@@ -38,7 +38,12 @@ import { createStickySection } from "./stickySection";
 import { focusFirstRevealed, renderPagedList } from "./listPaging";
 import type { PagingState } from "./listPaging";
 import { headingWithCount } from "../../ui/headingCount";
-import { offerMetadataRename, ownedMetadataKey } from "./paletteMetadataRename";
+import {
+	isBuiltInColorWord,
+	isStylingWord,
+	offerMetadataRename,
+	ownedMetadataKey,
+} from "./paletteMetadataRename";
 
 export function renderCustomPalettesSection(
 	ctx: SettingsSectionContext,
@@ -48,6 +53,9 @@ export function renderCustomPalettesSection(
 		ctx.plugin.settings.customPalettes.filter((p) => p.id !== excludeId);
 	const takenNamesExcept = (excludeId?: string): string[] =>
 		othersExcept(excludeId).map((p) => p.name);
+	/** The metadata words the user's own snippets keep for themselves. */
+	const reservedWords = (): ReadonlySet<string> =>
+		ctx.plugin.cssInjector.metadataCatalog.snippetWords();
 
 	/**
 	 * Pick up any callouts left behind by an earlier deletion whose colors match
@@ -109,7 +117,7 @@ export function renderCustomPalettesSection(
 		}).openAndWait();
 		if (!result) return;
 		// Read before the edit lands: the word the notes know this palette by.
-		const oldMetadataKey = ownedMetadataKey(ctx.plugin.settings.customPalettes, palette.id);
+		const oldMetadataKey = ownedMetadataKey(ctx.plugin.settings.customPalettes, palette.id, reservedWords());
 		Object.assign(palette, result);
 		// Object.assign never removes keys: when the edit switched the palette
 		// to another background style, the absent bgGradient must still clear
@@ -139,8 +147,10 @@ export function renderCustomPalettesSection(
 		await offerMetadataRename(
 			ctx.app,
 			oldMetadataKey,
-			ctx.plugin.settings.customPalettes,
-			palette.id,
+			ownedMetadataKey(ctx.plugin.settings.customPalettes, palette.id, reservedWords()),
+			(word) =>
+				isBuiltInColorWord(word) ||
+				isStylingWord(word, ctx.plugin.cssInjector.metadataCatalog.sourcesNow()),
 		);
 	};
 
@@ -158,11 +168,14 @@ export function renderCustomPalettesSection(
 					count: linked,
 				});
 		// What happens to `[!type|its-word]` in notes: nothing, by design —
-		// those callouts just stop taking its colour. Said, so it is no surprise.
-		const key = ownedMetadataKey(ctx.plugin.settings.customPalettes, palette.id);
-		const message = key
-			? `${base}\n${t("settings.deletePaletteMetadataNote", { key })}`
-			: base;
+		// those callouts just stop taking its colour, or take the built-in one
+		// a palette named "Pink" was holding the word from. Said, so it is no
+		// surprise.
+		const key = ownedMetadataKey(ctx.plugin.settings.customPalettes, palette.id, reservedWords());
+		const note = !key ? ""
+			: isBuiltInColorWord(key) ? t("settings.deletePaletteMetadataNoteBuiltIn", { key })
+			: t("settings.deletePaletteMetadataNote", { key });
+		const message = note ? `${base}\n${note}` : base;
 		const ok = await new ConfirmModal(
 			ctx.app,
 			t("confirm.titleDeletePalette"),

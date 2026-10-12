@@ -16,6 +16,16 @@ export const nl: Record<string, string> = {
 	"cmd.openQuickInsert": "Blok-callout snel invoegen",
 
 	"autocomplete.createNew": 'Nieuwe "{{name}}"',
+	"metadataSuggest.finish": "Klaar",
+	"metadataSuggest.colors": "Kleuren",
+	"metadataSuggest.useTyped": '"{{text}}" gebruiken',
+	"metadataSuggest.replaces": "Vervangt {{word}}",
+	"metadataSuggest.themeAlso": "Je thema stijlt dit woord ook",
+	"metadataSuggest.needsSpace": "Scheid met spaties, niet met |",
+	"metadataSuggest.anySeparator": "Scheid met spaties of |",
+	"metadataSuggest.mustBeFirst": "Werkt alleen als eerste woord",
+	"metadataSuggest.mustBeLast": "Werkt alleen als laatste woord",
+	"metadataSuggest.alone": "Werkt alleen op zichzelf",
 
 	"calloutPicker.noMatches": "Geen callouts gevonden voor ‘{{query}}’.",
 	"calloutPicker.placeholder": "Callouts zoeken",
@@ -166,6 +176,10 @@ export const nl: Record<string, string> = {
 	"settings.deletePaletteAria": "Palet {{name}} verwijderen",
 	"settings.deletePaletteConfirm":
 		'Palet "{{name}}" verwijderen?\nCallouts die de kleuren ervan gebruiken, worden niet beïnvloed.',
+	"settings.deletePaletteMetadataNote":
+		'Callouts die het in hun metadata noemen ("{{key}}"), gaan terug naar hun eigen kleur. Je notities veranderen niet.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Callouts die het in hun metadata noemen ("{{key}}"), krijgen in plaats daarvan de ingebouwde kleur met die naam. Je notities veranderen niet.',
 
 	"settings.customCommands": "Opdrachten & sneltoetsen",
 	"settings.customCommandsDesc":
@@ -375,6 +389,18 @@ export const nl: Record<string, string> = {
 	"palette.namePlaceholder": "Mijn palet",
 	"palette.nameExists": "Er bestaat al een palet met deze naam",
 	"palette.saveBlockedName": "Er bestaat al een palet met deze naam. Kies een andere naam om het op te slaan.",
+	"palette.metadataName": "In callout-metadata: {{key}}",
+	"palette.metadataNameExists":
+		'Een ander palet staat al als "{{key}}" in de callout-metadata. Kies een andere naam.',
+	"palette.metadataNameShared":
+		"In callout-metadata: {{key}}. Een ander opgeslagen palet heeft dit woord ook, dus slechts één van beide reageert erop.",
+	"palette.renameNotesTitle": "Je notities bijwerken?",
+	"palette.renameNotesBody":
+		'{{count}} callouts in {{files}} notities gebruiken dit palet als "{{old}}".\nWijzigen in "{{new}}"?\nZo niet, dan gaan ze terug naar hun eigen kleur.',
+	"palette.renameNotesConfirm": "Notities bijwerken",
+	"palette.renameNotesSkip": "Laten staan",
+	"palette.renameNotesFailed":
+		"Sommige notities konden niet worden bijgewerkt. De bijgewerkte zijn opgeslagen; de rest gebruikt nog de oude naam.",
 	"palette.baseColor": "Basiskleur",
 	"palette.baseColorHint":
 		"We passen de achtergrondkleur hier automatisch op aan. Als je wilt, kun je dit apart aansturen door {{link}}.",
@@ -411,7 +437,7 @@ export const nl: Record<string, string> = {
 	"colorName.sky": "Hemelsblauw",
 	"colorName.blue": "Blauw",
 	"colorName.indigo": "Indigo",
-	"colorName.violet": "Violet",
+	"colorName.violet": "Paars",
 	"colorName.purple": "Paars",
 	"colorName.pink": "Roze",
 	"colorName.rose": "Oudroze",
@@ -419,6 +445,7 @@ export const nl: Record<string, string> = {
 	"colorName.gray": "Grijs",
 	"colorName.black": "Zwart",
 	"colorName.white": "Wit",
+	"colorName.crimson": "Karmozijn",
 	"colorName.coral": "Koraal",
 	"colorName.grape": "Druif",
 	"colorName.plum": "Pruim",

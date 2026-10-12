@@ -1,26 +1,35 @@
 /**
- * tests/retiredPresets.test.ts — Amber and Lime folded into Yellow, Crimson
- * into Red.
+ * tests/retiredPresets.test.ts — Amber, Lime and Crimson left the menu, and
+ * nobody's callouts changed.
  *
- * A callout stores its colours, so retiring a preset has to repaint the
- * callouts that wore it, or a callout on `"amber"` would read "Yellow" in the
- * editor while still painting amber. These pin which callouts move, what they
- * end up storing (exactly what picking Yellow would have saved), and which ones
- * must be left alone — on load and on import alike.
+ * Retiring a preset is a menu decision, not a data migration. A callout stores
+ * its colours, so taking a preset away must neither repaint the callouts that
+ * wear it (Amber → Yellow is 16 CIEDE2000 in light mode — a different colour)
+ * nor leave them reading "Deleted color". These pin both halves: what a load,
+ * an import and the importer do (nothing), and what still knows the retired
+ * presets (the id lookup, the editor's label, the importer's colour match) as
+ * against what no longer offers them (the menu, metadata words).
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { DEFAULT_CALLOUTS } from "../src/defaultCallouts";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import type { CalloutDefinition, CustomPalette, PluginData } from "../src/types";
-import { findPresetByPaletteId, getAllColorPalettes } from "../src/utils/colorPalettes";
-import { bgTintFor, DEFAULT_TEXT_COLOR_DARK, DEFAULT_TEXT_COLOR_LIGHT } from "../src/utils/colorUtils";
+import { resolvePaletteEntry } from "../src/settings/paletteEntryResolution";
+import type { PaletteEntry } from "../src/settings/paletteCombobox";
+import type { CalloutDefinition, PluginData } from "../src/types";
+import { metadataColorEntries } from "../src/utils/calloutMetadata";
+import {
+	findPresetByPaletteId,
+	getAllColorPalettes,
+	getRetiredPalettes,
+	resolveCalloutManagerColors,
+	type ColorPalette,
+} from "../src/utils/colorPalettes";
+import { bgTintFor } from "../src/utils/colorUtils";
 import { applyImportedCallout } from "../src/utils/importedCallout";
-import { movedOffRetiredPreset, RETIRED_PRESETS } from "../src/utils/retiredPresets";
 
-const YELLOW = { light: "#e0ac00", dark: "#e0de71" };
 const AMBER = { light: "#ff8f00", dark: "#ffd54f" };
 const LIME = { light: "#afb42b", dark: "#dce775" };
+const CRIMSON = { light: "#ff1744", dark: "#ff1744" };
 
 function def(over: Partial<CalloutDefinition> = {}): CalloutDefinition {
 	return {
@@ -37,193 +46,155 @@ function def(over: Partial<CalloutDefinition> = {}): CalloutDefinition {
 	};
 }
 
-const move = (d: CalloutDefinition, palettes: CustomPalette[] = []) =>
-	movedOffRetiredPreset(d, palettes);
+function loaded(callouts: CalloutDefinition[]): CalloutRegistry {
+	const registry = new CalloutRegistry();
+	registry.load({ callouts } as Partial<PluginData>);
+	return registry;
+}
 
-describe("the retired presets themselves", () => {
-	it("are gone from the menu, and their successor answers to their ids", () => {
-		const ids = getAllColorPalettes().map((p) => p.id);
-		for (const [id, retired] of Object.entries(RETIRED_PRESETS)) {
-			assert.ok(!ids.includes(id), `${id} is still listed`);
-			assert.equal(findPresetByPaletteId(id)?.id, retired.successor);
-		}
-	});
+const colorsOf = (d: CalloutDefinition | undefined) => ({
+	light: d?.colorLight,
+	dark: d?.colorDark,
+	bgLight: d?.bgColorLight,
+	bgDark: d?.bgColorDark,
 });
 
-describe("a callout linked to Amber or Lime by id", () => {
-	for (const [id, from] of [["amber", AMBER], ["lime", LIME]] as const) {
-		it(`moves from ${id} to Yellow, keeping its link`, () => {
-			const moved = move(def({ paletteId: id, colorLight: from.light, colorDark: from.dark }));
-			assert.ok(moved);
-			assert.equal(moved.colorLight, YELLOW.light);
-			assert.equal(moved.colorDark, YELLOW.dark);
-			// Kept: this build reads it as Yellow, an older synced build still
-			// knows it and does not call it a deleted colour.
-			assert.equal(moved.paletteId, id);
-		});
-	}
-
-	it("moves even when its accents drifted from the preset's", () => {
-		// The editor labelled it by id, so it was Amber whatever it painted.
-		const moved = move(def({ paletteId: "amber", colorLight: "#ff9900", colorDark: "#ffcc44" }));
-		assert.equal(moved?.colorLight, YELLOW.light);
-	});
-
-	it("drops a background that was only the old accent's tint", () => {
-		const moved = move(def({
-			paletteId: "amber",
-			bgColorLight: bgTintFor(AMBER.light, false),
-			bgColorDark: bgTintFor(AMBER.dark, true),
-		}));
-		assert.ok(moved);
-		assert.equal(moved.bgColorLight, undefined);
-		assert.equal(moved.bgColorDark, undefined);
-	});
-
-	it("keeps an authored background, text colours, a gradient and transparency", () => {
-		const gradient = { angleDeg: 90, toColorLight: "#111111", toColorDark: "#222222" };
-		const moved = move(def({
-			paletteId: "amber",
-			bgColorLight: "#123456",
-			bgColorDark: "#654321",
-			textColorLight: "#010101",
-			textColorDark: "#fefefe",
-			bgGradient: gradient,
-		}));
-		assert.ok(moved);
-		assert.equal(moved.bgColorLight, "#123456");
-		assert.equal(moved.bgColorDark, "#654321");
-		assert.equal(moved.textColorLight, "#010101");
-		assert.equal(moved.textColorDark, "#fefefe");
-		assert.deepEqual(moved.bgGradient, gradient);
-		const transparent = move(def({ paletteId: "lime", transparentBg: true }));
-		assert.equal(transparent?.transparentBg, true);
-	});
-
-	it("is a no-op once moved", () => {
-		const moved = move(def({ paletteId: "amber" }));
-		assert.ok(moved);
-		assert.equal(move(moved), null);
-	});
-});
-
-describe("a callout saved before the palette link existed", () => {
-	it("moves when its colours are exactly Amber's, with no background", () => {
-		assert.equal(move(def())?.colorLight, YELLOW.light);
-	});
-
-	it("moves when its background is Amber's own tint", () => {
-		const moved = move(def({
-			bgColorLight: bgTintFor(AMBER.light, false),
-			bgColorDark: bgTintFor(AMBER.dark, true),
-		}));
-		assert.equal(moved?.colorLight, YELLOW.light);
-		assert.equal(moved?.bgColorLight, undefined);
-	});
-
-	it("moves Lime's too, and gains no link it never had", () => {
-		const moved = move(def({ colorLight: LIME.light.toUpperCase(), colorDark: LIME.dark }));
-		assert.equal(moved?.colorDark, YELLOW.dark);
-		assert.equal(moved?.paletteId, undefined);
-	});
-
-	it("stays when only the accent is Amber's — a background or gradient of its own, or transparent", () => {
-		assert.equal(move(def({ bgColorLight: "#123456", bgColorDark: "#654321" })), null);
-		assert.equal(move(def({ bgGradient: { angleDeg: 0, toColorLight: "#000000", toColorDark: "#ffffff" } })), null);
-		assert.equal(move(def({ transparentBg: true })), null);
-		assert.equal(move(def({ colorDark: "#000000" })), null);
-	});
-
-	it("stays when the user has a saved palette of exactly those colours", () => {
-		// Amber's colours as a saved palette spells them out; the adoption pass
-		// links the callout to it, so it is the user's colour now, not a preset.
-		const own: CustomPalette = {
-			id: "cp-amber",
-			name: "My amber",
-			colorLight: AMBER.light,
-			colorDark: AMBER.dark,
-			bgColorLight: bgTintFor(AMBER.light, false),
-			bgColorDark: bgTintFor(AMBER.dark, true),
-			textColorLight: DEFAULT_TEXT_COLOR_LIGHT,
-			textColorDark: DEFAULT_TEXT_COLOR_DARK,
-		};
-		assert.equal(move(def(), [own]), null);
-		assert.equal(move(def(), [{ ...own, colorDark: "#000000" }])?.colorLight, YELLOW.light, "a merely similar palette is not it");
-	});
-});
-
-describe("Crimson, folded into Red", () => {
-	const RED = { light: "#e93147", dark: "#fb464c" };
-	const crimson = { colorLight: "#ff1744", colorDark: "#ff1744" };
-
-	for (const id of ["crimson", "danger"]) {
-		it(`a callout linked to ${id} moves to Red`, () => {
-			const moved = move(def({ paletteId: id, ...crimson }));
-			assert.equal(moved?.colorLight, RED.light);
-			assert.equal(moved?.colorDark, RED.dark);
-			assert.equal(moved?.paletteId, id);
-			assert.equal(findPresetByPaletteId(id)?.id, "red");
-		});
-	}
-
-	it("an unlinked callout in Crimson's colours moves to Red", () => {
-		assert.equal(move(def(crimson))?.colorLight, RED.light);
-	});
-});
-
-describe("callouts that never wore a retired preset", () => {
-	it("include every built-in callout as it ships", () => {
-		// An untouched built-in follows the theme; repainting one would freeze
-		// it to a hex. None ships in a retired preset's colours.
-		for (const builtIn of DEFAULT_CALLOUTS) {
-			assert.equal(move(structuredClone(builtIn)), null, builtIn.id);
+describe("the retired presets", () => {
+	it("are gone from the menu and are no metadata word", () => {
+		const offered = getAllColorPalettes().map((p) => p.id);
+		const words = metadataColorEntries([]).flatMap((e) => [e.key, ...e.aliases]);
+		for (const retired of getRetiredPalettes()) {
+			assert.ok(!offered.includes(retired.id), `${retired.id} is still offered`);
+			assert.ok(!words.includes(retired.id), `${retired.id} is a metadata word`);
 		}
 	});
 
-	it("are left alone", () => {
-		assert.equal(move(def({ paletteId: "cp-mine" })), null, "a saved palette's callout");
-		assert.equal(move(def({ paletteId: "orange" })), null, "another preset");
-		assert.equal(move(def({ paletteId: "cp-dead" })), null, "an orphan keeps its colours");
-		assert.equal(move(def({ colorLight: "#ec7500", colorDark: "#e9973f" })), null);
-		assert.equal(move(def({ source: "theme" })), null, "a theme's own colour");
+	it("each resolve to themselves, Crimson also by its old role id", () => {
+		for (const id of ["amber", "lime", "crimson"]) {
+			assert.equal(findPresetByPaletteId(id)?.id, id);
+		}
+		assert.equal(findPresetByPaletteId("danger")?.id, "crimson");
+	});
+
+	it("are claimed by no current preset", () => {
+		for (const preset of getAllColorPalettes()) {
+			for (const id of ["amber", "lime", "crimson", "danger"]) {
+				assert.ok(!preset.legacyIds?.includes(id), `${preset.id} answers to ${id}`);
+			}
+		}
+	});
+
+	it("keep the colours they shipped with", () => {
+		const byId = new Map(getRetiredPalettes().map((p) => [p.id, p]));
+		assert.equal(byId.get("amber")?.colorLight, AMBER.light);
+		assert.equal(byId.get("lime")?.colorDark, LIME.dark);
+		assert.equal(byId.get("crimson")?.colorLight, CRIMSON.light);
 	});
 });
 
-describe("on load and on import", () => {
-	function loaded(callouts: CalloutDefinition[]): CalloutRegistry {
-		const registry = new CalloutRegistry();
-		registry.load({ callouts } as Partial<PluginData>);
-		return registry;
-	}
-
-	it("load moves them, flushes once, and lists no deleted colour", () => {
-		const registry = loaded([
+describe("a load changes nobody's colours", () => {
+	it("linked, unlinked and tinted callouts keep exactly what they had, with nothing to save", () => {
+		const callouts = [
 			def({ id: "a", paletteId: "amber" }),
 			def({ id: "b", colorLight: LIME.light, colorDark: LIME.dark }),
-			def({ id: "c", paletteId: "orange", colorLight: "#ec7500", colorDark: "#e9973f" }),
-		]);
-		assert.equal(registry.get("a")?.colorLight, YELLOW.light);
-		assert.equal(registry.get("b")?.colorLight, YELLOW.light);
-		assert.equal(registry.get("c")?.colorLight, "#ec7500");
-		assert.deepEqual(registry.listOrphanPaletteGroups(), []);
-		assert.equal(registry.needsSaveAfterLoad(), true);
-
-		const again = loaded(registry.toSaveData().callouts);
-		assert.equal(again.needsSaveAfterLoad(), false, "nothing left to move");
+			def({ id: "c", paletteId: "crimson", colorLight: CRIMSON.light, colorDark: CRIMSON.dark }),
+			def({ id: "d", paletteId: "danger", colorLight: CRIMSON.light, colorDark: CRIMSON.dark }),
+			def({
+				id: "e",
+				paletteId: "lime",
+				colorLight: LIME.light,
+				colorDark: LIME.dark,
+				bgColorLight: "#123456",
+				bgColorDark: "#654321",
+			}),
+		];
+		const registry = loaded(structuredClone(callouts));
+		for (const before of callouts) {
+			assert.deepEqual(colorsOf(registry.get(before.id)), colorsOf(before), before.id);
+			assert.equal(registry.get(before.id)?.paletteId, before.paletteId, before.id);
+		}
+		assert.deepEqual(registry.listOrphanPaletteGroups(), [], "no deleted colour");
+		assert.equal(registry.needsSaveAfterLoad(), false);
 	});
 
-	it("a modified built-in on Amber moves too", () => {
+	it("a 2.0.0-era Crimson in its own darker red keeps it", () => {
+		// 2.0.0's Crimson was #b71c1c / #e57373 under the same id.
+		const registry = loaded([def({ id: "old", paletteId: "crimson", colorLight: "#b71c1c", colorDark: "#e57373" })]);
+		assert.equal(registry.get("old")?.colorLight, "#b71c1c");
+	});
+
+	it("a built-in danger edited on a release that shipped it as #ff1744 keeps it", () => {
+		// Releases 1.0.0–2.7.x shipped `danger` as #ff1744; an edited built-in
+		// was saved whole, colours included.
 		const registry = loaded([
-			def({ id: "warning", builtIn: true, source: "builtin", displayName: "Warning", paletteId: "amber" }),
+			def({
+				id: "danger",
+				displayName: "Danger",
+				builtIn: true,
+				source: "builtin",
+				icon: { type: "lucide", value: "flame" },
+				colorLight: CRIMSON.light,
+				colorDark: CRIMSON.dark,
+				foldable: false,
+			}),
 		]);
-		assert.equal(registry.get("warning")?.colorLight, YELLOW.light);
+		const danger = registry.get("danger");
+		assert.equal(danger?.colorLight, CRIMSON.light);
+		assert.ok(danger && !registry.isUnmodifiedBuiltIn(danger), "still the user's own colour");
+		assert.equal(registry.needsSaveAfterLoad(), false);
 	});
 
-	it("an imported backup lands already moved", () => {
+	it("an imported backup lands as it was written", () => {
 		const registry = new CalloutRegistry();
 		registry.load(null);
-		assert.equal(applyImportedCallout(registry, def({ id: "old", paletteId: "lime", colorLight: LIME.light, colorDark: LIME.dark })), true);
-		assert.equal(registry.get("old")?.colorLight, YELLOW.light);
-		assert.equal(registry.get("old")?.colorDark, YELLOW.dark);
+		const old = def({ id: "old", paletteId: "lime", colorLight: LIME.light, colorDark: LIME.dark });
+		assert.equal(applyImportedCallout(registry, structuredClone(old)), true);
+		assert.deepEqual(colorsOf(registry.get("old")), colorsOf(old));
+		assert.equal(registry.get("old")?.paletteId, "lime");
+	});
+});
+
+describe("the editor still names a retired preset", () => {
+	const entries: PaletteEntry[] = getAllColorPalettes().map((palette) => ({
+		id: palette.id,
+		name: palette.name,
+		group: palette.group,
+		palette,
+	}));
+	const wears = (light: string, dark: string) => (p: ColorPalette) =>
+		p.colorLight === light && p.colorDark === dark;
+
+	it("by id, keeping the id", () => {
+		const resolved = resolvePaletteEntry(entries, "amber", () => false);
+		assert.equal(resolved?.entry.id, "amber");
+		assert.equal(resolved?.paletteId, "amber");
+		assert.equal(resolvePaletteEntry(entries, "danger", () => false)?.paletteId, "danger");
+	});
+
+	it("by colour, for a callout saved before the link existed", () => {
+		const resolved = resolvePaletteEntry(entries, undefined, wears(LIME.light, LIME.dark));
+		assert.equal(resolved?.entry.id, "lime");
+		assert.equal(resolved?.paletteId, "lime");
+	});
+
+	it("never lists it — the menu's own entries are untouched", () => {
+		assert.ok(!entries.some((e) => e.id === "amber"));
+	});
+
+	it("keeps an id saved before a rename, while showing the preset's new name", () => {
+		// An older synced build knows only "violet"; rewriting it on the next
+		// save would show that device a deleted colour.
+		const resolved = resolvePaletteEntry(entries, "violet", () => false);
+		assert.equal(resolved?.entry.id, "purple");
+		assert.equal(resolved?.paletteId, "violet");
+	});
+});
+
+describe("the importer", () => {
+	it("links Amber's colours to Amber rather than minting a palette, as before it retired", () => {
+		const result = resolveCalloutManagerColors(AMBER.light, AMBER.dark, []);
+		assert.equal(result.paletteId, "amber");
+		assert.equal(result.createdPalette, undefined);
+		assert.equal(result.colors.bgColorLight, bgTintFor(AMBER.light, false));
 	});
 });

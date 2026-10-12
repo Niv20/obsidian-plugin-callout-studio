@@ -68,6 +68,16 @@ export const vi: Record<string, string> = {
 	"cmd.openQuickInsert": "Chèn nhanh callout khối",
 
 	"autocomplete.createNew": 'Tạo "{{name}}"',
+	"metadataSuggest.finish": "Xong",
+	"metadataSuggest.colors": "Màu sắc",
+	"metadataSuggest.useTyped": 'Dùng "{{text}}"',
+	"metadataSuggest.replaces": "Thay thế {{word}}",
+	"metadataSuggest.themeAlso": "Giao diện của bạn cũng định dạng từ này",
+	"metadataSuggest.needsSpace": "Phân tách bằng dấu cách, không dùng |",
+	"metadataSuggest.anySeparator": "Phân tách bằng dấu cách hoặc |",
+	"metadataSuggest.mustBeFirst": "Chỉ hoạt động khi là từ đầu tiên",
+	"metadataSuggest.mustBeLast": "Chỉ hoạt động khi là từ cuối cùng",
+	"metadataSuggest.alone": "Chỉ hoạt động khi đứng riêng",
 
 	"calloutPicker.noMatches": "Không có callout nào khớp với “{{query}}”.",
 	"calloutPicker.placeholder": "Tìm kiếm callout",
@@ -219,6 +229,10 @@ export const vi: Record<string, string> = {
 	"settings.deletePaletteAria": "Xóa bảng màu {{name}}",
 	"settings.deletePaletteConfirm":
 		'Xóa bảng màu "{{name}}"?\nCác callout dùng màu này sẽ không bị ảnh hưởng.',
+	"settings.deletePaletteMetadataNote":
+		'Các callout nêu tên này trong siêu dữ liệu ("{{key}}") sẽ trở về màu riêng của chúng. Ghi chú của bạn không thay đổi.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Các callout nêu tên này trong siêu dữ liệu ("{{key}}") sẽ dùng màu tích hợp có tên đó. Ghi chú của bạn không thay đổi.',
 
 	"settings.customCommands": "Lệnh và phím nóng",
 	"settings.customCommandsDesc":
@@ -421,6 +435,18 @@ export const vi: Record<string, string> = {
 	"palette.namePlaceholder": "Bảng màu của tôi",
 	"palette.nameExists": "Đã tồn tại bảng màu với tên này",
 	"palette.saveBlockedName": "Đã tồn tại bảng màu với tên này. Hãy chọn tên khác để lưu.",
+	"palette.metadataName": "Trong siêu dữ liệu của callout: {{key}}",
+	"palette.metadataNameExists":
+		'Một bảng màu khác đã được ghi là "{{key}}" trong siêu dữ liệu của callout. Hãy chọn tên khác.',
+	"palette.metadataNameShared":
+		"Trong siêu dữ liệu của callout: {{key}}. Một bảng màu đã lưu khác cũng có từ này, nên chỉ một trong hai đáp ứng nó.",
+	"palette.renameNotesTitle": "Cập nhật ghi chú của bạn?",
+	"palette.renameNotesBody":
+		'{{count}} callout trong {{files}} ghi chú đang dùng bảng màu này với tên "{{old}}".\nĐổi chúng thành "{{new}}"?\nNếu không, chúng sẽ trở về màu riêng.',
+	"palette.renameNotesConfirm": "Cập nhật ghi chú",
+	"palette.renameNotesSkip": "Để nguyên",
+	"palette.renameNotesFailed":
+		"Không thể cập nhật một số ghi chú. Những ghi chú đã cập nhật được lưu lại; phần còn lại vẫn dùng tên cũ.",
 	"palette.baseColor": "Màu gốc",
 	"palette.baseColorHint":
 		"Chúng tôi sẽ tự động khớp màu nền với màu này. Nếu muốn, bạn có thể điều khiển riêng bằng cách {{link}}.",
@@ -458,7 +484,7 @@ export const vi: Record<string, string> = {
 	"colorName.sky": "Xanh da trời",
 	"colorName.blue": "Xanh dương",
 	"colorName.indigo": "Chàm",
-	"colorName.violet": "Tím oải hương",
+	"colorName.violet": "Tím",
 	"colorName.purple": "Tím",
 	"colorName.pink": "Hồng",
 	"colorName.rose": "Hồng đậm",
@@ -466,6 +492,7 @@ export const vi: Record<string, string> = {
 	"colorName.gray": "Xám",
 	"colorName.black": "Đen",
 	"colorName.white": "Trắng",
+	"colorName.crimson": "Đỏ thẫm",
 	"colorName.coral": "San hô",
 	"colorName.grape": "Nho",
 	"colorName.plum": "Mận",

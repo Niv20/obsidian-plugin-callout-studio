@@ -15,6 +15,16 @@ export const nb: Record<string, string> = {
 	"cmd.customInsertInline": "Sett inn {{name}}-inline-callout",
 	"cmd.openQuickInsert": "Hurtiginnsetting av blokk-callout",
 	"autocomplete.createNew": 'Opprett "{{name}}"',
+	"metadataSuggest.finish": "Ferdig",
+	"metadataSuggest.colors": "Farger",
+	"metadataSuggest.useTyped": 'Bruk "{{text}}"',
+	"metadataSuggest.replaces": "Erstatter {{word}}",
+	"metadataSuggest.themeAlso": "Temaet ditt stiler også dette ordet",
+	"metadataSuggest.needsSpace": "Skill med mellomrom, ikke |",
+	"metadataSuggest.anySeparator": "Skill med mellomrom eller |",
+	"metadataSuggest.mustBeFirst": "Fungerer bare som første ord",
+	"metadataSuggest.mustBeLast": "Fungerer bare som siste ord",
+	"metadataSuggest.alone": "Fungerer bare alene",
 	"calloutPicker.noMatches": "Ingen callouter samsvarer med «{{query}}».",
 	"calloutPicker.placeholder": "Søk i callouter",
 	"editor.paletteNoMatches": "Ingen farger samsvarer med «{{query}}».",
@@ -157,6 +167,10 @@ export const nb: Record<string, string> = {
 	"settings.deletePaletteAria": "Slett palett {{name}}",
 	"settings.deletePaletteConfirm":
 		'Slette paletten "{{name}}"?\nCallouts som bruker fargene, blir ikke påvirket.',
+	"settings.deletePaletteMetadataNote":
+		'Callouts som nevner den i metadataene sine ("{{key}}"), går tilbake til sin egen farge. Notatene dine endres ikke.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Callouts som nevner den i metadataene sine ("{{key}}"), får i stedet den innebygde fargen med det navnet. Notatene dine endres ikke.',
 	"settings.customCommands": "Kommandoer og hurtigtaster",
 	"settings.customCommandsDesc":
 		"Se alle Callout Studio-kommandoer og snarveien de er bundet til, og lag dine egne kommandoer for callouts du bruker mest. Ingen snarveier er tildelt som standard.",
@@ -354,6 +368,18 @@ export const nb: Record<string, string> = {
 	"palette.namePlaceholder": "Min palett",
 	"palette.nameExists": "Det finnes allerede en palett med dette navnet",
 	"palette.saveBlockedName": "Det finnes allerede en palett med dette navnet. Velg et annet navn for å lagre den.",
+	"palette.metadataName": "I callout-metadata: {{key}}",
+	"palette.metadataNameExists":
+		'En annen palett er allerede skrevet som "{{key}}" i callout-metadata. Velg et annet navn.',
+	"palette.metadataNameShared":
+		"I callout-metadata: {{key}}. En annen lagret palett har også dette ordet, så bare én av dem svarer på det.",
+	"palette.renameNotesTitle": "Oppdatere notatene dine?",
+	"palette.renameNotesBody":
+		'{{count}} callouts i {{files}} notater bruker denne paletten som "{{old}}".\nEndre dem til "{{new}}"?\nHvis ikke, går de tilbake til sin egen farge.',
+	"palette.renameNotesConfirm": "Oppdater notater",
+	"palette.renameNotesSkip": "La dem være",
+	"palette.renameNotesFailed":
+		"Noen notater kunne ikke oppdateres. De som ble oppdatert, er lagret; resten bruker fortsatt det gamle navnet.",
 	"palette.baseColor": "Grunnfarge",
 	"palette.baseColorHint":
 		"Vi tilpasser automatisk bakgrunnsfargen til denne. Hvis du vil, kan du styre den separat ved å {{link}}.",
@@ -391,7 +417,7 @@ export const nb: Record<string, string> = {
 	"colorName.sky": "Himmelblå",
 	"colorName.blue": "Blå",
 	"colorName.indigo": "Indigo",
-	"colorName.violet": "Fiolett",
+	"colorName.violet": "Lilla",
 	"colorName.purple": "Lilla",
 	"colorName.pink": "Rosa",
 	"colorName.rose": "Cerise",
@@ -399,6 +425,7 @@ export const nb: Record<string, string> = {
 	"colorName.gray": "Grå",
 	"colorName.black": "Svart",
 	"colorName.white": "Hvit",
+	"colorName.crimson": "Karmosinrød",
 	"colorName.coral": "Korall",
 	"colorName.grape": "Drue",
 	"colorName.plum": "Plomme",

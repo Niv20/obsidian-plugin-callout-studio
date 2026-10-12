@@ -68,6 +68,16 @@ export const pt: Record<string, string> = {
 	"cmd.openQuickInsert": "Inserção rápida de callout de bloco",
 
 	"autocomplete.createNew": 'Criar "{{name}}"',
+	"metadataSuggest.finish": "Concluído",
+	"metadataSuggest.colors": "Cores",
+	"metadataSuggest.useTyped": 'Usar "{{text}}"',
+	"metadataSuggest.replaces": "Substitui {{word}}",
+	"metadataSuggest.themeAlso": "Seu tema também estiliza esta palavra",
+	"metadataSuggest.needsSpace": "Separe com espaços, não com |",
+	"metadataSuggest.anySeparator": "Separe com espaços ou com |",
+	"metadataSuggest.mustBeFirst": "Só funciona como primeira palavra",
+	"metadataSuggest.mustBeLast": "Só funciona como última palavra",
+	"metadataSuggest.alone": "Só funciona sozinha",
 
 	"calloutPicker.noMatches": "Nenhum callout corresponde a “{{query}}”.",
 	"calloutPicker.placeholder": "Pesquisar callouts",
@@ -216,6 +226,10 @@ export const pt: Record<string, string> = {
 	"settings.deletePaletteAria": "Excluir paleta {{name}}",
 	"settings.deletePaletteConfirm":
 		'Excluir a paleta "{{name}}"?\nOs callouts que usam essas cores não são afetados.',
+	"settings.deletePaletteMetadataNote":
+		'Os callouts que a nomeiam nos metadados ("{{key}}") voltam à própria cor. Suas notas não mudam.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Os callouts que a nomeiam nos metadados ("{{key}}") passam a usar a cor integrada com esse nome. Suas notas não mudam.',
 
 	"settings.customCommands": "Comandos e teclas de atalho",
 	"settings.customCommandsDesc":
@@ -418,6 +432,18 @@ export const pt: Record<string, string> = {
 	"palette.namePlaceholder": "Minha paleta",
 	"palette.nameExists": "Já existe uma paleta com esse nome",
 	"palette.saveBlockedName": "Já existe uma paleta com esse nome. Escolha outro nome para salvá-la.",
+	"palette.metadataName": "Nos metadados do callout: {{key}}",
+	"palette.metadataNameExists":
+		'Outra paleta já está escrita como "{{key}}" nos metadados do callout. Escolha um nome diferente.',
+	"palette.metadataNameShared":
+		"Nos metadados do callout: {{key}}. Outra paleta salva também tem esta palavra, então só uma delas responde a ela.",
+	"palette.renameNotesTitle": "Atualizar suas notas?",
+	"palette.renameNotesBody":
+		'{{count}} callouts em {{files}} notas usam esta paleta como "{{old}}".\nAlterá-los para "{{new}}"?\nSe não, eles voltam à própria cor.',
+	"palette.renameNotesConfirm": "Atualizar notas",
+	"palette.renameNotesSkip": "Deixar como está",
+	"palette.renameNotesFailed":
+		"Algumas notas não puderam ser atualizadas. As que foram atualizadas estão salvas; as demais ainda usam o nome antigo.",
 	"palette.baseColor": "Cor base",
 	"palette.baseColorHint":
 		"Ajustaremos automaticamente a cor de fundo a esta. Se preferir, pode controlá-la separadamente ao {{link}}.",
@@ -454,7 +480,7 @@ export const pt: Record<string, string> = {
 	"colorName.sky": "Azul-celeste",
 	"colorName.blue": "Azul",
 	"colorName.indigo": "Índigo",
-	"colorName.violet": "Violeta",
+	"colorName.violet": "Roxo",
 	"colorName.purple": "Roxo",
 	"colorName.pink": "Rosa",
 	"colorName.rose": "Rosé",
@@ -462,6 +488,7 @@ export const pt: Record<string, string> = {
 	"colorName.gray": "Cinza",
 	"colorName.black": "Preto",
 	"colorName.white": "Branco",
+	"colorName.crimson": "Carmesim",
 	"colorName.coral": "Coral",
 	"colorName.grape": "Uva",
 	"colorName.plum": "Ameixa",

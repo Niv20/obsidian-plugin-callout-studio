@@ -10,9 +10,10 @@
  * opens the CalloutEditor pre-filled with the typed query in all three contexts.
  *
  * Tab and `|` accept too, the way they do in Obsidian's own link suggest: Tab
- * writes the type alone and leaves the cursor before the `]`, `|` does the
- * same and types the separator, which opens the metadata suggestions
- * (`CalloutMetadataSuggest`). Enter is unchanged — most people never use
+ * writes the type alone and leaves the cursor before the `]`; `|` completes a
+ * half-typed type and types the separator, which opens the metadata
+ * suggestions (`CalloutMetadataSuggest`). Neither ever rewrites or adds the
+ * `]` — see `replaceTypeText`. Enter is unchanged — most people never use
  * metadata, and Enter finishing the callout is what they expect.
  */
 import {
@@ -33,7 +34,7 @@ import { paintCalloutListIcon } from "../manager/theme/calloutListIcon";
 import { getLocale, t } from "../i18n";
 import { suggestableCallouts } from "../utils/usableCallouts";
 import { calloutMatchesQuery } from "../utils/calloutSearch";
-import { readCalloutTrigger, triggerInCode } from "./calloutTriggerContext";
+import { readCalloutTrigger, tokenBodyAt, triggerInCode } from "./calloutTriggerContext";
 import {
 	landAfterInlineToken,
 	parkCursor,
@@ -296,18 +297,13 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 			allIds.find((id) => id.toLowerCase().startsWith(queryLower)) ??
 			def.id;
 
-		// `|` is a keystroke more than a choice: it accepts the highlighted
-		// row only when that row's id is what the user was typing — its start.
-		// A name of their own that merely contains a known id (`mark2`, with
-		// "Mark" highlighted) is kept, and the pipe is simply typed after it.
-		if (key === "pipe" && !matchedId.toLowerCase().startsWith(queryLower)) {
-			this.typePipe(editor, end, ctx.file);
+		// Tab and `|` complete the type and nothing else, whatever the role.
+		if (key === "pipe") {
+			this.completeTypeThenPipe(editor, start, end, queryLower, matchedId, ctx.file);
 			return;
 		}
-
-		// Tab and `|` write the type and nothing else, whatever the role.
-		if (key !== "enter") {
-			this.writeTypeOnly(editor, start, end, matchedId, key, ctx.file);
+		if (key === "tab") {
+			this.writeTypeOnly(editor, start, end, matchedId);
 			return;
 		}
 
@@ -397,38 +393,93 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 	}
 
 	/**
-	 * Tab's pick, and `|`'s: the type is written and nothing else — the
-	 * metadata, the fold mark and the title already on the line stay exactly as
-	 * they are — and the cursor parks before the `]`, after any metadata, the
-	 * way Obsidian's own link suggest leaves it before `]]`. An unclosed token
-	 * is closed, as every other pick closes it.
+	 * Replace the type's own characters with `insertId` and nothing around
+	 * them, returning the column just past it.
 	 *
-	 * `|` then types the separator at that spot and opens the metadata
-	 * suggestions, as `#` opens heading suggestions in a link.
+	 * Never the `]`. Obsidian's bracket pairing steps over a typed `]` only
+	 * while it still tracks the `]` it inserted itself, and rewriting that
+	 * character — even with an identical one — drops the tracking: whoever then
+	 * types `]` by habit, as everyone typing metadata by hand does, would get
+	 * `]]`. For the same reason an unclosed token is left unclosed. In one, the
+	 * type ends at the cursor: the rest of the line is not the user's to lose.
+	 */
+	private replaceTypeText(
+		editor: Editor,
+		start: EditorPosition,
+		cursor: EditorPosition,
+		insertId: string,
+	): number {
+		const line = editor.getLine(start.line);
+		const body = tokenBodyAt(line, start.ch);
+		const from = start.ch + 2;
+		const to =
+			body.closeCh === -1 ? Math.min(body.idEndCh, Math.max(cursor.ch, from)) : body.idEndCh;
+		if (line.slice(from, to) !== insertId) {
+			editor.replaceRange(insertId, { line: start.line, ch: from }, { line: start.line, ch: to });
+		}
+		return from + insertId.length;
+	}
+
+	/**
+	 * Tab's pick: the type is written and nothing else — the metadata, the fold
+	 * mark and the title already on the line stay exactly as they are — and the
+	 * cursor parks before the `]`, after any metadata, the way Obsidian's own
+	 * link suggest leaves it before `]]`. Without a `]` it parks after the type
+	 * and its metadata.
 	 */
 	private writeTypeOnly(
 		editor: Editor,
 		start: EditorPosition,
-		contextEnd: EditorPosition,
+		cursor: EditorPosition,
 		insertId: string,
-		key: PickKey,
+	): void {
+		const idEnd = this.replaceTypeText(editor, start, cursor, insertId);
+		const body = tokenBodyAt(editor.getLine(start.line), start.ch);
+		const park =
+			body.closeCh !== -1 ? body.closeCh : body.pipeCh !== -1 ? body.bodyEndCh : idEnd;
+		parkCursor(editor, { line: start.line, ch: park });
+	}
+
+	/**
+	 * `|`'s pick — a keystroke more than a choice. It completes a type the user
+	 * was halfway through, and only that: the highlighted row's id must start
+	 * with what was typed, be longer than it, and the cursor must sit at the
+	 * end of the type. Anything else — a name of their own that merely contains
+	 * a known id (`mark2`, "Mark" highlighted), a type already complete, a
+	 * cursor mid-word, nothing typed yet — and the pipe is simply typed, exactly
+	 * as without the dropdown.
+	 *
+	 * A completed type already followed by a `|` steps over it rather than
+	 * doubling it. Either way the metadata suggestions open there, as `#`
+	 * opens heading suggestions in a link.
+	 */
+	private completeTypeThenPipe(
+		editor: Editor,
+		start: EditorPosition,
+		cursor: EditorPosition,
+		typed: string,
+		matchedId: string,
 		file: TFile | null,
 	): void {
-		const line = editor.getLine(start.line);
-		const close = line.indexOf("]", start.ch + 2);
-		const tokenEnd: EditorPosition =
-			close === -1 ? contextEnd : { line: start.line, ch: close + 1 };
-		const token = `[!${insertId}${this.tokenMetadataSuffix(line, start.ch)}]`;
-		editor.replaceRange(token, start, tokenEnd);
-		const beforeClose: EditorPosition = {
-			line: start.line,
-			ch: start.ch + token.length - 1,
-		};
-		if (key === "pipe") {
-			this.typePipe(editor, beforeClose, file);
+		const body = tokenBodyAt(editor.getLine(start.line), start.ch);
+		const id = matchedId.toLowerCase();
+		const completes =
+			typed !== "" &&
+			cursor.ch === body.idEndCh &&
+			id.startsWith(typed) &&
+			id !== typed;
+		if (!completes) {
+			this.typePipe(editor, cursor, file);
 			return;
 		}
-		parkCursor(editor, beforeClose);
+		const idEnd = this.replaceTypeText(editor, start, cursor, matchedId);
+		if (editor.getLine(start.line)[idEnd] === "|") {
+			parkCursor(editor, { line: start.line, ch: idEnd + 1 }, () =>
+				this.triggerNow(editor, file),
+			);
+			return;
+		}
+		this.typePipe(editor, { line: start.line, ch: idEnd }, file);
 	}
 
 	/**
@@ -521,7 +572,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		// returns — the modal is just a longer pick.
 		if (key === "tab") {
 			editor.focus();
-			this.writeTypeOnly(editor, start, tokenEnd, result.id, key, file);
+			this.writeTypeOnly(editor, start, tokenEnd, result.id);
 			return;
 		}
 

@@ -68,6 +68,16 @@ export const uk: Record<string, string> = {
 	"cmd.openQuickInsert": "Швидка вставка блокового callout",
 
 	"autocomplete.createNew": 'Створити "{{name}}"',
+	"metadataSuggest.finish": "Готово",
+	"metadataSuggest.colors": "Кольори",
+	"metadataSuggest.useTyped": 'Використати "{{text}}"',
+	"metadataSuggest.replaces": "Замінює {{word}}",
+	"metadataSuggest.themeAlso": "Ваша тема також стилізує це слово",
+	"metadataSuggest.needsSpace": "Розділяйте пробілами, а не |",
+	"metadataSuggest.anySeparator": "Розділяйте пробілами або |",
+	"metadataSuggest.mustBeFirst": "Працює лише як перше слово",
+	"metadataSuggest.mustBeLast": "Працює лише як останнє слово",
+	"metadataSuggest.alone": "Працює лише окремо",
 
 	"calloutPicker.noMatches": "За запитом «{{query}}» не знайдено жодного callout.",
 	"calloutPicker.placeholder": "Пошук callout",
@@ -220,6 +230,10 @@ export const uk: Record<string, string> = {
 	"settings.deletePaletteAria": "Видалити палітру {{name}}",
 	"settings.deletePaletteConfirm":
 		'Видалити палітру "{{name}}"?\nБлоки callout, які використовують її кольори, не зміняться.',
+	"settings.deletePaletteMetadataNote":
+		'Callout, які вказують її в метаданих ("{{key}}"), повертаються до власного кольору. Ваші нотатки не змінюються.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Callout, які вказують її в метаданих ("{{key}}"), натомість отримують вбудований колір із такою назвою. Ваші нотатки не змінюються.',
 
 	"settings.customCommands": "Команди та гарячі клавіші",
 	"settings.customCommandsDesc":
@@ -428,6 +442,18 @@ export const uk: Record<string, string> = {
 	"palette.namePlaceholder": "Моя палітра",
 	"palette.nameExists": "Палітра з такою назвою вже існує",
 	"palette.saveBlockedName": "Палітра з такою назвою вже існує. Виберіть іншу назву, щоб зберегти її.",
+	"palette.metadataName": "У метаданих callout: {{key}}",
+	"palette.metadataNameExists":
+		'Іншу палітру вже записано як "{{key}}" у метаданих callout. Виберіть іншу назву.',
+	"palette.metadataNameShared":
+		"У метаданих callout: {{key}}. Це слово є й в іншої збереженої палітри, тому відгукується на нього лише одна з них.",
+	"palette.renameNotesTitle": "Оновити ваші нотатки?",
+	"palette.renameNotesBody":
+		'{{count}} callout у {{files}} нотатках використовують цю палітру як "{{old}}".\nЗмінити на "{{new}}"?\nЯкщо ні, вони повернуться до власного кольору.',
+	"palette.renameNotesConfirm": "Оновити нотатки",
+	"palette.renameNotesSkip": "Залишити",
+	"palette.renameNotesFailed":
+		"Не вдалося оновити деякі нотатки. Оновлені збережено; решта й надалі використовує стару назву.",
 	"palette.baseColor": "Базовий колір",
 	"palette.baseColorHint":
 		"Ми автоматично підберемо колір фону під нього. За бажанням ви можете керувати ним окремо, {{link}}.",
@@ -472,6 +498,7 @@ export const uk: Record<string, string> = {
 	"colorName.gray": "Сірий",
 	"colorName.black": "Чорний",
 	"colorName.white": "Білий",
+	"colorName.crimson": "Малиновий",
 	"colorName.coral": "Кораловий",
 	"colorName.grape": "Виноградний",
 	"colorName.plum": "Сливовий",

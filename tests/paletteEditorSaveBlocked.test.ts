@@ -136,6 +136,27 @@ describe("a palette saved before a preset took its name or colours", () => {
 	});
 });
 
+describe("two saved palettes that already share a metadata word", () => {
+	// Legal names before metadata words existed, and still legal as names —
+	// they only kebab-case alike. Blocking them would lock the user out of
+	// editing either palette, even its colours.
+	const saved = (name: string): CustomPalette => ({ ...twinOf(name), id: `cp-${name}`, name });
+	for (const [mine, theirs] of [["Note dark", "Note (dark)"], ["🔥 Fire", "Fire 🔥"], ["Blue 2", "blue_2"]] as const) {
+		it(`"${mine}" still saves beside "${theirs}", with a warning instead`, () => {
+			const { internals, save } = editor({ existing: saved(mine), takenNames: [theirs] });
+			internals.updateValidity();
+			assert.equal(internals.saveBlockedReason(), null);
+			assert.equal(save.getAttribute("aria-disabled"), "false");
+		});
+	}
+
+	it("still refuses giving a palette another's word now", () => {
+		const { internals } = editor({ existing: saved("Sunrise"), takenNames: ["Note (dark)"] });
+		internals.name = "Note dark";
+		assert.equal(internals.saveBlockedReason(), t("palette.metadataNameExists", { key: "note-dark" }));
+	});
+});
+
 describe("a brand-new palette's starting color", () => {
 	it("is the default when no saved palette wears it", () => {
 		const { internals } = editor({ seedName: "Sunrise" });

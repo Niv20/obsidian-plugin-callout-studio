@@ -27,7 +27,9 @@
  * quote of the same kind swallowed the following 4 KB of the theme and
  * unbalanced every brace after it: the scan never reached the theme's last
  * sixth, where its callout-metadata rules live. An escaped newline (`\` then newline) is a
- * line continuation, which the escape branch already steps over.
+ * line continuation, which the escape branch steps over — CRLF as one newline,
+ * as CSS's input preprocessing reads it, or a theme saved on Windows would end
+ * the string at the LF a continuation was meant to swallow.
  */
 export function skipString(sel: string, start: number): number {
 	const quote = sel[start];
@@ -35,7 +37,7 @@ export function skipString(sel: string, start: number): number {
 	while (i < sel.length) {
 		const ch = sel[i];
 		if (ch === "\\") {
-			i += 2;
+			i += sel[i + 1] === "\r" && sel[i + 2] === "\n" ? 3 : 2;
 			continue;
 		}
 		if (ch === quote) return i + 1;

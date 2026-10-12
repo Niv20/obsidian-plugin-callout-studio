@@ -17,6 +17,16 @@ export const ar: Record<string, string> = {
 	"cmd.openQuickInsert": "إدراج سريع لـ callout كتلة",
 
 	"autocomplete.createNew": 'إنشاء "{{name}}"',
+	"metadataSuggest.finish": "تم",
+	"metadataSuggest.colors": "الألوان",
+	"metadataSuggest.useTyped": 'استخدام "{{text}}"',
+	"metadataSuggest.replaces": "يستبدل {{word}}",
+	"metadataSuggest.themeAlso": "قالبك يُنسّق هذه الكلمة أيضًا",
+	"metadataSuggest.needsSpace": "افصلها بمسافات، وليس بـ |",
+	"metadataSuggest.anySeparator": "افصلها بمسافات أو بـ |",
+	"metadataSuggest.mustBeFirst": "تعمل فقط ككلمة أولى",
+	"metadataSuggest.mustBeLast": "تعمل فقط ككلمة أخيرة",
+	"metadataSuggest.alone": "تعمل بمفردها فقط",
 
 	"calloutPicker.noMatches": "لا يوجد callout يطابق «{{query}}».",
 	"calloutPicker.placeholder": "بحث في الـ callouts",
@@ -164,6 +174,10 @@ export const ar: Record<string, string> = {
 	"settings.deletePaletteAria": "حذف لوحة الألوان {{name}}",
 	"settings.deletePaletteConfirm":
 		'حذف لوحة الألوان "{{name}}"؟\nلن تتأثر عناصر callout التي تستخدم هذه الألوان.',
+	"settings.deletePaletteMetadataNote":
+		'تعود callouts التي تذكرها في بياناتها الوصفية ("{{key}}") إلى لونها الخاص. ملاحظاتك لا تتغير.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'تأخذ callouts التي تذكرها في بياناتها الوصفية ("{{key}}") اللون المدمج الذي يحمل هذا الاسم بدلًا منها. ملاحظاتك لا تتغير.',
 
 	"settings.customCommands": "الأوامر والمفاتيح السريعة",
 	"settings.customCommandsDesc":
@@ -359,6 +373,18 @@ export const ar: Record<string, string> = {
 	"palette.namePlaceholder": "لوحتي",
 	"palette.nameExists": "توجد بالفعل لوحة ألوان بهذا الاسم",
 	"palette.saveBlockedName": "توجد بالفعل لوحة ألوان بهذا الاسم. اختر اسمًا مختلفًا لحفظها.",
+	"palette.metadataName": "في البيانات الوصفية لـ callout: {{key}}",
+	"palette.metadataNameExists":
+		'توجد لوحة ألوان أخرى مكتوبة بالفعل "{{key}}" في البيانات الوصفية لـ callout. اختر اسمًا مختلفًا.',
+	"palette.metadataNameShared":
+		"في البيانات الوصفية لـ callout: {{key}}. توجد لوحة محفوظة أخرى بهذه الكلمة أيضًا، لذا تستجيب لها واحدة منهما فقط.",
+	"palette.renameNotesTitle": "تحديث ملاحظاتك؟",
+	"palette.renameNotesBody":
+		'{{count}} callout في {{files}} ملاحظة تستخدم هذه اللوحة باسم "{{old}}".\nهل تريد تغييرها إلى "{{new}}"؟\nإن لم تفعل، فستعود إلى لونها الخاص.',
+	"palette.renameNotesConfirm": "تحديث الملاحظات",
+	"palette.renameNotesSkip": "تركها",
+	"palette.renameNotesFailed":
+		"تعذّر تحديث بعض الملاحظات. التي تم تحديثها محفوظة، وما تبقى لا يزال يستخدم الاسم القديم.",
 	"palette.baseColor": "اللون الأساسي",
 	"palette.baseColorHint":
 		"سنقوم بمطابقة لون الخلفية معه تلقائيًا. إذا أردت، يمكنك التحكم فيه بشكل منفصل عن طريق {{link}}.",
@@ -403,6 +429,7 @@ export const ar: Record<string, string> = {
 	"colorName.gray": "رمادي",
 	"colorName.black": "أسود",
 	"colorName.white": "أبيض",
+	"colorName.crimson": "قرمزي",
 	"colorName.coral": "مرجاني",
 	"colorName.grape": "عنبي",
 	"colorName.plum": "برقوقي",

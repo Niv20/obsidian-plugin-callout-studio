@@ -68,6 +68,16 @@ export const zh: Record<string, string> = {
 	"cmd.openQuickInsert": "快速插入块级 callout",
 
 	"autocomplete.createNew": '创建 "{{name}}"',
+	"metadataSuggest.finish": "完成",
+	"metadataSuggest.colors": "颜色",
+	"metadataSuggest.useTyped": '使用 "{{text}}"',
+	"metadataSuggest.replaces": "替换 {{word}}",
+	"metadataSuggest.themeAlso": "你的主题也会为这个词设置样式",
+	"metadataSuggest.needsSpace": "请用空格分隔，不要用 |",
+	"metadataSuggest.anySeparator": "请用空格或 | 分隔",
+	"metadataSuggest.mustBeFirst": "仅作为第一个词时有效",
+	"metadataSuggest.mustBeLast": "仅作为最后一个词时有效",
+	"metadataSuggest.alone": "仅单独使用时有效",
 
 	"calloutPicker.noMatches": "没有与“{{query}}”匹配的 callout。",
 	"calloutPicker.placeholder": "搜索 callout",
@@ -212,6 +222,9 @@ export const zh: Record<string, string> = {
 	"settings.deletePaletteAria": "删除调色板 {{name}}",
 	"settings.deletePaletteConfirm":
 		'删除调色板 "{{name}}"？\n使用其颜色的 callout 不受影响。',
+	"settings.deletePaletteMetadataNote": '在元数据中写了这个名称（"{{key}}"）的 callout 会恢复为自己的颜色。你的笔记不会改变。',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'在元数据中写了这个名称（"{{key}}"）的 callout 会改用同名的内置颜色。你的笔记不会改变。',
 
 	"settings.customCommands": "命令与热键",
 	"settings.customCommandsDesc":
@@ -408,6 +421,15 @@ export const zh: Record<string, string> = {
 	"palette.namePlaceholder": "我的调色板",
 	"palette.nameExists": "已存在同名的调色板",
 	"palette.saveBlockedName": "已存在同名的调色板。请换一个名称再保存。",
+	"palette.metadataName": "在 callout 元数据中：{{key}}",
+	"palette.metadataNameExists": '另一个调色板在 callout 元数据中已写作 "{{key}}"。请换一个名称。',
+	"palette.metadataNameShared": "在 callout 元数据中：{{key}}。另一个已保存的调色板也有这个词，因此只有其中一个会响应它。",
+	"palette.renameNotesTitle": "更新你的笔记？",
+	"palette.renameNotesBody":
+		'{{files}} 篇笔记中的 {{count}} 个 callout 将此调色板写作 "{{old}}"。\n要改为 "{{new}}" 吗？\n如果不改，它们会恢复为自己的颜色。',
+	"palette.renameNotesConfirm": "更新笔记",
+	"palette.renameNotesSkip": "保持原样",
+	"palette.renameNotesFailed": "有些笔记无法更新。已更新的已保存；其余的仍在使用旧名称。",
 	"palette.baseColor": "基础颜色",
 	"palette.baseColorHint":
 		"我们会自动将背景颜色与之匹配。如果需要，您可以通过{{link}}单独控制它。",
@@ -444,7 +466,7 @@ export const zh: Record<string, string> = {
 	"colorName.sky": "天蓝色",
 	"colorName.blue": "蓝色",
 	"colorName.indigo": "靛蓝色",
-	"colorName.violet": "紫罗兰色",
+	"colorName.violet": "紫色",
 	"colorName.purple": "紫色",
 	"colorName.pink": "粉色",
 	"colorName.rose": "玫瑰色",
@@ -452,6 +474,7 @@ export const zh: Record<string, string> = {
 	"colorName.gray": "灰色",
 	"colorName.black": "黑色",
 	"colorName.white": "白色",
+	"colorName.crimson": "深红色",
 	"colorName.coral": "珊瑚色",
 	"colorName.grape": "葡萄色",
 	"colorName.plum": "梅子色",

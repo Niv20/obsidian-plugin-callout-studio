@@ -16,6 +16,16 @@ export const id: Record<string, string> = {
 	"cmd.openQuickInsert": "Sisipan cepat callout blok",
 
 	"autocomplete.createNew": 'Buat "{{name}}"',
+	"metadataSuggest.finish": "Selesai",
+	"metadataSuggest.colors": "Warna",
+	"metadataSuggest.useTyped": 'Gunakan "{{text}}"',
+	"metadataSuggest.replaces": "Menggantikan {{word}}",
+	"metadataSuggest.themeAlso": "Tema Anda juga menata kata ini",
+	"metadataSuggest.needsSpace": "Pisahkan dengan spasi, bukan |",
+	"metadataSuggest.anySeparator": "Pisahkan dengan spasi atau |",
+	"metadataSuggest.mustBeFirst": "Hanya berfungsi sebagai kata pertama",
+	"metadataSuggest.mustBeLast": "Hanya berfungsi sebagai kata terakhir",
+	"metadataSuggest.alone": "Hanya berfungsi sendirian",
 
 	"calloutPicker.noMatches": "Tidak ada callout yang cocok dengan “{{query}}”.",
 	"calloutPicker.placeholder": "Cari callout",
@@ -164,6 +174,10 @@ export const id: Record<string, string> = {
 	"settings.deletePaletteAria": "Hapus palet {{name}}",
 	"settings.deletePaletteConfirm":
 		'Hapus palet "{{name}}"?\nCallout yang menggunakan warna ini tidak terpengaruh.',
+	"settings.deletePaletteMetadataNote":
+		'Callout yang menyebutnya di metadata ("{{key}}") kembali ke warnanya sendiri. Catatan Anda tidak berubah.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Callout yang menyebutnya di metadata ("{{key}}") akan memakai warna bawaan dengan nama itu. Catatan Anda tidak berubah.',
 
 	"settings.customCommands": "Perintah & tombol pintas",
 	"settings.customCommandsDesc":
@@ -367,6 +381,18 @@ export const id: Record<string, string> = {
 	"palette.namePlaceholder": "Palet saya",
 	"palette.nameExists": "Palet dengan nama ini sudah ada",
 	"palette.saveBlockedName": "Palet dengan nama ini sudah ada. Pilih nama lain untuk menyimpannya.",
+	"palette.metadataName": "Di metadata callout: {{key}}",
+	"palette.metadataNameExists":
+		'Palet lain sudah ditulis sebagai "{{key}}" di metadata callout. Pilih nama yang berbeda.',
+	"palette.metadataNameShared":
+		"Di metadata callout: {{key}}. Palet tersimpan lain juga memiliki kata ini, jadi hanya satu di antaranya yang menanggapinya.",
+	"palette.renameNotesTitle": "Perbarui catatan Anda?",
+	"palette.renameNotesBody":
+		'{{count}} callout di {{files}} catatan memakai palet ini sebagai "{{old}}".\nUbah menjadi "{{new}}"?\nJika tidak, callout kembali ke warnanya sendiri.',
+	"palette.renameNotesConfirm": "Perbarui catatan",
+	"palette.renameNotesSkip": "Biarkan",
+	"palette.renameNotesFailed":
+		"Beberapa catatan tidak dapat diperbarui. Yang sudah diperbarui tersimpan; sisanya masih memakai nama lama.",
 	"palette.baseColor": "Warna dasar",
 	"palette.baseColorHint":
 		"Kami akan otomatis menyesuaikan warna latar belakang dengannya. Jika mau, Anda dapat mengaturnya secara terpisah dengan {{link}}.",
@@ -403,7 +429,7 @@ export const id: Record<string, string> = {
 	"colorName.sky": "Biru langit",
 	"colorName.blue": "Biru",
 	"colorName.indigo": "Nila",
-	"colorName.violet": "Lembayung",
+	"colorName.violet": "Ungu",
 	"colorName.purple": "Ungu",
 	"colorName.pink": "Merah muda",
 	"colorName.rose": "Merah mawar",
@@ -411,6 +437,7 @@ export const id: Record<string, string> = {
 	"colorName.gray": "Abu-abu",
 	"colorName.black": "Hitam",
 	"colorName.white": "Putih",
+	"colorName.crimson": "Merah krimson",
 	"colorName.coral": "Koral",
 	"colorName.grape": "Anggur",
 	"colorName.plum": "Prune",

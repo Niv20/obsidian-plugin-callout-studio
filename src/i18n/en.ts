@@ -551,6 +551,8 @@ export const en: Record<string, string> = {
 		'Delete palette "{{name}}"?\nCallouts that use its colors are not affected.',
 	"settings.deletePaletteMetadataNote":
 		'Callouts that name it in their metadata ("{{key}}") go back to their own color. Your notes are not changed.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Callouts that name it in their metadata ("{{key}}") take the built-in color of that name instead. Your notes are not changed.',
 
 	// Settings — Keyboard shortcuts
 	"settings.customCommands": "Commands & Hotkeys",
@@ -888,6 +890,8 @@ export const en: Record<string, string> = {
 	"palette.metadataName": "In callout metadata: {{key}}",
 	"palette.metadataNameExists":
 		'Another palette is already written "{{key}}" in callout metadata. Choose a different name.',
+	"palette.metadataNameShared":
+		"In callout metadata: {{key}}. Another saved palette has this word too, so only one of them answers to it.",
 	"palette.renameNotesTitle": "Update your notes?",
 	"palette.renameNotesBody":
 		'{{count}} callouts in {{files}} notes use this palette as "{{old}}".\nChange them to "{{new}}"?\nIf you don\'t, they go back to their own color.',
@@ -933,7 +937,11 @@ export const en: Record<string, string> = {
 	"colorName.sky": "Sky",
 	"colorName.blue": "Blue",
 	"colorName.indigo": "Indigo",
-	"colorName.violet": "Violet",
+	// The anchor #7c4dff, and the label of the Purple preset (#7852ee) that sits
+	// on it: Obsidian's word in English, the violet hue's word in every other
+	// language. `colorName.purple` is the magenta anchor (#9c27b0), translated
+	// as such ("ארגמן", "Pourpre"), so it must not label that preset.
+	"colorName.violet": "Purple",
 	"colorName.purple": "Purple",
 	"colorName.pink": "Pink",
 	"colorName.rose": "Rose",
@@ -941,6 +949,7 @@ export const en: Record<string, string> = {
 	"colorName.gray": "Gray",
 	"colorName.black": "Black",
 	"colorName.white": "White",
+	"colorName.crimson": "Crimson",
 	"colorName.coral": "Coral",
 	"colorName.grape": "Grape",
 	"colorName.plum": "Plum",

@@ -18,6 +18,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import {
 	definition,
+	flattenNesting,
 	harness,
 	parseRules,
 	rulesMatching,
@@ -25,9 +26,11 @@ import {
 	type Harness,
 } from "./support/cssInjectorHarness";
 import { metadataWordSelector } from "../src/manager/css/metadataColorCSS";
+import { metadataNamesWord } from "../src/utils/calloutMetadata";
 import { compareSpecificity, specificityOf } from "../src/utils/cssSpecificity";
 import { splitSelectorList } from "../src/utils/selectorText";
 import type { CustomPalette } from "../src/types";
+import type { App } from "obsidian";
 
 interface MetaInternals {
 	generateMetadataColorCSS(standalone?: boolean): string;
@@ -120,7 +123,7 @@ describe("generateMetadataColorCSS — the rules", () => {
 
 	it("carries the palette's own accent and background", () => {
 		const h = harness();
-		const css = internals(h).generateMetadataColorCSS();
+		const css = flattenNesting(internals(h).generateMetadataColorCSS());
 		const purple = parseRules(css).find(
 			(r) =>
 				r.at.length === 0 &&
@@ -137,7 +140,7 @@ describe("generateMetadataColorCSS — the rules", () => {
 	it("outweighs the callout's own light and dark rules", () => {
 		const h = harness();
 		const own = internals(h).generateCalloutCSS(definition());
-		const meta = internals(h).generateMetadataColorCSS();
+		const meta = flattenNesting(internals(h).generateMetadataColorCSS());
 		const heaviest = parseRules(own)
 			.filter((r) => r.at.length === 0 && r.props.includes("--cs-accent"))
 			.flatMap((r) => splitSelectorList(r.selector))
@@ -159,7 +162,7 @@ describe("generateMetadataColorCSS — the rules", () => {
 		const h = harness();
 		h.registry.settings.customPalettes = [palette("Comic Red")];
 		const weights = new Set(
-			parseRules(internals(h).generateMetadataColorCSS())
+			parseRules(flattenNesting(internals(h).generateMetadataColorCSS()))
 				.filter((r) => r.at.length === 0 && r.props.includes("--callout-color"))
 				.flatMap((r) => splitSelectorList(r.selector))
 				.map((s) => specificityOf(s).join(",")),
@@ -169,16 +172,20 @@ describe("generateMetadataColorCSS — the rules", () => {
 
 	it("restates the heading bar and the inline pill, heavier than their own rules", () => {
 		const h = harness();
-		const meta = internals(h).generateMetadataColorCSS();
-		const pill = rulesMatching(meta, ':root .cs-inline-callout[data-callout]:is(')
-			.find((r) => r.props.includes("--cs-accent"));
-		assert.ok(pill);
-		assert.ok(pill.selector.includes(".cs-heading-callout[data-callout]"));
-		const own = rulesMatching(internals(h).generateCalloutCSS(definition()), ".cs-inline-callout[")
-			.flatMap((r) => splitSelectorList(r.selector))
-			.map(specificityOf);
-		for (const sel of splitSelectorList(pill.selector)) {
-			for (const o of own) assert.ok(compareSpecificity(specificityOf(sel), o) > 0);
+		const meta = flattenNesting(internals(h).generateMetadataColorCSS());
+		for (const [surface, ownNeedle] of [
+			[":root .cs-inline-callout[data-callout]:is(", ".cs-inline-callout["],
+			[":root .cs-heading-callout[data-callout]:is(", ".cs-heading-callout["],
+		] as const) {
+			const rule = rulesMatching(meta, surface).find((r) => r.props.includes("--cs-accent"));
+			assert.ok(rule, surface);
+			const own = rulesMatching(internals(h).generateCalloutCSS(definition()), ownNeedle)
+				.flatMap((r) => splitSelectorList(r.selector))
+				.map(specificityOf);
+			assert.ok(own.length > 0, ownNeedle);
+			for (const sel of splitSelectorList(rule.selector)) {
+				for (const o of own) assert.ok(compareSpecificity(specificityOf(sel), o) > 0, `${sel} vs ${o.join(",")}`);
+			}
 		}
 	});
 
@@ -208,5 +215,161 @@ describe("generateMetadataColorCSS — the rules", () => {
 		assert.ok(!css.includes(".cs-inline-callout"));
 		assert.ok(!css.includes(".cs-heading-callout"));
 		assert.ok(!css.includes(":not("), "the theme of THIS vault means nothing elsewhere");
+	});
+});
+
+describe("metadataNamesWord — the stylesheet's own answer, in code", () => {
+	// The PDF painters bake colours from this; the screen paints from the
+	// selector. A string one of them reads differently is a callout that
+	// prints in a colour the screen never showed.
+	const sel = metadataWordSelector(["pink"]);
+	for (const value of [
+		"pink", "a pink", "a|pink", "pink|b", "a|pink b", "a pink|b", " PINK ", "x|Pink|y",
+		"a\u00a0pink", "pink\u00a0b", "a\tpink", "a|pink\tb", "pinkish", "a|pinky", "",
+	]) {
+		it(JSON.stringify(value), () => {
+			assert.strictEqual(metadataNamesWord(value, "pink"), selectorMatches(sel, value));
+		});
+	}
+});
+
+describe("generateMetadataColorCSS — replacing, not layering", () => {
+	const swept = definition({
+		id: "grad",
+		bgColorLight: "#ddeeff",
+		bgColorDark: "#112233",
+		bgGradient: {
+			angleDeg: 135,
+			toColorLight: "#ffddee",
+			toColorDark: "#331122",
+			textGradient: true,
+			textToColorLight: "#aa0066",
+			textToColorDark: "#ff66aa",
+		},
+	});
+	const rulesOf = (h: Harness, key: string) =>
+		parseRules(flattenNesting(internals(h).generateMetadataColorCSS())).filter((r) =>
+			r.selector.includes(`"${key}"`),
+		);
+
+	it("with no gradient or sweep in any definition, a colour carries no resets", () => {
+		const rules = rulesOf(harness(), "pink");
+		assert.ok(!rules.some((r) => r.decls.some((d) => d.startsWith("background-image: none"))));
+		assert.ok(!rules.some((r) => r.selector.includes(".callout-title-inner")));
+		assert.ok(!rules.some((r) => r.at.length > 0));
+	});
+
+	it("over a definition with a gradient and a title sweep, a solid colour clears both", () => {
+		const h = harness();
+		h.registry.add(swept);
+		const rules = rulesOf(h, "pink");
+		const block = rules.find(
+			(r) => r.at.length === 0 && r.selector.startsWith(":root .callout") && r.props.includes("--cs-accent"),
+		);
+		assert.ok(block?.decls.includes("background-image: none !important"), "the gradient");
+		assert.ok(
+			rules.some((r) => r.selector.endsWith("> .callout-title > .callout-title-inner") &&
+				r.decls.includes("-webkit-text-fill-color: currentColor !important")),
+			"the title sweep",
+		);
+		assert.ok(
+			rules.some((r) => r.selector.endsWith("> .callout-fold") && r.decls.includes("color: inherit !important")),
+			"the chevron",
+		);
+		assert.ok(
+			rules.some((r) => r.at.includes("@media print") && r.selector.endsWith("::before") &&
+				r.decls.includes("background-image: none !important")),
+			"the print repaint",
+		);
+		assert.ok(rules.some((r) => r.selector.endsWith(" .cs-heading-title") && r.decls.includes("background-clip: border-box")), "the heading bar's title");
+		assert.ok(rules.some((r) => r.selector.endsWith(".cs-inline-callout") && r.decls.includes("background-clip: border-box")), "the pill's own sweep");
+		assert.ok(rules.some((r) => r.selector.endsWith("> .cs-callout-name") && r.decls.includes("background-clip: border-box")), "the heading token's name");
+	});
+
+	it("each reset outweighs the definition rule it undoes, surface by surface", () => {
+		const h = harness();
+		h.registry.add(swept);
+		const own = parseRules(internals(h).generateCalloutCSS(swept))
+			.filter((r) => r.at.length === 0)
+			.flatMap((r) => splitSelectorList(r.selector).map((selector) => ({ selector, props: r.props })));
+		const resets = rulesOf(h, "pink")
+			.filter((r) => r.at.length === 0)
+			.flatMap((r) => splitSelectorList(r.selector).map((selector) => ({ selector, decls: r.decls })));
+		// [what the reset clears, the definition's selectors for it, the reset's]
+		const pairs: Array<[string, (sel: string) => boolean, (sel: string) => boolean]> = [
+			[
+				"the block's gradient",
+				(sel) => /^(\.theme-dark )?\.callout\[data-callout="[^"]*"\]$/.test(sel),
+				(sel) => sel.startsWith(":root .callout") && !sel.includes(" > "),
+			],
+			["the block title's sweep", (sel) => sel.endsWith(".callout-title-inner"), (sel) => sel.endsWith(".callout-title-inner")],
+			["the pill's sweep", (sel) => sel.includes(".cs-inline-callout.cs-inline-callout"), (sel) => sel.endsWith(".cs-inline-callout")],
+			["the bar title's sweep", (sel) => sel.endsWith(".cs-heading-title"), (sel) => sel.endsWith(".cs-heading-title")],
+			["the token name's sweep", (sel) => sel.endsWith(".cs-callout-name"), (sel) => sel.endsWith(".cs-callout-name")],
+		];
+		for (const [what, ownSel, resetSel] of pairs) {
+			const theirs = own.filter((r) => ownSel(r.selector.trim()) && r.props.includes("background-image"));
+			const ours = resets.filter((r) => resetSel(r.selector.trim()) && r.decls.some((d) => d.startsWith("background-") || d.startsWith("-webkit-background-clip")));
+			assert.ok(theirs.length > 0 && ours.length > 0, what);
+			for (const reset of ours) {
+				for (const rule of theirs) {
+					assert.ok(
+						compareSpecificity(specificityOf(reset.selector), specificityOf(rule.selector)) > 0,
+						`${what}: ${reset.selector} vs ${rule.selector}`,
+					);
+				}
+			}
+		}
+	});
+
+	it("content text follows the theme unless the palette chose a colour", () => {
+		const h = harness();
+		h.registry.settings.customPalettes = [
+			palette("Comic Red"),
+			palette("Plain", { textColorLight: undefined, textColorDark: undefined }),
+		];
+		const content = (key: string) =>
+			rulesOf(h, key).filter((r) => r.selector.endsWith("> .callout-content")).map((r) => valueOf(r, "color"));
+		assert.deepStrictEqual(content("pink"), ["inherit !important"], "a preset never picks a text colour");
+		assert.deepStrictEqual(content("plain"), ["inherit !important"]);
+		assert.deepStrictEqual(content("comic-red"), ["#111111 !important", "#eeeeee !important"]);
+	});
+
+	it("states each colour's word once per surface, nested", () => {
+		const css = internals(harness()).generateMetadataColorCSS();
+		const start = css.indexOf("/* metadata colour: pink */");
+		const pink = css.slice(start, css.indexOf("/* metadata colour:", start + 1));
+		// The callout, the pill and the heading bar; a heading token block only
+		// exists when some definition sweeps its title.
+		assert.strictEqual(pink.split('[data-callout-metadata~="pink" i]').length - 1, 3);
+		assert.ok(pink.includes(":root & {"));
+	});
+});
+
+describe("generateMetadataColorCSS — a word the user's own snippet styles is theirs", () => {
+	const snippetApp = (names: string[], css: string[]): App =>
+		({
+			customCss: {
+				theme: "",
+				themes: {},
+				styleEl: { textContent: "" },
+				snippets: names,
+				enabledSnippets: new Set(names),
+				extraStyleEls: css.map((textContent) => ({ textContent })),
+			},
+		}) as unknown as App;
+	const groups = (h: Harness) =>
+		[...internals(h).generateMetadataColorCSS().matchAll(/\/\* metadata colour: (\S+) \*\//g)].map((m) => m[1]);
+
+	it("stands down on it, and on nothing else", () => {
+		const h = harness(snippetApp(["my-colours"], ['.callout[data-callout-metadata~="Red"] { --callout-color: 255, 0, 0; }']));
+		assert.ok(!groups(h).includes("red"), "the snippet keeps red");
+		assert.ok(groups(h).includes("pink"));
+		assert.ok(!h.injector.metadataColorEntries().some((e) => e.key === "red"), "nor is red offered after the pipe");
+	});
+
+	it("but reads nothing into Callout Studio's own exported snippet", () => {
+		const exported = '.callout[data-callout-metadata~="red" i] { --callout-color: #e93147; }';
+		assert.ok(groups(harness(snippetApp(["callout-studio-custom"], [exported]))).includes("red"));
 	});
 });

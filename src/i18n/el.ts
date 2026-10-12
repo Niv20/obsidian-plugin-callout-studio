@@ -15,6 +15,16 @@ export const el: Record<string, string> = {
 	"cmd.customInsertInline": "Εισαγωγή ενσωματωμένου callout {{name}}",
 	"cmd.openQuickInsert": "Γρήγορη εισαγωγή callout μπλοκ",
 	"autocomplete.createNew": 'Δημιουργία "{{name}}"',
+	"metadataSuggest.finish": "Τέλος",
+	"metadataSuggest.colors": "Χρώματα",
+	"metadataSuggest.useTyped": 'Χρήση του "{{text}}"',
+	"metadataSuggest.replaces": "Αντικαθιστά το {{word}}",
+	"metadataSuggest.themeAlso": "Το θέμα σας διαμορφώνει επίσης αυτή τη λέξη",
+	"metadataSuggest.needsSpace": "Χωρίστε με κενά, όχι με |",
+	"metadataSuggest.anySeparator": "Χωρίστε με κενά ή με |",
+	"metadataSuggest.mustBeFirst": "Λειτουργεί μόνο ως πρώτη λέξη",
+	"metadataSuggest.mustBeLast": "Λειτουργεί μόνο ως τελευταία λέξη",
+	"metadataSuggest.alone": "Λειτουργεί μόνο μόνη της",
 	"calloutPicker.noMatches": "Κανένα callout δεν αντιστοιχεί στο «{{query}}».",
 	"calloutPicker.placeholder": "Αναζήτηση callout",
 	"editor.paletteNoMatches": "Κανένα χρώμα δεν αντιστοιχεί στο «{{query}}».",
@@ -157,6 +167,10 @@ export const el: Record<string, string> = {
 	"settings.deletePaletteAria": "Διαγραφή παλέτας {{name}}",
 	"settings.deletePaletteConfirm":
 		'Διαγραφή παλέτας "{{name}}";\nΤα callout που χρησιμοποιούν τα χρώματά της δεν επηρεάζονται.',
+	"settings.deletePaletteMetadataNote":
+		'Τα callout που την αναφέρουν στα μεταδεδομένα τους ("{{key}}") επιστρέφουν στο δικό τους χρώμα. Οι σημειώσεις σας δεν αλλάζουν.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Τα callout που την αναφέρουν στα μεταδεδομένα τους ("{{key}}") παίρνουν αντ᾽ αυτού το ενσωματωμένο χρώμα με αυτό το όνομα. Οι σημειώσεις σας δεν αλλάζουν.',
 	"settings.customCommands": "Εντολές & πλήκτρα συντόμευσης",
 	"settings.customCommandsDesc":
 		"Δείτε κάθε εντολή του Callout Studio και τη συντόμευση στην οποία είναι δεσμευμένη, και δημιουργήστε τις δικές σας εντολές για τα callouts που χρησιμοποιείτε περισσότερο. Καμία συντόμευση δεν έχει ανατεθεί από προεπιλογή.",
@@ -354,6 +368,18 @@ export const el: Record<string, string> = {
 	"palette.namePlaceholder": "Η παλέτα μου",
 	"palette.nameExists": "Υπάρχει ήδη παλέτα με αυτό το όνομα",
 	"palette.saveBlockedName": "Υπάρχει ήδη παλέτα με αυτό το όνομα. Επιλέξτε διαφορετικό όνομα για να την αποθηκεύσετε.",
+	"palette.metadataName": "Στα μεταδεδομένα του callout: {{key}}",
+	"palette.metadataNameExists":
+		'Μια άλλη παλέτα είναι ήδη γραμμένη ως "{{key}}" στα μεταδεδομένα του callout. Επιλέξτε διαφορετικό όνομα.',
+	"palette.metadataNameShared":
+		"Στα μεταδεδομένα του callout: {{key}}. Και μια άλλη αποθηκευμένη παλέτα έχει αυτή τη λέξη, οπότε μόνο η μία από αυτές ανταποκρίνεται σε αυτήν.",
+	"palette.renameNotesTitle": "Ενημέρωση των σημειώσεών σας;",
+	"palette.renameNotesBody":
+		'{{count}} callout σε {{files}} σημειώσεις χρησιμοποιούν αυτή την παλέτα ως "{{old}}".\nΝα αλλάξουν σε "{{new}}";\nΑν όχι, επιστρέφουν στο δικό τους χρώμα.',
+	"palette.renameNotesConfirm": "Ενημέρωση σημειώσεων",
+	"palette.renameNotesSkip": "Να μείνουν ως έχουν",
+	"palette.renameNotesFailed":
+		"Δεν ήταν δυνατή η ενημέρωση ορισμένων σημειώσεων. Όσες ενημερώθηκαν έχουν αποθηκευτεί· οι υπόλοιπες εξακολουθούν να χρησιμοποιούν το παλιό όνομα.",
 	"palette.baseColor": "Βασικό χρώμα",
 	"palette.baseColorHint":
 		"Θα ταιριάξουμε αυτόματα το χρώμα φόντου με αυτό. Αν θέλετε, μπορείτε να το ελέγξετε ξεχωριστά κάνοντας {{link}}.",
@@ -391,7 +417,7 @@ export const el: Record<string, string> = {
 	"colorName.sky": "Ουρανί",
 	"colorName.blue": "Μπλε",
 	"colorName.indigo": "Λουλακί",
-	"colorName.violet": "Βιολετί",
+	"colorName.violet": "Μωβ",
 	"colorName.purple": "Μωβ",
 	"colorName.pink": "Ροζ",
 	"colorName.rose": "Ροδί",
@@ -399,6 +425,7 @@ export const el: Record<string, string> = {
 	"colorName.gray": "Γκρι",
 	"colorName.black": "Μαύρο",
 	"colorName.white": "Λευκό",
+	"colorName.crimson": "Βυσσινί",
 	"colorName.coral": "Κοραλί",
 	"colorName.grape": "Σταφύλι",
 	"colorName.plum": "Δαμάσκηνο",

@@ -144,24 +144,35 @@ describe("the preset list — groups, and every id ever saved", () => {
 		assert.equal(yellow?.colorDark, "#e0de71");
 	});
 
-	// Every `paletteId` a released build could have written for a preset. A
+	// Every `paletteId` a release since 2.1.0 could have written for a preset. A
 	// stored id is never rewritten, so each one must find its preset forever —
 	// dropping one turns that user's callouts into "Deleted color".
 	const SAVED_ONCE: Record<string, string> = {
 		// Role names, before the presets were named for their hue.
 		note: "blue", abstract: "cyan", tip: "teal", success: "green",
-		question: "orange", failure: "red", danger: "red", example: "purple",
+		question: "orange", failure: "red", danger: "crimson", example: "purple",
 		quote: "gray",
 		// Hue names that later took Obsidian's own word for the colour.
 		violet: "purple", bubblegum: "pink",
-		// Retired as too close to another preset; their callouts were repainted.
-		amber: "yellow", lime: "yellow", crimson: "red",
+		// Retired from the menu, still known: see tests/retiredPresets.test.ts.
+		amber: "amber", lime: "lime", crimson: "crimson",
 	};
 	for (const [saved, now] of Object.entries(SAVED_ONCE)) {
 		it(`a callout saved on "${saved}" resolves to ${now}`, () => {
 			assert.equal(findPresetByPaletteId(saved)?.id, now);
 		});
 	}
+
+	// 2.0.0 shipped twelve more presets for four days; 2.1.0 dropped them, and
+	// the callouts saved on them have read "Deleted color" — with Restore, which
+	// saves their colours as a palette — ever since. Pinned so that stays a
+	// decision rather than an accident.
+	it("2.0.0's short-lived presets are deleted colours, not renamed ones", () => {
+		for (const id of ["ocean", "cobalt", "emerald", "forest", "mint", "rose",
+			"lavender", "sunset", "gold", "slate", "graphite", "storm"]) {
+			assert.equal(findPresetByPaletteId(id), null, id);
+		}
+	});
 
 	it("every current id resolves to itself", () => {
 		for (const preset of getAllColorPalettes()) {

@@ -69,6 +69,16 @@ export const ru: Record<string, string> = {
 	"cmd.openQuickInsert": "Быстрая вставка блочного callout",
 
 	"autocomplete.createNew": 'Создать "{{name}}"',
+	"metadataSuggest.finish": "Готово",
+	"metadataSuggest.colors": "Цвета",
+	"metadataSuggest.useTyped": 'Использовать "{{text}}"',
+	"metadataSuggest.replaces": "Заменяет {{word}}",
+	"metadataSuggest.themeAlso": "Ваша тема тоже оформляет это слово",
+	"metadataSuggest.needsSpace": "Разделяйте пробелами, а не |",
+	"metadataSuggest.anySeparator": "Разделяйте пробелами или |",
+	"metadataSuggest.mustBeFirst": "Работает только как первое слово",
+	"metadataSuggest.mustBeLast": "Работает только как последнее слово",
+	"metadataSuggest.alone": "Работает только отдельно",
 
 	"calloutPicker.noMatches": "Для запроса «{{query}}» не найдено ни одного callout.",
 	"calloutPicker.placeholder": "Поиск callout",
@@ -217,6 +227,10 @@ export const ru: Record<string, string> = {
 	"settings.deletePaletteAria": "Удалить палитру {{name}}",
 	"settings.deletePaletteConfirm":
 		'Удалить палитру "{{name}}"?\nБлоки callout, которые используют её цвета, не изменятся.',
+	"settings.deletePaletteMetadataNote":
+		'Callout, которые указывают её в метаданных ("{{key}}"), возвращаются к собственному цвету. Ваши заметки не меняются.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Callout, которые указывают её в метаданных ("{{key}}"), вместо этого получают встроенный цвет с таким названием. Ваши заметки не меняются.',
 
 	"settings.customCommands": "Команды и горячие клавиши",
 	"settings.customCommandsDesc":
@@ -418,6 +432,18 @@ export const ru: Record<string, string> = {
 	"palette.namePlaceholder": "Моя палитра",
 	"palette.nameExists": "Палитра с таким названием уже существует",
 	"palette.saveBlockedName": "Палитра с таким названием уже существует. Выберите другое название, чтобы сохранить её.",
+	"palette.metadataName": "В метаданных callout: {{key}}",
+	"palette.metadataNameExists":
+		'Другая палитра уже записана как "{{key}}" в метаданных callout. Выберите другое название.',
+	"palette.metadataNameShared":
+		"В метаданных callout: {{key}}. Это слово есть и у другой сохранённой палитры, поэтому откликается на него только одна из них.",
+	"palette.renameNotesTitle": "Обновить ваши заметки?",
+	"palette.renameNotesBody":
+		'{{count}} callout в {{files}} заметках используют эту палитру как "{{old}}".\nИзменить на "{{new}}"?\nЕсли нет, они вернутся к собственному цвету.',
+	"palette.renameNotesConfirm": "Обновить заметки",
+	"palette.renameNotesSkip": "Оставить",
+	"palette.renameNotesFailed":
+		"Не удалось обновить некоторые заметки. Обновлённые сохранены; остальные по-прежнему используют старое название.",
 	"palette.baseColor": "Базовый цвет",
 	"palette.baseColorHint":
 		"Мы автоматически подберём цвет фона под него. При желании вы можете настроить его отдельно, {{link}}.",
@@ -462,6 +488,7 @@ export const ru: Record<string, string> = {
 	"colorName.gray": "Серый",
 	"colorName.black": "Чёрный",
 	"colorName.white": "Белый",
+	"colorName.crimson": "Малиновый",
 	"colorName.coral": "Коралловый",
 	"colorName.grape": "Виноградный",
 	"colorName.plum": "Сливовый",

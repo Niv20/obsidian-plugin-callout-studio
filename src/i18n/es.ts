@@ -17,6 +17,16 @@ export const es: Record<string, string> = {
 	"cmd.openQuickInsert": "Inserción rápida de callout de bloque",
 
 	"autocomplete.createNew": 'Crear "{{name}}"',
+	"metadataSuggest.finish": "Listo",
+	"metadataSuggest.colors": "Colores",
+	"metadataSuggest.useTyped": 'Usar "{{text}}"',
+	"metadataSuggest.replaces": "Reemplaza {{word}}",
+	"metadataSuggest.themeAlso": "Tu tema también da estilo a esta palabra",
+	"metadataSuggest.needsSpace": "Sepárala con espacios, no con |",
+	"metadataSuggest.anySeparator": "Sepárala con espacios o con |",
+	"metadataSuggest.mustBeFirst": "Solo funciona como primera palabra",
+	"metadataSuggest.mustBeLast": "Solo funciona como última palabra",
+	"metadataSuggest.alone": "Solo funciona por sí sola",
 
 	"calloutPicker.noMatches": "Ningún callout coincide con «{{query}}».",
 	"calloutPicker.placeholder": "Buscar callouts",
@@ -165,6 +175,10 @@ export const es: Record<string, string> = {
 	"settings.deletePaletteAria": "Eliminar paleta {{name}}",
 	"settings.deletePaletteConfirm":
 		'¿Eliminar la paleta "{{name}}"?\nLos callouts que usan sus colores no se ven afectados.',
+	"settings.deletePaletteMetadataNote":
+		'Los callouts que la nombran en sus metadatos ("{{key}}") vuelven a su propio color. Tus notas no cambian.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Los callouts que la nombran en sus metadatos ("{{key}}") toman en su lugar el color integrado de ese nombre. Tus notas no cambian.',
 
 	"settings.customCommands": "Comandos y teclas de acceso rápido",
 	"settings.customCommandsDesc":
@@ -370,6 +384,18 @@ export const es: Record<string, string> = {
 	"palette.namePlaceholder": "Mi paleta",
 	"palette.nameExists": "Ya existe una paleta con este nombre",
 	"palette.saveBlockedName": "Ya existe una paleta con este nombre. Elige otro nombre para guardarla.",
+	"palette.metadataName": "En los metadatos del callout: {{key}}",
+	"palette.metadataNameExists":
+		'Otra paleta ya está escrita como "{{key}}" en los metadatos del callout. Elige un nombre distinto.',
+	"palette.metadataNameShared":
+		"En los metadatos del callout: {{key}}. Otra paleta guardada también tiene esta palabra, así que solo una de ellas responde a ella.",
+	"palette.renameNotesTitle": "¿Actualizar tus notas?",
+	"palette.renameNotesBody":
+		'{{count}} callouts en {{files}} notas usan esta paleta como "{{old}}".\n¿Cambiarlos a "{{new}}"?\nSi no, vuelven a su propio color.',
+	"palette.renameNotesConfirm": "Actualizar notas",
+	"palette.renameNotesSkip": "Dejarlos",
+	"palette.renameNotesFailed":
+		"No se pudieron actualizar algunas notas. Las que sí se actualizaron están guardadas; el resto sigue usando el nombre anterior.",
 	"palette.baseColor": "Color base",
 	"palette.baseColorHint":
 		"Ajustaremos automáticamente el color de fondo a este. Si lo prefieres, puedes controlarlo por separado {{link}}.",
@@ -406,7 +432,7 @@ export const es: Record<string, string> = {
 	"colorName.sky": "Celeste",
 	"colorName.blue": "Azul",
 	"colorName.indigo": "Índigo",
-	"colorName.violet": "Violeta",
+	"colorName.violet": "Morado",
 	"colorName.purple": "Morado",
 	"colorName.pink": "Rosa",
 	"colorName.rose": "Rosado",
@@ -414,6 +440,7 @@ export const es: Record<string, string> = {
 	"colorName.gray": "Gris",
 	"colorName.black": "Negro",
 	"colorName.white": "Blanco",
+	"colorName.crimson": "Carmesí",
 	"colorName.coral": "Coral",
 	"colorName.grape": "Uva",
 	"colorName.plum": "Ciruela",

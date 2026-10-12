@@ -33,7 +33,10 @@ const ANCHORS: ReadonlyArray<readonly [string, string]> = [
 	["#03a9f4", "Sky"],
 	["#2962ff", "Blue"],
 	["#3f51b5", "Indigo"],
-	["#7c4dff", "Violet"],
+	// Both read "Purple" in English: `colorName.violet` also labels the Purple
+	// preset that sits on this anchor (see en.ts). Other languages keep the two
+	// words apart.
+	["#7c4dff", "Purple"],
 	["#9c27b0", "Purple"],
 	["#e91e63", "Pink"],
 	["#f06292", "Rose"],
@@ -55,7 +58,7 @@ describe("suggestColorName — a pale color is named for its hue", () => {
 	// Each of these resolved to Gray or White before the hue weighting, which is
 	// how a lavender callout ended up saved as a palette called "Gray 3".
 	const cases: ReadonlyArray<readonly [string, string, string]> = [
-		["#c8a0ff", "Violet", "lavender — the actual 'Gray 3' from the import"],
+		["#c8a0ff", "Purple", "lavender — the actual 'Gray 3' from the import"],
 		["#78beff", "Blue", "light blue"],
 		["#ffc0cb", "Rose", "pastel pink"],
 		["#b8e6c8", "Green", "pastel mint"],

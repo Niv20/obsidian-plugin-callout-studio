@@ -59,6 +59,7 @@ import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
 import { obsidianCalloutAttrId } from "../utils/calloutId";
 import { StudioWeightCache } from "./theme/StudioWeightCache";
 import type { ThemeCalloutStore } from "./theme/ThemeCalloutStore";
+import { ThemeMetadataCatalog } from "./theme/ThemeMetadataCatalog";
 import { generateFallbackCSS } from "./css/fallbackCSS";
 import { generateMetadataColorCSS } from "./css/metadataColorCSS";
 import {
@@ -171,8 +172,29 @@ export class CSSInjector {
 		this.icons = createIconResolver(registry);
 		this.startupCache = new StartupStyleCache(app);
 		this.studioWeights = new StudioWeightCache(app);
+		this.metadataCatalog = new ThemeMetadataCatalog(app);
 	}
 	private readonly studioWeights: StudioWeightCache;
+
+	/**
+	 * The metadata words the theme and the user's snippets react to — one scan
+	 * for the stylesheet and the `|` suggestions both, so a colour the
+	 * stylesheet stands down on is never offered as one.
+	 */
+	readonly metadataCatalog: ThemeMetadataCatalog;
+
+	/**
+	 * The colours callout metadata can name right now: none with the hidden
+	 * switch off, and none of the words the user's own snippets style. Every
+	 * consumer — this sheet, the export painters, the reading post-processor,
+	 * the `|` dropdown — reads it from here, so they cannot disagree.
+	 */
+	metadataColorEntries(): MetadataColorEntry[] {
+		return activeMetadataColorEntries(
+			this.registry.settings,
+			this.metadataCatalog.snippetWords(),
+		);
+	}
 
 	/**
 	 * The one theme scan: studio mode's selector weight, and the settings tab's
@@ -1414,7 +1436,7 @@ export class CSSInjector {
 		const painted = (def: CalloutDefinition, el: Element): CalloutDefinition => {
 			const metadata = el.getAttribute("data-callout-metadata");
 			if (!metadata) return def;
-			metadataEntries ??= activeMetadataColorEntries(this.registry.settings);
+			metadataEntries ??= this.metadataColorEntries();
 			return definitionWithMetadataColor(def, metadata, metadataEntries);
 		};
 
@@ -1828,16 +1850,21 @@ export class CSSInjector {
 	 */
 	generateMetadataColorCSS(standalone = false): string {
 		const settings = this.registry.settings;
-		const entries = activeMetadataColorEntries(settings);
+		const entries = this.metadataColorEntries();
 		if (entries.length === 0) return "";
 		this.emitWeight = this.studioWeights.resolve();
 		this.emitImportant = " !important";
+		const defs = this.registry.getAll();
 		try {
 			return generateMetadataColorCSS(
 				entries,
 				{
 					weight: this.emitWeight,
 					important: this.emitImportant,
+					clears: {
+						gradient: defs.some((d) => d.bgGradient !== undefined && d.transparentBg !== true),
+						sweep: defs.some((d) => Boolean(d.bgGradient?.textGradient && d.bgGradient.textToColorLight)),
+					},
 					themeOwnedAttrIds: this.themeOwnedAttrIds(),
 					transparentBorderProps: () =>
 						transparentBorderProps(settings.globalStyle.borderSides, true),

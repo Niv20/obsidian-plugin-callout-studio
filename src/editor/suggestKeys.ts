@@ -23,7 +23,11 @@ interface SuggestionList {
 /**
  * Make `key` accept the highlighted row, as Enter does. `modifiers` follows
  * `Scope.register`: `null` accepts the key under any modifiers, which is what a
- * character like `|` needs — it is Shift+\ on most layouts and not on others.
+ * character like `|` needs — it is Shift+\ on most layouts, Option+7 on a
+ * German Mac and AltGr (reported as Ctrl+Alt) on a German PC.
+ *
+ * A character typed with Cmd, or with Ctrl but no Alt, is a hotkey rather than
+ * typing, though, and passes through untouched.
  */
 export function acceptOnKey<T>(
 	suggest: EditorSuggest<T>,
@@ -33,6 +37,7 @@ export function acceptOnKey<T>(
 	suggest.scope.register(modifiers, key, (evt: KeyboardEvent) => {
 		// Mid-composition the key belongs to the input method, not to us.
 		if (evt.isComposing) return true;
+		if (key.length === 1 && (evt.metaKey || (evt.ctrlKey && !evt.altKey))) return true;
 		const list = (suggest as unknown as { suggestions?: SuggestionList })
 			.suggestions;
 		// `false` consumes the key; anything else lets it do what it would have.

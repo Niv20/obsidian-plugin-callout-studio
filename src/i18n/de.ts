@@ -17,6 +17,16 @@ export const de: Record<string, string> = {
 	"cmd.openQuickInsert": "Block-Callout schnell einfügen",
 
 	"autocomplete.createNew": 'Erstellen "{{name}}"',
+	"metadataSuggest.finish": "Fertig",
+	"metadataSuggest.colors": "Farben",
+	"metadataSuggest.useTyped": '"{{text}}" verwenden',
+	"metadataSuggest.replaces": "Ersetzt {{word}}",
+	"metadataSuggest.themeAlso": "Dein Theme formatiert dieses Wort ebenfalls",
+	"metadataSuggest.needsSpace": "Mit Leerzeichen trennen, nicht mit |",
+	"metadataSuggest.anySeparator": "Mit Leerzeichen oder | trennen",
+	"metadataSuggest.mustBeFirst": "Funktioniert nur als erstes Wort",
+	"metadataSuggest.mustBeLast": "Funktioniert nur als letztes Wort",
+	"metadataSuggest.alone": "Funktioniert nur allein",
 
 	"calloutPicker.noMatches": "Kein Callout entspricht „{{query}}“.",
 	"calloutPicker.placeholder": "Callouts durchsuchen",
@@ -165,6 +175,10 @@ export const de: Record<string, string> = {
 	"settings.deletePaletteAria": "Palette {{name}} löschen",
 	"settings.deletePaletteConfirm":
 		'Palette "{{name}}" löschen?\nCallouts, die ihre Farben verwenden, sind davon nicht betroffen.',
+	"settings.deletePaletteMetadataNote":
+		'Callouts, die sie in ihren Metadaten nennen ("{{key}}"), kehren zu ihrer eigenen Farbe zurück. Deine Notizen werden nicht verändert.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Callouts, die sie in ihren Metadaten nennen ("{{key}}"), übernehmen stattdessen die eingebaute Farbe dieses Namens. Deine Notizen werden nicht verändert.',
 
 	"settings.customCommands": "Befehle & Tastenkürzel",
 	"settings.customCommandsDesc":
@@ -370,6 +384,18 @@ export const de: Record<string, string> = {
 	"palette.namePlaceholder": "Meine Palette",
 	"palette.nameExists": "Es gibt bereits eine Palette mit diesem Namen",
 	"palette.saveBlockedName": "Es gibt bereits eine Palette mit diesem Namen. Wähle einen anderen Namen, um sie zu speichern.",
+	"palette.metadataName": "In den Callout-Metadaten: {{key}}",
+	"palette.metadataNameExists":
+		'Eine andere Palette ist in den Callout-Metadaten bereits als "{{key}}" geschrieben. Wähle einen anderen Namen.',
+	"palette.metadataNameShared":
+		"In den Callout-Metadaten: {{key}}. Auch eine andere gespeicherte Palette hat dieses Wort, daher reagiert nur eine von beiden darauf.",
+	"palette.renameNotesTitle": "Notizen aktualisieren?",
+	"palette.renameNotesBody":
+		'{{count}} Callouts in {{files}} Notizen verwenden diese Palette als "{{old}}".\nAuf "{{new}}" ändern?\nWenn nicht, kehren sie zu ihrer eigenen Farbe zurück.',
+	"palette.renameNotesConfirm": "Notizen aktualisieren",
+	"palette.renameNotesSkip": "Unverändert lassen",
+	"palette.renameNotesFailed":
+		"Einige Notizen konnten nicht aktualisiert werden. Die aktualisierten sind gespeichert; die übrigen verwenden noch den alten Namen.",
 	"palette.baseColor": "Basisfarbe",
 	"palette.baseColorHint":
 		"Wir passen die Hintergrundfarbe automatisch daran an. Wenn du möchtest, kannst du sie separat steuern, indem du {{link}}.",
@@ -407,7 +433,7 @@ export const de: Record<string, string> = {
 	"colorName.sky": "Himmelblau",
 	"colorName.blue": "Blau",
 	"colorName.indigo": "Indigo",
-	"colorName.violet": "Violett",
+	"colorName.violet": "Lila",
 	"colorName.purple": "Lila",
 	"colorName.pink": "Pink",
 	"colorName.rose": "Rosé",
@@ -415,6 +441,7 @@ export const de: Record<string, string> = {
 	"colorName.gray": "Grau",
 	"colorName.black": "Schwarz",
 	"colorName.white": "Weiß",
+	"colorName.crimson": "Karmesinrot",
 	"colorName.coral": "Koralle",
 	"colorName.grape": "Traube",
 	"colorName.plum": "Pflaume",

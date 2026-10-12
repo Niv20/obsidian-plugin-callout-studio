@@ -274,7 +274,8 @@ describe("earlier setup detail reports", () => {
 			assert.deepEqual(labels(group), [recoveryFieldLabel("paletteId")]);
 			const [now, restored] = group.querySelectorAll(".cs-recovery-field-row")[0]!.querySelectorAll("td");
 			assert.ok(text(now).includes(t("colorName.pink")), text(now));
-			assert.ok(text(restored).includes(t("colorName.purple")), text(restored));
+			// The Purple preset is labelled through `colorName.violet` — see en.ts.
+			assert.ok(text(restored).includes(t("colorName.violet")), text(restored));
 			assert.ok(!text(group).includes(t("recovery.details.value.paletteMissing")));
 		} finally { h.destroy(); }
 	});

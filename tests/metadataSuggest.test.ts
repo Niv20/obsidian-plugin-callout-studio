@@ -22,6 +22,7 @@ import { describe, it } from "node:test";
 import { fakeDom } from "./support/fakeDom";
 import { asEditor, editor, type FakeEditor } from "./support/fakeEditor";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
+import { CSSInjector } from "../src/manager/CSSInjector";
 import { CalloutAutoComplete } from "../src/editor/AutoComplete";
 import { CalloutMetadataSuggest } from "../src/editor/CalloutMetadataSuggest";
 import {
@@ -32,6 +33,7 @@ import {
 	type MetadataSuggestion,
 } from "../src/editor/metadataSuggestions";
 import { metadataColorEntries } from "../src/utils/calloutMetadata";
+import { acceptOnKey } from "../src/editor/suggestKeys";
 import type { ThemeMetadataWord } from "../src/manager/theme/themeMetadataScan";
 import type { CustomPalette } from "../src/types";
 
@@ -140,6 +142,13 @@ describe("buildMetadataSuggestions — rows and their order", () => {
 
 	it("a word nothing matches gets a Use row", () => {
 		assert.deepStrictEqual(labels(rows("zz9⎸")), ["<use zz9>"]);
+	});
+
+	it("the Use row leads when no row starts with the word, so Enter keeps it", () => {
+		// `50` only turns up inside `width-50`: not a completion of it.
+		assert.deepStrictEqual(labels(rows("50⎸", { words: [word("width-50")] })), ["<use 50>", "theme:width-50"]);
+		// `wid` does start `width-50`: completing it is what Enter is for.
+		assert.deepStrictEqual(labels(rows("wid⎸", { words: [word("width-50")] })), ["theme:width-50", "<use wid>"]);
 	});
 
 	it("once a colour is named, the styling's words lead and colours replace it", () => {
@@ -307,6 +316,8 @@ interface Harness {
 	registry: CalloutRegistry;
 	meta: CalloutMetadataSuggest;
 	auto: CalloutAutoComplete;
+	/** The injector both suggests read their colours and theme words from. */
+	injector: CSSInjector;
 	/** Every call the type dropdown made to Obsidian's manager. */
 	triggered: number;
 }
@@ -315,18 +326,21 @@ function harness(): Harness {
 	const registry = new CalloutRegistry();
 	registry.load(null);
 	const h = { triggered: 0 } as Harness;
-	const plugin = {
-		app: {
-			workspace: {
-				getLeavesOfType: () => [],
-				editorSuggest: { trigger: () => void h.triggered++ },
-			},
+	const app = {
+		workspace: {
+			getLeavesOfType: () => [],
+			editorSuggest: { trigger: () => void h.triggered++ },
 		},
+	};
+	const plugin = {
+		app,
 		registry,
 		settings: registry.settings,
 		isKnownZeroUsageFallback: () => false,
+		cssInjector: new CSSInjector(app as never, registry),
 	};
 	h.registry = registry;
+	h.injector = plugin.cssInjector;
 	h.meta = new CalloutMetadataSuggest(plugin as never);
 	h.auto = new CalloutAutoComplete(plugin as never);
 	return h;
@@ -480,10 +494,13 @@ describe("CalloutAutoComplete — Tab and | on a type", () => {
 	}
 
 	it("Tab writes the type alone and parks before the bracket", () => {
-		assert.strictEqual(accept("> [!no⎸", "note", "Tab").ed.valueWithCursor(), "> [!note|]");
 		assert.strictEqual(accept("> [!no⎸]", "note", "Tab").ed.valueWithCursor(), "> [!note|]");
 		assert.strictEqual(accept("### [!no⎸]", "note", "Tab").ed.valueWithCursor(), "### [!note|]");
 		assert.strictEqual(accept("a [!no⎸]{t} b", "note", "Tab").ed.valueWithCursor(), "a [!note|]{t} b");
+	});
+
+	it("Tab leaves an unclosed token unclosed — a `]` the user did not type would double", () => {
+		assert.strictEqual(accept("> [!no⎸", "note", "Tab").ed.valueWithCursor(), "> [!note|");
 	});
 
 	it("Tab keeps the metadata, fold mark and title, parking after the metadata", () => {
@@ -493,20 +510,65 @@ describe("CalloutAutoComplete — Tab and | on a type", () => {
 		);
 	});
 
-	it("| writes the type, types the pipe, and opens the metadata dropdown", () => {
-		const { ed, h } = accept("> [!no⎸", "note", "|");
+	it("| completes the type, types the pipe, and opens the metadata dropdown", () => {
+		const { ed, h } = accept("> [!no⎸]", "note", "|");
 		assert.strictEqual(ed.valueWithCursor(), "> [!note||]");
 		// The dropdown opens a frame after the cursor settles (triggerNow).
 		settle();
 		assert.strictEqual(h.triggered, 1);
-		const after = accept("> [!no⎸|pink]", "note", "|").ed.valueWithCursor();
-		assert.strictEqual(after, "> [!note|pink||]");
+		assert.strictEqual(accept("> [!no⎸", "note", "|").ed.valueWithCursor(), "> [!note||");
+	});
+
+	it("| steps over a pipe that already follows the type", () => {
+		assert.strictEqual(accept("> [!no⎸|pink]", "note", "|").ed.valueWithCursor(), "> [!note||pink]");
+	});
+
+	it("neither key ever rewrites the `]` — Obsidian's bracket pairing stops tracking a `]` that was rewritten", () => {
+		// Typed by hand with Auto pair brackets on: `> [` gives `> []`, and a `]`
+		// typed at the end steps over the tracked one. Rewrite that `]` and the
+		// typed one is inserted instead: `> [!note|wide]]`.
+		for (const [source, k] of [["> [!no⎸]", "|"], ["> [!no⎸]", "Tab"], ["> [!no⎸|pink]", "|"]] as const) {
+			const { ed } = accept(source, "note", k);
+			const close = ed.getLine(0).indexOf("]");
+			for (const edit of ed.edits) {
+				const to = edit.to?.ch ?? edit.from.ch;
+				assert.ok(to <= close, `${source} + ${k}: an edit reached the \`]\` at ${close}: ${JSON.stringify(edit)}`);
+			}
+		}
 	});
 
 	it("| keeps a name the user is typing when the highlighted id only contains it", () => {
 		// "Note" is offered for `ote` (the search matches anywhere in an id),
 		// but the user was not typing `note`: the pipe goes after their text.
 		assert.strictEqual(accept("> [!ote⎸", "note", "|").ed.valueWithCursor(), "> [!ote||");
+	});
+
+	it("| under Cmd, or under Ctrl without Alt, is a hotkey and is left alone", () => {
+		let handler: ((evt: KeyboardEvent) => boolean | void) | null = null;
+		let picks = 0;
+		const suggest = {
+			scope: { register: (_m: unknown, _k: string, fn: (evt: KeyboardEvent) => boolean | void) => { handler = fn; } },
+			suggestions: { useSelectedItem: () => { picks++; return true; } },
+		};
+		acceptOnKey(suggest as never, null, "|");
+		const press = (mods: Partial<KeyboardEvent>) =>
+			(handler as unknown as (evt: KeyboardEvent) => boolean)({ key: "|", isComposing: false, metaKey: false, ctrlKey: false, altKey: false, ...mods } as KeyboardEvent);
+		assert.strictEqual(press({ metaKey: true }), true);
+		assert.strictEqual(press({ ctrlKey: true }), true);
+		assert.strictEqual(picks, 0);
+		// Plain, Shift and AltGr (Ctrl+Alt) are typing.
+		assert.strictEqual(press({}), false);
+		assert.strictEqual(press({ ctrlKey: true, altKey: true }), false);
+		assert.strictEqual(picks, 2);
+	});
+
+	it("| is only typed when there is nothing to complete", () => {
+		// The whole type already typed: kept exactly as spelled.
+		assert.strictEqual(accept("> [!NOTE⎸]", "note", "|").ed.valueWithCursor(), "> [!NOTE||]");
+		// Nothing typed yet: no row is chosen for the user.
+		assert.strictEqual(accept("> [!⎸]", "note", "|").ed.valueWithCursor(), "> [!||]");
+		// Mid-word: a pipe there splits nothing it was not asked to.
+		assert.strictEqual(accept("> [!no⎸te]", "note", "|").ed.valueWithCursor(), "> [!no||te]");
 	});
 });
 
@@ -529,8 +591,9 @@ describe("CalloutMetadataSuggest — what a row looks like", () => {
 	}
 
 	const withTheme = (h: Harness) => {
-		(h.meta as unknown as { catalog: unknown }).catalog = {
+		(h.injector as unknown as { metadataCatalog: unknown }).metadataCatalog = {
 			sourcesNow: () => [{ label: "Fixture theme", words: [word("wide", "spaced")] }],
+			snippetWords: () => new Set<string>(),
 		};
 	};
 

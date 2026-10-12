@@ -15,6 +15,16 @@ export const bg: Record<string, string> = {
 	"cmd.customInsertInline": "Вмъкване на вграден callout {{name}}",
 	"cmd.openQuickInsert": "Бързо вмъкване на блоков callout",
 	"autocomplete.createNew": 'Създаване "{{name}}"',
+	"metadataSuggest.finish": "Готово",
+	"metadataSuggest.colors": "Цветове",
+	"metadataSuggest.useTyped": 'Използване на "{{text}}"',
+	"metadataSuggest.replaces": "Замества {{word}}",
+	"metadataSuggest.themeAlso": "Вашата тема също стилизира тази дума",
+	"metadataSuggest.needsSpace": "Разделете с интервали, не с |",
+	"metadataSuggest.anySeparator": "Разделете с интервали или с |",
+	"metadataSuggest.mustBeFirst": "Работи само като първа дума",
+	"metadataSuggest.mustBeLast": "Работи само като последна дума",
+	"metadataSuggest.alone": "Работи само самостоятелно",
 	"calloutPicker.noMatches": "Няма callout, който да съответства на „{{query}}“.",
 	"calloutPicker.placeholder": "Търсене на callout",
 	"editor.paletteNoMatches": "Няма цвят, който да съответства на „{{query}}“.",
@@ -155,6 +165,10 @@ export const bg: Record<string, string> = {
 	"settings.deletePaletteAria": "Изтриване на палитра {{name}}",
 	"settings.deletePaletteConfirm":
 		'Изтриване на палитра "{{name}}"?\nCallout-ите, които използват нейните цветове, няма да бъдат засегнати.',
+	"settings.deletePaletteMetadataNote":
+		'Callout-ите, които я посочват в метаданните си ("{{key}}"), се връщат към собствения си цвят. Бележките ви не се променят.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Callout-ите, които я посочват в метаданните си ("{{key}}"), вместо това получават вградения цвят с това име. Бележките ви не се променят.',
 	"settings.customCommands": "Команди и бързи клавиши",
 	"settings.customCommandsDesc":
 		"Вижте всяка команда на Callout Studio и клавишната комбинация, към която е обвързана, и създайте свои команди за callout-ите, които използвате най-често. По подразбиране не са зададени комбинации.",
@@ -348,6 +362,18 @@ export const bg: Record<string, string> = {
 	"palette.namePlaceholder": "Моята палитра",
 	"palette.nameExists": "Вече съществува палитра с това име",
 	"palette.saveBlockedName": "Палитра с това име вече съществува. Изберете друго име, за да я запазите.",
+	"palette.metadataName": "В метаданните на callout: {{key}}",
+	"palette.metadataNameExists":
+		'Друга палитра вече е записана като "{{key}}" в метаданните на callout. Изберете друго име.',
+	"palette.metadataNameShared":
+		"В метаданните на callout: {{key}}. Друга запазена палитра също има тази дума, затова само една от тях отговаря на нея.",
+	"palette.renameNotesTitle": "Да се обновят ли бележките ви?",
+	"palette.renameNotesBody":
+		'{{count}} callout-а в {{files}} бележки използват тази палитра като "{{old}}".\nДа се променят ли на "{{new}}"?\nАко не, те се връщат към собствения си цвят.',
+	"palette.renameNotesConfirm": "Обновяване на бележките",
+	"palette.renameNotesSkip": "Оставяне",
+	"palette.renameNotesFailed":
+		"Някои бележки не можаха да бъдат обновени. Обновените са запазени, а останалите все още използват старото име.",
 	"palette.baseColor": "Основен цвят",
 	"palette.baseColorHint":
 		"Автоматично ще съпоставим цвета на фона с него. Ако желаете, можете да го контролирате отделно чрез {{link}}.",
@@ -385,7 +411,7 @@ export const bg: Record<string, string> = {
 	"colorName.sky": "Небесносиньо",
 	"colorName.blue": "Синьо",
 	"colorName.indigo": "Индиго",
-	"colorName.violet": "Виолетово",
+	"colorName.violet": "Лилаво",
 	"colorName.purple": "Пурпурно",
 	"colorName.pink": "Розово",
 	"colorName.rose": "Малиново",
@@ -393,6 +419,7 @@ export const bg: Record<string, string> = {
 	"colorName.gray": "Сиво",
 	"colorName.black": "Черно",
 	"colorName.white": "Бяло",
+	"colorName.crimson": "Тъмночервено",
 	"colorName.coral": "Коралово",
 	"colorName.grape": "Гроздов",
 	"colorName.plum": "Сливов",

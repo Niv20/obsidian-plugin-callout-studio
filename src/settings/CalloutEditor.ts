@@ -54,6 +54,7 @@ import { resolveCurrentModeColors } from "../ui/ColorCircles";
 import { PaletteEditorModal } from "./PaletteEditorModal";
 import { PaletteCombobox } from "./paletteCombobox";
 import type { PaletteEntry } from "./paletteCombobox";
+import { resolvePaletteEntry } from "./paletteEntryResolution";
 import type { CalloutEditorOptions, CalloutEditorPlugin } from "./editor/types";
 import {
 	buildStateSnapshot,
@@ -982,8 +983,9 @@ export class CalloutEditor extends Modal {
 		 * palette's colors being edited); a paletteId saved under a preset's
 		 * old (pre-rename) id still resolves via legacyIds; falls back to hex
 		 * matching for definitions saved before paletteId existed at all.
-		 * Either way, remembers the resolved id going forward. Called once at
-		 * setup and again after a colour revert, so (unlike the one-shot setup
+		 * Either way, remembers the resolved id going forward — unless the stored
+		 * id is one the preset was saved under before a rename, which is kept.
+		 * Called once at setup and again after a colour revert, so (unlike the one-shot setup
 		 * this replaced) the "no match" branch must explicitly reset the label
 		 * — it may already be showing a previously selected palette's name.
 		 *
@@ -996,19 +998,16 @@ export class CalloutEditor extends Modal {
 		 * `performCalloutEditorSave` persists whatever this holds.
 		 */
 		const refreshTriggerFromCurrentColors = (): void => {
-			const matched =
-				(this.paletteId
-					? paletteEntries.find(
-							(e) =>
-								e.id === this.paletteId ||
-								e.palette.legacyIds?.includes(
-									this.paletteId as string,
-								),
-						)
-					: undefined) ??
-				paletteEntries.find(({ palette }) => matchesPalette(palette));
-			if (matched) {
-				this.paletteId = matched.id;
+			// Retired presets and pre-rename ids included — see
+			// paletteEntryResolution.ts for the rules.
+			const resolved = resolvePaletteEntry(
+				paletteEntries,
+				this.paletteId,
+				matchesPalette,
+			);
+			const matched = resolved?.entry;
+			if (resolved && matched) {
+				this.paletteId = resolved.paletteId;
 				palettePicker.setSelection(matched.id, matched.name);
 				isOrphanColor = false;
 				orphanPaletteId = undefined;

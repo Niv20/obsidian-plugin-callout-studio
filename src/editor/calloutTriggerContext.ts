@@ -77,16 +77,23 @@ export function readCalloutTrigger(
 		role = "inline";
 	}
 
-	// The full token body (from `[!` to the next `]`, or end of line),
-	// independent of where the cursor sits within it.
+	return { role, line, triggerCh, ...tokenBodyAt(line, triggerCh) };
+}
+
+/** Where the parts of the token opened by the `[!` at `triggerCh` sit. */
+export type TokenBody = Pick<CalloutTrigger, "closeCh" | "id" | "pipeCh" | "idEndCh" | "bodyEndCh">;
+
+/**
+ * The token body opened at `triggerCh` — from `[!` to the next `]`, or the end
+ * of the line — independent of where the cursor sits within it. Shared with
+ * the picks that rewrite the type alone, so they replace exactly what was read.
+ */
+export function tokenBodyAt(line: string, triggerCh: number): TokenBody {
 	const bodyStart = triggerCh + 2;
 	const close = line.indexOf("]", bodyStart);
 	const bodyEndCh = close === -1 ? line.length : close;
 	const parts = splitCalloutMetadata(line.slice(bodyStart, bodyEndCh));
 	return {
-		role,
-		line,
-		triggerCh,
 		closeCh: close,
 		id: parts.id,
 		pipeCh: parts.hasMetadata ? bodyStart + parts.id.length : -1,

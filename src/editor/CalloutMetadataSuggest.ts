@@ -48,8 +48,6 @@ import {
 } from "obsidian";
 import type CalloutStudioPlugin from "../main";
 import { getLocale, t } from "../i18n";
-import { activeMetadataColorEntries } from "../utils/calloutMetadata";
-import { ThemeMetadataCatalog } from "../manager/theme/ThemeMetadataCatalog";
 import { readCalloutTrigger, triggerInCode } from "./calloutTriggerContext";
 import {
 	landAfterInlineToken,
@@ -94,7 +92,6 @@ interface OpenSlot extends MetadataSlot {
 
 export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 	private readonly plugin: CalloutStudioPlugin;
-	private readonly catalog: ThemeMetadataCatalog;
 	private slot: OpenSlot | null = null;
 	/** Where a Tab pick left the cursor, and the line as it left it. */
 	private lastPick: { line: number; ch: number; text: string } | null = null;
@@ -107,7 +104,6 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 	constructor(plugin: CalloutStudioPlugin) {
 		super(plugin.app);
 		this.plugin = plugin;
-		this.catalog = new ThemeMetadataCatalog(plugin.app);
 		this.limit = ROW_LIMIT;
 		acceptOnKey(this, [], "Tab");
 	}
@@ -153,12 +149,15 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 		const slot = this.slot;
 		if (!slot) return [];
 		const resolved = resolveCalloutDef(this.plugin.registry, slot.calloutId);
+		// The injector's, so a colour its stylesheet stands down on (a word the
+		// user's own snippet styles) is never offered as one.
+		const injector = this.plugin.cssInjector;
 		const rows = buildMetadataSuggestions({
 			slot,
 			calloutId: slot.calloutId,
 			themeOwned: !resolved.unknown && resolved.themeOwned,
-			colors: activeMetadataColorEntries(this.plugin.settings),
-			sources: this.catalog.sourcesNow(),
+			colors: injector.metadataColorEntries(),
+			sources: injector.metadataCatalog.sourcesNow(),
 			locale: getLocale(),
 		}).slice(0, ROW_LIMIT);
 		// Headings over the rows that will actually show, not the ones cut off.

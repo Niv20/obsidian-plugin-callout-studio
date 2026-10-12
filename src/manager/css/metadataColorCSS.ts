@@ -18,19 +18,42 @@
  *
  * A metadata colour is "apply this palette to this one instance". Everything
  * a palette decides — accent variables, background tint and its alpha, the
- * gradient and its print repaint, content text colour, the title sweep, the
- * fold chevron — is a function of the palette alone, so each colour is a
- * virtual definition (`metadataDefinition`) run through the injector's own
- * emitters, with a selector that names the word instead of an id. What the
- * callout's own definition says about its icon, frame and title stays.
+ * gradient and its print repaint, the title sweep, the fold chevron — is a
+ * function of the palette alone, so each colour is a virtual definition
+ * (`metadataDefinition`) run through the injector's own emitters, with a
+ * selector that names the word instead of an id. What the callout's own
+ * definition says about its icon, frame and title stays.
+ *
+ * ## Replacing, not layering
+ *
+ * The callout's own definition still matches the element, so anything the
+ * colour does not restate shows through it. Hence the resets, each written
+ * only for a colour that lacks the thing: no gradient → `background-image:
+ * none` (and the print `::before` cleared), no title sweep → the sweep's
+ * clipping undone and the chevrons back to their defaults. Content text takes
+ * the palette's own colour when it has one and the theme's otherwise
+ * (`inherit`) — never the fixed `#1a1a1a` a palette bakes when it has none,
+ * which under a theme with text colours of its own would be a colour nobody
+ * chose.
  *
  * ## Matching a word in either separator
  *
  * A word may stand alone, or between spaces (ITS Theme's convention), or
- * between pipes (the Callout Metadata plugin's), or any mix. `~=` covers every
- * whitespace boundary; the five pipe forms cover the rest. The `i` flag
+ * between pipes (the Callout Metadata plugin's), or any mix — the six forms of
+ * `METADATA_WORD_FORMS`, which the export painters evaluate too. The `i` flag
  * matches `PINK` as `pink` — ASCII only, which is why the JS side folds case
  * the same narrow way (`foldMetadataCase`).
+ *
+ * ## Nested, so a word's selector is written once
+ *
+ * Each colour is a handful of blocks — the callout, the inline pill, the
+ * heading bar, the heading token — whose selector holds the word's six forms,
+ * `.callout` repeated to the studio weight and the theme-owned exclusion. Flat,
+ * every one of a colour's rules repeated all of that; under ITS Theme that was
+ * five sixths of a 217 KB block. Native nesting states it once and puts each
+ * rule inside as `:root &` / `.theme-dark &`, which is the same selector to the
+ * cascade: `&` is `:is(outer)`, and `:is()` of one selector weighs what the
+ * selector does.
  *
  * ## Weight and order
  *
@@ -52,7 +75,12 @@
 import type { CalloutDefinition } from "../../types";
 import { bakePaletteColors } from "../../utils/colorPalettes";
 import {
+	DEFAULT_TEXT_COLOR_DARK,
+	DEFAULT_TEXT_COLOR_LIGHT,
+} from "../../utils/colorUtils";
+import {
 	entryWords,
+	METADATA_WORD_FORMS,
 	type MetadataColorEntry,
 } from "../../utils/calloutMetadata";
 import { cssAttrValue } from "../../utils/calloutSelector";
@@ -81,6 +109,13 @@ export interface MetadataColorCssContext {
 	weight: number;
 	/** `" !important"` in studio mode — always, for a painted rule. */
 	important: string;
+	/**
+	 * What some callout's own definition paints that a colour without it must
+	 * clear: a background gradient, a title sweep. False → no definition has
+	 * one, so the resets would clear nothing and are left out. The sheet is
+	 * rebuilt whenever a definition changes, so this cannot go stale.
+	 */
+	clears: { gradient: boolean; sweep: boolean };
 	/** The `data-callout` attr forms of every callout the theme owns. */
 	themeOwnedAttrIds: readonly string[];
 	/** The frame declarations a transparent palette adds — see `transparentBorder.ts`. */
@@ -114,17 +149,11 @@ export interface MetadataColorCssContext {
  * specificity, whichever form matches.
  */
 export function metadataWordSelector(words: readonly string[]): string {
-	const forms = words.flatMap((word) => {
-		const v = cssAttrValue(word);
-		return [
-			`[data-callout-metadata~="${v}" i]`,
-			`[data-callout-metadata^="${v}|" i]`,
-			`[data-callout-metadata$="|${v}" i]`,
-			`[data-callout-metadata*="|${v}|" i]`,
-			`[data-callout-metadata*="|${v} " i]`,
-			`[data-callout-metadata*=" ${v}|" i]`,
-		];
-	});
+	const forms = words.flatMap((word) =>
+		METADATA_WORD_FORMS.map(
+			({ op, value }) => `[data-callout-metadata${op}="${cssAttrValue(value(word))}" i]`,
+		),
+	);
 	return `:is(${forms.join(", ")})`;
 }
 
@@ -147,8 +176,46 @@ function metadataDefinition(entry: MetadataColorEntry): CalloutDefinition {
 	};
 }
 
-/** `""` → `:root ` so a light rule weighs what its `.theme-dark ` twin does. */
-const scope = (themePrefix: string): string => themePrefix || ":root ";
+/** One mode's rule inside a colour's block: `:root &` or `.theme-dark &`. */
+const inMode = (themePrefix: string): string => `${themePrefix || ":root "}&`;
+
+/** A rule from its selector and declaration lines. */
+const rule = (selector: string, props: readonly string[]): string =>
+	`${selector} {\n${props.join("\n")}\n}`;
+
+/** One nested block: the colour's selector once, its rules inside. */
+const nest = (outer: string, rules: readonly string[]): string =>
+	`${outer} {\n${rules.filter(Boolean).join("\n\n")}\n}`;
+
+/**
+ * `props` with `background-image: none` added when they paint none of their
+ * own: a colour without a gradient must clear the gradient the callout's own
+ * definition draws, or its tint sits underneath it, unseen. Only while some
+ * definition has a gradient to clear (`clears.gradient`).
+ */
+function clearingImage(props: string[], imp: string, ctx: MetadataColorCssContext): string[] {
+	return !ctx.clears.gradient || props.some((p) => p.trimStart().startsWith("background-image:"))
+		? props
+		: [...props, `  background-image: none${imp};`];
+}
+
+/** The title-sweep declarations at rest — a colour without a sweep restores them. */
+const unswept = (imp: string): string[] => [
+	`  background-image: none${imp};`,
+	`  -webkit-background-clip: border-box${imp};`,
+	`  background-clip: border-box${imp};`,
+	`  -webkit-text-fill-color: currentColor${imp};`,
+];
+
+/** The print `::before` a callout's own gradient paints, emptied — when one could. */
+const noPrintGradient = (selector: string, imp: string, ctx: MetadataColorCssContext): string =>
+	ctx.clears.gradient
+		? `@media print {\n${rule(`${selector}::before`, [`  background-image: none${imp};`])}\n}`
+		: "";
+
+/** Whether the palette sweeps its title text — `CSSInjector.textGradientCss`'s own test. */
+const sweeps = (def: CalloutDefinition): boolean =>
+	Boolean(def.bgGradient?.textGradient && def.bgGradient.textToColorLight);
 
 /**
  * Every metadata colour's rules, weakest colour first — see the module note
@@ -179,142 +246,158 @@ function colorRules(
 	const def = metadataDefinition(entry);
 	const words = metadataWordSelector(entryWords(entry));
 	const imp = ctx.important;
+	const weight = Math.max(1, ctx.weight);
 	const owned =
 		standalone || ctx.themeOwnedAttrIds.length === 0
 			? ""
 			: `:not(${ctx.themeOwnedAttrIds
 					.map((id) => `[data-callout="${cssAttrValue(id)}"]`)
 					.join(", ")})`;
-	const block = (themePrefix: string, weight = ctx.weight): string =>
-		`${themePrefix}${".callout".repeat(Math.max(1, weight))}` +
-		`[data-callout]${owned}${words}`;
-	const blockSel: SelectorsFor = (themePrefix) => block(scope(themePrefix));
-
-	const parts: string[] = [];
+	const rules: string[] = [];
 
 	// Accent and background, light then dark — the same two blocks a
 	// definition gets, minus the icon, which stays the callout's own.
-	const light = [...ctx.accentProps(def, "light"), ...ctx.bgProps(def, "light", true)];
+	const light = clearingImage(
+		[...ctx.accentProps(def, "light"), ...ctx.bgProps(def, "light", true)],
+		imp,
+		ctx,
+	);
 	if (def.transparentBg) light.push(...ctx.transparentBorderProps());
-	parts.push(`${blockSel("")} {\n${light.join("\n")}\n}`);
-	if (def.transparentBg) {
-		// The `:root` rule matches in both modes, so one copy clears both.
-		parts.push(transparentChildrenCSS([blockSel("")], true));
-	}
+	rules.push(rule(inMode(""), light));
+	// The `:root` rule matches in both modes, so one copy clears both.
+	if (def.transparentBg) rules.push(transparentChildrenCSS([inMode("")], true));
 	if (ctx.needsDarkBlock(def)) {
-		const dark = [...ctx.accentProps(def, "dark"), ...ctx.bgProps(def, "dark", true)];
-		parts.push(`${blockSel(".theme-dark ")} {\n${dark.join("\n")}\n}`);
-	}
-
-	// Content text. A palette always carries both (bakePaletteColors fills in
-	// the defaults), so both are written: the callout's own text colour must
-	// not show through under a colour that never chose it.
-	if (def.textColorLight) {
-		parts.push(`${blockSel("")} > .callout-content {\n  color: ${def.textColorLight}${imp};\n}`);
-	}
-	if (def.textColorDark) {
-		parts.push(
-			`${blockSel(".theme-dark ")} > .callout-content {\n  color: ${def.textColorDark}${imp};\n}`,
-		);
-	}
-
-	parts.push(
-		...ctx.textSweepRules(
-			def,
-			(p) => `${blockSel(p)} > .callout-title > .callout-title-inner`,
-			false,
+		const dark = clearingImage(
+			[...ctx.accentProps(def, "dark"), ...ctx.bgProps(def, "dark", true)],
 			imp,
-		),
+			ctx,
+		);
+		rules.push(rule(inMode(".theme-dark "), dark));
+	}
+
+	rules.push(...contentColorRules(entry, def, imp));
+
+	const title = (p: string): string => `${inMode(p)} > .callout-title > .callout-title-inner`;
+	const fold = (p: string): string => `${inMode(p)} > .callout-title > .callout-fold`;
+	if (sweeps(def)) {
+		rules.push(...ctx.textSweepRules(def, title, false, imp), sweptChevrons(def, fold, imp));
+	} else if (ctx.clears.sweep) {
+		rules.push(rule(title(""), unswept(imp)), rule(fold(""), [`  color: inherit${imp};`]));
+	}
+
+	rules.push(
+		ctx.printGradientCSS(def, (p, suffix) => `${inMode(p)}${suffix}`, false, imp) ||
+			noPrintGradient(inMode(""), imp, ctx),
 	);
 
-	const fold = foldArrowRules(def, blockSel, words, imp);
-	if (fold) parts.push(fold);
-
-	const print = ctx.printGradientCSS(def, (p, suffix) => `${blockSel(p)}${suffix}`, false, imp);
-	if (print) parts.push(print);
-
 	if (!standalone) {
-		parts.push(tokenRules(def, words, ctx));
-		const surface = ctx.themeSurface(def, (guard, weight, rootQualifier) =>
-			`${block(guard, weight)}${rootQualifier}`,
+		// A guard is a theme's own prefix, `body.x` as often as `.x`. Wrapped in
+		// `:is()` — same weight — because a nested selector that opens with a
+		// type selector is dropped by the first engines to ship nesting.
+		rules.push(
+			ctx.themeSurface(def, (guard, surfaceWeight, rootQualifier) =>
+				`${guard.trim() ? `:is(${guard.trim()}) ` : ""}&` +
+				`${".callout".repeat(Math.max(0, surfaceWeight - weight))}${rootQualifier}`,
+			),
 		);
-		if (surface) parts.push(surface);
 	}
-	return parts.filter(Boolean).join("\n\n");
+
+	const blocks = [nest(`${".callout".repeat(weight)}[data-callout]${owned}${words}`, rules)];
+	if (!standalone) blocks.push(...tokenBlocks(def, words, ctx));
+	return blocks.join("\n\n");
 }
 
 /**
- * Heading bars and inline pills — our own DOM, so ordinary (non-important)
- * rules as the definition's are, each one class heavier than its definition
- * twin: `[data-callout]` beside the word's `:is()`, plus the scope.
+ * Content text: the palette's own colour when it chose one, else the theme's.
+ * A palette that never set a text colour bakes `#1a1a1a` / `#e0e0e0`, and
+ * forcing those would repaint the body text of a callout whose theme writes in
+ * sepia; `inherit` still clears a text colour the callout's own definition has.
  */
-function tokenRules(
+function contentColorRules(
+	entry: MetadataColorEntry,
+	def: CalloutDefinition,
+	imp: string,
+): string[] {
+	const { textColorLight, textColorDark } = entry.palette;
+	const authored =
+		(textColorLight !== undefined && textColorLight !== DEFAULT_TEXT_COLOR_LIGHT) ||
+		(textColorDark !== undefined && textColorDark !== DEFAULT_TEXT_COLOR_DARK);
+	const content = (p: string): string => `${inMode(p)} > .callout-content`;
+	if (!authored) return [rule(content(""), [`  color: inherit${imp};`])];
+	const rules = [rule(content(""), [`  color: ${def.textColorLight}${imp};`])];
+	if (def.textColorDark !== def.textColorLight) {
+		rules.push(rule(content(".theme-dark "), [`  color: ${def.textColorDark}${imp};`]));
+	}
+	return rules;
+}
+
+/**
+ * The fold chevrons in the sweep's second colour, as
+ * `CSSInjector.generateFoldArrowCSS` paints them for a definition.
+ */
+function sweptChevrons(def: CalloutDefinition, selectorsFor: SelectorsFor, imp: string): string {
+	const light = def.bgGradient?.textToColorLight ?? "";
+	const dark = def.bgGradient?.textToColorDark ?? light;
+	return (
+		rule(selectorsFor(""), [`  color: ${light}${imp};`]) +
+		(dark === light ? "" : `\n\n${rule(selectorsFor(".theme-dark "), [`  color: ${dark}${imp};`])}`)
+	);
+}
+
+/**
+ * Heading bars, heading tokens and inline pills — our own DOM, so ordinary
+ * (non-important) rules as the definition's are, each one class heavier than
+ * its definition twin: `[data-callout]` beside the word's `:is()`, plus the
+ * scope.
+ */
+function tokenBlocks(
 	def: CalloutDefinition,
 	words: string,
 	ctx: MetadataColorCssContext,
-): string {
-	const pill = (p: string) => `${scope(p)}.${CSS_INLINE_TOKEN}[data-callout]${words}`;
-	const heading = (p: string) => `${scope(p)}.${CSS_HEADING_LINE}[data-callout]${words}`;
-	const both: SelectorsFor = (p) => `${pill(p)},\n${heading(p)}`;
-	const parts: string[] = [];
+): string[] {
+	const colours = (): string[] =>
+		(["light", "dark"] as const).map((mode) =>
+			rule(
+				inMode(mode === "dark" ? ".theme-dark " : ""),
+				clearingImage([...ctx.ownAccentProps(def, mode), ...ctx.bgProps(def, mode)], "", ctx),
+			),
+		);
+	const sweep = (selectorsFor: SelectorsFor, ownsBackground: boolean): string[] =>
+		sweeps(def)
+			? ctx.textSweepRules(def, selectorsFor, ownsBackground, "")
+			: ctx.clears.sweep
+				? [rule(selectorsFor(""), ownsBackground ? unswept("").slice(1) : unswept(""))]
+				: [];
+	const print = (hideElementGradient: boolean): string =>
+		ctx.printGradientCSS(def, (p, suffix) => `${inMode(p)}${suffix}`, hideElementGradient) ||
+		noPrintGradient(inMode(""), "", ctx);
 
-	const accent = (mode: "light" | "dark") => [
-		...ctx.ownAccentProps(def, mode),
-		...ctx.bgProps(def, mode),
-	];
-	parts.push(`${both("")} {\n${accent("light").join("\n")}\n}`);
-	parts.push(`${both(".theme-dark ")} {\n${accent("dark").join("\n")}\n}`);
+	// The pill sweeps its own root (it carries the background layer), so its
+	// reset leaves the background image to the colour rules above.
+	const pill = nest(`.${CSS_INLINE_TOKEN}[data-callout]${words}`, [
+		...colours(),
+		print(true),
+		...sweep((p) => `${inMode(p)}.${CSS_INLINE_TOKEN}`, true),
+	]);
 
-	const pillPrint = ctx.printGradientCSS(def, (p, suffix) => `${pill(p)}${suffix}`, true);
-	if (pillPrint) parts.push(pillPrint);
-	const headingPrint = ctx.printGradientCSS(def, (p, suffix) => `${heading(p)}${suffix}`, false);
-	if (headingPrint) parts.push(headingPrint);
+	const arrows = (p: string): string =>
+		`${inMode(p)} .${CSS_FOLD_ARROW},\n${inMode(p)} .heading-collapse-indicator`;
+	const bar = nest(`.${CSS_HEADING_LINE}[data-callout]${words}`, [
+		...colours(),
+		print(false),
+		...sweep((p) => `${inMode(p)} .${CSS_HEADING_TITLE}`, false),
+		sweeps(def)
+			? sweptChevrons(def, arrows, ctx.important)
+			: ctx.clears.sweep
+				? rule(arrows(""), [`  color: var(--cs-accent, #086ddd)${ctx.important};`])
+				: "",
+	]);
 
-	// The pill sweeps its own root (it carries the background layer); the bar
-	// sweeps the two text runs it can hold — same split as the definition's.
-	parts.push(
-		...ctx.textSweepRules(
-			def,
-			(p) => `${scope(p)}.${CSS_INLINE_TOKEN}.${CSS_INLINE_TOKEN}[data-callout]${words}`,
-			true,
-			"",
-		),
-	);
-	parts.push(
-		...ctx.textSweepRules(
-			def,
-			(p) =>
-				`${heading(p)} .${CSS_HEADING_TITLE},\n` +
-				`${scope(p)}.${CSS_HEADING_TOKEN}[data-callout]${words} > .${CSS_TOKEN_NAME}`,
-			false,
-			"",
-		),
-	);
-	return parts.join("\n\n");
-}
-
-/**
- * The fold chevrons in the gradient's second colour, as
- * `CSSInjector.generateFoldArrowCSS` does for a definition — only when the
- * palette sweeps its title text, which is the sweep the arrow closes.
- */
-function foldArrowRules(
-	def: CalloutDefinition,
-	blockSel: SelectorsFor,
-	words: string,
-	imp: string,
-): string {
-	const g = def.bgGradient;
-	if (!g?.textGradient || !g.textToColorLight) return "";
-	const selectorsFor = (p: string): string =>
-		[
-			`${blockSel(p)} > .callout-title > .callout-fold`,
-			`${scope(p)}.${CSS_HEADING_LINE}[data-callout]${words} .${CSS_FOLD_ARROW}`,
-			`${scope(p)}.${CSS_HEADING_LINE}[data-callout]${words} .heading-collapse-indicator`,
-		].join(",\n");
-	const dark = g.textToColorDark ?? g.textToColorLight;
-	return (
-		`${selectorsFor("")} {\n  color: ${g.textToColorLight}${imp};\n}\n\n` +
-		`${selectorsFor(".theme-dark ")} {\n  color: ${dark}${imp};\n}`
-	);
+	// Only a sweep reaches the heading token's own name, so without one in
+	// play there is nothing to say about it.
+	const tokenName = sweep((p) => `${inMode(p)} > .${CSS_TOKEN_NAME}`, false);
+	const token = tokenName.length > 0
+		? nest(`.${CSS_HEADING_TOKEN}[data-callout]${words}`, tokenName)
+		: "";
+	return [pill, bar, token].filter(Boolean);
 }

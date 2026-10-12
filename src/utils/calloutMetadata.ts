@@ -18,7 +18,9 @@
  *
  * So any run of whitespace and/or pipes separates two words, and
  * `pink right`, `pink|right` and ` pink | right ` are the same two words.
- * A comma is NOT a separator: `pink,` is one word that names nothing.
+ * "Whitespace" is CSS's, the only kind the stylesheet can see: a no-break
+ * space joins two words rather than parting them. A comma is NOT a separator
+ * either: `pink,` is one word that names nothing.
  *
  * ## Which words are colours
  *
@@ -65,12 +67,17 @@ export interface MetadataWord {
 	to: number;
 }
 
-/** A word is a run of anything that is neither whitespace nor a pipe. */
-const WORD_RE = /[^\s|]+/g;
+/**
+ * A word is a run of anything that is neither whitespace nor a pipe — CSS's
+ * whitespace (space, tab, line feed, carriage return, form feed), which is all
+ * `~=` splits on. A no-break space (Option+Space on a Mac) is part of a word
+ * here exactly as it is to the stylesheet.
+ */
+const WORD_RE = /[^ \t\n\r\f|]+/g;
 
 /** True for the characters that separate two metadata words. */
 export const isMetadataSeparator = (ch: string): boolean =>
-	ch === "|" || /^\s$/.test(ch);
+	ch === "|" || ch === " " || ch === "\t" || ch === "\n" || ch === "\r" || ch === "\f";
 
 /**
  * The words of a metadata string, in order, with their offsets — the offsets
@@ -93,6 +100,40 @@ export function metadataWords(metadata: string): MetadataWord[] {
  */
 export const foldMetadataCase = (word: string): string =>
 	word.replace(/[A-Z]/g, (c) => c.toLowerCase());
+
+/**
+ * How the stylesheet finds one word in `data-callout-metadata` — the six
+ * attribute conditions `metadataColorCSS.ts` writes, and the same six that
+ * {@link metadataNamesWord} evaluates for the PDF painters, so print and screen
+ * cannot disagree about which callouts a word reaches. `~=` covers every
+ * whitespace boundary; the other five every boundary that is a `|`.
+ */
+export const METADATA_WORD_FORMS: ReadonlyArray<{
+	op: "~" | "^" | "$" | "*";
+	value: (word: string) => string;
+}> = [
+	{ op: "~", value: (w) => w },
+	{ op: "^", value: (w) => `${w}|` },
+	{ op: "$", value: (w) => `|${w}` },
+	{ op: "*", value: (w) => `|${w}|` },
+	{ op: "*", value: (w) => `|${w} ` },
+	{ op: "*", value: (w) => ` ${w}|` },
+];
+
+/** Whether the stylesheet's rule for `word` matches this metadata. */
+export function metadataNamesWord(metadata: string, word: string): boolean {
+	const attr = foldMetadataCase(metadata);
+	const target = foldMetadataCase(word);
+	return METADATA_WORD_FORMS.some(({ op, value }) => {
+		const v = value(target);
+		switch (op) {
+			case "~": return attr.split(/[ \t\n\r\f]+/).includes(v);
+			case "^": return attr.startsWith(v);
+			case "$": return attr.endsWith(v);
+			default: return attr.includes(v);
+		}
+	});
+}
 
 /**
  * Other spellings of a built-in colour's id, mapped to that id. Accepted when
@@ -154,9 +195,15 @@ export interface MetadataColorEntry {
  * take. Between two saved palettes the later one
  * in the list wins — the palette editor refuses to create such a pair, so
  * only older or imported data ever has one.
+ *
+ * `reserved` words belong to nobody here: the words the user's own CSS
+ * snippets already style (ASCII case folded). A snippet is the user's
+ * deliberate styling, so this plugin stands down on its words rather than
+ * painting over them with `!important`.
  */
 export function metadataColorEntries(
 	customPalettes: readonly CustomPalette[],
+	reserved: ReadonlySet<string> = new Set(),
 ): MetadataColorEntry[] {
 	const aliasesOf = (id: string): string[] =>
 		Object.entries(METADATA_COLOR_ALIASES)
@@ -180,7 +227,7 @@ export function metadataColorEntries(
 		})),
 	];
 
-	const claimed = new Set<string>();
+	const claimed = new Set<string>(reserved);
 	const kept: MetadataColorEntry[] = [];
 	for (const candidate of [...candidates].reverse()) {
 		const key = candidate.key && !claimed.has(candidate.key) ? candidate.key : "";
@@ -199,12 +246,15 @@ export function metadataColorEntries(
  * The entries in force for these settings — none at all while the hidden
  * `metadataColors` switch is off, which is what keeps every consumer (the
  * stylesheet, the export painters, the `|` suggestions) quiet together.
+ * `reserved` as for {@link metadataColorEntries}; every consumer passes the
+ * same set (`CSSInjector.metadataColorEntries`), so they agree on it too.
  */
 export function activeMetadataColorEntries(
 	settings: Pick<PluginSettings, "metadataColors" | "customPalettes">,
+	reserved?: ReadonlySet<string>,
 ): MetadataColorEntry[] {
 	return settings.metadataColors.enabled
-		? metadataColorEntries(settings.customPalettes)
+		? metadataColorEntries(settings.customPalettes, reserved)
 		: [];
 }
 
@@ -223,10 +273,8 @@ export function resolveMetadataColor(
 	entries: readonly MetadataColorEntry[],
 ): MetadataColorEntry | null {
 	if (!metadata) return null;
-	const words = new Set(metadataWords(metadata).map((w) => foldMetadataCase(w.text)));
-	if (words.size === 0) return null;
 	for (const entry of [...entries].reverse()) {
-		if (entryWords(entry).some((word) => words.has(word))) return entry;
+		if (entryWords(entry).some((word) => metadataNamesWord(metadata, word))) return entry;
 	}
 	return null;
 }

@@ -499,9 +499,23 @@ export class PaletteEditorModal extends Modal {
 	}
 
 	/** The typed name's metadata word, when another saved palette has it. */
-	private takenMetadataKey(): string | null {
+	private sharedMetadataKey(): string | null {
 		const key = paletteMetadataKey(this.name);
 		return key !== "" && this.takenMetadataKeys.has(key) ? key : null;
+	}
+
+	/**
+	 * The typed name's word when it is another palette's AND blocks saving —
+	 * which is only when the user is giving this palette that word now. A
+	 * palette saved under it already shares it from before words existed
+	 * ("Note dark" beside "Note (dark)" kebab-case alike), and holding that
+	 * against it would lock the user out of editing their own palette, even
+	 * its colours; that pair is warned about instead (`metadataKeyEl`).
+	 */
+	private takenMetadataKey(): string | null {
+		const key = this.sharedMetadataKey();
+		if (key === null) return null;
+		return this.existing && paletteMetadataKey(this.existing.name) === key ? null : key;
 	}
 
 	/** The current form colors as a palette, for comparison and preview alike. */
@@ -550,7 +564,12 @@ export class PaletteEditorModal extends Modal {
 		}
 		if (this.metadataKeyEl) {
 			const key = paletteMetadataKey(this.name);
-			this.metadataKeyEl.setText(key ? t("palette.metadataName", { key }) : "");
+			const sharedFromBefore = !nameTaken && keyTaken === null && this.sharedMetadataKey() !== null;
+			this.metadataKeyEl.setText(
+				!key ? ""
+				: sharedFromBefore ? t("palette.metadataNameShared", { key })
+				: t("palette.metadataName", { key }),
+			);
 		}
 		this.colorClash = this.findColorClash();
 		this.renderColorError();

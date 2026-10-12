@@ -58,14 +58,23 @@ const createTieBreakerCollator = (locale?: string): Intl.Collator =>
 		usage: "sort",
 	});
 
+const comparators = new Map<string, (a: string, b: string) => number>();
+
 /**
- * `compareText` with its collators built once, for a sort that compares many
- * times — a list rebuilt on every keystroke, say.
+ * `compareText` as a function, for a sort that compares many times — a list
+ * rebuilt on every keystroke, say. Built once per locale and kept: building an
+ * `Intl.Collator` costs more than all the comparisons one sort makes with it.
  */
 export const textComparator = (locale?: string): ((a: string, b: string) => number) => {
-	const base = createBaseCollator(locale);
-	const tieBreaker = createTieBreakerCollator(locale);
-	return (a, b) => base.compare(a, b) || tieBreaker.compare(a, b);
+	const key = locale ?? "";
+	let compare = comparators.get(key);
+	if (!compare) {
+		const base = createBaseCollator(locale);
+		const tieBreaker = createTieBreakerCollator(locale);
+		compare = (a, b) => base.compare(a, b) || tieBreaker.compare(a, b);
+		comparators.set(key, compare);
+	}
+	return compare;
 };
 
 export const compareText = (a: string, b: string, locale?: string): number =>

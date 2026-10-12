@@ -57,6 +57,7 @@ import { applyTitleGradient } from "./gradientTitleText";
 import {
 	activeMetadataColorEntries,
 	definitionWithMetadataColor,
+	type MetadataColorEntry,
 } from "../utils/calloutMetadata";
 import { createInlineEscapePlan, type InlineEscapePlan } from "./inlineEscapePlan";
 
@@ -64,6 +65,8 @@ import { createInlineEscapePlan, type InlineEscapePlan } from "./inlineEscapePla
 export interface ReadingRenderHost {
 	registry: CalloutRegistry;
 	settings: PluginSettings;
+	/** The plugin's injector, for the metadata colours it stands behind. */
+	cssInjector?: { metadataColorEntries(): MetadataColorEntry[] };
 }
 
 /**
@@ -304,7 +307,7 @@ function paintedDefinition(
 	return definitionWithMetadataColor(
 		def,
 		metadata,
-		activeMetadataColorEntries(host.settings),
+		host.cssInjector?.metadataColorEntries() ?? activeMetadataColorEntries(host.settings),
 	);
 }
 
