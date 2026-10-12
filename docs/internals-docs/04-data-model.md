@@ -210,6 +210,7 @@ interface PluginSettings {
   iconLibraries: IconLibrarySettings;    // { order: string[]; hidden: string[] }
   headingCallouts: HeadingCalloutSettings;
   inlineCallouts: InlineCalloutSettings;
+  metadataColors: RoleToggleSettings;   // { enabled: true }; no UI
   welcomeSeen?: boolean;
   fallbackCalloutId: string;
   language: string;                  // "auto" or a locale code
@@ -243,6 +244,19 @@ that predates it rebuilds `iconSources` from the fields it knows and would drop
 the new ones on its next save, while a whole top-level key it does not know is
 carried through by `foreignFields.ts`. Two devices one release apart therefore
 keep each other's library order.
+
+`metadataColors.enabled` switches off the colours a callout takes from its own
+metadata (`[!mark|pink]`) - the stylesheet block, the colour rows in the `|`
+dropdown and the PDF painters' metadata overlay, all through
+`activeMetadataColorEntries`. It has no settings UI by decision: the feature is
+always on, and the switch exists to be flipped by hand in `data.json`, the way
+`inlineCallouts.allowContent` is. It is also the one deliberate exception to
+"an upgrade changes nothing": a note that already carried `|red` for a theme or
+another plugin is coloured by Callout Studio after the update.
+
+A saved palette's metadata word is not stored: it is derived from the name
+(`paletteMetadataKey`), so `CustomPalette` gained no field - see
+[12-color-system.md](12-color-system.md#metadata-colour-words).
 
 `autocomplete.enabled` remains in the serialized shape so older settings files
 and exports have an explicit upgrade target, but it is no longer mutable

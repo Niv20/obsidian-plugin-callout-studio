@@ -10,8 +10,10 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import {
 	convertCalloutsToPlainTextInVault,
+	countMetadataWordUsages,
 	replaceCalloutIdsInVault,
 	replaceCalloutTitlesInVault,
+	replaceMetadataWordInVault,
 } from "../src/utils/vaultCalloutScanner";
 import type { App } from "obsidian";
 
@@ -480,5 +482,34 @@ describe("a bulk rewrite survives a hostile vault", () => {
 			"> [!new] One\n\nTyped.",
 			"the paragraph typed mid-pass survives the rewrite",
 		);
+	});
+});
+
+describe("replaceMetadataWordInVault — a renamed palette's notes", () => {
+	const swap = (line: string) =>
+		rewrite(line, (app) => replaceMetadataWordInVault(app, "red-2", "comic-red"));
+
+	it("swaps the word in every role, keeping everything around it", async () => {
+		assert.strictEqual((await swap("> [!mark|red-2]- Page break")).line, "> [!mark|comic-red]- Page break");
+		assert.strictEqual((await swap("## [!Mark|wide RED-2] Title")).line, "## [!Mark|wide comic-red] Title");
+		assert.strictEqual((await swap("a [!mark|x|red-2|y]{label} b")).line, "a [!mark|x|comic-red|y]{label} b");
+	});
+
+	it("leaves a longer word, the type, and code alone", async () => {
+		const result = await swap("> [!red-2|red-22] T\n`[!mark|red-2]`");
+		assert.strictEqual(result.line, "> [!red-2|red-22] T\n`[!mark|red-2]`");
+		assert.strictEqual(result.count, 0);
+	});
+
+	it("counts callouts and notes that use the word", async () => {
+		const { app } = fakeApp({
+			"a.md": "> [!mark|red-2] A\n> body\n\nx [!mark|pink red-2] y",
+			"b.md": "## [!mark|red-2]",
+			"c.md": "> [!mark|red] none here",
+		});
+		assert.deepStrictEqual(await countMetadataWordUsages(app, "red-2"), {
+			fileCount: 2,
+			totalCount: 3,
+		});
 	});
 });

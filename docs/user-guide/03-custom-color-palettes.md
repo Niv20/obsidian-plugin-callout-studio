@@ -23,6 +23,8 @@ Open the main plugin settings, find **Saved color palettes**, and click **New pa
 
 Saved palettes appear at the top of every callout color menu under **Custom**.
 
+Under the name, the editor shows the palette's word for callout metadata: **Comic Red** is `comic-red`. Write `[!note|comic-red]` to give one callout this palette. **Save** also stays dimmed while another saved palette already has that word. See [Callout metadata](18-callout-metadata.md).
+
 ![New Ocean palette with a base color, background intensity, and live previews in dark mode](../../assets/user-guide/palette-editor.svg)
 
 ## Background styles
@@ -53,6 +55,8 @@ background; the palette's base color still colors the title, icon, and frame.
 ## Edit, delete, and restore palettes
 
 Click the pencil beside a saved palette to edit it. When you save the changes, every callout linked to that palette updates across the vault.
+
+If the new name changes the palette's metadata word and your notes use the old one, Callout Studio asks whether to update those notes. Deleting a palette never changes your notes; callouts that name it in their metadata go back to their own color.
 
 Deleting a palette does not change the callouts that already use it. They keep their exact colors. The callout editor's **Color** row shows the color circles and the message “This callout's saved color was deleted.” Click **Restore** beside the message to open the palette save popup with those colors filled in.
 

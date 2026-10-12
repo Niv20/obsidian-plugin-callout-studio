@@ -186,7 +186,8 @@ existing heading in place rather than nesting a second token, and donating a
 plain line's text as the title. **Quoted lines are never rewritten** - heading
 syntax is column-0-anchored (`HEADING_CALLOUT_RE` is anchored), so a heading
 callout inside a blockquote is impossible; the command instead inserts the
-new heading *below* the blockquote.
+new heading *below* the blockquote. Re-typing keeps the heading's own
+`|metadata` - a colour written there belongs to the heading, not its old type.
 
 `frontmatter.ts` owns the protected property range. A note containing only
 frontmatter gets a new body after its closing `---` or `...`; insertion never
@@ -254,12 +255,14 @@ line:
 | nothing (bare line start) | `inline` if enabled, else legacy `regular` fallback |
 | any other text | `inline` (popup suppressed if `inlineCallouts.enabled` is false) |
 
-It captures the **whole token body**, independent of exactly where the cursor
+The classification is `readCalloutTrigger` in
+[`calloutTriggerContext.ts`](../../src/editor/calloutTriggerContext.ts), shared
+with the metadata dropdown. It captures the **whole token body**, independent of exactly where the cursor
 sits inside it - reading only up to the cursor would mis-filter a mid-token
 cursor (`[!dang⎸aaaaa]` would otherwise match "Danger" instead of offering
 "Create new: dangaaaaa"). The popup **closes** once the cursor moves past the
 id into metadata, the fold mark, or title text - none of those are the type
-dropdown's business. A code-context check (`isCalloutTokenInCode`) runs
+dropdown's business; the metadata has a dropdown of its own (below). A code-context check (`isCalloutTokenInCode`) runs
 **last**, deliberately, since it's the only check that reads past the current
 line and by that point the cursor is already known to sit inside a token.
 
@@ -321,6 +324,96 @@ them. The inline placement is synchronous.
 > like an open token to it. While the placement waited for that close, callouts
 > with such ids kept the popover open and left the cursor where the rewrite
 > dropped it, just before `[!`. ASCII-only ids (every built-in) were unaffected.
+
+### Tab and `|` - accepting without finishing
+
+Enter finishes the callout; most people never write metadata, and that stays
+untouched. Two more keys accept the highlighted row, bound on the popover's
+`scope` exactly as Obsidian's own link suggest binds Tab, `#` and `^` (verified
+in its bundled `app.js`): the binding hands the event to the internal
+suggestion list's `useSelectedItem`, so `selectSuggestion` sees `evt.key`
+(`editor/suggestKeys.ts`). `suggestions` is not in `obsidian.d.ts` and is read
+optionally - without it the keys fall through to what they would have done.
+
+| Key | Writes | Cursor |
+| --- | --- | --- |
+| Tab | `[!id]` only - existing metadata, fold mark and title untouched; an unclosed token is closed | before the `]`, after any metadata (`parkCursor`) |
+| `\|` | the same, then a `\|` there; `triggerNow` opens the metadata dropdown | after the new `\|` |
+| `\|` on **Create new**, or on a row whose id does not start with the typed text | nothing but the `\|` - the user is typing a name of their own | after the `\|` |
+
+`parkCursor` sets the cursor at once and re-asserts it after the popover's
+close-and-restore frame, but only while the line is unchanged, so a fast next
+keystroke keeps both its text and its cursor. Neither dropdown sets
+`setInstructions`: the keys are in the user guide, not in a footer. Tab on
+**Create new** lands the way Tab on a row does once the modal returns.
+
+### Metadata suggestions after the pipe
+
+[`CalloutMetadataSuggest`](../../src/editor/CalloutMetadataSuggest.ts) is a second
+`EditorSuggest`. Both read the token through one reader,
+[`calloutTriggerContext.ts`](../../src/editor/calloutTriggerContext.ts), so role
+classification, escapes and the code check cannot disagree. Their claims are
+disjoint by construction - the type dropdown answers up to the end of the id,
+this one past the first `|` and up to the `]` - so Obsidian's manager, which
+asks every suggest in order, only ever finds one. Both are skipped by
+`LinkSuggestDecorator`.
+
+What it offers and what each pick writes is pure
+([`metadataSuggestions.ts`](../../src/editor/metadataSuggestions.ts)):
+
+- **Colours** - saved palettes, Obsidian's and the extras together, filtered on
+  the word, the translated name and the aliases. None for a theme-owned
+  callout.
+- **Order**: each group (the colours, then each source's words) is sorted on
+  its own - a prefix match before a match inside the word, then A→Z by the word
+  written (`textComparator` from `utils/sorting.ts`, built once per call since
+  a theme can bring hundreds of words). Groups are never merged into one A→Z.
+- Matching forgives a name's joints: dashes, underscores and spaces are ignored
+  when comparing, and a *joined reading* takes in up to three words before the
+  cursor when only spaces part them, so `comic re` finds `comic-red`, ranks
+  ahead of every plain match, and the pick (`joinedFrom`) rewrites all of it. A
+  `|` is never read across.
+- **The styling's words**, grouped by source, from `ThemeMetadataCatalog` (the
+  active theme, then enabled snippets - see
+  [18-theme-callout-discovery.md](18-theme-callout-discovery.md#metadata-words)),
+  minus any that could not work at the cursor: `alone` beside other words,
+  `first` anywhere but first, a word guarded to another callout id, a word
+  already present. A word a colour row already writes is not repeated; the
+  colour row says the theme reacts too.
+- Once the metadata names a colour, the styling's words lead and every colour
+  row **replaces** it (`applyMetadataPick` swaps the old word in place and drops
+  the typed one with its separator), so the UI never stacks two colours.
+- **Done** heads the list on an empty word after a separator, so Enter there
+  finishes (dropping the trailing separator) instead of breaking the line inside
+  `[!…]`. **Use "…"** closes it for a word nothing matches exactly.
+- A `spaced` word (one the stylesheet matches with `~=`) turns a `|` touching
+  it into a space - that operator never sees across a pipe. The first `|` is
+  outside the metadata and never touched.
+
+Each row is one line: a colour's word in its accent beside the editor's
+`renderColorCircles` (a third circle for a gradient), a styling word in code
+type. `metadataRowHeadings` puts a sticky heading over each group - **Colors**,
+the theme's name, each snippet's - but only when the visible rows (after the
+50-row cut) come from two groups or more. The headings are siblings of the
+rows inside Obsidian's `.suggestion` list, which only walks the elements it
+created, so arrow keys pass them by. What a row needs (spacing, first/last,
+alone, which colour it replaces, the theme reacting too - and for a colour
+with nothing more pressing, that spaces and `|` both work) is not on the row: a
+line at the bottom of the popup shows it for the highlighted row only, fed by
+the undeclared `onSelectedChange` hook Obsidian's list calls on its owner (by
+key, by hover and on opening). The line is always there, with its top border,
+and stays one line tall when the row needs nothing (`:empty::before` holds a
+zero-width space), so the popup does not jump as the highlight moves onto
+**Done** or a word with no rule. It is our own element, appended
+to the suggestion container, so phones (which hide `.prompt-instructions`)
+show it too.
+
+Tab writes the word and parks in the brackets; the spot is remembered
+(`lastPick`) and passed over until the line or cursor moves, so the very next
+check does not re-offer the word just written. Enter writes it and finishes
+through the same writers and `placeCursorAfterPick` landing as Enter on a type,
+keeping a title and fold mark the user wrote. Like the type dropdown, it closes
+itself before writing (the Admonition note above).
 
 ### `triggerNow` - opening the popup for a programmatically-inserted `[!`
 
@@ -661,8 +754,8 @@ confirming it against the file's own raw heading text
 ### `LinkSuggestDecorator`
 
 Installed on `workspace.onLayoutReady` (so Obsidian's core link suggester
-already exists) and explicitly **excludes this plugin's own autocomplete**
-from the suggesters it wraps, because that one already renders callout
+already exists) and explicitly **excludes this plugin's own two suggests** (the
+type dropdown and the metadata dropdown) from the suggesters it wraps, because that one already renders callout
 suggestions itself and doesn't need cleanup. It cleans the `[[#` heading-link
 popup the same way the Outline pane is cleaned - stripping the raw `[!id]`
 token from the displayed suggestion text.

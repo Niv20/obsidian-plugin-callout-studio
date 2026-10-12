@@ -111,6 +111,8 @@ registry actually holds data) replaces it with a real generated pass.
         accent differently from core; see "The core accent shim" below
 5. generateFallbackCSS(callouts) - styles any data-callout Obsidian rendered that this
                                        plugin does not recognize
+6. generateMetadataColorCSS() - one group per metadata colour word, weakest first;
+                                LAST on purpose (see "Metadata colours" below)
 ```
 
 ### Block title/content alignment
@@ -700,6 +702,72 @@ A user-requested scan may add the theme's declared ids as durable fallback rows.
 Automatic theme appearance inspection updates only ownership and measured artwork.
 Switching themes never adds or removes definitions, writes a retirement list, or
 starts a vault discovery pass. See [theme appearance](18-theme-callout-discovery.md).
+
+## Metadata colours (`[!type|colour]`)
+
+A colour word in a callout's metadata paints that one callout:
+`> [!mark|pink]` is a Bubblegum `mark` while every other `mark` keeps its
+own colour. [`css/metadataColorCSS.ts`](../../src/manager/css/metadataColorCSS.ts)
+emits it; the words, their precedence and the palette-name rule live in
+[`utils/calloutMetadata.ts`](../../src/utils/calloutMetadata.ts) (see
+[12-color-system.md](12-color-system.md#metadata-colour-words)).
+
+**Pure CSS, keyed on the attribute.** Obsidian writes `data-callout-metadata` on
+every block callout and the plugin stamps it on its own heading and inline DOM,
+so nothing runs per element: the colour is there at first paint, and the block
+half travels in the exported snippet (`standalone`), where none of our code runs.
+Only PDF export's baked DOM colours need script, and they read the element's
+own metadata through `definitionWithMetadataColor` (see
+[09-render-roles.md](09-render-roles.md)).
+
+**One rule set per colour, not per callout.** Everything a palette decides -
+accent variables, background tint and its alpha, gradient, content text colour,
+title sweep, fold chevron, the print repaint, the theme-surface relocation - is
+a function of the palette alone. So each word becomes a virtual definition
+(`bakePaletteColors(palette)`) run through the injector's own emitters with a
+selector that names the word instead of an id. `generateMetadataColorCSS` sets
+the ambient weight and importance those emitters read, as `generateCalloutCSS`
+does. The callout's icon, frame and title stay its own.
+
+**Either separator.** A word may sit between spaces (ITS Theme's convention),
+pipes (the Callout Metadata plugin's) or any mix. `~=` covers every whitespace
+boundary; five pipe forms cover the rest, all inside one `:is()` with the `i`
+flag:
+
+```css
+:is([data-callout-metadata~="v" i], [data-callout-metadata^="v|" i],
+    [data-callout-metadata$="|v" i], [data-callout-metadata*="|v|" i],
+    [data-callout-metadata*="|v " i], [data-callout-metadata*=" v|" i])
+```
+
+An alias (`pink` for Bubblegum) folds into its preset's `:is()`.
+
+**Weight.** Every rule is one attribute heavier than the definition rule it
+overrides: `[data-callout]` plus the word's `:is()` stand where the definition
+has its single `[data-callout="id"]`, at the same `.callout` repeat. The light
+rules carry a `:root` scope so they weigh exactly what their `.theme-dark` twins
+do - which is what keeps the fixed precedence true in dark mode, where a weaker
+colour's dark block would otherwise outweigh a stronger colour's unscoped light
+rule. Token rules (heading bar, pill) follow the same pattern without
+`!important`, as the definition's token rules do.
+
+**Precedence is source order.** CSS cannot tell which of two words was written
+last, so two colours resolve by a fixed order instead: the groups are emitted
+weakest first - extra presets, Obsidian's colours, saved palettes (in list
+order) - at one specificity, and the later wins. `resolveMetadataColor` walks
+the same list from the strong end, so print agrees. The `|` dropdown swaps an
+existing colour rather than adding a second, so the order only decides pairs
+typed by hand. Emitting this block after every definition and the fallback is
+part of the same rule.
+
+**Theme-owned callouts are excluded** with one `:not([data-callout=…])` over every
+theme-owned attr id (the same for every colour, so weights stay equal). Unknown
+ids are not excluded: the rule names no id. The standalone export drops the
+`:not()` and the token rules, as `generateCalloutCSS` drops theme-specific blocks.
+
+**Off is nothing.** The hidden `metadataColors.enabled` switch (no UI; `data.json`
+only) makes `activeMetadataColorEntries` return no entries, and the generator
+returns `""` - a test pins the empty string.
 
 ## Unknown-callout fallback: deliberately weak on native Blocks
 

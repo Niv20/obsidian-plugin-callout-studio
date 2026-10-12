@@ -64,9 +64,13 @@ Type `[!` in any of the three positions and a menu of your callouts opens. Choos
 
 If you were only changing the type of a callout that already has a title, the cursor stays at the end of that line instead. This works the same for built-in callouts and for ones you created, whatever their ID.
 
+To add metadata after the ID, press **Tab** instead of **Enter**. The ID is written and the cursor stays before the `]`. Pressing **|** does the same and also opens a menu of colors and of your theme's words.
+
 ## Metadata and callout IDs
 
-Obsidian can attach metadata after a pipe, such as `[!note|purple]`. Callout Studio ignores that metadata when identifying the callout type, so `[!note]`, `[!note|purple]`, and `[!note|green]` all use the same **Note** definition. Heading, Inline, and Block callouts can all carry metadata.
+Obsidian can attach metadata after a pipe, such as `[!note|purple]`. The metadata never changes the callout type, so `[!note]`, `[!note|purple]`, and `[!note|green]` all use the same **Note** definition. Heading, Inline, and Block callouts can all carry metadata.
+
+A color in the metadata paints that one callout: `[!note|purple]` is a purple Note, and every other Note keeps its color. See [Callout metadata](18-callout-metadata.md).
 
 All three formats render in Live Preview, Reading view, and PDF exports.
 

@@ -292,6 +292,8 @@ const STICKY_LAYERS: Record<string, string> = {
 		"the quick-insert window's search + source filter, inside .modal-content",
 	".cs-combobox-group-label":
 		"a dropdown's group heading, inside the .cs-combobox-menu scrollport and bounded by its group",
+	".cs-meta-suggestion-heading":
+		"the metadata autocomplete's group heading, a sibling of the rows inside Obsidian's .suggestion scrollport",
 ".callout-studio-settings .cs-sticky-heading.setting-item":
 		"the three callout-list section headings, inside .vertical-tab-content — " +
 		"the settings tab is its own scroller, and the plugin renders straight into it",
@@ -449,6 +451,14 @@ describe("sticky layers", () => {
 			`the sticky band inherits its paint, so ${wrapper.selector} has to carry it down ` +
 				`from the pane (styles.css:${wrapper.line})`,
 		);
+	});
+
+	it("the metadata autocomplete's heading has a painted list to inherit from", () => {
+		// Same chain, one level shorter: the heading sits straight in
+		// Obsidian's `.suggestion` list, which is unpainted — the popup around
+		// it is — so the list has to carry the popup's paint down.
+		assert.strictEqual(paintOf(ruleFor(".cs-meta-suggestion-heading")), "inherit");
+		assert.strictEqual(paintOf(ruleFor(".suggestion.cs-meta-suggestion-list")), "inherit");
 	});
 
 	it("nothing between the band and the scroller makes a new scrollport", () => {

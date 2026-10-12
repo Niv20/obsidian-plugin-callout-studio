@@ -101,9 +101,15 @@ jobs:
             # backups and sync copies by content, storage-location markers,
             # relative dates, automatic reason names and per-device reason
             # labels beside the backups, plus the translated interface copy.
+            # Raised by 20 KiB for colours from callout metadata
+            # (`[!mark|pink]`): the colour rules keyed on the metadata word,
+            # the dropdown after `|` with Tab and `|` in the type dropdown,
+            # the scan of a theme's own metadata words, and carrying a renamed
+            # palette's notes along — 20.2 KB, which leaves the headroom about
+            # where it was.
             - name: Check bundle size
               run: |
-                  limit=2250752  # 2 MiB + 150 KiB
+                  limit=2271232  # 2 MiB + 170 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

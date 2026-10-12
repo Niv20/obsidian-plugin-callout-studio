@@ -278,6 +278,14 @@ colour the palette never had.
   replaces it under the vault's id and repaints the callouts linked to it, so a
   name never ends up on two palettes. See
   [Import and export](15-import-export.md#settings-import-restore-the-groups-the-file-carries-three-lists-merge-by-id).
+- **Renaming** changes the palette's metadata word (see
+  [Metadata colour words](#metadata-colour-words)). When the word it answered
+  to before is used in notes, `offerMetadataRename`
+  (`settings/sections/paletteMetadataRename.ts`) counts the uses
+  (`countMetadataWordUsages`) and offers to rewrite them
+  (`replaceMetadataWordInVault`, with the shared note-rewrite Undo). Only the
+  word changes. Deleting never rewrites notes; its confirmation says that
+  callouts naming the palette go back to their own colour.
 - **Consolidation on load**: `consolidateDuplicatePalettes()` merges any two
   saved palettes with identical colours (by the same equality test the
   editor's dropdown and the paletteId-adoption migration use), relinking
@@ -319,6 +327,44 @@ appearing as an unmatched "Deleted color."
 > user-saved custom palette** created from the palette editor's "None"
 > background style, which is the one place the user can find and re-select it
 > later.
+
+## Metadata colour words
+
+`[!mark|pink]` paints one callout with a palette; `utils/calloutMetadata.ts`
+decides which words name which palette.
+
+- **Words.** Any run of whitespace and/or `|` separates two words
+  (`metadataWords`), so `pink wide`, `pink|wide` and ` pink | wide ` are the same
+  two words. A comma is not a separator. Comparison folds **ASCII** case only
+  (`foldMetadataCase`), because that is all the stylesheet's `i` flag folds - a
+  wider fold would let PDF export colour a callout the screen leaves alone.
+- **Built-ins** answer to their preset **id**, never their translated name, so a
+  note means the same thing in every interface language: Obsidian's nine
+  (`blue` … `gray`) and the seven extras (`coral` … `bubblegum`). `legacyIds`
+  (`note`, `tip`, …) are not colour words - themes such as flexcyon use `info`
+  and `warning` as metadata of their own.
+- **Aliases** (`METADATA_COLOR_ALIASES`) cover Obsidian's own colour names that
+  have no preset: `purple` → Violet (exact - Violet carries Obsidian's purple
+  hexes), `pink` → Bubblegum, `yellow` → Amber, `grey` → Gray. Accepted when
+  typed; the dropdown writes the preset id.
+- **Saved palettes** answer to `paletteMetadataKey(name)`: NFKC, lowercase,
+  whitespace/`_`/`|` → `-`, anything but letters, marks, digits and `-` dropped,
+  dash runs collapsed. Every script survives (`ורוד בהיר` → `ורוד-בהיר`); a name
+  with no usable character has no word. The key is derived, never stored, so
+  nothing new is persisted or synced - which is why a rename has to offer the
+  note rewrite above.
+- **Who owns a word** (`metadataColorEntries`): weakest first, extra presets <
+  Obsidian's colours < saved palettes in list order. A stronger entry takes a
+  word from a weaker one - a palette named "Pink" takes the alias, one named
+  "Blue" (possible under a non-English interface) takes the preset. The palette
+  editor refuses a second saved palette with the same word, so a palette-palette
+  tie only comes from older or imported data, where the later one wins.
+- **Two colours in one callout** resolve by that same order, not by position,
+  because the stylesheet can only order rules - see
+  [Metadata colours](06-css-generation.md#metadata-colours-typecolour).
+
+Any other word is left alone: it may be a theme's (`wide`, `c-red`), another
+plugin's (`50`, `shadow`) or a typo.
 
 ## Accent dialect: version drift **and** theme drift
 

@@ -51,6 +51,16 @@ on every token span the **whole** `[!…]` bracket including the metadata, which
 is why nothing may derive a token's length from `rawId` alone; a rewriter that
 tried would corrupt offsets on any token carrying `|metadata`.
 
+The heading and inline DOM stamp that metadata as `data-callout-metadata`
+(omitted when empty), exactly as Obsidian does on a block callout. It is not
+decoration: the metadata colour rules (`css/metadataColorCSS.ts`) select on it
+for all three roles, and themes hook it the same way. Ref tokens never carry
+it, so an Outline or link icon keeps the callout's own colour. The two paths
+that bake a colour into the DOM for PDF export - the regular icon in
+`CSSInjector.paintIcon` and the per-letter title colours of
+`applyTitleGradient` - read the element's own metadata through
+`definitionWithMetadataColor`, so print matches the screen.
+
 ### The `{…}` content payload (inline pills only)
 
 `[!warning]{be careful}` renders the braces' content as the pill's label,

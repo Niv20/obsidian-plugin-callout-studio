@@ -38,6 +38,7 @@ import { createStickySection } from "./stickySection";
 import { focusFirstRevealed, renderPagedList } from "./listPaging";
 import type { PagingState } from "./listPaging";
 import { headingWithCount } from "../../ui/headingCount";
+import { offerMetadataRename, ownedMetadataKey } from "./paletteMetadataRename";
 
 export function renderCustomPalettesSection(
 	ctx: SettingsSectionContext,
@@ -107,6 +108,8 @@ export function renderCustomPalettesSection(
 			takenColors: othersExcept(palette.id),
 		}).openAndWait();
 		if (!result) return;
+		// Read before the edit lands: the word the notes know this palette by.
+		const oldMetadataKey = ownedMetadataKey(ctx.plugin.settings.customPalettes, palette.id);
 		Object.assign(palette, result);
 		// Object.assign never removes keys: when the edit switched the palette
 		// to another background style, the absent bgGradient must still clear
@@ -132,6 +135,13 @@ export function renderCustomPalettesSection(
 		);
 		await ctx.plugin.saveSettings();
 		renderList();
+		// A new name is a new metadata word; offer to carry the notes along.
+		await offerMetadataRename(
+			ctx.app,
+			oldMetadataKey,
+			ctx.plugin.settings.customPalettes,
+			palette.id,
+		);
 	};
 
 	const deletePalette = async (palette: CustomPalette): Promise<void> => {
@@ -139,7 +149,7 @@ export function renderCustomPalettesSection(
 		// is the link, so the count is the honest thing to put in front of the
 		// user before they confirm.
 		const linked = ctx.plugin.registry.countPaletteLinks(palette.id);
-		const message =
+		const base =
 			linked === 0 ? t("settings.deletePaletteConfirm", { name: palette.name })
 			: linked === 1 ?
 				t("settings.deletePaletteConfirmLinkedOne", { name: palette.name })
@@ -147,6 +157,12 @@ export function renderCustomPalettesSection(
 					name: palette.name,
 					count: linked,
 				});
+		// What happens to `[!type|its-word]` in notes: nothing, by design —
+		// those callouts just stop taking its colour. Said, so it is no surprise.
+		const key = ownedMetadataKey(ctx.plugin.settings.customPalettes, palette.id);
+		const message = key
+			? `${base}\n${t("settings.deletePaletteMetadataNote", { key })}`
+			: base;
 		const ok = await new ConfirmModal(
 			ctx.app,
 			t("confirm.titleDeletePalette"),

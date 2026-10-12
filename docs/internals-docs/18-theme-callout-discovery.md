@@ -167,6 +167,7 @@ Confirmed against the scanner itself; every row here is behaviour, not intent.
 | `[data-callout="x"] { }` | **claimed** - an empty rule body still names the id |
 | `body.some-style-settings-class [data-callout="y"]` | **claimed**, whether or not that class is currently on `<body>` |
 | Anything inside a `/* … */` comment | not claimed |
+| A string a raw newline cuts short (Blue Topaz's `content: '\A\9\9'';`) | ends at the newline, as in the browser (`skipString`) - before, it swallowed the rest of the theme and no later rule was read |
 | Native CSS nesting - a rule that names an id **and** nests child rules | read as its flat equivalent: the parent's own declarations are its claim, and each nested rule is resolved against it (`&`, or the implied descendant) |
 | A nested `@media` / `@supports` inside a style rule | its declarations belong to the rule around it, exactly as the browser reads them |
 
@@ -347,6 +348,36 @@ exercised by the suites.
 
 Both answers are memoised on `stylingSignature`, because parsing ITS Theme is
 ~850 KB of text.
+
+### Metadata words
+
+A fourth question has its own scanner, because it reads a different attribute:
+*which `[!type|word]` words does the styling react to?* The `|` dropdown offers
+them (see [10-editor-integrations.md](10-editor-integrations.md#metadata-suggestions-after-the-pipe)).
+[`themeMetadataScan.ts`](../../src/manager/theme/themeMetadataScan.ts) reads every
+`[data-callout-metadata<op>=word]` in the theme and the enabled snippets, through
+the same `cssBlocks` walk; [`ThemeMetadataCatalog.ts`](../../src/manager/theme/ThemeMetadataCatalog.ts)
+caches the result per `stylingSignature`, labelled with the theme's or the
+snippet's name.
+
+The operator is the point - it decides where the word may stand:
+
+| Operator | Placement | Example |
+| --- | --- | --- |
+| `*=` | `anywhere`, either separator | flexcyon, Blue Topaz, Notation 2 |
+| `~=` | `spaced` - a `\|` hides it | ITS Theme, Dune, Ribbons, Sanctum |
+| `^=` / `$=` | `first` / `last` | Blue Topaz's `noicon`, Faded's `large` |
+| `=` / `\|=` | `alone` | MagicUser, Ebullientworks |
+
+A word matched several ways takes the most forgiving placement. A
+`[data-callout…]` condition at the **top level of the same compound** guards the
+word to that callout (ITS Theme's `friend` only on `[!kith]`); one inside
+`:is()` is an alternative, not a requirement (Blue Topaz's
+`:is([data-callout-metadata*=indent], [data-callout*=indent])`), and one on an
+ancestor guards nothing. Family fragments (`bg-`, `-large`), empties and words
+with whitespace are dropped; opt-outs named inside `:not()` are kept, and the
+spelling is kept exactly, since no installed theme uses the `i` flag on
+metadata.
 
 ## Stage 3 - Ownership
 
