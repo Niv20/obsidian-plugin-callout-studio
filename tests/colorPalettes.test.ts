@@ -130,7 +130,7 @@ describe("the preset list — groups, and every id ever saved", () => {
 		);
 		assert.deepEqual(
 			getExtraPalettes().map((p) => p.id),
-			["crimson", "coral", "amber", "yellow", "lime", "teal", "brown", "grape", "plum", "pink"],
+			["crimson", "coral", "yellow", "teal", "brown", "grape", "plum", "pink"],
 		);
 	});
 
@@ -154,6 +154,8 @@ describe("the preset list — groups, and every id ever saved", () => {
 		quote: "gray",
 		// Hue names that later took Obsidian's own word for the colour.
 		violet: "purple", bubblegum: "pink",
+		// Retired as too close to Yellow; their callouts were repainted onto it.
+		amber: "yellow", lime: "yellow",
 	};
 	for (const [saved, now] of Object.entries(SAVED_ONCE)) {
 		it(`a callout saved on "${saved}" resolves to ${now}`, () => {

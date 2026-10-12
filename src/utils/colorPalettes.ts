@@ -192,8 +192,10 @@ export function getObsidianPalettes(): ColorPalette[] {
  * entries. They keep their Material values (and their role `legacyIds`) here.
  *
  * Yellow is Obsidian's `--color-yellow`, a colour Obsidian has but no callout
- * of its uses; Amber beside it is the warmer Material hue it always was. Pink
- * was called Bubblegum until it took the plain word, hence its `legacyIds`.
+ * of its uses. It absorbed Amber and Lime, which sat too close to it to earn
+ * their own rows — their callouts were repainted onto it (see
+ * `utils/retiredPresets.ts`), and their ids stay in its `legacyIds`. Pink was
+ * called Bubblegum until it took the plain word, hence its `legacyIds`.
  *
  * Same function-not-const shape as `getObsidianPalettes` and for the same
  * reason: names are localized, so they must be resolved at call time.
@@ -211,9 +213,16 @@ export function getExtraPalettes(): ColorPalette[] {
 			["danger"],
 		),
 		makePalette("coral", t("colorName.coral"), "preset", "#ff5722", "#ff8a65"),
-		makePalette("amber", t("colorName.amber"), "preset", "#ff8f00", "#ffd54f"),
-		makePalette("yellow", t("colorName.yellow"), "preset", "#e0ac00", "#e0de71"),
-		makePalette("lime", t("colorName.lime"), "preset", "#afb42b", "#dce775"),
+		makePalette(
+			"yellow",
+			t("colorName.yellow"),
+			"preset",
+			"#e0ac00",
+			"#e0de71",
+			undefined,
+			undefined,
+			["amber", "lime"],
+		),
 		makePalette(
 			"teal",
 			t("colorName.teal"),

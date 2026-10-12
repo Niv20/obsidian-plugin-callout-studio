@@ -1,6 +1,7 @@
 import type { CalloutDefinition } from "../types";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import { calloutIdentity } from "./calloutId";
+import { movedOffRetiredPreset } from "./retiredPresets";
 
 /** Restore a validated backup row, preserving spellings still used in notes. */
 export function applyImportedCallout(registry: CalloutRegistry, def: CalloutDefinition): boolean {
@@ -13,8 +14,11 @@ export function addImportedCallout(registry: CalloutRegistry, def: CalloutDefini
 }
 
 function writeImportedCallout(
-	registry: CalloutRegistry, def: CalloutDefinition, overwrite: boolean,
+	registry: CalloutRegistry, imported: CalloutDefinition, overwrite: boolean,
 ): boolean {
+	// An old backup can still wear a retired preset (Amber, Lime); land it on
+	// the successor now, exactly as a load would, instead of at next launch.
+	const def = movedOffRetiredPreset(imported, registry.settings.customPalettes) ?? imported;
 	const existing = registry.getReal(def.id);
 	// Check the entire replacement before removing local placeholders. Alias
 	// and dash/space collisions count too; saved definitions still win.

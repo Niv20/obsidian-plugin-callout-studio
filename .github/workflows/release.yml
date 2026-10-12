@@ -107,9 +107,12 @@ jobs:
             # the scan of a theme's own metadata words, and carrying a renamed
             # palette's notes along — 20.2 KB, which leaves the headroom about
             # where it was.
+            # Raised by 2 KiB for folding Amber and Lime into Yellow: the
+            # migration that repaints callouts still wearing a retired preset,
+            # on load and on import — 1.4 KB.
             - name: Check bundle size
               run: |
-                  limit=2271232  # 2 MiB + 170 KiB
+                  limit=2273280  # 2 MiB + 172 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

@@ -29,7 +29,7 @@ The callout takes the whole color: accent, background, gradient and text color, 
 | Words | What they are |
 | --- | --- |
 | `blue`, `cyan`, `green`, `orange`, `red`, `purple`, `gray` | The colors of Obsidian's own callouts, under **Obsidian callouts** in the color menu |
-| `crimson`, `coral`, `amber`, `yellow`, `lime`, `teal`, `brown`, `grape`, `plum`, `pink` | Callout Studio's other colors, under **Color presets** |
+| `crimson`, `coral`, `yellow`, `teal`, `brown`, `grape`, `plum`, `pink` | Callout Studio's other colors, under **Color presets** |
 | `grey` | Another spelling of `gray` |
 | Your saved palettes | Their name in lowercase, with dashes for spaces |
 

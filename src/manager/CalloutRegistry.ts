@@ -63,6 +63,7 @@ import {
 	resolveCalloutManagerColors,
 } from "../utils/colorPalettes";
 import { bgGradientsEqual, derivedBgAmount } from "../utils/colorUtils";
+import { movedOffRetiredPreset } from "../utils/retiredPresets";
 import { notifyListeners } from "./listenerList";
 import { reconcileSavedRow } from "./savedCalloutRows";
 import { mergeSavedSettings } from "../utils/settingsMerge";
@@ -288,6 +289,16 @@ export class CalloutRegistry {
 		// every launch. The flag is raised here rather than inside the pass
 		// because the settings caller (CustomPalettesSection) saves for itself.
 		if (this.adoptOrphansMatchingPalettes() > 0) {
+			this.pendingLoadMigrationSave = true;
+		}
+		// Migration: a callout on a retired preset (Amber, Lime) moves onto its
+		// successor (Yellow). After the adoption pass, so a callout the user's own
+		// identical palette just claimed stays theirs; before the background
+		// drop, which has to judge the moved accent. See utils/retiredPresets.
+		for (const def of Array.from(this.callouts.values())) {
+			const moved = movedOffRetiredPreset(def, this.settings.customPalettes);
+			if (!moved) continue;
+			this.setCallout(def.id, moved);
 			this.pendingLoadMigrationSave = true;
 		}
 		this.dropDerivedBackgrounds();
