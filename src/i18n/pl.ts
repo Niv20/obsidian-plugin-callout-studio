@@ -16,6 +16,16 @@ export const pl: Record<string, string> = {
 	"cmd.openQuickInsert": "Szybkie wstawianie callout blokowego",
 
 	"autocomplete.createNew": 'Utwórz "{{name}}"',
+	"metadataSuggest.finish": "Gotowe",
+	"metadataSuggest.colors": "Kolory",
+	"metadataSuggest.useTyped": 'Użyj "{{text}}"',
+	"metadataSuggest.replaces": "Zastępuje {{word}}",
+	"metadataSuggest.themeAlso": "Twój motyw również stylizuje to słowo",
+	"metadataSuggest.needsSpace": "Oddziel spacjami, nie znakiem |",
+	"metadataSuggest.anySeparator": "Oddziel spacjami lub znakiem |",
+	"metadataSuggest.mustBeFirst": "Działa tylko jako pierwsze słowo",
+	"metadataSuggest.mustBeLast": "Działa tylko jako ostatnie słowo",
+	"metadataSuggest.alone": "Działa tylko samodzielnie",
 
 	"calloutPicker.noMatches": "Nie znaleziono calloutów pasujących do „{{query}}”.",
 	"calloutPicker.placeholder": "Szukaj callout",
@@ -164,6 +174,10 @@ export const pl: Record<string, string> = {
 	"settings.deletePaletteAria": "Usuń paletę {{name}}",
 	"settings.deletePaletteConfirm":
 		'Usunąć paletę "{{name}}"?\nCallouty korzystające z jej kolorów nie zostaną zmienione.',
+	"settings.deletePaletteMetadataNote":
+		'Calloutów, które wymieniają ją w metadanych ("{{key}}"), wracają do własnego koloru. Twoje notatki nie zmieniają się.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Calloutów, które wymieniają ją w metadanych ("{{key}}"), zamiast tego przyjmują wbudowany kolor o tej nazwie. Twoje notatki nie zmieniają się.',
 
 	"settings.customCommands": "Polecenia i skróty klawiszowe",
 	"settings.customCommandsDesc":
@@ -367,6 +381,18 @@ export const pl: Record<string, string> = {
 	"palette.namePlaceholder": "Moja paleta",
 	"palette.nameExists": "Paleta o tej nazwie już istnieje",
 	"palette.saveBlockedName": "Paleta o tej nazwie już istnieje. Wybierz inną nazwę, aby ją zapisać.",
+	"palette.metadataName": "W metadanych calloutu: {{key}}",
+	"palette.metadataNameExists":
+		'Inna paleta jest już zapisana jako "{{key}}" w metadanych calloutu. Wybierz inną nazwę.',
+	"palette.metadataNameShared":
+		"W metadanych calloutu: {{key}}. Inna zapisana paleta też ma to słowo, więc odpowiada na nie tylko jedna z nich.",
+	"palette.renameNotesTitle": "Zaktualizować notatki?",
+	"palette.renameNotesBody":
+		'{{count}} calloutów w {{files}} notatkach używa tej palety jako "{{old}}".\nZmienić je na "{{new}}"?\nJeśli nie, wrócą do własnego koloru.',
+	"palette.renameNotesConfirm": "Zaktualizuj notatki",
+	"palette.renameNotesSkip": "Zostaw",
+	"palette.renameNotesFailed":
+		"Nie udało się zaktualizować niektórych notatek. Zaktualizowane zostały zapisane; pozostałe nadal używają starej nazwy.",
 	"palette.baseColor": "Kolor bazowy",
 	"palette.baseColorHint":
 		"Automatycznie dopasujemy do niego kolor tła. Jeśli chcesz, możesz kontrolować go osobno, {{link}}.",
@@ -415,7 +441,6 @@ export const pl: Record<string, string> = {
 	"colorName.coral": "Koralowy",
 	"colorName.grape": "Winogronowy",
 	"colorName.plum": "Śliwkowy",
-	"colorName.bubblegum": "Guma balonowa",
 
 	"iconPicker.pickIcon": "Wybierz ikonę",
 	"iconPicker.confirm": "Potwierdź",

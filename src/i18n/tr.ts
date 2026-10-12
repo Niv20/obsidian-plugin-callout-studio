@@ -68,6 +68,16 @@ export const tr: Record<string, string> = {
 	"cmd.openQuickInsert": "Blok callout'u hızlı ekle",
 
 	"autocomplete.createNew": 'Oluştur "{{name}}"',
+	"metadataSuggest.finish": "Bitti",
+	"metadataSuggest.colors": "Renkler",
+	"metadataSuggest.useTyped": '"{{text}}" kullan',
+	"metadataSuggest.replaces": "{{word}} yerine geçer",
+	"metadataSuggest.themeAlso": "Temanız da bu kelimeyi biçimlendiriyor",
+	"metadataSuggest.needsSpace": "Boşlukla ayırın, | ile değil",
+	"metadataSuggest.anySeparator": "Boşlukla veya | ile ayırın",
+	"metadataSuggest.mustBeFirst": "Yalnızca ilk kelime olarak çalışır",
+	"metadataSuggest.mustBeLast": "Yalnızca son kelime olarak çalışır",
+	"metadataSuggest.alone": "Yalnızca tek başına çalışır",
 
 	"calloutPicker.noMatches": "“{{query}}” ile eşleşen callout bulunamadı.",
 	"calloutPicker.placeholder": "Callout ara",
@@ -216,6 +226,10 @@ export const tr: Record<string, string> = {
 	"settings.deletePaletteAria": "{{name}} paletini sil",
 	"settings.deletePaletteConfirm":
 		'"{{name}}" paletini sil?\nBu renkleri kullanan callout öğeleri etkilenmez.',
+	"settings.deletePaletteMetadataNote":
+		"Üst verilerinde (\"{{key}}\") bu adı belirten callout'lar kendi renklerine döner. Notlarınız değişmez.",
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		"Üst verilerinde (\"{{key}}\") bu adı belirten callout'lar bunun yerine o adın yerleşik rengini alır. Notlarınız değişmez.",
 
 	"settings.customCommands": "Komutlar ve kısayol tuşları",
 	"settings.customCommandsDesc":
@@ -416,6 +430,18 @@ export const tr: Record<string, string> = {
 	"palette.namePlaceholder": "Paletim",
 	"palette.nameExists": "Bu adla bir palet zaten var",
 	"palette.saveBlockedName": "Bu adla bir palet zaten var. Kaydetmek için farklı bir ad seçin.",
+	"palette.metadataName": "Callout üst verisinde: {{key}}",
+	"palette.metadataNameExists":
+		'Başka bir palet callout üst verisinde zaten "{{key}}" olarak yazılmış. Farklı bir ad seçin.',
+	"palette.metadataNameShared":
+		"Callout üst verisinde: {{key}}. Kayıtlı başka bir palette de bu kelime var, bu yüzden yalnızca biri buna yanıt verir.",
+	"palette.renameNotesTitle": "Notlarınız güncellensin mi?",
+	"palette.renameNotesBody":
+		'{{files}} nottaki {{count}} callout bu paleti "{{old}}" olarak kullanıyor.\n"{{new}}" olarak değiştirilsin mi?\nDeğiştirmezseniz kendi renklerine dönerler.',
+	"palette.renameNotesConfirm": "Notları güncelle",
+	"palette.renameNotesSkip": "Olduğu gibi bırak",
+	"palette.renameNotesFailed":
+		"Bazı notlar güncellenemedi. Güncellenenler kaydedildi; geri kalanı hâlâ eski adı kullanıyor.",
 	"palette.baseColor": "Temel renk",
 	"palette.baseColorHint":
 		"Arka plan rengini otomatik olarak buna uyduracağız. İsterseniz {{link}} ile ayrı olarak kontrol edebilirsiniz.",
@@ -453,7 +479,7 @@ export const tr: Record<string, string> = {
 	"colorName.sky": "Gök mavisi",
 	"colorName.blue": "Mavi",
 	"colorName.indigo": "Çivit mavisi",
-	"colorName.violet": "Eflatun",
+	"colorName.violet": "Mor",
 	"colorName.purple": "Mor",
 	"colorName.pink": "Pembe",
 	"colorName.rose": "Gül kurusu",
@@ -465,7 +491,6 @@ export const tr: Record<string, string> = {
 	"colorName.coral": "Mercan",
 	"colorName.grape": "Üzüm",
 	"colorName.plum": "Erik",
-	"colorName.bubblegum": "Sakız",
 
 	"iconPicker.pickIcon": "Simge seç",
 	"iconPicker.confirm": "Onayla",

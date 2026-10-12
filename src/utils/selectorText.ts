@@ -15,16 +15,33 @@
  * development vault, and each was a real mis-read before this module existed.
  */
 
-/** Index just past the quote closing the string opened at `start`. */
+/**
+ * Index just past the quote closing the string opened at `start` — or, for a
+ * string a raw newline cuts short, the index of that newline.
+ *
+ * The newline rule is the CSS tokenizer's own (CSS Syntax §4.3.5: an unescaped
+ * newline ends a string as a bad-string token and is reconsumed), and it is the
+ * one that matters for whole stylesheets, which this also scans through
+ * `cssBlocks`. Blue Topaz ships `content: '\A\9\9'';` — one quote too many —
+ * and a browser drops just that declaration, while a string read to the next
+ * quote of the same kind swallowed the following 4 KB of the theme and
+ * unbalanced every brace after it: the scan never reached the theme's last
+ * sixth, where its callout-metadata rules live. An escaped newline (`\` then newline) is a
+ * line continuation, which the escape branch steps over — CRLF as one newline,
+ * as CSS's input preprocessing reads it, or a theme saved on Windows would end
+ * the string at the LF a continuation was meant to swallow.
+ */
 export function skipString(sel: string, start: number): number {
 	const quote = sel[start];
 	let i = start + 1;
 	while (i < sel.length) {
-		if (sel[i] === "\\") {
-			i += 2;
+		const ch = sel[i];
+		if (ch === "\\") {
+			i += sel[i + 1] === "\r" && sel[i + 2] === "\n" ? 3 : 2;
 			continue;
 		}
-		if (sel[i] === quote) return i + 1;
+		if (ch === quote) return i + 1;
+		if (ch === "\n" || ch === "\r" || ch === "\f") return i;
 		i++;
 	}
 	return sel.length;

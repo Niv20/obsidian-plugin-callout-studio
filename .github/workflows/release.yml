@@ -101,9 +101,23 @@ jobs:
             # backups and sync copies by content, storage-location markers,
             # relative dates, automatic reason names and per-device reason
             # labels beside the backups, plus the translated interface copy.
+            # Raised by 20 KiB for colours from callout metadata
+            # (`[!mark|pink]`): the colour rules keyed on the metadata word,
+            # the dropdown after `|` with Tab and `|` in the type dropdown,
+            # the scan of a theme's own metadata words, and carrying a renamed
+            # palette's notes along — 20.2 KB, which leaves the headroom about
+            # where it was.
+            # Raised by 4 KiB for retiring Amber, Lime and Crimson from the
+            # menu without repainting anybody's callouts (the presets they
+            # still resolve to), and for the fixes that made metadata colours
+            # safe on upgrade: Tab and `|` that never rewrite the `]`, colours
+            # that clear a callout's own gradient and title sweep, the nested
+            # metadata stylesheet, leaving a word to the user's own snippet,
+            # and the palette-word and rename guards — 2.2 KB over the build
+            # before them, which leaves the headroom about where it was.
             - name: Check bundle size
               run: |
-                  limit=2250752  # 2 MiB + 150 KiB
+                  limit=2275328  # 2 MiB + 174 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

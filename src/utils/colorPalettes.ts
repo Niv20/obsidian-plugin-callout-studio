@@ -22,11 +22,14 @@ export interface ColorPalette {
 	id: string;
 	name: string;
 	/**
-	 * Ids this preset was saved under before it was renamed (e.g. the old
-	 * callout-name-based id "note" for what is now "blue"). Checked before
-	 * hex-matching so a callout saved under the old id still resolves to
-	 * this preset by name instead of falling through as an unmatched/
-	 * "deleted" color — see CalloutEditor.ts's palette-dropdown lookup.
+	 * Ids this preset was saved under before it was renamed (the old
+	 * callout-name-based id "note" for what is now "blue", the old hue name
+	 * "violet" for what is now "purple"). Checked before hex-matching so a
+	 * callout saved under the old id still resolves to this preset by name
+	 * instead of falling through as an unmatched/"deleted" color — see
+	 * {@link findPresetByPaletteId} and CalloutEditor.ts's dropdown lookup.
+	 * Never metadata words: themes use some of them (`info`, `warning`) as
+	 * metadata of their own.
 	 */
 	legacyIds?: string[];
 	/** Group label for the dropdown */
@@ -90,20 +93,30 @@ function makePalette(
  */
 
 /**
- * Palettes derived from Obsidian's built-in callout types, named for the hue
- * itself rather than the callout role it happens to match (so the same
- * dropdown entry reads sensibly for a `[!bug]` as for a `[!failure]`).
+ * The colours Obsidian's own callouts are painted in, under Obsidian's own
+ * hexes per theme — picking "Blue" gives the blue Obsidian would have given.
+ * Named for the hue rather than the callout role it happens to match, so the
+ * same dropdown entry reads sensibly for a `[!bug]` as for a `[!failure]`.
  *
- * The six that mirror a built-in carry Obsidian's own hexes, per theme —
- * picking "Blue" gives the blue Obsidian would have given. `teal` and `crimson`
- * keep their Material values on purpose: Obsidian collapses tip onto the same
- * cyan as abstract and danger onto the same red as failure, so following it
- * exactly would leave two pairs of identical entries in the dropdown. They stay
- * as the near-hues they always were, and the dropdown keeps its variety.
- * `legacyIds` carries the old callout-name-based id each preset used to be
- * saved under, so a callout picked before this rename still resolves to the
- * right preset (see the palette-dropdown lookup in CalloutEditor.ts) instead
+ * This group is exactly that set and nothing else: Obsidian paints its
+ * callouts in red, orange, green, cyan, blue and purple (`--color-*`), plus
+ * the quote's fixed gray. Anything that is not one of them — Teal included,
+ * which carries a Material value — lives in {@link getExtraPalettes}.
+ *
+ * `legacyIds` carries every id a preset was saved under before it was renamed:
+ * first the callout role each was named after (`note`, `example`, …), and for
+ * Purple also `violet`, its hue name until it took Obsidian's own word for the
+ * colour. A callout's `paletteId` keeps whatever id it was saved with, so
+ * every reader resolves through {@link findPresetByPaletteId} (or checks
+ * `legacyIds` the same way) and an old callout still finds its preset instead
  * of appearing as an unmatched/"deleted" color.
+ *
+ * Purple's label is `colorName.violet`, not `colorName.purple`: that pair are
+ * also the hue anchors `suggestColorName` names colours by, and `purple` is the
+ * magenta anchor (#9c27b0) — translated as "ארגמן", "Pourpre", "Пурпурный" in
+ * the languages that tell the two apart. `violet` is the anchor this colour
+ * actually sits on, so its translations already name it; only its English
+ * reads "Purple", Obsidian's own word.
  *
  * Built as a function (not a top-level const) so preset names are resolved
  * through `t()` at call time — the dropdown is rebuilt on every open, so this
@@ -121,16 +134,6 @@ export function getObsidianPalettes(): ColorPalette[] {
 			undefined,
 			undefined,
 			["abstract"],
-		),
-		makePalette(
-			"teal",
-			t("colorName.teal"),
-			"obsidian",
-			"#00bfa5",
-			"#00bfa5",
-			undefined,
-			undefined,
-			["tip"],
 		),
 		makePalette(
 			"green",
@@ -163,24 +166,14 @@ export function getObsidianPalettes(): ColorPalette[] {
 			["failure"],
 		),
 		makePalette(
-			"crimson",
-			t("colorName.crimson"),
-			"obsidian",
-			"#ff1744",
-			"#ff1744",
-			undefined,
-			undefined,
-			["danger"],
-		),
-		makePalette(
-			"violet",
+			"purple",
 			t("colorName.violet"),
 			"obsidian",
 			"#7852ee",
 			"#a882ff",
 			undefined,
 			undefined,
-			["example"],
+			["example", "violet"],
 		),
 		makePalette(
 			"gray",
@@ -196,10 +189,22 @@ export function getObsidianPalettes(): ColorPalette[] {
 }
 
 /**
- * Additional curated color presets. Deliberately kept to hues Obsidian's
- * built-in callouts don't already cover (chartreuse, brown, and the
- * warm/purple/pink family) so the presets add variety instead of duplicating
- * note-blue, tip-teal, success-green, failure-red or quote-gray.
+ * Callout Studio's own presets: every colour that is not one Obsidian paints
+ * its callouts in.
+ *
+ * Teal was once listed with Obsidian's colours, standing in for `tip`, but it
+ * never carried Obsidian's hex — Obsidian paints tip in the same cyan as
+ * abstract, so following it exactly would have listed Cyan twice. It keeps its
+ * Material value (and its role `legacyIds`) here.
+ *
+ * Sky and Indigo fill the two gaps in the hue wheel, either side of Blue. Their
+ * hexes were chosen by measured distance (CIEDE2000) to every other entry, so
+ * neither one is among the list's closest pairs in either theme.
+ *
+ * Yellow is Obsidian's `--color-yellow`, a colour Obsidian has but no callout
+ * of its uses. It took the place of Amber and Lime in the menu — see
+ * {@link getRetiredPalettes} for what became of those two. Pink was called
+ * Bubblegum until it took the plain word, hence its `legacyIds`.
  *
  * Same function-not-const shape as `getObsidianPalettes` and for the same
  * reason: names are localized, so they must be resolved at call time.
@@ -207,24 +212,94 @@ export function getObsidianPalettes(): ColorPalette[] {
 export function getExtraPalettes(): ColorPalette[] {
 	return [
 		makePalette("coral", t("colorName.coral"), "preset", "#ff5722", "#ff8a65"),
-		makePalette("amber", t("colorName.amber"), "preset", "#ff8f00", "#ffd54f"),
-		makePalette("lime", t("colorName.lime"), "preset", "#afb42b", "#dce775"),
-		makePalette("brown", t("colorName.brown"), "preset", "#795548", "#a1887f"),
+		makePalette(
+			"yellow",
+			t("colorName.yellow"),
+			"preset",
+			"#e0ac00",
+			"#e0de71",
+		),
+		makePalette(
+			"teal",
+			t("colorName.teal"),
+			"preset",
+			"#00bfa5",
+			"#00bfa5",
+			undefined,
+			undefined,
+			["tip"],
+		),
+		makePalette("sky", t("colorName.sky"), "preset", "#039be5", "#4fc3f7"),
+		makePalette("indigo", t("colorName.indigo"), "preset", "#3949ab", "#9fa8da"),
 		makePalette("grape", t("colorName.grape"), "preset", "#9c27b0", "#ce93d8"),
 		makePalette("plum", t("colorName.plum"), "preset", "#6a1b9a", "#ab47bc"),
 		makePalette(
-			"bubblegum",
-			t("colorName.bubblegum"),
+			"pink",
+			t("colorName.pink"),
 			"preset",
 			"#e91e63",
 			"#f48fb1",
+			undefined,
+			undefined,
+			["bubblegum"],
 		),
+		makePalette("brown", t("colorName.brown"), "preset", "#795548", "#a1887f"),
 	];
 }
 
 /** All available palettes */
 export function getAllColorPalettes(): ColorPalette[] {
 	return [...getObsidianPalettes(), ...getExtraPalettes()];
+}
+
+/**
+ * Presets the menu no longer offers, kept for the callouts that already wear
+ * them. Amber and Lime sat too close to Yellow, and Crimson (once `danger`) to
+ * Red, to earn rows of their own — but a callout stores its colours, so taking
+ * a preset away must not repaint anybody's notes. Instead a callout on one of
+ * these keeps exactly the colour it had and still reads its own name in the
+ * editor, resolved by id ({@link findPresetByPaletteId}) or, for a callout
+ * saved before `paletteId` existed, by its colours.
+ *
+ * Hidden everywhere a preset is *offered*: not in the menu, not a metadata
+ * word, not held against a palette's name or colours — a user who misses Amber
+ * can save it as a palette of their own. Still matched where a preset is
+ * *recognised*: the editor's label, version history, and the importer, which
+ * linked these colours to them before they were retired.
+ */
+export function getRetiredPalettes(): ColorPalette[] {
+	return [
+		makePalette("amber", t("colorName.amber"), "preset", "#ff8f00", "#ffd54f"),
+		makePalette("lime", t("colorName.lime"), "preset", "#afb42b", "#dce775"),
+		makePalette(
+			"crimson",
+			t("colorName.crimson"),
+			"obsidian",
+			"#ff1744",
+			"#ff1744",
+			undefined,
+			undefined,
+			["danger"],
+		),
+	];
+}
+
+/**
+ * The built-in preset a stored `paletteId` names — by its current id, or by
+ * any id it was saved under before a rename (`legacyIds`), retired presets
+ * included. Null for a custom palette's id and for anything unknown.
+ *
+ * Stored ids are never rewritten when a preset is renamed: a synced device
+ * still running an older build would not know the new id and would show every
+ * such callout as a deleted colour. So the old id stays valid for good, and
+ * this is the one lookup that has to know it.
+ */
+export function findPresetByPaletteId(id: string): ColorPalette | null {
+	return (
+		[...getAllColorPalettes(), ...getRetiredPalettes()].find(
+			(p) => p.id === id || p.legacyIds?.includes(id) === true,
+		) ?? null
+	);
 }
 
 /**
@@ -539,8 +614,11 @@ export function resolveCalloutManagerColors(
 	customPalettes: CustomPalette[],
 ): CalloutManagerColorResolution {
 	const derived = derivePaletteFromColors(hexLight, hexDark);
+	// Retired presets too: an import that matched Amber before it left the menu
+	// still links to it, rather than minting a saved palette of the same colour.
 	const candidates: ColorPalette[] = [
 		...getAllColorPalettes(),
+		...getRetiredPalettes(),
 		...customPalettes.map(customPaletteToColorPalette),
 	];
 

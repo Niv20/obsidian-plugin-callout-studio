@@ -48,6 +48,7 @@
  * both say so at their definition.
  */
 import { StateField } from "@codemirror/state";
+import { TestScope } from "./fakeKeymap";
 export { TestScope as Scope } from "./fakeKeymap";
 
 /* -------------------------------------------------------------------------- */
@@ -587,6 +588,16 @@ export class EditorSuggest<T> {
 	context: unknown = null;
 	/** Marks that `super.close()` ran, which is otherwise unobservable. */
 	closedCount = 0;
+	/** Obsidian's row cap; subclasses may lower it. */
+	limit = 100;
+	/** The popover's own key bindings — subclasses register Tab and `|` here. */
+	scope = new TestScope();
+	/**
+	 * Obsidian's internal suggestion list, which `editor/suggestKeys.ts` reads
+	 * optionally. Absent until a suite installs one — the same "missing"
+	 * case the production code has to survive.
+	 */
+	suggestions?: { useSelectedItem(evt: KeyboardEvent): boolean };
 
 	constructor(public app: unknown) {}
 

@@ -16,6 +16,16 @@ export const fa: Record<string, string> = {
 	"cmd.openQuickInsert": "درج سریع callout بلوکی",
 
 	"autocomplete.createNew": 'ایجاد "{{name}}"',
+	"metadataSuggest.finish": "انجام شد",
+	"metadataSuggest.colors": "رنگ‌ها",
+	"metadataSuggest.useTyped": 'استفاده از "{{text}}"',
+	"metadataSuggest.replaces": "جایگزین {{word}} می‌شود",
+	"metadataSuggest.themeAlso": "پوستهٔ شما نیز این واژه را سبک‌دهی می‌کند",
+	"metadataSuggest.needsSpace": "با فاصله جدا کنید، نه با |",
+	"metadataSuggest.anySeparator": "با فاصله یا با | جدا کنید",
+	"metadataSuggest.mustBeFirst": "فقط به‌عنوان واژهٔ اول کار می‌کند",
+	"metadataSuggest.mustBeLast": "فقط به‌عنوان واژهٔ آخر کار می‌کند",
+	"metadataSuggest.alone": "فقط به‌تنهایی کار می‌کند",
 
 	"calloutPicker.noMatches": "هیچ کال‌اوتی با «{{query}}» مطابقت ندارد.",
 	"calloutPicker.placeholder": "جستجوی callout‌ها",
@@ -163,6 +173,10 @@ export const fa: Record<string, string> = {
 	"settings.deletePaletteAria": "حذف پالت {{name}}",
 	"settings.deletePaletteConfirm":
 		'پالت "{{name}}" حذف شود؟\nبلوک‌های callout که از رنگ‌های آن استفاده می‌کنند تغییر نمی‌کنند.',
+	"settings.deletePaletteMetadataNote":
+		'callout‌هایی که آن را در فراداده‌شان نام برده‌اند ("{{key}}") به رنگ خودشان برمی‌گردند. یادداشت‌های شما تغییر نمی‌کنند.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'callout‌هایی که آن را در فراداده‌شان نام برده‌اند ("{{key}}") به‌جای آن رنگ داخلی همان نام را می‌گیرند. یادداشت‌های شما تغییر نمی‌کنند.',
 
 	"settings.customCommands": "دستورها و کلیدهای میانبر",
 	"settings.customCommandsDesc":
@@ -365,6 +379,18 @@ export const fa: Record<string, string> = {
 	"palette.namePlaceholder": "پالت من",
 	"palette.nameExists": "پالتی با این نام از قبل وجود دارد",
 	"palette.saveBlockedName": "پالتی با این نام از قبل وجود دارد. برای ذخیره، نام دیگری انتخاب کنید.",
+	"palette.metadataName": "در فراداده‌ٔ callout: {{key}}",
+	"palette.metadataNameExists":
+		'پالت دیگری از قبل در فراداده‌ٔ callout به‌صورت "{{key}}" نوشته شده است. نام دیگری انتخاب کنید.',
+	"palette.metadataNameShared":
+		"در فراداده‌ٔ callout: {{key}}. پالت ذخیره‌شدهٔ دیگری هم این واژه را دارد، پس فقط یکی از آن‌ها به آن پاسخ می‌دهد.",
+	"palette.renameNotesTitle": "یادداشت‌هایتان به‌روز شوند؟",
+	"palette.renameNotesBody":
+		'{{count}} callout در {{files}} یادداشت از این پالت با نام "{{old}}" استفاده می‌کنند.\nبه "{{new}}" تغییر کنند؟\nاگر نه، به رنگ خودشان برمی‌گردند.',
+	"palette.renameNotesConfirm": "به‌روزرسانی یادداشت‌ها",
+	"palette.renameNotesSkip": "رها کردن",
+	"palette.renameNotesFailed":
+		"برخی یادداشت‌ها به‌روز نشدند. آن‌هایی که به‌روز شدند ذخیره شده‌اند؛ بقیه هنوز از نام قدیمی استفاده می‌کنند.",
 	"palette.baseColor": "رنگ پایه",
 	"palette.baseColorHint":
 		"رنگ پس‌زمینه را به‌طور خودکار با آن هماهنگ می‌کنیم. در صورت تمایل، می‌توانید با {{link}} آن را جداگانه کنترل کنید.",
@@ -402,7 +428,7 @@ export const fa: Record<string, string> = {
 	"colorName.sky": "آبی آسمانی",
 	"colorName.blue": "آبی",
 	"colorName.indigo": "نیلی",
-	"colorName.violet": "ارغوانی",
+	"colorName.violet": "بنفش",
 	"colorName.purple": "بنفش",
 	"colorName.pink": "صورتی",
 	"colorName.rose": "سرخابی",
@@ -414,7 +440,6 @@ export const fa: Record<string, string> = {
 	"colorName.coral": "مرجانی",
 	"colorName.grape": "انگوری",
 	"colorName.plum": "آلویی",
-	"colorName.bubblegum": "آدامس",
 
 	"iconPicker.pickIcon": "انتخاب آیکون",
 	"iconPicker.confirm": "تأیید",

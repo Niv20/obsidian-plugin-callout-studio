@@ -16,6 +16,16 @@ export const hi: Record<string, string> = {
 	"cmd.openQuickInsert": "ब्लॉक callout जल्दी डालें",
 
 	"autocomplete.createNew": 'नया "{{name}}"',
+	"metadataSuggest.finish": "हो गया",
+	"metadataSuggest.colors": "रंग",
+	"metadataSuggest.useTyped": '"{{text}}" इस्तेमाल करें',
+	"metadataSuggest.replaces": "{{word}} की जगह लेता है",
+	"metadataSuggest.themeAlso": "आपकी थीम भी इस शब्द को स्टाइल करती है",
+	"metadataSuggest.needsSpace": "स्पेस से अलग करें, | से नहीं",
+	"metadataSuggest.anySeparator": "स्पेस या | से अलग करें",
+	"metadataSuggest.mustBeFirst": "केवल पहले शब्द के रूप में काम करता है",
+	"metadataSuggest.mustBeLast": "केवल आखिरी शब्द के रूप में काम करता है",
+	"metadataSuggest.alone": "केवल अकेले काम करता है",
 
 	"calloutPicker.noMatches": "“{{query}}” से मेल खाने वाला कोई callout नहीं मिला।",
 	"calloutPicker.placeholder": "callout खोजें",
@@ -164,6 +174,10 @@ export const hi: Record<string, string> = {
 	"settings.deletePaletteAria": "पैलेट {{name}} हटाएँ",
 	"settings.deletePaletteConfirm":
 		'पैलेट "{{name}}" हटाएँ?\nइसके रंगों का उपयोग करने वाले callout प्रभावित नहीं होंगे.',
+	"settings.deletePaletteMetadataNote":
+		'जो callout इसे अपने मेटाडेटा ("{{key}}") में नाम देते हैं, वे अपने रंग पर लौट जाते हैं। आपके नोट नहीं बदलते।',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'जो callout इसे अपने मेटाडेटा ("{{key}}") में नाम देते हैं, वे इसके बजाय उस नाम का बिल्ट-इन रंग ले लेते हैं। आपके नोट नहीं बदलते।',
 
 	"settings.customCommands": "कमांड और हॉटकी",
 	"settings.customCommandsDesc":
@@ -367,6 +381,18 @@ export const hi: Record<string, string> = {
 	"palette.namePlaceholder": "मेरा पैलेट",
 	"palette.nameExists": "इस नाम का पैलेट पहले से मौजूद है",
 	"palette.saveBlockedName": "इस नाम का पैलेट पहले से मौजूद है। उसे सहेजने के लिए कोई दूसरा नाम चुनें।",
+	"palette.metadataName": "callout के मेटाडेटा में: {{key}}",
+	"palette.metadataNameExists":
+		'कोई दूसरा पैलेट पहले से callout के मेटाडेटा में "{{key}}" लिखा गया है। कोई दूसरा नाम चुनें।',
+	"palette.metadataNameShared":
+		"callout के मेटाडेटा में: {{key}}। एक और सहेजे गए पैलेट में भी यही शब्द है, इसलिए उनमें से केवल एक ही इसका जवाब देता है।",
+	"palette.renameNotesTitle": "अपने नोट अपडेट करें?",
+	"palette.renameNotesBody":
+		'{{files}} नोट में {{count}} callout इस पैलेट को "{{old}}" के रूप में इस्तेमाल करते हैं।\nक्या उन्हें "{{new}}" में बदलें?\nनहीं बदला तो वे अपने रंग पर लौट जाएँगे।',
+	"palette.renameNotesConfirm": "नोट अपडेट करें",
+	"palette.renameNotesSkip": "रहने दें",
+	"palette.renameNotesFailed":
+		"कुछ नोट अपडेट नहीं हो सके। जो अपडेट हुए वे सहेज लिए गए हैं; बाकी अब भी पुराना नाम इस्तेमाल करते हैं।",
 	"palette.baseColor": "आधार रंग",
 	"palette.baseColorHint":
 		"हम पृष्ठभूमि के रंग को स्वतः इससे मिला देंगे। यदि आप चाहें, तो {{link}} करके इसे अलग से नियंत्रित कर सकते हैं।",
@@ -415,7 +441,6 @@ export const hi: Record<string, string> = {
 	"colorName.coral": "मूंगा",
 	"colorName.grape": "अंगूरी",
 	"colorName.plum": "आलूबुखारा",
-	"colorName.bubblegum": "बबलगम",
 
 	"iconPicker.pickIcon": "आइकन चुनें",
 	"iconPicker.confirm": "पुष्टि करें",

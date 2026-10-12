@@ -280,6 +280,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
 		showFoldArrow: true,
 	},
 	inlineCallouts: { enabled: true, allowContent: true },
+	metadataColors: { enabled: true },
 	welcomeSeen: false,
 	competitorImportBannerHandled: false,
 	fallbackCalloutId: "note",

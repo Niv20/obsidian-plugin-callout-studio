@@ -51,11 +51,10 @@ import {
 	normalizeName,
 	suggestColorName,
 } from "../utils/colorNames";
+import { paletteMetadataKey } from "../utils/calloutMetadata";
 import {
 	customPaletteToColorPalette,
 	getAllColorPalettes,
-	getObsidianPalettes,
-	getExtraPalettes,
 	palettesVisuallyEqual,
 	type ColorPalette,
 } from "../utils/colorPalettes";
@@ -126,9 +125,24 @@ const SHOW_TEXT_COLOR_CHANNEL: boolean = false;
 
 export class PaletteEditorModal extends Modal {
 	private existing: CustomPalette | null;
-	/** Normalized names of every other palette (custom AND built-in presets). */
+	/**
+	 * Normalized names of every other palette (custom AND built-in presets),
+	 * less a preset name this palette was already saved under.
+	 */
 	private takenNames: Set<string>;
-	/** Every other palette (custom AND built-in presets) this one may not duplicate. */
+	/**
+	 * The metadata words of the other SAVED palettes — `[!type|comic-red]`.
+	 * Two names can differ and still kebab-case alike ("Blue 2", "blue-2"),
+	 * and only one palette can answer to a word. The built-in colours are not
+	 * here: a palette may take a built-in's word, and wins it (see
+	 * `metadataColorEntries`).
+	 */
+	private takenMetadataKeys: Set<string>;
+	private metadataKeyEl: HTMLElement | null = null;
+	/**
+	 * Every other palette (custom AND built-in presets) this one may not
+	 * duplicate, less a preset whose colours this palette was already saved with.
+	 */
 	private takenColors: ColorPalette[];
 	/** The palette the current colors duplicate, if any; blocks Save while set. */
 	private colorClash: ColorPalette | null = null;
@@ -231,6 +245,14 @@ export class PaletteEditorModal extends Modal {
 		// exists.
 		const base: Omit<CustomPalette, "id" | "name"> | null =
 			options.existing ?? options.seed ?? null;
+		// A preset only blocks what the user changes a palette TO. A saved
+		// palette may already wear a preset's name or colours — it was saved
+		// before that preset existed under them (Purple, Pink and Yellow came
+		// after plenty of palettes had those names), or named under another
+		// interface language — and holding those against it would lock the user
+		// out of editing their own palette until they renamed it.
+		const own = this.existing ? customPaletteToColorPalette(this.existing) : null;
+		const presets = getAllColorPalettes();
 		// Callers pass the other CUSTOM palette names; the fixed preset names
 		// are merged here so a custom palette can't shadow "Blue" etc. Read via
 		// the getters (not a cached const) so the comparison is against the
@@ -238,15 +260,19 @@ export class PaletteEditorModal extends Modal {
 		this.takenNames = new Set(
 			[
 				...(options.takenNames ?? []),
-				...getObsidianPalettes().map((p) => p.name),
-				...getExtraPalettes().map((p) => p.name),
+				...presets
+					.map((p) => p.name)
+					.filter((name) => !own || normalizeName(name) !== normalizeName(own.name)),
 			].map(normalizeName),
+		);
+		this.takenMetadataKeys = new Set(
+			(options.takenNames ?? []).map(paletteMetadataKey).filter((k) => k !== ""),
 		);
 		// Same shape as takenNames, one axis over: the presets are pooled in so a
 		// custom palette can't be an unnamed copy of "Blue" either.
 		this.takenColors = [
 			...(options.takenColors ?? []).map(customPaletteToColorPalette),
-			...getAllColorPalettes(),
+			...presets.filter((p) => !own || !palettesVisuallyEqual(p, own)),
 		];
 		this.name = this.existing?.name ?? options.seedName?.trim() ?? "";
 		// Prefers the user's stored pick over the derivation's own output; see
@@ -384,6 +410,9 @@ export class PaletteEditorModal extends Modal {
 						this.updateValidity();
 					});
 			});
+		// The word that names this palette in a callout's metadata, kept in
+		// step with the field — the only place a user can learn it.
+		this.metadataKeyEl = nameSetting.descEl.createDiv({ cls: "cs-palette-metadata-key" });
 		// Error line in the info column, mirroring the callout IDs error.
 		this.nameErrorEl = nameSetting.descEl.createDiv({ cls: "cs-tag-error" });
 
@@ -469,6 +498,26 @@ export class PaletteEditorModal extends Modal {
 		return this.takenNames.has(normalizeName(this.name));
 	}
 
+	/** The typed name's metadata word, when another saved palette has it. */
+	private sharedMetadataKey(): string | null {
+		const key = paletteMetadataKey(this.name);
+		return key !== "" && this.takenMetadataKeys.has(key) ? key : null;
+	}
+
+	/**
+	 * The typed name's word when it is another palette's AND blocks saving —
+	 * which is only when the user is giving this palette that word now. A
+	 * palette saved under it already shares it from before words existed
+	 * ("Note dark" beside "Note (dark)" kebab-case alike), and holding that
+	 * against it would lock the user out of editing their own palette, even
+	 * its colours; that pair is warned about instead (`metadataKeyEl`).
+	 */
+	private takenMetadataKey(): string | null {
+		const key = this.sharedMetadataKey();
+		if (key === null) return null;
+		return this.existing && paletteMetadataKey(this.existing.name) === key ? null : key;
+	}
+
 	/** The current form colors as a palette, for comparison and preview alike. */
 	private currentColorPalette(): ColorPalette {
 		const gradient = this.currentGradient();
@@ -503,10 +552,24 @@ export class PaletteEditorModal extends Modal {
 	 */
 	private updateValidity(): void {
 		const nameTaken = this.isNameTaken();
-		this.nameInputEl?.toggleClass("cs-input-invalid", nameTaken);
+		const keyTaken = nameTaken ? null : this.takenMetadataKey();
+		this.nameInputEl?.toggleClass("cs-input-invalid", nameTaken || keyTaken !== null);
 		if (this.nameErrorEl) {
-			this.nameErrorEl.setText(nameTaken ? t("palette.nameExists") : "");
-			this.nameErrorEl.toggleClass("is-visible", nameTaken);
+			this.nameErrorEl.setText(
+				nameTaken ? t("palette.nameExists")
+				: keyTaken ? t("palette.metadataNameExists", { key: keyTaken })
+				: "",
+			);
+			this.nameErrorEl.toggleClass("is-visible", nameTaken || keyTaken !== null);
+		}
+		if (this.metadataKeyEl) {
+			const key = paletteMetadataKey(this.name);
+			const sharedFromBefore = !nameTaken && keyTaken === null && this.sharedMetadataKey() !== null;
+			this.metadataKeyEl.setText(
+				!key ? ""
+				: sharedFromBefore ? t("palette.metadataNameShared", { key })
+				: t("palette.metadataName", { key }),
+			);
 		}
 		this.colorClash = this.findColorClash();
 		this.renderColorError();
@@ -520,6 +583,8 @@ export class PaletteEditorModal extends Modal {
 	 */
 	private saveBlockedReason(clash: ColorPalette | null = this.findColorClash()): string | null {
 		if (this.isNameTaken()) return t("palette.saveBlockedName");
+		const key = this.takenMetadataKey();
+		if (key) return t("palette.metadataNameExists", { key });
 		return clash ? t("palette.colorExists", { name: clash.name }) : null;
 	}
 

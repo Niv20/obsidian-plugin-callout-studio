@@ -278,6 +278,20 @@ colour the palette never had.
   replaces it under the vault's id and repaints the callouts linked to it, so a
   name never ends up on two palettes. See
   [Import and export](15-import-export.md#settings-import-restore-the-groups-the-file-carries-three-lists-merge-by-id).
+- **Renaming** changes the palette's metadata word (see
+  [Metadata colour words](#metadata-colour-words)). When the word it answered
+  to before is used in notes, `offerMetadataRename`
+  (`settings/sections/paletteMetadataRename.ts`) counts the uses
+  (`countMetadataWordUsages`) and offers to rewrite them
+  (`replaceMetadataWordInVault`, with the shared note-rewrite Undo). Only the
+  word changes. No offer for a word that also means something else - a
+  built-in colour's (`isBuiltInColorWord`: a palette called "Pink" from before
+  that preset) or one the theme or a snippet styles (`isStylingWord`): a
+  rewrite cannot tell which callouts meant the palette, so those notes stay as
+  written and take the other meaning. Deleting never rewrites notes; its
+  confirmation says that callouts naming the palette go back to their own
+  colour, or - for a built-in's word - take that built-in colour
+  (`settings.deletePaletteMetadataNoteBuiltIn`).
 - **Consolidation on load**: `consolidateDuplicatePalettes()` merges any two
   saved palettes with identical colours (by the same equality test the
   editor's dropdown and the paletteId-adoption migration use), relinking
@@ -296,20 +310,116 @@ applied - `CSSInjector` never reads `bgIntensity` itself.
 
 ## Preset palettes - hue-named, not role-named
 
-`getObsidianPalettes()` names presets by **hue** ("Blue", "Cyan") rather than
-by the built-in callout role they happen to match ("Info", "Abstract") - so
-the same dropdown entry reads sensibly whether it's applied to `[!bug]` or
-`[!failure]`. Six presets carry Obsidian's own per-theme hexes exactly; two
-(`teal`, `crimson`) deliberately keep **different** Material-derived values,
-because Obsidian itself collapses `tip` onto the same cyan as `abstract` and
-`danger` onto the same red as `failure` - following that exactly would put
-two visually-identical entries in the dropdown.
+Presets are named by **hue** ("Blue", "Cyan") rather than by the built-in
+callout role they happen to match ("Info", "Abstract"), so the same dropdown
+entry reads sensibly whether it's applied to `[!bug]` or `[!failure]`. The two
+groups are drawn on one line:
 
-`legacyIds` on a preset records the **old callout-name-based id** it used to
-be saved under (e.g. `"note"` for what is now the `"blue"` preset) - a
-callout picked before the rename still resolves to the right preset by
-checking `legacyIds` *before* falling through to hex-matching, rather than
-appearing as an unmatched "Deleted color."
+- **`getObsidianPalettes()`** (**Obsidian callouts**) is exactly the colours
+  Obsidian's own callouts use, at Obsidian's own per-theme hexes: `blue`,
+  `cyan`, `green`, `orange`, `red`, `purple` (`--color-*`) and `gray` (the
+  quote's fixed `#9e9e9e`). Nothing that is not one of them belongs here.
+- **`getExtraPalettes()`** (**Color presets**) is everything else: `coral`,
+  `yellow`, `teal`, `sky`, `indigo`, `grape`, `plum`, `pink`, `brown`.
+  `teal` used to sit with Obsidian's colours, standing in for `tip`, but it
+  always carried a Material value - Obsidian paints `tip` in the same cyan as
+  `abstract`, so following it exactly would have listed Cyan twice. `yellow` is
+  Obsidian's `--color-yellow`, a colour Obsidian has but none of its callouts
+  uses; it took the place of `amber` and `lime` in the menu, as `red` took
+  `crimson`'s (Crimson stood in for `danger`). See *Retiring a preset* below.
+  `sky` and `indigo` fill the hue gaps either side of Blue.
+- **`getRetiredPalettes()`** is a third list nothing offers: `amber`, `lime`,
+  `crimson`. It exists so the callouts that wear them keep their colour and
+  their name.
+
+Purple is labelled through `colorName.violet`, not `colorName.purple`. Those
+keys double as the hue anchors `suggestColorName` names colours by
+(`utils/colorNames.ts`), and `purple` is the magenta anchor `#9c27b0` - which
+the languages that tell the two apart translate as a red-purple ("ארגמן",
+"Pourpre", "Пурпурный"). `violet` (`#7c4dff`) is the anchor this preset sits
+on, so its translations already name it; only its English text reads "Purple",
+Obsidian's word, which also makes English auto-naming call both anchors
+Purple.
+
+Presets are kept visibly apart, measured rather than eyeballed: every pair the
+menu offers must differ by at least 7 CIEDE2000 in both themes
+(`tests/colorPalettes.test.ts`, "no two presets look alike"). Red and Crimson
+were 3.5 / 4.3, Yellow and Lime 3.4 in dark mode; the closest pair kept on
+purpose is Cyan and Teal at 7.8 in light mode. A new preset's hexes are chosen
+against that floor - Sky's nearest neighbour is Blue at 17.2, Indigo's is
+Purple at 13.8.
+
+### Renaming a preset - `legacyIds`, never a data rewrite
+
+A preset's id is persisted: `CalloutDefinition.paletteId` holds it in
+`data.json`, in exports and in every version-history entry. So a preset is never
+re-hexed: it is renamed, its old id going into `legacyIds`, or retired (below).
+
+| Now | Also answers to | Why |
+| --- | --- | --- |
+| `blue`, `cyan`, `green`, `orange`, `red`, `gray`, `teal` | `note`, `abstract`, `success`, `question`, `failure`, `quote`, `tip` | role names, before hue names |
+| `purple` | `example`, `violet` | took Obsidian's own word for the colour |
+| `pink` | `bubblegum` | took the plain word |
+| `crimson` (retired) | `danger` | its role name |
+
+`findPresetByPaletteId` (`utils/colorPalettes.ts`) is the lookup that knows
+this, retired presets included. `CalloutRegistry.isLivePaletteId` and version
+history's `renderPaletteRef` read through it; `CalloutEditor`'s Color row
+resolves through `resolvePaletteEntry` (`settings/paletteEntryResolution.ts`),
+id first and hex-matching only for a callout saved before the link existed. A
+callout on an old id therefore shows the new name, is not listed as an orphan
+group, and cannot be adopted by a saved palette that happens to share its
+hexes.
+
+Stored ids are deliberately **never** rewritten - not on load, and not when the
+editor opens and saves a callout: `resolvePaletteEntry` keeps an id the preset
+lists in `legacyIds`. A synced device still on an older build would not know
+`purple` and would list every such callout as a deleted colour
+(`listOrphanPaletteGroups`) and run its adoption pass over them. Only a colour
+the user actually picks again writes the current id.
+`tests/colorPalettes.test.ts` pins every id a release since 2.1.0 wrote. 2.0.0
+shipped twelve more presets for four days (`ocean`, `cobalt`, `emerald`,
+`forest`, `mint`, `rose`, `lavender`, `sunset`, `gold`, `slate`, `graphite`,
+`storm`); 2.1.0 dropped them, their callouts have read "Deleted color" with
+**Restore** ever since, and a test pins that too.
+
+### Retiring a preset - out of the menu, never out of anybody's notes
+
+Amber and Lime left the menu as too close to Yellow (Lime and Yellow are 3.4
+CIEDE2000 apart in dark mode), and Crimson as too close to Red (3.5 / 4.3). But
+a callout stores its colours, and "too close in a menu" is not "too close on a
+callout someone chose": Amber and Yellow are 16.4 apart in light mode, Lime and
+Yellow 15.3. So retiring is a menu decision and nothing else.
+
+- **Nothing is repainted** - not on load, not on import. A callout on a retired
+  preset keeps exactly the colours it saved, and its `paletteId`.
+- **It keeps its name.** `getRetiredPalettes()` resolves by id
+  (`findPresetByPaletteId`, so `danger` still finds Crimson) and, for a callout
+  saved before `paletteId` existed, by its colours (`resolvePaletteEntry`): the
+  Color row reads "Amber", not "Deleted color", and version history names it.
+- **It is offered nowhere**: not in the menu, not as a metadata word, and it
+  does not block a palette's name or colours - a user who misses Amber can save
+  it as a palette of their own.
+- **The importer still recognises it** (`resolveCalloutManagerColors`), as it
+  did before the retirement, so importing Amber's colours links to Amber rather
+  than minting a saved palette of the same colour.
+
+Two cases that once looked like Crimson and are not is why the colours are
+never touched: releases 1.0.0-2.7.x shipped the built-in `danger` as
+`#ff1744`, so a vault that edited it back then stores that colour without ever
+picking Crimson; and 2.0.0's own Crimson preset was `#b71c1c` / `#e57373` under
+the same id. Both keep what they have.
+
+A rename can also hand a preset a name a user's saved palette already has
+("Pink"). `PaletteEditorModal` checks preset names and colours only against
+what the user changes a palette *to*: an existing palette's own name and its
+own saved colours are dropped from the preset half of `takenNames` and
+`takenColors`, so the user is never locked out of editing it. The same rule
+covers a palette named under another interface language, and metadata words:
+two saved palettes whose names kebab-case alike ("Note dark", "Note (dark)")
+were legal before words existed, so a palette whose own saved word another
+palette shares still saves, with `palette.metadataNameShared` under the name
+instead of a block. Giving a palette another's word *now* is still refused.
 
 > [!NOTE]
 > There is deliberately **no "Transparent" preset**. A preset is a *colour*,
@@ -319,6 +429,55 @@ appearing as an unmatched "Deleted color."
 > user-saved custom palette** created from the palette editor's "None"
 > background style, which is the one place the user can find and re-select it
 > later.
+
+## Metadata colour words
+
+`[!mark|pink]` paints one callout with a palette; `utils/calloutMetadata.ts`
+decides which words name which palette.
+
+- **Words.** Any run of whitespace and/or `|` separates two words
+  (`metadataWords`), so `pink wide`, `pink|wide` and ` pink | wide ` are the same
+  two words. "Whitespace" is CSS's - space, tab, line feed, carriage return,
+  form feed - because that is all `~=` splits on: a no-break space joins two
+  words. A comma is not a separator. Comparison folds **ASCII** case only
+  (`foldMetadataCase`), because that is all the stylesheet's `i` flag folds - a
+  wider fold would let PDF export colour a callout the screen leaves alone. For
+  the same reason the painters do not tokenize at all to decide a colour:
+  `metadataNamesWord` evaluates the stylesheet's six attribute forms
+  (`METADATA_WORD_FORMS`) on the raw string.
+- **Built-ins** answer to their preset **id**, never their translated name, so a
+  note means the same thing in every interface language: Obsidian's seven
+  (`blue` … `gray`) and the nine other presets (`coral` … `brown`). Every one of
+  Obsidian's own colour names is an id. `legacyIds` (`note`, `tip`, `violet`,
+  `bubblegum`, `amber`, …) are not colour words - themes such as flexcyon use `info` and
+  `warning` as metadata of their own, and the former hue ids were never
+  released as metadata.
+- **Aliases** (`METADATA_COLOR_ALIASES`) are only true spelling variants:
+  `grey` → `gray`. The dropdown prints an alias beside its word when the typed
+  text matched it, so a preset's former id is not one. Accepted when typed; the
+  dropdown writes the preset id.
+- **Saved palettes** answer to `paletteMetadataKey(name)`: NFKC, lowercase,
+  whitespace/`_`/`|` → `-`, anything but letters, marks, digits and `-` dropped,
+  dash runs collapsed. Every script survives (`ורוד בהיר` → `ורוד-בהיר`); a name
+  with no usable character has no word. The key is derived, never stored, so
+  nothing new is persisted or synced - which is why a rename has to offer the
+  note rewrite above.
+- **Who owns a word** (`metadataColorEntries`): weakest first, extra presets <
+  Obsidian's colours < saved palettes in list order. A stronger entry takes a
+  word from a weaker one - a palette saved as "Pink" before that preset existed
+  takes `pink`, one named "Blue" (possible under a non-English interface) takes
+  `blue`, and the preset is left with no word. The palette
+  editor refuses giving a saved palette a word another already has, so a
+  palette-palette tie only comes from older or imported data, where the later
+  one wins. A word an enabled snippet of the user's own styles belongs to no
+  entry at all (`reserved`, from `ThemeMetadataCatalog.snippetWords()`): the
+  snippet keeps it.
+- **Two colours in one callout** resolve by that same order, not by position,
+  because the stylesheet can only order rules - see
+  [Metadata colours](06-css-generation.md#metadata-colours-typecolour).
+
+Any other word is left alone: it may be a theme's (`wide`, `c-red`), another
+plugin's (`50`, `shadow`) or a typo.
 
 ## Accent dialect: version drift **and** theme drift
 

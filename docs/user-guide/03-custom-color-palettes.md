@@ -2,6 +2,15 @@
 
 Callout Studio includes Obsidian's native callout colors and its own built-in presets. To change a callout's color, open that callout for editing and use the color menu.
 
+The color menu lists the built-in colors in two groups:
+
+- **Obsidian callouts**: Blue, Cyan, Green, Orange, Red, Purple and Gray, the colors of Obsidian's own callouts with Obsidian's exact shades.
+- **Color presets**: Coral, Yellow, Teal, Sky, Indigo, Grape, Plum, Pink and Brown.
+
+Violet is now called Purple, and Bubblegum is now called Pink. Callouts that used them keep their color and show the new name.
+
+Amber, Lime and Crimson are no longer in the menu: Yellow takes the place of the first two and Red of Crimson. Callouts that already use one of them keep their exact color, and the color menu still shows its name. If you want to choose one of them again, save it as a palette of your own.
+
 Hovering a colour temporarily previews it. Moving the pointer away from the
 row restores the current colour; click a row or use the arrow keys and Enter
 to choose it. If the pointer rests over one row while you use the arrow keys,
@@ -21,7 +30,11 @@ Open the main plugin settings, find **Saved color palettes**, and click **New pa
 
 **Save** stays dimmed while the name is already used by another palette, or while the colors are identical to another palette's. Press it and a message says which.
 
+The built-in colors count too, with one exception. A palette you saved before a built-in color took its name or colors keeps them. For example, a palette called **Pink** from before the Pink preset still saves under that name.
+
 Saved palettes appear at the top of every callout color menu under **Custom**.
+
+Under the name, the editor shows the palette's word for callout metadata: **Comic Red** is `comic-red`. Write `[!note|comic-red]` to give one callout this palette. **Save** also stays dimmed when you give a palette a word another saved palette already has. Two palettes saved before metadata words existed can share one, such as **Note dark** and **Note (dark)**. They still save, and the line under the name says that only one of them answers to the word. See [Callout metadata](18-callout-metadata.md).
 
 ![New Ocean palette with a base color, background intensity, and live previews in dark mode](../../assets/user-guide/palette-editor.svg)
 
@@ -53,6 +66,10 @@ background; the palette's base color still colors the title, icon, and frame.
 ## Edit, delete, and restore palettes
 
 Click the pencil beside a saved palette to edit it. When you save the changes, every callout linked to that palette updates across the vault.
+
+If the new name changes the palette's metadata word and your notes use the old one, Callout Studio asks whether to update those notes. It doesn't ask when the old word also means something else: a built-in color's word, such as `pink` for a palette called **Pink**, or a word your theme or a CSS snippet styles. Those notes stay as they are and take that other meaning.
+
+Deleting a palette never changes your notes. Callouts that name it in their metadata go back to their own color, or take the built-in color of that name when there is one.
 
 Deleting a palette does not change the callouts that already use it. They keep their exact colors. The callout editor's **Color** row shows the color circles and the message “This callout's saved color was deleted.” Click **Restore** beside the message to open the palette save popup with those colors filled in.
 

@@ -68,6 +68,16 @@ export const ro: Record<string, string> = {
 	"cmd.openQuickInsert": "Inserare rapidă de callout bloc",
 
 	"autocomplete.createNew": 'Creează "{{name}}"',
+	"metadataSuggest.finish": "Gata",
+	"metadataSuggest.colors": "Culori",
+	"metadataSuggest.useTyped": 'Folosește "{{text}}"',
+	"metadataSuggest.replaces": "Înlocuiește {{word}}",
+	"metadataSuggest.themeAlso": "Tema ta stilizează și acest cuvânt",
+	"metadataSuggest.needsSpace": "Separă cu spații, nu cu |",
+	"metadataSuggest.anySeparator": "Separă cu spații sau cu |",
+	"metadataSuggest.mustBeFirst": "Funcționează doar ca prim cuvânt",
+	"metadataSuggest.mustBeLast": "Funcționează doar ca ultim cuvânt",
+	"metadataSuggest.alone": "Funcționează doar singur",
 
 	"calloutPicker.noMatches": "Niciun callout nu corespunde căutării „{{query}}”.",
 	"calloutPicker.placeholder": "Caută callout-uri",
@@ -216,6 +226,10 @@ export const ro: Record<string, string> = {
 	"settings.deletePaletteAria": "Ștergeți paleta {{name}}",
 	"settings.deletePaletteConfirm":
 		'Ștergeți paleta "{{name}}"?\nCallout-urile care îi folosesc culorile nu sunt afectate.',
+	"settings.deletePaletteMetadataNote":
+		'Callout-urile care o menționează în metadate ("{{key}}") revin la propria culoare. Notițele tale nu se schimbă.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Callout-urile care o menționează în metadate ("{{key}}") preiau în schimb culoarea încorporată cu acel nume. Notițele tale nu se schimbă.',
 
 	"settings.customCommands": "Comenzi și taste rapide",
 	"settings.customCommandsDesc":
@@ -421,6 +435,18 @@ export const ro: Record<string, string> = {
 	"palette.namePlaceholder": "Paleta mea",
 	"palette.nameExists": "Există deja o paletă cu acest nume",
 	"palette.saveBlockedName": "Există deja o paletă cu acest nume. Alege alt nume pentru a o salva.",
+	"palette.metadataName": "În metadatele callout-ului: {{key}}",
+	"palette.metadataNameExists":
+		'O altă paletă este deja scrisă "{{key}}" în metadatele callout-ului. Alege un alt nume.',
+	"palette.metadataNameShared":
+		"În metadatele callout-ului: {{key}}. Și o altă paletă salvată are acest cuvânt, așa că doar una dintre ele îi răspunde.",
+	"palette.renameNotesTitle": "Actualizezi notițele?",
+	"palette.renameNotesBody":
+		'{{count}} callout-uri din {{files}} notițe folosesc această paletă ca "{{old}}".\nLe schimbi în "{{new}}"?\nDacă nu, revin la propria culoare.',
+	"palette.renameNotesConfirm": "Actualizează notițele",
+	"palette.renameNotesSkip": "Lasă-le",
+	"palette.renameNotesFailed":
+		"Unele notițe nu au putut fi actualizate. Cele actualizate sunt salvate; restul folosesc în continuare numele vechi.",
 	"palette.baseColor": "Culoare de bază",
 	"palette.baseColorHint":
 		"Vom potrivi automat culoarea de fundal cu aceasta. Dacă dorești, o poți controla separat {{link}}.",
@@ -457,7 +483,7 @@ export const ro: Record<string, string> = {
 	"colorName.sky": "Bleu",
 	"colorName.blue": "Albastru",
 	"colorName.indigo": "Indigo",
-	"colorName.violet": "Violet",
+	"colorName.violet": "Mov",
 	"colorName.purple": "Mov",
 	"colorName.pink": "Roz",
 	"colorName.rose": "Roz-închis",
@@ -469,7 +495,6 @@ export const ro: Record<string, string> = {
 	"colorName.coral": "Coral",
 	"colorName.grape": "Strugure",
 	"colorName.plum": "Prună",
-	"colorName.bubblegum": "Gumă de mestecat",
 
 	"iconPicker.pickIcon": "Alegeți o pictogramă",
 	"iconPicker.confirm": "Confirmare",

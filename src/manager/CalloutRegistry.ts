@@ -58,7 +58,7 @@ import {
 } from "../utils/calloutId";
 import {
 	consolidatePalettesByColor,
-	getAllColorPalettes,
+	findPresetByPaletteId,
 	resolveCalloutManagerColor,
 	resolveCalloutManagerColors,
 } from "../utils/colorPalettes";
@@ -847,9 +847,7 @@ export class CalloutRegistry {
 	private isLivePaletteId(id: string): boolean {
 		return (
 			this.settings.customPalettes.some((p) => p.id === id) ||
-			getAllColorPalettes().some(
-				(p) => p.id === id || p.legacyIds?.includes(id),
-			)
+			findPresetByPaletteId(id) !== null
 		);
 	}
 
@@ -1533,6 +1531,11 @@ export class CalloutRegistry {
 		);
 		this.settings.inlineCallouts = structuredClone(
 			DEFAULT_SETTINGS.inlineCallouts,
+		);
+		// The hidden switch (no settings UI; `data.json` only) goes back too:
+		// a reset that left a hand-made "off" behind would look like a bug.
+		this.settings.metadataColors = structuredClone(
+			DEFAULT_SETTINGS.metadataColors,
 		);
 		// The library order and the hidden libraries go back to the catalog's.
 		// Downloaded library files stay: they are this device's cache, not a

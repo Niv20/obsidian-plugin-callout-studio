@@ -16,6 +16,16 @@ export const fr: Record<string, string> = {
 	"cmd.openQuickInsert": "Insertion rapide d'un callout de bloc",
 
 	"autocomplete.createNew": 'Créer "{{name}}"',
+	"metadataSuggest.finish": "Terminé",
+	"metadataSuggest.colors": "Couleurs",
+	"metadataSuggest.useTyped": 'Utiliser "{{text}}"',
+	"metadataSuggest.replaces": "Remplace {{word}}",
+	"metadataSuggest.themeAlso": "Votre thème stylise aussi ce mot",
+	"metadataSuggest.needsSpace": "Séparez-le par des espaces, pas par |",
+	"metadataSuggest.anySeparator": "Séparez-le par des espaces ou par |",
+	"metadataSuggest.mustBeFirst": "Ne fonctionne que comme premier mot",
+	"metadataSuggest.mustBeLast": "Ne fonctionne que comme dernier mot",
+	"metadataSuggest.alone": "Ne fonctionne que seul",
 
 	"calloutPicker.noMatches": "Aucun callout ne correspond à « {{query}} ».",
 	"calloutPicker.placeholder": "Rechercher des callouts",
@@ -167,6 +177,10 @@ export const fr: Record<string, string> = {
 	"settings.deletePaletteAria": "Supprimer la palette {{name}}",
 	"settings.deletePaletteConfirm":
 		'Supprimer la palette "{{name}}" ?\nLes callouts qui utilisent ses couleurs ne sont pas affectés.',
+	"settings.deletePaletteMetadataNote":
+		'Les callouts qui la citent dans leurs métadonnées ("{{key}}") reprennent leur propre couleur. Vos notes ne sont pas modifiées.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Les callouts qui la citent dans leurs métadonnées ("{{key}}") prennent à la place la couleur intégrée de ce nom. Vos notes ne sont pas modifiées.',
 
 	"settings.customCommands": "Commandes et raccourcis clavier",
 	"settings.customCommandsDesc":
@@ -377,6 +391,18 @@ export const fr: Record<string, string> = {
 	"palette.namePlaceholder": "Ma palette",
 	"palette.nameExists": "Une palette portant ce nom existe déjà",
 	"palette.saveBlockedName": "Une palette portant ce nom existe déjà. Choisissez un autre nom pour l’enregistrer.",
+	"palette.metadataName": "Dans les métadonnées du callout : {{key}}",
+	"palette.metadataNameExists":
+		"Une autre palette est déjà écrite « {{key}} » dans les métadonnées du callout. Choisissez un autre nom.",
+	"palette.metadataNameShared":
+		"Dans les métadonnées du callout : {{key}}. Une autre palette enregistrée porte aussi ce mot, donc une seule des deux y répond.",
+	"palette.renameNotesTitle": "Mettre à jour vos notes ?",
+	"palette.renameNotesBody":
+		"{{count}} callouts dans {{files}} notes utilisent cette palette sous le nom « {{old}} ».\nLes changer en « {{new}} » ?\nSinon, ils reprennent leur propre couleur.",
+	"palette.renameNotesConfirm": "Mettre à jour les notes",
+	"palette.renameNotesSkip": "Les laisser",
+	"palette.renameNotesFailed":
+		"Certaines notes n’ont pas pu être mises à jour. Celles qui l’ont été sont enregistrées ; les autres utilisent encore l’ancien nom.",
 	"palette.baseColor": "Couleur de base",
 	"palette.baseColorHint":
 		"Nous adapterons automatiquement la couleur d'arrière-plan à celle-ci. Si vous le souhaitez, vous pouvez la contrôler séparément en {{link}}.",
@@ -425,7 +451,6 @@ export const fr: Record<string, string> = {
 	"colorName.coral": "Corail",
 	"colorName.grape": "Raisin",
 	"colorName.plum": "Prune",
-	"colorName.bubblegum": "Chewing-gum",
 
 	"iconPicker.pickIcon": "Choisir une icône",
 	"iconPicker.confirm": "Confirmer",

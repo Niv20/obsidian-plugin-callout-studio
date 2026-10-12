@@ -23,7 +23,7 @@
  * runs only when the source actually contains `\[!`.
  */
 import type { MarkdownPostProcessorContext } from "obsidian";
-import type { PluginSettings } from "../types";
+import type { CalloutDefinition, PluginSettings } from "../types";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import {
 	RENDERED_HEADING_TOKEN_RE,
@@ -54,12 +54,19 @@ import {
 	shouldRenderToken,
 } from "../editor/renderShared";
 import { applyTitleGradient } from "./gradientTitleText";
+import {
+	activeMetadataColorEntries,
+	definitionWithMetadataColor,
+	type MetadataColorEntry,
+} from "../utils/calloutMetadata";
 import { createInlineEscapePlan, type InlineEscapePlan } from "./inlineEscapePlan";
 
 /** Narrow structural host type (avoids importing the concrete plugin class). */
 export interface ReadingRenderHost {
 	registry: CalloutRegistry;
 	settings: PluginSettings;
+	/** The plugin's injector, for the metadata colours it stands behind. */
+	cssInjector?: { metadataColorEntries(): MetadataColorEntry[] };
 }
 
 /**
@@ -275,12 +282,33 @@ function transformHeading(
 	// them during export. (Regular-callout titles are Obsidian's own DOM,
 	// present when paintIcons runs, and are handled there instead.) On screen
 	// the sweep is pure CSS and these spans stay inert. See gradientTitleText.
-	if (def && !unknown && def.bgGradient?.textGradient) {
+	// The colour is this heading's own: a `|colour` in its metadata may bring a
+	// sweep the definition does not have, or replace the one it does.
+	const instance = def && !unknown ? paintedDefinition(def, metadata, host) : null;
+	if (instance?.bgGradient?.textGradient) {
 		const swept = hasTitle
 			? h.querySelector<HTMLElement>(`.${CSS_HEADING_TITLE}`)
 			: tokenEl.querySelector<HTMLElement>(`.${CSS_TOKEN_NAME}`);
-		if (swept) applyTitleGradient(swept, def);
+		if (swept) applyTitleGradient(swept, instance);
 	}
+}
+
+/**
+ * `def` with the colour its instance's metadata names baked over it — what
+ * the screen shows through CSS, for the export colours that cannot come from
+ * CSS. See `utils/calloutMetadata.definitionWithMetadataColor`.
+ */
+function paintedDefinition(
+	def: CalloutDefinition,
+	metadata: string,
+	host: ReadingRenderHost,
+): CalloutDefinition {
+	if (!metadata) return def;
+	return definitionWithMetadataColor(
+		def,
+		metadata,
+		host.cssInjector?.metadataColorEntries() ?? activeMetadataColorEntries(host.settings),
+	);
 }
 
 /**
@@ -713,9 +741,10 @@ function transformInlinePills(
 		// existed). The sweep lives on the pill root but the text is in its
 		// name span, so that is what gets wrapped.
 		const { def, unknown } = resolved;
-		if (def && !unknown && def.bgGradient?.textGradient) {
+		const instance = def && !unknown ? paintedDefinition(def, c.metadata, host) : null;
+		if (instance?.bgGradient?.textGradient) {
 			const nameEl = pill.querySelector<HTMLElement>(`.${CSS_TOKEN_NAME}`);
-			if (nameEl) applyTitleGradient(nameEl, def);
+			if (nameEl) applyTitleGradient(nameEl, instance);
 		}
 	}
 }

@@ -26,6 +26,16 @@ export const he: Record<string, string> = {
 
 	// Autocomplete
 	"autocomplete.createNew": 'יצירת „{{name}}”',
+	"metadataSuggest.finish": "סיום",
+	"metadataSuggest.colors": "צבעים",
+	"metadataSuggest.useTyped": "שימוש ב„{{text}}”",
+	"metadataSuggest.replaces": "מחליף את {{word}}",
+	"metadataSuggest.themeAlso": "ערכת הנושא שלך מעצבת גם את המילה הזאת",
+	"metadataSuggest.needsSpace": "יש להפריד ברווחים, לא ב־|",
+	"metadataSuggest.anySeparator": "יש להפריד ברווחים או ב־|",
+	"metadataSuggest.mustBeFirst": "פועל רק כמילה הראשונה",
+	"metadataSuggest.mustBeLast": "פועל רק כמילה האחרונה",
+	"metadataSuggest.alone": "פועל רק לבדו",
 
 	// Vault scan / fallback / delete
 	"calloutPicker.noMatches": "לא נמצאו תיבות־הבלטה התואמות לחיפוש „{{query}}”.",
@@ -187,6 +197,10 @@ export const he: Record<string, string> = {
 	"settings.deletePaletteAria": "מחיקת פלטה {{name}}",
 	"settings.deletePaletteConfirm":
 		'למחוק את הפלטה "{{name}}"?\nתיבות־הבלטה שמשתמשות בצבעים שלה לא יושפעו.',
+	"settings.deletePaletteMetadataNote":
+		"תיבות־הבלטה שמציינות אותה במטא־נתונים שלהן („{{key}}”) חוזרות לצבע של עצמן. הפתקים שלך לא משתנים.",
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		"תיבות־הבלטה שמציינות אותה במטא־נתונים שלהן („{{key}}”) מקבלות במקומה את הצבע המובנה בשם הזה. הפתקים שלך לא משתנים.",
 
 	// Settings — Keyboard shortcuts
 	"settings.customCommands": "פקודות ומקשי קיצור",
@@ -455,6 +469,18 @@ export const he: Record<string, string> = {
 	"palette.namePlaceholder": "הפלטה שלי",
 	"palette.nameExists": "כבר קיימת פלטה בשם הזה",
 	"palette.saveBlockedName": "כבר קיימת פלטה בשם הזה. יש לבחור שם אחר כדי לשמור.",
+	"palette.metadataName": "במטא־נתונים של תיבת־ההבלטה: {{key}}",
+	"palette.metadataNameExists":
+		"פלטה אחרת כבר כתובה כ„{{key}}” במטא־נתונים של תיבת־ההבלטה. יש לבחור שם אחר.",
+	"palette.metadataNameShared":
+		"במטא־נתונים של תיבת־ההבלטה: {{key}}. גם לפלטה שמורה אחרת יש את המילה הזאת, ולכן רק אחת מהן עונה לה.",
+	"palette.renameNotesTitle": "לעדכן את הפתקים שלך?",
+	"palette.renameNotesBody":
+		"{{count}} תיבות־הבלטה ב־{{files}} פתקים משתמשות בפלטה הזאת בשם „{{old}}”.\nלשנות אותן ל„{{new}}”?\nאם לא, הן חוזרות לצבע של עצמן.",
+	"palette.renameNotesConfirm": "עדכון הפתקים",
+	"palette.renameNotesSkip": "להשאיר",
+	"palette.renameNotesFailed":
+		"לא ניתן היה לעדכן חלק מהפתקים. אלה שעודכנו נשמרו; השאר עדיין משתמשים בשם הישן.",
 	"palette.baseColor": "צבע בסיס",
 	"palette.baseColorHint":
 		"נתאים את צבע הרקע לצבע הזה באופן אוטומטי. אם תרצו, אפשר לשלוט בזה בנפרד על ידי {{link}}.",
@@ -503,7 +529,6 @@ export const he: Record<string, string> = {
 	"colorName.coral": "קורל",
 	"colorName.grape": "ענבים",
 	"colorName.plum": "שזיף",
-	"colorName.bubblegum": "מסטיק",
 
 	"iconPicker.pickIcon": "בחירת אייקון",
 	"iconPicker.confirm": "אישור",

@@ -245,7 +245,7 @@ changes.
 `02-syntax.svg` is 1080 × 704: a full-width dark syntax reference compares
 default and custom content for Heading, Inline, and Block using the exact
 `[!note]` snippets from the README. Below it, two adjacent dark panels show an
-actual Violet Idea heading, inline, and block callout beside their exact
+actual Purple Idea heading, inline, and block callout beside their exact
 Markdown. The fixed reference rows and English example live in
 `scripts/readme/scene.mjs`; production Reading view
 processors, icon painting, and generated CSS render the preview. The panel
@@ -465,7 +465,7 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 1. Verify manifest.json / package.json / versions.json all agree with the pushed tag exactly
 2. npm ci, npm run build, npm run lint, npm test (all required on the tagged commit)
 3. Re-verify locales/ has no diff (same reasoning as lint.yml, but against the release build)
-4. Check main.js is under the 2 MiB + 150 KiB bundle-size budget (2,250,752 bytes)
+4. Check main.js is under the 2 MiB + 174 KiB bundle-size budget (2,275,328 bytes)
 5. Attest build provenance for main.js and styles.css
 6. Wait (poll, up to 15×2s) for the tag to be visible via the GitHub API
  - the tag-push webhook can fire before the tag itself propagates
@@ -479,7 +479,7 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 > can't correctly resolve as an update.
 
 > [!NOTE]
-> **The bundle-size budget (2 MiB + 150 KiB) is deliberately tight against the current
+> **The bundle-size budget (2 MiB + 174 KiB) is deliberately tight against the current
 > size**, not generously padded - "a careless import trips it here rather
 > than in users' vaults; raise it consciously when a feature earns it." The
 > ceiling's own history is documented right in the workflow file: it moved
@@ -503,7 +503,17 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 > identical copies, automatic names based on saved reasons, storage markers and
 > their details, and localized window copy. The current interface uses place
 > icons inside the timeline markers and relative day headings; version names
-> are automatic.
+> are automatic. Colours from callout metadata (`[!mark|pink]`) - the colour
+> rules keyed on the metadata word, the dropdown after `|` and the Tab and `|`
+> keys in the type dropdown, the scan of a theme's own metadata words, and the
+> offer to carry a renamed palette's notes along - came to 20.2 KB, and the
+> allowance grew by 20 KiB, the headroom again about where it was. Retiring
+> Amber, Lime and Crimson from the menu without repainting anybody's callouts,
+> together with the fixes that made metadata colours safe on upgrade (Tab and
+> `|` that never rewrite the `]`, colours that clear a callout's own gradient
+> and title sweep, the nested metadata stylesheet, the snippet stand-down, the
+> palette-word and rename guards), took the bundle 2.2 KB further, and the
+> allowance grew by 4 KiB.
 
 > [!NOTE]
 > **The release is created as a `draft`, on purpose.** The `$release` skill

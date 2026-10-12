@@ -14,6 +14,16 @@ export const fi: Record<string, string> = {
 	"cmd.customInsertInline": "Lisää {{name}}-rivin sisäinen callout",
 	"cmd.openQuickInsert": "Lisää lohko-callout nopeasti",
 	"autocomplete.createNew": 'Luo "{{name}}"',
+	"metadataSuggest.finish": "Valmis",
+	"metadataSuggest.colors": "Värit",
+	"metadataSuggest.useTyped": 'Käytä "{{text}}"',
+	"metadataSuggest.replaces": "Korvaa sanan {{word}}",
+	"metadataSuggest.themeAlso": "Teemasi tyylittelee myös tätä sanaa",
+	"metadataSuggest.needsSpace": "Erota välilyönneillä, ei |-merkillä",
+	"metadataSuggest.anySeparator": "Erota välilyönneillä tai |-merkillä",
+	"metadataSuggest.mustBeFirst": "Toimii vain ensimmäisenä sanana",
+	"metadataSuggest.mustBeLast": "Toimii vain viimeisenä sanana",
+	"metadataSuggest.alone": "Toimii vain yksinään",
 	"calloutPicker.noMatches": "Yksikään callout ei vastaa hakua ”{{query}}”.",
 	"calloutPicker.placeholder": "Hae callouteja",
 	"editor.paletteNoMatches": "Yksikään väri ei vastaa hakua ”{{query}}”.",
@@ -159,6 +169,10 @@ export const fi: Record<string, string> = {
 	"settings.deletePaletteAria": "Poista paletti {{name}}",
 	"settings.deletePaletteConfirm":
 		'Poistetaanko paletti "{{name}}"?\nSen värejä käyttävät callout-tyypit eivät muutu.',
+	"settings.deletePaletteMetadataNote":
+		'Calloutit, jotka mainitsevat sen metatiedoissaan ("{{key}}"), palaavat omaan väriinsä. Muistiinpanojasi ei muuteta.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Calloutit, jotka mainitsevat sen metatiedoissaan ("{{key}}"), saavat sen sijaan tämän nimisen sisäänrakennetun värin. Muistiinpanojasi ei muuteta.',
 	"settings.customCommands": "Komennot ja pikanäppäimet",
 	"settings.customCommandsDesc":
 		"Näytä jokainen Callout Studion komento ja sen pikanäppäin, ja luo omia komentoja eniten käyttämillesi callouteille. Oletuksena ei ole määritetty pikanäppäimiä.",
@@ -360,6 +374,18 @@ export const fi: Record<string, string> = {
 	"palette.namePlaceholder": "Oma paletti",
 	"palette.nameExists": "Tämän niminen paletti on jo olemassa",
 	"palette.saveBlockedName": "Tämän niminen paletti on jo olemassa. Tallenna se valitsemalla toinen nimi.",
+	"palette.metadataName": "Calloutin metatiedoissa: {{key}}",
+	"palette.metadataNameExists":
+		'Toinen paletti on jo kirjoitettu calloutin metatietoihin muodossa "{{key}}". Valitse toinen nimi.',
+	"palette.metadataNameShared":
+		"Calloutin metatiedoissa: {{key}}. Myös toisella tallennetulla paletilla on tämä sana, joten vain toinen niistä vastaa siihen.",
+	"palette.renameNotesTitle": "Päivitetäänkö muistiinpanosi?",
+	"palette.renameNotesBody":
+		'{{count}} calloutia {{files}} muistiinpanossa käyttää tätä palettia nimellä "{{old}}".\nMuutetaanko ne nimeksi "{{new}}"?\nJos ei, ne palaavat omaan väriinsä.',
+	"palette.renameNotesConfirm": "Päivitä muistiinpanot",
+	"palette.renameNotesSkip": "Jätä ennalleen",
+	"palette.renameNotesFailed":
+		"Joitakin muistiinpanoja ei voitu päivittää. Päivitetyt on tallennettu; loput käyttävät yhä vanhaa nimeä.",
 	"palette.baseColor": "Perusväri",
 	"palette.baseColorHint":
 		"Sovitamme taustavärin automaattisesti siihen. Jos haluat, voit hallita sitä erikseen {{link}}.",
@@ -408,7 +434,6 @@ export const fi: Record<string, string> = {
 	"colorName.coral": "Koralli",
 	"colorName.grape": "Rypäle",
 	"colorName.plum": "Luumu",
-	"colorName.bubblegum": "Purukumi",
 
 	"iconPicker.pickIcon": "Valitse kuvake",
 	"iconPicker.confirm": "Vahvista",

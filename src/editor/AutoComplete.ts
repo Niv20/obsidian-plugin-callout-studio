@@ -8,6 +8,13 @@
  * suggestion inserts role-appropriate markdown, and Enter placement differs
  * per role (see selectSuggestion and autoCompleteCursor). The "Create new" row
  * opens the CalloutEditor pre-filled with the typed query in all three contexts.
+ *
+ * Tab and `|` accept too, the way they do in Obsidian's own link suggest: Tab
+ * writes the type alone and leaves the cursor before the `]`; `|` completes a
+ * half-typed type and types the separator, which opens the metadata
+ * suggestions (`CalloutMetadataSuggest`). Neither ever rewrites or adds the
+ * `]` — see `replaceTypeText`. Enter is unchanged — most people never use
+ * metadata, and Enter finishing the callout is what they expect.
  */
 import {
 	Editor,
@@ -25,11 +32,15 @@ import type { CalloutDefinition, CalloutRenderRole } from "../types";
 import { CalloutEditor } from "../settings/CalloutEditor";
 import { paintCalloutListIcon } from "../manager/theme/calloutListIcon";
 import { getLocale, t } from "../i18n";
-import { splitCalloutMetadata } from "../utils/calloutId";
 import { suggestableCallouts } from "../utils/usableCallouts";
 import { calloutMatchesQuery } from "../utils/calloutSearch";
-import { isCalloutTokenInCode } from "./calloutCodeContext";
-import { placeCursorAfterPick } from "./autoCompleteCursor";
+import { readCalloutTrigger, tokenBodyAt, triggerInCode } from "./calloutTriggerContext";
+import {
+	landAfterInlineToken,
+	parkCursor,
+	placeCursorAfterPick,
+} from "./autoCompleteCursor";
+import { acceptOnKey, pickKeyOf, type PickKey } from "./suggestKeys";
 import {
 	buildBlockHeaderToken,
 	buildHeadingToken,
@@ -40,9 +51,6 @@ import {
 } from "./calloutWriter";
 import { sortCalloutsByDisplayName } from "../utils/sorting";
 import { renderCalloutIdLine } from "../settings/calloutComboboxRow";
-
-/** Heading hashes + whitespace and nothing else before the `[!` trigger. */
-const HEADING_TRIGGER_PREFIX_REGEX = /^#{1,6}[ \t]+$/;
 
 interface CreateNewSuggestion {
 	__createNew: true;
@@ -63,6 +71,8 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 	constructor(plugin: CalloutStudioPlugin) {
 		super(plugin.app);
 		this.plugin = plugin;
+		acceptOnKey(this, [], "Tab");
+		acceptOnKey(this, null, "|");
 	}
 
 	/**
@@ -108,78 +118,38 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		editor: Editor,
 		_file: TFile | null,
 	): EditorSuggestTriggerInfo | null {
-		const line = editor.getLine(cursor.line);
-		// Look for the `[!` trigger by scanning backward from the cursor. Its
-		// position on the line decides which render role is being typed.
-		const textBefore = line.slice(0, cursor.ch);
-		const triggerIdx = textBefore.lastIndexOf("[!");
+		// The token around the cursor and the role it is typed in — read by the
+		// one reader the metadata suggest shares, so the two never disagree.
+		const trigger = readCalloutTrigger(
+			editor.getLine(cursor.line),
+			cursor.ch,
+			this.plugin.settings,
+		);
+		if (!trigger) return null;
 
-		if (triggerIdx === -1) return null;
-
-		// Never trigger for escaped tokens (`\[!`) or wikilinks (`[[!`).
-		const charBefore = triggerIdx > 0 ? textBefore[triggerIdx - 1] : "";
-		if (charBefore === "\\" || charBefore === "[") return null;
-
-		// Classify the trigger position into a render role.
-		const rawPrefix = textBefore.slice(0, triggerIdx);
-		const trimmedPrefix = rawPrefix.trimStart();
-		const { headingCallouts, inlineCallouts } = this.plugin.settings;
-		let role: CalloutRenderRole;
-		if (/^>[\s>]*$/.test(trimmedPrefix)) {
-			// "> [!", ">> [!", … — a native block callout header.
-			role = "regular";
-		} else if (HEADING_TRIGGER_PREFIX_REGEX.test(rawPrefix)) {
-			// "## [!" — heading callout; no popup while the role is off.
-			if (!headingCallouts.enabled) return null;
-			role = "heading";
-		} else if (trimmedPrefix === "") {
-			// Bare "[!" at line start: an inline callout when the role is on;
-			// otherwise keep the legacy block-callout behavior.
-			role = inlineCallouts.enabled ? "inline" : "regular";
-		} else {
-			// Any other text before the token — inline callout mid-line.
-			if (!inlineCallouts.enabled) return null;
-			role = "inline";
-		}
-
-		// Capture the full token body (from `[!` to the next `]`, or end of
-		// line), independent of where the cursor sits within it. Reading only up
-		// to the cursor would mis-filter a mid-token cursor (e.g. `[!dang⎸aaaaa]`
-		// would match "Danger" instead of offering "Create new: dangaaaaa").
-		const afterTrigger = line.slice(triggerIdx + 2);
-		const closeIdx = afterTrigger.indexOf("]");
-		const body =
-			closeIdx === -1 ? afterTrigger : afterTrigger.slice(0, closeIdx);
-
-		// Only the type is a callout name; anything past the first `|` is
-		// Obsidian metadata. Matching on the body whole would offer
-		// "Create new: note|purple" for a perfectly ordinary `note` callout.
-		const { id: query } = splitCalloutMetadata(body);
-
+		// The query is the whole type, independent of where the cursor sits
+		// within it — reading only up to the cursor would mis-filter a mid-token
+		// cursor (`[!dang⎸aaaaa]` would match "Danger" instead of offering
+		// "Create new: dangaaaaa"). Anything past the first `|` is Obsidian
+		// metadata, not part of the name.
+		//
 		// Stop once the cursor moves past the id — into the metadata, the fold
-		// mark, or the title. All three are things the type dropdown has no say
-		// over, so the popup closes rather than filtering on them.
-		const idEndCh = triggerIdx + 2 + query.length;
-		if (cursor.ch > idEndCh) return null;
+		// mark, or the title. None of those are the type dropdown's business;
+		// the metadata has a suggest of its own.
+		if (cursor.ch > trigger.idEndCh) return null;
 
 		// A `[!` in code is code, exactly as every other reader of this syntax
 		// already has it. Asked last, deliberately: it is the only check that
 		// reads past this line, and by here the cursor is known to sit inside a
 		// token — a handful of keystrokes, not every one.
-		const inCode = isCalloutTokenInCode({
-			line,
-			tokenIndex: triggerIdx,
-			lineIndex: cursor.line, lineCount: editor.lineCount(),
-			lineAt: (index) => editor.getLine(index),
-		});
-		if (inCode) return null;
+		if (triggerInCode(editor, cursor, trigger)) return null;
 
-		this.triggerRole = role;
+		this.triggerRole = trigger.role;
 
 		return {
-			start: { line: cursor.line, ch: triggerIdx },
+			start: { line: cursor.line, ch: trigger.triggerCh },
 			end: cursor,
-			query,
+			query: trigger.id,
 		};
 	}
 
@@ -291,10 +261,18 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 			evt.preventDefault();
 			evt.stopPropagation();
 		}
+		const key = pickKeyOf(evt);
 
-		// Handle "Create new" — open editor pre-filled with the typed query
+		// Handle "Create new" — open editor pre-filled with the typed query.
+		// `|` on it is not a request to create anything: the user is still
+		// typing their own name and reached the separator, so it is typed.
 		if (isCreateNew(item)) {
-			void this.openCreateForQuery(item.query, ctx);
+			if (key === "pipe") {
+				this.close();
+				this.typePipe(ctx.editor, ctx.end, ctx.file);
+				return;
+			}
+			void this.openCreateForQuery(item.query, ctx, key);
 			return;
 		}
 
@@ -318,6 +296,16 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 			allIds.find((id) => id.toLowerCase() === queryLower) ??
 			allIds.find((id) => id.toLowerCase().startsWith(queryLower)) ??
 			def.id;
+
+		// Tab and `|` complete the type and nothing else, whatever the role.
+		if (key === "pipe") {
+			this.completeTypeThenPipe(editor, start, end, queryLower, matchedId, ctx.file);
+			return;
+		}
+		if (key === "tab") {
+			this.writeTypeOnly(editor, start, end, matchedId);
+			return;
+		}
 
 		// Inline pill: only the token itself is written; Enter continues on
 		// the same line (see insertInlineToken).
@@ -401,13 +389,113 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 			metaSuffix: this.tokenMetadataSuffix(line, start.ch),
 		});
 		editor.replaceRange(token, start, tokenEnd);
+		landAfterInlineToken(editor, start.line, start.ch + token.length);
+	}
 
-		const afterCh = start.ch + token.length;
-		const newLine = editor.getLine(start.line);
-		if (newLine[afterCh] !== " ") {
-			editor.replaceRange(" ", { line: start.line, ch: afterCh });
+	/**
+	 * Replace the type's own characters with `insertId` and nothing around
+	 * them, returning the column just past it.
+	 *
+	 * Never the `]`. Obsidian's bracket pairing steps over a typed `]` only
+	 * while it still tracks the `]` it inserted itself, and rewriting that
+	 * character — even with an identical one — drops the tracking: whoever then
+	 * types `]` by habit, as everyone typing metadata by hand does, would get
+	 * `]]`. For the same reason an unclosed token is left unclosed. In one, the
+	 * type ends at the cursor: the rest of the line is not the user's to lose.
+	 */
+	private replaceTypeText(
+		editor: Editor,
+		start: EditorPosition,
+		cursor: EditorPosition,
+		insertId: string,
+	): number {
+		const line = editor.getLine(start.line);
+		const body = tokenBodyAt(line, start.ch);
+		const from = start.ch + 2;
+		const to =
+			body.closeCh === -1 ? Math.min(body.idEndCh, Math.max(cursor.ch, from)) : body.idEndCh;
+		if (line.slice(from, to) !== insertId) {
+			editor.replaceRange(insertId, { line: start.line, ch: from }, { line: start.line, ch: to });
 		}
-		editor.setCursor({ line: start.line, ch: afterCh + 1 });
+		return from + insertId.length;
+	}
+
+	/**
+	 * Tab's pick: the type is written and nothing else — the metadata, the fold
+	 * mark and the title already on the line stay exactly as they are — and the
+	 * cursor parks before the `]`, after any metadata, the way Obsidian's own
+	 * link suggest leaves it before `]]`. Without a `]` it parks after the type
+	 * and its metadata.
+	 */
+	private writeTypeOnly(
+		editor: Editor,
+		start: EditorPosition,
+		cursor: EditorPosition,
+		insertId: string,
+	): void {
+		const idEnd = this.replaceTypeText(editor, start, cursor, insertId);
+		const body = tokenBodyAt(editor.getLine(start.line), start.ch);
+		const park =
+			body.closeCh !== -1 ? body.closeCh : body.pipeCh !== -1 ? body.bodyEndCh : idEnd;
+		parkCursor(editor, { line: start.line, ch: park });
+	}
+
+	/**
+	 * `|`'s pick — a keystroke more than a choice. It completes a type the user
+	 * was halfway through, and only that: the highlighted row's id must start
+	 * with what was typed, be longer than it, and the cursor must sit at the
+	 * end of the type. Anything else — a name of their own that merely contains
+	 * a known id (`mark2`, "Mark" highlighted), a type already complete, a
+	 * cursor mid-word, nothing typed yet — and the pipe is simply typed, exactly
+	 * as without the dropdown.
+	 *
+	 * A completed type already followed by a `|` steps over it rather than
+	 * doubling it. Either way the metadata suggestions open there, as `#`
+	 * opens heading suggestions in a link.
+	 */
+	private completeTypeThenPipe(
+		editor: Editor,
+		start: EditorPosition,
+		cursor: EditorPosition,
+		typed: string,
+		matchedId: string,
+		file: TFile | null,
+	): void {
+		const body = tokenBodyAt(editor.getLine(start.line), start.ch);
+		const id = matchedId.toLowerCase();
+		const completes =
+			typed !== "" &&
+			cursor.ch === body.idEndCh &&
+			id.startsWith(typed) &&
+			id !== typed;
+		if (!completes) {
+			this.typePipe(editor, cursor, file);
+			return;
+		}
+		const idEnd = this.replaceTypeText(editor, start, cursor, matchedId);
+		if (editor.getLine(start.line)[idEnd] === "|") {
+			parkCursor(editor, { line: start.line, ch: idEnd + 1 }, () =>
+				this.triggerNow(editor, file),
+			);
+			return;
+		}
+		this.typePipe(editor, { line: start.line, ch: idEnd }, file);
+	}
+
+	/**
+	 * Type a `|` at `at` as if the user had, and open the metadata suggestions
+	 * there — a write of ours is not a keystroke, so Obsidian's manager would
+	 * not re-check the line on its own (see {@link triggerNow}).
+	 */
+	private typePipe(
+		editor: Editor,
+		at: EditorPosition,
+		file: TFile | null,
+	): void {
+		editor.replaceRange("|", at);
+		parkCursor(editor, { line: at.line, ch: at.ch + 1 }, () =>
+			this.triggerNow(editor, file),
+		);
 	}
 
 	/**
@@ -447,6 +535,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 	private async openCreateForQuery(
 		query: string,
 		ctx: EditorSuggestContext,
+		key: PickKey = "enter",
 	): Promise<void> {
 		// Snapshot the role now: close() and the modal round-trip may let
 		// another onTrigger run and overwrite triggerRole.
@@ -478,6 +567,14 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 			line: start.line,
 			ch: Math.min(Math.max(end.ch, start.ch), line.length),
 		};
+
+		// Tab on "Create new" lands where Tab on a row would, once the modal
+		// returns — the modal is just a longer pick.
+		if (key === "tab") {
+			editor.focus();
+			this.writeTypeOnly(editor, start, tokenEnd, result.id);
+			return;
+		}
 
 		if (role === "inline") {
 			editor.focus();

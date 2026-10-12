@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { eachBlock, stripComments } from "../src/manager/theme/cssBlocks";
+import { skipString } from "../src/utils/selectorText";
 
 function blocks(css: string): Map<string, string> {
 	const result = new Map<string, string>();
@@ -33,5 +34,24 @@ describe("CSS structural punctuation", () => {
 	it("removes real comments without deleting quoted comment markers", () => {
 		assert.equal(stripComments('.a { content:"/*keep*/"; } /* } */ .b{}'), '.a { content:"/*keep*/"; }  .b{}');
 		assert.equal(stripComments('.a{} /* unfinished'), '.a{} ');
+	});
+
+	it("ends a string at a raw newline, as the CSS tokenizer does", () => {
+		// Blue Topaz ships this stray quote, with the rule's `}` on the next
+		// line. Read to the next `'`, the string swallowed the rest of the
+		// theme and every rule after it vanished.
+		const found = blocks(
+			String.raw`.a { content: '\A\9\9'';` + "\n}\n.b { color: red; }\n.c { content: ''; }",
+		);
+		assert.equal(found.get(".b"), "color: red;");
+		assert.equal(found.get(".c"), "content: '';");
+	});
+
+	it("keeps reading a string across an escaped newline, CRLF included", () => {
+		// `\` + newline continues a CSS string; a theme saved on Windows writes
+		// that newline as CRLF, which CSS reads as one newline, not two.
+		assert.equal(skipString('"a\\\r\nb" x', 0), 7);
+		assert.equal(skipString('"a\\\nb" x', 0), 6);
+		assert.equal(skipString('"a\nb" x', 0), 2, "an unescaped newline still ends it");
 	});
 });

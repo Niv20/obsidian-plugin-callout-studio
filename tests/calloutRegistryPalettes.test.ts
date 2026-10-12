@@ -354,6 +354,25 @@ describe("isLivePaletteId — through listOrphanPaletteGroups", () => {
 		assert.deepStrictEqual(registry.listOrphanPaletteGroups(), []);
 	});
 
+	it("keeps a callout saved on Violet or Bubblegum on its renamed preset", () => {
+		// Violet became Purple and Bubblegum became Pink. A saved `paletteId` is
+		// never rewritten (an older synced device would not know the new id), so
+		// the old one must stay live — not an orphan group, and not adoptable by
+		// a saved palette that happens to carry the same hexes.
+		const { registry } = loaded(
+			saved(
+				[
+					def({ id: "a", paletteId: "violet", ...BAKED }),
+					def({ id: "b", paletteId: "bubblegum", ...BAKED }),
+				],
+				{ customPalettes: [palette()] },
+			),
+		);
+		assert.deepStrictEqual(registry.listOrphanPaletteGroups(), []);
+		assert.strictEqual(registry.get("a")?.paletteId, "violet");
+		assert.strictEqual(registry.get("b")?.paletteId, "bubblegum");
+	});
+
 	it("ignores a callout with no palette link at all", () => {
 		const { registry } = loaded(saved([def({ id: "a" })]));
 		assert.deepStrictEqual(registry.listOrphanPaletteGroups(), []);

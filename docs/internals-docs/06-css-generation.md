@@ -111,6 +111,8 @@ registry actually holds data) replaces it with a real generated pass.
         accent differently from core; see "The core accent shim" below
 5. generateFallbackCSS(callouts) - styles any data-callout Obsidian rendered that this
                                        plugin does not recognize
+6. generateMetadataColorCSS() - one group per metadata colour word, weakest first;
+                                LAST on purpose (see "Metadata colours" below)
 ```
 
 ### Block title/content alignment
@@ -700,6 +702,115 @@ A user-requested scan may add the theme's declared ids as durable fallback rows.
 Automatic theme appearance inspection updates only ownership and measured artwork.
 Switching themes never adds or removes definitions, writes a retirement list, or
 starts a vault discovery pass. See [theme appearance](18-theme-callout-discovery.md).
+
+## Metadata colours (`[!type|colour]`)
+
+A colour word in a callout's metadata paints that one callout:
+`> [!mark|pink]` is a Pink `mark` while every other `mark` keeps its
+own colour. [`css/metadataColorCSS.ts`](../../src/manager/css/metadataColorCSS.ts)
+emits it; the words, their precedence and the palette-name rule live in
+[`utils/calloutMetadata.ts`](../../src/utils/calloutMetadata.ts) (see
+[12-color-system.md](12-color-system.md#metadata-colour-words)).
+
+**One list of colours, for every consumer.** `CSSInjector.metadataColorEntries()`
+is the list this block emits, the PDF painters bake from, the reading
+post-processor reads and the `|` dropdown offers. It is empty while the hidden
+`metadataColors.enabled` switch is off, and it leaves out every word an enabled
+snippet of the user's own styles: `ThemeMetadataCatalog.snippetWords()` reserves
+them, and the user's snippet keeps them rather than being painted over at
+`!important`. Callout Studio's own exported snippet (`callout-studio-custom`) is
+not read as the user's. Themes are not reserved - colouring a theme's colour
+words is the deliberate exception in [04-data-model.md](04-data-model.md).
+
+**Pure CSS, keyed on the attribute.** Obsidian writes `data-callout-metadata` on
+every block callout and the plugin stamps it on its own heading and inline DOM,
+so nothing runs per element: the colour is there at first paint, and the block
+half travels in the exported snippet (`standalone`), where none of our code runs.
+Only PDF export's baked DOM colours need script, and they read the element's
+own metadata through `definitionWithMetadataColor` (see
+[09-render-roles.md](09-render-roles.md)).
+
+**One rule set per colour, not per callout.** Everything a palette decides -
+accent variables, background tint and its alpha, gradient, title sweep, fold
+chevron, the print repaint, the theme-surface relocation - is a function of the
+palette alone. So each word becomes a virtual definition
+(`bakePaletteColors(palette)`) run through the injector's own emitters with a
+selector that names the word instead of an id. `generateMetadataColorCSS` sets
+the ambient weight and importance those emitters read, as `generateCalloutCSS`
+does. The callout's icon, frame and title stay its own.
+
+**Replacing, not layering.** The callout's own definition rule still matches the
+element, so whatever the colour does not restate shows through it. A colour
+without a gradient therefore writes `background-image: none` on the callout,
+the pill and the bar, empties the print `::before`, and - without a title
+sweep of its own - undoes a sweep's clipping (`background-clip`, the
+transparent `-webkit-text-fill-color`) on the block title, the bar title, the
+token name and the pill, and puts the chevrons back to their defaults
+(`inherit`; the bar's `var(--cs-accent, …)` from styles.css). Each reset only
+exists while some definition has the thing it clears (`clears.gradient`,
+`clears.sweep`, computed from the registry on every pass), so a vault without
+gradients pays nothing for them. Content text is the palette's own colour when
+it authored one, else `inherit` - the theme's text colour, never the
+`#1a1a1a`/`#e0e0e0` a palette bakes when it has none. Two leftovers are
+accepted: over a callout whose own palette has no background ("None"), the
+colour keeps that style's `box-shadow: none` and transparent border colour.
+
+**Either separator.** A word may sit between spaces (ITS Theme's convention),
+pipes (the Callout Metadata plugin's) or any mix. `~=` covers every whitespace
+boundary; five pipe forms cover the rest, all inside one `:is()` with the `i`
+flag:
+
+```css
+:is([data-callout-metadata~="v" i], [data-callout-metadata^="v|" i],
+    [data-callout-metadata$="|v" i], [data-callout-metadata*="|v|" i],
+    [data-callout-metadata*="|v " i], [data-callout-metadata*=" v|" i])
+```
+
+The six forms are `METADATA_WORD_FORMS`, and `metadataNamesWord` evaluates the
+same six for the PDF painters, so the screen and the print cannot disagree about
+a string - a no-break space, which `~=` does not treat as whitespace, included.
+An alias (`grey` for `gray`) folds into its preset's `:is()`.
+
+**Nested, so a word's selector is written once.** Each colour is up to four
+blocks - the callout, the pill, the heading bar, the heading token - whose
+selector carries the word's `:is()`, `.callout` repeated to the studio weight
+and the theme-owned `:not()`. Every rule sits inside its block as `:root &` or
+`.theme-dark &` (a theme guard as `:is(guard) &`, so no nested selector opens
+with a type selector, which the first engines to ship nesting reject). Flat,
+that selector was repeated in every rule: under ITS Theme the block was 217 KB,
+now 77 KB; 48 KB with no theme, now 30 KB. Native nesting needs Chromium 112
+(the desktop app's Electron, which only a new installer updates) and Safari 16.5
+on iOS. An older engine reads each nested block as an empty rule and skips it -
+those blocks only - so its callouts keep their own colours.
+
+**Weight.** Every rule is one attribute heavier than the definition rule it
+overrides: `[data-callout]` plus the word's `:is()` stand where the definition
+has its single `[data-callout="id"]`, at the same `.callout` repeat. `&` is
+`:is(outer)`, which weighs what the one selector inside it does, so nesting
+changes no weight. The light rules carry a `:root` scope so they weigh exactly
+what their `.theme-dark` twins do - which is what keeps the fixed precedence
+true in dark mode, where a weaker colour's dark block would otherwise outweigh a
+stronger colour's unscoped light rule. Token rules (heading bar, pill) follow
+the same pattern without `!important`, as the definition's token rules do.
+
+**Precedence is source order.** CSS cannot tell which of two words was written
+last, so two colours resolve by a fixed order instead: the groups are emitted
+weakest first - extra presets, Obsidian's colours, saved palettes (in list
+order) - at one specificity, and the later wins. `resolveMetadataColor` walks
+the same list from the strong end, so print agrees. The resets are per colour
+for the same reason: a shared one would land on one side of that order. The `|`
+dropdown swaps an existing colour rather than adding a second, so the order
+only decides pairs typed by hand. Emitting this block after every definition and
+the fallback is part of the same rule.
+
+**Theme-owned callouts are excluded** with one `:not([data-callout=…])` over every
+theme-owned attr id (the same for every colour, so weights stay equal). Unknown
+ids are not excluded: the rule names no id. The standalone export drops the
+`:not()` and the token rules, as `generateCalloutCSS` drops theme-specific blocks.
+
+**Off is nothing.** The hidden `metadataColors.enabled` switch (no UI; `data.json`
+only) makes `activeMetadataColorEntries` return no entries, and the generator
+returns `""` - a test pins the empty string.
 
 ## Unknown-callout fallback: deliberately weak on native Blocks
 

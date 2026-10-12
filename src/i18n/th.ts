@@ -68,6 +68,16 @@ export const th: Record<string, string> = {
 	"cmd.openQuickInsert": "แทรก callout แบบบล็อกอย่างรวดเร็ว",
 
 	"autocomplete.createNew": 'สร้าง "{{name}}"',
+	"metadataSuggest.finish": "เสร็จสิ้น",
+	"metadataSuggest.colors": "สี",
+	"metadataSuggest.useTyped": 'ใช้ "{{text}}"',
+	"metadataSuggest.replaces": "แทนที่ {{word}}",
+	"metadataSuggest.themeAlso": "ธีมของคุณก็จัดรูปแบบคำนี้เช่นกัน",
+	"metadataSuggest.needsSpace": "คั่นด้วยช่องว่าง ไม่ใช่ |",
+	"metadataSuggest.anySeparator": "คั่นด้วยช่องว่างหรือ |",
+	"metadataSuggest.mustBeFirst": "ใช้ได้เฉพาะเป็นคำแรก",
+	"metadataSuggest.mustBeLast": "ใช้ได้เฉพาะเป็นคำสุดท้าย",
+	"metadataSuggest.alone": "ใช้ได้เฉพาะเมื่ออยู่โดดๆ",
 
 	"calloutPicker.noMatches": "ไม่พบ callout ที่ตรงกับ “{{query}}”",
 	"calloutPicker.placeholder": "ค้นหา callout",
@@ -216,6 +226,10 @@ export const th: Record<string, string> = {
 	"settings.deletePaletteAria": "ลบชุดสี {{name}}",
 	"settings.deletePaletteConfirm":
 		'ลบชุดสี "{{name}}" หรือไม่?\nCallout ที่ใช้สีนี้จะไม่ได้รับผลกระทบ',
+	"settings.deletePaletteMetadataNote":
+		'callout ที่ระบุชื่อนี้ในเมทาดาทา ("{{key}}") จะกลับไปใช้สีของตัวเอง บันทึกของคุณจะไม่เปลี่ยนแปลง',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'callout ที่ระบุชื่อนี้ในเมทาดาทา ("{{key}}") จะใช้สีในตัวที่มีชื่อนั้นแทน บันทึกของคุณจะไม่เปลี่ยนแปลง',
 
 	"settings.customCommands": "คำสั่งและปุ่มลัด",
 	"settings.customCommandsDesc":
@@ -413,6 +427,18 @@ export const th: Record<string, string> = {
 	"palette.namePlaceholder": "ชุดสีของฉัน",
 	"palette.nameExists": "มีชุดสีชื่อนี้อยู่แล้ว",
 	"palette.saveBlockedName": "มีชุดสีชื่อนี้อยู่แล้ว เลือกชื่ออื่นเพื่อบันทึก",
+	"palette.metadataName": "ในเมทาดาทาของ callout: {{key}}",
+	"palette.metadataNameExists":
+		'มีชุดสีอื่นเขียนเป็น "{{key}}" ในเมทาดาทาของ callout อยู่แล้ว เลือกชื่ออื่น',
+	"palette.metadataNameShared":
+		"ในเมทาดาทาของ callout: {{key}} ชุดสีอื่นที่บันทึกไว้ก็มีคำนี้เช่นกัน จึงมีเพียงชุดเดียวที่ตอบสนองต่อคำนี้",
+	"palette.renameNotesTitle": "อัปเดตบันทึกของคุณไหม",
+	"palette.renameNotesBody":
+		'callout {{count}} รายการใน {{files}} บันทึกใช้ชุดสีนี้ในชื่อ "{{old}}"\nเปลี่ยนเป็น "{{new}}" ไหม\nถ้าไม่เปลี่ยน จะกลับไปใช้สีของตัวเอง',
+	"palette.renameNotesConfirm": "อัปเดตบันทึก",
+	"palette.renameNotesSkip": "ปล่อยไว้",
+	"palette.renameNotesFailed":
+		"อัปเดตบางบันทึกไม่สำเร็จ ที่อัปเดตแล้วถูกบันทึกไว้ ส่วนที่เหลือยังใช้ชื่อเดิม",
 	"palette.baseColor": "สีพื้นฐาน",
 	"palette.baseColorHint":
 		"เราจะจับคู่สีพื้นหลังให้เข้ากับสีนี้โดยอัตโนมัติ หากต้องการ คุณสามารถควบคุมแยกต่างหากได้โดย{{link}}",
@@ -449,7 +475,7 @@ export const th: Record<string, string> = {
 	"colorName.sky": "ฟ้า",
 	"colorName.blue": "น้ำเงิน",
 	"colorName.indigo": "คราม",
-	"colorName.violet": "ม่วงน้ำเงิน",
+	"colorName.violet": "ม่วง",
 	"colorName.purple": "ม่วง",
 	"colorName.pink": "ชมพู",
 	"colorName.rose": "กุหลาบ",
@@ -461,7 +487,6 @@ export const th: Record<string, string> = {
 	"colorName.coral": "สีปะการัง",
 	"colorName.grape": "สีองุ่น",
 	"colorName.plum": "สีพลัม",
-	"colorName.bubblegum": "หมากฝรั่ง",
 
 	"iconPicker.pickIcon": "เลือกไอคอน",
 	"iconPicker.confirm": "ยืนยัน",

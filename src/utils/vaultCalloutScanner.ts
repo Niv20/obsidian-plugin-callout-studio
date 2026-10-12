@@ -27,7 +27,12 @@ import type { LineCalloutToken } from "../editor/calloutTokens";
 import {
 	forEachCalloutToken,
 } from "../editor/calloutTokens";
-import { iterateDocumentCalloutLines } from "../editor/documentCallouts";
+import {
+	iterateDocumentCalloutLines,
+	iterateDocumentCallouts,
+} from "../editor/documentCallouts";
+import { splitCalloutMetadata } from "./calloutId";
+import { foldMetadataCase, metadataWords } from "./calloutMetadata";
 import { splitFoldMark } from "../editor/calloutWriter";
 import { calloutsToPlainText } from "./calloutPlainText";
 
@@ -399,5 +404,88 @@ export async function replaceCalloutTitlesInVault(
 		requireComplete,
 	);
 
+	return count;
+}
+
+/**
+ * A token's `[!…]` bracket with every metadata word that reads as `word`
+ * (ASCII case folded, as the stylesheet matches) written as `replacement` —
+ * or null when its metadata never names `word`. Only the words change: the
+ * type as written, the separators around them, and everything after the `]`
+ * are left exactly as they were.
+ */
+function withMetadataWord(
+	line: string,
+	token: LineCalloutToken,
+	word: string,
+	replacement: string,
+): string | null {
+	if (!token.hasMetadata) return null;
+	const target = foldMetadataCase(word);
+	// The bracket's own text, so the type keeps the spelling the note gave it.
+	const parts = splitCalloutMetadata(line.slice(token.from + 2, tokenBracketEnd(token) - 1));
+	let metadata = parts.metadata;
+	let hit = false;
+	for (const w of [...metadataWords(metadata)].reverse()) {
+		if (foldMetadataCase(w.text) !== target) continue;
+		metadata = metadata.slice(0, w.from) + replacement + metadata.slice(w.to);
+		hit = true;
+	}
+	return hit ? `[!${parts.id}|${metadata}]` : null;
+}
+
+/**
+ * How many callouts, in how many notes, name `word` in their metadata — every
+ * role, whole word, either separator. What renaming a saved palette asks
+ * before offering to carry its notes along. Incomplete scans reject.
+ */
+export async function countMetadataWordUsages(
+	app: App,
+	word: string,
+): Promise<{ fileCount: number; totalCount: number }> {
+	const target = foldMetadataCase(word);
+	let fileCount = 0;
+	let totalCount = 0;
+	await scanVaultFiles(app, async (file) => {
+		const content = await app.vault.cachedRead(file);
+		if (content.indexOf("[!") === -1) return;
+		let inFile = 0;
+		for (const { token } of iterateDocumentCallouts(content)) {
+			if (!token.hasMetadata) continue;
+			if (metadataWords(token.metadata).some((w) => foldMetadataCase(w.text) === target)) {
+				inFile++;
+			}
+		}
+		if (inFile > 0) {
+			fileCount++;
+			totalCount += inFile;
+		}
+	});
+	return { fileCount, totalCount };
+}
+
+/**
+ * Rewrite the metadata word `word` to `replacement` in every callout of every
+ * note — the notes half of renaming a saved palette, whose metadata word is
+ * its name in kebab-case. Returns the number of callouts changed.
+ */
+export async function replaceMetadataWordInVault(
+	app: App,
+	word: string,
+	replacement: string,
+	journal?: NoteRewriteJournal,
+): Promise<number> {
+	const { count } = await rewriteVaultFiles(
+		app,
+		(content) =>
+			rewriteCalloutLines(content, (line, tokens) =>
+				rewriteTokensOnLine(line, tokens, (token) => {
+					const text = withMetadataWord(line, token, word, replacement);
+					return text === null ? null : { text, end: tokenBracketEnd(token) };
+				}),
+			),
+		false,
+		journal,
+	);
 	return count;
 }

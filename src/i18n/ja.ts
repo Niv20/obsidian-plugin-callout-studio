@@ -16,6 +16,16 @@ export const ja: Record<string, string> = {
 	"cmd.openQuickInsert": "ブロックcalloutをクイック挿入",
 
 	"autocomplete.createNew": '作成 "{{name}}"',
+	"metadataSuggest.finish": "完了",
+	"metadataSuggest.colors": "色",
+	"metadataSuggest.useTyped": '"{{text}}" を使う',
+	"metadataSuggest.replaces": "{{word}} を置き換えます",
+	"metadataSuggest.themeAlso": "お使いのテーマもこの語にスタイルを適用します",
+	"metadataSuggest.needsSpace": "| ではなく、スペースで区切ってください",
+	"metadataSuggest.anySeparator": "スペースまたは | で区切ってください",
+	"metadataSuggest.mustBeFirst": "最初の語としてのみ機能します",
+	"metadataSuggest.mustBeLast": "最後の語としてのみ機能します",
+	"metadataSuggest.alone": "単独でのみ機能します",
 
 	"calloutPicker.noMatches": "「{{query}}」に一致するcalloutはありません。",
 	"calloutPicker.placeholder": "calloutを検索",
@@ -166,6 +176,10 @@ export const ja: Record<string, string> = {
 	"settings.deletePaletteAria": "パレット {{name}} を削除",
 	"settings.deletePaletteConfirm":
 		'パレット "{{name}}" を削除しますか？\nこの色を使用しているcalloutには影響しません。',
+	"settings.deletePaletteMetadataNote":
+		'メタデータにこの名前 ("{{key}}") を指定している callout は、それぞれ自身の色に戻ります。ノートは変更されません。',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'メタデータにこの名前 ("{{key}}") を指定している callout は、代わりにその名前の組み込みの色になります。ノートは変更されません。',
 
 	"settings.customCommands": "コマンドとホットキー",
 	"settings.customCommandsDesc":
@@ -366,6 +380,15 @@ export const ja: Record<string, string> = {
 	"palette.namePlaceholder": "マイパレット",
 	"palette.nameExists": "この名前のパレットはすでに存在します",
 	"palette.saveBlockedName": "この名前のパレットはすでに存在します。別の名前を選んで保存してください。",
+	"palette.metadataName": "calloutのメタデータでの表記: {{key}}",
+	"palette.metadataNameExists": '別のパレットがすでに calloutのメタデータで "{{key}}" と書かれています。別の名前を選んでください。',
+	"palette.metadataNameShared": "calloutのメタデータでの表記: {{key}}。保存済みの別のパレットにもこの語があるため、どちらか一方だけが反応します。",
+	"palette.renameNotesTitle": "ノートを更新しますか？",
+	"palette.renameNotesBody":
+		'{{files}} 件のノートにある {{count}} 個の callout が、このパレットを "{{old}}" として使っています。\n"{{new}}" に変更しますか？\n変更しない場合、それぞれ自身の色に戻ります。',
+	"palette.renameNotesConfirm": "ノートを更新",
+	"palette.renameNotesSkip": "そのままにする",
+	"palette.renameNotesFailed": "一部のノートを更新できませんでした。更新できたものは保存されています。残りは古い名前のままです。",
 	"palette.baseColor": "ベースカラー",
 	"palette.baseColorHint":
 		"背景色を自動的にこの色に合わせます。ご希望であれば、{{link}}で個別に設定することもできます。",
@@ -402,7 +425,7 @@ export const ja: Record<string, string> = {
 	"colorName.sky": "スカイブルー",
 	"colorName.blue": "青",
 	"colorName.indigo": "インディゴ",
-	"colorName.violet": "バイオレット",
+	"colorName.violet": "紫",
 	"colorName.purple": "紫",
 	"colorName.pink": "ピンク",
 	"colorName.rose": "ローズ",
@@ -414,7 +437,6 @@ export const ja: Record<string, string> = {
 	"colorName.coral": "サンゴ色",
 	"colorName.grape": "グレープ",
 	"colorName.plum": "プラム",
-	"colorName.bubblegum": "バブルガム",
 
 	"iconPicker.pickIcon": "アイコンを選択",
 	"iconPicker.confirm": "確認",

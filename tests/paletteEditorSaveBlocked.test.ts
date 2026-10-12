@@ -8,6 +8,7 @@ import type { App } from "obsidian";
 import { t } from "../src/i18n";
 import { PaletteEditorModal } from "../src/settings/PaletteEditorModal";
 import type { CustomPalette } from "../src/types";
+import { bakePaletteColors, findPresetByPaletteId } from "../src/utils/colorPalettes";
 import { el } from "./support/fakeDom";
 
 type Options = ConstructorParameters<typeof PaletteEditorModal>[1];
@@ -76,6 +77,83 @@ describe("the palette editor's Save", () => {
 		internals.updateValidity();
 		assert.equal(save.getAttribute("aria-disabled"), "false");
 		assert.equal(save.hasClass("cs-btn-disabled"), false);
+	});
+});
+
+describe("a palette saved before a preset took its name or colours", () => {
+	// Purple, Pink and Yellow became preset names after users had already
+	// saved palettes called that. Upgrading must not lock them out of editing.
+	const saved = (name: string, over: Partial<CustomPalette> = {}): CustomPalette => ({
+		...twinOf(name),
+		id: `cp-${name}`,
+		name,
+		...over,
+	});
+
+	for (const name of ["Pink", "Purple", "Yellow"]) {
+		it(`still saves an existing palette called "${name}"`, () => {
+			const { internals, save } = editor({ existing: saved(name) });
+			internals.updateValidity();
+			assert.equal(save.getAttribute("aria-disabled"), "false");
+			assert.equal(internals.saveBlockedReason(), null);
+		});
+
+		it(`still refuses "${name}" for a new palette`, () => {
+			const { internals } = editor({ seedName: name });
+			assert.equal(internals.saveBlockedReason(), t("palette.saveBlockedName"));
+		});
+	}
+
+	it("still refuses renaming another palette to a preset's name", () => {
+		const { internals } = editor({ existing: saved("Rose petal") });
+		internals.name = "Pink";
+		assert.equal(internals.saveBlockedReason(), t("palette.saveBlockedName"));
+	});
+
+	it("still refuses a name another saved palette has, even its old one", () => {
+		const { internals } = editor({ existing: saved("Pink"), takenNames: ["Pink"] });
+		assert.equal(internals.saveBlockedReason(), t("palette.saveBlockedName"));
+	});
+
+	// Advanced mode stores the six colours verbatim, so the form opens on
+	// exactly what was saved.
+	const yellow = findPresetByPaletteId("yellow");
+	assert.ok(yellow);
+	const yellowColors = { ...bakePaletteColors(yellow), colorMode: "advanced" as const };
+
+	it("still saves an existing palette wearing a new preset's exact colours", () => {
+		const existing = saved("Sun", yellowColors as Partial<CustomPalette>);
+		const { internals, save } = editor({ existing });
+		internals.updateValidity();
+		assert.equal(internals.colorClash, null);
+		assert.equal(save.getAttribute("aria-disabled"), "false");
+	});
+
+	it("still refuses those colours for a new palette, naming the preset", () => {
+		const seed = saved("Sun", yellowColors as Partial<CustomPalette>);
+		const { internals } = editor({ seedName: "Sun", seed });
+		assert.equal(internals.saveBlockedReason(), t("palette.colorExists", { name: yellow.name }));
+	});
+});
+
+describe("two saved palettes that already share a metadata word", () => {
+	// Legal names before metadata words existed, and still legal as names —
+	// they only kebab-case alike. Blocking them would lock the user out of
+	// editing either palette, even its colours.
+	const saved = (name: string): CustomPalette => ({ ...twinOf(name), id: `cp-${name}`, name });
+	for (const [mine, theirs] of [["Note dark", "Note (dark)"], ["🔥 Fire", "Fire 🔥"], ["Blue 2", "blue_2"]] as const) {
+		it(`"${mine}" still saves beside "${theirs}", with a warning instead`, () => {
+			const { internals, save } = editor({ existing: saved(mine), takenNames: [theirs] });
+			internals.updateValidity();
+			assert.equal(internals.saveBlockedReason(), null);
+			assert.equal(save.getAttribute("aria-disabled"), "false");
+		});
+	}
+
+	it("still refuses giving a palette another's word now", () => {
+		const { internals } = editor({ existing: saved("Sunrise"), takenNames: ["Note (dark)"] });
+		internals.name = "Note dark";
+		assert.equal(internals.saveBlockedReason(), t("palette.metadataNameExists", { key: "note-dark" }));
 	});
 });
 

@@ -59,7 +59,14 @@ import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
 import { obsidianCalloutAttrId } from "../utils/calloutId";
 import { StudioWeightCache } from "./theme/StudioWeightCache";
 import type { ThemeCalloutStore } from "./theme/ThemeCalloutStore";
+import { ThemeMetadataCatalog } from "./theme/ThemeMetadataCatalog";
 import { generateFallbackCSS } from "./css/fallbackCSS";
+import { generateMetadataColorCSS } from "./css/metadataColorCSS";
+import {
+	activeMetadataColorEntries,
+	definitionWithMetadataColor,
+	type MetadataColorEntry,
+} from "../utils/calloutMetadata";
 import {
 	bgImageFor,
 	bgProps,
@@ -165,8 +172,29 @@ export class CSSInjector {
 		this.icons = createIconResolver(registry);
 		this.startupCache = new StartupStyleCache(app);
 		this.studioWeights = new StudioWeightCache(app);
+		this.metadataCatalog = new ThemeMetadataCatalog(app);
 	}
 	private readonly studioWeights: StudioWeightCache;
+
+	/**
+	 * The metadata words the theme and the user's snippets react to — one scan
+	 * for the stylesheet and the `|` suggestions both, so a colour the
+	 * stylesheet stands down on is never offered as one.
+	 */
+	readonly metadataCatalog: ThemeMetadataCatalog;
+
+	/**
+	 * The colours callout metadata can name right now: none with the hidden
+	 * switch off, and none of the words the user's own snippets style. Every
+	 * consumer — this sheet, the export painters, the reading post-processor,
+	 * the `|` dropdown — reads it from here, so they cannot disagree.
+	 */
+	metadataColorEntries(): MetadataColorEntry[] {
+		return activeMetadataColorEntries(
+			this.registry.settings,
+			this.metadataCatalog.snippetWords(),
+		);
+	}
 
 	/**
 	 * The one theme scan: studio mode's selector weight, and the settings tab's
@@ -325,6 +353,10 @@ export class CSSInjector {
 
 		// Fallback rule: style unrecognized callout IDs with the fallback callout
 		rules.push(this.generateFallbackCSS(callouts));
+
+		// `[!type|colour]` — after every definition and the fallback, which
+		// the metadata colours' precedence relies on (see metadataColorCSS.ts).
+		rules.push(this.generateMetadataColorCSS());
 
 		const cssText = rules.join("\n\n");
 		// Write the CSS to BOTH targets:
@@ -1396,6 +1428,18 @@ export class CSSInjector {
 			),
 		);
 
+		// The colour a callout's own `|metadata` names, baked over its
+		// definition for the two export painters below — see
+		// `definitionWithMetadataColor`. Built on first need: most callouts carry
+		// no metadata, and this runs for every rendered section.
+		let metadataEntries: MetadataColorEntry[] | null = null;
+		const painted = (def: CalloutDefinition, el: Element): CalloutDefinition => {
+			const metadata = el.getAttribute("data-callout-metadata");
+			if (!metadata) return def;
+			metadataEntries ??= this.metadataColorEntries();
+			return definitionWithMetadataColor(def, metadata, metadataEntries);
+		};
+
 		for (const calloutEl of calloutEls) {
 			const id = calloutEl.getAttribute("data-callout");
 			if (!id) continue;
@@ -1424,8 +1468,9 @@ export class CSSInjector {
 				if (titleInner) clearGradientChars(titleInner);
 				continue;
 			}
-			if (iconEl) this.paintIcon(iconEl, def);
-			if (titleInner) this.syncTitleGradient(titleInner, def);
+			const instance = painted(def, calloutEl);
+			if (iconEl) this.paintIcon(iconEl, instance);
+			if (titleInner) this.syncTitleGradient(titleInner, instance);
 		}
 
 		// Heading-bar title spans: reading view wraps the heading's own
@@ -1448,7 +1493,7 @@ export class CSSInjector {
 			const titleEl = headingEl.querySelector<HTMLElement>(
 				`.${CSS_HEADING_TITLE}`,
 			);
-			if (titleEl) this.syncTitleGradient(titleEl, def);
+			if (titleEl) this.syncTitleGradient(titleEl, painted(def, headingEl));
 		}
 
 		// Heading/inline token DOM (Live Preview widgets and reading-view
@@ -1476,7 +1521,7 @@ export class CSSInjector {
 			// nests a `.cm-content` under a rendered container, so no ancestry
 			// test gets both right (see CSS_CM_WIDGET).
 			if (tokenEl.classList.contains(CSS_CM_WIDGET)) continue;
-			this.paintTokenEl(tokenEl);
+			this.paintTokenEl(tokenEl, painted);
 		}
 	}
 
@@ -1497,8 +1542,15 @@ export class CSSInjector {
 		return Array.from(docs);
 	}
 
-	/** Repaint one heading/inline token's icon (and name, for known ids). */
-	private paintTokenEl(tokenEl: HTMLElement): void {
+	/**
+	 * Repaint one heading/inline token's icon (and name, for known ids).
+	 * `painted` bakes the token's own metadata colour over its definition for
+	 * the export colours of a swept name.
+	 */
+	private paintTokenEl(
+		tokenEl: HTMLElement,
+		painted: (def: CalloutDefinition, el: Element) => CalloutDefinition,
+	): void {
 		const id = tokenEl.getAttribute("data-callout");
 		if (!id) return;
 		const resolved = resolveCalloutDef(this.registry, id);
@@ -1535,7 +1587,7 @@ export class CSSInjector {
 		if (unknown) {
 			clearGradientChars(nameEl);
 		} else {
-			this.syncTitleGradient(nameEl, def);
+			this.syncTitleGradient(nameEl, painted(def, tokenEl));
 		}
 	}
 
@@ -1784,6 +1836,71 @@ export class CSSInjector {
 			printGradientCSS: (def, selector, isPill) =>
 				this.printGradientCSS(def, selector, isPill),
 		});
+	}
+
+	/**
+	 * Every colour a callout can take from its own metadata — see
+	 * `css/metadataColorCSS.ts`. Empty while the hidden `metadataColors`
+	 * switch is off. `standalone` is the exported snippet's cut, as for
+	 * {@link generateCalloutCSS}.
+	 *
+	 * Sets the ambient weight and importance the shared emitters read
+	 * (`themeSurface`, `printGradientCSS`) for the duration, like
+	 * `generateCalloutCSS` does, and always puts them back.
+	 */
+	generateMetadataColorCSS(standalone = false): string {
+		const settings = this.registry.settings;
+		const entries = this.metadataColorEntries();
+		if (entries.length === 0) return "";
+		this.emitWeight = this.studioWeights.resolve();
+		this.emitImportant = " !important";
+		const defs = this.registry.getAll();
+		try {
+			return generateMetadataColorCSS(
+				entries,
+				{
+					weight: this.emitWeight,
+					important: this.emitImportant,
+					clears: {
+						gradient: defs.some((d) => d.bgGradient !== undefined && d.transparentBg !== true),
+						sweep: defs.some((d) => Boolean(d.bgGradient?.textGradient && d.bgGradient.textToColorLight)),
+					},
+					themeOwnedAttrIds: this.themeOwnedAttrIds(),
+					transparentBorderProps: () =>
+						transparentBorderProps(settings.globalStyle.borderSides, true),
+					accentProps: (def, mode) => this.accentProps(def, mode, true),
+					ownAccentProps: (def, mode) => this.ownAccentProps(def, mode),
+					bgProps: (def, mode, important) =>
+						this.bgProps(def, mode, important),
+					needsDarkBlock: (def) => this.needsDarkBlock(def),
+					textSweepRules: (def, selectorsFor, ownsBackground, imp) =>
+						this.textSweepRules(def, selectorsFor, ownsBackground, imp),
+					printGradientCSS: (def, selFor, hideElementGradient, imp) =>
+						this.printGradientCSS(def, selFor, hideElementGradient, imp),
+					themeSurface: (def, selectorsAt) =>
+						this.themeSurface(def, selectorsAt),
+				},
+				standalone,
+			);
+		} finally {
+			this.emitWeight = 1;
+			this.emitImportant = "";
+		}
+	}
+
+	/**
+	 * The `data-callout` forms of every callout the theme owns, ids and aliases
+	 * alike — what a metadata colour must stay off.
+	 */
+	private themeOwnedAttrIds(): string[] {
+		const ids = new Set<string>();
+		for (const def of this.registry.getAll()) {
+			if (!this.registry.themeOwns(def)) continue;
+			for (const id of [def.id, ...(def.aliases ?? [])]) {
+				ids.add(obsidianCalloutAttrId(id));
+			}
+		}
+		return [...ids].sort();
 	}
 
 	destroy(): void {

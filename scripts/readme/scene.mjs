@@ -62,8 +62,8 @@ export async function mount() {
 	installDomHelpers();
 	setLocale("en");
 	const plugin = makeHost();
-	const palette = getAllColorPalettes().find(item => item.id === "violet");
-	if (!palette) throw new Error("The Violet palette is missing");
+	const palette = getAllColorPalettes().find(item => item.id === "purple");
+	if (!palette) throw new Error("The Purple palette is missing");
 	seedExample(plugin, {
 		id: "idea", displayName: "Idea", icon: { type: "lucide", value: "lightbulb" },
 		paletteId: palette.id, colorLight: palette.colorLight, colorDark: palette.colorDark,

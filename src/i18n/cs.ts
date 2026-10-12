@@ -16,6 +16,16 @@ export const cs: Record<string, string> = {
 	"cmd.openQuickInsert": "Rychlé vložení blokového callout",
 
 	"autocomplete.createNew": 'Vytvořit "{{name}}"',
+	"metadataSuggest.finish": "Hotovo",
+	"metadataSuggest.colors": "Barvy",
+	"metadataSuggest.useTyped": 'Použít "{{text}}"',
+	"metadataSuggest.replaces": "Nahrazuje {{word}}",
+	"metadataSuggest.themeAlso": "Váš motiv toto slovo také stylizuje",
+	"metadataSuggest.needsSpace": "Oddělte mezerami, ne znakem |",
+	"metadataSuggest.anySeparator": "Oddělte mezerami nebo znakem |",
+	"metadataSuggest.mustBeFirst": "Funguje jen jako první slovo",
+	"metadataSuggest.mustBeLast": "Funguje jen jako poslední slovo",
+	"metadataSuggest.alone": "Funguje jen samostatně",
 
 	"calloutPicker.noMatches": "Žádný callout neodpovídá dotazu „{{query}}“.",
 	"calloutPicker.placeholder": "Hledat callouty",
@@ -164,6 +174,10 @@ export const cs: Record<string, string> = {
 	"settings.deletePaletteAria": "Smazat paletu {{name}}",
 	"settings.deletePaletteConfirm":
 		'Smazat paletu "{{name}}"?\nCallouty používající její barvy nebudou ovlivněny.',
+	"settings.deletePaletteMetadataNote":
+		'Calloutů, které ji uvádějí ve svých metadatech ("{{key}}"), se vrátí k vlastní barvě. Vaše poznámky se nezmění.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Calloutů, které ji uvádějí ve svých metadatech ("{{key}}"), místo toho převezmou vestavěnou barvu tohoto jména. Vaše poznámky se nezmění.',
 
 	"settings.customCommands": "Příkazy a klávesové zkratky",
 	"settings.customCommandsDesc":
@@ -364,6 +378,18 @@ export const cs: Record<string, string> = {
 	"palette.namePlaceholder": "Moje paleta",
 	"palette.nameExists": "Paleta s tímto názvem již existuje",
 	"palette.saveBlockedName": "Paleta s tímto názvem již existuje. Pro uložení zvolte jiný název.",
+	"palette.metadataName": "V metadatech calloutu: {{key}}",
+	"palette.metadataNameExists":
+		'Jiná paleta je již v metadatech calloutu zapsána jako "{{key}}". Zvolte jiný název.',
+	"palette.metadataNameShared":
+		"V metadatech calloutu: {{key}}. Toto slovo má i jiná uložená paleta, takže na něj odpovídá jen jedna z nich.",
+	"palette.renameNotesTitle": "Aktualizovat poznámky?",
+	"palette.renameNotesBody":
+		'{{count}} calloutů v {{files}} poznámkách používá tuto paletu jako "{{old}}".\nZměnit je na "{{new}}"?\nPokud ne, vrátí se k vlastní barvě.',
+	"palette.renameNotesConfirm": "Aktualizovat poznámky",
+	"palette.renameNotesSkip": "Ponechat",
+	"palette.renameNotesFailed":
+		"Některé poznámky se nepodařilo aktualizovat. Ty, které se podařilo, jsou uloženy; ostatní stále používají starý název.",
 	"palette.baseColor": "Základní barva",
 	"palette.baseColorHint":
 		"Barvu pozadí automaticky přizpůsobíme této barvě. Pokud chcete, můžete ji ovládat samostatně kliknutím na {{link}}.",
@@ -413,7 +439,6 @@ export const cs: Record<string, string> = {
 	"colorName.coral": "Korálová",
 	"colorName.grape": "Hroznová",
 	"colorName.plum": "Švestková",
-	"colorName.bubblegum": "Žvýkačka",
 
 	"iconPicker.pickIcon": "Vybrat ikonu",
 	"iconPicker.confirm": "Potvrdit",

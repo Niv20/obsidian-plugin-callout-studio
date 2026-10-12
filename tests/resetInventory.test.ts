@@ -78,6 +78,15 @@ describe("Reset inventory", () => {
 		assert.ok(isResetInventoryEmpty(resetInventory(registry)));
 	});
 
+	it("turns the hidden metadata-colours switch back on", () => {
+		// No settings UI lists it, so nothing in the inventory names it — but a
+		// reset that left a hand-made "off" behind would read as a bug.
+		const registry = fresh();
+		registry.settings.metadataColors.enabled = false;
+		registry.resetAll();
+		assert.equal(registry.settings.metadataColors.enabled, true);
+	});
+
 	it("puts the number first in every counted row's sentence", () => {
 		const registry = fresh();
 		registry.add(definition({ id: "mine", displayName: "Mine" }));

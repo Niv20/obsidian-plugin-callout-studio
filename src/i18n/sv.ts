@@ -68,6 +68,16 @@ export const sv: Record<string, string> = {
 	"cmd.openQuickInsert": "Snabbinfoga block-callout",
 
 	"autocomplete.createNew": 'Skapa "{{name}}"',
+	"metadataSuggest.finish": "Klar",
+	"metadataSuggest.colors": "Färger",
+	"metadataSuggest.useTyped": 'Använd "{{text}}"',
+	"metadataSuggest.replaces": "Ersätter {{word}}",
+	"metadataSuggest.themeAlso": "Ditt tema formaterar också det här ordet",
+	"metadataSuggest.needsSpace": "Separera med mellanslag, inte |",
+	"metadataSuggest.anySeparator": "Separera med mellanslag eller |",
+	"metadataSuggest.mustBeFirst": "Fungerar bara som första ord",
+	"metadataSuggest.mustBeLast": "Fungerar bara som sista ord",
+	"metadataSuggest.alone": "Fungerar bara ensamt",
 
 	"calloutPicker.noMatches": "Ingen callout matchar ”{{query}}”.",
 	"calloutPicker.placeholder": "Sök callouts",
@@ -217,6 +227,10 @@ export const sv: Record<string, string> = {
 	"settings.deletePaletteAria": "Ta bort palett {{name}}",
 	"settings.deletePaletteConfirm":
 		'Ta bort paletten "{{name}}"?\nCallouts som använder dess färger påverkas inte.',
+	"settings.deletePaletteMetadataNote":
+		'Callouts som anger den i sina metadata ("{{key}}") går tillbaka till sin egen färg. Dina anteckningar ändras inte.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Callouts som anger den i sina metadata ("{{key}}") får i stället den inbyggda färgen med det namnet. Dina anteckningar ändras inte.',
 
 	"settings.customCommands": "Kommandon och kortkommandon",
 	"settings.customCommandsDesc":
@@ -417,6 +431,18 @@ export const sv: Record<string, string> = {
 	"palette.namePlaceholder": "Min palett",
 	"palette.nameExists": "En palett med detta namn finns redan",
 	"palette.saveBlockedName": "En palett med detta namn finns redan. Välj ett annat namn för att spara den.",
+	"palette.metadataName": "I callout-metadata: {{key}}",
+	"palette.metadataNameExists":
+		'En annan palett är redan skriven som "{{key}}" i callout-metadata. Välj ett annat namn.',
+	"palette.metadataNameShared":
+		"I callout-metadata: {{key}}. En annan sparad palett har också det här ordet, så bara en av dem svarar på det.",
+	"palette.renameNotesTitle": "Uppdatera dina anteckningar?",
+	"palette.renameNotesBody":
+		'{{count}} callouts i {{files}} anteckningar använder den här paletten som "{{old}}".\nÄndra dem till "{{new}}"?\nOm inte går de tillbaka till sin egen färg.',
+	"palette.renameNotesConfirm": "Uppdatera anteckningar",
+	"palette.renameNotesSkip": "Låt dem vara",
+	"palette.renameNotesFailed":
+		"Vissa anteckningar kunde inte uppdateras. De som uppdaterades är sparade; resten använder fortfarande det gamla namnet.",
 	"palette.baseColor": "Basfärg",
 	"palette.baseColorHint":
 		"Vi matchar automatiskt bakgrundsfärgen till den. Om du vill kan du styra den separat genom att {{link}}.",
@@ -453,7 +479,7 @@ export const sv: Record<string, string> = {
 	"colorName.sky": "Himmelsblå",
 	"colorName.blue": "Blå",
 	"colorName.indigo": "Indigo",
-	"colorName.violet": "Violett",
+	"colorName.violet": "Lila",
 	"colorName.purple": "Lila",
 	"colorName.pink": "Rosa",
 	"colorName.rose": "Cerise",
@@ -465,7 +491,6 @@ export const sv: Record<string, string> = {
 	"colorName.coral": "Korall",
 	"colorName.grape": "Druva",
 	"colorName.plum": "Plommon",
-	"colorName.bubblegum": "Tuggummi",
 
 	"iconPicker.pickIcon": "Välj en ikon",
 	"iconPicker.confirm": "Bekräfta",

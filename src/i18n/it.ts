@@ -16,6 +16,16 @@ export const it: Record<string, string> = {
 	"cmd.openQuickInsert": "Inserimento rapido di callout a blocco",
 
 	"autocomplete.createNew": 'Crea "{{name}}"',
+	"metadataSuggest.finish": "Fatto",
+	"metadataSuggest.colors": "Colori",
+	"metadataSuggest.useTyped": 'Usa "{{text}}"',
+	"metadataSuggest.replaces": "Sostituisce {{word}}",
+	"metadataSuggest.themeAlso": "Anche il tuo tema dà stile a questa parola",
+	"metadataSuggest.needsSpace": "Separala con spazi, non con |",
+	"metadataSuggest.anySeparator": "Separala con spazi o con |",
+	"metadataSuggest.mustBeFirst": "Funziona solo come prima parola",
+	"metadataSuggest.mustBeLast": "Funziona solo come ultima parola",
+	"metadataSuggest.alone": "Funziona solo da sola",
 
 	"calloutPicker.noMatches": "Nessun callout corrisponde a “{{query}}”.",
 	"calloutPicker.placeholder": "Cerca callout",
@@ -166,6 +176,10 @@ export const it: Record<string, string> = {
 	"settings.deletePaletteAria": "Elimina tavolozza {{name}}",
 	"settings.deletePaletteConfirm":
 		'Eliminare la tavolozza "{{name}}"?\nI callout che usano i suoi colori non vengono modificati.',
+	"settings.deletePaletteMetadataNote":
+		'I callout che la nominano nei metadati ("{{key}}") tornano al proprio colore. Le tue note non cambiano.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'I callout che la nominano nei metadati ("{{key}}") prendono invece il colore integrato con quel nome. Le tue note non cambiano.',
 
 	"settings.customCommands": "Comandi e tasti di scelta rapida",
 	"settings.customCommandsDesc":
@@ -374,6 +388,18 @@ export const it: Record<string, string> = {
 	"palette.namePlaceholder": "La mia tavolozza",
 	"palette.nameExists": "Esiste già una tavolozza con questo nome",
 	"palette.saveBlockedName": "Esiste già una tavolozza con questo nome. Scegli un altro nome per salvarla.",
+	"palette.metadataName": "Nei metadati del callout: {{key}}",
+	"palette.metadataNameExists":
+		'Un’altra tavolozza è già scritta come "{{key}}" nei metadati del callout. Scegli un nome diverso.',
+	"palette.metadataNameShared":
+		"Nei metadati del callout: {{key}}. Anche un’altra tavolozza salvata ha questa parola, quindi solo una delle due risponde.",
+	"palette.renameNotesTitle": "Aggiornare le tue note?",
+	"palette.renameNotesBody":
+		'{{count}} callout in {{files}} note usano questa tavolozza come "{{old}}".\nCambiarli in "{{new}}"?\nSe no, tornano al proprio colore.',
+	"palette.renameNotesConfirm": "Aggiorna le note",
+	"palette.renameNotesSkip": "Lasciali",
+	"palette.renameNotesFailed":
+		"Alcune note non è stato possibile aggiornarle. Quelle aggiornate sono salvate; le altre usano ancora il vecchio nome.",
 	"palette.baseColor": "Colore di base",
 	"palette.baseColorHint":
 		"Adatteremo automaticamente il colore di sfondo a questo. Se preferisci, puoi controllarlo separatamente {{link}}.",
@@ -410,7 +436,7 @@ export const it: Record<string, string> = {
 	"colorName.sky": "Azzurro",
 	"colorName.blue": "Blu",
 	"colorName.indigo": "Indaco",
-	"colorName.violet": "Violetto",
+	"colorName.violet": "Viola",
 	"colorName.purple": "Viola",
 	"colorName.pink": "Rosa",
 	"colorName.rose": "Rosé",
@@ -422,7 +448,6 @@ export const it: Record<string, string> = {
 	"colorName.coral": "Corallo",
 	"colorName.grape": "Uva",
 	"colorName.plum": "Prugna",
-	"colorName.bubblegum": "Gomma da masticare",
 
 	"iconPicker.pickIcon": "Scegli un'icona",
 	"iconPicker.confirm": "Conferma",

@@ -25,6 +25,7 @@
  */
 import { CalloutRegistry } from "../../src/manager/CalloutRegistry";
 import { CSSInjector } from "../../src/manager/CSSInjector";
+import { splitSelectorList } from "../../src/utils/selectorText";
 import type { App } from "obsidian";
 import type {
 	CalloutDefinition,
@@ -243,6 +244,65 @@ export function parseRules(css: string): CssRule[] {
 	// Comments carry no rules and would otherwise land in a selector.
 	walk(css.replace(/\/\*[\s\S]*?\*\//g, ""), []);
 	return rules;
+}
+
+/**
+ * Native CSS nesting resolved into the flat rules the cascade reads: each
+ * nested selector's `&` replaced by its parent's selector (a selector without
+ * one becomes a descendant of it), nested at-rules kept around the rules
+ * inside them. The metadata colours nest (see `metadataColorCSS.ts`); this
+ * lets a suite weigh their selectors exactly as it weighs flat ones. Every
+ * parent the generator writes is a single selector, so substituting its text
+ * is exactly what `:is(parent)` means.
+ */
+export function flattenNesting(css: string): string {
+	const out: string[] = [];
+	const wrap = (at: string[], body: string): string =>
+		at.reduceRight((inner, a) => `${a} {\n${inner}\n}`, body);
+	const resolve = (selector: string, parent: string | null): string =>
+		parent === null
+			? selector
+			: splitSelectorList(selector)
+					.map((s) => (s.includes("&") ? s.split("&").join(parent) : `${parent} ${s}`))
+					.join(",\n");
+	const walk = (text: string, parent: string | null, at: string[]): void => {
+		const decls: string[] = [];
+		let buf = "";
+		let i = 0;
+		while (i < text.length) {
+			const ch = text[i] ?? "";
+			if (ch === ";") {
+				if (buf.trim()) decls.push(buf.trim());
+				buf = "";
+				i++;
+				continue;
+			}
+			if (ch !== "{") {
+				buf += ch;
+				i++;
+				continue;
+			}
+			let depth = 1;
+			let j = i + 1;
+			while (j < text.length && depth > 0) {
+				if (text[j] === "{") depth++;
+				else if (text[j] === "}") depth--;
+				j++;
+			}
+			const head = norm(buf);
+			buf = "";
+			const body = text.slice(i + 1, j - 1);
+			if (head.startsWith("@")) walk(body, parent, [...at, head]);
+			else walk(body, resolve(head, parent), at);
+			i = j;
+		}
+		if (buf.trim()) decls.push(buf.trim());
+		if (parent !== null && decls.length > 0) {
+			out.push(wrap(at, `${parent} {\n${decls.map((d) => `  ${d};`).join("\n")}\n}`));
+		}
+	};
+	walk(css.replace(/\/\*[\s\S]*?\*\//g, ""), null, []);
+	return out.join("\n\n");
 }
 
 /**

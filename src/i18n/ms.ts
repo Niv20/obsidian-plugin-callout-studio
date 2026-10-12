@@ -16,6 +16,16 @@ export const ms: Record<string, string> = {
 	"cmd.openQuickInsert": "Sisipan pantas callout blok",
 
 	"autocomplete.createNew": 'Cipta "{{name}}"',
+	"metadataSuggest.finish": "Selesai",
+	"metadataSuggest.colors": "Warna",
+	"metadataSuggest.useTyped": 'Guna "{{text}}"',
+	"metadataSuggest.replaces": "Menggantikan {{word}}",
+	"metadataSuggest.themeAlso": "Tema anda juga menggayakan perkataan ini",
+	"metadataSuggest.needsSpace": "Asingkan dengan ruang, bukan |",
+	"metadataSuggest.anySeparator": "Asingkan dengan ruang atau |",
+	"metadataSuggest.mustBeFirst": "Hanya berfungsi sebagai perkataan pertama",
+	"metadataSuggest.mustBeLast": "Hanya berfungsi sebagai perkataan terakhir",
+	"metadataSuggest.alone": "Hanya berfungsi bersendirian",
 	"calloutPicker.noMatches": "Tiada callout yang sepadan dengan “{{query}}”.",
 	"calloutPicker.placeholder": "Cari callout",
 	"editor.paletteNoMatches": "Tiada warna yang sepadan dengan “{{query}}”.",
@@ -160,6 +170,10 @@ export const ms: Record<string, string> = {
 	"settings.deletePaletteAria": "Padam palet {{name}}",
 	"settings.deletePaletteConfirm":
 		'Padam palet "{{name}}"?\nCallout yang menggunakan warna ini tidak terjejas.',
+	"settings.deletePaletteMetadataNote":
+		'Callout yang menamakannya dalam metadata ("{{key}}") kembali kepada warnanya sendiri. Nota anda tidak berubah.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Callout yang menamakannya dalam metadata ("{{key}}") sebaliknya mengambil warna terbina dalam dengan nama itu. Nota anda tidak berubah.',
 
 	"settings.customCommands": "Arahan & kekunci pintas",
 	"settings.customCommandsDesc":
@@ -362,6 +376,18 @@ export const ms: Record<string, string> = {
 	"palette.namePlaceholder": "Palet saya",
 	"palette.nameExists": "Palet dengan nama ini sudah wujud",
 	"palette.saveBlockedName": "Palet dengan nama ini sudah wujud. Pilih nama lain untuk menyimpannya.",
+	"palette.metadataName": "Dalam metadata callout: {{key}}",
+	"palette.metadataNameExists":
+		'Palet lain sudah ditulis sebagai "{{key}}" dalam metadata callout. Pilih nama yang berbeza.',
+	"palette.metadataNameShared":
+		"Dalam metadata callout: {{key}}. Palet tersimpan lain juga mempunyai perkataan ini, jadi hanya satu daripadanya yang menyahut.",
+	"palette.renameNotesTitle": "Kemas kini nota anda?",
+	"palette.renameNotesBody":
+		'{{count}} callout dalam {{files}} nota menggunakan palet ini sebagai "{{old}}".\nTukar kepada "{{new}}"?\nJika tidak, callout kembali kepada warnanya sendiri.',
+	"palette.renameNotesConfirm": "Kemas kini nota",
+	"palette.renameNotesSkip": "Biarkan",
+	"palette.renameNotesFailed":
+		"Sesetengah nota tidak dapat dikemas kini. Yang berjaya dikemas kini telah disimpan; selebihnya masih menggunakan nama lama.",
 	"palette.baseColor": "Warna asas",
 	"palette.baseColorHint":
 		"Kami akan padankan warna latar belakang dengannya secara automatik. Jika mahu, anda boleh mengawalnya secara berasingan dengan {{link}}.",
@@ -398,7 +424,7 @@ export const ms: Record<string, string> = {
 	"colorName.sky": "Biru langit",
 	"colorName.blue": "Biru",
 	"colorName.indigo": "Nila",
-	"colorName.violet": "Lembayung",
+	"colorName.violet": "Ungu",
 	"colorName.purple": "Ungu",
 	"colorName.pink": "Merah jambu",
 	"colorName.rose": "Merah mawar",
@@ -410,7 +436,6 @@ export const ms: Record<string, string> = {
 	"colorName.coral": "Karang",
 	"colorName.grape": "Anggur",
 	"colorName.plum": "Plum",
-	"colorName.bubblegum": "Gula-gula getah",
 
 	"iconPicker.pickIcon": "Pilih ikon",
 	"iconPicker.confirm": "Sahkan",

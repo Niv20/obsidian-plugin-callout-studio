@@ -774,6 +774,15 @@ export interface PluginSettings {
 	headingCallouts: HeadingCalloutSettings;
 	/** Inline callouts (`[!name]` mid-line) — optional role, can be disabled. */
 	inlineCallouts: InlineCalloutSettings;
+	/**
+	 * Colouring one callout from its own metadata — `> [!mark|pink]` paints
+	 * that callout pink while every other `mark` keeps its colour (see
+	 * `utils/calloutMetadata.ts`). Always on, and deliberately without settings
+	 * UI: the switch exists so the feature can be turned off by hand in
+	 * `data.json`, the way `inlineCallouts.allowContent` can. Off emits none of
+	 * its CSS, offers no colours after `|`, and leaves PDF export alone.
+	 */
+	metadataColors: RoleToggleSettings;
 	/** Has the welcome/splash screen been shown at least once? */ welcomeSeen?: boolean;
 	/** Has the first-install import prompt been dismissed or completed? */ competitorImportBannerHandled?: boolean;
 	/** Callout ID to use as fallback for unrecognized callout types. Empty = Obsidian default */

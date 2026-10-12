@@ -16,6 +16,16 @@ export const ko: Record<string, string> = {
 	"cmd.openQuickInsert": "블록 callout 빠른 삽입",
 
 	"autocomplete.createNew": '만들기 "{{name}}"',
+	"metadataSuggest.finish": "완료",
+	"metadataSuggest.colors": "색상",
+	"metadataSuggest.useTyped": '"{{text}}" 사용',
+	"metadataSuggest.replaces": "{{word}}을(를) 대체합니다",
+	"metadataSuggest.themeAlso": "사용 중인 테마도 이 단어를 스타일링합니다",
+	"metadataSuggest.needsSpace": "|가 아니라 공백으로 구분하세요",
+	"metadataSuggest.anySeparator": "공백 또는 |로 구분하세요",
+	"metadataSuggest.mustBeFirst": "첫 번째 단어로만 작동합니다",
+	"metadataSuggest.mustBeLast": "마지막 단어로만 작동합니다",
+	"metadataSuggest.alone": "단독으로만 작동합니다",
 
 	"calloutPicker.noMatches": "“{{query}}”와 일치하는 callout이 없습니다.",
 	"calloutPicker.placeholder": "callout 검색",
@@ -166,6 +176,10 @@ export const ko: Record<string, string> = {
 	"settings.deletePaletteAria": "팔레트 {{name}} 삭제",
 	"settings.deletePaletteConfirm":
 		'팔레트 "{{name}}"을(를) 삭제하시겠습니까?\n이 색상을 사용하는 callout은 영향을 받지 않습니다.',
+	"settings.deletePaletteMetadataNote":
+		'메타데이터에 이 이름("{{key}}")을 적은 callout은 자체 색상으로 돌아갑니다. 노트는 변경되지 않습니다.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'메타데이터에 이 이름("{{key}}")을 적은 callout은 대신 그 이름의 기본 제공 색상을 사용합니다. 노트는 변경되지 않습니다.',
 
 	"settings.customCommands": "명령 및 핫키",
 	"settings.customCommandsDesc":
@@ -366,6 +380,15 @@ export const ko: Record<string, string> = {
 	"palette.namePlaceholder": "내 팔레트",
 	"palette.nameExists": "이 이름의 팔레트가 이미 있습니다",
 	"palette.saveBlockedName": "이 이름의 팔레트가 이미 있습니다. 저장하려면 다른 이름을 선택하세요.",
+	"palette.metadataName": "callout 메타데이터에서: {{key}}",
+	"palette.metadataNameExists": '다른 팔레트가 이미 callout 메타데이터에 "{{key}}"(으)로 쓰여 있습니다. 다른 이름을 선택하세요.',
+	"palette.metadataNameShared": "callout 메타데이터에서: {{key}}. 저장된 다른 팔레트에도 이 단어가 있어서 둘 중 하나만 반응합니다.",
+	"palette.renameNotesTitle": "노트를 업데이트할까요?",
+	"palette.renameNotesBody":
+		'노트 {{files}}개의 callout {{count}}개가 이 팔레트를 "{{old}}"(으)로 사용하고 있습니다.\n"{{new}}"(으)로 변경할까요?\n변경하지 않으면 자체 색상으로 돌아갑니다.',
+	"palette.renameNotesConfirm": "노트 업데이트",
+	"palette.renameNotesSkip": "그대로 두기",
+	"palette.renameNotesFailed": "일부 노트를 업데이트하지 못했습니다. 업데이트된 노트는 저장되었으며, 나머지는 여전히 이전 이름을 사용합니다.",
 	"palette.baseColor": "기본 색상",
 	"palette.baseColorHint":
 		"배경색을 자동으로 이 색상에 맞춥니다. 원하시면 {{link}}하여 별도로 설정할 수 있습니다.",
@@ -402,7 +425,7 @@ export const ko: Record<string, string> = {
 	"colorName.sky": "하늘색",
 	"colorName.blue": "파랑",
 	"colorName.indigo": "인디고",
-	"colorName.violet": "바이올렛",
+	"colorName.violet": "보라",
 	"colorName.purple": "보라",
 	"colorName.pink": "분홍",
 	"colorName.rose": "로즈",
@@ -414,7 +437,6 @@ export const ko: Record<string, string> = {
 	"colorName.coral": "산호색",
 	"colorName.grape": "포도색",
 	"colorName.plum": "자두색",
-	"colorName.bubblegum": "풍선껌",
 
 	"iconPicker.pickIcon": "아이콘 선택",
 	"iconPicker.confirm": "확인",

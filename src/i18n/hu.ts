@@ -16,6 +16,16 @@ export const hu: Record<string, string> = {
 	"cmd.openQuickInsert": "Blokk callout gyors beszúrása",
 
 	"autocomplete.createNew": 'Létrehozás "{{name}}"',
+	"metadataSuggest.finish": "Kész",
+	"metadataSuggest.colors": "Színek",
+	"metadataSuggest.useTyped": '"{{text}}" használata',
+	"metadataSuggest.replaces": "Helyettesíti: {{word}}",
+	"metadataSuggest.themeAlso": "A témád is formázza ezt a szót",
+	"metadataSuggest.needsSpace": "Szóközzel válaszd el, ne |-lel",
+	"metadataSuggest.anySeparator": "Szóközzel vagy |-lel válaszd el",
+	"metadataSuggest.mustBeFirst": "Csak első szóként működik",
+	"metadataSuggest.mustBeLast": "Csak utolsó szóként működik",
+	"metadataSuggest.alone": "Csak önmagában működik",
 
 	"calloutPicker.noMatches": "Nincs a(z) „{{query}}” keresésnek megfelelő callout.",
 	"calloutPicker.placeholder": "Callout-ok keresése",
@@ -165,6 +175,10 @@ export const hu: Record<string, string> = {
 	"settings.deletePaletteAria": "{{name}} paletta törlése",
 	"settings.deletePaletteConfirm":
 		'"{{name}}" paletta törlése?\nAz ezt a színt használó callout-ok nem változnak.',
+	"settings.deletePaletteMetadataNote":
+		'Azok a calloutok, amelyek a metaadataikban megnevezik ("{{key}}"), visszatérnek a saját színükhöz. A jegyzeteid nem változnak.',
+	"settings.deletePaletteMetadataNoteBuiltIn":
+		'Azok a calloutok, amelyek a metaadataikban megnevezik ("{{key}}"), helyette az ilyen nevű beépített színt kapják. A jegyzeteid nem változnak.',
 
 	"settings.customCommands": "Parancsok és gyorsbillentyűk",
 	"settings.customCommandsDesc":
@@ -370,6 +384,18 @@ export const hu: Record<string, string> = {
 	"palette.namePlaceholder": "Saját paletta",
 	"palette.nameExists": "Már létezik paletta ezzel a névvel",
 	"palette.saveBlockedName": "Már létezik paletta ezzel a névvel. A mentéshez válasszon másik nevet.",
+	"palette.metadataName": "A callout metaadataiban: {{key}}",
+	"palette.metadataNameExists":
+		'Egy másik paletta már "{{key}}" néven szerepel a callout metaadataiban. Válassz másik nevet.',
+	"palette.metadataNameShared":
+		"A callout metaadataiban: {{key}}. Egy másik mentett palettának is ez a szava, ezért csak az egyik felel rá.",
+	"palette.renameNotesTitle": "Frissíted a jegyzeteidet?",
+	"palette.renameNotesBody":
+		'{{count}} callout {{files}} jegyzetben ezt a palettát "{{old}}" néven használja.\nÁtírod őket "{{new}}" névre?\nHa nem, visszatérnek a saját színükhöz.',
+	"palette.renameNotesConfirm": "Jegyzetek frissítése",
+	"palette.renameNotesSkip": "Meghagyás",
+	"palette.renameNotesFailed":
+		"Néhány jegyzetet nem sikerült frissíteni. A frissítettek mentve vannak; a többi még a régi nevet használja.",
 	"palette.baseColor": "Alapszín",
 	"palette.baseColorHint":
 		"Automatikusan hozzá igazítjuk a háttérszínt. Ha szeretné, külön is beállíthatja a(z) {{link}} lehetőséggel.",
@@ -406,7 +432,7 @@ export const hu: Record<string, string> = {
 	"colorName.sky": "Égkék",
 	"colorName.blue": "Kék",
 	"colorName.indigo": "Indigó",
-	"colorName.violet": "Ibolya",
+	"colorName.violet": "Lila",
 	"colorName.purple": "Lila",
 	"colorName.pink": "Rózsaszín",
 	"colorName.rose": "Rózsa",
@@ -418,7 +444,6 @@ export const hu: Record<string, string> = {
 	"colorName.coral": "Korall",
 	"colorName.grape": "Szőlő",
 	"colorName.plum": "Szilva",
-	"colorName.bubblegum": "Rágógumi",
 
 	"iconPicker.pickIcon": "Ikon kiválasztása",
 	"iconPicker.confirm": "Megerősítés",

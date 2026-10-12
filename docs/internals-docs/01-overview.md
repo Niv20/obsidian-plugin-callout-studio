@@ -100,5 +100,13 @@ Every path that turns raw markdown into an ID funnels through
 ID structurally unreachable by the registry. Full treatment in
 [Callout IDs and normalization](04-data-model.md#callout-ids-and-the-normalizers).
 
+The metadata is never part of the type, but it is not ignored either: a colour
+word in it paints that one callout (`[!mark|pink]`). The words are read by
+[`src/utils/calloutMetadata.ts`](../../src/utils/calloutMetadata.ts) and painted
+by pure CSS keyed on the attribute - see
+[Metadata colours](06-css-generation.md#metadata-colours-typecolour). The
+dropdown that offers them after `|` is in
+[10-editor-integrations.md](10-editor-integrations.md#metadata-suggestions-after-the-pipe).
+
 ---
 Next chapter: [02-architecture.md](02-architecture.md)
