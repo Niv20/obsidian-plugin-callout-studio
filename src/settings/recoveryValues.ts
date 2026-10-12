@@ -16,6 +16,7 @@ import { getLocale, getSelectableLocales, resolveLocaleFile, t } from "../i18n";
 import { emojiLabelFor } from "../icons/packs/emoji";
 import { packFor } from "../icons/registry";
 import type { CalloutDefinition, CalloutIcon, PluginData } from "../types";
+import { findPresetByPaletteId } from "../utils/colorPalettes";
 import { bgGradientCss, isValidHexColor, normalizeAngleDeg, sanitizeBgGradient } from "../utils/colorUtils";
 import { recoveryFieldLabel } from "./recoveryDetailFields";
 import { renderRecoveryIcon } from "./recoveryPreview";
@@ -266,10 +267,15 @@ export const renderAliases: ValueRenderer = (parent, value, side) => {
 	for (const alias of value) row.createEl("code", { cls: "cs-recovery-chip", text: `[!${alias}]` });
 };
 
-/** A palette id, as the palette it names on this side. */
+/**
+ * A palette id, as the palette it names on this side: one of that side's saved
+ * palettes, or else a built-in preset — under its current id or one it was
+ * saved under before a rename, so an old `"violet"` reads as Purple rather
+ * than as a palette that went missing.
+ */
 export const renderPaletteRef: ValueRenderer = (parent, value, side) => {
 	if (typeof value !== "string") { generic(parent, value, side, 0); return; }
-	const palette = side.data.settings?.customPalettes?.find(entry => entry.id === value);
+	const palette = side.data.settings?.customPalettes?.find(entry => entry.id === value) ?? findPresetByPaletteId(value);
 	const row = inline(parent);
 	if (!palette) {
 		row.createEl("code", { cls: "cs-recovery-code", text: value });

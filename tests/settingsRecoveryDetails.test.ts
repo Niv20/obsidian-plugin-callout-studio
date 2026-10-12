@@ -261,6 +261,24 @@ describe("earlier setup detail reports", () => {
 		} finally { h.destroy(); }
 	});
 
+	it("names a built-in preset palette, under an id it had before a rename too", async () => {
+		// Version history used to read only the saved palettes, so every preset
+		// id showed as a missing palette; an older backup saved on "violet"
+		// should read as the Purple it is now.
+		const current = savedSetup(), earlier = savedSetup();
+		current.callouts = [definition({ id: "idea", paletteId: "pink" })];
+		earlier.callouts = [definition({ id: "idea", paletteId: "violet" })];
+		const h = await render(compare(current, earlier));
+		try {
+			const group = item(h.root, "callout:idea");
+			assert.deepEqual(labels(group), [recoveryFieldLabel("paletteId")]);
+			const [now, restored] = group.querySelectorAll(".cs-recovery-field-row")[0]!.querySelectorAll("td");
+			assert.ok(text(now).includes(t("colorName.pink")), text(now));
+			assert.ok(text(restored).includes(t("colorName.purple")), text(restored));
+			assert.ok(!text(group).includes(t("recovery.details.value.paletteMissing")));
+		} finally { h.destroy(); }
+	});
+
 	it("names each context-menu entry that is shown or hidden, and lists a changed order", async () => {
 		const current = savedSetup(), earlier = savedSetup();
 		const regular = structuredClone(current.settings.contextMenu.items.regular).reverse();
