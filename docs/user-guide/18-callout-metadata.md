@@ -84,7 +84,7 @@ Anything a word needs in order to work, such as spaces around it, appears on a l
 - **Tab** writes the word and stays inside the brackets. Type a space or a `|` to add another word.
 - **Enter** writes the word and finishes the callout, just like Enter in the first menu.
 - **Done**, at the top after a space or a pipe that follows a word, finishes without adding a word.
-- **Use "…"** keeps a word that isn't on the list. It is at the bottom, or at the top when no word in the list starts with what you typed, so Enter keeps your word.
+- **Use "…"** keeps a word that isn't on the list. It is always at the bottom of the menu.
 
 After the first color, the colors move below the theme's words, and the line at the bottom says **Replaces …** for each one. Picking one swaps the color instead of adding a second.
 

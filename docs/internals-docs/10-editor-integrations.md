@@ -396,9 +396,8 @@ What it offers and what each pick writes is pure
 - **Done** heads the list on an empty word after a separator that follows a
   word, so Enter there finishes (dropping the trailing separator) instead of
   breaking the line inside `[!…]`. **Use "…"** appears for a word nothing matches
-  exactly: last while some row starts with the typed text, first when none
-  does - Enter takes the top row, and a match inside a longer word (`width-50`
-  for `50`) is no completion.
+  exactly, always last - even when the typed text only turns up inside a
+  longer word (`width-50` for `50`), the matching rows come first.
 - **The colours and the styling's words come from the injector**
   (`cssInjector.metadataColorEntries()`, `cssInjector.metadataCatalog`), the
   same list and scan the stylesheet uses, so a colour the stylesheet stands down

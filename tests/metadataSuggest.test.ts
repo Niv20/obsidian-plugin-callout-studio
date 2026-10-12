@@ -144,10 +144,9 @@ describe("buildMetadataSuggestions — rows and their order", () => {
 		assert.deepStrictEqual(labels(rows("zz9⎸")), ["<use zz9>"]);
 	});
 
-	it("the Use row leads when no row starts with the word, so Enter keeps it", () => {
-		// `50` only turns up inside `width-50`: not a completion of it.
-		assert.deepStrictEqual(labels(rows("50⎸", { words: [word("width-50")] })), ["<use 50>", "theme:width-50"]);
-		// `wid` does start `width-50`: completing it is what Enter is for.
+	it("the Use row is always last", () => {
+		// Even when `50` only turns up inside `width-50`.
+		assert.deepStrictEqual(labels(rows("50⎸", { words: [word("width-50")] })), ["theme:width-50", "<use 50>"]);
 		assert.deepStrictEqual(labels(rows("wid⎸", { words: [word("width-50")] })), ["theme:width-50", "<use wid>"]);
 	});
 

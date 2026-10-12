@@ -20,10 +20,9 @@
  * prefix matches before matches inside a word, then A→Z by the word written.
  * - **Done** — on an empty word after a separator, at the top, so Enter there
  *   finishes the header instead of breaking the line inside `[!…]`.
- * - **Use "…"** — when the typed word matches no row exactly, so Enter can keep
- *   a word of the user's own (another plugin's `50`, say). At the bottom while
- *   some row starts with what was typed; on top when none does, since Enter
- *   takes the top row and a match inside a longer word is no completion.
+ * - **Use "…"** — when the typed word matches no row exactly, so a word of
+ *   the user's own (another plugin's `50`, say) can still be kept. Always at
+ *   the bottom; when it is the only row, Enter takes it.
  *
  * The styling's words are grouped by the theme or snippet they come from, so
  * the dropdown can put each group under one heading (`metadataRowHeadings`).
@@ -337,15 +336,7 @@ export function buildMetadataSuggestions(input: SuggestionInput): MetadataSugges
 					(r.kind === "color" && entryWords(r.entry).includes(folded)) ||
 					(r.kind === "theme" && r.word.word === query),
 			) || plain.others.some((w) => foldMetadataCase(w.text) === folded);
-		if (!exact) {
-			// Enter takes the top row. When no row even starts with what was
-			// typed — it only turns up inside longer words — the user's own word
-			// goes on top, so Enter keeps `50` instead of writing `width-50`.
-			const startsSomeRow = [...colorRows, ...themeRows].some((r) => r.rank <= 0);
-			const typed: MetadataSuggestion = { kind: "typed", text: query };
-			if (startsSomeRow) rows.push(typed);
-			else rows.unshift(typed);
-		}
+		if (!exact) rows.push({ kind: "typed", text: query });
 	}
 	return rows;
 }
