@@ -10,8 +10,8 @@ export async function mountContextMenu() {
 	setLocale("en");
 	document.body.className = "theme-dark is-desktop";
 	const plugin = makeHost();
-	const palette = getAllColorPalettes().find(item => item.id === "violet");
-	if (!palette) throw new Error("Missing storefront Idea's Violet palette");
+	const palette = getAllColorPalettes().find(item => item.id === "purple");
+	if (!palette) throw new Error("Missing storefront Idea's Purple palette");
 	seedExample(plugin, {
 		id: "idea", displayName: "Idea", aliases: ["spark"],
 		icon: { type: "lucide", value: "lightbulb" }, paletteId: palette.id,
@@ -21,7 +21,7 @@ export async function mountContextMenu() {
 	const markdown = "> [!idea]+ Idea\n> Give your ideas room to grow. Keep the next steps together.";
 	const metadata = await mountNote(plugin, markdown, {
 		title: "Right-click an Idea block callout",
-		description: "The production reading processor and CSS render the same saved Violet Idea with lightbulb icon used throughout the store screenshots. The real addItems function assembles five actions for its initially expanded block callout. Installed Obsidian CSS supplies the native menu shell, captured entirely offline with synthetic content.",
+		description: "The production reading processor and CSS render the same saved Purple Idea with lightbulb icon used throughout the store screenshots. The real addItems function assembles five actions for its initially expanded block callout. Installed Obsidian CSS supplies the native menu shell, captured entirely offline with synthetic content.",
 	});
 	const panel = document.querySelector(metadata.selector);
 	const targetEl = panel.querySelector('.callout[data-callout="idea"]');

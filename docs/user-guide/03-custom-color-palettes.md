@@ -2,6 +2,13 @@
 
 Callout Studio includes Obsidian's native callout colors and its own built-in presets. To change a callout's color, open that callout for editing and use the color menu.
 
+The color menu lists the built-in colors in two groups:
+
+- **Obsidian callouts**: Blue, Cyan, Green, Orange, Red, Purple and Gray, the colors of Obsidian's own callouts with Obsidian's exact shades.
+- **Color presets**: Crimson, Coral, Amber, Yellow, Lime, Teal, Brown, Grape, Plum and Pink.
+
+Violet is now called Purple, and Bubblegum is now called Pink. Callouts that used them keep their color and show the new name.
+
 Hovering a colour temporarily previews it. Moving the pointer away from the
 row restores the current colour; click a row or use the arrow keys and Enter
 to choose it. If the pointer rests over one row while you use the arrow keys,
@@ -20,6 +27,8 @@ Open the main plugin settings, find **Saved color palettes**, and click **New pa
 5. Click **Save**.
 
 **Save** stays dimmed while the name is already used by another palette, or while the colors are identical to another palette's. Press it and a message says which.
+
+The built-in colors count too, with one exception. A palette you saved before a built-in color took its name or colors keeps them. For example, a palette called **Pink** from before the Pink preset still saves under that name.
 
 Saved palettes appear at the top of every callout color menu under **Custom**.
 

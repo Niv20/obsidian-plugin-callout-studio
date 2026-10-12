@@ -9,7 +9,7 @@ import { makeHost, seedExample } from "../user-guide/fixture-host.mjs";
 
 function seedStoreExamples(plugin) {
 	for (const [id, displayName, glyph, paletteId, alias] of [
-		["idea", "Idea", "lightbulb", "violet", "spark"],
+		["idea", "Idea", "lightbulb", "purple", "spark"],
 		["meeting", "Meeting", "messages-square", "plum", "sync"],
 		["research", "Research", "telescope", "teal", "study"],
 	]) {

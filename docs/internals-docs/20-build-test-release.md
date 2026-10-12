@@ -245,7 +245,7 @@ changes.
 `02-syntax.svg` is 1080 × 704: a full-width dark syntax reference compares
 default and custom content for Heading, Inline, and Block using the exact
 `[!note]` snippets from the README. Below it, two adjacent dark panels show an
-actual Violet Idea heading, inline, and block callout beside their exact
+actual Purple Idea heading, inline, and block callout beside their exact
 Markdown. The fixed reference rows and English example live in
 `scripts/readme/scene.mjs`; production Reading view
 processors, icon painting, and generated CSS render the preview. The panel

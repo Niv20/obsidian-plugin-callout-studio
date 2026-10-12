@@ -41,7 +41,7 @@ function seedCallout(plugin, id, displayName, icon, paletteId, aliases = []) {
 }
 
 function seedPersonalCallouts(plugin) {
-	seedCallout(plugin, "idea", "Idea", "lightbulb", "violet", ["spark"]);
+	seedCallout(plugin, "idea", "Idea", "lightbulb", "purple", ["spark"]);
 	seedCallout(plugin, "meeting", "Meeting", "messages-square", "plum", ["sync"]);
 	seedCallout(plugin, "research", "Research", "telescope", "teal", ["study"]);
 }
@@ -114,9 +114,9 @@ async function notes(plugin, { mobile = false } = {}) {
 
 function create(plugin) {
 	// A new callout inherits the configured fallback in the real editor. This
-	// seeds the same visible Violet/lightbulb choices without rewriting controls
+	// seeds the same visible Purple/lightbulb choices without rewriting controls
 	// or pretending an existing callout is the Create callout form.
-	seedCallout(plugin, "inspiration", "Inspiration", "lightbulb", "violet");
+	seedCallout(plugin, "inspiration", "Inspiration", "lightbulb", "purple");
 	plugin.settings.fallbackCalloutId = "inspiration";
 	const modal = new CalloutEditor(plugin, undefined, {
 		seedDisplayName: "Idea",
@@ -124,7 +124,7 @@ function create(plugin) {
 	});
 	const metadata = openModal(modal, {
 		title: "Create something that feels like you.",
-		description: "The actual new-callout editor opens on Idea with the idea and spark IDs, a Violet palette, and a lightbulb icon, showing its real color and icon controls, geometry settings, and live three-format preview.",
+		description: "The actual new-callout editor opens on Idea with the idea and spark IDs, a Purple palette, and a lightbulb icon, showing its real color and icon controls, geometry settings, and live three-format preview.",
 	});
 	// Commit the second ID through the same field a user uses in this form.
 	const input = modal.modalEl.querySelector(".cs-callout-ids-setting .cs-tag-input-field");

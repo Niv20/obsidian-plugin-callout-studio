@@ -10,7 +10,7 @@ Write a color after the pipe to paint that one callout in it. Every other callou
 > [!mark|pink] Sequence break
 > ...
 
-> [!mark|violet] Page break
+> [!mark|purple] Page break
 > ...
 ```
 
@@ -28,14 +28,14 @@ The callout takes the whole color: accent, background, gradient and text color, 
 
 | Words | What they are |
 | --- | --- |
-| `blue`, `cyan`, `teal`, `green`, `orange`, `red`, `crimson`, `violet`, `gray` | Obsidian's colors, as in the color menu |
-| `coral`, `amber`, `lime`, `brown`, `grape`, `plum`, `bubblegum` | Callout Studio's extra presets |
-| `purple`, `pink`, `yellow`, `grey` | Other names for Violet, Bubblegum, Amber and Gray |
+| `blue`, `cyan`, `green`, `orange`, `red`, `purple`, `gray` | The colors of Obsidian's own callouts, under **Obsidian callouts** in the color menu |
+| `crimson`, `coral`, `amber`, `yellow`, `lime`, `teal`, `brown`, `grape`, `plum`, `pink` | Callout Studio's other colors, under **Color presets** |
+| `grey` | Another spelling of `gray` |
 | Your saved palettes | Their name in lowercase, with dashes for spaces |
 
 The words stay in English whatever language the interface uses.
 
-A saved palette called **Comic Red** is written `comic-red`. The palette editor shows each palette's word under its name. Two saved palettes can't share a word, so **Save** stays dimmed while another palette already has it. A palette named like a built-in color, such as **Blue**, takes that word over.
+A saved palette called **Comic Red** is written `comic-red`. The palette editor shows each palette's word under its name. Two saved palettes can't share a word, so **Save** stays dimmed while another palette already has it. A saved palette named like a built-in color takes that word over. For example, a palette you called **Pink** before the Pink preset existed keeps `pink`.
 
 Capital letters don't matter: `PINK` works like `pink`.
 

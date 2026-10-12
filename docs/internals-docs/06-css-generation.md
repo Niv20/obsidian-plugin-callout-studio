@@ -706,7 +706,7 @@ starts a vault discovery pass. See [theme appearance](18-theme-callout-discovery
 ## Metadata colours (`[!type|colour]`)
 
 A colour word in a callout's metadata paints that one callout:
-`> [!mark|pink]` is a Bubblegum `mark` while every other `mark` keeps its
+`> [!mark|pink]` is a Pink `mark` while every other `mark` keeps its
 own colour. [`css/metadataColorCSS.ts`](../../src/manager/css/metadataColorCSS.ts)
 emits it; the words, their precedence and the palette-name rule live in
 [`utils/calloutMetadata.ts`](../../src/utils/calloutMetadata.ts) (see
@@ -740,7 +740,7 @@ flag:
     [data-callout-metadata*="|v " i], [data-callout-metadata*=" v|" i])
 ```
 
-An alias (`pink` for Bubblegum) folds into its preset's `:is()`.
+An alias (`grey` for `gray`) folds into its preset's `:is()`.
 
 **Weight.** Every rule is one attribute heavier than the definition rule it
 overrides: `[data-callout]` plus the word's `:is()` stand where the definition
