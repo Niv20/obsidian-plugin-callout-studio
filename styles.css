@@ -3800,6 +3800,11 @@ button.callout-studio-icon-picker-loading {
 	content: "\200b";
 }
 
+/* …unless no row in the list would ever fill it. */
+.cs-meta-suggestion-footer.cs-meta-suggestion-footer-unused {
+	display: none;
+}
+
 /* ─── Combobox (type-to-filter picker) ───────────────────────── */
 
 .suggestion.callout-studio-suggestion-list {

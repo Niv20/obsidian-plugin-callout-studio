@@ -637,14 +637,40 @@ describe("CalloutMetadataSuggest — what a row looks like", () => {
 		assert.strictEqual(footer.textContent, "");
 	});
 
-	it("keeps the hint line without a theme, and a colour says where it may stand", () => {
+	it("beside a theme's words, a colour says where it may stand", () => {
 		const h = harness();
+		withTheme(h);
 		const { got, container } = render(h, "> [!mark|⎸]");
 		const footer = container.querySelector(".cs-meta-suggestion-footer");
 		assert.ok(footer);
-		assert.strictEqual(container.lastElementChild, footer);
 		assert.strictEqual(got[0]?.kind, "color");
 		h.meta.onSelectedChange(got[0]);
 		assert.strictEqual(footer.textContent, "Separate it with spaces or |");
+	});
+
+	it("among colours alone, says nothing about separators and drops the empty line", () => {
+		const h = harness();
+		const { got, container } = render(h, "> [!mark|⎸]");
+		assert.ok(got.every((r) => r.kind !== "theme"));
+		const footer = container.querySelector(".cs-meta-suggestion-footer");
+		assert.ok(footer);
+		for (const row of got) {
+			h.meta.onSelectedChange(row);
+			assert.strictEqual(footer.textContent, "");
+		}
+		assert.ok(footer.classList.contains("cs-meta-suggestion-footer-unused"));
+	});
+
+	it("among colours alone, keeps the line when a row has something else to say", () => {
+		const h = harness();
+		const { got, container } = render(h, "> [!mark|pink ⎸]");
+		assert.ok(got.every((r) => r.kind !== "theme"));
+		const footer = container.querySelector(".cs-meta-suggestion-footer");
+		assert.ok(footer);
+		assert.ok(!footer.classList.contains("cs-meta-suggestion-footer-unused"));
+		h.meta.onSelectedChange(got.find((r) => label(r) === "purple>pink"));
+		assert.strictEqual(footer.textContent, "Replaces pink");
+		h.meta.onSelectedChange(got.find((r) => r.kind === "color" && !r.replaces && !r.themeAlso));
+		assert.strictEqual(footer.textContent, "");
 	});
 });

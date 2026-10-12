@@ -99,6 +99,8 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 	private headings = new Map<MetadataSuggestion, MetadataRowHeading>();
 	/** What the hint line says for each row of that list. */
 	private hints = new Map<MetadataSuggestion, string>();
+	/** Whether any row of that list has something to say on the hint line. */
+	private anyHint = false;
 	private hintEl: HTMLElement | null = null;
 
 	constructor(plugin: CalloutStudioPlugin) {
@@ -163,13 +165,15 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 		// Headings over the rows that will actually show, not the ones cut off.
 		const headings = metadataRowHeadings(rows);
 		const withHeadings = headings.some((h) => h !== null);
+		const withThemeWords = rows.some((row) => row.kind === "theme");
 		this.headings = new Map();
 		this.hints = new Map();
 		rows.forEach((row, i) => {
 			const heading = headings[i];
 			if (heading) this.headings.set(row, heading);
-			this.hints.set(row, hintOf(row, withHeadings));
+			this.hints.set(row, hintOf(row, withHeadings, withThemeWords));
 		});
+		this.anyHint = [...this.hints.values()].some((hint) => hint !== "");
 		return rows;
 	}
 
@@ -186,8 +190,9 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 	/**
 	 * The one line at the bottom of the popup that says what the highlighted
 	 * row needs — where its word may stand, which colour it replaces — instead
-	 * of every row repeating it. Always there, empty when the row needs
-	 * nothing, so the popup keeps its height while the arrow keys move.
+	 * of every row repeating it. There, empty, when the row needs nothing, so
+	 * the popup keeps its height while the arrow keys move — but gone when no
+	 * row in the list would ever fill it.
 	 */
 	private ensureHintLine(listEl: HTMLElement | null): void {
 		const container = listEl?.parentElement;
@@ -202,6 +207,7 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 		listEl?.addClass("cs-meta-suggestion-list");
 		listEl?.toggleClass("cs-meta-suggestion-grouped", this.headings.size > 0);
 		this.ensureHintLine(listEl);
+		this.hintEl?.toggleClass("cs-meta-suggestion-footer-unused", !this.anyHint);
 		const heading = this.headings.get(item);
 		const parent = el.parentElement;
 		if (heading && parent) {
@@ -355,12 +361,13 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 
 /**
  * What the hint line says while `row` is highlighted. Without headings, a
- * theme's word also names its source there, since nothing else would. A
- * colour with nothing more pressing to say answers what a theme's word
- * answers — where it may stand — since beside one that must be spaced, a
- * colour saying nothing reads as the same rule.
+ * theme's word also names its source there, since nothing else would. Beside
+ * a theme's words, a colour with nothing more pressing to say answers what
+ * theirs answer — where it may stand — since next to one that must be spaced,
+ * a colour saying nothing reads as the same rule. In a list of colours alone
+ * there is no rule to tell it from, so it says nothing.
  */
-function hintOf(row: MetadataSuggestion, withHeadings: boolean): string {
+function hintOf(row: MetadataSuggestion, withHeadings: boolean, withThemeWords: boolean): string {
 	const parts: string[] = [];
 	if (row.kind === "theme") {
 		if (!withHeadings) parts.push(row.source);
@@ -369,7 +376,7 @@ function hintOf(row: MetadataSuggestion, withHeadings: boolean): string {
 	} else if (row.kind === "color") {
 		if (row.replaces) parts.push(t("metadataSuggest.replaces", { word: row.replaces.text }));
 		if (row.themeAlso) parts.push(t("metadataSuggest.themeAlso"));
-		if (parts.length === 0) parts.push(t("metadataSuggest.anySeparator"));
+		if (parts.length === 0 && withThemeWords) parts.push(t("metadataSuggest.anySeparator"));
 	}
 	return parts.join(" · ");
 }
