@@ -55,8 +55,6 @@ import { paletteMetadataKey } from "../utils/calloutMetadata";
 import {
 	customPaletteToColorPalette,
 	getAllColorPalettes,
-	getObsidianPalettes,
-	getExtraPalettes,
 	palettesVisuallyEqual,
 	type ColorPalette,
 } from "../utils/colorPalettes";
@@ -127,7 +125,10 @@ const SHOW_TEXT_COLOR_CHANNEL: boolean = false;
 
 export class PaletteEditorModal extends Modal {
 	private existing: CustomPalette | null;
-	/** Normalized names of every other palette (custom AND built-in presets). */
+	/**
+	 * Normalized names of every other palette (custom AND built-in presets),
+	 * less a preset name this palette was already saved under.
+	 */
 	private takenNames: Set<string>;
 	/**
 	 * The metadata words of the other SAVED palettes — `[!type|comic-red]`.
@@ -138,7 +139,10 @@ export class PaletteEditorModal extends Modal {
 	 */
 	private takenMetadataKeys: Set<string>;
 	private metadataKeyEl: HTMLElement | null = null;
-	/** Every other palette (custom AND built-in presets) this one may not duplicate. */
+	/**
+	 * Every other palette (custom AND built-in presets) this one may not
+	 * duplicate, less a preset whose colours this palette was already saved with.
+	 */
 	private takenColors: ColorPalette[];
 	/** The palette the current colors duplicate, if any; blocks Save while set. */
 	private colorClash: ColorPalette | null = null;
@@ -241,6 +245,14 @@ export class PaletteEditorModal extends Modal {
 		// exists.
 		const base: Omit<CustomPalette, "id" | "name"> | null =
 			options.existing ?? options.seed ?? null;
+		// A preset only blocks what the user changes a palette TO. A saved
+		// palette may already wear a preset's name or colours — it was saved
+		// before that preset existed under them (Purple, Pink and Yellow came
+		// after plenty of palettes had those names), or named under another
+		// interface language — and holding those against it would lock the user
+		// out of editing their own palette until they renamed it.
+		const own = this.existing ? customPaletteToColorPalette(this.existing) : null;
+		const presets = getAllColorPalettes();
 		// Callers pass the other CUSTOM palette names; the fixed preset names
 		// are merged here so a custom palette can't shadow "Blue" etc. Read via
 		// the getters (not a cached const) so the comparison is against the
@@ -248,8 +260,9 @@ export class PaletteEditorModal extends Modal {
 		this.takenNames = new Set(
 			[
 				...(options.takenNames ?? []),
-				...getObsidianPalettes().map((p) => p.name),
-				...getExtraPalettes().map((p) => p.name),
+				...presets
+					.map((p) => p.name)
+					.filter((name) => !own || normalizeName(name) !== normalizeName(own.name)),
 			].map(normalizeName),
 		);
 		this.takenMetadataKeys = new Set(
@@ -259,7 +272,7 @@ export class PaletteEditorModal extends Modal {
 		// custom palette can't be an unnamed copy of "Blue" either.
 		this.takenColors = [
 			...(options.takenColors ?? []).map(customPaletteToColorPalette),
-			...getAllColorPalettes(),
+			...presets.filter((p) => !own || !palettesVisuallyEqual(p, own)),
 		];
 		this.name = this.existing?.name ?? options.seedName?.trim() ?? "";
 		// Prefers the user's stored pick over the derivation's own output; see
