@@ -175,8 +175,6 @@ export const cs: Record<string, string> = {
 	"settings.deletePaletteAria": "Smazat paletu {{name}}",
 	"settings.deletePaletteConfirm":
 		'Smazat paletu "{{name}}"?\nCallouty používající její barvy nebudou ovlivněny.',
-	"settings.deletePaletteMetadataNote":
-		'Calloutů, které ji uvádějí ve svých metadatech ("{{key}}"), se vrátí k vlastní barvě. Vaše poznámky se nezmění.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Calloutů, které ji uvádějí ve svých metadatech ("{{key}}"), místo toho převezmou vestavěnou barvu tohoto jména. Vaše poznámky se nezmění.',
 

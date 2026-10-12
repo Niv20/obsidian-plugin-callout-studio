@@ -175,8 +175,6 @@ export const id: Record<string, string> = {
 	"settings.deletePaletteAria": "Hapus palet {{name}}",
 	"settings.deletePaletteConfirm":
 		'Hapus palet "{{name}}"?\nCallout yang menggunakan warna ini tidak terpengaruh.',
-	"settings.deletePaletteMetadataNote":
-		'Callout yang menyebutnya di metadata ("{{key}}") kembali ke warnanya sendiri. Catatan Anda tidak berubah.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callout yang menyebutnya di metadata ("{{key}}") akan memakai warna bawaan dengan nama itu. Catatan Anda tidak berubah.',
 

@@ -168,8 +168,6 @@ export const el: Record<string, string> = {
 	"settings.deletePaletteAria": "Διαγραφή παλέτας {{name}}",
 	"settings.deletePaletteConfirm":
 		'Διαγραφή παλέτας "{{name}}";\nΤα callout που χρησιμοποιούν τα χρώματά της δεν επηρεάζονται.',
-	"settings.deletePaletteMetadataNote":
-		'Τα callout που την αναφέρουν στα μεταδεδομένα τους ("{{key}}") επιστρέφουν στο δικό τους χρώμα. Οι σημειώσεις σας δεν αλλάζουν.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Τα callout που την αναφέρουν στα μεταδεδομένα τους ("{{key}}") παίρνουν αντ᾽ αυτού το ενσωματωμένο χρώμα με αυτό το όνομα. Οι σημειώσεις σας δεν αλλάζουν.',
 	"settings.customCommands": "Εντολές & πλήκτρα συντόμευσης",

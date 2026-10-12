@@ -289,8 +289,8 @@ colour the palette never had.
   that preset) or one the theme or a snippet styles (`isStylingWord`): a
   rewrite cannot tell which callouts meant the palette, so those notes stay as
   written and take the other meaning. Deleting never rewrites notes; its
-  confirmation says that callouts naming the palette go back to their own
-  colour, or - for a built-in's word - take that built-in colour
+  confirmation says nothing about metadata, except for a built-in's word,
+  where callouts take that built-in colour
   (`settings.deletePaletteMetadataNoteBuiltIn`).
 - **Consolidation on load**: `consolidateDuplicatePalettes()` merges any two
   saved palettes with identical colours (by the same equality test the

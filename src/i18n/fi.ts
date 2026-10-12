@@ -170,8 +170,6 @@ export const fi: Record<string, string> = {
 	"settings.deletePaletteAria": "Poista paletti {{name}}",
 	"settings.deletePaletteConfirm":
 		'Poistetaanko paletti "{{name}}"?\nSen värejä käyttävät callout-tyypit eivät muutu.',
-	"settings.deletePaletteMetadataNote":
-		'Calloutit, jotka mainitsevat sen metatiedoissaan ("{{key}}"), palaavat omaan väriinsä. Muistiinpanojasi ei muuteta.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Calloutit, jotka mainitsevat sen metatiedoissaan ("{{key}}"), saavat sen sijaan tämän nimisen sisäänrakennetun värin. Muistiinpanojasi ei muuteta.',
 	"settings.customCommands": "Komennot ja pikanäppäimet",

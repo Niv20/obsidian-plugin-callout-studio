@@ -230,8 +230,6 @@ export const vi: Record<string, string> = {
 	"settings.deletePaletteAria": "Xóa bảng màu {{name}}",
 	"settings.deletePaletteConfirm":
 		'Xóa bảng màu "{{name}}"?\nCác callout dùng màu này sẽ không bị ảnh hưởng.',
-	"settings.deletePaletteMetadataNote":
-		'Các callout nêu tên này trong siêu dữ liệu ("{{key}}") sẽ trở về màu riêng của chúng. Ghi chú của bạn không thay đổi.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Các callout nêu tên này trong siêu dữ liệu ("{{key}}") sẽ dùng màu tích hợp có tên đó. Ghi chú của bạn không thay đổi.',
 

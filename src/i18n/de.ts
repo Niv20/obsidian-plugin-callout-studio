@@ -176,8 +176,6 @@ export const de: Record<string, string> = {
 	"settings.deletePaletteAria": "Palette {{name}} löschen",
 	"settings.deletePaletteConfirm":
 		'Palette "{{name}}" löschen?\nCallouts, die ihre Farben verwenden, sind davon nicht betroffen.',
-	"settings.deletePaletteMetadataNote":
-		'Callouts, die sie in ihren Metadaten nennen ("{{key}}"), kehren zu ihrer eigenen Farbe zurück. Deine Notizen werden nicht verändert.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callouts, die sie in ihren Metadaten nennen ("{{key}}"), übernehmen stattdessen die eingebaute Farbe dieses Namens. Deine Notizen werden nicht verändert.',
 

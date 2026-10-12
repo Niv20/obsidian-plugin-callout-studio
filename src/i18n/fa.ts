@@ -174,8 +174,6 @@ export const fa: Record<string, string> = {
 	"settings.deletePaletteAria": "حذف پالت {{name}}",
 	"settings.deletePaletteConfirm":
 		'پالت "{{name}}" حذف شود؟\nبلوک‌های callout که از رنگ‌های آن استفاده می‌کنند تغییر نمی‌کنند.',
-	"settings.deletePaletteMetadataNote":
-		'callout‌هایی که آن را در فراداده‌شان نام برده‌اند ("{{key}}") به رنگ خودشان برمی‌گردند. یادداشت‌های شما تغییر نمی‌کنند.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'callout‌هایی که آن را در فراداده‌شان نام برده‌اند ("{{key}}") به‌جای آن رنگ داخلی همان نام را می‌گیرند. یادداشت‌های شما تغییر نمی‌کنند.',
 

@@ -231,8 +231,6 @@ export const uk: Record<string, string> = {
 	"settings.deletePaletteAria": "Видалити палітру {{name}}",
 	"settings.deletePaletteConfirm":
 		'Видалити палітру "{{name}}"?\nБлоки callout, які використовують її кольори, не зміняться.',
-	"settings.deletePaletteMetadataNote":
-		'Callout, які вказують її в метаданих ("{{key}}"), повертаються до власного кольору. Ваші нотатки не змінюються.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callout, які вказують її в метаданих ("{{key}}"), натомість отримують вбудований колір із такою назвою. Ваші нотатки не змінюються.',
 

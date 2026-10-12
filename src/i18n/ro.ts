@@ -227,8 +227,6 @@ export const ro: Record<string, string> = {
 	"settings.deletePaletteAria": "Ștergeți paleta {{name}}",
 	"settings.deletePaletteConfirm":
 		'Ștergeți paleta "{{name}}"?\nCallout-urile care îi folosesc culorile nu sunt afectate.',
-	"settings.deletePaletteMetadataNote":
-		'Callout-urile care o menționează în metadate ("{{key}}") revin la propria culoare. Notițele tale nu se schimbă.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callout-urile care o menționează în metadate ("{{key}}") preiau în schimb culoarea încorporată cu acel nume. Notițele tale nu se schimbă.',
 

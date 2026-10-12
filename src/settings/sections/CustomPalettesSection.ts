@@ -167,14 +167,13 @@ export function renderCustomPalettesSection(
 					name: palette.name,
 					count: linked,
 				});
-		// What happens to `[!type|its-word]` in notes: nothing, by design —
-		// those callouts just stop taking its colour, or take the built-in one
-		// a palette named "Pink" was holding the word from. Said, so it is no
-		// surprise.
+		// What happens to `[!type|its-word]` in notes: nothing, by design.
+		// Only the case that is not obvious is said: a palette named "Pink"
+		// was holding the word of a built-in colour, which takes over again.
 		const key = ownedMetadataKey(ctx.plugin.settings.customPalettes, palette.id, reservedWords());
 		const note = !key ? ""
 			: isBuiltInColorWord(key) ? t("settings.deletePaletteMetadataNoteBuiltIn", { key })
-			: t("settings.deletePaletteMetadataNote", { key });
+			: "";
 		const message = note ? `${base}\n${note}` : base;
 		const ok = await new ConfirmModal(
 			ctx.app,

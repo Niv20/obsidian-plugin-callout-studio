@@ -175,8 +175,6 @@ export const ar: Record<string, string> = {
 	"settings.deletePaletteAria": "حذف لوحة الألوان {{name}}",
 	"settings.deletePaletteConfirm":
 		'حذف لوحة الألوان "{{name}}"؟\nلن تتأثر عناصر callout التي تستخدم هذه الألوان.',
-	"settings.deletePaletteMetadataNote":
-		'تعود callouts التي تذكرها في بياناتها الوصفية ("{{key}}") إلى لونها الخاص. ملاحظاتك لا تتغير.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'تأخذ callouts التي تذكرها في بياناتها الوصفية ("{{key}}") اللون المدمج الذي يحمل هذا الاسم بدلًا منها. ملاحظاتك لا تتغير.',
 

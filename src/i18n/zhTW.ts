@@ -215,7 +215,6 @@ export const zhTW: Record<string, string> = {
 	"settings.deletePaletteAria": "刪除調色盤 {{name}}",
 	"settings.deletePaletteConfirm":
 		"刪除調色盤「{{name}}」？\n使用其顏色的 callout 不受影響。",
-	"settings.deletePaletteMetadataNote": '在中繼資料中寫了這個名稱（"{{key}}"）的 callout 會恢復為自己的顏色。你的筆記不會改變。',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'在中繼資料中寫了這個名稱（"{{key}}"）的 callout 會改用同名的內建顏色。你的筆記不會改變。',
 	"settings.customCommands": "指令與快速鍵",

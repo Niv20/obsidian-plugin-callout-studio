@@ -165,8 +165,6 @@ export const da: Record<string, string> = {
 	"settings.deletePaletteAria": "Slet palet {{name}}",
 	"settings.deletePaletteConfirm":
 		'Slet paletten "{{name}}"?\nCallouts, der bruger dens farver, påvirkes ikke.',
-	"settings.deletePaletteMetadataNote":
-		'Callouts, der nævner den i deres metadata ("{{key}}"), vender tilbage til deres egen farve. Dine noter ændres ikke.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callouts, der nævner den i deres metadata ("{{key}}"), får i stedet den indbyggede farve med det navn. Dine noter ændres ikke.',
 	"settings.customCommands": "Kommandoer og genvejstaster",

@@ -168,8 +168,6 @@ export const nb: Record<string, string> = {
 	"settings.deletePaletteAria": "Slett palett {{name}}",
 	"settings.deletePaletteConfirm":
 		'Slette paletten "{{name}}"?\nCallouts som bruker fargene, blir ikke påvirket.',
-	"settings.deletePaletteMetadataNote":
-		'Callouts som nevner den i metadataene sine ("{{key}}"), går tilbake til sin egen farge. Notatene dine endres ikke.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callouts som nevner den i metadataene sine ("{{key}}"), får i stedet den innebygde fargen med det navnet. Notatene dine endres ikke.',
 	"settings.customCommands": "Kommandoer og hurtigtaster",

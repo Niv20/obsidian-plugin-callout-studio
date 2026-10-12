@@ -228,8 +228,6 @@ export const sv: Record<string, string> = {
 	"settings.deletePaletteAria": "Ta bort palett {{name}}",
 	"settings.deletePaletteConfirm":
 		'Ta bort paletten "{{name}}"?\nCallouts som använder dess färger påverkas inte.',
-	"settings.deletePaletteMetadataNote":
-		'Callouts som anger den i sina metadata ("{{key}}") går tillbaka till sin egen färg. Dina anteckningar ändras inte.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callouts som anger den i sina metadata ("{{key}}") får i stället den inbyggda färgen med det namnet. Dina anteckningar ändras inte.',
 

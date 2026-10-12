@@ -198,8 +198,6 @@ export const he: Record<string, string> = {
 	"settings.deletePaletteAria": "מחיקת פלטה {{name}}",
 	"settings.deletePaletteConfirm":
 		'למחוק את הפלטה "{{name}}"?\nתיבות־הבלטה שמשתמשות בצבעים שלה לא יושפעו.',
-	"settings.deletePaletteMetadataNote":
-		"תיבות־הבלטה שמציינות אותה במטא־נתונים שלהן („{{key}}”) חוזרות לצבע של עצמן. הפתקים שלך לא משתנים.",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		"תיבות־הבלטה שמציינות אותה במטא־נתונים שלהן („{{key}}”) מקבלות במקומה את הצבע המובנה בשם הזה. הפתקים שלך לא משתנים.",
 

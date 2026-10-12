@@ -177,8 +177,6 @@ export const it: Record<string, string> = {
 	"settings.deletePaletteAria": "Elimina tavolozza {{name}}",
 	"settings.deletePaletteConfirm":
 		'Eliminare la tavolozza "{{name}}"?\nI callout che usano i suoi colori non vengono modificati.',
-	"settings.deletePaletteMetadataNote":
-		'I callout che la nominano nei metadati ("{{key}}") tornano al proprio colore. Le tue note non cambiano.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'I callout che la nominano nei metadati ("{{key}}") prendono invece il colore integrato con quel nome. Le tue note non cambiano.',
 

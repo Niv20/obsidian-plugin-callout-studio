@@ -176,8 +176,6 @@ export const hu: Record<string, string> = {
 	"settings.deletePaletteAria": "{{name}} paletta törlése",
 	"settings.deletePaletteConfirm":
 		'"{{name}}" paletta törlése?\nAz ezt a színt használó callout-ok nem változnak.',
-	"settings.deletePaletteMetadataNote":
-		'Azok a calloutok, amelyek a metaadataikban megnevezik ("{{key}}"), visszatérnek a saját színükhöz. A jegyzeteid nem változnak.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Azok a calloutok, amelyek a metaadataikban megnevezik ("{{key}}"), helyette az ilyen nevű beépített színt kapják. A jegyzeteid nem változnak.',
 

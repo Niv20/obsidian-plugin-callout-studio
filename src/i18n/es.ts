@@ -176,8 +176,6 @@ export const es: Record<string, string> = {
 	"settings.deletePaletteAria": "Eliminar paleta {{name}}",
 	"settings.deletePaletteConfirm":
 		'¿Eliminar la paleta "{{name}}"?\nLos callouts que usan sus colores no se ven afectados.',
-	"settings.deletePaletteMetadataNote":
-		'Los callouts que la nombran en sus metadatos ("{{key}}") vuelven a su propio color. Tus notas no cambian.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Los callouts que la nombran en sus metadatos ("{{key}}") toman en su lugar el color integrado de ese nombre. Tus notas no cambian.',
 

@@ -177,8 +177,6 @@ export const ja: Record<string, string> = {
 	"settings.deletePaletteAria": "パレット {{name}} を削除",
 	"settings.deletePaletteConfirm":
 		'パレット "{{name}}" を削除しますか？\nこの色を使用しているcalloutには影響しません。',
-	"settings.deletePaletteMetadataNote":
-		'メタデータにこの名前 ("{{key}}") を指定している callout は、それぞれ自身の色に戻ります。ノートは変更されません。',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'メタデータにこの名前 ("{{key}}") を指定している callout は、代わりにその名前の組み込みの色になります。ノートは変更されません。',
 

@@ -177,8 +177,6 @@ export const nl: Record<string, string> = {
 	"settings.deletePaletteAria": "Palet {{name}} verwijderen",
 	"settings.deletePaletteConfirm":
 		'Palet "{{name}}" verwijderen?\nCallouts die de kleuren ervan gebruiken, worden niet beïnvloed.',
-	"settings.deletePaletteMetadataNote":
-		'Callouts die het in hun metadata noemen ("{{key}}"), gaan terug naar hun eigen kleur. Je notities veranderen niet.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callouts die het in hun metadata noemen ("{{key}}"), krijgen in plaats daarvan de ingebouwde kleur met die naam. Je notities veranderen niet.',
 

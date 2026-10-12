@@ -175,8 +175,6 @@ export const pl: Record<string, string> = {
 	"settings.deletePaletteAria": "Usuń paletę {{name}}",
 	"settings.deletePaletteConfirm":
 		'Usunąć paletę "{{name}}"?\nCallouty korzystające z jej kolorów nie zostaną zmienione.',
-	"settings.deletePaletteMetadataNote":
-		'Calloutów, które wymieniają ją w metadanych ("{{key}}"), wracają do własnego koloru. Twoje notatki nie zmieniają się.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Calloutów, które wymieniają ją w metadanych ("{{key}}"), zamiast tego przyjmują wbudowany kolor o tej nazwie. Twoje notatki nie zmieniają się.',
 

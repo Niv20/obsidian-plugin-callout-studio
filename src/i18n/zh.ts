@@ -223,7 +223,6 @@ export const zh: Record<string, string> = {
 	"settings.deletePaletteAria": "删除调色板 {{name}}",
 	"settings.deletePaletteConfirm":
 		'删除调色板 "{{name}}"？\n使用其颜色的 callout 不受影响。',
-	"settings.deletePaletteMetadataNote": '在元数据中写了这个名称（"{{key}}"）的 callout 会恢复为自己的颜色。你的笔记不会改变。',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'在元数据中写了这个名称（"{{key}}"）的 callout 会改用同名的内置颜色。你的笔记不会改变。',
 

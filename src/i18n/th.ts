@@ -227,8 +227,6 @@ export const th: Record<string, string> = {
 	"settings.deletePaletteAria": "ลบชุดสี {{name}}",
 	"settings.deletePaletteConfirm":
 		'ลบชุดสี "{{name}}" หรือไม่?\nCallout ที่ใช้สีนี้จะไม่ได้รับผลกระทบ',
-	"settings.deletePaletteMetadataNote":
-		'callout ที่ระบุชื่อนี้ในเมทาดาทา ("{{key}}") จะกลับไปใช้สีของตัวเอง บันทึกของคุณจะไม่เปลี่ยนแปลง',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'callout ที่ระบุชื่อนี้ในเมทาดาทา ("{{key}}") จะใช้สีในตัวที่มีชื่อนั้นแทน บันทึกของคุณจะไม่เปลี่ยนแปลง',
 

@@ -178,8 +178,6 @@ export const fr: Record<string, string> = {
 	"settings.deletePaletteAria": "Supprimer la palette {{name}}",
 	"settings.deletePaletteConfirm":
 		'Supprimer la palette "{{name}}" ?\nLes callouts qui utilisent ses couleurs ne sont pas affectés.',
-	"settings.deletePaletteMetadataNote":
-		'Les callouts qui la citent dans leurs métadonnées ("{{key}}") reprennent leur propre couleur. Vos notes ne sont pas modifiées.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Les callouts qui la citent dans leurs métadonnées ("{{key}}") prennent à la place la couleur intégrée de ce nom. Vos notes ne sont pas modifiées.',
 

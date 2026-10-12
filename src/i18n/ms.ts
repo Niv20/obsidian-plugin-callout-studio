@@ -171,8 +171,6 @@ export const ms: Record<string, string> = {
 	"settings.deletePaletteAria": "Padam palet {{name}}",
 	"settings.deletePaletteConfirm":
 		'Padam palet "{{name}}"?\nCallout yang menggunakan warna ini tidak terjejas.',
-	"settings.deletePaletteMetadataNote":
-		'Callout yang menamakannya dalam metadata ("{{key}}") kembali kepada warnanya sendiri. Nota anda tidak berubah.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callout yang menamakannya dalam metadata ("{{key}}") sebaliknya mengambil warna terbina dalam dengan nama itu. Nota anda tidak berubah.',
 

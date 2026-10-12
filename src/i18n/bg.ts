@@ -166,8 +166,6 @@ export const bg: Record<string, string> = {
 	"settings.deletePaletteAria": "Изтриване на палитра {{name}}",
 	"settings.deletePaletteConfirm":
 		'Изтриване на палитра "{{name}}"?\nCallout-ите, които използват нейните цветове, няма да бъдат засегнати.',
-	"settings.deletePaletteMetadataNote":
-		'Callout-ите, които я посочват в метаданните си ("{{key}}"), се връщат към собствения си цвят. Бележките ви не се променят.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callout-ите, които я посочват в метаданните си ("{{key}}"), вместо това получават вградения цвят с това име. Бележките ви не се променят.',
 	"settings.customCommands": "Команди и бързи клавиши",

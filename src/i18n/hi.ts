@@ -175,8 +175,6 @@ export const hi: Record<string, string> = {
 	"settings.deletePaletteAria": "पैलेट {{name}} हटाएँ",
 	"settings.deletePaletteConfirm":
 		'पैलेट "{{name}}" हटाएँ?\nइसके रंगों का उपयोग करने वाले callout प्रभावित नहीं होंगे.',
-	"settings.deletePaletteMetadataNote":
-		'जो callout इसे अपने मेटाडेटा ("{{key}}") में नाम देते हैं, वे अपने रंग पर लौट जाते हैं। आपके नोट नहीं बदलते।',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'जो callout इसे अपने मेटाडेटा ("{{key}}") में नाम देते हैं, वे इसके बजाय उस नाम का बिल्ट-इन रंग ले लेते हैं। आपके नोट नहीं बदलते।',
 

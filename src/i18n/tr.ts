@@ -227,8 +227,6 @@ export const tr: Record<string, string> = {
 	"settings.deletePaletteAria": "{{name}} paletini sil",
 	"settings.deletePaletteConfirm":
 		'"{{name}}" paletini sil?\nBu renkleri kullanan callout öğeleri etkilenmez.',
-	"settings.deletePaletteMetadataNote":
-		"Üst verilerinde (\"{{key}}\") bu adı belirten callout'lar kendi renklerine döner. Notlarınız değişmez.",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		"Üst verilerinde (\"{{key}}\") bu adı belirten callout'lar bunun yerine o adın yerleşik rengini alır. Notlarınız değişmez.",
 
