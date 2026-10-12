@@ -58,11 +58,18 @@ const createTieBreakerCollator = (locale?: string): Intl.Collator =>
 		usage: "sort",
 	});
 
-export const compareText = (a: string, b: string, locale?: string): number => {
-	const base = createBaseCollator(locale).compare(a, b);
-	if (base !== 0) return base;
-	return createTieBreakerCollator(locale).compare(a, b);
+/**
+ * `compareText` with its collators built once, for a sort that compares many
+ * times — a list rebuilt on every keystroke, say.
+ */
+export const textComparator = (locale?: string): ((a: string, b: string) => number) => {
+	const base = createBaseCollator(locale);
+	const tieBreaker = createTieBreakerCollator(locale);
+	return (a, b) => base.compare(a, b) || tieBreaker.compare(a, b);
 };
+
+export const compareText = (a: string, b: string, locale?: string): number =>
+	textComparator(locale)(a, b);
 
 export const sortCalloutsByDisplayName = (
 	callouts: CalloutDefinition[],

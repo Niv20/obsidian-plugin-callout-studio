@@ -725,6 +725,15 @@ describe("insertHeadingCallout", () => {
 		assert.strictEqual(e.value(), "## [!warning] Chapter one");
 	});
 
+	it("keeps the heading's own metadata when it re-types it", () => {
+		// A colour written on this heading belongs to it, not to its old type.
+		// A selection rather than a `|` caret: this editor would read the
+		// metadata's own pipe as the cursor.
+		const e = editor("«## [!note|pink wide] Chapter one»");
+		insertHeadingCallout(asEditor(e), def(), 2);
+		assert.strictEqual(e.value(), "## [!warning|pink wide] Chapter one");
+	});
+
 	it("changes level without disturbing the title", () => {
 		const e = editor("## [!warning] Chapter one|");
 		insertHeadingCallout(asEditor(e), def(), 5);

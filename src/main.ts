@@ -40,6 +40,7 @@ import { WelcomeModal } from "./settings/WelcomeModal";
 import { CalloutEditor } from "./settings/CalloutEditor";
 import { QuickInsertModal } from "./settings/QuickInsertModal";
 import { CalloutAutoComplete } from "./editor/AutoComplete";
+import { CalloutMetadataSuggest } from "./editor/CalloutMetadataSuggest";
 import { LinkSuggestDecorator } from "./editor/LinkSuggestDecorator";
 import { registerContextMenu } from "./editor/contextmenu";
 import { createCalloutViewPlugin } from "./editor/livepreview/calloutViewPlugin";
@@ -308,14 +309,16 @@ export default class CalloutStudioPlugin extends Plugin {
 
 		registerQuickInsertRibbon(this);
 
-		// Editor autocomplete on [! trigger
+		// Editor autocomplete on [! trigger, and on the metadata past its `|`
 		this.autoComplete = new CalloutAutoComplete(this);
 		this.registerEditorSuggest(this.autoComplete);
+		const metadataSuggest = new CalloutMetadataSuggest(this);
+		this.registerEditorSuggest(metadataSuggest);
 
 		// Clean heading-callout titles in the [[# link suggestion popup.
 		this.linkSuggestDecorator = new LinkSuggestDecorator(this);
 		onActiveLayoutReady(this, () =>
-			this.linkSuggestDecorator.install([this.autoComplete]),
+			this.linkSuggestDecorator.install([this.autoComplete, metadataSuggest]),
 		);
 		this.register(() => this.linkSuggestDecorator.uninstall());
 

@@ -20,6 +20,7 @@ import {
 	buildInlineToken,
 } from "./calloutWriter";
 import { HEADING_CALLOUT_RE } from "./calloutTokens";
+import { splitCalloutMetadata } from "../utils/calloutId";
 import { splitFoldMark } from "./calloutWriter";
 import { collectFenceBlocks, findFenceBlockAtLine } from "./fenceBlocks";
 import type { FenceBlock } from "./fenceBlocks";
@@ -393,9 +394,13 @@ export const insertHeadingCallout = (
 	const existingTitle = headingMatch
 		? (headingMatch[3] ?? "")
 		: (plainHeading?.[1] ?? lineText);
+	// The `|metadata` belongs to this heading, not to its old type — a colour
+	// written there (`### [!mark|pink]`) must survive a change of type.
+	const meta = headingMatch ? splitCalloutMetadata(headingMatch[2] ?? "") : null;
 
 	const token = buildHeadingToken(def, {
 		existingTitle,
+		...(meta?.hasMetadata ? { metaSuffix: `|${meta.metadata}` } : {}),
 		...(options?.isKnownDisplayName
 			? { isKnownDisplayName: options.isKnownDisplayName }
 			: {}),

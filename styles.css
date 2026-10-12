@@ -3715,6 +3715,91 @@ button.callout-studio-icon-picker-loading {
 	color: var(--text-faint);
 }
 
+/* The `[!type|…]` dropdown (editor/CalloutMetadataSuggest.ts) draws its rows
+   with the classes above; what follows is its own. One icon column wide
+   enough for a gradient's three circles, so every row's word starts at the
+   same place. The list carries its popup's paint down (`inherit` — the
+   popup is painted, the list is not) for the heading to inherit in turn: one
+   chain to whatever `--suggestion-background` the theme gives the popup. */
+.suggestion.cs-meta-suggestion-list {
+	background-color: inherit;
+}
+
+/* With headings, the scrollport starts flush with them so scrolled rows cannot
+   show in a strip above the pinned one — as `.cs-combobox-menu-grouped` does —
+   and arrow-key scrolling reserves the heading's height. A Done row on top
+   gets the list's usual inset back as its own margin. */
+.suggestion.cs-meta-suggestion-list.cs-meta-suggestion-grouped {
+	padding-top: 0;
+	scroll-padding-top: calc(var(--font-ui-smaller) * var(--line-height-normal) + 8px);
+}
+
+.cs-meta-suggestion-grouped > .suggestion-item:first-child {
+	margin-top: var(--size-2-3);
+}
+
+/* One line per row, so a little more air than the type list's two-line rows. */
+.cs-meta-suggestion-list .callout-studio-suggestion {
+	padding-block: 9px;
+}
+
+.cs-meta-suggestion-list .callout-studio-suggestion-icon {
+	width: 32px;
+	justify-content: flex-start;
+}
+
+/* A word is code, as the ids under a callout row are. */
+.cs-meta-suggestion-word {
+	font-family: var(--font-monospace);
+	direction: ltr;
+}
+
+.mod-rtl .cs-meta-suggestion-word {
+	text-align: right;
+}
+
+/* The alias that found a colour row: `bubblegum · pink`. */
+.cs-meta-suggestion-alias {
+	color: var(--text-faint);
+}
+
+/* Colors / the theme's name / a snippet's name, over each group — only when
+   there are two groups or more. It is a sibling of the rows inside the
+   scrolling list, so `sticky` pins it until the next heading slides over it. */
+.cs-meta-suggestion-heading {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	background-color: inherit;
+	padding: var(--size-4-1) var(--size-4-3) var(--size-2-1);
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-semibold);
+	color: var(--text-muted);
+	user-select: none;
+}
+
+.cs-meta-suggestion-heading:not(:first-child) {
+	margin-top: var(--size-4-1);
+}
+
+/* What the highlighted row needs, said once at the bottom of the popup. */
+.cs-meta-suggestion-footer {
+	padding: var(--size-4-1) var(--size-4-3);
+	border-top: var(--border-width) solid var(--background-modifier-border);
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	flex-shrink: 0;
+}
+
+/* Always there: a row that needs nothing leaves the line empty, not gone, so
+   the popup keeps its height as the highlight moves. */
+.cs-meta-suggestion-footer:empty::before {
+	content: "\200b";
+}
+
 /* ─── Combobox (type-to-filter picker) ───────────────────────── */
 
 .suggestion.callout-studio-suggestion-list {
@@ -5930,6 +6015,18 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	flex: 0 0 auto;
 	width: var(--cs-palette-control-width);
 	max-width: 100%;
+}
+
+/* The palette's metadata word under its name (PaletteEditorModal): muted,
+   one line, and empty — so collapsed — until the name yields a word. */
+.callout-studio-palette-editor .cs-palette-metadata-key {
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	overflow-wrap: anywhere;
+}
+
+.callout-studio-palette-editor .cs-palette-metadata-key:empty {
+	display: none;
 }
 
 /* Let both controls shrink within the shared column for long translations. */

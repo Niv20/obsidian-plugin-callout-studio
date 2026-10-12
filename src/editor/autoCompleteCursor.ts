@@ -20,7 +20,7 @@
  * A pick that only changed an existing callout's type has nothing to open: the
  * cursor goes to the end of that line, where the title the user kept is.
  */
-import type { Editor } from "obsidian";
+import type { Editor, EditorPosition } from "obsidian";
 
 const CALLOUT_QUOTE_PREFIX_REGEX = /^((?:\s*> ?|\t)+)/;
 
@@ -78,4 +78,50 @@ export function placeCursorAfterPick(
 			editor.setCursor({ line, ch: editor.getLine(line).length });
 		}, 50);
 	});
+}
+
+/**
+ * Put the cursor at `pos` now, and again once the popover has closed if
+ * Obsidian's selection restore moved it — but only while the line is still
+ * exactly as the pick left it. A user fast enough to type in that window keeps
+ * their keystroke and their cursor: re-asserting over an edited line would put
+ * the cursor back behind what they just typed.
+ *
+ * For the picks that leave the cursor inside the token — Tab, and `|` — which
+ * cannot use {@link placeCursorAfterPick}'s plain deferral for exactly that
+ * reason: the next keystroke lands right there and is expected to. `then`
+ * runs after the re-assert, for work that needs the settled cursor.
+ */
+export function parkCursor(
+	editor: Editor,
+	pos: EditorPosition,
+	then?: () => void,
+): void {
+	editor.setCursor(pos);
+	const expected = editor.getLine(pos.line);
+	window.requestAnimationFrame(() => {
+		window.setTimeout(() => {
+			if (pos.line >= editor.lineCount()) return;
+			if (editor.getLine(pos.line) !== expected) return;
+			const now = editor.getCursor();
+			if (now.line !== pos.line || now.ch !== pos.ch) editor.setCursor(pos);
+			then?.();
+		}, 50);
+	});
+}
+
+/**
+ * Leave an inline token the way Enter does: past `afterCh` (just after the
+ * token), with exactly one space between it and whatever follows, so the user
+ * keeps writing on the SAME line — an inline pick must not break the paragraph.
+ */
+export function landAfterInlineToken(
+	editor: Editor,
+	line: number,
+	afterCh: number,
+): void {
+	if (editor.getLine(line)[afterCh] !== " ") {
+		editor.replaceRange(" ", { line, ch: afterCh });
+	}
+	editor.setCursor({ line, ch: afterCh + 1 });
 }

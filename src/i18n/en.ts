@@ -31,6 +31,18 @@ export const en: Record<string, string> = {
 	// Autocomplete
 	"autocomplete.createNew": 'Create "{{name}}"',
 
+	// Metadata suggestions (after `[!type|`)
+	"metadataSuggest.finish": "Done",
+	"metadataSuggest.colors": "Colors",
+	"metadataSuggest.useTyped": 'Use "{{text}}"',
+	"metadataSuggest.replaces": "Replaces {{word}}",
+	"metadataSuggest.themeAlso": "Your theme also styles this word",
+	"metadataSuggest.needsSpace": "Separate it with spaces, not |",
+	"metadataSuggest.anySeparator": "Separate it with spaces or |",
+	"metadataSuggest.mustBeFirst": "Works only as the first word",
+	"metadataSuggest.mustBeLast": "Works only as the last word",
+	"metadataSuggest.alone": "Works only on its own",
+
 	// Vault scan / fallback / delete
 	"settings.fallbackTag": "Default",
 	"settings.fallbackTagAuto": "Default fallback",
@@ -537,6 +549,8 @@ export const en: Record<string, string> = {
 	"settings.deletePaletteAria": "Delete palette {{name}}",
 	"settings.deletePaletteConfirm":
 		'Delete palette "{{name}}"?\nCallouts that use its colors are not affected.',
+	"settings.deletePaletteMetadataNote":
+		'Callouts that name it in their metadata ("{{key}}") go back to their own color. Your notes are not changed.',
 
 	// Settings — Keyboard shortcuts
 	"settings.customCommands": "Commands & Hotkeys",
@@ -871,6 +885,16 @@ export const en: Record<string, string> = {
 	"palette.namePlaceholder": "My palette",
 	"palette.nameExists": "A palette with this name already exists",
 	"palette.saveBlockedName": "A palette with this name already exists. Choose a different name to save it.",
+	"palette.metadataName": "In callout metadata: {{key}}",
+	"palette.metadataNameExists":
+		'Another palette is already written "{{key}}" in callout metadata. Choose a different name.',
+	"palette.renameNotesTitle": "Update your notes?",
+	"palette.renameNotesBody":
+		'{{count}} callouts in {{files}} notes use this palette as "{{old}}".\nChange them to "{{new}}"?\nIf you don\'t, they go back to their own color.',
+	"palette.renameNotesConfirm": "Update notes",
+	"palette.renameNotesSkip": "Leave them",
+	"palette.renameNotesFailed":
+		"Some notes could not be updated. The ones that were are saved; the rest still use the old name.",
 	"palette.baseColor": "Base color",
 	"palette.baseColorHint":
 		"We'll automatically match the background color to it. If you'd like, you can control it separately by {{link}}.",

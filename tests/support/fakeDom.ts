@@ -1448,7 +1448,21 @@ export function installFakeDom(): FakeDomHandle {
 	};
 	g.MutationObserver = FakeMutationObserver;
 	g.MouseEvent = class MouseEvent {};
-	g.KeyboardEvent = class KeyboardEvent {};
+	// A key and the two calls a handler makes. Constructed bare by older
+	// suites, so both arguments stay optional.
+	g.KeyboardEvent = class KeyboardEvent {
+		key: string;
+		isComposing: boolean;
+		defaultPrevented = false;
+		constructor(_type?: string, init?: { key?: string; isComposing?: boolean }) {
+			this.key = init?.key ?? "";
+			this.isComposing = init?.isComposing ?? false;
+		}
+		preventDefault(): void {
+			this.defaultPrevented = true;
+		}
+		stopPropagation(): void {}
+	};
 
 	return {
 		document: doc,
