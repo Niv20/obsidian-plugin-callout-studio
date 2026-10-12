@@ -200,6 +200,11 @@ export function mergeSavedSettings(
 				booleanPreference(savedSettings.inlineCallouts?.allowContent,
 					DEFAULT_SETTINGS.inlineCallouts.allowContent),
 		},
+		metadataColors: {
+			enabled:
+				booleanPreference(savedSettings.metadataColors?.enabled,
+					DEFAULT_SETTINGS.metadataColors.enabled),
+		},
 		welcomeSeen:
 			booleanPreference(savedSettings.welcomeSeen, DEFAULT_SETTINGS.welcomeSeen ?? false),
 		competitorImportBannerHandled:

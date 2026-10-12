@@ -69,6 +69,7 @@ const FIELD_KIND: Record<keyof PluginSettings, "value" | "list"> = {
 	iconLibraries: "value",
 	headingCallouts: "value",
 	inlineCallouts: "value",
+	metadataColors: "value",
 	welcomeSeen: "value",
 	competitorImportBannerHandled: "value",
 	fallbackCalloutId: "value",
@@ -176,6 +177,7 @@ const EXPECTED_LEAVES: string[] = [
 	"inlineCallouts.allowContent",
 	"inlineCallouts.enabled",
 	"language",
+	"metadataColors.enabled",
 	"quickInsertSource",
 	"welcomeSeen",
 ];

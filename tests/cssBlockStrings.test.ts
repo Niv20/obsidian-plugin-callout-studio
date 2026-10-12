@@ -34,4 +34,15 @@ describe("CSS structural punctuation", () => {
 		assert.equal(stripComments('.a { content:"/*keep*/"; } /* } */ .b{}'), '.a { content:"/*keep*/"; }  .b{}');
 		assert.equal(stripComments('.a{} /* unfinished'), '.a{} ');
 	});
+
+	it("ends a string at a raw newline, as the CSS tokenizer does", () => {
+		// Blue Topaz ships this stray quote, with the rule's `}` on the next
+		// line. Read to the next `'`, the string swallowed the rest of the
+		// theme and every rule after it vanished.
+		const found = blocks(
+			String.raw`.a { content: '\A\9\9'';` + "\n}\n.b { color: red; }\n.c { content: ''; }",
+		);
+		assert.equal(found.get(".b"), "color: red;");
+		assert.equal(found.get(".c"), "content: '';");
+	});
 });

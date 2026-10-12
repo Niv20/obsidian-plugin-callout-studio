@@ -171,6 +171,9 @@ export function buildSnippetCss(plugin: SnippetExportPlugin): string {
 		plugin.cssInjector.generateGlobalStyleCSS(true),
 		...supportAccentRules(plugin),
 		...callouts,
+		// Last, as in the live sheet: `[!type|colour]` overrides any callout's
+		// own colour, and its colours' precedence rides on source order.
+		plugin.cssInjector.generateMetadataColorCSS(true),
 	];
 	const body = parts.filter((p) => p.trim()).join("\n\n");
 	const head = body.includes("--cs-accent-theme")
