@@ -334,12 +334,22 @@ in its bundled `app.js`): the binding hands the event to the internal
 suggestion list's `useSelectedItem`, so `selectSuggestion` sees `evt.key`
 (`editor/suggestKeys.ts`). `suggestions` is not in `obsidian.d.ts` and is read
 optionally - without it the keys fall through to what they would have done.
+`|` is registered under any modifiers (it is Shift+\\, Option+7 or AltGr
+depending on the layout) but declines under Cmd, or under Ctrl without Alt:
+that is a hotkey, not typing.
 
 | Key | Writes | Cursor |
 | --- | --- | --- |
-| Tab | `[!id]` only - existing metadata, fold mark and title untouched; an unclosed token is closed | before the `]`, after any metadata (`parkCursor`) |
-| `\|` | the same, then a `\|` there; `triggerNow` opens the metadata dropdown | after the new `\|` |
-| `\|` on **Create new**, or on a row whose id does not start with the typed text | nothing but the `\|` - the user is typing a name of their own | after the `\|` |
+| Tab | the id's own characters only (`replaceTypeText`) - existing metadata, fold mark, title and `]` untouched; an unclosed token stays unclosed | before the `]`, after any metadata; without a `]`, after the id and its metadata (`parkCursor`) |
+| `\|` | completes a half-typed id the same way, then types a `\|` after it - or steps over the `\|` already there; `triggerNow` opens the metadata dropdown | after the `\|` |
+| `\|` with nothing to complete - **Create new**, a row whose id does not start with the typed text, an id already typed in full (its spelling kept), nothing typed yet, a cursor mid-id | nothing but the `\|`, exactly as without the dropdown | after the `\|` |
+
+Neither key ever rewrites the `]`. Obsidian's bracket pairing (CodeMirror's
+`closeBrackets`, on by default as **Auto pair brackets**) steps over a typed `]`
+only while it still tracks the `]` it inserted itself, and replacing that
+character - even with an identical one - drops the tracking: a user typing
+`> [!note|wide]` by hand got `> [!note|wide]]`. For the same reason neither key
+adds a missing `]`; the user is about to type it.
 
 `parkCursor` sets the cursor at once and re-asserts it after the popover's
 close-and-restore frame, but only while the line is unchanged, so a fast next
@@ -383,9 +393,16 @@ What it offers and what each pick writes is pure
 - Once the metadata names a colour, the styling's words lead and every colour
   row **replaces** it (`applyMetadataPick` swaps the old word in place and drops
   the typed one with its separator), so the UI never stacks two colours.
-- **Done** heads the list on an empty word after a separator, so Enter there
-  finishes (dropping the trailing separator) instead of breaking the line inside
-  `[!…]`. **Use "…"** closes it for a word nothing matches exactly.
+- **Done** heads the list on an empty word after a separator that follows a
+  word, so Enter there finishes (dropping the trailing separator) instead of
+  breaking the line inside `[!…]`. **Use "…"** appears for a word nothing matches
+  exactly: last while some row starts with the typed text, first when none
+  does - Enter takes the top row, and a match inside a longer word (`width-50`
+  for `50`) is no completion.
+- **The colours and the styling's words come from the injector**
+  (`cssInjector.metadataColorEntries()`, `cssInjector.metadataCatalog`), the
+  same list and scan the stylesheet uses, so a colour the stylesheet stands down
+  on (a word the user's own snippet styles) is never offered as one.
 - A `spaced` word (one the stylesheet matches with `~=`) turns a `|` touching
   it into a space - that operator never sees across a pipe. The first `|` is
   outside the metadata and never touched.

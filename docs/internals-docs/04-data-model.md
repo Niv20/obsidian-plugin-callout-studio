@@ -248,11 +248,18 @@ keep each other's library order.
 `metadataColors.enabled` switches off the colours a callout takes from its own
 metadata (`[!mark|pink]`) - the stylesheet block, the colour rows in the `|`
 dropdown and the PDF painters' metadata overlay, all through
-`activeMetadataColorEntries`. It has no settings UI by decision: the feature is
-always on, and the switch exists to be flipped by hand in `data.json`, the way
-`inlineCallouts.allowContent` is. It is also the one deliberate exception to
-"an upgrade changes nothing": a note that already carried `|red` for a theme or
-another plugin is coloured by Callout Studio after the update.
+`CSSInjector.metadataColorEntries` (`activeMetadataColorEntries` underneath). It
+has no settings UI by decision: the feature is always on, and the switch exists
+to be flipped by hand in `data.json`, the way `inlineCallouts.allowContent` is.
+**Reset all** turns it back on. Builds from 2.13 on carry it through untouched
+as an unknown settings key (`foreignFields.ts`); 2.12 and older drop it when they
+save, which leaves the default - on.
+
+It is also the one deliberate exception to "an upgrade changes nothing": a note
+that already carried `|red` for a theme or another plugin is coloured by
+Callout Studio after the update. The user's own CSS snippets are not part of
+the exception - a word an enabled snippet styles is left to it (see
+[06-css-generation.md](06-css-generation.md#metadata-colours-typecolour)).
 
 A saved palette's metadata word is not stored: it is derived from the name
 (`paletteMetadataKey`), so `CustomPalette` gained no field - see

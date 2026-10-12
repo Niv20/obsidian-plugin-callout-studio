@@ -59,7 +59,13 @@ it, so an Outline or link icon keeps the callout's own colour. The two paths
 that bake a colour into the DOM for PDF export - the regular icon in
 `CSSInjector.paintIcon` and the per-letter title colours of
 `applyTitleGradient` - read the element's own metadata through
-`definitionWithMetadataColor`, so print matches the screen.
+`definitionWithMetadataColor`, with the same colour list the stylesheet emits
+(`CSSInjector.metadataColorEntries`, which the reading post-processor reaches
+through its host's `cssInjector`) and the same word test
+(`metadataNamesWord`), so print matches the screen. That includes a colour
+without a title sweep over a callout whose own definition has one: the
+stylesheet clears the sweep, and the painter, given a definition without one,
+leaves the title unwrapped.
 
 ### The `{…}` content payload (inline pills only)
 

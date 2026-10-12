@@ -64,7 +64,7 @@ Type `[!` in any of the three positions and a menu of your callouts opens. Choos
 
 If you were only changing the type of a callout that already has a title, the cursor stays at the end of that line instead. This works the same for built-in callouts and for ones you created, whatever their ID.
 
-To add metadata after the ID, press **Tab** instead of **Enter**. The ID is written and the cursor stays before the `]`. Pressing **|** does the same and also opens a menu of colors and of your theme's words.
+To add metadata after the ID, press **Tab** instead of **Enter**. The ID is written and the cursor stays before the `]`. Pressing **|** completes an ID you were halfway through, types the pipe, and opens a menu of colors and of your theme's words. Neither key adds or rewrites the `]`.
 
 ## Metadata and callout IDs
 
