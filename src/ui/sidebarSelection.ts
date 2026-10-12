@@ -1,29 +1,48 @@
-import type { Editor, EditorPosition } from "obsidian";
-import type { SidebarSourceRange } from "./sidebarNavigation";
+import type { Editor, EditorSelection } from "obsidian";
+
+type SelectionListener = (editor: Editor, documentChanged: boolean) => void;
 
 const subscriptions = new WeakMap<Editor, Set<(documentChanged: boolean) => void>>();
+/** Sidebars that follow whichever editor the caret moves in (Find callouts). */
+const anyEditorListeners = new Set<SelectionListener>();
 
-/** The existing CodeMirror extension forwards selection transactions, without polling. */
+/**
+ * The existing CodeMirror extension forwards selection transactions, without polling.
+ * With no sidebar open, both lookups come back empty, so a transaction costs nothing more.
+ */
 export function notifySidebarEditorSelection(editor: Editor, documentChanged = false): void {
 	for (const notify of subscriptions.get(editor) ?? []) notify(documentChanged);
+	for (const listener of anyEditorListeners) listener(editor, documentChanged);
 }
 
-const equalPosition = (a: EditorPosition, b: EditorPosition): boolean => a.line === b.line && a.ch === b.ch;
+/** Hear every editor's caret moves and edits until the returned function is called. */
+export function onSidebarEditorSelection(listener: SelectionListener): () => void {
+	anyEditorListeners.add(listener);
+	return () => { anyEditorListeners.delete(listener); };
+}
 
-/** A highlighted result lasts only as long as its exact source selection. */
+const equalPosition = (a: EditorSelection["anchor"], b: EditorSelection["anchor"]): boolean =>
+	a.line === b.line && a.ch === b.ch;
+const sameRange = (a: EditorSelection, b: EditorSelection): boolean =>
+	equalPosition(a.anchor, b.anchor) && equalPosition(a.head, b.head) ||
+	equalPosition(a.anchor, b.head) && equalPosition(a.head, b.anchor);
+
+/**
+ * A clicked result stays current until the user acts in its editor: a different
+ * selection or any edit. Navigation leaves the caret where it was, so the
+ * selection to compare against is whatever the editor held when it landed.
+ */
 export class SidebarSourceSelection {
 	private dispose?: () => void;
 	clear(): void { this.dispose?.(); this.dispose = undefined; }
-	watch(editor: Editor, range: SidebarSourceRange, onClear: () => void): void {
+	watch(editor: Editor, onClear: () => void): void {
 		this.clear();
+		const landed = editor.listSelections();
 		const notify = (documentChanged: boolean): void => {
 			const selections = editor.listSelections();
-			const selection = selections.length === 1 ? selections[0] : undefined;
-			const matches = selection && (
-				equalPosition(selection.anchor, range.from) && equalPosition(selection.head, range.to) ||
-				equalPosition(selection.head, range.from) && equalPosition(selection.anchor, range.to)
-			);
-			if (matches && !documentChanged) return;
+			const unchanged = selections.length === landed.length &&
+				selections.every((selection, i) => sameRange(selection, landed[i]!));
+			if (unchanged && !documentChanged) return;
 			this.clear();
 			onClear();
 		};

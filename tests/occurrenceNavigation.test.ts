@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { setTimeout as scheduleTimer } from "node:timers";
-import { MarkdownView, TFile, type App, type EditorPosition, type WorkspaceLeaf } from "obsidian";
+import { MarkdownView, Platform, TFile, type App, type EditorPosition, type WorkspaceLeaf } from "obsidian";
 import { scanCalloutOccurrences } from "../src/usage/scanCalloutOccurrences";
 import { navigateToCalloutOccurrence, resolveOccurrencePosition } from "../src/usage/navigation";
 import { t } from "../src/i18n";
@@ -49,12 +49,15 @@ describe("occurrence position validation", () => {
 	});
 });
 
-function navigationHarness(content = original) {
+function navigationHarness(content = original, mode: "source" | "preview" = "source") {
 	const file = Object.assign(new TFile(), { path: "note.md" });
 	const root = {};
 	const side = {};
 	const selections: Array<[EditorPosition, EditorPosition | undefined]> = [];
-	const scrolled: unknown[] = [];
+	const scrolled: Array<{ from: EditorPosition; to: EditorPosition }> = [];
+	const scrolledTo: Array<[number | null | undefined, number | null | undefined]> = [];
+	const activations: unknown[] = [];
+	const collapsed: string[] = [];
 	const requestedLeaves: unknown[] = [];
 	const opened: unknown[] = [];
 	const ephemeral: unknown[] = [];
@@ -62,10 +65,12 @@ function navigationHarness(content = original) {
 	let deferredLoaded = false;
 	const view = Object.assign(new MarkdownView({} as WorkspaceLeaf), {
 		file,
+		getMode: () => mode,
 		editor: {
 			getValue: () => content,
 			setSelection: (from: EditorPosition, to?: EditorPosition) => { selections.push([from, to]); },
-			scrollIntoView: (range: unknown) => { scrolled.push(range); },
+			scrollIntoView: (range: { from: EditorPosition; to: EditorPosition }) => { scrolled.push(range); },
+			scrollTo: (x?: number | null, y?: number | null) => { scrolledTo.push([x, y]); },
 			focus: () => { focus++; },
 		},
 	});
@@ -78,17 +83,21 @@ function navigationHarness(content = original) {
 	const sidebarLeaf = { getRoot: () => side, openFile: () => { throw new Error("Must not replace sidebar"); } };
 	let activeView: MarkdownView | null = view;
 	let recentLeaf: WorkspaceLeaf | null = documentLeaf as unknown as WorkspaceLeaf;
+	const drawer = (name: string) => ({ collapsed: false, collapse() { collapsed.push(name); this.collapsed = true; } });
 	const app = {
 		vault: { getAbstractFileByPath: () => file },
 		workspace: {
 			rootSplit: root,
+			leftSplit: drawer("left"),
+			rightSplit: drawer("right"),
+			setActiveLeaf: (_leaf: unknown, params: unknown) => { activations.push(params); },
 			getLeavesOfType: () => [],
 			getActiveViewOfType: () => activeView,
 			getMostRecentLeaf: () => recentLeaf,
 			getLeaf: (mode: unknown) => { requestedLeaves.push(mode); return mode === "tab" ? documentLeaf : sidebarLeaf; },
 		},
 	} as unknown as App;
-	return { app, view, documentLeaf, selections, opened, requestedLeaves, ephemeral, scrolled,
+	return { app, view, documentLeaf, selections, opened, requestedLeaves, ephemeral, scrolled, scrolledTo, activations, collapsed,
 		activate: (active: MarkdownView | null, leaf?: WorkspaceLeaf | null) => {
 			activeView = active;
 			if (leaf !== undefined) recentLeaf = leaf;
@@ -97,51 +106,88 @@ function navigationHarness(content = original) {
 }
 
 describe("occurrence navigation", () => {
-	it("opens file headings at the top without selecting text and honors a new tab", async () => {
+	it("opens file headings at the top without moving the caret and honors a new tab", async () => {
 		const h = navigationHarness();
-		assert.equal(await navigateToSidebarFile(h.app, "note.md", true), true);
-		assert.deepEqual(h.selections, [[{ line: 0, ch: 0 }, { line: 0, ch: 0 }]]);
+		assert.equal(await navigateToSidebarFile(h.app, "note.md", { newTab: true }), true);
+		assert.deepEqual(h.scrolledTo, [[null, 0]]);
+		assert.deepEqual(h.selections, []);
 		assert.deepEqual(h.requestedLeaves, ["tab"]);
-		assert.deepEqual(h.ephemeral, [{ line: 0, focus: true }]);
+		assert.deepEqual(h.ephemeral, []);
+		assert.equal(h.focused(), 0);
 	});
-	it("opens a document leaf and resolves against the current editor buffer", async () => {
+	it("opens a document leaf, resolves against the current buffer and scrolls without selecting", async () => {
 		const h = navigationHarness(`Unsaved line\n${original}`);
 		h.activate(h.view, null);
 		assert.equal(await navigateToCalloutOccurrence(h.app, saved()), true);
 		assert.deepEqual(h.requestedLeaves, [false, "tab"]);
-		assert.deepEqual(h.opened, [{ active: true, state: { mode: "source" } }]);
+		assert.deepEqual(h.opened, [{ active: false, state: { mode: "source" } }]);
+		assert.deepEqual(h.activations, [{ focus: false }], "activated without core's focusLeaf");
 		assert.equal(h.loaded(), true);
-		assert.deepEqual(h.selections, [[{ line: 1, ch: saved().from }, { line: 1, ch: saved().to }]]);
-		assert.deepEqual(h.ephemeral, [{ line: 1, focus: true }]);
-		assert.equal(h.scrolled.length, 1);
-		assert.equal(h.focused(), 1);
+		// Head before anchor, so a callout taller than the editor aligns by its top.
+		assert.deepEqual(h.scrolled, [{ from: { line: 1, ch: saved().to }, to: { line: 1, ch: saved().from } }]);
+		assert.deepEqual(h.selections, [], "a caret in the callout would show its raw Markdown");
+		assert.deepEqual(h.ephemeral, [], "setEphemeralState({ line }) moves the caret too");
+		assert.equal(h.focused(), 0, "focusing the editor raises the iOS keyboard");
+		assert.deepEqual(h.collapsed, []);
+	});
+	it("opens a pane in Reading view in the vault's default editing mode, and leaves an editing pane as it is", async () => {
+		const reading = navigationHarness(original, "preview");
+		assert.equal(await navigateToCalloutOccurrence(reading.app, saved()), true);
+		assert.deepEqual(reading.opened, [{ active: false, state: { mode: "source", source: false } }],
+			"without `source`, core restores whatever the pane last edited in");
+		const sourceDefault = navigationHarness(original, "preview");
+		Object.assign(sourceDefault.app.vault, { getConfig: (key: string) => key === "livePreview" ? false : undefined });
+		assert.equal(await navigateToCalloutOccurrence(sourceDefault.app, saved()), true);
+		assert.deepEqual(sourceDefault.opened, [{ active: false, state: { mode: "source", source: true } }]);
+		const editing = navigationHarness(original, "source");
+		Object.assign(editing.app.vault, { getConfig: () => false });
+		assert.equal(await navigateToCalloutOccurrence(editing.app, saved()), true);
+		assert.deepEqual(editing.opened, [{ active: false, state: { mode: "source" } }]);
 	});
 	it("honors a new-tab request", async () => {
 		const h = navigationHarness();
-		assert.equal(await navigateToCalloutOccurrence(h.app, saved(), true), true);
+		assert.equal(await navigateToCalloutOccurrence(h.app, saved(), { newTab: true }), true);
 		assert.deepEqual(h.requestedLeaves, ["tab"]);
+	});
+	it("closes the sidebar's own drawer on a phone or tablet, and nothing else", async () => {
+		const mobile = Platform.isMobile;
+		try {
+			Platform.isMobile = true;
+			for (const side of ["left", "right", "main"] as const) {
+				const h = navigationHarness();
+				const workspace = h.app.workspace as unknown as Record<string, unknown>;
+				const origin = { getRoot: () => side === "main" ? workspace.rootSplit : workspace[`${side}Split`] } as unknown as WorkspaceLeaf;
+				assert.equal(await navigateToCalloutOccurrence(h.app, saved(), { origin }), true);
+				assert.deepEqual(h.collapsed, side === "main" ? [] : [side]);
+			}
+			Platform.isMobile = false;
+			const h = navigationHarness();
+			const origin = { getRoot: () => h.app.workspace.rightSplit } as unknown as WorkspaceLeaf;
+			assert.equal(await navigateToCalloutOccurrence(h.app, saved(), { origin }), true);
+			assert.deepEqual(h.collapsed, [], "a desktop sidebar stays open");
+		} finally { Platform.isMobile = mobile; }
 	});
 	it("rejects edits that land while an asynchronous scan is in progress", async () => {
 		const h = navigationHarness(original);
 		let reads = 0;
 		h.view.editor.getValue = () => ++reads === 1 ? original : `${original}\nchanged`;
 		assert.equal(await navigateToCalloutOccurrence(h.app, saved()), false);
-		assert.deepEqual(h.selections, []);
+		assert.deepEqual(h.scrolled, []);
 	});
-	it("yields during navigation in a large note instead of blocking until selection", async () => {
+	it("yields during navigation in a large note instead of blocking until it scrolls", async () => {
 		const content = `${"plain text\n".repeat(1500)}${original}`;
 		const occurrences = scanCalloutOccurrences("note.md", content);
 		const occurrence = occurrences[occurrences.length - 1]!;
 		const h = navigationHarness(content);
 		let yieldedBeforeSelection = false;
 		const checkpoint = new Promise<void>((resolve) => window.setTimeout(() => {
-			yieldedBeforeSelection = h.selections.length === 0;
+			yieldedBeforeSelection = h.scrolled.length === 0;
 			resolve();
 		}, 0));
 		assert.equal(await navigateToCalloutOccurrence(h.app, occurrence), true);
 		await checkpoint;
 		assert.equal(yieldedBeforeSelection, true);
-		assert.equal(h.selections[0]?.[0].line, 1500);
+		assert.equal(h.scrolled[0]?.to.line, 1500);
 	});
 	it("does not steal focus back after the user switches editor tabs during a scan", async () => {
 		const content = `${"plain text\n".repeat(1500)}${original}`;
@@ -156,7 +202,7 @@ describe("occurrence navigation", () => {
 		}, 0));
 		assert.equal(await navigateToCalloutOccurrence(h.app, occurrence), false);
 		await switched;
-		assert.deepEqual(h.selections, []);
+		assert.deepEqual(h.scrolled, []);
 		assert.deepEqual(h.ephemeral, []);
 		assert.equal(h.focused(), 0);
 	});
@@ -164,22 +210,22 @@ describe("occurrence navigation", () => {
 		const h = navigationHarness();
 		h.activate(null);
 		assert.equal(await navigateToCalloutOccurrence(h.app, saved()), true);
-		assert.equal(h.selections.length, 1);
+		assert.equal(h.scrolled.length, 1);
 	});
 	it("cancels a request before opening or after its sidebar context changes", async () => {
 		const content = `${"plain text\n".repeat(1500)}${original}`;
 		const occurrence = scanCalloutOccurrences("note.md", content).at(-1)!;
 		const h = navigationHarness(content);
-		assert.equal(await navigateToCalloutOccurrence(h.app, occurrence, false, () => false), false);
+		assert.equal(await navigateToCalloutOccurrence(h.app, occurrence, { isCurrent: () => false }), false);
 		assert.deepEqual(h.opened, []);
 		let current = true;
 		const cancelled = new Promise<void>((resolve) => window.setTimeout(() => {
 			current = false;
 			resolve();
 		}, 0));
-		assert.equal(await navigateToCalloutOccurrence(h.app, occurrence, false, () => current), false);
+		assert.equal(await navigateToCalloutOccurrence(h.app, occurrence, { isCurrent: () => current }), false);
 		await cancelled;
-		assert.deepEqual(h.selections, []);
+		assert.deepEqual(h.scrolled, []);
 		assert.equal(h.focused(), 0);
 	});
 	it("uses the most recent matching editor when a note has duplicate tabs", async () => {
@@ -193,7 +239,7 @@ describe("occurrence navigation", () => {
 		h.app.workspace.getLeavesOfType = () => [staleLeaf, h.documentLeaf as unknown as WorkspaceLeaf];
 		assert.equal(await navigateToCalloutOccurrence(h.app, saved()), true);
 		assert.deepEqual(h.requestedLeaves, []);
-		assert.equal(h.selections[0]?.[0].line, 1);
+		assert.equal(h.scrolled[0]?.to.line, 1);
 	});
 	it("reports missing or stale results and never selects a guessed location", async () => {
 		const notices: string[] = [];
@@ -202,7 +248,7 @@ describe("occurrence navigation", () => {
 		try {
 			const h = navigationHarness("changed");
 			assert.equal(await navigateToCalloutOccurrence(h.app, saved()), false);
-			assert.deepEqual(h.selections, []);
+			assert.deepEqual(h.scrolled, []);
 			assert.deepEqual(notices, [t("usage.changed")]);
 			h.app.vault.getAbstractFileByPath = () => null;
 			assert.equal(await navigateToCalloutOccurrence(h.app, saved()), false);

@@ -79,6 +79,7 @@ function harness(
 			getActiveViewOfType: (type: typeof MarkdownView) => activeLeaf?.view instanceof type ? activeLeaf.view : null,
 			getActiveFile: () => activeLeaf?.view instanceof MarkdownView ? activeLeaf.view.file : null,
 			getMostRecentLeaf: () => recentDocumentLeaf,
+			setActiveLeaf: () => {},
 		},
 	} as unknown as App;
 	const registry = new CalloutRegistry();
@@ -679,23 +680,30 @@ describe("callout occurrence sidebar", () => {
 		await h.view.onClose();
 		h.index.dispose();
 	});
-	it("clicking results navigates files and inline columns without moving their sidebar cards", async () => {
+	it("clicking results scrolls to them without selecting, and the caret takes the mark back", async () => {
 		const contents = { "a.md": "[!note] and [!note]", "b.md": "# [!note]" };
 		const h = harness(contents);
 		h.activateFile("a.md");
 		const root = h.app.workspace.rootSplit;
-		const selected: Array<{ path: string; from: EditorPosition }> = [];
+		const scrolledTo: Array<{ path: string; from: EditorPosition; to: EditorPosition }> = [];
 		let liveSelection = { anchor: { line: 0, ch: 0 }, head: { line: 0, ch: 0 } };
 		const opened: string[] = [];
 		const view = new MarkdownView({} as WorkspaceLeaf);
+		const text = (): string => contents[view.file!.path as keyof typeof contents];
 		Object.assign(view, {
+			getMode: () => "source",
 			editor: {
-				getValue: () => contents[view.file!.path as keyof typeof contents],
-				setSelection: (from: EditorPosition, to = from) => {
-					selected.push({ path: view.file!.path, from }); liveSelection = { anchor: from, head: to };
-				},
+				getValue: text,
+				getLine: (line: number) => text().split("\n")[line] ?? "",
+				lineCount: () => text().split("\n").length,
+				getCursor: () => liveSelection.head,
+				setSelection: () => { throw new Error("navigation must not select"); },
 				listSelections: () => [liveSelection],
-				scrollIntoView: () => {}, focus: () => {},
+				scrollIntoView: (range: { from: EditorPosition; to: EditorPosition }) => {
+					scrolledTo.push({ path: view.file!.path, ...range });
+				},
+				scrollTo: () => {},
+				focus: () => { throw new Error("navigation must not focus the editor"); },
 			},
 		});
 		const leaf = {
@@ -719,6 +727,13 @@ describe("callout occurrence sidebar", () => {
 				h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop = 999;
 			}
 		};
+		const current = (): string | null =>
+			h.view.contentEl.querySelector('[aria-current="true"]')?.getAttribute("data-result") ?? null;
+		const moveCaret = (line: number, ch: number): void => {
+			liveSelection = { anchor: { line, ch }, head: { line, ch } };
+			notifySidebarEditorSelection(view.editor);
+			dom.window.flushFrames();
+		};
 		try {
 			await h.view.onOpen();
 			assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent,
@@ -728,35 +743,40 @@ describe("callout occurrence sidebar", () => {
 				const button = h.view.contentEl.querySelector(`[data-action="result"][data-result="${position}"]`)!;
 				(h.view.contentEl as unknown as FakeElement).fire("click", { target: button });
 				await new Promise((resolve) => window.setTimeout(resolve, 0));
+				dom.window.flushFrames();
 				assert.equal(h.view.contentEl.querySelector(`[data-result="${position}"]`), button,
 					"selecting a result updates its existing card without rebuilding the list");
 				assert.equal(h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop, 240, `result ${position} stays at its original scroll offset`);
 				assert.deepEqual(scrolled, [], "result navigation must not reveal its file heading");
+				assert.equal(current(), String(position), "the clicked card holds the mark over the unmoved caret");
 			}
 			assert.deepEqual(opened, ["a.md", "a.md", "a.md", "b.md"]);
-			assert.deepEqual(selected.map((item) => item.from.ch), [0, 12, 0, 2]);
+			// Inline pills are scrolled to by their token; a heading callout by its whole line.
+			assert.deepEqual(scrolledTo.map((item) => [item.path, item.to.ch, item.from.ch]),
+				[["a.md", 0, 7], ["a.md", 12, 19], ["a.md", 0, 7], ["b.md", 0, 9]]);
 			assert.equal(h.view.contentEl.querySelectorAll('[aria-current="true"]').length, 1);
-			assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent,
-				t("usage.summary", { count: 3, files: 2 }));
 			h.activateFile("b.md");
 			assert.equal(h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop, 240, "a delayed activation of the clicked file keeps the card in place");
 			assert.deepEqual(scrolled, []);
-			liveSelection = { anchor: { line: 0, ch: 0 }, head: { line: 0, ch: 0 } };
-			notifySidebarEditorSelection(view.editor);
-			assert.equal(h.view.contentEl.querySelector('[aria-current="true"]'), null, "clicking elsewhere clears the card immediately");
+			moveCaret(0, 4);
+			assert.equal(current(), "2", "the caret on the heading callout's line marks its card");
 			const fileButton = h.view.contentEl.querySelector('button[data-action="file"][data-path="b.md"]')!;
 			(h.view.contentEl as unknown as FakeElement).fire("click", { target: fileButton, ctrlKey: true });
 			await new Promise(resolve => window.setTimeout(resolve, 0));
+			dom.window.flushFrames();
 			assert.equal(opened.at(-1), "b.md");
-			assert.deepEqual(liveSelection, { anchor: { line: 0, ch: 0 }, head: { line: 0, ch: 0 } });
-			assert.equal(h.view.contentEl.querySelector('[aria-current="true"]'), null);
+			assert.deepEqual(liveSelection, { anchor: { line: 0, ch: 4 }, head: { line: 0, ch: 4 } }, "a file heading leaves the caret alone");
+			assert.equal(current(), "2", "after a file heading the caret keeps leading");
 			const file = h.app.vault.getAbstractFileByPath("a.md");
 			assert.ok(file instanceof TFile);
 			view.file = file;
+			liveSelection = { anchor: { line: 0, ch: 14 }, head: { line: 0, ch: 14 } };
 			h.activateFile("a.md");
+			dom.window.flushFrames();
 			assert.deepEqual(scrolled, [fileSection(h.view, "a.md")], "a later direct tab switch still reveals its file");
-			assert.equal(h.view.contentEl.querySelector('[aria-current="true"]'), null,
-				"the previous file's card must not remain selected beneath the new active heading");
+			assert.equal(current(), "1", "a note switch hands the mark to that note's caret, not the previous file's card");
+			moveCaret(0, 9);
+			assert.equal(current(), null, "a caret between two pills is in no callout");
 		} finally {
 			Object.defineProperty(FakeElement.prototype, "scrollIntoView", originalScrollIntoView);
 			await h.view.onClose();
@@ -770,9 +790,8 @@ describe("callout occurrence sidebar", () => {
 			let selected = false;
 			let release = (): void => {};
 			const deferred = new Promise<void>((resolve) => { release = resolve; });
-			Object.assign(editorView, { editor: {
-				getValue: () => "[!note]", setSelection: () => { selected = true; },
-				scrollIntoView: () => {}, focus: () => {},
+			Object.assign(editorView, { getMode: () => "source", editor: {
+				getValue: () => "[!note]", scrollIntoView: () => { selected = true; }, focus: () => {},
 			} });
 			const leaf = {
 				view: editorView, getRoot: () => h.app.workspace.rootSplit,
@@ -911,10 +930,10 @@ describe("callout occurrence sidebar", () => {
 		const root = h.app.workspace.rootSplit;
 		const editorView = new MarkdownView({} as WorkspaceLeaf);
 		const selectedLines: number[] = [];
-		Object.assign(editorView, { editor: {
+		Object.assign(editorView, { getMode: () => "source", editor: {
 			getValue: () => text,
-			setSelection: (from: EditorPosition) => { selectedLines.push(from.line); },
-			scrollIntoView: () => {}, focus: () => {},
+			listSelections: () => [{ anchor: { line: 0, ch: 0 }, head: { line: 0, ch: 0 } }],
+			scrollIntoView: (range: { to: EditorPosition }) => { selectedLines.push(range.to.line); }, focus: () => {},
 		} });
 		const leaf = {
 			view: editorView, getRoot: () => root,

@@ -50,13 +50,13 @@ describe("conversion file groups and cards", () => {
 			h.root.fire("click", { target: h.root.querySelectorAll('button[data-action="result"]')[0] });
 			await h.settle();
 			assert.equal(h.root.querySelectorAll('[aria-current="true"]').length, 1);
-			const opened = [...h.opened], selections = [...h.selections];
+			const opened = [...h.opened], revealed = [...h.revealed];
 			h.root.fire("click", { target: h.root.querySelectorAll(".cs-portable-after-button")[1] });
 			assert.equal(h.root.querySelector('[aria-current="true"]'), null);
 			assert.equal(h.root.querySelectorAll(".is-editing").length, 1);
 			assert.ok(h.root.querySelectorAll(".cs-portable-change")[1]!.hasClass("is-editing"));
 			assert.deepEqual(h.opened, opened);
-			assert.deepEqual(h.selections, selections);
+			assert.deepEqual(h.revealed, revealed);
 		} finally { await h.destroy(); }
 	});
 	it("switches inline editors without opening or selecting a source", async () => {
@@ -72,7 +72,7 @@ describe("conversion file groups and cards", () => {
 			assert.equal(h.root.ownerDocument.activeElement, latest);
 			assert.deepEqual([latest.selectionStart, latest.selectionEnd], [0, 3]);
 			assert.deepEqual(h.opened, []);
-			assert.deepEqual(h.selections, []);
+			assert.deepEqual(h.revealed, []);
 			assert.equal(h.root.querySelectorAll(".is-editing").length, 1);
 			assert.equal(h.root.querySelectorAll(".cs-portable-after")[0]!.textContent, "First custom");
 			assert.deepEqual(h.written, []);
@@ -92,7 +92,7 @@ describe("conversion file groups and cards", () => {
 			assert.equal(h.root.ownerDocument.activeElement, outside);
 			assert.equal(h.root.querySelector('[aria-current="true"]'), null);
 			assert.equal(loads, 0);
-			assert.deepEqual(h.opened, []); assert.deepEqual(h.selections, []); assert.deepEqual(h.written, []);
+			assert.deepEqual(h.opened, []); assert.deepEqual(h.revealed, []); assert.deepEqual(h.written, []);
 		} finally { outside.remove(); await h.destroy(); }
 	});
 	it("opens a clicked file heading while an inline edit is active", async () => {
@@ -105,7 +105,7 @@ describe("conversion file groups and cards", () => {
 			h.root.fire("click", { target }); h.root.ownerDocument.fire("click", { target });
 			await h.settle();
 			assert.deepEqual(h.opened, ["b.md"]);
-			assert.deepEqual(h.selections, [[{ line: 0, ch: 0 }, { line: 0, ch: 0 }]]);
+			assert.deepEqual(h.revealed, ["top"]);
 			assert.equal(h.documentView.file?.path, "b.md");
 			assert.equal(h.root.querySelector("textarea"), null);
 			assert.equal(h.root.querySelector('[aria-current="true"]'), null);
@@ -148,7 +148,7 @@ describe("conversion file groups and cards", () => {
 			const card = h.root.querySelectorAll('button[data-action="result"]')[1]!;
 			h.root.fire("click", { target: card }); await h.settle();
 			assert.deepEqual(h.opened, ["a.md"]);
-			assert.deepEqual(h.selections, [[{ line: 1, ch: 2 }, { line: 1, ch: 14 }]]);
+			assert.deepEqual(h.revealed, [[{ line: 1, ch: 2 }, { line: 1, ch: 14 }]]);
 			assert.ok(h.inputs().every(input => input.checked));
 			assert.equal(groupScrolls, 0);
 			assert.equal(h.root.querySelectorAll('[aria-current="true"]').length, 1);
@@ -158,7 +158,7 @@ describe("conversion file groups and cards", () => {
 			assert.deepEqual(h.opened, ["a.md"]);
 		} finally { await h.destroy(); }
 	});
-	it("clears the current card after the source selection collapses and opens file headings without selecting text", async () => {
+	it("clears the current card once the user moves the caret and opens file headings at the top", async () => {
 		const h = harness();
 		try {
 			await h.view.onOpen();
@@ -169,7 +169,7 @@ describe("conversion file groups and cards", () => {
 			assert.equal(h.root.querySelector('[aria-current="true"]'), null);
 			h.root.fire("click", { target: h.root.querySelector('button[data-action="file"]'), metaKey: true }); await h.settle();
 			assert.deepEqual(h.opened, ["a.md", "a.md"]);
-			assert.deepEqual(h.selections.at(-1), [{ line: 0, ch: 0 }, { line: 0, ch: 0 }]);
+			assert.deepEqual(h.revealed.at(-1), "top");
 			assert.equal(h.root.querySelector('[aria-current="true"]'), null);
 		} finally { await h.destroy(); }
 	});
@@ -189,7 +189,7 @@ describe("conversion file groups and cards", () => {
 		try {
 			await h.view.onOpen(); h.setLiveText("An unrelated line");
 			h.root.fire("click", { target: h.root.querySelector('button[data-action="result"]') }); await h.settle();
-			assert.deepEqual(h.selections, []);
+			assert.deepEqual(h.revealed, []);
 			assert.equal(h.blocked("convert"), true);
 		} finally { await h.destroy(); }
 	});

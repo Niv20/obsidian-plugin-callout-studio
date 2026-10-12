@@ -1,4 +1,4 @@
-import type { App, EventRef } from "obsidian";
+import type { App, EventRef, WorkspaceLeaf } from "obsidian";
 import { SidebarActiveFile } from "../ui/sidebarActiveFile";
 import { navigateToSidebarFile, navigateToSidebarResult, type SidebarSourceRange } from "../ui/sidebarNavigation";
 import { SidebarSourceSelection } from "../ui/sidebarSelection";
@@ -53,7 +53,7 @@ export class PortableConversionNavigation {
 	private failed = false;
 	constructor(private readonly app: App, register: (ref: EventRef) => void,
 		private readonly render: () => void, private readonly refresh: () => void,
-		expandTo: (limit: number) => void) {
+		expandTo: (limit: number) => void, private readonly origin?: WorkspaceLeaf) {
 		this.activeFile = new SidebarActiveFile(app, register, path => {
 			if (this.rows.find(row => row.id === this.current)?.path !== path) {
 				this.clearCurrent();
@@ -86,8 +86,9 @@ export class PortableConversionNavigation {
 		let opened = false;
 		let trackSelection: (() => void) | undefined;
 		try { opened = await navigateToSidebarResult(this.app, row.path,
-			(content, stillOpen) => resolvePortableSourcePosition(row.change, content, stillOpen), newTab, isCurrent,
-			(editor, range) => { trackSelection = () => this.sourceSelection.watch(editor, range, () => this.clearCurrent()); }); }
+			(content, stillOpen) => resolvePortableSourcePosition(row.change, content, stillOpen),
+			{ newTab, isCurrent, origin: this.origin,
+				onSelected: (editor) => { trackSelection = () => this.sourceSelection.watch(editor, () => this.clearCurrent()); } }); }
 		finally { if (generation === this.generation) this.activeFile.endResultNavigation(row.path); }
 		if (!isCurrent()) return;
 		if (opened) { this.activeFile.openedResult(row.path); this.current = row.id; trackSelection?.(); this.render(); }
@@ -99,7 +100,7 @@ export class PortableConversionNavigation {
 		const isCurrent = (): boolean => this.opened && generation === this.generation;
 		this.activeFile.beginResultNavigation(path);
 		try {
-			if (await navigateToSidebarFile(this.app, path, newTab, isCurrent) && isCurrent()) {
+			if (await navigateToSidebarFile(this.app, path, { newTab, isCurrent, origin: this.origin }) && isCurrent()) {
 				this.clearCurrent();
 				this.activeFile.openedResult(path);
 			}

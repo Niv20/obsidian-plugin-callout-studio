@@ -167,13 +167,14 @@ panes by restricting document lookup to `rootSplit`, and follows `TFile.path` wh
 the active note is renamed. It highlights that file's heading in the current
 filtered results. Initial opening leaves the sidebar at the top, without
 expanding pages or scrolling to the active file. Navigating through a result
-updates selection and active-file highlighting without moving the clicked card,
+marks the clicked card and highlights the active file without moving the card,
 including when Obsidian emits editor activation events during navigation. A
 later editor tab change made outside the sidebar scrolls to that file's group.
 If the group lies beyond the current page, it reveals enough results before
 scrolling. An active file without a matching group does not move the list.
-Switching documents clears a selected card from the previous file immediately;
-focusing the sidebar preserves the current document and its selected card.
+Switching documents clears a marked card from the previous file immediately and
+hands the mark to the new document's caret (see "Cursor-follow" below);
+focusing the sidebar preserves the current document and its marked card.
 This synchronization does not change the selected callout type or role. Committing either filter
 resets pagination and selection while preserving the sidebar's scroll offset
 within the updated results. A shorter list may clamp that offset to its end.
@@ -185,13 +186,14 @@ still request those actions.
 file group and its row-major grid come from `ui/sidebarResults.ts`, shared with
 the conversion sidebar. CSS bounds both panes' content at 1000px, switches cards
 to two columns at 680px container width, and keeps each file heading full-width
-and sticky within its section. `ui/sidebarNavigation.ts` owns opening and
-selecting a validated source range; each consumer supplies its source resolver.
+and sticky within its section. `ui/sidebarNavigation.ts` owns opening a note and
+revealing a validated source range; each consumer supplies its source resolver.
 A card's identity includes its path, source fingerprint, token coordinates,
 identity, and role; array offsets are presentation data only. A `WeakMap` maps
 current buttons directly to occurrences, so detached buttons cannot open a
-different result after a refresh. Selection updates `aria-current` in place
-without rebuilding the cards. After a query update, focus follows the same
+different result after a refresh. Marking a card updates `aria-current` in place
+without rebuilding the cards, and writes only the card losing the mark and the
+one gaining it. After a query update, focus follows the same
 occurrence rather than its old list position. A changed source snapshot clears
 selection instead of transferring it to a replacement at the same coordinates.
 Per-file counts are cached by result-array identity and reused for pagination.
@@ -246,20 +248,90 @@ button to Obsidian's left ribbon.
 Navigation uses public workspace/editor APIs, opens a document leaf in editing
 mode and revalidates source tokens against the current editor. When a note has
 multiple open editors, it prefers the most recent matching main-pane editor.
+A leaf already in editing mode is opened with `{ mode: "source" }` and keeps
+Live Preview or Source as its user left it. Any other leaf (Reading view, a new
+tab, another view type) also gets `source` from the vault's **Default editing
+mode** (`getConfig("livePreview")`, read defensively). Given only `mode`, core's
+`MarkdownView.setState` keeps whichever flavour the pane last edited in, which
+took a Reading-view note into Source mode.
+The leaf is opened with `active: false` and then activated with
+`setActiveLeaf(leaf, { focus: false })`: core's `focusLeaf` is what moves focus
+into the editor, and on iOS that raises the keyboard. Navigation never calls
+`setSelection`, `editor.focus()` or `setEphemeralState({ line })` (which moves the
+caret too), because a caret anywhere inside a callout makes Live Preview show its
+raw Markdown. It calls `revealCalloutInEditor` (`editor/calloutFlash.ts`, see
+[Editor integrations](10-editor-integrations.md#landing-flash)) to scroll the
+callout into view and flash it. On `Platform.isMobile` it first collapses the
+drawer holding the sidebar (the `origin` leaf's root, when that is `leftSplit` or
+`rightSplit`), as core's `focusLeaf` would have, and the flash waits 280 ms for
+the drawer to slide away.
+
+**Known and expected: the note's header title blinks grey on a click.**
+Pressing a card makes the sidebar's own leaf the active one, so core dims the
+title of the note's pane. A moment later `setActiveLeaf(leaf, { focus: false })`
+hands the active leaf back to the note and the title turns normal again. The two
+happen within one click, so the title looks like it blinks grey beside the flash.
+It is core's own activation of the sidebar, not the flash (which never touches
+the header), and the plugin has no way to avoid it: the press runs before any
+plugin code. Do not chase it as a flash bug.
 A document
 fingerprint (normalized for CRLF/LF) permits exact coordinates only while the
 source is unchanged. After edits, unique unchanged source lines can be relocated;
 ambiguous or missing occurrences trigger an automatic refresh. The editor is checked again
-after asynchronous parsing so navigation cannot select from an obsolete buffer
-or steal focus after a document switch. A caller generation guard also cancels
-selection after filters change or the occurrences view closes and reopens.
-`sidebarNavigation.ts` also opens a file from its group heading at the top of the
-note without selecting a result. File headings display their counts in parentheses
-beside the name. Both sidebars use `sidebarSelection.ts` to tie active-card styling
-to the exact selected range: a collapsed, moved or additional editor selection,
-or a document edit, clears the purple state. The existing CodeMirror extension
-forwards selection transactions to per-editor subscribers; there is no polling.
-Subscriptions are removed when the tracked range is cleared or its view closes.
+after asynchronous parsing so navigation cannot reveal from an obsolete buffer
+or act after a document switch. A caller generation guard also cancels
+the reveal after filters change or the occurrences view closes and reopens.
+`sidebarNavigation.ts` also opens a file from its group heading scrolled to the
+top (`editor.scrollTo(null, 0)`), leaving the caret alone. File headings display
+their counts in parentheses beside the name. Both sidebars use
+`sidebarSelection.ts`'s `SidebarSourceSelection` to keep a clicked card marked
+until the user acts in its editor: it records `listSelections()` when the result
+lands and clears on the first selection that differs, or on any edit. A cursor
+restore that lands on the same selection is not the user acting. The existing
+CodeMirror extension forwards selection transactions to per-editor subscribers;
+there is no polling. Subscriptions are removed when the card is released or its
+view closes.
+
+### Cursor-follow
+
+Find callouts marks the card for the callout under the caret, as the core Outline
+marks the heading under the caret. Obsidian 1.14.4's Outline follows the cursor in
+editing mode (`editor-selection-change`, 20 ms debounce) and uses scroll only in
+Reading view. The plugin follows the cursor for the same reasons and one more: the
+signal is already there. `calloutViewPlugin.update` calls
+`notifySidebarEditorSelection` on every `selectionSet` or `docChanged`, and
+`onSidebarEditorSelection` lets a sidebar hear every editor through it. With no
+sidebar open the listener set is empty and a transaction costs one size check.
+A scroll-driven design would need a listener per editor firing on every frame of
+a fling, geometry reads while scrolling, and a rule for which of several visible
+callouts counts.
+
+`usage/occurrenceCursorSync.ts` subscribes while the view is open, ignores every
+editor but the one `SidebarActiveFile.currentView()` follows (embedded editors,
+canvas cards and settings previews never reach it), and coalesces notifications
+into one lookup per animation frame. `OccurrenceResults.follow` writes to the DOM
+only when the marked card changes, and scrolls the list with `scrollToReveal`
+only when that card is out of sight and the scroller is laid out (a hidden
+sidebar tab has zero height). The card's own file heading is sticky at the top
+of the scroller, so its height is passed as `coveredTop`: a card whose top edge
+sits under that heading counts as out of sight, and lands 8 px below it. It never moves focus or expands **Show more**.
+
+`usage/occurrenceAtCursor.ts` resolves the caret against the **drawn** cards of
+that note (`OccurrenceResults.linesOf`), innermost first: an inline pill the caret
+touches, payload included; a heading callout on the caret's line; then the
+nearest block callout above whose quote holds the caret, walking up only through
+quoted lines and tracking the shallowest depth on the way. A header's own token
+supplies its depth, so a callout under a list item (`- > [!x]`) is found too. A
+filtered-out inner callout passes the mark to the one around it. A card whose
+`lineText` no longer equals the live line never matches: while the index lags
+behind typing the mark drops out rather than landing on the wrong card, and the
+next index render (which always reschedules the lookup) restores it. Block extent
+follows `editor/calloutExtent.ts`, shared with the landing flash.
+
+A click holds the mark: `openResult` calls `hold()` before navigating, so neither a
+note switch nor a queued frame can mark another card, and `landedIn(editor)` once
+the result is in view. The first real selection change or edit releases it.
+Filter changes and `setState` reset the hold; closing the view unsubscribes.
 Navigation never inserts block IDs or modifies notes. The one isolated optional host seam
 is `openFromSettings.ts`: existing Obsidian `app.setting.close()` is called only
 when present to dismiss the settings overlay after explicit navigation. Hosts

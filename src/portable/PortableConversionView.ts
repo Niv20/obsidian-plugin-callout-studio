@@ -50,7 +50,7 @@ export class PortableConversionView extends ItemView {
 			this.revision++; this.plan = plan; this.selected = new Set(plan.selectedIds); this.setStatus(""); this.render();
 		}, () => this.render(), () => this.resultNavigation.clearCurrent());
 		this.resultNavigation = new PortableConversionNavigation(this.app, ref => this.registerEvent(ref),
-			() => this.render(), () => this.invalidate(), limit => { this.limit = limit; this.render(); });
+			() => this.render(), () => this.invalidate(), limit => { this.limit = limit; this.render(); }, this.leaf);
 		this.watch = new PortableConversionWatch(this.app, ref => this.registerEvent(ref), (path, old) => this.invalidate(path, old));
 		this.registerDomEvent(this.contentEl, "click", event => this.onClick(event));
 		this.registerDomEvent(this.contentEl, "change", event => this.onChange(event));

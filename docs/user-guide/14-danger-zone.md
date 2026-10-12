@@ -63,8 +63,10 @@ replacement. Heading cards show the complete heading. Each inline callout gets
 a separate card showing its `[!type]` token and optional `{content}` payload,
 even when several are on one line. Long text wraps in full.
 
-Select a card's format label or **Before** text to open and select its exact
-source in the editor. Its highlight lasts while that source remains selected.
+Select a card's format label or **Before** text to open its note scrolled to
+that source, which briefly glows; the cursor stays where it was, as in
+[Find callouts](12-find-callouts.md#navigate-through-occurrences). The card stays
+highlighted until you click or type in the note.
 Only the card's checkbox includes or excludes that replacement. The summary
 checkbox selects all changes, clears them all, or shows a dash when only some
 are selected. **Show more** reveals additional results; switching notes scrolls

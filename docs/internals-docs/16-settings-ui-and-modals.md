@@ -59,11 +59,14 @@ Both sidebars open a note at its beginning when its file heading is clicked;
 counts appear in parentheses after the file name, drawn like every other
 heading count (see [Heading counts](#heading-counts---one-n-everywhere)). The
 shared file-heading button uses its visible name and count as its accessible
-label, without a redundant hover tooltip. The shared
-`ui/sidebarSelection.ts` observes selection transactions forwarded by the existing
-CodeMirror extension. Moving or collapsing the selection, adding another selection,
-or changing the document clears the active card without polling. Subscriptions
-are released when the active card changes or the sidebar closes.
+label, without a redundant hover tooltip. Navigation scrolls a source into view
+and flashes it without selecting it or focusing the editor (see the occurrence
+navigation notes in [Vault discovery](11-vault-discovery.md)); the conversion
+leaf passes itself as the `origin`, so its drawer closes on a phone. The shared
+`ui/sidebarSelection.ts` keeps the clicked card current until the editor's
+selection differs from the one it landed on, or the document changes, without
+polling. Subscriptions are released when the active card changes or the sidebar
+closes. Cursor-follow is Find callouts only.
 
 `portableConversionWatch.ts` listens only while open, debounces changes by 350 ms
 and invalidates affected cache entries. Stale previews immediately disable

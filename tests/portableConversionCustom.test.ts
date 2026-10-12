@@ -93,13 +93,13 @@ describe("inline custom replacement review", () => {
 				assert.deepEqual([editor.input.selectionStart, editor.input.selectionEnd], [0, 4]);
 				assert.equal(h.root.ownerDocument.activeElement, editor.input);
 				assert.deepEqual(h.opened, []);
-				assert.deepEqual(h.selections, []);
+				assert.deepEqual(h.revealed, []);
 				await h.settle();
 				assert.ok(editor.card.hasClass("is-editing"));
 				assert.equal(h.root.querySelector('[aria-current="true"]'), null);
 				assert.equal(h.root.ownerDocument.activeElement, editor.input);
 				assert.deepEqual(h.opened, []);
-				assert.deepEqual(h.selections, []);
+				assert.deepEqual(h.revealed, []);
 				assert.equal(h.blocked("convert"), true);
 				assert.equal(editor.card.querySelector('[data-action="save-replacement"]'), null);
 				assert.equal(editor.card.querySelector('[data-action="cancel-replacement"]'), null);

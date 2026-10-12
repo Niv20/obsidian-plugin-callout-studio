@@ -88,10 +88,12 @@ selection summary. Only the results scroll. Select a
 card to navigate. As you scroll through a note's results, its file heading stays
 below the fixed header until that note's results end; the next file heading
 then takes its place. Clicking a result highlights that card and keeps it in the
-same sidebar position. Clicking elsewhere in the editor or changing its text
-selection returns that card to its normal appearance. Clicking the file heading
-opens the note at its beginning. Switching to another note also clears the previous card's highlight;
-the new note's heading identifies the current file. Updating the list keeps
+same sidebar position. The card stays highlighted until you click or type in the
+note; from then on the highlight follows your cursor (see
+[Follow your cursor](#follow-your-cursor)). Clicking the file heading opens the
+note at its beginning without moving its cursor. Switching to another note moves
+the highlight to the card your cursor is in there, if any; the new note's heading
+identifies the current file. Updating the list keeps
 keyboard focus on the same occurrence when its source is unchanged.
 Ctrl-click (Command-click on macOS) opens a new tab. The list initially shows
 up to 100 results; **Show more** reveals another page.
@@ -113,14 +115,53 @@ If the filtered list is shorter, the scroll position settles at the nearest
 available place. The highlighted note does not pull the list to its section
 after a filter change.
 
-Navigation opens the note in editing mode and selects the exact callout token.
+Navigation opens the note in editing mode and scrolls the callout into view. A
+note in Reading view opens in your default editing mode (**Settings → Editor →
+Default editing mode**), Live Preview unless you changed it; a note you are
+already editing stays in Live Preview or Source mode, whichever it was in. A
+callout that fits on screen is centred; a taller one is aligned by its top. If
+the callout is inside a folded section, that section unfolds. Navigation does not
+select the callout or move the cursor, so the callout stays rendered instead of
+showing its Markdown. Keyboard focus stays in the sidebar, so you can keep moving
+through results, and on a phone or tablet the on-screen keyboard does not open.
+To edit the callout, click or tap it in the note.
+
+Instead of a selection, the callout briefly glows in its own colour: a ring and
+a soft tint. Nothing moves or resizes, so a wide block is never clipped at the
+edge of the editor. Block, heading and inline callouts all flash this way. In
+Source mode the callout's lines are tinted instead. On a phone or tablet the
+sidebar closes first, and the glow starts once the note is visible.
+
 If that note is already the most recent main-pane editor, navigation reuses it
 even when duplicate tabs are open. Switching away, changing the filters, or closing the sidebar while a
-result is still opening cancels its pending selection.
+result is still opening cancels it.
 Locations are revalidated against the current editor. Missing or ambiguous
-occurrences trigger an automatic update instead of selecting unrelated text.
+occurrences trigger an automatic update instead of jumping to unrelated text.
 On hosts where Settings cannot be dismissed automatically, close Settings to
 reach the opened sidebar.
+
+### Follow your cursor
+
+While you edit a note, the card for the callout your cursor is in is
+highlighted, much as Obsidian's **Outline** highlights the heading you are in:
+
+- an inline callout, while the cursor touches it;
+- a heading callout, while the cursor is on its heading line;
+- a block callout, while the cursor is anywhere inside it.
+
+In nested callouts, the innermost callout with a card in the current results
+wins, so a filtered-out inner callout passes the highlight to the one around it.
+When the cursor is in no callout, no card is highlighted.
+
+If the highlighted card is outside the visible part of the list, the sidebar
+scrolls just far enough to show it in full, clear of the file name that stays
+pinned at the top of the list. It never takes keyboard focus, and it does not
+reveal cards hidden behind **Show more**.
+
+The highlight follows the cursor, not scrolling: scrolling the note without
+clicking leaves it where it is, and Reading view, which has no cursor, highlights
+nothing. While you type on a callout's first line, the highlight can briefly drop
+out until the list catches up with your edit.
 
 ## Usage counts in menus
 

@@ -2,8 +2,9 @@
 
 This covers everything that lets a user *write* callouts and *act* on them:
 autocomplete, wrap/unwrap/insert, the built-in commands, custom commands,
-the right-click context menu, and the two decorators that clean up callout
-syntax outside the editor (Outline pane, link suggestions).
+the right-click context menu, the two decorators that clean up callout
+syntax outside the editor (Outline pane, link suggestions), and the landing
+flash a sidebar result plays on the callout it opens.
 
 ## `calloutWriter.ts` - the only place a definition becomes markdown
 
@@ -798,6 +799,97 @@ alias: `[[#[!tip]|Tip]]`.
   ending in `]`. That last one would rebuild the `]]]` run.
 
 Core and wrapper write in two transactions, but one Undo takes back both.
+
+## Landing flash
+
+[`src/editor/calloutFlash.ts`](../../src/editor/calloutFlash.ts) is how Find
+callouts and Review conversion show where a result landed. Navigation
+(`ui/sidebarNavigation.ts`, see [Vault discovery](11-vault-discovery.md)) leaves
+the selection alone, because a caret anywhere inside a callout makes Live Preview
+show its raw Markdown. `revealCalloutInEditor(editor, lines, range, delayed)`
+scrolls to the callout and lights it up instead.
+
+**Extent.** [`editor/calloutExtent.ts`](../../src/editor/calloutExtent.ts) turns
+the result's token range into what the callout covers:
+
+- an inline pill: its token plus any `{…}` payload (`tokenEnd`);
+- a heading callout: its line;
+- a block callout: its header down to the first blank line, or the first line
+  quoted shallower than the header (the rule `findContainingCallout` in
+  `CalloutBlockTools.ts` uses);
+- a range that is no callout token (a link a conversion repairs): a plain span.
+
+Cursor-follow uses the same module, so "what the flash covers" and "the caret is
+inside it" cannot disagree.
+
+**One dispatch.** The function sends three things in a single transaction:
+
+1. `unfoldEffect` for any fold hiding the callout's start. The target's own fold
+   is left alone, so a folded heading callout stays folded.
+2. `EditorView.scrollIntoView(EditorSelection.range(end, start), { y: "center" })`.
+   With the head before the anchor, CodeMirror centres a range that fits and
+   aligns a taller one by its top; core's own search highlight passes its range
+   reversed for the same reason.
+3. `setCalloutFlash`.
+
+An editor without `editor.cm` falls back to `editor.scrollIntoView` with the same
+reversed range, and gets no flash.
+
+**Two ways to reach the rendered callout**, because CodeMirror owns one kind of
+DOM and Obsidian the other:
+
+- `calloutFlashField` (a `StateField`, mapped through edits) decorates lines and
+  inline ranges. It puts `cs-callout-flash-line` on each line and
+  `cs-callout-flash-mark` over an inline span. CodeMirror's mark wraps an inline
+  pill's replace widget, so `.cs-callout-flash-mark > .cs-inline-callout` reaches
+  the pill. **Never add a class to a `.cm-line` by hand**: CodeMirror rewrites
+  line attributes it did not set.
+- A Live Preview block callout is Obsidian's own block widget
+  (`.cm-embed-block.cm-callout`), which line decorations cannot reach. The
+  companion view plugin waits up to about 20 frames for the scrolled-to widget to
+  be drawn. `renderedBlockCallout` then picks the nearest widget above the target
+  and checks that the target lies within it. It indexes the target's nested
+  `.callout` by counting headers (`isBlockHeaderLine`) in between, and confirms
+  the match against `data-callout` (`obsidianCalloutAttrId`). On a mismatch it
+  falls back to the outer callout. The view plugin adds `cs-callout-flash`
+  directly to that element, since CodeMirror ignores DOM changes inside a widget.
+
+The same view plugin owns the clear timer: `FLASH_MS`, plus `FLASH_DELAY_MS` when
+a phone's drawer is closing. It removes the widget class when a flash ends or a
+new one replaces it. A second reveal while a flash still shows clears it, then
+sets it again two animation frames later. The first frame paints the element
+without the class; otherwise the browser would never see the class go and would
+not replay the animation.
+
+**CSS** (`styles.css`, "Landing flash") is paint-only:
+
+- A ring: an *inset* outline, so core's `.cm-embed-block:hover { overflow: hidden }`
+  cannot clip it.
+- A tint: an inset `box-shadow`. A callout whose border style pins
+  `box-shadow: none !important` (`css/transparentBorder.ts`) keeps the ring alone.
+- No pop. A `transform: scale()` swell was tried and dropped: a wide block grew
+  past the editor's edges and was clipped, and a heading bar, being a measured
+  `.cm-line`, could only pop a `::after` overlay whose growth nobody could see,
+  so only its ring showed. A ring and a tint change no box's size or position,
+  so the same two layers sit directly on a block's `.callout`, a heading's
+  `.cm-line` and an inline pill. Do not add a transform back to any of them:
+  CodeMirror measures the block widget's root and every `.cm-line`.
+- The colour is `--cs-accent`, then `--callout-color` (a full colour in 1.14),
+  then the accent.
+- A phone's delay is the `--cs-flash-delay` variable that every `animation`
+  shorthand reads. An `animation-delay` would be reset by those heavier shorthands.
+- Reduced motion needs no rule: nothing moves, and the colour fade is what says
+  where you landed.
+
+`FLASH_MS` and `FLASH_DELAY_MS` must stay equal to the keyframe durations in the
+stylesheet.
+
+The note's header title may also blink grey for an instant when a card is
+clicked. That is not part of the flash: core dims the title while the sidebar's
+leaf is active, and navigation hands the leaf back to the note a moment later.
+It is expected; see
+[Vault discovery](11-vault-discovery.md#read-only-occurrence-index-and-navigation)
+for why it has no fix.
 
 ---
 Next chapter: [11-vault-discovery.md](11-vault-discovery.md)

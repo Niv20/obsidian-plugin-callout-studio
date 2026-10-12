@@ -8,11 +8,11 @@ import type { CalloutRenderRole } from "../types";
 import { getCalloutOccurrenceIndex, type CalloutOccurrenceIndex } from "./CalloutOccurrenceIndex";
 import { SidebarActiveFile } from "../ui/sidebarActiveFile";
 import { navigateToSidebarFile } from "../ui/sidebarNavigation";
-import { SidebarSourceSelection } from "../ui/sidebarSelection";
 import type { CalloutOccurrence, CalloutOccurrenceQuery } from "./occurrenceTypes";
 import { ALL_TYPES_ID, OccurrenceTypeChoices, occurrencePickerChoices } from "./occurrenceTypeChoices";
 import { OccurrenceResults } from "./occurrenceResults";
 import { navigateToCalloutOccurrence } from "./navigation";
+import { OccurrenceCursorSync } from "./occurrenceCursorSync";
 import { createOccurrencesFrame, OCCURRENCE_ROLES, type OccurrencesFrame } from "./occurrencesViewFrame";
 
 export const CALLOUT_OCCURRENCES_VIEW = "callout-studio-occurrences";
@@ -30,7 +30,7 @@ export class CalloutOccurrencesView extends ItemView {
 	private role: CalloutRenderRole | undefined;
 	private limit = PAGE_SIZE;
 	private readonly resultCards = new OccurrenceResults(PAGE_SIZE);
-	private readonly sourceSelection = new SidebarSourceSelection();
+	private readonly cursor: OccurrenceCursorSync;
 	private results: readonly CalloutOccurrence[] = [];
 	private unsubscribe: (() => void) | null = null;
 	private opened = false;
@@ -64,11 +64,14 @@ export class CalloutOccurrencesView extends ItemView {
 		this.activeFile = new SidebarActiveFile(this.app,
 			(ref) => this.registerEvent(ref),
 			(path) => {
-				this.sourceSelection.clear();
 				this.resultCards.setActiveFile(path);
+				// A result being opened owns the mark; any other note switch hands it to the caret.
+				if (!this.navigating) this.cursor.release();
 				if (this.opened && this.frame) this.activeFile.sync(this.results, this.limit, this.index.status, this.failed);
 			},
 			(limit) => { this.limit = limit; this.render(); }, PAGE_SIZE);
+		this.cursor = new OccurrenceCursorSync(() => this.activeFile.currentView(), this.resultCards,
+			() => this.frame?.scroll ?? null);
 	}
 	getViewType(): string { return CALLOUT_OCCURRENCES_VIEW; }
 	getDisplayText(): string { return t("usage.title"); }
@@ -94,7 +97,7 @@ export class CalloutOccurrencesView extends ItemView {
 		this.role = OCCURRENCE_ROLES.includes(input.role as CalloutRenderRole) ? input.role as CalloutRenderRole : undefined;
 		this.limit = PAGE_SIZE;
 		this.navigationGeneration++;
-		this.resultCards.select(null); this.sourceSelection.clear();
+		this.resultCards.select(null); this.cursor.reset();
 		if (this.frame) this.frame.scroll.scrollTop = 0;
 		this.activeFile.cancelReveal();
 		this.picker?.setValue(this.selectedType);
@@ -118,13 +121,14 @@ export class CalloutOccurrencesView extends ItemView {
 		this.registry.offChange(this.registryChanged);
 		this.registry.onChange(this.registryChanged);
 		this.activeFile.open();
+		this.cursor.open();
 		this.render();
 		await this.refresh();
 	}
 	onClose(): Promise<void> {
 		this.opened = false;
 		this.navigationGeneration++;
-		this.resultCards.select(null); this.sourceSelection.clear();
+		this.resultCards.select(null); this.cursor.close();
 		this.resetBusyStatus();
 		this.unsubscribe?.();
 		this.unsubscribe = null;
@@ -165,7 +169,7 @@ export class CalloutOccurrencesView extends ItemView {
 	private resetResults(): void {
 		this.limit = PAGE_SIZE;
 		this.navigationGeneration++;
-		this.resultCards.select(null); this.sourceSelection.clear();
+		this.resultCards.select(null); this.cursor.reset();
 		// render() preserves the current scroll offset after a picker commit.
 		this.activeFile.cancelReveal();
 		this.app.workspace.requestSaveLayout();
@@ -217,19 +221,22 @@ export class CalloutOccurrencesView extends ItemView {
 		const generation = this.navigationGeneration;
 		const isCurrent = (): boolean => this.opened && generation === this.navigationGeneration;
 		this.activeFile.beginResultNavigation(path);
+		this.cursor.hold();
 		let opened = false;
-		let trackSelection: (() => void) | undefined;
+		let landedIn: (() => void) | undefined;
+		const options = { newTab, isCurrent, origin: this.leaf };
 		try { opened = await (typeof occurrence === "string"
-			? navigateToSidebarFile(this.app, path, newTab, isCurrent)
-			: navigateToCalloutOccurrence(this.app, occurrence, newTab, isCurrent,
-				(editor, range) => { trackSelection = () => this.sourceSelection.watch(editor, range, () => this.resultCards.select(null)); })); }
+			? navigateToSidebarFile(this.app, path, options)
+			: navigateToCalloutOccurrence(this.app, occurrence, { ...options,
+				onSelected: (editor) => { landedIn = () => this.cursor.landedIn(editor); } })); }
 		finally { this.activeFile.endResultNavigation(path); this.navigating = false; }
 		if (!isCurrent()) return;
 		if (opened) {
-			this.activeFile.openedResult(path); trackSelection?.();
-			if (typeof occurrence === "string") this.sourceSelection.clear();
-			this.resultCards.select(typeof occurrence === "string" ? null : occurrence);
+			this.activeFile.openedResult(path);
+			if (typeof occurrence !== "string" && landedIn) { landedIn(); this.resultCards.select(occurrence); }
+			else this.cursor.release();
 		} else {
+			this.cursor.release();
 			this.index.invalidate(path);
 			await this.refresh();
 		}
@@ -295,6 +302,8 @@ export class CalloutOccurrencesView extends ItemView {
 			(path, section) => this.activeFile.addSection(path, section), () => this.activeFile.clearSections());
 		frame.scroll.scrollTop = scrollTop;
 		this.activeFile.sync(this.results, this.limit, index.status, this.failed);
+		// New or moved cards: the caret may sit in a different one now.
+		this.cursor.schedule();
 	}
 	private indexState(): string { return `${this.index.dataRevision}:${this.index.status}:${this.index.failures.length}`; }
 }

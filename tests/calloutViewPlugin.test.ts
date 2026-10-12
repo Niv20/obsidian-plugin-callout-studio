@@ -261,7 +261,7 @@ describe("sidebar selection updates from CodeMirror", () => {
 		update(h, { transaction: { selection: { anchor: 0, head: 7 } } });
 		const selected = new SidebarSourceSelection();
 		let cleared = false;
-		selected.watch(editor, { from: { line: 0, ch: 0 }, to: { line: 0, ch: 7 } }, () => { cleared = true; });
+		selected.watch(editor, () => { cleared = true; });
 		update(h, { transaction: { selection: { anchor: 10 } } });
 		assert.equal(cleared, true);
 		h.instance.destroy();

@@ -44,6 +44,7 @@ import { CalloutMetadataSuggest } from "./editor/CalloutMetadataSuggest";
 import { LinkSuggestDecorator } from "./editor/LinkSuggestDecorator";
 import { registerContextMenu } from "./editor/contextmenu";
 import { createCalloutViewPlugin } from "./editor/livepreview/calloutViewPlugin";
+import { createCalloutFlashExtension } from "./editor/calloutFlash";
 import { clearContentPillCache } from "./editor/livepreview/contentPillRender";
 import { createHeadingGapField } from "./editor/livepreview/headingGapField";
 import { beginStartupEntranceWindow } from "./editor/renderShared";
@@ -215,6 +216,9 @@ export default class CalloutStudioPlugin extends Plugin {
 
 		// Live Preview rendering for heading callouts and inline callouts.
 		this.registerEditorExtension(createCalloutViewPlugin(this));
+
+		// The landing flash a sidebar result plays on the callout it opens.
+		this.registerEditorExtension(createCalloutFlashExtension());
 
 		// The heading "gap above the bar" spacer. A separate StateField because
 		// block decorations can't come from a view plugin (see headingGapField).

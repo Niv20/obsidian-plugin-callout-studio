@@ -60,7 +60,7 @@ mutate → CSS → repaint loop everything else builds on.
 | [07-persistence-and-caching.md](07-persistence-and-caching.md) | What is stored in `data.json`, device storage and vault caches; what is runtime-only; the startup CSS snapshot. |
 | [08-settings-sync-and-recovery.md](08-settings-sync-and-recovery.md) | Saving and sync authorization, the recovery incident and repair, causal merges, verified writes, checkpoints and backups, recovery UI, provider differences, and edge cases. |
 | [09-render-roles.md](09-render-roles.md) | The token grammar, and how heading/inline callouts render in Live Preview and Reading view. |
-| [10-editor-integrations.md](10-editor-integrations.md) | Autocomplete, wrap/unwrap, built-in command registration and availability, custom commands, the right-click menu, Outline/link cleanup. |
+| [10-editor-integrations.md](10-editor-integrations.md) | Autocomplete, wrap/unwrap, built-in command registration and availability, custom commands, the right-click menu, Outline/link cleanup, the landing flash. |
 
 ## Subsystems - reference, as needed
 

@@ -27,15 +27,20 @@ export function portableConversionViewHarness(notes: Record<string, string> = { 
 	Object.assign(h.app.vault, vaultEvents);
 	Object.assign(h.app.workspace, workspaceEvents);
 	const mainRoot = {};
-	const selections: Array<[EditorPosition, EditorPosition | undefined]> = [];
+	/** What navigation brought into view: a result's [start, end], or "top" for a file heading. */
+	const revealed: Array<[EditorPosition, EditorPosition] | "top"> = [];
 	const opened: string[] = [];
 	let recent: WorkspaceLeaf | null = null;
 	let liveText: string | undefined;
 	const documentView = new MarkdownView({} as WorkspaceLeaf);
-	Object.assign(documentView, { editor: {
+	Object.assign(documentView, { getMode: () => "source", editor: {
 		getValue: () => liveText ?? h.contents.get(documentView.file!.path)!,
-		setSelection: (from: EditorPosition, to?: EditorPosition) => selections.push([from, to]),
-		scrollIntoView: () => {}, focus: () => {},
+		listSelections: () => [{ anchor: { line: 0, ch: 0 }, head: { line: 0, ch: 0 } }],
+		setSelection: () => { throw new Error("navigation must not select"); },
+		// Head before anchor: navigation scrolls from a result's end back to its start.
+		scrollIntoView: (range: { from: EditorPosition; to: EditorPosition }) => revealed.push([range.to, range.from]),
+		scrollTo: () => revealed.push("top"),
+		focus: () => { throw new Error("navigation must not focus the editor"); },
 	} });
 	const documentLeaf = {
 		view: documentView, getRoot: () => mainRoot,
@@ -51,6 +56,7 @@ export function portableConversionViewHarness(notes: Record<string, string> = { 
 		rootSplit: mainRoot, getMostRecentLeaf: () => recent,
 		getActiveViewOfType: () => recent?.view ?? null,
 		getLeaf: () => documentLeaf,
+		setActiveLeaf: () => {},
 	});
 	const view = new PortableConversionView({ app: h.app } as unknown as WorkspaceLeaf, 1, busyDelayMs);
 	const root = view.contentEl as unknown as FakeElement;
@@ -82,7 +88,7 @@ export function portableConversionViewHarness(notes: Record<string, string> = { 
 		Object.assign(input, { checked });
 		root.fire("change", { target: input });
 	};
-	return { ...h, view, root, hooks, opened, selections, documentView, documentLeaf,
+	return { ...h, view, root, hooks, opened, revealed, documentView, documentLeaf,
 		setLiveText: (value: string | undefined) => { liveText = value; }, confirmations, tasks, vaultEvents, workspaceEvents, actions, inputs, button, blocked, click, choose,
 		status: () => root.querySelector(".cs-portable-review-status")!.textContent,
 		settle: async () => {

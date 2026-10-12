@@ -152,6 +152,17 @@ describe("scrollToReveal", () => {
 		assert.deepEqual(h.writes, [-42]);
 	});
 
+	it("keeps an item out from under a sticky header that covers the top of the view", () => {
+		// View 100..400 with a 42px heading stuck to its top: the item's top may
+		// reach 150 (100 + 42 + 8); at 120 its top edge is under the heading.
+		const h = setup({ scrollerTop: 100, clientHeight: 300, scrollTop: 500, item: { top: 120, bottom: 200 } });
+		scrollToReveal(h.scroller, h.item, 8, 42);
+		assert.deepEqual(h.writes, [470]);
+		const below = setup({ scrollerTop: 100, clientHeight: 300, scrollTop: 0, item: { top: 360, bottom: 396 } });
+		scrollToReveal(below.scroller, below.item, 8, 42);
+		assert.deepEqual(below.writes, [4], "the bottom edge keeps only the plain margin");
+	});
+
 	it("takes the margin it is given", () => {
 		const h = setup({ scrollerTop: 0, clientHeight: 300, item: { top: 250, bottom: 300 } });
 		scrollToReveal(h.scroller, h.item, 0);

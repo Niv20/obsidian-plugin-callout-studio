@@ -1,5 +1,5 @@
 import type { App } from "obsidian";
-import { navigateToSidebarResult, type SidebarSourceSelected } from "../ui/sidebarNavigation";
+import { navigateToSidebarResult, type SidebarNavigationOptions } from "../ui/sidebarNavigation";
 import type { CalloutOccurrence } from "./occurrenceTypes";
 import { scanCalloutOccurrences, scanCalloutOccurrencesAsync } from "./scanCalloutOccurrences";
 
@@ -32,13 +32,11 @@ function resolveParsedOccurrence(
 	return matches.length === 1 ? matches[0]! : null;
 }
 
-/** Opens a document leaf, never the results sidebar, and selects the exact token. */
+/** Opens a document leaf, never the results sidebar, and brings the exact token into view. */
 export async function navigateToCalloutOccurrence(
 	app: App,
 	occurrence: CalloutOccurrence,
-	newTab = false,
-	isCurrent: () => boolean = () => true,
-	onSelected?: SidebarSourceSelected,
+	options: SidebarNavigationOptions = {},
 ): Promise<boolean> {
 	return navigateToSidebarResult(app, occurrence.path, async (content, stillOpen) => {
 		const candidates = await scanCalloutOccurrencesAsync(occurrence.path, content, stillOpen);
@@ -47,5 +45,5 @@ export async function navigateToCalloutOccurrence(
 			from: { line: current.line, ch: current.from },
 			to: { line: current.line, ch: current.to },
 		} : null;
-	}, newTab, isCurrent, onSelected);
+	}, options);
 }

@@ -91,11 +91,16 @@ export class SidebarActiveFile {
 		}
 	}
 
-	private currentDocument(): TFile | null {
+	/** The main-workspace note the sidebar follows, even while the sidebar has focus. */
+	currentView(): MarkdownView | null {
 		// A Markdown note can itself live in a sidebar. Keep the main workspace
 		// as the document context even while that note or our filters have focus.
 		const recent = this.app.workspace.getMostRecentLeaf(this.app.workspace.rootSplit);
-		return recent?.view instanceof MarkdownView ? recent.view.file : null;
+		return recent?.view instanceof MarkdownView ? recent.view : null;
+	}
+
+	private currentDocument(): TFile | null {
+		return this.currentView()?.file ?? null;
 	}
 
 	private onActiveLeafChange(leaf: WorkspaceLeaf | null): void {

@@ -121,9 +121,15 @@ jobs:
             # callout's icon in front of an aliased link in both views, and
             # the old `[[#[!tip]]]` widget drawn above Obsidian's link hiding
             # so it can no longer go blank — 2.3 KB over the build before them.
+            # Raised by 8 KiB for the Find callouts round trip: a result opens
+            # its callout scrolled into view and flashing in its own colour
+            # instead of selecting its raw Markdown (the flash field, the
+            # Live Preview widget lookup, a callout's extent), and the sidebar
+            # marking the card for the callout the caret is in — 7.6 KB over
+            # the build before them, which leaves the headroom about where it was.
             - name: Check bundle size
               run: |
-                  limit=2279424  # 2 MiB + 178 KiB
+                  limit=2287616  # 2 MiB + 186 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

@@ -51,17 +51,21 @@ export function scrollDeltaToReveal(item: Span, view: Span, margin: number): num
  * Scroll `scroller` so `item` is in view, if it is not. `item` is read where it
  * lays out now, so call this once the list has been rebuilt and no slide is
  * applied to it.
+ *
+ * `coveredTop` is how much of the scrollport's top a sticky header inside it
+ * hides; an item tucked under that header is not in view.
  */
 export function scrollToReveal(
 	scroller: HTMLElement,
 	item: HTMLElement,
 	margin: number = REVEAL_MARGIN_PX,
+	coveredTop = 0,
 ): void {
 	// The scrollport is the padding box: inside the borders, under the header.
 	const top = scroller.getBoundingClientRect().top + scroller.clientTop;
 	const delta = scrollDeltaToReveal(
 		item.getBoundingClientRect(),
-		{ top, bottom: top + scroller.clientHeight },
+		{ top: top + coveredTop, bottom: top + scroller.clientHeight },
 		margin,
 	);
 	if (delta !== 0) scroller.scrollTop += delta;
