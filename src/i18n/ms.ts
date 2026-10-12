@@ -406,7 +406,6 @@ export const ms: Record<string, string> = {
 	"colorName.gray": "Kelabu",
 	"colorName.black": "Hitam",
 	"colorName.white": "Putih",
-	"colorName.crimson": "Merah tua",
 	"colorName.coral": "Karang",
 	"colorName.grape": "Anggur",
 	"colorName.plum": "Plum",

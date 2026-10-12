@@ -419,7 +419,6 @@ export const nl: Record<string, string> = {
 	"colorName.gray": "Grijs",
 	"colorName.black": "Zwart",
 	"colorName.white": "Wit",
-	"colorName.crimson": "Karmozijn",
 	"colorName.coral": "Koraal",
 	"colorName.grape": "Druif",
 	"colorName.plum": "Pruim",

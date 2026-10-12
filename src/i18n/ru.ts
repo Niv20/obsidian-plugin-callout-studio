@@ -462,7 +462,6 @@ export const ru: Record<string, string> = {
 	"colorName.gray": "Серый",
 	"colorName.black": "Чёрный",
 	"colorName.white": "Белый",
-	"colorName.crimson": "Малиновый",
 	"colorName.coral": "Коралловый",
 	"colorName.grape": "Виноградный",
 	"colorName.plum": "Сливовый",

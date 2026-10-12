@@ -461,7 +461,6 @@ export const sv: Record<string, string> = {
 	"colorName.gray": "Grå",
 	"colorName.black": "Svart",
 	"colorName.white": "Vit",
-	"colorName.crimson": "Karmosinröd",
 	"colorName.coral": "Korall",
 	"colorName.grape": "Druva",
 	"colorName.plum": "Plommon",

@@ -399,7 +399,6 @@ export const nb: Record<string, string> = {
 	"colorName.gray": "Grå",
 	"colorName.black": "Svart",
 	"colorName.white": "Hvit",
-	"colorName.crimson": "Karmosinrød",
 	"colorName.coral": "Korall",
 	"colorName.grape": "Drue",
 	"colorName.plum": "Plomme",

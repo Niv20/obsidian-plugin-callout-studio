@@ -291,10 +291,11 @@ export class CalloutRegistry {
 		if (this.adoptOrphansMatchingPalettes() > 0) {
 			this.pendingLoadMigrationSave = true;
 		}
-		// Migration: a callout on a retired preset (Amber, Lime) moves onto its
-		// successor (Yellow). After the adoption pass, so a callout the user's own
-		// identical palette just claimed stays theirs; before the background
-		// drop, which has to judge the moved accent. See utils/retiredPresets.
+		// Migration: a callout on a retired preset (Amber, Lime, Crimson) moves
+		// onto its successor (Yellow, Red). After the adoption pass, so a
+		// callout the user's own identical palette just claimed stays theirs;
+		// before the background drop, which has to judge the moved accent. See
+		// utils/retiredPresets.
 		for (const def of Array.from(this.callouts.values())) {
 			const moved = movedOffRetiredPreset(def, this.settings.customPalettes);
 			if (!moved) continue;

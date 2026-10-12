@@ -393,7 +393,6 @@ export const bg: Record<string, string> = {
 	"colorName.gray": "Сиво",
 	"colorName.black": "Черно",
 	"colorName.white": "Бяло",
-	"colorName.crimson": "Тъмночервено",
 	"colorName.coral": "Коралово",
 	"colorName.grape": "Гроздов",
 	"colorName.plum": "Сливов",

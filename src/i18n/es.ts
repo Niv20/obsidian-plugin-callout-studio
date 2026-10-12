@@ -414,7 +414,6 @@ export const es: Record<string, string> = {
 	"colorName.gray": "Gris",
 	"colorName.black": "Negro",
 	"colorName.white": "Blanco",
-	"colorName.crimson": "Carmesí",
 	"colorName.coral": "Coral",
 	"colorName.grape": "Uva",
 	"colorName.plum": "Ciruela",

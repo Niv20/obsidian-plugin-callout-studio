@@ -499,7 +499,6 @@ export const he: Record<string, string> = {
 	"colorName.gray": "אפור",
 	"colorName.black": "שחור",
 	"colorName.white": "לבן",
-	"colorName.crimson": "קרמזון",
 	"colorName.coral": "קורל",
 	"colorName.grape": "ענבים",
 	"colorName.plum": "שזיף",

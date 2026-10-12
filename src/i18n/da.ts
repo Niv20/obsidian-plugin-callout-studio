@@ -395,7 +395,6 @@ export const da: Record<string, string> = {
 	"colorName.gray": "Grå",
 	"colorName.black": "Sort",
 	"colorName.white": "Hvid",
-	"colorName.crimson": "Karmoisinrød",
 	"colorName.coral": "Koral",
 	"colorName.grape": "Drue",
 	"colorName.plum": "Blomme",

@@ -313,15 +313,22 @@ groups are drawn on one line:
   Obsidian's own callouts use, at Obsidian's own per-theme hexes: `blue`,
   `cyan`, `green`, `orange`, `red`, `purple` (`--color-*`) and `gray` (the
   quote's fixed `#9e9e9e`). Nothing that is not one of them belongs here.
-- **`getExtraPalettes()`** (**Color presets**) is everything else: `crimson`,
-  `coral`, `yellow`, `teal`, `brown`, `grape`, `plum`, `pink`.
-  `teal` and `crimson` used to sit with Obsidian's colours, standing in for
-  `tip` and `danger`, but they always carried Material values - Obsidian
-  collapses `tip` onto the same cyan as `abstract` and `danger` onto the same
-  red as `failure`, so following it exactly would have put two identical
-  entries in the dropdown. `yellow` is Obsidian's `--color-yellow`, a colour
-  Obsidian has but none of its callouts uses. It absorbed `amber` and `lime`
-  (see *Retiring a preset* below).
+- **`getExtraPalettes()`** (**Color presets**) is everything else: `coral`,
+  `yellow`, `teal`, `sky`, `indigo`, `grape`, `plum`, `pink`, `brown`.
+  `teal` used to sit with Obsidian's colours, standing in for `tip`, but it
+  always carried a Material value - Obsidian paints `tip` in the same cyan as
+  `abstract`, so following it exactly would have listed Cyan twice. `yellow` is
+  Obsidian's `--color-yellow`, a colour Obsidian has but none of its callouts
+  uses; it absorbed `amber` and `lime`. `crimson` (standing in for `danger`)
+  was absorbed by `red`. See *Retiring a preset* below. `sky` and `indigo` fill
+  the hue gaps either side of Blue.
+
+Presets are kept visibly apart, measured rather than eyeballed: every pair must
+differ by at least 7 CIEDE2000 in both themes (`tests/colorPalettes.test.ts`,
+"no two presets look alike"). Red and Crimson were 3.5 / 4.3, Yellow and Lime
+3.4 in dark mode; the closest pair kept on purpose is Cyan and Teal at 7.8 in
+light mode. A new preset's hexes are chosen against that floor - Sky's nearest
+neighbour is Blue at 17.2, Indigo's is Purple at 13.8.
 
 ### Renaming a preset - `legacyIds`, never a data rewrite
 
@@ -331,10 +338,11 @@ deleted or re-hexed, only renamed, and its old id goes into `legacyIds`:
 
 | Now | Also answers to | Why |
 | --- | --- | --- |
-| `blue`, `cyan`, `green`, `orange`, `red`, `gray`, `teal`, `crimson` | `note`, `abstract`, `success`, `question`, `failure`, `quote`, `tip`, `danger` | role names, before hue names |
+| `blue`, `cyan`, `green`, `orange`, `red`, `gray`, `teal` | `note`, `abstract`, `success`, `question`, `failure`, `quote`, `tip` | role names, before hue names |
 | `purple` | `example`, `violet` | took Obsidian's own word for the colour |
 | `pink` | `bubblegum` | took the plain word |
 | `yellow` | `amber`, `lime` | retired into it - and repainted, see below |
+| `red` | `crimson`, `danger` | Crimson (once `danger`) retired into it - repainted |
 
 `findPresetByPaletteId` (`utils/colorPalettes.ts`) is the lookup that knows
 this. `CalloutRegistry.isLivePaletteId` and version history's
@@ -355,14 +363,16 @@ a release ever wrote.
 ### Retiring a preset - the one case that repaints
 
 Amber and Lime were dropped as too close to Yellow (CIEDE2000 between Lime and
-Yellow is 3.4 in dark mode - near-identical side by side). A rename only
-relabels, because the callout's stored hexes still are the preset's. A
-*retired* preset's callouts store hexes no preset has any more, so a link alone
-would leave the editor reading "Yellow" over a callout painting amber.
+Yellow is 3.4 in dark mode - near-identical side by side), and Crimson as too
+close to Red (3.5 / 4.3). A rename only relabels, because the callout's stored
+hexes still are the preset's. A *retired* preset's callouts store hexes no
+preset has any more, so a link alone would leave the editor reading "Yellow"
+over a callout painting amber.
 `utils/retiredPresets.ts` therefore moves them for real, to exactly what picking
 the successor would have saved:
 
-- **Which callouts.** Linked by id (`paletteId` is `amber`/`lime`), whatever
+- **Which callouts.** Linked by id (`paletteId` is `amber`, `lime`, `crimson` or
+  Crimson's own former id `danger`), whatever
   their colours - the editor labelled them by that id. Or unlinked (no
   `paletteId`) but wearing the preset exactly as the editor's hex match would
   have read it: same accents, no gradient, not transparent, and no background
@@ -414,7 +424,7 @@ decides which words name which palette.
   wider fold would let PDF export colour a callout the screen leaves alone.
 - **Built-ins** answer to their preset **id**, never their translated name, so a
   note means the same thing in every interface language: Obsidian's seven
-  (`blue` … `gray`) and the eight other presets (`crimson` … `pink`). Every one of
+  (`blue` … `gray`) and the nine other presets (`coral` … `brown`). Every one of
   Obsidian's own colour names is an id. `legacyIds` (`note`, `tip`, `violet`,
   `bubblegum`, `amber`, …) are not colour words - themes such as flexcyon use `info` and
   `warning` as metadata of their own, and the former hue ids were never

@@ -452,7 +452,6 @@ export const zh: Record<string, string> = {
 	"colorName.gray": "灰色",
 	"colorName.black": "黑色",
 	"colorName.white": "白色",
-	"colorName.crimson": "深红色",
 	"colorName.coral": "珊瑚色",
 	"colorName.grape": "葡萄色",
 	"colorName.plum": "梅子色",

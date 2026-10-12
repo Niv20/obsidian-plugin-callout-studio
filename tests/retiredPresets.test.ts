@@ -1,5 +1,6 @@
 /**
- * tests/retiredPresets.test.ts — Amber and Lime folded into Yellow.
+ * tests/retiredPresets.test.ts — Amber and Lime folded into Yellow, Crimson
+ * into Red.
  *
  * A callout stores its colours, so retiring a preset has to repaint the
  * callouts that wore it, or a callout on `"amber"` would read "Yellow" in the
@@ -9,6 +10,7 @@
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { DEFAULT_CALLOUTS } from "../src/defaultCallouts";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import type { CalloutDefinition, CustomPalette, PluginData } from "../src/types";
 import { findPresetByPaletteId, getAllColorPalettes } from "../src/utils/colorPalettes";
@@ -39,7 +41,7 @@ const move = (d: CalloutDefinition, palettes: CustomPalette[] = []) =>
 	movedOffRetiredPreset(d, palettes);
 
 describe("the retired presets themselves", () => {
-	it("are gone from the menu, and Yellow answers to their ids", () => {
+	it("are gone from the menu, and their successor answers to their ids", () => {
 		const ids = getAllColorPalettes().map((p) => p.id);
 		for (const [id, retired] of Object.entries(RETIRED_PRESETS)) {
 			assert.ok(!ids.includes(id), `${id} is still listed`);
@@ -150,7 +152,34 @@ describe("a callout saved before the palette link existed", () => {
 	});
 });
 
+describe("Crimson, folded into Red", () => {
+	const RED = { light: "#e93147", dark: "#fb464c" };
+	const crimson = { colorLight: "#ff1744", colorDark: "#ff1744" };
+
+	for (const id of ["crimson", "danger"]) {
+		it(`a callout linked to ${id} moves to Red`, () => {
+			const moved = move(def({ paletteId: id, ...crimson }));
+			assert.equal(moved?.colorLight, RED.light);
+			assert.equal(moved?.colorDark, RED.dark);
+			assert.equal(moved?.paletteId, id);
+			assert.equal(findPresetByPaletteId(id)?.id, "red");
+		});
+	}
+
+	it("an unlinked callout in Crimson's colours moves to Red", () => {
+		assert.equal(move(def(crimson))?.colorLight, RED.light);
+	});
+});
+
 describe("callouts that never wore a retired preset", () => {
+	it("include every built-in callout as it ships", () => {
+		// An untouched built-in follows the theme; repainting one would freeze
+		// it to a hex. None ships in a retired preset's colours.
+		for (const builtIn of DEFAULT_CALLOUTS) {
+			assert.equal(move(structuredClone(builtIn)), null, builtIn.id);
+		}
+	});
+
 	it("are left alone", () => {
 		assert.equal(move(def({ paletteId: "cp-mine" })), null, "a saved palette's callout");
 		assert.equal(move(def({ paletteId: "orange" })), null, "another preset");

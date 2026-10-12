@@ -411,7 +411,6 @@ export const hi: Record<string, string> = {
 	"colorName.gray": "धूसर",
 	"colorName.black": "काला",
 	"colorName.white": "सफेद",
-	"colorName.crimson": "किरमिजी",
 	"colorName.coral": "मूंगा",
 	"colorName.grape": "अंगूरी",
 	"colorName.plum": "आलूबुखारा",

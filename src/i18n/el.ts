@@ -399,7 +399,6 @@ export const el: Record<string, string> = {
 	"colorName.gray": "Γκρι",
 	"colorName.black": "Μαύρο",
 	"colorName.white": "Λευκό",
-	"colorName.crimson": "Βυσσινί",
 	"colorName.coral": "Κοραλί",
 	"colorName.grape": "Σταφύλι",
 	"colorName.plum": "Δαμάσκηνο",

@@ -5,11 +5,16 @@ Callout Studio includes Obsidian's native callout colors and its own built-in pr
 The color menu lists the built-in colors in two groups:
 
 - **Obsidian callouts**: Blue, Cyan, Green, Orange, Red, Purple and Gray, the colors of Obsidian's own callouts with Obsidian's exact shades.
-- **Color presets**: Crimson, Coral, Yellow, Teal, Brown, Grape, Plum and Pink.
+- **Color presets**: Coral, Yellow, Teal, Sky, Indigo, Grape, Plum, Pink and Brown.
 
 Violet is now called Purple, and Bubblegum is now called Pink. Callouts that used them keep their color and show the new name.
 
-Amber and Lime were too close to Yellow, so they were folded into it. Callouts that used Amber or Lime turn Yellow automatically. The previous look stays in [Version history](13-syncing-and-backups.md#version-history) if you want it back.
+Some colors were too close to another one to tell apart, so they were folded into it:
+
+- Amber and Lime became Yellow.
+- Crimson became Red.
+
+Callouts that used them change to the new color automatically. The previous look stays in [Version history](13-syncing-and-backups.md#version-history) if you want it back.
 
 Hovering a colour temporarily previews it. Moving the pointer away from the
 row restores the current colour; click a row or use the arrow keys and Enter

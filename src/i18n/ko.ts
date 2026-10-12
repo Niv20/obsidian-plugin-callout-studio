@@ -410,7 +410,6 @@ export const ko: Record<string, string> = {
 	"colorName.gray": "회색",
 	"colorName.black": "검정",
 	"colorName.white": "흰색",
-	"colorName.crimson": "진홍색",
 	"colorName.coral": "산호색",
 	"colorName.grape": "포도색",
 	"colorName.plum": "자두색",

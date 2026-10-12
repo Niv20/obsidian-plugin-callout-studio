@@ -16,7 +16,7 @@ export function addImportedCallout(registry: CalloutRegistry, def: CalloutDefini
 function writeImportedCallout(
 	registry: CalloutRegistry, imported: CalloutDefinition, overwrite: boolean,
 ): boolean {
-	// An old backup can still wear a retired preset (Amber, Lime); land it on
+	// An old backup can still wear a retired preset (Amber, Crimson…); land it on
 	// the successor now, exactly as a load would, instead of at next launch.
 	const def = movedOffRetiredPreset(imported, registry.settings.customPalettes) ?? imported;
 	const existing = registry.getReal(def.id);

@@ -457,7 +457,6 @@ export const th: Record<string, string> = {
 	"colorName.gray": "เทา",
 	"colorName.black": "ดำ",
 	"colorName.white": "ขาว",
-	"colorName.crimson": "สีแดงเข้ม",
 	"colorName.coral": "สีปะการัง",
 	"colorName.grape": "สีองุ่น",
 	"colorName.plum": "สีพลัม",

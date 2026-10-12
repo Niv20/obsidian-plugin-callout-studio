@@ -403,7 +403,6 @@ export const ar: Record<string, string> = {
 	"colorName.gray": "رمادي",
 	"colorName.black": "أسود",
 	"colorName.white": "أبيض",
-	"colorName.crimson": "قرمزي",
 	"colorName.coral": "مرجاني",
 	"colorName.grape": "عنبي",
 	"colorName.plum": "برقوقي",

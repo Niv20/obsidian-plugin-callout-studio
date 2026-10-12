@@ -404,7 +404,6 @@ export const fi: Record<string, string> = {
 	"colorName.gray": "Harmaa",
 	"colorName.black": "Musta",
 	"colorName.white": "Valkoinen",
-	"colorName.crimson": "Karmiininpunainen",
 	"colorName.coral": "Koralli",
 	"colorName.grape": "Rypäle",
 	"colorName.plum": "Luumu",

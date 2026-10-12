@@ -466,7 +466,6 @@ export const vi: Record<string, string> = {
 	"colorName.gray": "Xám",
 	"colorName.black": "Đen",
 	"colorName.white": "Trắng",
-	"colorName.crimson": "Đỏ thẫm",
 	"colorName.coral": "San hô",
 	"colorName.grape": "Nho",
 	"colorName.plum": "Mận",

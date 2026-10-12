@@ -410,7 +410,6 @@ export const fa: Record<string, string> = {
 	"colorName.gray": "خاکستری",
 	"colorName.black": "مشکی",
 	"colorName.white": "سفید",
-	"colorName.crimson": "زرشکی",
 	"colorName.coral": "مرجانی",
 	"colorName.grape": "انگوری",
 	"colorName.plum": "آلویی",

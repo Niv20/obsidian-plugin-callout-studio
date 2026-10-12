@@ -461,7 +461,6 @@ export const tr: Record<string, string> = {
 	"colorName.gray": "Gri",
 	"colorName.black": "Siyah",
 	"colorName.white": "Beyaz",
-	"colorName.crimson": "Kızıl",
 	"colorName.coral": "Mercan",
 	"colorName.grape": "Üzüm",
 	"colorName.plum": "Erik",

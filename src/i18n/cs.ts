@@ -409,7 +409,6 @@ export const cs: Record<string, string> = {
 	"colorName.gray": "Šedá",
 	"colorName.black": "Černá",
 	"colorName.white": "Bílá",
-	"colorName.crimson": "Karmínová",
 	"colorName.coral": "Korálová",
 	"colorName.grape": "Hroznová",
 	"colorName.plum": "Švestková",

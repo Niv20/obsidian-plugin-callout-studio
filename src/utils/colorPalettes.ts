@@ -100,13 +100,15 @@ function makePalette(
  *
  * This group is exactly that set and nothing else: Obsidian paints its
  * callouts in red, orange, green, cyan, blue and purple (`--color-*`), plus
- * the quote's fixed gray. Anything that is not one of them — Teal and Crimson
- * included, which carry Material values — lives in {@link getExtraPalettes}.
+ * the quote's fixed gray. Anything that is not one of them — Teal included,
+ * which carries a Material value — lives in {@link getExtraPalettes}.
  *
  * `legacyIds` carries every id a preset was saved under before it was renamed:
  * first the callout role each was named after (`note`, `example`, …), and for
  * Purple also `violet`, its hue name until it took Obsidian's own word for the
- * colour. A callout's `paletteId` keeps whatever id it was saved with, so
+ * colour. Red also answers to `crimson` (and `danger`, Crimson's own role id):
+ * Crimson was retired into it as near-identical in both modes, and its
+ * callouts were repainted onto Red (see `utils/retiredPresets.ts`). A callout's `paletteId` keeps whatever id it was saved with, so
  * every reader resolves through {@link findPresetByPaletteId} (or checks
  * `legacyIds` the same way) and an old callout still finds its preset instead
  * of appearing as an unmatched/"deleted" color.
@@ -156,7 +158,7 @@ export function getObsidianPalettes(): ColorPalette[] {
 			"#fb464c",
 			undefined,
 			undefined,
-			["failure"],
+			["failure", "crimson", "danger"],
 		),
 		makePalette(
 			"purple",
@@ -185,11 +187,15 @@ export function getObsidianPalettes(): ColorPalette[] {
  * Callout Studio's own presets: every colour that is not one Obsidian paints
  * its callouts in.
  *
- * Teal and Crimson were once listed with Obsidian's colours, standing in for
- * `tip` and `danger`, but they never carried Obsidian's hexes — Obsidian
- * collapses tip onto the same cyan as abstract and danger onto the same red as
- * failure, so following it exactly would have left two pairs of identical
- * entries. They keep their Material values (and their role `legacyIds`) here.
+ * Teal was once listed with Obsidian's colours, standing in for `tip`, but it
+ * never carried Obsidian's hex — Obsidian paints tip in the same cyan as
+ * abstract, so following it exactly would have listed Cyan twice. It keeps its
+ * Material value (and its role `legacyIds`) here. Crimson stood in for
+ * `danger` the same way, but sat so close to Red that it was retired into it.
+ *
+ * Sky and Indigo fill the two gaps in the hue wheel, either side of Blue. Their
+ * hexes were chosen by measured distance (CIEDE2000) to every other entry, so
+ * neither one is among the list's closest pairs in either theme.
  *
  * Yellow is Obsidian's `--color-yellow`, a colour Obsidian has but no callout
  * of its uses. It absorbed Amber and Lime, which sat too close to it to earn
@@ -202,16 +208,6 @@ export function getObsidianPalettes(): ColorPalette[] {
  */
 export function getExtraPalettes(): ColorPalette[] {
 	return [
-		makePalette(
-			"crimson",
-			t("colorName.crimson"),
-			"preset",
-			"#ff1744",
-			"#ff1744",
-			undefined,
-			undefined,
-			["danger"],
-		),
 		makePalette("coral", t("colorName.coral"), "preset", "#ff5722", "#ff8a65"),
 		makePalette(
 			"yellow",
@@ -233,7 +229,8 @@ export function getExtraPalettes(): ColorPalette[] {
 			undefined,
 			["tip"],
 		),
-		makePalette("brown", t("colorName.brown"), "preset", "#795548", "#a1887f"),
+		makePalette("sky", t("colorName.sky"), "preset", "#039be5", "#4fc3f7"),
+		makePalette("indigo", t("colorName.indigo"), "preset", "#3949ab", "#9fa8da"),
 		makePalette("grape", t("colorName.grape"), "preset", "#9c27b0", "#ce93d8"),
 		makePalette("plum", t("colorName.plum"), "preset", "#6a1b9a", "#ab47bc"),
 		makePalette(
@@ -246,6 +243,7 @@ export function getExtraPalettes(): ColorPalette[] {
 			undefined,
 			["bubblegum"],
 		),
+		makePalette("brown", t("colorName.brown"), "preset", "#795548", "#a1887f"),
 	];
 }
 

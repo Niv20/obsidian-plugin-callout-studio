@@ -472,7 +472,6 @@ export const uk: Record<string, string> = {
 	"colorName.gray": "Сірий",
 	"colorName.black": "Чорний",
 	"colorName.white": "Білий",
-	"colorName.crimson": "Малиновий",
 	"colorName.coral": "Кораловий",
 	"colorName.grape": "Виноградний",
 	"colorName.plum": "Сливовий",

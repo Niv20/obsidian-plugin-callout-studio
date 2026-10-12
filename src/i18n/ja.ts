@@ -410,7 +410,6 @@ export const ja: Record<string, string> = {
 	"colorName.gray": "グレー",
 	"colorName.black": "黒",
 	"colorName.white": "白",
-	"colorName.crimson": "深紅",
 	"colorName.coral": "サンゴ色",
 	"colorName.grape": "グレープ",
 	"colorName.plum": "プラム",

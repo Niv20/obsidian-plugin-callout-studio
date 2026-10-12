@@ -3,7 +3,8 @@
  * callouts that wore them.
  *
  * Amber and Lime were dropped because they sat too close to Yellow (Lime is
- * near-identical to it in dark mode). A renamed preset only needs its old id in
+ * near-identical to it in dark mode), and Crimson because it was
+ * near-identical to Red in both. A renamed preset only needs its old id in
  * `legacyIds`; a *retired* one also has to repaint, because a callout stores
  * its colours, not just a link: picking a preset saves its two accent hexes
  * beside the `paletteId`. Left alone, a callout on `"amber"` would resolve to
@@ -58,6 +59,9 @@ interface RetiredPreset {
 export const RETIRED_PRESETS: Readonly<Record<string, RetiredPreset>> = {
 	amber: { colorLight: "#ff8f00", colorDark: "#ffd54f", successor: "yellow" },
 	lime: { colorLight: "#afb42b", colorDark: "#dce775", successor: "yellow" },
+	crimson: { colorLight: "#ff1744", colorDark: "#ff1744", successor: "red" },
+	// Crimson's own former id, from when presets were named for callout roles.
+	danger: { colorLight: "#ff1744", colorDark: "#ff1744", successor: "red" },
 };
 
 const sameHex = (a: string | undefined, b: string | undefined): boolean =>

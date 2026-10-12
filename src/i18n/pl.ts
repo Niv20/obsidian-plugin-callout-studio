@@ -411,7 +411,6 @@ export const pl: Record<string, string> = {
 	"colorName.gray": "Szary",
 	"colorName.black": "Czarny",
 	"colorName.white": "Biały",
-	"colorName.crimson": "Karmazynowy",
 	"colorName.coral": "Koralowy",
 	"colorName.grape": "Winogronowy",
 	"colorName.plum": "Śliwkowy",
