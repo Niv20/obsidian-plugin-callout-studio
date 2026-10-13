@@ -480,3 +480,24 @@ describe("modal surfaces use the --cs-surface pair", () => {
 		);
 	});
 });
+
+/* -------------------------------------------------------------------------- */
+/* No :has()                                                                  */
+/* -------------------------------------------------------------------------- */
+
+describe("styles.css selects nothing with :has()", () => {
+	// Obsidian's plugin review flags it ("Avoid :has — it can cause significant
+	// performance issues due to broad selector invalidation"): the browser
+	// re-checks the whole subtree on every DOM change, and inside an editor that
+	// is every keystroke. Give the element a class from the code instead — the
+	// landing flash's tint is its own mark (editor/calloutFlash.ts) for this
+	// reason. Comments are blanked, so explaining the rule is still allowed.
+	it("has no :has() in any selector", () => {
+		const hits = [...css.matchAll(/:has\(/g)].map((m) => `styles.css:${lineOf(cssRaw, m.index ?? 0)}`);
+		assert.deepStrictEqual(
+			hits,
+			[],
+			report("Replace these :has() selectors with a class the code sets:", hits),
+		);
+	});
+});

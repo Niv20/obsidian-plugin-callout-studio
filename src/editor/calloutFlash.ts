@@ -10,8 +10,8 @@
  * DOM and Obsidian the other:
  * - Lines and inline ranges get decorations from a StateField. Never a class
  *   added by hand to a `.cm-line`: CodeMirror rewrites line attributes it did
- *   not set itself. A mark over an inline pill wraps the pill's widget; in
- *   Source mode it tints the token's text.
+ *   not set itself. An inline token takes two marks: one wraps the pill's
+ *   widget, the other tints the token's text when no pill covers it.
  * - A Live Preview block callout is Obsidian's own block widget
  *   (`.cm-embed-block.cm-callout`). Line decorations cannot reach it, so its
  *   `.callout` gets the class directly; CodeMirror ignores DOM changes inside
@@ -57,6 +57,7 @@ const WIDGET_FRAMES = 20;
 export const CSS_FLASH = "cs-callout-flash";
 export const CSS_FLASH_LINE = "cs-callout-flash-line";
 export const CSS_FLASH_MARK = "cs-callout-flash-mark";
+export const CSS_FLASH_TEXT = "cs-callout-flash-text";
 export const CSS_FLASH_DELAYED = "cs-callout-flash-delayed";
 
 export interface CalloutFlash {
@@ -87,9 +88,17 @@ function flashDecorations(state: EditorState, { extent, delayed }: CalloutFlash)
 		const line = doc.line(extent.startLine + 1);
 		const from = line.from + Math.min(extent.from, line.length);
 		const to = line.from + Math.min(extent.to, line.length);
-		// Inclusive, so the mark opens before the pill's replace widget at the
-		// same offset and wraps it; a plain mark starts after it and never shows.
-		if (to > from) ranges.push(Decoration.mark({ class: CSS_FLASH_MARK + suffix, inclusive: true }).range(from, to));
+		if (to > from) {
+			const inline = extent.kind === "inline";
+			// Inclusive, so the mark opens before the pill's replace widget at the
+			// same offset and wraps it; a plain mark starts after it and never shows.
+			if (inline) ranges.push(Decoration.mark({ class: CSS_FLASH_MARK + suffix, inclusive: true }).range(from, to));
+			// The tint. On an inline token it is that plain mark, so a drawn pill
+			// hides it (the pill flashes itself) and the token's raw text keeps it:
+			// styles.css never has to ask which one is showing. A span holds no
+			// token, so it stays inclusive.
+			ranges.push(Decoration.mark({ class: CSS_FLASH_TEXT + suffix, inclusive: !inline }).range(from, to));
+		}
 	} else {
 		const deco = Decoration.line({ class: CSS_FLASH_LINE + suffix });
 		const last = Math.min(extent.endLine, doc.lines - 1);

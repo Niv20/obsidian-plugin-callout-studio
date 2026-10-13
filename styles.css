@@ -8606,10 +8606,12 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 
 /* Source text: a block's quoted lines (Source mode, or a block whose Markdown
    is showing), an inline token's raw text, a link a conversion repairs. A ring
-   per line would stack into boxes, so these take a tint alone. The mark that
-   wraps a rendered pill stays clear; the pill above flashes itself. */
+   per line would stack into boxes, so these take a tint alone. Over a rendered
+   pill CodeMirror draws no tint mark at all (calloutFlash.ts); the mark that
+   wraps the pill stays clear and the pill above flashes itself. No `:has()`:
+   it re-checks the whole editor on every change. */
 .cs-callout-flash-line:not(.cs-heading-callout),
-.cs-callout-flash-mark:not(:has(> .cs-inline-callout)) {
+.cs-callout-flash-text {
 	animation: cs-callout-flash-tint 1400ms ease-out var(--cs-flash-delay, 0ms) backwards;
 }
 

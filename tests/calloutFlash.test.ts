@@ -1,13 +1,14 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { EditorState, type Extension, type StateEffect, type TransactionSpec } from "@codemirror/state";
+import { EditorState, RangeSet, type Extension, type StateEffect, type TransactionSpec } from "@codemirror/state";
 import { foldEffect, foldState, unfoldEffect } from "@codemirror/language";
-import type { EditorView } from "@codemirror/view";
+import { Decoration, type EditorView } from "@codemirror/view";
 import type { Editor } from "obsidian";
 import {
 	CSS_FLASH_DELAYED,
 	CSS_FLASH_LINE,
 	CSS_FLASH_MARK,
+	CSS_FLASH_TEXT,
 	calloutFlashField,
 	renderedBlockCallout,
 	revealCalloutInEditor,
@@ -25,7 +26,28 @@ const flashOf = (content: string, line: number, from: number, delayed = false): 
 function decorations(state: EditorState): Array<[number, number, string]> {
 	const out: Array<[number, number, string]> = [];
 	state.field(calloutFlashField).decorations.between(0, state.doc.length, (from, to, value) => {
-		out.push([from, to, String((value.spec as { class?: string }).class)]);
+		out.push([from, to, classOf(value)]);
+	});
+	return out;
+}
+
+const classOf = (value: Decoration): string => String((value.spec as { class?: string }).class);
+
+/**
+ * What CodeMirror draws for the flash, walked the way its content builder walks
+ * decorations: each text run or widget, with the flash marks wrapping it. `pill`
+ * adds a replace widget the way calloutViewPlugin draws one, not inclusive. The
+ * flash set goes last: a mark wraps a widget only from a set that outranks it,
+ * as the flash field outranks the pills in the live app.
+ */
+function drawn(state: EditorState, pill?: [number, number]): Array<[string, string[]]> {
+	const sets = [state.field(calloutFlashField).decorations];
+	if (pill) sets.unshift(Decoration.set(Decoration.replace({}).range(pill[0], pill[1])));
+	const out: Array<[string, string[]]> = [];
+	const classes = (active: readonly Decoration[]) => active.map(classOf).sort();
+	RangeSet.spans(sets, 0, state.doc.length, {
+		span: (from, to, active) => { if (to > from) out.push([state.doc.sliceString(from, to), classes(active)]); },
+		point: (from, to, _value, active) => out.push([`<pill ${state.doc.sliceString(from, to)}>`, classes(active)]),
 	});
 	return out;
 }
@@ -58,17 +80,44 @@ describe("landing flash decorations", () => {
 		const content = "Say [!tip]{word} now";
 		let state = EditorState.create({ doc: content, extensions: [calloutFlashField] })
 			.update({ effects: setCalloutFlash.of(flashOf(content, 0, 4, true)) }).state;
-		assert.deepEqual(decorations(state), [[4, 16, `${CSS_FLASH_MARK} ${CSS_FLASH_DELAYED}`]]);
+		assert.deepEqual(decorations(state), [
+			[4, 16, `${CSS_FLASH_MARK} ${CSS_FLASH_DELAYED}`],
+			[4, 16, `${CSS_FLASH_TEXT} ${CSS_FLASH_DELAYED}`],
+		]);
 		// Found in the live app: a plain mark starts after the pill's replace
 		// widget at the same offset, so it never wraps the pill and nothing flashes.
+		const inclusive: boolean[] = [];
 		state.field(calloutFlashField).decorations.between(0, state.doc.length, (_from, _to, value) => {
-			assert.equal((value.spec as { inclusive?: boolean }).inclusive, true);
+			inclusive.push((value.spec as { inclusive?: boolean }).inclusive === true);
 		});
+		assert.deepEqual(inclusive, [true, false], "the pill's mark is inclusive, the tint is not");
 		state = state.update({ changes: { from: 0, insert: ">> " } }).state;
-		assert.deepEqual(decorations(state).map(([from, to]) => [from, to]), [[7, 19]]);
+		assert.deepEqual(decorations(state).map(([from, to]) => [from, to]), [[7, 19], [7, 19]]);
 		state = state.update({ effects: setCalloutFlash.of(null) }).state;
 		assert.deepEqual(decorations(state), []);
 		assert.equal(state.field(calloutFlashField).flash, null);
+	});
+	it("tints an inline token's raw text, and leaves a pill drawn over it to flash itself", () => {
+		// styles.css tints `.cs-callout-flash-text` and rings `.cs-callout-flash-mark >
+		// .cs-inline-callout`. Without a `:has()` to ask what the mark holds, the
+		// tint must simply not exist over a pill.
+		const content = "Say [!tip]{word} now";
+		const state = EditorState.create({ doc: content, extensions: [calloutFlashField] })
+			.update({ effects: setCalloutFlash.of(flashOf(content, 0, 4)) }).state;
+		assert.deepEqual(drawn(state), [["Say ", []], ["[!tip]{word}", [CSS_FLASH_MARK, CSS_FLASH_TEXT]], [" now", []]]);
+		assert.deepEqual(drawn(state, [4, 16]), [["Say ", []], ["<pill [!tip]{word}>", [CSS_FLASH_MARK]], [" now", []]]);
+	});
+	it("tints a span with one inclusive mark, as before", () => {
+		const content = "See [[Note#Old]] here";
+		const span: CalloutFlash = { extent: { kind: "span", startLine: 0, endLine: 0, from: 4, to: 16 }, delayed: false };
+		const state = EditorState.create({ doc: content, extensions: [calloutFlashField] })
+			.update({ effects: setCalloutFlash.of(span) }).state;
+		assert.deepEqual(decorations(state), [[4, 16, CSS_FLASH_TEXT]]);
+		state.field(calloutFlashField).decorations.between(0, state.doc.length, (_from, _to, value) => {
+			assert.equal((value.spec as { inclusive?: boolean }).inclusive, true);
+		});
+		// Inclusive, so a widget drawn over the whole span is still tinted.
+		assert.deepEqual(drawn(state, [4, 16]), [["See ", []], ["<pill [[Note#Old]]>", [CSS_FLASH_TEXT]], [" here", []]]);
 	});
 });
 

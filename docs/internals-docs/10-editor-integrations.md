@@ -886,11 +886,23 @@ reversed range, and gets no flash.
 DOM and Obsidian the other:
 
 - `calloutFlashField` (a `StateField`, mapped through edits) decorates lines and
-  inline ranges. It puts `cs-callout-flash-line` on each line and
-  `cs-callout-flash-mark` over an inline span. CodeMirror's mark wraps an inline
-  pill's replace widget, so `.cs-callout-flash-mark > .cs-inline-callout` reaches
-  the pill. **Never add a class to a `.cm-line` by hand**: CodeMirror rewrites
-  line attributes it did not set.
+  inline ranges. It puts `cs-callout-flash-line` on each line. An inline token
+  gets two marks over the same range:
+  - `cs-callout-flash-mark` is *inclusive*, so it opens before the pill's replace
+    widget at the same offset and wraps it. `.cs-callout-flash-mark >
+    .cs-inline-callout` reaches the pill this way; the mark itself is never
+    painted.
+  - `cs-callout-flash-text` carries the tint and is *not* inclusive. Over a drawn
+    pill it lies inside the replaced range, so CodeMirror draws nothing for it.
+    Over the token's raw text (Source mode, or a caret on the pill) it wraps the
+    text.
+
+  The stylesheet therefore never asks which of the two is showing. It used to,
+  with `.cs-callout-flash-mark:not(:has(> .cs-inline-callout))`. Obsidian's
+  review flags `:has()`, and `tests/repoStyles.test.ts` keeps it out of
+  `styles.css`. A span (a link a conversion repairs) holds no token, so it takes
+  the tint mark alone, inclusive. **Never add a class to a `.cm-line` by hand**:
+  CodeMirror rewrites line attributes it did not set.
 - A Live Preview block callout is Obsidian's own block widget
   (`.cm-embed-block.cm-callout`), which line decorations cannot reach. The
   companion view plugin waits up to about 20 frames for the scrolled-to widget to
