@@ -203,6 +203,20 @@ export function nestedRulesSeen(
 	return walk(cssRulesOf(rule), rule);
 }
 
+/** Every style rule nested inside `rule`, through any group rules, in order. */
+export function nestedStyleRules(rule: CSSRule): StyleRule[] {
+	const out: StyleRule[] = [];
+	const walk = (list: CSSRuleList | undefined): void => {
+		if (!list) return;
+		for (const child of Array.from(list)) {
+			if (isStyleRule(child)) out.push(child);
+			walk(cssRulesOf(child));
+		}
+	};
+	walk(cssRulesOf(rule));
+	return out;
+}
+
 function cssRulesOf(rule: CSSRule): CSSRuleList | undefined {
 	return (rule as CSSRule & { cssRules?: CSSRuleList }).cssRules;
 }

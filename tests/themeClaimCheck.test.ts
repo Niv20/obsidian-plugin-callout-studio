@@ -886,6 +886,21 @@ describe("a page condition the theme's rules depend on", () => {
 		}
 	});
 
+	it("keys the rules nested inside an id's rule too", () => {
+		// `body.is-fullscreen &` inside the id's rule: the verdict was built on it
+		// being switched off, so the key has to move when it comes on.
+		const parent: FakeRule = { selectorText: '.callout[data-callout="note"]', parentRule: null, cssRules: [] };
+		parent.cssRules = [{ selectorText: "body.is-fullscreen &", parentRule: parent }];
+		const claims = check(harness([parent]));
+		assert.strictEqual(claims.pageStateKey(["note"]), "note:-p");
+		document.body.classList.add("is-fullscreen");
+		try {
+			assert.strictEqual(claims.pageStateKey(["note"]), "note:--");
+		} finally {
+			document.body.classList.remove("is-fullscreen");
+		}
+	});
+
 	it("keeps an id no parsed rule names", () => {
 		const h = harness([]);
 		assert.deepStrictEqual([...check(h).pageRootOff(new Set(["aside"]))], []);

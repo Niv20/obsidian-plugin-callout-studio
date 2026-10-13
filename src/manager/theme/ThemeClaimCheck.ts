@@ -45,6 +45,7 @@ import { namesInSelector, styleSettingsClasses, withoutName } from "./themeClaim
 import {
 	indexRules,
 	nestedRulesSeen,
+	nestedStyleRules,
 	optionGatedRule,
 	pageRootTest,
 	ruleInForce,
@@ -272,13 +273,13 @@ export class ThemeClaimCheck {
 		const pageOff = pageRootTest(doc);
 		const options = this.optionClasses();
 		const bits: string[] = [];
+		const bit = (rule: CSSRule): string =>
+			pageOff(rule) ? "p" : optionGatedRule(rule, options, doc) ? "o" : "-";
 		for (const id of [...new Set(ids)].sort()) {
-			const rules = index.get(id) ?? [];
-			bits.push(
-				`${id}:${rules
-					.map((rule) => (pageOff(rule) ? "p" : optionGatedRule(rule, options, doc) ? "o" : "-"))
-					.join("")}`,
-			);
+			// The rules nested inside each are part of the verdict too
+			// (`nestedRulesSeen`), so they are part of the key.
+			const rules = (index.get(id) ?? []).flatMap((rule) => [rule, ...nestedStyleRules(rule)]);
+			bits.push(`${id}:${rules.map(bit).join("")}`);
 		}
 		return bits.join("|");
 	}

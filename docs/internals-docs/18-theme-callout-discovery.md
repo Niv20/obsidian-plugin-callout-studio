@@ -549,7 +549,8 @@ Two checks, aimed where a wrong answer costs something:
   attribute of `<body>` and `<html>` (`watchPageClasses`, a `MutationObserver`
   on those two elements only). It re-derives ownership, and measures again,
   when the set of ids a page condition keeps off moves - or when, for an id it
-  measures, which rules the page switches off moves (`pageStateKey`): a verdict
+  measures, which rules the page switches off moves (`pageStateKey`, nested
+  rules included, as `nestedRulesSeen` reads them): a verdict
   is built rule by rule, so `body.is-fullscreen` arriving beside an
   unconditional rule changes the answer though the id stays claimed. A condition that moves with no event at all -
   `:has()`, which follows the whole document, and the user-action
