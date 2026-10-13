@@ -197,6 +197,15 @@ describe("generateMetadataColorCSS — the rules", () => {
 		assert.ok(css.includes(':not([data-callout="themed"])'));
 	});
 
+	it("stays off only the claimed name of a callout the theme partly names", () => {
+		const h = harness();
+		h.registry.add(definition({ id: "mine", aliases: ["themed"] }));
+		h.registry.setThemeOwnedIds(new Set(["themed"]));
+		const css = internals(h).generateMetadataColorCSS();
+		assert.ok(css.includes(':not([data-callout="themed"])'));
+		assert.ok(!css.includes('[data-callout="mine"]'));
+	});
+
 	it("a transparent palette clears the background and the two child boxes", () => {
 		const h = harness();
 		h.registry.settings.customPalettes = [palette("Glass", { transparentBg: true })];

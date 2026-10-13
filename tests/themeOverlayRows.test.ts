@@ -67,6 +67,19 @@ describe("theme overlay rows — what the sweep mints", () => {
 		assert.strictEqual(registry.themeOwns(registry.get("note")!), true);
 	});
 
+	it("leaves a callout the theme does not draw with this plugin, and mints as before", () => {
+		// `ThemeClaimCheck` measured the theme's rules for `note` to change
+		// nothing: ownership leaves it out, and the overlay still mints `recite`.
+		const registry = vault();
+		assert.strictEqual(
+			syncThemeOverlayRows(registry, new Set(["note", "recite"]), new Set(["note"])),
+			1,
+		);
+		assert.strictEqual(registry.themeOwns(registry.get("note")!), false);
+		assert.strictEqual(registry.get("recite")?.source, "theme");
+		assert.strictEqual(registry.themeOwns(registry.get("recite")!), true);
+	});
+
 	it("leaves a user row alone when the theme declares its id", () => {
 		const registry = vault();
 		registry.add(definition({ id: "recite", displayName: "Mine" }));

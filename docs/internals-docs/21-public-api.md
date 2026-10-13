@@ -124,7 +124,11 @@ Three deliberate steps, each closing a real gap:
 - **Theme-owned callouts** - deliberately included even though Callout Studio
   does not draw them: the id is still valid Markdown, and `themeStyled` tells a
   consumer not to substitute the stored icon and colours for the theme's live
-  appearance.
+  appearance. `themeStyled` is `registry.themeOwns(def)`: every name drawn (a
+  built-in's stock aliases excepted) as the claim check publishes it, so a
+  callout the theme names but does not draw, or draws under only some of its
+  names, is `false`. Which names those are is not published; `docs/API.md`
+  tells consumers to render a real callout when they need the Block look.
 
 ## `getCallout(id)` - the lookup ladder, deliberately shallower than the renderer's
 
@@ -157,13 +161,24 @@ routes around it to the committed row.
 
 ```ts
 onChange(callback: () => void): () => void {
-  plugin.registry.onChange(callback);
-  return () => plugin.registry.offChange(callback);
+  const listener = (): void => callback();
+  plugin.registry.onChange(listener);
+  return () => plugin.registry.offChange(listener);
 }
 ```
 
-A thin pass-through to the registry's own change list (see
-[Callout registry § onChange carries no payload](05-callout-registry.md#onchange-carries-no-payload)).
+A thin subscription to the registry's own change list (see
+[Callout registry § onChange carries no diff](05-callout-registry.md#onchange-carries-no-diff)).
+It is **not** a bare pass-through: the registry hands its own listeners a
+`RegistryChange` (`{ persists }`, see
+[Callout registry § RegistryChange](05-callout-registry.md#registrychange---does-this-round-need-a-save)),
+and the contract for a consumer is a callback that takes nothing - a consumer's
+`(x = fallback) => ...` must never meet an object it did not ask for. So each
+call subscribes its own argument-less wrapper, which also keeps each returned
+unsubscribe detaching exactly its own registration, however many times the same
+function was subscribed. A round about the theme's claims or readings (which do
+not persist) still reaches consumers: ownership and `fromTheme` are part of what
+they re-read.
 `API.md` is explicit that consumers must **not** treat this as a precise
 diff: "A single user action can fire it more than once - editing the
 callout that other manually discovered callouts mirror emits one event for the

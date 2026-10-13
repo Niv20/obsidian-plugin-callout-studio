@@ -348,6 +348,10 @@ export const fa: Record<string, string> = {
 		"Obsidian فاصله‌ها را به‌صورت خط تیره می‌نویسد، بنابراین این شناسه با «{{other}}» تداخل دارد",
 	"editor.idFromTheme":
 		"{{theme}} از قبل callout ای با این شناسه ارائه می‌دهد، بنابراین Callout Studio نمی‌تواند آن را استایل بدهد. شناسه‌ی دیگری انتخاب کنید.",
+	"editor.namesFromTheme":
+		"{{theme}} خودش callout‌های بلوکی {{names}} را ترسیم می‌کند. شناسه‌های دیگر شما این طراحی را حفظ می‌کنند.",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} خودش callout‌های بلوکی {{names}} را ترسیم می‌کند و Obsidian {{stock}} را ترسیم می‌کند. شناسه‌های دیگر شما این طراحی را حفظ می‌کنند.",
 	"editor.idThemePattern":
 		"توجه: پوسته‌ی شما هر callout ای را که با {{pattern}} مطابقت داشته باشد استایل می‌دهد، بنابراین ممکن است ظاهر این یکی را بازنویسی کند.",
 	"editor.untitledCallout": "Callout بدون عنوان",

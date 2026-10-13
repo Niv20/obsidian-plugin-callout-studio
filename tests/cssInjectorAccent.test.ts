@@ -556,12 +556,22 @@ describe("global block geometry — registered Studio ids only", () => {
 	it("omits every id and alias owned by the theme", () => {
 		const { registry, css } = harness();
 		registry.add(definition({ id: "themed", aliases: ["themed alt"] }));
-		registry.setThemeOwnedIds(new Set(["themed-alt"]));
+		registry.setThemeOwnedIds(new Set(["themed", "themed-alt"]));
 		registry.settings.globalStyle.titleScale = 1.2;
 		registry.settings.globalStyle.alignContentWithTitle = true;
 		const out = css.generateGlobalStyleCSS();
 		assert.ok(out.includes('.callout[data-callout="note"]'));
 		assert.ok(!out.includes('[data-callout="themed"]'));
+		assert.ok(!out.includes('[data-callout="themed-alt"]'));
+	});
+
+	it("omits only the name the theme claims on a callout it partly names", () => {
+		const { registry, css } = harness();
+		registry.add(definition({ id: "themed", aliases: ["themed alt"] }));
+		registry.setThemeOwnedIds(new Set(["themed-alt"]));
+		registry.settings.globalStyle.titleScale = 1.2;
+		const out = css.generateGlobalStyleCSS();
+		assert.ok(out.includes('.callout[data-callout="themed"]'));
 		assert.ok(!out.includes('[data-callout="themed-alt"]'));
 	});
 

@@ -35,7 +35,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { installFakeDom } from "./support/fakeDom";
+import { FakeDocument, installFakeDom } from "./support/fakeDom";
 import { ThemeAppearanceProbe } from "../src/manager/theme/ThemeAppearanceProbe";
 import type { ComputedStyleReader } from "../src/manager/theme/ThemeAppearanceProbe";
 import { MarkdownRenderer } from "obsidian";
@@ -54,6 +54,7 @@ function fakeApp(theme = "ITS Theme"): App {
 			styleEl: { textContent: "" },
 			extraStyleEls: [],
 		},
+		workspace: { containerEl: document.body },
 	} as unknown as App;
 }
 
@@ -68,7 +69,7 @@ function switchableApp(): { app: App; setTheme: (name: string) => void } {
 		extraStyleEls: [],
 	};
 	return {
-		app: { customCss } as unknown as App,
+		app: { customCss, workspace: { containerEl: document.body } } as unknown as App,
 		setTheme: (name: string) => {
 			customCss.theme = name;
 		},
@@ -248,6 +249,107 @@ describe("mapping rendered callouts back to ids", () => {
 			assert.strictEqual(probe.results().size, 1);
 		} finally {
 			restore();
+		}
+	});
+});
+
+describe("invalidating without dropping what is on hand", () => {
+	it("keeps answering the last readings until the next pass lands", async () => {
+		// A font-size step leaves the theme exactly as it was. The readings on
+		// hand are that theme's own, so the rows and pills keep wearing them
+		// instead of flashing neutral placeholders for the length of a pass.
+		const restore = emitCallouts(["bug"]);
+		try {
+			const probe = new ThemeAppearanceProbe(fakeApp(), labelReader);
+			await probe.ensure(["bug"], () => {});
+			probe.invalidate({ keepAnswers: true });
+			assert.strictEqual(probe.get("bug").accent, "color-bug");
+			assert.strictEqual(probe.results().size, 1);
+		} finally {
+			restore();
+		}
+	});
+
+	it("still makes the next ensure read again", async () => {
+		const probe = new ThemeAppearanceProbe(fakeApp(), reader().read);
+		let ready = 0;
+		await probe.ensure(["recite"], () => ready++);
+		probe.invalidate({ keepAnswers: true });
+		await probe.ensure(["recite"], () => ready++);
+		assert.strictEqual(ready, 2);
+	});
+
+	it("still drops a pass that was already in flight", async () => {
+		// The pass was measuring the page before the nudge; what it comes back
+		// with may describe a page that is gone.
+		const probe = new ThemeAppearanceProbe(fakeApp(), reader().read);
+		let ready = 0;
+		const pass = probe.ensure(["recite"], () => ready++);
+		probe.invalidate({ keepAnswers: true });
+		await pass;
+		assert.strictEqual(ready, 0, "an out-of-date pass does not announce itself");
+	});
+
+	it("drops the answers without the option, which is what a theme switch needs", async () => {
+		const restore = emitCallouts(["bug"]);
+		try {
+			const probe = new ThemeAppearanceProbe(fakeApp(), labelReader);
+			await probe.ensure(["bug"], () => {});
+			probe.invalidate();
+			assert.strictEqual(probe.get("bug").accent, null);
+			assert.strictEqual(probe.results().size, 0);
+		} finally {
+			restore();
+		}
+	});
+
+	it("replaces the kept answers when the next pass lands", async () => {
+		const restore = emitCallouts(["bug"]);
+		try {
+			const probe = new ThemeAppearanceProbe(fakeApp(), labelReader);
+			await probe.ensure(["bug"], () => {});
+			probe.invalidate({ keepAnswers: true });
+			// A different id set: the kept `bug` must not outlive its pass.
+			restore();
+			const again = emitCallouts(["tip"]);
+			try {
+				await probe.ensure(["tip"], () => {});
+			} finally {
+				again();
+			}
+			assert.strictEqual(probe.get("tip").accent, "color-tip");
+			assert.strictEqual(probe.get("bug").accent, null);
+		} finally {
+			restore();
+		}
+	});
+});
+
+describe("which window it measures in", () => {
+	it("renders in the main window while the Settings window has focus", async () => {
+		// Obsidian 1.14's Settings window is `activeDocument` while it has
+		// focus, and it need not carry the theme: Obsidian copies no stylesheet
+		// containing `ͼ1` into a pop-out, and Agate's contains one. Measured
+		// there, every callout Agate recolours read as core's colours.
+		const renderer = MarkdownRenderer as unknown as {
+			render: (app: unknown, markdown: string, el: HTMLElement) => Promise<void>;
+		};
+		const original = renderer.render;
+		const g = globalThis as unknown as { activeDocument: Document };
+		const main = g.activeDocument;
+		let renderedIn: Document | null = null;
+		renderer.render = (_app, _markdown, el) => {
+			renderedIn = el.ownerDocument;
+			return Promise.resolve();
+		};
+		g.activeDocument = new FakeDocument() as unknown as Document;
+		try {
+			const probe = new ThemeAppearanceProbe(fakeApp(), reader().read);
+			await probe.ensure(["note"], () => {});
+			assert.strictEqual(renderedIn, main);
+		} finally {
+			g.activeDocument = main;
+			renderer.render = original;
 		}
 	});
 });

@@ -23,7 +23,7 @@ interface CustomCssApi {
 	theme?: string;
 	themes?: Record<string, ThemeManifest | undefined>;
 	/** The one `<style>` holding the theme's CSS. */
-	styleEl?: { textContent?: string | null } | null;
+	styleEl?: { textContent?: string | null; sheet?: CSSStyleSheet | null } | null;
 	/** Snippet names, sorted, enabled or not. */
 	snippets?: string[];
 	enabledSnippets?: Set<string>;
@@ -65,16 +65,46 @@ export function usesDefaultTheme(app: App): boolean {
  * the next time anything else changes.
  */
 export function stylingSignature(app: App): string {
+	return `${themeSignature(app)}|${enabledSnippetNames(app).join(",")}`;
+}
+
+/**
+ * The theme half of {@link stylingSignature}: name and version, no snippets.
+ *
+ * For an answer about the theme's own rules - the claim check's verdicts -
+ * which a snippet switched on or off does not invalidate.
+ */
+export function themeSignature(app: App): string {
 	const css = api(app);
 	const name = css?.theme ?? "";
 	const version = (name && css?.themes?.[name]?.version) || "";
-	const snippets = enabledSnippetNames(app).join(",");
-	return `${name}@${version}|${snippets}`;
+	return `${name}@${version}`;
 }
 
 /** The active theme's CSS text, or `""` when there is no theme. */
 export function themeCss(app: App): string {
 	return api(app)?.styleEl?.textContent ?? "";
+}
+
+/**
+ * The browser's parsed copy of the theme, or `null`.
+ *
+ * Read only by `ThemeClaimCheck`, which switches single rules off and back on
+ * inside one synchronous task to see whether they change anything on screen.
+ */
+export function themeSheet(app: App): CSSStyleSheet | null {
+	return api(app)?.styleEl?.sheet ?? null;
+}
+
+/**
+ * Have the browser parse the theme's `<style>` again from its own text,
+ * discarding any change made to the parsed copy. `ThemeClaimCheck`'s last
+ * resort if a rule it switched off would not switch back on.
+ */
+export function reparseTheme(app: App): void {
+	const el = api(app)?.styleEl;
+	const text = el?.textContent;
+	if (el && typeof text === "string") el.textContent = text;
 }
 
 /** Enabled snippet names, in the order Obsidian loads them. */

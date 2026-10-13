@@ -542,7 +542,8 @@ query is present, every empty result uses the ordinary no-match message.
 
 [`src/editor/CustomCommandManager.ts`](../../src/editor/CustomCommandManager.ts)
 is worth understanding in depth because its whole design follows from one
-constraint: `registry.onChange` carries **no payload**, and a callout id
+constraint: `registry.onChange` carries **no diff** (its only argument says
+whether the round needs a save, never which row moved), and a callout id
 "rename" is really `remove()` followed by `add()` - so no per-event handler
 can distinguish a delete from a rename from an unrelated colour tweak.
 

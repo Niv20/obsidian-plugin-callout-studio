@@ -390,6 +390,10 @@ export const zh: Record<string, string> = {
 
 	"editor.idFromTheme":
 		"{{theme}} 已经提供了具有此 ID 的 callout，因此 Callout Studio 无法为其设置样式。请选择其他 ID。",
+	"editor.namesFromTheme":
+		"{{theme}} 会自行绘制 {{names}} 块 callout。您的其他 ID 保持此设计。",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} 会自行绘制 {{names}} 块 callout，{{stock}} 则由 Obsidian 绘制。您的其他 ID 保持此设计。",
 	"editor.idThemePattern":
 		"提示：您的主题会为每个匹配 {{pattern}} 的 callout 设置样式，因此它可能会覆盖此 callout 的外观。",
 

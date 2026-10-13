@@ -86,8 +86,14 @@ export class CalloutStudioAPI implements CalloutStudioApi {
 	}
 
 	onChange(callback: () => void): () => void {
-		this.#plugin.registry.onChange(callback);
-		return () => this.#plugin.registry.offChange(callback);
+		// One wrapper per subscription. The registry hands its listeners a
+		// description of the change, and the documented contract is a callback
+		// that takes nothing: a consumer's `(x = fallback) => ...` must never
+		// meet an object it did not ask for. A wrapper per call also keeps each
+		// unsubscribe detaching exactly its own registration.
+		const listener = (): void => callback();
+		this.#plugin.registry.onChange(listener);
+		return () => this.#plugin.registry.offChange(listener);
 	}
 }
 

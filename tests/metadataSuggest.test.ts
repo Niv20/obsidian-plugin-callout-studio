@@ -407,6 +407,47 @@ describe("CalloutMetadataSuggest — when it opens", () => {
 	});
 });
 
+describe("CalloutMetadataSuggest — a name the theme claims", () => {
+	/** Does the dropdown offer any colour for `source`? */
+	const offersColours = (h: Harness, source: string): boolean => {
+		const { ed, line, ch } = at(source);
+		const info = h.meta.onTrigger({ line, ch }, asEditor(ed), null);
+		assert.ok(info, `expected the dropdown to open on ${source}`);
+		const ctx = { editor: asEditor(ed), file: null, start: info.start, end: info.end, query: info.query };
+		return h.meta.getSuggestions(ctx as never).some((r) => r.kind === "color");
+	};
+
+	it("offers no colour for that name's block callout, which the theme draws", () => {
+		// Quote stays ours: the theme names `quote` but not the `цитата` the
+		// user added. A colour on `> [!quote|…]` would never paint.
+		const h = harness();
+		h.registry.update("quote", { aliases: ["cite", "цитата"] });
+		h.registry.setThemeOwnedIds(new Set(["quote"]));
+		assert.strictEqual(h.registry.themeOwns(h.registry.get("quote")!), false);
+
+		assert.strictEqual(offersColours(h, "> [!quote|⎸"), false);
+		assert.strictEqual(offersColours(h, "> [!цитата|⎸"), true);
+		assert.strictEqual(offersColours(h, "## [!quote|⎸]"), true, "the heading is ours");
+	});
+
+	it("agrees with the stylesheet on a stock alias however it is typed", () => {
+		// `[!Cite]`, `[!CITE]` and `[!cite ]` all render as data-callout="cite",
+		// which Obsidian draws while the theme claims Quote's id - the metadata
+		// colours stay off it, so offering one would write a word that never
+		// paints. GitHub-style `[!IMPORTANT]` is the common case.
+		const h = harness();
+		h.registry.update("quote", { aliases: ["cite", "цитата"] });
+		h.registry.setThemeOwnedIds(new Set(["quote"]));
+		for (const typed of ["cite", "Cite", "CITE", "cite "]) {
+			assert.strictEqual(offersColours(h, `> [!${typed}|⎸`), false, typed);
+		}
+		h.registry.update("tip", { aliases: ["hint", "important", "мой-совет"] });
+		h.registry.setThemeOwnedIds(new Set(["tip"]));
+		assert.strictEqual(offersColours(h, "> [!IMPORTANT|⎸"), false);
+		assert.strictEqual(offersColours(h, "> [!мой-совет|⎸"), true, "the user's own name is ours");
+	});
+});
+
 describe("CalloutMetadataSuggest — Tab stays, Enter finishes", () => {
 	it("Tab writes the word, closes, and keeps the cursor in the brackets", () => {
 		const h = harness();

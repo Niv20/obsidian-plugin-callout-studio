@@ -6347,6 +6347,17 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	contain: layout style;
 }
 
+/* The theme claim check reads a callout, switches a theme rule off and reads
+   it again in the same task; a theme's transition would hand back the old
+   value and hide the difference. A weightier `!important` theme transition
+   can win this, which is why the check also finishes running transitions
+   (ThemeClaimCheck's finishTransitions). */
+.cs-theme-probe *,
+.cs-theme-probe *::before,
+.cs-theme-probe *::after {
+	transition: none !important;
+}
+
 /* Theme callout preview window */
 .cs-theme-preview-note {
 	margin: 0 0 var(--size-4-2);

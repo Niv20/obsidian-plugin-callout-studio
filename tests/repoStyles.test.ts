@@ -233,6 +233,7 @@ describe("class names in styles.css and src/ agree", () => {
 		"callout-studio-css", // legacy startup CSS retained for recovery
 		"callout-studio-css-v2", // current startup CSS snapshot
 		"callout-studio-local", // localStorage key for the device-local state
+		"callout-studio-theme-claims-v1", // localStorage key for the claim check's verdicts
 		"callout-studio-dynamic-css", // <style> element id
 		"callout-studio-do-not-delete", // the legacy vault snippet's filename
 		"callout-studio-custom", // the exported vault snippet's filename

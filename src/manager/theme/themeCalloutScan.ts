@@ -185,15 +185,32 @@ function calloutBoxOf(sel: string): "root" | "title" | "content" | null {
 	return /\.callout(?![\w-])/.test(subject) ? "root" : null;
 }
 
+/**
+ * Whether an exact `[data-callout=…]` value can match a rendered callout.
+ *
+ * Obsidian lower-cases the type before it writes `data-callout`, and an HTML
+ * attribute value compares case-sensitively unless the selector carries the
+ * `i` flag. So `[data-callout="I"]` matches nothing at all: Serenity writes
+ * two of them, and reading them as `i` and `s` listed two callouts under
+ * *Callouts from your theme* that the theme never draws. Family patterns keep
+ * their old reading; they name no callout, so they list nothing.
+ */
+export function namesRenderedId(value: string, flag: string | undefined): boolean {
+	return flag === "i" || flag === "I" || value === value.toLowerCase();
+}
+
 /** Every `[data-callout<op>=<value>]` in one selector. */
 function calloutAttrs(selector: string): Array<{ op: string; value: string }> {
 	const out: Array<{ op: string; value: string }> = [];
 	const re =
-		/\[\s*data-callout\s*([~^*$|]?)=\s*("([^"]*)"|'([^']*)'|([^\]\s]+))\s*(?:[iIsS]\s*)?\]/g;
+		/\[\s*data-callout\s*([~^*$|]?)=\s*("([^"]*)"|'([^']*)'|([^\]\s]+))\s*(?:([iIsS])\s*)?\]/g;
 	let m: RegExpExecArray | null;
 	while ((m = re.exec(selector)) !== null) {
+		const op = m[1] ?? "";
 		const value = m[3] ?? m[4] ?? m[5] ?? "";
-		if (value.length > 0) out.push({ op: m[1] ?? "", value });
+		if (value.length === 0) continue;
+		if (NAMES_ONE_ID.has(op) && !namesRenderedId(value, m[6])) continue;
+		out.push({ op, value });
 	}
 	return out;
 }

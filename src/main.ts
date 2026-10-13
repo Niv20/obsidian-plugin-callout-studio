@@ -286,12 +286,14 @@ export default class CalloutStudioPlugin extends Plugin {
 		// css-change separately ran the whole pass twice per mutation — the
 		// trigger landed in our own css-change listener, which injects
 		// immediately, and the debounced timer then repeated it 300ms later.)
-		this.registry.onChange(() => {
+		this.registry.onChange((change) => {
 			if (this.settingsWriter.isDestroyed) return;
 			this.cssInjector.inject();
 			// Icon/color/display-name edits must repaint outline items too.
 			this.outlineDecorator.refreshAll();
-			void this.saveSettings();
+			// What the theme claims and draws is never written to data.json, so
+			// announcing a move of it must not pay for a save pass.
+			if (change.persists) void this.saveSettings();
 		});
 
 		// A paused session stays visible and keeps checking for its file.

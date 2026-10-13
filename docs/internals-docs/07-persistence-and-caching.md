@@ -24,6 +24,7 @@ This chapter keeps the storage inventory and cache-specific behavior.
 | Device history | App IndexedDB (`CalloutStudioHistory`, its own database); this device's ten newest accepted states within a size budget, content only. |
 | Recovery backups | `<plugin-dir>/backups/`; verified, content-only copies (no sync envelope), named by time, device and content hash, written before guarded adoption, missing-file restoration, **Reset everything** and every import. |
 | Device UI/prior-use state | Vault-scoped `localStorage`; folds and onboarding/migration markers, never a live definitions cache. |
+| Theme claim verdicts | Vault-scoped `localStorage` (`callout-studio-theme-claims-v1`); which callout ids the last eight themes were measured to draw, so a launch starts from the last answer - see [Theme callout discovery](18-theme-callout-discovery.md#naming-is-not-drawing---the-claim-check). Derived, never authoritative, safe to delete. |
 
 See the canonical chapter's
 [state distinctions](08-settings-sync-and-recovery.md#safety-rules-and-the-different-kinds-of-state)

@@ -127,9 +127,30 @@ jobs:
             # Live Preview widget lookup, a callout's extent), and the sidebar
             # marking the card for the callout the caret is in — 7.6 KB over
             # the build before them, which leaves the headroom about where it was.
+            # Raised by 13 KiB for theme ownership per name: the claim check
+            # that measures whether the theme really draws the built-ins and
+            # the user's callouts it names (and hands back the ones it does
+            # not), a callout whose names the theme claims only in part, and
+            # the cheaper css-change (theme facts no longer save, bursts
+            # folded) - 13.3 KB over the build before them, which leaves the
+            # headroom about where it was.
+            # Raised by 5 KiB for the claim check's follow-ups: verdicts kept on
+            # the device per theme (no flash at launch or on a snippet toggle),
+            # a callout judged only when every rule naming it was seen in force
+            # (a note's ancestry, nesting, @media, Style Settings options), the
+            # editor reading the published claim and the export keeping every
+            # name - 4.4 KB over the build before them, which leaves the
+            # headroom about where it was.
+            # Raised by 3 KiB for the rest of them and their review: the page
+            # class watcher, idle and batched passes, stock aliases following
+            # the built-in's id however they are typed, names measured on
+            # arrival, finished transitions, a per-pass render owner, mode and
+            # platform classes, real Style Settings option classes, and the
+            # editor naming the aliases Obsidian draws - 3.8 KB, which leaves
+            # the headroom about where it was.
             - name: Check bundle size
               run: |
-                  limit=2287616  # 2 MiB + 186 KiB
+                  limit=2309120  # 2 MiB + 207 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

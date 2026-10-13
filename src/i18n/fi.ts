@@ -342,6 +342,10 @@ export const fi: Record<string, string> = {
 
 	"editor.idFromTheme":
 		"{{theme}} tarjoaa jo calloutin tällä tunnuksella, joten Callout Studio ei voi tyylitellä sitä. Valitse toinen tunnus.",
+	"editor.namesFromTheme":
+		"{{theme}} piirtää itse lohkocalloutit {{names}}. Muut tunnuksesi säilyttävät tämän ulkoasun.",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} piirtää itse lohkocalloutit {{names}}, ja Obsidian piirtää {{stock}}. Muut tunnuksesi säilyttävät tämän ulkoasun.",
 	"editor.idThemePattern":
 		"Huomio: teemasi tyylittelee jokaisen calloutin, joka vastaa mallia {{pattern}}, joten se saattaa ohittaa tämän ulkoasun.",
 

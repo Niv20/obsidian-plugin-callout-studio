@@ -335,6 +335,10 @@ export const el: Record<string, string> = {
 	"editor.idConflict": "Αυτό το ID έρχεται σε σύγκρουση με υπάρχον callout",
 	"editor.idFromTheme":
 		"Το {{theme}} παρέχει ήδη ένα callout με αυτό το ID, οπότε το Callout Studio δεν μπορεί να το μορφοποιήσει. Επιλέξτε διαφορετικό ID.",
+	"editor.namesFromTheme":
+		"Το {{theme}} σχεδιάζει μόνο του τα callout μπλοκ {{names}}. Τα υπόλοιπα IDs σας διατηρούν αυτόν τον σχεδιασμό.",
+	"editor.namesFromThemeAndObsidian":
+		"Το {{theme}} σχεδιάζει μόνο του τα callout μπλοκ {{names}} και το Obsidian σχεδιάζει τα {{stock}}. Τα υπόλοιπα IDs σας διατηρούν αυτόν τον σχεδιασμό.",
 	"editor.idThemePattern":
 		"Προσοχή: το θέμα σας μορφοποιεί κάθε callout που ταιριάζει με {{pattern}}, οπότε ενδέχεται να παρακάμψει την εμφάνιση αυτού.",
 	"editor.idDashConflict":

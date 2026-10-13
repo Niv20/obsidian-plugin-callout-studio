@@ -402,6 +402,10 @@ export const ro: Record<string, string> = {
 	"editor.idConflict": "Acest ID intră în conflict cu un callout existent",
 	"editor.idFromTheme":
 		"{{theme}} furnizează deja un callout cu acest ID, așa că Callout Studio nu îl poate stiliza. Alegeți un alt ID.",
+	"editor.namesFromTheme":
+		"{{theme}} desenează singură callout-urile bloc {{names}}. Celelalte ID-uri ale dvs. păstrează acest design.",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} desenează singură callout-urile bloc {{names}}, iar Obsidian desenează {{stock}}. Celelalte ID-uri ale dvs. păstrează acest design.",
 	"editor.idThemePattern":
 		"Atenție: tema dvs. stilizează fiecare callout care se potrivește cu {{pattern}}, așa că poate suprascrie aspectul acestuia.",
 	"editor.idDashConflict":

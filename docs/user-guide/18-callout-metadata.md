@@ -24,6 +24,8 @@ A pink [!mark|pink] inline callout, and one [!mark|pink]{with its own text}.
 
 The callout takes the whole color: accent, background and gradient. When the color has no gradient, a gradient the callout's type has is cleared, and so is a title sweep. The text takes the color's own text color when it has one; otherwise it keeps your theme's text color. The callout's icon, title and frame stay its own.
 
+![A regular Note and a purple Note keep the same type while only the second callout takes the metadata color](../../assets/user-guide/metadata-color-scope.svg)
+
 ### Which words are colors
 
 | Words | What they are |
@@ -57,6 +59,8 @@ A no-break space (Option+Space on a Mac) doesn't separate two words.
 
 Callout Studio leaves words it doesn't know alone. They are for your theme or for another plugin.
 
+![Two metadata separators give Callout Studio the same pink color word, while the additional wide word remains available to a theme or snippet](../../assets/user-guide/metadata-separators.svg)
+
 Themes are pickier than that. Each theme decides how it reads its own words:
 
 - **ITS Theme** (and themes built on it, such as Cyber Glow), **Dune**, **Ribbons** and **Sanctum** only see words separated by spaces. `[!note|pink wide]` works with them, `[!note|pink|wide]` does not.
@@ -87,6 +91,8 @@ Anything a word needs in order to work, such as spaces around it, appears on a l
 - **Use "…"** keeps a word that isn't on the list. It is always at the bottom of the menu.
 
 After the first color, the colors move below the theme's words, and the line at the bottom says **Replaces …** for each one. Picking one swaps the color instead of adding a second.
+
+![The metadata autocomplete lists the Guide theme word wide above matching colors while pink is already present, and says that brown replaces pink](../../assets/user-guide/metadata-menu.svg)
 
 ## Two colors in one callout
 

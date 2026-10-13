@@ -1796,15 +1796,53 @@ export class CalloutEditor extends Modal {
 			}
 		}
 
+		// Typically a callout saved before its theme started naming one of its
+		// names. Never a block — the other names still take this design — but
+		// it explains why `[!description]` in a note will not match the preview.
+		const names = [this.calloutId, ...this.aliases];
+		const themeNames = names.filter((id) => this.themeSuppliesId(id));
+		// A built-in's stock alias (`[!cite]` for Quote) is left to Obsidian
+		// while the theme claims the built-in's id - the stylesheet's own
+		// per-name answer, `registry.leavesBlockName` - so it does not keep this
+		// design either, and saying "your other names" would include it.
+		const builtIn =
+			this.isBuiltIn && this.existingId ? this.plugin.registry.get(this.existingId) : undefined;
+		const obsidianNames = builtIn
+			? names.filter(
+					(id) =>
+						!this.themeSuppliesId(id) && this.plugin.registry.leavesBlockName(builtIn, id),
+				)
+			: [];
+		if (themeNames.length > 0) {
+			const list = (ids: string[]): string => ids.map((id) => `[!${id}]`).join(", ");
+			const theme =
+				activeThemeName(this.plugin.app) ?? t("settings.themeCalloutsDefaultTheme");
+			this.idsTagInput.showExternalError(
+				obsidianNames.length > 0
+					? t("editor.namesFromThemeAndObsidian", {
+							theme,
+							names: list(themeNames),
+							stock: list(obsidianNames),
+						})
+					: t("editor.namesFromTheme", { theme, names: list(themeNames) }),
+			);
+			return;
+		}
+
 		this.idsTagInput.clearExternalError();
 	}
 
-	/** Does the active theme name this exact id? See {@link updateIdWarning}. */
+	/**
+	 * Does the active theme draw this exact id? See {@link updateIdWarning}.
+	 *
+	 * The published claim, not the text scan: the scan also lists a name the
+	 * theme keeps behind an option that is off, or names without changing
+	 * anything (Catppuccin restates core's icons for every built-in). Neither
+	 * is the theme's on the page - this plugin paints it - so telling the user
+	 * the theme draws it would be wrong, and so would refusing an id for it.
+	 */
 	private themeSuppliesId(id: string): boolean {
-		return this.plugin.cssInjector
-			.themeCallouts()
-			.themeDefinedIds()
-			.has(obsidianCalloutAttrId(id));
+		return this.plugin.registry.themeClaimsName(id);
 	}
 
 	/**

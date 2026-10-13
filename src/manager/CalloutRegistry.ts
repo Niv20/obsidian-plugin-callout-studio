@@ -54,6 +54,7 @@ import type { AdmonitionPlan } from "../utils/admonitionImport";
 import {
 	normalizeCalloutId,
 	calloutIdentity,
+	obsidianCalloutAttrId,
 	obsidianDefaultTitle,
 } from "../utils/calloutId";
 import {
@@ -84,7 +85,27 @@ const SORTED_DEFAULT_CALLOUTS = sortCalloutsByDisplayName(DEFAULT_CALLOUTS);
 export const EXPORT_FORMAT_ID = "callout-studio";
 export const EXPORT_FORMAT_VERSION = 2;
 
-export type RegistryChangeCallback = () => void;
+/**
+ * What a registry notification is about, told to every listener of the round.
+ *
+ * Almost every change is a mutation of what `toSaveData()` writes, and its
+ * listeners may rely on the plugin saving afterwards. The derived theme facts
+ * are the exception: which ids the theme claims and what it draws are never
+ * part of `data.json`, so announcing them must not cost a settings save - the
+ * serialise-and-fingerprint pass is the largest single item of a `css-change`
+ * (about 18 ms for a 1.2 MB `data.json`, twice per event, measured).
+ */
+export interface RegistryChange {
+	/**
+	 * Whether `toSaveData()` may now differ from what was last written. A
+	 * listener that persists does so only when this is `true`; one that repaints
+	 * ignores it.
+	 */
+	persists: boolean;
+}
+
+/** A listener may take no argument at all; most of them do not need one. */
+export type RegistryChangeCallback = (change: RegistryChange) => void;
 
 /**
  * Re-stamps a transient preview definition with the identity of the real
@@ -127,6 +148,8 @@ export class CalloutRegistry {
 	private batchDepth = 0;
 	/** Whether anything mutated while the batch above was open. */
 	private batchDirty = false;
+	/** Whether any of it was a change the file must hear about. See {@link RegistryChange}. */
+	private batchPersists = false;
 	/**
 	 * Listeners for transient live-preview changes — a separate list from
 	 * {@link changeCallbacks} precisely because a preview is NOT a mutation:
@@ -1009,16 +1032,21 @@ export class CalloutRegistry {
 	 * announce a move like any other registry change — ownership decides who
 	 * paints, and the probe's readings land *after* the settings tab drew its
 	 * rows — and neither announces a no-op. Call the first inside `batch()`.
+	 *
+	 * Both announce with `persists: false`. Neither fact is read by
+	 * `toSaveData()` (`selectPersistedRows` looks at each row's own `source`,
+	 * never at ownership), so the file cannot have moved; the listeners that
+	 * repaint still run, and the one that saves stands down.
 	 */
 	setThemeOwnedIds(ids: ReadonlySet<string>): boolean {
 		const moved = this.themeFacts.setOwnedIds(ids);
-		if (moved) this.notifyChange();
+		if (moved) this.notifyChange(false);
 		return moved;
 	}
 
 	setThemeAppearances(map: ReadonlyMap<string, ThemeAppearance>): boolean {
 		const moved = this.themeFacts.setAppearances(map);
-		if (moved) this.notifyChange();
+		if (moved) this.notifyChange(false);
 		return moved;
 	}
 
@@ -1026,9 +1054,56 @@ export class CalloutRegistry {
 	 * Does the active theme supply or style this callout? The whole ownership
 	 * model — **derived, never stored**; `ThemeFacts` argues why, and why a
 	 * stored flip would quietly drop the row from the user's backups.
+	 *
+	 * The theme has to name every one of the callout's names, except a
+	 * built-in's stock aliases: once this plugin stands down, Obsidian itself
+	 * still draws `[!cite]` and `[!tldr]`, so a theme that restyles `quote`
+	 * without them owns Quote all the same. A name nobody else draws — one the
+	 * user added — has to be named too, or it would be left unstyled.
 	 */
 	themeOwns(def: CalloutDefinition): boolean {
-		return this.themeFacts.owns(def, this.vaultIdFormsFor(def));
+		const stock = def.builtIn
+			? (this.builtInDefaults.get(def.id)?.aliases ?? [])
+			: [];
+		return this.themeFacts.owns(
+			def,
+			this.vaultIdFormsFor(def).filter((form) => !stock.includes(form)),
+		);
+	}
+
+	/**
+	 * Does the active theme name this one spelling? What decides who draws a
+	 * block callout written with it when the callout as a whole is not
+	 * {@link themeOwns | the theme's}: a claimed name is the theme's, the
+	 * others keep this plugin's style.
+	 */
+	themeClaimsName(name: string): boolean {
+		return this.themeFacts.claims(name);
+	}
+
+	/**
+	 * Does this plugin leave the block callout written as `name` - one of
+	 * `def`'s names - to someone else? To the theme when it claims the name;
+	 * to Obsidian when it is one of a built-in's stock aliases and the theme
+	 * claims the built-in's own id. That second case is what {@link themeOwns}
+	 * already does when the theme owns the callout outright, and it keeps a
+	 * name the user adds to Quote from changing how `[!cite]` looks.
+	 *
+	 * The one question the CSS, the icon painter and the metadata dropdown ask
+	 * per name, so the three cannot disagree.
+	 */
+	leavesBlockName(def: CalloutDefinition, name: string): boolean {
+		if (this.themeFacts.claims(name)) return true;
+		if (!def.builtIn) return false;
+		// In Obsidian's attribute form, as `claims` reads it: the dropdown asks
+		// with the name as typed, and `[!Cite]` or `[!IMPORTANT]` render as
+		// the stock alias they spell.
+		const form = obsidianCalloutAttrId(name);
+		const stock = this.builtInDefaults.get(def.id)?.aliases ?? [];
+		return (
+			stock.some((alias) => obsidianCalloutAttrId(alias) === form) &&
+			this.themeFacts.claims(def.id)
+		);
 	}
 
 	/** How the theme paints `def`. See {@link ThemeFacts.appearanceOf}. */
@@ -1854,19 +1929,30 @@ export class CalloutRegistry {
 		} finally {
 			this.batchDepth--;
 			if (this.batchDepth === 0 && this.batchDirty) {
+				// One round for everything inside, and it persists if any one
+				// of the changes did.
+				const persists = this.batchPersists;
 				this.batchDirty = false;
-				this.notifyChange();
+				this.batchPersists = false;
+				this.notifyChange(persists);
 			}
 		}
 	}
 
-	/** Through {@link notifyListeners} — the list can change mid-round. */
-	private notifyChange(): void {
+	/**
+	 * Through {@link notifyListeners} — the list can change mid-round.
+	 *
+	 * `persists` defaults to `true`, which is the right answer for every
+	 * mutation of a row or a setting: only the two derived theme facts say
+	 * otherwise, and they say it explicitly.
+	 */
+	private notifyChange(persists = true): void {
 		if (this.batchDepth > 0) {
 			this.batchDirty = true;
+			if (persists) this.batchPersists = true;
 			return;
 		}
-		notifyListeners(this.changeCallbacks);
+		notifyListeners(this.changeCallbacks, { persists });
 	}
 
 	/**
@@ -1889,6 +1975,7 @@ export class CalloutRegistry {
 
 	/** Likewise. */
 	private notifyPreviewChange(): void {
-		notifyListeners(this.previewChangeCallbacks);
+		// A preview is not a mutation, so it never persists.
+		notifyListeners(this.previewChangeCallbacks, { persists: false });
 	}
 }

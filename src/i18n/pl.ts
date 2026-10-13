@@ -348,6 +348,10 @@ export const pl: Record<string, string> = {
 	"editor.idConflict": "To ID koliduje z istniejącym callout",
 	"editor.idFromTheme":
 		"{{theme}} już dostarcza callout z tym ID, więc Callout Studio nie może go stylizować. Wybierz inne ID.",
+	"editor.namesFromTheme":
+		"{{theme}} samodzielnie rysuje blokowe callouty {{names}}. Twoje pozostałe ID zachowują ten wygląd.",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} samodzielnie rysuje blokowe callouty {{names}}, a Obsidian rysuje {{stock}}. Twoje pozostałe ID zachowują ten wygląd.",
 	"editor.idThemePattern":
 		"Uwaga: Twój motyw stylizuje każdy callout pasujący do {{pattern}}, więc może zmienić wygląd tego callout.",
 	"editor.idDashConflict":

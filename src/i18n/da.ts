@@ -334,6 +334,10 @@ export const da: Record<string, string> = {
 		'Obsidian skriver mellemrum som bindestreger, så dette ID er i konflikt med "{{other}}"',
 	"editor.idFromTheme":
 		"{{theme}} leverer allerede en callout med dette ID, så Callout Studio kan ikke style den. Vælg et andet ID.",
+	"editor.namesFromTheme":
+		"{{theme}} tegner selv blok-callouts {{names}}. Dine andre ID'er beholder dette design.",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} tegner selv blok-callouts {{names}}, og Obsidian tegner {{stock}}. Dine andre ID'er beholder dette design.",
 	"editor.idThemePattern":
 		"Bemærk: dit tema styler alle callouts, der matcher {{pattern}}, så det kan overskrive, hvordan denne ser ud.",
 	"editor.untitledCallout": "Navnløs Callout",

@@ -259,20 +259,36 @@ sufficient**. Common cases that also need an explicit follow-up call:
   `container-type: normal`; do the same for any other `Setting` row that
   borrows the class. `tests/settingsRecoveryModal.test.ts` checks for the reset.
 
-## Style Settings changes nothing you can hear
+## A Style Settings class moves nothing you *key a cache on*
 
-`obsidian-style-settings` applies a `class-toggle` by calling
-`removeClasses()` + `initClasses()` on `document.body`. It **does not fire
-`css-change`**, and `stylingSignature()` is theme name + version + snippet
-names, so it does not move either. There is no event and no cache miss: a
-plugin decision that depends on a Style Settings class will be taken once and
-never revisited, and the user sees the option do nothing until they restart.
+`obsidian-style-settings` (1.0.9, read from its `main.js`) applies a
+`class-toggle` by calling `removeClasses()` + `initClasses()` on
+`document.body`, and the `save()` that follows rewrites its variables
+`<style>` and ends in `workspace.trigger("css-change", { source:
+"style-settings" })`. So the event *does* fire - once per change, and once per
+step while a slider or colour is dragged. What does not move is
+`stylingSignature()`, which is theme name + version + snippet names: a decision
+memoised on it is taken once and never revisited, and the user sees the option
+do nothing until they restart.
+
+The theme sweep therefore keys on the theme and snippet **text**, re-reads the
+page's own state (`ThemeClaimCheck.pageRootOff` asks `<body>`/`<html>` what they
+carry right now) on every `css-change`, and tells a nudge from a restyle by the
+text, not by the signature (see
+[Theme callout discovery § When theme appearance refreshes](18-theme-callout-discovery.md#when-theme-appearance-refreshes)).
+A class put on `<body>` by something that does *not* fire the event - Obsidian's
+own `is-focused` or `is-fullscreen`, another plugin, a snippet's script - is
+heard only by the theme sync's own `MutationObserver` on the `class` attribute
+of `<body>` and `<html>` (`watchPageClasses` in `themeAppearanceSync.ts`, released
+on unload). It re-derives ownership and the claim check's verdicts when a page
+condition they rest on moves (`pageRootOff`, `pageStateKey`), and nothing else:
+any other decision taken in JS from a `<body>` class is still silent to it.
 
 The fix used by `manager/css/themeSurfaceCSS.ts` is to never take the decision
 in JS - record the theme's own guard during the scan and re-state it in the
-emitted selector, so the browser evaluates it live. Anything else needs a
-`MutationObserver` on `document.body`'s `class` attribute, which is a cost and a
-lifetime this plugin has so far not had to take on.
+emitted selector, so the browser evaluates it live. Prefer that wherever it can
+work; the observer exists for the one question the browser cannot answer for us,
+which callouts the theme owns.
 
 ## A guard on `<body>` cannot be prefixed onto a selector that already says `body`
 

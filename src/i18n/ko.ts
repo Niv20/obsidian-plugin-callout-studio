@@ -346,6 +346,10 @@ export const ko: Record<string, string> = {
 	"editor.idConflict": "이 ID는 기존 callout과 충돌합니다",
 	"editor.idFromTheme":
 		"{{theme}}이(가) 이미 이 ID로 callout을 제공하므로 Callout Studio는 이를 스타일 지정할 수 없습니다. 다른 ID를 선택하세요.",
+	"editor.namesFromTheme":
+		"{{theme}}이(가) {{names}} 블록 callout을 직접 그립니다. 다른 ID는 이 디자인을 유지합니다.",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}}이(가) {{names}} 블록 callout을 직접 그리고, {{stock}}은(는) Obsidian이 그립니다. 다른 ID는 이 디자인을 유지합니다.",
 	"editor.idThemePattern":
 		"참고: 사용자의 테마는 {{pattern}}과(와) 일치하는 모든 callout을 스타일 지정하므로, 이 callout의 모양을 덮어쓸 수 있습니다.",
 	"editor.idDashConflict":

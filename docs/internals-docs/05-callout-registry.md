@@ -355,19 +355,59 @@ renaming may also require re-mirroring uncustomized fallback rows that copy
 the callout being renamed (if it's the active default fallback), and that
 mirror pass fires its own notification unless batched together.
 
-### `onChange` carries no payload
+### `onChange` carries no diff
 
 ```ts
-onChange(callback: () => void): void
+onChange(callback: (change: RegistryChange) => void): void
 offChange(callback): void
 ```
 
 Every listener re-derives what it needs from current state. There is no diff,
-no "what changed" argument - this is what makes `CustomCommandManager.syncAll()`
-correct (it recomputes the whole desired command set from scratch every time,
-converging regardless of *how* the registry changed) and it's also explicitly
-called out in `API.md` as the contract external plugins get too: "Treat it as
-a hint, not a precise event."
+no "which row changed" argument - this is what makes
+`CustomCommandManager.syncAll()` correct (it recomputes the whole desired
+command set from scratch every time, converging regardless of *how* the
+registry changed) and it's also explicitly called out in `API.md` as the
+contract external plugins get too: "Treat it as a hint, not a precise event."
+A callback that takes no argument at all is still the usual shape; the
+argument below is for the one listener that needs it.
+
+### `RegistryChange` - does this round need a save?
+
+```ts
+interface RegistryChange {
+  /** Whether `toSaveData()` may now differ from what was last written. */
+  persists: boolean;
+}
+```
+
+`main.ts`'s listener does inject + outline refresh + **save** on every round.
+Almost every round is a mutation of what the file holds, and says
+`persists: true`. The exception is the two **derived theme facts** -
+`setThemeOwnedIds` (which ids the active theme claims) and `setThemeAppearances`
+(what it draws for them) - which announce `persists: false`:
+
+- They are published from the theme layer on every `css-change`, and a font-size
+  or accent drag fires that once per step. Serialising and fingerprinting the
+  whole of `data.json` for each used to be the largest single item of the
+  event (about 18 ms for a 1.2 MB file, twice per event, measured in Obsidian
+  1.14.4).
+- They are safe to skip because `toSaveData()` never reads them:
+  `selectPersistedRows` looks at each row's own `source` (`"theme"` rows are
+  never written), not at ownership. `tests/registryChangeKinds.test.ts` pins
+  that the serialised data is byte-identical across a move of both.
+- The listeners that *repaint* are unchanged - the CSS depends on ownership
+  (a theme-owned callout gets no rule from this plugin), the settings tab and
+  the Live Preview pills (`editor/roleIcon.ts`) draw the readings, and
+  `customCommands.syncAll()` filters theme-owned ids. Only the saving listener
+  reads the flag.
+
+A `batch()` is one round and persists if **any** change inside it did, in
+either order (`batchPersists` is reset with `batchDirty`, so one batch's verdict
+never leaks into the next). Preview rounds (`onPreviewChange`) always say
+`persists: false`.
+
+The public API's `onChange` does **not** pass this on: it subscribes one
+argument-less wrapper per call (see [Public API § `onChange`](21-public-api.md)).
 
 ### `batch(fn)` - coalescing
 

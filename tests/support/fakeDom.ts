@@ -547,6 +547,26 @@ export class FakeElement {
 	}
 
 	/**
+	 * A detached copy: tag, attributes, classes, inline custom properties and,
+	 * when `deep`, the whole subtree. `ThemeClaimCheck` clones each rendered
+	 * callout into a Live Preview ancestry rather than rendering it twice.
+	 */
+	cloneNode(deep = false): FakeElement {
+		const copy = new FakeElement(this.tagName.toLowerCase(), this.ownerDocument);
+		for (const [name, value] of this.attrs) copy.attrs.set(name, value);
+		for (const [name, value] of this.cssProps) copy.cssProps.set(name, value);
+		copy.classList.add(...this.classList.toArray());
+		if (deep) {
+			for (const child of this.childNodes) {
+				copy.appendChild(
+					child.nodeType === NODE_TEXT ? new FakeText(child.nodeValue) : child.cloneNode(true),
+				);
+			}
+		}
+		return copy;
+	}
+
+	/**
 	 * Merge adjacent text children and drop empty ones, recursively — what
 	 * `clearGradientChars` calls to put a title back to the single text node it
 	 * was before the per-grapheme wrapping.

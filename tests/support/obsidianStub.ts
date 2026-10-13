@@ -22,6 +22,9 @@
  * `getIconIds` established:
  *
  * - `__CS_ICON_IDS__`   — the Lucide id list (`icons/lucideId.ts`, `nameCheck.ts`)
+ * - `__CS_ICONS__`      — what `getIcon(id)` hands back, by id; `null` for any
+ *   id not seeded. Only `fallbackIcon.restoreCoreIcon` reads it, to decide
+ *   whether a slot already shows what `setIcon` would draw.
  * - `__CS_LIVE_PREVIEW__` — whether a state created with `editorLivePreviewField`
  *   reports Live Preview (`false` models source mode)
  * - `__CS_NOTICES__`    — an array collecting every `new Notice(...)` message,
@@ -62,6 +65,7 @@ export interface StubResponse {
 
 interface TestGlobals {
 	__CS_ICON_IDS__?: string[];
+	__CS_ICONS__?: Record<string, { outerHTML: string }>;
 	__CS_LIVE_PREVIEW__?: boolean;
 	__CS_NOTICES__?: string[];
 	__CS_MACOS__?: boolean;
@@ -90,6 +94,11 @@ export function removeIcon(): void { /* No global icon registry in this stand-in
 
 export function setIcon(): void {
 	/* no-op: nothing here draws */
+}
+
+/** The drawing `setIcon` would leave for `id`, or `null` when none is seeded. */
+export function getIcon(id: string): { outerHTML: string } | null {
+	return seams.__CS_ICONS__?.[id] ?? null;
 }
 
 /**

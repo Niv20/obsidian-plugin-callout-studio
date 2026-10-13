@@ -3,8 +3,60 @@ import type { CalloutDefinition } from "../../types";
 import { enabledSnippetCss, stylingSignature, themeCss } from "./customCssApi";
 import type { ThemeCalloutStore } from "./ThemeCalloutStore";
 import { ThemeAppearanceProbe } from "./ThemeAppearanceProbe";
+import { ThemeClaimCheck } from "./ThemeClaimCheck";
 import { syncThemeOverlayRows } from "./themeOverlayRows";
 import type { ThemeAppearance } from "./themeAppearance";
+import { obsidianCalloutAttrId } from "../../utils/calloutId";
+import { isOwnCssChange } from "../ownCssChange";
+import { QuietGate, type GateScheduler } from "../../utils/quietGate";
+
+/**
+ * `css-change` comes once for a theme switch and once per step while a slider
+ * or a Style Settings colour is dragged. Re-reading what the theme draws is
+ * done at once for the first event of a burst and once more when the burst has
+ * been quiet this long, or has run this long, so a drag costs a pass or so a
+ * second rather than one per step.
+ */
+const REREAD_QUIET_MS = 250;
+const REREAD_MAX_MS = 2000;
+
+/**
+ * What a test swaps in; production passes nothing. The two DOM-reading halves
+ * (what the theme draws, and whether it draws what it names) are the parts a
+ * fake DOM cannot answer, and this file's subject is when they are asked.
+ */
+export interface ThemeSyncOptions {
+	appearance?: Pick<ThemeAppearanceProbe, "ensure" | "results" | "invalidate" | "destroy">;
+	claims?: Pick<
+		ThemeClaimCheck,
+		"invalidate" | "pageRootOff" | "pageStateKey" | "unstyled" | "check" | "hasUnmeasured" | "destroy"
+	>;
+	schedule?: GateScheduler;
+	/** Calls back when `<body>`/`<html>` classes change; returns its own undo. */
+	watchPage?: (onChange: () => void) => () => void;
+}
+
+/**
+ * Call `onChange` whenever the class list of `<body>` or `<html>` changes.
+ *
+ * A theme rule behind `body.some-class` is claimed only while the class is on
+ * (`ThemeClaimCheck.pageRootOff`), and most such classes are theme options,
+ * whose Style Settings toggle fires `css-change`. Not all: Obsidian moves
+ * `is-focused`, `is-fullscreen` and friends on its own, and another plugin may
+ * set a class of its own, with no event at all. Only the `class` attribute of
+ * those two elements is watched, so the cost is a callback per toggle.
+ */
+export function watchPageClasses(doc: Document, onChange: () => void): () => void {
+	const Observer =
+		doc.defaultView?.MutationObserver ??
+		(typeof MutationObserver === "undefined" ? undefined : MutationObserver);
+	if (!Observer) return () => {};
+	const observer = new Observer(() => onChange());
+	for (const el of [doc.documentElement, doc.body]) {
+		if (el) observer.observe(el, { attributes: true, attributeFilter: ["class"] });
+	}
+	return () => observer.disconnect();
+}
 
 export interface ThemeSyncHost {
 
@@ -28,31 +80,124 @@ export interface ThemeSyncHost {
 	cssInjector: {
 		themeCallouts(): ThemeCalloutStore;
 		inject(emitCssChange?: boolean): void;
+		suspendOwnStyles(): () => void;
 	};
 	registerEvent(ref: EventRef): void;
 
 	register(cb: () => void): void;
 }
 
-export function registerThemeAppearance(host: ThemeSyncHost): () => void {
+/**
+ * Keep the registry's two derived theme facts - who owns which id, and what
+ * the theme draws for it - true to the page, and re-read them when it moves.
+ *
+ * ## What one `css-change` costs, and why it is small
+ *
+ * Obsidian fires `css-change` for a theme switch and for a font-size step
+ * alike, and a drag fires one per step. So the handler distinguishes a
+ * *restyle* (the theme or snippet text moved: everything is re-derived, the
+ * old readings are dropped and the theme is read again at once) from a
+ * *nudge* from outside (same text: the readings on hand stay, and the re-read
+ * is folded into one per burst by a `QuietGate`). Only a move is announced,
+ * and an announcement of a theme fact does not save `data.json`
+ * (`RegistryChange.persists`). This plugin's own `css-change` is neither: it
+ * re-reads at once, as it always did, and asks the claim check only about a
+ * name no pass has been asked about.
+ *
+ * Measured per event in Obsidian 1.14.4, on a note of sixty callouts open in
+ * Reading view and Live Preview and a 1.2 MB `data.json`, where core alone
+ * spends 13 ms on an event: a theme that draws nine of the callouts went from
+ * about 320 ms to 19 ms, and Serenity, which owns ninety-five types, from about
+ * 540 ms to 73 ms. The full table, and what is left of Serenity's, is in
+ * `docs/internals-docs/18-theme-callout-discovery.md`.
+ *
+ * ## Why the chain terminates
+ *
+ * The handler injects, an inject that changes the generated text emits this
+ * plugin's own `css-change`, and that is heard here too. Every hop stands on a
+ * comparison that goes quiet: ownership is announced only when the set moved
+ * (`ThemeFacts.setOwnedIds`), readings only when they differ
+ * (`setAppearances`), and `CSSInjector.inject` emits only when the text it
+ * generated differs from what is installed. The generated text depends on
+ * ownership but never on the readings, so a published reading cannot emit a
+ * `css-change` at all, and an ownership change emits exactly one, whose
+ * handler finds the theme text unchanged and the set already published.
+ */
+export function registerThemeAppearance(
+	host: ThemeSyncHost,
+	options: ThemeSyncOptions = {},
+): () => void {
 
-	const appearance = new ThemeAppearanceProbe(host.app);
+	const appearance = options.appearance ?? new ThemeAppearanceProbe(host.app);
+	const claims = options.claims ?? new ThemeClaimCheck(host.app);
 	host.register(() => {
 		appearance.destroy();
+		claims.destroy();
 	});
 	let signature: string | null = null;
 
 	const fingerprint = (): string =>
 		JSON.stringify([stylingSignature(host.app), themeCss(host.app), enabledSnippetCss(host.app)]);
-	const syncRows = (): number => syncThemeOverlayRows(
-		host.registry, host.cssInjector.themeCallouts().themeDefinedIds(),
-	);
-	const sweep = (force = false): void => {
-		const next = fingerprint();
-		if (force || next !== signature) {
-			signature = next;
-			host.cssInjector.themeCallouts().invalidate();
+	// What the theme names, less what it names only behind a page condition
+	// that is off right now — see ThemeClaimCheck. `offKey` is the answer the
+	// published ownership was built on, so a page change can tell whether it
+	// moved anything.
+	let offKey = "";
+	const pageOff = (): Set<string> =>
+		claims.pageRootOff(host.cssInjector.themeCallouts().themeDefinedIds());
+	const keyOf = (off: ReadonlySet<string>): string => [...off].sort().join("\n");
+	const declared = (): ReadonlySet<string> => {
+		const named = host.cssInjector.themeCallouts().themeDefinedIds();
+		const off = claims.pageRootOff(named);
+		offKey = keyOf(off);
+		return off.size === 0 ? named : new Set([...named].filter((id) => !off.has(id)));
+	};
+	// Every attribute form of the callouts whose design is lost if the theme is
+	// wrongly said to own them: built-ins, the user's own, and those another
+	// plugin made. A saved scan row is a copy of the fallback's look, often of a
+	// type the theme draws only in context (Ukiyo's `col` inside a `cont`), so
+	// it stays as it was.
+	const ownForms = (): Set<string> => {
+		const out = new Set<string>();
+		for (const def of host.registry.getAll()) {
+			if (!def.builtIn && def.source !== "user" && def.source !== "plugin") continue;
+			for (const form of host.registry.vaultIdFormsFor(def)) {
+				out.add(obsidianCalloutAttrId(form));
+			}
 		}
+		return out;
+	};
+	// The ids the claim check measures - named by the theme, carrying a design
+	// here - as of the last syncRows, and which of their rules the page
+	// switched off then (`pageStateKey`).
+	let lastClaimIds: string[] = [];
+	let pageState = "";
+	const syncRows = (): number => {
+		const named = declared();
+		const own = ownForms();
+		lastClaimIds = [...named].filter((id) => own.has(id));
+		pageState = claims.pageStateKey(lastClaimIds);
+		return syncThemeOverlayRows(
+			host.registry,
+			named,
+			claims.unstyled(lastClaimIds),
+		);
+	};
+	/**
+	 * Whether the theme or the enabled snippets are other than the last time
+	 * this ran, dropping the cached scan when they are. It is also how a
+	 * `css-change` that moved nothing of ours - a font-size step, a dragged
+	 * Style Settings colour - is told from one that did.
+	 */
+	const restyled = (force = false): boolean => {
+		const next = fingerprint();
+		if (!force && next === signature) return false;
+		signature = next;
+		host.cssInjector.themeCallouts().invalidate();
+		return true;
+	};
+	const sweep = (force = false): void => {
+		restyled(force);
 		// The stylesheet can stay the same while a reset, import or closed
 		// draft releases an id. Reconcile rows using the cached CSS scan.
 		syncRows();
@@ -65,35 +210,143 @@ export function registerThemeAppearance(host: ThemeSyncHost): () => void {
 		void appearance.ensure(
 			owned.flatMap((def) => host.registry.vaultIdFormsFor(def)),
 			() => {
-				host.registry.setThemeAppearances(appearance.results());
-				host.cssInjector.inject(false);
+				// Publish, and regenerate only for what moved: readings equal
+				// to the ones on hand are not an event, and the CSS they would
+				// regenerate was written by the `css-change` that started this.
+				if (host.registry.setThemeAppearances(appearance.results())) {
+					host.cssInjector.inject(false);
+				}
 			},
 		);
 	};
 
+	// Measure whether the theme really draws the callouts of ours it names,
+	// and hand back the ones it does not. Publishing the new ownership is a
+	// registry change, which injects; the css-change that inject fires is this
+	// plugin's own, which re-checks no styling and asks only about names never
+	// asked about - and `check` marks every id it is handed as asked before it
+	// measures, so this cannot cycle.
+	const checkClaims = (): void => {
+		const own = ownForms();
+		void claims.check({
+			ids: [...declared()].filter((id) => own.has(id)),
+			suspendStudioCss: () => host.cssInjector.suspendOwnStyles(),
+			onChange: () => {
+				syncRows();
+				probe();
+			},
+		});
+	};
+
+	// Re-reading what the theme draws is two questions - the probe's "what does
+	// it look like" and the claim check's "does it draw what it names" - and
+	// neither has anything new to say at every step of a drag. A nudge from
+	// outside only marks them owed; the gate runs them at once for the first of
+	// a burst and again when it ends. `nudged` is the invalidation still to be
+	// applied, kept out of the handler so a folded event cannot discard a pass
+	// that is already in flight.
+	// `claimsNew` is a check owed only because a name arrived that no pass has
+	// been asked about (`hasUnmeasured`): the styling did not move, so a pass
+	// already in flight stays valid and is not invalidated.
+	let nudged = false;
+	let claimsOwed = false;
+	let claimsNew = false;
+	const reread = (): void => {
+		if (nudged) {
+			nudged = false;
+			appearance.invalidate({ keepAnswers: true });
+		}
+		probe();
+		if (claimsOwed || claimsNew) {
+			if (claimsOwed) claims.invalidate();
+			claimsOwed = false;
+			claimsNew = false;
+			checkClaims();
+		}
+	};
+	const noteUnmeasured = (): boolean => {
+		if (!claims.hasUnmeasured(lastClaimIds)) return false;
+		claimsNew = true;
+		return true;
+	};
+	const rereadGate = new QuietGate(reread, REREAD_QUIET_MS, REREAD_MAX_MS, options.schedule);
+	host.register(() => rereadGate.destroy());
+
+	// A `<body>`/`<html>` class moved without a css-change (see
+	// watchPageClasses). Nothing to do unless it moved a page condition the
+	// published answer rests on: what keeps an id from the theme outright
+	// (`offKey`), or which rules of a measured id the page switches off
+	// (`pageState` - a verdict is built rule by rule). When it did, ownership
+	// follows now and the two re-reads through the gate, as for a nudge.
+	const pageMoved = (): void => {
+		if (keyOf(pageOff()) === offKey && claims.pageStateKey(lastClaimIds) === pageState) return;
+		syncRows();
+		claimsOwed = true;
+		rereadGate.request();
+	};
+	const stopWatching = (options.watchPage ??
+		((onChange: () => void) =>
+			watchPageClasses(host.app.workspace.containerEl.ownerDocument, onChange)))(pageMoved);
+	host.register(stopWatching);
+
 	// Closing an unsaved draft can release a newly theme-owned id without
 	// changing generated CSS (for example with the fallback disabled).
-	const previewChanged = (): void => { if (syncRows() > 0) probe(); };
+	const previewChanged = (): void => {
+		if (syncRows() > 0) probe();
+		if (noteUnmeasured()) rereadGate.request();
+	};
 	host.registry.onPreviewChange(previewChanged);
 	host.register(() => host.registry.offPreviewChange(previewChanged));
 
 	sweep(true);
-	probe();
+	claimsOwed = true;
+	rereadGate.request(true);
 
 	const resweep = (): void => {
 		sweep(true);
-		probe();
+		claimsOwed = true;
+		rereadGate.request(true);
 	};
 	host.registerEvent(
-		host.app.workspace.on("css-change", () => {
-
-			appearance.invalidate();
+		host.app.workspace.on("css-change", (data?: unknown) => {
+			// The claim check switches this plugin's CSS off while it measures,
+			// so this plugin's own CSS moving cannot change a verdict.
+			const theirs = !isOwnCssChange(data);
+			let restyledNow = false;
 			host.registry.batch(() => {
-				host.registry.setThemeAppearances(new Map());
-				sweep();
+				restyledNow = restyled();
+				if (restyledNow) {
+					// A different theme or snippet text: nothing measured
+					// under the old one is true, and the rows repaint before
+					// the new readings can land, so none may be published.
+					appearance.invalidate();
+					nudged = false;
+					host.registry.setThemeAppearances(new Map());
+					if (theirs) claims.invalidate();
+				}
+				syncRows();
 			});
+			if (theirs) claimsOwed = true;
+			// A name no pass has been asked about - most often this plugin's own
+			// css-change after an import, an alias or another plugin's callout.
+			else noteUnmeasured();
+			// The same styling nudged from outside (a size, an accent, a mode,
+			// an option): the readings on hand are this theme's own, and the
+			// pass that follows replaces them. Clearing first only flashed
+			// placeholders and announced the same readings twice, and a drag
+			// asks this once per step - so it is folded, and its invalidation
+			// is applied when the pass runs, not now.
+			const nudge = theirs && !restyledNow;
+			if (nudge) {
+				nudged = true;
+			} else if (!restyledNow) {
+				// Our own css-change: re-read at once, as it always did. The
+				// invalidation made here covers any a folded step still owed.
+				nudged = false;
+				appearance.invalidate({ keepAnswers: true });
+			}
 			host.cssInjector.inject(false);
-			probe();
+			rereadGate.request(!nudge);
 		}),
 	);
 	return resweep;
