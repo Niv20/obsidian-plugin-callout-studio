@@ -279,6 +279,19 @@ describe("matching a parsed rule against the callout the check rendered", () => 
 		assert.strictEqual(resolveNested('[title="&"]', ".p"), ':is(.p) [title="&"]');
 	});
 
+	it("never reads an alternative inside :is() or :where() as required", () => {
+		// `body:is(.theme-light, .theme-dark)` needs neither mode; reading both as
+		// required made the rule look switched off in every mode.
+		assert.deepStrictEqual(
+			[...classesIn('body:is(.theme-light, .theme-dark) .callout[data-callout="note"]:hover')],
+			["callout"],
+		);
+		assert.deepStrictEqual([...classesIn(":where(.mod-windows, .mod-macos) .a:has(.b)")], ["a"]);
+		const off = (cls: string): boolean => cls === "theme-dark" || cls === "theme-light";
+		assert.strictEqual(optionGated("body:is(.theme-light, .theme-dark) .callout", off), false);
+		assert.strictEqual(optionGated(".theme-dark .callout", off), true);
+	});
+
 	it("lists the classes a selector requires, never those it negates", () => {
 		assert.deepStrictEqual(
 			[...classesIn('body.opt .callout[data-callout="a.b"]:not(.off) .x\\.y')],

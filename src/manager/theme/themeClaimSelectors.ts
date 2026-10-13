@@ -249,13 +249,20 @@ export function resolveNested(child: string, parent: string): string {
 
 const CLASS_TOKEN = /^\.((?:[\w-]|[\u0080-\uffff]|\\[\s\S])+)/;
 
-/** The class names a selector requires, `:not()` contents excluded. */
+/**
+ * The class names a selector requires outright. Nothing inside a functional
+ * pseudo-class counts: `:not()` excludes, and `:is()`, `:where()`, `:has()`
+ * and their kin offer alternatives or look elsewhere -
+ * `body:is(.theme-light, .theme-dark)` requires neither mode, and reading both
+ * as required made such a rule look switched off in every mode.
+ */
 export function classesIn(selector: string): Set<string> {
-	const visible = blankNegations(selector);
 	const out = new Set<string>();
-	eachPlainIndex(visible, (i) => {
-		if (visible[i] !== ".") return;
-		const m = CLASS_TOKEN.exec(visible.slice(i));
+	eachPlainIndex(selector, (i) => {
+		const ch = selector[i];
+		if (ch === "(") return matchParen(selector, i) + 1;
+		if (ch !== ".") return;
+		const m = CLASS_TOKEN.exec(selector.slice(i));
 		if (!m) return;
 		out.add(unescapeCss(m[1] ?? ""));
 		return i + m[0].length;
