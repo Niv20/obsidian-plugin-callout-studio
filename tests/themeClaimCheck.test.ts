@@ -193,6 +193,41 @@ describe("what the theme draws", () => {
 		}));
 });
 
+describe("where the callouts are drawn", () => {
+	it("mirrors Obsidian's Live Preview widget, a .markdown-rendered child of .cm-embed-block.cm-callout", () =>
+		withCallouts(async () => {
+			// Obsidian draws a Live Preview callout as
+			// `div.cm-embed-block.cm-callout > div.markdown-rendered > div.callout`
+			// (snippets in the wild select `.cm-callout:has(> div.markdown-rendered
+			// > [data-callout…])`), so a theme's `.cm-callout > .markdown-rendered
+			// > .callout` must reach the clone the check reads.
+			const h = harness([rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"])]);
+			const chains = new Set<string>();
+			const base = reader(h);
+			const claims = new ThemeClaimCheck(h.app, {
+				read: (el, pseudo) => {
+					const callout = el.closest(".callout");
+					const parent = callout?.parentElement;
+					const widget = parent?.parentElement;
+					if (callout && parent && widget?.classList.contains("cm-callout")) {
+						chains.add(
+							[widget, parent, callout]
+								.map((node) => `${node.tagName.toLowerCase()}.${node.className.trim().split(/\s+/).join(".")}`)
+								.join(" > "),
+						);
+					}
+					return base(el, pseudo);
+				},
+				properties: () => ["color", "cursor", "display", "content"],
+				nextTask: () => Promise.resolve(),
+			});
+			await claims.check(request(h, ["note"]));
+			assert.deepStrictEqual([...chains], [
+				"div.cm-embed-block.cm-callout > div.markdown-rendered > div.callout",
+			]);
+		}));
+});
+
 describe("what the check leaves behind", () => {
 	it("puts every rule back exactly as it was", () =>
 		withCallouts(async () => {

@@ -537,7 +537,9 @@ Two checks, aimed where a wrong answer costs something:
   Retroma's 312 types come back the moment its option is turned on.
 - **A measured difference, for ids that carry a design of their own** -
   built-ins, and callouts the user or another plugin made. Each is rendered offscreen
-  in Reading view's ancestry and cloned into Live Preview's, read with every
+  in Reading view's ancestry and cloned into Live Preview's (Obsidian's widget
+  is `div.cm-embed-block.cm-callout > div.markdown-rendered > div.callout`;
+  `.markdown-rendered` is a child there, not a class on the widget), read with every
   theme rule naming it switched off (`withoutName` rewrites the parsed
   `selectorText` to a value no callout can carry), read again with them back,
   and compared (`changesVisibly`). An id whose rules change nothing is

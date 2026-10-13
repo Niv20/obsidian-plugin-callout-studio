@@ -328,6 +328,9 @@ export class ThemeClaimCheck {
 			const id = obsidianCalloutAttrId(reading.getAttribute("data-callout") ?? "");
 			if (!wanted.has(id) || out.has(id)) continue;
 			const live = reading.cloneNode(true) as HTMLElement;
+			// Obsidian's own widget: `.markdown-rendered` is a child of
+			// `.cm-embed-block.cm-callout`, not a class on it (snippets in the
+			// wild select `.cm-callout:has(> div.markdown-rendered > …)`).
 			lines
 				.createDiv({ cls: "cm-embed-block cm-callout" })
 				.createDiv({ cls: "markdown-rendered" })
