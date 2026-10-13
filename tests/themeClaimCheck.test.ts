@@ -685,6 +685,38 @@ settings:
 			assert.deepStrictEqual([...claims.unstyled(["note"])], ["note"]);
 		}));
 
+	it("keeps a callout whose rule nests a hover the render cannot see", () =>
+		withCallouts(async () => {
+			// `.callout[…]:hover` written flat stays the theme's; the same written as
+			// `&:hover` inside the id's rule used to be handed back.
+			const parent: FakeRule = {
+				selectorText: '.callout[data-callout="note"]',
+				parentRule: null,
+				sets: ["callout-title", "cursor", "x"],
+				cssRules: [],
+			};
+			parent.cssRules = [{ selectorText: "&:hover", parentRule: parent, sets: ["callout-title", "color", "red"], under: "hovered" }];
+			const h = harness([parent]);
+			const claims = check(h);
+			await claims.check(request(h, ["note"]));
+			assert.deepStrictEqual([...claims.unstyled(["note"])], []);
+		}));
+
+	it("judges past a nested rule the page switches off", () =>
+		withCallouts(async () => {
+			const parent: FakeRule = {
+				selectorText: '.callout[data-callout="note"]',
+				parentRule: null,
+				sets: ["callout-title", "cursor", "x"],
+				cssRules: [],
+			};
+			parent.cssRules = [{ selectorText: "body.opt-off &", parentRule: parent, sets: ["callout-title", "color", "red"], under: "opt-off" }];
+			const h = harness([parent]);
+			const claims = check(h);
+			await claims.check(request(h, ["note"]));
+			assert.deepStrictEqual([...claims.unstyled(["note"])], ["note"]);
+		}));
+
 	it("judges past a rule for the other appearance mode, and measures it in its own", () =>
 		withCallouts(async () => {
 			// `.theme-dark …` draws nothing in light mode - written bare as often as

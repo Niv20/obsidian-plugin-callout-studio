@@ -169,6 +169,44 @@ function groupsHold(rule: CSSRule, doc: Document): boolean {
 	return true;
 }
 
+/**
+ * Whether everything nested inside `rule` is accounted for by `seen`: child
+ * style rules (`&:hover`, `& .callout-title`, `&.is-collapsed`), through any
+ * `@media` or `@supports` around them, and the bare declarations nested after
+ * or inside those (in force where their owning rule is, under the groups
+ * around them). A theme that writes `&:hover` inside the id's rule draws on
+ * hover exactly as one that writes `.callout[…]:hover` beside it, and the
+ * render sees neither.
+ */
+export function nestedRulesSeen(
+	rule: StyleRule,
+	seen: (rule: StyleRule) => boolean,
+	doc: Document,
+): boolean {
+	const walk = (list: CSSRuleList | undefined, owner: StyleRule): boolean => {
+		if (!list) return true;
+		for (const child of Array.from(list)) {
+			if (isStyleRule(child)) {
+				if (!seen(child) || !walk(cssRulesOf(child), child)) return false;
+				continue;
+			}
+			const inner = cssRulesOf(child);
+			if (inner) {
+				if (!walk(inner, owner)) return false;
+				continue;
+			}
+			// `CSSNestedDeclarations`: declarations with no selector of their own.
+			if ("style" in child && !(groupsHold(child, doc) && seen(owner))) return false;
+		}
+		return true;
+	};
+	return walk(cssRulesOf(rule), rule);
+}
+
+function cssRulesOf(rule: CSSRule): CSSRuleList | undefined {
+	return (rule as CSSRule & { cssRules?: CSSRuleList }).cssRules;
+}
+
 /** Does `rule` apply, right now, to one of `boxes`? */
 export function ruleInForce(rule: StyleRule, boxes: Iterable<Element>, doc: Document): boolean {
 	if (!groupsHold(rule, doc)) return false;

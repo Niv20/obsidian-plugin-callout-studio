@@ -565,7 +565,9 @@ Two checks, aimed where a wrong answer costs something:
   published as not owned (`syncThemeOverlayRows`' `notDrawn`), so this plugin
   keeps painting it.
 - **Only rules the measurement saw count** (`rulesSeen`). An id is judged at
-  all only when every parsed rule naming it is either *in force* on a box of
+  all only when every parsed rule naming it - and everything nested inside one
+  in force (`nestedRulesSeen`: `&:hover`, `&.is-collapsed`, a nested `@media`,
+  the declarations inside it), exactly as if written flat - is either *in force* on a box of
   the rendered callout - its selector, nesting folded in (`resolveNested`) and
   pseudo-elements stripped (`stripPseudoElements`), matches one in either view,
   under every `@media`/`@supports` around it holding - or *switched off by the

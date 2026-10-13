@@ -44,6 +44,7 @@ import { changesVisibly, sampledStyle, type CalloutStyle } from "./themeClaimEff
 import { namesInSelector, styleSettingsClasses, withoutName } from "./themeClaimSelectors";
 import {
 	indexRules,
+	nestedRulesSeen,
 	optionGatedRule,
 	pageRootTest,
 	ruleInForce,
@@ -465,7 +466,13 @@ export class ThemeClaimCheck {
 			const rules = index.get(id) ?? [];
 			const seen = (rule: (typeof rules)[number]): boolean =>
 				pageOff(rule) || optionGatedRule(rule, options, doc) || ruleInForce(rule, boxes, doc);
-			if (rules.every(seen)) {
+			// A rule switched off by the page takes its nested rules with it; one
+			// in force needs them seen too (`&:hover` inside it, a nested @media).
+			const seenWithNested = (rule: (typeof rules)[number]): boolean =>
+				pageOff(rule) ||
+				optionGatedRule(rule, options, doc) ||
+				(ruleInForce(rule, boxes, doc) && nestedRulesSeen(rule, seen, doc));
+			if (rules.every(seenWithNested)) {
 				out.add(id);
 			}
 		}
