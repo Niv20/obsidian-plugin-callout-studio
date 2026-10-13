@@ -11,10 +11,14 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { MarkdownRenderer } from "obsidian";
+import { Component, MarkdownRenderer } from "obsidian";
 import type { App } from "obsidian";
 import { FakeElement, installFakeDom } from "./support/fakeDom";
-import { ThemeClaimCheck, type ClaimCheckRequest } from "../src/manager/theme/ThemeClaimCheck";
+import {
+	everyComputedProperty,
+	ThemeClaimCheck,
+	type ClaimCheckRequest,
+} from "../src/manager/theme/ThemeClaimCheck";
 import { namesInSelector } from "../src/manager/theme/themeClaimSelectors";
 import type { ComputedStyleReader } from "../src/manager/theme/readCalloutStyle";
 import { isOwnCssChange, OWN_CSS_CHANGE } from "../src/manager/ownCssChange";
@@ -440,6 +444,101 @@ describe("what the check leaves behind", () => {
 			assert.strictEqual(h.studio.restored, 1);
 			assert.strictEqual(h.studio.on, true);
 		}));
+
+	it("puts every rule and this plugin's CSS back when a read throws", () =>
+		withCallouts(async () => {
+			const rules = [rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"])];
+			const before = rules.map((r) => r.selectorText);
+			const h = harness(rules);
+			const claims = new ThemeClaimCheck(h.app, {
+				read: () => {
+					throw new Error("a read the browser refused");
+				},
+				properties: () => ["color"],
+				nextTask: () => Promise.resolve(),
+			});
+			let changes = 0;
+			await claims.check(request(h, ["note"], () => changes++));
+			assert.deepStrictEqual(rules.map((r) => r.selectorText), before);
+			assert.strictEqual(h.studio.on, true);
+			assert.strictEqual(h.studio.suspended, h.studio.restored);
+			assert.strictEqual(changes, 0, "a failed pass publishes nothing");
+			assert.deepStrictEqual([...claims.unstyled(["note"])], []);
+		}));
+
+	it("re-reads the theme from its text if a rule will not switch back on", () =>
+		withCallouts(async () => {
+			// The browser's own serialisation always parses back, so this is a
+			// last resort - but a rule left off would stay off until Obsidian
+			// reloaded the theme.
+			let selector = '.callout[data-callout="note"]';
+			let rewrites = 0;
+			const sticky: FakeRule = {
+				get selectorText() {
+					return selector;
+				},
+				set selectorText(value: string) {
+					if (rewrites++ === 0) selector = value;
+				},
+				parentRule: null,
+				sets: ["callout-title", "cursor", "x"],
+			};
+			const h = harness([sticky], "the theme's own text");
+			const styleEl = (h.app as unknown as { customCss: { styleEl: { textContent: string } } }).customCss.styleEl;
+			const written: string[] = [];
+			let text = styleEl.textContent;
+			Object.defineProperty(styleEl, "textContent", {
+				get: () => text,
+				set: (value: string) => {
+					written.push(value);
+					text = value;
+				},
+			});
+			await check(h).check(request(h, ["note"]));
+			assert.deepStrictEqual(written, ["the theme's own text"]);
+		}));
+
+	it("gives each pass's render its own owner and lets it go after", () =>
+		withCallouts(async () => {
+			// Fields typed as plain functions, so saving and restoring them is
+			// not an unbound-method read.
+			const proto = Component.prototype as unknown as {
+				load: (this: Component) => void;
+				unload: (this: Component) => void;
+			};
+			const load = proto.load;
+			const unload = proto.unload;
+			let live = 0;
+			proto.load = function (this: Component) {
+				live++;
+				load.call(this);
+			};
+			proto.unload = function (this: Component) {
+				live--;
+				unload.call(this);
+			};
+			try {
+				const h = harness([rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"])]);
+				const claims = check(h);
+				await claims.check(request(h, ["note"]));
+				await claims.check(request(h, ["note", "tip"]));
+				assert.strictEqual(live, 0, "nothing the renders attached outlives them");
+			} finally {
+				proto.load = load;
+				proto.unload = unload;
+			}
+		}));
+
+	it("compares every computed longhand but no custom property", () => {
+		const names = ["color", "--anuppuccin-accent", "display", "--callout-color"];
+		const doc = {
+			body: {},
+			defaultView: {
+				getComputedStyle: () => ({ length: names.length, item: (i: number) => names[i] ?? "" }),
+			},
+		} as unknown as Document;
+		assert.deepStrictEqual(everyComputedProperty(doc), ["color", "display"]);
+	});
 
 	it("leaves the offscreen callouts nowhere in the document", () =>
 		withCallouts(async () => {

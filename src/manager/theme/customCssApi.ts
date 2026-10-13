@@ -96,6 +96,17 @@ export function themeSheet(app: App): CSSStyleSheet | null {
 	return api(app)?.styleEl?.sheet ?? null;
 }
 
+/**
+ * Have the browser parse the theme's `<style>` again from its own text,
+ * discarding any change made to the parsed copy. `ThemeClaimCheck`'s last
+ * resort if a rule it switched off would not switch back on.
+ */
+export function reparseTheme(app: App): void {
+	const el = api(app)?.styleEl;
+	const text = el?.textContent;
+	if (el && typeof text === "string") el.textContent = text;
+}
+
 /** Enabled snippet names, in the order Obsidian loads them. */
 export function enabledSnippetNames(app: App): string[] {
 	const css = api(app);

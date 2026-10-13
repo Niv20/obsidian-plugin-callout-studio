@@ -663,6 +663,17 @@ Decisions in the measurement:
   check existed, 26.7 s with a pass per event, 2.5 s with the gate.
   [When theme appearance refreshes](#when-theme-appearance-refreshes) has the
   rest of what a `css-change` costs.
+- **Nothing outlives a pass.** Every rule and this plugin's CSS are restored
+  in `finally`, a read that throws included; and since a rule left switched
+  off would stay off until Obsidian reloaded the theme, a rule whose restored
+  `selectorText` does not read back as written makes the check re-parse the
+  theme from its own text (`reparseTheme`) - a last resort, as the browser's
+  own serialisation always parses back. The render's owner (`Component`) is
+  one per pass in both the claim check and the appearance probe, unloaded
+  with the host, so whatever post-processors attach is not kept for the
+  session. Custom properties are left out of the compared list
+  (`everyComputedProperty`): `changesVisibly` never counts one, and a theme can
+  define a thousand on `<body>`.
 - **The probe hosts are left unpainted.** `CSSInjector.paintIcons` skips
   callouts inside `.cs-theme-probe`; painting there re-read a computed value
   after each DOM write, a style recalc per callout.

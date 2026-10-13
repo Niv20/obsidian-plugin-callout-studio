@@ -73,7 +73,6 @@ export type { ComputedStyleReader } from "./readCalloutStyle";
 const HOST_CLASS = "cs-theme-probe";
 
 export class ThemeAppearanceProbe {
-	private readonly component = new Component();
 	private cache: Map<string, ThemeAppearance> = new Map();
 	private signature: string | null = null;
 	private generation = 0;
@@ -86,9 +85,7 @@ export class ThemeAppearanceProbe {
 	constructor(
 		private readonly app: App,
 		private readonly read: ComputedStyleReader = domReader,
-	) {
-		this.component.load();
-	}
+	) {}
 
 	/**
 	 * What the theme does to this callout, or the unknown appearance when the
@@ -242,6 +239,10 @@ export class ThemeAppearanceProbe {
 		host.setAttribute("aria-hidden", "true");
 		const target = host.createDiv({ cls: "markdown-rendered" });
 		const out = new Map<string, ThemeAppearance>();
+		// One owner per pass for whatever the render attaches, unloaded with
+		// the host rather than kept for the session.
+		const component = new Component();
+		component.load();
 		try {
 			await MarkdownRenderer.render(
 				this.app,
@@ -251,7 +252,7 @@ export class ThemeAppearanceProbe {
 				attrIds.map((id) => `> [!${id}] `).join("\n\n"),
 				target,
 				"",
-				this.component,
+				component,
 			);
 			// Each rendered callout names its own id, so ask it rather than
 			// counting. Reading `rendered[index]` instead assumes the renderer
@@ -274,13 +275,13 @@ export class ThemeAppearanceProbe {
 			}
 		} finally {
 			host.remove();
+			component.unload();
 		}
 		return out;
 	}
 
 	destroy(): void {
 		this.destroyed = true;
-		this.component.unload();
 		this.cache = new Map();
 		this.pending = null;
 	}

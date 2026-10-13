@@ -37,7 +37,7 @@
  */
 import { Component, MarkdownRenderer, Platform, type App } from "obsidian";
 import { obsidianCalloutAttrId } from "../../utils/calloutId";
-import { themeCss, themeSheet, themeSignature } from "./customCssApi";
+import { reparseTheme, themeCss, themeSheet, themeSignature } from "./customCssApi";
 import { localClaimVerdicts, type ClaimVerdictStore } from "./themeClaimCache";
 import { domReader, type ComputedStyleReader } from "./readCalloutStyle";
 import { changesVisibly, sampledStyle, type CalloutStyle } from "./themeClaimEffect";
@@ -131,15 +131,22 @@ function finishTransitions(el: Element): void {
 /** Ids per synchronous pass on a phone or tablet - see {@link ThemeClaimCheck.compare}. */
 const MOBILE_BATCH = 8;
 
-function everyComputedProperty(doc: Document): readonly string[] {
+/**
+ * Every computed longhand, custom properties left out: `changesVisibly` never
+ * counts one (what it changes shows up in the properties that read it), and a
+ * theme can define a thousand of them on `<body>`, each read off every box.
+ */
+export function everyComputedProperty(doc: Document): readonly string[] {
 	const style = (doc.defaultView ?? window).getComputedStyle(doc.body);
 	const out: string[] = [];
-	for (let i = 0; i < style.length; i++) out.push(style.item(i));
+	for (let i = 0; i < style.length; i++) {
+		const name = style.item(i);
+		if (!name.startsWith("--")) out.push(name);
+	}
 	return out;
 }
 
 export class ThemeClaimCheck {
-	private readonly component = new Component();
 	private readonly indexes = new WeakMap<CSSStyleSheet, RuleIndex>();
 	/** Per parsed sheet: the class names its Style Settings block can put on `<body>`. */
 	private readonly optionClassSets = new WeakMap<CSSStyleSheet, Set<string>>();
@@ -178,7 +185,6 @@ export class ThemeClaimCheck {
 		this.nextTask = options.nextTask ?? nextIdleTask;
 		this.batchSize = Math.max(1, options.batchSize ?? (Platform.isMobile ? MOBILE_BATCH : Infinity));
 		this.store = options.store ?? localClaimVerdicts(app);
-		this.component.load();
 	}
 
 	/**
@@ -297,7 +303,6 @@ export class ThemeClaimCheck {
 		this.verdicts = new Map();
 		this.verdictSignature = null;
 		this.asked = new Set();
-		this.component.unload();
 	}
 
 	/** The main window's document — see `ThemeAppearanceProbe.mainDocument`. */
@@ -331,8 +336,12 @@ export class ThemeClaimCheck {
 		const doc = this.mainDocument();
 		const host = doc.body.createDiv({ cls: HOST_CLASS });
 		host.setAttribute("aria-hidden", "true");
+		// One owner per pass for whatever the render attaches (post-processor
+		// children), unloaded with the host rather than kept for the session.
+		const component = new Component();
+		component.load();
 		try {
-			const rendered = await this.render(host, wanted);
+			const rendered = await this.render(host, wanted, component);
 			if (this.destroyed || generation !== this.generation) return null;
 			// An id with a rule the measurement cannot see in force stays the
 			// theme's whatever the comparison says - see `rulesSeen`.
@@ -351,6 +360,7 @@ export class ThemeClaimCheck {
 			return out;
 		} finally {
 			host.remove();
+			component.unload();
 		}
 	}
 
@@ -358,7 +368,11 @@ export class ThemeClaimCheck {
 	 * Every wanted id once in reading view's ancestry and once in Live
 	 * Preview's, because a theme may style either alone.
 	 */
-	private async render(host: HTMLElement, ids: readonly string[]): Promise<Map<string, Rendered>> {
+	private async render(
+		host: HTMLElement,
+		ids: readonly string[],
+		component: Component,
+	): Promise<Map<string, Rendered>> {
 		// A note's own ancestry, both views under one leaf as in a real pane,
 		// so a theme rule scoped to `.markdown-reading-view` or to a markdown
 		// leaf is in force here as it is on the page.
@@ -384,7 +398,7 @@ export class ThemeClaimCheck {
 			ids.map((id) => `> [!${id}]\n> x\n> - x`).join("\n\n"),
 			section,
 			"",
-			this.component,
+			component,
 		);
 		const wanted = new Set(ids);
 		const out = new Map<string, Rendered>();
@@ -582,6 +596,13 @@ export class ThemeClaimCheck {
 			rules.forEach((rule, i) => {
 				rule.selectorText = original[i] ?? rule.selectorText;
 			});
+			// The browser's own serialisation always parses back, so this should
+			// never fire; if it ever did, a theme rule would stay switched off
+			// until Obsidian reloaded the theme. Re-reading the theme's own text
+			// is the one way back to exactly what it wrote.
+			if (rules.some((rule, i) => rule.selectorText !== original[i])) {
+				reparseTheme(this.app);
+			}
 		}
 	}
 
