@@ -29,7 +29,7 @@ import { describe, it } from "node:test";
 import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { ThemeCalloutStore } from "../src/manager/theme/ThemeCalloutStore";
-import { registerThemeAppearance } from "../src/manager/theme/themeAppearanceSync";
+import { registerThemeAppearance, watchPageClasses } from "../src/manager/theme/themeAppearanceSync";
 import type { ClaimCheckRequest } from "../src/manager/theme/ThemeClaimCheck";
 import { OWN_CSS_CHANGE } from "../src/manager/ownCssChange";
 import { discovered, definition } from "./support/discoveryHarness";
@@ -216,6 +216,98 @@ function countingClaims() {
 		destroy: () => {},
 	};
 }
+
+describe("a page class that moves without a css-change", () => {
+	// Obsidian moves `is-focused` and `is-fullscreen` on <body> by itself and a
+	// plugin may set a class of its own, with no event. A theme rule behind
+	// `body.some-class` is claimed only while the class is on.
+	function start() {
+		const t = themeHost('body.opt .callout[data-callout="note"] { color: red; }');
+		const registry = vault();
+		const { host, disposers } = syncHost(registry, t.app);
+		let off = new Set<string>(["note"]);
+		const claims = { ...countingClaims(), pageRootOff: () => new Set(off) };
+		let pageChanged = (): void => {};
+		let watching = 0;
+		const clock = manualClock();
+		registerThemeAppearance(host, {
+			claims,
+			schedule: clock.schedule,
+			watchPage: (onChange) => {
+				pageChanged = onChange;
+				watching++;
+				return () => watching--;
+			},
+		});
+		return {
+			registry,
+			claims,
+			clock,
+			disposers,
+			setOff: (ids: string[]) => {
+				off = new Set(ids);
+			},
+			pageChanged: () => pageChanged(),
+			watching: () => watching,
+		};
+	}
+
+	it("hands a callout to the theme when the class arrives, and back when it goes", () => {
+		const s = start();
+		const note = (): boolean => s.registry.themeOwns(s.registry.get("note")!);
+		assert.strictEqual(note(), false, "the option is off");
+		s.setOff([]);
+		s.pageChanged();
+		assert.strictEqual(note(), true, "the class arrived");
+		s.setOff(["note"]);
+		s.pageChanged();
+		assert.strictEqual(note(), false, "and went");
+	});
+
+	it("does nothing for a class change no theme condition depends on", () => {
+		const s = start();
+		s.clock.advance(1000);
+		const asked = s.claims.asked.length;
+		s.pageChanged();
+		s.clock.advance(1000);
+		assert.strictEqual(s.claims.asked.length, asked);
+	});
+
+	it("watches only the class attribute of <body> and <html>", () => {
+		const observed: Array<[unknown, unknown]> = [];
+		let disconnected = 0;
+		let fire = (): void => {};
+		class Observer {
+			constructor(cb: () => void) {
+				fire = cb;
+			}
+			observe(el: unknown, init: unknown): void {
+				observed.push([el, init]);
+			}
+			disconnect(): void {
+				disconnected++;
+			}
+		}
+		const doc = { defaultView: { MutationObserver: Observer }, body: "BODY", documentElement: "HTML" };
+		let changes = 0;
+		const stop = watchPageClasses(doc as unknown as Document, () => changes++);
+		assert.deepStrictEqual(observed, [
+			["HTML", { attributes: true, attributeFilter: ["class"] }],
+			["BODY", { attributes: true, attributeFilter: ["class"] }],
+		]);
+		fire();
+		assert.strictEqual(changes, 1);
+		stop();
+		assert.strictEqual(disconnected, 1);
+	});
+
+	it("stops watching when the plugin unloads", () => {
+		const s = start();
+		assert.strictEqual(s.watching(), 1);
+		for (const dispose of s.disposers) dispose();
+		assert.strictEqual(s.watching(), 0);
+	});
+});
 
 describe("the claim check across a burst of css-change", () => {
 	/** A theme that names a built-in, so there is something to measure. */

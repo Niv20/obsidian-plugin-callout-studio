@@ -120,6 +120,23 @@ describe("a <body> or <html> condition that fails right now", () => {
 		assert.strictEqual(pageRootFails("html.dark .callout", page([], ["dark"])), false);
 	});
 
+	it("leaves a condition that moves without an event unjudged", () => {
+		// `:has()` follows the whole document and `:hover`/`:focus*` the pointer;
+		// a page that fails them now may meet them a moment later with nothing
+		// telling the theme sync, so they never take a callout from the theme.
+		const never = (): boolean => false;
+		for (const selector of [
+			'body:has(.mod-active .is-live-preview) .callout[data-callout="note"]',
+			"body:hover .callout",
+			":root:focus-within .callout",
+			"body.opt:has(.x) .callout",
+			"html:not(:focus) .callout",
+		]) {
+			assert.strictEqual(pageRootFails(selector, never), false, selector);
+		}
+		assert.strictEqual(pageRootFails("body.opt .callout", never), true, "a class is still judged");
+	});
+
 	it("treats a condition it cannot evaluate as met", () => {
 		const throws = (): boolean => {
 			throw new Error("SyntaxError");

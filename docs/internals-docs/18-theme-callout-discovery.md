@@ -536,7 +536,15 @@ Two checks, aimed where a wrong answer costs something:
   against a rule here (the measurement below reads it as an option only when
   the theme's Style Settings block offers it). Style Settings fires
   `css-change` when an option flips, so Retroma's 312 types come back the
-  moment its option is turned on.
+  moment its option is turned on. Not every class on `<body>` moves with an
+  event - Obsidian toggles `is-focused` and `is-fullscreen` itself, and a
+  plugin may set one of its own - so the sync also watches the `class`
+  attribute of `<body>` and `<html>` (`watchPageClasses`, a `MutationObserver`
+  on those two elements only) and re-derives ownership when the set of ids a
+  page condition keeps off moves. A condition that moves with no event at all -
+  `:has()`, which follows the whole document, and the user-action
+  pseudo-classes (`:hover`, `:focus-within`, …) - is never judged: it cannot
+  take a callout from the theme.
 - **A measured difference, for ids that carry a design of their own** -
   built-ins, and callouts the user or another plugin made. Each is rendered offscreen
   in a note's ancestry - `.workspace-leaf-content[data-type="markdown"] >

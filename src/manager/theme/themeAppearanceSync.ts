@@ -29,6 +29,30 @@ export interface ThemeSyncOptions {
 	appearance?: Pick<ThemeAppearanceProbe, "ensure" | "results" | "invalidate" | "destroy">;
 	claims?: Pick<ThemeClaimCheck, "invalidate" | "pageRootOff" | "unstyled" | "check" | "destroy">;
 	schedule?: GateScheduler;
+	/** Calls back when `<body>`/`<html>` classes change; returns its own undo. */
+	watchPage?: (onChange: () => void) => () => void;
+}
+
+/**
+ * Call `onChange` whenever the class list of `<body>` or `<html>` changes.
+ *
+ * A theme rule behind `body.some-class` is claimed only while the class is on
+ * (`ThemeClaimCheck.pageRootOff`), and most such classes are theme options,
+ * whose Style Settings toggle fires `css-change`. Not all: Obsidian moves
+ * `is-focused`, `is-fullscreen` and friends on its own, and another plugin may
+ * set a class of its own, with no event at all. Only the `class` attribute of
+ * those two elements is watched, so the cost is a callback per toggle.
+ */
+export function watchPageClasses(doc: Document, onChange: () => void): () => void {
+	const Observer =
+		doc.defaultView?.MutationObserver ??
+		(typeof MutationObserver === "undefined" ? undefined : MutationObserver);
+	if (!Observer) return () => {};
+	const observer = new Observer(() => onChange());
+	for (const el of [doc.documentElement, doc.body]) {
+		if (el) observer.observe(el, { attributes: true, attributeFilter: ["class"] });
+	}
+	return () => observer.disconnect();
 }
 
 export interface ThemeSyncHost {
@@ -111,10 +135,17 @@ export function registerThemeAppearance(
 	const fingerprint = (): string =>
 		JSON.stringify([stylingSignature(host.app), themeCss(host.app), enabledSnippetCss(host.app)]);
 	// What the theme names, less what it names only behind a page condition
-	// that is off right now — see ThemeClaimCheck.
+	// that is off right now — see ThemeClaimCheck. `offKey` is the answer the
+	// published ownership was built on, so a page change can tell whether it
+	// moved anything.
+	let offKey = "";
+	const pageOff = (): Set<string> =>
+		claims.pageRootOff(host.cssInjector.themeCallouts().themeDefinedIds());
+	const keyOf = (off: ReadonlySet<string>): string => [...off].sort().join("\n");
 	const declared = (): ReadonlySet<string> => {
 		const named = host.cssInjector.themeCallouts().themeDefinedIds();
 		const off = claims.pageRootOff(named);
+		offKey = keyOf(off);
 		return off.size === 0 ? named : new Set([...named].filter((id) => !off.has(id)));
 	};
 	// Every attribute form of the callouts whose design is lost if the theme is
@@ -217,6 +248,21 @@ export function registerThemeAppearance(
 	};
 	const rereadGate = new QuietGate(reread, REREAD_QUIET_MS, REREAD_MAX_MS, options.schedule);
 	host.register(() => rereadGate.destroy());
+
+	// A `<body>`/`<html>` class moved without a css-change (see
+	// watchPageClasses). Nothing to do unless it moved what a page condition
+	// keeps from the theme; when it did, ownership follows now and the two
+	// re-reads through the gate, as for a nudge.
+	const pageMoved = (): void => {
+		if (keyOf(pageOff()) === offKey) return;
+		syncRows();
+		claimsOwed = true;
+		rereadGate.request();
+	};
+	const stopWatching = (options.watchPage ??
+		((onChange: () => void) =>
+			watchPageClasses(host.app.workspace.containerEl.ownerDocument, onChange)))(pageMoved);
+	host.register(stopWatching);
 
 	// Closing an unsaved draft can release a newly theme-owned id without
 	// changing generated CSS (for example with the fallback disabled).

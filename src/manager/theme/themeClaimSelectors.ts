@@ -128,6 +128,15 @@ function compoundsOf(complex: string): string[] {
 /** Which page-wide element a compound has to be, if it names one. */
 export type PageRoot = "body" | "html";
 
+/**
+ * A condition on the page root that moves without any event this plugin hears:
+ * `:has()` follows the whole document, the user-action pseudo-classes follow
+ * the pointer and focus. A class on `<body>` is different - the theme sync
+ * watches those (`watchPageClasses`) - so only these are left unjudged.
+ */
+const UNSTABLE_ROOT_STATE =
+	/:(?:has|hover|focus|focus-within|focus-visible|active|target|target-within|fullscreen|modal|popover-open|picture-in-picture|playing|paused)(?![\w-])/i;
+
 function pageRootOf(compound: string): PageRoot | null {
 	if (/^body(?![\w-])/i.test(compound)) return "body";
 	if (/^(?:html(?![\w-])|:root(?![\w-]))/i.test(compound)) return "html";
@@ -144,8 +153,10 @@ function pageRootOf(compound: string): PageRoot | null {
  * compound that *is* the page root is asked — a bare class such as
  * `.aura-callouts` may sit on `<body>` or on the note, and only the note can
  * say which, so it is never held against a rule. `matches` throwing on a
- * selector it cannot parse counts as a match: an unreadable condition never
- * takes a callout away from a theme.
+ * selector it cannot parse counts as a match, and so does a condition that
+ * moves without an event (`:has()`, `:hover`): an unreadable or unstable
+ * condition never takes a callout away from a theme. A class on `<body>`
+ * moves without one too, but the theme sync watches those.
  */
 export function pageRootFails(
 	selector: string,
@@ -156,7 +167,7 @@ export function pageRootFails(
 	return list.every((complex) =>
 		compoundsOf(complex).some((compound) => {
 			const root = pageRootOf(compound);
-			if (root === null) return false;
+			if (root === null || UNSTABLE_ROOT_STATE.test(compound)) return false;
 			try {
 				return !matches(compound, root);
 			} catch {
