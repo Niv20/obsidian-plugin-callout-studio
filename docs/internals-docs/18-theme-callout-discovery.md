@@ -475,7 +475,13 @@ block format only. The heading and inline formats are this plugin's DOM, which
 no theme selector reaches, so they keep the callout's design under every name;
 the metadata dropdown follows the same split (`CalloutMetadataSuggest` offers no
 colour for a claimed name's block callout). The callout editor says which names
-the theme draws (`editor.namesFromTheme`), without blocking the save.
+the theme draws (`editor.namesFromTheme`), without blocking the save. It asks
+the published claim (`registry.themeClaimsName`), never the text scan: a name
+kept behind an option that is off, or one the claim check measured the theme
+not to draw, is painted by this plugin, and saying otherwise would be false.
+The same question picks the reason a taken primary id is refused - "your theme
+supplies it" (`editor.idFromTheme`) only while the theme really draws it,
+"already exists" (`editor.idExists`) when the row is the user's to edit.
 
 **A generic `.callout {}` rule owns nothing.** Of the 257 themes installed in
 the dev vault, only 63 name a callout id in `theme.css`; a large group styles

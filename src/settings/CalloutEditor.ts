@@ -1817,12 +1817,17 @@ export class CalloutEditor extends Modal {
 		this.idsTagInput.clearExternalError();
 	}
 
-	/** Does the active theme name this exact id? See {@link updateIdWarning}. */
+	/**
+	 * Does the active theme draw this exact id? See {@link updateIdWarning}.
+	 *
+	 * The published claim, not the text scan: the scan also lists a name the
+	 * theme keeps behind an option that is off, or names without changing
+	 * anything (Catppuccin restates core's icons for every built-in). Neither
+	 * is the theme's on the page - this plugin paints it - so telling the user
+	 * the theme draws it would be wrong, and so would refusing an id for it.
+	 */
 	private themeSuppliesId(id: string): boolean {
-		return this.plugin.cssInjector
-			.themeCallouts()
-			.themeDefinedIds()
-			.has(obsidianCalloutAttrId(id));
+		return this.plugin.registry.themeClaimsName(id);
 	}
 
 	/**

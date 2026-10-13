@@ -15,12 +15,22 @@ import { CalloutEditor } from "../src/settings/CalloutEditor";
 import type { CalloutEditorPlugin } from "../src/settings/editor/types";
 import { definition } from "./support/discoveryHarness";
 
-function editorFor(themeIds: string[], aliases: string[]) {
+/**
+ * `themeIds` is what the theme's text names; `drawn` is what the claim check
+ * published as the theme's (the registry's owned set). They differ when a rule
+ * sits behind an option that is off, or changes nothing on screen.
+ */
+function editorFor(
+	themeIds: string[],
+	aliases: string[],
+	drawn: string[] = themeIds,
+	newId?: string,
+) {
 	const registry = new CalloutRegistry();
 	registry.load({
 		callouts: [definition({ id: "описание", displayName: "Описание", aliases })],
 	});
-	registry.setThemeOwnedIds(new Set(themeIds));
+	registry.setThemeOwnedIds(new Set(drawn));
 	const app = { customCss: { theme: "Fixture" } } as unknown as App;
 	const plugin = {
 		app,
@@ -33,7 +43,13 @@ function editorFor(themeIds: string[], aliases: string[]) {
 			}),
 		},
 	} as unknown as CalloutEditorPlugin;
-	const editor = new CalloutEditor(plugin, registry.get("описание"));
+	const editor =
+		newId === undefined
+			? new CalloutEditor(plugin, registry.get("описание"))
+			: new CalloutEditor(plugin);
+	if (newId !== undefined) {
+		Object.assign(editor, { calloutId: newId, aliases: [] });
+	}
 	const shown: string[] = [];
 	let cleared = 0;
 	Object.assign(editor, {
@@ -58,5 +74,25 @@ describe("the callout editor on a name the theme draws", () => {
 		const { shown, cleared } = editorFor(["infobox"], ["вид"]);
 		assert.deepEqual(shown, []);
 		assert.equal(cleared(), 1);
+	});
+
+	it("says nothing for a name the theme names but does not draw", () => {
+		// Catppuccin restates core's own icon for every built-in, and Retroma
+		// keeps its types behind an option: the text names them, the page does
+		// not show them, and this plugin paints them. The note would be false.
+		const { shown, cleared } = editorFor(["description"], ["вид", "description"], []);
+		assert.deepEqual(shown, []);
+		assert.equal(cleared(), 1);
+	});
+
+	it("calls a taken id the user's own when the theme does not draw it", () => {
+		// A new callout named `note`: the built-in has it. Only when the theme
+		// really draws Note is "your theme supplies it" the right reason.
+		const own = editorFor(["note"], [], [], "note");
+		assert.deepEqual(own.shown, [t("editor.idExists")]);
+		const theirs = editorFor(["note"], [], ["note"], "note");
+		assert.deepEqual(theirs.shown, [
+			t("editor.idFromTheme", { theme: "Fixture" }),
+		]);
 	});
 });
