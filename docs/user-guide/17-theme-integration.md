@@ -48,9 +48,18 @@ To change a theme-owned callout, use the community **Style Settings** plugin if 
 
 ## When your theme uses only some of a callout's names
 
-A callout can have several IDs, for example `[!описание]`, `[!вид]` and `[!description]`. If your theme defines only some of them, the callout stays yours. It stays in your own list and you can still edit it. Block callouts written with a name your theme defines look the way the theme draws them; every other name keeps your design. Heading and Inline callouts keep your design under every name, because themes don't style those formats. When you open such a callout in the editor, a note under **Callout IDs** lists the names your theme draws. Remove a name there if you want to keep your design for all of them.
+A callout can have several IDs, for example `[!описание]`, `[!вид]` and `[!description]`. If your theme defines only some of them, the callout stays yours. It stays in your own list and you can still edit it. Block callouts written with a name your theme defines look the way the theme draws them; every other name keeps your design. Heading and Inline callouts keep your design under every name, because themes don't style those formats. When you open such a callout in the editor, a note under **Callout IDs** lists the names your theme draws. Blocks written with those names follow the theme whatever you set here; if you want your design there too, write those blocks with one of your other IDs.
 
 Built-in callouts work the same way, with one difference: Obsidian's own extra names for a built-in, such as `[!cite]` for Quote or `[!tldr]` for Abstract, don't count. A theme that restyles `[!quote]` takes the whole Quote callout even if it never mentions `[!cite]`, and Obsidian keeps drawing `[!cite]` as it always has. That stays true if you add an ID of your own to Quote: your ID uses your design, and `[!quote]` and `[!cite]` look as they did.
+
+## If a callout moved after an update
+
+Callout Studio checks whether your theme really draws each built-in callout, and each callout you made, that its stylesheet mentions. After updating to a version with this check you may notice:
+
+- **A callout left Callouts from your theme for your own list.** Your theme mentions it without changing how it looks, or only behind an option that is off. Callout Studio now draws it with your design, including changes you saved for it earlier that had no effect while the theme held it. To hand it back, turn the option on in **Style Settings**.
+- **A callout with several IDs stayed in your list although your theme styles one of them.** See [When your theme uses only some of a callout's names](#when-your-theme-uses-only-some-of-a-callouts-names).
+- **A theme type written in capital letters disappeared from Callouts from your theme.** Obsidian writes callout types in lower case, so a theme rule such as `[data-callout="I"]` never matched a note. Notes using that type are now treated like any other type Callout Studio doesn't know (see [Default fallback](#default-fallback)).
+- **One change of look at the first start.** The check runs once after Obsidian starts and then remembers its answer on this device for the themes you use, so a callout may change look once, at the first start after the update or after switching to a theme for the first time.
 
 ## Default fallback
 
