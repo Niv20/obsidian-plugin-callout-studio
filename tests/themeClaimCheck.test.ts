@@ -395,6 +395,34 @@ describe("every doubt goes to the theme", () => {
 		}));
 });
 
+describe("names no pass has been asked about", () => {
+	it("are told apart from names asked once, judged or not", () =>
+		withCallouts(async () => {
+			const h = harness([rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"])]);
+			const claims = check(h);
+			assert.strictEqual(claims.hasUnmeasured(["note"]), true);
+			// `ghost` has no parsed rule, so the pass cannot judge it - but it
+			// was asked about, and asking again at every css-change buys nothing.
+			await claims.check(request(h, ["note", "ghost"]));
+			assert.strictEqual(claims.hasUnmeasured(["note", "ghost"]), false);
+			assert.strictEqual(claims.hasUnmeasured(["note", "new"]), true);
+		}));
+
+	it("start over for another theme, and count what the device remembers", () =>
+		withCallouts(async () => {
+			const store = memoryStore();
+			store.held.set("Other@1", new Map([["note", false]]));
+			const h = harness([rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"])]);
+			const claims = check(h, undefined, store);
+			await claims.check(request(h, ["tip"]));
+			assert.strictEqual(claims.hasUnmeasured(["tip"]), false);
+			h.setTheme("Other");
+			claims.invalidate();
+			assert.strictEqual(claims.hasUnmeasured(["tip"]), true, "another theme's pass");
+			assert.strictEqual(claims.hasUnmeasured(["note"]), false, "remembered for this one");
+		}));
+});
+
 describe("a rule the measurement cannot see in force", () => {
 	// Only a callout whose every rule was in force on the offscreen render -
 	// or switched off by the page - can be judged not drawn. Anything else

@@ -27,7 +27,10 @@ const REREAD_MAX_MS = 2000;
  */
 export interface ThemeSyncOptions {
 	appearance?: Pick<ThemeAppearanceProbe, "ensure" | "results" | "invalidate" | "destroy">;
-	claims?: Pick<ThemeClaimCheck, "invalidate" | "pageRootOff" | "unstyled" | "check" | "destroy">;
+	claims?: Pick<
+		ThemeClaimCheck,
+		"invalidate" | "pageRootOff" | "unstyled" | "check" | "hasUnmeasured" | "destroy"
+	>;
 	schedule?: GateScheduler;
 	/** Calls back when `<body>`/`<html>` classes change; returns its own undo. */
 	watchPage?: (onChange: () => void) => () => void;
@@ -163,13 +166,17 @@ export function registerThemeAppearance(
 		}
 		return out;
 	};
+	// The ids the claim check measures - named by the theme, carrying a design
+	// here - as of the last syncRows.
+	let lastClaimIds: string[] = [];
 	const syncRows = (): number => {
 		const named = declared();
 		const own = ownForms();
+		lastClaimIds = [...named].filter((id) => own.has(id));
 		return syncThemeOverlayRows(
 			host.registry,
 			named,
-			claims.unstyled([...named].filter((id) => own.has(id))),
+			claims.unstyled(lastClaimIds),
 		);
 	};
 	/**
@@ -232,19 +239,29 @@ export function registerThemeAppearance(
 	// a burst and again when it ends. `nudged` is the invalidation still to be
 	// applied, kept out of the handler so a folded event cannot discard a pass
 	// that is already in flight.
+	// `claimsNew` is a check owed only because a name arrived that no pass has
+	// been asked about (`hasUnmeasured`): the styling did not move, so a pass
+	// already in flight stays valid and is not invalidated.
 	let nudged = false;
 	let claimsOwed = false;
+	let claimsNew = false;
 	const reread = (): void => {
 		if (nudged) {
 			nudged = false;
 			appearance.invalidate({ keepAnswers: true });
 		}
 		probe();
-		if (claimsOwed) {
+		if (claimsOwed || claimsNew) {
+			if (claimsOwed) claims.invalidate();
 			claimsOwed = false;
-			claims.invalidate();
+			claimsNew = false;
 			checkClaims();
 		}
+	};
+	const noteUnmeasured = (): boolean => {
+		if (!claims.hasUnmeasured(lastClaimIds)) return false;
+		claimsNew = true;
+		return true;
 	};
 	const rereadGate = new QuietGate(reread, REREAD_QUIET_MS, REREAD_MAX_MS, options.schedule);
 	host.register(() => rereadGate.destroy());
@@ -266,7 +283,10 @@ export function registerThemeAppearance(
 
 	// Closing an unsaved draft can release a newly theme-owned id without
 	// changing generated CSS (for example with the fallback disabled).
-	const previewChanged = (): void => { if (syncRows() > 0) probe(); };
+	const previewChanged = (): void => {
+		if (syncRows() > 0) probe();
+		if (noteUnmeasured()) rereadGate.request();
+	};
 	host.registry.onPreviewChange(previewChanged);
 	host.register(() => host.registry.offPreviewChange(previewChanged));
 
@@ -299,6 +319,9 @@ export function registerThemeAppearance(
 				syncRows();
 			});
 			if (theirs) claimsOwed = true;
+			// A name no pass has been asked about - most often this plugin's own
+			// css-change after an import, an alias or another plugin's callout.
+			else noteUnmeasured();
 			// The same styling nudged from outside (a size, an accent, a mode,
 			// an option): the readings on hand are this theme's own, and the
 			// pass that follows replaces them. Clearing first only flashed

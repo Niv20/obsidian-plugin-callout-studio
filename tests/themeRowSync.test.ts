@@ -209,6 +209,7 @@ function countingClaims() {
 		invalidate: () => {},
 		pageRootOff: () => new Set<string>(),
 		unstyled: () => new Set<string>(),
+		hasUnmeasured: (ids: Iterable<string>) => [...ids].some((id) => !asked.some((a) => a.includes(id))),
 		check: (request: ClaimCheckRequest) => {
 			asked.push([...request.ids]);
 			return Promise.resolve();
@@ -363,6 +364,30 @@ describe("the claim check across a burst of css-change", () => {
 		t.cssChange(OWN_CSS_CHANGE);
 		clock.advance(10_000);
 		assert.strictEqual(claims.asked.length, before);
+	});
+
+	it("measures a name that arrived since the last pass, on this plugin's own css-change", () => {
+		// The user makes the theme's `mine` a callout of their own (or imports
+		// one, or another plugin adds one): it carries a design now, and until
+		// a pass asks, it would count as the theme's.
+		const t = themeHost('.callout[data-callout="note"], .callout[data-callout="mine"] { color: red; }');
+		const registry = vault();
+		const { host } = syncHost(registry, t.app);
+		const claims = countingClaims();
+		const clock = manualClock();
+		registerThemeAppearance(host, { claims, schedule: clock.schedule });
+		assert.deepStrictEqual(claims.asked, [["note"]], "a theme row carries no design of its own");
+		clock.advance(1000);
+		registry.batch(() => {
+			registry.remove("mine");
+			registry.add(definition({ id: "mine", source: "user" }));
+		});
+		t.cssChange(OWN_CSS_CHANGE);
+		assert.deepStrictEqual([...(claims.asked[claims.asked.length - 1] ?? [])].sort(), ["mine", "note"]);
+		const before = claims.asked.length;
+		t.cssChange(OWN_CSS_CHANGE);
+		clock.advance(10_000);
+		assert.strictEqual(claims.asked.length, before, "and asks once, not at every css-change");
 	});
 
 	it("leaves nothing armed once the plugin unloads", () => {

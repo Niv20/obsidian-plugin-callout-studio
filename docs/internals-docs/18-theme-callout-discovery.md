@@ -620,6 +620,15 @@ Decisions in the measurement:
   of a render; a theme switch swaps them for that theme's. This plugin's own
   `css-change` (`OWN_CSS_CHANGE` in `manager/ownCssChange.ts`) starts no check:
   the check switches this plugin's CSS off, so that CSS cannot change a verdict.
+- **A name no pass has been asked about is measured on arrival**
+  (`hasUnmeasured`). This plugin's own `css-change` starts no re-check of the
+  styling, but a callout imported, made by another plugin, or given an alias
+  the theme names is a new id with a design to lose, and it would count as the
+  theme's until the theme next fired an event. The sync asks after every
+  `css-change` and preview change whether any id it would measure was never put
+  to a pass for the active theme - asked ids are remembered per theme, judged or
+  not, so an id that cannot be measured is asked about once - and then requests
+  a pass without invalidating one already in flight (`claimsNew`).
 - **Verdicts are remembered on the device**
   ([`themeClaimCache.ts`](../../src/manager/theme/themeClaimCache.ts)). The
   first stylesheet of a launch is built before any pass can land, and with no

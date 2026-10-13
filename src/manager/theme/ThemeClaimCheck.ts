@@ -130,6 +130,13 @@ export class ThemeClaimCheck {
 	 * or off leaves the theme's own rules as they were, so it keeps them.
 	 */
 	private verdictSignature: string | null = null;
+	/**
+	 * Ids a pass has been asked about for {@link verdictSignature}, whether or
+	 * not it could judge them - so {@link hasUnmeasured} asks once for an id
+	 * that cannot be measured (no rule the browser parsed, a failed render),
+	 * not at every css-change.
+	 */
+	private asked = new Set<string>();
 	private generation = 0;
 	private running = false;
 	private pending: ClaimCheckRequest | null = null;
@@ -171,6 +178,20 @@ export class ThemeClaimCheck {
 		if (this.verdictSignature === signature) return;
 		this.verdicts = this.store.load(signature) ?? new Map<string, boolean>();
 		this.verdictSignature = signature;
+		this.asked = new Set(this.verdicts.keys());
+	}
+
+	/**
+	 * Whether any of `ids` has never been put to a pass for the active theme.
+	 * A name added since the last pass - a callout imported, made by another
+	 * plugin, given an alias the theme names - would otherwise count as the
+	 * theme's until the theme next fired a css-change.
+	 */
+	hasUnmeasured(ids: Iterable<string>): boolean {
+		if (this.destroyed) return false;
+		this.syncVerdicts();
+		for (const id of ids) if (!this.asked.has(id)) return true;
+		return false;
 	}
 
 	/**
@@ -213,6 +234,8 @@ export class ThemeClaimCheck {
 		this.running = true;
 		const generation = this.generation;
 		const signature = themeSignature(this.app);
+		this.syncVerdicts();
+		for (const id of request.ids) this.asked.add(id);
 		let measured: Map<string, boolean> | null = null;
 		try {
 			measured = await this.measure(request, generation);
@@ -246,6 +269,7 @@ export class ThemeClaimCheck {
 		this.pending = null;
 		this.verdicts = new Map();
 		this.verdictSignature = null;
+		this.asked = new Set();
 		this.component.unload();
 	}
 
