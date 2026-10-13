@@ -337,6 +337,12 @@ settings:
 		assert.deepStrictEqual([...styleSettingsClasses(".a { color: red }")], []);
 	});
 
+	it("reads items indented with a tab beside items indented with spaces", () => {
+		// ITS: `    -` items followed by `\t-` items. Style Settings expands tabs.
+		const css = "/* @settings\nname: T\nid: t\nsettings:\n    -\n        id: a-one\n        type: class-toggle\n\t-\n\t\tid: a-two\n\t\ttype: class-toggle\n*/";
+		assert.deepStrictEqual([...styleSettingsClasses(css)].sort(), ["a-one", "a-two"]);
+	});
+
 	it("never reads a heading's, a variable's or the block's own id as a class", () => {
 		// A heading called `callout` made every rule needing `.callout` look
 		// like an option that is off.

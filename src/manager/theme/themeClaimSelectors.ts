@@ -302,7 +302,9 @@ export function styleSettingsClasses(css: string): Set<string> {
 	const block = /\/\*\s*@settings\b([\s\S]*?)\*\//g;
 	let m: RegExpExecArray | null;
 	while ((m = block.exec(css)) !== null) {
-		const lines = (m[1] ?? "").split(/\r?\n/);
+		// Tabs expanded, as Style Settings itself does before it reads the YAML:
+		// ITS writes some items with four spaces and the next with a tab.
+		const lines = (m[1] ?? "").split(/\r?\n/).map((line) => line.replace(/\t/g, "    "));
 		const start = lines.findIndex((line) => /^\s*settings\s*:\s*$/.test(line));
 		if (start < 0) continue;
 		// Items are the list entries at the first indentation under `settings:`.
@@ -310,7 +312,7 @@ export function styleSettingsClasses(css: string): Set<string> {
 		const items: string[][] = [];
 		for (const line of lines.slice(start + 1)) {
 			const dash = /^(\s*)-(?:\s|$)/.exec(line);
-			if (dash && (indent < 0 || (dash[1] ?? "").length === indent)) {
+			if (dash && (indent < 0 || (dash[1] ?? "").length <= indent)) {
 				indent = (dash[1] ?? "").length;
 				items.push([line]);
 			} else if (items.length > 0) {
