@@ -27,6 +27,11 @@ The whole subsystem answers one rule, and the rule is not a setting:
 > *Callouts from your theme*, shows what the theme actually draws, and offers
 > it in the Block format only.
 
+For a callout with aliases, "names its id" means every one of its names - a
+built-in's stock aliases excepted. A theme that names only some of them gets
+those names' block callouts and nothing more; see
+[Stage 3](#stage-3---ownership).
+
 ## The pipeline, end to end
 
 Six stages, plus one question answered off to the side. Each is a separate
@@ -419,24 +424,52 @@ that draw an icon is eight chances for one of them to keep drawing the stored
 one, which is exactly the bug this replaced.
 
 ```ts
-registry.themeOwns(def)   // does the ACTIVE THEME name this callout's id?
+registry.themeOwns(def)          // does the ACTIVE THEME name all of this callout?
+registry.themeClaimsName(name)   // ...or this one spelling of it?
 ```
 
 | | Reason | Listed under | Editable | Emits CSS |
 | --- | --- | --- | --- | --- |
-| `themeOwns(def)` | the active theme names the id | *Callouts from your theme* | no | no |
+| `themeOwns(def)` | the active theme names every name | *Callouts from your theme* | no | no |
+| some names claimed | the theme names some of them | the user's own lists | yes | block rules for the unclaimed names; token rules for all |
 
-`themeOwns` is both the ownership fact and the sole emission gate. A saved
-personal-CSS flag is no longer part of the definition model; ordinary snippets
-participate through the cascade rather than by changing registry ownership.
+`themeOwns` is both the ownership fact and the emission gate for the callout;
+`themeClaimsName` is the gate for each of its names. A saved personal-CSS flag
+is no longer part of the definition model; ordinary snippets participate
+through the cascade rather than by changing registry ownership.
 
 Three properties of ownership, each of which was a decision:
 
-**Every id form counts.** `ThemeFacts.owns` walks `registry.vaultIdFormsFor(def)`
+**Ownership is per name.** `ThemeFacts.owns` walks `registry.vaultIdFormsFor(def)`
  - the id, its aliases, and each one's dasherized attribute form where no other
-definition owns it. A theme that styles `[data-callout="tldr"]` but not
-`abstract` owns the whole callout. Letting the two halves render differently is
-precisely the split this model exists to abolish.
+definition owns it - and needs the theme to name **every** one. A name it does
+not name stays this plugin's, because nobody else would draw it: a theme that
+styles `[data-callout="description"]` says nothing about the `[!описание]` the
+user gave the same callout. Until issue #84 one claimed name handed over the
+whole callout, which left such a name with no theme rule, no Studio rule, and
+no fallback either (the name is known, so the fallback's `:not()` chain skips
+it). The split this model abolishes is two painters on *one* rendered callout;
+two names of one callout drawn by two painters is not that.
+
+The exception is a built-in's **stock aliases** - `cite`, `tldr`, `hint` and the
+rest of Obsidian's own synonyms, read from the shipped defaults, so an alias the
+user added does not count as one. `CalloutRegistry.themeOwns` leaves them out of
+the forms it hands `ThemeFacts`, so a theme that restyles `quote` owns Quote
+without naming `cite`: once this plugin stands down, Obsidian's `app.css` still
+draws `[!cite]`, exactly as before. It matters: of the 50 installed themes that
+restyle a built-in by name, 22 leave out at least one of its synonyms (ITS
+Theme names `quote` and never `cite`; Agate names all thirteen ids and no
+alias), and without the exception every one of those rows would leave
+*Callouts from your theme*. A stock alias the theme names on its own
+(Elegance's `tldr`) is still claimed: that block callout is the theme's, and
+the rest of the built-in is this plugin's.
+
+A name the theme claims on a callout it does not own is the theme's in the
+block format only. The heading and inline formats are this plugin's DOM, which
+no theme selector reaches, so they keep the callout's design under every name;
+the metadata dropdown follows the same split (`CalloutMetadataSuggest` offers no
+colour for a claimed name's block callout). The callout editor says which names
+the theme draws (`editor.namesFromTheme`), without blocking the save.
 
 **A generic `.callout {}` rule owns nothing.** Of the 257 themes installed in
 the dev vault, only 63 name a callout id in `theme.css`; a large group styles
@@ -1124,10 +1157,12 @@ The columns worth checking for your own theme:
   named only behind a Style Settings body class is owned even while that class
   is off. The plugin stands down; the probe then measures whatever *is* on
   screen, which may be core's defaults.
-- **Ownership is per id, not per property.** A theme that sets one variable for
-  `note` owns `note` entirely. This is the whole point - a partial override is
-  the split the model exists to abolish - but it does mean a very light touch
-  costs the theme the full callout.
+- **Ownership is per name, not per property.** A theme that sets one variable
+  for `note` owns `note` entirely. This is the whole point - a partial override
+  is the split the model exists to abolish - but it does mean a very light touch
+  costs the theme the full callout. The cut runs between names, never inside
+  one: the claimed names of a callout the theme does not own are the theme's
+  as block callouts, and the rest stay this plugin's.
 - **Layout is not undone.** The plugin wins the properties it sets; it does not
   reverse `display: grid` or a `transform` a theme adds.
 - **Enumeration reads the theme only.** A user snippet that declares
