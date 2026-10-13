@@ -47,7 +47,7 @@ happen in this order.
 | --- | --- | --- | --- |
 | 1 | Find the active theme and its CSS text | [`customCssApi.ts`](../../src/manager/theme/customCssApi.ts) | theme name, stylesheet text, snippet texts, a cheap signature |
 | 2 | Scan that text for callout claims | [`cssBlocks.ts`](../../src/manager/theme/cssBlocks.ts) → [`themeCalloutScan.ts`](../../src/manager/theme/themeCalloutScan.ts), cached by [`ThemeCalloutStore.ts`](../../src/manager/theme/ThemeCalloutStore.ts) | `Map<attrId, ThemeClaim>` + family patterns |
-| 3 | Check the names against the page, then publish ownership | [`ThemeClaimCheck.ts`](../../src/manager/theme/ThemeClaimCheck.ts) + [`themeClaimSelectors.ts`](../../src/manager/theme/themeClaimSelectors.ts) + [`themeClaimEffect.ts`](../../src/manager/theme/themeClaimEffect.ts), then [`ThemeFacts.ts`](../../src/manager/theme/ThemeFacts.ts) via `CalloutRegistry.setThemeOwnedIds` | `registry.themeOwns(def)` |
+| 3 | Check the names against the page, then publish ownership | [`ThemeClaimCheck.ts`](../../src/manager/theme/ThemeClaimCheck.ts) + [`themeClaimRules.ts`](../../src/manager/theme/themeClaimRules.ts) + [`themeClaimSelectors.ts`](../../src/manager/theme/themeClaimSelectors.ts) + [`themeClaimEffect.ts`](../../src/manager/theme/themeClaimEffect.ts), then [`ThemeFacts.ts`](../../src/manager/theme/ThemeFacts.ts) via `CalloutRegistry.setThemeOwnedIds` | `registry.themeOwns(def)` |
 | 4 | List theme ids locally; persist only explicit scans/imports | [`themeOverlayRows.ts`](../../src/manager/theme/themeOverlayRows.ts), [`ManualCalloutDiscovery.ts`](../../src/manager/ManualCalloutDiscovery.ts) | Ephemeral theme rows or durable definitions |
 | 5 | Measure what the theme actually draws | [`ThemeAppearanceProbe.ts`](../../src/manager/theme/ThemeAppearanceProbe.ts) + [`readCalloutStyle.ts`](../../src/manager/theme/readCalloutStyle.ts) + [`themeAppearance.ts`](../../src/manager/theme/themeAppearance.ts) / [`themeIcon.ts`](../../src/manager/theme/themeIcon.ts) | `ThemeAppearance` per id |
 | 6 | Reproduce it wherever the plugin lists callouts | [`renderThemeIcon.ts`](../../src/manager/theme/renderThemeIcon.ts), [`calloutListIcon.ts`](../../src/manager/theme/calloutListIcon.ts) | icons and swatches on rows, menus, pickers |
@@ -585,19 +585,26 @@ Decisions in the measurement:
   A callout handed back is one this plugin paints; measured with that paint on,
   the theme's colour could never show, and the callout could never be won back
   when the user turns the option on.
-- **One synchronous run, batched.** Every rule is back, and this plugin's CSS on,
-  before the task ends, so no frame is painted without them. All ids are switched
-  off together: one at a time made the browser lay the whole window out twice per
-  id, a 1.5 s freeze on AnuPpuccin. Together can only add a difference (a rule
-  naming one id that reaches another's callout), never hide one. Reading view
-  first; only an id it shows no difference for is read again in Live Preview's
-  ancestry, and the "rules on" side is read lazily, stopping at the first
-  visible difference.
-- **A task of its own.** The check waits a macrotask after the `css-change`
+- **Each pass is one synchronous run, batched** (`comparePass`). Every rule is
+  back, and this plugin's CSS on, before the task ends, so no frame is painted
+  without them. All ids of a pass are switched off together: one at a time made
+  the browser lay the whole window out twice per id, a 1.5 s freeze on
+  AnuPpuccin. Together can only add a difference (a rule naming one id that
+  reaches another's callout), never hide one. Reading view first; only an id it
+  shows no difference for is read again in Live Preview's ancestry, and the
+  "rules on" side is read lazily, stopping at the first visible difference.
+- **Passes are tasks of their own, in idle time** (`compare`, `nextIdleTask`).
+  The check waits for an idle moment (`requestIdleCallback`, at most a second;
+  a macrotask where a webview lacks it) after the `css-change` or the launch
   that started it, so the sweep's CSS pass and the check do not merge into one
-  freeze. On a theme switch the longest task stays at or below what it was
-  before the check: AnuPpuccin 490 → 321 ms, Retroma 13.6 s → 337 ms (its 312
-  overlay rows are no longer minted).
+  freeze, and Live Preview's pass waits for another. On a phone or tablet
+  (`Platform.isMobile`) a pass holds at most eight ids, each batch its own task:
+  more layouts in all, but no single freeze holding every built-in on a slow
+  device. A `css-change` between passes drops the whole check (the generation
+  moved), and between passes the page is whole. On a desktop theme switch the
+  longest task stays at or below what it was before the check: AnuPpuccin 490 →
+  321 ms, Retroma 13.6 s → 337 ms (its 312 overlay rows are no longer minted),
+  measured before the passes were split, so now at most that.
 - **Every doubt goes to the theme** - no parsed sheet, an id no parsed rule
   names, a rule the measurement could not see in force, a rewritten selector
   the browser refuses (it silently keeps the old one), a failed render. That is
@@ -1626,6 +1633,7 @@ real cascade (`app.css` → `styles.css` → theme → snippets →
 | [`manager/theme/themeAppearanceSync.ts`](../../src/manager/theme/themeAppearanceSync.ts) | Scheduling, ordering, the fingerprint, the probe's lifetime |
 | [`manager/theme/ThemeClaimCheck.ts`](../../src/manager/theme/ThemeClaimCheck.ts) | Page conditions and the measured "does the theme draw it?" pass |
 | [`manager/theme/themeClaimSelectors.ts`](../../src/manager/theme/themeClaimSelectors.ts) / [`themeClaimEffect.ts`](../../src/manager/theme/themeClaimEffect.ts) | Reading and rewriting a parsed selector; what counts as a visible difference |
+| [`manager/theme/themeClaimRules.ts`](../../src/manager/theme/themeClaimRules.ts) | The theme's parsed rules: which name an id, which the page switches off, which are in force on the rendered callout |
 | [`manager/theme/themeClaimCache.ts`](../../src/manager/theme/themeClaimCache.ts) | The claim check's verdicts, remembered on the device per theme |
 | [`utils/quietGate.ts`](../../src/utils/quietGate.ts) | Act at once, then once more when a burst of `css-change` has ended |
 | [`manager/ownCssChange.ts`](../../src/manager/ownCssChange.ts) | The payload that marks this plugin's own `css-change` |

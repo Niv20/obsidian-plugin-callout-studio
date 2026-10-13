@@ -35,82 +35,23 @@
  * sheet, a rule the browser would not rewrite, a render that failed, an id no
  * parsed rule names.
  */
-import { Component, MarkdownRenderer, type App } from "obsidian";
+import { Component, MarkdownRenderer, Platform, type App } from "obsidian";
 import { obsidianCalloutAttrId } from "../../utils/calloutId";
 import { themeCss, themeSheet, themeSignature } from "./customCssApi";
 import { localClaimVerdicts, type ClaimVerdictStore } from "./themeClaimCache";
 import { domReader, type ComputedStyleReader } from "./readCalloutStyle";
 import { changesVisibly, sampledStyle, type CalloutStyle } from "./themeClaimEffect";
+import { namesInSelector, styleSettingsClasses, withoutName } from "./themeClaimSelectors";
 import {
-	namesInSelector,
-	optionGated,
-	pageRootFails,
-	resolveNested,
-	stripPseudoElements,
-	styleSettingsClasses,
-	withoutName,
-	type PageRoot,
-} from "./themeClaimSelectors";
+	indexRules,
+	optionGatedRule,
+	pageRootTest,
+	ruleInForce,
+	type RuleIndex,
+} from "./themeClaimRules";
 
 /** Kept in sync with the probe container rule in `styles.css`. */
 const HOST_CLASS = "cs-theme-probe";
-
-type StyleRule = CSSRule & { selectorText: string };
-
-/** `@page` also has a `selectorText`, but never one naming a callout. */
-function isStyleRule(rule: CSSRule): rule is StyleRule {
-	return typeof (rule as Partial<StyleRule>).selectorText === "string";
-}
-
-/**
- * A rule's selector with the selectors of the rules it is nested in folded in
- * (`resolveNested`), so it can be matched on its own. `null` when a parent's
- * cannot be read.
- */
-function resolvedSelector(rule: StyleRule): string | null {
-	let parent = rule.parentRule;
-	while (parent && !isStyleRule(parent)) parent = parent.parentRule;
-	if (!parent) return rule.selectorText;
-	const outer = resolvedSelector(parent);
-	return outer === null ? null : resolveNested(rule.selectorText, outer);
-}
-
-/**
- * Whether every grouping rule around `rule` holds on this page right now:
- * `@media` against the window, `@supports` against the browser. `@container`
- * and `@scope` depend on where the callout sits, which an offscreen render
- * cannot answer, so they count as not holding - a doubt, and a doubt keeps the
- * callout with the theme. `@layer` and the rest are transparent.
- */
-function groupsHold(rule: CSSRule, doc: Document): boolean {
-	const win = doc.defaultView;
-	for (let r = rule.parentRule; r; r = r.parentRule) {
-		if (isStyleRule(r)) continue;
-		const group = r as CSSRule & {
-			media?: { mediaText?: string };
-			conditionText?: string;
-			containerName?: string;
-			containerQuery?: string;
-			start?: unknown;
-		};
-		if (group.media && typeof group.media.mediaText === "string") {
-			const text = group.media.mediaText;
-			if (text && !(win?.matchMedia?.(text).matches ?? false)) return false;
-			continue;
-		}
-		if (group.containerQuery !== undefined || group.containerName !== undefined) return false;
-		if (typeof group.conditionText === "string") {
-			const css = (win as (Window & { CSS?: { supports?: (c: string) => boolean } }) | null)?.CSS;
-			if (!(css?.supports?.(group.conditionText) ?? false)) return false;
-			continue;
-		}
-		if (group.start !== undefined) return false;
-	}
-	return true;
-}
-
-/** Each named id's rules in one parsed sheet. */
-type RuleIndex = Map<string, StyleRule[]>;
 
 /** The two places a callout is drawn, as rendered for one id. */
 interface Rendered {
@@ -127,6 +68,8 @@ export interface ThemeClaimCheckOptions {
 	nextTask?: () => Promise<void>;
 	/** Where verdicts outlive the session; device `localStorage` by default. */
 	store?: ClaimVerdictStore;
+	/** Ids judged in one synchronous pass; defaults to all of them, 8 on a phone or tablet. */
+	batchSize?: number;
 }
 
 /** What a caller hands {@link ThemeClaimCheck.check}. */
@@ -140,14 +83,26 @@ export interface ClaimCheckRequest {
 }
 
 /**
- * A task of its own. The check starts from a `css-change`, whose handler
- * already pays for a sweep and a full CSS pass; run in the same task, the two
- * read as one long freeze.
+ * A task of its own, in a moment the window is idle. The check starts from a
+ * `css-change` or from the plugin loading, which already pay for a sweep and a
+ * full CSS pass, and Obsidian itself is busiest right then; run in the same
+ * task, they read as one long freeze. `requestIdleCallback` waits for a gap,
+ * at most a second; a webview without it gets the next macrotask.
  */
-const nextMacrotask = (): Promise<void> =>
+const nextIdleTask = (): Promise<void> =>
 	new Promise((resolve) => {
-		window.setTimeout(resolve, 0);
+		const win = window as Window & {
+			requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+		};
+		if (typeof win.requestIdleCallback === "function") {
+			win.requestIdleCallback(() => resolve(), { timeout: 1000 });
+		} else {
+			window.setTimeout(resolve, 0);
+		}
 	});
+
+/** Ids per synchronous pass on a phone or tablet - see {@link ThemeClaimCheck.compare}. */
+const MOBILE_BATCH = 8;
 
 function everyComputedProperty(doc: Document): readonly string[] {
 	const style = (doc.defaultView ?? window).getComputedStyle(doc.body);
@@ -164,6 +119,7 @@ export class ThemeClaimCheck {
 	private readonly read: ComputedStyleReader;
 	private readonly properties: (doc: Document) => readonly string[];
 	private readonly nextTask: () => Promise<void>;
+	private readonly batchSize: number;
 	private readonly store: ClaimVerdictStore;
 	private propertyList: readonly string[] | null = null;
 	/** Per id: did switching the theme's rules off change what is drawn? */
@@ -185,7 +141,8 @@ export class ThemeClaimCheck {
 	) {
 		this.read = options.read ?? domReader;
 		this.properties = options.properties ?? everyComputedProperty;
-		this.nextTask = options.nextTask ?? nextMacrotask;
+		this.nextTask = options.nextTask ?? nextIdleTask;
+		this.batchSize = Math.max(1, options.batchSize ?? (Platform.isMobile ? MOBILE_BATCH : Infinity));
 		this.store = options.store ?? localClaimVerdicts(app);
 		this.component.load();
 	}
@@ -224,34 +181,13 @@ export class ThemeClaimCheck {
 		const out = new Set<string>();
 		const index = this.currentIndex();
 		if (!index || ids.size === 0) return out;
-		const ruleOff = this.pageRootTest(this.mainDocument());
+		const ruleOff = pageRootTest(this.mainDocument());
 		for (const id of ids) {
 			const rules = index.get(id);
 			// No parsed rule names it: nothing to judge, so it stays the theme's.
 			if (rules && rules.length > 0 && rules.every(ruleOff)) out.add(id);
 		}
 		return out;
-	}
-
-	/**
-	 * Whether a rule - or a rule it is nested in - asks `<body>`/`<html>` for
-	 * something the page lacks right now. Memoised for one question.
-	 */
-	private pageRootTest(doc: Document): (rule: CSSRule) => boolean {
-		const matches = (compound: string, root: PageRoot): boolean =>
-			(root === "body" ? doc.body : doc.documentElement).matches(compound);
-		const off = new Map<CSSRule, boolean>();
-		const ruleOff = (rule: CSSRule): boolean => {
-			const known = off.get(rule);
-			if (known !== undefined) return known;
-			const parent = rule.parentRule;
-			const result =
-				(isStyleRule(rule) && pageRootFails(rule.selectorText, matches)) ||
-				(parent !== null && ruleOff(parent));
-			off.set(rule, result);
-			return result;
-		};
-		return ruleOff;
 	}
 
 	/** The ids, of `ids`, last measured to look the same without the theme's rules. */
@@ -323,28 +259,8 @@ export class ThemeClaimCheck {
 		if (!sheet) return null;
 		const cached = this.indexes.get(sheet);
 		if (cached) return cached;
-		let rules: CSSRuleList;
-		try {
-			rules = sheet.cssRules;
-		} catch {
-			return null;
-		}
-		const index: RuleIndex = new Map();
-		const walk = (list: CSSRuleList): void => {
-			for (const rule of Array.from(list)) {
-				if (isStyleRule(rule) && rule.selectorText.includes("data-callout")) {
-					for (const id of namesInSelector(rule.selectorText)) {
-						const named = index.get(id);
-						if (named) named.push(rule);
-						else index.set(id, [rule]);
-					}
-				}
-				const inner = (rule as CSSRule & { cssRules?: CSSRuleList }).cssRules;
-				if (inner && inner.length > 0) walk(inner);
-			}
-		};
-		walk(rules);
-		this.indexes.set(sheet, index);
+		const index = indexRules(sheet);
+		if (index) this.indexes.set(sheet, index);
 		return index;
 	}
 
@@ -374,14 +290,9 @@ export class ThemeClaimCheck {
 			const out = new Map<string, boolean>();
 			if (judged.length > 0) {
 				this.propertyList ??= this.properties(doc);
-				const restoreStudioCss = request.suspendStudioCss();
-				try {
-					for (const [id, drawn] of this.compare(judged, index, rendered, this.propertyList)) {
-						out.set(id, drawn);
-					}
-				} finally {
-					restoreStudioCss();
-				}
+				const compared = await this.compare(judged, index, rendered, this.propertyList, request, generation);
+				if (compared === null) return null;
+				for (const [id, drawn] of compared) out.set(id, drawn);
 			}
 			for (const id of wanted) {
 				if (rendered.has(id) && !seen.has(id)) out.set(id, true);
@@ -445,8 +356,8 @@ export class ThemeClaimCheck {
 	/**
 	 * The ids, of `ids`, whose every theme rule the measurement can see: in
 	 * force on a box of the rendered callout in either view, or switched off
-	 * by the page - a `<body>`/`<html>` condition it fails
-	 * ({@link pageRootTest}) or a Style Settings option class it lacks.
+	 * by the page - a `<body>`/`<html>` condition it fails or a Style Settings
+	 * option class it lacks (`themeClaimRules.ts`).
 	 *
 	 * Only those can be judged "not drawn". A rule the offscreen render does
 	 * not satisfy - scoped to a note's `cssclasses`, an embed, a hover, a
@@ -460,18 +371,8 @@ export class ThemeClaimCheck {
 		rendered: ReadonlyMap<string, Rendered>,
 		doc: Document,
 	): Set<string> {
-		const pageOff = this.pageRootTest(doc);
+		const pageOff = pageRootTest(doc);
 		const options = this.optionClasses();
-		const optionOff = (cls: string): boolean =>
-			options.has(cls) &&
-			!doc.body.classList.contains(cls) &&
-			!doc.documentElement.classList.contains(cls);
-		const gated = (rule: CSSRule): boolean => {
-			for (let r: CSSRule | null = rule; r; r = r.parentRule) {
-				if (isStyleRule(r) && optionGated(r.selectorText, optionOff)) return true;
-			}
-			return false;
-		};
 		const out = new Set<string>();
 		for (const id of ids) {
 			const views = rendered.get(id);
@@ -480,27 +381,13 @@ export class ThemeClaimCheck {
 				[...this.boxesOf(views.reading), ...this.boxesOf(views.live)].map(([, el]) => el),
 			);
 			const rules = index.get(id) ?? [];
-			if (rules.every((rule) => pageOff(rule) || gated(rule) || this.inForce(rule, boxes, doc))) {
+			const seen = (rule: (typeof rules)[number]): boolean =>
+				pageOff(rule) || optionGatedRule(rule, options, doc) || ruleInForce(rule, boxes, doc);
+			if (rules.every(seen)) {
 				out.add(id);
 			}
 		}
 		return out;
-	}
-
-	/** Does `rule` apply, right now, to one of `boxes`? */
-	private inForce(rule: StyleRule, boxes: ReadonlySet<Element>, doc: Document): boolean {
-		if (!groupsHold(rule, doc)) return false;
-		const selector = resolvedSelector(rule);
-		if (selector === null) return false;
-		const plain = stripPseudoElements(selector);
-		for (const el of boxes) {
-			try {
-				if (el.matches(plain)) return true;
-			} catch {
-				/* a selector this browser will not match is not one it can see in force */
-			}
-		}
-		return false;
 	}
 
 	/** The active theme's Style Settings classes, read once per parsed sheet. */
@@ -516,50 +403,91 @@ export class ThemeClaimCheck {
 	}
 
 	/**
-	 * Which ids look different without the theme's rules for them.
+	 * Which ids look different without the theme's rules for them; `null`
+	 * when a `css-change` overtook the passes.
 	 *
-	 * One synchronous run, so no frame is painted with any rule or this
-	 * plugin's CSS switched off. Batched rather than one id at a time: every
-	 * switch makes the browser lay the whole window out again on the next read,
-	 * and per id that cost AnuPpuccin a 1.5 s freeze. Here it is two layouts
-	 * per view however many ids there are. Reading view first; only an id it
-	 * shows no difference for is read again in Live Preview's ancestry.
-	 *
-	 * Switching all of them off together can only add a difference — a rule
-	 * naming another id that also reached this callout — never hide one, so it
-	 * errs toward the theme.
+	 * Reading view first; only an id it shows no difference for is read again
+	 * in Live Preview's ancestry. Each pass is {@link comparePass}, one
+	 * synchronous run, and the passes are separate tasks: Live Preview's waits
+	 * for the next idle moment, and on a phone or tablet a long list is cut into
+	 * batches of {@link MOBILE_BATCH}, so no single freeze has to hold them all.
+	 * Between passes every rule and this plugin's CSS are back; a pass a
+	 * `css-change` overtook is dropped with the rest.
 	 */
-	private compare(
+	private async compare(
 		ids: readonly string[],
 		index: RuleIndex,
 		rendered: ReadonlyMap<string, Rendered>,
 		props: readonly string[],
-	): Map<string, boolean> {
+		request: ClaimCheckRequest,
+		generation: number,
+	): Promise<Map<string, boolean> | null> {
 		const out = new Map<string, boolean>();
 		let open = ids;
+		let first = true;
 		for (const view of ["reading", "live"] as const) {
-			if (open.length === 0) break;
-			const without = this.withRulesOff(open, index, (id) => {
-				const callout = rendered.get(id)?.[view];
-				return callout ? this.sample(callout, props) : null;
-			});
-			if (without === null) {
-				for (const id of open) out.set(id, true);
-				return out;
-			}
 			const still: string[] = [];
-			for (const id of open) {
-				const before = without.get(id);
-				const callout = rendered.get(id)?.[view];
-				if (before && callout && changesVisibly(props, before, this.liveStyle(callout))) {
-					out.set(id, true);
-				} else {
-					still.push(id);
+			for (let at = 0; at < open.length; at += this.batchSize) {
+				if (!first) {
+					await this.nextTask();
+					if (this.destroyed || generation !== this.generation) return null;
+				}
+				first = false;
+				const batch = open.slice(at, at + this.batchSize);
+				const restoreStudioCss = request.suspendStudioCss();
+				let pass: Map<string, boolean> | null;
+				try {
+					pass = this.comparePass(batch, index, rendered, props, view);
+				} finally {
+					restoreStudioCss();
+				}
+				for (const id of batch) {
+					// A batch whose rules the browser would not rewrite cannot be
+					// weighed: those ids stay the theme's.
+					if (pass === null || pass.get(id) === true) out.set(id, true);
+					else still.push(id);
 				}
 			}
 			open = still;
 		}
 		for (const id of open) out.set(id, false);
+		return out;
+	}
+
+	/**
+	 * One view, one batch: does each id look different without the theme's
+	 * rules for it? `null` when the browser would not take a rewritten
+	 * selector.
+	 *
+	 * One synchronous run, so no frame is painted with any rule or this
+	 * plugin's CSS switched off (the caller holds it off around this). Batched
+	 * rather than one id at a time: every switch makes the browser lay the
+	 * whole window out again on the next read, and per id that cost AnuPpuccin
+	 * a 1.5 s freeze. Here it is two layouts per pass however many ids there
+	 * are.
+	 *
+	 * Switching all of them off together can only add a difference — a rule
+	 * naming another id that also reached this callout — never hide one, so it
+	 * errs toward the theme.
+	 */
+	private comparePass(
+		ids: readonly string[],
+		index: RuleIndex,
+		rendered: ReadonlyMap<string, Rendered>,
+		props: readonly string[],
+		view: keyof Rendered,
+	): Map<string, boolean> | null {
+		const without = this.withRulesOff(ids, index, (id) => {
+			const callout = rendered.get(id)?.[view];
+			return callout ? this.sample(callout, props) : null;
+		});
+		if (without === null) return null;
+		const out = new Map<string, boolean>();
+		for (const id of ids) {
+			const before = without.get(id);
+			const callout = rendered.get(id)?.[view];
+			out.set(id, Boolean(before && callout && changesVisibly(props, before, this.liveStyle(callout))));
+		}
 		return out;
 	}
 

@@ -152,12 +152,14 @@ function check(
 	h: Harness,
 	nextTask = () => Promise.resolve(),
 	store?: ClaimVerdictStore,
+	batchSize?: number,
 ): ThemeClaimCheck {
 	return new ThemeClaimCheck(h.app, {
 		read: reader(h),
 		properties: () => ["color", "cursor", "display", "content"],
 		nextTask,
 		store,
+		batchSize,
 	});
 }
 
@@ -214,7 +216,7 @@ describe("what the theme draws", () => {
 			]);
 			const claims = check(h);
 			await claims.check(request(h, ["warning"]));
-			assert.strictEqual(h.studio.suspended, 1, "it was measured, not skipped");
+			assert.strictEqual(h.studio.suspended, 2, "measured in Reading view, then in Live Preview");
 			assert.deepStrictEqual([...claims.unstyled(["warning"])], []);
 		}));
 });
@@ -251,6 +253,76 @@ describe("where the callouts are drawn", () => {
 			assert.deepStrictEqual([...chains], [
 				"div.cm-embed-block.cm-callout > div.markdown-rendered > div.callout",
 			]);
+		}));
+});
+
+describe("how the measuring is spread out", () => {
+	// Each pass - one view, one batch - is one synchronous run. Between passes
+	// the page is whole again: every rule back and this plugin's CSS on, so a
+	// frame painted there shows nothing switched off.
+	function watched(h: Harness, originals: string[]) {
+		const between: Array<{ rulesBack: boolean; studioOn: boolean }> = [];
+		const nextTask = (): Promise<void> => {
+			between.push({
+				rulesBack: h.rules.every((r, i) => r.selectorText === originals[i]),
+				studioOn: h.studio.on,
+			});
+			return Promise.resolve();
+		};
+		return { between, nextTask };
+	}
+
+	it("gives Live Preview its own task, with the page whole in between", () =>
+		withCallouts(async () => {
+			const h = harness([rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"])]);
+			const originals = h.rules.map((r) => r.selectorText);
+			const { between, nextTask } = watched(h, originals);
+			const claims = check(h, nextTask);
+			await claims.check(request(h, ["note"]));
+			assert.strictEqual(between.length, 2, "one wait before measuring, one between the views");
+			assert.ok(between.every((b) => b.rulesBack && b.studioOn));
+			assert.deepStrictEqual([...claims.unstyled(["note"])], ["note"]);
+		}));
+
+	it("cuts a long list into batches, each its own task, and judges it the same", () =>
+		withCallouts(async () => {
+			const rules = [
+				rule('.callout[data-callout="a"]', ["callout-title", "color", "violet"]),
+				rule('.callout[data-callout="b"]', ["callout-title", "cursor", "x"]),
+				rule('.callout[data-callout="c"]', ["callout-title", "color", "teal"]),
+			];
+			const whole = harness(rules);
+			const all = check(whole);
+			await all.check(request(whole, ["a", "b", "c"]));
+
+			const h = harness(rules);
+			const originals = h.rules.map((r) => r.selectorText);
+			const { between, nextTask } = watched(h, originals);
+			const batched = check(h, nextTask, undefined, 1);
+			await batched.check(request(h, ["a", "b", "c"]));
+			// Reading view: a, b, c one at a time; Live Preview: b alone.
+			assert.strictEqual(h.studio.suspended, 4);
+			assert.ok(between.every((b) => b.rulesBack && b.studioOn));
+			assert.deepStrictEqual([...batched.unstyled(["a", "b", "c"])], [...all.unstyled(["a", "b", "c"])]);
+			assert.deepStrictEqual([...batched.unstyled(["a", "b", "c"])], ["b"]);
+		}));
+
+	it("drops the passes a css-change overtook between them", () =>
+		withCallouts(async () => {
+			const h = harness([rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"])]);
+			let waits = 0;
+			let claims: ThemeClaimCheck | null = null;
+			const nextTask = (): Promise<void> => {
+				// The second wait sits between the two views.
+				if (++waits === 2) claims?.invalidate();
+				return Promise.resolve();
+			};
+			claims = check(h, nextTask);
+			let changes = 0;
+			await claims.check(request(h, ["note"], () => changes++));
+			assert.strictEqual(changes, 0);
+			assert.deepStrictEqual([...claims.unstyled(["note"])], []);
+			assert.strictEqual(h.studio.on, true);
 		}));
 });
 
