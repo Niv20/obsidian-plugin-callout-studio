@@ -276,24 +276,51 @@ export function optionGated(selector: string, isOff: (cls: string) => boolean): 
 	return list.every((complex) => [...classesIn(complex)].some(isOff));
 }
 
+/** One `key: value` of a Style Settings item, quotes dropped. */
+function settingValue(line: string, key: string): string | null {
+	const m = new RegExp(`^\\s*(?:-\\s+)?${key}\\s*:\\s*["']?([^"'#\\s][^"'#]*?)["']?\\s*$`).exec(line);
+	return m?.[1]?.trim() ?? null;
+}
+
 /**
- * The class names a theme's Style Settings block can put on `<body>`: every
- * `id:` and `value:` and every bare list item inside a `/* @settings … *\/`
- * comment. A superset - variable ids come along - which is safe, because a
- * name is only ever used here when a selector requires it as a class and the
- * page does not have it.
+ * The class names a theme's Style Settings block can put on `<body>`: the
+ * `id` of every `class-toggle`, and every option of a `class-select` (a bare
+ * list item or an item's `value:`), read from each `/* @settings … *\/`
+ * comment. Nothing else - a heading's or a variable's `id`, or the block's
+ * own, is not a class Style Settings ever sets, and a heading named `callout`
+ * would otherwise make every rule needing `.callout` look like an option.
  */
 export function styleSettingsClasses(css: string): Set<string> {
 	const out = new Set<string>();
 	const block = /\/\*\s*@settings\b([\s\S]*?)\*\//g;
 	let m: RegExpExecArray | null;
 	while ((m = block.exec(css)) !== null) {
-		const body = m[1] ?? "";
-		const token = /^\s*(?:-\s*)?(?:(?:id|value)\s*:\s*)?["']?([A-Za-z_][\w-]*)["']?\s*$/;
-		for (const line of body.split(/\r?\n/)) {
-			if (!/^\s*(?:-|id\s*:|value\s*:|-\s*(?:id|value)\s*:)/.test(line)) continue;
-			const t = token.exec(line);
-			if (t?.[1]) out.add(t[1]);
+		const lines = (m[1] ?? "").split(/\r?\n/);
+		const start = lines.findIndex((line) => /^\s*settings\s*:\s*$/.test(line));
+		if (start < 0) continue;
+		// Items are the list entries at the first indentation under `settings:`.
+		let indent = -1;
+		const items: string[][] = [];
+		for (const line of lines.slice(start + 1)) {
+			const dash = /^(\s*)-(?:\s|$)/.exec(line);
+			if (dash && (indent < 0 || (dash[1] ?? "").length === indent)) {
+				indent = (dash[1] ?? "").length;
+				items.push([line]);
+			} else if (items.length > 0) {
+				items[items.length - 1]?.push(line);
+			}
+		}
+		for (const item of items) {
+			const id = item.map((line) => settingValue(line, "id")).find((v) => v !== null) ?? null;
+			const type = item.map((line) => settingValue(line, "type")).find((v) => v !== null) ?? null;
+			if (type === "class-toggle" && id) out.add(id);
+			if (type !== "class-select") continue;
+			const from = item.findIndex((line) => /^\s*(?:-\s+)?options\s*:/.test(line));
+			if (from < 0) continue;
+			for (const line of item.slice(from + 1)) {
+				const value = settingValue(line, "value") ?? /^\s*-\s+["']?([A-Za-z_][\w-]*)["']?\s*$/.exec(line)?.[1] ?? null;
+				if (value && /^[A-Za-z_][\w-]*$/.test(value)) out.add(value);
+			}
 		}
 	}
 	return out;

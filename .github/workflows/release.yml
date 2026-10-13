@@ -141,9 +141,16 @@ jobs:
             # editor reading the published claim and the export keeping every
             # name - 4.4 KB over the build before them, which leaves the
             # headroom about where it was.
+            # Raised by 3 KiB for the rest of them and their review: the page
+            # class watcher, idle and batched passes, stock aliases following
+            # the built-in's id however they are typed, names measured on
+            # arrival, finished transitions, a per-pass render owner, mode and
+            # platform classes, real Style Settings option classes, and the
+            # editor naming the aliases Obsidian draws - 3.8 KB, which leaves
+            # the headroom about where it was.
             - name: Check bundle size
               run: |
-                  limit=2306048  # 2 MiB + 204 KiB
+                  limit=2309120  # 2 MiB + 207 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

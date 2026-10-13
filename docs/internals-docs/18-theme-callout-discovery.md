@@ -571,7 +571,9 @@ Two checks, aimed where a wrong answer costs something:
   under every `@media`/`@supports` around it holding - or *switched off by the
   page*: a `<body>`/`<html>` condition it fails, or a class `<body>` does not
   carry that only `<body>` could - one the theme's own Style Settings block
-  offers (`styleSettingsClasses`, `optionGated`), or one of Obsidian's own mode
+  offers (`styleSettingsClasses`: the id of a `class-toggle` and the options of
+  a `class-select`, never a heading's or a variable's id, and never a class the
+  rendered note itself carries; `optionGated`), or one of Obsidian's own mode
   and platform classes (`OBSIDIAN_BODY_STATE`: `.theme-dark` written bare is as
   common as `body.theme-dark`, and draws nothing in light mode; a mode switch
   fires `css-change`, so the other mode is measured in its turn). Any other rule may well draw where the offscreen

@@ -714,6 +714,31 @@ settings:
 			}
 		}));
 
+	it("never takes a class the rendered note carries for an option, whatever the block calls it", () =>
+		withCallouts(async () => {
+			// A Style Settings heading with the id `callout`: `.callout` is on the
+			// rendered callout itself, so the cssclass rule below must stay unseen
+			// and keep Note with the theme.
+			const settings = `/* @settings
+name: T
+id: t
+settings:
+    -
+        id: callout
+        type: class-toggle
+*/`;
+			const h = harness(
+				[
+					rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"]),
+					rule('.my-cssclass .callout[data-callout="note"]', ["callout-title", "color", "red"], "my-cssclass"),
+				],
+				settings,
+			);
+			const claims = check(h);
+			await claims.check(request(h, ["note"]));
+			assert.deepStrictEqual([...claims.unstyled(["note"])], []);
+		}));
+
 	it("does not take a bare class the theme never offers as an option for one", () =>
 		withCallouts(async () => {
 			const h = harness(

@@ -101,6 +101,19 @@ const nextIdleTask = (): Promise<void> =>
 		}
 	});
 
+/** Every class carried by `root` or an element under it. */
+function classesUnder(root: Element): Set<string> {
+	const out = new Set<string>();
+	const walk = (el: Element): void => {
+		// On the icon's SVG `className` is an object; its attribute is the text.
+		const raw = typeof el.className === "string" ? el.className : (el.getAttribute("class") ?? "");
+		for (const cls of raw.split(/\s+/)) if (cls) out.add(cls);
+		for (const child of Array.from(el.children)) walk(child);
+	};
+	walk(root);
+	return out;
+}
+
 /**
  * Jump every CSS transition running in `el`'s subtree, pseudo-elements
  * included, to its end, so a computed value read now is the one the rules
@@ -345,7 +358,7 @@ export class ThemeClaimCheck {
 			if (this.destroyed || generation !== this.generation) return null;
 			// An id with a rule the measurement cannot see in force stays the
 			// theme's whatever the comparison says - see `rulesSeen`.
-			const seen = this.rulesSeen(wanted, index, rendered, doc);
+			const seen = this.rulesSeen(wanted, index, rendered, doc, host);
 			const judged = wanted.filter((id) => seen.has(id));
 			const out = new Map<string, boolean>();
 			if (judged.length > 0) {
@@ -435,9 +448,13 @@ export class ThemeClaimCheck {
 		index: RuleIndex,
 		rendered: ReadonlyMap<string, Rendered>,
 		doc: Document,
+		host: HTMLElement,
 	): Set<string> {
 		const pageOff = pageRootTest(doc);
-		const options = this.optionClasses();
+		// A class the rendered note carries is structure, not an option, whatever
+		// a Style Settings block happens to call one of its entries.
+		const carried = classesUnder(host);
+		const options = new Set([...this.optionClasses()].filter((cls) => !carried.has(cls)));
 		const out = new Set<string>();
 		for (const id of ids) {
 			const views = rendered.get(id);

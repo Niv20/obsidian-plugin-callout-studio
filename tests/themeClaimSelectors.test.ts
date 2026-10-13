@@ -320,11 +320,38 @@ settings:
 */
 .aura-callouts .callout[data-callout="note"] { color: red; }`;
 		const classes = styleSettingsClasses(css);
-		for (const cls of ["aura-callouts", "aura-style", "aura-flat", "aura-round"]) {
-			assert.ok(classes.has(cls), cls);
-		}
-		assert.ok(!classes.has("Rounded"));
-		assert.ok(!classes.has("callout"));
+		assert.deepStrictEqual([...classes].sort(), ["aura-callouts", "aura-flat", "aura-round"]);
 		assert.deepStrictEqual([...styleSettingsClasses(".a { color: red }")], []);
+	});
+
+	it("never reads a heading's, a variable's or the block's own id as a class", () => {
+		// A heading called `callout` made every rule needing `.callout` look
+		// like an option that is off.
+		const css = `/* @settings
+name: T
+id: callout
+settings:
+    -
+        id: callout
+        title: Callouts
+        type: heading
+        level: 2
+    -
+        id: callout-title
+        type: variable-color
+        format: hex
+        default: '#ff0000'
+    - id: t-cards
+      type: class-toggle
+    -
+        id: t-mode
+        type: class-select
+        default: t-light
+        options:
+            - t-light
+            - label: Dark
+              value: "t-dark"
+*/`;
+		assert.deepStrictEqual([...styleSettingsClasses(css)].sort(), ["t-cards", "t-dark", "t-light"]);
 	});
 });
