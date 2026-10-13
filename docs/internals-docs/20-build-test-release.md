@@ -242,7 +242,7 @@ the partially clipped bottom row to show that the list continues. Its canvas is
 padding. Refresh the store source first with
 `node scripts/render-store-screenshots.mjs 01-settings` if its settings content
 changes.
-`02-syntax.svg` is 1080 × 704: a full-width dark syntax reference compares
+`02-syntax.svg` is 1080 × 666: a full-width dark syntax reference compares
 default and custom content for Heading, Inline, and Block using the exact
 `[!note]` snippets from the README. Below it, two adjacent dark panels show an
 actual Purple Idea heading, inline, and block callout beside their exact

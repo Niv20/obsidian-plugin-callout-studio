@@ -24,7 +24,7 @@ body { margin:0; background:transparent; }
 *, *::before, *::after { animation:none!important; transition:none!important; caret-color:transparent!important; }
 #readme-scene { display:flex; flex-direction:column; gap:24px; width:1080px; padding:8px; box-sizing:border-box; background:transparent; }
 .readme-example { display:flex; gap:24px; }
-.readme-card { position:relative; flex:1; height:422px; min-width:0; overflow:hidden; border:1px solid #40384e; border-radius:16px; background:#1e1e1e; }
+.readme-card { position:relative; flex:1; height:384px; min-width:0; overflow:hidden; border:1px solid #40384e; border-radius:16px; background:#1e1e1e; }
 .readme-reference { flex:none; height:242px; }
 .readme-syntax-table { width:100%; table-layout:fixed; border-spacing:0; border-collapse:separate; color:#d8d4df; font-family:Arial,Helvetica,sans-serif; }
 .readme-syntax-table th, .readme-syntax-table td { height:60px; padding:0 26px; text-align:left; vertical-align:middle; border:0; }
@@ -106,9 +106,9 @@ try {
 		if (callout.bottom > card.bottom - 16) throw new Error("The rendered sample overflows its panel");
 	});
 	const syntax = await exportSvg(page, metadata.selector, { ...metadata, padding: 0, background: "transparent" });
-	await validate(page, syntax, [1080, 704]);
+	await validate(page, syntax, [1080, 666]);
 	assert.deepEqual(network, [], "README artwork attempted network access");
 	assert.deepEqual(errors, [], "README artwork has browser errors");
 	writeFileSync(path.join(output, "02-syntax.svg"), syntax);
-	console.log(`README SVGs: settings 960 × 681; syntax 1080 × 704 (${Math.round(Buffer.byteLength(syntax) / 1024)} KiB)`);
+	console.log(`README SVGs: settings 960 × 681; syntax 1080 × 666 (${Math.round(Buffer.byteLength(syntax) / 1024)} KiB)`);
 } finally { await browser.close(); }
