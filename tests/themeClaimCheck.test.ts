@@ -13,7 +13,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import { MarkdownRenderer } from "obsidian";
 import type { App } from "obsidian";
-import { installFakeDom } from "./support/fakeDom";
+import { FakeElement, installFakeDom } from "./support/fakeDom";
 import { ThemeClaimCheck, type ClaimCheckRequest } from "../src/manager/theme/ThemeClaimCheck";
 import { namesInSelector } from "../src/manager/theme/themeClaimSelectors";
 import type { ComputedStyleReader } from "../src/manager/theme/readCalloutStyle";
@@ -324,6 +324,94 @@ describe("how the measuring is spread out", () => {
 			assert.deepStrictEqual([...claims.unstyled(["note"])], []);
 			assert.strictEqual(h.studio.on, true);
 		}));
+});
+
+describe("a theme's transitions", () => {
+	// Switching a rule off starts the theme's transition, and a value read
+	// right then is the one it had a moment ago - which hides the difference.
+	// The fake: any selector change starts a transition on every callout, and
+	// until it is finished the reader answers with the value read before.
+	function transitioningTheme(withFinish: boolean) {
+		let running = false;
+		const r = rule('.callout[data-callout="note"]', ["callout-title", "color", "violet"]);
+		let selector = r.selectorText;
+		Object.defineProperty(r, "selectorText", {
+			get: () => selector,
+			set: (value: string) => {
+				if (value !== selector) running = true;
+				selector = value;
+			},
+		});
+		const h = harness([r]);
+		const fresh = reader(h);
+		const seen = new WeakMap<Element, Map<string, string>>();
+		const read: ComputedStyleReader = (el, pseudo) => ({
+			getPropertyValue: (prop: string) => {
+				const known = seen.get(el) ?? new Map<string, string>();
+				seen.set(el, known);
+				const key = `${pseudo ?? ""}|${prop}`;
+				const before = known.get(key);
+				if (running && before !== undefined) return before;
+				const value = fresh(el, pseudo).getPropertyValue(prop);
+				known.set(key, value);
+				return value;
+			},
+		});
+		const proto = FakeElement.prototype as unknown as { getAnimations?: unknown };
+		proto.getAnimations = withFinish
+			? () => (running ? [{ transitionProperty: "color", finish: () => void (running = false) }] : [])
+			: undefined;
+		const claims = new ThemeClaimCheck(h.app, {
+			read,
+			properties: () => ["color", "cursor", "display", "content"],
+			nextTask: () => Promise.resolve(),
+		});
+		return { h, claims, restore: () => delete proto.getAnimations };
+	}
+
+	it("finishes them before reading, so a callout the theme recolours stays the theme's", () =>
+		withCallouts(async () => {
+			const { h, claims, restore } = transitioningTheme(true);
+			try {
+				await claims.check(request(h, ["note"]));
+				assert.deepStrictEqual([...claims.unstyled(["note"])], []);
+			} finally {
+				restore();
+			}
+		}));
+
+	it("would have handed it back with the transition left running", () =>
+		withCallouts(async () => {
+			// The same theme with no animation API: the fake's stale read hides the
+			// recolour - the false "not drawn" the finishing exists to prevent.
+			const { h, claims, restore } = transitioningTheme(false);
+			try {
+				await claims.check(request(h, ["note"]));
+				assert.deepStrictEqual([...claims.unstyled(["note"])], ["note"]);
+			} finally {
+				restore();
+			}
+		}));
+
+	it("leaves a keyframe animation alone - an infinite one cannot finish", async () => {
+		const proto = FakeElement.prototype as unknown as { getAnimations?: unknown };
+		let asked = 0;
+		let finished = 0;
+		proto.getAnimations = () => {
+			asked++;
+			return [{ animationName: "pulse", finish: () => { finished++; throw new Error("InvalidStateError"); } }];
+		};
+		try {
+			await withCallouts(async () => {
+				const h = harness([rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"])]);
+				await check(h).check(request(h, ["note"]));
+			});
+			assert.ok(asked > 0, "the running animations were looked at");
+			assert.strictEqual(finished, 0);
+		} finally {
+			delete proto.getAnimations;
+		}
+	});
 });
 
 describe("what the check leaves behind", () => {

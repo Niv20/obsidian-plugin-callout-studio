@@ -597,6 +597,15 @@ Decisions in the measurement:
   reaches another's callout), never hide one. Reading view first; only an id it
   shows no difference for is read again in Live Preview's ancestry, and the
   "rules on" side is read lazily, stopping at the first visible difference.
+- **A theme's transitions are finished before each read** (`finishTransitions`).
+  Switching a rule off starts any `transition` the theme put on the callout,
+  and a value read right then is the one it had a moment ago - the difference
+  hidden, the callout wrongly handed back. `styles.css` turns transitions off
+  inside `.cs-theme-probe`, but a theme rule with `!important` and more weight
+  wins that, so every CSS transition in the rendered callouts (pseudo-elements
+  included, `getAnimations({ subtree: true })`) is jumped to its end after the
+  rules go off and again after they come back. Keyframe animations are left
+  alone: an infinite one cannot finish, and it reads the same both ways.
 - **Passes are tasks of their own, in idle time** (`compare`, `nextIdleTask`).
   The check waits for an idle moment (`requestIdleCallback`, at most a second;
   a macrotask where a webview lacks it) after the `css-change` or the launch

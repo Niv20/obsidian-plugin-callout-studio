@@ -101,6 +101,33 @@ const nextIdleTask = (): Promise<void> =>
 		}
 	});
 
+/**
+ * Jump every CSS transition running in `el`'s subtree, pseudo-elements
+ * included, to its end, so a computed value read now is the one the rules
+ * settle on and not a frame of the way there.
+ *
+ * A theme's `transition` on a callout would otherwise answer the switch with
+ * the value it had a moment ago and hide the very difference being measured.
+ * `styles.css` already turns transitions off inside the probe, but a theme
+ * rule with `!important` and more weight wins that. Keyframe animations are
+ * left alone: an infinite one cannot finish, and it reads the same both ways.
+ */
+function finishTransitions(el: Element): void {
+	const running =
+		(el as Element & { getAnimations?: (options?: { subtree?: boolean }) => Animation[] })
+			.getAnimations?.({ subtree: true }) ?? [];
+	for (const animation of running) {
+		if (typeof (animation as Animation & { transitionProperty?: unknown }).transitionProperty !== "string") {
+			continue;
+		}
+		try {
+			animation.finish();
+		} catch {
+			/* one that cannot finish keeps running; the read errs toward the theme */
+		}
+	}
+}
+
 /** Ids per synchronous pass on a phone or tablet - see {@link ThemeClaimCheck.compare}. */
 const MOBILE_BATCH = 8;
 
@@ -501,11 +528,17 @@ export class ThemeClaimCheck {
 		props: readonly string[],
 		view: keyof Rendered,
 	): Map<string, boolean> | null {
-		const without = this.withRulesOff(ids, index, (id) => {
+		const callouts = ids.flatMap((id) => rendered.get(id)?.[view] ?? []);
+		const settle = (): void => {
+			for (const callout of callouts) finishTransitions(callout);
+		};
+		const without = this.withRulesOff(ids, index, settle, (id) => {
 			const callout = rendered.get(id)?.[view];
 			return callout ? this.sample(callout, props) : null;
 		});
 		if (without === null) return null;
+		// The rules are back: let what they start settle before the other side.
+		settle();
 		const out = new Map<string, boolean>();
 		for (const id of ids) {
 			const before = without.get(id);
@@ -523,6 +556,7 @@ export class ThemeClaimCheck {
 	private withRulesOff(
 		ids: readonly string[],
 		index: RuleIndex,
+		settle: () => void,
 		read: (id: string) => CalloutStyle | null,
 	): Map<string, CalloutStyle> | null {
 		const off = new Set(ids);
@@ -537,6 +571,7 @@ export class ThemeClaimCheck {
 				rule.selectorText = selector;
 			});
 			if (rules.some((rule, i) => rule.selectorText === original[i])) return null;
+			settle();
 			const out = new Map<string, CalloutStyle>();
 			for (const id of ids) {
 				const style = read(id);
