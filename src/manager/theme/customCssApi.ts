@@ -65,11 +65,20 @@ export function usesDefaultTheme(app: App): boolean {
  * the next time anything else changes.
  */
 export function stylingSignature(app: App): string {
+	return `${themeSignature(app)}|${enabledSnippetNames(app).join(",")}`;
+}
+
+/**
+ * The theme half of {@link stylingSignature}: name and version, no snippets.
+ *
+ * For an answer about the theme's own rules - the claim check's verdicts -
+ * which a snippet switched on or off does not invalidate.
+ */
+export function themeSignature(app: App): string {
 	const css = api(app);
 	const name = css?.theme ?? "";
 	const version = (name && css?.themes?.[name]?.version) || "";
-	const snippets = enabledSnippetNames(app).join(",");
-	return `${name}@${version}|${snippets}`;
+	return `${name}@${version}`;
 }
 
 /** The active theme's CSS text, or `""` when there is no theme. */

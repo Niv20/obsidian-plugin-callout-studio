@@ -18,6 +18,7 @@ import { ThemeClaimCheck, type ClaimCheckRequest } from "../src/manager/theme/Th
 import { namesInSelector } from "../src/manager/theme/themeClaimSelectors";
 import type { ComputedStyleReader } from "../src/manager/theme/readCalloutStyle";
 import { isOwnCssChange, OWN_CSS_CHANGE } from "../src/manager/ownCssChange";
+import type { ClaimVerdictStore } from "../src/manager/theme/themeClaimCache";
 
 installFakeDom();
 
@@ -55,13 +56,14 @@ interface Harness {
 	rules: FakeRule[];
 	studio: { on: boolean; suspended: number; restored: number };
 	setTheme(name: string): void;
+	setSnippets(names: string[]): void;
 }
 
 function harness(rules: FakeRule[]): Harness {
 	const customCss = {
 		theme: "Theme",
 		themes: { Theme: { version: "1" }, Other: { version: "1" } } as Record<string, { version: string }>,
-		snippets: [],
+		snippets: [] as string[],
 		enabledSnippets: new Set<string>(),
 		styleEl: { textContent: "x", sheet: { cssRules: rules } },
 		extraStyleEls: [],
@@ -72,6 +74,25 @@ function harness(rules: FakeRule[]): Harness {
 		studio: { on: true, suspended: 0, restored: 0 },
 		setTheme: (name) => {
 			customCss.theme = name;
+		},
+		setSnippets: (names) => {
+			customCss.snippets = names;
+			customCss.enabledSnippets = new Set(names);
+		},
+	};
+}
+
+/** A device store held in memory, as `localStorage` would hold it across launches. */
+function memoryStore(): ClaimVerdictStore & { held: Map<string, Map<string, boolean>> } {
+	const held = new Map<string, Map<string, boolean>>();
+	return {
+		held,
+		load: (theme) => {
+			const found = held.get(theme);
+			return found ? new Map(found) : null;
+		},
+		save: (theme, verdicts) => {
+			held.set(theme, new Map(verdicts));
 		},
 	};
 }
@@ -127,11 +148,16 @@ function emitCallouts(): () => void {
 	};
 }
 
-function check(h: Harness, nextTask = () => Promise.resolve()): ThemeClaimCheck {
+function check(
+	h: Harness,
+	nextTask = () => Promise.resolve(),
+	store?: ClaimVerdictStore,
+): ThemeClaimCheck {
 	return new ThemeClaimCheck(h.app, {
 		read: reader(h),
 		properties: () => ["color", "cursor", "display", "content"],
 		nextTask,
+		store,
 	});
 }
 
@@ -308,6 +334,50 @@ describe("how long a verdict lasts", () => {
 			h.setTheme("Other");
 			claims.invalidate();
 			assert.deepStrictEqual([...claims.unstyled(["note"])], []);
+		}));
+
+	it("survives a snippet switched on or off: the theme's own rules did not move", () =>
+		withCallouts(async () => {
+			// A snippet toggle used to drop every verdict, so each callout the
+			// theme names but does not draw flashed to the theme's look until
+			// the re-check landed.
+			const h = harness([rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"])]);
+			const claims = check(h);
+			await claims.check(request(h, ["note"]));
+			h.setSnippets(["my-snippet"]);
+			claims.invalidate();
+			assert.deepStrictEqual([...claims.unstyled(["note"])], ["note"]);
+		}));
+
+	it("is remembered on the device for the next launch of the same theme", () =>
+		withCallouts(async () => {
+			// The first stylesheet of a launch is built before any pass can land;
+			// without this every launch flashed the callout to the theme's look.
+			const store = memoryStore();
+			const h = harness([rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"])]);
+			await check(h, undefined, store).check(request(h, ["note"]));
+			assert.deepStrictEqual([...(store.held.get("Theme@1") ?? [])], [["note", false]]);
+
+			const nextLaunch = check(h, undefined, store);
+			assert.deepStrictEqual([...nextLaunch.unstyled(["note"])], ["note"], "before any pass");
+
+			h.setTheme("Other");
+			nextLaunch.invalidate();
+			assert.deepStrictEqual([...nextLaunch.unstyled(["note"])], [], "not another theme's");
+		}));
+
+	it("corrects a remembered verdict the theme no longer earns", () =>
+		withCallouts(async () => {
+			const store = memoryStore();
+			store.held.set("Theme@1", new Map([["note", false]]));
+			const h = harness([rule('.callout[data-callout="note"]', ["callout-title", "color", "violet"])]);
+			const claims = check(h, undefined, store);
+			assert.deepStrictEqual([...claims.unstyled(["note"])], ["note"]);
+			let changes = 0;
+			await claims.check(request(h, ["note"], () => changes++));
+			assert.deepStrictEqual([...claims.unstyled(["note"])], []);
+			assert.strictEqual(changes, 1);
+			assert.deepStrictEqual([...(store.held.get("Theme@1") ?? [])], [["note", true]]);
 		}));
 });
 

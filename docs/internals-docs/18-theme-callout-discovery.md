@@ -575,11 +575,25 @@ Decisions in the measurement:
 - **Every doubt goes to the theme** - no parsed sheet, an id no parsed rule
   names, a rewritten selector the browser refuses (it silently keeps the old
   one), a failed render. That is how ownership behaved before the check.
-- **Verdicts outlive a `css-change` of the same theme** and are re-measured
-  after it, so a Style Settings toggle does not hand everything back for the
-  length of a render; a theme switch drops them. This plugin's own `css-change`
-  (`OWN_CSS_CHANGE` in `manager/ownCssChange.ts`) starts no check: the check
-  switches this plugin's CSS off, so that CSS cannot change a verdict.
+- **Verdicts belong to the theme, not to the styling.** They are keyed on
+  `themeSignature` (name and version, no snippets), outlive any `css-change` of
+  the same theme and are re-measured after it, so neither a Style Settings
+  toggle nor a snippet switched on or off hands everything back for the length
+  of a render; a theme switch swaps them for that theme's. This plugin's own
+  `css-change` (`OWN_CSS_CHANGE` in `manager/ownCssChange.ts`) starts no check:
+  the check switches this plugin's CSS off, so that CSS cannot change a verdict.
+- **Verdicts are remembered on the device**
+  ([`themeClaimCache.ts`](../../src/manager/theme/themeClaimCache.ts)). The
+  first stylesheet of a launch is built before any pass can land, and with no
+  verdicts every callout the theme names counts as the theme's - so a built-in
+  Catppuccin names but does not draw lost its design at every launch until the
+  check handed it back. Each completed pass saves its verdicts to vault-scoped
+  `localStorage` (`<appId>-callout-studio-theme-claims-v1`, the last eight
+  themes, callout ids only, written only when they moved), and `syncVerdicts`
+  seeds from them whenever the active theme changes, including the first time
+  `unstyled` is asked at startup. A signature whose version is not read yet
+  (`Name@`) takes the newest entry for that name. The check still runs and
+  corrects anything that moved.
 - **A burst is one question, asked again when it quiets.** Dragging a slider
   or a Style Settings colour fires `css-change` once per step. The check is
   asked through the same `QuietGate`
@@ -1582,6 +1596,7 @@ real cascade (`app.css` → `styles.css` → theme → snippets →
 | [`manager/theme/themeAppearanceSync.ts`](../../src/manager/theme/themeAppearanceSync.ts) | Scheduling, ordering, the fingerprint, the probe's lifetime |
 | [`manager/theme/ThemeClaimCheck.ts`](../../src/manager/theme/ThemeClaimCheck.ts) | Page conditions and the measured "does the theme draw it?" pass |
 | [`manager/theme/themeClaimSelectors.ts`](../../src/manager/theme/themeClaimSelectors.ts) / [`themeClaimEffect.ts`](../../src/manager/theme/themeClaimEffect.ts) | Reading and rewriting a parsed selector; what counts as a visible difference |
+| [`manager/theme/themeClaimCache.ts`](../../src/manager/theme/themeClaimCache.ts) | The claim check's verdicts, remembered on the device per theme |
 | [`utils/quietGate.ts`](../../src/utils/quietGate.ts) | Act at once, then once more when a burst of `css-change` has ended |
 | [`manager/ownCssChange.ts`](../../src/manager/ownCssChange.ts) | The payload that marks this plugin's own `css-change` |
 | [`manager/theme/themeOverlayRows.ts`](../../src/manager/theme/themeOverlayRows.ts) | Minting and retiring the ephemeral `source: "theme"` rows |
@@ -1599,7 +1614,7 @@ real cascade (`app.css` → `styles.css` → theme → snippets →
 
 Suites: `themeCalloutScan`, `themeOwnership`, `manualDiscovery`,
 `themeOverlayRows`, `themeRowSync`, `syncThemeOverlay`, `themeAppearance`,
-`themeAppearanceProbe`, `themeClaimCheck`, `themeClaimSelectors`, `quietGate`,
+`themeAppearanceProbe`, `themeClaimCheck`, `themeClaimCache`, `themeClaimSelectors`, `quietGate`,
 `registryChangeKinds`, `restoreCoreIcon`, `themeRowActions`, `themeReport`,
 `cssSpecificity`.
 

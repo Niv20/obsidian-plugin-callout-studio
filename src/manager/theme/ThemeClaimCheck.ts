@@ -37,7 +37,8 @@
  */
 import { Component, MarkdownRenderer, type App } from "obsidian";
 import { obsidianCalloutAttrId } from "../../utils/calloutId";
-import { stylingSignature, themeSheet } from "./customCssApi";
+import { themeSheet, themeSignature } from "./customCssApi";
+import { localClaimVerdicts, type ClaimVerdictStore } from "./themeClaimCache";
 import { domReader, type ComputedStyleReader } from "./readCalloutStyle";
 import { changesVisibly, sampledStyle, type CalloutStyle } from "./themeClaimEffect";
 import {
@@ -73,6 +74,8 @@ export interface ThemeClaimCheckOptions {
 	properties?: (doc: Document) => readonly string[];
 	/** Waits for a task of its own; tests, whose timers never fire, resolve it at once. */
 	nextTask?: () => Promise<void>;
+	/** Where verdicts outlive the session; device `localStorage` by default. */
+	store?: ClaimVerdictStore;
 }
 
 /** What a caller hands {@link ThemeClaimCheck.check}. */
@@ -108,10 +111,15 @@ export class ThemeClaimCheck {
 	private readonly read: ComputedStyleReader;
 	private readonly properties: (doc: Document) => readonly string[];
 	private readonly nextTask: () => Promise<void>;
+	private readonly store: ClaimVerdictStore;
 	private propertyList: readonly string[] | null = null;
 	/** Per id: did switching the theme's rules off change what is drawn? */
 	private verdicts = new Map<string, boolean>();
-	/** The styling the verdicts describe; another theme's verdicts mean nothing. */
+	/**
+	 * The theme the verdicts describe (`themeSignature`: name and version, no
+	 * snippets). Another theme's verdicts mean nothing; a snippet switched on
+	 * or off leaves the theme's own rules as they were, so it keeps them.
+	 */
 	private verdictSignature: string | null = null;
 	private generation = 0;
 	private running = false;
@@ -125,21 +133,34 @@ export class ThemeClaimCheck {
 		this.read = options.read ?? domReader;
 		this.properties = options.properties ?? everyComputedProperty;
 		this.nextTask = options.nextTask ?? nextMacrotask;
+		this.store = options.store ?? localClaimVerdicts(app);
 		this.component.load();
 	}
 
 	/**
 	 * The styling may have changed (`css-change`). A pass in flight stops
-	 * counting; verdicts for another theme are dropped, verdicts for this one
-	 * are kept until a new pass replaces them, so a Style Settings toggle does
-	 * not hand every callout back to the theme for the length of a render.
+	 * counting; verdicts for another theme are swapped for that theme's, and
+	 * verdicts for this one are kept until a new pass replaces them, so a Style
+	 * Settings toggle or a snippet does not hand every callout back to the
+	 * theme for the length of a render.
 	 */
 	invalidate(): void {
 		this.generation++;
-		if (this.verdictSignature !== stylingSignature(this.app)) {
-			this.verdicts = new Map();
-			this.verdictSignature = null;
-		}
+		this.syncVerdicts();
+	}
+
+	/**
+	 * Make {@link verdicts} the active theme's: kept when they already are,
+	 * else the ones this device remembers for it (`themeClaimCache.ts`), else
+	 * none. Remembered verdicts are what keep a launch, or a switch back to a
+	 * theme used before, from flashing every callout the theme names but does
+	 * not draw; the next pass replaces them.
+	 */
+	private syncVerdicts(): void {
+		const signature = themeSignature(this.app);
+		if (this.verdictSignature === signature) return;
+		this.verdicts = this.store.load(signature) ?? new Map<string, boolean>();
+		this.verdictSignature = signature;
 	}
 
 	/**
@@ -175,7 +196,8 @@ export class ThemeClaimCheck {
 	/** The ids, of `ids`, last measured to look the same without the theme's rules. */
 	unstyled(ids: Iterable<string>): Set<string> {
 		const out = new Set<string>();
-		if (this.verdictSignature !== stylingSignature(this.app)) return out;
+		if (this.destroyed) return out;
+		this.syncVerdicts();
 		for (const id of ids) if (this.verdicts.get(id) === false) out.add(id);
 		return out;
 	}
@@ -193,7 +215,7 @@ export class ThemeClaimCheck {
 		}
 		this.running = true;
 		const generation = this.generation;
-		const signature = stylingSignature(this.app);
+		const signature = themeSignature(this.app);
 		let measured: Map<string, boolean> | null = null;
 		try {
 			measured = await this.measure(request, generation);
@@ -202,16 +224,19 @@ export class ThemeClaimCheck {
 		} finally {
 			this.running = false;
 		}
-		if (measured && !this.destroyed && generation === this.generation) {
-			if (this.verdictSignature !== signature) {
-				this.verdicts = new Map();
-				this.verdictSignature = signature;
-			}
+		if (
+			measured &&
+			!this.destroyed &&
+			generation === this.generation &&
+			themeSignature(this.app) === signature
+		) {
+			this.syncVerdicts();
 			let moved = false;
 			for (const [id, drawn] of measured) {
 				if ((this.verdicts.get(id) === false) !== !drawn) moved = true;
 				this.verdicts.set(id, drawn);
 			}
+			this.store.save(signature, this.verdicts);
 			if (moved) request.onChange();
 		}
 		const next = this.pending;
@@ -223,6 +248,7 @@ export class ThemeClaimCheck {
 		this.destroyed = true;
 		this.pending = null;
 		this.verdicts = new Map();
+		this.verdictSignature = null;
 		this.component.unload();
 	}
 
