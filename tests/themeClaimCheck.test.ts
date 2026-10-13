@@ -59,13 +59,13 @@ interface Harness {
 	setSnippets(names: string[]): void;
 }
 
-function harness(rules: FakeRule[]): Harness {
+function harness(rules: FakeRule[], themeText = "x"): Harness {
 	const customCss = {
 		theme: "Theme",
 		themes: { Theme: { version: "1" }, Other: { version: "1" } } as Record<string, { version: string }>,
 		snippets: [] as string[],
 		enabledSnippets: new Set<string>(),
-		styleEl: { textContent: "x", sheet: { cssRules: rules } },
+		styleEl: { textContent: themeText, sheet: { cssRules: rules } },
 		extraStyleEls: [],
 	};
 	return {
@@ -319,6 +319,96 @@ describe("every doubt goes to the theme", () => {
 			claims.invalidate();
 			release();
 			await pass;
+			assert.deepStrictEqual([...claims.unstyled(["note"])], []);
+		}));
+});
+
+describe("a rule the measurement cannot see in force", () => {
+	// Only a callout whose every rule was in force on the offscreen render -
+	// or switched off by the page - can be judged not drawn. Anything else
+	// stays the theme's, as every callout did before the check existed.
+	it("keeps a callout a rule draws only under a note's cssclass", () =>
+		withCallouts(async () => {
+			const h = harness([
+				rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"]),
+				rule('.my-cssclass .callout[data-callout="note"]', ["callout-title", "color", "red"]),
+			]);
+			const claims = check(h);
+			await claims.check(request(h, ["note"]));
+			assert.deepStrictEqual([...claims.unstyled(["note"])], []);
+			assert.strictEqual(h.studio.suspended, 0, "nothing it could judge, nothing switched off");
+		}));
+
+	it("keeps a callout with a rule in a @media the window does not meet", () =>
+		withCallouts(async () => {
+			const media = { selectorText: undefined, media: { mediaText: "(max-width: 400px)" }, parentRule: null, cssRules: [] as FakeRule[] };
+			const inner: FakeRule = {
+				selectorText: '.callout[data-callout="note"]',
+				parentRule: media as unknown as FakeRule,
+				sets: ["callout-title", "color", "red"],
+				// The fake cascade has no media queries: a class nothing carries
+				// stands in for the narrow window this is not.
+				under: "narrow-window",
+			};
+			media.cssRules = [inner];
+			const h = harness([
+				rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"]),
+				media as unknown as FakeRule,
+			]);
+			const claims = check(h);
+			await claims.check(request(h, ["note"]));
+			assert.deepStrictEqual([...claims.unstyled(["note"])], []);
+		}));
+
+	it("judges a callout whose rules sit in a note's own ancestry", () =>
+		withCallouts(async () => {
+			// `.markdown-reading-view` and the markdown leaf are rendered too, so
+			// a rule scoped to them is seen, and one that changes nothing is
+			// handed back.
+			const h = harness([
+				rule('.markdown-reading-view .callout[data-callout="note"]', ["callout-title", "cursor", "x"]),
+				rule('.workspace-leaf-content .callout[data-callout="note"]', ["callout-title", "cursor", "x"]),
+			]);
+			const claims = check(h);
+			await claims.check(request(h, ["note"]));
+			assert.deepStrictEqual([...claims.unstyled(["note"])], ["note"]);
+		}));
+
+	const SETTINGS = `/* @settings
+name: Aura
+id: aura
+settings:
+    -
+        id: aura-callouts
+        type: class-toggle
+*/`;
+
+	it("judges past a rule behind a Style Settings option that is off", () =>
+		withCallouts(async () => {
+			const h = harness(
+				[
+					rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"]),
+					// `under`: the fake cascade applies it only inside that class.
+					rule('.aura-callouts .callout[data-callout="note"]', ["callout-title", "color", "red"], "aura-callouts"),
+				],
+				SETTINGS,
+			);
+			const claims = check(h);
+			await claims.check(request(h, ["note"]));
+			assert.deepStrictEqual([...claims.unstyled(["note"])], ["note"]);
+		}));
+
+	it("does not take a bare class the theme never offers as an option for one", () =>
+		withCallouts(async () => {
+			const h = harness(
+				[
+					rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"]),
+					rule('.not-an-option .callout[data-callout="note"]', ["callout-title", "color", "red"], "not-an-option"),
+				],
+				SETTINGS,
+			);
+			const claims = check(h);
+			await claims.check(request(h, ["note"]));
 			assert.deepStrictEqual([...claims.unstyled(["note"])], []);
 		}));
 });

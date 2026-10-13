@@ -11,10 +11,15 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import {
+	classesIn,
 	namesInSelector,
+	optionGated,
 	pageRootFails,
-	withoutName,
+	resolveNested,
+	stripPseudoElements,
+	styleSettingsClasses,
 	type PageRoot,
+	withoutName,
 } from "../src/manager/theme/themeClaimSelectors";
 import { changesVisibly, sampledStyle } from "../src/manager/theme/themeClaimEffect";
 
@@ -226,5 +231,83 @@ describe("whether a difference reaches the screen", () => {
 		const at = (top: string, position: string) => ({ icon: { top, position } });
 		assert.strictEqual(changesVisibly(PROPS, reading("i", at("2px", "static")), reading("i", at("0px", "static"))), false);
 		assert.strictEqual(changesVisibly(PROPS, reading("i", at("2px", "relative")), reading("i", at("0px", "relative"))), true);
+	});
+});
+
+describe("matching a parsed rule against the callout the check rendered", () => {
+	it("drops pseudo-elements, keeping the element they hang off", () => {
+		assert.strictEqual(
+			stripPseudoElements('.callout[data-callout="x"] .callout-title::before'),
+			'.callout[data-callout="x"] .callout-title',
+		);
+		assert.strictEqual(stripPseudoElements(".a:after, .b::marker"), ".a, .b");
+		assert.strictEqual(stripPseudoElements(".a::part(x) .b"), ".a .b");
+		// Pseudo-classes are kept: a :hover the render cannot see is a doubt.
+		assert.strictEqual(stripPseudoElements(".a:hover::before"), ".a:hover");
+		// Text inside an attribute value is not a pseudo-element.
+		assert.strictEqual(stripPseudoElements('[title="a::before"]'), '[title="a::before"]');
+	});
+
+	it("folds a nested selector into its parent's", () => {
+		assert.strictEqual(
+			resolveNested('& .callout[data-callout="x"]', "body.opt"),
+			':is(body.opt) .callout[data-callout="x"]',
+		);
+		assert.strictEqual(resolveNested("&.is-collapsed", ".callout"), ":is(.callout).is-collapsed");
+		assert.strictEqual(resolveNested("> .callout-title", ".callout"), ":is(.callout) > .callout-title");
+		assert.strictEqual(
+			resolveNested(".a, & .b", ".p"),
+			":is(.p) .a, :is(.p) .b",
+		);
+		assert.strictEqual(resolveNested('[title="&"]', ".p"), ':is(.p) [title="&"]');
+	});
+
+	it("lists the classes a selector requires, never those it negates", () => {
+		assert.deepStrictEqual(
+			[...classesIn('body.opt .callout[data-callout="a.b"]:not(.off) .x\\.y')],
+			["opt", "callout", "x.y"],
+		);
+	});
+});
+
+describe("a theme option switched off", () => {
+	const off = (cls: string): boolean => cls === "aura-callouts";
+
+	it("gates a selector only when every branch requires an off option class", () => {
+		assert.strictEqual(optionGated('.aura-callouts .callout[data-callout="note"]', off), true);
+		assert.strictEqual(
+			optionGated('.aura-callouts .callout[data-callout="note"], .callout[data-callout="note"]', off),
+			false,
+		);
+		assert.strictEqual(optionGated('.callout[data-callout="note"]:not(.aura-callouts)', off), false);
+	});
+
+	it("reads the class names a theme's Style Settings block can set", () => {
+		const css = `
+/* @settings
+name: Aura
+id: aura-theme
+settings:
+    -
+        id: aura-callouts
+        title: Aura callouts
+        type: class-toggle
+    -
+        id: aura-style
+        type: class-select
+        options:
+            - aura-flat
+            -
+                label: Rounded
+                value: aura-round
+*/
+.aura-callouts .callout[data-callout="note"] { color: red; }`;
+		const classes = styleSettingsClasses(css);
+		for (const cls of ["aura-callouts", "aura-style", "aura-flat", "aura-round"]) {
+			assert.ok(classes.has(cls), cls);
+		}
+		assert.ok(!classes.has("Rounded"));
+		assert.ok(!classes.has("callout"));
+		assert.deepStrictEqual([...styleSettingsClasses(".a { color: red }")], []);
 	});
 });

@@ -465,7 +465,7 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 1. Verify manifest.json / package.json / versions.json all agree with the pushed tag exactly
 2. npm ci, npm run build, npm run lint, npm test (all required on the tagged commit)
 3. Re-verify locales/ has no diff (same reasoning as lint.yml, but against the release build)
-4. Check main.js is under the 2 MiB + 199 KiB bundle-size budget (2,300,928 bytes)
+4. Check main.js is under the 2 MiB + 204 KiB bundle-size budget (2,306,048 bytes)
 5. Attest build provenance for main.js and styles.css
 6. Wait (poll, up to 15×2s) for the tag to be visible via the GitHub API
  - the tag-push webhook can fire before the tag itself propagates
@@ -479,7 +479,7 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 > can't correctly resolve as an update.
 
 > [!NOTE]
-> **The bundle-size budget (2 MiB + 199 KiB) is deliberately tight against the current
+> **The bundle-size budget (2 MiB + 204 KiB) is deliberately tight against the current
 > size**, not generously padded - "a careless import trips it here rather
 > than in users' vaults; raise it consciously when a feature earns it." The
 > ceiling's own history is documented right in the workflow file: it moved
@@ -524,7 +524,11 @@ and opens a PR on each new release, which `lint.yml` then runs against.
 > ownership per name - the claim check that measures whether the theme really
 > draws the built-ins and the user's callouts it names, a callout the theme
 > claims only in part, and the cheaper `css-change` - came to 13.3 KB, and the
-> allowance grew by 13 KiB, the headroom again about where it was.
+> allowance grew by 13 KiB, the headroom again about where it was. Its
+> follow-ups - verdicts kept on the device per theme, a callout judged only
+> when every rule naming it was seen in force, the editor reading the published
+> claim and the export keeping every name - came to 4.4 KB, and the allowance
+> grew by 5 KiB.
 
 > [!NOTE]
 > **The release is created as a `draft`, on purpose.** The `$release` skill

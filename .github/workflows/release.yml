@@ -134,9 +134,16 @@ jobs:
             # the cheaper css-change (theme facts no longer save, bursts
             # folded) - 13.3 KB over the build before them, which leaves the
             # headroom about where it was.
+            # Raised by 5 KiB for the claim check's follow-ups: verdicts kept on
+            # the device per theme (no flash at launch or on a snippet toggle),
+            # a callout judged only when every rule naming it was seen in force
+            # (a note's ancestry, nesting, @media, Style Settings options), the
+            # editor reading the published claim and the export keeping every
+            # name - 4.4 KB over the build before them, which leaves the
+            # headroom about where it was.
             - name: Check bundle size
               run: |
-                  limit=2300928  # 2 MiB + 199 KiB
+                  limit=2306048  # 2 MiB + 204 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

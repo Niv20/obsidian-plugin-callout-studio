@@ -165,3 +165,125 @@ export function pageRootFails(
 		}),
 	);
 }
+
+/** Scan `sel`, calling `visit` at every index outside a string or a bracket. */
+function eachPlainIndex(sel: string, visit: (i: number) => number | void): void {
+	let i = 0;
+	while (i < sel.length) {
+		const ch = sel[i];
+		if (ch === '"' || ch === "'") {
+			i = skipString(sel, i);
+			continue;
+		}
+		if (ch === "[") {
+			i = skipBrackets(sel, i);
+			continue;
+		}
+		if (ch === "\\") {
+			i += 2;
+			continue;
+		}
+		const next = visit(i);
+		i = typeof next === "number" ? next : i + 1;
+	}
+}
+
+const PSEUDO_ELEMENT = /^(?:::[\w-]+(?:\([^)]*\))?|:(?:before|after|first-line|first-letter)(?![\w-]))/i;
+
+/**
+ * The selector with its pseudo-elements taken out, so `Element.matches` can be
+ * asked about the element they hang off: `.callout[data-callout="x"]
+ * .callout-title::before` matches the title. Pseudo-*classes* stay - a
+ * `:hover` the measurement cannot see is exactly the doubt this is used to
+ * find.
+ */
+export function stripPseudoElements(selector: string): string {
+	let out = "";
+	let last = 0;
+	eachPlainIndex(selector, (i) => {
+		if (selector[i] !== ":") return;
+		const m = PSEUDO_ELEMENT.exec(selector.slice(i));
+		if (!m) return;
+		out += selector.slice(last, i);
+		last = i + m[0].length;
+		return last;
+	});
+	return out + selector.slice(last);
+}
+
+/**
+ * A nested rule's selector made whole against its parent's, the way CSS
+ * nesting reads it: every `&` is the parent (`:is(parent)`), and a branch with
+ * no `&` is a descendant of it (relative ones such as `> .x` included).
+ */
+export function resolveNested(child: string, parent: string): string {
+	const parentIs = `:is(${parent})`;
+	return splitSelectorList(child)
+		.map((branch) => branch.trim())
+		.filter((branch) => branch.length > 0)
+		.map((branch) => {
+			let out = "";
+			let last = 0;
+			let found = false;
+			eachPlainIndex(branch, (i) => {
+				if (branch[i] !== "&") return;
+				found = true;
+				out += branch.slice(last, i) + parentIs;
+				last = i + 1;
+			});
+			return found ? out + branch.slice(last) : `${parentIs} ${branch}`;
+		})
+		.join(", ");
+}
+
+const CLASS_TOKEN = /^\.((?:[\w-]|[\u0080-\uffff]|\\[\s\S])+)/;
+
+/** The class names a selector requires, `:not()` contents excluded. */
+export function classesIn(selector: string): Set<string> {
+	const visible = blankNegations(selector);
+	const out = new Set<string>();
+	eachPlainIndex(visible, (i) => {
+		if (visible[i] !== ".") return;
+		const m = CLASS_TOKEN.exec(visible.slice(i));
+		if (!m) return;
+		out.add(unescapeCss(m[1] ?? ""));
+		return i + m[0].length;
+	});
+	return out;
+}
+
+/**
+ * True when every selector in the list requires a class `isOff` says is a
+ * theme option that is switched off - a Style Settings class the page does not
+ * carry. A bare `.my-option .callout[…]` cannot be told from a note's
+ * `cssclasses` by its text alone; the theme's own `@settings` block is what
+ * says it is an option.
+ */
+export function optionGated(selector: string, isOff: (cls: string) => boolean): boolean {
+	const list = splitSelectorList(selector).filter((part) => part.trim().length > 0);
+	if (list.length === 0) return false;
+	return list.every((complex) => [...classesIn(complex)].some(isOff));
+}
+
+/**
+ * The class names a theme's Style Settings block can put on `<body>`: every
+ * `id:` and `value:` and every bare list item inside a `/* @settings … *\/`
+ * comment. A superset - variable ids come along - which is safe, because a
+ * name is only ever used here when a selector requires it as a class and the
+ * page does not have it.
+ */
+export function styleSettingsClasses(css: string): Set<string> {
+	const out = new Set<string>();
+	const block = /\/\*\s*@settings\b([\s\S]*?)\*\//g;
+	let m: RegExpExecArray | null;
+	while ((m = block.exec(css)) !== null) {
+		const body = m[1] ?? "";
+		const token = /^\s*(?:-\s*)?(?:(?:id|value)\s*:\s*)?["']?([A-Za-z_][\w-]*)["']?\s*$/;
+		for (const line of body.split(/\r?\n/)) {
+			if (!/^\s*(?:-|id\s*:|value\s*:|-\s*(?:id|value)\s*:)/.test(line)) continue;
+			const t = token.exec(line);
+			if (t?.[1]) out.add(t[1]);
+		}
+	}
+	return out;
+}

@@ -6,7 +6,7 @@ Callout Studio is designed to work with the active Obsidian theme without fighti
 
 Some themes define their own callout types or restyle Obsidian's built-in types. Callout Studio detects them automatically and lists them under **Callouts from your theme**.
 
-A built-in callout, or one you made, moves here only while the theme actually changes how it looks. A theme rule that changes nothing you can see - one behind a theme option that is off, or one that repeats Obsidian's own look - does not count, and Callout Studio keeps drawing that callout with your design. Turn such an option on in **Style Settings** and the callout moves here straight away; turn it off and it comes back.
+A built-in callout, or one you made, moves here only while the theme actually changes how it looks. A theme rule that changes nothing you can see - one behind a theme option that is off, or one that repeats Obsidian's own look - does not count, and Callout Studio keeps drawing that callout with your design. Turn such an option on in **Style Settings** and the callout moves here straight away; turn it off and it comes back. When Callout Studio can't check a theme rule from where it measures - one that applies only in notes with a certain `cssclasses` value, in embeds, on hover or on narrow windows - the callout stays with your theme, as it did before this check existed.
 
 Callout types the theme adds are listed while the theme provides them. When the theme keeps a whole family of them behind one of its own options (Retroma's retro callouts, for example), they are listed only while that option is on.
 

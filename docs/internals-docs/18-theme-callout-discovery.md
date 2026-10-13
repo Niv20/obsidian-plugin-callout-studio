@@ -533,11 +533,15 @@ Two checks, aimed where a wrong answer costs something:
   dropped from what the theme declares - no ownership, no overlay row. Only a
   compound that *is* the page root is judged: a bare class such as
   `.aura-callouts` may come from the note's `cssclasses`, so it is never held
-  against a rule. Style Settings fires `css-change` when an option flips, so
-  Retroma's 312 types come back the moment its option is turned on.
+  against a rule here (the measurement below reads it as an option only when
+  the theme's Style Settings block offers it). Style Settings fires
+  `css-change` when an option flips, so Retroma's 312 types come back the
+  moment its option is turned on.
 - **A measured difference, for ids that carry a design of their own** -
   built-ins, and callouts the user or another plugin made. Each is rendered offscreen
-  in Reading view's ancestry and cloned into Live Preview's (Obsidian's widget
+  in a note's ancestry - `.workspace-leaf-content[data-type="markdown"] >
+  .view-content`, then `.markdown-reading-view > .markdown-preview-view` for
+  Reading view - and cloned into Live Preview's (Obsidian's widget
   is `div.cm-embed-block.cm-callout > div.markdown-rendered > div.callout`;
   `.markdown-rendered` is a child there, not a class on the widget), read with every
   theme rule naming it switched off (`withoutName` rewrites the parsed
@@ -545,6 +549,20 @@ Two checks, aimed where a wrong answer costs something:
   and compared (`changesVisibly`). An id whose rules change nothing is
   published as not owned (`syncThemeOverlayRows`' `notDrawn`), so this plugin
   keeps painting it.
+- **Only rules the measurement saw count** (`rulesSeen`). An id is judged at
+  all only when every parsed rule naming it is either *in force* on a box of
+  the rendered callout - its selector, nesting folded in (`resolveNested`) and
+  pseudo-elements stripped (`stripPseudoElements`), matches one in either view,
+  under every `@media`/`@supports` around it holding - or *switched off by the
+  page*: a `<body>`/`<html>` condition it fails, or a class the theme's own
+  Style Settings block offers (`styleSettingsClasses`, `optionGated`) that
+  `<body>` does not carry. Any other rule may well draw where the offscreen
+  render cannot reach - under a note's `cssclasses`, in an embed or a hover,
+  on a folded callout, in a narrow window, in a `@container` - and a
+  comparison that never saw it in force says nothing about it, so the id stays
+  the theme's. Every category the measurement found (an option that is off, a
+  dead `rgb(var(--callout-color))`, a restated icon, an invisible property) is
+  a rule in force or an option off, so none of them is lost.
 
 Theme-invented ids are not measured: they have no design here to lose, and many
 are drawn only where a lone render cannot reach - Ukiyo's `col` inside a
@@ -573,8 +591,9 @@ Decisions in the measurement:
   before the check: AnuPpuccin 490 → 321 ms, Retroma 13.6 s → 337 ms (its 312
   overlay rows are no longer minted).
 - **Every doubt goes to the theme** - no parsed sheet, an id no parsed rule
-  names, a rewritten selector the browser refuses (it silently keeps the old
-  one), a failed render. That is how ownership behaved before the check.
+  names, a rule the measurement could not see in force, a rewritten selector
+  the browser refuses (it silently keeps the old one), a failed render. That is
+  how ownership behaved before the check.
 - **Verdicts belong to the theme, not to the styling.** They are keyed on
   `themeSignature` (name and version, no snippets), outlive any `css-change` of
   the same theme and are re-measured after it, so neither a Style Settings
@@ -1391,8 +1410,11 @@ The columns worth checking for your own theme:
   on the `css-change` that an appearance switch fires.
 - **A claim is checked only against the page as it is.** An id named only
   behind a bare class (`.my-option .callout[…]`, no `body`) stays claimed while
-  that class is off, if the theme invented it; a built-in or a user callout in
-  the same position is measured and handed back; a saved scan row is not. A theme-invented type drawn
+  that class is off, if the theme invented it. A built-in or a user callout in
+  the same position stays claimed too - the class may come from a note's
+  `cssclasses` - unless your theme's Style Settings block offers that class as
+  an option: then it is handed back while the option is off. A saved scan row is
+  not measured. A theme-invented type drawn
   only inside another callout, or only with metadata, stays listed because it
   cannot be measured alone.
 - **Ownership is per name, not per property.** A theme that sets one variable

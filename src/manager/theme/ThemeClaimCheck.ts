@@ -37,13 +37,17 @@
  */
 import { Component, MarkdownRenderer, type App } from "obsidian";
 import { obsidianCalloutAttrId } from "../../utils/calloutId";
-import { themeSheet, themeSignature } from "./customCssApi";
+import { themeCss, themeSheet, themeSignature } from "./customCssApi";
 import { localClaimVerdicts, type ClaimVerdictStore } from "./themeClaimCache";
 import { domReader, type ComputedStyleReader } from "./readCalloutStyle";
 import { changesVisibly, sampledStyle, type CalloutStyle } from "./themeClaimEffect";
 import {
 	namesInSelector,
+	optionGated,
 	pageRootFails,
+	resolveNested,
+	stripPseudoElements,
+	styleSettingsClasses,
 	withoutName,
 	type PageRoot,
 } from "./themeClaimSelectors";
@@ -56,6 +60,53 @@ type StyleRule = CSSRule & { selectorText: string };
 /** `@page` also has a `selectorText`, but never one naming a callout. */
 function isStyleRule(rule: CSSRule): rule is StyleRule {
 	return typeof (rule as Partial<StyleRule>).selectorText === "string";
+}
+
+/**
+ * A rule's selector with the selectors of the rules it is nested in folded in
+ * (`resolveNested`), so it can be matched on its own. `null` when a parent's
+ * cannot be read.
+ */
+function resolvedSelector(rule: StyleRule): string | null {
+	let parent = rule.parentRule;
+	while (parent && !isStyleRule(parent)) parent = parent.parentRule;
+	if (!parent) return rule.selectorText;
+	const outer = resolvedSelector(parent);
+	return outer === null ? null : resolveNested(rule.selectorText, outer);
+}
+
+/**
+ * Whether every grouping rule around `rule` holds on this page right now:
+ * `@media` against the window, `@supports` against the browser. `@container`
+ * and `@scope` depend on where the callout sits, which an offscreen render
+ * cannot answer, so they count as not holding - a doubt, and a doubt keeps the
+ * callout with the theme. `@layer` and the rest are transparent.
+ */
+function groupsHold(rule: CSSRule, doc: Document): boolean {
+	const win = doc.defaultView;
+	for (let r = rule.parentRule; r; r = r.parentRule) {
+		if (isStyleRule(r)) continue;
+		const group = r as CSSRule & {
+			media?: { mediaText?: string };
+			conditionText?: string;
+			containerName?: string;
+			containerQuery?: string;
+			start?: unknown;
+		};
+		if (group.media && typeof group.media.mediaText === "string") {
+			const text = group.media.mediaText;
+			if (text && !(win?.matchMedia?.(text).matches ?? false)) return false;
+			continue;
+		}
+		if (group.containerQuery !== undefined || group.containerName !== undefined) return false;
+		if (typeof group.conditionText === "string") {
+			const css = (win as (Window & { CSS?: { supports?: (c: string) => boolean } }) | null)?.CSS;
+			if (!(css?.supports?.(group.conditionText) ?? false)) return false;
+			continue;
+		}
+		if (group.start !== undefined) return false;
+	}
+	return true;
 }
 
 /** Each named id's rules in one parsed sheet. */
@@ -108,6 +159,8 @@ function everyComputedProperty(doc: Document): readonly string[] {
 export class ThemeClaimCheck {
 	private readonly component = new Component();
 	private readonly indexes = new WeakMap<CSSStyleSheet, RuleIndex>();
+	/** Per parsed sheet: the class names its Style Settings block can put on `<body>`. */
+	private readonly optionClassSets = new WeakMap<CSSStyleSheet, Set<string>>();
 	private readonly read: ComputedStyleReader;
 	private readonly properties: (doc: Document) => readonly string[];
 	private readonly nextTask: () => Promise<void>;
@@ -171,7 +224,20 @@ export class ThemeClaimCheck {
 		const out = new Set<string>();
 		const index = this.currentIndex();
 		if (!index || ids.size === 0) return out;
-		const doc = this.mainDocument();
+		const ruleOff = this.pageRootTest(this.mainDocument());
+		for (const id of ids) {
+			const rules = index.get(id);
+			// No parsed rule names it: nothing to judge, so it stays the theme's.
+			if (rules && rules.length > 0 && rules.every(ruleOff)) out.add(id);
+		}
+		return out;
+	}
+
+	/**
+	 * Whether a rule - or a rule it is nested in - asks `<body>`/`<html>` for
+	 * something the page lacks right now. Memoised for one question.
+	 */
+	private pageRootTest(doc: Document): (rule: CSSRule) => boolean {
 		const matches = (compound: string, root: PageRoot): boolean =>
 			(root === "body" ? doc.body : doc.documentElement).matches(compound);
 		const off = new Map<CSSRule, boolean>();
@@ -185,12 +251,7 @@ export class ThemeClaimCheck {
 			off.set(rule, result);
 			return result;
 		};
-		for (const id of ids) {
-			const rules = index.get(id);
-			// No parsed rule names it: nothing to judge, so it stays the theme's.
-			if (rules && rules.length > 0 && rules.every(ruleOff)) out.add(id);
-		}
-		return out;
+		return ruleOff;
 	}
 
 	/** The ids, of `ids`, last measured to look the same without the theme's rules. */
@@ -306,18 +367,26 @@ export class ThemeClaimCheck {
 		try {
 			const rendered = await this.render(host, wanted);
 			if (this.destroyed || generation !== this.generation) return null;
-			this.propertyList ??= this.properties(doc);
-			const restoreStudioCss = request.suspendStudioCss();
-			try {
-				return this.compare(
-					wanted.filter((id) => rendered.has(id)),
-					index,
-					rendered,
-					this.propertyList,
-				);
-			} finally {
-				restoreStudioCss();
+			// An id with a rule the measurement cannot see in force stays the
+			// theme's whatever the comparison says - see `rulesSeen`.
+			const seen = this.rulesSeen(wanted, index, rendered, doc);
+			const judged = wanted.filter((id) => seen.has(id));
+			const out = new Map<string, boolean>();
+			if (judged.length > 0) {
+				this.propertyList ??= this.properties(doc);
+				const restoreStudioCss = request.suspendStudioCss();
+				try {
+					for (const [id, drawn] of this.compare(judged, index, rendered, this.propertyList)) {
+						out.set(id, drawn);
+					}
+				} finally {
+					restoreStudioCss();
+				}
 			}
+			for (const id of wanted) {
+				if (rendered.has(id) && !seen.has(id)) out.set(id, true);
+			}
+			return out;
 		} finally {
 			host.remove();
 		}
@@ -328,10 +397,17 @@ export class ThemeClaimCheck {
 	 * Preview's, because a theme may style either alone.
 	 */
 	private async render(host: HTMLElement, ids: readonly string[]): Promise<Map<string, Rendered>> {
-		const section = host
+		// A note's own ancestry, both views under one leaf as in a real pane,
+		// so a theme rule scoped to `.markdown-reading-view` or to a markdown
+		// leaf is in force here as it is on the page.
+		const view = host
+			.createDiv({ cls: "workspace-leaf-content", attr: { "data-type": "markdown" } })
+			.createDiv({ cls: "view-content" });
+		const section = view
+			.createDiv({ cls: "markdown-reading-view" })
 			.createDiv({ cls: "markdown-preview-view markdown-rendered" })
 			.createDiv({ cls: "markdown-preview-sizer markdown-preview-section" });
-		const lines = host
+		const lines = view
 			.createDiv({ cls: "markdown-source-view cm-s-obsidian mod-cm6 is-live-preview" })
 			.createDiv({ cls: "cm-editor" })
 			.createDiv({ cls: "cm-scroller" })
@@ -364,6 +440,79 @@ export class ThemeClaimCheck {
 			out.set(id, { reading, live });
 		}
 		return out;
+	}
+
+	/**
+	 * The ids, of `ids`, whose every theme rule the measurement can see: in
+	 * force on a box of the rendered callout in either view, or switched off
+	 * by the page - a `<body>`/`<html>` condition it fails
+	 * ({@link pageRootTest}) or a Style Settings option class it lacks.
+	 *
+	 * Only those can be judged "not drawn". A rule the offscreen render does
+	 * not satisfy - scoped to a note's `cssclasses`, an embed, a hover, a
+	 * folded state, a narrow window, a container query - may well draw on the
+	 * page, and a comparison that never saw it in force says nothing about it.
+	 * Such an id stays the theme's, as every id was before the check existed.
+	 */
+	private rulesSeen(
+		ids: readonly string[],
+		index: RuleIndex,
+		rendered: ReadonlyMap<string, Rendered>,
+		doc: Document,
+	): Set<string> {
+		const pageOff = this.pageRootTest(doc);
+		const options = this.optionClasses();
+		const optionOff = (cls: string): boolean =>
+			options.has(cls) &&
+			!doc.body.classList.contains(cls) &&
+			!doc.documentElement.classList.contains(cls);
+		const gated = (rule: CSSRule): boolean => {
+			for (let r: CSSRule | null = rule; r; r = r.parentRule) {
+				if (isStyleRule(r) && optionGated(r.selectorText, optionOff)) return true;
+			}
+			return false;
+		};
+		const out = new Set<string>();
+		for (const id of ids) {
+			const views = rendered.get(id);
+			if (!views) continue;
+			const boxes = new Set<Element>(
+				[...this.boxesOf(views.reading), ...this.boxesOf(views.live)].map(([, el]) => el),
+			);
+			const rules = index.get(id) ?? [];
+			if (rules.every((rule) => pageOff(rule) || gated(rule) || this.inForce(rule, boxes, doc))) {
+				out.add(id);
+			}
+		}
+		return out;
+	}
+
+	/** Does `rule` apply, right now, to one of `boxes`? */
+	private inForce(rule: StyleRule, boxes: ReadonlySet<Element>, doc: Document): boolean {
+		if (!groupsHold(rule, doc)) return false;
+		const selector = resolvedSelector(rule);
+		if (selector === null) return false;
+		const plain = stripPseudoElements(selector);
+		for (const el of boxes) {
+			try {
+				if (el.matches(plain)) return true;
+			} catch {
+				/* a selector this browser will not match is not one it can see in force */
+			}
+		}
+		return false;
+	}
+
+	/** The active theme's Style Settings classes, read once per parsed sheet. */
+	private optionClasses(): Set<string> {
+		const sheet = themeSheet(this.app);
+		if (!sheet) return new Set();
+		let known = this.optionClassSets.get(sheet);
+		if (!known) {
+			known = styleSettingsClasses(themeCss(this.app));
+			this.optionClassSets.set(sheet, known);
+		}
+		return known;
 	}
 
 	/**
