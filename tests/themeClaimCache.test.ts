@@ -79,6 +79,11 @@ describe("verdicts kept on this device", () => {
 			cache.save("Minimal@7.0", new Map([["tip", false]]));
 			assert.deepStrictEqual([...(cache.load("Catppuccin@") ?? [])], [["note", false]]);
 			assert.strictEqual(cache.load("Cat@"), null, "a name, not a prefix of one");
+			// With the mode the check keys on: the newest entry of that name and mode.
+			cache.save("Catppuccin@1.1#dark", new Map([["note", true]]));
+			cache.save("Catppuccin@1.1#light", new Map([["note", false]]));
+			assert.deepStrictEqual([...(cache.load("Catppuccin@#dark") ?? [])], [["note", true]]);
+			assert.deepStrictEqual([...(cache.load("Catppuccin@#light") ?? [])], [["note", false]]);
 		});
 	});
 

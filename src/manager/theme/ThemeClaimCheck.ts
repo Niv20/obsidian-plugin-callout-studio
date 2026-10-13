@@ -174,9 +174,10 @@ export class ThemeClaimCheck {
 	/** Per id: did switching the theme's rules off change what is drawn? */
 	private verdicts = new Map<string, boolean>();
 	/**
-	 * The theme the verdicts describe (`themeSignature`: name and version, no
-	 * snippets). Another theme's verdicts mean nothing; a snippet switched on
-	 * or off leaves the theme's own rules as they were, so it keeps them.
+	 * The theme and mode the verdicts describe ({@link verdictKey}). Another
+	 * theme's, or the other mode's, verdicts mean nothing here; a snippet
+	 * switched on or off leaves the theme's own rules as they were, so it
+	 * keeps them.
 	 */
 	private verdictSignature: string | null = null;
 	/**
@@ -222,7 +223,7 @@ export class ThemeClaimCheck {
 	 * not draw; the next pass replaces them.
 	 */
 	private syncVerdicts(): void {
-		const signature = themeSignature(this.app);
+		const signature = this.verdictKey();
 		if (this.verdictSignature === signature) return;
 		this.verdicts = this.store.load(signature) ?? new Map<string, boolean>();
 		this.verdictSignature = signature;
@@ -306,7 +307,7 @@ export class ThemeClaimCheck {
 		}
 		this.running = true;
 		const generation = this.generation;
-		const signature = themeSignature(this.app);
+		const signature = this.verdictKey();
 		this.syncVerdicts();
 		for (const id of request.ids) this.asked.add(id);
 		let measured: Map<string, boolean> | null = null;
@@ -321,7 +322,7 @@ export class ThemeClaimCheck {
 			measured &&
 			!this.destroyed &&
 			generation === this.generation &&
-			themeSignature(this.app) === signature
+			this.verdictKey() === signature
 		) {
 			this.syncVerdicts();
 			let moved = false;
@@ -343,6 +344,18 @@ export class ThemeClaimCheck {
 		this.verdicts = new Map();
 		this.verdictSignature = null;
 		this.asked = new Set();
+	}
+
+	/**
+	 * What the verdicts describe: the theme (`themeSignature`, name and version,
+	 * no snippets) and the appearance mode. A bare `.theme-dark` rule is
+	 * switched off in light mode (`OBSIDIAN_BODY_STATE`), so a theme can draw a
+	 * callout in one mode only, and each mode keeps - and remembers - its own
+	 * answer; a mode switch swaps them rather than publishing the other's.
+	 */
+	private verdictKey(): string {
+		const dark = this.mainDocument().body.classList.contains("theme-dark");
+		return `${themeSignature(this.app)}#${dark ? "dark" : "light"}`;
 	}
 
 	/** The main window's document — see `ThemeAppearanceProbe.mainDocument`. */

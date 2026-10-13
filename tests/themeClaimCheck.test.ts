@@ -598,7 +598,7 @@ describe("names no pass has been asked about", () => {
 	it("start over for another theme, and count what the device remembers", () =>
 		withCallouts(async () => {
 			const store = memoryStore();
-			store.held.set("Other@1", new Map([["note", false]]));
+			store.held.set("Other@1#light", new Map([["note", false]]));
 			const h = harness([rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"])]);
 			const claims = check(h, undefined, store);
 			await claims.check(request(h, ["tip"]));
@@ -819,7 +819,7 @@ describe("how long a verdict lasts", () => {
 			const store = memoryStore();
 			const h = harness([rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"])]);
 			await check(h, undefined, store).check(request(h, ["note"]));
-			assert.deepStrictEqual([...(store.held.get("Theme@1") ?? [])], [["note", false]]);
+			assert.deepStrictEqual([...(store.held.get("Theme@1#light") ?? [])], [["note", false]]);
 
 			const nextLaunch = check(h, undefined, store);
 			assert.deepStrictEqual([...nextLaunch.unstyled(["note"])], ["note"], "before any pass");
@@ -829,10 +829,47 @@ describe("how long a verdict lasts", () => {
 			assert.deepStrictEqual([...nextLaunch.unstyled(["note"])], [], "not another theme's");
 		}));
 
+	it("keeps each appearance mode's verdicts apart", () =>
+		withCallouts(async () => {
+			// A theme drawing Note in dark mode only: light hands it back, dark
+			// keeps it. Launching or switching into a mode must start from that
+			// mode's answer, not the other's.
+			const store = memoryStore();
+			const rules = [
+				rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"]),
+				rule('.theme-dark .callout[data-callout="note"]', ["callout-title", "color", "red"], "theme-dark"),
+			];
+			const h = harness(rules);
+			document.body.classList.add("theme-light");
+			let claims = check(h, undefined, store);
+			try {
+				await claims.check(request(h, ["note"]));
+			} finally {
+				document.body.classList.remove("theme-light");
+			}
+			document.body.classList.add("theme-dark");
+			try {
+				claims.invalidate();
+				assert.deepStrictEqual([...claims.unstyled(["note"])], [], "switched to dark: not light's verdict");
+				await claims.check(request(h, ["note"]));
+				claims = check(h, undefined, store);
+				assert.deepStrictEqual([...claims.unstyled(["note"])], [], "a launch in dark seeds dark's");
+			} finally {
+				document.body.classList.remove("theme-dark");
+			}
+			document.body.classList.add("theme-light");
+			try {
+				claims = check(h, undefined, store);
+				assert.deepStrictEqual([...claims.unstyled(["note"])], ["note"], "and light's in light");
+			} finally {
+				document.body.classList.remove("theme-light");
+			}
+		}));
+
 	it("corrects a remembered verdict the theme no longer earns", () =>
 		withCallouts(async () => {
 			const store = memoryStore();
-			store.held.set("Theme@1", new Map([["note", false]]));
+			store.held.set("Theme@1#light", new Map([["note", false]]));
 			const h = harness([rule('.callout[data-callout="note"]', ["callout-title", "color", "violet"])]);
 			const claims = check(h, undefined, store);
 			assert.deepStrictEqual([...claims.unstyled(["note"])], ["note"]);
@@ -840,7 +877,7 @@ describe("how long a verdict lasts", () => {
 			await claims.check(request(h, ["note"], () => changes++));
 			assert.deepStrictEqual([...claims.unstyled(["note"])], []);
 			assert.strictEqual(changes, 1);
-			assert.deepStrictEqual([...(store.held.get("Theme@1") ?? [])], [["note", true]]);
+			assert.deepStrictEqual([...(store.held.get("Theme@1#light") ?? [])], [["note", true]]);
 		}));
 });
 

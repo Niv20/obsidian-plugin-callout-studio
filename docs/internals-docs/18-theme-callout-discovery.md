@@ -636,8 +636,11 @@ Decisions in the measurement:
   names, a rule the measurement could not see in force, a rewritten selector
   the browser refuses (it silently keeps the old one), a failed render. That is
   how ownership behaved before the check.
-- **Verdicts belong to the theme, not to the styling.** They are keyed on
-  `themeSignature` (name and version, no snippets), outlive any `css-change` of
+- **Verdicts belong to the theme and the mode, not to the styling.** They are
+  keyed on `themeSignature` (name and version, no snippets) plus the appearance
+  mode (`verdictKey`: a bare `.theme-dark` rule is switched off in light mode, so
+  a theme may draw a callout in one mode only, and each mode keeps its own
+  answer - a mode switch swaps them in), outlive any `css-change` of
   the same theme and are re-measured after it, so neither a Style Settings
   toggle nor a snippet switched on or off hands everything back for the length
   of a render; a theme switch swaps them for that theme's. This plugin's own
@@ -660,10 +663,10 @@ Decisions in the measurement:
   Catppuccin names but does not draw lost its design at every launch until the
   check handed it back. Each completed pass saves its verdicts to vault-scoped
   `localStorage` (`<appId>-callout-studio-theme-claims-v1`, the last eight
-  themes, callout ids only, written only when they moved), and `syncVerdicts`
+  theme-and-mode keys, callout ids only, written only when they moved), and `syncVerdicts`
   seeds from them whenever the active theme changes, including the first time
-  `unstyled` is asked at startup. A signature whose version is not read yet
-  (`Name@`) takes the newest entry for that name. The check still runs and
+  `unstyled` is asked at startup. A key whose version is not read yet
+  (`Name@#mode`) takes the newest entry for that name and mode. The check still runs and
   corrects anything that moved.
 - **A burst is one question, asked again when it quiets.** Dragging a slider
   or a Style Settings colour fires `css-change` once per step. The check is

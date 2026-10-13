@@ -29,7 +29,7 @@ const MAX_THEMES = 8;
 export type ClaimVerdicts = Map<string, boolean>;
 
 export interface ClaimVerdictStore {
-	/** The verdicts last saved for `theme` (`themeSignature`), or `null`. */
+	/** The verdicts last saved for `theme` (`themeSignature` plus `#mode`), or `null`. */
 	load(theme: string): ClaimVerdicts | null;
 	save(theme: string, verdicts: ReadonlyMap<string, boolean>): void;
 }
@@ -91,11 +91,17 @@ export function localClaimVerdicts(app: App): ClaimVerdictStore {
 			const k = key();
 			if (!k) return null;
 			const themes = parse(raw(k)).themes;
-			// A version not read yet (`Name@`, before Obsidian has loaded the
-			// theme's manifest) takes the newest entry for the same name; the
-			// check that follows corrects it if the theme has moved on.
-			const found = theme.endsWith("@")
-				? [...themes].reverse().find(([name]) => name.startsWith(theme))
+			// A key is `Name@version#mode`. A version not read yet (`Name@#mode`,
+			// before Obsidian has loaded the theme's manifest) takes the newest
+			// entry for the same name and mode; the check that follows corrects
+			// it if the theme has moved on.
+			const hash = theme.lastIndexOf("#");
+			const base = hash < 0 ? theme : theme.slice(0, hash);
+			const mode = hash < 0 ? "" : theme.slice(hash);
+			const found = base.endsWith("@")
+				? [...themes]
+						.reverse()
+						.find(([name]) => name.startsWith(base) && (mode === "" || name.endsWith(mode)))
 				: themes.find(([name]) => name === theme);
 			return found ? new Map(found[1]) : null;
 		},
