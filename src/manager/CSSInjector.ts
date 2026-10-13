@@ -98,6 +98,7 @@ import { coreAccentShimCSS } from "./css/coreAccentShim";
 import { coreAccentDialect } from "../utils/calloutColorFormat";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import { StartupStyleCache } from "./StartupStyleCache";
+import { OWN_CSS_CHANGE } from "./ownCssChange";
 
 const STYLE_SHEET_REGISTRY_KEY = "__calloutStudioStyleSheet";
 type RegistryWindow = Window & {
@@ -214,6 +215,29 @@ export class CSSInjector {
 	 */
 	themeCallouts(): ThemeCalloutStore {
 		return this.studioWeights.themeCallouts();
+	}
+
+	/**
+	 * Switch this plugin's generated CSS off until the returned function runs.
+	 *
+	 * For `ThemeClaimCheck`, which has to see what the theme draws without this
+	 * plugin painting over it — a callout the theme stopped drawing is one this
+	 * plugin paints, so measuring it with that paint on would keep it ours
+	 * forever. Both copies go, the adopted sheet and the `<style>` PDF export
+	 * reads, and the caller restores them in the same task, so no frame is ever
+	 * painted without them.
+	 */
+	suspendOwnStyles(): () => void {
+		const sheet = this.styleSheet;
+		const el = this.styleEl;
+		const sheetWas = sheet?.disabled ?? false;
+		const elWas = el?.disabled ?? false;
+		if (sheet) sheet.disabled = true;
+		if (el) el.disabled = true;
+		return () => {
+			if (sheet) sheet.disabled = sheetWas;
+			if (el) el.disabled = elWas;
+		};
 	}
 
 	initialize(): void {
@@ -426,7 +450,9 @@ export class CSSInjector {
 		// refresh above still run either way: artwork can land while the
 		// generated CSS stays identical.
 		if (emitCssChange && cssChanged) {
-			this.app.workspace.trigger("css-change");
+			// Named, as Style Settings names its own, so a listener that only
+			// cares about the theme can tell this plugin's CSS moving apart.
+			this.app.workspace.trigger("css-change", OWN_CSS_CHANGE);
 		}
 	}
 
@@ -1477,6 +1503,11 @@ export class CSSInjector {
 		for (const calloutEl of calloutEls) {
 			const id = calloutEl.getAttribute("data-callout");
 			if (!id) continue;
+			// The theme probes render offscreen to read what the theme and core
+			// draw on their own. Repainting there only re-reads a computed value
+			// per callout after a DOM write — a full style recalc each, which on
+			// AnuPpuccin cost the probes hundreds of milliseconds.
+			if (calloutEl.closest(".cs-theme-probe")) continue;
 			const def = this.registry.findByAttrId(id);
 			const iconEl = calloutEl.querySelector<HTMLElement>(
 				".callout-title .callout-icon",

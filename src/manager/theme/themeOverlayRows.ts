@@ -65,10 +65,16 @@ export interface ThemeOverlayRegistry {
  * `declared` is the raw set from {@link ThemeCalloutStore.themeDefinedIds};
  * filtering it is this function's job so the scan and the overlay cannot
  * disagree about which ids are real.
+ *
+ * `notDrawn` holds ids `ThemeClaimCheck` measured the theme's rules not to
+ * change. They stay out of the published ownership, so this plugin keeps
+ * painting them; every one already has a row of its own, which is why the
+ * check measured it, so it never decides what is minted here.
  */
 export function syncThemeOverlayRows(
 	registry: ThemeOverlayRegistry,
 	declared: ReadonlySet<string>,
+	notDrawn: ReadonlySet<string> = new Set(),
 ): number {
 	// A stylesheet may name anything; only a value that can be written as an
 	// actual callout token can become a row. Reserved demo ids are excluded
@@ -107,8 +113,12 @@ export function syncThemeOverlayRows(
 	// built-in mints and retires nothing yet changes who paints it — so it is
 	// published unconditionally, and inside the batch so that listeners see the
 	// rows and the ownership as one change rather than two halves of a sweep.
+	const owned =
+		notDrawn.size === 0
+			? themeIds
+			: new Set([...themeIds].filter((id) => !notDrawn.has(id)));
 	return registry.batch(() => {
-		registry.setThemeOwnedIds(themeIds);
+		registry.setThemeOwnedIds(owned);
 		let changed = 0;
 		for (const def of stale) {
 			if (registry.remove(def.id)) changed++;

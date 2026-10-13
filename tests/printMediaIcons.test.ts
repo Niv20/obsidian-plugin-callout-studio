@@ -300,6 +300,22 @@ describe("paintIcons — weak unknown-callout fallback", () => {
 		assert.ok(icon.children[0]?.classList.contains(CSS_FALLBACK_ICON));
 	});
 
+	it("leaves the theme probes' offscreen callouts alone", () => {
+		// They render to read what the theme and core draw on their own. Painting
+		// there changes nothing they read and costs a style recalc per callout,
+		// which under AnuPpuccin was most of a theme switch's freeze.
+		const { injector } = emojiFallback();
+		const probe = el({ cls: "cs-theme-probe" });
+		const { callout, icon } = block();
+		probe.appendChild(callout);
+		callout.setCssProp("--callout-icon", FALLBACK_ICON_SENTINEL);
+
+		injector.paintIcons(asEl(probe));
+
+		assert.strictEqual(icon.textContent, "");
+		assert.deepStrictEqual(icon.children, []);
+	});
+
 	it("lets an exact snippet icon win, then restores fallback when removed", () => {
 		const { injector } = emojiFallback();
 		const { callout, icon } = block();

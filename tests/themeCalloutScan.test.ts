@@ -65,6 +65,16 @@ describe("enumeration — which matchers may name a callout", () => {
 		assert.deepStrictEqual([...scan.byId.keys()], ["metadata"]);
 	});
 
+	it("never claims a value no rendered callout can carry", () => {
+		// Obsidian lower-cases the type before it writes data-callout, and the
+		// attribute compares case-sensitively without the `i` flag. Verbatim from
+		// Serenity, which listed an `i` and an `s` it never draws.
+		const scan = scanCalloutClaims(
+			'.callout[data-callout="idea"], .callout[data-callout="I"] { --callout-color: var(--color-yellow-rgb); }',
+		);
+		assert.deepStrictEqual([...scan.byId.keys()], ["idea"]);
+	});
+
 	it("normalizes a pattern's value too, so it can still match", () => {
 		const scan = scanCalloutClaims(
 			'.callout[data-callout^="Col"] { color: red; }',

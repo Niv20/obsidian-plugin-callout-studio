@@ -23,7 +23,7 @@ interface CustomCssApi {
 	theme?: string;
 	themes?: Record<string, ThemeManifest | undefined>;
 	/** The one `<style>` holding the theme's CSS. */
-	styleEl?: { textContent?: string | null } | null;
+	styleEl?: { textContent?: string | null; sheet?: CSSStyleSheet | null } | null;
 	/** Snippet names, sorted, enabled or not. */
 	snippets?: string[];
 	enabledSnippets?: Set<string>;
@@ -75,6 +75,16 @@ export function stylingSignature(app: App): string {
 /** The active theme's CSS text, or `""` when there is no theme. */
 export function themeCss(app: App): string {
 	return api(app)?.styleEl?.textContent ?? "";
+}
+
+/**
+ * The browser's parsed copy of the theme, or `null`.
+ *
+ * Read only by `ThemeClaimCheck`, which switches single rules off and back on
+ * inside one synchronous task to see whether they change anything on screen.
+ */
+export function themeSheet(app: App): CSSStyleSheet | null {
+	return api(app)?.styleEl?.sheet ?? null;
 }
 
 /** Enabled snippet names, in the order Obsidian loads them. */
