@@ -54,6 +54,7 @@ import type { AdmonitionPlan } from "../utils/admonitionImport";
 import {
 	normalizeCalloutId,
 	calloutIdentity,
+	obsidianCalloutAttrId,
 	obsidianDefaultTitle,
 } from "../utils/calloutId";
 import {
@@ -1094,8 +1095,15 @@ export class CalloutRegistry {
 	leavesBlockName(def: CalloutDefinition, name: string): boolean {
 		if (this.themeFacts.claims(name)) return true;
 		if (!def.builtIn) return false;
+		// In Obsidian's attribute form, as `claims` reads it: the dropdown asks
+		// with the name as typed, and `[!Cite]` or `[!IMPORTANT]` render as
+		// the stock alias they spell.
+		const form = obsidianCalloutAttrId(name);
 		const stock = this.builtInDefaults.get(def.id)?.aliases ?? [];
-		return stock.includes(name) && this.themeFacts.claims(def.id);
+		return (
+			stock.some((alias) => obsidianCalloutAttrId(alias) === form) &&
+			this.themeFacts.claims(def.id)
+		);
 	}
 
 	/** How the theme paints `def`. See {@link ThemeFacts.appearanceOf}. */

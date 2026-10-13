@@ -429,6 +429,23 @@ describe("CalloutMetadataSuggest — a name the theme claims", () => {
 		assert.strictEqual(offersColours(h, "> [!цитата|⎸"), true);
 		assert.strictEqual(offersColours(h, "## [!quote|⎸]"), true, "the heading is ours");
 	});
+
+	it("agrees with the stylesheet on a stock alias however it is typed", () => {
+		// `[!Cite]`, `[!CITE]` and `[!cite ]` all render as data-callout="cite",
+		// which Obsidian draws while the theme claims Quote's id - the metadata
+		// colours stay off it, so offering one would write a word that never
+		// paints. GitHub-style `[!IMPORTANT]` is the common case.
+		const h = harness();
+		h.registry.update("quote", { aliases: ["cite", "цитата"] });
+		h.registry.setThemeOwnedIds(new Set(["quote"]));
+		for (const typed of ["cite", "Cite", "CITE", "cite "]) {
+			assert.strictEqual(offersColours(h, `> [!${typed}|⎸`), false, typed);
+		}
+		h.registry.update("tip", { aliases: ["hint", "important", "мой-совет"] });
+		h.registry.setThemeOwnedIds(new Set(["tip"]));
+		assert.strictEqual(offersColours(h, "> [!IMPORTANT|⎸"), false);
+		assert.strictEqual(offersColours(h, "> [!мой-совет|⎸"), true, "the user's own name is ours");
+	});
 });
 
 describe("CalloutMetadataSuggest — Tab stays, Enter finishes", () => {
