@@ -158,6 +158,17 @@ export class CSSInjector {
 	private sel(id: string, themePrefix = ""): string {
 		return calloutSelAt(id, this.emitWeight, themePrefix);
 	}
+
+	/**
+	 * The names whose Obsidian block callout this plugin paints for `def`: all
+	 * of them, minus any the active theme names itself. See
+	 * `CalloutRegistry.themeClaimsName`.
+	 */
+	private blockNames(def: CalloutDefinition): string[] {
+		return [def.id, ...(def.aliases ?? [])].filter(
+			(name) => !this.registry.themeClaimsName(name),
+		);
+	}
 	private injecting = false;
 	private registry: CalloutRegistry;
 	private app: App;
@@ -482,7 +493,7 @@ export class CSSInjector {
 	 * active styling agree on the spelling and nothing is broken.
 	 */
 	private coreAccentShim(def: CalloutDefinition): string {
-		const ids = [def.id, ...(def.aliases ?? [])];
+		const ids = this.blockNames(def);
 		const claimed = new Set<string>(this.studioWeights.dialect().unguarded);
 		for (const id of ids) {
 			for (const prop of this.studioWeights
@@ -706,6 +717,12 @@ export class CSSInjector {
 		if (theme) return "";
 		const hidesIcon = def.hideIcon === true;
 		const imp = this.emitImportant;
+		// The theme may name only some of this callout's spellings. Those block
+		// callouts are the theme's; every rule below aimed at Obsidian's own DOM
+		// skips them, and the rest keep this callout's style. Token rules stay
+		// for every name: no theme selector can reach `.cs-*` DOM.
+		const names = this.blockNames(def);
+		const paintsId = names.includes(def.id);
 
 		// Emitting `--callout-icon` for a hidden icon would be harmless (the box
 		// it lands in is display:none) but it would also keep Obsidian resolving
@@ -741,14 +758,16 @@ export class CSSInjector {
 				),
 			);
 		}
-		parts.push(`${this.sel(def.id)} {\n${lightProps.join("\n")}\n}`);
+		if (paintsId) {
+			parts.push(`${this.sel(def.id)} {\n${lightProps.join("\n")}\n}`);
+		}
 		// A theme can paint the title or the content instead of the root — see
 		// `transparentChildrenCSS` — so transparent has to reach both. One rule,
 		// aliases included, the same in either mode.
 		if (def.transparentBg) {
 			parts.push(
 				transparentChildrenCSS(
-					[def.id, ...(def.aliases ?? [])].map((id) => this.sel(id)),
+					names.map((id) => this.sel(id)),
 					true,
 				),
 			);
@@ -762,7 +781,7 @@ export class CSSInjector {
 		if (shim) parts.push(shim);
 
 		// Dark mode override
-		if (this.needsDarkBlock(def)) {
+		if (paintsId && this.needsDarkBlock(def)) {
 			const darkProps: string[] = [...this.accentProps(def, "dark", true)];
 			darkProps.push(...this.bgProps(def, "dark", true));
 			parts.push(
@@ -771,14 +790,18 @@ export class CSSInjector {
 		}
 
 		// Content text color overrides
-		if (def.textColorLight) {
+		if (paintsId && def.textColorLight) {
 			parts.push(
 				`${this.sel(def.id)} > .callout-content {\n` +
 					`  color: ${def.textColorLight}${imp};\n` +
 					`}`,
 			);
 		}
-		if (def.textColorDark && def.textColorDark !== def.textColorLight) {
+		if (
+			paintsId &&
+			def.textColorDark &&
+			def.textColorDark !== def.textColorLight
+		) {
 			parts.push(
 				`${this.sel(def.id, ".theme-dark ")} > .callout-content {\n` +
 					`  color: ${def.textColorDark}${imp};\n` +
@@ -794,7 +817,7 @@ export class CSSInjector {
 		const iconSvg = hidesIcon
 			? null
 			: this.icons.resolveSvg(def.icon, "regular");
-		if (iconSvg) {
+		if (paintsId && iconSvg) {
 			parts.push(
 				iconOverrideCSS(this.sel(def.id), def.icon, iconSvg, imp),
 			);
@@ -804,7 +827,7 @@ export class CSSInjector {
 		// An emoji is the one icon kind `--callout-icon` cannot carry — it takes
 		// a Lucide id and nothing else — so this ::after is not a preference,
 		// it is the only channel there is.
-		if (!hidesIcon && def.icon.type === "emoji") {
+		if (paintsId && !hidesIcon && def.icon.type === "emoji") {
 			parts.push(emojiOverrideCSS(this.sel(def.id), def.icon.value, imp));
 		}
 
@@ -823,7 +846,7 @@ export class CSSInjector {
 			...this.textSweepRules(
 				def,
 				(themePrefix) =>
-					[def.id, ...(def.aliases ?? [])]
+					names
 						.map(
 							(id) =>
 								`${this.sel(id, themePrefix)} > ` +
@@ -852,7 +875,7 @@ export class CSSInjector {
 		const calloutPrint = this.printGradientCSS(
 			def,
 			(themePrefix, suffix) =>
-				[def.id, ...(def.aliases ?? [])]
+				names
 					.map((id) => `${this.sel(id, themePrefix)}${suffix}`)
 					.join(",\n"),
 			false,
@@ -863,6 +886,14 @@ export class CSSInjector {
 		// Generate alias selectors that reference the same styles
 		if (def.aliases && def.aliases.length > 0) {
 			for (const alias of def.aliases) {
+				const aliasTransform = hidesIcon
+					? ""
+					: this.getIconTransformCSS({ ...def, id: alias });
+				if (!names.includes(alias)) {
+					// The theme's block callout; only the token transforms remain.
+					if (aliasTransform) parts.push(aliasTransform);
+					continue;
+				}
 				parts.push(
 					`/* alias: ${alias} → ${def.id} */\n` +
 						`${this.sel(alias)} {\n${lightProps.join("\n")}\n}`,
@@ -899,9 +930,6 @@ export class CSSInjector {
 						emojiOverrideCSS(this.sel(alias), def.icon.value, imp),
 					);
 				}
-				const aliasTransform = hidesIcon
-					? ""
-					: this.getIconTransformCSS({ ...def, id: alias });
 				if (aliasTransform) {
 					parts.push(aliasTransform);
 				}
@@ -918,7 +946,7 @@ export class CSSInjector {
 		const surface = standalone
 			? ""
 			: this.themeSurface(def, (guard, weight, rootQualifier) =>
-				[def.id, ...(def.aliases ?? [])]
+				names
 					.map((id) => `${calloutSelAt(id, weight, guard)}${rootQualifier}`)
 					.join(",\n"),
 				);
@@ -1028,16 +1056,20 @@ export class CSSInjector {
 		if (!light) return "";
 		const dark = g.textToColorDark ?? light;
 		const ids = [def.id, ...(def.aliases ?? [])];
+		const blockIds = this.blockNames(def);
 
 		const selectorsFor = (themePrefix: string): string =>
 			ids
 				.map(
 					(id) =>
-						// Obsidian's own DOM → dasherized attr (calloutSel).
+						// Obsidian's own DOM → dasherized attr (calloutSel),
+						// unless the theme draws that name's block callout.
 						// Our heading-bar DOM → space-form attr (the two below).
 						// The two conventions are deliberate — do not unify them.
-						`${this.sel(id, themePrefix)} > ` +
-						`.callout-title > .callout-fold, ` +
+						(blockIds.includes(id)
+							? `${this.sel(id, themePrefix)} > ` +
+								`.callout-title > .callout-fold, `
+							: "") +
 						`${themePrefix}.${CSS_HEADING_LINE}${tokenAttrSel(id)} ` +
 						`.${CSS_FOLD_ARROW}, ` +
 						`${themePrefix}.${CSS_HEADING_LINE}${tokenAttrSel(id)} ` +
@@ -1317,6 +1349,8 @@ export class CSSInjector {
 		const parts: string[] = [];
 
 		for (const role of CALLOUT_RENDER_ROLES) {
+			// A name the theme claims keeps its block icon where the theme put it.
+			if (role === "regular" && this.registry.themeClaimsName(def.id)) continue;
 			const adjust = resolveIconAdjust(def, role);
 			// The heading keeps its static nudge from styles.css when untouched.
 			if (isDefaultIconAdjust(adjust)) continue;
@@ -1375,7 +1409,7 @@ export class CSSInjector {
 			this.registry.settings.globalStyle.alignContentWithTitle;
 		const imp = this.emitImportant;
 		const parts: string[] = [];
-		for (const id of [def.id, ...(def.aliases ?? [])]) {
+		for (const id of this.blockNames(def)) {
 			parts.push(
 				`${this.sel(id)} > .callout-title > .callout-icon {\n` +
 					`  display: none${imp};\n` +
@@ -1460,7 +1494,9 @@ export class CSSInjector {
 				if (titleInner) clearGradientChars(titleInner);
 				continue;
 			}
-			if (this.registry.themeOwns(def)) {
+			// Asked of the name on this element, not the callout: the theme may
+			// draw `[!description]` while the same callout's other names stay ours.
+			if (this.registry.themeOwns(def) || this.registry.themeClaimsName(id)) {
 				// Skipping is not enough: an earlier pass may already have painted
 				// this element and core resolves its icon only once. Restore from the
 				// now-winning theme/core property on every pass.
@@ -1649,15 +1685,15 @@ export class CSSInjector {
 	 * `.callout` rule would also seize unknown ids and make the weak fallback a
 	 * fiction. An explicit allow-list keeps the contract sharp: registered
 	 * Studio callouts get Studio geometry, theme-owned and unregistered callouts
-	 * do not. A Set folds aliases that normalize to the same Obsidian attr form.
+	 * do not, and neither does a name the theme claims on a callout it only
+	 * partly owns. A Set folds aliases that normalize to the same attr form.
 	 */
 	private studioCalloutSelectors(): string[] {
 		const attrIds = new Set<string>();
 		for (const def of this.registry.getAll()) {
 			if (this.registry.themeOwns(def)) continue;
-			attrIds.add(obsidianCalloutAttrId(def.id));
-			for (const alias of def.aliases ?? []) {
-				attrIds.add(obsidianCalloutAttrId(alias));
+			for (const name of this.blockNames(def)) {
+				attrIds.add(obsidianCalloutAttrId(name));
 			}
 		}
 		return Array.from(attrIds)
@@ -1889,15 +1925,18 @@ export class CSSInjector {
 	}
 
 	/**
-	 * The `data-callout` forms of every callout the theme owns, ids and aliases
-	 * alike — what a metadata colour must stay off.
+	 * The `data-callout` forms a metadata colour must stay off: every name of a
+	 * callout the theme owns, ids and aliases alike, and the claimed names of
+	 * one it only partly names.
 	 */
 	private themeOwnedAttrIds(): string[] {
 		const ids = new Set<string>();
 		for (const def of this.registry.getAll()) {
-			if (!this.registry.themeOwns(def)) continue;
+			const owned = this.registry.themeOwns(def);
 			for (const id of [def.id, ...(def.aliases ?? [])]) {
-				ids.add(obsidianCalloutAttrId(id));
+				if (owned || this.registry.themeClaimsName(id)) {
+					ids.add(obsidianCalloutAttrId(id));
+				}
 			}
 		}
 		return [...ids].sort();

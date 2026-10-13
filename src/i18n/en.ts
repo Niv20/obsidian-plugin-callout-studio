@@ -854,6 +854,8 @@ export const en: Record<string, string> = {
 	"editor.idConflict": "This ID conflicts with an existing callout",
 	"editor.idFromTheme":
 		"{{theme}} already supplies a callout with this ID, so Callout Studio can't style it. Pick a different ID.",
+	"editor.namesFromTheme":
+		"{{theme}} draws {{names}} block callouts itself. Your other names keep this design.",
 	"editor.idThemePattern":
 		"Heads up: your theme styles every callout matching {{pattern}}, so it may override how this one looks.",
 	"editor.idDashConflict":

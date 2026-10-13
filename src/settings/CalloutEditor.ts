@@ -1796,6 +1796,24 @@ export class CalloutEditor extends Modal {
 			}
 		}
 
+		// Typically a callout saved before its theme started naming one of its
+		// names. Never a block — the other names still take this design — but
+		// it explains why `[!description]` in a note will not match the preview.
+		const themeNames = [this.calloutId, ...this.aliases].filter((id) =>
+			this.themeSuppliesId(id),
+		);
+		if (themeNames.length > 0) {
+			this.idsTagInput.showExternalError(
+				t("editor.namesFromTheme", {
+					theme:
+						activeThemeName(this.plugin.app) ??
+						t("settings.themeCalloutsDefaultTheme"),
+					names: themeNames.map((id) => `[!${id}]`).join(", "),
+				}),
+			);
+			return;
+		}
+
 		this.idsTagInput.clearExternalError();
 	}
 

@@ -1026,9 +1026,31 @@ export class CalloutRegistry {
 	 * Does the active theme supply or style this callout? The whole ownership
 	 * model — **derived, never stored**; `ThemeFacts` argues why, and why a
 	 * stored flip would quietly drop the row from the user's backups.
+	 *
+	 * The theme has to name every one of the callout's names, except a
+	 * built-in's stock aliases: once this plugin stands down, Obsidian itself
+	 * still draws `[!cite]` and `[!tldr]`, so a theme that restyles `quote`
+	 * without them owns Quote all the same. A name nobody else draws — one the
+	 * user added — has to be named too, or it would be left unstyled.
 	 */
 	themeOwns(def: CalloutDefinition): boolean {
-		return this.themeFacts.owns(def, this.vaultIdFormsFor(def));
+		const stock = def.builtIn
+			? (this.builtInDefaults.get(def.id)?.aliases ?? [])
+			: [];
+		return this.themeFacts.owns(
+			def,
+			this.vaultIdFormsFor(def).filter((form) => !stock.includes(form)),
+		);
+	}
+
+	/**
+	 * Does the active theme name this one spelling? What decides who draws a
+	 * block callout written with it when the callout as a whole is not
+	 * {@link themeOwns | the theme's}: a claimed name is the theme's, the
+	 * others keep this plugin's style.
+	 */
+	themeClaimsName(name: string): boolean {
+		return this.themeFacts.claims(name);
 	}
 
 	/** How the theme paints `def`. See {@link ThemeFacts.appearanceOf}. */

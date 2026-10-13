@@ -42,6 +42,12 @@ If the theme restyles a custom callout you saved in Callout Studio, its menu als
 
 To change a theme-owned callout, use the community **Style Settings** plugin if the theme author provides a setting for it. Otherwise, the theme's CSS must be changed.
 
+## When your theme uses only some of a callout's names
+
+A callout can have several IDs, for example `[!описание]`, `[!вид]` and `[!description]`. If your theme defines only some of them, the callout stays yours. It stays in your own list and you can still edit it. Block callouts written with a name your theme defines look the way the theme draws them; every other name keeps your design. Heading and Inline callouts keep your design under every name, because themes don't style those formats. When you open such a callout in the editor, a note under **Callout IDs** lists the names your theme draws. Remove a name there if you want to keep your design for all of them.
+
+Built-in callouts work the same way, with one difference: Obsidian's own extra names for a built-in, such as `[!cite]` for Quote or `[!tldr]` for Abstract, don't count. A theme that restyles `[!quote]` takes the whole Quote callout even if it never mentions `[!cite]`, and Obsidian keeps drawing `[!cite]` as it always has.
+
 ## Default fallback
 
 A callout type that exists only in the active theme cannot be selected as the **Default fallback callout**. Use a built-in type or create a Callout Studio callout with an ID the theme does not define if you need a fallback that remains available after switching themes.

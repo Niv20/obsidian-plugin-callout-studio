@@ -157,7 +157,13 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 		const rows = buildMetadataSuggestions({
 			slot,
 			calloutId: slot.calloutId,
-			themeOwned: !resolved.unknown && resolved.themeOwned,
+			// A block callout under a name the theme claims is the theme's even
+			// when the rest of the callout is not.
+			themeOwned:
+				!resolved.unknown &&
+				(resolved.themeOwned ||
+					(slot.role === "regular" &&
+						this.plugin.registry.themeClaimsName(slot.calloutId))),
 			colors: injector.metadataColorEntries(),
 			sources: injector.metadataCatalog.sourcesNow(),
 			locale: getLocale(),

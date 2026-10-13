@@ -244,6 +244,30 @@ describe("paintIcon, the print-side half", () => {
 	});
 });
 
+describe("paintIcons — a name the theme claims", () => {
+	it("leaves that name's block icon to the theme and paints the others", () => {
+		// The callout is still ours (the theme names one of its names, not
+		// all), so `[!вид]` gets its icon while `[!description]` keeps the
+		// theme's, exactly as the stylesheet splits them.
+		const h = harness();
+		h.registry.add(
+			definition({ id: "вид", aliases: ["description"], icon: EMOJI }),
+		);
+		h.registry.setThemeOwnedIds(new Set(["description"]));
+		const blockFor = (id: string) => {
+			const callout = el({ cls: "callout", attrs: { "data-callout": id } });
+			const icon = callout
+				.createDiv({ cls: "callout-title" })
+				.createDiv({ cls: "callout-icon" });
+			h.injector.paintIcons(asEl(callout));
+			return icon;
+		};
+
+		assert.strictEqual(blockFor("вид").textContent, EMOJI.value);
+		assert.strictEqual(blockFor("description").textContent, "");
+	});
+});
+
 /* -------------------------------------------------------------------------- */
 /* Unknown native icons — computed cascade gate                               */
 /* -------------------------------------------------------------------------- */

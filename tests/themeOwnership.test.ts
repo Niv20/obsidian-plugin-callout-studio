@@ -48,13 +48,54 @@ describe("themeOwns — derived from the theme, never stored", () => {
 		assert.strictEqual(registry.themeOwns(registry.get("tip")!), false);
 	});
 
-	it("owns the whole callout when the theme names only an alias", () => {
-		// Letting `[!tldr]` be the theme's while `[!abstract]` stays ours is
-		// exactly the split render this model exists to abolish.
+	it("owns a callout only when the theme names every one of its names", () => {
+		// Issue #84. Handing the whole callout over for one claimed name left
+		// `[!вид]` and `[!описание]` styled by nobody: the theme never named
+		// them, and this plugin stood down for them.
 		const { registry } = harness();
-		registry.add(definition({ id: "abstract", aliases: ["tldr"] }));
-		registry.setThemeOwnedIds(new Set(["tldr"]));
-		assert.strictEqual(registry.themeOwns(registry.get("abstract")!), true);
+		registry.add(
+			definition({ id: "описание", aliases: ["вид", "description"] }),
+		);
+		const def = () => registry.get("описание")!;
+
+		registry.setThemeOwnedIds(new Set(["description"]));
+		assert.strictEqual(registry.themeOwns(def()), false);
+		assert.strictEqual(registry.themeClaimsName("description"), true);
+		assert.strictEqual(registry.themeClaimsName("вид"), false);
+
+		registry.setThemeOwnedIds(new Set(["описание"]));
+		assert.strictEqual(registry.themeOwns(def()), false, "the id alone");
+
+		registry.setThemeOwnedIds(new Set(["описание", "вид", "description"]));
+		assert.strictEqual(registry.themeOwns(def()), true);
+	});
+
+	it("owns a built-in the theme names without its stock aliases", () => {
+		// ITS Theme styles `quote` and never `cite`; 22 of the 50 installed
+		// themes that restyle a built-in leave out at least one of Obsidian's
+		// own synonyms. Obsidian draws those itself once this plugin stands
+		// down, so they cannot be left bare and do not hold the callout back.
+		const { registry } = harness();
+		registry.setThemeOwnedIds(new Set(["quote"]));
+		assert.strictEqual(registry.themeOwns(registry.get("quote")!), true);
+
+		registry.setThemeOwnedIds(new Set(["cite"]));
+		assert.strictEqual(
+			registry.themeOwns(registry.get("quote")!),
+			false,
+			"a stock alias alone does not carry the callout",
+		);
+	});
+
+	it("needs a name the user added to a built-in", () => {
+		// Obsidian has never heard of it, so standing down would leave it bare.
+		const { registry } = harness();
+		registry.update("quote", { aliases: ["cite", "цитата"] });
+		registry.setThemeOwnedIds(new Set(["quote"]));
+		assert.strictEqual(registry.themeOwns(registry.get("quote")!), false);
+
+		registry.setThemeOwnedIds(new Set(["quote", "цитата"]));
+		assert.strictEqual(registry.themeOwns(registry.get("quote")!), true);
 	});
 
 	it("matches on the attribute form, not the id as written", () => {
@@ -305,12 +346,91 @@ describe("a theme-owned callout — emitting nothing at all", () => {
 	it("is lifted out of the global frame rules", () => {
 		const { registry, css } = harness();
 		registry.add(definition({ id: "handed", aliases: ["handed-alt"] }));
-		registry.setThemeOwnedIds(new Set(["handed"]));
+		registry.setThemeOwnedIds(new Set(["handed", "handed-alt"]));
 		registry.settings.globalStyle.borderRadius = 12;
 		const global = css.generateGlobalStyleCSS();
 		assert.ok(global.includes('[data-callout="note"]'));
 		assert.ok(!global.includes('[data-callout="handed"]'));
 		assert.ok(!global.includes('[data-callout="handed-alt"]'));
+	});
+
+	it("leaves a built-in's stock alias to Obsidian, not to the global frame", () => {
+		// The theme owns Quote without naming `cite`; core draws `[!cite]` as
+		// it did before, so no Studio geometry may reach it either.
+		const { registry, css } = harness();
+		registry.setThemeOwnedIds(new Set(["quote"]));
+		registry.settings.globalStyle.borderRadius = 12;
+		const global = css.generateGlobalStyleCSS();
+		assert.ok(!global.includes('[data-callout="quote"]'));
+		assert.ok(!global.includes('[data-callout="cite"]'));
+		assert.strictEqual(css.generateCalloutCSS(registry.get("quote")!), "");
+	});
+});
+
+/**
+ * A callout the theme names only in part stays this plugin's (issue #84).
+ * The block callouts written with a claimed name are the theme's, so no rule
+ * aimed at Obsidian's DOM may name them; every other name keeps the callout's
+ * own style. The `.cs-*` heading and inline DOM is this plugin's whatever the
+ * name, since no theme selector can reach it.
+ */
+describe("a callout the theme names only in part", () => {
+	/** Selectors on core's block DOM, as opposed to our own token DOM. */
+	const coreSelectors = (out: string): string[] =>
+		parseRules(out)
+			.flatMap((rule) => rule.selector.split(/,\s*/))
+			.filter((sel) => sel.includes("[data-callout=") && !sel.includes(".cs-"));
+
+	const partlyClaimed = (claimed: string[]) => {
+		const { registry, css } = harness();
+		registry.add(
+			definition({
+				id: "описание",
+				aliases: ["вид", "description"],
+				colorLight: "#ff0000",
+			}),
+		);
+		registry.setThemeOwnedIds(new Set(claimed));
+		return css.generateCalloutCSS(registry.get("описание")!);
+	};
+
+	it("keeps its style on every name the theme does not claim", () => {
+		const out = partlyClaimed(["description"]);
+		const selectors = coreSelectors(out);
+		assert.ok(selectors.some((s) => s.includes('[data-callout="описание"]')));
+		assert.ok(selectors.some((s) => s.includes('[data-callout="вид"]')));
+		assert.match(out, /#ff0000|255, 0, 0/);
+	});
+
+	it("aims nothing at the claimed name's block callout", () => {
+		for (const claimed of ["description", "описание"]) {
+			const selectors = coreSelectors(partlyClaimed([claimed]));
+			assert.ok(selectors.length > 0);
+			assert.ok(
+				selectors.every((s) => !s.includes(`[data-callout="${claimed}"]`)),
+				`a core rule names [!${claimed}]`,
+			);
+		}
+	});
+
+	it("still colours the claimed name's heading and inline callouts", () => {
+		const out = partlyClaimed(["description"]);
+		const tokenRules = parseRules(out).filter(
+			(rule) =>
+				rule.selector.includes(".cs-heading-callout") &&
+				rule.selector.includes('[data-callout="description"]'),
+		);
+		assert.ok(tokenRules.length > 0);
+	});
+
+	it("keeps the unclaimed names in the global frame rules", () => {
+		const { registry, css } = harness();
+		registry.add(definition({ id: "описание", aliases: ["description"] }));
+		registry.setThemeOwnedIds(new Set(["description"]));
+		registry.settings.globalStyle.borderRadius = 12;
+		const global = css.generateGlobalStyleCSS();
+		assert.ok(global.includes('[data-callout="описание"]'));
+		assert.ok(!global.includes('[data-callout="description"]'));
 	});
 });
 

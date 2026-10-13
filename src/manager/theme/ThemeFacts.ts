@@ -82,19 +82,25 @@ export class ThemeFacts {
 	}
 
 	/**
-	 * Does the active theme supply or style this callout?
+	 * Does the active theme supply or style this whole callout?
 	 *
-	 * Matches on **every id form** the callout answers to, aliases included. A
-	 * theme that styles `[data-callout="tldr"]` but not `abstract` owns the
-	 * whole callout: letting the two halves render differently is precisely the
-	 * split this model exists to abolish.
+	 * Only when it names **every** form it is handed — the callout's names,
+	 * aliases included, less a built-in's stock aliases, which the registry
+	 * leaves out because Obsidian draws those itself. A theme that styles
+	 * `[data-callout="description"]` says nothing about the `[!описание]` the
+	 * user gave the same callout, and handing that name over too left it styled
+	 * by nobody: no theme rule, no Studio rule, and outside the fallback because
+	 * the name is known. A name the theme does claim on a callout it does not
+	 * own is {@link claims}'s question.
 	 */
 	owns(def: CalloutDefinition, forms: readonly string[]): boolean {
-		if (this.ownedIds.size === 0) return false;
-		for (const form of forms) {
-			if (this.ownedIds.has(obsidianCalloutAttrId(form))) return true;
-		}
-		return false;
+		if (this.ownedIds.size === 0 || forms.length === 0) return false;
+		return forms.every((form) => this.claims(form));
+	}
+
+	/** Does the active theme name this one spelling? */
+	claims(form: string): boolean {
+		return this.ownedIds.has(obsidianCalloutAttrId(form));
 	}
 
 	/**

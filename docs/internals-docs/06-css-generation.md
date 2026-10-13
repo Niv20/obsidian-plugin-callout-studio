@@ -569,9 +569,13 @@ they change theme.
 So ownership is derived, absolute, and not the user's to set:
 
 ```
-registry.themeOwns(def)   the active theme NAMES this callout's id
+registry.themeOwns(def)   the active theme NAMES every one of this callout's
+                          names (a built-in's stock aliases excepted)
                           → the theme paints it; this plugin emits nothing
                             aimed at .callout
+themeClaimsName(name)     the theme names SOME of them
+                          → those names' block callouts are the theme's; the
+                            rest are painted as below
 otherwise                 → this plugin paints it, outright, with !important
                             at the derived weight
 ```
@@ -583,20 +587,30 @@ only what the injector does once that question has an answer.
 
 Three consequences worth stating separately, because each was a decision.
 
-**Every id form counts.** `ThemeFacts.owns` walks `vaultIdFormsFor(def)` - the
-id, its aliases, and each one's attribute form. A theme that styles
-`[data-callout="tldr"]` but not `abstract` owns the whole callout; letting the
-two halves render differently is the split all of this exists to abolish.
+**Ownership is per name.** The split all of this exists to abolish is two
+painters on *one rendered callout* - this plugin's colour on the theme's frame.
+Two names of one callout drawn by two painters is not that: each block callout
+on screen still has exactly one owner. So `themeOwns` needs every name of the
+callout claimed (see [18-theme-callout-discovery.md § Stage 3](18-theme-callout-discovery.md#stage-3---ownership)
+for the built-in exception), and when only some are claimed,
+`generateCalloutCSS` builds its block rules from `blockNames(def)` - the names
+the theme does not claim - and leaves the claimed ones out. The `.cs-*` token
+rules keep every name: no theme selector reaches that DOM. The global frame
+selectors, the metadata-colour exclusion list and `paintIcons` make the same
+per-name cut. Before issue #84 one claimed alias handed over the whole callout,
+and a name the user had added - `[!описание]` beside a theme's
+`[!description]` - was then styled by nobody.
 
 **A generic `.callout {}` rule owns nothing.** 55 of the 257 themes in the dev
 vault style callouts without naming a single id. Counting those would hand the
 plugin's entire job to the theme on half the corpus, for rules that mostly set a
 radius.
 
-**`themeOwns` is the sole emission gate.** If the active theme names the id,
-the row appears under *Callouts from your theme*, is read-only, and the plugin
-emits nothing for it. Otherwise the saved definition is an ordinary editable
-Studio callout. Enabled snippet CSS still contributes to the existing
+**`themeOwns` is the emission gate for the callout; `themeClaimsName` for each
+of its names.** If the active theme owns the callout, the row appears under
+*Callouts from your theme*, is read-only, and the plugin emits nothing for it.
+Otherwise the saved definition is an ordinary editable Studio callout, minus
+the block rules of any name the theme claims. Enabled snippet CSS still contributes to the existing
 specificity/dialect scan, but snippets are not scanned for definitions or
 promoted into an ownership model; they participate through the normal cascade.
 
