@@ -32,6 +32,11 @@ built-in's stock aliases excepted. A theme that names only some of them gets
 those names' block callouts and nothing more; see
 [Stage 3](#stage-3---ownership).
 
+"Names" is checked against the page, not just the text: a name counts only
+while a rule naming it is in force, and a built-in or one of the user's
+callouts moves to the theme only while that rule visibly changes it. See
+[Naming is not drawing](#naming-is-not-drawing---the-claim-check).
+
 ## The pipeline, end to end
 
 Six stages, plus one question answered off to the side. Each is a separate
@@ -42,7 +47,7 @@ happen in this order.
 | --- | --- | --- | --- |
 | 1 | Find the active theme and its CSS text | [`customCssApi.ts`](../../src/manager/theme/customCssApi.ts) | theme name, stylesheet text, snippet texts, a cheap signature |
 | 2 | Scan that text for callout claims | [`cssBlocks.ts`](../../src/manager/theme/cssBlocks.ts) → [`themeCalloutScan.ts`](../../src/manager/theme/themeCalloutScan.ts), cached by [`ThemeCalloutStore.ts`](../../src/manager/theme/ThemeCalloutStore.ts) | `Map<attrId, ThemeClaim>` + family patterns |
-| 3 | Publish ownership | [`ThemeFacts.ts`](../../src/manager/theme/ThemeFacts.ts), via `CalloutRegistry.setThemeOwnedIds` | `registry.themeOwns(def)` |
+| 3 | Check the names against the page, then publish ownership | [`ThemeClaimCheck.ts`](../../src/manager/theme/ThemeClaimCheck.ts) + [`themeClaimSelectors.ts`](../../src/manager/theme/themeClaimSelectors.ts) + [`themeClaimEffect.ts`](../../src/manager/theme/themeClaimEffect.ts), then [`ThemeFacts.ts`](../../src/manager/theme/ThemeFacts.ts) via `CalloutRegistry.setThemeOwnedIds` | `registry.themeOwns(def)` |
 | 4 | List theme ids locally; persist only explicit scans/imports | [`themeOverlayRows.ts`](../../src/manager/theme/themeOverlayRows.ts), [`ManualCalloutDiscovery.ts`](../../src/manager/ManualCalloutDiscovery.ts) | Ephemeral theme rows or durable definitions |
 | 5 | Measure what the theme actually draws | [`ThemeAppearanceProbe.ts`](../../src/manager/theme/ThemeAppearanceProbe.ts) + [`readCalloutStyle.ts`](../../src/manager/theme/readCalloutStyle.ts) + [`themeAppearance.ts`](../../src/manager/theme/themeAppearance.ts) / [`themeIcon.ts`](../../src/manager/theme/themeIcon.ts) | `ThemeAppearance` per id |
 | 6 | Reproduce it wherever the plugin lists callouts | [`renderThemeIcon.ts`](../../src/manager/theme/renderThemeIcon.ts), [`calloutListIcon.ts`](../../src/manager/theme/calloutListIcon.ts) | icons and swatches on rows, menus, pickers |
@@ -170,7 +175,8 @@ Confirmed against the scanner itself; every row here is behaviour, not intent.
 | `[data-callout~=Metadata]` | claimed as `metadata` - keys are normalised |
 | `[data-callout="my note"]` | claimed as `my-note` |
 | `[data-callout="x"] { }` | **claimed** - an empty rule body still names the id |
-| `body.some-style-settings-class [data-callout="y"]` | **claimed**, whether or not that class is currently on `<body>` |
+| `body.some-style-settings-class [data-callout="y"]` | **claimed** by the text scan; while `<body>` lacks the class, [the claim check](#naming-is-not-drawing---the-claim-check) drops it |
+| `[data-callout="I"]` (uppercase, no `i` flag) | **not claimed** - Obsidian lower-cases the type, and the attribute compares case-sensitively, so no rendered callout matches (Serenity writes `"I"` and `"S"`) |
 | Anything inside a `/* … */` comment | not claimed |
 | A string a raw newline cuts short (Blue Topaz's `content: '\A\9\9'';`) | ends at the newline, as in the browser (`skipString`) - before, it swallowed the rest of the theme and no later rule was read (see *Blue Topaz, read to the end* below) |
 | An escaped newline inside a string (`\` then LF, or CRLF from a theme saved on Windows) | a line continuation: the string goes on, CRLF counting as one newline as CSS preprocesses it |
@@ -458,8 +464,8 @@ the forms it hands `ThemeFacts`, so a theme that restyles `quote` owns Quote
 without naming `cite`: once this plugin stands down, Obsidian's `app.css` still
 draws `[!cite]`, exactly as before. It matters: of the 50 installed themes that
 restyle a built-in by name, 22 leave out at least one of its synonyms (ITS
-Theme names `quote` and never `cite`; Agate names all thirteen ids and no
-alias), and without the exception every one of those rows would leave
+Theme names `quote` and never `cite`; Agate names nine of the thirteen ids
+and no alias), and without the exception every one of those rows would leave
 *Callouts from your theme*. A stock alias the theme names on its own
 (Elegance's `tldr`) is still claimed: that block callout is the theme's, and
 the rest of the built-in is this plugin's.
@@ -489,6 +495,107 @@ ways: `getUserDefined()` excludes theme rows and feeds every backup, so the row
 would silently stop being exported; the sweep's `stale` branch **deletes** an
 uncustomized theme row on the next theme switch; and `importValidator` re-stamps
 `source: "user"` on every import, so the flip would not even stay done.
+
+### Naming is not drawing - the claim check
+
+[`ThemeClaimCheck`](../../src/manager/theme/ThemeClaimCheck.ts) checks the
+names the text scan found against the theme as the browser parsed it, in the
+main window, every time the sweep runs: at startup, on every `css-change` the
+theme, a snippet or Style Settings fires, and on `refreshThemeAppearance`.
+
+It exists because naming is not drawing. Measured over the 65 installed themes
+that name a callout - real Obsidian 1.14.4, each listed id's rules switched off
+and the callout compared, light and dark, Reading view and Live Preview - 451
+of the 1,292 rows those themes listed changed nothing on screen:
+
+| Why the rule changed nothing | Rows | Examples |
+| --- | --- | --- |
+| behind a theme option that is off | 358 | Retroma (312, all inside `body.rtm-ss-retro-callout { … }`), Aura, Ultra Lobster, Shiba Inu, AnuPpuccin's Capacities types, Typomagical's quote |
+| dead since Obsidian 1.13 made `--callout-color` a full colour | 31 | Origami's `rgb(var(--callout-color))`, Vicious, Velocity's `math-*` |
+| restates what is already drawn | 29 | Catppuccin and Sandstorm re-declare core's own icons; PLN |
+| drawn only in a context a lone callout lacks | 14 | Kakano's column children, Ukiyo's `col`, Dune's metadata variants, `note-toolbar` |
+| named only through a synonym | 13 | the per-name rule above |
+| not a callout at all | 4 | Velocity's `.lc-list-callout[data-callout="!"]`, the List Callouts plugin's markers |
+| an uppercase value with no `i` flag | 1 | Serenity's `"I"` - now refused by the scan itself |
+| only an invisible property | 1 | Brainhack's border colour on a borderless title |
+
+Two checks, aimed where a wrong answer costs something:
+
+- **Page conditions, for every id, synchronously inside the sweep.** An id
+  whose every parsed rule asks `<body>` or `<html>` for something the page
+  lacks right now (`pageRootFails`; a nested rule inherits its parent's) is
+  dropped from what the theme declares - no ownership, no overlay row. Only a
+  compound that *is* the page root is judged: a bare class such as
+  `.aura-callouts` may come from the note's `cssclasses`, so it is never held
+  against a rule. Style Settings fires `css-change` when an option flips, so
+  Retroma's 312 types come back the moment its option is turned on.
+- **A measured difference, for ids that carry a design of their own** -
+  built-ins, and callouts the user or another plugin made. Each is rendered offscreen
+  in Reading view's ancestry and cloned into Live Preview's, read with every
+  theme rule naming it switched off (`withoutName` rewrites the parsed
+  `selectorText` to a value no callout can carry), read again with them back,
+  and compared (`changesVisibly`). An id whose rules change nothing is
+  published as not owned (`syncThemeOverlayRows`' `notDrawn`), so this plugin
+  keeps painting it.
+
+Theme-invented ids are not measured: they have no design here to lose, and many
+are drawn only where a lone render cannot reach - Ukiyo's `col` inside a
+`cont`, Dune's `[!leer|l]`. Measured alone they would leave the list and pick up
+the fallback's look inside the theme's own layout. A saved scan row
+(`source: "fallback"`) is left alone for the same reason: it is a copy of the
+fallback's look, usually of exactly such a type.
+
+Decisions in the measurement:
+
+- **This plugin's CSS is off while it measures** (`CSSInjector.suspendOwnStyles`).
+  A callout handed back is one this plugin paints; measured with that paint on,
+  the theme's colour could never show, and the callout could never be won back
+  when the user turns the option on.
+- **One synchronous run, batched.** Every rule is back, and this plugin's CSS on,
+  before the task ends, so no frame is painted without them. All ids are switched
+  off together: one at a time made the browser lay the whole window out twice per
+  id, a 1.5 s freeze on AnuPpuccin. Together can only add a difference (a rule
+  naming one id that reaches another's callout), never hide one. Reading view
+  first; only an id it shows no difference for is read again in Live Preview's
+  ancestry, and the "rules on" side is read lazily, stopping at the first
+  visible difference.
+- **A task of its own.** The check waits a macrotask after the `css-change`
+  that started it, so the sweep's CSS pass and the check do not merge into one
+  freeze. On a theme switch the longest task stays at or below what it was
+  before the check: AnuPpuccin 490 → 321 ms, Retroma 13.6 s → 337 ms (its 312
+  overlay rows are no longer minted).
+- **Every doubt goes to the theme** - no parsed sheet, an id no parsed rule
+  names, a rewritten selector the browser refuses (it silently keeps the old
+  one), a failed render. That is how ownership behaved before the check.
+- **Verdicts outlive a `css-change` of the same theme** and are re-measured
+  after it, so a Style Settings toggle does not hand everything back for the
+  length of a render; a theme switch drops them. This plugin's own `css-change`
+  (`OWN_CSS_CHANGE` in `manager/ownCssChange.ts`) starts no check: the check
+  switches this plugin's CSS off, so that CSS cannot change a verdict.
+- **A burst is one question, asked again when it quiets.** Dragging a slider
+  or a Style Settings colour fires `css-change` once per step. The check is
+  asked through the same `QuietGate`
+  ([`utils/quietGate.ts`](../../src/utils/quietGate.ts)) that gates the
+  appearance probe's re-read, so the two answer together: the first event of
+  a burst is judged at once, so a theme switch lands the moment it happens;
+  the rest fold into one more pass after 250 ms of quiet, or 2 s into a burst
+  that never stops. A restyle (the theme or snippet text moved) and this
+  plugin's own `css-change` are urgent and never wait. Measured over 180
+  `css-change` events on Catppuccin in a real Obsidian: 10.5 s before the
+  check existed, 26.7 s with a pass per event, 2.5 s with the gate.
+  [When theme appearance refreshes](#when-theme-appearance-refreshes) has the
+  rest of what a `css-change` costs.
+- **The probe hosts are left unpainted.** `CSSInjector.paintIcons` skips
+  callouts inside `.cs-theme-probe`; painting there re-read a computed value
+  after each DOM write, a style recalc per callout.
+
+`changesVisibly` does not count: interaction and timing properties;
+`--callout-color` itself (what it changes shows up in what reads it, and PLN's
+triplet is another spelling of the same colour); a border colour on a side with
+no border; SVG paint off the drawing; offsets of an unpositioned box; a
+pseudo-element with no content either way; anything on a box hidden both ways.
+`tests/themeClaimSelectors.test.ts` pins that judgement and the selector
+rewriting, `tests/themeClaimCheck.test.ts` the switching.
 
 ## Stage 4 - The overlay, and adding theme types permanently
 
@@ -645,13 +752,21 @@ body class the user toggled ten minutes ago.
 
 So [`ThemeAppearanceProbe`](../../src/manager/theme/ThemeAppearanceProbe.ts)
 renders every theme-owned callout once, offscreen, and reads **used values** off
-it. Three things about that rendering are load-bearing:
+it. Four things about that rendering are load-bearing:
 
 - **The ancestry.** Callouts are rendered inside
   `.markdown-preview-view > .markdown-rendered`, exactly as
   `settings/quickInsertPreview.ts` rebuilds it, because core's callout CSS and
   every theme's are written against reading view. A callout lifted out of that
   chain loses the very styling being measured.
+- **The main window, never `activeDocument`.** Since Obsidian 1.14 Settings
+  is a window of its own, and while it has focus it is `activeDocument`.
+  Obsidian copies the main window's stylesheets into a pop-out but skips any
+  `<style>` containing `ͼ1` (how it leaves CodeMirror's own sheets behind), and
+  Agate's theme writes `.ͼ1 .cm-lineWrapping`. A pass started from the settings
+  tab therefore read all ten callouts Agate recolours in core's colours. The
+  probe takes the main document the way `CSSInjector` does,
+  `app.workspace.containerEl.ownerDocument`.
 - **`visibility: hidden`, never `display: none`.** A display-none subtree has no
   layout and no used values for masks or backgrounds; every theme would read as
   unknown. The host is parked at `left: -10000px` with `contain: layout style`
@@ -668,7 +783,12 @@ true would be silently attributed to its neighbour. A wrong colour looks
 plausible, so nothing would ever report it.
 
 The cache is keyed on `stylingSignature` + light/dark + the sorted id set, and
-dropped outright on `css-change`. A request arriving mid-pass is **held in one
+dropped on `css-change` - **outright** when the theme or snippet text moved, and
+**signature only** (`invalidate({ keepAnswers: true })`) when it did not: the
+answers on hand are then the same theme's own, a beat behind at worst, and the
+rows and pills keep wearing them until the pass replaces them instead of
+flashing placeholders. The pass is forced and one already in flight still stops
+counting either way. A request arriving mid-pass is **held in one
 slot and re-run**, never dropped - the one request that is never redundant is
 `css-change`'s, and dropping it left the running pass free to write the
 *outgoing* theme's readings into a cache that had just been cleared. A failed
@@ -833,6 +953,89 @@ or removes definitions. Its fingerprint includes the theme and enabled snippet C
 texts, so an in-place edit with unchanged name, version and text length is still
 recognized. Snippet edits refresh cascade claims without discovering theme types. Rendering updates
 are deduplicated and do not emit another CSS event when reinjecting.
+
+### A restyle, and a nudge
+
+Obsidian fires `css-change` for a theme switch and for a font-size step alike,
+and a drag fires one per step; Style Settings fires it (with
+`{ source: "style-settings" }`) for every option and every step of a colour
+picker. The handler tells three kinds of event apart, because what each owes is
+different:
+
+| Event | What it is | What the handler does |
+| --- | --- | --- |
+| **Restyle** | the theme or enabled-snippet *text* moved (`restyled()`, the fingerprint) | drops the cached scan, the probe's answers and the registry's readings, re-derives ownership, and re-reads **at once** |
+| **Nudge** | the text is the same - a font size, an accent, a mode flip, a Style Settings option, from outside | keeps the readings on hand; re-reads **at once for the first event of a burst**, and once more when the burst has been quiet 250 ms (or 2 s into one that never stops) |
+| **Own** | this plugin's `css-change` (`OWN_CSS_CHANGE`), after its own CSS moved | re-reads at once, as it always did; starts no claim check |
+
+What a nudge does *not* do any more is the interesting part, because it is where
+the time went:
+
+- **It does not clear the readings.** The handler used to publish an empty map
+  and then, a pass later, the same readings back - two registry rounds, each an
+  `inject()`, an outline refresh and a settings save, and a flash of neutral
+  placeholders in the settings rows and the Live Preview pills. The clear exists
+  so the settings tab cannot repaint the *outgoing* theme's artwork during a
+  switch; for the same theme there is nothing outgoing.
+- **It announces only a move.** `setThemeAppearances` returns whether the
+  readings differed, and the regeneration that follows runs only when they did.
+  Readings and ownership announce `persists: false`
+  ([Callout registry § RegistryChange](05-callout-registry.md#registrychange---does-this-round-need-a-save)),
+  so not even a move costs a settings save.
+- **It does not discard a read already in flight for a step that is folded
+  away.** The invalidation a nudge owes is applied when the read runs
+  (`nudged`), not when the event arrives, so a drag does not keep cancelling
+  the pass that would have published.
+
+`inject(false)` still runs per event, and so does the sweep of rows (it is
+what repaints icons core re-rendered on the same event); both are byte-compared
+and cheap for a nudge.
+
+**Why the chain terminates.** The handler injects; an inject that changes the
+generated text emits this plugin's own `css-change`; that is heard here too.
+Every hop stands on a comparison that goes quiet: ownership is announced only
+when the set moved (`ThemeFacts.setOwnedIds`), readings only when they differ
+(`setAppearances`), and `CSSInjector.inject` emits only when the text differs
+from what is installed. The generated text depends on ownership but never on the
+readings, so publishing a reading cannot emit a `css-change` at all, and an
+ownership change emits exactly one, whose handler finds the text unchanged and
+the set already published.
+
+#### What it costs, measured
+
+Obsidian 1.14.4, a note of sixty callouts open in Reading view and in Live
+Preview, a 1.2 MB `data.json`, forty `css-change` events one per frame;
+**core alone spends 13 ms an event** with this plugin disabled. Milliseconds per
+event:
+
+| Theme (callouts it owns) | Git HEAD before this work | Now |
+| --- | --- | --- |
+| Catppuccin (0) | 89 | 17 |
+| AnuPpuccin (9) | about 320 | 19 |
+| MagicUser (114) | 146 | 16 |
+| Lumines (90) | 351 | 20 |
+| Serenity (95) | about 540 | 73 |
+
+A theme switch is unchanged: the same single pass, one frame drawn in the
+interim ownership. The numbers are spread over three changes - the settings save
+(about 18 ms, twice an event), the clear-and-republish, and the per-step read -
+plus one in the icon painter (`restoreCoreIcon` writes a slot only when it
+differs, see [CSS generation](06-css-generation.md)). The end state was compared
+before and after in a real Obsidian across five theme switches, a dark/light
+flip, an accent colour, font sizes and a thirty-step burst ending on an accent
+change: ownership, readings, the generated CSS text and every icon slot in the
+DOM were identical at every step.
+
+**What is left.** Serenity's 73 ms is `paintIcon()` re-rendering the icon of
+each of the eighteen Studio-owned callouts in the DOM on every sweep - about
+2.7 ms apiece, because each new node costs a style resolution against a very
+large stylesheet. With the render switched off the whole sweep takes 0.2 ms.
+It is unrelated to theme ownership and scales with the theme's weight, so it is
+a follow-up of its own: skip the render when `iconRenderKey()` (the contract
+the Live Preview widgets already compare, including "artwork that was pending
+has since arrived") and the baked colour are unchanged for the slot - with the
+care that other painters (`restoreCoreIcon`, the token painters, a rebuilt
+widget) must invalidate whatever remembers a slot.
 
 ## Representation and persistence
 
@@ -1001,22 +1204,33 @@ body.theme-dark .callout[data-callout="recite"] {
 >   supplying its own. Put a guard on it (a body class, a `[data-callout=…]`) if
 >   you meant it as a default rather than a decision.
 
-- **Case and spacing do not matter.** `[data-callout~=Metadata i]` is read as
-  `metadata`; `[data-callout="my note"]` as `my-note` - the same normalisation
-  Obsidian applies when it writes the attribute.
+- **Spacing does not matter; case does, unless you add `i`.**
+  `[data-callout~=Metadata i]` is read as `metadata`, and `[data-callout="my note"]`
+  as `my-note` - the normalisation Obsidian applies when it writes the
+  attribute. But Obsidian writes the type in lower case and the attribute
+  compares case-sensitively, so `[data-callout="Metadata"]` matches nothing and
+  claims nothing.
 - **`@media`, `@supports` and `@layer` wrappers are descended into.**
-- **A rule that sets nothing still claims the id.** `[data-callout="x"] {}` is a
-  claim, and so is one whose body holds nothing but nested rules.
+- **A rule that sets nothing still claims a type you add.** `[data-callout="x"] {}`
+  lists `x` as one of your theme's callouts, and so does one whose body holds
+  nothing but nested rules. For a built-in, or a callout the user made, it
+  claims nothing: those move to your theme only while your rules visibly change
+  them - see [Naming is not drawing](#naming-is-not-drawing---the-claim-check).
 - **Nesting costs nothing.** A nested selector is resolved against its parent
   before anything is read, so `.callout-icon { … }` inside your callout rule is
   scanned as `…[data-callout="x"] .callout-icon`, at that selector's real
   specificity. Nested `@media` and `@supports` blocks hand their declarations
   back to the rule around them.
-- **Body-class scoping still claims.** `body.my-style-settings-class
-  [data-callout="y"]` claims `y` whether or not that class is currently applied.
-- **Light and dark variants both claim the same id**, so a callout styled only
-  in `.theme-dark` is still owned in light mode. What the *swatch* shows is the
-  current appearance mode only - see
+- **Body-class scoping claims only while the class is on.**
+  `body.my-style-settings-class [data-callout="y"]` claims `y` while `<body>`
+  has that class; Style Settings fires `css-change` when it changes, and the
+  claim follows. Write `body` (or `html`, `:root`) into the selector for this to
+  apply: a bare `.my-style-settings-class` may come from a note's `cssclasses`,
+  so it is never held against your rule.
+- **A callout styled in one appearance mode only** is listed in both modes when
+  your theme adds it - unless the selector writes `body.theme-dark`, which the
+  body rule above reads - and, for a built-in, only in the mode you style. What the *swatch*
+  shows is the current appearance mode only - see
   [Limitations](#limitations-and-edge-cases).
 
 ### Patterns that prevent discovery
@@ -1153,12 +1367,14 @@ The columns worth checking for your own theme:
   `.theme-light` div does not flip a theme that writes `body.theme-dark …`, and
   flipping the real body would repaint the user's screen. Readings are re-taken
   on the `css-change` that an appearance switch fires.
-- **A claim does not mean the rule is active.** The scanner reads text, so an id
-  named only behind a Style Settings body class is owned even while that class
-  is off. The plugin stands down; the probe then measures whatever *is* on
-  screen, which may be core's defaults.
+- **A claim is checked only against the page as it is.** An id named only
+  behind a bare class (`.my-option .callout[…]`, no `body`) stays claimed while
+  that class is off, if the theme invented it; a built-in or a user callout in
+  the same position is measured and handed back; a saved scan row is not. A theme-invented type drawn
+  only inside another callout, or only with metadata, stays listed because it
+  cannot be measured alone.
 - **Ownership is per name, not per property.** A theme that sets one variable
-  for `note` owns `note` entirely. This is the whole point - a partial override
+  for `note`, and so visibly changes it, owns `note` entirely. This is the whole point - a partial override
   is the split the model exists to abolish - but it does mean a very light touch
   costs the theme the full callout. The cut runs between names, never inside
   one: the claimed names of a callout the theme does not own are the theme's
@@ -1356,6 +1572,10 @@ real cascade (`app.css` → `styles.css` → theme → snippets →
 | [`manager/theme/ThemeCalloutStore.ts`](../../src/manager/theme/ThemeCalloutStore.ts) | Caching + the enumeration/weight split |
 | [`manager/theme/ThemeFacts.ts`](../../src/manager/theme/ThemeFacts.ts) | Owned ids + measured appearances, held behind the registry |
 | [`manager/theme/themeAppearanceSync.ts`](../../src/manager/theme/themeAppearanceSync.ts) | Scheduling, ordering, the fingerprint, the probe's lifetime |
+| [`manager/theme/ThemeClaimCheck.ts`](../../src/manager/theme/ThemeClaimCheck.ts) | Page conditions and the measured "does the theme draw it?" pass |
+| [`manager/theme/themeClaimSelectors.ts`](../../src/manager/theme/themeClaimSelectors.ts) / [`themeClaimEffect.ts`](../../src/manager/theme/themeClaimEffect.ts) | Reading and rewriting a parsed selector; what counts as a visible difference |
+| [`utils/quietGate.ts`](../../src/utils/quietGate.ts) | Act at once, then once more when a burst of `css-change` has ended |
+| [`manager/ownCssChange.ts`](../../src/manager/ownCssChange.ts) | The payload that marks this plugin's own `css-change` |
 | [`manager/theme/themeOverlayRows.ts`](../../src/manager/theme/themeOverlayRows.ts) | Minting and retiring the ephemeral `source: "theme"` rows |
 | [`manager/theme/ThemeAppearanceProbe.ts`](../../src/manager/theme/ThemeAppearanceProbe.ts) | Offscreen render + cache |
 | [`manager/theme/readCalloutStyle.ts`](../../src/manager/theme/readCalloutStyle.ts) | Which node answers which property |
@@ -1371,7 +1591,9 @@ real cascade (`app.css` → `styles.css` → theme → snippets →
 
 Suites: `themeCalloutScan`, `themeOwnership`, `manualDiscovery`,
 `themeOverlayRows`, `themeRowSync`, `syncThemeOverlay`, `themeAppearance`,
-`themeAppearanceProbe`, `themeRowActions`, `themeReport`, `cssSpecificity`.
+`themeAppearanceProbe`, `themeClaimCheck`, `themeClaimSelectors`, `quietGate`,
+`registryChangeKinds`, `restoreCoreIcon`, `themeRowActions`, `themeReport`,
+`cssSpecificity`.
 
 ---
 Next chapter: [19-upgrading-manual-discovery.md](19-upgrading-manual-discovery.md)

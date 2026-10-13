@@ -88,6 +88,8 @@ registry.onChange fires (coalesced - see CalloutRegistry.batch)
         │
         ├──► OutlineDecorator.refreshAll() - repaints outline items
         └──► plugin.saveSettings() - writes data.json
+               (skipped when the round says `persists: false` - the two
+               derived theme facts, which `toSaveData()` never reads)
 ```
 
 `main.ts` wires exactly two `registry.onChange` listeners (see
@@ -97,20 +99,28 @@ sync is subscribed first, so a delete's command pruning is folded into the same
 settings snapshot the save writes, rather than racing it.
 
 > [!IMPORTANT]
-> **`onChange` carries no payload.** Every listener re-derives what it needs from
-> current registry state rather than being told what changed. This is deliberate
-> - an id rename is really `remove()` followed by `add()`, so no listener could
-> tell a rename from a delete-then-create anyway. `CustomCommandManager.syncAll()`
-> is designed entirely around this: it recomputes the whole desired command set
-> from scratch every time, which is what makes it converge correctly regardless
-> of *how* the registry changed. See [Editor integrations](10-editor-integrations.md).
+> **`onChange` says nothing about *what* changed.** Every listener re-derives
+> what it needs from current registry state rather than being told which row
+> moved. This is deliberate - an id rename is really `remove()` followed by
+> `add()`, so no listener could tell a rename from a delete-then-create anyway.
+> `CustomCommandManager.syncAll()` is designed entirely around this: it
+> recomputes the whole desired command set from scratch every time, which is
+> what makes it converge correctly regardless of *how* the registry changed. See
+> [Editor integrations](10-editor-integrations.md).
+>
+> The one thing a round does say is a `RegistryChange` - `{ persists }`: whether
+> `toSaveData()` may now differ from what was last written. It is `false` for
+> exactly the two derived theme facts (who owns which id, what the theme draws),
+> which the file never holds, so the listener that saves can stand down while
+> the ones that repaint run as ever. See
+> [Callout registry § `RegistryChange`](05-callout-registry.md#registrychange---does-this-round-need-a-save).
 
 ### Coalescing: why a single edit is not four full passes
 
 A single `onChange` round is expensive - full stylesheet regeneration, every
 open document's icons repainted, every CodeMirror editor's widgets refreshed, a
 `data.json` write, and (if the CSS actually moved) a `css-change` event that
-makes Obsidian core rebuild every open editor's cache. Three mechanisms exist
+makes Obsidian core rebuild every open editor's cache. Four mechanisms exist
 purely to keep that cost tied to real work:
 
 1. **`CalloutRegistry.batch(fn)`** coalesces multiple mutations inside `fn` into
@@ -128,6 +138,12 @@ purely to keep that cost tied to real work:
    listener - which ran the whole pass twice per mutation. `inject()` now emits
    `css-change` itself, once, only when text actually changed; there is no
    second path.
+4. **A theme fact does not save.** The theme's claims and readings are re-derived
+   on every `css-change` (see
+   [Theme callout discovery § When theme appearance refreshes](18-theme-callout-discovery.md#when-theme-appearance-refreshes)),
+   and announcing them used to serialise and fingerprint the whole of
+   `data.json` twice per event - about 18 ms apiece for a 1.2 MB file. They now
+   announce `persists: false`, and a round that only moved them skips the save.
 
 See [CSS generation](06-css-generation.md) for the injector's internals and
 [Callout registry](05-callout-registry.md) for `batch()`.

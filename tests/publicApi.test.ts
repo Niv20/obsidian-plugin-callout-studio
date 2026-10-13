@@ -697,6 +697,18 @@ describe("onChange — subscribing", () => {
 		assert.deepStrictEqual(seen, [[]]);
 	});
 
+	it("hands over no argument for a round about the theme either", () => {
+		// The registry tells its own listeners what kind of change it was; the
+		// documented contract for a consumer is a callback that takes nothing,
+		// so a `(x = fallback) => ...` must never meet an object it did not ask
+		// for.
+		const { api, registry } = apiHarness();
+		const seen: unknown[][] = [];
+		api.onChange((...args: unknown[]) => seen.push(args));
+		registry.setThemeOwnedIds(new Set(["recite"]));
+		assert.deepStrictEqual(seen, [[]]);
+	});
+
 	it("fires once for a whole batch", () => {
 		const { api, registry } = apiHarness();
 		let fired = 0;

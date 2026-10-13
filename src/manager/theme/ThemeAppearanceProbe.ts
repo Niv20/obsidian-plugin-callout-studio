@@ -20,13 +20,16 @@
  * that a theme can reach its colour through variables, `color-mix()`,
  * inheritance or a Style Settings class, and a text parser sees none of it.
  *
- * ## Three things about the rendering that are load-bearing
+ * ## Four things about the rendering that are load-bearing
  *
  * **The ancestry.** Callouts are rendered inside
  * `.markdown-preview-view > .markdown-rendered`, exactly as
  * `settings/quickInsertPreview.ts` does, because core's callout CSS and every
  * theme's are written against reading view. A callout lifted out of that chain
  * loses the very styling we are here to measure.
+ *
+ * **The main window.** Never `activeDocument`, which may be the Settings
+ * window — see {@link ThemeAppearanceProbe.mainDocument}.
  *
  * **`visibility: hidden`, never `display: none`.** A `display: none` subtree has
  * no layout and no used values for the properties that matter — masks and
@@ -116,11 +119,24 @@ export class ThemeAppearanceProbe {
 	 * swatch at all, which is how one callout could look uniquely broken while
 	 * its neighbours looked merely wrong. Answering `UNKNOWN_APPEARANCE` for a
 	 * moment is the contract callers are already written against.
+	 *
+	 * ## `keepAnswers`
+	 *
+	 * For a `css-change` that left the theme and the snippets exactly as they
+	 * were: a font-size or accent step, a Style Settings option, a mode flip.
+	 * There the answers on hand are this same theme's own, at worst a beat
+	 * behind, and the pass that follows replaces them. Dropping them bought a
+	 * run of neutral placeholders in the settings rows and Live Preview pills,
+	 * and a publish of "nothing" followed by a publish of the very same
+	 * readings - two registry announcements, two CSS regenerations and, before
+	 * theme facts stopped saving, two settings saves per event for no change.
+	 * The pass is still forced (the signature goes) and a pass in flight still
+	 * stops counting; only the cache stays.
 	 */
-	invalidate(): void {
+	invalidate(options: { keepAnswers?: boolean } = {}): void {
 		this.generation++;
 		this.signature = null;
-		this.cache = new Map();
+		if (!options.keepAnswers) this.cache = new Map();
 	}
 
 	/**
@@ -196,14 +212,31 @@ export class ThemeAppearanceProbe {
 		}
 	}
 
+	/**
+	 * The main window's document: where notes are drawn, and the one window
+	 * sure to carry the theme. The same route `CSSInjector` takes to it.
+	 *
+	 * Not `activeDocument`. Since Obsidian 1.14 Settings is a window of its
+	 * own, and while it has focus it *is* `activeDocument`, so a pass started
+	 * from the settings tab rendered there. A pop-out gets copies of the main
+	 * window's stylesheets, except any `<style>` whose text contains `ͼ1` —
+	 * that is how Obsidian leaves CodeMirror's own sheets behind — and Agate
+	 * writes `.ͼ1 .cm-lineWrapping`. Measured in the Settings window, all ten
+	 * callouts Agate recolours came back in core's colours, and the list of
+	 * the theme's callouts looked exactly like the built-ins.
+	 */
+	private mainDocument(): Document {
+		return this.app.workspace.containerEl.ownerDocument;
+	}
+
 	private isDark(): boolean {
-		return activeDocument.body.classList.contains("theme-dark");
+		return this.mainDocument().body.classList.contains("theme-dark");
 	}
 
 	private async measure(
 		attrIds: readonly string[],
 	): Promise<Map<string, ThemeAppearance>> {
-		const host = activeDocument.body.createDiv({
+		const host = this.mainDocument().body.createDiv({
 			cls: `${HOST_CLASS} markdown-preview-view`,
 		});
 		host.setAttribute("aria-hidden", "true");

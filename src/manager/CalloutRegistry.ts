@@ -84,7 +84,27 @@ const SORTED_DEFAULT_CALLOUTS = sortCalloutsByDisplayName(DEFAULT_CALLOUTS);
 export const EXPORT_FORMAT_ID = "callout-studio";
 export const EXPORT_FORMAT_VERSION = 2;
 
-export type RegistryChangeCallback = () => void;
+/**
+ * What a registry notification is about, told to every listener of the round.
+ *
+ * Almost every change is a mutation of what `toSaveData()` writes, and its
+ * listeners may rely on the plugin saving afterwards. The derived theme facts
+ * are the exception: which ids the theme claims and what it draws are never
+ * part of `data.json`, so announcing them must not cost a settings save - the
+ * serialise-and-fingerprint pass is the largest single item of a `css-change`
+ * (about 18 ms for a 1.2 MB `data.json`, twice per event, measured).
+ */
+export interface RegistryChange {
+	/**
+	 * Whether `toSaveData()` may now differ from what was last written. A
+	 * listener that persists does so only when this is `true`; one that repaints
+	 * ignores it.
+	 */
+	persists: boolean;
+}
+
+/** A listener may take no argument at all; most of them do not need one. */
+export type RegistryChangeCallback = (change: RegistryChange) => void;
 
 /**
  * Re-stamps a transient preview definition with the identity of the real
@@ -127,6 +147,8 @@ export class CalloutRegistry {
 	private batchDepth = 0;
 	/** Whether anything mutated while the batch above was open. */
 	private batchDirty = false;
+	/** Whether any of it was a change the file must hear about. See {@link RegistryChange}. */
+	private batchPersists = false;
 	/**
 	 * Listeners for transient live-preview changes — a separate list from
 	 * {@link changeCallbacks} precisely because a preview is NOT a mutation:
@@ -1009,16 +1031,21 @@ export class CalloutRegistry {
 	 * announce a move like any other registry change — ownership decides who
 	 * paints, and the probe's readings land *after* the settings tab drew its
 	 * rows — and neither announces a no-op. Call the first inside `batch()`.
+	 *
+	 * Both announce with `persists: false`. Neither fact is read by
+	 * `toSaveData()` (`selectPersistedRows` looks at each row's own `source`,
+	 * never at ownership), so the file cannot have moved; the listeners that
+	 * repaint still run, and the one that saves stands down.
 	 */
 	setThemeOwnedIds(ids: ReadonlySet<string>): boolean {
 		const moved = this.themeFacts.setOwnedIds(ids);
-		if (moved) this.notifyChange();
+		if (moved) this.notifyChange(false);
 		return moved;
 	}
 
 	setThemeAppearances(map: ReadonlyMap<string, ThemeAppearance>): boolean {
 		const moved = this.themeFacts.setAppearances(map);
-		if (moved) this.notifyChange();
+		if (moved) this.notifyChange(false);
 		return moved;
 	}
 
@@ -1876,19 +1903,30 @@ export class CalloutRegistry {
 		} finally {
 			this.batchDepth--;
 			if (this.batchDepth === 0 && this.batchDirty) {
+				// One round for everything inside, and it persists if any one
+				// of the changes did.
+				const persists = this.batchPersists;
 				this.batchDirty = false;
-				this.notifyChange();
+				this.batchPersists = false;
+				this.notifyChange(persists);
 			}
 		}
 	}
 
-	/** Through {@link notifyListeners} — the list can change mid-round. */
-	private notifyChange(): void {
+	/**
+	 * Through {@link notifyListeners} — the list can change mid-round.
+	 *
+	 * `persists` defaults to `true`, which is the right answer for every
+	 * mutation of a row or a setting: only the two derived theme facts say
+	 * otherwise, and they say it explicitly.
+	 */
+	private notifyChange(persists = true): void {
 		if (this.batchDepth > 0) {
 			this.batchDirty = true;
+			if (persists) this.batchPersists = true;
 			return;
 		}
-		notifyListeners(this.changeCallbacks);
+		notifyListeners(this.changeCallbacks, { persists });
 	}
 
 	/**
@@ -1911,6 +1949,7 @@ export class CalloutRegistry {
 
 	/** Likewise. */
 	private notifyPreviewChange(): void {
-		notifyListeners(this.previewChangeCallbacks);
+		// A preview is not a mutation, so it never persists.
+		notifyListeners(this.previewChangeCallbacks, { persists: false });
 	}
 }

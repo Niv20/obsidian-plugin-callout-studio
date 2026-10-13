@@ -27,17 +27,22 @@
  * one, and the next round gives it one — this is the same overshoot a plain
  * snapshot has, never worse, and no caller registers the same function twice.)
  */
-export type Listener = () => void;
+export type Listener<A extends unknown[] = []> = (...args: A) => void;
 
 /**
- * Call every listener in `live` once, in order.
+ * Call every listener in `live` once, in order, with `args`.
  *
  * `live` is the array the `on…`/`off…` pair really mutates, not a copy: the
  * snapshot is taken here so that unsubscribing mid-round can be honoured.
+ * The arguments describe the round (what kind of change it was), so every
+ * listener of one round is told the same thing.
  */
-export function notifyListeners(live: readonly Listener[]): void {
+export function notifyListeners<A extends unknown[]>(
+	live: readonly Listener<A>[],
+	...args: A
+): void {
 	for (const cb of [...live]) {
 		if (!live.includes(cb)) continue;
-		cb();
+		cb(...args);
 	}
 }

@@ -71,9 +71,11 @@ export class ThemeFacts {
 	 * Returns `true` when the readings actually moved, exactly as
 	 * {@link setOwnedIds} does and for the same reason: publishing is now an
 	 * announced change, and announcing one that changed nothing costs a CSS
-	 * regeneration, a settings save and a full settings-tab repaint. The
-	 * `css-change → inject → sweep` chain terminates on this comparison —
-	 * see the termination note in `themeAppearanceSync.ts`.
+	 * regeneration and a full settings-tab repaint (and, for a persisting
+	 * change, a settings save - which these two never are, see
+	 * `RegistryChange`). The `css-change → inject → sweep` chain terminates on
+	 * this comparison — see the note on `registerThemeAppearance` in
+	 * `themeAppearanceSync.ts`.
 	 */
 	setAppearances(map: ReadonlyMap<string, ThemeAppearance>): boolean {
 		if (sameThemeAppearances(this.appearances, map)) return false;

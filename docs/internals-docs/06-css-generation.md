@@ -44,19 +44,60 @@ inject(emitCssChange = true): void {
 ```
 
 Emitting `workspace.trigger("css-change")` at the end of a pass lands back on
-this same class through the plugin's own `css-change` listener
-(`main.ts: workspace.on("css-change", () => cssInjector.inject(false))`). The
-latch makes that re-entrant call a no-op instead of a second full pass. The
+this plugin through its own `css-change` listener (`registerThemeAppearance` in
+`manager/theme/themeAppearanceSync.ts`, which ends in `cssInjector.inject(false)`).
+The latch makes that re-entrant call a no-op instead of a second full pass. The
 `try/finally` is load-bearing, not defensive boilerplate: a throw anywhere in
 the generation pass (a malformed colour, a `setIcon` call in an export realm
 that lacks it) would otherwise leave the latch stuck `true` and silently drop
 **every subsequent inject for the rest of the session**.
+
+The event carries `OWN_CSS_CHANGE` (`{ source: "callout-studio" }`, from
+`manager/ownCssChange.ts`), as Style Settings names its own, so a listener that
+depends only on the theme can skip it. The theme claim check is the one that
+does: it measures with this plugin's CSS switched off, so this plugin's CSS
+moving cannot change what it finds (see
+[18-theme-callout-discovery.md](18-theme-callout-discovery.md#naming-is-not-drawing---the-claim-check)).
 
 `inject(false)` is what the external `css-change` handler passes - re-emitting
 `css-change` in response to hearing it would create a feedback loop with any
 other plugin that also listens and re-emits (Style Settings is named
 explicitly in the source as an example), and would cost a full editor cache
 wipe for CSS that never moved.
+
+### What one external `css-change` costs here
+
+Obsidian fires `css-change` for a font-size step as readily as for a theme
+switch, and a slider drag fires one per step - so the handler is on the path of
+every drag, and its cost is what makes a drag feel smooth or not. Measured in
+Obsidian 1.14.4 on a sixty-callout note open in Reading view and Live Preview
+(a 1.2 MB `data.json`; core alone spends 13 ms an event on it), the per-event
+cost of the build before this work was 89 ms on Catppuccin and about 320 ms on
+AnuPpuccin; now it is 17 and 19 (the full table is in
+[Theme callout discovery § When theme appearance refreshes](18-theme-callout-discovery.md#when-theme-appearance-refreshes)).
+Three things made up nearly all of the difference, and none of them was this
+class:
+
+- **a settings save, twice per event** (about 18 ms each) - the theme's claims
+  and readings were announced as persisting changes. They announce
+  `persists: false` now ([Callout registry § RegistryChange](05-callout-registry.md#registrychange---does-this-round-need-a-save));
+- **clearing the readings and publishing the same ones back** - two registry
+  rounds, each an `inject()` and an outline refresh. A `css-change` that left
+  the theme and snippet text unchanged no longer clears them
+  ([Theme callout discovery § When theme appearance refreshes](18-theme-callout-discovery.md#when-theme-appearance-refreshes));
+- **re-reading what the theme draws at every step** - folded into one read at
+  the start of a burst and one at its end.
+
+What stays, per event, is the generation above (3 ms, byte-compared and so never
+written for a nudge), `paintIcons()`, and the editor refresh. `paintIcons()` is
+where the remaining weight is: theme-owned and unknown callouts no longer have
+their slot emptied and refilled when it already holds the right drawing (see
+below), but a **Studio-owned** callout's icon is still re-rendered into its slot
+on every sweep, and under a theme with a very large stylesheet each new node
+costs a style resolution - Serenity, about 2.7 ms for each of eighteen callouts,
+which is most of its 73 ms event (about 540 ms before). It is the next thing to
+spend effort on, and `iconRenderKey()` (the key the Live Preview widgets already
+compare) is the contract such a skip would stand on.
 
 ## Byte-identical short-circuit
 
@@ -354,6 +395,18 @@ fallback icon without Callout Studio reading the snippet file.
 > "did we already fix this one" flag, because
 > Live Preview's native callout widget has no forced-rebuild hook this plugin
 > can reach, so re-deriving and comparing is cheaper than tracking state.
+>
+> **It compares before it writes.** The value is read *first*, and a slot that
+> already holds exactly what `setIcon` would draw for it (`slotAlreadyShows`:
+> one child, `outerHTML` equal to `getIcon(value)`'s) is left alone. A pass used
+> to empty the slot and refill it, and the read of the *next* callout's
+> property then forced a style recalculation of the page - 1.5 ms apiece under
+> Serenity, 66 ms an event for thirty callouts. The DOM that results is
+> identical either way; only an id Obsidian has no drawing for, a literal
+> `<svg` value, or a slot that really differs still takes the full restore.
+> Pinned by `tests/restoreCoreIcon.test.ts`, and the end state of every icon
+> slot was compared before and after across theme, mode, accent and font-size
+> changes in a real Obsidian.
 
 ## Where the generated CSS actually lands in the cascade
 
