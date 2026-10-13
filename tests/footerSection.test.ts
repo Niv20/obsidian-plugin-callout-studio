@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { renderFooterSection } from "../src/settings/sections/FooterSection";
 import type { SettingsSectionContext } from "../src/settings/sections/types";
+import { compareSpecificity, specificityOf } from "../src/utils/cssSpecificity";
 import { installFakeDom } from "./support/fakeDom";
+import { readRepoFile } from "./support/sourceScan";
 
 installFakeDom();
 
@@ -115,5 +117,28 @@ describe("the settings footer", () => {
 		const { disposers } = renderFooter();
 		assert.equal(disposers.length, 1);
 		assert.equal(typeof disposers[0], "function");
+	});
+
+	it("keeps the footer links' padding above Obsidian's tablet button rule", () => {
+		// Obsidian's `.is-tablet button:not(.clickable-icon)` gives every button
+		// 4px 20px. The licences trigger is the one <button> in a row of links,
+		// so on an iPad (and nowhere else) it came out ~38px wider than its
+		// neighbours. The fake DOM has no layout; the cascade shape is what is
+		// guarded, measured in WebKit against Obsidian 1.14.4's app.css.
+		const tablet = specificityOf(".is-tablet button:not(.clickable-icon)");
+		const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, "");
+		const rule = Array.from(css.matchAll(/([^{}]+)\{([^{}]*)\}/g)).find(
+			(m) =>
+				!(m[1] ?? "").includes(",") &&
+				!(m[1] ?? "").includes(":") &&
+				(m[1] ?? "").includes("callout-studio-footer-meta-link") &&
+				/padding\s*:\s*0 1px/.test(m[2] ?? ""),
+		);
+		assert.ok(rule, "the footer link padding rule is missing");
+		const selector = (rule[1] ?? "").replace(/\s+/g, " ").trim();
+		assert.ok(
+			compareSpecificity(specificityOf(selector), tablet) > 0,
+			`${selector} must outrank Obsidian's tablet button padding`,
+		);
 	});
 });

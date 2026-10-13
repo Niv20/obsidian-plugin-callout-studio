@@ -7147,7 +7147,12 @@ body:not(.is-phone)
 	min-inline-size: 0;
 }
 
-.callout-studio-footer .callout-studio-footer-meta-link {
+/* Three classes, not two: Obsidian's tablet rule
+   `.is-tablet button:not(.clickable-icon)` is (0,2,1) and gave the licences
+   button 20px of side padding on an iPad only. */
+.callout-studio-footer
+	.callout-studio-footer-meta
+	.callout-studio-footer-meta-link {
 	appearance: none;
 	min-block-size: 24px;
 	block-size: auto;
