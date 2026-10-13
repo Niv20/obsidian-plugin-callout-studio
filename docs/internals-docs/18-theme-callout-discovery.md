@@ -640,8 +640,9 @@ Decisions in the measurement:
   the same theme and are re-measured after it, so neither a Style Settings
   toggle nor a snippet switched on or off hands everything back for the length
   of a render; a theme switch swaps them for that theme's. This plugin's own
-  `css-change` (`OWN_CSS_CHANGE` in `manager/ownCssChange.ts`) starts no check:
-  the check switches this plugin's CSS off, so that CSS cannot change a verdict.
+  `css-change` (`OWN_CSS_CHANGE` in `manager/ownCssChange.ts`) does not re-check
+  them: the check switches this plugin's CSS off, so that CSS cannot change a
+  verdict (it asks only about names never asked about - next bullet).
 - **A name no pass has been asked about is measured on arrival**
   (`hasUnmeasured`). This plugin's own `css-change` starts no re-check of the
   styling, but a callout imported, made by another plugin, or given an alias
@@ -1068,7 +1069,7 @@ different:
 | --- | --- | --- |
 | **Restyle** | the theme or enabled-snippet *text* moved (`restyled()`, the fingerprint) | drops the cached scan, the probe's answers and the registry's readings, re-derives ownership, and re-reads **at once** |
 | **Nudge** | the text is the same - a font size, an accent, a mode flip, a Style Settings option, from outside | keeps the readings on hand; re-reads **at once for the first event of a burst**, and once more when the burst has been quiet 250 ms (or 2 s into one that never stops) |
-| **Own** | this plugin's `css-change` (`OWN_CSS_CHANGE`), after its own CSS moved | re-reads at once, as it always did; starts no claim check |
+| **Own** | this plugin's `css-change` (`OWN_CSS_CHANGE`), after its own CSS moved | re-reads at once, as it always did; starts no re-check of the styling, and a claim pass only for a name no pass has been asked about (`hasUnmeasured`) |
 
 What a nudge does *not* do any more is the interesting part, because it is where
 the time went:

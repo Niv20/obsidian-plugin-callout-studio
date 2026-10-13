@@ -101,7 +101,8 @@ export interface ThemeSyncHost {
  * is folded into one per burst by a `QuietGate`). Only a move is announced,
  * and an announcement of a theme fact does not save `data.json`
  * (`RegistryChange.persists`). This plugin's own `css-change` is neither: it
- * re-reads at once, as it always did.
+ * re-reads at once, as it always did, and asks the claim check only about a
+ * name no pass has been asked about.
  *
  * Measured per event in Obsidian 1.14.4, on a note of sixty callouts open in
  * Reading view and Live Preview and a 1.2 MB `data.json`, where core alone
@@ -222,7 +223,9 @@ export function registerThemeAppearance(
 	// Measure whether the theme really draws the callouts of ours it names,
 	// and hand back the ones it does not. Publishing the new ownership is a
 	// registry change, which injects; the css-change that inject fires is this
-	// plugin's own and does not start another check, so this cannot cycle.
+	// plugin's own, which re-checks no styling and asks only about names never
+	// asked about - and `check` marks every id it is handed as asked before it
+	// measures, so this cannot cycle.
 	const checkClaims = (): void => {
 		const own = ownForms();
 		void claims.check({
