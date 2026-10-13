@@ -161,14 +161,34 @@ export class CSSInjector {
 	}
 
 	/**
-	 * The names whose Obsidian block callout this plugin paints for `def`: all
-	 * of them, minus any the active theme names itself. See
-	 * `CalloutRegistry.themeClaimsName`.
+	 * Whether the callout being written is for the exported snippet
+	 * (`cssSnippetExport.ts`) rather than the live sheet. Ambient for the same
+	 * reason as {@link emitWeight}: set by `generateCalloutCSS` on entry and
+	 * cleared before it returns.
+	 *
+	 * The export is carried to a vault, a Publish site or a garden where the
+	 * active theme is not, so which names *this* theme claims cannot thin it
+	 * out: a claimed name keeps every rule the callout's other names get.
 	 */
-	private blockNames(def: CalloutDefinition): string[] {
-		return [def.id, ...(def.aliases ?? [])].filter(
-			(name) => !this.registry.themeClaimsName(name),
+	private emitStandalone = false;
+
+	/**
+	 * The names whose Obsidian block callout this plugin paints for `def`: all
+	 * of them, minus any the active theme names itself (see
+	 * `CalloutRegistry.themeClaimsName`) - all of them, always, in the export.
+	 */
+	private blockNames(
+		def: CalloutDefinition,
+		standalone = this.emitStandalone,
+	): string[] {
+		return [def.id, ...(def.aliases ?? [])].filter((name) =>
+			this.paintsBlockName(name, standalone),
 		);
+	}
+
+	/** One name's answer to {@link blockNames}. */
+	private paintsBlockName(name: string, standalone = this.emitStandalone): boolean {
+		return standalone || !this.registry.themeClaimsName(name);
 	}
 	private injecting = false;
 	private registry: CalloutRegistry;
@@ -735,6 +755,7 @@ export class CSSInjector {
 		// manager/theme/studioWeight.ts for why it takes both.
 		this.emitWeight = theme ? 1 : this.studioWeights.resolve();
 		this.emitImportant = theme ? "" : " !important";
+		this.emitStandalone = !theme && standalone;
 		// Nothing at all, and that is now literal: the `.cs-*` token rules used
 		// to be emitted here so a theme-owned callout could still render as a
 		// heading and a pill. Those two formats are gone for a theme callout
@@ -980,6 +1001,7 @@ export class CSSInjector {
 
 		this.emitWeight = 1;
 		this.emitImportant = "";
+		this.emitStandalone = false;
 		return parts.join("\n\n");
 	}
 
@@ -1376,7 +1398,7 @@ export class CSSInjector {
 
 		for (const role of CALLOUT_RENDER_ROLES) {
 			// A name the theme claims keeps its block icon where the theme put it.
-			if (role === "regular" && this.registry.themeClaimsName(def.id)) continue;
+			if (role === "regular" && !this.paintsBlockName(def.id)) continue;
 			const adjust = resolveIconAdjust(def, role);
 			// The heading keeps its static nudge from styles.css when untouched.
 			if (isDefaultIconAdjust(adjust)) continue;
@@ -1719,11 +1741,11 @@ export class CSSInjector {
 	 * do not, and neither does a name the theme claims on a callout it only
 	 * partly owns. A Set folds aliases that normalize to the same attr form.
 	 */
-	private studioCalloutSelectors(): string[] {
+	private studioCalloutSelectors(standalone: boolean): string[] {
 		const attrIds = new Set<string>();
 		for (const def of this.registry.getAll()) {
 			if (this.registry.themeOwns(def)) continue;
-			for (const name of this.blockNames(def)) {
+			for (const name of this.blockNames(def, standalone)) {
 				attrIds.add(obsidianCalloutAttrId(name));
 			}
 		}
@@ -1735,7 +1757,7 @@ export class CSSInjector {
 	generateGlobalStyleCSS(standalone = false): string {
 		const gs = this.registry.settings.globalStyle;
 		const parts: string[] = ["/* Global callout style */"];
-		const calloutSelectors = this.studioCalloutSelectors();
+		const calloutSelectors = this.studioCalloutSelectors(standalone);
 		const selectorsFor = (tail: string): string =>
 			calloutSelectors.map((selector) => `${selector}${tail}`).join(",\n");
 
@@ -1932,7 +1954,7 @@ export class CSSInjector {
 						gradient: defs.some((d) => d.bgGradient !== undefined && d.transparentBg !== true),
 						sweep: defs.some((d) => Boolean(d.bgGradient?.textGradient && d.bgGradient.textToColorLight)),
 					},
-					themeOwnedAttrIds: this.themeOwnedAttrIds(),
+					themeOwnedAttrIds: this.themeOwnedAttrIds(standalone),
 					transparentBorderProps: () =>
 						transparentBorderProps(settings.globalStyle.borderSides, true),
 					accentProps: (def, mode) => this.accentProps(def, mode, true),
@@ -1958,14 +1980,15 @@ export class CSSInjector {
 	/**
 	 * The `data-callout` forms a metadata colour must stay off: every name of a
 	 * callout the theme owns, ids and aliases alike, and the claimed names of
-	 * one it only partly names.
+	 * one it only partly names - those only in the live sheet, never in the
+	 * export, for the reason given at {@link emitStandalone}.
 	 */
-	private themeOwnedAttrIds(): string[] {
+	private themeOwnedAttrIds(standalone: boolean): string[] {
 		const ids = new Set<string>();
 		for (const def of this.registry.getAll()) {
 			const owned = this.registry.themeOwns(def);
 			for (const id of [def.id, ...(def.aliases ?? [])]) {
-				if (owned || this.registry.themeClaimsName(id)) {
+				if (owned || !this.paintsBlockName(id, standalone)) {
 					ids.add(obsidianCalloutAttrId(id));
 				}
 			}

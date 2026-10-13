@@ -581,6 +581,30 @@ describe("which callouts are covered", () => {
 			),
 		);
 	});
+
+	it("keeps every name of a callout the theme claims only in part", () => {
+		// The export travels to a vault, a Publish site or a garden where the
+		// active theme is not, so a name *this* theme draws must not thin it out:
+		// `[!описание]` there would be left unstyled.
+		const f = fake();
+		f.registry.add(
+			definition({ id: "описание", aliases: ["вид", "description"], hideIcon: false }),
+		);
+		f.registry.setThemeOwnedIds(new Set(["описание"]));
+		const live = f.plugin.cssInjector.generateCalloutCSS(f.registry.get("описание")!);
+		assert.ok(
+			!selectors(live).some((s) => s.includes('[data-callout="описание"]') && s.startsWith(".callout")),
+			"the live sheet leaves the claimed name to the theme",
+		);
+
+		const all = selectors(buildSnippetCss(f.plugin));
+		for (const name of ["описание", "вид", "description"]) {
+			assert.ok(
+				all.some((s) => s.startsWith(".callout") && s.includes(`[data-callout="${name}"]`)),
+				`${name} is styled in the export`,
+			);
+		}
+	});
 });
 
 /* --- The awkward definitions ----------------------------------------------- */

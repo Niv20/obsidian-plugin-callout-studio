@@ -86,5 +86,7 @@ Use the snippet for Obsidian Publish, a static website, or another place where t
 
 The CSS export covers Block callouts. Heading and Inline callouts depend on the plugin's renderer and are not reproduced by the standalone snippet.
 
+A callout your active theme draws entirely is left out of the file. A callout the theme draws under only some of its IDs is exported with all of them, because the snippet is meant for places where that theme may not be active.
+
 ---
 **Next:** [Languages](11-languages.md)

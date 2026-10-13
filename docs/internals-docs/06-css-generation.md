@@ -654,6 +654,16 @@ per-name cut. Before issue #84 one claimed alias handed over the whole callout,
 and a name the user had added - `[!описание]` beside a theme's
 `[!description]` - was then styled by nobody.
 
+The cut is the live sheet's alone. The exported snippet (`standalone`) is
+carried to a vault, a Publish site or a garden where the active theme is not, so
+a claimed name there keeps every rule the callout's other names get - its own
+block, the global frame selectors and the metadata colours. `generateCalloutCSS`
+sets the ambient `emitStandalone` beside `emitWeight` and clears it before it
+returns; `blockNames` and `paintsBlockName` read it, and the two callers outside
+that function (`studioCalloutSelectors`, `themeOwnedAttrIds`) are handed the
+flag. A callout the theme owns outright is still left out of the export, as it
+always was (`cssSnippetExport.ts`).
+
 **A generic `.callout {}` rule owns nothing.** 55 of the 257 themes in the dev
 vault style callouts without naming a single id. Counting those would hand the
 plugin's entire job to the theme on half the corpus, for rules that mostly set a

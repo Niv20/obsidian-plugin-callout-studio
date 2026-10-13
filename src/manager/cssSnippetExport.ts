@@ -31,6 +31,9 @@
  * whichever theme is active *now*, and an opt-out guard like Prism's
  * `body:not(.pt-disable-callout-styling)` is satisfied in every other vault too —
  * so exporting one would blank callout backgrounds under every theme, for good.
+ * For the same reason the active theme's per-name claims do not thin it out: a
+ * callout that theme draws under only some of its names is exported with all
+ * of them (`CSSInjector.emitStandalone`).
  *
  * Two survivors that can look like oversights. Icon `::after` overrides stay
  * inside `@media screen`, so a non-Lucide icon prints as core's pencil: print
