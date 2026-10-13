@@ -23,9 +23,9 @@ function backdrop() {
 	${rect(0, 0, 1200, 800, "url(#ambient)")}`;
 }
 
-function workspace() {
+function workspace(backgroundColor = "#18161E") {
 	const { x, y, width, height } = frame;
-	let svg = rect(x, y, width, height, "#18161E", 14, 'stroke="url(#rim)"');
+	let svg = rect(x, y, width, height, backgroundColor, 14, 'stroke="url(#rim)"');
 	svg += '<g clip-path="url(#workspace)">';
 	svg += rect(x, y, width, 39, "#211D2B");
 	for (let i = 0; i < 3; i++) svg += `<circle cx="${x + 22 + i * 16}" cy="${y + 20}" r="4" fill="#51485F"/>`;
@@ -41,10 +41,6 @@ function workspace() {
 			svg += `<path d="M${arrowX} ${arrowY}l4 4 4-4" fill="none" stroke="#514B60" opacity="0.42" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>`;
 		}
 		svg += bar(x + 74 + indent, y + 110 + i * 31, 66 + (i * 19 % 39), .42);
-	}
-	svg += bar(x + 268, y + 74, 150, .45);
-	for (let row = 0; row < 16; row++) {
-		svg += bar(x + 268, y + 126 + row * 32, 300 + (row * 67 % 344), .19);
 	}
 	svg += '</g>';
 	return svg;
@@ -64,8 +60,8 @@ export function compose(name, source, metadata) {
 	const scene = vectorContent(source, name);
 	let body = backdrop();
 	body += text(600, 61, headline, 36, "#F7F3FF", 'font-weight="700" letter-spacing="-1" text-anchor="middle"');
-	body += workspace();
-	if (name === "02-notes") body += `<g clip-path="url(#workspace)">${rect(frame.x + 207, frame.y + 39, frame.width - 207, frame.height - 39, "#1e1e1e")}</g>`;
+	body += workspace(name === "02-notes" ? "#17161d" : undefined);
+	if (name === "02-notes") body += `<g clip-path="url(#workspace)">${rect(frame.x + 207, frame.y + 39, frame.width - 207, frame.height - 39, "#17161d")}</g>`;
 	let scale, x, y;
 	if (name === "01-settings") {
 		scale = Math.min(948 / scene.width, 664 / scene.height);

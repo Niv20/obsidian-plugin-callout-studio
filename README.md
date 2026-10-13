@@ -24,6 +24,8 @@ The same callout type can be written in three ways:
 
 Callout Studio has much more to offer, including color palettes, icons, global styles, context menus, vault discovery, and theme compatibility. You are welcome to read more about it in the [User guide](docs/user-guide/README.md).
 
+![Callout Studio features: find callouts, color palettes, quick insert, shortcuts, version history, context menus, and autocomplete](assets/readme/03-more-features.svg)
+
 ## Special Thanks
 
 Thank you to everyone who reported bugs, tested fixes, and shared detailed feedback:

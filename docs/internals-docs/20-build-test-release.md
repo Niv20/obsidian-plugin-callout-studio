@@ -273,10 +273,13 @@ editorial artwork. No real vault is opened or changed, and browser network
 requests are blocked and fail the run.
 
 The framing uses one short headline and gives the central UI most of the
-canvas. The abstract Obsidian workspace is centered behind it; its file list
-shows small downward chevrons matching the adjacent bars’ color and opacity
-on unindented folder rows and no icons on indented file rows. Neither window has a black drop shadow. There are no subtitles, outer corner brand labels,
-bottom taglines, or per-image navigation counters. The narrower settings scene
+canvas. The abstract Obsidian workspace is centered behind it; only the file
+list at left has synthetic name bars and small downward chevrons on folder
+rows. The space behind the foreground window is blank. In the notes scene, the
+workspace and reading area behind the note use `#17161d`; the note canvas
+keeps its `#1c1c1c` fill. Neither window has a black drop shadow. There are no
+subtitles, outer corner brand labels, bottom taglines, or per-image navigation
+counters. The narrower settings scene
 enables Obsidian's native settings background so the real rounded row surfaces
 are visible. Its three synthetic custom callouts each show a primary ID and an
 alias: Idea (`idea`, `spark`), Meeting (`meeting`, `sync`), and Research
