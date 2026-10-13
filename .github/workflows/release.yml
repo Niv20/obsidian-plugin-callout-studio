@@ -127,9 +127,16 @@ jobs:
             # Live Preview widget lookup, a callout's extent), and the sidebar
             # marking the card for the callout the caret is in — 7.6 KB over
             # the build before them, which leaves the headroom about where it was.
+            # Raised by 13 KiB for theme ownership per name: the claim check
+            # that measures whether the theme really draws the built-ins and
+            # the user's callouts it names (and hands back the ones it does
+            # not), a callout whose names the theme claims only in part, and
+            # the cheaper css-change (theme facts no longer save, bursts
+            # folded) - 13.3 KB over the build before them, which leaves the
+            # headroom about where it was.
             - name: Check bundle size
               run: |
-                  limit=2287616  # 2 MiB + 186 KiB
+                  limit=2300928  # 2 MiB + 199 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"
