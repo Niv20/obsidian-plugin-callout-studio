@@ -124,7 +124,11 @@ Three deliberate steps, each closing a real gap:
 - **Theme-owned callouts** - deliberately included even though Callout Studio
   does not draw them: the id is still valid Markdown, and `themeStyled` tells a
   consumer not to substitute the stored icon and colours for the theme's live
-  appearance.
+  appearance. `themeStyled` is `registry.themeOwns(def)`: every name drawn (a
+  built-in's stock aliases excepted) as the claim check publishes it, so a
+  callout the theme names but does not draw, or draws under only some of its
+  names, is `false`. Which names those are is not published; `docs/API.md`
+  tells consumers to render a real callout when they need the Block look.
 
 ## `getCallout(id)` - the lookup ladder, deliberately shallower than the renderer's
 

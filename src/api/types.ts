@@ -99,9 +99,13 @@ export interface CalloutDetails extends Callout {
 	 */
 	readonly source: "builtin" | "user" | "fallback" | "theme" | "plugin";
 	/**
-	 * True when the **active theme** is what supplies and styles this callout.
-	 * Derived from the theme's own stylesheet, so it changes when the user
-	 * changes theme, and no field on the stored definition records it.
+	 * True when the **active theme** draws this callout's Block form under
+	 * every one of its IDs (a built-in's own Obsidian aliases, such as `cite`,
+	 * excepted), checked against the page: a rule behind an option that is off,
+	 * or one that changes nothing visible, does not count. A callout the theme
+	 * draws under only some of its IDs is `false`. Derived from the theme, so
+	 * it changes when the user changes theme, and no field on the stored
+	 * definition records it.
 	 */
 	readonly themeStyled: boolean;
 }

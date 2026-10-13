@@ -82,7 +82,7 @@ export interface CalloutDetails extends Callout {
 	readonly defaultFolded: boolean;
 	readonly builtIn: boolean;
 	readonly source: "builtin" | "user" | "fallback" | "theme" | "plugin";
-	readonly themeStyled: boolean; // the active theme owns the Block appearance
+	readonly themeStyled: boolean; // the active theme draws the Block callout under every id
 }
 
 export interface CalloutIconInfo {
@@ -211,9 +211,26 @@ painting over them.
 
 ### `themeStyled`
 
-`themeStyled` is true when the active theme names this callout and therefore
-controls its Block appearance. Callout Studio emits no Block CSS, including its
-global geometry, for that callout.
+`themeStyled` is true when the active theme draws this callout's Block form
+under **every** one of its IDs and therefore controls its Block appearance.
+Callout Studio emits no Block CSS, including its global geometry, for that
+callout. Obsidian's own extra IDs for a built-in (`cite` for Quote, `tldr` for
+Abstract and the like) don't count: a theme that restyles `quote` alone still
+makes Quote `themeStyled`, and Obsidian keeps drawing `[!cite]` itself.
+
+"Draws" is checked against the page, not just the theme's text. A theme rule
+behind a theme option that is off, or one that changes nothing visible (a
+restatement of Obsidian's own icon, say), does not count, and the callout
+reports `false` while Callout Studio paints it. Anything the check cannot see -
+a rule that applies only under a note's `cssclasses`, in embeds or on narrow
+windows - counts as the theme's.
+
+A callout the theme draws under only **some** of its IDs reports `false`. Its
+Heading and Inline forms, and its Block form under the other IDs, use the
+stored design; Block callouts written with an ID the theme draws look the way
+the theme draws them. This API does not say which IDs those are, so a consumer
+that draws Block callouts itself should render a real callout and let the
+cascade decide.
 
 It also means the callout has **only** its block form: Callout
 Studio's own Heading and Inline syntaxes are not rendered for a callout the
