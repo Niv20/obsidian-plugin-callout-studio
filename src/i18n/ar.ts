@@ -343,6 +343,8 @@ export const ar: Record<string, string> = {
 		'أوبسيديان يكتب المسافات كشرطات، لذلك يتعارض هذا المعرّف مع "{{other}}"',
 	"editor.idFromTheme":
 		"{{theme}} يوفّر بالفعل callout بهذا المعرّف، لذا لا يمكن لـ Callout Studio تنسيقه. اختر معرّفًا مختلفًا.",
+	"editor.namesFromTheme":
+		"{{theme}} يرسم الـ callouts الكتلية {{names}} بنفسه. تحتفظ معرّفاتك الأخرى بهذا التصميم.",
 	"editor.idThemePattern":
 		"تنبيه: يقوم القالب الخاص بك بتنسيق كل callout يطابق {{pattern}}، لذا قد يتجاوز شكل هذا الـ callout.",
 	"editor.untitledCallout": "Callout بدون عنوان",

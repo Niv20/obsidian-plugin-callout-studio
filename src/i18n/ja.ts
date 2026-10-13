@@ -346,6 +346,8 @@ export const ja: Record<string, string> = {
 	"editor.idConflict": "このIDは既存のcalloutと競合します",
 	"editor.idFromTheme":
 		"{{theme}}がこのIDのcalloutを既に提供しているため、Callout Studioはスタイル設定できません。別のIDを選んでください。",
+	"editor.namesFromTheme":
+		"{{theme}}は{{names}}のブロックcalloutを独自に描画します。その他のIDはこのデザインのままです。",
 	"editor.idThemePattern":
 		"注意: あなたのテーマは{{pattern}}に一致するすべてのcalloutをスタイル設定するため、この見た目が上書きされる可能性があります。",
 	"editor.idDashConflict":

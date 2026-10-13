@@ -434,6 +434,8 @@ export const he: Record<string, string> = {
 	"editor.idConflict": "מזהה זה מתנגש עם תיבת־הבלטה קיימת",
 	"editor.idFromTheme":
 		"{{theme}} כבר מספקת תיבת־הבלטה עם מזהה זה, ולכן Callout Studio לא יכול לעצב אותה. בחרו מזהה אחר.",
+	"editor.namesFromTheme":
+		"{{theme}} מציירת בעצמה את תיבות־ההבלטה הבלוקיות {{names}}. שאר המזהים שלכם שומרים על העיצוב הזה.",
 	"editor.idThemePattern":
 		"לתשומת ליבכם: ערכת הנושא שלכם מעצבת כל תיבת־הבלטה שתואמת ל-{{pattern}}, כך שהיא עשויה לשנות את המראה של זו.",
 	"editor.idDashConflict":

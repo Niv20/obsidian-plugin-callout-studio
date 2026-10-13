@@ -342,6 +342,8 @@ export const ms: Record<string, string> = {
 	"editor.idConflict": "ID ini bercanggah dengan callout sedia ada",
 	"editor.idFromTheme":
 		"{{theme}} sudah membekalkan callout dengan ID ini, jadi Callout Studio tidak dapat menggayakannya. Pilih ID lain.",
+	"editor.namesFromTheme":
+		"{{theme}} melukis sendiri callout blok {{names}}. ID anda yang lain mengekalkan reka bentuk ini.",
 	"editor.idThemePattern":
 		"Ambil perhatian: tema anda menggayakan setiap callout yang sepadan dengan {{pattern}}, jadi ia mungkin mengatasi rupa yang satu ini.",
 	"editor.idDashConflict":

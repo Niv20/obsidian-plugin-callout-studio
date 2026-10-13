@@ -347,6 +347,8 @@ export const cs: Record<string, string> = {
 		"Obsidian zapisuje mezery jako pomlčky, takže toto ID koliduje s „{{other}}“",
 	"editor.idFromTheme":
 		"{{theme}} už poskytuje callout s tímto ID, takže ho Callout Studio nemůže stylizovat. Zvolte jiné ID.",
+	"editor.namesFromTheme":
+		"Blokové callouty {{names}} vykresluje přímo {{theme}}. Ostatní vaše ID si ponechají tento vzhled.",
 	"editor.idThemePattern":
 		"Upozornění: vaše téma stylizuje každý callout odpovídající {{pattern}}, takže může přepsat vzhled tohoto.",
 	"editor.untitledCallout": "Callout bez názvu",

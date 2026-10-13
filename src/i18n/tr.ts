@@ -399,6 +399,8 @@ export const tr: Record<string, string> = {
 		'Obsidian boşlukları tire olarak yazar, bu yüzden bu ID "{{other}}" ile çakışıyor',
 	"editor.idFromTheme":
 		"{{theme}} bu kimlikte bir callout zaten sağlıyor, bu yüzden Callout Studio onu biçimlendiremez. Farklı bir kimlik seçin.",
+	"editor.namesFromTheme":
+		"{{theme}}, {{names}} blok callout'larını kendisi çiziyor. Diğer ID'leriniz bu tasarımı korur.",
 	"editor.idThemePattern":
 		"Uyarı: temanız {{pattern}} ile eşleşen her callout'u biçimlendiriyor, bu yüzden bunun görünümünü geçersiz kılabilir.",
 	"editor.untitledCallout": "Başlıksız Callout",

@@ -409,6 +409,8 @@ export const uk: Record<string, string> = {
 
 	"editor.idFromTheme":
 		"{{theme}} вже надає callout з цим ID, тому Callout Studio не може його стилізувати. Виберіть інший ID.",
+	"editor.namesFromTheme":
+		"{{theme}} сама малює блокові callout {{names}}. Інші ваші ID зберігають цей дизайн.",
 	"editor.idThemePattern":
 		"Зверніть увагу: ваша тема стилізує кожен callout, що відповідає {{pattern}}, тому вона може змінити вигляд цього.",
 

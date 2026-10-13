@@ -356,6 +356,8 @@ export const nl: Record<string, string> = {
 
 	"editor.idFromTheme":
 		"{{theme}} levert al een callout met deze ID, dus Callout Studio kan deze niet stijlen. Kies een andere ID.",
+	"editor.namesFromTheme":
+		"{{theme}} tekent de blokcallouts {{names}} zelf. Uw andere ID's behouden dit ontwerp.",
 	"editor.idThemePattern":
 		"Let op: uw thema stijlt elke callout die overeenkomt met {{pattern}}, dus dit kan het uiterlijk van deze callout overschrijven.",
 
