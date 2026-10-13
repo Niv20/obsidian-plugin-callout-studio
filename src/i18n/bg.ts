@@ -335,6 +335,8 @@ export const bg: Record<string, string> = {
 		"{{theme}} вече предоставя callout с това ID, затова Callout Studio не може да го стилизира. Изберете друго ID.",
 	"editor.namesFromTheme":
 		"{{theme}} сама изобразява блоковите callout-и {{names}}. Другите ви ID-та запазват този дизайн.",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} сама изобразява блоковите callout-и {{names}}, а Obsidian изобразява {{stock}}. Другите ви ID-та запазват този дизайн.",
 	"editor.idThemePattern":
 		"Внимание: темата ви стилизира всеки callout, съвпадащ с {{pattern}}, затова може да промени как изглежда този.",
 	"editor.untitledCallout": "Callout без заглавие",

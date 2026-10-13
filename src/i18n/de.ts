@@ -355,6 +355,8 @@ export const de: Record<string, string> = {
 		"{{theme}} liefert bereits einen Callout mit dieser ID, daher kann Callout Studio ihn nicht gestalten. Wählen Sie eine andere ID.",
 	"editor.namesFromTheme":
 		"{{theme}} zeichnet die Block-Callouts {{names}} selbst. Ihre anderen IDs behalten dieses Design.",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} zeichnet die Block-Callouts {{names}} selbst, und Obsidian zeichnet {{stock}}. Ihre anderen IDs behalten dieses Design.",
 	"editor.idThemePattern":
 		"Hinweis: Ihr Theme gestaltet jeden Callout, der zu {{pattern}} passt, daher könnte es das Aussehen dieses hier überschreiben.",
 	"editor.untitledCallout": "Callout ohne Titel",

@@ -345,6 +345,8 @@ export const ar: Record<string, string> = {
 		"{{theme}} يوفّر بالفعل callout بهذا المعرّف، لذا لا يمكن لـ Callout Studio تنسيقه. اختر معرّفًا مختلفًا.",
 	"editor.namesFromTheme":
 		"{{theme}} يرسم الـ callouts الكتلية {{names}} بنفسه. تحتفظ معرّفاتك الأخرى بهذا التصميم.",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} يرسم الـ callouts الكتلية {{names}} بنفسه، ويرسم Obsidian {{stock}}. تحتفظ معرّفاتك الأخرى بهذا التصميم.",
 	"editor.idThemePattern":
 		"تنبيه: يقوم القالب الخاص بك بتنسيق كل callout يطابق {{pattern}}، لذا قد يتجاوز شكل هذا الـ callout.",
 	"editor.untitledCallout": "Callout بدون عنوان",

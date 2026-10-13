@@ -1799,17 +1799,32 @@ export class CalloutEditor extends Modal {
 		// Typically a callout saved before its theme started naming one of its
 		// names. Never a block — the other names still take this design — but
 		// it explains why `[!description]` in a note will not match the preview.
-		const themeNames = [this.calloutId, ...this.aliases].filter((id) =>
-			this.themeSuppliesId(id),
-		);
+		const names = [this.calloutId, ...this.aliases];
+		const themeNames = names.filter((id) => this.themeSuppliesId(id));
+		// A built-in's stock alias (`[!cite]` for Quote) is left to Obsidian
+		// while the theme claims the built-in's id - the stylesheet's own
+		// per-name answer, `registry.leavesBlockName` - so it does not keep this
+		// design either, and saying "your other names" would include it.
+		const builtIn =
+			this.isBuiltIn && this.existingId ? this.plugin.registry.get(this.existingId) : undefined;
+		const obsidianNames = builtIn
+			? names.filter(
+					(id) =>
+						!this.themeSuppliesId(id) && this.plugin.registry.leavesBlockName(builtIn, id),
+				)
+			: [];
 		if (themeNames.length > 0) {
+			const list = (ids: string[]): string => ids.map((id) => `[!${id}]`).join(", ");
+			const theme =
+				activeThemeName(this.plugin.app) ?? t("settings.themeCalloutsDefaultTheme");
 			this.idsTagInput.showExternalError(
-				t("editor.namesFromTheme", {
-					theme:
-						activeThemeName(this.plugin.app) ??
-						t("settings.themeCalloutsDefaultTheme"),
-					names: themeNames.map((id) => `[!${id}]`).join(", "),
-				}),
+				obsidianNames.length > 0
+					? t("editor.namesFromThemeAndObsidian", {
+							theme,
+							names: list(themeNames),
+							stock: list(obsidianNames),
+						})
+					: t("editor.namesFromTheme", { theme, names: list(themeNames) }),
 			);
 			return;
 		}

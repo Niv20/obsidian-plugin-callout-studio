@@ -381,6 +381,8 @@ export const zhTW: Record<string, string> = {
 		"{{theme}} 已經提供了具有此 ID 的 callout，因此 Callout Studio 無法為其設定樣式。請選擇其他 ID。",
 	"editor.namesFromTheme":
 		"{{theme}} 會自行繪製 {{names}} 區塊 callout。您的其他 ID 保持此設計。",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} 會自行繪製 {{names}} 區塊 callout，{{stock}} 則由 Obsidian 繪製。您的其他 ID 保持此設計。",
 	"editor.idThemePattern":
 		"提醒：您的佈景主題會為每個符合 {{pattern}} 的 callout 設定樣式，因此它可能會覆蓋此 callout 的外觀。",
 

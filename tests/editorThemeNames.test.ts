@@ -95,4 +95,38 @@ describe("the callout editor on a name the theme draws", () => {
 			t("editor.idFromTheme", { theme: "Fixture" }),
 		]);
 	});
+
+	it("says Obsidian draws a built-in's stock alias while the theme claims its id", () => {
+		// Quote with an alias of the user's own is not the theme's outright, but
+		// `[!cite]` is left to Obsidian (the stylesheet's own per-name answer),
+		// so it is not one of the names that keep this design.
+		const registry = new CalloutRegistry();
+		registry.load(null);
+		registry.update("quote", { aliases: ["cite", "q"] });
+		registry.setThemeOwnedIds(new Set(["quote"]));
+		const app = { customCss: { theme: "Fixture" } } as unknown as App;
+		const plugin = {
+			app,
+			registry,
+			settings: registry.settings,
+			cssInjector: {
+				themeCallouts: () => ({
+					themeDefinedIds: () => new Set(["quote"]),
+					patternClaims: () => [],
+				}),
+			},
+		} as unknown as CalloutEditorPlugin;
+		const editor = new CalloutEditor(plugin, registry.get("quote"));
+		const shown: string[] = [];
+		Object.assign(editor, {
+			idsTagInput: {
+				showExternalError: (msg: string) => shown.push(msg),
+				clearExternalError: () => {},
+			},
+		});
+		(editor as unknown as { updateIdWarning(): void }).updateIdWarning();
+		assert.deepEqual(shown, [
+			t("editor.namesFromThemeAndObsidian", { theme: "Fixture", names: "[!quote]", stock: "[!cite]" }),
+		]);
+	});
 });

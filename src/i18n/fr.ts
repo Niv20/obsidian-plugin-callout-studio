@@ -360,6 +360,8 @@ export const fr: Record<string, string> = {
 		"{{theme}} fournit déjà un callout avec cet ID, donc Callout Studio ne peut pas le styliser. Choisissez un ID différent.",
 	"editor.namesFromTheme":
 		"{{theme}} dessine lui-même les callouts de bloc {{names}}. Vos autres IDs conservent ce design.",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} dessine lui-même les callouts de bloc {{names}}, et Obsidian dessine {{stock}}. Vos autres IDs conservent ce design.",
 	"editor.idThemePattern":
 		"Attention : votre thème stylise tous les callouts correspondant à {{pattern}}, il pourrait donc modifier l'apparence de celui-ci.",
 

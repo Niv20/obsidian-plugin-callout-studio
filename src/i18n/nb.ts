@@ -340,6 +340,8 @@ export const nb: Record<string, string> = {
 		"{{theme}} tilbyr allerede en callout med denne ID-en, så Callout Studio kan ikke stile den. Velg en annen ID.",
 	"editor.namesFromTheme":
 		"{{theme}} tegner blokk-calloutene {{names}} selv. De andre ID-ene dine beholder dette designet.",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} tegner blokk-calloutene {{names}} selv, og Obsidian tegner {{stock}}. De andre ID-ene dine beholder dette designet.",
 	"editor.idThemePattern":
 		"Merk: temaet ditt stiler alle callouts som matcher {{pattern}}, så det kan overstyre hvordan denne ser ut.",
 	"editor.untitledCallout": "Navnløs Callout",

@@ -395,6 +395,8 @@ export const th: Record<string, string> = {
 		"{{theme}} มี callout ที่ใช้ ID นี้อยู่แล้ว Callout Studio จึงไม่สามารถจัดสไตล์ได้ กรุณาเลือก ID อื่น",
 	"editor.namesFromTheme":
 		"{{theme}} วาด callout แบบบล็อก {{names}} เอง ID อื่นๆ ของคุณยังคงใช้ดีไซน์นี้",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} วาด callout แบบบล็อก {{names}} เอง และ Obsidian วาด {{stock}} ID อื่นๆ ของคุณยังคงใช้ดีไซน์นี้",
 	"editor.idThemePattern":
 		"โปรดทราบ: ธีมของคุณจัดสไตล์ callout ทุกรายการที่ตรงกับ {{pattern}} จึงอาจแทนที่รูปลักษณ์ของ callout นี้",
 	"editor.idDashConflict":

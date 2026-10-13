@@ -344,6 +344,8 @@ export const ms: Record<string, string> = {
 		"{{theme}} sudah membekalkan callout dengan ID ini, jadi Callout Studio tidak dapat menggayakannya. Pilih ID lain.",
 	"editor.namesFromTheme":
 		"{{theme}} melukis sendiri callout blok {{names}}. ID anda yang lain mengekalkan reka bentuk ini.",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} melukis sendiri callout blok {{names}}, dan Obsidian melukis {{stock}}. ID anda yang lain mengekalkan reka bentuk ini.",
 	"editor.idThemePattern":
 		"Ambil perhatian: tema anda menggayakan setiap callout yang sepadan dengan {{pattern}}, jadi ia mungkin mengatasi rupa yang satu ini.",
 	"editor.idDashConflict":

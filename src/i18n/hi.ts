@@ -348,6 +348,8 @@ export const hi: Record<string, string> = {
 		"{{theme}} पहले से ही इस ID वाला एक callout प्रदान करती है, इसलिए Callout Studio इसे स्टाइल नहीं कर सकता। कोई दूसरी ID चुनें।",
 	"editor.namesFromTheme":
 		"{{theme}} {{names}} ब्लॉक callouts को खुद बनाती है। आपकी बाकी ID इसी डिज़ाइन को बनाए रखती हैं।",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} {{names}} ब्लॉक callouts को खुद बनाती है, और Obsidian {{stock}} को बनाता है। आपकी बाकी ID इसी डिज़ाइन को बनाए रखती हैं।",
 	"editor.idThemePattern":
 		"ध्यान दें: आपकी थीम {{pattern}} से मेल खाने वाले हर callout को स्टाइल करती है, इसलिए यह इसका रूप बदल सकती है।",
 	"editor.idDashConflict":

@@ -479,7 +479,10 @@ block format only. The heading and inline formats are this plugin's DOM, which
 no theme selector reaches, so they keep the callout's design under every name;
 the metadata dropdown follows the same split (`CalloutMetadataSuggest` offers no
 colour for a claimed name's block callout). The callout editor says which names
-the theme draws (`editor.namesFromTheme`), without blocking the save. It asks
+the theme draws (`editor.namesFromTheme`), without blocking the save - and, for a
+built-in, which stock aliases are left to Obsidian with them
+(`editor.namesFromThemeAndObsidian`, from `registry.leavesBlockName`), so "your
+other names" never includes a name that does not keep the design. It asks
 the published claim (`registry.themeClaimsName`), never the text scan: a name
 kept behind an option that is off, or one the claim check measured the theme
 not to draw, is painted by this plugin, and saying otherwise would be false.

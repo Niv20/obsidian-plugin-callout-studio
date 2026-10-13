@@ -348,6 +348,8 @@ export const id: Record<string, string> = {
 		"{{theme}} sudah menyediakan callout dengan ID ini, sehingga Callout Studio tidak dapat menata gayanya. Pilih ID lain.",
 	"editor.namesFromTheme":
 		"{{theme}} menggambar sendiri callout blok {{names}}. ID Anda yang lain tetap memakai desain ini.",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} menggambar sendiri callout blok {{names}}, dan Obsidian menggambar {{stock}}. ID Anda yang lain tetap memakai desain ini.",
 	"editor.idThemePattern":
 		"Perhatian: tema Anda menata gaya setiap callout yang cocok dengan {{pattern}}, sehingga mungkin akan menimpa tampilan callout ini.",
 	"editor.idDashConflict":

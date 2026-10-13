@@ -402,6 +402,8 @@ export const sv: Record<string, string> = {
 		"{{theme}} tillhandahåller redan en callout med detta ID, så Callout Studio kan inte stila den. Välj ett annat ID.",
 	"editor.namesFromTheme":
 		"{{theme}} ritar självt blockcallouts {{names}}. Dina andra ID:n behåller den här designen.",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} ritar självt blockcallouts {{names}}, och Obsidian ritar {{stock}}. Dina andra ID:n behåller den här designen.",
 	"editor.idThemePattern":
 		"Obs: ditt tema stilar alla callouts som matchar {{pattern}}, så det kan påverka hur den här ser ut.",
 	"editor.untitledCallout": "Namnlös Callout",

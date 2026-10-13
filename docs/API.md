@@ -228,7 +228,9 @@ windows - counts as the theme's.
 A callout the theme draws under only **some** of its IDs reports `false`. Its
 Heading and Inline forms, and its Block form under the other IDs, use the
 stored design; Block callouts written with an ID the theme draws look the way
-the theme draws them. This API does not say which IDs those are, so a consumer
+the theme draws them. For a built-in whose own ID the theme draws, Obsidian's
+extra IDs (`[!cite]` beside `[!quote]`) are drawn by Obsidian as well, never
+with the stored design. This API does not say which IDs those are, so a consumer
 that draws Block callouts itself should render a real callout and let the
 cascade decide.
 

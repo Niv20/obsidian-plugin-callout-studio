@@ -402,6 +402,8 @@ export const ru: Record<string, string> = {
 		"{{theme}} уже предоставляет callout с этим ID, поэтому Callout Studio не может его оформить. Выберите другой ID.",
 	"editor.namesFromTheme":
 		"{{theme}} сама отрисовывает блочные callout {{names}}. Остальные ваши ID сохраняют это оформление.",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} сама отрисовывает блочные callout {{names}}, а {{stock}} отрисовывает Obsidian. Остальные ваши ID сохраняют это оформление.",
 	"editor.idThemePattern":
 		"Обратите внимание: ваша тема оформляет каждый callout, соответствующий {{pattern}}, поэтому она может изменить вид этого callout.",
 	"editor.idDashConflict":

@@ -351,6 +351,8 @@ export const hu: Record<string, string> = {
 		"A(z) {{theme}} már biztosít egy callout-ot ezzel az azonosítóval, ezért a Callout Studio nem tudja stílusozni. Válasszon másik azonosítót.",
 	"editor.namesFromTheme":
 		"A(z) {{theme}} maga rajzolja meg a(z) {{names}} blokk callout-okat. A többi azonosítója megtartja ezt a dizájnt.",
+	"editor.namesFromThemeAndObsidian":
+		"A(z) {{theme}} maga rajzolja meg a(z) {{names}} blokk callout-okat, a(z) {{stock}} callout-okat pedig az Obsidian rajzolja meg. A többi azonosítója megtartja ezt a dizájnt.",
 	"editor.idThemePattern":
 		"Figyelem: a témája minden, a(z) {{pattern}}-nak megfelelő callout-ot stílusoz, ezért felülírhatja ennek a kinézetét.",
 	"editor.idDashConflict":

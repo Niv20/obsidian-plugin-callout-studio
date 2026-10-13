@@ -404,6 +404,8 @@ export const vi: Record<string, string> = {
 		"{{theme}} đã cung cấp một callout với ID này, vì vậy Callout Studio không thể tạo kiểu cho nó. Hãy chọn một ID khác.",
 	"editor.namesFromTheme":
 		"{{theme}} tự vẽ các callout khối {{names}}. Các ID khác của bạn vẫn giữ thiết kế này.",
+	"editor.namesFromThemeAndObsidian":
+		"{{theme}} tự vẽ các callout khối {{names}}, còn Obsidian vẽ {{stock}}. Các ID khác của bạn vẫn giữ thiết kế này.",
 	"editor.idThemePattern":
 		"Lưu ý: giao diện của bạn tạo kiểu cho mọi callout khớp với {{pattern}}, vì vậy nó có thể ghi đè hình thức của callout này.",
 
