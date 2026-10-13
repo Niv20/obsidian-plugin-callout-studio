@@ -547,8 +547,11 @@ Two checks, aimed where a wrong answer costs something:
   event - Obsidian toggles `is-focused` and `is-fullscreen` itself, and a
   plugin may set one of its own - so the sync also watches the `class`
   attribute of `<body>` and `<html>` (`watchPageClasses`, a `MutationObserver`
-  on those two elements only) and re-derives ownership when the set of ids a
-  page condition keeps off moves. A condition that moves with no event at all -
+  on those two elements only). It re-derives ownership, and measures again,
+  when the set of ids a page condition keeps off moves - or when, for an id it
+  measures, which rules the page switches off moves (`pageStateKey`): a verdict
+  is built rule by rule, so `body.is-fullscreen` arriving beside an
+  unconditional rule changes the answer though the id stays claimed. A condition that moves with no event at all -
   `:has()`, which follows the whole document, and the user-action
   pseudo-classes (`:hover`, `:focus-within`, …) - is never judged: it cannot
   take a callout from the theme.

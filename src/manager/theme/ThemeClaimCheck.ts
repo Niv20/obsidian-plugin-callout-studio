@@ -258,6 +258,31 @@ export class ThemeClaimCheck {
 		return out;
 	}
 
+	/**
+	 * Which of the rules naming `ids` the page switches off right now - by a
+	 * `<body>`/`<html>` condition or an option class - as one comparable key.
+	 * A verdict is built on these, rule by rule: when one moves without a
+	 * `css-change` (Obsidian's `is-fullscreen`, a plugin's class), the id may
+	 * be judged differently even though the id as a whole is still claimed.
+	 */
+	pageStateKey(ids: Iterable<string>): string {
+		const index = this.currentIndex();
+		if (!index) return "";
+		const doc = this.mainDocument();
+		const pageOff = pageRootTest(doc);
+		const options = this.optionClasses();
+		const bits: string[] = [];
+		for (const id of [...new Set(ids)].sort()) {
+			const rules = index.get(id) ?? [];
+			bits.push(
+				`${id}:${rules
+					.map((rule) => (pageOff(rule) ? "p" : optionGatedRule(rule, options, doc) ? "o" : "-"))
+					.join("")}`,
+			);
+		}
+		return bits.join("|");
+	}
+
 	/** The ids, of `ids`, last measured to look the same without the theme's rules. */
 	unstyled(ids: Iterable<string>): Set<string> {
 		const out = new Set<string>();

@@ -210,6 +210,7 @@ function countingClaims() {
 		pageRootOff: () => new Set<string>(),
 		unstyled: () => new Set<string>(),
 		hasUnmeasured: (ids: Iterable<string>) => [...ids].some((id) => !asked.some((a) => a.includes(id))),
+		pageStateKey: () => "",
 		check: (request: ClaimCheckRequest) => {
 			asked.push([...request.ids]);
 			return Promise.resolve();
@@ -263,6 +264,28 @@ describe("a page class that moves without a css-change", () => {
 		s.setOff(["note"]);
 		s.pageChanged();
 		assert.strictEqual(note(), false, "and went");
+	});
+
+	it("re-measures when a rule-level condition moves, though the id stays claimed", () => {
+		// `note` has an unconditional rule (restating core) and one behind
+		// `body.is-fullscreen`: the id is claimed either way, but the verdict was
+		// built with that rule switched off by the page.
+		const s = start();
+		s.setOff([]);
+		s.pageChanged();
+		s.clock.advance(1000);
+		let state = "note:-p";
+		s.claims.pageStateKey = () => state;
+		s.pageChanged();
+		s.clock.advance(1000);
+		const asked = s.claims.asked.length;
+		state = "note:--";
+		s.pageChanged();
+		s.clock.advance(1000);
+		assert.strictEqual(s.claims.asked.length, asked + 1, "the fullscreen rule came on: measure again");
+		s.pageChanged();
+		s.clock.advance(1000);
+		assert.strictEqual(s.claims.asked.length, asked + 1, "and only once");
 	});
 
 	it("does nothing for a class change no theme condition depends on", () => {

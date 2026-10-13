@@ -871,6 +871,21 @@ describe("a page condition the theme's rules depend on", () => {
 		assert.deepStrictEqual([...check(h).pageRootOff(new Set(["aside"]))], []);
 	});
 
+	it("keys which rules of each id the page switches off right now", () => {
+		const h = harness([
+			rule('.callout[data-callout="note"]'),
+			rule('body.is-fullscreen .callout[data-callout="note"]'),
+		]);
+		const claims = check(h);
+		assert.strictEqual(claims.pageStateKey(["note"]), "note:-p");
+		document.body.classList.add("is-fullscreen");
+		try {
+			assert.strictEqual(claims.pageStateKey(["note"]), "note:--");
+		} finally {
+			document.body.classList.remove("is-fullscreen");
+		}
+	});
+
 	it("keeps an id no parsed rule names", () => {
 		const h = harness([]);
 		assert.deepStrictEqual([...check(h).pageRootOff(new Set(["aside"]))], []);

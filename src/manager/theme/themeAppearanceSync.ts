@@ -29,7 +29,7 @@ export interface ThemeSyncOptions {
 	appearance?: Pick<ThemeAppearanceProbe, "ensure" | "results" | "invalidate" | "destroy">;
 	claims?: Pick<
 		ThemeClaimCheck,
-		"invalidate" | "pageRootOff" | "unstyled" | "check" | "hasUnmeasured" | "destroy"
+		"invalidate" | "pageRootOff" | "pageStateKey" | "unstyled" | "check" | "hasUnmeasured" | "destroy"
 	>;
 	schedule?: GateScheduler;
 	/** Calls back when `<body>`/`<html>` classes change; returns its own undo. */
@@ -167,12 +167,15 @@ export function registerThemeAppearance(
 		return out;
 	};
 	// The ids the claim check measures - named by the theme, carrying a design
-	// here - as of the last syncRows.
+	// here - as of the last syncRows, and which of their rules the page
+	// switched off then (`pageStateKey`).
 	let lastClaimIds: string[] = [];
+	let pageState = "";
 	const syncRows = (): number => {
 		const named = declared();
 		const own = ownForms();
 		lastClaimIds = [...named].filter((id) => own.has(id));
+		pageState = claims.pageStateKey(lastClaimIds);
 		return syncThemeOverlayRows(
 			host.registry,
 			named,
@@ -267,11 +270,13 @@ export function registerThemeAppearance(
 	host.register(() => rereadGate.destroy());
 
 	// A `<body>`/`<html>` class moved without a css-change (see
-	// watchPageClasses). Nothing to do unless it moved what a page condition
-	// keeps from the theme; when it did, ownership follows now and the two
-	// re-reads through the gate, as for a nudge.
+	// watchPageClasses). Nothing to do unless it moved a page condition the
+	// published answer rests on: what keeps an id from the theme outright
+	// (`offKey`), or which rules of a measured id the page switches off
+	// (`pageState` - a verdict is built rule by rule). When it did, ownership
+	// follows now and the two re-reads through the gate, as for a nudge.
 	const pageMoved = (): void => {
-		if (keyOf(pageOff()) === offKey) return;
+		if (keyOf(pageOff()) === offKey && claims.pageStateKey(lastClaimIds) === pageState) return;
 		syncRows();
 		claimsOwed = true;
 		rereadGate.request();
