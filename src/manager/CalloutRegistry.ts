@@ -1080,6 +1080,24 @@ export class CalloutRegistry {
 		return this.themeFacts.claims(name);
 	}
 
+	/**
+	 * Does this plugin leave the block callout written as `name` - one of
+	 * `def`'s names - to someone else? To the theme when it claims the name;
+	 * to Obsidian when it is one of a built-in's stock aliases and the theme
+	 * claims the built-in's own id. That second case is what {@link themeOwns}
+	 * already does when the theme owns the callout outright, and it keeps a
+	 * name the user adds to Quote from changing how `[!cite]` looks.
+	 *
+	 * The one question the CSS, the icon painter and the metadata dropdown ask
+	 * per name, so the three cannot disagree.
+	 */
+	leavesBlockName(def: CalloutDefinition, name: string): boolean {
+		if (this.themeFacts.claims(name)) return true;
+		if (!def.builtIn) return false;
+		const stock = this.builtInDefaults.get(def.id)?.aliases ?? [];
+		return stock.includes(name) && this.themeFacts.claims(def.id);
+	}
+
 	/** How the theme paints `def`. See {@link ThemeFacts.appearanceOf}. */
 	themeAppearanceOf(def: CalloutDefinition): ThemeAppearance {
 		return this.themeFacts.appearanceOf(this.vaultIdFormsFor(def));

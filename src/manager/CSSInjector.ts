@@ -174,21 +174,25 @@ export class CSSInjector {
 
 	/**
 	 * The names whose Obsidian block callout this plugin paints for `def`: all
-	 * of them, minus any the active theme names itself (see
-	 * `CalloutRegistry.themeClaimsName`) - all of them, always, in the export.
+	 * of them, minus any it leaves to the theme or to Obsidian (see
+	 * `CalloutRegistry.leavesBlockName`) - all of them, always, in the export.
 	 */
 	private blockNames(
 		def: CalloutDefinition,
 		standalone = this.emitStandalone,
 	): string[] {
 		return [def.id, ...(def.aliases ?? [])].filter((name) =>
-			this.paintsBlockName(name, standalone),
+			this.paintsBlockName(def, name, standalone),
 		);
 	}
 
 	/** One name's answer to {@link blockNames}. */
-	private paintsBlockName(name: string, standalone = this.emitStandalone): boolean {
-		return standalone || !this.registry.themeClaimsName(name);
+	private paintsBlockName(
+		def: CalloutDefinition,
+		name: string,
+		standalone = this.emitStandalone,
+	): boolean {
+		return standalone || !this.registry.leavesBlockName(def, name);
 	}
 	private injecting = false;
 	private registry: CalloutRegistry;
@@ -935,7 +939,7 @@ export class CSSInjector {
 			for (const alias of def.aliases) {
 				const aliasTransform = hidesIcon
 					? ""
-					: this.getIconTransformCSS({ ...def, id: alias });
+					: this.getIconTransformCSS(def, alias);
 				if (!names.includes(alias)) {
 					// The theme's block callout; only the token transforms remain.
 					if (aliasTransform) parts.push(aliasTransform);
@@ -1393,12 +1397,13 @@ export class CSSInjector {
 	 * (0.06em here, 0.1em there) until this rewrite, which made any slider move
 	 * lift the heading icon by the 0.04em difference.
 	 */
-	private getIconTransformCSS(def: CalloutDefinition): string {
+	private getIconTransformCSS(def: CalloutDefinition, name = def.id): string {
 		const parts: string[] = [];
 
 		for (const role of CALLOUT_RENDER_ROLES) {
-			// A name the theme claims keeps its block icon where the theme put it.
-			if (role === "regular" && !this.paintsBlockName(def.id)) continue;
+			// A name left to the theme or to Obsidian keeps its block icon where
+			// they put it.
+			if (role === "regular" && !this.paintsBlockName(def, name)) continue;
 			const adjust = resolveIconAdjust(def, role);
 			// The heading keeps its static nudge from styles.css when untouched.
 			if (isDefaultIconAdjust(adjust)) continue;
@@ -1418,7 +1423,7 @@ export class CSSInjector {
 
 			const imp = this.emitImportant;
 			parts.push(
-				`${this.iconTransformSelector(def.id, role)} {\n` +
+				`${this.iconTransformSelector(name, role)} {\n` +
 					`  transform: ${transforms.join(" ")}${imp};\n` +
 					`  transform-origin: center${imp};\n` +
 					`}`,
@@ -1549,7 +1554,7 @@ export class CSSInjector {
 			}
 			// Asked of the name on this element, not the callout: the theme may
 			// draw `[!description]` while the same callout's other names stay ours.
-			if (this.registry.themeOwns(def) || this.registry.themeClaimsName(id)) {
+			if (this.registry.themeOwns(def) || this.registry.leavesBlockName(def, id)) {
 				// Skipping is not enough: an earlier pass may already have painted
 				// this element and core resolves its icon only once. Restore from the
 				// now-winning theme/core property on every pass.
@@ -1988,7 +1993,7 @@ export class CSSInjector {
 		for (const def of this.registry.getAll()) {
 			const owned = this.registry.themeOwns(def);
 			for (const id of [def.id, ...(def.aliases ?? [])]) {
-				if (owned || !this.paintsBlockName(id, standalone)) {
+				if (owned || !this.paintsBlockName(def, id, standalone)) {
 					ids.add(obsidianCalloutAttrId(id));
 				}
 			}

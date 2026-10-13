@@ -423,6 +423,49 @@ describe("a callout the theme names only in part", () => {
 		assert.ok(tokenRules.length > 0);
 	});
 
+	it("leaves a built-in's stock aliases with its claimed id, whatever the user added", () => {
+		// The theme restyles `quote`; Obsidian draws `[!cite]` itself, exactly as
+		// when the theme owns Quote outright. A name the user adds (`q`) is the
+		// only one this plugin paints - adding it must not start painting cite.
+		const { registry, css } = harness();
+		registry.update("quote", { aliases: ["cite", "q"] });
+		registry.setThemeOwnedIds(new Set(["quote"]));
+		const quote = registry.get("quote")!;
+		assert.strictEqual(registry.themeOwns(quote), false);
+		assert.strictEqual(registry.leavesBlockName(quote, "quote"), true, "the theme's");
+		assert.strictEqual(registry.leavesBlockName(quote, "cite"), true, "Obsidian's");
+		assert.strictEqual(registry.leavesBlockName(quote, "q"), false, "ours");
+
+		const blockSelectors = parseRules(css.generateCalloutCSS(quote))
+			.map((rule) => rule.selector)
+			.filter((selector) => selector.includes(".callout["));
+		assert.ok(blockSelectors.some((sel) => sel.includes('[data-callout="q"]')));
+		assert.ok(!blockSelectors.some((sel) => sel.includes('[data-callout="cite"]')));
+		assert.ok(!blockSelectors.some((sel) => sel.includes('[data-callout="quote"]')));
+	});
+
+	it("paints a stock alias while the theme leaves the built-in's id alone", () => {
+		const { registry } = harness();
+		registry.update("quote", { aliases: ["cite", "q"] });
+		registry.setThemeOwnedIds(new Set(["q"]));
+		const quote = registry.get("quote")!;
+		assert.strictEqual(registry.leavesBlockName(quote, "cite"), false);
+		assert.strictEqual(registry.leavesBlockName(quote, "quote"), false);
+		// And a stock alias the theme names itself is the theme's either way.
+		registry.setThemeOwnedIds(new Set(["cite"]));
+		assert.strictEqual(registry.leavesBlockName(registry.get("quote")!, "cite"), true);
+	});
+
+	it("never extends the stock-alias rule to a callout the user made", () => {
+		// Only a built-in has names Obsidian draws on its own.
+		const { registry } = harness();
+		registry.add(definition({ id: "said", aliases: ["quoted"] }));
+		registry.setThemeOwnedIds(new Set(["said"]));
+		const said = registry.get("said")!;
+		assert.strictEqual(registry.leavesBlockName(said, "said"), true);
+		assert.strictEqual(registry.leavesBlockName(said, "quoted"), false);
+	});
+
 	it("keeps the unclaimed names in the global frame rules", () => {
 		const { registry, css } = harness();
 		registry.add(definition({ id: "описание", aliases: ["description"] }));

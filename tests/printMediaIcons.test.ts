@@ -266,6 +266,25 @@ describe("paintIcons — a name the theme claims", () => {
 		assert.strictEqual(blockFor("вид").textContent, EMOJI.value);
 		assert.strictEqual(blockFor("description").textContent, "");
 	});
+
+	it("leaves a built-in's stock alias to Obsidian while the theme claims its id", () => {
+		// The stylesheet stops painting `[!cite]` once the theme claims `quote`;
+		// the painter has to agree, or cite would wear this plugin's icon over
+		// Obsidian's colours.
+		const h = harness();
+		h.registry.update("quote", { aliases: ["cite", "q"], icon: EMOJI });
+		h.registry.setThemeOwnedIds(new Set(["quote"]));
+		const blockFor = (id: string) => {
+			const callout = el({ cls: "callout", attrs: { "data-callout": id } });
+			const icon = callout
+				.createDiv({ cls: "callout-title" })
+				.createDiv({ cls: "callout-icon" });
+			h.injector.paintIcons(asEl(callout));
+			return icon;
+		};
+		assert.strictEqual(blockFor("q").textContent, EMOJI.value);
+		assert.strictEqual(blockFor("cite").textContent, "");
+	});
 });
 
 /* -------------------------------------------------------------------------- */

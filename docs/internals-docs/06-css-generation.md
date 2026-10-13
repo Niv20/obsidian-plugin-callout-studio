@@ -647,10 +647,12 @@ on screen still has exactly one owner. So `themeOwns` needs every name of the
 callout claimed (see [18-theme-callout-discovery.md § Stage 3](18-theme-callout-discovery.md#stage-3---ownership)
 for the built-in exception), and when only some are claimed,
 `generateCalloutCSS` builds its block rules from `blockNames(def)` - the names
-the theme does not claim - and leaves the claimed ones out. The `.cs-*` token
+`registry.leavesBlockName` does not leave to the theme or, for a built-in's
+stock alias while the theme claims its id, to Obsidian - and leaves the others
+out. The `.cs-*` token
 rules keep every name: no theme selector reaches that DOM. The global frame
-selectors, the metadata-colour exclusion list and `paintIcons` make the same
-per-name cut. Before issue #84 one claimed alias handed over the whole callout,
+selectors, the metadata-colour exclusion list, `paintIcons` and the metadata
+dropdown make the same per-name cut, through that one registry question. Before issue #84 one claimed alias handed over the whole callout,
 and a name the user had added - `[!описание]` beside a theme's
 `[!description]` - was then styled by nobody.
 

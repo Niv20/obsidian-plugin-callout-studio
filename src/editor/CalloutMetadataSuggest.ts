@@ -157,13 +157,15 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 		const rows = buildMetadataSuggestions({
 			slot,
 			calloutId: slot.calloutId,
-			// A block callout under a name the theme claims is the theme's even
-			// when the rest of the callout is not.
+			// A block callout under a name this plugin leaves to the theme (or,
+			// for a stock alias, to Obsidian) is not ours even when the rest of
+			// the callout is.
 			themeOwned:
 				!resolved.unknown &&
 				(resolved.themeOwned ||
 					(slot.role === "regular" &&
-						this.plugin.registry.themeClaimsName(slot.calloutId))),
+						resolved.def !== undefined &&
+						this.plugin.registry.leavesBlockName(resolved.def, slot.calloutId))),
 			colors: injector.metadataColorEntries(),
 			sources: injector.metadataCatalog.sourcesNow(),
 			locale: getLocale(),

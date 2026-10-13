@@ -468,7 +468,11 @@ Theme names `quote` and never `cite`; Agate names nine of the thirteen ids
 and no alias), and without the exception every one of those rows would leave
 *Callouts from your theme*. A stock alias the theme names on its own
 (Elegance's `tldr`) is still claimed: that block callout is the theme's, and
-the rest of the built-in is this plugin's.
+the rest of the built-in is this plugin's. The exception holds per name too
+(`registry.leavesBlockName`): while the theme claims a built-in's id, its stock
+aliases are left to Obsidian even when the user has added a name of their own
+and the callout is no longer the theme's outright - adding `q` to Quote must
+not start painting `[!cite]`.
 
 A name the theme claims on a callout it does not own is the theme's in the
 block format only. The heading and inline formats are this plugin's DOM, which
