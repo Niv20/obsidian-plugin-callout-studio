@@ -566,9 +566,12 @@ Two checks, aimed where a wrong answer costs something:
   the rendered callout - its selector, nesting folded in (`resolveNested`) and
   pseudo-elements stripped (`stripPseudoElements`), matches one in either view,
   under every `@media`/`@supports` around it holding - or *switched off by the
-  page*: a `<body>`/`<html>` condition it fails, or a class the theme's own
-  Style Settings block offers (`styleSettingsClasses`, `optionGated`) that
-  `<body>` does not carry. Any other rule may well draw where the offscreen
+  page*: a `<body>`/`<html>` condition it fails, or a class `<body>` does not
+  carry that only `<body>` could - one the theme's own Style Settings block
+  offers (`styleSettingsClasses`, `optionGated`), or one of Obsidian's own mode
+  and platform classes (`OBSIDIAN_BODY_STATE`: `.theme-dark` written bare is as
+  common as `body.theme-dark`, and draws nothing in light mode; a mode switch
+  fires `css-change`, so the other mode is measured in its turn). Any other rule may well draw where the offscreen
   render cannot reach - under a note's `cssclasses`, in an embed or a hover,
   on a folded callout, in a narrow window, in a `@container` - and a
   comparison that never saw it in force says nothing about it, so the id stays

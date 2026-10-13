@@ -85,9 +85,29 @@ export function pageRootTest(doc: Document): (rule: CSSRule) => boolean {
 }
 
 /**
+ * Classes Obsidian itself keeps on `<body>`, and nowhere else: the appearance
+ * mode and the platform. A theme writes `.theme-dark .callout[…]` as often as
+ * `body.theme-dark …`, and in light mode that rule draws nothing - the light
+ * twin, or core, is what shows. Switching mode fires `css-change`, so the
+ * verdict is measured again in the other mode.
+ */
+export const OBSIDIAN_BODY_STATE: ReadonlySet<string> = new Set([
+	"theme-dark",
+	"theme-light",
+	"is-mobile",
+	"is-phone",
+	"is-tablet",
+	"mod-windows",
+	"mod-macos",
+	"mod-linux",
+]);
+
+/**
  * Whether a rule - or a rule it is nested in - requires, in every branch, a
- * class the theme's Style Settings block offers (`options`) and the page root
- * does not carry: a theme option that is off.
+ * class the page root does not carry and only the page root could: one the
+ * theme's Style Settings block offers (`options`, a theme option that is off),
+ * or one of Obsidian's own {@link OBSIDIAN_BODY_STATE} classes (the other mode,
+ * another platform).
  */
 export function optionGatedRule(
 	rule: CSSRule,
@@ -95,7 +115,7 @@ export function optionGatedRule(
 	doc: Document,
 ): boolean {
 	const off = (cls: string): boolean =>
-		options.has(cls) &&
+		(options.has(cls) || OBSIDIAN_BODY_STATE.has(cls)) &&
 		!doc.body.classList.contains(cls) &&
 		!doc.documentElement.classList.contains(cls);
 	for (let r: CSSRule | null = rule; r; r = r.parentRule) {

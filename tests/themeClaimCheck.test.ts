@@ -685,6 +685,35 @@ settings:
 			assert.deepStrictEqual([...claims.unstyled(["note"])], ["note"]);
 		}));
 
+	it("judges past a rule for the other appearance mode, and measures it in its own", () =>
+		withCallouts(async () => {
+			// `.theme-dark …` draws nothing in light mode - written bare as often as
+			// `body.theme-dark`. Before the in-force rule this was handed back in
+			// light mode; leaving it unseen kept it with the theme in both modes.
+			const rules = [
+				rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"]),
+				rule('.theme-dark .callout[data-callout="note"]', ["callout-title", "color", "red"], "theme-dark"),
+			];
+			document.body.classList.add("theme-light");
+			try {
+				const light = harness(rules);
+				const inLight = check(light);
+				await inLight.check(request(light, ["note"]));
+				assert.deepStrictEqual([...inLight.unstyled(["note"])], ["note"], "light: the theme draws nothing");
+			} finally {
+				document.body.classList.remove("theme-light");
+			}
+			document.body.classList.add("theme-dark");
+			try {
+				const dark = harness(rules);
+				const inDark = check(dark);
+				await inDark.check(request(dark, ["note"]));
+				assert.deepStrictEqual([...inDark.unstyled(["note"])], [], "dark: the theme draws it");
+			} finally {
+				document.body.classList.remove("theme-dark");
+			}
+		}));
+
 	it("does not take a bare class the theme never offers as an option for one", () =>
 		withCallouts(async () => {
 			const h = harness(
