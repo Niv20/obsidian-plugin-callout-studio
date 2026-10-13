@@ -596,22 +596,54 @@ describe("selectSuggestion — block header", () => {
 		);
 	});
 
-	it("writes the alias the user typed, not the canonical id", () => {
+	it("writes the alias the user typed, titled the way Obsidian titles it", () => {
+		// The typed word decides the title: an alias is another spelling of the
+		// callout, so it reads as Obsidian's own untitled `> [!shh]` does
+		// ("Shh"), never as the definition's NAME.
 		const h = harness();
 		addCallout(h.registry, { id: "hushed", displayName: "Hushed", aliases: ["shh"] });
-		assert.strictEqual(pick(h, "> [!shh⎸", "hushed").getValue(), "> [!shh] Hushed");
+		assert.strictEqual(pick(h, "> [!shh⎸", "hushed").getValue(), "> [!shh] Shh");
 	});
 
 	it("matches an alias by prefix as well as exactly", () => {
 		const h = harness();
 		addCallout(h.registry, { id: "hushed", displayName: "Hushed", aliases: ["shh"] });
-		assert.strictEqual(pick(h, "> [!sh⎸", "hushed").getValue(), "> [!shh] Hushed");
+		assert.strictEqual(pick(h, "> [!sh⎸", "hushed").getValue(), "> [!shh] Shh");
 	});
 
 	it("falls back to the definition's own id when the query matched neither", () => {
 		const h = harness();
 		addCallout(h.registry, { id: "hushed", displayName: "Hushed", aliases: ["shh"] });
 		assert.strictEqual(pick(h, "> [!zz⎸", "hushed").getValue(), "> [!hushed] Hushed");
+	});
+
+	it("still titles a pick of the id itself with the NAME", () => {
+		// Writing the NAME is what surfaces it in a block: Obsidian's own
+		// default title for `[!library-voice]` would read "Library voice".
+		const h = harness();
+		addCallout(h.registry, { id: "library-voice", displayName: "Library Voice" });
+		assert.strictEqual(
+			pick(h, "> [!libr⎸", "library-voice").getValue(),
+			"> [!library-voice] Library Voice",
+		);
+	});
+
+	it("replaces a title written from an alias when the type is switched", () => {
+		const h = harness();
+		const written = pick(h, "> [!atte⎸", "warning").getValue();
+		assert.strictEqual(written, "> [!attention] Attention");
+		// The user retypes the id and picks another callout: "Attention" was
+		// ours, not theirs, so it must go with the old type.
+		const retyped = written.replace("[!attention]", "[!no⎸]");
+		assert.strictEqual(pick(h, retyped, "note").getValue(), "> [!note] Note");
+	});
+
+	it("keeps a genuinely custom title through the same switch", () => {
+		const h = harness();
+		const written = pick(h, "> [!atte⎸] Mind the gap", "warning").getValue();
+		assert.strictEqual(written, "> [!attention] Mind the gap");
+		const retyped = written.replace("[!attention]", "[!no⎸]");
+		assert.strictEqual(pick(h, retyped, "note").getValue(), "> [!note] Mind the gap");
 	});
 });
 

@@ -70,7 +70,7 @@ leaves the title unwrapped.
 ### The `{…}` content payload (inline pills only)
 
 `[!warning]{be careful}` renders the braces' content as the pill's label,
-dropping the callout's own display name. A `{` only opens a payload when it
+dropping the token's own one (the display name, or an alias's title). A `{` only opens a payload when it
 sits **directly** against the token's `]` - `[!warning] {x}` (with a space) is
 a plain pill followed by literal text, because prose uses braces freely and a
 looser rule would eat them. `token.contentOpen = true` marks a payload that
@@ -147,6 +147,26 @@ which unresolved ids use the configured fallback; the split exists so native
 theme/snippet CSS can outrank that baseline without being turned into registry
 ownership.
 
+### Resolving a token
+
+Two more answers come off a resolved token, and both stay with the spelling
+that was typed:
+
+- **The label** is `calloutTokenLabel(def, rawId)` from
+  [`utils/calloutId.ts`](../../src/utils/calloutId.ts): the NAME for the
+  definition's own id, Obsidian's default title for one of its aliases
+  (`[!attention]` draws "Attention", as Obsidian's untitled block does), what
+  was typed for an unknown id. Every drawn label goes through it - see
+  [editor integrations § the typed word decides the title](10-editor-integrations.md#the-typed-word-decides-the-title).
+- **`data-callout`** is `calloutDomId(rawId, resolved)`: the typed spelling
+  when it is the id or an alias exactly, the definition's id when the token
+  only matched the id's attribute form (`[!a-b]` for `a b` - no generated
+  selector carries the dashed spelling), and the alias itself when it matched
+  an alias's attribute form (`[!banner-icon]` for the alias `banner icon`).
+  That last case is not cosmetic: `CSSInjector`'s icon sweep repaints a token's
+  name from this attribute alone, so a token stamped with the id there would
+  be repainted with the NAME the next time the sweep ran.
+
 ### `shouldRenderToken` - the theme-ownership cutoff
 
 ```ts
@@ -184,7 +204,7 @@ parent.
 ### Inline pill alignment and scale
 
 Both inline pill forms use the same `.cs-inline-callout` flex box. An optional
-icon or icon lead sits beside the display name or `{…}` payload. The root uses
+icon or icon lead sits beside the token's label or `{…}` payload. The root uses
 `vertical-align: middle` at every font scale, so changing the scale contracts
 or expands the whole pill around the surrounding line's vertical center
 instead of pinning its bottom to the text baseline. CSS
@@ -276,7 +296,7 @@ raw link while the caret is inside it, a half-parsed `#[!tip]` (core rendering
 the link it thinks ends one `]` early) while the caret sits just after it, and
 the rendered link elsewhere. So the link suggester never writes that shape
 any more: picking a title-less heading writes `[[#[!tip]|Tip]]`, the
-callout's display name as an alias (see
+token's label as an alias (see
 [`LinkSuggestDecorator`](10-editor-integrations.md#linksuggestdecorator)).
 Obsidian parses, shows and follows that link natively, with the same two
 states as any link.
@@ -294,7 +314,7 @@ because the alias icon does not sit on the token.
 
 A `[[#[!tip]]]` written by hand, or by an older version, still gets the old
 treatment. Live Preview replaces the **whole link** with one
-`HeadingRefLinkWidget` (icon + display name). That replace
+`HeadingRefLinkWidget` (icon + label). That replace
 opens at the link's `[[`, the same offset where core's own replace hides the
 brackets. Two replaced ranges that start together are tie-broken by
 precedence, and core's decorations come before a plugin's at the same level.

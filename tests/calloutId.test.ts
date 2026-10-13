@@ -19,6 +19,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import {
 	calloutIdentity,
+	calloutTokenLabel,
 	mergeDashSpaceVariants,
 	normalizeCalloutId,
 	obsidianCalloutAttrId,
@@ -363,5 +364,55 @@ describe("mergeDashSpaceVariants", () => {
 	it("is idempotent", () => {
 		const once = mergeDashSpaceVariants(["a-b", "a b", "c", "C"]);
 		assert.deepStrictEqual(mergeDashSpaceVariants(once), once);
+	});
+});
+
+describe("calloutTokenLabel — the typed word decides", () => {
+	const warning = {
+		id: "warning",
+		displayName: "Warning",
+		aliases: ["caution", "attention"],
+	};
+	const voice = { id: "library voice", displayName: "Library Voice" };
+
+	it("names the definition's own id with its NAME", () => {
+		assert.strictEqual(calloutTokenLabel(warning, "warning"), "Warning");
+		// The NAME is whatever the user called it, not a derived title.
+		assert.strictEqual(calloutTokenLabel(voice, "library voice"), "Library Voice");
+	});
+
+	it("titles an alias the way Obsidian titles it, not with the NAME", () => {
+		// Obsidian shows "Attention" for an untitled `> [!attention]`; a pill or
+		// heading drawing "Warning" for the same token is the bug this fixes.
+		assert.strictEqual(calloutTokenLabel(warning, "attention"), "Attention");
+		assert.strictEqual(calloutTokenLabel(warning, "CAUTION"), "Caution");
+	});
+
+	it("counts every spelling Obsidian folds onto the id as the id", () => {
+		// Dash, space, case and whitespace runs are one callout to Obsidian
+		// (calloutIdentity), so none of them is an alias.
+		for (const typed of ["library-voice", "Library Voice", "  library   voice ", "LIBRARY-VOICE"]) {
+			assert.strictEqual(calloutTokenLabel(voice, typed), "Library Voice", typed);
+		}
+	});
+
+	it("titles an alias typed in its attribute form from what was typed", () => {
+		const banner = { id: "flag", displayName: "Flag", aliases: ["banner icon"] };
+		assert.strictEqual(calloutTokenLabel(banner, "banner-icon"), "Banner icon");
+		assert.strictEqual(calloutTokenLabel(banner, "Banner Icon"), "Banner icon");
+	});
+
+	it("shows what was typed, trimmed, for an unknown id", () => {
+		assert.strictEqual(calloutTokenLabel(undefined, "  mystery-box "), "mystery-box");
+		// The fallback a renderer draws an unknown id with is not the token's
+		// definition, so its NAME must not leak onto the label either.
+		assert.strictEqual(calloutTokenLabel(warning, " mystery "), "mystery");
+	});
+
+	it("handles a non-Latin alias, where capitalising is a no-op", () => {
+		const hebrew = { id: "note", displayName: "Note", aliases: ["הערה", "שים לב"] };
+		assert.doesNotThrow(() => calloutTokenLabel(hebrew, "הערה"));
+		assert.strictEqual(calloutTokenLabel(hebrew, "הערה"), "הערה");
+		assert.strictEqual(calloutTokenLabel(hebrew, "שים-לב"), "שים לב");
 	});
 });

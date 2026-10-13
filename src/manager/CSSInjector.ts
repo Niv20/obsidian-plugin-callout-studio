@@ -56,7 +56,7 @@ import {
 	shouldRenderToken,
 } from "../editor/renderShared";
 import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
-import { obsidianCalloutAttrId } from "../utils/calloutId";
+import { calloutTokenLabel, obsidianCalloutAttrId } from "../utils/calloutId";
 import { StudioWeightCache } from "./theme/StudioWeightCache";
 import type { ThemeCalloutStore } from "./theme/ThemeCalloutStore";
 import { ThemeMetadataCatalog } from "./theme/ThemeMetadataCatalog";
@@ -1667,12 +1667,16 @@ export class CSSInjector {
 		}
 		const nameEl = tokenEl.querySelector<HTMLElement>(`.${CSS_TOKEN_NAME}`);
 		if (!nameEl) return;
-		// Unknown tokens keep showing the raw id the user typed. (The
-		// comparison reads through any char spans — textContent concatenates
-		// descendants — while a real rename rewrites the node and strips
-		// them, which is why the gradient sync below runs after it.)
-		if (!unknown && nameEl.textContent !== def.displayName) {
-			nameEl.textContent = def.displayName;
+		// Unknown tokens keep showing the raw id the user typed. Known ones
+		// get the same label the builder drew, read off `data-callout`, which
+		// keeps an alias token's alias (see calloutDomId) — so a NAME change
+		// repaints `[!warning]` and leaves `[!attention]` reading "Attention".
+		// (The comparison reads through any char spans — textContent
+		// concatenates descendants — while a real rename rewrites the node and
+		// strips them, which is why the gradient sync below runs after it.)
+		const label = calloutTokenLabel(def, id);
+		if (!unknown && nameEl.textContent !== label) {
+			nameEl.textContent = label;
 		}
 		// Per-grapheme print colors for the swept name (PDF export — see
 		// gradientTitleText.ts). The pill root carries the sweep but its name

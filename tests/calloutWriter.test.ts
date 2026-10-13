@@ -14,6 +14,7 @@ import {
 	buildInlineContentToken,
 	buildInlineToken,
 	foldMarkFor,
+	isGeneratedTitle,
 	metadataSuffixOf,
 } from "../src/editor/calloutWriter";
 import type { CalloutDefinition } from "../src/types";
@@ -106,10 +107,35 @@ describe("buildBlockHeaderToken", () => {
 		);
 	});
 
-	it("writes the alias the user typed rather than the canonical id", () => {
+	it("writes the alias the user typed, titled as Obsidian titles it", () => {
 		assert.strictEqual(
-			buildBlockHeaderToken(def(), { matchedId: "warn" }),
-			"[!warn] Warning",
+			buildBlockHeaderToken(def({ aliases: ["warn"] }), { matchedId: "warn" }),
+			"[!warn] Warn",
+		);
+	});
+
+	it("gives a replaced generated title the alias's label too", () => {
+		// The "only another callout's name" branch must land on the same label
+		// as an empty title does, or switching type by alias would write the
+		// NAME after all.
+		assert.strictEqual(
+			buildBlockHeaderToken(def({ aliases: ["warn"] }), {
+				matchedId: "warn",
+				existingTitle: "Note",
+				isKnownDisplayName: (title) => title === "Note",
+			}),
+			"[!warn] Warn",
+		);
+	});
+
+	it("titles the id itself, in any spelling, with the NAME", () => {
+		// A NAME that differs from Obsidian's default title ("Library voice") is
+		// exactly what the written title is for; only aliases changed.
+		const voice = def({ id: "library-voice", displayName: "Library Voice" });
+		assert.strictEqual(buildBlockHeaderToken(voice), "[!library-voice] Library Voice");
+		assert.strictEqual(
+			buildBlockHeaderToken(voice, { matchedId: "library voice" }),
+			"[!library voice] Library Voice",
 		);
 	});
 
@@ -190,5 +216,33 @@ describe("metadataSuffixOf", () => {
 
 	it("returns nothing for an unterminated token", () => {
 		assert.strictEqual(metadataSuffixOf("> [!note", 2), "");
+	});
+});
+
+describe("isGeneratedTitle", () => {
+	const defs = [
+		def({ aliases: ["caution", "attention"] }),
+		def({ id: "library-voice", displayName: "Library Voice" }),
+	];
+
+	it("recognises any definition's NAME, whatever its case", () => {
+		assert.strictEqual(isGeneratedTitle(defs, "Warning"), true);
+		assert.strictEqual(isGeneratedTitle(defs, "library VOICE"), true);
+	});
+
+	it("recognises the title an alias is written with", () => {
+		// What a pick of `[!attention]` writes, so a later type switch replaces
+		// it rather than keeping it as if the user had chosen the word.
+		assert.strictEqual(isGeneratedTitle(defs, "Attention"), true);
+		assert.strictEqual(isGeneratedTitle(defs, "caution"), true);
+	});
+
+	it("recognises Obsidian's default title for an id", () => {
+		assert.strictEqual(isGeneratedTitle(defs, "Library voice"), true);
+	});
+
+	it("leaves the user's own words alone", () => {
+		assert.strictEqual(isGeneratedTitle(defs, "Mind the gap"), false);
+		assert.strictEqual(isGeneratedTitle(defs, "Attention please"), false);
 	});
 });

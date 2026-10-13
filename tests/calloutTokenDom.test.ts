@@ -32,6 +32,9 @@ import { describe, it } from "node:test";
 // rest are free identifiers in the bundle), before anything under test loads.
 import { fakeDom } from "./support/fakeDom";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
+import { CSSInjector } from "../src/manager/CSSInjector";
+import type { App } from "obsidian";
+import type { CalloutDefinition } from "../src/types";
 import {
 	CSS_CALLOUT_LEAD,
 	CSS_CALLOUT_PAYLOAD,
@@ -267,8 +270,8 @@ describe("buildCalloutTokenDom — data-callout", () => {
 
 		const el = token(registry, { rawId: "hush" });
 		assert.strictEqual(el.getAttribute("data-callout"), "hush");
-		// …while the label still comes from the definition.
-		assert.strictEqual(kids(el).at(-1)?.textContent, "Quiet");
+		// …and the label is the alias's own title, as Obsidian shows it.
+		assert.strictEqual(kids(el).at(-1)?.textContent, "Hush");
 	});
 
 	it("falls back to the definition's id when only the attribute form matched", () => {
@@ -328,6 +331,72 @@ describe("buildCalloutTokenDom — the label", () => {
 
 		const el = token(registry, { showName: false });
 		assert.ok(!kids(el).some((child) => hasClass(child, CSS_TOKEN_NAME)));
+	});
+});
+
+/* -------------------------------------------------------------------------- */
+/* The typed word decides the label                                           */
+/* -------------------------------------------------------------------------- */
+
+/** The name span's text, or null when the token drew none. */
+const label = (el: AnyElement): string | null =>
+	kids(el).find((child) => hasClass(child, CSS_TOKEN_NAME))?.textContent ?? null;
+
+describe("buildCalloutTokenDom — an alias draws its own title", () => {
+	// `attention` is one of the built-in `warning`'s aliases. Obsidian titles an
+	// untitled `> [!attention]` "Attention"; the pill and the heading must agree.
+	for (const variant of ["inline", "heading"] as const) {
+		it(`draws "Attention" for [!attention] and "Warning" for [!warning] (${variant})`, () => {
+			const registry = harness();
+			assert.strictEqual(label(token(registry, { rawId: "attention", variant })), "Attention");
+			assert.strictEqual(label(token(registry, { rawId: "warning", variant })), "Warning");
+		});
+	}
+
+	it("draws the NAME for the id in any spelling Obsidian folds onto it", () => {
+		const registry = harness();
+		addCallout(registry, { id: "a b", displayName: "Alpha Beta" });
+		assert.strictEqual(label(token(registry, { rawId: "A-B" })), "Alpha Beta");
+	});
+
+	it("keeps an alias typed in its attribute form an alias token", () => {
+		// `data-callout` is all the icon sweep has to re-derive the label from,
+		// so it carries the alias rather than the id — still a spelling the
+		// generated CSS covers.
+		const registry = harness();
+		addCallout(registry, { aliases: ["hush now"] });
+		const el = token(registry, { rawId: "hush-now" });
+		assert.strictEqual(el.getAttribute("data-callout"), "hush now");
+		assert.strictEqual(label(el), "Hush now");
+	});
+});
+
+describe("the icon sweep repaints a token's label by the same rule", () => {
+	type Sweep = {
+		paintTokenEl(
+			el: AnyElement,
+			painted: (def: CalloutDefinition) => CalloutDefinition,
+		): void;
+	};
+	const sweep = (registry: Registry, el: AnyElement): void =>
+		(new CSSInjector({} as App, registry) as unknown as Sweep).paintTokenEl(
+			el,
+			(def) => def,
+		);
+
+	it("follows a NAME change on the id and leaves an alias's title alone", () => {
+		const registry = harness();
+		addCallout(registry, { aliases: ["hush now"] });
+		const byId = token(registry);
+		const byAlias = token(registry, { rawId: "hush now" });
+		const byAttrAlias = token(registry, { rawId: "hush-now" });
+
+		registry.update("quiet", { displayName: "Very Quiet" });
+		for (const el of [byId, byAlias, byAttrAlias]) sweep(registry, el);
+
+		assert.strictEqual(label(byId), "Very Quiet");
+		assert.strictEqual(label(byAlias), "Hush now");
+		assert.strictEqual(label(byAttrAlias), "Hush now");
 	});
 });
 

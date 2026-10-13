@@ -738,7 +738,12 @@ from the callout being replaced, the title rewrite rides along too - because
 a header this plugin wrote carries the callout's display name as literal
 title text (`> [!danger] Warning`), so swapping only the id would leave a
 stale title behind. **Only a title that exactly matches the old display name
-is touched** - a title the user wrote themselves is never touched.
+is touched** - a title the user wrote themselves is never touched. Neither is a
+header written from an alias, which carries the alias's own title
+(`> [!attention] Attention`, see
+[editor integrations § the typed word decides the title](10-editor-integrations.md#the-typed-word-decides-the-title)):
+the swap matches the display name only, so that title stays after the id is
+replaced.
 
 ---
 Next chapter: [12-color-system.md](12-color-system.md)

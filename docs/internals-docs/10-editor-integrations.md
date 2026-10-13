@@ -33,11 +33,56 @@ user-built command carries its own fold state; every other caller leaves it
 gives.
 
 `resolveTitle()` decides whether an existing title survives a type change: an
-empty title, or one that merely echoes some *other* callout's display name
-(`isKnownDisplayName` callback), is replaced by the new callout's own name -
-otherwise a genuine user-authored title is preserved verbatim. This is what
-lets picking a different type from autocomplete's dropdown update a
-still-default title while leaving a custom one alone.
+empty title, or one that is merely generated (the `isKnownDisplayName`
+callback), is replaced by this token's own label - otherwise a genuine
+user-authored title is preserved verbatim. This is what lets picking a
+different type from autocomplete's dropdown update a still-default title while
+leaving a custom one alone.
+
+### The typed word decides the title
+
+The label a token is written with is `calloutTokenLabel(def, typedId)`
+([`src/utils/calloutId.ts`](../../src/utils/calloutId.ts)), where `typedId` is
+`TokenBuildOptions.matchedId ?? def.id`:
+
+| The typed word is | Title written / label drawn |
+| --- | --- |
+| the definition's own `id`, in any spelling `calloutIdentity` folds onto it (case, dash, space) | `def.displayName`, the NAME |
+| one of `def.aliases`, exact or attribute-form | `obsidianDefaultTitle(typedId)` - dashes to spaces, lowercased, first letter capitalised |
+| neither (unknown id, or the fallback an unknown id is drawn with) | `typedId.trim()` |
+
+So a pick of `attention` writes `> [!attention] Attention`, which is also what
+Obsidian shows for an untitled `> [!attention]` - an alias is another spelling
+of the callout, not another name for it. A pick of the id still writes the
+NAME, and that is the reason titles are written at all: `> [!library-voice]`
+untitled would read "Library voice" in Obsidian, the written title reads
+"Library Voice". Obsidian's own rendering of a hand-typed untitled block is
+never touched.
+
+`matchedId` is what carries the typed spelling, and each writer passes what it
+has: `AutoComplete` passes the id or alias the query matched (falling back to
+`def.id`), `CalloutMetadataSuggest` passes the token's own raw id. Quick insert,
+user-built commands, `previewMarkdown` and "Create new" write `def.id` itself
+and pass none, which is the primary-id row of the table.
+
+The same helper names every token the plugin *draws*, so the two paths cannot
+disagree: the token DOM (`buildCalloutTokenDom`), the Live Preview reference
+link widget and both widgets' render keys, reading-view reference links, the
+Outline pane, the link-suggest popup and the alias it writes, and
+`CSSInjector`'s icon sweep (which reads the typed spelling back off
+`data-callout` - see
+[render roles § resolving a token](09-render-roles.md#resolving-a-token)).
+Surfaces that show a *definition* rather than a typed token - settings rows,
+the callout editor, the dropdown's own rows, command names, the public API's
+`Callout.title` - keep showing `displayName`.
+
+Every `isKnownDisplayName` caller (`AutoComplete`, `CustomCommandManager`,
+`CalloutMetadataSuggest`) backs it with the one predicate
+`isGeneratedTitle(registry.getAll(), title)`: a whole title, case-insensitive,
+that equals some definition's `displayName` **or** `obsidianDefaultTitle` of
+one of its ids or aliases. The second half is what lets a title written from an
+alias ("Attention") count as ours, so switching type replaces it instead of
+keeping it as if the user had chosen the word.
 
 > [!IMPORTANT]
 > **`splitFoldMark` takes `role` as an explicit argument, not an assumption
@@ -782,8 +827,9 @@ It also wraps `selectSuggestion`, for one case: a title-less heading
 (`## [!tip]`). Core would insert `[[#[!tip]]]`, whose `]]]` run its own parser
 cuts at the first `]]` (see
 [Title-less and aliased reference links](09-render-roles.md#title-less-and-aliased-reference-links)).
-So after core's insert, the wrapper adds the callout's display name as the
-alias: `[[#[!tip]|Tip]]`.
+So after core's insert, the wrapper adds the token's label (`calloutTokenLabel`)
+as the alias: `[[#[!tip]|Tip]]`, and `[[#[!hint]|Hint]]` for a heading written
+with the alias `hint`.
 
 - It reads the suggest's `context` before calling the original, because core's
   link suggester closes itself, clearing it, before it inserts.

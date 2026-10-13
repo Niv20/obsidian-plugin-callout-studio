@@ -12,12 +12,19 @@
  * the nesting and selection math lives (see CalloutBlockTools).
  */
 import type { CalloutDefinition, CalloutRenderRole } from "../types";
-import { splitCalloutMetadata } from "../utils/calloutId";
+import {
+	calloutTokenLabel,
+	obsidianDefaultTitle,
+	splitCalloutMetadata,
+	type CalloutLabelSource,
+} from "../utils/calloutId";
 
 export interface TokenBuildOptions {
 	/**
 	 * Written in place of `def.id` — the alias the user actually typed, so
-	 * picking a suggestion by alias keeps that spelling.
+	 * picking a suggestion by alias keeps that spelling. It also decides the
+	 * title (see calloutTokenLabel): an alias is titled the way Obsidian titles
+	 * it, `[!attention] Attention`, never with the definition's NAME.
 	 */
 	matchedId?: string;
 	/** `|metadata` carried over from the token being replaced. */
@@ -34,11 +41,36 @@ export interface TokenBuildOptions {
 	 */
 	foldMark?: "" | "+" | "-";
 	/**
-	 * Whether a title is merely some callout's display name rather than
-	 * something the user wrote. Such a title is replaced instead of preserved,
-	 * so switching type doesn't leave the old type's name behind.
+	 * Whether a title is merely one this plugin would have generated rather
+	 * than something the user wrote. Such a title is replaced instead of
+	 * preserved, so switching type doesn't leave the old type's name behind.
+	 * Callers back it with {@link isGeneratedTitle}.
 	 */
 	isKnownDisplayName?: (title: string) => boolean;
+}
+
+/**
+ * Whether `title` is one a token could have been given automatically rather
+ * than words the user wrote: some definition's NAME, or the default title of
+ * one of its ids or aliases — what calloutTokenLabel writes for an alias, and
+ * what Obsidian shows for an untitled block. Whole title, case-insensitive.
+ *
+ * The one predicate behind every `isKnownDisplayName` a caller passes in, so
+ * a title written from `[!attention]` is recognised as generated when the type
+ * is switched later, and replaced rather than kept as if the user chose it.
+ */
+export function isGeneratedTitle(
+	defs: Iterable<CalloutLabelSource>,
+	title: string,
+): boolean {
+	const wanted = title.toLowerCase();
+	for (const def of defs) {
+		if (def.displayName.toLowerCase() === wanted) return true;
+		for (const id of [def.id, ...(def.aliases ?? [])]) {
+			if (obsidianDefaultTitle(id).toLowerCase() === wanted) return true;
+		}
+	}
+	return false;
 }
 
 /** `|metadata` for a token, read off the raw text between `[!` and `]`. */
@@ -89,15 +121,17 @@ export function splitFoldMark(
 
 /**
  * The title to write: a genuine user title survives, an empty one or one that
- * only echoes a known callout's display name is replaced by this callout's.
+ * only echoes a generated title is replaced by this token's own label — the
+ * NAME for the callout's id, the default title for an alias it was typed as.
  */
 function resolveTitle(
 	def: CalloutDefinition,
 	options: TokenBuildOptions,
 ): string {
+	const label = calloutTokenLabel(def, options.matchedId ?? def.id);
 	const existing = (options.existingTitle ?? "").trim();
-	if (existing === "") return def.displayName;
-	if (options.isKnownDisplayName?.(existing) === true) return def.displayName;
+	if (existing === "") return label;
+	if (options.isKnownDisplayName?.(existing) === true) return label;
 	return existing;
 }
 

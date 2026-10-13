@@ -19,6 +19,7 @@ import { Component, Keymap, setIcon } from "obsidian";
 import type { App } from "obsidian";
 import type { CalloutRegistry } from "../../manager/CalloutRegistry";
 import { contentPayloadStart, findWikilinkCalloutRefs } from "../calloutTokens";
+import { calloutTokenLabel } from "../../utils/calloutId";
 import { t } from "../../i18n";
 import {
 	CSS_ANIM_IN,
@@ -91,7 +92,9 @@ export class CalloutTokenWidget extends WidgetType {
 			String(this.sourceLen),
 			unknown ? "u" : "",
 			def?.id ?? "",
-			def?.displayName ?? "",
+			// The label the name span draws, not `displayName`: an alias token
+			// does not show the NAME, so only what it does show belongs here.
+			calloutTokenLabel(unknown ? undefined : def, this.rawId),
 			iconKey,
 			// buildCalloutTokenDom stamps CSS_ANIM_IN from the startup-entrance
 			// flag (see renderShared), and it reads it at build time — so a
@@ -584,7 +587,7 @@ export class HeadingRefLinkWidget extends WidgetType {
 			this.rawId,
 			unknown ? "u" : "",
 			def?.id ?? "",
-			def?.displayName ?? "",
+			calloutTokenLabel(unknown ? undefined : def, this.rawId),
 			iconKey,
 		].join("|");
 	}
@@ -623,7 +626,7 @@ export class HeadingRefLinkWidget extends WidgetType {
 		// anchor text — link color, native underline.
 		el.appendChild(
 			doc.createTextNode(
-				unknown || !def ? this.rawId.trim() : def.displayName,
+				calloutTokenLabel(unknown ? undefined : def, this.rawId),
 			),
 		);
 

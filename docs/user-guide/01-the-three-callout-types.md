@@ -64,6 +64,8 @@ Type `[!` in any of the three positions and a menu of your callouts opens. Choos
 
 If you were only changing the type of a callout that already has a title, the cursor stays at the end of that line instead. This works the same for built-in callouts and for ones you created, whatever their ID.
 
+A new block callout gets its title from the word you typed. The callout's ID gives its display name: picking **Warning** writes `> [!warning] Warning`. One of its aliases gives the alias, written the way Obsidian titles it: typing `attention` and picking **Warning** writes `> [!attention] Attention`. Heading callouts, inline pills, the Outline and links show the same word for that token. When you change the type, a title that is only a callout's name or an alias like this is replaced with the new callout's; a title you wrote yourself stays.
+
 To add metadata after the ID, press **Tab** instead of **Enter**. The ID is written and the cursor stays before the `]`. Pressing **|** completes an ID you were halfway through, types the pipe, and opens a menu of colors and of your theme's words. Neither key adds or rewrites the `]`.
 
 ## Metadata and callout IDs

@@ -31,7 +31,7 @@ import {
 	scanLineForCalloutTokens,
 	tokenEnd,
 } from "../editor/calloutTokens";
-import { splitCalloutMetadata } from "../utils/calloutId";
+import { calloutTokenLabel, splitCalloutMetadata } from "../utils/calloutId";
 import {
 	matchContentParts,
 	type ContentPart,
@@ -392,9 +392,7 @@ function transformHeadingRefLinks(
 		const title =
 			token.title.trim() !== ""
 				? token.title
-				: unknown || !def
-					? token.rawId.trim()
-					: def.displayName;
+				: calloutTokenLabel(unknown ? undefined : def, token.rawId);
 
 		// A bare same-file `#` prefix is dropped (matching Live Preview);
 		// `Note#`/`Note > ` prefixes stay. Then icon, then the cleaned

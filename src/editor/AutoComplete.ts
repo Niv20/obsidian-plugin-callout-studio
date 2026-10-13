@@ -45,6 +45,7 @@ import {
 	buildBlockHeaderToken,
 	buildHeadingToken,
 	buildInlineToken,
+	isGeneratedTitle,
 	metadataSuffixOf,
 	splitFoldMark,
 	titleAfterToken,
@@ -245,11 +246,9 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		return metadataSuffixOf(line, startCh);
 	}
 
-	/** Whether a title is just some callout's display name, not the user's own. */
+	/** Whether a title is one we would have generated, not the user's own. */
 	private isKnownDisplayName = (title: string): boolean =>
-		this.plugin.registry
-			.getAll()
-			.some((d) => d.displayName.toLowerCase() === title.toLowerCase());
+		isGeneratedTitle(this.plugin.registry.getAll(), title);
 
 	selectSuggestion(
 		item: CalloutSuggestion,

@@ -37,6 +37,7 @@ import {
 	insertInlineCallout,
 	wrapSelectionInCallout,
 } from "./CalloutBlockTools";
+import { isGeneratedTitle } from "./calloutWriter";
 
 /** Everything the manager needs from the plugin, structurally. */
 export type CustomCommandHostPlugin = Plugin & {
@@ -198,11 +199,9 @@ export class CustomCommandManager {
 
 	}
 
-	/** Whether a title is only some callout's display name, not the user's. */
+	/** Whether a title is one we would have generated, not the user's. */
 	private isKnownDisplayName = (title: string): boolean =>
-		this.plugin.registry
-			.getAll()
-			.some((def) => def.displayName.toLowerCase() === title.toLowerCase());
+		isGeneratedTitle(this.plugin.registry.getAll(), title);
 
 	/**
 	 * Run a command's editor action.

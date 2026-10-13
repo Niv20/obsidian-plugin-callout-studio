@@ -333,6 +333,12 @@ space-preserving `normalizeCalloutId` form instead - mixing the two up is what
 prevent. See the `callout-metadata-pipe` skill for the full migration/edge-case
 derivation.
 
+Two more helpers sit beside them. `obsidianDefaultTitle` is the title Obsidian
+shows for an untitled block of a given type, and `calloutTokenLabel` uses it
+with `calloutIdentity` to name a typed token: the NAME for the id, the default
+title for an alias, the raw text for an unknown id (see
+[editor integrations § the typed word decides the title](10-editor-integrations.md#the-typed-word-decides-the-title)).
+
 `calloutIdentity` is the **uniqueness** question, which is a third thing again.
 `[!banner icon]`, `[!banner   icon]`, `[!Banner Icon]` and `[!banner-icon]` are
 four spellings of ONE callout - Obsidian renders them all as

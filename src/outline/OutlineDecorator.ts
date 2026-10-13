@@ -27,7 +27,7 @@ import {
 	shouldRenderToken,
 	tokenIconKey,
 } from "../editor/renderShared";
-import { normalizeCalloutId } from "../utils/calloutId";
+import { calloutTokenLabel, normalizeCalloutId } from "../utils/calloutId";
 
 /** Narrow structural host type (avoids importing the concrete plugin class). */
 export interface OutlineDecoratorHost {
@@ -283,9 +283,7 @@ export class OutlineDecorator {
 		const title =
 			customTitle !== ""
 				? customTitle
-				: unknown || !def
-					? token.rawId.trim()
-					: def.displayName;
+				: calloutTokenLabel(unknown ? undefined : def, token.rawId);
 		const showIcon =
 			this.host.settings.headingCallouts.refShowIcon && !!def;
 

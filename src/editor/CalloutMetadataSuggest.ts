@@ -69,6 +69,7 @@ import { renderColorCircles, resolveCurrentModeColors } from "../ui/ColorCircles
 import {
 	buildBlockHeaderToken,
 	buildHeadingToken,
+	isGeneratedTitle,
 	metadataSuffixOf,
 	splitFoldMark,
 } from "./calloutWriter";
@@ -356,9 +357,7 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 				// The mark the user wrote stays; none written → the definition's.
 				foldMark: foldMark === "" ? undefined : foldMark,
 				isKnownDisplayName: (text) =>
-					this.plugin.registry
-						.getAll()
-						.some((d) => d.displayName.toLowerCase() === text.toLowerCase()),
+					isGeneratedTitle(this.plugin.registry.getAll(), text),
 			}),
 			start,
 			lineEnd,

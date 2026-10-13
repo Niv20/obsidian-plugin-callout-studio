@@ -16,7 +16,7 @@ Type `[[#` and start searching for the heading. Link suggestions show the clean 
 
 After you insert the link, it behaves like a normal heading link and renders with the callout's icon and color.
 
-A heading with no title of its own, such as `## [!tip]`, gets the callout's name as the link text: picking it writes `[[#[!tip]|Tip]]`. The link then reads like any other: **Tip** with the icon, and the raw link while the cursor is on it. Any link to a heading callout that has its own display text, like `[[#[!tip] Setup|see the setup]]`, also shows the callout's icon.
+A heading with no title of its own, such as `## [!tip]`, gets the callout's name as the link text: picking it writes `[[#[!tip]|Tip]]`. The link then reads like any other: **Tip** with the icon, and the raw link while the cursor is on it. A heading written with an alias gets the alias instead, so `## [!hint]` becomes `[[#[!hint]|Hint]]`. Any link to a heading callout that has its own display text, like `[[#[!tip] Setup|see the setup]]`, also shows the callout's icon.
 
 ![Clean heading suggestions and rendered internal links in dark mode.](../../assets/user-guide/heading-links.svg)
 

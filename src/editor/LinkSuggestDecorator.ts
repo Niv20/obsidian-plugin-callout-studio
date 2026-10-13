@@ -33,7 +33,7 @@ import {
 	resolveCalloutDef,
 	shouldRenderToken,
 } from "./renderShared";
-import { normalizeCalloutId } from "../utils/calloutId";
+import { calloutTokenLabel, normalizeCalloutId } from "../utils/calloutId";
 
 /** Narrow structural host type (avoids importing the concrete plugin class). */
 export interface LinkSuggestHost {
@@ -205,9 +205,9 @@ function decorateHeadingSuggestion(
 	if (token.title.trim() !== "") {
 		textNode.nodeValue = text.slice(consumed);
 	} else {
-		// Titleless heading: show the callout's display name, like the
-		// outline pane does (what the user wrote when the id is unknown).
-		textNode.nodeValue = unknown || !def ? token.rawId.trim() : def.displayName;
+		// Titleless heading: show the token's label, like the outline pane
+		// does — the NAME, an alias's own title, or what the user wrote.
+		textNode.nodeValue = calloutTokenLabel(unknown ? undefined : def, token.rawId);
 	}
 	if (headingCallouts.refShowIcon && def) {
 		const iconEl = buildCalloutTokenDom({
@@ -253,7 +253,7 @@ function aliasTitlelessHeadingLink(
 	// Theme-owned: the heading is plain text to this plugin, so is the link.
 	if (!shouldRenderToken(resolved)) return;
 	const { def, unknown } = resolved;
-	const name = (unknown || !def ? token.rawId : def.displayName).trim();
+	const name = calloutTokenLabel(unknown ? undefined : def, token.rawId).trim();
 	// A name the alias cannot carry as written would rebuild the problem
 	// (`]` before `]]`) or split the link; leave core's link alone then.
 	if (!name || /\||\[\[|\]\]|\n/.test(name) || name.endsWith("]")) return;

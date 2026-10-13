@@ -12,7 +12,11 @@
  */
 import type { CalloutDefinition, CalloutRenderRole } from "../types";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
-import { normalizeCalloutId } from "../utils/calloutId";
+import {
+	calloutIdentity,
+	calloutTokenLabel,
+	normalizeCalloutId,
+} from "../utils/calloutId";
 
 /** Class names shared between Live Preview widgets and reading-view DOM. */
 export const CSS_INLINE_TOKEN = "cs-inline-callout";
@@ -258,6 +262,12 @@ export function resolveCalloutDef(
  * The block callout has never had the problem — its selector is built from
  * the attribute form to begin with.
  *
+ * The attribute form of an *alias* (`[!banner-icon]` for the alias
+ * `banner icon`) is stamped with that alias, not the id: it is just as covered
+ * by the CSS, and it keeps the token an alias token for the icon sweep, which
+ * re-reads its label from this attribute alone (see calloutTokenLabel). Stamped
+ * with the id, the sweep would repaint "Banner icon" as the callout's NAME.
+ *
  * Unknown tokens keep the raw spelling, which is what `.cs-unknown` styling and
  * the raw-id label expect.
  */
@@ -269,7 +279,9 @@ export function calloutDomId(
 	const { def, unknown } = resolved;
 	if (!def || unknown) return id;
 	if (id === def.id || def.aliases?.includes(id)) return id;
-	return def.id;
+	const typed = calloutIdentity(id);
+	if (typed === calloutIdentity(def.id)) return def.id;
+	return def.aliases?.find((alias) => calloutIdentity(alias) === typed) ?? def.id;
 }
 
 /**
@@ -372,8 +384,9 @@ export function buildCalloutTokenDom(
 	if (showName) {
 		const nameEl = createSpan();
 		nameEl.classList.add(CSS_TOKEN_NAME);
-		// Unknown ids show what the user wrote; known ids show the display name.
-		nameEl.textContent = unknown || !def ? rawId.trim() : def.displayName;
+		// The typed word decides: the NAME for the id, Obsidian's own title for
+		// an alias, what the user wrote for an unknown id.
+		nameEl.textContent = calloutTokenLabel(unknown ? undefined : def, rawId);
 		root.appendChild(nameEl);
 	}
 

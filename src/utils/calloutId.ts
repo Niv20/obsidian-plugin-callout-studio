@@ -20,8 +20,9 @@
  *   The only thing anything may compare identity by.
  *
  * mergeDashSpaceVariants builds on those to fold IDs that only a vault scan can
- * turn up in two spellings at once.
+ * turn up in two spellings at once, and calloutTokenLabel to name a typed token.
  */
+import type { CalloutDefinition } from "../types";
 
 /** The two halves of a `[!type|metadata]` token body. See splitCalloutMetadata. */
 export interface CalloutIdParts {
@@ -176,11 +177,57 @@ export const calloutIdentity = (raw: string): string =>
  * capitalized (verified in its bundled renderer — see obsidianCalloutAttrId's
  * doc). Used when we generate a display name ourselves (manually discovered
  * fallback rows) so it reads the same as what the regular role would show for
- * the identical raw text.
+ * the identical raw text, and by {@link calloutTokenLabel} as the label of a
+ * typed alias, for the same reason.
  */
 export const obsidianDefaultTitle = (raw: string): string => {
 	const lower = raw.trim().replace(/-/g, " ").toLowerCase();
 	return lower.charAt(0).toUpperCase() + lower.slice(1);
+};
+
+/** The three fields {@link calloutTokenLabel} reads off a definition. */
+export type CalloutLabelSource = Pick<
+	CalloutDefinition,
+	"id" | "displayName" | "aliases"
+>;
+
+/**
+ * The label a `[!typed]` token shows, and the title written for it. The typed
+ * word decides:
+ *
+ * - the definition's own id, in any spelling Obsidian folds onto it (case,
+ *   dash or space — compared by {@link calloutIdentity}) → its NAME,
+ *   `displayName`;
+ * - one of its aliases, exact or attribute-form → {@link obsidianDefaultTitle}
+ *   of what was typed, the very title Obsidian shows for an untitled
+ *   `> [!attention]`. An alias is another spelling of the callout, not another
+ *   name for it, so the pill, the heading and the quoted block all read
+ *   "Attention" rather than two of them reading "Warning";
+ * - anything else — no definition, or the fallback a renderer draws an unknown
+ *   id with — → what was typed, trimmed.
+ *
+ * `typedId` is the token's type exactly as written, `|metadata` already split
+ * off (see splitCalloutMetadata). `def` is the definition that spelling
+ * resolved to; the caller resolves, this only names.
+ *
+ * Every surface that writes or draws the label of a typed token goes through
+ * here — calloutWriter's titles, the token DOM, reference links, outline
+ * entries, the link suggester and the icon sweep — so none of them can disagree
+ * about it. Surfaces that show a *definition* (settings lists, the editor, the
+ * suggestion rows) show `displayName` directly and do not belong here.
+ */
+export const calloutTokenLabel = (
+	def: CalloutLabelSource | undefined,
+	typedId: string,
+): string => {
+	if (def) {
+		const typed = calloutIdentity(typedId);
+		if (typed === calloutIdentity(def.id)) return def.displayName;
+		if (def.aliases?.some((alias) => calloutIdentity(alias) === typed)) {
+			return obsidianDefaultTitle(typedId);
+		}
+	}
+	return typedId.trim();
 };
 
 /**
