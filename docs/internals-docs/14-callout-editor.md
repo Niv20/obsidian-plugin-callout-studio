@@ -83,6 +83,27 @@ removed-ID plan temporarily retains any dropped aliases, rewrites their vault
 usages to the primary ID, and then releases them, so this path inherits the same
 partial-failure safety as a manual alias removal.
 
+## How many IDs a callout can have
+
+`MAX_TAGS_COUNT` in `constants.ts` is the only copy of the number, and two
+limits read it. `TagInput` stops taking IDs at that count, whether they are
+typed, pasted, or arrive as the name-linked primary (a rename replaces the
+pinned ID in place), and shows `editor.maxIds` with the cap filled in. The
+import validator rejects an entry with more (`import.err.tooManyIds`, primary
+ID included), so anything the editor can save, an export of it can bring back.
+
+Nothing trims a callout that already has more. A restored backup keeps both
+sides' spellings (`importedCallout.ts`) and the collision migration folds a
+loser's IDs into the survivor, so such a callout keeps every ID; its field just
+refuses another until it is under the cap. Exporting it produces a file the
+validator rejects for that entry.
+
+`tests/calloutIdLimit.test.ts` reads the constant everywhere, so changing it
+needs no test edit, and holds it above the largest built-in ID set so every
+built-in can still take an alias. More IDs cost the stylesheet little: the
+icon's artwork is written once per callout, not once per name (see
+[Icon painting](06-css-generation.md#icon-painting)).
+
 Each icon-adjustment card owns one return arrow for its Size / Horizontal /
 Vertical trio. It resets only that render role and calls the preview once;
 other roles keep their values. The target is

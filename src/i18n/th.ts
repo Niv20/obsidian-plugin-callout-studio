@@ -348,6 +348,7 @@ export const th: Record<string, string> = {
 		"ตัวระบุทั้งหมดสำหรับ callout นี้ อนุญาตให้ใช้ช่องว่างได้\nกด Enter หรือปุ่ม + เพื่อเพิ่ม",
 	"editor.calloutIdsPlaceholder": "เพิ่ม ID",
 	"editor.addId": "เพิ่ม ID",
+	"editor.maxIds": "ใส่ ID ได้สูงสุด {{max}} รายการ ลบหนึ่งรายการเพื่อเพิ่มรายการอื่น",
 	"editor.idLinkedToName": "เชื่อมโยงกับชื่อที่แสดง",
 	"editor.idCannotDelete":
 		"ID นี้เชื่อมโยงกับชื่อที่แสดงและไม่สามารถลบได้ — แก้ไขชื่อเพื่อเปลี่ยน",

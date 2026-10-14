@@ -355,6 +355,7 @@ export const ro: Record<string, string> = {
 		"Toți identificatorii pentru acest callout. Spațiile sunt permise.\nApăsați Enter sau butonul + pentru a adăuga.",
 	"editor.calloutIdsPlaceholder": "Adaugă ID",
 	"editor.addId": "Adaugă ID",
+	"editor.maxIds": "Maximum {{max}} ID-uri. Șterge unul pentru a adăuga altul.",
 	"editor.idLinkedToName": "Legat de numele afișat",
 	"editor.idCannotDelete":
 		"Acest ID este legat de numele afișat și nu poate fi șters — editați numele pentru a-l schimba",

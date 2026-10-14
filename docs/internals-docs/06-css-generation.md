@@ -337,6 +337,10 @@ and understanding why both exist matters for anyone touching icon rendering:
    `--cs-accent`; a user-uploaded picture that keeps its own colours is drawn
    as a plain `background-image` instead (a mask is a stencil - running a
    photo through one would flatten it to a silhouette).
+   One rule covers the callout's ID and every alias it paints (a selector
+   list built from `blockNames`), so the data URI is written once per callout
+   however many IDs it has. An uploaded picture can be 256 KB, and it used to
+   be copied once per alias. The emoji rule is shared the same way.
    Emoji `content` values use `cssAttrValue`, including LF/CR/FF escapes;
    imports and synced settings must never be trusted as CSS string syntax.
    Lucide custom-property values accept only plain ASCII letter/digit/dash/

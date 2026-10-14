@@ -300,6 +300,7 @@ export const hi: Record<string, string> = {
 		"इस callout के सभी पहचानकर्ता। स्पेस की अनुमति है।\nजोड़ने के लिए Enter या + बटन दबाएँ।",
 	"editor.calloutIdsPlaceholder": "ID जोड़ें",
 	"editor.addId": "ID जोड़ें",
+	"editor.maxIds": "अधिकतम {{max}} आईडी। दूसरी जोड़ने के लिए एक हटाएँ।",
 	"editor.idLinkedToName": "प्रदर्शन नाम से जुड़ी",
 	"editor.idCannotDelete":
 		"यह ID प्रदर्शन नाम से जुड़ी है और इसे हटाया नहीं जा सकता — बदलने के लिए नाम संपादित करें",

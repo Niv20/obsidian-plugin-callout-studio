@@ -18,12 +18,30 @@
  * Selectors arrive already built, at whatever weight the calling mode emits at
  * (see `CSSInjector.sel`) — these functions never construct one, so they cannot
  * disagree with the rest of a callout's rules about how hard to push.
+ *
+ * Each takes one selector or a list: a callout's ID and all its aliases share
+ * one rule, so the artwork is written once per callout, however many IDs it has.
  */
 import { svgToDataUri } from "../../icons/svg";
 import { followsCalloutColor, userImageFor } from "../../icons/packs/userImages";
 import type { CalloutIcon, UserImageIcon } from "../../types";
 import { iconBoxWidth } from "./iconBox";
 import { cssAttrValue } from "../../utils/calloutSelector";
+
+/** One callout selector, or the selectors of every name a callout goes by. */
+export type CalloutSelectors = string | readonly string[];
+
+/** `suffix` appended to each selector, as one selector list. */
+function under(sels: CalloutSelectors, suffix: string): string {
+	return (typeof sels === "string" ? [sels] : sels)
+		.map((sel) => `${sel}${suffix}`)
+		.join(",\n");
+}
+
+/** No selectors, no rule: an empty list would leave a rule with no selector. */
+function isEmpty(sels: CalloutSelectors): boolean {
+	return typeof sels !== "string" && sels.length === 0;
+}
 
 /**
  * A pack glyph, painted as a mask tinted with the callout's accent.
@@ -35,17 +53,18 @@ import { cssAttrValue } from "../../utils/calloutSelector";
  * worth the indirection.
  */
 export function iconMaskOverrideCSS(
-	sel: string,
+	sel: CalloutSelectors,
 	svg: string,
 	picture?: UserImageIcon,
 	imp = "",
 ): string {
+	if (isEmpty(sel)) return "";
 	return (
 		`@media screen {\n` +
-		`${sel} > .callout-title > .callout-icon > svg {\n` +
+		`${under(sel, " > .callout-title > .callout-icon > svg")} {\n` +
 		`  display: none${imp};\n` +
 		`}\n` +
-		`${sel} > .callout-title > .callout-icon::after {\n` +
+		`${under(sel, " > .callout-title > .callout-icon::after")} {\n` +
 		`  --cs-icon-mask: ${svgToDataUri(svg)}${imp};\n` +
 		`  content: ""${imp};\n` +
 		`  display: inline-block${imp};\n` +
@@ -69,17 +88,18 @@ export function iconMaskOverrideCSS(
  * running a logo or a photograph through one throws its colours away.
  */
 export function imageOverrideCSS(
-	sel: string,
+	sel: CalloutSelectors,
 	svg: string,
 	picture: UserImageIcon,
 	imp = "",
 ): string {
+	if (isEmpty(sel)) return "";
 	return (
 		`@media screen {\n` +
-		`${sel} > .callout-title > .callout-icon > svg {\n` +
+		`${under(sel, " > .callout-title > .callout-icon > svg")} {\n` +
 		`  display: none${imp};\n` +
 		`}\n` +
-		`${sel} > .callout-title > .callout-icon::after {\n` +
+		`${under(sel, " > .callout-title > .callout-icon::after")} {\n` +
 		`  content: ""${imp};\n` +
 		`  display: inline-block${imp};\n` +
 		`  width: ${iconBoxWidth(picture)}${imp};\n` +
@@ -98,18 +118,19 @@ export function imageOverrideCSS(
  * no `background-color`.
  */
 export function emojiOverrideCSS(
-	sel: string,
+	sel: CalloutSelectors,
 	emoji: string,
 	imp = "",
 ): string {
+	if (isEmpty(sel)) return "";
 	// Imported/synced values are arbitrary strings, including CSS newlines.
 	const safe = cssAttrValue(emoji);
 	return (
 		`@media screen {\n` +
-		`${sel} > .callout-title > .callout-icon > svg {\n` +
+		`${under(sel, " > .callout-title > .callout-icon > svg")} {\n` +
 		`  display: none${imp};\n` +
 		`}\n` +
-		`${sel} > .callout-title > .callout-icon::after {\n` +
+		`${under(sel, " > .callout-title > .callout-icon::after")} {\n` +
 		`  content: "${safe}"${imp};\n` +
 		`  display: inline-block${imp};\n` +
 		`  font-size: var(--icon-size, 1.2em)${imp};\n` +
@@ -129,7 +150,7 @@ export function emojiOverrideCSS(
  * the same reasoning that already keeps emoji out of the mask path.
  */
 export function iconOverrideCSS(
-	sel: string,
+	sel: CalloutSelectors,
 	icon: CalloutIcon,
 	svg: string,
 	imp = "",

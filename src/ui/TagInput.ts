@@ -199,9 +199,7 @@ export class TagInput {
 			this.inputEl.disabled = true;
 			this.addBtnEl.disabled = true;
 			this.inputEl.placeholder = "";
-			this.showPersistentError(
-				`Maximum ${this.maxTags} IDs. Delete one to add another.`,
-			);
+			this.showPersistentError(t("editor.maxIds", { max: this.maxTags }));
 		} else {
 			this.inputEl.disabled = false;
 			this.addBtnEl.disabled = false;

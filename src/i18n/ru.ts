@@ -353,6 +353,7 @@ export const ru: Record<string, string> = {
 		"Все идентификаторы этого callout. Пробелы разрешены.\nНажмите Enter или кнопку + для добавления.",
 	"editor.calloutIdsPlaceholder": "Добавить ID",
 	"editor.addId": "Добавить ID",
+	"editor.maxIds": "Максимум {{max}} идентификаторов. Удалите один, чтобы добавить другой.",
 	"editor.idLinkedToName": "Связано с отображаемым именем",
 	"editor.idCannotDelete":
 		"Этот ID связан с отображаемым именем и не может быть удалён — измените имя, чтобы изменить его",

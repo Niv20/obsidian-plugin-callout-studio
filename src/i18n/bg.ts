@@ -284,6 +284,7 @@ export const bg: Record<string, string> = {
 		"Всички идентификатори за този callout. Разрешени са интервали.\nНатиснете Enter или бутона + за добавяне.",
 	"editor.calloutIdsPlaceholder": "Добавяне на ID",
 	"editor.addId": "Добавяне на ID",
+	"editor.maxIds": "Максимум {{max}} идентификатора. Изтрийте един, за да добавите друг.",
 	"editor.idLinkedToName": "Свързано с показваното име",
 	"editor.idCannotDelete":
 		"Това ID е свързано с показваното име и не може да бъде изтрито — редактирайте името, за да го промените",

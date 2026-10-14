@@ -300,6 +300,7 @@ export const ja: Record<string, string> = {
 		"このcalloutのすべての識別子。スペースを使用できます。\nEnterまたは + ボタンを押して追加します。",
 	"editor.calloutIdsPlaceholder": "IDを追加",
 	"editor.addId": "IDを追加",
+	"editor.maxIds": "IDは最大{{max}}個までです。別のIDを追加するには、1つ削除してください。",
 	"editor.idLinkedToName": "表示名にリンクされています",
 	"editor.idCannotDelete":
 		"このIDは表示名にリンクされているため削除できません。名前を編集して変更してください",

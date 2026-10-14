@@ -300,6 +300,7 @@ export const fa: Record<string, string> = {
 		"همه شناسه‌ها برای این callout. استفاده از فاصله مجاز است.\nEnter یا دکمه + را فشار دهید تا اضافه شود.",
 	"editor.calloutIdsPlaceholder": "افزودن شناسه",
 	"editor.addId": "افزودن شناسه",
+	"editor.maxIds": "حداکثر {{max}} شناسه. برای افزودن شناسهٔ دیگر، یکی را حذف کنید.",
 	"editor.idLinkedToName": "متصل به نام نمایشی",
 	"editor.idCannotDelete":
 		"این شناسه به نام نمایشی متصل است و قابل حذف نیست — برای تغییر آن، نام را ویرایش کنید",

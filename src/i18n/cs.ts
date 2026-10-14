@@ -298,6 +298,7 @@ export const cs: Record<string, string> = {
 		"Všechny identifikátory tohoto callout. Mezery jsou povoleny.\nStiskněte Enter nebo tlačítko + pro přidání.",
 	"editor.calloutIdsPlaceholder": "Přidat ID",
 	"editor.addId": "Přidat ID",
+	"editor.maxIds": "Maximálně {{max}} ID. Smažte jedno, abyste mohli přidat další.",
 	"editor.idLinkedToName": "Propojeno se zobrazovaným názvem",
 	"editor.idCannotDelete":
 		"Toto ID je propojeno se zobrazovaným názvem a nelze ho smazat — upravte název, abyste ho změnili",

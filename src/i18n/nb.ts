@@ -288,6 +288,7 @@ export const nb: Record<string, string> = {
 		"Alle identifikatorer for denne callout-en. Mellomrom er tillatt.\nTrykk Enter eller +-knappen for å legge til.",
 	"editor.calloutIdsPlaceholder": "Legg til ID",
 	"editor.addId": "Legg til ID",
+	"editor.maxIds": "Maks {{max}} ID-er. Slett én for å legge til en ny.",
 	"editor.idLinkedToName": "Koblet til visningsnavnet",
 	"editor.idCannotDelete":
 		"Denne ID-en er koblet til visningsnavnet og kan ikke slettes — rediger navnet for å endre den",

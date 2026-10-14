@@ -308,6 +308,7 @@ export const fr: Record<string, string> = {
 		"Tous les identifiants de ce callout. Les espaces sont autorisés.\nAppuyez sur Entrée ou le bouton + pour en ajouter.",
 	"editor.calloutIdsPlaceholder": "Ajouter un ID",
 	"editor.addId": "Ajouter un ID",
+	"editor.maxIds": "Maximum {{max}} identifiants. Supprimez-en un pour en ajouter un autre.",
 	"editor.idLinkedToName": "Lié au nom d'affichage",
 	"editor.idCannotDelete":
 		"Cet ID est lié au nom d'affichage et ne peut pas être supprimé — modifiez le nom pour le changer",

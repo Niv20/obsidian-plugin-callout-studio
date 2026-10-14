@@ -354,6 +354,7 @@ export const vi: Record<string, string> = {
 		"Tất cả các định danh cho callout này. Cho phép dấu cách.\nNhấn Enter hoặc nút + để thêm.",
 	"editor.calloutIdsPlaceholder": "Thêm ID",
 	"editor.addId": "Thêm ID",
+	"editor.maxIds": "Tối đa {{max}} ID. Hãy xóa một ID để thêm ID khác.",
 	"editor.idLinkedToName": "Liên kết với tên hiển thị",
 	"editor.idCannotDelete":
 		"ID này được liên kết với tên hiển thị và không thể xóa — chỉnh sửa tên để thay đổi nó",

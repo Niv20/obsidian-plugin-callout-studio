@@ -285,6 +285,7 @@ export const da: Record<string, string> = {
 		"Alle identifikatorer for denne callout. Mellemrum er tilladt.\nTryk Enter eller +-knappen for at tilføje.",
 	"editor.calloutIdsPlaceholder": "Tilføj ID",
 	"editor.addId": "Tilføj ID",
+	"editor.maxIds": "Højst {{max}} ID'er. Slet ét for at tilføje et andet.",
 	"editor.idLinkedToName": "Knyttet til visningsnavnet",
 	"editor.idCannotDelete":
 		"Dette ID er knyttet til visningsnavnet og kan ikke slettes — rediger navnet for at ændre det",

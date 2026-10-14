@@ -8,6 +8,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import { buildSnippetCss } from "../src/manager/cssSnippetExport";
 import type { UserImageIcon } from "../src/types";
+import { splitSelectorList } from "../src/utils/selectorText";
 import {
 	definition,
 	harness,
@@ -130,8 +131,12 @@ describe("Align content with title", () => {
 				valueOf(ruleFor(out, base), ALIGN_LENGTHS[0]),
 				`${expectedWidth} !important`,
 			);
+			// The ID and its alias share one painted rule (one copy of the
+			// artwork); each still has to be in its selector list.
 			const paintedRules = parseRules(out).filter((rule) =>
-				rule.selector === `${base} > .callout-title > .callout-icon::after` &&
+				splitSelectorList(rule.selector)
+					.map((part) => part.trim())
+					.includes(`${base} > .callout-title > .callout-icon::after`) &&
 				rule.at.includes("@media screen") &&
 				rule.props.includes("width"),
 			);

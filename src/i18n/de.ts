@@ -303,6 +303,7 @@ export const de: Record<string, string> = {
 		"Alle Bezeichner für diesen Callout. Leerzeichen sind erlaubt.\nEnter oder die +-Schaltfläche drücken zum Hinzufügen.",
 	"editor.calloutIdsPlaceholder": "ID hinzufügen",
 	"editor.addId": "ID hinzufügen",
+	"editor.maxIds": "Maximal {{max}} IDs. Löschen Sie eine, um eine weitere hinzuzufügen.",
 	"editor.idLinkedToName": "Mit dem Anzeigenamen verknüpft",
 	"editor.idCannotDelete":
 		"Diese ID ist mit dem Anzeigenamen verknüpft und kann nicht gelöscht werden — ändern Sie den Namen, um sie zu ändern",

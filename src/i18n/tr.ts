@@ -351,6 +351,7 @@ export const tr: Record<string, string> = {
 		"Bu callout için tüm tanımlayıcılar. Boşluklara izin verilir.\nEklemek için Enter veya + düğmesine basın.",
 	"editor.calloutIdsPlaceholder": "ID ekle",
 	"editor.addId": "ID ekle",
+	"editor.maxIds": "En fazla {{max}} kimlik eklenebilir. Başka bir tane eklemek için birini silin.",
 	"editor.idLinkedToName": "Görünen ada bağlı",
 	"editor.idCannotDelete":
 		"Bu ID, görünen ada bağlı olduğu için silinemez — değiştirmek için adı düzenleyin",

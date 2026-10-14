@@ -300,6 +300,7 @@ export const ko: Record<string, string> = {
 		"이 callout의 모든 식별자. 공백을 사용할 수 있습니다.\nEnter 또는 + 버튼을 눌러 추가합니다.",
 	"editor.calloutIdsPlaceholder": "ID 추가",
 	"editor.addId": "ID 추가",
+	"editor.maxIds": "ID는 최대 {{max}}개까지 추가할 수 있습니다. 다른 ID를 추가하려면 하나를 삭제하세요.",
 	"editor.idLinkedToName": "표시 이름에 연결됨",
 	"editor.idCannotDelete":
 		"이 ID는 표시 이름에 연결되어 있어 삭제할 수 없습니다 — 이름을 편집하여 변경하세요",

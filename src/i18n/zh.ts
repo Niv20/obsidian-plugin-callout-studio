@@ -342,6 +342,7 @@ export const zh: Record<string, string> = {
 		"此 callout 的所有标识符。允许使用空格。\n按 Enter 或 + 按钮添加。",
 	"editor.calloutIdsPlaceholder": "添加 ID",
 	"editor.addId": "添加 ID",
+	"editor.maxIds": "最多 {{max}} 个 ID。删除一个后才能再添加。",
 	"editor.idLinkedToName": "已关联到显示名称",
 	"editor.idCannotDelete":
 		"此 ID 已关联到显示名称，无法删除——请编辑名称以更改",

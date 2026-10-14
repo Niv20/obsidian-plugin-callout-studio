@@ -302,6 +302,7 @@ export const hu: Record<string, string> = {
 		"Ennek a callout-nak az összes azonosítója. A szóközök engedélyezettek.\nNyomja meg az Enter billentyűt vagy a + gombot a hozzáadáshoz.",
 	"editor.calloutIdsPlaceholder": "Azonosító hozzáadása",
 	"editor.addId": "Azonosító hozzáadása",
+	"editor.maxIds": "Legfeljebb {{max}} azonosító. Törölj egyet, ha újat szeretnél hozzáadni.",
 	"editor.idLinkedToName": "A megjelenítési névhez kapcsolva",
 	"editor.idCannotDelete":
 		"Ez az azonosító a megjelenítési névhez van kapcsolva, és nem törölhető — a módosításhoz szerkessze a nevet",

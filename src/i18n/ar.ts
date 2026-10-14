@@ -296,6 +296,7 @@ export const ar: Record<string, string> = {
 		"جميع معرّفات هذا الـ callout. يُسمح باستخدام المسافات.\nاضغط Enter أو زر + للإضافة.",
 	"editor.calloutIdsPlaceholder": "إضافة معرّف",
 	"editor.addId": "إضافة معرّف",
+	"editor.maxIds": "الحد الأقصى {{max}} من المعرّفات. احذف أحدها لإضافة معرّف آخر.",
 	"editor.idLinkedToName": "مرتبط بالاسم المعروض",
 	"editor.idCannotDelete":
 		"هذا المعرّف مرتبط بالاسم المعروض ولا يمكن حذفه — عدّل الاسم لتغييره",

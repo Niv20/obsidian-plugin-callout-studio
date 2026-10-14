@@ -805,6 +805,7 @@ export const en: Record<string, string> = {
 		"All identifiers for this callout. Spaces are allowed.\nPress Enter or the + button to add.",
 	"editor.calloutIdsPlaceholder": "Add ID",
 	"editor.addId": "Add ID",
+	"editor.maxIds": "Maximum {{max}} IDs. Delete one to add another.",
 	"editor.idLinkedToName": "Linked to the display name",
 	"editor.idCannotDelete":
 		"This ID is linked to the display name and can't be deleted — edit the name to change it",

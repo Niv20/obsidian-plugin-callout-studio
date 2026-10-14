@@ -331,6 +331,7 @@ export const zhTW: Record<string, string> = {
 		"此 callout 的所有識別符。允許使用空格。\n按 Enter 或 + 按鈕新增。",
 	"editor.calloutIdsPlaceholder": "新增 ID",
 	"editor.addId": "新增 ID",
+	"editor.maxIds": "最多 {{max}} 個 ID。刪除一個後才能再新增。",
 	"editor.idLinkedToName": "已連結到顯示名稱",
 	"editor.idCannotDelete":
 		"此 ID 已連結到顯示名稱，無法刪除——請編輯名稱以變更",

@@ -306,6 +306,7 @@ export const nl: Record<string, string> = {
 		"Alle identificatoren voor deze callout. Spaties zijn toegestaan.\nDruk op Enter of de +-knop om toe te voegen.",
 	"editor.calloutIdsPlaceholder": "ID toevoegen",
 	"editor.addId": "ID toevoegen",
+	"editor.maxIds": "Maximaal {{max}} ID's. Verwijder er een om een andere toe te voegen.",
 	"editor.idLinkedToName": "Gekoppeld aan de weergavenaam",
 	"editor.idCannotDelete":
 		"Deze ID is gekoppeld aan de weergavenaam en kan niet worden verwijderd — bewerk de naam om deze te wijzigen",

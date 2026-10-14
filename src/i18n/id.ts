@@ -300,6 +300,7 @@ export const id: Record<string, string> = {
 		"Semua pengidentifikasi untuk callout ini. Spasi diperbolehkan.\nTekan Enter atau tombol + untuk menambahkan.",
 	"editor.calloutIdsPlaceholder": "Tambah ID",
 	"editor.addId": "Tambah ID",
+	"editor.maxIds": "Maksimal {{max}} ID. Hapus satu untuk menambahkan yang lain.",
 	"editor.idLinkedToName": "Terhubung ke nama tampilan",
 	"editor.idCannotDelete":
 		"ID ini terhubung ke nama tampilan dan tidak dapat dihapus — edit nama untuk mengubahnya",

@@ -359,6 +359,7 @@ export const uk: Record<string, string> = {
 		"Всі ідентифікатори цього callout. Пробіли дозволені.\nНатисніть Enter або кнопку + для додавання.",
 	"editor.calloutIdsPlaceholder": "Додати ID",
 	"editor.addId": "Додати ID",
+	"editor.maxIds": "Максимум {{max}} ідентифікаторів. Видаліть один, щоб додати інший.",
 	"editor.idLinkedToName": "Пов'язано з відображуваною назвою",
 	"editor.idCannotDelete":
 		"Цей ID пов'язаний з відображуваною назвою і не може бути видалений — щоб змінити його, відредагуйте назву",

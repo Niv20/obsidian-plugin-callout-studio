@@ -304,6 +304,7 @@ export const es: Record<string, string> = {
 		"Todos los identificadores de este callout. Se permiten espacios.\nPresione Enter o el botón + para añadir.",
 	"editor.calloutIdsPlaceholder": "Añadir ID",
 	"editor.addId": "Añadir ID",
+	"editor.maxIds": "Máximo {{max}} ID. Elimina uno para añadir otro.",
 	"editor.idLinkedToName": "Vinculado al nombre para mostrar",
 	"editor.idCannotDelete":
 		"Este ID está vinculado al nombre para mostrar y no se puede eliminar — edite el nombre para cambiarlo",

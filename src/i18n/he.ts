@@ -389,6 +389,7 @@ export const he: Record<string, string> = {
 		"כל המזהים המשויכים לתיבת־הבלטה זו. ניתן להשתמש ברווחים.\nלחצו על Enter או על כפתור ה־+ כדי להוסיף.",
 	"editor.calloutIdsPlaceholder": "הוספת מזהה",
 	"editor.addId": "הוספת מזהה",
+	"editor.maxIds": "עד {{max}} מזהים. מחקו מזהה כדי להוסיף אחר.",
 	"editor.idLinkedToName": "מקושר לשם התצוגה",
 	"editor.idCannotDelete":
 		"לא ניתן למחוק מזהה זה — הוא מקושר לשם התצוגה. כדי לשנותו, ערכו את השם",

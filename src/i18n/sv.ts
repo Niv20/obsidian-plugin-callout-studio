@@ -352,6 +352,7 @@ export const sv: Record<string, string> = {
 		"Alla identifierare för denna callout. Blanksteg är tillåtna.\nTryck Enter eller +-knappen för att lägga till.",
 	"editor.calloutIdsPlaceholder": "Lägg till ID",
 	"editor.addId": "Lägg till ID",
+	"editor.maxIds": "Högst {{max}} ID:n. Ta bort ett för att lägga till ett annat.",
 	"editor.idLinkedToName": "Länkad till visningsnamnet",
 	"editor.idCannotDelete":
 		"Detta ID är länkat till visningsnamnet och kan inte tas bort — redigera namnet för att ändra det",

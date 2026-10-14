@@ -199,7 +199,9 @@ table is changed by this hardening.
   **warning**, not an error.
 - **Tags/aliases**: length-capped at `MAX_TAG_LENGTH` (200 - a generous
   safety net on *imported*, untrusted data only; the editor itself imposes
-  no length limit), count-capped at `MAX_TAGS_COUNT`.
+  no length limit), count-capped at `MAX_TAGS_COUNT`, primary ID included -
+  the same constant the editor's IDs field stops at (see
+  [How many IDs a callout can have](14-callout-editor.md#how-many-ids-a-callout-can-have)).
 - **Metadata**: every value must be a string. Keys such as `__proto__`,
   `constructor`, and `prototype` remain literal data properties through import
   and export; safe object construction avoids invoking inherited setters or

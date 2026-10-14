@@ -296,6 +296,7 @@ export const ms: Record<string, string> = {
 		"Semua pengecam untuk callout ini. Ruang dibenarkan.\nTekan Enter atau butang + untuk menambah.",
 	"editor.calloutIdsPlaceholder": "Tambah ID",
 	"editor.addId": "Tambah ID",
+	"editor.maxIds": "Maksimum {{max}} ID. Padam satu untuk menambah yang lain.",
 	"editor.idLinkedToName": "Dipautkan ke nama paparan",
 	"editor.idCannotDelete":
 		"ID ini dipautkan ke nama paparan dan tidak boleh dipadam — edit nama untuk menukarnya",

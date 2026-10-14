@@ -292,6 +292,7 @@ export const fi: Record<string, string> = {
 		"Kaikki tämän calloutin tunnisteet. Välilyönnit ovat sallittuja.\nLisää painamalla Enter tai +-painiketta.",
 	"editor.calloutIdsPlaceholder": "Lisää tunnus",
 	"editor.addId": "Lisää tunnus",
+	"editor.maxIds": "Enintään {{max}} tunnistetta. Poista yksi lisätäksesi toisen.",
 	"editor.idLinkedToName": "Linkitetty näyttönimeen",
 	"editor.idCannotDelete":
 		"Tämä tunnus on linkitetty näyttönimeen eikä sitä voi poistaa — muuta nimeä muuttaaksesi sitä",
