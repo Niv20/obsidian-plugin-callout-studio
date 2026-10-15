@@ -17,8 +17,10 @@
  *   `{…}` payload is replaced WHOLE, payload included, which is what keeps it a
  *   single indivisible element (see CalloutContentPillWidget).
  * - Title-less reference link (`[[#[!id]]]`) → ONE replace widget over the
- *   whole link, in its own set at the highest precedence (see
- *   BuiltDecorations.wholeLinks for why it must outrank core).
+ *   whole link.
+ * - The token widgets — heading token, pills, whole links — go in a set of
+ *   their own at the highest precedence (see BuiltDecorations.raised for why
+ *   they must outrank core).
  * - Native `> [!id]` headers, code, math and frontmatter are never touched.
  *
  * Active in Live Preview only (source mode shows raw markdown, matching how
@@ -82,21 +84,29 @@ const NO_FOLDS: ReadonlySet<number> = new Set();
 interface BuiltDecorations {
 	decorations: DecorationSet;
 	/**
-	 * Whole-link replacements of title-less references (`[[#[!id]]]`).
+	 * The replace widgets that open where core may open a replace of its own:
+	 * the heading token, both kinds of pill, and the whole-link replacement of
+	 * a title-less reference (`[[#[!id]]]`).
 	 *
-	 * Each one opens at the link's `[[`, the exact offset where core's own
-	 * replace hides those brackets. Two replaced ranges starting together are
-	 * tie-broken by precedence, and at default precedence core's set comes
-	 * first: its two-character hide wins and ours is treated as continuing
-	 * from before it. A full redraw of the line still draws our widget after
-	 * the hidden `[[`. A partial one — the caret leaving the link with Enter, so
-	 * only our set changed — starts at the end of core's hide and drops our
-	 * widget as "already drawn". The whole link was hidden, nothing replaced
-	 * it, and the line stayed blank until the caret went in and back out.
+	 * Core hides brackets with replaces of its own — a wikilink's `[[`, and the
+	 * `[` and `]` of anything it reads as a reference link, which `[!a] [!b]`
+	 * is to it (`[text] [label]`). Each of those starts exactly where one of
+	 * our widgets does. Two replaced ranges starting together are tie-broken
+	 * by precedence, and at default precedence core's set comes first: its
+	 * one- or two-character hide wins and ours is treated as continuing from
+	 * before it. A full redraw of the line still draws our widget after the
+	 * hidden bracket. A partial one — only our set changed: the caret leaving
+	 * a link with Enter, a pill's callout restyled in the editor — starts at
+	 * the end of core's hide and drops our widget as "already drawn". The
+	 * token was hidden, nothing replaced it, and it stayed blank until the
+	 * caret went in and back out.
+	 *
 	 * Prec.highest makes this set win the tie, so the widget always opens the
-	 * link and core's hides inside it are skipped.
+	 * range and core's hides inside it are skipped. Marks and line decorations
+	 * stay in `decorations`: precedence also decides how marks nest, and the
+	 * heading title mark raised would wrap outside core's header spans.
 	 */
-	wholeLinks: DecorationSet;
+	raised: DecorationSet;
 }
 
 /** Syntax-tree node names whose content must never be decorated. */
@@ -111,8 +121,8 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 	const plugin = ViewPlugin.fromClass(
 		class {
 			decorations: DecorationSet = Decoration.none;
-			/** See BuiltDecorations.wholeLinks. */
-			wholeLinks: DecorationSet = Decoration.none;
+			/** See BuiltDecorations.raised. */
+			raised: DecorationSet = Decoration.none;
 			/**
 			 * Raw-syntax reveal is frozen while the left mouse button is held
 			 * (Obsidian's livePreviewState.mousedown). Core defers its own
@@ -265,7 +275,7 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 					this.focused,
 				);
 				this.decorations = built.decorations;
-				this.wholeLinks = built.wholeLinks;
+				this.raised = built.raised;
 			}
 
 			destroy(): void {
@@ -287,7 +297,7 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 			provide: (p) =>
 				Prec.highest(
 					EditorView.decorations.of(
-						(view) => view.plugin(p)?.wholeLinks ?? Decoration.none,
+						(view) => view.plugin(p)?.raised ?? Decoration.none,
 					),
 				),
 		},
@@ -303,7 +313,7 @@ function buildDecorations(
 	/** Frozen snapshot of `view.hasFocus`, for the same reason. */
 	focused: boolean,
 ): BuiltDecorations {
-	const none = { decorations: Decoration.none, wholeLinks: Decoration.none };
+	const none = { decorations: Decoration.none, raised: Decoration.none };
 	const headingEnabled = host.settings.headingCallouts.enabled;
 	const inlineEnabled = host.settings.inlineCallouts.enabled;
 	if (!headingEnabled && !inlineEnabled) return none;
@@ -314,7 +324,7 @@ function buildDecorations(
 		return none;
 	}
 	const builder = new RangeSetBuilder<Decoration>();
-	const linkBuilder = new RangeSetBuilder<Decoration>();
+	const raisedBuilder = new RangeSetBuilder<Decoration>();
 	const doc = view.state.doc;
 	const tree = syntaxTree(view.state);
 	// Owning file, for resolving links and embeds inside a content pill's
@@ -359,7 +369,7 @@ function buildDecorations(
 			if (line.text.indexOf("[!") !== -1) {
 				decorateLine(
 					builder,
-					linkBuilder,
+					raisedBuilder,
 					view,
 					host,
 					tree,
@@ -380,14 +390,14 @@ function buildDecorations(
 	}
 	return {
 		decorations: builder.finish(),
-		wholeLinks: linkBuilder.finish(),
+		raised: raisedBuilder.finish(),
 	};
 }
 
 function decorateLine(
 	builder: RangeSetBuilder<Decoration>,
-	/** BuiltDecorations.wholeLinks, filled in line order like `builder`. */
-	linkBuilder: RangeSetBuilder<Decoration>,
+	/** BuiltDecorations.raised, filled in line order like `builder`. */
+	raisedBuilder: RangeSetBuilder<Decoration>,
 	view: EditorView,
 	host: LivePreviewHost,
 	tree: ReturnType<typeof syntaxTree>,
@@ -447,8 +457,9 @@ function decorateLine(
 
 	// Mid-line decorations. Pills, wikilink refs and the heading-title mark
 	// interleave in arbitrary order, so they are collected first and added
-	// sorted — RangeSetBuilder requires sorted insertion.
-	const midLine: Array<{ from: number; to: number; deco: Decoration }> = [];
+	// sorted — RangeSetBuilder requires sorted insertion. `raised` ones go in
+	// BuiltDecorations.raised.
+	const midLine: Array<{ from: number; to: number; deco: Decoration; raised?: true }> = [];
 
 	for (const token of tokens) {
 		const from = lineFrom + token.from;
@@ -532,6 +543,7 @@ function decorateLine(
 							token.to - token.from,
 						),
 					}),
+					raised: true,
 				});
 				// The fold chevron trails the whole heading (after the title
 				// text), so it is a separate end-of-line widget rather than part
@@ -589,6 +601,7 @@ function decorateLine(
 						end - from,
 					),
 				}),
+				raised: true,
 			});
 			continue;
 		}
@@ -607,6 +620,7 @@ function decorateLine(
 					end - from,
 				),
 			}),
+			raised: true,
 		});
 	}
 
@@ -694,13 +708,12 @@ function decorateLine(
 			const inner = lineText.slice(ref.linkFrom + 2, ref.linkTo - 2);
 			const pipeIdx = inner.indexOf("|");
 			midLine.length = curLinkStartIdx;
-			// Its own set, not `midLine`: it opens where core hides the `[[`,
-			// and only precedence decides which of the two is drawn there (see
-			// BuiltDecorations.wholeLinks).
-			linkBuilder.add(
-				lineFrom + ref.linkFrom,
-				lineFrom + ref.linkTo,
-				Decoration.replace({
+			// It opens where core hides the `[[`, and only precedence decides
+			// which of the two is drawn there (see BuiltDecorations.raised).
+			midLine.push({
+				from: lineFrom + ref.linkFrom,
+				to: lineFrom + ref.linkTo,
+				deco: Decoration.replace({
 					widget: new HeadingRefLinkWidget(
 						host.app,
 						ref.rawId,
@@ -710,7 +723,8 @@ function decorateLine(
 						refSettings.refShowIcon,
 					),
 				}),
-			);
+				raised: true,
+			});
 			continue;
 		}
 
@@ -740,7 +754,7 @@ function decorateLine(
 	// order it produces is the one the title mark needs: a non-inclusive mark
 	// (startSide 500000000) sorts AFTER a replace (499999999).
 	midLine.sort((a, b) => a.from - b.from || a.deco.startSide - b.deco.startSide);
-	for (const r of midLine) builder.add(r.from, r.to, r.deco);
+	for (const r of midLine) (r.raised ? raisedBuilder : builder).add(r.from, r.to, r.deco);
 
 	// End-of-line fold chevron, added last so it never precedes an inline token
 	// that also sits on this heading line.
