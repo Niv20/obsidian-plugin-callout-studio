@@ -355,6 +355,15 @@ export const id: Record<string, string> = {
 		"Perhatian: tema Anda menata gaya setiap callout yang cocok dengan {{pattern}}, sehingga mungkin akan menimpa tampilan callout ini.",
 	"editor.idDashConflict":
 		'Obsidian menulis spasi sebagai tanda hubung, sehingga ID ini bertentangan dengan "{{other}}"',
+	"editor.idOwnedBy":
+		'"{{id}}" adalah salah satu ID milik {{name}}. Anda bisa {{link}}.',
+	"editor.idMoveHere": "memindahkannya ke sini",
+	"editor.idOwnedByMain":
+		'"{{id}}" adalah ID utama {{name}}. Untuk memakainya di sini, hapus {{name}} terlebih dahulu.',
+	"editor.idBuiltInStock":
+		'"{{id}}" adalah salah satu ID bawaan Obsidian untuk {{name}}.',
+	"editor.idMoving": 'Saat disimpan, "{{id}}" pindah ke sini dari {{name}}.',
+	"editor.idMovingNotes": "Catatan Anda tidak berubah. Catatan itu mengikuti gaya callout ini.",
 	"editor.untitledCallout": "Callout Tanpa Judul",
 	"editor.loremIpsum":
 		"Angin sepoi-sepoi bertiup di antara pepohonan. Sinar matahari yang hangat menyinari jalan setapak yang tenang dan menghidupkan suasana.",
@@ -363,6 +372,33 @@ export const id: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Berikut adalah Inline Callout [!{id}] di dalam sebuah paragraf.",
 	"editor.previewReadOnly": "Pratinjau langsung tidak dapat diedit",
+	"noteChanges.title": "Perbarui catatan Anda?",
+	"noteChanges.uses": '"{{id}}" muncul {{count}} kali di {{files}} catatan.',
+	"noteChanges.usesUnknown": 'Beberapa catatan mungkin memakai "{{id}}".',
+	"noteChanges.leave": "Biarkan apa adanya",
+	"noteChanges.leaveDesc":
+		"Catatan tetap memakai [!{{id}}] dan kembali ke gaya default.",
+	"noteChanges.changeTo": "Ubah menjadi",
+	"noteChanges.changeToLabel": 'Callout tujuan perubahan "{{id}}"',
+	"noteChanges.undoHint": "Anda dapat membatalkannya.",
+	"noteChanges.renameChange": 'Ubah menjadi "{{id}}"',
+	"noteChanges.renameChangeDesc":
+		'Judul yang berbunyi "{{old}}" menjadi "{{new}}". Anda dapat membatalkannya.',
+	"noteChanges.renameKeep": 'Pertahankan "{{id}}" sebagai ID lain',
+	"noteChanges.renameKeepDesc": "Catatan Anda tidak berubah dan tetap memakai gaya callout ini.",
+	"noteChanges.renameKeepFull": "Callout ini sudah memiliki maksimum {{max}} ID.",
+	"noteChanges.titlesUses":
+		'{{count}} judul di {{files}} catatan berbunyi "{{old}}".',
+	"noteChanges.titlesUnknown": 'Beberapa judul mungkin berbunyi "{{old}}".',
+	"noteChanges.titlesChange": 'Ubah menjadi "{{new}}"',
+	"noteChanges.titlesLeaveDesc": 'Tetap berbunyi "{{old}}".',
+	"noteChanges.foldUses":
+		"{{count}} callout di {{files}} catatan diatur untuk melipat secara berbeda.",
+	"noteChanges.foldUnknown":
+		"Beberapa callout mungkin diatur untuk melipat secara berbeda.",
+	"noteChanges.foldChange": 'Atur menjadi "{{state}}"',
+	"noteChanges.foldLeaveDesc":
+		"Hanya callout yang Anda sisipkan mulai sekarang yang memakai pengaturan baru.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -776,6 +812,8 @@ export const id: Record<string, string> = {
 		"{{count}} ID callout diperbarui di file vault: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"{{count}} judul callout diperbarui di file vault: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Tanda lipat {{count}} callout diperbarui di file vault.",
 	"vault.replaceWith": "Ganti dengan:",
 	"vault.deleteWithout": "Hapus tanpa mengganti",
 	"vault.confirmDelete": "Konfirmasi",
@@ -1468,4 +1506,33 @@ export const id: Record<string, string> = {
 	"settings.versions": "Versi sebelumnya",
 	"settings.versionsDesc": "Callout Studio otomatis menyimpan versi konfigurasi Anda.\nBandingkan atau kembali ke salah satunya.",
 	"settings.versionsButton": "Lihat versi",
+	"noteChanges.callouts": "{{count}} callout",
+	"noteChanges.calloutsOne": "1 callout",
+	"noteChanges.notes": "{{count}} catatan",
+	"noteChanges.notesOne": "1 catatan",
+	"noteChanges.askCallout": "Apa yang harus dilakukan pada callout itu?",
+	"noteChanges.askCallouts": "Apa yang harus dilakukan pada callout itu?",
+	"noteChanges.askTitle": "Apa yang harus dilakukan pada judul itu?",
+	"noteChanges.askTitles": "Apa yang harus dilakukan pada judul-judul itu?",
+	"noteChanges.removedLine": "Anda menghapus ID \"{{id}}\" dari {{name}}, tetapi masih dipakai oleh {{callouts}} di {{notes}}.",
+	"noteChanges.removedLineUnknown": "Anda menghapus ID \"{{id}}\" dari {{name}}, tetapi beberapa catatan mungkin masih memakainya.",
+	"noteChanges.moveTo": "Pindahkan \"{{id}}\" ke callout lain",
+	"noteChanges.moveToDesc": "Catatan Anda tidak berubah. Catatan itu mengikuti gaya callout yang Anda pilih.",
+	"noteChanges.moveToLabel": "Callout tujuan pemindahan \"{{id}}\"",
+	"noteChanges.moveNoRoom": "Setiap callout lain sudah memiliki maksimum {{max}} ID.",
+	"noteChanges.rewrite": "Ubah di catatan Anda",
+	"noteChanges.rewriteDesc": "Setiap [!{{id}}] di catatan Anda menjadi [!{{to}}].",
+	"noteChanges.renamedLine": "Anda mengganti nama \"{{old}}\" menjadi \"{{new}}\", sehingga ID-nya berubah dari \"{{oldId}}\" menjadi \"{{newId}}\". ID lama masih dipakai oleh {{callouts}} di {{notes}}.",
+	"noteChanges.renamedLineUnknown": "Anda mengganti nama \"{{old}}\" menjadi \"{{new}}\", sehingga ID-nya berubah dari \"{{oldId}}\" menjadi \"{{newId}}\". Beberapa catatan mungkin masih memakai ID lama.",
+	"noteChanges.idChangedLine": "ID callout ini berubah dari \"{{oldId}}\" menjadi \"{{newId}}\". ID lama masih dipakai oleh {{callouts}} di {{notes}}.",
+	"noteChanges.idChangedLineUnknown": "ID callout ini berubah dari \"{{oldId}}\" menjadi \"{{newId}}\". Beberapa catatan mungkin masih memakai ID lama.",
+	"noteChanges.renameFollowDesc": "Setiap [!{{oldId}}] di catatan Anda menjadi [!{{newId}}], dan judul yang berbunyi \"{{old}}\" menjadi \"{{new}}\".",
+	"noteChanges.renameFollowDescIdOnly": "Setiap [!{{oldId}}] di catatan Anda menjadi [!{{newId}}].",
+	"noteChanges.titlesLine": "Anda mengganti nama \"{{old}}\" menjadi \"{{new}}\". Nama lama masih menjadi judul {{callouts}} di {{notes}}.",
+	"noteChanges.titlesLineUnknown": "Anda mengganti nama \"{{old}}\" menjadi \"{{new}}\". Beberapa callout di catatan Anda mungkin masih memakai nama lama sebagai judul.",
+	"noteChanges.titlesChangeDesc": "Judul yang berbunyi \"{{old}}\" menjadi \"{{new}}\".",
+	"noteChanges.foldLine": "Anda mengubah cara callout ini dilipat. Tanda lipat yang berbeda diatur pada {{callouts}} di {{notes}}.",
+	"noteChanges.foldLineUnknown": "Anda mengubah cara callout ini dilipat. Beberapa callout di catatan Anda mungkin memiliki tanda lipat yang berbeda.",
+	"noteChanges.foldChangeDesc": "Tanda + atau - pada callout itu berubah menyesuaikan.",
+	"editor.idGiveFailed": "\"{{id}}\" tidak dapat dipindahkan ke {{name}}, sehingga catatan yang memakainya kembali ke gaya bawaan.",
 };

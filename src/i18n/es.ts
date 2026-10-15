@@ -360,6 +360,14 @@ export const es: Record<string, string> = {
 		"Aviso: su tema aplica estilo a todos los callouts que coincidan con {{pattern}}, así que puede que anule el aspecto de este.",
 	"editor.idDashConflict":
 		'Obsidian escribe los espacios como guiones, por lo que este ID coincide con "{{other}}"',
+	"editor.idOwnedBy": '"{{id}}" es un ID de {{name}}. Puedes {{link}}.',
+	"editor.idMoveHere": "moverlo aquí",
+	"editor.idOwnedByMain":
+		'"{{id}}" es el ID principal de {{name}}. Para usarlo aquí, elimina primero {{name}}.',
+	"editor.idBuiltInStock":
+		'"{{id}}" es uno de los ID propios de Obsidian para {{name}}.',
+	"editor.idMoving": 'Al guardar, "{{id}}" se mueve aquí desde {{name}}.',
+	"editor.idMovingNotes": "Tus notas no cambian. Toman el estilo de este callout.",
 	"editor.untitledCallout": "Callout sin título",
 	"editor.loremIpsum":
 		"Una brisa suave recorre los árboles. La luz cálida del sol baña un sendero tranquilo y llena de vida la escena.",
@@ -368,6 +376,34 @@ export const es: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Aquí hay una píldora [!{id}] insertada dentro de un párrafo.",
 	"editor.previewReadOnly": "La vista previa en vivo no se puede editar",
+	"noteChanges.title": "¿Actualizar tus notas?",
+	"noteChanges.uses":
+		'"{{id}}" aparece {{count}} vez/veces en {{files}} nota(s).',
+	"noteChanges.usesUnknown": 'Algunas notas pueden usar "{{id}}".',
+	"noteChanges.leave": "Dejarlas como están",
+	"noteChanges.leaveDesc":
+		"Conservan [!{{id}}] y vuelven al estilo predeterminado.",
+	"noteChanges.changeTo": "Cambiarlas a",
+	"noteChanges.changeToLabel": 'Callout al que cambiar "{{id}}"',
+	"noteChanges.undoHint": "Puedes deshacerlo.",
+	"noteChanges.renameChange": 'Cambiarlas a "{{id}}"',
+	"noteChanges.renameChangeDesc":
+		'Los títulos que dicen "{{old}}" pasan a decir "{{new}}". Puedes deshacerlo.',
+	"noteChanges.renameKeep": 'Mantener "{{id}}" como otro ID',
+	"noteChanges.renameKeepDesc": "Tus notas no cambian y conservan el estilo de este callout.",
+	"noteChanges.renameKeepFull": "Este callout ya tiene el máximo de {{max}} ID.",
+	"noteChanges.titlesUses":
+		'{{count}} título(s) en {{files}} nota(s) dicen "{{old}}".',
+	"noteChanges.titlesUnknown": 'Algunos títulos pueden decir "{{old}}".',
+	"noteChanges.titlesChange": 'Cambiarlos a "{{new}}"',
+	"noteChanges.titlesLeaveDesc": 'Siguen diciendo "{{old}}".',
+	"noteChanges.foldUses":
+		"{{count}} callout(s) en {{files}} nota(s) están configurados para plegarse de otra forma.",
+	"noteChanges.foldUnknown":
+		"Algunos callouts pueden estar configurados para plegarse de otra forma.",
+	"noteChanges.foldChange": 'Establecerlos en "{{state}}"',
+	"noteChanges.foldLeaveDesc":
+		"Solo los callouts que insertes a partir de ahora usan el nuevo ajuste.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -777,6 +813,8 @@ export const es: Record<string, string> = {
 		"Se actualizaron {{count}} ID(s) de callout en los archivos del vault: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"Se actualizaron {{count}} título(s) de callout en los archivos del vault: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Se actualizó la marca de plegado de {{count}} callout(s) en los archivos del vault.",
 	"vault.replaceWith": "Reemplazar con:",
 	"vault.deleteWithout": "Eliminar sin reemplazar",
 	"vault.confirmDelete": "Confirmar",
@@ -1478,4 +1516,33 @@ export const es: Record<string, string> = {
 	"settings.versions": "Versiones anteriores",
 	"settings.versionsDesc": "Callout Studio guarda versiones de tu configuración automáticamente.\nCompáralas o vuelve a una de ellas.",
 	"settings.versionsButton": "Ver versiones",
+	"noteChanges.callouts": "{{count}} callouts",
+	"noteChanges.calloutsOne": "1 callout",
+	"noteChanges.notes": "{{count}} notas",
+	"noteChanges.notesOne": "1 nota",
+	"noteChanges.askCallout": "¿Qué debe pasar con ese callout?",
+	"noteChanges.askCallouts": "¿Qué debe pasar con esos callouts?",
+	"noteChanges.askTitle": "¿Qué debe pasar con ese título?",
+	"noteChanges.askTitles": "¿Qué debe pasar con esos títulos?",
+	"noteChanges.removedLine": "Quitaste el ID \"{{id}}\" de {{name}}, pero aún lo usan {{callouts}} en {{notes}}.",
+	"noteChanges.removedLineUnknown": "Quitaste el ID \"{{id}}\" de {{name}}, pero puede que algunas notas aún lo usen.",
+	"noteChanges.moveTo": "Mover \"{{id}}\" a otro callout",
+	"noteChanges.moveToDesc": "Tus notas no cambian. Toman el estilo del callout que elijas.",
+	"noteChanges.moveToLabel": "Callout al que mover \"{{id}}\"",
+	"noteChanges.moveNoRoom": "Cada uno de los demás callouts ya tiene el máximo de {{max}} ID.",
+	"noteChanges.rewrite": "Cambiarlas en tus notas",
+	"noteChanges.rewriteDesc": "Cada [!{{id}}] de tus notas pasa a ser [!{{to}}].",
+	"noteChanges.renamedLine": "Cambiaste el nombre de \"{{old}}\" a \"{{new}}\", así que su ID pasa de \"{{oldId}}\" a \"{{newId}}\". El ID anterior aún lo usan {{callouts}} en {{notes}}.",
+	"noteChanges.renamedLineUnknown": "Cambiaste el nombre de \"{{old}}\" a \"{{new}}\", así que su ID pasa de \"{{oldId}}\" a \"{{newId}}\". Puede que algunas notas aún usen el ID anterior.",
+	"noteChanges.idChangedLine": "El ID de este callout pasa de \"{{oldId}}\" a \"{{newId}}\". El ID anterior aún lo usan {{callouts}} en {{notes}}.",
+	"noteChanges.idChangedLineUnknown": "El ID de este callout pasa de \"{{oldId}}\" a \"{{newId}}\". Puede que algunas notas aún usen el ID anterior.",
+	"noteChanges.renameFollowDesc": "Cada [!{{oldId}}] de tus notas pasa a ser [!{{newId}}], y los títulos que dicen \"{{old}}\" pasan a decir \"{{new}}\".",
+	"noteChanges.renameFollowDescIdOnly": "Cada [!{{oldId}}] de tus notas pasa a ser [!{{newId}}].",
+	"noteChanges.titlesLine": "Cambiaste el nombre de \"{{old}}\" a \"{{new}}\". El nombre anterior sigue siendo el título de {{callouts}} en {{notes}}.",
+	"noteChanges.titlesLineUnknown": "Cambiaste el nombre de \"{{old}}\" a \"{{new}}\". Puede que algunos callouts de tus notas aún tengan el nombre anterior como título.",
+	"noteChanges.titlesChangeDesc": "Los títulos que dicen \"{{old}}\" pasan a decir \"{{new}}\".",
+	"noteChanges.foldLine": "Cambiaste cómo se pliega este callout. Hay una marca de plegado distinta en {{callouts}} de {{notes}}.",
+	"noteChanges.foldLineUnknown": "Cambiaste cómo se pliega este callout. Puede que algunos callouts de tus notas tengan una marca de plegado distinta.",
+	"noteChanges.foldChangeDesc": "Su marca + o - cambia para coincidir.",
+	"editor.idGiveFailed": "No se pudo mover \"{{id}}\" a {{name}}, así que las notas que lo usan vuelven al estilo predeterminado.",
 };

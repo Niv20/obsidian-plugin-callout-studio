@@ -1199,8 +1199,10 @@ It contains nothing of the setup itself.
 An editor can explicitly retry adoption using `editor: true`, retaining its own
 ownership while still respecting previews and in-flight writes. Its `canApply`
 constraint can reject a merge that would invalidate pending rename/replacement
-note work. The form is kept for review and another Save; that is not equivalent
-to automatically committing the form after recovery.
+note work. Such work exists only when the user chose a rewrite in the editor's
+**Update your notes?** window; an id left in its notes leaves nothing pending.
+The form is kept for review and another Save; that is not equivalent to
+automatically committing the form after recovery.
 
 Missing-file creation is offered in the settings page, not while the editor owns
 the registry. The editor banner directs the user to recovery on the same device

@@ -355,6 +355,14 @@ export const hi: Record<string, string> = {
 		"ध्यान दें: आपकी थीम {{pattern}} से मेल खाने वाले हर callout को स्टाइल करती है, इसलिए यह इसका रूप बदल सकती है।",
 	"editor.idDashConflict":
 		'Obsidian स्पेस को डैश के रूप में लिखता है, इसलिए यह ID "{{other}}" से टकराती है',
+	"editor.idOwnedBy": '"{{id}}" {{name}} की एक ID है। आप इसे {{link}}।',
+	"editor.idMoveHere": "यहाँ ले जा सकते हैं",
+	"editor.idOwnedByMain":
+		'"{{id}}" {{name}} की मुख्य ID है। इसे यहाँ उपयोग करने के लिए पहले {{name}} को हटाएँ।',
+	"editor.idBuiltInStock":
+		'"{{id}}" {{name}} के लिए Obsidian की अपनी IDs में से एक है।',
+	"editor.idMoving": 'सहेजने पर "{{id}}" {{name}} से यहाँ आ जाएगी।',
+	"editor.idMovingNotes": "आपके नोट नहीं बदलेंगे। वे इस callout की शैली अपना लेंगे।",
 	"editor.untitledCallout": "बिना शीर्षक Callout",
 	"editor.loremIpsum":
 		"पेड़ों के बीच से हल्की हवा गुजरती है। धूप की गर्म किरणें शांत पगडंडी पर पड़ती हैं और दृश्य को जीवंत बनाती हैं।",
@@ -363,6 +371,33 @@ export const hi: Record<string, string> = {
 	"editor.sampleInlineText":
 		"यहाँ एक पैराग्राफ के भीतर एक इनलाइन [!{id}] पिल है।",
 	"editor.previewReadOnly": "लाइव पूर्वावलोकन संपादित नहीं किया जा सकता",
+	"noteChanges.title": "अपने नोट अपडेट करें?",
+	"noteChanges.uses": '"{{id}}" {{files}} नोट में {{count}} बार आती है।',
+	"noteChanges.usesUnknown": 'कुछ नोट "{{id}}" का उपयोग कर सकते हैं।',
+	"noteChanges.leave": "उन्हें जैसा है वैसा रहने दें",
+	"noteChanges.leaveDesc":
+		"वे [!{{id}}] रखेंगे और डिफ़ॉल्ट शैली पर लौट जाएँगे।",
+	"noteChanges.changeTo": "इन्हें इसमें बदलें",
+	"noteChanges.changeToLabel": 'वह callout जिसमें "{{id}}" बदला जाए',
+	"noteChanges.undoHint": "आप इसे पूर्ववत कर सकते हैं।",
+	"noteChanges.renameChange": 'इन्हें "{{id}}" में बदलें',
+	"noteChanges.renameChangeDesc":
+		'जिन शीर्षकों में "{{old}}" लिखा है वे "{{new}}" हो जाएँगे। आप इसे पूर्ववत कर सकते हैं।',
+	"noteChanges.renameKeep": '"{{id}}" को अन्य ID के रूप में रखें',
+	"noteChanges.renameKeepDesc": "आपके नोट नहीं बदलेंगे और वे इस callout की शैली बनाए रखेंगे।",
+	"noteChanges.renameKeepFull": "इस callout में पहले से अधिकतम {{max}} आईडी हैं।",
+	"noteChanges.titlesUses":
+		'{{files}} नोट में {{count}} शीर्षक "{{old}}" पढ़ते हैं।',
+	"noteChanges.titlesUnknown": 'कुछ शीर्षक "{{old}}" पढ़ सकते हैं।',
+	"noteChanges.titlesChange": 'इन्हें "{{new}}" में बदलें',
+	"noteChanges.titlesLeaveDesc": 'वे "{{old}}" ही पढ़ते रहेंगे।',
+	"noteChanges.foldUses":
+		"{{files}} नोट में {{count}} callout अलग तरह से फ़ोल्ड होने के लिए सेट हैं।",
+	"noteChanges.foldUnknown":
+		"कुछ callout अलग तरह से फ़ोल्ड होने के लिए सेट हो सकते हैं।",
+	"noteChanges.foldChange": 'इन्हें "{{state}}" पर सेट करें',
+	"noteChanges.foldLeaveDesc":
+		"केवल वे callout नई सेटिंग का उपयोग करते हैं जिन्हें आप अब से डालते हैं।",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -771,6 +806,8 @@ export const hi: Record<string, string> = {
 		"vault फ़ाइलों में {{count}} callout ID अपडेट किए गए: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"vault फ़ाइलों में {{count}} callout शीर्षक अपडेट किए गए: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"vault फ़ाइलों में {{count}} callout का फ़ोल्ड चिह्न अपडेट किया गया।",
 	"vault.replaceWith": "इससे बदलें:",
 	"vault.deleteWithout": "बिना बदले हटाएँ",
 	"vault.confirmDelete": "पुष्टि करें",
@@ -1453,4 +1490,33 @@ export const hi: Record<string, string> = {
 	"settings.versions": "पुराने संस्करण",
 	"settings.versionsDesc": "Callout Studio आपके कॉन्फ़िगरेशन के संस्करण अपने आप सहेजता है।\nउनकी तुलना करें या किसी संस्करण पर वापस जाएँ।",
 	"settings.versionsButton": "संस्करण देखें",
+	"noteChanges.callouts": "{{count}} callout",
+	"noteChanges.calloutsOne": "1 callout",
+	"noteChanges.notes": "{{count}} नोट",
+	"noteChanges.notesOne": "1 नोट",
+	"noteChanges.askCallout": "उस callout का क्या किया जाए?",
+	"noteChanges.askCallouts": "उन callout का क्या किया जाए?",
+	"noteChanges.askTitle": "उस शीर्षक का क्या किया जाए?",
+	"noteChanges.askTitles": "उन शीर्षकों का क्या किया जाए?",
+	"noteChanges.removedLine": "आपने {{name}} से ID \"{{id}}\" हटा दिया, लेकिन यह अब भी {{notes}} में {{callouts}} द्वारा उपयोग में है।",
+	"noteChanges.removedLineUnknown": "आपने {{name}} से ID \"{{id}}\" हटा दिया, लेकिन कुछ नोट अब भी इसका उपयोग कर सकते हैं।",
+	"noteChanges.moveTo": "\"{{id}}\" को किसी दूसरे callout में ले जाएँ",
+	"noteChanges.moveToDesc": "आपके नोट नहीं बदलेंगे। वे आपके चुने हुए callout की शैली अपना लेंगे।",
+	"noteChanges.moveToLabel": "वह callout जिसमें \"{{id}}\" ले जाना है",
+	"noteChanges.moveNoRoom": "हर दूसरे callout में पहले से अधिकतम {{max}} आईडी हैं।",
+	"noteChanges.rewrite": "उन्हें अपने नोट में बदलें",
+	"noteChanges.rewriteDesc": "आपके नोट का हर [!{{id}}] [!{{to}}] बन जाएगा।",
+	"noteChanges.renamedLine": "आपने \"{{old}}\" का नाम बदलकर \"{{new}}\" किया, इसलिए इसकी आईडी \"{{oldId}}\" से बदलकर \"{{newId}}\" हो जाएगी। पुरानी आईडी अब भी {{notes}} में {{callouts}} द्वारा उपयोग में है।",
+	"noteChanges.renamedLineUnknown": "आपने \"{{old}}\" का नाम बदलकर \"{{new}}\" किया, इसलिए इसकी आईडी \"{{oldId}}\" से बदलकर \"{{newId}}\" हो जाएगी। कुछ नोट अब भी पुरानी आईडी का उपयोग कर सकते हैं।",
+	"noteChanges.idChangedLine": "इस callout की आईडी \"{{oldId}}\" से बदलकर \"{{newId}}\" हो जाएगी। पुरानी आईडी अब भी {{notes}} में {{callouts}} द्वारा उपयोग में है।",
+	"noteChanges.idChangedLineUnknown": "इस callout की आईडी \"{{oldId}}\" से बदलकर \"{{newId}}\" हो जाएगी। कुछ नोट अब भी पुरानी आईडी का उपयोग कर सकते हैं।",
+	"noteChanges.renameFollowDesc": "आपके नोट का हर [!{{oldId}}] [!{{newId}}] बन जाएगा, और जिन शीर्षकों में \"{{old}}\" लिखा है वे \"{{new}}\" हो जाएँगे।",
+	"noteChanges.renameFollowDescIdOnly": "आपके नोट का हर [!{{oldId}}] [!{{newId}}] बन जाएगा।",
+	"noteChanges.titlesLine": "आपने \"{{old}}\" का नाम बदलकर \"{{new}}\" किया। पुराना नाम अब भी {{notes}} में {{callouts}} का शीर्षक है।",
+	"noteChanges.titlesLineUnknown": "आपने \"{{old}}\" का नाम बदलकर \"{{new}}\" किया। आपके नोट के कुछ callout में पुराना नाम अब भी शीर्षक हो सकता है।",
+	"noteChanges.titlesChangeDesc": "जिन शीर्षकों में \"{{old}}\" लिखा है वे \"{{new}}\" हो जाएँगे।",
+	"noteChanges.foldLine": "आपने बदला कि यह callout कैसे फ़ोल्ड होता है। {{notes}} में {{callouts}} पर अलग फ़ोल्ड चिह्न सेट है।",
+	"noteChanges.foldLineUnknown": "आपने बदला कि यह callout कैसे फ़ोल्ड होता है। आपके नोट के कुछ callout में अलग फ़ोल्ड चिह्न सेट हो सकता है।",
+	"noteChanges.foldChangeDesc": "उनका + या - चिह्न उसी के अनुसार बदल जाएगा।",
+	"editor.idGiveFailed": "\"{{id}}\" को {{name}} में नहीं ले जाया जा सका, इसलिए इसका उपयोग करने वाले नोट डिफ़ॉल्ट शैली पर लौट जाते हैं।",
 };

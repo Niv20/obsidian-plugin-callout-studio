@@ -5218,6 +5218,16 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	margin-top: 4px;
 }
 
+/* Not a problem, something worth knowing: the callout editor's "On save,
+   "test" moves here from Abstract." One line per id moving, and one more,
+   so its ceiling is higher than an error's. */
+.cs-tag-error.is-note {
+	color: var(--text-muted);
+}
+.cs-tag-error.is-note.is-visible {
+	max-height: 12em;
+}
+
 /*
  * The duplicate-color error stands alone in the palette editor's options
  * column rather than inside a setting's info block, so it needs even more
@@ -6832,7 +6842,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
    empty until its card is the active one. The check inside it is always there
    and simply has no colour until then, so choosing moves nothing. With nothing
    in its card to choose, it fades. */
-.cs-import-radio {
+.cs-option-radio {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -6846,22 +6856,59 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 		background 120ms ease,
 		border-color 120ms ease;
 }
-.cs-import-radio .svg-icon {
+.cs-option-radio .svg-icon {
 	width: 12px;
 	height: 12px;
 	stroke-width: 3px;
 }
-.cs-import-radio[aria-disabled="true"] {
+.cs-option-radio[aria-disabled="true"] {
 	opacity: 0.45;
 }
-.cs-import-radio:focus-visible {
+.cs-option-radio:focus-visible {
 	outline: 2px solid var(--background-modifier-border-focus);
 	outline-offset: 2px;
 }
-.cs-option-box.is-selected .cs-import-radio {
+.cs-option-box.is-selected .cs-option-radio {
 	border-color: var(--checkbox-color);
 	background: var(--checkbox-color);
 	color: var(--text-on-accent);
+}
+
+/* ─── "Update your notes?" (settings/editor/NoteChangesModal.ts) ─── */
+
+/* One part per thing the notes hold — the line saying what changed and
+   asking, then its answers, drawn as the import window draws its cards. With
+   more than one part showing, a rule sets each apart from the one above it;
+   a part with nothing left to change is hidden, and takes no rule with it. */
+.cs-note-change:not(.cs-row-hidden) ~ .cs-note-change:not(.cs-row-hidden) {
+	margin-top: 20px;
+	padding-top: 20px;
+	border-top: 1px solid var(--background-modifier-border);
+}
+.cs-note-change-line {
+	margin: 0 0 10px;
+}
+/* A card with a callout picker: the picker sits at the trailing edge, centred
+   on the card's height, just before the dot — where the import card keeps its
+   button. On a narrow window the card wraps, and the picker and the dot take
+   a line of their own, still at the trailing edge, rather than squeezing the
+   words. */
+.cs-option-box.cs-note-change-picking {
+	flex-wrap: wrap;
+	row-gap: 8px;
+}
+.cs-note-change-picking .cs-option-box-text {
+	flex: 1 1 180px;
+}
+.cs-note-change-target {
+	display: flex;
+	flex: 0 1 220px;
+	min-width: 160px;
+	margin-inline-start: auto;
+}
+/* An answer that cannot be chosen: Keep, with no room left for another id. */
+.cs-option-box.is-blocked {
+	opacity: 0.6;
 }
 
 /* A card's own button — Upload, which reads Replace once a file is staged, and

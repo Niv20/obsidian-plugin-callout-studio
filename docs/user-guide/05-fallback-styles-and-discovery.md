@@ -33,7 +33,7 @@ After choosing a different fallback, click **Reset to default** beside the picke
 
 Deleting the callout you chose as the fallback also selects **Note** again. Callout Studio asks before that delete, and its **Undo** makes the callout the fallback once more.
 
-A callout you delete while notes still use it becomes an unknown callout like any other: it takes the fallback appearance, and **Scan for callouts** can find it again. See [Delete a custom callout](06-editing-replacing-and-deleting.md#delete-a-custom-callout).
+A callout you delete while notes still use it becomes an unknown callout like any other: it takes the fallback appearance, and **Scan for callouts** can find it again. See [Delete a custom callout](06-editing-replacing-and-deleting.md#delete-a-custom-callout). The same goes for an ID you remove from a callout and choose to leave in your notes. See [Remove, rename or move an ID](06-editing-replacing-and-deleting.md#remove-rename-or-move-an-id).
 
 ![The default fallback picker open with the custom Project note type selected and its reset arrow visible](../../assets/user-guide/fallback-picker.svg)
 

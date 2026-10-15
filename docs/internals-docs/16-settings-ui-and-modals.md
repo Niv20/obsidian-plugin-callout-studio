@@ -2026,6 +2026,40 @@ Each is now a plain two-button `ConfirmModal`: Cancel plus a red **Delete** or
 A callout nothing uses, unless it is the default fallback, is deleted with no
 dialog at all. The notice's **Undo** stands in for the question.
 
+### `NoteChangesModal` - "Update your notes?"
+
+Asked by the callout editor's Save, before anything is saved, when the save
+would change something notes hold: an id leaving the callout, titles reading
+its old name, fold marks after a **Foldable** change. The rule and the flow are
+in [Callout editor](14-callout-editor.md#notes-change-only-after-asking); this is
+the window.
+
+- **One part per thing the notes hold**: a line saying what the user changed
+  and what the notes still hold, ending in the question (`You removed the ID "test"
+  from Abstract, but it's still used by 12 callouts in 5 notes. What should
+  happen to those callouts?`), over a `role="radiogroup"` of answer cards - three for a
+  removed id, two otherwise. With more than one part showing, each is set apart
+  from the one above by a rule (a sibling selector over the parts not hidden,
+  so a hidden part takes no rule with it).
+- **The cards are the plugin import window's**: `renderOptionBox` without an
+  icon tile, `addOptionRadio` for the dot and `paintOptionRadio` for the
+  chosen / choosable / out-of-reach state, all from `optionBox.ts` and shared
+  with the import window. A card's callout picker sits at its trailing edge,
+  just before the dot, centred on the card's height - where the import card
+  keeps its button (`.cs-note-change-picking`; on a narrow window the picker and
+  dot wrap to a line of their own, still at the trailing edge). Here a click
+  anywhere on a card chooses it, a click into its picker included; the import
+  window exempts its own buttons and text box.
+- **Blocked answer**: **Keep "old" as another ID** with no room left, and
+  **Move "id" to another callout** with no callout able to take it, draw
+  `is-blocked` and take no click.
+- **The title and fold parts** repaint their counts on every answer and hide
+  (`cs-row-hidden`) while nothing they would change is left. (The fold part is
+  dormant while the editor's Foldable section stays hidden.)
+- **Footer**: **Cancel** and **Save changes** (`mod-cta`). Cancel, Escape and
+  the close button resolve `null` - back to the editor, nothing saved. The
+  promise resolves exactly once; `onClose` destroys the pickers.
+
 ### `PaletteEditorModal` - simple vs. advanced, two background styles
 
 Two-column layout mirroring the per-role global-style popups: a sticky live

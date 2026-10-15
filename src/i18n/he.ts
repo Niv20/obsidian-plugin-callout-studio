@@ -443,6 +443,14 @@ export const he: Record<string, string> = {
 		"לתשומת ליבכם: ערכת הנושא שלכם מעצבת כל תיבת־הבלטה שתואמת ל-{{pattern}}, כך שהיא עשויה לשנות את המראה של זו.",
 	"editor.idDashConflict":
 		'אובסידיאן ממיר רווחים למקפים, ולכן מזהה זה מתנגש עם "{{other}}"',
+	"editor.idOwnedBy": '"{{id}}" הוא מזהה של {{name}}. אפשר {{link}}.',
+	"editor.idMoveHere": "להעביר אותו לכאן",
+	"editor.idOwnedByMain":
+		'"{{id}}" הוא המזהה הראשי של {{name}}. כדי להשתמש בו כאן, מחקו קודם את {{name}}.',
+	"editor.idBuiltInStock":
+		'"{{id}}" הוא אחד המזהים של אובסידיאן עצמה עבור {{name}}.',
+	"editor.idMoving": 'בעת השמירה, "{{id}}" יעבור לכאן מ{{name}}.',
+	"editor.idMovingNotes": "הפתקים שלכם לא משתנים. הם יקבלו את הסגנון של תיבת־ההבלטה הזו.",
 	"editor.untitledCallout": "תיבת־הבלטה ללא שם",
 	"editor.loremIpsum":
 		"רוח קלה נושבת בין העצים. אור שמש חמים מאיר שביל שקט ומפיח חיים בנוף.",
@@ -450,6 +458,32 @@ export const he: Record<string, string> = {
 		"רוח קלה נושבת בין העצים.",
 	"editor.sampleInlineText": "כאן יש תיבת־הבלטה מוטבעת מסוג [!{id}] בתוך פסקה.",
 	"editor.previewReadOnly": "לא ניתן לערוך את התצוגה המקדימה",
+	"noteChanges.title": "לעדכן את הפתקים שלכם?",
+	"noteChanges.uses": '"{{id}}" מופיע {{count}} פעמים ב־{{files}} פתקים.',
+	"noteChanges.usesUnknown": 'ייתכן שחלק מהפתקים משתמשים ב־"{{id}}".',
+	"noteChanges.leave": "להשאיר אותם כמו שהם",
+	"noteChanges.leaveDesc": "הם ישמרו את [!{{id}}] ויחזרו לסגנון ברירת המחדל.",
+	"noteChanges.changeTo": "לשנות אותם ל־",
+	"noteChanges.changeToLabel": 'תיבת־הבלטה שאליה ישונה "{{id}}"',
+	"noteChanges.undoHint": "אפשר לבטל את הפעולה.",
+	"noteChanges.renameChange": 'לשנות אותם ל־"{{id}}"',
+	"noteChanges.renameChangeDesc":
+		'כותרות שכתוב בהן "{{old}}" יהפכו ל־"{{new}}". אפשר לבטל את הפעולה.',
+	"noteChanges.renameKeep": 'להשאיר את "{{id}}" כמזהה נוסף',
+	"noteChanges.renameKeepDesc": "הפתקים שלכם לא משתנים, והם ישמרו את הסגנון של תיבת־ההבלטה הזו.",
+	"noteChanges.renameKeepFull": "בתיבת־ההבלטה הזו כבר יש את המספר המרבי של {{max}} מזהים.",
+	"noteChanges.titlesUses":
+		'{{count}} כותרות ב־{{files}} פתקים כתוב בהן "{{old}}".',
+	"noteChanges.titlesUnknown": 'ייתכן שבחלק מהכותרות כתוב "{{old}}".',
+	"noteChanges.titlesChange": 'לשנות אותם ל־"{{new}}"',
+	"noteChanges.titlesLeaveDesc": 'הן ימשיכו להציג "{{old}}".',
+	"noteChanges.foldUses":
+		"{{count}} תיבות־הבלטה ב־{{files}} פתקים מוגדרות להתקפל באופן אחר.",
+	"noteChanges.foldUnknown":
+		"ייתכן שחלק מתיבות־ההבלטה מוגדרות להתקפל באופן אחר.",
+	"noteChanges.foldChange": 'להגדיר אותן כ־"{{state}}"',
+	"noteChanges.foldLeaveDesc":
+		"רק תיבות־הבלטה שתוסיפו מעכשיו ישתמשו בהגדרה החדשה.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -871,6 +905,8 @@ export const he: Record<string, string> = {
 		"עודכנו {{count}} מזהים של תיבות־הבלטה בקובצי הכספת: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"עודכנו {{count}} כותרות של תיבות־הבלטה בקובצי הכספת: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"סימן הקיפול של {{count}} תיבות־הבלטה בקובצי הכספת עודכן.",
 	"vault.replaceWith": "החלפה ב:",
 	"vault.deleteWithout": "מחיקה ללא החלפה",
 	"vault.confirmDelete": "אישור",
@@ -1491,4 +1527,33 @@ export const he: Record<string, string> = {
 	"settings.versions": "גרסאות קודמות",
 	"settings.versionsDesc": "Callout Studio שומר גרסאות של התצורה שלכם אוטומטית.\nהשוו ביניהן או חזרו לאחת מהן.",
 	"settings.versionsButton": "הצגת גרסאות",
+	"noteChanges.callouts": "{{count}} תיבות־הבלטה",
+	"noteChanges.calloutsOne": "תיבת־הבלטה אחת",
+	"noteChanges.notes": "{{count}} פתקים",
+	"noteChanges.notesOne": "פתק אחד",
+	"noteChanges.askCallout": "מה לעשות עם תיבת־ההבלטה הזו?",
+	"noteChanges.askCallouts": "מה לעשות עם תיבות־ההבלטה האלה?",
+	"noteChanges.askTitle": "מה לעשות עם הכותרת הזו?",
+	"noteChanges.askTitles": "מה לעשות עם הכותרות האלה?",
+	"noteChanges.removedLine": "הסרתם את המזהה \"{{id}}\" מ{{name}}, אבל הוא עדיין בשימוש: {{callouts}}, ב־{{notes}}.",
+	"noteChanges.removedLineUnknown": "הסרתם את המזהה \"{{id}}\" מ{{name}}, אבל ייתכן שחלק מהפתקים עדיין משתמשים בו.",
+	"noteChanges.moveTo": "להעביר את \"{{id}}\" לתיבת־הבלטה אחרת",
+	"noteChanges.moveToDesc": "הפתקים שלכם לא משתנים. הם יקבלו את הסגנון של תיבת־ההבלטה שתבחרו.",
+	"noteChanges.moveToLabel": "תיבת־ההבלטה שאליה יועבר \"{{id}}\"",
+	"noteChanges.moveNoRoom": "בכל תיבות־ההבלטה האחרות כבר יש את המספר המרבי של {{max}} מזהים.",
+	"noteChanges.rewrite": "לשנות אותם בפתקים שלכם",
+	"noteChanges.rewriteDesc": "כל [!{{id}}] בפתקים שלכם יהפוך ל־[!{{to}}].",
+	"noteChanges.renamedLine": "שיניתם את השם \"{{old}}\" ל־\"{{new}}\", ולכן המזהה שלה משתנה מ־\"{{oldId}}\" ל־\"{{newId}}\". המזהה הישן עדיין בשימוש: {{callouts}}, ב־{{notes}}.",
+	"noteChanges.renamedLineUnknown": "שיניתם את השם \"{{old}}\" ל־\"{{new}}\", ולכן המזהה שלה משתנה מ־\"{{oldId}}\" ל־\"{{newId}}\". ייתכן שחלק מהפתקים עדיין משתמשים במזהה הישן.",
+	"noteChanges.idChangedLine": "המזהה של תיבת־ההבלטה הזו משתנה מ־\"{{oldId}}\" ל־\"{{newId}}\". המזהה הישן עדיין בשימוש: {{callouts}}, ב־{{notes}}.",
+	"noteChanges.idChangedLineUnknown": "המזהה של תיבת־ההבלטה הזו משתנה מ־\"{{oldId}}\" ל־\"{{newId}}\". ייתכן שחלק מהפתקים עדיין משתמשים במזהה הישן.",
+	"noteChanges.renameFollowDesc": "כל [!{{oldId}}] בפתקים שלכם יהפוך ל־[!{{newId}}], וכותרות שכתוב בהן \"{{old}}\" יהפכו ל־\"{{new}}\".",
+	"noteChanges.renameFollowDescIdOnly": "כל [!{{oldId}}] בפתקים שלכם יהפוך ל־[!{{newId}}].",
+	"noteChanges.titlesLine": "שיניתם את השם \"{{old}}\" ל־\"{{new}}\". השם הישן עדיין מופיע ככותרת של {{callouts}} ב־{{notes}}.",
+	"noteChanges.titlesLineUnknown": "שיניתם את השם \"{{old}}\" ל־\"{{new}}\". ייתכן שבחלק מתיבות־ההבלטה בפתקים שלכם השם הישן עדיין מופיע ככותרת.",
+	"noteChanges.titlesChangeDesc": "כותרות שכתוב בהן \"{{old}}\" יהפכו ל־\"{{new}}\".",
+	"noteChanges.foldLine": "שיניתם את אופן הקיפול של תיבת־ההבלטה הזו. סימון קיפול שונה מוגדר ב־{{callouts}}, ב־{{notes}}.",
+	"noteChanges.foldLineUnknown": "שיניתם את אופן הקיפול של תיבת־ההבלטה הזו. ייתכן שבחלק מתיבות־ההבלטה בפתקים שלכם מוגדר סימון קיפול שונה.",
+	"noteChanges.foldChangeDesc": "סימן ה־+ או ה־- שלהן ישתנה בהתאם.",
+	"editor.idGiveFailed": "לא הצלחנו להעביר את \"{{id}}\" אל {{name}}, ולכן פתקים שמשתמשים בו יחזרו לסגנון ברירת המחדל.",
 };

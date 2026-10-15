@@ -87,9 +87,10 @@ describe("the callout editor on a name the theme draws", () => {
 
 	it("calls a taken id the user's own when the theme does not draw it", () => {
 		// A new callout named `note`: the built-in has it. Only when the theme
-		// really draws Note is "your theme supplies it" the right reason.
+		// really draws Note is "your theme supplies it" the right reason —
+		// otherwise the message names whose id it is.
 		const own = editorFor(["note"], [], [], "note");
-		assert.deepEqual(own.shown, [t("editor.idExists")]);
+		assert.deepEqual(own.shown, [t("editor.idBuiltInStock", { id: "note", name: "Note" })]);
 		const theirs = editorFor(["note"], [], ["note"], "note");
 		assert.deepEqual(theirs.shown, [
 			t("editor.idFromTheme", { theme: "Fixture" }),

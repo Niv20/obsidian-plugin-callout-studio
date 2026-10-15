@@ -332,6 +332,15 @@ export const bg: Record<string, string> = {
 	"editor.idConflict": "Това ID е в конфликт с вече съществуващ callout",
 	"editor.idDashConflict":
 		"Obsidian записва интервалите като тирета, затова това ID се сблъсква с „{{other}}“",
+	"editor.idOwnedBy":
+		"„{{id}}“ е идентификатор на {{name}}. Можете да {{link}}.",
+	"editor.idMoveHere": "го преместите тук",
+	"editor.idOwnedByMain":
+		"„{{id}}“ е основният идентификатор на {{name}}. За да го използвате тук, първо изтрийте {{name}}.",
+	"editor.idBuiltInStock":
+		"„{{id}}“ е един от собствените идентификатори на Obsidian за {{name}}.",
+	"editor.idMoving": "При запазване „{{id}}“ се премества тук от {{name}}.",
+	"editor.idMovingNotes": "Бележките ви не се променят. Те приемат стила на този callout.",
 	"editor.idFromTheme":
 		"{{theme}} вече предоставя callout с това ID, затова Callout Studio не може да го стилизира. Изберете друго ID.",
 	"editor.namesFromTheme":
@@ -347,6 +356,34 @@ export const bg: Record<string, string> = {
 		"Лек вятър полюшва дърветата.",
 	"editor.sampleInlineText": "Ето вградена [!{id}] капсула вътре в абзац.",
 	"editor.previewReadOnly": "Прегледът на живо не може да се редактира",
+	"noteChanges.title": "Да се актуализират ли бележките ви?",
+	"noteChanges.uses":
+		"„{{id}}“ се среща {{count}} път/пъти в {{files}} бележка(и).",
+	"noteChanges.usesUnknown": "Някои бележки може да използват „{{id}}“.",
+	"noteChanges.leave": "Оставяне както са",
+	"noteChanges.leaveDesc":
+		"Запазват [!{{id}}] и се връщат към стила по подразбиране.",
+	"noteChanges.changeTo": "Промени ги на",
+	"noteChanges.changeToLabel": "Callout, на който да се промени „{{id}}“",
+	"noteChanges.undoHint": "Можете да отмените това.",
+	"noteChanges.renameChange": "Промени ги на „{{id}}“",
+	"noteChanges.renameChangeDesc":
+		"Заглавията, които гласят „{{old}}“, стават „{{new}}“. Можете да отмените това.",
+	"noteChanges.renameKeep": "Запази „{{id}}“ като друг идентификатор",
+	"noteChanges.renameKeepDesc": "Бележките ви не се променят и запазват стила на този callout.",
+	"noteChanges.renameKeepFull": "Този callout вече има максималния брой от {{max}} идентификатора.",
+	"noteChanges.titlesUses":
+		"{{count}} заглавие/я в {{files}} бележка(и) гласят „{{old}}“.",
+	"noteChanges.titlesUnknown": "Някои заглавия може да гласят „{{old}}“.",
+	"noteChanges.titlesChange": "Промени ги на „{{new}}“",
+	"noteChanges.titlesLeaveDesc": "Продължават да гласят „{{old}}“.",
+	"noteChanges.foldUses":
+		"{{count}} callout(а) в {{files}} бележка(и) са настроени да се свиват по различен начин.",
+	"noteChanges.foldUnknown":
+		"Някои callout-и може да са настроени да се свиват по различен начин.",
+	"noteChanges.foldChange": "Задай ги на „{{state}}“",
+	"noteChanges.foldLeaveDesc":
+		"Само callout-ите, които вмъквате отсега нататък, използват новата настройка.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -754,6 +791,8 @@ export const bg: Record<string, string> = {
 		"Актуализирани са {{count}} ID/та на callout в файловете на хранилището: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"Актуализирани са {{count}} заглавие/а на callout в файловете на хранилището: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Актуализирана е маркировката за свиване на {{count}} callout(а) във файловете на хранилището.",
 	"vault.replaceWith": "Замяна с:",
 	"vault.deleteWithout": "Изтриване без замяна",
 	"vault.confirmDelete": "Потвърждаване",
@@ -1448,4 +1487,33 @@ export const bg: Record<string, string> = {
 	"settings.versions": "По-ранни версии",
 	"settings.versionsDesc": "Callout Studio автоматично записва версии на конфигурацията ви.\nСравнявайте ги или се върнете към някоя от тях.",
 	"settings.versionsButton": "Преглед на версиите",
+	"noteChanges.callouts": "{{count}} callout-а",
+	"noteChanges.calloutsOne": "1 callout",
+	"noteChanges.notes": "{{count}} бележки",
+	"noteChanges.notesOne": "1 бележка",
+	"noteChanges.askCallout": "Какво да се случи с този callout?",
+	"noteChanges.askCallouts": "Какво да се случи с тези callout-и?",
+	"noteChanges.askTitle": "Какво да се случи с това заглавие?",
+	"noteChanges.askTitles": "Какво да се случи с тези заглавия?",
+	"noteChanges.removedLine": "Премахнахте идентификатора „{{id}}“ от {{name}}, но все още се използва от {{callouts}} в {{notes}}.",
+	"noteChanges.removedLineUnknown": "Премахнахте идентификатора „{{id}}“ от {{name}}, но някои бележки може все още да го използват.",
+	"noteChanges.moveTo": "Преместване на „{{id}}“ в друг callout",
+	"noteChanges.moveToDesc": "Бележките ви не се променят. Те приемат стила на избрания callout.",
+	"noteChanges.moveToLabel": "Callout, в който да се премести „{{id}}“",
+	"noteChanges.moveNoRoom": "Всеки друг callout вече има максималния брой от {{max}} идентификатора.",
+	"noteChanges.rewrite": "Промяна в бележките ви",
+	"noteChanges.rewriteDesc": "Всеки [!{{id}}] във вашите бележки става [!{{to}}].",
+	"noteChanges.renamedLine": "Преименувахте „{{old}}“ на „{{new}}“, затова идентификаторът му се променя от „{{oldId}}“ на „{{newId}}“. Старият идентификатор все още се използва от {{callouts}} в {{notes}}.",
+	"noteChanges.renamedLineUnknown": "Преименувахте „{{old}}“ на „{{new}}“, затова идентификаторът му се променя от „{{oldId}}“ на „{{newId}}“. Някои бележки може все още да използват стария идентификатор.",
+	"noteChanges.idChangedLine": "Идентификаторът на този callout се променя от „{{oldId}}“ на „{{newId}}“. Старият идентификатор все още се използва от {{callouts}} в {{notes}}.",
+	"noteChanges.idChangedLineUnknown": "Идентификаторът на този callout се променя от „{{oldId}}“ на „{{newId}}“. Някои бележки може все още да използват стария идентификатор.",
+	"noteChanges.renameFollowDesc": "Всеки [!{{oldId}}] във вашите бележки става [!{{newId}}], а заглавията „{{old}}“ стават „{{new}}“.",
+	"noteChanges.renameFollowDescIdOnly": "Всеки [!{{oldId}}] във вашите бележки става [!{{newId}}].",
+	"noteChanges.titlesLine": "Преименувахте „{{old}}“ на „{{new}}“. Старото име все още е заглавие на {{callouts}} в {{notes}}.",
+	"noteChanges.titlesLineUnknown": "Преименувахте „{{old}}“ на „{{new}}“. Някои callout-и във вашите бележки може все още да имат старото име като заглавие.",
+	"noteChanges.titlesChangeDesc": "Заглавията „{{old}}“ стават „{{new}}“.",
+	"noteChanges.foldLine": "Променихте начина, по който този callout се свива. Различна отметка за свиване е зададена при {{callouts}} в {{notes}}.",
+	"noteChanges.foldLineUnknown": "Променихте начина, по който този callout се свива. Някои callout-и във вашите бележки може да имат различна отметка за свиване.",
+	"noteChanges.foldChangeDesc": "Тяхната отметка + или - се променя съответно.",
+	"editor.idGiveFailed": "„{{id}}“ не можа да бъде преместен в {{name}}, затова бележките, които го използват, се връщат към стила по подразбиране.",
 };

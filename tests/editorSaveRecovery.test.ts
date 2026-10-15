@@ -7,6 +7,8 @@ import { SettingsWriter } from "../src/manager/SettingsWriter";
 import { CalloutEditor } from "../src/settings/CalloutEditor";
 import { EditorSaveSession } from "../src/settings/editor/EditorSaveSession";
 import { stageRenameAliases } from "../src/settings/editor/calloutVaultSavePlan";
+import { defaultNoteChoices, pendingNoteChangesFor } from "../src/settings/editor/noteChanges";
+import type { NoteChangesAnswer } from "../src/settings/editor/NoteChangesModal";
 import { performCalloutEditorSave, type CalloutEditorSaveState } from "../src/settings/editor/CalloutEditorSave";
 import type { CalloutEditorPlugin } from "../src/settings/editor/types";
 import type { PluginData } from "../src/types";
@@ -56,6 +58,7 @@ function recoveryHarness(notes = { "a.md": "> [!old] Old", "b.md": "> [!old] Old
 	writer.adopt(JSON.stringify(state.disk));
 	const plugin = { app, registry, get settings() { return registry.settings; }, settingsWriter: writer,
 		settingsEditOpen: true, saveSettings: () => writer.save(), ensureIconArtwork: () => Promise.resolve(),
+		refreshCallouts: () => undefined,
 		customCommands: { migrateCalloutId: () => undefined },
 	} as unknown as CalloutEditorPlugin;
 	registry.onChange(() => { void writer.save().catch(() => undefined); });
@@ -63,14 +66,19 @@ function recoveryHarness(notes = { "a.md": "> [!old] Old", "b.md": "> [!old] Old
 	let existingId = "old";
 	const save = (over: Partial<CalloutEditorSaveState> = {}) => session.run(plugin, () => {
 		state.applied++;
+		const form: CalloutEditorSaveState = { displayName: "New", calloutId: "new", icon: { type: "lucide", value: "star" },
+			hideIcon: false, colorLight: "#336699", colorDark: "#88bbee", bgColorLight: "", bgColorDark: "",
+			transparentBg: false, textColorLight: DEFAULT_TEXT_COLOR_LIGHT, textColorDark: DEFAULT_TEXT_COLOR_DARK,
+			foldable: true, defaultFolded: false, iconOffsetX: 0, iconOffsetY: 0, iconSize: 1, aliases: [], ...over };
 		return performCalloutEditorSave({
 			app, plugin, existingId, isBuiltIn: false, baselineDef: registry.get(existingId),
-			state: { displayName: "New", calloutId: "new", icon: { type: "lucide", value: "star" },
-				hideIcon: false, colorLight: "#336699", colorDark: "#88bbee", bgColorLight: "", bgColorDark: "",
-				transparentBg: false, textColorLight: DEFAULT_TEXT_COLOR_LIGHT, textColorDark: DEFAULT_TEXT_COLOR_DARK,
-				foldable: true, defaultFolded: false, iconOffsetX: 0, iconOffsetY: 0, iconSize: 1, aliases: [], ...over },
+			state: form,
 			hasStyleChanges: true, saveAsFallback: false, overwriteAutoFallback: false,
 			canUseCalloutId: () => true, getFallbackBase: () => registry.get("note"),
+			// The user took the question's preselected answers: the notes follow
+			// the rename, as they always did.
+			noteChoices: defaultNoteChoices(pendingNoteChangesFor(registry, existingId, form)),
+			announceNoteRewrite: () => undefined,
 			onDefinitionApplied: (def) => { existingId = def.id; },
 			onVaultChangesReady: (plan) => session.applyVaultChanges(plugin, plan),
 		});
@@ -148,7 +156,8 @@ describe("editor rename work survives failed saves and partial note rewrites", (
 	it("finishes partial A→B before applying a later B→C edit", async () => {
 		const h = recoveryHarness(); h.state.failProcess = (path) => path === "b.md";
 		assert.equal(await h.save(), null);
-		assert.equal(h.contents.get("a.md"), "> [!new] Old");
+		// The title pass runs first, over the ids the notes carry before the rewrite.
+		assert.equal(h.contents.get("a.md"), "> [!old] New");
 		assert.equal(h.contents.get("b.md"), "> [!old] Old");
 		const restart = new CalloutRegistry(); restart.load(h.state.disk);
 		assert.equal(restart.findByAlias("old")?.id, "new", "old references still resolve after a crash/restart");
@@ -172,11 +181,11 @@ describe("editor rename work survives failed saves and partial note rewrites", (
 		assert.equal(h.state.disk.callouts.find((row) => row.id === "new")?.aliases, undefined);
 		assert.deepEqual([...h.contents.values()], ["> [!new] New", "> [!new] New"]);
 	});
-	it("retries an unfinished title phase after the id phase succeeded", async () => {
+	it("retries an unfinished title phase, then rewrites the ids", async () => {
 		const h = recoveryHarness(); h.state.failProcess = (path, next) => path === "b.md" && next.endsWith("New");
 		assert.equal(await h.save(), null);
-		assert.equal(h.contents.get("a.md"), "> [!new] New");
-		assert.equal(h.contents.get("b.md"), "> [!new] Old");
+		assert.equal(h.contents.get("a.md"), "> [!old] New");
+		assert.equal(h.contents.get("b.md"), "> [!old] Old", "no id is rewritten before every title is");
 		h.state.failProcess = null;
 		assert.ok(await h.save());
 		assert.deepEqual([...h.contents.values()], ["> [!new] New", "> [!new] New"]);
@@ -192,8 +201,14 @@ describe("editor rename work survives failed saves and partial note rewrites", (
 		h.state.beforeRead = () => { started.release(); return finish.promise; };
 		const editor = new CalloutEditor(h.plugin, h.registry.get("old"));
 		const shell = { findAll: () => [], removeClasses: () => undefined, removeClass: () => undefined };
+		// The user answers the question at once, following the rename — so the
+		// first note read is the rewrite's, which is where the gate waits.
+		const followRename: NoteChangesAnswer = {
+			choices: { rewrite: new Map([["old", { kind: "self" }]]), titles: true, fold: true }, keep: [], give: [],
+		};
 		Object.assign(editor, { app: h.app, editorOpen: true, calloutId: "new", displayName: "New",
-			saveSession: h.session, contentEl: { empty: () => undefined }, modalEl: shell, containerEl: shell });
+			saveSession: h.session, contentEl: { empty: () => undefined }, modalEl: shell, containerEl: shell,
+			askNoteChanges: () => Promise.resolve(followRename) });
 		const saving = (editor as unknown as { save(): Promise<void> }).save();
 		await started.promise;
 		editor.onClose();

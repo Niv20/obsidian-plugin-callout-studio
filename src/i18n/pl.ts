@@ -357,6 +357,15 @@ export const pl: Record<string, string> = {
 		"Uwaga: Twój motyw stylizuje każdy callout pasujący do {{pattern}}, więc może zmienić wygląd tego callout.",
 	"editor.idDashConflict":
 		"Obsidian zapisuje spacje jako myślniki, więc to ID koliduje z „{{other}}”",
+	"editor.idOwnedBy":
+		"„{{id}}” jest jednym z ID calloutu {{name}}. Możesz {{link}}.",
+	"editor.idMoveHere": "przenieść je tutaj",
+	"editor.idOwnedByMain":
+		"„{{id}}” jest głównym ID calloutu {{name}}. Aby użyć go tutaj, najpierw usuń {{name}}.",
+	"editor.idBuiltInStock":
+		"„{{id}}” jest jednym z własnych ID Obsidiana dla {{name}}.",
+	"editor.idMoving": "Po zapisaniu „{{id}}” przeniesie się tutaj z {{name}}.",
+	"editor.idMovingNotes": "Twoje notatki się nie zmieniają. Przyjmą styl tego calloutu.",
 	"editor.untitledCallout": "Callout bez tytułu",
 	"editor.loremIpsum":
 		"Lekki wiatr porusza gałęziami drzew. Ciepłe światło słońca rozjaśnia cichą ścieżkę i ożywia krajobraz.",
@@ -365,6 +374,33 @@ export const pl: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Oto wbudowana pigułka [!{id}] wewnątrz akapitu.",
 	"editor.previewReadOnly": "Podglądu na żywo nie można edytować",
+	"noteChanges.title": "Zaktualizować Twoje notatki?",
+	"noteChanges.uses":
+		"„{{id}}” występuje {{count}} raz(y) w {{files}} notatk(ach).",
+	"noteChanges.usesUnknown": "Niektóre notatki mogą używać „{{id}}”.",
+	"noteChanges.leave": "Zostaw je bez zmian",
+	"noteChanges.leaveDesc": "Zachowają [!{{id}}] i wrócą do stylu domyślnego.",
+	"noteChanges.changeTo": "Zmień na",
+	"noteChanges.changeToLabel": "Callout, na który zmienić „{{id}}”",
+	"noteChanges.undoHint": "Możesz to cofnąć.",
+	"noteChanges.renameChange": "Zmień na „{{id}}”",
+	"noteChanges.renameChangeDesc":
+		"Tytuły o treści „{{old}}” zmienią się na „{{new}}”. Możesz to cofnąć.",
+	"noteChanges.renameKeep": "Zachowaj „{{id}}” jako dodatkowe ID",
+	"noteChanges.renameKeepDesc": "Twoje notatki się nie zmieniają i zachowują styl tego calloutu.",
+	"noteChanges.renameKeepFull": "Ten callout ma już maksymalną liczbę {{max}} identyfikatorów.",
+	"noteChanges.titlesUses":
+		"{{count}} tytuł(ów) w {{files}} notatk(ach) brzmi „{{old}}”.",
+	"noteChanges.titlesUnknown": "Niektóre tytuły mogą brzmieć „{{old}}”.",
+	"noteChanges.titlesChange": "Zmień na „{{new}}”",
+	"noteChanges.titlesLeaveDesc": "Nadal będą brzmieć „{{old}}”.",
+	"noteChanges.foldUses":
+		"{{count}} callout(ów) w {{files}} notatk(ach) ma ustawione inne zwijanie.",
+	"noteChanges.foldUnknown":
+		"Niektóre callouty mogą mieć ustawione inne zwijanie.",
+	"noteChanges.foldChange": "Ustaw na „{{state}}”",
+	"noteChanges.foldLeaveDesc":
+		"Nowe ustawienie stosują tylko callouty wstawiane od teraz.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -772,6 +808,8 @@ export const pl: Record<string, string> = {
 		"Zaktualizowano {{count}} ID callout w plikach vault: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"Zaktualizowano {{count}} tytuł(ów) callout w plikach vault: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Zaktualizowano znacznik zwijania {{count}} callout(ów) w plikach vault.",
 	"vault.replaceWith": "Zastąp przez:",
 	"vault.deleteWithout": "Usuń bez zastępowania",
 	"vault.confirmDelete": "Potwierdź",
@@ -1484,4 +1522,33 @@ export const pl: Record<string, string> = {
 	"settings.versions": "Wcześniejsze wersje",
 	"settings.versionsDesc": "Callout Studio automatycznie zapisuje wersje Twojej konfiguracji.\nPorównuj je lub wróć do jednej z nich.",
 	"settings.versionsButton": "Wyświetl wersje",
+	"noteChanges.callouts": "{{count}}",
+	"noteChanges.calloutsOne": "1",
+	"noteChanges.notes": "{{count}}",
+	"noteChanges.notesOne": "1",
+	"noteChanges.askCallout": "Co zrobić z tym calloutem?",
+	"noteChanges.askCallouts": "Co zrobić z tymi calloutami?",
+	"noteChanges.askTitle": "Co zrobić z tym tytułem?",
+	"noteChanges.askTitles": "Co zrobić z tymi tytułami?",
+	"noteChanges.removedLine": "Usunięto ID „{{id}}” z {{name}}, ale nadal jest używany: calloutów {{callouts}}, notatek {{notes}}.",
+	"noteChanges.removedLineUnknown": "Usunięto ID „{{id}}” z {{name}}, ale niektóre notatki mogą nadal go używać.",
+	"noteChanges.moveTo": "Przenieś „{{id}}” do innego calloutu",
+	"noteChanges.moveToDesc": "Twoje notatki się nie zmieniają. Przyjmą styl wybranego calloutu.",
+	"noteChanges.moveToLabel": "Callout, do którego przenieść „{{id}}”",
+	"noteChanges.moveNoRoom": "Każdy inny callout ma już maksymalną liczbę {{max}} identyfikatorów.",
+	"noteChanges.rewrite": "Zmień je w Twoich notatkach",
+	"noteChanges.rewriteDesc": "Każde [!{{id}}] w Twoich notatkach zmieni się w [!{{to}}].",
+	"noteChanges.renamedLine": "Zmieniono nazwę „{{old}}” na „{{new}}”, więc jego identyfikator zmienia się z „{{oldId}}” na „{{newId}}”. Stary identyfikator jest nadal używany: calloutów {{callouts}}, notatek {{notes}}.",
+	"noteChanges.renamedLineUnknown": "Zmieniono nazwę „{{old}}” na „{{new}}”, więc jego identyfikator zmienia się z „{{oldId}}” na „{{newId}}”. Niektóre notatki mogą nadal używać starego identyfikatora.",
+	"noteChanges.idChangedLine": "Identyfikator tego calloutu zmienia się z „{{oldId}}” na „{{newId}}”. Stary identyfikator jest nadal używany: calloutów {{callouts}}, notatek {{notes}}.",
+	"noteChanges.idChangedLineUnknown": "Identyfikator tego calloutu zmienia się z „{{oldId}}” na „{{newId}}”. Niektóre notatki mogą nadal używać starego identyfikatora.",
+	"noteChanges.renameFollowDesc": "Każde [!{{oldId}}] w Twoich notatkach zmieni się w [!{{newId}}], a tytuły o treści „{{old}}” zmienią się w „{{new}}”.",
+	"noteChanges.renameFollowDescIdOnly": "Każde [!{{oldId}}] w Twoich notatkach zmieni się w [!{{newId}}].",
+	"noteChanges.titlesLine": "Zmieniono nazwę „{{old}}” na „{{new}}”. Stara nazwa jest nadal tytułem: calloutów {{callouts}}, notatek {{notes}}.",
+	"noteChanges.titlesLineUnknown": "Zmieniono nazwę „{{old}}” na „{{new}}”. Niektóre callouty w Twoich notatkach mogą nadal mieć starą nazwę jako tytuł.",
+	"noteChanges.titlesChangeDesc": "Tytuły o treści „{{old}}” zmienią się w „{{new}}”.",
+	"noteChanges.foldLine": "Zmieniono sposób zwijania tego calloutu. Inny znacznik zwijania jest ustawiony: calloutów {{callouts}}, notatek {{notes}}.",
+	"noteChanges.foldLineUnknown": "Zmieniono sposób zwijania tego calloutu. Niektóre callouty w Twoich notatkach mogą mieć inny znacznik zwijania.",
+	"noteChanges.foldChangeDesc": "Ich znak + lub - zmieni się odpowiednio.",
+	"editor.idGiveFailed": "Nie udało się przenieść „{{id}}” do {{name}}, więc notatki, które go używają, wracają do stylu domyślnego.",
 };

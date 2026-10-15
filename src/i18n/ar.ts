@@ -342,6 +342,14 @@ export const ar: Record<string, string> = {
 	"editor.idConflict": "هذا المعرّف يتعارض مع callout موجود",
 	"editor.idDashConflict":
 		'أوبسيديان يكتب المسافات كشرطات، لذلك يتعارض هذا المعرّف مع "{{other}}"',
+	"editor.idOwnedBy": '"{{id}}" هو أحد معرّفات {{name}}. يمكنك {{link}}.',
+	"editor.idMoveHere": "نقله إلى هنا",
+	"editor.idOwnedByMain":
+		'"{{id}}" هو المعرّف الرئيسي لـ {{name}}. لاستخدامه هنا، احذف {{name}} أولاً.',
+	"editor.idBuiltInStock":
+		'"{{id}}" أحد معرّفات Obsidian الخاصة بـ {{name}}.',
+	"editor.idMoving": 'عند الحفظ، سينتقل "{{id}}" إلى هنا من {{name}}.',
+	"editor.idMovingNotes": "لا تتغير ملاحظاتك. تأخذ نمط هذا الـ callout.",
 	"editor.idFromTheme":
 		"{{theme}} يوفّر بالفعل callout بهذا المعرّف، لذا لا يمكن لـ Callout Studio تنسيقه. اختر معرّفًا مختلفًا.",
 	"editor.namesFromTheme":
@@ -357,6 +365,31 @@ export const ar: Record<string, string> = {
 		"تداعب نسمة لطيفة أوراق الأشجار.",
 	"editor.sampleInlineText": "إليك شارة [!{id}] مضمّنة داخل فقرة.",
 	"editor.previewReadOnly": "لا يمكن تعديل المعاينة المباشرة",
+	"noteChanges.title": "هل تريد تحديث ملاحظاتك؟",
+	"noteChanges.uses": 'يظهر "{{id}}" {{count}} مرة في {{files}} ملاحظة.',
+	"noteChanges.usesUnknown": 'قد تستخدم بعض الملاحظات "{{id}}".',
+	"noteChanges.leave": "اتركها كما هي",
+	"noteChanges.leaveDesc": "تحتفظ بـ [!{{id}}] وتعود إلى النمط الافتراضي.",
+	"noteChanges.changeTo": "غيّرها إلى",
+	"noteChanges.changeToLabel": 'الـ callout الذي سيُستبدل به "{{id}}"',
+	"noteChanges.undoHint": "يمكنك التراجع عن هذا.",
+	"noteChanges.renameChange": 'غيّرها إلى "{{id}}"',
+	"noteChanges.renameChangeDesc":
+		'العناوين التي تقرأ "{{old}}" ستصبح "{{new}}". يمكنك التراجع عن هذا.',
+	"noteChanges.renameKeep": 'أبقِ "{{id}}" معرّفاً آخر',
+	"noteChanges.renameKeepDesc": "لا تتغير ملاحظاتك وتحتفظ بنمط هذا الـ callout.",
+	"noteChanges.renameKeepFull": "وصل هذا الـ callout بالفعل إلى الحد الأقصى وهو {{max}} من المعرّفات.",
+	"noteChanges.titlesUses":
+		'{{count}} عنوان في {{files}} ملاحظة يقرأ "{{old}}".',
+	"noteChanges.titlesUnknown": 'قد تقرأ بعض العناوين "{{old}}".',
+	"noteChanges.titlesChange": 'غيّرها إلى "{{new}}"',
+	"noteChanges.titlesLeaveDesc": 'تبقى تقرأ "{{old}}".',
+	"noteChanges.foldUses":
+		"{{count}} من الـ callout في {{files}} ملاحظة مضبوطة على طيّ مختلف.",
+	"noteChanges.foldUnknown": "قد تكون بعض الـ callout مضبوطة على طيّ مختلف.",
+	"noteChanges.foldChange": 'اضبطها على "{{state}}"',
+	"noteChanges.foldLeaveDesc":
+		"فقط الـ callout التي تُدرجها من الآن فصاعداً تستخدم الإعداد الجديد.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -764,6 +797,8 @@ export const ar: Record<string, string> = {
 		"تم تحديث {{count}} معرّف callout في ملفات المخزن: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"تم تحديث {{count}} عنوان callout في ملفات المخزن: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"تم تحديث علامة الطيّ لـ {{count}} callout في ملفات المخزن.",
 	"vault.replaceWith": "الاستبدال بـ:",
 	"vault.deleteWithout": "حذف بدون استبدال",
 	"vault.confirmDelete": "تأكيد",
@@ -1450,4 +1485,33 @@ export const ar: Record<string, string> = {
 	"settings.versions": "الإصدارات السابقة",
 	"settings.versionsDesc": "يحفظ Callout Studio إصدارات من إعداداتك تلقائيًا.\nقارن بينها أو ارجع إلى أحدها.",
 	"settings.versionsButton": "عرض الإصدارات",
+	"noteChanges.callouts": "{{count}} من الـ callout",
+	"noteChanges.calloutsOne": "callout واحد",
+	"noteChanges.notes": "{{count}} من الملاحظات",
+	"noteChanges.notesOne": "ملاحظة واحدة",
+	"noteChanges.askCallout": "ماذا يجب أن يحدث لذلك الـ callout؟",
+	"noteChanges.askCallouts": "ماذا يجب أن يحدث لتلك الـ callout؟",
+	"noteChanges.askTitle": "ماذا يجب أن يحدث لذلك العنوان؟",
+	"noteChanges.askTitles": "ماذا يجب أن يحدث لتلك العناوين؟",
+	"noteChanges.removedLine": "أزلت المعرّف \"{{id}}\" من {{name}}، لكنه ما زال مستخدمًا في {{callouts}} داخل {{notes}}.",
+	"noteChanges.removedLineUnknown": "أزلت المعرّف \"{{id}}\" من {{name}}، لكن بعض الملاحظات قد تظل تستخدمه.",
+	"noteChanges.moveTo": "نقل \"{{id}}\" إلى callout آخر",
+	"noteChanges.moveToDesc": "لا تتغير ملاحظاتك. تأخذ نمط الـ callout الذي تختاره.",
+	"noteChanges.moveToLabel": "الـ callout الذي سيُنقل إليه \"{{id}}\"",
+	"noteChanges.moveNoRoom": "كل callout آخر وصل بالفعل إلى الحد الأقصى وهو {{max}} من المعرّفات.",
+	"noteChanges.rewrite": "تغييرها في ملاحظاتك",
+	"noteChanges.rewriteDesc": "كل [!{{id}}] في ملاحظاتك يصبح [!{{to}}].",
+	"noteChanges.renamedLine": "غيّرت اسم \"{{old}}\" إلى \"{{new}}\"، لذا يتغير معرّفه من \"{{oldId}}\" إلى \"{{newId}}\". ما زال المعرّف القديم مستخدمًا في {{callouts}} داخل {{notes}}.",
+	"noteChanges.renamedLineUnknown": "غيّرت اسم \"{{old}}\" إلى \"{{new}}\"، لذا يتغير معرّفه من \"{{oldId}}\" إلى \"{{newId}}\". قد تظل بعض الملاحظات تستخدم المعرّف القديم.",
+	"noteChanges.idChangedLine": "يتغير معرّف هذا الـ callout من \"{{oldId}}\" إلى \"{{newId}}\". ما زال المعرّف القديم مستخدمًا في {{callouts}} داخل {{notes}}.",
+	"noteChanges.idChangedLineUnknown": "يتغير معرّف هذا الـ callout من \"{{oldId}}\" إلى \"{{newId}}\". قد تظل بعض الملاحظات تستخدم المعرّف القديم.",
+	"noteChanges.renameFollowDesc": "كل [!{{oldId}}] في ملاحظاتك يصبح [!{{newId}}]، وتتحول العناوين التي تحمل \"{{old}}\" إلى \"{{new}}\".",
+	"noteChanges.renameFollowDescIdOnly": "كل [!{{oldId}}] في ملاحظاتك يصبح [!{{newId}}].",
+	"noteChanges.titlesLine": "غيّرت اسم \"{{old}}\" إلى \"{{new}}\". ما زال الاسم القديم عنوانًا لـ {{callouts}} داخل {{notes}}.",
+	"noteChanges.titlesLineUnknown": "غيّرت اسم \"{{old}}\" إلى \"{{new}}\". قد يظل الاسم القديم عنوانًا لبعض الـ callout في ملاحظاتك.",
+	"noteChanges.titlesChangeDesc": "تتحول العناوين التي تحمل \"{{old}}\" إلى \"{{new}}\".",
+	"noteChanges.foldLine": "غيّرت طريقة طيّ هذا الـ callout. هناك علامة طيّ مختلفة في {{callouts}} داخل {{notes}}.",
+	"noteChanges.foldLineUnknown": "غيّرت طريقة طيّ هذا الـ callout. قد تكون لبعض الـ callout في ملاحظاتك علامة طيّ مختلفة.",
+	"noteChanges.foldChangeDesc": "تتغير علامة + أو - فيها لتتوافق.",
+	"editor.idGiveFailed": "تعذّر نقل \"{{id}}\" إلى {{name}}، لذا تعود الملاحظات التي تستخدمه إلى النمط الافتراضي.",
 };

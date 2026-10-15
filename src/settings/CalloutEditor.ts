@@ -66,8 +66,12 @@ import {
 	shouldSaveNewTokenCalloutAsFallback,
 } from "./editor/CalloutEditorValidation";
 import { renderCalloutEditorIconPreview } from "./editor/CalloutEditorIconRenderer";
-import { performCalloutEditorSave } from "./editor/CalloutEditorSave";
+import { performCalloutEditorSave, type CalloutEditorSaveState } from "./editor/CalloutEditorSave";
 import { EditorSaveSession } from "./editor/EditorSaveSession";
+import { askNoteChanges } from "./editor/askNoteChanges";
+import type { NoteChangesAnswer } from "./editor/NoteChangesModal";
+import { idOwnership, type IdMove } from "./editor/idMoves";
+import type { TagMessage } from "../ui/TagInput";
 import {
 	hasAuthoredBackground,
 	hasAuthoredTextColors,
@@ -84,7 +88,7 @@ import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
 import { activeThemeName } from "../manager/theme/customCssApi";
 import { patternMatches } from "../manager/theme/themeClaimLookup";
 import type { PatternOp } from "../manager/theme/themeCalloutScan";
-import { obsidianCalloutAttrId } from "../utils/calloutId";
+import { calloutIdentity, obsidianCalloutAttrId } from "../utils/calloutId";
 
 // Derive a callout ID from the display name. Spaces are preserved (the ID may
 // be a human-readable, multi-word label like "multi word callout"); the shared
@@ -292,6 +296,12 @@ export class CalloutEditor extends Modal {
 	private previewColorOverride: EditorColorState | null = null;
 	private previewFoldCollapsed = false;
 	private idsTagInput: TagInput | null = null;
+	/**
+	 * Ids this callout takes from other callouts on Save — the user chose
+	 * "move it here" — keyed by identity. Validation treats them as free; an
+	 * entry goes as soon as its id leaves the field. See ./editor/idMoves.
+	 */
+	private readonly idMoves = new Map<string, IdMove>();
 	private nameTextInput: TextComponent | null = null;
 	/** The last display name auto-filled live from ID-field typing (reverse link). */
 	private idDrivenName = "";
@@ -550,14 +560,15 @@ export class CalloutEditor extends Modal {
 					!this.isBuiltIn &&
 					this.idsTagInput?.getPinnedTag() == null;
 				const role = willBePinned ? "primary" : "alias";
-				if (!this.canUseCalloutId(tag, role)) {
-					return t("editor.idConflict");
-				}
 				const clash = this.findAttrIdCollision(tag);
-				if (clash) {
-					return t("editor.idDashConflict", { other: clash });
-				}
-				return null;
+				if (this.canUseCalloutId(tag, role) && !clash) return null;
+				// Name the callout that has it — and offer to move it here when
+				// it can come: the field then takes it with no further check.
+				const taken = this.takenIdMessage(tag, () => this.idsTagInput?.addTagUnchecked(tag));
+				if (taken) return taken;
+				return clash
+					? t("editor.idDashConflict", { other: clash })
+					: t("editor.idConflict");
 			},
 		});
 		if (originalDef) {
@@ -1575,15 +1586,31 @@ export class CalloutEditor extends Modal {
 		});
 	}
 
+	/**
+	 * The registry as the id checks below see it: an id this callout is taking
+	 * from another on Save counts as free, since by then it will be.
+	 */
+	private idLookups(): {
+		getById: (id: string) => CalloutDefinition | undefined;
+		findByAlias: (id: string) => CalloutDefinition | undefined;
+		findAttrIdConflict: (id: string) => CalloutDefinition | undefined;
+	} {
+		const { registry } = this.plugin;
+		const moved = (id: string): boolean => this.idMoves.has(calloutIdentity(id));
+		return {
+			getById: (id) => (moved(id) ? undefined : registry.getReal(id)),
+			findByAlias: (id) => (moved(id) ? undefined : registry.findByAlias(id)),
+			findAttrIdConflict: (id) => (moved(id) ? undefined : registry.findAttrIdConflict(id, this.existingId)),
+		};
+	}
+
 	private canUseCalloutId(id: string, role: "primary" | "alias"): boolean {
 		return canUseCalloutId({
 			createFromToken: this.createFromToken,
 			existingId: this.existingId,
 			id,
 			role,
-			getById: (targetId) => this.plugin.registry.getReal(targetId),
-			findByAlias: (targetId) =>
-				this.plugin.registry.findByAlias(targetId),
+			...this.idLookups(),
 		});
 	}
 
@@ -1597,11 +1624,7 @@ export class CalloutEditor extends Modal {
 		return findAttrIdCollision({
 			existingId: this.existingId,
 			id,
-			findAttrIdConflict: (targetId) =>
-				this.plugin.registry.findAttrIdConflict(
-					targetId,
-					this.existingId,
-				),
+			findAttrIdConflict: this.idLookups().findAttrIdConflict,
 		});
 	}
 
@@ -1613,14 +1636,70 @@ export class CalloutEditor extends Modal {
 			displayName: this.displayName,
 			calloutId: this.calloutId,
 			aliases: this.aliases,
-			getById: (targetId) => this.plugin.registry.getReal(targetId),
-			findByAlias: (targetId) =>
-				this.plugin.registry.findByAlias(targetId),
-			findAttrIdConflict: (targetId) =>
-				this.plugin.registry.findAttrIdConflict(
-					targetId,
-					this.existingId,
-				),
+			...this.idLookups(),
+		});
+	}
+
+	/**
+	 * Why `id` cannot just be used here, naming the callout that has it; null
+	 * when nothing does. When it may come here, the message carries the way:
+	 * "move it here" records the move and calls `onMove`. See ./editor/idMoves
+	 * for what may move.
+	 */
+	private takenIdMessage(id: string, onMove: () => void): TagMessage | null {
+		const owner = idOwnership(this.plugin.registry, id, this.existingId);
+		switch (owner.kind) {
+			case "free":
+				return null;
+			case "theme":
+				return t("editor.idFromTheme", {
+					theme: activeThemeName(this.plugin.app) ?? t("settings.themeCalloutsDefaultTheme"),
+				});
+			case "stock":
+				return t("editor.idBuiltInStock", { id, name: owner.owner.displayName });
+			case "main":
+				return t("editor.idOwnedByMain", { id, name: owner.owner.displayName });
+			case "movable":
+				return (el) => {
+					const line = renderInlineLinkHint(el, {
+						textKey: "editor.idOwnedBy",
+						linkKey: "editor.idMoveHere",
+						vars: { id, name: owner.owner.displayName },
+						onClick: () => {
+							this.idMoves.set(calloutIdentity(id), {
+								id, from: owner.owner.id, removeRow: owner.removeRow,
+							});
+							onMove();
+						},
+					});
+					// Pressing it must not blur the field first: a blur commits the
+					// typed id again, and the message would be redrawn from under
+					// the pointer before the click lands — as the + guards itself.
+					line.querySelector("button")?.addEventListener("mousedown", (evt) => evt.preventDefault());
+				};
+		}
+	}
+
+	/** Forget a move once its id has left the field again. */
+	private pruneIdMoves(): void {
+		const present = new Set([this.calloutId, ...this.aliases].map(calloutIdentity));
+		for (const key of [...this.idMoves.keys()]) {
+			if (!present.has(key)) this.idMoves.delete(key);
+		}
+	}
+
+	/** The note under the ids while some are moving here on Save. */
+	private movingNote(): TagMessage | null {
+		const moves = [...this.idMoves.values()];
+		if (moves.length === 0) return null;
+		const lines = moves.map((move) => t("editor.idMoving", {
+			id: move.id,
+			name: this.plugin.registry.getReal(move.from)?.displayName ?? move.from,
+		}));
+		lines.push(t("editor.idMovingNotes"));
+		return (el) => lines.forEach((line, index) => {
+			if (index > 0) el.createEl("br");
+			el.appendText(line);
 		});
 	}
 
@@ -1736,6 +1815,7 @@ export class CalloutEditor extends Modal {
 
 	private updateIdWarning(): void {
 		if (!this.idsTagInput) return;
+		this.pruneIdMoves();
 
 		if (!this.calloutId) {
 			if (this.hasHadCalloutId) {
@@ -1755,7 +1835,9 @@ export class CalloutEditor extends Modal {
 			// the row would land under *Callouts from your theme*, read-only,
 			// which looks like the editor silently discarding the work. Saying
 			// "already exists" there sends the user looking for a callout of
-			// their own that is not there.
+			// their own that is not there. An ordinary duplicate is named too,
+			// and when the id may come here — the name of a new callout typed
+			// over another's extra id — the message says how.
 			this.idsTagInput.showExternalError(
 				this.themeSuppliesId(this.calloutId)
 					? t("editor.idFromTheme", {
@@ -1763,7 +1845,11 @@ export class CalloutEditor extends Modal {
 								activeThemeName(this.plugin.app) ??
 								t("settings.themeCalloutsDefaultTheme"),
 						})
-					: t("editor.idExists"),
+					: this.takenIdMessage(this.calloutId, () => {
+							this.updateIdWarning();
+							this.updatePreview();
+							this.updateSaveState();
+						}) ?? t("editor.idExists"),
 			);
 			return;
 		}
@@ -1829,6 +1915,12 @@ export class CalloutEditor extends Modal {
 			return;
 		}
 
+		// Nothing wrong: say what Save will do with any id moving here.
+		const moving = this.movingNote();
+		if (moving) {
+			this.idsTagInput.showExternalNote(moving);
+			return;
+		}
 		this.idsTagInput.clearExternalError();
 	}
 
@@ -2074,48 +2166,93 @@ export class CalloutEditor extends Modal {
 		});
 	}
 
+	/**
+	 * Count what the notes hold and, when Save would change any of it, ask —
+	 * see ./editor/askNoteChanges. Null: back to the editor, nothing saved.
+	 * An instance method so a test can answer in the window's place.
+	 */
+	private askNoteChanges(
+		state: CalloutEditorSaveState,
+		moves: readonly IdMove[],
+		before: string,
+	): Promise<NoteChangesAnswer | null> {
+		return askNoteChanges({
+			app: this.app,
+			registry: this.plugin.registry,
+			existingId: this.existingId,
+			state,
+			moves,
+			// Counting can take a moment on a large vault. A form edited
+			// meanwhile is the next Save's; a closed editor still asks, since
+			// Save was pressed and closing never cancelled one.
+			stillWanted: () => !this.editorOpen || this.stateSnapshot() === before,
+		});
+	}
+
 	private async save(): Promise<void> {
 		if (this.saveSession.busy) return;
 		const before = this.stateSnapshot();
-		// Hover colours and transient previews must never become committed data.
+		// What is saved is the form as it stood when Save was pressed: the
+		// question about the notes comes first, and an edit made while it is
+		// counted belongs to the next Save.
+		const state: CalloutEditorSaveState = {
+			displayName: this.displayName,
+			calloutId: this.calloutId,
+			icon: this.icon,
+			hideIcon: this.hideIcon,
+			colorLight: this.colorLight,
+			colorDark: this.colorDark,
+			bgColorLight: this.bgColorLight,
+			bgColorDark: this.bgColorDark,
+			bgGradient: this.bgGradient,
+			transparentBg: this.transparentBg,
+			textColorLight: this.textColorLight,
+			textColorDark: this.textColorDark,
+			foldable: this.foldable,
+			defaultFolded: this.defaultFolded,
+			...this.iconAdjustState(),
+			aliases: [...this.aliases],
+			paletteId: this.paletteId,
+		};
+		const hasStyleChanges = this.hasStyleChanges();
+		const saveAsFallback = this.shouldSaveNewTokenCalloutAsFallback();
+		const overwriteAutoFallback = this.isOverwritingAutoFallbackRow();
+		// Only moves whose id is still in the field travel with the save.
+		this.pruneIdMoves();
+		const moves = [...this.idMoves.values()];
+		// Hover colours must never become committed data.
 		this.previewColorOverride = null;
-		this.plugin.registry.setPreviewDefinition(null);
-		const def = await this.saveSession.run(this.plugin, () => performCalloutEditorSave({
-			app: this.app,
-			plugin: this.plugin,
-			existingId: this.existingId,
-			isBuiltIn: this.isBuiltIn,
-			baselineDef: this.baselineDef,
-			state: {
-				displayName: this.displayName,
-				calloutId: this.calloutId,
-				icon: this.icon,
-				hideIcon: this.hideIcon,
-				colorLight: this.colorLight,
-				colorDark: this.colorDark,
-				bgColorLight: this.bgColorLight,
-				bgColorDark: this.bgColorDark,
-				bgGradient: this.bgGradient,
-				transparentBg: this.transparentBg,
-				textColorLight: this.textColorLight,
-				textColorDark: this.textColorDark,
-				foldable: this.foldable,
-				defaultFolded: this.defaultFolded,
-				...this.iconAdjustState(),
-				aliases: this.aliases,
-				paletteId: this.paletteId,
-			},
-			hasStyleChanges: this.hasStyleChanges(),
-			saveAsFallback: this.shouldSaveNewTokenCalloutAsFallback(),
-			overwriteAutoFallback: this.isOverwritingAutoFallbackRow(),
-			canUseCalloutId: (id, role) => this.canUseCalloutId(id, role),
-			getFallbackBase: () => this.getFallbackBase(),
-			onDefinitionApplied: (saved) => { this.existingId = saved.id; },
-			onVaultChangesReady: (plan, definition) => this.saveSession.applyVaultChanges(this.plugin, plan, definition),
-		}), () => {
+		const def = await this.saveSession.run(this.plugin, async () => {
+			const answer = await this.askNoteChanges(state, moves, before);
+			if (!answer) return null;
+			// Transient previews must never become committed data either. Cleared
+			// only now, so the question was asked over the callout as edited, and
+			// going back to the editor found the preview still standing.
+			this.plugin.registry.setPreviewDefinition(null);
+			return performCalloutEditorSave({
+				app: this.app,
+				plugin: this.plugin,
+				existingId: this.existingId,
+				isBuiltIn: this.isBuiltIn,
+				baselineDef: this.baselineDef,
+				// "Keep the old id as another id": it stays, so it is not leaving.
+				state: answer.keep.length > 0 ? { ...state, aliases: [...state.aliases, ...answer.keep] } : state,
+				hasStyleChanges,
+				saveAsFallback,
+				overwriteAutoFallback,
+				canUseCalloutId: (id, role) => this.canUseCalloutId(id, role),
+				getFallbackBase: () => this.getFallbackBase(),
+				noteChoices: answer.choices,
+				moves,
+				gives: answer.give,
+				onDefinitionApplied: (saved) => { this.existingId = saved.id; },
+				onVaultChangesReady: (plan, definition) => this.saveSession.applyVaultChanges(this.plugin, plan, definition),
+			});
+		}, () => {
 			if (this.editorOpen) this.updateSaveState();
 			else this.plugin.settingsEditOpen = this.saveSession.busy;
 		});
+		if (def) this.idMoves.clear();
 		if (!this.editorOpen) return;
 		if (!def || this.stateSnapshot() !== before) {
 			// Keep a failed save, or newer edits made during a save, available.

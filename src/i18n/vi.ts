@@ -400,6 +400,14 @@ export const vi: Record<string, string> = {
 	"editor.idConflict": "ID này xung đột với callout hiện có",
 	"editor.idDashConflict":
 		'Obsidian ghi khoảng trắng thành dấu gạch ngang, vì vậy ID này xung đột với "{{other}}"',
+	"editor.idOwnedBy": '"{{id}}" là một ID của {{name}}. Bạn có thể {{link}}.',
+	"editor.idMoveHere": "chuyển nó sang đây",
+	"editor.idOwnedByMain":
+		'"{{id}}" là ID chính của {{name}}. Để dùng ở đây, hãy xóa {{name}} trước.',
+	"editor.idBuiltInStock":
+		'"{{id}}" là một trong các ID riêng của Obsidian cho {{name}}.',
+	"editor.idMoving": 'Khi lưu, "{{id}}" sẽ chuyển sang đây từ {{name}}.',
+	"editor.idMovingNotes": "Các ghi chú của bạn không đổi. Chúng lấy kiểu của callout này.",
 
 	"editor.idFromTheme":
 		"{{theme}} đã cung cấp một callout với ID này, vì vậy Callout Studio không thể tạo kiểu cho nó. Hãy chọn một ID khác.",
@@ -418,6 +426,33 @@ export const vi: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Đây là một viên [!{id}] nội tuyến bên trong một đoạn văn.",
 	"editor.previewReadOnly": "Không thể chỉnh sửa bản xem trước trực tiếp",
+	"noteChanges.title": "Cập nhật các ghi chú của bạn?",
+	"noteChanges.uses":
+		'"{{id}}" xuất hiện {{count}} lần trong {{files}} ghi chú.',
+	"noteChanges.usesUnknown": 'Một số ghi chú có thể đang dùng "{{id}}".',
+	"noteChanges.leave": "Để nguyên",
+	"noteChanges.leaveDesc": "Chúng giữ [!{{id}}] và quay về kiểu mặc định.",
+	"noteChanges.changeTo": "Đổi thành",
+	"noteChanges.changeToLabel": 'Callout để đổi "{{id}}" thành',
+	"noteChanges.undoHint": "Bạn có thể hoàn tác thao tác này.",
+	"noteChanges.renameChange": 'Đổi thành "{{id}}"',
+	"noteChanges.renameChangeDesc":
+		'Các tiêu đề ghi "{{old}}" sẽ thành "{{new}}". Bạn có thể hoàn tác thao tác này.',
+	"noteChanges.renameKeep": 'Giữ "{{id}}" làm ID khác',
+	"noteChanges.renameKeepDesc": "Các ghi chú của bạn không đổi và giữ kiểu của callout này.",
+	"noteChanges.renameKeepFull": "Callout này đã đạt tối đa {{max}} ID.",
+	"noteChanges.titlesUses":
+		'{{count}} tiêu đề trong {{files}} ghi chú ghi "{{old}}".',
+	"noteChanges.titlesUnknown": 'Một số tiêu đề có thể ghi "{{old}}".',
+	"noteChanges.titlesChange": 'Đổi thành "{{new}}"',
+	"noteChanges.titlesLeaveDesc": 'Chúng vẫn ghi "{{old}}".',
+	"noteChanges.foldUses":
+		"{{count}} callout trong {{files}} ghi chú được đặt để thu gọn khác đi.",
+	"noteChanges.foldUnknown":
+		"Một số callout có thể được đặt để thu gọn khác đi.",
+	"noteChanges.foldChange": 'Đặt thành "{{state}}"',
+	"noteChanges.foldLeaveDesc":
+		"Chỉ các callout bạn chèn từ giờ trở đi mới dùng cài đặt mới.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -832,6 +867,8 @@ export const vi: Record<string, string> = {
 		"Đã cập nhật {{count}} ID callout trong các tệp vault: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"Đã cập nhật {{count}} tiêu đề callout trong các tệp vault: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Đã cập nhật dấu thu gọn của {{count}} callout trong các tệp vault.",
 	"vault.replaceWith": "Thay thế bằng:",
 	"vault.deleteWithout": "Xóa không thay thế",
 	"vault.confirmDelete": "Xác nhận",
@@ -1472,4 +1509,33 @@ export const vi: Record<string, string> = {
 	"settings.versions": "Các phiên bản trước",
 	"settings.versionsDesc": "Callout Studio tự động lưu các phiên bản cấu hình của bạn.\nSo sánh hoặc quay lại một phiên bản.",
 	"settings.versionsButton": "Xem phiên bản",
+	"noteChanges.callouts": "{{count}} callout",
+	"noteChanges.calloutsOne": "1 callout",
+	"noteChanges.notes": "{{count}} ghi chú",
+	"noteChanges.notesOne": "1 ghi chú",
+	"noteChanges.askCallout": "Nên làm gì với callout đó?",
+	"noteChanges.askCallouts": "Nên làm gì với những callout đó?",
+	"noteChanges.askTitle": "Nên làm gì với tiêu đề đó?",
+	"noteChanges.askTitles": "Nên làm gì với những tiêu đề đó?",
+	"noteChanges.removedLine": "Bạn đã xóa ID \"{{id}}\" khỏi {{name}}, nhưng nó vẫn được dùng bởi {{callouts}} trong {{notes}}.",
+	"noteChanges.removedLineUnknown": "Bạn đã xóa ID \"{{id}}\" khỏi {{name}}, nhưng một số ghi chú có thể vẫn đang dùng nó.",
+	"noteChanges.moveTo": "Chuyển \"{{id}}\" sang callout khác",
+	"noteChanges.moveToDesc": "Các ghi chú của bạn không đổi. Chúng lấy kiểu của callout bạn chọn.",
+	"noteChanges.moveToLabel": "Callout để chuyển \"{{id}}\" tới",
+	"noteChanges.moveNoRoom": "Mọi callout khác đều đã đạt tối đa {{max}} ID.",
+	"noteChanges.rewrite": "Đổi chúng trong ghi chú của bạn",
+	"noteChanges.rewriteDesc": "Mỗi [!{{id}}] trong ghi chú của bạn sẽ thành [!{{to}}].",
+	"noteChanges.renamedLine": "Bạn đã đổi tên \"{{old}}\" thành \"{{new}}\", nên ID của nó đổi từ \"{{oldId}}\" thành \"{{newId}}\". ID cũ vẫn được dùng bởi {{callouts}} trong {{notes}}.",
+	"noteChanges.renamedLineUnknown": "Bạn đã đổi tên \"{{old}}\" thành \"{{new}}\", nên ID của nó đổi từ \"{{oldId}}\" thành \"{{newId}}\". Một số ghi chú có thể vẫn đang dùng ID cũ.",
+	"noteChanges.idChangedLine": "ID của callout này đổi từ \"{{oldId}}\" thành \"{{newId}}\". ID cũ vẫn được dùng bởi {{callouts}} trong {{notes}}.",
+	"noteChanges.idChangedLineUnknown": "ID của callout này đổi từ \"{{oldId}}\" thành \"{{newId}}\". Một số ghi chú có thể vẫn đang dùng ID cũ.",
+	"noteChanges.renameFollowDesc": "Mỗi [!{{oldId}}] trong ghi chú của bạn sẽ thành [!{{newId}}], và các tiêu đề ghi \"{{old}}\" sẽ thành \"{{new}}\".",
+	"noteChanges.renameFollowDescIdOnly": "Mỗi [!{{oldId}}] trong ghi chú của bạn sẽ thành [!{{newId}}].",
+	"noteChanges.titlesLine": "Bạn đã đổi tên \"{{old}}\" thành \"{{new}}\". Tên cũ vẫn là tiêu đề của {{callouts}} trong {{notes}}.",
+	"noteChanges.titlesLineUnknown": "Bạn đã đổi tên \"{{old}}\" thành \"{{new}}\". Một số callout trong ghi chú của bạn có thể vẫn dùng tên cũ làm tiêu đề.",
+	"noteChanges.titlesChangeDesc": "Các tiêu đề ghi \"{{old}}\" sẽ thành \"{{new}}\".",
+	"noteChanges.foldLine": "Bạn đã đổi cách callout này thu gọn. Một dấu thu gọn khác đang được đặt ở {{callouts}} trong {{notes}}.",
+	"noteChanges.foldLineUnknown": "Bạn đã đổi cách callout này thu gọn. Một số callout trong ghi chú của bạn có thể đang đặt dấu thu gọn khác.",
+	"noteChanges.foldChangeDesc": "Dấu + hoặc - của chúng sẽ đổi cho khớp.",
+	"editor.idGiveFailed": "Không thể chuyển \"{{id}}\" sang {{name}}, nên các ghi chú dùng nó quay về kiểu mặc định.",
 };

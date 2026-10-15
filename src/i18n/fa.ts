@@ -347,6 +347,16 @@ export const fa: Record<string, string> = {
 	"editor.idConflict": "این شناسه با یک callout موجود تعارض دارد",
 	"editor.idDashConflict":
 		"Obsidian فاصله‌ها را به‌صورت خط تیره می‌نویسد، بنابراین این شناسه با «{{other}}» تداخل دارد",
+	"editor.idOwnedBy":
+		"«{{id}}» یکی از شناسه‌های {{name}} است. می‌توانید {{link}}.",
+	"editor.idMoveHere": "آن را به اینجا منتقل کنید",
+	"editor.idOwnedByMain":
+		"«{{id}}» شناسهٔ اصلی {{name}} است. برای استفاده از آن در اینجا، ابتدا {{name}} را حذف کنید.",
+	"editor.idBuiltInStock":
+		"«{{id}}» یکی از شناسه‌های خود Obsidian برای {{name}} است.",
+	"editor.idMoving":
+		"هنگام ذخیره، «{{id}}» از {{name}} به اینجا منتقل می‌شود.",
+	"editor.idMovingNotes": "یادداشت‌های شما تغییر نمی‌کنند. آن‌ها سبک این callout را می‌گیرند.",
 	"editor.idFromTheme":
 		"{{theme}} از قبل callout ای با این شناسه ارائه می‌دهد، بنابراین Callout Studio نمی‌تواند آن را استایل بدهد. شناسه‌ی دیگری انتخاب کنید.",
 	"editor.namesFromTheme":
@@ -363,6 +373,35 @@ export const fa: Record<string, string> = {
 	"editor.sampleInlineText":
 		"در اینجا یک قرص [!{id}] درون‌خطی در داخل یک پاراگراف وجود دارد.",
 	"editor.previewReadOnly": "پیش‌نمایش زنده قابل ویرایش نیست",
+	"noteChanges.title": "یادداشت‌های شما به‌روزرسانی شوند؟",
+	"noteChanges.uses":
+		"«{{id}}» {{count}} بار در {{files}} یادداشت دیده می‌شود.",
+	"noteChanges.usesUnknown":
+		"ممکن است برخی یادداشت‌ها از «{{id}}» استفاده کنند.",
+	"noteChanges.leave": "همان‌طور که هستند بمانند",
+	"noteChanges.leaveDesc":
+		"[!{{id}}] را نگه می‌دارند و به سبک پیش‌فرض برمی‌گردند.",
+	"noteChanges.changeTo": "تغییر به",
+	"noteChanges.changeToLabel": "callout‌ای که «{{id}}» به آن تغییر کند",
+	"noteChanges.undoHint": "می‌توانید این کار را واگرد کنید.",
+	"noteChanges.renameChange": "تغییر به «{{id}}»",
+	"noteChanges.renameChangeDesc":
+		"عنوان‌هایی که «{{old}}» هستند به «{{new}}» تبدیل می‌شوند. می‌توانید این کار را واگرد کنید.",
+	"noteChanges.renameKeep": "«{{id}}» را به‌عنوان شناسهٔ دیگر نگه دار",
+	"noteChanges.renameKeepDesc": "یادداشت‌های شما تغییر نمی‌کنند و سبک این callout را حفظ می‌کنند.",
+	"noteChanges.renameKeepFull": "این callout از قبل به حداکثر {{max}} شناسه رسیده است.",
+	"noteChanges.titlesUses":
+		"{{count}} عنوان در {{files}} یادداشت «{{old}}» است.",
+	"noteChanges.titlesUnknown": "ممکن است برخی عنوان‌ها «{{old}}» باشند.",
+	"noteChanges.titlesChange": "تغییر به «{{new}}»",
+	"noteChanges.titlesLeaveDesc": "همچنان «{{old}}» می‌مانند.",
+	"noteChanges.foldUses":
+		"{{count}} callout در {{files}} یادداشت برای تاشدن متفاوت تنظیم شده‌اند.",
+	"noteChanges.foldUnknown":
+		"ممکن است برخی callout‌ها برای تاشدن متفاوت تنظیم شده باشند.",
+	"noteChanges.foldChange": "تنظیم روی «{{state}}»",
+	"noteChanges.foldLeaveDesc":
+		"فقط callout‌هایی که از این پس درج می‌کنید از تنظیم جدید استفاده می‌کنند.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -772,6 +811,8 @@ export const fa: Record<string, string> = {
 		"{{count}} شناسه callout در فایل‌های vault به‌روزرسانی شد: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"{{count}} عنوان callout در فایل‌های vault به‌روزرسانی شد: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"نشانهٔ تاشدن {{count}} callout در فایل‌های vault به‌روزرسانی شد.",
 	"vault.replaceWith": "جایگزینی با:",
 	"vault.deleteWithout": "حذف بدون جایگزینی",
 	"vault.confirmDelete": "تأیید",
@@ -1466,4 +1507,33 @@ export const fa: Record<string, string> = {
 	"settings.versions": "نسخه‌های قبلی",
 	"settings.versionsDesc": "Callout Studio نسخه‌های پیکربندی شما را خودکار ذخیره می‌کند.\nآن‌ها را مقایسه کنید یا به یکی از آن‌ها برگردید.",
 	"settings.versionsButton": "نمایش نسخه‌ها",
+	"noteChanges.callouts": "{{count}} callout",
+	"noteChanges.calloutsOne": "1 callout",
+	"noteChanges.notes": "{{count}} یادداشت",
+	"noteChanges.notesOne": "1 یادداشت",
+	"noteChanges.askCallout": "با آن callout چه شود؟",
+	"noteChanges.askCallouts": "با آن callout‌ها چه شود؟",
+	"noteChanges.askTitle": "با آن عنوان چه شود؟",
+	"noteChanges.askTitles": "با آن عنوان‌ها چه شود؟",
+	"noteChanges.removedLine": "شناسه «{{id}}» را از {{name}} حذف کردید، اما هنوز در {{callouts}} از {{notes}} استفاده می‌شود.",
+	"noteChanges.removedLineUnknown": "شناسه «{{id}}» را از {{name}} حذف کردید، اما ممکن است برخی یادداشت‌ها هنوز از آن استفاده کنند.",
+	"noteChanges.moveTo": "انتقال «{{id}}» به callout دیگر",
+	"noteChanges.moveToDesc": "یادداشت‌های شما تغییر نمی‌کنند. آن‌ها سبک callout انتخابی شما را می‌گیرند.",
+	"noteChanges.moveToLabel": "callout مقصد برای انتقال «{{id}}»",
+	"noteChanges.moveNoRoom": "هر callout دیگر از قبل به حداکثر {{max}} شناسه رسیده است.",
+	"noteChanges.rewrite": "تغییر دادن آن‌ها در یادداشت‌ها",
+	"noteChanges.rewriteDesc": "هر [!{{id}}] در یادداشت‌های شما به [!{{to}}] تبدیل می‌شود.",
+	"noteChanges.renamedLine": "نام «{{old}}» را به «{{new}}» تغییر دادید، بنابراین شناسهٔ آن از «{{oldId}}» به «{{newId}}» تغییر می‌کند. شناسهٔ قدیمی هنوز در {{callouts}} از {{notes}} استفاده می‌شود.",
+	"noteChanges.renamedLineUnknown": "نام «{{old}}» را به «{{new}}» تغییر دادید، بنابراین شناسهٔ آن از «{{oldId}}» به «{{newId}}» تغییر می‌کند. ممکن است برخی یادداشت‌ها هنوز از شناسهٔ قدیمی استفاده کنند.",
+	"noteChanges.idChangedLine": "شناسهٔ این callout از «{{oldId}}» به «{{newId}}» تغییر می‌کند. شناسهٔ قدیمی هنوز در {{callouts}} از {{notes}} استفاده می‌شود.",
+	"noteChanges.idChangedLineUnknown": "شناسهٔ این callout از «{{oldId}}» به «{{newId}}» تغییر می‌کند. ممکن است برخی یادداشت‌ها هنوز از شناسهٔ قدیمی استفاده کنند.",
+	"noteChanges.renameFollowDesc": "هر [!{{oldId}}] در یادداشت‌های شما به [!{{newId}}] تبدیل می‌شود و عنوان‌هایی که «{{old}}» نوشته‌اند به «{{new}}» تبدیل می‌شوند.",
+	"noteChanges.renameFollowDescIdOnly": "هر [!{{oldId}}] در یادداشت‌های شما به [!{{newId}}] تبدیل می‌شود.",
+	"noteChanges.titlesLine": "نام «{{old}}» را به «{{new}}» تغییر دادید. نام قدیمی هنوز عنوان {{callouts}} از {{notes}} است.",
+	"noteChanges.titlesLineUnknown": "نام «{{old}}» را به «{{new}}» تغییر دادید. ممکن است نام قدیمی هنوز عنوان برخی callout‌ها در یادداشت‌های شما باشد.",
+	"noteChanges.titlesChangeDesc": "عنوان‌هایی که «{{old}}» نوشته‌اند به «{{new}}» تبدیل می‌شوند.",
+	"noteChanges.foldLine": "شیوهٔ جمع‌شدن این callout را تغییر دادید. نشانهٔ جمع‌شدن متفاوتی روی {{callouts}} از {{notes}} تنظیم شده است.",
+	"noteChanges.foldLineUnknown": "شیوهٔ جمع‌شدن این callout را تغییر دادید. ممکن است برخی callout‌ها در یادداشت‌های شما نشانهٔ جمع‌شدن متفاوتی داشته باشند.",
+	"noteChanges.foldChangeDesc": "نشانهٔ + یا - آن‌ها متناسب با آن تغییر می‌کند.",
+	"editor.idGiveFailed": "«{{id}}» را نتوانستیم به {{name}} منتقل کنیم، بنابراین یادداشت‌هایی که از آن استفاده می‌کنند به سبک پیش‌فرض برمی‌گردند.",
 };

@@ -435,7 +435,7 @@ reads the active one.
 - **Choosing.** While both cards are there, the list is a
   `role="radiogroup"` named by the window's title (`aria-labelledby`, never an
   `aria-label`, which Obsidian would pop up as a tooltip over every card), and
-  each card ends in a radio dot, `.cs-import-radio`: `role="radio"`,
+  each card ends in a radio dot, `.cs-option-radio`: `role="radio"`,
   `aria-checked`, `aria-labelledby` its card's title line, `aria-describedby`
   its status line. The dot, not the card, is the radio, because a radio may
   hold no control and the fallback's card holds a button and, for a paste, a

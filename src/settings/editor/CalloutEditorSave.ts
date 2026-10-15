@@ -1,16 +1,21 @@
 /**
  * settings/editor/CalloutEditorSave.ts — Save logic for the callout editor modal.
  *
- * Handles the full save flow: writing the definition to the registry,
- * renaming callout IDs in vault files when the ID changes, updating fold
- * markers, and normalizing titles. Separated from CalloutEditor.ts to keep
- * the modal class focused on UI state.
+ * Handles the full save flow: writing the definition to the registry, taking
+ * ids moved in from other callouts and handing removed ones to others, and
+ * then the note changes the user agreed to — ids rewritten, titles renamed,
+ * fold marks updated. Which of those run is
+ * the caller's to say (`noteChoices`): this file never decides on its own to
+ * touch a note. See ./noteChanges for the rule. Separated from CalloutEditor.ts
+ * to keep the modal class focused on UI state.
  */
 import { Notice } from "obsidian";
 import { t } from "../../i18n";
 import type { App } from "obsidian";
 import type { CalloutDefinition } from "../../types";
 import { packFor } from "../../icons/registry";
+import { calloutIdentity } from "../../utils/calloutId";
+import type { NoteRewriteJournal } from "../../utils/noteRewriteUndo";
 import {
 	authoredCustomizedFlag,
 	hasAuthoredBackground,
@@ -19,6 +24,9 @@ import {
 import { definitionIconAdjustFields } from "./definitionIconAdjust";
 import type { CalloutEditorPlugin } from "./types";
 import { createCalloutVaultSavePlan, stageRenameAliases, type CalloutVaultSavePlan } from "./calloutVaultSavePlan";
+import { formsEndingHere, noteRewritesFor, pendingNoteChangesFor, type NoteChoices } from "./noteChanges";
+import { giveIds, takeMovedIds, type IdMove } from "./idMoves";
+import type { GivenId } from "./noteChangeQuestion";
 
 export type CalloutEditorSaveState = {
 	displayName: string;
@@ -73,6 +81,18 @@ export type CalloutEditorSaveInput = {
 	overwriteAutoFallback: boolean;
 	canUseCalloutId: (id: string, role: "primary" | "alias") => boolean;
 	getFallbackBase: () => CalloutDefinition | undefined;
+	/**
+	 * What may change in the notes — the answers to the question the editor
+	 * asks before saving (see ./noteChanges). Required, so no caller can reach
+	 * the notes by leaving it out: `LEAVE_NOTES` changes none of them.
+	 */
+	noteChoices: NoteChoices;
+	/** Ids this Save takes from other callouts — see ./idMoves. */
+	moves?: readonly IdMove[];
+	/** Removed ids this Save hands to other callouts — see ./idMoves. */
+	gives?: readonly GivenId[];
+	/** How finished note changes are announced; Undo by default. */
+	announceNoteRewrite?: (message: string, journal: NoteRewriteJournal) => void;
 	onMaterialDownloadStart?: () => void;
 	/** Track the committed in-memory identity before fallible artwork/file work. */
 	onDefinitionApplied?: (def: CalloutDefinition) => void;
@@ -113,34 +133,25 @@ export async function performCalloutEditorSave(
 		if (!canUseCalloutId(alias, "alias")) return null;
 	}
 
-	let removedIds: string[] = [];
-	let oldDisplayName: string | null = null;
-	let oldAllIds: string[] = [];
-	let oldFoldable = false;
-	let oldDefaultFolded = false;
-	if (existingId) {
-		const existingDef = plugin.registry.get(existingId);
-		if (existingDef) {
-			oldDisplayName = existingDef.displayName;
-			// Both spellings of an ID belong to this one callout, so renaming it
-			// rewrites `[!a-b]` usages alongside `[!a b]` ones rather than
-			// orphaning them. See CalloutRegistry.vaultIdFormsFor.
-			oldAllIds = plugin.registry.vaultIdFormsFor(existingDef);
-			oldFoldable = existingDef.foldable;
-			oldDefaultFolded = existingDef.defaultFolded;
-			const newIdSet = new Set(
-				[state.calloutId, ...state.aliases].map((s) => s.toLowerCase()),
-			);
-			removedIds = oldAllIds.filter(
-				(id) => !newIdSet.has(id.toLowerCase()),
-			);
-		}
-	}
-
+	const moves = input.moves ?? [];
 	const newDisplayName = state.displayName || state.calloutId;
+	// The committed row, never the live preview standing in for it.
 	const existingDef = existingId
-		? plugin.registry.get(existingId)
+		? plugin.registry.getReal(existingId)
 		: undefined;
+	// What this Save would change in the notes — the same question the editor
+	// asked the user, asked of the same state. Both spellings of an id belong
+	// to this one callout, so a rewrite carries `[!a-b]` along with `[!a b]`
+	// rather than orphaning it; see CalloutRegistry.vaultIdFormsFor.
+	const pending = pendingNoteChangesFor(
+		plugin.registry,
+		existingId,
+		state,
+		new Set(moves.map((move) => calloutIdentity(move.id))),
+	);
+	const rewrittenIds = pending.leaving
+		.filter((leaving) => input.noteChoices.rewrite.has(calloutIdentity(leaving.id)))
+		.map((leaving) => leaving.id);
 
 	let nextSource: CalloutDefinition["source"] = "user";
 	if (isBuiltIn) {
@@ -280,44 +291,79 @@ export async function performCalloutEditorSave(
 		...(customized === true ? { customized: true } : {}),
 	};
 
-	const protectedRename = stageRenameAliases(def, input.onVaultChangesReady ? removedIds : []);
+	const protectedRename = stageRenameAliases(def, input.onVaultChangesReady ? rewrittenIds : []);
 	const mutationDef = protectedRename.definition;
-	let saved = false;
-	if (existingId) {
-		if (isIdChanged) {
-			// Batched so the remove and the add announce themselves once,
-			// together. Un-batched, the remove's change event would reach the
-			// custom-command sweep while the commands still pointed at an id
-			// that had just stopped existing, and they would be pruned as
-			// broken. Inside the batch the migration lands first, so the single
-			// event that follows sees a consistent world.
-			saved = plugin.registry.batch(() => {
-				const wasFallback = plugin.registry.settings.fallbackCalloutId === existingId;
-				plugin.registry.remove(existingId);
-				const added = plugin.registry.add(mutationDef);
-				if (added) {
-					plugin.customCommands.migrateCalloutId(existingId, def.id);
-					if (wasFallback) {
-						plugin.registry.settings.fallbackCalloutId = def.id;
-						plugin.registry.restyleUncustomizedFallbackRows();
-					}
+	const { registry } = plugin;
+	// One batch for everything a Save does to the registry — the ids moved in
+	// from other callouts, then this callout itself — so it all announces
+	// itself once, together. Un-batched, a rename's remove would reach the
+	// custom-command sweep while the commands still pointed at an id that had
+	// just stopped existing, and they would be pruned as broken. Inside the
+	// batch the migration lands first, so the single event that follows sees a
+	// consistent world.
+	//
+	// A batch holds back events; it undoes nothing. So a refused save puts back
+	// what it already changed — the moved ids, and for a rename the row it
+	// removed — rather than leaving the user with less than they started with.
+	let notGiven: GivenId[] = [];
+	const saved = registry.batch(() => {
+		const restoreMoves = takeMovedIds(registry, moves, existingId);
+		if (!restoreMoves) return false;
+		let applied: boolean;
+		if (existingId && isIdChanged) {
+			const before = registry.getReal(existingId);
+			const wasFallback = registry.settings.fallbackCalloutId === existingId;
+			registry.remove(existingId);
+			applied = registry.add(mutationDef);
+			if (applied) {
+				plugin.customCommands.migrateCalloutId(existingId, def.id);
+				if (wasFallback) {
+					registry.settings.fallbackCalloutId = def.id;
+					registry.restyleUncustomizedFallbackRows();
 				}
-				return added;
-			});
+			} else if (before) {
+				registry.add(before);
+				if (wasFallback) {
+					registry.settings.fallbackCalloutId = existingId;
+					registry.restyleUncustomizedFallbackRows();
+				}
+			}
+		} else if (existingId) {
+			applied = registry.update(existingId, mutationDef);
+		} else if (overwriteAutoFallback) {
+			applied = registry.update(state.calloutId, mutationDef);
 		} else {
-			saved = plugin.registry.update(existingId, mutationDef);
+			applied = registry.add(mutationDef);
 		}
-	} else if (overwriteAutoFallback) {
-		saved = plugin.registry.update(state.calloutId, mutationDef);
-	} else {
-		saved = plugin.registry.add(mutationDef);
-	}
+		if (!applied) {
+			restoreMoves();
+			return false;
+		}
+		// A discovered row whose only id moved here is gone: whatever pointed
+		// at it — a command inserting that callout — points here now.
+		for (const move of moves) {
+			if (move.removeRow && move.from !== def.id) plugin.customCommands.migrateCalloutId(move.from, def.id);
+		}
+		// Only now: the id is this callout's until it has been saved without it.
+		notGiven = giveIds(registry, input.gives ?? []);
+		return true;
+	});
 
 	if (!saved) {
 		new Notice(t("editor.idConflict"));
 		return null;
 	}
 	input.onDefinitionApplied?.(def);
+	for (const gift of notGiven) {
+		new Notice(t("editor.idGiveFailed", {
+			id: gift.id,
+			name: registry.getReal(gift.to)?.displayName ?? gift.to,
+		}));
+	}
+	// Notes that still write an id that left, or one that moved here, look
+	// different now without having changed — repaint them, as Delete does. A
+	// rewrite below re-renders the notes it touches on its own.
+	if (pending.leaving.length > 0 || moves.length > 0) plugin.refreshCallouts();
 
 	// Packs served one icon at a time fetch on save, so the artwork is in the
 	// cache before the definition is rendered anywhere. Packs that ship or
@@ -333,13 +379,28 @@ export async function performCalloutEditorSave(
 
 	plugin.registry.cleanupUnusedIconSvgs();
 
+	const { noteChoices } = input;
+	// The ids this callout keeps, asked again now the registry holds the saved
+	// row — a renamed callout no longer "owns" its old id's dashed spelling, and
+	// ids moved in from elsewhere are not this callout's notes to rewrite. With
+	// the leaving ids being rewritten into it, they are what the title and fold
+	// passes cover, before any id changes.
+	const movedHere = new Set(moves.map((move) => calloutIdentity(move.id)));
+	const ownIds = [state.calloutId, ...state.aliases].filter((id) => !movedHere.has(calloutIdentity(id)));
+	const keptForms = ownIds.length > 0 ? registry.vaultIdFormsFor(def, ownIds) : [];
+	const noteForms = formsEndingHere(keptForms, pending, noteChoices);
 	const plan = createCalloutVaultSavePlan({
-		app, removedIds, newId: state.calloutId,
-		currentIds: plugin.registry.vaultIdFormsFor(def, [state.calloutId, ...state.aliases]),
-		oldTitle: oldAllIds.length > 0 ? oldDisplayName : null,
-		newTitle: newDisplayName,
-		foldMarker: existingId && (oldFoldable !== state.foldable || oldDefaultFolded !== state.defaultFolded)
-			? !state.foldable ? "" : state.defaultFolded ? "-" : "+" : null,
+		app,
+		rewrites: existingDef
+			? noteRewritesFor(pending, noteChoices, { id: def.id, displayName: newDisplayName }, existingDef.displayName)
+			: [],
+		titles: noteChoices.titles && pending.name
+			? { forms: noteForms, from: pending.name.from, to: pending.name.to }
+			: null,
+		fold: noteChoices.fold && pending.fold !== null
+			? { forms: noteForms, to: pending.fold }
+			: null,
+		announce: input.announceNoteRewrite,
 	});
 	if (plan) {
 		const complete = async () => { await plan(); protectedRename.release(plugin.registry); };

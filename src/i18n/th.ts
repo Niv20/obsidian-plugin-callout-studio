@@ -402,6 +402,14 @@ export const th: Record<string, string> = {
 		"โปรดทราบ: ธีมของคุณจัดสไตล์ callout ทุกรายการที่ตรงกับ {{pattern}} จึงอาจแทนที่รูปลักษณ์ของ callout นี้",
 	"editor.idDashConflict":
 		'Obsidian เขียนช่องว่างเป็นขีดกลาง ดังนั้น ID นี้จึงขัดแย้งกับ "{{other}}"',
+	"editor.idOwnedBy": '"{{id}}" เป็น ID ของ {{name}} คุณสามารถ{{link}}',
+	"editor.idMoveHere": "ย้ายมาไว้ที่นี่ได้",
+	"editor.idOwnedByMain":
+		'"{{id}}" เป็น ID หลักของ {{name}} หากต้องการใช้ที่นี่ ให้ลบ {{name}} ก่อน',
+	"editor.idBuiltInStock":
+		'"{{id}}" เป็นหนึ่งใน ID ของ Obsidian เองสำหรับ {{name}}',
+	"editor.idMoving": 'เมื่อบันทึก "{{id}}" จะย้ายมาที่นี่จาก {{name}}',
+	"editor.idMovingNotes": "โน้ตของคุณจะไม่เปลี่ยน และจะใช้สไตล์ของ callout นี้",
 	"editor.untitledCallout": "Callout ไม่มีชื่อ",
 	"editor.loremIpsum":
 		"สายลมอ่อน ๆ พัดผ่านต้นไม้ แสงแดดอบอุ่นส่องลงบนทางเดินอันเงียบสงบและทำให้ทิวทัศน์ดูมีชีวิตชีวา",
@@ -409,6 +417,31 @@ export const th: Record<string, string> = {
 		"สายลมอ่อน ๆ พัดผ่านต้นไม้",
 	"editor.sampleInlineText": "นี่คือแคปซูล [!{id}] แบบอินไลน์ภายในย่อหน้า",
 	"editor.previewReadOnly": "ไม่สามารถแก้ไขตัวอย่างสดได้",
+	"noteChanges.title": "อัปเดตโน้ตของคุณไหม",
+	"noteChanges.uses": '"{{id}}" ปรากฏ {{count}} ครั้งใน {{files}} โน้ต',
+	"noteChanges.usesUnknown": 'โน้ตบางฉบับอาจใช้ "{{id}}"',
+	"noteChanges.leave": "ปล่อยไว้ตามเดิม",
+	"noteChanges.leaveDesc": "ยังคงใช้ [!{{id}}] และกลับไปใช้สไตล์เริ่มต้น",
+	"noteChanges.changeTo": "เปลี่ยนเป็น",
+	"noteChanges.changeToLabel": 'callout ที่จะเปลี่ยน "{{id}}" ไปเป็น',
+	"noteChanges.undoHint": "คุณสามารถเลิกทำได้",
+	"noteChanges.renameChange": 'เปลี่ยนเป็น "{{id}}"',
+	"noteChanges.renameChangeDesc":
+		'หัวเรื่องที่เขียนว่า "{{old}}" จะกลายเป็น "{{new}}" คุณสามารถเลิกทำได้',
+	"noteChanges.renameKeep": 'เก็บ "{{id}}" ไว้เป็น ID อีกตัว',
+	"noteChanges.renameKeepDesc": "โน้ตของคุณจะไม่เปลี่ยน และยังคงใช้สไตล์ของ callout นี้",
+	"noteChanges.renameKeepFull": "callout นี้มี ID ครบสูงสุด {{max}} ตัวแล้ว",
+	"noteChanges.titlesUses":
+		'หัวเรื่อง {{count}} รายการใน {{files}} โน้ตเขียนว่า "{{old}}"',
+	"noteChanges.titlesUnknown": 'หัวเรื่องบางรายการอาจเขียนว่า "{{old}}"',
+	"noteChanges.titlesChange": 'เปลี่ยนเป็น "{{new}}"',
+	"noteChanges.titlesLeaveDesc": 'ยังคงเขียนว่า "{{old}}" ต่อไป',
+	"noteChanges.foldUses":
+		"callout {{count}} รายการใน {{files}} โน้ตตั้งค่าให้พับต่างออกไป",
+	"noteChanges.foldUnknown": "callout บางรายการอาจตั้งค่าให้พับต่างออกไป",
+	"noteChanges.foldChange": 'ตั้งเป็น "{{state}}"',
+	"noteChanges.foldLeaveDesc":
+		"เฉพาะ callout ที่คุณแทรกจากนี้ไปเท่านั้นที่ใช้การตั้งค่าใหม่",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -820,6 +853,8 @@ export const th: Record<string, string> = {
 		"อัปเดต {{count}} ID callout ในไฟล์ vault แล้ว: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"อัปเดต {{count}} หัวเรื่อง callout ในไฟล์ vault แล้ว: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"อัปเดตเครื่องหมายการพับของ callout {{count}} รายการในไฟล์ vault แล้ว",
 	"vault.replaceWith": "แทนที่ด้วย:",
 	"vault.deleteWithout": "ลบโดยไม่แทนที่",
 	"vault.confirmDelete": "ยืนยัน",
@@ -1446,4 +1481,33 @@ export const th: Record<string, string> = {
 	"settings.versions": "เวอร์ชันก่อนหน้า",
 	"settings.versionsDesc": "Callout Studio บันทึกเวอร์ชันของการตั้งค่าของคุณโดยอัตโนมัติ\nเปรียบเทียบ หรือกลับไปใช้เวอร์ชันใดเวอร์ชันหนึ่ง",
 	"settings.versionsButton": "ดูเวอร์ชัน",
+	"noteChanges.callouts": "{{count}} callout",
+	"noteChanges.calloutsOne": "1 callout",
+	"noteChanges.notes": "{{count}} โน้ต",
+	"noteChanges.notesOne": "1 โน้ต",
+	"noteChanges.askCallout": "ต้องการทำอย่างไรกับ callout นั้น?",
+	"noteChanges.askCallouts": "ต้องการทำอย่างไรกับ callout เหล่านั้น?",
+	"noteChanges.askTitle": "ต้องการทำอย่างไรกับชื่อเรื่องนั้น?",
+	"noteChanges.askTitles": "ต้องการทำอย่างไรกับชื่อเรื่องเหล่านั้น?",
+	"noteChanges.removedLine": "คุณลบ ID \"{{id}}\" ออกจาก {{name}} แล้ว แต่ยังมี {{callouts}} ใน {{notes}} ที่ใช้อยู่",
+	"noteChanges.removedLineUnknown": "คุณลบ ID \"{{id}}\" ออกจาก {{name}} แล้ว แต่โน้ตบางฉบับอาจยังใช้อยู่",
+	"noteChanges.moveTo": "ย้าย \"{{id}}\" ไปยัง callout อื่น",
+	"noteChanges.moveToDesc": "โน้ตของคุณจะไม่เปลี่ยน และจะใช้สไตล์ของ callout ที่คุณเลือก",
+	"noteChanges.moveToLabel": "callout ที่จะย้าย \"{{id}}\" ไป",
+	"noteChanges.moveNoRoom": "callout อื่นทุกตัวมี ID ครบสูงสุด {{max}} ตัวแล้ว",
+	"noteChanges.rewrite": "เปลี่ยนในโน้ตของคุณ",
+	"noteChanges.rewriteDesc": "ทุก [!{{id}}] ในโน้ตของคุณจะกลายเป็น [!{{to}}]",
+	"noteChanges.renamedLine": "คุณเปลี่ยนชื่อ \"{{old}}\" เป็น \"{{new}}\" ดังนั้น ID จะเปลี่ยนจาก \"{{oldId}}\" เป็น \"{{newId}}\" ID เดิมยังมี {{callouts}} ใน {{notes}} ที่ใช้อยู่",
+	"noteChanges.renamedLineUnknown": "คุณเปลี่ยนชื่อ \"{{old}}\" เป็น \"{{new}}\" ดังนั้น ID จะเปลี่ยนจาก \"{{oldId}}\" เป็น \"{{newId}}\" โน้ตบางฉบับอาจยังใช้ ID เดิมอยู่",
+	"noteChanges.idChangedLine": "ID ของ callout นี้จะเปลี่ยนจาก \"{{oldId}}\" เป็น \"{{newId}}\" ID เดิมยังมี {{callouts}} ใน {{notes}} ที่ใช้อยู่",
+	"noteChanges.idChangedLineUnknown": "ID ของ callout นี้จะเปลี่ยนจาก \"{{oldId}}\" เป็น \"{{newId}}\" โน้ตบางฉบับอาจยังใช้ ID เดิมอยู่",
+	"noteChanges.renameFollowDesc": "ทุก [!{{oldId}}] ในโน้ตของคุณจะกลายเป็น [!{{newId}}] และชื่อเรื่องที่เขียนว่า \"{{old}}\" จะกลายเป็น \"{{new}}\"",
+	"noteChanges.renameFollowDescIdOnly": "ทุก [!{{oldId}}] ในโน้ตของคุณจะกลายเป็น [!{{newId}}]",
+	"noteChanges.titlesLine": "คุณเปลี่ยนชื่อ \"{{old}}\" เป็น \"{{new}}\" ชื่อเดิมยังเป็นชื่อเรื่องของ {{callouts}} ใน {{notes}}",
+	"noteChanges.titlesLineUnknown": "คุณเปลี่ยนชื่อ \"{{old}}\" เป็น \"{{new}}\" callout บางตัวในโน้ตของคุณอาจยังใช้ชื่อเดิมเป็นชื่อเรื่อง",
+	"noteChanges.titlesChangeDesc": "ชื่อเรื่องที่เขียนว่า \"{{old}}\" จะกลายเป็น \"{{new}}\"",
+	"noteChanges.foldLine": "คุณเปลี่ยนวิธีที่ callout นี้พับ มีเครื่องหมายพับที่ต่างออกไปตั้งไว้ที่ {{callouts}} ใน {{notes}}",
+	"noteChanges.foldLineUnknown": "คุณเปลี่ยนวิธีที่ callout นี้พับ callout บางตัวในโน้ตของคุณอาจตั้งเครื่องหมายพับต่างออกไป",
+	"noteChanges.foldChangeDesc": "เครื่องหมาย + หรือ - ของ callout เหล่านั้นจะเปลี่ยนให้ตรงกัน",
+	"editor.idGiveFailed": "ย้าย \"{{id}}\" ไปที่ {{name}} ไม่สำเร็จ โน้ตที่ใช้ ID นี้จึงกลับไปใช้สไตล์เริ่มต้น",
 };

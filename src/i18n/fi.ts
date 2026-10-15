@@ -340,6 +340,15 @@ export const fi: Record<string, string> = {
 		"Tämä tunnus on ristiriidassa olemassa olevan calloutin kanssa",
 	"editor.idDashConflict":
 		'Obsidian kirjoittaa välilyönnit väliviivoina, joten tämä tunnus on ristiriidassa tunnuksen "{{other}}" kanssa',
+	"editor.idOwnedBy": '"{{id}}" on kohteen {{name}} tunnus. Voit {{link}}.',
+	"editor.idMoveHere": "siirtää sen tähän",
+	"editor.idOwnedByMain":
+		'"{{id}}" on kohteen {{name}} pääasiallinen tunnus. Jos haluat käyttää sitä tässä, poista ensin {{name}}.',
+	"editor.idBuiltInStock":
+		'"{{id}}" on yksi Obsidianin omista tunnuksista kohteelle {{name}}.',
+	"editor.idMoving":
+		'Tallennettaessa "{{id}}" siirtyy tähän kohteesta {{name}}.',
+	"editor.idMovingNotes": "Muistiinpanosi eivät muutu. Ne saavat tämän calloutin tyylin.",
 
 	"editor.idFromTheme":
 		"{{theme}} tarjoaa jo calloutin tällä tunnuksella, joten Callout Studio ei voi tyylitellä sitä. Valitse toinen tunnus.",
@@ -358,6 +367,36 @@ export const fi: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Tässä on upotettu [!{id}] -pilleri kappaleen sisällä.",
 	"editor.previewReadOnly": "Live-esikatselua ei voi muokata",
+	"noteChanges.title": "Päivitetäänkö muistiinpanosi?",
+	"noteChanges.uses":
+		'"{{id}}" esiintyy {{count}} kertaa {{files}} muistiinpanossa.',
+	"noteChanges.usesUnknown":
+		'Jotkin muistiinpanot saattavat käyttää tunnusta "{{id}}".',
+	"noteChanges.leave": "Jätä ne ennalleen",
+	"noteChanges.leaveDesc":
+		"Ne säilyttävät tunnuksen [!{{id}}] ja palaavat oletustyyliin.",
+	"noteChanges.changeTo": "Muuta muotoon",
+	"noteChanges.changeToLabel": 'Callout, johon "{{id}}" muutetaan',
+	"noteChanges.undoHint": "Voit perua tämän.",
+	"noteChanges.renameChange": 'Muuta muotoon "{{id}}"',
+	"noteChanges.renameChangeDesc":
+		'Otsikot, joissa lukee "{{old}}", muuttuvat muotoon "{{new}}". Voit perua tämän.',
+	"noteChanges.renameKeep": 'Säilytä "{{id}}" toisena tunnuksena',
+	"noteChanges.renameKeepDesc": "Muistiinpanosi eivät muutu, ja ne säilyttävät tämän calloutin tyylin.",
+	"noteChanges.renameKeepFull": "Tässä calloutissa on jo enimmäismäärä eli {{max}} tunnistetta.",
+	"noteChanges.titlesUses":
+		'{{count}} otsikossa {{files}} muistiinpanossa lukee "{{old}}".',
+	"noteChanges.titlesUnknown":
+		'Joissakin otsikoissa saattaa lukea "{{old}}".',
+	"noteChanges.titlesChange": 'Muuta muotoon "{{new}}"',
+	"noteChanges.titlesLeaveDesc": 'Niissä luetaan edelleen "{{old}}".',
+	"noteChanges.foldUses":
+		"{{count}} calloutia {{files}} muistiinpanossa on asetettu taittumaan eri tavalla.",
+	"noteChanges.foldUnknown":
+		"Jotkin calloutit saattavat olla asetettu taittumaan eri tavalla.",
+	"noteChanges.foldChange": 'Aseta arvoon "{{state}}"',
+	"noteChanges.foldLeaveDesc":
+		"Vain tästä lähtien lisäämäsi calloutit käyttävät uutta asetusta.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -762,6 +801,8 @@ export const fi: Record<string, string> = {
 		"{{count}} callout-tunnus(ta) päivitetty holvin tiedostoissa: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"{{count}} callout-otsikko(a) päivitetty holvin tiedostoissa: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Päivitettiin {{count}} calloutin taittomerkki holvin tiedostoissa.",
 	"vault.replaceWith": "Korvaa:",
 	"vault.deleteWithout": "Poista korvaamatta",
 	"vault.confirmDelete": "Vahvista",
@@ -1449,4 +1490,33 @@ export const fi: Record<string, string> = {
 	"settings.versions": "Aiemmat versiot",
 	"settings.versionsDesc": "Callout Studio tallentaa kokoonpanosi versiot automaattisesti.\nVertaile niitä tai palaa johonkin niistä.",
 	"settings.versionsButton": "Näytä versiot",
+	"noteChanges.callouts": "{{count}}",
+	"noteChanges.calloutsOne": "1",
+	"noteChanges.notes": "{{count}}",
+	"noteChanges.notesOne": "1",
+	"noteChanges.askCallout": "Mitä sille calloutille pitäisi tehdä?",
+	"noteChanges.askCallouts": "Mitä niille callouteille pitäisi tehdä?",
+	"noteChanges.askTitle": "Mitä sille otsikolle pitäisi tehdä?",
+	"noteChanges.askTitles": "Mitä niille otsikoille pitäisi tehdä?",
+	"noteChanges.removedLine": "Poistit tunnisteen \"{{id}}\" kohteesta {{name}}, mutta se on yhä käytössä: callouteja {{callouts}}, muistiinpanoja {{notes}}.",
+	"noteChanges.removedLineUnknown": "Poistit tunnisteen \"{{id}}\" kohteesta {{name}}, mutta jotkin muistiinpanot saattavat yhä käyttää sitä.",
+	"noteChanges.moveTo": "Siirrä \"{{id}}\" toiseen calloutiin",
+	"noteChanges.moveToDesc": "Muistiinpanosi eivät muutu. Ne saavat valitsemasi calloutin tyylin.",
+	"noteChanges.moveToLabel": "Callout, johon \"{{id}}\" siirretään",
+	"noteChanges.moveNoRoom": "Kaikissa muissa callouteissa on jo enimmäismäärä eli {{max}} tunnistetta.",
+	"noteChanges.rewrite": "Muuta ne muistiinpanoissasi",
+	"noteChanges.rewriteDesc": "Jokainen [!{{id}}] muistiinpanoissasi muuttuu muotoon [!{{to}}].",
+	"noteChanges.renamedLine": "Nimesit kohteen \"{{old}}\" uudelleen nimellä \"{{new}}\", joten sen tunniste muuttuu: \"{{oldId}}\" → \"{{newId}}\". Vanha tunniste on yhä käytössä: callouteja {{callouts}}, muistiinpanoja {{notes}}.",
+	"noteChanges.renamedLineUnknown": "Nimesit kohteen \"{{old}}\" uudelleen nimellä \"{{new}}\", joten sen tunniste muuttuu: \"{{oldId}}\" → \"{{newId}}\". Jotkin muistiinpanot saattavat yhä käyttää vanhaa tunnistetta.",
+	"noteChanges.idChangedLine": "Tämän calloutin tunniste muuttuu: \"{{oldId}}\" → \"{{newId}}\". Vanha tunniste on yhä käytössä: callouteja {{callouts}}, muistiinpanoja {{notes}}.",
+	"noteChanges.idChangedLineUnknown": "Tämän calloutin tunniste muuttuu: \"{{oldId}}\" → \"{{newId}}\". Jotkin muistiinpanot saattavat yhä käyttää vanhaa tunnistetta.",
+	"noteChanges.renameFollowDesc": "Jokainen [!{{oldId}}] muistiinpanoissasi muuttuu muotoon [!{{newId}}], ja otsikot \"{{old}}\" muuttuvat otsikoiksi \"{{new}}\".",
+	"noteChanges.renameFollowDescIdOnly": "Jokainen [!{{oldId}}] muistiinpanoissasi muuttuu muotoon [!{{newId}}].",
+	"noteChanges.titlesLine": "Nimesit kohteen \"{{old}}\" uudelleen nimellä \"{{new}}\". Vanha nimi on yhä otsikkona: callouteja {{callouts}}, muistiinpanoja {{notes}}.",
+	"noteChanges.titlesLineUnknown": "Nimesit kohteen \"{{old}}\" uudelleen nimellä \"{{new}}\". Joillakin muistiinpanojesi callouteilla vanha nimi saattaa yhä olla otsikkona.",
+	"noteChanges.titlesChangeDesc": "Otsikot \"{{old}}\" muuttuvat otsikoiksi \"{{new}}\".",
+	"noteChanges.foldLine": "Muutit tämän calloutin taittamistapaa. Eri taittomerkki on asetettu: callouteja {{callouts}}, muistiinpanoja {{notes}}.",
+	"noteChanges.foldLineUnknown": "Muutit tämän calloutin taittamistapaa. Joillakin muistiinpanojesi callouteilla saattaa olla eri taittomerkki.",
+	"noteChanges.foldChangeDesc": "Niiden + tai - -merkki muuttuu vastaavasti.",
+	"editor.idGiveFailed": "Tunnistetta \"{{id}}\" ei voitu siirtää kohteeseen {{name}}, joten sitä käyttävät muistiinpanot palaavat oletustyyliin.",
 };

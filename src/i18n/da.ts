@@ -333,6 +333,14 @@ export const da: Record<string, string> = {
 	"editor.idConflict": "Dette ID er i konflikt med en eksisterende callout",
 	"editor.idDashConflict":
 		'Obsidian skriver mellemrum som bindestreger, så dette ID er i konflikt med "{{other}}"',
+	"editor.idOwnedBy": '"{{id}}" er et ID for {{name}}. Du kan {{link}}.',
+	"editor.idMoveHere": "flytte det hertil",
+	"editor.idOwnedByMain":
+		"\"{{id}}\" er hoved-ID'et for {{name}}. For at bruge det her skal du først slette {{name}}.",
+	"editor.idBuiltInStock":
+		"\"{{id}}\" er et af Obsidians egne ID'er for {{name}}.",
+	"editor.idMoving": 'Ved gem flyttes "{{id}}" hertil fra {{name}}.',
+	"editor.idMovingNotes": "Dine noter ændres ikke. De får denne callouts stil.",
 	"editor.idFromTheme":
 		"{{theme}} leverer allerede en callout med dette ID, så Callout Studio kan ikke style den. Vælg et andet ID.",
 	"editor.namesFromTheme":
@@ -349,6 +357,34 @@ export const da: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Her er en indlejret [!{id}] pille inde i et afsnit.",
 	"editor.previewReadOnly": "Livevisningen kan ikke redigeres",
+	"noteChanges.title": "Opdater dine noter?",
+	"noteChanges.uses":
+		'"{{id}}" forekommer {{count}} gang(e) i {{files}} note(r).',
+	"noteChanges.usesUnknown": 'Nogle noter bruger muligvis "{{id}}".',
+	"noteChanges.leave": "Lad dem være, som de er",
+	"noteChanges.leaveDesc":
+		"De beholder [!{{id}}] og falder tilbage til standardstilen.",
+	"noteChanges.changeTo": "Ændr dem til",
+	"noteChanges.changeToLabel": 'Callout som "{{id}}" skal ændres til',
+	"noteChanges.undoHint": "Du kan fortryde dette.",
+	"noteChanges.renameChange": 'Ændr dem til "{{id}}"',
+	"noteChanges.renameChangeDesc":
+		'Titler, der lyder "{{old}}", bliver til "{{new}}". Du kan fortryde dette.',
+	"noteChanges.renameKeep": 'Behold "{{id}}" som et ekstra ID',
+	"noteChanges.renameKeepDesc": "Dine noter ændres ikke, og de beholder denne callouts stil.",
+	"noteChanges.renameKeepFull": "Denne callout har allerede det maksimale antal på {{max}} ID'er.",
+	"noteChanges.titlesUses":
+		'{{count}} titel(ler) i {{files}} note(r) lyder "{{old}}".',
+	"noteChanges.titlesUnknown": 'Nogle titler lyder muligvis "{{old}}".',
+	"noteChanges.titlesChange": 'Ændr dem til "{{new}}"',
+	"noteChanges.titlesLeaveDesc": 'De bliver ved med at lyde "{{old}}".',
+	"noteChanges.foldUses":
+		"{{count}} callout(s) i {{files}} note(r) er indstillet til at folde anderledes.",
+	"noteChanges.foldUnknown":
+		"Nogle callouts er muligvis indstillet til at folde anderledes.",
+	"noteChanges.foldChange": 'Indstil dem til "{{state}}"',
+	"noteChanges.foldLeaveDesc":
+		"Kun callouts, du indsætter fra nu af, bruger den nye indstilling.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -750,6 +786,8 @@ export const da: Record<string, string> = {
 		"{{count}} callout-ID('er) opdateret i vault-filer: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"{{count}} callout-titel(ler) opdateret i vault-filer: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Opdaterede foldemærket på {{count}} callout(s) i vault-filer.",
 	"vault.replaceWith": "Erstat med:",
 	"vault.deleteWithout": "Slet uden at erstatte",
 	"vault.confirmDelete": "Bekræft",
@@ -1441,4 +1479,33 @@ export const da: Record<string, string> = {
 	"settings.versions": "Tidligere versioner",
 	"settings.versionsDesc": "Callout Studio gemmer automatisk versioner af din opsætning.\nSammenlign dem, eller vend tilbage til en af dem.",
 	"settings.versionsButton": "Vis versioner",
+	"noteChanges.callouts": "{{count}} callouts",
+	"noteChanges.calloutsOne": "1 callout",
+	"noteChanges.notes": "{{count}} noter",
+	"noteChanges.notesOne": "1 note",
+	"noteChanges.askCallout": "Hvad skal der ske med den callout?",
+	"noteChanges.askCallouts": "Hvad skal der ske med de callouts?",
+	"noteChanges.askTitle": "Hvad skal der ske med den titel?",
+	"noteChanges.askTitles": "Hvad skal der ske med de titler?",
+	"noteChanges.removedLine": "Du fjernede ID'et \"{{id}}\" fra {{name}}, men det bruges stadig af {{callouts}} i {{notes}}.",
+	"noteChanges.removedLineUnknown": "Du fjernede ID'et \"{{id}}\" fra {{name}}, men nogle noter bruger det måske stadig.",
+	"noteChanges.moveTo": "Flyt \"{{id}}\" til en anden callout",
+	"noteChanges.moveToDesc": "Dine noter ændres ikke. De får stilen fra den callout, du vælger.",
+	"noteChanges.moveToLabel": "Callout, som \"{{id}}\" skal flyttes til",
+	"noteChanges.moveNoRoom": "Alle andre callouts har allerede det maksimale antal på {{max}} ID'er.",
+	"noteChanges.rewrite": "Ændr dem i dine noter",
+	"noteChanges.rewriteDesc": "Hver [!{{id}}] i dine noter bliver til [!{{to}}].",
+	"noteChanges.renamedLine": "Du omdøbte \"{{old}}\" til \"{{new}}\", så dens ID ændres fra \"{{oldId}}\" til \"{{newId}}\". Det gamle ID bruges stadig af {{callouts}} i {{notes}}.",
+	"noteChanges.renamedLineUnknown": "Du omdøbte \"{{old}}\" til \"{{new}}\", så dens ID ændres fra \"{{oldId}}\" til \"{{newId}}\". Nogle noter bruger måske stadig det gamle ID.",
+	"noteChanges.idChangedLine": "Denne callouts ID ændres fra \"{{oldId}}\" til \"{{newId}}\". Det gamle ID bruges stadig af {{callouts}} i {{notes}}.",
+	"noteChanges.idChangedLineUnknown": "Denne callouts ID ændres fra \"{{oldId}}\" til \"{{newId}}\". Nogle noter bruger måske stadig det gamle ID.",
+	"noteChanges.renameFollowDesc": "Hver [!{{oldId}}] i dine noter bliver til [!{{newId}}], og titler, der lyder \"{{old}}\", bliver til \"{{new}}\".",
+	"noteChanges.renameFollowDescIdOnly": "Hver [!{{oldId}}] i dine noter bliver til [!{{newId}}].",
+	"noteChanges.titlesLine": "Du omdøbte \"{{old}}\" til \"{{new}}\". Det gamle navn er stadig titlen på {{callouts}} i {{notes}}.",
+	"noteChanges.titlesLineUnknown": "Du omdøbte \"{{old}}\" til \"{{new}}\". Nogle callouts i dine noter har måske stadig det gamle navn som titel.",
+	"noteChanges.titlesChangeDesc": "Titler, der lyder \"{{old}}\", bliver til \"{{new}}\".",
+	"noteChanges.foldLine": "Du har ændret, hvordan denne callout foldes. Et andet foldemærke er sat på {{callouts}} i {{notes}}.",
+	"noteChanges.foldLineUnknown": "Du har ændret, hvordan denne callout foldes. Nogle callouts i dine noter har måske et andet foldemærke.",
+	"noteChanges.foldChangeDesc": "Deres + eller - ændres, så det passer.",
+	"editor.idGiveFailed": "Kunne ikke flytte \"{{id}}\" til {{name}}, så noter, der bruger det, falder tilbage til standardstilen.",
 };

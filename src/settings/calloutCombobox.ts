@@ -126,6 +126,11 @@ export class CalloutCombobox {
 		this.paintLead(this.popup.value);
 	}
 
+	/** Put the caret in the search field, which opens the list. */
+	focus(): void {
+		this.popup.inputEl.focus();
+	}
+
 	setChoices(choices: () => readonly CalloutDefinition[]): void {
 		this.choices = choices;
 		this.popup.setItems();

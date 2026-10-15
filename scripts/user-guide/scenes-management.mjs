@@ -2,6 +2,9 @@
 import { Menu } from "obsidian";
 import { CalloutEditor } from "../../src/settings/CalloutEditor.ts";
 import { ReplaceCalloutModal } from "../../src/utils/ReplaceCalloutModal.ts";
+import { NoteChangesModal } from "../../src/settings/editor/NoteChangesModal.ts";
+import { pendingNoteChangesFor } from "../../src/settings/editor/noteChanges.ts";
+import { noteChangeQuestion } from "../../src/settings/editor/noteChangeQuestion.ts";
 import { MenuCustomizationModal } from "../../src/settings/MenuCustomizationModal.ts";
 import { CommandBuilderModal } from "../../src/settings/CommandBuilderModal.ts";
 import { CommandEditorModal } from "../../src/settings/CommandEditorModal.ts";
@@ -65,6 +68,66 @@ function replaceCallout(plugin) {
 		.find(row => row.querySelector(".callout-studio-replace-item-id")?.textContent === "tip");
 	if (!tip) throw new Error("Replacement scene needs the real Tip row");
 	tip.click();
+	return metadata;
+}
+
+function ensureIdea(plugin) {
+	if (!plugin.registry.has("idea")) {
+		plugin.registry.add({
+			...plugin.registry.getReal("note"),
+			id: "idea", displayName: "Idea", aliases: ["test"],
+			icon: { type: "lucide", value: "lightbulb" },
+			colorLight: "#e0ac00", colorDark: "#e0de71", paletteId: "yellow", builtIn: false, source: "user",
+		});
+		plugin.cssInjector.inject(false);
+	}
+	return plugin.registry.getReal("idea");
+}
+
+/** Synthetic counts in the shape utils/idNoteStats.ts returns. */
+function noteStats(entries) {
+	const tally = (count, notes) => ({ count, files: new Set(Array.from({ length: notes }, (_, i) => `Note ${i + 1}.md`)) });
+	return new Map(Object.entries(entries).map(([id, [count, notes]]) => [id, {
+		uses: tally(count, notes), foldDiffers: tally(0, 0), titled: tally(Math.min(count, 3), Math.min(notes, 2)),
+	}]));
+}
+
+function noteChanges(plugin) {
+	const idea = ensureIdea(plugin);
+	const { registry } = plugin;
+	// Idea is renamed Insight and its "test" ID removed: the window's two parts.
+	const state = { calloutId: "insight", aliases: [], displayName: "Insight", foldable: idea.foldable, defaultFolded: idea.defaultFolded };
+	const pending = pendingNoteChangesFor(registry, idea.id, state);
+	const stats = noteStats({ idea: [12, 5], test: [4, 2] });
+	const question = noteChangeQuestion(pending, stats);
+	if (question?.ids.length !== 2) throw new Error("Note-changes scene needs the rename and the removed ID");
+	const saved = { ...idea, id: "insight", displayName: "Insight", aliases: [] };
+	const others = () => registry.getAll().filter(def => def.id !== idea.id);
+	return openModal(new NoteChangesModal(plugin.app, {
+		question, pending, stats, saved, roomForIds: 9, registry,
+		targets: () => [saved, ...others()],
+		moveTargets: others,
+	}), {
+		title: "Update your notes before saving",
+		description: "The production NoteChangesModal asks about an Idea callout renamed to Insight whose test ID was removed, with illustrative note counts from synthetic data. Each change has its own part with the answers preselected on opening; nothing is saved and no note is edited.",
+	});
+}
+
+function idMoveHere(plugin) {
+	ensureProjectNote(plugin);
+	const editor = new CalloutEditor(plugin, ensureIdea(plugin));
+	const metadata = openModal(editor, {
+		title: "Move an ID from another callout",
+		description: "The actual CalloutEditor for Idea after typing project, an ID of the Project note callout. The IDs field keeps the typed text and its real message names the owner and offers move it here; the offer is shown, not pressed.",
+	});
+	const input = editor.modalEl.querySelector(".cs-tag-input-field");
+	if (!input) throw new Error("ID move scene needs the real IDs field");
+	input.value = "project";
+	input.dispatchEvent(new Event("input", { bubbles: true }));
+	input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+	if (!editor.modalEl.querySelector(".cs-tag-error .cs-link-btn")) {
+		throw new Error("ID move scene needs the real move it here offer");
+	}
 	return metadata;
 }
 
@@ -191,6 +254,8 @@ function languageLocalized(plugin) {
 export const scenes = {
 	"edit-callout": editCallout,
 	"replace-callout": replaceCallout,
+	"note-changes": noteChanges,
+	"id-move-here": idMoveHere,
 	"context-menu": contextMenu,
 	"context-customization": contextCustomization,
 	"command-manager": commandManager,

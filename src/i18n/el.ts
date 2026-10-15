@@ -344,6 +344,16 @@ export const el: Record<string, string> = {
 		"Προσοχή: το θέμα σας μορφοποιεί κάθε callout που ταιριάζει με {{pattern}}, οπότε ενδέχεται να παρακάμψει την εμφάνιση αυτού.",
 	"editor.idDashConflict":
 		"Το Obsidian γράφει τα κενά ως παύλες, επομένως αυτό το ID συγκρούεται με το «{{other}}»",
+	"editor.idOwnedBy":
+		"Το «{{id}}» είναι αναγνωριστικό του {{name}}. Μπορείτε να {{link}}.",
+	"editor.idMoveHere": "το μετακινήσετε εδώ",
+	"editor.idOwnedByMain":
+		"Το «{{id}}» είναι το κύριο αναγνωριστικό του {{name}}. Για να το χρησιμοποιήσετε εδώ, διαγράψτε πρώτα το {{name}}.",
+	"editor.idBuiltInStock":
+		"Το «{{id}}» είναι ένα από τα δικά του αναγνωριστικά του Obsidian για το {{name}}.",
+	"editor.idMoving":
+		"Κατά την αποθήκευση, το «{{id}}» μετακινείται εδώ από το {{name}}.",
+	"editor.idMovingNotes": "Οι σημειώσεις σας δεν αλλάζουν. Παίρνουν το στυλ αυτού του callout.",
 	"editor.untitledCallout": "Callout χωρίς τίτλο",
 	"editor.loremIpsum":
 		"Ένα απαλό αεράκι περνά ανάμεσα από τα δέντρα. Το ζεστό φως του ήλιου φωτίζει ένα ήσυχο μονοπάτι και ζωντανεύει το τοπίο.",
@@ -353,6 +363,35 @@ export const el: Record<string, string> = {
 		"Εδώ υπάρχει ένα ενσωματωμένο [!{id}] χάπι μέσα σε μια παράγραφο.",
 	"editor.previewReadOnly":
 		"Η ζωντανή προεπισκόπηση δεν μπορεί να επεξεργαστεί",
+	"noteChanges.title": "Να ενημερωθούν οι σημειώσεις σας;",
+	"noteChanges.uses":
+		"Το «{{id}}» εμφανίζεται {{count}} φορά/ές σε {{files}} σημείωση/εις.",
+	"noteChanges.usesUnknown":
+		"Ορισμένες σημειώσεις ίσως χρησιμοποιούν το «{{id}}».",
+	"noteChanges.leave": "Αφήστε τες ως έχουν",
+	"noteChanges.leaveDesc":
+		"Κρατούν το [!{{id}}] και επιστρέφουν στο προεπιλεγμένο στυλ.",
+	"noteChanges.changeTo": "Αλλαγή σε",
+	"noteChanges.changeToLabel": "Callout στο οποίο θα αλλάξει το «{{id}}»",
+	"noteChanges.undoHint": "Μπορείτε να το αναιρέσετε.",
+	"noteChanges.renameChange": "Αλλαγή σε «{{id}}»",
+	"noteChanges.renameChangeDesc":
+		"Οι τίτλοι που γράφουν «{{old}}» γίνονται «{{new}}». Μπορείτε να το αναιρέσετε.",
+	"noteChanges.renameKeep": "Διατήρηση του «{{id}}» ως άλλου αναγνωριστικού",
+	"noteChanges.renameKeepDesc": "Οι σημειώσεις σας δεν αλλάζουν και διατηρούν το στυλ αυτού του callout.",
+	"noteChanges.renameKeepFull": "Αυτό το callout έχει ήδη το μέγιστο των {{max}} αναγνωριστικών.",
+	"noteChanges.titlesUses":
+		"{{count}} τίτλος/οι σε {{files}} σημείωση/εις γράφουν «{{old}}».",
+	"noteChanges.titlesUnknown": "Ορισμένοι τίτλοι ίσως γράφουν «{{old}}».",
+	"noteChanges.titlesChange": "Αλλαγή σε «{{new}}»",
+	"noteChanges.titlesLeaveDesc": "Συνεχίζουν να γράφουν «{{old}}».",
+	"noteChanges.foldUses":
+		"{{count}} callout σε {{files}} σημείωση/εις έχουν ρυθμιστεί να διπλώνουν διαφορετικά.",
+	"noteChanges.foldUnknown":
+		"Ορισμένα callout ίσως έχουν ρυθμιστεί να διπλώνουν διαφορετικά.",
+	"noteChanges.foldChange": "Ορισμός σε «{{state}}»",
+	"noteChanges.foldLeaveDesc":
+		"Μόνο τα callout που εισάγετε από εδώ και πέρα χρησιμοποιούν τη νέα ρύθμιση.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -761,6 +800,8 @@ export const el: Record<string, string> = {
 		"Ενημερώθηκαν {{count}} IDs callout σε αρχεία vault: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"Ενημερώθηκαν {{count}} τίτλος/τίτλοι callout σε αρχεία vault: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Ενημερώθηκε ο δείκτης δίπλωσης {{count}} callout σε αρχεία vault.",
 	"vault.replaceWith": "Αντικατάσταση με:",
 	"vault.deleteWithout": "Διαγραφή χωρίς αντικατάσταση",
 	"vault.confirmDelete": "Επιβεβαίωση",
@@ -1466,4 +1507,33 @@ export const el: Record<string, string> = {
 	"settings.versions": "Παλαιότερες εκδόσεις",
 	"settings.versionsDesc": "Το Callout Studio αποθηκεύει αυτόματα εκδόσεις της διαμόρφωσής σας.\nΣυγκρίνετέ τις ή επιστρέψτε σε μία από αυτές.",
 	"settings.versionsButton": "Προβολή εκδόσεων",
+	"noteChanges.callouts": "{{count}} callouts",
+	"noteChanges.calloutsOne": "1 callout",
+	"noteChanges.notes": "{{count}} σημειώσεις",
+	"noteChanges.notesOne": "1 σημείωση",
+	"noteChanges.askCallout": "Τι να γίνει με εκείνο το callout;",
+	"noteChanges.askCallouts": "Τι να γίνει με εκείνα τα callouts;",
+	"noteChanges.askTitle": "Τι να γίνει με εκείνον τον τίτλο;",
+	"noteChanges.askTitles": "Τι να γίνει με εκείνους τους τίτλους;",
+	"noteChanges.removedLine": "Αφαιρέσατε το ID «{{id}}» από το {{name}}, αλλά εξακολουθεί να χρησιμοποιείται από {{callouts}} σε {{notes}}.",
+	"noteChanges.removedLineUnknown": "Αφαιρέσατε το ID «{{id}}» από το {{name}}, αλλά ορισμένες σημειώσεις ίσως το χρησιμοποιούν ακόμη.",
+	"noteChanges.moveTo": "Μετακίνηση του «{{id}}» σε άλλο callout",
+	"noteChanges.moveToDesc": "Οι σημειώσεις σας δεν αλλάζουν. Παίρνουν το στυλ του callout που θα επιλέξετε.",
+	"noteChanges.moveToLabel": "Callout στο οποίο θα μετακινηθεί το «{{id}}»",
+	"noteChanges.moveNoRoom": "Κάθε άλλο callout έχει ήδη το μέγιστο των {{max}} αναγνωριστικών.",
+	"noteChanges.rewrite": "Αλλαγή τους στις σημειώσεις σας",
+	"noteChanges.rewriteDesc": "Κάθε [!{{id}}] στις σημειώσεις σας γίνεται [!{{to}}].",
+	"noteChanges.renamedLine": "Μετονομάσατε το «{{old}}» σε «{{new}}», οπότε το αναγνωριστικό του αλλάζει από «{{oldId}}» σε «{{newId}}». Το παλιό αναγνωριστικό εξακολουθεί να χρησιμοποιείται από {{callouts}} σε {{notes}}.",
+	"noteChanges.renamedLineUnknown": "Μετονομάσατε το «{{old}}» σε «{{new}}», οπότε το αναγνωριστικό του αλλάζει από «{{oldId}}» σε «{{newId}}». Ορισμένες σημειώσεις ίσως χρησιμοποιούν ακόμη το παλιό αναγνωριστικό.",
+	"noteChanges.idChangedLine": "Το αναγνωριστικό αυτού του callout αλλάζει από «{{oldId}}» σε «{{newId}}». Το παλιό αναγνωριστικό εξακολουθεί να χρησιμοποιείται από {{callouts}} σε {{notes}}.",
+	"noteChanges.idChangedLineUnknown": "Το αναγνωριστικό αυτού του callout αλλάζει από «{{oldId}}» σε «{{newId}}». Ορισμένες σημειώσεις ίσως χρησιμοποιούν ακόμη το παλιό αναγνωριστικό.",
+	"noteChanges.renameFollowDesc": "Κάθε [!{{oldId}}] στις σημειώσεις σας γίνεται [!{{newId}}] και οι τίτλοι που γράφουν «{{old}}» γίνονται «{{new}}».",
+	"noteChanges.renameFollowDescIdOnly": "Κάθε [!{{oldId}}] στις σημειώσεις σας γίνεται [!{{newId}}].",
+	"noteChanges.titlesLine": "Μετονομάσατε το «{{old}}» σε «{{new}}». Το παλιό όνομα εξακολουθεί να είναι ο τίτλος σε {{callouts}} σε {{notes}}.",
+	"noteChanges.titlesLineUnknown": "Μετονομάσατε το «{{old}}» σε «{{new}}». Ορισμένα callouts στις σημειώσεις σας ίσως έχουν ακόμη το παλιό όνομα ως τίτλο.",
+	"noteChanges.titlesChangeDesc": "Οι τίτλοι που γράφουν «{{old}}» γίνονται «{{new}}».",
+	"noteChanges.foldLine": "Αλλάξατε τον τρόπο που διπλώνει αυτό το callout. Διαφορετικό σημάδι δίπλωσης έχει οριστεί σε {{callouts}} σε {{notes}}.",
+	"noteChanges.foldLineUnknown": "Αλλάξατε τον τρόπο που διπλώνει αυτό το callout. Ορισμένα callouts στις σημειώσεις σας ίσως έχουν διαφορετικό σημάδι δίπλωσης.",
+	"noteChanges.foldChangeDesc": "Το σημάδι τους + ή - αλλάζει ανάλογα.",
+	"editor.idGiveFailed": "Δεν ήταν δυνατή η μετακίνηση του «{{id}}» στο {{name}}, οπότε οι σημειώσεις που το χρησιμοποιούν επιστρέφουν στο προεπιλεγμένο στυλ.",
 };

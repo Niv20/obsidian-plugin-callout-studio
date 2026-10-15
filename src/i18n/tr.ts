@@ -398,6 +398,16 @@ export const tr: Record<string, string> = {
 	"editor.idConflict": "Bu ID mevcut bir callout ile çakışıyor",
 	"editor.idDashConflict":
 		'Obsidian boşlukları tire olarak yazar, bu yüzden bu ID "{{other}}" ile çakışıyor',
+	"editor.idOwnedBy":
+		'"{{id}}", {{name}} için bir kimliktir. İsterseniz {{link}}.',
+	"editor.idMoveHere": "buraya taşıyabilirsiniz",
+	"editor.idOwnedByMain":
+		'"{{id}}", {{name}} için ana kimliktir. Burada kullanmak için önce {{name}} öğesini silin.',
+	"editor.idBuiltInStock":
+		"\"{{id}}\", Obsidian'ın {{name}} için kendi kimliklerinden biridir.",
+	"editor.idMoving":
+		'Kaydettiğinizde "{{id}}", {{name}} öğesinden buraya taşınır.',
+	"editor.idMovingNotes": "Notlarınız değişmez. Bu callout'un stilini alırlar.",
 	"editor.idFromTheme":
 		"{{theme}} bu kimlikte bir callout zaten sağlıyor, bu yüzden Callout Studio onu biçimlendiremez. Farklı bir kimlik seçin.",
 	"editor.namesFromTheme":
@@ -414,6 +424,33 @@ export const tr: Record<string, string> = {
 	"editor.sampleInlineText":
 		"İşte bir paragraf içinde satır içi bir [!{id}] hapı.",
 	"editor.previewReadOnly": "Canlı önizleme düzenlenemez",
+	"noteChanges.title": "Notlarınız güncellensin mi?",
+	"noteChanges.uses": '"{{id}}", {{files}} notta {{count}} kez geçiyor.',
+	"noteChanges.usesUnknown": 'Bazı notlar "{{id}}" kullanıyor olabilir.',
+	"noteChanges.leave": "Olduğu gibi bırak",
+	"noteChanges.leaveDesc":
+		"[!{{id}}] kimliğini korurlar ve varsayılan stile geri dönerler.",
+	"noteChanges.changeTo": "Şuna değiştir",
+	"noteChanges.changeToLabel": '"{{id}}" kimliğinin değiştirileceği callout',
+	"noteChanges.undoHint": "Bunu geri alabilirsiniz.",
+	"noteChanges.renameChange": '"{{id}}" olarak değiştir',
+	"noteChanges.renameChangeDesc":
+		'"{{old}}" yazan başlıklar "{{new}}" olur. Bunu geri alabilirsiniz.',
+	"noteChanges.renameKeep": '"{{id}}" kimliğini başka bir kimlik olarak koru',
+	"noteChanges.renameKeepDesc": "Notlarınız değişmez ve bu callout'un stilini korur.",
+	"noteChanges.renameKeepFull": "Bu callout'ta zaten en fazla {{max}} kimlik var.",
+	"noteChanges.titlesUses":
+		'{{files}} nottaki {{count}} başlık "{{old}}" yazıyor.',
+	"noteChanges.titlesUnknown": 'Bazı başlıklar "{{old}}" yazıyor olabilir.',
+	"noteChanges.titlesChange": '"{{new}}" olarak değiştir',
+	"noteChanges.titlesLeaveDesc": 'Yazmaya "{{old}}" olarak devam ederler.',
+	"noteChanges.foldUses":
+		"{{files}} nottaki {{count}} callout farklı katlanacak şekilde ayarlanmış.",
+	"noteChanges.foldUnknown":
+		"Bazı callout'lar farklı katlanacak şekilde ayarlanmış olabilir.",
+	"noteChanges.foldChange": '"{{state}}" olarak ayarla',
+	"noteChanges.foldLeaveDesc":
+		"Yeni ayarı yalnızca bundan sonra eklediğiniz callout'lar kullanır.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -824,6 +861,8 @@ export const tr: Record<string, string> = {
 		"Vault dosyalarında {{count}} callout ID'si güncellendi: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"Vault dosyalarında {{count}} callout başlığı güncellendi: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Vault dosyalarında {{count}} callout'un katlama işareti güncellendi.",
 	"vault.replaceWith": "Şununla değiştir:",
 	"vault.deleteWithout": "Değiştirmeden sil",
 	"vault.confirmDelete": "Onayla",
@@ -1460,4 +1499,33 @@ export const tr: Record<string, string> = {
 	"settings.versions": "Önceki sürümler",
 	"settings.versionsDesc": "Callout Studio yapılandırmanızın sürümlerini otomatik olarak kaydeder.\nKarşılaştırın veya birine geri dönün.",
 	"settings.versionsButton": "Sürümleri görüntüle",
+	"noteChanges.callouts": "{{count}} callout",
+	"noteChanges.calloutsOne": "1 callout",
+	"noteChanges.notes": "{{count}} not",
+	"noteChanges.notesOne": "1 not",
+	"noteChanges.askCallout": "O callout'a ne yapılsın?",
+	"noteChanges.askCallouts": "O callout'lara ne yapılsın?",
+	"noteChanges.askTitle": "O başlığa ne yapılsın?",
+	"noteChanges.askTitles": "O başlıklara ne yapılsın?",
+	"noteChanges.removedLine": "\"{{id}}\" kimliğini {{name}} öğesinden kaldırdınız, ancak hâlâ {{notes}} içindeki {{callouts}} tarafından kullanılıyor.",
+	"noteChanges.removedLineUnknown": "\"{{id}}\" kimliğini {{name}} öğesinden kaldırdınız, ancak bazı notlar hâlâ kullanıyor olabilir.",
+	"noteChanges.moveTo": "\"{{id}}\" kimliğini başka bir callout'a taşı",
+	"noteChanges.moveToDesc": "Notlarınız değişmez. Seçtiğiniz callout'un stilini alırlar.",
+	"noteChanges.moveToLabel": "\"{{id}}\" kimliğinin taşınacağı callout",
+	"noteChanges.moveNoRoom": "Diğer tüm callout'larda zaten en fazla {{max}} kimlik var.",
+	"noteChanges.rewrite": "Notlarınızda değiştir",
+	"noteChanges.rewriteDesc": "Notlarınızdaki her [!{{id}}], [!{{to}}] olur.",
+	"noteChanges.renamedLine": "\"{{old}}\" adını \"{{new}}\" olarak değiştirdiniz, bu yüzden kimliği \"{{oldId}}\" yerine \"{{newId}}\" olacak. Eski kimlik hâlâ {{notes}} içindeki {{callouts}} tarafından kullanılıyor.",
+	"noteChanges.renamedLineUnknown": "\"{{old}}\" adını \"{{new}}\" olarak değiştirdiniz, bu yüzden kimliği \"{{oldId}}\" yerine \"{{newId}}\" olacak. Bazı notlar eski kimliği hâlâ kullanıyor olabilir.",
+	"noteChanges.idChangedLine": "Bu callout'un kimliği \"{{oldId}}\" yerine \"{{newId}}\" olacak. Eski kimlik hâlâ {{notes}} içindeki {{callouts}} tarafından kullanılıyor.",
+	"noteChanges.idChangedLineUnknown": "Bu callout'un kimliği \"{{oldId}}\" yerine \"{{newId}}\" olacak. Bazı notlar eski kimliği hâlâ kullanıyor olabilir.",
+	"noteChanges.renameFollowDesc": "Notlarınızdaki her [!{{oldId}}], [!{{newId}}] olur ve \"{{old}}\" yazan başlıklar \"{{new}}\" olur.",
+	"noteChanges.renameFollowDescIdOnly": "Notlarınızdaki her [!{{oldId}}], [!{{newId}}] olur.",
+	"noteChanges.titlesLine": "\"{{old}}\" adını \"{{new}}\" olarak değiştirdiniz. Eski ad hâlâ {{notes}} içindeki {{callouts}} için başlık olarak duruyor.",
+	"noteChanges.titlesLineUnknown": "\"{{old}}\" adını \"{{new}}\" olarak değiştirdiniz. Notlarınızdaki bazı callout'ların başlığı hâlâ eski ad olabilir.",
+	"noteChanges.titlesChangeDesc": "\"{{old}}\" yazan başlıklar \"{{new}}\" olur.",
+	"noteChanges.foldLine": "Bu callout'un nasıl katlandığını değiştirdiniz. {{notes}} içindeki {{callouts}} için farklı bir katlama işareti ayarlı.",
+	"noteChanges.foldLineUnknown": "Bu callout'un nasıl katlandığını değiştirdiniz. Notlarınızdaki bazı callout'larda farklı bir katlama işareti ayarlı olabilir.",
+	"noteChanges.foldChangeDesc": "+ veya - işaretleri buna uyacak şekilde değişir.",
+	"editor.idGiveFailed": "\"{{id}}\" kimliği {{name}} öğesine taşınamadı, bu yüzden onu kullanan notlar varsayılan stile döner.",
 };

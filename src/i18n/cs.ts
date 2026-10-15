@@ -346,6 +346,14 @@ export const cs: Record<string, string> = {
 	"editor.idConflict": "Toto ID je v konfliktu s existujícím callout",
 	"editor.idDashConflict":
 		"Obsidian zapisuje mezery jako pomlčky, takže toto ID koliduje s „{{other}}“",
+	"editor.idOwnedBy": "„{{id}}“ je ID callout {{name}}. Můžete jej {{link}}.",
+	"editor.idMoveHere": "přesunout sem",
+	"editor.idOwnedByMain":
+		"„{{id}}“ je hlavní ID callout {{name}}. Chcete-li ho použít zde, nejprve smažte {{name}}.",
+	"editor.idBuiltInStock":
+		"„{{id}}“ je jedno z vlastních ID Obsidianu pro {{name}}.",
+	"editor.idMoving": "Při uložení se „{{id}}“ přesune sem z {{name}}.",
+	"editor.idMovingNotes": "Vaše poznámky se nezmění. Převezmou styl tohoto calloutu.",
 	"editor.idFromTheme":
 		"{{theme}} už poskytuje callout s tímto ID, takže ho Callout Studio nemůže stylizovat. Zvolte jiné ID.",
 	"editor.namesFromTheme":
@@ -362,6 +370,34 @@ export const cs: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Zde je vložená pilulka [!{id}] uvnitř odstavce.",
 	"editor.previewReadOnly": "Živý náhled nelze upravovat",
+	"noteChanges.title": "Aktualizovat vaše poznámky?",
+	"noteChanges.uses":
+		"„{{id}}“ se vyskytuje {{count}}× v {{files}} poznámkách.",
+	"noteChanges.usesUnknown": "Některé poznámky mohou používat „{{id}}“.",
+	"noteChanges.leave": "Ponechat je, jak jsou",
+	"noteChanges.leaveDesc":
+		"Ponechají si [!{{id}}] a vrátí se k výchozímu stylu.",
+	"noteChanges.changeTo": "Změnit je na",
+	"noteChanges.changeToLabel": "Callout, na který změnit „{{id}}“",
+	"noteChanges.undoHint": "Toto můžete vrátit zpět.",
+	"noteChanges.renameChange": "Změnit je na „{{id}}“",
+	"noteChanges.renameChangeDesc":
+		"Názvy, které znějí „{{old}}“, se změní na „{{new}}“. Toto můžete vrátit zpět.",
+	"noteChanges.renameKeep": "Ponechat „{{id}}“ jako další ID",
+	"noteChanges.renameKeepDesc": "Vaše poznámky se nezmění a zachovají si styl tohoto calloutu.",
+	"noteChanges.renameKeepFull": "Tento callout už má maximální počet {{max}} ID.",
+	"noteChanges.titlesUses":
+		"{{count}} nadpisů v {{files}} poznámkách zní „{{old}}“.",
+	"noteChanges.titlesUnknown": "Některé nadpisy mohou znít „{{old}}“.",
+	"noteChanges.titlesChange": "Změnit je na „{{new}}“",
+	"noteChanges.titlesLeaveDesc": "Dál budou znít „{{old}}“.",
+	"noteChanges.foldUses":
+		"{{count}} calloutů v {{files}} poznámkách má nastaveno jiné sbalování.",
+	"noteChanges.foldUnknown":
+		"Některé callouty mohou mít nastaveno jiné sbalování.",
+	"noteChanges.foldChange": "Nastavit je na „{{state}}“",
+	"noteChanges.foldLeaveDesc":
+		"Nové nastavení používají jen callouty, které vložíte od teď.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -769,6 +805,8 @@ export const cs: Record<string, string> = {
 		"Aktualizováno {{count}} ID callout v souborech vaultu: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"Aktualizováno {{count}} nadpisů callout v souborech vaultu: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Aktualizována značka sbalení u {{count}} calloutů v souborech vaultu.",
 	"vault.replaceWith": "Nahradit za:",
 	"vault.deleteWithout": "Smazat bez nahrazení",
 	"vault.confirmDelete": "Potvrdit",
@@ -1464,4 +1502,33 @@ export const cs: Record<string, string> = {
 	"settings.versions": "Dřívější verze",
 	"settings.versionsDesc": "Callout Studio automaticky ukládá verze vaší konfigurace.\nPorovnejte je nebo se k některé vraťte.",
 	"settings.versionsButton": "Zobrazit verze",
+	"noteChanges.callouts": "{{count}}",
+	"noteChanges.calloutsOne": "1",
+	"noteChanges.notes": "{{count}}",
+	"noteChanges.notesOne": "1",
+	"noteChanges.askCallout": "Co se má stát s tímto calloutem?",
+	"noteChanges.askCallouts": "Co se má stát s těmito callouty?",
+	"noteChanges.askTitle": "Co se má stát s tímto názvem?",
+	"noteChanges.askTitles": "Co se má stát s těmito názvy?",
+	"noteChanges.removedLine": "Odebrali jste ID „{{id}}“ z {{name}}, ale stále se používá: calloutů {{callouts}}, poznámek {{notes}}.",
+	"noteChanges.removedLineUnknown": "Odebrali jste ID „{{id}}“ z {{name}}, ale některé poznámky ho mohou stále používat.",
+	"noteChanges.moveTo": "Přesunout „{{id}}“ do jiného calloutu",
+	"noteChanges.moveToDesc": "Vaše poznámky se nezmění. Převezmou styl calloutu, který vyberete.",
+	"noteChanges.moveToLabel": "Callout, do kterého se „{{id}}“ přesune",
+	"noteChanges.moveNoRoom": "Každý další callout už má maximální počet {{max}} ID.",
+	"noteChanges.rewrite": "Změnit je ve vašich poznámkách",
+	"noteChanges.rewriteDesc": "Každé [!{{id}}] ve vašich poznámkách se změní na [!{{to}}].",
+	"noteChanges.renamedLine": "Přejmenovali jste „{{old}}“ na „{{new}}“, takže se jeho ID změní z „{{oldId}}“ na „{{newId}}“. Staré ID se stále používá: calloutů {{callouts}}, poznámek {{notes}}.",
+	"noteChanges.renamedLineUnknown": "Přejmenovali jste „{{old}}“ na „{{new}}“, takže se jeho ID změní z „{{oldId}}“ na „{{newId}}“. Některé poznámky mohou staré ID stále používat.",
+	"noteChanges.idChangedLine": "ID tohoto calloutu se změní z „{{oldId}}“ na „{{newId}}“. Staré ID se stále používá: calloutů {{callouts}}, poznámek {{notes}}.",
+	"noteChanges.idChangedLineUnknown": "ID tohoto calloutu se změní z „{{oldId}}“ na „{{newId}}“. Některé poznámky mohou staré ID stále používat.",
+	"noteChanges.renameFollowDesc": "Každé [!{{oldId}}] ve vašich poznámkách se změní na [!{{newId}}] a názvy znějící „{{old}}“ se změní na „{{new}}“.",
+	"noteChanges.renameFollowDescIdOnly": "Každé [!{{oldId}}] ve vašich poznámkách se změní na [!{{newId}}].",
+	"noteChanges.titlesLine": "Přejmenovali jste „{{old}}“ na „{{new}}“. Starý název je stále názvem: calloutů {{callouts}}, poznámek {{notes}}.",
+	"noteChanges.titlesLineUnknown": "Přejmenovali jste „{{old}}“ na „{{new}}“. Některé callouty ve vašich poznámkách mohou mít starý název stále jako název.",
+	"noteChanges.titlesChangeDesc": "Názvy znějící „{{old}}“ se změní na „{{new}}“.",
+	"noteChanges.foldLine": "Změnili jste, jak se tento callout sbaluje. Jiná značka sbalení je nastavena: calloutů {{callouts}}, poznámek {{notes}}.",
+	"noteChanges.foldLineUnknown": "Změnili jste, jak se tento callout sbaluje. Některé callouty ve vašich poznámkách mohou mít jinou značku sbalení.",
+	"noteChanges.foldChangeDesc": "Jejich značka + nebo - se odpovídajícím způsobem změní.",
+	"editor.idGiveFailed": "„{{id}}“ se nepodařilo přesunout do {{name}}, takže poznámky, které ho používají, se vrátí k výchozímu stylu.",
 };

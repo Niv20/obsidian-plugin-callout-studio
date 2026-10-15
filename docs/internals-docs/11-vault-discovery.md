@@ -346,7 +346,8 @@ navigating the ItemView use public APIs.
 `editor/documentCallouts.ts` exposes a token iterator and a line iterator. Both
 preserve original source spans and use `markdownExclusions.ts` and
 `markdownContainers.ts` for comments, code and container context. Every whole-note
-consumer uses this path: discovery, statistics/indexing and note rewrites.
+consumer uses this path: discovery, statistics/indexing, the callout editor's
+pre-save count and note rewrites.
 Excluded characters are masked without changing offsets or creating whitespace
 that could turn invalid syntax into a token.
 
@@ -356,8 +357,10 @@ that could turn invalid syntax into a token.
 | `getOccurrenceMetrics(index)` | Cache the current snapshot's aggregate totals for statistics consumers |
 | `scanStringForUnknownCallouts` | Unknown source IDs after shared parsing; discovery primitive |
 | `countCalloutUsages` / `countCalloutUsagesMap` | Fresh direct scans for maintenance/confirmation, independent of cached menu counts |
+| `scanIdNoteStats` in `idNoteStats.ts` | One fresh pass for the callout editor's question: uses, differing fold marks and old-name titles per ID, with the notes each was found in |
 | `convertCalloutsToPlainTextInVault` | Strip markup while keeping content |
 | `replaceCalloutIdsInVault` | Bulk ID swap with optional title rewrite |
+| `replaceCalloutTitlesInVault` / `normalizeFoldMarkersInVault` | Titles reading an old name; block fold marks. The callout editor's title and fold passes |
 | `preparePortableCalloutConversion` / `applyPortableCalloutConversion` | Reviewed, single-use heading/inline migration to standard Markdown |
 
 The writers still use fresh file contents and complete-pass checks. Cached usage
@@ -366,14 +369,26 @@ counts never authorize destructive operations. A statistics refresh never calls
 
 **Undo.** `rewriteVaultFiles` takes an optional `NoteRewriteJournal`
 (`utils/noteRewriteUndo.ts`), which records each note's text before and after,
-once its write has succeeded. **Replace in vault** and **Convert uses to plain
-text** pass one and end with `noticeWithUndo`
-(`settings/rewriteUndoNotice.ts`): a notice with an **Undo** link.
+once its write has succeeded. **Replace in vault**, **Convert uses to plain
+text**, a renamed palette's **Update notes** and the callout editor's Save,
+when its **Update your notes?** answers chose a rewrite, pass one and end with
+`noticeWithUndo` (`settings/rewriteUndoNotice.ts`): a notice with an **Undo**
+link.
 
 - Only the most recent rewrite is kept, in memory. It is kept only whole: over
   about 64 MB of text it is dropped rather than kept in part.
 - Undo writes back a note only while it holds exactly what the rewrite left.
   Moved, deleted and edited notes are skipped and counted.
+- One journal can span several passes. The editor's Save rewrites IDs, then
+  titles, then fold marks into one journal, so a note can be recorded more
+  than once. `record()` chains a later pass onto that note's earlier record
+  (looked up by path): the first `before` stays and `after` moves on, so Undo
+  goes from the last pass's text straight back to the first pass's. Two
+  separate records would each find the note holding something other than what
+  they expect. When a later pass's `before` is not the earlier `after`, the
+  note was typed into between passes; the record is marked `broken`, and Undo
+  skips and counts it, as it does a note edited after the rewrite. The size
+  budget counts the first `before` and the latest `after`.
 
 **Delete** rewrites no note, so it has no journal. Its notice comes from
 `noticeWithUndoAction` instead, the same fragment and link around a plain
@@ -628,11 +643,16 @@ tokens `countCalloutUsages` counted for its dialog, short of the ambiguous ones.
 A later manual scan can only rediscover an id if a note or the active theme
 still supplies it - which, after a [Delete](#delete-flow), a note usually does.
 
-The editor's id/title/fold rewrites use the same document filter, so examples in
-frontmatter or fenced code remain untouched. They request complete success from
-the vault rewrite helper: it visits every available file, reports failures and
-then rejects an incomplete pass. The editor retains its unfinished work for an
-explicit Save retry and keeps old ids as saved aliases until all files succeed.
+The editor's id/title/fold rewrites run only when the user chose them in
+**Update your notes?** (see
+[Callout editor](14-callout-editor.md#notes-change-only-after-asking)); its
+count before asking, `scanIdNoteStats`, reads the same tokens these writers
+change. They use the same document filter, so examples in frontmatter or fenced
+code remain untouched. They request complete success from the vault rewrite
+helper: it visits every available file, reports failures and then rejects an
+incomplete pass. The editor retains its unfinished work for an explicit Save
+retry and keeps the old ids it is rewriting as saved aliases until all files
+succeed.
 
 ## Delete flow
 

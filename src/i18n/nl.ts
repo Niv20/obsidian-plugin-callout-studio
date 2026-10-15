@@ -354,6 +354,15 @@ export const nl: Record<string, string> = {
 	"editor.idConflict": "Deze ID is in conflict met een bestaande callout",
 	"editor.idDashConflict":
 		'Obsidian schrijft spaties als streepjes, dus deze ID komt in conflict met "{{other}}"',
+	"editor.idOwnedBy":
+		'"{{id}}" is een ID van {{name}}. Je kunt het {{link}}.',
+	"editor.idMoveHere": "hierheen verplaatsen",
+	"editor.idOwnedByMain":
+		'"{{id}}" is de hoofd-ID van {{name}}. Om het hier te gebruiken, verwijder je eerst {{name}}.',
+	"editor.idBuiltInStock":
+		"\"{{id}}\" is een van Obsidians eigen ID's voor {{name}}.",
+	"editor.idMoving": 'Bij opslaan verhuist "{{id}}" van {{name}} naar hier.',
+	"editor.idMovingNotes": "Je notities veranderen niet. Ze nemen de stijl van deze callout over.",
 
 	"editor.idFromTheme":
 		"{{theme}} levert al een callout met deze ID, dus Callout Studio kan deze niet stijlen. Kies een andere ID.",
@@ -372,6 +381,34 @@ export const nl: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Hier is een Inline Callout [!{id}] binnen een alinea.",
 	"editor.previewReadOnly": "De live-voorvertoning kan niet worden bewerkt",
+	"noteChanges.title": "Je notities bijwerken?",
+	"noteChanges.uses":
+		'"{{id}}" komt {{count}} keer voor in {{files}} notitie(s).',
+	"noteChanges.usesUnknown": 'Sommige notities gebruiken mogelijk "{{id}}".',
+	"noteChanges.leave": "Laten staan",
+	"noteChanges.leaveDesc":
+		"Ze houden [!{{id}}] en vallen terug op de standaardstijl.",
+	"noteChanges.changeTo": "Wijzigen in",
+	"noteChanges.changeToLabel": 'Callout waarin "{{id}}" wordt gewijzigd',
+	"noteChanges.undoHint": "Je kunt dit ongedaan maken.",
+	"noteChanges.renameChange": 'Wijzigen in "{{id}}"',
+	"noteChanges.renameChangeDesc":
+		'Titels die "{{old}}" luiden, worden "{{new}}". Je kunt dit ongedaan maken.',
+	"noteChanges.renameKeep": '"{{id}}" behouden als extra ID',
+	"noteChanges.renameKeepDesc": "Je notities veranderen niet en behouden de stijl van deze callout.",
+	"noteChanges.renameKeepFull": "Deze callout heeft al het maximum van {{max}} ID's.",
+	"noteChanges.titlesUses":
+		'{{count}} titel(s) in {{files}} notitie(s) luiden "{{old}}".',
+	"noteChanges.titlesUnknown": 'Sommige titels luiden mogelijk "{{old}}".',
+	"noteChanges.titlesChange": 'Wijzigen in "{{new}}"',
+	"noteChanges.titlesLeaveDesc": 'Ze blijven "{{old}}" luiden.',
+	"noteChanges.foldUses":
+		"{{count}} callout(s) in {{files}} notitie(s) zijn ingesteld om anders in te klappen.",
+	"noteChanges.foldUnknown":
+		"Sommige callouts zijn mogelijk ingesteld om anders in te klappen.",
+	"noteChanges.foldChange": 'Instellen op "{{state}}"',
+	"noteChanges.foldLeaveDesc":
+		"Alleen callouts die je vanaf nu invoegt gebruiken de nieuwe instelling.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -781,6 +818,8 @@ export const nl: Record<string, string> = {
 		"{{count}} callout-ID('s) bijgewerkt in vault-bestanden: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"{{count}} callout-titel(s) bijgewerkt in vault-bestanden: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Het inklapteken van {{count}} callout(s) in vault-bestanden is bijgewerkt.",
 	"vault.replaceWith": "Vervangen door:",
 	"vault.deleteWithout": "Verwijderen zonder te vervangen",
 	"vault.confirmDelete": "Bevestigen",
@@ -1496,4 +1535,33 @@ export const nl: Record<string, string> = {
 	"settings.versions": "Eerdere versies",
 	"settings.versionsDesc": "Callout Studio slaat automatisch versies van je configuratie op.\nVergelijk ze of keer terug naar een versie.",
 	"settings.versionsButton": "Versies bekijken",
+	"noteChanges.callouts": "{{count}} callouts",
+	"noteChanges.calloutsOne": "1 callout",
+	"noteChanges.notes": "{{count}} notities",
+	"noteChanges.notesOne": "1 notitie",
+	"noteChanges.askCallout": "Wat moet er met die callout gebeuren?",
+	"noteChanges.askCallouts": "Wat moet er met die callouts gebeuren?",
+	"noteChanges.askTitle": "Wat moet er met die titel gebeuren?",
+	"noteChanges.askTitles": "Wat moet er met die titels gebeuren?",
+	"noteChanges.removedLine": "Je hebt de ID \"{{id}}\" uit {{name}} verwijderd, maar het wordt nog gebruikt door {{callouts}} in {{notes}}.",
+	"noteChanges.removedLineUnknown": "Je hebt de ID \"{{id}}\" uit {{name}} verwijderd, maar sommige notities gebruiken het misschien nog.",
+	"noteChanges.moveTo": "\"{{id}}\" naar een andere callout verplaatsen",
+	"noteChanges.moveToDesc": "Je notities veranderen niet. Ze nemen de stijl over van de callout die je kiest.",
+	"noteChanges.moveToLabel": "Callout waarnaar \"{{id}}\" wordt verplaatst",
+	"noteChanges.moveNoRoom": "Elke andere callout heeft al het maximum van {{max}} ID's.",
+	"noteChanges.rewrite": "Wijzig ze in je notities",
+	"noteChanges.rewriteDesc": "Elke [!{{id}}] in je notities wordt [!{{to}}].",
+	"noteChanges.renamedLine": "Je hebt \"{{old}}\" hernoemd naar \"{{new}}\", dus de ID verandert van \"{{oldId}}\" naar \"{{newId}}\". De oude ID wordt nog gebruikt door {{callouts}} in {{notes}}.",
+	"noteChanges.renamedLineUnknown": "Je hebt \"{{old}}\" hernoemd naar \"{{new}}\", dus de ID verandert van \"{{oldId}}\" naar \"{{newId}}\". Sommige notities gebruiken de oude ID misschien nog.",
+	"noteChanges.idChangedLine": "De ID van deze callout verandert van \"{{oldId}}\" naar \"{{newId}}\". De oude ID wordt nog gebruikt door {{callouts}} in {{notes}}.",
+	"noteChanges.idChangedLineUnknown": "De ID van deze callout verandert van \"{{oldId}}\" naar \"{{newId}}\". Sommige notities gebruiken de oude ID misschien nog.",
+	"noteChanges.renameFollowDesc": "Elke [!{{oldId}}] in je notities wordt [!{{newId}}], en titels met \"{{old}}\" worden \"{{new}}\".",
+	"noteChanges.renameFollowDescIdOnly": "Elke [!{{oldId}}] in je notities wordt [!{{newId}}].",
+	"noteChanges.titlesLine": "Je hebt \"{{old}}\" hernoemd naar \"{{new}}\". De oude naam is nog de titel van {{callouts}} in {{notes}}.",
+	"noteChanges.titlesLineUnknown": "Je hebt \"{{old}}\" hernoemd naar \"{{new}}\". Sommige callouts in je notities hebben de oude naam misschien nog als titel.",
+	"noteChanges.titlesChangeDesc": "Titels met \"{{old}}\" worden \"{{new}}\".",
+	"noteChanges.foldLine": "Je hebt gewijzigd hoe deze callout inklapt. Bij {{callouts}} in {{notes}} staat een andere inklapmarkering.",
+	"noteChanges.foldLineUnknown": "Je hebt gewijzigd hoe deze callout inklapt. Bij sommige callouts in je notities staat misschien een andere inklapmarkering.",
+	"noteChanges.foldChangeDesc": "Hun + of - wordt daarop aangepast.",
+	"editor.idGiveFailed": "\"{{id}}\" kon niet naar {{name}} worden verplaatst, dus notities die het gebruiken vallen terug op de standaardstijl.",
 };
