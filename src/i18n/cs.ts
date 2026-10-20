@@ -32,7 +32,6 @@ export const cs: Record<string, string> = {
 	"editor.paletteNoMatches": "Žádná barva neodpovídá dotazu „{{query}}“.",
 	"editor.paletteSearchPlaceholder": "Hledat barvy…",
 	"replaceModal.searchPlaceholder": "Hledat callouty",
-	"replaceModal.chooseFirst": "Chcete-li pokračovat, vyberte náhradní callout nebo „{{delete}}“.",
 	"replaceModal.chooseFirstReplace": "Nejprve vyberte callout, kterým ho nahradíte.",
 	"settings.fallbackTag": "Výchozí",
 	"settings.fallbackTagAuto": "Aut. výchozí",
@@ -42,8 +41,6 @@ export const cs: Record<string, string> = {
 	"manualDiscovery.scanning": "Prohledávání…",
 	"settings.rescanComplete":
 		"Prohledávání dokončeno: přidáno {{count}} nových typů calloutů.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(vrátí se na výchozí)",
-	"replaceModal.titleDelete": "Smazat callout",
 	"replaceModal.titleReplace": "Nahradit ve vaultu",
 
 	"welcome.tooltip": "O aplikaci Callout Studio",
@@ -94,7 +91,6 @@ export const cs: Record<string, string> = {
 	"settings.language": "Jazyk",
 	"settings.languageDesc":
 		"Jazyk zobrazení Callout Studio. Ve výchozím nastavení odpovídá jazyku rozhraní Obsidianu.",
-	"settings.languageAuto": "Automaticky",
 	"settings.importExport": "Import a export",
 	"settings.import": "Importovat…",
 	"settings.export": "Exportovat…",
@@ -406,11 +402,10 @@ export const cs: Record<string, string> = {
 		'Jiná paleta je již v metadatech calloutu zapsána jako "{{key}}". Zvolte jiný název.',
 	"palette.metadataNameShared":
 		"V metadatech calloutu: {{key}}. Toto slovo má i jiná uložená paleta, takže na něj odpovídá jen jedna z nich.",
-	"palette.renameNotesTitle": "Aktualizovat poznámky?",
-	"palette.renameNotesBody":
-		'{{count}} calloutů v {{files}} poznámkách používá tuto paletu jako "{{old}}".\nZměnit je na "{{new}}"?\nPokud ne, vrátí se k vlastní barvě.',
-	"palette.renameNotesConfirm": "Aktualizovat poznámky",
-	"palette.renameNotesSkip": "Ponechat",
+	"palette.renameNotesChange":
+		"Přejmenovali jste paletu z „{{old}}“ na „{{new}}“, takže její slovo v metadatech calloutu se změní z „{{oldWord}}“ na „{{newWord}}“.",
+	"palette.renameNotesLeaveDesc": "Ponechají si „{{word}}“ a vrátí se k vlastní barvě.",
+	"palette.renameNotesChangeDesc": "Každé |{{old}} ve vašich poznámkách se změní na |{{new}}.",
 	"palette.renameNotesFailed":
 		"Některé poznámky se nepodařilo aktualizovat. Ty, které se podařilo, jsou uloženy; ostatní stále používají starý název.",
 	"palette.baseColor": "Základní barva",
@@ -534,11 +529,8 @@ export const cs: Record<string, string> = {
 	"iconPicker.customRecolor": "Sledovat barvu Callout",
 	"iconPicker.allSources": "Všechny zdroje",
 	"iconPicker.searchAllSources": "Hledat ve všech zdrojích ikon",
-	"iconPicker.sourcesNotDownloaded":
-		"Zatím není součástí: {{names}}. Vyberte zdroj výše a stáhněte ho.",
 	"iconPicker.chooseSource": "Vybrat zdroj",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "Nestaženo",
 	"iconPicker.librariesAvailable": "Dostupné knihovny",
 	"iconPicker.librariesToDownload": "Knihovny ke stažení",
 	"iconPicker.groupCurrent": "Aktuální ikona",
@@ -776,7 +768,6 @@ export const cs: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Smazat příkaz",
-	"confirm.titleResetCallout": "Obnovit callout",
 	"confirm.titleDeletePalette": "Smazat paletu",
 	"confirm.titleDeleteImage": "Smazat obrázek",
 	"confirm.titleDeleteLibrary": "Smazat knihovnu ikon",
@@ -791,8 +782,6 @@ export const cs: Record<string, string> = {
 	"vault.foldUpdated":
 		"Aktualizována značka sbalení u {{count}} calloutů v souborech vaultu.",
 	"vault.replaceWith": "Nahradit za:",
-	"vault.deleteWithout": "Smazat bez nahrazení",
-	"vault.confirmDelete": "Potvrdit",
 	"vault.confirmReplace": "Nahradit",
 	"vault.replacePromptInUse":
 		'"{{name}}" se používá {{count}}krát v {{files}} souboru(ech). Vyberte callout, kterým ho chcete nahradit:',
@@ -802,9 +791,8 @@ export const cs: Record<string, string> = {
 		"Nejsou k dispozici žádné jiné callouts pro nahrazení.",
 	"vault.convertedToPlainText":
 		"{{blocks}} bloků callout v {{files}} souboru(ech) převedeno na prostý text.",
-	"vault.resetAliasWarning":
-		"{{count}} odkazů v {{files}} souboru(ech) používá vlastní aliasy: {{aliases}}. Po obnovení přestanou fungovat. Pokračovat?",
-	"vault.resetConfirm": "Obnovit",
+	"vault.resetNotesFailed":
+		"Některé poznámky se nepodařilo aktualizovat, takže callout nebyl obnoven. Pro dokončení znovu zvolte Obnovit výchozí.",
 
 	"quickInsert.title": "Rychlé vložení blokového callout",
 	"quickInsert.desc": "Vyberte callout pro vložení na pozici kurzoru. Pouze blokové callouty.",
@@ -1495,6 +1483,9 @@ export const cs: Record<string, string> = {
 	"noteChanges.changeMainId": "Hlavní ID se změní z „{{oldId}}“ na „{{newId}}“.",
 	"noteChanges.changeName": "Změnili jste zobrazovaný název z „{{old}}“ na „{{new}}“.",
 	"noteChanges.changeRemoved": "Odebrali jste ID „{{id}}“.",
+	"noteChanges.changeRemovedMany": "Odebrali jste tato ID: {{ids}}.",
+	"noteChanges.changeResetRemoved": "Obnovení výchozího odebere ID „{{id}}“, které jste přidali.",
+	"noteChanges.changeResetRemovedMany": "Obnovení výchozího odebere ID, která jste přidali: {{ids}}.",
 	"noteChanges.changeFold": "Změnili jste, jak se tento callout sbaluje.",
 	"noteChanges.affects": "Týká se to: calloutů {{callouts}}, poznámek {{notes}}.",
 	"noteChanges.affectsUnknown": "Některé vaše poznámky mohou být dotčeny.",

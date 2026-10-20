@@ -31,7 +31,6 @@ export const ms: Record<string, string> = {
 	"editor.paletteNoMatches": "Tiada warna yang sepadan dengan “{{query}}”.",
 	"editor.paletteSearchPlaceholder": "Cari warna…",
 	"replaceModal.searchPlaceholder": "Cari callout",
-	"replaceModal.chooseFirst": "Pilih callout pengganti, atau “{{delete}}”, untuk meneruskan.",
 	"replaceModal.chooseFirstReplace": "Pilih dahulu callout yang akan menggantikannya.",
 	"settings.fallbackTag": "Lalai",
 	"settings.fallbackTagAuto": "Lalai automatik",
@@ -41,8 +40,6 @@ export const ms: Record<string, string> = {
 	"manualDiscovery.scanning": "Mengimbas…",
 	"settings.rescanComplete":
 		"Pengimbasan selesai: {{count}} jenis callout baharu ditambah.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(kembali ke lalai)",
-	"replaceModal.titleDelete": "Padam callout",
 	"replaceModal.titleReplace": "Ganti dalam vault",
 
 	"welcome.tooltip": "Tentang Callout Studio",
@@ -94,7 +91,6 @@ export const ms: Record<string, string> = {
 	"settings.language": "Bahasa",
 	"settings.languageDesc":
 		"Bahasa paparan untuk Callout Studio. Secara lalai mengikut bahasa antara muka Obsidian.",
-	"settings.languageAuto": "Automatik",
 	"settings.importExport": "Import dan eksport",
 	"settings.import": "Import…",
 	"settings.export": "Eksport…",
@@ -405,11 +401,10 @@ export const ms: Record<string, string> = {
 		'Palet lain sudah ditulis sebagai "{{key}}" dalam metadata callout. Pilih nama yang berbeza.',
 	"palette.metadataNameShared":
 		"Dalam metadata callout: {{key}}. Palet tersimpan lain juga mempunyai perkataan ini, jadi hanya satu daripadanya yang menyahut.",
-	"palette.renameNotesTitle": "Kemas kini nota anda?",
-	"palette.renameNotesBody":
-		'{{count}} callout dalam {{files}} nota menggunakan palet ini sebagai "{{old}}".\nTukar kepada "{{new}}"?\nJika tidak, callout kembali kepada warnanya sendiri.',
-	"palette.renameNotesConfirm": "Kemas kini nota",
-	"palette.renameNotesSkip": "Biarkan",
+	"palette.renameNotesChange":
+		"Anda menamakan semula palet daripada \"{{old}}\" kepada \"{{new}}\", jadi perkataannya dalam metadata callout bertukar daripada \"{{oldWord}}\" kepada \"{{newWord}}\".",
+	"palette.renameNotesLeaveDesc": "Kekal dengan \"{{word}}\" dan kembali kepada warnanya sendiri.",
+	"palette.renameNotesChangeDesc": "Setiap |{{old}} dalam nota anda menjadi |{{new}}.",
 	"palette.renameNotesFailed":
 		"Sesetengah nota tidak dapat dikemas kini. Yang berjaya dikemas kini telah disimpan; selebihnya masih menggunakan nama lama.",
 	"palette.baseColor": "Warna asas",
@@ -533,11 +528,8 @@ export const ms: Record<string, string> = {
 	"iconPicker.customRecolor": "Ikut warna Callout",
 	"iconPicker.allSources": "Semua sumber",
 	"iconPicker.searchAllSources": "Cari semua sumber ikon",
-	"iconPicker.sourcesNotDownloaded":
-		"Belum disertakan: {{names}}. Pilih sumber di atas untuk memuat turunnya.",
 	"iconPicker.chooseSource": "Pilih sumber",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "Belum dimuat turun",
 	"iconPicker.librariesAvailable": "Pustaka tersedia",
 	"iconPicker.librariesToDownload": "Pustaka untuk dimuat turun",
 	"iconPicker.groupCurrent": "Ikon semasa",
@@ -772,7 +764,6 @@ export const ms: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Padam arahan",
-	"confirm.titleResetCallout": "Set semula callout",
 	"confirm.titleDeletePalette": "Padam palet",
 	"confirm.titleDeleteImage": "Padam gambar",
 	"confirm.titleDeleteLibrary": "Padam pustaka ikon",
@@ -786,8 +777,6 @@ export const ms: Record<string, string> = {
 	"vault.foldUpdated":
 		"Tanda lipat {{count}} callout dikemas kini dalam fail vault.",
 	"vault.replaceWith": "Ganti dengan:",
-	"vault.deleteWithout": "Padam tanpa mengganti",
-	"vault.confirmDelete": "Sahkan",
 	"vault.confirmReplace": "Ganti",
 	"vault.replacePromptInUse":
 		'"{{name}}" digunakan {{count}} kali dalam {{files}} fail. Pilih callout untuk menggantikannya:',
@@ -796,9 +785,8 @@ export const ms: Record<string, string> = {
 		"Tiada callout lain tersedia untuk menggantikan ini.",
 	"vault.convertedToPlainText":
 		"{{blocks}} blok callout dalam {{files}} fail ditukar kepada teks biasa.",
-	"vault.resetAliasWarning":
-		"{{count}} rujukan dalam {{files}} fail menggunakan alias tersuai: {{aliases}}. Ini akan berhenti berfungsi selepas set semula. Teruskan?",
-	"vault.resetConfirm": "Set semula",
+	"vault.resetNotesFailed":
+		"Sesetengah nota tidak dapat dikemas kini, jadi callout tidak disetkan semula. Pilih Set semula ke lalai sekali lagi untuk selesai.",
 	"quickInsert.title": "Sisipan pantas callout blok",
 	"quickInsert.desc": "Pilih callout untuk disisipkan pada kedudukan kursor. Callout blok sahaja.",
 	"quickInsert.searchPlaceholder": "Cari callout",
@@ -1500,6 +1488,9 @@ export const ms: Record<string, string> = {
 	"noteChanges.changeMainId": "ID utama berubah daripada \"{{oldId}}\" kepada \"{{newId}}\".",
 	"noteChanges.changeName": "Anda menukar nama paparan daripada \"{{old}}\" kepada \"{{new}}\".",
 	"noteChanges.changeRemoved": "Anda mengalih keluar ID \"{{id}}\".",
+	"noteChanges.changeRemovedMany": "Anda mengalih keluar ID ini: {{ids}}.",
+	"noteChanges.changeResetRemoved": "Set semula ke lalai mengalih keluar ID \"{{id}}\" yang anda tambah.",
+	"noteChanges.changeResetRemovedMany": "Set semula ke lalai mengalih keluar ID yang anda tambah: {{ids}}.",
 	"noteChanges.changeFold": "Anda mengubah cara callout ini dilipat.",
 	"noteChanges.affects": "Ini menjejaskan {{callouts}} dalam {{notes}}.",
 	"noteChanges.affectsUnknown": "Sesetengah nota anda mungkin terjejas.",

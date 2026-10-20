@@ -84,7 +84,6 @@ export const tr: Record<string, string> = {
 	"editor.paletteNoMatches": "“{{query}}” ile eşleşen renk bulunamadı.",
 	"editor.paletteSearchPlaceholder": "Renk ara…",
 	"replaceModal.searchPlaceholder": "Callout ara",
-	"replaceModal.chooseFirst": "Devam etmek için bir yedek callout veya “{{delete}}” seçin.",
 	"replaceModal.chooseFirstReplace": "Önce yerine geçecek callout'u seçin.",
 	"settings.fallbackTag": "Varsayılan",
 	"settings.fallbackTagAuto": "Otomatik varsayılan",
@@ -94,8 +93,6 @@ export const tr: Record<string, string> = {
 	"manualDiscovery.scanning": "Taranıyor…",
 	"settings.rescanComplete":
 		"Tarama tamamlandı: {{count}} yeni callout türü eklendi.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(varsayılana geri döner)",
-	"replaceModal.titleDelete": "Callout'u sil",
 	"replaceModal.titleReplace": "Vault'ta değiştir",
 
 	"welcome.tooltip": "Callout Studio hakkında",
@@ -146,7 +143,6 @@ export const tr: Record<string, string> = {
 	"settings.language": "Dil",
 	"settings.languageDesc":
 		"Callout Studio görüntüleme dili. Varsayılan olarak Obsidian'ın arayüz dilini izler.",
-	"settings.languageAuto": "Otomatik",
 	"settings.importExport": "İçe aktar ve dışa aktar",
 	"settings.import": "İçe aktar…",
 	"settings.export": "Dışa aktar…",
@@ -460,11 +456,10 @@ export const tr: Record<string, string> = {
 		'Başka bir palet callout üst verisinde zaten "{{key}}" olarak yazılmış. Farklı bir ad seçin.',
 	"palette.metadataNameShared":
 		"Callout üst verisinde: {{key}}. Kayıtlı başka bir palette de bu kelime var, bu yüzden yalnızca biri buna yanıt verir.",
-	"palette.renameNotesTitle": "Notlarınız güncellensin mi?",
-	"palette.renameNotesBody":
-		'{{files}} nottaki {{count}} callout bu paleti "{{old}}" olarak kullanıyor.\n"{{new}}" olarak değiştirilsin mi?\nDeğiştirmezseniz kendi renklerine dönerler.',
-	"palette.renameNotesConfirm": "Notları güncelle",
-	"palette.renameNotesSkip": "Olduğu gibi bırak",
+	"palette.renameNotesChange":
+		"Paletin adını \"{{old}}\" yerine \"{{new}}\" olarak değiştirdiniz, bu yüzden callout üst verisindeki sözcüğü \"{{oldWord}}\" iken \"{{newWord}}\" olur.",
+	"palette.renameNotesLeaveDesc": "\"{{word}}\" olarak kalırlar ve kendi renklerine dönerler.",
+	"palette.renameNotesChangeDesc": "Notlarınızdaki her |{{old}}, |{{new}} olur.",
 	"palette.renameNotesFailed":
 		"Bazı notlar güncellenemedi. Güncellenenler kaydedildi; geri kalanı hâlâ eski adı kullanıyor.",
 	"palette.baseColor": "Temel renk",
@@ -588,11 +583,8 @@ export const tr: Record<string, string> = {
 	"iconPicker.customRecolor": "Callout rengini izle",
 	"iconPicker.allSources": "Tüm kaynaklar",
 	"iconPicker.searchAllSources": "Tüm simge kaynaklarında ara",
-	"iconPicker.sourcesNotDownloaded":
-		"Henüz dahil edilmedi: {{names}}. İndirmek için yukarıdan bir kaynak seçin.",
 	"iconPicker.chooseSource": "Kaynak seç",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "İndirilmedi",
 	"iconPicker.librariesAvailable": "Kullanılabilir kitaplıklar",
 	"iconPicker.librariesToDownload": "İndirilecek kitaplıklar",
 	"iconPicker.groupCurrent": "Geçerli simge",
@@ -833,7 +825,6 @@ export const tr: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Komutu sil",
-	"confirm.titleResetCallout": "Callout'u sıfırla",
 	"confirm.titleDeletePalette": "Paleti sil",
 	"confirm.titleDeleteImage": "Resmi sil",
 	"confirm.titleDeleteLibrary": "Simge kitaplığını sil",
@@ -848,8 +839,6 @@ export const tr: Record<string, string> = {
 	"vault.foldUpdated":
 		"Vault dosyalarında {{count}} callout'un katlama işareti güncellendi.",
 	"vault.replaceWith": "Şununla değiştir:",
-	"vault.deleteWithout": "Değiştirmeden sil",
-	"vault.confirmDelete": "Onayla",
 	"vault.confirmReplace": "Değiştir",
 	"vault.replacePromptInUse":
 		'"{{name}}" {{files}} dosyada {{count}} kez kullanılıyor. Onu değiştirmek için bir callout seçin:',
@@ -858,9 +847,8 @@ export const tr: Record<string, string> = {
 		"Bunu değiştirmek için başka callout mevcut değil.",
 	"vault.convertedToPlainText":
 		"{{files}} dosyadaki {{blocks}} callout bloğu düz metne dönüştürüldü.",
-	"vault.resetAliasWarning":
-		"{{files}} dosyadaki {{count}} referans özel takma adlar kullanıyor: {{aliases}}. Sıfırlamadan sonra çalışmayacaklar. Devam edilsin mi?",
-	"vault.resetConfirm": "Sıfırla",
+	"vault.resetNotesFailed":
+		"Bazı notlar güncellenemedi, bu yüzden callout sıfırlanmadı. Bitirmek için Varsayılana sıfırla seçeneğini yeniden seçin.",
 
 	"quickInsert.title": "Blok callout'u hızlı ekle",
 	"quickInsert.desc": "İmleç konumuna eklemek için bir callout seçin. Yalnızca blok callout'lar.",
@@ -1493,6 +1481,9 @@ export const tr: Record<string, string> = {
 	"noteChanges.changeMainId": "Ana kimlik \"{{oldId}}\" yerine \"{{newId}}\" olacak.",
 	"noteChanges.changeName": "Görünen adı \"{{old}}\" yerine \"{{new}}\" olarak değiştirdiniz.",
 	"noteChanges.changeRemoved": "\"{{id}}\" kimliğini kaldırdınız.",
+	"noteChanges.changeRemovedMany": "Şu kimlikleri kaldırdınız: {{ids}}.",
+	"noteChanges.changeResetRemoved": "Varsayılana sıfırla, eklediğiniz \"{{id}}\" kimliğini kaldırır.",
+	"noteChanges.changeResetRemovedMany": "Varsayılana sıfırla, eklediğiniz kimlikleri kaldırır: {{ids}}.",
 	"noteChanges.changeFold": "Bu callout'un nasıl katlandığını değiştirdiniz.",
 	"noteChanges.affects": "Bu durum {{notes}} içindeki {{callouts}} için geçerli.",
 	"noteChanges.affectsUnknown": "Bazı notlarınız etkilenebilir.",

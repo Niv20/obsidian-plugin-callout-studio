@@ -32,7 +32,6 @@ export const ja: Record<string, string> = {
 	"editor.paletteNoMatches": "「{{query}}」に一致する色はありません。",
 	"editor.paletteSearchPlaceholder": "色を検索…",
 	"replaceModal.searchPlaceholder": "calloutを検索",
-	"replaceModal.chooseFirst": "続行するには、置き換え先のcalloutまたは「{{delete}}」を選択してください。",
 	"replaceModal.chooseFirstReplace": "先に置き換え先のcalloutを選択してください。",
 	"settings.fallbackTag": "デフォルト",
 	"settings.fallbackTagAuto": "自動デフォルト",
@@ -42,8 +41,6 @@ export const ja: Record<string, string> = {
 	"manualDiscovery.scanning": "スキャン中…",
 	"settings.rescanComplete":
 		"スキャン完了: {{count}}件の新しいcalloutタイプを追加しました。",
-	"replaceModal.deleteWithoutReplaceSuffix": "（デフォルトにフォールバック）",
-	"replaceModal.titleDelete": "calloutを削除",
 	"replaceModal.titleReplace": "vaultで置き換え",
 
 	"welcome.tooltip": "Callout Studioについて",
@@ -94,7 +91,6 @@ export const ja: Record<string, string> = {
 	"settings.language": "言語",
 	"settings.languageDesc":
 		"Callout Studio の表示言語。デフォルトでは Obsidian のインターフェース言語に従います。",
-	"settings.languageAuto": "自動",
 	"settings.importExport": "インポートとエクスポート",
 	"settings.import": "インポート…",
 	"settings.export": "エクスポート…",
@@ -403,11 +399,10 @@ export const ja: Record<string, string> = {
 	"palette.metadataName": "calloutのメタデータでの表記: {{key}}",
 	"palette.metadataNameExists": '別のパレットがすでに calloutのメタデータで "{{key}}" と書かれています。別の名前を選んでください。',
 	"palette.metadataNameShared": "calloutのメタデータでの表記: {{key}}。保存済みの別のパレットにもこの語があるため、どちらか一方だけが反応します。",
-	"palette.renameNotesTitle": "ノートを更新しますか？",
-	"palette.renameNotesBody":
-		'{{files}} 件のノートにある {{count}} 個の callout が、このパレットを "{{old}}" として使っています。\n"{{new}}" に変更しますか？\n変更しない場合、それぞれ自身の色に戻ります。',
-	"palette.renameNotesConfirm": "ノートを更新",
-	"palette.renameNotesSkip": "そのままにする",
+	"palette.renameNotesChange":
+		"パレット名を「{{old}}」から「{{new}}」に変更したため、calloutのメタデータでのパレットの語も「{{oldWord}}」から「{{newWord}}」に変わります。",
+	"palette.renameNotesLeaveDesc": "「{{word}}」のまま残り、それぞれ自身の色に戻ります。",
+	"palette.renameNotesChangeDesc": "ノート内の|{{old}}がすべて|{{new}}に変わります。",
 	"palette.renameNotesFailed": "一部のノートを更新できませんでした。更新できたものは保存されています。残りは古い名前のままです。",
 	"palette.baseColor": "ベースカラー",
 	"palette.baseColorHint":
@@ -530,11 +525,8 @@ export const ja: Record<string, string> = {
 	"iconPicker.customRecolor": "Calloutのカラーに合わせる",
 	"iconPicker.allSources": "すべてのソース",
 	"iconPicker.searchAllSources": "すべてのアイコンソースを検索",
-	"iconPicker.sourcesNotDownloaded":
-		"未取得: {{names}}。上からソースを選んでダウンロードしてください。",
 	"iconPicker.chooseSource": "ソースを選択",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "未ダウンロード",
 	"iconPicker.librariesAvailable": "利用可能なライブラリ",
 	"iconPicker.librariesToDownload": "ダウンロードするライブラリ",
 	"iconPicker.groupCurrent": "現在のアイコン",
@@ -777,7 +769,6 @@ export const ja: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "コマンドを削除",
-	"confirm.titleResetCallout": "calloutをリセット",
 	"confirm.titleDeletePalette": "パレットを削除",
 	"confirm.titleDeleteImage": "画像を削除",
 	"confirm.titleDeleteLibrary": "アイコンライブラリを削除",
@@ -791,8 +782,6 @@ export const ja: Record<string, string> = {
 		"vaultファイルの{{count}}件のcalloutタイトルを更新しました: {{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated": "vaultファイル内の{{count}}件のCalloutの折りたたみ記号を更新しました。",
 	"vault.replaceWith": "置き換え先:",
-	"vault.deleteWithout": "置き換えずに削除",
-	"vault.confirmDelete": "確認",
 	"vault.confirmReplace": "置き換え",
 	"vault.replacePromptInUse":
 		'"{{name}}"は{{files}}個のファイルで{{count}}回使用されています。置き換えるcalloutを選択してください:',
@@ -801,9 +790,7 @@ export const ja: Record<string, string> = {
 	"vault.noReplacementAvailable": "置き換え可能な他のcalloutがありません。",
 	"vault.convertedToPlainText":
 		"{{files}}個のファイルの{{blocks}}個のcalloutブロックをプレーンテキストに変換しました。",
-	"vault.resetAliasWarning":
-		"{{files}}個のファイルの{{count}}件の参照がカスタムエイリアスを使用しています: {{aliases}}。リセット後これらは機能しなくなります。続行しますか？",
-	"vault.resetConfirm": "リセット",
+	"vault.resetNotesFailed": "一部のノートを更新できなかったため、calloutはリセットされませんでした。完了するには、もう一度「デフォルトにリセット」を選んでください。",
 
 	"quickInsert.title": "ブロックcalloutをクイック挿入",
 	"quickInsert.desc": "カーソル位置に挿入するcalloutを選択します。ブロックcalloutのみです。",
@@ -1476,6 +1463,9 @@ export const ja: Record<string, string> = {
 	"noteChanges.changeMainId": "メインIDが「{{oldId}}」から「{{newId}}」に変わります。",
 	"noteChanges.changeName": "表示名を「{{old}}」から「{{new}}」に変更しました。",
 	"noteChanges.changeRemoved": "ID「{{id}}」を削除しました。",
+	"noteChanges.changeRemovedMany": "次のIDを削除しました：{{ids}}。",
+	"noteChanges.changeResetRemoved": "「デフォルトにリセット」を実行すると、追加したID「{{id}}」が削除されます。",
+	"noteChanges.changeResetRemovedMany": "「デフォルトにリセット」を実行すると、追加した次のIDが削除されます：{{ids}}。",
 	"noteChanges.changeFold": "このCalloutの折りたたみ方を変更しました。",
 	"noteChanges.affects": "{{notes}}の{{callouts}}が対象です。",
 	"noteChanges.affectsUnknown": "一部のノートが影響を受ける可能性があります。",

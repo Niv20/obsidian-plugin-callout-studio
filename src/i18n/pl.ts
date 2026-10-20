@@ -32,7 +32,6 @@ export const pl: Record<string, string> = {
 	"editor.paletteNoMatches": "Nie znaleziono kolorów pasujących do „{{query}}”.",
 	"editor.paletteSearchPlaceholder": "Szukaj kolorów…",
 	"replaceModal.searchPlaceholder": "Szukaj callout",
-	"replaceModal.chooseFirst": "Aby kontynuować, wybierz zastępczy callout lub „{{delete}}”.",
 	"replaceModal.chooseFirstReplace": "Najpierw wybierz callout, którym ma zostać zastąpiony.",
 	"settings.fallbackTag": "Domyślny",
 	"settings.fallbackTagAuto": "Aut. domyślny",
@@ -42,8 +41,6 @@ export const pl: Record<string, string> = {
 	"manualDiscovery.scanning": "Skanowanie…",
 	"settings.rescanComplete":
 		"Skanowanie zakończone: dodano {{count}} nowych typów calloutów.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(wraca do domyślnego)",
-	"replaceModal.titleDelete": "Usuń callout",
 	"replaceModal.titleReplace": "Zastąp w vault",
 
 	"welcome.tooltip": "O Callout Studio",
@@ -94,7 +91,6 @@ export const pl: Record<string, string> = {
 	"settings.language": "Język",
 	"settings.languageDesc":
 		"Język wyświetlania Callout Studio. Domyślnie zgodny z językiem interfejsu Obsidian.",
-	"settings.languageAuto": "Automatycznie",
 	"settings.importExport": "Importuj i eksportuj",
 	"settings.import": "Importuj…",
 	"settings.export": "Eksportuj…",
@@ -409,11 +405,10 @@ export const pl: Record<string, string> = {
 		'Inna paleta jest już zapisana jako "{{key}}" w metadanych calloutu. Wybierz inną nazwę.',
 	"palette.metadataNameShared":
 		"W metadanych calloutu: {{key}}. Inna zapisana paleta też ma to słowo, więc odpowiada na nie tylko jedna z nich.",
-	"palette.renameNotesTitle": "Zaktualizować notatki?",
-	"palette.renameNotesBody":
-		'{{count}} calloutów w {{files}} notatkach używa tej palety jako "{{old}}".\nZmienić je na "{{new}}"?\nJeśli nie, wrócą do własnego koloru.',
-	"palette.renameNotesConfirm": "Zaktualizuj notatki",
-	"palette.renameNotesSkip": "Zostaw",
+	"palette.renameNotesChange":
+		"Zmieniono nazwę palety z „{{old}}” na „{{new}}”, więc jej słowo w metadanych calloutu zmieni się z „{{oldWord}}” na „{{newWord}}”.",
+	"palette.renameNotesLeaveDesc": "Zachowają „{{word}}” i wrócą do własnego koloru.",
+	"palette.renameNotesChangeDesc": "Każde |{{old}} w Twoich notatkach zmieni się w |{{new}}.",
 	"palette.renameNotesFailed":
 		"Nie udało się zaktualizować niektórych notatek. Zaktualizowane zostały zapisane; pozostałe nadal używają starej nazwy.",
 	"palette.baseColor": "Kolor bazowy",
@@ -536,11 +531,8 @@ export const pl: Record<string, string> = {
 	"iconPicker.customRecolor": "Podążaj za kolorem Callout",
 	"iconPicker.allSources": "Wszystkie źródła",
 	"iconPicker.searchAllSources": "Szukaj we wszystkich źródłach ikon",
-	"iconPicker.sourcesNotDownloaded":
-		"Jeszcze nie pobrano: {{names}}. Wybierz powyżej źródło, aby je pobrać.",
 	"iconPicker.chooseSource": "Wybierz źródło",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "Nie pobrano",
 	"iconPicker.librariesAvailable": "Dostępne biblioteki",
 	"iconPicker.librariesToDownload": "Biblioteki do pobrania",
 	"iconPicker.groupCurrent": "Bieżąca ikona",
@@ -779,7 +771,6 @@ export const pl: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Usuń polecenie",
-	"confirm.titleResetCallout": "Resetuj callout",
 	"confirm.titleDeletePalette": "Usuń paletę",
 	"confirm.titleDeleteImage": "Usuń obraz",
 	"confirm.titleDeleteLibrary": "Usuń bibliotekę ikon",
@@ -794,8 +785,6 @@ export const pl: Record<string, string> = {
 	"vault.foldUpdated":
 		"Zaktualizowano znacznik zwijania {{count}} callout(ów) w plikach vault.",
 	"vault.replaceWith": "Zastąp przez:",
-	"vault.deleteWithout": "Usuń bez zastępowania",
-	"vault.confirmDelete": "Potwierdź",
 	"vault.confirmReplace": "Zastąp",
 	"vault.replacePromptInUse":
 		'"{{name}}" jest używany {{count}} raz(y) w {{files}} pliku(ach). Wybierz callout, którym go zastąpić:',
@@ -804,9 +793,8 @@ export const pl: Record<string, string> = {
 		"Brak innych callouts dostępnych jako zastępstwo.",
 	"vault.convertedToPlainText":
 		"Przekształcono {{blocks}} blok(ów) callout w {{files}} pliku(ach) w zwykły tekst.",
-	"vault.resetAliasWarning":
-		"{{count}} odwołanie(ń) w {{files}} pliku(ach) używa niestandardowych aliasów: {{aliases}}. Po zresetowaniu przestaną działać. Kontynuować?",
-	"vault.resetConfirm": "Resetuj",
+	"vault.resetNotesFailed":
+		"Nie udało się zaktualizować niektórych notatek, więc callout nie został zresetowany. Aby dokończyć, wybierz ponownie Resetuj do domyślnego.",
 
 	"quickInsert.title": "Szybkie wstawianie callout blokowego",
 	"quickInsert.desc": "Wybierz callout do wstawienia w pozycji kursora. Tylko callout blokowe.",
@@ -1515,6 +1503,9 @@ export const pl: Record<string, string> = {
 	"noteChanges.changeMainId": "Główny identyfikator zmienia się z „{{oldId}}” na „{{newId}}”.",
 	"noteChanges.changeName": "Zmieniono nazwę wyświetlaną z „{{old}}” na „{{new}}”.",
 	"noteChanges.changeRemoved": "Usunięto ID „{{id}}”.",
+	"noteChanges.changeRemovedMany": "Usunięto te ID: {{ids}}.",
+	"noteChanges.changeResetRemoved": "Resetowanie do domyślnego usuwa dodane przez Ciebie ID „{{id}}”.",
+	"noteChanges.changeResetRemovedMany": "Resetowanie do domyślnego usuwa dodane przez Ciebie ID: {{ids}}.",
 	"noteChanges.changeFold": "Zmieniono sposób zwijania tego calloutu.",
 	"noteChanges.affects": "Dotyczy to: calloutów {{callouts}}, notatek {{notes}}.",
 	"noteChanges.affectsUnknown": "To może dotyczyć niektórych Twoich notatek.",

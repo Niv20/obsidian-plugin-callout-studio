@@ -30,7 +30,6 @@ export const el: Record<string, string> = {
 	"editor.paletteNoMatches": "Κανένα χρώμα δεν αντιστοιχεί στο «{{query}}».",
 	"editor.paletteSearchPlaceholder": "Αναζήτηση χρωμάτων…",
 	"replaceModal.searchPlaceholder": "Αναζήτηση callout",
-	"replaceModal.chooseFirst": "Για να συνεχίσετε, επιλέξτε ένα callout αντικατάστασης ή «{{delete}}».",
 	"replaceModal.chooseFirstReplace": "Επιλέξτε πρώτα το callout με το οποίο θα αντικατασταθεί.",
 	"settings.fallbackTag": "Προεπιλογή",
 	"settings.fallbackTagAuto": "Αυτόματη προεπιλογή",
@@ -40,8 +39,6 @@ export const el: Record<string, string> = {
 	"manualDiscovery.scanning": "Σάρωση…",
 	"settings.rescanComplete":
 		"Η σάρωση ολοκληρώθηκε: προστέθηκαν {{count}} νέοι τύποι callout.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(επιστρέφει στην προεπιλογή)",
-	"replaceModal.titleDelete": "Διαγραφή callout",
 	"replaceModal.titleReplace": "Αντικατάσταση στο vault",
 
 	"welcome.tooltip": "Σχετικά με το Callout Studio",
@@ -91,7 +88,6 @@ export const el: Record<string, string> = {
 	"settings.language": "Γλώσσα",
 	"settings.languageDesc":
 		"Γλώσσα εμφάνισης για το Callout Studio. Ακολουθεί από προεπιλογή τη γλώσσα διεπαφής του Obsidian.",
-	"settings.languageAuto": "Αυτόματα",
 	"settings.importExport": "Εισαγωγή και εξαγωγή",
 	"settings.import": "Εισαγωγή…",
 	"settings.export": "Εξαγωγή…",
@@ -398,11 +394,10 @@ export const el: Record<string, string> = {
 		'Μια άλλη παλέτα είναι ήδη γραμμένη ως "{{key}}" στα μεταδεδομένα του callout. Επιλέξτε διαφορετικό όνομα.',
 	"palette.metadataNameShared":
 		"Στα μεταδεδομένα του callout: {{key}}. Και μια άλλη αποθηκευμένη παλέτα έχει αυτή τη λέξη, οπότε μόνο η μία από αυτές ανταποκρίνεται σε αυτήν.",
-	"palette.renameNotesTitle": "Ενημέρωση των σημειώσεών σας;",
-	"palette.renameNotesBody":
-		'{{count}} callout σε {{files}} σημειώσεις χρησιμοποιούν αυτή την παλέτα ως "{{old}}".\nΝα αλλάξουν σε "{{new}}";\nΑν όχι, επιστρέφουν στο δικό τους χρώμα.',
-	"palette.renameNotesConfirm": "Ενημέρωση σημειώσεων",
-	"palette.renameNotesSkip": "Να μείνουν ως έχουν",
+	"palette.renameNotesChange":
+		"Μετονομάσατε την παλέτα από «{{old}}» σε «{{new}}», οπότε η λέξη της στα μεταδεδομένα του callout αλλάζει από «{{oldWord}}» σε «{{newWord}}».",
+	"palette.renameNotesLeaveDesc": "Κρατούν το «{{word}}» και επιστρέφουν στο δικό τους χρώμα.",
+	"palette.renameNotesChangeDesc": "Κάθε |{{old}} στις σημειώσεις σας γίνεται |{{new}}.",
 	"palette.renameNotesFailed":
 		"Δεν ήταν δυνατή η ενημέρωση ορισμένων σημειώσεων. Όσες ενημερώθηκαν έχουν αποθηκευτεί· οι υπόλοιπες εξακολουθούν να χρησιμοποιούν το παλιό όνομα.",
 	"palette.baseColor": "Βασικό χρώμα",
@@ -528,11 +523,8 @@ export const el: Record<string, string> = {
 	"iconPicker.customRecolor": "Παρακολούθηση χρώματος Callout",
 	"iconPicker.allSources": "Όλες οι πηγές",
 	"iconPicker.searchAllSources": "Αναζήτηση σε όλες τις πηγές εικονιδίων",
-	"iconPicker.sourcesNotDownloaded":
-		"Δεν έχει ληφθεί ακόμα: {{names}}. Επιλέξτε μια πηγή παραπάνω για να τη λάβετε.",
 	"iconPicker.chooseSource": "Επιλογή πηγής",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "Δεν έχει ληφθεί",
 	"iconPicker.librariesAvailable": "Διαθέσιμες βιβλιοθήκες",
 	"iconPicker.librariesToDownload": "Βιβλιοθήκες προς λήψη",
 	"iconPicker.groupCurrent": "Τρέχον εικονίδιο",
@@ -771,7 +763,6 @@ export const el: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Διαγραφή εντολής",
-	"confirm.titleResetCallout": "Επαναφορά callout",
 	"confirm.titleDeletePalette": "Διαγραφή παλέτας",
 	"confirm.titleDeleteImage": "Διαγραφή εικόνας",
 	"confirm.titleDeleteLibrary": "Διαγραφή βιβλιοθήκης εικονιδίων",
@@ -785,8 +776,6 @@ export const el: Record<string, string> = {
 	"vault.foldUpdated":
 		"Ενημερώθηκε ο δείκτης δίπλωσης {{count}} callout σε αρχεία vault.",
 	"vault.replaceWith": "Αντικατάσταση με:",
-	"vault.deleteWithout": "Διαγραφή χωρίς αντικατάσταση",
-	"vault.confirmDelete": "Επιβεβαίωση",
 	"vault.confirmReplace": "Αντικατάσταση",
 	"vault.replacePromptInUse":
 		'"{{name}}" χρησιμοποιείται {{count}} φορά/φορές σε {{files}} αρχείο/α. Επιλέξτε callout για αντικατάσταση:',
@@ -796,9 +785,8 @@ export const el: Record<string, string> = {
 		"Δεν υπάρχουν διαθέσιμα callouts για αντικατάσταση.",
 	"vault.convertedToPlainText":
 		"{{blocks}} μπλοκ callout σε {{files}} αρχείο/α μετατράπηκαν σε απλό κείμενο.",
-	"vault.resetAliasWarning":
-		"{{count}} αναφορές σε {{files}} αρχείο/α χρησιμοποιούν προσαρμοσμένα ψευδώνυμα: {{aliases}}. Αυτά θα σταματήσουν να λειτουργούν μετά την επαναφορά. Συνέχεια;",
-	"vault.resetConfirm": "Επαναφορά",
+	"vault.resetNotesFailed":
+		"Δεν ήταν δυνατή η ενημέρωση ορισμένων σημειώσεων, γι’ αυτό το callout δεν επαναφέρθηκε. Επιλέξτε ξανά Επαναφορά στις προεπιλογές για να ολοκληρώσετε.",
 	"quickInsert.title": "Γρήγορη εισαγωγή callout μπλοκ",
 	"quickInsert.desc": "Επιλέξτε ένα callout για εισαγωγή στη θέση του δρομέα. Μόνο callout τύπου μπλοκ.",
 	"quickInsert.searchPlaceholder": "Αναζήτηση callout",
@@ -1499,6 +1487,9 @@ export const el: Record<string, string> = {
 	"noteChanges.changeMainId": "Το κύριο αναγνωριστικό αλλάζει από «{{oldId}}» σε «{{newId}}».",
 	"noteChanges.changeName": "Αλλάξατε το εμφανιζόμενο όνομα από «{{old}}» σε «{{new}}».",
 	"noteChanges.changeRemoved": "Αφαιρέσατε το ID «{{id}}».",
+	"noteChanges.changeRemovedMany": "Αφαιρέσατε αυτά τα ID: {{ids}}.",
+	"noteChanges.changeResetRemoved": "Η επαναφορά στις προεπιλογές αφαιρεί το ID «{{id}}» που προσθέσατε.",
+	"noteChanges.changeResetRemovedMany": "Η επαναφορά στις προεπιλογές αφαιρεί τα ID που προσθέσατε: {{ids}}.",
 	"noteChanges.changeFold": "Αλλάξατε τον τρόπο που διπλώνει αυτό το callout.",
 	"noteChanges.affects": "Αυτό επηρεάζει {{callouts}} σε {{notes}}.",
 	"noteChanges.affectsUnknown": "Ορισμένες από τις σημειώσεις σας ίσως επηρεάζονται.",

@@ -84,7 +84,6 @@ export const vi: Record<string, string> = {
 	"editor.paletteNoMatches": "Không có màu nào khớp với “{{query}}”.",
 	"editor.paletteSearchPlaceholder": "Tìm màu…",
 	"replaceModal.searchPlaceholder": "Tìm kiếm callout",
-	"replaceModal.chooseFirst": "Để tiếp tục, hãy chọn một callout thay thế hoặc “{{delete}}”.",
 	"replaceModal.chooseFirstReplace": "Hãy chọn callout sẽ thay thế nó trước.",
 	"settings.fallbackTag": "Mặc định",
 	"settings.fallbackTagAuto": "Mặc định tự động",
@@ -94,8 +93,6 @@ export const vi: Record<string, string> = {
 	"manualDiscovery.scanning": "Đang quét…",
 	"settings.rescanComplete":
 		"Quét hoàn tất: đã thêm {{count}} loại callout mới.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(quay lại mặc định)",
-	"replaceModal.titleDelete": "Xóa callout",
 	"replaceModal.titleReplace": "Thay thế trong vault",
 
 	"welcome.tooltip": "Giới thiệu về Callout Studio",
@@ -147,7 +144,6 @@ export const vi: Record<string, string> = {
 	"settings.language": "Ngôn ngữ",
 	"settings.languageDesc":
 		"Ngôn ngữ hiển thị cho Callout Studio. Mặc định theo ngôn ngữ giao diện của Obsidian.",
-	"settings.languageAuto": "Tự động",
 	"settings.importExport": "Nhập và xuất",
 	"settings.import": "Nhập…",
 	"settings.export": "Xuất…",
@@ -462,11 +458,10 @@ export const vi: Record<string, string> = {
 		'Một bảng màu khác đã được ghi là "{{key}}" trong siêu dữ liệu của callout. Hãy chọn tên khác.',
 	"palette.metadataNameShared":
 		"Trong siêu dữ liệu của callout: {{key}}. Một bảng màu đã lưu khác cũng có từ này, nên chỉ một trong hai đáp ứng nó.",
-	"palette.renameNotesTitle": "Cập nhật ghi chú của bạn?",
-	"palette.renameNotesBody":
-		'{{count}} callout trong {{files}} ghi chú đang dùng bảng màu này với tên "{{old}}".\nĐổi chúng thành "{{new}}"?\nNếu không, chúng sẽ trở về màu riêng.',
-	"palette.renameNotesConfirm": "Cập nhật ghi chú",
-	"palette.renameNotesSkip": "Để nguyên",
+	"palette.renameNotesChange":
+		"Bạn đã đổi tên bảng màu từ \"{{old}}\" thành \"{{new}}\", nên từ của nó trong siêu dữ liệu callout đổi từ \"{{oldWord}}\" thành \"{{newWord}}\".",
+	"palette.renameNotesLeaveDesc": "Chúng giữ \"{{word}}\" và trở về màu riêng.",
+	"palette.renameNotesChangeDesc": "Mỗi |{{old}} trong ghi chú của bạn sẽ thành |{{new}}.",
 	"palette.renameNotesFailed":
 		"Không thể cập nhật một số ghi chú. Những ghi chú đã cập nhật được lưu lại; phần còn lại vẫn dùng tên cũ.",
 	"palette.baseColor": "Màu gốc",
@@ -591,11 +586,8 @@ export const vi: Record<string, string> = {
 	"iconPicker.customRecolor": "Theo màu Callout",
 	"iconPicker.allSources": "Tất cả nguồn",
 	"iconPicker.searchAllSources": "Tìm kiếm trong tất cả nguồn biểu tượng",
-	"iconPicker.sourcesNotDownloaded":
-		"Chưa có: {{names}}. Chọn nguồn ở trên để tải xuống.",
 	"iconPicker.chooseSource": "Chọn nguồn",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "Chưa tải xuống",
 	"iconPicker.librariesAvailable": "Thư viện có sẵn",
 	"iconPicker.librariesToDownload": "Thư viện để tải xuống",
 	"iconPicker.groupCurrent": "Biểu tượng hiện tại",
@@ -838,7 +830,6 @@ export const vi: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Xóa lệnh",
-	"confirm.titleResetCallout": "Đặt lại callout",
 	"confirm.titleDeletePalette": "Xóa bảng màu",
 	"confirm.titleDeleteImage": "Xóa hình ảnh",
 	"confirm.titleDeleteLibrary": "Xóa thư viện biểu tượng",
@@ -853,8 +844,6 @@ export const vi: Record<string, string> = {
 	"vault.foldUpdated":
 		"Đã cập nhật dấu thu gọn của {{count}} callout trong các tệp vault.",
 	"vault.replaceWith": "Thay thế bằng:",
-	"vault.deleteWithout": "Xóa không thay thế",
-	"vault.confirmDelete": "Xác nhận",
 	"vault.confirmReplace": "Thay thế",
 	"vault.replacePromptInUse":
 		'"{{name}}" được sử dụng {{count}} lần trong {{files}} tệp. Chọn callout để thay thế:',
@@ -863,9 +852,8 @@ export const vi: Record<string, string> = {
 		"Không có callout nào khác để thay thế callout này.",
 	"vault.convertedToPlainText":
 		"Đã chuyển {{blocks}} khối callout trong {{files}} tệp thành văn bản thường.",
-	"vault.resetAliasWarning":
-		"{{count}} tham chiếu trong {{files}} tệp đang sử dụng bí danh tùy chỉnh: {{aliases}}. Chúng sẽ ngừng hoạt động sau khi đặt lại. Tiếp tục?",
-	"vault.resetConfirm": "Đặt lại",
+	"vault.resetNotesFailed":
+		"Không thể cập nhật một số ghi chú, nên callout chưa được đặt lại. Hãy chọn lại Đặt lại về mặc định để hoàn tất.",
 
 	"quickInsert.title": "Chèn nhanh callout khối",
 	"quickInsert.desc": "Chọn một callout để chèn vào vị trí con trỏ. Chỉ callout dạng khối.",
@@ -1502,6 +1490,9 @@ export const vi: Record<string, string> = {
 	"noteChanges.changeMainId": "ID chính đổi từ \"{{oldId}}\" thành \"{{newId}}\".",
 	"noteChanges.changeName": "Bạn đã đổi tên hiển thị từ \"{{old}}\" thành \"{{new}}\".",
 	"noteChanges.changeRemoved": "Bạn đã xóa ID \"{{id}}\".",
+	"noteChanges.changeRemovedMany": "Bạn đã xóa các ID này: {{ids}}.",
+	"noteChanges.changeResetRemoved": "Đặt lại về mặc định sẽ xóa ID \"{{id}}\" mà bạn đã thêm.",
+	"noteChanges.changeResetRemovedMany": "Đặt lại về mặc định sẽ xóa các ID mà bạn đã thêm: {{ids}}.",
 	"noteChanges.changeFold": "Bạn đã đổi cách callout này gập lại.",
 	"noteChanges.affects": "Điều này ảnh hưởng đến {{callouts}} trong {{notes}}.",
 	"noteChanges.affectsUnknown": "Một số ghi chú của bạn có thể bị ảnh hưởng.",

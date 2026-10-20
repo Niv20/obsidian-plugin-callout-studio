@@ -85,7 +85,6 @@ export const ru: Record<string, string> = {
 	"editor.paletteNoMatches": "Для запроса «{{query}}» не найдено цветов.",
 	"editor.paletteSearchPlaceholder": "Поиск цветов…",
 	"replaceModal.searchPlaceholder": "Поиск callout",
-	"replaceModal.chooseFirst": "Чтобы продолжить, выберите callout-замену или «{{delete}}».",
 	"replaceModal.chooseFirstReplace": "Сначала выберите callout, на который его нужно заменить.",
 	"settings.fallbackTag": "По умолчанию",
 	"settings.fallbackTagAuto": "Авт. по умолчанию",
@@ -95,8 +94,6 @@ export const ru: Record<string, string> = {
 	"manualDiscovery.scanning": "Сканирование…",
 	"settings.rescanComplete":
 		"Сканирование завершено: добавлено {{count}} новых типов callout.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(возврат к умолчанию)",
-	"replaceModal.titleDelete": "Удалить callout",
 	"replaceModal.titleReplace": "Заменить в хранилище",
 
 	"welcome.tooltip": "О Callout Studio",
@@ -147,7 +144,6 @@ export const ru: Record<string, string> = {
 	"settings.language": "Язык",
 	"settings.languageDesc":
 		"Язык интерфейса Callout Studio. По умолчанию совпадает с языком интерфейса Obsidian.",
-	"settings.languageAuto": "Автоматически",
 	"settings.importExport": "Импорт и экспорт",
 	"settings.import": "Импорт…",
 	"settings.export": "Экспорт…",
@@ -461,11 +457,10 @@ export const ru: Record<string, string> = {
 		'Другая палитра уже записана как "{{key}}" в метаданных callout. Выберите другое название.',
 	"palette.metadataNameShared":
 		"В метаданных callout: {{key}}. Это слово есть и у другой сохранённой палитры, поэтому откликается на него только одна из них.",
-	"palette.renameNotesTitle": "Обновить ваши заметки?",
-	"palette.renameNotesBody":
-		'{{count}} callout в {{files}} заметках используют эту палитру как "{{old}}".\nИзменить на "{{new}}"?\nЕсли нет, они вернутся к собственному цвету.',
-	"palette.renameNotesConfirm": "Обновить заметки",
-	"palette.renameNotesSkip": "Оставить",
+	"palette.renameNotesChange":
+		"Вы переименовали палитру из «{{old}}» в «{{new}}», поэтому её слово в метаданных callout изменится с «{{oldWord}}» на «{{newWord}}».",
+	"palette.renameNotesLeaveDesc": "Они сохранят «{{word}}» и вернутся к собственному цвету.",
+	"palette.renameNotesChangeDesc": "Каждый |{{old}} в ваших заметках станет |{{new}}.",
 	"palette.renameNotesFailed":
 		"Не удалось обновить некоторые заметки. Обновлённые сохранены; остальные по-прежнему используют старое название.",
 	"palette.baseColor": "Базовый цвет",
@@ -589,11 +584,8 @@ export const ru: Record<string, string> = {
 	"iconPicker.customRecolor": "Следовать цвету Callout",
 	"iconPicker.allSources": "Все источники",
 	"iconPicker.searchAllSources": "Поиск во всех источниках иконок",
-	"iconPicker.sourcesNotDownloaded":
-		"Ещё не включено: {{names}}. Выберите источник выше, чтобы загрузить.",
 	"iconPicker.chooseSource": "Выбрать источник",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "Не загружено",
 	"iconPicker.librariesAvailable": "Доступные библиотеки",
 	"iconPicker.librariesToDownload": "Библиотеки для загрузки",
 	"iconPicker.groupCurrent": "Текущая иконка",
@@ -832,7 +824,6 @@ export const ru: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Удалить команду",
-	"confirm.titleResetCallout": "Сбросить callout",
 	"confirm.titleDeletePalette": "Удалить палитру",
 	"confirm.titleDeleteImage": "Удалить изображение",
 	"confirm.titleDeleteLibrary": "Удалить библиотеку иконок",
@@ -847,8 +838,6 @@ export const ru: Record<string, string> = {
 	"vault.foldUpdated":
 		"Обновлена отметка сворачивания у callout: {{count}} в файлах хранилища.",
 	"vault.replaceWith": "Заменить на:",
-	"vault.deleteWithout": "Удалить без замены",
-	"vault.confirmDelete": "Подтвердить",
 	"vault.confirmReplace": "Заменить",
 	"vault.replacePromptInUse":
 		'"{{name}}" используется {{count}} раз(а) в {{files}} файле(ах). Выберите callout для замены:',
@@ -856,9 +845,8 @@ export const ru: Record<string, string> = {
 	"vault.noReplacementAvailable": "Нет других доступных callout для замены.",
 	"vault.convertedToPlainText":
 		"{{blocks}} блоков callout в {{files}} файле(ах) преобразовано в обычный текст.",
-	"vault.resetAliasWarning":
-		"{{count}} ссылок в {{files}} файле(ах) используют пользовательские псевдонимы: {{aliases}}. После сброса они перестанут работать. Продолжить?",
-	"vault.resetConfirm": "Сбросить",
+	"vault.resetNotesFailed":
+		"Не удалось обновить некоторые заметки, поэтому callout не был сброшен. Чтобы завершить, снова выберите Сбросить до умолчания.",
 
 	"quickInsert.title": "Быстрая вставка блочного callout",
 	"quickInsert.desc": "Выберите callout для вставки в позицию курсора. Только блочные callout.",
@@ -1511,6 +1499,9 @@ export const ru: Record<string, string> = {
 	"noteChanges.changeMainId": "Основной ID изменится с «{{oldId}}» на «{{newId}}».",
 	"noteChanges.changeName": "Вы изменили отображаемое имя с «{{old}}» на «{{new}}».",
 	"noteChanges.changeRemoved": "Вы убрали ID «{{id}}».",
+	"noteChanges.changeRemovedMany": "Вы убрали эти ID: {{ids}}.",
+	"noteChanges.changeResetRemoved": "Сброс до умолчания убирает ID «{{id}}», который вы добавили.",
+	"noteChanges.changeResetRemovedMany": "Сброс до умолчания убирает ID, которые вы добавили: {{ids}}.",
 	"noteChanges.changeFold": "Вы изменили способ сворачивания этого callout.",
 	"noteChanges.affects": "Это затрагивает: callout — {{callouts}}, заметок — {{notes}}.",
 	"noteChanges.affectsUnknown": "Возможно, это затронет некоторые ваши заметки.",

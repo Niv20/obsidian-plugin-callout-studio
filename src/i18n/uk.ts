@@ -84,7 +84,6 @@ export const uk: Record<string, string> = {
 	"editor.paletteNoMatches": "За запитом «{{query}}» не знайдено кольорів.",
 	"editor.paletteSearchPlaceholder": "Пошук кольорів…",
 	"replaceModal.searchPlaceholder": "Пошук callout",
-	"replaceModal.chooseFirst": "Щоб продовжити, виберіть callout-заміну або «{{delete}}».",
 	"replaceModal.chooseFirstReplace": "Спершу виберіть callout, на який його потрібно замінити.",
 	"settings.fallbackTag": "За замовчуванням",
 	"settings.fallbackTagAuto": "Авт. за замовчуванням",
@@ -94,8 +93,6 @@ export const uk: Record<string, string> = {
 	"manualDiscovery.scanning": "Сканування…",
 	"settings.rescanComplete":
 		"Сканування завершено: додано {{count}} нових типів callout.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(повернення до типового)",
-	"replaceModal.titleDelete": "Видалити callout",
 	"replaceModal.titleReplace": "Замінити у сховищі",
 
 	"welcome.tooltip": "Про Callout Studio",
@@ -147,7 +144,6 @@ export const uk: Record<string, string> = {
 	"settings.language": "Мова",
 	"settings.languageDesc":
 		"Мова інтерфейсу Callout Studio. За замовчуванням відповідає мові інтерфейсу Obsidian.",
-	"settings.languageAuto": "Автоматично",
 	"settings.importExport": "Імпорт і експорт",
 	"settings.import": "Імпорт…",
 	"settings.export": "Експорт…",
@@ -472,11 +468,10 @@ export const uk: Record<string, string> = {
 		'Іншу палітру вже записано як "{{key}}" у метаданих callout. Виберіть іншу назву.',
 	"palette.metadataNameShared":
 		"У метаданих callout: {{key}}. Це слово є й в іншої збереженої палітри, тому відгукується на нього лише одна з них.",
-	"palette.renameNotesTitle": "Оновити ваші нотатки?",
-	"palette.renameNotesBody":
-		'{{count}} callout у {{files}} нотатках використовують цю палітру як "{{old}}".\nЗмінити на "{{new}}"?\nЯкщо ні, вони повернуться до власного кольору.',
-	"palette.renameNotesConfirm": "Оновити нотатки",
-	"palette.renameNotesSkip": "Залишити",
+	"palette.renameNotesChange":
+		"Ви перейменували палітру з «{{old}}» на «{{new}}», тому її слово в метаданих callout зміниться з «{{oldWord}}» на «{{newWord}}».",
+	"palette.renameNotesLeaveDesc": "Вони збережуть «{{word}}» і повернуться до власного кольору.",
+	"palette.renameNotesChangeDesc": "Кожен |{{old}} у ваших нотатках стане |{{new}}.",
 	"palette.renameNotesFailed":
 		"Не вдалося оновити деякі нотатки. Оновлені збережено; решта й надалі використовує стару назву.",
 	"palette.baseColor": "Базовий колір",
@@ -600,11 +595,8 @@ export const uk: Record<string, string> = {
 	"iconPicker.customRecolor": "Слідувати кольору Callout",
 	"iconPicker.allSources": "Всі джерела",
 	"iconPicker.searchAllSources": "Пошук у всіх джерелах іконок",
-	"iconPicker.sourcesNotDownloaded":
-		"Ще не включено: {{names}}. Виберіть джерело вище, щоб завантажити.",
 	"iconPicker.chooseSource": "Вибрати джерело",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "Не завантажено",
 	"iconPicker.librariesAvailable": "Доступні бібліотеки",
 	"iconPicker.librariesToDownload": "Бібліотеки для завантаження",
 	"iconPicker.groupCurrent": "Поточна іконка",
@@ -847,7 +839,6 @@ export const uk: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Видалити команду",
-	"confirm.titleResetCallout": "Скинути callout",
 	"confirm.titleDeletePalette": "Видалити палітру",
 	"confirm.titleDeleteImage": "Видалити зображення",
 	"confirm.titleDeleteLibrary": "Видалити бібліотеку іконок",
@@ -862,8 +853,6 @@ export const uk: Record<string, string> = {
 	"vault.foldUpdated":
 		"Оновлено позначку згортання у callout: {{count}} у файлах сховища.",
 	"vault.replaceWith": "Замінити на:",
-	"vault.deleteWithout": "Видалити без заміни",
-	"vault.confirmDelete": "Підтвердити",
 	"vault.confirmReplace": "Замінити",
 	"vault.replacePromptInUse":
 		"«{{name}}» використовується {{count}} раз(ів) у {{files}} файлі(ах). Виберіть callout для заміни:",
@@ -871,9 +860,8 @@ export const uk: Record<string, string> = {
 	"vault.noReplacementAvailable": "Немає інших доступних callout для заміни.",
 	"vault.convertedToPlainText":
 		"{{blocks}} блоків callout у {{files}} файлі(ах) перетворено на звичайний текст.",
-	"vault.resetAliasWarning":
-		"{{count}} посилань у {{files}} файлі(ах) використовують користувацькі псевдоніми: {{aliases}}. Після скидання вони перестануть працювати. Продовжити?",
-	"vault.resetConfirm": "Скинути",
+	"vault.resetNotesFailed":
+		"Не вдалося оновити деякі нотатки, тому callout не було скинуто. Щоб завершити, знову виберіть Скинути до типового.",
 
 	"quickInsert.title": "Швидка вставка блокового callout",
 	"quickInsert.desc": "Виберіть callout для вставки в позицію курсора. Лише блокові callout.",
@@ -1508,6 +1496,9 @@ export const uk: Record<string, string> = {
 	"noteChanges.changeMainId": "Основний ID зміниться з «{{oldId}}» на «{{newId}}».",
 	"noteChanges.changeName": "Ви змінили відображувану назву з «{{old}}» на «{{new}}».",
 	"noteChanges.changeRemoved": "Ви прибрали ID «{{id}}».",
+	"noteChanges.changeRemovedMany": "Ви прибрали ці ID: {{ids}}.",
+	"noteChanges.changeResetRemoved": "Скидання до типового прибирає ID «{{id}}», який ви додали.",
+	"noteChanges.changeResetRemovedMany": "Скидання до типового прибирає ID, які ви додали: {{ids}}.",
 	"noteChanges.changeFold": "Ви змінили спосіб згортання цього callout.",
 	"noteChanges.affects": "Це стосується: callout — {{callouts}}, нотаток — {{notes}}.",
 	"noteChanges.affectsUnknown": "Можливо, це вплине на деякі ваші нотатки.",

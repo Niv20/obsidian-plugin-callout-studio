@@ -32,7 +32,6 @@ export const fa: Record<string, string> = {
 	"editor.paletteNoMatches": "هیچ رنگی با «{{query}}» مطابقت ندارد.",
 	"editor.paletteSearchPlaceholder": "جستجوی رنگ‌ها…",
 	"replaceModal.searchPlaceholder": "جستجوی callout‌ها",
-	"replaceModal.chooseFirst": "برای ادامه، یک callout جایگزین یا «{{delete}}» را انتخاب کنید.",
 	"replaceModal.chooseFirstReplace": "ابتدا calloutی را که باید جایگزین آن شود انتخاب کنید.",
 	"settings.fallbackTag": "پیش‌فرض",
 	"settings.fallbackTagAuto": "پیش‌فرض خودکار",
@@ -42,8 +41,6 @@ export const fa: Record<string, string> = {
 	"manualDiscovery.scanning": "در حال اسکن…",
 	"settings.rescanComplete":
 		"اسکن کامل شد: {{count}} نوع callout جدید اضافه شد.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(به پیش‌فرض برمی‌گردد)",
-	"replaceModal.titleDelete": "حذف callout",
 	"replaceModal.titleReplace": "جایگزینی در vault",
 
 	"welcome.tooltip": "درباره‌ی Callout Studio",
@@ -94,7 +91,6 @@ export const fa: Record<string, string> = {
 	"settings.language": "زبان",
 	"settings.languageDesc":
 		"زبان نمایش Callout Studio. به‌طور پیش‌فرض از زبان رابط Obsidian پیروی می‌کند.",
-	"settings.languageAuto": "خودکار",
 	"settings.importExport": "وارد کردن و صادر کردن",
 	"settings.import": "وارد کردن…",
 	"settings.export": "صادر کردن…",
@@ -409,11 +405,10 @@ export const fa: Record<string, string> = {
 		'پالت دیگری از قبل در فراداده‌ٔ callout به‌صورت "{{key}}" نوشته شده است. نام دیگری انتخاب کنید.',
 	"palette.metadataNameShared":
 		"در فراداده‌ٔ callout: {{key}}. پالت ذخیره‌شدهٔ دیگری هم این واژه را دارد، پس فقط یکی از آن‌ها به آن پاسخ می‌دهد.",
-	"palette.renameNotesTitle": "یادداشت‌هایتان به‌روز شوند؟",
-	"palette.renameNotesBody":
-		'{{count}} callout در {{files}} یادداشت از این پالت با نام "{{old}}" استفاده می‌کنند.\nبه "{{new}}" تغییر کنند؟\nاگر نه، به رنگ خودشان برمی‌گردند.',
-	"palette.renameNotesConfirm": "به‌روزرسانی یادداشت‌ها",
-	"palette.renameNotesSkip": "رها کردن",
+	"palette.renameNotesChange":
+		"نام پالت را از «{{old}}» به «{{new}}» تغییر دادید، بنابراین واژهٔ آن در فرادادهٔ callout از «{{oldWord}}» به «{{newWord}}» تغییر می‌کند.",
+	"palette.renameNotesLeaveDesc": "«{{word}}» را نگه می‌دارند و به رنگ خودشان برمی‌گردند.",
+	"palette.renameNotesChangeDesc": "هر |{{old}} در یادداشت‌های شما به |{{new}} تبدیل می‌شود.",
 	"palette.renameNotesFailed":
 		"برخی یادداشت‌ها به‌روز نشدند. آن‌هایی که به‌روز شدند ذخیره شده‌اند؛ بقیه هنوز از نام قدیمی استفاده می‌کنند.",
 	"palette.baseColor": "رنگ پایه",
@@ -537,11 +532,8 @@ export const fa: Record<string, string> = {
 	"iconPicker.customRecolor": "پیروی از رنگ Callout",
 	"iconPicker.allSources": "همه منابع",
 	"iconPicker.searchAllSources": "جستجو در همه منابع آیکون",
-	"iconPicker.sourcesNotDownloaded":
-		"هنوز دانلود نشده: {{names}}. یک منبع را در بالا انتخاب کنید تا دانلود شود.",
 	"iconPicker.chooseSource": "انتخاب منبع",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "دانلود نشده",
 	"iconPicker.librariesAvailable": "کتابخانه‌های موجود",
 	"iconPicker.librariesToDownload": "کتابخانه‌ها برای دانلود",
 	"iconPicker.groupCurrent": "نماد فعلی",
@@ -777,7 +769,6 @@ export const fa: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "حذف دستور",
-	"confirm.titleResetCallout": "بازنشانی callout",
 	"confirm.titleDeletePalette": "حذف پالت",
 	"confirm.titleDeleteImage": "حذف تصویر",
 	"confirm.titleDeleteLibrary": "حذف کتابخانهٔ نماد",
@@ -796,8 +787,6 @@ export const fa: Record<string, string> = {
 	"vault.foldUpdated":
 		"نشانهٔ تاشدن {{count}} callout در فایل‌های vault به‌روزرسانی شد.",
 	"vault.replaceWith": "جایگزینی با:",
-	"vault.deleteWithout": "حذف بدون جایگزینی",
-	"vault.confirmDelete": "تأیید",
 	"vault.confirmReplace": "جایگزینی",
 	"vault.replacePromptInUse":
 		'"{{name}}" {{count}} بار در {{files}} فایل استفاده می‌شود. یک callout برای جایگزینی انتخاب کنید:',
@@ -807,9 +796,8 @@ export const fa: Record<string, string> = {
 		"هیچ callout دیگری برای جایگزینی موجود نیست.",
 	"vault.convertedToPlainText":
 		"{{blocks}} بلوک callout در {{files}} فایل به متن ساده تبدیل شد.",
-	"vault.resetAliasWarning":
-		"{{count}} مرجع در {{files}} فایل از نام‌های مستعار سفارشی استفاده می‌کنند: {{aliases}}. پس از بازنشانی کار نخواهند کرد. ادامه داده شود؟",
-	"vault.resetConfirm": "بازنشانی",
+	"vault.resetNotesFailed":
+		"برخی یادداشت‌ها به‌روز نشدند، بنابراین callout بازنشانی نشد. برای پایان دادن دوباره بازنشانی به پیش‌فرض را انتخاب کنید.",
 
 	"quickInsert.title": "درج سریع callout بلوکی",
 	"quickInsert.desc": "یک callout برای درج در مکان‌نما انتخاب کنید. فقط callout‌های بلوکی.",
@@ -1499,6 +1487,10 @@ export const fa: Record<string, string> = {
 	"noteChanges.changeMainId": "شناسهٔ اصلی از «{{oldId}}» به «{{newId}}» تغییر می‌کند.",
 	"noteChanges.changeName": "نام نمایشی را از «{{old}}» به «{{new}}» تغییر دادید.",
 	"noteChanges.changeRemoved": "شناسهٔ «{{id}}» را حذف کردید.",
+	"noteChanges.changeRemovedMany": "این شناسه‌ها را حذف کردید: {{ids}}.",
+	"noteChanges.changeResetRemoved": "بازنشانی به پیش‌فرض شناسهٔ «{{id}}» را که اضافه کرده بودید حذف می‌کند.",
+	"noteChanges.changeResetRemovedMany":
+		"بازنشانی به پیش‌فرض شناسه‌هایی را که اضافه کرده بودید حذف می‌کند: {{ids}}.",
 	"noteChanges.changeFold": "شیوهٔ جمع‌شدن این callout را تغییر دادید.",
 	"noteChanges.affects": "این روی {{callouts}} از {{notes}} اثر می‌گذارد.",
 	"noteChanges.affectsUnknown": "ممکن است برخی از یادداشت‌های شما تحت تأثیر قرار بگیرند.",

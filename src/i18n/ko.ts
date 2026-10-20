@@ -32,7 +32,6 @@ export const ko: Record<string, string> = {
 	"editor.paletteNoMatches": "“{{query}}”와 일치하는 색상이 없습니다.",
 	"editor.paletteSearchPlaceholder": "색상 검색…",
 	"replaceModal.searchPlaceholder": "callout 검색",
-	"replaceModal.chooseFirst": "계속하려면 대체할 callout 또는 “{{delete}}”을(를) 선택하세요.",
 	"replaceModal.chooseFirstReplace": "먼저 대체할 callout을 선택하세요.",
 	"settings.fallbackTag": "기본값",
 	"settings.fallbackTagAuto": "자동 기본값",
@@ -42,8 +41,6 @@ export const ko: Record<string, string> = {
 	"manualDiscovery.scanning": "스캔 중…",
 	"settings.rescanComplete":
 		"스캔 완료: {{count}}개의 새 callout 유형이 추가되었습니다.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(기본값으로 폴백)",
-	"replaceModal.titleDelete": "callout 삭제",
 	"replaceModal.titleReplace": "볼트에서 교체",
 
 	"welcome.tooltip": "Callout Studio 소개",
@@ -94,7 +91,6 @@ export const ko: Record<string, string> = {
 	"settings.language": "언어",
 	"settings.languageDesc":
 		"Callout Studio의 표시 언어입니다. 기본값은 Obsidian의 인터페이스 언어를 따릅니다.",
-	"settings.languageAuto": "자동",
 	"settings.importExport": "가져오기 및 내보내기",
 	"settings.import": "가져오기…",
 	"settings.export": "내보내기…",
@@ -404,11 +400,10 @@ export const ko: Record<string, string> = {
 	"palette.metadataName": "callout 메타데이터에서: {{key}}",
 	"palette.metadataNameExists": '다른 팔레트가 이미 callout 메타데이터에 "{{key}}"(으)로 쓰여 있습니다. 다른 이름을 선택하세요.',
 	"palette.metadataNameShared": "callout 메타데이터에서: {{key}}. 저장된 다른 팔레트에도 이 단어가 있어서 둘 중 하나만 반응합니다.",
-	"palette.renameNotesTitle": "노트를 업데이트할까요?",
-	"palette.renameNotesBody":
-		'노트 {{files}}개의 callout {{count}}개가 이 팔레트를 "{{old}}"(으)로 사용하고 있습니다.\n"{{new}}"(으)로 변경할까요?\n변경하지 않으면 자체 색상으로 돌아갑니다.',
-	"palette.renameNotesConfirm": "노트 업데이트",
-	"palette.renameNotesSkip": "그대로 두기",
+	"palette.renameNotesChange":
+		"팔레트 이름을 \"{{old}}\"에서 \"{{new}}\"(으)로 변경했으므로, callout 메타데이터의 팔레트 단어도 \"{{oldWord}}\"에서 \"{{newWord}}\"(으)로 바뀝니다.",
+	"palette.renameNotesLeaveDesc": "\"{{word}}\"을(를) 유지하며 자체 색상으로 돌아갑니다.",
+	"palette.renameNotesChangeDesc": "노트의 모든 |{{old}}이(가) |{{new}}(으)로 바뀝니다.",
 	"palette.renameNotesFailed": "일부 노트를 업데이트하지 못했습니다. 업데이트된 노트는 저장되었으며, 나머지는 여전히 이전 이름을 사용합니다.",
 	"palette.baseColor": "기본 색상",
 	"palette.baseColorHint":
@@ -530,11 +525,8 @@ export const ko: Record<string, string> = {
 	"iconPicker.customRecolor": "Callout 색상 따르기",
 	"iconPicker.allSources": "모든 소스",
 	"iconPicker.searchAllSources": "모든 아이콘 소스 검색",
-	"iconPicker.sourcesNotDownloaded":
-		"아직 포함되지 않음: {{names}}. 위에서 소스를 선택하여 다운로드하세요.",
 	"iconPicker.chooseSource": "소스 선택",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "다운로드 안 됨",
 	"iconPicker.librariesAvailable": "사용 가능한 라이브러리",
 	"iconPicker.librariesToDownload": "다운로드할 라이브러리",
 	"iconPicker.groupCurrent": "현재 아이콘",
@@ -775,7 +767,6 @@ export const ko: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "명령 삭제",
-	"confirm.titleResetCallout": "callout 재설정",
 	"confirm.titleDeletePalette": "팔레트 삭제",
 	"confirm.titleDeleteImage": "이미지 삭제",
 	"confirm.titleDeleteLibrary": "아이콘 라이브러리 삭제",
@@ -789,8 +780,6 @@ export const ko: Record<string, string> = {
 		"볼트 파일에서 {{count}}개의 callout 제목을 업데이트했습니다: {{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated": "볼트 파일에서 Callout {{count}}개의 접기 표시를 업데이트했습니다.",
 	"vault.replaceWith": "다음으로 교체:",
-	"vault.deleteWithout": "교체 없이 삭제",
-	"vault.confirmDelete": "확인",
 	"vault.confirmReplace": "교체",
 	"vault.replacePromptInUse":
 		'"{{name}}"은(는) {{files}}개의 파일에서 {{count}}번 사용됩니다. 교체할 callout을 선택하세요:',
@@ -799,9 +788,7 @@ export const ko: Record<string, string> = {
 	"vault.noReplacementAvailable": "이것을 교체할 다른 callout이 없습니다.",
 	"vault.convertedToPlainText":
 		"{{files}}개의 파일에서 {{blocks}}개의 callout 블록을 일반 텍스트로 변환했습니다.",
-	"vault.resetAliasWarning":
-		"{{files}}개의 파일에서 {{count}}개의 참조가 사용자 정의 별칭을 사용합니다: {{aliases}}. 재설정 후 작동하지 않습니다. 계속하시겠습니까?",
-	"vault.resetConfirm": "재설정",
+	"vault.resetNotesFailed": "일부 노트를 업데이트하지 못해 callout이 재설정되지 않았습니다. 마무리하려면 기본값으로 재설정을 다시 선택하세요.",
 
 	"quickInsert.title": "블록 callout 빠른 삽입",
 	"quickInsert.desc": "커서 위치에 삽입할 callout을 선택하세요. 블록 callout만 해당됩니다.",
@@ -1491,6 +1478,9 @@ export const ko: Record<string, string> = {
 	"noteChanges.changeMainId": "기본 ID가 \"{{oldId}}\"에서 \"{{newId}}\"(으)로 바뀝니다.",
 	"noteChanges.changeName": "표시 이름을 \"{{old}}\"에서 \"{{new}}\"(으)로 변경했습니다.",
 	"noteChanges.changeRemoved": "ID \"{{id}}\"을(를) 제거했습니다.",
+	"noteChanges.changeRemovedMany": "다음 ID를 제거했습니다: {{ids}}.",
+	"noteChanges.changeResetRemoved": "기본값으로 재설정하면 추가한 ID \"{{id}}\"이(가) 제거됩니다.",
+	"noteChanges.changeResetRemovedMany": "기본값으로 재설정하면 추가한 다음 ID가 제거됩니다: {{ids}}.",
 	"noteChanges.changeFold": "이 Callout의 접힘 방식을 변경했습니다.",
 	"noteChanges.affects": "{{notes}}의 {{callouts}}에 영향을 줍니다.",
 	"noteChanges.affectsUnknown": "일부 노트가 영향을 받을 수 있습니다.",

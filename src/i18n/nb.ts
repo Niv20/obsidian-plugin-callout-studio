@@ -30,7 +30,6 @@ export const nb: Record<string, string> = {
 	"editor.paletteNoMatches": "Ingen farger samsvarer med «{{query}}».",
 	"editor.paletteSearchPlaceholder": "Søk etter farger…",
 	"replaceModal.searchPlaceholder": "Søk i callouter",
-	"replaceModal.chooseFirst": "Velg en erstatnings-callout, eller «{{delete}}», for å fortsette.",
 	"replaceModal.chooseFirstReplace": "Velg først callouten den skal erstattes med.",
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatisk standard",
@@ -40,8 +39,6 @@ export const nb: Record<string, string> = {
 	"manualDiscovery.scanning": "Skanner…",
 	"settings.rescanComplete":
 		"Skanning fullført: {{count}} ny(e) callout-type(r) lagt til.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(faller tilbake til standard)",
-	"replaceModal.titleDelete": "Slett callout",
 	"replaceModal.titleReplace": "Erstatt i vault",
 
 	"welcome.tooltip": "Om Callout Studio",
@@ -93,7 +90,6 @@ export const nb: Record<string, string> = {
 	"settings.language": "Språk",
 	"settings.languageDesc":
 		"Visningsspråk for Callout Studio. Følger som standard Obsidians grensesnittspråk.",
-	"settings.languageAuto": "Automatisk",
 	"settings.importExport": "Importer og eksporter",
 	"settings.import": "Importer…",
 	"settings.export": "Eksporter…",
@@ -396,11 +392,10 @@ export const nb: Record<string, string> = {
 		'En annen palett er allerede skrevet som "{{key}}" i callout-metadata. Velg et annet navn.',
 	"palette.metadataNameShared":
 		"I callout-metadata: {{key}}. En annen lagret palett har også dette ordet, så bare én av dem svarer på det.",
-	"palette.renameNotesTitle": "Oppdatere notatene dine?",
-	"palette.renameNotesBody":
-		'{{count}} callouts i {{files}} notater bruker denne paletten som "{{old}}".\nEndre dem til "{{new}}"?\nHvis ikke, går de tilbake til sin egen farge.',
-	"palette.renameNotesConfirm": "Oppdater notater",
-	"palette.renameNotesSkip": "La dem være",
+	"palette.renameNotesChange":
+		"Du endret navnet på paletten fra «{{old}}» til «{{new}}», så ordet den har i callout-metadata, endres fra «{{oldWord}}» til «{{newWord}}».",
+	"palette.renameNotesLeaveDesc": "De beholder «{{word}}» og går tilbake til sin egen farge.",
+	"palette.renameNotesChangeDesc": "Hver |{{old}} i notatene dine blir til |{{new}}.",
 	"palette.renameNotesFailed":
 		"Noen notater kunne ikke oppdateres. De som ble oppdatert, er lagret; resten bruker fortsatt det gamle navnet.",
 	"palette.baseColor": "Grunnfarge",
@@ -524,11 +519,8 @@ export const nb: Record<string, string> = {
 	"iconPicker.customRecolor": "Følg Callout-fargen",
 	"iconPicker.allSources": "Alle kilder",
 	"iconPicker.searchAllSources": "Søk i alle ikonkilder",
-	"iconPicker.sourcesNotDownloaded":
-		"Ikke inkludert ennå: {{names}}. Velg en kilde ovenfor for å laste den ned.",
 	"iconPicker.chooseSource": "Velg kilde",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "Ikke lastet ned",
 	"iconPicker.librariesAvailable": "Tilgjengelige biblioteker",
 	"iconPicker.librariesToDownload": "Biblioteker som kan lastes ned",
 	"iconPicker.groupCurrent": "Gjeldende ikon",
@@ -763,7 +755,6 @@ export const nb: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Slett kommando",
-	"confirm.titleResetCallout": "Tilbakestill callout",
 	"confirm.titleDeletePalette": "Slett palett",
 	"confirm.titleDeleteImage": "Slett bilde",
 	"confirm.titleDeleteLibrary": "Slett ikonbibliotek",
@@ -777,8 +768,6 @@ export const nb: Record<string, string> = {
 	"vault.foldUpdated":
 		"Oppdaterte sammenbrettingsmerket til {{count}} callout(s) i vault-filer.",
 	"vault.replaceWith": "Erstatt med:",
-	"vault.deleteWithout": "Slett uten å erstatte",
-	"vault.confirmDelete": "Bekreft",
 	"vault.confirmReplace": "Erstatt",
 	"vault.replacePromptInUse":
 		'"{{name}}" brukes {{count}} gang(er) i {{files}} fil(er). Velg en callout å erstatte den med:',
@@ -787,9 +776,8 @@ export const nb: Record<string, string> = {
 		"Ingen andre callouts tilgjengelig for erstatning.",
 	"vault.convertedToPlainText":
 		"{{blocks}} callout-blokk(er) i {{files}} fil(er) konvertert til ren tekst.",
-	"vault.resetAliasWarning":
-		"{{count}} referanse(r) i {{files}} fil(er) bruker tilpassede aliaser: {{aliases}}. Disse vil slutte å fungere etter tilbakestilling. Fortsett?",
-	"vault.resetConfirm": "Tilbakestill",
+	"vault.resetNotesFailed":
+		"Noen notater kunne ikke oppdateres, så calloutten ble ikke tilbakestilt. Velg Tilbakestill til standard igjen for å fullføre.",
 	"quickInsert.title": "Hurtiginnsetting av blokk-callout",
 	"quickInsert.desc": "Velg en callout som skal settes inn ved markøren. Kun blokk-callouter.",
 	"quickInsert.searchPlaceholder": "Søk i callouter",
@@ -1488,6 +1476,9 @@ export const nb: Record<string, string> = {
 	"noteChanges.changeMainId": "Hoved-ID-en endres fra «{{oldId}}» til «{{newId}}».",
 	"noteChanges.changeName": "Du endret visningsnavnet fra «{{old}}» til «{{new}}».",
 	"noteChanges.changeRemoved": "Du fjernet ID-en «{{id}}».",
+	"noteChanges.changeRemovedMany": "Du fjernet disse ID-ene: {{ids}}.",
+	"noteChanges.changeResetRemoved": "Tilbakestill til standard fjerner ID-en «{{id}}» som du la til.",
+	"noteChanges.changeResetRemovedMany": "Tilbakestill til standard fjerner ID-ene du la til: {{ids}}.",
 	"noteChanges.changeFold": "Du har endret hvordan denne calloutten foldes.",
 	"noteChanges.affects": "Dette gjelder {{callouts}} i {{notes}}.",
 	"noteChanges.affectsUnknown": "Noen av notatene dine kan bli berørt.",

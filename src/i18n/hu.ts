@@ -32,7 +32,6 @@ export const hu: Record<string, string> = {
 	"editor.paletteNoMatches": "Nincs a(z) „{{query}}” keresésnek megfelelő szín.",
 	"editor.paletteSearchPlaceholder": "Színek keresése…",
 	"replaceModal.searchPlaceholder": "Callout-ok keresése",
-	"replaceModal.chooseFirst": "A folytatáshoz válasszon egy helyettesítő calloutot, vagy a(z) „{{delete}}” lehetőséget.",
 	"replaceModal.chooseFirstReplace": "Először válassza ki a calloutot, amelyre cserélni szeretné.",
 	"settings.fallbackTag": "Alapértelmezett",
 	"settings.fallbackTagAuto": "Aut. alapértelmezett",
@@ -42,9 +41,6 @@ export const hu: Record<string, string> = {
 	"manualDiscovery.scanning": "Keresés…",
 	"settings.rescanComplete":
 		"Keresés kész: {{count}} új callout-típus hozzáadva.",
-	"replaceModal.deleteWithoutReplaceSuffix":
-		"(visszaesik az alapértelmezettre)",
-	"replaceModal.titleDelete": "Callout törlése",
 	"replaceModal.titleReplace": "Csere a tárban",
 
 	"welcome.tooltip": "A Callout Studio névjegye",
@@ -95,7 +91,6 @@ export const hu: Record<string, string> = {
 	"settings.language": "Nyelv",
 	"settings.languageDesc":
 		"A Callout Studio megjelenítési nyelve. Alapértelmezés szerint az Obsidian felületi nyelvét követi.",
-	"settings.languageAuto": "Automatikus",
 	"settings.importExport": "Importálás és exportálás",
 	"settings.import": "Importálás…",
 	"settings.export": "Exportálás…",
@@ -414,11 +409,10 @@ export const hu: Record<string, string> = {
 		'Egy másik paletta már "{{key}}" néven szerepel a callout metaadataiban. Válassz másik nevet.',
 	"palette.metadataNameShared":
 		"A callout metaadataiban: {{key}}. Egy másik mentett palettának is ez a szava, ezért csak az egyik felel rá.",
-	"palette.renameNotesTitle": "Frissíted a jegyzeteidet?",
-	"palette.renameNotesBody":
-		'{{count}} callout {{files}} jegyzetben ezt a palettát "{{old}}" néven használja.\nÁtírod őket "{{new}}" névre?\nHa nem, visszatérnek a saját színükhöz.',
-	"palette.renameNotesConfirm": "Jegyzetek frissítése",
-	"palette.renameNotesSkip": "Meghagyás",
+	"palette.renameNotesChange":
+		"Átnevezted a palettát „{{old}}” névről „{{new}}” névre, ezért a callout metaadataiban szereplő szava „{{oldWord}}” helyett „{{newWord}}” lesz.",
+	"palette.renameNotesLeaveDesc": "Megtartják a(z) „{{word}}” szót, és visszatérnek a saját színükhöz.",
+	"palette.renameNotesChangeDesc": "A jegyzeteidben minden |{{old}} |{{new}} lesz.",
 	"palette.renameNotesFailed":
 		"Néhány jegyzetet nem sikerült frissíteni. A frissítettek mentve vannak; a többi még a régi nevet használja.",
 	"palette.baseColor": "Alapszín",
@@ -541,11 +535,8 @@ export const hu: Record<string, string> = {
 	"iconPicker.customRecolor": "Callout szín követése",
 	"iconPicker.allSources": "Minden forrás",
 	"iconPicker.searchAllSources": "Keresés az összes ikonforrásban",
-	"iconPicker.sourcesNotDownloaded":
-		"Még nem tartalmazza: {{names}}. Válasszon fent egy forrást a letöltéshez.",
 	"iconPicker.chooseSource": "Forrás kiválasztása",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "Nincs letöltve",
 	"iconPicker.librariesAvailable": "Elérhető könyvtárak",
 	"iconPicker.librariesToDownload": "Letölthető könyvtárak",
 	"iconPicker.groupCurrent": "Jelenlegi ikon",
@@ -785,7 +776,6 @@ export const hu: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Parancs törlése",
-	"confirm.titleResetCallout": "Callout visszaállítása",
 	"confirm.titleDeletePalette": "Paletta törlése",
 	"confirm.titleDeleteImage": "Kép törlése",
 	"confirm.titleDeleteLibrary": "Ikonkönyvtár törlése",
@@ -800,8 +790,6 @@ export const hu: Record<string, string> = {
 	"vault.foldUpdated":
 		"{{count}} callout összecsukási jelölése frissítve a tárfájlokban.",
 	"vault.replaceWith": "Csere erre:",
-	"vault.deleteWithout": "Törlés csere nélkül",
-	"vault.confirmDelete": "Megerősítés",
 	"vault.confirmReplace": "Csere",
 	"vault.replacePromptInUse":
 		'"{{name}}" {{count}} alkalommal szerepel {{files}} fájlban. Válasszon callout-ot a helyettesítéshez:',
@@ -811,9 +799,8 @@ export const hu: Record<string, string> = {
 		"Nincs más elérhető callout a helyettesítéshez.",
 	"vault.convertedToPlainText":
 		"{{blocks}} callout-blokk {{files}} fájlban egyszerű szöveggé alakítva.",
-	"vault.resetAliasWarning":
-		"{{count}} hivatkozás {{files}} fájlban egyéni aliasokat használ: {{aliases}}. Visszaállítás után ezek nem fognak működni. Folytatja?",
-	"vault.resetConfirm": "Visszaállítás",
+	"vault.resetNotesFailed":
+		"Néhány jegyzetet nem sikerült frissíteni, ezért a callout visszaállítása nem történt meg. A befejezéshez válaszd újra a Visszaállítás alapértelmezettre lehetőséget.",
 
 	"quickInsert.title": "Blokk callout gyors beszúrása",
 	"quickInsert.desc": "Válassz egy callout-ot a kurzor pozíciójába való beszúráshoz. Csak blokk callout-ok.",
@@ -1508,6 +1495,11 @@ export const hu: Record<string, string> = {
 	"noteChanges.changeMainId": "A fő azonosító „{{oldId}}” helyett „{{newId}}” lesz.",
 	"noteChanges.changeName": "Megváltoztattad a megjelenítési nevet: „{{old}}” helyett „{{new}}” lett.",
 	"noteChanges.changeRemoved": "Eltávolítottad a(z) „{{id}}” azonosítót.",
+	"noteChanges.changeRemovedMany": "Eltávolítottad ezeket az azonosítókat: {{ids}}.",
+	"noteChanges.changeResetRemoved":
+		"A Visszaállítás alapértelmezettre eltávolítja a(z) „{{id}}” azonosítót, amelyet hozzáadtál.",
+	"noteChanges.changeResetRemovedMany":
+		"A Visszaállítás alapértelmezettre eltávolítja az általad hozzáadott azonosítókat: {{ids}}.",
 	"noteChanges.changeFold": "Megváltoztattad, hogyan csukódik össze ez a callout.",
 	"noteChanges.affects": "Ez érinti: callout {{callouts}}, jegyzet {{notes}}.",
 	"noteChanges.affectsUnknown": "Előfordulhat, hogy egyes jegyzeteidet érinti.",

@@ -43,7 +43,6 @@ export const he: Record<string, string> = {
 	"editor.paletteNoMatches": "לא נמצאו צבעים התואמים לחיפוש „{{query}}”.",
 	"editor.paletteSearchPlaceholder": "חיפוש צבעים…",
 	"replaceModal.searchPlaceholder": "חיפוש תיבות־הבלטה",
-	"replaceModal.chooseFirst": "כדי להמשיך, יש לבחור תיבת־הבלטה חלופית או “{{delete}}”.",
 	"replaceModal.chooseFirstReplace": "יש לבחור קודם את תיבת־ההבלטה שתחליף אותה.",
 	"settings.fallbackTag": "ברירת־מחדל",
 	"settings.fallbackTagAuto": "ברירת־מחדל אוטומטית",
@@ -54,8 +53,6 @@ export const he: Record<string, string> = {
 	"commandBuilder.missingCallout": "מושהית: תיבת־ההבלטה חסרה. יש לאתר או ליצור אותה כדי להפעיל מחדש את הפקודה, או לערוך את הפקודה ולבחור סוג אחר.",
 	"manualDiscovery.scanning": "סורק…",
 	"settings.rescanComplete": "הסריקה הסתיימה: נוספו {{count}} סוגי תיבות־הבלטה חדשים.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(החלה של ברירת־מחדל)",
-	"replaceModal.titleDelete": "מחיקת תיבת־ההבלטה",
 	"replaceModal.titleReplace": "החלפה בכספת",
 
 	// פופאפ סריקה ראשונית (מוצג פעם אחת בהתקנה ראשונה ל-Vault גדול)
@@ -112,7 +109,6 @@ export const he: Record<string, string> = {
 	"settings.language": "שפה",
 	"settings.languageDesc":
 		"שפת התצוגה של Callout Studio. ברירת־המחדל היא שפת הממשק של Obsidian.",
-	"settings.languageAuto": "אוטומטי",
 	"settings.importExport": "יבוא ויצוא",
 	"settings.import": "ייבוא…",
 	"settings.export": "ייצוא…",
@@ -496,11 +492,10 @@ export const he: Record<string, string> = {
 		"פלטה אחרת כבר כתובה כ„{{key}}” במטא־נתונים של תיבת־ההבלטה. יש לבחור שם אחר.",
 	"palette.metadataNameShared":
 		"במטא־נתונים של תיבת־ההבלטה: {{key}}. גם לפלטה שמורה אחרת יש את המילה הזאת, ולכן רק אחת מהן עונה לה.",
-	"palette.renameNotesTitle": "לעדכן את הפתקים שלך?",
-	"palette.renameNotesBody":
-		"{{count}} תיבות־הבלטה ב־{{files}} פתקים משתמשות בפלטה הזאת בשם „{{old}}”.\nלשנות אותן ל„{{new}}”?\nאם לא, הן חוזרות לצבע של עצמן.",
-	"palette.renameNotesConfirm": "עדכון הפתקים",
-	"palette.renameNotesSkip": "להשאיר",
+	"palette.renameNotesChange":
+		"שיניתם את שם הפלטה מ־\"{{old}}\" ל־\"{{new}}\", ולכן המילה שלה במטא-נתונים של תיבת־ההבלטה משתנה מ־\"{{oldWord}}\" ל־\"{{newWord}}\".",
+	"palette.renameNotesLeaveDesc": "הן ישמרו את \"{{word}}\" ויחזרו לצבע של עצמן.",
+	"palette.renameNotesChangeDesc": "כל |{{old}} בפתקים שלכם יהפוך ל־|{{new}}.",
 	"palette.renameNotesFailed":
 		"לא ניתן היה לעדכן חלק מהפתקים. אלה שעודכנו נשמרו; השאר עדיין משתמשים בשם הישן.",
 	"palette.baseColor": "צבע בסיס",
@@ -623,11 +618,8 @@ export const he: Record<string, string> = {
 	"iconPicker.customRecolor": "התאמה לצבע תיבת־ההבלטה",
 	"iconPicker.allSources": "כל המקורות",
 	"iconPicker.searchAllSources": "חיפוש בכל מקורות האייקונים",
-	"iconPicker.sourcesNotDownloaded":
-		"עדיין לא נכללים: {{names}}. בחרו מקור מהרשימה למעלה כדי להוריד אותו.",
 	"iconPicker.chooseSource": "בחירת מקור",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "לא הורד",
 	"iconPicker.librariesAvailable": "ספריות זמינות",
 	"iconPicker.librariesToDownload": "ספריות להורדה",
 	"iconPicker.groupCurrent": "האייקון הנוכחי",
@@ -873,7 +865,6 @@ export const he: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "מחיקת פקודה",
-	"confirm.titleResetCallout": "איפוס תיבת הבלטה",
 	"confirm.titleDeletePalette": "מחיקת פלטה",
 	"confirm.titleDeleteImage": "מחיקת תמונה",
 	"confirm.titleDeleteLibrary": "מחיקת ספריית אייקונים",
@@ -892,8 +883,6 @@ export const he: Record<string, string> = {
 	"vault.foldUpdated":
 		"סימן הקיפול של {{count}} תיבות־הבלטה בקובצי הכספת עודכן.",
 	"vault.replaceWith": "החלפה ב:",
-	"vault.deleteWithout": "מחיקה ללא החלפה",
-	"vault.confirmDelete": "אישור",
 	"vault.confirmReplace": "החלפה",
 	"vault.replacePromptInUse":
 		'"{{name}}" מופיעה {{count}} פעמים ב־{{files}} קבצים. בחרו תיבת־הבלטה חלופית:',
@@ -901,9 +890,8 @@ export const he: Record<string, string> = {
 	"vault.noReplacementAvailable": "אין תיבות־הבלטה אחרות הזמינות להחלפה.",
 	"vault.convertedToPlainText":
 		"הומרו {{blocks}} בלוקים של תיבות־הבלטה ב־{{files}} קבצים לטקסט רגיל.",
-	"vault.resetAliasWarning":
-		"{{count}} הפניות ב־{{files}} קבצים משתמשות בכינויים מותאמים־אישית: {{aliases}}. הכינויים הללו יפסיקו לעבוד לאחר איפוס. להמשיך?",
-	"vault.resetConfirm": "איפוס",
+	"vault.resetNotesFailed":
+		"לא ניתן היה לעדכן חלק מהפתקים, ולכן תיבת־ההבלטה לא אופסה. בחרו שוב באיפוס לברירת־מחדל כדי לסיים.",
 
 	// Vault statistics modal
 	"quickInsert.title": "הוספה מהירה של תיבת־הבלטה מסוג בלוק",
@@ -1521,6 +1509,9 @@ export const he: Record<string, string> = {
 	"noteChanges.changeMainId": "המזהה הראשי משתנה מ־\"{{oldId}}\" ל־\"{{newId}}\".",
 	"noteChanges.changeName": "שיניתם את השם לתצוגה מ־\"{{old}}\" ל־\"{{new}}\".",
 	"noteChanges.changeRemoved": "הסרתם את המזהה \"{{id}}\".",
+	"noteChanges.changeRemovedMany": "הסרתם את המזהים האלה: {{ids}}.",
+	"noteChanges.changeResetRemoved": "איפוס לברירת־מחדל מסיר את המזהה \"{{id}}\" שהוספתם.",
+	"noteChanges.changeResetRemovedMany": "איפוס לברירת־מחדל מסיר את המזהים שהוספתם: {{ids}}.",
 	"noteChanges.changeFold": "שיניתם את אופן הקיפול של תיבת־ההבלטה הזו.",
 	"noteChanges.affects": "זה משפיע על {{callouts}}, ב־{{notes}}.",
 	"noteChanges.affectsUnknown": "ייתכן שחלק מהפתקים שלכם יושפעו.",

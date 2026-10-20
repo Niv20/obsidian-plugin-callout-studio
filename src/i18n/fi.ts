@@ -29,7 +29,6 @@ export const fi: Record<string, string> = {
 	"editor.paletteNoMatches": "Yksikään väri ei vastaa hakua ”{{query}}”.",
 	"editor.paletteSearchPlaceholder": "Hae värejä…",
 	"replaceModal.searchPlaceholder": "Hae callouteja",
-	"replaceModal.chooseFirst": "Jatka valitsemalla korvaava callout tai ”{{delete}}”.",
 	"replaceModal.chooseFirstReplace": "Valitse ensin callout, jolla se korvataan.",
 	"settings.fallbackTag": "Oletus",
 	"settings.fallbackTagAuto": "Automaattinen oletus",
@@ -39,8 +38,6 @@ export const fi: Record<string, string> = {
 	"manualDiscovery.scanning": "Skannataan…",
 	"settings.rescanComplete":
 		"Skannaus valmis: lisätty {{count}} uutta callout-tyyppiä.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(palaa oletukseen)",
-	"replaceModal.titleDelete": "Poista callout",
 	"replaceModal.titleReplace": "Korvaa holvissa",
 
 	"welcome.tooltip": "Tietoja Callout Studiosta",
@@ -92,7 +89,6 @@ export const fi: Record<string, string> = {
 	"settings.language": "Kieli",
 	"settings.languageDesc":
 		"Callout Studion näyttökieli. Seuraa oletuksena Obsidianin käyttöliittymän kieltä.",
-	"settings.languageAuto": "Automaattinen",
 	"settings.importExport": "Tuo ja vie",
 	"settings.import": "Tuo…",
 	"settings.export": "Vie…",
@@ -403,11 +399,10 @@ export const fi: Record<string, string> = {
 		'Toinen paletti on jo kirjoitettu calloutin metatietoihin muodossa "{{key}}". Valitse toinen nimi.',
 	"palette.metadataNameShared":
 		"Calloutin metatiedoissa: {{key}}. Myös toisella tallennetulla paletilla on tämä sana, joten vain toinen niistä vastaa siihen.",
-	"palette.renameNotesTitle": "Päivitetäänkö muistiinpanosi?",
-	"palette.renameNotesBody":
-		'{{count}} calloutia {{files}} muistiinpanossa käyttää tätä palettia nimellä "{{old}}".\nMuutetaanko ne nimeksi "{{new}}"?\nJos ei, ne palaavat omaan väriinsä.',
-	"palette.renameNotesConfirm": "Päivitä muistiinpanot",
-	"palette.renameNotesSkip": "Jätä ennalleen",
+	"palette.renameNotesChange":
+		"Nimesit paletin uudelleen nimestä \"{{old}}\" nimeksi \"{{new}}\", joten sen sana calloutin metatiedoissa muuttuu sanasta \"{{oldWord}}\" sanaksi \"{{newWord}}\".",
+	"palette.renameNotesLeaveDesc": "Ne säilyttävät sanan \"{{word}}\" ja palaavat omaan väriinsä.",
+	"palette.renameNotesChangeDesc": "Jokainen |{{old}} muistiinpanoissasi muuttuu muotoon |{{new}}.",
 	"palette.renameNotesFailed":
 		"Joitakin muistiinpanoja ei voitu päivittää. Päivitetyt on tallennettu; loput käyttävät yhä vanhaa nimeä.",
 	"palette.baseColor": "Perusväri",
@@ -530,11 +525,8 @@ export const fi: Record<string, string> = {
 	"iconPicker.customRecolor": "Seuraa Callout-väriä",
 	"iconPicker.allSources": "Kaikki lähteet",
 	"iconPicker.searchAllSources": "Hae kaikista kuvakelähteis",
-	"iconPicker.sourcesNotDownloaded":
-		"Ei vielä sisällytetty: {{names}}. Valitse lähde ylhäältä ladataksesi sen.",
 	"iconPicker.chooseSource": "Valitse lähde",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "Ei ladattu",
 	"iconPicker.librariesAvailable": "Saatavilla olevat kirjastot",
 	"iconPicker.librariesToDownload": "Ladattavat kirjastot",
 	"iconPicker.groupCurrent": "Nykyinen kuvake",
@@ -771,7 +763,6 @@ export const fi: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Poista komento",
-	"confirm.titleResetCallout": "Palauta callout",
 	"confirm.titleDeletePalette": "Poista paletti",
 	"confirm.titleDeleteImage": "Poista kuva",
 	"confirm.titleDeleteLibrary": "Poista kuvakekirjasto",
@@ -785,8 +776,6 @@ export const fi: Record<string, string> = {
 	"vault.foldUpdated":
 		"Päivitettiin {{count}} calloutin taittomerkki holvin tiedostoissa.",
 	"vault.replaceWith": "Korvaa:",
-	"vault.deleteWithout": "Poista korvaamatta",
-	"vault.confirmDelete": "Vahvista",
 	"vault.confirmReplace": "Korvaa",
 	"vault.replacePromptInUse":
 		'"{{name}}" on käytössä {{count}} kertaa {{files}} tiedostossa. Valitse callout, jolla se korvataan:',
@@ -795,9 +784,8 @@ export const fi: Record<string, string> = {
 		"Ei muita callouteja saatavilla korvaukseksi.",
 	"vault.convertedToPlainText":
 		"{{blocks}} callout-lohkoa {{files}} tiedostossa muunnettu tavalliseksi tekstiksi.",
-	"vault.resetAliasWarning":
-		"{{count}} viite(ttä) {{files}} tiedostossa käyttää mukautettuja aliaksia: {{aliases}}. Ne lopettavat toimintansa palautuksen jälkeen. Jatketaanko?",
-	"vault.resetConfirm": "Palauta",
+	"vault.resetNotesFailed":
+		"Joitakin muistiinpanoja ei voitu päivittää, joten calloutia ei palautettu. Viimeistele valitsemalla Palauta oletukseksi uudelleen.",
 	"quickInsert.title": "Lisää lohko-callout nopeasti",
 	"quickInsert.desc": "Valitse callout lisättäväksi kohdistimen kohdalle. Vain lohko-callout.",
 	"quickInsert.searchPlaceholder": "Hae callouteja",
@@ -1481,6 +1469,9 @@ export const fi: Record<string, string> = {
 	"noteChanges.changeMainId": "Pääasiallinen tunnus muuttuu: \"{{oldId}}\" → \"{{newId}}\".",
 	"noteChanges.changeName": "Muutit näyttönimen \"{{old}}\" nimeksi \"{{new}}\".",
 	"noteChanges.changeRemoved": "Poistit tunnisteen \"{{id}}\".",
+	"noteChanges.changeRemovedMany": "Poistit nämä tunnisteet: {{ids}}.",
+	"noteChanges.changeResetRemoved": "Palauta oletukseksi poistaa tunnisteen \"{{id}}\", jonka lisäsit.",
+	"noteChanges.changeResetRemovedMany": "Palauta oletukseksi poistaa lisäämäsi tunnisteet: {{ids}}.",
 	"noteChanges.changeFold": "Muutit tapaa, jolla tämä callout taittuu.",
 	"noteChanges.affects": "Tämä koskee: callouteja {{callouts}}, muistiinpanoja {{notes}}.",
 	"noteChanges.affectsUnknown": "Muutos voi vaikuttaa joihinkin muistiinpanoihisi.",

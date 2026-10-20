@@ -32,7 +32,6 @@ export const nl: Record<string, string> = {
 	"editor.paletteNoMatches": "Geen kleuren gevonden voor ‘{{query}}’.",
 	"editor.paletteSearchPlaceholder": "Kleuren zoeken…",
 	"replaceModal.searchPlaceholder": "Callouts zoeken",
-	"replaceModal.chooseFirst": "Kies een vervangende callout, of “{{delete}}”, om verder te gaan.",
 	"replaceModal.chooseFirstReplace": "Kies eerst de callout waarmee je deze wilt vervangen.",
 	"settings.fallbackTag": "Standaard",
 	"settings.fallbackTagAuto": "Automatisch standaard",
@@ -42,8 +41,6 @@ export const nl: Record<string, string> = {
 	"manualDiscovery.scanning": "Scannen…",
 	"settings.rescanComplete":
 		"Scan voltooid: {{count}} nieuw(e) callout-type(n) toegevoegd.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(valt terug op standaard)",
-	"replaceModal.titleDelete": "Callout verwijderen",
 	"replaceModal.titleReplace": "In vault vervangen",
 
 	"welcome.tooltip": "Over Callout Studio",
@@ -95,7 +92,6 @@ export const nl: Record<string, string> = {
 	"settings.language": "Taal",
 	"settings.languageDesc":
 		"Weergavetaal voor Callout Studio. Volgt standaard de interfacetaal van Obsidian.",
-	"settings.languageAuto": "Automatisch",
 	"settings.importExport": "Importeren en exporteren",
 	"settings.import": "Importeren…",
 	"settings.export": "Exporteren…",
@@ -418,11 +414,10 @@ export const nl: Record<string, string> = {
 		'Een ander palet staat al als "{{key}}" in de callout-metadata. Kies een andere naam.',
 	"palette.metadataNameShared":
 		"In callout-metadata: {{key}}. Een ander opgeslagen palet heeft dit woord ook, dus slechts één van beide reageert erop.",
-	"palette.renameNotesTitle": "Je notities bijwerken?",
-	"palette.renameNotesBody":
-		'{{count}} callouts in {{files}} notities gebruiken dit palet als "{{old}}".\nWijzigen in "{{new}}"?\nZo niet, dan gaan ze terug naar hun eigen kleur.',
-	"palette.renameNotesConfirm": "Notities bijwerken",
-	"palette.renameNotesSkip": "Laten staan",
+	"palette.renameNotesChange":
+		"Je hebt het palet hernoemd van \"{{old}}\" naar \"{{new}}\", dus het woord ervan in de callout-metadata verandert van \"{{oldWord}}\" in \"{{newWord}}\".",
+	"palette.renameNotesLeaveDesc": "Ze houden \"{{word}}\" en gaan terug naar hun eigen kleur.",
+	"palette.renameNotesChangeDesc": "Elke |{{old}} in je notities wordt |{{new}}.",
 	"palette.renameNotesFailed":
 		"Sommige notities konden niet worden bijgewerkt. De bijgewerkte zijn opgeslagen; de rest gebruikt nog de oude naam.",
 	"palette.baseColor": "Basiskleur",
@@ -547,11 +542,8 @@ export const nl: Record<string, string> = {
 	"iconPicker.customRecolor": "Callout-kleur volgen",
 	"iconPicker.allSources": "Alle bronnen",
 	"iconPicker.searchAllSources": "Zoek in alle iconbronnen",
-	"iconPicker.sourcesNotDownloaded":
-		"Nog niet opgenomen: {{names}}. Kies hierboven een bron om te downloaden.",
 	"iconPicker.chooseSource": "Bron kiezen",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "Niet gedownload",
 	"iconPicker.librariesAvailable": "Beschikbare bibliotheken",
 	"iconPicker.librariesToDownload": "Bibliotheken om te downloaden",
 	"iconPicker.groupCurrent": "Huidig pictogram",
@@ -789,7 +781,6 @@ export const nl: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Opdracht verwijderen",
-	"confirm.titleResetCallout": "Callout terugzetten",
 	"confirm.titleDeletePalette": "Palet verwijderen",
 	"confirm.titleDeleteImage": "Afbeelding verwijderen",
 	"confirm.titleDeleteLibrary": "Pictogrambibliotheek verwijderen",
@@ -804,8 +795,6 @@ export const nl: Record<string, string> = {
 	"vault.foldUpdated":
 		"Het inklapteken van {{count}} callout(s) in vault-bestanden is bijgewerkt.",
 	"vault.replaceWith": "Vervangen door:",
-	"vault.deleteWithout": "Verwijderen zonder te vervangen",
-	"vault.confirmDelete": "Bevestigen",
 	"vault.confirmReplace": "Vervangen",
 	"vault.replacePromptInUse":
 		'"{{name}}" wordt {{count}} keer gebruikt in {{files}} bestand(en). Kies een callout om het mee te vervangen:',
@@ -815,9 +804,8 @@ export const nl: Record<string, string> = {
 		"Geen andere callouts beschikbaar om deze te vervangen.",
 	"vault.convertedToPlainText":
 		"{{blocks}} callout-blok(ken) in {{files}} bestand(en) geconverteerd naar platte tekst.",
-	"vault.resetAliasWarning":
-		"{{count}} referentie(s) in {{files}} bestand(en) gebruiken aangepaste aliassen: {{aliases}}. Deze werken niet meer na het terugzetten. Doorgaan?",
-	"vault.resetConfirm": "Terugzetten",
+	"vault.resetNotesFailed":
+		"Sommige notities konden niet worden bijgewerkt, dus de callout is niet teruggezet. Kies Terugzetten naar standaard opnieuw om af te ronden.",
 
 	"quickInsert.title": "Blok-callout snel invoegen",
 	"quickInsert.desc": "Kies een callout om in te voegen op de cursorpositie. Alleen blok-callouts.",
@@ -1528,6 +1516,11 @@ export const nl: Record<string, string> = {
 	"noteChanges.changeMainId": "De hoofd-ID verandert van \"{{oldId}}\" naar \"{{newId}}\".",
 	"noteChanges.changeName": "Je hebt de weergavenaam gewijzigd van \"{{old}}\" naar \"{{new}}\".",
 	"noteChanges.changeRemoved": "Je hebt de ID \"{{id}}\" verwijderd.",
+	"noteChanges.changeRemovedMany": "Je hebt deze ID's verwijderd: {{ids}}.",
+	"noteChanges.changeResetRemoved":
+		"Terugzetten naar standaard verwijdert de ID \"{{id}}\" die je hebt toegevoegd.",
+	"noteChanges.changeResetRemovedMany":
+		"Terugzetten naar standaard verwijdert de ID's die je hebt toegevoegd: {{ids}}.",
 	"noteChanges.changeFold": "Je hebt gewijzigd hoe deze callout inklapt.",
 	"noteChanges.affects": "Dit betreft {{callouts}} in {{notes}}.",
 	"noteChanges.affectsUnknown": "Sommige van je notities worden mogelijk geraakt.",

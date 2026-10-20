@@ -84,7 +84,6 @@ export const ro: Record<string, string> = {
 	"editor.paletteNoMatches": "Nicio culoare nu corespunde căutării „{{query}}”.",
 	"editor.paletteSearchPlaceholder": "Căutați culori…",
 	"replaceModal.searchPlaceholder": "Caută callout-uri",
-	"replaceModal.chooseFirst": "Alege un callout de înlocuire sau „{{delete}}” pentru a continua.",
 	"replaceModal.chooseFirstReplace": "Alege mai întâi callout-ul cu care va fi înlocuit.",
 	"settings.fallbackTag": "Implicit",
 	"settings.fallbackTagAuto": "Implicit automat",
@@ -94,8 +93,6 @@ export const ro: Record<string, string> = {
 	"manualDiscovery.scanning": "Se scanează…",
 	"settings.rescanComplete":
 		"Scanare completă: {{count}} tip(uri) de callout noi adăugate.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(revine la implicit)",
-	"replaceModal.titleDelete": "Șterge callout",
 	"replaceModal.titleReplace": "Înlocuiți în vault",
 
 	"welcome.tooltip": "Despre Callout Studio",
@@ -146,7 +143,6 @@ export const ro: Record<string, string> = {
 	"settings.language": "Limbă",
 	"settings.languageDesc":
 		"Limba de afișare pentru Callout Studio. În mod implicit urmează limba interfeței Obsidian.",
-	"settings.languageAuto": "Automat",
 	"settings.importExport": "Import și export",
 	"settings.import": "Importați…",
 	"settings.export": "Exportați…",
@@ -462,11 +458,10 @@ export const ro: Record<string, string> = {
 		'O altă paletă este deja scrisă "{{key}}" în metadatele callout-ului. Alege un alt nume.',
 	"palette.metadataNameShared":
 		"În metadatele callout-ului: {{key}}. Și o altă paletă salvată are acest cuvânt, așa că doar una dintre ele îi răspunde.",
-	"palette.renameNotesTitle": "Actualizezi notițele?",
-	"palette.renameNotesBody":
-		'{{count}} callout-uri din {{files}} notițe folosesc această paletă ca "{{old}}".\nLe schimbi în "{{new}}"?\nDacă nu, revin la propria culoare.',
-	"palette.renameNotesConfirm": "Actualizează notițele",
-	"palette.renameNotesSkip": "Lasă-le",
+	"palette.renameNotesChange":
+		"Ai redenumit paleta din „{{old}}” în „{{new}}”, așa că cuvântul ei din metadatele callout-ului se schimbă din „{{oldWord}}” în „{{newWord}}”.",
+	"palette.renameNotesLeaveDesc": "Rămân cu „{{word}}” și revin la propria culoare.",
+	"palette.renameNotesChangeDesc": "Fiecare |{{old}} din notele tale devine |{{new}}.",
 	"palette.renameNotesFailed":
 		"Unele notițe nu au putut fi actualizate. Cele actualizate sunt salvate; restul folosesc în continuare numele vechi.",
 	"palette.baseColor": "Culoare de bază",
@@ -589,11 +584,8 @@ export const ro: Record<string, string> = {
 	"iconPicker.customRecolor": "Urmează culoarea Callout",
 	"iconPicker.allSources": "Toate sursele",
 	"iconPicker.searchAllSources": "Caută în toate sursele de pictograme",
-	"iconPicker.sourcesNotDownloaded":
-		"Neincluși încă: {{names}}. Alege o sursă de mai sus pentru a o descărca.",
 	"iconPicker.chooseSource": "Alege sursa",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "Nedescărcat",
 	"iconPicker.librariesAvailable": "Biblioteci disponibile",
 	"iconPicker.librariesToDownload": "Biblioteci de descărcat",
 	"iconPicker.groupCurrent": "Pictograma curentă",
@@ -833,7 +825,6 @@ export const ro: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Șterge comanda",
-	"confirm.titleResetCallout": "Resetează callout",
 	"confirm.titleDeletePalette": "Șterge paleta",
 	"confirm.titleDeleteImage": "Șterge imaginea",
 	"confirm.titleDeleteLibrary": "Ștergeți biblioteca de pictograme",
@@ -848,8 +839,6 @@ export const ro: Record<string, string> = {
 	"vault.foldUpdated":
 		"S-a actualizat marcajul de pliere pentru {{count}} callout(uri) în fișierele vault.",
 	"vault.replaceWith": "Înlocuiți cu:",
-	"vault.deleteWithout": "Ștergeți fără înlocuire",
-	"vault.confirmDelete": "Confirmare",
 	"vault.confirmReplace": "Înlocuiți",
 	"vault.replacePromptInUse":
 		'"{{name}}" este utilizat de {{count}} ori în {{files}} fișier(e). Alegeți un callout cu care să îl înlocuiți:',
@@ -859,9 +848,8 @@ export const ro: Record<string, string> = {
 		"Nu există alte callouts disponibile pentru a înlocui acesta.",
 	"vault.convertedToPlainText":
 		"{{blocks}} bloc(uri) callout din {{files}} fișier(e) convertit(e) în text simplu.",
-	"vault.resetAliasWarning":
-		"{{count}} referință(e) din {{files}} fișier(e) folosesc aliasuri personalizate: {{aliases}}. Acestea vor înceta să funcționeze după resetare. Continuați?",
-	"vault.resetConfirm": "Resetați",
+	"vault.resetNotesFailed":
+		"Unele notițe nu au putut fi actualizate, așa că callout-ul nu a fost resetat. Alege din nou Resetează la implicit pentru a termina.",
 
 	"quickInsert.title": "Inserare rapidă de callout bloc",
 	"quickInsert.desc": "Alege un callout de inserat la poziția cursorului. Doar callout de tip bloc.",
@@ -1518,6 +1506,10 @@ export const ro: Record<string, string> = {
 	"noteChanges.changeMainId": "ID-ul principal se schimbă din „{{oldId}}” în „{{newId}}”.",
 	"noteChanges.changeName": "Ai schimbat numele afișat din „{{old}}” în „{{new}}”.",
 	"noteChanges.changeRemoved": "Ai eliminat ID-ul „{{id}}”.",
+	"noteChanges.changeRemovedMany": "Ai eliminat aceste ID-uri: {{ids}}.",
+	"noteChanges.changeResetRemoved": "Resetează la implicit elimină ID-ul „{{id}}” pe care l-ai adăugat.",
+	"noteChanges.changeResetRemovedMany":
+		"Resetează la implicit elimină ID-urile pe care le-ai adăugat: {{ids}}.",
 	"noteChanges.changeFold": "Ai schimbat modul în care se pliază acest callout.",
 	"noteChanges.affects": "Aceasta afectează {{callouts}} din {{notes}}.",
 	"noteChanges.affectsUnknown": "Este posibil ca unele dintre notițele tale să fie afectate.",

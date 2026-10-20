@@ -84,7 +84,6 @@ export const th: Record<string, string> = {
 	"editor.paletteNoMatches": "ไม่พบสีที่ตรงกับ “{{query}}”",
 	"editor.paletteSearchPlaceholder": "ค้นหาสี…",
 	"replaceModal.searchPlaceholder": "ค้นหา callout",
-	"replaceModal.chooseFirst": "เลือก callout ที่จะใช้แทน หรือ “{{delete}}” เพื่อดำเนินการต่อ",
 	"replaceModal.chooseFirstReplace": "โปรดเลือก callout ที่จะใช้แทนก่อน",
 	"settings.fallbackTag": "ค่าเริ่มต้น",
 	"settings.fallbackTagAuto": "ค่าเริ่มต้นอัตโนมัติ",
@@ -94,8 +93,6 @@ export const th: Record<string, string> = {
 	"manualDiscovery.scanning": "กำลังสแกน…",
 	"settings.rescanComplete":
 		"สแกนเสร็จแล้ว: เพิ่มชนิด callout ใหม่ {{count}} รายการ",
-	"replaceModal.deleteWithoutReplaceSuffix": "(กลับไปใช้ค่าเริ่มต้น)",
-	"replaceModal.titleDelete": "ลบ callout",
 	"replaceModal.titleReplace": "แทนที่ใน vault",
 
 	"welcome.tooltip": "เกี่ยวกับ Callout Studio",
@@ -146,7 +143,6 @@ export const th: Record<string, string> = {
 	"settings.language": "ภาษา",
 	"settings.languageDesc":
 		"ภาษาที่แสดงผลสำหรับ Callout Studio ค่าเริ่มต้นจะใช้ตามภาษาอินเทอร์เฟซของ Obsidian",
-	"settings.languageAuto": "อัตโนมัติ",
 	"settings.importExport": "นำเข้าและส่งออก",
 	"settings.import": "นำเข้า…",
 	"settings.export": "ส่งออก…",
@@ -454,11 +450,10 @@ export const th: Record<string, string> = {
 		'มีชุดสีอื่นเขียนเป็น "{{key}}" ในเมทาดาทาของ callout อยู่แล้ว เลือกชื่ออื่น',
 	"palette.metadataNameShared":
 		"ในเมทาดาทาของ callout: {{key}} ชุดสีอื่นที่บันทึกไว้ก็มีคำนี้เช่นกัน จึงมีเพียงชุดเดียวที่ตอบสนองต่อคำนี้",
-	"palette.renameNotesTitle": "อัปเดตบันทึกของคุณไหม",
-	"palette.renameNotesBody":
-		'callout {{count}} รายการใน {{files}} บันทึกใช้ชุดสีนี้ในชื่อ "{{old}}"\nเปลี่ยนเป็น "{{new}}" ไหม\nถ้าไม่เปลี่ยน จะกลับไปใช้สีของตัวเอง',
-	"palette.renameNotesConfirm": "อัปเดตบันทึก",
-	"palette.renameNotesSkip": "ปล่อยไว้",
+	"palette.renameNotesChange":
+		"คุณเปลี่ยนชื่อชุดสีจาก \"{{old}}\" เป็น \"{{new}}\" คำของชุดสีนี้ในเมทาดาทาของ callout จึงเปลี่ยนจาก \"{{oldWord}}\" เป็น \"{{newWord}}\"",
+	"palette.renameNotesLeaveDesc": "ยังคงใช้ \"{{word}}\" และกลับไปใช้สีของตัวเอง",
+	"palette.renameNotesChangeDesc": "ทุก |{{old}} ในโน้ตของคุณจะกลายเป็น |{{new}}",
 	"palette.renameNotesFailed":
 		"อัปเดตบางบันทึกไม่สำเร็จ ที่อัปเดตแล้วถูกบันทึกไว้ ส่วนที่เหลือยังใช้ชื่อเดิม",
 	"palette.baseColor": "สีพื้นฐาน",
@@ -581,11 +576,8 @@ export const th: Record<string, string> = {
 	"iconPicker.customRecolor": "ตามสี Callout",
 	"iconPicker.allSources": "ทุกแหล่งข้อมูล",
 	"iconPicker.searchAllSources": "ค้นหาในทุกแหล่งไอคอน",
-	"iconPicker.sourcesNotDownloaded":
-		"ยังไม่ได้รวม: {{names}} เลือกแหล่งข้อมูลด้านบนเพื่อดาวน์โหลด",
 	"iconPicker.chooseSource": "เลือกแหล่งข้อมูล",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "ยังไม่ได้ดาวน์โหลด",
 	"iconPicker.librariesAvailable": "คลังที่ใช้ได้",
 	"iconPicker.librariesToDownload": "คลังที่ดาวน์โหลดได้",
 	"iconPicker.groupCurrent": "ไอคอนปัจจุบัน",
@@ -826,7 +818,6 @@ export const th: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "ลบคำสั่ง",
-	"confirm.titleResetCallout": "รีเซ็ต callout",
 	"confirm.titleDeletePalette": "ลบชุดสี",
 	"confirm.titleDeleteImage": "ลบรูปภาพ",
 	"confirm.titleDeleteLibrary": "ลบคลังไอคอน",
@@ -841,8 +832,6 @@ export const th: Record<string, string> = {
 	"vault.foldUpdated":
 		"อัปเดตเครื่องหมายการพับของ callout {{count}} รายการในไฟล์ vault แล้ว",
 	"vault.replaceWith": "แทนที่ด้วย:",
-	"vault.deleteWithout": "ลบโดยไม่แทนที่",
-	"vault.confirmDelete": "ยืนยัน",
 	"vault.confirmReplace": "แทนที่",
 	"vault.replacePromptInUse":
 		'"{{name}}" ถูกใช้งาน {{count}} ครั้งใน {{files}} ไฟล์ เลือก callout เพื่อแทนที่:',
@@ -851,9 +840,8 @@ export const th: Record<string, string> = {
 		"ไม่มี callout อื่นที่พร้อมใช้งานเพื่อแทนที่",
 	"vault.convertedToPlainText":
 		"แปลง {{blocks}} บล็อก callout ใน {{files}} ไฟล์เป็นข้อความธรรมดาแล้ว",
-	"vault.resetAliasWarning":
-		"{{count}} การอ้างอิงใน {{files}} ไฟล์ใช้นามแฝงแบบกำหนดเอง: {{aliases}} นามแฝงเหล่านี้จะหยุดทำงานหลังจากรีเซ็ต ดำเนินการต่อหรือไม่?",
-	"vault.resetConfirm": "รีเซ็ต",
+	"vault.resetNotesFailed":
+		"อัปเดตบางบันทึกไม่สำเร็จ จึงไม่ได้รีเซ็ต callout เลือกรีเซ็ตเป็นค่าเริ่มต้นอีกครั้งเพื่อให้เสร็จสิ้น",
 
 	"quickInsert.title": "แทรก callout แบบบล็อกอย่างรวดเร็ว",
 	"quickInsert.desc": "เลือก callout เพื่อแทรกที่ตำแหน่งเคอร์เซอร์ เฉพาะ callout แบบบล็อกเท่านั้น",
@@ -1476,6 +1464,9 @@ export const th: Record<string, string> = {
 	"noteChanges.changeMainId": "ID หลักจะเปลี่ยนจาก \"{{oldId}}\" เป็น \"{{newId}}\"",
 	"noteChanges.changeName": "คุณเปลี่ยนชื่อที่แสดงจาก \"{{old}}\" เป็น \"{{new}}\"",
 	"noteChanges.changeRemoved": "คุณลบ ID \"{{id}}\" แล้ว",
+	"noteChanges.changeRemovedMany": "คุณลบ ID เหล่านี้แล้ว: {{ids}}",
+	"noteChanges.changeResetRemoved": "การรีเซ็ตเป็นค่าเริ่มต้นจะลบ ID \"{{id}}\" ที่คุณเพิ่มไว้",
+	"noteChanges.changeResetRemovedMany": "การรีเซ็ตเป็นค่าเริ่มต้นจะลบ ID ที่คุณเพิ่มไว้: {{ids}}",
 	"noteChanges.changeFold": "คุณเปลี่ยนวิธีที่ callout นี้พับ",
 	"noteChanges.affects": "การเปลี่ยนแปลงนี้มีผลกับ {{callouts}} ใน {{notes}}",
 	"noteChanges.affectsUnknown": "โน้ตของคุณบางส่วนอาจได้รับผลกระทบ",

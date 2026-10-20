@@ -81,7 +81,6 @@ export const zhTW: Record<string, string> = {
 	"editor.paletteNoMatches": "找不到符合「{{query}}」的顏色。",
 	"editor.paletteSearchPlaceholder": "搜尋顏色…",
 	"replaceModal.searchPlaceholder": "搜尋 callout",
-	"replaceModal.chooseFirst": "請選擇一個替換用的 callout，或選擇「{{delete}}」，以繼續。",
 	"replaceModal.chooseFirstReplace": "請先選擇用來替換它的 callout。",
 	"settings.fallbackTag": "預設",
 	"settings.fallbackTagAuto": "自動預設",
@@ -90,8 +89,6 @@ export const zhTW: Record<string, string> = {
 	"manualDiscovery.failed": "掃描結果未儲存。請確認設定檔可寫入且同步已完成，再前往「設定 → 我的 callout 類型 → 掃描 callout」重試。現有 callout 未被取代。",
 	"manualDiscovery.scanning": "掃描中…",
 	"settings.rescanComplete": "掃描完成：已新增 {{count}} 個新的 callout 類型。",
-	"replaceModal.deleteWithoutReplaceSuffix": "（回復為預設值）",
-	"replaceModal.titleDelete": "刪除 callout",
 	"replaceModal.titleReplace": "在 vault 中替換",
 
 	"welcome.tooltip": "關於 Callout Studio",
@@ -139,7 +136,6 @@ export const zhTW: Record<string, string> = {
 	"settings.language": "語言",
 	"settings.languageDesc":
 		"Callout Studio 的顯示語言。預設跟隨 Obsidian 的介面語言。",
-	"settings.languageAuto": "自動",
 	"settings.importExport": "匯入與匯出",
 	"settings.import": "匯入…",
 	"settings.export": "匯出…",
@@ -432,11 +428,10 @@ export const zhTW: Record<string, string> = {
 	"palette.metadataName": "在 callout 中繼資料中：{{key}}",
 	"palette.metadataNameExists": '另一個調色盤在 callout 中繼資料中已寫作 "{{key}}"。請換一個名稱。',
 	"palette.metadataNameShared": "在 callout 中繼資料中：{{key}}。另一個已儲存的調色盤也有這個詞，因此只有其中一個會回應它。",
-	"palette.renameNotesTitle": "更新你的筆記？",
-	"palette.renameNotesBody":
-		'{{files}} 篇筆記中的 {{count}} 個 callout 將此調色盤寫作 "{{old}}"。\n要改為 "{{new}}" 嗎？\n如果不改，它們會恢復為自己的顏色。',
-	"palette.renameNotesConfirm": "更新筆記",
-	"palette.renameNotesSkip": "保持原樣",
+	"palette.renameNotesChange":
+		"你將調色盤從「{{old}}」重新命名為「{{new}}」，因此它在 callout 中繼資料中的詞會從「{{oldWord}}」變為「{{newWord}}」。",
+	"palette.renameNotesLeaveDesc": "它們保留「{{word}}」，並恢復為自己的顏色。",
+	"palette.renameNotesChangeDesc": "筆記中的每個 |{{old}} 都會變成 |{{new}}。",
 	"palette.renameNotesFailed": "有些筆記無法更新。已更新的已儲存；其餘的仍在使用舊名稱。",
 	"palette.baseColor": "基礎顏色",
 	"palette.baseColorHint":
@@ -557,11 +552,8 @@ export const zhTW: Record<string, string> = {
 	"iconPicker.customRecolor": "跟隨 Callout 色彩",
 	"iconPicker.allSources": "所有來源",
 	"iconPicker.searchAllSources": "搜尋所有圖示來源",
-	"iconPicker.sourcesNotDownloaded":
-		"尚未包含：{{names}}。請在上方選擇來源以下載。",
 	"iconPicker.chooseSource": "選擇來源",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "尚未下載",
 	"iconPicker.librariesAvailable": "可用的圖示庫",
 	"iconPicker.librariesToDownload": "可下載的圖示庫",
 	"iconPicker.groupCurrent": "目前的圖示",
@@ -790,7 +782,6 @@ export const zhTW: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "刪除指令",
-	"confirm.titleResetCallout": "重置 callout",
 	"confirm.titleDeletePalette": "刪除調色盤",
 	"confirm.titleDeleteImage": "刪除圖片",
 	"confirm.titleDeleteLibrary": "刪除圖示庫",
@@ -802,8 +793,6 @@ export const zhTW: Record<string, string> = {
 		"已更新 vault 檔案中的 {{count}} 個 callout 標題：{{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated": "已更新 vault 檔案中 {{count}} 個 callout 的摺疊標記。",
 	"vault.replaceWith": "替換為：",
-	"vault.deleteWithout": "直接刪除",
-	"vault.confirmDelete": "確認",
 	"vault.confirmReplace": "替換",
 	"vault.replacePromptInUse":
 		"「{{name}}」在 {{files}} 個檔案中被使用了 {{count}} 次。選擇替換它的 callout：",
@@ -811,9 +800,7 @@ export const zhTW: Record<string, string> = {
 	"vault.noReplacementAvailable": "沒有其他可用的 callout 來替換此項。",
 	"vault.convertedToPlainText":
 		"已將 {{files}} 個檔案中的 {{blocks}} 個 callout 區塊轉換為純文字。",
-	"vault.resetAliasWarning":
-		"{{files}} 個檔案中有 {{count}} 個參照使用了自訂別名：{{aliases}}。重置後這些別名將失效。繼續？",
-	"vault.resetConfirm": "重置",
+	"vault.resetNotesFailed": "有些筆記無法更新，因此 callout 沒有被重置。請再次選擇「重置為預設值」以完成。",
 	"quickInsert.title": "快速插入區塊 callout",
 	"quickInsert.desc": "選擇要插入游標位置的 callout。僅限區塊 callout。",
 	"quickInsert.searchPlaceholder": "搜尋 callout",
@@ -1412,6 +1399,9 @@ export const zhTW: Record<string, string> = {
 	"noteChanges.changeMainId": "主 ID 會從「{{oldId}}」變為「{{newId}}」。",
 	"noteChanges.changeName": "你將顯示名稱從「{{old}}」改為「{{new}}」。",
 	"noteChanges.changeRemoved": "你移除了 ID「{{id}}」。",
+	"noteChanges.changeRemovedMany": "你移除了這些 ID：{{ids}}。",
+	"noteChanges.changeResetRemoved": "重置為預設值會移除你新增的 ID「{{id}}」。",
+	"noteChanges.changeResetRemovedMany": "重置為預設值會移除你新增的 ID：{{ids}}。",
 	"noteChanges.changeFold": "你變更了此 callout 的摺疊方式。",
 	"noteChanges.affects": "這會影響{{notes}}中的{{callouts}}。",
 	"noteChanges.affectsUnknown": "部分筆記可能會受到影響。",

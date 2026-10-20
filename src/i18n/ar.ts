@@ -33,7 +33,6 @@ export const ar: Record<string, string> = {
 	"editor.paletteNoMatches": "لا يوجد لون يطابق «{{query}}».",
 	"editor.paletteSearchPlaceholder": "البحث عن الألوان…",
 	"replaceModal.searchPlaceholder": "بحث في الـ callouts",
-	"replaceModal.chooseFirst": "اختر callout بديلًا، أو «{{delete}}»، للمتابعة.",
 	"replaceModal.chooseFirstReplace": "اختر أولًا الـ callout الذي سيحل محله.",
 	"settings.fallbackTag": "افتراضي",
 	"settings.fallbackTagAuto": "افتراضي تلقائي",
@@ -43,8 +42,6 @@ export const ar: Record<string, string> = {
 	"manualDiscovery.scanning": "جارٍ المسح…",
 	"settings.rescanComplete":
 		"اكتمل المسح: تمت إضافة {{count}} نوع callout جديد.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(يعود إلى الافتراضي)",
-	"replaceModal.titleDelete": "حذف الـ callout",
 	"replaceModal.titleReplace": "استبدال في المخزن",
 
 	"welcome.tooltip": "حول Callout Studio",
@@ -95,7 +92,6 @@ export const ar: Record<string, string> = {
 	"settings.language": "اللغة",
 	"settings.languageDesc":
 		"لغة عرض Callout Studio. تتبع افتراضيًا لغة واجهة Obsidian.",
-	"settings.languageAuto": "تلقائي",
 	"settings.importExport": "استيراد وتصدير",
 	"settings.import": "استيراد…",
 	"settings.export": "تصدير…",
@@ -400,11 +396,10 @@ export const ar: Record<string, string> = {
 		'توجد لوحة ألوان أخرى مكتوبة بالفعل "{{key}}" في البيانات الوصفية لـ callout. اختر اسمًا مختلفًا.',
 	"palette.metadataNameShared":
 		"في البيانات الوصفية لـ callout: {{key}}. توجد لوحة محفوظة أخرى بهذه الكلمة أيضًا، لذا تستجيب لها واحدة منهما فقط.",
-	"palette.renameNotesTitle": "تحديث ملاحظاتك؟",
-	"palette.renameNotesBody":
-		'{{count}} callout في {{files}} ملاحظة تستخدم هذه اللوحة باسم "{{old}}".\nهل تريد تغييرها إلى "{{new}}"؟\nإن لم تفعل، فستعود إلى لونها الخاص.',
-	"palette.renameNotesConfirm": "تحديث الملاحظات",
-	"palette.renameNotesSkip": "تركها",
+	"palette.renameNotesChange":
+		"غيّرت اسم اللوحة من \"{{old}}\" إلى \"{{new}}\"، لذا تتغير كلمتها في البيانات الوصفية لـ callout من \"{{oldWord}}\" إلى \"{{newWord}}\".",
+	"palette.renameNotesLeaveDesc": "تحتفظ بـ \"{{word}}\" وتعود إلى لونها الخاص.",
+	"palette.renameNotesChangeDesc": "كل |{{old}} في ملاحظاتك يصبح |{{new}}.",
 	"palette.renameNotesFailed":
 		"تعذّر تحديث بعض الملاحظات. التي تم تحديثها محفوظة، وما تبقى لا يزال يستخدم الاسم القديم.",
 	"palette.baseColor": "اللون الأساسي",
@@ -527,11 +522,8 @@ export const ar: Record<string, string> = {
 	"iconPicker.customRecolor": "اتباع لون Callout",
 	"iconPicker.allSources": "جميع المصادر",
 	"iconPicker.searchAllSources": "البحث في جميع مصادر الأيقونات",
-	"iconPicker.sourcesNotDownloaded":
-		"لم يتم تضمينها بعد: {{names}}. اختر مصدرًا أعلاه لتنزيله.",
 	"iconPicker.chooseSource": "اختر مصدرًا",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "لم يتم تنزيله",
 	"iconPicker.librariesAvailable": "المكتبات المتاحة",
 	"iconPicker.librariesToDownload": "مكتبات للتنزيل",
 	"iconPicker.groupCurrent": "الأيقونة الحالية",
@@ -767,7 +759,6 @@ export const ar: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "حذف الأمر",
-	"confirm.titleResetCallout": "إعادة تعيين الـ callout",
 	"confirm.titleDeletePalette": "حذف لوحة الألوان",
 	"confirm.titleDeleteImage": "حذف الصورة",
 	"confirm.titleDeleteLibrary": "حذف مكتبة أيقونات",
@@ -785,8 +776,6 @@ export const ar: Record<string, string> = {
 	"vault.foldUpdated":
 		"تم تحديث علامة الطيّ لـ {{count}} callout في ملفات المخزن.",
 	"vault.replaceWith": "الاستبدال بـ:",
-	"vault.deleteWithout": "حذف بدون استبدال",
-	"vault.confirmDelete": "تأكيد",
 	"vault.confirmReplace": "استبدال",
 	"vault.replacePromptInUse":
 		'يُستخدم "{{name}}" {{count}} مرة في {{files}} ملف. اختر callout لاستبداله:',
@@ -794,9 +783,8 @@ export const ar: Record<string, string> = {
 	"vault.noReplacementAvailable": "لا توجد callouts أخرى متاحة لاستبدال هذا.",
 	"vault.convertedToPlainText":
 		"تم تحويل {{blocks}} كتلة callout في {{files}} ملف إلى نص عادي.",
-	"vault.resetAliasWarning":
-		"يستخدم {{count}} مرجع(اً) في {{files}} ملف أسماءً مستعارة مخصصة: {{aliases}}. ستتوقف عن العمل بعد إعادة التعيين. المتابعة؟",
-	"vault.resetConfirm": "إعادة التعيين",
+	"vault.resetNotesFailed":
+		"تعذّر تحديث بعض الملاحظات، لذا لم تتم إعادة تعيين الـ callout. اختر إعادة التعيين إلى الافتراضي مرة أخرى للإنهاء.",
 
 	"quickInsert.title": "إدراج سريع لـ callout كتلة",
 	"quickInsert.desc": "اختر callout لإدراجه عند المؤشر. للـ callout من نوع الكتلة فقط.",
@@ -1480,6 +1468,9 @@ export const ar: Record<string, string> = {
 	"noteChanges.changeMainId": "يتغير المعرّف الرئيسي من \"{{oldId}}\" إلى \"{{newId}}\".",
 	"noteChanges.changeName": "غيّرت الاسم المعروض من \"{{old}}\" إلى \"{{new}}\".",
 	"noteChanges.changeRemoved": "أزلت المعرّف \"{{id}}\".",
+	"noteChanges.changeRemovedMany": "أزلت هذه المعرّفات: {{ids}}.",
+	"noteChanges.changeResetRemoved": "إعادة التعيين إلى الافتراضي تزيل المعرّف \"{{id}}\" الذي أضفته.",
+	"noteChanges.changeResetRemovedMany": "إعادة التعيين إلى الافتراضي تزيل المعرّفات التي أضفتها: {{ids}}.",
 	"noteChanges.changeFold": "غيّرت طريقة طيّ هذا الـ callout.",
 	"noteChanges.affects": "يؤثر هذا في {{callouts}} داخل {{notes}}.",
 	"noteChanges.affectsUnknown": "قد تتأثر بعض ملاحظاتك.",

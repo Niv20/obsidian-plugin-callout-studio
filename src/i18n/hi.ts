@@ -32,7 +32,6 @@ export const hi: Record<string, string> = {
 	"editor.paletteNoMatches": "“{{query}}” से मेल खाने वाला कोई रंग नहीं मिला।",
 	"editor.paletteSearchPlaceholder": "रंग खोजें…",
 	"replaceModal.searchPlaceholder": "callout खोजें",
-	"replaceModal.chooseFirst": "आगे बढ़ने के लिए कोई प्रतिस्थापन callout या “{{delete}}” चुनें।",
 	"replaceModal.chooseFirstReplace": "पहले वह callout चुनें जिससे इसे बदलना है।",
 	"settings.fallbackTag": "डिफ़ॉल्ट",
 	"settings.fallbackTagAuto": "स्वतः डिफ़ॉल्ट",
@@ -42,8 +41,6 @@ export const hi: Record<string, string> = {
 	"manualDiscovery.scanning": "स्कैन हो रहा है…",
 	"settings.rescanComplete":
 		"स्कैन पूर्ण: {{count}} नए callout प्रकार जोड़े गए।",
-	"replaceModal.deleteWithoutReplaceSuffix": "(डिफ़ॉल्ट पर वापस)",
-	"replaceModal.titleDelete": "callout हटाएँ",
 	"replaceModal.titleReplace": "vault में बदलें",
 
 	"welcome.tooltip": "Callout Studio के बारे में",
@@ -94,7 +91,6 @@ export const hi: Record<string, string> = {
 	"settings.language": "भाषा",
 	"settings.languageDesc":
 		"Callout Studio के लिए प्रदर्शन भाषा। डिफ़ॉल्ट रूप से Obsidian की इंटरफ़ेस भाषा का अनुसरण करती है।",
-	"settings.languageAuto": "स्वचालित",
 	"settings.importExport": "आयात और निर्यात",
 	"settings.import": "आयात…",
 	"settings.export": "निर्यात…",
@@ -409,11 +405,10 @@ export const hi: Record<string, string> = {
 		'कोई दूसरा पैलेट पहले से callout के मेटाडेटा में "{{key}}" लिखा गया है। कोई दूसरा नाम चुनें।',
 	"palette.metadataNameShared":
 		"callout के मेटाडेटा में: {{key}}। एक और सहेजे गए पैलेट में भी यही शब्द है, इसलिए उनमें से केवल एक ही इसका जवाब देता है।",
-	"palette.renameNotesTitle": "अपने नोट अपडेट करें?",
-	"palette.renameNotesBody":
-		'{{files}} नोट में {{count}} callout इस पैलेट को "{{old}}" के रूप में इस्तेमाल करते हैं।\nक्या उन्हें "{{new}}" में बदलें?\nनहीं बदला तो वे अपने रंग पर लौट जाएँगे।',
-	"palette.renameNotesConfirm": "नोट अपडेट करें",
-	"palette.renameNotesSkip": "रहने दें",
+	"palette.renameNotesChange":
+		"आपने पैलेट का नाम \"{{old}}\" से बदलकर \"{{new}}\" किया, इसलिए callout मेटाडेटा में उसका शब्द \"{{oldWord}}\" से \"{{newWord}}\" हो जाएगा।",
+	"palette.renameNotesLeaveDesc": "वे \"{{word}}\" रखेंगे और अपने रंग पर लौट जाएँगे।",
+	"palette.renameNotesChangeDesc": "आपके नोट का हर |{{old}} |{{new}} बन जाएगा।",
 	"palette.renameNotesFailed":
 		"कुछ नोट अपडेट नहीं हो सके। जो अपडेट हुए वे सहेज लिए गए हैं; बाकी अब भी पुराना नाम इस्तेमाल करते हैं।",
 	"palette.baseColor": "आधार रंग",
@@ -537,11 +532,8 @@ export const hi: Record<string, string> = {
 	"iconPicker.customRecolor": "Callout रंग अनुसरण करें",
 	"iconPicker.allSources": "सभी स्रोत",
 	"iconPicker.searchAllSources": "सभी आइकन स्रोतों में खोजें",
-	"iconPicker.sourcesNotDownloaded":
-		"अभी तक शामिल नहीं: {{names}}। डाउनलोड करने के लिए ऊपर एक स्रोत चुनें।",
 	"iconPicker.chooseSource": "स्रोत चुनें",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	"iconPicker.notDownloaded": "डाउनलोड नहीं किया गया",
 	"iconPicker.librariesAvailable": "उपलब्ध लाइब्रेरी",
 	"iconPicker.librariesToDownload": "डाउनलोड के लिए लाइब्रेरी",
 	"iconPicker.groupCurrent": "मौजूदा आइकन",
@@ -778,7 +770,6 @@ export const hi: Record<string, string> = {
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "कमांड हटाएँ",
-	"confirm.titleResetCallout": "callout रीसेट करें",
 	"confirm.titleDeletePalette": "पैलेट हटाएँ",
 	"confirm.titleDeleteImage": "छवि हटाएँ",
 	"confirm.titleDeleteLibrary": "आइकन लाइब्रेरी हटाएँ",
@@ -793,8 +784,6 @@ export const hi: Record<string, string> = {
 	"vault.foldUpdated":
 		"vault फ़ाइलों में {{count}} callout का फ़ोल्ड चिह्न अपडेट किया गया।",
 	"vault.replaceWith": "इससे बदलें:",
-	"vault.deleteWithout": "बिना बदले हटाएँ",
-	"vault.confirmDelete": "पुष्टि करें",
 	"vault.confirmReplace": "बदलें",
 	"vault.replacePromptInUse":
 		'"{{name}}" {{files}} फ़ाइल(ों) में {{count}} बार उपयोग हो रहा है। इसे बदलने के लिए callout चुनें:',
@@ -803,9 +792,8 @@ export const hi: Record<string, string> = {
 		"इसे बदलने के लिए कोई अन्य callout उपलब्ध नहीं है।",
 	"vault.convertedToPlainText":
 		"{{files}} फ़ाइल(ों) में {{blocks}} callout ब्लॉक सादे टेक्स्ट में बदले गए।",
-	"vault.resetAliasWarning":
-		"{{files}} फ़ाइल(ों) में {{count}} संदर्भ कस्टम उपनाम उपयोग कर रहे हैं: {{aliases}}। रीसेट के बाद ये काम करना बंद कर देंगे। जारी रखें?",
-	"vault.resetConfirm": "रीसेट करें",
+	"vault.resetNotesFailed":
+		"कुछ नोट अपडेट नहीं हो सके, इसलिए callout रीसेट नहीं हुआ। पूरा करने के लिए फिर से डिफ़ॉल्ट पर रीसेट करें चुनें।",
 
 	"quickInsert.title": "ब्लॉक callout जल्दी डालें",
 	"quickInsert.desc": "कर्सर पर डालने के लिए एक callout चुनें। केवल ब्लॉक callout।",
@@ -1484,6 +1472,9 @@ export const hi: Record<string, string> = {
 	"noteChanges.changeMainId": "मुख्य आईडी \"{{oldId}}\" से बदलकर \"{{newId}}\" हो जाएगी।",
 	"noteChanges.changeName": "आपने प्रदर्शन नाम \"{{old}}\" से बदलकर \"{{new}}\" कर दिया।",
 	"noteChanges.changeRemoved": "आपने ID \"{{id}}\" हटा दिया।",
+	"noteChanges.changeRemovedMany": "आपने ये ID हटा दिए: {{ids}}।",
+	"noteChanges.changeResetRemoved": "डिफ़ॉल्ट पर रीसेट करें से आपका जोड़ा हुआ ID \"{{id}}\" हट जाता है।",
+	"noteChanges.changeResetRemovedMany": "डिफ़ॉल्ट पर रीसेट करें से आपके जोड़े हुए ID हट जाते हैं: {{ids}}।",
 	"noteChanges.changeFold": "आपने बदला कि यह callout कैसे फ़ोल्ड होता है।",
 	"noteChanges.affects": "इसका असर {{notes}} में {{callouts}} पर पड़ता है।",
 	"noteChanges.affectsUnknown": "हो सकता है कि आपके कुछ नोट्स प्रभावित हों।",
