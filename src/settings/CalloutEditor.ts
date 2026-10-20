@@ -89,6 +89,7 @@ import { activeThemeName } from "../manager/theme/customCssApi";
 import { patternMatches } from "../manager/theme/themeClaimLookup";
 import type { PatternOp } from "../manager/theme/themeCalloutScan";
 import { calloutIdentity, obsidianCalloutAttrId } from "../utils/calloutId";
+import { cancelFrame, requestFrameFor, type FrameHandle } from "../utils/elementFrame";
 
 // Derive a callout ID from the display name. Spaces are preserved (the ID may
 // be a human-readable, multi-word label like "multi word callout"); the shared
@@ -268,8 +269,9 @@ export class CalloutEditor extends Modal {
 	/** Id of the palette (custom or preset) currently applied, if any. */
 	private paletteId: string | undefined;
 	private preview: LiveCalloutPreview | null = null;
-	private noteRefreshFrame: number | null = null;
-	private updatePreviewFrame: number | null = null;
+	/** Both asked of the editor's own window — see utils/elementFrame.ts. */
+	private noteRefreshFrame: FrameHandle | null = null;
+	private updatePreviewFrame: FrameHandle | null = null;
 	private recolorToggle: ToggleComponent | null = null;
 	/**
 	 * Re-reads the Picture section from the current icon: whether it applies at
@@ -1990,7 +1992,7 @@ export class CalloutEditor extends Modal {
 	 */
 	private scheduleNoteDecorationRefresh(): void {
 		if (this.noteRefreshFrame !== null) return;
-		this.noteRefreshFrame = window.requestAnimationFrame(() => {
+		this.noteRefreshFrame = requestFrameFor(this.modalEl, () => {
 			this.noteRefreshFrame = null;
 			refreshAllCalloutEditors();
 		});
@@ -1999,7 +2001,7 @@ export class CalloutEditor extends Modal {
 	/** Coalesce slider previews to one paint per animation frame. */
 	private scheduleUpdatePreview(): void {
 		if (this.updatePreviewFrame !== null) return;
-		this.updatePreviewFrame = window.requestAnimationFrame(() => {
+		this.updatePreviewFrame = requestFrameFor(this.modalEl, () => {
 			this.updatePreviewFrame = null;
 			this.updatePreview();
 		});
@@ -2275,14 +2277,8 @@ export class CalloutEditor extends Modal {
 		this.releaseSaveStatus?.();
 		this.releaseSaveStatus = null;
 		// Cancel queued paints before destroying the preview.
-		if (this.noteRefreshFrame !== null) {
-			window.cancelAnimationFrame(this.noteRefreshFrame);
-			this.noteRefreshFrame = null;
-		}
-		if (this.updatePreviewFrame !== null) {
-			window.cancelAnimationFrame(this.updatePreviewFrame);
-			this.updatePreviewFrame = null;
-		}
+		this.noteRefreshFrame = cancelFrame(this.noteRefreshFrame);
+		this.updatePreviewFrame = cancelFrame(this.updatePreviewFrame);
 		this.preview?.destroy();
 		this.preview = null;
 		this.removePopupOutsideClickListener?.();

@@ -66,9 +66,11 @@ export function renderFallbackSection(
 		ctx.plugin.settings.fallbackCalloutId = id;
 		syncReset();
 		ctx.plugin.restyleUncustomizedFallbackRows();
+		// Painted before the save, never after it: a save can queue behind
+		// another or fail, and the notes should not wait on the disk.
+		ctx.plugin.refreshCallouts();
 		refreshOccurrencesViewAppearance(ctx.plugin);
 		await ctx.plugin.saveSettings();
-		ctx.plugin.refreshCallouts();
 	}
 	// The picker holds a document-level click listener; the tab owns its
 	// lifetime and clears these on `hide()` and before every re-`display()`.

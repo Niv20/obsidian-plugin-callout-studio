@@ -7,14 +7,24 @@
  * groups. Every control follows the same live-update contract: dragging
  * previews the change via cssInjector.inject(false), coalesced to one pass per
  * animation frame (see scheduleLiveInject) and skipping the css-change
- * re-render; releasing commits it via saveSettings() + cssInjector.inject().
+ * re-render; releasing commits it via cssInjector.inject() + saveSettings().
  * There is no scheduleInject — the injector has no debounce at all.
+ *
+ * Paint first, then save, at every commit. A save reads the file back, writes
+ * a recovery copy and queues behind any save already under way, so painting
+ * after it made the change wait on the disk — and a failed save rejects, which
+ * skipped the repaint altogether until something else injected.
+ *
+ * The animation frame is the control's own window's (utils/elementFrame.ts):
+ * in Obsidian 1.14 the settings are a window of their own, and a frame asked
+ * of the main window never arrives while it is hidden behind them.
  */
 import { Setting, type SliderComponent } from "obsidian";
 import { t } from "../i18n";
 import type { BorderSidesSettings } from "../types";
 import type { SettingsTabPlugin } from "./sections/types";
 import { addHeaderResetButton } from "./headerResetButton";
+import { cancelFrame, requestFrameFor, type FrameHandle } from "../utils/elementFrame";
 
 /**
  * `setDisplayFormat` arrived with the value readout in Obsidian 1.13. It is in
@@ -108,8 +118,8 @@ export function createResettableControlGroup(
 				defaults.reset();
 				for (const sync of controls) sync();
 				reset.sync();
-				await plugin.saveSettings();
 				plugin.cssInjector.inject();
+				await plugin.saveSettings();
 				defaults.afterReset?.();
 			},
 		},
@@ -133,8 +143,8 @@ export function createResettableControlGroup(
 				toggle.setValue(get()).onChange(async (value) => {
 					setValue(value);
 					reset.sync();
-					await plugin.saveSettings();
 					plugin.cssInjector.inject();
+					await plugin.saveSettings();
 					afterCommit?.();
 				});
 			});
@@ -210,12 +220,13 @@ export function addStyleSlider(
 
 	// Coalesce the per-move live reflow to at most one inject per animation
 	// frame, so even a fast drag updates the preview every frame (~60fps)
-	// instead of stalling behind a debounce until the thumb stops.
-	let rafId: number | null = null;
+	// instead of stalling behind a debounce until the thumb stops. The frame
+	// is the slider's own window's (see the file header).
+	let frame: FrameHandle | null = null;
 	const scheduleLiveInject = (): void => {
-		if (rafId !== null) return;
-		rafId = window.requestAnimationFrame(() => {
-			rafId = null;
+		if (frame !== null) return;
+		frame = requestFrameFor(row, () => {
+			frame = null;
 			// `false` = skip the css-change re-render: geometry rides CSS
 			// variables and reflows on stylesheet replace, so this stays cheap.
 			plugin.cssInjector.inject(false);
@@ -240,8 +251,7 @@ export function addStyleSlider(
 
 	new Setting(row).addSlider((slider) => {
 		syncValue = () => {
-			if (rafId !== null) window.cancelAnimationFrame(rafId);
-			rafId = null;
+			frame = cancelFrame(frame);
 			slider.setValue(spec.get());
 			endDrag();
 		};
@@ -269,8 +279,8 @@ export function addStyleSlider(
 			// `change` marks the end of a drag (release) as well as commit.
 			endDrag();
 			spec.set(round(v));
-			await plugin.saveSettings();
 			plugin.cssInjector.inject();
+			await plugin.saveSettings();
 		});
 	});
 	return () => syncValue();
@@ -318,8 +328,8 @@ export function renderBordersGroup(
 
 	const commit = async (): Promise<void> => {
 		syncUI();
-		await plugin.saveSettings();
 		plugin.cssInjector.inject();
+		await plugin.saveSettings();
 		syncUI();
 	};
 

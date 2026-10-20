@@ -29,6 +29,8 @@
  * at the top.
  */
 
+import { requestFrameFor } from "../../utils/elementFrame";
+
 const currentCaptures = new WeakMap<HTMLElement, object>();
 
 /**
@@ -49,8 +51,9 @@ export function captureScroll(el: HTMLElement): () => void {
 		const restored = el.scrollTop;
 		if (restored >= target) return;
 		// Late-loading rows grow the page; a clamped assignment above is what
-		// reads as "it jumped back to the top".
-		window.requestAnimationFrame(() => {
+		// reads as "it jumped back to the top". The container's own window's
+		// frame — see utils/elementFrame.ts.
+		requestFrameFor(el, () => {
 			if (el.isConnected && currentCaptures.get(el) === capture && el.scrollTop === restored) {
 				el.scrollTop = target;
 			}

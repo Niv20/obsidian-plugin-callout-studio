@@ -69,7 +69,8 @@ describe("settings row resets", () => {
 			assert.equal(host.querySelector(".cs-combobox-input")?.value, "Note");
 			assert.equal(reset.hasClass("cs-hidden"), true);
 			await Promise.resolve();
-			assert.deepEqual(h.calls, ["restyle", "save", "refresh"]);
+			// Painted before the save, which it must never wait on.
+			assert.deepEqual(h.calls, ["restyle", "refresh", "save"]);
 		} finally { h.dispose(); }
 	});
 
