@@ -2034,31 +2034,24 @@ its old name, fold marks after a **Foldable** change. The rule and the flow are
 in [Callout editor](14-callout-editor.md#notes-change-only-after-asking); this is
 the window.
 
-- **One part per thing the notes hold**: a line saying what the user changed
-  and what the notes still hold, ending in the question (`You removed the ID "test"
-  from Abstract, but it's still used by 12 callouts in 5 notes. What should
-  happen to those callouts?`), over a `role="radiogroup"` of answer cards - three for a
-  removed id, two otherwise. With more than one part showing, each is set apart
-  from the one above by a rule (a sibling selector over the parts not hidden,
-  so a hidden part takes no rule with it).
+- **One question**: the changes Save would make - one line, or a `<ul>` when
+  there are several - then how many callouts they reach and the question, one
+  sentence per line (`\n` in the string, `<br>` in the window), over a
+  `role="radiogroup"` of two answer cards: **Leave them as they are**, first and
+  preselected, and **Change them to**, which rewrites every old id to one of
+  this callout's own ids.
 - **The cards are the plugin import window's**: `renderOptionBox` without an
-  icon tile, `addOptionRadio` for the dot and `paintOptionRadio` for the
-  chosen / choosable / out-of-reach state, all from `optionBox.ts` and shared
-  with the import window. A card's callout picker sits at its trailing edge,
-  just before the dot, centred on the card's height - where the import card
-  keeps its button (`.cs-note-change-picking`; on a narrow window the picker and
-  dot wrap to a line of their own, still at the trailing edge). Here a click
-  anywhere on a card chooses it, a click into its picker included; the import
-  window exempts its own buttons and text box.
-- **Blocked answer**: **Keep "old" as another ID** with no room left, and
-  **Move "id" to another callout** with no callout able to take it, draw
-  `is-blocked` and take no click.
-- **The title and fold parts** repaint their counts on every answer and hide
-  (`cs-row-hidden`) while nothing they would change is left. (The fold part is
-  dormant while the editor's Foldable section stays hidden.)
+  icon tile, `addOptionRadio` for the dot and `paintOptionRadio` for the chosen
+  / choosable state, all from `optionBox.ts` and shared with the import window.
+  With more than one id to pick from, Change carries a `SelectDropdown` at its
+  trailing edge, just before the dot - where the import card keeps its button
+  (`.cs-note-change-picking`; on a narrow window the dropdown and dot wrap to a
+  line of their own, still at the trailing edge). Here a click anywhere on a
+  card chooses it, a click into its dropdown included; the import window
+  exempts its own buttons and text box.
 - **Footer**: **Cancel** and **Save changes** (`mod-cta`). Cancel, Escape and
   the close button resolve `null` - back to the editor, nothing saved. The
-  promise resolves exactly once; `onClose` destroys the pickers.
+  promise resolves exactly once; `onClose` destroys the dropdown.
 
 ### `PaletteEditorModal` - simple vs. advanced, two background styles
 

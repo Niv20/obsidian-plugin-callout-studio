@@ -31,18 +31,18 @@ Resetting **Callout IDs** restores Obsidian's original ID and aliases. Custom al
 
 ## Remove, rename or move an ID
 
-Saving never changes your notes behind your back. When a change you made in the editor touches callouts already in your notes, **Save changes** first opens **Update your notes?**. For each change, it says what you changed and how many callouts in how many notes it affects, then asks what should happen to them. The first answer is chosen when the window opens. When one save changes several things, each gets its own part of the window, set apart by a line.
+Saving never changes your notes behind your back. When a change you made in the editor touches callouts already in your notes, **Save changes** first opens **Update your notes?**. It lists what you changed, such as an ID you removed, or a new display name that changes the callout's main ID with it. It then says how many callouts in how many notes this affects, and asks one question about all of it:
 
-- **An ID you removed.** There are three answers:
-  - **Leave them as they are** keeps `[!test]` in your notes exactly as written. Those callouts fall back to the default style, like any callout type Callout Studio doesn't know.
-  - **Move "test" to another callout** makes `test` an ID of the callout you pick in the box beside it. Your notes don't change; callouts written with `[!test]` simply take that callout's style. Only callouts with room for another ID are listed.
-  - **Change them in your notes** rewrites every `[!test]` to the ID of the callout you pick in the box beside it, this one by default.
-- **A new name.** A callout's first ID follows its name, so renaming *Idea* to *Insight* also changes `idea` to `insight`. **Change them to "insight"** rewrites your notes to the new ID, and titles that still read *Idea* follow. **Keep "idea" as another ID** leaves your notes alone and keeps `idea` working as an extra ID of the callout. It isn't offered when the callout already has 10 IDs.
-- **A new name, same ID.** When only the name's wording changed, the window asks about titles that still read the old name: **Change them to** the new name, or **Leave them as they are**.
+- **Leave them as they are** is chosen when the window opens. Your notes don't change. Callouts written with an old ID, such as `[!test]`, fall back to the default style, like any callout type Callout Studio doesn't know.
+- **Change them to** rewrites every old ID in your notes to one of this callout's own IDs, the main ID unless you pick another from the box beside it. Like **Replace in vault…**, it also changes titles Callout Studio wrote to match, such as *Idea* to *Insight*. A title you wrote yourself stays.
 
-![The Update your notes? window after renaming Idea to Insight and removing its test ID, with one part for each change](../../assets/user-guide/note-changes.svg)
+When only the display name changed and the ID stayed the same, the question is about titles that still read the old name: **Leave them as they are**, or **Change them to** the new name.
 
-Press **Save changes** to save with your answers, or **Cancel** to go back to the editor with nothing saved. If no note uses what you changed, nothing is asked. If some notes can't be read, the window still asks, without numbers.
+![The Update your notes? window after renaming Idea to Insight and removing its test ID: both changes listed above one question](../../assets/user-guide/note-changes.svg)
+
+Press **Save changes** to save with your answer, or **Cancel** to go back to the editor with nothing saved. If no note uses what you changed, nothing is asked. If some notes can't be read, the window still asks, without numbers.
+
+To keep an old ID working without changing your notes, add it back in the **Callout IDs** field before you save; then it isn't leaving, and nothing is asked. To give it to another callout instead, see [Move an ID to another callout](#move-an-id-to-another-callout).
 
 When notes were changed, the notice offers **Undo** for a few seconds. Undo puts back the notes, unless you've edited them since; it doesn't undo the edit to the callout. An ID you removed stays removed, so notes put back to it fall back to the default style until you add the ID again.
 
@@ -52,7 +52,7 @@ An ID belongs to one callout. If you type one that another callout has, the IDs 
 
 ![The Idea callout's editor after typing project, an ID of Project note, with the move it here offer under the IDs field](../../assets/user-guide/id-move-here.svg)
 
-It works the other way too: remove the ID from the callout that has it, and choose **Move "test" to another callout** when Callout Studio asks what should happen to your notes.
+You can also do it in two steps: remove the ID from the callout that has it and choose **Leave them as they are**, then add the ID to the other callout. Your notes don't change either way.
 
 - **To make an ID a callout of its own**, create a new callout with that name, then choose **move it here**.
 - **To make a callout an extra ID of another one**, delete it first (its notes are not touched), then add its ID to the other callout.

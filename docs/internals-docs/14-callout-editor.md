@@ -88,14 +88,11 @@ them to (see [Notes change only after asking](#notes-change-only-after-asking)).
 
 ## How many IDs a callout can have
 
-`MAX_TAGS_COUNT` in `constants.ts` is the only copy of the number, and three
+`MAX_TAGS_COUNT` in `constants.ts` is the only copy of the number, and two
 limits read it. `TagInput` stops taking IDs at that count, whether they are
 typed, pasted, moved here (`addTagUnchecked`), or arrive as the name-linked
 primary (a rename replaces the pinned ID in place), and shows `editor.maxIds`
-with the cap filled in. **Keep "old" as another ID** in
-[Update your notes?](#what-the-window-asks) adds an alias, so `askNoteChanges`
-passes the room left (`MAX_TAGS_COUNT - 1 - aliases`), and with none left that
-answer is drawn blocked (`noteChanges.renameKeepFull`). The import validator
+with the cap filled in. The import validator
 rejects an entry with more (`import.err.tooManyIds`, primary ID included), so
 anything the editor can save, an export of it can bring back.
 
@@ -413,9 +410,9 @@ said so in the window it shows first.**
 
 | Module | Role |
 |---|---|
-| [`editor/noteChanges.ts`](../../src/settings/editor/noteChanges.ts) | Pure: what Save would change (`pendingNoteChanges` / `pendingNoteChangesFor`), the answers (`NoteChoices`, `LEAVE_NOTES`, `defaultNoteChoices`), and the id rewrites they turn into (`noteRewritesFor`) |
+| [`editor/noteChanges.ts`](../../src/settings/editor/noteChanges.ts) | Pure: what Save would change (`pendingNoteChanges` / `pendingNoteChangesFor`), the answers (`NoteChoices`, `LEAVE_NOTES`), and the id rewrites they turn into (`noteRewritesFor`) |
 | [`utils/idNoteStats.ts`](../../src/utils/idNoteStats.ts) | One vault pass counting, per id: uses, block callouts whose fold mark differs, titles reading the old name - each with the notes it was found in |
-| [`editor/noteChangeQuestion.ts`](../../src/settings/editor/noteChangeQuestion.ts) | Pure: which parts the window asks, their preselected answers, the live fold count, answers → `NoteChoices` |
+| [`editor/noteChangeQuestion.ts`](../../src/settings/editor/noteChangeQuestion.ts) | Pure: what the window lists and counts, and its answer → `NoteChoices` (`choicesFor`) |
 | [`editor/askNoteChanges.ts`](../../src/settings/editor/askNoteChanges.ts) | The step between the click and the save: count, then open the window only when something would change |
 | [`editor/NoteChangesModal.ts`](../../src/settings/editor/NoteChangesModal.ts) | **Update your notes?** - draws the question and resolves once |
 
@@ -452,62 +449,59 @@ owns every spelling); ids moved in from another callout are left out of it.
    `null` for Cancel / Escape / close - back to the editor, nothing saved.
 6. Only now does the save clear the live-preview slot, so the window was drawn
    over the callout as edited and going back finds the preview still standing.
-   **Keep "old" as another ID** is applied here: the editor appends the old id to
-   the state's aliases, so it is not leaving at all. **Move "id" to another
-   callout** travels as the answer's `give` list, passed to the save as `gives`.
 
 ### What the window asks
 
-`noteChangeQuestion` asks only about what the notes hold:
+One question for everything Save would change, with two answers - the window
+was simplified to this after rounds of per-change parts proved too busy.
+`noteChangeQuestion` lists only what the notes hold:
 
-| Part | When | Answers (preselected first) |
-|---|---|---|
-| Removed id | the id is used (or counting failed) | **Leave them as they are** · **Move "id" to another callout** [callout picker, nothing picked] · **Change them in your notes** [callout picker, this callout by default] |
-| Rename | the old main id is used | **Change them to "new"** (titles reading the old name follow) · **Keep "old" as another ID** (blocked with no room: `MAX_TAGS_COUNT - 1 - aliases`) |
-| Titles | the name changed, no rename part covers it, titles read the old name | **Change them to "new"** · **Leave them as they are** |
-| Fold | the fold mark changed and a block callout differs | **Set them to "state"** · **Leave them as they are** |
+| Listed | When |
+|---|---|
+| The rename of the main id (`changeRenamed`, or `changeMainId` with no name change) | the old main id is used (or counting failed) |
+| A removed id (`changeRemoved`) | the id is used (or counting failed) |
+| A new name (`changeName`) | the name changed, no rename line covers it, and titles read the old name |
+| A new fold setting (`changeFold`) | the fold mark changed and a block callout differs |
 
-Each part opens on a line that says what the user changed and what the notes
-still hold, then asks - "What should happen to that callout?" for one, "…to
-those callouts?" for several or for counts that could not be read ("title"
-for the titles part). Counts read "3 callouts in 1 note", singular and plural
-from their own keys, and the sentences are built so no verb has to agree with
-a count.
+One change is a line; several are a `<ul>`. Then one count, `affected` - the
+leaving ids' uses plus, on the kept ids, the titles that read the old name (or,
+with no name change, the fold marks that differ, so a callout is not counted
+twice) - and the question on its own line: "What should happen to that
+callout?" for one, "…to those callouts?" for several or for counts that could
+not be read. Counts read "3 callouts in 1 note", singular and plural from their
+own keys, and the sentences are built so no verb has to agree with a count.
+
+The answers:
+
+- **Leave them as they are** - first, and chosen on opening. `choicesFor(q,
+  null)` is `LEAVE_NOTES`: no note changes unless the user picks Change.
+- **Change them to** - every listed leaving id is rewritten to one id **of this
+  callout**: its main id by default, or another of its ids from a
+  `SelectDropdown` at the card's trailing edge (shown only when there is more
+  than one). With a single id to offer, the title names it: **Change them to
+  "insight"**. `choicesFor(q, to)` maps every listed id to `to` and turns the
+  title and fold passes on; Save runs those only when the name or the setting
+  changed. With no id leaving - only a new name, or only a fold setting - this
+  answer reads **Change them to "new"** / **Set them to "state"**.
+
+Notes never go to another callout from this window, and there is no "keep the
+old id as another id" answer. Both were tried and dropped as clutter: giving an
+id to another callout is that callout's **move it here** ([Moving an id
+here](#moving-an-id-here)), and keeping one is adding it back in the IDs field
+before saving - then it is not leaving, and nothing is asked.
 
 > [!NOTE]
-> The fold part is dormant for now: the editor's **Foldable** section is hidden
+> Fold changes are dormant for now: the editor's **Foldable** section is hidden
 > (`foldSection.hide()` in `CalloutEditor`), so the form's fold state always
 > equals the saved one and `pending.fold` stays `null`. It is wired and tested
 > so that showing the section again needs nothing more - the user guide leaves
 > it out until then.
 
-The preselected answer is the one that changes least, except where Save always
-changed the notes - a rename and a fold change - which open on doing what they
-always did. The fold count is `foldTally` over the kept ids **plus** every
-leaving id whose notes stay this callout's after the answers (`idsEndingHere`):
-one rewritten to it (the rewrite runs first, then the fold pass covers it) or
-one kept as another id. Leaving a kept id out of the count would hide notes the
-fold pass still changes. The part repaints on every answer and hides while its
-count is 0. The rewrite picker's choices are the committed callouts minus the
-edited row and the demo ids, with a stand-in for "this callout as it will be
-saved" first; it has no **Create new** entry, since a nested editor's close
-would release `settingsEditOpen` mid-save. The move picker offers the same
-callouts minus the stand-in, and minus any that cannot hold another id: theme
-rows, unstyled discovered placeholders, and callouts already at
-`MAX_TAGS_COUNT` (counting ids this same Save moves out of them). With none
-left, the answer is blocked. It starts on nothing picked; a click on the card
-then opens the list rather than choosing a move to nowhere, and picking a
-callout chooses the card.
-
 ### What Save then runs
 
 `performCalloutEditorSave` takes a **required** `noteChoices` - `LEAVE_NOTES`
 changes nothing, so no caller can reach the notes by leaving it out - and
-optional `moves` and `gives`. Inside the registry batch, once this callout is
-saved without them, `giveIds` (`idMoves.ts`) adds each given id to its
-target's aliases; one the target can no longer take (deleted, full, or the id
-owned elsewhere) is left with nobody - Leave's outcome - and a Notice says so
-(`editor.idGiveFailed`). After the registry batch:
+optional `moves`. After the registry batch:
 
 - `stageRenameAliases` keeps, as temporary aliases, only the leaving ids that
   are being **rewritten**: one the user left in its notes goes at once, and
@@ -515,14 +509,17 @@ owned elsewhere) is left with nobody - Leave's outcome - and a Notice says so
   to release it.
 - `plugin.refreshCallouts()` runs when ids left or moved: those notes look
   different without having changed, exactly as after Delete.
-- `createCalloutVaultSavePlan` gets the id rewrites grouped by target
-  (`noteRewritesFor`), the title pass (`noteChoices.titles`, over the kept
-  spellings) and the fold pass (`noteChoices.fold`, likewise). A rewritten note
-  takes its new callout's name as its title when the old title was one the plugin
-  would have written (`isGeneratedTitle`'s rule): the callout's old name for its
-  main id, an alias's default title or the old name for an alias. A rewrite back
-  onto this same callout swaps only an alias's default title - the old name is
-  the title pass's question, answered once.
+- `createCalloutVaultSavePlan` gets the id rewrites grouped by the id they go
+  to (`noteRewritesFor`, through Replace in vault's own
+  `replaceCalloutIdsInVault`, scoped to these ids' spellings), the title pass
+  (`noteChoices.titles`, over the kept spellings and the rewritten ones -
+  `formsEndingHere`) and the fold pass (`noteChoices.fold`, likewise). A
+  rewritten note takes the title the plugin would write for its new id when the
+  old title was one the plugin would have written (`isGeneratedTitle`'s rule):
+  the callout's old name for its main id, an alias's default title or the old
+  name for an alias. Going to the main id, the old name is the title pass's to
+  change, answered once; going to an alias, the pass has already turned it into
+  the new name, so both are swapped for the alias's default title.
 
 The editor retains this unfinished, idempotent plan in its save session. It
 confirms durable settings before running it, requests strict failure reporting

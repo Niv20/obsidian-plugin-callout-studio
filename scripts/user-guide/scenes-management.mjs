@@ -95,21 +95,17 @@ function noteStats(entries) {
 function noteChanges(plugin) {
 	const idea = ensureIdea(plugin);
 	const { registry } = plugin;
-	// Idea is renamed Insight and its "test" ID removed: the window's two parts.
-	const state = { calloutId: "insight", aliases: [], displayName: "Insight", foldable: idea.foldable, defaultFolded: idea.defaultFolded };
+	// Idea is renamed Insight, its "test" ID removed and "thought" added: two
+	// changes, one question, and two IDs of its own to change the notes to.
+	const state = { calloutId: "insight", aliases: ["thought"], displayName: "Insight", foldable: idea.foldable, defaultFolded: idea.defaultFolded };
 	const pending = pendingNoteChangesFor(registry, idea.id, state);
 	const stats = noteStats({ idea: [12, 5], test: [4, 2] });
 	const question = noteChangeQuestion(pending, stats);
 	if (question?.ids.length !== 2) throw new Error("Note-changes scene needs the rename and the removed ID");
-	const saved = { ...idea, id: "insight", displayName: "Insight", aliases: [] };
-	const others = () => registry.getAll().filter(def => def.id !== idea.id);
-	return openModal(new NoteChangesModal(plugin.app, {
-		question, pending, stats, saved, roomForIds: 9, registry,
-		targets: () => [saved, ...others()],
-		moveTargets: others,
-	}), {
+	const saved = { ...idea, id: "insight", displayName: "Insight", aliases: ["thought"] };
+	return openModal(new NoteChangesModal(plugin.app, { question, pending, saved }), {
 		title: "Update your notes before saving",
-		description: "The production NoteChangesModal asks about an Idea callout renamed to Insight whose test ID was removed, with illustrative note counts from synthetic data. Each change has its own part with the answers preselected on opening; nothing is saved and no note is edited.",
+		description: "The production NoteChangesModal asks about an Idea callout renamed to Insight whose test ID was removed, with illustrative note counts from synthetic data. Both changes are listed above one question, with Leave them as they are chosen on opening; nothing is saved and no note is edited.",
 	});
 }
 
