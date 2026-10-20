@@ -4,8 +4,6 @@
  * The other callout gives it up on Save and this one takes it, without a note
  * changing — `[!test]` simply starts drawing as this callout. What may move,
  * what may not, and that a refused save leaves both callouts as they were.
- * And the other way round: an id removed in the editor, which the user chose
- * to move to another callout ("Update your notes?").
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -14,14 +12,9 @@ import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { performCalloutEditorSave, type CalloutEditorSaveState } from "../src/settings/editor/CalloutEditorSave";
 import { idOwnership, takeMovedIds, type IdMove } from "../src/settings/editor/idMoves";
 import { LEAVE_NOTES } from "../src/settings/editor/noteChanges";
-import type { GivenId } from "../src/settings/editor/noteChangeQuestion";
 import type { CalloutEditorPlugin } from "../src/settings/editor/types";
 import type { CalloutDefinition, PluginData } from "../src/types";
 import { DEFAULT_TEXT_COLOR_DARK, DEFAULT_TEXT_COLOR_LIGHT } from "../src/utils/colorUtils";
-import { t } from "../src/i18n";
-
-const notices: string[] = [];
-Object.assign(globalThis, { __CS_NOTICES__: notices });
 
 function def(over: Partial<CalloutDefinition> & { id: string }): CalloutDefinition {
 	return {
@@ -155,14 +148,13 @@ describe("Save with a moved id", () => {
 			state: CalloutEditorSaveState,
 			moves: IdMove[],
 			noteChoices = LEAVE_NOTES,
-			gives: GivenId[] = [],
 		) =>
 			performCalloutEditorSave({
 				app, plugin, existingId, isBuiltIn: false, state,
 				baselineDef: existingId ? registry.get(existingId) : undefined,
 				hasStyleChanges: true, saveAsFallback: false, overwriteAutoFallback: false,
 				canUseCalloutId: () => true, getFallbackBase: () => undefined,
-				noteChoices, moves, gives, announceNoteRewrite: () => undefined,
+				noteChoices, moves, announceNoteRewrite: () => undefined,
 			});
 		return { registry, migrations, events: () => events, files, form, save };
 	}
@@ -220,7 +212,7 @@ describe("Save with a moved id", () => {
 		const saved = await h.save("idea",
 			h.form({ displayName: "Insight", calloutId: "insight", foldable: true, defaultFolded: true }),
 			[{ id: "insight", from: "other", removeRow: false }],
-			{ rewrite: new Map([["idea", { kind: "self" }]]), titles: true, fold: true });
+			{ rewrite: new Map([["idea", "insight"]]), titles: true, fold: true });
 		assert.ok(saved);
 		assert.equal(h.files.get("a.md"), "> [!insight]- Insight\n> body");
 		assert.equal(h.files.get("b.md"), "> [!insight]+ Idea", "the moved id's own notes were Other's: untouched");
@@ -236,31 +228,5 @@ describe("Save with a moved id", () => {
 		assert.ok(saved);
 		assert.equal(h.files.get("a.md"), "> [!test] Test");
 		assert.equal(h.files.get("b.md"), "> [!tip]- Tip");
-	});
-
-	it("moves a removed id to the callout picked, without touching a note", async () => {
-		const h = harness([def({ id: "abstract2", displayName: "Abstract2", aliases: ["test", "keep"] }), def({ id: "idea", displayName: "Idea" })],
-			{ "a.md": "> [!test] Test" });
-		const before = h.events();
-		const saved = await h.save("abstract2", h.form({ displayName: "Abstract2", calloutId: "abstract2", aliases: ["keep"] }), [],
-			LEAVE_NOTES, [{ id: "test", to: "idea" }]);
-		assert.ok(saved);
-		assert.deepEqual(h.registry.get("abstract2")?.aliases, ["keep"]);
-		assert.deepEqual(h.registry.get("idea")?.aliases, ["test"]);
-		assert.equal(h.registry.findAttrIdConflict("test", null)?.id, "idea");
-		assert.equal(h.files.get("a.md"), "> [!test] Test");
-		assert.equal(h.events() - before, 1, "both callouts change in one event");
-	});
-
-	it("leaves the id with nobody, and says so, when the callout picked filled up meanwhile", async () => {
-		const full = Array.from({ length: 9 }, (_, i) => `idea${i}`);
-		const h = harness([def({ id: "abstract2", displayName: "Abstract2", aliases: ["test"] }), def({ id: "idea", displayName: "Idea", aliases: full })]);
-		notices.length = 0;
-		const saved = await h.save("abstract2", h.form({ displayName: "Abstract2", calloutId: "abstract2", aliases: [] }), [],
-			LEAVE_NOTES, [{ id: "test", to: "idea" }]);
-		assert.ok(saved, "the callout itself still saves");
-		assert.deepEqual(h.registry.get("idea")?.aliases, full);
-		assert.equal(h.registry.findAttrIdConflict("test", null), undefined);
-		assert.deepEqual(notices, [t("editor.idGiveFailed", { id: "test", name: "Idea" })]);
 	});
 });

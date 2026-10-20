@@ -9,14 +9,13 @@
  * window opens only if something the notes hold would actually change.
  */
 import type { App } from "obsidian";
-import { MAX_TAGS_COUNT, RESERVED_DEMO_IDS } from "../../constants";
 import type { CalloutRegistry } from "../../manager/CalloutRegistry";
 import type { CalloutDefinition } from "../../types";
 import { calloutIdentity } from "../../utils/calloutId";
 import { scanIdNoteStats, type IdNoteStats } from "../../utils/idNoteStats";
-import { LEAVE_NOTES, pendingNoteChangesFor, type NoteChangeFormState } from "./noteChanges";
+import { LEAVE_NOTES, pendingNoteChangesFor, type NoteChangeFormState, type NoteChoices } from "./noteChanges";
 import { noteChangeQuestion } from "./noteChangeQuestion";
-import { NoteChangesModal, type NoteChangesAnswer, type NoteChangesModalInput } from "./NoteChangesModal";
+import { NoteChangesModal, type NoteChangesModalInput } from "./NoteChangesModal";
 import type { IdMove } from "./idMoves";
 
 export interface AskNoteChangesInput {
@@ -32,11 +31,11 @@ export interface AskNoteChangesInput {
 	 */
 	stillWanted: () => boolean;
 	/** Opens the window; tests answer in its place. */
-	open?: (input: NoteChangesModalInput) => Promise<NoteChangesAnswer | null>;
+	open?: (input: NoteChangesModalInput) => Promise<NoteChoices | null>;
 }
 
 /** What Save should do to the notes, or null when the user went back to the editor. */
-export async function askNoteChanges(input: AskNoteChangesInput): Promise<NoteChangesAnswer | null> {
+export async function askNoteChanges(input: AskNoteChangesInput): Promise<NoteChoices | null> {
 	const { app, registry, existingId, state } = input;
 	const pending = pendingNoteChangesFor(
 		registry,
@@ -44,8 +43,7 @@ export async function askNoteChanges(input: AskNoteChangesInput): Promise<NoteCh
 		state,
 		new Set(input.moves.map((move) => calloutIdentity(move.id))),
 	);
-	const nothing: NoteChangesAnswer = { choices: LEAVE_NOTES, keep: [], give: [] };
-	if (pending.leaving.length === 0 && !pending.name && pending.fold === null) return nothing;
+	if (pending.leaving.length === 0 && !pending.name && pending.fold === null) return LEAVE_NOTES;
 
 	let stats: Map<string, IdNoteStats> | null;
 	try {
@@ -64,38 +62,15 @@ export async function askNoteChanges(input: AskNoteChangesInput): Promise<NoteCh
 	const question = noteChangeQuestion(pending, stats);
 	// Only a callout that already exists has notes to ask about.
 	const existing = existingId ? registry.getReal(existingId) : undefined;
-	if (!question || !existing) return nothing;
+	if (!question || !existing) return LEAVE_NOTES;
 
-	// "This callout" as Save will leave it: its new id and name, its current look.
+	// "This callout" as Save will leave it: its new id, name and ids.
 	const saved: CalloutDefinition = {
 		...existing,
 		id: state.calloutId,
 		displayName: state.displayName || state.calloutId,
 		aliases: [...state.aliases],
 	};
-	const others = registry.getCommitted().filter((def) =>
-		def.id !== existingId && def.id !== saved.id && !RESERVED_DEMO_IDS.has(def.id));
-	// An id moves only to a callout that can hold it as one of its own — not a
-	// theme's (the theme decides its ids), not a placeholder a scan made with no
-	// style of its own (the id would look no different), and not one already
-	// at the cap. An id moved in from one of these by this same Save has left
-	// it already, so the count is the one Save will find.
-	const movedOut = new Map<string, number>();
-	for (const move of input.moves) movedOut.set(move.from, (movedOut.get(move.from) ?? 0) + 1);
-	const canTakeAnId = (def: CalloutDefinition): boolean =>
-		def.source !== "theme" &&
-		!registry.themeOwns(def) &&
-		!(def.source === "fallback" && def.customized !== true) &&
-		1 + (def.aliases?.length ?? 0) - (movedOut.get(def.id) ?? 0) < MAX_TAGS_COUNT;
-	const modalInput: NoteChangesModalInput = {
-		question,
-		pending,
-		stats,
-		saved,
-		roomForIds: MAX_TAGS_COUNT - 1 - state.aliases.length,
-		registry,
-		targets: () => [saved, ...others],
-		moveTargets: () => others.filter(canTakeAnId),
-	};
+	const modalInput: NoteChangesModalInput = { question, pending, saved };
 	return input.open ? input.open(modalInput) : new NoteChangesModal(app, modalInput).ask();
 }

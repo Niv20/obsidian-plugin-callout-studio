@@ -69,8 +69,8 @@ import { renderCalloutEditorIconPreview } from "./editor/CalloutEditorIconRender
 import { performCalloutEditorSave, type CalloutEditorSaveState } from "./editor/CalloutEditorSave";
 import { EditorSaveSession } from "./editor/EditorSaveSession";
 import { askNoteChanges } from "./editor/askNoteChanges";
-import type { NoteChangesAnswer } from "./editor/NoteChangesModal";
 import { idOwnership, type IdMove } from "./editor/idMoves";
+import type { NoteChoices } from "./editor/noteChanges";
 import type { TagMessage } from "../ui/TagInput";
 import {
 	hasAuthoredBackground,
@@ -2175,7 +2175,7 @@ export class CalloutEditor extends Modal {
 		state: CalloutEditorSaveState,
 		moves: readonly IdMove[],
 		before: string,
-	): Promise<NoteChangesAnswer | null> {
+	): Promise<NoteChoices | null> {
 		return askNoteChanges({
 			app: this.app,
 			registry: this.plugin.registry,
@@ -2235,16 +2235,14 @@ export class CalloutEditor extends Modal {
 				existingId: this.existingId,
 				isBuiltIn: this.isBuiltIn,
 				baselineDef: this.baselineDef,
-				// "Keep the old id as another id": it stays, so it is not leaving.
-				state: answer.keep.length > 0 ? { ...state, aliases: [...state.aliases, ...answer.keep] } : state,
+				state,
 				hasStyleChanges,
 				saveAsFallback,
 				overwriteAutoFallback,
 				canUseCalloutId: (id, role) => this.canUseCalloutId(id, role),
 				getFallbackBase: () => this.getFallbackBase(),
-				noteChoices: answer.choices,
+				noteChoices: answer,
 				moves,
-				gives: answer.give,
 				onDefinitionApplied: (saved) => { this.existingId = saved.id; },
 				onVaultChangesReady: (plan, definition) => this.saveSession.applyVaultChanges(this.plugin, plan, definition),
 			});

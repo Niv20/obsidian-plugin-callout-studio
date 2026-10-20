@@ -1,37 +1,41 @@
 /**
  * settings/editor/noteChangeQuestion.ts — what the "Update your notes?" window
- * asks, worked out from the notes' counts; and how its answers become the
+ * asks, worked out from the notes' counts, and how its answer becomes the
  * {@link NoteChoices} Save runs. Pure, so all of it is tested without a DOM —
  * NoteChangesModal only draws it.
  *
- * The window asks only about what notes actually hold:
+ * One question covers everything Save would change in the notes, with two
+ * answers: leave the notes as they are, or change them — every old id still in
+ * use becomes one id of this callout that the user picks, and titles and fold
+ * marks follow. The window lists only what notes actually hold:
  *
- * - **An id that leaves** and is still used. A rename's old id asks "change
- *   them to the new id, or keep the old one as another id"; any other id asks
- *   "leave them, move the id to a callout you pick, or change them in your
- *   notes to a callout you pick". Moving touches no note: the id becomes the
- *   other callout's, and `[!id]` takes its style.
- * - **Titles** reading the old name, when the name changed and no rename
- *   question above already covers them.
- * - **Fold marks** that differ from the new setting, counted over this
- *   callout's ids plus every leaving id the user is sending here — so the count
- *   moves as the answers above it change.
+ * - **An id that leaves** and is still used — one the user removed, or the
+ *   main id a rename left behind.
+ * - **A new name** whose old titles are still in the notes, when no rename of
+ *   the main id above already says so.
+ * - **A new fold setting** some block callout does not have.
  *
- * When the notes could not all be read the counts are unknown, and every
- * question that might apply is asked rather than none: an unreadable note is
- * not proof that nothing uses an id.
+ * When the notes could not all be read the counts are unknown, and everything
+ * that might apply is listed rather than nothing: an unreadable note is not
+ * proof that nothing uses an id.
  */
 import { calloutIdentity } from "../../utils/calloutId";
 import { sumTallies, type IdNoteStats, type NoteTally } from "../../utils/idNoteStats";
-import type { FoldMark, LeavingId, NoteChoices, PendingNoteChanges, RewriteTarget } from "./noteChanges";
+import { LEAVE_NOTES, type FoldMark, type LeavingId, type NoteChoices, type PendingNoteChanges } from "./noteChanges";
 
 export interface NoteChangeQuestion {
 	/** Leaving ids the notes use; `uses` null when they could not be counted. */
 	ids: Array<{ leaving: LeavingId; uses: NoteTally | null }>;
-	/** Titles reading the old name; counted live by {@link titleTally}. */
-	titles: { from: string; to: string } | null;
-	/** The fold mark block callouts are offered; counted live by {@link foldTally}. */
+	/** A new name whose old titles the notes may hold, when no leaving main id covers it. */
+	name: { from: string; to: string } | null;
+	/** The fold mark block callouts would get, when some do not have it. */
 	fold: FoldMark | null;
+	/**
+	 * The callouts it all reaches, for the window's count; null when not every
+	 * note could be read. Fold marks are counted only when nothing else is, so
+	 * a callout is not counted twice.
+	 */
+	affected: NoteTally | null;
 }
 
 function statsFor(stats: ReadonlyMap<string, IdNoteStats>, forms: readonly string[]): IdNoteStats[] {
@@ -55,28 +59,33 @@ export function noteChangeQuestion(
 		return uses === null || uses.count > 0 ? [{ leaving, uses }] : [];
 	});
 
-	// The title and fold parts are asked when they could matter at all — with
-	// every leaving id ending here — and then shown or hidden by a live count,
-	// since the answers above them decide which ids end here.
+	// Titles and fold marks matter when Change would reach them: over the ids
+	// the callout keeps and every leaving id, since Change rewrites them all here.
 	const everything = pending.leaving.map((leaving) => leaving.id);
 	const could = (tally: NoteTally | null): boolean => tally === null || tally.count > 0;
 
-	let titles: NoteChangeQuestion["titles"] = null;
-	const renameAsked = ids.some((id) => id.leaving.wasPrimary);
-	if (pending.name && !renameAsked && could(titleTally(pending, stats, everything))) {
-		titles = { ...pending.name };
-	}
+	let name: NoteChangeQuestion["name"] = null;
+	const renamed = ids.some((id) => id.leaving.wasPrimary);
+	if (pending.name && !renamed && could(titleTally(pending, stats, everything))) name = { ...pending.name };
 
 	let fold: FoldMark | null = null;
 	if (pending.fold !== null && could(foldTally(pending, stats, everything))) fold = pending.fold;
 
-	return ids.length > 0 || titles || fold !== null ? { ids, titles, fold } : null;
+	if (ids.length === 0 && !name && fold === null) return null;
+
+	// The leaving ids' own notes are in their uses; the kept ids' are counted
+	// here, by what would change on them.
+	const parts: Array<NoteTally | null> = ids.map((id) => id.uses);
+	if (pending.name) parts.push(titleTally(pending, stats, []));
+	else if (fold !== null) parts.push(foldTally(pending, stats, []));
+	const affected = parts.some((part) => part === null) ? null : sumTallies(parts as NoteTally[]);
+	return { ids, name, fold, affected };
 }
 
 /**
  * One count over the notes that are this callout's once Save is done: its
- * kept ids, plus the leaving ids in `toSelf` (see {@link idsEndingHere}) —
- * exactly what the title and fold passes cover (noteChanges.formsEndingHere).
+ * kept ids, plus the leaving ids in `toSelf` — exactly what the title and fold
+ * passes cover (noteChanges.formsEndingHere) when those are rewritten here.
  * Null when the notes could not be counted.
  */
 function tallyEndingHere(
@@ -112,84 +121,17 @@ export function titleTally(
 	return tallyEndingHere(pending, stats, toSelf, (one) => one.titled);
 }
 
-/** What the user picked for one leaving id. */
-export type IdAnswer =
-	| { kind: "leave" }
-	| { kind: "keep" }
-	/** The id becomes another callout's; no note changes. */
-	| { kind: "move"; to: string }
-	| { kind: "rewrite"; target: RewriteTarget };
-
-/** A leaving id Save hands to another callout — see {@link IdAnswer}. */
-export interface GivenId {
-	/** As this callout had it. */
-	id: string;
-	/** The callout that takes it. */
-	to: string;
-}
-
-export interface NoteChangeAnswers {
-	/** By the leaving id's identity; an id with no answer is left in its notes. */
-	ids: ReadonlyMap<string, IdAnswer>;
-	titles: boolean;
-	fold: boolean;
-}
-
-/** The answers the window opens on — see noteChanges.defaultNoteChoices. */
-export function defaultAnswers(question: NoteChangeQuestion): NoteChangeAnswers {
-	const ids = new Map<string, IdAnswer>();
-	for (const { leaving } of question.ids) {
-		ids.set(
-			calloutIdentity(leaving.id),
-			leaving.wasPrimary ? { kind: "rewrite", target: { kind: "self" } } : { kind: "leave" },
-		);
-	}
-	return { ids, titles: question.titles !== null, fold: question.fold !== null };
-}
-
 /**
- * The leaving ids whose notes are still this callout's once Save is done:
- * rewritten to it, or kept on it as another id. The fold pass runs over every
- * id the callout ends up with, so the fold question has to count these too —
- * a kept id's notes left out of the count would still take the new mark.
+ * What Save runs for the answer: `to` is the id of this callout the user chose
+ * to change the notes to, or null for "Leave them as they are". Changing
+ * rewrites every leaving id the window listed, and lets the titles and fold
+ * marks follow — Save applies those only when the name or the setting changed.
  */
-export function idsEndingHere(answers: NoteChangeAnswers): string[] {
-	return [...answers.ids].flatMap(([key, answer]) =>
-		answer.kind === "keep" || (answer.kind === "rewrite" && answer.target.kind === "self") ? [key] : [],
-	);
-}
-
-/**
- * What Save runs for these answers; the old ids the user chose to keep on the
- * callout — the editor adds those back to its aliases, so they are not leaving
- * at all; and the ones it hands to other callouts.
- */
-export function choicesFromAnswers(
-	question: NoteChangeQuestion,
-	answers: NoteChangeAnswers,
-): { choices: NoteChoices; keep: string[]; give: GivenId[] } {
-	const rewrite = new Map<string, RewriteTarget>();
-	const keep: string[] = [];
-	const give: GivenId[] = [];
-	let renameFollowed = false;
-	for (const { leaving } of question.ids) {
-		const answer = answers.ids.get(calloutIdentity(leaving.id));
-		if (answer?.kind === "rewrite") {
-			rewrite.set(calloutIdentity(leaving.id), answer.target);
-			if (leaving.wasPrimary) renameFollowed = true;
-		} else if (answer?.kind === "keep") {
-			keep.push(leaving.id);
-		} else if (answer?.kind === "move") {
-			give.push({ id: leaving.id, to: answer.to });
-		}
-	}
-	// A rename asked about its old id answers for its titles too: followed,
-	// the titles follow; kept, the notes stay as they are, titles and all.
-	const renameAsked = question.ids.some(({ leaving }) => leaving.wasPrimary);
-	const titles = renameAsked ? renameFollowed : question.titles !== null && answers.titles;
+export function choicesFor(question: NoteChangeQuestion, to: string | null): NoteChoices {
+	if (to === null) return LEAVE_NOTES;
 	return {
-		choices: { rewrite, titles, fold: question.fold !== null && answers.fold },
-		keep,
-		give,
+		rewrite: new Map(question.ids.map(({ leaving }) => [calloutIdentity(leaving.id), to])),
+		titles: true,
+		fold: true,
 	};
 }

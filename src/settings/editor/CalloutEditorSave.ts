@@ -25,8 +25,7 @@ import { definitionIconAdjustFields } from "./definitionIconAdjust";
 import type { CalloutEditorPlugin } from "./types";
 import { createCalloutVaultSavePlan, stageRenameAliases, type CalloutVaultSavePlan } from "./calloutVaultSavePlan";
 import { formsEndingHere, noteRewritesFor, pendingNoteChangesFor, type NoteChoices } from "./noteChanges";
-import { giveIds, takeMovedIds, type IdMove } from "./idMoves";
-import type { GivenId } from "./noteChangeQuestion";
+import { takeMovedIds, type IdMove } from "./idMoves";
 
 export type CalloutEditorSaveState = {
 	displayName: string;
@@ -89,8 +88,6 @@ export type CalloutEditorSaveInput = {
 	noteChoices: NoteChoices;
 	/** Ids this Save takes from other callouts — see ./idMoves. */
 	moves?: readonly IdMove[];
-	/** Removed ids this Save hands to other callouts — see ./idMoves. */
-	gives?: readonly GivenId[];
 	/** How finished note changes are announced; Undo by default. */
 	announceNoteRewrite?: (message: string, journal: NoteRewriteJournal) => void;
 	onMaterialDownloadStart?: () => void;
@@ -305,7 +302,6 @@ export async function performCalloutEditorSave(
 	// A batch holds back events; it undoes nothing. So a refused save puts back
 	// what it already changed — the moved ids, and for a rename the row it
 	// removed — rather than leaving the user with less than they started with.
-	let notGiven: GivenId[] = [];
 	const saved = registry.batch(() => {
 		const restoreMoves = takeMovedIds(registry, moves, existingId);
 		if (!restoreMoves) return false;
@@ -344,8 +340,6 @@ export async function performCalloutEditorSave(
 		for (const move of moves) {
 			if (move.removeRow && move.from !== def.id) plugin.customCommands.migrateCalloutId(move.from, def.id);
 		}
-		// Only now: the id is this callout's until it has been saved without it.
-		notGiven = giveIds(registry, input.gives ?? []);
 		return true;
 	});
 
@@ -354,12 +348,6 @@ export async function performCalloutEditorSave(
 		return null;
 	}
 	input.onDefinitionApplied?.(def);
-	for (const gift of notGiven) {
-		new Notice(t("editor.idGiveFailed", {
-			id: gift.id,
-			name: registry.getReal(gift.to)?.displayName ?? gift.to,
-		}));
-	}
 	// Notes that still write an id that left, or one that moved here, look
 	// different now without having changed — repaint them, as Delete does. A
 	// rewrite below re-renders the notes it touches on its own.

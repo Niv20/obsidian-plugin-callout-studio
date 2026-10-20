@@ -42,7 +42,6 @@ import {
 	LEAVE_NOTES,
 	pendingNoteChanges,
 	type NoteChoices,
-	type RewriteTarget,
 } from "../src/settings/editor/noteChanges";
 import type { CalloutEditorPlugin } from "../src/settings/editor/types";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
@@ -138,13 +137,13 @@ function stateFor(
 }
 
 /**
- * The answers that rewrite `ids`' notes to this callout, plus titles and fold
- * marks — what a user accepting the question's preselected answers to a rename
- * agrees to. Ids are matched by identity, as the save matches them.
+ * "Change them to `to`" for the leaving `ids`: their notes are rewritten to that
+ * id of this callout, and titles and fold marks follow. Ids are matched by
+ * identity, as the save matches them.
  */
-function follow(...ids: string[]): NoteChoices {
+function follow(to: string, ...ids: string[]): NoteChoices {
 	return {
-		rewrite: new Map<string, RewriteTarget>(ids.map((id) => [calloutIdentity(id), { kind: "self" }])),
+		rewrite: new Map(ids.map((id) => [calloutIdentity(id), to])),
 		titles: true,
 		fold: true,
 	};
@@ -272,7 +271,7 @@ describe("performCalloutEditorSave — renaming a callout's ID", () => {
 			existingId: "old",
 			state: formState({ calloutId: "new", displayName: "X" }),
 			baselineDef: h.registry.get("old"),
-			noteChoices: follow("old"),
+			noteChoices: follow("new", "old"),
 		});
 
 	it("moves the definition to the new ID and frees the old one", async () => {
@@ -369,7 +368,7 @@ describe("performCalloutEditorSave — renaming a callout's ID", () => {
 			existingId: "my note",
 			state: formState({ calloutId: "renamed", displayName: "X" }),
 			baselineDef: h.registry.get("my note"),
-			noteChoices: follow("my note"),
+			noteChoices: follow("renamed", "my note"),
 		});
 		assert.strictEqual(h.file("a.md"), "> [!renamed] X");
 		assert.strictEqual(h.file("b.md"), "> [!renamed] X");
@@ -388,14 +387,14 @@ describe("performCalloutEditorSave — renaming a callout's ID", () => {
 				aliases: ["keep"],
 			}),
 			baselineDef: h.registry.get("old"),
-			noteChoices: follow("old"),
+			noteChoices: follow("new", "old"),
 		});
 		assert.strictEqual(h.file("note.md"), "> [!keep] X");
 	});
 
 	it("rewrites nothing when the user kept the old id as another id", async () => {
-		// "Keep "old" as another ID" in the question: the editor adds it to the
-		// aliases, so it is not leaving and no note has anything to follow.
+		// The old id added back in the IDs field before saving: it is not
+		// leaving, so no note has anything to follow.
 		const h = harness([def({ id: "old", displayName: "Old" })], {
 			"note.md": "> [!old] Old",
 		});
@@ -460,30 +459,38 @@ describe("performCalloutEditorSave — removing an id", () => {
 			existingId: "note",
 			baselineDef: baseline,
 			state: stateFor(baseline, { aliases: [] }),
-			noteChoices: follow("mine"),
+			noteChoices: follow("note", "mine"),
 		});
 		// The alias's default title was generated, so it follows the type.
 		assert.strictEqual(h.file("note.md"), "> [!note] Note\n> body");
 	});
 
-	it("rewrites them to another callout, carrying a generated title across", async () => {
+	it("rewrites them to another of the callout's own ids, carrying a generated title across", async () => {
 		const { h } = noteWithAlias();
 		h.registry.update("note", { aliases: ["mine", "kept"] });
 		const withTwo = h.registry.get("note")!;
-		const tip = h.registry.get("tip")!;
 		await h.save({
 			isBuiltIn: true,
 			existingId: "note",
 			baselineDef: withTwo,
 			state: stateFor(withTwo, { aliases: ["kept"] }),
-			noteChoices: {
-				rewrite: new Map([["mine", { kind: "callout", id: tip.id, name: tip.displayName }]]),
-				titles: false,
-				fold: false,
-			},
+			noteChoices: follow("kept", "mine"),
 		});
-		assert.strictEqual(h.file("note.md"), "> [!tip] Tip\n> body");
+		assert.strictEqual(h.file("note.md"), "> [!kept] Kept\n> body");
 		assert.deepStrictEqual(h.registry.get("note")?.aliases, ["kept"]);
+	});
+
+	it("sends a renamed callout's old id to one of its aliases, its generated title with it", async () => {
+		const h = harness([def({ id: "idea", displayName: "Idea", aliases: ["thought"] })],
+			{ "a.md": "> [!idea] Idea\n> body", "b.md": "> [!idea] My own words" });
+		await h.save({
+			existingId: "idea",
+			state: formState({ calloutId: "insight", displayName: "Insight", aliases: ["thought"] }),
+			baselineDef: h.registry.get("idea"),
+			noteChoices: follow("thought", "idea"),
+		});
+		assert.strictEqual(h.file("a.md"), "> [!thought] Thought\n> body");
+		assert.strictEqual(h.file("b.md"), "> [!thought] My own words");
 	});
 
 	it("keeps a title the user wrote", async () => {
@@ -492,7 +499,7 @@ describe("performCalloutEditorSave — removing an id", () => {
 			existingId: "x",
 			state: formState({ calloutId: "x", aliases: [] }),
 			baselineDef: h.registry.get("x"),
-			noteChoices: follow("mine"),
+			noteChoices: follow("x", "mine"),
 		});
 		assert.strictEqual(h.file("a.md"), "> [!x] My own words");
 	});
@@ -505,7 +512,7 @@ describe("performCalloutEditorSave — removing an id", () => {
 			existingId: "x",
 			state: formState({ calloutId: "x", aliases: ["a-b"] }),
 			baselineDef: h.registry.get("x"),
-			noteChoices: follow("a b"),
+			noteChoices: follow("x", "a b"),
 		});
 		assert.deepStrictEqual(saved?.aliases, ["a-b"]);
 		assert.strictEqual(h.file("n.md"), "> [!a b] A b");
@@ -523,7 +530,7 @@ describe("performCalloutEditorSave — removing an id", () => {
 			existingId: "my note",
 			state: formState({ calloutId: "my note", displayName: "My note", colorLight: "#ff0000" }),
 			baselineDef: h.registry.get("my note"),
-			noteChoices: follow("my note"),
+			noteChoices: follow("my note", "my note"),
 		});
 		assert.strictEqual(h.file("a.md"), "> [!my-note] Hi");
 	});

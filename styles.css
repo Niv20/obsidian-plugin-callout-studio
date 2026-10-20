@@ -6876,23 +6876,24 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 
 /* ─── "Update your notes?" (settings/editor/NoteChangesModal.ts) ─── */
 
-/* One part per thing the notes hold — the line saying what changed and
-   asking, then its answers, drawn as the import window draws its cards. With
-   more than one part showing, a rule sets each apart from the one above it;
-   a part with nothing left to change is hidden, and takes no rule with it. */
-.cs-note-change:not(.cs-row-hidden) ~ .cs-note-change:not(.cs-row-hidden) {
-	margin-top: 20px;
-	padding-top: 20px;
-	border-top: 1px solid var(--background-modifier-border);
-}
+/* One question for everything Save would change: the changes — a line, or a
+   list when there are several — then the count and the question, then the two
+   answers, drawn as the import window draws its cards. */
 .cs-note-change-line {
 	margin: 0 0 10px;
 }
-/* A card with a callout picker: the picker sits at the trailing edge, centred
-   on the card's height, just before the dot — where the import card keeps its
-   button. On a narrow window the card wraps, and the picker and the dot take
-   a line of their own, still at the trailing edge, rather than squeezing the
-   words. */
+.cs-note-change-list {
+	margin: 0 0 10px;
+	padding-inline-start: 1.25em;
+	list-style: disc;
+}
+.cs-note-change-list li + li {
+	margin-top: 4px;
+}
+/* A card with a dropdown: it sits at the trailing edge, centred on the card's
+   height, just before the dot — where the import card keeps its button. On a
+   narrow window the card wraps, and the dropdown and the dot take a line of
+   their own, still at the trailing edge, rather than squeezing the words. */
 .cs-option-box.cs-note-change-picking {
 	flex-wrap: wrap;
 	row-gap: 8px;
@@ -6902,15 +6903,9 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 }
 .cs-note-change-target {
 	display: flex;
-	flex: 0 1 220px;
-	min-width: 160px;
+	flex: 0 0 auto;
 	margin-inline-start: auto;
 }
-/* An answer that cannot be chosen: Keep, with no room left for another id. */
-.cs-option-box.is-blocked {
-	opacity: 0.6;
-}
-
 /* A card's own button — Upload, which reads Replace once a file is staged, and
    Paste: a standard button at the card's trailing edge, never squeezed by a
    long file name. It wears the shared neutral face and border, as a footer's

@@ -3,88 +3,52 @@
  * callout editor's Save before anything in a note changes.
  *
  *   ┌ Update your notes? ──────────────────────────────────────────┐
- *   │ You removed "test" from Abstract, but it's still used by 12  │
- *   │ callouts in 5 notes. What should happen to those callouts?   │
+ *   │ • You changed the display name from "Idea" to "Insight", so  │
+ *   │   the main ID changes from "idea" to "insight".              │
+ *   │ • You removed the ID "test".                                 │
+ *   │ This affects 16 callouts in 7 notes.                         │
+ *   │ What should happen to those callouts?                        │
  *   │ ┌──────────────────────────────────────────────────────────┐ │
  *   │ │ Leave them as they are                                (●)│ │
- *   │ │ They keep [!test] and fall back to the default style.    │ │
+ *   │ │ They keep their old IDs and fall back to the default …   │ │
  *   │ └──────────────────────────────────────────────────────────┘ │
  *   │ ┌──────────────────────────────────────────────────────────┐ │
- *   │ │ Move "test" to another callout   [Search callouts… ▾] ( )│ │
- *   │ │ Your notes don't change. …                               │ │
+ *   │ │ Change them to                   [insight          ▾] ( )│ │
+ *   │ │ Every old ID in your notes becomes [!insight].           │ │
  *   │ └──────────────────────────────────────────────────────────┘ │
- *   │ ┌──────────────────────────────────────────────────────────┐ │
- *   │ │ Change them in your notes        [▣ Abstract       ▾] ( )│ │
- *   │ │ Every [!test] in your notes becomes [!abstract].         │ │
- *   │ └──────────────────────────────────────────────────────────┘ │
- *   │ ──────────────────────────────────────────────────────────── │
- *   │ (the next part, when Save changes more than one thing)       │
  *   │                                   [Cancel] [Save changes]    │
  *   └──────────────────────────────────────────────────────────────┘
  *
- * One part per thing the notes hold (see noteChangeQuestion.ts for which):
- * a line saying what the user changed and what the notes still hold, ending in
- * the question, then the answers — drawn as the import window draws its
- * options, on the same card, dot and painting (../optionBox.ts). A card's
- * picker sits at its trailing edge, before the dot, where the import card keeps
- * its button. Parts are set apart by a rule. Every answer stays in view, and
- * the one preselected is the one that changes the least — except where Save
- * always changed the notes, a rename and a fold change, which open on doing
- * what they always did.
+ * One question for everything Save would change (see noteChangeQuestion.ts
+ * for what is listed): the changes — one line, or a list when there are
+ * several — then how many callouts they reach and the question, then two
+ * answers drawn as the import window draws its options, on the same card, dot
+ * and painting (../optionBox.ts). **Leave them as they are** comes first and is
+ * chosen on opening: no note changes unless the user picks Change. Change
+ * offers only this callout's own ids; giving an id to another callout is that
+ * callout's **move it here** (./idMoves.ts). With more than one id to pick
+ * from, the dropdown sits at the card's trailing edge, before the dot, where
+ * the import card keeps its button.
  *
  * Cancel, Escape or the close button go back to the editor with nothing saved;
- * only Save changes saves, with the answers showing.
+ * only Save changes saves, with the answer showing.
  */
 import { Modal, type App } from "obsidian";
-import { MAX_TAGS_COUNT } from "../../constants";
 import { t } from "../../i18n";
-import type { CalloutRegistry } from "../../manager/CalloutRegistry";
 import type { CalloutDefinition } from "../../types";
+import { SelectDropdown } from "../../ui/selectDropdown";
 import { calloutIdentity } from "../../utils/calloutId";
-import type { IdNoteStats, NoteTally } from "../../utils/idNoteStats";
-import { CalloutCombobox, type CalloutComboboxOptions } from "../calloutCombobox";
+import type { NoteTally } from "../../utils/idNoteStats";
 import { applyModalChrome } from "../modalChrome";
-import {
-	addOptionRadio,
-	optionBoxId,
-	paintOptionRadio,
-	renderOptionBox,
-	renderOptionList,
-	type OptionBox,
-} from "../optionBox";
-import type { FoldMark, LeavingId, NoteChoices, PendingNoteChanges } from "./noteChanges";
-import {
-	choicesFromAnswers,
-	defaultAnswers,
-	foldTally,
-	idsEndingHere,
-	titleTally,
-	type GivenId,
-	type IdAnswer,
-	type NoteChangeQuestion,
-} from "./noteChangeQuestion";
-
-export interface NoteChangesAnswer {
-	choices: NoteChoices;
-	/** Old ids to keep on the callout, so their notes need nothing. */
-	keep: string[];
-	/** Old ids to hand to another callout, so their notes need nothing either. */
-	give: GivenId[];
-}
+import { addOptionRadio, optionBoxId, paintOptionRadio, renderOptionBox, renderOptionList } from "../optionBox";
+import type { FoldMark, NoteChoices, PendingNoteChanges } from "./noteChanges";
+import { choicesFor, type NoteChangeQuestion } from "./noteChangeQuestion";
 
 export interface NoteChangesModalInput {
 	question: NoteChangeQuestion;
 	pending: PendingNoteChanges;
-	stats: ReadonlyMap<string, IdNoteStats> | null;
-	/** The callout as Save will leave it — the "this callout" of every answer. */
+	/** The callout as Save will leave it: its ids are what Change offers. */
 	saved: CalloutDefinition;
-	/** Ids the callout can still take, for "Keep as another ID". */
-	roomForIds: number;
-	registry: CalloutRegistry;
-	/** Callouts a removed id's notes may be rewritten to; `saved` among them. */
-	targets: () => readonly CalloutDefinition[];
-	/** Callouts a removed id may move to: room for another id, not `saved`. */
-	moveTargets: () => readonly CalloutDefinition[];
 }
 
 /** The label the fold setting wears in the editor. */
@@ -93,7 +57,7 @@ function foldLabel(mark: FoldMark): string {
 	return mark === "-" ? t("editor.foldClosed") : t("editor.foldOpen");
 }
 
-/** "3 callouts" and "1 note", for the `{{callouts}} in {{notes}}` of a part's line. */
+/** "3 callouts" and "1 note", for the `{{callouts}} in {{notes}}` of the count. */
 function counted(tally: NoteTally): { callouts: string; notes: string } {
 	const files = tally.files.size;
 	return {
@@ -103,47 +67,69 @@ function counted(tally: NoteTally): { callouts: string; notes: string } {
 }
 
 /**
- * A part's line: what the user changed and what the notes still hold, then
- * the question — about that one callout (or title), or about those, which is
- * also how it is asked when the notes could not be counted.
+ * How many callouts the changes reach, then the question on a line of its own
+ * — about that one callout, or about those, which is also how it is asked
+ * when the notes could not be counted.
  */
-function asked(statement: string, tally: NoteTally | null, of: "callouts" | "titles"): string {
-	const one = tally?.count === 1;
-	const question = of === "titles"
-		? (one ? t("noteChanges.askTitle") : t("noteChanges.askTitles"))
-		: (one ? t("noteChanges.askCallout") : t("noteChanges.askCallouts"));
-	return `${statement} ${question}`;
+function asked(affected: NoteTally | null): string {
+	const count = affected ? t("noteChanges.affects", counted(affected)) : t("noteChanges.affectsUnknown");
+	const question = affected?.count === 1 ? t("noteChanges.askCallout") : t("noteChanges.askCallouts");
+	return `${count}\n${question}`;
 }
 
-/** One answer card, as {@link NoteChangesModal} builds it. */
-interface AnswerSpec {
-	title: string;
-	desc: string;
-	isChosen: () => boolean;
-	choose: () => void;
-	/** Drawn greyed and out of reach while true. */
-	blocked?: () => boolean;
+/** Each `\n` of the text starts a new line of it. */
+function writeLines(el: HTMLElement, text: string): void {
+	el.empty();
+	text.split("\n").forEach((line, i) => {
+		if (i > 0) el.createEl("br");
+		el.appendText(line);
+	});
+}
+
+/** One line per change Save would make to the notes, the main id's first. */
+function changeLines(question: NoteChangeQuestion, pending: PendingNoteChanges, saved: CalloutDefinition): string[] {
+	const lines: string[] = [];
+	const main = question.ids.find(({ leaving }) => leaving.wasPrimary);
+	if (main) {
+		const ids = { oldId: main.leaving.id, newId: saved.id };
+		lines.push(pending.name
+			? t("noteChanges.changeRenamed", { old: pending.name.from, new: pending.name.to, ...ids })
+			: t("noteChanges.changeMainId", ids));
+	} else if (question.name) {
+		lines.push(t("noteChanges.changeName", { old: question.name.from, new: question.name.to }));
+	}
+	for (const { leaving } of question.ids) {
+		if (!leaving.wasPrimary) lines.push(t("noteChanges.changeRemoved", { id: leaving.id }));
+	}
+	if (question.fold !== null) lines.push(t("noteChanges.changeFold"));
+	return lines;
+}
+
+/** The ids Change can send the notes to: this callout's own, its main id first. */
+function ownIds(saved: CalloutDefinition): string[] {
+	const seen = new Set<string>();
+	return [saved.id, ...(saved.aliases ?? [])].filter((id) => {
+		const key = calloutIdentity(id);
+		if (!key || seen.has(key)) return false;
+		seen.add(key);
+		return true;
+	});
 }
 
 export class NoteChangesModal extends Modal {
-	private resolve: (answer: NoteChangesAnswer | null) => void = () => undefined;
+	private resolve: (choices: NoteChoices | null) => void = () => undefined;
 	private settled = false;
-	private readonly ids: Map<string, IdAnswer>;
-	private titles: boolean;
-	private fold: boolean;
+	/** The id Change sends the notes to; null while Leave is chosen. */
+	private to: string | null = null;
 	/** Each answer card's own repaint, run after every choice. */
 	private readonly paints: Array<() => void> = [];
-	private readonly pickers: CalloutCombobox[] = [];
+	private dropdown: SelectDropdown | null = null;
 
 	constructor(app: App, private readonly input: NoteChangesModalInput) {
 		super(app);
-		const start = defaultAnswers(input.question);
-		this.ids = new Map(start.ids);
-		this.titles = start.titles;
-		this.fold = start.fold;
 	}
 
-	ask(): Promise<NoteChangesAnswer | null> {
+	ask(): Promise<NoteChoices | null> {
 		return new Promise((resolve) => {
 			this.resolve = resolve;
 			this.open();
@@ -153,13 +139,24 @@ export class NoteChangesModal extends Modal {
 	onOpen(): void {
 		const footer = applyModalChrome(this, { footer: true });
 		this.setTitle(t("noteChanges.title"));
-		const { question } = this.input;
-		for (const { leaving, uses } of question.ids) {
-			if (leaving.wasPrimary) this.renderRename(leaving, uses);
-			else this.renderRemoved(leaving, uses);
+		const { question, pending, saved } = this.input;
+		const el = this.contentEl;
+
+		const changes = changeLines(question, pending, saved);
+		if (changes.length === 1) {
+			el.createEl("p", { cls: "cs-note-change-line", text: changes[0] });
+		} else {
+			const listEl = el.createEl("ul", { cls: "cs-note-change-list" });
+			for (const line of changes) listEl.createEl("li", { text: line });
 		}
-		if (question.titles) this.renderTitles(question.titles);
-		if (question.fold !== null) this.renderFold(question.fold);
+		const askId = optionBoxId("note-change");
+		writeLines(el.createEl("p", { cls: "cs-note-change-line", attr: { id: askId } }), asked(question.affected));
+
+		const list = renderOptionList(el);
+		list.setAttribute("role", "radiogroup");
+		list.setAttribute("aria-labelledby", askId);
+		this.renderLeave(list);
+		this.renderChange(list);
 
 		footer.createEl("button", { text: t("editor.cancel") })
 			.addEventListener("click", () => this.finish(false));
@@ -173,15 +170,14 @@ export class NoteChangesModal extends Modal {
 			this.settled = true;
 			this.resolve(null);
 		}
-		for (const picker of this.pickers) picker.destroy();
+		this.dropdown?.destroy();
 		this.contentEl.empty();
 	}
 
 	private finish(save: boolean): void {
 		if (this.settled) return;
 		this.settled = true;
-		const { ids, titles, fold } = this;
-		this.resolve(save ? choicesFromAnswers(this.input.question, { ids, titles, fold }) : null);
+		this.resolve(save ? choicesFor(this.input.question, this.to) : null);
 		this.close();
 	}
 
@@ -189,213 +185,81 @@ export class NoteChangesModal extends Modal {
 		for (const paint of this.paints) paint();
 	}
 
-	/** One part of the question: the line saying what changed and asking, then its answers. */
-	private part(line: string): { el: HTMLElement; lineEl: HTMLElement; list: HTMLElement } {
-		const el = this.contentEl.createDiv({ cls: "cs-note-change" });
-		const lineId = optionBoxId("note-change");
-		const lineEl = el.createEl("p", { cls: "cs-note-change-line", text: line, attr: { id: lineId } });
-		const list = renderOptionList(el);
-		list.setAttribute("role", "radiogroup");
-		list.setAttribute("aria-labelledby", lineId);
-		return { el, lineEl, list };
-	}
-
 	/** One answer card. */
-	private answer(list: HTMLElement, spec: AnswerSpec): { box: OptionBox; radio: HTMLElement } {
-		const blocked = spec.blocked ?? (() => false);
+	private answer(list: HTMLElement, spec: { title: string; desc: string; isChosen: () => boolean; choose: () => void }) {
 		const box = renderOptionBox(list, { title: spec.title, desc: spec.desc });
 		const radio = addOptionRadio(box, () => {
-			if (blocked()) return;
 			spec.choose();
 			this.repaint();
 		});
 		this.paints.push(() => {
 			const chosen = spec.isChosen();
-			const off = blocked();
-			box.el.toggleClass("is-blocked", off);
-			paintOptionRadio(box, radio, { chosen, choosable: !chosen && !off, enabled: !off });
+			paintOptionRadio(box, radio, { chosen, choosable: !chosen, enabled: true });
 		});
 		return { box, radio };
 	}
 
-	/**
-	 * A callout picker at a card's trailing edge, just before its dot — where
-	 * the import window's card keeps its button. A click anywhere on the card,
-	 * the picker included, still answers for the card.
-	 */
-	private picker(card: { box: OptionBox; radio: HTMLElement }, options: CalloutComboboxOptions): CalloutCombobox {
+	private renderLeave(list: HTMLElement): void {
+		const { ids, name } = this.input.question;
+		let desc: string;
+		if (ids.length === 1) desc = t("noteChanges.leaveDesc", { id: ids[0]!.leaving.id });
+		else if (ids.length > 1) desc = t("noteChanges.leaveManyDesc");
+		else if (name) desc = t("noteChanges.titlesLeaveDesc", { old: name.from });
+		else desc = t("noteChanges.foldLeaveDesc");
+		this.answer(list, {
+			title: t("noteChanges.leave"),
+			desc,
+			isChosen: () => this.to === null,
+			choose: () => { this.to = null; },
+		});
+	}
+
+	private renderChange(list: HTMLElement): void {
+		const { question, pending, saved } = this.input;
+		const { ids, name, fold } = question;
+		// Nothing to rewrite: only titles or fold marks would change.
+		if (ids.length === 0) {
+			this.answer(list, {
+				title: name ? t("noteChanges.titlesChange", { new: name.to }) : t("noteChanges.foldChange", { state: foldLabel(fold ?? "") }),
+				desc: name ? t("noteChanges.titlesChangeDesc", { old: name.from, new: name.to }) : t("noteChanges.foldChangeDesc"),
+				isChosen: () => this.to !== null,
+				choose: () => { this.to = saved.id; },
+			});
+			return;
+		}
+
+		const describe = (to: string): string => {
+			if (ids.length > 1) return t("noteChanges.rewriteManyDesc", { to });
+			const { leaving } = ids[0]!;
+			// A rename followed back to the main id: its titles follow too.
+			if (leaving.wasPrimary && pending.name && to === saved.id) {
+				return t("noteChanges.renameFollowDesc", { oldId: leaving.id, newId: to, old: pending.name.from, new: pending.name.to });
+			}
+			return t("noteChanges.rewriteDesc", { id: leaving.id, to });
+		};
+		const choices = ownIds(saved);
+		let picked = saved.id;
+		const card = this.answer(list, {
+			title: choices.length > 1 ? t("noteChanges.changeTo") : t("noteChanges.renameChange", { id: saved.id }),
+			desc: describe(picked),
+			isChosen: () => this.to !== null,
+			choose: () => { this.to = picked; },
+		});
+		if (choices.length < 2) return;
+
+		// The dropdown at the card's trailing edge, the dot still its last mark.
+		// A click on it answers for the card, as a click anywhere on it does.
 		card.box.el.addClass("cs-note-change-picking");
 		const host = card.box.el.createDiv({ cls: "cs-note-change-target" });
-		// The dot stays the card's last mark, after its picker.
 		card.box.el.appendChild(card.radio);
-		const picker = new CalloutCombobox(host, options);
-		this.pickers.push(picker);
-		return picker;
-	}
-
-	private renderRename(leaving: LeavingId, uses: NoteTally | null): void {
-		const key = calloutIdentity(leaving.id);
-		const { saved, pending, roomForIds } = this.input;
-		const name = pending.name;
-		const ids = { oldId: leaving.id, newId: saved.id };
-		let line: string;
-		if (name) {
-			const names = { old: name.from, new: name.to, ...ids };
-			line = uses
-				? t("noteChanges.renamedLine", { ...names, ...counted(uses) })
-				: t("noteChanges.renamedLineUnknown", names);
-		} else {
-			line = uses
-				? t("noteChanges.idChangedLine", { ...ids, ...counted(uses) })
-				: t("noteChanges.idChangedLineUnknown", ids);
-		}
-		const { list } = this.part(asked(line, uses, "callouts"));
-		this.answer(list, {
-			title: t("noteChanges.renameChange", { id: saved.id }),
-			desc: name
-				? t("noteChanges.renameFollowDesc", { ...ids, old: name.from, new: name.to })
-				: t("noteChanges.renameFollowDescIdOnly", ids),
-			isChosen: () => this.ids.get(key)?.kind === "rewrite",
-			choose: () => this.ids.set(key, { kind: "rewrite", target: { kind: "self" } }),
-		});
-		this.answer(list, {
-			title: t("noteChanges.renameKeep", { id: leaving.id }),
-			desc: roomForIds > 0
-				? t("noteChanges.renameKeepDesc")
-				: t("noteChanges.renameKeepFull", { max: MAX_TAGS_COUNT }),
-			isChosen: () => this.ids.get(key)?.kind === "keep",
-			choose: () => this.ids.set(key, { kind: "keep" }),
-			blocked: () => roomForIds <= 0,
-		});
-	}
-
-	private renderRemoved(leaving: LeavingId, uses: NoteTally | null): void {
-		const key = calloutIdentity(leaving.id);
-		const { id } = leaving;
-		const { saved, registry, targets, moveTargets } = this.input;
-		const name = saved.displayName;
-		const { list } = this.part(asked(uses
-			? t("noteChanges.removedLine", { id, name, ...counted(uses) })
-			: t("noteChanges.removedLineUnknown", { id, name }), uses, "callouts"));
-
-		this.answer(list, {
-			title: t("noteChanges.leave"),
-			desc: t("noteChanges.leaveDesc", { id }),
-			isChosen: () => (this.ids.get(key)?.kind ?? "leave") === "leave",
-			choose: () => this.ids.set(key, { kind: "leave" }),
-		});
-
-		// Where the id or its notes go is remembered apart from whether they
-		// go, so choosing Leave and coming back finds the callout picked before.
-		// The move starts on nothing picked: there is no callout it is likelier
-		// to be than any other, and a guess would read as a suggestion.
-		let moveTo = "";
-		const noRoom = (): boolean => moveTargets().length === 0;
-		const move = this.answer(list, {
-			title: t("noteChanges.moveTo", { id }),
-			desc: noRoom() ? t("noteChanges.moveNoRoom", { max: MAX_TAGS_COUNT }) : t("noteChanges.moveToDesc"),
-			isChosen: () => this.ids.get(key)?.kind === "move",
-			choose: () => {
-				if (moveTo) this.ids.set(key, { kind: "move", to: moveTo });
-				// Nothing to move it to yet: open the list instead. After this
-				// click has finished, or the document's own click handler would
-				// close the list again as a click outside it.
-				else window.setTimeout(() => { if (!this.settled) movePicker.focus(); }, 0);
-			},
-			blocked: noRoom,
-		});
-		const movePicker = this.picker(move, {
-			registry,
-			choices: moveTargets,
-			value: "",
-			ariaLabel: t("noteChanges.moveToLabel", { id }),
-			onChange: (to) => {
-				moveTo = to;
-				this.ids.set(key, { kind: "move", to });
+		this.dropdown = new SelectDropdown(host, t("noteChanges.changeToIdLabel"))
+			.setOptions(choices.map((id) => ({ value: id, label: id })))
+			.setValue(picked)
+			.onChange((to) => {
+				picked = to;
+				card.box.descEl.setText(describe(to));
+				this.to = to;
 				this.repaint();
-			},
-		});
-
-		let target = saved.id;
-		const send = (): void => {
-			const def = targets().find((one) => one.id === target);
-			this.ids.set(key, target === saved.id || !def
-				? { kind: "rewrite", target: { kind: "self" } }
-				: { kind: "rewrite", target: { kind: "callout", id: def.id, name: def.displayName } });
-		};
-		const rewrite = this.answer(list, {
-			title: t("noteChanges.rewrite"),
-			desc: t("noteChanges.rewriteDesc", { id, to: target }),
-			isChosen: () => this.ids.get(key)?.kind === "rewrite",
-			choose: send,
-		});
-		this.picker(rewrite, {
-			registry,
-			choices: targets,
-			value: saved.id,
-			ariaLabel: t("noteChanges.changeToLabel", { id }),
-			onChange: (to) => {
-				target = to;
-				rewrite.box.descEl.setText(t("noteChanges.rewriteDesc", { id, to }));
-				send();
-				this.repaint();
-			},
-		});
-	}
-
-	private renderTitles(titles: NonNullable<NoteChangeQuestion["titles"]>): void {
-		const names = { old: titles.from, new: titles.to };
-		const { el, lineEl, list } = this.part("");
-		// Like the fold part below: the count covers the ids that end up here.
-		this.paints.push(() => {
-			const { pending, stats } = this.input;
-			const tally = titleTally(pending, stats, idsEndingHere({ ids: this.ids, titles: this.titles, fold: this.fold }));
-			lineEl.setText(asked(tally
-				? t("noteChanges.titlesLine", { ...names, ...counted(tally) })
-				: t("noteChanges.titlesLineUnknown", names), tally, "titles"));
-			el.toggleClass("cs-row-hidden", tally !== null && tally.count === 0);
-		});
-		this.answer(list, {
-			title: t("noteChanges.titlesChange", { new: titles.to }),
-			desc: t("noteChanges.titlesChangeDesc", names),
-			isChosen: () => this.titles,
-			choose: () => { this.titles = true; },
-		});
-		this.answer(list, {
-			title: t("noteChanges.leave"),
-			desc: t("noteChanges.titlesLeaveDesc", { old: titles.from }),
-			isChosen: () => !this.titles,
-			choose: () => { this.titles = false; },
-		});
-	}
-
-	private renderFold(mark: FoldMark): void {
-		const { el, lineEl, list } = this.part("");
-		this.answer(list, {
-			title: t("noteChanges.foldChange", { state: foldLabel(mark) }),
-			desc: t("noteChanges.foldChangeDesc"),
-			isChosen: () => this.fold,
-			choose: () => { this.fold = true; },
-		});
-		this.answer(list, {
-			title: t("noteChanges.leave"),
-			desc: t("noteChanges.foldLeaveDesc"),
-			isChosen: () => !this.fold,
-			choose: () => { this.fold = false; },
-		});
-		// The count covers the ids that stay this callout's after the answers
-		// above — sent here, or kept as another id — so it is read again
-		// whenever an answer changes, and the part goes away while nothing it
-		// would change is left.
-		this.paints.push(() => {
-			const { pending, stats } = this.input;
-			const tally = foldTally(pending, stats, idsEndingHere({ ids: this.ids, titles: this.titles, fold: this.fold }));
-			lineEl.setText(asked(
-				tally ? t("noteChanges.foldLine", counted(tally)) : t("noteChanges.foldLineUnknown"),
-				tally,
-				"callouts",
-			));
-			el.toggleClass("cs-row-hidden", tally !== null && tally.count === 0);
-		});
+			});
 	}
 }

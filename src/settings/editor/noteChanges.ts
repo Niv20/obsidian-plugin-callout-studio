@@ -18,10 +18,10 @@
  * and the save rewrites exactly that and nothing more. Delete already followed
  * the rule (it never touches a note); this is the editor catching up.
  *
- * The answers preselected in the window ({@link defaultNoteChoices}) keep a
- * rename and a fold change doing what they always did, and keep a removed id
- * out of the notes entirely, which is the fix: an alias someone takes off a
- * callout is not a request to rewrite every note that used it.
+ * The window opens on **Leave them as they are** (noteChangeQuestion.choicesFor
+ * with no id picked), which is the fix: an alias someone takes
+ * off a callout, or a new name, is not a request to rewrite every note that
+ * used it. A note changes only when the user picks an answer that changes it.
  *
  * ## Ids are compared by identity
  *
@@ -72,14 +72,14 @@ export interface NoteChangeFormState {
 	defaultFolded: boolean;
 }
 
-/** Where a leaving id's notes go: this callout as saved, or another one. */
-export type RewriteTarget =
-	| { kind: "self" }
-	| { kind: "callout"; id: string; name: string };
-
 export interface NoteChoices {
-	/** Leaving ids whose notes are rewritten, by identity. Absent: left as written. */
-	rewrite: ReadonlyMap<string, RewriteTarget>;
+	/**
+	 * Leaving ids whose notes are rewritten, by identity, to one of this
+	 * callout's own ids as Save leaves them. Absent: left as written. Notes
+	 * never go to another callout from here — giving an id away is that
+	 * callout's **move it here** (./idMoves.ts).
+	 */
+	rewrite: ReadonlyMap<string, string>;
 	/** Titles reading the old name take the new one, on the ids the callout keeps. */
 	titles: boolean;
 	/** Block callouts take the new fold mark. */
@@ -88,7 +88,7 @@ export interface NoteChoices {
 
 /** Nothing in any note changes. */
 export const LEAVE_NOTES: NoteChoices = Object.freeze({
-	rewrite: new Map<string, RewriteTarget>(),
+	rewrite: new Map<string, string>(),
 	titles: false,
 	fold: false,
 });
@@ -160,22 +160,9 @@ export function pendingNoteChangesFor(
 }
 
 /**
- * The answers the question starts on: a rename and a fold change keep doing
- * what Save always did with them, and an id taken off the callout is left in
- * its notes.
- */
-export function defaultNoteChoices(pending: PendingNoteChanges): NoteChoices {
-	const rewrite = new Map<string, RewriteTarget>();
-	for (const leaving of pending.leaving) {
-		if (leaving.wasPrimary) rewrite.set(calloutIdentity(leaving.id), { kind: "self" });
-	}
-	return { rewrite, titles: pending.name !== null, fold: pending.fold !== null };
-}
-
-/**
  * The spellings whose notes are this callout's once Save is done, as those
  * notes read BEFORE any rewrite: the ids it keeps, plus the leaving ids being
- * rewritten into it. The title and fold passes run over these, ahead of the
+ * rewritten — every rewrite ends in this callout. The title and fold passes run over these, ahead of the
  * rewrites — afterwards a rewritten note carries the saved id, which may be one
  * just moved here whose own notes belong to nobody's question. See
  * calloutVaultSavePlan.
@@ -187,7 +174,7 @@ export function formsEndingHere(
 ): string[] {
 	const forms = new Set(keptForms);
 	for (const leaving of pending.leaving) {
-		if (choices.rewrite.get(calloutIdentity(leaving.id))?.kind !== "self") continue;
+		if (!choices.rewrite.has(calloutIdentity(leaving.id))) continue;
 		for (const form of leaving.forms) forms.add(form);
 	}
 	return [...forms];
@@ -201,20 +188,19 @@ export interface NoteRewrite {
 }
 
 /**
- * The id rewrites `choices` asks for, grouped by where they go.
+ * The id rewrites `choices` asks for, grouped by the id they go to.
  *
- * A rewritten note takes its new callout's name as its title when its title was
- * one the plugin would have written for the old id — the way Replace in vault
- * carries a name across. A title the user wrote stays. What counts as written
- * by the plugin follows calloutWriter.isGeneratedTitle: the callout's name for
- * its main id, and for an alias the alias's default title or, from before that
- * rule, the callout's name.
+ * A rewritten note takes the title the plugin would write for its new id when
+ * its title was one the plugin would have written for the old id — the way
+ * Replace in vault carries a name across. A title the user wrote stays. What
+ * counts as written by the plugin follows calloutWriter.isGeneratedTitle: the
+ * callout's name for its main id, and for an alias the alias's default title
+ * or, from before that rule, the callout's name.
  *
- * Except the callout's old name on a note rewritten to this same callout: that
- * is the rename's title question (`choices.titles`), answered by its own pass,
- * which runs before the rewrites over the ids being rewritten here as well
- * (formsEndingHere). Swapping it here too would answer that question twice —
- * and against the user's "Leave them".
+ * The callout's old name going to its main id is the rename's title pass
+ * (`choices.titles`), which runs first, over these notes too
+ * (formsEndingHere). Going to an alias, the pass has already turned the old
+ * name into the new one, so both are swapped for the alias's title.
  */
 export function noteRewritesFor(
 	pending: PendingNoteChanges,
@@ -224,17 +210,19 @@ export function noteRewritesFor(
 ): NoteRewrite[] {
 	const groups = new Map<string, { forms: string[]; from: Set<string>; to: string }>();
 	for (const leaving of pending.leaving) {
-		const target = choices.rewrite.get(calloutIdentity(leaving.id));
-		if (!target) continue;
-		const self = target.kind === "self";
-		const toId = self ? saved.id : target.id;
+		const toId = choices.rewrite.get(calloutIdentity(leaving.id));
+		if (!toId) continue;
+		const main = calloutIdentity(toId) === calloutIdentity(saved.id);
 		let group = groups.get(toId);
 		if (!group) {
-			group = { forms: [], from: new Set(), to: self ? saved.displayName : target.name };
+			group = { forms: [], from: new Set(), to: main ? saved.displayName : obsidianDefaultTitle(toId) };
 			groups.set(toId, group);
 		}
 		group.forms.push(...leaving.forms);
-		if (!self) group.from.add(oldName);
+		if (!main) {
+			group.from.add(oldName);
+			group.from.add(saved.displayName);
+		}
 		if (!leaving.wasPrimary) group.from.add(obsidianDefaultTitle(leaving.id));
 	}
 	return [...groups].map(([toId, group]) => {

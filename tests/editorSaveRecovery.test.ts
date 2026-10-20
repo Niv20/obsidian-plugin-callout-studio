@@ -7,11 +7,11 @@ import { SettingsWriter } from "../src/manager/SettingsWriter";
 import { CalloutEditor } from "../src/settings/CalloutEditor";
 import { EditorSaveSession } from "../src/settings/editor/EditorSaveSession";
 import { stageRenameAliases } from "../src/settings/editor/calloutVaultSavePlan";
-import { defaultNoteChoices, pendingNoteChangesFor } from "../src/settings/editor/noteChanges";
-import type { NoteChangesAnswer } from "../src/settings/editor/NoteChangesModal";
+import { pendingNoteChangesFor, type NoteChoices, type PendingNoteChanges } from "../src/settings/editor/noteChanges";
 import { performCalloutEditorSave, type CalloutEditorSaveState } from "../src/settings/editor/CalloutEditorSave";
 import type { CalloutEditorPlugin } from "../src/settings/editor/types";
 import type { PluginData } from "../src/types";
+import { calloutIdentity } from "../src/utils/calloutId";
 import { normalizeFoldMarkersInVault } from "../src/utils/vaultCalloutScanner";
 import { definition } from "./support/discoveryHarness";
 import { DEFAULT_TEXT_COLOR_DARK, DEFAULT_TEXT_COLOR_LIGHT } from "../src/utils/colorUtils";
@@ -20,6 +20,13 @@ function gate() {
 	let release!: () => void;
 	const promise = new Promise<void>((done) => { release = done; });
 	return { promise, release };
+}
+
+/** "Change them to" the new main id for the old one: titles and fold follow too. */
+function followRename(pending: PendingNoteChanges, to: string): NoteChoices {
+	const rewrite = new Map(pending.leaving.filter((leaving) => leaving.wasPrimary)
+		.map((leaving) => [calloutIdentity(leaving.id), to]));
+	return { rewrite, titles: true, fold: true };
 }
 
 function recoveryHarness(notes = { "a.md": "> [!old] Old", "b.md": "> [!old] Old" }) {
@@ -75,9 +82,8 @@ function recoveryHarness(notes = { "a.md": "> [!old] Old", "b.md": "> [!old] Old
 			state: form,
 			hasStyleChanges: true, saveAsFallback: false, overwriteAutoFallback: false,
 			canUseCalloutId: () => true, getFallbackBase: () => registry.get("note"),
-			// The user took the question's preselected answers: the notes follow
-			// the rename, as they always did.
-			noteChoices: defaultNoteChoices(pendingNoteChangesFor(registry, existingId, form)),
+			// The user chose Change them to the new id: the notes follow the rename.
+			noteChoices: followRename(pendingNoteChangesFor(registry, existingId, form), form.calloutId),
 			announceNoteRewrite: () => undefined,
 			onDefinitionApplied: (def) => { existingId = def.id; },
 			onVaultChangesReady: (plan) => session.applyVaultChanges(plugin, plan),
@@ -203,9 +209,7 @@ describe("editor rename work survives failed saves and partial note rewrites", (
 		const shell = { findAll: () => [], removeClasses: () => undefined, removeClass: () => undefined };
 		// The user answers the question at once, following the rename — so the
 		// first note read is the rewrite's, which is where the gate waits.
-		const followRename: NoteChangesAnswer = {
-			choices: { rewrite: new Map([["old", { kind: "self" }]]), titles: true, fold: true }, keep: [], give: [],
-		};
+		const followRename: NoteChoices = { rewrite: new Map([["old", "new"]]), titles: true, fold: true };
 		Object.assign(editor, { app: h.app, editorOpen: true, calloutId: "new", displayName: "New",
 			saveSession: h.session, contentEl: { empty: () => undefined }, modalEl: shell, containerEl: shell,
 			askNoteChanges: () => Promise.resolve(followRename) });

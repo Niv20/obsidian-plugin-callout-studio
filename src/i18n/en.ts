@@ -872,10 +872,6 @@ export const en: Record<string, string> = {
 	"editor.idBuiltInStock": '"{{id}}" is one of Obsidian\'s own IDs for {{name}}.',
 	"editor.idMoving": 'On save, "{{id}}" moves here from {{name}}.',
 	"editor.idMovingNotes": "Your notes don't change. They take this callout's style.",
-	// An ID the user chose, on Save, to move to another callout that could not
-	// take it after all — it was deleted or filled up meanwhile.
-	"editor.idGiveFailed":
-		'Couldn\'t move "{{id}}" to {{name}}, so notes that use it fall back to the default style.',
 	"editor.untitledCallout": "Untitled Callout",
 	"editor.loremIpsum":
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
@@ -887,72 +883,51 @@ export const en: Record<string, string> = {
 
 	// "Update your notes?" — asked by the callout editor's Save before anything
 	// in a note changes: an ID that leaves the callout, a new name, a new fold
-	// setting. Each part says what the user changed and what the notes still
-	// hold, asks what to do, then offers the answers.
+	// setting. The window lists what the user changed, asks what to do, then
+	// offers the answers.
 	"noteChanges.title": "Update your notes?",
-	"noteChanges.uses": '"{{id}}" appears {{count}} time(s) in {{files}} note(s).',
-	"noteChanges.usesUnknown": 'Some notes may use "{{id}}".',
 	"noteChanges.leave": "Leave them as they are",
 	"noteChanges.leaveDesc": "They keep [!{{id}}] and fall back to the default style.",
 	"noteChanges.changeTo": "Change them to",
-	"noteChanges.changeToLabel": 'Callout to change "{{id}}" to',
-	"noteChanges.undoHint": "You can undo this.",
 	"noteChanges.renameChange": 'Change them to "{{id}}"',
-	"noteChanges.renameChangeDesc": 'Titles that read "{{old}}" become "{{new}}". You can undo this.',
-	"noteChanges.renameKeep": 'Keep "{{id}}" as another ID',
-	"noteChanges.renameKeepDesc": "Your notes don't change, and they keep this callout's style.",
-	"noteChanges.renameKeepFull": "This callout already has the maximum of {{max}} IDs.",
-	"noteChanges.titlesUses": '{{count}} title(s) in {{files}} note(s) read "{{old}}".',
-	"noteChanges.titlesUnknown": 'Some titles may read "{{old}}".',
 	"noteChanges.titlesChange": 'Change them to "{{new}}"',
 	"noteChanges.titlesLeaveDesc": 'They keep reading "{{old}}".',
-	"noteChanges.foldUses": "{{count}} callout(s) in {{files}} note(s) are set to fold differently.",
-	"noteChanges.foldUnknown": "Some callouts may be set to fold differently.",
 	"noteChanges.foldChange": 'Set them to "{{state}}"',
 	"noteChanges.foldLeaveDesc": "Only callouts you insert from now on use the new setting.",
-	// Counts inside the sentences below: "used by 3 callouts in 1 note".
+	// Counts inside the sentence below: "This affects 3 callouts in 1 note."
 	"noteChanges.callouts": "{{count}} callouts",
 	"noteChanges.calloutsOne": "1 callout",
 	"noteChanges.notes": "{{count}} notes",
 	"noteChanges.notesOne": "1 note",
-	// The question that follows each part's sentence: about one callout or
-	// title, or about several (and when the notes could not all be counted).
+	// The question that follows: about one callout, or about several (and when
+	// the notes could not all be counted).
 	"noteChanges.askCallout": "What should happen to that callout?",
 	"noteChanges.askCallouts": "What should happen to those callouts?",
-	"noteChanges.askTitle": "What should happen to that title?",
-	"noteChanges.askTitles": "What should happen to those titles?",
-	// An extra ID taken off the callout. {{name}} is the callout's name.
-	"noteChanges.removedLine": 'You removed the ID "{{id}}" from {{name}}, but it\'s still used by {{callouts}} in {{notes}}.',
-	"noteChanges.removedLineUnknown": 'You removed the ID "{{id}}" from {{name}}, but some notes may still use it.',
-	"noteChanges.moveTo": 'Move "{{id}}" to another callout',
-	"noteChanges.moveToDesc": "Your notes don't change. They take the style of the callout you pick.",
-	"noteChanges.moveToLabel": 'Callout to move "{{id}}" to',
-	"noteChanges.moveNoRoom": "Every other callout already has the maximum of {{max}} IDs.",
-	"noteChanges.rewrite": "Change them in your notes",
+	// The window asks one question about everything Save would change: first
+	// the changes, one line each (a list when there are several)…
+	"noteChanges.changeRenamed":
+		'You changed the display name from "{{old}}" to "{{new}}", so the main ID changes from "{{oldId}}" to "{{newId}}".',
+	"noteChanges.changeMainId": 'The main ID changes from "{{oldId}}" to "{{newId}}".',
+	"noteChanges.changeName": 'You changed the display name from "{{old}}" to "{{new}}".',
+	"noteChanges.changeRemoved": 'You removed the ID "{{id}}".',
+	"noteChanges.changeFold": "You changed how this callout folds.",
+	// …then how many callouts they reach, before the question…
+	"noteChanges.affects": "This affects {{callouts}} in {{notes}}.",
+	"noteChanges.affectsUnknown": "Some of your notes may be affected.",
+	// …and the answers' words when more than one ID is changing. The Change
+	// answer's dropdown lists this callout's own IDs.
+	"noteChanges.leaveManyDesc": "They keep their old IDs and fall back to the default style.",
+	"noteChanges.rewriteManyDesc": "Every old ID in your notes becomes [!{{to}}].",
+	"noteChanges.changeToIdLabel": "ID to change them to",
+	// An extra ID taken off the callout. {{name}} is the callout's name. Each
+	// `\n` starts a new line in the window, as in the lines below.
 	"noteChanges.rewriteDesc": "Every [!{{id}}] in your notes becomes [!{{to}}].",
 	// The callout's main ID, which follows its name: a rename changes it.
-	"noteChanges.renamedLine":
-		'You renamed "{{old}}" to "{{new}}", so its ID changes from "{{oldId}}" to "{{newId}}". The old ID is still used by {{callouts}} in {{notes}}.',
-	"noteChanges.renamedLineUnknown":
-		'You renamed "{{old}}" to "{{new}}", so its ID changes from "{{oldId}}" to "{{newId}}". Some notes may still use the old ID.',
-	"noteChanges.idChangedLine":
-		'This callout\'s ID changes from "{{oldId}}" to "{{newId}}". The old ID is still used by {{callouts}} in {{notes}}.',
-	"noteChanges.idChangedLineUnknown":
-		'This callout\'s ID changes from "{{oldId}}" to "{{newId}}". Some notes may still use the old ID.',
 	"noteChanges.renameFollowDesc":
 		'Every [!{{oldId}}] in your notes becomes [!{{newId}}], and titles that read "{{old}}" become "{{new}}".',
-	"noteChanges.renameFollowDescIdOnly": "Every [!{{oldId}}] in your notes becomes [!{{newId}}].",
 	// A new name, while the IDs stay.
-	"noteChanges.titlesLine":
-		'You renamed "{{old}}" to "{{new}}". The old name is still the title of {{callouts}} in {{notes}}.',
-	"noteChanges.titlesLineUnknown":
-		'You renamed "{{old}}" to "{{new}}". Some callouts in your notes may still have the old name as their title.',
 	"noteChanges.titlesChangeDesc": 'Titles that read "{{old}}" become "{{new}}".',
 	// A new fold setting.
-	"noteChanges.foldLine":
-		"You changed how this callout folds. A different fold mark is set on {{callouts}} in {{notes}}.",
-	"noteChanges.foldLineUnknown":
-		"You changed how this callout folds. Some callouts in your notes may be set to fold differently.",
 	"noteChanges.foldChangeDesc": "Their + or - mark changes to match.",
 
 	// Theme callout preview window — opens instead of the editor for a callout

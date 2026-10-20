@@ -1,9 +1,9 @@
 /**
  * "Update your notes?" — what the callout editor's Save asks before a note
- * changes (GitHub: Nathan, after #86). Removing an id leaves its notes alone
- * unless the user says otherwise — moving the id to another callout, or
- * changing the notes; a rename and a fold change open on doing what they
- * always did; Cancel saves nothing.
+ * changes (GitHub: Nathan, after #86). One question for everything: the
+ * changes, then Leave them as they are (chosen on opening — no note changes
+ * unless the user says so) or Change them to one of this callout's own ids.
+ * Cancel saves nothing.
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -12,18 +12,19 @@ import type { App } from "obsidian";
 import { t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { askNoteChanges } from "../src/settings/editor/askNoteChanges";
-import { NoteChangesModal, type NoteChangesAnswer, type NoteChangesModalInput } from "../src/settings/editor/NoteChangesModal";
-import { pendingNoteChanges, type NoteChangeFormState, type PendingNoteChanges } from "../src/settings/editor/noteChanges";
+import { NoteChangesModal, type NoteChangesModalInput } from "../src/settings/editor/NoteChangesModal";
 import {
-	choicesFromAnswers,
-	defaultAnswers,
-	foldTally,
-	noteChangeQuestion,
-} from "../src/settings/editor/noteChangeQuestion";
+	pendingNoteChanges,
+	type NoteChangeFormState,
+	type NoteChoices,
+	type PendingNoteChanges,
+} from "../src/settings/editor/noteChanges";
+import { choicesFor, foldTally, noteChangeQuestion } from "../src/settings/editor/noteChangeQuestion";
 import type { CalloutDefinition } from "../src/types";
 import type { IdNoteStats, NoteTally } from "../src/utils/idNoteStats";
-import { fakeDom, type FakeElement } from "./support/fakeDom";
+import { fakeDom, NODE_TEXT, type FakeElement } from "./support/fakeDom";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";
+import { dropdownOptions, pickDropdown } from "./support/selectDropdown";
 
 function def(over: Partial<CalloutDefinition> & { id: string }): CalloutDefinition {
 	return {
@@ -57,51 +58,50 @@ describe("what the question asks", () => {
 		assert.equal(noteChangeQuestion(pending, stats({ test: {} })), null);
 	});
 
-	it("asks about a removed id its notes use, and leaves them by default", () => {
+	it("lists a removed id its notes use, and Leave changes nothing", () => {
 		const pending = pendingOf(callout, form());
 		const question = noteChangeQuestion(pending, stats({ test: { uses: tally(12, "a.md", "b.md") } }));
 		assert.ok(question);
 		assert.deepEqual(question.ids.map(({ leaving }) => leaving.id), ["test"]);
-		const { choices, keep, give } = choicesFromAnswers(question, defaultAnswers(question));
-		assert.equal(choices.rewrite.size, 0, "nothing is rewritten unless the user says so");
-		assert.deepEqual(keep, []);
-		assert.deepEqual(give, []);
+		assert.equal(question.affected?.count, 12);
+		const left = choicesFor(question, null);
+		assert.equal(left.rewrite.size, 0, "nothing is rewritten unless the user says so");
+		assert.equal(left.titles, false);
+		assert.equal(left.fold, false);
 	});
 
-	it("hands a removed id to the callout picked, and rewrites no note for it", () => {
-		const pending = pendingOf(callout, form());
-		const question = noteChangeQuestion(pending, stats({ test: { uses: tally(1, "a.md") } }));
+	it("changes every listed id to the one picked, and lets titles and fold marks follow", () => {
+		const idea = def({ id: "idea", displayName: "Idea", aliases: ["test", "thought"] });
+		const pending = pendingOf(idea, form({ calloutId: "insight", displayName: "Insight", aliases: ["thought"] }));
+		const question = noteChangeQuestion(pending, stats({ idea: { uses: tally(3, "a.md") }, test: { uses: tally(2, "b.md") } }));
 		assert.ok(question);
-		const moved = choicesFromAnswers(question, { ids: new Map([["test", { kind: "move", to: "tip" }]]), titles: false, fold: false });
-		assert.deepEqual(moved.give, [{ id: "test", to: "tip" }]);
-		assert.equal(moved.choices.rewrite.size, 0);
-		assert.deepEqual(moved.keep, []);
+		assert.equal(question.affected?.count, 5);
+		const changed = choicesFor(question, "thought");
+		assert.deepEqual([...changed.rewrite], [["idea", "thought"], ["test", "thought"]]);
+		assert.equal(changed.titles, true);
+		assert.equal(changed.fold, true);
 	});
 
-	it("opens a rename on following it, titles and all — or keeps the old id", () => {
-		const renamed = def({ id: "idea", displayName: "Idea" });
-		const pending = pendingOf(renamed, form({ calloutId: "insight", displayName: "Insight" }));
-		const question = noteChangeQuestion(pending, stats({ idea: { uses: tally(3, "a.md") } }));
-		assert.ok(question);
-		const followed = choicesFromAnswers(question, defaultAnswers(question));
-		assert.deepEqual([...followed.choices.rewrite], [["idea", { kind: "self" }]]);
-		assert.equal(followed.choices.titles, true);
-		const kept = choicesFromAnswers(question, { ids: new Map([["idea", { kind: "keep" }]]), titles: true, fold: false });
-		assert.equal(kept.choices.rewrite.size, 0);
-		assert.deepEqual(kept.keep, ["idea"]);
-		assert.equal(kept.choices.titles, false, "kept: the notes stay as they are, titles and all");
-	});
-
-	it("asks about titles alone when only the name changed", () => {
+	it("lists a new name alone when only the name changed, counting its titles", () => {
 		const named = def({ id: "tip2", displayName: "Old Name" });
 		const pending = pendingOf(named, form({ calloutId: "tip2", displayName: "New Name" }));
 		const question = noteChangeQuestion(pending, stats({ tip2: { uses: tally(2, "a.md"), titled: tally(2, "a.md") } }));
-		assert.ok(question?.titles);
-		assert.equal(question.titles.from, "Old Name");
-		assert.equal(choicesFromAnswers(question, defaultAnswers(question)).choices.titles, true);
+		assert.ok(question?.name);
+		assert.equal(question.name.from, "Old Name");
+		assert.equal(question.affected?.count, 2);
+		assert.equal(choicesFor(question, "tip2").titles, true);
 	});
 
-	it("counts fold marks over the ids being sent here, and only asks when one would change", () => {
+	it("does not list the name again when the main id's rename already says it", () => {
+		const renamed = def({ id: "idea", displayName: "Idea" });
+		const pending = pendingOf(renamed, form({ calloutId: "insight", displayName: "Insight" }));
+		const question = noteChangeQuestion(pending, stats({ idea: { uses: tally(3, "a.md"), titled: tally(3, "a.md") } }));
+		assert.ok(question);
+		assert.equal(question.name, null);
+		assert.equal(question.affected?.count, 3, "the old id's titled callouts are its uses, counted once");
+	});
+
+	it("lists fold marks only when one would change", () => {
 		const folding = def({ id: "f", aliases: ["g"] });
 		const pending = pendingOf(folding, form({ calloutId: "f", displayName: "f", foldable: true, defaultFolded: true }));
 		const counts = stats({ f: { foldDiffers: tally(1, "a.md") }, g: { uses: tally(2, "b.md"), foldDiffers: tally(2, "b.md") } });
@@ -112,15 +112,21 @@ describe("what the question asks", () => {
 		assert.equal(noteChangeQuestion(pending, settled), null);
 	});
 
-	it("asks everything that might apply when the notes could not all be read", () => {
+	it("lists everything that might apply when the notes could not all be read", () => {
 		const both = def({ id: "idea", displayName: "Idea", aliases: ["test"] });
 		const pending = pendingOf(both, form({ calloutId: "insight", displayName: "Insight", foldable: true }));
 		const question = noteChangeQuestion(pending, null);
 		assert.ok(question);
 		assert.deepEqual(question.ids.map(({ leaving, uses }) => [leaving.id, uses]), [["idea", null], ["test", null]]);
 		assert.equal(question.fold, "+");
+		assert.equal(question.affected, null);
 	});
 });
+
+/** A line as it reads, a `\n` for each of its line breaks. */
+function lineText(line: FakeElement): string {
+	return line.childNodes.map((node) => (node.nodeType === NODE_TEXT ? node.nodeValue : "\n")).join("");
+}
 
 /** Open the window on the fake DOM and drive it. */
 function open(input: NoteChangesModalInput) {
@@ -137,15 +143,19 @@ function open(input: NoteChangesModalInput) {
 		open: () => modal.onOpen(),
 		close: () => modal.onClose(),
 	});
-	let answer: NoteChangesAnswer | null | undefined;
+	let answer: NoteChoices | null | undefined;
 	void modal.ask().then((result) => { answer = result; });
 	const button = (label: string): FakeElement =>
 		modalEl.querySelectorAll(".cs-modal-footer button").find((el) => el.textContent === label)!;
+	const cards = () => contentEl.querySelectorAll(".cs-option-box");
 	return {
 		titleEl, contentEl,
 		answer: async () => { await setImmediate(); return answer; },
-		parts: () => contentEl.querySelectorAll(".cs-note-change"),
-		cards: () => contentEl.querySelectorAll(".cs-option-box"),
+		changes: () => contentEl.querySelectorAll(".cs-note-change-list li").map((li) => li.textContent),
+		lines: () => contentEl.querySelectorAll(".cs-note-change-line").map(lineText),
+		cards,
+		titles: () => cards().map((card) => card.querySelector(".cs-option-box-title")!.textContent),
+		desc: (card: FakeElement) => card.querySelector(".cs-option-box-desc")?.textContent,
 		chosen: () => contentEl.querySelectorAll(".cs-option-box.is-selected").map((el) => el.querySelector(".cs-option-box-title")!.textContent),
 		save: () => button(t("editor.saveChanges")).fire("click"),
 		cancel: () => button(t("editor.cancel")).fire("click"),
@@ -153,131 +163,112 @@ function open(input: NoteChangesModalInput) {
 	};
 }
 
-function modalInput(callout: CalloutDefinition, state: NoteChangeFormState, counts: Map<string, IdNoteStats>, roomForIds = 9): NoteChangesModalInput {
-	const registry = new CalloutRegistry();
-	registry.load(null);
+function modalInput(callout: CalloutDefinition, state: NoteChangeFormState, counts: Map<string, IdNoteStats> | null): NoteChangesModalInput {
 	const pending = pendingOf(callout, state);
 	const question = noteChangeQuestion(pending, counts);
 	assert.ok(question);
-	const saved = { ...callout, id: state.calloutId, displayName: state.displayName };
-	return {
-		question, pending, stats: counts, saved, roomForIds, registry,
-		targets: () => [saved, ...registry.getAll()],
-		moveTargets: () => registry.getAll(),
-	};
-}
-
-/** Pick `name` in the callout picker on `card`, the way a mouse would. */
-function pick(card: FakeElement, name: string): void {
-	const input = card.querySelector(".cs-combobox-input") as FakeElement & { value: string };
-	input.fire("focus");
-	input.value = name;
-	input.fire("input");
-	const menu = card.querySelector(".cs-combobox-menu")!;
-	const row = menu.querySelectorAll(".cs-combobox-option")[0];
-	assert.ok(row, `no callout matches ${name}`);
-	menu.fire("mousedown", { preventDefault: () => undefined });
-	row.fire("click");
+	const saved = { ...callout, id: state.calloutId, displayName: state.displayName, aliases: [...state.aliases] };
+	return { question, pending, saved };
 }
 
 describe("the window", () => {
 	const callout = def({ id: "abstract2", displayName: "Abstract2", aliases: ["test"] });
 
-	it("says what was removed and how often it is used, asks, and starts on Leave them", async () => {
+	it("says the one change in a line, how far it reaches, asks, and starts on Leave them", async () => {
 		const h = open(modalInput(callout, form(), stats({ test: { uses: tally(12, "a.md", "b.md") } })));
 		assert.equal(h.titleEl.textContent, t("noteChanges.title"));
-		assert.equal(h.parts().length, 1);
-		assert.equal(
-			h.contentEl.querySelector(".cs-note-change-line")?.textContent,
-			'You removed the ID "test" from Abstract2, but it\'s still used by 12 callouts in 2 notes. What should happen to those callouts?',
-		);
-		assert.deepEqual(h.cards().map((card) => card.querySelector(".cs-option-box-title")!.textContent), [
-			t("noteChanges.leave"), t("noteChanges.moveTo", { id: "test" }), t("noteChanges.rewrite"),
+		assert.deepEqual(h.changes(), [], "one change is a line, not a list");
+		assert.deepEqual(h.lines(), [
+			'You removed the ID "test".',
+			"This affects 12 callouts in 2 notes.\nWhat should happen to those callouts?",
 		]);
+		assert.deepEqual(h.titles(), [t("noteChanges.leave"), 'Change them to "abstract2"']);
+		assert.equal(h.desc(h.cards()[0]!), "They keep [!test] and fall back to the default style.");
+		assert.equal(h.desc(h.cards()[1]!), "Every [!test] in your notes becomes [!abstract2].");
+		assert.equal(h.contentEl.querySelector(".cs-select-dropdown"), null, "one id to change to: no dropdown");
 		assert.deepEqual(h.chosen(), [t("noteChanges.leave")]);
 		h.save();
 		const answer = await h.answer();
-		assert.equal(answer?.choices.rewrite.size, 0);
-		assert.deepEqual(answer?.give, []);
+		assert.equal(answer?.rewrite.size, 0);
+		assert.equal(answer?.titles, false);
 	});
 
 	it("counts one callout in one note in the singular, and asks about that one", () => {
 		const h = open(modalInput(callout, form(), stats({ test: { uses: tally(1, "a.md") } })));
-		assert.match(h.contentEl.textContent, /still used by 1 callout in 1 note\. What should happen to that callout\?/);
+		assert.equal(h.lines()[1], "This affects 1 callout in 1 note.\nWhat should happen to that callout?");
 	});
 
 	it("asks about those callouts when the notes could not all be counted", () => {
-		const pending = pendingOf(callout, form());
-		const question = noteChangeQuestion(pending, null);
-		assert.ok(question);
-		const registry = new CalloutRegistry();
-		registry.load(null);
-		const saved = { ...callout };
-		const h = open({ question, pending, stats: null, saved, roomForIds: 9, registry, targets: () => [saved], moveTargets: () => [] });
-		assert.equal(
-			h.contentEl.querySelector(".cs-note-change-line")?.textContent,
-			'You removed the ID "test" from Abstract2, but some notes may still use it. What should happen to those callouts?',
-		);
+		const h = open(modalInput(callout, form(), null));
+		assert.equal(h.lines()[1], `${t("noteChanges.affectsUnknown")}\nWhat should happen to those callouts?`);
 	});
 
-	it("puts a card's picker at its trailing edge, just before the dot", () => {
-		const h = open(modalInput(callout, form(), stats({ test: { uses: tally(1, "a.md") } })));
-		for (const card of h.cards().slice(1)) {
-			const parts = card.children.map((child) => child.className.split(" ")[0]);
-			assert.deepEqual(parts, ["cs-option-box-text", "cs-note-change-target", "cs-option-radio"]);
-		}
+	it("lists several changes, and changes every old id to the one picked from this callout's own", async () => {
+		const idea = def({ id: "idea", displayName: "Idea", aliases: ["test", "thought"] });
+		const h = open(modalInput(idea, form({ calloutId: "insight", displayName: "Insight", aliases: ["thought"] }),
+			stats({ idea: { uses: tally(3, "a.md") }, test: { uses: tally(2, "b.md") } })));
+		assert.deepEqual(h.changes(), [
+			'You changed the display name from "Idea" to "Insight", so the main ID changes from "idea" to "insight".',
+			'You removed the ID "test".',
+		]);
+		assert.equal(h.lines()[0], "This affects 5 callouts in 2 notes.\nWhat should happen to those callouts?");
+		assert.deepEqual(h.titles(), [t("noteChanges.leave"), t("noteChanges.changeTo")]);
+		assert.equal(h.desc(h.cards()[0]!), t("noteChanges.leaveManyDesc"));
+		const change = h.cards()[1]!;
+		assert.equal(h.desc(change), "Every old ID in your notes becomes [!insight].");
+		// Only this callout's own ids, its main id first: never another callout.
+		const dropdown = change.querySelector(".cs-select-dropdown") as unknown as HTMLElement;
+		assert.deepEqual(dropdownOptions(dropdown).map((row) => row.textContent), ["insight", "thought"]);
+		pickDropdown(dropdown, "thought");
+		assert.equal(h.desc(change), "Every old ID in your notes becomes [!thought].");
+		assert.deepEqual(h.chosen(), [t("noteChanges.changeTo")]);
+		h.save();
+		const answer = await h.answer();
+		assert.deepEqual([...answer!.rewrite], [["idea", "thought"], ["test", "thought"]]);
+		assert.equal(answer?.titles, true);
+	});
+
+	it("puts the dropdown at the card's trailing edge, just before the dot", () => {
+		const idea = def({ id: "idea", displayName: "Idea", aliases: ["test", "thought"] });
+		const h = open(modalInput(idea, form({ calloutId: "idea", displayName: "Idea", aliases: ["thought"] }),
+			stats({ test: { uses: tally(1, "a.md") } })));
+		const parts = h.cards()[1]!.children.map((child) => child.className.split(" ")[0]);
+		assert.deepEqual(parts, ["cs-option-box-text", "cs-note-change-target", "cs-option-radio"]);
+	});
+
+	it("follows a rename back to the main id, titles and all", async () => {
+		const renamed = def({ id: "idea", displayName: "Idea" });
+		const h = open(modalInput(renamed, form({ calloutId: "insight", displayName: "Insight" }), stats({ idea: { uses: tally(2, "a.md") } })));
+		assert.deepEqual(h.lines(), [
+			'You changed the display name from "Idea" to "Insight", so the main ID changes from "idea" to "insight".',
+			"This affects 2 callouts in 1 note.\nWhat should happen to those callouts?",
+		]);
+		const change = h.cards()[1]!;
+		assert.equal(h.desc(change), 'Every [!idea] in your notes becomes [!insight], and titles that read "Idea" become "Insight".');
+		change.fire("click");
+		h.save();
+		const answer = await h.answer();
+		assert.deepEqual([...answer!.rewrite], [["idea", "insight"]]);
+		assert.equal(answer?.titles, true);
+	});
+
+	it("asks about titles alone when only the name changed", async () => {
+		const named = def({ id: "tip2", displayName: "Old Name" });
+		const h = open(modalInput(named, form({ calloutId: "tip2", displayName: "New Name" }),
+			stats({ tip2: { uses: tally(2, "a.md"), titled: tally(2, "a.md") } })));
+		assert.equal(h.lines()[0], 'You changed the display name from "Old Name" to "New Name".');
+		assert.deepEqual(h.titles(), [t("noteChanges.leave"), 'Change them to "New Name"']);
+		assert.equal(h.desc(h.cards()[0]!), 'They keep reading "Old Name".');
+		h.cards()[1]!.fire("click");
+		h.save();
+		const answer = await h.answer();
+		assert.equal(answer?.rewrite.size, 0);
+		assert.equal(answer?.titles, true);
 	});
 
 	it("says no more than what the answer does — no undo line", () => {
 		const h = open(modalInput(callout, form(), stats({ test: { uses: tally(1, "a.md") } })));
 		assert.doesNotMatch(h.contentEl.textContent, /undo/i);
-	});
-
-	it("rewrites to this callout when Change them in your notes is chosen", async () => {
-		const h = open(modalInput(callout, form(), stats({ test: { uses: tally(1, "a.md") } })));
-		const rewrite = h.cards()[2]!;
-		assert.equal(rewrite.querySelector(".cs-option-box-desc")?.textContent, "Every [!test] in your notes becomes [!abstract2].");
-		rewrite.fire("click");
-		assert.deepEqual(h.chosen(), [t("noteChanges.rewrite")]);
-		h.save();
-		const answer = await h.answer();
-		assert.deepEqual([...answer!.choices.rewrite], [["test", { kind: "self" }]]);
-	});
-
-	it("rewrites to another callout picked, and says what the notes become", async () => {
-		const h = open(modalInput(callout, form(), stats({ test: { uses: tally(1, "a.md") } })));
-		const rewrite = h.cards()[2]!;
-		pick(rewrite, "Warning");
-		assert.equal(rewrite.querySelector(".cs-option-box-desc")?.textContent, "Every [!test] in your notes becomes [!warning].");
-		assert.deepEqual(h.chosen(), [t("noteChanges.rewrite")]);
-		h.save();
-		const answer = await h.answer();
-		assert.deepEqual([...answer!.choices.rewrite], [["test", { kind: "callout", id: "warning", name: "Warning" }]]);
-	});
-
-	it("moves the id to the callout picked, changing no note", async () => {
-		const h = open(modalInput(callout, form(), stats({ test: { uses: tally(1, "a.md") } })));
-		const move = h.cards()[1]!;
-		// Nothing picked yet: a click opens the list rather than choosing a
-		// move to nowhere.
-		move.fire("click");
-		assert.deepEqual(h.chosen(), [t("noteChanges.leave")]);
-		pick(move, "Tip");
-		assert.deepEqual(h.chosen(), [t("noteChanges.moveTo", { id: "test" })]);
-		h.save();
-		const answer = await h.answer();
-		assert.deepEqual(answer?.give, [{ id: "test", to: "tip" }]);
-		assert.equal(answer?.choices.rewrite.size, 0);
-	});
-
-	it("will not move the id when no other callout has room for it", () => {
-		const input = modalInput(callout, form(), stats({ test: { uses: tally(1, "a.md") } }));
-		const h = open({ ...input, moveTargets: () => [] });
-		const move = h.cards()[1]!;
-		assert.equal(move.hasClass("is-blocked"), true);
-		assert.equal(move.querySelector(".cs-option-box-desc")?.textContent, t("noteChanges.moveNoRoom", { max: 10 }));
-		move.fire("click");
-		assert.deepEqual(h.chosen(), [t("noteChanges.leave")]);
 	});
 
 	it("saves nothing on Cancel, or when the window is closed", async () => {
@@ -287,55 +278,6 @@ describe("the window", () => {
 		const closed = open(modalInput(callout, form(), stats({ test: { uses: tally(1, "a.md") } })));
 		closed.escape();
 		assert.equal(await closed.answer(), null);
-	});
-
-	it("will not keep a renamed id the callout has no room for", async () => {
-		const renamed = def({ id: "idea", displayName: "Idea" });
-		const h = open(modalInput(renamed, form({ calloutId: "insight", displayName: "Insight" }),
-			stats({ idea: { uses: tally(1, "a.md") } }), 0));
-		assert.deepEqual(h.chosen(), [t("noteChanges.renameChange", { id: "insight" })]);
-		const keep = h.cards()[1]!;
-		assert.equal(keep.hasClass("is-blocked"), true);
-		keep.fire("click");
-		assert.deepEqual(h.chosen(), [t("noteChanges.renameChange", { id: "insight" })]);
-	});
-
-	it("counts a removed id's titles only while its notes are sent here", () => {
-		// The title pass covers what ends up in this callout, so the count must.
-		const named = def({ id: "x", displayName: "Old", aliases: ["al"] });
-		const counts = stats({ x: { titled: tally(1, "a.md") }, al: { uses: tally(2, "b.md"), titled: tally(2, "b.md") } });
-		const h = open(modalInput(named, form({ calloutId: "x", displayName: "New" }), counts));
-		const [, titlesPart] = h.parts();
-		assert.ok(titlesPart);
-		assert.match(titlesPart.textContent, /still the title of 1 callout in 1 note\./);
-		h.cards()[2]!.fire("click"); // "al": Change them in your notes → this callout
-		assert.match(titlesPart.textContent, /still the title of 3 callouts in 2 notes\./);
-	});
-
-	it("counts a kept old id's notes in the fold part — they take the new mark too", () => {
-		// Keep makes the old id another id of this callout, so the fold pass
-		// covers its notes. Hiding them from the count would change them unasked.
-		const renamed = def({ id: "oscar", displayName: "Oscar" });
-		const counts = stats({ oscar: { uses: tally(3, "a.md", "b.md"), foldDiffers: tally(2, "a.md") }, papa: {} });
-		const h = open(modalInput(renamed, form({ calloutId: "papa", displayName: "Papa", foldable: true, defaultFolded: true }), counts));
-		const [, foldPart] = h.parts();
-		assert.ok(foldPart);
-		assert.match(foldPart.textContent, /set on 2 callouts in 1 note\./);
-		h.cards()[1]!.fire("click"); // Keep "oscar" as another ID
-		assert.equal(foldPart.hasClass("cs-row-hidden"), false);
-		assert.match(foldPart.textContent, /set on 2 callouts in 1 note\./);
-	});
-
-	it("moves the fold count as ids are sent here, and hides the part when nothing would change", async () => {
-		const folding = def({ id: "f", displayName: "F", aliases: ["g"] });
-		const counts = stats({ f: {}, g: { uses: tally(2, "b.md"), foldDiffers: tally(2, "b.md") } });
-		const h = open(modalInput(folding, form({ calloutId: "f", displayName: "F", foldable: true }), counts));
-		const [, foldPart] = h.parts();
-		assert.ok(foldPart);
-		assert.equal(foldPart.hasClass("cs-row-hidden"), true, "g's notes stay g's: nothing of this callout differs");
-		h.cards()[2]!.fire("click"); // Change them in your notes → this callout
-		assert.equal(foldPart.hasClass("cs-row-hidden"), false);
-		assert.match(foldPart.textContent, /set on 2 callouts in 1 note\./);
 	});
 });
 
@@ -349,7 +291,7 @@ describe("askNoteChanges", () => {
 			app, registry, existingId: "plain", state: form({ calloutId: "plain", displayName: "plain" }), moves: [],
 			stillWanted: () => true, open: () => assert.fail("nothing to ask"),
 		});
-		assert.equal(answer?.choices.rewrite.size, 0);
+		assert.equal(answer?.rewrite.size, 0);
 		assert.equal(reads, 0);
 	});
 
