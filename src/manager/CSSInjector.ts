@@ -195,6 +195,11 @@ export class CSSInjector {
 		return standalone || !this.registry.leavesBlockName(def, name);
 	}
 	private injecting = false;
+	/**
+	 * What a request refused by the latch asked for — whether it wanted
+	 * `css-change` — or null when none arrived. See {@link inject}.
+	 */
+	private owedEmit: boolean | null = null;
 	private registry: CalloutRegistry;
 	private app: App;
 	private startupCache: StartupStyleCache;
@@ -364,13 +369,35 @@ export class CSSInjector {
 	 *
 	 * Ignore recursive css-change notifications and all work after destroy.
 	 * Always release the re-entrancy latch, including when rendering throws.
+	 *
+	 * A request the latch refuses is remembered, not forgotten. The pass fires
+	 * `css-change` from inside itself, and a listener there may change the
+	 * registry (the theme sync reconciling its overlay rows) — that change's
+	 * own inject lands here mid-pass, and dropping it left the sheet without it
+	 * until something unrelated injected. It is owed only if the registry
+	 * really moved during the pass: this plugin's own listener answers every
+	 * `css-change` with an inject, and rerunning for that echo would double
+	 * every pass for nothing. One rerun at most; a change inside it waits for
+	 * the next inject, as every nested request used to.
 	 */
 	inject(emitCssChange = true): void {
-		if (this.destroyed || this.injecting) return;
+		if (this.destroyed) return;
+		if (this.injecting) {
+			this.owedEmit = (this.owedEmit ?? false) || emitCssChange;
+			return;
+		}
 		this.injecting = true;
+		this.owedEmit = null;
 		try {
+			const revision = this.registry.revision;
 			this.injectNow(emitCssChange);
+			const owed = this.owedEmit;
+			this.owedEmit = null;
+			if (owed !== null && this.registry.revision !== revision && !this.destroyed) {
+				this.injectNow(owed);
+			}
 		} finally {
+			this.owedEmit = null;
 			this.injecting = false;
 		}
 	}
@@ -435,17 +462,24 @@ export class CSSInjector {
 			if (this.styleSheet) this.styleSheet.replaceSync(cssText);
 			if (this.styleEl) this.styleEl.textContent = cssText;
 			this.lastCssText = cssText;
+		}
 
-			// Snapshot the same text for next launch's startup fast path (see
-			// StartupStyleCache). Skipped while a transient live-preview
-			// definition is registered: that CSS describes an unsaved draft,
-			// which toSaveData() already goes out of its way to keep off disk,
-			// and hovering a colour in the editor's palette menu would otherwise
-			// cost a synchronous localStorage write each time. Clearing the
-			// preview re-injects, which persists the real CSS again.
-			if (!this.registry.hasPreviewDefinition()) {
-				this.startupCache.persist(cssText);
-			}
+		// Snapshot the same text for next launch's startup fast path (see
+		// StartupStyleCache). Skipped while a transient live-preview
+		// definition is registered: that CSS describes an unsaved draft,
+		// which toSaveData() already goes out of its way to keep off disk,
+		// and hovering a colour in the editor's palette menu would otherwise
+		// cost a synchronous localStorage write each time. Clearing the
+		// preview re-injects, which persists the real CSS again.
+		//
+		// Outside the `cssChanged` branch on purpose. The callout editor clears
+		// its preview without a pass and then saves, so the save's pass makes
+		// text byte-identical to the preview's: `cssChanged` is false there,
+		// and the snapshot kept the CSS from before the edit. The cache's own
+		// memo skips text it already holds, so an unchanged pass costs one
+		// compare.
+		if (!this.registry.hasPreviewDefinition()) {
+			this.startupCache.persist(cssText);
 		}
 
 		// Re-paint DOM icons: keeps Lucide icons in sync after edits, and bakes
