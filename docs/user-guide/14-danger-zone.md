@@ -67,9 +67,21 @@ Select a card's format label or **Before** text to open its note scrolled to
 that source, which briefly glows; the cursor stays where it was, as in
 [Find callouts](12-find-callouts.md#navigate-through-occurrences). The card stays
 highlighted until you click or type in the note.
+
+The highlight also follows your cursor, as in
+[Find callouts](12-find-callouts.md#follow-your-cursor): while you edit a note,
+the card for what your cursor is in is highlighted, and the list scrolls just far
+enough to show it. That is an inline callout while the cursor touches it (its
+`{content}` included), a heading callout while the cursor is on its line, and
+otherwise a **Heading link** card for the cursor's line. While you edit a
+replacement, only that card is highlighted. A line you have just typed on
+highlights nothing until the review catches up with your edit.
+
 Only the card's checkbox includes or excludes that replacement. The summary
 checkbox selects all changes, clears them all, or shows a dash when only some
-are selected. **Show more** reveals additional results; switching notes scrolls
+are selected. Beside it, the summary counts the selected replacements and the
+heading links they will update; when there are none, it leaves heading links
+out. **Show more** reveals additional results; switching notes scrolls
 to that file's results.
 
 To change a proposed replacement, click its **After** text or the pencil in the

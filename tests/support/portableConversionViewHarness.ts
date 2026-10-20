@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { setTimeout as scheduleTimer, clearTimeout as cancelTimer } from "node:timers";
 import { MarkdownView, type EditorPosition, type TFile, type WorkspaceLeaf } from "obsidian";
 import { PortableConversionView } from "../../src/portable/PortableConversionView";
+import { notifySidebarEditorSelection } from "../../src/ui/sidebarSelection";
 import { ConfirmModal } from "../../src/utils/ConfirmModal";
 import { FakeElement, installFakeDom } from "./fakeDom";
 import { portableVault } from "./portableVaultHarness";
@@ -32,10 +33,15 @@ export function portableConversionViewHarness(notes: Record<string, string> = { 
 	const opened: string[] = [];
 	let recent: WorkspaceLeaf | null = null;
 	let liveText: string | undefined;
+	let caret: EditorPosition = { line: 0, ch: 0 };
 	const documentView = new MarkdownView({} as WorkspaceLeaf);
+	const text = (): string => liveText ?? h.contents.get(documentView.file!.path)!;
 	Object.assign(documentView, { getMode: () => "source", editor: {
-		getValue: () => liveText ?? h.contents.get(documentView.file!.path)!,
-		listSelections: () => [{ anchor: { line: 0, ch: 0 }, head: { line: 0, ch: 0 } }],
+		getValue: text,
+		getLine: (line: number) => text().split("\n")[line] ?? "",
+		lineCount: () => text().split("\n").length,
+		getCursor: () => caret,
+		listSelections: () => [{ anchor: caret, head: caret }],
 		setSelection: () => { throw new Error("navigation must not select"); },
 		// Head before anchor: navigation scrolls from a result's end back to its start.
 		scrollIntoView: (range: { from: EditorPosition; to: EditorPosition }) => revealed.push([range.to, range.from]),
@@ -89,7 +95,17 @@ export function portableConversionViewHarness(notes: Record<string, string> = { 
 		root.fire("change", { target: input });
 	};
 	return { ...h, view, root, hooks, opened, revealed, documentView, documentLeaf,
-		setLiveText: (value: string | undefined) => { liveText = value; }, confirmations, tasks, vaultEvents, workspaceEvents, actions, inputs, button, blocked, click, choose,
+		setLiveText: (value: string | undefined) => { liveText = value; },
+		/** Put the caret somewhere, as the user would, and let the sidebar's frame run. */
+		moveCaret: (line: number, ch = 0): void => {
+			caret = { line, ch };
+			notifySidebarEditorSelection(documentView.editor);
+			dom.window.flushFrames();
+		},
+		flushFrames: () => dom.window.flushFrames(),
+		/** The Before text of every marked card. */
+		current: () => root.querySelectorAll('[aria-current="true"]').map(card => card.querySelector(".cs-portable-before")?.textContent),
+		confirmations, tasks, vaultEvents, workspaceEvents, actions, inputs, button, blocked, click, choose,
 		status: () => root.querySelector(".cs-portable-review-status")!.textContent,
 		settle: async () => {
 			for (let i = 0; i < 50; i++) {

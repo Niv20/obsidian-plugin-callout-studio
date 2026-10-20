@@ -1,12 +1,14 @@
-import type { App, EventRef, WorkspaceLeaf } from "obsidian";
+import type { App, EventRef, MarkdownView, WorkspaceLeaf } from "obsidian";
 import { SidebarActiveFile } from "../ui/sidebarActiveFile";
+import { SidebarCursorSync } from "../ui/sidebarCursorSync";
 import { navigateToSidebarFile, navigateToSidebarResult, type SidebarSourceRange } from "../ui/sidebarNavigation";
-import { SidebarSourceSelection } from "../ui/sidebarSelection";
+import { revealSidebarCard } from "../ui/sidebarResults";
 import { iterateContentFingerprint } from "../usage/contentFingerprint";
 import type { PortableCalloutConversionPlan } from "../utils/portableCalloutVault";
 import type { PortableCalloutLinkChange } from "../utils/portableCalloutPlan";
 import { PORTABLE_PAGE_SIZE } from "./portableConversionFrame";
 import { portableConversionRows, renderPortableConversionRows, type PortableConversionRow } from "./portableConversionRows";
+import { portableRowAtCursor } from "./portableRowAtCursor";
 
 /** Repeated lines require the original document; only a unique unchanged line can move. */
 export async function resolvePortableSourcePosition(
@@ -39,12 +41,20 @@ export async function resolvePortableSourcePosition(
 	return isCurrent() && line >= 0 ? { from: { line, ch: from }, to: { line, ch: to } } : null;
 }
 
-/** Both sidebars share note tracking, file groups and source-editor navigation. */
+/**
+ * Both sidebars share note tracking, file groups, source-editor navigation and
+ * following the caret: the card under it is marked, as in Find callouts.
+ */
 export class PortableConversionNavigation {
 	private readonly activeFile: SidebarActiveFile;
-	private readonly sourceSelection = new SidebarSourceSelection();
+	private readonly cursor: SidebarCursorSync;
 	private rows: PortableConversionRow[] = [];
+	/** Drawn cards only, by note: what the caret can be matched against. */
+	private drawn = new Map<string, PortableConversionRow[]>();
 	private current?: string;
+	private editingId?: string;
+	/** The opening result or file holds the mark; its note switch must not hand it to the caret. */
+	private navigating?: number;
 	private opened = false;
 	private generation = 0;
 	private root?: HTMLElement;
@@ -53,22 +63,26 @@ export class PortableConversionNavigation {
 	private failed = false;
 	constructor(private readonly app: App, register: (ref: EventRef) => void,
 		private readonly render: () => void, private readonly refresh: () => void,
-		expandTo: (limit: number) => void, private readonly origin?: WorkspaceLeaf) {
+		expandTo: (limit: number) => void, private readonly scroller: () => HTMLElement | null,
+		private readonly origin?: WorkspaceLeaf) {
 		this.activeFile = new SidebarActiveFile(app, register, path => {
-			if (this.rows.find(row => row.id === this.current)?.path !== path) {
-				this.clearCurrent();
-			}
+			if (this.rows.find(row => row.id === this.current)?.path !== path) this.mark(undefined);
+			if (this.navigating === undefined) this.cursor.release();
 			if (this.opened) this.activeFile.sync(this.rows, this.limit, this.ready ? "ready" : "loading", this.failed);
 		}, expandTo, PORTABLE_PAGE_SIZE);
+		this.cursor = new SidebarCursorSync(() => this.activeFile.currentView(), view => this.followCaret(view));
 	}
-	open(): void { this.opened = true; this.activeFile.open(); }
-	close(): void { this.opened = false; this.invalidate(); this.clearCurrent(); this.activeFile.close(); this.root = undefined; }
+	open(): void { this.opened = true; this.activeFile.open(); this.cursor.open(); }
+	close(): void { this.opened = false; this.invalidate(); this.cursor.close(); this.clearCurrent(); this.activeFile.close(); this.root = undefined; }
 	invalidate(): void { this.generation++; }
 	renderRows(root: HTMLElement, plan: PortableCalloutConversionPlan | undefined, limit: number, disabled: boolean, editingId?: string, resetEnabled = false): void {
 		this.root = root;
 		this.limit = limit;
+		this.editingId = editingId;
 		this.rows = portableConversionRows(plan);
-		if (!this.rows.some(row => row.id === this.current)) this.clearCurrent();
+		this.drawn = new Map();
+		for (const row of this.rows.slice(0, limit)) this.drawn.set(row.path, [...this.drawn.get(row.path) ?? [], row]);
+		if (!this.rows.some(row => row.id === this.current)) this.current = undefined;
 		this.activeFile.clearSections();
 		renderPortableConversionRows(root, plan, this.rows, limit, disabled, this.current,
 			(path, section) => this.activeFile.addSection(path, section), editingId, resetEnabled);
@@ -76,39 +90,79 @@ export class PortableConversionNavigation {
 	sync(ready: boolean, failed: boolean): void {
 		this.ready = ready; this.failed = failed;
 		this.activeFile.sync(this.rows, this.limit, ready ? "ready" : "loading", failed);
+		// New or moved cards: the caret may sit in a different one now.
+		this.cursor.schedule();
 	}
 	async navigate(id: string | undefined, newTab: boolean): Promise<void> {
 		const row = this.rows.find(item => item.id === id);
 		if (!row || !this.opened) return;
-		const generation = ++this.generation;
+		const generation = this.begin(row.path);
 		const isCurrent = (): boolean => this.opened && generation === this.generation;
-		this.activeFile.beginResultNavigation(row.path);
-		let opened = false;
-		let trackSelection: (() => void) | undefined;
+		let opened = false, current = false;
+		let landedIn: (() => void) | undefined;
 		try { opened = await navigateToSidebarResult(this.app, row.path,
 			(content, stillOpen) => resolvePortableSourcePosition(row.change, content, stillOpen),
 			{ newTab, isCurrent, origin: this.origin,
-				onSelected: (editor) => { trackSelection = () => this.sourceSelection.watch(editor, () => this.clearCurrent()); } }); }
-		finally { if (generation === this.generation) this.activeFile.endResultNavigation(row.path); }
-		if (!isCurrent()) return;
-		if (opened) { this.activeFile.openedResult(row.path); this.current = row.id; trackSelection?.(); this.render(); }
-		else this.refresh();
+				onSelected: (editor) => { landedIn = () => this.cursor.landedIn(editor); } }); }
+		finally { current = this.end(generation, row.path); }
+		if (!current) return;
+		if (!opened) { this.cursor.release(); this.refresh(); return; }
+		this.activeFile.openedResult(row.path);
+		this.current = row.id;
+		if (landedIn) landedIn(); else this.cursor.release();
+		this.render();
 	}
 	async navigateFile(path: string | undefined, newTab: boolean): Promise<void> {
 		if (!path || !this.opened || !this.rows.some(row => row.path === path)) return;
-		const generation = ++this.generation;
+		const generation = this.begin(path);
 		const isCurrent = (): boolean => this.opened && generation === this.generation;
-		this.activeFile.beginResultNavigation(path);
-		try {
-			if (await navigateToSidebarFile(this.app, path, { newTab, isCurrent, origin: this.origin }) && isCurrent()) {
-				this.clearCurrent();
-				this.activeFile.openedResult(path);
-			}
-		} finally { if (generation === this.generation) this.activeFile.endResultNavigation(path); }
+		let opened = false, current = false;
+		try { opened = await navigateToSidebarFile(this.app, path, { newTab, isCurrent, origin: this.origin }); }
+		finally { current = this.end(generation, path); }
+		if (!current) return;
+		if (opened) { this.clearCurrent(); this.activeFile.openedResult(path); }
+		this.cursor.release();
 	}
-	clearCurrent(): void {
-		this.current = undefined;
-		this.sourceSelection.clear();
-		for (const card of Array.from(this.root?.querySelectorAll('[aria-current="true"]') ?? [])) card.setAttribute("aria-current", "false");
+	/** Unmark the current card, as when a replacement draft takes over the highlight. */
+	clearCurrent(): void { this.mark(undefined); }
+	/** Hold the mark for a result or file while it opens. */
+	private begin(path: string): number {
+		const generation = ++this.generation;
+		this.navigating = generation;
+		this.cursor.hold();
+		this.activeFile.beginResultNavigation(path);
+		return generation;
+	}
+	/**
+	 * Whether the opening still counts. One overtaken by a rescan or a closed
+	 * view, rather than by the next opening, hands the mark back to the caret.
+	 */
+	private end(generation: number, path: string): boolean {
+		const current = this.opened && generation === this.generation;
+		if (generation === this.generation) this.activeFile.endResultNavigation(path);
+		if (this.navigating !== generation) return current;
+		this.navigating = undefined;
+		if (!current && this.opened) this.cursor.release();
+		return current;
+	}
+	private followCaret(view: MarkdownView | null): void {
+		const path = view?.file?.path;
+		// An open replacement draft wears the same highlight; no second card joins it.
+		const row = view && path && this.editingId === undefined
+			? portableRowAtCursor(view.editor, view.editor.getCursor("head"), this.drawn.get(path) ?? []) : null;
+		if (row?.id === this.current) return;
+		const card = this.mark(row?.id);
+		if (card) revealSidebarCard(this.scroller(), card);
+	}
+	/** Move the mark to one card, or none, and return that card; only cards whose mark changes are written. */
+	private mark(id: string | undefined): HTMLElement | undefined {
+		this.current = id;
+		let marked: HTMLElement | undefined;
+		for (const card of Array.from(this.root?.querySelectorAll<HTMLElement>(".cs-portable-change-body") ?? [])) {
+			const on = id !== undefined && card.dataset.rowId === id;
+			if (on) marked = card;
+			if ((card.getAttribute("aria-current") === "true") !== on) card.setAttribute("aria-current", String(on));
+		}
+		return marked;
 	}
 }

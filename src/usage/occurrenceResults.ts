@@ -1,15 +1,13 @@
+import type { MarkdownView } from "obsidian";
 import { t } from "../i18n";
-import { createSidebarFileGroup, renderSidebarLocation } from "../ui/sidebarResults";
-import { scrollToReveal } from "../ui/scrollToReveal";
-import type { OccurrencesByLine } from "./occurrenceAtCursor";
+import { createSidebarFileGroup, renderSidebarLocation, revealSidebarCard } from "../ui/sidebarResults";
+import { occurrenceAtCursor, type OccurrencesByLine } from "./occurrenceAtCursor";
 import type { CalloutOccurrence } from "./occurrenceTypes";
 import { occurrenceButton, occurrenceRoleLabel } from "./occurrencesViewFrame";
 
 const occurrenceKey = (item: CalloutOccurrence): string =>
 	JSON.stringify([item.path, item.contentFingerprint, item.line, item.from, item.to, item.identity, item.role]);
 const NO_LINES: OccurrencesByLine = new Map();
-/** Air between a revealed card and the sticky file heading above it, or the list's bottom: the grid's own gap. */
-const CARD_REVEAL_GAP_PX = 8;
 
 /** Owns card identity, selection and focus independently of their changing list offsets. */
 export class OccurrenceResults {
@@ -56,12 +54,15 @@ export class OccurrenceResults {
 		const key = occurrence && occurrenceKey(occurrence);
 		if (key === (this.selected && occurrenceKey(this.selected))) return;
 		this.select(occurrence);
-		// A hidden sidebar tab lays out at zero height; there is nothing to scroll.
-		if (!this.currentRow || !scroller || scroller.clientHeight === 0) return;
-		// The card's file heading sticks to the top of the list and hides what
-		// scrolls under it, so a card is only in view below that heading.
-		const heading = this.currentRow.closest(".cs-sidebar-file")?.querySelector<HTMLElement>(".cs-sidebar-file-heading");
-		scrollToReveal(scroller, this.currentRow, CARD_REVEAL_GAP_PX, heading?.offsetHeight ?? 0);
+		if (this.currentRow) revealSidebarCard(scroller, this.currentRow);
+	}
+
+	/** Follow the caret of `view`: mark the drawn card it sits in, or none. */
+	followCaret(view: MarkdownView | null, scroller: HTMLElement | null): void {
+		const path = view?.file?.path;
+		this.follow(view && path
+			? occurrenceAtCursor(view.editor, view.editor.getCursor("head"), this.linesOf(path))
+			: null, scroller);
 	}
 
 	setActiveFile(path: string | null): void {

@@ -66,7 +66,12 @@ leaf passes itself as the `origin`, so its drawer closes on a phone. The shared
 `ui/sidebarSelection.ts` keeps the clicked card current until the editor's
 selection differs from the one it landed on, or the document changes, without
 polling. Subscriptions are released when the active card changes or the sidebar
-closes. Cursor-follow is Find callouts only.
+closes. Both sidebars follow the caret through the shared `ui/sidebarCursorSync.ts`
+(see "Cursor-follow" in [Vault discovery](11-vault-discovery.md#cursor-follow));
+Review conversion's lookup is `portable/portableRowAtCursor.ts`, and
+`PortableConversionNavigation` owns its hold, its drawn-rows map and the mark.
+The summary line drops its heading-link half when `plan.linkCount` is 0
+(`portable.selectionSummaryNoLinks`), rather than saying "0 heading links".
 
 `portableConversionWatch.ts` listens only while open, debounces changes by 350 ms
 and invalidates affected cache entries. Stale previews immediately disable

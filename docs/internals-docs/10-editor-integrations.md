@@ -866,8 +866,10 @@ the result's token range into what the callout covers:
   `CalloutBlockTools.ts` uses);
 - a range that is no callout token (a link a conversion repairs): a plain span.
 
-Cursor-follow uses the same module, so "what the flash covers" and "the caret is
-inside it" cannot disagree.
+Find callouts' cursor-follow uses the same module, so "what the flash covers" and
+"the caret is inside it" cannot disagree. Review conversion's cards already carry
+their exact source range (`from`/`to`, payload included), so its lookup reads that
+range instead.
 
 **One dispatch.** The function sends three things in a single transaction:
 

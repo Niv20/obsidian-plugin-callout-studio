@@ -1,23 +1,21 @@
 /**
- * usage/occurrenceCursorSync.ts — Find callouts follows the caret.
+ * ui/sidebarCursorSync.ts — a results sidebar follows the caret.
  *
- * The card for the callout under the caret is marked current, as the core
- * Outline marks the heading under the caret (in editing mode it follows the
- * selection, not the scroll position). Following the caret costs no listener of
- * its own: the Live Preview view plugin already forwards every selection change
- * and edit (notifySidebarEditorSelection). Scroll would mean a listener per
- * editor firing on every frame of a fling, geometry reads while scrolling, and
- * no single answer when several callouts are on screen.
+ * Find callouts and Review conversion both mark the card for what is under the
+ * caret, as the core Outline marks the heading under the caret (in editing
+ * mode it follows the selection, not the scroll position). Following the caret
+ * costs no listener of its own: the Live Preview view plugin already forwards
+ * every selection change and edit (notifySidebarEditorSelection). Scroll would
+ * mean a listener per editor firing on every frame of a fling, geometry reads
+ * while scrolling, and no single answer when several callouts are on screen.
  *
- * Work per caret move is one frame-coalesced lookup (occurrenceAtCursor), and
- * the DOM is written only when the marked card actually changes.
+ * Work per caret move is one frame-coalesced lookup, done by the sidebar's
+ * `follow`, which writes the DOM only when the marked card actually changes.
  */
 import type { MarkdownView } from "obsidian";
-import { onSidebarEditorSelection, SidebarSourceSelection } from "../ui/sidebarSelection";
-import { occurrenceAtCursor } from "./occurrenceAtCursor";
-import type { OccurrenceResults } from "./occurrenceResults";
+import { onSidebarEditorSelection, SidebarSourceSelection } from "./sidebarSelection";
 
-export class OccurrenceCursorSync {
+export class SidebarCursorSync {
 	private unsubscribe: (() => void) | null = null;
 	private frame: number | null = null;
 	/** A clicked card, or one being opened, holds its mark over the caret's. */
@@ -26,8 +24,8 @@ export class OccurrenceCursorSync {
 
 	constructor(
 		private readonly currentView: () => MarkdownView | null,
-		private readonly cards: OccurrenceResults,
-		private readonly scroller: () => HTMLElement | null,
+		/** Mark the card under this view's caret, or none when there is no view. */
+		private readonly follow: (view: MarkdownView | null) => void,
 	) {}
 
 	open(): void {
@@ -42,8 +40,12 @@ export class OccurrenceCursorSync {
 		this.reset();
 	}
 
-	/** A result is opening: keep the caret from marking another card meanwhile. */
+	/**
+	 * A result is opening: keep the caret from marking another card meanwhile.
+	 * An earlier click's watch goes, or the note loading into its editor would end the hold.
+	 */
 	hold(): void {
+		this.landed.clear();
 		this.held = true;
 		this.cancelFrame();
 	}
@@ -79,12 +81,7 @@ export class OccurrenceCursorSync {
 
 	private sync(): void {
 		if (this.held || !this.unsubscribe) return;
-		const view = this.currentView();
-		const path = view?.file?.path;
-		const found = view && path
-			? occurrenceAtCursor(view.editor, view.editor.getCursor("head"), this.cards.linesOf(path))
-			: null;
-		this.cards.follow(found, this.scroller());
+		this.follow(this.currentView());
 	}
 
 	private cancelFrame(): void {

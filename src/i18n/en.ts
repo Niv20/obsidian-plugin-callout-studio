@@ -661,6 +661,7 @@ export const en: Record<string, string> = {
 	"portable.roleLink": "Heading link",
 	"portable.convertSelected": "Convert selected",
 	"portable.selectionSummary": "{{selected}} of {{total}} replacements selected · {{links}} heading links to update",
+	"portable.selectionSummaryNoLinks": "{{selected}} of {{total}} replacements selected",
 	"portable.selectionConflict": "That choice would make heading links ambiguous. Your previous selection was kept.",
 	"portable.selectAll": "Select all",
 	"portable.selectNone": "Deselect all",

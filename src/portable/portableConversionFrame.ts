@@ -61,7 +61,8 @@ export function createPortableConversionFrame(root: HTMLElement): PortableConver
  * and dims the button itself (`PortableConversionView.convertBlockedReason`).
  */
 export function updatePortableSelection(frame: PortableConversionFrame, plan: PortableCalloutConversionPlan | undefined, ready: boolean): void {
-	frame.summary.setText(plan ? t("portable.selectionSummary", {
+	// No heading link to update is no news: the summary drops that half rather than say "0".
+	frame.summary.setText(plan ? t(plan.linkCount ? "portable.selectionSummary" : "portable.selectionSummaryNoLinks", {
 		selected: plan.selectedIds.length, total: plan.changes.length, links: plan.linkCount,
 	}) : "");
 	frame.convert.setText(t(plan?.recovery ? "portable.finishConversion" : "portable.convertSelected"));

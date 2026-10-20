@@ -297,8 +297,8 @@ view closes.
 
 ### Cursor-follow
 
-Find callouts marks the card for the callout under the caret, as the core Outline
-marks the heading under the caret. Obsidian 1.14.4's Outline follows the cursor in
+Find callouts and Review conversion mark the card for what is under the caret, as
+the core Outline marks the heading under the caret. Obsidian 1.14.4's Outline follows the cursor in
 editing mode (`editor-selection-change`, 20 ms debounce) and uses scroll only in
 Reading view. The plugin follows the cursor for the same reasons and one more: the
 signal is already there. `calloutViewPlugin.update` calls
@@ -309,15 +309,19 @@ A scroll-driven design would need a listener per editor firing on every frame of
 a fling, geometry reads while scrolling, and a rule for which of several visible
 callouts counts.
 
-`usage/occurrenceCursorSync.ts` subscribes while the view is open, ignores every
-editor but the one `SidebarActiveFile.currentView()` follows (embedded editors,
-canvas cards and settings previews never reach it), and coalesces notifications
-into one lookup per animation frame. `OccurrenceResults.follow` writes to the DOM
-only when the marked card changes, and scrolls the list with `scrollToReveal`
-only when that card is out of sight and the scroller is laid out (a hidden
-sidebar tab has zero height). The card's own file heading is sticky at the top
-of the scroller, so its height is passed as `coveredTop`: a card whose top edge
-sits under that heading counts as out of sight, and lands 8 px below it. It never moves focus or expands **Show more**.
+`ui/sidebarCursorSync.ts` (`SidebarCursorSync`, shared by both sidebars)
+subscribes while the view is open, ignores every editor but the one
+`SidebarActiveFile.currentView()` follows (embedded editors, canvas cards and
+settings previews never reach it), and coalesces notifications into one call of
+the sidebar's `follow(view)` per animation frame. Each sidebar's `follow` writes
+to the DOM only when the marked card changes (`OccurrenceResults.followCaret`,
+`PortableConversionNavigation.followCaret`), and both scroll the list with
+`revealSidebarCard` (`ui/sidebarResults.ts`, over `scrollToReveal`) only when
+that card is out of sight and the scroller is laid out (a hidden sidebar tab has
+zero height). The card's own file heading is sticky at the top of the scroller,
+so its height is passed as `coveredTop`: a card whose top edge sits under that
+heading counts as out of sight, and lands 8 px below it. It never moves focus or
+expands **Show more**.
 
 `usage/occurrenceAtCursor.ts` resolves the caret against the **drawn** cards of
 that note (`OccurrenceResults.linesOf`), innermost first: an inline pill the caret
@@ -331,10 +335,27 @@ behind typing the mark drops out rather than landing on the wrong card, and the
 next index render (which always reschedules the lookup) restores it. Block extent
 follows `editor/calloutExtent.ts`, shared with the landing flash.
 
+Review conversion resolves the caret with `portable/portableRowAtCursor.ts`
+against its drawn rows for that note. Every row stands for one source line (it
+has no block callouts), so only the caret's line is read, innermost first: an
+inline row whose `from`–`to` range the caret touches (the range already covers
+the `{…}` payload), a heading row on that line, then that line's **Heading link**
+row. A row matches only while the live line still equals the scanned line
+(`sourceLine`, or a link row's `before`), so typing drops the mark until the
+debounced rescan renders again, and every render reschedules the lookup. While a
+replacement draft is open the lookup answers "none": the draft card wears the
+same highlight, and a second highlighted card would read as two current cards.
+
 A click holds the mark: `openResult` calls `hold()` before navigating, so neither a
 note switch nor a queued frame can mark another card, and `landedIn(editor)` once
-the result is in view. The first real selection change or edit releases it.
+the result is in view. `hold()` also drops an earlier click's selection watch;
+otherwise the new note loading into that same editor would count as an edit and
+end the hold mid-navigation. The first real selection change or edit releases it.
 Filter changes and `setState` reset the hold; closing the view unsubscribes.
+Review conversion holds the same way, per navigation generation: an opening that
+a rescan or a closed view overtakes hands the mark back to the caret, while one
+that a newer click overtakes leaves the hold to that click. A file-heading click
+releases to the caret once the note is open.
 Navigation never inserts block IDs or modifies notes. The one isolated optional host seam
 is `openFromSettings.ts`: existing Obsidian `app.setting.close()` is called only
 when present to dismiss the settings overlay after explicit navigation. Hosts

@@ -158,19 +158,69 @@ describe("conversion file groups and cards", () => {
 			assert.deepEqual(h.opened, ["a.md"]);
 		} finally { await h.destroy(); }
 	});
-	it("clears the current card once the user moves the caret and opens file headings at the top", async () => {
+	it("keeps a clicked card current until the user moves the caret, then follows the caret", async () => {
 		const h = harness();
 		try {
 			await h.view.onOpen();
-			h.root.fire("click", { target: h.root.querySelector('button[data-action="result"]') }); await h.settle();
-			assert.equal(h.root.querySelectorAll('[aria-current="true"]').length, 1);
-			h.documentView.editor.listSelections = () => [{ anchor: { line: 1, ch: 0 }, head: { line: 1, ch: 0 } }];
-			notifySidebarEditorSelection(h.documentView.editor);
-			assert.equal(h.root.querySelector('[aria-current="true"]'), null);
+			h.root.fire("click", { target: h.root.querySelectorAll('button[data-action="result"]')[1] }); await h.settle();
+			assert.deepEqual(h.current(), ["[!tip]{word}"]);
+			// Navigation leaves the caret on the heading's line; a restore onto it is not a move.
+			notifySidebarEditorSelection(h.documentView.editor); h.flushFrames();
+			assert.deepEqual(h.current(), ["[!tip]{word}"]);
+			h.moveCaret(1, 0);
+			assert.deepEqual(h.current(), [], "the text before the inline callout is in no card");
+			h.moveCaret(0, 4);
+			assert.deepEqual(h.current(), ["# [!note] Heading"]);
 			h.root.fire("click", { target: h.root.querySelector('button[data-action="file"]'), metaKey: true }); await h.settle();
 			assert.deepEqual(h.opened, ["a.md", "a.md"]);
 			assert.deepEqual(h.revealed.at(-1), "top");
-			assert.equal(h.root.querySelector('[aria-current="true"]'), null);
+			h.flushFrames();
+			assert.deepEqual(h.current(), ["# [!note] Heading"], "opening the note at the top leaves the caret's card marked");
+		} finally { await h.destroy(); }
+	});
+	it("marks the card under the caret: an inline callout it touches, else the line's heading link", async () => {
+		const h = harness({ "a.md": "# Report [!note]\n[!tip]{word} and [[#Report note]]\nplain" });
+		try {
+			await h.view.onOpen();
+			await h.documentLeaf.openFile(h.handles.get("a.md")!);
+			h.moveCaret(1, 12);
+			assert.deepEqual(h.current(), ["[!tip]{word}"], "the payload belongs to the inline callout");
+			h.moveCaret(1, 20);
+			assert.deepEqual(h.current(), ["[!tip]{word} and [[#Report note]]"]);
+			h.moveCaret(2, 2);
+			assert.deepEqual(h.current(), []);
+			h.moveCaret(1, 3);
+			assert.deepEqual(h.current(), ["[!tip]{word}"]);
+			h.setLiveText("# Report [!note]\n[!tip]{word} edited\nplain");
+			h.moveCaret(1, 4);
+			assert.deepEqual(h.current(), [], "a line typed since the scan matches nothing until the rescan");
+		} finally { await h.destroy(); }
+	});
+	it("leaves heading links out of the summary when there are none to update", async () => {
+		const summary = (h: ReturnType<typeof harness>): string => h.root.querySelector(".cs-portable-summary-text")!.textContent;
+		const plain = harness({ "a.md": "[!note]\n[!tip]" });
+		try {
+			await plain.view.onOpen();
+			assert.equal(summary(plain), t("portable.selectionSummaryNoLinks", { selected: 2, total: 2 }));
+			assert.ok(!summary(plain).includes("0"));
+		} finally { await plain.destroy(); }
+		const linked = harness({ "a.md": "# Report [!note]", "b.md": "[[a#Report note]]" });
+		try {
+			await linked.view.onOpen();
+			assert.equal(summary(linked), t("portable.selectionSummary", { selected: 1, total: 1, links: 1 }));
+		} finally { await linked.destroy(); }
+	});
+	it("ignores the caret while a replacement draft holds the highlight", async () => {
+		const h = harness({ "a.md": "[!note]\n[!tip]" });
+		try {
+			await h.view.onOpen();
+			await h.documentLeaf.openFile(h.handles.get("a.md")!);
+			h.moveCaret(0, 2);
+			assert.deepEqual(h.current(), ["[!note]"]);
+			h.root.fire("click", { target: h.root.querySelectorAll(".cs-portable-after-button")[1] });
+			h.moveCaret(1, 2);
+			assert.deepEqual(h.current(), []);
+			assert.equal(h.root.querySelectorAll(".is-editing").length, 1);
 		} finally { await h.destroy(); }
 	});
 	it("opening another note reveals its file group and loads a later page when needed", async () => {

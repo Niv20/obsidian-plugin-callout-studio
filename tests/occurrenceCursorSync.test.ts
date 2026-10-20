@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import type { Editor, MarkdownView } from "obsidian";
 import { linesOf } from "../src/editor/calloutExtent";
 import { notifySidebarEditorSelection } from "../src/ui/sidebarSelection";
-import { OccurrenceCursorSync } from "../src/usage/occurrenceCursorSync";
+import { SidebarCursorSync } from "../src/ui/sidebarCursorSync";
 import { OccurrenceResults } from "../src/usage/occurrenceResults";
 import { scanCalloutOccurrences } from "../src/usage/scanCalloutOccurrences";
 import { installFakeDom } from "./support/fakeDom";
@@ -27,7 +27,7 @@ function harness() {
 	}) as unknown as Editor;
 	const editor = makeEditor();
 	const view = { file: { path: "a.md" }, editor } as unknown as MarkdownView;
-	const sync = new OccurrenceCursorSync(() => view, cards, () => null);
+	const sync = new SidebarCursorSync(() => view, (current) => cards.followCaret(current, null));
 	return {
 		sync, cards, editor, other: makeEditor(),
 		move: (line: number, ch = 0, on = editor): void => { caret = { line, ch }; notifySidebarEditorSelection(on); },

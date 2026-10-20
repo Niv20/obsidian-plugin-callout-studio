@@ -12,7 +12,7 @@ import type { CalloutOccurrence, CalloutOccurrenceQuery } from "./occurrenceType
 import { ALL_TYPES_ID, OccurrenceTypeChoices, occurrencePickerChoices } from "./occurrenceTypeChoices";
 import { OccurrenceResults } from "./occurrenceResults";
 import { navigateToCalloutOccurrence } from "./navigation";
-import { OccurrenceCursorSync } from "./occurrenceCursorSync";
+import { SidebarCursorSync } from "../ui/sidebarCursorSync";
 import { createOccurrencesFrame, OCCURRENCE_ROLES, type OccurrencesFrame } from "./occurrencesViewFrame";
 
 export const CALLOUT_OCCURRENCES_VIEW = "callout-studio-occurrences";
@@ -30,7 +30,7 @@ export class CalloutOccurrencesView extends ItemView {
 	private role: CalloutRenderRole | undefined;
 	private limit = PAGE_SIZE;
 	private readonly resultCards = new OccurrenceResults(PAGE_SIZE);
-	private readonly cursor: OccurrenceCursorSync;
+	private readonly cursor: SidebarCursorSync;
 	private results: readonly CalloutOccurrence[] = [];
 	private unsubscribe: (() => void) | null = null;
 	private opened = false;
@@ -70,8 +70,8 @@ export class CalloutOccurrencesView extends ItemView {
 				if (this.opened && this.frame) this.activeFile.sync(this.results, this.limit, this.index.status, this.failed);
 			},
 			(limit) => { this.limit = limit; this.render(); }, PAGE_SIZE);
-		this.cursor = new OccurrenceCursorSync(() => this.activeFile.currentView(), this.resultCards,
-			() => this.frame?.scroll ?? null);
+		this.cursor = new SidebarCursorSync(() => this.activeFile.currentView(),
+			(view) => this.resultCards.followCaret(view, this.frame?.scroll ?? null));
 	}
 	getViewType(): string { return CALLOUT_OCCURRENCES_VIEW; }
 	getDisplayText(): string { return t("usage.title"); }
