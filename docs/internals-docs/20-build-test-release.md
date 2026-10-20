@@ -341,7 +341,10 @@ have lossless WebP exports in their respective `webp/` directories for web
 and GitHub display. Exports retain the native 1200 × 800 or 900 × 1600 canvas
 and are individually below 5 MB. Each decoded WebP was checked against the
 source raster for pixel equality; WebP was smaller than PNG in eight of the
-nine comparison exports and smaller across the set overall. The renderers write
+nine comparison exports and smaller across the set overall. The source raster is
+a Chromium screenshot of the SVG at its own size and a device scale of 1 (not
+`rsvg-convert`, whose text differs), encoded with `cwebp -lossless -z 9`.
+Re-export a WebP the same way after re-rendering its SVG. The renderers write
 SVG artwork only; open the SVGs directly for review. Temporary raster previews
 for visual QA belong outside the deliverable directory.
 

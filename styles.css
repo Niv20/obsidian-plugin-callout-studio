@@ -5506,6 +5506,16 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	user-select: none;
 }
 
+/* On mobile Obsidian turns every field into a pill (`--input-radius` is
+   `--touch-radius-m` under `.is-mobile`), so a 4px chip sat square under a round
+   field. There the chips take the field's own corners; desktop keeps
+   `--radius-s`. The extra inline padding keeps the text clear of the curve. */
+.is-mobile .cs-tag-chip {
+	padding-inline: 8px;
+	border-radius: var(--input-radius, var(--radius-s));
+	corner-shape: var(--input-corner-shape, round);
+}
+
 .cs-tag-chip-text {
 	pointer-events: none;
 	display: inline-block;

@@ -1501,6 +1501,15 @@ the field's corner. Anything new that overlays a field edge should derive its
 radius from `--input-radius` the same way. The combobox's inner input stays at
 `border-radius: 0`; its wrapper owns the corner.
 
+The ID chips under the IDs field (`.cs-tag-chip`) keep `--radius-s` on
+desktop, where a 4px chip under a 5–8px field reads as one family. Under
+`.is-mobile` they take the field's own two declarations instead, plus 8px of
+inline padding to keep the text off the curve: a 4px chip sitting square under
+a pill-shaped field looked like a mistake on the phone. They follow the token
+rather than a fixed pill, so a theme that squares mobile fields squares the
+chips too. `tests/tagChipCorners.test.ts` holds the chip to the field's
+declarations.
+
 `tests/inputPointerStability.test.ts` pins the declarations. To confirm the
 computed numbers, render a native `button`, `input`, `select` and `textarea`
 beside the plugin's fields under the harness linked above, with body classes
