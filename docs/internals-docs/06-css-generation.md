@@ -36,10 +36,13 @@ builds, because sheet construction and adoption are realm-scoped.
 
 ```ts
 inject(emitCssChange = true): void {
-  if (this.injecting) return;
+  if (this.injecting) { this.owedEmit = (this.owedEmit ?? false) || emitCssChange; return; }
   this.injecting = true;
-  try { this.injectNow(emitCssChange); }
-  finally { this.injecting = false; }
+  try {
+    const revision = this.registry.revision;
+    this.injectNow(emitCssChange);
+    if (this.owedEmit !== null && this.registry.revision !== revision) this.injectNow(this.owedEmit);
+  } finally { this.owedEmit = null; this.injecting = false; }
 }
 ```
 
@@ -51,6 +54,16 @@ The latch makes that re-entrant call a no-op instead of a second full pass. The
 the generation pass (a malformed colour, a `setIcon` call in an export realm
 that lacks it) would otherwise leave the latch stuck `true` and silently drop
 **every subsequent inject for the rest of the session**.
+
+A refused request is remembered, though, and owed **only if the registry moved
+during the pass**. That same listener reconciles the theme's overlay rows
+before it injects, and a reconcile that changes a row is a registry round
+whose own inject arrives mid-pass. Dropped, its effect stayed out of the sheet
+- the fallback's exclusion list and the metadata colours' `:not()` of
+theme-owned ids - until something unrelated injected. `registry.revision`
+counts `onChange` rounds, so the listener's unconditional `inject(false)`, which
+moves nothing, never buys a second pass. One rerun at most: a change made
+inside it waits for the next inject, as every nested request used to.
 
 The event carries `OWN_CSS_CHANGE` (`{ source: "callout-studio" }`, from
 `manager/ownCssChange.ts`), as Style Settings names its own, so a listener that
@@ -105,19 +118,30 @@ compare) is the contract such a skip would stand on.
 generate CSS text
   → compare against this.lastCssText
       ├─ unchanged → skip: stylesheet swap, <style> textContent write,
-      │              localStorage persist, css-change trigger
-      └─ changed   → do all four, then set lastCssText = new text
+      │              css-change trigger
+      └─ changed   → do all three, then set lastCssText = new text
+  → startup snapshot persist runs regardless, unless a preview is registered
+    (StartupStyleCache's own memo skips text it already holds)
   → paintIcons() runs regardless (artwork can land with unchanged CSS text)
   → refreshAllCalloutEditors() runs regardless
 ```
+
+The snapshot is outside the comparison on purpose. The callout editor clears
+its preview without a pass and then saves, so the save's pass produces text
+byte-identical to the preview's: with the persist inside the `changed` branch,
+the snapshot kept the CSS from before the edit and the next launch flashed it.
 
 Most injects arrive with output byte-identical to what's already installed -
 an icon download landing that changes nothing about *this* callout, a prune
 pass that removed zero rows, another plugin's unrelated `css-change`, most
 steps of a multi-row import. `workspace.trigger("css-change")` is not free:
 core answers it by dispatching a clear-cache effect and calling
-`editor.refresh()` on **every** open CodeMirror instance and re-rendering
-every open reading view - on mobile that's the visible "screen jumps" symptom.
+`editor.refresh()` on **every** open CodeMirror instance - on mobile that's the
+visible "screen jumps" symptom. It does **not** re-render reading views
+(`MarkdownView.onCssChange` forwards to the editor alone, read out of 1.14.4's
+`app.js`); what reading view baked is
+[`ReadingStructureWatch`'s](09-render-roles.md#what-reading-view-bakes) to
+refresh.
 Comparing text first keeps that cost tied to actual changes.
 
 `lastCssText` is explicitly nulled whenever a style target is rebound

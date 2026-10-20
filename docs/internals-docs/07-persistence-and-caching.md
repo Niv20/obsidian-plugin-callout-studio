@@ -169,7 +169,7 @@ toggle (the README states this explicitly under "What is stored locally").
 
 ```ts
 loadCachedCss(): string | null    // synchronous read
-persist(cssText: string): void     // called at the end of every inject() whose text changed
+persist(cssText: string): void     // called by every inject() with no preview registered
 ```
 
 The key is vault-scoped:
@@ -197,7 +197,10 @@ legacy-discovery recovery archive; it is never installed as a stylesheet.
 > draft - `toSaveData()` already goes out of its way to keep drafts off disk -
 > and hovering a colour swatch in the palette menu would otherwise cost a
 > synchronous `localStorage` write on every hover. Closing the preview
-> re-injects the committed state, which persists normally.
+> re-injects the committed state, which persists normally - including when
+> that state is byte-identical to the preview's, which is what a Save in the
+> callout editor produces: the persist does not depend on the text having
+> changed, only the memo below decides whether to write.
 
 `persist()` also memoizes on `lastPersisted` to skip redundant writes, and -
 notably - only updates that memo **after** the write actually succeeds (a

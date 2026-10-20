@@ -244,7 +244,12 @@ workspace.on("css-change", cb)     → scheduleListRefresh(false)  // theme-mode
 All four funnel into one `requestAnimationFrame`-coalesced refresh
 (`scheduleListRefresh`), so a burst of related events (a registry mutation
 that *also* triggers `css-change`) costs exactly one re-render, landing on
-the very next paint rather than a beat later. The `onPreviewChange`
+the very next paint rather than a beat later. The frame is the **tab's own
+window's** (`requestFrameFor(this.containerEl, …)`, `utils/elementFrame.ts`):
+in Obsidian 1.14 the settings are a window of their own, and a frame asked of
+the main window is held back while it is hidden behind them - the lists then
+stayed stale until the settings window closed. The callout editor's two
+frames and the global style sliders follow the same rule. The `onPreviewChange`
 subscription specifically is what keeps a row's swatch tracking the callout
 editor's in-progress colour picks live, without the preview reaching
 `saveSettings()` or forcing a document-wide re-render - see
