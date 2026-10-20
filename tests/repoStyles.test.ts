@@ -263,7 +263,6 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-portable-file", // per-view hook; shared cs-sidebar-file supplies the layout
 		"cs-occurrences-result", // identity/query hook; shared cs-sidebar-result supplies the card
 		"cs-occurrences-location", // per-view hook; shared cs-sidebar-location supplies its typography
-		"cs-discover-callouts-btn", // stable action hook; neutral-button and heading rules supply its styling
 
 		"callout-studio-more-btn",
 		"callout-studio-replace-modal",

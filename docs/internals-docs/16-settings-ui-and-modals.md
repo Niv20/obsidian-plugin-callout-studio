@@ -200,6 +200,103 @@ are guarded by `tests/subheaderRowWrapping.test.ts`:
   from Obsidian, since it is per-line and is what holds the lower button to the
   trailing edge.
 
+**When the line has no room, Scan leaves the heading - on every device.** While
+the title and both buttons fit on the heading's one line, they stay there. When
+they do not - a phone, an iPad in portrait, a narrow settings window, a long
+translation, larger text - **Add new callout** keeps the title's line at the
+trailing edge and **Scan for callouts** goes to the foot of the list, under
+**Load more** when there is one. The heading therefore never splits its two
+buttons over lines of their own; the `wrap-reverse` stack above is only what
+shows where nothing has measured (no `ResizeObserver`). The order at the foot is
+not arbitrary: Load more is the list's own last child and continues it, so it
+must stay against the last row, while a scan is about the section, not one row
+of it - with Scan above Load more, the revealed rows would appear below a scan
+button.
+
+The switch is **measured, not keyed to `.is-phone` or to a width**, in
+`sections/scanPlacement.ts`. It used to be `.is-phone` alone, which left an iPad
+in portrait and a narrow desktop window with two lines of buttons under the
+title. The width it takes is three translated, font-dependent boxes, so only the
+layout can answer it:
+
+- The heading is read **as it would be with Scan**, never as it is. With Scan
+  gone the line has room by construction, and an answer read off that state
+  brings Scan straight back - a flip on every frame. So the heading gets
+  `cs-scan-measure` (the hiding rule skips it), its info and control boxes are
+  read, and the class comes off again in one synchronous turn, before paint.
+  "Fits" is the control on the title's flex line. The title is `flex: 1 1 auto`
+  (it used to reserve 12rem), so the line breaks exactly when the full title and
+  both full buttons stop fitting side by side.
+- The measuring class is on the heading and nothing below it. The footer keeps
+  its state while the heading is read, so the body never shrinks for a moment
+  and the pane's scroller has nothing to clamp.
+- The answer is `.cs-scan-below` on the section wrapper; the stylesheet hides
+  the heading's copy and shows the footer under it.
+- It is asked again when the pane's width changes, through a `ResizeObserver` on
+  the tab's title row ("Callout Studio"), whose box follows the pane and nothing
+  this toggle does. Observing the heading itself would loop: moving Scan changes
+  its height inside the observer's own callback, which ends in "ResizeObserver
+  loop completed with undelivered notifications". It is also asked when the
+  painter rewrites the heading's "(N)" (`placeScan`), from a **microtask**: the
+  painter runs inside `display()` too, before the sections under it exist, and a
+  layout read there flushes half a page, so the scroller clamps and the reader
+  loses their place. A language change rebuilds the tab and the observer with it.
+  The label turning into "Scanning…" deliberately does not re-ask: moving the
+  button just pressed is worse than a line a word short for the length of a scan.
+
+`tests/scanPlacement.test.ts` drives the measurement against a fake layout
+(including the flip-every-frame trap); `tests/subheaderRowWrapping.test.ts`
+guards that no rule places either copy by platform.
+
+Scan is built **twice**, on every platform: once in the heading's control and
+once in `.cs-discover-footer`, the last child of the section body. Both come
+from the one `addManualDiscoveryButton`, which keeps one progress state for all
+copies, so a scan started from either greys both
+(`tests/manualDiscoveryButton.test.ts`).
+
+The footer is **inside the body and the painter never rebuilds it.** Inside,
+because the body owns the section's whole trailing gap and folds with it
+(`tests/sectionTrailingGap.test.ts` fails on a second spender or on anything
+after the body), so the footer needs no gap and no fold rule of its own - which
+also means a folded section with Scan at its foot shows no Scan until it is
+unfolded. Kept, because a scan is followed by exactly the repaint that rebuilds
+the rows, and the button that started it holds focus: a focused node removed
+from a body that is half empty makes Chromium flush layout, the pane's scroller
+clamps and the page jumps. `renderUserList` therefore removes every child but the
+footer, renders (the new rows land after it) and moves the *rows* in front of
+it, so the footer never leaves the DOM. Measured in Obsidian 1.14.4 phone
+emulation with the footer focused and a repaint adding a row: `scrollTop` stayed
+constant on every frame and the same element kept focus. (A real scan still
+drops focus, because the button is `disabled` while it runs and Chromium blurs a
+disabled control; that is the button, not the repaint.)
+
+Why a phone needs its own button sizes: Obsidian's
+`.is-phone .modal .setting-item-control button:not(.clickable-icon)` is
+`width: 100%; margin: 0` at (0,4,1), and its exclusion list covers the control's
+width but not the buttons'. In a real phone window each button took the control's
+whole width - two full-width bars (170px) under a lone title - and a button that
+wide fits beside no title, so the measurement would send Scan down even on a
+phone turned sideways. A bare-pane harness, including the store-screenshot
+renderer, does not show it because it mounts the settings outside `.modal`. The
+phone rules restate `width`, `margin` and `padding` for **both** heading buttons
+at (0,5,1), and `tests/subheaderRowWrapping.test.ts` compares them to that
+selector with `specificityOf`.
+
+English fits the title and the CTA on one phone line from a 370px window up.
+Below that (the common 360px Android width) or with a long translation, Add falls
+to a line of its own at the trailing edge; that is the existing wrap rather than
+a case of its own. The column gap and the buttons' side padding are 12px on a
+phone for this reason - the 16px used elsewhere needs 381px.
+
+Verified in Obsidian 1.14.4 (English, dark, empty title count unless noted): the
+desktop settings window keeps all three on one line down to a 720px window and
+moves Scan from 715px (every width from 730 to 690 checked against an
+independent "would it fit" reading, plus a fast drag, with no observer errors);
+phone emulation moves it at 320-430px portrait and keeps it at 568-932px
+landscape; tablet emulation moves it at 744-834px portrait (iPad mini to iPad
+Pro 11") and keeps it at 1024px and wider; `mod-rtl` mirrors both states; and at
+the narrowest width where "(3)" fits, adding callouts to "(11)" moves Scan.
+
 The button rule that supplies `min-inline-size: 0` and `overflow-wrap: anywhere`
 is scoped to `.cs-subheader-row`, not to the callout-list heading alone. Obsidian's
 `button` is `white-space: nowrap` with a fixed `height`, so its min-content width

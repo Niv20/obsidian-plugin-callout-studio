@@ -408,8 +408,14 @@
 	gap: 8px 16px;
 }
 
+/* `auto`: the title reserves its own width and no more. A fixed reservation
+   (it was 12rem) is wrong in both directions — wider than a short title, so the
+   buttons wrapped under a title that had room to share the line with them, and
+   narrower than a long translation, which then wrapped beside them instead. With
+   `auto` the line breaks exactly when the full title and the full buttons stop
+   fitting side by side, which is also the question `scanPlacement.ts` asks. */
 .callout-studio-settings .cs-callout-list-heading .setting-item-info {
-	flex: 1 1 12rem;
+	flex: 1 1 auto;
 	min-width: 0;
 	margin-inline-end: 0;
 }
@@ -482,6 +488,97 @@
 	height: auto;
 	white-space: normal;
 	overflow-wrap: anywhere;
+}
+
+/* ─── "My callout types": where Scan goes ─────────────────────── */
+
+/* The heading keeps **Scan for callouts** beside **Add new callout** for as
+   long as the title and both buttons fit on its one line. When they do not —
+   a phone, an iPad in portrait, a narrow settings window, a long translation,
+   larger text — Scan goes to the foot of the list (`.cs-discover-footer`,
+   below), under **Load more** when there is one, and Add keeps the title's
+   line at the trailing edge. The heading never splits its buttons over two
+   lines; the stacking above is only what shows where nothing has measured.
+
+   Measured, not keyed to `.is-phone` or to a width: `scanPlacement.ts` lays
+   the heading out with both buttons, sees whether they stayed on the title's
+   line, and sets `.cs-scan-below` on the section when they did not. Its
+   `.cs-scan-measure` is "lay this out as if Scan were here" for the length of
+   that one reading, which is why the hiding rule skips it.
+
+   Scan is built twice — once in the heading's control, once in the footer —
+   rather than one button moved between the two: the rows above the footer are
+   rebuilt on every registry change, and a button rebuilt while it holds focus
+   makes the pane's scroller clamp and jump; the footer is the one child of the
+   body the painter keeps (see `CalloutListsSection`). The two share one
+   progress state (see `manualDiscoveryButton.ts`), so a scan started from
+   either greys both. */
+.callout-studio-settings
+	.cs-scan-below
+	.cs-callout-list-heading:not(.cs-scan-measure)
+	.cs-discover-callouts-btn {
+	display: none;
+}
+
+.callout-studio-settings .cs-discover-footer {
+	display: none;
+}
+
+/* The last thing in the section body, so it sits under the list and under
+   **Load more**, which is the list's own last child: Load more continues the
+   list and has to stay against its last row, and a scan is about the section,
+   not one row of it. It carries no trailing space of its own — it is inside the
+   body, so the body's `--cs-section-gap` falls under it as it would under a last
+   row, and it folds away with the body. */
+.callout-studio-settings .cs-scan-below .cs-discover-footer {
+	display: flex;
+	justify-content: center;
+	padding-top: var(--size-4-4);
+}
+
+/* Wrapping, not sizing — the same pair of declarations the heading's buttons
+   carry above, for the same long-translation reason. */
+.callout-studio-settings .cs-discover-footer .cs-discover-callouts-btn {
+	max-inline-size: 100%;
+	min-block-size: var(--input-height);
+	height: auto;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+/* A phone measures the same way, but only after its buttons are given their
+   own width back. Its settings live inside `.modal`, and Obsidian's
+   `.is-phone .modal .setting-item-control button` rules reach a heading's
+   buttons too (their exclusion list covers the control's width, not the
+   buttons'): `width: 100%`, `margin: 0`, `padding: 10px`. A button that claims
+   the control's whole width fits beside no title, so Scan would leave even a
+   phone turned sideways, and Add would be a full-width bar under the title
+   rather than a button on its line. Both are restated at (0,5,1), one class
+   beyond Obsidian's (0,4,1).
+
+   The column gap and the side padding are trimmed to Obsidian's own 12px: the
+   title and Add then share one line from a 370px window up, which takes in the
+   375px iPhones and every common Android width but 360. The 16px used above
+   needs 381px. Below that, Add falls to a line of its own at the trailing edge
+   — the control's auto margin above — rather than crushing the title. */
+.is-phone .callout-studio-settings .cs-callout-list-heading.setting-item {
+	column-gap: var(--size-4-3);
+}
+
+.is-phone
+	.callout-studio-settings
+	.cs-callout-list-heading
+	.setting-item-control
+	> button.mod-cta,
+.is-phone
+	.callout-studio-settings
+	.cs-callout-list-heading
+	.setting-item-control
+	> button.cs-discover-callouts-btn {
+	width: auto;
+	margin: 0;
+	padding-block: 0;
+	padding-inline: var(--size-4-3);
 }
 
 /* ─── Foldable section headings ───────────────────────────────── */

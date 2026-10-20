@@ -24,6 +24,7 @@ import { attachPersistedFold } from "./calloutListsFold";
 import { createStickySection } from "./stickySection";
 import { WelcomeModal } from "../WelcomeModal";
 import { addManualDiscoveryButton } from "./manualDiscoveryButton";
+import { followScanPlacement } from "./scanPlacement";
 import type { SettingsSectionContext } from "./types";
 
 /** Everything the painter needs to keep hold of after the build. */
@@ -43,6 +44,10 @@ export type CalloutListsScaffold = {
 	/** "My callout types"' wrapper — it carries the conditional divider. */
 	subSectionEl: HTMLElement;
 	userListEl: HTMLElement;
+	/** Scan's place under the list, inside `userListEl` and outliving its repaints. */
+	discoverFooterEl: HTMLElement;
+	/** Ask again whether Scan fits on the heading — after its "(N)" changes. */
+	placeScan: () => void;
 	userFold: SectionDisclosure;
 	builtInListEl: HTMLElement;
 	builtInFold: SectionDisclosure;
@@ -122,6 +127,27 @@ export function buildCalloutListsScaffold(
 		const userListEl = my.wrapEl.createDiv();
 		const userFold = attachPersistedFold(mySetting, userListEl, "user", ctx.plugin);
 
+		// Scan's second copy, for when the heading's line has no room for it: the
+		// last thing in the body — under the list, and so under Load more, which
+		// is the list's own last child. Inside the body rather than after it,
+		// because the body owns the section's whole trailing gap and folds with
+		// it (`tests/sectionTrailingGap.test.ts`). It is the one child of the
+		// body the painter does not rebuild — a button rebuilt while it has focus
+		// makes the pane's scroller clamp and jump, and a scan is followed by
+		// exactly that repaint — see `CalloutListsSection`.
+		//
+		// Which of the two shows is measured, on every device — see
+		// `scanPlacement.ts`. Both share one progress state — see
+		// `addManualDiscoveryButton`.
+		const discoverFooterEl = userListEl.createDiv({ cls: "cs-discover-footer" });
+		addManualDiscoveryButton(ctx, discoverFooterEl);
+		const scanPlacement = followScanPlacement(
+			ctx,
+			subSectionEl,
+			mySetting.settingEl,
+			headerSetting.settingEl,
+		);
+
 		// No `cs-subheader-row` here on purpose: this heading is a size larger
 		// than the two above it, and that class is what sets their smaller
 		// type. The chevron layout rides on `cs-collapsible-heading` instead,
@@ -147,6 +173,8 @@ export function buildCalloutListsScaffold(
 		themeFold,
 		subSectionEl,
 		userListEl,
+		discoverFooterEl,
+		placeScan: scanPlacement.request,
 		userFold,
 		builtInListEl,
 		builtInFold,

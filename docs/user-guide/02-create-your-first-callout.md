@@ -10,6 +10,8 @@ Open **Settings → Callout Studio**, then click **Add new callout**.
 
 *Dark-mode render of **My callout types**, with **Add new callout** beside the heading.*
 
+When the heading's line is too narrow for both buttons — on a phone, an iPad in portrait, or a narrow settings window — **Add new callout** stays on the heading's line, at the end of it, and **Scan for callouts** moves to the bottom of the list (see [Fallback styles & discovery](05-fallback-styles-and-discovery.md)). On a very narrow screen, or with a long translation, **Add new callout** moves to a line of its own rather than squeezing the heading.
+
 1. Enter a **Display name**. This is the readable name in Callout Studio and the default title shown when the note does not provide one.
 2. Review the **Callout IDs**. The first ID fills automatically from the display name and is the token you type in your notes. Add more IDs if you want aliases for the same callout. An alias looks and behaves exactly like the first ID, but a callout written with it is titled after the alias, as Obsidian titles it: `[!attention]` reads **Attention**, not **Warning**.
 3. Choose a color from Obsidian's standard colors, Callout Studio's extended presets, or one of your saved palettes.

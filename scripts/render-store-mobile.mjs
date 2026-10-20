@@ -19,11 +19,15 @@ const { outputFiles } = await build({
 	write: false, format: "iife", globalName: "storeScenes",
 	alias: { obsidian: path.join(root, "scripts/user-guide/obsidian-runtime.ts") },
 });
-// Host-window geometry only; controls keep their production phone CSS.
+// Host-window geometry only; controls keep their production phone CSS. The one
+// paint it owns is the settings pane: black, as Obsidian 1.13's dark phone
+// settings were, so image 01 stays one family with 02–05. 1.14 greys the pane
+// to --background-secondary, which is also the colour of the row pills, and
+// they would vanish into it.
 const layout = `
 body { margin:0; padding:0; overflow:hidden; background:var(--background-primary); }
 *, *::before, *::after { animation:none!important; transition:none!important; caret-color:transparent!important; }
-.guide-settings { width:430px; height:684px; padding:16px; background:var(--settings-background); overflow:auto; }
+.guide-settings { width:430px; height:684px; padding:16px; background:#000; overflow:auto; }
 .modal-container { position:static; padding:0; height:auto; min-height:0; }
 .modal-bg { display:none; }
 .is-phone .modal { position:relative; top:auto; margin:0; max-height:684px; min-height:0; }

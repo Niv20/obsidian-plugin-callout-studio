@@ -47,10 +47,16 @@ function harness(scan: () => Promise<number> = () => Promise.resolve(2)) {
 }
 
 describe("the manual discovery header action", () => {
-	it("exists once beside Add new callout and never folds the list", async () => {
+	it("sits beside Add new callout, and again under the list, and never folds the list", async () => {
 		const h = harness();
 		const { host, button } = h.mount(true);
-		assert.equal(host.querySelectorAll(".cs-discover-callouts-btn").length, 1);
+		// Two copies, one per placement; the stylesheet shows one of them, by
+		// whether the heading's line has room (`scanPlacement.ts`). The first in
+		// the DOM is the heading's.
+		const all = host.querySelectorAll(".cs-discover-callouts-btn");
+		assert.equal(all.length, 2);
+		assert.equal(all[0], button);
+		assert.ok(all[1]?.closest(".cs-discover-footer"), "the second copy is not in the footer");
 		const heading = button.closest(".cs-callout-list-heading");
 		assert.ok(heading);
 		assert.equal(button.parentElement?.children.length, 2);
@@ -62,6 +68,27 @@ describe("the manual discovery header action", () => {
 		assert.equal(name?.getAttribute("aria-expanded"), "true");
 		assert.equal(h.calls(), 1);
 		assert.doesNotMatch(readRepoFile("src/settings/sections/DataManagementSection.ts"), /runVaultScan|rescanVaultHintAction/);
+	});
+
+	it("shares one scan between the two copies", async () => {
+		const p = pending();
+		const h = harness(() => p.promise);
+		const { host } = h.mount(true);
+		const [heading, footer] = Array.from(
+			host.querySelectorAll<HTMLButtonElement>(".cs-discover-callouts-btn"),
+		);
+		assert.ok(heading && footer);
+		click(footer);
+		assert.equal(heading.disabled, true, "a scan started from the footer leaves the heading's copy live");
+		assert.equal(footer.disabled, true);
+		assert.equal(footer.textContent, "Scanning…");
+		click(heading);
+		assert.equal(h.calls(), 1, "the second copy started a second scan");
+		p.resolve(2); await turn();
+		assert.equal(heading.disabled, false);
+		assert.equal(footer.disabled, false);
+		assert.equal(heading.textContent, "Scan for callouts");
+		assert.equal(notices.length, 1, "one scan, one notice");
 	});
 
 	it("shows progress, blocks repeated activation, and does not redraw or scroll settings", async () => {

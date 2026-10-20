@@ -185,16 +185,30 @@ export function createCalloutListsController(
 
 	const renderUserList = (own: CalloutDefinition[]): void => {
 		if (!els) return;
-		const { userFold, userListEl } = els;
+		const { userFold, userListEl, discoverFooterEl } = els;
 		userFold.setName(
 			headingWithCount(t("settings.myCalloutTypes"), own.length),
 		);
-		userListEl.empty();
+		// A longer "(N)" can be what stops Scan fitting beside the title.
+		els.placeScan();
+		// `empty()` minus the footer's Scan, which ends this body and is not
+		// rebuilt. It is pressed, and a scan is followed by exactly this repaint:
+		// a button removed while it holds focus makes Chromium flush layout on a
+		// half-empty body, and the pane's scroller clamps and jumps. So the rows
+		// go and the footer stays, and the new rows — which `createDiv` appends
+		// after it — are then moved in front of it. The footer itself never moves.
+		for (const child of Array.from(userListEl.children)) {
+			if (child !== discoverFooterEl) child.remove();
+		}
 		if (own.length === 0) {
 			emptyState(userListEl, t("settings.noCalloutsNow"));
-			return;
+		} else {
+			renderList(userListEl, own, "user");
 		}
-		renderList(userListEl, own, "user");
+		const fresh = Array.from(userListEl.children);
+		for (const child of fresh.slice(fresh.indexOf(discoverFooterEl) + 1)) {
+			userListEl.insertBefore(child, discoverFooterEl);
+		}
 	};
 
 	const renderBuiltInList = (builtIn: CalloutDefinition[]): void => {

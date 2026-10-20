@@ -316,7 +316,10 @@ names and asset/browser overrides. It shares the synthetic scenes with desktop,
 but mounts them with `is-mobile is-phone`, a 430 × 684 logical viewport, and
 touch input so Obsidian and plugin phone layouts apply. Dialog widths, rounded
 corners, form stacking, and the icon grid come from production CSS. Only the
-host geometry is constrained. Desktop and 4B outputs are not regenerated.
+host geometry is constrained, plus one paint: the settings pane is black, as
+Obsidian 1.13's dark phone settings were. 1.14 greys it to the colour of the row
+pills, which would vanish into it, and 01 would stop matching 02-05. Desktop and
+4B outputs are not regenerated.
 
 The portrait composition retains the purple background and English headlines,
 but has no simulated workspace, file bars, device bezel, or invented navigation.

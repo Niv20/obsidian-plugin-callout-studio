@@ -324,9 +324,19 @@ function bodyOf(host: HTMLElement, label: string): HTMLElement {
 	return body;
 }
 
-/** The element the section actually ends with, as a class name. */
+/**
+ * The element the section's content ends with, as a class name. The Scan
+ * footer closes "My callout types" and is not content: it is `display: none`
+ * while Scan fits on the heading's line, and otherwise it is a row *in* the
+ * body, so the body's gap falls under it exactly as under a last row. What the child combinators have
+ * to reach is the list or the empty state in front of it, so that is what is
+ * checked — and that the footer really is the last child is pinned in
+ * `subheaderRowWrapping.test.ts`.
+ */
 function endsWith(host: HTMLElement, label: string): string {
-	const kids = Array.from(bodyOf(host, label).children) as HTMLElement[];
+	const kids = (Array.from(bodyOf(host, label).children) as HTMLElement[]).filter(
+		(el) => !el.hasClass("cs-discover-footer"),
+	);
 	assert.ok(kids.length > 0, `"${label}" renders an empty body`);
 	return (kids[kids.length - 1] as HTMLElement).className;
 }
@@ -431,4 +441,66 @@ describe("a section ends in something the trailing-space rule can reach", () => 
 			);
 		}
 	});
+});
+
+describe("the Scan footer outlives every repaint of its list", () => {
+	/**
+	 * A scan is followed by a repaint of the rows, and the button that started it
+	 * is the one holding focus. Rebuilt, or merely moved, while it holds that
+	 * focus, it makes Chromium flush layout on a half-empty body and the pane's
+	 * scroller clamps and jumps. So the painter keeps it as the body's one
+	 * permanent child and puts the new rows in front of it.
+	 */
+	const cases: [string, number][] = [
+		["a short list", 3],
+		["a list behind Load more", LIST_PAGE_SIZE + 5],
+		["an empty list", 0],
+	];
+
+	for (const [what, count] of cases) {
+		it(`keeps the same element, last in the body, across ${what}`, () => {
+			const registry = vault();
+			addUserCallouts(registry, count);
+			const { host, lists } = render(registry, themeApp([]), []);
+			const body = bodyOf(host, MINE);
+			const footer = body.querySelector<HTMLElement>(".cs-discover-footer");
+			assert.ok(footer);
+			const button = footer.querySelector(".cs-discover-callouts-btn");
+			assert.ok(button);
+
+			for (const extra of [1, 2]) {
+				registry.add({
+					id: `extra-${extra}`,
+					displayName: `extra-${extra}`,
+					icon: { type: "lucide", value: "pencil" },
+					colorLight: "#336699",
+					colorDark: "#88bbee",
+					foldable: false,
+					defaultFolded: false,
+					builtIn: false,
+					source: "user",
+				});
+				lists.refresh(true);
+
+				assert.strictEqual(
+					body.querySelector(".cs-discover-footer"),
+					footer,
+					"the footer was rebuilt",
+				);
+				assert.strictEqual(footer.querySelector(".cs-discover-callouts-btn"), button);
+				assert.strictEqual(body.lastElementChild, footer, "the footer is no longer last");
+				assert.strictEqual(
+					body.querySelectorAll(".cs-discover-footer").length,
+					1,
+				);
+				const kids = Array.from(body.children) as HTMLElement[];
+				assert.ok(
+					kids[0]?.hasClass("callout-studio-callout-list") ||
+						kids[0]?.hasClass("callout-studio-empty-state"),
+					"the rebuilt content is not in front of the footer",
+				);
+				assert.strictEqual(kids.length, 2, "stale rows were left behind");
+			}
+		});
+	}
 });

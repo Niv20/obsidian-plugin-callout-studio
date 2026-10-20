@@ -4,7 +4,7 @@ Callout Studio saves only the callout types you explicitly create, import, or di
 
 ## Discover callouts already in your vault
 
-Open **Settings → Callout Studio → My callout types** and click **Scan for callouts**. Callout Studio scans your saved notes and adds types that are not already in the list. It does not alter notes, overwrite existing types, or change your custom styles.
+Open **Settings → Callout Studio → My callout types** and click **Scan for callouts**. Callout Studio scans your saved notes and adds types that are not already in the list. It does not alter notes, overwrite existing types, or change your custom styles. When there is no room for it beside **Add new callout** — on a phone, an iPad in portrait, or a narrow settings window — **Scan for callouts** is at the bottom of **My callout types** instead, under the last callout, and under **Load more** when the list has one. It is hidden while that section is folded.
 
 ![Research and Meeting types saved through discovery, both marked as following the default fallback](../../assets/user-guide/fallback-discovery.svg)
 
