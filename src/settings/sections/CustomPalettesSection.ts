@@ -6,8 +6,12 @@
  * Palettes are stored in settings.customPalettes and surfaced in the callout
  * editor's palette dropdown under the "Custom" group. Colors are baked into
  * callouts at apply time; editing a palette here cascades the new colors onto
- * every callout still linked to it (registry.applyPaletteColors), while
- * deleting a palette leaves existing callouts as-is.
+ * every callout still linked to it, while deleting a palette leaves existing
+ * callouts as-is. Every change goes through the registry's palette writers
+ * (`addPalette`, `updatePalette`, `removePalette`), which announce it even
+ * when nothing links to the palette — its name is a metadata colour word the
+ * stylesheet paints on its own. The first two also adopt the orphans whose
+ * colours match.
  *
  * The heading folds, pages and *pins* exactly like the three callout lists
  * above it in the settings tab — `attachPersistedFold` for the chevron and the
@@ -21,11 +25,7 @@ import { setIcon } from "obsidian";
 import { getLocale, t } from "../../i18n";
 import type { CustomPalette } from "../../types";
 import type { SettingsSectionContext } from "./types";
-import {
-	bakePaletteColors,
-	customPaletteToColorPalette,
-	generatePaletteId,
-} from "../../utils/colorPalettes";
+import { generatePaletteId } from "../../utils/colorPalettes";
 import {
 	renderColorCircles,
 	resolveCurrentModeColors,
@@ -60,16 +60,6 @@ export function renderCustomPalettesSection(
 	const reservedWords = (): ReadonlySet<string> =>
 		ctx.plugin.cssInjector.metadataCatalog.snippetWords();
 
-	/**
-	 * Pick up any callouts left behind by an earlier deletion whose colors match
-	 * what was just saved. Without it those callouts would sit orphaned until the
-	 * next launch, when the load migration would adopt them anyway — the same
-	 * pass, just hours later.
-	 */
-	const adoptOrphans = (): void => {
-		ctx.plugin.registry.adoptOrphansMatchingPalettes();
-	};
-
 	// A fourth pinned section, built exactly like "My callout types" above it —
 	// same wrapper, same `cs-subheader-row` heading box (tight, no border, and
 	// the layout its CTA button needs). The three wrapper classes are the only
@@ -99,11 +89,9 @@ export function renderCustomPalettesSection(
 					takenColors: othersExcept(),
 				}).openAndWait();
 				if (!result) return;
-				ctx.plugin.settings.customPalettes.push({
-					id: generatePaletteId(),
-					...result,
-				});
-				adoptOrphans();
+				// Through the registry, which announces it: the new name is a
+				// metadata colour word, and only an inject puts it in the sheet.
+				ctx.plugin.registry.addPalette({ id: generatePaletteId(), ...result });
 				await ctx.plugin.saveSettings();
 				renderList();
 			}),
@@ -136,29 +124,10 @@ export function renderCustomPalettesSection(
 			},
 		}).openAndWait();
 		if (!result) return;
-		Object.assign(palette, result);
-		// Object.assign never removes keys: when the edit switched the palette
-		// to another background style, the absent bgGradient must still clear
-		// the stored one (and cascade as an explicit undefined below). Same
-		// reasoning for transparentBg — an edit from the "None" style back to
-		// Solid has to actually un-transparent the palette — and for colorMode:
-		// toggling back to simple and saving must actually clear a stale
-		// "advanced" flag, not leave the editor auto-expanded next time.
-		palette.bgGradient = result.bgGradient;
-		palette.transparentBg = result.transparentBg;
-		palette.colorMode = result.colorMode;
-		// Baked through the same function the import path uses, so "what this
-		// palette means as callout colors" is decided in exactly one place — and
-		// every field comes back set (undefined included), which is what lets the
-		// cascade clear a background the previous style had left behind.
-		// Before the cascade: an orphan the edit just brought into range has to
-		// be carrying the palette's id by the time applyPaletteColors walks the
-		// map, or it gets adopted now and repainted only on the next edit.
-		adoptOrphans();
-		ctx.plugin.registry.applyPaletteColors(
-			palette.id,
-			bakePaletteColors(customPaletteToColorPalette(palette)),
-		);
+		// One round for the linked callouts and the palette's own colour word —
+		// announced even when nothing links to it, and before a rename rewrites
+		// the notes, so the new word is in the sheet when they change.
+		ctx.plugin.registry.updatePalette(palette.id, result);
 		await ctx.plugin.saveSettings();
 		renderList();
 		if (asked.rename) await applyMetadataRename(ctx.app, asked.rename);
@@ -191,9 +160,7 @@ export function renderCustomPalettesSection(
 			message,
 		).confirm();
 		if (!ok) return;
-		const list = ctx.plugin.settings.customPalettes;
-		const idx = list.findIndex((p) => p.id === palette.id);
-		if (idx >= 0) list.splice(idx, 1);
+		ctx.plugin.registry.removePalette(palette.id);
 		await ctx.plugin.saveSettings();
 		renderList();
 	};

@@ -641,3 +641,97 @@ describe("takePaletteMerges", () => {
 		assert.deepStrictEqual(registry.takePaletteMerges(), []);
 	});
 });
+
+describe("the palette writers — one round, every time", () => {
+	// A palette is more than the rows linked to it: its name is a metadata
+	// colour word (`[!mark|mine]`) the stylesheet paints on its own. Written
+	// straight into settings, a palette nothing linked to changed nothing on
+	// screen until something unrelated injected, or until a reload.
+	const fields = (over: Partial<CustomPalette> = {}): Omit<CustomPalette, "id"> => ({
+		name: "Mine",
+		...BAKED,
+		...over,
+	});
+
+	it("addPalette announces a palette nothing links to", () => {
+		const { registry, events } = loaded(null);
+		registry.addPalette(palette());
+		assert.strictEqual(events(), 1);
+		assert.deepStrictEqual(registry.settings.customPalettes.map((p) => p.id), ["cp-1"]);
+	});
+
+	it("addPalette links the orphans its colours match, in that same round", () => {
+		const { registry, events } = loaded(saved([def({ id: "a", ...BAKED })]));
+		registry.addPalette(palette());
+		assert.strictEqual(registry.get("a")?.paletteId, "cp-1");
+		assert.strictEqual(events(), 1);
+	});
+
+	it("updatePalette announces even when no callout is linked", () => {
+		const { registry, events } = loaded(saved([], { customPalettes: [palette()] }));
+		assert.strictEqual(registry.updatePalette("cp-1", fields({ name: "Renamed" })), true);
+		assert.strictEqual(events(), 1);
+		assert.strictEqual(registry.settings.customPalettes[0]?.name, "Renamed");
+	});
+
+	it("updatePalette repaints the linked callouts in that one round", () => {
+		const { registry, events } = loaded(
+			saved([def({ id: "a", paletteId: "cp-1", ...BAKED })], { customPalettes: [palette()] }),
+		);
+		registry.updatePalette("cp-1", fields({ colorLight: "#123456" }));
+		assert.strictEqual(registry.get("a")?.colorLight, "#123456");
+		assert.strictEqual(events(), 1);
+	});
+
+	it("updatePalette clears a background style the edit dropped", () => {
+		const { registry } = loaded(
+			saved([], { customPalettes: [palette({ transparentBg: true, colorMode: "advanced" })] }),
+		);
+		registry.updatePalette("cp-1", fields());
+		const stored = registry.settings.customPalettes[0];
+		assert.strictEqual(stored?.transparentBg, undefined);
+		assert.strictEqual(stored?.colorMode, undefined);
+	});
+
+	it("updatePalette of an id nobody has changes nothing and says so", () => {
+		const { registry, events } = loaded(null);
+		assert.strictEqual(registry.updatePalette("cp-missing", fields()), false);
+		assert.strictEqual(events(), 0);
+	});
+
+	it("removePalette announces, and the linked callouts keep colours and link", () => {
+		const { registry, events } = loaded(
+			saved([def({ id: "a", paletteId: "cp-1", ...BAKED })], { customPalettes: [palette()] }),
+		);
+		assert.strictEqual(registry.removePalette("cp-1"), true);
+		assert.strictEqual(events(), 1);
+		assert.deepStrictEqual(registry.settings.customPalettes, []);
+		assert.strictEqual(registry.get("a")?.paletteId, "cp-1");
+		assert.strictEqual(registry.get("a")?.colorLight, ACCENT_LIGHT);
+		assert.strictEqual(registry.removePalette("cp-1"), false);
+		assert.strictEqual(events(), 1);
+	});
+
+	it("setPalettes announces", () => {
+		const { registry, events } = loaded(null);
+		registry.setPalettes([palette()]);
+		assert.strictEqual(events(), 1);
+	});
+
+	it("settingsChanged announces a setting written in place", () => {
+		const { registry, events } = loaded(null);
+		registry.settings.fallbackCalloutId = "warning";
+		registry.settingsChanged();
+		assert.strictEqual(events(), 1);
+	});
+
+	it("revision counts rounds, and a batch is one of them", () => {
+		const { registry } = loaded(null);
+		const before = registry.revision;
+		registry.batch(() => {
+			registry.addPalette(palette());
+			registry.addPalette(palette({ id: "cp-2", name: "Other", colorLight: "#445566" }));
+		});
+		assert.strictEqual(registry.revision, before + 1);
+	});
+});

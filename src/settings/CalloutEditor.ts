@@ -1173,7 +1173,11 @@ export class CalloutEditor extends Modal {
 				id: generatePaletteId(),
 				...result,
 			};
+			// Pushed rather than `addPalette`d: that would also adopt orphans,
+			// and this callout's own row is the editor's until Save. Announced
+			// all the same — the name is a metadata colour word.
 			this.plugin.settings.customPalettes.push(palette);
+			this.plugin.registry.settingsChanged();
 			await this.plugin.saveSettings();
 			rebuildPaletteEntries();
 			this.paletteId = palette.id;
@@ -1224,27 +1228,29 @@ export class CalloutEditor extends Modal {
 				id: generatePaletteId(),
 				...result,
 			};
-			this.plugin.settings.customPalettes.push(palette);
 			// Regroup the siblings, then repaint them through the ordinary
 			// cascade so they match the palette even if its colours were tweaked
 			// in the modal. This callout is excluded from both: the editor owns
 			// its own row until Save, and it takes the new colours through the
-			// form below instead.
-			if (orphanId) {
-				this.plugin.registry.relinkPalette(
-					orphanId,
-					palette.id,
-					this.existingId,
-				);
-				this.plugin.registry.applyPaletteColors(
-					palette.id,
-					bakePaletteColors(customPaletteToColorPalette(palette)),
-				);
-			}
+			// form below instead. One round for all of it, announced even with
+			// no sibling to repaint: the new name is a metadata colour word.
+			this.plugin.registry.batch(() => {
+				this.plugin.settings.customPalettes.push(palette);
+				if (orphanId) {
+					this.plugin.registry.relinkPalette(
+						orphanId,
+						palette.id,
+						this.existingId,
+					);
+					this.plugin.registry.applyPaletteColors(
+						palette.id,
+						bakePaletteColors(customPaletteToColorPalette(palette)),
+					);
+				}
+				this.plugin.registry.settingsChanged();
+			});
 			// After the registry work, not before: one write then covers the new
-			// palette AND the re-pointed siblings. (`applyPaletteColors` also
-			// notifies, and `onChange` saves — but only when it actually
-			// repainted a row, so this is what makes the save unconditional.)
+			// palette AND the re-pointed siblings.
 			await this.plugin.saveSettings();
 			rebuildPaletteEntries();
 			this.paletteId = palette.id;

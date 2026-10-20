@@ -320,48 +320,55 @@ export async function processImportedJSON(
 			customCommands: importedCommands,
 			...restSettings
 		} = result.settings;
-		Object.assign(
-			ctx.plugin.registry.settings,
-			Object.fromEntries(Object.entries(restSettings).filter(([key]) => restored.includes(key))),
-		);
-		if (importedPalettes) {
-			applyPaletteMerge(
-				ctx.plugin.registry,
-				mergePalettes(ctx.plugin.registry.settings.customPalettes, importedPalettes),
+		// One round for the whole settings half, and always one: the global
+		// style, the fallback and the palettes' colour words are read by the
+		// stylesheet straight off settings, and the callout batch above
+		// repainted before any of them arrived.
+		ctx.plugin.registry.batch(() => {
+			Object.assign(
+				ctx.plugin.registry.settings,
+				Object.fromEntries(Object.entries(restSettings).filter(([key]) => restored.includes(key))),
 			);
-			// Merging routinely brings in a palette that duplicates a local
-			// one's colors under a different id and name — the two vaults made
-			// the same color independently. No vault may hold two of those, so
-			// fold them together here rather than leaving a state the next
-			// launch would silently repair. The callouts that referenced the
-			// dropped id are re-pointed, so nothing is orphaned by the merge.
-			const merges = ctx.plugin.registry.consolidateDuplicatePalettes();
-			if (merges.length > 0) {
-				new Notice(
-					t("notice.palettesMerged", {
-						count: merges.length,
-						names: merges.map((m) => m.from).join(", "),
-					}),
-					10000,
+			if (importedPalettes) {
+				applyPaletteMerge(
+					ctx.plugin.registry,
+					mergePalettes(ctx.plugin.registry.settings.customPalettes, importedPalettes),
+				);
+				// Merging routinely brings in a palette that duplicates a local
+				// one's colors under a different id and name — the two vaults made
+				// the same color independently. No vault may hold two of those, so
+				// fold them together here rather than leaving a state the next
+				// launch would silently repair. The callouts that referenced the
+				// dropped id are re-pointed, so nothing is orphaned by the merge.
+				const merges = ctx.plugin.registry.consolidateDuplicatePalettes();
+				if (merges.length > 0) {
+					new Notice(
+						t("notice.palettesMerged", {
+							count: merges.length,
+							names: merges.map((m) => m.from).join(", "),
+						}),
+						10000,
+					);
+				}
+			}
+			if (importedImages) {
+				// Through the registry rather than by assignment: it is what
+				// hands the new pictures to the pack that draws them.
+				ctx.plugin.registry.setUserImages(
+					mergeById(ctx.plugin.registry.getUserImages(), importedImages),
 				);
 			}
-		}
-		if (importedImages) {
-			// Through the registry rather than by assignment: it is what
-			// hands the new pictures to the pack that draws them.
-			ctx.plugin.registry.setUserImages(
-				mergeById(ctx.plugin.registry.getUserImages(), importedImages),
-			);
-		}
-		if (importedCommands) {
-			ctx.plugin.registry.settings.customCommands = mergeById(
-				ctx.plugin.registry.settings.customCommands,
-				importedCommands,
-			);
-			// Anything pointing at a callout this vault doesn't have is
-			// dropped by the sweep, which also registers the rest.
-			ctx.plugin.customCommands.syncAll();
-		}
+			if (importedCommands) {
+				ctx.plugin.registry.settings.customCommands = mergeById(
+					ctx.plugin.registry.settings.customCommands,
+					importedCommands,
+				);
+				// Anything pointing at a callout this vault doesn't have is
+				// dropped by the sweep, which also registers the rest.
+				ctx.plugin.customCommands.syncAll();
+			}
+			ctx.plugin.registry.settingsChanged();
+		});
 		ctx.plugin.refreshRenderModes();
 	}
 	// Awaited for every import, callouts-only included, so the notice below
