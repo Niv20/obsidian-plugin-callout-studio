@@ -159,9 +159,12 @@ jobs:
             # counts in the singular, and the radio painting it now shares with
             # the plugin import window - 5.2 KB, which leaves the headroom about
             # where it was.
+            # Raised by 1 KiB for one Version history entry per settings visit
+            # (the visit tag, its seals and the quiet gap) - 1.0 KB, which
+            # leaves the headroom about where it was.
             - name: Check bundle size
               run: |
-                  limit=2330624  # 2 MiB + 228 KiB
+                  limit=2331648  # 2 MiB + 229 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

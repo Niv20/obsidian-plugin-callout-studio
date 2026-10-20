@@ -100,6 +100,8 @@ Changed values can include your callout names, command settings, and uploaded ar
 
 Device history keeps up to ten most recent distinct setups in Obsidian's app storage, outside the vault. A setup is recorded after a successful settings save or when this device accepts settings from the vault, including settings originally edited on another device. There are no additional daily or weekly copies. Returning to the same setup refreshes its date instead of adding a duplicate; the timeline uses the newest available copy's date.
 
+Every change you make in **Settings → Callout Studio** is saved at once, but one visit to the settings adds one version, however many changes it takes. That version is updated with each change and dated by the last one. The version from before you opened the settings is kept. If you undo everything before leaving, no new version is added. The version ends when you close the settings or switch to another tab, when 15 minutes pass without a change, when you restore a version, or when settings arrive from another device. A change made outside the settings, such as from a note's right-click menu or a command, is a version of its own.
+
 History also has an estimated 24 MiB storage budget per vault, configuration folder, and plugin on this device. Older versions can be removed sooner to stay within that budget; the newest version is kept even if it alone exceeds the budget. Large uploaded images or stored icon artwork can reduce the number of older versions retained.
 
 Cleanup happens when the plugin starts and whenever a setup is recorded. After an upgrade, older versions beyond the new limit are deleted automatically, even if you make no changes or saving is paused. Versions within the limit remain regardless of age unless the size budget removes older ones. Storage failures can delay cleanup or leave fewer versions available; cleanup is retried on the next startup or recording.
@@ -122,7 +124,7 @@ Each device keeps its ten newest backup copies, shared across all reasons, with 
 
 Copies from other devices are left alone while those devices are still producing backups. When another device's newest backup is more than ninety days older than this device's newest backup, cleanup keeps only that other device's newest copy. An installation with no backups of its own does not thin other devices' copies. A device can still be in use without producing backups, so this is based on backup dates rather than device activity.
 
-Backups written by Callout Studio 2.14 or earlier do not identify their device. They share a separate limit of ten newest copies, and excess copies are also deleted during startup cleanup.
+Backups written by Callout Studio 2.14 or earlier do not identify their device. They share a separate limit of ten newest copies, and excess copies are also deleted during startup cleanup. Each one is also deleted ninety days after it was saved, including the newest, because no current version replaces them with newer copies. The age is measured by this device's clock, at startup and whenever a new backup is saved.
 
 These are limits per storage source and device, not a limit of ten rows in **Version history**. The list combines those sources and merges identical setups. There is no single file-count or size limit for the whole folder, and some files are never removed automatically:
 

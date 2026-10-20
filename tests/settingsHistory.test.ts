@@ -266,3 +266,131 @@ describe("what the writer records", () => {
 		writer.destroy();
 	});
 });
+
+describe("a settings visit is one version", () => {
+	it("lets each edit of a visit replace the last, and keeps the state from before it", async () => {
+		const db = installFakeIndexedDb();
+		try {
+			let clock = START;
+			const h = history("vault-a", () => clock);
+			await h.record({ n: 1 }, "load");
+			for (const n of [2, 3, 4]) { clock += MINUTE; await h.record({ n }, "edit", "visit-1"); }
+			assert.deepEqual((await h.list()).map(entry => entry.data.n), [4, 1]);
+			assert.equal((await h.list())[0]!.savedAt, START + 3 * MINUTE, "dated by its last edit");
+		} finally { db.restore(); }
+	});
+
+	it("leaves no version of a visit that returns to where it started, and never takes that state over", async () => {
+		const db = installFakeIndexedDb();
+		try {
+			let clock = START;
+			const h = history("vault-a", () => clock);
+			await h.record({ n: 1 }, "load");
+			clock += MINUTE; await h.record({ n: 2 }, "edit", "visit-1");
+			clock += MINUTE; await h.record({ n: 1 }, "edit", "visit-1");
+			assert.deepEqual((await h.list()).map(entry => entry.data.n), [1]);
+			clock += MINUTE; await h.record({ n: 3 }, "edit", "visit-1");
+			assert.deepEqual((await h.list()).map(entry => entry.data.n), [3, 1], "the state from before the visit is not the visit's");
+		} finally { db.restore(); }
+	});
+
+	it("never replaces another visit's version, one saved outside a visit, or one that is not an edit", async () => {
+		const db = installFakeIndexedDb();
+		try {
+			let clock = START;
+			const h = history("vault-a", () => clock);
+			await h.record({ n: 1 }, "edit");
+			clock += MINUTE; await h.record({ n: 2 }, "edit", "visit-1");
+			clock += MINUTE; await h.record({ n: 3 }, "edit", "visit-2");
+			clock += MINUTE; await h.record({ n: 4 }, "restore", "visit-2");
+			clock += MINUTE; await h.record({ n: 5 }, "edit", "visit-2");
+			assert.deepEqual((await h.list()).map(entry => entry.data.n), [5, 4, 2, 1]);
+		} finally { db.restore(); }
+	});
+});
+
+describe("when the writer starts a new version", () => {
+	function visitWriter() {
+		let clock = START, state: Record<string, unknown> = { n: 1 }, written = "";
+		const h = history("vault-a", () => clock);
+		const writer = new SettingsWriter({
+			build: () => state, history: h, mergeConcurrent: true, now: () => clock,
+			write: data => { written = JSON.stringify(data); return Promise.resolve(); },
+		});
+		return {
+			writer,
+			/** Save `n`, a minute after the last step. */
+			async save(n: number) { clock += MINUTE; state = { n }; await writer.save(); },
+			wait(ms: number) { clock += ms; },
+			get written() { return written; },
+			/** Waits for every recording queued so far, then lists them. */
+			async kept() { await h.prune(); return (await h.list()).map(entry => entry.data.n); },
+		};
+	}
+
+	it("keeps a visit's saves as one version until it ends, then starts another", async () => {
+		const db = installFakeIndexedDb();
+		try {
+			const t = visitWriter();
+			t.writer.adopt(JSON.stringify({ n: 1 }));
+			const end = t.writer.openVisit();
+			await t.save(2); await t.save(3); await t.save(4);
+			assert.deepEqual(await t.kept(), [4, 1]);
+			end();
+			await t.save(5); await t.save(6);
+			assert.deepEqual(await t.kept(), [6, 5, 4, 1], "outside a visit, each save is a version");
+			t.writer.destroy();
+		} finally { db.restore(); }
+	});
+
+	it("ends a visit's version at a restore and at settings from elsewhere, not at its own file read back", async () => {
+		const db = installFakeIndexedDb();
+		try {
+			const t = visitWriter();
+			t.writer.adopt(JSON.stringify({ n: 1 }));
+			t.writer.openVisit();
+			await t.save(2);
+			assert.equal(await t.writer.commit({ n: 3 }, () => true, () => {}, "restore"), true);
+			await t.save(4); await t.save(5);
+			assert.deepEqual(await t.kept(), [5, 3, 2, 1]);
+			t.writer.adopt(JSON.stringify({ n: 6 }));
+			await t.save(7);
+			assert.deepEqual(await t.kept(), [7, 6, 5, 3, 2, 1]);
+			t.writer.adopt(t.written);
+			await t.save(8);
+			assert.deepEqual(await t.kept(), [8, 6, 5, 3, 2, 1]);
+			t.writer.destroy();
+		} finally { db.restore(); }
+	});
+
+	it("starts a new version after a quarter of an hour without a change", async () => {
+		const db = installFakeIndexedDb();
+		try {
+			const t = visitWriter();
+			t.writer.adopt(JSON.stringify({ n: 1 }));
+			t.writer.openVisit();
+			await t.save(2);
+			t.wait(15 * MINUTE);
+			await t.save(3); await t.save(4);
+			assert.deepEqual(await t.kept(), [4, 2, 1]);
+			t.writer.destroy();
+		} finally { db.restore(); }
+	});
+
+	it("ends a visit only when every holder has, however often one ends its own", async () => {
+		const db = installFakeIndexedDb();
+		try {
+			const t = visitWriter();
+			t.writer.adopt(JSON.stringify({ n: 1 }));
+			const first = t.writer.openVisit();
+			const second = t.writer.openVisit();
+			first(); first();
+			await t.save(2); await t.save(3);
+			assert.deepEqual(await t.kept(), [3, 1]);
+			second();
+			await t.save(4);
+			assert.deepEqual(await t.kept(), [4, 3, 1]);
+			t.writer.destroy();
+		} finally { db.restore(); }
+	});
+});

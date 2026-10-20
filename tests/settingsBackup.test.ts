@@ -265,14 +265,32 @@ describe("applying retention to existing backups", () => {
 		const untouched = [`${DIR}/notes.json`, `${DIR}/unreadable-old.txt`, `${DIR}/recovery-copy-old.txt`,
 			`${DIR}/nested/data-2026-01-01T12-00-00-000Z.json`];
 		for (const path of untouched) v.files.set(path, "kept");
-		await pruneSettingsBackups(v.host);
+		const now = day(24).getTime();
+		await pruneSettingsBackups(v.host, new Set(), undefined, now);
 		assert.deepStrictEqual(v.backups().filter(path => own.includes(path)), own.slice(-10));
 		assert.deepStrictEqual(v.backups().filter(path => legacy.includes(path)), legacy.slice(-10));
 		assert.ok(phone.every(path => v.files.has(path)), "other devices enforce their own limit on upgrade");
 		assert.ok(untouched.every(path => v.files.has(path)));
 		const remaining = [...v.files];
-		await pruneSettingsBackups(v.host);
+		await pruneSettingsBackups(v.host, new Set(), undefined, now);
 		assert.deepStrictEqual([...v.files], remaining, "cleanup is idempotent");
+	});
+
+	it("deletes each 2.14 copy ninety days after it was taken, the newest too, with no backup of its own needed", async () => {
+		const v = vault();
+		const legacy = seed(v, null, 4);
+		await pruneSettingsBackups(v.host, new Set(), undefined, day(92).getTime());
+		assert.deepStrictEqual(v.backups(), legacy.slice(2), "ninety days to the day is not past it yet");
+		await pruneSettingsBackups(v.host, new Set(), undefined, day(94).getTime());
+		assert.deepStrictEqual(v.backups(), []);
+	});
+
+	it("expires 2.14 copies by the time a new backup is written", async () => {
+		const v = vault();
+		const legacy = seed(v, null, 4);
+		const mine = await writeSettingsBackup(v.host, { n: 1 }, { now: day(100) });
+		assert.ok(legacy.every(path => !v.files.has(path)));
+		assert.deepStrictEqual(v.backups(), [mine]);
 	});
 
 	it("does not thin old backups from another device when this installation has none of its own", async () => {

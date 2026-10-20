@@ -24,7 +24,12 @@ export interface SettingsWriterHost extends StaleWriteHost {
 	onCheckpointStale?(): void;
 	/** Whether a payload says nothing beyond the shipped defaults. */
 	isUntouched?(data: unknown): boolean;
+	/** The clock a settings visit's quiet gap is measured by. */
+	now?(): number;
 }
+
+/** A settings window left open this long without a change starts a new version. */
+const VISIT_QUIET_MS = 15 * 60 * 1000;
 
 export class SettingsWriter {
 	readonly status = new SettingsSaveStatus();
@@ -56,6 +61,11 @@ export class SettingsWriter {
 	private closing = false;
 	private revision = 0;
 	private destroyed = false;
+	/** Open settings visits; while any is, edits share one history version. */
+	private visits = 0;
+	/** The version this visit's edits replace; null until its first edit, and once sealed. */
+	private visit: string | null = null;
+	private lastVisitEdit = 0;
 
 	constructor(private readonly host: SettingsWriterHost) {
 		this.stale = new StaleWriteGuard({ ...host, onBlocked: reason => {
@@ -106,18 +116,48 @@ export class SettingsWriter {
 
 	adopt(json: string, diskJson = json): void {
 		const data: unknown = JSON.parse(json);
+		const before = this.persistedContent;
 		this.sync?.adopt(data);
 		this.guard.adopt(diskJson);
 		if (this.sync) this.persistedContent = canonical(content(JSON.parse(diskJson)));
 		this.revision++;
 		this.stale.clear();
 		this.status.clear();
+		// Settings from elsewhere are a version of their own; this device's own
+		// file read back is not.
+		if (before === null || this.persistedContent !== before) this.visit = null;
 		this.recordAccepted(data, "load");
+	}
+
+	/**
+	 * Treat the edits saved from now until the returned function is called as
+	 * one version in device history. Counted, so two holders cannot end each
+	 * other's visit; the function is safe to call twice.
+	 */
+	openVisit(): () => void {
+		this.visits++;
+		let open = true;
+		return () => {
+			if (!open) return;
+			open = false;
+			if (--this.visits === 0) this.visit = null;
+		};
 	}
 
 	/** Device history, never awaited: it must not slow or fail a save. */
 	private recordAccepted(data: unknown, reason: HistoryReason): void {
-		void this.host.history?.record(data, reason);
+		// A restore or a repair is a version of its own: the edits after it start another.
+		if (reason === "restore" || reason === "repair") this.visit = null;
+		void this.host.history?.record(data, reason, reason === "edit" ? this.visitFor() : undefined);
+	}
+
+	/** The version an edit saved now belongs to; undefined outside a visit. */
+	private visitFor(): string | undefined {
+		if (this.visits === 0) return undefined;
+		const now = this.host.now?.() ?? Date.now();
+		if (this.visit === null || now - this.lastVisitEdit > VISIT_QUIET_MS) this.visit = crypto.randomUUID();
+		this.lastVisitEdit = now;
+		return this.visit;
 	}
 
 	matchesLastWrite(json: string, contentOnly = false): boolean {

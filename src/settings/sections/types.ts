@@ -25,7 +25,7 @@ export type SettingsTabPlugin = Plugin & {
 	settings: PluginSettings;
 	settingsEditOpen: boolean;
 
-	settingsWriter: Pick<SettingsWriter, "isFrozen" | "isDestroyed" | "matchesLastWrite" | "commit"> & Partial<Pick<SettingsWriter, "status" | "persists">>;
+	settingsWriter: Pick<SettingsWriter, "isFrozen" | "isDestroyed" | "matchesLastWrite" | "commit"> & Partial<Pick<SettingsWriter, "status" | "persists" | "openVisit">>;
 
 	localState: DeviceLocalStore;
 	onIconCacheChange(cb: () => void): () => void;

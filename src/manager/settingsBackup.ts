@@ -63,6 +63,8 @@ export type BackupReason =
 const KEEP_RECENT = 10;
 /** Another device's copies are thinned only once it has saved none for this long. */
 const IDLE_DEVICE_MS = 90 * 24 * 60 * 60 * 1000;
+/** How long a copy named by 2.14 or earlier is kept, by this device's clock. */
+const LEGACY_EXPIRY_MS = 90 * 24 * 60 * 60 * 1000;
 
 /** The name a device uses when it cannot remember one of its own. */
 export const SHARED_DEVICE_ID = "device00";
@@ -172,6 +174,7 @@ export async function writeSettingsBackup(
 	let path: string;
 	let dir: string;
 	const device = deviceOf(host);
+	const now = (options.now ?? new Date()).getTime();
 	try {
 		// Capture before the first await: edits during mkdir/exists must not
 		// mutate the recovery copy that the caller is counting on.
@@ -191,7 +194,7 @@ export async function writeSettingsBackup(
 			if (file.hash === hash && !pendingRemovals.get(adapter)?.has(file.path) && await holds(adapter, file.path, expected) &&
 				!pendingRemovals.get(adapter)?.has(file.path)) {
 				options.batch?.add(file.path);
-				await pruneSettingsBackups(host, options.batch ?? new Set([file.path]));
+				await pruneSettingsBackups(host, options.batch ?? new Set([file.path]), undefined, now);
 				return file.path;
 			}
 		}
@@ -209,7 +212,7 @@ export async function writeSettingsBackup(
 	}
 	options.batch?.add(path);
 	if (options.reason) await recordBackupReason(host.app.vault.adapter, dir, device, path, options.reason);
-	await pruneSettingsBackups(host, options.batch ?? new Set([path]));
+	await pruneSettingsBackups(host, options.batch ?? new Set([path]), undefined, now);
 	return path;
 }
 
@@ -221,13 +224,17 @@ export async function writeSettingsBackup(
  *
  * Another device's copies are left alone while it is in use; once it has saved
  * none for {@link IDLE_DEVICE_MS} (a reinstalled phone gets a new name), all
- * but its newest go. Only recognized automatic backup names are considered.
+ * but its newest go. A legacy copy goes {@link LEGACY_EXPIRY_MS} after it was
+ * taken, by this device's clock and whatever else the folder holds: no current
+ * build writes one, so no newer copy would ever replace it, and its newest
+ * would otherwise stay for good. Only recognized automatic backup names are considered.
  * Run before startup adoption as well as after writes/reuse, so upgrades tidy
  * existing copies without needing a new backup. Failure never blocks loading
  * or saving. The cancellation callback stops further removals after unload.
  */
 export async function pruneSettingsBackups(
 	host: SettingsBackupHost, protectedPaths: ReadonlySet<string> = new Set(), isCancelled = () => false,
+	now = Date.now(),
 ): Promise<void> {
 	const { adapter } = host.app.vault;
 	try {
@@ -242,6 +249,8 @@ export async function pruneSettingsBackups(
 			let count = group.filter(file => keep.has(file.path)).length;
 			for (const file of group) {
 				if (count >= KEEP_RECENT) break;
+				// Newest first, so every copy after an expired one has expired too.
+				if (owner === null && now - file.time > LEGACY_EXPIRY_MS) break;
 				if (!keep.has(file.path)) { keep.add(file.path); count++; }
 			}
 		}

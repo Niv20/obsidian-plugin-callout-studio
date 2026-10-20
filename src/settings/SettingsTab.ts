@@ -72,6 +72,12 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 	 * which keeps the cursor session-only exactly as it has always been.
 	 */
 	private paging: Record<RowKind, PagingState> = freshPaging();
+	/**
+	 * Ends this visit's version in device history. Every edit saved between
+	 * opening the tab and leaving it is one version there, the way the paging
+	 * above is one visit's.
+	 */
+	private endVisit: (() => void) | null = null;
 
 	constructor(app: App, plugin: SettingsTabPlugin) {
 		super(app, plugin);
@@ -111,6 +117,7 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		containerEl.addClass("callout-studio-settings");
 		this.sectionDisposers.push(registerMenuScopeHost(containerEl, this.app));
 
+		this.endVisit ??= this.plugin.settingsWriter.openVisit?.() ?? null;
 		this.unsubscribe ??= subscribeSettingsTab(
 			this.app,
 			this.plugin,
@@ -225,6 +232,8 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		// the tab is the reopen it has always been reset by. What it is no
 		// longer reset by is a repaint the reader did not ask for.
 		this.paging = freshPaging();
+		this.endVisit?.();
+		this.endVisit = null;
 		super.hide();
 	}
 

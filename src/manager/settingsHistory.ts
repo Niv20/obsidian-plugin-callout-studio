@@ -21,6 +21,11 @@
  * Each state also carries why it was recorded, which Version history shows as
  * its name. This is an extra field on the stored entry rather than a new
  * store, for the reason above; a build that predates it reads past it.
+ *
+ * A visit to the settings is one version, however many saves it takes: each
+ * edit made during it carries the visit's tag and replaces the state the same
+ * visit recorded before it. Ten small steps would otherwise be the whole
+ * history. The tag is a field too, for the same reason.
  */
 import type { App, PluginManifest } from "obsidian";
 import { canonical, content } from "./syncTree";
@@ -59,8 +64,11 @@ export interface SettingsHistoryEntry {
 }
 
 export interface SettingsHistoryStore {
-	/** Remember `data` as a state this device accepted. Never rejects. */
-	record(data: unknown, reason?: HistoryReason): Promise<void>;
+	/**
+	 * Remember `data` as a state this device accepted. Never rejects. An edit
+	 * with a `visit` replaces the state that visit recorded before it.
+	 */
+	record(data: unknown, reason?: HistoryReason, visit?: string): Promise<void>;
 	/** Every kept state, newest first. */
 	list(): Promise<SettingsHistoryEntry[]>;
 	/** Forget one kept state. Unlike `record`, a failure is reported to the caller. */
@@ -83,6 +91,8 @@ export function historyToKeep(entries: readonly Pick<SettingsHistoryEntry, "hash
 
 interface StoredEntry extends SettingsHistoryEntry {
 	scope: string;
+	/** The settings visit whose latest edit this is; absent outside one. */
+	visit?: string;
 }
 
 /** IndexedDB-backed history for one vault, configuration folder and plugin. */
@@ -100,7 +110,7 @@ export class SettingsHistory implements SettingsHistoryStore {
 		return JSON.stringify([appId, this.app.vault.configDir, this.manifest.id]);
 	}
 
-	record(data: unknown, reason: HistoryReason = "edit"): Promise<void> {
+	record(data: unknown, reason: HistoryReason = "edit", visit?: string): Promise<void> {
 		// Nothing to keep it in; not worth a log line per save.
 		if (typeof indexedDB === "undefined") return Promise.resolve();
 		let entry: StoredEntry;
@@ -109,6 +119,7 @@ export class SettingsHistory implements SettingsHistoryStore {
 			const body = content(data);
 			const text = canonical(body);
 			entry = { scope: this.scope, hash: hash64(text), savedAt: this.now(), bytes: text.length * 2, data: body, reason };
+			if (visit !== undefined && reason === "edit") entry.visit = visit;
 		} catch (error) {
 			console.debug("[callout-studio] could not record settings history", error);
 			return Promise.resolve();
@@ -176,8 +187,9 @@ export class SettingsHistory implements SettingsHistoryStore {
 	}
 
 	/**
-	 * One transaction: add or refresh `entry`, then drop what retention no
-	 * longer keeps. The writes are issued from the read's success callback
+	 * One transaction: add or refresh `entry`, drop the state its visit
+	 * recorded before it, then drop what retention no longer keeps. The
+	 * writes are issued from the read's success callback
 	 * rather than after an `await`: a transaction with no request pending when
 	 * its callbacks return commits, and older WebKit did so before promise
 	 * continuations ran.
@@ -193,8 +205,15 @@ export class SettingsHistory implements SettingsHistoryStore {
 					if (previous.reason === undefined) delete stored.reason;
 					else stored.reason = previous.reason;
 				}
+				// A state kept before this visit is not the visit's to replace,
+				// even when an edit returns to it.
+				if (previous.visit === undefined) delete stored.visit;
+				else stored.visit = previous.visit;
 			}
-			const entries = existing.filter(other => other.hash !== entry.hash);
+			const replaced = entry.visit === undefined ? [] :
+				existing.filter(other => other.visit === entry.visit && other.hash !== entry.hash);
+			for (const other of replaced) store.delete(this.key(other.hash));
+			const entries = existing.filter(other => other.hash !== entry.hash && !replaced.includes(other));
 			entries.push(stored);
 			store.put(stored, this.key(entry.hash));
 			this.dropExcess(store, entries);

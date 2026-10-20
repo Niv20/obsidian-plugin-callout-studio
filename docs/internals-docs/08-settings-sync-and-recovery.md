@@ -84,7 +84,7 @@ The following rules explain the checks that can otherwise look redundant:
 | Normal disk baseline | `SaveGuard` inside `SettingsWriter`, in memory | Canonical contents of the last accepted file/write. It is not a file-existence cache or a cross-device lock. |
 | Committed merge state | `SettingsSync`, in memory and the persisted envelope | Causal history used to distinguish edits, deletions, and stale snapshots. It is not ordered by wall-clock time. |
 | Recovery checkpoint | `CalloutStudioRecovery` IndexedDB database | One independent device-local snapshot, scoped by vault identity, configuration folder, and plugin id. It may survive plugin removal. |
-| Device history | `CalloutStudioHistory` IndexedDB database | This device's ten newest accepted states within a size budget. Same scope as the checkpoint; never synced. |
+| Device history | `CalloutStudioHistory` IndexedDB database | This device's ten newest accepted states within a size budget; a settings visit's edits are one state. Same scope as the checkpoint; never synced. |
 | Recovery backups | `<plugin-dir>/backups/data-<timestamp>-<device>-<hash>.json` | Verified copies taken before particular replacements. These files are inside the vault and can be synced or deleted by a provider. |
 | Prior-use/UI markers | `DeviceLocalStore`, vault-scoped `localStorage` | Evidence that absence should not be treated as a never-used installation; not a source of callout definitions. |
 | Editor form | The open editor's own fields and save session | An unsaved draft. A checkpoint of the registry is not a backup of every form field. |
@@ -549,14 +549,14 @@ not a combined ten-version limit for the window.
 | --- | --- | --- | --- |
 | Purpose | Return to a previously accepted settings state. | Preserve settings before an operation replaces them. | Make an extra settings file left by a sync provider available for review and restoration. |
 | Created by | Callout Studio, through `SettingsHistory`. | Callout Studio, through `writeSettingsBackup()`. | Usually the sync provider; the plugin lists matching sidecar files. |
-| Capture trigger | Each verified primary-file write and each settings file adopted from disk. | Before import, reset, restoration, repair, or adoption that replaces authored settings. | Whenever a provider leaves an extra settings JSON file beside the primary file. |
+| Capture trigger | Each verified primary-file write and each settings file adopted from disk; within a settings visit, each write replaces the visit's previous entry (see [Device history](#device-history)). | Before import, reset, restoration, repair, or adoption that replaces authored settings. | Whenever a provider leaves an extra settings JSON file beside the primary file. |
 | Storage location | Device-local IndexedDB database `CalloutStudioHistory`, outside the vault. | `<plugin-dir>/backups/`. | Beside `<plugin-dir>/data.json`. |
-| Maximum count | The newest **10 distinct states**, subject to the size budget. | Normally **10 per device**; a protected operation batch can temporarily exceed this. Legacy names share a separate pool of 10. | No count limit enforced by the plugin. |
+| Maximum count | The newest **10 distinct states**, subject to the size budget. | Normally **10 per device**; a protected operation batch can temporarily exceed this. Legacy names share a separate pool of 10, and each expires 90 days after it was taken. | No count limit enforced by the plugin. |
 | Separate quota per device? | Yes, scoped by vault identity, configuration folder, and plugin id on this device. | Yes for current backup names; older names cannot identify their device. | No plugin-managed quota. |
 | Size budget | **24 MiB**, estimated as `canonical(content).length * 2`; fewer than 10 may fit. The newest state always stays, even if it alone exceeds the budget. | No folder-wide byte budget. | No plugin-managed byte budget. |
 | Automatically deleted? | Yes, when count or size retention no longer keeps an older state. | Yes, for recognized automatic backup names under the retention rules below. | Never automatically deleted by the plugin. |
 | Cleanup timing | At startup and in the same transaction as every record or refresh. Listing does not prune. | At startup, after a new verified backup, and after reuse of an identical verified backup. | No automatic plugin cleanup. |
-| Age expiry | None. | No fixed expiry for this device's retained copies. Another device can be reduced to its newest copy under the relative **90-day rule** below. | None enforced by the plugin. |
+| Age expiry | None. | No fixed expiry for this device's retained copies. Another device can be reduced to its newest copy under the relative **90-day rule** below. A legacy copy expires 90 days after it was taken, by this device's clock. | None enforced by the plugin. |
 | Identical content | Refreshes the existing hash's timestamp rather than adding another state. | Reuses a matching verified content-hash backup; retention still runs with that copy protected. | Provider behavior determines file creation; the plugin combines identical normalized settings into one timeline row. |
 | Additional daily or weekly copies | None. | None. | Provider-specific; the plugin creates none. |
 | Available on other devices? | No; IndexedDB history is not synced. | Yes, if the provider syncs the plugin's backup directory. | Depends on the provider syncing that file. |
@@ -663,7 +663,15 @@ Import's 1,000-key limit.
   sometimes its own earlier copy from the same adoption.
 - **Only recognized automatic backup names are pruned.** Copies named by 2.14
   and earlier (`data-<timestamp>[-<uuid>].json`) share a separate newest-10 pool,
-  since their names do not identify a device. Only direct children of the backup
+  since their names do not identify a device. Each legacy copy also expires
+  `LEGACY_EXPIRY_MS` (90 days) after the time in its name, newest included,
+  measured against `Date.now()` at startup or the new copy's time after a write.
+  This is the one retention rule that reads the wall clock: no current build
+  adds to the pool, so the relative rules never fire for it, and its copies
+  (whole `data.json` files, sync envelope included) would otherwise stay
+  forever. The accepted cost is a device whose clock runs far ahead deleting
+  them early, for every device the folder syncs to. A clock behind them deletes
+  nothing, and a device still on 2.14 keeps writing fresh ones that last 90 days. Only direct children of the backup
   directory are eligible. Unrecognized user files are never touched. A pruning failure is logged and
   does not invalidate a copy that was already written and verified.
 - **Reasons are recorded separately.** When `pruneSettingsBackups()` deletes this device's
@@ -683,7 +691,8 @@ checks stop further backup removals after timeout or unload. An adapter removal
 already in progress cannot be cancelled, so pending-removal paths cannot be
 reused or overwritten by a later backup. A later startup/write retries cleanup.
 Maintenance never writes the primary or checkpoint. Retention is not an age
-expiry: copies within the newest-ten sets can remain indefinitely. Raw preservation
+expiry, legacy copies aside: current copies within the newest-ten sets can
+remain indefinitely. Raw preservation
 files (`unreadable-*.txt`, `recovery-copy-*.txt`) are outside this filename matcher
 and are never pruned. The folder has no global file-count or byte budget: multiple
 devices, legacy names, protected batches and preservation files make its total
@@ -715,6 +724,24 @@ existing reason (or its absence) while its date still moves; any other reason
 replaces it. The reason is an extra field on the stored value, not a new object
 store: a build that predates it reads past it, and one that records the same hash
 again writes the entry back without it.
+
+A visit to the settings is one version. `CalloutStudioSettingsTab` calls
+`SettingsWriter.openVisit()` on the first `display()` of a visit and the closer it
+returns in `hide()`; while a visit is open, each `edit` the writer records carries
+the visit's tag (`visit`, another extra field on the stored value), and `put()`
+deletes the entry the same visit recorded before it in the same transaction. The
+state from before the visit is untagged, or another visit's, so it is never
+replaced. An entry that already exists keeps its own tag (or its absence) when a
+tagged edit returns to it, so an edit that undoes the visit leaves only the
+earlier state, and the next edit cannot delete that state. The writer starts a
+new tag (seals the version) when the last visit closes, on a `restore` or
+`repair` record, when `adopt()` takes content that differs from what this device
+last wrote (another device's settings; its own file read back is not news), and
+when an edit comes more than 15 minutes (`VISIT_QUIET_MS`) after the visit's
+previous one, so a settings window left open does not merge an afternoon. Visits
+are counted, so two holders cannot end each other's. Edits saved outside a visit
+are one entry each, as before. Saving is unchanged: every edit is still written
+to `data.json` at once; only how history groups those writes differs.
 
 Every record or refresh of an existing hash prunes the scope in the same
 transaction. Startup calls the best-effort `prune()` through `SettingsWriter.pruneHistory()`;

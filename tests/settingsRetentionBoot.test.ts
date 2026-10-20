@@ -31,9 +31,12 @@ function retainedSetup() {
 	return { ...h, retention: state };
 }
 
+/** A month ago: recent enough that no legacy copy has expired yet. */
+const SEEDED_FROM = Date.now() - 30 * 86_400_000;
+
 function seed(h: ReturnType<typeof retainedSetup>, owner: string | null, count: number): string[] {
 	return Array.from({ length: count }, (_, index) => {
-		const time = new Date(Date.UTC(2026, 0, index + 1)).toISOString().replace(/[:.]/g, "-");
+		const time = new Date(SEEDED_FROM + index * 86_400_000).toISOString().replace(/[:.]/g, "-");
 		const suffix = owner === null ? "" : `-${owner}-${index.toString(16).padStart(16, "0")}`;
 		const path = `${DIR}/data-${time}${suffix}.json`;
 		h.files.set(path, JSON.stringify({ version: index }));
