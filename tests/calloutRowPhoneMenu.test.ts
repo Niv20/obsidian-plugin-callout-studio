@@ -48,8 +48,12 @@ const geometryChanges: Array<[string, (h: Harness) => void]> = [
 	}],
 ];
 
+/** On iOS, hiding the keyboard for a sheet takes focus from the web view. */
+const keyboardBlur: [string, (h: Harness) => void] = ["window blur", (h) => h.view.fire("blur")];
+const presentationEffects = [...geometryChanges, keyboardBlur];
+
 describe("phone callout row sheets", () => {
-	for (const [label, change] of geometryChanges) {
+	for (const [label, change] of presentationEffects) {
 		it(`survives ${label} while native presentation is still running`, async (test) => {
 			const h = harness(test);
 			await h.ready();
@@ -71,19 +75,6 @@ describe("phone callout row sheets", () => {
 			assert.equal(h.menu().hideCalls, 0);
 		});
 
-		it(`still cancels a pending phone opening on ${label}`, async (test) => {
-			const h = harness(test);
-			const opening = h.open();
-			await settleMenu();
-			change(h);
-			await opening;
-			assert.equal(h.builds(), 0);
-			h.assertClean();
-			h.release();
-			await h.index.ensureFresh();
-			assert.equal(h.builds(), 0, "counts arriving later cannot revive the cancelled opening");
-		});
-
 		it(`still dismisses a positioned tablet menu on ${label}`, async (test) => {
 			Object.assign(Platform, { isPhone: false, isTablet: true });
 			const h = harness(test);
@@ -93,6 +84,39 @@ describe("phone callout row sheets", () => {
 			assert.equal(h.menu().shown, false);
 			assert.equal(h.menu().hideCalls, 1);
 			h.assertClean();
+		});
+	}
+
+	for (const [label, change] of geometryChanges) {
+		it(`keeps a pending phone opening through ${label}`, async (test) => {
+			const h = harness(test);
+			const opening = h.open();
+			await settleMenu();
+			change(h);
+			assert.equal(h.builds(), 0);
+			h.release();
+			await opening;
+			assert.equal(h.menu().shown, true, "a sheet never depended on where the button was");
+			assert.equal(h.menu().hideCalls, 0);
+		});
+	}
+
+	const pendingCancellations: Array<[string, (h: Harness) => void]> = [
+		keyboardBlur,
+		["a touch elsewhere", (h) => h.document.fire("pointerdown", { target: h.document.body })],
+	];
+	for (const [label, cancel] of pendingCancellations) {
+		it(`still cancels a pending phone opening on ${label}`, async (test) => {
+			const h = harness(test);
+			const opening = h.open();
+			await settleMenu();
+			cancel(h);
+			await opening;
+			assert.equal(h.builds(), 0);
+			h.assertClean();
+			h.release();
+			await h.index.ensureFresh();
+			assert.equal(h.builds(), 0, "counts arriving later cannot revive the cancelled opening");
 		});
 	}
 
@@ -108,7 +132,6 @@ describe("phone callout row sheets", () => {
 		}],
 		["settings disposal", (h) => h.dispose()],
 		["orientation change", (h) => h.view.fire("orientationchange")],
-		["window blur", (h) => h.view.fire("blur")],
 		["page hide", (h) => h.view.fire("pagehide")],
 	];
 	for (const [label, dismiss] of dismissals) {
@@ -124,7 +147,7 @@ describe("phone callout row sheets", () => {
 		});
 	}
 
-	it("switches a cold opening to sheet behavior when its counts become ready", async (test) => {
+	it("keeps a sheet that waited for its counts open through presentation effects", async (test) => {
 		const h = harness(test);
 		const opening = h.open();
 		await settleMenu();
@@ -132,7 +155,7 @@ describe("phone callout row sheets", () => {
 		h.release();
 		await opening;
 		assert.equal(h.menu().shown, true);
-		for (const [, change] of geometryChanges) {
+		for (const [, change] of presentationEffects) {
 			change(h);
 			assert.equal(h.menu().shown, true);
 		}

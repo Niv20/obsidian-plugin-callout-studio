@@ -546,21 +546,32 @@ submenus and unrelated scrollports do not close it. No wheel/touch gesture is
 cancelled, and dismissal never focuses or scrolls the trigger back into view.
 This uses actual scroll movement for mouse, touch, trackpad and keyboard alike,
 including horizontal/RTL scrolling and momentum. Window resize and
-visual-viewport resize/pan also cancel a pending opening or dismiss a desktop
-or tablet popup. A temporary child-list observer detects a detached, reparented
-or moved trigger during incremental list refreshes. The trigger is rechecked
-immediately before showing a delayed menu.
+visual-viewport resize/pan also cancel a pending opening or dismiss an open
+popup on desktop and tablet. A temporary child-list observer detects a
+detached, reparented or moved trigger during incremental list refreshes. The
+trigger is rechecked immediately before showing a delayed menu.
 
-Once `showAtMouseEvent` begins on `Platform.isPhone`, positional changes stop
-dismissing the menu: Obsidian presents a bottom sheet rather than an anchored
-popup. Its phone presentation also requests native keyboard dismissal, which
-can resize/pan the viewport, change ancestor scroll offsets and move the trigger.
-Treating those host-driven changes as cancellation made the sheet disappear
-during opening. The exception starts before the show call, covers subsequent
-layout settling, and applies only to phones, not tablets. Structural removal or
-reparenting of the trigger, orientation changes, blur/pagehide, Settings disposal,
-and a newer menu request still close the sheet. Pending phone menus retain all
-positional cancellation checks.
+On `Platform.isPhone` none of the positional checks exist, for a pending
+opening or a shown menu: Obsidian presents a bottom sheet that ignores the tap
+position, so nothing positional can make it stale. The scroll, resize and
+visual-viewport listeners are not registered, and the trigger is compared by
+structure only, never by its rectangle. A real scroll of the list starts with a
+touch, and that `pointerdown` already cancels a pending opening
+(`prepareUsageMenu`). The phone presentation also hides the keyboard, which
+resizes/pans the viewport and moves the trigger. Earlier the checks were only
+skipped once the sheet was shown, so a sheet still waiting for its counts could
+be cancelled by the keyboard closing under it.
+
+Window blur cancels a pending opening and closes a desktop or tablet popup, but
+not a phone sheet once `showAtMouseEvent` has begun. The phone branch of
+Obsidian's `Menu.showAtPosition` calls Capacitor's `Keyboard.hide()` (only when
+`Platform.isMobileApp`). On iOS that ends editing in the web view, the web view
+gives up first responder, and WebKit blurs the window while the sheet is still
+sliding in; closing on that made the sheet vanish a moment after it opened on a
+real iPhone. Desktop mobile emulation is not `isMobileApp`, never calls
+`Keyboard.hide()`, and cannot reproduce it - check on a device. Structural
+removal or reparenting of the trigger, orientation changes, pagehide, Settings
+disposal and a newer menu request still close the sheet.
 
 Cleanup is idempotent and immediate on explicit dismissal. Obsidian's `Menu`
 unloads its old component lifetime while showing, so the unload cleanup is

@@ -13,11 +13,11 @@ A row shows only the actions that apply to it, and a group with nothing in it le
 
 On desktop and tablet, a callout's three-dot menu closes when you scroll the
 settings list or resize the window. On a phone, Obsidian opens the menu at the
-bottom of the screen; it stays open as the keyboard closes and the page adjusts.
-Rotating the device or leaving Settings closes the menu on every device. You
-can still scroll inside a long menu. Scrolling the settings list also cancels
-a menu that is still waiting to open on any device; it will not appear after
-its row has moved. Open the three-dot menu again when you need it.
+bottom of the screen; it opens and stays open even as the keyboard closes and
+the page adjusts. Rotating the device or leaving Settings closes the menu on
+every device. You can still scroll inside a long menu. Scrolling the settings
+list also cancels a menu that is still waiting to open, on any device. Open the
+three-dot menu again when you need it.
 
 ## Edit a callout
 

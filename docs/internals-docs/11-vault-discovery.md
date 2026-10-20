@@ -222,12 +222,14 @@ Escape/Tab, window blur, Settings hide/redraw or index disposal cancels the
 pending opening; a detached trigger cannot open a delayed menu. Every settlement
 cleans up the temporary resources.
 The settings row's surrounding `openCalloutRowMenu` lifetime remains active
-through this wait and after the menu opens. Pending menus and open desktop/tablet
-popups also cancel on actual ancestor scrolling, viewport resize/pan and a moved
-trigger, including changes between index readiness and the awaiting continuation.
-An open phone sheet lets Obsidian dismiss the keyboard and adjust the page without
-closing for these positional changes. Orientation changes and trigger removal or
-reparenting still dismiss it on every device.
+through this wait and after the menu opens. On desktop and tablet, pending and
+open menus also cancel on actual ancestor scrolling, viewport resize/pan and a
+moved trigger, including changes between index readiness and the awaiting
+continuation. A phone menu is a bottom sheet that ignores the tap position, so it
+has none of these positional checks, pending or open, and once shown it also
+ignores window blur: iOS blurs the window when Obsidian hides the keyboard for
+the sheet. Orientation changes and trigger removal or reparenting still dismiss
+it on every device.
 See [settings menu lifetime](16-settings-ui-and-modals.md#callout-row-menu-lifetime).
 Fast scans show the exact count from the menu's first frame. On timeout, DOM
 menus open with the plain localized **Find callouts** label and observe the existing

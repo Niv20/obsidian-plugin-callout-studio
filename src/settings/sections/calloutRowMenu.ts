@@ -23,7 +23,11 @@ export async function openCalloutRowMenu(
 	lifetime.load();
 	let active = true;
 	let menu: Menu | undefined;
-	let presentingPhoneSheet = false;
+	// Phone menus are bottom sheets that never use the tap position, so on a
+	// phone nothing positional can make one stale, pending or shown. A real
+	// scroll starts with a touch, which already cancels a pending opening.
+	const phoneSheet = Platform.isPhone;
+	let presented = false;
 	const close = (): void => {
 		if (!active) return;
 		active = false;
@@ -33,9 +37,6 @@ export async function openCalloutRowMenu(
 		menu = undefined;
 		lifetime.unload();
 		closingMenu?.hide();
-	};
-	const closeForPositionChange = (): void => {
-		if (!presentingPhoneSheet) close();
 	};
 	// Settings retains its disposers until hide/redraw. Release this session's
 	// DOM/menu references as soon as it closes, even during a long settings visit.
@@ -47,8 +48,6 @@ export async function openCalloutRowMenu(
 	for (let parent = anchor.parentElement; parent; parent = parent.parentElement) {
 		ancestors.push(parent);
 	}
-	const scrollPositions = new Map(ancestors.map((el) =>
-		[el, { x: el.scrollLeft, y: el.scrollTop }] as const));
 	const initialRect = anchor.getBoundingClientRect();
 	const anchorChanged = (): boolean => {
 		if (!anchor.isConnected || anchor.ownerDocument !== doc) return true;
@@ -58,43 +57,50 @@ export async function openCalloutRowMenu(
 			parent = parent.parentElement;
 		}
 		if (parent) return true;
-		if (presentingPhoneSheet) return false;
+		if (phoneSheet) return false;
 		const rect = anchor.getBoundingClientRect();
 		return rect.left !== initialRect.left || rect.top !== initialRect.top ||
 			rect.width !== initialRect.width || rect.height !== initialRect.height;
 	};
-	const onScroll = (scrollEvent: Event): void => {
-		if (presentingPhoneSheet) return;
-		const target = scrollEvent.target === doc
-			? doc.scrollingElement ?? doc.documentElement : scrollEvent.target;
-		const position = scrollPositions.get(target as HTMLElement);
-		if (!position) return;
-		const el = target as HTMLElement;
-		// A scroll queued before the click must not close a freshly opened menu.
-		if (el.scrollLeft !== position.x || el.scrollTop !== position.y) close();
-	};
-	// Capture sees non-bubbling ancestor scrolls. Menu/submenu and sibling
-	// scrollports are absent from the map, so their own scrolling stays usable.
-	lifetime.registerDomEvent(doc, "scroll", onScroll, { capture: true, passive: true });
-	lifetime.registerDomEvent(view, "resize", closeForPositionChange);
 	lifetime.registerDomEvent(view, "orientationchange", close);
-	lifetime.registerDomEvent(view, "blur", close);
+	// Presenting a phone sheet hides the keyboard, and on iOS that takes focus
+	// from the web view: the window blurs while the sheet is still on screen.
+	lifetime.registerDomEvent(view, "blur", () => {
+		if (!phoneSheet || !presented) close();
+	});
 	lifetime.registerDomEvent(view, "pagehide", close);
-	const viewport = view.visualViewport;
-	if (viewport) {
-		const geometry = (): number[] => [viewport.width, viewport.height,
-			viewport.offsetLeft, viewport.offsetTop, viewport.scale];
-		const initialViewport = geometry();
-		const viewportChanged = (): void => {
-			if (geometry().some((value, i) => value !== initialViewport[i])) closeForPositionChange();
+	if (!phoneSheet) {
+		const scrollPositions = new Map(ancestors.map((el) =>
+			[el, { x: el.scrollLeft, y: el.scrollTop }] as const));
+		const onScroll = (scrollEvent: Event): void => {
+			const target = scrollEvent.target === doc
+				? doc.scrollingElement ?? doc.documentElement : scrollEvent.target;
+			const position = scrollPositions.get(target as HTMLElement);
+			if (!position) return;
+			const el = target as HTMLElement;
+			// A scroll queued before the click must not close a freshly opened menu.
+			if (el.scrollLeft !== position.x || el.scrollTop !== position.y) close();
 		};
-		// registerDomEvent has no VisualViewport overload in the Obsidian types.
-		viewport.addEventListener("resize", viewportChanged, { passive: true });
-		viewport.addEventListener("scroll", viewportChanged, { passive: true });
-		lifetime.register(() => {
-			viewport.removeEventListener("resize", viewportChanged);
-			viewport.removeEventListener("scroll", viewportChanged);
-		});
+		// Capture sees non-bubbling ancestor scrolls. Menu/submenu and sibling
+		// scrollports are absent from the map, so their own scrolling stays usable.
+		lifetime.registerDomEvent(doc, "scroll", onScroll, { capture: true, passive: true });
+		lifetime.registerDomEvent(view, "resize", close);
+		const viewport = view.visualViewport;
+		if (viewport) {
+			const geometry = (): number[] => [viewport.width, viewport.height,
+				viewport.offsetLeft, viewport.offsetTop, viewport.scale];
+			const initialViewport = geometry();
+			const viewportChanged = (): void => {
+				if (geometry().some((value, i) => value !== initialViewport[i])) close();
+			};
+			// registerDomEvent has no VisualViewport overload in the Obsidian types.
+			viewport.addEventListener("resize", viewportChanged, { passive: true });
+			viewport.addEventListener("scroll", viewportChanged, { passive: true });
+			lifetime.register(() => {
+				viewport.removeEventListener("resize", viewportChanged);
+				viewport.removeEventListener("scroll", viewportChanged);
+			});
+		}
 	}
 	if (typeof view.MutationObserver === "function") {
 		const observer = new view.MutationObserver(() => {
@@ -119,11 +125,7 @@ export async function openCalloutRowMenu(
 		onMenuHide(openingMenu, hidden);
 		build(openingMenu);
 		if (!active) return;
-		// Phone menus are bottom sheets. Obsidian hides the keyboard while
-		// showing them, which can resize/pan the viewport, scroll ancestors and
-		// move the trigger. Only pending menus and desktop/tablet popups still
-		// depend on that position; structural/lifecycle checks remain armed.
-		presentingPhoneSheet = Platform.isPhone;
+		presented = true;
 		openingMenu.showAtMouseEvent(event);
 		// Showing an Obsidian Menu unloads its previous component lifetime, so
 		// register only AFTER show. hide() unloads immediately (also on phones),

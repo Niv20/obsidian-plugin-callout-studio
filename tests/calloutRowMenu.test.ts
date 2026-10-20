@@ -97,6 +97,7 @@ describe("callout row menu lifetime", () => {
 	const changes: Array<[string, (h: Harness) => void]> = [
 		["window resize", (h) => h.view.fire("resize")],
 		["tablet orientation change", (h) => h.view.fire("orientationchange")],
+		["window blur", (h) => h.view.fire("blur")],
 		["visual viewport resize", (h) => { h.view.visualViewport.height -= 10; h.view.fire("visualViewport:resize"); }],
 		["visual viewport movement", (h) => {
 			Object.assign(h.view.visualViewport, { offsetTop: 10 }); h.view.fire("visualViewport:scroll");
