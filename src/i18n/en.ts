@@ -382,11 +382,8 @@ export const en: Record<string, string> = {
 		"Scan complete: {{count}} new callout type(s) added.",
 	"settings.readOnly":
 		"Callout Studio could not use its settings file when Obsidian started, so nothing on this page is being saved on this device. Your changes will last until you close Obsidian. Reload Obsidian once the file is back — if you sync this vault, let the sync finish first.",
-	"replaceModal.deleteWithoutReplaceSuffix": "(falls back to default)",
-	"replaceModal.titleDelete": "Delete callout",
 	"replaceModal.titleReplace": "Replace in vault",
 	"replaceModal.searchPlaceholder": "Search callouts…",
-	"replaceModal.chooseFirst": "Choose a replacement callout, or “{{delete}}”, to continue.",
 	"replaceModal.chooseFirstReplace": "Choose the callout to replace it with first.",
 
 	// Welcome / splash screen (shown once on first load; reopen via header icon)
@@ -449,7 +446,6 @@ export const en: Record<string, string> = {
 	"settings.language": "Language",
 	"settings.languageDesc":
 		"Display language for Callout Studio. Defaults to Obsidian's interface language.",
-	"settings.languageAuto": "Automatic",
 
 	// Downloadable translations. English is built in; every other language is
 	// fetched the first time it is needed and kept for later.
@@ -910,6 +906,11 @@ export const en: Record<string, string> = {
 	"noteChanges.changeMainId": 'The main ID changes from "{{oldId}}" to "{{newId}}".',
 	"noteChanges.changeName": 'You changed the display name from "{{old}}" to "{{new}}".',
 	"noteChanges.changeRemoved": 'You removed the ID "{{id}}".',
+	// Several removed ids share one line, listed after the colon.
+	"noteChanges.changeRemovedMany": "You removed these IDs: {{ids}}.",
+	// The same lines when a built-in's Reset to default asks the question.
+	"noteChanges.changeResetRemoved": 'Reset to default removes the ID "{{id}}" that you added.',
+	"noteChanges.changeResetRemovedMany": "Reset to default removes the IDs you added: {{ids}}.",
 	"noteChanges.changeFold": "You changed how this callout folds.",
 	// …then how many callouts they reach, before the question…
 	"noteChanges.affects": "This affects {{callouts}} in {{notes}}.",
@@ -954,11 +955,13 @@ export const en: Record<string, string> = {
 		'Another palette is already written "{{key}}" in callout metadata. Choose a different name.',
 	"palette.metadataNameShared":
 		"In callout metadata: {{key}}. Another saved palette has this word too, so only one of them answers to it.",
-	"palette.renameNotesTitle": "Update your notes?",
-	"palette.renameNotesBody":
-		'{{count}} callouts in {{files}} notes use this palette as "{{old}}".\nChange them to "{{new}}"?\nIf you don\'t, they go back to their own color.',
-	"palette.renameNotesConfirm": "Update notes",
-	"palette.renameNotesSkip": "Leave them",
+	// The palette editor's "Update your notes?" (its title, count, question and
+	// answer titles are the callout editor's noteChanges.* strings): the change…
+	"palette.renameNotesChange":
+		'You renamed the palette from "{{old}}" to "{{new}}", so its word in callout metadata changes from "{{oldWord}}" to "{{newWord}}".',
+	// …and what each answer does to the callouts written with the old word.
+	"palette.renameNotesLeaveDesc": 'They keep "{{word}}" and go back to their own color.',
+	"palette.renameNotesChangeDesc": "Every |{{old}} in your notes becomes |{{new}}.",
 	"palette.renameNotesFailed":
 		"Some notes could not be updated. The ones that were are saved; the rest still use the old name.",
 	"palette.baseColor": "Base color",
@@ -1088,13 +1091,8 @@ export const en: Record<string, string> = {
 	"iconPicker.customRecolor": "Follow callout color",
 	"iconPicker.allSources": "All sources",
 	"iconPicker.searchAllSources": "Search all icon sources",
-	"iconPicker.sourcesNotDownloaded":
-		"Not included yet: {{names}}. Pick a source above to download it.",
 	"iconPicker.chooseSource": "Choose source",
 	"iconPicker.sourceGroup": "{{name}} ({{count}})",
-	// No longer drawn: the source menu lists only libraries on the device, so
-	// no row needs the badge. Kept because every locale carries it.
-	"iconPicker.notDownloaded": "Not downloaded",
 	// The Manage icon libraries window's band headings; the source menu used
 	// them too until it stopped listing libraries to download.
 	"iconPicker.librariesAvailable": "Available libraries",
@@ -1359,7 +1357,6 @@ export const en: Record<string, string> = {
 	"confirm.titleDiscardRecoveryCopy": "Discard recovery copy",
 	"confirm.discardRecoveryCopy":
 		"This device's recovery copy can't be read, so saving is paused on this device. An exact copy of it is saved to the plugin's backups folder first. It is then replaced with the setup shown here. Your settings file is not changed.",
-	"confirm.titleResetCallout": "Reset callout",
 	"confirm.titleDeletePalette": "Delete palette",
 	"confirm.titleDeleteImage": "Delete image",
 	"confirm.titleDeleteLibrary": "Delete icon library",
@@ -1384,8 +1381,6 @@ export const en: Record<string, string> = {
 		"Updated {{count}} callout title(s) in vault files: {{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated": "Updated the fold mark of {{count}} callout(s) in vault files.",
 	"vault.replaceWith": "Replace with:",
-	"vault.deleteWithout": "Delete without replacing",
-	"vault.confirmDelete": "Confirm",
 	"vault.confirmReplace": "Replace",
 	"vault.undoRewrite": "Undo",
 	"vault.undoRestored": "Restored {{count}} note(s).",
@@ -1398,9 +1393,8 @@ export const en: Record<string, string> = {
 		"No other callouts are available to replace this one.",
 	"vault.convertedToPlainText":
 		"Converted {{blocks}} callout block(s) in {{files}} file(s) to plain text.",
-	"vault.resetAliasWarning":
-		"{{count}} reference(s) in {{files}} file(s) use custom alias(es): {{aliases}}. These will stop working after reset. Continue?",
-	"vault.resetConfirm": "Reset",
+	"vault.resetNotesFailed":
+		"Some notes could not be updated, so the callout was not reset. Choose Reset to default again to finish.",
 
 	// Vault statistics modal
 	"vaultStats.columnType": "Type",

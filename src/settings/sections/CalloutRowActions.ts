@@ -6,14 +6,12 @@
  * describes: Find callouts; Replace in vault and Convert uses to plain text;
  * the callout's own definition; Delete. User rows offer Duplicate, Use default
  * fallback style and Delete there; built-in rows offer Reset to default, never
- * Delete. The flows behind them live next door in `calloutVaultActions.ts` —
- * this file decides which items a row is offered. Menu counts come from the
+ * Delete. The flows behind them live next door — `calloutVaultActions.ts`,
+ * `builtInResetAction.ts` — and this file decides which items a row is offered. Menu counts come from the
  * read-only occurrence index; the actions still count current contents before
  * they ask anything.
  */
 import type { Menu } from "obsidian";
-import { ConfirmModal } from "../../utils/ConfirmModal";
-import { countCalloutUsages } from "../../utils/vaultCalloutScanner";
 import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
@@ -23,6 +21,7 @@ import { openCalloutRowMenu } from "./calloutRowMenu";
 import { addDuplicateItem } from "./duplicateCallout";
 import { applyDefaultFallbackStyle } from "./fallbackStyleAction";
 import { ROW_MENU_SECTION } from "./rowMenuSections";
+import { handleBuiltInReset } from "./builtInResetAction";
 
 export async function openBuiltInRowMenu(
 	ctx: SettingsSectionContext,
@@ -94,43 +93,4 @@ export function buildUserRowMenu(
 	}
 
 	addDeleteItem(menu, ctx, def);
-}
-
-async function handleBuiltInReset(
-	ctx: SettingsSectionContext,
-	def: CalloutDefinition,
-): Promise<void> {
-	const original = ctx.plugin.registry.getBuiltInDefault(def.id);
-	if (original) {
-		const currentAliases = def.aliases ?? [];
-		const originalAliasSet = new Set(
-			(original.aliases ?? []).map((a) => a.toLowerCase()),
-		);
-		const customAliases = currentAliases.filter(
-			(a) => !originalAliasSet.has(a.toLowerCase()),
-		);
-
-		if (customAliases.length > 0) {
-			const { fileCount, totalCount } = await countCalloutUsages(
-				ctx.app,
-				ctx.plugin.registry.vaultIdFormsFor(def, customAliases),
-			);
-			if (fileCount > 0) {
-				const confirmed = await new ConfirmModal(
-					ctx.app,
-					t("confirm.titleResetCallout"),
-					t("vault.resetAliasWarning", {
-						count: String(totalCount),
-						files: String(fileCount),
-						aliases: customAliases.join(", "),
-					}),
-					t("vault.resetConfirm"),
-				).confirm();
-				if (!confirmed) return;
-			}
-		}
-	}
-
-	ctx.plugin.registry.resetBuiltIn(def.id);
-	ctx.display();
 }

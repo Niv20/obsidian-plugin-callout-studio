@@ -246,7 +246,6 @@ export async function handleCalloutReplace(
 			: t("vault.replacePromptUnused", { name: def.displayName });
 
 	const result = await new ReplaceCalloutModal(ctx.app, {
-		mode: "replace",
 		message,
 		availableCallouts: otherCallouts,
 		registry: ctx.plugin.registry,

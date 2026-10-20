@@ -193,7 +193,7 @@ describe("icon library menu headings", () => {
 			const listed = h.menu.querySelectorAll(".cs-source-name").map((name) => name.textContent);
 			assert.deepEqual(listed, ["all", ...SOME_TO_DOWNLOAD.libraries].map((id) => label(id as PickerSourceId)));
 			assert.ok(!listed.includes(label("tabler")) && !listed.includes(label("octicons")));
-			assert.equal(h.menu.textContent.includes(t("iconPicker.notDownloaded")), false);
+			assert.equal(/not downloaded/i.test(h.menu.textContent), false);
 			assert.equal(headings(h.menu).includes(t("iconPicker.librariesToDownload")), false);
 			assert.equal(headings(h.menu).includes(t("iconPicker.librariesAvailable")), false);
 		} finally { h.destroy(); }

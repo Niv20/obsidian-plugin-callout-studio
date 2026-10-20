@@ -24,9 +24,10 @@
  * - **A card** (no `onActivate`) — the box alone: no role, no focus stop, no
  *   chevron, no listeners. The plugin import window builds its two options on
  *   it, and adds what is its own to say — a radio dot, a button, a text box
- *   (pluginImport/pluginImportViews.ts). The callout editor's "Update your
- *   notes?" question builds its answers the same way, without the icon tile,
- *   some with a callout picker (settings/editor/NoteChangesModal.ts).
+ *   (pluginImport/pluginImportViews.ts). Both "Update your notes?" questions
+ *   build their answers the same way, without the icon tile
+ *   (settings/noteQuestion.ts); the callout editor's adds an id picker to one
+ *   (settings/editor/NoteChangesModal.ts).
  *   {@link addOptionRadio} is the dot both of them use and
  *   {@link paintOptionRadio} how both of them show which card is chosen. A
  *   card's own control — the import's Upload button, the question's picker —

@@ -370,8 +370,9 @@ counts never authorize destructive operations. A statistics refresh never calls
 **Undo.** `rewriteVaultFiles` takes an optional `NoteRewriteJournal`
 (`utils/noteRewriteUndo.ts`), which records each note's text before and after,
 once its write has succeeded. **Replace in vault**, **Convert uses to plain
-text**, a renamed palette's **Update notes** and the callout editor's Save,
-when its **Update your notes?** answers chose a rewrite, pass one and end with
+text**, the callout editor's and palette editor's Save and a built-in's
+**Reset to default**, when their **Update your notes?** answer chose a
+rewrite, pass one and end with
 `noticeWithUndo` (`settings/rewriteUndoNotice.ts`): a notice with an **Undo**
 link.
 
@@ -664,8 +665,10 @@ a plain yes/no `ConfirmModal`.
 Which rows offer Delete is `deleteRemovesRow` (`rowOwnership.ts`): neither a
 built-in nor an id the active theme names, since something outside the plugin
 keeps declaring those and the row would come straight back. Built-ins get
-**Reset to default** instead (`handleBuiltInReset`, which warns before
-dropping custom aliases still in vault use).
+**Reset to default** instead (`handleBuiltInReset` in
+`settings/sections/builtInResetAction.ts`). When notes use an alias the user
+added, it asks **Update your notes?** first, as the editor's Save does, and
+rewrites those notes before resetting when the answer is Change.
 
 `handleCalloutDelete` (`settings/sections/calloutVaultActions.ts`), end to end:
 

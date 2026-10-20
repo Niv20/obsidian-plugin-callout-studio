@@ -29,6 +29,13 @@ When you customize one of Obsidian's thirteen built-in callouts, small return ar
 
 Resetting **Callout IDs** restores Obsidian's original ID and aliases. Custom aliases it removes leave the callout when you save; if your notes use them, Callout Studio asks what should happen to those notes first, as for any ID you remove. If another callout already uses one of the original aliases, the draft stays unchanged and the IDs field shows the conflict.
 
+**Reset to default** in the three-dot menu removes the IDs you added, too. If your notes use one, it first opens **Update your notes?**:
+
+- **Leave them as they are** is chosen when the window opens. Your notes don't change. Callouts written with an ID you added fall back to the default style.
+- **Change them to** rewrites them to one of the built-in callout's own IDs and offers **Undo**.
+
+The window's **Reset to default** button resets the callout with your answer. **Cancel** changes nothing.
+
 ## Remove, rename or move an ID
 
 Saving never changes your notes behind your back. When a change you made in the editor touches callouts already in your notes, **Save changes** first opens **Update your notes?**. It lists what you changed, such as an ID you removed, or a new display name that changes the callout's main ID with it. It then says how many callouts in how many notes this affects, and asks one question about all of it:

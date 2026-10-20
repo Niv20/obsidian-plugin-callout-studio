@@ -10,18 +10,18 @@ import { setImmediate } from "node:timers/promises";
 import type { App } from "obsidian";
 import { t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import { ReplaceCalloutModal, type DeleteAction } from "../src/utils/ReplaceCalloutModal";
+import { ReplaceCalloutModal, type ReplaceChoice } from "../src/utils/ReplaceCalloutModal";
 import { fakeDom, type FakeElement } from "./support/fakeDom";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";
 import { Notice } from "./support/obsidianStub";
 
-function open(mode: "replace" | "delete") {
+function open() {
 	fakeDom.light();
 	const registry = new CalloutRegistry();
 	registry.load(null);
 	const app = { keymap: new TestKeymap(), scope: new TestScope() } as unknown as App;
 	const modal = new ReplaceCalloutModal(app, {
-		mode, message: "", registry,
+		message: "", registry,
 		availableCallouts: registry.getAll().filter((def) => def.id !== "note"),
 	});
 	const containerEl = fakeDom.document.body.createDiv({ cls: "modal-container" });
@@ -34,7 +34,7 @@ function open(mode: "replace" | "delete") {
 		open: () => modal.onOpen(),
 		close: () => modal.onClose(),
 	});
-	let answer: DeleteAction | undefined;
+	let answer: ReplaceChoice | undefined;
 	void modal.prompt().then((result) => { answer = result; });
 	const confirm = (): FakeElement => {
 		const buttons = modalEl.querySelectorAll(".cs-modal-footer button");
@@ -51,7 +51,7 @@ function open(mode: "replace" | "delete") {
 
 describe("the replacement picker", () => {
 	it("chooses the top row on Enter but leaves confirming to the button", async () => {
-		const h = open("replace");
+		const h = open();
 		try {
 			h.search().fire("keydown", { type: "keydown", key: "Enter", preventDefault: () => {} });
 			await setImmediate();
@@ -66,33 +66,51 @@ describe("the replacement picker", () => {
 		} finally { h.close(); }
 	});
 
-	for (const mode of ["replace", "delete"] as const) {
-		it(`dims its ${mode} button until a row is chosen, and says what to choose when it is pressed`, async () => {
-			const h = open(mode);
-			try {
-				assert.equal(h.confirm().getAttribute("aria-disabled"), "true");
-				assert.equal(h.confirm().hasClass("cs-btn-disabled"), true);
-				h.confirm().fire("click");
-				await setImmediate();
-				assert.equal(h.answer(), undefined, "a dimmed button must not confirm");
-				// Only delete mode offers "delete without replacing", so only it names it.
-				assert.equal(String(Notice.last?.message), mode === "replace"
-					? t("replaceModal.chooseFirstReplace")
-					: t("replaceModal.chooseFirst", { delete: t("vault.deleteWithout") }));
-				h.search().fire("keydown", { type: "keydown", key: "Enter", preventDefault: () => {} });
-				assert.equal(h.confirm().getAttribute("aria-disabled"), "false");
-				assert.equal(h.confirm().hasClass("cs-btn-disabled"), false);
-			} finally { h.close(); }
-		});
-	}
+	it("dims its button until a row is chosen, and says what to choose when it is pressed", async () => {
+		const h = open();
+		try {
+			assert.equal(h.confirm().getAttribute("aria-disabled"), "true");
+			assert.equal(h.confirm().hasClass("cs-btn-disabled"), true);
+			h.confirm().fire("click");
+			await setImmediate();
+			assert.equal(h.answer(), undefined, "a dimmed button must not confirm");
+			assert.equal(String(Notice.last?.message), t("replaceModal.chooseFirstReplace"));
+			h.search().fire("keydown", { type: "keydown", key: "Enter", preventDefault: () => {} });
+			assert.equal(h.confirm().getAttribute("aria-disabled"), "false");
+			assert.equal(h.confirm().hasClass("cs-btn-disabled"), false);
+		} finally { h.close(); }
+	});
 
-	for (const mode of ["replace", "delete"] as const) {
-		it(`marks its ${mode} button as destructive`, () => {
-			const h = open(mode);
-			try {
-				assert.ok(h.confirm().hasClass("mod-warning"));
-				assert.ok(!h.confirm().hasClass("mod-cta"));
-			} finally { h.close(); }
-		});
-	}
+	it("marks its button as destructive", () => {
+		const h = open();
+		try {
+			assert.ok(h.confirm().hasClass("mod-warning"));
+			assert.ok(!h.confirm().hasClass("mod-cta"));
+		} finally { h.close(); }
+	});
+
+	it("lists only callouts: nothing to delete here", () => {
+		const h = open();
+		try {
+			const rows = h.contentEl.querySelectorAll(".callout-studio-replace-item");
+			assert.ok(rows.length > 0);
+			for (const row of rows) assert.ok(row.querySelector(".callout-studio-replace-item-id"), "a row that is not a callout");
+		} finally { h.close(); }
+	});
+
+	it("walks the list with the arrows from nothing chosen", () => {
+		const h = open();
+		try {
+			const key = (name: string) => h.search().fire("keydown", { type: "keydown", key: name, preventDefault: () => {} });
+			const chosenId = () => h.contentEl.querySelector(".callout-studio-replace-item.is-selected .callout-studio-replace-item-id")?.textContent;
+			const ids = h.contentEl.querySelectorAll(".callout-studio-replace-item-id").map((el) => el.textContent);
+			key("ArrowDown");
+			assert.equal(chosenId(), ids[0]);
+			key("ArrowDown");
+			assert.equal(chosenId(), ids[1]);
+			key("ArrowUp");
+			key("ArrowUp");
+			assert.equal(chosenId(), ids[0], "stops at the top");
+		} finally { h.close(); }
+	});
 });

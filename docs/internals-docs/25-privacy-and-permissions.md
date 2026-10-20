@@ -7,7 +7,7 @@ Callout Studio never sends your vault content anywhere and collects no telemetry
 Callout Studio asks for a small number of permissions, and all of them stay local to your machine:
 
 - **Vault file enumeration.** The plugin reads note contents through Obsidian's APIs for **Scan for callouts**, callout statistics, **Replace in vault**, **Convert to plain text**, **Convert to standard Markdown**, and warnings about deleting a type that is still in use. It uses that content locally and never sends it anywhere. Statistics, the occurrences sidebar and usage menus share a lazy, in-memory index of Markdown, preferring current editor text for open notes. After the first usage request, vault and editor changes refresh affected entries; there is no unconditional startup scan. Source positions, excerpts and counts are discarded when the plugin unloads and never register callout types or enter plugin settings.
-- **Vault file modification.** The plugin writes to notes only when you run **Replace in vault**, **Convert to plain text**, **Convert to standard Markdown**, or a wrap/unwrap command, or when you choose to change them in the callout editor's **Update your notes?** window (asked before saving a removed ID or a new name that notes use). It does not rewrite notes in the background.
+- **Vault file modification.** The plugin writes to notes only when you run **Replace in vault**, **Convert to plain text**, **Convert to standard Markdown**, or a wrap/unwrap command, or when you choose to change them in an **Update your notes?** window: the callout editor asks it before saving a removed ID or a new name that notes use, the palette editor before saving a palette under a new name whose old word notes use, and a built-in's **Reset to default** before removing IDs you added that notes use. It does not rewrite notes in the background.
 - **Clipboard access**, narrowly: the **Copy callout Markdown**, **Copy heading section** and **Cut heading section** actions write to your clipboard when you click them. The callout ID/alias input field can read a pasted block of comma- or space-separated text so you can paste several IDs at once. The Callout Manager importer reads your clipboard only when you press its **Paste** button, and puts what it read in its text box for you to see; you can also paste into that box yourself. The clipboard is never read at any other time.
 
 No vault content, clipboard data, or usage information is ever transmitted off your device.
@@ -86,7 +86,7 @@ These pictures live in the plugin's own data file alongside the rest of your set
   **Version history**; the file syncs like the backups do.
 - **The most recent note rewrite**, kept only in memory for **Undo** after
   replacing callouts, converting a type's uses to plain text, or changing notes
-  from the callout editor's **Update your notes?** window. The journal
+  from an **Update your notes?** window. The journal
   holds note paths and their before/after text within a size budget; it creates
   no file and sends no note content anywhere.
 - **Artwork for icons in use**, plus your uploaded pictures, inside the plugin's data file. This keeps callouts rendering on a device that synced settings without downloading the original source.

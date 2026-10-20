@@ -39,10 +39,13 @@ import { focusFirstRevealed, renderPagedList } from "./listPaging";
 import type { PagingState } from "./listPaging";
 import { headingWithCount } from "../../ui/headingCount";
 import {
+	applyMetadataRename,
+	askMetadataRename,
 	isBuiltInColorWord,
 	isStylingWord,
-	offerMetadataRename,
 	ownedMetadataKey,
+	renamedMetadataWords,
+	type MetadataRename,
 } from "./paletteMetadataRename";
 
 export function renderCustomPalettesSection(
@@ -110,14 +113,29 @@ export function renderCustomPalettesSection(
 	const paging: PagingState = { expanded: false };
 
 	const editPalette = async (palette: CustomPalette): Promise<void> => {
+		// A new name is a new metadata word. What the notes still using the old
+		// one should do is asked by the editor's Save, before anything is saved,
+		// so the question's Cancel goes back to the editor.
+		const asked: { rename: MetadataRename | null } = { rename: null };
 		const result = await new PaletteEditorModal(ctx.plugin, {
 			existing: palette,
 			takenNames: takenNamesExcept(palette.id),
 			takenColors: othersExcept(palette.id),
+			beforeSave: async (draft, stillOpen) => {
+				const answer = await askMetadataRename({
+					app: ctx.app,
+					name: { from: palette.name, to: draft.name },
+					word: renamedMetadataWords(ctx.plugin.settings.customPalettes, palette.id, draft.name, reservedWords()),
+					sharedWord: (word) =>
+						isBuiltInColorWord(word) ||
+						isStylingWord(word, ctx.plugin.cssInjector.metadataCatalog.sourcesNow()),
+					stillWanted: stillOpen,
+				});
+				asked.rename = answer?.rewrite ?? null;
+				return answer !== null;
+			},
 		}).openAndWait();
 		if (!result) return;
-		// Read before the edit lands: the word the notes know this palette by.
-		const oldMetadataKey = ownedMetadataKey(ctx.plugin.settings.customPalettes, palette.id, reservedWords());
 		Object.assign(palette, result);
 		// Object.assign never removes keys: when the edit switched the palette
 		// to another background style, the absent bgGradient must still clear
@@ -143,15 +161,7 @@ export function renderCustomPalettesSection(
 		);
 		await ctx.plugin.saveSettings();
 		renderList();
-		// A new name is a new metadata word; offer to carry the notes along.
-		await offerMetadataRename(
-			ctx.app,
-			oldMetadataKey,
-			ownedMetadataKey(ctx.plugin.settings.customPalettes, palette.id, reservedWords()),
-			(word) =>
-				isBuiltInColorWord(word) ||
-				isStylingWord(word, ctx.plugin.cssInjector.metadataCatalog.sourcesNow()),
-		);
+		if (asked.rename) await applyMetadataRename(ctx.app, asked.rename);
 	};
 
 	const deletePalette = async (palette: CustomPalette): Promise<void> => {

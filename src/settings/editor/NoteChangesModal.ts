@@ -20,11 +20,11 @@
  *   └──────────────────────────────────────────────────────────────┘
  *
  * One question for everything Save would change (see noteChangeQuestion.ts
- * for what is listed): the changes — one line, or a list when there are
+ * for what is listed), in the frame the palette editor's question shares
+ * (../noteQuestion.ts): the changes — one line, or a list when there are
  * several — then how many callouts they reach and the question, then two
- * answers drawn as the import window draws its options, on the same card, dot
- * and painting (../optionBox.ts). **Leave them as they are** comes first and is
- * chosen on opening: no note changes unless the user picks Change. Change
+ * answer cards. **Leave them as they are** comes first and is chosen on
+ * opening: no note changes unless the user picks Change. Change
  * offers only this callout's own ids; giving an id to another callout is that
  * callout's **move it here** (./idMoves.ts). With more than one id to pick
  * from, the dropdown sits at the card's trailing edge, before the dot, where
@@ -32,15 +32,18 @@
  *
  * Cancel, Escape or the close button go back to the editor with nothing saved;
  * only Save changes saves, with the answer showing.
+ *
+ * A built-in's **Reset to default** asks the same question about the ids it
+ * takes off the callout (../sections/builtInResetAction.ts), in its own words
+ * for them and with its own button — `action`.
  */
 import { Modal, type App } from "obsidian";
 import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
 import { SelectDropdown } from "../../ui/selectDropdown";
 import { calloutIdentity } from "../../utils/calloutId";
-import type { NoteTally } from "../../utils/idNoteStats";
 import { applyModalChrome } from "../modalChrome";
-import { addOptionRadio, optionBoxId, paintOptionRadio, renderOptionBox, renderOptionList } from "../optionBox";
+import { renderNoteQuestion, type NoteQuestion } from "../noteQuestion";
 import type { FoldMark, NoteChoices, PendingNoteChanges } from "./noteChanges";
 import { choicesFor, type NoteChangeQuestion } from "./noteChangeQuestion";
 
@@ -49,6 +52,17 @@ export interface NoteChangesModalInput {
 	pending: PendingNoteChanges;
 	/** The callout as Save will leave it: its ids are what Change offers. */
 	saved: CalloutDefinition;
+	/**
+	 * When the question stands before something other than the editor's Save:
+	 * how the removed ids are said (see removedIdsLine), and the button that
+	 * goes ahead.
+	 */
+	action?: { removed: (ids: readonly string[]) => string; confirm: string };
+}
+
+/** Removed ids in one line: one quoted in `one`, several listed after `many`'s colon. */
+export function removedIdsLine(ids: readonly string[], one: string, many: string): string {
+	return ids.length === 1 ? t(one, { id: ids[0]! }) : t(many, { ids: ids.join(", ") });
 }
 
 /** The label the fold setting wears in the editor. */
@@ -57,37 +71,8 @@ function foldLabel(mark: FoldMark): string {
 	return mark === "-" ? t("editor.foldClosed") : t("editor.foldOpen");
 }
 
-/** "3 callouts" and "1 note", for the `{{callouts}} in {{notes}}` of the count. */
-function counted(tally: NoteTally): { callouts: string; notes: string } {
-	const files = tally.files.size;
-	return {
-		callouts: tally.count === 1 ? t("noteChanges.calloutsOne") : t("noteChanges.callouts", { count: tally.count }),
-		notes: files === 1 ? t("noteChanges.notesOne") : t("noteChanges.notes", { count: files }),
-	};
-}
-
-/**
- * How many callouts the changes reach, then the question on a line of its own
- * — about that one callout, or about those, which is also how it is asked
- * when the notes could not be counted.
- */
-function asked(affected: NoteTally | null): string {
-	const count = affected ? t("noteChanges.affects", counted(affected)) : t("noteChanges.affectsUnknown");
-	const question = affected?.count === 1 ? t("noteChanges.askCallout") : t("noteChanges.askCallouts");
-	return `${count}\n${question}`;
-}
-
-/** Each `\n` of the text starts a new line of it. */
-function writeLines(el: HTMLElement, text: string): void {
-	el.empty();
-	text.split("\n").forEach((line, i) => {
-		if (i > 0) el.createEl("br");
-		el.appendText(line);
-	});
-}
-
 /** One line per change Save would make to the notes, the main id's first. */
-function changeLines(question: NoteChangeQuestion, pending: PendingNoteChanges, saved: CalloutDefinition): string[] {
+function changeLines({ question, pending, saved, action }: NoteChangesModalInput): string[] {
 	const lines: string[] = [];
 	const main = question.ids.find(({ leaving }) => leaving.wasPrimary);
 	if (main) {
@@ -98,8 +83,11 @@ function changeLines(question: NoteChangeQuestion, pending: PendingNoteChanges, 
 	} else if (question.name) {
 		lines.push(t("noteChanges.changeName", { old: question.name.from, new: question.name.to }));
 	}
-	for (const { leaving } of question.ids) {
-		if (!leaving.wasPrimary) lines.push(t("noteChanges.changeRemoved", { id: leaving.id }));
+	const removed = question.ids.filter(({ leaving }) => !leaving.wasPrimary).map(({ leaving }) => leaving.id);
+	if (removed.length > 0) {
+		lines.push(action
+			? action.removed(removed)
+			: removedIdsLine(removed, "noteChanges.changeRemoved", "noteChanges.changeRemovedMany"));
 	}
 	if (question.fold !== null) lines.push(t("noteChanges.changeFold"));
 	return lines;
@@ -121,8 +109,6 @@ export class NoteChangesModal extends Modal {
 	private settled = false;
 	/** The id Change sends the notes to; null while Leave is chosen. */
 	private to: string | null = null;
-	/** Each answer card's own repaint, run after every choice. */
-	private readonly paints: Array<() => void> = [];
 	private dropdown: SelectDropdown | null = null;
 
 	constructor(app: App, private readonly input: NoteChangesModalInput) {
@@ -139,30 +125,16 @@ export class NoteChangesModal extends Modal {
 	onOpen(): void {
 		const footer = applyModalChrome(this, { footer: true });
 		this.setTitle(t("noteChanges.title"));
-		const { question, pending, saved } = this.input;
-		const el = this.contentEl;
-
-		const changes = changeLines(question, pending, saved);
-		if (changes.length === 1) {
-			el.createEl("p", { cls: "cs-note-change-line", text: changes[0] });
-		} else {
-			const listEl = el.createEl("ul", { cls: "cs-note-change-list" });
-			for (const line of changes) listEl.createEl("li", { text: line });
-		}
-		const askId = optionBoxId("note-change");
-		writeLines(el.createEl("p", { cls: "cs-note-change-line", attr: { id: askId } }), asked(question.affected));
-
-		const list = renderOptionList(el);
-		list.setAttribute("role", "radiogroup");
-		list.setAttribute("aria-labelledby", askId);
-		this.renderLeave(list);
-		this.renderChange(list);
-
-		footer.createEl("button", { text: t("editor.cancel") })
-			.addEventListener("click", () => this.finish(false));
-		footer.createEl("button", { text: t("editor.saveChanges"), cls: "mod-cta" })
-			.addEventListener("click", () => this.finish(true));
-		this.repaint();
+		const { affected } = this.input.question;
+		const ask = renderNoteQuestion(this.contentEl, footer, {
+			changes: changeLines(this.input),
+			reach: affected ? { callouts: affected.count, notes: affected.files.size } : null,
+			finish: (save) => this.finish(save),
+			confirm: this.input.action?.confirm,
+		});
+		this.renderLeave(ask);
+		this.renderChange(ask);
+		ask.repaint();
 	}
 
 	onClose(): void {
@@ -181,32 +153,14 @@ export class NoteChangesModal extends Modal {
 		this.close();
 	}
 
-	private repaint(): void {
-		for (const paint of this.paints) paint();
-	}
-
-	/** One answer card. */
-	private answer(list: HTMLElement, spec: { title: string; desc: string; isChosen: () => boolean; choose: () => void }) {
-		const box = renderOptionBox(list, { title: spec.title, desc: spec.desc });
-		const radio = addOptionRadio(box, () => {
-			spec.choose();
-			this.repaint();
-		});
-		this.paints.push(() => {
-			const chosen = spec.isChosen();
-			paintOptionRadio(box, radio, { chosen, choosable: !chosen, enabled: true });
-		});
-		return { box, radio };
-	}
-
-	private renderLeave(list: HTMLElement): void {
+	private renderLeave(ask: NoteQuestion): void {
 		const { ids, name } = this.input.question;
 		let desc: string;
 		if (ids.length === 1) desc = t("noteChanges.leaveDesc", { id: ids[0]!.leaving.id });
 		else if (ids.length > 1) desc = t("noteChanges.leaveManyDesc");
 		else if (name) desc = t("noteChanges.titlesLeaveDesc", { old: name.from });
 		else desc = t("noteChanges.foldLeaveDesc");
-		this.answer(list, {
+		ask.answer({
 			title: t("noteChanges.leave"),
 			desc,
 			isChosen: () => this.to === null,
@@ -214,12 +168,12 @@ export class NoteChangesModal extends Modal {
 		});
 	}
 
-	private renderChange(list: HTMLElement): void {
+	private renderChange(ask: NoteQuestion): void {
 		const { question, pending, saved } = this.input;
 		const { ids, name, fold } = question;
 		// Nothing to rewrite: only titles or fold marks would change.
 		if (ids.length === 0) {
-			this.answer(list, {
+			ask.answer({
 				title: name ? t("noteChanges.titlesChange", { new: name.to }) : t("noteChanges.foldChange", { state: foldLabel(fold ?? "") }),
 				desc: name ? t("noteChanges.titlesChangeDesc", { old: name.from, new: name.to }) : t("noteChanges.foldChangeDesc"),
 				isChosen: () => this.to !== null,
@@ -239,7 +193,7 @@ export class NoteChangesModal extends Modal {
 		};
 		const choices = ownIds(saved);
 		let picked = saved.id;
-		const card = this.answer(list, {
+		const card = ask.answer({
 			title: choices.length > 1 ? t("noteChanges.changeTo") : t("noteChanges.renameChange", { id: saved.id }),
 			desc: describe(picked),
 			isChosen: () => this.to !== null,
@@ -259,7 +213,7 @@ export class NoteChangesModal extends Modal {
 				picked = to;
 				card.box.descEl.setText(describe(to));
 				this.to = to;
-				this.repaint();
+				ask.repaint();
 			});
 	}
 }

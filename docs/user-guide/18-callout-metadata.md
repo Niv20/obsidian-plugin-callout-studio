@@ -111,7 +111,12 @@ Callouts that your theme controls (see [Theme integration](17-theme-integration.
 
 ## Renaming or deleting a palette
 
-Renaming a saved palette changes its word. If your notes use the old word, Callout Studio asks whether to update them. **Update notes** rewrites only that word and offers **Undo**. **Leave them** keeps your notes as they are, and those callouts go back to their own color.
+Renaming a saved palette changes its word. If your notes use the old word, **Save** first opens **Update your notes?**, the same question the callout editor asks. It says what changed and how many callouts in how many notes use the old word, and offers two answers:
+
+- **Leave them as they are** is chosen when the window opens. Your notes don't change, and those callouts go back to their own color.
+- **Change them to** the new word rewrites only that word and offers **Undo**.
+
+**Save changes** saves the palette with your answer. **Cancel** takes you back to the palette editor, and nothing is saved.
 
 It doesn't ask when the old word also means something else: a built-in color's word, such as `pink` for a palette called **Pink**, or a word your theme or a snippet styles. Those notes may mean that other thing, so they stay as they are and take that meaning.
 

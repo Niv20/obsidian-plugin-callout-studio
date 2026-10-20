@@ -150,6 +150,7 @@ function open(input: NoteChangesModalInput) {
 	const cards = () => contentEl.querySelectorAll(".cs-option-box");
 	return {
 		titleEl, contentEl,
+		buttons: () => modalEl.querySelectorAll(".cs-modal-footer button").map((el) => el.textContent),
 		answer: async () => { await setImmediate(); return answer; },
 		changes: () => contentEl.querySelectorAll(".cs-note-change-list li").map((li) => li.textContent),
 		lines: () => contentEl.querySelectorAll(".cs-note-change-line").map(lineText),
@@ -228,6 +229,13 @@ describe("the window", () => {
 		assert.equal(answer?.titles, true);
 	});
 
+	it("says several removed ids in one sentence, listed after a colon", () => {
+		const many = def({ id: "abstract2", displayName: "Abstract2", aliases: ["test", "dfgdf", "sss"] });
+		const h = open(modalInput(many, form(), stats({ test: { uses: tally(1, "a.md") }, dfgdf: { uses: tally(1, "b.md") }, sss: { uses: tally(1, "c.md") } })));
+		assert.deepEqual(h.changes(), [], "one line, not a list of the same sentence");
+		assert.equal(h.lines()[0], "You removed these IDs: test, dfgdf, sss.");
+	});
+
 	it("puts the dropdown at the card's trailing edge, just before the dot", () => {
 		const idea = def({ id: "idea", displayName: "Idea", aliases: ["test", "thought"] });
 		const h = open(modalInput(idea, form({ calloutId: "idea", displayName: "Idea", aliases: ["thought"] }),
@@ -269,6 +277,15 @@ describe("the window", () => {
 	it("says no more than what the answer does — no undo line", () => {
 		const h = open(modalInput(callout, form(), stats({ test: { uses: tally(1, "a.md") } })));
 		assert.doesNotMatch(h.contentEl.textContent, /undo/i);
+	});
+
+	it("speaks for another action when it stands before one — a built-in's Reset to default", async () => {
+		const reset = { removed: (ids: readonly string[]) => `Reset removes "${ids.join(" and ")}".`, confirm: t("settings.resetAction") };
+		const h = open({ ...modalInput(callout, form(), stats({ test: { uses: tally(2, "a.md") } })), action: reset });
+		assert.equal(h.titleEl.textContent, t("noteChanges.title"));
+		assert.equal(h.lines()[0], 'Reset removes "test".');
+		assert.deepEqual(h.buttons(), [t("editor.cancel"), t("settings.resetAction")]);
+		assert.deepEqual(h.chosen(), [t("noteChanges.leave")]);
 	});
 
 	it("saves nothing on Cancel, or when the window is closed", async () => {

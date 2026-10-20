@@ -71,6 +71,13 @@ import {
 
 export type PaletteEditorResult = Omit<CustomPalette, "id">;
 
+/**
+ * Whether Save may go ahead with `draft`. `stillOpen` turns false once the
+ * editor has closed, so a question that takes a moment to prepare is not put
+ * to a save nobody is waiting for.
+ */
+export type PaletteBeforeSave = (draft: PaletteEditorResult, stillOpen: () => boolean) => Promise<boolean>;
+
 /** Minimal plugin surface the palette editor needs to drive the live preview. */
 interface PaletteEditorPlugin {
 	app: App;
@@ -147,6 +154,9 @@ export class PaletteEditorModal extends Modal {
 	/** The palette the current colors duplicate, if any; blocks Save while set. */
 	private colorClash: ColorPalette | null = null;
 	private onUseExisting: ((paletteId: string, name: string) => void) | null;
+	private beforeSave: PaletteBeforeSave | null;
+	/** Save was pressed and `beforeSave` has not answered yet. */
+	private confirming = false;
 	private name: string;
 	private baseColor: string;
 	private colors: DerivedPalette;
@@ -233,11 +243,18 @@ export class PaletteEditorModal extends Modal {
 			 * only managing the collection, leaves it off and shows the bare error.
 			 */
 			onUseExisting?: (paletteId: string, name: string) => void;
+			/**
+			 * Asked when Save is pressed, before the window closes: false keeps
+			 * it open with nothing saved. The settings list asks "Update your
+			 * notes?" here, so that window's Cancel comes back to this one.
+			 */
+			beforeSave?: PaletteBeforeSave;
 		} = {},
 	) {
 		super(plugin.app);
 		this.existing = options.existing ?? null;
 		this.onUseExisting = options.onUseExisting ?? null;
+		this.beforeSave = options.beforeSave ?? null;
 		// Everything the form *seeds from*. `this.existing` stays reserved for
 		// the two things that decide whether this is an edit at all — the name
 		// (line below) and the title in onOpen — so a seed fills the colours
@@ -1089,46 +1106,71 @@ export class PaletteEditorModal extends Modal {
 	}
 
 	private finish(save: boolean): void {
+		if (!save) {
+			this.settle(null);
+			return;
+		}
 		// Save stays dimmed on a duplicate name or duplicate colors and its press
-		// is answered before it gets here, but guard anyway.
-		if (save && (this.isNameTaken() || this.findColorClash())) return;
+		// is answered before it gets here, but guard anyway. A second press while
+		// `beforeSave` is still asking is the same Save.
+		if (this.isNameTaken() || this.findColorClash() || this.confirming) return;
+		const result = this.buildResult();
+		if (this.beforeSave) void this.confirmSave(this.beforeSave, result);
+		else this.settle(result);
+	}
+
+	/** Save once `beforeSave` agrees; otherwise stay open with nothing saved. */
+	private async confirmSave(beforeSave: PaletteBeforeSave, result: PaletteEditorResult): Promise<void> {
+		this.confirming = true;
+		let agreed = false;
+		try {
+			agreed = await beforeSave(result, () => this.resolve !== null);
+		} finally {
+			this.confirming = false;
+		}
+		// Closed while it was asked: closing already answered "nothing saved".
+		if (agreed && this.resolve) this.settle(result);
+	}
+
+	private settle(result: PaletteEditorResult | null): void {
 		const resolve = this.resolve;
 		this.resolve = null;
-		let result: PaletteEditorResult | null = null;
-		if (save) {
-			const typed = this.name.trim();
-			const name =
-				typed ||
-				dedupeColorName(
-					suggestColorName(this.colors.colorLight),
-					this.takenNames,
-				);
-			const gradient = this.currentGradient();
-			result = {
-				name,
-				...this.colors,
-				bgIntensity: this.bgIntensity,
-				// The pick itself, so reopening this palette derives from what
-				// the user chose rather than from what the contrast fix returned.
-				// Saved in advanced mode too: the grid's hand-edited channels win
-				// while they last, but "Revert" goes back to deriving from here.
-				baseColor: this.baseColor,
-				...(gradient ? { bgGradient: gradient } : {}),
-				// The six colors above are saved unchanged under None: the
-				// backgrounds among them are what a later switch back to Solid
-				// restores, and `bakePaletteColors` is what keeps them from
-				// reaching a callout meanwhile.
-				...(this.bgStyle === "none"
-					? { transparentBg: true as const }
-					: {}),
-				// Saved regardless of the current bgStyle so a palette left in
-				// advanced mode while Gradient was selected still reopens
-				// advanced if the user switches back to Solid later.
-				...(this.advancedColors ? { colorMode: "advanced" as const } : {}),
-			};
-		}
 		this.close();
 		resolve?.(result);
+	}
+
+	/** The form as a palette to save. */
+	private buildResult(): PaletteEditorResult {
+		const typed = this.name.trim();
+		const name =
+			typed ||
+			dedupeColorName(
+				suggestColorName(this.colors.colorLight),
+				this.takenNames,
+			);
+		const gradient = this.currentGradient();
+		return {
+			name,
+			...this.colors,
+			bgIntensity: this.bgIntensity,
+			// The pick itself, so reopening this palette derives from what
+			// the user chose rather than from what the contrast fix returned.
+			// Saved in advanced mode too: the grid's hand-edited channels win
+			// while they last, but "Revert" goes back to deriving from here.
+			baseColor: this.baseColor,
+			...(gradient ? { bgGradient: gradient } : {}),
+			// The six colors above are saved unchanged under None: the
+			// backgrounds among them are what a later switch back to Solid
+			// restores, and `bakePaletteColors` is what keeps them from
+			// reaching a callout meanwhile.
+			...(this.bgStyle === "none"
+				? { transparentBg: true as const }
+				: {}),
+			// Saved regardless of the current bgStyle so a palette left in
+			// advanced mode while Gradient was selected still reopens
+			// advanced if the user switches back to Solid later.
+			...(this.advancedColors ? { colorMode: "advanced" as const } : {}),
+		};
 	}
 
 	onClose(): void {

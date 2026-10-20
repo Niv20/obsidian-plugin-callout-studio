@@ -408,6 +408,15 @@ default and a renamed palette already left notes alone or asked first; the
 editor now does the same. The rule: **Save changes a note only when the user
 said so in the window it shows first.**
 
+A built-in row's **Reset to default** asks this same question about the ids
+the user added (`settings/sections/builtInResetAction.ts`). It passes the
+editor's machinery a form whose ids are the shipped ones and whose name and
+fold setting are left as they stand, so only the added ids are asked about,
+and gives the window its own line for a removed id and its own button
+(`NoteChangesModalInput.action`). A rewrite runs before the reset, through
+`createCalloutVaultSavePlan` with one Undo; if it fails part-way, nothing is
+reset and the next Reset asks about the notes still left.
+
 | Module | Role |
 |---|---|
 | [`editor/noteChanges.ts`](../../src/settings/editor/noteChanges.ts) | Pure: what Save would change (`pendingNoteChanges` / `pendingNoteChangesFor`), the answers (`NoteChoices`, `LEAVE_NOTES`), and the id rewrites they turn into (`noteRewritesFor`) |
@@ -415,6 +424,7 @@ said so in the window it shows first.**
 | [`editor/noteChangeQuestion.ts`](../../src/settings/editor/noteChangeQuestion.ts) | Pure: what the window lists and counts, and its answer → `NoteChoices` (`choicesFor`) |
 | [`editor/askNoteChanges.ts`](../../src/settings/editor/askNoteChanges.ts) | The step between the click and the save: count, then open the window only when something would change |
 | [`editor/NoteChangesModal.ts`](../../src/settings/editor/NoteChangesModal.ts) | **Update your notes?** - draws the question and resolves once |
+| [`noteQuestion.ts`](../../src/settings/noteQuestion.ts) | The frame it is drawn in, shared with the palette editor's question: changes, count and question, the radiogroup of answer cards, Cancel / Save changes |
 
 ### Ids are compared by identity
 
@@ -459,7 +469,7 @@ was simplified to this after rounds of per-change parts proved too busy.
 | Listed | When |
 |---|---|
 | The rename of the main id (`changeRenamed`, or `changeMainId` with no name change) | the old main id is used (or counting failed) |
-| A removed id (`changeRemoved`) | the id is used (or counting failed) |
+| The removed ids (`changeRemoved` for one; `changeRemovedMany` lists several after a colon in one line) | the id is used (or counting failed) |
 | A new name (`changeName`) | the name changed, no rename line covers it, and titles read the old name |
 | A new fold setting (`changeFold`) | the fold mark changed and a block callout differs |
 
@@ -624,8 +634,7 @@ there is no `hideSingleGroup` here:
 All sources has a heading of its own because it is a search, not a library. A
 downloadable library this device lacks is not a row at all - not even a dimmed
 one - so no row carries a download status and the old **Not downloaded** badge
-is gone (`iconPicker.notDownloaded` is left unread, as is every key a locale
-still carries). Instead `footerNote`, a `ListboxPopup` option, closes the list
+is gone (its string is deleted from every locale). Instead `footerNote`, a `ListboxPopup` option, closes the list
 with plain text - "3 more libraries available for download"
 (`iconPicker.moreToDownload`, or `…One` for one) - counting `toDownload`, or
 nothing when it is empty. It is `div.cs-combobox-footer-note`: no role, no

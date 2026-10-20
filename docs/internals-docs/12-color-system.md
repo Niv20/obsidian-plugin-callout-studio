@@ -279,12 +279,19 @@ colour the palette never had.
   name never ends up on two palettes. See
   [Import and export](15-import-export.md#settings-import-restore-the-groups-the-file-carries-three-lists-merge-by-id).
 - **Renaming** changes the palette's metadata word (see
-  [Metadata colour words](#metadata-colour-words)). When the word it answered
-  to before is used in notes, `offerMetadataRename`
-  (`settings/sections/paletteMetadataRename.ts`) counts the uses
-  (`countMetadataWordUsages`) and offers to rewrite them
+  [Metadata colour words](#metadata-colour-words)). The question about the
+  notes comes before anything is saved, as the callout editor's does: the
+  settings list gives `PaletteEditorModal` a `beforeSave` hook, which runs
+  `askMetadataRename` (`settings/sections/paletteMetadataRename.ts`). It reads
+  the word now and under the new name (`renamedMetadataWords`), counts the old
+  word's uses (`countMetadataWordUsages`) and, when there are any, opens
+  **Update your notes?** (`settings/PaletteNotesModal.ts`, in the frame
+  `settings/noteQuestion.ts` shares with the callout editor's): **Leave them as
+  they are**, preselected, or **Change them to** the new word. Its Cancel
+  keeps the palette editor open with nothing saved. Once the palette is saved,
+  `applyMetadataRename` rewrites the notes if Change was chosen
   (`replaceMetadataWordInVault`, with the shared note-rewrite Undo). Only the
-  word changes. No offer for a word that also means something else - a
+  word changes. Nothing is asked for a word that also means something else - a
   built-in colour's (`isBuiltInColorWord`: a palette called "Pink" from before
   that preset) or one the theme or a snippet styles (`isStylingWord`): a
   rewrite cannot tell which callouts meant the palette, so those notes stay as

@@ -52,7 +52,6 @@ function editCallout(plugin) {
 function replaceCallout(plugin) {
 	const source = ensureProjectNote(plugin);
 	const modal = new ReplaceCalloutModal(plugin.app, {
-		mode: "replace",
 		message: t("vault.replacePromptInUse", { name: source.displayName, count: "8", files: "3" }),
 		availableCallouts: plugin.registry.getAll().filter(def => def.id !== source.id),
 		registry: plugin.registry,

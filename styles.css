@@ -3610,20 +3610,6 @@ button.callout-studio-icon-picker-loading {
 	font-family: var(--font-monospace);
 }
 
-.callout-studio-replace-no-replace {
-	color: var(--text-muted);
-	border-top: 2px solid var(--background-modifier-border);
-}
-
-.callout-studio-replace-no-replace .callout-studio-replace-item-icon {
-	color: var(--text-error);
-}
-
-.callout-studio-replace-no-replace .callout-studio-replace-item-name {
-	color: var(--text-muted);
-	font-style: italic;
-}
-
 /* ─── Autocomplete Suggestions ────────────────────────────────── */
 
 .callout-studio-suggestion {
@@ -6376,12 +6362,6 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	line-height: 1.5;
 }
 
-/* Phase 7: delete-without-replace styling */
-.callout-studio-replace-no-replace .callout-studio-replace-no-replace-name {
-	color: var(--text-error);
-	padding-left: 8px;
-}
-
 /* Phase 7: autocomplete create-new entry */
 .callout-studio-suggestion-create-new {
 	display: flex;
@@ -6874,11 +6854,13 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	color: var(--text-on-accent);
 }
 
-/* ─── "Update your notes?" (settings/editor/NoteChangesModal.ts) ─── */
+/* ─── "Update your notes?" (settings/noteQuestion.ts) ─── */
 
-/* One question for everything Save would change: the changes — a line, or a
-   list when there are several — then the count and the question, then the two
-   answers, drawn as the import window draws its cards. */
+/* One question for everything Save would change, in the callout editor
+   (settings/editor/NoteChangesModal.ts) and the palette editor
+   (settings/PaletteNotesModal.ts) alike: the changes — a line, or a list when
+   there are several — then the count and the question, then the two answers,
+   drawn as the import window draws its cards. */
 .cs-note-change-line {
 	margin: 0 0 10px;
 }

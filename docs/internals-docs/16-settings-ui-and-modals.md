@@ -1067,7 +1067,7 @@ that would double the inset.
 > specifically because it's a generic, reusable dialog - only the caller
 > knows what's being confirmed, and a compiler-enforced parameter is what
 > keeps a future caller from shipping a headerless one. `ReplaceCalloutModal`
-> defaults its title from its `mode` for the same reason.
+> defaults its title to **Replace in vault** for the same reason.
 >
 > **`WelcomeModal` is the one deliberate exception** - it's a splash screen,
 > opts out of the chrome entirely (`this.titleEl.remove()`), and carries its
@@ -1861,7 +1861,7 @@ the label.
 | **Convert selected** / **Finish conversion** (Review conversion) | `PortableConversionView.convertBlockedReason()` | a conversion is running → `portable.blockedConverting`; pending link updates unrecoverable → `portable.recoveryUnavailable`; the review failed → the error already on its status line; the review is updating → `portable.blockedUpdating`; a replacement draft is open → `portable.blockedEditing`; every replacement unchecked → `portable.blockedNothingSelected`; nothing eligible → `portable.empty` |
 | **Save** (command editor) | `CommandEditorModal.saveBlockedReason()` | no callout exists or is chosen → `commandBuilder.noCallouts` / `commandBuilder.noCalloutChosen`; the same command already exists → `commandBuilder.duplicate` |
 | **Save** (palette editor) | `PaletteEditorModal.saveBlockedReason()` | the name is taken → `palette.saveBlockedName`; the colours duplicate another palette → `palette.colorExists` |
-| **Replace** / **Confirm** (replacement picker) | `ReplaceCalloutModal.confirmBlockedReason()` | no row chosen → `replaceModal.chooseFirst` (delete mode names "delete without replacing") / `replaceModal.chooseFirstReplace` |
+| **Replace** / **Confirm** (replacement picker) | `ReplaceCalloutModal.confirmBlockedReason()` | no row chosen → `replaceModal.chooseFirstReplace` |
 | **Import valid only (N)** (import report) | `ImportReportModal` | N is 0 → `import.nothingValid` |
 | **Confirm** (icon picker) | `IconPicker.confirmBlockedReason()` | no icon selected, which is also what switching source does → `iconPicker.chooseFirst` |
 | **Restore** (Version history) | `SettingsRecoveryModal.restoreBlockedReason()` | saving is paused → `notice.blockedWhilePaused`; the version equals the current setup → `versions.restoreSame` |
@@ -2040,6 +2040,14 @@ the window.
   `role="radiogroup"` of two answer cards: **Leave them as they are**, first and
   preselected, and **Change them to**, which rewrites every old id to one of
   this callout's own ids.
+- **One frame for both questions**: each window wears the chrome and sets its
+  title itself (every modal file must, see `tests/modalChrome.test.ts`), then
+  `renderNoteQuestion` (`noteQuestion.ts`) draws the changes, the count and
+  question, the radiogroup and the footer's two buttons, and hands back
+  `answer()` for each card and `repaint()`. The palette
+  editor's question (`PaletteNotesModal`, below) is drawn by it too, so the two
+  cannot drift apart. Each window adds its own answers and decides what Save
+  changes resolves with.
 - **The cards are the plugin import window's**: `renderOptionBox` without an
   icon tile, `addOptionRadio` for the dot and `paintOptionRadio` for the chosen
   / choosable state, all from `optionBox.ts` and shared with the import window.
@@ -2052,6 +2060,26 @@ the window.
 - **Footer**: **Cancel** and **Save changes** (`mod-cta`). Cancel, Escape and
   the close button resolve `null` - back to the editor, nothing saved. The
   promise resolves exactly once; `onClose` destroys the dropdown.
+- **Another action**: a built-in row's **Reset to default** opens this window
+  too (`sections/builtInResetAction.ts`). `input.action` gives it its own line
+  for the removed ids (`noteChanges.changeResetRemoved`, or `…RemovedMany`
+  listing several in one line) and its own button
+  (`settings.resetAction` in place of **Save changes**). Everything else is the
+  editor's: the count, Leave first and preselected, Change to one of the
+  built-in's own ids.
+
+### `PaletteNotesModal` - the palette editor's "Update your notes?"
+
+Asked by the palette editor's Save, through its `beforeSave` hook, when a new
+name changes the palette's word in callout metadata and notes still use the old
+word (the rule is in [Colour system](12-color-system.md)). The same frame as
+`NoteChangesModal`: one line saying what changed (`palette.renameNotesChange`),
+the count and question, then **Leave them as they are** (preselected) and
+**Change them to "new-word"**. No dropdown: there is only one word to change
+to. It resolves `false` for Leave, `true` for Change, and `null` for Cancel,
+Escape or the close button, which keep the palette editor open with nothing
+saved. The title, count, question and answer titles reuse the `noteChanges.*`
+strings; only the change line and the two descriptions are the palette's own.
 
 ### `PaletteEditorModal` - simple vs. advanced, two background styles
 
@@ -2081,6 +2109,14 @@ callout editor uses - and, notably, **deliberately not**
 `PREVIEW_PLACEHOLDER_ID` (the callout editor's own reserved id), because two
 concurrently-open demo previews (opening the palette editor from inside the
 callout editor) must not collide on one registry slot.
+
+**`beforeSave`** is an optional hook the caller passes: Save builds the result,
+then awaits `beforeSave(draft, stillOpen)` before it closes. `false` keeps the
+window open with nothing saved; that is how the settings list asks
+`PaletteNotesModal` first, and how its Cancel comes back here. A second press
+while the hook is still answering is the same Save (`confirming`). Closing the
+window meanwhile resolves `null` as usual; `stillOpen()` then turns false, so
+the question is not opened, and a late `true` saves nothing.
 
 ### Scoped reset controls
 

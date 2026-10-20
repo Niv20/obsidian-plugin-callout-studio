@@ -1,11 +1,11 @@
 /**
  * utils/ReplaceCalloutModal.ts — Pick-a-replacement callout modal.
  *
- * Shown in two scenarios: (1) during deletion when the callout is used in the
- * vault and the user chose "Replace instead...", and (2) via a direct "Replace"
- * action. Renders a scrollable list of available callouts with icons and color
- * swatches for easy scanning. Returns a DeleteAction to the caller so the
- * caller can execute the vault-wide replacement.
+ * Shown by a callout row's **Replace in vault…**. Renders a scrollable list of
+ * the other callouts with icons and color swatches for easy scanning, and
+ * returns the one chosen so the caller can run the vault-wide replacement.
+ * Delete never comes here: it removes the definition and leaves the notes
+ * alone (see settings/sections/calloutVaultActions.ts).
  */
 import { Modal } from "obsidian";
 import type { App } from "obsidian";
@@ -18,19 +18,14 @@ import { filterCalloutList } from "./calloutSearch";
 import { applyModalChrome } from "../settings/modalChrome";
 import { autofocusOnDesktop } from "../settings/modalAutofocus";
 
-export type DeleteAction =
+export type ReplaceChoice =
 	| { action: "replace"; replaceWith: string }
-	| { action: "delete" }
 	| { action: "cancel" };
 
 export interface ReplaceCalloutModalOptions {
-	/** "delete" preserves legacy behavior used by the trash flow (allows
-	 * "delete without replacing" + warning copy). "replace" presents a pure
-	 * replacement picker with no delete option. */
-	mode?: "delete" | "replace";
-	/** Window heading. Defaults to the one that matches `mode`, which is what
-	 * every current caller wants; an override is here for a caller whose
-	 * wording needs to be more specific than "delete" or "replace". */
+	/** Window heading. Defaults to **Replace in vault**, which is what every
+	 * current caller wants; an override is here for a caller whose wording
+	 * needs to be more specific. */
 	title?: string;
 	/** Heading paragraph above the picker. */
 	message: string;
@@ -39,50 +34,35 @@ export interface ReplaceCalloutModalOptions {
 	/** Selectable callouts (the source callout should already be filtered out). */
 	availableCallouts: CalloutDefinition[];
 	registry: CalloutRegistry;
-	/** Force-disable the "delete without replacing" row. Ignored in `replace`
-	 * mode (which never shows that row). */
-	disallowDeleteWithoutReplace?: boolean;
 }
 
 /**
- * Modal shown when deleting or replacing a callout. Renders a scrollable
- * list of callouts (with icons + colors) for the user to choose from.
+ * Modal shown when replacing a callout. Renders a scrollable list of
+ * callouts (with icons + colors) for the user to choose from.
  * Closing without confirming cancels the operation.
  */
 export class ReplaceCalloutModal extends Modal {
 	private resolved = false;
-	private resolve: (value: DeleteAction) => void = () => {};
-	private selectedId: string | null | undefined = undefined;
-	private itemEls = new Map<string | null, HTMLElement>();
+	private resolve: (value: ReplaceChoice) => void = () => {};
+	/** The callout chosen as the replacement; null until a row is picked. */
+	private selectedId: string | null = null;
+	private itemEls = new Map<string, HTMLElement>();
 	private confirmBtn: HTMLButtonElement | null = null;
 	private listEl?: HTMLElement;
 
-	private mode: "delete" | "replace";
 	private title: string;
 	private message: string;
 	private confirmLabel?: string;
 	private availableCallouts: CalloutDefinition[];
 	private registry: CalloutRegistry;
-	private disallowDeleteWithoutReplace: boolean;
 
 	constructor(app: App, options: ReplaceCalloutModalOptions) {
 		super(app);
-		this.mode = options.mode ?? "delete";
-		this.title =
-			options.title ??
-			t(
-				this.mode === "replace"
-					? "replaceModal.titleReplace"
-					: "replaceModal.titleDelete",
-			);
+		this.title = options.title ?? t("replaceModal.titleReplace");
 		this.message = options.message;
 		this.confirmLabel = options.confirmLabel;
 		this.availableCallouts = options.availableCallouts;
 		this.registry = options.registry;
-		this.disallowDeleteWithoutReplace =
-			this.mode === "replace"
-				? true
-				: (options.disallowDeleteWithoutReplace ?? false);
 	}
 
 	onOpen(): void {
@@ -118,37 +98,24 @@ export class ReplaceCalloutModal extends Modal {
 		// Keep search ready on desktop without raising the mobile keyboard on open.
 		autofocusOnDesktop(search);
 
-		// Single confirm button
+		// Single confirm button. It rewrites notes across the vault.
 		const btnContainer = applyModalChrome(this, { footer: true });
-		const confirmText =
-			this.confirmLabel ??
-			(this.mode === "replace"
-				? t("vault.confirmReplace")
-				: t("vault.confirmDelete"));
-		// Both modes rewrite notes across the vault.
 		this.confirmBtn = btnContainer.createEl("button", {
-			text: confirmText,
+			text: this.confirmLabel ?? t("vault.confirmReplace"),
 			cls: "mod-warning",
 		});
 		// Dimmed until a row is chosen, but still pressable: pressing it says what to choose.
 		paintBlocked(this.confirmBtn, this.confirmBlockedReason());
 		this.confirmBtn.addEventListener("click", () => {
-			if (explainIfBlocked(this.confirmBlockedReason())) return;
+			if (explainIfBlocked(this.confirmBlockedReason()) || !this.selectedId) return;
 			this.resolved = true;
-			if (this.selectedId) {
-				this.resolve({
-					action: "replace",
-					replaceWith: this.selectedId,
-				});
-			} else {
-				this.resolve({ action: "delete" });
-			}
+			this.resolve({ action: "replace", replaceWith: this.selectedId });
 			this.close();
 		});
 	}
 
 	/**
-	 * Draw the rows matching `query`, plus the pinned delete row.
+	 * Draw the rows matching `query`.
 	 *
 	 * The selection is *not* cleared by filtering. A row typed out of view is
 	 * still the answer the user gave, and the confirm button stays live on it —
@@ -181,47 +148,27 @@ export class ReplaceCalloutModal extends Modal {
 				text: t("calloutPicker.noMatches", { query }),
 			});
 		}
-
-		// "Delete without replacing" — pinned, and never filtered. It is an
-		// action rather than a callout, so a query that matches no callout must
-		// not also take away the other thing this window is for.
-		if (!this.disallowDeleteWithoutReplace) {
-			const noReplaceItem = listEl.createDiv({
-				cls: "callout-studio-replace-item callout-studio-replace-no-replace",
-			});
-			noReplaceItem.createDiv({
-				cls: "callout-studio-replace-item-name callout-studio-replace-no-replace-name",
-				text: `${t("vault.deleteWithout")} ${t("replaceModal.deleteWithoutReplaceSuffix")}`,
-			});
-			if (this.selectedId === null) noReplaceItem.addClass("is-selected");
-			this.itemEls.set(null, noReplaceItem);
-			noReplaceItem.addEventListener("click", () => this.selectItem(null));
-		}
 	}
 
-	/**
-	 * Why confirming cannot act yet, or null: nothing is chosen until a row is
-	 * picked. The window offers "delete without replacing" only in delete mode,
-	 * so only there does the sentence name it as the other way forward.
-	 */
+	/** Why confirming cannot act yet, or null: nothing is chosen until a row is picked. */
 	private confirmBlockedReason(): string | null {
-		if (this.selectedId !== undefined) return null;
-		return this.disallowDeleteWithoutReplace
-			? t("replaceModal.chooseFirstReplace")
-			: t("replaceModal.chooseFirst", { delete: t("vault.deleteWithout") });
+		return this.selectedId === null ? t("replaceModal.chooseFirstReplace") : null;
 	}
 
 	/** Arrow and Enter drive the list from the search field. */
 	private onSearchKey(ev: KeyboardEvent): void {
 		const ids = [...this.itemEls.keys()];
 		if (ids.length === 0) return;
-		const at = ids.indexOf(this.selectedId ?? null);
+		const at = this.selectedId === null ? -1 : ids.indexOf(this.selectedId);
+		const pick = (id: string | undefined): void => {
+			if (id !== undefined) this.selectItem(id);
+		};
 		if (ev.key === "ArrowDown") {
 			ev.preventDefault();
-			this.selectItem(ids[Math.min(at + 1, ids.length - 1)] ?? null);
+			pick(ids[Math.min(at + 1, ids.length - 1)]);
 		} else if (ev.key === "ArrowUp") {
 			ev.preventDefault();
-			this.selectItem(ids[Math.max(at - 1, 0)] ?? null);
+			pick(ids[Math.max(at - 1, 0)]);
 		} else if (ev.key === "Enter") {
 			ev.preventDefault();
 			// Enter chooses — the top row when nothing is chosen yet, the one
@@ -229,11 +176,11 @@ export class ReplaceCalloutModal extends Modal {
 			// rewrites every note that uses the callout (Undo is brief and in
 			// memory only), so it takes the button itself, not a reflexive
 			// keypress in a search field that opened focused.
-			if (this.selectedId === undefined) this.selectItem(ids[0] ?? null);
+			if (this.selectedId === null) pick(ids[0]);
 		}
 	}
 
-	private selectItem(id: string | null): void {
+	private selectItem(id: string): void {
 		// Remove old selection
 		for (const el of this.itemEls.values()) {
 			el.removeClass("is-selected");
@@ -291,8 +238,8 @@ export class ReplaceCalloutModal extends Modal {
 		this.contentEl.empty();
 	}
 
-	prompt(): Promise<DeleteAction> {
-		return new Promise<DeleteAction>((resolve) => {
+	prompt(): Promise<ReplaceChoice> {
+		return new Promise<ReplaceChoice>((resolve) => {
 			this.resolve = resolve;
 			this.open();
 		});
