@@ -1987,8 +1987,11 @@ export class CalloutEditor extends Modal {
 	 * SettingsTab batches its list refresh).
 	 *
 	 * Reading view is deliberately left out: re-running its post-processors
-	 * means previewMode.rerender(), far too heavy to repeat per keystroke. It
-	 * catches up on save, when inject() emits css-change.
+	 * means previewMode.rerender(), far too heavy to repeat per keystroke. Its
+	 * colours ride the CSS like the block callout's; what it bakes — an icon
+	 * span, a token at all — catches up on save, through ReadingStructureWatch
+	 * (editor/renderRefresh.ts). Not through css-change: core answers that by
+	 * refreshing the editors only.
 	 */
 	private scheduleNoteDecorationRefresh(): void {
 		if (this.noteRefreshFrame !== null) return;

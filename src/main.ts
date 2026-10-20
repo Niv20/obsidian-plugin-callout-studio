@@ -48,7 +48,7 @@ import { createCalloutFlashExtension } from "./editor/calloutFlash";
 import { clearContentPillCache } from "./editor/livepreview/contentPillRender";
 import { createHeadingGapField } from "./editor/livepreview/headingGapField";
 import { beginStartupEntranceWindow } from "./editor/renderShared";
-import { refreshCallouts, refreshRenderModes } from "./editor/renderRefresh";
+import { ReadingStructureWatch, refreshCallouts, refreshRenderModes } from "./editor/renderRefresh";
 import { OutlineDecorator } from "./outline/OutlineDecorator";
 import { createCalloutReadingPostProcessor } from "./reading/calloutPostProcessor";
 import {
@@ -98,6 +98,8 @@ export default class CalloutStudioPlugin extends Plugin {
 	localState!: DeviceLocalStore;
 	/** Re-derives the theme's overlay rows — see registerThemeAppearance. */
 	refreshThemeAppearance!: () => void;
+	/** Re-renders the reading views a registry change left wrong. */
+	readingStructure?: ReadingStructureWatch;
 	/** Adoption of another device's `data.json` — serialized, and retried when
 	 * a modal hands the registry back. See manager/reloadQueue.ts. */
 	private reloads!: ReloadQueue;
@@ -295,6 +297,11 @@ export default class CalloutStudioPlugin extends Plugin {
 			// announcing a move of it must not pay for a save pass.
 			if (change.persists) void this.saveSettings();
 		});
+		// After the repaint above: what reading view baked (which names are
+		// callouts, which tokens have an icon) only a re-render can change.
+		const readingStructure = new ReadingStructureWatch(this.app, this.registry);
+		this.readingStructure = readingStructure;
+		this.registry.onChange(() => { if (!this.settingsWriter.isDestroyed) readingStructure.check(); });
 
 		// A paused session stays visible and keeps checking for its file.
 		registerPausedIndicator(this);
