@@ -24,9 +24,8 @@
  * a file name, which card is active — so the Upload button that becomes
  * Replace is the same button, and typing never moves the caret.
  */
-import { setIcon } from "obsidian";
 import { t } from "../../i18n";
-import { optionBoxId, renderOptionBox, renderOptionList, type OptionBox } from "../optionBox";
+import { addOptionRadio, optionBoxId, paintOptionRadio, renderOptionBox, renderOptionList, type OptionBox } from "../optionBox";
 import { renderRecommendedBadge } from "../recommendedBadge";
 import {
 	activeOption,
@@ -145,18 +144,8 @@ export function renderOptions(
 		for (const [option, { box, radio }] of [["vault", vault], ["manual", card]] as const) {
 			const on = two && option === active;
 			const filled = isFilled(flow, option);
-			box.el.toggleClass("is-selected", on);
-			// What a click on the card would change.
-			box.el.toggleClass("is-choosable", two && filled && !on);
-			radio.setAttribute("aria-checked", on ? "true" : "false");
 			// A dot is a focus stop only while its card has something to choose.
-			if (filled) {
-				radio.setAttribute("tabindex", "0");
-				radio.removeAttribute("aria-disabled");
-			} else {
-				radio.removeAttribute("tabindex");
-				radio.setAttribute("aria-disabled", "true");
-			}
+			paintOptionRadio(box, radio, { chosen: on, choosable: two && filled && !on, enabled: filled });
 		}
 	};
 
@@ -183,29 +172,9 @@ function renderCard(
 ): Card {
 	const box = renderOptionBox(list, { icon, title: "", desc: "" });
 	box.el.addClass(option === "vault" ? "cs-import-vault" : "cs-import-manual");
-	const [headId, descId] = box.describedBy.split(" ");
-	const radio = box.el.createDiv({
-		cls: "cs-import-radio",
-		attr: {
-			role: "radio",
-			"aria-checked": "false",
-			"aria-labelledby": headId ?? "",
-			"aria-describedby": descId ?? "",
-		},
-	});
-	setIcon(radio, "check");
-	radio.addEventListener("keydown", (evt) => {
-		if (evt.key !== "Enter" && evt.key !== " ") return;
-		// Claimed even when repeated, so a held Space never scrolls the window.
-		evt.preventDefault();
-		if (!evt.repeat) handlers.onChoose(option);
-	});
 	// Anywhere on the card chooses it — except on a control of its own, which
 	// does what it says instead.
-	box.el.addEventListener("click", (evt) => {
-		if ((evt.target as Element | null)?.closest("button, textarea")) return;
-		handlers.onChoose(option);
-	});
+	const radio = addOptionRadio(box, () => handlers.onChoose(option), "button, textarea");
 	return { box, radio };
 }
 

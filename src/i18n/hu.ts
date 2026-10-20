@@ -302,6 +302,7 @@ export const hu: Record<string, string> = {
 		"Ennek a callout-nak az összes azonosítója. A szóközök engedélyezettek.\nNyomja meg az Enter billentyűt vagy a + gombot a hozzáadáshoz.",
 	"editor.calloutIdsPlaceholder": "Azonosító hozzáadása",
 	"editor.addId": "Azonosító hozzáadása",
+	"editor.maxIds": "Legfeljebb {{max}} azonosító. Törölj egyet, ha újat szeretnél hozzáadni.",
 	"editor.idLinkedToName": "A megjelenítési névhez kapcsolva",
 	"editor.idCannotDelete":
 		"Ez az azonosító a megjelenítési névhez van kapcsolva, és nem törölhető — a módosításhoz szerkessze a nevet",
@@ -357,6 +358,16 @@ export const hu: Record<string, string> = {
 		"Figyelem: a témája minden, a(z) {{pattern}}-nak megfelelő callout-ot stílusoz, ezért felülírhatja ennek a kinézetét.",
 	"editor.idDashConflict":
 		"Az Obsidian a szóközöket kötőjelként írja, ezért ez az azonosító ütközik ezzel: „{{other}}”",
+	"editor.idOwnedBy":
+		"A(z) „{{id}}” a(z) {{name}} egyik azonosítója. {{link}}.",
+	"editor.idMoveHere": "Áthelyezheted ide",
+	"editor.idOwnedByMain":
+		"A(z) „{{id}}” a(z) {{name}} fő azonosítója. Ha itt szeretnéd használni, előbb töröld a(z) {{name}} elemet.",
+	"editor.idBuiltInStock":
+		"A(z) „{{id}}” az Obsidian saját azonosítóinak egyike a(z) {{name}} számára.",
+	"editor.idMoving":
+		"Mentéskor a(z) „{{id}}” ide kerül át a(z) {{name}} elemből.",
+	"editor.idMovingNotes": "A jegyzeteid nem változnak. Ennek a calloutnak a stílusát kapják.",
 	"editor.untitledCallout": "Névtelen callout",
 	"editor.loremIpsum":
 		"Enyhe szellő suhan át a fák között. A meleg napfény beragyog egy csendes ösvényt, és élettel tölti meg a tájat.",
@@ -365,6 +376,17 @@ export const hu: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Íme egy soron belüli [!{id}] pirula egy bekezdésen belül.",
 	"editor.previewReadOnly": "Az élő előnézet nem szerkeszthető",
+	"noteChanges.title": "Frissíted a jegyzeteidet?",
+	"noteChanges.leave": "Hagyd őket úgy, ahogy vannak",
+	"noteChanges.leaveDesc":
+		"Megtartják a(z) [!{{id}}] azonosítót, és az alapértelmezett stílusra állnak vissza.",
+	"noteChanges.changeTo": "Módosítás erre:",
+	"noteChanges.renameChange": "Módosítás erre: „{{id}}”",
+	"noteChanges.titlesChange": "Módosítás erre: „{{new}}”",
+	"noteChanges.titlesLeaveDesc": "Továbbra is „{{old}}” marad bennük.",
+	"noteChanges.foldChange": "Beállítás erre: „{{state}}”",
+	"noteChanges.foldLeaveDesc":
+		"Csak a mostantól beszúrt calloutok használják az új beállítást.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -775,6 +797,8 @@ export const hu: Record<string, string> = {
 		"{{count}} callout-azonosító frissítve a tárfájlokban: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"{{count}} callout-cím frissítve a tárfájlokban: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"{{count}} callout összecsukási jelölése frissítve a tárfájlokban.",
 	"vault.replaceWith": "Csere erre:",
 	"vault.deleteWithout": "Törlés csere nélkül",
 	"vault.confirmDelete": "Megerősítés",
@@ -1474,4 +1498,24 @@ export const hu: Record<string, string> = {
 	"settings.versions": "Korábbi verziók",
 	"settings.versionsDesc": "A Callout Studio automatikusan menti a konfigurációd verzióit.\nHasonlítsd össze őket, vagy térj vissza valamelyikhez.",
 	"settings.versionsButton": "Verziók megtekintése",
+	"noteChanges.callouts": "{{count}}",
+	"noteChanges.calloutsOne": "1",
+	"noteChanges.notes": "{{count}}",
+	"noteChanges.notesOne": "1",
+	"noteChanges.askCallout": "Mi történjen azzal a callouttal?",
+	"noteChanges.askCallouts": "Mi történjen azokkal a calloutokkal?",
+	"noteChanges.changeRenamed": "Megváltoztattad a megjelenítési nevet: „{{old}}” helyett „{{new}}” lett, ezért a fő azonosító „{{oldId}}” helyett „{{newId}}” lesz.",
+	"noteChanges.changeMainId": "A fő azonosító „{{oldId}}” helyett „{{newId}}” lesz.",
+	"noteChanges.changeName": "Megváltoztattad a megjelenítési nevet: „{{old}}” helyett „{{new}}” lett.",
+	"noteChanges.changeRemoved": "Eltávolítottad a(z) „{{id}}” azonosítót.",
+	"noteChanges.changeFold": "Megváltoztattad, hogyan csukódik össze ez a callout.",
+	"noteChanges.affects": "Ez érinti: callout {{callouts}}, jegyzet {{notes}}.",
+	"noteChanges.affectsUnknown": "Előfordulhat, hogy egyes jegyzeteidet érinti.",
+	"noteChanges.leaveManyDesc": "Megtartják a régi azonosítóikat, és az alapértelmezett stílusra állnak vissza.",
+	"noteChanges.rewriteManyDesc": "A jegyzeteidben minden régi azonosító [!{{to}}] lesz.",
+	"noteChanges.changeToIdLabel": "Azonosító, amelyre módosulnak",
+	"noteChanges.rewriteDesc": "A jegyzeteidben minden [!{{id}}] [!{{to}}] lesz.",
+	"noteChanges.renameFollowDesc": "A jegyzeteidben minden [!{{oldId}}] [!{{newId}}] lesz, a „{{old}}” címek pedig „{{new}}” címek lesznek.",
+	"noteChanges.titlesChangeDesc": "A „{{old}}” címek „{{new}}” címek lesznek.",
+	"noteChanges.foldChangeDesc": "A + vagy - jelölésük ennek megfelelően változik.",
 };

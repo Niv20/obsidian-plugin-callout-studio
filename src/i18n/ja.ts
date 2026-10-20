@@ -300,6 +300,7 @@ export const ja: Record<string, string> = {
 		"このcalloutのすべての識別子。スペースを使用できます。\nEnterまたは + ボタンを押して追加します。",
 	"editor.calloutIdsPlaceholder": "IDを追加",
 	"editor.addId": "IDを追加",
+	"editor.maxIds": "IDは最大{{max}}個までです。別のIDを追加するには、1つ削除してください。",
 	"editor.idLinkedToName": "表示名にリンクされています",
 	"editor.idCannotDelete":
 		"このIDは表示名にリンクされているため削除できません。名前を編集して変更してください",
@@ -354,6 +355,13 @@ export const ja: Record<string, string> = {
 		"注意: あなたのテーマは{{pattern}}に一致するすべてのcalloutをスタイル設定するため、この見た目が上書きされる可能性があります。",
 	"editor.idDashConflict":
 		"Obsidianはスペースをハイフンとして書き込むため、このIDは「{{other}}」と衝突します",
+	"editor.idOwnedBy": "「{{id}}」は{{name}}のIDです。{{link}}ことができます。",
+	"editor.idMoveHere": "ここに移す",
+	"editor.idOwnedByMain":
+		"「{{id}}」は{{name}}のメインIDです。ここで使うには、先に{{name}}を削除してください。",
+	"editor.idBuiltInStock": "「{{id}}」は{{name}}用のObsidian標準のIDの1つです。",
+	"editor.idMoving": "保存すると、「{{id}}」は{{name}}からここに移ります。",
+	"editor.idMovingNotes": "ノートはそのままで、このCalloutのスタイルになります。",
 	"editor.untitledCallout": "タイトルなしCallout",
 	"editor.loremIpsum":
 		"木々の間をそよ風が吹き抜けます。暖かな日差しが静かな小道を照らし、景色に彩りを添えます。",
@@ -361,6 +369,15 @@ export const ja: Record<string, string> = {
 		"木々の間をそよ風が吹き抜けます。",
 	"editor.sampleInlineText": "段落内にインラインの [!{id}] ピルがあります。",
 	"editor.previewReadOnly": "ライブプレビューは編集できません",
+	"noteChanges.title": "ノートを更新しますか？",
+	"noteChanges.leave": "そのままにする",
+	"noteChanges.leaveDesc": "[!{{id}}]のまま残り、既定のスタイルになります。",
+	"noteChanges.changeTo": "次に変更する",
+	"noteChanges.renameChange": "「{{id}}」に変更する",
+	"noteChanges.titlesChange": "「{{new}}」に変更する",
+	"noteChanges.titlesLeaveDesc": "「{{old}}」のままになります。",
+	"noteChanges.foldChange": "「{{state}}」に設定する",
+	"noteChanges.foldLeaveDesc": "今後挿入するCalloutだけが新しい設定になります。",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -772,6 +789,7 @@ export const ja: Record<string, string> = {
 		"vaultファイルの{{count}}件のcallout IDを更新しました: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"vaultファイルの{{count}}件のcalloutタイトルを更新しました: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated": "vaultファイル内の{{count}}件のCalloutの折りたたみ記号を更新しました。",
 	"vault.replaceWith": "置き換え先:",
 	"vault.deleteWithout": "置き換えずに削除",
 	"vault.confirmDelete": "確認",
@@ -1448,4 +1466,24 @@ export const ja: Record<string, string> = {
 	"settings.versions": "以前のバージョン",
 	"settings.versionsDesc": "Callout Studio は構成のバージョンを自動で保存します。\n比較したり、以前のバージョンに戻ったりできます。",
 	"settings.versionsButton": "バージョンを表示",
+	"noteChanges.callouts": "{{count}}個のCallout",
+	"noteChanges.calloutsOne": "1個のCallout",
+	"noteChanges.notes": "{{count}}件のノート",
+	"noteChanges.notesOne": "1件のノート",
+	"noteChanges.askCallout": "そのCalloutをどうしますか？",
+	"noteChanges.askCallouts": "それらのCalloutをどうしますか？",
+	"noteChanges.changeRenamed": "表示名を「{{old}}」から「{{new}}」に変更したため、メインIDが「{{oldId}}」から「{{newId}}」に変わります。",
+	"noteChanges.changeMainId": "メインIDが「{{oldId}}」から「{{newId}}」に変わります。",
+	"noteChanges.changeName": "表示名を「{{old}}」から「{{new}}」に変更しました。",
+	"noteChanges.changeRemoved": "ID「{{id}}」を削除しました。",
+	"noteChanges.changeFold": "このCalloutの折りたたみ方を変更しました。",
+	"noteChanges.affects": "{{notes}}の{{callouts}}が対象です。",
+	"noteChanges.affectsUnknown": "一部のノートが影響を受ける可能性があります。",
+	"noteChanges.leaveManyDesc": "古いIDのまま残り、既定のスタイルになります。",
+	"noteChanges.rewriteManyDesc": "ノート内の古いIDはすべて[!{{to}}]になります。",
+	"noteChanges.changeToIdLabel": "変更先のID",
+	"noteChanges.rewriteDesc": "ノート内の[!{{id}}]がすべて[!{{to}}]に変わります。",
+	"noteChanges.renameFollowDesc": "ノート内の[!{{oldId}}]がすべて[!{{newId}}]に変わり、「{{old}}」というタイトルは「{{new}}」になります。",
+	"noteChanges.titlesChangeDesc": "「{{old}}」というタイトルは「{{new}}」になります。",
+	"noteChanges.foldChangeDesc": "それらの+または-の記号が合わせて変わります。",
 };

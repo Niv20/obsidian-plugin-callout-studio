@@ -199,7 +199,9 @@ table is changed by this hardening.
   **warning**, not an error.
 - **Tags/aliases**: length-capped at `MAX_TAG_LENGTH` (200 - a generous
   safety net on *imported*, untrusted data only; the editor itself imposes
-  no length limit), count-capped at `MAX_TAGS_COUNT`.
+  no length limit), count-capped at `MAX_TAGS_COUNT`, primary ID included -
+  the same constant the editor's IDs field stops at (see
+  [How many IDs a callout can have](14-callout-editor.md#how-many-ids-a-callout-can-have)).
 - **Metadata**: every value must be a string. Keys such as `__proto__`,
   `constructor`, and `prototype` remain literal data properties through import
   and export; safe object construction avoids invoking inherited setters or
@@ -433,7 +435,7 @@ reads the active one.
 - **Choosing.** While both cards are there, the list is a
   `role="radiogroup"` named by the window's title (`aria-labelledby`, never an
   `aria-label`, which Obsidian would pop up as a tooltip over every card), and
-  each card ends in a radio dot, `.cs-import-radio`: `role="radio"`,
+  each card ends in a radio dot, `.cs-option-radio`: `role="radio"`,
   `aria-checked`, `aria-labelledby` its card's title line, `aria-describedby`
   its status line. The dot, not the card, is the radio, because a radio may
   hold no control and the fallback's card holds a button and, for a paste, a

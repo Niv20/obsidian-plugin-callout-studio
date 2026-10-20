@@ -326,12 +326,21 @@ this plugin's set changed, such as the caret leaving the link with Enter right
 after a link-suggest pick. Nothing was drawn and the line went blank until the
 caret moved in and back out.
 
-So `buildDecorations` returns two sets. Whole-link replacements go in
-`wholeLinks`, which the plugin `provide`s at `Prec.highest`. Everything else
-stays in `decorations` at default precedence. The widget then always opens the
-link, and core's hides inside it are skipped. Only this one set is raised
-because precedence also decides how mark decorations nest. Raising the heading
-title mark, for example, would wrap it outside core's header spans.
+The same tie hit pills and heading tokens. Core reads `[!a] [!b]` as a
+reference link (`[text] [label]`) and hides the `[` and `]` of both, so its
+hide opens exactly where each pill does. Restyling the callout in the editor
+redraws only this plugin's set. Every pill followed by another token went
+blank, and only the last one on the line (`[!c]`, with nothing after it to
+make it a link) kept its pill until the caret went in and back out.
+
+So `buildDecorations` returns two sets. Every replace widget over a token goes
+in `raised`, which the plugin `provide`s at `Prec.highest`: the heading token,
+both kinds of pill, and the whole-link replacement. Marks, line decorations,
+the in-link ref icons and the fold chevron stay in `decorations` at default
+precedence. The widgets then always open their range, and core's hides inside
+them are skipped. Marks stay at default precedence because precedence also
+decides how mark decorations nest. Raising the heading title mark, for
+example, would wrap it outside core's header spans.
 
 ### `refreshAllCalloutEditors()` - why registry edits need an explicit nudge
 

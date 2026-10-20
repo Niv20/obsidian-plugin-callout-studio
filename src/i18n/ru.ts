@@ -353,6 +353,7 @@ export const ru: Record<string, string> = {
 		"Все идентификаторы этого callout. Пробелы разрешены.\nНажмите Enter или кнопку + для добавления.",
 	"editor.calloutIdsPlaceholder": "Добавить ID",
 	"editor.addId": "Добавить ID",
+	"editor.maxIds": "Максимум {{max}} идентификаторов. Удалите один, чтобы добавить другой.",
 	"editor.idLinkedToName": "Связано с отображаемым именем",
 	"editor.idCannotDelete":
 		"Этот ID связан с отображаемым именем и не может быть удалён — измените имя, чтобы изменить его",
@@ -408,6 +409,15 @@ export const ru: Record<string, string> = {
 		"Обратите внимание: ваша тема оформляет каждый callout, соответствующий {{pattern}}, поэтому она может изменить вид этого callout.",
 	"editor.idDashConflict":
 		"Obsidian записывает пробелы как дефисы, поэтому этот ID конфликтует с «{{other}}»",
+	"editor.idOwnedBy":
+		"«{{id}}» — это ID callout «{{name}}». Вы можете {{link}}.",
+	"editor.idMoveHere": "перенести его сюда",
+	"editor.idOwnedByMain":
+		"«{{id}}» — основной ID callout «{{name}}». Чтобы использовать его здесь, сначала удалите «{{name}}».",
+	"editor.idBuiltInStock":
+		"«{{id}}» — один из собственных ID Obsidian для «{{name}}».",
+	"editor.idMoving": "При сохранении «{{id}}» перейдёт сюда от «{{name}}».",
+	"editor.idMovingNotes": "Ваши заметки не изменятся. Они получат стиль этого callout.",
 	"editor.untitledCallout": "Callout без названия",
 	"editor.loremIpsum":
 		"Лёгкий ветерок колышет деревья. Тёплый солнечный свет заливает тихую тропинку и оживляет пейзаж.",
@@ -415,6 +425,17 @@ export const ru: Record<string, string> = {
 		"Лёгкий ветерок колышет деревья.",
 	"editor.sampleInlineText": "Вот встроенная капсула [!{id}] внутри абзаца.",
 	"editor.previewReadOnly": "Живой предпросмотр нельзя редактировать",
+	"noteChanges.title": "Обновить ваши заметки?",
+	"noteChanges.leave": "Оставить как есть",
+	"noteChanges.leaveDesc":
+		"Они сохранят [!{{id}}] и вернутся к стилю по умолчанию.",
+	"noteChanges.changeTo": "Изменить на",
+	"noteChanges.renameChange": "Изменить на «{{id}}»",
+	"noteChanges.titlesChange": "Изменить на «{{new}}»",
+	"noteChanges.titlesLeaveDesc": "Они по-прежнему будут читаться «{{old}}».",
+	"noteChanges.foldChange": "Установить «{{state}}»",
+	"noteChanges.foldLeaveDesc":
+		"Новую настройку используют только callout, которые вы вставите с этого момента.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -823,6 +844,8 @@ export const ru: Record<string, string> = {
 		"Обновлено {{count}} ID callout в файлах хранилища: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"Обновлено {{count}} заголовков callout в файлах хранилища: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Обновлена отметка сворачивания у callout: {{count}} в файлах хранилища.",
 	"vault.replaceWith": "Заменить на:",
 	"vault.deleteWithout": "Удалить без замены",
 	"vault.confirmDelete": "Подтвердить",
@@ -1478,4 +1501,24 @@ export const ru: Record<string, string> = {
 	"settings.versions": "Предыдущие версии",
 	"settings.versionsDesc": "Callout Studio автоматически сохраняет версии вашей конфигурации.\nСравнивайте их или возвращайтесь к одной из них.",
 	"settings.versionsButton": "Просмотреть версии",
+	"noteChanges.callouts": "{{count}}",
+	"noteChanges.calloutsOne": "1",
+	"noteChanges.notes": "{{count}}",
+	"noteChanges.notesOne": "1",
+	"noteChanges.askCallout": "Что делать с этим callout?",
+	"noteChanges.askCallouts": "Что делать с этими callout?",
+	"noteChanges.changeRenamed": "Вы изменили отображаемое имя с «{{old}}» на «{{new}}», поэтому основной ID изменится с «{{oldId}}» на «{{newId}}».",
+	"noteChanges.changeMainId": "Основной ID изменится с «{{oldId}}» на «{{newId}}».",
+	"noteChanges.changeName": "Вы изменили отображаемое имя с «{{old}}» на «{{new}}».",
+	"noteChanges.changeRemoved": "Вы убрали ID «{{id}}».",
+	"noteChanges.changeFold": "Вы изменили способ сворачивания этого callout.",
+	"noteChanges.affects": "Это затрагивает: callout — {{callouts}}, заметок — {{notes}}.",
+	"noteChanges.affectsUnknown": "Возможно, это затронет некоторые ваши заметки.",
+	"noteChanges.leaveManyDesc": "Они сохранят свои старые ID и вернутся к стилю по умолчанию.",
+	"noteChanges.rewriteManyDesc": "Каждый старый ID в ваших заметках станет [!{{to}}].",
+	"noteChanges.changeToIdLabel": "ID, на который их заменить",
+	"noteChanges.rewriteDesc": "Каждый [!{{id}}] в ваших заметках станет [!{{to}}].",
+	"noteChanges.renameFollowDesc": "Каждый [!{{oldId}}] в ваших заметках станет [!{{newId}}], а заголовки «{{old}}» станут «{{new}}».",
+	"noteChanges.titlesChangeDesc": "Заголовки «{{old}}» станут «{{new}}».",
+	"noteChanges.foldChangeDesc": "Их отметка + или - изменится соответствующим образом.",
 };

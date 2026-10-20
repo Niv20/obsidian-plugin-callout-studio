@@ -298,6 +298,7 @@ export const cs: Record<string, string> = {
 		"Všechny identifikátory tohoto callout. Mezery jsou povoleny.\nStiskněte Enter nebo tlačítko + pro přidání.",
 	"editor.calloutIdsPlaceholder": "Přidat ID",
 	"editor.addId": "Přidat ID",
+	"editor.maxIds": "Maximálně {{max}} ID. Smažte jedno, abyste mohli přidat další.",
 	"editor.idLinkedToName": "Propojeno se zobrazovaným názvem",
 	"editor.idCannotDelete":
 		"Toto ID je propojeno se zobrazovaným názvem a nelze ho smazat — upravte název, abyste ho změnili",
@@ -345,6 +346,14 @@ export const cs: Record<string, string> = {
 	"editor.idConflict": "Toto ID je v konfliktu s existujícím callout",
 	"editor.idDashConflict":
 		"Obsidian zapisuje mezery jako pomlčky, takže toto ID koliduje s „{{other}}“",
+	"editor.idOwnedBy": "„{{id}}“ je ID callout {{name}}. Můžete jej {{link}}.",
+	"editor.idMoveHere": "přesunout sem",
+	"editor.idOwnedByMain":
+		"„{{id}}“ je hlavní ID callout {{name}}. Chcete-li ho použít zde, nejprve smažte {{name}}.",
+	"editor.idBuiltInStock":
+		"„{{id}}“ je jedno z vlastních ID Obsidianu pro {{name}}.",
+	"editor.idMoving": "Při uložení se „{{id}}“ přesune sem z {{name}}.",
+	"editor.idMovingNotes": "Vaše poznámky se nezmění. Převezmou styl tohoto calloutu.",
 	"editor.idFromTheme":
 		"{{theme}} už poskytuje callout s tímto ID, takže ho Callout Studio nemůže stylizovat. Zvolte jiné ID.",
 	"editor.namesFromTheme":
@@ -361,6 +370,17 @@ export const cs: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Zde je vložená pilulka [!{id}] uvnitř odstavce.",
 	"editor.previewReadOnly": "Živý náhled nelze upravovat",
+	"noteChanges.title": "Aktualizovat vaše poznámky?",
+	"noteChanges.leave": "Ponechat je, jak jsou",
+	"noteChanges.leaveDesc":
+		"Ponechají si [!{{id}}] a vrátí se k výchozímu stylu.",
+	"noteChanges.changeTo": "Změnit je na",
+	"noteChanges.renameChange": "Změnit je na „{{id}}“",
+	"noteChanges.titlesChange": "Změnit je na „{{new}}“",
+	"noteChanges.titlesLeaveDesc": "Dál budou znít „{{old}}“.",
+	"noteChanges.foldChange": "Nastavit je na „{{state}}“",
+	"noteChanges.foldLeaveDesc":
+		"Nové nastavení používají jen callouty, které vložíte od teď.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -768,6 +788,8 @@ export const cs: Record<string, string> = {
 		"Aktualizováno {{count}} ID callout v souborech vaultu: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"Aktualizováno {{count}} nadpisů callout v souborech vaultu: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Aktualizována značka sbalení u {{count}} calloutů v souborech vaultu.",
 	"vault.replaceWith": "Nahradit za:",
 	"vault.deleteWithout": "Smazat bez nahrazení",
 	"vault.confirmDelete": "Potvrdit",
@@ -1463,4 +1485,24 @@ export const cs: Record<string, string> = {
 	"settings.versions": "Dřívější verze",
 	"settings.versionsDesc": "Callout Studio automaticky ukládá verze vaší konfigurace.\nPorovnejte je nebo se k některé vraťte.",
 	"settings.versionsButton": "Zobrazit verze",
+	"noteChanges.callouts": "{{count}}",
+	"noteChanges.calloutsOne": "1",
+	"noteChanges.notes": "{{count}}",
+	"noteChanges.notesOne": "1",
+	"noteChanges.askCallout": "Co se má stát s tímto calloutem?",
+	"noteChanges.askCallouts": "Co se má stát s těmito callouty?",
+	"noteChanges.changeRenamed": "Změnili jste zobrazovaný název z „{{old}}“ na „{{new}}“, takže se hlavní ID změní z „{{oldId}}“ na „{{newId}}“.",
+	"noteChanges.changeMainId": "Hlavní ID se změní z „{{oldId}}“ na „{{newId}}“.",
+	"noteChanges.changeName": "Změnili jste zobrazovaný název z „{{old}}“ na „{{new}}“.",
+	"noteChanges.changeRemoved": "Odebrali jste ID „{{id}}“.",
+	"noteChanges.changeFold": "Změnili jste, jak se tento callout sbaluje.",
+	"noteChanges.affects": "Týká se to: calloutů {{callouts}}, poznámek {{notes}}.",
+	"noteChanges.affectsUnknown": "Některé vaše poznámky mohou být dotčeny.",
+	"noteChanges.leaveManyDesc": "Ponechají si svá stará ID a vrátí se k výchozímu stylu.",
+	"noteChanges.rewriteManyDesc": "Každé staré ID ve vašich poznámkách se změní na [!{{to}}].",
+	"noteChanges.changeToIdLabel": "ID, na které je změnit",
+	"noteChanges.rewriteDesc": "Každé [!{{id}}] ve vašich poznámkách se změní na [!{{to}}].",
+	"noteChanges.renameFollowDesc": "Každé [!{{oldId}}] ve vašich poznámkách se změní na [!{{newId}}] a názvy znějící „{{old}}“ se změní na „{{new}}“.",
+	"noteChanges.titlesChangeDesc": "Názvy znějící „{{old}}“ se změní na „{{new}}“.",
+	"noteChanges.foldChangeDesc": "Jejich značka + nebo - se odpovídajícím způsobem změní.",
 };

@@ -865,21 +865,23 @@ export class CSSInjector {
 		// DOM copy is also baked in by paintIcons for PDF export, where this
 		// adopted stylesheet is dropped. Always the "regular" role: the
 		// selector is Obsidian's blockquote DOM, which no other role produces.
+		// One rule for the ID and every alias: the artwork is the largest thing
+		// in the stylesheet (an uploaded picture can be 256 KB), so it is
+		// written once per callout rather than once per name.
+		const nameSels = names.map((name) => this.sel(name));
 		const iconSvg = hidesIcon
 			? null
 			: this.icons.resolveSvg(def.icon, "regular");
-		if (paintsId && iconSvg) {
-			parts.push(
-				iconOverrideCSS(this.sel(def.id), def.icon, iconSvg, imp),
-			);
+		if (iconSvg) {
+			parts.push(iconOverrideCSS(nameSels, def.icon, iconSvg, imp));
 		}
 
 		// Emoji icon override (renders the glyph via ::after) for live view.
 		// An emoji is the one icon kind `--callout-icon` cannot carry — it takes
 		// a Lucide id and nothing else — so this ::after is not a preference,
 		// it is the only channel there is.
-		if (paintsId && !hidesIcon && def.icon.type === "emoji") {
-			parts.push(emojiOverrideCSS(this.sel(def.id), def.icon.value, imp));
+		if (!hidesIcon && def.icon.type === "emoji") {
+			parts.push(emojiOverrideCSS(nameSels, def.icon.value, imp));
 		}
 
 		// Icon position/size transform
@@ -971,16 +973,8 @@ export class CSSInjector {
 						`${this.sel(alias, ".theme-dark ")} > .callout-content {\n  color: ${def.textColorDark}${imp};\n}`,
 					);
 				}
-				if (iconSvg) {
-					parts.push(
-						iconOverrideCSS(this.sel(alias), def.icon, iconSvg, imp),
-					);
-				}
-				if (!hidesIcon && def.icon.type === "emoji") {
-					parts.push(
-						emojiOverrideCSS(this.sel(alias), def.icon.value, imp),
-					);
-				}
+				// The icon itself is already drawn for this alias, by the
+				// shared rule above.
 				if (aliasTransform) {
 					parts.push(aliasTransform);
 				}

@@ -88,8 +88,12 @@ export function titleAfterToken(line: string, startCh: number, role: CalloutRend
 	return close < 0 ? "" : splitFoldMark(line.slice(close + 1), role).title;
 }
 
-/** The fold marker a definition's header carries, if any. */
-export function foldMarkFor(def: CalloutDefinition): string {
+/**
+ * The fold marker a definition's header carries, if any. Takes only the two
+ * fields it reads, so the editor can ask it about a form that is not a
+ * definition yet.
+ */
+export function foldMarkFor(def: Pick<CalloutDefinition, "foldable" | "defaultFolded">): "" | "+" | "-" {
 	if (!def.foldable) return "";
 	return def.defaultFolded ? "-" : "+";
 }

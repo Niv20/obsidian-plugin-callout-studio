@@ -292,6 +292,7 @@ export const fi: Record<string, string> = {
 		"Kaikki tämän calloutin tunnisteet. Välilyönnit ovat sallittuja.\nLisää painamalla Enter tai +-painiketta.",
 	"editor.calloutIdsPlaceholder": "Lisää tunnus",
 	"editor.addId": "Lisää tunnus",
+	"editor.maxIds": "Enintään {{max}} tunnistetta. Poista yksi lisätäksesi toisen.",
 	"editor.idLinkedToName": "Linkitetty näyttönimeen",
 	"editor.idCannotDelete":
 		"Tämä tunnus on linkitetty näyttönimeen eikä sitä voi poistaa — muuta nimeä muuttaaksesi sitä",
@@ -339,6 +340,15 @@ export const fi: Record<string, string> = {
 		"Tämä tunnus on ristiriidassa olemassa olevan calloutin kanssa",
 	"editor.idDashConflict":
 		'Obsidian kirjoittaa välilyönnit väliviivoina, joten tämä tunnus on ristiriidassa tunnuksen "{{other}}" kanssa',
+	"editor.idOwnedBy": '"{{id}}" on kohteen {{name}} tunnus. Voit {{link}}.',
+	"editor.idMoveHere": "siirtää sen tähän",
+	"editor.idOwnedByMain":
+		'"{{id}}" on kohteen {{name}} pääasiallinen tunnus. Jos haluat käyttää sitä tässä, poista ensin {{name}}.',
+	"editor.idBuiltInStock":
+		'"{{id}}" on yksi Obsidianin omista tunnuksista kohteelle {{name}}.',
+	"editor.idMoving":
+		'Tallennettaessa "{{id}}" siirtyy tähän kohteesta {{name}}.',
+	"editor.idMovingNotes": "Muistiinpanosi eivät muutu. Ne saavat tämän calloutin tyylin.",
 
 	"editor.idFromTheme":
 		"{{theme}} tarjoaa jo calloutin tällä tunnuksella, joten Callout Studio ei voi tyylitellä sitä. Valitse toinen tunnus.",
@@ -357,6 +367,17 @@ export const fi: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Tässä on upotettu [!{id}] -pilleri kappaleen sisällä.",
 	"editor.previewReadOnly": "Live-esikatselua ei voi muokata",
+	"noteChanges.title": "Päivitetäänkö muistiinpanosi?",
+	"noteChanges.leave": "Jätä ne ennalleen",
+	"noteChanges.leaveDesc":
+		"Ne säilyttävät tunnuksen [!{{id}}] ja palaavat oletustyyliin.",
+	"noteChanges.changeTo": "Muuta muotoon",
+	"noteChanges.renameChange": 'Muuta muotoon "{{id}}"',
+	"noteChanges.titlesChange": 'Muuta muotoon "{{new}}"',
+	"noteChanges.titlesLeaveDesc": 'Niissä luetaan edelleen "{{old}}".',
+	"noteChanges.foldChange": 'Aseta arvoon "{{state}}"',
+	"noteChanges.foldLeaveDesc":
+		"Vain tästä lähtien lisäämäsi calloutit käyttävät uutta asetusta.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -761,6 +782,8 @@ export const fi: Record<string, string> = {
 		"{{count}} callout-tunnus(ta) päivitetty holvin tiedostoissa: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"{{count}} callout-otsikko(a) päivitetty holvin tiedostoissa: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Päivitettiin {{count}} calloutin taittomerkki holvin tiedostoissa.",
 	"vault.replaceWith": "Korvaa:",
 	"vault.deleteWithout": "Poista korvaamatta",
 	"vault.confirmDelete": "Vahvista",
@@ -1448,4 +1471,24 @@ export const fi: Record<string, string> = {
 	"settings.versions": "Aiemmat versiot",
 	"settings.versionsDesc": "Callout Studio tallentaa kokoonpanosi versiot automaattisesti.\nVertaile niitä tai palaa johonkin niistä.",
 	"settings.versionsButton": "Näytä versiot",
+	"noteChanges.callouts": "{{count}}",
+	"noteChanges.calloutsOne": "1",
+	"noteChanges.notes": "{{count}}",
+	"noteChanges.notesOne": "1",
+	"noteChanges.askCallout": "Mitä sille calloutille pitäisi tehdä?",
+	"noteChanges.askCallouts": "Mitä niille callouteille pitäisi tehdä?",
+	"noteChanges.changeRenamed": "Muutit näyttönimen \"{{old}}\" nimeksi \"{{new}}\", joten pääasiallinen tunnus muuttuu: \"{{oldId}}\" → \"{{newId}}\".",
+	"noteChanges.changeMainId": "Pääasiallinen tunnus muuttuu: \"{{oldId}}\" → \"{{newId}}\".",
+	"noteChanges.changeName": "Muutit näyttönimen \"{{old}}\" nimeksi \"{{new}}\".",
+	"noteChanges.changeRemoved": "Poistit tunnisteen \"{{id}}\".",
+	"noteChanges.changeFold": "Muutit tapaa, jolla tämä callout taittuu.",
+	"noteChanges.affects": "Tämä koskee: callouteja {{callouts}}, muistiinpanoja {{notes}}.",
+	"noteChanges.affectsUnknown": "Muutos voi vaikuttaa joihinkin muistiinpanoihisi.",
+	"noteChanges.leaveManyDesc": "Ne säilyttävät vanhat tunnisteensa ja palaavat oletustyyliin.",
+	"noteChanges.rewriteManyDesc": "Jokainen vanha tunniste muistiinpanoissasi muuttuu muotoon [!{{to}}].",
+	"noteChanges.changeToIdLabel": "Tunniste, johon ne muutetaan",
+	"noteChanges.rewriteDesc": "Jokainen [!{{id}}] muistiinpanoissasi muuttuu muotoon [!{{to}}].",
+	"noteChanges.renameFollowDesc": "Jokainen [!{{oldId}}] muistiinpanoissasi muuttuu muotoon [!{{newId}}], ja otsikot \"{{old}}\" muuttuvat otsikoiksi \"{{new}}\".",
+	"noteChanges.titlesChangeDesc": "Otsikot \"{{old}}\" muuttuvat otsikoiksi \"{{new}}\".",
+	"noteChanges.foldChangeDesc": "Niiden + tai - -merkki muuttuu vastaavasti.",
 };

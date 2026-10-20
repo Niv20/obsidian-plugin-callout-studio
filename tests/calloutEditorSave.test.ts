@@ -23,10 +23,13 @@
  * therefore gated on its own predicate, and the assertions below are about
  * fields being **absent**.
  *
- * The vault rewrites that follow a save (ids, titles, fold marks) are the same
- * three writers `vaultCalloutScanner.test.ts` covers in detail; what is checked
- * here is only that the save asks for them, with the right arguments, in the
- * cases that call for it.
+ * **What reaches the notes.** Nothing, unless the user said so. The save is
+ * handed `noteChoices` — the answers to the question the editor asks first —
+ * and rewrites exactly those: an id taken off a callout stays in its notes
+ * unless the user chose a callout to rewrite it to. The writers themselves
+ * (ids, titles, fold marks) are covered in `vaultCalloutScanner.test.ts`; what
+ * is checked here is that the save runs the ones it was asked for, with the
+ * right arguments, and no others.
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
@@ -35,6 +38,11 @@ import type {
 	CalloutEditorSaveInput,
 	CalloutEditorSaveState,
 } from "../src/settings/editor/CalloutEditorSave";
+import {
+	LEAVE_NOTES,
+	pendingNoteChanges,
+	type NoteChoices,
+} from "../src/settings/editor/noteChanges";
 import type { CalloutEditorPlugin } from "../src/settings/editor/types";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import {
@@ -48,6 +56,7 @@ import {
 } from "../src/utils/iconAdjust";
 import type { App } from "obsidian";
 import type { CalloutDefinition, PluginData } from "../src/types";
+import { calloutIdentity } from "../src/utils/calloutId";
 
 const ACCENT = "#448aff";
 
@@ -127,6 +136,19 @@ function stateFor(
 	});
 }
 
+/**
+ * "Change them to `to`" for the leaving `ids`: their notes are rewritten to that
+ * id of this callout, and titles and fold marks follow. Ids are matched by
+ * identity, as the save matches them.
+ */
+function follow(to: string, ...ids: string[]): NoteChoices {
+	return {
+		rewrite: new Map(ids.map((id) => [calloutIdentity(id), to])),
+		titles: true,
+		fold: true,
+	};
+}
+
 type Harness = {
 	registry: CalloutRegistry;
 	/** One entry per `onChange` fire, holding what the world looked like then. */
@@ -134,6 +156,8 @@ type Harness = {
 	migrations: Array<[string, string]>;
 	fetched: CalloutDefinition["icon"][];
 	notices: string[];
+	/** How many times the save asked open notes to repaint. */
+	refreshes: () => number;
 	file: (path: string) => string;
 	save: (
 		over: Partial<CalloutEditorSaveInput>,
@@ -181,6 +205,7 @@ function harness(
 		},
 	} as unknown as App;
 
+	let refreshes = 0;
 	const plugin = {
 		app,
 		registry,
@@ -188,6 +213,7 @@ function harness(
 		settingsEditOpen: false,
 		saveSettings: () => Promise.resolve(),
 		schedulePruneUnusedFallbacks: () => {},
+		refreshCallouts: () => { refreshes++; },
 		ensureIconArtwork: (icon: CalloutDefinition["icon"]) => {
 			fetched.push(icon);
 			return Promise.resolve();
@@ -211,6 +237,7 @@ function harness(
 		migrations,
 		fetched,
 		notices,
+		refreshes: () => refreshes,
 		file: (path) => store.get(path) ?? "",
 		save: (over) =>
 			performCalloutEditorSave({
@@ -225,6 +252,9 @@ function harness(
 				overwriteAutoFallback: false,
 				canUseCalloutId: () => true,
 				getFallbackBase: () => undefined,
+				noteChoices: LEAVE_NOTES,
+				// The Undo link needs a DOM; the message is what is checked here.
+				announceNoteRewrite: (message) => { notices.push(message); },
 				...over,
 			}),
 	};
@@ -235,11 +265,13 @@ function harness(
 /* -------------------------------------------------------------------------- */
 
 describe("performCalloutEditorSave — renaming a callout's ID", () => {
+	// The user accepted the question's preselected answer: the notes follow.
 	const renaming = (h: Harness): Promise<CalloutDefinition | null> =>
 		h.save({
 			existingId: "old",
 			state: formState({ calloutId: "new", displayName: "X" }),
 			baselineDef: h.registry.get("old"),
+			noteChoices: follow("new", "old"),
 		});
 
 	it("moves the definition to the new ID and frees the old one", async () => {
@@ -289,6 +321,22 @@ describe("performCalloutEditorSave — renaming a callout's ID", () => {
 		assert.ok(h.notices.length > 0, "the user was not told the save failed");
 	});
 
+	it("puts the callout back when the add is refused", async () => {
+		// The remove already happened inside the batch, and a batch undoes
+		// nothing — so a refused rename used to delete the callout, and the
+		// deletion reached data.json with the event the batch then fired.
+		const h = harness([def({ id: "old", displayName: "Old", aliases: ["o"] }), def({ id: "taken" })]);
+		h.registry.settings.fallbackCalloutId = "old";
+		const saved = await h.save({
+			existingId: "old",
+			state: formState({ calloutId: "taken", displayName: "Old" }),
+			baselineDef: h.registry.get("old"),
+		});
+		assert.strictEqual(saved, null);
+		assert.deepStrictEqual(h.registry.get("old")?.aliases, ["o"]);
+		assert.strictEqual(h.registry.settings.fallbackCalloutId, "old");
+	});
+
 	it("does not migrate commands for an edit that keeps the ID", async () => {
 		// An ordinary update is not a rename, and re-pointing commands that
 		// already point correctly is churn `syncAll` would have to undo.
@@ -320,6 +368,7 @@ describe("performCalloutEditorSave — renaming a callout's ID", () => {
 			existingId: "my note",
 			state: formState({ calloutId: "renamed", displayName: "X" }),
 			baselineDef: h.registry.get("my note"),
+			noteChoices: follow("renamed", "my note"),
 		});
 		assert.strictEqual(h.file("a.md"), "> [!renamed] X");
 		assert.strictEqual(h.file("b.md"), "> [!renamed] X");
@@ -338,27 +387,152 @@ describe("performCalloutEditorSave — renaming a callout's ID", () => {
 				aliases: ["keep"],
 			}),
 			baselineDef: h.registry.get("old"),
+			noteChoices: follow("new", "old"),
 		});
 		assert.strictEqual(h.file("note.md"), "> [!keep] X");
 	});
 
-	it("rewrites a removed custom built-in alias to its primary ID", async () => {
-		const h = harness([], { "note.md": "> [!mine] Note" });
+	it("rewrites nothing when the user kept the old id as another id", async () => {
+		// The old id added back in the IDs field before saving: it is not
+		// leaving, so no note has anything to follow.
+		const h = harness([def({ id: "old", displayName: "Old" })], {
+			"note.md": "> [!old] Old",
+		});
+		const saved = await h.save({
+			existingId: "old",
+			state: formState({ calloutId: "new", displayName: "New", aliases: ["old"] }),
+			baselineDef: h.registry.get("old"),
+		});
+		assert.deepStrictEqual(saved?.aliases, ["old"]);
+		assert.strictEqual(h.file("note.md"), "> [!old] Old");
+	});
+
+	it("rewrites the old id to the new one only when the user said so", async () => {
+		const h = harness([def({ id: "old", displayName: "Old" })], {
+			"note.md": "> [!old] Old",
+		});
+		await h.save({
+			existingId: "old",
+			state: formState({ calloutId: "new", displayName: "New" }),
+			baselineDef: h.registry.get("old"),
+		});
+		assert.strictEqual(h.file("note.md"), "> [!old] Old");
+		assert.ok(h.registry.get("new"));
+	});
+});
+
+/* -------------------------------------------------------------------------- */
+/* An id taken off a callout stays in its notes (GitHub: Nathan, after #86)   */
+/* -------------------------------------------------------------------------- */
+
+describe("performCalloutEditorSave — removing an id", () => {
+	/** `note` with a custom alias `mine`, used in a note. */
+	function noteWithAlias() {
+		const h = harness([], { "note.md": "> [!mine] Mine\n> body" });
 		h.registry.update("note", { aliases: ["mine"] });
 		const baseline = h.registry.get("note");
 		assert.ok(baseline);
+		return { h, baseline };
+	}
 
+	it("leaves the notes exactly as they were, by default", async () => {
+		const { h, baseline } = noteWithAlias();
 		const saved = await h.save({
 			isBuiltIn: true,
 			existingId: "note",
 			baselineDef: baseline,
 			state: stateFor(baseline, { aliases: [] }),
 		});
-
-		assert.strictEqual(h.file("note.md"), "> [!note] Note");
+		assert.strictEqual(h.file("note.md"), "> [!mine] Mine\n> body");
 		assert.strictEqual(saved?.aliases, undefined);
+		assert.strictEqual(h.registry.findByAlias("mine"), undefined, "the alias really left");
 		assert.strictEqual(h.registry.isBuiltInModified("note"), false);
 		assert.deepStrictEqual(h.registry.toSaveData().callouts, []);
+		// Those notes look different now without having changed: repaint them.
+		assert.strictEqual(h.refreshes(), 1);
+	});
+
+	it("rewrites them to the callout's own id when the user chose that", async () => {
+		const { h, baseline } = noteWithAlias();
+		await h.save({
+			isBuiltIn: true,
+			existingId: "note",
+			baselineDef: baseline,
+			state: stateFor(baseline, { aliases: [] }),
+			noteChoices: follow("note", "mine"),
+		});
+		// The alias's default title was generated, so it follows the type.
+		assert.strictEqual(h.file("note.md"), "> [!note] Note\n> body");
+	});
+
+	it("rewrites them to another of the callout's own ids, carrying a generated title across", async () => {
+		const { h } = noteWithAlias();
+		h.registry.update("note", { aliases: ["mine", "kept"] });
+		const withTwo = h.registry.get("note")!;
+		await h.save({
+			isBuiltIn: true,
+			existingId: "note",
+			baselineDef: withTwo,
+			state: stateFor(withTwo, { aliases: ["kept"] }),
+			noteChoices: follow("kept", "mine"),
+		});
+		assert.strictEqual(h.file("note.md"), "> [!kept] Kept\n> body");
+		assert.deepStrictEqual(h.registry.get("note")?.aliases, ["kept"]);
+	});
+
+	it("sends a renamed callout's old id to one of its aliases, its generated title with it", async () => {
+		const h = harness([def({ id: "idea", displayName: "Idea", aliases: ["thought"] })],
+			{ "a.md": "> [!idea] Idea\n> body", "b.md": "> [!idea] My own words" });
+		await h.save({
+			existingId: "idea",
+			state: formState({ calloutId: "insight", displayName: "Insight", aliases: ["thought"] }),
+			baselineDef: h.registry.get("idea"),
+			noteChoices: follow("thought", "idea"),
+		});
+		assert.strictEqual(h.file("a.md"), "> [!thought] Thought\n> body");
+		assert.strictEqual(h.file("b.md"), "> [!thought] My own words");
+	});
+
+	it("keeps a title the user wrote", async () => {
+		const h = harness([def({ id: "x", aliases: ["mine"] })], { "a.md": "> [!mine] My own words" });
+		await h.save({
+			existingId: "x",
+			state: formState({ calloutId: "x", aliases: [] }),
+			baselineDef: h.registry.get("x"),
+			noteChoices: follow("x", "mine"),
+		});
+		assert.strictEqual(h.file("a.md"), "> [!x] My own words");
+	});
+
+	it("does not treat a re-spelled alias as removed", async () => {
+		// `a b` and `a-b` are one callout to Obsidian. Comparing raw strings once
+		// rewrote every note's `[!a b]` to the main id on this edit.
+		const h = harness([def({ id: "x", aliases: ["a b"] })], { "n.md": "> [!a b] A b" });
+		const saved = await h.save({
+			existingId: "x",
+			state: formState({ calloutId: "x", aliases: ["a-b"] }),
+			baselineDef: h.registry.get("x"),
+			noteChoices: follow("x", "a b"),
+		});
+		assert.deepStrictEqual(saved?.aliases, ["a-b"]);
+		assert.strictEqual(h.file("n.md"), "> [!a b] A b");
+		assert.strictEqual(h.refreshes(), 0);
+	});
+
+	it("never touches a note when a callout with a space in its id is saved", async () => {
+		// The old removed-id test compared lowercase strings against every
+		// spelling the callout owns — and `my-note`, the dashed form of
+		// `my note`, is never in the form. So every save rewrote `[!my-note]`.
+		const h = harness([def({ id: "my note", displayName: "My note" })], {
+			"a.md": "> [!my-note] Hi",
+		});
+		await h.save({
+			existingId: "my note",
+			state: formState({ calloutId: "my note", displayName: "My note", colorLight: "#ff0000" }),
+			baselineDef: h.registry.get("my note"),
+			noteChoices: follow("my note", "my note"),
+		});
+		assert.strictEqual(h.file("a.md"), "> [!my-note] Hi");
 	});
 });
 
@@ -371,8 +545,21 @@ describe("performCalloutEditorSave — the other vault rewrites", () => {
 			existingId: "tip",
 			state: formState({ calloutId: "tip", displayName: "New Name" }),
 			baselineDef: h.registry.get("tip"),
+			noteChoices: { ...LEAVE_NOTES, titles: true },
 		});
 		assert.strictEqual(h.file("note.md"), "> [!tip] New Name");
+	});
+
+	it("leaves the titles when the user said to", async () => {
+		const h = harness([def({ id: "tip", displayName: "Old Name" })], {
+			"note.md": "> [!tip] Old Name",
+		});
+		await h.save({
+			existingId: "tip",
+			state: formState({ calloutId: "tip", displayName: "New Name" }),
+			baselineDef: h.registry.get("tip"),
+		});
+		assert.strictEqual(h.file("note.md"), "> [!tip] Old Name");
 	});
 
 	it("normalizes fold marks when foldability changes", async () => {
@@ -387,8 +574,33 @@ describe("performCalloutEditorSave — the other vault rewrites", () => {
 				defaultFolded: true,
 			}),
 			baselineDef: h.registry.get("tip"),
+			noteChoices: { ...LEAVE_NOTES, fold: true },
 		});
 		assert.strictEqual(h.file("note.md"), "> [!tip]- X");
+	});
+
+	it("leaves every note's own fold mark when the user said to", async () => {
+		const h = harness([def({ id: "tip", displayName: "X" })], {
+			"note.md": "> [!tip]- Folded here on purpose",
+		});
+		await h.save({
+			existingId: "tip",
+			state: formState({ calloutId: "tip", defaultFolded: false, foldable: false }),
+			baselineDef: h.registry.get("tip"),
+		});
+		assert.strictEqual(h.file("note.md"), "> [!tip]- Folded here on purpose");
+	});
+
+	it("does not call it a fold change when a callout that cannot fold flips its default", async () => {
+		// Both write no mark at all, so there is nothing to change in a note. The
+		// old test compared the two booleans and stripped every mark.
+		const before = def({ id: "tip", foldable: false, defaultFolded: true });
+		const pending = pendingNoteChanges({
+			existing: before,
+			state: { calloutId: "tip", aliases: [], displayName: "X", foldable: false, defaultFolded: false },
+			vaultIdFormsFor: (d, forms) => forms ?? [d.id],
+		});
+		assert.strictEqual(pending.fold, null);
 	});
 
 	it("leaves the vault alone when nothing that lives in it changed", async () => {
@@ -824,6 +1036,7 @@ describe("performCalloutEditorSave — fetching the artwork", () => {
 			overwriteAutoFallback: false,
 			canUseCalloutId: () => true,
 			getFallbackBase: () => undefined,
+			noteChoices: LEAVE_NOTES,
 		});
 		assert.ok(saved);
 		assert.ok(h.registry.get("x"));

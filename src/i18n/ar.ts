@@ -296,6 +296,7 @@ export const ar: Record<string, string> = {
 		"جميع معرّفات هذا الـ callout. يُسمح باستخدام المسافات.\nاضغط Enter أو زر + للإضافة.",
 	"editor.calloutIdsPlaceholder": "إضافة معرّف",
 	"editor.addId": "إضافة معرّف",
+	"editor.maxIds": "الحد الأقصى {{max}} من المعرّفات. احذف أحدها لإضافة معرّف آخر.",
 	"editor.idLinkedToName": "مرتبط بالاسم المعروض",
 	"editor.idCannotDelete":
 		"هذا المعرّف مرتبط بالاسم المعروض ولا يمكن حذفه — عدّل الاسم لتغييره",
@@ -341,6 +342,14 @@ export const ar: Record<string, string> = {
 	"editor.idConflict": "هذا المعرّف يتعارض مع callout موجود",
 	"editor.idDashConflict":
 		'أوبسيديان يكتب المسافات كشرطات، لذلك يتعارض هذا المعرّف مع "{{other}}"',
+	"editor.idOwnedBy": '"{{id}}" هو أحد معرّفات {{name}}. يمكنك {{link}}.',
+	"editor.idMoveHere": "نقله إلى هنا",
+	"editor.idOwnedByMain":
+		'"{{id}}" هو المعرّف الرئيسي لـ {{name}}. لاستخدامه هنا، احذف {{name}} أولاً.',
+	"editor.idBuiltInStock":
+		'"{{id}}" أحد معرّفات Obsidian الخاصة بـ {{name}}.',
+	"editor.idMoving": 'عند الحفظ، سينتقل "{{id}}" إلى هنا من {{name}}.',
+	"editor.idMovingNotes": "لا تتغير ملاحظاتك. تأخذ نمط هذا الـ callout.",
 	"editor.idFromTheme":
 		"{{theme}} يوفّر بالفعل callout بهذا المعرّف، لذا لا يمكن لـ Callout Studio تنسيقه. اختر معرّفًا مختلفًا.",
 	"editor.namesFromTheme":
@@ -356,6 +365,16 @@ export const ar: Record<string, string> = {
 		"تداعب نسمة لطيفة أوراق الأشجار.",
 	"editor.sampleInlineText": "إليك شارة [!{id}] مضمّنة داخل فقرة.",
 	"editor.previewReadOnly": "لا يمكن تعديل المعاينة المباشرة",
+	"noteChanges.title": "هل تريد تحديث ملاحظاتك؟",
+	"noteChanges.leave": "اتركها كما هي",
+	"noteChanges.leaveDesc": "تحتفظ بـ [!{{id}}] وتعود إلى النمط الافتراضي.",
+	"noteChanges.changeTo": "غيّرها إلى",
+	"noteChanges.renameChange": 'غيّرها إلى "{{id}}"',
+	"noteChanges.titlesChange": 'غيّرها إلى "{{new}}"',
+	"noteChanges.titlesLeaveDesc": 'تبقى تقرأ "{{old}}".',
+	"noteChanges.foldChange": 'اضبطها على "{{state}}"',
+	"noteChanges.foldLeaveDesc":
+		"فقط الـ callout التي تُدرجها من الآن فصاعداً تستخدم الإعداد الجديد.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -763,6 +782,8 @@ export const ar: Record<string, string> = {
 		"تم تحديث {{count}} معرّف callout في ملفات المخزن: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"تم تحديث {{count}} عنوان callout في ملفات المخزن: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"تم تحديث علامة الطيّ لـ {{count}} callout في ملفات المخزن.",
 	"vault.replaceWith": "الاستبدال بـ:",
 	"vault.deleteWithout": "حذف بدون استبدال",
 	"vault.confirmDelete": "تأكيد",
@@ -1449,4 +1470,24 @@ export const ar: Record<string, string> = {
 	"settings.versions": "الإصدارات السابقة",
 	"settings.versionsDesc": "يحفظ Callout Studio إصدارات من إعداداتك تلقائيًا.\nقارن بينها أو ارجع إلى أحدها.",
 	"settings.versionsButton": "عرض الإصدارات",
+	"noteChanges.callouts": "{{count}} من الـ callout",
+	"noteChanges.calloutsOne": "callout واحد",
+	"noteChanges.notes": "{{count}} من الملاحظات",
+	"noteChanges.notesOne": "ملاحظة واحدة",
+	"noteChanges.askCallout": "ماذا يجب أن يحدث لذلك الـ callout؟",
+	"noteChanges.askCallouts": "ماذا يجب أن يحدث لتلك الـ callout؟",
+	"noteChanges.changeRenamed": "غيّرت الاسم المعروض من \"{{old}}\" إلى \"{{new}}\"، لذا يتغير المعرّف الرئيسي من \"{{oldId}}\" إلى \"{{newId}}\".",
+	"noteChanges.changeMainId": "يتغير المعرّف الرئيسي من \"{{oldId}}\" إلى \"{{newId}}\".",
+	"noteChanges.changeName": "غيّرت الاسم المعروض من \"{{old}}\" إلى \"{{new}}\".",
+	"noteChanges.changeRemoved": "أزلت المعرّف \"{{id}}\".",
+	"noteChanges.changeFold": "غيّرت طريقة طيّ هذا الـ callout.",
+	"noteChanges.affects": "يؤثر هذا في {{callouts}} داخل {{notes}}.",
+	"noteChanges.affectsUnknown": "قد تتأثر بعض ملاحظاتك.",
+	"noteChanges.leaveManyDesc": "تحتفظ بمعرّفاتها القديمة وتعود إلى النمط الافتراضي.",
+	"noteChanges.rewriteManyDesc": "كل معرّف قديم في ملاحظاتك يصبح [!{{to}}].",
+	"noteChanges.changeToIdLabel": "المعرّف الذي ستُغيَّر إليه",
+	"noteChanges.rewriteDesc": "كل [!{{id}}] في ملاحظاتك يصبح [!{{to}}].",
+	"noteChanges.renameFollowDesc": "كل [!{{oldId}}] في ملاحظاتك يصبح [!{{newId}}]، وتتحول العناوين التي تحمل \"{{old}}\" إلى \"{{new}}\".",
+	"noteChanges.titlesChangeDesc": "تتحول العناوين التي تحمل \"{{old}}\" إلى \"{{new}}\".",
+	"noteChanges.foldChangeDesc": "تتغير علامة + أو - فيها لتتوافق.",
 };

@@ -389,6 +389,7 @@ export const he: Record<string, string> = {
 		"כל המזהים המשויכים לתיבת־הבלטה זו. ניתן להשתמש ברווחים.\nלחצו על Enter או על כפתור ה־+ כדי להוסיף.",
 	"editor.calloutIdsPlaceholder": "הוספת מזהה",
 	"editor.addId": "הוספת מזהה",
+	"editor.maxIds": "עד {{max}} מזהים. מחקו מזהה כדי להוסיף אחר.",
 	"editor.idLinkedToName": "מקושר לשם התצוגה",
 	"editor.idCannotDelete":
 		"לא ניתן למחוק מזהה זה — הוא מקושר לשם התצוגה. כדי לשנותו, ערכו את השם",
@@ -442,6 +443,14 @@ export const he: Record<string, string> = {
 		"לתשומת ליבכם: ערכת הנושא שלכם מעצבת כל תיבת־הבלטה שתואמת ל-{{pattern}}, כך שהיא עשויה לשנות את המראה של זו.",
 	"editor.idDashConflict":
 		'אובסידיאן ממיר רווחים למקפים, ולכן מזהה זה מתנגש עם "{{other}}"',
+	"editor.idOwnedBy": '"{{id}}" הוא מזהה של {{name}}. אפשר {{link}}.',
+	"editor.idMoveHere": "להעביר אותו לכאן",
+	"editor.idOwnedByMain":
+		'"{{id}}" הוא המזהה הראשי של {{name}}. כדי להשתמש בו כאן, מחקו קודם את {{name}}.',
+	"editor.idBuiltInStock":
+		'"{{id}}" הוא אחד המזהים של אובסידיאן עצמה עבור {{name}}.',
+	"editor.idMoving": 'בעת השמירה, "{{id}}" יעבור לכאן מ{{name}}.',
+	"editor.idMovingNotes": "הפתקים שלכם לא משתנים. הם יקבלו את הסגנון של תיבת־ההבלטה הזו.",
 	"editor.untitledCallout": "תיבת־הבלטה ללא שם",
 	"editor.loremIpsum":
 		"רוח קלה נושבת בין העצים. אור שמש חמים מאיר שביל שקט ומפיח חיים בנוף.",
@@ -449,6 +458,16 @@ export const he: Record<string, string> = {
 		"רוח קלה נושבת בין העצים.",
 	"editor.sampleInlineText": "כאן יש תיבת־הבלטה מוטבעת מסוג [!{id}] בתוך פסקה.",
 	"editor.previewReadOnly": "לא ניתן לערוך את התצוגה המקדימה",
+	"noteChanges.title": "לעדכן את הפתקים שלכם?",
+	"noteChanges.leave": "להשאיר אותם כמו שהם",
+	"noteChanges.leaveDesc": "הם ישמרו את [!{{id}}] ויחזרו לסגנון ברירת המחדל.",
+	"noteChanges.changeTo": "לשנות אותם ל־",
+	"noteChanges.renameChange": 'לשנות אותם ל־"{{id}}"',
+	"noteChanges.titlesChange": 'לשנות אותם ל־"{{new}}"',
+	"noteChanges.titlesLeaveDesc": 'הן ימשיכו להציג "{{old}}".',
+	"noteChanges.foldChange": 'להגדיר אותן כ־"{{state}}"',
+	"noteChanges.foldLeaveDesc":
+		"רק תיבות־הבלטה שתוסיפו מעכשיו ישתמשו בהגדרה החדשה.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -870,6 +889,8 @@ export const he: Record<string, string> = {
 		"עודכנו {{count}} מזהים של תיבות־הבלטה בקובצי הכספת: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"עודכנו {{count}} כותרות של תיבות־הבלטה בקובצי הכספת: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"סימן הקיפול של {{count}} תיבות־הבלטה בקובצי הכספת עודכן.",
 	"vault.replaceWith": "החלפה ב:",
 	"vault.deleteWithout": "מחיקה ללא החלפה",
 	"vault.confirmDelete": "אישור",
@@ -1490,4 +1511,24 @@ export const he: Record<string, string> = {
 	"settings.versions": "גרסאות קודמות",
 	"settings.versionsDesc": "Callout Studio שומר גרסאות של התצורה שלכם אוטומטית.\nהשוו ביניהן או חזרו לאחת מהן.",
 	"settings.versionsButton": "הצגת גרסאות",
+	"noteChanges.callouts": "{{count}} תיבות־הבלטה",
+	"noteChanges.calloutsOne": "תיבת־הבלטה אחת",
+	"noteChanges.notes": "{{count}} פתקים",
+	"noteChanges.notesOne": "פתק אחד",
+	"noteChanges.askCallout": "מה לעשות עם תיבת־ההבלטה הזו?",
+	"noteChanges.askCallouts": "מה לעשות עם תיבות־ההבלטה האלה?",
+	"noteChanges.changeRenamed": "שיניתם את השם לתצוגה מ־\"{{old}}\" ל־\"{{new}}\", ולכן המזהה הראשי משתנה מ־\"{{oldId}}\" ל־\"{{newId}}\".",
+	"noteChanges.changeMainId": "המזהה הראשי משתנה מ־\"{{oldId}}\" ל־\"{{newId}}\".",
+	"noteChanges.changeName": "שיניתם את השם לתצוגה מ־\"{{old}}\" ל־\"{{new}}\".",
+	"noteChanges.changeRemoved": "הסרתם את המזהה \"{{id}}\".",
+	"noteChanges.changeFold": "שיניתם את אופן הקיפול של תיבת־ההבלטה הזו.",
+	"noteChanges.affects": "זה משפיע על {{callouts}}, ב־{{notes}}.",
+	"noteChanges.affectsUnknown": "ייתכן שחלק מהפתקים שלכם יושפעו.",
+	"noteChanges.leaveManyDesc": "הם ישמרו את המזהים הישנים שלהם ויחזרו לסגנון ברירת המחדל.",
+	"noteChanges.rewriteManyDesc": "כל מזהה ישן בפתקים שלכם יהפוך ל־[!{{to}}].",
+	"noteChanges.changeToIdLabel": "המזהה שאליו ישונו",
+	"noteChanges.rewriteDesc": "כל [!{{id}}] בפתקים שלכם יהפוך ל־[!{{to}}].",
+	"noteChanges.renameFollowDesc": "כל [!{{oldId}}] בפתקים שלכם יהפוך ל־[!{{newId}}], וכותרות שכתוב בהן \"{{old}}\" יהפכו ל־\"{{new}}\".",
+	"noteChanges.titlesChangeDesc": "כותרות שכתוב בהן \"{{old}}\" יהפכו ל־\"{{new}}\".",
+	"noteChanges.foldChangeDesc": "סימן ה־+ או ה־- שלהן ישתנה בהתאם.",
 };

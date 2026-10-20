@@ -29,8 +29,25 @@ export { DEFAULT_CALLOUTS } from "./defaultCallouts";
  */
 export const MAX_TAG_LENGTH: number = 200;
 
-/** Maximum number of IDs (aliases) allowed per callout */
-export const MAX_TAGS_COUNT: number = 4;
+/**
+ * The most IDs one callout can have: its primary ID plus every alias.
+ *
+ * The one place this number lives. Both limits read it: the editor's IDs
+ * field stops taking new IDs at this count, and the import validator rejects
+ * an entry with more. Nothing else counts IDs, so changing this line is the
+ * whole change.
+ *
+ * Raising it is always safe. Lowering it never trims a callout that already
+ * has more IDs: it keeps every one and keeps working, its IDs field just
+ * refuses another until it is back under the cap. An exported file holding
+ * such a callout is rejected on import, though, and so is any file with more
+ * IDs than the installed version allows.
+ *
+ * Keep it above the largest built-in ID set (three, e.g. abstract, summary,
+ * tldr), so every built-in can still take an alias of the user's own;
+ * tests/calloutIdLimit.test.ts holds it there.
+ */
+export const MAX_TAGS_COUNT: number = 10;
 
 /**
  * The Lucide id that stands for Callout Studio itself.

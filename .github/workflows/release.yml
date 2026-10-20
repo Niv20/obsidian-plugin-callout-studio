@@ -148,9 +148,20 @@ jobs:
             # platform classes, real Style Settings option classes, and the
             # editor naming the aliases Obsidian draws - 3.8 KB, which leaves
             # the headroom about where it was.
+            # Raised by 16 KiB for notes that change only when the user says
+            # so: the callout editor's "Update your notes?" window for a removed
+            # ID, a rename and a fold change, the one counting pass behind it,
+            # a single Undo for every pass a save writes, "move it here" for an
+            # ID another callout has, and their strings - 16.2 KB over the
+            # build before them, which leaves the headroom about where it was.
+            # Raised by 5 KiB for that window's second round: moving a removed
+            # ID to another callout, sentences that say what changed and ask,
+            # counts in the singular, and the radio painting it now shares with
+            # the plugin import window - 5.2 KB, which leaves the headroom about
+            # where it was.
             - name: Check bundle size
               run: |
-                  limit=2309120  # 2 MiB + 207 KiB
+                  limit=2330624  # 2 MiB + 228 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

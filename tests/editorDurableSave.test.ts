@@ -11,6 +11,7 @@ import { saveSettingsWithFeedback } from "../src/manager/settingsSaveFeedback";
 import { EditorSaveSession } from "../src/settings/editor/EditorSaveSession";
 import { performCalloutEditorSave } from "../src/settings/editor/CalloutEditorSave";
 import type { CalloutEditorSaveState } from "../src/settings/editor/CalloutEditorSave";
+import { LEAVE_NOTES } from "../src/settings/editor/noteChanges";
 import type { CalloutEditorPlugin } from "../src/settings/editor/types";
 import type { CalloutDefinition, PluginData } from "../src/types";
 import { DEFAULT_TEXT_COLOR_DARK, DEFAULT_TEXT_COLOR_LIGHT } from "../src/utils/colorUtils";
@@ -61,6 +62,7 @@ async function harness(run: (h: {
 		registry, settingsWriter: writer,
 		saveSettings: () => saveSettingsWithFeedback(owner, () => undefined),
 		ensureIconArtwork: () => Promise.resolve(),
+		refreshCallouts: () => undefined,
 		customCommands: { migrateCalloutId: () => undefined },
 	} as unknown as CalloutEditorPlugin;
 	const app = { vault: { getMarkdownFiles: () => [] } } as unknown as App;
@@ -74,6 +76,7 @@ async function harness(run: (h: {
 			state: form(over), baselineDef: existingId ? registry.get(existingId) : undefined,
 			hasStyleChanges: true, saveAsFallback: false, overwriteAutoFallback: false,
 			canUseCalloutId: () => true, getFallbackBase: () => registry.get("note"),
+			noteChoices: LEAVE_NOTES,
 			onDefinitionApplied: (def) => { existingId = def.id; },
 		});
 	}, () => undefined);

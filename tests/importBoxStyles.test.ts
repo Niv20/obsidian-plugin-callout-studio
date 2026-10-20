@@ -94,10 +94,10 @@ describe("the shared import/export boxes at rest", () => {
 
 	it("marks a chooser's box with a quiet chevron and a plugin import card with a radio dot", () => {
 		assert.equal(valueOf(only(".cs-option-box-mark"), "color"), "var(--text-faint)");
-		const dot = only(".cs-import-radio");
+		const dot = only(".cs-option-radio");
 		assert.equal(valueOf(dot, "border-radius"), "50%");
 		assert.equal(valueOf(dot, "color"), "transparent", "its check is there, and uncoloured, until chosen");
-		const chosen = only(".cs-option-box.is-selected .cs-import-radio");
+		const chosen = only(".cs-option-box.is-selected .cs-option-radio");
 		assert.equal(valueOf(chosen, "background"), "var(--checkbox-color)");
 		assert.equal(valueOf(chosen, "color"), "var(--text-on-accent)");
 	});

@@ -2026,6 +2026,33 @@ Each is now a plain two-button `ConfirmModal`: Cancel plus a red **Delete** or
 A callout nothing uses, unless it is the default fallback, is deleted with no
 dialog at all. The notice's **Undo** stands in for the question.
 
+### `NoteChangesModal` - "Update your notes?"
+
+Asked by the callout editor's Save, before anything is saved, when the save
+would change something notes hold: an id leaving the callout, titles reading
+its old name, fold marks after a **Foldable** change. The rule and the flow are
+in [Callout editor](14-callout-editor.md#notes-change-only-after-asking); this is
+the window.
+
+- **One question**: the changes Save would make - one line, or a `<ul>` when
+  there are several - then how many callouts they reach and the question, one
+  sentence per line (`\n` in the string, `<br>` in the window), over a
+  `role="radiogroup"` of two answer cards: **Leave them as they are**, first and
+  preselected, and **Change them to**, which rewrites every old id to one of
+  this callout's own ids.
+- **The cards are the plugin import window's**: `renderOptionBox` without an
+  icon tile, `addOptionRadio` for the dot and `paintOptionRadio` for the chosen
+  / choosable state, all from `optionBox.ts` and shared with the import window.
+  With more than one id to pick from, Change carries a `SelectDropdown` at its
+  trailing edge, just before the dot - where the import card keeps its button
+  (`.cs-note-change-picking`; on a narrow window the dropdown and dot wrap to a
+  line of their own, still at the trailing edge). Here a click anywhere on a
+  card chooses it, a click into its dropdown included; the import window
+  exempts its own buttons and text box.
+- **Footer**: **Cancel** and **Save changes** (`mod-cta`). Cancel, Escape and
+  the close button resolve `null` - back to the editor, nothing saved. The
+  promise resolves exactly once; `onClose` destroys the dropdown.
+
 ### `PaletteEditorModal` - simple vs. advanced, two background styles
 
 Two-column layout mirroring the per-role global-style popups: a sticky live

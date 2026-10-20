@@ -342,6 +342,7 @@ export const zh: Record<string, string> = {
 		"此 callout 的所有标识符。允许使用空格。\n按 Enter 或 + 按钮添加。",
 	"editor.calloutIdsPlaceholder": "添加 ID",
 	"editor.addId": "添加 ID",
+	"editor.maxIds": "最多 {{max}} 个 ID。删除一个后才能再添加。",
 	"editor.idLinkedToName": "已关联到显示名称",
 	"editor.idCannotDelete":
 		"此 ID 已关联到显示名称，无法删除——请编辑名称以更改",
@@ -387,6 +388,12 @@ export const zh: Record<string, string> = {
 	"editor.idConflict": "此 ID 与现有 callout 冲突",
 	"editor.idDashConflict":
 		'Obsidian 会将空格写为连字符，因此此 ID 与 "{{other}}" 冲突',
+	"editor.idOwnedBy": "“{{id}}”是{{name}}的一个 ID。你可以{{link}}。",
+	"editor.idMoveHere": "把它移到这里",
+	"editor.idOwnedByMain": "“{{id}}”是{{name}}的主 ID。要在这里使用它，请先删除{{name}}。",
+	"editor.idBuiltInStock": "“{{id}}”是 Obsidian 为{{name}}自带的 ID 之一。",
+	"editor.idMoving": "保存时，“{{id}}”会从{{name}}移到这里。",
+	"editor.idMovingNotes": "你的笔记保持原样，并采用这个 callout 的样式。",
 
 	"editor.idFromTheme":
 		"{{theme}} 已经提供了具有此 ID 的 callout，因此 Callout Studio 无法为其设置样式。请选择其他 ID。",
@@ -404,6 +411,15 @@ export const zh: Record<string, string> = {
 		"微风拂过树梢。",
 	"editor.sampleInlineText": "这是一个嵌入在段落中的行内 [!{id}] 徽标。",
 	"editor.previewReadOnly": "实时预览无法编辑",
+	"noteChanges.title": "更新你的笔记？",
+	"noteChanges.leave": "保持原样",
+	"noteChanges.leaveDesc": "它们保留 [!{{id}}]，并回退到默认样式。",
+	"noteChanges.changeTo": "改为",
+	"noteChanges.renameChange": "改为“{{id}}”",
+	"noteChanges.titlesChange": "改为“{{new}}”",
+	"noteChanges.titlesLeaveDesc": "它们仍然写着“{{old}}”。",
+	"noteChanges.foldChange": "设为“{{state}}”",
+	"noteChanges.foldLeaveDesc": "只有从现在起插入的 callout 才会使用新设置。",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -803,6 +819,7 @@ export const zh: Record<string, string> = {
 		"已更新库文件中的 {{count}} 个 callout ID：{{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"已更新库文件中的 {{count}} 个 callout 标题：{{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated": "已更新库文件中 {{count}} 个 callout 的折叠标记。",
 	"vault.replaceWith": "替换为：",
 	"vault.deleteWithout": "直接删除",
 	"vault.confirmDelete": "确认",
@@ -1406,4 +1423,24 @@ export const zh: Record<string, string> = {
 	"settings.versions": "较早版本",
 	"settings.versionsDesc": "Callout Studio 会自动保存配置的版本。\n比较这些版本，或返回某个版本。",
 	"settings.versionsButton": "查看版本",
+	"noteChanges.callouts": "{{count}} 个 callout",
+	"noteChanges.calloutsOne": "1 个 callout",
+	"noteChanges.notes": "{{count}} 篇笔记",
+	"noteChanges.notesOne": "1 篇笔记",
+	"noteChanges.askCallout": "要如何处理那个 callout？",
+	"noteChanges.askCallouts": "要如何处理那些 callout？",
+	"noteChanges.changeRenamed": "你将显示名称从“{{old}}”改为“{{new}}”，因此主 ID 会从“{{oldId}}”变为“{{newId}}”。",
+	"noteChanges.changeMainId": "主 ID 会从“{{oldId}}”变为“{{newId}}”。",
+	"noteChanges.changeName": "你将显示名称从“{{old}}”改为“{{new}}”。",
+	"noteChanges.changeRemoved": "你移除了 ID“{{id}}”。",
+	"noteChanges.changeFold": "你更改了此 callout 的折叠方式。",
+	"noteChanges.affects": "这会影响{{notes}}中的{{callouts}}。",
+	"noteChanges.affectsUnknown": "部分笔记可能会受到影响。",
+	"noteChanges.leaveManyDesc": "它们保留旧 ID，并回退到默认样式。",
+	"noteChanges.rewriteManyDesc": "笔记中的每个旧 ID 都会变成 [!{{to}}]。",
+	"noteChanges.changeToIdLabel": "要改为的 ID",
+	"noteChanges.rewriteDesc": "笔记中的每个 [!{{id}}] 都会变成 [!{{to}}]。",
+	"noteChanges.renameFollowDesc": "笔记中的每个 [!{{oldId}}] 都会变成 [!{{newId}}]，写着“{{old}}”的标题会变成“{{new}}”。",
+	"noteChanges.titlesChangeDesc": "写着“{{old}}”的标题会变成“{{new}}”。",
+	"noteChanges.foldChangeDesc": "它们的 + 或 - 标记会随之更改。",
 };

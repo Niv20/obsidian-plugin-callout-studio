@@ -300,6 +300,7 @@ export const ko: Record<string, string> = {
 		"이 callout의 모든 식별자. 공백을 사용할 수 있습니다.\nEnter 또는 + 버튼을 눌러 추가합니다.",
 	"editor.calloutIdsPlaceholder": "ID 추가",
 	"editor.addId": "ID 추가",
+	"editor.maxIds": "ID는 최대 {{max}}개까지 추가할 수 있습니다. 다른 ID를 추가하려면 하나를 삭제하세요.",
 	"editor.idLinkedToName": "표시 이름에 연결됨",
 	"editor.idCannotDelete":
 		"이 ID는 표시 이름에 연결되어 있어 삭제할 수 없습니다 — 이름을 편집하여 변경하세요",
@@ -354,6 +355,14 @@ export const ko: Record<string, string> = {
 		"참고: 사용자의 테마는 {{pattern}}과(와) 일치하는 모든 callout을 스타일 지정하므로, 이 callout의 모양을 덮어쓸 수 있습니다.",
 	"editor.idDashConflict":
 		'Obsidian은 공백을 대시로 저장하므로 이 ID는 "{{other}}"와(과) 충돌합니다',
+	"editor.idOwnedBy": '"{{id}}"은(는) {{name}}의 ID입니다. {{link}}.',
+	"editor.idMoveHere": "여기로 옮길 수 있습니다",
+	"editor.idOwnedByMain":
+		'"{{id}}"은(는) {{name}}의 기본 ID입니다. 여기서 사용하려면 먼저 {{name}}을(를) 삭제하세요.',
+	"editor.idBuiltInStock":
+		'"{{id}}"은(는) {{name}}에 대한 Obsidian 자체 ID 중 하나입니다.',
+	"editor.idMoving": '저장하면 "{{id}}"이(가) {{name}}에서 여기로 이동합니다.',
+	"editor.idMovingNotes": "노트는 그대로 유지되며 이 Callout의 스타일을 따릅니다.",
 	"editor.untitledCallout": "제목 없는 Callout",
 	"editor.loremIpsum":
 		"산들바람이 나무 사이로 지나갑니다. 따뜻한 햇살이 고요한 오솔길을 비추며 풍경에 생기를 더합니다.",
@@ -361,6 +370,15 @@ export const ko: Record<string, string> = {
 		"산들바람이 나무 사이로 지나갑니다.",
 	"editor.sampleInlineText": "다음은 단락 안에 있는 인라인 [!{id}] 필입니다.",
 	"editor.previewReadOnly": "실시간 미리보기는 편집할 수 없습니다",
+	"noteChanges.title": "노트를 업데이트할까요?",
+	"noteChanges.leave": "그대로 두기",
+	"noteChanges.leaveDesc": "[!{{id}}]을(를) 유지하며 기본 스타일로 돌아갑니다.",
+	"noteChanges.changeTo": "다음으로 변경",
+	"noteChanges.renameChange": '"{{id}}"(으)로 변경',
+	"noteChanges.titlesChange": '"{{new}}"(으)로 변경',
+	"noteChanges.titlesLeaveDesc": '계속 "{{old}}"(으)로 남습니다.',
+	"noteChanges.foldChange": '"{{state}}"(으)로 설정',
+	"noteChanges.foldLeaveDesc": "지금부터 삽입하는 Callout만 새 설정을 사용합니다.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -769,6 +787,7 @@ export const ko: Record<string, string> = {
 		"볼트 파일에서 {{count}}개의 callout ID를 업데이트했습니다: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"볼트 파일에서 {{count}}개의 callout 제목을 업데이트했습니다: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated": "볼트 파일에서 Callout {{count}}개의 접기 표시를 업데이트했습니다.",
 	"vault.replaceWith": "다음으로 교체:",
 	"vault.deleteWithout": "교체 없이 삭제",
 	"vault.confirmDelete": "확인",
@@ -1462,4 +1481,24 @@ export const ko: Record<string, string> = {
 	"settings.versions": "이전 버전",
 	"settings.versionsDesc": "Callout Studio는 구성의 버전을 자동으로 저장합니다.\n비교하거나, 이전 버전으로 돌아갈 수 있습니다.",
 	"settings.versionsButton": "버전 보기",
+	"noteChanges.callouts": "Callout {{count}}개",
+	"noteChanges.calloutsOne": "Callout 1개",
+	"noteChanges.notes": "노트 {{count}}개",
+	"noteChanges.notesOne": "노트 1개",
+	"noteChanges.askCallout": "그 Callout을 어떻게 할까요?",
+	"noteChanges.askCallouts": "그 Callout들을 어떻게 할까요?",
+	"noteChanges.changeRenamed": "표시 이름을 \"{{old}}\"에서 \"{{new}}\"(으)로 변경했으므로 기본 ID가 \"{{oldId}}\"에서 \"{{newId}}\"(으)로 바뀝니다.",
+	"noteChanges.changeMainId": "기본 ID가 \"{{oldId}}\"에서 \"{{newId}}\"(으)로 바뀝니다.",
+	"noteChanges.changeName": "표시 이름을 \"{{old}}\"에서 \"{{new}}\"(으)로 변경했습니다.",
+	"noteChanges.changeRemoved": "ID \"{{id}}\"을(를) 제거했습니다.",
+	"noteChanges.changeFold": "이 Callout의 접힘 방식을 변경했습니다.",
+	"noteChanges.affects": "{{notes}}의 {{callouts}}에 영향을 줍니다.",
+	"noteChanges.affectsUnknown": "일부 노트가 영향을 받을 수 있습니다.",
+	"noteChanges.leaveManyDesc": "이전 ID를 유지하며 기본 스타일로 돌아갑니다.",
+	"noteChanges.rewriteManyDesc": "노트의 이전 ID는 모두 [!{{to}}]이(가) 됩니다.",
+	"noteChanges.changeToIdLabel": "변경할 ID",
+	"noteChanges.rewriteDesc": "노트의 모든 [!{{id}}]이(가) [!{{to}}](으)로 바뀝니다.",
+	"noteChanges.renameFollowDesc": "노트의 모든 [!{{oldId}}]이(가) [!{{newId}}](으)로 바뀌고, \"{{old}}\"라고 적힌 제목은 \"{{new}}\"(으)로 바뀝니다.",
+	"noteChanges.titlesChangeDesc": "\"{{old}}\"라고 적힌 제목은 \"{{new}}\"(으)로 바뀝니다.",
+	"noteChanges.foldChangeDesc": "해당 + 또는 - 표시가 그에 맞게 바뀝니다.",
 };

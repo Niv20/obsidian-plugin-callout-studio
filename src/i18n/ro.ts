@@ -355,6 +355,7 @@ export const ro: Record<string, string> = {
 		"Toți identificatorii pentru acest callout. Spațiile sunt permise.\nApăsați Enter sau butonul + pentru a adăuga.",
 	"editor.calloutIdsPlaceholder": "Adaugă ID",
 	"editor.addId": "Adaugă ID",
+	"editor.maxIds": "Maximum {{max}} ID-uri. Șterge unul pentru a adăuga altul.",
 	"editor.idLinkedToName": "Legat de numele afișat",
 	"editor.idCannotDelete":
 		"Acest ID este legat de numele afișat și nu poate fi șters — editați numele pentru a-l schimba",
@@ -410,6 +411,14 @@ export const ro: Record<string, string> = {
 		"Atenție: tema dvs. stilizează fiecare callout care se potrivește cu {{pattern}}, așa că poate suprascrie aspectul acestuia.",
 	"editor.idDashConflict":
 		"Obsidian scrie spațiile ca liniuțe, așa că acest ID intră în conflict cu „{{other}}”",
+	"editor.idOwnedBy": "„{{id}}” este un ID al {{name}}. Îl poți {{link}}.",
+	"editor.idMoveHere": "muta aici",
+	"editor.idOwnedByMain":
+		"„{{id}}” este ID-ul principal al {{name}}. Ca să-l folosești aici, șterge mai întâi {{name}}.",
+	"editor.idBuiltInStock":
+		"„{{id}}” este unul dintre ID-urile proprii ale Obsidian pentru {{name}}.",
+	"editor.idMoving": "La salvare, „{{id}}” se mută aici de la {{name}}.",
+	"editor.idMovingNotes": "Notele tale nu se schimbă. Preiau stilul acestui callout.",
 	"editor.untitledCallout": "Callout fără titlu",
 	"editor.loremIpsum":
 		"O adiere ușoară trece printre copaci. Lumina caldă a soarelui scaldă o cărare liniștită și însuflețește peisajul.",
@@ -418,6 +427,16 @@ export const ro: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Iată o pastilă [!{id}] inline în interiorul unui paragraf.",
 	"editor.previewReadOnly": "Previzualizarea live nu poate fi editată",
+	"noteChanges.title": "Actualizezi notele tale?",
+	"noteChanges.leave": "Lasă-le cum sunt",
+	"noteChanges.leaveDesc": "Păstrează [!{{id}}] și revin la stilul implicit.",
+	"noteChanges.changeTo": "Schimbă-le în",
+	"noteChanges.renameChange": "Schimbă-le în „{{id}}”",
+	"noteChanges.titlesChange": "Schimbă-le în „{{new}}”",
+	"noteChanges.titlesLeaveDesc": "Continuă să scrie „{{old}}”.",
+	"noteChanges.foldChange": "Setează-le la „{{state}}”",
+	"noteChanges.foldLeaveDesc":
+		"Doar callout-urile pe care le inserezi de acum încolo folosesc noua setare.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -826,6 +845,8 @@ export const ro: Record<string, string> = {
 		"Au fost actualizate {{count}} ID(uri) callout în fișierele vault: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"Au fost actualizate {{count}} titlu(uri) callout în fișierele vault: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"S-a actualizat marcajul de pliere pentru {{count}} callout(uri) în fișierele vault.",
 	"vault.replaceWith": "Înlocuiți cu:",
 	"vault.deleteWithout": "Ștergeți fără înlocuire",
 	"vault.confirmDelete": "Confirmare",
@@ -1487,4 +1508,24 @@ export const ro: Record<string, string> = {
 	"settings.versions": "Versiuni anterioare",
 	"settings.versionsDesc": "Callout Studio salvează automat versiuni ale configurației tale.\nCompară-le sau revino la una dintre ele.",
 	"settings.versionsButton": "Vezi versiunile",
+	"noteChanges.callouts": "{{count}} callout-uri",
+	"noteChanges.calloutsOne": "1 callout",
+	"noteChanges.notes": "{{count}} note",
+	"noteChanges.notesOne": "1 notă",
+	"noteChanges.askCallout": "Ce să se întâmple cu acel callout?",
+	"noteChanges.askCallouts": "Ce să se întâmple cu acele callout-uri?",
+	"noteChanges.changeRenamed": "Ai schimbat numele afișat din „{{old}}” în „{{new}}”, așa că ID-ul principal se schimbă din „{{oldId}}” în „{{newId}}”.",
+	"noteChanges.changeMainId": "ID-ul principal se schimbă din „{{oldId}}” în „{{newId}}”.",
+	"noteChanges.changeName": "Ai schimbat numele afișat din „{{old}}” în „{{new}}”.",
+	"noteChanges.changeRemoved": "Ai eliminat ID-ul „{{id}}”.",
+	"noteChanges.changeFold": "Ai schimbat modul în care se pliază acest callout.",
+	"noteChanges.affects": "Aceasta afectează {{callouts}} din {{notes}}.",
+	"noteChanges.affectsUnknown": "Este posibil ca unele dintre notițele tale să fie afectate.",
+	"noteChanges.leaveManyDesc": "Își păstrează vechile ID-uri și revin la stilul implicit.",
+	"noteChanges.rewriteManyDesc": "Fiecare ID vechi din notițele tale devine [!{{to}}].",
+	"noteChanges.changeToIdLabel": "ID-ul în care să fie schimbate",
+	"noteChanges.rewriteDesc": "Fiecare [!{{id}}] din notele tale devine [!{{to}}].",
+	"noteChanges.renameFollowDesc": "Fiecare [!{{oldId}}] din notele tale devine [!{{newId}}], iar titlurile care spun „{{old}}” devin „{{new}}”.",
+	"noteChanges.titlesChangeDesc": "Titlurile care spun „{{old}}” devin „{{new}}”.",
+	"noteChanges.foldChangeDesc": "Semnul lor + sau - se schimbă în consecință.",
 };

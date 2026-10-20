@@ -303,6 +303,7 @@ export const de: Record<string, string> = {
 		"Alle Bezeichner für diesen Callout. Leerzeichen sind erlaubt.\nEnter oder die +-Schaltfläche drücken zum Hinzufügen.",
 	"editor.calloutIdsPlaceholder": "ID hinzufügen",
 	"editor.addId": "ID hinzufügen",
+	"editor.maxIds": "Maximal {{max}} IDs. Löschen Sie eine, um eine weitere hinzuzufügen.",
 	"editor.idLinkedToName": "Mit dem Anzeigenamen verknüpft",
 	"editor.idCannotDelete":
 		"Diese ID ist mit dem Anzeigenamen verknüpft und kann nicht gelöscht werden — ändern Sie den Namen, um sie zu ändern",
@@ -351,6 +352,16 @@ export const de: Record<string, string> = {
 		"Diese ID steht in Konflikt mit einem bestehenden Callout",
 	"editor.idDashConflict":
 		"Obsidian schreibt Leerzeichen als Bindestriche, daher kollidiert diese ID mit „{{other}}“",
+	"editor.idOwnedBy":
+		"„{{id}}“ ist eine ID von {{name}}. Du kannst sie {{link}}.",
+	"editor.idMoveHere": "hierher verschieben",
+	"editor.idOwnedByMain":
+		"„{{id}}“ ist die Haupt-ID von {{name}}. Um sie hier zu verwenden, lösche zuerst {{name}}.",
+	"editor.idBuiltInStock":
+		"„{{id}}“ ist eine von Obsidians eigenen IDs für {{name}}.",
+	"editor.idMoving":
+		"Beim Speichern wird „{{id}}“ von {{name}} hierher verschoben.",
+	"editor.idMovingNotes": "Deine Notizen bleiben unverändert. Sie übernehmen den Stil dieses Callouts.",
 	"editor.idFromTheme":
 		"{{theme}} liefert bereits einen Callout mit dieser ID, daher kann Callout Studio ihn nicht gestalten. Wählen Sie eine andere ID.",
 	"editor.namesFromTheme":
@@ -367,6 +378,17 @@ export const de: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Hier ist eine eingebettete [!{id}] Pille innerhalb eines Absatzes.",
 	"editor.previewReadOnly": "Die Live-Vorschau kann nicht bearbeitet werden",
+	"noteChanges.title": "Notizen aktualisieren?",
+	"noteChanges.leave": "Unverändert lassen",
+	"noteChanges.leaveDesc":
+		"Sie behalten [!{{id}}] und fallen auf den Standardstil zurück.",
+	"noteChanges.changeTo": "Ändern in",
+	"noteChanges.renameChange": "In „{{id}}“ ändern",
+	"noteChanges.titlesChange": "In „{{new}}“ ändern",
+	"noteChanges.titlesLeaveDesc": "Sie lauten weiterhin „{{old}}“.",
+	"noteChanges.foldChange": "Auf „{{state}}“ setzen",
+	"noteChanges.foldLeaveDesc":
+		"Nur Callouts, die du ab jetzt einfügst, verwenden die neue Einstellung.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -778,6 +800,8 @@ export const de: Record<string, string> = {
 		"{{count}} Callout-ID(s) in Vault-Dateien aktualisiert: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"{{count}} Callout-Titel in Vault-Dateien aktualisiert: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Einklappmarkierung von {{count}} Callout(s) in Vault-Dateien aktualisiert.",
 	"vault.replaceWith": "Ersetzen durch:",
 	"vault.deleteWithout": "Ohne Ersetzen löschen",
 	"vault.confirmDelete": "Bestätigen",
@@ -1487,4 +1511,24 @@ export const de: Record<string, string> = {
 	"settings.versions": "Frühere Versionen",
 	"settings.versionsDesc": "Callout Studio speichert automatisch Versionen deiner Konfiguration.\nVergleiche sie oder kehre zu einer zurück.",
 	"settings.versionsButton": "Versionen anzeigen",
+	"noteChanges.callouts": "{{count}} Callouts",
+	"noteChanges.calloutsOne": "1 Callout",
+	"noteChanges.notes": "{{count}} Notizen",
+	"noteChanges.notesOne": "1 Notiz",
+	"noteChanges.askCallout": "Was soll mit diesem Callout geschehen?",
+	"noteChanges.askCallouts": "Was soll mit diesen Callouts geschehen?",
+	"noteChanges.changeRenamed": "Du hast den Anzeigenamen von „{{old}}“ in „{{new}}“ geändert, daher ändert sich die Haupt-ID von „{{oldId}}“ zu „{{newId}}“.",
+	"noteChanges.changeMainId": "Die Haupt-ID ändert sich von „{{oldId}}“ zu „{{newId}}“.",
+	"noteChanges.changeName": "Du hast den Anzeigenamen von „{{old}}“ in „{{new}}“ geändert.",
+	"noteChanges.changeRemoved": "Du hast die ID „{{id}}“ entfernt.",
+	"noteChanges.changeFold": "Du hast geändert, wie dieses Callout eingeklappt wird.",
+	"noteChanges.affects": "Das betrifft {{callouts}} in {{notes}}.",
+	"noteChanges.affectsUnknown": "Einige deiner Notizen sind möglicherweise betroffen.",
+	"noteChanges.leaveManyDesc": "Sie behalten ihre alten IDs und fallen auf den Standardstil zurück.",
+	"noteChanges.rewriteManyDesc": "Jede alte ID in deinen Notizen wird zu [!{{to}}].",
+	"noteChanges.changeToIdLabel": "ID, in die sie geändert werden",
+	"noteChanges.rewriteDesc": "Jedes [!{{id}}] in deinen Notizen wird zu [!{{to}}].",
+	"noteChanges.renameFollowDesc": "Jedes [!{{oldId}}] in deinen Notizen wird zu [!{{newId}}], und Titel mit „{{old}}“ werden zu „{{new}}“.",
+	"noteChanges.titlesChangeDesc": "Titel mit „{{old}}“ werden zu „{{new}}“.",
+	"noteChanges.foldChangeDesc": "Ihre Markierung + oder - wird entsprechend angepasst.",
 };

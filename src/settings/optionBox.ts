@@ -24,7 +24,13 @@
  * - **A card** (no `onActivate`) — the box alone: no role, no focus stop, no
  *   chevron, no listeners. The plugin import window builds its two options on
  *   it, and adds what is its own to say — a radio dot, a button, a text box
- *   (pluginImport/pluginImportViews.ts).
+ *   (pluginImport/pluginImportViews.ts). The callout editor's "Update your
+ *   notes?" question builds its answers the same way, without the icon tile,
+ *   some with a callout picker (settings/editor/NoteChangesModal.ts).
+ *   {@link addOptionRadio} is the dot both of them use and
+ *   {@link paintOptionRadio} how both of them show which card is chosen. A
+ *   card's own control — the import's Upload button, the question's picker —
+ *   sits at its trailing edge, just before the dot.
  */
 import { setIcon } from "obsidian";
 import { renderRecommendedBadge } from "./recommendedBadge";
@@ -38,7 +44,8 @@ export function optionBoxId(name: string): string {
 }
 
 export interface OptionBoxSpec {
-	icon: string;
+	/** The tile at the leading edge. Left out, the box starts with its title. */
+	icon?: string;
 	title: string;
 	desc: string;
 	/** The grey Recommended pill on the title line. */
@@ -78,7 +85,7 @@ export function renderOptionBox(parent: HTMLElement, spec: OptionBoxSpec): Optio
 	const headId = optionBoxId("title");
 	const descId = optionBoxId("status");
 	const el = parent.createDiv({ cls: "cs-option-box" });
-	setIcon(el.createDiv({ cls: "cs-option-box-icon" }), spec.icon);
+	if (spec.icon) setIcon(el.createDiv({ cls: "cs-option-box-icon" }), spec.icon);
 
 	const text = el.createDiv({ cls: "cs-option-box-text" });
 	const head = text.createDiv({ cls: "cs-option-box-head", attr: { id: headId } });
@@ -125,4 +132,63 @@ export function renderOptionBox(parent: HTMLElement, spec: OptionBoxSpec): Optio
 		onActivate();
 	});
 	return box;
+}
+
+/**
+ * Make a card one answer of a radio group: a dot at its trailing edge, empty
+ * until the window paints its card `is-selected` and sets `aria-checked`.
+ *
+ * The dot is the radio — named by the card's title line, described by its
+ * status line — and the card around it is one large pointer target for the
+ * same thing. The card cannot be the radio itself: a radio may hold no control
+ * of its own, and a card can hold a button, a text box or a picker. A click on
+ * one matching `exempt` does what that control says instead of choosing; left
+ * out, every click on the card chooses it, a click into its picker included.
+ */
+export function addOptionRadio(box: OptionBox, onChoose: () => void, exempt?: string): HTMLElement {
+	const [headId, descId] = box.describedBy.split(" ");
+	const radio = box.el.createDiv({
+		cls: "cs-option-radio",
+		attr: {
+			role: "radio",
+			"aria-checked": "false",
+			"aria-labelledby": headId ?? "",
+			"aria-describedby": descId ?? "",
+		},
+	});
+	setIcon(radio, "check");
+	radio.addEventListener("keydown", (evt) => {
+		if (evt.key !== "Enter" && evt.key !== " ") return;
+		// Claimed even when repeated, so a held Space never scrolls the window.
+		evt.preventDefault();
+		if (!evt.repeat) onChoose();
+	});
+	box.el.addEventListener("click", (evt) => {
+		if (exempt && (evt.target as Element | null)?.closest(exempt)) return;
+		onChoose();
+	});
+	return radio;
+}
+
+/**
+ * Show one radio card's state: `chosen` wears the accent ring and fills the
+ * dot; `choosable` says a click would choose it (it has something to choose,
+ * and is not chosen already); a card that is not `enabled` keeps its dot out
+ * of the tab order and faded.
+ */
+export function paintOptionRadio(
+	box: OptionBox,
+	radio: HTMLElement,
+	state: { chosen: boolean; choosable: boolean; enabled: boolean },
+): void {
+	box.el.toggleClass("is-selected", state.chosen);
+	box.el.toggleClass("is-choosable", state.choosable);
+	radio.setAttribute("aria-checked", state.chosen ? "true" : "false");
+	if (state.enabled) {
+		radio.setAttribute("tabindex", "0");
+		radio.removeAttribute("aria-disabled");
+	} else {
+		radio.removeAttribute("tabindex");
+		radio.setAttribute("aria-disabled", "true");
+	}
 }

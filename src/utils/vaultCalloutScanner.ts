@@ -254,9 +254,19 @@ export interface CalloutTitleSwap {
 	/**
 	 * Only a title that is exactly this (trimmed, case-insensitive) is
 	 * swapped, so a title the user wrote themselves is never clobbered.
+	 *
+	 * Several when a note may carry more than one generated title for the same
+	 * token — an alias is titled either the way Obsidian titles it or, written
+	 * before that rule, with its callout's name.
 	 */
-	from: string;
+	from: string | readonly string[];
 	to: string;
+}
+
+/** The titles a swap replaces, folded for comparison; never the empty title. */
+function swapTitles(swap: CalloutTitleSwap | undefined): Set<string> {
+	const from = typeof swap?.from === "string" ? [swap.from] : (swap?.from ?? []);
+	return new Set(from.map((title) => title.trim().toLowerCase()).filter(Boolean));
 }
 
 /**
@@ -294,8 +304,8 @@ export async function replaceCalloutIdsInVault(
 	const idSet = new Set(oldIds.map((id) => calloutIdentity(id)));
 	// An empty old title would match every title-less header and *add* a title
 	// to it, which is never what a type swap means. Same guard, same reason, as
-	// in replaceCalloutTitlesInVault.
-	const wanted = titleSwap?.from.trim().toLowerCase() ?? "";
+	// in replaceCalloutTitlesInVault — swapTitles drops it.
+	const wanted = swapTitles(titleSwap);
 
 	const { count } = await rewriteVaultFiles(app, (content) =>
 			rewriteCalloutLines(content, (line, tokens) =>
@@ -304,9 +314,9 @@ export async function replaceCalloutIdsInVault(
 					const bracket = `[!${newId}${metadataSuffix(token)}]`;
 					// A pill has no title text of its own, so there is nothing
 					// to carry across for an inline token.
-					if (titleSwap && wanted && token.role !== "inline") {
+					if (titleSwap && wanted.size > 0 && token.role !== "inline") {
 						const { foldMark, title } = splitFoldAndTitle(line, token);
-						if (title.trim().toLowerCase() === wanted) {
+						if (wanted.has(title.trim().toLowerCase())) {
 							// Widening to end-of-line is safe here precisely
 							// because the title matched: a title that is exactly
 							// a plain display name holds no tokens of its own, so
@@ -347,6 +357,7 @@ export async function normalizeFoldMarkersInVault(
 	ids: string[],
 	desiredMarker: "" | "+" | "-",
 	requireComplete = false,
+	journal?: NoteRewriteJournal,
 ): Promise<number> {
 	if (ids.length === 0) return 0;
 
@@ -360,7 +371,7 @@ export async function normalizeFoldMarkersInVault(
 				if (current === desiredMarker) return null;
 				return { text: `${line.slice(token.from, token.to)}${desiredMarker}`, end: token.to + current.length };
 			}),
-		), requireComplete);
+		), requireComplete, journal);
 	return count;
 }
 
@@ -379,6 +390,7 @@ export async function replaceCalloutTitlesInVault(
 	oldTitle: string,
 	newTitle: string,
 	requireComplete = false,
+	journal?: NoteRewriteJournal,
 ): Promise<number> {
 	if (ids.length === 0) return 0;
 
@@ -402,6 +414,7 @@ export async function replaceCalloutTitlesInVault(
 				}),
 			),
 		requireComplete,
+		journal,
 	);
 
 	return count;

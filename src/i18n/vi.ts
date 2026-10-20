@@ -354,6 +354,7 @@ export const vi: Record<string, string> = {
 		"Tất cả các định danh cho callout này. Cho phép dấu cách.\nNhấn Enter hoặc nút + để thêm.",
 	"editor.calloutIdsPlaceholder": "Thêm ID",
 	"editor.addId": "Thêm ID",
+	"editor.maxIds": "Tối đa {{max}} ID. Hãy xóa một ID để thêm ID khác.",
 	"editor.idLinkedToName": "Liên kết với tên hiển thị",
 	"editor.idCannotDelete":
 		"ID này được liên kết với tên hiển thị và không thể xóa — chỉnh sửa tên để thay đổi nó",
@@ -399,6 +400,14 @@ export const vi: Record<string, string> = {
 	"editor.idConflict": "ID này xung đột với callout hiện có",
 	"editor.idDashConflict":
 		'Obsidian ghi khoảng trắng thành dấu gạch ngang, vì vậy ID này xung đột với "{{other}}"',
+	"editor.idOwnedBy": '"{{id}}" là một ID của {{name}}. Bạn có thể {{link}}.',
+	"editor.idMoveHere": "chuyển nó sang đây",
+	"editor.idOwnedByMain":
+		'"{{id}}" là ID chính của {{name}}. Để dùng ở đây, hãy xóa {{name}} trước.',
+	"editor.idBuiltInStock":
+		'"{{id}}" là một trong các ID riêng của Obsidian cho {{name}}.',
+	"editor.idMoving": 'Khi lưu, "{{id}}" sẽ chuyển sang đây từ {{name}}.',
+	"editor.idMovingNotes": "Các ghi chú của bạn không đổi. Chúng lấy kiểu của callout này.",
 
 	"editor.idFromTheme":
 		"{{theme}} đã cung cấp một callout với ID này, vì vậy Callout Studio không thể tạo kiểu cho nó. Hãy chọn một ID khác.",
@@ -417,6 +426,16 @@ export const vi: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Đây là một viên [!{id}] nội tuyến bên trong một đoạn văn.",
 	"editor.previewReadOnly": "Không thể chỉnh sửa bản xem trước trực tiếp",
+	"noteChanges.title": "Cập nhật các ghi chú của bạn?",
+	"noteChanges.leave": "Để nguyên",
+	"noteChanges.leaveDesc": "Chúng giữ [!{{id}}] và quay về kiểu mặc định.",
+	"noteChanges.changeTo": "Đổi thành",
+	"noteChanges.renameChange": 'Đổi thành "{{id}}"',
+	"noteChanges.titlesChange": 'Đổi thành "{{new}}"',
+	"noteChanges.titlesLeaveDesc": 'Chúng vẫn ghi "{{old}}".',
+	"noteChanges.foldChange": 'Đặt thành "{{state}}"',
+	"noteChanges.foldLeaveDesc":
+		"Chỉ các callout bạn chèn từ giờ trở đi mới dùng cài đặt mới.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -831,6 +850,8 @@ export const vi: Record<string, string> = {
 		"Đã cập nhật {{count}} ID callout trong các tệp vault: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"Đã cập nhật {{count}} tiêu đề callout trong các tệp vault: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Đã cập nhật dấu thu gọn của {{count}} callout trong các tệp vault.",
 	"vault.replaceWith": "Thay thế bằng:",
 	"vault.deleteWithout": "Xóa không thay thế",
 	"vault.confirmDelete": "Xác nhận",
@@ -1471,4 +1492,24 @@ export const vi: Record<string, string> = {
 	"settings.versions": "Các phiên bản trước",
 	"settings.versionsDesc": "Callout Studio tự động lưu các phiên bản cấu hình của bạn.\nSo sánh hoặc quay lại một phiên bản.",
 	"settings.versionsButton": "Xem phiên bản",
+	"noteChanges.callouts": "{{count}} callout",
+	"noteChanges.calloutsOne": "1 callout",
+	"noteChanges.notes": "{{count}} ghi chú",
+	"noteChanges.notesOne": "1 ghi chú",
+	"noteChanges.askCallout": "Nên làm gì với callout đó?",
+	"noteChanges.askCallouts": "Nên làm gì với những callout đó?",
+	"noteChanges.changeRenamed": "Bạn đã đổi tên hiển thị từ \"{{old}}\" thành \"{{new}}\", nên ID chính đổi từ \"{{oldId}}\" thành \"{{newId}}\".",
+	"noteChanges.changeMainId": "ID chính đổi từ \"{{oldId}}\" thành \"{{newId}}\".",
+	"noteChanges.changeName": "Bạn đã đổi tên hiển thị từ \"{{old}}\" thành \"{{new}}\".",
+	"noteChanges.changeRemoved": "Bạn đã xóa ID \"{{id}}\".",
+	"noteChanges.changeFold": "Bạn đã đổi cách callout này gập lại.",
+	"noteChanges.affects": "Điều này ảnh hưởng đến {{callouts}} trong {{notes}}.",
+	"noteChanges.affectsUnknown": "Một số ghi chú của bạn có thể bị ảnh hưởng.",
+	"noteChanges.leaveManyDesc": "Chúng giữ các ID cũ và quay về kiểu mặc định.",
+	"noteChanges.rewriteManyDesc": "Mỗi ID cũ trong ghi chú của bạn sẽ thành [!{{to}}].",
+	"noteChanges.changeToIdLabel": "ID để đổi chúng thành",
+	"noteChanges.rewriteDesc": "Mỗi [!{{id}}] trong ghi chú của bạn sẽ thành [!{{to}}].",
+	"noteChanges.renameFollowDesc": "Mỗi [!{{oldId}}] trong ghi chú của bạn sẽ thành [!{{newId}}], và các tiêu đề ghi \"{{old}}\" sẽ thành \"{{new}}\".",
+	"noteChanges.titlesChangeDesc": "Các tiêu đề ghi \"{{old}}\" sẽ thành \"{{new}}\".",
+	"noteChanges.foldChangeDesc": "Dấu + hoặc - của chúng sẽ đổi cho khớp.",
 };

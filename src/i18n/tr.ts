@@ -351,6 +351,7 @@ export const tr: Record<string, string> = {
 		"Bu callout için tüm tanımlayıcılar. Boşluklara izin verilir.\nEklemek için Enter veya + düğmesine basın.",
 	"editor.calloutIdsPlaceholder": "ID ekle",
 	"editor.addId": "ID ekle",
+	"editor.maxIds": "En fazla {{max}} kimlik eklenebilir. Başka bir tane eklemek için birini silin.",
 	"editor.idLinkedToName": "Görünen ada bağlı",
 	"editor.idCannotDelete":
 		"Bu ID, görünen ada bağlı olduğu için silinemez — değiştirmek için adı düzenleyin",
@@ -397,6 +398,16 @@ export const tr: Record<string, string> = {
 	"editor.idConflict": "Bu ID mevcut bir callout ile çakışıyor",
 	"editor.idDashConflict":
 		'Obsidian boşlukları tire olarak yazar, bu yüzden bu ID "{{other}}" ile çakışıyor',
+	"editor.idOwnedBy":
+		'"{{id}}", {{name}} için bir kimliktir. İsterseniz {{link}}.',
+	"editor.idMoveHere": "buraya taşıyabilirsiniz",
+	"editor.idOwnedByMain":
+		'"{{id}}", {{name}} için ana kimliktir. Burada kullanmak için önce {{name}} öğesini silin.',
+	"editor.idBuiltInStock":
+		"\"{{id}}\", Obsidian'ın {{name}} için kendi kimliklerinden biridir.",
+	"editor.idMoving":
+		'Kaydettiğinizde "{{id}}", {{name}} öğesinden buraya taşınır.',
+	"editor.idMovingNotes": "Notlarınız değişmez. Bu callout'un stilini alırlar.",
 	"editor.idFromTheme":
 		"{{theme}} bu kimlikte bir callout zaten sağlıyor, bu yüzden Callout Studio onu biçimlendiremez. Farklı bir kimlik seçin.",
 	"editor.namesFromTheme":
@@ -413,6 +424,17 @@ export const tr: Record<string, string> = {
 	"editor.sampleInlineText":
 		"İşte bir paragraf içinde satır içi bir [!{id}] hapı.",
 	"editor.previewReadOnly": "Canlı önizleme düzenlenemez",
+	"noteChanges.title": "Notlarınız güncellensin mi?",
+	"noteChanges.leave": "Olduğu gibi bırak",
+	"noteChanges.leaveDesc":
+		"[!{{id}}] kimliğini korurlar ve varsayılan stile geri dönerler.",
+	"noteChanges.changeTo": "Şuna değiştir",
+	"noteChanges.renameChange": '"{{id}}" olarak değiştir',
+	"noteChanges.titlesChange": '"{{new}}" olarak değiştir',
+	"noteChanges.titlesLeaveDesc": 'Yazmaya "{{old}}" olarak devam ederler.',
+	"noteChanges.foldChange": '"{{state}}" olarak ayarla',
+	"noteChanges.foldLeaveDesc":
+		"Yeni ayarı yalnızca bundan sonra eklediğiniz callout'lar kullanır.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -823,6 +845,8 @@ export const tr: Record<string, string> = {
 		"Vault dosyalarında {{count}} callout ID'si güncellendi: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"Vault dosyalarında {{count}} callout başlığı güncellendi: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Vault dosyalarında {{count}} callout'un katlama işareti güncellendi.",
 	"vault.replaceWith": "Şununla değiştir:",
 	"vault.deleteWithout": "Değiştirmeden sil",
 	"vault.confirmDelete": "Onayla",
@@ -1459,4 +1483,24 @@ export const tr: Record<string, string> = {
 	"settings.versions": "Önceki sürümler",
 	"settings.versionsDesc": "Callout Studio yapılandırmanızın sürümlerini otomatik olarak kaydeder.\nKarşılaştırın veya birine geri dönün.",
 	"settings.versionsButton": "Sürümleri görüntüle",
+	"noteChanges.callouts": "{{count}} callout",
+	"noteChanges.calloutsOne": "1 callout",
+	"noteChanges.notes": "{{count}} not",
+	"noteChanges.notesOne": "1 not",
+	"noteChanges.askCallout": "O callout'a ne yapılsın?",
+	"noteChanges.askCallouts": "O callout'lara ne yapılsın?",
+	"noteChanges.changeRenamed": "Görünen adı \"{{old}}\" yerine \"{{new}}\" olarak değiştirdiniz, bu yüzden ana kimlik \"{{oldId}}\" yerine \"{{newId}}\" olacak.",
+	"noteChanges.changeMainId": "Ana kimlik \"{{oldId}}\" yerine \"{{newId}}\" olacak.",
+	"noteChanges.changeName": "Görünen adı \"{{old}}\" yerine \"{{new}}\" olarak değiştirdiniz.",
+	"noteChanges.changeRemoved": "\"{{id}}\" kimliğini kaldırdınız.",
+	"noteChanges.changeFold": "Bu callout'un nasıl katlandığını değiştirdiniz.",
+	"noteChanges.affects": "Bu durum {{notes}} içindeki {{callouts}} için geçerli.",
+	"noteChanges.affectsUnknown": "Bazı notlarınız etkilenebilir.",
+	"noteChanges.leaveManyDesc": "Eski kimliklerini korurlar ve varsayılan stile geri dönerler.",
+	"noteChanges.rewriteManyDesc": "Notlarınızdaki her eski kimlik [!{{to}}] olur.",
+	"noteChanges.changeToIdLabel": "Değiştirilecekleri kimlik",
+	"noteChanges.rewriteDesc": "Notlarınızdaki her [!{{id}}], [!{{to}}] olur.",
+	"noteChanges.renameFollowDesc": "Notlarınızdaki her [!{{oldId}}], [!{{newId}}] olur ve \"{{old}}\" yazan başlıklar \"{{new}}\" olur.",
+	"noteChanges.titlesChangeDesc": "\"{{old}}\" yazan başlıklar \"{{new}}\" olur.",
+	"noteChanges.foldChangeDesc": "+ veya - işaretleri buna uyacak şekilde değişir.",
 };

@@ -72,7 +72,7 @@ type Host = Parameters<typeof createCalloutViewPlugin>[0];
 
 interface PluginInstance {
 	decorations: DecorationSet;
-	wholeLinks: DecorationSet;
+	raised: DecorationSet;
 	update(update: unknown): void;
 	destroy(): void;
 }
@@ -135,7 +135,7 @@ interface Harness {
 	plugin: Extension;
 	instance: PluginInstance;
 	handleEvent(type: string, target: FakeElement, button?: number): boolean;
-	/** `[from, to, decoration]` for every decoration currently emitted. */
+	/** `[from, to, decoration]` for every decoration currently emitted, both sets. */
 	decorations(): Array<[number, number, Decoration]>;
 	/** Classes on the line decoration at a line's start offset. */
 	lineClasses(from: number): string[];
@@ -176,16 +176,16 @@ function harness(
 	};
 	const instance = plugin.create(view.asView);
 
+	// Both sets, in document order: which of the two a decoration lands in is
+	// precedence, asserted on its own (see BuiltDecorations.raised).
 	const decorations = (): Array<[number, number, Decoration]> => {
 		const out: Array<[number, number, Decoration]> = [];
-		instance.decorations.between(
-			0,
-			view.state.doc.length,
-			(from, to, deco) => {
+		for (const set of [instance.decorations, instance.raised]) {
+			set.between(0, view.state.doc.length, (from, to, deco) => {
 				out.push([from, to, deco]);
-			},
-		);
-		return out;
+			});
+		}
+		return out.sort((a, b) => a[0] - b[0] || a[2].startSide - b[2].startSide);
 	};
 
 	return {
@@ -251,6 +251,37 @@ const widgets = (h: Harness): unknown[] =>
 		.map(([, , deco]) => widgetOf(deco))
 		.filter(Boolean);
 
+/**
+ * The replaced ranges CodeMirror would draw, `[from, to, widget]`, with core's
+ * own bracket hides (`Decoration.replace({})` over each of `coreHides`) in a set
+ * ahead of the plugin's — where Obsidian's live preview puts them.
+ */
+function pointsDrawn(
+	h: Harness,
+	doc: string,
+	coreHides: Array<[number, number]>,
+): Array<[number, number, unknown]> {
+	const hides = Decoration.set(coreHides.map(([from, to]) => Decoration.replace({}).range(from, to)));
+	const state = EditorState.create({
+		doc,
+		extensions: [EditorView.decorations.of(hides), h.plugin],
+	});
+	const view = {
+		plugin: (key: unknown) => (key === h.plugin ? h.instance : null),
+	} as unknown as EditorView;
+	const sets = state
+		.facet(EditorView.decorations)
+		.map((source) => (typeof source === "function" ? source(view) : source));
+	const points: Array<[number, number, unknown]> = [];
+	RangeSet.spans(sets, 0, doc.length, {
+		span: () => {},
+		point: (from, to, deco) => {
+			points.push([from, to, widgetOf(deco)]);
+		},
+	});
+	return points;
+}
+
 describe("sidebar selection updates from CodeMirror", () => {
 	it("clears a sidebar highlight when source mode moves the caret, without a document edit", () => {
 		let h: Harness;
@@ -297,6 +328,17 @@ describe("heading callouts", () => {
 
 		assert.ok(token);
 		assert.ok(widgetOf(token[2]) instanceof CalloutTokenWidget);
+	});
+
+	it("outranks a bracket hide core opens where the token does", () => {
+		// `## [!a] [!b]` reads as a reference link to core, as a pair of pills
+		// does (see "inline pills").
+		const doc = "## [!note] [!tip]\nbody";
+		const h = harness(doc, { selection: doc.length });
+		const tokens = pointsDrawn(h, doc, [[3, 4], [9, 10], [11, 12], [16, 17]])
+			.filter((point) => point[2] instanceof CalloutTokenWidget);
+
+		assert.deepStrictEqual(tokens.map((point) => point.slice(0, 2)), [[3, 10], [11, 17]]);
 	});
 
 	it("keeps the bar but reveals the raw token while the caret is on the line", () => {
@@ -485,6 +527,20 @@ describe("inline pills", () => {
 		assert.strictEqual(pill[1], 9, "only the token itself is replaced");
 	});
 
+	it("outranks core's bracket hides on a pair it reads as a reference link", () => {
+		// `[!a] [!b]` is `[text] [label]` to core, which hides the `[` and `]`
+		// of both. Its hide at 0 tied with the pill at 0 and won, so a redraw
+		// of only the pills — their callout restyled in the editor — dropped
+		// both and left them blank until clicked; `[!c]`, with nothing after
+		// it, kept its pill.
+		const doc = "[!a] [!b] [!c] end";
+		const h = harness(doc, { selection: doc.length });
+		const points = pointsDrawn(h, doc, [[0, 1], [3, 4], [5, 6], [8, 9]]);
+
+		assert.deepStrictEqual(points.map((point) => point.slice(0, 2)), [[0, 4], [5, 9], [10, 14]]);
+		assert.ok(points.every((point) => point[2] instanceof CalloutTokenWidget));
+	});
+
 	it("refuses a token nested inside another token's payload", () => {
 		const h = harness("a [!note]{see [!tip] here} b", { selection: 0 });
 		const replaced = h.decorations().filter(([, , deco]) => widgetOf(deco));
@@ -515,19 +571,19 @@ describe("title-less reference links", () => {
 	// plugin replaces the whole link with a widget of its own.
 	const doc = "x [[#[!tip]]] y";
 
-	it("replaces the whole link, in a set of its own", () => {
+	it("replaces the whole link, in the raised set", () => {
 		const h = harness(doc, { selection: doc.length });
-		const whole = ranges(h.instance.wholeLinks);
+		const whole = ranges(h.instance.raised);
 
 		assert.strictEqual(whole.length, 1);
 		assert.deepStrictEqual(whole[0]?.slice(0, 2), [2, 13]);
 		assert.ok(whole[0]?.[2] instanceof HeadingRefLinkWidget);
-		assert.deepStrictEqual(h.decorations(), []);
+		assert.deepStrictEqual(ranges(h.instance.decorations), []);
 	});
 
 	it("reveals the raw link while the selection touches it", () => {
 		const h = harness(doc, { selection: 6 });
-		assert.deepStrictEqual(ranges(h.instance.wholeLinks), []);
+		assert.deepStrictEqual(ranges(h.instance.raised), []);
 	});
 
 	it("outranks a replace core opens at the same offset", () => {
@@ -535,25 +591,7 @@ describe("title-less reference links", () => {
 		// does. Whichever set ranks first is drawn there; when it was core's,
 		// a partial redraw dropped the widget and left the link blank.
 		const h = harness(doc, { selection: doc.length });
-		const coreHide = Decoration.set(Decoration.replace({}).range(2, 4));
-		const state = EditorState.create({
-			doc,
-			extensions: [EditorView.decorations.of(coreHide), h.plugin],
-		});
-		const view = {
-			plugin: (key: unknown) => (key === h.plugin ? h.instance : null),
-		} as unknown as EditorView;
-		const sets = state
-			.facet(EditorView.decorations)
-			.map((source) => (typeof source === "function" ? source(view) : source));
-
-		const points: Array<[number, number, unknown]> = [];
-		RangeSet.spans(sets, 0, doc.length, {
-			span: () => {},
-			point: (from, to, deco) => {
-				points.push([from, to, widgetOf(deco)]);
-			},
-		});
+		const points = pointsDrawn(h, doc, [[2, 4]]);
 		assert.strictEqual(points.length, 1);
 		assert.deepStrictEqual(points[0]?.slice(0, 2), [2, 13]);
 		assert.ok(points[0]?.[2] instanceof HeadingRefLinkWidget);
@@ -573,7 +611,7 @@ describe("aliased reference links", () => {
 		const [from, to, deco] = decos[0] as [number, number, Decoration];
 		assert.deepStrictEqual([from, to], [12, 12]);
 		assert.ok(widgetOf(deco) instanceof CalloutTokenWidget);
-		assert.deepStrictEqual(ranges(h.instance.wholeLinks), []);
+		assert.deepStrictEqual(ranges(h.instance.raised), []);
 	});
 
 	it("does so for an alias the user wrote over a titled reference too", () => {

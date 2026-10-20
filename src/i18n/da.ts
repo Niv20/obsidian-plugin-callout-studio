@@ -285,6 +285,7 @@ export const da: Record<string, string> = {
 		"Alle identifikatorer for denne callout. Mellemrum er tilladt.\nTryk Enter eller +-knappen for at tilføje.",
 	"editor.calloutIdsPlaceholder": "Tilføj ID",
 	"editor.addId": "Tilføj ID",
+	"editor.maxIds": "Højst {{max}} ID'er. Slet ét for at tilføje et andet.",
 	"editor.idLinkedToName": "Knyttet til visningsnavnet",
 	"editor.idCannotDelete":
 		"Dette ID er knyttet til visningsnavnet og kan ikke slettes — rediger navnet for at ændre det",
@@ -332,6 +333,14 @@ export const da: Record<string, string> = {
 	"editor.idConflict": "Dette ID er i konflikt med en eksisterende callout",
 	"editor.idDashConflict":
 		'Obsidian skriver mellemrum som bindestreger, så dette ID er i konflikt med "{{other}}"',
+	"editor.idOwnedBy": '"{{id}}" er et ID for {{name}}. Du kan {{link}}.',
+	"editor.idMoveHere": "flytte det hertil",
+	"editor.idOwnedByMain":
+		"\"{{id}}\" er hoved-ID'et for {{name}}. For at bruge det her skal du først slette {{name}}.",
+	"editor.idBuiltInStock":
+		"\"{{id}}\" er et af Obsidians egne ID'er for {{name}}.",
+	"editor.idMoving": 'Ved gem flyttes "{{id}}" hertil fra {{name}}.',
+	"editor.idMovingNotes": "Dine noter ændres ikke. De får denne callouts stil.",
 	"editor.idFromTheme":
 		"{{theme}} leverer allerede en callout med dette ID, så Callout Studio kan ikke style den. Vælg et andet ID.",
 	"editor.namesFromTheme":
@@ -348,6 +357,17 @@ export const da: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Her er en indlejret [!{id}] pille inde i et afsnit.",
 	"editor.previewReadOnly": "Livevisningen kan ikke redigeres",
+	"noteChanges.title": "Opdater dine noter?",
+	"noteChanges.leave": "Lad dem være, som de er",
+	"noteChanges.leaveDesc":
+		"De beholder [!{{id}}] og falder tilbage til standardstilen.",
+	"noteChanges.changeTo": "Ændr dem til",
+	"noteChanges.renameChange": 'Ændr dem til "{{id}}"',
+	"noteChanges.titlesChange": 'Ændr dem til "{{new}}"',
+	"noteChanges.titlesLeaveDesc": 'De bliver ved med at lyde "{{old}}".',
+	"noteChanges.foldChange": 'Indstil dem til "{{state}}"',
+	"noteChanges.foldLeaveDesc":
+		"Kun callouts, du indsætter fra nu af, bruger den nye indstilling.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -749,6 +769,8 @@ export const da: Record<string, string> = {
 		"{{count}} callout-ID('er) opdateret i vault-filer: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"{{count}} callout-titel(ler) opdateret i vault-filer: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Opdaterede foldemærket på {{count}} callout(s) i vault-filer.",
 	"vault.replaceWith": "Erstat med:",
 	"vault.deleteWithout": "Slet uden at erstatte",
 	"vault.confirmDelete": "Bekræft",
@@ -1440,4 +1462,24 @@ export const da: Record<string, string> = {
 	"settings.versions": "Tidligere versioner",
 	"settings.versionsDesc": "Callout Studio gemmer automatisk versioner af din opsætning.\nSammenlign dem, eller vend tilbage til en af dem.",
 	"settings.versionsButton": "Vis versioner",
+	"noteChanges.callouts": "{{count}} callouts",
+	"noteChanges.calloutsOne": "1 callout",
+	"noteChanges.notes": "{{count}} noter",
+	"noteChanges.notesOne": "1 note",
+	"noteChanges.askCallout": "Hvad skal der ske med den callout?",
+	"noteChanges.askCallouts": "Hvad skal der ske med de callouts?",
+	"noteChanges.changeRenamed": "Du ændrede visningsnavnet fra \"{{old}}\" til \"{{new}}\", så hoved-ID'et ændres fra \"{{oldId}}\" til \"{{newId}}\".",
+	"noteChanges.changeMainId": "Hoved-ID'et ændres fra \"{{oldId}}\" til \"{{newId}}\".",
+	"noteChanges.changeName": "Du ændrede visningsnavnet fra \"{{old}}\" til \"{{new}}\".",
+	"noteChanges.changeRemoved": "Du fjernede ID'et \"{{id}}\".",
+	"noteChanges.changeFold": "Du har ændret, hvordan denne callout foldes.",
+	"noteChanges.affects": "Det berører {{callouts}} i {{notes}}.",
+	"noteChanges.affectsUnknown": "Nogle af dine noter bliver måske berørt.",
+	"noteChanges.leaveManyDesc": "De beholder deres gamle ID'er og falder tilbage til standardstilen.",
+	"noteChanges.rewriteManyDesc": "Hvert gammelt ID i dine noter bliver til [!{{to}}].",
+	"noteChanges.changeToIdLabel": "ID de skal ændres til",
+	"noteChanges.rewriteDesc": "Hver [!{{id}}] i dine noter bliver til [!{{to}}].",
+	"noteChanges.renameFollowDesc": "Hver [!{{oldId}}] i dine noter bliver til [!{{newId}}], og titler, der lyder \"{{old}}\", bliver til \"{{new}}\".",
+	"noteChanges.titlesChangeDesc": "Titler, der lyder \"{{old}}\", bliver til \"{{new}}\".",
+	"noteChanges.foldChangeDesc": "Deres + eller - ændres, så det passer.",
 };

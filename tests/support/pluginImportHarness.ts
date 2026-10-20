@@ -342,7 +342,7 @@ export function status(h: Harness, name: Option): FakeElement {
 
 /** The radio dot at the card's trailing edge; null when the card stands alone. */
 export function radio(h: Harness, name: Option): FakeElement | null {
-	return option(h, name).querySelector(".cs-import-radio");
+	return option(h, name).querySelector(".cs-option-radio");
 }
 
 /**

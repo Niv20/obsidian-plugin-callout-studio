@@ -78,10 +78,35 @@ IDs are passed to `TagInput` as read-only: a custom alias saved during an
 earlier session must still have a remove action when the editor reopens. The
 reset first checks that every shipped ID is still available; an exact or
 dasherized conflict leaves the draft unchanged and reports the problem on the
-row. A successful reset changes form state only. On Save, the ordinary
-removed-ID plan temporarily retains any dropped aliases, rewrites their vault
-usages to the primary ID, and then releases them, so this path inherits the same
-partial-failure safety as a manual alias removal.
+row. That check goes through the same `idLookups()` as the rest of the form, so
+an ID already [moving here](#moving-an-id-here) counts as free, but the reset
+never offers a move itself: its message is plain text. A successful reset
+changes form state only. On Save, the custom aliases it dropped are leaving IDs
+like any alias removed by hand: when notes use them, **Update your notes?**
+asks, and they stay in those notes unless the user picks a callout to rewrite
+them to (see [Notes change only after asking](#notes-change-only-after-asking)).
+
+## How many IDs a callout can have
+
+`MAX_TAGS_COUNT` in `constants.ts` is the only copy of the number, and two
+limits read it. `TagInput` stops taking IDs at that count, whether they are
+typed, pasted, moved here (`addTagUnchecked`), or arrive as the name-linked
+primary (a rename replaces the pinned ID in place), and shows `editor.maxIds`
+with the cap filled in. The import validator
+rejects an entry with more (`import.err.tooManyIds`, primary ID included), so
+anything the editor can save, an export of it can bring back.
+
+Nothing trims a callout that already has more. A restored backup keeps both
+sides' spellings (`importedCallout.ts`) and the collision migration folds a
+loser's IDs into the survivor, so such a callout keeps every ID; its field just
+refuses another until it is under the cap. Exporting it produces a file the
+validator rejects for that entry.
+
+`tests/calloutIdLimit.test.ts` reads the constant everywhere, so changing it
+needs no test edit, and holds it above the largest built-in ID set so every
+built-in can still take an alias. More IDs cost the stylesheet little: the
+icon's artwork is written once per callout, not once per name (see
+[Icon painting](06-css-generation.md#icon-painting)).
 
 Each icon-adjustment card owns one return arrow for its Size / Horizontal /
 Vertical trio. It resets only that render role and calls the preview once;
@@ -225,6 +250,10 @@ mechanics in [Callout registry](05-callout-registry.md#the-transient-live-previe
  - this is what makes closing the modal (save, cancel, or dismiss) instantly
   revert every open note's rendering back to committed state, with no
   leftover draft styling lingering until the next unrelated change.
+- **Save clears the slot itself, but only once the notes question is
+  answered** - see [From the click to the save](#from-the-click-to-the-save).
+  Until then the draft stays registered, so anything on the save path that
+  needs the committed row reads it with `registry.getReal()`.
 - `PREVIEW_PLACEHOLDER_ID = "new-callout-preview"` is the id a brand-new
   callout's demo preview registers under before the user has typed a name -
   see [Data model](04-data-model.md) for why it can't be a real callout id
@@ -269,6 +298,14 @@ hasStateChanges(initial, current): boolean
 > inline callouts (which keep the space-form attribute) would stay distinct.
 > Shipping a type that's half-broken for one of three roles isn't worth it.
 
+The editor hands all of these the same lookups, `CalloutEditor.idLookups()`:
+`registry.getReal`, `findByAlias` and `findAttrIdConflict` (the edited callout
+excluded), except that an ID in `idMoves` - one the user chose to
+[move here](#moving-an-id-here) - answers as nobody's, since by the end of Save
+it will be. The Save button, the field's messages and the save's own
+`canUseCalloutId` gate therefore agree; the move itself is checked again inside
+the save's batch.
+
 ### The dirty-check snapshot includes fields that "don't visibly change anything else"
 
 `SnapshotInput` explicitly documents why `hideIcon` and `transparentBg` are
@@ -301,10 +338,11 @@ rename, "mirror the fallback") goes through.
 `EditorSaveSession` owns one in-flight attempt. `persistEditorSettings` awaits
 the writer and checks that the canonical current registry matches the writer's
 last successful file state; a resolved frozen/stale save is not success.
-The editor resolves and closes only after this confirmation and the required
-note updates. Failed attempts retain the form and allow retry, repeated Save
-clicks are ignored, and newer form edits made during the wait keep the editor
-open. Background saves use `settingsSaveFeedback` to report errors without
+The editor resolves and closes only after this confirmation and the note
+updates the user agreed to (see
+[Notes change only after asking](#notes-change-only-after-asking)). Failed
+attempts retain the form and allow retry, repeated Save clicks are ignored, and
+newer form edits made during the wait keep the editor open. Background saves use `settingsSaveFeedback` to report errors without
 leaking an unhandled promise rejection; awaiting callers still receive failure.
 
 Persistence errors share the writer's English error reporter, including frozen and
@@ -334,11 +372,16 @@ but its *look* is entirely borrowed and stays borrowed until customized.
 ### Rename: `remove` + `add`, batched, with command migration inside the batch
 
 ```ts
-saved = plugin.registry.batch(() => {
-  plugin.registry.remove(existingId);
-  const added = plugin.registry.add(def);
-  if (added) plugin.customCommands.migrateCalloutId(existingId, def.id);
-  return added;
+const saved = registry.batch(() => {
+  const restoreMoves = takeMovedIds(registry, moves, existingId); // see "Moving an ID here"
+  if (!restoreMoves) return false;
+  const before = registry.getReal(existingId);
+  registry.remove(existingId);
+  let applied = registry.add(mutationDef);
+  if (applied) plugin.customCommands.migrateCalloutId(existingId, def.id);
+  else if (before) registry.add(before);            // put the callout back
+  if (!applied) restoreMoves();
+  return applied;
 });
 ```
 
@@ -347,34 +390,197 @@ saved = plugin.registry.batch(() => {
 > already pointing to the new id. Missing targets are now paused and retained,
 > rather than deleted, but observers must still see a consistent rename.
 
-### Vault side effects that ride along with a save
+A batch only holds back change events; it undoes nothing. A refused `add`
+used to leave the callout removed - and the deletion reached `data.json` with
+the event the batch then fired. The save now re-adds the row it removed (and
+puts back `fallbackCalloutId` if `remove` had reset it), and gives back any id
+it took from another callout, before the batch closes. The same rollback covers
+every save path, not only a rename.
 
-After the definition is written, three vault-wide operations may run,
-**each gated on something actually having changed**:
+## Notes change only after asking
 
-1. **ID change** → `replaceCalloutIdsInVault` rewrites every vault usage of
-   the *removed* id forms to the new one (only if there was actual vault
-   usage - `countCalloutUsages` checked first).
-2. **Display-name change** → `replaceCalloutTitlesInVault` rewrites titles,
-   but **only where the existing title exactly matched the old display
-   name** - a title the user wrote themselves is never touched.
-3. **Fold-behaviour change** (`foldable`/`defaultFolded`) →
-   `normalizeFoldMarkersInVault` rewrites every existing header's fold mark to
-   match the new default.
+The editor's Save used to rewrite notes on its own in three cases: an id that
+left the callout (a removed alias, or the old main id after a rename, since
+the main id mirrors the display name), titles that read the old display name,
+and every block callout's `+`/`-` after a **Foldable** change. None of it was
+announced before the fact, and none of it could be undone. Delete, Reset to
+default and a renamed palette already left notes alone or asked first; the
+editor now does the same. The rule: **Save changes a note only when the user
+said so in the window it shows first.**
 
-The editor retains an unfinished, idempotent note-update plan in its save
-session. It confirms durable settings before running that plan, requests
-strict failure reporting from the shared rewrite helpers, and retries the
-unfinished old operation before applying a subsequent edit. This preserves an
-original A→B rename even after the in-memory editor identity became B. Closing
-the modal during a save keeps edit ownership until the attempt settles, so
-external settings cannot replace the registry midway through note updates.
-The plan is session-only. Before a rename begins, removed IDs are persisted as
-temporary aliases; they are removed only after all note-update phases succeed.
-A process crash can therefore leave a partial text rename but preserves how
-both old and new spellings resolve after restart. Removing a retained alias in
-a later edit can finish its remaining note updates. Settings plus multiple
-Markdown files still have no shared transaction.
+| Module | Role |
+|---|---|
+| [`editor/noteChanges.ts`](../../src/settings/editor/noteChanges.ts) | Pure: what Save would change (`pendingNoteChanges` / `pendingNoteChangesFor`), the answers (`NoteChoices`, `LEAVE_NOTES`), and the id rewrites they turn into (`noteRewritesFor`) |
+| [`utils/idNoteStats.ts`](../../src/utils/idNoteStats.ts) | One vault pass counting, per id: uses, block callouts whose fold mark differs, titles reading the old name - each with the notes it was found in |
+| [`editor/noteChangeQuestion.ts`](../../src/settings/editor/noteChangeQuestion.ts) | Pure: what the window lists and counts, and its answer → `NoteChoices` (`choicesFor`) |
+| [`editor/askNoteChanges.ts`](../../src/settings/editor/askNoteChanges.ts) | The step between the click and the save: count, then open the window only when something would change |
+| [`editor/NoteChangesModal.ts`](../../src/settings/editor/NoteChangesModal.ts) | **Update your notes?** - draws the question and resolves once |
+
+### Ids are compared by identity
+
+`pendingNoteChanges` decides which ids leave by `calloutIdentity`, the same
+rule `calloutIdForms.ts` uses everywhere. Comparing raw strings, as the save
+once did, produced two silent rewrites: an alias re-spelled from `a b` to `a-b`
+counted as removed, and - because `vaultIdFormsFor` lists the dashed spelling
+of every spaced id - **every save** of a callout with a space in an id rewrote
+its `[!my-note]` usages. A fold change is decided by `foldMarkFor(old)` against
+`foldMarkFor(new)`, so flipping **Default folded** on a callout that cannot fold
+(both write no mark) is no change; the old boolean comparison stripped every
+mark. `keptForms` is asked of the row as it stands before the save (it still
+owns every spelling); ids moved in from another callout are left out of it.
+
+### From the click to the save
+
+1. `save()` captures the form state, `hasStyleChanges`, the fallback flags and
+   the moves **at the click**. Counting can take a moment on a large vault, and
+   an edit made meanwhile belongs to the next Save.
+2. Inside `EditorSaveSession.run` - so a second click is ignored and an
+   unfinished earlier plan resumes first - the editor's `askNoteChanges`
+   *instance method* calls `askNoteChanges()`. It is a method so a test can
+   answer in the window's place (`editorSaveRecovery.test.ts` does).
+3. `askNoteChanges()` reads nothing when the edit cannot reach a note: no id
+   leaving, no name change, no fold change. Otherwise one `scanIdNoteStats`
+   pass covers every leaving spelling and every kept one. A read failure is
+   not taken for "unused": the window is asked without numbers.
+4. `stillWanted()` is checked after the count: a form edited meanwhile cancels
+   this Save (the user presses it again); a closed editor still asks, since
+   closing never cancelled a save.
+5. Nothing in use → `LEAVE_NOTES`, no window. Otherwise the window's answer, or
+   `null` for Cancel / Escape / close - back to the editor, nothing saved.
+6. Only now does the save clear the live-preview slot, so the window was drawn
+   over the callout as edited and going back finds the preview still standing.
+
+### What the window asks
+
+One question for everything Save would change, with two answers - the window
+was simplified to this after rounds of per-change parts proved too busy.
+`noteChangeQuestion` lists only what the notes hold:
+
+| Listed | When |
+|---|---|
+| The rename of the main id (`changeRenamed`, or `changeMainId` with no name change) | the old main id is used (or counting failed) |
+| A removed id (`changeRemoved`) | the id is used (or counting failed) |
+| A new name (`changeName`) | the name changed, no rename line covers it, and titles read the old name |
+| A new fold setting (`changeFold`) | the fold mark changed and a block callout differs |
+
+One change is a line; several are a `<ul>`. Then one count, `affected` - the
+leaving ids' uses plus, on the kept ids, the titles that read the old name (or,
+with no name change, the fold marks that differ, so a callout is not counted
+twice) - and the question on its own line: "What should happen to that
+callout?" for one, "…to those callouts?" for several or for counts that could
+not be read. Counts read "3 callouts in 1 note", singular and plural from their
+own keys, and the sentences are built so no verb has to agree with a count.
+
+The answers:
+
+- **Leave them as they are** - first, and chosen on opening. `choicesFor(q,
+  null)` is `LEAVE_NOTES`: no note changes unless the user picks Change.
+- **Change them to** - every listed leaving id is rewritten to one id **of this
+  callout**: its main id by default, or another of its ids from a
+  `SelectDropdown` at the card's trailing edge (shown only when there is more
+  than one). With a single id to offer, the title names it: **Change them to
+  "insight"**. `choicesFor(q, to)` maps every listed id to `to` and turns the
+  title and fold passes on; Save runs those only when the name or the setting
+  changed. With no id leaving - only a new name, or only a fold setting - this
+  answer reads **Change them to "new"** / **Set them to "state"**.
+
+Notes never go to another callout from this window, and there is no "keep the
+old id as another id" answer. Both were tried and dropped as clutter: giving an
+id to another callout is that callout's **move it here** ([Moving an id
+here](#moving-an-id-here)), and keeping one is adding it back in the IDs field
+before saving - then it is not leaving, and nothing is asked.
+
+> [!NOTE]
+> Fold changes are dormant for now: the editor's **Foldable** section is hidden
+> (`foldSection.hide()` in `CalloutEditor`), so the form's fold state always
+> equals the saved one and `pending.fold` stays `null`. It is wired and tested
+> so that showing the section again needs nothing more - the user guide leaves
+> it out until then.
+
+### What Save then runs
+
+`performCalloutEditorSave` takes a **required** `noteChoices` - `LEAVE_NOTES`
+changes nothing, so no caller can reach the notes by leaving it out - and
+optional `moves`. After the registry batch:
+
+- `stageRenameAliases` keeps, as temporary aliases, only the leaving ids that
+  are being **rewritten**: one the user left in its notes goes at once, and
+  staging it would keep it on the callout for good, since nothing would finish
+  to release it.
+- `plugin.refreshCallouts()` runs when ids left or moved: those notes look
+  different without having changed, exactly as after Delete.
+- `createCalloutVaultSavePlan` gets the id rewrites grouped by the id they go
+  to (`noteRewritesFor`, through Replace in vault's own
+  `replaceCalloutIdsInVault`, scoped to these ids' spellings), the title pass
+  (`noteChoices.titles`, over the kept spellings and the rewritten ones -
+  `formsEndingHere`) and the fold pass (`noteChoices.fold`, likewise). A
+  rewritten note takes the title the plugin would write for its new id when the
+  old title was one the plugin would have written (`isGeneratedTitle`'s rule):
+  the callout's old name for its main id, an alias's default title or the old
+  name for an alias. Going to the main id, the old name is the title pass's to
+  change, answered once; going to an alias, the pass has already turned it into
+  the new name, so both are swapped for the alias's default title.
+
+The editor retains this unfinished, idempotent plan in its save session. It
+confirms durable settings before running it, requests strict failure reporting
+from the shared rewrite helpers, and retries the unfinished old operation before
+applying a subsequent edit. This preserves an original A→B rename even after the
+in-memory editor identity became B. Closing the modal during a save keeps edit
+ownership until the attempt settles, so external settings cannot replace the
+registry midway through note updates. The plan is session-only. Temporary
+aliases persist until all note-update phases succeed, so a process crash can
+leave a partial text rename but preserves how both spellings resolve after
+restart. Settings plus multiple Markdown files still have no shared transaction.
+
+Every pass records into **one** `NoteRewriteJournal`, created with the plan so it
+outlives a failed attempt; the journal chains the passes over one note (see
+[Vault discovery](11-vault-discovery.md)). The plan announces once, after the
+last pass and never after a failed attempt, through an injectable `announce`
+that defaults to `noticeWithUndo` - so the retry that finishes the work offers
+**Undo** for all of it. Undo restores notes only: an id that was removed stays
+removed, and notes put back to `[!old]` take the fallback look until it is added
+again.
+
+## Moving an ID here
+
+Typing an id another callout has used to end in "This ID conflicts with an
+existing callout", with the typed text cleared. Now the IDs field names the
+owner and, when the id can come here, offers **move it here**. On Save the
+other callout gives the id up and this one takes it; no note changes -
+`[!test]` simply starts drawing as this callout.
+
+`idOwnership` ([`editor/idMoves.ts`](../../src/settings/editor/idMoves.ts))
+classifies the owner, found by identity through `registry.findAttrIdConflict`:
+
+| Kind | Owner | Offer |
+|---|---|---|
+| `movable` | an extra id of another callout, including one the user added to a built-in | **move it here**; the owner keeps everything else |
+| `movable`, `removeRow` | the only id of an unstyled discovered row (`source: "fallback"`, not `customized`, no aliases, not the Default fallback) | **move it here**; the placeholder row goes and its commands migrate here |
+| `stock` | an id Obsidian ships for a built-in | none - it would come straight back (`editor.idBuiltInStock`) |
+| `theme` | a theme overlay row, or a row `themeOwns` | none (`editor.idFromTheme`) |
+| `main` | another callout's main id | none - that callout would be left without one; delete it first (`editor.idOwnedByMain`) |
+
+The editor keeps accepted moves in `idMoves` (identity → `IdMove`), treats them
+as free in `idLookups()`, drops one as soon as its id leaves the field
+(`pruneIdMoves`), and while any are pending shows the muted note "On save,
+"test" moves here from X." The offer also appears for the name-derived main id
+of a new callout: naming a new callout "Test" over another callout's `test` is
+how an alias becomes a callout of its own.
+
+`takeMovedIds` runs first inside the save's batch: it re-checks each owner by
+identity (refusing, having changed nothing, if one has changed since), snapshots
+the sources, strips the ids (or removes the placeholder row), and returns the
+restore the save calls if its own `add`/`update` is refused. Moved ids are left
+out of the title and fold passes: their notes belonged to another callout until
+this Save, and nobody was asked about them.
+
+`TagInput` carries the field's messages. A refused id stays in the field. A
+`validate` result may be a `TagMessage` renderer - an **offer**, drawn over
+whatever lasting message was showing, kept until the typed text changes, then
+the lasting message comes back. `showExternalNote` draws a lasting message in
+the muted colour, and `addTagUnchecked` adds the moved id without asking
+`validate` again. The link keeps the field's focus on `mousedown`, as the + does:
+a blur would commit the typed id again and redraw the message under the pointer.
 
 ### Material icons fetch on save, not on pick
 

@@ -1,16 +1,25 @@
-import { Notice, type App } from "obsidian";
+import type { App } from "obsidian";
 import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
 import type { CalloutRegistry } from "../../manager/CalloutRegistry";
 import { calloutIdentity } from "../../utils/calloutId";
+import { NoteRewriteJournal } from "../../utils/noteRewriteUndo";
 import {
 	normalizeFoldMarkersInVault,
 	replaceCalloutIdsInVault, replaceCalloutTitlesInVault,
 } from "../../utils/vaultCalloutScanner";
+import { noticeWithUndo } from "../rewriteUndoNotice";
+import type { FoldMark, NoteRewrite } from "./noteChanges";
 
 export type CalloutVaultSavePlan = () => Promise<void>;
 
-/** Persist old spellings until every affected note has reached the new id. */
+/**
+ * Persist old spellings until every affected note has reached the new id.
+ *
+ * Only for ids whose notes are being rewritten: one the user chose to leave in
+ * its notes goes at once, and staging it here would keep it on the callout for
+ * good, since nothing would ever finish to release it.
+ */
 export function stageRenameAliases(def: CalloutDefinition, removedIds: string[]): {
 	definition: CalloutDefinition;
 	release(registry: CalloutRegistry): void;
@@ -45,43 +54,76 @@ export function stageRenameAliases(def: CalloutDefinition, removedIds: string[])
 
 interface VaultSavePlanInput {
 	app: App;
-	removedIds: string[];
-	currentIds: string[];
-	newId: string;
-	oldTitle: string | null;
-	newTitle: string;
-	foldMarker: "" | "+" | "-" | null;
+	/** Ids rewritten in notes, each group to one callout. */
+	rewrites: NoteRewrite[];
+	/**
+	 * Titles reading `from` take `to`, on these spellings — the ids the notes
+	 * carry BEFORE the rewrites, since this pass runs first.
+	 */
+	titles: { forms: string[]; from: string; to: string } | null;
+	/** Block callouts of these spellings take this fold mark; runs before the rewrites too. */
+	fold: { forms: string[]; to: FoldMark } | null;
+	/**
+	 * How the finished work is announced: with Undo, by default. A test with no
+	 * DOM, which an Undo link needs, passes a plain notice instead.
+	 */
+	announce?: (message: string, journal: NoteRewriteJournal) => void;
 }
 
-/** Idempotent phases: retain unfinished work when a file fails, then retry it. */
+/**
+ * Idempotent phases: retain unfinished work when a file fails, then retry it.
+ *
+ * Titles and fold marks go first, over the ids the notes carry before any
+ * rewrite: this callout's own, and the leaving ids about to be rewritten into
+ * it. After the rewrites those notes would carry the saved id — which can be
+ * an id just moved here from another callout, whose own notes must not be
+ * touched — so only beforehand can a pass tell the two apart. A rewrite keeps
+ * whatever fold mark and title the passes left.
+ *
+ * Every phase records into one journal, created here so it outlives a failed
+ * attempt: the retry that finishes the work offers Undo for all of it, and the
+ * journal chains the passes over one note (see noteRewriteUndo.ts). The notice
+ * comes once, when the last phase is done — never after a failed attempt.
+ */
 export function createCalloutVaultSavePlan(input: VaultSavePlanInput): CalloutVaultSavePlan | null {
-	const { app, newId, oldTitle, newTitle, foldMarker } = input;
-	const removedIds = [...input.removedIds];
-	const currentIds = [...input.currentIds];
-	let idsDone = removedIds.length === 0;
-	let titleDone = oldTitle === null || oldTitle === newTitle;
-	let foldDone = foldMarker === null;
-	if (idsDone && titleDone && foldDone) return null;
+	const { app, titles, fold } = input;
+	const rewrites = input.rewrites.filter((rewrite) => rewrite.forms.length > 0);
+	if (rewrites.length === 0 && !titles && !fold) return null;
+	const announce = input.announce ?? ((message: string, journal: NoteRewriteJournal) =>
+		noticeWithUndo(app, message, journal));
+	const journal = new NoteRewriteJournal();
+	let nextRewrite = 0;
+	let titlesDone = titles === null;
+	let foldDone = fold === null;
+	let announced = false;
 	const updates: string[] = [];
 	return async () => {
-		if (!idsDone) {
-			const replaced = await replaceCalloutIdsInVault(app, removedIds, newId, undefined, true);
-			if (replaced > 0) updates.push(t("vault.idsUpdated", {
-				count: String(replaced), oldIds: removedIds.join(", "), newId,
-			}));
-			idsDone = true;
-		}
-		if (!titleDone && oldTitle !== null) {
-			const replaced = await replaceCalloutTitlesInVault(app, currentIds, oldTitle, newTitle, true);
+		if (!titlesDone && titles) {
+			const replaced = await replaceCalloutTitlesInVault(app, titles.forms, titles.from, titles.to, true, journal);
 			if (replaced > 0) updates.push(t("vault.titlesUpdated", {
-				count: String(replaced), oldTitle, newTitle,
+				count: String(replaced), oldTitle: titles.from, newTitle: titles.to,
 			}));
-			titleDone = true;
+			titlesDone = true;
 		}
-		if (!foldDone && foldMarker !== null) {
-			await normalizeFoldMarkersInVault(app, currentIds, foldMarker, true);
+		if (!foldDone && fold) {
+			const replaced = await normalizeFoldMarkersInVault(app, fold.forms, fold.to, true, journal);
+			if (replaced > 0) updates.push(t("vault.foldUpdated", { count: String(replaced) }));
 			foldDone = true;
 		}
-		if (updates.length) { new Notice(updates.join("\n")); updates.length = 0; }
+		for (; nextRewrite < rewrites.length; nextRewrite++) {
+			const rewrite = rewrites[nextRewrite]!;
+			const replaced = await replaceCalloutIdsInVault(app, rewrite.forms, rewrite.toId, rewrite.titleSwap, true, journal);
+			if (replaced > 0) updates.push(t("vault.idsUpdated", {
+				count: String(replaced), oldIds: rewrite.forms.join(", "), newId: rewrite.toId,
+			}));
+		}
+		if (announced) return;
+		announced = true;
+		// A pass that failed part-way and finished on a retry reports only the
+		// retry's share; the journal holds both, so Undo still covers both.
+		if (updates.length === 0 && journal.notes.length > 0) {
+			updates.push(t("vault.filesUpdated", { count: String(journal.notes.length) }));
+		}
+		if (updates.length > 0) announce(updates.join("\n"), journal);
 	};
 }

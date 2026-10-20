@@ -18,7 +18,7 @@ import {
 } from "../src/settings/sections/calloutVaultActions";
 import type { SettingsSectionContext } from "../src/settings/sections/types";
 import { ReplaceCalloutModal } from "../src/utils/ReplaceCalloutModal";
-import { canUndo, keepForUndo, NoteRewriteJournal } from "../src/utils/noteRewriteUndo";
+import { canUndo, keepForUndo, NoteRewriteJournal, undoNoteRewrite } from "../src/utils/noteRewriteUndo";
 import { en } from "../src/i18n/en";
 import { Notice } from "./support/obsidianStub";
 import { definition } from "./support/discoveryHarness";
@@ -118,6 +118,32 @@ describe("undoing a note rewrite", () => {
 			assert.equal(h.registry.has("owned"), true);
 			assert.equal(h.contents.get("a.md"), "> [!owned] Kept text");
 		} finally { confirm.restore(); }
+	});
+
+	it("chains several passes over one note into one step back", async () => {
+		// The callout editor's save rewrites ids, then titles, then fold marks,
+		// all into one journal.
+		const h = vault({ "a.md": "v2" });
+		const journal = new NoteRewriteJournal();
+		journal.record("a.md", "v0", "v1");
+		journal.record("a.md", "v1", "v2");
+		assert.equal(journal.notes.length, 1);
+		assert.equal(keepForUndo(journal), true);
+		assert.deepEqual(await undoNoteRewrite(h.app, journal), { restored: 1, skipped: 0 });
+		assert.equal(h.contents.get("a.md"), "v0");
+	});
+
+	it("leaves a note that was typed into between two passes alone", async () => {
+		const h = vault({ "a.md": "v2", "b.md": "after" });
+		const journal = new NoteRewriteJournal();
+		journal.record("a.md", "v0", "v1");
+		// The second pass found something the first did not leave.
+		journal.record("a.md", "v1 and a typed line", "v2");
+		journal.record("b.md", "before", "after");
+		assert.equal(keepForUndo(journal), true);
+		assert.deepEqual(await undoNoteRewrite(h.app, journal), { restored: 1, skipped: 1 });
+		assert.equal(h.contents.get("a.md"), "v2", "the typed line is never thrown away");
+		assert.equal(h.contents.get("b.md"), "before");
 	});
 
 	it("undoes only the most recent rewrite, and never an empty one", () => {

@@ -805,6 +805,7 @@ export const en: Record<string, string> = {
 		"All identifiers for this callout. Spaces are allowed.\nPress Enter or the + button to add.",
 	"editor.calloutIdsPlaceholder": "Add ID",
 	"editor.addId": "Add ID",
+	"editor.maxIds": "Maximum {{max}} IDs. Delete one to add another.",
 	"editor.idLinkedToName": "Linked to the display name",
 	"editor.idCannotDelete":
 		"This ID is linked to the display name and can't be deleted — edit the name to change it",
@@ -862,6 +863,15 @@ export const en: Record<string, string> = {
 		"Heads up: your theme styles every callout matching {{pattern}}, so it may override how this one looks.",
 	"editor.idDashConflict":
 		'Obsidian writes spaces as dashes, so this ID collides with "{{other}}"',
+	// An ID typed here that another callout already has. {{link}} is the
+	// "move it here" link; nothing in any note changes when it is used.
+	"editor.idOwnedBy": '"{{id}}" is an ID of {{name}}. You can {{link}}.',
+	"editor.idMoveHere": "move it here",
+	"editor.idOwnedByMain":
+		'"{{id}}" is the main ID of {{name}}. To use it here, delete {{name}} first.',
+	"editor.idBuiltInStock": '"{{id}}" is one of Obsidian\'s own IDs for {{name}}.',
+	"editor.idMoving": 'On save, "{{id}}" moves here from {{name}}.',
+	"editor.idMovingNotes": "Your notes don't change. They take this callout's style.",
 	"editor.untitledCallout": "Untitled Callout",
 	"editor.loremIpsum":
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
@@ -870,6 +880,55 @@ export const en: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Here is an inline [!{id}] callout inside a paragraph.",
 	"editor.previewReadOnly": "The live preview can't be edited",
+
+	// "Update your notes?" — asked by the callout editor's Save before anything
+	// in a note changes: an ID that leaves the callout, a new name, a new fold
+	// setting. The window lists what the user changed, asks what to do, then
+	// offers the answers.
+	"noteChanges.title": "Update your notes?",
+	"noteChanges.leave": "Leave them as they are",
+	"noteChanges.leaveDesc": "They keep [!{{id}}] and fall back to the default style.",
+	"noteChanges.changeTo": "Change them to",
+	"noteChanges.renameChange": 'Change them to "{{id}}"',
+	"noteChanges.titlesChange": 'Change them to "{{new}}"',
+	"noteChanges.titlesLeaveDesc": 'They keep reading "{{old}}".',
+	"noteChanges.foldChange": 'Set them to "{{state}}"',
+	"noteChanges.foldLeaveDesc": "Only callouts you insert from now on use the new setting.",
+	// Counts inside the sentence below: "This affects 3 callouts in 1 note."
+	"noteChanges.callouts": "{{count}} callouts",
+	"noteChanges.calloutsOne": "1 callout",
+	"noteChanges.notes": "{{count}} notes",
+	"noteChanges.notesOne": "1 note",
+	// The question that follows: about one callout, or about several (and when
+	// the notes could not all be counted).
+	"noteChanges.askCallout": "What should happen to that callout?",
+	"noteChanges.askCallouts": "What should happen to those callouts?",
+	// The window asks one question about everything Save would change: first
+	// the changes, one line each (a list when there are several)…
+	"noteChanges.changeRenamed":
+		'You changed the display name from "{{old}}" to "{{new}}", so the main ID changes from "{{oldId}}" to "{{newId}}".',
+	"noteChanges.changeMainId": 'The main ID changes from "{{oldId}}" to "{{newId}}".',
+	"noteChanges.changeName": 'You changed the display name from "{{old}}" to "{{new}}".',
+	"noteChanges.changeRemoved": 'You removed the ID "{{id}}".',
+	"noteChanges.changeFold": "You changed how this callout folds.",
+	// …then how many callouts they reach, before the question…
+	"noteChanges.affects": "This affects {{callouts}} in {{notes}}.",
+	"noteChanges.affectsUnknown": "Some of your notes may be affected.",
+	// …and the answers' words when more than one ID is changing. The Change
+	// answer's dropdown lists this callout's own IDs.
+	"noteChanges.leaveManyDesc": "They keep their old IDs and fall back to the default style.",
+	"noteChanges.rewriteManyDesc": "Every old ID in your notes becomes [!{{to}}].",
+	"noteChanges.changeToIdLabel": "ID to change them to",
+	// An extra ID taken off the callout. {{name}} is the callout's name. Each
+	// `\n` starts a new line in the window, as in the lines below.
+	"noteChanges.rewriteDesc": "Every [!{{id}}] in your notes becomes [!{{to}}].",
+	// The callout's main ID, which follows its name: a rename changes it.
+	"noteChanges.renameFollowDesc":
+		'Every [!{{oldId}}] in your notes becomes [!{{newId}}], and titles that read "{{old}}" become "{{new}}".',
+	// A new name, while the IDs stay.
+	"noteChanges.titlesChangeDesc": 'Titles that read "{{old}}" become "{{new}}".',
+	// A new fold setting.
+	"noteChanges.foldChangeDesc": "Their + or - mark changes to match.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -1323,6 +1382,7 @@ export const en: Record<string, string> = {
 		"Updated {{count}} callout ID(s) in vault files: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"Updated {{count}} callout title(s) in vault files: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated": "Updated the fold mark of {{count}} callout(s) in vault files.",
 	"vault.replaceWith": "Replace with:",
 	"vault.deleteWithout": "Delete without replacing",
 	"vault.confirmDelete": "Confirm",

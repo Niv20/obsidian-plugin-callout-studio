@@ -359,6 +359,7 @@ export const uk: Record<string, string> = {
 		"Всі ідентифікатори цього callout. Пробіли дозволені.\nНатисніть Enter або кнопку + для додавання.",
 	"editor.calloutIdsPlaceholder": "Додати ID",
 	"editor.addId": "Додати ID",
+	"editor.maxIds": "Максимум {{max}} ідентифікаторів. Видаліть один, щоб додати інший.",
 	"editor.idLinkedToName": "Пов'язано з відображуваною назвою",
 	"editor.idCannotDelete":
 		"Цей ID пов'язаний з відображуваною назвою і не може бути видалений — щоб змінити його, відредагуйте назву",
@@ -406,6 +407,16 @@ export const uk: Record<string, string> = {
 	"editor.idConflict": "Цей ID конфліктує з існуючим callout",
 	"editor.idDashConflict":
 		"Obsidian записує пробіли як дефіси, тому цей ID конфліктує з «{{other}}»",
+	"editor.idOwnedBy":
+		"«{{id}}» — це ID callout «{{name}}». Ви можете {{link}}.",
+	"editor.idMoveHere": "перенести його сюди",
+	"editor.idOwnedByMain":
+		"«{{id}}» — основний ID callout «{{name}}». Щоб використати його тут, спершу видаліть «{{name}}».",
+	"editor.idBuiltInStock":
+		"«{{id}}» — один із власних ID Obsidian для «{{name}}».",
+	"editor.idMoving":
+		"Під час збереження «{{id}}» перейде сюди від «{{name}}».",
+	"editor.idMovingNotes": "Ваші нотатки не зміняться. Вони отримають стиль цього callout.",
 
 	"editor.idFromTheme":
 		"{{theme}} вже надає callout з цим ID, тому Callout Studio не може його стилізувати. Виберіть інший ID.",
@@ -424,6 +435,17 @@ export const uk: Record<string, string> = {
 	"editor.sampleInlineText":
 		"Ось вбудована капсула [!{id}] всередині абзацу.",
 	"editor.previewReadOnly": "Живий перегляд не можна редагувати",
+	"noteChanges.title": "Оновити ваші нотатки?",
+	"noteChanges.leave": "Залишити як є",
+	"noteChanges.leaveDesc":
+		"Вони збережуть [!{{id}}] і повернуться до стилю за замовчуванням.",
+	"noteChanges.changeTo": "Змінити на",
+	"noteChanges.renameChange": "Змінити на «{{id}}»",
+	"noteChanges.titlesChange": "Змінити на «{{new}}»",
+	"noteChanges.titlesLeaveDesc": "Вони й надалі матимуть вигляд «{{old}}».",
+	"noteChanges.foldChange": "Встановити «{{state}}»",
+	"noteChanges.foldLeaveDesc":
+		"Нове налаштування використовують лише callout, які ви вставите відтепер.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
@@ -837,6 +859,8 @@ export const uk: Record<string, string> = {
 		"Оновлено {{count}} ID callout у файлах сховища: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"Оновлено {{count}} заголовків callout у файлах сховища: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated":
+		"Оновлено позначку згортання у callout: {{count}} у файлах сховища.",
 	"vault.replaceWith": "Замінити на:",
 	"vault.deleteWithout": "Видалити без заміни",
 	"vault.confirmDelete": "Підтвердити",
@@ -1474,4 +1498,24 @@ export const uk: Record<string, string> = {
 	"settings.versions": "Попередні версії",
 	"settings.versionsDesc": "Callout Studio автоматично зберігає версії вашої конфігурації.\nПорівнюйте їх або поверніться до однієї з них.",
 	"settings.versionsButton": "Переглянути версії",
+	"noteChanges.callouts": "{{count}}",
+	"noteChanges.calloutsOne": "1",
+	"noteChanges.notes": "{{count}}",
+	"noteChanges.notesOne": "1",
+	"noteChanges.askCallout": "Що робити з цим callout?",
+	"noteChanges.askCallouts": "Що робити з цими callout?",
+	"noteChanges.changeRenamed": "Ви змінили відображувану назву з «{{old}}» на «{{new}}», тому основний ID зміниться з «{{oldId}}» на «{{newId}}».",
+	"noteChanges.changeMainId": "Основний ID зміниться з «{{oldId}}» на «{{newId}}».",
+	"noteChanges.changeName": "Ви змінили відображувану назву з «{{old}}» на «{{new}}».",
+	"noteChanges.changeRemoved": "Ви прибрали ID «{{id}}».",
+	"noteChanges.changeFold": "Ви змінили спосіб згортання цього callout.",
+	"noteChanges.affects": "Це стосується: callout — {{callouts}}, нотаток — {{notes}}.",
+	"noteChanges.affectsUnknown": "Можливо, це вплине на деякі ваші нотатки.",
+	"noteChanges.leaveManyDesc": "Вони збережуть свої старі ID і повернуться до стилю за замовчуванням.",
+	"noteChanges.rewriteManyDesc": "Кожен старий ID у ваших нотатках стане [!{{to}}].",
+	"noteChanges.changeToIdLabel": "ID, на який їх замінити",
+	"noteChanges.rewriteDesc": "Кожен [!{{id}}] у ваших нотатках стане [!{{to}}].",
+	"noteChanges.renameFollowDesc": "Кожен [!{{oldId}}] у ваших нотатках стане [!{{newId}}], а заголовки «{{old}}» стануть «{{new}}».",
+	"noteChanges.titlesChangeDesc": "Заголовки «{{old}}» стануть «{{new}}».",
+	"noteChanges.foldChangeDesc": "Їхня позначка + або - зміниться відповідно.",
 };
