@@ -89,6 +89,7 @@ import { activeThemeName } from "../manager/theme/customCssApi";
 import { patternMatches } from "../manager/theme/themeClaimLookup";
 import type { PatternOp } from "../manager/theme/themeCalloutScan";
 import { calloutIdentity, obsidianCalloutAttrId } from "../utils/calloutId";
+import { cancelFrame, requestFrameFor, type FrameHandle } from "../utils/elementFrame";
 
 // Derive a callout ID from the display name. Spaces are preserved (the ID may
 // be a human-readable, multi-word label like "multi word callout"); the shared
@@ -268,8 +269,9 @@ export class CalloutEditor extends Modal {
 	/** Id of the palette (custom or preset) currently applied, if any. */
 	private paletteId: string | undefined;
 	private preview: LiveCalloutPreview | null = null;
-	private noteRefreshFrame: number | null = null;
-	private updatePreviewFrame: number | null = null;
+	/** Both asked of the editor's own window — see utils/elementFrame.ts. */
+	private noteRefreshFrame: FrameHandle | null = null;
+	private updatePreviewFrame: FrameHandle | null = null;
 	private recolorToggle: ToggleComponent | null = null;
 	/**
 	 * Re-reads the Picture section from the current icon: whether it applies at
@@ -1173,7 +1175,11 @@ export class CalloutEditor extends Modal {
 				id: generatePaletteId(),
 				...result,
 			};
+			// Pushed rather than `addPalette`d: that would also adopt orphans,
+			// and this callout's own row is the editor's until Save. Announced
+			// all the same — the name is a metadata colour word.
 			this.plugin.settings.customPalettes.push(palette);
+			this.plugin.registry.settingsChanged();
 			await this.plugin.saveSettings();
 			rebuildPaletteEntries();
 			this.paletteId = palette.id;
@@ -1224,27 +1230,29 @@ export class CalloutEditor extends Modal {
 				id: generatePaletteId(),
 				...result,
 			};
-			this.plugin.settings.customPalettes.push(palette);
 			// Regroup the siblings, then repaint them through the ordinary
 			// cascade so they match the palette even if its colours were tweaked
 			// in the modal. This callout is excluded from both: the editor owns
 			// its own row until Save, and it takes the new colours through the
-			// form below instead.
-			if (orphanId) {
-				this.plugin.registry.relinkPalette(
-					orphanId,
-					palette.id,
-					this.existingId,
-				);
-				this.plugin.registry.applyPaletteColors(
-					palette.id,
-					bakePaletteColors(customPaletteToColorPalette(palette)),
-				);
-			}
+			// form below instead. One round for all of it, announced even with
+			// no sibling to repaint: the new name is a metadata colour word.
+			this.plugin.registry.batch(() => {
+				this.plugin.settings.customPalettes.push(palette);
+				if (orphanId) {
+					this.plugin.registry.relinkPalette(
+						orphanId,
+						palette.id,
+						this.existingId,
+					);
+					this.plugin.registry.applyPaletteColors(
+						palette.id,
+						bakePaletteColors(customPaletteToColorPalette(palette)),
+					);
+				}
+				this.plugin.registry.settingsChanged();
+			});
 			// After the registry work, not before: one write then covers the new
-			// palette AND the re-pointed siblings. (`applyPaletteColors` also
-			// notifies, and `onChange` saves — but only when it actually
-			// repainted a row, so this is what makes the save unconditional.)
+			// palette AND the re-pointed siblings.
 			await this.plugin.saveSettings();
 			rebuildPaletteEntries();
 			this.paletteId = palette.id;
@@ -1979,12 +1987,15 @@ export class CalloutEditor extends Modal {
 	 * SettingsTab batches its list refresh).
 	 *
 	 * Reading view is deliberately left out: re-running its post-processors
-	 * means previewMode.rerender(), far too heavy to repeat per keystroke. It
-	 * catches up on save, when inject() emits css-change.
+	 * means previewMode.rerender(), far too heavy to repeat per keystroke. Its
+	 * colours ride the CSS like the block callout's; what it bakes — an icon
+	 * span, a token at all — catches up on save, through ReadingStructureWatch
+	 * (editor/renderRefresh.ts). Not through css-change: core answers that by
+	 * refreshing the editors only.
 	 */
 	private scheduleNoteDecorationRefresh(): void {
 		if (this.noteRefreshFrame !== null) return;
-		this.noteRefreshFrame = window.requestAnimationFrame(() => {
+		this.noteRefreshFrame = requestFrameFor(this.modalEl, () => {
 			this.noteRefreshFrame = null;
 			refreshAllCalloutEditors();
 		});
@@ -1993,7 +2004,7 @@ export class CalloutEditor extends Modal {
 	/** Coalesce slider previews to one paint per animation frame. */
 	private scheduleUpdatePreview(): void {
 		if (this.updatePreviewFrame !== null) return;
-		this.updatePreviewFrame = window.requestAnimationFrame(() => {
+		this.updatePreviewFrame = requestFrameFor(this.modalEl, () => {
 			this.updatePreviewFrame = null;
 			this.updatePreview();
 		});
@@ -2269,14 +2280,8 @@ export class CalloutEditor extends Modal {
 		this.releaseSaveStatus?.();
 		this.releaseSaveStatus = null;
 		// Cancel queued paints before destroying the preview.
-		if (this.noteRefreshFrame !== null) {
-			window.cancelAnimationFrame(this.noteRefreshFrame);
-			this.noteRefreshFrame = null;
-		}
-		if (this.updatePreviewFrame !== null) {
-			window.cancelAnimationFrame(this.updatePreviewFrame);
-			this.updatePreviewFrame = null;
-		}
+		this.noteRefreshFrame = cancelFrame(this.noteRefreshFrame);
+		this.updatePreviewFrame = cancelFrame(this.updatePreviewFrame);
 		this.preview?.destroy();
 		this.preview = null;
 		this.removePopupOutsideClickListener?.();

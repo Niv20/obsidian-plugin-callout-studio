@@ -9,6 +9,7 @@
  */
 import type {
 	CalloutDefinition,
+	CustomPalette,
 	IconPackId,
 	IconSvgCacheEntry,
 	PluginData,
@@ -58,7 +59,9 @@ import {
 	obsidianDefaultTitle,
 } from "../utils/calloutId";
 import {
+	bakePaletteColors,
 	consolidatePalettesByColor,
+	customPaletteToColorPalette,
 	findPresetByPaletteId,
 	resolveCalloutManagerColor,
 	resolveCalloutManagerColors,
@@ -150,6 +153,13 @@ export class CalloutRegistry {
 	private batchDirty = false;
 	/** Whether any of it was a change the file must hear about. See {@link RegistryChange}. */
 	private batchPersists = false;
+	/**
+	 * How many `onChange` rounds have gone out. Read by the CSS injector, whose
+	 * pass fires `css-change` from inside itself: a listener that mutates the
+	 * registry there asks for an inject the re-entrancy latch has to refuse, and
+	 * this is how the injector tells that owed pass from its own echo.
+	 */
+	private changeRounds = 0;
 	/**
 	 * Listeners for transient live-preview changes — a separate list from
 	 * {@link changeCallbacks} precisely because a preview is NOT a mutation:
@@ -927,6 +937,85 @@ export class CalloutRegistry {
 			adopted++;
 		}
 		return adopted;
+	}
+
+	/*
+	 * The saved-palette writers. A palette is more than the rows linked to it:
+	 * its name is a metadata colour word (`[!mark|ocean]`) the stylesheet paints
+	 * by itself, so every one of these ends in a change round even when no row
+	 * moved. Writing `settings.customPalettes` directly and saving skipped that
+	 * round, and a palette used only through metadata kept its old colours on
+	 * screen until something unrelated injected — or until a reload.
+	 */
+
+	/**
+	 * Save a new palette, and link the orphans whose colours it matches —
+	 * callouts left behind by an earlier deletion would otherwise sit orphaned
+	 * until the next launch, when the load migration adopts them anyway.
+	 */
+	addPalette(palette: CustomPalette): void {
+		this.batch(() => {
+			this.settings.customPalettes.push(palette);
+			this.adoptOrphansMatchingPalettes();
+			this.notifyChange();
+		});
+	}
+
+	/**
+	 * Replace a saved palette's fields and repaint everything it paints: the
+	 * callouts linked to it and its metadata colour word, in one round. Returns
+	 * false when no palette has `id`.
+	 */
+	updatePalette(id: string, fields: Omit<CustomPalette, "id">): boolean {
+		const palette = this.settings.customPalettes.find((p) => p.id === id);
+		if (!palette) return false;
+		this.batch(() => {
+			Object.assign(palette, fields);
+			// Object.assign never removes keys: when the edit switched the palette
+			// to another background style, the absent bgGradient must still clear
+			// the stored one (and cascade as an explicit undefined below). Same
+			// reasoning for transparentBg — an edit from the "None" style back to
+			// Solid has to actually un-transparent the palette — and for colorMode:
+			// toggling back to simple and saving must actually clear a stale
+			// "advanced" flag, not leave the editor auto-expanded next time.
+			palette.bgGradient = fields.bgGradient;
+			palette.transparentBg = fields.transparentBg;
+			palette.colorMode = fields.colorMode;
+			// Before the cascade: an orphan the edit just brought into range has to
+			// be carrying the palette's id by the time applyPaletteColors walks the
+			// map, or it gets adopted now and repainted only on the next edit.
+			this.adoptOrphansMatchingPalettes();
+			// Baked through the same function the import path uses, so "what this
+			// palette means as callout colors" is decided in exactly one place — and
+			// every field comes back set (undefined included), which is what lets the
+			// cascade clear a background the previous style had left behind.
+			this.applyPaletteColors(
+				id,
+				bakePaletteColors(customPaletteToColorPalette(palette)),
+			);
+			this.notifyChange();
+		});
+		return true;
+	}
+
+	/**
+	 * Delete a saved palette. The callouts linked to it keep their colours and
+	 * the dangling id (see {@link relinkPalette}); only its colour word stops
+	 * painting. Returns false when no palette has `id`.
+	 */
+	removePalette(id: string): boolean {
+		const list = this.settings.customPalettes;
+		const idx = list.findIndex((p) => p.id === id);
+		if (idx < 0) return false;
+		list.splice(idx, 1);
+		this.notifyChange();
+		return true;
+	}
+
+	/** Make `palettes` the saved list, as a merge or a restore decides it. */
+	setPalettes(palettes: CustomPalette[]): void {
+		this.settings.customPalettes = palettes;
+		this.notifyChange();
 	}
 
 	/**
@@ -1952,7 +2041,26 @@ export class CalloutRegistry {
 			if (persists) this.batchPersists = true;
 			return;
 		}
+		this.changeRounds++;
 		notifyListeners(this.changeCallbacks, { persists });
+	}
+
+	/** The number of `onChange` rounds so far — see {@link changeRounds}. */
+	get revision(): number {
+		return this.changeRounds;
+	}
+
+	/**
+	 * Announce a setting changed in place on {@link settings}.
+	 *
+	 * The stylesheet and the renderers read settings as well as rows — the
+	 * saved palettes (each one a metadata colour word), the global style, the
+	 * fallback id. A caller that writes one of those directly owes the round
+	 * that repaints it; saving alone repaints nothing. Batch-aware, like every
+	 * other mutation.
+	 */
+	settingsChanged(): void {
+		this.notifyChange();
 	}
 
 	/**

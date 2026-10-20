@@ -392,6 +392,53 @@ describe("inject — the re-entrancy latch", () => {
 			assert.strictEqual(passes, 1, "the nested call ran a second full pass");
 		}));
 
+	it("runs the pass once more when a listener changed the registry mid-pass", () =>
+		withInjector((h) => {
+			// The theme sync answers this plugin's own css-change by reconciling
+			// its overlay rows, which is a registry change, which asks for an
+			// inject — from inside the pass. Refused outright, that change stayed
+			// out of the sheet until something unrelated injected.
+			const app = h.injector as unknown as {
+				app: { workspace: { trigger(name: string): void } };
+			};
+			const realTrigger = app.app.workspace.trigger.bind(app.app.workspace);
+			let added = false;
+			app.app.workspace.trigger = (name: string) => {
+				realTrigger(name);
+				if (added) return;
+				added = true;
+				h.registry.add(definition({ id: "late" }));
+				h.injector.inject();
+			};
+
+			h.injector.inject();
+			assert.ok(h.css().includes('data-callout="late"'), "the mid-pass change never reached the sheet");
+		}));
+
+	it("reruns at most once, however often the registry moves under it", () =>
+		withInjector((h) => {
+			const internals = h.injector as unknown as {
+				generateFallbackCSS(callouts: unknown[]): string;
+				app: { workspace: { trigger(name: string): void } };
+			};
+			const real = internals.generateFallbackCSS.bind(internals);
+			let passes = 0;
+			internals.generateFallbackCSS = (callouts) => {
+				passes++;
+				return real(callouts);
+			};
+			const realTrigger = internals.app.workspace.trigger.bind(internals.app.workspace);
+			let n = 0;
+			internals.app.workspace.trigger = (name: string) => {
+				realTrigger(name);
+				h.registry.add(definition({ id: `moving ${n++}` }));
+				h.injector.inject();
+			};
+
+			h.injector.inject();
+			assert.strictEqual(passes, 2);
+		}));
+
 	it("clears the latch even when the pass throws", () =>
 		withInjector((h) => {
 			// `finally` is load-bearing: a throw anywhere in the pass (a malformed
@@ -507,6 +554,60 @@ describe("inject — the no-op guard that replaced the debounce", () => {
 			// nothing extra reached disk, and what is on disk is the committed CSS.
 			assert.strictEqual(h.css(), committed);
 			assert.deepStrictEqual(h.persists, [committed]);
+		}));
+
+	it("persists a save made with the editor open once the editor closes", () =>
+		withInjector((h) => {
+			h.injector.inject();
+			const red = definition({ id: "note", colorLight: "#ff0000", builtIn: true });
+
+			// The editor's preview, then its Save, in the editor's own order: the
+			// preview is cleared without a pass, and the committed row becomes
+			// what the preview already showed. That pass writes nothing — the
+			// text is the preview's to the byte — and the snapshot used to stay
+			// on the CSS from before the edit, so the next launch flashed it.
+			h.registry.setPreviewDefinition(red);
+			h.injector.inject();
+			const previewed = h.css();
+			h.registry.setPreviewDefinition(null);
+			h.registry.update("note", red);
+			h.injector.inject();
+
+			assert.strictEqual(h.css(), previewed, "the save was expected to match the preview");
+			assert.strictEqual(h.persists.at(-1), previewed);
+		}));
+});
+
+describe("inject — a saved palette's colour word", () => {
+	// The palette writers announce every change, so the stylesheet hears about
+	// a palette that is used only as `[!mark|ocean]` — no callout linked to it,
+	// nothing else to make the pass run.
+	const BAKED = {
+		colorLight: "#0a5f8a",
+		colorDark: "#7cc4ea",
+		bgColorLight: "#e6f2f8",
+		bgColorDark: "#10232d",
+		textColorLight: "#111111",
+		textColorDark: "#eeeeee",
+	};
+
+	it("is painted the moment it is added, edited, renamed or deleted", () =>
+		withInjector((h) => {
+			h.registry.onChange(() => h.injector.inject());
+			h.injector.inject();
+			assert.ok(!h.css().includes('"ocean"'));
+
+			h.registry.addPalette({ id: "cp-ocean", name: "Ocean", ...BAKED });
+			assert.ok(h.css().includes('"ocean"'), "a new palette's word is not in the sheet");
+
+			h.registry.updatePalette("cp-ocean", { name: "Ocean", ...BAKED, colorLight: "#123456" });
+			assert.ok(h.css().includes("#123456"), "an edit nothing links to did not repaint");
+
+			h.registry.updatePalette("cp-ocean", { name: "Sea", ...BAKED });
+			assert.ok(h.css().includes('"sea"') && !h.css().includes('"ocean"'));
+
+			h.registry.removePalette("cp-ocean");
+			assert.ok(!h.css().includes('"sea"'), "a deleted palette's word kept painting");
 		}));
 });
 

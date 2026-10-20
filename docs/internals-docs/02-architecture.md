@@ -76,7 +76,9 @@ because almost every bug report traces back to a step being skipped:
 
 ```text
 Something mutates the registry
-        │  (registry.add/update/remove/batch(...), or a preview via setPreviewDefinition)
+        │  (registry.add/update/remove/batch(...), a palette writer, a setting
+        │   written in place and announced with registry.settingsChanged(),
+        │   or a preview via setPreviewDefinition)
         ▼
 registry.onChange fires (coalesced - see CalloutRegistry.batch)
         │
@@ -84,19 +86,36 @@ registry.onChange fires (coalesced - see CalloutRegistry.batch)
         │        │  (only if the text actually changed - see "Coalescing" below)
         │        ├──► paintIcons() - repaints DOM icons in every open window
         │        ├──► refreshAllCalloutEditors() - asks CodeMirror to rebuild its widgets
-        │        └──► workspace.trigger("css-change") - forces every open editor/reading view to re-render
+        │        └──► workspace.trigger("css-change") - core refreshes every open editor
+        │               (reading views are NOT re-rendered by it)
         │
         ├──► OutlineDecorator.refreshAll() - repaints outline items
-        └──► plugin.saveSettings() - writes data.json
-               (skipped when the round says `persists: false` - the two
-               derived theme facts, which `toSaveData()` never reads)
+        ├──► plugin.saveSettings() - writes data.json
+        │      (skipped when the round says `persists: false` - the two
+        │      derived theme facts, which `toSaveData()` never reads)
+        └──► ReadingStructureWatch.check() - re-renders the open reading views
+               that mention a name whose baked structure moved
 ```
 
-`main.ts` wires exactly two `registry.onChange` listeners (see
+`main.ts` wires three `registry.onChange` listeners (see
 [Plugin lifecycle](03-plugin-lifecycle.md)): one for `customCommands.syncAll()`,
-one that does the inject + outline-refresh + save. Order matters - the command
-sync is subscribed first, so a delete's command pruning is folded into the same
-settings snapshot the save writes, rather than racing it.
+one that does the inject + outline-refresh + save, and the reading-structure
+watch. Order matters - the command sync is subscribed first, so a delete's
+command pruning is folded into the same settings snapshot the save writes,
+rather than racing it; the watch comes last, so a re-render reads the new
+stylesheet.
+
+**A setting the stylesheet reads is a registry change too.** The saved palettes
+(each one a metadata colour word), the global style and the fallback id live on
+`registry.settings`, not on a row. Writing one in place and only saving repaints
+nothing: a palette used only as `[!mark|ocean]` kept its old colours until
+something unrelated injected, or until a reload. Palettes go through the
+registry's writers (`addPalette`, `updatePalette`, `removePalette`,
+`setPalettes`); anything else written in place announces itself with
+`registry.settingsChanged()` - or, for the global style controls, injects
+directly. Either way the paint comes **before** the save, never after it: a
+save reads the file back, writes a recovery copy and queues behind any save in
+flight, and a failed one rejects, which skipped a repaint placed after it.
 
 > [!IMPORTANT]
 > **`onChange` says nothing about *what* changed.** Every listener re-derives

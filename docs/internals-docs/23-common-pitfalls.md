@@ -12,9 +12,27 @@ that feels like it "should just work."
 > settings UI and the rendered vault disagreeing.** `registry.onChange` is
 > what triggers `CSSInjector.inject()` - if you mutate `registry.callouts`
 > or `registry.settings` through anything other than the registry's own
-> methods (`add`/`update`/`remove`/`batch`/`setUserImages`/etc.), nothing
-> will repaint. There is no other path. See
+> methods (`add`/`update`/`remove`/`batch`/`setUserImages`/the palette
+> writers/etc.), nothing will repaint. There is no other path. That includes
+> **settings**: a saved palette is a metadata colour word, so pushing one onto
+> `settings.customPalettes` and saving left `[!mark|its-name]` unpainted until a
+> reload. Use `addPalette`/`updatePalette`/`removePalette`/`setPalettes`, or
+> announce an in-place write with `registry.settingsChanged()`. See
 > [Architecture § the data-flow loop](02-architecture.md#the-data-flow-loop).
+
+> [!WARNING]
+> **Paint, then save - never `await saveSettings()` and then repaint.** A save
+> reads the file back, writes a recovery copy and queues behind any save under
+> way, so the change waited on the disk; and a failed save rejects, so a
+> repaint placed after it never ran. The paint reads `settings` in memory,
+> which already hold the change.
+
+> [!WARNING]
+> **`css-change` does not re-render reading view.** Core's
+> `MarkdownView.onCssChange` refreshes the editor alone. What a reading view
+> baked - `.cs-unknown`, an icon span, whether a token exists - changes only
+> through `ReadingStructureWatch` or `refreshRenderModes()`. See
+> [Render roles § what reading view bakes](09-render-roles.md#what-reading-view-bakes).
 
 > [!WARNING]
 > **Registry edits don't touch the document, so CodeMirror won't rebuild
@@ -158,7 +176,8 @@ sufficient**. Common cases that also need an explicit follow-up call:
 | Anything affecting generated CSS | `cssInjector.inject()` (usually automatic via `onChange`, but a **preview-only** or **out-of-band** mutation must call it explicitly with `inject(false)`) |
 | `headingCallouts.enabled` / `inlineCallouts.enabled` toggled | `plugin.refreshRenderModes()` - re-runs reading-view post-processors so already-baked DOM is added/stripped immediately, not just on next file open |
 | Language changed, or a locale download lands mid-session | `plugin.applyLocaleChange()` - re-renders the three surfaces that snapshot translated text (see [Localization § three surfaces](17-i18n.md#surfaces-that-snapshot-translated-text-and-need-a-manual-refresh)) |
-| Fallback callout id changed | `restyleUncustomizedFallbackRows()` before saving, or every uncustomized fallback row keeps its stale look until some unrelated edit happens to trigger a re-mirror |
+| Fallback callout id changed | `restyleUncustomizedFallbackRows()` before saving, or every uncustomized fallback row keeps its stale look until some unrelated edit happens to trigger a re-mirror; then `refreshCallouts()`, also before the save |
+| A saved palette added, edited, renamed or deleted | the registry's palette writers - they announce the round even when no callout links to the palette, which is the only thing that puts its metadata colour word in the sheet |
 
 ## CSS ordering/specificity assumptions
 
@@ -315,6 +334,16 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
   **re-derive and re-paint** what core would have drawn
   (`CSSInjector.restoreCoreIcon`), because there is no way to make core
   "look again."
+- **In Obsidian 1.14 the settings are a window of their own**, and every
+  modal opened from them lands there (`Modal.open` appends to
+  `activeWindow`). Plugin code runs in the main window's realm, so a bare
+  `window.requestAnimationFrame` is the *main* window's - and the browser holds
+  it back while that window is hidden behind the settings, minimised or on
+  another desktop. The callout editor's preview and the settings lists froze
+  until the settings window closed. Ask the frame of the element's own window:
+  `requestFrameFor(el, …)` / `cancelFrame(handle)` in
+  [`utils/elementFrame.ts`](../../src/utils/elementFrame.ts), which also keeps
+  the window for the cancel (frame ids are per window).
 - **`EmbeddableMarkdownEditor` is an undocumented internal API and may
   change or disappear.** Every construction of it is wrapped in a
   `try/catch` with a full-fidelity static-render fallback

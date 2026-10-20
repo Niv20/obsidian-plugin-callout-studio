@@ -23,7 +23,13 @@
  * or an end (pointer vs. keyboard), and a caller swapping in a bespoke preview
  * for the duration must see exactly one start and one end per drag.
  */
-import { asEl, fakeDom, type FakeElement } from "./support/fakeDom";
+import {
+	asEl,
+	fakeDom,
+	FakeDocument,
+	FakeWindow,
+	type FakeElement,
+} from "./support/fakeDom";
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { createdSliders } from "./support/obsidianStub";
@@ -397,6 +403,21 @@ describe("addStyleSlider — one inject per frame", () => {
 		assert.deepStrictEqual(h.injects, [false, false]);
 	});
 
+	it("asks the frame of the window the slider is in, not the main one", () => {
+		// Obsidian 1.14 opens the settings as a window of their own. A frame
+		// asked of the main window is held back while that window is hidden
+		// behind them, so the drag would preview nothing until they closed.
+		const h = harness();
+		const settingsWindow = new FakeWindow();
+		const parent = asEl(new FakeDocument(settingsWindow).body.createDiv({}));
+		addStyleSlider(h.plugin, parent, spec());
+		h.drag(3);
+		fakeDom.window.flushFrames();
+		assert.deepStrictEqual(h.injects, [], "the main window's frame ran the repaint");
+		settingsWindow.flushFrames();
+		assert.deepStrictEqual(h.injects, [false]);
+	});
+
 	it("skips the css-change re-render while dragging", () => {
 		// `false` is the argument, and it is the reason a drag stays cheap:
 		// geometry rides CSS variables and reflows when the stylesheet is
@@ -410,7 +431,7 @@ describe("addStyleSlider — one inject per frame", () => {
 });
 
 describe("addStyleSlider — releasing the thumb", () => {
-	it("saves, then repaints in full", async () => {
+	it("repaints in full, and saves", async () => {
 		const h = harness();
 		const s = spec();
 		addStyleSlider(h.plugin, h.parent, s);
@@ -420,6 +441,19 @@ describe("addStyleSlider — releasing the thumb", () => {
 		assert.deepStrictEqual(s.written, [3]);
 		assert.strictEqual(h.saves, 1);
 		// No argument this time: the commit DOES want the css-change re-render.
+		assert.deepStrictEqual(h.injects, [undefined]);
+	});
+
+	it("repaints without waiting for the save", () => {
+		// A save reads the file back, writes a recovery copy and queues behind
+		// any save under way, and a failed one rejects. Painted after it, the
+		// change waited on the disk — or never showed until something else
+		// injected.
+		const h = harness();
+		(h.plugin as unknown as { saveSettings(): Promise<void> }).saveSettings = () =>
+			new Promise<void>(() => {});
+		addStyleSlider(h.plugin, h.parent, spec());
+		void (h.slider() as unknown as { commit(v: number): Promise<void> }).commit(3);
 		assert.deepStrictEqual(h.injects, [undefined]);
 	});
 

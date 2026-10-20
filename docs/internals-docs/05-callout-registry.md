@@ -425,6 +425,32 @@ it would without batching. Used for: the rename pair, `applyCalloutManagerImport
 `applyPaletteColors`, `convertToFallback`, and every writer that might trigger
 `mirrorFallbackRowsFor`.
 
+`revision` counts the rounds that actually went out (a batch is one). The CSS
+injector reads it to tell a registry change made mid-pass from its own echo -
+see [CSS generation § the re-entrancy latch](06-css-generation.md#inject---the-re-entrancy-latch).
+
+### Settings the stylesheet reads - `settingsChanged()` and the palette writers
+
+```ts
+addPalette(palette: CustomPalette): void          // + adopts the orphans its colours match
+updatePalette(id, fields): boolean                // + cascades onto linked rows (applyPaletteColors)
+removePalette(id): boolean                        // linked rows keep colours and the dangling id
+setPalettes(palettes: CustomPalette[]): void      // a merge or a restore
+settingsChanged(): void                           // anything else written in place on `settings`
+```
+
+The stylesheet does not read rows alone. A saved palette's name is a metadata
+colour word that `generateMetadataColorCSS` paints by itself, and the global
+style and the fallback id live on `settings` too. A caller that writes one of
+those in place and only saves owes a round, and used to skip it: a palette
+nobody linked to (used only as `[!mark|ocean]`) kept its old colours on screen
+until something unrelated injected - `applyPaletteColors` announces only when
+it repainted a row. So every palette writer ends in exactly one `notifyChange()`
+(wrapped in a batch with its cascade), and `settingsChanged()` is the same
+round for anything else, batch-aware like every mutation. The callout editor's
+two palette pushes announce through it rather than `addPalette`, because
+adoption could stamp the row the editor is holding open.
+
 ## The transient live-preview slot
 
 The settings tab's edit modals (`CalloutEditor`, the palette editor, the

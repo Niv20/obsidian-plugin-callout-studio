@@ -10,7 +10,11 @@ import type { CalloutRenderRole, PluginSettings } from "../src/types";
 import { registerCalloutEditorView, unregisterCalloutEditorView } from "../src/editor/livepreview/refresh";
 import { t } from "../src/i18n";
 
-function build(role: CalloutRenderRole, change?: (settings: PluginSettings) => void) {
+function build(
+	role: CalloutRenderRole,
+	change?: (settings: PluginSettings) => void,
+	save: () => Promise<void> = async () => {},
+) {
 	fakeDom.window.flushFrames();
 	fakeDom.document.body.empty();
 	createdSliders.length = 0;
@@ -20,7 +24,7 @@ function build(role: CalloutRenderRole, change?: (settings: PluginSettings) => v
 	const counts = { saves: 0, injects: 0, previews: 0 };
 	const plugin = {
 		settings,
-		saveSettings: async () => { counts.saves++; },
+		saveSettings: () => { counts.saves++; return save(); },
 		cssInjector: { inject: () => { counts.injects++; } },
 	} as unknown as SettingsTabPlugin;
 	const modal = Object.assign(Object.create(GlobalStyleModal.prototype) as object, {
@@ -161,5 +165,33 @@ describe("global style group resets", () => {
 		await reset(h.button(1));
 		assert.equal(h.settings.globalStyle.inline.fontScale, 1);
 		assert.deepEqual(createdSliders.slice(1).map((s) => s.getValue()), [1, 16]);
+	});
+});
+
+describe("global style commits paint before they save", () => {
+	// A save reads the file back, writes a recovery copy and queues behind any
+	// save under way, and a failed one rejects. Painting after it made every
+	// toggle, reset and border button wait on the disk, or never show at all
+	// until something else injected. These saves never finish.
+	const hung = (): Promise<void> => new Promise<void>(() => {});
+
+	it("a toggle", () => {
+		const h = build("regular", undefined, hung);
+		void createdToggles[0]?.commit(true);
+		assert.deepEqual([h.counts.injects, h.counts.saves], [1, 1]);
+	});
+
+	it("a group reset", () => {
+		const h = build("regular", (settings) => { settings.globalStyle.borderWidth = 4; }, hung);
+		h.button(0).fire("click");
+		assert.deepEqual([h.counts.injects, h.counts.saves], [1, 1]);
+	});
+
+	it("a border side button", () => {
+		const h = build("regular", undefined, hung);
+		const side = h.group(0).querySelectorAll(".cs-border-side-btn")[1];
+		assert.ok(side);
+		side.fire("click");
+		assert.deepEqual([h.counts.injects, h.counts.saves], [1, 1]);
 	});
 });

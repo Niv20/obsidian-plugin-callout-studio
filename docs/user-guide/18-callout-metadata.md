@@ -39,6 +39,8 @@ The words stay in English whatever language the interface uses.
 
 A saved palette called **Comic Red** is written `comic-red`. The palette editor shows each palette's word under its name. **Save** stays dimmed when you give a palette a word another saved palette already has. Two palettes saved before metadata words existed can share one, such as **Note dark** and **Note (dark)**; they still save, and only one of them answers to the word. A saved palette named like a built-in color takes that word over. For example, a palette you called **Pink** before the Pink preset existed keeps `pink`.
 
+Changes to a saved palette show up in your notes right away, even when no callout type uses the palette and only its word does. A new palette's word works as soon as you save the palette. An edited palette repaints every callout that uses its word. A deleted palette's word stops coloring callouts.
+
 Capital letters A to Z don't matter: `PINK` works like `pink`. Other capitals do, because the stylesheet that paints the colors only ignores the case of A to Z: a palette called **Émeraude** is written `émeraude`, and `Émeraude` doesn't find it.
 
 ### Removing the color

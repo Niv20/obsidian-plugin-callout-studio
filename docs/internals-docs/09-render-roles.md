@@ -409,6 +409,36 @@ rendered candidates disagree, the block's inline tokens remain literal rather
 than ignoring a possible escape. When source is unavailable (some embeds and
 exports), the existing DOM-only rendering remains available.
 
+### What reading view bakes
+
+A rendered note keeps what the post-processor decided until it renders again,
+and a registry change does not render it again: `css-change` refreshes the
+editors only. Colours ride the stylesheet and `paintIcons` repaints icons and
+names in place, but four things are structure:
+
+- whether a name is a callout at all - `.cs-unknown` on the token and the
+  heading, and the `data-callout` spelling `calloutDomId` chose;
+- whether a token has an icon span - `hideIcon` omits it rather than hiding it;
+- whether a token is built in the first place - `shouldRenderToken`;
+- which callout an unknown token borrows from - the fallback, and whether it
+  hides its icon.
+
+So a `## [!new]` written before its type existed kept the fallback's look after
+the type was created, until the note was reopened.
+`ReadingStructureWatch` ([`editor/renderRefresh.ts`](../../src/editor/renderRefresh.ts))
+closes that, and stays off the hot path: on every registry round (and every
+`refreshCallouts`, which is how a reloaded `data.json` arrives) it compares
+one signature of the committed rows - ids, aliases, `hideIcon`, theme
+ownership, the fallback - so a colour, icon or name edit costs a string
+compare. When the signature moved it works out which names did, in
+`calloutIdentity` form, and calls `previewMode.rerender(true)` only on the open
+notes whose text mentions one. A theme switch that hands hundreds of names to
+the theme re-renders the note using two of them, not every open note.
+
+Two things it does not reach: a `![[transclusion]]` inside another note's
+reading view (the host's text does not mention the embedded note's tokens),
+and a hover preview, which renders fresh each time anyway.
+
 ## The Outline pane, PDF export, and gradient text
 
 - **`OutlineDecorator`** - see

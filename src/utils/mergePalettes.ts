@@ -107,10 +107,14 @@ export function mergePalettes(
  * the old colours and the file's on the new.
  */
 export function applyPaletteMerge(registry: CalloutRegistry, merge: PaletteMerge): void {
-	registry.settings.customPalettes = merge.palettes;
-	for (const [fromId, toId] of merge.remap) registry.relinkPalette(fromId, toId);
-	for (const id of merge.restyled) {
-		const palette = merge.palettes.find((p) => p.id === id);
-		if (palette) registry.applyPaletteColors(id, bakePaletteColors(customPaletteToColorPalette(palette)));
-	}
+	// One round, and always one: a palette that arrived with no callout linked
+	// to it is still a metadata colour word the sheet has to learn.
+	registry.batch(() => {
+		registry.setPalettes(merge.palettes);
+		for (const [fromId, toId] of merge.remap) registry.relinkPalette(fromId, toId);
+		for (const id of merge.restyled) {
+			const palette = merge.palettes.find((p) => p.id === id);
+			if (palette) registry.applyPaletteColors(id, bakePaletteColors(customPaletteToColorPalette(palette)));
+		}
+	});
 }

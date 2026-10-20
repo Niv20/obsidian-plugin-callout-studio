@@ -775,7 +775,7 @@ describe("renderFallbackSection — the settings row end to end", () => {
 		assert.ok(!names.includes("Themed"), "a theme row must never be offered");
 	});
 
-	it("saves before refreshing, and registers its teardown", async () => {
+	it("repaints before saving, and registers its teardown", async () => {
 		fakeDom.light();
 		const host = el();
 		const harness = fakeCtx(registryWith([...CHOICES]));
@@ -797,11 +797,12 @@ describe("renderFallbackSection — the settings row end to end", () => {
 		row.fire("click");
 
 		assert.strictEqual(harness.settings.fallbackCalloutId, "warning");
-		// `onChange` awaits the save, so the refresh lands a microtask later.
 		await Promise.resolve();
-		// The order matters: a refresh that ran before the save would paint from
-		// settings that had not been written yet.
-		assert.deepStrictEqual(harness.calls, ["restyle", "save", "refresh"]);
+		// The order matters: the paint reads the settings in memory, which are
+		// already the new ones, so it must not wait on the disk. A save can
+		// queue behind another or fail, and a repaint placed after it was then
+		// late or skipped altogether.
+		assert.deepStrictEqual(harness.calls, ["restyle", "refresh", "save"]);
 	});
 
 	it("the registered disposer really releases the listener", () => {

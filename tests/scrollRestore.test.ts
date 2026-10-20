@@ -15,7 +15,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { captureScroll } from "../src/settings/sections/scrollRestore";
-import { installFakeDom } from "./support/fakeDom";
+import { FakeDocument, FakeWindow, installFakeDom } from "./support/fakeDom";
 
 const dom = installFakeDom();
 
@@ -25,8 +25,9 @@ const dom = installFakeDom();
  * `scrollTop` clamps to `max`, exactly as a browser clamps to the scrollable
  * height — which is the whole behaviour under test.
  */
-function scroller(max: number, at = 0) {
+function scroller(max: number, at = 0, ownerDocument: unknown = dom.document) {
 	const el = {
+		ownerDocument,
 		isConnected: true,
 		max,
 		_top: Math.min(at, max),
@@ -146,5 +147,22 @@ describe("putting the reader back where they were", () => {
 		dom.window.flushFrames();
 
 		assert.strictEqual(el.scrollTop, 0);
+	});
+
+	it("retries on the frame of the window the pane is in, not the main one", () => {
+		// Obsidian 1.14 opens the settings as a window of their own. A frame
+		// asked of the main window is held back while that window is hidden
+		// behind them, so the retry has to ride the settings window's frames.
+		const settingsWindow = new FakeWindow();
+		const el = scroller(1000, 400, new FakeDocument(settingsWindow));
+		const restore = captureScroll(el);
+		el.max = 150;
+		restore();
+		el.max = 1000;
+
+		dom.window.flushFrames();
+		assert.strictEqual(el.scrollTop, 150, "the main window's frame ran the retry");
+		settingsWindow.flushFrames();
+		assert.strictEqual(el.scrollTop, 400);
 	});
 });

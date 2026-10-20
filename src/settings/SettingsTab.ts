@@ -37,6 +37,7 @@ import {
 import { freshPaging } from "./sections/calloutListsSignature";
 import { keepScrollAnchored } from "./sections/foldAnchor";
 import { subscribeSettingsTab } from "./sections/tabSubscriptions";
+import { cancelFrame, requestFrameFor, type FrameHandle } from "../utils/elementFrame";
 import type { PagingState } from "./sections/listPaging";
 import type { RowKind } from "./sections/rowOwnership";
 import { renderCalloutRow as renderCalloutRowSection } from "./sections/CalloutRowRenderer";
@@ -50,7 +51,7 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 	plugin: SettingsTabPlugin;
 	/** Undoes all four change subscriptions — see `subscribeSettingsTab`. */
 	private unsubscribe: (() => void) | null = null;
-	private refreshFrame: number | null = null;
+	private refreshFrame: FrameHandle | null = null;
 	/**
 	 * Whether the refresh already queued for the next frame must redraw even if
 	 * nothing in the registry moved. Sticky on purpose: a frame that coalesces a
@@ -217,10 +218,7 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		this.runSectionDisposers();
 		this.unsubscribe?.();
 		this.unsubscribe = null;
-		if (this.refreshFrame !== null) {
-			window.cancelAnimationFrame(this.refreshFrame);
-			this.refreshFrame = null;
-		}
+		this.refreshFrame = cancelFrame(this.refreshFrame);
 		this.refreshForced = false;
 		this.calloutLists = null;
 		// The cursor is session-only and this is what makes that true: leaving
@@ -294,7 +292,10 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		if (!this.containerEl.isConnected) return;
 		this.refreshForced ||= force;
 		if (this.refreshFrame !== null) return;
-		this.refreshFrame = window.requestAnimationFrame(() => {
+		// The tab's own window's frame: in Obsidian 1.14 the settings are a
+		// window of their own, and one asked of the main window never arrives
+		// while it is hidden behind them (utils/elementFrame.ts).
+		this.refreshFrame = requestFrameFor(this.containerEl, () => {
 			this.refreshFrame = null;
 			const forced = this.refreshForced;
 			this.refreshForced = false;
