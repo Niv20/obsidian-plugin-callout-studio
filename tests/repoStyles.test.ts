@@ -500,3 +500,28 @@ describe("styles.css selects nothing with :has()", () => {
 		);
 	});
 });
+
+/* -------------------------------------------------------------------------- */
+/* No multi-column properties                                                 */
+/* -------------------------------------------------------------------------- */
+
+describe("styles.css declares no multi-column property", () => {
+	// Obsidian's plugin review warns on these ("Unexpected browser feature
+	// "multicolumn" is only partially supported by Obsidian …"): it matches the
+	// property name, and Can I Use lists multi-column layout as partial in every
+	// Chromium, so raising minAppVersion never clears it. A flex or grid
+	// `column-gap` is caught too — write it as `gap: <row> <column>` instead.
+	// The lookbehind keeps `grid-column` and `grid-template-columns` out.
+	it("has no columns, column-*, or break-* declaration", () => {
+		const hits = [
+			...css.matchAll(
+				/(?<![-\w])(columns|column-(?:count|fill|gap|rule(?:-[a-z]+)?|span|width)|break-(?:after|before|inside))\s*:/g,
+			),
+		].map((m) => `styles.css:${lineOf(cssRaw, m.index ?? 0)}  ${m[1]}`);
+		assert.deepStrictEqual(
+			hits,
+			[],
+			report("Rewrite these without a multi-column property (e.g. column-gap → gap):", hits),
+		);
+	});
+});

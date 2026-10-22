@@ -560,9 +560,14 @@
    title and Add then share one line from a 370px window up, which takes in the
    375px iPhones and every common Android width but 360. The 16px used above
    needs 381px. Below that, Add falls to a line of its own at the trailing edge
-   — the control's auto margin above — rather than crushing the title. */
+   — the control's auto margin above — rather than crushing the title.
+
+   The `gap` shorthand, with the 8px row gap above restated, rather than
+   `column-gap`: Obsidian's plugin review reads every `column-*` property as
+   multi-column layout, which Can I Use lists as partial in every Chromium, and
+   warns. This is flex gap, which it is not. Change the two 8px together. */
 .is-phone .callout-studio-settings .cs-callout-list-heading.setting-item {
-	column-gap: var(--size-4-3);
+	gap: 8px var(--size-4-3);
 }
 
 .is-phone
