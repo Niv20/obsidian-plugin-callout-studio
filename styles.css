@@ -2697,15 +2697,6 @@ button.callout-studio-icon-picker-loading {
 	margin-top: 0;
 }
 
-/* Same theme-defensive pin the settings tab already carries: some themes
-   restyle .setting-item to align-items: flex-start, which strands a row's
-   control near the top once its name + description block grows taller than the
-   control — a two-line description, or a name that wraps at a larger UI font
-   size. */
-.cs-modal .setting-item:not(.setting-item-heading) {
-	align-items: center;
-}
-
 /* ── Rows that keep their control on the label's line ─────────────
    Obsidian stacks every setting row on the phone — name above, control on a
    full-width row below:
@@ -3107,17 +3098,18 @@ button.callout-studio-icon-picker-loading {
    resizes the slider and jumps the thumb under the cursor (measured: dragging
    Size across 100 to 95 moved the track by 6px, and up to 12px over the full
    range). A fixed reserve is what stops that, and it has to clear the longest
-   string any of these sliders can spell — "0.75em", six characters wide. The
-   monospace face is what makes that a promise rather than an estimate: it puts
-   every character at exactly 1ch, so the reserve does not drift with the theme
-   font the way it would under the proportional UI face. flex-shrink stays off
-   so a narrow modal squeezes the track instead of the number. */
+   string any of these sliders can spell — "0.75em", six characters wide.
+
+   The face, size and weight are Obsidian's own readout. Its `tabular-nums` is
+   restated because the reserve leans on it: every digit is then exactly 1ch,
+   and only "-", ".", "e", "m" and "×" stay proportional, which the half-ch of
+   slack absorbs. flex-shrink stays off so a narrow modal squeezes the track
+   instead of the number. */
 .callout-studio-slider-row .setting-item-control .slider-value {
 	flex: 0 0 auto;
 	min-width: 6.5ch;
 	text-align: end;
-	font-family: var(--font-monospace);
-	font-size: var(--font-ui-smaller);
+	font-variant-numeric: tabular-nums;
 }
 
 /* ─── Color Palette Presets ───────────────────────────────────── */

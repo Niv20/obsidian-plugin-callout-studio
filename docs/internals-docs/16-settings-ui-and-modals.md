@@ -1287,6 +1287,25 @@ open count check is reliable specifically because `Modal.open()` appends
 `containerEl` to the document **before** calling `onOpen()`, so this modal is
 already counted by the time the check runs.
 
+### Rows and slider values inside a window
+
+- **Rows sit at the top, as Obsidian's do.** Core 1.14 lays a `.setting-item`
+  out with `align-items: flex-start`; only headings, navigable rows, action
+  rows and list rows are centred. The windows used to pin every row to
+  `center` "against themes that top-align", which by 1.14 meant against core
+  itself: adding an ID in the callout editor pushed the **Callout IDs** label
+  down to stay centred against the growing chips. Nothing pins it now. The IDs
+  row's reset arrow keeps its own `align-self: flex-start`, because it sits
+  inside `.setting-item-control`, which core still centres. (The settings tab
+  keeps its centring pin until it is rebuilt from Obsidian's own groups.)
+- **A slider's value is Obsidian's readout.** `span.slider-value` takes core's
+  face, size and weight. The plugin adds only a `min-width: 6.5ch` reserve
+  (`flex: 0 0 auto`, `text-align: end`) and restates `tabular-nums`, so a value
+  that gains or loses a digit does not resize the track and jump the thumb.
+  The reserve used to be exact because the value was monospace; now the digits
+  are 1ch each and only `-`, `.`, `e`, `m` and `×` are proportional. After a UI
+  font or theme change, drag "0.75em", "×1.25" and "-4px" and watch the track.
+
 ## Where the cursor lands when a window opens
 
 [`src/settings/modalAutofocus.ts`](../../src/settings/modalAutofocus.ts)
