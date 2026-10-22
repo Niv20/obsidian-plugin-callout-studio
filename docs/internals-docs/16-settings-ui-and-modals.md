@@ -2432,7 +2432,19 @@ Keyboard moves return focus to the moved item's handle.
 The row label uses all width left by the drag handle and toggle. It deliberately
 drops the shared callout-name `22ch` cap, while retaining overflow ellipsis, so
 long actions such as **Fold defaults (open / closed / none)** are complete when
-the window has room and shorten only at a real narrow-width limit. The saved
+the window has room and shorten only at a real narrow-width limit. It is set in
+Obsidian's setting-name type (`--setting-item-name-size`, `-weight`, `-color`),
+like every row in Obsidian's settings.
+
+In the settings tab the callout and palette lists go one step further. A
+name there wraps onto a second line instead of being cut, like a native
+setting's name. Because nothing is cut, the name spans carry no `aria-label`
+tooltip.
+
+The `[!id]` chips are `direction: ltr; unicode-bidi: isolate`, so a
+right-to-left interface still shows `[!note]` and not `[note!]`. The row icon
+is a muted list icon at `--icon-s`, and the callout's colour lives in its
+swatches. Empty states are upright, as Obsidian's are. The saved
 `edit` row is labelled **Create or edit callout** because it is one toggle for
 both runtime outcomes, not two mutually visible actions.
 

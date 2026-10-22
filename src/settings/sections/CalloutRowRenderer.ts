@@ -66,10 +66,11 @@ export function renderCalloutRow(
 	const nameLine = infoEl.createDiv({
 		cls: "callout-studio-row-name-line",
 	});
+	// No aria-label tooltip: in the settings lists a long name wraps instead of
+	// being cut (styles.css), so the tooltip would only repeat what is shown.
 	nameLine.createSpan({
 		cls: "callout-studio-row-name",
 		text: def.displayName,
-		attr: { "aria-label": def.displayName },
 	});
 	// Both labels describe how Callout Studio would *style* the callout, so
 	// neither says anything true under *Callouts from your theme*: the theme

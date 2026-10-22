@@ -180,10 +180,10 @@ export function renderCustomPalettesSection(
 				bg: colors.bg,
 			}),
 		});
+		// A long name wraps instead of being cut, so no tooltip repeats it.
 		row.createSpan({
 			cls: "cs-palette-list-name",
 			text: palette.name,
-			attr: { "aria-label": palette.name },
 		});
 
 		const buttonsEl = row.createDiv({

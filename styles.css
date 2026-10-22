@@ -1256,10 +1256,15 @@ body:not(.is-phone)
 	align-items: center;
 }
 
+/* Upright, like every Obsidian empty state ("No matches found"). Popups keep
+   their own size; the settings lists use Obsidian's settings text size. */
 .callout-studio-empty-state {
 	color: var(--text-muted);
-	font-style: italic;
 	padding: 8px 0 12px;
+}
+
+.callout-studio-settings .callout-studio-empty-state {
+	font-size: var(--font-ui-small);
 }
 
 /* ─── Callout List Rows ───────────────────────────────────────── */
@@ -1377,6 +1382,10 @@ body:not(.is-phone)
 	color: var(--text-muted);
 	font-family: var(--font-monospace);
 	white-space: nowrap;
+	/* `[!note]` is code, and reads left to right in every interface language.
+	   Isolated, so a right-to-left window does not turn it into `[note!]`. */
+	direction: ltr;
+	unicode-bidi: isolate;
 	background: var(--background-primary);
 	padding: 1px 6px;
 	border-radius: 4px;
@@ -1387,6 +1396,35 @@ body:not(.is-phone)
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 4px;
+}
+
+/* In the settings lists a callout's or palette's name is set like any Obsidian
+   setting's name: the same size, weight and colour, and a long name wraps onto
+   a second line rather than being cut. Commands and the drag lists keep their
+   own rules. The icon beside it is a muted list icon at Obsidian's small icon
+   size; the callout's own colour is in its swatches. */
+.callout-studio-settings .callout-studio-row :is(.callout-studio-row-name, .cs-palette-list-name) {
+	font-size: var(--setting-item-name-size);
+	font-weight: var(--setting-item-name-weight);
+	color: var(--setting-item-name-color);
+	line-height: var(--line-height-tight);
+	max-width: none;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+.callout-studio-settings .callout-studio-row-icon {
+	width: auto;
+	height: auto;
+	min-width: var(--icon-s);
+	color: var(--text-muted);
+	--icon-size: var(--icon-s);
+	--icon-stroke: var(--icon-s-stroke-width);
+}
+
+.callout-studio-settings .callout-studio-row-icon svg {
+	width: var(--icon-size);
+	height: var(--icon-size);
 }
 
 /* ─── Color Swatches ──────────────────────────────────────────── */
@@ -1514,6 +1552,10 @@ body:not(.is-phone)
 	/* The shared 22ch cap is for callout names. Menu actions should use the
 	   whole row and ellipsize only when the handle and toggle truly need it. */
 	max-width: none;
+	/* Obsidian's setting-name type, like every row in its settings. */
+	font-size: var(--setting-item-name-size);
+	font-weight: var(--setting-item-name-weight);
+	color: var(--setting-item-name-color);
 }
 
 .cs-menu-row.is-disabled {
