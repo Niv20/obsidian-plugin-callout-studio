@@ -616,13 +616,24 @@ navigation), `ImagePanel` ("Your images" upload/manage), `allSources.ts` (the
 pooled cross-source search), `IconLibrariesModal` (the **Manage icon libraries**
 window - see [Settings UI and modals](16-settings-ui-and-modals.md#iconlibrariesmodal---libraries-in-two-bands)).
 
+`IconGrid`'s left and right arrows follow the reading direction: under a
+right-to-left interface (`.mod-rtl`, read through the grid's computed
+`direction`) the next cell is to the left. Results swap in at once, with no
+fade, as in Obsidian's own result lists - a fade replayed on every keystroke.
+A notice in a library's panel is quiet text, not a box: the trademark notice
+is muted small text, and the Material font failure is a line in
+`--text-warning` with its **Retry** button. Dragging a picture over **Your
+images** lays Obsidian's 10% accent drop tint over the grid area.
+
 The source menu lists only what can be picked from right now:
 `icons/iconLibraries.ts` decides it (`menuLibraries()`,
 [Icons](13-icons.md#icon-libraries---what-the-picker-offers)), and
 `sourcePicker.ts` lays it out in up to three groups, each the listbox's own
 `groupOf` heading (`.cs-combobox-group-label`, sticky at the top of the
 scrolling menu, each held inside its own `.cs-combobox-group`), always shown -
-there is no `hideSingleGroup` here:
+there is no `hideSingleGroup` here. Its rows have no lines between them, and
+the check on the library on screen is the row's own colour, as the check is in
+Obsidian's pickers:
 
 | Heading (key) | Rows | When |
 | --- | --- | --- |
@@ -733,7 +744,11 @@ needs **no special case** to render it; it's just another source as far as
 The pool is built from `pickerSources()` - the libraries the picker offers,
 in the user's order - so its result groups come in that order too. A
 group heading uses `iconPicker.sourceGroup` to show the library name followed
-by its exact filtered result count in parentheses, in every locale. A
+by its exact filtered result count in parentheses, in every locale. It is set
+as Obsidian sets a group heading - small, semibold, muted, in sentence case -
+and folds with Obsidian's own triangle: a `span.collapse-icon` holding
+`right-triangle`, which app.css sizes and turns by the reading direction once
+`.is-collapsed` is on it. A
 downloadable source counts only when **every** file it draws from is present -
 not "any": Font Awesome pools names across three separate files
 (Solid/Regular/Brands), and a missing file would silently drop every name only

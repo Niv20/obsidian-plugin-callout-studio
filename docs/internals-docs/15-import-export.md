@@ -62,8 +62,9 @@ rather than as dialogs of their own:
 - **Chrome stays grey-lit.** The icon is `--text-muted`, Obsidian's own icon
   grey, not `--text-accent`, and it stays that grey whatever the box comes to
   hold: nothing on a box turns green. The accent is spent on exactly one thing,
-  the active card of the plugin import window (and the dashed outline a dragged
-  file lands in, `is-drop-target`). `tests/importBoxStyles.test.ts` fails on
+  the active card of the plugin import window (and the card a dragged file
+  lands on, `is-drop-target`, which takes Obsidian's drop target: a 10% accent
+  tint laid over the box in a `::after`, so it shows on the chosen card too). `tests/importBoxStyles.test.ts` fails on
   any other option-box or import-card rule that names the accent, and on any
   `.cs-option-*` or `.cs-import-*` rule that names a success colour.
 - **The mark at the trailing edge says what a click does.**

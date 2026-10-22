@@ -7,7 +7,9 @@
  * Obsidian paints solid red on every device. Never the older `mod-warning`,
  * which `.is-mobile` paints grey with bold red text, so the same button was red
  * on a desktop and grey on a phone; and never `ButtonComponent.setWarning()`,
- * which 1.13 deprecates (it is `setDestructive().setCta()` now).
+ * which 1.13 deprecates (it is `setDestructive().setCta()` now). `mod-warning`
+ * on a paragraph is something else — Obsidian's warning-coloured line, as in
+ * its own "Delete file?" — and stays allowed.
  *
  * And nothing of ours repaints one. Obsidian's hover for it paints
  * `--background-modifier-error-hover`, which is the resting red, so a red button
@@ -34,14 +36,19 @@ describe("a red button's classes", () => {
 		assert.deepStrictEqual(DESTRUCTIVE_BUTTON_CLASSES, ["mod-destructive", "mod-cta"]);
 	});
 
-	it("never include mod-warning anywhere in src/", () => {
+	it("never include mod-warning, which only ever classes a warning paragraph", () => {
 		const found: string[] = [];
 		for (const file of pluginSourceFiles()) {
 			for (const literal of literals(file.text)) {
-				if (/\bmod-warning\b/.test(literal.value)) found.push(at(file, literal.start));
+				if (!/\bmod-warning\b/.test(literal.value)) continue;
+				// The createEl call this literal is an option of, in the same statement.
+				const before = file.text.slice(0, literal.start);
+				const call = before.slice(before.lastIndexOf("createEl("));
+				const tag = call.includes(";") ? undefined : /^createEl\(\s*"(\w+)"/.exec(call)?.[1];
+				if (tag !== "p") found.push(at(file, literal.start));
 			}
 		}
-		assert.deepStrictEqual(found, [], report("mod-warning is grey with red text on mobile", found));
+		assert.deepStrictEqual(found, [], report("mod-warning is grey with red text on a mobile button", found));
 	});
 
 	it("never come from ButtonComponent.setWarning()", () => {

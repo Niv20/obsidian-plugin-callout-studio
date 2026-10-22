@@ -598,9 +598,9 @@
 }
 
 /* Every fold chevron in this plugin's own UI sits beside a semibold heading —
-   the settings lists, the groups and sections of Restore an earlier setup, and
-   the icon picker's source groups — and all of them draw at one weight, set
-   here and nowhere else. Obsidian's default icon stroke (1.75 of the icon's 24
+   the settings lists and the groups and sections of Restore an earlier setup —
+   and all of them draw at one weight, set here and nowhere else. (The icon
+   picker's source groups use Obsidian's own `.collapse-icon` triangle.) Obsidian's default icon stroke (1.75 of the icon's 24
    units) is a regular-weight line, so beside semibold text the chevron read as
    a hairline. The icon is 1em in both places, so 2.5 units is about 0.1em at
    any heading size: a semibold stem.
@@ -608,8 +608,7 @@
    A callout's own fold arrow — the heading callout's chevron, a block
    callout's `.callout-fold` and the previews of either — is not in this list:
    it belongs to the callout and follows Obsidian's look for callouts. */
-.cs-disclosure-chevron svg,
-.icon-picker-group-chevron svg {
+.cs-disclosure-chevron svg {
 	stroke-width: 2.5px;
 }
 
@@ -2521,20 +2520,13 @@ body:not(.is-phone)
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	margin-right: 6px;
+	margin-inline-end: 6px;
 }
 
 .callout-studio-spinner svg {
 	width: 16px;
 	height: 16px;
 	animation: cs-spin 1s linear infinite;
-}
-
-button.callout-studio-icon-picker-loading {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 6px;
 }
 
 @keyframes cs-spin {
@@ -4415,10 +4407,6 @@ button.callout-studio-icon-picker-loading {
 	cursor: pointer;
 }
 
-.icon-picker-source-menu-item + .icon-picker-source-menu-item {
-	border-top: var(--border-width) solid var(--background-modifier-border);
-}
-
 .icon-picker-source-menu-item-emblem {
 	display: flex;
 	flex-shrink: 0;
@@ -4455,12 +4443,14 @@ button.callout-studio-icon-picker-loading {
 	font-size: var(--font-ui-smaller);
 }
 
+/* The row's own colour, as the check beside the current value is in
+   Obsidian's pickers (`.suggestion-item.mod-toggle .mod-checked`). */
 .cs-source-check {
 	display: flex;
 	align-items: center;
 	margin-inline-start: auto;
 	padding-inline-start: 0.5em;
-	color: var(--text-accent);
+	color: inherit;
 }
 
 .cs-source-check .svg-icon {
@@ -4499,13 +4489,10 @@ button.callout-studio-icon-picker-loading {
    (the trademarks in Font Awesome's Brands style, and in all of Simple Icons).
    Not dismissible by design.
    The element is always present and hidden when empty, so switching style can
-   raise it without rebuilding the panel around it. */
+   raise it without rebuilding the panel around it. Quiet text, not a box:
+   Obsidian draws secondary information as muted small text. */
 .icon-picker-pack-notice {
 	margin: 8px 0 0;
-	padding: 8px 10px;
-	border-radius: var(--radius-s);
-	corner-shape: var(--corner-shape);
-	background-color: var(--background-modifier-hover);
 	color: var(--text-muted);
 	font-size: var(--font-ui-smaller);
 	line-height: 1.45;
@@ -4518,17 +4505,14 @@ button.callout-studio-icon-picker-loading {
 /* Raised when Material's webfont could not be loaded. Sits above the grid
    rather than under it, because the grid it explains is the thing that looks
    wrong — its cells are ligature names, so without the font they read as text
-   (see the degradation rule further down). */
+   (see the degradation rule further down). A line in Obsidian's warning colour
+   with its Retry button, not a tinted box: the failure is recoverable. */
 .icon-picker-font-notice {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	margin: 8px 0 0;
-	padding: 8px 10px;
-	border-radius: var(--radius-s);
-	corner-shape: var(--corner-shape);
-	background-color: var(--background-modifier-error-hover);
-	color: var(--text-normal);
+	color: var(--text-warning);
 	font-size: var(--font-ui-smaller);
 	line-height: 1.45;
 }
@@ -4694,30 +4678,19 @@ button.callout-studio-icon-picker-loading {
 	}
 }
 
-@keyframes cs-grid-fade-in {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
-}
-
 .icon-picker-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
 	gap: 4px;
 }
 
-.icon-picker-grid.is-loaded > .icon-picker-cell {
-	animation: cs-grid-fade-in 0.25s ease-out both;
-}
-
 /* Source heading in the pooled search. Spans the grid, so its group always
    starts on a fresh row. Deliberately not sticky: the toolbar above already
    sticks at top 0, and a second sticky layer would land on top of it.
    Clickable — collapsing it hides that source's cells, so a source with
-   hundreds of hits can get out of the way without losing the rest below it. */
+   hundreds of hits can get out of the way without losing the rest below it.
+   Set as Obsidian sets a group heading: small, semibold, muted, sentence case,
+   with its fold triangle (`.collapse-icon`, drawn by app.css). */
 .icon-picker-group-header {
 	display: flex;
 	align-items: center;
@@ -4727,8 +4700,6 @@ button.callout-studio-icon-picker-loading {
 	font-size: var(--font-ui-smaller);
 	font-weight: var(--font-semibold);
 	color: var(--text-muted);
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
 	cursor: pointer;
 }
 
@@ -4740,26 +4711,6 @@ button.callout-studio-icon-picker-loading {
 
 .icon-picker-group-header:first-child {
 	padding-top: 2px;
-}
-
-.icon-picker-group-chevron {
-	display: inline-flex;
-	flex-shrink: 0;
-	transition: transform 120ms ease;
-	/* Turns by core's `--direction` for the reason the settings headings'
-	   chevron does — see `.cs-collapsible-heading .cs-disclosure-chevron`. */
-	transform: rotate(calc(var(--direction, 1) * 90deg));
-}
-
-/* Its stroke is shared with the settings headings' chevron — see
-   `.cs-disclosure-chevron svg`. */
-.icon-picker-group-chevron svg {
-	width: 1em;
-	height: 1em;
-}
-
-.icon-picker-group-header.is-collapsed .icon-picker-group-chevron {
-	transform: rotate(0deg);
 }
 
 .icon-picker-cell.is-group-collapsed {
@@ -4894,10 +4845,6 @@ button.callout-studio-icon-picker-loading {
 	height: 42px;
 }
 
-.icon-picker-image-panel .icon-picker-grid.is-loaded > .icon-picker-cell-wrap > .icon-picker-cell {
-	animation: cs-grid-fade-in 0.25s ease-out both;
-}
-
 /* ── "Your images" panel ───────────────────────────────────────────── */
 
 /* The real file input never shows; the icon beside search drives it. */
@@ -4988,13 +4935,17 @@ button.callout-studio-icon-picker-loading {
 }
 
 /* Dropping a file anywhere on the panel adds it, so no separate drop zone takes
-   up room — but the frame marks the grid alone, since around the whole panel it
-   would enclose the toolbar too. */
-.icon-picker-image-panel.is-drop-target .icon-picker-body {
-	outline: 2px dashed var(--interactive-accent);
-	outline-offset: -2px;
-	border-radius: var(--radius-m);
+   up room — but the mark covers the grid alone, since over the whole panel it
+   would cover the toolbar too. It is Obsidian's drop target: a 10% accent tint
+   laid over the area, as a folder in the file explorer gets, never a frame. */
+.icon-picker-image-panel.is-drop-target .icon-picker-body::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: var(--radius-s);
 	corner-shape: var(--corner-shape);
+	background: color-mix(in oklch, var(--interactive-accent) 10%, transparent);
+	pointer-events: none;
 }
 
 /* The grid area is the drop target, so it reaches the bottom of the picker
@@ -5008,6 +4959,7 @@ button.callout-studio-icon-picker-loading {
 }
 
 .icon-picker-image-panel .icon-picker-body {
+	position: relative;
 	flex: 1;
 	min-height: 120px;
 }
@@ -6475,6 +6427,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	color: var(--text-muted);
 }
 .cs-option-box {
+	position: relative;
 	display: flex;
 	align-items: center;
 	gap: 12px;
@@ -6492,17 +6445,24 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	outline-offset: 2px;
 }
 /* The plugin import window's file card shows where a dragged file will land,
-   whether or not a file is already staged on it. */
-.cs-option-box.is-drop-target {
-	outline: 2px dashed var(--interactive-accent);
-	outline-offset: 2px;
+   whether or not a file is already staged on it: Obsidian's drop target, a 10%
+   accent tint laid over the box. Laid over rather than mixed into the fill, so
+   it still shows on the card that is already chosen. */
+.cs-option-box.is-drop-target::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	corner-shape: inherit;
+	background: color-mix(in oklch, var(--interactive-accent) 10%, transparent);
+	pointer-events: none;
 }
 /* Behind `(hover: hover)`, as Obsidian guards its own button hovers, so a
    tapped box on a phone doesn't stay lit. */
 @media (hover: hover) {
 	/* A box that takes clicks answers the pointer by stepping its fill toward
 	   the text colour: darker over a light window, lighter over a dark one,
-	   and a visible step on either. `.callout-studio-row` hovers to
+	   and a visible step on either. `.callout-studio-row` used to hover to
 	   `--background-secondary-alt` instead, which on a light desktop is nearly
 	   the window's own white — fine for a row whose buttons carry the
 	   feedback, too faint for a box that is itself the button. A card has no
@@ -7179,11 +7139,6 @@ body:not(.is-phone)
 .callout-studio-footer-meta-separator {
 	color: var(--text-faint);
 	user-select: none;
-}
-
-.cs-reset-warning {
-	color: var(--text-error);
-	font-weight: bold;
 }
 
 /* What "Reset everything" would change in this vault: a lead-in and, under it,

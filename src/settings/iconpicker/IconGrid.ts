@@ -79,9 +79,7 @@ export class IconGrid {
 		this.gridEl.empty();
 		this.parent.toggleClass("icon-picker-grid-empty", entries.length === 0);
 		this.gridEl.removeClass("has-message");
-		this.gridEl.removeClass("is-loaded");
 		for (const segment of this.segments) this.renderSegment(segment);
-		this.gridEl.addClass("is-loaded");
 		if (entries.length === 0) {
 			const empty = this.gridEl.createDiv("icon-picker-empty");
 			if (this.options.renderEmpty) this.options.renderEmpty(empty);
@@ -100,7 +98,6 @@ export class IconGrid {
 		this.gridEl.empty();
 		this.parent.removeClass("icon-picker-grid-empty");
 		this.gridEl.addClass("has-message");
-		this.gridEl.addClass("is-loaded");
 		build(this.gridEl.createDiv("icon-picker-notice"));
 	}
 
@@ -212,8 +209,10 @@ export class IconGrid {
 			cls: "icon-picker-group-header",
 			attr: { role: "button", tabindex: "0", "aria-expanded": "true" },
 		});
-		const chevron = header.createSpan({ cls: "icon-picker-group-chevron" });
-		setIcon(chevron, "chevron-right");
+		// Obsidian's own fold triangle, as the file explorer and search draw it:
+		// its `.collapse-icon` CSS sizes it and turns it by the reading direction.
+		const fold = header.createSpan({ cls: "collapse-icon" });
+		setIcon(fold, "right-triangle");
 		header.createSpan({ cls: "icon-picker-group-text", text: heading });
 
 		const toggle = () => this.toggleSegment(segment);
@@ -291,6 +290,7 @@ export class IconGrid {
 	private toggleSegment(segment: GridSegment): void {
 		segment.collapsed = !segment.collapsed;
 		segment.headerEl?.toggleClass("is-collapsed", segment.collapsed);
+		segment.headerEl?.querySelector(".collapse-icon")?.toggleClass("is-collapsed", segment.collapsed);
 		segment.headerEl?.setAttribute("aria-expanded", String(!segment.collapsed));
 		for (const cell of segment.cellEls) {
 			cell.toggleClass("is-group-collapsed", segment.collapsed);
@@ -306,22 +306,25 @@ export class IconGrid {
 	private enableKeyNav(): void {
 		this.gridEl.addEventListener("keydown", (e) => {
 			const cells = Array.from(
-				this.gridEl.querySelectorAll<HTMLElement>(
-					".icon-picker-cell:not(.is-group-collapsed)",
-				),
-			);
+				this.gridEl.querySelectorAll<HTMLElement>(".icon-picker-cell"),
+			).filter((cell) => !cell.hasClass("is-group-collapsed"));
 			const current = activeDocument.activeElement as HTMLElement | null;
 			const idx = current ? cells.indexOf(current) : -1;
 			if (idx < 0) return;
 
 			const cols = countColumns(cells);
+			// The cells flow with the reading direction, so under a right-to-left
+			// interface the next cell is to the left: the arrows move the way
+			// they point. Obsidian sets that through `.mod-rtl`, never a `dir`.
+			const view = this.gridEl.ownerDocument.defaultView;
+			const step = view?.getComputedStyle?.(this.gridEl).direction === "rtl" ? -1 : 1;
 			let next = -1;
 			switch (e.key) {
 				case "ArrowRight":
-					next = idx + 1;
+					next = idx + step;
 					break;
 				case "ArrowLeft":
-					next = idx - 1;
+					next = idx - step;
 					break;
 				case "ArrowDown":
 					next = idx + cols;

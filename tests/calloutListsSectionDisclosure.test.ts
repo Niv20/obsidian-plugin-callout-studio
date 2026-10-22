@@ -639,7 +639,7 @@ describe("the fold chevron hangs in the gutter, not in the title", () => {
 	});
 
 	it("draws every heading's fold chevron at one stroke, thicker than Obsidian's default", () => {
-		const chevrons = [".cs-disclosure-chevron svg", ".icon-picker-group-chevron svg"];
+		const chevrons = [".cs-disclosure-chevron svg"];
 		const rules = Array.from(css.matchAll(/([^{}]+)\{([^}]*)\}/g))
 			.map((m) => ({
 				selectors: (m[1] as string).split(",").map((s) => s.replace(/\s+/g, " ").trim()),
@@ -647,7 +647,7 @@ describe("the fold chevron hangs in the gutter, not in the title", () => {
 			}))
 			.filter((r) => r.stroke !== undefined && r.selectors.some((s) => chevrons.includes(s)));
 
-		assert.strictEqual(rules.length, 1, "one rule, or the two chevrons can drift apart");
+		assert.strictEqual(rules.length, 1, "one rule, or the chevrons can drift apart");
 		const [rule] = rules;
 		assert.ok(rule);
 		for (const chevron of chevrons) {
@@ -669,7 +669,6 @@ describe("the fold chevron hangs in the gutter, not in the title", () => {
 	it("turns an open chevron by core's --direction, never by a [dir] rule", () => {
 		for (const [open, folded] of [
 			[".cs-collapsible-heading .cs-disclosure-chevron", ".cs-collapsible-heading.is-collapsed .cs-disclosure-chevron"],
-			[".icon-picker-group-chevron", ".icon-picker-group-header.is-collapsed .icon-picker-group-chevron"],
 		] as const) {
 			const body = (selector: string) =>
 				Array.from(css.matchAll(/([^{}]+)\{([^}]*)\}/g))
@@ -689,7 +688,7 @@ describe("the fold chevron hangs in the gutter, not in the title", () => {
 		}
 		assert.doesNotMatch(
 			css,
-			/\[dir="rtl"\][^{]*(?:cs-disclosure-chevron|icon-picker-group-chevron)/,
+			/\[dir="rtl"\][^{]*cs-disclosure-chevron/,
 			"Obsidian never sets dir=\"rtl\" on its interface; this rule would never match",
 		);
 	});

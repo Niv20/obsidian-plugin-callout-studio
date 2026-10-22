@@ -331,9 +331,11 @@ export class ImagePanel {
 			text: t("iconPicker.customDeleteConfirm", { name: image.name }),
 		});
 		if (inUse > 0) {
+			// Obsidian's warning line, as its own "Delete file?" names a note's
+			// backlinks.
 			message.createEl("p", {
 				text: t("iconPicker.customDeleteInUse", { count: String(inUse) }),
-				cls: "cs-reset-warning",
+				cls: "mod-warning",
 			});
 		}
 

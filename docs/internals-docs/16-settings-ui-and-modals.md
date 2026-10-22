@@ -2115,7 +2115,9 @@ the checkbox instead (see [`ConfirmModal`](#confirmmodal---the-generic-yesno-dia
 **Where `disabled` stays right.** A button that is merely *busy* and whose
 label already says so: **Saving…** and **Importing…**, the discovery button's
 **Scanning…**, the saving banner's **Working on it…**, and the icon picker's
-Confirm while its artwork downloads. Pressing one of those teaches nothing.
+Confirm while its artwork downloads (which shows Obsidian's own busy button,
+`mod-loading`: a ring in place of the label, at the same width, with
+`aria-busy`). Pressing one of those teaches nothing.
 
 **Two consequences to keep.** A dimmed button is focusable, so Enter and Space
 answer too. And a press on one is *not* "clicking away": while a Review

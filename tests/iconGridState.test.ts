@@ -59,3 +59,69 @@ it("marks the grid while a message stands in for its cells, and only then", () =
 	grid.setEntries([]);
 	assert.equal(gridEl.hasClass("has-message"), false, "the empty state is not a message");
 });
+
+it("folds a pooled group with Obsidian's own collapse triangle", () => {
+	// `.collapse-icon` + `right-triangle` is the file explorer's and search's
+	// fold control; app.css sizes it and turns it by the reading direction, so
+	// the grid only has to say which way it is.
+	fakeDom.light();
+	const body = el();
+	const grid = new IconGrid(asEl(body), {
+		renderCell: (cell, entry) => cell.setText(entry.name),
+		isSelected: () => false,
+		onSelect: () => {},
+		labelFor: (entry) => entry.name,
+		emptyText: "Empty collection",
+		loadMoreText: "Load more",
+		groupLabelFor: (entry, previous) =>
+			previous?.categories[0] === entry.categories[0] ? undefined : entry.categories[0],
+	});
+	grid.setEntries([
+		{ name: "star", categories: ["Lucide"], keywords: [] },
+		{ name: "heart", categories: ["Lucide"], keywords: [] },
+		{ name: "smile", categories: ["Emoji"], keywords: [] },
+	]);
+	const header = body.querySelector(".icon-picker-group-header")!;
+	const fold = header.querySelector(".collapse-icon");
+	assert.ok(fold, "the heading carries Obsidian's .collapse-icon");
+	assert.equal(fold.hasClass("is-collapsed"), false);
+	header.fire("click");
+	assert.equal(fold.hasClass("is-collapsed"), true);
+	assert.equal(header.getAttribute("aria-expanded"), "false");
+	header.fire("click");
+	assert.equal(fold.hasClass("is-collapsed"), false);
+	assert.equal(header.getAttribute("aria-expanded"), "true");
+});
+
+it("moves along the reading direction with the left and right arrows", () => {
+	// Obsidian marks a right-to-left interface with `.mod-rtl`, whose
+	// `direction: rtl` the grid inherits; the cells then flow from the right.
+	fakeDom.light();
+	const body = el();
+	const grid = new IconGrid(asEl(body), {
+		renderCell: (cell, entry) => cell.setText(entry.name),
+		isSelected: () => false,
+		onSelect: () => {},
+		labelFor: (entry) => entry.name,
+		emptyText: "Empty collection",
+		loadMoreText: "Load more",
+	});
+	grid.setEntries(["a", "b", "c"].map((name) => ({ name, categories: [], keywords: [] })));
+	const gridEl = body.querySelector(".icon-picker-grid")!;
+	const cells = body.querySelectorAll(".icon-picker-cell");
+	const press = (key: string) => gridEl.fire("keydown", { type: "keydown", key, preventDefault: () => {} });
+	const win = fakeDom.window;
+	for (const direction of ["ltr", "rtl"] as const) {
+		Object.defineProperty(win, "getComputedStyle", { configurable: true, value: () => ({ direction }) });
+		try {
+			cells[1]!.focus();
+			press("ArrowRight");
+			assert.equal(fakeDom.document.activeElement, cells[direction === "ltr" ? 2 : 0], `${direction}: right arrow`);
+			cells[1]!.focus();
+			press("ArrowLeft");
+			assert.equal(fakeDom.document.activeElement, cells[direction === "ltr" ? 0 : 2], `${direction}: left arrow`);
+		} finally {
+			Reflect.deleteProperty(win, "getComputedStyle");
+		}
+	}
+});

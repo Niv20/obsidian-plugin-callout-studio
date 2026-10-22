@@ -6,7 +6,7 @@
  *
  * Requests start only on Download or confirmation of uncached artwork.
  */
-import { Modal, setIcon } from "obsidian";
+import { Modal } from "obsidian";
 import type { App } from "obsidian";
 import type {
 	CalloutDefinition,
@@ -540,8 +540,8 @@ export class IconPicker extends Modal {
 	 * Why Confirm cannot act, or null: no icon is chosen — which is also what
 	 * switching to another source does, since an icon only means something
 	 * within the source it came from. Dimmed rather than disabled, so pressing
-	 * it says so. (While the artwork downloads it is truly disabled: the
-	 * spinner and "Downloading icon" in its label already say why.)
+	 * it says so. (While the artwork downloads it is truly disabled, and
+	 * Obsidian's loading ring in place of its label says why.)
 	 */
 	private confirmBlockedReason(): string | null {
 		return this.selectedIcon ? null : t("iconPicker.chooseFirst");
@@ -559,26 +559,21 @@ export class IconPicker extends Modal {
 			return;
 		}
 
-		const originalText = this.confirmBtn.textContent ?? "";
-		this.confirmBtn.disabled = true;
-		this.confirmBtn.toggleClass("is-disabled", true);
-		this.confirmBtn.empty();
-		this.confirmBtn.addClass("callout-studio-icon-picker-loading");
-		const spinner = this.confirmBtn.createSpan({
-			cls: "callout-studio-spinner",
-		});
-		setIcon(spinner, "loader-2");
-		this.confirmBtn.createSpan({ text: t("editor.downloadingIcon") });
+		// Obsidian's busy button, as a form shows while it submits: `mod-loading`
+		// hides the label behind a ring without changing the button's width.
+		const busy = this.confirmBtn;
+		busy.disabled = true;
+		busy.addClass("mod-loading");
+		busy.setAttribute("aria-busy", "true");
 		try {
 			await this.plugin.ensureIconArtwork(this.selectedIcon);
 		} catch {
 			// Failures surface through the icon's own error state; never trap
 			// the user in the picker over one.
 		} finally {
-			this.confirmBtn.disabled = false;
-			this.confirmBtn.removeClass("callout-studio-icon-picker-loading");
-			this.confirmBtn.empty();
-			this.confirmBtn.textContent = originalText;
+			busy.disabled = false;
+			busy.removeClass("mod-loading");
+			busy.removeAttribute("aria-busy");
 		}
 		// The user may have closed the modal while the fetch was in flight.
 		if (!this.resolve) return;
