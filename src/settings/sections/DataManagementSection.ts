@@ -114,7 +114,8 @@ export function renderResetSection(
 		.addButton((btn) =>
 			btn
 				.setButtonText(t("settings.resetAllButton"))
-				.setWarning()
+				.setDestructive()
+				.setCta()
 				.onClick(async () => {
 					// A reset that cannot be saved would only look done.
 					if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;

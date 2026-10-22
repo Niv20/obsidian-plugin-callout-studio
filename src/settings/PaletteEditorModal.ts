@@ -747,8 +747,7 @@ export class PaletteEditorModal extends Modal {
 	 * wide inside its padding, and a track sharing that line with its label
 	 * would be squeezed to half of it. The row puts the label and Obsidian's
 	 * value readout above a full-width track, exactly as the per-role style
-	 * popups do. `setDynamicTooltip` stays for builds below 1.13, where
-	 * `setDisplayFormat` is missing and there is no readout to read.
+	 * popups do.
 	 */
 	private buildBgIntensityRow(parent: HTMLElement): void {
 		const row = createSliderRow(parent, t("palette.bgIntensity"));
@@ -761,7 +760,6 @@ export class PaletteEditorModal extends Modal {
 					1,
 				)
 				.setValue(Math.round(this.bgIntensity * 100))
-				.setDynamicTooltip()
 				.setInstant(true)
 				.onChange((v) => {
 					this.bgIntensity = v / 100;

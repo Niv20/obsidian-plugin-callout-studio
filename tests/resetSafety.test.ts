@@ -50,7 +50,8 @@ function resetButton(ctx: SettingsSectionContext): () => Promise<void> {
 			const button = {
 				buttonEl: root.createEl("button"),
 				setButtonText(text: string) { label = text; return this; },
-				setWarning() { return this; },
+				setDestructive() { return this; },
+				setCta() { return this; },
 				onClick(action: () => Promise<void>) { if (label === t("settings.resetAllButton")) reset = action; return this; },
 			} as unknown as ButtonComponent;
 			callback(button);

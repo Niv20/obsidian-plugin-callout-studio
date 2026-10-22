@@ -445,6 +445,12 @@ export class ButtonLike {
 		return this;
 	}
 
+	/** Obsidian 1.13's red button class (`setWarning` is now `setDestructive().setCta()`). */
+	setDestructive(): this {
+		this.buttonEl.addClass?.("mod-destructive");
+		return this;
+	}
+
 	/** Recorded as `aria-disabled`, and a disabled button's press does nothing. */
 	setDisabled(disabled: boolean): this {
 		this.disabled = disabled;

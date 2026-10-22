@@ -149,7 +149,7 @@ export class SettingsRecoveryModal extends Modal {
 		});
 		if (!data || !difference) return;
 		row.addButton(button => {
-			button.setButtonText(t("recovery.restore")).setWarning()
+			button.setButtonText(t("recovery.restore")).setDestructive().setCta()
 				.onClick(() => {
 					if (explainIfBlocked(this.restoreBlockedReason(difference.changed))) return;
 					void this.restore(version, data, difference.changed);

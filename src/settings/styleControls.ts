@@ -27,31 +27,19 @@ import { addHeaderResetButton } from "./headerResetButton";
 import { cancelFrame, requestFrameFor, type FrameHandle } from "../utils/elementFrame";
 
 /**
- * `setDisplayFormat` arrived with the value readout in Obsidian 1.13. It is in
- * neither the 1.10.3 typings this repo builds against nor the runtime of the
- * older builds the manifest still supports, which is why it is declared here
- * and reached optionally rather than called outright.
- */
-type SliderWithDisplayFormat = SliderComponent & {
-	setDisplayFormat?: (format: (value: number) => string) => unknown;
-};
-
-/**
  * Put a unit on the number Obsidian draws beside a slider — "12px" rather than
  * a bare "12".
  *
- * A no-op below 1.13, where there is no readout to format: those builds show
- * the slider alone, exactly as they did before. Keep the formatted string's
- * length stable (a fixed decimal count, a unit that never changes) — it shares
- * a flex row with a track that takes the width it leaves, so a readout that
- * grows by a character shrinks the slider under the cursor. styles.css reserves
- * a width for the same reason.
+ * Keep the formatted string's length stable (a fixed decimal count, a unit
+ * that never changes) — it shares a flex row with a track that takes the width
+ * it leaves, so a readout that grows by a character shrinks the slider under
+ * the cursor. styles.css reserves a width for the same reason.
  */
 export function setSliderDisplay(
 	slider: SliderComponent,
 	format: (value: number) => string,
 ): void {
-	(slider as SliderWithDisplayFormat).setDisplayFormat?.(format);
+	slider.setDisplayFormat(format);
 }
 
 /** A titled control group box (bordered section with a muted header). */

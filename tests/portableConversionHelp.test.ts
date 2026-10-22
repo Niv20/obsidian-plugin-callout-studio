@@ -69,7 +69,8 @@ describe("portable conversion entry and help", () => {
 				const button = {
 					buttonEl: root.createEl("button"),
 					setButtonText(text: string) { label = text; return this; },
-					setWarning() { return this; },
+					setDestructive() { return this; },
+					setCta() { return this; },
 					onClick(action: () => unknown) { if (label === t("portable.review")) review = action; return this; },
 				} as unknown as ButtonComponent;
 				callback(button);

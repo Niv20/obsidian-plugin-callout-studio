@@ -155,15 +155,6 @@ describe("setSliderDisplay", () => {
 		assert.strictEqual(typeof format, "function");
 	});
 
-	it("is a no-op on a build that does not", () => {
-		// `setDisplayFormat` arrived in Obsidian 1.13. It is in neither the
-		// 1.10.3 typings this repo builds against nor the runtime of the older
-		// builds the manifest still supports, so it is reached optionally — and
-		// those builds simply show the slider alone, exactly as before.
-		const older = { setValue: () => {} } as unknown as SliderComponent;
-		assert.doesNotThrow(() => setSliderDisplay(older, (v) => `${v}`));
-	});
-
 	it("passes the formatter through unchanged", () => {
 		const format = (v: number): string => `~${v}~`;
 		const captured: Array<(v: number) => string> = [];
