@@ -11,7 +11,9 @@ export const ms: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Balut dalam callout blok {{name}} (tertutup)",
 	"cmd.customInsertBlockExpanded": "Masukkan callout blok {{name}} (terbuka)",
 	"cmd.customInsertBlockCollapsed": "Masukkan callout blok {{name}} (tertutup)",
+	"cmd.customWrapHeading": "Balut dalam callout tajuk H{{level}} {{name}}",
 	"cmd.customInsertHeading": "Masukkan callout tajuk H{{level}} {{name}}",
+	"cmd.customWrapInline": "Balut dalam callout sebaris {{name}}",
 	"cmd.customInsertInline": "Masukkan callout sebaris {{name}}",
 	"cmd.openQuickInsert": "Sisipan pantas callout blok",
 
@@ -210,6 +212,10 @@ export const ms: Record<string, string> = {
 	"commandBuilder.action": "Tindakan",
 	"commandBuilder.actionDesc":
 		"Balut menukar pilihan menjadi callout; masukkan menambah satu yang kosong.",
+	"commandBuilder.actionDescHeading":
+		"Balut menukar baris tempat kursor berada menjadi callout tajuk.\nMasukkan menambah satu yang kosong pada baris baharu.",
+	"commandBuilder.actionDescInline":
+		"Balut meletakkan teks yang dipilih di dalam callout.\nMasukkan menambah callout sebaris yang kosong pada kursor dan membiarkan teks seperti sedia ada.",
 	"commandBuilder.actionWrap": "Balut pilihan",
 	"commandBuilder.actionInsert": "Masukkan baharu",
 	"commandBuilder.foldState": "Status lipatan",
@@ -272,6 +278,9 @@ export const ms: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "Sesetengah nota tidak dapat ditukar. Jenis callout dikekalkan. Penukaran yang selesai telah disimpan; selesaikan masalah fail, kemudian jalankan tindakan itu semula untuk menyelesaikannya.",
 	"notice.nothingToWrap": "Tiada apa untuk dibalut.",
 	"notice.cursorNotInsideCallout": "Kursor tidak berada dalam callout.",
+	"notice.headingAlreadyCallout": "Tajuk ini sudah menjadi callout.",
+	"notice.unwrapLeftAsIs":
+		"Callout ini tidak dapat dibuang dengan selamat, jadi ia dibiarkan seperti sedia ada.",
 	"notice.autocompleteTargetMoved":
 		"Tiada apa-apa disisipkan — baris berubah semasa penyunting dibuka.",
 	"notice.autocompleteAlwaysEnabled": "Autolengkap kini merupakan ciri teras dan sentiasa didayakan.",

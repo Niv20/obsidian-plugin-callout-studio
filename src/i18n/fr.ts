@@ -11,7 +11,10 @@ export const fr: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Envelopper dans un callout de bloc {{name}} (fermé)",
 	"cmd.customInsertBlockExpanded": "Insérer un callout de bloc {{name}} (ouvert)",
 	"cmd.customInsertBlockCollapsed": "Insérer un callout de bloc {{name}} (fermé)",
+	"cmd.customWrapHeading":
+		"Envelopper dans un titre H{{level}} callout {{name}}",
 	"cmd.customInsertHeading": "Insérer un titre H{{level}} callout {{name}}",
+	"cmd.customWrapInline": "Envelopper dans un callout en ligne {{name}}",
 	"cmd.customInsertInline": "Insérer un callout en ligne {{name}}",
 	"cmd.openQuickInsert": "Insertion rapide d'un callout de bloc",
 
@@ -214,6 +217,10 @@ export const fr: Record<string, string> = {
 	"commandBuilder.action": "Action",
 	"commandBuilder.actionDesc":
 		"Envelopper transforme la sélection en callout ; insérer en ajoute un vide.",
+	"commandBuilder.actionDescHeading":
+		"Envelopper transforme la ligne du curseur en callout de titre.\nInsérer en ajoute un vide sur une nouvelle ligne.",
+	"commandBuilder.actionDescInline":
+		"Envelopper place le texte sélectionné dans le callout.\nInsérer ajoute un callout en ligne vide au niveau du curseur et laisse le texte tel quel.",
 	"commandBuilder.actionWrap": "Envelopper la sélection",
 	"commandBuilder.actionInsert": "Insérer un nouveau",
 	"commandBuilder.foldState": "État de repli",
@@ -284,6 +291,9 @@ export const fr: Record<string, string> = {
 
 	"notice.nothingToWrap": "Rien à envelopper.",
 	"notice.cursorNotInsideCallout": "Le curseur n'est pas dans un callout.",
+	"notice.headingAlreadyCallout": "Ce titre est déjà un callout.",
+	"notice.unwrapLeftAsIs":
+		"Ce callout n'a pas pu être retiré sans risque ; il a donc été laissé tel quel.",
 	"notice.autocompleteTargetMoved":
 		"Rien n'a été inséré : la ligne a changé pendant que l'éditeur était ouvert.",
 	"notice.autocompleteAlwaysEnabled": "L’autocomplétion est désormais une fonction principale et elle est toujours activée.",

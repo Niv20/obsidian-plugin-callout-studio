@@ -11,7 +11,9 @@ export const fa: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "پیچیدن در callout بلوکی {{name}} (بسته)",
 	"cmd.customInsertBlockExpanded": "درج callout بلوکی {{name}} (باز)",
 	"cmd.customInsertBlockCollapsed": "درج callout بلوکی {{name}} (بسته)",
+	"cmd.customWrapHeading": "پیچیدن در سرتیتر H{{level}} از نوع callout {{name}}",
 	"cmd.customInsertHeading": "درج سرتیتر H{{level}} از نوع callout {{name}}",
+	"cmd.customWrapInline": "پیچیدن در callout درون‌خطی {{name}}",
 	"cmd.customInsertInline": "درج callout درون‌خطی {{name}}",
 	"cmd.openQuickInsert": "درج سریع callout بلوکی",
 
@@ -214,6 +216,10 @@ export const fa: Record<string, string> = {
 	"commandBuilder.action": "عملکرد",
 	"commandBuilder.actionDesc":
 		"پیچیدن، انتخاب را به یک callout تبدیل می‌کند؛ درج، یک callout خالی اضافه می‌کند.",
+	"commandBuilder.actionDescHeading":
+		"پیچیدن، خطی را که مکان‌نما در آن است به یک callout سرتیتری تبدیل می‌کند.\nدرج، یک callout خالی در خط تازه اضافه می‌کند.",
+	"commandBuilder.actionDescInline":
+		"پیچیدن، متن انتخاب‌شده را درون callout قرار می‌دهد.\nدرج، یک callout درون‌خطی خالی در محل مکان‌نما اضافه می‌کند و متن را بدون تغییر می‌گذارد.",
 	"commandBuilder.actionWrap": "پیچیدن انتخاب",
 	"commandBuilder.actionInsert": "درج جدید",
 	"commandBuilder.foldState": "وضعیت تا کردن",
@@ -276,6 +282,9 @@ export const fa: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "برخی یادداشت‌ها قابل تبدیل نبودند. نوع callout حفظ شد. تبدیل‌های کامل‌شده ذخیره شده‌اند؛ مشکل فایل را برطرف کنید و سپس برای تکمیل، دوباره این کنش را اجرا کنید.",
 	"notice.nothingToWrap": "چیزی برای پیچیدن وجود ندارد.",
 	"notice.cursorNotInsideCallout": "مکان‌نما داخل callout نیست.",
+	"notice.headingAlreadyCallout": "این سرتیتر از قبل یک callout است.",
+	"notice.unwrapLeftAsIs":
+		"حذف این callout به‌شکل ایمن ممکن نبود، بنابراین همان‌طور که بود باقی ماند.",
 	"notice.autocompleteTargetMoved":
 		"چیزی درج نشد — خط در حالی که ویرایشگر باز بود تغییر کرد.",
 	"notice.autocompleteAlwaysEnabled": "تکمیل خودکار اکنون یک ویژگی اصلی است و همیشه فعال است.",

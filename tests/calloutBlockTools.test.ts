@@ -13,6 +13,7 @@ import {
 	insertEmptyCallout,
 	insertHeadingCallout,
 	insertInlineCallout,
+	insertNewHeadingCallout,
 	unwrapCalloutAtSelection,
 	wrapSelectionInCallout,
 } from "../src/editor/CalloutBlockTools";
@@ -787,6 +788,38 @@ describe("insertHeadingCallout", () => {
 		const e = editor("---\n|tags: [x]\n---\n");
 		insertHeadingCallout(asEditor(e), def(), 2);
 		assert.strictEqual(e.value(), "---\ntags: [x]\n---\n## [!warning]");
+	});
+});
+
+describe("insertNewHeadingCallout", () => {
+	it("takes a blank line's place", () => {
+		const e = editor("Intro\n|\nOutro");
+		assert.strictEqual(insertNewHeadingCallout(asEditor(e), def(), 2), true);
+		assert.strictEqual(e.valueWithCursor(), "Intro\n## [!warning]|\nOutro");
+	});
+
+	it("goes on a line of its own below text, leaving the text alone", () => {
+		const e = editor("## Old| heading\nbody");
+		insertNewHeadingCallout(asEditor(e), def(), 3);
+		assert.strictEqual(e.valueWithCursor(), "## Old heading\n### [!warning]|\nbody");
+	});
+
+	it("leaves a quote with a blank line between", () => {
+		const e = editor("> quo|ted");
+		insertNewHeadingCallout(asEditor(e), def(), 2);
+		assert.strictEqual(e.valueWithCursor(), "> quoted\n\n## [!warning]|");
+	});
+
+	it("goes on the first line after the properties, never into them", () => {
+		const blank = editor("---\nta|gs: [x]\n---\n\nbody");
+		insertNewHeadingCallout(asEditor(blank), def(), 2);
+		assert.strictEqual(blank.valueWithCursor(), "---\ntags: [x]\n---\n## [!warning]|\nbody");
+		const text = editor("---\nta|gs: [x]\n---\nbody");
+		insertNewHeadingCallout(asEditor(text), def(), 2);
+		assert.strictEqual(text.valueWithCursor(), "---\ntags: [x]\n---\n## [!warning]|\nbody");
+		const only = editor("---\nta|gs: [x]\n---");
+		insertNewHeadingCallout(asEditor(only), def(), 2);
+		assert.strictEqual(only.valueWithCursor(), "---\ntags: [x]\n---\n\n## [!warning]|");
 	});
 });
 

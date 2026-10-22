@@ -20,7 +20,9 @@ export const he: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "עטיפה בתיבת־הבלטה בלוקית {{name}} (סגורה)",
 	"cmd.customInsertBlockExpanded": "הוספת תיבת־הבלטה בלוקית {{name}} (פתוחה)",
 	"cmd.customInsertBlockCollapsed": "הוספת תיבת־הבלטה בלוקית {{name}} (סגורה)",
+	"cmd.customWrapHeading": "עטיפה בכותרת H{{level}} מסוג {{name}}",
 	"cmd.customInsertHeading": "הוספת כותרת H{{level}} מסוג {{name}}",
+	"cmd.customWrapInline": "עטיפה בתיבת־הבלטה מוטבעת {{name}}",
 	"cmd.customInsertInline": "הוספת תיבת־הבלטה מוטבעת {{name}}",
 	"cmd.openQuickInsert": "הוספה מהירה של תיבת־הבלטה מסוג בלוק",
 
@@ -239,6 +241,10 @@ export const he: Record<string, string> = {
 	"commandBuilder.action": "פעולה",
 	"commandBuilder.actionDesc":
 		"עטיפה הופכת את הבחירה לתיבת־הבלטה; הוספה מוסיפה תיבה ריקה.",
+	"commandBuilder.actionDescHeading":
+		"עטיפה הופכת את השורה שבה נמצא הסמן לתיבת־הבלטה בצורת כותרת.\nהוספה מוסיפה תיבה ריקה בשורה חדשה.",
+	"commandBuilder.actionDescInline":
+		"עטיפה מכניסה את הטקסט שנבחר לתוך תיבת־ההבלטה.\nהוספה מוסיפה תיבת־הבלטה מוטבעת ריקה בסמן ומשאירה את הטקסט כמו שהוא.",
 	"commandBuilder.actionWrap": "עטיפת הבחירה",
 	"commandBuilder.actionInsert": "הוספת חדשה",
 	"commandBuilder.foldState": "מצב קיפול",
@@ -364,6 +370,9 @@ export const he: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "חלק מהפתקים לא ניתנים להמרה. סוג תיבת־ההבלטה נשמר. ההמרות שהושלמו נשמרו; טפלו בבעיית הקובץ והפעילו שוב את הפעולה כדי לסיים.",
 	"notice.nothingToWrap": "אין תוכן לעטוף.",
 	"notice.cursorNotInsideCallout": "הסמן אינו נמצא בתוך תיבת־הבלטה.",
+	"notice.headingAlreadyCallout": "הכותרת הזו כבר תיבת־הבלטה.",
+	"notice.unwrapLeftAsIs":
+		"אי אפשר היה לחלץ את תיבת־ההבלטה הזו בבטחה, ולכן היא נשארה כמו שהיא.",
 	"notice.autocompleteTargetMoved":
 		"לא נוסף דבר — השורה השתנתה בזמן שהעורך היה פתוח.",
 	"notice.autocompleteAlwaysEnabled": "ההשלמה האוטומטית היא כעת תכונת ליבה והיא מופעלת תמיד.",

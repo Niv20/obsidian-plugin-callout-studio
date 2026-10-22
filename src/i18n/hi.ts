@@ -11,7 +11,9 @@ export const hi: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "{{name}} ब्लॉक callout में लपेटें (बंद)",
 	"cmd.customInsertBlockExpanded": "{{name}} ब्लॉक callout डालें (खुला)",
 	"cmd.customInsertBlockCollapsed": "{{name}} ब्लॉक callout डालें (बंद)",
+	"cmd.customWrapHeading": "H{{level}} {{name}} हेडिंग callout में लपेटें",
 	"cmd.customInsertHeading": "H{{level}} {{name}} हेडिंग callout डालें",
+	"cmd.customWrapInline": "{{name}} इनलाइन callout में लपेटें",
 	"cmd.customInsertInline": "{{name}} इनलाइन callout डालें",
 	"cmd.openQuickInsert": "ब्लॉक callout जल्दी डालें",
 
@@ -215,6 +217,10 @@ export const hi: Record<string, string> = {
 	"commandBuilder.action": "क्रिया",
 	"commandBuilder.actionDesc":
 		"लपेटें चयन को callout में बदल देता है; डालें एक खाली callout जोड़ता है।",
+	"commandBuilder.actionDescHeading":
+		"लपेटें कर्सर वाली पंक्ति को हेडिंग callout में बदल देता है।\nडालें नई पंक्ति में एक खाली callout जोड़ता है।",
+	"commandBuilder.actionDescInline":
+		"लपेटें चुने हुए टेक्स्ट को callout के अंदर रखता है।\nडालें कर्सर पर एक खाली इनलाइन callout जोड़ता है और टेक्स्ट को जैसा है वैसा छोड़ देता है।",
 	"commandBuilder.actionWrap": "चयन लपेटें",
 	"commandBuilder.actionInsert": "नया डालें",
 	"commandBuilder.foldState": "फ़ोल्ड स्थिति",
@@ -277,6 +283,9 @@ export const hi: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "कुछ नोट रूपांतरित नहीं किए जा सके। callout प्रकार रखा गया। पूर्ण हो चुके रूपांतरण सहेजे गए हैं; फ़ाइल समस्या हल करें, फिर पूरा करने के लिए क्रिया दोबारा चलाएँ।",
 	"notice.nothingToWrap": "लपेटने के लिए कुछ नहीं।",
 	"notice.cursorNotInsideCallout": "कर्सर callout के अंदर नहीं है।",
+	"notice.headingAlreadyCallout": "यह हेडिंग पहले से ही एक callout है।",
+	"notice.unwrapLeftAsIs":
+		"इस callout को सुरक्षित रूप से हटाया नहीं जा सका, इसलिए इसे जैसा था वैसा ही छोड़ दिया गया।",
 	"notice.autocompleteTargetMoved":
 		"कुछ भी नहीं जोड़ा गया — संपादक खुला रहते हुए पंक्ति बदल गई।",
 	"notice.autocompleteAlwaysEnabled": "Autocomplete अब एक मुख्य सुविधा है और हमेशा सक्षम रहता है।",

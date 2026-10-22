@@ -11,7 +11,9 @@ export const hu: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Becsomagolás {{name}} blokk callout-ba (zárt)",
 	"cmd.customInsertBlockExpanded": "{{name}} blokk callout beszúrása (nyitott)",
 	"cmd.customInsertBlockCollapsed": "{{name}} blokk callout beszúrása (zárt)",
+	"cmd.customWrapHeading": "Becsomagolás H{{level}} {{name}} címsor callout-ba",
 	"cmd.customInsertHeading": "H{{level}} {{name}} címsor callout beszúrása",
+	"cmd.customWrapInline": "Becsomagolás {{name}} beágyazott callout-ba",
 	"cmd.customInsertInline": "{{name}} beágyazott callout beszúrása",
 	"cmd.openQuickInsert": "Blokk callout gyors beszúrása",
 
@@ -214,6 +216,10 @@ export const hu: Record<string, string> = {
 	"commandBuilder.action": "Művelet",
 	"commandBuilder.actionDesc":
 		"A becsomagolás callout-tá alakítja a kijelölést; a beszúrás egy üreset ad hozzá.",
+	"commandBuilder.actionDescHeading":
+		"A becsomagolás a kurzort tartalmazó sort címsor callout-tá alakítja.\nA beszúrás egy üreset ad hozzá új sorban.",
+	"commandBuilder.actionDescInline":
+		"A becsomagolás a kijelölt szöveget a callout-ba helyezi.\nA beszúrás egy üres beágyazott callout-ot ad hozzá a kurzornál, a szöveget pedig változatlanul hagyja.",
 	"commandBuilder.actionWrap": "Kijelölés becsomagolása",
 	"commandBuilder.actionInsert": "Új beszúrása",
 	"commandBuilder.foldState": "Összecsukási állapot",
@@ -276,6 +282,9 @@ export const hu: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "Néhány jegyzetet nem sikerült átalakítani. A callout típusa megmaradt. A befejezett átalakítások mentve vannak; oldja meg a fájlproblémát, majd futtassa újra a műveletet a befejezéshez.",
 	"notice.nothingToWrap": "Nincs mit becsomagolni.",
 	"notice.cursorNotInsideCallout": "A kurzor nem callout-on belül van.",
+	"notice.headingAlreadyCallout": "Ez a címsor már callout.",
+	"notice.unwrapLeftAsIs":
+		"Ezt a callout-ot nem sikerült biztonságosan eltávolítani, ezért változatlanul maradt.",
 	"notice.autocompleteTargetMoved":
 		"Semmi nem lett beszúrva — a sor megváltozott, amíg a szerkesztő nyitva volt.",
 	"notice.autocompleteAlwaysEnabled": "Az automatikus kiegészítés mostantól alapfunkció, és mindig be van kapcsolva.",

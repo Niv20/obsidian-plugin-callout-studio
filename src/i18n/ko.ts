@@ -11,7 +11,9 @@ export const ko: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "{{name}} 블록 callout으로 감싸기 (닫힘)",
 	"cmd.customInsertBlockExpanded": "{{name}} 블록 callout 삽입 (열림)",
 	"cmd.customInsertBlockCollapsed": "{{name}} 블록 callout 삽입 (닫힘)",
+	"cmd.customWrapHeading": "H{{level}} {{name}} 제목 callout으로 감싸기",
 	"cmd.customInsertHeading": "H{{level}} {{name}} 제목 callout 삽입",
+	"cmd.customWrapInline": "{{name}} 인라인 callout으로 감싸기",
 	"cmd.customInsertInline": "{{name}} 인라인 callout 삽입",
 	"cmd.openQuickInsert": "블록 callout 빠른 삽입",
 
@@ -216,6 +218,10 @@ export const ko: Record<string, string> = {
 	"commandBuilder.action": "작업",
 	"commandBuilder.actionDesc":
 		"감싸기는 선택 영역을 callout으로 바꾸고, 삽입은 빈 callout을 추가합니다.",
+	"commandBuilder.actionDescHeading":
+		"감싸기는 커서가 있는 줄을 제목 callout으로 바꿉니다.\n삽입은 새 줄에 빈 callout을 추가합니다.",
+	"commandBuilder.actionDescInline":
+		"감싸기는 선택한 텍스트를 callout 안에 넣습니다.\n삽입은 커서 위치에 빈 인라인 callout을 추가하며 텍스트는 그대로 둡니다.",
 	"commandBuilder.actionWrap": "선택 영역 감싸기",
 	"commandBuilder.actionInsert": "새로 삽입",
 	"commandBuilder.foldState": "접기 상태",
@@ -277,6 +283,8 @@ export const ko: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "일부 노트를 변환하지 못했습니다. callout 유형은 유지되었습니다. 완료된 변환은 저장되었습니다. 파일 문제를 해결한 다음 작업을 다시 실행하여 완료하세요.",
 	"notice.nothingToWrap": "감쌀 내용이 없습니다.",
 	"notice.cursorNotInsideCallout": "커서가 callout 안에 있지 않습니다.",
+	"notice.headingAlreadyCallout": "이 제목은 이미 callout입니다.",
+	"notice.unwrapLeftAsIs": "이 callout은 안전하게 제거할 수 없어 그대로 두었습니다.",
 	"notice.autocompleteTargetMoved":
 		"아무것도 삽입되지 않았습니다 — 편집기가 열려 있는 동안 줄이 변경되었습니다.",
 	"notice.autocompleteAlwaysEnabled": "자동 완성은 이제 핵심 기능이며 항상 켜져 있습니다.",

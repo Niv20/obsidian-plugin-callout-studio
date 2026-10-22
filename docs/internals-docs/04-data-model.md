@@ -167,7 +167,7 @@ interface CustomCommand {
   calloutId: string;                // always canonical, never an alias
   role: CalloutRenderRole;
   headingLevel?: number;             // 1 - 6, only read when role === "heading"
-  action?: CustomCommandAction;      // "wrap" | "insert", only read when role === "regular"
+  action?: CustomCommandAction;      // "wrap" | "insert"; absent: "insert" for a block, "wrap" otherwise
   fold?: CustomCommandFold;          // "none" | "expanded" | "collapsed", only read when role === "regular"
 }
 ```
@@ -198,6 +198,17 @@ It also overrides `CalloutDefinition.foldable`/`defaultFolded` rather than
 deferring to them: the command carries its own answer, so a callout created by
 `applyCalloutManagerImport` or `applyAdmonitionImport` - both of which stamp
 `foldable: true` on everything - no longer decides what a command writes.
+
+`action` is read in every format. Wrap takes in what is already there - the
+selection or paragraph for a block, the cursor's line for a heading, the
+selected text for a pill - and Insert adds a new, empty one. Its absence keeps
+the answer each format gave before heading and inline commands had the choice,
+resolved by `resolveAction`: `"insert"` for a block command, `"wrap"` for the
+other two, which always took the line or selection they ran on. `storedAction`
+writes it always for a block command, and for a heading or inline one only when
+it is `"insert"` - the sanitizer and the command editor both go through it, so
+a saved command loads back identical, and a device still on an older version,
+which drops the key for these formats, runs it as Wrap.
 
 ## `PluginSettings`
 

@@ -63,8 +63,10 @@ export const ru: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Обернуть в блочный callout «{{name}}» (закрыт)",
 	"cmd.customInsertBlockExpanded": "Вставить блочный callout «{{name}}» (открыт)",
 	"cmd.customInsertBlockCollapsed": "Вставить блочный callout «{{name}}» (закрыт)",
+	"cmd.customWrapHeading": "Обернуть в заголовок H{{level}} callout «{{name}}»",
 	"cmd.customInsertHeading":
 		"Вставить заголовок H{{level}} callout «{{name}}»",
+	"cmd.customWrapInline": "Обернуть во встроенный callout «{{name}}»",
 	"cmd.customInsertInline": "Вставить встроенный callout «{{name}}»",
 	"cmd.openQuickInsert": "Быстрая вставка блочного callout",
 
@@ -267,6 +269,10 @@ export const ru: Record<string, string> = {
 	"commandBuilder.action": "Действие",
 	"commandBuilder.actionDesc":
 		"«Обернуть» превращает выделение в callout; «вставить» добавляет пустой.",
+	"commandBuilder.actionDescHeading":
+		"«Обернуть» превращает строку с курсором в callout-заголовок.\n«Вставить» добавляет пустой на новой строке.",
+	"commandBuilder.actionDescInline":
+		"«Обернуть» помещает выделенный текст внутрь callout.\n«Вставить» добавляет пустой встроенный callout у курсора и оставляет текст как есть.",
 	"commandBuilder.actionWrap": "Обернуть выделение",
 	"commandBuilder.actionInsert": "Вставить новый",
 	"commandBuilder.foldState": "Состояние сворачивания",
@@ -329,6 +335,9 @@ export const ru: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "Некоторые заметки не удалось преобразовать. Тип callout сохранён. Завершённые преобразования сохранены; устраните проблему с файлом и запустите действие снова, чтобы завершить его.",
 	"notice.nothingToWrap": "Нечего оборачивать.",
 	"notice.cursorNotInsideCallout": "Курсор не находится внутри callout.",
+	"notice.headingAlreadyCallout": "Этот заголовок уже является callout.",
+	"notice.unwrapLeftAsIs":
+		"Не удалось безопасно убрать этот callout, поэтому он остался как был.",
 	"notice.autocompleteTargetMoved":
 		"Ничего не вставлено — строка изменилась, пока редактор был открыт.",
 	"notice.autocompleteAlwaysEnabled": "Автодополнение теперь является основной функцией и всегда включено.",

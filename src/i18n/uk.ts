@@ -63,7 +63,9 @@ export const uk: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Обгорнути в блоковий callout {{name}} (закритий)",
 	"cmd.customInsertBlockExpanded": "Вставити блоковий callout {{name}} (відкритий)",
 	"cmd.customInsertBlockCollapsed": "Вставити блоковий callout {{name}} (закритий)",
+	"cmd.customWrapHeading": "Обгорнути в заголовок H{{level}} callout {{name}}",
 	"cmd.customInsertHeading": "Вставити заголовок H{{level}} callout {{name}}",
+	"cmd.customWrapInline": "Обгорнути у вбудований callout {{name}}",
 	"cmd.customInsertInline": "Вставити вбудований callout {{name}}",
 	"cmd.openQuickInsert": "Швидка вставка блокового callout",
 
@@ -266,6 +268,10 @@ export const uk: Record<string, string> = {
 	"commandBuilder.action": "Дія",
 	"commandBuilder.actionDesc":
 		"«Обгорнути» перетворює виділення на callout; «Вставити» додає порожній.",
+	"commandBuilder.actionDescHeading":
+		"«Обгорнути» перетворює рядок із курсором на callout-заголовок.\n«Вставити» додає порожній на новому рядку.",
+	"commandBuilder.actionDescInline":
+		"«Обгорнути» поміщає виділений текст усередину callout.\n«Вставити» додає порожній вбудований callout біля курсора й залишає текст без змін.",
 	"commandBuilder.actionWrap": "Обгорнути виділення",
 	"commandBuilder.actionInsert": "Вставити новий",
 	"commandBuilder.foldState": "Стан згортання",
@@ -334,6 +340,9 @@ export const uk: Record<string, string> = {
 
 	"notice.nothingToWrap": "Нічого для обгортання.",
 	"notice.cursorNotInsideCallout": "Курсор не знаходиться всередині callout.",
+	"notice.headingAlreadyCallout": "Цей заголовок уже є callout.",
+	"notice.unwrapLeftAsIs":
+		"Не вдалося безпечно видалити цей callout, тому його залишено без змін.",
 	"notice.autocompleteTargetMoved":
 		"Нічого не вставлено — рядок змінився, поки редактор був відкритий.",
 	"notice.autocompleteAlwaysEnabled": "Автодоповнення тепер є основною функцією і завжди ввімкнене.",

@@ -11,8 +11,11 @@ export const es: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Envolver en callout de bloque {{name}} (cerrado)",
 	"cmd.customInsertBlockExpanded": "Insertar callout de bloque {{name}} (abierto)",
 	"cmd.customInsertBlockCollapsed": "Insertar callout de bloque {{name}} (cerrado)",
+	"cmd.customWrapHeading":
+		"Envolver en encabezado H{{level}} de callout {{name}}",
 	"cmd.customInsertHeading":
 		"Insertar encabezado H{{level}} de callout {{name}}",
+	"cmd.customWrapInline": "Envolver en callout en línea {{name}}",
 	"cmd.customInsertInline": "Insertar callout en línea {{name}}",
 	"cmd.openQuickInsert": "Inserción rápida de callout de bloque",
 
@@ -216,6 +219,10 @@ export const es: Record<string, string> = {
 	"commandBuilder.action": "Acción",
 	"commandBuilder.actionDesc":
 		"Envolver convierte la selección en un callout; insertar añade uno vacío.",
+	"commandBuilder.actionDescHeading":
+		"Envolver convierte la línea con el cursor en un callout de encabezado.\nInsertar añade uno vacío en una línea nueva.",
+	"commandBuilder.actionDescInline":
+		"Envolver coloca el texto seleccionado dentro del callout.\nInsertar añade un callout en línea vacío en el cursor y deja el texto como está.",
 	"commandBuilder.actionWrap": "Envolver selección",
 	"commandBuilder.actionInsert": "Insertar nuevo",
 	"commandBuilder.foldState": "Estado de plegado",
@@ -280,6 +287,9 @@ export const es: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "Algunas notas no se pudieron convertir. Se conservó el tipo de callout. Las conversiones completadas se han guardado; resuelve el problema del archivo y vuelve a ejecutar la acción para terminar.",
 	"notice.nothingToWrap": "No hay nada para envolver.",
 	"notice.cursorNotInsideCallout": "El cursor no está dentro de un callout.",
+	"notice.headingAlreadyCallout": "Este encabezado ya es un callout.",
+	"notice.unwrapLeftAsIs":
+		"No se pudo desenvolver este callout de forma segura, así que se dejó como estaba.",
 	"notice.autocompleteTargetMoved":
 		"No se insertó nada: la línea cambió mientras el editor estaba abierto.",
 	"notice.autocompleteAlwaysEnabled": "El autocompletado ahora es una función principal y siempre está activado.",

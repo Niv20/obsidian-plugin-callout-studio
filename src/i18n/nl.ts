@@ -11,7 +11,9 @@ export const nl: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "In {{name}}-blokcallout inpakken (gesloten)",
 	"cmd.customInsertBlockExpanded": "{{name}}-blokcallout invoegen (open)",
 	"cmd.customInsertBlockCollapsed": "{{name}}-blokcallout invoegen (gesloten)",
+	"cmd.customWrapHeading": "In H{{level}} {{name}}-kopcallout inpakken",
 	"cmd.customInsertHeading": "H{{level}} {{name}}-kopcallout invoegen",
+	"cmd.customWrapInline": "In inline {{name}}-callout inpakken",
 	"cmd.customInsertInline": "Inline {{name}}-callout invoegen",
 	"cmd.openQuickInsert": "Blok-callout snel invoegen",
 
@@ -212,6 +214,10 @@ export const nl: Record<string, string> = {
 	"commandBuilder.action": "Actie",
 	"commandBuilder.actionDesc":
 		"Inpakken maakt van de selectie een callout; invoegen voegt een lege toe.",
+	"commandBuilder.actionDescHeading":
+		"Inpakken maakt van de regel met de cursor een kopcallout.\nInvoegen voegt een lege toe op een nieuwe regel.",
+	"commandBuilder.actionDescInline":
+		"Inpakken zet de geselecteerde tekst in de callout.\nInvoegen voegt bij de cursor een lege inline callout toe en laat de tekst ongewijzigd.",
 	"commandBuilder.actionWrap": "Selectie inpakken",
 	"commandBuilder.actionInsert": "Nieuwe invoegen",
 	"commandBuilder.foldState": "Inklapstatus",
@@ -281,6 +287,9 @@ export const nl: Record<string, string> = {
 	"notice.nothingToWrap": "Niets om in te pakken.",
 	"notice.cursorNotInsideCallout":
 		"De cursor bevindt zich niet in een callout.",
+	"notice.headingAlreadyCallout": "Deze kop is al een callout.",
+	"notice.unwrapLeftAsIs":
+		"Deze callout kon niet veilig worden verwijderd en is daarom ongewijzigd gelaten.",
 	"notice.autocompleteTargetMoved":
 		"Er is niets ingevoegd — de regel is gewijzigd terwijl de editor open was.",
 	"notice.autocompleteAlwaysEnabled": "Automatisch aanvullen is nu een kernfunctie en staat altijd aan.",

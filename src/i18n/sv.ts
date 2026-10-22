@@ -63,7 +63,9 @@ export const sv: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Lägg i blockcallout {{name}} (stängd)",
 	"cmd.customInsertBlockExpanded": "Infoga blockcallout {{name}} (öppen)",
 	"cmd.customInsertBlockCollapsed": "Infoga blockcallout {{name}} (stängd)",
+	"cmd.customWrapHeading": "Lägg i H{{level}}-rubrikcallout {{name}}",
 	"cmd.customInsertHeading": "Infoga H{{level}}-rubrikcallout {{name}}",
+	"cmd.customWrapInline": "Lägg i infogad callout {{name}}",
 	"cmd.customInsertInline": "Infoga infogad callout {{name}}",
 	"cmd.openQuickInsert": "Snabbinfoga block-callout",
 
@@ -266,6 +268,10 @@ export const sv: Record<string, string> = {
 	"commandBuilder.action": "Åtgärd",
 	"commandBuilder.actionDesc":
 		"Lägg i omvandlar markeringen till en callout; infoga lägger till en tom.",
+	"commandBuilder.actionDescHeading":
+		"Lägg i omvandlar raden med markören till en rubrikcallout.\nInfoga lägger till en tom på en ny rad.",
+	"commandBuilder.actionDescInline":
+		"Lägg i placerar den markerade texten inuti calloutet.\nInfoga lägger till en tom infogad callout vid markören och låter texten vara som den är.",
 	"commandBuilder.actionWrap": "Lägg i markering",
 	"commandBuilder.actionInsert": "Infoga ny",
 	"commandBuilder.foldState": "Hopfällningsstatus",
@@ -327,6 +333,9 @@ export const sv: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "Vissa anteckningar kunde inte konverteras. Callout-typen behölls. Slutförda konverteringar har sparats; åtgärda filproblemet och kör åtgärden igen för att slutföra.",
 	"notice.nothingToWrap": "Inget att lägga i callout.",
 	"notice.cursorNotInsideCallout": "Markören är inte inne i en callout.",
+	"notice.headingAlreadyCallout": "Den här rubriken är redan en callout.",
+	"notice.unwrapLeftAsIs":
+		"Den här calloutet kunde inte tas bort på ett säkert sätt, så den lämnades som den är.",
 	"notice.autocompleteTargetMoved":
 		"Ingenting infogades — raden ändrades medan redigeraren var öppen.",
 	"notice.autocompleteAlwaysEnabled": "Autokomplettering är nu en kärnfunktion och är alltid aktiverad.",

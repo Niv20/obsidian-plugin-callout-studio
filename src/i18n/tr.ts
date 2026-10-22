@@ -63,7 +63,9 @@ export const tr: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "{{name}} blok callout'una sar (kapalı)",
 	"cmd.customInsertBlockExpanded": "{{name}} blok callout'u ekle (açık)",
 	"cmd.customInsertBlockCollapsed": "{{name}} blok callout'u ekle (kapalı)",
+	"cmd.customWrapHeading": "H{{level}} {{name}} başlık callout'una sar",
 	"cmd.customInsertHeading": "H{{level}} {{name}} başlık callout'u ekle",
+	"cmd.customWrapInline": "{{name}} satır içi callout'una sar",
 	"cmd.customInsertInline": "{{name}} satır içi callout'u ekle",
 	"cmd.openQuickInsert": "Blok callout'u hızlı ekle",
 
@@ -266,6 +268,10 @@ export const tr: Record<string, string> = {
 	"commandBuilder.action": "Eylem",
 	"commandBuilder.actionDesc":
 		"Sar, seçimi bir callout'a dönüştürür; ekle boş bir tane ekler.",
+	"commandBuilder.actionDescHeading":
+		"Sar, imlecin bulunduğu satırı bir başlık callout'una dönüştürür.\nEkle, yeni bir satıra boş bir tane ekler.",
+	"commandBuilder.actionDescInline":
+		"Sar, seçili metni callout'un içine yerleştirir.\nEkle, imlecin olduğu yere boş bir satır içi callout ekler ve metni olduğu gibi bırakır.",
 	"commandBuilder.actionWrap": "Seçimi sar",
 	"commandBuilder.actionInsert": "Yeni ekle",
 	"commandBuilder.foldState": "Katlama durumu",
@@ -327,6 +333,9 @@ export const tr: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "Bazı notlar dönüştürülemedi. Callout türü korundu. Tamamlanan dönüştürmeler kaydedildi; dosya sorununu çözün, ardından işlemi bitirmek için yeniden çalıştırın.",
 	"notice.nothingToWrap": "Sarılacak bir şey yok.",
 	"notice.cursorNotInsideCallout": "İmleç callout içinde değil.",
+	"notice.headingAlreadyCallout": "Bu başlık zaten bir callout.",
+	"notice.unwrapLeftAsIs":
+		"Bu callout güvenli bir şekilde kaldırılamadı, bu yüzden olduğu gibi bırakıldı.",
 	"notice.autocompleteTargetMoved":
 		"Hiçbir şey eklenmedi — düzenleyici açıkken satır değişti.",
 	"notice.autocompleteAlwaysEnabled": "Otomatik tamamlama artık temel bir özelliktir ve her zaman etkindir.",

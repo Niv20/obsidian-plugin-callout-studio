@@ -11,8 +11,11 @@ export const de: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "In {{name}}-Block-Callout einbetten (geschlossen)",
 	"cmd.customInsertBlockExpanded": "{{name}}-Block-Callout einfügen (geöffnet)",
 	"cmd.customInsertBlockCollapsed": "{{name}}-Block-Callout einfügen (geschlossen)",
+	"cmd.customWrapHeading":
+		"In H{{level}}-{{name}}-Überschrift-Callout einbetten",
 	"cmd.customInsertHeading":
 		"H{{level}}-{{name}}-Überschrift-Callout einfügen",
+	"cmd.customWrapInline": "In {{name}}-Inline-Callout einbetten",
 	"cmd.customInsertInline": "{{name}}-Inline-Callout einfügen",
 	"cmd.openQuickInsert": "Block-Callout schnell einfügen",
 
@@ -212,6 +215,10 @@ export const de: Record<string, string> = {
 	"commandBuilder.action": "Aktion",
 	"commandBuilder.actionDesc":
 		"Einbetten verwandelt die Auswahl in einen Callout; Einfügen fügt einen leeren hinzu.",
+	"commandBuilder.actionDescHeading":
+		"Einbetten verwandelt die Zeile mit dem Cursor in einen Überschrift-Callout.\nEinfügen fügt einen leeren in einer neuen Zeile hinzu.",
+	"commandBuilder.actionDescInline":
+		"Einbetten setzt den ausgewählten Text in den Callout.\nEinfügen fügt am Cursor einen leeren Inline-Callout hinzu und lässt den Text unverändert.",
 	"commandBuilder.actionWrap": "Auswahl einbetten",
 	"commandBuilder.actionInsert": "Neu einfügen",
 	"commandBuilder.foldState": "Einklappstatus",
@@ -278,6 +285,9 @@ export const de: Record<string, string> = {
 	"notice.nothingToWrap": "Nichts zum Einbetten.",
 	"notice.cursorNotInsideCallout":
 		"Der Cursor befindet sich nicht in einem Callout.",
+	"notice.headingAlreadyCallout": "Diese Überschrift ist bereits ein Callout.",
+	"notice.unwrapLeftAsIs":
+		"Dieser Callout konnte nicht sicher entfernt werden und blieb deshalb unverändert.",
 	"notice.autocompleteTargetMoved":
 		"Nichts wurde eingefügt – die Zeile hat sich geändert, während der Editor geöffnet war.",
 	"notice.autocompleteAlwaysEnabled": "Autovervollständigung ist jetzt eine Kernfunktion und immer aktiviert.",

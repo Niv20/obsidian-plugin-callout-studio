@@ -521,10 +521,9 @@ export interface InlineCalloutSettings extends RoleToggleSettings {
 /**
  * What a custom command does to the editor.
  *
- * Only the block role has a real choice here: a heading callout has no body to
- * wrap, and an inline pill is written at the cursor. Both of those always
- * insert, which is why `CustomCommand.action` is optional rather than a value
- * the other two roles have to carry meaninglessly.
+ * Wrap takes in what is already there — the selection or paragraph for a block,
+ * the cursor's line for a heading, the selected text for a pill — and inserts
+ * when there is nothing to take. Insert always adds a new, empty one.
  */
 export type CustomCommandAction = "wrap" | "insert";
 
@@ -564,7 +563,12 @@ export interface CustomCommand {
 	role: CalloutRenderRole;
 	/** 1–6. Only read when `role` is `"heading"`. */
 	headingLevel?: number;
-	/** Only read when `role` is `"regular"`; the other roles always insert. */
+	/**
+	 * Absent means what each role did before heading and inline commands had
+	 * this choice: `"insert"` for a block command, `"wrap"` for the other two.
+	 * `resolveAction` keeps that promise, and `storedAction` writes the key only
+	 * where it says something the absence does not.
+	 */
 	action?: CustomCommandAction;
 	/**
 	 * Only read when `role` is `"regular"`; the other roles have no fold syntax.

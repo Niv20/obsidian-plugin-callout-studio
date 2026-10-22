@@ -62,7 +62,9 @@ export const zhTW: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "以 {{name}} 區塊 callout 包覆（折疊）",
 	"cmd.customInsertBlockExpanded": "插入 {{name}} 區塊 callout（展開）",
 	"cmd.customInsertBlockCollapsed": "插入 {{name}} 區塊 callout（折疊）",
+	"cmd.customWrapHeading": "以 H{{level}} {{name}} 標題 callout 包覆",
 	"cmd.customInsertHeading": "插入 H{{level}} {{name}} 標題 callout",
+	"cmd.customWrapInline": "以 {{name}} 行內 callout 包覆",
 	"cmd.customInsertInline": "插入 {{name}} 行內 callout",
 	"cmd.openQuickInsert": "快速插入區塊 callout",
 	"autocomplete.createNew": '建立 "{{name}}"',
@@ -248,6 +250,10 @@ export const zhTW: Record<string, string> = {
 	"commandBuilder.action": "動作",
 	"commandBuilder.actionDesc":
 		"「包覆」會將所選內容轉換為 callout；「插入」會新增一個空白的。",
+	"commandBuilder.actionDescHeading":
+		"「包覆」會將游標所在的行轉換為標題 callout。\n「插入」會在新的一行新增一個空白的。",
+	"commandBuilder.actionDescInline":
+		"「包覆」會將所選文字放入 callout 中。\n「插入」會在游標處新增一個空白的行內 callout，文字維持不變。",
 	"commandBuilder.actionWrap": "包覆所選內容",
 	"commandBuilder.actionInsert": "插入新項目",
 	"commandBuilder.foldState": "折疊狀態",
@@ -310,6 +316,8 @@ export const zhTW: Record<string, string> = {
 
 	"notice.nothingToWrap": "沒有可包覆的內容。",
 	"notice.cursorNotInsideCallout": "游標不在 callout 內部。",
+	"notice.headingAlreadyCallout": "此標題已經是 callout。",
+	"notice.unwrapLeftAsIs": "無法安全地移除此 callout，因此維持原樣。",
 	"notice.autocompleteTargetMoved":
 		"未插入任何內容 — 編輯器開啟期間該行已變更。",
 	"notice.autocompleteAlwaysEnabled": "自動補全現在是核心功能，且一律啟用。",

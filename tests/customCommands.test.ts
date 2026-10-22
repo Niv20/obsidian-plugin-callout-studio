@@ -110,6 +110,24 @@ describe("sanitizeCustomCommands", () => {
 		assert.strictEqual(block?.action, "insert");
 	});
 
+	it("stores a heading or inline action only when it is Insert", () => {
+		// Absent is Wrap for these two roles, so every one saved before they
+		// had an action loads back with no key added — and a device still on
+		// an older version, which drops the key, runs it as it always did.
+		const [headingInsert, inlineInsert, inlineWrap, inlineJunk] = sanitizeCustomCommands([
+			{ id: "a", calloutId: "note", role: "heading", headingLevel: 2, action: "insert" },
+			{ id: "b", calloutId: "note", role: "inline", action: "insert" },
+			{ id: "c", calloutId: "note", role: "inline", action: "wrap" },
+			{ id: "d", calloutId: "note", role: "inline", action: "sideways" },
+		]);
+		assert.deepStrictEqual(headingInsert, {
+			id: "a", calloutId: "note", role: "heading", headingLevel: 2, action: "insert",
+		});
+		assert.deepStrictEqual(inlineInsert, { id: "b", calloutId: "note", role: "inline", action: "insert" });
+		assert.deepStrictEqual(inlineWrap, { id: "c", calloutId: "note", role: "inline" });
+		assert.deepStrictEqual(inlineJunk, { id: "d", calloutId: "note", role: "inline" });
+	});
+
 	it("stores a fold state only when it is not the default", () => {
 		// Absence already means "none", so writing it would add a key to every
 		// command in every existing data.json — a synced file — to record
@@ -148,10 +166,21 @@ describe("resolve helpers", () => {
 		assert.strictEqual(resolveHeadingLevel({ headingLevel: 6 }), 6);
 	});
 
-	it("treats anything but an explicit wrap as insert", () => {
-		assert.strictEqual(resolveAction({}), "insert");
-		assert.strictEqual(resolveAction({ action: "wrap" }), "wrap");
-		assert.strictEqual(resolveAction({ action: "insert" }), "insert");
+	it("treats anything but an explicit wrap as insert for a block command", () => {
+		assert.strictEqual(resolveAction({ role: "regular" }), "insert");
+		assert.strictEqual(resolveAction({ role: "regular", action: "wrap" }), "wrap");
+		assert.strictEqual(resolveAction({ role: "regular", action: "insert" }), "insert");
+	});
+
+	it("treats anything but an explicit insert as wrap for heading and inline commands", () => {
+		// The backward-compatibility guarantee for these two roles: every one
+		// saved before they had an action took the line or selection it ran
+		// on, which is what Wrap does — so it goes on doing exactly that.
+		for (const role of ["heading", "inline"] as const) {
+			assert.strictEqual(resolveAction({ role }), "wrap", role);
+			assert.strictEqual(resolveAction({ role, action: "wrap" }), "wrap", role);
+			assert.strictEqual(resolveAction({ role, action: "insert" }), "insert", role);
+		}
 	});
 
 	it("treats a missing fold state as non-foldable", () => {
@@ -177,7 +206,8 @@ describe("resolve helpers", () => {
 describe("commandSignature", () => {
 	it("ignores the fields a role does not read", () => {
 		// Two inline commands for the same callout are the same command even
-		// if stale level/action data is hanging off one of them.
+		// if a stale level is hanging off one of them — and an absent action
+		// is the Wrap it resolves to.
 		assert.strictEqual(
 			commandSignature({ role: "inline", calloutId: "note" }),
 			commandSignature({
@@ -187,6 +217,16 @@ describe("commandSignature", () => {
 				action: "wrap",
 			}),
 		);
+	});
+
+	it("separates wrap and insert in every role", () => {
+		for (const role of ["regular", "heading", "inline"] as const) {
+			assert.notStrictEqual(
+				commandSignature({ role, calloutId: "note", action: "wrap" }),
+				commandSignature({ role, calloutId: "note", action: "insert" }),
+				role,
+			);
+		}
 	});
 
 	it("separates heading levels and block actions", () => {
@@ -271,7 +311,9 @@ const EVERY_SHAPE: Omit<CustomCommand, "id">[] = [
 		fold: "collapsed",
 	},
 	{ calloutId: "warning", role: "heading", headingLevel: 3 },
+	{ calloutId: "warning", role: "heading", headingLevel: 3, action: "insert" },
 	{ calloutId: "warning", role: "inline" },
+	{ calloutId: "warning", role: "inline", action: "insert" },
 ];
 
 describe("describeCommand", () => {
@@ -291,11 +333,22 @@ describe("describeCommand", () => {
 		);
 		assert.strictEqual(
 			describeCommand({ calloutId: "warning", role: "inline" }, def()),
+			"Wrap in Warning inline callout",
+		);
+		assert.strictEqual(
+			describeCommand({ calloutId: "warning", role: "inline", action: "insert" }, def()),
 			"Insert Warning inline callout",
 		);
 		assert.strictEqual(
 			describeCommand(
 				{ calloutId: "warning", role: "heading", headingLevel: 3 },
+				def(),
+			),
+			"Wrap in H3 Warning heading callout",
+		);
+		assert.strictEqual(
+			describeCommand(
+				{ calloutId: "warning", role: "heading", headingLevel: 3, action: "insert" },
 				def(),
 			),
 			"Insert H3 Warning heading callout",
@@ -364,14 +417,14 @@ describe("describeCommand", () => {
 				},
 				def(),
 			),
-			"Insert H3 Warning heading callout",
+			"Wrap in H3 Warning heading callout",
 		);
 		assert.strictEqual(
 			describeCommand(
 				{ calloutId: "warning", role: "inline", fold: "collapsed" },
 				def(),
 			),
-			"Insert Warning inline callout",
+			"Wrap in Warning inline callout",
 		);
 	});
 
@@ -405,7 +458,7 @@ describe("describeCommand", () => {
 		};
 		assert.strictEqual(
 			describeCommand(command, def({ displayName: "Careful" })),
-			"Insert Careful inline callout",
+			"Wrap in Careful inline callout",
 		);
 	});
 });

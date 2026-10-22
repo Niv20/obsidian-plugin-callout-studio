@@ -35,6 +35,7 @@ import {
 	insertEmptyCallout,
 	insertHeadingCallout,
 	insertInlineCallout,
+	insertNewHeadingCallout,
 	wrapSelectionInCallout,
 } from "./CalloutBlockTools";
 import { isGeneratedTitle } from "./calloutWriter";
@@ -225,19 +226,24 @@ export class CustomCommandManager {
 			return;
 		}
 
+		const wrap = resolveAction(command) === "wrap";
 		if (command.role === "heading") {
-			insertHeadingCallout(
-				editor,
-				def,
-				resolveHeadingLevel(command),
-				{ isKnownDisplayName: this.isKnownDisplayName },
-			);
+			const level = resolveHeadingLevel(command);
+			if (wrap) {
+				insertHeadingCallout(editor, def, level, {
+					isKnownDisplayName: this.isKnownDisplayName,
+				});
+			} else {
+				insertNewHeadingCallout(editor, def, level);
+			}
 			return;
 		}
 
 		if (command.role === "inline") {
+			// Insert is the path a pill with no room for text always took: the
+			// pill goes in at the cursor and the selection stays as it was.
 			insertInlineCallout(editor, def, {
-				allowContent: this.plugin.settings.inlineCallouts.allowContent,
+				allowContent: wrap && this.plugin.settings.inlineCallouts.allowContent,
 			});
 			return;
 		}
@@ -246,7 +252,7 @@ export class CustomCommandManager {
 		// when it is "" is the point, since that is what overrides a callout
 		// whose stored `foldable` would otherwise add a mark nobody chose.
 		const foldMark = FOLD_MARK[resolveFold(command)];
-		if (resolveAction(command) === "wrap") {
+		if (wrap) {
 			wrapSelectionInCallout(editor, { def, foldMark });
 			return;
 		}

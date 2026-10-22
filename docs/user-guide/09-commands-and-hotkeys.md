@@ -22,13 +22,35 @@ No keyboard shortcut is assigned by default.
 
 ## Insert an empty callout
 
-Run **Callout Studio: Insert empty callout** to start a callout at the cursor, then choose its type from the list that opens. On an empty line, the callout takes that line's place. On a line with text, it goes on a new line below it. Inside a callout, the new one is nested in it.
+Run **Callout Studio: Insert empty callout** to start a new callout at the cursor, then choose its type from the list that opens. It never changes the text that is already there. Where the cursor is decides which kind of callout you get:
 
-Wherever the new callout would touch the text above or below it, Callout Studio adds a blank line, so neither is pulled into the other. It never writes into the note's properties: with the cursor there, the callout goes where the note's text begins.
+| Cursor | You get |
+| --- | --- |
+| On an empty line | A block callout in that line's place |
+| At the start of a heading, before or on its `#` marks | A heading callout: `## [!tip] My heading` |
+| Anywhere in a line of text | An inline callout at the cursor: `Some [!tip] text` |
+
+Where an inline callout cannot go - in code, at the very start of a quoted line, on a block callout's first line, or right before `{` - you get a block callout on a new line below, as before. You also get a block callout while inline callouts are turned off. On a heading that is already a heading callout, a message says so and nothing changes.
+
+A block callout that would touch the text above or below it gets a blank line in between, so neither is pulled into the other. Inside a callout, the new one is nested in it. It never writes into the note's properties: with the cursor there, the callout goes where the note's text begins.
 
 ## Wrap text after writing it
 
-Select text and run **Callout Studio: Wrap in callout**. Choose a callout type, and Callout Studio turns the selection into a block callout.
+Select text and run **Callout Studio: Wrap in callout**. Choose a callout type from the list that opens, and Callout Studio turns the selection into a callout. Which kind depends on what you selected:
+
+| Selection | You get |
+| --- | --- |
+| A heading, or the cursor on one | A heading callout: `## My heading` becomes `## [!tip] My heading`. Selecting the whole line, with its `#` marks, counts too. |
+| Part of a line | An inline callout around the words: `Some [!tip]{selected words} here` |
+| A whole line, several lines, or the cursor in a paragraph | A block callout, as described below |
+
+Spaces at either end of the selection are left outside the inline callout. Part of a heading's title becomes an inline callout inside the heading.
+
+An inline callout is only written where it works, so these get a block callout instead: text in code or a link, the very start of a quoted line, a block callout's first line, a `{` or `}` without its partner, a `|` between table cells, or part of another inline callout. The same happens while inline callouts, or text inside them, are turned off. A heading is treated like any other line while heading callouts are turned off. On a heading that is already a heading callout, a message says so and nothing changes.
+
+If you close the list without choosing, the unfinished `[!]` stays in the note. Press **Undo** once to remove it.
+
+### Block callouts
 
 ```md
 > [!note]
@@ -38,7 +60,9 @@ Select text and run **Callout Studio: Wrap in callout**. Choose a callout type, 
 
 This lets you write first and decide on the callout later. It also handles tables and fenced code blocks without making you add every `>` manually.
 
-### What gets wrapped
+#### What gets wrapped
+
+These rules decide what a block callout takes in. Part of a single line becomes an inline callout instead wherever one can go, as above.
 
 - **With a selection**, the lines the selection touches are wrapped. A line that the selection reaches only at its very start is left out. If the selection starts or ends in the middle of a paragraph, the paragraph is split there.
 - **Without a selection**, the paragraph under the cursor is wrapped: the lines around it, up to the nearest blank line. A heading directly above or below it stays out.
@@ -49,7 +73,7 @@ Some blocks are always wrapped whole, even when the selection covers only part o
 
 When the new callout would touch the text right above or below it, Callout Studio adds a blank line in between. Without that line, Obsidian would merge the two blocks.
 
-### Inside a callout
+#### Inside a callout
 
 Wrapping text that is already inside a callout puts the new callout inside it:
 
@@ -73,9 +97,17 @@ A heading callout (`## [!tip] Title`) only works outside block callouts. If you 
 
 ## Unwrap a callout
 
-Place the cursor inside a callout, or select part of it, and run **Callout Studio: Unwrap from callout**. It removes one callout layer while keeping the content. It always unwraps the innermost callout around the cursor, so nested blocks can be unwrapped one level at a time.
+Place the cursor inside a callout, or select part of it, and run **Callout Studio: Unwrap from callout**. It removes one callout while keeping the content, and it works on all three kinds. It always takes the innermost one at the cursor:
 
-The callout's title stays, as a line of its own; only the `[!type]` marker is removed. This is the same thing that happens to notes when you choose **Convert uses to plain text** for a callout type. If text sat right above the callout with no blank line between, a blank line is added so the two stay separate paragraphs. A callout indented under a list item stays inside that item.
+1. An inline callout the cursor is on: `[!tip]{some words}` becomes `some words`, and `[!tip]` becomes `tip`.
+2. Otherwise, the heading callout on the cursor's line: `## [!tip] My heading` becomes `## My heading`. A heading with no title of its own keeps the callout's ID as its title: `## [!tip]` becomes `## tip`.
+3. Otherwise, the block callout around the cursor.
+
+Nested callouts can therefore be unwrapped one level at a time, an inline callout before the block or heading it sits in. This is the same text **Convert uses to plain text** leaves in notes for a callout type.
+
+For a block callout, the title stays as a line of its own; only the `[!type]` marker is removed. If text sat right above the callout with no blank line between, a blank line is added so the two stay separate paragraphs. A callout indented under a list item stays inside that item.
+
+An inline callout that holds another one in its text, or whose `{` is never closed, is left as it is, and a message says so.
 
 ## Show, hide, and assign shortcuts
 
@@ -121,7 +153,11 @@ without empty strips.
 
 **Save** stays dimmed when there is no callout to build the command from, or when you already have a command that does exactly the same. Press it and a message says which.
 
-A Heading command can insert a chosen callout at a specific heading level. An Inline command inserts a chosen inline callout. A Block command can either insert a new block or wrap the current selection, and it can set the initial fold state:
+Every command has an **Action**, **Wrap selection** or **Insert new**. A new command starts on **Wrap selection**, which inserts an empty callout anyway when there is nothing to wrap.
+
+- A **Heading** command writes a chosen callout at a specific heading level. **Wrap selection** turns the line with the cursor into that heading callout, keeping its text as the title. **Insert new** adds an empty heading callout on a new line and leaves the line alone.
+- An **Inline** command writes a chosen inline callout. **Wrap selection** puts the selected text inside it. **Insert new** adds an empty one at the cursor and leaves the selected text as it is.
+- A **Block** command can either insert a new block or wrap the current selection, and it can set the initial fold state:
 
 | Fold state | Markdown |
 | --- | --- |
@@ -130,6 +166,8 @@ A Heading command can insert a chosen callout at a specific heading level. An In
 | **Foldable, collapsed (-)** | `> [!note]-` |
 
 For example, you can create a command that always wraps text in your favorite block callout, inserts a collapsed warning, or adds a summary as an H2 heading callout.
+
+Heading and inline commands you made before they had an **Action** keep doing exactly what they did, which is **Wrap selection**. Their names in the Command Palette now start with "Wrap in", and their shortcuts stay assigned.
 
 Each custom command appears in the Command Palette and can receive its own hotkey. Because its callout type is already selected, it runs without opening the suggestion list.
 

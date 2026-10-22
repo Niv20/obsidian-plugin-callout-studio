@@ -10,8 +10,10 @@ export const nb: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Pakk inn i {{name}}-blokk-callout (lukket)",
 	"cmd.customInsertBlockExpanded": "Sett inn {{name}}-blokk-callout (åpen)",
 	"cmd.customInsertBlockCollapsed": "Sett inn {{name}}-blokk-callout (lukket)",
+	"cmd.customWrapHeading": "Pakk inn i H{{level}} {{name}}-overskriftscallout",
 	"cmd.customInsertHeading":
 		"Sett inn H{{level}} {{name}}-overskriftscallout",
+	"cmd.customWrapInline": "Pakk inn i {{name}}-inline-callout",
 	"cmd.customInsertInline": "Sett inn {{name}}-inline-callout",
 	"cmd.openQuickInsert": "Hurtiginnsetting av blokk-callout",
 	"autocomplete.createNew": 'Opprett "{{name}}"',
@@ -205,6 +207,10 @@ export const nb: Record<string, string> = {
 	"commandBuilder.action": "Handling",
 	"commandBuilder.actionDesc":
 		"Pakk inn gjør utvalget om til en callout; sett inn legger til en tom en.",
+	"commandBuilder.actionDescHeading":
+		"Pakk inn gjør linjen med markøren om til en overskriftscallout.\nSett inn legger til en tom en på en ny linje.",
+	"commandBuilder.actionDescInline":
+		"Pakk inn legger den valgte teksten inni calloutet.\nSett inn legger til en tom inline-callout ved markøren og lar teksten stå som den er.",
 	"commandBuilder.actionWrap": "Pakk inn utvalg",
 	"commandBuilder.actionInsert": "Sett inn ny",
 	"commandBuilder.foldState": "Foldetilstand",
@@ -264,6 +270,9 @@ export const nb: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "Noen notater kunne ikke konverteres. Callout-typen ble beholdt. Fullførte konverteringer er lagret; løs filproblemet, og kjør handlingen på nytt for å fullføre.",
 	"notice.nothingToWrap": "Ingenting å pakke inn.",
 	"notice.cursorNotInsideCallout": "Markøren er ikke inne i en callout.",
+	"notice.headingAlreadyCallout": "Denne overskriften er allerede en callout.",
+	"notice.unwrapLeftAsIs":
+		"Denne calloutet kunne ikke fjernes på en trygg måte, så den ble latt stå som den er.",
 	"notice.autocompleteTargetMoved":
 		"Ingenting ble satt inn — linjen ble endret mens editoren var åpen.",
 	"notice.autocompleteAlwaysEnabled": "Autofullføring er nå en kjernefunksjon og er alltid aktivert.",

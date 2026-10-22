@@ -11,7 +11,9 @@ export const id: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Bungkus dalam callout blok {{name}} (tertutup)",
 	"cmd.customInsertBlockExpanded": "Sisipkan callout blok {{name}} (terbuka)",
 	"cmd.customInsertBlockCollapsed": "Sisipkan callout blok {{name}} (tertutup)",
+	"cmd.customWrapHeading": "Bungkus dalam heading callout {{name}} H{{level}}",
 	"cmd.customInsertHeading": "Sisipkan heading callout {{name}} H{{level}}",
+	"cmd.customWrapInline": "Bungkus dalam inline callout {{name}}",
 	"cmd.customInsertInline": "Sisipkan inline callout {{name}}",
 	"cmd.openQuickInsert": "Sisipan cepat callout blok",
 
@@ -214,6 +216,10 @@ export const id: Record<string, string> = {
 	"commandBuilder.action": "Aksi",
 	"commandBuilder.actionDesc":
 		"Bungkus mengubah seleksi menjadi callout; sisipkan menambahkan callout kosong.",
+	"commandBuilder.actionDescHeading":
+		"Bungkus mengubah baris tempat kursor berada menjadi heading callout.\nSisipkan menambahkan callout kosong di baris baru.",
+	"commandBuilder.actionDescInline":
+		"Bungkus menempatkan teks yang dipilih di dalam callout.\nSisipkan menambahkan inline callout kosong di kursor dan membiarkan teks apa adanya.",
 	"commandBuilder.actionWrap": "Bungkus seleksi",
 	"commandBuilder.actionInsert": "Sisipkan baru",
 	"commandBuilder.foldState": "Status lipatan",
@@ -276,6 +282,9 @@ export const id: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "Beberapa catatan tidak dapat dikonversi. Tipe callout dipertahankan. Konversi yang selesai telah disimpan; atasi masalah berkas, lalu jalankan lagi tindakan tersebut untuk menyelesaikannya.",
 	"notice.nothingToWrap": "Tidak ada yang perlu dibungkus.",
 	"notice.cursorNotInsideCallout": "Kursor tidak berada di dalam callout.",
+	"notice.headingAlreadyCallout": "Heading ini sudah berupa callout.",
+	"notice.unwrapLeftAsIs":
+		"Callout ini tidak dapat dihapus dengan aman, jadi dibiarkan apa adanya.",
 	"notice.autocompleteTargetMoved":
 		"Tidak ada yang disisipkan — baris berubah saat editor terbuka.",
 	"notice.autocompleteAlwaysEnabled": "Pelengkapan otomatis sekarang menjadi fitur inti dan selalu aktif.",

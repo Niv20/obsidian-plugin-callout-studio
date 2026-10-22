@@ -191,6 +191,40 @@ describe("command editor choices", () => {
 		assert.equal(fakeDom.document.listeners.get("click")?.length ?? 0, before);
 	});
 
+	it("explains Wrap and Insert for the format the command writes, one sentence a line", () => {
+		fakeDom.light();
+		const host = el();
+		const action = buildActionRow(asEl(host), "wrap", () => {});
+		const description = () => host.querySelector(".setting-item-description");
+		try {
+			for (const [role, key] of [
+				["regular", "commandBuilder.actionDesc"],
+				["heading", "commandBuilder.actionDescHeading"],
+				["inline", "commandBuilder.actionDescInline"],
+			] as const) {
+				action.describe(role);
+				assert.equal(description()?.textContent, t(key).replace(/\n/g, ""), role);
+				assert.equal(description()?.querySelectorAll("br").length, t(key).split("\n").length - 1, role);
+			}
+		} finally {
+			action.dropdown.destroy();
+		}
+	});
+
+	it("starts a new command on Wrap, and an old one on what it always did", () => {
+		const host = {
+			registry: { getBuiltIn: () => [], getUserDefined: () => [], getThemeProvided: () => [], get: () => undefined },
+		} as unknown as ConstructorParameters<typeof CommandEditorModal>[1];
+		const app = {} as ConstructorParameters<typeof CommandEditorModal>[0];
+		const actionOf = (existing?: CustomCommand) =>
+			(new CommandEditorModal(app, host, existing ? { existing } : {}) as unknown as { action: string }).action;
+		assert.equal(actionOf(), "wrap");
+		assert.equal(actionOf({ id: "a", calloutId: "note", role: "regular" }), "insert");
+		assert.equal(actionOf({ id: "b", calloutId: "note", role: "heading", headingLevel: 2 }), "wrap");
+		assert.equal(actionOf({ id: "c", calloutId: "note", role: "inline" }), "wrap");
+		assert.equal(actionOf({ id: "d", calloutId: "note", role: "inline", action: "insert" }), "insert");
+	});
+
 	it("refreshes the open format list when theme ownership narrows its options", () => {
 		const host = el();
 		const before = fakeDom.document.listeners.get("click")?.length ?? 0;

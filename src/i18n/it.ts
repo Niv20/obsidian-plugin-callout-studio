@@ -11,7 +11,9 @@ export const it: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Racchiudi in callout a blocco {{name}} (chiuso)",
 	"cmd.customInsertBlockExpanded": "Inserisci callout a blocco {{name}} (aperto)",
 	"cmd.customInsertBlockCollapsed": "Inserisci callout a blocco {{name}} (chiuso)",
+	"cmd.customWrapHeading": "Racchiudi in titolo callout H{{level}} {{name}}",
 	"cmd.customInsertHeading": "Inserisci titolo callout H{{level}} {{name}}",
+	"cmd.customWrapInline": "Racchiudi in callout in linea {{name}}",
 	"cmd.customInsertInline": "Inserisci callout in linea {{name}}",
 	"cmd.openQuickInsert": "Inserimento rapido di callout a blocco",
 
@@ -213,6 +215,10 @@ export const it: Record<string, string> = {
 	"commandBuilder.action": "Azione",
 	"commandBuilder.actionDesc":
 		"Racchiudi trasforma la selezione in un callout; inserisci ne aggiunge uno vuoto.",
+	"commandBuilder.actionDescHeading":
+		"Racchiudi trasforma la riga con il cursore in un callout titolo.\nInserisci ne aggiunge uno vuoto su una nuova riga.",
+	"commandBuilder.actionDescInline":
+		"Racchiudi mette il testo selezionato dentro il callout.\nInserisci aggiunge un callout in linea vuoto al cursore e lascia il testo com'è.",
 	"commandBuilder.actionWrap": "Racchiudi selezione",
 	"commandBuilder.actionInsert": "Inserisci nuovo",
 	"commandBuilder.foldState": "Stato di piegatura",
@@ -281,6 +287,9 @@ export const it: Record<string, string> = {
 
 	"notice.nothingToWrap": "Niente da racchiudere.",
 	"notice.cursorNotInsideCallout": "Il cursore non è dentro un callout.",
+	"notice.headingAlreadyCallout": "Questo titolo è già un callout.",
+	"notice.unwrapLeftAsIs":
+		"Non è stato possibile rimuovere questo callout in sicurezza, quindi è stato lasciato com'è.",
 	"notice.autocompleteTargetMoved":
 		"Non è stato inserito nulla: la riga è cambiata mentre l'editor era aperto.",
 	"notice.autocompleteAlwaysEnabled": "Il completamento automatico è ora una funzionalità principale ed è sempre attivo.",

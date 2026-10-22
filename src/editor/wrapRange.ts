@@ -83,6 +83,26 @@ const readShapes = (editor: Editor): LineShape[] => {
 };
 
 /**
+ * A selection without the lines it only grazes. One that ends at the very
+ * start of a line took nothing from it, and one that starts at the very end
+ * of a line took nothing from that one: both are what dragging or Shift+Down
+ * over whole lines leaves behind. `from` must not come after `to`.
+ */
+export const normalizeSelection = (
+	editor: Editor,
+	from: EditorPosition,
+	to: EditorPosition,
+): { from: EditorPosition; to: EditorPosition } => {
+	if (to.line > from.line && to.ch === 0) {
+		to = { line: to.line - 1, ch: editor.getLine(to.line - 1).length };
+	}
+	if (to.line > from.line && from.ch >= editor.getLine(from.line).length) {
+		from = { line: from.line + 1, ch: 0 };
+	}
+	return { from, to };
+};
+
+/**
  * Plan a wrap of `from`–`to`. `selection` is false for a bare cursor, which
  * asks for the paragraph under it. Returns null when there is no line to put a
  * callout on (the note is only frontmatter).
@@ -94,15 +114,9 @@ export const planWrap = (
 	selection: boolean,
 ): WrapPlan | null => {
 	const lineCount = editor.lineCount();
+	if (selection) ({ from, to } = normalizeSelection(editor, from, to));
 	let first = from.line;
 	let last = to.line;
-	// A selection that ends at the very start of a line took nothing from it,
-	// and one that starts at the very end of a line took nothing from that one:
-	// both are what dragging or Shift+Down over whole lines leaves behind.
-	if (selection && last > first && to.ch === 0) last -= 1;
-	if (selection && last > first && from.ch >= editor.getLine(first).length) {
-		first += 1;
-	}
 
 	// Properties are never wrapped: a target that starts inside them starts
 	// after them.

@@ -95,11 +95,98 @@ keeping it as if the user had chosen the word.
 > signature the compiler checks - a rule that lived nowhere and that
 > refactoring the returns could quietly undo.
 
+## `smartCallout.ts` - which format Wrap and Insert write
+
+**Wrap in callout** and **Insert empty callout** never ask for a format; the
+cursor's place answers it.
+[`src/editor/smartCallout.ts`](../../src/editor/smartCallout.ts) decides
+(`chooseWrapForm`, `chooseInsertForm`, both returning a `CalloutForm`) and then
+writes (`wrapAtCursor`, `insertAtCursor`). The block form is handed straight
+to `wrapSelectionInCallout` / `insertEmptyCallout`, unchanged - Quick Insert
+and block custom commands call those directly and never pass through here.
+
+The line is read with `documentCalloutLineAt`
+([`documentCallouts.ts`](../../src/editor/documentCallouts.ts)), the document
+lexer stopped at one line, because a fence or a `%%` opened lines above makes
+this one code and the line alone cannot know it. Masked bytes are `\0` in
+`visible`.
+
+A **heading** (`readHeading`) is an ATX heading at column 0 and depth 0 - the
+same anchoring `HEADING_CALLOUT_RE` and the autocomplete's heading trigger use -
+read only while `headingCallouts.enabled`. With the role off, a heading is a
+line like any other. `markupEnd` is past the hashes, or past the token of a
+heading that is already a callout. The title's words exclude closing `#` marks,
+so selecting the words of `## Title ##` is the whole heading.
+
+Wrap, after `normalizeSelection` (shared with `planWrap`, and trimmed of
+whitespace at both ends):
+
+| Selection | Form |
+| --- | --- |
+| Cursor on a heading, or a selection touching its markup or covering its title | heading (`headingAlreadyCallout` when it is one) |
+| Part of one line, a heading's title included | inline, when `pillFits`; otherwise the heading for a heading line, a block for any other |
+| The whole content of a line - after `>`, a list marker and a task box (`contentRange`) | block |
+| More than one line, or a bare cursor elsewhere | block |
+
+Insert ignores any selection. A blank line (after its container prefix) takes a
+block. A cursor at or before a heading's `markupEnd` takes a heading callout.
+Anywhere else a bare pill goes in when `pillFits` the point. Everything else
+gets a block below the line, as the command always wrote.
+
+`pillFits` is the shape check. A pill is written only where it reads back as a
+pill, the rule being to change the inserted syntax rather than mend the
+rendering. It refuses:
+
+- a start before the line's content (the `>`, the list marker, a task box);
+- a line the lexer masked whole, or an end *inside* a masked span (both
+  neighbours masked), so a pill may sit at a code span's edge or around it;
+- a line led by a block header (Obsidian's title, no pills in it);
+- any overlap with an existing token's full span (`tokenEnd`);
+- a `|` in the selection on a line with another `|` (a table cell would split).
+
+It then scans the candidate line with a placeholder id (`[!x]{…}` or `[!x]`)
+over the same mask, and asks for an inline token at `from` whose `content.text`
+is the selection (or with no payload, for a bare pill). Last, it runs
+`readCalloutTrigger` on the empty-id line the command will really leave. The
+popover reads the role from the text before `[!`, and `>  [!` (two spaces) is a
+block header to it although the lexer sees a pill. The check catches
+wikilinks, an unmatched brace, a pill that would open a heading's title
+(`## [!x]{My}` is a heading callout titled `{My}`), and a `{` right after a bare
+pill.
+
+`writeForm` leaves the type unfinished, cursor after `[!`: `## [!] Title`
+(keeping the heading's own gap, one space when it had none), `[!]{text}` or
+`[!]`. Each is one `replaceRange`, so one Undo. The command then calls
+`triggerNow`. Closing the popover without a pick leaves the `[!]`, exactly as
+the block form leaves `> [!`. Nothing cleans up in `close()`, because another
+plugin's suggest can claim the line (see the Admonition note below).
+
+## `unwrapAnyCallout.ts` - one Unwrap for every format
+
+[`src/editor/unwrapAnyCallout.ts`](../../src/editor/unwrapAnyCallout.ts) takes
+off the innermost callout at the cursor, or at a selection's start:
+
+1. A pill the cursor touches (`from ≤ ch ≤ tokenEnd`, both ends inclusive). Of
+   two, the later one is chosen, being the nested one or the one the cursor is at
+   the front of. A selection on one line also takes the first pill it overlaps.
+2. Otherwise, the heading token on that line.
+3. Otherwise, `unwrapCalloutAtSelection`, unchanged.
+
+A pill or heading token goes through `convertCalloutLine({ take: token =>
+token === target })`, the converter **Convert uses to plain text** and Review
+conversion share. It never decides on its own what a token becomes. A token the
+converter refuses (an open or nested payload, a removal that would expose an
+HTML block) comes back with `count === 0`, and the command shows
+`notice.unwrapLeftAsIs` instead of writing. The rewrite is one `replaceRange`
+over the line. `mapCh` maps the cursor through the edits: inside a pill it keeps
+its place in the payload, and inside anything else it lands where the token was.
+
 ## `CalloutBlockTools.ts` - wrap, unwrap, insert
 
 [`src/editor/CalloutBlockTools.ts`](../../src/editor/CalloutBlockTools.ts) holds
-the pure editor-manipulation functions behind the three fixed editor commands and
-custom commands. All of it is careful about structure that has nothing to do
+the pure editor-manipulation functions behind the fixed editor commands (which
+reach them through `smartCallout.ts` and `unwrapAnyCallout.ts`), Quick Insert
+and custom commands. All of it is careful about structure that has nothing to do
 with callouts: fenced code blocks, math blocks (`$$`), YAML frontmatter, and
 existing nesting.
 
@@ -239,6 +326,16 @@ new heading *below* the blockquote. Re-typing keeps the heading's own
 frontmatter gets a new body after its closing `---` or `...`; insertion never
 clamps the requested first body line back onto the closing delimiter.
 
+### `insertNewHeadingCallout`
+
+The Insert action of a heading custom command: an untitled `## [!note]` that
+never touches the cursor's line. It takes a blank line's place, and otherwise
+goes on a new line below. It leaves a quoted line with a blank line between,
+because heading callouts are column-0-only. From inside the properties it goes
+on the first body line, onto it when it is blank and above it when it is not.
+A frontmatter-only note gets it appended, through the same
+`appendAfterFrontmatter` that `insertHeadingCallout` uses.
+
 ### `insertInlineCallout`
 
 Inserts a plain pill at the cursor, or - when `allowContent` is on, the
@@ -350,6 +447,12 @@ user, theme, fallback) and the characters in its id play no part:
 | Heading, no title yet | on a **new** plain line under the heading (a heading callout has no body) |
 | Block or heading whose type was changed (a title was already there) | at the end of that line |
 | Inline | after the pill and one space, on the same line |
+| Inline with a `{…}` right after the `]` (Wrap's pill, or a content pill retyped) | after the closing `}`, with nothing added |
+
+A space between `]` and `{` turns the payload into literal text (see
+[Render roles](09-render-roles.md#the--content-payload-inline-pills-only)), so
+`landAfterInlineToken` finds the payload with `scanLineForCalloutTokens` and
+steps past it. Before this, retyping the type of a content pill broke it.
 
 The line under a new block or heading callout is always *opened*, never
 borrowed. Quoting the blank line that separates the callout from the next
@@ -479,8 +582,9 @@ itself before writing (the Admonition note above).
 
 ### `triggerNow` - opening the popup for a programmatically-inserted `[!`
 
-The "Insert empty callout" and "Wrap in callout" commands insert `[!` and want
-the suggestion popup to open immediately - but Obsidian's `EditorSuggest`
+The "Insert empty callout" and "Wrap in callout" commands leave an unfinished
+type - `> [!`, `## [!]` or `[!]{…}` - and want the suggestion popup to open
+immediately - but Obsidian's `EditorSuggest`
 manager only calls `onTrigger` on real keystrokes. `triggerNow` routes through
 the workspace's internal `editorSuggest.trigger(editor, file, true)` (rather
 than calling `this.open()` directly) specifically so the popup registers as
@@ -611,9 +715,19 @@ plugin re-enable all fall out of the *same* code path with no special-casing:
 5. Register (or **re**-register) anything whose desired name differs from
    what it's currently registered under.
 
-`run()` resolves the command's fold state at *run* time, alongside its action,
-and passes the resulting mark to `wrapSelectionInCallout` /
-`insertEmptyCallout` as `foldMark`. It is passed even when it is `""`, which is
+`run()` resolves the command's action at *run* time, for every format.
+Heading Wrap is `insertHeadingCallout` (the line becomes the heading) and
+heading Insert is `insertNewHeadingCallout`. Inline Wrap is
+`insertInlineCallout` with the setting's `allowContent`, and inline Insert is
+the same call with `allowContent: false`, the path that leaves the selection
+alone. `resolveAction`'s absent default per format is what keeps commands
+saved before heading and inline had an action writing what they always wrote
+(see [`CustomCommand`](04-data-model.md#customcommand)). Their palette name
+moves from "Insert …" to "Wrap in …", a name change `syncAll` re-registers at
+the same id, so the hotkey stays.
+
+It resolves the fold state alongside the action, and passes the resulting mark
+to `wrapSelectionInCallout` / `insertEmptyCallout` as `foldMark`. It is passed even when it is `""`, which is
 the point: that is what overrides a callout whose stored `foldable` would
 otherwise add a `+` the command's own dropdown says it does not want. Both block
 actions get it - they write the same header line - and neither of the other two

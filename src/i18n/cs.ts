@@ -11,7 +11,10 @@ export const cs: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Zabalit do blokového callout {{name}} (zavřený)",
 	"cmd.customInsertBlockExpanded": "Vložit blokový callout {{name}} (otevřený)",
 	"cmd.customInsertBlockCollapsed": "Vložit blokový callout {{name}} (zavřený)",
+	"cmd.customWrapHeading":
+		"Zabalit do nadpisového callout {{name}} (H{{level}})",
 	"cmd.customInsertHeading": "Vložit nadpisový callout {{name}} (H{{level}})",
+	"cmd.customWrapInline": "Zabalit do vloženého callout {{name}}",
 	"cmd.customInsertInline": "Vložit vložený callout {{name}}",
 	"cmd.openQuickInsert": "Rychlé vložení blokového callout",
 
@@ -210,6 +213,10 @@ export const cs: Record<string, string> = {
 	"commandBuilder.action": "Akce",
 	"commandBuilder.actionDesc":
 		"Zabalení promění výběr v callout; vložení přidá prázdný.",
+	"commandBuilder.actionDescHeading":
+		"Zabalení promění řádek s kurzorem v nadpisový callout.\nVložení přidá prázdný na nový řádek.",
+	"commandBuilder.actionDescInline":
+		"Zabalení vloží vybraný text dovnitř callout.\nVložení přidá prázdný vložený callout na místo kurzoru a text nechá beze změny.",
 	"commandBuilder.actionWrap": "Zabalit výběr",
 	"commandBuilder.actionInsert": "Vložit nový",
 	"commandBuilder.foldState": "Stav sbalení",
@@ -274,6 +281,9 @@ export const cs: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "Některé poznámky se nepodařilo převést. Typ calloutu byl zachován. Dokončené převody jsou uloženy; vyřešte problém se souborem a poté akci spusťte znovu, abyste ji dokončili.",
 	"notice.nothingToWrap": "Není co zabalit.",
 	"notice.cursorNotInsideCallout": "Kurzor není uvnitř callout.",
+	"notice.headingAlreadyCallout": "Tento nadpis už je callout.",
+	"notice.unwrapLeftAsIs":
+		"Tento callout se nepodařilo bezpečně odebrat, proto zůstal beze změny.",
 	"notice.autocompleteTargetMoved":
 		"Nic nebylo vloženo — řádek se změnil, zatímco byl editor otevřený.",
 	"notice.autocompleteAlwaysEnabled": "Automatické doplňování je nyní základní funkce a je vždy zapnuté.",

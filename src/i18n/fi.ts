@@ -10,7 +10,9 @@ export const fi: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Kääri {{name}}-lohkocalloutiin (kiinni)",
 	"cmd.customInsertBlockExpanded": "Lisää {{name}}-lohkocallout (auki)",
 	"cmd.customInsertBlockCollapsed": "Lisää {{name}}-lohkocallout (kiinni)",
+	"cmd.customWrapHeading": "Kääri H{{level}}-otsikkocalloutiin ({{name}})",
 	"cmd.customInsertHeading": "Lisää H{{level}}-otsikkocallout ({{name}})",
+	"cmd.customWrapInline": "Kääri {{name}}-rivin sisäiseen calloutiin",
 	"cmd.customInsertInline": "Lisää {{name}}-rivin sisäinen callout",
 	"cmd.openQuickInsert": "Lisää lohko-callout nopeasti",
 	"autocomplete.createNew": 'Luo "{{name}}"',
@@ -204,6 +206,10 @@ export const fi: Record<string, string> = {
 	"commandBuilder.action": "Toiminto",
 	"commandBuilder.actionDesc":
 		"Kääri muuttaa valinnan calloutiksi; lisää lisää tyhjän.",
+	"commandBuilder.actionDescHeading":
+		"Kääri muuttaa kohdistimen rivin otsikkocalloutiksi.\nLisää lisää tyhjän uudelle riville.",
+	"commandBuilder.actionDescInline":
+		"Kääri asettaa valitun tekstin calloutin sisään.\nLisää lisää tyhjän rivin sisäisen calloutin kohdistimeen ja jättää tekstin ennalleen.",
 	"commandBuilder.actionWrap": "Kääri valinta",
 	"commandBuilder.actionInsert": "Lisää uusi",
 	"commandBuilder.foldState": "Kutistustila",
@@ -270,6 +276,9 @@ export const fi: Record<string, string> = {
 
 	"notice.nothingToWrap": "Ei mitään kääriä.",
 	"notice.cursorNotInsideCallout": "Kursori ei ole calloutin sisällä.",
+	"notice.headingAlreadyCallout": "Tämä otsikko on jo callout.",
+	"notice.unwrapLeftAsIs":
+		"Tätä calloutia ei voitu poistaa turvallisesti, joten se jätettiin ennalleen.",
 	"notice.autocompleteTargetMoved":
 		"Mitään ei lisätty — rivi muuttui, kun editori oli auki.",
 	"notice.autocompleteAlwaysEnabled": "Automaattinen täydennys on nyt ydintoiminto ja aina käytössä.",

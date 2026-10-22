@@ -235,12 +235,13 @@ describe("show-callout-occurrences", () => {
 /* -------------------------------------------------------------------------- */
 
 describe("the editor commands", () => {
-	function run(id: FixedCommandId, buffer: string): { h: CommandHost; ed: FakeEditor } {
+	function run(id: FixedCommandId, buffer: string, ch = 0): { h: CommandHost; ed: FakeEditor } {
 		const h = host();
 		registerCalloutCommands(h.plugin, deps());
 		const command = h.added.find((c) => c.id === id);
 		assert.ok(command?.editorCallback);
 		const ed = editor(buffer);
+		ed.setCursor({ line: 0, ch });
 		command.editorCallback(asEditor(ed), {} as never);
 		return { h, ed };
 	}
@@ -264,6 +265,29 @@ describe("the editor commands", () => {
 		const { h, ed } = run("callout-unwrap", "> [!note] Note\n> body");
 		assert.strictEqual(ed.getValue(), "Note\nbody");
 		assert.strictEqual(h.triggered.length, 0);
+	});
+
+	it("wraps a heading as a heading callout, and opens the popover on its type", () => {
+		const { h, ed } = run("callout-wrap", "## My title");
+		assert.strictEqual(ed.getValue(), "## [!] My title");
+		assert.strictEqual(h.triggered.length, 1);
+	});
+
+	it("opens nothing on a heading that is a callout already", () => {
+		const { h, ed } = run("callout-wrap", "## [!tip] My title");
+		assert.strictEqual(ed.getValue(), "## [!tip] My title");
+		assert.strictEqual(h.triggered.length, 0);
+	});
+
+	it("inserts a pill in text, and opens the popover on it", () => {
+		const { h, ed } = run("insert-empty-callout", "hello world", 6);
+		assert.strictEqual(ed.getValue(), "hello [!]world");
+		assert.strictEqual(h.triggered.length, 1);
+	});
+
+	it("unwraps a pill and a heading callout too", () => {
+		assert.strictEqual(run("callout-unwrap", "a [!tip]{b} c", 3).ed.getValue(), "a b c");
+		assert.strictEqual(run("callout-unwrap", "## [!tip] Title").ed.getValue(), "## Title");
 	});
 });
 

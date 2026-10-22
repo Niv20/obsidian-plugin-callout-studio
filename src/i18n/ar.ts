@@ -11,8 +11,11 @@ export const ar: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "التفاف في callout الكتلي {{name}} (مغلق)",
 	"cmd.customInsertBlockExpanded": "إدراج callout الكتلي {{name}} (مفتوح)",
 	"cmd.customInsertBlockCollapsed": "إدراج callout الكتلي {{name}} (مغلق)",
+	"cmd.customWrapHeading":
+		"التفاف في عنوان callout {{name}} من المستوى H{{level}}",
 	"cmd.customInsertHeading":
 		"إدراج عنوان callout {{name}} من المستوى H{{level}}",
+	"cmd.customWrapInline": "التفاف في callout {{name}} ضمن السطر",
 	"cmd.customInsertInline": "إدراج callout {{name}} ضمن السطر",
 	"cmd.openQuickInsert": "إدراج سريع لـ callout كتلة",
 
@@ -210,6 +213,10 @@ export const ar: Record<string, string> = {
 	"commandBuilder.action": "الإجراء",
 	"commandBuilder.actionDesc":
 		"الالتفاف يحوّل التحديد إلى callout؛ الإدراج يضيف واحدًا فارغًا.",
+	"commandBuilder.actionDescHeading":
+		"الالتفاف يحوّل السطر الذي عليه المؤشر إلى callout على هيئة عنوان.\nالإدراج يضيف واحدًا فارغًا في سطر جديد.",
+	"commandBuilder.actionDescInline":
+		"الالتفاف يضع النص المحدد داخل callout.\nالإدراج يضيف callout فارغًا ضمن السطر عند المؤشر ويترك النص كما هو.",
 	"commandBuilder.actionWrap": "التفاف حول التحديد",
 	"commandBuilder.actionInsert": "إدراج جديد",
 	"commandBuilder.foldState": "حالة الطي",
@@ -273,6 +280,9 @@ export const ar: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "تعذّر تحويل بعض الملاحظات. تم الاحتفاظ بنوع الـ callout. التحويلات المكتملة محفوظة؛ عالج مشكلة الملف ثم شغّل الإجراء مرة أخرى لإتمامه.",
 	"notice.nothingToWrap": "لا يوجد شيء للالتفاف.",
 	"notice.cursorNotInsideCallout": "المؤشر ليس داخل callout.",
+	"notice.headingAlreadyCallout": "هذا العنوان هو callout بالفعل.",
+	"notice.unwrapLeftAsIs":
+		"تعذّرت إزالة هذا الـ callout بأمان، لذا تُرك كما هو.",
 	"notice.autocompleteTargetMoved":
 		"لم يُدرج أي شيء — تغيّر السطر أثناء فتح المحرّر.",
 	"notice.autocompleteAlwaysEnabled": "أصبح الإكمال التلقائي الآن ميزة أساسية وهو مفعّل دائمًا.",

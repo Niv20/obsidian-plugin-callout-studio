@@ -63,7 +63,9 @@ export const pt: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Envolver em callout de bloco {{name}} (fechado)",
 	"cmd.customInsertBlockExpanded": "Inserir callout de bloco {{name}} (aberto)",
 	"cmd.customInsertBlockCollapsed": "Inserir callout de bloco {{name}} (fechado)",
+	"cmd.customWrapHeading": "Envolver em título H{{level}} callout {{name}}",
 	"cmd.customInsertHeading": "Inserir título H{{level}} callout {{name}}",
+	"cmd.customWrapInline": "Envolver em callout inline {{name}}",
 	"cmd.customInsertInline": "Inserir callout inline {{name}}",
 	"cmd.openQuickInsert": "Inserção rápida de callout de bloco",
 
@@ -266,6 +268,10 @@ export const pt: Record<string, string> = {
 	"commandBuilder.action": "Ação",
 	"commandBuilder.actionDesc":
 		"Envolver transforma a seleção em um callout; inserir adiciona um vazio.",
+	"commandBuilder.actionDescHeading":
+		"Envolver transforma a linha com o cursor em um callout de título.\nInserir adiciona um vazio em uma nova linha.",
+	"commandBuilder.actionDescInline":
+		"Envolver coloca o texto selecionado dentro do callout.\nInserir adiciona um callout inline vazio no cursor e deixa o texto como está.",
 	"commandBuilder.actionWrap": "Envolver seleção",
 	"commandBuilder.actionInsert": "Inserir novo",
 	"commandBuilder.foldState": "Estado de dobra",
@@ -328,6 +334,9 @@ export const pt: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "Algumas notas não puderam ser convertidas. O tipo de callout foi mantido. As conversões concluídas foram salvas; resolva o problema do arquivo e execute a ação novamente para concluir.",
 	"notice.nothingToWrap": "Nada para envolver.",
 	"notice.cursorNotInsideCallout": "O cursor não está dentro de um callout.",
+	"notice.headingAlreadyCallout": "Este título já é um callout.",
+	"notice.unwrapLeftAsIs":
+		"Não foi possível remover este callout com segurança, então ele foi deixado como está.",
 	"notice.autocompleteTargetMoved":
 		"Nada foi inserido: a linha mudou enquanto o editor estava aberto.",
 	"notice.autocompleteAlwaysEnabled": "O preenchimento automático agora é um recurso principal e está sempre ativado.",

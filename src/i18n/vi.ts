@@ -63,7 +63,9 @@ export const vi: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Bọc trong callout khối {{name}} (đóng)",
 	"cmd.customInsertBlockExpanded": "Chèn callout khối {{name}} (mở)",
 	"cmd.customInsertBlockCollapsed": "Chèn callout khối {{name}} (đóng)",
+	"cmd.customWrapHeading": "Bọc trong tiêu đề callout H{{level}} {{name}}",
 	"cmd.customInsertHeading": "Chèn tiêu đề callout H{{level}} {{name}}",
+	"cmd.customWrapInline": "Bọc trong callout nội dòng {{name}}",
 	"cmd.customInsertInline": "Chèn callout nội dòng {{name}}",
 	"cmd.openQuickInsert": "Chèn nhanh callout khối",
 
@@ -265,6 +267,10 @@ export const vi: Record<string, string> = {
 	"commandBuilder.action": "Hành động",
 	"commandBuilder.actionDesc":
 		"Bọc sẽ biến phần chọn thành callout; chèn sẽ thêm một callout trống.",
+	"commandBuilder.actionDescHeading":
+		"Bọc sẽ biến dòng có con trỏ thành callout tiêu đề.\nChèn sẽ thêm một callout trống ở dòng mới.",
+	"commandBuilder.actionDescInline":
+		"Bọc sẽ đặt đoạn văn bản đã chọn vào trong callout.\nChèn sẽ thêm một callout nội dòng trống tại con trỏ và giữ nguyên văn bản.",
 	"commandBuilder.actionWrap": "Bọc phần chọn",
 	"commandBuilder.actionInsert": "Chèn mới",
 	"commandBuilder.foldState": "Trạng thái thu gọn",
@@ -331,6 +337,9 @@ export const vi: Record<string, string> = {
 
 	"notice.nothingToWrap": "Không có gì để bọc.",
 	"notice.cursorNotInsideCallout": "Con trỏ không nằm trong callout.",
+	"notice.headingAlreadyCallout": "Tiêu đề này đã là một callout.",
+	"notice.unwrapLeftAsIs":
+		"Không thể bỏ callout này một cách an toàn nên đã giữ nguyên.",
 	"notice.autocompleteTargetMoved":
 		"Không có gì được chèn — dòng đã thay đổi khi trình chỉnh sửa đang mở.",
 	"notice.autocompleteAlwaysEnabled": "Tự động hoàn thành hiện là tính năng cốt lõi và luôn được bật.",

@@ -10,8 +10,11 @@ export const el: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Αναδίπλωση σε callout μπλοκ {{name}} (κλειστό)",
 	"cmd.customInsertBlockExpanded": "Εισαγωγή callout μπλοκ {{name}} (ανοιχτό)",
 	"cmd.customInsertBlockCollapsed": "Εισαγωγή callout μπλοκ {{name}} (κλειστό)",
+	"cmd.customWrapHeading":
+		"Αναδίπλωση σε callout επικεφαλίδας H{{level}} {{name}}",
 	"cmd.customInsertHeading":
 		"Εισαγωγή callout επικεφαλίδας H{{level}} {{name}}",
+	"cmd.customWrapInline": "Αναδίπλωση σε ενσωματωμένο callout {{name}}",
 	"cmd.customInsertInline": "Εισαγωγή ενσωματωμένου callout {{name}}",
 	"cmd.openQuickInsert": "Γρήγορη εισαγωγή callout μπλοκ",
 	"autocomplete.createNew": 'Δημιουργία "{{name}}"',
@@ -205,6 +208,10 @@ export const el: Record<string, string> = {
 	"commandBuilder.action": "Ενέργεια",
 	"commandBuilder.actionDesc":
 		"Η αναδίπλωση μετατρέπει την επιλογή σε callout· η εισαγωγή προσθέτει ένα κενό.",
+	"commandBuilder.actionDescHeading":
+		"Η αναδίπλωση μετατρέπει τη γραμμή με τον κέρσορα σε callout επικεφαλίδας.\nΗ εισαγωγή προσθέτει ένα κενό σε νέα γραμμή.",
+	"commandBuilder.actionDescInline":
+		"Η αναδίπλωση τοποθετεί το επιλεγμένο κείμενο μέσα στο callout.\nΗ εισαγωγή προσθέτει ένα κενό ενσωματωμένο callout στον κέρσορα και αφήνει το κείμενο ως έχει.",
 	"commandBuilder.actionWrap": "Αναδίπλωση επιλογής",
 	"commandBuilder.actionInsert": "Εισαγωγή νέου",
 	"commandBuilder.foldState": "Κατάσταση σύμπτυξης",
@@ -264,6 +271,9 @@ export const el: Record<string, string> = {
 	"notice.nothingToWrap": "Δεν υπάρχει τίποτα για αναδίπλωση.",
 	"notice.cursorNotInsideCallout":
 		"Ο κέρσορας δεν βρίσκεται μέσα σε callout.",
+	"notice.headingAlreadyCallout": "Αυτή η επικεφαλίδα είναι ήδη callout.",
+	"notice.unwrapLeftAsIs":
+		"Δεν ήταν δυνατή η ασφαλής αφαίρεση αυτού του callout, γι' αυτό παρέμεινε ως έχει.",
 	"notice.autocompleteTargetMoved":
 		"Δεν εισήχθη τίποτα — η γραμμή άλλαξε ενώ ο επεξεργαστής ήταν ανοιχτός.",
 	"notice.autocompleteAlwaysEnabled": "Η αυτόματη συμπλήρωση είναι πλέον βασική λειτουργία και είναι πάντα ενεργή.",

@@ -10,7 +10,9 @@ export const da: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Indpak i {{name}}-blokcallout (lukket)",
 	"cmd.customInsertBlockExpanded": "Indsæt {{name}}-blokcallout (åben)",
 	"cmd.customInsertBlockCollapsed": "Indsæt {{name}}-blokcallout (lukket)",
+	"cmd.customWrapHeading": "Indpak i H{{level}} {{name}}-overskriftscallout",
 	"cmd.customInsertHeading": "Indsæt H{{level}} {{name}}-overskriftscallout",
+	"cmd.customWrapInline": "Indpak i {{name}}-inline-callout",
 	"cmd.customInsertInline": "Indsæt {{name}}-inline-callout",
 	"cmd.openQuickInsert": "Hurtig indsættelse af blok-callout",
 	"autocomplete.createNew": 'Opret "{{name}}"',
@@ -199,6 +201,10 @@ export const da: Record<string, string> = {
 	"commandBuilder.action": "Handling",
 	"commandBuilder.actionDesc":
 		"Indpak gør markeringen til en callout; indsæt tilføjer en tom.",
+	"commandBuilder.actionDescHeading":
+		"Indpak gør linjen med markøren til en overskriftscallout.\nIndsæt tilføjer en tom på en ny linje.",
+	"commandBuilder.actionDescInline":
+		"Indpak lægger den markerede tekst ind i callouten.\nIndsæt tilføjer en tom inline-callout ved markøren og lader teksten stå, som den er.",
 	"commandBuilder.actionWrap": "Indpak markering",
 	"commandBuilder.actionInsert": "Indsæt ny",
 	"commandBuilder.foldState": "Foldtilstand",
@@ -262,6 +268,9 @@ export const da: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "Nogle noter kunne ikke konverteres. Callout-typen blev bevaret. Gennemførte konverteringer er gemt; løs filproblemet, og kør handlingen igen for at afslutte.",
 	"notice.nothingToWrap": "Intet at indpakke.",
 	"notice.cursorNotInsideCallout": "Markøren er ikke inde i en callout.",
+	"notice.headingAlreadyCallout": "Denne overskrift er allerede en callout.",
+	"notice.unwrapLeftAsIs":
+		"Denne callout kunne ikke fjernes sikkert, så den blev ladet urørt.",
 	"notice.autocompleteTargetMoved":
 		"Intet blev indsat — linjen blev ændret, mens editoren var åben.",
 	"notice.autocompleteAlwaysEnabled": "Autofuldførelse er nu en kernefunktion og er altid aktiveret.",

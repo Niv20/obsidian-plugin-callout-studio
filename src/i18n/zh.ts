@@ -63,7 +63,9 @@ export const zh: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "用 {{name}} 块 callout 包裹（折叠）",
 	"cmd.customInsertBlockExpanded": "插入 {{name}} 块 callout（展开）",
 	"cmd.customInsertBlockCollapsed": "插入 {{name}} 块 callout（折叠）",
+	"cmd.customWrapHeading": "用 H{{level}} {{name}} 标题 callout 包裹",
 	"cmd.customInsertHeading": "插入 H{{level}} {{name}} 标题 callout",
+	"cmd.customWrapInline": "用 {{name}} 行内 callout 包裹",
 	"cmd.customInsertInline": "插入 {{name}} 行内 callout",
 	"cmd.openQuickInsert": "快速插入块级 callout",
 
@@ -258,6 +260,10 @@ export const zh: Record<string, string> = {
 	"commandBuilder.action": "操作",
 	"commandBuilder.actionDesc":
 		"「包裹」将选中内容转换为 callout；「插入」添加一个空 callout。",
+	"commandBuilder.actionDescHeading":
+		"「包裹」会将光标所在的行转换为标题 callout。\n「插入」会在新的一行添加一个空 callout。",
+	"commandBuilder.actionDescInline":
+		"「包裹」会将选中的文字放入 callout 中。\n「插入」会在光标处添加一个空的行内 callout，文字保持不变。",
 	"commandBuilder.actionWrap": "包裹所选内容",
 	"commandBuilder.actionInsert": "插入新的",
 	"commandBuilder.foldState": "折叠状态",
@@ -320,6 +326,8 @@ export const zh: Record<string, string> = {
 
 	"notice.nothingToWrap": "没有可包裹的内容。",
 	"notice.cursorNotInsideCallout": "光标不在 callout 内部。",
+	"notice.headingAlreadyCallout": "此标题已经是 callout。",
+	"notice.unwrapLeftAsIs": "无法安全地解包此 callout，因此保持原样。",
 	"notice.autocompleteTargetMoved":
 		"未插入任何内容 — 编辑器打开期间该行已更改。",
 	"notice.autocompleteAlwaysEnabled": "自动补全现在是核心功能，并且始终启用。",

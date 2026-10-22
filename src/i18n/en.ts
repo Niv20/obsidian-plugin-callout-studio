@@ -25,7 +25,9 @@ export const en: Record<string, string> = {
 	"cmd.customInsertBlockExpanded": "Insert {{name}} block callout (expanded)",
 	"cmd.customInsertBlockCollapsed":
 		"Insert {{name}} block callout (collapsed)",
+	"cmd.customWrapHeading": "Wrap in H{{level}} {{name}} heading callout",
 	"cmd.customInsertHeading": "Insert H{{level}} {{name}} heading callout",
+	"cmd.customWrapInline": "Wrap in {{name}} inline callout",
 	"cmd.customInsertInline": "Insert {{name}} inline callout",
 
 	// Autocomplete
@@ -591,6 +593,10 @@ export const en: Record<string, string> = {
 	"commandBuilder.action": "Action",
 	"commandBuilder.actionDesc":
 		"Wrap turns the selection into a callout; insert adds an empty one.",
+	"commandBuilder.actionDescHeading":
+		"Wrap turns the line with the cursor into a heading callout.\nInsert adds an empty one on a new line.",
+	"commandBuilder.actionDescInline":
+		"Wrap puts the selected text inside the pill.\nInsert adds an empty pill at the cursor and leaves the text as it is.",
 	"commandBuilder.actionWrap": "Wrap selection",
 	"commandBuilder.actionInsert": "Insert new",
 	"commandBuilder.foldState": "Fold state",
@@ -781,6 +787,9 @@ export const en: Record<string, string> = {
 		"Callout Studio's settings were saved by a newer version of the plugin, so nothing will be written on this device until you update it. Your settings are safe — update Callout Studio here and reload Obsidian.",
 	"notice.nothingToWrap": "Nothing to wrap.",
 	"notice.cursorNotInsideCallout": "Cursor is not inside a callout.",
+	"notice.headingAlreadyCallout": "This heading is already a callout.",
+	"notice.unwrapLeftAsIs":
+		"This callout could not be unwrapped safely, so it was left as it is.",
 	"notice.autocompleteTargetMoved":
 		"Nothing was inserted — the line changed while the editor was open.",
 	"notice.autocompleteAlwaysEnabled":

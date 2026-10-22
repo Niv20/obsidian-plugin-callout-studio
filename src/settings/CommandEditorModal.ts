@@ -29,6 +29,7 @@ import {
 	resolveAction,
 	resolveFold,
 	resolveHeadingLevel,
+	storedAction,
 } from "../utils/customCommands";
 import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import { sortCalloutsByDisplayName } from "../utils/sorting";
@@ -38,7 +39,12 @@ import { buildCalloutRow, type CalloutRow } from "./command/calloutRow";
 import type { CalloutEditorPlugin } from "./editor/types";
 import { buildFormatRow, type FormatRow } from "./command/commandRoles";
 import { buildFoldStateRow, type FoldStateRow } from "./command/foldStateRow";
-import { buildActionRow, buildHeadingLevelRow, type ChoiceRow } from "./command/optionRows";
+import {
+	buildActionRow,
+	buildHeadingLevelRow,
+	type ActionRow,
+	type ChoiceRow,
+} from "./command/optionRows";
 
 /**
  * Narrow structural host — the plugin instance, which both call sites already
@@ -68,7 +74,7 @@ export class CommandEditorModal extends Modal {
 	private resolved = false;
 
 	private headingRow?: ChoiceRow;
-	private actionRow?: ChoiceRow;
+	private actionRow?: ActionRow;
 	private formatRow?: FormatRow;
 	private foldRow?: FoldStateRow;
 	private calloutRow?: CalloutRow;
@@ -89,7 +95,9 @@ export class CommandEditorModal extends Modal {
 		this.headingLevel = existing
 			? resolveHeadingLevel(existing)
 			: DEFAULT_HEADING_LEVEL;
-		this.action = existing ? resolveAction(existing) : "insert";
+		// Wrap for a new command, whatever its format: on a blank line or with
+		// nothing selected it inserts anyway, so it is the one that does both.
+		this.action = existing ? resolveAction(existing) : "wrap";
 		this.fold = existing ? resolveFold(existing) : "none";
 		// A discovered callout can have a whitespace-only name and sort first.
 		// Start a new command on the familiar Note type instead of a blank field.
@@ -223,7 +231,7 @@ export class CommandEditorModal extends Modal {
 			...(this.role === "heading"
 				? { headingLevel: this.headingLevel }
 				: {}),
-			...(this.role === "regular" ? { action: this.action } : {}),
+			...storedAction({ role: this.role, action: this.action }),
 			// Omitted when it is the default, matching what the sanitizer
 			// stores — otherwise a saved command and the same command reloaded
 			// would differ by a key that means nothing.
@@ -253,12 +261,10 @@ export class CommandEditorModal extends Modal {
 			"cs-row-hidden",
 			this.role !== "heading",
 		);
-		// Heading and inline have exactly one sensible action, so the row is
-		// hidden rather than shown as a dropdown with nothing to choose.
-		this.actionRow?.el.toggleClass("cs-row-hidden", this.role !== "regular");
+		// Every format has the choice; what each option means differs.
+		this.actionRow?.describe(this.role);
 		this.foldRow?.sync(this.role);
 		if (this.role !== "heading") this.headingRow?.dropdown.close();
-		if (this.role !== "regular") this.actionRow?.dropdown.close();
 
 		const def = this.host.registry.get(this.calloutId);
 		if (this.previewEl) {

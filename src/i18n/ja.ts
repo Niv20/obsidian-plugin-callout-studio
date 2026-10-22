@@ -11,7 +11,9 @@ export const ja: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "{{name}}ブロックcalloutで囲む（折りたたみ）",
 	"cmd.customInsertBlockExpanded": "{{name}}ブロックcalloutを挿入（展開）",
 	"cmd.customInsertBlockCollapsed": "{{name}}ブロックcalloutを挿入（折りたたみ）",
+	"cmd.customWrapHeading": "H{{level}} {{name}}見出しcalloutで囲む",
 	"cmd.customInsertHeading": "H{{level}} {{name}}見出しcalloutを挿入",
+	"cmd.customWrapInline": "{{name}}インラインcalloutで囲む",
 	"cmd.customInsertInline": "{{name}}インラインcalloutを挿入",
 	"cmd.openQuickInsert": "ブロックcalloutをクイック挿入",
 
@@ -216,6 +218,10 @@ export const ja: Record<string, string> = {
 	"commandBuilder.action": "アクション",
 	"commandBuilder.actionDesc":
 		"「囲む」は選択範囲をcalloutに変換し、「挿入」は空のcalloutを追加します。",
+	"commandBuilder.actionDescHeading":
+		"「囲む」はカーソルのある行を見出しcalloutに変換します。\n「挿入」は新しい行に空のcalloutを追加します。",
+	"commandBuilder.actionDescInline":
+		"「囲む」は選択したテキストをcalloutの中に入れます。\n「挿入」はカーソル位置に空のインラインcalloutを追加してテキストはそのままにします。",
 	"commandBuilder.actionWrap": "選択範囲を囲む",
 	"commandBuilder.actionInsert": "新規挿入",
 	"commandBuilder.foldState": "折りたたみ状態",
@@ -278,6 +284,8 @@ export const ja: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "一部のノートを変換できませんでした。callout タイプは保持されました。完了した変換は保存されています。ファイルの問題を解決してから、操作をもう一度実行して完了してください。",
 	"notice.nothingToWrap": "囲むものがありません。",
 	"notice.cursorNotInsideCallout": "カーソルがcallout内にありません。",
+	"notice.headingAlreadyCallout": "この見出しはすでにcalloutです。",
+	"notice.unwrapLeftAsIs": "このcalloutは安全に解除できなかったため、そのままにしました。",
 	"notice.autocompleteTargetMoved":
 		"何も挿入されませんでした — エディタを開いている間に行が変更されました。",
 	"notice.autocompleteAlwaysEnabled": "オートコンプリートはコア機能になり、常に有効です。",

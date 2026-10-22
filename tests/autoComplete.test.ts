@@ -661,6 +661,16 @@ describe("selectSuggestion — heading callout", () => {
 		);
 	});
 
+	it("finishes the empty type Wrap in callout leaves on a heading", () => {
+		const h = harness();
+		const { info } = triggerAt(h, "## [!⎸] My section");
+		assert.strictEqual(info?.query, "");
+		assert.strictEqual(
+			landing(h, "## [!⎸] My section\nSection text", "note"),
+			"## [!note] My section|\nSection text",
+		);
+	});
+
 	it("writes no fold mark, whatever the callout's own default is", () => {
 		// A heading callout folds through Obsidian's own heading fold; the `+`/`-`
 		// syntax belongs to the blockquote form alone.
@@ -733,6 +743,21 @@ describe("selectSuggestion — inline pill", () => {
 		assert.strictEqual(
 			pick(h, "a [!no⎸|purple] b", "note").getValue(),
 			"a [!note|purple] b",
+		);
+	});
+
+	it("keeps a pill's `{text}` attached, landing after it", () => {
+		// A space between `]` and `{` turns the payload into literal text, so
+		// retyping a content pill's type used to break the pill it changed.
+		const h = harness();
+		assert.strictEqual(
+			pick(h, "a [!warn⎸]{keep this} b", "note").valueWithCursor(),
+			"a [!note]{keep this}| b",
+		);
+		// The empty type "Wrap in callout" leaves for a partly selected line.
+		assert.strictEqual(
+			pick(h, "a [!⎸]{keep this}", "note").valueWithCursor(),
+			"a [!note]{keep this}|",
 		);
 	});
 });

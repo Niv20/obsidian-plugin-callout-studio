@@ -11,7 +11,9 @@ export const pl: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Owiń w blokowy callout {{name}} (zamknięty)",
 	"cmd.customInsertBlockExpanded": "Wstaw blokowy callout {{name}} (otwarty)",
 	"cmd.customInsertBlockCollapsed": "Wstaw blokowy callout {{name}} (zamknięty)",
+	"cmd.customWrapHeading": "Owiń w nagłówek H{{level}} callout {{name}}",
 	"cmd.customInsertHeading": "Wstaw nagłówek H{{level}} callout {{name}}",
+	"cmd.customWrapInline": "Owiń w śródtekstowy callout {{name}}",
 	"cmd.customInsertInline": "Wstaw śródtekstowy callout {{name}}",
 	"cmd.openQuickInsert": "Szybkie wstawianie callout blokowego",
 
@@ -214,6 +216,10 @@ export const pl: Record<string, string> = {
 	"commandBuilder.action": "Akcja",
 	"commandBuilder.actionDesc":
 		"Owiń zamienia zaznaczenie w callout; wstaw dodaje pusty.",
+	"commandBuilder.actionDescHeading":
+		"Owiń zamienia wiersz z kursorem w callout nagłówkowy.\nWstaw dodaje pusty w nowym wierszu.",
+	"commandBuilder.actionDescInline":
+		"Owiń umieszcza zaznaczony tekst wewnątrz callout.\nWstaw dodaje pusty śródtekstowy callout przy kursorze i zostawia tekst bez zmian.",
 	"commandBuilder.actionWrap": "Owiń zaznaczenie",
 	"commandBuilder.actionInsert": "Wstaw nowy",
 	"commandBuilder.foldState": "Stan zwijania",
@@ -277,6 +283,9 @@ export const pl: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "Niektórych notatek nie udało się przekonwertować. Typ callout został zachowany. Ukończone konwersje są zapisane; rozwiąż problem z plikiem, a następnie ponownie uruchom akcję, aby ją zakończyć.",
 	"notice.nothingToWrap": "Nic do owinięcia.",
 	"notice.cursorNotInsideCallout": "Kursor nie jest wewnątrz callout.",
+	"notice.headingAlreadyCallout": "Ten nagłówek jest już callout.",
+	"notice.unwrapLeftAsIs":
+		"Nie udało się bezpiecznie usunąć tego callout, więc został bez zmian.",
 	"notice.autocompleteTargetMoved":
 		"Nic nie wstawiono — wiersz zmienił się, gdy edytor był otwarty.",
 	"notice.autocompleteAlwaysEnabled": "Autouzupełnianie jest teraz funkcją podstawową i jest zawsze włączone.",

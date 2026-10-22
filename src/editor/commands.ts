@@ -2,19 +2,16 @@
  * editor/commands.ts — Registers all user-facing Obsidian commands.
  *
  * Calls plugin.addCommand() for every id in FIXED_COMMAND_IDS. Command
- * implementations delegate to CalloutBlockTools or to an injected window
- * passed in as `FixedCommandDeps`.
+ * implementations delegate to the editor transforms (smartCallout,
+ * unwrapAnyCallout) or to an injected window passed in as `FixedCommandDeps`.
  * Command IDs must never be renamed after release because users may have
  * them bound to hotkeys.
  */
 import type { Command, Plugin } from "obsidian";
 import { CalloutEditor } from "../settings/CalloutEditor";
 import type { CalloutAutoComplete } from "./AutoComplete";
-import {
-	insertEmptyCallout,
-	unwrapCalloutAtSelection,
-	wrapSelectionInCallout,
-} from "./CalloutBlockTools";
+import { insertAtCursor, wrapAtCursor } from "./smartCallout";
+import { unwrapCalloutAtCursor } from "./unwrapAnyCallout";
 import { t } from "../i18n";
 import type { PluginSettings } from "../types";
 import { QUICK_INSERT_ICON_ID, STATISTICS_ICON_ID } from "../icons/uiIcons";
@@ -111,7 +108,7 @@ function buildFixedCommand(
 				id,
 				name,
 				editorCallback: (editor) => {
-					if (insertEmptyCallout(editor)) {
+					if (insertAtCursor(editor, plugin.settings)) {
 						plugin.autoComplete.triggerNow(
 							editor,
 							plugin.app.workspace.getActiveFile(),
@@ -124,7 +121,7 @@ function buildFixedCommand(
 				id,
 				name,
 				editorCallback: (editor) => {
-					if (wrapSelectionInCallout(editor)) {
+					if (wrapAtCursor(editor, plugin.settings)) {
 						plugin.autoComplete.triggerNow(
 							editor,
 							plugin.app.workspace.getActiveFile(),
@@ -137,7 +134,7 @@ function buildFixedCommand(
 				id,
 				name,
 				editorCallback: (editor) => {
-					unwrapCalloutAtSelection(editor);
+					unwrapCalloutAtCursor(editor);
 				},
 			};
 		case "open-quick-insert":

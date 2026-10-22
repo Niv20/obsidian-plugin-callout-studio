@@ -156,7 +156,8 @@ function renderCommand(parent: HTMLElement, entry: Entry, side: RecoverySide): v
 	const parts = [Object.hasOwn(ROLE_LABELS, role) ? t(ROLE_LABELS[role as CalloutRenderRole]) : role];
 	const command = entry as Partial<CustomCommand>;
 	if (role === "heading") parts.push(t("recovery.details.value.headingLevel", { value: resolveHeadingLevel(command) }));
-	if (role === "regular") parts.push(t(COMMAND_ACTIONS[resolveAction(command)]!), t(COMMAND_FOLDS[resolveFold(command)]!));
+	if (Object.hasOwn(ROLE_LABELS, role)) parts.push(t(COMMAND_ACTIONS[resolveAction(command)]!));
+	if (role === "regular") parts.push(t(COMMAND_FOLDS[resolveFold(command)]!));
 	parent.createDiv({ cls: "cs-recovery-muted", text: parts.filter(Boolean).join(" · ") });
 }
 

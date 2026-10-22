@@ -658,10 +658,9 @@ describe("upgrading commands saved before block callouts named their format", ()
 		]);
 	});
 
-	it("leaves heading and inline commands where they were", () => {
-		// Those two already named their format, so the rename must not reach
-		// them — and a name that did not move must not cost a re-registration,
-		// which is what the second sweep here checks.
+	it("names a stored heading or inline command for its explicit action", () => {
+		// A name that did not move must not cost a re-registration, which is
+		// what the second sweep here checks.
 		const h = harness();
 		addCallout(h.registry);
 		seed(h, { id: "cc-h", role: "heading", headingLevel: 3 });
@@ -678,6 +677,64 @@ describe("upgrading commands saved before block callouts named their format", ()
 		h.manager.syncAll();
 		assert.deepStrictEqual(h.added, []);
 		assert.deepStrictEqual(h.removed, []);
+	});
+});
+
+describe("upgrading heading and inline commands saved before they had an action", () => {
+	/** What a released version stored: no `action` on these two roles. */
+	const legacy = (h: Harness): void => {
+		h.registry.settings.customCommands.push(
+			{ id: "cc-h", calloutId: "quiet", role: "heading", headingLevel: 2 },
+			{ id: "cc-i", calloutId: "quiet", role: "inline" },
+		);
+	};
+
+	it("renames them Wrap in place, at the same id", () => {
+		// They always took the line or selection they ran on, which is Wrap, so
+		// the name says so now. The unchanged id is the kept hotkey.
+		const h = harness();
+		addCallout(h.registry);
+		legacy(h);
+
+		h.manager.syncAll();
+
+		assert.deepStrictEqual(
+			h.added.map((command) => command.name),
+			["Wrap in H2 Quiet heading callout", "Wrap in Quiet inline callout"],
+		);
+		assert.deepStrictEqual(idsOf(h.added), [obsidianCommandId("cc-h"), obsidianCommandId("cc-i")]);
+		assert.deepStrictEqual(h.removed, []);
+	});
+
+	it("rewrites nothing on disk", () => {
+		const h = harness();
+		addCallout(h.registry);
+		legacy(h);
+
+		h.manager.syncAll();
+
+		assert.deepStrictEqual(h.registry.settings.customCommands, [
+			{ id: "cc-h", calloutId: "quiet", role: "heading", headingLevel: 2 },
+			{ id: "cc-i", calloutId: "quiet", role: "inline" },
+		]);
+		assert.strictEqual(h.saves, 0);
+	});
+
+	it("keeps writing what they always wrote", () => {
+		const h = harness();
+		addCallout(h.registry);
+		legacy(h);
+		h.manager.syncAll();
+		const [heading, inline] = h.added;
+
+		const line = editor("My title");
+		heading!.editorCallback!(asEditor(line), {} as never);
+		assert.strictEqual(line.getValue(), "## [!quiet] My title");
+
+		const pill = editor("before after");
+		pill.setCursor({ line: 0, ch: 7 });
+		inline!.editorCallback!(asEditor(pill), {} as never);
+		assert.strictEqual(pill.getValue(), "before [!quiet] after");
 	});
 
 	it("still re-registers a renamed callout at the same id", () => {
@@ -800,8 +857,14 @@ describe("the registered editorCallback", () => {
 
 		await h.manager.add({ calloutId: "quiet", role: "heading", headingLevel: 3 });
 		assert.strictEqual(run(h, ""), "### [!quiet]");
+		// Wrap takes the line it runs on; Insert leaves it and adds its own.
+		assert.strictEqual(run(h, "My title"), "### [!quiet] My title");
+		await h.manager.add({ calloutId: "quiet", role: "heading", headingLevel: 3, action: "insert" });
+		assert.strictEqual(run(h, "My title"), "My title\n### [!quiet]");
 
 		await h.manager.add({ calloutId: "quiet", role: "inline" });
+		assert.ok(run(h, "").startsWith("[!quiet]"));
+		await h.manager.add({ calloutId: "quiet", role: "inline", action: "insert" });
 		assert.ok(run(h, "").startsWith("[!quiet]"));
 	});
 

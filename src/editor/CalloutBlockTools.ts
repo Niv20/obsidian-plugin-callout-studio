@@ -6,8 +6,8 @@
  * existing callout back to plain text. The structural questions it leans on
  * live next door — `wrapRange.ts` for which lines a wrap takes and how deep it
  * goes, `quotePrefix.ts` for the `>` arithmetic of a single line.
- * Used by editor/commands.ts (keyboard commands), the Quick insert window and
- * user-built block commands.
+ * Used by the fixed commands (through smartCallout.ts and unwrapAnyCallout.ts,
+ * which pick the format), the Quick insert window and user-built commands.
  */
 import { Editor, Notice } from "obsidian";
 import type { EditorPosition } from "obsidian";
@@ -341,6 +341,10 @@ export const insertEmptyCallout = (
 	return true;
 };
 
+/** The `#` run for a heading level, clamped to a real one. */
+const headingHashes = (level: number): string =>
+	"#".repeat(Math.min(Math.max(Math.round(level), 1), 6));
+
 /**
  * Turn the cursor's line into a heading callout: `## [!note] Title`.
  *
@@ -363,7 +367,7 @@ export const insertHeadingCallout = (
 ): boolean => {
 	if (editor.lineCount() === 0) return false;
 
-	const hashes = "#".repeat(Math.min(Math.max(Math.round(level), 1), 6));
+	const hashes = headingHashes(level);
 	const frontmatterEnd = findFrontmatterEnd(editor);
 	if (appendAfterFrontmatter(editor, frontmatterEnd, `${hashes} ${buildHeadingToken(def)}`)) return true;
 	const head = editor.getCursor("head");
@@ -413,6 +417,46 @@ export const insertHeadingCallout = (
 	);
 	editor.setCursor({ line: targetLine, ch: replacement.length });
 
+	return true;
+};
+
+/**
+ * Write a new, untitled heading callout — `## [!note]` — without touching the
+ * line the cursor is on: it takes a blank line's place, and otherwise goes on a
+ * line of its own below it. The Insert counterpart of `insertHeadingCallout`,
+ * with the same two places it never writes: into the properties, where it goes
+ * on the first line after them instead, and into a quote, which it leaves with
+ * a blank line between.
+ */
+export const insertNewHeadingCallout = (
+	editor: Editor,
+	def: CalloutDefinition,
+	level: number,
+): boolean => {
+	if (editor.lineCount() === 0) return false;
+
+	const heading = `${headingHashes(level)} ${buildHeadingToken(def)}`;
+	const frontmatterEnd = findFrontmatterEnd(editor);
+	if (appendAfterFrontmatter(editor, frontmatterEnd, heading)) return true;
+	const head = editor.getCursor("head");
+	const inProperties = head.line <= frontmatterEnd;
+	const line = inProperties ? frontmatterEnd + 1 : head.line;
+	const text = editor.getLine(line);
+
+	if (text.trim() === "") {
+		editor.replaceRange(heading, { line, ch: 0 }, { line, ch: text.length });
+		editor.setCursor({ line, ch: heading.length });
+		return true;
+	}
+	if (inProperties) {
+		editor.replaceRange(`${heading}\n`, { line, ch: 0 });
+		editor.setCursor({ line, ch: heading.length });
+		return true;
+	}
+	const gap = countLeadingQuoteTokens(text) > 0 ? "\n\n" : "\n";
+	editor.replaceRange(`${gap}${heading}`, { line, ch: text.length });
+	const headingLine = line + gap.length;
+	editor.setCursor({ line: headingLine, ch: heading.length });
 	return true;
 };
 

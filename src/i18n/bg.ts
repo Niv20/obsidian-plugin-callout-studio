@@ -10,8 +10,10 @@ export const bg: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Обвиване в блоков callout {{name}} (затворен)",
 	"cmd.customInsertBlockExpanded": "Вмъкване на блоков callout {{name}} (отворен)",
 	"cmd.customInsertBlockCollapsed": "Вмъкване на блоков callout {{name}} (затворен)",
+	"cmd.customWrapHeading": "Обвиване в заглавен callout {{name}} (H{{level}})",
 	"cmd.customInsertHeading":
 		"Вмъкване на заглавен callout {{name}} (H{{level}})",
+	"cmd.customWrapInline": "Обвиване във вграден callout {{name}}",
 	"cmd.customInsertInline": "Вмъкване на вграден callout {{name}}",
 	"cmd.openQuickInsert": "Бързо вмъкване на блоков callout",
 	"autocomplete.createNew": 'Създаване "{{name}}"',
@@ -199,6 +201,10 @@ export const bg: Record<string, string> = {
 	"commandBuilder.action": "Действие",
 	"commandBuilder.actionDesc":
 		"Обвиването превръща избора в callout; вмъкването добавя празен.",
+	"commandBuilder.actionDescHeading":
+		"Обвиването превръща реда с курсора в заглавен callout.\nВмъкването добавя празен на нов ред.",
+	"commandBuilder.actionDescInline":
+		"Обвиването поставя избрания текст вътре в callout.\nВмъкването добавя празен вграден callout при курсора и оставя текста както е.",
 	"commandBuilder.actionWrap": "Обвиване на избора",
 	"commandBuilder.actionInsert": "Вмъкване на нов",
 	"commandBuilder.foldState": "Състояние на сгъването",
@@ -261,6 +267,9 @@ export const bg: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "Някои бележки не можаха да бъдат преобразувани. Типът callout беше запазен. Завършените преобразувания са запазени; отстранете проблема с файла и стартирайте действието отново, за да го завършите.",
 	"notice.nothingToWrap": "Няма какво да се обвие.",
 	"notice.cursorNotInsideCallout": "Курсорът не е вътре в callout.",
+	"notice.headingAlreadyCallout": "Това заглавие вече е callout.",
+	"notice.unwrapLeftAsIs":
+		"Този callout не можа да бъде премахнат безопасно, затова остана както е.",
 	"notice.autocompleteTargetMoved":
 		"Нищо не беше вмъкнато — редът се промени, докато редакторът беше отворен.",
 	"notice.autocompleteAlwaysEnabled": "Автодовършването вече е основна функция и винаги е включено.",

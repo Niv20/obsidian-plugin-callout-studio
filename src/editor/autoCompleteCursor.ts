@@ -21,6 +21,7 @@
  * cursor goes to the end of that line, where the title the user kept is.
  */
 import type { Editor, EditorPosition } from "obsidian";
+import { scanLineForCalloutTokens } from "./calloutTokens";
 
 const CALLOUT_QUOTE_PREFIX_REGEX = /^((?:\s*> ?|\t)+)/;
 
@@ -114,13 +115,23 @@ export function parkCursor(
  * Leave an inline token the way Enter does: past `afterCh` (just after the
  * token), with exactly one space between it and whatever follows, so the user
  * keeps writing on the SAME line — an inline pick must not break the paragraph.
+ *
+ * A `{…}` right after the `]` is the pill's own text, and a space there would
+ * turn it into literal prose (see inlineContent.ts), so the cursor goes past
+ * the payload instead and nothing is added.
  */
 export function landAfterInlineToken(
 	editor: Editor,
 	line: number,
 	afterCh: number,
 ): void {
-	if (editor.getLine(line)[afterCh] !== " ") {
+	const text = editor.getLine(line);
+	if (text[afterCh] === "{") {
+		const token = scanLineForCalloutTokens(text).find((t) => t.to === afterCh);
+		editor.setCursor({ line, ch: token?.content ? token.content.to : afterCh });
+		return;
+	}
+	if (text[afterCh] !== " ") {
 		editor.replaceRange(" ", { line, ch: afterCh });
 	}
 	editor.setCursor({ line, ch: afterCh + 1 });

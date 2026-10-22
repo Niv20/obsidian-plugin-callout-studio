@@ -76,8 +76,31 @@ describe("the command editor's Save", () => {
 		const modal = new CommandEditorModal({} as App, { registry: none } as unknown as CommandEditorHost);
 		assert.equal((modal as unknown as { saveBlockedReason(): string | null }).saveBlockedReason(), t("commandBuilder.noCallouts"));
 	});
+	it("saves a heading or inline command's action the way the sanitizer stores it", async () => {
+		// Every format has the Action row now; Wrap is what an absent action
+		// already means for these two, so only Insert is written.
+		const save = async (role: "heading" | "inline", action: "wrap" | "insert") => {
+			const h = open();
+			try {
+				const form = h.modal as unknown as { role: string; action: string; syncVisibility(): void };
+				form.role = role;
+				form.action = action;
+				form.syncVisibility();
+				const row = Array.from(h.modal.contentEl.querySelectorAll<HTMLElement>(".setting-item"))
+					.find((item) => item.textContent?.includes(t("commandBuilder.action")));
+				assert.equal(row?.hasClass("cs-row-hidden"), false, `${role}: the Action row is shown`);
+				h.save.fire("click"); await setImmediate();
+				return h.answer();
+			} finally { h.destroy(); }
+		};
+		assert.equal((await save("heading", "wrap"))?.action, undefined);
+		assert.equal((await save("heading", "insert"))?.action, "insert");
+		assert.equal((await save("inline", "wrap"))?.action, undefined);
+		assert.equal((await save("inline", "insert"))?.action, "insert");
+	});
 	it("is dimmed for a command the user already has, and says so", async () => {
-		const taken = commandSignature({ calloutId: "note", role: "regular", action: "insert" });
+		// What a new command starts as: Note, Block, Wrap selection.
+		const taken = commandSignature({ calloutId: "note", role: "regular", action: "wrap" });
 		const h = open({ takenSignatures: new Set([taken]) });
 		try {
 			assert.equal(h.save.getAttribute("aria-disabled"), "true");

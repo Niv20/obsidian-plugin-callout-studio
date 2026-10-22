@@ -63,7 +63,9 @@ export const th: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "ห่อใน callout แบบบล็อก {{name}} (ปิด)",
 	"cmd.customInsertBlockExpanded": "แทรก callout แบบบล็อก {{name}} (เปิด)",
 	"cmd.customInsertBlockCollapsed": "แทรก callout แบบบล็อก {{name}} (ปิด)",
+	"cmd.customWrapHeading": "ห่อใน callout หัวข้อ H{{level}} {{name}}",
 	"cmd.customInsertHeading": "แทรกหัวข้อ callout H{{level}} {{name}}",
+	"cmd.customWrapInline": "ห่อใน callout แบบอินไลน์ {{name}}",
 	"cmd.customInsertInline": "แทรก callout แบบอินไลน์ {{name}}",
 	"cmd.openQuickInsert": "แทรก callout แบบบล็อกอย่างรวดเร็ว",
 
@@ -266,6 +268,10 @@ export const th: Record<string, string> = {
 	"commandBuilder.action": "การกระทำ",
 	"commandBuilder.actionDesc":
 		"ห่อจะเปลี่ยนข้อความที่เลือกให้เป็น callout ส่วนแทรกจะเพิ่ม callout เปล่า",
+	"commandBuilder.actionDescHeading":
+		"ห่อจะเปลี่ยนบรรทัดที่เคอร์เซอร์อยู่ให้เป็น callout หัวข้อ\nแทรกจะเพิ่ม callout เปล่าในบรรทัดใหม่",
+	"commandBuilder.actionDescInline":
+		"ห่อจะนำข้อความที่เลือกไปไว้ใน callout\nแทรกจะเพิ่ม callout แบบอินไลน์เปล่าที่เคอร์เซอร์ และคงข้อความไว้ตามเดิม",
 	"commandBuilder.actionWrap": "ห่อข้อความที่เลือก",
 	"commandBuilder.actionInsert": "แทรกใหม่",
 	"commandBuilder.foldState": "สถานะการพับ",
@@ -324,6 +330,9 @@ export const th: Record<string, string> = {
 	"notice.calloutDeleteIncomplete": "ไม่สามารถแปลงบางโน้ตได้ ระบบเก็บประเภท callout ไว้ การแปลงที่เสร็จแล้วถูกบันทึกไว้ แก้ไขปัญหาไฟล์แล้วเรียกใช้การกระทำนี้อีกครั้งเพื่อให้เสร็จสมบูรณ์",
 	"notice.nothingToWrap": "ไม่มีอะไรให้ห่อ",
 	"notice.cursorNotInsideCallout": "เคอร์เซอร์ไม่อยู่ใน callout",
+	"notice.headingAlreadyCallout": "หัวข้อนี้เป็น callout อยู่แล้ว",
+	"notice.unwrapLeftAsIs":
+		"ไม่สามารถนำ callout นี้ออกได้อย่างปลอดภัย จึงคงไว้ตามเดิม",
 	"notice.autocompleteTargetMoved":
 		"ไม่ได้แทรกสิ่งใด — บรรทัดเปลี่ยนไปขณะที่ตัวแก้ไขเปิดอยู่",
 	"notice.autocompleteAlwaysEnabled": "การเติมข้อความอัตโนมัติเป็นฟีเจอร์หลักแล้ว และเปิดใช้งานอยู่เสมอ",

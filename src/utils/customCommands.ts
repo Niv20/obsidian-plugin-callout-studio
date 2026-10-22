@@ -63,7 +63,7 @@ export function commandSignature(
 	>,
 ): string {
 	const level = command.role === "heading" ? resolveHeadingLevel(command) : "";
-	const action = command.role === "regular" ? resolveAction(command) : "";
+	const action = resolveAction(command);
 	// Fold belongs here because it reaches the palette: "Wrap in Note block
 	// callout" and "…(expanded)" are two entries a user can want at once, and
 	// leaving it out would grey the save button on the second as a duplicate.
@@ -83,11 +83,31 @@ export function resolveHeadingLevel(
 	return level;
 }
 
-/** The action a block command performs; the other roles always insert. */
+/**
+ * The action a command performs. An absent action keeps each role doing what
+ * it did before the role had a choice: a block command inserts, while heading
+ * and inline commands always took the line or selection they were run on —
+ * what Wrap does now, so a command saved back then keeps working unchanged.
+ */
 export function resolveAction(
-	command: Pick<CustomCommand, "action">,
+	command: Pick<Partial<CustomCommand>, "action" | "role">,
 ): CustomCommandAction {
-	return command.action === "wrap" ? "wrap" : "insert";
+	if (command.role === "regular") return command.action === "wrap" ? "wrap" : "insert";
+	return command.action === "insert" ? "insert" : "wrap";
+}
+
+/**
+ * The action as it is stored: always for a block command, and for a heading or
+ * inline command only when it is Insert. The two must agree wherever a command
+ * is written — the sanitizer and the command editor — so a saved command and
+ * the same command reloaded never differ by a key that means nothing.
+ */
+export function storedAction(
+	command: Pick<Partial<CustomCommand>, "action" | "role">,
+): { action?: CustomCommandAction } {
+	const action = resolveAction(command);
+	if (command.role === "regular" || action === "insert") return { action };
+	return {};
 }
 
 /**
@@ -162,16 +182,17 @@ export function describeCommand(
 	def: CalloutDefinition,
 ): string {
 	const name = def.displayName;
+	const wrap = resolveAction(command) === "wrap";
 	if (command.role === "heading") {
-		return t("cmd.customInsertHeading", {
+		return t(wrap ? "cmd.customWrapHeading" : "cmd.customInsertHeading", {
 			name,
 			level: resolveHeadingLevel(command),
 		});
 	}
 	if (command.role === "inline") {
-		return t("cmd.customInsertInline", { name });
+		return t(wrap ? "cmd.customWrapInline" : "cmd.customInsertInline", { name });
 	}
-	const keys = resolveAction(command) === "wrap" ? WRAP_KEYS : INSERT_KEYS;
+	const keys = wrap ? WRAP_KEYS : INSERT_KEYS;
 	return t(keys[resolveFold(command)], { name });
 }
 
@@ -230,7 +251,7 @@ export function sanitizeCustomCommands(raw: unknown): CustomCommand[] {
 			...(c.role === "heading"
 				? { headingLevel: resolveHeadingLevel(c) }
 				: {}),
-			...(c.role === "regular" ? { action: resolveAction(c) } : {}),
+			...storedAction({ role: c.role, action: c.action }),
 			// Written only when it says something. `"none"` is what absence
 			// already means, so stamping it would rewrite every command in
 			// every existing `data.json` — a file that syncs between devices —

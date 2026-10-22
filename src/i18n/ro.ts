@@ -63,7 +63,9 @@ export const ro: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Înfășoară în callout bloc {{name}} (închis)",
 	"cmd.customInsertBlockExpanded": "Inserează callout bloc {{name}} (deschis)",
 	"cmd.customInsertBlockCollapsed": "Inserează callout bloc {{name}} (închis)",
+	"cmd.customWrapHeading": "Înfășoară în titlu H{{level}} callout {{name}}",
 	"cmd.customInsertHeading": "Inserează titlu H{{level}} callout {{name}}",
+	"cmd.customWrapInline": "Înfășoară în callout inline {{name}}",
 	"cmd.customInsertInline": "Inserează callout inline {{name}}",
 	"cmd.openQuickInsert": "Inserare rapidă de callout bloc",
 
@@ -267,6 +269,10 @@ export const ro: Record<string, string> = {
 	"commandBuilder.action": "Acțiune",
 	"commandBuilder.actionDesc":
 		"Înfășoară transformă selecția într-un callout; inserează adaugă unul gol.",
+	"commandBuilder.actionDescHeading":
+		"Înfășoară transformă rândul cu cursorul într-un callout de titlu.\nInserează adaugă unul gol pe un rând nou.",
+	"commandBuilder.actionDescInline":
+		"Înfășoară pune textul selectat în interiorul callout-ului.\nInserează adaugă un callout inline gol la cursor și lasă textul neschimbat.",
 	"commandBuilder.actionWrap": "Înfășoară selecția",
 	"commandBuilder.actionInsert": "Inserează nou",
 	"commandBuilder.foldState": "Stare de pliere",
@@ -331,6 +337,9 @@ export const ro: Record<string, string> = {
 	"notice.nothingToWrap": "Nimic de înfășurat.",
 	"notice.cursorNotInsideCallout":
 		"Cursorul nu este în interiorul unui callout.",
+	"notice.headingAlreadyCallout": "Acest titlu este deja un callout.",
+	"notice.unwrapLeftAsIs":
+		"Acest callout nu a putut fi eliminat în siguranță, așa că a fost lăsat neschimbat.",
 	"notice.autocompleteTargetMoved":
 		"Nu s-a inserat nimic — linia s-a schimbat cât timp editorul a fost deschis.",
 	"notice.autocompleteAlwaysEnabled": "Completarea automată este acum o funcție de bază și este întotdeauna activată.",
