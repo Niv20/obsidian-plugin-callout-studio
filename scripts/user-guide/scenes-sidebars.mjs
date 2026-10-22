@@ -197,7 +197,7 @@ async function resetScene(plugin) {
 	syntheticVault(plugin);
 	const root = panel("callout-studio-settings guide-settings");
 	renderResetSection({ app: plugin.app, plugin, display() {}, registerDisposer() {} }, root);
-	root.querySelector("button.mod-warning").click();
+	root.querySelector("button.mod-destructive").click();
 	await waitFor(() => document.querySelector(".cs-confirm-acknowledge"));
 	root.removeAttribute("id");
 	root.style.display = "none";

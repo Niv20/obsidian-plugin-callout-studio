@@ -1373,8 +1373,9 @@ Obsidian, so this plugin does not programmatically focus a field there.
 The search field's keyboard handling is also why `ReplaceCalloutModal`'s **Enter only chooses**
 (the top row, when nothing is chosen yet) and never confirms. Confirming rewrites
 every note that uses the callout, and its Undo is brief and in memory only, so it takes the confirm button,
-which is `mod-warning` in both modes. `tests/replaceCalloutModal.test.ts` pins
-both.
+which is Obsidian's red destructive confirmation (`mod-destructive mod-cta`, see
+[Red and purple buttons are Obsidian's](#red-and-purple-buttons-are-obsidians)) on
+every device. `tests/replaceCalloutModal.test.ts` pins both.
 
 ## Two theme-aware surface tokens
 
@@ -1767,8 +1768,8 @@ identical for all four, against `#ffffff` → `#fafafa` (−4.4%) and `#363636` 
 `#3f3f3f` (+1.3%) for a native Obsidian button, which is deliberately left
 alone - every rule here is scoped to `.callout-studio-settings` or
 `.cs-modal > .cs-modal-footer`, so nothing reaches a core dialog. The coloured
-variants keep their own faces: the footer rule carves out `.mod-cta`,
-`.mod-warning` and `.mod-destructive` with a `:not()` **list**, which takes the
+variants keep Obsidian's own faces and hovers: the footer rule carves out
+`.mod-cta` and `.mod-destructive` with a `:not()` **list**, which takes the
 specificity of its most specific argument and so leaves the selector at (0,3,1).
 
 ### The specificity half, which is the half that gets lost
@@ -1832,89 +1833,51 @@ and the two tokens that must never come back to a button face.
 > harness measured the resting colour twice that way and reported the fix as
 > broken.
 
-### The red half: a hover rule that resolves to nothing
+### Red and purple buttons are Obsidian's
 
-The footer carve-out hands `.mod-cta`, `.mod-warning` and `.mod-destructive`
-back to Obsidian on the grounds that they own their own faces. The red variants
-only appear to own a useful hover, and the reason is worth writing down because
-nothing in either stylesheet looks wrong.
+**One red.** A destructive action is Obsidian's destructive confirmation,
+`mod-destructive mod-cta`: `setDestructive().setCta()` on a `ButtonComponent`,
+`DESTRUCTIVE_BUTTON_CLASSES` (`ui/destructiveButton.ts`) on a raw `<button>`.
+Obsidian paints it solid red on every device. That covers every
+`ConfirmModal` yes that destroys something (its default `confirmKind`,
+`"destructive"`; a yes that loses nothing passes `"cta"`), **Replace in vault**,
+the paused-saving banner's **Replace settings file** and **Discard recovery
+copy**, **Convert selected**, **Reset everything** and a version's **Restore**.
+A destructive *secondary* action would be `mod-destructive` alone, Obsidian's
+10% red tint with red text; there is none today.
 
-Obsidian ships the rule you would expect:
+Never the older `mod-warning`. Obsidian still styles it, but under
+`.is-mobile` it is a grey button with bold red text, so the same button was red
+on a desktop and grey on a phone or tablet. Never `ButtonComponent.setWarning()`
+either: 1.13 deprecates it, and it is only `setDestructive().setCta()` anyway.
+(`MenuItem.setWarning(true)`, a red menu item, is a different API and stays.)
 
-```css
-button.mod-warning       { background-color: var(--background-modifier-error) }
-button.mod-warning:hover { background-color: var(--background-modifier-error-hover) }
-```
+**No hover of ours.** Obsidian's hover for a red button paints
+`--background-modifier-error-hover`, which it defines as the same
+`--color-red` as the resting `--background-modifier-error`, so a red button does
+not change under the pointer, exactly like Obsidian's own **Delete** buttons. A
+purple button (`mod-cta`) hovers to `--interactive-accent-hover`, a lighter
+purple in both modes. The plugin used to override both: a red stepped darker in
+light and lighter in dark (`--cs-btn-danger-face-hover`), and a purple derived
+from the resting accent, darker in light (`--cs-btn-accent-face-hover`). Both
+tokens and their rules are gone, so these buttons look and behave exactly like
+Obsidian's. The two segmented rows' selected segment takes the same
+`--interactive-accent-hover`.
 
-and then, under `body`, defines both of those tokens as the same colour:
-
-```css
---background-modifier-error: var(--color-red);
---background-modifier-error-hover: var(--color-red);
-```
-
-So the hover matches, fires, and paints the colour that is already there. Read
-out of headless Chrome against the real `app.css`, both tokens resolve to
-`rgb(233, 49, 71)` in light and `rgb(251, 70, 76)` in dark - **identical**,
-where the accent pair beside them genuinely differs. Delete, Replace and
-"Reset everything" were never missing a hover rule; they were running a no-op,
-Δlum 0.0% in both themes, which is why the gap outlived the grey-button pass
-sitting directly above it.
-
-This reaches the settings tab as well as the windows. The class produced by
-`ButtonComponent.setWarning()` has changed across Obsidian versions: older
-versions and themes use `.mod-warning`, while the live DOM in Obsidian 1.13.7
-gives "Reset everything" both `.mod-destructive` and `.mod-cta`. That dual
-classification caused a second regression when the accent hover was fixed:
-the generic `.mod-cta` rule won and turned the red button purple. The accent
-selector therefore excludes both red classes, and the danger selector accepts
-either of them.
-
-`--cs-btn-danger-face-hover` is declared beside `--cs-btn-face` and mixed the
-same way, at the same 92%, with `--mono-rgb-100` for direction:
-
-| | rest → hover | ΔE00 | white text |
-| --- | --- | --- | --- |
-| light | `#e93147` → `#d62d41` | 4.19 | 4.20:1 → 4.87:1 |
-| dark | `#fb464c` → `#fb555a` | 2.84 | 3.45:1 → 3.20:1 |
-
-against the grey face's 4.10 and 5.26. Light matches almost exactly; dark is
-deliberately the smaller step, because a saturated red is already the most
-prominent thing on the surface and driving it to the grey's ΔE00 needs ~86%,
-which costs white-text contrast (3.01:1) on a fill Obsidian already ships below
-AA.
-
-> [!WARNING]
-> Measure a step like this in **CIEDE2000**. Plain CIE76 ΔE scores the two rows
-> above 6.5 and 7.4 - "already matched" - and it is wrong in exactly the
-> saturated region a red button lives in. The greys above are near-neutral,
-> which is the case where the two measures happen to agree.
-
-Three constraints shape the rule itself:
-
-- **It sets the hover only.** A theme that restyles `.mod-warning` or
-  `.mod-destructive` keeps its own red, and because the mix reads
-  `--background-modifier-error`, a theme that retunes *that* gets a hover
-  derived from its colour. Claiming the resting fill at this weight would beat
-  a theme painting either class directly.
-- **`body:not(.is-mobile)`**, because Obsidian's mobile warning/destructive
-  treatment drops the red fill for grey-with-red-text, and a tablet with a
-  pointer attached satisfies `hover: hover` while still carrying `.is-mobile`.
-- **(0,5,2) against Obsidian's (0,2,1)**, so it lands without `!important`.
+`tests/dangerButtons.test.ts` fails on a `mod-warning` string in `src/`, an
+argument-less `.setWarning()`, any `styles.css` rule that names `.mod-warning`
+or selects `.mod-destructive`, and the old red token.
+`tests/accentButtons.test.ts` fails on any rule that repaints a `.mod-cta`
+under the pointer.
 
 > [!NOTE]
-> `.cs-icon-tile-clear` - the small red ✕ on an icon tile - is the one red
-> control that does **not** follow this, and that is deliberate. It mixes toward
-> a hardcoded `black` in both themes, so it darkens in dark mode against the
-> house direction rule. It also carries a hardcoded white glyph, and darkening
-> is what keeps that glyph legible: `color-mix(… black)` holds it at 6.08:1
-> light and 5.10:1 dark, where switching to `--mono-rgb-100` would drop the dark
-> pair to 2.80:1. The direction rule serves contrast; here it would cost it.
-
-Do not infer the runtime class from a search for literal `.mod-destructive`
-call sites in `src/`: it is added inside Obsidian's `ButtonComponent`. The
-regression test intentionally covers the real `mod-destructive mod-cta`
-combination so a future accent change cannot capture warning buttons again.
+> `.cs-icon-tile-clear` - the small red ✕ on an icon tile - is not a button
+> face and keeps a hover of its own. It mixes toward a hardcoded `black` in both
+> themes, so it darkens in dark mode against the house direction rule. It also
+> carries a hardcoded white glyph, and darkening is what keeps that glyph
+> legible: `color-mix(… black)` holds it at 6.08:1 light and 5.10:1 dark, where
+> switching to `--mono-rgb-100` would drop the dark pair to 2.80:1. The
+> direction rule serves contrast; here it would cost it.
 
 ## The light palette
 
@@ -2188,9 +2151,9 @@ the step that used to be skipped.
 ### `ConfirmModal` - the generic yes/no dialog
 
 Resolves `Promise<boolean>`. Required `title` (see above), optional
-`confirmLabel`/`cancelLabel`/`confirmClass` (defaults to
-`"mod-warning"` - a destructive action reads as one by default unless the
-caller overrides it). Used throughout for anything destructive that isn't
+`confirmLabel`/`cancelLabel`/`confirmKind` (`"destructive"` by default, Obsidian's
+red `mod-destructive mod-cta` - a destructive action reads as one by default
+unless the caller passes `"cta"`, the accent, for a yes that loses nothing). Used throughout for anything destructive that isn't
 specific enough to warrant its own modal (bulk vault edits, full reset).
 
 An optional last argument, `acknowledgement`, is for a confirmation that
@@ -3321,7 +3284,7 @@ described in the canonical chapter.
 For an unreadable file the banner asks `actions.diagnose()` once per paused
 episode, and again after each action. **Replace settings file** appears only
 for causes waiting cannot fix, and **Discard recovery copy** only for a
-`recovery-read` freeze. Both are `mod-warning` and run only after a
+`recovery-read` freeze. Both are red (`mod-destructive mod-cta`) and run only after a
 `ConfirmModal`. The one exception to the red is a `combined` file: replacing
 it keeps every setting, so **Replace settings file** is the main button
 (`mod-cta`), its confirmation's button is too, and after the yes the banner
@@ -3481,7 +3444,7 @@ Each row is an ordinary `Setting`:
 file deletion syncing only when the version includes backup or sync-copy files.
 Another device's private history may retain the version. Then
 `recovery.removeVersion()` deletes every available copy; the list is read again
-either way. **Restore** is `mod-warning`, dimmed (not disabled - a press says
+either way. **Restore** is red (`setDestructive().setCta()`), dimmed (not disabled - a press says
 why, see [Blocked main buttons say why](#blocked-main-buttons-say-why)) while
 saving is paused or when the version equals the current setup, and confirms
 before calling `recovery.restore()`; both confirmations and their notices quote

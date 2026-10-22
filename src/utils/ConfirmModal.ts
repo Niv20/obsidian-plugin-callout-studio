@@ -12,6 +12,10 @@
  * the next caller ship a headerless dialog. Making it a parameter the compiler
  * insists on is what keeps "every window carries a title" true going forward.
  *
+ * `confirmKind` is what the yes does. `"destructive"`, the default, is the red
+ * a destructive action reads as (ui/destructiveButton.ts); `"cta"` is the
+ * accent, for a yes that loses nothing.
+ *
  * `acknowledgement` is for the few confirmations that cannot be taken back: it
  * puts a checkbox carrying that label under the message and keeps the confirm
  * button disabled until it is ticked. Pressing the locked button shakes and
@@ -22,7 +26,10 @@ import { Modal } from "obsidian";
 import type { App } from "obsidian";
 import { t } from "../i18n";
 import { applyModalChrome } from "../settings/modalChrome";
+import { DESTRUCTIVE_BUTTON_CLASSES } from "../ui/destructiveButton";
 import { prefersReducedMotion } from "../ui/flip";
+
+export type ConfirmKind = "destructive" | "cta";
 
 export class ConfirmModal extends Modal {
 	private resolved = false;
@@ -34,7 +41,7 @@ export class ConfirmModal extends Modal {
 		private message: string | DocumentFragment,
 		private confirmLabel?: string,
 		private cancelLabel?: string,
-		private confirmClass: string = "mod-warning",
+		private confirmKind: ConfirmKind = "destructive",
 		private acknowledgement?: string,
 	) {
 		super(app);
@@ -65,7 +72,7 @@ export class ConfirmModal extends Modal {
 
 		const confirmBtn = btnContainer.createEl("button", {
 			text: this.confirmLabel ?? t("confirm.ok"),
-			cls: this.confirmClass,
+			cls: this.confirmKind === "cta" ? "mod-cta" : DESTRUCTIVE_BUTTON_CLASSES,
 		});
 		confirmBtn.addEventListener("click", () => {
 			if (confirmBtn.getAttribute("aria-disabled") === "true") return;

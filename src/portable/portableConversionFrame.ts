@@ -1,6 +1,7 @@
 import { setIcon } from "obsidian";
 import { HELP_ICON_ID } from "../constants";
 import { t } from "../i18n";
+import { DESTRUCTIVE_BUTTON_CLASSES } from "../ui/destructiveButton";
 import { createSidebarSummary, createSidebarToolbar } from "../ui/sidebarFrame";
 import type { PortableCalloutConversionPlan } from "../utils/portableCalloutPlan";
 
@@ -34,7 +35,7 @@ export function createPortableConversionFrame(root: HTMLElement): PortableConver
 	const subtitle = toolbar.querySelector(".cs-sidebar-subtitle");
 	if (subtitle) actions.appendChild(subtitle);
 	const convert = actions.createEl("button", {
-		text: t("portable.convertSelected"), cls: "mod-warning", attr: { "data-action": "convert" },
+		text: t("portable.convertSelected"), cls: DESTRUCTIVE_BUTTON_CLASSES, attr: { "data-action": "convert" },
 	});
 	const summaryRow = createSidebarSummary(toolbar, "cs-portable-review-summary");
 	const all = summaryRow.createEl("input", { type: "checkbox", attr: {

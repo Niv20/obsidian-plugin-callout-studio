@@ -129,7 +129,7 @@ export class ButtonComponent extends Control {
 	setButtonText(text: string): this { this.buttonEl.textContent = text; return this; }
 	setIcon(name: string): this { setIcon(this.buttonEl, name); return this; }
 	setCta(): this { this.buttonEl.classList.add("mod-cta"); return this; }
-	setWarning(): this { this.buttonEl.classList.add("mod-warning"); return this; }
+	setDestructive(): this { this.buttonEl.classList.add("mod-destructive"); return this; }
 	onClick(callback: () => unknown): this { this.buttonEl.addEventListener("click", callback); return this; }
 }
 export class ExtraButtonComponent extends Control {

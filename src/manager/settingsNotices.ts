@@ -155,7 +155,7 @@ export async function confirmFreshStart(
 		t("confirm.saveDisplayedSettings"),
 		t(hasRecoveryState ? "saveStatus.restoreSettings" : "saveStatus.createSettingsFile"),
 		undefined,
-		"mod-cta",
+		"cta",
 	).confirm();
 	if (!ok) return false;
 	try {

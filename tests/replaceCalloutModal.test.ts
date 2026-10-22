@@ -2,7 +2,7 @@
  * The replacement picker rewrites every note that uses a callout, with no undo,
  * and its search field opens focused on every device. Enter used to pick the
  * top row *and* confirm, so one reflexive keypress rewrote the vault. Enter now
- * only chooses; confirming takes the button, which reads as the warning it is.
+ * only chooses; confirming takes the button, which is red, as the warning it is.
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -84,8 +84,9 @@ describe("the replacement picker", () => {
 	it("marks its button as destructive", () => {
 		const h = open();
 		try {
-			assert.ok(h.confirm().hasClass("mod-warning"));
-			assert.ok(!h.confirm().hasClass("mod-cta"));
+			// Obsidian's destructive confirmation: solid red on every device.
+			assert.ok(h.confirm().hasClass("mod-destructive"));
+			assert.ok(h.confirm().hasClass("mod-cta"));
 		} finally { h.close(); }
 	});
 

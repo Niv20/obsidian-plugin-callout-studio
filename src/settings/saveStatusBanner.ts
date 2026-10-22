@@ -6,6 +6,7 @@ import { settingsSaveMessage } from "../manager/settingsSaveMessage";
 import { confirmFreshStart } from "../manager/settingsNotices";
 import type { SettingsDiagnosis } from "../manager/settingsDiagnosis";
 import type { SettingsWriter } from "../manager/SettingsWriter";
+import { DESTRUCTIVE_BUTTON_CLASSES } from "../ui/destructiveButton";
 import { ConfirmModal } from "../utils/ConfirmModal";
 import { diagnosisKey, pausedCopy, type PausedButtons } from "./saveStatusCopy";
 
@@ -38,10 +39,10 @@ const REPLACEABLE: ReadonlySet<SettingsDiagnosis> = new Set(["empty", "merge-mar
 
 /**
  * Ask, and run `action` only on a yes. Every one of these replaces something,
- * so the yes is a warning unless `keeps` says the replacement loses nothing.
+ * so the yes is red unless `keeps` says the replacement loses nothing.
  */
 async function confirmed(app: App, title: string, body: string, label: string, action: () => Promise<boolean>, keeps = false): Promise<boolean> {
-	return await new ConfirmModal(app, t(title), t(body), t(label), undefined, keeps ? "mod-cta" : "mod-warning").confirm() ? action() : false;
+	return await new ConfirmModal(app, t(title), t(body), t(label), undefined, keeps ? "cta" : "destructive").confirm() ? action() : false;
 }
 
 /** Updates just the banner, preserving the settings page's scroll and form. */
@@ -149,7 +150,7 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 			// replacing it keeps them all: the step to take, not a warning. Every
 			// other cause loses what the file held (an exact copy is kept first).
 			const keeps = diagnosis === "combined";
-			const replace = actionsEl.createEl("button", { text: t("saveStatus.replaceUnreadable"), cls: keeps ? "mod-cta" : "mod-warning" });
+			const replace = actionsEl.createEl("button", { text: t("saveStatus.replaceUnreadable"), cls: keeps ? "mod-cta" : DESTRUCTIVE_BUTTON_CLASSES });
 			replace.disabled = busy;
 			const body = keeps ? "confirm.replaceUnreadableSalvage" : "confirm.replaceUnreadable";
 			// Keeping everything was promised, so look once more after the yes: a
@@ -163,7 +164,7 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 			});
 		}
 		if (buttons.discard) {
-			const discard = actionsEl.createEl("button", { text: t("saveStatus.discardRecoveryCopy"), cls: "mod-warning" });
+			const discard = actionsEl.createEl("button", { text: t("saveStatus.discardRecoveryCopy"), cls: DESTRUCTIVE_BUTTON_CLASSES });
 			discard.disabled = busy;
 			discard.addEventListener("click", () => {
 				void run(() => confirmed(host.app, "confirm.titleDiscardRecoveryCopy", "confirm.discardRecoveryCopy",

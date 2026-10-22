@@ -440,11 +440,6 @@ export class ButtonLike {
 		return this;
 	}
 
-	setWarning(): this {
-		this.buttonEl.addClass?.("mod-warning");
-		return this;
-	}
-
 	/** Obsidian 1.13's red button class (`setWarning` is now `setDestructive().setCta()`). */
 	setDestructive(): this {
 		this.buttonEl.addClass?.("mod-destructive");

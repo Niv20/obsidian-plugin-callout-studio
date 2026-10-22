@@ -120,9 +120,9 @@ const FACES = [
 	},
 	{
 		label: "window footer (Cancel)",
-		base: ".cs-modal > .cs-modal-footer button:not(.mod-cta, .mod-warning, .mod-destructive)",
+		base: ".cs-modal > .cs-modal-footer button:not(.mod-cta, .mod-destructive)",
 		hover:
-			".cs-modal > .cs-modal-footer button:not(.mod-cta, .mod-warning, .mod-destructive):not( :disabled, .cs-btn-disabled ):hover",
+			".cs-modal > .cs-modal-footer button:not(.mod-cta, .mod-destructive):not( :disabled, .cs-btn-disabled ):hover",
 	},
 	{
 		label: "segmented: border sides",
@@ -222,8 +222,8 @@ describe("a selected segment still answers the pointer", () => {
 			assert.ok(rule, `${seg.active}:hover is missing — a hovered selection has no feedback`);
 			assert.match(
 				backgroundOf(rule) ?? "",
-				/var\(\s*--cs-btn-accent-face-hover/,
-				"a hovered selection steps within the accent, so it cannot be mistaken for an unselected segment",
+				/^var\(--interactive-accent-hover\)$/,
+				"a hovered selection takes Obsidian's accent hover, so it cannot be mistaken for an unselected segment",
 			);
 		});
 	}

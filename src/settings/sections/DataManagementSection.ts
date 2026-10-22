@@ -269,7 +269,7 @@ export async function processImportedJSON(
 			t("import.confirmSummary", { added: defs.length - replaced, replaced, settings: restored.length }),
 			t("import.confirmAction"),
 			undefined,
-			"mod-cta",
+			"cta",
 		).confirm();
 		if (!confirmed) return;
 	}

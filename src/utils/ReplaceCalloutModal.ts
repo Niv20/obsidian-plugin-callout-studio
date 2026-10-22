@@ -14,6 +14,7 @@ import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import { paintCalloutListIcon } from "../manager/theme/calloutListIcon";
 import { getLocale, t } from "../i18n";
 import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
+import { DESTRUCTIVE_BUTTON_CLASSES } from "../ui/destructiveButton";
 import { filterCalloutList } from "./calloutSearch";
 import { applyModalChrome } from "../settings/modalChrome";
 import { autofocusOnDesktop } from "../settings/modalAutofocus";
@@ -102,7 +103,7 @@ export class ReplaceCalloutModal extends Modal {
 		const btnContainer = applyModalChrome(this, { footer: true });
 		this.confirmBtn = btnContainer.createEl("button", {
 			text: this.confirmLabel ?? t("vault.confirmReplace"),
-			cls: "mod-warning",
+			cls: DESTRUCTIVE_BUTTON_CLASSES,
 		});
 		// Dimmed until a row is chosen, but still pressable: pressing it says what to choose.
 		paintBlocked(this.confirmBtn, this.confirmBlockedReason());
