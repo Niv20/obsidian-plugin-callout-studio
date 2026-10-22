@@ -1296,11 +1296,9 @@ body:not(.is-phone)
 	padding-top: 16px;
 }
 
-/* The row is a pill on whatever it sits on, and it sits on two different
-   things: the settings tab, where the token is undefined and the fallback keeps
-   `--background-secondary`, and a modal (Commands and shortcuts, the palette
-   list), where on mobile dark `--background-secondary` IS the window and the
-   pills would otherwise vanish. */
+/* The row is a pill in Obsidian's own box colour, wherever it sits: on the
+   settings tab the token is undefined and the fallback names that colour, and
+   in a window (Commands and shortcuts, version history) the token is it. */
 .callout-studio-row {
 	display: flex;
 	align-items: center;
@@ -1308,15 +1306,8 @@ body:not(.is-phone)
 	padding: 8px 12px;
 	border-radius: var(--radius-m);
 	corner-shape: var(--corner-shape);
-	background: var(--cs-surface-raised, var(--background-secondary));
+	background: var(--cs-surface-raised, var(--setting-items-background));
 	container-type: inline-size;
-}
-
-/* On iPhone/iPad in light mode the settings pane background nearly matches
-   --background-secondary, leaving the row "pill" invisible. Nudge its resting
-   background one step darker there instead of drawing a border. */
-.is-mobile.theme-light .callout-studio-row {
-	background: var(--background-secondary-alt);
 }
 
 /* A row is not clickable — only its buttons are — so the row itself never
@@ -1913,7 +1904,7 @@ body:not(.is-phone)
 	color: var(--text-faint);
 	opacity: 0.5;
 	cursor: not-allowed;
-	background: var(--cs-surface-raised, var(--background-secondary));
+	background: var(--cs-surface-raised, var(--setting-items-background));
 }
 
 /* ─── Live Preview ────────────────────────────────────────────── */
@@ -1931,7 +1922,7 @@ body:not(.is-phone)
 	align-items: center;
 	justify-content: space-between;
 	padding: 6px 10px;
-	background: var(--cs-surface-raised, var(--background-secondary));
+	background: var(--cs-surface-raised, var(--setting-items-background));
 	font-size: var(--font-ui-smaller);
 	color: var(--text-muted);
 	font-weight: var(--font-semibold);
@@ -2673,44 +2664,22 @@ button.callout-studio-icon-picker-loading {
 	   itself) still wants. */
 	--cs-surface: var(--modal-background);
 	/* Its companion: the shade for anything that has to read as RAISED off that
-	   surface — a group box's header strip, a card, a control.
+	   surface — a box, a card, a row, a group box's header strip.
 
-	   The two only ever make sense as a pair, and setting one without the other
-	   is exactly how the group boxes regressed: the body was moved onto
-	   `--cs-surface` while the header stayed pinned to `--background-secondary`,
-	   which on mobile dark IS the window (see the override below), so the strip
-	   disappeared into it. Move one, move the other. */
-	--cs-surface-raised: var(--background-secondary);
+	   It is Obsidian's own box colour, `--setting-items-background`, so a plugin
+	   box and an Obsidian settings box in the same window are one grey. Obsidian
+	   already steps it off the window on every device (on mobile dark it is
+	   `--color-secondary-2`, a shade off `--background-secondary`, which there IS
+	   the window), so there is no device override left to keep in step.
+
+	   The two only ever make sense as a pair: setting one without the other is
+	   how the group boxes once regressed, a header strip vanishing into the
+	   window on mobile dark. Move one, move the other. */
+	--cs-surface-raised: var(--setting-items-background);
 	display: flex;
 	flex-direction: column;
 	padding: 0;
 	overflow: hidden;
-}
-
-/* `--background-secondary` is the raised shade only while `--modal-background`
-   is `--background-primary`. Mobile dark is where that stops being true —
-   `.is-mobile.theme-dark` repoints `--modal-background` ONTO
-   `--background-secondary` (phone and tablet alike), so a band painted with it
-   lands exactly on the surface it is meant to sit above.
-
-   Step off `--cs-surface` rather than naming a replacement colour: that
-   reproduces desktop's own step (#1C1C1C → #282828, +12/255) on whatever the
-   window turns out to be — here #1e1e1e → ≈#292929 — and stays clear of the
-   #333 border, which a stock `--color-base-25` would nearly merge with.
-   `--mono-100` is `white` under `.theme-dark`, which this is scoped to, so the
-   literal fallback is the same colour. Should a theme ever make the whole
-   `color-mix` invalid at computed-value time, the property drops out and every
-   call site's `var(…, var(--background-secondary))` fallback restores today's
-   behaviour.
-
-   Dark only: mobile light keeps `--modal-background` on `--background-primary`
-   and so already matches the desktop exactly. */
-.is-mobile.theme-dark .modal.cs-modal {
-	--cs-surface-raised: color-mix(
-		in srgb,
-		var(--cs-surface) 95%,
-		var(--mono-100, #fff)
-	);
 }
 
 /* The two editors used to be inset by the modal's own 16px PLUS their
@@ -3124,7 +3093,7 @@ button.callout-studio-icon-picker-loading {
 	font-weight: var(--font-semibold);
 	color: var(--text-muted);
 	padding: 6px 10px;
-	background: var(--cs-surface-raised, var(--background-secondary));
+	background: var(--cs-surface-raised, var(--setting-items-background));
 	border-radius: calc(var(--radius-m) - 1px) calc(var(--radius-m) - 1px) 0 0;
 	corner-shape: var(--corner-shape);
 }
@@ -5387,7 +5356,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	color: var(--text-faint);
 	opacity: 0.5;
 	cursor: not-allowed;
-	background: var(--cs-surface-raised, var(--background-secondary));
+	background: var(--cs-surface-raised, var(--setting-items-background));
 }
 
 .cs-tag-input-row > .cs-tag-input-field::placeholder {
@@ -5624,7 +5593,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	font-weight: var(--font-semibold);
 	color: var(--text-muted);
 	padding: 6px 10px;
-	background: var(--cs-surface-raised, var(--background-secondary));
+	background: var(--cs-surface-raised, var(--setting-items-background));
 	border-radius: calc(var(--radius-m) - 1px) calc(var(--radius-m) - 1px) 0 0;
 	corner-shape: var(--corner-shape);
 	margin-bottom: 0;
@@ -6015,7 +5984,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-s);
 	corner-shape: var(--corner-shape);
-	background: var(--cs-surface-raised, var(--background-secondary));
+	background: var(--cs-surface-raised, var(--setting-items-background));
 }
 
 .cs-command-preview-label {
@@ -6409,7 +6378,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	/* Same fill as the `.callout-studio-row` it sits in — the border is what
 	   draws the pill's edge — so it has to follow the row onto the raised token
 	   or it would come out DARKER than its own row on mobile dark. */
-	background: var(--cs-surface-raised, var(--background-secondary));
+	background: var(--cs-surface-raised, var(--setting-items-background));
 	color: var(--text-faint);
 	font-size: var(--font-smallest, 11px);
 	line-height: 1;
@@ -6517,7 +6486,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-m);
 	corner-shape: var(--corner-shape);
-	background: var(--cs-surface-raised, var(--background-secondary));
+	background: var(--cs-surface-raised, var(--setting-items-background));
 }
 .callout-studio-import-report
 	.cs-import-report-group
@@ -6618,7 +6587,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	padding: 10px 12px;
 	border-radius: var(--radius-m);
 	corner-shape: var(--corner-shape);
-	background: var(--cs-surface-raised, var(--background-secondary));
+	background: var(--cs-surface-raised, var(--setting-items-background));
 	transition: background 120ms ease;
 }
 .cs-option-box[tabindex="0"] {
@@ -6647,7 +6616,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	.cs-option-box[tabindex="0"]:hover {
 		background: color-mix(
 			in srgb,
-			var(--cs-surface-raised, var(--background-secondary)) 93%,
+			var(--cs-surface-raised, var(--setting-items-background)) 93%,
 			var(--text-normal)
 		);
 	}
@@ -6937,7 +6906,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	background: color-mix(
 		in srgb,
 		var(--interactive-accent) 8%,
-		var(--cs-surface-raised, var(--background-secondary))
+		var(--cs-surface-raised, var(--setting-items-background))
 	);
 }
 /* A card that a click would choose — it holds something, and is not the
@@ -6950,7 +6919,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	.cs-option-box.is-choosable:hover {
 		background: color-mix(
 			in srgb,
-			var(--cs-surface-raised, var(--background-secondary)) 93%,
+			var(--cs-surface-raised, var(--setting-items-background)) 93%,
 			var(--text-normal)
 		);
 	}
@@ -7144,7 +7113,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-m);
 	corner-shape: var(--corner-shape);
-	background: var(--cs-surface-raised, var(--background-secondary));
+	background: var(--cs-surface-raised, var(--setting-items-background));
 	line-height: 1.5;
 }
 
@@ -7366,7 +7335,7 @@ body:not(.is-phone)
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-m);
 	corner-shape: var(--corner-shape);
-	background-color: var(--cs-surface-raised, var(--background-secondary));
+	background-color: var(--cs-surface-raised, var(--setting-items-background));
 	cursor: pointer;
 }
 
@@ -7460,7 +7429,7 @@ body:not(.is-phone)
 .cs-portable-rules td {
 	padding: var(--size-4-2);
 	border-block-start: 1px solid var(--background-modifier-border);
-	background: var(--cs-surface-raised, var(--background-secondary));
+	background: var(--cs-surface-raised, var(--setting-items-background));
 }
 
 .cs-portable-rules code {
@@ -7586,7 +7555,9 @@ body:not(.is-phone)
 	gap: var(--size-4-2);
 	margin: 0;
 	padding-block: var(--size-4-3);
-	background: var(--cs-surface-raised, var(--background-secondary));
+	/* A vault sidebar, not a settings box: stuck at the top, the heading stays
+	   the pane's own colour so it reads flush with it. */
+	background: var(--background-secondary);
 	font-size: var(--font-ui-small);
 	font-weight: var(--font-medium);
 	line-height: 1.4;
@@ -7647,7 +7618,9 @@ button.cs-sidebar-file-link:focus-visible {
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-m);
 	corner-shape: var(--corner-shape);
-	background: var(--cs-surface-raised, var(--background-secondary));
+	/* Obsidian's search-result card colour, as the Search pane paints its file
+	   boxes — a vault sidebar, not a settings box. */
+	background: var(--search-result-background);
 	box-shadow: none;
 	text-align: start;
 	white-space: normal;
@@ -7880,7 +7853,7 @@ button.cs-sidebar-result {
 	display: grid;
 	place-content: center;
 	padding: var(--size-4-6);
-	background: color-mix(in srgb, var(--cs-surface-raised, var(--background-secondary)) 70%, transparent);
+	background: color-mix(in srgb, var(--background-secondary) 70%, transparent);
 	color: var(--text-muted);
 	font-size: var(--font-ui-small);
 	text-align: center;
@@ -9313,7 +9286,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	border: none;
 	border-radius: var(--radius-m);
 	corner-shape: var(--corner-shape);
-	background: var(--cs-surface-raised, var(--background-secondary));
+	background: var(--cs-surface-raised, var(--setting-items-background));
 }
 
 /* The row wears `.callout-studio-row` for its surface, and that class makes it
@@ -9509,7 +9482,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-m);
 	corner-shape: var(--corner-shape);
-	background: var(--cs-surface-raised, var(--background-secondary));
+	background: var(--cs-surface-raised, var(--setting-items-background));
 }
 
 .cs-recovery-change-title {
@@ -9653,7 +9626,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	border: none;
 	border-radius: 0;
 	box-shadow: none;
-	background: var(--cs-surface-raised, var(--background-secondary));
+	background: var(--cs-surface-raised, var(--setting-items-background));
 	font-size: var(--font-ui-medium);
 	font-weight: var(--font-semibold);
 	color: var(--text-normal);
@@ -9707,7 +9680,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	font-weight: var(--font-semibold);
 	font-variant-numeric: tabular-nums;
 	color: var(--text-muted);
-	background: var(--cs-surface-raised, var(--background-secondary));
+	background: var(--cs-surface-raised, var(--setting-items-background));
 }
 
 .cs-recovery-item-title {

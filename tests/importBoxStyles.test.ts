@@ -36,7 +36,7 @@ const rules = parseRules(readFileSync(join(process.cwd(), "styles.css"), "utf8")
 const HOVER_MEDIA = "@media (hover: hover)";
 /** The window's own colour, and the shade raised off it. */
 const SURFACE = "var(--cs-surface, var(--background-primary))";
-const RAISED = "var(--cs-surface-raised, var(--background-secondary))";
+const RAISED = "var(--cs-surface-raised, var(--setting-items-background))";
 
 /** Every rule whose selector list names `selector` as one of its entries. */
 function rulesNaming(selector: string): CssRule[] {
@@ -121,7 +121,7 @@ describe("the shared import/export boxes on hover", () => {
 		assert.deepEqual(rule.at, [HOVER_MEDIA]);
 		assert.match(
 			valueOf(rule, "background") ?? "",
-			/^color-mix\( in srgb, var\(--cs-surface-raised, var\(--background-secondary\)\) \d+%, var\(--text-normal\) \)$/,
+			/^color-mix\( in srgb, var\(--cs-surface-raised, var\(--setting-items-background\)\) \d+%, var\(--text-normal\) \)$/,
 		);
 	});
 

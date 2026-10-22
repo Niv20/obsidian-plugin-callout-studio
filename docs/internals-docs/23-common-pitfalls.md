@@ -361,7 +361,9 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
   [Render roles § the raw-syntax reveal](09-render-roles.md#the-raw-syntax-reveal-and-the-mousedown-freeze).
 - **`.is-mobile.theme-dark` repoints `--modal-background` onto
   `--background-secondary`** - this is precisely what broke the modal
-  surface tokens once and required the `color-mix()`-based re-derivation.
+  surface tokens once. A raised surface inside a window is
+  `--cs-surface-raised` (Obsidian's `--setting-items-background`, which steps
+  off the window there by itself), never a raw `--background-secondary`.
   See [Settings UI § two theme-aware surface tokens](16-settings-ui-and-modals.md#two-theme-aware-surface-tokens).
 - **`isDesktopOnly` is `false`** - any new feature must avoid Node/Electron-
   only APIs. The startup CSS-snapshot cache exists specifically to soften

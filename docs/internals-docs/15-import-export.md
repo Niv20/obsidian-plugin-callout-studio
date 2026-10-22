@@ -50,13 +50,15 @@ A box is drawn as the settings lists draw a callout row
 rather than as dialogs of their own:
 
 - **A borderless pill on the raised surface.** `border-radius: var(--radius-m)` with `corner-shape: var(--corner-shape)`, no border,
-  and `var(--cs-surface-raised, var(--background-secondary))` as its fill. The
-  icon sits on a 36px tile painted `var(--cs-surface, var(--background-primary))`
- - the window's own colour, as a row's syntax chip is - and so does the
-  **Recommended** pill. Those two tokens are the pair
-  [Settings UI and modals](16-settings-ui-and-modals.md) describes, and nothing
-  else may be used here: on mobile dark `--background-secondary` *is* the
-  window, and a box painted with it directly disappears.
+  and `var(--cs-surface-raised, var(--setting-items-background))` - Obsidian's
+  own settings-box colour - as its fill. The icon sits on a 36px tile painted
+  `var(--cs-surface, var(--background-primary))`, the window's own colour, as a
+  row's syntax chip is. Those two tokens are the pair
+  [Settings UI and modals](16-settings-ui-and-modals.md#two-theme-aware-surface-tokens)
+  describes, and nothing else may be used here: on mobile dark
+  `--background-secondary` *is* the window, and a box painted with it directly
+  disappears. On a phone or tablet in light mode the box is white on the white
+  window, as Obsidian's own boxes are in a window there, so it reads faint.
 - **Chrome stays grey-lit.** The icon is `--text-muted`, Obsidian's own icon
   grey, not `--text-accent`, and it stays that grey whatever the box comes to
   hold: nothing on a box turns green. The accent is spent on exactly one thing,
@@ -72,10 +74,9 @@ rather than as dialogs of their own:
   chooses.
 - **Hover.** A choice steps its own fill 7% toward `--text-normal` - darker
   over a light window, lighter over a dark one - and its chevron goes from
-  `--text-faint` to `--text-muted`. (A callout row hovers to
-  `--background-secondary-alt` instead, which on a light desktop is nearly the
-  window's white: fine for a row whose buttons carry the feedback, too faint
-  for a box that is itself the button.) A plugin import card takes the same
+  `--text-faint` to `--text-muted`. (A callout row has no hover fill at all:
+  its buttons carry the feedback, which is too little for a box that is itself
+  the button.) A plugin import card takes the same
   step only while a click would change something (`is-choosable`: it holds
   something and is not the active one). All hover rules sit inside
   `@media (hover: hover)`, as Obsidian guards its own button hovers, so a
@@ -471,8 +472,8 @@ reads the active one.
   folder is `notInstalled`; a folder without a settings file is `empty`.
   A file with no custom entries and an empty `{}` are also `empty`.
   A file that can't be read, parsed, or recognized is `unreadable`. Once
-  found, the vault card carries the shared grey **Recommended** pill
-  (`settings/recommendedBadge.ts`, also used by `ExportFormatModal`'s backup
+  found, the vault card carries the shared grey **Recommended** flair
+  (Obsidian's `flair mod-flat`, `settings/recommendedBadge.ts`, also used by `ExportFormatModal`'s backup
   row) on its title line. While the probe is still checking, the vault card
   says "Looking for…", its dot takes no focus, and the card
   (`.cs-import-vault.is-checking`) is held back 250ms, so a fast probe never

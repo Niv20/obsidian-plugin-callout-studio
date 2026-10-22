@@ -474,7 +474,7 @@ describe("modal surfaces use the --cs-surface pair", () => {
 			bad,
 			[],
 			report(
-				"Inside .cs-modal, paint var(--cs-surface, var(--background-primary)) or var(--cs-surface-raised, var(--background-secondary)) — the raw variables are wrong on mobile dark:",
+				"Inside .cs-modal, paint var(--cs-surface, var(--background-primary)) or var(--cs-surface-raised, var(--setting-items-background)) — the raw variables are wrong on mobile dark:",
 				bad,
 			),
 		);

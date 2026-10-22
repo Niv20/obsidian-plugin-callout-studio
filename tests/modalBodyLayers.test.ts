@@ -412,15 +412,23 @@ describe("sticky layers", () => {
 		// the window's colour (see "Dropdown popups wear their control's face").
 		// It cannot `inherit` either — its parent is an unpainted group wrapper,
 		// which would hand it `transparent` — so it names the menu's own token.
+		//
+		// And one is outside any window: a sidebar's file heading sits in a vault
+		// sidebar, whose pane is `--background-secondary`. The surface pair's
+		// raised fallback is Obsidian's settings box colour, which is wrong
+		// there, and its wrappers are unpainted, so it names the pane's colour.
 		const painted = stickyRules.filter((r) => paintOf(r));
 		assert.ok(painted.length >= 2, "expected at least two painted layers");
 
+		const own: Record<string, RegExp> = {
+			".cs-combobox-group-label": /^var\(--cs-menu-face\)$/,
+			".cs-sidebar-file-heading": /^var\(--background-secondary\)$/,
+		};
 		for (const rule of painted) {
 			assert.match(
 				paintOf(rule) as string,
-				rule.selector === ".cs-combobox-group-label"
-					? /^var\(--cs-menu-face\)$/
-					: /^(inherit|var\(--cs-surface(-raised)?, var\(--background-(primary|secondary)\)\))$/,
+				own[rule.selector] ??
+					/^(inherit|var\(--cs-surface, var\(--background-primary\)\)|var\(--cs-surface-raised, var\(--setting-items-background\)\))$/,
 				`${rule.selector} (styles.css:${rule.line})`,
 			);
 		}

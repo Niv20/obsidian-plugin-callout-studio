@@ -1378,12 +1378,13 @@ both.
 
 ## Two theme-aware surface tokens
 
-Defined **only** on `.modal.cs-modal` (never redefined per-modal), so
-falling through to the bare CSS variable keeps the plain settings tab -
-which Obsidian itself paints `--background-primary` - visually unchanged:
+Defined **only** on `.modal.cs-modal` (never redefined per-modal or per
+device). Every call site names its half's fallback, so outside a window - the
+settings tab - each half falls through to the colour Obsidian itself uses
+there:
 
 ```css
-.modal.cs-modal { --cs-surface: var(--modal-background); --cs-surface-raised: var(--background-secondary); }
+.modal.cs-modal { --cs-surface: var(--modal-background); --cs-surface-raised: var(--setting-items-background); }
 ```
 
 - **`--cs-surface`** (fallback `--background-primary`) - anything meant to
@@ -1391,26 +1392,44 @@ which Obsidian itself paints `--background-primary` - visually unchanged:
   cut around an icon tile's ✕. Not dropdown lists: those wear the face of the
   control that opened them (see
   [Dropdown popups wear their control's face](#dropdown-popups-wear-their-controls-face)).
-- **`--cs-surface-raised`** (fallback `--background-secondary`) - anything
+- **`--cs-surface-raised`** (fallback `--setting-items-background`) - anything
   meant to read as *raised off* that surface: a group-box header strip, a
-  card, a control, a row pill.
+  card, a control, a row pill. It is Obsidian's own settings-box colour, so a
+  plugin box and an Obsidian `SettingGroup` box in the same window, or on the
+  settings tab, are one grey.
+
+Obsidian steps that box colour off the window on every device by itself:
+
+| Where | Window / pane | Box (`--setting-items-background`) |
+|---|---|---|
+| Desktop | `--background-primary` | `--background-primary-alt` |
+| Mobile, light | `--background-primary` (a window), `--background-secondary` (the settings pane) | `--background-primary` |
+| Mobile, dark | `--background-secondary` | `--color-secondary-2` (4% white over `--background-secondary`) |
+
+So on a phone or tablet in light mode a box inside a window is white on white,
+exactly like Obsidian's own grouped rows in a window: the lines and headings
+carry the shape. A borderless plugin pill (`.callout-studio-row`,
+`.cs-option-box`) reads faint there until it is drawn as a box with lines.
 
 > [!IMPORTANT]
 > **The two tokens are a pair and must always move together.** Setting one
-> alone is precisely how the group boxes broke once: `--background-secondary`
-> is only the correct "raised" shade *while* `--modal-background` equals
-> `--background-primary` - and mobile dark theme is exactly where that
-> relationship stops holding. `.is-mobile.theme-dark` (phone and tablet)
-> repoints `--modal-background` **onto** `--background-secondary` itself
-> (for OLED-friendly true-black elsewhere), which means a strip painted with
-> the naive `--background-secondary` fallback lands on the exact surface
-> it's meant to sit *above*, and visually disappears. The fix,
-> `.is-mobile.theme-dark .modal.cs-modal` re-derives `--cs-surface-raised` as
-> a `color-mix()` step **off `--cs-surface`** rather than naming a fixed
-> replacement colour - reproducing the same visual step desktop gets
-> (`#1C1C1C` → `#282828`) on whatever the window turns out to be, and
-> surviving yet another theme repointing `--modal-background` again in the
-> future.
+> alone is precisely how the group boxes broke once: the body moved onto
+> `--cs-surface` while the header strip stayed pinned to
+> `--background-secondary`, and `.is-mobile.theme-dark` (phone and tablet)
+> repoints `--modal-background` **onto** `--background-secondary` itself, so
+> the strip landed on the exact surface it was meant to sit *above* and
+> disappeared. The plugin used to answer that with its own `color-mix()` step
+> off `--cs-surface` on mobile dark. Obsidian's box colour already makes that
+> step (`--color-secondary-2`), so the override is gone; a raw
+> `--background-secondary` inside a window is still a bug
+> (`tests/modalSurfaces.test.ts`).
+
+**Vault sidebars are not settings.** Find callouts and Review conversion live
+in workspace panes, not windows, so they never use the raised half: a result
+card is `--search-result-background`, Obsidian's colour for a Search pane's
+file box, and the sticky file heading and the refresh overlay name the pane's
+own `--background-secondary` (listed, with that reason, in
+`KNOWN_RAW_SECONDARY` in `tests/modalSurfaces.test.ts`).
 
 **Deliberately not covered**: `.cs-live-preview-body` and `.cs-gap-demo`,
 which are meant to emulate an actual **note** surface inside the modal (the
@@ -1923,8 +1942,8 @@ painted `#e4e4e4` before the palette were: every text control, the Callout IDs
 field and its **+** end-cap, the icon tile, every dropdown control and its open
 list and group headings, every window footer button, the settings tab's neutral
 buttons and the gradient-direction buttons. After it, the only neutral
-non-white backgrounds left are the cards behind rows (`#fafafa`, `#f6f6f6`),
-which are surfaces and not control faces.
+non-white backgrounds left are the cards behind rows (`#fafafa`, Obsidian's own
+settings-box colour), which are surfaces and not control faces.
 
 ### The swatches
 
@@ -2008,11 +2027,11 @@ therefore set on the main renderer document
 ### Not part of it
 
 Dark mode; callouts as they are drawn in a note; Obsidian's own widgets; the
-cards behind rows (`--background-secondary`), which are surfaces; and the tag
-chips, which are a translucent overlay on whatever they sit on. The palette also
-applies on phone and tablet (`is-mobile`), where it replaces a borderless
-`#f6f6f6` pill with a white one that has the same soft line - one palette for the
-light scheme rather than a per-device variant. A **user setting** to switch it
+cards behind rows (`--setting-items-background`, see
+[Two theme-aware surface tokens](#two-theme-aware-surface-tokens)), which are
+surfaces; and the tag chips, which are a translucent overlay on whatever they sit
+on. The palette also applies on phone and tablet (`is-mobile`) - one palette for
+the light scheme rather than a per-device variant. A **user setting** to switch it
 off was deliberately not added: choosing a theme is the switch.
 
 `tests/lightPalette.test.ts` pins the shape (one declaration site, the gate's

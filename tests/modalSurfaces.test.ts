@@ -4,7 +4,10 @@
  * Inside a chromed modal, a surface meant to read as flush with the window
  * paints `var(--cs-surface, var(--background-primary))`, and anything meant to
  * read as *raised off* it paints `var(--cs-surface-raised,
- * var(--background-secondary))`. Never the raw variables.
+ * var(--setting-items-background))`. Never the raw variables.
+ *
+ * The raised half is Obsidian's own box colour, `--setting-items-background`,
+ * so a plugin box and an Obsidian settings box in one window are one grey.
  *
  * The two are the same colour on the desktop, which is exactly what hid the bug
  * for so long. Mobile dark redefines `--color-base-00` to a true `#000` for
@@ -15,12 +18,11 @@
  * Nothing here reproduces on a desktop, which is why it is a source rule rather
  * than a rendering test.
  *
- * The tokens are a **pair** and must move together: `--background-secondary` is
- * the raised shade only while `--modal-background` is `--background-primary`,
- * and mobile dark is where that stops being true. Setting one alone is how the
- * group boxes regressed — the body moved onto `--cs-surface` while the header
- * strip stayed pinned to `--background-secondary`, which on that platform IS
- * the window, so the strip disappeared into it.
+ * The tokens are a **pair** and must move together. Setting one alone is how
+ * the group boxes once regressed — the body moved onto `--cs-surface` while the
+ * header strip stayed pinned to `--background-secondary`, which on mobile dark
+ * IS the window, so the strip disappeared into it. Obsidian's box colour has no
+ * such trap: it steps itself off the window on every device.
  *
  * What this file can and cannot see is worth being exact about. A CSS selector
  * says where a rule applies, not where the element ends up: `.cs-color-circle`
@@ -117,7 +119,7 @@ function rawPaints(rule: Rule, raw: RegExp): string[] {
 						"",
 					)
 					.replace(
-						/var\(\s*--cs-surface-raised\s*,\s*var\(\s*--background-secondary\s*\)\s*\)/g,
+						/var\(\s*--cs-surface-raised\s*,\s*var\(\s*--setting-items-background\s*\)\s*\)/g,
 						"",
 					),
 			),
@@ -134,8 +136,8 @@ describe("the stylesheet reader itself", () => {
 
 	it("descends into media queries", () => {
 		assert.ok(
-			rules.some((r) => r.selector === ".is-mobile.theme-dark .modal.cs-modal"),
-			"the mobile-dark override was not reached",
+			rules.some((r) => r.selector === ".callout-studio-row-buttons button:not(.clickable-icon):hover"),
+			"a rule nested in @media (hover: hover) was not reached",
 		);
 		assert.strictEqual(
 			rules.some((r) => r.selector.startsWith("@")),
@@ -172,7 +174,7 @@ describe("a rule scoped to a chromed window never paints the raw variables", () 
 			assert.deepStrictEqual(
 				rawPaints(rule, RAW_SECONDARY),
 				[],
-				"use var(--cs-surface-raised, var(--background-secondary)) instead",
+				"use var(--cs-surface-raised, var(--setting-items-background)) instead",
 			);
 		});
 	}
@@ -221,21 +223,18 @@ describe("--cs-surface and --cs-surface-raised are defined as a pair", () => {
 		assert.deepStrictEqual(alone.map((r) => r.selector), []);
 	});
 
-	it("re-derives the raised half off the surface rather than naming a colour", () => {
-		// The one override that redefines a single token. It steps off
-		// `--cs-surface` — which it is guaranteed to inherit, being scoped inside
-		// the same window — so it reproduces the desktop's own step on whatever
-		// the window turns out to be, and survives a theme repointing
-		// `--modal-background` again.
+	it("takes the raised half from Obsidian's own box colour, with no device override", () => {
+		// Obsidian steps `--setting-items-background` off the window on every
+		// device itself (on mobile dark it is `--color-secondary-2`, a shade off
+		// the `--background-secondary` that there IS the window), so there is no
+		// override of the raised half left to keep in step.
 		const alone = definingRules.filter(
 			(r) => defines(r, "--cs-surface-raised") && !defines(r, "--cs-surface"),
 		);
-		assert.deepStrictEqual(alone.map((r) => r.selector), [
-			".is-mobile.theme-dark .modal.cs-modal",
-		]);
-		for (const rule of alone) {
-			assert.match(rule.declarations, /var\(\s*--cs-surface\s*[),]/);
-		}
+		assert.deepStrictEqual(alone.map((r) => r.selector), []);
+		const pair = definingRules.find((r) => r.selector === ".modal.cs-modal");
+		assert.ok(pair);
+		assert.match(pair.declarations, /--cs-surface-raised\s*:\s*var\(--setting-items-background\)/);
 	});
 });
 
@@ -259,7 +258,7 @@ describe("every call site carries its own half's fallback", () => {
 				/var\(\s*--cs-surface-raised\s*,[^)]*\)[^)]*\)/g,
 			);
 			for (const use of raised ?? []) {
-				assert.match(use, /var\(--cs-surface-raised, var\(--background-secondary\)\)/);
+				assert.match(use, /var\(--cs-surface-raised, var\(--setting-items-background\)\)/);
 			}
 			for (const use of surface ?? []) {
 				if (use.startsWith("var(--cs-surface-raised")) continue;
@@ -336,11 +335,9 @@ describe("a disabled text field stays raised off the window", () => {
 	// The greyed-out state of the editor's two text fields — the display name of
 	// a built-in, and the IDs field while the name is linked to the id. Disabled
 	// is meant to read as "a control you cannot use", so the fill has to stay a
-	// step *above* whatever is behind it. `--background-secondary` is that step
-	// only while `--modal-background` is `--background-primary`; mobile dark
-	// points the modal AT `--background-secondary`, so the fill landed on the
-	// window and the field read as a hole rather than as a control.
-	const RAISED = "var(--cs-surface-raised, var(--background-secondary))";
+	// step *above* whatever is behind it — the raised half of the pair, which
+	// Obsidian keeps off the window on every device.
+	const RAISED = "var(--cs-surface-raised, var(--setting-items-background))";
 
 	it("the display-name field in the callout editor", () => {
 		// The `:not()` list is load-bearing and both halves have to stay in it.
@@ -446,18 +443,17 @@ describe("nothing else paints --background-primary unexamined", () => {
 });
 
 /**
- * The same review list for the raised half — and it is **empty**, which is a
- * stronger statement than the flush list can make.
- *
- * There is no equivalent of the settings tab here. A surface wanting the raised
- * shade wants it *relative to whatever it is sitting on*, and
- * `--background-secondary` only answers that while `--modal-background` is
- * `--background-primary` — so unlike `--background-primary`, which is genuinely
- * the right answer for a note or for the settings tab, there is no context in
- * which naming this one raw is correct. An entry here would be a bug awaiting
- * triage, not a decision; the empty list says so.
+ * The same review list for `--background-secondary`. Inside a window naming it
+ * raw is never right — the raised half is Obsidian's box colour — so every
+ * entry here is outside one, and says why.
  */
-const KNOWN_RAW_SECONDARY: string[] = [];
+const KNOWN_RAW_SECONDARY: string[] = [
+	// Deliberate. Vault sidebars, never a window: the sticky file heading stays
+	// the pane's own colour so it reads flush when stuck, and the refresh
+	// overlay is mixed from that same pane colour.
+	".cs-sidebar-file-heading | background",
+	".cs-portable-refresh-overlay | background",
+];
 
 describe("nothing else paints --background-secondary unexamined", () => {
 	const found = rules
