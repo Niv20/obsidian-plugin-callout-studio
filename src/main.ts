@@ -10,7 +10,7 @@ import type { SettingsAdoptionOptions } from "./manager/settingsAdopt";
  * Keep this file focused on lifecycle only — all feature logic lives in
  * the sub-modules under manager/, editor/, settings/, etc.
  */
-import { Notice, Platform, Plugin } from "obsidian";
+import { Notice, Platform, Plugin, type App, type PluginManifest } from "obsidian";
 import type { CalloutIcon, CalloutRenderRole, PluginSettings } from "./types";
 import { CalloutRegistry } from "./manager/CalloutRegistry";
 import { CSSInjector } from "./manager/CSSInjector";
@@ -108,8 +108,22 @@ export default class CalloutStudioPlugin extends Plugin {
 	private reloads!: ReloadQueue;
 	private linkSuggestDecorator!: LinkSuggestDecorator;
 
-	get settings(): PluginSettings {
-		return this.registry.settings;
+	/**
+	 * The live settings object, always read through the registry, because
+	 * adopting another device's `data.json` replaces `registry.settings`.
+	 *
+	 * Obsidian 1.13 declares `Plugin.settings` as a plain property. TypeScript
+	 * forbids overriding a property with an accessor (TS2611), so the getter is
+	 * installed per instance in the constructor and only the type lives here.
+	 */
+	declare settings: PluginSettings;
+
+	constructor(app: App, manifest: PluginManifest) {
+		super(app, manifest);
+		Object.defineProperty(this, "settings", {
+			get: (): PluginSettings => this.registry.settings,
+			configurable: true,
+		});
 	}
 
 	/** Backwards-compatible accessor used by SettingsTab/CalloutEditor. */

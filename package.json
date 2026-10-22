@@ -33,6 +33,7 @@
 		"husky": "^9.1.7",
 		"jiti": "2.6.1",
 		"nano-staged": "^1.0.2",
+		"obsidian": "1.13.1",
 		"rpg-awesome": "^0.2.0",
 		"simple-icons": "16.33.0",
 		"svgpath": "^2.6.0",
@@ -43,8 +44,7 @@
 	},
 	"dependencies": {
 		"@codemirror/view": "6.38.6",
-		"monkey-around": "^3.0.0",
-		"obsidian": "1.10.3"
+		"monkey-around": "^3.0.0"
 	},
 	"nano-staged": {
 		"*.{ts,mts}": "eslint --config scripts/eslint.config.mts"
