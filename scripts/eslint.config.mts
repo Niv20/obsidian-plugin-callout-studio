@@ -102,6 +102,8 @@ export default tseslint.config(
 		"node_modules",
 		"dist",
 		"scripts",
+		// Node-only artwork generator for the personal website, same status as scripts/.
+		"assets/website/generator",
 		// Bundled test output (npm test) — generated, and a copy of tests/.
 		".test-out",
 		"versions.json",

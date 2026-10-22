@@ -393,6 +393,16 @@ check (not exhaustive - see each file directly for the full list):
 > correctly" by inspection when the corresponding repo test will simply tell
 > you.
 
+### Personal website artwork
+
+`assets/website/` holds nine SVGs for the Callout Studio page on the maintainer's personal website.
+They are private-use artwork, not plugin content: no plugin file or public document links to them.
+`node assets/website/generator/build.mjs` regenerates them from production plugin code on the same
+offline documentation host as the user-guide renderer, with the same `PLAYWRIGHT_MODULE` and
+`BROWSER_EXECUTABLE` variables. The folder's `README.md` lists each image, where it appears on the
+site, and how to copy the result into the website repo. The generator is plain Node `.mjs`, like `scripts/`: it is in the ESLint ignore list
+(`scripts/eslint.config.mts`) and `npm test` does not scan it.
+
 ### Source file size
 
 The size check covers handwritten TypeScript under `src/`, including
