@@ -190,6 +190,8 @@ const NOTE_SURFACES = [
 			"overflow",
 			"background",
 			"border-radius",
+			// The corner's shape, like its radius, frames the note; it styles nothing inside.
+			"corner-shape",
 		],
 		why: "hosts a real embedded Obsidian editor (or a MarkdownRenderer fallback); it IS a note",
 	},

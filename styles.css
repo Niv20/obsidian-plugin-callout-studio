@@ -656,6 +656,7 @@
 	outline: 2px solid var(--background-modifier-border-focus);
 	outline-offset: 2px;
 	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 }
 
 /* Sized from the token rather than left to the SVG. The heading's offset is
@@ -1305,7 +1306,8 @@ body:not(.is-phone)
 	align-items: center;
 	gap: 12px;
 	padding: 8px 12px;
-	border-radius: 8px;
+	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	background: var(--cs-surface-raised, var(--background-secondary));
 	container-type: inline-size;
 }
@@ -1388,7 +1390,8 @@ body:not(.is-phone)
 	unicode-bidi: isolate;
 	background: var(--background-primary);
 	padding: 1px 6px;
-	border-radius: 4px;
+	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 }
 
 .callout-studio-row-syntax-line {
@@ -1453,7 +1456,8 @@ body:not(.is-phone)
 	width: 32px;
 	height: 32px;
 	padding: 0;
-	border-radius: 6px;
+	border-radius: var(--button-radius);
+	corner-shape: var(--button-corner-shape);
 	cursor: pointer;
 	color: var(--text-muted);
 	background: transparent;
@@ -1917,7 +1921,8 @@ body:not(.is-phone)
 .callout-studio-preview-container {
 	margin: 0;
 	border: 1px solid var(--background-modifier-border);
-	border-radius: 8px;
+	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	overflow: hidden;
 }
 
@@ -1944,7 +1949,8 @@ body:not(.is-phone)
 	max-height: 340px;
 	overflow: auto;
 	background: var(--background-primary);
-	border-radius: 6px;
+	border-radius: calc(var(--radius-m) - 2px);
+	corner-shape: var(--corner-shape);
 }
 
 /* Editable path: let the embedded editor own its own layout. Keep its surface
@@ -2069,6 +2075,7 @@ body:not(.is-phone)
 	padding: 0;
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	background-color: var(--background-modifier-form-field);
 	box-shadow: none;
 	color: var(--text-normal);
@@ -3101,7 +3108,8 @@ button.callout-studio-icon-picker-loading {
 
 .callout-studio-adjust-section {
 	border: 1px solid var(--background-modifier-border);
-	border-radius: 8px;
+	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	/* Allow palette/fold popups to overflow outside the section while
 	   keeping the inner header's background clipped via its own radius. */
 	overflow: visible;
@@ -3117,7 +3125,8 @@ button.callout-studio-icon-picker-loading {
 	color: var(--text-muted);
 	padding: 6px 10px;
 	background: var(--cs-surface-raised, var(--background-secondary));
-	border-radius: 7px 7px 0 0;
+	border-radius: calc(var(--radius-m) - 1px) calc(var(--radius-m) - 1px) 0 0;
+	corner-shape: var(--corner-shape);
 }
 
 /* Reset buttons sit outside the header's line box: revealing one must never
@@ -3649,7 +3658,8 @@ button.callout-studio-icon-picker-loading {
 	width: 28px;
 	height: 22px;
 	border: 1px solid var(--background-modifier-border);
-	border-radius: 4px;
+	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 	cursor: pointer;
 	justify-self: center;
 	overflow: hidden;
@@ -3690,6 +3700,7 @@ button.callout-studio-icon-picker-loading {
 	overflow-y: auto;
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 	margin-bottom: 12px;
 }
 
@@ -4625,6 +4636,7 @@ button.callout-studio-icon-picker-loading {
 	margin: 8px 0 0;
 	padding: 8px 10px;
 	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 	background-color: var(--background-modifier-hover);
 	color: var(--text-muted);
 	font-size: var(--font-ui-smaller);
@@ -4646,6 +4658,7 @@ button.callout-studio-icon-picker-loading {
 	margin: 8px 0 0;
 	padding: 8px 10px;
 	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 	background-color: var(--background-modifier-error-hover);
 	color: var(--text-normal);
 	font-size: var(--font-ui-smaller);
@@ -4912,6 +4925,7 @@ button.callout-studio-icon-picker-loading {
 	width: 42px;
 	height: 42px;
 	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 	cursor: pointer;
 	color: var(--text-normal);
 	transition: background-color 0.1s;
@@ -4930,7 +4944,9 @@ button.callout-studio-icon-picker-loading {
 }
 
 .icon-picker-cell:focus-visible {
-	outline: 2px solid var(--text-accent);
+	/* Obsidian's inset focus grey (as on its filter pills), not the accent:
+	   the accent is the chosen cell's fill. */
+	outline: 2px solid var(--background-modifier-border-focus);
 	outline-offset: -2px;
 }
 
@@ -5121,6 +5137,7 @@ button.callout-studio-icon-picker-loading {
 	outline: 2px dashed var(--interactive-accent);
 	outline-offset: -2px;
 	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 }
 
 /* The grid area is the drop target, so it reaches the bottom of the picker
@@ -5592,7 +5609,8 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 
 .cs-settings-group {
 	border: 1px solid var(--background-modifier-border);
-	border-radius: 8px;
+	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	padding: 0;
 	margin-bottom: 0;
 	overflow: visible;
@@ -5607,7 +5625,8 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	color: var(--text-muted);
 	padding: 6px 10px;
 	background: var(--cs-surface-raised, var(--background-secondary));
-	border-radius: 7px 7px 0 0;
+	border-radius: calc(var(--radius-m) - 1px) calc(var(--radius-m) - 1px) 0 0;
+	corner-shape: var(--corner-shape);
 	margin-bottom: 0;
 }
 
@@ -5684,7 +5703,8 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	padding: 3px 10px;
 	min-height: 24px;
 	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
-	border-radius: 6px;
+	border-radius: var(--button-radius);
+	corner-shape: var(--button-corner-shape);
 	background: var(--cs-btn-face, var(--interactive-normal));
 	color: var(--text-muted);
 	cursor: pointer;
@@ -5994,6 +6014,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	padding: 10px 12px;
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 	background: var(--cs-surface-raised, var(--background-secondary));
 }
 
@@ -6292,6 +6313,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	background: var(--cs-btn-face, var(--interactive-normal));
 	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
 	border-radius: var(--radius-s, 4px);
+	corner-shape: var(--corner-shape);
 	color: var(--text-muted);
 	cursor: pointer;
 	transition:
@@ -6493,7 +6515,8 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	margin: 0.75rem 0;
 	padding: 0.5rem 0.75rem;
 	border: 1px solid var(--background-modifier-border);
-	border-radius: 6px;
+	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	background: var(--cs-surface-raised, var(--background-secondary));
 }
 .callout-studio-import-report
@@ -6527,7 +6550,8 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	font-size: 0.85em;
 	background: var(--background-modifier-border);
 	padding: 0 4px;
-	border-radius: 3px;
+	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 }
 .callout-studio-import-report .cs-import-report-summary {
 	margin: 0.5rem 0 0.75rem;
@@ -6592,7 +6616,8 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	align-items: center;
 	gap: 12px;
 	padding: 10px 12px;
-	border-radius: 8px;
+	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	background: var(--cs-surface-raised, var(--background-secondary));
 	transition: background 120ms ease;
 }
@@ -6641,7 +6666,8 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	flex-shrink: 0;
 	width: 36px;
 	height: 36px;
-	border-radius: 8px;
+	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	background: var(--cs-surface, var(--background-primary));
 	color: var(--text-muted);
 }
@@ -6788,6 +6814,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	   button's own edge. */
 	padding: 3px 6px 3px 4px;
 	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	/* Obsidian's suggestion rows use the UI cursor (default on desktop,
 	   pointer on mobile), not a hard-coded pointer. */
 	cursor: var(--cursor);
@@ -7054,6 +7081,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	flex: 0 0 100%;
 	height: 132px;
 	border-radius: var(--textarea-radius, var(--input-radius, var(--radius-s)));
+	corner-shape: var(--input-corner-shape, round);
 	resize: none;
 	overflow: auto;
 	direction: ltr;
@@ -7115,6 +7143,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	padding: var(--size-4-3) var(--size-4-4);
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	background: var(--cs-surface-raised, var(--background-secondary));
 	line-height: 1.5;
 }
@@ -7161,6 +7190,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 
 .callout-studio-credits-content a:focus-visible {
 	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 	outline: 2px solid var(--text-accent);
 	outline-offset: 2px;
 }
@@ -7227,6 +7257,7 @@ body:not(.is-phone)
 
 .callout-studio-footer-contact-link:focus-visible {
 	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 	outline: 2px solid var(--text-accent);
 	outline-offset: 2px;
 }
@@ -7263,6 +7294,7 @@ body:not(.is-phone)
 	padding: 0 1px;
 	border: 0;
 	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 	background: transparent;
 	color: var(--text-faint);
 	box-shadow: none;
@@ -7333,6 +7365,7 @@ body:not(.is-phone)
 	padding: var(--size-4-3) var(--size-4-4);
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	background-color: var(--cs-surface-raised, var(--background-secondary));
 	cursor: pointer;
 }
@@ -7447,6 +7480,7 @@ body:not(.is-phone)
 	padding: var(--size-4-2) var(--size-4-3);
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	color: var(--text-muted);
 	font-size: var(--font-small);
 }
@@ -7467,6 +7501,7 @@ body:not(.is-phone)
 	flex: 1 1 0;
 	min-inline-size: 0;
 	border-radius: var(--radius-s);
+	corner-shape: var(--input-corner-shape, round);
 	background: color-mix(in srgb, var(--interactive-accent) 8%, transparent);
 	box-shadow: 0 0 0 1px color-mix(in srgb, var(--interactive-accent) 25%, transparent);
 }
@@ -7570,6 +7605,7 @@ button.cs-sidebar-file-link {
 	padding: 0;
 	border: 0;
 	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 	background: transparent;
 	box-shadow: none;
 	color: inherit;
@@ -7610,6 +7646,7 @@ button.cs-sidebar-file-link:focus-visible {
 	margin: 0;
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	background: var(--cs-surface-raised, var(--background-secondary));
 	box-shadow: none;
 	text-align: start;
@@ -7824,6 +7861,7 @@ button.cs-sidebar-result {
 	padding: var(--size-4-3);
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	color: var(--text-muted);
 	font-size: var(--font-ui-small);
 	overflow-wrap: anywhere;
@@ -7900,6 +7938,7 @@ button.cs-portable-after-button {
 	padding: 0;
 	border: 0;
 	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 	background: transparent;
 	box-shadow: none;
 	color: inherit;
@@ -9059,6 +9098,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 		transparent
 	);
 	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	/* A translucent tint of the warning colour rather than a surface token: the
 	   banner sits on the settings tab, and a raised-shade token would be a claim
 	   about what it is sitting on (see tests/modalSurfaces.test.ts). Lighter
@@ -9271,7 +9311,8 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	margin: 0;
 	padding: 14px 16px;
 	border: none;
-	border-radius: 8px;
+	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	background: var(--cs-surface-raised, var(--background-secondary));
 }
 
@@ -9347,10 +9388,6 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	min-width: 0;
 	margin-inline-start: auto;
 	gap: 4px;
-}
-
-.cs-recovery-row .setting-item-control .clickable-icon {
-	border-radius: 6px;
 }
 
 /* Quiet until hovered/focused, same as the main callout list's own delete
@@ -9471,6 +9508,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	padding: var(--size-4-3) var(--size-4-4);
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	background: var(--cs-surface-raised, var(--background-secondary));
 }
 
@@ -9533,6 +9571,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	table-layout: fixed;
 	border: 1px solid var(--background-modifier-border);
 	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	-webkit-mask-image: linear-gradient(#fff, #fff);
 	mask-image: linear-gradient(#fff, #fff);
 }
@@ -9710,6 +9749,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	margin-top: var(--size-4-1);
 	padding: 0 6px;
 	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 	font-size: var(--font-ui-smaller);
 	font-weight: var(--font-medium);
 	color: var(--color-yellow);
@@ -9774,7 +9814,8 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	flex: none;
 	width: 1.15em;
 	height: 1.15em;
-	border-radius: 4px;
+	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 }
 
 .cs-recovery-swatch {
@@ -9791,7 +9832,8 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 /* A little frame: the chosen sides solid, the others a faint dash. */
 .cs-recovery-sides {
 	box-sizing: border-box;
-	border-radius: 2px;
+	border-radius: calc(var(--radius-s) / 2);
+	corner-shape: var(--corner-shape);
 	border: 1px dashed var(--text-faint);
 }
 
@@ -9803,6 +9845,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 .cs-recovery-chip {
 	padding: 0 6px;
 	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 	background: var(--background-modifier-hover);
 }
 
@@ -9846,6 +9889,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	min-width: 0;
 	padding: 6px 8px;
 	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 	border-inline-start: 3px solid var(--cs-recovery-accent, var(--text-faint));
 	background-image: var(--cs-recovery-palette-image, none);
 }
@@ -10121,6 +10165,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 		transparent
 	);
 	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
 	background: color-mix(in srgb, var(--interactive-accent) 10%, transparent);
 }
 
@@ -10236,6 +10281,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 .callout-studio-settings .cs-scroll-target.cs-scroll-target-highlight {
 	animation: cs-scroll-target-highlight 1.5s ease-in-out both;
 	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
 }
 
 @keyframes cs-scroll-target-highlight {

@@ -53,7 +53,8 @@ describe("the shared import/export boxes at rest", () => {
 	it("draws a box as a borderless pill on the raised surface, like a callout row", () => {
 		const box = only(".cs-option-box");
 		assert.equal(valueOf(box, "background"), RAISED);
-		assert.equal(valueOf(box, "border-radius"), "8px");
+		assert.equal(valueOf(box, "border-radius"), "var(--radius-m)");
+		assert.equal(valueOf(box, "corner-shape"), "var(--corner-shape)");
 		assert.deepEqual(
 			box.props.filter((p) => p.startsWith("border") && p !== "border-radius"),
 			[],

@@ -562,6 +562,25 @@ and dimmed state.
 - **Rows that have not moved keep the plugin's 32px square,** narrowed to
   `button:not(.clickable-icon)`. Those are the command rows.
 
+### Corners
+
+The plugin rounds its chrome the way Obsidian does: from tokens, never from px.
+A box, card, row, banner or panel takes `--radius-m`, and a small chip or
+badge takes `--radius-s`. A plain button takes `--button-radius` with
+`--button-corner-shape`, and a field keeps the input tokens. Every rule with a
+radius also sets a `corner-shape` (`--corner-shape` unless the component has
+its own). That gives superellipse corners on macOS, and the touch radii on
+mobile.
+
+A few things are exempt:
+- 0 and 50% (circles);
+- callout rendering in notes;
+- Obsidian's own literal 5px drop slot;
+- the two chips that later become Obsidian's own components.
+
+`tests/cornerShapeStyles.test.ts` holds this. Its exception list can only
+shrink.
+
 ### Callout row menu groups
 
 All three row menus are built by plain functions: `buildBuiltInRowMenu` and

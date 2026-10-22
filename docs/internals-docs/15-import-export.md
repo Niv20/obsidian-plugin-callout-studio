@@ -49,7 +49,7 @@ A box is drawn as the settings lists draw a callout row
 (`.callout-studio-row`), so the three windows read as part of the same plugin
 rather than as dialogs of their own:
 
-- **A borderless pill on the raised surface.** `border-radius: 8px`, no border,
+- **A borderless pill on the raised surface.** `border-radius: var(--radius-m)` with `corner-shape: var(--corner-shape)`, no border,
   and `var(--cs-surface-raised, var(--background-secondary))` as its fill. The
   icon sits on a 36px tile painted `var(--cs-surface, var(--background-primary))`
  - the window's own colour, as a row's syntax chip is - and so does the
