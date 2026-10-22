@@ -7,7 +7,7 @@
  * Delete never comes here: it removes the definition and leaves the notes
  * alone (see settings/sections/calloutVaultActions.ts).
  */
-import { Modal } from "obsidian";
+import { Modal, setIcon } from "obsidian";
 import type { App } from "obsidian";
 import type { CalloutDefinition } from "../types";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
@@ -228,6 +228,14 @@ export class ReplaceCalloutModal extends Modal {
 			cls: "callout-studio-replace-item-id",
 			text: def.id,
 		});
+
+		// The check Obsidian's menus put beside the current value. Every row has
+		// one and `.is-selected` shows it, so moving the choice is a class change.
+		const check = item.createDiv({
+			cls: "callout-studio-replace-item-check",
+			attr: { "aria-hidden": "true" },
+		});
+		setIcon(check, "check");
 
 		return item;
 	}

@@ -26,7 +26,7 @@
  *   `LiveCalloutPreview`, so it is drawn by the theme's own CSS rather than by
  *   an imitation of it.
  */
-import { Modal, Setting } from "obsidian";
+import { Modal } from "obsidian";
 import { t } from "../i18n";
 import { applyModalChrome } from "./modalChrome";
 import { LiveCalloutPreview } from "./LiveCalloutPreview";
@@ -48,7 +48,7 @@ export class ThemeCalloutPreviewModal extends Modal {
 		const themeName =
 			activeThemeName(this.app) ?? t("settings.themeCalloutsDefaultTheme");
 		this.setTitle(t("themePreview.title", { name: this.def.displayName }));
-		const footer = applyModalChrome(this, { footer: true, wide: true });
+		const footer = applyModalChrome(this, { footer: true });
 		const { contentEl } = this;
 
 		contentEl.createEl("p", {
@@ -70,14 +70,13 @@ export class ThemeCalloutPreviewModal extends Modal {
 			collapseTrailingBlankLine: this.plugin.registry.themeOwns(this.def),
 		});
 
-		new Setting(footer).addButton((btn) =>
-			btn
-				.setButtonText(t("editor.themePreviewClose"))
-				.setCta()
-				.onClick(() => {
-					this.close();
-				}),
-		);
+		// A bare footer button, as every other window has: inside a Setting row
+		// it became a stretched form row on a phone.
+		footer
+			.createEl("button", { text: t("editor.themePreviewClose"), cls: "mod-cta" })
+			.addEventListener("click", () => {
+				this.close();
+			});
 	}
 
 	onClose(): void {

@@ -3556,7 +3556,7 @@ button.callout-studio-icon-picker-loading {
 	gap: 8px;
 	padding: 6px 10px;
 	cursor: pointer;
-	border-bottom: 1px solid var(--background-modifier-border-hover);
+	border-bottom: 1px solid var(--background-modifier-border);
 }
 
 .callout-studio-replace-item:last-child {
@@ -3569,8 +3569,26 @@ button.callout-studio-icon-picker-loading {
 	}
 }
 
+/* The chosen row: Obsidian's selected-item tint (a tree row's `.is-selected`),
+   with the check its menus put beside the current value at the end — so the
+   choice still reads under the pointer, where a hover is its own grey. */
 .callout-studio-replace-item.is-selected {
-	background-color: var(--background-modifier-active-hover);
+	background-color: var(--nav-item-background-selected);
+}
+
+.callout-studio-replace-item-check {
+	display: none;
+	flex-shrink: 0;
+	color: var(--text-muted);
+}
+
+.callout-studio-replace-item.is-selected .callout-studio-replace-item-check {
+	display: flex;
+}
+
+.callout-studio-replace-item-check .svg-icon {
+	--icon-size: var(--icon-s);
+	--icon-stroke: var(--icon-s-stroke-width);
 }
 
 .callout-studio-replace-item-icon {
@@ -6330,11 +6348,11 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	transition: none !important;
 }
 
-/* Theme callout preview window */
+/* Theme callout preview window. The explanation is the window's message, so
+   it is the dialog's own body text (`.modal-content`, 15px, normal colour), as
+   a confirmation's message is — not a small grey footnote. */
 .cs-theme-preview-note {
 	margin: 0 0 var(--size-4-2);
-	color: var(--text-muted);
-	font-size: var(--font-ui-small);
 	line-height: 1.5;
 }
 
@@ -7278,10 +7296,18 @@ body:not(.is-phone)
 	margin-block: var(--size-4-3);
 }
 
+/* One rounded box with a line between rows, as a settings group is drawn,
+   rather than a grid of filled cells. `separate` because a collapsed table
+   cannot round its corners; with no spacing the cells' top lines still meet. */
 .cs-portable-rules table {
 	width: 100%;
 	table-layout: fixed;
-	border-collapse: collapse;
+	border-collapse: separate;
+	border-spacing: 0;
+	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
+	box-shadow: 0 0 0 1px var(--background-modifier-border);
+	background: var(--cs-surface-raised, var(--setting-items-background));
 	font-size: var(--font-small);
 }
 
@@ -7289,13 +7315,12 @@ body:not(.is-phone)
 	color: var(--text-muted);
 	font-weight: var(--font-normal);
 	text-align: start;
-	padding: 0 var(--size-4-2) var(--size-4-1);
+	padding: var(--size-4-2) var(--size-4-2) var(--size-4-1);
 }
 
 .cs-portable-rules td {
 	padding: var(--size-4-2);
 	border-block-start: 1px solid var(--background-modifier-border);
-	background: var(--cs-surface-raised, var(--setting-items-background));
 }
 
 .cs-portable-rules code {
@@ -7308,16 +7333,6 @@ body:not(.is-phone)
 	white-space: pre-wrap;
 	overflow-wrap: anywhere;
 	font-size: inherit;
-}
-
-.cs-portable-warning {
-	margin-block: var(--size-4-3) 0;
-	padding: var(--size-4-2) var(--size-4-3);
-	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-m);
-	corner-shape: var(--corner-shape);
-	color: var(--text-muted);
-	font-size: var(--font-small);
 }
 
 .cs-portable-inline {
@@ -8704,16 +8719,26 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	text-align: left;
+	text-align: start;
 	gap: 12px;
 	min-width: 0;
 }
 
+/* The size and weight Obsidian gives a plugin's name in its details window
+   (`.community-modal-info-name`). */
 .cs-welcome-title {
 	margin: 8px 0 0;
-	font-size: 1.6em;
-	font-weight: 700;
+	font-size: var(--h2-size);
+	font-weight: var(--font-semibold);
+	line-height: var(--line-height-tight);
 	color: var(--text-normal);
+}
+
+/* The title is removed, but its empty header keeps a 0.75em bottom margin: a
+   blank strip above the columns. The phone keeps the header, whose padding is
+   what holds the hero clear of the close button. */
+body:not(.is-phone) .modal.cs-welcome-modal .modal-header {
+	display: none;
 }
 
 .cs-welcome-tagline {
@@ -9570,7 +9595,8 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 /* A title with nothing to draw beside it spans the row: keep it on one line. */
 .cs-recovery-item-title[colspan] > * {
 	display: inline-block;
-	margin: 0 var(--size-4-2) 0 0;
+	margin: 0;
+	margin-inline-end: var(--size-4-2);
 	vertical-align: baseline;
 }
 
@@ -9949,7 +9975,8 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 
 	.cs-recovery-item-row > .cs-recovery-item-title > * {
 		display: inline-block;
-		margin: 0 var(--size-4-2) 0 0;
+		margin: 0;
+		margin-inline-end: var(--size-4-2);
 		vertical-align: baseline;
 	}
 
@@ -9997,7 +10024,8 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	align-items: center;
 	gap: 10px;
 	margin: 4px 0 16px;
-	padding: 10px 10px 10px 14px;
+	padding: 10px;
+	padding-inline-start: 14px;
 	border: 1px solid color-mix(
 		in srgb,
 		var(--interactive-accent) 42%,

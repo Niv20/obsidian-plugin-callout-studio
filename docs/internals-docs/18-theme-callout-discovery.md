@@ -1368,7 +1368,10 @@ a Block-only live preview that **writes nothing at all**. The saved definition
 remains intact while its current theme owns the appearance. This theme-only
 preview visually collapses its terminal blank editor row so the box ends with
 content, while retaining the underlying line as a safe caret target; every
-ordinary preview remains unchanged. Its `⋮` menu
+ordinary preview remains unchanged. The explanation is the window's message, in
+the dialog's own body text, and **Got it** is a bare footer button like every
+other window's (inside a `Setting` row it became a stretched form row on a
+phone). Its `⋮` menu
 ([`themeRowActions.ts`](../../src/settings/sections/themeRowActions.ts)) carries
 usage information, then - only when the callout is actually written somewhere -
 *Replace in vault* and *Convert uses to plain text*, then *Duplicate* for a saved

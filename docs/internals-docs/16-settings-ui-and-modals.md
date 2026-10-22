@@ -18,7 +18,9 @@ The question-mark button sits at the far trailing edge of the sidebar's title
 row. It opens `PortableConversionHelpModal`: an **About conversion** explanation
 with one four-row **Before**/**After** table, isolated LTR source text, and a
 backup recommendation. Heading and inline examples share the table without
-separate subheadings.
+separate subheadings. The table is one rounded box with a line between rows, as
+a settings group is drawn, and the recommendation is a plain line of the
+window's text rather than a box.
 The help modal performs no vault reads and has no conversion action.
 The **Review conversion** tab is created only by this action, rather than at
 startup. A tab restored by Obsidian from an earlier session is closed during
@@ -1407,6 +1409,12 @@ the platform behavior.
 fills the search query and dispatches input/change on every device; it focuses
 and selects the text only on desktop. The normal `setQuery` path is supplied by
 Obsidian, so this plugin does not programmatically focus a field there.
+
+The chosen row in `ReplaceCalloutModal`'s list wears Obsidian's selected-item
+tint (`--nav-item-background-selected`, a tree row's `.is-selected`) and, at its
+end, the check Obsidian's menus put beside the current value. Every row draws
+the check and `.is-selected` shows it. A hover is plain grey, mouse only, so the
+choice still reads under the pointer.
 
 The search field's keyboard handling is also why `ReplaceCalloutModal`'s **Enter only chooses**
 (the top row, when nothing is chosen yet) and never confirms. Confirming rewrites
@@ -3193,7 +3201,13 @@ different ways in two different windows of this plugin.
 
 ### `WelcomeModal` - the one chrome opt-out
 
-Covered above under Modal chrome. Automatic onboarding requires confirmed
+Covered above under Modal chrome. The hero name takes the size and weight
+Obsidian gives a plugin's name in its details window (`--h2-size`, semibold,
+`--line-height-tight`). The removed title leaves an empty `.modal-header` with
+a 0.75em bottom margin, so off the phone that header is hidden and the columns
+start at the window's own inset; on a phone it stays, because its padding holds
+the hero clear of the close button. The left column aligns to `start`, so it
+mirrors under a right-to-left interface. Automatic onboarding requires confirmed
 fresh-install eligibility and checks both `settings.welcomeSeen` and the
 device-local welcome marker. An absent `data.json` alone is insufficient; see
 the [startup decisions](08-settings-sync-and-recovery.md#launch-decision-table).
