@@ -5561,14 +5561,6 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	height: 13px;
 }
 
-/* ─── Disabled Display Name (Built-in) ───────────────────── */
-
-.setting-item input[type="text"]:disabled {
-	color: var(--text-faint);
-	opacity: 0.6;
-	cursor: not-allowed;
-}
-
 /* ─── Responsive Settings Row ──────────────────────────────── */
 
 @container (max-width: 450px) {
