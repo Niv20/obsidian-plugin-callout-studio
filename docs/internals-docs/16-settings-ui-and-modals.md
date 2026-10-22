@@ -554,8 +554,13 @@ and dimmed state.
 - **The menu button** is `more-vertical` (⋮), Obsidian's "More options" icon.
 - **The drag handle** of the menu and library lists is a `.clickable-icon` too,
   and so are the library action and the image panel's add button.
+- **Quick insert's Edit and Insert** are `.clickable-icon`s too. A blocked
+  Insert wears Obsidian's dimmed icon state. Its keyboard- or pointer-active row
+  is ringed the way Obsidian rings a focused setting row (2px of
+  `--background-modifier-border-focus`), and its cursor is Obsidian's
+  `--cursor`.
 - **Rows that have not moved keep the plugin's 32px square,** narrowed to
-  `button:not(.clickable-icon)`. Those are the command and Quick insert rows.
+  `button:not(.clickable-icon)`. Those are the command rows.
 
 ### Callout row menu groups
 

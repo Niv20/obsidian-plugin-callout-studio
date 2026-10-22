@@ -53,13 +53,17 @@ export function renderQuickInsertRow(
 
 	const buttonsEl = row.createDiv({ cls: "callout-studio-row-buttons" });
 
+	// Obsidian's own icon buttons (`.clickable-icon`): size, hover, focus ring,
+	// and the dimmed state a blocked Insert wears.
 	const editBtn = buttonsEl.createEl("button", {
+		cls: "clickable-icon",
 		attr: { "aria-label": t("quickInsert.editAria", { name }) },
 	});
 	setIcon(editBtn, "pencil");
 	editBtn.addEventListener("click", () => handlers.onEdit(def));
 
 	const insertBtn = buttonsEl.createEl("button", {
+		cls: "clickable-icon",
 		attr: { "aria-label": t("quickInsert.insertAria", { name }) },
 	});
 	setIcon(insertBtn, "between-horizontal-start");

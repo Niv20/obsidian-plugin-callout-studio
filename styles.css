@@ -6779,16 +6779,18 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 .cs-qi-row {
 	display: flex;
 	align-items: center;
-	/* Tight: the buttons are 32px boxes around a ~16px glyph, so they already
-	   carry 8px of their own air on the side facing the callout. Anything more
-	   here reads as a gap twice the size it is. */
+	/* Tight: the buttons are Obsidian icon buttons, which carry their own
+	   padding on the side facing the callout. Anything more here reads as a
+	   gap twice the size it is. */
 	gap: 2px;
 	/* Right side gets a hair more than the rest: the hover/active ring below
 	   sits right on this padding, and 4px left it touching the insert
 	   button's own edge. */
 	padding: 3px 6px 3px 4px;
 	border-radius: var(--radius-m);
-	cursor: pointer;
+	/* Obsidian's suggestion rows use the UI cursor (default on desktop,
+	   pointer on mobile), not a hard-coded pointer. */
+	cursor: var(--cursor);
 }
 
 /* min-width: 0 is what actually keeps a long callout name from pushing the two
@@ -6849,8 +6851,9 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
    same bug. Inset so it stays inside the row's own box and cannot be clipped by
    the list's scroller, and the row's padding is what holds it off the callout's
    own border instead of doubling it. */
+/* The ring Obsidian draws around a focused setting row: 2px of its focus grey. */
 .cs-qi-row.is-active {
-	box-shadow: inset 0 0 0 1px var(--background-modifier-border-hover);
+	box-shadow: inset 0 0 0 2px var(--background-modifier-border-focus);
 }
 
 /* ─── Plugin import window (Admonition, Callout Manager) ────── */
