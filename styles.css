@@ -637,9 +637,11 @@
 	);
 }
 
-.callout-studio-settings .cs-collapsible-heading .setting-item-name:hover,
-.cs-modal .cs-collapsible-heading .setting-item-name:hover {
-	color: var(--text-normal);
+@media (hover: hover) {
+	.callout-studio-settings .cs-collapsible-heading .setting-item-name:hover,
+	.cs-modal .cs-collapsible-heading .setting-item-name:hover {
+		color: var(--text-normal);
+	}
 }
 
 /* It is reachable by Tab and answers Enter and Space, so it has to show where
@@ -1790,16 +1792,27 @@ body:not(.is-phone)
 	color: var(--text-muted);
 }
 
-.cs-icon-library-row button.cs-icon-library-action:hover,
 .cs-icon-library-row button.cs-icon-library-action:focus-visible {
 	background: var(--background-modifier-hover);
 	color: var(--text-normal);
 }
 
+@media (hover: hover) {
+	.cs-icon-library-row button.cs-icon-library-action:hover {
+		background: var(--background-modifier-hover);
+		color: var(--text-normal);
+	}
+}
+
 /* Deleting is the one action here that costs a download to undo. */
-.cs-icon-library-row button.cs-icon-library-delete:hover,
 .cs-icon-library-row button.cs-icon-library-delete:focus-visible {
 	color: var(--text-error);
+}
+
+@media (hover: hover) {
+	.cs-icon-library-row button.cs-icon-library-delete:hover {
+		color: var(--text-error);
+	}
 }
 
 /* The spinner fills the button on its own; its margin is for sitting beside text. */
@@ -2413,15 +2426,14 @@ body:not(.is-phone)
 
 /* Hover feedback of its own, because the (0,4,1) rule above also shut out
    Obsidian's `button:hover` — which would have turned it grey anyway. */
-.callout-studio-editor
-	.setting-item
-	.setting-item-control
-	button.cs-icon-tile-clear:hover {
-	background-color: color-mix(
-		in oklch,
-		var(--color-red, #e93147) 85%,
-		black
-	);
+@media (hover: hover) {
+	.callout-studio-editor .setting-item .setting-item-control button.cs-icon-tile-clear:hover {
+		background-color: color-mix(
+			in oklch,
+			var(--color-red, #e93147) 85%,
+			black
+		);
+	}
 }
 
 .cs-icon-tile-clear svg {
@@ -3475,9 +3487,14 @@ button.callout-studio-icon-picker-loading {
 
 /* The fold menu has no arrow navigation; combobox rows take their pointer
    highlight from .is-active so stationary :hover cannot compete with arrows. */
-.cs-palette-menu-item.is-active,
-:where(.cs-fold-menu) .cs-palette-menu-item:hover {
+.cs-palette-menu-item.is-active {
 	background-color: var(--background-modifier-hover);
+}
+
+@media (hover: hover) {
+	:where(.cs-fold-menu) .cs-palette-menu-item:hover {
+		background-color: var(--background-modifier-hover);
+	}
 }
 
 .cs-palette-menu-item.is-selected {
@@ -3486,8 +3503,10 @@ button.callout-studio-icon-picker-loading {
 
 /* The committed Fold option must still answer the pointer. Shared listboxes
    use .is-active for this state below. */
-.cs-fold-menu .cs-palette-menu-item.is-selected:hover {
-	background-color: var(--cs-menu-row-selected-active);
+@media (hover: hover) {
+	.cs-fold-menu .cs-palette-menu-item.is-selected:hover {
+		background-color: var(--cs-menu-row-selected-active);
+	}
 }
 
 /* The circles' cut-out ring repaints the ground behind them; in a popup that is
@@ -3692,8 +3711,10 @@ button.callout-studio-icon-picker-loading {
 	border-bottom: none;
 }
 
-.callout-studio-replace-item:hover {
-	background-color: var(--background-modifier-hover);
+@media (hover: hover) {
+	.callout-studio-replace-item:hover {
+		background-color: var(--background-modifier-hover);
+	}
 }
 
 .callout-studio-replace-item.is-selected {
@@ -4350,46 +4371,6 @@ button.callout-studio-icon-picker-loading {
 	inline-size: 100%;
 }
 
-.cs-combobox-footer-row {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 6px 8px;
-	cursor: pointer;
-	color: var(--text-muted);
-	font-size: var(--font-ui-small);
-}
-
-.cs-combobox-footer-row:hover {
-	background-color: var(--background-modifier-hover);
-	color: var(--text-normal);
-}
-
-/* The footer is not arrow-navigable, but its hover must also yield while an
-   option is keyboard-active under a stationary pointer. */
-.cs-combobox-menu.is-keyboard-active .cs-combobox-footer-row:hover {
-	background-color: transparent;
-	color: var(--text-muted);
-}
-
-.cs-combobox-footer-row-icon {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 20px;
-	flex-shrink: 0;
-}
-
-.cs-combobox-footer-row-icon .svg-icon {
-	width: var(--icon-s);
-	height: var(--icon-s);
-}
-
-.cs-combobox-footer-row-label {
-	flex: 1;
-	min-width: 0;
-}
-
 /* Text that closes the list — the source menu's "3 more libraries available
    for download". Information, not an action: no hover, no pointer, and the
    menu's own mousedown swallows a press on it. The rule above it is the one
@@ -4690,8 +4671,10 @@ button.callout-studio-icon-picker-loading {
 	text-decoration: none;
 }
 
-.icon-picker-pack-credit a:hover {
-	text-decoration: underline;
+@media (hover: hover) {
+	.icon-picker-pack-credit a:hover {
+		text-decoration: underline;
+	}
 }
 
 .icon-picker-content {
@@ -4878,8 +4861,10 @@ button.callout-studio-icon-picker-loading {
 	cursor: pointer;
 }
 
-.icon-picker-group-header:hover {
-	color: var(--text-normal);
+@media (hover: hover) {
+	.icon-picker-group-header:hover {
+		color: var(--text-normal);
+	}
 }
 
 .icon-picker-group-header:first-child {
@@ -4937,8 +4922,10 @@ button.callout-studio-icon-picker-loading {
 	overflow: hidden;
 }
 
-.icon-picker-cell:hover {
-	background-color: var(--background-modifier-hover);
+@media (hover: hover) {
+	.icon-picker-cell:hover {
+		background-color: var(--background-modifier-hover);
+	}
 }
 
 .icon-picker-cell:focus-visible {
@@ -5066,10 +5053,16 @@ button.callout-studio-icon-picker-loading {
 	color: var(--text-muted);
 }
 
-.icon-picker-image-panel button.icon-picker-image-add:hover,
 .icon-picker-image-panel button.icon-picker-image-add:focus-visible {
 	background: var(--background-modifier-hover);
 	color: var(--text-normal);
+}
+
+@media (hover: hover) {
+	.icon-picker-image-panel button.icon-picker-image-add:hover {
+		background: var(--background-modifier-hover);
+		color: var(--text-normal);
+	}
 }
 
 .icon-picker-image-panel button.icon-picker-image-delete {
@@ -5094,8 +5087,10 @@ button.callout-studio-icon-picker-loading {
 	transition: opacity 120ms ease, background-color 120ms ease;
 }
 
-.icon-picker-image-panel button.icon-picker-image-delete:hover {
-	background: color-mix(in oklch, var(--color-red, #e93147) 85%, black);
+@media (hover: hover) {
+	.icon-picker-image-panel button.icon-picker-image-delete:hover {
+		background: color-mix(in oklch, var(--color-red, #e93147) 85%, black);
+	}
 }
 
 .icon-picker-image-panel .icon-picker-image-delete svg {
@@ -5462,9 +5457,10 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 }
 
 /* Inset, like every other focus ring in this file — an outward one on a control
-   this close to the modal's scrolling edge is the thing that gets clipped. */
+   this close to the modal's scrolling edge is the thing that gets clipped.
+   Obsidian's focus grey, not the accent: no Obsidian focus ring is purple. */
 .cs-tag-add-btn:focus-visible {
-	outline: 2px solid var(--text-accent);
+	outline: 2px solid var(--background-modifier-border-focus);
 	outline-offset: -2px;
 	box-shadow: none;
 }
@@ -5500,12 +5496,12 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	box-shadow: none;
 }
 
-.cs-tag-input-row
-	.cs-tag-add-slot
-	.cs-tag-add-btn.cs-tag-add-btn:hover:not(:disabled) {
-	color: var(--text-normal);
-	background: var(--background-modifier-hover);
-	box-shadow: none;
+@media (hover: hover) {
+	.cs-tag-input-row .cs-tag-add-slot .cs-tag-add-btn.cs-tag-add-btn:hover:not(:disabled) {
+		color: var(--text-normal);
+		background: var(--background-modifier-hover);
+		box-shadow: none;
+	}
 }
 
 .cs-tag-row {
@@ -5558,8 +5554,10 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	font-weight: bold;
 }
 
-.cs-tag-chip-remove:hover {
-	opacity: 1;
+@media (hover: hover) {
+	.cs-tag-chip-remove:hover {
+		opacity: 1;
+	}
 }
 
 .cs-tag-chip.is-readonly {
@@ -6260,10 +6258,12 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	height: auto;
 	cursor: pointer;
 }
-.cs-inline-hint .cs-link-btn.cs-link-btn:hover {
-	color: var(--text-accent-hover);
-	background: none;
-	text-decoration: underline;
+@media (hover: hover) {
+	.cs-inline-hint .cs-link-btn.cs-link-btn:hover {
+		color: var(--text-accent-hover);
+		background: none;
+		text-decoration: underline;
+	}
 }
 
 /* Sentence + inline link, e.g. the palette editor's auto-background hint,
@@ -7379,8 +7379,10 @@ body:not(.is-phone)
 	cursor: pointer;
 }
 
-.cs-confirm-acknowledge:hover {
-	border-color: var(--background-modifier-border-hover);
+@media (hover: hover) {
+	.cs-confirm-acknowledge:hover {
+		border-color: var(--background-modifier-border-hover);
+	}
 }
 
 /* No `transition` on the outline. The tick's own fill flips at once, so a
@@ -7630,8 +7632,10 @@ button.cs-sidebar-file-link {
 	cursor: pointer;
 }
 
-button.cs-sidebar-file-link:hover {
-	color: var(--text-accent);
+@media (hover: hover) {
+	button.cs-sidebar-file-link:hover {
+		color: var(--text-accent);
+	}
 }
 
 button.cs-sidebar-file-link:focus-visible {
@@ -7683,9 +7687,22 @@ button.cs-sidebar-result {
 }
 
 @media (hover: hover) and (pointer: fine) {
-	.cs-sidebar-result:hover {
+	/* Find callouts' cards are whole-card buttons, so they answer the pointer. */
+	button.cs-sidebar-result:hover {
 		border-color: var(--background-modifier-border-focus);
 		background: var(--background-modifier-hover);
+	}
+
+	/* A Review conversion card is not a control itself; its source line and its
+	   After value are. So the card never fills: the source line's location
+	   steps up to normal text, and the card's own icon buttons sharpen. */
+	button.cs-portable-source:hover .cs-portable-change-location {
+		color: var(--text-normal);
+	}
+
+	.cs-portable-change-body:hover .cs-portable-card-actions .clickable-icon:not(:disabled, [aria-disabled="true"]) {
+		color: var(--icon-color-hover);
+		--icon-opacity: var(--icon-opacity-hover);
 	}
 }
 
@@ -7955,13 +7972,17 @@ button.cs-portable-after-button {
 	transition: background-color 140ms ease, box-shadow 140ms ease;
 }
 
-button.cs-portable-after-button:not(:disabled):hover {
-	background: color-mix(in srgb, var(--interactive-accent) 8%, transparent);
-	box-shadow: 0 0 0 3px color-mix(in srgb, var(--interactive-accent) 8%, transparent);
+@media (hover: hover) {
+	button.cs-portable-after-button:not(:disabled):hover {
+		background: color-mix(in srgb, var(--interactive-accent) 8%, transparent);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--interactive-accent) 8%, transparent);
+	}
 }
 
-button.cs-portable-after-button:not(:disabled):hover .cs-portable-after {
-	color: var(--text-accent);
+@media (hover: hover) {
+	button.cs-portable-after-button:not(:disabled):hover .cs-portable-after {
+		color: var(--text-accent);
+	}
 }
 
 button.cs-portable-source:focus-visible,
@@ -7997,10 +8018,6 @@ button.cs-portable-after-button:focus-visible {
 
 .cs-portable-card-actions button[hidden] {
 	display: none;
-}
-
-.cs-portable-card-actions button:hover {
-	color: var(--text-normal);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -9657,8 +9674,10 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	cursor: pointer;
 }
 
-.cs-recovery-comparison .cs-recovery-section-toggle:hover {
-	background: var(--background-modifier-hover);
+@media (hover: hover) {
+	.cs-recovery-comparison .cs-recovery-section-toggle:hover {
+		background: var(--background-modifier-hover);
+	}
 }
 
 .cs-recovery-comparison .cs-recovery-section-toggle:focus-visible {

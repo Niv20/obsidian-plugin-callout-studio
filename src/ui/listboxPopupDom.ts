@@ -214,49 +214,13 @@ export function renderComboboxEmptyState(
 	menuEl.createDiv({ cls: "callout-studio-empty-state", text });
 }
 
-export interface FooterRowSpec {
-	/** Lucide id. */
-	icon: string;
-	label: string;
-	onClick(): void;
-}
-
-/**
- * The optional row pinned below the list — the palette picker's Create "name" row.
- *
- * It is an action, not an item, which is why it is built here rather than
- * through the caller's `renderRow` and why the popup keeps it out of the array
- * the arrow keys walk: Enter must never land on it.
- */
-export function renderComboboxFooterRow(
-	menuEl: HTMLElement,
-	footer: FooterRowSpec,
-	onPointer: () => void,
-): void {
-	const rowEl = menuEl.createDiv({
-		cls: "cs-combobox-footer-row",
-		attr: { role: "option" },
-	});
-	const iconEl = rowEl.createSpan({ cls: "cs-combobox-footer-row-icon" });
-	setIcon(iconEl, footer.icon);
-	rowEl.createSpan({
-		cls: "cs-combobox-footer-row-label",
-		text: footer.label,
-	});
-	// Moving onto this row leaves the real ones, which also ends whatever they
-	// were previewing.
-	rowEl.addEventListener("mouseenter", onPointer);
-	rowEl.addEventListener("mousemove", onPointer);
-	rowEl.addEventListener("click", () => footer.onClick());
-}
-
 /**
  * The plain text that can close the list — see `footerNote`.
  *
- * Unlike {@link renderComboboxFooterRow} it is not an action, so it has no
- * role and no listeners: nothing highlights it, the popup never counts it among
- * its rows, and a press on it is swallowed by the menu's own `mousedown`, which
- * keeps focus in the input and the menu open.
+ * It is not an action, so it has no role and no listeners: nothing highlights
+ * it, the popup never counts it among its rows, and a press on it is swallowed
+ * by the menu's own `mousedown`, which keeps focus in the input and the menu
+ * open.
  */
 export function renderComboboxFooterNote(menuEl: HTMLElement, text: string): void {
 	menuEl.createDiv({ cls: "cs-combobox-footer-note", text });

@@ -14,7 +14,6 @@ import {
 	renderComboboxCreateRow,
 	renderComboboxEmptyState,
 	renderComboboxFooterNote,
-	renderComboboxFooterRow,
 	renderComboboxRows,
 } from "./listboxPopupDom";
 import { wirePopupEvents } from "./listboxPopupEvents";
@@ -218,8 +217,6 @@ export class ListboxPopup<T> {
 			}
 		}
 
-		if (this.options.footerRow)
-			renderComboboxFooterRow(this.menuEl, this.options.footerRow, () => this.restorePointerHighlight(-1));
 		const note = this.options.footerNote?.() ?? "";
 		if (note !== "") renderComboboxFooterNote(this.menuEl, note);
 
@@ -243,7 +240,6 @@ export class ListboxPopup<T> {
 		this.rowEls[this.activeIndex]?.removeClass("is-active");
 		this.activeIndex = index >= 0 && index < this.rowEls.length ? index : -1;
 		this.pointerActive = opts?.pointer ?? false;
-		this.menuEl.toggleClass("is-keyboard-active", !this.pointerActive && this.activeIndex >= 0);
 
 		const el = this.rowEls[this.activeIndex];
 		if (el) {

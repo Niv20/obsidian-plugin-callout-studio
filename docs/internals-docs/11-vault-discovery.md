@@ -210,9 +210,12 @@ completion or view closure clears it. Partial and failed states remain immediate
 the Settings action and styles. Result cards omit redundant type labels and
 clamp excerpts to two lines while preserving raw Markdown syntax; block excerpts
 prefer a header line and a line of body content. Preview formatting does not
-change source coordinates or token exclusions. Fine-pointer hover changes only a
-result card's border to the theme's focus-border colour; selected and
-keyboard-focus treatments remain distinct.
+change source coordinates or token exclusions. A fine-pointer hover changes a
+result card's border to the theme's focus-border colour and gives it the
+hover fill. Selected and keyboard-focus treatments remain distinct. Only the
+Find callouts cards answer this way, because each of them is a whole-card button.
+A Review conversion card is not itself a control, so it never fills. Its source
+line's location steps up to normal text, and its own icon buttons sharpen.
 `prepareUsageMenu` gives the shared occurrence scan up to 200 ms before any
 custom, built-in or theme row menu is constructed. A ready index bypasses both
 the wait and a freshness request. Concurrent requests share one scan; the latest

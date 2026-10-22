@@ -2989,9 +2989,7 @@ creates a group, clearing it before every rebuild. That class owns the menu's
 top padding and sticky-heading scroll allowance, including transitions to
 ungrouped, empty, or create-only results.
 
-Two options add something after the rows, and they are opposites. `footerRow`
-is an action (the palette picker's Create "name"): it answers the pointer and
-runs on click, though the arrow keys skip it. `footerNote()` is information -
+One option adds something after the rows. `footerNote()` is information -
 plain text asked on every rebuild, nothing when it returns `""` - drawn last as
 `cs-combobox-footer-note` with no role and no listener, outside `rowEls`, so
 nothing highlights it and a press on it is swallowed by the menu's

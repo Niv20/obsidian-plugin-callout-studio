@@ -42,7 +42,7 @@ function mount(options: Partial<ListboxPopupOptions<Choice>> = {}) {
 
 describe("ListboxPopup — rendered group presentation", () => {
 	it("drops and restores grouped padding while searching through one group, no results and all groups", () => {
-		const h = mount({ footerRow: { icon: "plus", label: "New choice", onClick: () => {} } });
+		const h = mount();
 		try {
 			h.expectGroups();
 			h.input.fire("focus");
@@ -52,7 +52,6 @@ describe("ListboxPopup — rendered group presentation", () => {
 			h.type("missing");
 			h.expectGroups();
 			assert.ok(h.menu.querySelector(".callout-studio-empty-state"));
-			assert.ok(h.menu.querySelector(".cs-combobox-footer-row"));
 			h.popup.close();
 			h.input.fire("focus");
 			h.expectGroups("browse", "custom", "preset");
