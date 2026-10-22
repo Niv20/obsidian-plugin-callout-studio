@@ -4530,17 +4530,6 @@ button.callout-studio-icon-picker-loading {
 	font-size: var(--font-ui-smaller);
 }
 
-.icon-picker-pack-credit a {
-	color: var(--text-accent);
-	text-decoration: none;
-}
-
-@media (hover: hover) {
-	.icon-picker-pack-credit a:hover {
-		text-decoration: underline;
-	}
-}
-
 .icon-picker-content {
 	flex: 1;
 	min-height: 0;
@@ -5141,7 +5130,11 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	box-shadow: 0 0 0 1px var(--text-error);
 }
 
+/* A link inside a red message ("move it here", "use it instead") keeps the
+   accent rather than the muted grey of the description it may sit in. */
 .cs-tag-error {
+	--link-color: var(--text-accent);
+	--link-color-hover: var(--text-accent-hover);
 	color: var(--text-error);
 	font-size: var(--font-ui-smaller);
 	min-height: 0;
@@ -6085,7 +6078,12 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
    `.setting-item`: the duplicate-colour error in PaletteEditorModal renders
    its hint into a bare div outside any Setting, where a `.setting-item`
    ancestor requirement never matches and the button falls through to
-   Obsidian's full grey style — see renderColorError. */
+   Obsidian's full grey style — see renderColorError.
+
+   Painted as Obsidian paints an `a`, from its link tokens: underlined, in
+   `--link-color`. A setting description redefines those to muted and normal
+   (`.setting-item-description`), so a hint there reads like a link in
+   Obsidian's own descriptions; elsewhere they are the accent. */
 .cs-inline-hint .cs-link-btn.cs-link-btn {
 	display: block;
 	appearance: none;
@@ -6097,7 +6095,9 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	border-radius: 0;
 	background: none;
 	box-shadow: none;
-	color: var(--text-accent);
+	color: var(--link-color);
+	text-decoration-line: var(--link-decoration);
+	text-decoration-thickness: var(--link-decoration-thickness);
 	font-size: var(--font-smaller);
 	font-family: inherit;
 	font-weight: normal;
@@ -6107,10 +6107,18 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 }
 @media (hover: hover) {
 	.cs-inline-hint .cs-link-btn.cs-link-btn:hover {
-		color: var(--text-accent-hover);
+		color: var(--link-color-hover);
 		background: none;
-		text-decoration: underline;
+		text-decoration-line: var(--link-decoration-hover);
 	}
+}
+/* The reset above takes Obsidian's button ring away with `box-shadow: none`;
+   this gives back the one Obsidian draws on a link in a setting row
+   (`.setting-item a:focus-visible`). */
+.cs-inline-hint .cs-link-btn.cs-link-btn:focus-visible {
+	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
+	box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
 }
 
 /* Sentence + inline link, e.g. the palette editor's auto-background hint,
@@ -7013,23 +7021,13 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	color: var(--text-faint);
 }
 
-.callout-studio-credits-content a {
-	color: var(--text-accent);
-	text-decoration: none;
-}
-
-@media (hover: hover) {
-	.callout-studio-credits-content a:hover {
-		color: var(--text-accent-hover);
-		text-decoration: underline;
-	}
-}
-
+/* The links are Obsidian's own `a`: underlined, in `--link-color`. Only the
+   keyboard ring is added, the one Obsidian draws on a link in a setting row
+   (`.setting-item a:focus-visible`), since core's `a` has `outline: none`. */
 .callout-studio-credits-content a:focus-visible {
 	border-radius: var(--radius-s);
 	corner-shape: var(--corner-shape);
-	outline: 2px solid var(--text-accent);
-	outline-offset: 2px;
+	box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
 }
 
 /* ── Footer ─────────────────────────────────────────────────── */

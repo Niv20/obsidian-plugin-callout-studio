@@ -16,8 +16,10 @@
  * Styling lives in `styles.css` under `.cs-inline-hint .cs-link-btn` (and the
  * `.cs-link-btn-inline` override that keeps it on the same line), scoped to
  * this function's own wrapper div rather than `.setting-item` so the hint
- * still gets the low-emphasis look when rendered outside a Setting — see
- * PaletteEditorModal.renderColorError.
+ * still looks like a link when rendered outside a Setting — see
+ * PaletteEditorModal.renderColorError. It is painted from Obsidian's link
+ * tokens, so inside a setting description it is the muted, underlined link
+ * Obsidian's own descriptions use.
  */
 import { t } from "../i18n";
 

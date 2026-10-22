@@ -1306,6 +1306,25 @@ already counted by the time the check runs.
   are 1ch each and only `-`, `.`, `e`, `m` and `×` are proportional. After a UI
   font or theme change, drag "0.75em", "×1.25" and "-4px" and watch the track.
 
+### Links look like Obsidian's
+
+A hint's link (`renderInlineLinkHint`: "clicking here", **Revert**,
+**Restore**, "move it here", "use it instead") is a `<button>`, but it is
+painted as Obsidian paints an `a`: `--link-color`, underlined with
+`--link-decoration`, `--link-color-hover` under a pointer. Obsidian's
+`.setting-item-description` redefines those tokens to muted and normal, so in a
+description the link is the grey underlined one Obsidian's own descriptions
+use; elsewhere it is the accent. Inside a red `.cs-tag-error` line the tokens
+are set back to the accent, so the link stays findable in the sentence. The
+reset that strips Obsidian's button face also strips its focus ring, so the
+link gets back the 2px `--background-modifier-border-focus` ring Obsidian draws
+on a link in a setting row.
+
+The credits window and Pick an icon's credit line use plain `<a>`s with no
+colour or underline of their own, only that same keyboard ring. (The settings
+footer's contact links keep their own no-underline look until the footer
+becomes the About group.)
+
 ## Where the cursor lands when a window opens
 
 [`src/settings/modalAutofocus.ts`](../../src/settings/modalAutofocus.ts)
