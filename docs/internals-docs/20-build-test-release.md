@@ -578,6 +578,26 @@ Bumping `manifest.json`/`package.json`/`versions.json` happens together, via
 > together, tags, pushes, waits for the CI build, writes release notes, and
 > publishes. Tags are bare semver (`1.5.0`), never `v1.5.0`.
 
+### Raising `minAppVersion`
+
+`minAppVersion` changes in its own commit, just before the release that needs
+it. Until then `manifest.json` keeps the shipped value, because the
+version-file tests (`tests/repoRelease.test.ts`) hold `versions.json` to it.
+
+Code can still start using newer APIs before that commit. The `obsidian`
+typings are pinned to the target version (1.13.1), and a block in
+`scripts/eslint.config.mts` points `obsidianmd/no-unsupported-api` at the same
+version (`minAppVersion: "1.13.1"`), instead of the manifest's. Without it, the
+rule flags every newer API against the old manifest value, including
+`plugin.settings`, which Obsidian 1.13 declares on `Plugin` itself.
+
+The release commit does three things in order:
+1. Checks the plugin on a real install of the target version.
+2. Raises `manifest.json`'s `minAppVersion`.
+3. Deletes that eslint block.
+
+`npm version` then writes the matching `versions.json` entry.
+
 ## Husky / pre-commit
 
 A single pre-commit hook (`scripts/hooks/pre-commit: npx nano-staged`) runs ESLint
