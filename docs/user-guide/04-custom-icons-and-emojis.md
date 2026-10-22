@@ -44,7 +44,7 @@ Click **Manage libraries** at the end of the source row to open **Manage icon li
 
 Your search text stays in place when you return, including after reordering, downloading, deleting, or hiding a library. The results update to reflect those changes. If removing the active library returns you to **All sources**, the same search continues there.
 
-- **Available libraries** are the ones the picker offers, in the order it offers them. Drag a row by its handle - or focus the handle and press the up and down arrow keys - to change that order. While you drag, a grey slot that follows the active palette shows where the row will land. The reset arrow sits on this heading.
+- **Available libraries** are the ones the picker offers, in the order it offers them. Drag a row by its handle - or focus the handle and press the up and down arrow keys - to change that order. While you drag, a slot in your accent colour shows where the row will land, as in Obsidian's own lists. The reset arrow sits on this heading.
 - **Libraries to download** are the ones not downloaded on this device yet. Their rows are dimmed and have no handle, because their order can't change anything until they're downloaded.
 - **Hidden libraries** appears only while you have hidden one of the libraries that come with the plugin, and lists it so you can show it again.
 

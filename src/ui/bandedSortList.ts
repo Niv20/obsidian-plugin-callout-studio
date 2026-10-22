@@ -57,12 +57,13 @@ export interface BandedSortListOptions<T> {
 	scroller?(): HTMLElement | null;
 	/**
 	 * Whether the row gets a handle. Default: every row. A row without one
-	 * keeps a spacer the handle's width, so the names stay in one column.
+	 * ends in a spacer the handle's width, so its control stays in one column
+	 * with the controls of the rows that have one.
 	 */
 	canMove?(item: T): boolean;
 	/** Accessible name of every handle. */
 	handleLabel: string;
-	/** Fill a row after its handle: the label and the row's own control. */
+	/** Fill a row before its handle: the label and the row's own control. */
 	renderRow(row: HTMLElement, item: T): void;
 	/** A drag or an arrow key moved an item; `items()` already shows the move. */
 	onReorder(): void;
@@ -163,18 +164,21 @@ export function attachBandedSortList<T>(
 		row.dataset.csItemId = opts.keyOf(item);
 		if (opts.inLowerBand(item)) row.addClass("is-disabled");
 
+		// The handle ends the row, after the row's own control, and draws
+		// Obsidian's three-bar icon — as Obsidian's reorderable lists do.
+		opts.renderRow(row, item);
 		if (!canMove(item)) {
 			row.createDiv({ cls: "cs-drag-handle-spacer" });
-			opts.renderRow(row, item);
 			return;
 		}
 
-		// Keyboard-operable as well as draggable.
-		const handle = row.createDiv({ cls: "cs-drag-handle clickable-icon" });
+		// Keyboard-operable as well as draggable: ↑/↓ on the handle, and
+		// Alt+↑/↓ (Obsidian's key) works the same, as no modifier is checked.
+		const handle = row.createDiv({ cls: "cs-drag-handle mod-drag-handle clickable-icon" });
 		handle.setAttribute("role", "button");
 		handle.setAttribute("tabindex", "0");
 		handle.setAttribute("aria-label", opts.handleLabel);
-		setIcon(handle, "grip-vertical");
+		setIcon(handle, "menu");
 		handle.addEventListener("keydown", (e) => {
 			const step = e.key === "ArrowUp" ? -1 : e.key === "ArrowDown" ? 1 : 0;
 			if (step === 0) return;
@@ -195,8 +199,6 @@ export function attachBandedSortList<T>(
 			opts.onReorder();
 			focusHandleOf(listEl, opts.keyOf(item));
 		});
-
-		opts.renderRow(row, item);
 	};
 
 	const detachDrag = makeDragSortable(listEl, {

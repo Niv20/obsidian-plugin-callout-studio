@@ -2462,12 +2462,19 @@ both runtime outcomes, not two mutually visible actions.
 #### The drop placeholder
 
 While a row is dragged, `DragSortList.ts` marks the slot it lands in if let go
-now: an empty `div.cs-drag-placeholder` (`aria-hidden`), the row's exact size,
-filled with `--background-modifier-border`, the theme's neutral resting
-border shade. In Obsidian's default palette this grey is darker in dark mode
-and lighter in light mode than the hover-border shade. Reading the semantic
-token directly follows the theme's UI palette without a plugin-defined
-colour or mixing ratio.
+now: an empty `div.cs-drag-placeholder` (`aria-hidden`), the row's exact size.
+It is Obsidian's own drop slot (`.drag-ghost-hidden:before`): the accent at 30%
+(`color-mix(in oklch, var(--interactive-accent) 30%, transparent)`) with 5px
+corners, as when a ribbon item is dragged in Settings → Appearance.
+
+The lifted row is Obsidian's drag ghost: a solid card on `--drag-item-background`
+with `--drag-item-shadow`. For the length of the gesture `DragSortList` puts
+Obsidian's own `is-grabbing` class on the window's `body`, which gives a grabbing
+cursor everywhere and keeps tooltips from opening. Every way a gesture ends
+clears it: a drop, a cancel, a lost capture, or the window closing. The handle
+ends the row (after the row's own control) and draws Obsidian's three-bar icon
+(`menu`, with `mod-drag-handle`). ↑/↓ on it moves the row, and so does Alt+↑/↓,
+Obsidian's key, because no modifier is checked.
 
 - **The slot is the dragged row's own box.** The row never leaves the flow -
   it sits in its slot with a `translateY` floating it under the pointer - so
@@ -2476,11 +2483,12 @@ colour or mixing ratio.
   `--cs-drag-placeholder-*` properties, which `styles.css` turns into an
   absolutely positioned box. `.cs-menu-customize-list` is `position: relative`
   for that. Measured rather than styled, so a taller library row gets a taller
-  slot; the corners are `.callout-studio-row`'s 8px.
+  slot.
 - **It moves inside the FLIP.** When the row changes slot, the placeholder is
   re-covered within the same `animateReorder` mutation that moves the row, so
   the FLIP slides it to the new slot in step with the neighbours trading places
-  with it (same 180ms ease, same cancel-and-restart on a fast drag). It is
+  with it (the same slide, Obsidian's 300ms `cubic-bezier(0.2, 0, 0, 1)` from
+  `ui/flip.ts`, and the same cancel-and-restart on a fast drag). It is
   placed with `top`, never `transform`, because the slide is a `transform`
   animation.
 - **Paint order.** It is the list's first child, so a row sliding past it is
@@ -2677,7 +2685,7 @@ Behaviour to keep in mind before changing it:
   row) to spare, and not at all when it is already in. Because the scroll is
   instant and happens *before* `animateReorder` reads where the rows now are,
   its slide runs from where each row was on screen to where it now is on
-  screen: the list visibly scrolls with the row, in the same 180ms, with no
+  screen: the list visibly scrolls with the row, in the same 300ms, with no
   second animation to keep in step. Reduced motion skips the slide but still
   scrolls. A list attached without a `scroller` option (Customize menu items)
   never scrolls itself.

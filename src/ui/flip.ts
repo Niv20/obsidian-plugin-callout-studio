@@ -16,8 +16,9 @@
  * skipping the animation and just running the mutation.
  */
 
-/** Default slide duration, matching the ~120-200ms eases used across styles.css. */
-export const REORDER_DURATION_MS = 180;
+/** Obsidian's own reorder slide (app.js `uk()`): 300ms on its decelerating curve. */
+export const REORDER_DURATION_MS = 300;
+export const REORDER_EASING = "cubic-bezier(0.2, 0, 0, 1)";
 
 /** True when the OS asks for reduced motion; animations should be skipped. */
 export function prefersReducedMotion(): boolean {
@@ -92,7 +93,7 @@ export function animateReorder(
 
 		const anim = el.animate(
 			[{ transform: `translateY(${dy}px)` }, { transform: "translateY(0px)" }],
-			{ duration, easing: "ease" },
+			{ duration, easing: REORDER_EASING },
 		);
 		slideAnims.set(el, anim);
 		anim.addEventListener("finish", () => {

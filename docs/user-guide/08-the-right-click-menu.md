@@ -38,7 +38,7 @@ A block callout offers:
 
 ## Customize the menu
 
-Open **Settings → Callout Studio → Context menu**, then click **Customize menu items**. Toggle individual actions on or off and drag their handles into your preferred order. While you drag, a grey slot that follows the active palette shows where the row will land if you let go. You can keep dragging the same row or another row without waiting for it to settle. Every change is saved immediately.
+Open **Settings → Callout Studio → Context menu**, then click **Customize menu items**. Toggle individual actions on or off and drag their handles into your preferred order. While you drag, a slot in your accent colour shows where the row will land if you let go, as in Obsidian's own lists. You can keep dragging the same row or another row without waiting for it to settle. Every change is saved immediately.
 
 ![The menu customization window, with action toggles and drag handles for each callout format](../../assets/user-guide/context-customization.svg)
 

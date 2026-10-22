@@ -29,6 +29,7 @@
  */
 import {
 	REORDER_DURATION_MS,
+	REORDER_EASING,
 	animateReorder,
 	cancelReorderAnimation,
 	prefersReducedMotion,
@@ -192,8 +193,22 @@ export function makeDragSortable(
 		dragEl.style.transform = `translateY(${currentTransform}px)`;
 	};
 
+	/**
+	 * Obsidian's own "something is being dragged" state on the window's body: a
+	 * grabbing cursor everywhere and no tooltips opening mid-drag. Every way a
+	 * gesture ends goes through `detachGesture`, which clears it — a body left
+	 * with it would keep the whole app's cursor grabbing.
+	 */
+	let grabbing = false;
+	const setGrabbing = (on: boolean): void => {
+		if (grabbing === on) return;
+		grabbing = on;
+		container.ownerDocument.body.toggleClass("is-grabbing", on);
+	};
+
 	const detachGesture = (): void => {
 		const capturedId = pointerId;
+		setGrabbing(false);
 		dragging = null;
 		startIndex = -1;
 		pointerId = -1;
@@ -237,7 +252,7 @@ export function makeDragSortable(
 					{ transform: `translateY(${offset}px)` },
 					{ transform: "translateY(0px)" },
 				],
-				{ duration: REORDER_DURATION_MS, easing: "ease" },
+				{ duration: REORDER_DURATION_MS, easing: REORDER_EASING },
 			);
 			// Drop the inline follow-transform now: the animation overrides it while
 			// running and, with no fill, the row rests at its natural slot after.
@@ -281,6 +296,7 @@ export function makeDragSortable(
 		currentTransform = reduceMotion ? 0 : visualTop - row.getBoundingClientRect().top;
 		if (!reduceMotion) row.style.transform = `translateY(${currentTransform}px)`;
 		container.addClass("cs-dragging");
+		setGrabbing(true);
 		row.addClass("is-dragging");
 		if (!reduceMotion) placeholder = createPlaceholder(row);
 		container.setPointerCapture(pointerId);

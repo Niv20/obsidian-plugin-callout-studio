@@ -46,6 +46,25 @@ describe("drag reorder gesture lifetime", () => {
 		});
 	}
 
+	it("holds Obsidian's body.is-grabbing for the gesture, and clears it on every way out", () => {
+		const h = dragSortHarness();
+		const body = h.list.ownerDocument.body;
+		try {
+			h.down(h.rows[0]!);
+			assert.ok(body.hasClass("is-grabbing"), "a grab sets it");
+			h.up();
+			assert.ok(!body.hasClass("is-grabbing"), "a drop clears it");
+
+			h.down(h.rows[0]!, 7);
+			h.loseCapture(7);
+			assert.ok(!body.hasClass("is-grabbing"), "a lost capture clears it");
+
+			h.down(h.rows[0]!);
+			h.cleanup();
+			assert.ok(!body.hasClass("is-grabbing"), "closing the window mid-drag clears it");
+		} finally { h.cleanup(); }
+	});
+
 	it("cancels a neighbour's slide when its handle is grabbed", () => {
 		const h = dragSortHarness();
 		try {

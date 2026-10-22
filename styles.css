@@ -1605,14 +1605,15 @@ body:not(.is-phone)
 	-webkit-user-select: none;
 }
 
-.cs-menu-customize-list.cs-dragging .cs-drag-handle {
-	cursor: grabbing;
-}
-
+/* The lifted row is Obsidian's drag ghost (`.drag-reorder-ghost >
+   .mod-dragged-item`): a solid card on the drag background with Obsidian's
+   drag shadow. The grabbing cursor is Obsidian's own `body.is-grabbing`, set by
+   DragSortList for the gesture, which also keeps tooltips from opening. */
 .callout-studio-row.is-dragging {
-	opacity: 0.9;
-	box-shadow: var(--shadow-s, 0 2px 8px rgba(0, 0, 0, 0.3));
-	background: var(--background-secondary-alt);
+	opacity: 1;
+	box-shadow: var(--drag-item-shadow);
+	background-color: var(--drag-item-background);
+	corner-shape: var(--corner-shape);
 	position: relative;
 	z-index: 1;
 	/* No CSS transition so the row tracks the pointer with zero lag; the release
@@ -1624,12 +1625,11 @@ body:not(.is-phone)
 /* Where the dragged row lands if it is let go now (ui/DragSortList.ts): an
    empty slot the row's exact size. DragSortList measures the row's box in the
    list — not the floating copy — and hands it over in the four properties
-   below; the corners are the row's own (`.callout-studio-row`).
+   below.
 
-   Use the theme's neutral resting-border shade: darker than its hover shade
-   in the default dark palette and lighter in the default light palette.
-   This grey follows the active light/dark palette and the theme's UI colours,
-   without a fixed colour or a plugin-defined mixing ratio.
+   It is Obsidian's own drop slot (`.drag-ghost-hidden:before`): the accent at
+   30% with 5px corners, the slot Obsidian shows when a ribbon item is dragged
+   in Settings → Appearance.
 
    It is the list's first child, so a row sliding past it is painted after it
    and passes over it; the dragged row's z-index lifts it above all of them. */
@@ -1639,8 +1639,8 @@ body:not(.is-phone)
 	left: var(--cs-drag-placeholder-left, 0);
 	width: var(--cs-drag-placeholder-width, 100%);
 	height: var(--cs-drag-placeholder-height, 0);
-	border-radius: 8px;
-	background: var(--background-modifier-border);
+	border-radius: 5px;
+	background-color: color-mix(in oklch, var(--interactive-accent) 30%, transparent);
 	pointer-events: none;
 }
 
