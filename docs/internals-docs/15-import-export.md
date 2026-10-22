@@ -13,8 +13,8 @@ rationale ("a second top-level row for a new format would leave the two
 halves of one section shaped differently"). Both choosers show the backup
 with the same Lucide `paintbrush` icon. Import's chooser sets its two other
 plugins under a **From another plugin** caption (`renderOptionGroupLabel`, a
-plain `div.cs-option-group-label` inside the same list, in the small capitals
-a combobox group wears), so the window reads as "your own backup, or somebody
+plain `div.cs-option-group-label` inside the same list, in the small semibold
+sentence-case label a combobox group wears), so the window reads as "your own backup, or somebody
 else's data" rather than as three equal rows. Export
 marks its backup with the shared grey **Recommended** tag (`settings/recommendedBadge.ts`) on its title line rather
 than a "(recommended)" written into the title. The tag is Obsidian's own flat

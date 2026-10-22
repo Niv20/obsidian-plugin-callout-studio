@@ -2615,7 +2615,7 @@ therefore returns the shown libraries, then the downloadable ones that are not
 offered, then the hidden ones, and `groupOf(row)` names each row's group for
 `captionOf`; a caption comes with a line above it, except at the very top.
 
-The headings are not drawn like the menu's small muted capitals. All three -
+The headings are not drawn like the menu's small muted labels. All three -
 **Available libraries**, **Libraries to
 download** and **Hidden libraries** - are drawn exactly as **Built-in commands**
 is in Commands and shortcuts: same size, weight, colour and line height, no
@@ -3038,6 +3038,12 @@ replaces it. Group containment handles the handoff without scroll listeners.
 The occurrence picker sets `hideSingleGroup` to suppress redundant headings,
 while `showSingleGroupKey` keeps the Browse heading when All types is the only
 matching group.
+The type follows Obsidian's own suggestions. A group heading is small,
+semibold and muted in sentence case, like `.search-suggest-item.mod-group`
+(Obsidian uppercases only badges). A name is the field's 13px
+(`--font-ui-small`), as `.combobox .suggestion-item` is, while the `[!` popover
+in a note keeps Obsidian's 15px suggestion size. A query that matches nothing
+reads upright and centred, like `.suggestion-empty`.
 The All types scope is iconless and remains separate from registry definitions.
 Color pickers retain their headings even with only one matching group.
 `renderComboboxRows()` sets `cs-combobox-menu-grouped` only when it actually

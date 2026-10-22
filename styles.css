@@ -1610,7 +1610,7 @@ body:not(.is-phone)
    but the variables Obsidian draws every setting heading with
    (`--setting-group-heading-*`), so the three stay level with it wherever
    those are set — by a theme, or by the phone's own scale. They are not the
-   small muted capitals of a menu's `.cs-combobox-group-label`, on purpose.
+   small muted label of a menu's `.cs-combobox-group-label`, on purpose.
    They are set in from the rows' edge to where their content starts. */
 .modal .cs-icon-libraries .setting-item.cs-icon-library-heading.cs-icon-library-heading {
 	/* A heading straight under the window's description, as Built-in commands is
@@ -4080,6 +4080,9 @@ button.callout-studio-icon-picker-loading {
 	position: relative;
 }
 
+/* Set as Obsidian sets a group in its search suggestions
+   (`.search-suggest-item.mod-group`): small, semibold, muted, in sentence
+   case — Obsidian uppercases only badges. */
 .cs-combobox-group-label {
 	position: sticky;
 	top: 0;
@@ -4087,10 +4090,9 @@ button.callout-studio-icon-picker-loading {
 	background: var(--cs-menu-face);
 	padding: 4px 12px;
 	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-semibold);
 	line-height: var(--line-height-normal);
 	color: var(--text-muted);
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
 	text-align: start;
 }
 
@@ -4260,9 +4262,17 @@ button.callout-studio-icon-picker-loading {
 }
 
 /* The shared empty state is a page-level block elsewhere; inside a popup it
-   only needs to fill one row. */
+   only needs to fill one row, centred like Obsidian's `.suggestion-empty`. */
 .cs-combobox-menu .callout-studio-empty-state {
 	padding: 8px 12px;
+	text-align: center;
+}
+
+/* A name in a field's dropdown is the field's own 13px, as Obsidian sets
+   `.combobox .suggestion-item`. The `[!` popover in a note shares the row's
+   markup and keeps Obsidian's 15px suggestion size. */
+.cs-combobox-menu .callout-studio-suggestion-name {
+	font-size: var(--font-ui-small);
 }
 
 .cs-combobox.is-disabled .cs-combobox-control {
@@ -6427,17 +6437,16 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	gap: 6px;
 }
 /* A caption over the boxes that follow — Import's "From another plugin". The
-   same small capitals a combobox group and an icon source wear
+   same small semibold label a combobox group wears
    (`.cs-combobox-group-label`). Its top margin, on top of the list's gap, is
    what sets the group apart from the box above it. */
 .cs-option-group-label {
 	margin-top: 10px;
 	padding-inline: 2px;
 	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-semibold);
 	line-height: var(--line-height-normal);
-	color: var(--text-faint);
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
+	color: var(--text-muted);
 }
 .cs-option-box {
 	display: flex;
