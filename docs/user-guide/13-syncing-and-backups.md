@@ -24,7 +24,7 @@ The **Earlier versions** description flows as one paragraph, wrapping to fit the
 
 Each date heading has space above and below it, with about twice as much above, so it clearly belongs to the versions beneath it. The first heading has only a small gap above it. A short horizontal line connects each heading to the timeline at the centre of the text.
 
-Hover over a version's card, time or timeline dot to highlight the card background, time and dot together.
+Pointing at a version's row makes its icons a little sharper. The row itself doesn't change, because only its buttons do something.
 
 Open **Settings → Callout Studio**, and under **Version history** choose **View versions**. The window lists every earlier version of your setup that Callout Studio can find, newest first, along a vertical timeline with a small dot for each version. Versions are grouped by your local calendar day. Each heading starts with the full date, followed by **today**, **yesterday** or **N days ago** in parentheses, including for older versions: for example, **October 1, 2026 (3 days ago)**. Dates and relative wording follow the interface language. A future date appears without a relative label. Versions whose dates are unknown appear in a separate group at the end. Each row shows:
 

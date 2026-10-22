@@ -1300,20 +1300,27 @@ body:not(.is-phone)
 	padding: 8px 12px;
 	border-radius: 8px;
 	background: var(--cs-surface-raised, var(--background-secondary));
-	transition: background 120ms ease;
 	container-type: inline-size;
 }
 
 /* On iPhone/iPad in light mode the settings pane background nearly matches
    --background-secondary, leaving the row "pill" invisible. Nudge its resting
-   background one step darker there — the hover shade, which touch devices
-   never show anyway — instead of drawing a border. */
+   background one step darker there instead of drawing a border. */
 .is-mobile.theme-light .callout-studio-row {
 	background: var(--background-secondary-alt);
 }
 
-.callout-studio-row:hover {
-	background: var(--background-secondary-alt);
+/* A row is not clickable — only its buttons are — so the row itself never
+   changes on hover, as no Obsidian list row does. Pointing anywhere on a row
+   only sharpens that row's own icon buttons (Obsidian's icon opacity steps),
+   and only on devices that can hover: on touch, WebKit replays the last tap's
+   hover onto whatever row is under it after a re-render. One rule for every
+   row kind: callouts, palettes, commands, menu and library lists, versions. */
+@media (hover: hover) {
+	:is(.callout-studio-row, .cs-recovery-row):hover :is(.clickable-icon, .callout-studio-row-buttons button, .cs-drag-handle):not(:disabled, .is-disabled, [aria-disabled="true"]) {
+		color: var(--icon-color-hover);
+		--icon-opacity: var(--icon-opacity-hover);
+	}
 }
 
 .callout-studio-row-icon {
@@ -1410,25 +1417,29 @@ body:not(.is-phone)
 	border: none;
 }
 
-.callout-studio-row-buttons button:hover {
-	background: var(--background-modifier-hover);
-	color: var(--text-normal);
+@media (hover: hover) {
+	.callout-studio-row-buttons button:hover {
+		background: var(--background-modifier-hover);
+		color: var(--text-normal);
+	}
+
+	.callout-studio-row-buttons .callout-studio-delete-btn:hover {
+		color: var(--text-error);
+	}
 }
 
 .callout-studio-row-buttons button svg {
 	width: 16px;
 	height: 16px;
 	flex-shrink: 0;
+	opacity: var(--icon-opacity);
+	transition: opacity var(--anim-duration-fast) ease-in-out;
 	/* iPadOS WebKit fails to paint setIcon() SVGs that live inside the row's
 	   `container-type: inline-size` subtree — the button keeps its box (so it
 	   is still tappable) but the glyph never renders. Promoting the SVG to its
 	   own compositing layer forces WebKit to paint it independently of the
 	   container's (buggy) paint pass. Harmless on desktop/phone. */
 	transform: translateZ(0);
-}
-
-.callout-studio-row-buttons .callout-studio-delete-btn:hover {
-	color: var(--text-error);
 }
 
 /* ─── Customize Right-Click Menu Modal ────────────────────────── */
@@ -1540,16 +1551,23 @@ body:not(.is-phone)
 	-webkit-user-select: none;
 }
 
-.cs-drag-handle:hover,
 .cs-drag-handle:focus-visible {
 	color: var(--text-normal);
 	background: var(--background-modifier-hover);
+}
+
+@media (hover: hover) {
+	.cs-drag-handle:hover {
+		color: var(--text-normal);
+		background: var(--background-modifier-hover);
+	}
 }
 
 .cs-drag-handle svg {
 	width: 18px;
 	height: 18px;
 	flex-shrink: 0;
+	opacity: var(--icon-opacity);
 	/* Same iPadOS WebKit container-paint workaround as the row icons/buttons. */
 	transform: translateZ(0);
 }
@@ -9290,29 +9308,6 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	border: none;
 	border-radius: 8px;
 	background: var(--cs-surface-raised, var(--background-secondary));
-	transition: background 120ms ease;
-}
-
-.modal .cs-recovery-rows > .cs-recovery-row.setting-item:not(.setting-item-heading):hover {
-	background: var(--background-secondary-alt);
-}
-
-/* Include the timeline gutter in the row's hover area, even over the
-   decorative marker. Keep the time above it so its text remains selectable. */
-.cs-recovery-row::after {
-	content: "";
-	position: absolute;
-	inset-inline-start: calc(0px - var(--cs-timeline-gutter));
-	inset-block: 0;
-	inline-size: var(--cs-timeline-gutter);
-}
-
-.cs-recovery-list .cs-recovery-row:hover .cs-recovery-time {
-	color: var(--text-normal);
-}
-
-.cs-recovery-row:hover .cs-version-marker {
-	background: var(--text-muted);
 }
 
 /* The row wears `.callout-studio-row` for its surface, and that class makes it
@@ -9396,9 +9391,14 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 /* Quiet until hovered/focused, same as the main callout list's own delete
    button (.callout-studio-delete-btn) — red is earned by intent to use it,
    not shown at rest on a row that is otherwise identical to "View details". */
-.cs-recovery-row .cs-recovery-delete-btn:hover,
 .cs-recovery-row .cs-recovery-delete-btn:focus-visible {
 	color: var(--text-error);
+}
+
+@media (hover: hover) {
+	.cs-recovery-row .cs-recovery-delete-btn:hover {
+		color: var(--text-error);
+	}
 }
 
 .cs-version-name {

@@ -524,6 +524,28 @@ section disappears with its last row. The section's visibility rule is what
 moved instead: a theme that styles callouts without naming any id lists no
 rows, and there the switch is not on screen.
 
+### List rows and hover
+
+A list row is not clickable; only its buttons are. So, as in every Obsidian
+list, the row itself never changes on hover: no fill, and no transition to one.
+
+That holds for every row that wears `.callout-studio-row`:
+- callouts and saved palettes;
+- commands;
+- the right-click menu and icon library lists;
+- versions, which add `.cs-recovery-row`.
+
+Pointing anywhere on a row only sharpens that row's own icon buttons, through
+one shared rule. It sets `--icon-opacity: var(--icon-opacity-hover)` on the
+row's `.clickable-icon`s, row buttons and drag handle, and skips any that are
+disabled or `aria-disabled`. Obsidian's own `.clickable-icon svg` already reads
+`--icon-opacity`, and the plugin's row buttons and drag-handle svgs read it too.
+
+Every row hover, the button fills and the red delete included, sits behind
+`@media (hover: hover)`. On touch, WebKit replays the last tap's hover onto
+whatever row lands under it after a re-render, which is how a dragged row on an
+iPhone used to light up. `tests/rowHoverStyles.test.ts` holds all of this.
+
 ### Callout row menu groups
 
 All three row menus are built by plain functions: `buildBuiltInRowMenu` and
@@ -3366,10 +3388,8 @@ Each row is an ordinary `Setting`:
   line, using `--background-modifier-border` to match the rail and day connectors.
   It is hidden from assistive technology and has no source icon, accessible
   source label, or tooltip. Storage location and category do not affect it.
-  Hovering the card, time or marker highlights the card background, changes the
-  time to `--text-normal` and the marker to `--text-muted`. A transparent row
-  pseudo-element extends the hover area across the timeline gutter; the time
-  sits above it so its text remains selectable.
+  Hovering a row changes neither the card, the time nor the marker; it only
+  sharpens the row's own icon buttons (see "List rows and hover").
 - **Name line** (`renderVersionName()` in [`versionRow.ts`](../../src/settings/versionRow.ts)):
   plain text naming why the version was kept. If the reason is absent or unknown,
   `versionCategory()` selects **Automatic backup** when any `history` or `backup`
