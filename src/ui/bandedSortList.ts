@@ -170,7 +170,7 @@ export function attachBandedSortList<T>(
 		}
 
 		// Keyboard-operable as well as draggable.
-		const handle = row.createDiv({ cls: "cs-drag-handle" });
+		const handle = row.createDiv({ cls: "cs-drag-handle clickable-icon" });
 		handle.setAttribute("role", "button");
 		handle.setAttribute("tabindex", "0");
 		handle.setAttribute("aria-label", opts.handleLabel);

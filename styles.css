@@ -1443,7 +1443,10 @@ body:not(.is-phone)
 	flex-shrink: 0;
 }
 
-.callout-studio-row-buttons button {
+/* Callout and palette rows use Obsidian's own icon button (`.clickable-icon`:
+   its size, corners, colour, gated hover and focus ring). The rows that have
+   not moved yet — commands, Quick insert — keep the plugin's square below. */
+.callout-studio-row-buttons button:not(.clickable-icon) {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -1458,7 +1461,7 @@ body:not(.is-phone)
 }
 
 @media (hover: hover) {
-	.callout-studio-row-buttons button:hover {
+	.callout-studio-row-buttons button:not(.clickable-icon):hover {
 		background: var(--background-modifier-hover);
 		color: var(--text-normal);
 	}
@@ -1579,37 +1582,17 @@ body:not(.is-phone)
 	pointer-events: none;
 }
 
-/* Drag handle (grip). touch-action:none keeps a touch drag from scrolling. */
+/* Drag handle (grip): an Obsidian icon button (`.clickable-icon`), so its size,
+   colour, hover and focus ring are Obsidian's. touch-action:none keeps a touch
+   drag from scrolling. */
 .cs-drag-handle {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 32px;
-	height: 32px;
 	flex-shrink: 0;
-	color: var(--text-faint);
-	cursor: grab;
-	border-radius: 6px;
 	touch-action: none;
 	user-select: none;
 	-webkit-user-select: none;
 }
 
-.cs-drag-handle:focus-visible {
-	color: var(--text-normal);
-	background: var(--background-modifier-hover);
-}
-
-@media (hover: hover) {
-	.cs-drag-handle:hover {
-		color: var(--text-normal);
-		background: var(--background-modifier-hover);
-	}
-}
-
 .cs-drag-handle svg {
-	width: 18px;
-	height: 18px;
 	flex-shrink: 0;
 	opacity: var(--icon-opacity);
 	/* Same iPadOS WebKit container-paint workaround as the row icons/buttons. */
@@ -1778,8 +1761,8 @@ body:not(.is-phone)
 /* Below the line there is no handle — the catalog decides that order — and
    this keeps every name in one column. */
 .cs-drag-handle-spacer {
-	width: 32px;
-	height: 32px;
+	/* As wide as the handle: an Obsidian icon button's icon plus its padding. */
+	width: calc(var(--icon-m) + 2 * var(--size-2-3));
 	flex-shrink: 0;
 }
 
@@ -1819,41 +1802,17 @@ body:not(.is-phone)
 	opacity: 0.55;
 }
 
+/* The action is an Obsidian icon button (`.clickable-icon`) like the handle:
+   its size, hover, focus ring and dimmed state are Obsidian's. */
 .cs-icon-library-row button.cs-icon-library-action {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex: 0 0 32px;
-	width: 32px;
-	height: 32px;
-	padding: 6px;
-	border: 0;
-	border-radius: var(--radius-s);
-	background: transparent;
-	box-shadow: none;
-	color: var(--text-muted);
+	flex-shrink: 0;
 }
 
-.cs-icon-library-row button.cs-icon-library-action:focus-visible {
-	background: var(--background-modifier-hover);
-	color: var(--text-normal);
-}
-
+/* Deleting is the one action here that costs a download to undo, so its hover
+   colour is the error red, as Obsidian's destructive icon buttons do it. */
 @media (hover: hover) {
-	.cs-icon-library-row button.cs-icon-library-action:hover {
-		background: var(--background-modifier-hover);
-		color: var(--text-normal);
-	}
-}
-
-/* Deleting is the one action here that costs a download to undo. */
-.cs-icon-library-row button.cs-icon-library-delete:focus-visible {
-	color: var(--text-error);
-}
-
-@media (hover: hover) {
-	.cs-icon-library-row button.cs-icon-library-delete:hover {
-		color: var(--text-error);
+	.cs-icon-library-row button.cs-icon-library-delete {
+		--icon-color-hover: var(--text-error);
 	}
 }
 
@@ -5083,28 +5042,11 @@ button.callout-studio-icon-picker-loading {
 	min-width: 0;
 }
 
+/* An Obsidian icon button (`.clickable-icon`); only its line-up with the
+   search field beside it is set here. */
 .icon-picker-image-panel button.icon-picker-image-add {
-	flex: 0 0 36px;
-	width: 36px;
-	height: 36px;
-	padding: 8px;
-	border: 0;
-	border-radius: var(--radius-s);
-	background: transparent;
-	box-shadow: none;
-	color: var(--text-muted);
-}
-
-.icon-picker-image-panel button.icon-picker-image-add:focus-visible {
-	background: var(--background-modifier-hover);
-	color: var(--text-normal);
-}
-
-@media (hover: hover) {
-	.icon-picker-image-panel button.icon-picker-image-add:hover {
-		background: var(--background-modifier-hover);
-		color: var(--text-normal);
-	}
+	flex: 0 0 auto;
+	height: var(--input-height);
 }
 
 .icon-picker-image-panel button.icon-picker-image-delete {
@@ -5303,7 +5245,7 @@ button.callout-studio-icon-picker-loading {
 /* ─── Accessibility & Mobile ─────────────────────────────────── */
 
 /* Focus-visible for all interactive elements */
-.callout-studio-row-buttons button:focus-visible,
+.callout-studio-row-buttons button:not(.clickable-icon):focus-visible,
 .cs-modal-footer button:focus-visible {
 	outline: 2px solid var(--text-accent);
 	outline-offset: -2px;

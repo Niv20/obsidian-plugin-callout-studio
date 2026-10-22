@@ -146,6 +146,7 @@ export function renderCalloutRow(
 	}
 
 	const editBtn = buttonsEl.createEl("button", {
+		cls: "clickable-icon",
 		attr: {
 			"aria-label": t("settings.editAria", { name: def.displayName }),
 		},
@@ -156,14 +157,14 @@ export function renderCalloutRow(
 	});
 
 	const moreBtn = buttonsEl.createEl("button", {
-		cls: "callout-studio-more-btn",
+		cls: "callout-studio-more-btn clickable-icon",
 		attr: {
 			"aria-label": t("settings.moreRowActionsAria", {
 				name: def.displayName,
 			}),
 		},
 	});
-	setIcon(moreBtn, "more-horizontal");
+	setIcon(moreBtn, "more-vertical");
 	moreBtn.addEventListener("click", (event) => {
 		if (def.builtIn) {
 			handlers.onOpenBuiltInMenu(event, def);

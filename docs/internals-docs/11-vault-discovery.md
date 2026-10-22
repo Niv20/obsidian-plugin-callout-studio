@@ -752,7 +752,7 @@ with it.
 
 ## Convert flow
 
-`handleClearCalloutUsages` behind the `⋯` item **Convert uses to plain text**
+`handleClearCalloutUsages` behind the `⋮` item **Convert uses to plain text**
 (`addConvertUsesItem`). Every row kind offers it: user, built-in and theme. It
 shows whenever the menu's count is not known to be zero, and is greyed out if
 that count lands on zero after the menu opened.

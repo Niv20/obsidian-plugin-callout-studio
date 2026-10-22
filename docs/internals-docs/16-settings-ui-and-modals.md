@@ -546,6 +546,17 @@ Every row hover, the button fills and the red delete included, sits behind
 whatever row lands under it after a re-render, which is how a dragged row on an
 iPhone used to light up. `tests/rowHoverStyles.test.ts` holds all of this.
 
+The callout and palette rows' buttons are Obsidian's own icon buttons:
+`<button class="clickable-icon">`, which keeps the `<button>` semantics.
+Obsidian supplies their size, corners, colour, gated hover, 3px focus ring
+and dimmed state.
+
+- **The menu button** is `more-vertical` (⋮), Obsidian's "More options" icon.
+- **The drag handle** of the menu and library lists is a `.clickable-icon` too,
+  and so are the library action and the image panel's add button.
+- **Rows that have not moved keep the plugin's 32px square,** narrowed to
+  `button:not(.clickable-icon)`. Those are the command and Quick insert rows.
+
 ### Callout row menu groups
 
 All three row menus are built by plain functions: `buildBuiltInRowMenu` and
@@ -2190,7 +2201,7 @@ destructive half.
 Splitting the action removed the reason for it:
 
 - **Delete** removes only the definition.
-- **Convert uses to plain text** only rewrites notes. It is its own `⋯` item
+- **Convert uses to plain text** only rewrites notes. It is its own `⋮` item
   (`addConvertUsesItem` in `rowOwnership.ts`).
 - **Replace in vault…** was already in the same menu (`addReplaceItem`, next to
   it in the `notes` group; see

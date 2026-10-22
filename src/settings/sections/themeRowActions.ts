@@ -36,7 +36,7 @@ function addRowButton(
 	label: string,
 	onClick: () => void,
 ): void {
-	const btn = host.createEl("button", { attr: { "aria-label": label } });
+	const btn = host.createEl("button", { cls: "clickable-icon", attr: { "aria-label": label } });
 	setIcon(btn, icon);
 	setTooltip(btn, label);
 	btn.addEventListener("click", onClick);
@@ -108,14 +108,14 @@ export function renderThemeRowControls(
 	);
 
 	const moreBtn = buttonsEl.createEl("button", {
-		cls: "callout-studio-more-btn",
+		cls: "callout-studio-more-btn clickable-icon",
 		attr: {
 			"aria-label": t("settings.moreRowActionsAria", {
 				name: def.displayName,
 			}),
 		},
 	});
-	setIcon(moreBtn, "more-horizontal");
+	setIcon(moreBtn, "more-vertical");
 	moreBtn.addEventListener("click", (event) => {
 		void openThemeRowMenu(ctx, event, def);
 	});

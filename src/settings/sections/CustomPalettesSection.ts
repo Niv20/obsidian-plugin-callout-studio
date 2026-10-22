@@ -190,6 +190,7 @@ export function renderCustomPalettesSection(
 			cls: "callout-studio-row-buttons",
 		});
 		const editBtn = buttonsEl.createEl("button", {
+			cls: "clickable-icon",
 			attr: {
 				"aria-label": t("settings.editPaletteAria", {
 					name: palette.name,
@@ -199,6 +200,7 @@ export function renderCustomPalettesSection(
 		setIcon(editBtn, "pencil");
 		editBtn.addEventListener("click", () => void editPalette(palette));
 		const deleteBtn = buttonsEl.createEl("button", {
+			cls: "clickable-icon",
 			attr: {
 				"aria-label": t("settings.deletePaletteAria", {
 					name: palette.name,
