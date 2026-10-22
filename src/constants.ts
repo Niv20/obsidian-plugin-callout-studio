@@ -52,8 +52,9 @@ export const MAX_TAGS_COUNT: number = 10;
 /**
  * The Lucide id that stands for Callout Studio itself.
  *
- * The welcome splash's hero mark. Action-specific composites for quick insert
- * and occurrences live separately in icons/uiIcons.ts.
+ * The welcome splash's hero mark, and the settings tab's icon. Action-specific
+ * composites for quick insert and occurrences live separately in
+ * icons/uiIcons.ts.
  */
 export const PLUGIN_ICON_ID = "paintbrush";
 

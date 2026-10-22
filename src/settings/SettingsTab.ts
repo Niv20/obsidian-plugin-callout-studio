@@ -11,6 +11,7 @@
  */
 import { PluginSettingTab } from "obsidian";
 import type { App, SettingDefinitionItem } from "obsidian";
+import { PLUGIN_ICON_ID } from "../constants";
 import { registerMenuScopeHost } from "../ui/menuEscape";
 import { CalloutEditor } from "./CalloutEditor";
 import { openCalloutEditorFor } from "./openCalloutEditor";
@@ -49,6 +50,12 @@ import type {
 
 export class CalloutStudioSettingsTab extends PluginSettingTab {
 	plugin: SettingsTabPlugin;
+	/**
+	 * Drawn beside "Callout Studio" in Obsidian's settings search results, as
+	 * every core tab's is. The sidebar list does not show it: Obsidian hides
+	 * every community plugin's tab icon there.
+	 */
+	icon = PLUGIN_ICON_ID;
 	/** Undoes all four change subscriptions — see `subscribeSettingsTab`. */
 	private unsubscribe: (() => void) | null = null;
 	private refreshFrame: FrameHandle | null = null;

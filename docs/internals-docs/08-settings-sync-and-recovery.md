@@ -1169,7 +1169,9 @@ edit the restoring device never saw survives it. Inspection remains available
 while saving is paused; restoring does not.
 
 **Seeing a pause.** `pausedIndicator.ts` keeps a status bar item up on desktop,
-and a notice that stays on mobile, while `writer.isVisiblyPaused`. That is every
+and a notice that stays on mobile, while `writer.isVisiblyPaused`. The item's
+icon is Obsidian's own `span.status-bar-item-icon`, so it has the size and
+stroke of Sync's and the editor mode's. That is every
 freeze except the quiet provisional one of a new install (`freeze(reason, false)`).
 A missing file at launch already has a notice that stays, so mobile does not
 add a second one. That notice (`offerFreshStart()`) is one reassuring line and a

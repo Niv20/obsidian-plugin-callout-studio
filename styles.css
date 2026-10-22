@@ -8985,21 +8985,13 @@ body:not(.is-phone) .modal.cs-welcome-modal .modal-header {
 	color: var(--text-muted);
 }
 
-/* Saving is paused: a status bar item that stays up until it resumes. */
+/* Saving is paused: a status bar item that stays up until it resumes. Its icon
+   is Obsidian's `.status-bar-item-icon`, sized by core like Sync's. */
 .cs-paused-status {
 	display: inline-flex;
 	align-items: center;
 	gap: var(--size-2-2);
 	color: var(--text-warning);
-}
-
-.cs-paused-status-icon {
-	display: inline-flex;
-}
-
-.cs-paused-status-icon .svg-icon {
-	width: var(--icon-xs);
-	height: var(--icon-xs);
 }
 
 /* Version history: one list of versions, newest first, each a raised row like

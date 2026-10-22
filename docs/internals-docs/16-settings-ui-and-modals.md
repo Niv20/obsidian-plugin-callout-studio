@@ -316,7 +316,7 @@ subscriptions refresh rows and counts while preserving paging and scroll.
 ### `getSettingDefinitions()` returns `[]` - deliberately, and only for now
 
 ```ts
-getSettingDefinitions(): unknown[] { return []; }
+getSettingDefinitions(): SettingDefinitionItem[] { return []; }
 ```
 
 This is Obsidian 1.13+'s declarative-settings hook, which powers the
@@ -332,6 +332,11 @@ sections declaratively, verified on a real 1.13 build - deliberately
 deferred (see the [`settings-getsettingdefinitions`](#) memory note if one
 exists in this project's history; functionally, this is a `[]` returned on
 purpose, not a stub someone forgot).
+
+The tab also sets `icon` to `PLUGIN_ICON_ID` (Lucide `paintbrush`, the mark
+that stands for Callout Studio). Obsidian draws a tab's icon beside its rows in
+the settings search results, as it does for every core tab; the sidebar list
+hides every community plugin's icon, so nothing changes there.
 
 ### Four subscriptions, one coalesced refresh
 

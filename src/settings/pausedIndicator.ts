@@ -68,7 +68,9 @@ export function registerPausedIndicator(host: PausedIndicatorHost, mobile: boole
 				item.addClass("cs-paused-status", "mod-clickable");
 				item.setAttribute("aria-label", t("statusBar.pausedTooltip"));
 				item.setAttribute("data-tooltip-position", "top");
-				setIcon(item.createSpan({ cls: "cs-paused-status-icon" }), "alert-triangle");
+				// Obsidian's status-bar icon, as Sync's and the editor mode's are:
+				// its size and stroke come from core.
+				setIcon(item.createSpan({ cls: "status-bar-item-icon" }), "alert-triangle");
 				item.createSpan({ text: t("statusBar.paused") });
 				item.addEventListener("click", open);
 			}
