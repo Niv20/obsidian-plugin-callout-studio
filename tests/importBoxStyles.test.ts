@@ -21,9 +21,9 @@
  *   doesn't stay lit.
  * - The paste box has one fixed height and scrolls: it neither grows with what
  *   is pasted nor can be dragged larger.
- * - The pill's word is trimmed to cap height and baseline. Without that, a UI
- *   font with a deep line box below the baseline (Ploni, and most Hebrew faces)
- *   sets the word visibly high in the pill.
+ * - "Recommended" is Obsidian's own flat flair, painted by Obsidian: the plugin
+ *   sets no fill, colour, corners or size for it, only drops the flair's margin
+ *   where the title line's gap already spaces it.
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -34,7 +34,6 @@ import { parseRules, valueOf, type CssRule } from "./support/cssInjectorHarness"
 const rules = parseRules(readFileSync(join(process.cwd(), "styles.css"), "utf8"));
 
 const HOVER_MEDIA = "@media (hover: hover)";
-const TEXT_BOX = "@supports (text-box: trim-both cap alphabetic)";
 /** The window's own colour, and the shade raised off it. */
 const SURFACE = "var(--cs-surface, var(--background-primary))";
 const RAISED = "var(--cs-surface-raised, var(--background-secondary))";
@@ -197,29 +196,23 @@ describe("the plugin import window's cards", () => {
 	});
 });
 
-describe("the Recommended pill", () => {
-	it("centres its word on the capitals, where text-box is supported", () => {
-		const word = only(".cs-recommended-badge-text");
-		assert.deepEqual(word.at, [TEXT_BOX]);
-		assert.equal(valueOf(word, "text-box"), "trim-both cap alphabetic");
-		const pill = rulesNaming(".cs-recommended-badge").find((r) => r.at.includes(TEXT_BOX));
-		assert.ok(pill, "the trimmed pill sets its own block padding");
-		assert.ok(valueOf(pill, "padding-block"), "with the line box gone, padding is the pill's height");
-	});
-
-	it("sets its word a step below the UI's smaller size", () => {
-		const pill = rulesNaming(".cs-recommended-badge").find((r) => r.at.length === 0);
-		assert.ok(pill);
-		assert.equal(valueOf(pill, "font-size"), "calc(var(--font-ui-smaller) - 1px)");
-	});
-
-	it("is a chip of the window's own colour, so it needs no hover fill of its own", () => {
-		const pill = rulesNaming(".cs-recommended-badge").find((r) => r.at.length === 0);
-		assert.ok(pill);
-		assert.equal(valueOf(pill, "background"), SURFACE);
+describe("the Recommended tag", () => {
+	it("is Obsidian's flat flair, with no paint of the plugin's own", () => {
+		const badgeRules = rules.filter((r) => r.selector.includes(".cs-recommended-badge"));
+		assert.ok(badgeRules.length > 0);
+		for (const rule of badgeRules) {
+			for (const prop of ["background", "background-color", "color", "border-radius", "font-size", "padding"]) {
+				assert.equal(valueOf(rule, prop), undefined, `${rule.selector} sets ${prop}`);
+			}
+		}
 		assert.deepEqual(
 			rules.filter((r) => r.selector.includes(".cs-recommended-badge") && r.selector.includes(":hover")),
 			[],
 		);
+	});
+
+	it("lets the title line's gap space it, instead of the flair's margin", () => {
+		const head = only(".cs-option-box-head > .cs-recommended-badge");
+		assert.equal(valueOf(head, "margin-inline-start"), "0");
 	});
 });

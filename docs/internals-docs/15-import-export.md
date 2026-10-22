@@ -16,14 +16,12 @@ plugins under a **From another plugin** caption (`renderOptionGroupLabel`, a
 plain `div.cs-option-group-label` inside the same list, in the small capitals
 a combobox group wears), so the window reads as "your own backup, or somebody
 else's data" rather than as three equal rows. Export
-marks its backup with the shared grey **Recommended** pill (`settings/recommendedBadge.ts`) on its title line rather
-than a "(recommended)" written into the title. The pill's word
-(`.cs-recommended-badge-text`) is centred on its capitals, not on the font's
-line box: inside `@supports (text-box: trim-both cap alphabetic)` the word is
-trimmed to cap height and baseline, so the pill's 4px block padding and its
-10px icon, not the font's line box, set the space above and below it. A UI font whose line box runs deep below the baseline
-(most Hebrew faces, which keep room there for vowel points) otherwise set the
-word visibly high. An installer without `text-box` keeps the line box.
+marks its backup with the shared grey **Recommended** tag (`settings/recommendedBadge.ts`) on its title line rather
+than a "(recommended)" written into the title. The tag is Obsidian's own flat
+flair (`.flair.mod-flat`), the tag Obsidian prints after "Regex", so Obsidian
+paints it. It is not core's green onboarding variant, because nothing in these
+windows is green. The title line is a flex row with its own gap, so the
+flair's margin is dropped there.
 
 `assets/ui-icons/braces.svg` is retained as an unused repository asset for
 possible future UI use; it is not bundled or shown in these choosers.
@@ -428,7 +426,7 @@ reads the active one.
   [`pluginImportViews.ts`](../../src/settings/pluginImport/pluginImportViews.ts))
   are option boxes drawn as cards (`.cs-import-vault`, `.cs-import-manual`),
   built **once** per open. `update()` writes everything that changes in place -
-  the count, the Recommended pill, a staged file's name, which card is active -
+  the count, the Recommended tag, a staged file's name, which card is active -
   so nothing the user is in is ever replaced: the Upload button that becomes
   Replace is the same button, typing never moves the caret, and the probe
   settling touches neither the text box nor focus.

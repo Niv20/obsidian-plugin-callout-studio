@@ -81,12 +81,12 @@ export function renderCalloutRow(
 	if (!fromTheme) {
 		if (def.id === ctx.plugin.settings.fallbackCalloutId) {
 			nameLine.createSpan({
-				cls: "cs-fallback-tag",
+				cls: "flair mod-flat cs-fallback-tag",
 				text: t("settings.fallbackTag"),
 			});
 		} else if (def.source === "fallback" && def.customized !== true) {
 			nameLine.createSpan({
-				cls: "cs-fallback-tag",
+				cls: "flair mod-flat cs-fallback-tag",
 				text: t("settings.fallbackTagAuto"),
 			});
 		}

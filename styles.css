@@ -5949,8 +5949,6 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	min-width: 0;
 }
 
-/* The shortcut pill itself is defined with .cs-fallback-tag — see "name +
-   fallback tag" further down; they are one design on purpose. */
 
 /* A switched-off fixed command's shortcut button: nowhere left for a click to
    lead while nothing is registered, so it neither hovers nor invites one. The
@@ -6369,13 +6367,17 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	gap: 8px;
 	flex-wrap: wrap;
 }
-/* One pill, two uses: a callout row's tag ("Default", "Default fallback",
-   "External style") and a command's shortcut in the Commands and shortcuts
-   window. The same surface on purpose — both are a fact about the row rather
-   than something to press, and in the command list the button that changes the
-   shortcut sits in the row's button group instead. Hence no hover, no focus and
-   no disabled state anywhere in this rule: there is nothing here to click. */
-.cs-fallback-tag,
+/* A callout row's tag ("Default", "Default fallback") is Obsidian's own flat
+   flair (`.flair.mod-flat`), the tag Obsidian prints after "Regex". The row's
+   name line is a flex row with its own gap, so the flair's margin goes. */
+.callout-studio-row-name-line > .cs-fallback-tag {
+	margin-inline-start: 0;
+}
+
+/* A command's shortcut in the Commands and shortcuts window: a fact about the
+   row rather than something to press — the button that changes the shortcut
+   sits in the row's button group instead. Hence no hover, no focus and no
+   disabled state anywhere in this rule: there is nothing here to click. */
 .cs-hotkey-chip {
 	display: inline-flex;
 	align-items: center;
@@ -7075,45 +7077,14 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	white-space: nowrap;
 }
 
-/* ─── Recommended pill ────────────────────────────────────────── */
+/* ─── Recommended tag ─────────────────────────────────────────── */
 /* On an option's title line: the export chooser's backup, and the plugin
-   import window's "This vault" once there is something in it. Grey on
-   purpose — a recommendation, not a state. It is a chip of the window's own
-   colour on the raised box, as the box's icon tile and a row's syntax chip
-   are, so it stays apart from the box through its hover and its selection
-   without a second fill of its own to keep in step. */
-.cs-recommended-badge {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.25em;
-	padding-block: 1px;
-	padding-inline: 6px 8px;
-	border-radius: 999px;
-	background: var(--cs-surface, var(--background-primary));
-	color: var(--text-muted);
-	font-size: calc(var(--font-ui-smaller) - 1px);
-	font-weight: var(--font-normal);
-	line-height: 1.4;
-	white-space: nowrap;
-}
-.cs-recommended-badge-icon {
-	display: flex;
-	--icon-size: 10px;
-	--icon-stroke: var(--icon-xs-stroke-width);
-}
-/* Centred on the word's capitals rather than on the font's line box. A face
-   whose line box runs deep below the baseline — most Hebrew ones, which keep
-   room there for vowel points — otherwise sets the word visibly high in the
-   pill. Trimmed to cap height and baseline, the word leaves the pill's
-   height to its padding and the icon. An installer too old for `text-box`
-   keeps the line box. */
-@supports (text-box: trim-both cap alphabetic) {
-	.cs-recommended-badge {
-		padding-block: 4px;
-	}
-	.cs-recommended-badge-text {
-		text-box: trim-both cap alphabetic;
-	}
+   import window's "This vault" once there is something in it. Obsidian's own
+   flat flair (`.flair.mod-flat`), grey on purpose — a recommendation, not a
+   state. The title line is a flex row with its own gap, so the flair's margin
+   goes. */
+.cs-option-box-head > .cs-recommended-badge {
+	margin-inline-start: 0;
 }
 
 /* ── Icon licenses & credits modal ───────────────────────────── */
@@ -7560,16 +7531,6 @@ body:not(.is-phone)
 
 .cs-portable-custom-error:empty {
 	display: none;
-}
-
-.cs-portable-custom-badge {
-	display: inline-block;
-	margin-inline-start: var(--size-4-2);
-	border-radius: var(--radius-s);
-	padding: 1px 6px;
-	background: color-mix(in srgb, var(--color-purple) 12%, transparent);
-	color: var(--color-purple);
-	font-size: var(--font-ui-smaller);
 }
 
 /* Both vault sidebars share file groups, cards and a bounded row-major grid. */

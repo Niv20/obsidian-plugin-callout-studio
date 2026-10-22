@@ -118,7 +118,7 @@ a notice rather than leaving the input's editing appearance active. Convert
 stays dimmed until the active draft is saved or cancelled; pressing it says so
 and leaves the draft open (see [Blocked main buttons say why](#blocked-main-buttons-say-why)).
 Drafts survive redraws; they are cancelled when the current review becomes stale or closes.
-A purple **Custom** badge sits beside the format/line label. Outside an
+A **Custom** tag sits beside the format/line label. It is Obsidian's flat flair (`.flair.mod-flat`), the same tag as **Default** on callout rows. Outside an
 active edit, the return-arrow button restores the default replacement, as does
 the context-menu action; both rebuild dependent heading-link repairs. Saved
 edits remain in the review until the separate conversion confirmation is accepted.

@@ -26,9 +26,8 @@ openHotkeySettings,
  * A command with none still gets a pill, reading "Blank" as the hotkeys pane
  * does — the alternative leaves the two states structurally different rows.
  *
- * These are `<span>`s and wear no Obsidian chrome. The pill is the same one
- * the callout list uses for "Default" / "Default fallback" (`.cs-fallback-tag`,
- * see styles.css): a label, deliberately not something to click.
+ * These are `<span>`s and wear no Obsidian chrome (`.cs-hotkey-chip`, see
+ * styles.css): a label, deliberately not something to click.
  */
 export function addHotkeyChips(
 	app: App,

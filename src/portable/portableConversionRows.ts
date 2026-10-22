@@ -67,7 +67,7 @@ export function renderPortableConversionRows(
 			type: "button", "data-action": "result", "data-row-id": row.id,
 		} });
 		const location = renderSidebarLocation(source, { role: rowRole(row), line: change.line, cls: "cs-portable-change-location" });
-		if (!linkOnly && (change as PortableCalloutConversionChange).custom) location.createSpan({ cls: "cs-portable-custom-badge", text: t("portable.customBadge") });
+		if (!linkOnly && (change as PortableCalloutConversionChange).custom) location.createSpan({ cls: "flair mod-flat cs-portable-custom-badge", text: t("portable.customBadge") });
 		for (const which of ["before", "after"] as const) {
 			const line = (which === "before" ? source : body).createSpan({ cls: "cs-portable-diff-line" });
 			line.createSpan({ text: t(`portable.${which}`), cls: "cs-portable-diff-label" });
