@@ -5,6 +5,8 @@ export const vi: Record<string, string> = {
 	"portable.roleLink": "Liên kết đến tiêu đề",
 	"portable.convertSelected": "Chuyển đổi mục đã chọn",
 	"portable.selectionSummary": "Đã chọn {{selected}} trong {{total}} mục thay thế · {{links}} liên kết tiêu đề cần cập nhật",
+	"portable.selectionSummaryNoLinks":
+		"Đã chọn {{selected}} trong {{total}} mục thay thế",
 	"portable.selectionConflict": "Lựa chọn này sẽ khiến liên kết tiêu đề không rõ đích đến. Lựa chọn trước đó được giữ nguyên.",
 	"portable.selectAll": "Chọn tất cả",
 	"portable.selectNone": "Bỏ chọn tất cả",
@@ -308,6 +310,7 @@ export const vi: Record<string, string> = {
 	"settings.resetItemContextMenu": "Menu chuột phải",
 	"settings.resetItemHeading": "Cài đặt callout tiêu đề",
 	"settings.resetItemInline": "Cài đặt callout nội dòng",
+	"settings.resetItemThemeCalloutStyles": "Kiểu callout từ giao diện của bạn",
 	"settings.resetItemFallback": "Kiểu dự phòng",
 	"settings.resetItemIconLibraries": "Thứ tự thư viện biểu tượng và thư viện đã ẩn",
 	"settings.resetAllConfirmAfter": "Đừng lo: trước khi đặt lại, chúng tôi lưu một bản sao lưu thiết lập hiện tại của bạn. Bạn có thể khôi phục bất cứ lúc nào từ mục Bản sao lưu trong phần cài đặt.\nNếu bạn dùng dịch vụ đồng bộ, việc đặt lại có thể lan sang các thiết bị khác của bạn.",
@@ -809,6 +812,9 @@ export const vi: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Điều chỉnh viền và hình dạng của mọi callout nội tuyến trong vault của bạn.",
 	"settings.globalSettingsCustomize": "Tùy chỉnh",
+	"settings.themeCalloutStyles": "Dùng kiểu callout từ giao diện của bạn",
+	"settings.themeCalloutStylesDesc":
+		"Bật: các callout mà giao diện của bạn định kiểu sẽ giữ nguyên diện mạo của giao diện.\nTắt: Callout Studio tự vẽ mọi callout, và kiểu callout từ giao diện của bạn bị tắt.",
 
 	"settings.calloutTypeRegular": "Callout dạng khối",
 	"settings.calloutTypeHeading": "Callout tiêu đề",

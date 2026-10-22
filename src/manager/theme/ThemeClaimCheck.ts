@@ -72,6 +72,13 @@ export interface ThemeClaimCheckOptions {
 	store?: ClaimVerdictStore;
 	/** Ids judged in one synchronous pass; defaults to all of them, 8 on a phone or tablet. */
 	batchSize?: number;
+	/**
+	 * True while the theme's callout styling is switched off
+	 * (`themeCalloutsOff.ts`). Its callout rules are then out of the parsed
+	 * sheet, and a pass would weigh what is left of them: it is neither run nor
+	 * remembered, so the verdicts stay true for when the switch goes back.
+	 */
+	paused?: () => boolean;
 }
 
 /** What a caller hands {@link ThemeClaimCheck.check}. */
@@ -170,6 +177,7 @@ export class ThemeClaimCheck {
 	private readonly nextTask: () => Promise<void>;
 	private readonly batchSize: number;
 	private readonly store: ClaimVerdictStore;
+	private readonly paused: () => boolean;
 	private propertyList: readonly string[] | null = null;
 	/** Per id: did switching the theme's rules off change what is drawn? */
 	private verdicts = new Map<string, boolean>();
@@ -201,6 +209,7 @@ export class ThemeClaimCheck {
 		this.nextTask = options.nextTask ?? nextIdleTask;
 		this.batchSize = Math.max(1, options.batchSize ?? (Platform.isMobile ? MOBILE_BATCH : Infinity));
 		this.store = options.store ?? localClaimVerdicts(app);
+		this.paused = options.paused ?? (() => false);
 	}
 
 	/**
@@ -249,8 +258,9 @@ export class ThemeClaimCheck {
 	 */
 	pageRootOff(ids: ReadonlySet<string>): Set<string> {
 		const out = new Set<string>();
+		if (ids.size === 0) return out;
 		const index = this.currentIndex();
-		if (!index || ids.size === 0) return out;
+		if (!index) return out;
 		const ruleOff = pageRootTest(this.mainDocument());
 		for (const id of ids) {
 			const rules = index.get(id);
@@ -300,7 +310,7 @@ export class ThemeClaimCheck {
 	 * does, so a burst of `css-change` events costs one extra pass.
 	 */
 	async check(request: ClaimCheckRequest): Promise<void> {
-		if (this.destroyed) return;
+		if (this.destroyed || this.paused()) return;
 		if (this.running) {
 			this.pending = request;
 			return;
@@ -321,6 +331,7 @@ export class ThemeClaimCheck {
 		if (
 			measured &&
 			!this.destroyed &&
+			!this.paused() &&
 			generation === this.generation &&
 			this.verdictKey() === signature
 		) {

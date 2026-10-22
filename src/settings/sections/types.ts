@@ -10,6 +10,7 @@ import type { FixedCommandId } from "../../editor/commands";
 import type { OutlineDecorator } from "../../outline/OutlineDecorator";
 import type { IconService } from "../../icons/IconService";
 import type { LocaleStore } from "../../i18n/LocaleStore";
+import type { ThemeCalloutsOff } from "../../manager/theme/themeCalloutsOff";
 import type {
 	CalloutDefinition,
 	CalloutIcon,
@@ -43,6 +44,9 @@ export type SettingsTabPlugin = Plugin & {
 	icons: Pick<IconService, "packs" | "deleteLibrary">;
 
 	locales: Pick<LocaleStore, "isReady">;
+
+	/** The switch that takes the theme's callout styling away; absent on minimal hosts. */
+	themeCalloutsOff?: Pick<ThemeCalloutsOff, "ensure">;
 
 	ensureLocale(): Promise<boolean>;
 

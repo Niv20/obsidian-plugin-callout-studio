@@ -105,7 +105,8 @@ export interface CalloutDetails extends Callout {
 	 * or one that changes nothing visible, does not count. A callout the theme
 	 * draws under only some of its IDs is `false`. Derived from the theme, so
 	 * it changes when the user changes theme, and no field on the stored
-	 * definition records it.
+	 * definition records it. Always `false` while the user has switched the
+	 * theme's callout styles off: the theme then draws no callout at all.
 	 */
 	readonly themeStyled: boolean;
 }

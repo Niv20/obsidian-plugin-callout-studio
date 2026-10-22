@@ -19,7 +19,8 @@
  * Around that go the inputs a row reads that are *not* in a definition: the
  * colour scheme (swatches show the current mode), the theme's name and what the
  * appearance probe measured (theme rows only — the one list that draws it), the
- * locale (id sort order), and the fallback id (the *Default fallback* tag).
+ * locale (id sort order), the fallback id (the *Default fallback* tag), and
+ * the theme section's switch (whether that section stays up with no rows).
  *
  * The paging cursors are in it too, and they have to be: **Load more** changes
  * what is drawn without changing a single definition, so leaving them out would
@@ -71,6 +72,9 @@ export function calloutListsSignature(
 		themeLabel,
 		locale,
 		ctx.plugin.settings.fallbackCalloutId,
+		// The theme section's switch, which keeps the section on screen while
+		// off — with no rows, nothing else here would move when it is flipped.
+		ctx.plugin.registry.settings.themeCalloutStyles.enabled,
 	];
 	const add = (kind: RowKind): void => {
 		const defs = rows[kind];

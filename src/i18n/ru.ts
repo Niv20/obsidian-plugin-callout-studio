@@ -5,6 +5,8 @@ export const ru: Record<string, string> = {
 	"portable.roleLink": "Ссылка на заголовок",
 	"portable.convertSelected": "Преобразовать выбранное",
 	"portable.selectionSummary": "Выбрано {{selected}} из {{total}} замен · Ссылок на заголовки для обновления: {{links}}",
+	"portable.selectionSummaryNoLinks":
+		"Выбрано {{selected}} из {{total}} замен",
 	"portable.selectionConflict": "Этот выбор сделал бы ссылки на заголовки неоднозначными. Предыдущий выбор сохранён.",
 	"portable.selectAll": "Выбрать всё",
 	"portable.selectNone": "Снять выделение",
@@ -307,6 +309,7 @@ export const ru: Record<string, string> = {
 	"settings.resetItemContextMenu": "Контекстное меню (правая кнопка мыши)",
 	"settings.resetItemHeading": "Настройки callout в заголовках",
 	"settings.resetItemInline": "Настройки встроенных в строку callout",
+	"settings.resetItemThemeCalloutStyles": "Стили callout вашей темы",
 	"settings.resetItemFallback": "Резервный стиль",
 	"settings.resetItemIconLibraries": "Порядок библиотек иконок и скрытые библиотеки",
 	"settings.resetAllConfirmAfter": "Не волнуйтесь: перед сбросом мы сохраним резервную копию вашей текущей конфигурации. Её можно восстановить в любой момент в разделе «Резервные копии» в настройках.\nЕсли вы используете службу синхронизации, сброс может дойти и до ваших других устройств.",
@@ -804,6 +807,9 @@ export const ru: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Настройте рамку и форму каждого встроенного callout в вашем хранилище.",
 	"settings.globalSettingsCustomize": "Настроить",
+	"settings.themeCalloutStyles": "Использовать стили callout вашей темы",
+	"settings.themeCalloutStylesDesc":
+		"Включено: callout, которые оформляет ваша тема, сохраняют вид, заданный темой.\nВыключено: Callout Studio сам рисует каждый callout, а стили callout вашей темы отключены.",
 	"settings.calloutTypeRegular": "Блочный callout",
 	"settings.calloutTypeHeading": "Callout-заголовок",
 	"settings.calloutTypeInline": "Встроенный callout",

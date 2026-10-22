@@ -59,6 +59,8 @@ function buildMyCalloutTypesHeading(): HTMLElement {
 		plugin: {
 			settingsWriter: { isFrozen: false },
 			localState: { isExpanded: () => true, setExpanded: () => {} },
+			// The theme section's switch reads it.
+			registry: { settings: { themeCalloutStyles: { enabled: true } } },
 		},
 		display: () => {},
 		registerDisposer: () => {},
@@ -224,6 +226,8 @@ function buildMyCalloutTypesSection(): HTMLElement {
 		plugin: {
 			settingsWriter: { isFrozen: false },
 			localState: { isExpanded: () => true, setExpanded: () => {} },
+			// The theme section's switch reads it.
+			registry: { settings: { themeCalloutStyles: { enabled: true } } },
 		},
 		display: () => {},
 		registerDisposer: () => {},

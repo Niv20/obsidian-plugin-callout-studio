@@ -253,6 +253,7 @@ export const ar: Record<string, string> = {
 	"settings.resetItemContextMenu": "قائمة النقر بزر الماوس الأيمن",
 	"settings.resetItemHeading": "إعدادات callout في العناوين",
 	"settings.resetItemInline": "إعدادات callout المضمّنة في السطر",
+	"settings.resetItemThemeCalloutStyles": "أنماط الـ callout في سمتك",
 	"settings.resetItemFallback": "النمط الاحتياطي",
 	"settings.resetItemIconLibraries": "ترتيب مكتبات الأيقونات والمكتبات المخفية",
 	"settings.resetAllConfirmAfter": "لا تقلق: قبل إعادة التعيين نحفظ نسخة احتياطية من إعداداتك الحالية. يمكنك استعادتها في أي وقت من قسم النسخ الاحتياطية في الإعدادات.\nإذا كنت تستخدم خدمة مزامنة، فقد تصل إعادة التعيين إلى أجهزتك الأخرى أيضًا.",
@@ -741,6 +742,9 @@ export const ar: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"اضبط الحدود والشكل لكل inline callout في خزنتك.",
 	"settings.globalSettingsCustomize": "تخصيص",
+	"settings.themeCalloutStyles": "استخدام أنماط الـ callout في سمتك",
+	"settings.themeCalloutStylesDesc":
+		"عند التفعيل: تحتفظ الـ callouts التي تنسّقها سمتك بمظهر سمتك.\nعند الإيقاف: يرسم Callout Studio كل callout، وتُعطَّل أنماط الـ callout في سمتك.",
 	"settings.calloutTypeRegular": "callout كتلي",
 	"settings.calloutTypeHeading": "callout العنوان",
 	"settings.calloutTypeInline": "callout مضمّن",
@@ -828,6 +832,8 @@ export const ar: Record<string, string> = {
 	"portable.roleLink": "رابط عنوان",
 	"portable.convertSelected": "تحويل المحدد",
 	"portable.selectionSummary": "تم تحديد {{selected}} من {{total}} استبدالات · {{links}} روابط عناوين للتحديث",
+	"portable.selectionSummaryNoLinks":
+		"تم تحديد {{selected}} من {{total}} استبدالات",
 	"portable.selectionConflict": "سيجعل هذا الاختيار روابط العناوين ملتبسة. تم الاحتفاظ باختيارك السابق.",
 	"portable.selectAll": "تحديد الكل",
 	"portable.selectNone": "إلغاء تحديد الكل",

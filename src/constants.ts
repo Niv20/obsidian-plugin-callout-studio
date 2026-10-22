@@ -298,6 +298,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
 	},
 	inlineCallouts: { enabled: true, allowContent: true },
 	metadataColors: { enabled: true },
+	themeCalloutStyles: { enabled: true },
 	welcomeSeen: false,
 	competitorImportBannerHandled: false,
 	fallbackCalloutId: "note",

@@ -1701,6 +1701,10 @@ export class CalloutRegistry {
 		this.settings.metadataColors = structuredClone(
 			DEFAULT_SETTINGS.metadataColors,
 		);
+		// Back on: the theme draws the callouts it styles again.
+		this.settings.themeCalloutStyles = structuredClone(
+			DEFAULT_SETTINGS.themeCalloutStyles,
+		);
 		// The library order and the hidden libraries go back to the catalog's.
 		// Downloaded library files stay: they are this device's cache, not a
 		// setting, and deleting them would only cost a download later.

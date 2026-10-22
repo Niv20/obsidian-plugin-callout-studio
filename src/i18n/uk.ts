@@ -5,6 +5,8 @@ export const uk: Record<string, string> = {
 	"portable.roleLink": "Посилання на заголовок",
 	"portable.convertSelected": "Перетворити вибране",
 	"portable.selectionSummary": "Вибрано {{selected}} із {{total}} замін · Посилань на заголовки для оновлення: {{links}}",
+	"portable.selectionSummaryNoLinks":
+		"Вибрано {{selected}} із {{total}} замін",
 	"portable.selectionConflict": "Цей вибір зробив би посилання на заголовки неоднозначними. Попередній вибір збережено.",
 	"portable.selectAll": "Вибрати все",
 	"portable.selectNone": "Зняти весь вибір",
@@ -311,6 +313,7 @@ export const uk: Record<string, string> = {
 	"settings.resetItemContextMenu": "Контекстне меню (права кнопка миші)",
 	"settings.resetItemHeading": "Налаштування callout у заголовках",
 	"settings.resetItemInline": "Налаштування вбудованих у рядок callout",
+	"settings.resetItemThemeCalloutStyles": "Стилі callout вашої теми",
 	"settings.resetItemFallback": "Резервний стиль",
 	"settings.resetItemIconLibraries": "Порядок бібліотек іконок і приховані бібліотеки",
 	"settings.resetAllConfirmAfter": "Не хвилюйтеся: перед скиданням ми збережемо резервну копію вашої поточної конфігурації. Її можна відновити будь-коли в розділі «Резервні копії» в налаштуваннях.\nЯкщо ви користуєтеся службою синхронізації, скидання може дійти й до ваших інших пристроїв.",
@@ -817,6 +820,9 @@ export const uk: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Налаштуйте рамку та форму кожного вбудованого callout у вашому сховищі.",
 	"settings.globalSettingsCustomize": "Налаштувати",
+	"settings.themeCalloutStyles": "Використовувати стилі callout вашої теми",
+	"settings.themeCalloutStylesDesc":
+		"Увімкнено: callout, які оформлює ваша тема, зберігають вигляд, заданий темою.\nВимкнено: Callout Studio сам малює кожен callout, а стилі callout вашої теми вимкнено.",
 
 	"settings.calloutTypeRegular": "Блоковий callout",
 	"settings.calloutTypeHeading": "Callout-заголовок",

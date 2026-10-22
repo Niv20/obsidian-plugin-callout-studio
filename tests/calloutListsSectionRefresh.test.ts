@@ -28,6 +28,7 @@ import {
 } from "../src/settings/sections/CalloutListsSection";
 import { freshPaging } from "../src/settings/sections/calloutListsSignature";
 import { installFakeDom } from "./support/fakeDom";
+import { createdToggles } from "./support/obsidianStub";
 
 installFakeDom();
 
@@ -179,5 +180,93 @@ describe("the theme heading follows the active theme across a refresh", () => {
 			once,
 			"two refreshes leave exactly the rows one render did",
 		);
+	});
+});
+
+/** The theme section's wrapper — the element `cs-hidden` goes on. */
+function themeSection(host: HTMLElement): HTMLElement {
+	const el = host.querySelector<HTMLElement>(".cs-sticky-section");
+	assert.ok(el, "the theme section is the first sticky section");
+	return el;
+}
+
+/** A controller over `app` whose theme owns `themeIds`, rendered into a fresh host. */
+function renderLists(app: App, registry: CalloutRegistry, themeIds: string[]) {
+	const ctx = listsCtx(registry, app, themeIds);
+	const host: HTMLElement = createDiv();
+	const lists = createCalloutListsController(ctx, {
+		paging: freshPaging(),
+		onAddNewCallout: () => Promise.resolve(),
+		renderRow: (el, def, kind) => {
+			if (kind !== "theme") return;
+			el.createEl("code", { cls: "callout-studio-row-syntax", text: def.id });
+		},
+	});
+	createdToggles.length = 0;
+	lists.render(host);
+	return { host, lists };
+}
+
+describe("Use your theme's callout styles sits under the theme heading", () => {
+	it("is the theme section's first row, above its callouts, and survives a refresh once", () => {
+		const t = themeApp("Nord", '.callout[data-callout="note"] {}');
+		const { host, lists } = renderLists(t.app, vault(), ["note"]);
+		lists.refresh(true);
+		lists.refresh(true);
+
+		// Inside the body, so it folds with the section; the test's rows are
+		// bare `<code>`s, so the body's one setting row is the switch.
+		const body = themeSection(host).querySelector<HTMLElement>(".cs-section-body");
+		assert.ok(body, "the theme section has a fold body");
+		const switches = body.querySelectorAll(".setting-item");
+		assert.equal(switches.length, 1, "one switch, however many repaints");
+		assert.equal(body.firstElementChild, switches[0], "the body opens with it");
+		assert.deepStrictEqual(themeRowIds(host), ["note"], "the rows follow it");
+	});
+
+	it("keeps the section on screen while off, so it can be turned back on", () => {
+		const t = themeApp("Nord", '.callout[data-callout="note"] {}');
+		const registry = vault();
+		const { host, lists } = renderLists(t.app, registry, ["note"]);
+
+		// Off, the theme names nothing: its rows leave the section.
+		const toggle = createdToggles[0];
+		assert.ok(toggle, "the switch is a toggle");
+		void toggle.commit(false);
+		assert.equal(registry.settings.themeCalloutStyles.enabled, false, "the press is saved");
+		registry.setThemeOwnedIds(new Set());
+		lists.refresh();
+
+		assert.ok(!themeSection(host).classList.contains("cs-hidden"), "the section stays");
+		assert.deepStrictEqual(themeRowIds(host), [], "with no rows in it");
+		assert.ok(
+			host.querySelector(".cs-theme-desc")?.classList.contains("cs-hidden"),
+			"and without the sentence that describes rows",
+		);
+
+		// Back on with a theme that still names nothing: nothing left to show.
+		void toggle.commit(true);
+		lists.refresh();
+		assert.ok(themeSection(host).classList.contains("cs-hidden"), "the empty section goes");
+	});
+
+	it("is not shown off in Obsidian's default theme, where it has nothing to take away", () => {
+		const t = themeApp("", "");
+		const registry = vault();
+		registry.settings.themeCalloutStyles.enabled = false;
+		const { host } = renderLists(t.app, registry, []);
+		assert.ok(themeSection(host).classList.contains("cs-hidden"));
+	});
+
+	it("shows a value changed under the open tab", () => {
+		const t = themeApp("Nord", '.callout[data-callout="note"] {}');
+		const registry = vault();
+		const { lists } = renderLists(t.app, registry, ["note"]);
+		assert.equal(createdToggles[0]?.getValue(), true);
+
+		// Another device's settings, or Reset — not a press on this toggle.
+		registry.settings.themeCalloutStyles.enabled = false;
+		lists.refresh();
+		assert.equal(createdToggles[0]?.getValue(), false);
 	});
 });

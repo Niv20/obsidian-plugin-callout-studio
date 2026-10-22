@@ -162,6 +162,14 @@ function styleItems(changes: ReadonlyMap<string, SetupChange>, sides: RecoverySi
 	}));
 }
 
+/** The switch under Global styling that hands every callout to Callout Studio. */
+function themeCalloutStyleItems(change: SetupChange | undefined): RecoveryItem[] {
+	const fields = groupFields(change, [["enabled", renderOnOff]]);
+	return fields.length
+		? [{ key: "themeCalloutStyles", kind: "changed", title: t("settings.themeCalloutStyles"), fields }]
+		: [];
+}
+
 function iconSourceItems(change: SetupChange | undefined): RecoveryItem[] {
 	const fields = groupFields(change, [
 		["materialStyleDefault", renderChoice(MATERIAL_STYLES)],
@@ -200,7 +208,7 @@ function otherItems(changes: readonly SetupChange[], handled: ReadonlySet<string
 
 /** Settings groups with a section of their own; everything else is "Other settings". */
 const HANDLED_GROUPS: ReadonlySet<string> = new Set(["userImages", "iconSources", "iconLibraries", "fallbackCalloutId",
-	"customPalettes", "globalStyle", "headingCallouts", "inlineCallouts", "contextMenu", "customCommands",
+	"customPalettes", "globalStyle", "headingCallouts", "inlineCallouts", "themeCalloutStyles", "contextMenu", "customCommands",
 	"disabledFixedCommands", "language"]
 	.map(name => `settings:${name}`));
 
@@ -225,7 +233,9 @@ export function recoveryReport(details: SetupDetails): RecoveryReport {
 				if (def) renderRecoveryPreview(parent.createDiv({ cls: "cs-recovery-side-preview" }), sides[which].data, def, component);
 			}) },
 		{ id: "palettes", title: t("settings.customPalettes"), items: paletteItems(group("customPalettes"), sides) },
-		{ id: "style", title: t("settings.globalSettings"), items: styleItems(changes, sides) },
+		{ id: "style", title: t("settings.globalSettings"), items: [
+			...styleItems(changes, sides), ...themeCalloutStyleItems(group("themeCalloutStyles")),
+		] },
 		{ id: "contextMenu", title: t("settings.contextMenu"), items: contextMenuItems(group("contextMenu")) },
 		{ id: "commands", title: t("settings.customCommands"), items: [
 			...customCommandItems(group("customCommands"), sides), ...builtInCommandItems(group("disabledFixedCommands"), sides),

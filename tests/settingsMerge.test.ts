@@ -70,6 +70,7 @@ const FIELD_KIND: Record<keyof PluginSettings, "value" | "list"> = {
 	headingCallouts: "value",
 	inlineCallouts: "value",
 	metadataColors: "value",
+	themeCalloutStyles: "value",
 	welcomeSeen: "value",
 	competitorImportBannerHandled: "value",
 	fallbackCalloutId: "value",
@@ -179,6 +180,7 @@ const EXPECTED_LEAVES: string[] = [
 	"language",
 	"metadataColors.enabled",
 	"quickInsertSource",
+	"themeCalloutStyles.enabled",
 	"welcomeSeen",
 ];
 

@@ -260,6 +260,7 @@ export const fr: Record<string, string> = {
 	"settings.resetItemContextMenu": "Menu contextuel (clic droit)",
 	"settings.resetItemHeading": "Réglages des callouts de titre",
 	"settings.resetItemInline": "Réglages des callouts en ligne",
+	"settings.resetItemThemeCalloutStyles": "Styles de callout de votre thème",
 	"settings.resetItemFallback": "Style de repli",
 	"settings.resetItemIconLibraries": "Ordre des bibliothèques d’icônes et bibliothèques masquées",
 	"settings.resetAllConfirmAfter": "Pas d'inquiétude : avant la réinitialisation, nous enregistrons une sauvegarde de votre configuration actuelle. Vous pouvez la restaurer à tout moment depuis la section Sauvegardes des réglages.\nSi vous utilisez un service de synchronisation, la réinitialisation peut aussi se propager à vos autres appareils.",
@@ -769,6 +770,10 @@ export const fr: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Ajustez la bordure et la forme de chaque callout en ligne de votre coffre.",
 	"settings.globalSettingsCustomize": "Personnaliser",
+	"settings.themeCalloutStyles":
+		"Utiliser les styles de callout de votre thème",
+	"settings.themeCalloutStylesDesc":
+		"Activé : les callouts que votre thème stylise gardent l'apparence de votre thème.\nDésactivé : Callout Studio dessine tous les callouts, et les styles de callout de votre thème sont désactivés.",
 	"settings.calloutTypeRegular": "Callout de bloc",
 	"settings.calloutTypeHeading": "Callout de titre",
 	"settings.calloutTypeInline": "Callout en ligne",
@@ -856,6 +861,8 @@ export const fr: Record<string, string> = {
 	"portable.roleLink": "Lien vers un titre",
 	"portable.convertSelected": "Convertir la sélection",
 	"portable.selectionSummary": "{{selected}} remplacements sélectionnés sur {{total}} · {{links}} liens vers des titres à mettre à jour",
+	"portable.selectionSummaryNoLinks":
+		"{{selected}} remplacements sélectionnés sur {{total}}",
 	"portable.selectionConflict": "Ce choix rendrait les liens vers les titres ambigus. Votre sélection précédente a été conservée.",
 	"portable.selectAll": "Tout sélectionner",
 	"portable.selectNone": "Tout désélectionner",

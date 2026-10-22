@@ -257,6 +257,7 @@ export const nl: Record<string, string> = {
 	"settings.resetItemContextMenu": "Rechtsklikmenu",
 	"settings.resetItemHeading": "Instellingen voor koptekst-callouts",
 	"settings.resetItemInline": "Instellingen voor inline callouts",
+	"settings.resetItemThemeCalloutStyles": "Callout-stijlen van uw thema",
 	"settings.resetItemFallback": "Terugvalstijl",
 	"settings.resetItemIconLibraries": "Volgorde van pictogrambibliotheken en verborgen bibliotheken",
 	"settings.resetAllConfirmAfter": "Geen zorgen: voordat we terugzetten, slaan we een back-up van je huidige configuratie op. Je kunt die op elk moment herstellen via het onderdeel Back-ups in de instellingen.\nAls je een synchronisatieservice gebruikt, kan het terugzetten ook naar je andere apparaten worden doorgegeven.",
@@ -762,6 +763,9 @@ export const nl: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Pas de rand en vorm van elke inline callout in uw vault aan.",
 	"settings.globalSettingsCustomize": "Aanpassen",
+	"settings.themeCalloutStyles": "Callout-stijlen van uw thema gebruiken",
+	"settings.themeCalloutStylesDesc":
+		"Aan: callouts die uw thema opmaakt, behouden de look van uw thema.\nUit: Callout Studio tekent elke callout zelf, en de callout-stijlen van uw thema zijn uitgeschakeld.",
 	"settings.calloutTypeRegular": "Blok-callout",
 	"settings.calloutTypeHeading": "Kop-callout",
 	"settings.calloutTypeInline": "Inline callout",
@@ -1154,6 +1158,8 @@ export const nl: Record<string, string> = {
 	"portable.roleLink": "Koplink",
 	"portable.convertSelected": "Selectie omzetten",
 	"portable.selectionSummary": "{{selected}} van {{total}} vervangingen geselecteerd · {{links}} koplinks bij te werken",
+	"portable.selectionSummaryNoLinks":
+		"{{selected}} van {{total}} vervangingen geselecteerd",
 	"portable.selectionConflict": "Die keuze zou koplinks dubbelzinnig maken. Je vorige selectie is behouden.",
 	"portable.selectAll": "Alles selecteren",
 	"portable.selectNone": "Alles deselecteren",

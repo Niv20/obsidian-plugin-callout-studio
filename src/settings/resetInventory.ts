@@ -53,6 +53,7 @@ export function resetInventory(registry: CalloutRegistry): ResetInventory {
 				["settings.resetItemContextMenu", settings.contextMenu, DEFAULT_SETTINGS.contextMenu],
 				["settings.resetItemHeading", settings.headingCallouts, DEFAULT_SETTINGS.headingCallouts],
 				["settings.resetItemInline", settings.inlineCallouts, DEFAULT_SETTINGS.inlineCallouts],
+				["settings.resetItemThemeCalloutStyles", settings.themeCalloutStyles, DEFAULT_SETTINGS.themeCalloutStyles],
 				["settings.resetItemFallback", settings.fallbackCalloutId, DEFAULT_SETTINGS.fallbackCalloutId],
 				["settings.resetItemIconLibraries", settings.iconLibraries, DEFAULT_SETTINGS.iconLibraries],
 			]),

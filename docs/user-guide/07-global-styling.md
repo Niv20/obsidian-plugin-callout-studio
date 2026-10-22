@@ -45,7 +45,7 @@ Block callouts include the broadest set of controls:
 
 ![Block callout style window with border, text scale, shape, and alignment controls beside its dark-mode preview](../../assets/user-guide/global-block.svg)
 
-These settings shape callouts drawn by Callout Studio. If your active theme owns a callout, the theme keeps control of its appearance; see [Theme integration](17-theme-integration.md).
+These settings shape callouts drawn by Callout Studio. If your active theme owns a callout, the theme keeps control of its appearance; see [Theme integration](17-theme-integration.md). Turn off **Use your theme's callout styles** and Callout Studio draws every callout, with these global settings included; see [Turning your theme's callout styles off](17-theme-integration.md#turning-your-themes-callout-styles-off).
 
 ---
 **Next:** [The right-click menu](08-the-right-click-menu.md)

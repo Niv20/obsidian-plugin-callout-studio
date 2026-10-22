@@ -254,6 +254,7 @@ export const fa: Record<string, string> = {
 	"settings.resetItemContextMenu": "منوی کلیک راست",
 	"settings.resetItemHeading": "تنظیمات callout عنوان",
 	"settings.resetItemInline": "تنظیمات callout درون‌خطی",
+	"settings.resetItemThemeCalloutStyles": "سبک‌های callout پوسته‌ی شما",
 	"settings.resetItemFallback": "سبک جایگزین",
 	"settings.resetItemIconLibraries": "ترتیب کتابخانه‌های نماد و کتابخانه‌های پنهان",
 	"settings.resetAllConfirmAfter": "نگران نباشید: پیش از بازنشانی، از پیکربندی فعلی شما یک پشتیبان ذخیره می‌کنیم. هر زمان می‌توانید آن را از بخش پشتیبان‌ها در تنظیمات بازیابی کنید.\nاگر از سرویس همگام‌سازی استفاده می‌کنید، ممکن است بازنشانی به دستگاه‌های دیگر شما هم برسد.",
@@ -750,6 +751,9 @@ export const fa: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"حاشیه و شکلِ هر inline callout در گاوصندوق‌تان را تنظیم کنید.",
 	"settings.globalSettingsCustomize": "سفارشی‌سازی",
+	"settings.themeCalloutStyles": "استفاده از سبک‌های callout پوسته‌ی شما",
+	"settings.themeCalloutStylesDesc":
+		"روشن: calloutهایی که پوسته‌ی شما استایل می‌دهد، ظاهر پوسته‌ی شما را حفظ می‌کنند.\nخاموش: Callout Studio همه‌ی calloutها را خودش ترسیم می‌کند و سبک‌های callout پوسته‌ی شما غیرفعال می‌شود.",
 	"settings.calloutTypeRegular": "کال‌اوت بلوکی",
 	"settings.calloutTypeHeading": "callout عنوان",
 	"settings.calloutTypeInline": "callout درون‌خطی",
@@ -841,6 +845,8 @@ export const fa: Record<string, string> = {
 	"portable.roleLink": "پیوند عنوان",
 	"portable.convertSelected": "تبدیل موارد انتخاب‌شده",
 	"portable.selectionSummary": "{{selected}} از {{total}} جایگزینی انتخاب شده · {{links}} پیوند عنوان برای به‌روزرسانی",
+	"portable.selectionSummaryNoLinks":
+		"{{selected}} از {{total}} جایگزینی انتخاب شده",
 	"portable.selectionConflict": "این انتخاب پیوندهای عنوان‌ها را مبهم می‌کند. انتخاب قبلی شما حفظ شد.",
 	"portable.selectAll": "انتخاب همه",
 	"portable.selectNone": "لغو انتخاب همه",

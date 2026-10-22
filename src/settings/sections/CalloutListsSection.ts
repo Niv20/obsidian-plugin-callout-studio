@@ -121,6 +121,15 @@ export function createCalloutListsController(
 	const themeLabel = (): string =>
 		activeThemeName(ctx.app) ?? t("settings.themeCalloutsDefaultTheme");
 
+	/**
+	 * The theme's callout styles are switched off while a theme is active —
+	 * what keeps its section, and the switch in it, on screen with no rows.
+	 * In Obsidian's default theme the switch has nothing to take away.
+	 */
+	const themeSwitchedOff = (): boolean =>
+		!ctx.plugin.registry.settings.themeCalloutStyles.enabled &&
+		activeThemeName(ctx.app) !== null;
+
 	/** See `isThemeStyled` for why membership is derived from the theme alone. */
 	const partition = () =>
 		partitionByStyleOwner(styleOwnerFacts(ctx), [
@@ -152,7 +161,7 @@ export function createCalloutListsController(
 
 	const renderThemeList = (fromTheme: CalloutDefinition[]): void => {
 		if (!els) return;
-		const { themeSectionEl, themeDescEl, themeFold, themeListEl } = els;
+		const { themeSectionEl, themeDescEl, themeFold, themeListEl, themeSwitch } = els;
 		// The heading names the *active* theme, so it is re-read on every render
 		// rather than once when the section is built. `renderAll` is the refresh
 		// path — it is what the tab's `css-change` listener reaches — and without
@@ -165,20 +174,29 @@ export function createCalloutListsController(
 		themeFold.setName(
 			headingWithCount(t("settings.themeCalloutsHeading"), fromTheme.length),
 		);
-		themeListEl.empty();
+		// `empty()` minus the switch, which opens the body and is not rebuilt;
+		// the rows are appended after it.
+		for (const child of Array.from(themeListEl.children)) {
+			if (child !== themeSwitch.settingEl) child.remove();
+		}
+		themeSwitch.sync();
 		// The whole section disappears with the last row rather than showing an
 		// empty state: most themes style no callouts at all, and a permanent
 		// "your theme styles none" heading would be noise in every one of those
-		// vaults.
+		// vaults. The one exception is the switch: turned off, it is what took
+		// the rows away, and it must stay on screen to be turned back on.
 		// One toggle, on the section wrapper: it holds the heading and the rows,
 		// so hiding it hides both, and neither has to carry `cs-hidden` beside
 		// the `is-collapsed` the fold puts there.
 		const has = fromTheme.length > 0;
-		themeSectionEl.toggleClass("cs-hidden", !has);
+		const shown = has || themeSwitchedOff();
+		themeSectionEl.toggleClass("cs-hidden", !shown);
+		// It describes the rows, so it goes when they do.
+		themeDescEl.toggleClass("cs-hidden", !has);
 		// The divider above "My callout types" only earns its keep when the
 		// theme section above it is actually on screen — otherwise it would be
 		// the first thing under the plugin title, with nothing to separate it from.
-		els.subSectionEl.toggleClass("cs-section-divider", has);
+		els.subSectionEl.toggleClass("cs-section-divider", shown);
 		if (!has) return;
 		renderList(themeListEl, fromTheme, "theme");
 	};

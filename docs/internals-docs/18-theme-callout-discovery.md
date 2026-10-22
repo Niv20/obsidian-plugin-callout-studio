@@ -37,6 +37,11 @@ while a rule naming it is in force, and a built-in or one of the user's
 callouts moves to the theme only while that rule visibly changes it. See
 [Naming is not drawing](#naming-is-not-drawing---the-claim-check).
 
+One setting stands beside the rule rather than inside it: **Use your theme's
+callout styles**, on by default. Off, the theme's callout styling is taken out
+of the page altogether, so the theme names nothing and owns nothing - see
+[Switching the theme's callout styling off](#switching-the-themes-callout-styling-off).
+
 ## The pipeline, end to end
 
 Six stages, plus one question answered off to the side. Each is a separate
@@ -51,6 +56,7 @@ happen in this order.
 | 4 | List theme ids locally; persist only explicit scans/imports | [`themeOverlayRows.ts`](../../src/manager/theme/themeOverlayRows.ts), [`ManualCalloutDiscovery.ts`](../../src/manager/ManualCalloutDiscovery.ts) | Ephemeral theme rows or durable definitions |
 | 5 | Measure what the theme actually draws | [`ThemeAppearanceProbe.ts`](../../src/manager/theme/ThemeAppearanceProbe.ts) + [`readCalloutStyle.ts`](../../src/manager/theme/readCalloutStyle.ts) + [`themeAppearance.ts`](../../src/manager/theme/themeAppearance.ts) / [`themeIcon.ts`](../../src/manager/theme/themeIcon.ts) | `ThemeAppearance` per id |
 | 6 | Reproduce it wherever the plugin lists callouts | [`renderThemeIcon.ts`](../../src/manager/theme/renderThemeIcon.ts), [`calloutListIcon.ts`](../../src/manager/theme/calloutListIcon.ts) | icons and swatches on rows, menus, pickers |
+| - | Take the theme's callout styling away when the user switched it off | [`themeCalloutRules.ts`](../../src/manager/theme/themeCalloutRules.ts) + [`themeCalloutStrip.ts`](../../src/manager/theme/themeCalloutStrip.ts) + [`themeCalloutsOff.ts`](../../src/manager/theme/themeCalloutsOff.ts) | the theme's parsed copies without their callout rules; every stage above reading "names nothing" |
 | - | Decide how the theme **spells** a callout accent | [`accentDialectScan.ts`](../../src/manager/theme/accentDialectScan.ts) + [`accentDialect.ts`](../../src/manager/theme/accentDialect.ts) + [`accentValueFormat.ts`](../../src/manager/theme/accentValueFormat.ts), cached alongside stage 2 | `AccentDialect` - see [The accent dialect](#the-accent-dialect) |
 
 Scheduling - when the whole thing runs and in which order - is
@@ -1144,6 +1150,156 @@ has since arrived") and the baked colour are unchanged for the slot - with the
 care that other painters (`restoreCoreIcon`, the token painters, a rebuilt
 widget) must invalidate whatever remembers a slot.
 
+## Switching the theme's callout styling off
+
+**Use your theme's callout styles** (`settings.themeCalloutStyles.enabled`), the
+first row under *Callouts from your theme* (see
+[16 § The theme section opens with its switch](16-settings-ui-and-modals.md#the-theme-section-opens-with-its-switch)), is on
+by default, and on, nothing in this section runs: the generated sheet is
+byte-identical to the one before the setting existed, and no stylesheet is
+touched. Off, [`themeCalloutsOff.ts`](../../src/manager/theme/themeCalloutsOff.ts)
+takes the theme's callout styling out of the page, and everything earlier in
+this chapter reads a theme that names no callout. Why removing rather than
+out-weighing - the retired rungs, the split render - is
+[06-css-generation.md § The one switch](06-css-generation.md#the-one-switch-and-why-it-is-not-a-mode).
+
+### What goes
+
+[`themeCalloutRules.ts`](../../src/manager/theme/themeCalloutRules.ts) is the
+judgement, pure text, as the browser serializes a selector:
+
+- **A selector reaches a callout** when a class of Obsidian's callout DOM
+  (`callout`, `callout-title`, `callout-title-inner`, `callout-icon`,
+  `callout-content`, `callout-fold`, Live Preview's `cm-callout`, and the
+  `HyperMD-callout` / `cm-hmd-callout` of a `> [!type]` line being edited, which
+  core never styles) or a `data-callout…` attribute appears anywhere outside
+  `:not()`. The list is exact: `body:not(.callout-no-quote)`, Border's
+  `.callout-style-1` option, Velocity's `.lc-list-callout` and
+  `blockquote:not(.callout)` stay the theme's.
+- **Only what reaches a callout goes.** A rule whose every selector does is
+  deleted with everything nested in it; a list loses only those selectors
+  (`.callout-content, .blockquote` keeps `.blockquote`).
+- **An alternative is switched off, not dropped.** Inside `:is()`, `:where()`
+  and `:has()` a reaching alternative becomes `:not(*, x)`: it matches nothing,
+  and it weighs exactly what `x` did. Dropping it would lighten the rule for
+  everything it still matches - Dune's `:is(p, li, .callout-title-inner)` is
+  every paragraph in the vault - and a lighter rule can lose a tie it used to
+  win, outside any callout. Inside a negation, it is also no longer a reach,
+  which is what makes a second pass find nothing to do.
+- **Every `--callout-*` declaration goes**, from every rule that stays (on
+  `body` as often as not), and any `@property --callout-…` registration with
+  them. They reach every callout through inheritance, or through core's own
+  callout CSS reading them.
+- **Obsidian's own values close the copy.** Core does not spell a callout's
+  corners, padding, title weight, blend or icon size out: it reads
+  `--radius-s`, the `--size-4-*` scale, `--font-weight` with
+  `--bold-modifier`, `--highlight-mix-blend-mode`, and `--icon-size` with
+  `--icon-stroke`, which a theme sets for the whole app.
+  `pinCoreCalloutDefaults` ends the theme's copy with the values Obsidian's own
+  theme resolves them to, on the selectors core declares them on (`body`,
+  `.mod-rtl, .is-rtl, .rtl`, `.theme-light`, `.theme-dark`, and print), the
+  icon's on `.callout-icon` alone so no other icon in the app changes. They
+  stand where the theme's declarations stood - after core, before the user's
+  snippets and this plugin's sheet, which both still win - and leave with the
+  copy on the way back.
+
+[`themeCalloutStrip.ts`](../../src/manager/theme/themeCalloutStrip.ts) applies
+it to a live sheet: group rules and nesting walked, deletions backwards, a
+rewrite the browser refuses (it keeps the old selector) turned into a
+deletion, `@keyframes` left alone (its `deleteRule` takes a keyframe's text),
+a readable `@import` followed, and every rule inside its own `try`.
+
+Run over the text of the 257 installed themes (`cssBlocks`, which flattens
+nesting): 81,232 rules, 4,736 removed and 140 narrowed, in 123 themes. Every
+rule kept that still mentions `callout` was read (166 of them): negations,
+theme option classes, and other plugins' classes.
+
+### Every window has its own copy
+
+Obsidian 1.14 keeps the theme in one anonymous `<style>`
+(`customCss.styleEl`), and every other window gets a `cloneNode` of it from a
+`MutationObserver` relay on the main `<head>` - parsed on its own, so changing
+one CSSOM changes no other. So the rules come out per document:
+
+| Window | How it is found |
+| --- | --- |
+| main | at once, and again on every `css-change` (registered before the theme sweep's listener, so a theme written anew loses its rules before that sweep reads anything) |
+| pop-out | `workspace` `window-open` |
+| the 1.14 Settings window | no event at all (a pop-out *modal*): the settings tab's `display()`, and where a callout is drawn in it |
+| the hidden window a PDF export prints from | `window.open(…, "popup,hide=true")` and a one-shot relay: the export renders the note through the post-processors, and this one finds it there |
+| an iframe editor | its Live Preview extension |
+
+A window's copy is found by its text (`customCssApi.themeStyleIn`, length
+first) and remembered while it is still a child of that `<head>`. A watch on
+each window's `<head>` catches a `<style>` written anew - a theme switched or
+reloaded, a Style Settings change, the relay's fresh clone - and takes the
+rules out before the frame: mutation records are delivered as a microtask.
+Style Settings' own `<style id="css-settings-manager">` loses its
+`--callout-*` declarations too: a theme's callout options set them there
+(Border's stripes, Tokyo Night's colours).
+
+### What reads the switch
+
+`ThemeCalloutsOff.active()` is the setting off **and** the theme's `<style>`
+reachable - without it nothing is gated, so the plugin never paints over a
+theme it cannot take away (that would be the split render). Until settings
+load, the startup snapshot's marker answers instead.
+
+- `ThemeCalloutStore` and `ThemeMetadataCatalog` read `""` for the theme (the
+  snippets still count), with the switch in their memo keys. No id is
+  declared, so ownership is empty and `syncThemeOverlayRows` retires every
+  `source: "theme"` row.
+- `ThemeClaimCheck` is `paused`: no pass runs and no verdict is written to
+  `themeClaimCache`. A pass over a sheet whose callout rules are out would
+  measure nothing drawn and remember that for the theme.
+- `CSSInjector` paints untouched built-ins in their stored colours, and marks
+  the sheet - see 06.
+
+### The way back
+
+Every `<style>` whose copy lost something is parsed again from its own text
+(`reparseStyle`): CSSOM changes never reach the text, so that is exactly what
+the theme wrote. The main window's element mutating is what makes the relay
+clone fresh copies into the other windows. The switch listens on the registry,
+not on its toggle, so Reset, an adopted `data.json`, a restored version and an
+import all move it, and each move re-derives the theme's facts at once
+(`refreshThemeAppearance`). Unloading the plugin takes the same way back.
+
+### What it was measured to do
+
+In a real Obsidian 1.14.4, over the 122 theme test notes in the dev vault
+(each a theme's built-ins and its own types - 2,567 callouts, 980 of them
+types a theme adds), every callout with the switch off was compared with the
+same note under Obsidian's own theme:
+
+- **Icons are the default in every theme**, artwork and size alike. With the
+  switch on, 48 of the themes replace an icon, on 996 callouts. They update in
+  place in an open note: Primary's sticker on Note becomes the pencil again,
+  and comes back when the switch does.
+- **Stripes and borders, corners, padding, backgrounds, shadows and
+  pseudo-element decorations are the default in every theme.** 113 of the 122
+  themes restyle callouts.
+- **Nothing outside a callout moves.** Paragraphs, blockquotes, tables, lists,
+  headings, links and code compute identically off, on and off again, and
+  switching back gives every callout box - pseudo-elements included - exactly
+  what it had.
+
+Before the copy ended with Obsidian's own values, what still differed was not
+callout styling but the general tokens core's callout CSS is built on, which a
+theme sets for the whole app: corners in 32 themes (ITS square, Colored Candy
+20px), the tint's blend in 10, padding in 1, and the icon's size and stroke in
+16 (Catppuccin's 18px, Sanctum's 1.25px stroke). Pinned, none of them differs
+in any theme. What is left follows the page, as it does outside callouts: the
+text's colour and weight, and margins, which follow the theme's text size and
+its block spacing (evangelion and iB Writer zero every block's margin).
+
+Switching off costs 18-39 ms on the heaviest themes (Willemstad's 4,272 rules
+included). Switching back on is a theme re-read, and costs what a theme switch
+does: re-parsing Serenity and recalculating styles is 52 ms of it, the rest the
+sweep every theme switch runs - minting Serenity's 91 rows, regenerating and
+repainting - so 3.7 s there against 5.2 s for switching to Serenity outright, in
+the same scratch Obsidian.
+
 ## Representation and persistence
 
 Manually discovered types have `source: "fallback"` and are saved in `data.json`.
@@ -1689,6 +1845,9 @@ real cascade (`app.css` → `styles.css` → theme → snippets →
 | [`utils/quietGate.ts`](../../src/utils/quietGate.ts) | Act at once, then once more when a burst of `css-change` has ended |
 | [`manager/ownCssChange.ts`](../../src/manager/ownCssChange.ts) | The payload that marks this plugin's own `css-change` |
 | [`manager/theme/themeOverlayRows.ts`](../../src/manager/theme/themeOverlayRows.ts) | Minting and retiring the ephemeral `source: "theme"` rows |
+| [`manager/theme/themeCalloutRules.ts`](../../src/manager/theme/themeCalloutRules.ts) | Which theme selectors reach a callout, and what is left of a rule without them |
+| [`manager/theme/themeCalloutStrip.ts`](../../src/manager/theme/themeCalloutStrip.ts) | Taking those rules and the `--callout-*` variables out of one parsed sheet |
+| [`manager/theme/themeCalloutsOff.ts`](../../src/manager/theme/themeCalloutsOff.ts) | The switch: when, in which windows, and the way back |
 | [`manager/theme/ThemeAppearanceProbe.ts`](../../src/manager/theme/ThemeAppearanceProbe.ts) | Offscreen render + cache |
 | [`manager/theme/readCalloutStyle.ts`](../../src/manager/theme/readCalloutStyle.ts) | Which node answers which property |
 | [`manager/theme/themeAppearance.ts`](../../src/manager/theme/themeAppearance.ts) | Accent/background interpretation |
@@ -1702,6 +1861,7 @@ real cascade (`app.css` → `styles.css` → theme → snippets →
 | [`settings/ThemeCalloutPreviewModal.ts`](../../src/settings/ThemeCalloutPreviewModal.ts) | The read-only window behind the eye icon |
 
 Suites: `themeCalloutScan`, `themeOwnership`, `manualDiscovery`,
+`themeCalloutRules`, `themeCalloutStrip`, `themeCalloutsOff`,
 `themeOverlayRows`, `themeRowSync`, `syncThemeOverlay`, `themeAppearance`,
 `themeAppearanceProbe`, `themeClaimCheck`, `themeClaimCache`, `themeClaimSelectors`, `quietGate`,
 `registryChangeKinds`, `restoreCoreIcon`, `themeRowActions`, `themeReport`,

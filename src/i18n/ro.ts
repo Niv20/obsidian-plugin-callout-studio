@@ -5,6 +5,8 @@ export const ro: Record<string, string> = {
 	"portable.roleLink": "Link către titlu",
 	"portable.convertSelected": "Convertește selecția",
 	"portable.selectionSummary": "{{selected}} din {{total}} înlocuiri selectate · {{links}} linkuri către titluri de actualizat",
+	"portable.selectionSummaryNoLinks":
+		"{{selected}} din {{total}} înlocuiri selectate",
 	"portable.selectionConflict": "Această alegere ar face ambigue linkurile către titluri. Selecția anterioară a fost păstrată.",
 	"portable.selectAll": "Selectează tot",
 	"portable.selectNone": "Deselectează tot",
@@ -307,6 +309,8 @@ export const ro: Record<string, string> = {
 	"settings.resetItemContextMenu": "Meniul clic dreapta",
 	"settings.resetItemHeading": "Setările callout-urilor de titlu",
 	"settings.resetItemInline": "Setările callout-urilor inline",
+	"settings.resetItemThemeCalloutStyles":
+		"Stilurile de callout ale temei dvs.",
 	"settings.resetItemFallback": "Stil de rezervă",
 	"settings.resetItemIconLibraries": "Ordinea bibliotecilor de pictograme și bibliotecile ascunse",
 	"settings.resetAllConfirmAfter": "Nu vă faceți griji: înainte de resetare salvăm un backup al configurației curente. Îl puteți restaura oricând din secțiunea Backup-uri din setări.\nDacă folosiți un serviciu de sincronizare, resetarea poate ajunge și pe celelalte dispozitive ale dumneavoastră.",
@@ -805,6 +809,10 @@ export const ro: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Ajustați bordura și forma fiecărui callout inline din vault-ul dvs.",
 	"settings.globalSettingsCustomize": "Personalizați",
+	"settings.themeCalloutStyles":
+		"Folosiți stilurile de callout ale temei dvs.",
+	"settings.themeCalloutStylesDesc":
+		"Activat: callout-urile pe care le stilizează tema dvs. își păstrează aspectul temei.\nDezactivat: Callout Studio desenează fiecare callout singur, iar stilurile de callout ale temei dvs. sunt dezactivate.",
 	"settings.calloutTypeRegular": "Callout de tip bloc",
 	"settings.calloutTypeHeading": "Callout tip titlu",
 	"settings.calloutTypeInline": "Callout inline",

@@ -41,7 +41,16 @@ export class ThemeMetadataCatalog {
 	private sources: MetadataWordSource[] = [];
 	private reserved: ReadonlySet<string> = new Set();
 
-	constructor(private readonly app: App) {}
+	/**
+	 * `themeOff`: the theme's callout styling is switched off
+	 * (`themeCalloutsOff.ts`), its metadata rules with it, so none of its words
+	 * is offered. The snippets' words stay — the switch leaves the user's CSS
+	 * alone.
+	 */
+	constructor(
+		private readonly app: App,
+		private readonly themeOff: () => boolean = () => false,
+	) {}
 
 	/** The active theme's words first, then each enabled snippet's. */
 	sourcesNow(): MetadataWordSource[] {
@@ -57,13 +66,14 @@ export class ThemeMetadataCatalog {
 
 	private refresh(): void {
 		const snippetCss = enabledSnippetCss(this.app);
-		const signature = `${stylingSignature(this.app)}|${snippetCss.map((css) => css.length).join(",")}`;
+		const off = this.themeOff();
+		const signature = `${stylingSignature(this.app)}|${snippetCss.map((css) => css.length).join(",")}${off ? "|theme callouts off" : ""}`;
 		if (signature === this.signature) return;
 		this.signature = signature;
 		const sources: MetadataWordSource[] = [];
 		const reserved = new Set<string>();
 		const theme = activeThemeName(this.app);
-		if (theme) {
+		if (theme && !off) {
 			const words = scanMetadataWords(themeCss(this.app));
 			if (words.length > 0) sources.push({ label: theme, words });
 		}

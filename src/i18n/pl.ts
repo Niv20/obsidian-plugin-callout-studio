@@ -255,6 +255,7 @@ export const pl: Record<string, string> = {
 	"settings.resetItemContextMenu": "Menu kontekstowe (prawy przycisk myszy)",
 	"settings.resetItemHeading": "Ustawienia callout w nagłówkach",
 	"settings.resetItemInline": "Ustawienia callout śródliniowych",
+	"settings.resetItemThemeCalloutStyles": "Style callout z Twojego motywu",
 	"settings.resetItemFallback": "Styl zastępczy",
 	"settings.resetItemIconLibraries": "Kolejność bibliotek ikon i ukryte biblioteki",
 	"settings.resetAllConfirmAfter": "Spokojnie: przed resetem zapisujemy kopię zapasową Twojej obecnej konfiguracji. Możesz ją w każdej chwili przywrócić w sekcji Kopie zapasowe w ustawieniach.\nJeśli korzystasz z usługi synchronizacji, reset może dotrzeć także na Twoje inne urządzenia.",
@@ -752,6 +753,9 @@ export const pl: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Dostosuj obramowanie i kształt każdego callout śródtekstowego w Twoim vault.",
 	"settings.globalSettingsCustomize": "Dostosuj",
+	"settings.themeCalloutStyles": "Używaj stylów callout z Twojego motywu",
+	"settings.themeCalloutStylesDesc":
+		"Włączone: callouty, które stylizuje Twój motyw, zachowują wygląd z motywu.\nWyłączone: Callout Studio samo rysuje każdy callout, a style callout z Twojego motywu są wyłączone.",
 	"settings.calloutTypeRegular": "Callout blokowy",
 	"settings.calloutTypeHeading": "Callout-nagłówek",
 	"settings.calloutTypeInline": "Callout śródtekstowy",
@@ -1143,6 +1147,8 @@ export const pl: Record<string, string> = {
 	"portable.roleLink": "Link do nagłówka",
 	"portable.convertSelected": "Konwertuj zaznaczone",
 	"portable.selectionSummary": "Zaznaczono {{selected}} z {{total}} zamian · {{links}} linków do nagłówków do aktualizacji",
+	"portable.selectionSummaryNoLinks":
+		"Zaznaczono {{selected}} z {{total}} zamian",
 	"portable.selectionConflict": "Ten wybór sprawiłby, że linki do nagłówków byłyby niejednoznaczne. Zachowano poprzednie zaznaczenie.",
 	"portable.selectAll": "Zaznacz wszystko",
 	"portable.selectNone": "Odznacz wszystko",

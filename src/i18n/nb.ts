@@ -244,6 +244,7 @@ export const nb: Record<string, string> = {
 	"settings.resetItemContextMenu": "Høyreklikkmeny",
 	"settings.resetItemHeading": "Innstillinger for overskrifts-callouts",
 	"settings.resetItemInline": "Innstillinger for inline-callouts",
+	"settings.resetItemThemeCalloutStyles": "Callout-stilene fra temaet ditt",
 	"settings.resetItemFallback": "Reservestil",
 	"settings.resetItemIconLibraries": "Rekkefølge på ikonbiblioteker og skjulte biblioteker",
 	"settings.resetAllConfirmAfter": "Ingen grunn til bekymring: før tilbakestillingen lagrer vi en sikkerhetskopi av det nåværende oppsettet ditt. Du kan gjenopprette den når som helst fra Sikkerhetskopier-delen i innstillingene.\nHvis du bruker en synkroniseringstjeneste, kan tilbakestillingen også nå de andre enhetene dine.",
@@ -737,6 +738,9 @@ export const nb: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Juster kant og form for alle callouts i teksten i vaulten din.",
 	"settings.globalSettingsCustomize": "Tilpass",
+	"settings.themeCalloutStyles": "Bruk callout-stilene fra temaet ditt",
+	"settings.themeCalloutStylesDesc":
+		"På: callouts som temaet ditt stiler, beholder utseendet fra temaet.\nAv: Callout Studio tegner alle callouts selv, og callout-stilene fra temaet ditt er slått av.",
 	"settings.calloutTypeRegular": "Blokk-callout",
 	"settings.calloutTypeHeading": "Overskrift-callout",
 	"settings.calloutTypeInline": "Callout i teksten",
@@ -1115,6 +1119,8 @@ export const nb: Record<string, string> = {
 	"portable.roleLink": "Overskriftslenke",
 	"portable.convertSelected": "Konverter valgte",
 	"portable.selectionSummary": "{{selected}} av {{total}} erstatninger valgt · {{links}} overskriftslenker skal oppdateres",
+	"portable.selectionSummaryNoLinks":
+		"{{selected}} av {{total}} erstatninger valgt",
 	"portable.selectionConflict": "Dette valget ville gjort overskriftslenkene tvetydige. Det forrige utvalget ble beholdt.",
 	"portable.selectAll": "Velg alle",
 	"portable.selectNone": "Fjern alle valg",

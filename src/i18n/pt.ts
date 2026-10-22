@@ -5,6 +5,8 @@ export const pt: Record<string, string> = {
 	"portable.roleLink": "Link para título",
 	"portable.convertSelected": "Converter selecionados",
 	"portable.selectionSummary": "{{selected}} de {{total}} substituições selecionadas · {{links}} links para títulos a atualizar",
+	"portable.selectionSummaryNoLinks":
+		"{{selected}} de {{total}} substituições selecionadas",
 	"portable.selectionConflict": "Essa escolha tornaria os links para títulos ambíguos. A seleção anterior foi mantida.",
 	"portable.selectAll": "Selecionar tudo",
 	"portable.selectNone": "Desmarcar tudo",
@@ -306,6 +308,7 @@ export const pt: Record<string, string> = {
 	"settings.resetItemContextMenu": "Menu de clique direito",
 	"settings.resetItemHeading": "Configurações de callouts de título",
 	"settings.resetItemInline": "Configurações de callouts em linha",
+	"settings.resetItemThemeCalloutStyles": "Estilos de callout do seu tema",
 	"settings.resetItemFallback": "Estilo de reserva",
 	"settings.resetItemIconLibraries": "Ordem das bibliotecas de ícones e bibliotecas ocultas",
 	"settings.resetAllConfirmAfter": "Fique tranquilo: antes de redefinir, salvamos um backup da sua configuração atual. Você pode restaurá-lo a qualquer momento na seção Backups das configurações.\nSe você usa um serviço de sincronização, a redefinição pode chegar também aos seus outros dispositivos.",
@@ -804,6 +807,9 @@ export const pt: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Ajuste a borda e a forma de todos os callouts em linha do seu vault.",
 	"settings.globalSettingsCustomize": "Personalizar",
+	"settings.themeCalloutStyles": "Usar os estilos de callout do seu tema",
+	"settings.themeCalloutStylesDesc":
+		"Ativado: os callouts que o seu tema estiliza mantêm o visual do seu tema.\nDesativado: o Callout Studio desenha todos os callouts, e os estilos de callout do seu tema ficam desativados.",
 	"settings.calloutTypeRegular": "Callout em bloco",
 	"settings.calloutTypeHeading": "Callout de cabeçalho",
 	"settings.calloutTypeInline": "Callout em linha",

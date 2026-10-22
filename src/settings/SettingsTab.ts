@@ -115,6 +115,9 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 		this.runSectionDisposers();
 		containerEl.empty();
 		containerEl.addClass("callout-studio-settings");
+		// Obsidian 1.14 opens settings in a window of its own, with its own copy
+		// of the theme — and its previews must not show what the switch took away.
+		this.plugin.themeCalloutsOff?.ensure(containerEl.ownerDocument);
 		this.sectionDisposers.push(registerMenuScopeHost(containerEl, this.app));
 
 		this.endVisit ??= this.plugin.settingsWriter.openVisit?.() ?? null;

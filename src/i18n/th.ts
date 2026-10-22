@@ -5,6 +5,8 @@ export const th: Record<string, string> = {
 	"portable.roleLink": "ลิงก์ไปยังหัวข้อ",
 	"portable.convertSelected": "แปลงรายการที่เลือก",
 	"portable.selectionSummary": "เลือก {{selected}} จาก {{total}} รายการแทนที่ · ลิงก์หัวข้อที่ต้องอัปเดต {{links}} รายการ",
+	"portable.selectionSummaryNoLinks":
+		"เลือก {{selected}} จาก {{total}} รายการแทนที่",
 	"portable.selectionConflict": "ตัวเลือกนี้จะทำให้ลิงก์หัวข้อกำกวม จึงคงการเลือกเดิมไว้",
 	"portable.selectAll": "เลือกทั้งหมด",
 	"portable.selectNone": "ยกเลิกการเลือกทั้งหมด",
@@ -304,6 +306,7 @@ export const th: Record<string, string> = {
 	"settings.resetItemContextMenu": "เมนูคลิกขวา",
 	"settings.resetItemHeading": "การตั้งค่า callout หัวข้อ",
 	"settings.resetItemInline": "การตั้งค่า callout แบบอินไลน์",
+	"settings.resetItemThemeCalloutStyles": "สไตล์ callout ของธีมของคุณ",
 	"settings.resetItemFallback": "สไตล์สำรอง",
 	"settings.resetItemIconLibraries": "ลำดับคลังไอคอนและคลังที่ซ่อนไว้",
 	"settings.resetAllConfirmAfter": "ไม่ต้องกังวล: ก่อนรีเซ็ต เราจะบันทึกข้อมูลสำรองของการตั้งค่าปัจจุบันของคุณไว้ คุณกู้คืนได้ทุกเมื่อจากส่วนข้อมูลสำรองในการตั้งค่า\nหากคุณใช้บริการซิงก์ การรีเซ็ตอาจส่งไปถึงอุปกรณ์เครื่องอื่นของคุณด้วย",
@@ -797,6 +800,9 @@ export const th: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"ปรับขอบและรูปร่างของทุก callout อินไลน์ ใน vault ของคุณ",
 	"settings.globalSettingsCustomize": "ปรับแต่ง",
+	"settings.themeCalloutStyles": "ใช้สไตล์ callout ของธีมของคุณ",
+	"settings.themeCalloutStylesDesc":
+		"เปิด: callout ที่ธีมของคุณกำหนดสไตล์จะคงรูปลักษณ์ตามธีมของคุณ\nปิด: Callout Studio จะวาด callout ทุกรายการเอง และสไตล์ callout ของธีมของคุณจะถูกปิด",
 
 	"settings.calloutTypeRegular": "callout แบบบล็อก",
 	"settings.calloutTypeHeading": "Callout หัวข้อ",

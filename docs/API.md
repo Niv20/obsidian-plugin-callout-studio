@@ -225,6 +225,11 @@ reports `false` while Callout Studio paints it. Anything the check cannot see -
 a rule that applies only under a note's `cssclasses`, in embeds or on narrow
 windows - counts as the theme's.
 
+While the user has turned off **Use your theme's callout styles**, the theme
+draws no callout at all: every callout reports `false`, Callout Studio paints
+each one with its stored design, and callout types only the theme defines are
+not listed.
+
 A callout the theme draws under only **some** of its IDs reports `false`. Its
 Heading and Inline forms, and its Block form under the other IDs, use the
 stored design; Block callouts written with an ID the theme draws look the way

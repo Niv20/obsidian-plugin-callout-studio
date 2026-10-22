@@ -737,6 +737,7 @@ export const en: Record<string, string> = {
 	"settings.resetItemContextMenu": "Right-click menu",
 	"settings.resetItemHeading": "Heading callout settings",
 	"settings.resetItemInline": "Inline callout settings",
+	"settings.resetItemThemeCalloutStyles": "Your theme's callout styles",
 	"settings.resetItemFallback": "Fallback style",
 	"settings.resetItemIconLibraries": "Icon library order and hidden libraries",
 	"settings.resetAllConfirmAfter":
@@ -1325,6 +1326,9 @@ export const en: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Adjust the border and shape of every inline callout in your vault.",
 	"settings.globalSettingsCustomize": "Customize",
+	"settings.themeCalloutStyles": "Use your theme's callout styles",
+	"settings.themeCalloutStylesDesc":
+		"On: the callouts your theme styles keep your theme's look.\nOff: Callout Studio draws every callout, and your theme's callout styles are switched off.",
 
 	// Callout types section
 	"settings.calloutTypeRegular": "Block callout",

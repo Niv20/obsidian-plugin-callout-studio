@@ -52,7 +52,16 @@ export class ThemeCalloutStore {
 	/** Theme plus snippets — the surface source. See {@link calloutSurface}. */
 	private surfaceEvidence: SurfaceEvidence[] = [emptySurfaceEvidence()];
 
-	constructor(private readonly app: App) {}
+	/**
+	 * `themeOff` says the theme's callout styling is switched off
+	 * (`themeCalloutsOff.ts`): its rules are out of the page, so every answer
+	 * here is the one for a theme that names no callout. The snippets are still
+	 * read — they are the user's own CSS, and the switch leaves them alone.
+	 */
+	constructor(
+		private readonly app: App,
+		private readonly themeOff: () => boolean = () => false,
+	) {}
 
 	/**
 	 * Drop the memo, so the next question re-scans whatever the signature says.
@@ -73,10 +82,11 @@ export class ThemeCalloutStore {
 	 * Returns true when the index actually moved.
 	 */
 	refresh(): boolean {
-		const signature = stylingSignature(this.app);
+		const off = this.themeOff();
+		const signature = `${stylingSignature(this.app)}${off ? "|theme callouts off" : ""}`;
 		if (signature === this.signature) return false;
 		this.signature = signature;
-		const css = themeCss(this.app);
+		const css = off ? "" : themeCss(this.app);
 		this.themeScan = scanCalloutClaims(css);
 		const snippets = enabledSnippetCss(this.app);
 		this.allScan = mergeScans([

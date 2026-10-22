@@ -257,6 +257,7 @@ export const de: Record<string, string> = {
 	"settings.resetItemContextMenu": "Rechtsklickmenü",
 	"settings.resetItemHeading": "Einstellungen für Überschrift-Callouts",
 	"settings.resetItemInline": "Einstellungen für Inline-Callouts",
+	"settings.resetItemThemeCalloutStyles": "Callout-Stile Ihres Themes",
 	"settings.resetItemFallback": "Ausweichstil",
 	"settings.resetItemIconLibraries": "Reihenfolge der Symbolbibliotheken und ausgeblendete Bibliotheken",
 	"settings.resetAllConfirmAfter": "Keine Sorge: Vor dem Zurücksetzen speichern wir ein Backup deiner aktuellen Konfiguration. Du kannst es jederzeit im Bereich Backups in den Einstellungen wiederherstellen.\nWenn du einen Synchronisierungsdienst nutzt, kann das Zurücksetzen auch auf deine anderen Geräte übertragen werden.",
@@ -761,6 +762,9 @@ export const de: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Passen Sie Rahmen und Form jedes Inline-Callouts in Ihrem Tresor an.",
 	"settings.globalSettingsCustomize": "Anpassen",
+	"settings.themeCalloutStyles": "Callout-Stile Ihres Themes verwenden",
+	"settings.themeCalloutStylesDesc":
+		"An: Die Callouts, die Ihr Theme gestaltet, behalten das Aussehen Ihres Themes.\nAus: Callout Studio zeichnet jedes Callout selbst, und die Callout-Stile Ihres Themes sind abgeschaltet.",
 	"settings.calloutTypeRegular": "Block-Callout",
 	"settings.calloutTypeHeading": "Überschrift-Callout",
 	"settings.calloutTypeInline": "Inline-Callout",
@@ -849,6 +853,8 @@ export const de: Record<string, string> = {
 	"portable.roleLink": "Überschriftenlink",
 	"portable.convertSelected": "Ausgewählte konvertieren",
 	"portable.selectionSummary": "{{selected}} von {{total}} Ersetzungen ausgewählt · {{links}} Überschriftenlinks zu aktualisieren",
+	"portable.selectionSummaryNoLinks":
+		"{{selected}} von {{total}} Ersetzungen ausgewählt",
 	"portable.selectionConflict": "Diese Auswahl würde Überschriftenlinks mehrdeutig machen. Deine vorherige Auswahl wurde beibehalten.",
 	"portable.selectAll": "Alle auswählen",
 	"portable.selectNone": "Auswahl aufheben",

@@ -81,6 +81,8 @@ export interface ThemeSyncHost {
 		themeCallouts(): ThemeCalloutStore;
 		inject(emitCssChange?: boolean): void;
 		suspendOwnStyles(): () => void;
+		/** The theme's callout styling switched off — see `themeCalloutsOff.ts`. */
+		themeCalloutsOff?(): boolean;
 	};
 	registerEvent(ref: EventRef): void;
 
@@ -129,7 +131,9 @@ export function registerThemeAppearance(
 ): () => void {
 
 	const appearance = options.appearance ?? new ThemeAppearanceProbe(host.app);
-	const claims = options.claims ?? new ThemeClaimCheck(host.app);
+	const claims =
+		options.claims ??
+		new ThemeClaimCheck(host.app, { paused: () => host.cssInjector.themeCalloutsOff?.() ?? false });
 	host.register(() => {
 		appearance.destroy();
 		claims.destroy();

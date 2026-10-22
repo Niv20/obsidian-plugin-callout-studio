@@ -165,9 +165,14 @@ jobs:
             # Raised by 7 KiB for Wrap, Insert and Unwrap working on heading
             # and inline callouts too, and Wrap/Insert on those custom
             # commands - 5.7 KB, which leaves about 1.5 KiB of headroom.
+            # Raised by 8 KiB for switching the theme's callout styling off:
+            # the judgement of which theme rules reach a callout, the walk
+            # that takes them out of the parsed theme in every window and puts
+            # them back, the gates on the theme's facts, and the setting -
+            # 7.9 KB, which leaves the headroom about where it was.
             - name: Check bundle size
               run: |
-                  limit=2338816  # 2 MiB + 236 KiB
+                  limit=2347008  # 2 MiB + 244 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

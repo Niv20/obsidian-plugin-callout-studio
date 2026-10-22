@@ -5,6 +5,8 @@ export const tr: Record<string, string> = {
 	"portable.roleLink": "Başlık bağlantısı",
 	"portable.convertSelected": "Seçilenleri dönüştür",
 	"portable.selectionSummary": "{{total}} değiştirmeden {{selected}} tanesi seçildi · Güncellenecek başlık bağlantısı: {{links}}",
+	"portable.selectionSummaryNoLinks":
+		"{{total}} değiştirmeden {{selected}} tanesi seçildi",
 	"portable.selectionConflict": "Bu seçim başlık bağlantılarını belirsiz hâle getirirdi. Önceki seçiminiz korundu.",
 	"portable.selectAll": "Tümünü seç",
 	"portable.selectNone": "Tüm seçimleri kaldır",
@@ -306,6 +308,7 @@ export const tr: Record<string, string> = {
 	"settings.resetItemContextMenu": "Sağ tık menüsü",
 	"settings.resetItemHeading": "Başlık callout ayarları",
 	"settings.resetItemInline": "Satır içi callout ayarları",
+	"settings.resetItemThemeCalloutStyles": "Temanızın callout stilleri",
 	"settings.resetItemFallback": "Yedek stil",
 	"settings.resetItemIconLibraries": "Simge kitaplıklarının sırası ve gizli kitaplıklar",
 	"settings.resetAllConfirmAfter": "Merak etmeyin: sıfırlamadan önce mevcut kurulumunuzun bir yedeğini kaydederiz. Ayarlardaki Yedekler bölümünden istediğiniz zaman geri yükleyebilirsiniz.\nBir eşitleme hizmeti kullanıyorsanız, sıfırlama diğer cihazlarınıza da ulaşabilir.",
@@ -804,6 +807,9 @@ export const tr: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Vault'unuzdaki her satır içi callout'un kenarlığını ve şeklini ayarlayın.",
 	"settings.globalSettingsCustomize": "Özelleştir",
+	"settings.themeCalloutStyles": "Temanızın callout stillerini kullan",
+	"settings.themeCalloutStylesDesc":
+		"Açık: temanızın biçimlendirdiği callout'lar temanızın görünümünü korur.\nKapalı: Callout Studio her callout'u kendisi çizer ve temanızın callout stilleri kapatılır.",
 
 	"settings.calloutTypeRegular": "Blok callout",
 	"settings.calloutTypeHeading": "Başlık callout'u",

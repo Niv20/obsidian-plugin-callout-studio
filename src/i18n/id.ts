@@ -254,6 +254,7 @@ export const id: Record<string, string> = {
 	"settings.resetItemContextMenu": "Menu klik kanan",
 	"settings.resetItemHeading": "Pengaturan callout judul",
 	"settings.resetItemInline": "Pengaturan callout inline",
+	"settings.resetItemThemeCalloutStyles": "Gaya callout dari tema Anda",
 	"settings.resetItemFallback": "Gaya cadangan",
 	"settings.resetItemIconLibraries": "Urutan pustaka ikon dan pustaka tersembunyi",
 	"settings.resetAllConfirmAfter": "Tenang: sebelum mereset, kami menyimpan cadangan penyiapan Anda saat ini. Anda bisa memulihkannya kapan saja dari bagian Cadangan di pengaturan.\nJika Anda memakai layanan sinkronisasi, reset ini mungkin juga sampai ke perangkat Anda yang lain.",
@@ -755,6 +756,9 @@ export const id: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Sesuaikan batas dan bentuk setiap callout sebaris di vault Anda.",
 	"settings.globalSettingsCustomize": "Sesuaikan",
+	"settings.themeCalloutStyles": "Gunakan gaya callout dari tema Anda",
+	"settings.themeCalloutStylesDesc":
+		"Aktif: callout yang ditata oleh tema Anda tetap tampil seperti tema Anda.\nNonaktif: Callout Studio menggambar setiap callout sendiri, dan gaya callout dari tema Anda dimatikan.",
 
 	"settings.calloutTypeRegular": "Callout blok",
 	"settings.calloutTypeHeading": "Callout heading",
@@ -1144,6 +1148,8 @@ export const id: Record<string, string> = {
 	"portable.roleLink": "Tautan judul",
 	"portable.convertSelected": "Konversi yang dipilih",
 	"portable.selectionSummary": "{{selected}} dari {{total}} penggantian dipilih · {{links}} tautan judul akan diperbarui",
+	"portable.selectionSummaryNoLinks":
+		"{{selected}} dari {{total}} penggantian dipilih",
 	"portable.selectionConflict": "Pilihan itu akan membuat tautan judul menjadi ambigu. Pilihan sebelumnya dipertahankan.",
 	"portable.selectAll": "Pilih semua",
 	"portable.selectNone": "Batalkan semua pilihan",

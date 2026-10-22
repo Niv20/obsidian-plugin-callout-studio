@@ -498,6 +498,32 @@ fallback brought that the old row lacked, such as a gradient or text colors.
 It does nothing while saving is paused, and nothing once the row has moved on:
 deleted, renamed, edited (`customized`), or made the fallback itself.
 
+### The theme section opens with its switch
+
+**Use your theme's callout styles** (`settings.themeCalloutStyles.enabled`,
+see [18 § Switching the theme's callout styling off](18-theme-callout-discovery.md#switching-the-themes-callout-styling-off))
+is the first row of *Callouts from your theme*'s body, under the heading and
+its description and above the rows. `calloutListsScaffold.ts` builds it once
+per `display()`, and `renderThemeList` rebuilds every other child of the body
+around it, as the user list does around Scan's footer - the switch is what is
+pressed right before that repaint. Being inside the body, it folds with the
+section, and the body's trailing gap still falls under whatever comes last.
+
+Turned off, the switch empties its own section: the theme names nothing, so
+no row is the theme's. The section therefore stays on screen with no rows
+while the switch is off and a community theme is active, and the description,
+which describes rows, hides on its own. In Obsidian's default theme the
+switch has nothing to take away, and the section stays hidden as before. With
+no rows, nothing in the signature moves when the switch is flipped, so the
+signature carries `themeCalloutStyles.enabled` itself; and every repaint
+re-reads the saved value into the toggle (`ThemeStylesSwitch.sync`), since
+another device's settings or a Reset can change it under an open tab.
+
+It used to be the last row of *Global settings*, put there because this
+section disappears with its last row. The section's visibility rule is what
+moved instead: a theme that styles callouts without naming any id lists no
+rows, and there the switch is not on screen.
+
 ### Callout row menu groups
 
 All three row menus are built by plain functions: `buildBuiltInRowMenu` and
@@ -649,7 +675,9 @@ Three things about it are decisions, not incidentals:
 
 Folding toggles `is-collapsed` on the heading and on the body. That is
 deliberately **not** `cs-hidden`: the theme *section* hides itself with
-`cs-hidden` when it has no rows, and one class toggled for two reasons means
+`cs-hidden` when it has no rows (unless its switch is off - see
+[The theme section opens with its switch](#the-theme-section-opens-with-its-switch)),
+and one class toggled for two reasons means
 whichever ran last decides - a fold would reopen an empty section, or an
 empty section would reopen a folded one. The two now sit on different
 elements as well (the section wrapper hides, the body folds), which makes the

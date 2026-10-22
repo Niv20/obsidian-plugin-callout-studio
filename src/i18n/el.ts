@@ -6,10 +6,14 @@ export const el: Record<string, string> = {
 	"cmd.calloutUnwrap": "Αφαίρεση callout",
 	"cmd.customWrapBlock": "Αναδίπλωση σε callout μπλοκ {{name}}",
 	"cmd.customInsertBlock": "Εισαγωγή callout μπλοκ {{name}}",
-	"cmd.customWrapBlockExpanded": "Αναδίπλωση σε callout μπλοκ {{name}} (ανοιχτό)",
-	"cmd.customWrapBlockCollapsed": "Αναδίπλωση σε callout μπλοκ {{name}} (κλειστό)",
-	"cmd.customInsertBlockExpanded": "Εισαγωγή callout μπλοκ {{name}} (ανοιχτό)",
-	"cmd.customInsertBlockCollapsed": "Εισαγωγή callout μπλοκ {{name}} (κλειστό)",
+	"cmd.customWrapBlockExpanded":
+		"Αναδίπλωση σε callout μπλοκ {{name}} (ανοιχτό)",
+	"cmd.customWrapBlockCollapsed":
+		"Αναδίπλωση σε callout μπλοκ {{name}} (κλειστό)",
+	"cmd.customInsertBlockExpanded":
+		"Εισαγωγή callout μπλοκ {{name}} (ανοιχτό)",
+	"cmd.customInsertBlockCollapsed":
+		"Εισαγωγή callout μπλοκ {{name}} (κλειστό)",
 	"cmd.customWrapHeading":
 		"Αναδίπλωση σε callout επικεφαλίδας H{{level}} {{name}}",
 	"cmd.customInsertHeading":
@@ -28,17 +32,21 @@ export const el: Record<string, string> = {
 	"metadataSuggest.mustBeFirst": "Λειτουργεί μόνο ως πρώτη λέξη",
 	"metadataSuggest.mustBeLast": "Λειτουργεί μόνο ως τελευταία λέξη",
 	"metadataSuggest.alone": "Λειτουργεί μόνο μόνη της",
-	"calloutPicker.noMatches": "Κανένα callout δεν αντιστοιχεί στο «{{query}}».",
+	"calloutPicker.noMatches":
+		"Κανένα callout δεν αντιστοιχεί στο «{{query}}».",
 	"calloutPicker.placeholder": "Αναζήτηση callout",
 	"editor.paletteNoMatches": "Κανένα χρώμα δεν αντιστοιχεί στο «{{query}}».",
 	"editor.paletteSearchPlaceholder": "Αναζήτηση χρωμάτων…",
 	"replaceModal.searchPlaceholder": "Αναζήτηση callout",
-	"replaceModal.chooseFirstReplace": "Επιλέξτε πρώτα το callout με το οποίο θα αντικατασταθεί.",
+	"replaceModal.chooseFirstReplace":
+		"Επιλέξτε πρώτα το callout με το οποίο θα αντικατασταθεί.",
 	"settings.fallbackTag": "Προεπιλογή",
 	"settings.fallbackTagAuto": "Αυτόματη προεπιλογή",
-	"settings.rescanVaultDesc": "Προσθέτει τύπους callout που χρησιμοποιούνται στις σημειώσεις σας και δεν βρίσκονται ακόμη σε αυτήν τη λίστα. Τα υπάρχοντα callout και οι σημειώσεις σας δεν αλλάζουν.",
+	"settings.rescanVaultDesc":
+		"Προσθέτει τύπους callout που χρησιμοποιούνται στις σημειώσεις σας και δεν βρίσκονται ακόμη σε αυτήν τη λίστα. Τα υπάρχοντα callout και οι σημειώσεις σας δεν αλλάζουν.",
 	"settings.rescanVaultHintAction": "Σάρωση για callout",
-	"manualDiscovery.failed": "Τα callout που εντοπίστηκαν δεν αποθηκεύτηκαν. Ελέγξτε ότι οι ρυθμίσεις μπορούν να εγγραφούν και ότι ο συγχρονισμός ολοκληρώθηκε. Έπειτα δοκιμάστε ξανά από Ρυθμίσεις → Οι τύποι callout μου → Σάρωση για callout. Τα υπάρχοντα callout δεν αντικαταστάθηκαν.",
+	"manualDiscovery.failed":
+		"Τα callout που εντοπίστηκαν δεν αποθηκεύτηκαν. Ελέγξτε ότι οι ρυθμίσεις μπορούν να εγγραφούν και ότι ο συγχρονισμός ολοκληρώθηκε. Έπειτα δοκιμάστε ξανά από Ρυθμίσεις → Οι τύποι callout μου → Σάρωση για callout. Τα υπάρχοντα callout δεν αντικαταστάθηκαν.",
 	"manualDiscovery.scanning": "Σάρωση…",
 	"settings.rescanComplete":
 		"Η σάρωση ολοκληρώθηκε: προστέθηκαν {{count}} νέοι τύποι callout.",
@@ -75,7 +83,8 @@ export const el: Record<string, string> = {
 	"convertModal.title": 'Μετατροπή του "{{name}}" σε απλό κείμενο;',
 	"convertModal.explain":
 		"Το καθένα γίνεται απλό κείμενο: ο τίτλος και το περιεχόμενο μένουν, φεύγει μόνο η μορφοποίηση του callout.",
-	"convertModal.typeStays": "Ο ίδιος ο τύπος callout παραμένει στη λίστα σας.",
+	"convertModal.typeStays":
+		"Ο ίδιος ο τύπος callout παραμένει στη λίστα σας.",
 	"convertModal.confirm": "Μετατροπή",
 	// The variant for a callout whose definition Callout Studio cannot remove:
 	// one of Obsidian's built-ins, or a type the active theme declares.
@@ -113,10 +122,12 @@ export const el: Record<string, string> = {
 	"notice.calloutDeleted": "Το «{{name}}» διαγράφηκε.",
 	"settings.duplicateAction": "Δημιουργία αντιγράφου",
 	"notice.calloutDuplicated": "Το callout αντιγράφηκε ως «{{name}}».",
-	"notice.calloutDuplicateFailed": "Δεν ήταν δυνατή η αντιγραφή του callout. Έλεγξε την κατάσταση αποθήκευσης και δοκίμασε ξανά.",
+	"notice.calloutDuplicateFailed":
+		"Δεν ήταν δυνατή η αντιγραφή του callout. Έλεγξε την κατάσταση αποθήκευσης και δοκίμασε ξανά.",
 	"settings.resetAction": "Επαναφορά στις προεπιλογές",
 	"settings.makeFallbackAction": "Χρήση προεπιλεγμένου εφεδρικού στυλ",
-	"notice.fallbackStyleApplied": "Το «{{name}}» χρησιμοποιεί τώρα το προεπιλεγμένο εφεδρικό στυλ.",
+	"notice.fallbackStyleApplied":
+		"Το «{{name}}» χρησιμοποιεί τώρα το προεπιλεγμένο εφεδρικό στυλ.",
 	"settings.colorSwatchAria": "Έμφαση: {{accent}} · Φόντο: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts από το θέμα σας",
@@ -131,7 +142,8 @@ export const el: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Οι άγνωστοι τύποι callout στο vault σας θα κληρονομήσουν το στυλ αυτού του callout.",
 	"settings.globalStyleRegularTitle": "Καθολικό στυλ για callout μπλοκ",
-	"settings.globalStyleHeadingTitle": "Καθολικό στυλ για callout επικεφαλίδας",
+	"settings.globalStyleHeadingTitle":
+		"Καθολικό στυλ για callout επικεφαλίδας",
 	"settings.globalStyleInlineTitle": "Καθολικό στυλ για ενσωματωμένο callout",
 	"settings.border": "Περιγράμματα",
 	"settings.borderAll": "Όλες",
@@ -224,30 +236,38 @@ export const el: Record<string, string> = {
 	"commandBuilder.duplicate": "Έχετε ήδη μια εντολή που κάνει ακριβώς αυτό.",
 	"commandBuilder.noCallouts":
 		"Δεν υπάρχουν ακόμη τύποι callout για να δημιουργήσετε μια εντολή.",
-	"commandBuilder.noCalloutChosen": "Επιλέξτε πρώτα ένα callout για αυτήν την εντολή.",
+	"commandBuilder.noCalloutChosen":
+		"Επιλέξτε πρώτα ένα callout για αυτήν την εντολή.",
 	"commandBuilder.save": "Αποθήκευση",
 	"settings.resetAll": "Επαναφορά",
 	"settings.resetAllDesc":
 		"Διαγράφει όλα τα callout χρήστη, επαναφέρει τα ενσωματωμένα callouts, τα καθολικά στυλ, τις αποθηκευμένες παλέτες χρωμάτων, την προσαρμογή του μενού δεξιού κλικ και τα ληφθέντα SVG Material.",
 	"settings.resetAllButton": "Επαναφορά όλων",
 	"notice.resetAllDone": "Όλα επαναφέρθηκαν στις προεπιλογές.",
-	"settings.resetIntro": "Αφιερώστε λίγο χρόνο να εκτιμήσετε όσα δημιουργήσατε με το Callout Studio.",
+	"settings.resetIntro":
+		"Αφιερώστε λίγο χρόνο να εκτιμήσετε όσα δημιουργήσατε με το Callout Studio.",
 	"settings.resetDeletes": "Όλα αυτά πρόκειται να διαγραφούν:",
 	"settings.resetRestores": "Αυτά θα επανέλθουν στις προεπιλογές:",
 	"settings.resetItemCallouts": "{{count}} προσαρμοσμένο(α) είδος(η) callout",
 	"settings.resetItemImages": "{{count}} εικόνα(ες) που ανεβάσατε",
 	"settings.resetItemCommands": "{{count}} προσαρμοσμένη(ες) εντολή(ές)",
-	"settings.resetItemPalettes": "{{count}} αποθηκευμένη(ες) παλέτα(ες) χρωμάτων",
+	"settings.resetItemPalettes":
+		"{{count}} αποθηκευμένη(ες) παλέτα(ες) χρωμάτων",
 	"settings.resetItemReferences": "{{count}} αναφορά(ές) callout",
-	"settings.resetItemBuiltIns": "{{count}} ενσωματωμένο(α) callout που αλλάξατε",
+	"settings.resetItemBuiltIns":
+		"{{count}} ενσωματωμένο(α) callout που αλλάξατε",
 	"settings.resetItemGlobalStyle": "Καθολικά στυλ",
 	"settings.resetItemContextMenu": "Μενού δεξιού κλικ",
 	"settings.resetItemHeading": "Ρυθμίσεις callout επικεφαλίδων",
 	"settings.resetItemInline": "Ρυθμίσεις ενσωματωμένων callout",
+	"settings.resetItemThemeCalloutStyles": "Στυλ callout του θέματός σας",
 	"settings.resetItemFallback": "Εφεδρικό στυλ",
-	"settings.resetItemIconLibraries": "Σειρά βιβλιοθηκών εικονιδίων και κρυφές βιβλιοθήκες",
-	"settings.resetAllConfirmAfter": "Μην ανησυχείτε: πριν από την επαναφορά αποθηκεύουμε αντίγραφο ασφαλείας της τρέχουσας διαμόρφωσής σας. Μπορείτε να το επαναφέρετε οποτεδήποτε από την ενότητα Αντίγραφα ασφαλείας στις ρυθμίσεις.\nΑν χρησιμοποιείτε υπηρεσία συγχρονισμού, η επαναφορά μπορεί να φτάσει και στις άλλες συσκευές σας.",
-	"settings.resetNothing": "Δεν υπάρχει τίποτα για επαναφορά: όλα είναι ήδη στις προεπιλογές.",
+	"settings.resetItemIconLibraries":
+		"Σειρά βιβλιοθηκών εικονιδίων και κρυφές βιβλιοθήκες",
+	"settings.resetAllConfirmAfter":
+		"Μην ανησυχείτε: πριν από την επαναφορά αποθηκεύουμε αντίγραφο ασφαλείας της τρέχουσας διαμόρφωσής σας. Μπορείτε να το επαναφέρετε οποτεδήποτε από την ενότητα Αντίγραφα ασφαλείας στις ρυθμίσεις.\nΑν χρησιμοποιείτε υπηρεσία συγχρονισμού, η επαναφορά μπορεί να φτάσει και στις άλλες συσκευές σας.",
+	"settings.resetNothing":
+		"Δεν υπάρχει τίποτα για επαναφορά: όλα είναι ήδη στις προεπιλογές.",
 	"notice.customCommandMissingCallout":
 		"Ο τύπος callout αυτής της εντολής δεν υπάρχει πια.",
 	"notice.importedJSON": "Εισήχθησαν {{count}} τύπος/τύποι callout από JSON.",
@@ -261,13 +281,15 @@ export const el: Record<string, string> = {
 		"Δεν εισήχθησαν νέοι τύποι callout (τα IDs μπορεί να υπάρχουν ήδη).",
 	"notice.iconDownloadFailed":
 		'Αποτυχία λήψης εικονιδίου Material "{{name}}". Ενδέχεται να μην είναι διαθέσιμο για αυτό το στυλ/βάρος ή η σύνδεσή σας να είναι εκτός σύνδεσης.',
-	"notice.vaultScanFailed": "Δεν ήταν δυνατή η καταμέτρηση της χρήσης callout, επειδή δεν ήταν δυνατή η ανάγνωση {{count}} σημειώσεων. Ελέγξτε την αποθήκευση και τον συγχρονισμό και δοκιμάστε ξανά.",
+	"notice.vaultScanFailed":
+		"Δεν ήταν δυνατή η καταμέτρηση της χρήσης callout, επειδή δεν ήταν δυνατή η ανάγνωση {{count}} σημειώσεων. Ελέγξτε την αποθήκευση και τον συγχρονισμό και δοκιμάστε ξανά.",
 
 	"notice.externalCssRetired":
 		"Η επιλογή προσωπικού στυλ CSS αφαιρέθηκε. Αυτά τα callouts χρησιμοποιούν πλέον το αποθηκευμένο σχέδιο του Callout Studio, εκτός αν το θέμα σας τα μορφοποιεί. Οι σημειώσεις και τα προσωπικά σας αποσπάσματα CSS δεν άλλαξαν.",
 	"notice.vaultRewritePartial":
 		"{{count}} σημείωση/-εις δεν ήταν δυνατό να ενημερωθούν και παρέμειναν αμετάβλητες. Δείτε την κονσόλα προγραμματιστή για λεπτομέρειες.",
-	"notice.calloutDeleteIncomplete": "Ορισμένες σημειώσεις δεν ήταν δυνατό να μετατραπούν. Ο τύπος callout διατηρήθηκε. Οι ολοκληρωμένες μετατροπές αποθηκεύτηκαν. Επιλύστε το πρόβλημα του αρχείου και, στη συνέχεια, εκτελέστε ξανά την ενέργεια για να ολοκληρωθεί.",
+	"notice.calloutDeleteIncomplete":
+		"Ορισμένες σημειώσεις δεν ήταν δυνατό να μετατραπούν. Ο τύπος callout διατηρήθηκε. Οι ολοκληρωμένες μετατροπές αποθηκεύτηκαν. Επιλύστε το πρόβλημα του αρχείου και, στη συνέχεια, εκτελέστε ξανά την ενέργεια για να ολοκληρωθεί.",
 	"notice.nothingToWrap": "Δεν υπάρχει τίποτα για αναδίπλωση.",
 	"notice.cursorNotInsideCallout":
 		"Ο κέρσορας δεν βρίσκεται μέσα σε callout.",
@@ -276,7 +298,8 @@ export const el: Record<string, string> = {
 		"Δεν ήταν δυνατή η ασφαλής αφαίρεση αυτού του callout, γι' αυτό παρέμεινε ως έχει.",
 	"notice.autocompleteTargetMoved":
 		"Δεν εισήχθη τίποτα — η γραμμή άλλαξε ενώ ο επεξεργαστής ήταν ανοιχτός.",
-	"notice.autocompleteAlwaysEnabled": "Η αυτόματη συμπλήρωση είναι πλέον βασική λειτουργία και είναι πάντα ενεργή.",
+	"notice.autocompleteAlwaysEnabled":
+		"Η αυτόματη συμπλήρωση είναι πλέον βασική λειτουργία και είναι πάντα ενεργή.",
 	"notice.openHotkeysFailed":
 		"Αδυναμία ανοίγματος ρυθμίσεων συντομεύσεων Obsidian.",
 	"notice.filterHotkeysFailed":
@@ -294,7 +317,8 @@ export const el: Record<string, string> = {
 		"Όλα τα αναγνωριστικά για αυτό το callout. Επιτρέπονται κενά.\nΠατήστε Enter ή το κουμπί + για προσθήκη.",
 	"editor.calloutIdsPlaceholder": "Προσθήκη ID",
 	"editor.addId": "Προσθήκη ID",
-	"editor.maxIds": "Έως {{max}} αναγνωριστικά. Διαγράψτε ένα για να προσθέσετε άλλο.",
+	"editor.maxIds":
+		"Έως {{max}} αναγνωριστικά. Διαγράψτε ένα για να προσθέσετε άλλο.",
 	"editor.idLinkedToName": "Συνδεδεμένο με το εμφανιζόμενο όνομα",
 	"editor.idCannotDelete":
 		"Αυτό το ID είναι συνδεδεμένο με το εμφανιζόμενο όνομα και δεν μπορεί να διαγραφεί — επεξεργαστείτε το όνομα για να το αλλάξετε",
@@ -331,7 +355,8 @@ export const el: Record<string, string> = {
 	"editor.cancel": "Ακύρωση",
 	"editor.saveChanges": "Αποθήκευση αλλαγών",
 	"editor.saving": "Αποθήκευση…",
-	"editor.saveFailed": "Η αποθήκευση δεν ολοκληρώθηκε. Αν αυτός ο επεξεργαστής παραμένει ανοιχτός, κρατήστε τον ανοιχτό και δοκιμάστε ξανά αφού ελέγξετε τον χώρο αποθήκευσης και τον συγχρονισμό. Ορισμένες ρυθμίσεις ή ενημερώσεις σημειώσεων μπορεί να έχουν ήδη αποθηκευτεί.",
+	"editor.saveFailed":
+		"Η αποθήκευση δεν ολοκληρώθηκε. Αν αυτός ο επεξεργαστής παραμένει ανοιχτός, κρατήστε τον ανοιχτό και δοκιμάστε ξανά αφού ελέγξετε τον χώρο αποθήκευσης και τον συγχρονισμό. Ορισμένες ρυθμίσεις ή ενημερώσεις σημειώσεων μπορεί να έχουν ήδη αποθηκευτεί.",
 	"editor.createCallout": "Δημιουργία callout",
 	"editor.nameRequired":
 		"Απαιτείται εμφανιζόμενο όνομα πριν τη δημιουργία callout.",
@@ -359,12 +384,12 @@ export const el: Record<string, string> = {
 		"Το «{{id}}» είναι ένα από τα δικά του αναγνωριστικά του Obsidian για το {{name}}.",
 	"editor.idMoving":
 		"Κατά την αποθήκευση, το «{{id}}» μετακινείται εδώ από το {{name}}.",
-	"editor.idMovingNotes": "Οι σημειώσεις σας δεν αλλάζουν. Παίρνουν το στυλ αυτού του callout.",
+	"editor.idMovingNotes":
+		"Οι σημειώσεις σας δεν αλλάζουν. Παίρνουν το στυλ αυτού του callout.",
 	"editor.untitledCallout": "Callout χωρίς τίτλο",
 	"editor.loremIpsum":
 		"Ένα απαλό αεράκι περνά ανάμεσα από τα δέντρα. Το ζεστό φως του ήλιου φωτίζει ένα ήσυχο μονοπάτι και ζωντανεύει το τοπίο.",
-	"editor.loremIpsumShort":
-		"Ένα απαλό αεράκι περνά ανάμεσα από τα δέντρα.",
+	"editor.loremIpsumShort": "Ένα απαλό αεράκι περνά ανάμεσα από τα δέντρα.",
 	"editor.sampleInlineText":
 		"Εδώ υπάρχει ένα ενσωματωμένο [!{id}] χάπι μέσα σε μια παράγραφο.",
 	"editor.previewReadOnly":
@@ -383,7 +408,7 @@ export const el: Record<string, string> = {
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": '{{name}} — παρέχεται από το θέμα σας',
+	"themePreview.title": "{{name}} — παρέχεται από το θέμα σας",
 	"themePreview.summary":
 		"Παρέχεται από το {{theme}} (μόνο για ανάγνωση). Το χρώμα, το εικονίδιο και το ID δεν μπορούν να τροποποιηθούν εδώ, ενώ οι μορφές Επικεφαλίδα/Ενσωματωμένο δεν είναι διαθέσιμες. Για προσαρμογή, δημιουργήστε ένα νέο callout.",
 	"themePreview.previewTitle": "Πώς αποδίδεται τώρα",
@@ -398,7 +423,8 @@ export const el: Record<string, string> = {
 	"palette.name": "Όνομα",
 	"palette.namePlaceholder": "Η παλέτα μου",
 	"palette.nameExists": "Υπάρχει ήδη παλέτα με αυτό το όνομα",
-	"palette.saveBlockedName": "Υπάρχει ήδη παλέτα με αυτό το όνομα. Επιλέξτε διαφορετικό όνομα για να την αποθηκεύσετε.",
+	"palette.saveBlockedName":
+		"Υπάρχει ήδη παλέτα με αυτό το όνομα. Επιλέξτε διαφορετικό όνομα για να την αποθηκεύσετε.",
 	"palette.metadataName": "Στα μεταδεδομένα του callout: {{key}}",
 	"palette.metadataNameExists":
 		'Μια άλλη παλέτα είναι ήδη γραμμένη ως "{{key}}" στα μεταδεδομένα του callout. Επιλέξτε διαφορετικό όνομα.',
@@ -406,8 +432,10 @@ export const el: Record<string, string> = {
 		"Στα μεταδεδομένα του callout: {{key}}. Και μια άλλη αποθηκευμένη παλέτα έχει αυτή τη λέξη, οπότε μόνο η μία από αυτές ανταποκρίνεται σε αυτήν.",
 	"palette.renameNotesChange":
 		"Μετονομάσατε την παλέτα από «{{old}}» σε «{{new}}», οπότε η λέξη της στα μεταδεδομένα του callout αλλάζει από «{{oldWord}}» σε «{{newWord}}».",
-	"palette.renameNotesLeaveDesc": "Κρατούν το «{{word}}» και επιστρέφουν στο δικό τους χρώμα.",
-	"palette.renameNotesChangeDesc": "Κάθε |{{old}} στις σημειώσεις σας γίνεται |{{new}}.",
+	"palette.renameNotesLeaveDesc":
+		"Κρατούν το «{{word}}» και επιστρέφουν στο δικό τους χρώμα.",
+	"palette.renameNotesChangeDesc":
+		"Κάθε |{{old}} στις σημειώσεις σας γίνεται |{{new}}.",
 	"palette.renameNotesFailed":
 		"Δεν ήταν δυνατή η ενημέρωση ορισμένων σημειώσεων. Όσες ενημερώθηκαν έχουν αποθηκευτεί· οι υπόλοιπες εξακολουθούν να χρησιμοποιούν το παλιό όνομα.",
 	"palette.baseColor": "Βασικό χρώμα",
@@ -525,8 +553,10 @@ export const el: Record<string, string> = {
 	"iconPicker.customEmpty":
 		"Δεν υπάρχουν ακόμη προσαρμοσμένα εικονίδια. Προσθέστε ένα αρχείο SVG, PNG, JPEG ή WebP από τον υπολογιστή σας ή αποθέστε το εδώ.",
 	"iconPicker.customEmptyTitle": "Δεν υπάρχουν ακόμη προσαρμοσμένα εικονίδια",
-	"iconPicker.customEmptyHint": "Κάντε κλικ στο κουμπί εικόνας παραπάνω ή σύρετε ένα αρχείο εδώ",
-	"iconPicker.customEmptyFormats": "Υποστηριζόμενες μορφές: SVG, PNG, JPEG και WebP",
+	"iconPicker.customEmptyHint":
+		"Κάντε κλικ στο κουμπί εικόνας παραπάνω ή σύρετε ένα αρχείο εδώ",
+	"iconPicker.customEmptyFormats":
+		"Υποστηριζόμενες μορφές: SVG, PNG, JPEG και WebP",
 	"iconPicker.customDeleteConfirm": "Διαγραφή “{{name}}”;",
 	"iconPicker.customDeleteInUse":
 		"{{count}} callouts χρησιμοποιούν αυτό το προσαρμοσμένο εικονίδιο. Θα επιστρέψουν σε εικονίδιο κράτησης θέσης μέχρι να επιλέξετε νέο.",
@@ -542,7 +572,8 @@ export const el: Record<string, string> = {
 	"iconPicker.groupSearch": "Αναζήτηση",
 	"iconPicker.groupLibraries": "Βιβλιοθήκες",
 	"iconPicker.moreToDownloadOne": "Διατίθεται για λήψη ακόμα 1 βιβλιοθήκη",
-	"iconPicker.moreToDownload": "Διατίθενται για λήψη ακόμα {{count}} βιβλιοθήκες",
+	"iconPicker.moreToDownload":
+		"Διατίθενται για λήψη ακόμα {{count}} βιβλιοθήκες",
 	"iconPicker.manageLibraries": "Διαχείριση βιβλιοθηκών",
 
 	// Source menu — what each library holds, in a few words
@@ -559,7 +590,8 @@ export const el: Record<string, string> = {
 	"iconPicker.descRpgAwesome":
 		"εικονίδια φαντασίας και επιτραπέζιων παιχνιδιών",
 	"iconPicker.descSimpleIcons": "λογότυπα επωνυμιών και προϊόντων",
-	"iconPicker.descCustom": "προσαρμοσμένα εικονίδια που προσθέτετε από τον υπολογιστή σας",
+	"iconPicker.descCustom":
+		"προσαρμοσμένα εικονίδια που προσθέτετε από τον υπολογιστή σας",
 
 	// Icon picker — category filter dropdown labels
 	"iconPicker.cat.Accessibility": "Προσβασιμότητα",
@@ -695,7 +727,8 @@ export const el: Record<string, string> = {
 	"iconLibraries.desc":
 		"Σύρετε για να αλλάξετε τη σειρά των βιβλιοθηκών στην «Επιλογή εικονιδίου».\nΟρισμένες βιβλιοθήκες μπορούν να ληφθούν και να διαγραφούν.\nΟι Lucide, Emoji και Material συνοδεύουν το πρόσθετο, γι’ αυτό μπορούν μόνο να κρυφτούν.",
 	"iconLibraries.librariesHidden": "Κρυφές βιβλιοθήκες",
-	"iconLibraries.reset": "Επαναφορά στις βιβλιοθήκες με τις οποίες ήρθε το πρόσθετο",
+	"iconLibraries.reset":
+		"Επαναφορά στις βιβλιοθήκες με τις οποίες ήρθε το πρόσθετο",
 	"iconLibraries.download": "Λήψη {{name}}",
 	"iconLibraries.delete": "Διαγραφή {{name}}",
 	"iconLibraries.hide": "Απόκρυψη {{name}}",
@@ -706,10 +739,14 @@ export const el: Record<string, string> = {
 	"iconLibraries.hidden": "Κρυφή",
 	"iconLibraries.downloading": "Λήψη…",
 	"iconLibraries.deleting": "Διαγραφή…",
-	"iconLibraries.keepOne": "Κρατήστε τουλάχιστον μία βιβλιοθήκη στην «Επιλογή εικονιδίου».",
-	"iconLibraries.deleteFailed": "Δεν ήταν δυνατή η διαγραφή της {{name}}. Δοκιμάστε ξανά.",
-	"iconLibraries.inUseOne": "1 callout χρησιμοποιεί εικονίδια από την {{name}}:",
-	"iconLibraries.inUse": "{{count}} callouts χρησιμοποιούν εικονίδια από την {{name}}:",
+	"iconLibraries.keepOne":
+		"Κρατήστε τουλάχιστον μία βιβλιοθήκη στην «Επιλογή εικονιδίου».",
+	"iconLibraries.deleteFailed":
+		"Δεν ήταν δυνατή η διαγραφή της {{name}}. Δοκιμάστε ξανά.",
+	"iconLibraries.inUseOne":
+		"1 callout χρησιμοποιεί εικονίδια από την {{name}}:",
+	"iconLibraries.inUse":
+		"{{count}} callouts χρησιμοποιούν εικονίδια από την {{name}}:",
 	"iconLibraries.inUseMore": "και άλλα {{count}}",
 	"iconLibraries.inUseKeeps":
 		"Διατηρούν τα εικονίδιά τους — ένα αντίγραφο κάθε εικονιδίου αποθηκεύεται με τις ρυθμίσεις σας. Για να επιλέξετε αργότερα νέα εικονίδια από την {{name}}, κάντε ξανά λήψη της.",
@@ -732,8 +769,10 @@ export const el: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Ορισμός callout ως ανοιχτού (+)",
 	"contextMenu.setFoldNone": "Ορισμός callout ως μη αναδιπλούμενου",
 	"contextMenu.cutSection": "Αποκοπή ενότητας επικεφαλίδας",
-	"notice.clipboardWriteFailed": "Δεν ήταν δυνατή η αντιγραφή στο πρόχειρο. Η σημείωση παρέμεινε αμετάβλητη.",
-	"notice.sectionChangedAfterCopy": "Η ενότητα αντιγράφηκε, αλλά η σημείωση άλλαξε πριν προλάβει να αποκοπεί. Δεν αφαιρέθηκε τίποτα.",
+	"notice.clipboardWriteFailed":
+		"Δεν ήταν δυνατή η αντιγραφή στο πρόχειρο. Η σημείωση παρέμεινε αμετάβλητη.",
+	"notice.sectionChangedAfterCopy":
+		"Η ενότητα αντιγράφηκε, αλλά η σημείωση άλλαξε πριν προλάβει να αποκοπεί. Δεν αφαιρέθηκε τίποτα.",
 	"contextMenu.copySection": "Αντιγραφή ενότητας επικεφαλίδας",
 	"contextMenu.deleteSection": "Διαγραφή ενότητας επικεφαλίδας",
 	"heading.toggleFold": "Εναλλαγή αναδίπλωσης",
@@ -745,6 +784,9 @@ export const el: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Προσαρμόστε το περίγραμμα και το σχήμα κάθε ενσωματωμένου callout στο vault σας.",
 	"settings.globalSettingsCustomize": "Προσαρμογή",
+	"settings.themeCalloutStyles": "Χρήση των στυλ callout του θέματός σας",
+	"settings.themeCalloutStylesDesc":
+		"Ενεργό: τα callout που μορφοποιεί το θέμα σας διατηρούν την εμφάνιση του θέματός σας.\nΑνενεργό: το Callout Studio σχεδιάζει κάθε callout και τα στυλ callout του θέματός σας απενεργοποιούνται.",
 	"settings.calloutTypeRegular": "Callout μπλοκ",
 	"settings.calloutTypeHeading": "Callout επικεφαλίδας",
 	"settings.calloutTypeInline": "Ενσωματωμένο callout",
@@ -798,7 +840,8 @@ export const el: Record<string, string> = {
 	"vault.resetNotesFailed":
 		"Δεν ήταν δυνατή η ενημέρωση ορισμένων σημειώσεων, γι’ αυτό το callout δεν επαναφέρθηκε. Επιλέξτε ξανά Επαναφορά στις προεπιλογές για να ολοκληρώσετε.",
 	"quickInsert.title": "Γρήγορη εισαγωγή callout μπλοκ",
-	"quickInsert.desc": "Επιλέξτε ένα callout για εισαγωγή στη θέση του δρομέα. Μόνο callout τύπου μπλοκ.",
+	"quickInsert.desc":
+		"Επιλέξτε ένα callout για εισαγωγή στη θέση του δρομέα. Μόνο callout τύπου μπλοκ.",
 	"quickInsert.searchPlaceholder": "Αναζήτηση callout",
 	"quickInsert.sourceAria": "Φιλτράρισμα κατά πηγή callout",
 	"quickInsert.sourceAll": "Όλα",
@@ -808,16 +851,22 @@ export const el: Record<string, string> = {
 	"quickInsert.editAria": "Επεξεργασία {{name}}",
 	"quickInsert.insertAria": "Εισαγωγή {{name}} ως callout μπλοκ",
 	"quickInsert.noResults": "Δεν βρέθηκαν callout",
-	"quickInsert.noBuiltInCallouts": "Δεν υπάρχουν διαθέσιμα ενσωματωμένα callouts αυτήν τη στιγμή.",
-	"quickInsert.noThemeCallouts": "Δεν υπάρχουν διαθέσιμα callouts ειδικά για το θέμα αυτήν τη στιγμή.",
-	"quickInsert.targetMoved": "Η σημείωση από την οποία ανοίξατε τη Γρήγορη εισαγωγή άλλαξε ή έκλεισε. Ανοίξτε ξανά τη Γρήγορη εισαγωγή στη σημείωση που θέλετε να επεξεργαστείτε.",
-	"quickInsert.targetMovedHint": "Η αρχική σημείωση δεν είναι πλέον διαθέσιμη για αυτήν την εισαγωγή.",
+	"quickInsert.noBuiltInCallouts":
+		"Δεν υπάρχουν διαθέσιμα ενσωματωμένα callouts αυτήν τη στιγμή.",
+	"quickInsert.noThemeCallouts":
+		"Δεν υπάρχουν διαθέσιμα callouts ειδικά για το θέμα αυτήν τη στιγμή.",
+	"quickInsert.targetMoved":
+		"Η σημείωση από την οποία ανοίξατε τη Γρήγορη εισαγωγή άλλαξε ή έκλεισε. Ανοίξτε ξανά τη Γρήγορη εισαγωγή στη σημείωση που θέλετε να επεξεργαστείτε.",
+	"quickInsert.targetMovedHint":
+		"Η αρχική σημείωση δεν είναι πλέον διαθέσιμη για αυτήν την εισαγωγή.",
 	"quickInsert.noUserCallouts":
 		"Δεν έχετε δημιουργήσει ακόμα κανένα προσαρμοσμένο callout. Εκτελέστε το «Callout Studio: Δημιουργία νέου τύπου callout» από την παλέτα εντολών.",
 	"quickInsert.noAvailableUserCallouts":
 		"Τα προσαρμοσμένα callouts σας εμφανίζονται προς το παρόν κάτω από το φίλτρο θέματος, επειδή τα ελέγχει το ενεργό θέμα.",
-	"quickInsert.noEditorHint": "Δεν υπάρχει ανοιχτή σημείωση σε λειτουργία επεξεργασίας, οπότε δεν μπορεί να γίνει εισαγωγή.",
-	"quickInsert.noEditor": "Ανοίξτε μια σημείωση σε λειτουργία επεξεργασίας για να εισαγάγετε ένα callout.",
+	"quickInsert.noEditorHint":
+		"Δεν υπάρχει ανοιχτή σημείωση σε λειτουργία επεξεργασίας, οπότε δεν μπορεί να γίνει εισαγωγή.",
+	"quickInsert.noEditor":
+		"Ανοίξτε μια σημείωση σε λειτουργία επεξεργασίας για να εισαγάγετε ένα callout.",
 
 	"vaultStats.columnType": "Τύπος",
 	"vaultStats.roleBlock": "Μπλοκ",
@@ -825,30 +874,45 @@ export const el: Record<string, string> = {
 	"vaultStats.roleInline": "Ενσωματωμένο",
 
 	"portable.reviewTitle": "Έλεγχος μετατροπής",
-	"portable.helpIntro": "Επιλέξτε τις αντικαταστάσεις που θέλετε να εφαρμόσετε. Πατήστε το μολύβι ή το κείμενο αντικατάστασης για να το επεξεργαστείτε και, στη συνέχεια, πατήστε Enter ή κάντε κλικ έξω από το πεδίο για αποθήκευση. Χρησιμοποιήστε το εικονίδιο επαναφοράς για να απορρίψετε ένα πρόχειρο ή να επαναφέρετε την προεπιλεγμένη αντικατάσταση. Οι σημειώσεις αλλάζουν μόνο αφού επιλέξετε «Μετατροπή επιλεγμένων» και επιβεβαιώσετε. Οι σύνδεσμοι επικεφαλίδων ενημερώνονται μαζί με τις επιλεγμένες επικεφαλίδες.",
+	"portable.helpIntro":
+		"Επιλέξτε τις αντικαταστάσεις που θέλετε να εφαρμόσετε. Πατήστε το μολύβι ή το κείμενο αντικατάστασης για να το επεξεργαστείτε και, στη συνέχεια, πατήστε Enter ή κάντε κλικ έξω από το πεδίο για αποθήκευση. Χρησιμοποιήστε το εικονίδιο επαναφοράς για να απορρίψετε ένα πρόχειρο ή να επαναφέρετε την προεπιλεγμένη αντικατάσταση. Οι σημειώσεις αλλάζουν μόνο αφού επιλέξετε «Μετατροπή επιλεγμένων» και επιβεβαιώσετε. Οι σύνδεσμοι επικεφαλίδων ενημερώνονται μαζί με τις επιλεγμένες επικεφαλίδες.",
 	"portable.help": "Σχετικά με τη μετατροπή",
 	"portable.roleLink": "Σύνδεσμος επικεφαλίδας",
 	"portable.convertSelected": "Μετατροπή επιλεγμένων",
-	"portable.selectionSummary": "Επιλέχθηκαν {{selected}} από {{total}} αντικαταστάσεις · {{links}} σύνδεσμοι επικεφαλίδων προς ενημέρωση",
-	"portable.selectionConflict": "Αυτή η επιλογή θα έκανε τους συνδέσμους επικεφαλίδων ασαφείς. Διατηρήθηκε η προηγούμενη επιλογή σας.",
+	"portable.selectionSummary":
+		"Επιλέχθηκαν {{selected}} από {{total}} αντικαταστάσεις · {{links}} σύνδεσμοι επικεφαλίδων προς ενημέρωση",
+	"portable.selectionSummaryNoLinks":
+		"Επιλέχθηκαν {{selected}} από {{total}} αντικαταστάσεις",
+	"portable.selectionConflict":
+		"Αυτή η επιλογή θα έκανε τους συνδέσμους επικεφαλίδων ασαφείς. Διατηρήθηκε η προηγούμενη επιλογή σας.",
 	"portable.selectAll": "Επιλογή όλων",
 	"portable.selectNone": "Αποεπιλογή όλων",
-	"portable.relatedLinksHint": "Οι σύνδεσμοι και οι ενσωματώσεις ακολουθούν τις επιλεγμένες επικεφαλίδες και μετατρέπονται μαζί τους.",
+	"portable.relatedLinksHint":
+		"Οι σύνδεσμοι και οι ενσωματώσεις ακολουθούν τις επιλεγμένες επικεφαλίδες και μετατρέπονται μαζί τους.",
 	"portable.selectChange": "Μετατροπή του {{path}}, γραμμή {{line}}",
 	"portable.showMore": "Εμφάνιση {{count}} ακόμη",
-	"portable.openFailed": "Δεν ήταν δυνατό το άνοιγμα της πλαϊνής στήλης μετατροπής.",
-	"portable.closeSettings": "Κλείστε τις ρυθμίσεις για να ελέγξετε τη μετατροπή στην πλαϊνή στήλη.",
+	"portable.openFailed":
+		"Δεν ήταν δυνατό το άνοιγμα της πλαϊνής στήλης μετατροπής.",
+	"portable.closeSettings":
+		"Κλείστε τις ρυθμίσεις για να ελέγξετε τη μετατροπή στην πλαϊνή στήλη.",
 	"portable.retry": "Δοκιμάστε ξανά",
-	"portable.blockedAmbiguous": "Αυτή η επικεφαλίδα παραλείπεται επειδή ο προορισμός του συνδέσμου της είναι ασαφής.",
-	"portable.blockedTarget": "Αυτή η επικεφαλίδα παραλείπεται επειδή ο προορισμός του συνδέσμου της δεν μπορεί να διατηρηθεί με ασφάλεια.",
-	"portable.recovery": "Απομένουν ορισμένες αλλαγές. Ολοκληρώστε αυτή τη μετατροπή και τις ενημερώσεις συνδέσμων επικεφαλίδων πριν επανεκκινήσετε ή απενεργοποιήσετε το πρόσθετο· το εκκρεμές σχέδιο διατηρείται μόνο στη μνήμη.",
-	"portable.recoveryChanged": "Οι σημειώσεις άλλαξαν μετά τη διακοπή της μετατροπής. Οι εκκρεμείς ενημερώσεις συνδέσμων διατηρούνται· κάθε σημείωση ελέγχεται ξανά πριν από την εγγραφή.",
+	"portable.blockedAmbiguous":
+		"Αυτή η επικεφαλίδα παραλείπεται επειδή ο προορισμός του συνδέσμου της είναι ασαφής.",
+	"portable.blockedTarget":
+		"Αυτή η επικεφαλίδα παραλείπεται επειδή ο προορισμός του συνδέσμου της δεν μπορεί να διατηρηθεί με ασφάλεια.",
+	"portable.recovery":
+		"Απομένουν ορισμένες αλλαγές. Ολοκληρώστε αυτή τη μετατροπή και τις ενημερώσεις συνδέσμων επικεφαλίδων πριν επανεκκινήσετε ή απενεργοποιήσετε το πρόσθετο· το εκκρεμές σχέδιο διατηρείται μόνο στη μνήμη.",
+	"portable.recoveryChanged":
+		"Οι σημειώσεις άλλαξαν μετά τη διακοπή της μετατροπής. Οι εκκρεμείς ενημερώσεις συνδέσμων διατηρούνται· κάθε σημείωση ελέγχεται ξανά πριν από την εγγραφή.",
 	"portable.finishConversion": "Ολοκλήρωση μετατροπής",
-	"portable.recoveryUnavailable": "Δεν ήταν δυνατή η ασφαλής ανάκτηση ορισμένων εκκρεμών ενημερώσεων συνδέσμων. Ελέγξτε τις επηρεαζόμενες σημειώσεις πριν ξεκινήσετε νέα μετατροπή.",
+	"portable.recoveryUnavailable":
+		"Δεν ήταν δυνατή η ασφαλής ανάκτηση ορισμένων εκκρεμών ενημερώσεων συνδέσμων. Ελέγξτε τις επηρεαζόμενες σημειώσεις πριν ξεκινήσετε νέα μετατροπή.",
 	"portable.title": "Μετατροπή σε τυπικό Markdown",
-	"portable.settingDesc": "Αντικαταστήστε τα callout επικεφαλίδων και τα ενσωματωμένα callout σε όλο το θησαυροφυλάκιο με απλό κείμενο, έτοιμο για χρήση χωρίς το Callout Studio.",
+	"portable.settingDesc":
+		"Αντικαταστήστε τα callout επικεφαλίδων και τα ενσωματωμένα callout σε όλο το θησαυροφυλάκιο με απλό κείμενο, έτοιμο για χρήση χωρίς το Callout Studio.",
 	"portable.review": "Έλεγχος μετατροπής",
-	"portable.intro": "Αν σκοπεύετε να σταματήσετε να χρησιμοποιείτε το Callout Studio ή να μεταφέρετε το θησαυροφυλάκιό σας σε εφαρμογή χωρίς αυτό, μετατρέψτε τα callout επικεφαλίδων και τα ενσωματωμένα callout σε τυπικό Markdown.",
+	"portable.intro":
+		"Αν σκοπεύετε να σταματήσετε να χρησιμοποιείτε το Callout Studio ή να μεταφέρετε το θησαυροφυλάκιό σας σε εφαρμογή χωρίς αυτό, μετατρέψτε τα callout επικεφαλίδων και τα ενσωματωμένα callout σε τυπικό Markdown.",
 	"portable.before": "Πριν",
 	"portable.after": "Μετά",
 	"portable.replacement": "Αντικατάσταση",
@@ -856,40 +920,61 @@ export const el: Record<string, string> = {
 	"portable.type": "τύπος",
 	"portable.text": "Κείμενο",
 	"portable.headingText": "Τίτλος",
-	"portable.backup": "Συνιστούμε να δημιουργήσετε αντίγραφο ασφαλείας του θησαυροφυλακίου πριν από τη μετατροπή. Αυτή τροποποιεί τις αρχικές σημειώσεις και δεν μπορεί να αναιρεθεί στο Callout Studio.",
+	"portable.backup":
+		"Συνιστούμε να δημιουργήσετε αντίγραφο ασφαλείας του θησαυροφυλακίου πριν από τη μετατροπή. Αυτή τροποποιεί τις αρχικές σημειώσεις και δεν μπορεί να αναιρεθεί στο Callout Studio.",
 	"portable.scanning": "Ανάγνωση σημειώσεων Markdown…",
 	"portable.progress": "Ανάγνωση σημειώσεων: {{done}} από {{total}}",
-	"portable.empty": "Δεν βρέθηκαν κατάλληλα callout επικεφαλίδων ή ενσωματωμένα callout. Δεν θα αλλάξει τίποτα.",
-	"portable.skipped": "{{count}} ελλιπείς ή μη υποστηριζόμενες εμφανίσεις παρέμειναν αμετάβλητες για μη αυτόματο έλεγχο.",
+	"portable.empty":
+		"Δεν βρέθηκαν κατάλληλα callout επικεφαλίδων ή ενσωματωμένα callout. Δεν θα αλλάξει τίποτα.",
+	"portable.skipped":
+		"{{count}} ελλιπείς ή μη υποστηριζόμενες εμφανίσεις παρέμειναν αμετάβλητες για μη αυτόματο έλεγχο.",
 	"portable.confirmTitle": "Οριστική μετατροπή αυτού του θησαυροφυλακίου;",
-	"portable.confirmBody": "Να μετατραπούν {{count}} εμφανίσεις και να ενημερωθούν {{links}} σύνδεσμοι επικεφαλίδων σε {{files}} σημειώσεις;\nΑυτό αλλάζει τα αρχικά αρχεία και δεν μπορεί να αναιρεθεί στο Callout Studio. Δεν δημιουργείται αυτόματο αντίγραφο ασφαλείας. Δημιουργήστε πρώτα αντίγραφο ασφαλείας του θησαυροφυλακίου, αποθηκεύστε τις ανοιχτές σημειώσεις και διακόψτε προσωρινά την επεξεργασία και τον συγχρονισμό μέχρι να ολοκληρωθεί η μετατροπή.\nΑν αλλάξει κάποιο αρχείο ή αποτύχει μια εγγραφή, η μετατροπή σταματά. Οι σημειώσεις που έχουν ήδη μετατραπεί παραμένουν αλλαγμένες.",
+	"portable.confirmBody":
+		"Να μετατραπούν {{count}} εμφανίσεις και να ενημερωθούν {{links}} σύνδεσμοι επικεφαλίδων σε {{files}} σημειώσεις;\nΑυτό αλλάζει τα αρχικά αρχεία και δεν μπορεί να αναιρεθεί στο Callout Studio. Δεν δημιουργείται αυτόματο αντίγραφο ασφαλείας. Δημιουργήστε πρώτα αντίγραφο ασφαλείας του θησαυροφυλακίου, αποθηκεύστε τις ανοιχτές σημειώσεις και διακόψτε προσωρινά την επεξεργασία και τον συγχρονισμό μέχρι να ολοκληρωθεί η μετατροπή.\nΑν αλλάξει κάποιο αρχείο ή αποτύχει μια εγγραφή, η μετατροπή σταματά. Οι σημειώσεις που έχουν ήδη μετατραπεί παραμένουν αλλαγμένες.",
 	"portable.confirmAction": "Οριστική μετατροπή",
-	"portable.converting": "Μετατροπή των επιλεγμένων αλλαγών… Το κλείσιμο αυτού του πλαισίου δεν θα σταματήσει τη μετατροπή.",
-	"portable.complete": "Μετατράπηκαν {{count}} εμφανίσεις και ενημερώθηκαν {{links}} σύνδεσμοι επικεφαλίδων σε {{files}} σημειώσεις.",
-	"portable.stopped": "Η μετατροπή σταμάτησε. Έχουν ήδη αλλάξει {{count}} εμφανίσεις και {{links}} σύνδεσμοι επικεφαλίδων σε {{files}} σημειώσεις· αυτές οι αλλαγές παραμένουν.",
-	"portable.errorEditor": "Αποθηκεύστε τις ανοιχτές σημειώσεις για να ενημερωθεί αυτόματα η προεπισκόπηση.",
-	"portable.errorChanged": "Οι σημειώσεις άλλαξαν. Ελέγξτε τις ενημερωμένες αλλαγές πριν από τη μετατροπή.",
-	"portable.errorBusy": "Εκτελείται άλλη μετατροπή. Περιμένετε να ολοκληρωθεί.",
-	"portable.error": "Δεν ήταν δυνατή η ασφαλής ανάγνωση ή ενημέρωση του θησαυροφυλακίου. Ελέγξτε την πρόσβαση στα αρχεία και δοκιμάστε ξανά.",
-	"portable.blockedConverting": "Μια μετατροπή εκτελείται ήδη. Περιμένετε να ολοκληρωθεί.",
-	"portable.blockedUpdating": "Η αναθεώρηση ενημερώνεται ακόμη. Περιμένετε να ολοκληρωθεί πριν από τη μετατροπή.",
-	"portable.blockedEditing": "Ολοκληρώστε πρώτα την επεξεργασία της αντικατάστασης: πατήστε Enter για αποθήκευση ή Esc για απόρριψη.",
-	"portable.blockedNothingSelected": "Επιλέξτε τουλάχιστον μία αντικατάσταση για μετατροπή.",
+	"portable.converting":
+		"Μετατροπή των επιλεγμένων αλλαγών… Το κλείσιμο αυτού του πλαισίου δεν θα σταματήσει τη μετατροπή.",
+	"portable.complete":
+		"Μετατράπηκαν {{count}} εμφανίσεις και ενημερώθηκαν {{links}} σύνδεσμοι επικεφαλίδων σε {{files}} σημειώσεις.",
+	"portable.stopped":
+		"Η μετατροπή σταμάτησε. Έχουν ήδη αλλάξει {{count}} εμφανίσεις και {{links}} σύνδεσμοι επικεφαλίδων σε {{files}} σημειώσεις· αυτές οι αλλαγές παραμένουν.",
+	"portable.errorEditor":
+		"Αποθηκεύστε τις ανοιχτές σημειώσεις για να ενημερωθεί αυτόματα η προεπισκόπηση.",
+	"portable.errorChanged":
+		"Οι σημειώσεις άλλαξαν. Ελέγξτε τις ενημερωμένες αλλαγές πριν από τη μετατροπή.",
+	"portable.errorBusy":
+		"Εκτελείται άλλη μετατροπή. Περιμένετε να ολοκληρωθεί.",
+	"portable.error":
+		"Δεν ήταν δυνατή η ασφαλής ανάγνωση ή ενημέρωση του θησαυροφυλακίου. Ελέγξτε την πρόσβαση στα αρχεία και δοκιμάστε ξανά.",
+	"portable.blockedConverting":
+		"Μια μετατροπή εκτελείται ήδη. Περιμένετε να ολοκληρωθεί.",
+	"portable.blockedUpdating":
+		"Η αναθεώρηση ενημερώνεται ακόμη. Περιμένετε να ολοκληρωθεί πριν από τη μετατροπή.",
+	"portable.blockedEditing":
+		"Ολοκληρώστε πρώτα την επεξεργασία της αντικατάστασης: πατήστε Enter για αποθήκευση ή Esc για απόρριψη.",
+	"portable.blockedNothingSelected":
+		"Επιλέξτε τουλάχιστον μία αντικατάσταση για μετατροπή.",
 	"settings.maintenance": "Επικίνδυνη ζώνη",
-	"portable.subtitle": "Επιλέξτε ποια callout επικεφαλίδων και εντός κειμένου θα μετατραπούν σε τυπικό Markdown πριν σταματήσετε να χρησιμοποιείτε το Callout Studio.",
+	"portable.subtitle":
+		"Επιλέξτε ποια callout επικεφαλίδων και εντός κειμένου θα μετατραπούν σε τυπικό Markdown πριν σταματήσετε να χρησιμοποιείτε το Callout Studio.",
 	"portable.customize": "Προσαρμοσμένη αντικατάσταση…",
 	"portable.editCustom": "Επεξεργασία προσαρμοσμένης αντικατάστασης…",
 	"portable.restoreDefault": "Επαναφορά προεπιλεγμένης αντικατάστασης",
 	"portable.cancelEdit": "Απόρριψη αλλαγών",
-	"portable.customInvalid": "Διατηρήστε την αντικατάσταση σε μία γραμμή χωρίς να αλλάξετε την περιβάλλουσα δομή Markdown.",
-	"portable.customUnsafe": "Αυτή η αντικατάσταση θα έκανε μια επικεφαλίδα ή τους συνδέσμους της ασαφείς. Επιλέξτε άλλη επικεφαλίδα.",
-	"portable.customStale": "Η επισκόπηση άλλαξε. Ανοίξτε ξανά το πρόγραμμα επεξεργασίας αντικαταστάσεων.",
-	"portable.customDiscarded": "Καταργήθηκαν {{count}} προσαρμοσμένες αντικαταστάσεις επειδή το αρχικό τους κείμενο άλλαξε ή δεν ήταν δυνατός ο ασφαλής εντοπισμός του.",
+	"portable.customInvalid":
+		"Διατηρήστε την αντικατάσταση σε μία γραμμή χωρίς να αλλάξετε την περιβάλλουσα δομή Markdown.",
+	"portable.customUnsafe":
+		"Αυτή η αντικατάσταση θα έκανε μια επικεφαλίδα ή τους συνδέσμους της ασαφείς. Επιλέξτε άλλη επικεφαλίδα.",
+	"portable.customStale":
+		"Η επισκόπηση άλλαξε. Ανοίξτε ξανά το πρόγραμμα επεξεργασίας αντικαταστάσεων.",
+	"portable.customDiscarded":
+		"Καταργήθηκαν {{count}} προσαρμοσμένες αντικαταστάσεις επειδή το αρχικό τους κείμενο άλλαξε ή δεν ήταν δυνατός ο ασφαλής εντοπισμός του.",
 	"portable.customBadge": "Προσαρμοσμένη",
 
 	"usage.title": "Εύρεση callout",
 	"usage.command": "Εύρεση callout",
-	"usage.subtitle": "Βρείτε callout στο θησαυροφυλάκιό σας και μεταβείτε στην πηγή τους.",
+	"usage.subtitle":
+		"Βρείτε callout στο θησαυροφυλάκιό σας και μεταβείτε στην πηγή τους.",
 	"usage.browse": "Περιήγηση",
 	"usage.allTypes": "Όλοι οι τύποι",
 	"usage.registeredCallouts": "Καταχωρισμένα callout",
@@ -898,20 +983,26 @@ export const el: Record<string, string> = {
 	"usage.allRoles": "Όλες οι μορφές",
 	"usage.failed": "Δεν ήταν δυνατή η ενημέρωση των εμφανίσεων callout.",
 	"usage.loading": "Σάρωση σημειώσεων Markdown…",
-	"usage.partial": "Τα αποτελέσματα είναι ελλιπή: {{count}} σφάλματα ανάγνωσης.",
+	"usage.partial":
+		"Τα αποτελέσματα είναι ελλιπή: {{count}} σφάλματα ανάγνωσης.",
 	"usage.stale": "Ενημέρωση εμφανίσεων callout…",
 	"usage.empty": "Δεν βρέθηκαν callout που να ταιριάζουν.",
 	"usage.failedFiles": "Αρχεία που δεν ήταν δυνατή η ανάγνωσή τους",
-	"usage.vaultReadFailed": "Δεν ήταν δυνατή η καταγραφή των σημειώσεων Markdown σε αυτό το vault.",
+	"usage.vaultReadFailed":
+		"Δεν ήταν δυνατή η καταγραφή των σημειώσεων Markdown σε αυτό το vault.",
 	"usage.more": "Εμφάνιση {{count}} ακόμη",
 	"usage.location": "Γραμμή {{line}} · {{role}}",
-	"usage.missing": "Αυτή η σημείωση δεν υπάρχει πλέον. Ενημέρωση αποτελεσμάτων…",
-	"usage.changed": "Αυτή η εμφάνιση άλλαξε ή μετακινήθηκε σε θέση που δεν μπορεί να προσδιοριστεί με βεβαιότητα. Ενημέρωση αποτελεσμάτων…",
-	"usage.openFailed": "Δεν ήταν δυνατό το άνοιγμα αυτής της εμφάνισης callout.",
+	"usage.missing":
+		"Αυτή η σημείωση δεν υπάρχει πλέον. Ενημέρωση αποτελεσμάτων…",
+	"usage.changed":
+		"Αυτή η εμφάνιση άλλαξε ή μετακινήθηκε σε θέση που δεν μπορεί να προσδιοριστεί με βεβαιότητα. Ενημέρωση αποτελεσμάτων…",
+	"usage.openFailed":
+		"Δεν ήταν δυνατό το άνοιγμα αυτής της εμφάνισης callout.",
 	"usage.menuCount": "Εύρεση callout ({{count}})",
 	"usage.menuIncomplete": "Εύρεση callout — η σάρωση δεν ολοκληρώθηκε",
 	"usage.menu": "Εύρεση callout",
-	"usage.closeSettings": "Κλείστε τις ρυθμίσεις για να δείτε τα αποτελέσματα των callout στην πλαϊνή στήλη.",
+	"usage.closeSettings":
+		"Κλείστε τις ρυθμίσεις για να δείτε τα αποτελέσματα των callout στην πλαϊνή στήλη.",
 	"import.title": "Προβλήματα εισαγωγής",
 	"import.reportLeadIn":
 		"Ελέγξτε αυτά τα προβλήματα εισαγωγής πριν συνεχίσετε:",
@@ -922,7 +1013,8 @@ export const el: Record<string, string> = {
 		"{{valid}} από {{total}} καταχωρήσεις είναι έγκυρες · βρέθηκαν {{issues}} πρόβλημα/τα.",
 	"import.btnCancel": "Ακύρωση",
 	"import.btnImportValid": "Εισαγωγή μόνο έγκυρων ({{count}})",
-	"import.nothingValid": "Καμία από τις εγγραφές δεν είναι έγκυρη, επομένως δεν υπάρχει τίποτα για εισαγωγή. Ακυρώστε, διορθώστε τα προβλήματα που αναφέρονται εδώ και εισαγάγετε ξανά.",
+	"import.nothingValid":
+		"Καμία από τις εγγραφές δεν είναι έγκυρη, επομένως δεν υπάρχει τίποτα για εισαγωγή. Ακυρώστε, διορθώστε τα προβλήματα που αναφέρονται εδώ και εισαγάγετε ξανά.",
 	"import.err.notRecognized":
 		"Μη αναγνωρίσιμο αρχείο: αναμενόταν πίνακας ορισμών callout ή εξαγωγή από το Callout Studio.",
 	"import.warn.settingsIgnored":
@@ -931,11 +1023,16 @@ export const el: Record<string, string> = {
 		"Η διαβάθμιση φόντου δεν ήταν έγκυρη και αγνοήθηκε.",
 	"import.err.parseFailed":
 		"Το αρχείο δεν είναι έγκυρο JSON και δεν ήταν δυνατή η ανάλυσή του.",
-	"import.err.tooLarge": "Αυτή η εισαγωγή υπερβαίνει το όριο μεγέθους των 16 MiB. Χωρίστε την σε μικρότερα αρχεία και δοκιμάστε ξανά.",
-	"import.err.tooComplex": "Αυτή η εισαγωγή είναι υπερβολικά σύνθετη: έως 1.000 στοιχεία ανά λίστα ή αντικείμενο, 50.000 τιμές συνολικά και έως 32 επίπεδα ένθεσης.",
-	"import.err.imageBudget": "Η συνολική συλλογή εικόνων υπερβαίνει τα όρια μεγέθους ή πολυπλοκότητας. Αφαιρέστε ή απλοποιήστε τις μεγάλες εικόνες πριν από την εισαγωγή.",
-	"import.err.processingFailed": "Δεν ήταν δυνατή η ολοκλήρωση της εισαγωγής. Ελέγξτε τα δεδομένα και δοκιμάστε ξανά.",
-	"import.reportTruncated": "Εμφανίζονται τα πρώτα {{shown}} από τα {{total}} ζητήματα. Οι μεγάλες τιμές έχουν συντομευτεί σε αυτήν την αναφορά.",
+	"import.err.tooLarge":
+		"Αυτή η εισαγωγή υπερβαίνει το όριο μεγέθους των 16 MiB. Χωρίστε την σε μικρότερα αρχεία και δοκιμάστε ξανά.",
+	"import.err.tooComplex":
+		"Αυτή η εισαγωγή είναι υπερβολικά σύνθετη: έως 1.000 στοιχεία ανά λίστα ή αντικείμενο, 50.000 τιμές συνολικά και έως 32 επίπεδα ένθεσης.",
+	"import.err.imageBudget":
+		"Η συνολική συλλογή εικόνων υπερβαίνει τα όρια μεγέθους ή πολυπλοκότητας. Αφαιρέστε ή απλοποιήστε τις μεγάλες εικόνες πριν από την εισαγωγή.",
+	"import.err.processingFailed":
+		"Δεν ήταν δυνατή η ολοκλήρωση της εισαγωγής. Ελέγξτε τα δεδομένα και δοκιμάστε ξανά.",
+	"import.reportTruncated":
+		"Εμφανίζονται τα πρώτα {{shown}} από τα {{total}} ζητήματα. Οι μεγάλες τιμές έχουν συντομευτεί σε αυτήν την αναφορά.",
 	"import.err.entryNotObject": "Η καταχώρηση πρέπει να είναι αντικείμενο.",
 	"import.err.requiredMissing":
 		'Το υποχρεωτικό πεδίο "{{field}}" λείπει ή έχει λανθασμένο τύπο.',
@@ -978,7 +1075,7 @@ export const el: Record<string, string> = {
 	"import.err.iconSizeRange":
 		'"{{field}}" πρέπει να είναι αριθμός μεταξύ {{min}} και {{max}} (ελήφθη "{{value}}").',
 	"import.err.iconAdjustShape":
-		"Το \"iconAdjust\" πρέπει να είναι αντικείμενο που αντιστοιχίζει έναν τύπο callout (\"regular\", \"heading\", \"inline\") στο μέγεθος και τις μετατοπίσεις του εικονιδίου του.",
+		'Το "iconAdjust" πρέπει να είναι αντικείμενο που αντιστοιχίζει έναν τύπο callout ("regular", "heading", "inline") στο μέγεθος και τις μετατοπίσεις του εικονιδίου του.',
 	"import.err.aliasesNotArray":
 		'"aliases" πρέπει να είναι πίνακας συμβολοσειρών.',
 	"import.err.aliasNotString": "Το ψευδώνυμο πρέπει να είναι συμβολοσειρά.",
@@ -1007,11 +1104,14 @@ export const el: Record<string, string> = {
 		'Το εικονίδιο "{{value}}" δεν είναι διαθέσιμο σε αυτό το vault, οπότε το "{{id}}" διατήρησε το εικονίδιο που είχε ήδη.',
 	"import.chooseSource": "Εισαγωγή από",
 	"import.sourceStudio": "Callout Studio",
-	"import.sourceStudioDesc": "Ένα αρχείο .json εξαγόμενο από το Callout Studio.",
+	"import.sourceStudioDesc":
+		"Ένα αρχείο .json εξαγόμενο από το Callout Studio.",
 	"import.sourceCalloutManager": "Callout Manager",
-	"import.sourceCalloutManagerDesc": "Τα προσαρμοσμένα σας callout από το πρόσθετο.",
+	"import.sourceCalloutManagerDesc":
+		"Τα προσαρμοσμένα σας callout από το πρόσθετο.",
 	"import.sourceAdmonition": "Admonition",
-	"import.sourceAdmonitionDesc": "Τα προσαρμοσμένα admonition σας από το πρόσθετο.",
+	"import.sourceAdmonitionDesc":
+		"Τα προσαρμοσμένα admonition σας από το πρόσθετο.",
 	"import.sourceOtherPlugins": "Από άλλο πρόσθετο",
 	"import.fileReady": "Έτοιμο για εισαγωγή.",
 	"import.upload": "Μεταφόρτωση…",
@@ -1021,8 +1121,10 @@ export const el: Record<string, string> = {
 	"import.pasteButton": "Επικόλληση",
 	"import.pasteFirst": "Επικολλήστε πρώτα τα αντιγραμμένα στυλ.",
 	"import.uploadFirst": "Μεταφορτώστε πρώτα ένα αρχείο.",
-	"import.clipboardEmpty": "Το πρόχειρο είναι άδειο. Αντιγράψτε πρώτα τα δεδομένα.",
-	"import.clipboardBlocked": "Δεν ήταν δυνατή η ανάγνωση του πρόχειρου. Επικολλήστε οι ίδιοι το περιεχόμενο στο πλαίσιο.",
+	"import.clipboardEmpty":
+		"Το πρόχειρο είναι άδειο. Αντιγράψτε πρώτα τα δεδομένα.",
+	"import.clipboardBlocked":
+		"Δεν ήταν δυνατή η ανάγνωση του πρόχειρου. Επικολλήστε οι ίδιοι το περιεχόμενο στο πλαίσιο.",
 	"import.importing": "Εισαγωγή…",
 	"import.err.fileUnreadable": "Δεν ήταν δυνατή η ανάγνωση του αρχείου.",
 	"import.cmTitle": "Εισαγωγή από Callout Manager",
@@ -1056,10 +1158,14 @@ export const el: Record<string, string> = {
 		"το προεπιλεγμένο γκρι του.",
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "Δεν είναι δυνατή η διατήρηση της μορφοποίησης που εξαρτάται από το θέμα. Προτιμώνται οι μη υπό όρους τιμές· τυχόν υπό όρους εναλλακτική εφαρμόζεται σε όλα τα θέματα.",
-	"import.warn.cmCustomStylesSkipped": "Δεν εισάγεται προσαρμοσμένο CSS από το Callout Manager. Μεταφέρονται μόνο οι υποστηριζόμενες ρυθμίσεις εικονιδίου και χρώματος.",
-	"import.warn.cmSchemeIcon": "Το Callout Studio χρησιμοποιεί ένα εικονίδιο και για τα δύο χρωματικά σχήματα· το εισαγόμενο εικονίδιο θα χρησιμοποιηθεί και στα δύο.",
-	"import.err.cmDuplicateId": "Το αναγνωριστικό {{value}} είναι διπλότυπο του {{other}} σε αυτήν την εισαγωγή και παραλείφθηκε.",
+	"import.warn.cmThemeConditionPartial":
+		"Δεν είναι δυνατή η διατήρηση της μορφοποίησης που εξαρτάται από το θέμα. Προτιμώνται οι μη υπό όρους τιμές· τυχόν υπό όρους εναλλακτική εφαρμόζεται σε όλα τα θέματα.",
+	"import.warn.cmCustomStylesSkipped":
+		"Δεν εισάγεται προσαρμοσμένο CSS από το Callout Manager. Μεταφέρονται μόνο οι υποστηριζόμενες ρυθμίσεις εικονιδίου και χρώματος.",
+	"import.warn.cmSchemeIcon":
+		"Το Callout Studio χρησιμοποιεί ένα εικονίδιο και για τα δύο χρωματικά σχήματα· το εισαγόμενο εικονίδιο θα χρησιμοποιηθεί και στα δύο.",
+	"import.err.cmDuplicateId":
+		"Το αναγνωριστικό {{value}} είναι διπλότυπο του {{other}} σε αυτήν την εισαγωγή και παραλείφθηκε.",
 	"import.admTitle": "Εισαγωγή από το Admonition",
 	"import.admInstructions":
 		"Κάθε admonition έρχεται ως callout με το όνομα, το εικονίδιο και " +
@@ -1085,8 +1191,10 @@ export const el: Record<string, string> = {
 	"import.warn.admIconUnknownExisting":
 		'Δεν βρέθηκε εικονίδιο με όνομα "{{value}}" σε καμία βιβλιοθήκη, ' +
 		'οπότε το "{{id}}" κράτησε το εικονίδιο που είχε ήδη.',
-	"import.warn.admUnsupportedOptions": "Αυτές οι επιλογές του Admonition δεν εισάγονται: {{fields}}.",
-	"import.warn.admImageSkipped": "Δεν ήταν δυνατή η ανάγνωση της μεταφορτωμένης εικόνας και δεν εισήχθη.",
+	"import.warn.admUnsupportedOptions":
+		"Αυτές οι επιλογές του Admonition δεν εισάγονται: {{fields}}.",
+	"import.warn.admImageSkipped":
+		"Δεν ήταν δυνατή η ανάγνωση της μεταφορτωμένης εικόνας και δεν εισήχθη.",
 	"import.warn.admIconWithCss":
 		"Αυτό το admonition παίρνει την εμφάνισή του από ένα απόσπασμα " +
 		"CSS στο Admonition. Η εμφάνιση αυτή δεν περιλαμβάνεται στην " +
@@ -1146,62 +1254,92 @@ export const el: Record<string, string> = {
 	"export.formatCss": "Αυτόνομο στιγμιότυπο CSS",
 	"export.formatCssDesc":
 		"Για ιστότοπους ή vault όπου δεν εκτελείται το Callout Studio. Καλύπτει μόνο callout τύπου block και πρέπει να εξαχθεί ξανά μετά από αλλαγές.",
-	"quickInsert.readingViewHint": "Αυτή η σημείωση είναι ανοιχτή σε λειτουργία ανάγνωσης, οπότε δεν μπορεί να γίνει εισαγωγή.",
-	"quickInsert.readingView": "Μεταβείτε σε λειτουργία πηγής ή στη Ζωντανή Προεπισκόπηση για να εισαγάγετε ένα callout.",
-	"quickInsert.noCursorHint": "Δεν υπάρχει δρομέας σε αυτή τη σημείωση, οπότε δεν υπάρχει σημείο εισαγωγής.",
-	"quickInsert.noCursor": "Τοποθετήστε τον δρομέα στη σημείωση εκεί όπου θέλετε να εισαγάγετε το callout και δοκιμάστε ξανά.",
-	"notice.legacyDiscoveryArchiveFailed": "Δεν ήταν δυνατή η ολοκλήρωση του αντιγράφου ανάκτησης για την αναβάθμιση. Η προηγούμενη τοπική προσωρινή μνήμη εντοπισμού και το CSS εκκίνησης διατηρήθηκαν χωρίς αλλαγές. Ελέγξτε τα δικαιώματα εγγραφής, την πρόσβαση στον αποθηκευτικό χώρο και τον διαθέσιμο χώρο και, στη συνέχεια, επανεκκινήστε το Obsidian για να δοκιμάσετε ξανά.",
+	"quickInsert.readingViewHint":
+		"Αυτή η σημείωση είναι ανοιχτή σε λειτουργία ανάγνωσης, οπότε δεν μπορεί να γίνει εισαγωγή.",
+	"quickInsert.readingView":
+		"Μεταβείτε σε λειτουργία πηγής ή στη Ζωντανή Προεπισκόπηση για να εισαγάγετε ένα callout.",
+	"quickInsert.noCursorHint":
+		"Δεν υπάρχει δρομέας σε αυτή τη σημείωση, οπότε δεν υπάρχει σημείο εισαγωγής.",
+	"quickInsert.noCursor":
+		"Τοποθετήστε τον δρομέα στη σημείωση εκεί όπου θέλετε να εισαγάγετε το callout και δοκιμάστε ξανά.",
+	"notice.legacyDiscoveryArchiveFailed":
+		"Δεν ήταν δυνατή η ολοκλήρωση του αντιγράφου ανάκτησης για την αναβάθμιση. Η προηγούμενη τοπική προσωρινή μνήμη εντοπισμού και το CSS εκκίνησης διατηρήθηκαν χωρίς αλλαγές. Ελέγξτε τα δικαιώματα εγγραφής, την πρόσβαση στον αποθηκευτικό χώρο και τον διαθέσιμο χώρο και, στη συνέχεια, επανεκκινήστε το Obsidian για να δοκιμάσετε ξανά.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "Σε παύση: το callout λείπει. Ανακαλύψτε το ή δημιουργήστε το για να επαναφέρετε αυτήν την εντολή, ή επεξεργαστείτε την εντολή για να επιλέξετε άλλον τύπο.",
+	"commandBuilder.missingCallout":
+		"Σε παύση: το callout λείπει. Ανακαλύψτε το ή δημιουργήστε το για να επαναφέρετε αυτήν την εντολή, ή επεξεργαστείτε την εντολή για να επιλέξετε άλλον τύπο.",
 	"confirm.titleRestoreSettings": "Επαναφορά αυτών των ρυθμίσεων",
 	"confirm.titleCreateSettingsFile": "Δημιουργία αρχείου ρυθμίσεων",
 	"confirm.saveDisplayedSettings":
 		"Αυτό αποθηκεύει τη ρύθμιση που βλέπετε τώρα ως αρχείο ρυθμίσεών σας και ενεργοποιεί ξανά την αποθήκευση. Το εφεδρικό αντίγραφο που κρατά αυτή η συσκευή δημιουργεί πρώτα δικό του αντίγραφο ασφαλείας.\nΑν κάποια άλλη συσκευή μπορεί να έχει νεότερες αλλαγές που θέλετε να κρατήσετε, αφήστε την να ολοκληρώσει τον συγχρονισμό πριν συνεχίσετε. Η εφαρμογή συγχρονισμού ενδέχεται να στείλει αυτό το αρχείο στις άλλες συσκευές σας.\nΤο Callout Studio αναζητά το αρχείο ρυθμίσεων άλλη μία φορά πριν από την αποθήκευση. Αν έχει επιστρέψει, το Callout Studio το κρατά αντί για αυτό.",
-	"notice.settingsBackupFailed": "Η ανάκτηση ρυθμίσεων δεν μπόρεσε να συνεχίσει επειδή δεν ήταν δυνατή η αποθήκευση ενός αντιγράφου ασφαλείας. Ελέγξτε τον διαθέσιμο αποθηκευτικό χώρο και τα δικαιώματα εγγραφής, και δοκιμάστε ξανά.",
-	"notice.settingsNewerVersion": "Οι ρυθμίσεις του Callout Studio αποθηκεύτηκαν από νεότερη έκδοση του προσθέτου, οπότε δεν θα γραφτεί τίποτα σε αυτήν τη συσκευή μέχρι να το ενημερώσετε. Οι ρυθμίσεις σας είναι ασφαλείς — ενημερώστε το Callout Studio εδώ και επαναφορτώστε το Obsidian.",
+	"notice.settingsBackupFailed":
+		"Η ανάκτηση ρυθμίσεων δεν μπόρεσε να συνεχίσει επειδή δεν ήταν δυνατή η αποθήκευση ενός αντιγράφου ασφαλείας. Ελέγξτε τον διαθέσιμο αποθηκευτικό χώρο και τα δικαιώματα εγγραφής, και δοκιμάστε ξανά.",
+	"notice.settingsNewerVersion":
+		"Οι ρυθμίσεις του Callout Studio αποθηκεύτηκαν από νεότερη έκδοση του προσθέτου, οπότε δεν θα γραφτεί τίποτα σε αυτήν τη συσκευή μέχρι να το ενημερώσετε. Οι ρυθμίσεις σας είναι ασφαλείς — ενημερώστε το Callout Studio εδώ και επαναφορτώστε το Obsidian.",
 	"saveStatus.changed":
 		"Το αρχείο ρυθμίσεων άλλαξε ενώ το επεξεργαζόσασταν. Το πρόχειρό σας είναι ακόμη διαθέσιμο. Επιλέξτε Δοκιμάστε ξανά για να φορτώσετε τις εισερχόμενες ρυθμίσεις και μετά ελέγξτε το πρόχειρο και αποθηκεύστε ξανά.",
-	"saveStatus.missing": "Η αποθήκευση είναι σε παύση επειδή λείπει το αρχείο ρυθμίσεων. Αυτό μπορεί να συμβεί μετά από επανεγκατάσταση ή ενώ ο συγχρονισμός εξακολουθεί να εκτελείται. Ολοκληρώστε τον συγχρονισμό και δοκιμάστε ξανά. Για να αντικαταστήσετε σκόπιμα το αρχείο που λείπει, χρησιμοποιήστε το Δημιουργία νέου αρχείου ρυθμίσεων στις ρυθμίσεις του Callout Studio.",
+	"saveStatus.missing":
+		"Η αποθήκευση είναι σε παύση επειδή λείπει το αρχείο ρυθμίσεων. Αυτό μπορεί να συμβεί μετά από επανεγκατάσταση ή ενώ ο συγχρονισμός εξακολουθεί να εκτελείται. Ολοκληρώστε τον συγχρονισμό και δοκιμάστε ξανά. Για να αντικαταστήσετε σκόπιμα το αρχείο που λείπει, χρησιμοποιήστε το Δημιουργία νέου αρχείου ρυθμίσεων στις ρυθμίσεις του Callout Studio.",
 	"saveStatus.restoreSettings": "Επαναφορά αυτών των ρυθμίσεων",
 	"saveStatus.createSettingsFile": "Δημιουργία αρχείου ρυθμίσεων",
 	"saveStatus.checkAgain": "Έλεγχος ξανά",
-	"saveStatus.recoverInSettings": "Για να επαναφέρετε το αρχείο που λείπει σε αυτήν τη συσκευή, ανοίξτε τις ρυθμίσεις του Callout Studio. Πριν κλείσετε αυτόν τον επεξεργαστή, αντιγράψτε τυχόν μη αποθηκευμένες αλλαγές που θέλετε να κρατήσετε· δεν έχουν αποθηκευτεί.",
+	"saveStatus.recoverInSettings":
+		"Για να επαναφέρετε το αρχείο που λείπει σε αυτήν τη συσκευή, ανοίξτε τις ρυθμίσεις του Callout Studio. Πριν κλείσετε αυτόν τον επεξεργαστή, αντιγράψτε τυχόν μη αποθηκευμένες αλλαγές που θέλετε να κρατήσετε· δεν έχουν αποθηκευτεί.",
 	"saveStatus.openSettings": "Άνοιγμα ρυθμίσεων Callout Studio",
-	"notice.openSettingsFailed": "Δεν ήταν δυνατό το άνοιγμα των ρυθμίσεων του Callout Studio. Ανοίξτε Ρυθμίσεις → Callout Studio για να επιλέξετε τι θα κάνετε.",
-	"saveStatus.notesFailed": "Ο ορισμός του callout αποθηκεύτηκε, αλλά ορισμένες ενημερώσεις σημειώσεων δεν ολοκληρώθηκαν. Αφήστε αυτόν τον επεξεργαστή ανοιχτό και επιλέξτε Αποθήκευση για να δοκιμάσετε ξανά τις ημιτελείς ενημερώσεις.",
-	"saveStatus.recoveryRead": "Η αποθήκευση είναι σε παύση επειδή δεν είναι δυνατή η ανάγνωση του τοπικού αντιγράφου ανάκτησης. Το αρχείο ρυθμίσεών σας μπορεί να είναι ακόμη ανέπαφο. Ελέγξτε τον διαθέσιμο αποθηκευτικό χώρο και δοκιμάστε ξανά την ανάκτηση. Τα υπάρχοντα δεδομένα ανάκτησης δεν θα αντικατασταθούν.",
-	"saveStatus.recoveryWrite": "Δεν ήταν δυνατή η αποθήκευση του τοπικού αντιγράφου ανάκτησης. Ελέγξτε τον διαθέσιμο αποθηκευτικό χώρο και δοκιμάστε ξανά. Αφήστε το προσχέδιό σας ανοιχτό μέχρι να πετύχει η αποθήκευση.",
-	"saveStatus.retryFailed": "Η αποθήκευση εξακολουθεί να είναι μπλοκαρισμένη. Ελέγξτε την κατάσταση αποθήκευσης στις ρυθμίσεις του Callout Studio για την αιτία, και δοκιμάστε ξανά.",
-	"saveStatus.reviewDraft": "Οι εισερχόμενες ρυθμίσεις και οι έλεγχοι ανάκτησης ολοκληρώθηκαν. Το προσχέδιό σας παραμένει αμετάβλητο. Ελέγξτε το και αποθηκεύστε ξανά.",
-	"saveStatus.settingsArrived": "Οι υπάρχουσες ρυθμίσεις έφτασαν και φορτώθηκαν. Δεν δημιουργήθηκε αρχείο αντικατάστασης.",
-	"saveStatus.syncConflict": "Οι εισερχόμενες ρυθμίσεις έρχονται σε σύγκρουση με ένα callout που απαιτείται για ημιτελείς ενημερώσεις σημειώσεων. Το προσχέδιό σας και οι εκκρεμείς ενημερώσεις διατηρήθηκαν. Επιλύστε τη σύγκρουση ρυθμίσεων πριν δοκιμάσετε ξανά.",
+	"notice.openSettingsFailed":
+		"Δεν ήταν δυνατό το άνοιγμα των ρυθμίσεων του Callout Studio. Ανοίξτε Ρυθμίσεις → Callout Studio για να επιλέξετε τι θα κάνετε.",
+	"saveStatus.notesFailed":
+		"Ο ορισμός του callout αποθηκεύτηκε, αλλά ορισμένες ενημερώσεις σημειώσεων δεν ολοκληρώθηκαν. Αφήστε αυτόν τον επεξεργαστή ανοιχτό και επιλέξτε Αποθήκευση για να δοκιμάσετε ξανά τις ημιτελείς ενημερώσεις.",
+	"saveStatus.recoveryRead":
+		"Η αποθήκευση είναι σε παύση επειδή δεν είναι δυνατή η ανάγνωση του τοπικού αντιγράφου ανάκτησης. Το αρχείο ρυθμίσεών σας μπορεί να είναι ακόμη ανέπαφο. Ελέγξτε τον διαθέσιμο αποθηκευτικό χώρο και δοκιμάστε ξανά την ανάκτηση. Τα υπάρχοντα δεδομένα ανάκτησης δεν θα αντικατασταθούν.",
+	"saveStatus.recoveryWrite":
+		"Δεν ήταν δυνατή η αποθήκευση του τοπικού αντιγράφου ανάκτησης. Ελέγξτε τον διαθέσιμο αποθηκευτικό χώρο και δοκιμάστε ξανά. Αφήστε το προσχέδιό σας ανοιχτό μέχρι να πετύχει η αποθήκευση.",
+	"saveStatus.retryFailed":
+		"Η αποθήκευση εξακολουθεί να είναι μπλοκαρισμένη. Ελέγξτε την κατάσταση αποθήκευσης στις ρυθμίσεις του Callout Studio για την αιτία, και δοκιμάστε ξανά.",
+	"saveStatus.reviewDraft":
+		"Οι εισερχόμενες ρυθμίσεις και οι έλεγχοι ανάκτησης ολοκληρώθηκαν. Το προσχέδιό σας παραμένει αμετάβλητο. Ελέγξτε το και αποθηκεύστε ξανά.",
+	"saveStatus.settingsArrived":
+		"Οι υπάρχουσες ρυθμίσεις έφτασαν και φορτώθηκαν. Δεν δημιουργήθηκε αρχείο αντικατάστασης.",
+	"saveStatus.syncConflict":
+		"Οι εισερχόμενες ρυθμίσεις έρχονται σε σύγκρουση με ένα callout που απαιτείται για ημιτελείς ενημερώσεις σημειώσεων. Το προσχέδιό σας και οι εκκρεμείς ενημερώσεις διατηρήθηκαν. Επιλύστε τη σύγκρουση ρυθμίσεων πριν δοκιμάσετε ξανά.",
 	"saveStatus.titlePaused": "Η αποθήκευση είναι σε παύση",
 	"saveStatus.titleFailed": "Οι ρυθμίσεις δεν αποθηκεύτηκαν",
 	"saveStatus.tryAgain": "Δοκιμάστε ξανά",
 	"saveStatus.working": "Γίνεται επεξεργασία…",
-	"saveStatus.unreadable": "Η αποθήκευση είναι σε παύση επειδή το αρχείο ρυθμίσεων δεν μπορεί να αναγνωστεί με ασφάλεια. Ολοκληρώστε τον συγχρονισμό ή επαναφέρετε ένα έγκυρο αντίγραφο, και δοκιμάστε ξανά. Το υπάρχον αρχείο διατηρήθηκε.",
-	"saveStatus.write": "Δεν ήταν δυνατή η αποθήκευση του αρχείου ρυθμίσεων. Ελέγξτε τον διαθέσιμο αποθηκευτικό χώρο, τα δικαιώματα φακέλου και τον συγχρονισμό, και δοκιμάστε ξανά πριν κλείσετε το Obsidian.",
-	"saveStatus.writePermission": "Δεν ήταν δυνατή η αποθήκευση του αρχείου ρυθμίσεων επειδή ο αποθηκευτικός χώρος αρνήθηκε την πρόσβαση εγγραφής. Ελέγξτε ότι το θησαυροφυλάκιο και ο φάκελος του προσθέτου είναι εγγράψιμα, και δοκιμάστε ξανά.",
-	"saveStatus.writeSpace": "Δεν ήταν δυνατή η αποθήκευση του αρχείου ρυθμίσεων επειδή ο αποθηκευτικός χώρος είναι γεμάτος ή η ποσόστωσή του ξεπεράστηκε. Ελευθερώστε λίγο χώρο, και δοκιμάστε ξανά.",
-	"settings.readOnly": "Το Callout Studio δεν μπόρεσε να χρησιμοποιήσει το αρχείο ρυθμίσεών του κατά την εκκίνηση του Obsidian, οπότε τίποτα σε αυτήν τη σελίδα δεν αποθηκεύεται σε αυτήν τη συσκευή. Οι αλλαγές σας θα διαρκέσουν μέχρι να κλείσετε το Obsidian. Επαναφορτώστε το Obsidian μόλις επιστρέψει το αρχείο — αν συγχρονίζετε αυτό το θησαυροφυλάκιο, αφήστε πρώτα τον συγχρονισμό να ολοκληρωθεί.",
+	"saveStatus.unreadable":
+		"Η αποθήκευση είναι σε παύση επειδή το αρχείο ρυθμίσεων δεν μπορεί να αναγνωστεί με ασφάλεια. Ολοκληρώστε τον συγχρονισμό ή επαναφέρετε ένα έγκυρο αντίγραφο, και δοκιμάστε ξανά. Το υπάρχον αρχείο διατηρήθηκε.",
+	"saveStatus.write":
+		"Δεν ήταν δυνατή η αποθήκευση του αρχείου ρυθμίσεων. Ελέγξτε τον διαθέσιμο αποθηκευτικό χώρο, τα δικαιώματα φακέλου και τον συγχρονισμό, και δοκιμάστε ξανά πριν κλείσετε το Obsidian.",
+	"saveStatus.writePermission":
+		"Δεν ήταν δυνατή η αποθήκευση του αρχείου ρυθμίσεων επειδή ο αποθηκευτικός χώρος αρνήθηκε την πρόσβαση εγγραφής. Ελέγξτε ότι το θησαυροφυλάκιο και ο φάκελος του προσθέτου είναι εγγράψιμα, και δοκιμάστε ξανά.",
+	"saveStatus.writeSpace":
+		"Δεν ήταν δυνατή η αποθήκευση του αρχείου ρυθμίσεων επειδή ο αποθηκευτικός χώρος είναι γεμάτος ή η ποσόστωσή του ξεπεράστηκε. Ελευθερώστε λίγο χώρο, και δοκιμάστε ξανά.",
+	"settings.readOnly":
+		"Το Callout Studio δεν μπόρεσε να χρησιμοποιήσει το αρχείο ρυθμίσεών του κατά την εκκίνηση του Obsidian, οπότε τίποτα σε αυτήν τη σελίδα δεν αποθηκεύεται σε αυτήν τη συσκευή. Οι αλλαγές σας θα διαρκέσουν μέχρι να κλείσετε το Obsidian. Επαναφορτώστε το Obsidian μόλις επιστρέψει το αρχείο — αν συγχρονίζετε αυτό το θησαυροφυλάκιο, αφήστε πρώτα τον συγχρονισμό να ολοκληρωθεί.",
 
 	// Sync safety hardening
 	"saveStatus.diagnosis.unavailable":
 		"Αυτή η συσκευή δεν μπορεί να ανοίξει το αρχείο αυτή τη στιγμή. Ίσως εξακολουθεί να κατεβαίνει, το θησαυροφυλάκιο μπορεί να μην είναι διαθέσιμο εκτός σύνδεσης, ή ο αποθηκευτικός χώρος δεν ανταποκρίνεται. Το Callout Studio ελέγχει ξανά αυτόματα.",
-	"saveStatus.diagnosis.empty": "Το αρχείο είναι κενό, κάτι που συνήθως σημαίνει ότι ένας συγχρονισμός διακόπηκε. Αν μια άλλη συσκευή έχει ακόμα τις ρυθμίσεις σας, αφήστε τη να συγχρονιστεί. Διαφορετικά, αντικαταστήστε το αρχείο.",
-	"saveStatus.diagnosis.mergeMarkers": "Το αρχείο περιέχει μη επιλυμένους δείκτες σύγκρουσης συγχώνευσης, για παράδειγμα από το Git. Επιλύστε τη σύγκρουση στο εργαλείο Git σας, ή αντικαταστήστε το αρχείο.",
-	"saveStatus.diagnosis.damaged": "Το αρχείο είναι ελλιπές ή κατεστραμμένο, οπότε δεν μπορεί να αναγνωστεί ως ρυθμίσεις.",
+	"saveStatus.diagnosis.empty":
+		"Το αρχείο είναι κενό, κάτι που συνήθως σημαίνει ότι ένας συγχρονισμός διακόπηκε. Αν μια άλλη συσκευή έχει ακόμα τις ρυθμίσεις σας, αφήστε τη να συγχρονιστεί. Διαφορετικά, αντικαταστήστε το αρχείο.",
+	"saveStatus.diagnosis.mergeMarkers":
+		"Το αρχείο περιέχει μη επιλυμένους δείκτες σύγκρουσης συγχώνευσης, για παράδειγμα από το Git. Επιλύστε τη σύγκρουση στο εργαλείο Git σας, ή αντικαταστήστε το αρχείο.",
+	"saveStatus.diagnosis.damaged":
+		"Το αρχείο είναι ελλιπές ή κατεστραμμένο, οπότε δεν μπορεί να αναγνωστεί ως ρυθμίσεις.",
 	"saveStatus.diagnosis.combined":
 		"Η υπηρεσία συγχρονισμού σας συνδύασε δύο εκδόσεις του αρχείου, οπότε ο εσωτερικός του έλεγχος δεν ταιριάζει πια. Οι ρυθμίσεις μέσα σε αυτό είναι ανέπαφες, και η αντικατάσταση του αρχείου τις διατηρεί.",
-	"saveStatus.diagnosis.invalidEntries": "Το αρχείο περιέχει καταχωρίσεις που το Callout Studio δεν μπορεί να χρησιμοποιήσει, για παράδειγμα τον ίδιο τύπο callout καταχωρισμένο δύο φορές.",
+	"saveStatus.diagnosis.invalidEntries":
+		"Το αρχείο περιέχει καταχωρίσεις που το Callout Studio δεν μπορεί να χρησιμοποιήσει, για παράδειγμα τον ίδιο τύπο callout καταχωρισμένο δύο φορές.",
 	"saveStatus.replaceUnreadable": "Αντικατάσταση αρχείου ρυθμίσεων",
 	"saveStatus.discardRecoveryCopy": "Απόρριψη αντιγράφου ανάκτησης",
-	"saveStatus.calm.opening": "Πρώτα απ' όλα, πάρτε μια βαθιά ανάσα — όλα θα πάνε καλά.",
-	"saveStatus.calm.kept": "Οι σημειώσεις σας είναι ασφαλείς και τα callout σας βρίσκονται ακόμη εδώ, σε αυτήν τη συσκευή.",
+	"saveStatus.calm.opening":
+		"Πρώτα απ' όλα, πάρτε μια βαθιά ανάσα — όλα θα πάνε καλά.",
+	"saveStatus.calm.kept":
+		"Οι σημειώσεις σας είναι ασφαλείς και τα callout σας βρίσκονται ακόμη εδώ, σε αυτήν τη συσκευή.",
 	"saveStatus.calm.safe": "Οι σημειώσεις σας είναι ασφαλείς.",
 	"saveStatus.calm.pausedPage":
 		"Το Callout Studio απλώς σταμάτησε προσωρινά την αποθήκευση για να προστατεύσει τη ρύθμισή σας, γι' αυτό αυτή η σελίδα είναι προς το παρόν μόνο για ανάγνωση.",
-	"saveStatus.calm.paused": "Το Callout Studio απλώς σταμάτησε προσωρινά την αποθήκευση για να προστατεύσει τη ρύθμισή σας.",
+	"saveStatus.calm.paused":
+		"Το Callout Studio απλώς σταμάτησε προσωρινά την αποθήκευση για να προστατεύσει τη ρύθμισή σας.",
 	"saveStatus.explain.missing":
 		"Το Callout Studio δεν βρίσκει το αρχείο ρυθμίσεών του. Αυτό συμβαίνει συνήθως όσο η εφαρμογή συγχρονισμού το κατεβάζει ακόμη ή αφού το Callout Studio αφαιρέθηκε από άλλη συσκευή.",
 	"saveStatus.explain.stillMissing":
@@ -1222,7 +1360,8 @@ export const el: Record<string, string> = {
 		"Αν οι ρυθμίσεις σας δεν επιστρέψουν, επιλέξτε Επαναφορά αυτών των ρυθμίσεων για να κρατήσετε τα callout που βλέπετε εδώ.",
 	"saveStatus.guide.create":
 		"Αν οι ρυθμίσεις σας δεν επιστρέψουν, επιλέξτε Δημιουργία αρχείου ρυθμίσεων για να ξεκινήσει ξανά η αποθήκευση.",
-	"saveStatus.guide.recoveryRetry": "Βεβαιωθείτε ότι αυτή η συσκευή έχει λίγο ελεύθερο χώρο αποθήκευσης και μετά επιλέξτε Δοκιμάστε ξανά.",
+	"saveStatus.guide.recoveryRetry":
+		"Βεβαιωθείτε ότι αυτή η συσκευή έχει λίγο ελεύθερο χώρο αποθήκευσης και μετά επιλέξτε Δοκιμάστε ξανά.",
 	"saveStatus.guide.recoveryDiscard":
 		"Αν αυτό δεν βοηθήσει, επιλέξτε Απόρριψη αντιγράφου ανάκτησης. Πρώτα αποθηκεύεται ένα ακριβές αντίγραφο και το αρχείο ρυθμίσεών σας δεν αγγίζεται.",
 	"saveStatus.guide.newerVersion":
@@ -1230,23 +1369,35 @@ export const el: Record<string, string> = {
 	"saveStatus.missingNotice":
 		"Οι σημειώσεις σας είναι ασφαλείς. Το Callout Studio σταμάτησε προσωρινά την αποθήκευση επειδή δεν βρίσκει αυτήν τη στιγμή το αρχείο ρυθμίσεών του.",
 	"statusBar.paused": "Η αποθήκευση είναι σε παύση",
-	"statusBar.pausedTooltip": "Το Callout Studio δεν αποθηκεύει αλλαγές ρυθμίσεων. Κάντε κλικ για να δείτε γιατί.",
-	"statusBar.pausedNotice": "Το Callout Studio δεν αποθηκεύει αλλαγές ρυθμίσεων αυτή τη στιγμή.",
-	"saveStatus.resumed": "Η αποθήκευση λειτουργεί ξανά. Το Callout Studio αποθηκεύει ξανά τις αλλαγές στις ρυθμίσεις.",
-	"notice.replaceUnreadableUnavailable": "Το αρχείο ρυθμίσεων δεν μπορεί να αντικατασταθεί αυτή τη στιγμή: αλλάζει, ή αυτή η συσκευή δεν μπορεί να το διαβάσει. Δοκιμάστε ξανά σε λίγο.",
-	"notice.recoveryStorageUnavailable": "Ο αποθηκευτικός χώρος ανάκτησης αυτής της συσκευής δεν ανταποκρίνεται, οπότε το αντίγραφο δεν μπορεί να απορριφθεί. Επανεκκινήστε το Obsidian, και δοκιμάστε ξανά.",
+	"statusBar.pausedTooltip":
+		"Το Callout Studio δεν αποθηκεύει αλλαγές ρυθμίσεων. Κάντε κλικ για να δείτε γιατί.",
+	"statusBar.pausedNotice":
+		"Το Callout Studio δεν αποθηκεύει αλλαγές ρυθμίσεων αυτή τη στιγμή.",
+	"saveStatus.resumed":
+		"Η αποθήκευση λειτουργεί ξανά. Το Callout Studio αποθηκεύει ξανά τις αλλαγές στις ρυθμίσεις.",
+	"notice.replaceUnreadableUnavailable":
+		"Το αρχείο ρυθμίσεων δεν μπορεί να αντικατασταθεί αυτή τη στιγμή: αλλάζει, ή αυτή η συσκευή δεν μπορεί να το διαβάσει. Δοκιμάστε ξανά σε λίγο.",
+	"notice.recoveryStorageUnavailable":
+		"Ο αποθηκευτικός χώρος ανάκτησης αυτής της συσκευής δεν ανταποκρίνεται, οπότε το αντίγραφο δεν μπορεί να απορριφθεί. Επανεκκινήστε το Obsidian, και δοκιμάστε ξανά.",
 	"recovery.unreadable": "Δεν μπορεί να αναγνωστεί ως ρυθμίσεις",
 	"recovery.same": "Ίδιο με την τρέχουσα διαμόρφωσή σας",
 	"recovery.restore": "Επαναφορά",
-	"recovery.stale": "Δεν επαναφέρθηκε τίποτα: οι ρυθμίσεις σας άλλαξαν ή δεν μπόρεσαν να ελεγχθούν. Ανοίξτε ξανά αυτό το παράθυρο, και ελέγξτε τη λίστα.",
-	"notice.recoveryCopyStale": "Οι ρυθμίσεις σας αποθηκεύτηκαν, αλλά το αντίγραφο ανάκτησης αυτής της συσκευής δεν μπόρεσε να ενημερωθεί. Ελέγξτε τον διαθέσιμο αποθηκευτικό χώρο σε αυτήν τη συσκευή. Το Callout Studio δοκιμάζει ξανά με την επόμενη αλλαγή σας.",
-	"notice.blockedWhilePaused": "Η αποθήκευση είναι σε παύση, οπότε αυτή η αλλαγή δεν μπορεί να διατηρηθεί αυτή τη στιγμή. Επιλύστε πρώτα το πρόβλημα αποθήκευσης που εμφανίζεται στις ρυθμίσεις του Callout Studio.",
-	"welcome.syncNote": "Χρησιμοποιείτε ήδη το Callout Studio σε άλλη συσκευή; Αφήστε την υπηρεσία συγχρονισμού σας να ολοκληρωθεί πρώτα. Τα callouts και οι ρυθμίσεις σας θα εμφανιστούν εδώ μόλις φτάσουν.",
-	"settings.resetBackupFailed": "Δεν επαναφέρθηκε τίποτα: δεν ήταν δυνατή η αποθήκευση ενός αντιγράφου ασφαλείας της τρέχουσας διαμόρφωσής σας πρώτα. Ελέγξτε τον διαθέσιμο αποθηκευτικό χώρο, και δοκιμάστε ξανά.",
-	"settings.resetNotSaved": "Η επαναφορά εμφανίζεται, αλλά δεν μπόρεσε να αποθηκευτεί ακόμα, οπότε το αρχείο ρυθμίσεών σας εξακολουθεί να έχει την προηγούμενη διαμόρφωση. Ελέγξτε την κατάσταση αποθήκευσης στις ρυθμίσεις του Callout Studio.",
+	"recovery.stale":
+		"Δεν επαναφέρθηκε τίποτα: οι ρυθμίσεις σας άλλαξαν ή δεν μπόρεσαν να ελεγχθούν. Ανοίξτε ξανά αυτό το παράθυρο, και ελέγξτε τη λίστα.",
+	"notice.recoveryCopyStale":
+		"Οι ρυθμίσεις σας αποθηκεύτηκαν, αλλά το αντίγραφο ανάκτησης αυτής της συσκευής δεν μπόρεσε να ενημερωθεί. Ελέγξτε τον διαθέσιμο αποθηκευτικό χώρο σε αυτήν τη συσκευή. Το Callout Studio δοκιμάζει ξανά με την επόμενη αλλαγή σας.",
+	"notice.blockedWhilePaused":
+		"Η αποθήκευση είναι σε παύση, οπότε αυτή η αλλαγή δεν μπορεί να διατηρηθεί αυτή τη στιγμή. Επιλύστε πρώτα το πρόβλημα αποθήκευσης που εμφανίζεται στις ρυθμίσεις του Callout Studio.",
+	"welcome.syncNote":
+		"Χρησιμοποιείτε ήδη το Callout Studio σε άλλη συσκευή; Αφήστε την υπηρεσία συγχρονισμού σας να ολοκληρωθεί πρώτα. Τα callouts και οι ρυθμίσεις σας θα εμφανιστούν εδώ μόλις φτάσουν.",
+	"settings.resetBackupFailed":
+		"Δεν επαναφέρθηκε τίποτα: δεν ήταν δυνατή η αποθήκευση ενός αντιγράφου ασφαλείας της τρέχουσας διαμόρφωσής σας πρώτα. Ελέγξτε τον διαθέσιμο αποθηκευτικό χώρο, και δοκιμάστε ξανά.",
+	"settings.resetNotSaved":
+		"Η επαναφορά εμφανίζεται, αλλά δεν μπόρεσε να αποθηκευτεί ακόμα, οπότε το αρχείο ρυθμίσεών σας εξακολουθεί να έχει την προηγούμενη διαμόρφωση. Ελέγξτε την κατάσταση αποθήκευσης στις ρυθμίσεις του Callout Studio.",
 	"confirm.titleResetEverything": "Επαναφορά όλων",
 	"confirm.titleReplaceUnreadable": "Αντικατάσταση αρχείου ρυθμίσεων",
-	"confirm.replaceUnreadable": "Ένα ακριβές αντίγραφο του τρέχοντος αρχείου αποθηκεύεται πρώτα στον φάκελο αντιγράφων ασφαλείας του προσθέτου. Το αρχείο αντικαθίσταται στη συνέχεια με τη διαμόρφωση που εμφανίζεται εδώ, και η υπηρεσία συγχρονισμού σας τη στέλνει στις άλλες συσκευές σας.",
+	"confirm.replaceUnreadable":
+		"Ένα ακριβές αντίγραφο του τρέχοντος αρχείου αποθηκεύεται πρώτα στον φάκελο αντιγράφων ασφαλείας του προσθέτου. Το αρχείο αντικαθίσταται στη συνέχεια με τη διαμόρφωση που εμφανίζεται εδώ, και η υπηρεσία συγχρονισμού σας τη στέλνει στις άλλες συσκευές σας.",
 	"confirm.replaceUnreadableSalvage":
 		"Ένα ακριβές αντίγραφο του τρέχοντος αρχείου αποθηκεύεται πρώτα στον φάκελο αντιγράφων ασφαλείας του προσθέτου. Οι ρυθμίσεις μέσα σε αυτό συνδυάζονται με τη διαμόρφωση που εμφανίζεται εδώ, και το αρχείο ξαναγράφεται ώστε κάθε συσκευή να μπορεί να το διαβάσει ξανά.",
 	"confirm.titleDiscardRecoveryCopy": "Απόρριψη αντιγράφου ανάκτησης",
@@ -1254,19 +1405,25 @@ export const el: Record<string, string> = {
 		"Το αντίγραφο ανάκτησης αυτής της συσκευής δεν μπορεί να αναγνωστεί, οπότε η αποθήκευση είναι σε παύση σε αυτήν τη συσκευή. Ένα ακριβές αντίγραφό του αποθηκεύεται πρώτα στον φάκελο αντιγράφων ασφαλείας του προσθέτου. Στη συνέχεια αντικαθίσταται με τη διαμόρφωση που εμφανίζεται εδώ. Το αρχείο ρυθμίσεών σας δεν αλλάζει.",
 	"vault.undoRewrite": "Αναίρεση",
 	"vault.undoRestored": "Επαναφέρθηκαν {{count}} σημειώσεις.",
-	"vault.undoPartial": "Επαναφέρθηκαν {{count}} σημειώσεις. {{skipped}} σημειώσεις άλλαξαν μετά την επανεγγραφή, οπότε παρέμειναν όπως είναι.",
+	"vault.undoPartial":
+		"Επαναφέρθηκαν {{count}} σημειώσεις. {{skipped}} σημειώσεις άλλαξαν μετά την επανεγγραφή, οπότε παρέμειναν όπως είναι.",
 	"import.confirmTitle": "Εισαγωγή αντιγράφου ασφαλείας Callout Studio",
-	"import.confirmSummary": "Αυτό προσθέτει {{added}} τύπο(ους) callout, αντικαθιστά {{replaced}} υπάρχοντα με την έκδοση του αρχείου, και επαναφέρει {{settings}} ομάδα(ες) ρυθμίσεων από το αρχείο. Αποθηκεύεται πρώτα ένα αντίγραφο ασφαλείας της τρέχουσας διαμόρφωσής σας.",
+	"import.confirmSummary":
+		"Αυτό προσθέτει {{added}} τύπο(ους) callout, αντικαθιστά {{replaced}} υπάρχοντα με την έκδοση του αρχείου, και επαναφέρει {{settings}} ομάδα(ες) ρυθμίσεων από το αρχείο. Αποθηκεύεται πρώτα ένα αντίγραφο ασφαλείας της τρέχουσας διαμόρφωσής σας.",
 	"import.confirmAction": "Εισαγωγή",
-	"import.backupFailed": "Δεν έγινε εισαγωγή τίποτα: δεν ήταν δυνατή η αποθήκευση ενός αντιγράφου ασφαλείας της τρέχουσας διαμόρφωσής σας πρώτα. Ελέγξτε τον διαθέσιμο αποθηκευτικό χώρο, και δοκιμάστε ξανά.",
-	"import.notSaved": "Η εισαγωγή εμφανίζεται, αλλά δεν μπόρεσε να αποθηκευτεί ακόμα. Ελέγξτε την κατάσταση αποθήκευσης στις ρυθμίσεις του Callout Studio.",
+	"import.backupFailed":
+		"Δεν έγινε εισαγωγή τίποτα: δεν ήταν δυνατή η αποθήκευση ενός αντιγράφου ασφαλείας της τρέχουσας διαμόρφωσής σας πρώτα. Ελέγξτε τον διαθέσιμο αποθηκευτικό χώρο, και δοκιμάστε ξανά.",
+	"import.notSaved":
+		"Η εισαγωγή εμφανίζεται, αλλά δεν μπόρεσε να αποθηκευτεί ακόμα. Ελέγξτε την κατάσταση αποθήκευσης στις ρυθμίσεις του Callout Studio.",
 
-	"recovery.summaryCallouts": "{{callouts}} αποθηκευμένος(-οι) τύπος(-οι) callout",
+	"recovery.summaryCallouts":
+		"{{callouts}} αποθηκευμένος(-οι) τύπος(-οι) callout",
 	"recovery.summaryChanges": "{{count}} διαφορά(-ές) από τώρα",
 	"recovery.details.view": "Προβολή λεπτομερειών",
 	"recovery.details.changesTitle": "Τι άλλαξε",
 	"recovery.details.loading": "Δημιουργία της σύγκρισης πριν και μετά…",
-	"recovery.details.renderFailed": "Δεν ήταν δυνατή η εμφάνιση της σύγκρισης.",
+	"recovery.details.renderFailed":
+		"Δεν ήταν δυνατή η εμφάνιση της σύγκρισης.",
 	"recovery.details.count.changed": "Τροποποιημένα: {{count}}",
 	"recovery.details.count.added": "Προστέθηκαν: {{count}}",
 	"recovery.details.count.removed": "Αφαιρέθηκαν: {{count}}",
@@ -1274,12 +1431,14 @@ export const el: Record<string, string> = {
 	"recovery.details.calloutState.added": "Προστέθηκε",
 	"recovery.details.calloutState.removed": "Αφαιρέθηκε",
 	"recovery.details.onlySaved": "Δεν υπάρχει στις τρέχουσες ρυθμίσεις",
-	"recovery.details.willRemove": "Θα αφαιρεθεί κατά την επαναφορά αυτής της έκδοσης",
+	"recovery.details.willRemove":
+		"Θα αφαιρεθεί κατά την επαναφορά αυτής της έκδοσης",
 	"recovery.details.order": "Σειρά",
 	"recovery.details.unknownTime": "Δεν καταγράφηκε ο χρόνος αποθήκευσης",
 	"recovery.details.current": "Τρέχουσες ρυθμίσεις",
 	"recovery.details.restored": "Μετά την επαναφορά αυτής της έκδοσης",
-	"recovery.details.unreadable": "Αυτή η έκδοση του Callout Studio δεν μπορεί να ερμηνεύσει αυτό το αντίγραφο ως ρυθμίσεις που μπορούν να επαναφερθούν. Μπορεί να είναι κατεστραμμένο, μη διαθέσιμο ή να χρησιμοποιεί νεότερη μορφή. Δεν είναι διαθέσιμες σύγκριση ούτε αναφορά επαναφερθεισών ρυθμίσεων. Παρακάτω περιλαμβάνεται κάθε πρωτότυπο περιεχόμενο που ήταν δυνατό να διαβαστεί.",
+	"recovery.details.unreadable":
+		"Αυτή η έκδοση του Callout Studio δεν μπορεί να ερμηνεύσει αυτό το αντίγραφο ως ρυθμίσεις που μπορούν να επαναφερθούν. Μπορεί να είναι κατεστραμμένο, μη διαθέσιμο ή να χρησιμοποιεί νεότερη μορφή. Δεν είναι διαθέσιμες σύγκριση ούτε αναφορά επαναφερθεισών ρυθμίσεων. Παρακάτω περιλαμβάνεται κάθε πρωτότυπο περιεχόμενο που ήταν δυνατό να διαβαστεί.",
 	"recovery.details.null": "Καμία τιμή (null)",
 	"recovery.details.yes": "Ναι",
 	"recovery.details.no": "Όχι",
@@ -1294,14 +1453,17 @@ export const el: Record<string, string> = {
 	"recovery.details.field.value": "Τιμή ή όνομα εικονιδίου",
 	"recovery.details.field.style": "Στιλ",
 	"recovery.details.field.weight": "Πάχος εικονιδίου",
-	"recovery.details.field.recolor": "Χρήση του χρώματος του callout για την εικόνα",
+	"recovery.details.field.recolor":
+		"Χρήση του χρώματος του callout για την εικόνα",
 	"recovery.details.field.hideIcon": "Απόκρυψη εικονιδίου",
 	"recovery.details.field.colorLight": "Χρώμα έμφασης σε φωτεινή λειτουργία",
 	"recovery.details.field.colorDark": "Χρώμα έμφασης σε σκοτεινή λειτουργία",
 	"recovery.details.field.bgColorLight": "Χρώμα φόντου σε φωτεινή λειτουργία",
 	"recovery.details.field.bgColorDark": "Χρώμα φόντου σε σκοτεινή λειτουργία",
-	"recovery.details.field.textColorLight": "Χρώμα κειμένου σε φωτεινή λειτουργία",
-	"recovery.details.field.textColorDark": "Χρώμα κειμένου σε σκοτεινή λειτουργία",
+	"recovery.details.field.textColorLight":
+		"Χρώμα κειμένου σε φωτεινή λειτουργία",
+	"recovery.details.field.textColorDark":
+		"Χρώμα κειμένου σε σκοτεινή λειτουργία",
 	"recovery.details.field.bgGradient": "Διαβάθμιση φόντου",
 	"recovery.details.field.transparentBg": "Διαφανές φόντο",
 	"recovery.details.field.foldable": "Αναδιπλούμενο",
@@ -1323,21 +1485,26 @@ export const el: Record<string, string> = {
 	"recovery.details.field.globalStyle": "Καθολικό στιλ callout",
 	"recovery.details.field.contextMenu": "Μενού περιβάλλοντος",
 	"recovery.details.field.autocomplete": "Αυτόματη συμπλήρωση",
-	"recovery.details.field.iconSources": "Πηγές εικονιδίων και προτιμήσεις επιλογέα",
+	"recovery.details.field.iconSources":
+		"Πηγές εικονιδίων και προτιμήσεις επιλογέα",
 	"recovery.details.field.iconLibraries": "Βιβλιοθήκες εικονιδίων",
 	"recovery.details.field.libraryOrder": "Σειρά βιβλιοθηκών",
 	"recovery.details.field.hiddenLibraries": "Κρυφές βιβλιοθήκες",
 	"recovery.details.field.headingCallouts": "Callout επικεφαλίδων",
 	"recovery.details.field.inlineCallouts": "Ενσωματωμένα callout",
-	"recovery.details.field.fallbackCalloutId": "Αναγνωριστικό εφεδρικού callout",
+	"recovery.details.field.fallbackCalloutId":
+		"Αναγνωριστικό εφεδρικού callout",
 	"recovery.details.field.language": "Γλώσσα διεπαφής",
 	"recovery.details.field.customPalettes": "Αποθηκευμένες παλέτες χρωμάτων",
 	"recovery.details.field.userImages": "Οι εικόνες σας",
 	"recovery.details.field.customCommands": "Προσαρμοσμένες εντολές",
-	"recovery.details.field.disabledFixedCommands": "Απενεργοποιημένες ενσωματωμένες εντολές",
-	"recovery.details.field.quickInsertSource": "Απομνημονευμένη πηγή γρήγορης εισαγωγής",
+	"recovery.details.field.disabledFixedCommands":
+		"Απενεργοποιημένες ενσωματωμένες εντολές",
+	"recovery.details.field.quickInsertSource":
+		"Απομνημονευμένη πηγή γρήγορης εισαγωγής",
 	"recovery.details.field.welcomeSeen": "Η οθόνη υποδοχής έχει προβληθεί",
-	"recovery.details.field.competitorImportBannerHandled": "Η προτροπή εισαγωγής κατά την πρώτη εγκατάσταση έχει διεκπεραιωθεί",
+	"recovery.details.field.competitorImportBannerHandled":
+		"Η προτροπή εισαγωγής κατά την πρώτη εγκατάσταση έχει διεκπεραιωθεί",
 	"recovery.details.field.iconSvgCache": "Αποθηκευμένα σχέδια εικονιδίων",
 	"recovery.details.field.enabled": "Ενεργοποιημένο",
 	"recovery.details.field.items": "Στοιχεία",
@@ -1346,7 +1513,8 @@ export const el: Record<string, string> = {
 	"recovery.details.field.height": "Ύψος",
 	"recovery.details.field.monochrome": "Μονόχρωμο",
 	"recovery.details.field.rev": "Αναθεώρηση εικόνας",
-	"recovery.details.field.addedAt": "Προστέθηκε στις (χιλιοστά του δευτερολέπτου Unix)",
+	"recovery.details.field.addedAt":
+		"Προστέθηκε στις (χιλιοστά του δευτερολέπτου Unix)",
 	"recovery.details.field.pack": "Πακέτο εικονιδίων",
 	"recovery.details.field.variant": "Παραλλαγή εικονιδίου",
 	"recovery.details.field.calloutId": "Αναγνωριστικό callout",
@@ -1363,36 +1531,50 @@ export const el: Record<string, string> = {
 	"recovery.details.field.left": "Αριστερά",
 	"recovery.details.field.titleScale": "Κλίμακα κειμένου τίτλου",
 	"recovery.details.field.contentScale": "Κλίμακα κειμένου περιεχομένου",
-	"recovery.details.field.alignContentWithTitle": "Στοίχιση περιεχομένου με τον τίτλο",
+	"recovery.details.field.alignContentWithTitle":
+		"Στοίχιση περιεχομένου με τον τίτλο",
 	"recovery.details.field.fontScale": "Κλίμακα κειμένου",
 	"recovery.details.field.paddingTop": "Εσωτερικό περιθώριο επάνω",
 	"recovery.details.field.paddingBottom": "Εσωτερικό περιθώριο κάτω",
 	"recovery.details.field.marginTop": "Απόσταση πάνω από την επικεφαλίδα",
-	"recovery.details.field.refCleanTitles": "Καθαρισμός τίτλων επικεφαλίδων στις αναφορές",
-	"recovery.details.field.refShowIcon": "Εμφάνιση εικονιδίων επικεφαλίδων στις αναφορές",
+	"recovery.details.field.refCleanTitles":
+		"Καθαρισμός τίτλων επικεφαλίδων στις αναφορές",
+	"recovery.details.field.refShowIcon":
+		"Εμφάνιση εικονιδίων επικεφαλίδων στις αναφορές",
 	"recovery.details.field.showFoldArrow": "Εμφάνιση βέλους αναδίπλωσης",
-	"recovery.details.field.allowContent": "Να επιτρέπεται ενσωματωμένο περιεχόμενο",
+	"recovery.details.field.allowContent":
+		"Να επιτρέπεται ενσωματωμένο περιεχόμενο",
 	"recovery.details.field.angleDeg": "Γωνία διαβάθμισης σε μοίρες",
-	"recovery.details.field.toColorLight": "Τελικό χρώμα διαβάθμισης σε φωτεινή λειτουργία",
-	"recovery.details.field.toColorDark": "Τελικό χρώμα διαβάθμισης σε σκοτεινή λειτουργία",
+	"recovery.details.field.toColorLight":
+		"Τελικό χρώμα διαβάθμισης σε φωτεινή λειτουργία",
+	"recovery.details.field.toColorDark":
+		"Τελικό χρώμα διαβάθμισης σε σκοτεινή λειτουργία",
 	"recovery.details.field.textGradient": "Διαβάθμιση στο κείμενο τίτλου",
-	"recovery.details.field.textToColorLight": "Τελικό χρώμα διαβάθμισης κειμένου σε φωτεινή λειτουργία",
-	"recovery.details.field.textToColorDark": "Τελικό χρώμα διαβάθμισης κειμένου σε σκοτεινή λειτουργία",
+	"recovery.details.field.textToColorLight":
+		"Τελικό χρώμα διαβάθμισης κειμένου σε φωτεινή λειτουργία",
+	"recovery.details.field.textToColorDark":
+		"Τελικό χρώμα διαβάθμισης κειμένου σε σκοτεινή λειτουργία",
 	"recovery.details.field.bgIntensity": "Ένταση φόντου",
 	"recovery.details.field.baseColor": "Βασικό χρώμα",
 	"recovery.details.field.colorMode": "Λειτουργία επεξεργασίας χρωμάτων",
-	"recovery.details.field.materialStyleDefault": "Προεπιλεγμένο στιλ Material",
-	"recovery.details.field.materialWeightDefault": "Προεπιλεγμένο πάχος Material",
+	"recovery.details.field.materialStyleDefault":
+		"Προεπιλεγμένο στιλ Material",
+	"recovery.details.field.materialWeightDefault":
+		"Προεπιλεγμένο πάχος Material",
 	"recovery.details.field.faStyleDefault": "Προεπιλεγμένο στιλ Font Awesome",
 	"recovery.details.field.tablerStyleDefault": "Προεπιλεγμένο στιλ Tabler",
-	"recovery.details.field.lastMaterialCategory": "Απομνημονευμένη κατηγορία Material",
+	"recovery.details.field.lastMaterialCategory":
+		"Απομνημονευμένη κατηγορία Material",
 	"recovery.details.field.lastCategory": "Απομνημονευμένες κατηγορίες",
-	"recovery.details.field.lastEmojiSkinTone": "Απομνημονευμένος τόνος δέρματος emoji",
-	"recovery.details.field.iconAdjustRole": "Θέση και μέγεθος εικονιδίου ({{role}})",
+	"recovery.details.field.lastEmojiSkinTone":
+		"Απομνημονευμένος τόνος δέρματος emoji",
+	"recovery.details.field.iconAdjustRole":
+		"Θέση και μέγεθος εικονιδίου ({{role}})",
 	"recovery.details.field.iconArtwork": "Σχέδιο εικονιδίου",
 	"recovery.details.field.artwork": "Σχέδιο",
 	"recovery.details.previewBody": "Περιεχόμενο callout",
-	"recovery.details.previewUnavailable": "Η προεπισκόπηση δεν είναι διαθέσιμη",
+	"recovery.details.previewUnavailable":
+		"Η προεπισκόπηση δεν είναι διαθέσιμη",
 	"recovery.details.column.number": "Α/Α",
 	"recovery.details.column.item": "Στοιχείο",
 	"recovery.details.section.iconSources": "Προεπιλογές επιλογέα εικονιδίων",
@@ -1417,7 +1599,8 @@ export const el: Record<string, string> = {
 	"recovery.details.value.percent": "{{value}}%",
 	"recovery.details.value.headingLevel": "H{{value}}",
 	"recovery.details.value.angle": "Γωνία {{value}}°",
-	"recovery.details.value.textGradient": "το κείμενο του τίτλου χρησιμοποιεί τη διαβάθμιση",
+	"recovery.details.value.textGradient":
+		"το κείμενο του τίτλου χρησιμοποιεί τη διαβάθμιση",
 	"recovery.details.value.lightMode": "Φωτεινή λειτουργία",
 	"recovery.details.value.darkMode": "Σκοτεινή λειτουργία",
 	"recovery.details.value.noBorders": "Χωρίς περιγράμματα",
@@ -1426,8 +1609,10 @@ export const el: Record<string, string> = {
 	"recovery.details.value.offsetY": "Κάθετα {{value}} px",
 	"recovery.details.value.size": "Κλίμακα {{value}}×",
 	"recovery.details.value.followsColor": "Ακολουθεί το χρώμα του callout",
-	"recovery.details.value.paletteMissing": "Αυτή η παλέτα δεν υπάρχει σε αυτές τις ρυθμίσεις",
-	"recovery.details.value.calloutMissing": "Αυτός ο τύπος callout δεν υπάρχει σε αυτές τις ρυθμίσεις",
+	"recovery.details.value.paletteMissing":
+		"Αυτή η παλέτα δεν υπάρχει σε αυτές τις ρυθμίσεις",
+	"recovery.details.value.calloutMissing":
+		"Αυτός ο τύπος callout δεν υπάρχει σε αυτές τις ρυθμίσεις",
 	"recovery.details.value.obsidianDefault": "Προεπιλογή του Obsidian",
 	"recovery.details.value.artwork": "Αποθηκευμένο σχέδιο, {{size}} KB",
 	"recovery.details.value.longText": "{{count}} χαρακτήρες συνολικά",
@@ -1447,11 +1632,14 @@ export const el: Record<string, string> = {
 	"recovery.delete": "Διαγραφή",
 
 	// Version history
-	"saveStatus.guide.versions": "Μόλις λειτουργήσει ξανά η αποθήκευση, μπορείτε να επαναφέρετε και μια παλαιότερη έκδοση από το ιστορικό εκδόσεων.",
+	"saveStatus.guide.versions":
+		"Μόλις λειτουργήσει ξανά η αποθήκευση, μπορείτε να επαναφέρετε και μια παλαιότερη έκδοση από το ιστορικό εκδόσεων.",
 	"saveStatus.goToVersions": "Μετάβαση στο ιστορικό εκδόσεων",
 	"versions.title": "Ιστορικό εκδόσεων",
-	"versions.intro": "Το Callout Studio αποθηκεύει αυτόματα εκδόσεις της διαμόρφωσής σας.\nΟι παλιότερες διαγράφονται σταδιακά.\nΗ επαναφορά μιας έκδοσης αντικαθιστά την τρέχουσα διαμόρφωση σε κάθε συγχρονισμένη συσκευή.",
-	"versions.pausedHint": "Η αποθήκευση έχει παύσει, οπότε η επαναφορά δεν είναι διαθέσιμη. Μπορείτε ακόμα να συγκρίνετε και να διαγράψετε εκδόσεις.",
+	"versions.intro":
+		"Το Callout Studio αποθηκεύει αυτόματα εκδόσεις της διαμόρφωσής σας.\nΟι παλιότερες διαγράφονται σταδιακά.\nΗ επαναφορά μιας έκδοσης αντικαθιστά την τρέχουσα διαμόρφωση σε κάθε συγχρονισμένη συσκευή.",
+	"versions.pausedHint":
+		"Η αποθήκευση έχει παύσει, οπότε η επαναφορά δεν είναι διαθέσιμη. Μπορείτε ακόμα να συγκρίνετε και να διαγράψετε εκδόσεις.",
 	"versions.loading": "Αναζήτηση εκδόσεων…",
 	"versions.empty": "Δεν βρέθηκαν εκδόσεις.",
 	"versions.dayWithDate": "{{date}} ({{relative}})",
@@ -1465,27 +1653,39 @@ export const el: Record<string, string> = {
 	"versions.reason.beforeRestore": "Πριν από επαναφορά έκδοσης",
 	"versions.reason.beforeReset": "Πριν από την Επαναφορά όλων",
 	"versions.reason.beforeImport": "Πριν από εισαγωγή",
-	"versions.reason.beforeRepair": "Πριν από την επιδιόρθωση του αρχείου ρυθμίσεων",
+	"versions.reason.beforeRepair":
+		"Πριν από την επιδιόρθωση του αρχείου ρυθμίσεων",
 	"versions.restoreTitle": "Επαναφορά αυτής της έκδοσης",
-	"versions.restoreBody": "Η τρέχουσα διαμόρφωσή σας αντικαθίσταται με την «{{name}}» από {{when}} ({{count}} διαφορές).\nΗ τρέχουσα διαμόρφωση αποθηκεύεται πρώτα ως έκδοση, ώστε να μπορείτε να επιστρέψετε σε αυτή.\nΗ υπηρεσία συγχρονισμού στέλνει έπειτα την επαναφερμένη διαμόρφωση στις άλλες συσκευές σας.",
-	"versions.restoreSame": "Αυτή η έκδοση είναι ίδια με την τρέχουσα διαμόρφωση, οπότε δεν υπάρχει κάτι για επαναφορά.",
+	"versions.restoreBody":
+		"Η τρέχουσα διαμόρφωσή σας αντικαθίσταται με την «{{name}}» από {{when}} ({{count}} διαφορές).\nΗ τρέχουσα διαμόρφωση αποθηκεύεται πρώτα ως έκδοση, ώστε να μπορείτε να επιστρέψετε σε αυτή.\nΗ υπηρεσία συγχρονισμού στέλνει έπειτα την επαναφερμένη διαμόρφωση στις άλλες συσκευές σας.",
+	"versions.restoreSame":
+		"Αυτή η έκδοση είναι ίδια με την τρέχουσα διαμόρφωση, οπότε δεν υπάρχει κάτι για επαναφορά.",
 	"versions.restored": "Επαναφέρθηκε η «{{name}}» από {{when}}.",
-	"versions.backupFailed": "Δεν επαναφέρθηκε τίποτα: η τρέχουσα διαμόρφωση δεν αποθηκεύτηκε πρώτα ως έκδοση. Ελέγξτε τον διαθέσιμο χώρο και δοκιμάστε ξανά.",
+	"versions.backupFailed":
+		"Δεν επαναφέρθηκε τίποτα: η τρέχουσα διαμόρφωση δεν αποθηκεύτηκε πρώτα ως έκδοση. Ελέγξτε τον διαθέσιμο χώρο και δοκιμάστε ξανά.",
 	"versions.restoreFailed": "Η έκδοση δεν επαναφέρθηκε. Δεν άλλαξε τίποτα.",
 	"versions.deleteTitle": "Διαγραφή αυτής της έκδοσης",
-	"versions.deleteAvailableBody": "Η έκδοση «{{name}}» από {{when}} και όλα τα διαθέσιμα αντίγραφά της θα διαγραφούν οριστικά.",
-	"versions.deleteSyncedFiles": "Η διαγραφή αυτών των αρχείων ενδέχεται να συγχρονιστεί με τις άλλες συσκευές σας. Τα τοπικά αντίγραφα σε αυτές τις συσκευές ενδέχεται να παραμείνουν.",
-	"versions.deleteFinal": "Αυτό δεν αναιρείται. Η τρέχουσα διαμόρφωση δεν επηρεάζεται.",
+	"versions.deleteAvailableBody":
+		"Η έκδοση «{{name}}» από {{when}} και όλα τα διαθέσιμα αντίγραφά της θα διαγραφούν οριστικά.",
+	"versions.deleteSyncedFiles":
+		"Η διαγραφή αυτών των αρχείων ενδέχεται να συγχρονιστεί με τις άλλες συσκευές σας. Τα τοπικά αντίγραφα σε αυτές τις συσκευές ενδέχεται να παραμείνουν.",
+	"versions.deleteFinal":
+		"Αυτό δεν αναιρείται. Η τρέχουσα διαμόρφωση δεν επηρεάζεται.",
 	"versions.deleted": "Διαγράφηκε η «{{name}}» από {{when}}.",
-	"versions.deleteFailed": "Ορισμένα αντίγραφα αυτής της έκδοσης δεν διαγράφηκαν. Η λίστα δείχνει πλέον όσα απομένουν.",
+	"versions.deleteFailed":
+		"Ορισμένα αντίγραφα αυτής της έκδοσης δεν διαγράφηκαν. Η λίστα δείχνει πλέον όσα απομένουν.",
 	"versions.details.title": "Λεπτομέρειες έκδοσης",
-	"versions.details.difference": "{{count}} διαφορά από τις τρέχουσες ρυθμίσεις σας",
-	"versions.details.differences": "{{count}} διαφορές από τις τρέχουσες ρυθμίσεις σας",
+	"versions.details.difference":
+		"{{count}} διαφορά από τις τρέχουσες ρυθμίσεις σας",
+	"versions.details.differences":
+		"{{count}} διαφορές από τις τρέχουσες ρυθμίσεις σας",
 	"versions.details.comparisonUnavailable": "Η σύγκριση δεν είναι διαθέσιμη",
-	"notice.unsavedChangesKept": "Κάποιες αλλαγές σε αυτή τη συσκευή δεν είχαν ακόμα αποθηκευτεί και αντικαταστάθηκαν από νεότερες ρυθμίσεις άλλης συσκευής. Η έκδοσή σας αποθηκεύτηκε πρώτα: ανοίξτε το ιστορικό εκδόσεων στις ρυθμίσεις του Callout Studio για να την ανακτήσετε.",
+	"notice.unsavedChangesKept":
+		"Κάποιες αλλαγές σε αυτή τη συσκευή δεν είχαν ακόμα αποθηκευτεί και αντικαταστάθηκαν από νεότερες ρυθμίσεις άλλης συσκευής. Η έκδοσή σας αποθηκεύτηκε πρώτα: ανοίξτε το ιστορικό εκδόσεων στις ρυθμίσεις του Callout Studio για να την ανακτήσετε.",
 	"settings.versionHistory": "Ιστορικό εκδόσεων",
 	"settings.versions": "Παλαιότερες εκδόσεις",
-	"settings.versionsDesc": "Το Callout Studio αποθηκεύει αυτόματα εκδόσεις της διαμόρφωσής σας.\nΣυγκρίνετέ τις ή επιστρέψτε σε μία από αυτές.",
+	"settings.versionsDesc":
+		"Το Callout Studio αποθηκεύει αυτόματα εκδόσεις της διαμόρφωσής σας.\nΣυγκρίνετέ τις ή επιστρέψτε σε μία από αυτές.",
 	"settings.versionsButton": "Προβολή εκδόσεων",
 	"noteChanges.callouts": "{{count}} callouts",
 	"noteChanges.calloutsOne": "1 callout",
@@ -1493,21 +1693,33 @@ export const el: Record<string, string> = {
 	"noteChanges.notesOne": "1 σημείωση",
 	"noteChanges.askCallout": "Τι να γίνει με εκείνο το callout;",
 	"noteChanges.askCallouts": "Τι να γίνει με εκείνα τα callouts;",
-	"noteChanges.changeRenamed": "Αλλάξατε το εμφανιζόμενο όνομα από «{{old}}» σε «{{new}}», οπότε το κύριο αναγνωριστικό αλλάζει από «{{oldId}}» σε «{{newId}}».",
-	"noteChanges.changeMainId": "Το κύριο αναγνωριστικό αλλάζει από «{{oldId}}» σε «{{newId}}».",
-	"noteChanges.changeName": "Αλλάξατε το εμφανιζόμενο όνομα από «{{old}}» σε «{{new}}».",
+	"noteChanges.changeRenamed":
+		"Αλλάξατε το εμφανιζόμενο όνομα από «{{old}}» σε «{{new}}», οπότε το κύριο αναγνωριστικό αλλάζει από «{{oldId}}» σε «{{newId}}».",
+	"noteChanges.changeMainId":
+		"Το κύριο αναγνωριστικό αλλάζει από «{{oldId}}» σε «{{newId}}».",
+	"noteChanges.changeName":
+		"Αλλάξατε το εμφανιζόμενο όνομα από «{{old}}» σε «{{new}}».",
 	"noteChanges.changeRemoved": "Αφαιρέσατε το ID «{{id}}».",
 	"noteChanges.changeRemovedMany": "Αφαιρέσατε αυτά τα ID: {{ids}}.",
-	"noteChanges.changeResetRemoved": "Η επαναφορά στις προεπιλογές αφαιρεί το ID «{{id}}» που προσθέσατε.",
-	"noteChanges.changeResetRemovedMany": "Η επαναφορά στις προεπιλογές αφαιρεί τα ID που προσθέσατε: {{ids}}.",
-	"noteChanges.changeFold": "Αλλάξατε τον τρόπο που διπλώνει αυτό το callout.",
+	"noteChanges.changeResetRemoved":
+		"Η επαναφορά στις προεπιλογές αφαιρεί το ID «{{id}}» που προσθέσατε.",
+	"noteChanges.changeResetRemovedMany":
+		"Η επαναφορά στις προεπιλογές αφαιρεί τα ID που προσθέσατε: {{ids}}.",
+	"noteChanges.changeFold":
+		"Αλλάξατε τον τρόπο που διπλώνει αυτό το callout.",
 	"noteChanges.affects": "Αυτό επηρεάζει {{callouts}} σε {{notes}}.",
-	"noteChanges.affectsUnknown": "Ορισμένες από τις σημειώσεις σας ίσως επηρεάζονται.",
-	"noteChanges.leaveManyDesc": "Κρατούν τα παλιά τους ID και επιστρέφουν στο προεπιλεγμένο στυλ.",
-	"noteChanges.rewriteManyDesc": "Κάθε παλιό ID στις σημειώσεις σας γίνεται [!{{to}}].",
+	"noteChanges.affectsUnknown":
+		"Ορισμένες από τις σημειώσεις σας ίσως επηρεάζονται.",
+	"noteChanges.leaveManyDesc":
+		"Κρατούν τα παλιά τους ID και επιστρέφουν στο προεπιλεγμένο στυλ.",
+	"noteChanges.rewriteManyDesc":
+		"Κάθε παλιό ID στις σημειώσεις σας γίνεται [!{{to}}].",
 	"noteChanges.changeToIdLabel": "ID στο οποίο θα αλλάξουν",
-	"noteChanges.rewriteDesc": "Κάθε [!{{id}}] στις σημειώσεις σας γίνεται [!{{to}}].",
-	"noteChanges.renameFollowDesc": "Κάθε [!{{oldId}}] στις σημειώσεις σας γίνεται [!{{newId}}] και οι τίτλοι που γράφουν «{{old}}» γίνονται «{{new}}».",
-	"noteChanges.titlesChangeDesc": "Οι τίτλοι που γράφουν «{{old}}» γίνονται «{{new}}».",
+	"noteChanges.rewriteDesc":
+		"Κάθε [!{{id}}] στις σημειώσεις σας γίνεται [!{{to}}].",
+	"noteChanges.renameFollowDesc":
+		"Κάθε [!{{oldId}}] στις σημειώσεις σας γίνεται [!{{newId}}] και οι τίτλοι που γράφουν «{{old}}» γίνονται «{{new}}».",
+	"noteChanges.titlesChangeDesc":
+		"Οι τίτλοι που γράφουν «{{old}}» γίνονται «{{new}}».",
 	"noteChanges.foldChangeDesc": "Το σημάδι τους + ή - αλλάζει ανάλογα.",
 };

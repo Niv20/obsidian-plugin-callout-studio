@@ -258,6 +258,7 @@ export const es: Record<string, string> = {
 	"settings.resetItemContextMenu": "Menú contextual (clic derecho)",
 	"settings.resetItemHeading": "Ajustes de callouts de encabezado",
 	"settings.resetItemInline": "Ajustes de callouts en línea",
+	"settings.resetItemThemeCalloutStyles": "Estilos de callout de su tema",
 	"settings.resetItemFallback": "Estilo de respaldo",
 	"settings.resetItemIconLibraries": "Orden de las bibliotecas de iconos y bibliotecas ocultas",
 	"settings.resetAllConfirmAfter": "Tranquilo: antes de restablecer, guardamos una copia de seguridad de tu configuración actual. Puedes restaurarla en cualquier momento desde la sección Copias de seguridad de los ajustes.\nSi usas un servicio de sincronización, el restablecimiento también podría llegar a tus otros dispositivos.",
@@ -757,6 +758,9 @@ export const es: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Ajuste el borde y la forma de cada callout en línea de su bóveda.",
 	"settings.globalSettingsCustomize": "Personalizar",
+	"settings.themeCalloutStyles": "Usar los estilos de callout de su tema",
+	"settings.themeCalloutStylesDesc":
+		"Activado: los callouts que su tema estiliza conservan el aspecto de su tema.\nDesactivado: Callout Studio dibuja todos los callouts y los estilos de callout de su tema quedan desactivados.",
 	"settings.calloutTypeRegular": "Callout de bloque",
 	"settings.calloutTypeHeading": "Callout de encabezado",
 	"settings.calloutTypeInline": "Callout en línea",
@@ -844,6 +848,8 @@ export const es: Record<string, string> = {
 	"portable.roleLink": "Enlace a encabezado",
 	"portable.convertSelected": "Convertir seleccionados",
 	"portable.selectionSummary": "{{selected}} de {{total}} reemplazos seleccionados · {{links}} enlaces a encabezados por actualizar",
+	"portable.selectionSummaryNoLinks":
+		"{{selected}} de {{total}} reemplazos seleccionados",
 	"portable.selectionConflict": "Esa elección haría que los enlaces a encabezados fueran ambiguos. Se ha conservado tu selección anterior.",
 	"portable.selectAll": "Seleccionar todo",
 	"portable.selectNone": "Deseleccionar todo",

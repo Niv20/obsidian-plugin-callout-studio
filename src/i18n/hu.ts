@@ -254,6 +254,7 @@ export const hu: Record<string, string> = {
 	"settings.resetItemContextMenu": "Jobb gombos menü",
 	"settings.resetItemHeading": "Címsor-callout beállításai",
 	"settings.resetItemInline": "Soron belüli callout beállításai",
+	"settings.resetItemThemeCalloutStyles": "A téma callout-stílusai",
 	"settings.resetItemFallback": "Tartalék stílus",
 	"settings.resetItemIconLibraries": "Az ikonkönyvtárak sorrendje és a rejtett könyvtárak",
 	"settings.resetAllConfirmAfter": "Ne aggódjon: a visszaállítás előtt biztonsági mentést készítünk a jelenlegi beállításairól. Bármikor visszaállíthatja a Beállítások Biztonsági mentések szakaszából.\nHa szinkronizálási szolgáltatást használ, a visszaállítás eljuthat a többi eszközére is.",
@@ -756,6 +757,9 @@ export const hu: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Állítsa be a tárában lévő összes beágyazott callout szegélyét és alakját.",
 	"settings.globalSettingsCustomize": "Testreszabás",
+	"settings.themeCalloutStyles": "A téma callout-stílusainak használata",
+	"settings.themeCalloutStylesDesc":
+		"Be: a témája által formázott callout-ok megtartják a téma megjelenését.\nKi: a Callout Studio minden callout-ot maga rajzol meg, és a témája callout-stílusai ki vannak kapcsolva.",
 	"settings.calloutTypeRegular": "Blokk callout",
 	"settings.calloutTypeHeading": "Címsor callout",
 	"settings.calloutTypeInline": "Beágyazott callout",
@@ -1149,6 +1153,8 @@ export const hu: Record<string, string> = {
 	"portable.roleLink": "Címsorhivatkozás",
 	"portable.convertSelected": "Kijelöltek átalakítása",
 	"portable.selectionSummary": "{{selected}} / {{total}} csere kijelölve · {{links}} címsorhivatkozás frissítendő",
+	"portable.selectionSummaryNoLinks":
+		"{{selected}} / {{total}} csere kijelölve",
 	"portable.selectionConflict": "Ez a választás kétértelművé tenné a címsorhivatkozásokat. Az előző kijelölés megmaradt.",
 	"portable.selectAll": "Összes kijelölése",
 	"portable.selectNone": "Kijelölés törlése",

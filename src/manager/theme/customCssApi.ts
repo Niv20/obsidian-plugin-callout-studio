@@ -103,8 +103,48 @@ export function themeSheet(app: App): CSSStyleSheet | null {
  */
 export function reparseTheme(app: App): void {
 	const el = api(app)?.styleEl;
-	const text = el?.textContent;
-	if (el && typeof text === "string") el.textContent = text;
+	if (el) reparseStyle(el);
+}
+
+/**
+ * Parse a `<style>` again from its own text. Changes made to the parsed copy
+ * never reach the text, so this is the exact original, whatever was changed.
+ * The element mutates, so Obsidian's window relay copies it to every window
+ * that holds a clone of it.
+ */
+export function reparseStyle(el: { textContent?: string | null }): void {
+	const text = el.textContent;
+	if (typeof text === "string") el.textContent = text;
+}
+
+/** Whether the theme's `<style>` can be reached at all — the switch's precondition. */
+export function hasThemeStyle(app: App): boolean {
+	return api(app)?.styleEl != null;
+}
+
+/**
+ * The `<style>` holding the active theme in `doc`, or `null`.
+ *
+ * In the main window that is Obsidian's own element. Every other window — a
+ * pop-out, the 1.14 Settings window, the hidden window a PDF export prints
+ * from — holds a clone Obsidian copied from it (`cloneNode`), each parsed on
+ * its own. A clone carries nothing else to know it by, so it is found by its
+ * text, length first. The main window's element still holding the text while a
+ * clone has not caught up yet is not a match, which is right: the relay is
+ * about to replace that clone.
+ */
+export function themeStyleIn(app: App, doc: Document): HTMLStyleElement | null {
+	const own = api(app)?.styleEl as (HTMLStyleElement & { ownerDocument?: Document }) | null | undefined;
+	if (!own) return null;
+	if (own.ownerDocument === doc) return own;
+	const text = own.textContent ?? "";
+	if (text.length === 0 || !doc.head) return null;
+	for (const el of Array.from(doc.head.children)) {
+		if (el.tagName !== "STYLE") continue;
+		const candidate = el.textContent ?? "";
+		if (candidate.length === text.length && candidate === text) return el as HTMLStyleElement;
+	}
+	return null;
 }
 
 /** Enabled snippet names, in the order Obsidian loads them. */

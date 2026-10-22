@@ -255,6 +255,7 @@ export const hi: Record<string, string> = {
 	"settings.resetItemContextMenu": "राइट-क्लिक मेनू",
 	"settings.resetItemHeading": "हेडिंग callout की सेटिंग",
 	"settings.resetItemInline": "इनलाइन callout की सेटिंग",
+	"settings.resetItemThemeCalloutStyles": "आपकी थीम के callout स्टाइल",
 	"settings.resetItemFallback": "फ़ॉलबैक स्टाइल",
 	"settings.resetItemIconLibraries": "आइकन लाइब्रेरी का क्रम और छिपी हुई लाइब्रेरी",
 	"settings.resetAllConfirmAfter": "चिंता न करें: रीसेट से पहले हम आपके मौजूदा सेटअप का बैकअप सहेजते हैं। आप उसे कभी भी सेटिंग के बैकअप सेक्शन से बहाल कर सकते हैं।\nअगर आप सिंक सेवा का उपयोग करते हैं, तो रीसेट आपके दूसरे डिवाइस तक भी पहुँच सकता है।",
@@ -751,6 +752,9 @@ export const hi: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"अपने वॉल्ट के हर इनलाइन callout का बॉर्डर और आकार समायोजित करें।",
 	"settings.globalSettingsCustomize": "कस्टमाइज़ करें",
+	"settings.themeCalloutStyles": "अपनी थीम के callout स्टाइल का उपयोग करें",
+	"settings.themeCalloutStylesDesc":
+		"चालू: आपकी थीम जिन callouts को स्टाइल करती है, वे आपकी थीम का ही रूप बनाए रखते हैं।\nबंद: Callout Studio हर callout खुद बनाता है, और आपकी थीम के callout स्टाइल बंद हो जाते हैं।",
 	"settings.calloutTypeRegular": "ब्लॉक callout",
 	"settings.calloutTypeHeading": "शीर्षक callout",
 	"settings.calloutTypeInline": "इनलाइन callout",
@@ -1133,6 +1137,8 @@ export const hi: Record<string, string> = {
 	"portable.roleLink": "शीर्षक का लिंक",
 	"portable.convertSelected": "चुने हुए बदलें",
 	"portable.selectionSummary": "{{total}} में से {{selected}} प्रतिस्थापन चुने गए · {{links}} शीर्षक लिंक अपडेट होंगे",
+	"portable.selectionSummaryNoLinks":
+		"{{total}} में से {{selected}} प्रतिस्थापन चुने गए",
 	"portable.selectionConflict": "इस चयन से शीर्षक लिंक अस्पष्ट हो जाएँगे। आपका पिछला चयन रखा गया है।",
 	"portable.selectAll": "सभी चुनें",
 	"portable.selectNone": "सभी का चयन हटाएँ",

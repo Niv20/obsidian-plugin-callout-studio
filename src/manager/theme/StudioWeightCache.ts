@@ -51,7 +51,14 @@ export class StudioWeightCache {
 	private accent: AccentDialect | null = null;
 	private surfaceClaim: CalloutSurface | null = null;
 
-	constructor(private readonly app: App) {}
+	/**
+	 * `themeOff` is the switch that takes the theme's callout styling away
+	 * (`themeCalloutsOff.ts`), handed on to the store it builds.
+	 */
+	constructor(
+		private readonly app: App,
+		private readonly themeOff: () => boolean = () => false,
+	) {}
 
 	/**
 	 * The theme scanner, built on first use.
@@ -61,7 +68,7 @@ export class StudioWeightCache {
 	 * screen to disagree with the CSS that was actually emitted.
 	 */
 	themeCallouts(): ThemeCalloutStore {
-		this.store ??= new ThemeCalloutStore(this.app);
+		this.store ??= new ThemeCalloutStore(this.app, this.themeOff);
 		return this.store;
 	}
 

@@ -5,6 +5,7 @@ export const zhTW: Record<string, string> = {
 	"portable.roleLink": "標題連結",
 	"portable.convertSelected": "轉換所選內容",
 	"portable.selectionSummary": "已選取 {{selected}} / {{total}} 項取代 · {{links}} 個標題連結待更新",
+	"portable.selectionSummaryNoLinks": "已選取 {{selected}} / {{total}} 項取代",
 	"portable.selectionConflict": "此選擇會使標題連結的目標不明確。已保留先前的選擇。",
 	"portable.selectAll": "全選",
 	"portable.selectNone": "取消全選",
@@ -291,6 +292,7 @@ export const zhTW: Record<string, string> = {
 	"settings.resetItemContextMenu": "右鍵選單",
 	"settings.resetItemHeading": "標題 callout 設定",
 	"settings.resetItemInline": "行內 callout 設定",
+	"settings.resetItemThemeCalloutStyles": "您佈景主題的 callout 樣式",
 	"settings.resetItemFallback": "後備樣式",
 	"settings.resetItemIconLibraries": "圖示庫順序與已隱藏的圖示庫",
 	"settings.resetAllConfirmAfter": "別擔心：重置之前，我們會先儲存目前設定的備份。你可以隨時在設定的「備份」區段還原。\n如果你使用同步服務，重置也可能同步到你的其他裝置。",
@@ -763,6 +765,9 @@ export const zhTW: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"調整 vault 中每個行內 callout 的邊框和形狀。",
 	"settings.globalSettingsCustomize": "自訂",
+	"settings.themeCalloutStyles": "使用您佈景主題的 callout 樣式",
+	"settings.themeCalloutStylesDesc":
+		"開啟：由您的佈景主題設定樣式的 callout 會維持佈景主題的外觀。\n關閉：Callout Studio 會自行繪製每個 callout，佈景主題的 callout 樣式將被停用。",
 	"settings.calloutTypeRegular": "區塊 callout",
 	"settings.calloutTypeHeading": "標題 callout",
 	"settings.calloutTypeInline": "行內 callout",

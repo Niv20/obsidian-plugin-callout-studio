@@ -5,6 +5,8 @@ export const sv: Record<string, string> = {
 	"portable.roleLink": "Rubriklänk",
 	"portable.convertSelected": "Konvertera markerade",
 	"portable.selectionSummary": "{{selected}} av {{total}} ersättningar markerade · {{links}} rubriklänkar att uppdatera",
+	"portable.selectionSummaryNoLinks":
+		"{{selected}} av {{total}} ersättningar markerade",
 	"portable.selectionConflict": "Det valet skulle göra rubriklänkarna tvetydiga. Ditt tidigare val behölls.",
 	"portable.selectAll": "Markera alla",
 	"portable.selectNone": "Avmarkera alla",
@@ -306,6 +308,7 @@ export const sv: Record<string, string> = {
 	"settings.resetItemContextMenu": "Högerklicksmeny",
 	"settings.resetItemHeading": "Inställningar för rubrik-callouts",
 	"settings.resetItemInline": "Inställningar för inline-callouts",
+	"settings.resetItemThemeCalloutStyles": "Callout-stilarna från ditt tema",
 	"settings.resetItemFallback": "Reservstil",
 	"settings.resetItemIconLibraries": "Ikonbibliotekens ordning och dolda bibliotek",
 	"settings.resetAllConfirmAfter": "Ingen fara: innan återställningen sparar vi en säkerhetskopia av din nuvarande konfiguration. Du kan återställa den när som helst från avsnittet Säkerhetskopior i inställningarna.\nOm du använder en synkroniseringstjänst kan återställningen även nå dina andra enheter.",
@@ -799,6 +802,9 @@ export const sv: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Justera kant och form för varje infogad callout i ditt vault.",
 	"settings.globalSettingsCustomize": "Anpassa",
+	"settings.themeCalloutStyles": "Använd callout-stilarna från ditt tema",
+	"settings.themeCalloutStylesDesc":
+		"På: callouts som ditt tema formger behåller temats utseende.\nAv: Callout Studio ritar varje callout själv, och callout-stilarna från ditt tema är avstängda.",
 	"settings.calloutTypeRegular": "Block-callout",
 	"settings.calloutTypeHeading": "Rubrik-callout",
 	"settings.calloutTypeInline": "Infogad callout",

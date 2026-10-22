@@ -241,6 +241,8 @@ export const bg: Record<string, string> = {
 	"settings.resetItemContextMenu": "Контекстно меню (десен бутон)",
 	"settings.resetItemHeading": "Настройки на callout в заглавия",
 	"settings.resetItemInline": "Настройки на вградените в реда callout",
+	"settings.resetItemThemeCalloutStyles":
+		"Стиловете на callout-ите от вашата тема",
 	"settings.resetItemFallback": "Резервен стил",
 	"settings.resetItemIconLibraries": "Редът на библиотеките с икони и скритите библиотеки",
 	"settings.resetAllConfirmAfter": "Спокойно: преди нулирането запазваме резервно копие на текущата ви конфигурация. Можете да я възстановите по всяко време от раздела Резервни копия в настройките.\nАко използвате услуга за синхронизиране, нулирането може да стигне и до другите ви устройства.",
@@ -736,6 +738,10 @@ export const bg: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Регулирайте границата и формата на всеки вграден callout в трезора ви.",
 	"settings.globalSettingsCustomize": "Персонализиране",
+	"settings.themeCalloutStyles":
+		"Използване на стиловете на callout-ите от вашата тема",
+	"settings.themeCalloutStylesDesc":
+		"Включено: callout-ите, които вашата тема оформя, запазват външния вид на темата.\nИзключено: Callout Studio изобразява всеки callout, а стиловете на callout-ите от темата са изключени.",
 	"settings.calloutTypeRegular": "Блоков callout",
 	"settings.calloutTypeHeading": "Callout-заглавие",
 	"settings.calloutTypeInline": "Вграден callout",
@@ -819,6 +825,8 @@ export const bg: Record<string, string> = {
 	"portable.roleLink": "Връзка към заглавие",
 	"portable.convertSelected": "Преобразуване на избраното",
 	"portable.selectionSummary": "Избрани са {{selected}} от {{total}} замени · {{links}} връзки към заглавия за актуализиране",
+	"portable.selectionSummaryNoLinks":
+		"Избрани са {{selected}} от {{total}} замени",
 	"portable.selectionConflict": "Този избор би направил връзките към заглавия нееднозначни. Предишният ви избор е запазен.",
 	"portable.selectAll": "Избор на всички",
 	"portable.selectNone": "Отмяна на всички",

@@ -249,6 +249,7 @@ export const fi: Record<string, string> = {
 	"settings.resetItemContextMenu": "Hiiren kakkospainikkeen valikko",
 	"settings.resetItemHeading": "Otsikko-calloutien asetukset",
 	"settings.resetItemInline": "Rivinsisäisten calloutien asetukset",
+	"settings.resetItemThemeCalloutStyles": "Teemasi calloutien tyylit",
 	"settings.resetItemFallback": "Varatyyli",
 	"settings.resetItemIconLibraries": "Kuvakekirjastojen järjestys ja piilotetut kirjastot",
 	"settings.resetAllConfirmAfter": "Ei huolta: ennen palautusta tallennamme varmuuskopion nykyisestä kokoonpanostasi. Voit palauttaa sen milloin tahansa asetusten Varmuuskopiot-osiosta.\nJos käytät synkronointipalvelua, palautus voi siirtyä myös muille laitteillesi.",
@@ -745,6 +746,9 @@ export const fi: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Säädä jokaisen holvisi rivinsisäisen calloutin reunaa ja muotoa.",
 	"settings.globalSettingsCustomize": "Mukauta",
+	"settings.themeCalloutStyles": "Käytä teemasi calloutien tyylejä",
+	"settings.themeCalloutStylesDesc":
+		"Päällä: calloutit, joita teemasi muotoilee, säilyttävät teemasi ulkoasun.\nPois: Callout Studio piirtää kaikki calloutit itse, ja teemasi calloutien tyylit on poistettu käytöstä.",
 	"settings.calloutTypeRegular": "Lohkocallout",
 	"settings.calloutTypeHeading": "Otsikko-callout",
 	"settings.calloutTypeInline": "Rivinsisäinen callout",
@@ -828,6 +832,8 @@ export const fi: Record<string, string> = {
 	"portable.roleLink": "Otsikkolinkki",
 	"portable.convertSelected": "Muunna valitut",
 	"portable.selectionSummary": "{{selected}}/{{total}} korvausta valittu · {{links}} päivitettävää otsikkolinkkiä",
+	"portable.selectionSummaryNoLinks":
+		"{{selected}}/{{total}} korvausta valittu",
 	"portable.selectionConflict": "Tämä valinta tekisi otsikkolinkeistä monitulkintaisia. Aiempi valintasi säilytettiin.",
 	"portable.selectAll": "Valitse kaikki",
 	"portable.selectNone": "Poista valinnat",

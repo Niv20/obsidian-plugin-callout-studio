@@ -255,6 +255,7 @@ export const ko: Record<string, string> = {
 	"settings.resetItemContextMenu": "마우스 오른쪽 버튼 메뉴",
 	"settings.resetItemHeading": "제목 callout 설정",
 	"settings.resetItemInline": "인라인 callout 설정",
+	"settings.resetItemThemeCalloutStyles": "테마의 callout 스타일",
 	"settings.resetItemFallback": "대체 스타일",
 	"settings.resetItemIconLibraries": "아이콘 라이브러리 순서 및 숨긴 라이브러리",
 	"settings.resetAllConfirmAfter": "걱정하지 마세요. 재설정하기 전에 현재 설정의 백업을 저장합니다. 설정의 백업 섹션에서 언제든 복원할 수 있습니다.\n동기화 서비스를 사용한다면 재설정이 다른 기기에도 전달될 수 있습니다.",
@@ -745,6 +746,9 @@ export const ko: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"볼트에 있는 모든 인라인 callout의 테두리와 모양을 조정합니다.",
 	"settings.globalSettingsCustomize": "사용자 지정",
+	"settings.themeCalloutStyles": "테마의 callout 스타일 사용",
+	"settings.themeCalloutStylesDesc":
+		"켜짐: 테마가 스타일을 지정한 callout은 테마의 모양을 그대로 유지합니다.\n꺼짐: Callout Studio가 모든 callout을 직접 그리며, 테마의 callout 스타일은 꺼집니다.",
 
 	"settings.calloutTypeRegular": "블록 callout",
 	"settings.calloutTypeHeading": "제목 callout",
@@ -1125,6 +1129,8 @@ export const ko: Record<string, string> = {
 	"portable.roleLink": "제목 링크",
 	"portable.convertSelected": "선택 항목 변환",
 	"portable.selectionSummary": "{{total}}개 대체 항목 중 {{selected}}개 선택 · 제목 링크 {{links}}개 업데이트 예정",
+	"portable.selectionSummaryNoLinks":
+		"{{total}}개 대체 항목 중 {{selected}}개 선택",
 	"portable.selectionConflict": "이 항목을 선택하면 제목 링크의 대상이 모호해집니다. 이전 선택을 유지했습니다.",
 	"portable.selectAll": "모두 선택",
 	"portable.selectNone": "모두 선택 해제",

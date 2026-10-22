@@ -87,6 +87,17 @@ describe("Reset inventory", () => {
 		assert.equal(registry.settings.metadataColors.enabled, true);
 	});
 
+	it("hands callouts back to the theme, and says so before it does", () => {
+		const registry = fresh();
+		registry.settings.themeCalloutStyles.enabled = false;
+		assert.ok(
+			resetInventory(registry).restored.some((row) => row.labelKey === "settings.resetItemThemeCalloutStyles"),
+		);
+		registry.resetAll();
+		assert.equal(registry.settings.themeCalloutStyles.enabled, true);
+		assert.ok(isResetInventoryEmpty(resetInventory(registry)));
+	});
+
 	it("puts the number first in every counted row's sentence", () => {
 		const registry = fresh();
 		registry.add(definition({ id: "mine", displayName: "Mine" }));

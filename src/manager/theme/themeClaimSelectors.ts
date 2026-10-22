@@ -35,7 +35,7 @@ const EXACT_ATTR =
 const NO_CALLOUT = '[data-callout="cs no callout"]';
 
 /** CSS string and identifier escapes, read back to the characters they stand for. */
-function unescapeCss(value: string): string {
+export function unescapeCss(value: string): string {
 	return value.replace(/\\([0-9a-fA-F]{1,6}[ \t\n]?|[\s\S])/g, (_m, esc: string) => {
 		if (!/^[0-9a-fA-F]/.test(esc)) return esc;
 		const code = Number.parseInt(esc.trim(), 16);
@@ -247,7 +247,8 @@ export function resolveNested(child: string, parent: string): string {
 		.join(", ");
 }
 
-const CLASS_TOKEN = /^\.((?:[\w-]|[\u0080-\uffff]|\\[\s\S])+)/;
+/** One `.class` token at the start of the text, its name (escapes and all) in group 1. */
+export const CLASS_TOKEN = /^\.((?:[\w-]|[\u0080-\uffff]|\\[\s\S])+)/;
 
 /**
  * The class names a selector requires outright. Nothing inside a functional

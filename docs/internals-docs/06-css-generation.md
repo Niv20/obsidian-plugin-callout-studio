@@ -647,7 +647,9 @@ reason: it asks the user to answer a question about CSS specificity that they
 have no way to evaluate, on a per-callout basis, and to re-answer it every time
 they change theme.
 
-So ownership is derived, absolute, and not the user's to set:
+So ownership is derived, absolute, and not the user's to set (the one switch
+there is takes the theme's callout styling away altogether rather than setting
+ownership - see [The one switch](#the-one-switch-and-why-it-is-not-a-mode)):
 
 ```
 registry.themeOwns(def)   the active theme NAMES every one of this callout's
@@ -809,6 +811,43 @@ A user-requested scan may add the theme's declared ids as durable fallback rows.
 Automatic theme appearance inspection updates only ownership and measured artwork.
 Switching themes never adds or removes definitions, writes a retirement list, or
 starts a vault discovery pass. See [theme appearance](18-theme-callout-discovery.md).
+
+### The one switch, and why it is not a mode
+
+There is one setting after all - **Use your theme's callout styles**
+(`settings.themeCalloutStyles.enabled`, on by default) - and it is not the rung
+the argument above retired. Every rung of that ladder tried to *out-weigh* the
+theme, which is the split render by construction. Turning this switch off
+*removes* the theme's callout styling instead:
+[`theme/themeCalloutsOff.ts`](../../src/manager/theme/themeCalloutsOff.ts) takes
+every theme rule whose selector reaches a callout, and every `--callout-*`
+declaration, out of the browser's parsed copy of the theme, and ends that copy
+with Obsidian's own values for the tokens core's callout CSS reads
+(`CORE_CALLOUT_DEFAULTS`: corners, padding, title weight, blend, icon size).
+Nothing is
+left to compete with, so nothing can split. The mechanism, the windows it has to
+reach and the way back are in
+[18-theme-callout-discovery.md § Switching the theme's callout styling off](18-theme-callout-discovery.md#switching-the-themes-callout-styling-off).
+
+What this file does differently while the switch is off:
+
+- **Nothing is theme-owned.** The theme scan reads the theme as if it named no
+  callout (`ThemeCalloutStore` and `ThemeMetadataCatalog` take the switch's
+  `active()` as `themeOff`), so every gate above opens on its own: no row is
+  theme-owned, no overlay row is minted, and the dialect, the surface facts and
+  the studio weight come from the user's snippets alone.
+- **An untouched built-in paints its stored seed.** `themeAccentVar()` answers
+  `undefined` during a pass with the switch off (`emitThemeOff`, ambient like
+  `emitWeight`), so Note emits `--callout-color: #086ddd` and `#027aff` instead
+  of deferring to `--callout-default`, which the theme's palette would have
+  coloured. The exported snippet is generated outside a pass and keeps
+  deferring: it goes where this setting does not exist.
+- **The sheet carries a marker.** `THEME_CALLOUTS_OFF_MARKER` is the second
+  comment of the generated text, and only while the switch is off - so with it
+  on, the sheet is byte-identical to what it was before the switch existed.
+  `injectFromCache()` reads it from the startup snapshot, which is replayed
+  before `data.json` is read: a snapshot that paints every callout must take the
+  theme's callout rules away with it, or the first frames would split.
 
 ## Metadata colours (`[!type|colour]`)
 

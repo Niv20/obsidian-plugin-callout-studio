@@ -277,6 +277,8 @@ export const he: Record<string, string> = {
 	"portable.roleLink": "קישור לכותרת",
 	"portable.convertSelected": "המרת הנבחרים",
 	"portable.selectionSummary": "{{selected}} מתוך {{total}} החלפות נבחרו · {{links}} קישורי כותרות יעודכנו",
+	"portable.selectionSummaryNoLinks":
+		"{{selected}} מתוך {{total}} החלפות נבחרו",
 	"portable.selectionConflict": "הבחירה הזו תיצור עמימות בקישורים לכותרות. הבחירה הקודמת שלך נשמרה.",
 	"portable.selectAll": "בחירת הכול",
 	"portable.selectNone": "ביטול הבחירה",
@@ -342,6 +344,8 @@ export const he: Record<string, string> = {
 	"settings.resetItemContextMenu": "תפריט הקליק הימני",
 	"settings.resetItemHeading": "הגדרות תיבות־הבלטה בכותרות",
 	"settings.resetItemInline": "הגדרות תיבות־הבלטה בתוך השורה",
+	"settings.resetItemThemeCalloutStyles":
+		"סגנונות תיבות־ההבלטה של ערכת הנושא שלכם",
 	"settings.resetItemFallback": "סגנון ברירת־מחדל",
 	"settings.resetItemIconLibraries": "סדר ספריות האייקונים וספריות מוסתרות",
 	"settings.resetAllConfirmAfter": "אל דאגה: לפני האיפוס נשמור גיבוי של התצורה הנוכחית שלכם. אפשר לשחזר אותו בכל עת מהקטע גיבויים בהגדרות.\nאם אתם משתמשים בשירות סנכרון, האיפוס עשוי להגיע גם למכשירים האחרים שלכם.",
@@ -841,6 +845,10 @@ export const he: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"התאמת המסגרת והצורה של כל תיבת־הבלטה מוטבעת בכספת שלכם.",
 	"settings.globalSettingsCustomize": "התאמה אישית",
+	"settings.themeCalloutStyles":
+		"שימוש בסגנונות תיבות־ההבלטה של ערכת הנושא שלכם",
+	"settings.themeCalloutStylesDesc":
+		"מופעל: תיבות־ההבלטה שערכת הנושא שלכם מעצבת שומרות על המראה של ערכת הנושא.\nכבוי: Callout Studio מצייר כל תיבת־הבלטה בעצמו, וסגנונות תיבות־ההבלטה של ערכת הנושא מושבתים.",
 
 	// Callout types section
 	"settings.calloutTypeRegular": "תיבת־הבלטה מסוג בלוק",

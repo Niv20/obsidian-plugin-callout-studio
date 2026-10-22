@@ -5,6 +5,7 @@ export const zh: Record<string, string> = {
 	"portable.roleLink": "标题链接",
 	"portable.convertSelected": "转换所选内容",
 	"portable.selectionSummary": "已选择 {{selected}} / {{total}} 项替换 · {{links}} 个标题链接需要更新",
+	"portable.selectionSummaryNoLinks": "已选择 {{selected}} / {{total}} 项替换",
 	"portable.selectionConflict": "此选择会导致标题链接的目标不明确。已保留之前的选择。",
 	"portable.selectAll": "全选",
 	"portable.selectNone": "取消全选",
@@ -301,6 +302,7 @@ export const zh: Record<string, string> = {
 	"settings.resetItemContextMenu": "右键菜单",
 	"settings.resetItemHeading": "标题 callout 设置",
 	"settings.resetItemInline": "行内 callout 设置",
+	"settings.resetItemThemeCalloutStyles": "主题的 callout 样式",
 	"settings.resetItemFallback": "后备样式",
 	"settings.resetItemIconLibraries": "图标库顺序和已隐藏的图标库",
 	"settings.resetAllConfirmAfter": "别担心：重置之前，我们会先保存当前设置的备份。你可以随时在设置的“备份”部分恢复。\n如果你使用同步服务，重置也可能同步到你的其他设备。",
@@ -778,6 +780,9 @@ export const zh: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"调整库中每个行内 callout 的边框和形状。",
 	"settings.globalSettingsCustomize": "自定义",
+	"settings.themeCalloutStyles": "使用主题的 callout 样式",
+	"settings.themeCalloutStylesDesc":
+		"开启：由主题设置样式的 callout 会保持主题的外观。\n关闭：Callout Studio 会自行绘制每个 callout，主题的 callout 样式将被停用。",
 
 	"settings.calloutTypeRegular": "块级 callout",
 	"settings.calloutTypeHeading": "标题 callout",

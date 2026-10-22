@@ -32,6 +32,7 @@ import { registerPausedIndicator } from "./settings/pausedIndicator";
 import { ReloadQueue } from "./manager/reloadQueue";
 import { registerThemeAppearance } from "./manager/theme/themeAppearanceSync";
 import { registerDefaultThemeClass } from "./manager/theme/defaultThemeClass";
+import { registerThemeCalloutsOff, type ThemeCalloutsOff } from "./manager/theme/themeCalloutsOff";
 import { removeLegacyStartupSnippet } from "./manager/legacyStartupSnippet";
 import { runLaunchSequence } from "./manager/launchSequence";
 import { onActiveLayoutReady } from "./manager/activeLayoutReady";
@@ -98,6 +99,8 @@ export default class CalloutStudioPlugin extends Plugin {
 	localState!: DeviceLocalStore;
 	/** Re-derives the theme's overlay rows — see registerThemeAppearance. */
 	refreshThemeAppearance!: () => void;
+	/** Takes the theme's callout styling away when the user switched it off. */
+	themeCalloutsOff!: ThemeCalloutsOff;
 	/** Re-renders the reading views a registry change left wrong. */
 	readingStructure?: ReadingStructureWatch;
 	/** Adoption of another device's `data.json` — serialized, and retried when
@@ -146,6 +149,9 @@ export default class CalloutStudioPlugin extends Plugin {
 		// Restore cached CSS before awaiting disk so mobile keeps its prior styles.
 		this.cssInjector = new CSSInjector(this.app, this.registry);
 		this.cssInjector.injectFromCache();
+		// Before data.json is read: when the snapshot just replayed paints every
+		// callout because the theme's callout styling was off, it goes off now.
+		this.themeCalloutsOff = registerThemeCalloutsOff(this);
 
 		// Every write to data.json goes through here — coalesced, and skipped
 		// when the payload is byte-identical to the last one that landed. Built
@@ -196,6 +202,8 @@ export default class CalloutStudioPlugin extends Plugin {
 			);
 		}
 
+		// From here on the setting, not the snapshot, decides.
+		this.themeCalloutsOff.settingsReady();
 		// Derive local theme rows, ownership and artwork before the full CSS pass.
 		this.refreshThemeAppearance = registerThemeAppearance(this);
 

@@ -254,6 +254,7 @@ export const cs: Record<string, string> = {
 	"settings.resetItemContextMenu": "Kontextová nabídka (pravé tlačítko)",
 	"settings.resetItemHeading": "Nastavení callout v nadpisech",
 	"settings.resetItemInline": "Nastavení inline callout",
+	"settings.resetItemThemeCalloutStyles": "Styly callout z vašeho tématu",
 	"settings.resetItemFallback": "Záložní styl",
 	"settings.resetItemIconLibraries": "Pořadí knihoven ikon a skryté knihovny",
 	"settings.resetAllConfirmAfter": "Žádný strach: před obnovením uložíme zálohu vaší aktuální konfigurace. Můžete ji kdykoli obnovit v části Zálohy v nastavení.\nPokud používáte synchronizační službu, obnovení se může přenést i na vaše další zařízení.",
@@ -749,6 +750,9 @@ export const cs: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Upravte ohraničení a tvar každého vloženého callout ve vašem trezoru.",
 	"settings.globalSettingsCustomize": "Přizpůsobit",
+	"settings.themeCalloutStyles": "Používat styly callout z vašeho tématu",
+	"settings.themeCalloutStylesDesc":
+		"Zapnuto: callouty, které vaše téma stylizuje, si ponechají vzhled z vašeho tématu.\nVypnuto: Callout Studio vykresluje každý callout a styly callout z vašeho tématu jsou vypnuté.",
 	"settings.calloutTypeRegular": "Blokový callout",
 	"settings.calloutTypeHeading": "Callout nadpisu",
 	"settings.calloutTypeInline": "Vložený callout",
@@ -837,6 +841,8 @@ export const cs: Record<string, string> = {
 	"portable.roleLink": "Odkaz na nadpis",
 	"portable.convertSelected": "Převést vybrané",
 	"portable.selectionSummary": "Vybráno {{selected}} z {{total}} náhrad · {{links}} odkazů na nadpisy k aktualizaci",
+	"portable.selectionSummaryNoLinks":
+		"Vybráno {{selected}} z {{total}} náhrad",
 	"portable.selectionConflict": "Tato volba by způsobila nejednoznačnost odkazů na nadpisy. Váš předchozí výběr byl zachován.",
 	"portable.selectAll": "Vybrat vše",
 	"portable.selectNone": "Zrušit výběr",

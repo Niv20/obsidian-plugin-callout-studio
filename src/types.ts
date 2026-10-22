@@ -787,6 +787,15 @@ export interface PluginSettings {
 	 * its CSS, offers no colours after `|`, and leaves PDF export alone.
 	 */
 	metadataColors: RoleToggleSettings;
+	/**
+	 * Whether the active theme styles callouts. On — the default, and what
+	 * every version before this switch did — a callout the theme names is
+	 * the theme's. Off takes the theme's callout rules and `--callout-*`
+	 * variables out of the page, so Callout Studio draws every callout and an
+	 * untouched built-in shows Obsidian's own colours
+	 * (`manager/theme/themeCalloutsOff.ts`).
+	 */
+	themeCalloutStyles: RoleToggleSettings;
 	/** Has the welcome/splash screen been shown at least once? */ welcomeSeen?: boolean;
 	/** Has the first-install import prompt been dismissed or completed? */ competitorImportBannerHandled?: boolean;
 	/** Callout ID to use as fallback for unrecognized callout types. Empty = Obsidian default */

@@ -129,6 +129,9 @@ Three deliberate steps, each closing a real gap:
   callout the theme names but does not draw, or draws under only some of its
   names, is `false`. Which names those are is not published; `docs/API.md`
   tells consumers to render a real callout when they need the Block look.
+  While the user has switched the theme's callout styles off, it is `false`
+  for every callout, and the theme's own types are not listed at all
+  ([18-theme-callout-discovery.md](18-theme-callout-discovery.md#switching-the-themes-callout-styling-off)).
 
 ## `getCallout(id)` - the lookup ladder, deliberately shallower than the renderer's
 

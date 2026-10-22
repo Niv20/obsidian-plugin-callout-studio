@@ -257,6 +257,7 @@ export const it: Record<string, string> = {
 	"settings.resetItemContextMenu": "Menu del clic destro",
 	"settings.resetItemHeading": "Impostazioni dei callout di intestazione",
 	"settings.resetItemInline": "Impostazioni dei callout in linea",
+	"settings.resetItemThemeCalloutStyles": "Stili dei callout del tuo tema",
 	"settings.resetItemFallback": "Stile di riserva",
 	"settings.resetItemIconLibraries": "Ordine delle librerie di icone e librerie nascoste",
 	"settings.resetAllConfirmAfter": "Niente paura: prima del ripristino salviamo un backup della tua configurazione attuale. Puoi ripristinarlo in qualsiasi momento dalla sezione Backup nelle impostazioni.\nSe usi un servizio di sincronizzazione, il ripristino potrebbe arrivare anche sugli altri tuoi dispositivi.",
@@ -762,6 +763,9 @@ export const it: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Regola bordo e forma di ogni callout in linea nel tuo vault.",
 	"settings.globalSettingsCustomize": "Personalizza",
+	"settings.themeCalloutStyles": "Usa gli stili dei callout del tuo tema",
+	"settings.themeCalloutStylesDesc":
+		"Attivato: i callout che il tuo tema stilizza mantengono l'aspetto del tuo tema.\nDisattivato: Callout Studio disegna ogni callout e gli stili dei callout del tuo tema sono disattivati.",
 
 	"settings.calloutTypeRegular": "Callout a blocco",
 	"settings.calloutTypeHeading": "Callout di intestazione",
@@ -1157,6 +1161,8 @@ export const it: Record<string, string> = {
 	"portable.roleLink": "Collegamento a un titolo",
 	"portable.convertSelected": "Converti selezionati",
 	"portable.selectionSummary": "{{selected}} sostituzioni selezionate su {{total}} · {{links}} collegamenti ai titoli da aggiornare",
+	"portable.selectionSummaryNoLinks":
+		"{{selected}} sostituzioni selezionate su {{total}}",
 	"portable.selectionConflict": "Questa scelta renderebbe ambigui i collegamenti ai titoli. La selezione precedente è stata mantenuta.",
 	"portable.selectAll": "Seleziona tutto",
 	"portable.selectNone": "Deseleziona tutto",

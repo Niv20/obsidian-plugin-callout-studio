@@ -82,9 +82,12 @@ function themeHost(css: string, name = "Nord", version = "1.0.0") {
 	};
 }
 
-/** The plugin slice `registerThemeAppearance` reaches for, plus what it did. */
-function syncHost(registry: CalloutRegistry, app: App) {
-	const store = new ThemeCalloutStore(app);
+/**
+ * The plugin slice `registerThemeAppearance` reaches for, plus what it did.
+ * `themeOff` is the switch that takes the theme's callout styling away.
+ */
+function syncHost(registry: CalloutRegistry, app: App, themeOff?: () => boolean) {
+	const store = new ThemeCalloutStore(app, themeOff);
 	const injects: boolean[] = [];
 	const disposers: (() => void)[] = [];
 	const host = {
@@ -121,6 +124,22 @@ describe("theme appearance updates never persist anything", () => {
   assert.ok(!store.themeDefinedIds().has("probe"));
   assert.strictEqual(registry.get("probe"), undefined);
   for (const dispose of disposers) dispose();
+ });
+ it("lists nothing of a theme whose callout styling is switched off, and gives it all back", () => {
+  const t = themeHost('.callout[data-callout="recite"] { color: red; } .callout[data-callout="note"] { color: red; }');
+  const registry = vault(); const saved = registry.toSaveData();
+  let off = false;
+  const { host } = syncHost(registry, t.app, () => off);
+  const refresh = registerThemeAppearance(host);
+  assert.strictEqual(registry.get("recite")?.source, "theme");
+  assert.strictEqual(registry.themeOwns(registry.get("note")!), true);
+  off = true; refresh();
+  assert.strictEqual(registry.get("recite"), undefined, "the theme's own type left with its styling");
+  assert.strictEqual(registry.themeOwns(registry.get("note")!), false, "Note is Callout Studio's again");
+  off = false; refresh();
+  assert.strictEqual(registry.get("recite")?.source, "theme");
+  assert.strictEqual(registry.themeOwns(registry.get("note")!), true);
+  assert.deepStrictEqual(registry.toSaveData(), saved, "data.json did not move");
  });
  it("mints an overlay row for a theme id without persisting it", () => {
   const t = themeHost('.callout[data-callout="recite"] { color: red; }');

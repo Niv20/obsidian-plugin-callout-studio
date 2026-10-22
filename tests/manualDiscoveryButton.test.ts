@@ -27,6 +27,8 @@ function harness(scan: () => Promise<number> = () => Promise.resolve(2)) {
 	const plugin = {
 		settingsWriter: { isFrozen: false },
 		localState: { isExpanded: () => true, setExpanded: () => {} },
+		// The theme section's switch reads it.
+		registry: { settings: { themeCalloutStyles: { enabled: true } } },
 		runVaultScan: () => { calls++; return scan(); },
 	};
 	const mount = (scaffold = false) => {

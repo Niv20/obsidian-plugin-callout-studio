@@ -250,6 +250,7 @@ export const ms: Record<string, string> = {
 	"settings.resetItemContextMenu": "Menu klik kanan",
 	"settings.resetItemHeading": "Tetapan callout tajuk",
 	"settings.resetItemInline": "Tetapan callout sebaris",
+	"settings.resetItemThemeCalloutStyles": "Gaya callout tema anda",
 	"settings.resetItemFallback": "Gaya sandaran",
 	"settings.resetItemIconLibraries": "Susunan pustaka ikon dan pustaka tersembunyi",
 	"settings.resetAllConfirmAfter": "Jangan risau: sebelum menetapkan semula, kami menyimpan sandaran persediaan semasa anda. Anda boleh memulihkannya pada bila-bila masa daripada bahagian Sandaran dalam tetapan.\nJika anda menggunakan perkhidmatan penyegerakan, penetapan semula mungkin sampai ke peranti anda yang lain juga.",
@@ -746,6 +747,9 @@ export const ms: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"Laraskan sempadan dan bentuk setiap callout sebaris dalam vault anda.",
 	"settings.globalSettingsCustomize": "Sesuaikan",
+	"settings.themeCalloutStyles": "Gunakan gaya callout tema anda",
+	"settings.themeCalloutStylesDesc":
+		"Hidup: callout yang digayakan oleh tema anda mengekalkan rupa tema anda.\nMati: Callout Studio melukis setiap callout sendiri, dan gaya callout tema anda dimatikan.",
 	"settings.calloutTypeRegular": "Callout blok",
 	"settings.calloutTypeHeading": "Callout tajuk",
 	"settings.calloutTypeInline": "Callout sebaris",
@@ -1125,6 +1129,8 @@ export const ms: Record<string, string> = {
 	"portable.roleLink": "Pautan tajuk",
 	"portable.convertSelected": "Tukar yang dipilih",
 	"portable.selectionSummary": "{{selected}} daripada {{total}} penggantian dipilih · {{links}} pautan tajuk untuk dikemas kini",
+	"portable.selectionSummaryNoLinks":
+		"{{selected}} daripada {{total}} penggantian dipilih",
 	"portable.selectionConflict": "Pilihan itu akan menjadikan pautan tajuk tidak jelas. Pilihan sebelumnya dikekalkan.",
 	"portable.selectAll": "Pilih semua",
 	"portable.selectNone": "Nyahpilih semua",

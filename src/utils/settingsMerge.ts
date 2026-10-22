@@ -205,6 +205,11 @@ export function mergeSavedSettings(
 				booleanPreference(savedSettings.metadataColors?.enabled,
 					DEFAULT_SETTINGS.metadataColors.enabled),
 		},
+		themeCalloutStyles: {
+			enabled:
+				booleanPreference(savedSettings.themeCalloutStyles?.enabled,
+					DEFAULT_SETTINGS.themeCalloutStyles.enabled),
+		},
 		welcomeSeen:
 			booleanPreference(savedSettings.welcomeSeen, DEFAULT_SETTINGS.welcomeSeen ?? false),
 		competitorImportBannerHandled:

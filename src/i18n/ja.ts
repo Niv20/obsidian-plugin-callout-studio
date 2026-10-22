@@ -256,6 +256,7 @@ export const ja: Record<string, string> = {
 	"settings.resetItemContextMenu": "右クリックメニュー",
 	"settings.resetItemHeading": "見出しcalloutの設定",
 	"settings.resetItemInline": "インラインcalloutの設定",
+	"settings.resetItemThemeCalloutStyles": "テーマのcalloutスタイル",
 	"settings.resetItemFallback": "フォールバックスタイル",
 	"settings.resetItemIconLibraries": "アイコンライブラリの順序と非表示のライブラリ",
 	"settings.resetAllConfirmAfter": "ご安心ください。リセットの前に、現在の設定のバックアップを保存します。設定の「バックアップ」セクションからいつでも復元できます。\n同期サービスをお使いの場合、リセットは他の端末にも反映される可能性があります。",
@@ -747,6 +748,9 @@ export const ja: Record<string, string> = {
 	"settings.globalSettingsInlineDesc":
 		"vault内のすべてのインラインcalloutのボーダーと形状を調整します。",
 	"settings.globalSettingsCustomize": "カスタマイズ",
+	"settings.themeCalloutStyles": "テーマのcalloutスタイルを使う",
+	"settings.themeCalloutStylesDesc":
+		"オン：テーマがスタイルを設定しているcalloutは、テーマの見た目のままになります。\nオフ：Callout Studioがすべてのcalloutを自分で描画し、テーマのcalloutスタイルは無効になります。",
 
 	"settings.calloutTypeRegular": "ブロックcallout",
 	"settings.calloutTypeHeading": "見出しcallout",
@@ -1129,6 +1133,8 @@ export const ja: Record<string, string> = {
 	"portable.roleLink": "見出しリンク",
 	"portable.convertSelected": "選択項目を変換",
 	"portable.selectionSummary": "{{total}} 件中 {{selected}} 件の置換を選択 · 見出しリンク {{links}} 件を更新",
+	"portable.selectionSummaryNoLinks":
+		"{{total}} 件中 {{selected}} 件の置換を選択",
 	"portable.selectionConflict": "この選択では見出しリンクの参照先が曖昧になります。前の選択を維持しました。",
 	"portable.selectAll": "すべて選択",
 	"portable.selectNone": "すべて選択解除",

@@ -17,7 +17,7 @@
  * on all of it, and a sticky heading that carries its own divider freezes a
  * rule against the top edge of the pane.
  */
-import { Setting } from "obsidian";
+import { Setting, type ToggleComponent } from "obsidian";
 import { t } from "../../i18n";
 import type { SectionDisclosure } from "./sectionDisclosure";
 import { attachPersistedFold } from "./calloutListsFold";
@@ -41,6 +41,8 @@ export type CalloutListsScaffold = {
 	themeDescEl: HTMLElement;
 	themeListEl: HTMLElement;
 	themeFold: SectionDisclosure;
+	/** *Use your theme's callout styles* — see {@link addThemeStylesSwitch}. */
+	themeSwitch: ThemeStylesSwitch;
 	/** "My callout types"' wrapper — it carries the conditional divider. */
 	subSectionEl: HTMLElement;
 	userListEl: HTMLElement;
@@ -96,6 +98,11 @@ export function buildCalloutListsScaffold(
 		});
 		const themeListEl = theme.wrapEl.createDiv();
 		const themeFold = attachPersistedFold(themeSetting, themeListEl, "theme", ctx.plugin);
+		// The section's first row, above its callouts, and the one child of the
+		// body the painter does not rebuild — the rows are appended after it.
+		// Inside the body, so it folds with the section and the section's
+		// trailing gap still falls under whatever comes last.
+		const themeSwitch = addThemeStylesSwitch(ctx, themeListEl);
 
 		const my = createStickySection(
 			containerEl,
@@ -171,6 +178,7 @@ export function buildCalloutListsScaffold(
 		themeDescEl,
 		themeListEl,
 		themeFold,
+		themeSwitch,
 		subSectionEl,
 		userListEl,
 		discoverFooterEl,
@@ -178,5 +186,50 @@ export function buildCalloutListsScaffold(
 		userFold,
 		builtInListEl,
 		builtInFold,
+	};
+}
+
+/** The switch row, held across repaints. */
+export type ThemeStylesSwitch = {
+	settingEl: HTMLElement;
+	/** Show the saved value — it can change under an open tab (sync, Reset). */
+	sync: () => void;
+};
+
+/**
+ * *Use your theme's callout styles* (`manager/theme/themeCalloutsOff.ts`),
+ * under the heading of the section it empties. Off, the theme lists nothing,
+ * so the painter keeps the section on screen for the switch's sake alone —
+ * see `renderThemeList`.
+ */
+function addThemeStylesSwitch(
+	ctx: SettingsSectionContext,
+	bodyEl: HTMLElement,
+): ThemeStylesSwitch {
+	const styles = () => ctx.plugin.registry.settings.themeCalloutStyles;
+	let toggle: ToggleComponent | null = null;
+	const setting = new Setting(bodyEl)
+		.setName(t("settings.themeCalloutStyles"))
+		.setDesc(
+			// One short sentence per line.
+			createFragment((frag) => {
+				t("settings.themeCalloutStylesDesc").split("\n").forEach((line, i) => {
+					if (i > 0) frag.createEl("br");
+					frag.appendText(line);
+				});
+			}),
+		)
+		.addToggle((tg) => {
+			toggle = tg.setValue(styles().enabled).onChange((enabled) => {
+				if (enabled === styles().enabled) return;
+				styles().enabled = enabled;
+				ctx.plugin.registry.settingsChanged();
+			});
+		});
+	return {
+		settingEl: setting.settingEl,
+		sync: () => {
+			if (toggle && toggle.getValue() !== styles().enabled) toggle.setValue(styles().enabled);
+		},
 	};
 }
