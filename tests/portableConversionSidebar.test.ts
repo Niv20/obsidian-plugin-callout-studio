@@ -118,12 +118,12 @@ describe("conversion file groups and cards", () => {
 			await h.view.onOpen();
 			const groups = h.root.querySelectorAll(".cs-sidebar-file");
 			assert.deepEqual(groups.map(group => group.dataset.path), ["a.md", "b.md"]);
-			assert.deepEqual(groups.map(group => group.querySelector(".cs-sidebar-file-link")?.textContent), ["a.md (2)", "b.md (1)"]);
+			assert.deepEqual(groups.map(group => group.querySelector(".cs-sidebar-file-link")?.textContent), ["a.md 2", "b.md 1"]);
 			for (const group of groups) {
 				const link = group.querySelector(".cs-sidebar-file-link")!;
 				assert.equal(link.getAttribute("aria-label"), null, "file names rely on visible text without a hover popup");
 				assert.equal(link.getAttribute("title"), null);
-				assert.equal(link.querySelector(".cs-heading-count")?.getAttribute("aria-hidden"), null);
+				assert.equal(link.querySelector(".cs-faint-count")?.getAttribute("aria-hidden"), null);
 			}
 			assert.deepEqual(groups.map(group => group.querySelectorAll(".cs-sidebar-result").length), [2, 1]);
 			assert.equal(groups[0]!.querySelectorAll(".cs-sidebar-grid").length, 1);

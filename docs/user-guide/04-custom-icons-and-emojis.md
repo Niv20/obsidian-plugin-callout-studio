@@ -29,7 +29,7 @@ Moving the pointer again highlights the row under it.
 - **Material Symbols** downloads only the specific SVG you select, keeping its stored footprint small.
 
 Search works offline. Depending on the selected source, the filters at the top can narrow icons by category, style, stroke weight, or emoji skin tone.
-In **All sources**, each library's result heading shows its matching icon count in parentheses, such as **Lucide (12)**.
+In **All sources**, each library's result heading shows how many of its icons match as a small faint number at the end of the line, as Obsidian's search does.
 Across all libraries, filters expand to use the available row width, including when they wrap below the search field.
 For Tabler Icons, the search field is slightly narrower to leave more room for the style and category filters.
 For Material Symbols, search sits above the style, weight, and category filters so their choices stay readable.

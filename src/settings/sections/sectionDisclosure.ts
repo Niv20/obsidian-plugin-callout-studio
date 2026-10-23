@@ -12,12 +12,12 @@
  *
  * **The control is the heading's name, not its row.** `nameEl` spans the
  * title line and excludes `.setting-item-control`, which is what keeps the CTA
- * pressable. It also keeps the accessible name to "My callout types (4)"
+ * pressable. It also keeps the accessible name to "My callout types 4"
  * rather than the whole row including a paragraph of description.
  *
  * **`setName` is wrapped, not called directly.** Every list rewrites its
- * heading on every refresh to update the "(N)" (`headingWithCount` in
- * `ui/headingCount.ts`), and Obsidian's `setName` replaces `nameEl`'s
+ * heading on every refresh to update its count (`headingWithCount` in
+ * `ui/faintCount.ts`), and Obsidian's `setName` replaces `nameEl`'s
  * children — which is where the chevron lives. Attributes survive that; child
  * elements do not.
  *

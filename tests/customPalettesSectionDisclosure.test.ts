@@ -216,12 +216,12 @@ describe("the Saved color palettes heading folds like the callout lists", () => 
 /* -------------------------------------------------------------------------- */
 
 describe("the heading names the full list, never the visible slice", () => {
-	it("shows the total in parentheses", () => {
+	it("shows the total as a faint count after the title", () => {
 		const registry = vault();
 		addPalettes(registry, 5);
 		const host = render(registry, fakeApp());
 
-		assert.strictEqual(headingText(section(host)), `${HEADING} (5)`);
+		assert.strictEqual(headingText(section(host)), `${HEADING} 5`);
 	});
 
 	it("keeps the count while folded", () => {
@@ -230,7 +230,7 @@ describe("the heading names the full list, never the visible slice", () => {
 		const host = render(registry, fakeApp());
 
 		click(section(host).nameEl);
-		assert.strictEqual(headingText(section(host)), `${HEADING} (4)`);
+		assert.strictEqual(headingText(section(host)), `${HEADING} 4`);
 	});
 
 	it("counts every saved palette even when most are behind Load more", () => {
@@ -240,15 +240,15 @@ describe("the heading names the full list, never the visible slice", () => {
 
 		assert.strictEqual(
 			headingText(section(host)),
-			`${HEADING} (${LIST_PAGE_SIZE + 7})`,
+			`${HEADING} ${LIST_PAGE_SIZE + 7}`,
 		);
 	});
 
-	it("shows (0) with no saved palettes", () => {
+	it("shows 0 with no saved palettes", () => {
 		const registry = vault();
 		const host = render(registry, fakeApp());
 
-		assert.strictEqual(headingText(section(host)), `${HEADING} (0)`);
+		assert.strictEqual(headingText(section(host)), `${HEADING} 0`);
 	});
 });
 

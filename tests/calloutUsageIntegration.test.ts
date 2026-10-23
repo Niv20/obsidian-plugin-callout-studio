@@ -81,7 +81,7 @@ describe("shared callout usage surfaces", () => {
 		}
 		const menu = fakeMenu();
 		addUsageMenuItem(menu.menu, app, ["note"]);
-		assert.equal(menu.title(), t("usage.menuCount", { count: 4 }), "menu shows usages without a file count");
+		assert.equal(menu.title(), `${t("usage.menu")} 4`, "menu shows usages without a file count, as a faint count");
 		assert.equal(menu.countNode(), undefined, "a count ready at opening appears immediately");
 		await scanVaultCalloutStatistics(app);
 		assert.equal(reads(), 2, "repeat report and menu reuse parsed files");
@@ -120,14 +120,14 @@ describe("shared callout usage surfaces", () => {
 		assert.equal(menu.title(), t("usage.menu"), "loading never flashes progress copy");
 		release("[!note]");
 		await running;
-		assert.equal(menu.title(), t("usage.menuCount", { count: 1 }));
-		assert.equal(menu.countNode()?.textContent, " (1)", "only the added count and its punctuation fade");
+		assert.equal(menu.title(), `${t("usage.menu")} 1`);
+		assert.equal(menu.countNode()?.textContent, " 1", "only the added count fades");
 		const countNode = menu.countNode();
 		await index.ensureFresh();
 		assert.equal(menu.countNode(), countNode, "an unchanged count keeps its existing element");
 		menu.hide();
 		index.invalidate("a.md");
-		assert.equal(menu.title(), t("usage.menuCount", { count: 1 }));
+		assert.equal(menu.title(), `${t("usage.menu")} 1`);
 		index.dispose();
 	});
 

@@ -74,7 +74,7 @@ it("folds a pooled group with Obsidian's own collapse triangle", () => {
 		emptyText: "Empty collection",
 		loadMoreText: "Load more",
 		groupLabelFor: (entry, previous) =>
-			previous?.categories[0] === entry.categories[0] ? undefined : entry.categories[0],
+			previous?.categories[0] === entry.categories[0] ? undefined : { name: entry.categories[0] ?? "" },
 	});
 	grid.setEntries([
 		{ name: "star", categories: ["Lucide"], keywords: [] },

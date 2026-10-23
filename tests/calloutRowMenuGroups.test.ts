@@ -102,7 +102,7 @@ function groups(menu: Menu): string[][] {
 	return drawn.map((group) => group.labels);
 }
 
-const find = (count: number): string => t("usage.menuCount", { count });
+const find = (count: number): string => `${t("usage.menu")} ${count}`;
 const REPLACE = t("settings.replaceAction");
 const CONVERT = t("settings.convertUsesAction");
 const DUPLICATE = t("settings.duplicateAction");

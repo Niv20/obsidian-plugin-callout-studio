@@ -141,14 +141,14 @@ describe("each list heading carries the count of rows it is showing", () => {
 
 		const builtInCount = registry.getBuiltIn().length;
 		const counts = headingCounts(host);
-		assert.strictEqual(counts.mine, "My callout types (0)");
+		assert.strictEqual(counts.mine, "My callout types 0");
 		assert.strictEqual(
 			counts.builtIn,
-			`Built-in callouts (${builtInCount})`,
+			`Built-in callouts ${builtInCount}`,
 		);
 		// The theme section names a count even at zero, but stays off screen —
 		// nothing to display means nothing to count in the user's eyes.
-		assert.strictEqual(counts.theme, "Callouts from your theme (0)");
+		assert.strictEqual(counts.theme, "Callouts from your theme 0");
 		assert.strictEqual(themeSectionVisible(host), false);
 	});
 
@@ -159,15 +159,15 @@ describe("each list heading carries the count of rows it is showing", () => {
 
 		addUserCallout(registry, "quiet");
 		lists.refresh();
-		assert.strictEqual(headingCounts(host).mine, "My callout types (1)");
+		assert.strictEqual(headingCounts(host).mine, "My callout types 1");
 
 		addUserCallout(registry, "loud");
 		lists.refresh();
-		assert.strictEqual(headingCounts(host).mine, "My callout types (2)");
+		assert.strictEqual(headingCounts(host).mine, "My callout types 2");
 
 		registry.remove("quiet");
 		lists.refresh();
-		assert.strictEqual(headingCounts(host).mine, "My callout types (1)");
+		assert.strictEqual(headingCounts(host).mine, "My callout types 1");
 	});
 
 	it("moves the count from Built-in to Callouts from your theme when a theme claims a built-in, and back on release", () => {
@@ -177,26 +177,26 @@ describe("each list heading carries the count of rows it is showing", () => {
 
 		const totalBuiltIn = registry.getBuiltIn().length;
 		let counts = headingCounts(host);
-		assert.strictEqual(counts.theme, "Callouts from your theme (1)");
+		assert.strictEqual(counts.theme, "Callouts from your theme 1");
 		assert.strictEqual(
 			counts.builtIn,
-			`Built-in callouts (${totalBuiltIn - 1})`,
+			`Built-in callouts ${totalBuiltIn - 1}`,
 		);
 
 		registry.setThemeOwnedIds(new Set());
 		lists.refresh();
 		counts = headingCounts(host);
-		assert.strictEqual(counts.theme, "Callouts from your theme (0)");
+		assert.strictEqual(counts.theme, "Callouts from your theme 0");
 		assert.strictEqual(themeSectionVisible(host), false);
 		assert.strictEqual(
 			counts.builtIn,
-			`Built-in callouts (${totalBuiltIn})`,
+			`Built-in callouts ${totalBuiltIn}`,
 		);
 	});
 
-	// The shared "(N)" from ui/headingCount.ts, in one span with its title: the
-	// name element is a flex row, and the chevron is the only other item in it.
-	it("draws every count as the shared heading count, in one span with its title", () => {
+	// The shared faint count from ui/faintCount.ts, after its title: the name
+	// element is a row (chevron, title, count), and the count goes to its end.
+	it("draws every count as the shared faint count, after its title", () => {
 		const registry = vault();
 		const app = themeApp(["note"]);
 		const { host, lists } = render(registry, app, ["note"]);
@@ -210,11 +210,12 @@ describe("each list heading carries the count of rows it is showing", () => {
 		for (const heading of headings) {
 			const nameEl = heading.querySelector(".setting-item-name");
 			const children: Element[] = nameEl ? Array.from(nameEl.children) : [];
-			const [chevron, label, ...rest] = children;
+			const [chevron, title, count, ...rest] = children;
 			assert.ok(chevron?.hasClass("cs-disclosure-chevron"), "the chevron leads the name");
-			assert.strictEqual(rest.length, 0, "title and count are one item beside it");
-			assert.match(label?.querySelector(".cs-heading-count")?.textContent ?? "", /^ \(\d+\)$/);
-			assert.strictEqual(label?.textContent, heading.dataset.csName);
+			assert.ok(count?.hasClass("cs-faint-count"), "the count follows the title");
+			assert.strictEqual(rest.length, 0, "nothing else in the row");
+			assert.match(count?.textContent ?? "", /^ \d+$/);
+			assert.strictEqual(`${title?.textContent}${count?.textContent}`, heading.dataset.csName);
 		}
 	});
 });

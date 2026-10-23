@@ -35,7 +35,7 @@ import {
 import type { PackDataStore } from "../../icons/PackDataStore";
 import { formatBytes } from "../../icons/iconLibraries";
 import { isAllSources } from "./allSources";
-import { IconGrid } from "./IconGrid";
+import { IconGrid, type GridGroupHeading } from "./IconGrid";
 import { PackToolbarFilters } from "./PackToolbarFilters";
 import { t } from "../../i18n";
 import { autofocusOnDesktop } from "../modalAutofocus";
@@ -324,13 +324,15 @@ export class PackPanel {
 	private groupLabelFor(
 		entry: IconEntry,
 		previous: IconEntry | undefined,
-	): string | undefined {
+	): GridGroupHeading | undefined {
 		if (!isAllSources(this.pack) || !entry.pack) return undefined;
 		if (previous && previous.pack === entry.pack) return undefined;
-		return t("iconPicker.sourceGroup", {
+		// The library's name, with how many of its icons match as a faint
+		// count at the end of the line (no "(24)" any more).
+		return {
 			name: t(this.packOf(entry).labelKey),
-			count: String(this.groupCounts.get(entry.pack) ?? 0),
-		});
+			count: this.groupCounts.get(entry.pack) ?? 0,
+		};
 	}
 
 	// ── Download states ─────────────────────────────────────────────────

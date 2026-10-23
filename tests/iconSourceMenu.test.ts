@@ -6,16 +6,16 @@ import {
 } from "../src/settings/iconpicker/sourceMenuPresentation";
 import { readRepoFile } from "./support/sourceScan";
 import { installFakeDom } from "./support/fakeDom";
-import { en } from "../src/i18n/en";
-import { LOCALE_TABLES } from "./support/localeTables";
 
 installFakeDom();
 
 describe("icon source menu counts", () => {
-	it("puts pooled result counts in parentheses in every language", () => {
-		for (const [locale, table] of Object.entries({ en, ...LOCALE_TABLES })) {
-			assert.equal(table["iconPicker.sourceGroup"], "{{name}} ({{count}})", locale);
-		}
+	it("shows a pooled library's count as a faint count, not a translated \"(N)\"", () => {
+		// The heading is the library's name and a `cs-faint-count` (ui/faintCount.ts),
+		// so no language's word order or brackets are involved any more.
+		const panel = readRepoFile("src/settings/iconpicker/PackPanel.ts");
+		assert.doesNotMatch(panel, /iconPicker\.sourceGroup/);
+		assert.match(readRepoFile("src/settings/iconpicker/IconGrid.ts"), /appendFaintCount\(header, heading\.count\)/);
 	});
 
 	it("keeps small and user-owned collections exact", () => {

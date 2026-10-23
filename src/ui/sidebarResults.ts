@@ -1,5 +1,5 @@
 import { t } from "../i18n";
-import { appendHeadingCount } from "./headingCount";
+import { appendFaintCount } from "./faintCount";
 import { scrollToReveal } from "./scrollToReveal";
 
 /** Air between a revealed card and the sticky file heading above it, or the list's bottom: the grid's own gap. */
@@ -19,7 +19,7 @@ export function createSidebarFileGroup(host: HTMLElement, options: {
 		type: "button", "data-action": "file", "data-path": options.path,
 	} });
 	link.createSpan({ cls: "cs-sidebar-file-name", text: options.path });
-	appendHeadingCount(link, options.count);
+	appendFaintCount(link, options.count);
 	const grid = section.createDiv({ cls: "cs-sidebar-grid" });
 	return { section, heading, grid };
 }

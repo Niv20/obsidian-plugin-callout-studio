@@ -58,8 +58,8 @@ Fingerprint plus source-line validation preserves repeated-line identity;
 changed documents may relocate only a unique unchanged line. Navigation never
 modifies text or conversion choices, and stale asynchronous selections cancel.
 Both sidebars open a note at its beginning when its file heading is clicked;
-counts appear in parentheses after the file name, drawn like every other
-heading count (see [Heading counts](#heading-counts---one-n-everywhere)). The
+its count appears as a faint number at the end of the file's line, drawn like
+every other count (see [Faint counts](#faint-counts---how-many-as-obsidians-search-shows-it)). The
 shared file-heading button uses its visible name and count as its accessible
 label, without a redundant hover tooltip. Navigation scrolls a source into view
 and flashes it without selecting it or focusing the editor (see the occurrence
@@ -237,7 +237,7 @@ layout can answer it:
   this toggle does. Observing the heading itself would loop: moving Scan changes
   its height inside the observer's own callback, which ends in "ResizeObserver
   loop completed with undelivered notifications". It is also asked when the
-  painter rewrites the heading's "(N)" (`placeScan`), from a **microtask**: the
+  painter rewrites the heading's count (`placeScan`), from a **microtask**: the
   painter runs inside `display()` too, before the sections under it exist, and a
   layout read there flushes half a page, so the scroller clamps and the reader
   loses their place. A language change rebuilds the tab and the observer with it.
@@ -595,7 +595,7 @@ All three row menus are built by plain functions: `buildBuiltInRowMenu` and
 
 | Section | Items |
 | --- | --- |
-| `find` | **Find callouts (N)**, alone: the one item that leaves Settings |
+| `find` | **Find callouts** with its faint count, alone: the one item that leaves Settings |
 | `notes` | **Replace in vault…**, **Convert uses to plain text** |
 | `callout` | **Duplicate**, **Reset to default**, **Use default fallback style** |
 | `danger` | **Delete**, with `setWarning(true)` |
@@ -742,13 +742,13 @@ Three things about it are decisions, not incidentals:
 - **The control is `setting.nameEl`, not `settingEl`.** The name element
   spans the title line and stops short of `.setting-item-control`, which is
   what keeps that CTA pressable without a target check. It also keeps the
-  button's accessible name to `"My callout types (4)"` rather than the whole
+  button's accessible name to `"My callout types 4"` rather than the whole
   row including a paragraph of description. `role="button"`, `tabindex="0"`,
   `aria-expanded` and `aria-controls` all live on it; the chevron is
   `aria-hidden`, because `aria-expanded` already says what it says.
 - **`setName` is wrapped.** Each list rewrites its heading on every render to
-  update the `(N)` - the fragment `headingWithCount` builds (see
-  [Heading counts](#heading-counts---one-n-everywhere)) - and Obsidian's
+  update its count - the fragment `headingWithCount` builds (see
+  [Faint counts](#faint-counts---how-many-as-obsidians-search-shows-it)) - and Obsidian's
   `setName` *replaces* `nameEl`'s children, which is where the chevron lives.
   Attributes survive that; elements do not. Callers therefore go through
   `fold.setName(...)`, never `setting.setName(...)`.
@@ -1058,7 +1058,7 @@ regression, not a feature. So the chevron does not take space from the title:
 `margin-inline-start` of `calc(-1 * (var(--cs-disclosure-size) +
 var(--cs-disclosure-gap)))`, moving the whole title line start-ward by
 exactly the chevron's footprint. The chevron fills the space that opens up,
-and the first glyph of the title - and the `(N)` after it - lands back on the
+and the first glyph of the title - and the count after it - lands back on the
 x it had before there was anything to fold.
 
 Two properties, `--cs-disclosure-size` and `--cs-disclosure-gap`, are the
@@ -1102,56 +1102,64 @@ heading size, a semibold stem. A callout's own fold arrow (heading callout,
 block callout, and their previews) is deliberately left out - it follows
 Obsidian's look for callouts.
 
-### Heading counts - one "(N)" everywhere
+### Faint counts - how many, as Obsidian's Search shows it
 
-Every heading that counts what it holds ends the same way: the four settings
-lists (*Callouts from your theme*, *My callout types*, *Built-in callouts*,
-*Saved color palettes*), the section titles of the setup comparison in
-**Version details**, and the file headings of the **Find
-callouts** and **Review conversion** sidebars.
-[`ui/headingCount.ts`](../../src/ui/headingCount.ts) builds all of them, and
-`.cs-heading-count` in `styles.css` is the one rule that places and colours
-them. They used to be four implementations, sitting one space, a space and a
-margin, or a flex gap and a margin from the title, in the heading's colour in
-one place and grey in the next.
+Every heading or line that counts what it holds ends the same way, the way
+Obsidian's Search pane ends a file's line with its match count
+(`.tree-item-flair`): a small number in faint text at the end of the row, with
+no brackets. Niv asked on 2026-10-22 for this everywhere in the plugin (item 57
+of the native-look plan); until 2026-10-23 these were a muted "(N)" just after
+the title. The places:
 
-- `appendHeadingCount(heading, count)` appends
-  `<span class="cs-heading-count"> (N)</span>`, the number formatted with
-  `toLocaleString(getLocale())`. The space before "(" is part of the text, so
-  the heading reads - and is announced as - "My callout types (4)".
-- `headingWithCount(title, count)` returns the same thing as a fragment for a
-  `Setting` heading's `setName`, with the title and its count wrapped in one
-  span. A foldable heading's `nameEl` is a flex row (chevron, then title);
-  unwrapped, title and count would be two flex items - the row's gap between
-  them, and a long title wrapping beside its count instead of carrying it to
-  the end of its last line.
+- the four settings lists (*Callouts from your theme*, *My callout types*,
+  *Built-in callouts*, *Saved color palettes*);
+- the section titles of the setup comparison in **Version details**;
+- the file headings of the **Find callouts** and **Review conversion** sidebars;
+- the library headings in Pick an icon's **All sources** grid ("Lucide", with
+  its matches after it);
+- **Find callouts** in a callout row's menu.
+
+[`ui/faintCount.ts`](../../src/ui/faintCount.ts) builds all of them, and
+`.cs-faint-count` in `styles.css` is the one rule that places and colours them:
+
+- `appendFaintCount(parent, count)` appends `<span class="cs-faint-count"> N</span>`,
+  the number formatted with `toLocaleString(getLocale())`. The space before
+  the number is part of the text, so the heading reads - and is announced as -
+  "My callout types 4".
+- `headingWithCount(title, count)` returns a fragment for a `Setting`
+  heading's `setName`: the title and its count as **siblings**, so in a
+  foldable heading's `nameEl` (a row: chevron, title, count) the count goes to
+  the row's end.
+- The rule is Obsidian's `.tree-item-flair-outer` + `.tree-item-flair`:
+  `margin-inline-start: auto` (to the end of a heading that is a flex row; in
+  running text it simply follows the words), `padding-inline-start:
+  var(--size-4-1)`, `--text-faint`, `--font-ui-smaller`, `line-height: 1`,
+  `tabular-nums`, `flex-shrink: 0`, and `white-space: pre` (keeps the leading
+  space in a flex row, and the number on one line).
+- A settings heading keeps its count beside its title
+  (`.setting-item-heading .cs-faint-count { margin-inline-start: 0 }`): some
+  share their row with buttons (Scan, Add), and pushed to the end the count
+  would land against them. Searchable Settings turns these headings into page
+  rows, with the count as the row's value at its end.
+- In a menu row the count floats to the end of Obsidian's `.menu-item-title`
+  (`float: inline-end`), which is a block, not a row. The row menu's title is a
+  fragment (`usageTitle` in `usage/usageMenuItem.ts`): "Find callouts" and the
+  count; a count that arrives after the menu opened fades in
+  (`cs-usage-menu-count`). The old `usage.menuCount` key is no longer used.
+- Pick an icon's grid takes `groupLabelFor` → `{ name, count }`
+  (`GridGroupHeading` in `IconGrid.ts`) and draws the count with the same
+  helper; the old `iconPicker.sourceGroup` key ("{{name}} ({{count}})") is no
+  longer used.
 - The setup comparison's title row keeps the count as its own flex item beside
   `.cs-recovery-section-title`, so a title cut short with an ellipsis still
-  shows its count. That row therefore has no flex `gap` - its chevron carries
-  `margin-inline-end: var(--cs-disclosure-gap)` instead - because a gap would
-  open between the title and its count as well.
+  shows its count. That row has no flex `gap` - its chevron carries
+  `margin-inline-end: var(--cs-disclosure-gap)` instead.
 
-The rule is the count's own word space plus `margin-inline-start: 0.3em` -
-about half an em in all, in `em` so it scales with each heading's type -
-`--text-muted`, `font-size: 0.85em` (a step below the heading, whatever size
-that is), `font-weight: var(--font-medium)`, `tabular-nums`, and
-`white-space: pre`. The margin is 0.3em rather than 0.25em because it is
-measured in the count's own, smaller em. Medium keeps the small digits from
-looking thin beside the title; where the interface font has no 500 cut the
-browser uses its regular one (its rule for a requested 500 is 400 first, then
-lighter, then heavier), so the count degrades to differing by size and colour
-alone, and a variable font simply renders 500. `pre` rather than `nowrap` because the comparison row's
-count opens a flex item, and `nowrap` drops a space at the start of one. On
-mobile, Obsidian paints settings headings in `--text-muted` themselves
-(`--setting-group-heading-color`), so
-`.is-mobile .setting-item-heading .cs-heading-count` steps down to
-`--text-faint` to stay distinct from its title.
-
-Not every "(N)" is a heading count. **Find callouts (134)** in a callout's menu,
-**Load more (14)**, **Import valid only (3)** and the icon total in an icon
-source's description are part of a label, and stay plain text in that label's
-colour. `tests/headingCount.test.ts` pins the helpers and the rule; each
-surface's own suite checks that it goes through them.
+Not every count is drawn this way. **Load more (14)**, **Import valid only
+(3)** and the icon total in an icon source's description are part of a
+button's or a line's own words, and stay plain text in that label's colour.
+`tests/faintCount.test.ts` pins the helpers and the rule; each surface's own
+suite checks that it goes through them.
 
 ### `listPaging.ts` - the first 20 rows, then a button
 
@@ -1170,11 +1178,11 @@ because its grids run to thousands - a different problem, deliberately not
 shared code.)
 
 The button's label is `t("iconPicker.loadMore")` with the hidden count
-appended in code - `Load more (14)` - the same trick the heading counts use: a
-numeric suffix on whatever `t()` returns, so it needs no key of its own in any
-of the 31 translated locales. Unlike a heading's count it stays plain text in
-the button's colour, because it is part of the label (see
-[Heading counts](#heading-counts---one-n-everywhere)). `focusFirstRevealed`
+appended in code - `Load more (14)` - a numeric suffix on whatever `t()`
+returns, so it needs no key of its own in any of the 31 translated locales.
+Unlike a heading's faint count it stays plain text in the button's colour,
+because it is part of the label (see
+[Faint counts](#faint-counts---how-many-as-obsidians-search-shows-it)). `focusFirstRevealed`
 (below) is an export of `listPaging.ts` rather than a per-section helper,
 which is what lets `CustomPalettesSection.ts` reuse it verbatim instead of
 reimplementing the same focus-on-reveal logic.

@@ -24,11 +24,11 @@ describe("occurrence result identity", () => {
 		const sections = Array.from(h.content.querySelectorAll<HTMLElement>(".cs-sidebar-file"));
 		assert.deepEqual(sections.map((section) => section.dataset.path), ["folder/a.md", "b.md"]);
 		assert.deepEqual(sections.map((section) => section.querySelector(".cs-sidebar-file-name")?.textContent), ["folder/a.md", "b.md"]);
-		assert.deepEqual(sections.map((section) => section.querySelector(".cs-heading-count")?.textContent), [" (3)", " (1)"]);
+		assert.deepEqual(sections.map((section) => section.querySelector(".cs-faint-count")?.textContent), [" 3", " 1"]);
 		assert.deepEqual(sections.map((section) => section.querySelector<HTMLButtonElement>('button[data-action="file"]')?.dataset.path),
 			["folder/a.md", "b.md"]);
 		assert.deepEqual(sections.map((section) => section.querySelector(".cs-sidebar-file-link")?.textContent),
-			["folder/a.md (3)", "b.md (1)"]);
+			["folder/a.md 3", "b.md 1"]);
 		assert.deepEqual(sections.map((section) => section.querySelector(".cs-sidebar-grid")?.children.length), [3, 1]);
 		for (const section of sections) {
 			assert.equal(section.children.length, 2, "the sticky heading sits outside its responsive card grid");
@@ -36,7 +36,7 @@ describe("occurrence result identity", () => {
 			const link = section.querySelector(".cs-sidebar-file-link")!;
 			assert.equal(link.getAttribute("aria-label"), null, "the visible file name must not create a redundant hover popup");
 			assert.equal(link.getAttribute("title"), null);
-			assert.equal(link.querySelector(".cs-heading-count")?.getAttribute("aria-hidden"), null,
+			assert.equal(link.querySelector(".cs-faint-count")?.getAttribute("aria-hidden"), null,
 				"the accessible name includes the visible count");
 		}
 		assert.deepEqual(h.rows().map((row) => h.cards.getOccurrence(row)?.line), [0, 1, 2, 0]);

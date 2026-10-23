@@ -552,7 +552,7 @@ export class Setting {
 			this.nameEl.textContent = name ?? "";
 		} else {
 			// A fragment's children move in, as they do in Obsidian — the
-			// heading counts (`ui/headingCount.ts`) arrive this way.
+			// heading counts (`ui/faintCount.ts`) arrive this way.
 			this.nameEl.textContent = "";
 			for (const child of Array.from(name.childNodes)) this.nameEl.appendChild?.(child);
 		}

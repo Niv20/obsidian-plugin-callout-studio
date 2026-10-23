@@ -51,7 +51,7 @@ export function renderPagedList<T>(
 	const row = listEl.createDiv({ cls: "callout-studio-load-more" });
 	// The count is a suffix on whatever `t()` returns, so it needs no key of
 	// its own in any of the 31 translated locales. Plain text, not the list
-	// headings' muted "(N)" (`ui/headingCount.ts`): it is part of the button's
+	// headings' faint count (`ui/faintCount.ts`): it is part of the button's
 	// label, not a note on a title.
 	const btn = row.createEl("button", {
 		text: `${t("iconPicker.loadMore")} (${hidden})`,

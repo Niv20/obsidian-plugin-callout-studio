@@ -37,7 +37,7 @@ import { keepScrollAnchored } from "./foldAnchor";
 import { createStickySection } from "./stickySection";
 import { focusFirstRevealed, renderPagedList } from "./listPaging";
 import type { PagingState } from "./listPaging";
-import { headingWithCount } from "../../ui/headingCount";
+import { headingWithCount } from "../../ui/faintCount";
 import {
 	applyMetadataRename,
 	askMetadataRename,

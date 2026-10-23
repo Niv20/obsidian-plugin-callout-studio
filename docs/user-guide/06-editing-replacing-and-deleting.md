@@ -4,12 +4,12 @@ Changes to a callout's color, icon, name, or IDs take effect everywhere the call
 
 A callout's three-dot menu groups its actions, with a line between groups. It opens under the three-dot button, like **More options** on Obsidian's own plugin list, and pressing the button again closes it. Right-clicking anywhere on a callout row opens the same menu where you clicked.
 
-1. **Find callouts**, with the number of uses.
+1. **Find callouts**, with the number of uses as a small faint number at the end of the line.
 2. **Replace in vault…** and **Convert uses to plain text**, which change your notes.
 3. **Duplicate**, **Reset to default** or **Use default fallback style**, which change the callout itself.
 4. **Delete**, in red.
 
-A row shows only the actions that apply to it, and a group with nothing in it leaves no line. When the count shows that no note uses the callout, **Find callouts (0)** is greyed out. If the count arrives after the menu opened and it is 0, **Replace in vault…** and **Convert uses to plain text** are greyed out too.
+A row shows only the actions that apply to it, and a group with nothing in it leaves no line. When the count shows that no note uses the callout, **Find callouts** shows 0 and is greyed out. If the count arrives after the menu opened and it is 0, **Replace in vault…** and **Convert uses to plain text** are greyed out too.
 
 On desktop and tablet, a callout's three-dot menu closes when you scroll the
 settings list or resize the window. On a phone, Obsidian opens the menu at the

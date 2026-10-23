@@ -59,7 +59,7 @@ import { partitionByStyleOwner, styleOwnerFacts } from "./rowOwnership";
 import type { RowKind } from "./rowOwnership";
 import { focusFirstRevealed, renderPagedList } from "./listPaging";
 import type { PagingState } from "./listPaging";
-import { headingWithCount } from "../../ui/headingCount";
+import { headingWithCount } from "../../ui/faintCount";
 import { calloutListsSignature } from "./calloutListsSignature";
 import {
 	buildCalloutListsScaffold,

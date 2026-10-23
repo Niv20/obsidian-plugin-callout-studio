@@ -10,11 +10,21 @@
  */
 import { setIcon } from "obsidian";
 import type { IconEntry } from "../../icons/types";
+import { appendFaintCount } from "../../ui/faintCount";
 
 const GRID_PAGE_SIZE = 120;
 
 /** Cap on paging-to-reveal, so a bad index can never spin the UI forever. */
 const MAX_REVEAL_PAGES = 500;
+
+/**
+ * The heading over one group of the grid: a library's name, and how many of
+ * its icons match, drawn as a faint count at the end of the line.
+ */
+export interface GridGroupHeading {
+	name: string;
+	count?: number;
+}
 
 export interface IconGridOptions {
 	/** Draws one icon into its cell. */
@@ -41,7 +51,7 @@ export interface IconGridOptions {
 	 * source, and every other source returns nothing and gets a flat grid (one
 	 * segment, no heading).
 	 */
-	groupLabelFor?(entry: IconEntry, previous: IconEntry | undefined): string | undefined;
+	groupLabelFor?(entry: IconEntry, previous: IconEntry | undefined): GridGroupHeading | undefined;
 	emptyText: string;
 	/** Optional custom empty state for sources with richer guidance. */
 	renderEmpty?(host: HTMLElement): void;
@@ -50,7 +60,7 @@ export interface IconGridOptions {
 
 /** One run of entries from a single group — or, for an ungrouped grid, all of them. */
 interface GridSegment {
-	readonly heading: string | undefined;
+	readonly heading: GridGroupHeading | undefined;
 	readonly entries: IconEntry[];
 	displayed: number;
 	collapsed: boolean;
@@ -204,7 +214,7 @@ export class IconGrid {
 	 * (and its own "Load more" with them). A source that floods the pool with
 	 * hundreds of hits would otherwise push every other source below the fold.
 	 */
-	private buildHeader(segment: GridSegment, heading: string): HTMLElement {
+	private buildHeader(segment: GridSegment, heading: GridGroupHeading): HTMLElement {
 		const header = this.gridEl.createDiv({
 			cls: "icon-picker-group-header",
 			attr: { role: "button", tabindex: "0", "aria-expanded": "true" },
@@ -213,7 +223,8 @@ export class IconGrid {
 		// its `.collapse-icon` CSS sizes it and turns it by the reading direction.
 		const fold = header.createSpan({ cls: "collapse-icon" });
 		setIcon(fold, "right-triangle");
-		header.createSpan({ cls: "icon-picker-group-text", text: heading });
+		header.createSpan({ cls: "icon-picker-group-text", text: heading.name });
+		if (heading.count !== undefined) appendFaintCount(header, heading.count);
 
 		const toggle = () => this.toggleSegment(segment);
 		header.addEventListener("click", toggle);

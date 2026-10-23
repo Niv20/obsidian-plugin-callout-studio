@@ -571,39 +571,48 @@
 	display: none;
 }
 
-/* ─── Heading counts ──────────────────────────────────────────── */
+/* ─── Faint counts ────────────────────────────────────────────── */
 
-/* The "(N)" after a heading that counts what it holds: the settings tab's four
-   lists, the groups in Restore an earlier setup, the sections of the setup
-   comparison, and the file headings of the Find callouts and Review conversion
-   sidebars. One look for all of them, built by `ui/headingCount.ts` — a little
-   further from the title than a word space, in the secondary text colour, a
-   step smaller than the title and at medium weight, so it reads as a note on
-   the heading, not part of its name. Medium keeps the small digits from going
-   thin next to the title; a face without a 500 cut falls back to its regular
-   one, so the count then differs from the title by size and colour alone.
+/* How many things a heading or a line holds, drawn as Obsidian's Search pane
+   draws a file's match count (`.tree-item-flair-outer` + `.tree-item-flair`):
+   a small number in faint text, no brackets, at the end of the row. Built by
+   `ui/faintCount.ts` for the sidebars' file headings, the settings lists, the
+   setup comparison's sections, Pick an icon's library headings and "Find
+   callouts" in a row's menu (item 57 of the native-look plan; until 2026-10-23
+   these were a muted "(N)" just after the title).
 
-   The space before "(" is in the text, so the heading still reads "My callout
-   types (4)" to a screen reader and when copied. `pre` keeps that space where
-   the count opens a flex item of its own (the setup comparison's section
-   titles), which would otherwise drop it, and — like `nowrap` — keeps "(12)"
-   on one line. The margin is the rest of the gap: `em`, so it keeps its
-   proportion to each heading's own type size. 0.3em of the count's 0.85em is
-   the 0.25em of the heading's own that the gap was before the count shrank. */
-.cs-heading-count {
-	margin-inline-start: 0.3em;
-	color: var(--text-muted);
-	font-size: 0.85em;
-	font-weight: var(--font-medium);
+   `margin-inline-start: auto` pushes it to the end of a heading that is a row
+   (a flex container); in running text it simply follows the words, 4px off.
+   The space before the number is in its text, so a screen reader still reads
+   "My callout types 4"; `pre` keeps that space in a flex row and keeps the
+   number on one line. `tabular-nums` keeps a changing count from shifting. */
+.cs-faint-count {
+	flex-shrink: 0;
+	margin-inline-start: auto;
+	padding-inline-start: var(--size-4-1);
+	color: var(--text-faint);
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-normal);
 	font-variant-numeric: tabular-nums;
+	line-height: 1;
 	white-space: pre;
 }
 
-/* On mobile, Obsidian draws settings headings in `--text-muted` themselves
-   (`--setting-group-heading-color`), which would leave the count the same
-   colour as its title. One step lighter keeps the two apart. */
-.is-mobile .setting-item-heading .cs-heading-count {
-	color: var(--text-faint);
+/* A settings heading keeps its count beside its title. Some of these headings
+   share their row with buttons (Scan, Add), and pushed to the row's end the
+   count would land against them, away from the title it counts. (Searchable
+   Settings turns these headings into page rows, with the count as the row's
+   value at its end, as Obsidian draws one.) */
+.setting-item-heading .cs-faint-count {
+	margin-inline-start: 0;
+}
+
+/* In a menu row the count goes to the row's end too. Obsidian's
+   `.menu-item-title` is a plain block, not a row, so the count floats to its
+   end instead, and keeps the line's own height. */
+.menu-item-title > .cs-faint-count {
+	float: inline-end;
+	line-height: inherit;
 }
 
 /* ─── Sticky section headings ─────────────────────────────────── */
@@ -9083,8 +9092,9 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
    surface pair, the same as the number column it heads.
 
    No `gap`: it would open between the title and its count as well, on top of
-   the count's own spacing (`.cs-heading-count`), so the chevron keeps its
-   distance from the title with a margin of its own instead (below). */
+   the count's own spacing (`.cs-faint-count`, pushed to the row's end), so the
+   chevron keeps its distance from the title with a margin of its own instead
+   (below). */
 .cs-recovery-comparison .cs-recovery-section-toggle {
 	display: flex;
 	align-items: center;

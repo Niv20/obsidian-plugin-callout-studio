@@ -477,9 +477,10 @@ describe("Pick an icon — the panel after the Icon libraries window", () => {
 				const cells = h.contentEl.querySelectorAll(".icon-picker-cell");
 				assert.ok(cells.length > 0);
 				assert.ok(cells.every((cell) => cell.getAttribute("aria-label")?.startsWith("star — ")));
-				const headings = h.contentEl.querySelectorAll(".icon-picker-group-text").map((el) => el.textContent);
+				// Each library's name, and its match count as a faint count after it.
+				const headings = h.contentEl.querySelectorAll(".icon-picker-group-header").map((el) => el.textContent);
 				const sources = h.picker.menuLibraries().libraries.filter((id) => id !== "image");
-				assert.deepEqual(headings, sources.map((id) => `${t(getSource(id).labelKey)} (1)`));
+				assert.deepEqual(headings, sources.map((id) => `${t(getSource(id).labelKey)} 1`));
 			} finally { h.destroy(); }
 		});
 	}

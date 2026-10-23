@@ -4,6 +4,7 @@ import { STATISTICS_ICON_ID } from "../icons/uiIcons";
 import { getCalloutOccurrenceIndex } from "./occurrenceService";
 import { openOccurrencesFromSettings } from "./openFromSettings";
 import { onMenuHide } from "../ui/menuOnHide";
+import { appendFaintCount } from "../ui/faintCount";
 import { ROW_MENU_SECTION } from "../settings/sections/rowMenuSections";
 
 export interface UsageCount { fileCount: number; totalCount: number }
@@ -28,21 +29,27 @@ export function addUsageMenuItem(
 	let unsubscribe = (): void => {};
 	onMenuHide(menu, () => { active = false; unsubscribe(); watches.delete(menu); });
 	menu.addItem((item) => {
-		let previousTitle: string | undefined;
+		/** What the title last showed: "waiting", "incomplete" or the count. */
+		let previous: string | undefined;
 		const update = (): void => {
 			if (!active) return;
-			// Grey rather than gone: "(0)" is still worth reading, and an item
-			// that vanished under the pointer would move everything below it.
+			// Grey rather than gone: a count of 0 is still worth reading, and an
+			// item that vanished under the pointer would move everything below it.
 			const none = unused();
 			item.setDisabled(none);
 			for (const dependent of watch.items) dependent.setDisabled(none);
-			const title = index.status === "ready"
-				? t("usage.menuCount", { count: index.query(ids).totalCount })
-				: t(index.status === "partial" ? "usage.menuIncomplete" : "usage.menu");
-			if (title === previousTitle) return;
-			const revealCount = index.status === "ready" && previousTitle === t("usage.menu");
-			item.setTitle(revealCount ? fadeInUsageCount(title) : title);
-			previousTitle = title;
+			const count = index.status === "ready" ? index.query(ids).totalCount : undefined;
+			const shown = count !== undefined ? String(count)
+				: index.status === "partial" ? "incomplete" : "waiting";
+			if (shown === previous) return;
+			if (count === undefined) {
+				item.setTitle(t(index.status === "partial" ? "usage.menuIncomplete" : "usage.menu"));
+			} else {
+				// A count that arrives while the menu is open fades in.
+				const arrivedWhileOpen = previous === "waiting";
+				item.setTitle(usageTitle(count, arrivedWhileOpen));
+			}
+			previous = shown;
 		};
 		item.setSection(ROW_MENU_SECTION.find)
 			.setIcon(STATISTICS_ICON_ID)
@@ -67,16 +74,18 @@ export function disableWhenUnused(menu: Menu, item: MenuItem): void {
 	item.setDisabled(watch.unused());
 }
 
-/** Preserve translated ordering and punctuation; only the added count fades. */
-function fadeInUsageCount(title: string): string | DocumentFragment {
-	const label = t("usage.menu");
-	const position = title.indexOf(label);
-	if (position < 0) return title;
+/**
+ * "Find callouts" with its count, drawn as Obsidian draws a count: a small
+ * faint number at the end of the row (`ui/faintCount.ts`), not "(12)".
+ *
+ * @param count How many times the callout is used in the vault.
+ * @param fadeIn True when the count arrives after the menu opened, so the
+ *   number fades in rather than popping into a menu the user is reading.
+ */
+function usageTitle(count: number, fadeIn: boolean): DocumentFragment {
 	const fragment = createFragment();
-	const before = title.slice(0, position);
-	const after = title.slice(position + label.length);
-	if (before) fragment.createSpan({ text: before, cls: "cs-usage-menu-count" });
-	fragment.createSpan({ text: label });
-	if (after) fragment.createSpan({ text: after, cls: "cs-usage-menu-count" });
+	fragment.createSpan({ text: t("usage.menu") });
+	const countEl = appendFaintCount(fragment, count);
+	if (fadeIn) countEl.addClass("cs-usage-menu-count");
 	return fragment;
 }

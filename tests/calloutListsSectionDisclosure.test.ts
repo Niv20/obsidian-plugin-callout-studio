@@ -307,7 +307,7 @@ describe("each list heading folds its own section", () => {
 		const { host } = render(registry, themeApp([]), []);
 
 		click(section(host, MINE).nameEl);
-		assert.strictEqual(headingText(section(host, MINE)), `${MINE} (3)`);
+		assert.strictEqual(headingText(section(host, MINE)), `${MINE} 3`);
 	});
 
 	it("survives a refresh with the fold and the count both intact", () => {
@@ -322,7 +322,7 @@ describe("each list heading folds its own section", () => {
 		const mine = section(host, MINE);
 		assert.strictEqual(folded(mine), true, "the refresh reopened the fold");
 		assert.strictEqual(expanded(mine), false);
-		assert.strictEqual(headingText(mine), `${MINE} (4)`);
+		assert.strictEqual(headingText(mine), `${MINE} 4`);
 	});
 });
 
@@ -502,7 +502,7 @@ describe("a list past the page size shows the first page and a button", () => {
 		addUserCallouts(registry, LIST_PAGE_SIZE + 5);
 		const { host } = render(registry, themeApp([]), []);
 
-		const total = `${MINE} (${LIST_PAGE_SIZE + 5})`;
+		const total = `${MINE} ${LIST_PAGE_SIZE + 5}`;
 		assert.strictEqual(
 			headingText(section(host, MINE)),
 			total,
