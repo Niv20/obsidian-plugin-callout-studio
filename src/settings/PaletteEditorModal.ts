@@ -922,9 +922,9 @@ export class PaletteEditorModal extends Modal {
 					this.colors[bgOppositeKey],
 					3,
 				);
-				refreshWarnings();
 				this.preview?.refresh();
 			},
+			() => refreshWarnings(),
 		);
 
 		createColorSwatchInput(
@@ -938,9 +938,9 @@ export class PaletteEditorModal extends Modal {
 					null,
 					null,
 				);
-				refreshWarnings();
 				this.preview?.refresh();
 			},
+			() => refreshWarnings(),
 		);
 
 		// Kept whole, behind the flag, rather than deleted: the channel is still
@@ -949,25 +949,32 @@ export class PaletteEditorModal extends Modal {
 			? channelRow(t("palette.textColorChannel"))
 			: null;
 		if (textRow) {
-			createColorSwatchInput(textRow.controlEl, this.colors[textKey], (hex) => {
-				this.colors[textKey] = hex;
-				this.colors[textOppositeKey] = inferOppositeModeColor(
-					hex,
-					isDark,
-					this.colors[bgOppositeKey],
-					4.5,
-				);
-				refreshWarnings();
-				this.preview?.refresh();
-			});
+			createColorSwatchInput(
+				textRow.controlEl,
+				this.colors[textKey],
+				(hex) => {
+					this.colors[textKey] = hex;
+					this.colors[textOppositeKey] = inferOppositeModeColor(
+						hex,
+						isDark,
+						this.colors[bgOppositeKey],
+						4.5,
+					);
+					this.preview?.refresh();
+				},
+				() => refreshWarnings(),
+			);
 		}
 
 		// Re-checks the contrast-dependent rows (Accent >=3:1, Text >=4.5:1)
-		// against the current mode's bg after any row changes — a non-blocking
+		// against the current mode's bg once a pick settles — a non-blocking
 		// heads-up, never a block on Save. It is a line of text under the
 		// colour, through the row's `setErrorMessage` (finding S6-12): readable
 		// on every device, where the old corner badge said it only to a hovering
-		// mouse. The Text check follows the flag: with the row gone the text
+		// mouse. On the settled pick (`change`), not on every move inside the
+		// picker: a line that came and went mid-pick would make the rows below
+		// jump while the user is still choosing (the preview follows every
+		// move). The Text check follows the flag: with the row gone the text
 		// color is whatever derivation produced, which is already
 		// contrast-corrected, so there is nothing to warn about.
 		const refreshWarnings = (): void => {
@@ -1011,8 +1018,8 @@ export class PaletteEditorModal extends Modal {
 	 * direction picker and the title-text sweep toggle.
 	 */
 	private buildGradientDirectionAndTextRows(parent: HTMLElement): void {
-		// Three 26px arrows on the phone (see the .is-mobile rule that pins that
-		// size) — well under the width of a row, so `cs-row-inline` too.
+		// Three icon buttons — well under the width of a row, so
+		// `cs-row-inline` keeps them beside the label on a phone too.
 		const dirSetting = new Setting(parent)
 			.setName(t("palette.gradientDirection"))
 			.setClass("cs-row-inline");
@@ -1043,11 +1050,9 @@ export class PaletteEditorModal extends Modal {
 			[this.gradToInput, this.gradientToBase],
 		];
 		for (const [input, value] of entries) {
-			if (!input) continue;
-			input.value = value;
-			if (input.parentElement) {
-				input.parentElement.style.backgroundColor = value;
-			}
+			// The input is the dot (app.css paints it from its value), so
+			// setting the value is all there is to do.
+			if (input) input.value = value;
 		}
 	}
 

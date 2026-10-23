@@ -1673,8 +1673,16 @@ disabled state onto its painted control as `cs-dropdown-disabled` (and keeps
 `is-disabled` on the root), so the hover and focus selectors read that state
 without a parent `:has()` query. Callers must use `setDisabled()` rather than
 disabling the inner input directly. Select-only combobox inputs remain
-readonly. File inputs and native color swatches are separate controls and do
-not receive field styling.
+readonly. File inputs are separate controls and do not receive field styling.
+A colour swatch is Obsidian's own `input[type="color"]` (`ui/ColorSwatchInput.ts`,
+finding S6-11): app.css draws it as a round dot with a hover ring and a focus
+ring, 40px on a phone or tablet, and the plugin paints nothing on it. It
+reports every move inside the picker (`input`, for the live preview) and the
+settled pick (`change`, `onCommit`) separately: the palette editor's
+low-contrast line waits for the settled pick, so the rows below do not jump
+while the user is still choosing. Until 2026-10-23 it was a painted rectangle
+with the real input invisible on top, which answered neither the pointer nor
+the keyboard.
 
 An invalid value draws nothing on the field itself. Obsidian says it under
 the field - `Setting.setErrorMessage`, a line in the warning colour, end-aligned
@@ -1861,11 +1869,15 @@ that does not change under the pointer, which is how Cancel looks in Obsidian's
 own dialogs there; on Windows and Linux it is white with Obsidian's hairline
 shadow and a small hover step.
 
-**Two kinds still wear the plugin's shared grey face**, until they are rebuilt
-as Obsidian controls later in the plan: the two segmented rows,
-`.cs-border-side-btn` (All/Top/Right/Bottom/Left in the style windows) and
-`.cs-gradient-dir-btn` (the palette's gradient direction). They read one pair
-of tokens, declared once near the top of `styles.css`:
+**One kind still wears the plugin's shared grey face**, until the style
+windows become settings pages: the segmented row `.cs-border-side-btn`
+(All/Top/Right/Bottom/Left in the style windows). The palette's gradient
+direction arrows (`.cs-gradient-dir-btn`) were the other until 2026-10-23;
+they are Obsidian icon buttons now (`div.clickable-icon` with `role=button`,
+`.is-active` on the chosen one, finding S6-10), drawn by app.css alone, and
+keep their physical direction in a right-to-left Obsidian (a `.mod-rtl` rule
+undoes app.css's icon mirroring, since a gradient's angle does not flip). The
+row reads one pair of tokens, declared once near the top of `styles.css`:
 
 ```css
 --cs-btn-face: var(--interactive-normal);
@@ -1934,21 +1946,19 @@ which is **(0,1,1)**. A single-class rule is (0,1,0) and *does not get the
 resting fill at all* - which is why the `background: transparent` the
 border-side buttons carried for their whole life never once took effect, and
 why their hover looked like it was darkening from a transparent base when it
-was really darkening from Obsidian's grey one. Both segmented rows double their
-class to clear the bar, the same trick `.cs-gradient-dir-btn` already used
-against the mobile core rules.
+was really darkening from Obsidian's grey one. The segmented row doubles its
+class to clear the bar.
 
-Doubling was not enough for that mobile rule itself, which is a cautionary
-tale: Obsidian 1.13's `.is-phone .modal .setting-item-control
-button:not(.clickable-icon) { width: 100% }` is **(0,4,1)**, so
-`.is-mobile .cs-gradient-dir-row .cs-gradient-dir-btn.cs-gradient-dir-btn`
-(0,4,0) lost `width: 26px` on the element tie-break and now carries a third
-copy of the class. Chrome hid the loss - `flex: 0 0 26px` still sized the
-buttons - but WebKit sizes the shrink-wrapped control column from `width`, got
-56px for three 26px arrows, and the last one spilled out of the card on iOS.
-`tests/gradientDirectionMobileSize.test.ts` pins the specificity; check a phone
-override in WebKit as well as Chrome (see "Checking a theme against the real
-cascade" in `21-theme-callout-discovery.md` for the harness).
+A cautionary tale from the arrows, before they became icon buttons: Obsidian
+1.13's `.is-phone .modal .setting-item-control button:not(.clickable-icon)
+{ width: 100% }` is **(0,4,1)**, and a four-class override (0,4,0) lost
+`width: 26px` on the element tie-break. Chrome hid the loss - a `flex-basis`
+still sized the buttons - but WebKit sized the shrink-wrapped control column
+from `width` and the last arrow spilled out of the card on iOS. A
+`.clickable-icon` is outside that rule altogether, which is one more reason to
+build a small control as Obsidian's icon button. Check a phone override in
+WebKit as well as Chrome (see "Checking a theme against the real cascade" in
+`21-theme-callout-discovery.md` for the harness).
 
 Two more consequences worth keeping:
 
@@ -2011,7 +2021,7 @@ purple in both modes. The plugin used to override both: a red stepped darker in
 light and lighter in dark (`--cs-btn-danger-face-hover`), and a purple derived
 from the resting accent, darker in light (`--cs-btn-accent-face-hover`). Both
 tokens and their rules are gone, so these buttons look and behave exactly like
-Obsidian's. The two segmented rows' selected segment takes the same
+Obsidian's. The segmented row's selected segment takes the same
 `--interactive-accent-hover`.
 
 `tests/dangerButtons.test.ts` fails on a `mod-warning` string in `src/`, an

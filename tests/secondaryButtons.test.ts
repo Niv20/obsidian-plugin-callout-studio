@@ -9,12 +9,13 @@
  * they look exactly like Obsidian's own buttons (on macOS that is a flat grey
  * button with no hover step, as in Obsidian's own dialogs).
  *
- * Two kinds of button still wear the plugin's shared grey face, until they are
- * rebuilt as Obsidian controls later in the plan: the two segmented rows,
- * `.cs-border-side-btn` (the style windows' border sides) and
- * `.cs-gradient-dir-btn` (the palette's gradient direction). Their face is a
- * pair of tokens declared once, `--cs-btn-face` and `--cs-btn-face-hover`, the
- * second mixed into the first with `--mono-rgb-100` for direction.
+ * One kind of button still wears the plugin's shared grey face, until the
+ * style windows become settings pages: the segmented row of border sides,
+ * `.cs-border-side-btn`. (The palette's gradient direction arrows were the
+ * other; they are Obsidian icon buttons now, see
+ * `tests/gradientDirectionPicker.test.ts`.) Its face is a pair of tokens
+ * declared once, `--cs-btn-face` and `--cs-btn-face-hover`, the second mixed
+ * into the first with `--mono-rgb-100` for direction.
  *
  * **Why not `--background-modifier-hover` for that hover?** It is not a colour:
  * it is a translucent mono overlay (black or white at 6.7%), so it composites
@@ -25,7 +26,7 @@
  * And **specificity**: Obsidian paints every button from
  * `button:not(.clickable-icon) { background-color: var(--interactive-normal) }`,
  * which is (0,1,1). A single-class rule is (0,1,0) and never gets its fill, so
- * both segmented rows double their class to clear it.
+ * the segmented row doubles its class to clear it.
  *
  * This file is arithmetic over the stylesheet, not a rendering test.
  */
@@ -93,11 +94,6 @@ const FACES = [
 		label: "segmented: border sides",
 		base: ".cs-border-side-btn.cs-border-side-btn",
 		hover: ".cs-border-side-btn:hover",
-	},
-	{
-		label: "segmented: gradient direction",
-		base: ".cs-gradient-dir-btn.cs-gradient-dir-btn",
-		hover: ".cs-gradient-dir-btn:hover",
 	},
 ];
 
@@ -183,7 +179,6 @@ describe("a grey button's face outranks Obsidian's own", () => {
 describe("a selected segment still answers the pointer", () => {
 	const SEGMENTS = [
 		{ label: "border sides", active: ".cs-border-side-btn.is-active", hover: ".cs-border-side-btn:hover" },
-		{ label: "gradient direction", active: ".cs-gradient-dir-btn.is-active", hover: ".cs-gradient-dir-btn:hover" },
 	];
 
 	for (const seg of SEGMENTS) {

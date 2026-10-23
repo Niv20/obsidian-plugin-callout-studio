@@ -33,7 +33,7 @@ describe("the accent hover is Obsidian's", () => {
 		assert.deepStrictEqual(hovering.map((rule) => rule.selector), []);
 	});
 
-	for (const selector of [".cs-border-side-btn.is-active:hover", ".cs-gradient-dir-btn.is-active:hover"]) {
+	for (const selector of [".cs-border-side-btn.is-active:hover"]) {
 		it(`${selector} takes Obsidian's accent hover`, () => {
 			const rule = rules.find((r) => r.selector === selector);
 			assert.ok(rule, `${selector} is missing`);

@@ -3264,38 +3264,6 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	);
 }
 
-/* ─── Compact Color Grid ──────────────────────────────────────── */
-
-/* The visible swatch is this wrapper's background-color — a box we fully
-   control, so it renders identically on desktop, iPhone and tablets and can
-   never be clipped. The native <input type="color"> sits invisibly on top to
-   keep the OS color-picker behaviour. */
-.callout-studio-color-input-wrap {
-	position: relative;
-	display: inline-block;
-	width: 28px;
-	height: 22px;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-s);
-	corner-shape: var(--corner-shape);
-	cursor: pointer;
-	justify-self: center;
-	overflow: hidden;
-}
-
-.callout-studio-color-input {
-	position: absolute;
-	inset: 0;
-	width: 100%;
-	height: 100%;
-	margin: 0;
-	padding: 0;
-	border: none;
-	background: none;
-	opacity: 0;
-	cursor: pointer;
-}
-
 /* ─── Replace Callout Modal ───────────────────────────────────── */
 
 /* (Its `.modal-content { padding: 0 16px 16px }` is gone: that inset was this
@@ -5224,10 +5192,9 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
    resting fill outright*. That is not new; it is why the `background:
    transparent` this rule used to carry never actually took effect, and why the
    old hover looked like it was darkening from a transparent base when it was
-   really darkening from Obsidian's grey one. Doubling to (0,2,0) is the same
-   trick `.cs-gradient-dir-btn` already uses against the mobile core rules
-   further down this file, and it is what puts `--cs-btn-face` genuinely in
-   charge rather than agreeing with core by coincidence. */
+   really darkening from Obsidian's grey one. Doubling to (0,2,0) is what puts
+   `--cs-btn-face` genuinely in charge rather than agreeing with core by
+   coincidence. */
 .cs-border-side-btn.cs-border-side-btn {
 	font-size: var(--font-ui-smaller);
 	padding: 3px 10px;
@@ -5324,13 +5291,6 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	.callout-studio-preview-col {
 		position: static;
 	}
-
-	/* Roomier color grid on narrow screens so native color swatches
-	   (iOS renders them as large circles) don't visually overlap. */
-	.callout-studio-color-input-wrap {
-		width: 44px;
-		height: 32px;
-	}
 }
 
 /* On phone, Obsidian's core CSS forces every input and button inside a
@@ -5382,14 +5342,9 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 
 /* ─── Custom Color Palettes ─────────────────────────────────── */
 
-/* The cell a colour swatch sits in. (A low-contrast warning is written under
-   the colour by the row's setErrorMessage, not badged onto the swatch.) */
-.cs-color-cell {
-	position: relative;
-	display: inline-block;
-	justify-self: center;
-	line-height: 0;
-}
+/* A colour swatch is Obsidian's own `input[type="color"]` (ui/ColorSwatchInput.ts),
+   drawn by app.css as a round dot with hover and focus rings, 40px on a phone
+   or tablet (finding S6-11). Nothing of the plugin's is painted on it. */
 
 
 /* ─── Custom commands ─────────────────────────────────────────────────── */
@@ -5821,87 +5776,15 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	gap: 4px;
 	flex-wrap: nowrap;
 }
-/* The gradient direction arrows — the plugin's other segmented control, and
-   the third variation on one button. It rested on `--cs-surface-raised`, which
-   is a *surface* token: right for a group box's header strip, wrong for a
-   control, and different again from the two rows above. Its hover moved only
-   `color`, so the face never answered the pointer at all — not the wrong
-   direction like the border sides, simply absent. Both now come from the
-   shared pair. */
-/* Doubled for the same reason as `.cs-border-side-btn` above — (0,1,1) core
-   rule, (0,1,0) single-class rule, core wins the face. */
-.cs-gradient-dir-btn.cs-gradient-dir-btn {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 26px;
-	height: 26px;
-	padding: 0;
-	box-shadow: none;
-	background: var(--cs-btn-face, var(--interactive-normal));
-	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
-	border-radius: var(--radius-s, 4px);
-	corner-shape: var(--corner-shape);
-	color: var(--text-muted);
-	cursor: pointer;
-	transition:
-		background 0.12s ease,
-		color 0.12s ease,
-		border-color 0.12s ease;
-}
-/* Before the hover rules, for the tie-break reason given on
-   `.cs-border-side-btn.is-active` above. */
-.cs-gradient-dir-btn.is-active {
-	background: var(--interactive-accent);
-	border-color: var(--interactive-accent);
-	color: var(--text-on-accent);
-}
-@media (hover: hover) {
-	.cs-gradient-dir-btn:hover {
-		background: var(--cs-btn-face-hover, var(--interactive-hover));
-		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
-		color: var(--text-normal);
-	}
-	.cs-gradient-dir-btn.is-active:hover {
-		background: var(--interactive-accent-hover);
-		border-color: var(--interactive-accent-hover);
-		color: var(--text-on-accent);
-	}
-}
-.cs-gradient-dir-btn:focus-visible {
-	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
-	outline: none;
-}
-.cs-gradient-dir-btn .svg-icon {
-	width: 14px;
-	height: 14px;
-}
-/* On mobile, Obsidian's core CSS restyles buttons inside a setting's control
-   column. Counted against what Obsidian 1.13 ships:
-
-     .is-phone .modal .setting-item-control
-                      button:not(.clickable-icon)   (0,4,1)  width: 100%
-     .is-phone .modal .setting-item-control button  (0,3,1)  padding: 10px
-     .is-tablet button:not(.clickable-icon)         (0,2,1)  padding: 4px 20px
-
-   so on phone/iPad the three arrows get smeared full-width / ballooned, while
-   the 40px of forced horizontal padding squeezes the centered 14px arrow out
-   of its 26px box — the icons vanish. (The row's own `flex-wrap: nowrap`
-   above stops them stacking regardless.) Reassert our fixed square size and
-   zero padding. The class is tripled, and has to be: four classes is (0,4,0),
-   which LOSES to the (0,4,1) width rule on the tie-break of one element
-   selector, and this rule sat there for a release. `flex: 0 0 26px` hid the
-   loss in Chrome (a flex-basis beats `width` when the item is laid out), but
-   not in WebKit, which sizes the shrink-wrapped control column from the
-   buttons' `width: 100%` — 16px each, 56px in all — and then lays the buttons
-   out at 26px, so on an iPhone the third arrow stuck out past the card's
-   right edge. With `width: 26px` actually winning, both engines measure the
-   row at 86px. .is-mobile covers phone and tablet alike; desktop lacks these
-   body classes, so it's untouched. */
-.is-mobile .cs-gradient-dir-row .cs-gradient-dir-btn.cs-gradient-dir-btn.cs-gradient-dir-btn {
-	width: 26px;
-	flex: 0 0 26px;
-	padding: 0;
+/* The arrows are Obsidian icon buttons (`.clickable-icon`, finding S6-10):
+   app.css draws them, the chosen one as `.is-active` (an accent arrow on a
+   pale accent tint). Only their direction is the plugin's business. In a
+   right-to-left Obsidian, app.css mirrors every icon
+   (`.mod-rtl svg.svg-icon:not(…) { transform: scale(-1, 1) }`, 0,3,1), but a
+   gradient's angle is physical — 90° runs to the right whatever the language
+   — so these arrows keep pointing the way the gradient actually runs. */
+.mod-rtl .cs-gradient-dir-row .cs-gradient-dir-btn svg.svg-icon {
+	transform: none;
 }
 
 /* Phase 7: name + fallback tag */
