@@ -213,6 +213,38 @@ export class Setting {
 }
 
 /**
+ * Obsidian 1.11's SettingGroup, in the DOM Obsidian builds for it:
+ * `div.setting-group > [heading row] + div.setting-items`. The heading row is
+ * added in front once a heading or a heading button is set.
+ */
+export class SettingGroup {
+	groupEl: HTMLElement; listEl: HTMLElement;
+	private headerEl: HTMLElement | null = null;
+	private headerNameEl: HTMLElement | null = null;
+	private headerControlEl: HTMLElement | null = null;
+	constructor(parent: HTMLElement) {
+		this.groupEl = parent.createDiv({ cls: "setting-group" });
+		this.listEl = this.groupEl.createDiv({ cls: "setting-items" });
+	}
+	private header(): { nameEl: HTMLElement; controlEl: HTMLElement } {
+		if (!this.headerEl) {
+			this.headerEl = createDiv({ cls: "setting-item setting-item-heading" });
+			this.headerNameEl = this.headerEl.createDiv({ cls: "setting-item-name" });
+			this.headerControlEl = this.headerEl.createDiv({ cls: "setting-item-control" });
+			this.groupEl.prepend(this.headerEl);
+		}
+		return { nameEl: this.headerNameEl!, controlEl: this.headerControlEl! };
+	}
+	setHeading(text: string | DocumentFragment): this { this.header().nameEl.setText(text); return this; }
+	addClass(...classes: string[]): this { this.groupEl.classList.add(...classes); return this; }
+	addSetting(callback: (setting: Setting) => unknown): this { callback(new Setting(this.listEl)); return this; }
+	addExtraButton(callback: (control: ExtraButtonComponent) => unknown): this {
+		callback(new ExtraButtonComponent(this.header().controlEl));
+		return this;
+	}
+}
+
+/**
  * Obsidian's menu shell, in the DOM Obsidian 1.14 builds for it
  * (`.menu > .menu-scroll > .menu-group > .menu-item`), so app.css draws it as
  * the real thing. The plugin supplies every item and action.

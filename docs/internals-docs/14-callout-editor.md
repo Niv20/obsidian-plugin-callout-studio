@@ -59,6 +59,21 @@ against one fixed tint strength - it calls `derivedBgAmount()` (see
 palette editor's intensity slider produces tints at any strength between
 `MIN_BG_COLOR_AMOUNT` and `MAX_BG_COLOR_AMOUNT`.
 
+## The form box
+
+The four rows that describe the callout (**Display name**, **Callout IDs**,
+**Color**, **Icon**) are built into one Obsidian `SettingGroup` without a
+heading (`new Setting(general.listEl)`), so they read as one rounded box with
+inset lines between the rows, the way an Obsidian settings page opens with its
+general rows (finding S5-15). The group carries `cs-editor-form`, whose only
+job is `--setting-items-padding-x: var(--size-4-4)`: the rows sit 16px in from
+the box's edge, the window's own inset, instead of Obsidian's default 20px.
+
+The preview panel below starts 24px under the box (`margin-top:
+var(--size-4-6)`), the gap Obsidian leaves between two groups. Until
+2026-10-23 the rows were loose in the window and a hairline `border-top` on
+the panel was what set the form off from the preview; the box now does that.
+
 ## A built-in's name, and Save while it saves
 
 A built-in's display name cannot change: Obsidian declares it. Its row shows

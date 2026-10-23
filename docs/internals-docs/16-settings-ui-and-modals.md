@@ -1349,6 +1349,8 @@ dimmed to 40% when blocked. Decision 15 of the native-look plan (findings
 S5-16, S5-06, S5-03, S6-01, S6-V4) replaced all of it with Obsidian's. The
 callout editor's preview panel now gives its preview column `1fr`, so the
 adjustment column ends flush with the 16px inset under the control column.
+The editor's four form rows are one Obsidian `SettingGroup` box above it (see
+[Callout editor](14-callout-editor.md#the-form-box)).
 
 > [!IMPORTANT]
 > **Every window wearing this chrome must set a title, with no opt-out.**

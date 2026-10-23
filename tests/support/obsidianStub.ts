@@ -623,6 +623,68 @@ export class Setting {
 	}
 }
 
+/**
+ * Obsidian 1.11's `SettingGroup`, built as Obsidian builds it:
+ * `div.setting-group > [div.setting-item.setting-item-heading] + div.setting-items`.
+ * The heading row exists only once a heading or a heading button is added, and
+ * it goes first, before the rows (`listEl`).
+ */
+export class SettingGroup {
+	readonly groupEl: ElementLike;
+	readonly listEl: ElementLike;
+	/** Every row added through `addSetting`, in order. */
+	readonly settings: Setting[] = [];
+	/** The heading's buttons, so a test can press them. */
+	readonly extraButtons: ButtonLike[] = [];
+	private headerEl: ElementLike | null = null;
+	private headerNameEl: ElementLike | null = null;
+	private headerControlEl: ElementLike | null = null;
+
+	constructor(containerEl: ElementLike) {
+		this.groupEl = containerEl.createDiv({ cls: "setting-group" });
+		this.listEl = this.groupEl.createDiv({ cls: "setting-items" });
+	}
+
+	/** The heading row, made on first use and moved before the rows. */
+	private header(): { nameEl: ElementLike; controlEl: ElementLike } {
+		if (!this.headerEl) {
+			const headerEl = this.groupEl.createDiv({ cls: "setting-item setting-item-heading" });
+			this.headerNameEl = headerEl.createDiv({ cls: "setting-item-name" });
+			this.headerControlEl = headerEl.createDiv({ cls: "setting-item-control" });
+			// `insertBefore` is the fake DOM's (and the browser's); the narrow
+			// `ElementLike` type above does not list it.
+			const group = this.groupEl as ElementLike & { insertBefore(node: unknown, ref: unknown): unknown; firstChild: unknown };
+			group.insertBefore(headerEl, group.firstChild);
+			this.headerEl = headerEl;
+		}
+		return { nameEl: this.headerNameEl!, controlEl: this.headerControlEl! };
+	}
+
+	setHeading(text: string): this {
+		this.header().nameEl.textContent = text;
+		return this;
+	}
+
+	addClass(...classes: string[]): this {
+		this.groupEl.addClass?.(...classes);
+		return this;
+	}
+
+	addSetting(cb: (setting: Setting) => unknown): this {
+		const setting = new Setting(this.listEl);
+		this.settings.push(setting);
+		cb(setting);
+		return this;
+	}
+
+	addExtraButton(cb: (button: ButtonLike) => unknown): this {
+		const button = new ButtonLike(this.header().controlEl);
+		this.extraButtons.push(button);
+		cb(button);
+		return this;
+	}
+}
+
 /** Records its message when `__CS_NOTICES__` is an array; inert otherwise. */
 export class Notice {
 	/**

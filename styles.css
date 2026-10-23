@@ -2624,16 +2624,23 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	align-items: start;
 }
 
-/* Closes the form off from the preview below it: Icon is the last of the four
-   setting rows, and without a line the panel reads as one more of them. No top
-   margin here — the last row's own bottom padding already separates it from
-   the line, and stacking a margin on top of that read as too much dead space.
-   Scoped to the callout editor on purpose — the palette editor and the per-role
-   style popups reuse this same panel (see the responsive overrides near the end
-   of this file), and neither has a form above it for the line to separate. */
+/* The callout editor's four form rows (Display name, Callout IDs, Color, Icon)
+   are one Obsidian `SettingGroup` without a heading: one rounded box with inset
+   lines between the rows, as an Obsidian settings page opens with its general
+   rows (finding S5-15). Its rows sit 16px in from the box's edge rather than
+   Obsidian's default 20px, the same inset the adjustment groups beside the
+   preview use, so the controls of both end on one line. */
+.cs-editor-form {
+	--setting-items-padding-x: var(--size-4-4);
+}
+
+/* The panel (preview and adjustments) sits 24px below the form box, the gap
+   Obsidian leaves between two setting groups. It used to be set off by a
+   line instead, back when the form rows were loose. Scoped to the callout
+   editor: the palette editor and the per-role style popups reuse this same
+   panel, and neither has a form above it. */
 .callout-studio-editor .callout-studio-preview-panel {
-	border-top: 1px solid var(--background-modifier-border);
-	padding-top: 16px;
+	margin-top: var(--size-4-6);
 }
 
 /* `top: 0`, not a comfortable little offset, and the reason is the rule above.

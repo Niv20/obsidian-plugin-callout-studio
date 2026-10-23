@@ -11,7 +11,7 @@ import { addBuiltInIdReset, builtInDefaultIds } from "./editor/builtInIdReset";
  * real-Obsidian live preview via LiveCalloutPreview. Save logic is delegated to
  * CalloutEditorSave; validation to CalloutEditorValidation.
  */
-import { Modal, Notice, Setting, setIcon } from "obsidian";
+import { Modal, Notice, Setting, SettingGroup, setIcon } from "obsidian";
 import type { TextComponent, ToggleComponent } from "obsidian";
 import type {
 	BgGradient,
@@ -437,8 +437,15 @@ export class CalloutEditor extends Modal {
 			: t("editor.newCallout");
 		this.setTitle(editorTitle);
 
+		// The four rows that describe the callout — Display name, Callout IDs,
+		// Color and Icon — sit together in one box without a heading, the way an
+		// Obsidian settings page opens with its general rows (`SettingGroup`;
+		// finding S5-15). The preview and the adjustments follow below it.
+		const general = new SettingGroup(contentEl);
+		general.addClass("cs-editor-form");
+
 		// Display Name
-		const nameSetting = new Setting(contentEl)
+		const nameSetting = new Setting(general.listEl)
 			.setName(t("editor.displayName"))
 			.setDesc(
 				this.isBuiltIn
@@ -494,7 +501,7 @@ export class CalloutEditor extends Modal {
 		let syncIdsRevert = (): void => undefined;
 		// Callout IDs (primary + aliases) — unified tag input
 		const initialIds = [this.calloutId, ...this.aliases].filter(Boolean);
-		const idsSetting = new Setting(contentEl)
+		const idsSetting = new Setting(general.listEl)
 			.setName(t("editor.calloutIds"))
 			.setClass("cs-callout-ids-setting")
 			.setDesc(
@@ -617,7 +624,7 @@ export class CalloutEditor extends Modal {
 		// The class is what lets styles.css pin this row's control column to the
 		// form's shared control width, so the revert button below shortens the
 		// dropdown instead of pushing it left off the shared right edge.
-		const colorSetting = new Setting(contentEl)
+		const colorSetting = new Setting(general.listEl)
 			.setName(t("editor.colors"))
 			.setClass("cs-color-setting")
 			.setDesc(t("editor.colorsDesc"));
@@ -626,7 +633,7 @@ export class CalloutEditor extends Modal {
 		// `cs-row-inline` keeps the tile beside the label on the phone instead
 		// of on a full-width row of its own — the tile is a fixed 44px box, so
 		// the row below it would be mostly empty. See the class in styles.css.
-		const iconSetting = new Setting(contentEl)
+		const iconSetting = new Setting(general.listEl)
 			.setName(t("editor.icon"))
 			.setClass("cs-row-inline")
 			.setDesc(this.getIconLabel());

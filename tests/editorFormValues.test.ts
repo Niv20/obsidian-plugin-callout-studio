@@ -1,7 +1,9 @@
 /**
- * tests/editorFormValues.test.ts — two small details of the callout editor's
- * form that follow Obsidian (findings S5-V2 and S5-V3).
+ * tests/editorFormValues.test.ts — small details of the callout editor's form
+ * that follow Obsidian (findings S5-V2, S5-V3 and S5-15).
  *
+ * - The four rows that describe the callout share one Obsidian settings box
+ *   (`SettingGroup`), and the preview below is set off by a gap, not a line.
  * - A built-in callout's name cannot change (Obsidian declares it), so the
  *   editor shows it as Obsidian shows a value you cannot change: quiet text at
  *   the row's end (`Setting.addDisplayValue`), not a field that looks editable
@@ -30,6 +32,27 @@ describe("a built-in callout's name", () => {
 	it("is a display value, not a disabled text field", () => {
 		assert.match(source, /if \(this\.isBuiltIn\) \{[\s\S]{0,400}?nameSetting\.addDisplayValue\(\(value\) => value\.setValue\(this\.displayName\)\)/);
 		assert.doesNotMatch(source, /text\.setDisabled\(true\)/, "no greyed-out name field any more");
+	});
+});
+
+describe("the form box (S5-15)", () => {
+	const source = readRepoFile("src/settings/CalloutEditor.ts");
+	const styles = readRepoFile("styles.css");
+
+	it("builds the four form rows into one SettingGroup without a heading", () => {
+		assert.match(source, /const general = new SettingGroup\(contentEl\);\s*general\.addClass\("cs-editor-form"\);/);
+		for (const name of ["nameSetting", "idsSetting", "colorSetting", "iconSetting"]) {
+			assert.match(source, new RegExp(`const ${name} = new Setting\\(general\\.listEl\\)`), `${name} lives in the box`);
+		}
+		assert.doesNotMatch(source, /general\.setHeading\(/, "the form box has no heading");
+	});
+
+	it("sets the panel off by a gap, not by a line", () => {
+		// `?.[1] ?? ""`: the declarations inside the braces, or "" when the rule is
+		// missing (which the first assertion then reports).
+		const body = /\.callout-studio-editor \.callout-studio-preview-panel \{([^}]*)\}/.exec(styles)?.[1] ?? "";
+		assert.match(body, /margin-top: var\(--size-4-6\)/, "the panel starts 24px below the box");
+		assert.doesNotMatch(body, /border-top/);
 	});
 });
 
