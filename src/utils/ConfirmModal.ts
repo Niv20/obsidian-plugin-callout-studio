@@ -25,7 +25,7 @@
 import { Modal } from "obsidian";
 import type { App } from "obsidian";
 import { t } from "../i18n";
-import { applyModalChrome } from "../settings/modalChrome";
+import { addCancelButton, applyModalChrome } from "../settings/modalChrome";
 import { DESTRUCTIVE_BUTTON_CLASSES } from "../ui/destructiveButton";
 import { prefersReducedMotion } from "../ui/flip";
 
@@ -60,15 +60,11 @@ export class ConfirmModal extends Modal {
 			contentEl.appendChild(this.message);
 		}
 
-		btnContainer
-			.createEl("button", {
-				text: this.cancelLabel ?? t("confirm.cancel"),
-			})
-			.addEventListener("click", () => {
-				this.resolved = true;
-				this.resolve(false);
-				this.close();
-			});
+		addCancelButton(btnContainer, this.cancelLabel ?? t("confirm.cancel"), () => {
+			this.resolved = true;
+			this.resolve(false);
+			this.close();
+		});
 
 		const confirmBtn = btnContainer.createEl("button", {
 			text: this.confirmLabel ?? t("confirm.ok"),

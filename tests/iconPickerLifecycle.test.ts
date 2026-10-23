@@ -91,7 +91,7 @@ describe("icon picker asynchronous lifecycle", () => {
 		try {
 			h.modal.onOpen();
 			await Promise.all(h.tasks);
-			const confirm = (h.modal.modalEl as unknown as FakeElement).querySelector(".cs-modal-footer button.mod-cta");
+			const confirm = (h.modal.modalEl as unknown as FakeElement).querySelector(".modal-button-container button.mod-cta");
 			assert.ok(confirm);
 			assert.equal(confirm.getAttribute("aria-disabled"), "false", "the icon being edited is selected");
 			// An icon only means something within its own source, so switching drops it.

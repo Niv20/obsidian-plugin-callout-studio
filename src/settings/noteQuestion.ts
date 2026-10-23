@@ -27,6 +27,7 @@
  * with. Cancel, Escape and the close button save nothing.
  */
 import { t } from "../i18n";
+import { addCancelButton } from "./modalChrome";
 import {
 	addOptionRadio,
 	optionBoxId,
@@ -112,8 +113,7 @@ export function renderNoteQuestion(
 	list.setAttribute("role", "radiogroup");
 	list.setAttribute("aria-labelledby", askId);
 
-	footer.createEl("button", { text: t("editor.cancel") })
-		.addEventListener("click", () => spec.finish(false));
+	addCancelButton(footer, t("editor.cancel"), () => spec.finish(false));
 	footer.createEl("button", { text: spec.confirm ?? t("editor.saveChanges"), cls: "mod-cta" })
 		.addEventListener("click", () => spec.finish(true));
 

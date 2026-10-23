@@ -61,7 +61,7 @@ import {
 import { t } from "../i18n";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { CSSInjector } from "../manager/CSSInjector";
-import { applyModalChrome, removeModalChrome } from "./modalChrome";
+import { addCancelButton, applyModalChrome, removeModalChrome } from "./modalChrome";
 import { autofocusOnDesktop } from "./modalAutofocus";
 import {
 	createControlGroup,
@@ -387,7 +387,7 @@ export class PaletteEditorModal extends Modal {
 		// scrolling content (the sticky preview column relies on that scroll
 		// container), and a fixed footer for the buttons.
 		this.modalEl.addClass("callout-studio-editor-modal");
-		const footer = applyModalChrome(this, { footer: true, wide: true });
+		const footer = applyModalChrome(this, { footer: true });
 
 		// Two-column body in the same order as the per-role style popups: the
 		// sticky live preview on the left, the control cards on the right.
@@ -488,9 +488,7 @@ export class PaletteEditorModal extends Modal {
 		});
 
 		const buttons = footer;
-		buttons
-			.createEl("button", { text: t("editor.cancel") })
-			.addEventListener("click", () => this.finish(false));
+		addCancelButton(buttons, t("editor.cancel"), () => this.finish(false));
 		this.saveBtnEl = buttons.createEl("button", {
 			text: t("palette.save"),
 			cls: "mod-cta",

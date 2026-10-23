@@ -36,7 +36,7 @@ import { t } from "../../i18n";
 import { ImportReportModal } from "../../utils/ImportReportModal";
 import { assertImportSize, assertImportTextSize, ImportLimitError } from "../../utils/importLimits";
 import { markCompetitorImportBannerHandled } from "../competitorImportState";
-import { applyModalChrome, removeModalChrome } from "../modalChrome";
+import { addCancelButton, applyModalChrome, removeModalChrome } from "../modalChrome";
 import { blockedWhilePaused } from "../pausedGuard";
 import { writeSettingsBackup } from "../../manager/settingsBackup";
 import type { SettingsSectionContext } from "../sections/types";
@@ -131,9 +131,7 @@ export class PluginImportModal extends Modal {
 		if (this.source.manual.kind === "file") this.bindFileDrop(this.view.manualEl);
 
 		const footer = applyModalChrome(this, { footer: true });
-		footer
-			.createEl("button", { text: t(copy.cancel) })
-			.addEventListener("click", () => this.close());
+		addCancelButton(footer, t(copy.cancel), () => this.close());
 		this.importBtn = footer.createEl("button", {
 			text: t(copy.importButton),
 			cls: "mod-cta",

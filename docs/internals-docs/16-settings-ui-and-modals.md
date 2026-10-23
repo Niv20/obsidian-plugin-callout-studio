@@ -1233,49 +1233,90 @@ rows on screen, changes what is drawn - not how many the user has.
 
 ## Modal chrome - the one shell every window wears
 
-[`src/settings/modalChrome.ts`](../../src/settings/modalChrome.ts) is a small
-file with an outsized effect on the whole UI's consistency. Before it
-existed, different modals had independently reinvented a sticky title, a
-pinned button bar, or neither - "two carried a sticky title with a rule
-under it and a pinned button bar, one drew its rule on a toolbar instead of
-the title, and the rest had neither."
+[`src/settings/modalChrome.ts`](../../src/settings/modalChrome.ts) dresses
+every Callout Studio window in **Obsidian's own shell for long dialogs**, the
+one Obsidian uses for Publish, the attachment cleanup and Keychain. Before the
+module existed, different windows had reinvented a sticky title, a pinned
+button bar, or neither.
 
 ```ts
-applyModalChrome(modal, { footer?: boolean, wide?: boolean }): HTMLElement | null
+applyModalChrome(modal, { footer?: boolean }): HTMLElement | null
+addCancelButton(bar, label, onClick): HTMLButtonElement
 removeModalChrome(modal): void
 ```
 
-Three fixed bands:
-
 ```text
 ┌───────────────────────────────┐
-│ title                       ✕ │  header - fixed, rule along its bottom
-├───────────────────────────────┤
+│ title                       ✕ │  header - fixed, no line under it
 │ content …                     │  body - the ONLY scroll container
 ├───────────────────────────────┤
-│              [Cancel] [Save]  │  footer - fixed, rule along its top; optional
+│              [Cancel] [Save]  │  button bar - fixed, a line over it; optional
 └───────────────────────────────┘
 ```
 
-Both rules run **edge to edge**, which is why the geometry lives in this one
-module rather than per-modal CSS: `.modal` gives up its own 16px padding to
-`.cs-modal`, redistributed to each band as `--cs-modal-inset`, so a rule can
-reach the window's sides while text still lines up with the inset. **A new
-modal must never re-add padding to `.modal` or `.modal-content` directly** -
-that would double the inset.
+Two of Obsidian's classes do all of it, so the look comes from Obsidian's
+stylesheet (and a theme's):
+
+- **`mod-scrollable-content`** on `.modal` takes the window's padding off,
+  gives the title `16px 16px 0`, makes `.modal-content` the one scroller with
+  `0 16px 16px`, and pins the bar under a line.
+- **`modal-button-container`** is the button bar, built as a child of `.modal`
+  after `.modal-content`, as `ConfirmationModal` builds it. On a computer it
+  lines the buttons up at the end. On a phone or tablet (`.is-mobile`) it
+  stacks them full-width in reverse: the main action on top, then Cancel
+  (`mod-cancel`, `order: -1`), then a `mod-secondary` item (`order: -2`). On a
+  phone it also clears the home indicator.
+
+**Every Cancel is made by `addCancelButton`**, which adds `mod-cancel` (what
+Obsidian's own `setCancel()` does). A hand-made Cancel would miss it and stack
+above the main action on a phone; `tests/modalChrome.test.ts` fails if a
+source file builds one itself. Pick an icon's preview ("Lucide: book-open")
+shares the bar as its `mod-secondary` item: at the start on a computer, under
+the buttons on a phone.
+
+**The buttons are Obsidian's**, with no size, padding, outline or dim of the
+plugin's own: Obsidian's `button` height and padding, its grey 3px focus ring,
+and for a blocked button (`aria-disabled`, see
+[Blocked main buttons say why](#blocked-main-buttons-say-why)) its 70% dim.
+
+**What the plugin adds** is only what Obsidian leaves to each dialog
+(`styles.css`, "Modal chrome"):
+
+- the surface tokens `--cs-surface` / `--cs-surface-raised` on `.modal.cs-modal`
+  (see [Two theme-aware surface tokens](#two-theme-aware-surface-tokens));
+- `--cs-modal-inset` (16px, Obsidian's), read by the few bands inside a body
+  that reach the window's sides (Pick an icon's source row and grid), and
+  narrowed by the setup-details window on a phone;
+- **room for the first row's focus ring.** Obsidian's long dialog starts its
+  body with no top padding, and a focused field's ring is drawn outside the
+  field (2px; 3px for a dropdown), so a scroller would clip it. 4px of the
+  title's 12px margin moves inside the body
+  (`margin-bottom: calc(0.75em - var(--size-2-2))` on `.modal-header`,
+  `padding-top: var(--size-2-2)` on `.modal-content`): the gap stays Obsidian's
+  12px and the ring has room. Windows with a sticky band at the top of the
+  body (Quick insert, the setup details) set it back to 0 and put it on their
+  first child instead, with a selector that repeats the shell's classes to
+  outrank it. Pick an icon turns the body's padding and scrolling off
+  altogether, since its own grid scrolls under a fixed source row.
+
+**History.** Until 2026-10-23 the plugin drew its own shell: a title band with a
+line under it, a wider inset (34-40px) in the editors through a `wide` option,
+its own `cs-modal-footer` row whose buttons it resized, outlined in purple and
+dimmed to 40% when blocked. Decision 15 of the native-look plan (findings
+S5-16, S5-06, S5-03, S6-01, S6-V4) replaced all of it with Obsidian's. The
+callout editor's preview panel now gives its preview column `1fr`, so the
+adjustment column ends flush with the 16px inset under the control column.
 
 > [!IMPORTANT]
 > **Every window wearing this chrome must set a title, with no opt-out.**
-> The two windows that used to skip the header band (a generic confirmation
-> dialog and the replace-callout picker) read as unlabelled boxes - Obsidian
-> still renders an empty, padded `.modal-title` band even with no text set,
-> so *skipping* the title doesn't remove the band, it just leaves it blank
-> and confusing. This is enforced structurally, not just by convention:
-> `ConfirmModal`'s constructor takes `title` as a **required** parameter
-> specifically because it's a generic, reusable dialog - only the caller
-> knows what's being confirmed, and a compiler-enforced parameter is what
-> keeps a future caller from shipping a headerless one. `ReplaceCalloutModal`
-> defaults its title to **Replace in vault** for the same reason.
+> The two windows that used to skip it (a generic confirmation dialog and the
+> replace-callout picker) read as unlabelled boxes. This is enforced
+> structurally, not just by convention: `ConfirmModal`'s constructor takes
+> `title` as a **required** parameter specifically because it's a generic,
+> reusable dialog - only the caller knows what's being confirmed, and a
+> compiler-enforced parameter is what keeps a future caller from shipping a
+> headerless one. `ReplaceCalloutModal` defaults its title to **Replace in
+> vault** for the same reason.
 >
 > **`WelcomeModal` is the one deliberate exception** - it's a splash screen,
 > opts out of the chrome entirely (`this.titleEl.remove()`), and carries its
@@ -1283,14 +1324,16 @@ that would double the inset.
 > generic title bar.
 
 `applyModalChrome` is safe to call again on a reopened modal - Obsidian
-reuses `modalEl` across open/close cycles, so a stale footer from a previous
-open is detached rather than duplicated. It also stamps `cs-modal-stacked`
-on the container when another modal is already open underneath it (used by
-`styles.css` to paint the correct backdrop dimming for stacked modals on
-mobile, where Obsidian's own backdrop layering can't be relied on) - the
-open count check is reliable specifically because `Modal.open()` appends
-`containerEl` to the document **before** calling `onOpen()`, so this modal is
-already counted by the time the check runs.
+reuses `modalEl` across open/close cycles, so a stale button bar from a
+previous open is detached rather than duplicated. It also installs the
+window's keyboard scope, so an open dropdown gets the first Escape
+(`ui/menuEscape.ts`), and stamps `cs-modal-stacked` on the container when
+another modal is already open underneath it (used by `styles.css` to paint the
+correct backdrop dimming for stacked modals on mobile, where Obsidian's own
+backdrop layering can't be relied on) - the open count check is reliable
+specifically because `Modal.open()` appends `containerEl` to the document
+**before** calling `onOpen()`, so this modal is already counted by the time the
+check runs.
 
 ### Rows and slider values inside a window
 
@@ -1734,8 +1777,8 @@ it already points, and back - 3.5 user units on a 24-unit viewBox drawn at
 
 ## How a secondary button paints
 
-**Obsidian paints the plain grey buttons.** A window's Cancel (a bare
-`<button>` in `.cs-modal-footer`), the settings tab's secondary buttons
+**Obsidian paints the plain grey buttons.** A window's Cancel (a
+`<button class="mod-cancel">` in Obsidian's `.modal-button-container`), the settings tab's secondary buttons
 (Discover, Import, Export, Reset, and the two in Data management), Pick an
 icon's **Manage libraries** and the import window's Upload/Paste get no face,
 edge, hover or focus ring from the plugin: Obsidian's `button` rules draw them,
@@ -1799,11 +1842,12 @@ contrast". Measured in headless Chrome against real `app.css`:
 
 identical for all four, against `#ffffff` → `#fafafa` (−4.4%) and `#363636` →
 `#3f3f3f` (+1.3%) for a native Obsidian button, which is deliberately left
-alone - every rule here is scoped to `.callout-studio-settings` or
-`.cs-modal > .cs-modal-footer`, so nothing reaches a core dialog. The coloured
-variants keep Obsidian's own faces and hovers: the footer rule carves out
-`.mod-cta` and `.mod-destructive` with a `:not()` **list**, which takes the
-specificity of its most specific argument and so leaves the selector at (0,3,1).
+alone - the face is only ever worn by the plugin's own segmented rows, so
+nothing reaches a core dialog, and the coloured variants keep Obsidian's own
+faces and hovers. (Window footers used to wear it too, through a
+`.cs-modal > .cs-modal-footer` rule that carved out `.mod-cta` and
+`.mod-destructive` with a `:not()` list; since 2026-10-23 a window's buttons
+are Obsidian's, in Obsidian's `.modal-button-container`.)
 
 ### The specificity half, which is the half that gets lost
 
@@ -1943,8 +1987,9 @@ two functions over one reason string.
   while `reason` is non-null and clears both otherwise. Obsidian's own
   stylesheet draws `button[aria-disabled="true"]` exactly like
   `button[disabled]` (`opacity: 0.7`, `cursor: not-allowed`);
-  `cs-btn-disabled` is what the plugin's own rules key on - the accent and red
-  hover rules skip it, and the modal footer dims it further (`opacity: 0.4`).
+  `cs-btn-disabled` is a hook for tests; no rule of the plugin's styles it.
+  (Until 2026-10-23 a window's footer dimmed it further, to `opacity: 0.4`,
+  fainter than any disabled button in Obsidian; finding S6-01 removed that.)
 - **`explainIfBlocked(reason)`** is the first line of the click handler:
   `if (explainIfBlocked(this.saveBlockedReason())) return;`. It returns true
   after showing the reason, so the handler stops. The notice stays up for

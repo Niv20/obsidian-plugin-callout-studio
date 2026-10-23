@@ -32,7 +32,7 @@ function open(options: CommandEditorOptions = {}) {
 		open: () => modal.onOpen(), close: () => modal.onClose() });
 	let answer: CustomCommandDraft | null | undefined;
 	void modal.openAndWait().then((result) => { answer = result; });
-	const save = modalEl.querySelector(".cs-modal-footer button.mod-cta")!;
+	const save = modalEl.querySelector(".modal-button-container button.mod-cta")!;
 	assert.ok(save);
 	return { modal, save, registry, answer: () => answer,
 		choose: (id: string) => { (modal as unknown as { calloutId: string }).calloutId = id; (modal as unknown as { syncVisibility(): void }).syncVisibility(); },

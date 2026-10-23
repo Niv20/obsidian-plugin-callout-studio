@@ -1642,7 +1642,7 @@ body:not(.is-phone)
    (A `.callout-studio-editor .modal-content { padding: 16px }` rule used to sit
    here and never matched anything: `contentEl` IS the `.modal-content` element
    the class is added to, so the descendant combinator had nothing to descend
-   into. The modal's real padding lives on `.cs-modal > .modal-content` in the
+   into. The window's real padding is Obsidian's long-dialog body; see the
    modal chrome block further down.) */
 .callout-studio-editor {
 	--cs-editor-control-width: 260px;
@@ -2381,21 +2381,20 @@ body:not(.is-phone)
 
 /* ═══ Modal chrome ════════════════════════════════════════════════
    The shell every Callout Studio window wears, hung by `applyModalChrome()`
-   (src/settings/modalChrome.ts). Three bands: a fixed header with a rule under
-   it, a scrolling body, and — for windows that have actions — a fixed footer
-   with a rule over it.
+   (src/settings/modalChrome.ts). It is Obsidian's own shell for long dialogs
+   (Publish, Keychain): `.modal.mod-scrollable-content` with a
+   `.modal-button-container` bar, so the title, the 16px insets, the one
+   scrolling body and the pinned bar with its line all come from Obsidian's
+   stylesheet. Only what Obsidian leaves to each dialog is written here.
 
-   Obsidian's `.modal` is `padding: var(--size-4-4); overflow: auto`, which puts
-   a 16px gutter between the window's edge and everything inside it, so a rule
-   drawn on the title could only ever be a short line floating in the middle.
-   The chrome takes that padding off `.modal` and hands it to the three bands as
-   `--cs-modal-inset`: the rules reach the sides, the text still lines up.
-
-   `overflow: hidden` rather than `auto` does two jobs — it stops `.modal` from
-   ever becoming a second scroll container behind the body's, and it is what
-   clips the now full-bleed footer to the window's corner radius. */
+   Until 2026-10-23 the plugin drew its own: a title band with a line under it,
+   a wider inset in the editors, and its own footer row. Decision 15 of the
+   native-look plan replaced it; please do not bring the bands back. */
 
 .modal.cs-modal {
+	/* The inset Obsidian's long dialog gives its title, body and bar (16px),
+	   for the few bands inside a body that reach the window's sides and must
+	   still line their contents up with the rest (the icon picker's). */
 	--cs-modal-inset: var(--size-4-4);
 	/* The window's own paint, for anything inside it that has to read as flush
 	   with it — a fixed band, a panel, a popup, the ring cut out around a badge.
@@ -2407,8 +2406,7 @@ body:not(.is-phone)
 	   moves `--modal-background` off it onto `--background-secondary`. A band
 	   painted `--background-primary` therefore matched the window everywhere it
 	   was ever looked at and came out as a pure-black stripe across an iPad in
-	   dark mode. Following the window instead is right on all three, and is what
-	   the footer below already does.
+	   dark mode. Following the window instead is right on all three.
 
 	   Defined here and nowhere else, so every call site reads it as
 	   `var(--cs-surface, var(--background-primary))`: outside a chromed modal
@@ -2429,103 +2427,33 @@ body:not(.is-phone)
 	   how the group boxes once regressed, a header strip vanishing into the
 	   window on mobile dark. Move one, move the other. */
 	--cs-surface-raised: var(--setting-items-background);
-	display: flex;
-	flex-direction: column;
-	padding: 0;
-	overflow: hidden;
 }
 
-/* The two editors used to be inset by the modal's own 16px PLUS their
-   scroller's `clamp(18px, 3vw, 24px)`. One inset owns the whole distance now,
-   so the two are added up here rather than rounded off: the preview panel's
-   column widths were measured against that total and would reflow. */
-.modal.cs-modal-wide {
-	--cs-modal-inset: clamp(34px, calc(16px + 3vw), 40px);
+/* ── Room for the first row's focus ring ──────────────────────────
+   Obsidian's long dialog starts its scrolling body flush under the title's
+   12px margin, with no padding at the top. A focused field on the first row
+   draws its ring OUTSIDE itself (2px for a text field, 3px for a dropdown),
+   and a scroller clips at its padding box, so that ring would be cut off at
+   the body's top edge.
+
+   So 4px of the title's 12px margin moves inside the body: the gap between the
+   title and the first row stays Obsidian's 12px, and the ring has room. Being
+   inside the scroller, the 4px costs nothing on scroll — rows travel up
+   through it and are cut only at the body's edge.
+
+   The padding is the inline one too, read from `--cs-modal-inset`, because
+   the setup-details window narrows it on a phone. */
+.modal.cs-modal.mod-scrollable-content > .modal-header {
+	margin-bottom: calc(0.75em - var(--size-2-2));
 }
 
-/* ── Header ───────────────────────────────────────────────────────
-   The band is `.modal-header`, and getting that wrong is expensive. Obsidian
-   NESTS the two — `modalEl > (.modal-close-button, .modal-header > .modal-title,
-   .modal-content)` — so a `.cs-modal > .modal-title` rule matches nothing at
-   all. On its own that would just be a missing rule; combined with the chrome
-   taking `.modal`'s own 16px away it also drops the header flush into the
-   window's top corner, where `overflow: hidden` and `--modal-radius` shave the
-   first glyph off. Both selectors are listed so that whichever element is the
-   direct child is the band.
-
-   Deliberately not sticky, and that is the whole fix: as a plain flex sibling
-   of the scroller it can never paint over it, so the body is clipped exactly at
-   this rule and text stays readable right up to the line.
-
-   `margin: 0` drops Obsidian's `.modal-header { margin-bottom: 0.75em }`, which
-   would otherwise hold the rule ~12px clear of the first row. It also covers
-   the fallback branch: there `.modal-title`'s `margin-left/right: auto` are
-   CROSS-axis margins in this column flex container and suppress the default
-   stretch — the title box would shrink to fit its own text and drag the rule in
-   with it. */
-.cs-modal > .modal-header,
-.cs-modal > .modal-title {
-	flex-shrink: 0;
-	margin: 0;
-	padding: var(--size-4-4) var(--cs-modal-inset) 12px;
-	/* The close button stays at Obsidian's own stock position (the corner) —
-	   see the "Close button" note below — so the title only needs room for a
-	   24px box 6px off the edge: `max(inset, 40px)` covers that in both the
-	   normal and wide windows. */
-	padding-inline-end: max(var(--cs-modal-inset), 40px);
-	border-bottom: 1px solid var(--background-modifier-border);
+.modal.cs-modal.mod-scrollable-content > .modal-content {
+	padding-top: var(--size-2-2);
+	padding-inline: var(--cs-modal-inset);
 }
 
-/* ── Close button ─────────────────────────────────────────────────
-   Left at Obsidian's own default position (`top` / `inset-inline-end:
-   var(--size-2-3)`, in the window's corner). A custom position was tried here
-   and rolled back: it never took visible effect during testing on this setup
-   even at extreme debug offsets, which points at something about how this
-   plugin's CSS is (or isn't) reaching the running window rather than a
-   selector problem — not worth chasing further. Default behaviour is safe and
-   correct; it just sits in the corner like every other Obsidian modal. */
-
-/* ── Body ─────────────────────────────────────────────────────────
-   The one scroll container in the window. `min-height: 0` lets it shrink past
-   its content once the window reaches `--dialog-max-height`; without it the
-   flex item's automatic minimum size would push the footer off the bottom.
-
-   The top padding is where the first row's air comes from, and it can be spent
-   freely because it costs nothing on scroll. An `overflow` box clips at its
-   PADDING box, so this space is INSIDE the scrollport: it is not a band drawn
-   over the top of the body, and nothing is hidden by it. At rest it holds row 1
-   clear of the rule; on scroll the rows travel up through it, still painted,
-   and are cut only where the scrollport ends — flush against the rule. The
-   header can't interfere either, being a plain flex sibling above rather than
-   anything sticky or overlapping.
-
-   That row 1 needs the help at all is Obsidian's doing: it zeroes the first
-   setting row's own `padding-top` (see the `:first-child` rule below), so
-   without this the first row starts ~12px tighter than every row under it.
-   16px puts it back on the same rhythm and matches the padding at the bottom.
-
-   It is load-bearing for a second reason: a focused text input's ring
-   (`box-shadow: 0 0 0 var(--input-border-width-focus)`, 2px, painted OUTSIDE
-   the input) needs somewhere to land on row 1. Don't take it back to 0. */
-.cs-modal > .modal-content {
-	flex: 1 1 auto;
-	min-height: 0;
-	overflow-y: auto;
-	padding: var(--size-4-4) var(--cs-modal-inset);
-}
-
-/* There is no headerless variant. The generic confirmation and the replace
-   picker used to set no title and hide the band with `.cs-modal-no-title`;
-   both now name themselves, so every window wearing this chrome has a header.
-   Don't bring the class back — hiding the band is what let an unlabelled
-   window ship unnoticed in the first place. */
-
-/* Only the margin reset survives here. This selector is (0,3,0) and Obsidian's
-   own `.modal:not(.mod-settings) .setting-item:not(.setting-item-heading)
-   :where(:not(.setting-group *)):first-child { padding-top: 0 }` is (0,5,0)
-   (`:where()` adds nothing), so the `padding-top: 8px` this used to carry never
-   applied. The space it was reaching for now sits on the scroller above, where
-   it also gives the focus ring somewhere to go. */
+/* Only the margin reset is needed: Obsidian already zeroes the first setting
+   row's own `padding-top` in a window. */
 .cs-modal > .modal-content > :first-child {
 	margin-top: 0;
 }
@@ -2575,38 +2503,18 @@ body:not(.is-phone)
 	flex: 0 0 auto;
 }
 
-/* ── Footer ───────────────────────────────────────────────────────
-   Mirror of the header. Windows with no actions never build one, so an empty
-   bar can't leave a stray second rule along the bottom. */
-.cs-modal > .cs-modal-footer {
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
-	gap: 8px;
-	flex-shrink: 0;
-	padding: 12px var(--cs-modal-inset);
-	border-top: 1px solid var(--background-modifier-border);
-	background: var(--modal-background);
-}
+/* ── The button bar ───────────────────────────────────────────────
+   Obsidian's `.modal-button-container`, drawn by Obsidian alone: its padding,
+   its line, its buttons at their own size and padding, the grey 3px focus ring
+   and, for a button that cannot act yet (`aria-disabled`, see
+   ui/blockedButton.ts), its 70% dim. On a phone or tablet it stacks the
+   buttons full-width, the main action on top and Cancel (`mod-cancel`, see
+   `addCancelButton`) under it.
 
-.cs-modal > .cs-modal-footer button {
-	min-height: 28px;
-	padding: 2px 14px;
-	font-size: var(--font-ui-small);
-}
-
-/* Cancel, and every other neutral action a window's footer carries, is a bare
-   `<button>` that Obsidian paints itself: `--interactive-normal`, its hover
-   step and its focus ring, exactly as Cancel looks in Obsidian's own dialogs
-   (decision 14 of the native-look plan). On macOS that is a flat grey button
-   that does not change under the pointer, which is how Obsidian's are there.
-
-   A main button that cannot act yet is dimmed rather than disabled (see
-   ui/blockedButton.ts), so a press can say why. */
-.cs-modal > .cs-modal-footer button.cs-btn-disabled {
-	opacity: 0.4;
-	cursor: not-allowed;
-}
+   Until 2026-10-23 the plugin restyled them: 2px 14px of padding, a purple
+   inner outline on top of the focus ring, and a 40% dim for a blocked button,
+   fainter than any disabled button in Obsidian (findings S5-03, S6-01,
+   S6-V4). */
 
 /* ── Red buttons are Obsidian's ────────────────────────────────────
    A destructive button is `mod-destructive mod-cta` (ui/destructiveButton.ts),
@@ -2692,12 +2600,16 @@ body:not(.is-phone)
 	   `--cs-editor-control-width` (see the callout editor's top-of-file rule),
 	   which is what lines the display-name/IDs/colour rows' right column up
 	   with the icon-adjustment boxes below it. The 701-760px override further
-	   down repeats the pairing — change one side, change the other. */
-	grid-template-columns: minmax(0, 400px) 260px;
+	   down repeats the pairing — change one side, change the other.
+
+	   The preview takes the rest (`1fr`), so the adjustment column ends flush
+	   with the window's 16px inset, under the control column above it. (It
+	   was `minmax(0, 400px)` with the panel packed to the start, which only
+	   lined up inside the editor's old 40px inset.) */
+	grid-template-columns: minmax(0, 1fr) 260px;
 	gap: 12px;
 	margin: 0 0 16px;
 	align-items: start;
-	justify-content: start;
 }
 
 /* Closes the form off from the preview below it: Icon is the last of the four
@@ -2714,8 +2626,8 @@ body:not(.is-phone)
 
 /* `top: 0`, not a comfortable little offset, and the reason is the rule above.
    A sticky `top` is measured from the SCROLLPORT — the scroller's padding box —
-   so any positive value parks this column's card that far below the header rule
-   while the rows above it are still sliding past. The card is opaque, and it is
+   so any positive value parks this column's card that far below the body's
+   top edge while the rows above it are still sliding past. The card is opaque, and it is
    the column the setting rows put their name and description in, so with
    `top: 12px` that text vanished 12px short of the line with a strip of bare
    background left over it: the window looked like it was clipping early. The
@@ -3320,8 +3232,9 @@ body:not(.is-phone)
 /* ─── Replace Callout Modal ───────────────────────────────────── */
 
 /* (Its `.modal-content { padding: 0 16px 16px }` is gone: that inset was this
-   window restating what `.modal` used to give it. The chrome owns it now, and
-   restating it here only cost the scroller its top padding.) */
+   window restating what `.modal` used to give it. The shell owns it now
+   (Obsidian's long-dialog body), and restating it here only cost the scroller
+   its top padding.) */
 
 .callout-studio-replace-label {
 	font-weight: var(--font-semibold);
@@ -4132,10 +4045,15 @@ body:not(.is-phone)
 
 /* The picker asks for a tall body rather than sizing to its grid, which would
    resize the window every time the source changed. The height goes on the
-   scroller itself, not on the container inside it: as a flex item of the chrome
+   body itself, not on the container inside it: as a flex item of the window
    it can then still shrink when the window meets `--dialog-max-height`, so the
-   header and footer are never pushed out past `.cs-modal`'s clipped edge. */
-.callout-studio-icon-picker > .modal-content {
+   title and the button bar are never pushed out past the window's clipped edge.
+
+   The body does not scroll itself: the picker's own grid area does, under its
+   fixed source row. So the shell's padding and scrolling come off here, and
+   the selector repeats the shell's classes to outrank Obsidian's long-dialog
+   body rule and the plugin's ring-room rule. */
+.callout-studio-icon-picker.cs-modal.mod-scrollable-content > .modal-content {
 	padding: 0;
 	overflow: hidden;
 	height: 500px;
@@ -4804,8 +4722,9 @@ body:not(.is-phone)
 	color: var(--text-error);
 }
 
-/* Footer — the layout is the chrome's (`.cs-modal-footer`); the class stays for
-   the preview that shares the bar with the two buttons. */
+/* The preview at the start of the window's button bar ("Lucide: book"). It is
+   the bar's `mod-secondary` item, so Obsidian puts it at the start on a
+   computer and under the buttons on a phone or tablet. */
 
 .icon-picker-preview {
 	flex: 1;
@@ -4837,8 +4756,7 @@ body:not(.is-phone)
 /* ─── Accessibility & Mobile ─────────────────────────────────── */
 
 /* Focus-visible for all interactive elements */
-.callout-studio-row-buttons button:not(.clickable-icon):focus-visible,
-.cs-modal-footer button:focus-visible {
+.callout-studio-row-buttons button:not(.clickable-icon):focus-visible {
 	outline: 2px solid var(--text-accent);
 	outline-offset: -2px;
 }
@@ -6167,7 +6085,8 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 
 /* No top margin of its own: the body's padding is the air above the first
    box. Export used to get away with one because its list is the body's first
-   child and so caught `.cs-modal > .modal-content > :first-child`; Import's
+   child and so caught `.cs-modal > .modal-content > :first-child` (still the
+   rule that resets a first child's margin); Import's
    hidden file input comes first, so the reset missed its list and the margin
    showed. */
 .cs-option-list {
@@ -6317,22 +6236,24 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	--dialog-width: 560px;
 }
 
-/* The generic modal body owns a top inset, but a sticky child measures `top: 0`
+/* The window body keeps a small top inset for the first row's focus ring (see
+   "Room for the first row's focus ring"), but a sticky child measures `top: 0`
    from below that inset. Leaving it there creates a transparent strip through
    which rows keep scrolling. Quick Insert moves the resting inset onto its
-   intro instead, so the scrollport itself begins at the header rule. */
-.cs-quick-insert.cs-modal > .modal-content {
+   intro instead, so the scrollport itself begins right under the title. The
+   selector repeats the shell's own classes to outrank that rule. */
+.cs-quick-insert.cs-modal.mod-scrollable-content > .modal-content {
 	padding-top: 0;
 }
 
 .cs-quick-insert.cs-modal
 	> .modal-content
 	> .setting-item-description:first-child {
-	padding-top: var(--size-4-4);
+	padding-top: var(--size-2-2);
 }
 
 /* Sticky at top: 0 and nowhere else. A positive offset parks this opaque band
-   below the header's rule, which then eats the rows scrolling behind it — the
+   below the body's top edge, which then eats the rows scrolling behind it — the
    same trap `.callout-studio-preview-col` documents. It is painted with the
    window's own surface, never --background-primary, because those are not the
    same colour on an iPad in dark mode. The small painted top inset protects the
@@ -6924,11 +6845,6 @@ body:not(.is-phone)
 	--checkbox-marker-color: white;
 	flex: none;
 	margin: 0;
-}
-
-.cs-modal > .cs-modal-footer button.cs-is-locked {
-	opacity: 0.4;
-	cursor: not-allowed;
 }
 
 /* The red is a colour fade, which reduced motion allows; only the shake is
@@ -9083,15 +8999,16 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 
 /* The window body's top padding moves into the report. A section's head
    pins at `top: 0`, which is measured inside the scroller's padding: kept on
-   the scroller, that padding would park every pinned head 16px below the title
-   rule, with rows showing through the strip above it. */
-.cs-recovery-details-modal > .modal-content {
+   the scroller, that padding would park every pinned head below the title,
+   with rows showing through the strip above it. The selector repeats the
+   shell's classes to outrank the window body's ring-room rule. */
+.cs-recovery-details-modal.cs-modal.mod-scrollable-content > .modal-content {
 	padding-top: 0;
 }
 
 .cs-recovery-detail-report,
 .cs-recovery-detail-loading {
-	padding-top: var(--size-4-4);
+	padding-top: var(--size-2-2);
 }
 
 /* ── The table ── */

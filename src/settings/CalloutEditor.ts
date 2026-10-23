@@ -83,7 +83,7 @@ import { describeIcon } from "../icons/describeIcon";
 import { iconsEqual } from "../icons/lucideId";
 import { createControlGroup } from "./styleControls";
 import { renderIconAdjustGroup } from "./editor/iconAdjustGroup";
-import { applyModalChrome, removeModalChrome } from "./modalChrome";
+import { addCancelButton, applyModalChrome, removeModalChrome } from "./modalChrome";
 import { autofocusOnDesktop } from "./modalAutofocus";
 import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
 import { activeThemeName } from "../manager/theme/customCssApi";
@@ -413,7 +413,7 @@ export class CalloutEditor extends Modal {
 		// Standard window shell; the extra class carries only this editor's
 		// width and the panel measurements taken against it.
 		this.modalEl.addClass("callout-studio-editor-modal");
-		const footerEl = applyModalChrome(this, { footer: true, wide: true });
+		const footerEl = applyModalChrome(this, { footer: true });
 
 		// Hold incoming settings while this editor owns a draft.
 		this.plugin.settingsEditOpen = true;
@@ -1422,12 +1422,7 @@ export class CalloutEditor extends Modal {
 		// Action buttons — the chrome's pinned bottom bar
 		const buttonContainer = footerEl;
 
-		const cancelBtn = buttonContainer.createEl("button", {
-			text: t("editor.cancel"),
-		});
-		cancelBtn.addEventListener("click", () => {
-			this.close();
-		});
+		addCancelButton(buttonContainer, t("editor.cancel"), () => this.close());
 
 		const saveBtn = buttonContainer.createEl("button", {
 			text: this.existingId

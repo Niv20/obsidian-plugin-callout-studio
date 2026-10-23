@@ -2,7 +2,7 @@
  * tests/secondaryButtons.test.ts — who paints the plugin's grey buttons.
  *
  * Since decision 14 of the native-look plan, **Obsidian does**. A window's
- * Cancel (a bare `<button>` in `.cs-modal-footer`), the settings tab's
+ * Cancel (a `<button class="mod-cancel">` in Obsidian's `.modal-button-container`), the settings tab's
  * secondary buttons (Discover, Import, Export, Reset, …), Pick an icon's
  * **Manage libraries** and the import window's Upload/Paste get no face, edge,
  * hover or focus ring from the plugin: Obsidian's `button` rules draw them, so
@@ -106,7 +106,7 @@ const FACES = [
  * rule that sets a face, an edge or a shadow.
  */
 const NATIVE_BUTTONS = [
-	".cs-modal > .cs-modal-footer button",
+	".modal-button-container",
 	".icon-picker-manage-libraries",
 	".cs-import-action",
 ];

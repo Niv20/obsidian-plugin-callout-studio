@@ -34,7 +34,7 @@ import {
 import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import { sortCalloutsByDisplayName } from "../utils/sorting";
 import { committedDefinitions } from "../utils/usableCallouts";
-import { applyModalChrome, removeModalChrome } from "./modalChrome";
+import { addCancelButton, applyModalChrome, removeModalChrome } from "./modalChrome";
 import { buildCalloutRow, type CalloutRow } from "./command/calloutRow";
 import type { CalloutEditorPlugin } from "./editor/types";
 import { buildFormatRow, type FormatRow } from "./command/commandRoles";
@@ -174,9 +174,7 @@ export class CommandEditorModal extends Modal {
 		});
 		this.buildPreview(contentEl);
 
-		footer
-			.createEl("button", { text: t("editor.cancel") })
-			.addEventListener("click", () => this.finish(false));
+		addCancelButton(footer, t("editor.cancel"), () => this.finish(false));
 		this.saveBtnEl = footer.createEl("button", {
 			text: t("commandBuilder.save"),
 			cls: "mod-cta",

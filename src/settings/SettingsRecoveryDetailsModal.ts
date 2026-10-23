@@ -19,7 +19,7 @@ export class SettingsRecoveryDetailsModal extends Modal {
 		this.component?.unload();
 		this.component = new Component();
 		this.component.load();
-		applyModalChrome(this, { wide: true });
+		applyModalChrome(this);
 		this.modalEl.addClass("cs-recovery-details-modal");
 		this.setTitle(t("versions.details.title"));
 		this.titleEl.createSpan({

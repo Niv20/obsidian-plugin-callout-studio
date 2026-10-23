@@ -278,7 +278,7 @@ export const IMPORT = t(ADMONITION_IMPORT.copy.importButton);
 export function importButton(h: Harness): FakeElement {
 	const cta = h.modalEl.querySelectorAll(".mod-cta");
 	assert.equal(cta.length, 1, "exactly one primary button in the window");
-	assert.ok(cta[0]!.parentElement?.hasClass("cs-modal-footer"), "and it is in the footer");
+	assert.ok(cta[0]!.parentElement?.hasClass("modal-button-container"), "and it is in the button bar");
 	return cta[0]!;
 }
 

@@ -408,7 +408,7 @@ describe("viewing details from Version history", () => {
 			await settle(ready);
 			assert.ok(titleEl.textContent.startsWith(t("versions.details.title")));
 			assert.equal(text(titleEl.querySelector(".cs-version-detail-date")), ` (${recoverySourceTime(details.source)})`);
-			assert.ok(modalEl.hasClass("cs-modal-wide"));
+			assert.ok(modalEl.hasClass("mod-scrollable-content"), "Obsidian's long-dialog shell");
 			assert.deepEqual(sections(contentEl), ["style"]);
 			modal.onOpen();
 			await settle(ready);
@@ -416,7 +416,7 @@ describe("viewing details from Version history", () => {
 			assert.equal(titleEl.querySelectorAll(".cs-version-detail-date").length, 1, "reopening replaces the title date");
 			modal.onClose();
 			assert.equal(contentEl.children.length, 0);
-			assert.ok(!modalEl.hasClass("cs-modal-wide"));
+			assert.ok(!modalEl.hasClass("mod-scrollable-content"), "the shell comes off with the window");
 		} finally { modal.onClose(); containerEl.remove(); setLocale(previous); }
 	});
 

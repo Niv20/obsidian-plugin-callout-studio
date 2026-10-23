@@ -655,8 +655,9 @@ function firstComponent(value: string): string {
 }
 
 describe("the quick-insert sticky toolbar's scrollport inset", () => {
+	// Repeats the shell's classes, to outrank the window body's 4px ring room.
 	const body = (): Rule =>
-		ruleFor(".cs-quick-insert.cs-modal > .modal-content");
+		ruleFor(".cs-quick-insert.cs-modal.mod-scrollable-content > .modal-content");
 	const intro = (): Rule =>
 		ruleFor(
 			".cs-quick-insert.cs-modal > .modal-content > .setting-item-description:first-child",
@@ -668,9 +669,11 @@ describe("the quick-insert sticky toolbar's scrollport inset", () => {
 	});
 
 	it("moves the resting inset onto content that scrolls away", () => {
+		// The same 4px every other window keeps in its body, so the intro sits
+		// as far under the title as any first row does.
 		assert.strictEqual(
 			valueOf(intro(), "padding-top"),
-			"var(--size-4-4)",
+			"var(--size-2-2)",
 		);
 	});
 

@@ -12,7 +12,7 @@ import type { App } from "obsidian";
 import { t } from "../i18n";
 import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import type { ValidationIssue } from "./importValidator";
-import { applyModalChrome } from "../settings/modalChrome";
+import { addCancelButton, applyModalChrome } from "../settings/modalChrome";
 
 export type ImportReportChoice = "cancel" | "importValid";
 
@@ -122,9 +122,7 @@ export class ImportReportModal extends Modal {
 		// Footer buttons
 		const btnContainer = applyModalChrome(this, { footer: true });
 
-		btnContainer
-			.createEl("button", { text: t("import.btnCancel") })
-			.addEventListener("click", () => this.finish("cancel"));
+		addCancelButton(btnContainer, t("import.btnCancel"), () => this.finish("cancel"));
 
 		if (!this.fatal) {
 			const importBtn = btnContainer.createEl("button", {

@@ -37,7 +37,7 @@ function open() {
 	let answer: ReplaceChoice | undefined;
 	void modal.prompt().then((result) => { answer = result; });
 	const confirm = (): FakeElement => {
-		const buttons = modalEl.querySelectorAll(".cs-modal-footer button");
+		const buttons = modalEl.querySelectorAll(".modal-button-container button");
 		assert.equal(buttons.length, 1);
 		return buttons[0]!;
 	};

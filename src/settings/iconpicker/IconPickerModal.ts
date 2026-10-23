@@ -50,7 +50,7 @@ import {
 } from "./sourcePicker";
 import { explainIfBlocked, paintBlocked } from "../../ui/blockedButton";
 import type { ListboxPopup } from "../../ui/listboxPopup";
-import { applyModalChrome, removeModalChrome } from "../modalChrome";
+import { addCancelButton, applyModalChrome, removeModalChrome } from "../modalChrome";
 import { t } from "../../i18n";
 
 /**
@@ -170,13 +170,13 @@ export class IconPicker extends Modal {
 		// Bundled indexes make counting offline and normally finish before first open.
 		void this.loadSourceCounts(generation);
 
-		this.previewEl = footer.createDiv("icon-picker-preview");
+		// `mod-secondary` is Obsidian's mark for the one item in a button bar
+		// that is not a button: at the start on a computer, under the buttons
+		// on a phone or tablet, where the bar stacks.
+		this.previewEl = footer.createDiv("icon-picker-preview mod-secondary");
 		this.updatePreview();
 
-		const cancelBtn = footer.createEl("button", {
-			text: t("iconPicker.cancel"),
-		});
-		cancelBtn.addEventListener("click", () => this.cancel());
+		addCancelButton(footer, t("iconPicker.cancel"), () => this.cancel());
 
 		this.confirmBtn = footer.createEl("button", {
 			text: t("iconPicker.confirm"),

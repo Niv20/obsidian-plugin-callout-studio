@@ -1,57 +1,64 @@
 /**
- * settings/modalChrome.ts — the one modal shell every Callout Studio window wears.
+ * settings/modalChrome.ts — the one window shell every Callout Studio window
+ * wears: Obsidian's own shell for long dialogs.
  *
- * Obsidian hands a plugin a few boxes — `modalEl > (closeEl, headerEl > titleEl,
- * contentEl)` — and no opinion about what to do with them, so each of this
- * plugin's windows had grown its own answer: two carried a sticky title with a
- * rule under it and a pinned button bar, one drew its rule on a toolbar instead
- * of the title, and the rest had neither and let their buttons scroll away with
- * the content.
- *
- * Note the nesting: the title is a grandchild of `modalEl`, so the header band
- * is `headerEl`. Styling `modalEl > .modal-title` selects nothing.
- *
- * The standard is three bands:
+ * What it is for. Obsidian hands a plugin a few boxes —
+ * `modalEl > (closeEl, headerEl > titleEl, contentEl)` — and no opinion about
+ * what to do with them. Obsidian's own long dialogs (Publish, the attachment
+ * cleanup, Keychain) all use the same answer, and so does every window here:
  *
  *   ┌───────────────────────────────┐
- *   │ title                       ✕ │  header  — fixed, rule along its bottom
+ *   │ title                       ✕ │  header  — fixed, no line under it
+ *   │ content …                     │  body    — the ONLY part that scrolls
  *   ├───────────────────────────────┤
- *   │ content …                     │  body    — the ONLY scroll container
- *   ├───────────────────────────────┤
- *   │              [Cancel] [Save]  │  footer  — fixed, rule along its top; optional
+ *   │              [Cancel] [Save]  │  button bar — fixed, a line over it; optional
  *   └───────────────────────────────┘
  *
- * Both rules run edge to edge, which is why the geometry lives here rather than
- * in each modal: `.modal` gives up its own padding to `.cs-modal` so the rules
- * can reach the window's sides, and every band re-applies that inset itself.
+ * The main idea. Two of Obsidian's own classes do all of it, so the look comes
+ * from Obsidian's stylesheet (and a theme's) rather than from ours:
  *
- * Everything visual is in `styles.css` under "Modal chrome". This module also
- * owns the modal's keyboard scope so an open dropdown gets the first Escape.
+ * - `mod-scrollable-content` on the window makes the body the one scroller,
+ *   with Obsidian's 16px insets and no line under the title;
+ * - `modal-button-container` is the button bar. Obsidian lines its buttons up
+ *   at the end on a computer and stacks them full-width on a phone or tablet,
+ *   with the main action on top and Cancel (`mod-cancel`) under it.
+ *
+ * Until 2026-10-23 the plugin drew its own shell instead: a ruled title band,
+ * wider margins in the editors and its own footer row (decision 15 of the
+ * native-look plan replaced it).
+ *
+ * Who calls it. Every window's `onOpen` calls {@link applyModalChrome}, puts
+ * its buttons in the bar it returns, and makes its Cancel with
+ * {@link addCancelButton}. This module also owns the window's keyboard scope,
+ * so an open dropdown gets the first Escape (`ui/menuEscape.ts`).
  */
 import type { Modal } from "obsidian";
 import { installModalMenuScope, removeModalMenuScope } from "../ui/menuEscape";
 
 export interface ModalChromeOptions {
-	/** Build the pinned bottom bar and return it. Omit for windows with no actions. */
+	/** Build the button bar and return it. Omit for windows with no actions. */
 	footer?: boolean;
-	/** Wider window with a roomier inset — the callout and palette editors. */
-	wide?: boolean;
 }
 
+/** The classes this module puts on the window, so it can take them off again. */
+const WINDOW_CLASSES = ["cs-modal", "mod-scrollable-content"];
+
 /**
- * Dress `modal` in the standard chrome.
+ * Dress `modal` in the standard shell.
  *
- * Safe to call again on a modal that is being reopened: Obsidian reuses `modalEl`
- * across open/close, so a previous footer is cleared rather than duplicated.
+ * Safe to call again on a modal that is being reopened: Obsidian reuses
+ * `modalEl` across open/close, so a previous button bar is removed rather than
+ * duplicated.
  *
- * Every window wearing this chrome must set a title (`setTitle` or
- * `titleEl.setText`). There is deliberately no opt-out: the header band is what
- * gives a window its name, and the two that used to skip it — the generic
- * confirmation and the replace picker — read as an unlabelled box. Skipping it
- * now leaves Obsidian's empty `.modal-title` behind, which is a visible padded
- * band over nothing, so the omission shows up the first time the window opens.
+ * Every window wearing this shell must set a title (`setTitle` or
+ * `titleEl.setText`). An unnamed window reads as an unlabelled box, which is
+ * how two windows once shipped; there is deliberately no headerless variant.
  *
- * @returns the footer element when `footer` is set, otherwise `null`.
+ * (The two `export function applyModalChrome(...)` lines without a body are
+ * TypeScript "overloads": they tell the compiler that asking for a footer
+ * always gives back an element, so a caller never has to check for `null`.)
+ *
+ * @returns the button bar when `footer` is set, otherwise `null`.
  */
 export function applyModalChrome(
 	modal: Modal,
@@ -67,9 +74,11 @@ export function applyModalChrome(
 ): HTMLElement | null {
 	const { modalEl, containerEl } = modal;
 	installModalMenuScope(modal);
-	modalEl.addClass("cs-modal");
-	modalEl.toggleClass("cs-modal-wide", options.wide === true);
-	detachFooter(modalEl);
+	// `cs-modal` is the plugin's own hook (its surface colours, its row rules);
+	// `mod-scrollable-content` is Obsidian's long-dialog shell.
+	// `...` spreads the list into separate arguments: addClass("cs-modal", …).
+	modalEl.addClass(...WINDOW_CLASSES);
+	detachButtonBar(modalEl);
 
 	// Marks the window's backdrop layer for styles.css, which paints the dim
 	// behind a stacked window on mobile itself (see "Stacked windows on mobile"
@@ -87,22 +96,48 @@ export function applyModalChrome(
 	);
 
 	if (!options.footer) return null;
-	return modalEl.createDiv({ cls: "cs-modal-footer" });
+	// After `.modal-content`, as Obsidian's own dialogs build it, so it stays
+	// pinned under the scrolling body.
+	return modalEl.createDiv({ cls: "modal-button-container" });
+}
+
+/**
+ * Add a window's Cancel button to its button bar.
+ *
+ * Obsidian marks Cancel with `mod-cancel` (what its own `setCancel()` does),
+ * and its button bar relies on the mark: on a phone or tablet, where the
+ * buttons stack, Cancel goes under the main action. Making every Cancel here
+ * means none can miss it.
+ *
+ * @param bar The bar {@link applyModalChrome} returned.
+ * @param label The button's words, usually "Cancel".
+ * @param onClick What a press does, usually closing the window.
+ * @returns The button, for a caller that needs to keep it.
+ */
+export function addCancelButton(
+	bar: HTMLElement,
+	label: string,
+	onClick: () => void,
+): HTMLButtonElement {
+	const button = bar.createEl("button", { text: label, cls: "mod-cancel" });
+	button.addEventListener("click", onClick);
+	return button;
 }
 
 /**
  * Undo {@link applyModalChrome}. Worth calling from `onClose()` on a modal whose
- * footer holds listeners, since the bar is a sibling of `.modal-content` and so
- * survives the usual `contentEl.empty()`.
+ * button bar holds listeners, since the bar is a sibling of `.modal-content`
+ * and so survives the usual `contentEl.empty()`.
  */
 export function removeModalChrome(modal: Modal): void {
 	removeModalMenuScope(modal);
 	const { modalEl, containerEl } = modal;
-	detachFooter(modalEl);
-	modalEl.removeClasses(["cs-modal", "cs-modal-wide"]);
+	detachButtonBar(modalEl);
+	modalEl.removeClasses(WINDOW_CLASSES);
 	containerEl.removeClasses(["cs-modal-container", "cs-modal-stacked"]);
 }
 
-function detachFooter(modalEl: HTMLElement): void {
-	modalEl.findAll(":scope > .cs-modal-footer").forEach((el) => el.detach());
+/** Remove the window's button bar, if it has one (a direct child of `.modal`). */
+function detachButtonBar(modalEl: HTMLElement): void {
+	modalEl.findAll(":scope > .modal-button-container").forEach((el) => el.detach());
 }

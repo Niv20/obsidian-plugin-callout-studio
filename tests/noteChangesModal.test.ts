@@ -146,11 +146,11 @@ function open(input: NoteChangesModalInput) {
 	let answer: NoteChoices | null | undefined;
 	void modal.ask().then((result) => { answer = result; });
 	const button = (label: string): FakeElement =>
-		modalEl.querySelectorAll(".cs-modal-footer button").find((el) => el.textContent === label)!;
+		modalEl.querySelectorAll(".modal-button-container button").find((el) => el.textContent === label)!;
 	const cards = () => contentEl.querySelectorAll(".cs-option-box");
 	return {
 		titleEl, contentEl,
-		buttons: () => modalEl.querySelectorAll(".cs-modal-footer button").map((el) => el.textContent),
+		buttons: () => modalEl.querySelectorAll(".modal-button-container button").map((el) => el.textContent),
 		answer: async () => { await setImmediate(); return answer; },
 		changes: () => contentEl.querySelectorAll(".cs-note-change-list li").map((li) => li.textContent),
 		lines: () => contentEl.querySelectorAll(".cs-note-change-line").map(lineText),

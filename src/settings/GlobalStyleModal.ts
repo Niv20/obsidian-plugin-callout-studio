@@ -56,7 +56,7 @@ export class GlobalStyleModal extends Modal {
 		this.modalEl.addClass("cs-role-style-modal");
 		// No footer: every control here applies live, so there is nothing to
 		// confirm. Same width as the two editors, hence `wide`.
-		applyModalChrome(this, { wide: true });
+		applyModalChrome(this);
 		this.titleEl.setText(t(this.titleKey()));
 
 		const panel = this.contentEl.createDiv({

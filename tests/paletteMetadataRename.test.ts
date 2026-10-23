@@ -159,7 +159,7 @@ function open(input: PaletteNotesModalInput) {
 	let answer: boolean | null | undefined;
 	void modal.ask().then((result) => { answer = result; });
 	const button = (label: string): FakeElement =>
-		modalEl.querySelectorAll(".cs-modal-footer button").find((el) => el.textContent === label)!;
+		modalEl.querySelectorAll(".modal-button-container button").find((el) => el.textContent === label)!;
 	const cards = () => contentEl.querySelectorAll(".cs-option-box");
 	return {
 		titleEl, contentEl, cards,

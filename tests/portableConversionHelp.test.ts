@@ -54,7 +54,7 @@ describe("portable conversion entry and help", () => {
 			assert.equal(h.contentEl.querySelector(".cs-collapsible-heading"), null);
 			assert.equal(h.contentEl.querySelectorAll("svg").length, 0);
 			assert.deepEqual(h.calls, []);
-			assert.equal(h.modalEl.querySelector(".cs-modal-footer"), null);
+			assert.equal(h.modalEl.querySelector(".modal-button-container"), null);
 		} finally { h.destroy(); }
 	});
 
