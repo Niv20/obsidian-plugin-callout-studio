@@ -2476,17 +2476,14 @@ guard still accepts previously saved values up to 64px.
 ### `MenuCustomizationModal` - reorder without replacing a grabbed row
 
 Each render role has one persistent list container with a banded list from
-[`ui/bandedSortList.ts`](../../src/ui/bandedSortList.ts) attached - the same
-list the Manage icon libraries window uses (below). It owns the band line, the
-handles with their ArrowUp/ArrowDown moves, and the one `makeDragSortable`
-attachment whose `groupOf` keeps each band to itself; the modal supplies each
-row's label and toggle. A caller may also caption its groups (`captionOf`, used
-only by the libraries window): the caption is a sibling element like the line,
-so a drag never carries it. It may hand over the window's scroller (`scroller`,
-likewise only the libraries window), which lets `animate(change, follow)`
-scroll to a row it is told to follow; without one the list never scrolls
-itself. Every rebuild swaps the whole list in with one `replaceChildren()`
-(see the libraries window, below, for why). Enabled and disabled items occupy separate bands,
+[`ui/bandedSortList.ts`](../../src/ui/bandedSortList.ts) attached. It owns the
+band line, the handles with their ArrowUp/ArrowDown moves, and the one
+`makeDragSortable` attachment whose `groupOf` keeps each band to itself; the
+modal supplies each row's label and toggle. (The Manage icon libraries window
+used the same list, with captions and a follow-scroll, until it became three
+Obsidian setting groups; those options went with it.) Every rebuild swaps the
+whole list in with one `replaceChildren()` (see the libraries window, below,
+for why). Enabled and disabled items occupy separate bands,
 divided by a sibling separator. Pointer and keyboard moves stay within the
 item's band; only its toggle changes bands. Every completed move updates the
 settings array and requests a save immediately.
@@ -2627,25 +2624,36 @@ only after a 250 ms press-and-hold, the keyboard reorder is Alt+↑/↓ on a foc
 row (rows and handles are `tabIndex -1`, so the handle is not a Tab stop), and
 neither `app.js` nor `app.css` mentions `prefers-reduced-motion`. This modal's
 handle starts a touch drag at once (`touch-action: none`), is a Tab stop that
-moves its row with ↑/↓, and honours reduced motion. Obsidian's engine does
-auto-scroll while dragging, which lists of two to five rows never need.
+moves its row with ↑/↓, and honours reduced motion. Obsidian's engine also
+scrolls while a row is held near the edge; `makeDragSortable` does the same
+when it is handed a `scroller` (finding S4-12): within 50px of the scroller's
+top or bottom edge (or a third of its height, if less), a frame loop scrolls it
+up to 15px a frame and finds the slot again, and a wheel scroll mid-drag
+re-tracks the row too. It keeps scrolling under reduced motion, which only
+removes the slides. Manage icon libraries passes its window body; Customize
+menu items, whose lists are two to five rows long, passes none.
 
 Revisit this only if `minAppVersion` reaches 1.13 *and* the settings tab moves
 to `getSettingDefinitions()`. Until then `MenuCustomizationModal` and
 `ui/DragSortList.ts` stay.
 
-### `IconLibrariesModal` - libraries in two bands
+### `IconLibrariesModal` - libraries in three Obsidian groups
 
 Opened by the **Manage libraries** text button at the end of Pick an icon's
 source row; titled **Manage icon libraries** - the button's words with "icon"
 put back, since the button is read inside a window already about icons and the
 title has to stand on its own
 ([`iconpicker/IconLibrariesModal.ts`](../../src/settings/iconpicker/IconLibrariesModal.ts)).
-It is the Customize menu items list with a different control on each row;
-`ui/bandedSortList.ts` draws both. Above the line are the libraries the picker
-offers, in its order. Below it are the rest, in catalog order and without
-handles - reordering libraries the picker does not show would change nothing -
-with a `cs-drag-handle-spacer` keeping every name in one column.
+The libraries are three Obsidian setting groups (`SettingGroup` with
+`mod-list`, finding S4-13): a heading over one rounded box of rows, thin lines
+between the rows, 24px between the groups, rows a little tighter and kept on
+one line on a phone. Each row is an Obsidian `Setting`: the library's emblem
+in a `setting-item-icon` (what `Setting.setIcon` builds; not in the typings, so
+built by hand), its name, the line of facts as its description, its one button
+as an extra button, and - in Available libraries only - the drag handle at the
+very end. Nothing is faded. Until 2026-10-23 it was one banded list of grey
+pills, with hand-drawn headings, captions and rules matched to Built-in
+commands.
 
 This window is also the only place a new library is downloaded: the Choose
 source menu lists only the libraries the picker offers (see
@@ -2664,48 +2672,37 @@ stopped listing libraries to download; they are now this window's alone:
 
 A hidden library cannot sit under *Libraries to download* - there is nothing to
 download - and the window has to list it to offer **Show**, hence the third
-group. Its caption appears only while a built-in library is hidden, after the
-to-download group. `computeRows()`
-therefore returns the shown libraries, then the downloadable ones that are not
-offered, then the hidden ones, and `groupOf(row)` names each row's group for
-`captionOf`; a caption comes with a line above it, except at the very top.
+group. A group with no row is not shown (`cs-hidden` on the group), except
+Available libraries, which never empties - the last library cannot leave the
+picker - and holds the reset arrow. `computeRows()` returns the shown
+libraries, then the downloadable ones not offered, then the hidden ones, and
+`groupOf(row)` sorts each into its box; because the Available rows come first,
+a drag's indexes in that box are indexes in `rows` too. Each group carries
+`data-cs-group` for tests and the screenshot scripts; only the Available group
+has a class of its own (`cs-icon-library-available`), for the drag's
+placeholder.
 
-The headings are not drawn like the menu's small muted labels. All three -
-**Available libraries**, **Libraries to
-download** and **Hidden libraries** - are drawn exactly as **Built-in commands**
-is in Commands and shortcuts: same size, weight, colour and line height, no
-capitals, and the same spacing - 36px, a rule, 36px before a later heading, 24px
-under the description for the first, 16px before the list. The description is a
-plain `p.setting-item-description`, as that window's is, so the first gap also
-matches on a phone, where a paragraph carries a margin a settings row does not.
-The list's 4px gap is allowed for in the caption's and line's margins, and the
-reset arrow's 26px box is pulled out of the heading's height so it never changes
-the spacing. The rule that styles `.cs-menu-band-caption` and the first heading's
-name reads Obsidian's own `--setting-group-heading-size`, `-weight` and `-color`
-(with `--font-ui-medium`, `--font-semibold` and `--text-normal` as fallbacks)
-and `--line-height-tight`, the variables that heading is drawn with, rather than
-numbers copied from it, so the three follow a theme that restyles setting
-headings and the phone's own scale (15px on the desktop, 14.99px on a phone,
-where the variables also point at a muted colour - read from a browser, against
-Obsidian's `app.css`). `iconLibrariesModal.test.ts` pins the variables, and pins
-the premise - that **Built-in commands** is a plain `setHeading()` row nothing in
-`styles.css` resizes - so a size given to that heading shows up as a failure
-there.
+The headings are Obsidian's group headings, drawn by app.css alone: nothing in
+`styles.css` sizes or colours them (`iconLibrariesModal.test.ts` holds that).
+The reset arrow is the Available group's extra button
+(`SettingGroup.addExtraButton`), built once with the group - only the rows are
+rebuilt - so `syncReset` always holds the arrow on screen. It is invisible
+(`cs-reset-idle`, `visibility: hidden`) while nothing differs from the default,
+and overhangs the heading's line by its own padding, as the callout editor's
+heading arrows do, so the heading keeps one height.
 
-**Available libraries** is a row of its own *above* the list rather than a
-caption inside it, because the reset arrow lives on it and the list is rebuilt
-on every change (`addFieldResetButton` returns a `sync` bound to one button
-element, which a rebuild would orphan). The row is a `Setting` used as a plain
-line: Obsidian pads every settings row in a window with 16px above and below and
-a rule along the top (`.modal:not(.mod-settings) .setting-item:not(…)`, specificity
-(0,4,0)), so the heading doubles its class under `.modal` to outrank it. The
-arrow's box is taller than the heading's line, so it is pulled out of the row's
-height with a negative margin: its appearing or disappearing moves nothing.
-Obsidian also gives
-`.setting-item-name` `unicode-bidi: plaintext`, which would pin an English
-heading to the left of a right-to-left window; the heading sets `isolate` and
-follows the window like the captions. The arrow is centred over the rows'
-button column (32px, 12px in from the row's edge).
+The row's button is an extra button rather than a `<button>`: Obsidian's phone
+rule pads every `button` in a row's control by 10px, which made the action
+40px beside a 28px handle. As a `div.clickable-icon` it is the handle's size
+everywhere, reachable with Tab, and dimmed by Obsidian's
+`.clickable-icon[aria-disabled='true']` when it is blocked.
+
+During a drag the placeholder is the Available box's first child, so the first
+row is not, and Obsidian's row divider (`.setting-item::before`, left off the
+first child only) would draw along the top of the box;
+`.cs-drag-placeholder + .setting-item::before { content: none }` keeps it off.
+The lifted row wears the same card as a callout row (`.is-dragging`), since a
+grouped row is transparent in its box.
 
 The description is a single translated string with one `\n` per sentence,
 rendered by `descriptionLines()` as text and `<br>` in a fragment (the Callout
@@ -2719,13 +2716,13 @@ it matters, and not repeated here.
 Each row has exactly one icon button, and which one says what kind of library
 it is:
 
-| Library | Above the line | Below the line |
+| Library | In Available libraries | In the other groups |
 | --- | --- | --- |
 | Downloadable: Tabler, Font Awesome, Octicons, RPG Awesome, Simple Icons | `trash-2`: delete its files | `download` |
 | Ships with the plugin: Lucide, Material, Emoji, Custom Icons | `eye-off`: hide | `eye`: show |
 
 The line under each name says what the library costs: its icon count and, for a
-downloadable library, its size - above the line the space it takes, below it
+downloadable library, its size - in Available libraries the space it takes, elsewhere
 what a download would fetch (only the missing files, so Font Awesome with Brands
 already on disk quotes Solid and Regular). Built-in libraries say "no download
 needed"; Material says "each icon downloads when picked". The count and the
@@ -2737,13 +2734,16 @@ Behaviour to keep in mind before changing it:
 
 - **Rows are recomputed, not kept.** Hiding, showing, a deletion, or a
   download finishing - here or in the picker's own prompt, heard through
-  `packs.onChange` - rebuilds both bands from settings and pack state inside
-  `animate()`, so rows slide into their new band. A change that arrives
+  `packs.onChange` - rebuilds every group from settings and pack state inside
+  `animateAvailable()`. Only the Available rows slide (`animateReorder` on that
+  box); a row that changes group moves there at once, as a row does between
+  two of Obsidian's lists - a slide across the gap would carry a transparent
+  row's text over the next heading. A change that arrives
   mid-drag waits for the drag's `pointerup`, `pointercancel` or
   `lostpointercapture`: rebuilding under the pointer would detach the dragged
   row.
-- **The window scrolls in exactly one case: the library whose button was
-  pressed changed band and landed out of view.** Then the list scrolls with the
+- **The window scrolls by itself in exactly one case: the library whose button
+  was pressed changed group and landed out of view.** Then the list scrolls with the
   row, just far enough to show where it went - down to **Libraries to download**
   or **Hidden libraries** for a delete or a hide, up into **Available
   libraries** for a download that has *finished* or a show. Nothing else moves
@@ -2754,24 +2754,23 @@ Behaviour to keep in mind before changing it:
   libraries whose button is being pressed through (`run()` adds the id and
   removes it in a `finally`, so a press that ends without the row moving is
   forgotten and a later move of that library by someone else scrolls nothing).
-  Every refresh asks `takeMovedFollowed()` whether one of them has changed band
+  Every refresh asks `takeMovedFollowed()` whether one of them has changed group
   since the last rows - a hide at once, a delete when its first file is gone, a
   download when its last file has arrived - and hands that key to
-  `list.animate(change, follow)`. There, after the rebuild and before the slide
-  is measured, `scrollToReveal()` (`ui/scrollToReveal.ts`) moves the window's
+  `animateAvailable(change, follow)`. There, after the rebuild and before the
+  slide is measured, `scrollToReveal()` (`ui/scrollToReveal.ts`) moves the window's
   body - `contentEl`, the one scroll container of the chrome
   ([Modal chrome](#modal-chrome---the-one-shell-every-window-wears)) - by the least that puts the row inside it with
-  `REVEAL_MARGIN_PX` (40px, room for a group's caption and line above its first
-  row) to spare, and not at all when it is already in. Because the scroll is
-  instant and happens *before* `animateReorder` reads where the rows now are,
-  its slide runs from where each row was on screen to where it now is on
-  screen: the list visibly scrolls with the row, in the same 300ms, with no
-  second animation to keep in step. Reduced motion skips the slide but still
-  scrolls. A list attached without a `scroller` option (Customize menu items)
-  never scrolls itself.
-- **A rebuild never leaves the list empty.** `render()` builds the rows in a
-  detached element and puts them in with one `replaceChildren()`; it used to
-  `empty()` the list and append. The row whose button was just pressed has
+  `REVEAL_MARGIN_PX` (40px, room for a group's heading above its first row) to
+  spare, and not at all when it is already in. Because the scroll is instant
+  and happens *before* `animateReorder` reads where the rows now are, the
+  Available rows slide from where each was on screen to where it now is.
+  Reduced motion skips the slide but still scrolls. (A drag scrolls the window
+  too, when the row is held near its edge - that is the drag's own doing, see
+  the `MenuCustomizationModal` section above.)
+- **A rebuild never leaves a box empty.** `render()` builds each group's rows
+  in a detached element and puts them in with one `replaceChildren()` per box;
+  the list used to be `empty()`-ed and appended to. The row whose button was just pressed has
   focus, and Chromium lays the page out on the spot when it takes focus off a
   node being removed - with the rows after it already gone, since Obsidian's
   `empty()` removes from the last child. The scroller is then too short for
@@ -2800,22 +2799,20 @@ Behaviour to keep in mind before changing it:
   not when the window opens. An unused library is deleted at once; one in use
   is refused while saving is paused (`blockedWhilePaused`), and the editor's
   icon is passed to `deleteLibrary` so its drawings are sealed too.
-- **The reset arrow** sits on the **Available libraries** row
-  (`addFieldResetButton`), level with the heading and centred over the button
-  column. It puts everything back the way the plugin
+- **The reset arrow** sits at the end of the **Available libraries** heading,
+  as that group's extra button. It puts everything back the way the plugin
   came, so it shows while *any* of three things differs: the order, a hidden
   built-in library, or a downloadable library with any file on the device
   (`isInstalled`, so a partial download counts). Pressing it restores the order
   and the hidden list at once, then deletes the installed libraries one by one
   through the same `deleteFiles()` a row's trash button uses, each row showing
-  its spinner and sliding below the line as its files go. It never downloads.
+  its spinner and moving to Libraries to download as its files go. It never downloads.
   When something would be deleted it asks first, naming the libraries and
   saying callouts keep their icons; with nothing to delete it does not ask. It
   is refused while saving is paused if a callout - or the edit - uses one of
   the libraries (the same seal as a single delete), and a library that cannot
   be deleted raises its own notice, leaves the arrow showing, and does not stop
-  the rest. Obsidian stacks a phone's setting rows; a phone-scoped rule keeps
-  the heading a row.
+  the rest.
 - **`openAndWait()` resolves with whether anything changed** when the window
   closes, which is what tells the picker to take it in: it rebuilds its menu
   and, only if what the panel shows changed, the panel

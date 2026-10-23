@@ -1410,8 +1410,11 @@ body:not(.is-phone)
 /* The lifted row is Obsidian's drag ghost (`.drag-reorder-ghost >
    .mod-dragged-item`): a solid card on the drag background with Obsidian's
    drag shadow. The grabbing cursor is Obsidian's own `body.is-grabbing`, set by
-   DragSortList for the gesture, which also keeps tooltips from opening. */
-.callout-studio-row.is-dragging {
+   DragSortList for the gesture, which also keeps tooltips from opening. A
+   library row in Manage icon libraries is an Obsidian setting row, transparent
+   in its box, and is lifted the same way. */
+.callout-studio-row.is-dragging,
+.cs-icon-library-row.is-dragging {
 	opacity: 1;
 	box-shadow: var(--drag-item-shadow);
 	background-color: var(--drag-item-background);
@@ -1465,155 +1468,47 @@ body:not(.is-phone)
 
 /* ─── Icon Libraries Window ───────────────────────────────────── */
 
-/* The list, its rows, the handle and the band line are Customize menu items'
-   (above). What follows is what a library row has and a menu row does not: an
-   emblem, a second line, and one icon button instead of a toggle. */
+/* Three Obsidian setting groups (`SettingGroup` with `mod-list`, finding
+   S4-13): app.css draws the headings, the boxes, the thin lines between rows,
+   the 24px between groups, a row's emblem (`.setting-item-icon`), name and
+   detail line, and keeps a row on one line on a phone. What follows is only
+   what is the window's own. */
 
-/* The heading of the first group sits above the list and carries the reset
-   arrow. It is not a setting, so it does not want what Obsidian gives a
-   settings row in a window — 16px above and below and a rule along the top
-   (`.modal:not(.mod-settings) .setting-item:not(…)`, 0,4,0). `.modal` and a
-   doubled class outrank it. */
-.modal .cs-icon-libraries .setting-item.cs-icon-library-heading.cs-icon-library-heading {
-	flex-direction: row;
-	align-items: center;
-	gap: 12px;
-	padding: 0;
-	border: none;
-}
-
-/* Obsidian stacks a phone's setting rows, label over control
-   (`.is-phone .modal .setting-item:not(…)`, 0,4,0); the heading keeps its arrow
-   beside the words rather than alone on a line of its own. */
-.is-phone .modal .cs-icon-libraries .setting-item.cs-icon-library-heading {
-	flex-direction: row;
-	align-items: center;
-}
-
-/* The three group headings — the first group's is a row of its own above the
-   list, the others are captions inside it — are drawn exactly as a section
-   heading is: the one **Built-in commands** has in the Commands and shortcuts
-   window. Size, weight, colour and line height are not numbers copied from it
-   but the variables Obsidian draws every setting heading with
-   (`--setting-group-heading-*`), so the three stay level with it wherever
-   those are set — by a theme, or by the phone's own scale. They are not the
-   small muted label of a menu's `.cs-combobox-group-label`, on purpose.
-   They are set in from the rows' edge to where their content starts. */
-.modal .cs-icon-libraries .setting-item.cs-icon-library-heading.cs-icon-library-heading {
-	/* A heading straight under the window's description, as Built-in commands is
-	   under its own: 24px of air above, none of its own below the text but the
-	   16px every setting heading has. */
-	margin-top: 24px;
-	margin-bottom: var(--size-4-4);
-}
-
-.cs-icon-libraries .cs-icon-library-heading .setting-item-name,
-.cs-menu-band-caption {
-	font-size: var(--setting-group-heading-size, var(--font-ui-medium));
-	font-weight: var(--setting-group-heading-weight, var(--font-semibold));
-	line-height: var(--line-height-tight);
-	color: var(--setting-group-heading-color, var(--text-normal));
-	text-align: start;
-	/* Obsidian reads a setting's name as plain text, so its own direction wins
-	   over the window's; a heading is the plugin's wording, and follows the
-	   window, like the captions under it. */
-	unicode-bidi: isolate;
-}
-
-/* The line and caption of a group below the first are a heading with a rule
-   over it, as Built-in commands is below Your commands: 36px, the rule, 36px,
-   the text, then the heading's 16px. The list puts a 4px gap between its
-   children, so each space is 4px short of what is written here. */
-.cs-icon-library-list .cs-menu-band-divider {
-	margin: 32px 0 0;
-}
-
-.cs-icon-library-list .cs-menu-band-caption {
-	padding: 32px 0 0;
-	margin-bottom: 12px;
-}
-
-/* Obsidian's mobile `.is-mobile .setting-item-name { font-weight: var(--font-medium) }`
-   comes after its heading rule and wins, so on a phone or tablet Built-in
-   commands is medium, not the variable's semibold. Do the same, or these would
-   come out heavier than the heading they are meant to match. */
-.is-mobile .cs-icon-libraries .cs-icon-library-heading .setting-item-name,
-.is-mobile .cs-menu-band-caption {
-	font-weight: var(--font-medium);
-}
-
-/* Centred over the rows' button column — 32px wide, 12px in from the row's
-   edge — the way Customize menu items centres its arrows over the toggles.
-   The heading has no inset of its own, so the arrow keeps that 12px as margin. */
-.cs-icon-library-heading .setting-item-control {
-	flex: 0 0 32px;
-	justify-content: center;
-	/* Taller than the heading's line, and it comes and goes: pulled out of the
-	   row's height so neither the heading's spacing nor the list moves. */
-	margin: -8px 0;
-	margin-inline-start: auto;
-	margin-inline-end: 12px;
-	padding: 0;
-}
-
+/* 24px between the description and the first group. Obsidian sets a group off
+   from the group before it, and the first one has none. */
 .cs-icon-library-list {
-	margin-top: 0;
+	margin-top: var(--size-4-6);
 }
 
-/* Below the line there is no handle — the catalog decides that order — and
-   this keeps every name in one column. */
-.cs-drag-handle-spacer {
-	/* As wide as the handle: an Obsidian icon button's icon plus its padding. */
-	width: calc(var(--icon-m) + 2 * var(--size-2-3));
-	flex-shrink: 0;
+/* Available libraries is where a drag happens. Its drop placeholder is laid
+   out against its box (ui/DragSortList.ts). */
+.cs-icon-library-available .setting-items {
+	position: relative;
 }
 
-.cs-icon-library-emblem {
-	display: flex;
-	align-items: center;
-	flex-shrink: 0;
-	color: var(--text-muted);
+.cs-icon-library-available .setting-items.cs-dragging {
+	user-select: none;
+	-webkit-user-select: none;
 }
 
-.cs-icon-library-emblem .svg-icon {
-	width: var(--icon-s);
-	height: var(--icon-s);
+/* During a drag the placeholder is the box's first child, so the first row is
+   not, and Obsidian would draw a row's dividing line along the top of the box.
+   The row right after the placeholder is the first row on screen. */
+.cs-drag-placeholder + .setting-item::before {
+	content: none;
 }
 
-/* Name over its detail line, where a callout row puts them side by side. */
-.cs-icon-library-row .callout-studio-row-info {
-	flex-direction: column;
-	flex-wrap: nowrap;
-	align-items: flex-start;
-	gap: 2px;
-}
-
-.cs-icon-library-meta {
-	color: var(--text-muted);
-	font-size: var(--font-ui-smaller);
-}
-
-/* Below the line the library is out of the picker, so its emblem and text fade
-   — but not its button: downloading or showing it is what the row is for. */
-.cs-menu-row.cs-icon-library-row.is-disabled {
-	opacity: 1;
-}
-
-.cs-icon-library-row.is-disabled .cs-icon-library-emblem,
-.cs-icon-library-row.is-disabled .callout-studio-row-info {
-	opacity: 0.55;
-}
-
-/* The action is an Obsidian icon button (`.clickable-icon`) like the handle:
-   its size, hover, focus ring and dimmed state are Obsidian's. */
-.cs-icon-library-row button.cs-icon-library-action {
-	flex-shrink: 0;
+/* The reset arrow at the end of the Available heading overhangs the heading's
+   line by its own padding, as the callout editor's heading arrows do, so the
+   heading is one text line tall whether the arrow shows or not. */
+.cs-icon-library-group > .setting-item-heading .extra-setting-button {
+	margin-block: calc(var(--size-2-2) * -1);
 }
 
 /* Deleting is the one action here that costs a download to undo, so its hover
    colour is the error red, as Obsidian's destructive icon buttons do it. */
 @media (hover: hover) {
-	.cs-icon-library-row button.cs-icon-library-delete {
+	.cs-icon-library-row .cs-icon-library-delete {
 		--icon-color-hover: var(--text-error);
 	}
 }

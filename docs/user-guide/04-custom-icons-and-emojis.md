@@ -40,26 +40,24 @@ sample hand beside each tone, so you can see the choice before selecting it.
 
 ## Manage icon libraries
 
-Click **Manage libraries** at the end of the source row to open **Manage icon libraries**. This is also where you download a library: the source menu lists only the libraries already on this device. The window works like **Customize menu items**: one list, divided by lines, under these headings.
+Click **Manage libraries** at the end of the source row to open **Manage icon libraries**. This is also where you download a library: the source menu lists only the libraries already on this device. The libraries are in up to three boxes, like the lists in Obsidian's own settings, each under its heading.
 
 Your search text stays in place when you return, including after reordering, downloading, deleting, or hiding a library. The results update to reflect those changes. If removing the active library returns you to **All sources**, the same search continues there.
 
-- **Available libraries** are the ones the picker offers, in the order it offers them. Drag a row by its handle - or focus the handle and press the up and down arrow keys - to change that order. While you drag, a slot in your accent colour shows where the row will land, as in Obsidian's own lists. The reset arrow sits on this heading.
-- **Libraries to download** are the ones not downloaded on this device yet. Their rows are dimmed and have no handle, because their order can't change anything until they're downloaded.
+- **Available libraries** are the ones the picker offers, in the order it offers them. Drag a row by its handle - or focus the handle and press the up and down arrow keys - to change that order. While you drag, a slot in your accent colour shows where the row will land, as in Obsidian's own lists, and holding the row near the top or bottom of the window scrolls it. The reset arrow sits at the end of this heading.
+- **Libraries to download** are the ones not downloaded on this device yet. Their rows have no handle, because their order can't change anything until they're downloaded.
 - **Hidden libraries** appears only while you have hidden one of the libraries that come with the plugin, and lists it so you can show it again.
 
 ![Manage icon libraries showing available sources and libraries to download in a bounded dark-mode window](../../assets/user-guide/icon-libraries.svg)
 
-The three headings are as large as **Built-in commands** in **Commands and shortcuts**.
-
 Each row has one button:
 
-- A library you download has a **trash** button above the line and a **download** button below it. Under its name you see how many icons it has and its size, so you know what a download costs and what deleting frees.
-- **Lucide, Material, Emoji, and Custom Icons** come with the plugin and can't be deleted, so their button hides them from the picker instead, and shows them again from below the line. Hiding **Material** also stops the picker from loading its preview font from Google.
+- A library you download has a **trash** button in **Available libraries** and a **download** button under **Libraries to download**. Under its name you see how many icons it has and its size, so you know what a download costs and what deleting frees.
+- **Lucide, Material, Emoji, and Custom Icons** come with the plugin and can't be deleted, so their button hides them from the picker instead, and shows them again from **Hidden libraries**. Hiding **Material** also stops the picker from loading its preview font from Google.
 
-Some libraries can be downloaded and deleted; **Lucide**, **Emoji** and **Material** come with the plugin, so they can only be hidden. A library you download takes its place in your order rather than jumping to the end. The picker always keeps at least one library, so the last one above the line can't be removed.
+Some libraries can be downloaded and deleted; **Lucide**, **Emoji** and **Material** come with the plugin, so they can only be hidden. A library you download takes its place in your order rather than jumping to the end. The picker always keeps at least one library, so the last one in **Available libraries** can't be removed.
 
-The window scrolls only when the library you pressed moves to a place you can't see. Delete or hide one and it drops below the line; the window scrolls down with it, so you see where it went. Download one and, the moment the download finishes, the row rises into **Available libraries**; the window scrolls up with it. In every other case - dragging, the arrow keys, the reset arrow, a download that is still running or fails, a question you decline, a library that lands in view anyway - the window stays where it is.
+The window scrolls by itself only when the library you pressed moves to a place you can't see. Delete or hide one and it moves to a lower box; the window scrolls down to it, so you see where it went. Download one and, the moment the download finishes, the row moves into **Available libraries**; the window scrolls up to it. In every other case - dragging, the arrow keys, the reset arrow, a download that is still running or fails, a question you decline, a library that lands in view anyway - the window stays where it is.
 
 The arrow on the **Available libraries** heading resets everything to how the plugin came: the default order, every library shown, and none of the libraries you downloaded. If any are on the device, it lists them and asks before it deletes them; callouts that use their icons keep them, as with any delete. It never downloads anything. The arrow shows only while something differs from that, so it is also the quickest way to see whether a library is still taking up space.
 

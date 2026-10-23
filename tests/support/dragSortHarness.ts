@@ -38,6 +38,8 @@ const PLACEHOLDER = "cs-drag-placeholder";
 export function dragSortHarness(options: {
 	reducedMotion?: boolean;
 	groups?: boolean[];
+	/** The element the list scrolls in, for the edge auto-scroll. */
+	scroller?: FakeElement;
 } = {}) {
 	Object.assign(window, {
 		matchMedia: () => ({ matches: options.reducedMotion ?? false }),
@@ -116,6 +118,7 @@ export function dragSortHarness(options: {
 		rowSelector: ".test-drag-row",
 		handleSelector: ".test-drag-handle",
 		groupOf: options.groups ? (row) => row.hasClass("is-disabled") : undefined,
+		scroller: options.scroller ? () => asEl(options.scroller!) : undefined,
 		onReorder: (from, to) => {
 			moves.push([from, to]);
 			model.splice(to, 0, model.splice(from, 1)[0]!);
@@ -145,5 +148,7 @@ export function dragSortHarness(options: {
 		finishAnimations: () => {
 			for (const animation of [...animations]) animation.finish();
 		},
+		/** The list's window, whose animation frames a test fires by hand. */
+		view: () => list.ownerDocument.defaultView as unknown as { flushFrames(): void; pendingFrames(): number },
 	};
 }

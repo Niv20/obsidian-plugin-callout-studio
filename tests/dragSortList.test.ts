@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { installFakeDom } from "./support/fakeDom";
+import { el, installFakeDom } from "./support/fakeDom";
 import { dragSortHarness } from "./support/dragSortHarness";
 
 installFakeDom();
@@ -275,6 +275,72 @@ describe("drop placeholder", () => {
 			assert.deepEqual(h.placeholders(), []);
 			h.up();
 			assert.deepEqual(h.order(), ["b", "c", "a", "d"]);
+		} finally { h.cleanup(); }
+	});
+});
+
+/**
+ * The edge auto-scroll (finding S4-12): a row held near the scroller's top or
+ * bottom edge scrolls it, as Obsidian's own lists do, a step every frame, and
+ * stops the moment the drag ends.
+ */
+describe("drag reorder edge auto-scroll", () => {
+	/** A scroller 150px tall at the top of the window: its edge zones are 50px. */
+	function scroller() {
+		const box = el();
+		Object.assign(box, { scrollTop: 0 });
+		box.getBoundingClientRect = () => ({
+			x: 0, y: 0, top: 0, bottom: 150, left: 0, right: 240, width: 240, height: 150, toJSON: () => ({}),
+		});
+		return box;
+	}
+
+	it("scrolls down while the row is held near the bottom edge, and stops on the drop", () => {
+		const box = scroller();
+		const h = dragSortHarness({ scroller: box });
+		try {
+			h.down(h.rows[0]!);
+			h.move(145);
+			h.view().flushFrames();
+			h.view().flushFrames();
+			const scrolled = box.scrollTop;
+			assert.ok(scrolled > 0, "it scrolled");
+			assert.ok(scrolled <= 30, "no more than 15px a frame");
+			h.up();
+			h.view().flushFrames();
+			assert.equal(box.scrollTop, scrolled, "nothing scrolls once the row is dropped");
+			assert.equal(h.view().pendingFrames(), 0, "and no frame is left waiting");
+		} finally { h.cleanup(); }
+	});
+
+	it("scrolls up near the top edge", () => {
+		const box = scroller();
+		Object.assign(box, { scrollTop: 100 });
+		const h = dragSortHarness({ scroller: box });
+		try {
+			h.down(h.rows[1]!);
+			h.move(5);
+			h.view().flushFrames();
+			assert.ok(box.scrollTop < 100);
+		} finally { h.cleanup(); }
+	});
+
+	it("leaves the scroller alone while the row is held away from its edges", () => {
+		const box = scroller();
+		const h = dragSortHarness({ scroller: box });
+		try {
+			h.down(h.rows[0]!);
+			h.move(75);
+			h.view().flushFrames();
+			assert.equal(box.scrollTop, 0);
+		} finally { h.cleanup(); }
+	});
+
+	it("asks for no frame at all without a scroller", () => {
+		const h = dragSortHarness();
+		try {
+			h.down(h.rows[0]!);
+			assert.equal(h.view().pendingFrames(), 0);
 		} finally { h.cleanup(); }
 	});
 });

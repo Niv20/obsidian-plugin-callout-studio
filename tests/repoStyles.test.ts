@@ -273,6 +273,8 @@ describe("class names in styles.css and src/ agree", () => {
 		"callout-studio-color-input", // finds a palette colour dot in tests and scenes; Obsidian's input[type=color] rules draw it
 		"callout-studio-replace-search", // finds Replace's search box in tests and scenes; Obsidian's .search-input-container rules draw it
 		"cs-quick-insert-search", // finds Quick insert's search box in tests; Obsidian's .search-input-container rules draw it
+		"cs-icon-libraries", // Manage icon libraries' body, a hook for tests and snippets; its groups are Obsidian's SettingGroups
+		"cs-icon-library-reset", // finds the Available heading's reset arrow in tests; Obsidian draws the extra button, cs-reset-idle hides it
 		// Window classes that only set a width until 2026-10-23. The windows are
 		// Obsidian's 560px dialog now; the classes stay as hooks a user's own
 		// snippet may already target.

@@ -26,6 +26,11 @@
  * float/slide/settle are skipped and reordering is instant (as it used to be).
  * There is no placeholder then either — the row never leaves its slot, so it
  * marks the slot itself.
+ *
+ * Given a `scroller`, a drag also scrolls it when the row is held near its top
+ * or bottom edge, as Obsidian's own lists do (finding S4-12): a list taller
+ * than the window can then be reordered end to end in one gesture. That keeps
+ * working under reduced motion — it is how the row gets there, not decoration.
  */
 import {
 	REORDER_DURATION_MS,
@@ -34,6 +39,7 @@ import {
 	cancelReorderAnimation,
 	prefersReducedMotion,
 } from "./flip";
+import { cancelFrame, requestFrameFor, type FrameHandle } from "../utils/elementFrame";
 
 export interface DragSortOptions {
 	/** CSS selector matching each reorderable row (a direct child of container). */
@@ -49,6 +55,35 @@ export interface DragSortOptions {
 	groupOf?: (row: HTMLElement) => unknown;
 	/** Called once on release when the row's index actually changed. */
 	onReorder: (fromIndex: number, toIndex: number) => void;
+	/**
+	 * The element that scrolls the list, for the edge auto-scroll. Read when a
+	 * drag starts. Default: none, and a drag never scrolls anything.
+	 */
+	scroller?: () => HTMLElement | null;
+}
+
+/**
+ * The edge auto-scroll's numbers, Obsidian's own (app.js): the zone is 50px
+ * from the edge, or a third of the scroller's height if that is less, and the
+ * scroll grows to 15px a frame as the pointer nears the very edge.
+ */
+const EDGE_ZONE_PX = 50;
+const EDGE_MAX_STEP_PX = 15;
+
+/**
+ * How far `scroller` should scroll this frame for a pointer at `y`: negative
+ * near its top edge, positive near its bottom one, 0 anywhere else.
+ */
+function edgeStep(scroller: HTMLElement, y: number): number {
+	const box = scroller.getBoundingClientRect();
+	const zone = Math.min(EDGE_ZONE_PX, box.height / 3);
+	if (zone <= 0) return 0;
+	// How deep into the zone the pointer is, from 0 at its inner edge to 1 at
+	// the scroller's edge (and past it, held at 1).
+	const depth = (into: number): number => Math.min(1, into / zone);
+	if (y < box.top + zone) return -EDGE_MAX_STEP_PX * depth(box.top + zone - y);
+	if (y > box.bottom - zone) return EDGE_MAX_STEP_PX * depth(y - (box.bottom - zone));
+	return 0;
 }
 
 /** The drop placeholder's class; styles.css draws it. */
@@ -85,6 +120,12 @@ export function makeDragSortable(
 	 * placeholder along and removes it when it lands.
 	 */
 	let placeholder: HTMLElement | null = null;
+	/** The pointer's latest height, kept for the frames that scroll between moves. */
+	let lastY = 0;
+	/** The scroller of the current drag, when the list was given one. */
+	let scrollEl: HTMLElement | null = null;
+	/** The edge auto-scroll's next frame, while a drag with a scroller runs. */
+	let edgeFrame: FrameHandle | null = null;
 
 	const rows = (): HTMLElement[] =>
 		Array.from(container.querySelectorAll<HTMLElement>(opts.rowSelector)).filter(
@@ -121,10 +162,20 @@ export function makeDragSortable(
 	};
 
 	const onPointerMove = (e: PointerEvent): void => {
-		const dragEl = dragging;
-		if (!dragEl || e.pointerId !== pointerId) return;
+		if (!dragging || e.pointerId !== pointerId) return;
 		e.preventDefault();
-		const y = e.clientY;
+		lastY = e.clientY;
+		track(lastY);
+	};
+
+	/**
+	 * Put the dragged row where a pointer at `y` (window coordinates) means:
+	 * into the slot it is over, and glued under the pointer. Run on every move,
+	 * and again whenever the list scrolls under a pointer that has not moved.
+	 */
+	const track = (y: number): void => {
+		const dragEl = dragging;
+		if (!dragEl) return;
 
 		// Rows the dragged one may reorder among: its own group only. Rows in
 		// other groups are ignored here, so they act as fixed walls the dragged
@@ -206,8 +257,32 @@ export function makeDragSortable(
 		container.ownerDocument.body.toggleClass("is-grabbing", on);
 	};
 
+	/** The list scrolled (the edge auto-scroll, a wheel): the slot under the pointer moved. */
+	const onScroll = (): void => track(lastY);
+
+	/**
+	 * Each frame of a drag, scroll the scroller if the pointer is held near one
+	 * of its edges, then find the slot again: the rows moved, the pointer did not.
+	 */
+	const scheduleEdgeScroll = (): void => {
+		edgeFrame = requestFrameFor(container, () => {
+			edgeFrame = null;
+			if (!dragging || !scrollEl) return;
+			const step = edgeStep(scrollEl, lastY);
+			if (step !== 0) {
+				const before = scrollEl.scrollTop;
+				scrollEl.scrollTop = before + step;
+				if (scrollEl.scrollTop !== before) track(lastY);
+			}
+			scheduleEdgeScroll();
+		});
+	};
+
 	const detachGesture = (): void => {
 		const capturedId = pointerId;
+		edgeFrame = cancelFrame(edgeFrame);
+		scrollEl?.removeEventListener("scroll", onScroll);
+		scrollEl = null;
 		setGrabbing(false);
 		dragging = null;
 		startIndex = -1;
@@ -293,6 +368,7 @@ export function makeDragSortable(
 		startIndex = rows().indexOf(row);
 		reduceMotion = prefersReducedMotion();
 		grabOffset = e.clientY - visualTop;
+		lastY = e.clientY;
 		currentTransform = reduceMotion ? 0 : visualTop - row.getBoundingClientRect().top;
 		if (!reduceMotion) row.style.transform = `translateY(${currentTransform}px)`;
 		container.addClass("cs-dragging");
@@ -304,6 +380,11 @@ export function makeDragSortable(
 		container.addEventListener("pointerup", onPointerUp);
 		container.addEventListener("pointercancel", onPointerUp);
 		container.addEventListener("lostpointercapture", onPointerUp);
+		scrollEl = opts.scroller?.() ?? null;
+		if (scrollEl) {
+			scrollEl.addEventListener("scroll", onScroll, { passive: true });
+			scheduleEdgeScroll();
+		}
 	};
 
 	container.addEventListener("pointerdown", onPointerDown);

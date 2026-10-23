@@ -52,8 +52,8 @@ try {
 				clientHeight: node.querySelector(".modal-content").clientHeight };
 		};
 		const rows = [...document.querySelectorAll("#guide-libraries .cs-icon-library-row")].map(node => ({
-			name: node.querySelector(".callout-studio-row-name")?.textContent,
-			meta: node.querySelector(".cs-icon-library-meta")?.textContent,
+			name: node.querySelector(".setting-item-name")?.textContent,
+			meta: node.querySelector(".setting-item-description")?.textContent,
 		}));
 		return { picker: measure(selectors.picker), libraries: measure(selectors.libraries), rows };
 	}, selectors);
