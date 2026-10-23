@@ -105,14 +105,11 @@ describe("text fields are Obsidian's own", () => {
 		assert.ok(painters[0]!.body.includes("background: var(--cs-tag-field-bg)"));
 	});
 
-	it("keep an invalid value red, above Obsidian's own focus rule", () => {
-		const error = "input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid";
-		// Obsidian's focused field is `input[type='text']:focus`, (0,2,1).
-		assert.ok(compareSpecificity(specificityOf(error), specificityOf("input[type='text']:focus")) > 0);
-		const rule = ruleFor(error);
-		assert.ok(rule.selectors.includes(`${error}:focus`), "focused or not, the value stays red");
-		assert.ok(rule.body.includes("border-color: var(--text-error)"));
-		assert.ok(rule.body.includes("box-shadow: 0 0 0 1px var(--text-error)"));
+	it("draw nothing of their own on an invalid value: Obsidian says it under the field", () => {
+		// A rejected value is shown as Obsidian shows one, a line under the
+		// field (`setErrorMessage`, findings S5-V1 and S7-06); core draws no red
+		// edge or ring on the field of an invalid setting row, so neither do we.
+		assert.ok(!css.includes("cs-input-invalid"));
 	});
 });
 
@@ -127,11 +124,11 @@ describe("the Callout IDs field and its + cap", () => {
 		assert.ok(ruleFor(".cs-tag-input-row:hover").body.includes("--cs-tag-field-bg: var(--background-modifier-form-field-hover)"));
 	});
 
-	it("keep the hover edge while the pointer is over the + button, but never over focus or red", () => {
+	it("keep the hover edge while the pointer is over the + button, but never over focus", () => {
 		// The + button takes the pointer, so over it the input is not the hovered
 		// element. The row repeats Obsidian's hover edge — except on a focused
-		// field (which keeps Obsidian's focus edge) and an invalid one (red).
-		const hover = ruleFor(".cs-tag-input-row:hover > input:not(:disabled):not(:focus):not(.cs-input-invalid)");
+		// field, which keeps Obsidian's focus edge.
+		const hover = ruleFor(".cs-tag-input-row:hover > input:not(:disabled):not(:focus)");
 		assert.deepStrictEqual(propertiesOf(hover), ["border-color"]);
 		assert.ok(hover.body.includes("border-color: var(--background-modifier-border-hover)"));
 	});

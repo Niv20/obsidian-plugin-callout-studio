@@ -229,7 +229,10 @@ The correction itself stays **silent**, and that is a deliberate call rather
 than an oversight. Simple mode is the "pick one colour and let us handle it"
 route, so it auto-fixes and says nothing; the advanced per-channel grid - one
 link away, from the hint already on this row - stores what you pick verbatim
-and shows a warning badge instead. The way to see and override the correction
+and warns instead: a line under the colour, "Low contrast against the
+background", through the row's `setErrorMessage` (Accent below 3:1, Text below
+4.5:1; finding S6-12). It was a small triangle on the swatch's corner that only
+a hovering mouse could read, until 2026-10-23. The way to see and override the correction
 therefore exists and is reachable; it just isn't volunteered.
 
 A version that announced it in the row was built and then withdrawn. It is

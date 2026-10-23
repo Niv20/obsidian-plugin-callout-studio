@@ -1676,12 +1676,19 @@ disabling the inner input directly. Select-only combobox inputs remain
 readonly. File inputs and native color swatches are separate controls and do
 not receive field styling.
 
-There are three cascade constraints:
+An invalid value draws nothing on the field itself. Obsidian says it under
+the field - `Setting.setErrorMessage`, a line in the warning colour, end-aligned
+- and draws no red edge or ring on the field of an invalid setting row, so the
+plugin's fields do the same: the palette name (finding S7-06), the IDs field
+(S5-V1, see [Callout editor](14-callout-editor.md)) and the palette editor's
+low-contrast colours (S6-12). Until 2026-10-23 an invalid field kept a red edge
+and a 1px red ring at `(0,5,1)` (`cs-input-invalid`), and the message faded in
+under the label. On a phone, a `cs-row-inline` row with such a line caps its
+control at half the row, as Obsidian caps an invalid row's control on the
+desktop, so the sentence wraps under the swatch instead of pushing the name
+out.
 
-- **Validation wins.** An invalid value (`cs-input-invalid`, the palette name
-  and the IDs field) keeps its red edge and 1px red ring, hovered or focused:
-  `input.cs-input-invalid` with four classes is `(0,5,1)`, above Obsidian's
-  `input[type='text']:focus` `(0,2,1)`.
+There are two cascade constraints:
 - **A dropdown's ring wins over its hover.** Focus and open are at least as
   specific as hover and come after it. `.is-open` draws the ring itself because
   a tap on a phone does not focus a `<button>` trigger (the Fold selector), and

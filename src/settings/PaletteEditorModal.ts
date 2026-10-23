@@ -33,7 +33,6 @@ import {
 } from "../utils/colorUtils";
 import {
 	createColorSwatchInput,
-	setContrastWarning,
 } from "../ui/ColorSwatchInput";
 import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import { renderInlineLinkHint } from "../ui/inlineLinkHint";
@@ -210,7 +209,11 @@ export class PaletteEditorModal extends Modal {
 	private outerPreview: CalloutDefinition | null = null;
 	private outerPreviewIsDemo = false;
 	private nameInputEl: HTMLInputElement | null = null;
-	private nameErrorEl: HTMLElement | null = null;
+	/**
+	 * The Name row. A taken name is said under its field, through Obsidian's
+	 * `setErrorMessage` (finding S7-06).
+	 */
+	private nameSetting: Setting | null = null;
 	private colorErrorEl: HTMLElement | null = null;
 	/** Identity of the clash the error line currently shows; "" when clear. */
 	private renderedClashKey = "";
@@ -431,8 +434,7 @@ export class PaletteEditorModal extends Modal {
 		// The word that names this palette in a callout's metadata, kept in
 		// step with the field — the only place a user can learn it.
 		this.metadataKeyEl = nameSetting.descEl.createDiv({ cls: "cs-palette-metadata-key" });
-		// Error line in the info column, mirroring the callout IDs error.
-		this.nameErrorEl = nameSetting.descEl.createDiv({ cls: "cs-tag-error" });
+		this.nameSetting = nameSetting;
 
 		this.buildBgStyleRow(paletteCard);
 
@@ -569,15 +571,13 @@ export class PaletteEditorModal extends Modal {
 	private updateValidity(): void {
 		const nameTaken = this.isNameTaken();
 		const keyTaken = nameTaken ? null : this.takenMetadataKey();
-		this.nameInputEl?.toggleClass("cs-input-invalid", nameTaken || keyTaken !== null);
-		if (this.nameErrorEl) {
-			this.nameErrorEl.setText(
-				nameTaken ? t("palette.nameExists")
-				: keyTaken ? t("palette.metadataNameExists", { key: keyTaken })
-				: "",
-			);
-			this.nameErrorEl.toggleClass("is-visible", nameTaken || keyTaken !== null);
-		}
+		// Under the field, where Obsidian shows a rejected value: its warning
+		// colour, end-aligned, and nothing drawn on the field itself.
+		this.nameSetting?.setErrorMessage(
+			nameTaken ? t("palette.nameExists")
+			: keyTaken ? t("palette.metadataNameExists", { key: keyTaken })
+			: null,
+		);
 		if (this.metadataKeyEl) {
 			const key = paletteMetadataKey(this.name);
 			const sharedFromBefore = !nameTaken && keyTaken === null && this.sharedMetadataKey() !== null;
@@ -902,16 +902,17 @@ export class PaletteEditorModal extends Modal {
 		// an inline Setting has no handle to push onto colorCardRows. Called
 		// only from a row that is actually built, so a gated-off channel adds
 		// nothing to the card and nothing to tear down.
-		const channelRow = (label: string): HTMLElement => {
+		const channelRow = (label: string): Setting => {
 			const setting = new Setting(parent)
 				.setName(label)
 				.setClass("cs-row-inline");
 			this.colorCardRows.push(setting.settingEl);
-			return setting.controlEl;
+			return setting;
 		};
 
-		const accentSwatch = createColorSwatchInput(
-			channelRow(t("palette.accentColor")),
+		const accentRow = channelRow(t("palette.accentColor"));
+		createColorSwatchInput(
+			accentRow.controlEl,
 			this.colors[accentKey],
 			(hex) => {
 				this.colors[accentKey] = hex;
@@ -927,7 +928,7 @@ export class PaletteEditorModal extends Modal {
 		);
 
 		createColorSwatchInput(
-			channelRow(t("palette.backgroundColorChannel")),
+			channelRow(t("palette.backgroundColorChannel")).controlEl,
 			this.colors[bgKey],
 			(hex) => {
 				this.colors[bgKey] = hex;
@@ -944,42 +945,40 @@ export class PaletteEditorModal extends Modal {
 
 		// Kept whole, behind the flag, rather than deleted: the channel is still
 		// a real part of a palette, so this stays ready to switch back on.
-		const textSwatch = SHOW_TEXT_COLOR_CHANNEL
-			? createColorSwatchInput(
-					channelRow(t("palette.textColorChannel")),
-					this.colors[textKey],
-					(hex) => {
-						this.colors[textKey] = hex;
-						this.colors[textOppositeKey] = inferOppositeModeColor(
-							hex,
-							isDark,
-							this.colors[bgOppositeKey],
-							4.5,
-						);
-						refreshWarnings();
-						this.preview?.refresh();
-					},
-				)
+		const textRow = SHOW_TEXT_COLOR_CHANNEL
+			? channelRow(t("palette.textColorChannel"))
 			: null;
+		if (textRow) {
+			createColorSwatchInput(textRow.controlEl, this.colors[textKey], (hex) => {
+				this.colors[textKey] = hex;
+				this.colors[textOppositeKey] = inferOppositeModeColor(
+					hex,
+					isDark,
+					this.colors[bgOppositeKey],
+					4.5,
+				);
+				refreshWarnings();
+				this.preview?.refresh();
+			});
+		}
 
-		// Re-checks the contrast-dependent swatches (Accent >=3:1, Text
-		// >=4.5:1) against the current mode's bg after any row changes — a
-		// non-blocking heads-up, never a block on Save. The Text check needs
-		// its swatch to have a badge to write to, so it follows the flag: with
-		// the row gone the text color is whatever derivation produced, which is
-		// already contrast-corrected, so there is nothing to warn about.
+		// Re-checks the contrast-dependent rows (Accent >=3:1, Text >=4.5:1)
+		// against the current mode's bg after any row changes — a non-blocking
+		// heads-up, never a block on Save. It is a line of text under the
+		// colour, through the row's `setErrorMessage` (finding S6-12): readable
+		// on every device, where the old corner badge said it only to a hovering
+		// mouse. The Text check follows the flag: with the row gone the text
+		// color is whatever derivation produced, which is already
+		// contrast-corrected, so there is nothing to warn about.
 		const refreshWarnings = (): void => {
 			const bg = this.colors[bgKey];
-			setContrastWarning(
-				accentSwatch.warnEl,
-				contrastRatio(this.colors[accentKey], bg) < 3,
+			const warning = t("editor.contrastWarning");
+			accentRow.setErrorMessage(
+				contrastRatio(this.colors[accentKey], bg) < 3 ? warning : null,
 			);
-			if (textSwatch) {
-				setContrastWarning(
-					textSwatch.warnEl,
-					contrastRatio(this.colors[textKey], bg) < 4.5,
-				);
-			}
+			textRow?.setErrorMessage(
+				contrastRatio(this.colors[textKey], bg) < 4.5 ? warning : null,
+			);
 		};
 		refreshWarnings();
 	}

@@ -2504,6 +2504,19 @@ body:not(.is-phone)
 	flex: 0 0 auto;
 }
 
+/* A row that says something under its control (`setErrorMessage`: the palette
+   editor's low-contrast warning, S6-12) holds a sentence in that column, and a
+   shrink-wrapped column would be as wide as the sentence on one line — wider
+   than the phone, with the name crushed to nothing. Capped at half the row,
+   as Obsidian caps an invalid row's control on the desktop, the sentence wraps
+   under the swatch and the name keeps the other half. */
+.is-phone
+	.setting-item.cs-row-inline.cs-row-inline.cs-row-inline.is-invalid
+	.setting-item-control {
+	flex-shrink: 1;
+	max-width: 50%;
+}
+
 /* ── The button bar ───────────────────────────────────────────────
    Obsidian's `.modal-button-container`, drawn by Obsidian alone: its padding,
    its line, its buttons at their own size and padding, the grey 3px focus ring
@@ -4830,14 +4843,6 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	max-width: 100%;
 }
 
-/* Keep validation visible above both the shared resting face and Obsidian's
-   hover rules. The normal engaged edge explicitly excludes invalid fields. */
-input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid,
-input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus {
-	border-color: var(--text-error);
-	box-shadow: 0 0 0 1px var(--text-error);
-}
-
 /* The IDs field's note, under the label: "On save, "test" moves here from
    Abstract." Not a problem — more description — so the description's muted
    colour, and nothing at all while there is none. The field's errors are not
@@ -4934,13 +4939,13 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
    two reasons: the cap reads the same variable, so it changes colour with the
    field; and over the + button itself the input underneath is not the hovered
    element (the button takes the pointer), so its own `:hover` would let go.
-   A focused field keeps Obsidian's focus edge, and an invalid one its red. */
+   A focused field keeps Obsidian's focus edge. */
 @media (hover: hover) {
 	.cs-tag-input-row:hover {
 		--cs-tag-field-bg: var(--background-modifier-form-field-hover);
 	}
 
-	.cs-tag-input-row:hover > input:not(:disabled):not(:focus):not(.cs-input-invalid) {
+	.cs-tag-input-row:hover > input:not(:disabled):not(:focus) {
 		border-color: var(--background-modifier-border-hover);
 	}
 }
@@ -5377,34 +5382,13 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 
 /* ─── Custom Color Palettes ─────────────────────────────────── */
 
-/* Grid cell wrapping a swatch + its low-contrast warning badge */
+/* The cell a colour swatch sits in. (A low-contrast warning is written under
+   the colour by the row's setErrorMessage, not badged onto the swatch.) */
 .cs-color-cell {
 	position: relative;
 	display: inline-block;
 	justify-self: center;
 	line-height: 0;
-}
-
-.cs-contrast-warning {
-	position: absolute;
-	top: -6px;
-	right: -8px;
-	display: none;
-	color: var(--text-warning);
-	background: var(--cs-surface, var(--background-primary));
-	border-radius: 50%;
-	line-height: 0;
-	padding: 1px;
-	pointer-events: auto;
-}
-
-.cs-contrast-warning.is-visible {
-	display: inline-flex;
-}
-
-.cs-contrast-warning svg {
-	width: 11px;
-	height: 11px;
 }
 
 
@@ -5737,7 +5721,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
    gap — leaving 8px of dead air between the cards whenever there is no clash.
    Taking it out of flow costs the 0.3s fade, which is no loss here: this error
    appears and disappears under a colour drag, where a fade is the wrong effect
-   anyway. The name error, which lives inside a row's description, keeps it. */
+   anyway. */
 .callout-studio-palette-editor .cs-palette-color-error:not(.is-visible) {
 	display: none;
 }

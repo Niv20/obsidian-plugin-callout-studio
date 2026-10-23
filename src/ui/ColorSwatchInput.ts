@@ -4,20 +4,16 @@
  * The visible swatch is a wrapper whose background-color we fully control (so
  * it renders identically on desktop, iPhone and tablets); the native
  * <input type="color"> sits invisibly on top to keep the OS color-picker
- * behaviour. Each swatch also carries a hidden low-contrast warning badge
- * toggled via setContrastWarning. Shared by the callout editor's color grid
- * and the custom palette editor modal.
+ * behaviour. Used by the palette editor's colour rows. A low-contrast
+ * warning is the row's business, not the swatch's: the editor writes it under
+ * the colour with `Setting.setErrorMessage`.
  */
-import { setIcon } from "obsidian";
-import { t } from "../i18n";
 
 export interface ColorSwatchInput {
 	/** The native color input (read/write its `.value` to sync the swatch). */
 	input: HTMLInputElement;
-	/** Grid-cell wrapper containing the swatch and the warning badge. */
+	/** Grid-cell wrapper containing the swatch. */
 	cell: HTMLElement;
-	/** Warning badge, hidden until shown via setContrastWarning. */
-	warnEl: HTMLElement;
 }
 
 export function createColorSwatchInput(
@@ -39,20 +35,5 @@ export function createColorSwatchInput(
 		wrap.style.backgroundColor = input.value;
 		onPick(input.value);
 	});
-	const warnEl = cell.createSpan({ cls: "cs-contrast-warning" });
-	setIcon(warnEl, "triangle-alert");
-	return { input, cell, warnEl };
-}
-
-/** Shows or hides a swatch's low-contrast warning badge (never blocks saving). */
-export function setContrastWarning(
-	warnEl: HTMLElement,
-	visible: boolean,
-): void {
-	warnEl.toggleClass("is-visible", visible);
-	if (visible) {
-		warnEl.setAttribute("aria-label", t("editor.contrastWarning"));
-	} else {
-		warnEl.removeAttribute("aria-label");
-	}
+	return { input, cell };
 }
