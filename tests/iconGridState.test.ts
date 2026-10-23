@@ -125,3 +125,68 @@ it("moves along the reading direction with the left and right arrows", () => {
 		}
 	}
 });
+
+/**
+ * The grid is one Tab stop (finding S8-V1): one cell has `tabindex="0"`, every
+ * other `-1`, so Tab lands in the grid once and goes on past it, while the
+ * arrow keys and a click still reach every cell.
+ */
+function tabStops(body: ReturnType<typeof el>): string[] {
+	return body.querySelectorAll(".icon-picker-cell")
+		.filter((cell) => cell.getAttribute("tabindex") === "0")
+		.map((cell) => cell.textContent);
+}
+
+function roverGrid(selected: string | null, grouped = false) {
+	fakeDom.light();
+	const body = el();
+	const grid = new IconGrid(asEl(body), {
+		renderCell: (cell, entry) => cell.setText(entry.name),
+		isSelected: (entry) => entry.name === selected,
+		onSelect: () => {},
+		labelFor: (entry) => entry.name,
+		emptyText: "Empty collection",
+		loadMoreText: "Load more",
+		groupLabelFor: grouped
+			? (entry, previous) => previous?.categories[0] === entry.categories[0] ? undefined : { name: entry.categories[0]! }
+			: undefined,
+	});
+	const entries = [
+		{ name: "book", categories: ["Lucide"], keywords: [] },
+		{ name: "star", categories: ["Lucide"], keywords: [] },
+		{ name: "bolt", categories: ["Tabler"], keywords: [] },
+		{ name: "heart", categories: ["Tabler"], keywords: [] },
+	];
+	grid.setEntries(entries);
+	return { body, grid };
+}
+
+it("lets Tab land on the chosen icon only, every other cell left to the arrows", () => {
+	const { body } = roverGrid("bolt");
+	assert.deepEqual(tabStops(body), ["bolt"]);
+	for (const cell of body.querySelectorAll(".icon-picker-cell")) {
+		assert.ok(["0", "-1"].includes(cell.getAttribute("tabindex") ?? ""), "every cell can still take focus");
+	}
+});
+
+it("lets Tab land on the first icon when none is chosen", () => {
+	const { body } = roverGrid(null);
+	assert.deepEqual(tabStops(body), ["book"]);
+});
+
+it("moves the Tab stop with a pick and with the focus", () => {
+	const { body, grid } = roverGrid(null);
+	const cells = body.querySelectorAll(".icon-picker-cell");
+	grid.markSelected(asEl(cells[2]!));
+	assert.deepEqual(tabStops(body), ["bolt"]);
+	// focusin bubbles to the grid, which reads the cell from the event.
+	body.querySelector(".icon-picker-grid")!.fire("focusin", { target: cells[3] });
+	assert.deepEqual(tabStops(body), ["heart"], "an arrow key or a click moves it too");
+});
+
+it("keeps one Tab stop on screen when the group holding it collapses", () => {
+	const { body } = roverGrid("bolt", true);
+	assert.deepEqual(tabStops(body), ["bolt"]);
+	body.querySelectorAll(".icon-picker-group-header")[1]!.fire("click");
+	assert.deepEqual(tabStops(body), ["book"], "off the collapsed group, onto the first cell on screen");
+});

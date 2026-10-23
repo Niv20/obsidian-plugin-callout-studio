@@ -204,6 +204,11 @@ export class FakeDocumentFragment {
 		return this.make("span", options);
 	}
 
+	/** As Obsidian's fragments have it: a description built of several lines. */
+	createDiv(options?: ElOptions): FakeElement {
+		return this.make("div", options);
+	}
+
 	appendText(text: string): void {
 		this.appendChild(new FakeText(text));
 	}

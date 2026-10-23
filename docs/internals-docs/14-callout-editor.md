@@ -691,7 +691,18 @@ immediately. Network availability is not a prerequisite for keeping a callout.
 grid, driven entirely by its `IconPack`), `IconGrid` (paging + keyboard
 navigation), `ImagePanel` ("Your images" upload/manage), `allSources.ts` (the
 pooled cross-source search), `IconLibrariesModal` (the **Manage icon libraries**
-window - see [Settings UI and modals](16-settings-ui-and-modals.md#iconlibrariesmodal---libraries-in-two-bands)).
+window - see [Settings UI and modals](16-settings-ui-and-modals.md#iconlibrariesmodal---libraries-in-three-obsidian-groups)).
+
+`IconGrid` is one Tab stop, as Obsidian's own pick lists are (finding S8-V1):
+a "roving tabindex". One cell has `tabindex="0"` - the chosen icon, or else
+the first cell on screen - and every other `-1`, which the arrows and a click
+can still focus but Tab skips. Tab therefore lands in the grid once and the
+next Tab goes on to Load more, Cancel and Confirm, instead of walking through
+up to 120 icons a page. The 0 moves with the focus (`focusin` on the grid),
+with a pick (`markSelected`), and to the chosen icon when `revealSelected`
+brings it in; when the cells on screen change - a new list, a collapsed group,
+a new page - `syncTabStop()` keeps exactly one, on screen. Group headers stay
+Tab stops of their own: each is a button that folds its group.
 
 `IconGrid`'s left and right arrows follow the reading direction: under a
 right-to-left interface (`.mod-rtl`, read through the grid's computed

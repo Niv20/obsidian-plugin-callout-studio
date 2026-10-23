@@ -147,6 +147,12 @@ and the GitHub release matching the displayed plugin version. The
 **Icon licenses** control opens `IconCreditsModal`; that modal renders
 the registry-backed icon attributions and links to the full third-party notices
 without reserving a long disclosure row at the bottom of the settings page.
+The attributions are one Obsidian setting group (finding S8-17), a row per
+library as Installed plugins lists plugins: the name as a link with the
+version beside it in Obsidian's `u-muted u-small u-numeric` type, and a line per
+licence, then the modifications and any notice, as the row's description. The
+rows keep `role="list"`/`listitem`. They were seven bordered cards in small
+grey text until 2026-10-23.
 
 ### Manual discovery in the callout-list heading
 
@@ -1423,7 +1429,9 @@ link gets back the 2px `--background-modifier-border-focus` ring Obsidian draws
 on a link in a setting row.
 
 The credits window and Pick an icon's credit line use plain `<a>`s with no
-colour or underline of their own, only that same keyboard ring. (The settings
+colour or underline of their own. The credits window's links sit in setting
+rows now, where Obsidian draws the ring itself; only the one in its first
+sentence, and the credit line's, get that same keyboard ring from the plugin. (The settings
 footer's contact links keep their own no-underline look until the footer
 becomes the About group.)
 

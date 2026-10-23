@@ -5,8 +5,14 @@
  * easy to reach without taking over the bottom of the settings page. The rows
  * are generated from the icon-source registry so every source still exposes
  * its creator, license, scope, modifications and any source-specific notice.
+ *
+ * The libraries are one Obsidian setting group (`SettingGroup`, finding
+ * S8-17): one rounded box with a row per library, the way Obsidian's Installed
+ * plugins lists its plugins — the name (here a link to the library) followed
+ * by its version in Obsidian's small muted type, and the licence lines under
+ * it as the row's description. They used to be seven separate cards.
  */
-import { Modal, type App } from "obsidian";
+import { Modal, SettingGroup, type App, type Setting } from "obsidian";
 import { ICON_SOURCE_IDS, getSource } from "../icons/registry";
 import type { IconPack } from "../icons/types";
 import { t } from "../i18n";
@@ -31,7 +37,7 @@ export class IconCreditsModal extends Modal {
 		applyModalChrome(this);
 
 		const { contentEl } = this;
-		contentEl.addClass("callout-studio-credits-content");
+		// The window's own text, at Obsidian's dialog size.
 		const intro = contentEl.createEl("p", {
 			cls: "callout-studio-credits-intro",
 		});
@@ -43,15 +49,15 @@ export class IconCreditsModal extends Modal {
 		});
 		intro.createSpan({ text: "." });
 
-		const creditsList = contentEl.createDiv();
-		creditsList.setAttribute("role", "list");
+		const group = new SettingGroup(contentEl);
+		// Read out as a list, as the cards were.
+		group.listEl.setAttribute("role", "list");
 		for (const id of ICON_SOURCE_IDS) {
 			const pack = getSource(id);
 			// A user's own images have no third-party artwork to attribute.
 			if (pack.attribution.licenses.length === 0) continue;
-			renderPackCredit(creditsList, pack);
+			group.addSetting((setting) => renderPackCredit(setting, pack));
 		}
-
 	}
 
 	onClose(): void {
@@ -61,51 +67,38 @@ export class IconCreditsModal extends Modal {
 	}
 }
 
-function renderPackCredit(parent: HTMLElement, pack: IconPack): void {
+/**
+ * One library's row: its name as a link to its homepage, its version beside
+ * it, then a line per licence (holder, licence link, what it covers), and the
+ * library's note on how its artwork was changed and any notice it needs.
+ */
+function renderPackCredit(setting: Setting, pack: IconPack): void {
 	const { attribution } = pack;
-	const row = parent.createDiv({ cls: "callout-studio-credit" });
-	row.setAttribute("role", "listitem");
+	setting.settingEl.setAttribute("role", "listitem");
 
-	const heading = row.createEl("h3", {
-		cls: "callout-studio-credit-name",
-	});
-	heading.createEl("a", {
+	const name = createFragment();
+	name.createEl("a", {
 		text: attribution.title,
 		href: attribution.homepage,
 		attr: EXTERNAL_LINK_ATTRS,
 	});
-	heading.createSpan({
-		text: ` ${attribution.version}`,
-		cls: "callout-studio-credit-version",
-	});
+	name.appendText(" ");
+	// Obsidian's own utility classes: Installed plugins prints a version so.
+	name.createSpan({ text: attribution.version, cls: "u-muted u-small u-numeric" });
+	setting.setName(name);
 
+	const desc = createFragment();
 	for (const license of attribution.licenses) {
-		const line = row.createDiv({ cls: "callout-studio-credit-license" });
-		line.createSpan({ text: `© ${license.holder} — ` });
+		const line = desc.createDiv();
+		line.appendText(`© ${license.holder} — `);
 		line.createEl("a", {
 			text: license.name,
 			href: license.url,
 			attr: EXTERNAL_LINK_ATTRS,
 		});
-		if (license.scope) {
-			line.createSpan({
-				text: ` (${license.scope})`,
-				cls: "callout-studio-credit-scope",
-			});
-		}
+		if (license.scope) line.appendText(` (${license.scope})`);
 	}
-
-	if (attribution.modifications) {
-		row.createDiv({
-			text: attribution.modifications,
-			cls: "callout-studio-credit-modifications",
-		});
-	}
-
-	if (attribution.noticeKey) {
-		row.createDiv({
-			text: t(attribution.noticeKey),
-			cls: "callout-studio-credit-notice",
-		});
-	}
+	if (attribution.modifications) desc.createDiv({ text: attribution.modifications });
+	if (attribution.noticeKey) desc.createDiv({ text: t(attribution.noticeKey) });
+	setting.setDesc(desc);
 }

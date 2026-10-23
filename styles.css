@@ -6347,63 +6347,13 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 }
 
 /* ── Icon licenses & credits modal ───────────────────────────── */
-/* Obsidian's dialog width (560px); it was 620px until 2026-10-23. */
-
-.callout-studio-credits-content {
-	color: var(--text-muted);
-	font-size: var(--font-ui-smaller);
-}
-
-.callout-studio-credits-intro {
-	line-height: 1.55;
-}
-
-.callout-studio-credits-intro {
-	margin: 0 0 var(--size-4-4);
-}
-
-.callout-studio-credit {
-	margin-block: var(--size-2-3);
-	padding: var(--size-4-3) var(--size-4-4);
-	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-m);
-	corner-shape: var(--corner-shape);
-	background: var(--cs-surface-raised, var(--setting-items-background));
-	line-height: 1.5;
-}
-
-.callout-studio-credit-name {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	gap: 0.2em 0.4em;
-	margin: 0 0 var(--size-2-1);
-	color: var(--text-normal);
-	font-size: inherit;
-	font-weight: var(--font-medium);
-	line-height: inherit;
-}
-
-.callout-studio-credit-version,
-.callout-studio-credit-scope {
-	color: var(--text-faint);
-	font-weight: normal;
-}
-
-.callout-studio-credit-license + .callout-studio-credit-license {
-	margin-top: var(--size-2-1);
-}
-
-.callout-studio-credit-modifications,
-.callout-studio-credit-notice {
-	margin-top: var(--size-2-2);
-	color: var(--text-faint);
-}
-
-/* The links are Obsidian's own `a`: underlined, in `--link-color`. Only the
-   keyboard ring is added, the one Obsidian draws on a link in a setting row
-   (`.setting-item a:focus-visible`), since core's `a` has `outline: none`. */
-.callout-studio-credits-content a:focus-visible {
+/* Obsidian's dialog width (560px); it was 620px until 2026-10-23. The
+   libraries are an Obsidian setting group (IconCreditsModal), which app.css
+   draws whole, links in its rows included. The one link outside the group, in
+   the window's first sentence, gets the keyboard ring Obsidian draws on a link
+   in a setting row (`.setting-item a:focus-visible`), since core's `a` has
+   `outline: none`. */
+.callout-studio-credits-intro a:focus-visible {
 	border-radius: var(--radius-s);
 	corner-shape: var(--corner-shape);
 	box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
