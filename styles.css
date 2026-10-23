@@ -1717,28 +1717,11 @@ body:not(.is-phone)
 }
 
 /* Width belongs to the display-name field; the IDs wrapper and combobox
-   manage their own width. Shared .cs-text-control rules paint the field. */
+   manage their own width. Obsidian's own input rule paints the field. */
 .callout-studio-editor
 	.setting-item-control
 	input[type="text"]:not(.cs-tag-input-field, .cs-combobox-input) {
 	width: var(--cs-editor-control-width);
-}
-
-/* A greyed-out control still has to read as a control, which means it has to
-   stay *raised off* the window rather than merging into it. `--background-
-   secondary` is that raised shade only while `--modal-background` is
-   `--background-primary`; on mobile dark the two swap, so this fill landed
-   exactly on the surface behind it and the field read as a hole punched in the
-   modal — with `opacity: 0.5` making the remaining border fainter still. This
-   rule is already scoped to the callout editor, which is a chromed window, so
-   the token is always in scope here and the fallback never fires. */
-.callout-studio-editor
-	.setting-item-control
-	input[type="text"]:not(.cs-tag-input-field, .cs-combobox-input):disabled {
-	color: var(--text-faint);
-	opacity: 0.5;
-	cursor: not-allowed;
-	background: var(--cs-surface-raised, var(--setting-items-background));
 }
 
 /* ─── Live Preview ────────────────────────────────────────────── */
@@ -1931,12 +1914,11 @@ body:not(.is-phone)
 
 /* ── Hover, press and focus ──
 
-   The tile is a box the user edits without typing into, and it sits directly
-   below the Display name and Callout IDs fields, so it answers the pointer the
-   way they do: the 1px border recolours to `--cs-field-border-hover` — the one
-   thin edge a field draws whenever it is engaged (see `.cs-text-control`) — with
-   no thicker border, no ring and no change of fill. Hover, keyboard focus and
-   press all draw that same edge.
+   The tile is a box the user edits without typing into, so it answers the
+   pointer the way the form's dropdowns do: the 1px border recolours to
+   `--cs-field-border-hover` — the one thin edge a dropdown draws whenever it is
+   engaged (see `.cs-dropdown-control`) — with no thicker border, no ring and no
+   change of fill. Hover, keyboard focus and press all draw that same edge.
 
    ── Why the box needs four classes ──
 
@@ -3099,8 +3081,8 @@ body:not(.is-phone)
    tighter at the corners than the field's 8px `superellipse` on macOS.
 
    `--cs-menu-face` is the control's own face, `--cs-btn-face`, and because a
-   field never repaints its fill (it answers the pointer and focus with its
-   EDGE — see `.cs-text-control`), that is the control's face in every state,
+   dropdown never repaints its fill (it answers the pointer and focus with its
+   EDGE — see `.cs-dropdown-control`), that is the control's face in every state,
    open included. There is no second grey to keep in step. An earlier version
    wore the field's lighter hover fill instead; #434343 read as too light for a
    list, and it only matched the field while the field was hovered.
@@ -3692,9 +3674,17 @@ body:not(.is-phone)
 	min-width: 0;
 }
 
-/* Selection controls and standalone text fields share one face and geometry.
-   Explicit opt-in leaves action buttons and the combobox's inner input alone.
-   Repeated classes beat Obsidian's native input/select/button chrome.
+/* Selection controls share one face and geometry. Explicit opt-in leaves action
+   buttons and the combobox's inner input alone. Repeated classes beat
+   Obsidian's native select/button chrome.
+
+   Standalone text fields (`.cs-text-control`) are not painted here any more:
+   Obsidian's own `input[type='text']` and `textarea` rules draw them — white
+   (or the theme's field colour), Obsidian's height, padding and corners, a
+   darker edge under the pointer, and on focus the focus-coloured edge plus a
+   2px ring, after a click too (decision 14 of the native-look plan). The class
+   stays as the hook that per-screen rules (width, the IDs field's "+" cap, the
+   paste box) hang off.
 
    The corners are Obsidian's own, not ours: `--input-radius` and
    `--input-corner-shape` are what its `input`, `select` and `.dropdown` rules
@@ -3705,8 +3695,7 @@ body:not(.is-phone)
    every platform. `--button-radius` is `var(--input-radius)` unless a theme
    splits them, so following the input token keeps fields level with buttons in
    the default case. */
-.cs-dropdown-control.cs-dropdown-control.cs-dropdown-control,
-.cs-text-control.cs-text-control.cs-text-control.cs-text-control {
+.cs-dropdown-control.cs-dropdown-control.cs-dropdown-control {
 	height: auto;
 	min-height: max(36px, var(--input-height));
 	box-sizing: border-box;
@@ -3731,50 +3720,37 @@ body:not(.is-phone)
 	cursor: pointer;
 }
 
-.cs-text-control.cs-text-control.cs-text-control.cs-text-control {
-	cursor: text;
-}
-
-/* A field never repaints its fill, and it has one answer for being engaged:
+/* A dropdown never repaints its fill, and it has one answer for being engaged:
    the thin edge `--cs-field-border-hover`. Hovering draws it; so do focus, a
    press and an open list, with no thicker border and no ring — the edge does
-   not change when a hovered field is clicked. Buttons are the ones that change
-   fill on hover.
+   not change when a hovered dropdown is clicked. Buttons are the ones that
+   change fill on hover.
 
    Because the list that opens from a dropdown wears the field's own face and
    the same edge, the two read as one object in every state (see "Dropdown
    popups wear their control's face").
 
    All of these set the same colour, so none can undo another and there is no
-   specificity to manage between hover and focus. Validation still wins: the
-   invalid field's red (0,4,1) sits above the text rules here, and the focus
-   rule excludes `.cs-input-invalid`. `.is-open` is listed because a tap on a
-   phone does not focus a `<button>` trigger (the Fold selector), and
+   specificity to manage between hover and focus. `.is-open` is listed because
+   a tap on a phone does not focus a `<button>` trigger (the Fold selector), and
    `.mobile-tap` is Obsidian's press class, there being no hover on a phone. */
 @media (hover: hover) {
-	.cs-dropdown-control.cs-dropdown-control:not(:disabled):not(.cs-dropdown-disabled):hover,
-	.cs-text-control.cs-text-control:not(:disabled):hover {
+	.cs-dropdown-control.cs-dropdown-control:not(:disabled):not(.cs-dropdown-disabled):hover {
 		border-color: var(--cs-field-border-hover, var(--background-modifier-border-hover));
 	}
 }
 
 .cs-dropdown-control.cs-dropdown-control.cs-dropdown-control:focus-within,
 .cs-dropdown-control.cs-dropdown-control.cs-dropdown-control.is-open,
-.cs-dropdown-control.cs-dropdown-control.mobile-tap:not(:disabled):not(.cs-dropdown-disabled),
-.cs-text-control.cs-text-control.cs-text-control.cs-text-control:not(:disabled):not(.cs-input-invalid):focus {
+.cs-dropdown-control.cs-dropdown-control.mobile-tap:not(:disabled):not(.cs-dropdown-disabled) {
 	border-color: var(--cs-field-border-hover, var(--background-modifier-border-hover));
 	box-shadow: none;
 	outline: none;
 }
 
-.cs-dropdown-control.cs-dropdown-control:disabled,
-.cs-text-control.cs-text-control.cs-text-control.cs-text-control:disabled {
+.cs-dropdown-control.cs-dropdown-control:disabled {
 	opacity: 0.5;
 	cursor: not-allowed;
-}
-
-.cs-text-control.cs-text-control.cs-text-control.cs-text-control::placeholder {
-	color: var(--text-faint);
 }
 
 /* Plain choices share the listbox popup. A hidden stack gives the trigger the
@@ -5042,7 +5018,9 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
    is *exactly* the field's fill rather than a colour that merely usually
    matches it. */
 .cs-tag-input-row {
-	--cs-tag-field-bg: var(--cs-btn-face, var(--interactive-normal));
+	/* Obsidian's text-field colour, the same one its `input[type='text']` rule
+	   paints, so the field and its cap are one colour. */
+	--cs-tag-field-bg: var(--background-modifier-form-field);
 	/* Width of the end-cap the + sits in. The field's trailing padding is
 	   derived from it below, so the two can never drift apart. */
 	--cs-tag-add-size: 28px;
@@ -5051,15 +5029,19 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	align-items: center;
 }
 
-/* The field's fill never changes (a field answers the pointer with its edge,
-   see `.cs-text-control`), so the field and the overlay read one constant. What
-   the row adds is the hover edge while the pointer is over the + button itself:
-   the button re-enables pointer events, so the input underneath is not the
-   hovered element there and its own `:hover` would let go. A field marked
-   invalid is excluded, which keeps its red. */
+/* Obsidian's hovered field takes `--background-modifier-form-field-hover` and
+   the hover edge. The row repeats both while the pointer is anywhere on it, for
+   two reasons: the cap reads the same variable, so it changes colour with the
+   field; and over the + button itself the input underneath is not the hovered
+   element (the button takes the pointer), so its own `:hover` would let go.
+   A focused field keeps Obsidian's focus edge, and an invalid one its red. */
 @media (hover: hover) {
-	.cs-tag-input-row:hover > input:not(:disabled):not(.cs-input-invalid) {
-		border-color: var(--cs-field-border-hover, var(--background-modifier-border-hover));
+	.cs-tag-input-row:hover {
+		--cs-tag-field-bg: var(--background-modifier-form-field-hover);
+	}
+
+	.cs-tag-input-row:hover > input:not(:disabled):not(:focus):not(.cs-input-invalid) {
+		border-color: var(--background-modifier-border-hover);
 	}
 }
 
@@ -5072,23 +5054,12 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	padding-inline-end: calc(var(--cs-tag-add-size) + 5px);
 }
 
-/* Disabled IDs retain the same raised fill as the disabled display name. */
-.cs-tag-input-row > input[type="text"].cs-tag-input-field:disabled {
-	color: var(--text-faint);
-	opacity: 0.5;
-	cursor: not-allowed;
-	background: var(--cs-surface-raised, var(--setting-items-background));
-}
-
-.cs-tag-input-row > .cs-tag-input-field::placeholder {
-	color: var(--text-faint);
-}
-
 /* The end-cap the + lives in, laid over the field's trailing edge.
-   `inset-block: 1px` / `inset-inline-end: 1px` keeps it inside the field's 1px
-   border rather than on top of it. It is a sibling of the input, not a child,
-   so nothing clips it — hence the matching corner radii, minus the 1px of
-   inset, so its hover tint cannot square off the field's rounded corner.
+   Insetting it by `--input-border-width` (1px on the desktop, 0 on mobile,
+   where Obsidian's fields have no border) keeps it inside the field's border
+   rather than on top of it. It is a sibling of the input, not a child, so
+   nothing clips it — hence the matching corner radii, minus that inset, so its
+   hover tint cannot square off the field's rounded corner.
 
    It still paints the field's own colour, even though the field's trailing
    padding now stops the text before it. That is a backstop, not the mechanism:
@@ -5102,15 +5073,15 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
    weren't there. The button re-enables them for itself. */
 .cs-tag-add-slot {
 	position: absolute;
-	inset-block: 1px;
-	inset-inline-end: 1px;
+	inset-block: var(--input-border-width, 1px);
+	inset-inline-end: var(--input-border-width, 1px);
 	width: var(--cs-tag-add-size);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	background: var(--cs-tag-field-bg);
-	border-start-end-radius: calc(var(--input-radius, var(--radius-s)) - 1px);
-	border-end-end-radius: calc(var(--input-radius, var(--radius-s)) - 1px);
+	border-start-end-radius: calc(var(--input-radius, var(--radius-s)) - var(--input-border-width, 1px));
+	border-end-end-radius: calc(var(--input-radius, var(--radius-s)) - var(--input-border-width, 1px));
 	corner-shape: var(--input-corner-shape, round);
 	pointer-events: none;
 	opacity: 0;
@@ -6768,20 +6739,14 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 
 /* A plain text box of one fixed height, across the paste card's full width: it
    scrolls instead of growing with what is pasted into it, and cannot be
-   dragged larger, so the footer's Import stays where it was. Painted by
-   `.cs-text-control` like every other text field; one class more than that
-   rule's four, to take its `height: auto` back. Monospace and left-to-right,
-   because what goes in is CSS or JSON: in a right-to-left window a rule would
-   otherwise read `} selector.`.
-
-   Obsidian's own `textarea` rule reads `--textarea-radius` ahead of the input
-   token, and only mobile defines it (24px, where inputs are pills): a pill
-   radius on a 132px box would be a sausage, so follow the same fallback. */
-.cs-import-paste-input.cs-text-control.cs-text-control.cs-text-control.cs-text-control {
+   dragged larger, so the footer's Import stays where it was. Obsidian's own
+   `textarea` rule paints it (face, edge, focus ring, and `--textarea-radius`
+   ahead of the input radius, so it is never a pill on mobile). Monospace and
+   left-to-right, because what goes in is CSS or JSON: in a right-to-left
+   window a rule would otherwise read `} selector.`. */
+.cs-import-paste-input.cs-text-control {
 	flex: 0 0 100%;
 	height: 132px;
-	border-radius: var(--textarea-radius, var(--input-radius, var(--radius-s)));
-	corner-shape: var(--input-corner-shape, round);
 	resize: none;
 	overflow: auto;
 	direction: ltr;
@@ -6791,7 +6756,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 }
 /* Empty, it shows a translated sentence rather than code, so that reads in the
    window's own direction. */
-.cs-import-paste-input.cs-text-control.cs-text-control.cs-text-control.cs-text-control:placeholder-shown {
+.cs-import-paste-input.cs-text-control:placeholder-shown {
 	direction: inherit;
 }
 

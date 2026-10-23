@@ -331,58 +331,24 @@ describe("the swatch widget follows the surface it is drawn on", () => {
 	});
 });
 
-describe("a disabled text field stays raised off the window", () => {
+describe("a disabled text field is Obsidian's own", () => {
 	// The greyed-out state of the editor's two text fields — the display name of
-	// a built-in, and the IDs field while the name is linked to the id. Disabled
-	// is meant to read as "a control you cannot use", so the fill has to stay a
-	// step *above* whatever is behind it — the raised half of the pair, which
-	// Obsidian keeps off the window on every device.
-	const RAISED = "var(--cs-surface-raised, var(--setting-items-background))";
-
-	it("the display-name field in the callout editor", () => {
-		// The `:not()` list is load-bearing and both halves have to stay in it.
-		// This rule reaches every `input[type="text"]` in the editor's control
-		// column, and two of them are not this field: the IDs field, and the
-		// text half of the Color row's palette combobox. The combobox input
-		// paints itself down to nothing so its wrapper can be the visible box,
-		// and `.cs-combobox-control .cs-combobox-input` is (0,2,0) against this
-		// rule's (0,4,1) — so without the exclusion this fill wins and a
-		// disabled picker draws the raised shade *inside* the transparent
-		// field, which is the box-in-a-box the focus states had too.
-		// `ListboxPopup.setDisabled` (src/ui/listboxPopup.ts) does set
-		// `inputEl.disabled`, so that state is reachable, not theoretical.
-		assert.strictEqual(
-			declaration(
-				ruleFor(
-					'.callout-studio-editor .setting-item-control input[type="text"]:not(.cs-tag-input-field, .cs-combobox-input):disabled',
+	// a built-in, and the IDs field while the name is linked to the id. These
+	// used to paint a raised fill of their own. Text fields are now Obsidian's
+	// (decision 14 of the native-look plan), and Obsidian draws a disabled field
+	// as its normal field at half opacity, so no rule of ours may fill one.
+	it("is not filled by any rule of the plugin", () => {
+		// A selector that styles a disabled `input` element itself — not one that
+		// merely says `:not(:disabled)` or names "input" inside a class.
+		const disabledInput = /(?:^|[\s>])input\b[^\s>,]*(?<!:not\():disabled/;
+		const fills = rules.filter(
+			(r) => disabledInput.test(r.selector)
+				&& !/cs-combobox|cs-dropdown/.test(r.selector)
+				&& /^(background|background-color)$/m.test(
+					r.declarations.split(";").map((d) => d.split(":")[0]?.trim() ?? "").join("\n"),
 				),
-				"background",
-			),
-			`background: ${RAISED}`,
 		);
-	});
-
-	it("the Callout IDs field directly below it", () => {
-		// Asserted separately rather than looped over, because the pairing is the
-		// point: these two fields were given matching box models on purpose (see
-		// the comment on `.cs-tag-input-field`), and fixing one without the other
-		// would make them disagree on mobile dark alone — the hardest place to
-		// notice and the only place it shows.
-		//
-		// `input[type="text"]` is part of the selector, not decoration: the base
-		// rule had to clear Obsidian's `input[type='text']:hover` (0,2,1), which
-		// was repainting this field's border and fill whenever the pointer was
-		// inside it, so every layer on top of it moved up with it.
-		// `tests/inputPointerStability.test.ts` owns that arithmetic.
-		assert.strictEqual(
-			declaration(
-				ruleFor(
-					'.cs-tag-input-row > input[type="text"].cs-tag-input-field:disabled',
-				),
-				"background",
-			),
-			`background: ${RAISED}`,
-		);
+		assert.deepStrictEqual(fills.map((r) => r.selector.replace(/\s+/g, " ")), []);
 	});
 });
 

@@ -156,7 +156,7 @@ describe("the shared import/export boxes on hover", () => {
 
 describe("the plugin import window's cards", () => {
 	it("gives the paste box one fixed height that scrolls and cannot be dragged larger", () => {
-		const box = only(".cs-import-paste-input.cs-text-control.cs-text-control.cs-text-control.cs-text-control");
+		const box = only(".cs-import-paste-input.cs-text-control");
 		assert.match(valueOf(box, "height") ?? "", /^\d+px$/, "a fixed height, not auto and not a share of the content");
 		assert.equal(valueOf(box, "resize"), "none");
 		assert.equal(valueOf(box, "overflow"), "auto");
@@ -165,16 +165,11 @@ describe("the plugin import window's cards", () => {
 		}
 		assert.equal(valueOf(box, "flex"), "0 0 100%", "a line of its own, across the card");
 		assert.equal(valueOf(box, "direction"), "ltr", "code reads left to right, even in a right-to-left window");
-		// `.cs-text-control` sets `height: auto` from four classes; this has to
-		// outweigh it rather than rely on coming later in the file.
-		const base = rulesNaming(".cs-text-control.cs-text-control.cs-text-control.cs-text-control")
-			.find((r) => r.props.includes("height"));
-		assert.ok(base);
-		assert.equal(valueOf(base, "height"), "auto");
-		assert.equal(
-			box.selector.split(".").length - 1,
-			5,
-			"one class more than the four of the rule whose height it takes back",
+		// Nothing else of the plugin's sets a text field's height any more (the
+		// face is Obsidian's), so two classes clear Obsidian's `textarea` (0,0,1).
+		assert.deepStrictEqual(
+			rules.filter((r) => r.selector.includes(".cs-text-control") && r.props.includes("height")).map((r) => r.selector),
+			[".cs-import-paste-input.cs-text-control"],
 		);
 		assert.equal(valueOf(only(".cs-import-manual"), "flex-wrap"), "wrap", "the card lets it take that line");
 	});

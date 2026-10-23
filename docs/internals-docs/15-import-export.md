@@ -489,9 +489,9 @@ reads the active one.
   `<textarea>` on a line of its own under the card's head (the card is
   `flex-wrap: wrap`; the box is `flex: 0 0 100%`), named and described by the
   card's own title and status lines (`aria-labelledby`/`aria-describedby`),
-  with the source's `manual.placeholder`. It opts into `.cs-text-control` for
-  the shared field face, and `.cs-import-paste-input` gives it **one fixed
-  height** (132px) with `resize: none` and `overflow: auto`: it scrolls
+  with the source's `manual.placeholder`. It is Obsidian's own `textarea` (the
+  `.cs-text-control` hook adds no face of its own), and `.cs-import-paste-input`
+  gives it **one fixed height** (132px) with `resize: none` and `overflow: auto`: it scrolls
   instead of growing with what is pasted, so the footer stays where it was. It
   is monospace and `direction: ltr`, since what goes in is CSS or JSON (in a
   right-to-left window a rule would otherwise read `} selector.`); only while

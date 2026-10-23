@@ -74,8 +74,10 @@ describe("dropdown popups wear their control's face", () => {
 		// control: a hover, focus or open fill on a field would open a gap between
 		// it and the list hanging from it. The shared base is the one and only rule
 		// that paints a fill on a field.
+		// (Text fields are not in this list any more: Obsidian's own input rule
+		// paints them, see tests/inputPointerStability.test.ts.)
 		const painters = rules.filter(
-			(rule) => rule.selectors.some((s) => /^\.cs-(dropdown|text)-control/.test(s))
+			(rule) => rule.selectors.some((s) => /^\.cs-dropdown-control/.test(s))
 				&& (rule.decls.has("background") || rule.decls.has("background-color")),
 		);
 		assert.strictEqual(painters.length, 1, "only the shared base paints a field's fill");
@@ -96,12 +98,14 @@ describe("dropdown popups wear their control's face", () => {
 			assert.strictEqual(valueOf(popup, "border-radius"), radius, popup);
 			assert.strictEqual(valueOf(popup, "corner-shape"), "var(--input-corner-shape, round)", popup);
 		}
-		// One concept, one expression: the import window's paste box is the other
-		// multi-line surface and must not round differently from a list.
-		assert.strictEqual(
-			valueOf(".cs-import-paste-input.cs-text-control.cs-text-control.cs-text-control.cs-text-control", "border-radius"),
-			radius,
+		// The import window's paste box is the other multi-line surface. It is
+		// Obsidian's own textarea now, whose rule reads the same expression
+		// (`--textarea-radius` before the input radius), so it sets no corner of
+		// its own and cannot round differently from a list.
+		const pasteCorners = rules.filter(
+			(rule) => rule.selectors.some((s) => s.startsWith(".cs-import-paste-input")) && rule.decls.has("border-radius"),
 		);
+		assert.deepStrictEqual(pasteCorners, []);
 	});
 
 	it("carry the open control's edge on into the list", () => {

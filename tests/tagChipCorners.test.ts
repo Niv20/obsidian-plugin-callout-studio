@@ -29,7 +29,15 @@ function declarationOf(body: string, property: string): string | undefined {
 		.find((d) => d.startsWith(`${property}:`));
 }
 
-const FIELD = ".cs-text-control.cs-text-control.cs-text-control.cs-text-control";
+/**
+ * The corner declarations Obsidian's own `input[type='text']` rule uses, which
+ * is what draws the IDs field above the chips. (Obsidian writes them without a
+ * fallback; ours carry one in case a theme removes the token.)
+ */
+const FIELD_CORNERS = {
+	"border-radius": "border-radius: var(--input-radius, var(--radius-s))",
+	"corner-shape": "corner-shape: var(--input-corner-shape, round)",
+};
 
 describe("ID chips under the IDs field", () => {
 	it("keep the small desktop radius by default", () => {
@@ -41,13 +49,9 @@ describe("ID chips under the IDs field", () => {
 
 	it("take the field's own corner tokens wherever Obsidian makes fields pills", () => {
 		// Obsidian sets `--input-radius` to a pill under `.is-mobile` (phone and
-		// tablet), so the chips must read the very same declarations as the field.
-		const field = rules.find((rule) => rule.selectors.includes(FIELD));
-		assert.ok(field, "the shared field base must exist");
+		// tablet), so the chips must read the very tokens the field is drawn with.
 		const chip = ruleFor(".is-mobile .cs-tag-chip");
-		for (const property of ["border-radius", "corner-shape"]) {
-			const expected = declarationOf(field.body, property);
-			assert.ok(expected, `the field declares ${property}`);
+		for (const [property, expected] of Object.entries(FIELD_CORNERS)) {
 			assert.strictEqual(declarationOf(chip.body, property), expected, property);
 		}
 	});
