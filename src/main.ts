@@ -31,7 +31,6 @@ import { registerPausedRecheck } from "./manager/pausedRecheck";
 import { registerPausedIndicator } from "./settings/pausedIndicator";
 import { ReloadQueue } from "./manager/reloadQueue";
 import { registerThemeAppearance } from "./manager/theme/themeAppearanceSync";
-import { registerDefaultThemeClass } from "./manager/theme/defaultThemeClass";
 import { registerThemeCalloutsOff, type ThemeCalloutsOff } from "./manager/theme/themeCalloutsOff";
 import { removeLegacyStartupSnippet } from "./manager/legacyStartupSnippet";
 import { runLaunchSequence } from "./manager/launchSequence";
@@ -150,9 +149,6 @@ export default class CalloutStudioPlugin extends Plugin {
 
 	async onload() {
 		registerUiIcons(this);
-		// Before the first await, so no window can open ahead of the light
-		// palette's gate being set (or deliberately left unset, under a theme).
-		registerDefaultThemeClass(this);
 		startMaterialFontLoader();
 		// Mobile and mid-session loads animate over an already visible UI.
 		// Capture visibility before any await.

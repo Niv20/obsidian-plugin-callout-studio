@@ -41,9 +41,9 @@ On a phone, the very first moment after Obsidian starts can still show your them
 
 ## Callout Studio's own windows
 
-In light mode with Obsidian's **Default** theme, Callout Studio's windows - its settings, the callout editor, the pickers and the other dialogs - use their own light colors: white text boxes, dropdowns and lists with a soft outline that darkens when you point at or click one, white buttons, and a pale tint of your accent color on the chosen row. The colors are the same on macOS, Windows, Linux and phones. (Without this, macOS paints Obsidian's light-mode controls as flat grey slabs.)
+Callout Studio's windows - its settings, the callout editor, the pickers and the other dialogs - use Obsidian's own colors for their text boxes, dropdowns, buttons and lists, in light and dark mode. On macOS in light mode that is the same light grey as Obsidian's own buttons and dropdowns.
 
-If you choose a community theme under **Settings → Appearance → Themes**, the theme takes command instead: the windows follow its own button, text-box and border colors, just as they did before. Dark mode is not affected either way. Switching theme or color scheme updates open windows immediately; nothing needs to be reloaded.
+If you choose a community theme under **Settings → Appearance → Themes**, the windows follow its button, text-box and border colors. Switching theme or color scheme updates open windows immediately; nothing needs to be reloaded.
 
 ![The Callout Studio editor with AnuPpuccin's dark controls and live previews.](../../assets/user-guide/theme-editor.svg)
 
