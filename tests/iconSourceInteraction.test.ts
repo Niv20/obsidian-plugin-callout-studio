@@ -315,7 +315,7 @@ describe("icon library menu — the edited icon's library when the picker does n
 			const [current, search, libraries] = groups(h.menu);
 			assert.equal(must(current, "current").querySelector(".cs-combobox-group-label")?.textContent, t("iconPicker.groupDeleted"));
 			assert.deepEqual(must(current, "current").querySelectorAll(".cs-source-name").map((n) => n.textContent), [t("iconPicker.tabler")]);
-			assert.ok(must(current, "current").querySelector(".cs-source-check"), "it is the library on screen");
+			assert.ok(must(current, "current").querySelector(".cs-combobox-check"), "it is the library on screen");
 			assert.equal(must(search, "search").querySelector(".cs-combobox-group-label")?.textContent, t("iconPicker.groupSearch"));
 			assert.equal(must(libraries, "libraries").querySelectorAll(".cs-source-name").length, 4);
 			assert.ok(h.rows[0]?.hasClass("is-active"), "the menu opens on it");
@@ -354,7 +354,7 @@ describe("icon library menu — the edited icon's library when the picker does n
 			h.input.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
 			const [current] = groups(h.menu);
 			const tabler = must(must(current, "current").querySelector(".icon-picker-source-menu-item") ?? undefined, "Tabler row");
-			assert.equal(tabler.querySelector(".cs-source-check"), null, "no longer the one on screen");
+			assert.equal(tabler.querySelector(".cs-combobox-check"), null, "no longer the one on screen");
 			tabler.fire("click");
 			assert.deepEqual(h.committed, ["lucide", "tabler"]);
 		} finally { h.destroy(); }
@@ -372,7 +372,7 @@ describe("icon library menu — the edited icon's library when the picker does n
 			h.popup.setItems();
 			const labels = h.menu.querySelectorAll(".cs-combobox-group-label").map((el) => el.textContent);
 			assert.deepEqual(labels, [t("iconPicker.groupSearch"), t("iconPicker.groupLibraries")]);
-			const checked = h.menu.querySelectorAll(".cs-source-check").map((check) => check.parentElement?.textContent ?? "");
+			const checked = h.menu.querySelectorAll(".cs-combobox-check").map((check) => check.parentElement?.textContent ?? "");
 			assert.equal(checked.length, 1);
 			assert.ok(checked[0]?.includes(t("iconPicker.tabler")), "downloaded from its prompt, it is still the one chosen");
 		} finally { h.destroy(); }

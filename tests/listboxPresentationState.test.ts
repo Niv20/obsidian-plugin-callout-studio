@@ -113,3 +113,58 @@ describe("ListboxPopup — rendered group presentation", () => {
 		} finally { h.popup.destroy(); }
 	});
 });
+
+describe("ListboxPopup — the ✓ on the committed row", () => {
+	/**
+	 * The rows of the open list that carry a check, by their name.
+	 *
+	 * `querySelectorAll(...).filter(...)` keeps only the rows that contain a
+	 * `.cs-combobox-check`, and `map` turns each into the name it shows.
+	 */
+	const checkedNames = (menu: ReturnType<typeof mount>["menu"]): string[] =>
+		menu.querySelectorAll(".cs-combobox-option")
+			.filter((row) => row.querySelector(".cs-combobox-check") !== null)
+			.map((row) => row.textContent);
+
+	it("marks the committed row, and only it, with one check at the very end", () => {
+		const h = mount();
+		try {
+			h.popup.setSelected("Amber");
+			h.input.fire("focus");
+			assert.deepEqual(checkedNames(h.menu), ["Amber"]);
+			const amber = h.menu.querySelectorAll(".cs-combobox-option")
+				.find((row) => row.textContent === "Amber")!;
+			// Last child: it sits after whatever the caller drew in the row.
+			const check = amber.lastElementChild!;
+			assert.ok(check.hasClass("cs-combobox-check"));
+			assert.equal(amber.querySelectorAll(".cs-combobox-check").length, 1);
+			// `aria-selected` already tells a screen reader which row is chosen,
+			// so the icon itself is hidden from it.
+			assert.equal(check.getAttribute("aria-hidden"), "true");
+			assert.equal(amber.getAttribute("aria-selected"), "true");
+		} finally { h.popup.destroy(); }
+	});
+
+	it("moves the check when another row is committed", () => {
+		const h = mount();
+		try {
+			h.popup.setSelected("Amber");
+			h.input.fire("focus");
+			const beta = h.menu.querySelectorAll(".cs-combobox-option")
+				.find((row) => row.textContent === "Beta")!;
+			beta.fire("click");
+			h.input.fire("focus");
+			assert.deepEqual(checkedNames(h.menu), ["Beta"]);
+		} finally { h.popup.destroy(); }
+	});
+
+	it("draws no check while nothing is committed, and none on the arrow-key highlight", () => {
+		const h = mount();
+		try {
+			h.input.fire("focus");
+			assert.deepEqual(checkedNames(h.menu), []);
+			// The first row is highlighted (`is-active`), which is not a choice.
+			assert.ok(h.menu.querySelector(".cs-combobox-option.is-active"));
+		} finally { h.popup.destroy(); }
+	});
+});

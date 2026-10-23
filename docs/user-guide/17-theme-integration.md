@@ -43,6 +43,8 @@ On a phone, the very first moment after Obsidian starts can still show your them
 
 Callout Studio's windows - its settings, the callout editor, the pickers and the other dialogs - use Obsidian's own colors for their text boxes, dropdowns, buttons and lists, in light and dark mode. On macOS in light mode that is the same light grey as Obsidian's own buttons and dropdowns.
 
+The list a dropdown opens looks like Obsidian's own menus, such as the one behind **More options**: the same background, edge, corners and shadow, and a check mark beside the current choice. On a phone or tablet it is slightly see-through, as Obsidian's menus are.
+
 If you choose a community theme under **Settings → Appearance → Themes**, the windows follow its button, text-box and border colors. Switching theme or color scheme updates open windows immediately; nothing needs to be reloaded.
 
 ![The Callout Studio editor with AnuPpuccin's dark controls and live previews.](../../assets/user-guide/theme-editor.svg)

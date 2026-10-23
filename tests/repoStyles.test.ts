@@ -264,6 +264,7 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-portable-file", // per-view hook; shared cs-sidebar-file supplies the layout
 		"cs-occurrences-result", // identity/query hook; shared cs-sidebar-result supplies the card
 		"cs-occurrences-location", // per-view hook; shared cs-sidebar-location supplies its typography
+		"cs-combobox-iconless-option", // a test hook for the row with no icon; the shared .cs-combobox-option paints it
 
 		"callout-studio-more-btn",
 		"callout-studio-replace-modal",

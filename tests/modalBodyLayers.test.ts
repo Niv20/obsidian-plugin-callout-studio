@@ -338,13 +338,18 @@ describe("sticky layers", () => {
 		// The heading sits on its menu's face, so it must paint exactly what the
 		// menu paints — a different value is a stripe across the list, and a
 		// translucent one lets the rows it is hiding show through.
+		//
+		// The menu's paint is shared with the Fold selector's list, in one rule
+		// for both. On a phone or tablet the list itself turns 90% opaque, as
+		// Obsidian's menus do; the heading keeps the opaque face on purpose, for
+		// the reason above, so that one rule is not compared here.
 		assert.strictEqual(
 			paintOf(ruleFor(".cs-combobox-group-label")),
 			"var(--cs-menu-face)",
 		);
 		assert.strictEqual(
 			paintOf(ruleFor(".cs-combobox-group-label")),
-			paintOf(ruleFor(".cs-combobox-menu")),
+			paintOf(ruleFor(".cs-combobox-menu, .cs-palette-menu")),
 			"the heading and the menu it is pinned in must not disagree",
 		);
 		assert.strictEqual(
@@ -408,10 +413,11 @@ describe("sticky layers", () => {
 		// because it is the pane's own computed colour.
 		//
 		// One layer is on a different ground: a dropdown's group heading sits
-		// inside its menu, which is painted the open control's face rather than
-		// the window's colour (see "Dropdown popups wear their control's face").
-		// It cannot `inherit` either — its parent is an unpainted group wrapper,
-		// which would hand it `transparent` — so it names the menu's own token.
+		// inside its list, which is painted Obsidian's menu ground rather than
+		// the window's colour (see "Dropdown popups look like Obsidian's
+		// menus"). It cannot `inherit` either — its parent is an unpainted group
+		// wrapper, which would hand it `transparent` — so it names the list's
+		// own token.
 		//
 		// And one is outside any window: a sidebar's file heading sits in a vault
 		// sidebar, whose pane is `--background-secondary`. The surface pair's

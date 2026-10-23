@@ -164,11 +164,15 @@ it("dropdown option styling has no independent mouse hover highlight", () => {
 });
 
 it("selected options still show a visible pointer state", () => {
+	// The chosen row used to have a fill of its own, and needed a second, darker
+	// rule so the pointer could still be seen on it. Since 2026-10-23 a chosen
+	// row has no fill — only a ✓ — so the ordinary highlight shows on it as on
+	// any row, as long as nothing paints a chosen row's background.
 	const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, "");
-	for (const selector of [
-		".cs-combobox-option.is-selected.is-active",
-		".cs-fold-menu .cs-palette-menu-item.is-selected:hover",
-	]) {
-		assert.ok(css.includes(`${selector} {`), `${selector} must override the resting selected fill`);
-	}
+	assert.doesNotMatch(
+		css,
+		/\.(?:cs-combobox-option|cs-palette-menu-item)[^{,]*\.is-selected[^{,]*\{[^}]*background/,
+		"a fill on the chosen row would hide the pointer highlight again",
+	);
+	assert.ok(css.includes(".cs-combobox-option.is-active,"), "the shared highlight covers every row");
 });

@@ -1442,9 +1442,9 @@ there:
 
 - **`--cs-surface`** (fallback `--background-primary`) - anything meant to
   read as flush with the modal window itself: fixed bands, panels, the ring
-  cut around an icon tile's ✕. Not dropdown lists: those wear the face of the
-  control that opened them (see
-  [Dropdown popups wear their control's face](#dropdown-popups-wear-their-controls-face)).
+  cut around an icon tile's ✕. Not dropdown lists: those stand on Obsidian's
+  menu ground (see
+  [Dropdown popups look like Obsidian's menus](#dropdown-popups-look-like-obsidians-menus)).
 - **`--cs-surface-raised`** (fallback `--setting-items-background`) - anything
   meant to read as *raised off* that surface: a group-box header strip, a
   card, a control, a row pill. It is Obsidian's own settings-box colour, so a
@@ -1764,7 +1764,9 @@ of tokens, declared once near the top of `styles.css`:
 (`--color-base-00`) in light on Windows and Linux, `#333333` (`--color-base-30`)
 in dark, and `#e4e4e4` on macOS, where `.mod-macos` points it at
 `--background-modifier-border` - so the resting look stays whatever a theme
-makes it. The list a dropdown opens also rests on `--cs-btn-face`, for now.
+makes it. The list a dropdown opens does not: it is drawn like Obsidian's own
+menus (see
+[Dropdown popups look like Obsidian's menus](#dropdown-popups-look-like-obsidians-menus)).
 
 ### Why the hover is a `color-mix` and not `--background-modifier-hover`
 
@@ -2772,92 +2774,128 @@ changing the value. Escape on an already closed list remains available to its
 modal. The readonly input avoids opening a mobile text keyboard. Searchable
 callout and color pickers retain their editable query behavior.
 
-### Dropdown popups wear their control's face
+### Dropdown popups look like Obsidian's menus
 
 The two popups that open from a `cs-dropdown-control` - `.cs-combobox-menu`
-(every `ListboxPopup`, so every `SelectDropdown` too) and the Fold selector's
-`.cs-palette-menu` - are painted from four tokens declared once on both:
+(every `ListboxPopup`, so every `SelectDropdown` too) and the callout editor's
+Fold selector, `.cs-palette-menu` - are drawn like Obsidian's own `.menu`: the
+menu behind ⋮ **More options**, or a file's right-click menu. Niv decided on
+2026-10-22 that every menu in the plugin should look the same as Obsidian's
+(decision 14, finding S6-04 in the refactor plan).
 
-| Token | Value | Paints |
+**The list.** One shared rule paints both popups from Obsidian's `--menu-*`
+tokens, so a theme that restyles Obsidian's menus restyles these lists too.
+The fallbacks are Obsidian 1.14's defaults, read from its `app.css`:
+
+| Property | Value | Obsidian 1.14 default |
 | --- | --- | --- |
-| `--cs-menu-face` | `var(--cs-btn-face, var(--interactive-normal))`, the control's own face | the popup, its sticky group heading, and the ring around overlapping colour circles |
-| `--cs-menu-divider` | `var(--cs-field-border-hover, var(--background-modifier-border-hover))` | the line between two groups |
-| `--cs-menu-row-selected` | `color-mix(in srgb, var(--cs-menu-face) 88%, var(--text-normal))` | the committed row |
-| `--cs-menu-row-selected-active` | the same shape, at 80% | the committed row while the pointer or keyboard is on it |
+| ground | `--cs-menu-face` = `var(--menu-background, var(--background-secondary))` | `--background-secondary` |
+| edge | `var(--menu-border-width, 1px) solid var(--menu-border-color, …)` | 1px of `--background-modifier-border-hover` |
+| corners | `var(--menu-radius, var(--radius-m))`, `corner-shape: var(--menu-corner-shape, …)` | 8px on a computer |
+| shadow | `var(--menu-shadow, var(--shadow-s))` | `--shadow-s` |
+| blur | `backdrop-filter: var(--menu-backdrop-filter)` | `none`; a blur on mobile |
+| inner padding | `var(--size-2-3)` | 6px, what `.menu-scroll` gets on a computer |
 
-They used to be `--cs-surface` with a fixed `--radius-s`, which under a grey,
-8px field read as a second object stuck onto it: near black beneath a `#333333`
-field in the default dark theme, and square-shouldered beside a macOS
-`superellipse` corner. Now the popup and its control share fill, corners and
-outline:
+The padding is not read from `--menu-padding`, because a phone redefines that
+token for its menus' bottom sheets (16px at the sides, plus the room under the
+home indicator). These lists stay attached to their field on a phone, so they
+keep the computer's 6px.
 
-- **Fill.** The popup rests on the same Obsidian grey as the control,
-  `--interactive-normal` (through `--cs-btn-face`). It reads that token rather
-  than the control's `--dropdown-background` because Obsidian turns the latter
-  transparent in its macOS settings window, and a list must stay opaque. While
-  the list is open the control itself takes Obsidian's open fill and ring.
-- **Corners.** `var(--textarea-radius, var(--input-radius, var(--radius-s)))`
-  with `corner-shape: var(--input-corner-shape, round)`. A list is taller than a
-  line, so it takes the radius Obsidian gives such a box: `--textarea-radius`
-  where defined (mobile only, 24px, because `--input-radius` there is a 44px
-  pill that would clip the first row's text), otherwise the field's own - 5px by
-  default, 8px superellipse on macOS. The import window's paste box uses the
-  same expression.
-- **Outline.** `--cs-field-border-hover`, the colour an engaged field draws its
-  border in, so the edge carries on from the field into the list. An open field
-  carries that edge itself (`.is-open` is in the engaged rule alongside
-  `:focus-within`), so the pair reads as one joined object.
+On a phone or tablet Obsidian draws its menus without an edge, 90% opaque over
+a blurred view of what is behind them (`.is-mobile .menu`). The lists do the
+same: `.is-mobile` drops the border and mixes the ground with
+`--blur-opacity-m`, and the blur arrives through `--menu-backdrop-filter`,
+which Obsidian sets for mobile.
 
-Five things leaned on the old dark ground and are re-derived from the face:
+**The rows.** `.cs-combobox-option` (and the Fold menu's `.cs-palette-menu-item`,
+which the colour picker's rows also wear) is laid out like `.menu-item`: flex,
+an 8px gap, `4px 8px` of padding, `--radius-s` corners, Obsidian's `--cursor`,
+13px text on a computer and 15px under `.is-mobile`. The size lives on the row;
+the words inside inherit it. The row under the pointer or the arrow keys
+(`.is-active`) is `--background-modifier-hover`, as `.menu-item.selected` is,
+so the highlight is a rounded pill inside the list's padding.
 
-- *Selected rows* were `--background-secondary-alt`, which in `.theme-dark` is
-  `--interactive-normal` - the face itself, so a selection would vanish. They mix
-  from the face toward `--text-normal`, which steps away in whichever direction
-  the theme reads as "more contrast", as `--cs-btn-face-hover` does.
-- *Group headings* use `--text-muted`: `--text-faint` is 2.2:1 on the dark face.
-  The heading stays opaque and paints exactly the menu's face.
-- *The divider between groups* cannot be `--background-modifier-border`: that is
-  the face's own colour in dark and in macOS light, so the line would not show.
-  It is the field's hover edge.
-- *Dimmed id characters* in a callout row (`callout-studio-suggestion-id-dim`)
-  are a 60% mix of `--text-muted` inside `.cs-combobox-menu` only; the `[!`
-  popover keeps the faint original.
-- *The colour circles' cut-out ring and transparent-swatch checkerboard* are both
-  drawn from the ground behind the circles, which inside a popup is the face.
+**The chosen row has no fill.** It carries a ✓ at the end of the row instead,
+which is what Obsidian's `MenuItem.setChecked(true)` draws.
+`appendComboboxCheck()` in `ui/listboxPopupDom.ts` appends
+`span.cs-combobox-check` (Lucide `check`, `aria-hidden`, since the row's
+`aria-selected` already says it is chosen). `renderComboboxRows` calls it for the
+committed row of every list after the caller's `renderRow`, so the ✓ always
+lands last; the Fold menu calls it for its own current state. The check is
+muted and at `--icon-s`, as `.menu-item-icon` is, and `margin-inline-start:
+auto` pushes it to the end even when the row's content is short. The icon-source
+menu's own smaller check (`.cs-source-check`) is gone: it uses the shared one.
 
-**The cost.** A callout's own colour, painted on its name and icon in the callout
-picker, now sits on a lighter ground than the window. Contrast against the popup
-for the built-in accents, worst case: dark (default theme) Note/Info/Todo blue
-`#027aff` falls from 4.2:1 to 3.1:1 and Danger red from 4.9:1 to 3.7:1; light
-teal `#00bfbc` (already 2.3:1 on white) is unchanged on Windows/Linux, where the
-face is white, and falls to 1.8:1 on macOS, where the light field is itself grey.
-(Painting the popup the field's hover fill instead would have cost 2.5:1, 2.9:1
-and 1.9:1/1.5:1 - the reason that version was dropped.)
+The list keeps its trigger's width (both inline edges pinned, see
+`.cs-palette-menu`), so the ✓ takes its 24px from the chosen row's words. A
+long name is cut a little earlier on that one row. Obsidian's own menus are
+shrink-to-fit instead; the plain choices (`SelectDropdown` and the language
+picker) become real Obsidian menus later in the refactor, and their rows are not
+cut there.
 
-`tests/dropdownPopupSurface.test.ts` pins the links (face = the control's face,
-corners, outline, every derived state); `tests/modalBodyLayers.test.ts` allows the
-sticky heading to paint `--cs-menu-face` instead of the window surface. To check
-it against the real cascade, render each popup open beside its field in the
-harness linked under [How an input field focuses](#how-an-input-field-focuses),
-with body classes `theme-dark`/`theme-light` × `mod-macos`/`mod-windows`/`is-mobile
-is-phone`. The open field needs no stand-in for `:focus-within`: `.is-open`
-carries the edge. For hover, drive a real pointer (Chrome's
-`Input.dispatchMouseEvent` over the DevTools protocol) rather than a forced
-class, so Obsidian's own `:hover` rules take part - and read
-`getComputedStyle(...).borderTopColor` as `color(srgb r g b)` with components in
-0 - 1 when it comes from a `color-mix`, not as `rgb()`: parsing it as 0 - 255 reads
-every mixed colour as black.
+**Groups.** A `.cs-combobox-group` reaches across the list's 6px side padding
+(negative margin, the same padding put back inside), so that:
+
+- the line between two groups spans the whole list, as `.menu-separator` does:
+  one `--background-modifier-border` line with 6px of air on each side;
+- the sticky heading (`.cs-combobox-group-label`) can span it too, edge to edge,
+  and hide the rows scrolling under it. It paints the opaque `--cs-menu-face`
+  (also on mobile, where the list itself is 90% opaque: a translucent heading
+  would let the hidden rows show through). Its padding puts its words where the
+  rows' words start, 14px from the edge. Its type is the S6-05 one: small,
+  semibold, `--text-muted`, sentence case.
+
+The source menu's closing note (`.cs-combobox-footer-note`) draws the same
+full-width line above it.
+
+**Things that repaint the ground** read `--cs-menu-face`: the sticky heading,
+the ring cut around overlapping colour circles, and the transparent swatch's
+checkerboard.
+
+**Dimmed id characters** (`callout-studio-suggestion-id-dim`) are no longer
+overridden inside a list. The override brightened them because the list stood
+on the lighter control face; on Obsidian's menu ground the `[!` popover's own
+`--text-faint` is right, as it is for `.menu-item-desc`.
+
+**History.** Until 2026-10-23 the lists wore their control's grey face
+(`--cs-btn-face`) with a field-coloured edge (`--cs-field-border-hover`), a heavy
+two-layer shadow and a filled stripe behind the chosen row
+(`--cs-menu-row-selected`, mixed from the face toward the text colour). That look
+was chosen on 2026-09-30, because a list in the window's colour read as "a second
+object stuck onto" its field. The menu look replaces it on purpose. Please do
+not bring the control's face back.
+
+`tests/dropdownPopupSurface.test.ts` pins the menu tokens, the mobile treatment,
+the row layout, the absence of any fill on a chosen row, the ✓, the separators
+and every repaint of the ground. `tests/listboxPresentationState.test.ts`
+checks that only the committed row carries the ✓, as its last child, and that it
+moves with the choice. `tests/modalBodyLayers.test.ts` allows the sticky heading
+to paint `--cs-menu-face`, and `tests/modalSurfaces.test.ts` lists the ground's
+`--background-secondary` fallback as reviewed. To check it against the real
+cascade, render each popup open in the harness linked under
+[How an input field focuses](#how-an-input-field-focuses), beside a hand-built
+Obsidian `.menu > .menu-scroll > .menu-group > .menu-item` (one `.selected`,
+one `.mod-checked` with its trailing check), with body classes
+`theme-dark`/`theme-light` × `mod-macos`, `is-mobile is-tablet` and
+`is-mobile is-phone`.
 
 ### Option rows are padded once
 
-A `SelectDropdown` row is `.cs-combobox-option > .cs-dropdown-option-label`, and
-the **label** owns the padding (`6px 12px`): text starts 13px inside the popup,
-28.9px rows, the same in the language list, the occurrence **Format** filter,
-the command editor and the palette editor. The command editor's four selects and
-the palette editor's **Style** select used to add `padding: 8px 12px` to the
-*row* as well, on top of the label's, which put their text 25px in - the field's
-own text starts 11px in - and made their rows 45px tall. That rule is gone;
-`tests/dropdownOptionRows.test.ts` fails if a row-level padding comes back.
+Every row of a list is padded in one place: the shared row rule
+(`.cs-combobox-option`, with the Fold menu's `.cs-palette-menu-item`), `4px 8px`
+as on Obsidian's `.menu-item`. The words inside carry none: a `SelectDropdown`
+row is `.cs-combobox-option > .cs-dropdown-option-label`, and the label (like the
+language list's `.cs-language-option-label`) only takes the room left beside the
+✓ and is cut with "…" when it does not fit.
+
+Until 2026-10-23 the label owned the padding (`6px 12px`). Before that, the
+command editor's four selects and the palette editor's **Style** select also
+added `padding: 8px 12px` to the *row*, on top of the label's, which put their
+text 25px in and made their rows 45px tall. The icon picker's filters, its skin
+tone picker, its source menu and the Find callouts "every type" row each padded
+their rows themselves too; all of those rules are gone.
+`tests/dropdownOptionRows.test.ts` fails if a label pads itself again, or if any
+rule reaches a row through another class and pads it a second time.
 
 ### The id line under a callout's name
 
@@ -2976,8 +3014,9 @@ returns the highlight to the row beneath it, even without another `mouseenter`.
 Hover never scrolls a row into view; keyboard navigation does. The icon-source
 menu and pack filters use this same component. Quick Insert follows the same pointer/keyboard
 distinction through its single `is-active` highlight. A row that is both
-`is-selected` and `is-active` gets a visible active treatment while retaining
-its selected state; hovering the committed option must not look inert.
+`is-selected` and `is-active` shows the ordinary highlight under its ✓: a
+chosen row has no fill of its own, so hovering the committed option never looks
+inert.
 
 Callers **must** call `destroy()` - a modal from `onClose`, a settings section
 through `registerDisposer` - because the popup holds a document-level click

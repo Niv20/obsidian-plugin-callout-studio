@@ -108,9 +108,6 @@ export function mountIconSourcePicker(
 				count: options.countFor(id),
 				locale: getLocale(),
 				exactCount: id === "image",
-				// The popup's own record of what is chosen, so a library shown
-				// by showIconSource is the one that carries the check.
-				selected: id === popup.value,
 			}));
 		},
 		// What is left to download is said, not offered: the libraries are got

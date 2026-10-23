@@ -49,6 +49,7 @@ import { t } from "../i18n";
 import { sanitizeCalloutIdInput } from "../utils/calloutId";
 import { TagInput } from "../ui/TagInput";
 import { appendDropdownCaret } from "../ui/dropdownControl";
+import { appendComboboxCheck } from "../ui/listboxPopupDom";
 import { renderInlineLinkHint } from "../ui/inlineLinkHint";
 import { resolveCurrentModeColors } from "../ui/ColorCircles";
 import { PaletteEditorModal } from "./PaletteEditorModal";
@@ -1374,6 +1375,8 @@ export class CalloutEditor extends Modal {
 					cls: "cs-palette-menu-item-label",
 					text: opt.label,
 				});
+				// The same ✓ the shared dropdowns put on their current choice.
+				if (currentFoldState() === opt.value) appendComboboxCheck(item);
 				item.addEventListener("mouseenter", () => {
 					applyFoldState(opt.value, false);
 				});

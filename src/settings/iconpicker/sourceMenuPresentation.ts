@@ -5,8 +5,6 @@
  * scale, not expose release bookkeeping. User-owned collections can opt into
  * exact counts because every item there is meaningful to the reader.
  */
-import { setIcon } from "obsidian";
-
 const APPROXIMATE_COUNT_STEP = 100;
 
 export function formatIconCount(
@@ -32,7 +30,6 @@ export interface SourceMenuTitleOptions {
 	count: number | undefined;
 	locale: string;
 	exactCount: boolean;
-	selected: boolean;
 }
 
 /**
@@ -42,6 +39,10 @@ export interface SourceMenuTitleOptions {
  * libraries this device can draw from — plus, under its own heading, the
  * library of the icon being edited — so a status on every row would only ever
  * repeat the heading above it.
+ *
+ * Nor does it draw the ✓ beside the chosen library: the shared dropdown adds
+ * that to whichever row is committed (`appendComboboxCheck` in
+ * `ui/listboxPopupDom.ts`), as it does in every other list in the plugin.
  */
 export function createSourceMenuTitle(
 	options: SourceMenuTitleOptions,
@@ -62,10 +63,5 @@ export function createSourceMenuTitle(
 		cls: "cs-source-desc",
 		text: `${options.description}${count}`,
 	});
-
-	if (options.selected) {
-		const check = wrap.createSpan({ cls: "cs-source-check" });
-		setIcon(check, "check");
-	}
 	return wrap;
 }

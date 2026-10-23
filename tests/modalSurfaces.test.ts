@@ -411,7 +411,7 @@ describe("nothing else paints --background-primary unexamined", () => {
 /**
  * The same review list for `--background-secondary`. Inside a window naming it
  * raw is never right — the raised half is Obsidian's box colour — so every
- * entry here is outside one, and says why.
+ * entry here is outside one, or is not a window surface at all, and says why.
  */
 const KNOWN_RAW_SECONDARY: string[] = [
 	// Deliberate. Vault sidebars, never a window: the sticky file heading stays
@@ -419,6 +419,11 @@ const KNOWN_RAW_SECONDARY: string[] = [
 	// overlay is mixed from that same pane colour.
 	".cs-sidebar-file-heading | background",
 	".cs-portable-refresh-overlay | background",
+	// Deliberate, and not a window surface: a dropdown's list is drawn as
+	// Obsidian draws its menus, on `--menu-background`. `--background-secondary`
+	// is only the fallback, and it is the value Obsidian itself gives that
+	// token, so a list looks like Obsidian's menus even inside a window.
+	".cs-combobox-menu, .cs-palette-menu | --cs-menu-face",
 ];
 
 describe("nothing else paints --background-secondary unexamined", () => {

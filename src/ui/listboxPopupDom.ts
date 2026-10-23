@@ -79,7 +79,8 @@ export function buildComboboxSkeleton(
 export interface ComboboxRowContract<T> {
 	/**
 	 * Draw one row. The caller owns everything inside it; the row's own `role`,
-	 * `id` and `is-active`/`is-selected` classes are not the caller's to set.
+	 * `id`, its `is-active`/`is-selected` classes and the ✓ at its end (see
+	 * {@link appendComboboxCheck}) are not the caller's to set.
 	 */
 	renderRow(rowEl: HTMLElement, item: T, query: string): void;
 	/** Stable identity, so a selection survives a rebuild of the list. */
@@ -164,6 +165,8 @@ export function renderComboboxRows<T>(
 		if (spec.selectedKey !== undefined && spec.keyOf(item) === spec.selectedKey) {
 			rowEl.addClass("is-selected");
 			rowEl.setAttribute("aria-selected", "true");
+			// Appended after the caller's content, so it always lands last.
+			appendComboboxCheck(rowEl);
 		}
 		// mouseenter rather than hover CSS alone, because the popup's
 		// `onHighlight` live-previews and CSS cannot call it.
@@ -177,6 +180,34 @@ export function renderComboboxRows<T>(
 	menuEl.toggleClass("cs-combobox-menu-grouped", hasGroups);
 
 	return rowEls;
+}
+
+/**
+ * Put a ✓ at the end of a row, to mark it as the current choice.
+ *
+ * This is how Obsidian marks the current choice in its own menus: calling
+ * `MenuItem.setChecked(true)` draws the same Lucide `check` icon at the end of
+ * the item. It replaces the filled stripe these lists used to paint behind the
+ * chosen row, so that a list looks like every other menu in Obsidian.
+ *
+ * Who calls it: {@link renderComboboxRows} for the committed row of every
+ * shared dropdown, and the callout editor's hand-built Fold menu, which is not
+ * a {@link ListboxPopup} but must mark its choice the same way.
+ *
+ * The icon is only decoration. A screen reader already hears "selected" from
+ * the row's `aria-selected="true"`, so `aria-hidden` stops it from also reading
+ * out the word "check".
+ *
+ * @param rowEl The row to mark. The check is appended as its last child.
+ * @returns The new check element (`span.cs-combobox-check`).
+ */
+export function appendComboboxCheck(rowEl: HTMLElement): HTMLElement {
+	const checkEl = rowEl.createSpan({
+		cls: "cs-combobox-check",
+		attr: { "aria-hidden": "true" },
+	});
+	setIcon(checkEl, "check");
+	return checkEl;
 }
 
 /**
