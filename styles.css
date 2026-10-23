@@ -5054,74 +5054,38 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 .cs-tag-row {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 4px;
-	margin-top: 4px;
+	/* The gap and type of Obsidian's multi-select field, whose pills these
+	   are (`.multi-select-container`). */
+	gap: var(--size-2-3);
+	margin-top: var(--size-2-3);
+	font-size: var(--font-ui-small);
 }
 
+/* An ID is Obsidian's own pill (`.multi-select-pill`, the one Properties draws
+   for a list value): app.css paints the outline, the round ends, the muted
+   text, the small x that turns accent on hover, and the focus ring (finding
+   S5-11). Only the ring is re-aimed here. Obsidian's default is drawn for the
+   borderless pills inside a property value — 6px wider than the pill and
+   shifted 4px — and these pills have a border, so the ring sits on it. */
 .cs-tag-chip {
-	display: inline-flex;
-	align-items: center;
-	gap: 2px;
-	padding: 2px 6px;
-	border-radius: var(--radius-s);
-	background: var(--background-modifier-hover);
-	color: var(--text-muted);
-	font-size: var(--font-smallest);
-	line-height: 1.4;
-	white-space: nowrap;
+	--pill-focus-width: 100%;
+	--pill-focus-left-adjust: 0;
 	user-select: none;
 }
 
-/* On mobile Obsidian turns every field into a pill (`--input-radius` is
-   `--touch-radius-m` under `.is-mobile`), so a 4px chip sat square under a round
-   field. There the chips take the field's own corners; desktop keeps
-   `--radius-s`. The extra inline padding keeps the text clear of the curve. */
-.is-mobile .cs-tag-chip {
-	padding-inline: 8px;
-	border-radius: var(--input-radius, var(--radius-s));
-	corner-shape: var(--input-corner-shape, round);
+/* A built-in's own ID has no x, and Obsidian's pill takes the room at its end
+   from the x; the text gets the same room at the end as at the start. */
+.cs-tag-chip.is-readonly .multi-select-pill-content {
+	margin-inline-end: var(--pill-padding-x);
 }
 
+/* A long ID ends in "…"; the pill's aria-label shows the whole of it. */
 .cs-tag-chip-text {
-	pointer-events: none;
-	display: inline-block;
+	display: block;
 	max-width: 140px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	vertical-align: bottom;
-}
-
-.cs-tag-chip-remove {
-	cursor: pointer;
-	font-size: 14px;
-	line-height: 1;
-	opacity: 0.7;
-	margin-inline-start: 2px;
-	font-weight: bold;
-}
-
-@media (hover: hover) {
-	.cs-tag-chip-remove:hover {
-		opacity: 1;
-	}
-}
-
-.cs-tag-chip.is-readonly {
-	opacity: 0.85;
-	font-style: italic;
-}
-
-/* The name-linked primary ID: looks exactly like any other chip. Its lock
-   reuses .cs-tag-chip-remove positioning so it sits where the × normally is. */
-.cs-tag-chip-lock {
-	display: inline-flex;
-	align-items: center;
-}
-
-.cs-tag-chip-lock .svg-icon {
-	width: 13px;
-	height: 13px;
 }
 
 /* ─── Responsive Settings Row ──────────────────────────────── */

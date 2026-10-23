@@ -28,7 +28,6 @@ const EXCEPTIONS = new Map<string, string>([
 	[".cs-recovery-preview, .cs-recovery-heading-preview, .cs-recovery-inline-preview", "renders a callout as a note would"],
 	[".cs-drag-placeholder", "Obsidian's own drop slot is a literal 5px"],
 	[".cs-hotkey-chip", "becomes Obsidian's .setting-hotkey (S8-19)"],
-	[".cs-tag-chip", "becomes Obsidian's multi-select pill (S5-11)"],
 ]);
 
 const FREE = new Set(["0", "50%", "inherit"]);

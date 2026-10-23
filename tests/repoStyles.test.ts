@@ -268,6 +268,8 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-btn-disabled", // marks a blocked button (ui/blockedButton.ts); Obsidian's aria-disabled rule draws the 70% dim
 		"cs-is-locked", // marks a confirm locked behind its checkbox; Obsidian's aria-disabled rule draws the dim
 		"cs-icon-adjust-reset", // finds an icon-adjustment group's ↺ in tests; Obsidian draws the button, cs-reset-idle hides it
+		"cs-tag-chip-remove", // finds an ID pill's x in tests; Obsidian's .multi-select-pill-remove-button draws it
+		"cs-tag-chip-lock", // finds the pinned ID's lock in tests; it sits in Obsidian's remove-button slot
 		// Window classes that only set a width until 2026-10-23. The windows are
 		// Obsidian's 560px dialog now; the classes stay as hooks a user's own
 		// snippet may already target.

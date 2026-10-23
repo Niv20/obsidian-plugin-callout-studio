@@ -2,12 +2,15 @@
  * ui/TagInput.ts — Reusable tag-input component for callout IDs and aliases.
  *
  * Renders a text input where pressing Enter (or clicking the + button) commits
- * the typed value as a pill/tag. Spaces are allowed inside a tag, so they no
- * longer commit it. Tags appear in a row below the input with an × remove
- * button. Supports validation callbacks, readonly tags (built-in IDs cannot
- * be removed), a pinned tag (the name-linked primary ID: always rendered
- * first, not removable, replaced in place via setPinnedTag), and configurable
- * max length / max count from constants.ts.
+ * the typed value as a tag. Spaces are allowed inside a tag, so they no
+ * longer commit it. Tags appear in a row below the input as Obsidian's own
+ * pills — the `multi-select-pill` the Properties panel draws for a list value:
+ * an outline with round ends and a small x (finding S5-11). Like Obsidian's,
+ * a pill can be reached with Tab and removed with Backspace. Supports
+ * validation callbacks, readonly tags (built-in IDs cannot be removed), a
+ * pinned tag (the name-linked primary ID: always rendered first, not
+ * removable, replaced in place via setPinnedTag), and configurable max length
+ * / max count from constants.ts.
  * Used by CalloutEditor for the unified IDs + aliases field.
  *
  * A refused tag stays in the field, so it can be corrected — or acted on: a
@@ -29,8 +32,8 @@ export type TagMessage = string | ((el: HTMLElement) => void);
 
 /**
  * A tag-input component: type text, press Enter or click + to add a tag.
- * Tags are displayed in a separate row below the input field.
- * Each tag has an × button to remove it.
+ * Tags are displayed in a separate row below the input field, each as an
+ * Obsidian pill with an x to remove it (or a lock, for the pinned tag).
  */
 export class TagInput {
 	private wrapperEl: HTMLElement;
@@ -172,6 +175,15 @@ export class TagInput {
 			if (e.key === "Enter" || e.key === ",") {
 				e.preventDefault();
 				this.commitInput();
+			} else if (
+				e.key === "Backspace" &&
+				this.inputEl.value === "" &&
+				this.tags.length > 0
+			) {
+				// Backspace in an empty field steps onto the last pill, as in
+				// Obsidian's multi-select; a second Backspace removes it.
+				e.preventDefault();
+				this.focusPill(this.tags.length - 1);
 			}
 		});
 
@@ -379,11 +391,12 @@ export class TagInput {
 		this.insertTag(tag);
 	}
 
-	private removeTag(tag: string): void {
-		if (this.readonlyTags.has(tag)) return;
-		if (tag === this.pinnedTag) return;
+	/** Remove `tag`, unless it is readonly or pinned. Returns whether it went. */
+	private removeTag(tag: string): boolean {
+		if (this.readonlyTags.has(tag)) return false;
+		if (tag === this.pinnedTag) return false;
 		const idx = this.tags.indexOf(tag);
-		if (idx === -1) return;
+		if (idx === -1) return false;
 		this.tags.splice(idx, 1);
 		const tagEl = this.tagsRowEl.querySelector(
 			`[data-tag="${CSS.escape(tag)}"]`,
@@ -393,49 +406,139 @@ export class TagInput {
 		// so parent's external errors (e.g. "at least one ID") survive.
 		this.updateInputState();
 		this.onChange([...this.tags]);
+		return true;
 	}
 
+	/**
+	 * Draw one tag as Obsidian's pill (`multi-select-pill`, the one Properties
+	 * uses for a list value), in the DOM Obsidian builds for it:
+	 *
+	 *   div.multi-select-pill [tabindex=0]
+	 *     div.multi-select-pill-content   (the ID)
+	 *     div.multi-select-pill-remove-button   (x, or the pinned tag's lock)
+	 *
+	 * app.css then draws the outline, the round ends, the muted text, the x
+	 * that turns accent on hover and the focus ring. The `cs-tag-chip*` classes
+	 * stay on as hooks for tests and the screenshot scripts.
+	 */
 	private renderTag(tag: string): void {
-		const tagEl = this.tagsRowEl.createDiv({ cls: "cs-tag-chip" });
-		tagEl.setAttribute("data-tag", tag);
-
 		const isPinned = tag === this.pinnedTag;
+		const isReadonly = !isPinned && this.readonlyTags.has(tag);
+
+		const pillEl = this.tagsRowEl.createDiv({
+			cls: "multi-select-pill cs-tag-chip",
+			// tabindex 0: every pill is a Tab stop, as in Obsidian, so the
+			// keyboard can reach it and remove it (see `onPillKeydown`).
+			attr: { tabindex: "0", "data-tag": tag },
+		});
+		// Long IDs are truncated with an ellipsis in CSS; the full value is
+		// shown on hover. As an aria-label, never a `title` — that draws the OS
+		// tooltip, which stacks with Obsidian's and is inherited by the x inside.
+		// The pinned pill says instead why it has a lock.
+		pillEl.setAttribute(
+			"aria-label",
+			isPinned ? t("editor.idLinkedToName") : tag,
+		);
+		if (isPinned) pillEl.addClass("is-pinned");
+		if (isReadonly) pillEl.addClass("is-readonly");
+
+		pillEl
+			.createDiv({ cls: "multi-select-pill-content" })
+			.createSpan({ cls: "cs-tag-chip-text", text: tag });
+
 		if (isPinned) {
-			// The name-linked primary: identical chip to any other, but the ×
-			// affordance is replaced by a lock sitting in the same slot. Clicking
-			// it explains why the ID can't be removed.
-			tagEl.addClass("is-pinned");
-			tagEl.setAttribute("aria-label", t("editor.idLinkedToName"));
-			tagEl.createSpan({ cls: "cs-tag-chip-text", text: tag });
-			const lockEl = tagEl.createSpan({
-				cls: "cs-tag-chip-remove cs-tag-chip-lock",
+			// The name-linked primary: the x is replaced by a lock in the same
+			// slot. Clicking it explains why the ID can't be removed.
+			const lockEl = pillEl.createDiv({
+				cls: "multi-select-pill-remove-button cs-tag-chip-lock",
 			});
 			setIcon(lockEl, "lock");
 			lockEl.addEventListener("click", (e) => {
 				e.stopPropagation();
-				new Notice(t("editor.idCannotDelete"));
+				this.explainPinned();
 			});
-			return;
+		} else if (!isReadonly) {
+			// A built-in's own IDs (readonly) get no x at all.
+			const removeEl = pillEl.createDiv({
+				cls: "multi-select-pill-remove-button cs-tag-chip-remove",
+				attr: { "aria-hidden": "true" },
+			});
+			setIcon(removeEl, "x");
+			// As in Obsidian: pressing the x must not move focus onto the pill
+			// first — the pill is about to go, and focus would go with it.
+			removeEl.addEventListener("mousedown", (e) => e.preventDefault());
+			removeEl.addEventListener("click", (e) => {
+				e.stopPropagation();
+				this.removeTag(tag);
+			});
 		}
 
-		// Long IDs are truncated with an ellipsis in CSS; the full value is
-		// shown on hover. As an aria-label, never a `title` — that draws the OS
-		// tooltip, which stacks with Obsidian's and is inherited by the × inside.
-		tagEl.setAttribute("aria-label", tag);
+		pillEl.addEventListener("keydown", (e) => this.onPillKeydown(e, tag));
+	}
 
-		const isReadonly = this.readonlyTags.has(tag);
-		if (isReadonly) tagEl.addClass("is-readonly");
+	/** The Notice a press on the pinned pill's lock (or Backspace on it) shows. */
+	private explainPinned(): void {
+		new Notice(t("editor.idCannotDelete"));
+	}
 
-		tagEl.createSpan({ cls: "cs-tag-chip-text", text: tag });
+	/**
+	 * The keys of a focused pill, which are Obsidian's for its multi-select:
+	 *
+	 * - Backspace (or Delete) removes the pill and moves focus to the one
+	 *   before it, or back to the field when none is left. The pinned pill
+	 *   says why it can't go; a built-in's own IDs do nothing, as they have no x.
+	 * - ← and → move to the neighbouring pill, in reading order: in a
+	 *   right-to-left language → goes to the previous one. Past the last pill
+	 *   focus returns to the field.
+	 * - ↑ jumps to the first pill; ↓ and Escape return to the field.
+	 */
+	private onPillKeydown(event: KeyboardEvent, tag: string): void {
+		const index = this.tags.indexOf(tag);
+		if (index === -1) return;
+		switch (event.key) {
+			case "Backspace":
+			case "Delete": {
+				event.preventDefault();
+				if (tag === this.pinnedTag) {
+					this.explainPinned();
+					return;
+				}
+				if (this.removeTag(tag)) this.focusPill(Math.max(0, index - 1));
+				return;
+			}
+			case "ArrowLeft":
+			case "ArrowRight": {
+				event.preventDefault();
+				// `getComputedStyle` is optional-chained because the test DOM may
+				// not have it; a missing answer means left-to-right.
+				const view = this.tagsRowEl.ownerDocument.defaultView;
+				const rightToLeft =
+					view?.getComputedStyle?.(this.tagsRowEl).direction === "rtl";
+				const forward = (event.key === "ArrowRight") !== rightToLeft;
+				this.focusPill(forward ? index + 1 : index - 1);
+				return;
+			}
+			case "ArrowUp":
+				event.preventDefault();
+				this.focusPill(0);
+				return;
+			case "ArrowDown":
+			case "Escape":
+				event.preventDefault();
+				this.inputEl.focus();
+				return;
+		}
+	}
 
-		if (isReadonly) return;
-
-		const removeBtn = tagEl.createSpan({ cls: "cs-tag-chip-remove" });
-		removeBtn.textContent = "×";
-		removeBtn.addEventListener("click", (e) => {
-			e.stopPropagation();
-			this.removeTag(tag);
-		});
+	/**
+	 * Focus the pill at `index` (clamped at 0). An index past the last pill,
+	 * or no pill at all, focuses the field instead — Obsidian's `focusElement`.
+	 */
+	private focusPill(index: number): void {
+		const pills = this.tagsRowEl.querySelectorAll<HTMLElement>(".cs-tag-chip");
+		const pill = pills[Math.max(0, index)];
+		if (pill) pill.focus();
+		else this.inputEl.focus();
 	}
 
 	getTags(): string[] {

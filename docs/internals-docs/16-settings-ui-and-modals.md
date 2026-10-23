@@ -1731,14 +1731,29 @@ on mobile, where Obsidian's fields have no border). Anything new that overlays
 a field edge should derive its radius from `--input-radius` the same way. The combobox's inner input stays at
 `border-radius: 0`; its wrapper owns the corner.
 
-The ID chips under the IDs field (`.cs-tag-chip`) keep `--radius-s` on
-desktop, where a 4px chip under a 5–8px field reads as one family. Under
-`.is-mobile` they take the field's own two declarations instead, plus 8px of
-inline padding to keep the text off the curve: a 4px chip sitting square under
-a pill-shaped field looked like a mistake on the phone. They follow the token
-rather than a fixed pill, so a theme that squares mobile fields squares the
-chips too. `tests/tagChipCorners.test.ts` holds the chip to the field's
-declarations.
+The IDs under the IDs field are Obsidian's own pills, on every device
+(finding S5-11, decision 16): `TagInput.renderTag` builds the DOM Obsidian
+builds for a list value in Properties (`div.multi-select-pill[tabindex=0] >
+.multi-select-pill-content + .multi-select-pill-remove-button`), and app.css
+draws them from the `--pill-*` tokens: an outline, round ends (`2em`), muted
+text, a small x that turns accent on hover. The plugin adds three things only:
+the focus ring re-aimed onto the pill's border (`--pill-focus-width: 100%`,
+`--pill-focus-left-adjust: 0`; Obsidian's default suits the borderless pills
+of a property value), end room for a pill without an x (a built-in's own IDs),
+and the 140px ellipsis cap. The pinned ID's lock sits in the x's slot. A theme
+that restyles `.multi-select-pill` for Properties restyles these too, which is
+the point.
+
+The keys are Obsidian's multi-select keys: Backspace (and Delete) removes the
+focused pill and focuses the one before it, or the field when none is left;
+←/→ move in reading order (flipped in a right-to-left language), ↑ goes to
+the first pill, ↓ and Escape back to the field; Backspace in the empty field
+steps onto the last pill. Enter (edit in place, in Properties) is not offered.
+The pinned pill answers Backspace with the same Notice as its lock; a
+built-in's own ID does nothing, as it has no x. Until 2026-10-23 the IDs were
+small grey-filled chips (`--radius-s` on the desktop, the field's pill under
+`.is-mobile`) with a bold × that only the mouse could reach.
+`tests/idPills.test.ts` covers the DOM, the keys and the CSS.
 
 `tests/inputPointerStability.test.ts` pins the declarations. To confirm the
 computed numbers, render a native `button`, `input`, `select` and `textarea`
