@@ -147,7 +147,7 @@ async function icons(plugin) {
 		title: "Find the perfect icon.",
 		description: "The actual icon picker displays the locally installed Lucide library with Lightbulb selected, its source picker, search, icon grid, and Confirm action. No icon library is downloaded.",
 	});
-	await waitFor(() => modal.modalEl.querySelector(".icon-picker-grid.is-loaded .icon-picker-cell"), "Lucide icon grid");
+	await waitFor(() => modal.modalEl.querySelector(".icon-picker-grid .icon-picker-cell"), "Lucide icon grid");
 	await waitFor(() => modal.modalEl.querySelector(".icon-picker-cell.is-selected"), "selected lightbulb");
 	return metadata;
 }

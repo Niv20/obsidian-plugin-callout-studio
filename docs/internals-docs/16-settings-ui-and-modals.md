@@ -1306,12 +1306,15 @@ already counted by the time the check runs.
   inside `.setting-item-control`, which core still centres. (The settings tab
   keeps its centring pin until it is rebuilt from Obsidian's own groups.)
 - **A slider's value is Obsidian's readout.** `span.slider-value` takes core's
-  face, size and weight. The plugin adds only a `min-width: 6.5ch` reserve
+  face, size and weight. The plugin adds only a `min-width: 7ch` reserve
   (`flex: 0 0 auto`, `text-align: end`) and restates `tabular-nums`, so a value
   that gains or loses a digit does not resize the track and jump the thumb.
   The reserve used to be exact because the value was monospace; now the digits
-  are 1ch each and only `-`, `.`, `e`, `m` and `×` are proportional. After a UI
-  font or theme change, drag "0.75em", "×1.25" and "-4px" and watch the track.
+  are 1ch each and only `-`, `.`, `e`, `m` and `×` are proportional. Measured
+  in the macOS UI font at 13px, every value spans 6.5ch or less and "0.75em",
+  the longest, 6.5ch to within a fifth of a pixel - hence 7ch, so a wider UI
+  face still fits. After a UI font or theme change, drag "0.75em", "×1.25" and
+  "-4px" and watch the track.
 
 ### Links look like Obsidian's
 
@@ -3210,11 +3213,11 @@ different ways in two different windows of this plugin.
 
 Covered above under Modal chrome. The hero name takes the size and weight
 Obsidian gives a plugin's name in its details window (`--h2-size`, semibold,
-`--line-height-tight`). The removed title leaves an empty `.modal-header` with
-a 0.75em bottom margin, so off the phone that header is hidden and the columns
-start at the window's own inset; on a phone it stays, because its padding holds
-the hero clear of the close button. The left column aligns to `start`, so it
-mirrors under a right-to-left interface. Automatic onboarding requires confirmed
+`--line-height-tight`). The removed title leaves an empty `.modal-header`, and
+it is kept on purpose: its 0.75em bottom margin on the desktop (its padding on a
+phone) is what holds the columns clear of the absolutely positioned close
+button. Hidden, the ✕ lands on the corner of the **See it in action** box. The
+left column aligns to `start`, so it mirrors under a right-to-left interface. Automatic onboarding requires confirmed
 fresh-install eligibility and checks both `settings.welcomeSeen` and the
 device-local welcome marker. An absent `data.json` alone is insufficient; see
 the [startup decisions](08-settings-sync-and-recovery.md#launch-decision-table).

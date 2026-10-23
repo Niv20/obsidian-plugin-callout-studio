@@ -3094,12 +3094,13 @@ body:not(.is-phone)
 
    The face, size and weight are Obsidian's own readout. Its `tabular-nums` is
    restated because the reserve leans on it: every digit is then exactly 1ch,
-   and only "-", ".", "e", "m" and "×" stay proportional, which the half-ch of
-   slack absorbs. flex-shrink stays off so a narrow modal squeezes the track
-   instead of the number. */
+   and only "-", ".", "e", "m" and "×" stay proportional. In the macOS UI font
+   "0.75em" measures 6.5ch to within a fifth of a pixel, so the reserve is 7ch:
+   a wider UI face (Windows, a custom font) still fits. flex-shrink stays off so
+   a narrow modal squeezes the track instead of the number. */
 .callout-studio-slider-row .setting-item-control .slider-value {
 	flex: 0 0 auto;
-	min-width: 6.5ch;
+	min-width: 7ch;
 	text-align: end;
 	font-variant-numeric: tabular-nums;
 }
@@ -7477,6 +7478,12 @@ button.cs-sidebar-result {
 	block-size: auto;
 	min-block-size: var(--input-height);
 	padding: var(--size-4-3);
+	/* The card colour again: a Find callouts card is a <button>, so Obsidian's
+	   `button:not(.clickable-icon)` face (0,1,1) beat the (0,1,0) card rule
+	   above and painted it button grey. Restated here it ties and wins on
+	   order, and stays under the current card (0,2,0) and the hover (0,2,1). */
+	background: var(--search-result-background);
+	box-shadow: none;
 	color: var(--text-normal);
 }
 
@@ -8689,12 +8696,6 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	color: var(--text-normal);
 }
 
-/* The title is removed, but its empty header keeps a 0.75em bottom margin: a
-   blank strip above the columns. The phone keeps the header, whose padding is
-   what holds the hero clear of the close button. */
-body:not(.is-phone) .modal.cs-welcome-modal .modal-header {
-	display: none;
-}
 
 .cs-welcome-tagline {
 	margin: 0;

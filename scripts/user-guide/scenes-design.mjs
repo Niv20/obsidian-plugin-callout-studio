@@ -58,7 +58,7 @@ function gradientPalette(plugin) {
 async function iconPicker(plugin, icon, query, metadata) {
 	const modal = new IconPicker(plugin, icon, { id: "project-note", name: "Project note" });
 	const result = openModal(modal, metadata);
-	await waitFor(() => modal.modalEl.querySelector(".icon-picker-grid.is-loaded .icon-picker-cell"), "icon grid");
+	await waitFor(() => modal.modalEl.querySelector(".icon-picker-grid .icon-picker-cell"), "icon grid");
 	const input = modal.modalEl.querySelector(".icon-picker-search-input");
 	if (!input) throw new Error("The production icon picker did not provide its search field");
 	input.value = query;

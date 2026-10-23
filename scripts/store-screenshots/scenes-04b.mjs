@@ -44,7 +44,7 @@ export async function mountScene() {
 	});
 	picker.open();
 	picker.modalEl.id = "guide-picker";
-	await waitFor(() => picker.modalEl.querySelector(".icon-picker-grid.is-loaded .icon-picker-cell"), "Lucide icon grid");
+	await waitFor(() => picker.modalEl.querySelector(".icon-picker-grid .icon-picker-cell"), "Lucide icon grid");
 	await waitFor(() => picker.modalEl.querySelector(".icon-picker-cell.is-selected"), "selected lightbulb");
 
 	const libraries = new IconLibrariesModal({

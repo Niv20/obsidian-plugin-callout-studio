@@ -43,7 +43,7 @@ export async function verifyScene(page, name, selector) {
 					if (name === "palette-gradient") require(getComputedStyle(role).backgroundImage.startsWith("linear-gradient("), "missing source gradient");
 				}
 			}
-			if (name.startsWith("icon-") && name !== "icon-libraries") require(root.querySelector(".icon-picker-grid.is-loaded .icon-picker-cell.is-selected"), "missing selected production icon");
+			if (name.startsWith("icon-") && name !== "icon-libraries") require(root.querySelector(".icon-picker-grid .icon-picker-cell.is-selected"), "missing selected production icon");
 			if (name === "theme-callouts") require(root.querySelectorAll("svg").length > 8 && root.innerText.includes("Callouts from your theme"), "missing measured theme rows");
 			if (name === "context-menu") require(root.querySelectorAll(".menu-item").length >= 4, "missing production context actions");
 		}

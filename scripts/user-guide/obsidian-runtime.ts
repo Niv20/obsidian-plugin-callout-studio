@@ -71,10 +71,18 @@ export function installDomHelpers(table?: IconTable): void {
 	});
 }
 
+/**
+ * Obsidian's own icons, which it registers beside Lucide rather than in its
+ * table: only the ones the plugin draws, in the same shape notation.
+ */
+const OBSIDIAN_ICONS: Record<string, unknown[][]> = {
+	"right-triangle": [[6, "M3 8L12 17L21 8"]],
+};
+
 /** Icon geometry comes from the locally installed Obsidian Lucide table. */
 export function setIcon(parent: HTMLElement, id: string): void {
 	const name = id.replace(/^lucide-/, "");
-	const shapes = icons[name];
+	const shapes = icons[name] ?? OBSIDIAN_ICONS[name];
 	if (!shapes) throw new Error(`Missing local Obsidian icon: ${name}`);
 	const svg = document.createElementNS(NS, "svg");
 	for (const [key, value] of Object.entries({ xmlns: NS, viewBox: "0 0 24 24", width: "24", height: "24", fill: "none", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round", class: `svg-icon lucide-${name}` })) svg.setAttribute(key, value);
