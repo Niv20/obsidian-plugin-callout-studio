@@ -1637,16 +1637,16 @@ body:not(.is-phone)
    rather than restating a number, which is what makes the phone case a single
    override below instead of one per control.
 
-   220px used to be arbitrary. It is now the icon-adjustment column's own width
-   (`.callout-studio-preview-panel`'s second grid track, below) so the three
-   rows' controls end on the SAME edge the icon-adjustment boxes do, not just
-   on each other — both sit flush against the panel's shared right edge, so
-   matching width is exactly what makes the left edges line up too. The
-   701-760px override further down mirrors the panel's own column width at
-   its one other fixed-px breakpoint, for the same reason; below that the
-   panel stacks to a full-width single column, which a `.setting-item` row
-   here has nothing to match (see the note there), so 260px just keeps
-   going.
+   The width is the icon-adjustment column's (260px,
+   `.callout-studio-preview-panel`'s second grid track, below) less the row
+   inset of the groups on both sides (`--size-4-4`, set by `.cs-editor-group`).
+   The form box and the adjustment groups both end flush with the panel's
+   right edge and both inset their rows by that much, so the form's controls
+   start and end exactly where the sliders do. The 701-760px override further
+   down mirrors the panel's own column width at its one other fixed-px
+   breakpoint, for the same reason; below that the panel stacks to a
+   full-width single column, which a `.setting-item` row here has nothing to
+   match (see the note there), so the base width just keeps going.
 
    (A `.callout-studio-editor .modal-content { padding: 16px }` rule used to sit
    here and never matched anything: `contentEl` IS the `.modal-content` element
@@ -1654,7 +1654,7 @@ body:not(.is-phone)
    into. The window's real padding is Obsidian's long-dialog body; see the
    modal chrome block further down.) */
 .callout-studio-editor {
-	--cs-editor-control-width: 260px;
+	--cs-editor-control-width: calc(260px - 2 * var(--size-4-4));
 }
 
 /* On phone Obsidian stacks every setting row and forces its controls to full
@@ -1681,11 +1681,11 @@ body:not(.is-phone)
 /* The panel's second column narrows to 250px between 701 and 760px (see the
    matching query near the panel's own rules) rather than jumping straight
    to a stack. Follow it here, or the three rows' right edge would still
-   line up but their shared width would drift 10px wider than the boxes
+   line up but their shared width would drift 10px wider than the sliders
    they're meant to match. */
 @media (min-width: 701px) and (max-width: 760px) {
 	.callout-studio-editor {
-		--cs-editor-control-width: 250px;
+		--cs-editor-control-width: calc(250px - 2 * var(--size-4-4));
 	}
 }
 
@@ -1702,20 +1702,12 @@ body:not(.is-phone)
 .callout-studio-preview-container {
 	margin: 0;
 	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-m);
+	/* The corners of an Obsidian settings box, like the groups beside it. Its
+	   title, when it has one, is an Obsidian group heading above the box
+	   (LiveCalloutPreview), not a strip inside it. */
+	border-radius: var(--setting-items-radius);
 	corner-shape: var(--corner-shape);
 	overflow: hidden;
-}
-
-.callout-studio-preview-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 6px 10px;
-	background: var(--cs-surface-raised, var(--setting-items-background));
-	font-size: var(--font-ui-smaller);
-	color: var(--text-muted);
-	font-weight: var(--font-semibold);
 }
 
 /* ─── Live callout preview (LiveCalloutPreview) ───────────────── */
@@ -1730,7 +1722,7 @@ body:not(.is-phone)
 	max-height: 340px;
 	overflow: auto;
 	background: var(--background-primary);
-	border-radius: calc(var(--radius-m) - 2px);
+	border-radius: calc(var(--setting-items-radius) - 1px);
 	corner-shape: var(--corner-shape);
 }
 
@@ -2608,11 +2600,12 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 
 .callout-studio-preview-panel {
 	display: grid;
-	/* 260px, not a round number picked for this panel alone: it is also
-	   `--cs-editor-control-width` (see the callout editor's top-of-file rule),
-	   which is what lines the display-name/IDs/colour rows' right column up
-	   with the icon-adjustment boxes below it. The 701-760px override further
-	   down repeats the pairing — change one side, change the other.
+	/* 260px, not a round number picked for this panel alone: less its groups'
+	   row inset, it is also `--cs-editor-control-width` (see the callout
+	   editor's top-of-file rule), which is what lines the display-name/IDs/
+	   colour controls up with the icon-adjustment sliders below them. The
+	   701-760px override further down repeats the pairing — change one side,
+	   change the other.
 
 	   The preview takes the rest (`1fr`), so the adjustment column ends flush
 	   with the window's 16px inset, under the control column above it. (It
@@ -2624,23 +2617,71 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	align-items: start;
 }
 
-/* The callout editor's four form rows (Display name, Callout IDs, Color, Icon)
-   are one Obsidian `SettingGroup` without a heading: one rounded box with inset
-   lines between the rows, as an Obsidian settings page opens with its general
-   rows (finding S5-15). Its rows sit 16px in from the box's edge rather than
-   Obsidian's default 20px, the same inset the adjustment groups beside the
-   preview use, so the controls of both end on one line. */
-.cs-editor-form {
+/* Every Obsidian `SettingGroup` in the callout editor: the four form rows
+   (Display name, Callout IDs, Color, Icon) in one box without a heading
+   (finding S5-15), and beside the preview the three icon-adjustment groups and
+   Picture, each with a heading (S5-14). Their rows sit 16px in from the box's
+   edge, the window's own inset, rather than Obsidian's default 20px, so the
+   controls of the form box and of the groups below end on one line. */
+.cs-editor-group {
 	--setting-items-padding-x: var(--size-4-4);
+}
+
+/* The groups beside the preview are spaced by Obsidian's own
+   `.setting-group + .setting-group` margin (24px), so the column adds none. */
+.callout-studio-editor .callout-studio-adjust-col {
+	gap: 0;
+}
+
+/* A slider row in those groups stacks: the name on its own line, the track
+   under it at full width. The column is 260px wide, too narrow for Obsidian's
+   usual name-beside-slider row. */
+.setting-item.cs-stacked-slider {
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--size-4-2);
+}
+
+.setting-item.cs-stacked-slider > .setting-item-info {
+	margin-inline-end: 0;
+}
+
+.setting-item.cs-stacked-slider > .setting-item-control {
+	width: 100%;
+}
+
+.setting-item.cs-stacked-slider input[type="range"] {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+/* The ↺ in a group heading adds no height to the heading: it overhangs the
+   text line by its own padding, the way Obsidian lets a Bases toolbar button
+   overhang its row (`margin: calc(var(--size-2-2) * -1)`). Every heading in
+   the panel is then one text line tall, with a ↺ or without, so "Live
+   preview" and the first adjustment heading share a line and their boxes
+   start level. */
+.cs-editor-group > .setting-item-heading .extra-setting-button {
+	margin-block: calc(var(--size-2-2) * -1);
+}
+
+/* A group's ↺ while there is nothing to restore: invisible, not removed, so
+   nothing beside it moves when it appears. `visibility: hidden` also takes it
+   out of the Tab order and away from screen readers. */
+.cs-reset-idle {
+	visibility: hidden;
 }
 
 /* The panel (preview and adjustments) sits 24px below the form box, the gap
    Obsidian leaves between two setting groups. It used to be set off by a
-   line instead, back when the form rows were loose. Scoped to the callout
+   line instead, back when the form rows were loose. Where the panel stacks
+   into one column (a phone, a narrow window) the same 24px separates the
+   preview from the first adjustment group (`row-gap`). Scoped to the callout
    editor: the palette editor and the per-role style popups reuse this same
    panel, and neither has a form above it. */
 .callout-studio-editor .callout-studio-preview-panel {
 	margin-top: var(--size-4-6);
+	row-gap: var(--size-4-6);
 }
 
 /* `top: 0`, not a comfortable little offset, and the reason is the rule above.
@@ -2693,18 +2734,12 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 /* Reset buttons sit outside the header's line box: revealing one must never
    change the colored strip's height or move the sliders below it. Logical
    positioning also keeps the action at the trailing edge in RTL languages. */
-.cs-icon-adjust-header,
 .callout-studio-adjust-header.cs-reset-header {
 	position: relative;
 	box-sizing: border-box;
 	padding-inline-end: 36px;
 }
 
-.cs-icon-adjust-header > span {
-	display: block;
-}
-
-.cs-icon-adjust-header > .cs-icon-adjust-reset,
 .callout-studio-adjust-header > .cs-header-reset {
 	position: absolute;
 	inset-inline-end: 6px;
@@ -2721,7 +2756,6 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	--icon-size: 14px;
 }
 
-.cs-icon-adjust-reset.cs-hidden,
 .cs-header-reset.cs-hidden {
 	display: none;
 }
@@ -2762,8 +2796,8 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	display: none;
 }
 
-/* Both slider-row call sites (GlobalStyleModal, CalloutEditor's icon-adjust
-   group) render inside a Modal, where Obsidian's own
+/* Both slider-row call sites (GlobalStyleModal, the palette editor's
+   Intensity row) render inside a Modal, where Obsidian's own
    `.modal:not(.mod-settings) .setting-item:not(.setting-item-heading)` rule
    ties the border reset above on specificity (0,5,0) and wins it back on
    source order — drawing a line between the row's own label and its track,
@@ -2828,7 +2862,8 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
    "0.75em" measures 6.5ch to within a fifth of a pixel, so the reserve is 7ch:
    a wider UI face (Windows, a custom font) still fits. flex-shrink stays off so
    a narrow modal squeezes the track instead of the number. */
-.callout-studio-slider-row .setting-item-control .slider-value {
+.callout-studio-slider-row .setting-item-control .slider-value,
+.cs-stacked-slider .setting-item-control .slider-value {
 	flex: 0 0 auto;
 	min-width: 7ch;
 	text-align: end;
@@ -6000,9 +6035,11 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 
 /* Theme callout preview window. The explanation is the window's message, so
    it is the dialog's own body text (`.modal-content`, 15px, normal colour), as
-   a confirmation's message is — not a small grey footnote. */
+   a confirmation's message is — not a small grey footnote. The preview's
+   heading ("How it renders now") follows 24px below it, the gap Obsidian
+   leaves above a group. */
 .cs-theme-preview-note {
-	margin: 0 0 var(--size-4-2);
+	margin: 0 0 var(--size-4-6);
 	line-height: 1.5;
 }
 

@@ -81,8 +81,8 @@ import { definitionIconAdjustFields } from "./editor/definitionIconAdjust";
 import { findUserImage } from "../icons/packs/userImages";
 import { describeIcon } from "../icons/describeIcon";
 import { iconsEqual } from "../icons/lucideId";
-import { createControlGroup } from "./styleControls";
 import { renderIconAdjustGroup } from "./editor/iconAdjustGroup";
+import { settingGroupEl } from "../ui/settingGroupEl";
 import { addCancelButton, applyModalChrome, removeModalChrome } from "./modalChrome";
 import { autofocusOnDesktop } from "./modalAutofocus";
 import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
@@ -442,7 +442,7 @@ export class CalloutEditor extends Modal {
 		// Obsidian settings page opens with its general rows (`SettingGroup`;
 		// finding S5-15). The preview and the adjustments follow below it.
 		const general = new SettingGroup(contentEl);
-		general.addClass("cs-editor-form");
+		general.addClass("cs-editor-group");
 
 		// Display Name
 		const nameSetting = new Setting(general.listEl)
@@ -812,29 +812,29 @@ export class CalloutEditor extends Modal {
 		this.syncIconAdjust();
 
 		// ── Picture section ──
-		// Only a picture has anything to say here, so the box hides itself for
-		// every other icon rather than showing a switch that does nothing.
-		// Same group chrome as the Align box in the global style popup, so the
-		// toggle row gets the same padding instead of Obsidian's modal default
-		// (which zeroes it and pins the label to the box edge).
-		const pictureBox = createControlGroup(
-			adjustCol,
-			t("editor.picture"),
-			"cs-layout-group",
-		);
-		new Setting(pictureBox)
-			.setName(t("iconPicker.customRecolor"))
-			.addToggle((toggle) => {
-				this.recolorToggle = toggle;
-				toggle.onChange((value: boolean) => {
-					// Straight onto the icon, which the save flow and the dirty
-					// check already carry — so this stages like every other field
-					// here, and Cancel puts it back.
-					this.icon = { ...this.icon, recolor: value };
-					syncIconRevert();
-					this.updatePreview();
-				});
+		// Only a picture has anything to say here, so the group hides itself
+		// for every other icon rather than showing a switch that does nothing.
+		// An Obsidian `SettingGroup` with a heading, like the adjustment groups
+		// above it.
+		const pictureGroup = new SettingGroup(adjustCol)
+			.setHeading(t("editor.picture"))
+			.addClass("cs-editor-group")
+			.addSetting((setting) => {
+				setting
+					.setName(t("iconPicker.customRecolor"))
+					.addToggle((toggle) => {
+						this.recolorToggle = toggle;
+						toggle.onChange((value: boolean) => {
+							// Straight onto the icon, which the save flow and the
+							// dirty check already carry — so this stages like every
+							// other field here, and Cancel puts it back.
+							this.icon = { ...this.icon, recolor: value };
+							syncIconRevert();
+							this.updatePreview();
+						});
+					});
 			});
+		const pictureBox = settingGroupEl(pictureGroup);
 		this.syncPictureBox = () => {
 			const picture =
 				!this.hideIcon && this.icon.type === "image"
@@ -1467,11 +1467,11 @@ export class CalloutEditor extends Modal {
 	}
 
 	/**
-	 * One role's icon-adjustment box. The controls themselves live in
-	 * `editor/iconAdjustGroup.ts`, shared with the theme callout preview, which
-	 * offers this trio and nothing else.
+	 * One role's icon-adjustment group (an Obsidian `SettingGroup`). The
+	 * controls themselves live in `editor/iconAdjustGroup.ts`; this only hands
+	 * them the role's slice of the form state and, for a built-in, its defaults.
 	 *
-	 * Returns the box so the caller can hide it when the callout draws no icon.
+	 * Returns the group so the caller can hide it when the callout draws no icon.
 	 */
 	private renderIconAdjustGroup(
 		parent: HTMLElement,

@@ -1,9 +1,11 @@
 /**
  * tests/editorFormValues.test.ts — small details of the callout editor's form
- * that follow Obsidian (findings S5-V2, S5-V3 and S5-15).
+ * that follow Obsidian (findings S5-V2, S5-V3, S5-15 and S5-07).
  *
  * - The four rows that describe the callout share one Obsidian settings box
  *   (`SettingGroup`), and the preview below is set off by a gap, not a line.
+ * - The preview's title is an Obsidian heading above its box, and Picture is
+ *   an Obsidian group like the icon adjustments (`iconAdjustGroup.test.ts`).
  * - A built-in callout's name cannot change (Obsidian declares it), so the
  *   editor shows it as Obsidian shows a value you cannot change: quiet text at
  *   the row's end (`Setting.addDisplayValue`), not a field that looks editable
@@ -40,7 +42,7 @@ describe("the form box (S5-15)", () => {
 	const styles = readRepoFile("styles.css");
 
 	it("builds the four form rows into one SettingGroup without a heading", () => {
-		assert.match(source, /const general = new SettingGroup\(contentEl\);\s*general\.addClass\("cs-editor-form"\);/);
+		assert.match(source, /const general = new SettingGroup\(contentEl\);\s*general\.addClass\("cs-editor-group"\);/);
 		for (const name of ["nameSetting", "idsSetting", "colorSetting", "iconSetting"]) {
 			assert.match(source, new RegExp(`const ${name} = new Setting\\(general\\.listEl\\)`), `${name} lives in the box`);
 		}
@@ -53,6 +55,20 @@ describe("the form box (S5-15)", () => {
 		const body = /\.callout-studio-editor \.callout-studio-preview-panel \{([^}]*)\}/.exec(styles)?.[1] ?? "";
 		assert.match(body, /margin-top: var\(--size-4-6\)/, "the panel starts 24px below the box");
 		assert.doesNotMatch(body, /border-top/);
+	});
+});
+
+describe("the panel beside the form (S5-07)", () => {
+	it("titles the live preview with an Obsidian heading above its box", () => {
+		const preview = readRepoFile("src/settings/LiveCalloutPreview.ts");
+		assert.match(preview, /new Setting\(parentEl\)\.setHeading\(\)\.setName\(this\.opts\.title\)/);
+		assert.doesNotMatch(preview, /callout-studio-preview-header/, "no grey strip inside the box");
+	});
+
+	it("builds the Picture group as an Obsidian group, like the adjustments", () => {
+		const source = readRepoFile("src/settings/CalloutEditor.ts");
+		assert.match(source, /new SettingGroup\(adjustCol\)\s*\.setHeading\(t\("editor\.picture"\)\)\s*\.addClass\("cs-editor-group"\)/);
+		assert.doesNotMatch(source, /createControlGroup\(/, "no plugin-drawn box left in the editor");
 	});
 });
 

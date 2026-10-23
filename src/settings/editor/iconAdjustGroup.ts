@@ -1,23 +1,22 @@
 /**
- * settings/editor/iconAdjustGroup.ts — the size / horizontal / vertical trio
- * that nudges one render role's icon.
+ * settings/editor/iconAdjustGroup.ts — the Size / Horizontal offset / Vertical
+ * offset trio that nudges one render role's icon.
  *
- * Extracted from `CalloutEditor` when a second window needed it: the theme
- * callout preview offers this and nothing else, because moving the icon inside
- * Callout Studio's own heading and inline DOM is the one appearance change that
- * is still the plugin's to make for a callout the theme owns. Two copies of
- * three sliders would have drifted on the first change to the limits.
+ * Who calls it. `CalloutEditor`, once for each render role (heading, inline,
+ * block), into the column beside the live preview.
  *
- * Writes straight into the `ResolvedIconAdjust` it is handed and reports every
- * move through `onChange`, so the caller owns both the state and what to do
- * about it — a live preview in one window, a save in the other.
+ * The main idea. Each role is one Obsidian `SettingGroup`, the same parts an
+ * Obsidian settings page is made of: a heading ("Heading icon adjustments"),
+ * one rounded box, and one row per slider with a thin line between the rows
+ * (finding S5-14). For a built-in callout the heading also holds a ↺ button
+ * that puts all three sliders back to the values the callout ships with. The
+ * ↺ stays invisible until one of the sliders has moved.
+ *
+ * The group writes straight into the `ResolvedIconAdjust` object it is handed
+ * and reports every move through `onChange`, so the caller owns both the state
+ * and what to do about a change (in the editor: redraw the live preview).
  */
-import {
-	Setting,
-	setIcon,
-	setTooltip,
-	type SliderComponent,
-} from "obsidian";
+import { SettingGroup, type SliderComponent } from "obsidian";
 import { t } from "../../i18n";
 import type { CalloutRenderRole } from "../../types";
 import {
@@ -26,8 +25,9 @@ import {
 	type ResolvedIconAdjust,
 } from "../../utils/iconAdjust";
 import { setSliderDisplay } from "../styleControls";
+import { settingGroupEl } from "../../ui/settingGroupEl";
 
-/** Translate the complete header so each locale controls its word order. */
+/** Translate the complete heading so each locale controls its word order. */
 function groupHeader(role: CalloutRenderRole): string {
 	const roleLabels: Record<CalloutRenderRole, string> = {
 		regular: t("editor.blockIconAdjustments"),
@@ -38,12 +38,37 @@ function groupHeader(role: CalloutRenderRole): string {
 }
 
 /**
- * Build one role's adjustment box into `parent` and return it, so the caller
- * can hide it when the callout draws no icon at all.
+ * Everything one slider row needs to know: what to call it, how to spell its
+ * value, its range, and how to read and write the field it controls.
+ */
+interface SliderControl {
+	label: string;
+	/** Written after the number Obsidian draws beside the track: "%" or "px". */
+	suffix: string;
+	/** `[min, max, step]`, in the units the slider shows. */
+	limits: [number, number, number];
+	/** The current value, in the units the slider shows. */
+	get: () => number;
+	/** The value the ↺ button goes back to, in the units the slider shows. */
+	getDefault: () => number;
+	/** Store a value the slider reports. */
+	set: (value: number) => void;
+	/** Filled in once the row is built, so the ↺ button can move the thumb. */
+	slider?: SliderComponent;
+}
+
+/**
+ * Build one role's adjustment group into `parent`.
  *
- * The three sliders are identical in every respect but which field they write,
- * so they come from a small table rather than three near-copies — the shape
- * this had before it was written once and called per role.
+ * @param parent The column the group goes into.
+ * @param role Which render role's icon this group moves.
+ * @param adjust The values to show, and to write each slider move into.
+ * @param onChange Called after every move and after a reset.
+ * @param defaults The shipped values of a built-in callout. When given, the
+ *   heading gets a ↺ that restores them; without it there is nothing to
+ *   restore, so there is no ↺.
+ * @returns The group's outer element, so the caller can hide the whole group
+ *   when the callout draws no icon at all.
  */
 export function renderIconAdjustGroup(
 	parent: HTMLElement,
@@ -52,37 +77,18 @@ export function renderIconAdjustGroup(
 	onChange: () => void,
 	defaults?: ResolvedIconAdjust,
 ): HTMLElement {
-	const box = parent.createDiv({ cls: "callout-studio-adjust-section" });
 	const header = groupHeader(role);
-	const headerEl = box.createDiv({
-		cls: "callout-studio-adjust-header cs-icon-adjust-header",
-	});
-	headerEl.createSpan({ text: header });
-	const resetLabel = `${t("settings.resetAction")}: ${header}`;
-	const resetBtn = defaults
-		? headerEl.createEl("button", {
-				cls: "clickable-icon cs-icon-adjust-reset cs-hidden",
-				attr: { type: "button", "aria-label": resetLabel },
-			})
-		: null;
-	if (resetBtn) {
-		setIcon(resetBtn, "rotate-ccw");
-		setTooltip(resetBtn, resetLabel);
-	}
+	const group = new SettingGroup(parent)
+		.setHeading(header)
+		.addClass("cs-editor-group");
 
 	const { offset, size } = ICON_ADJUST_LIMITS;
 
-	// Size is stored as a factor but shown as a percentage, so it converts on
-	// the way in and out; the offsets are already px and pass straight through.
-	const controls: {
-		label: string;
-		suffix: string;
-		limits: [number, number, number];
-		get: () => number;
-		getDefault: () => number;
-		set: (value: number) => void;
-		slider?: SliderComponent;
-	}[] = [
+	// The three sliders are identical in every respect but which field they
+	// write, so they come from a small table rather than three near-copies.
+	// Size is stored as a factor (1 = 100%) but shown as a percentage, so it
+	// converts on the way in and out; the offsets are already px.
+	const controls: SliderControl[] = [
 		{
 			label: t("editor.size"),
 			suffix: "%",
@@ -114,45 +120,77 @@ export function renderIconAdjustGroup(
 			},
 		},
 	];
+
+	// The ↺ button's element, or `null` when there are no defaults to restore.
+	// It is filled in inside the `addExtraButton` callback further down; the
+	// `syncReset` closure reads it later, when it already exists.
+	let resetEl: HTMLElement | null = null;
+
+	/**
+	 * Show the ↺ only while the values differ from the defaults.
+	 *
+	 * Invisible (`cs-reset-idle`, `visibility: hidden`) rather than removed: an
+	 * invisible button still takes its room, so the heading keeps one height and
+	 * the sliders below do not jump the moment it appears. It cannot be reached
+	 * with Tab or by a screen reader while it is invisible.
+	 */
 	const syncReset = (): void => {
-		resetBtn?.toggleClass(
-			"cs-hidden",
+		resetEl?.toggleClass(
+			"cs-reset-idle",
 			!defaults || equalIconAdjust(adjust, defaults),
 		);
 	};
 
 	for (const control of controls) {
-		const row = box.createDiv({ cls: "callout-studio-slider-row" });
-		const label = row.createDiv({ cls: "callout-studio-slider-label" });
-		label.createSpan({ text: control.label });
-		// The number beside the track is Obsidian's own — SliderComponent keeps
-		// it in sync, so this only says how to spell it. All three values are
-		// whole numbers, so there are no decimals to pad.
-		new Setting(row).addSlider((slider: SliderComponent) => {
-			control.slider = slider;
-			setSliderDisplay(slider, (v) => `${v}${control.suffix}`);
-			slider
-				.setLimits(...control.limits)
-				.setValue(control.get())
-				.setInstant(true)
-				.onChange((value: number) => {
-					control.set(value);
-					syncReset();
-					onChange();
+		group.addSetting((setting) => {
+			// `cs-stacked-slider`: the name on its own line and the track under
+			// it at full width. The column is too narrow for Obsidian's usual
+			// name-beside-slider row.
+			setting
+				.setName(control.label)
+				.setClass("cs-stacked-slider")
+				.addSlider((slider: SliderComponent) => {
+					control.slider = slider;
+					// The number beside the track is Obsidian's own, kept in sync
+					// by the SliderComponent; this only says how to spell it. All
+					// three values are whole numbers, so there are no decimals.
+					setSliderDisplay(slider, (v) => `${v}${control.suffix}`);
+					slider
+						.setLimits(...control.limits)
+						.setValue(control.get())
+						.setInstant(true)
+						.onChange((value: number) => {
+							control.set(value);
+							syncReset();
+							onChange();
+						});
 				});
 		});
 	}
 
-	resetBtn?.addEventListener("click", () => {
-		if (!defaults) return;
-		Object.assign(adjust, defaults);
-		for (const control of controls) {
-			control.slider?.setValue(control.getDefault());
-		}
-		syncReset();
-		onChange();
-	});
+	if (defaults) {
+		const resetLabel = `${t("settings.resetAction")}: ${header}`;
+		// Obsidian puts a group's extra buttons at the end of its heading.
+		group.addExtraButton((button) => {
+			button
+				.setIcon("rotate-ccw")
+				.setTooltip(resetLabel)
+				.onClick(() => {
+					Object.assign(adjust, defaults);
+					for (const control of controls) {
+						control.slider?.setValue(control.getDefault());
+					}
+					syncReset();
+					onChange();
+				});
+			resetEl = button.extraSettingsEl;
+			resetEl.addClass("cs-icon-adjust-reset");
+			// `setTooltip` also names the button for screen readers, but only
+			// in Obsidian; stating it keeps the name whatever draws the tooltip.
+			resetEl.setAttribute("aria-label", resetLabel);
+		});
+	}
 	syncReset();
 
-	return box;
+	return settingGroupEl(group);
 }

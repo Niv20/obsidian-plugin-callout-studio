@@ -1349,8 +1349,10 @@ dimmed to 40% when blocked. Decision 15 of the native-look plan (findings
 S5-16, S5-06, S5-03, S6-01, S6-V4) replaced all of it with Obsidian's. The
 callout editor's preview panel now gives its preview column `1fr`, so the
 adjustment column ends flush with the 16px inset under the control column.
-The editor's four form rows are one Obsidian `SettingGroup` box above it (see
-[Callout editor](14-callout-editor.md#the-form-box)).
+The editor's four form rows are one Obsidian `SettingGroup` box above it, and
+the preview's title and the adjustments beside it are Obsidian group headings
+and groups too (see
+[Callout editor](14-callout-editor.md#the-form-box-and-the-groups-beside-the-preview)).
 
 > [!IMPORTANT]
 > **Every window wearing this chrome must set a title, with no opt-out.**
@@ -2376,8 +2378,10 @@ When the language a preference asks for has not downloaded, the warning below
 the picker names it after the row the picker shows, so `zh-hk` reads as 繁體中文.
 
 Colored option headers reserve space at their trailing edge for the compact
-reset control without increasing the header's original height. The rule also
-applies to the callout editor's icon-adjustment headers. Menu-category and
+reset control without increasing the header's original height. (The callout
+editor's icon-adjustment groups no longer have such headers: they are Obsidian
+`SettingGroup`s whose ↺ is the heading's extra button; see
+[Callout editor](14-callout-editor.md#the-form-box-and-the-groups-beside-the-preview).) Menu-category and
 built-in-command resets sit at the trailing edge of their headings, above the
 toggle rows.
 

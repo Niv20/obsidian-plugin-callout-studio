@@ -59,20 +59,45 @@ against one fixed tint strength - it calls `derivedBgAmount()` (see
 palette editor's intensity slider produces tints at any strength between
 `MIN_BG_COLOR_AMOUNT` and `MAX_BG_COLOR_AMOUNT`.
 
-## The form box
+## The form box and the groups beside the preview
 
 The four rows that describe the callout (**Display name**, **Callout IDs**,
 **Color**, **Icon**) are built into one Obsidian `SettingGroup` without a
 heading (`new Setting(general.listEl)`), so they read as one rounded box with
 inset lines between the rows, the way an Obsidian settings page opens with its
-general rows (finding S5-15). The group carries `cs-editor-form`, whose only
+general rows (finding S5-15). The group carries `cs-editor-group`, whose only
 job is `--setting-items-padding-x: var(--size-4-4)`: the rows sit 16px in from
 the box's edge, the window's own inset, instead of Obsidian's default 20px.
 
 The preview panel below starts 24px under the box (`margin-top:
-var(--size-4-6)`), the gap Obsidian leaves between two groups. Until
-2026-10-23 the rows were loose in the window and a hairline `border-top` on
-the panel was what set the form off from the preview; the box now does that.
+var(--size-4-6)`), the gap Obsidian leaves between two groups; where the panel
+stacks into one column (a phone, a narrow window), `row-gap` puts the same
+24px between the preview and the first adjustment group. Until 2026-10-23 the
+rows were loose in the window and a hairline `border-top` on the panel was
+what set the form off from the preview; the box now does that.
+
+The panel is built from the same parts (findings S5-07 and S5-14):
+
+- **Live preview** is an Obsidian group heading above the preview's box, not
+  a grey strip inside it. `LiveCalloutPreview` draws it for every window that
+  passes a `title` (`new Setting(parent).setHeading()`), and the box takes
+  `--setting-items-radius`, the corners of an Obsidian settings box.
+- **The three icon-adjustment groups and Picture** are `SettingGroup`s with a
+  heading, carrying `cs-editor-group` too, so their controls end on the same
+  line as the form's. The column adds no gap of its own: Obsidian's
+  `.setting-group + .setting-group` margin (24px) spaces them.
+- **A slider row stacks** (`cs-stacked-slider`): the name on its own line, the
+  track under it at full width, because the 260px column is too narrow for
+  Obsidian's name-beside-slider row. The value readout keeps the 7ch reserve
+  of every slider in the plugin.
+- **The heading's ↺** is the group's extra button (`addExtraButton`). It
+  overhangs the text line by its own padding (`margin-block`, as Obsidian's
+  Bases toolbar buttons do), so every heading in the panel is one line tall and
+  "Live preview" lines up with the first adjustment heading.
+
+`settingGroupEl()` (`ui/settingGroupEl.ts`) finds a group's outer element
+through the declared `listEl`, for hiding a whole group (no icon, or a
+picture that cannot follow the callout's colour).
 
 ## A built-in's name, and Save while it saves
 
@@ -95,9 +120,9 @@ The editor keeps a separate `builtInDefault` alongside `baselineDef`.
 reset target would simply restore the customization. `builtInDefault` is the
 pristine shipped definition returned by `CalloutRegistry.getBuiltInDefault()`
 and is the target for the conditional return arrows on IDs, icon, color, and
-each render role's icon-adjustment card.
+each render role's icon-adjustment group.
 
-`iconAdjustGroup.ts` translates each complete card header through
+`iconAdjustGroup.ts` translates each complete group heading through
 `editor.blockIconAdjustments`, `editor.headingIconAdjustments`, or
 `editor.inlineIconAdjustments`. All 32 languages have these short headers,
 with word order controlled by each locale rather than a joined prefix and role.
@@ -137,13 +162,15 @@ built-in can still take an alias. More IDs cost the stylesheet little: the
 icon's artwork is written once per callout, not once per name (see
 [Icon painting](06-css-generation.md#icon-painting)).
 
-Each icon-adjustment card owns one return arrow for its Size / Horizontal /
-Vertical trio. It resets only that render role and calls the preview once;
+Each icon-adjustment group owns one return arrow, in its heading, for its
+Size / Horizontal / Vertical trio. It resets only that render role and calls the preview once;
 other roles keep their values. The target is
 `resolveIconAdjust(builtInDefault, role)`, not hard-coded `0 / 0 / 1`, so a
 future built-in with a non-neutral shipped adjustment remains correct.
-The compact header reset shares the settings-wide layout rule: showing it must
-preserve the colored header's natural height. See
+It is invisible until the trio differs from the defaults (`cs-reset-idle`,
+`visibility: hidden`), so it keeps its room and nothing beside it moves when
+it appears; while invisible it is out of the Tab order and hidden from screen
+readers. See also
 [settings resets](16-settings-ui-and-modals.md#scoped-reset-controls).
 
 There is a storage trap here: moving every thumb back to its shipped position
