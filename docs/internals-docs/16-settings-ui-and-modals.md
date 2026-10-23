@@ -1276,12 +1276,20 @@ the buttons on a phone.
 
 **The width is Obsidian's dialog width** (`--dialog-width`, 560px, capped by
 `--dialog-max-width`) for every window except the callout and palette editors,
-whose two columns need 720px (`.callout-studio-editor-modal`), and three that
+whose two columns need 720px (`.callout-studio-editor-modal`, off phones
+only), and three that
 keep their own for now: the welcome splash, and Commands and shortcuts and the
 style windows, which become settings pages later. The import chooser, the
 export chooser, the plugin import window, the import report, the icon credits
 and the conversion help used to set 520-700px each (finding S9-V3, GAP-06); their
 classes stay as hooks a user's snippet may target.
+
+**On a phone, the two editors are Obsidian's large-form sheet.** They carry
+`mod-lg`, Obsidian's mark for a large form: on a phone its stylesheet makes
+the window full width and full height, rounded only at the top, as its own
+large forms (Keychain, Publish) are, and keeps the side safe areas. On a
+computer or a tablet the class changes nothing (finding S5-09,
+`tests/editorPhoneSheet.test.ts`).
 
 **The buttons are Obsidian's**, with no size, padding, outline or dim of the
 plugin's own: Obsidian's `button` height and padding, its grey 3px focus ring,

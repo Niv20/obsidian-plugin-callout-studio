@@ -383,10 +383,11 @@ export class PaletteEditorModal extends Modal {
 		const { contentEl } = this;
 		contentEl.empty();
 		contentEl.addClass("callout-studio-palette-editor");
-		// Same shell and width as the callout editor: fixed title with a rule,
-		// scrolling content (the sticky preview column relies on that scroll
-		// container), and a fixed footer for the buttons.
-		this.modalEl.addClass("callout-studio-editor-modal");
+		// Same shell and width as the callout editor: Obsidian's long-dialog
+		// shell (the sticky preview column relies on its one scrolling body),
+		// the editors' wider width, and `mod-lg`, Obsidian's large-form mark,
+		// which opens it as a full-height sheet on a phone.
+		this.modalEl.addClass("callout-studio-editor-modal", "mod-lg");
 		const footer = applyModalChrome(this, { footer: true });
 
 		// Two-column body in the same order as the per-role style popups: the

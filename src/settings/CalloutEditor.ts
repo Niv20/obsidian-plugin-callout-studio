@@ -411,8 +411,11 @@ export class CalloutEditor extends Modal {
 		contentEl.empty();
 		contentEl.addClass("callout-studio-editor");
 		// Standard window shell; the extra class carries only this editor's
-		// width and the panel measurements taken against it.
-		this.modalEl.addClass("callout-studio-editor-modal");
+		// width and the panel measurements taken against it. `mod-lg` is
+		// Obsidian's mark for a large form: on a phone it opens as a
+		// full-height sheet with rounded top corners, as Obsidian's own large
+		// forms do (it changes nothing on a computer or a tablet).
+		this.modalEl.addClass("callout-studio-editor-modal", "mod-lg");
 		const footerEl = applyModalChrome(this, { footer: true });
 
 		// Hold incoming settings while this editor owns a draft.
@@ -2293,7 +2296,7 @@ export class CalloutEditor extends Modal {
 		this.contentEl.empty();
 		// The button bar is a sibling of contentEl, so emptying that misses it.
 		removeModalChrome(this);
-		this.modalEl.removeClass("callout-studio-editor-modal");
+		this.modalEl.removeClass("callout-studio-editor-modal", "mod-lg");
 		// A pending save still owns its definition while it finishes note work.
 		this.plugin.settingsEditOpen = this.saveSession.busy;
 	}

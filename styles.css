@@ -2587,7 +2587,10 @@ body:not(.is-phone)
 
 /* ─── Callout / palette editor window size ────────────────────── */
 
-.modal.callout-studio-editor-modal {
+/* The two editors' two columns need more than Obsidian's 560px dialog. Not on
+   a phone: there the window is Obsidian's large-form sheet (`mod-lg`, full
+   width and full height, rounded only at the top), set in the editors' code. */
+body:not(.is-phone) .modal.callout-studio-editor-modal {
 	width: min(720px, 95vw);
 	max-width: min(720px, 95vw);
 }
