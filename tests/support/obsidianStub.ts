@@ -593,6 +593,16 @@ export class Setting {
 		return this;
 	}
 
+	/**
+	 * Obsidian 1.13.1's read-only value: a `div.setting-item-value` in the
+	 * control area, holding the text `setValue` gives it.
+	 */
+	addDisplayValue(cb: (value: { setValue(text: string): unknown }) => unknown): this {
+		const valueEl = this.controlEl.createDiv({ cls: "setting-item-value" });
+		cb({ setValue(text: string) { valueEl.textContent = text ?? ""; return this; } });
+		return this;
+	}
+
 	addExtraButton(cb: (button: ButtonLike) => unknown): this {
 		const button = new ButtonLike(this.controlEl);
 		this.extraButtons.push(button);

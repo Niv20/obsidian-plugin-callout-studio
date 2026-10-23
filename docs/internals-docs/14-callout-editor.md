@@ -59,6 +59,20 @@ against one fixed tint strength - it calls `derivedBgAmount()` (see
 palette editor's intensity slider produces tints at any strength between
 `MIN_BG_COLOR_AMOUNT` and `MAX_BG_COLOR_AMOUNT`.
 
+## A built-in's name, and Save while it saves
+
+A built-in's display name cannot change: Obsidian declares it. Its row shows
+the name the way Obsidian shows a value you cannot change, as quiet text at the
+row's end (`Setting.addDisplayValue`, Obsidian 1.13.1), not as a greyed-out
+field that looks editable (finding S5-V2). `nameTextInput` is therefore `null`
+for a built-in; every reader already uses `?.`.
+
+While a save runs, **Save** keeps its words and its width and shows Obsidian's
+own spinner: `updateSaveState()` toggles `mod-loading` and sets `aria-busy`,
+with `disabled` so a second press cannot start a second save (finding S5-V3).
+It used to read **Saving…**; the `editor.saving` key is no longer used.
+`tests/editorFormValues.test.ts` pins both.
+
 ## Field-level reset for built-ins
 
 The editor keeps a separate `builtInDefault` alongside `baselineDef`.

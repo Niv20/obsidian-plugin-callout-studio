@@ -163,8 +163,9 @@ what it is waiting for. Dim it with `paintBlocked()` and answer the press with
 `explainIfBlocked()` (both in `ui/blockedButton.ts`), driven by one
 `…BlockedReason()` method per button - see
 [Blocked main buttons say why](16-settings-ui-and-modals.md#blocked-main-buttons-say-why).
-Keep `disabled` only for a button that is merely *busy* and says so in its
-label ("Saving…", "Scanning…").
+Keep `disabled` only for a button that is merely *busy* and says so, in its
+label ("Scanning…") or with Obsidian's own spinner (`mod-loading` and
+`aria-busy`, as the callout editor's Save does).
 
 ## Settings that require a runtime refresh, not just a save
 

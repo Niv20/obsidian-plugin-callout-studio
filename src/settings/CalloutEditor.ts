@@ -438,50 +438,54 @@ export class CalloutEditor extends Modal {
 		this.setTitle(editorTitle);
 
 		// Display Name
-		new Setting(contentEl)
+		const nameSetting = new Setting(contentEl)
 			.setName(t("editor.displayName"))
 			.setDesc(
 				this.isBuiltIn
 					? t("editor.displayNameBuiltIn")
 					: t("editor.displayNameDesc"),
-			)
-			.addText((text) => {
+			);
+		if (this.isBuiltIn) {
+			// A built-in's name is fixed (Obsidian declares it), so it is shown
+			// the way Obsidian shows a value you cannot change: quiet text at
+			// the row's end (`addDisplayValue`, Obsidian 1.13.1), not a field
+			// that looks editable but is greyed out (finding S5-V2).
+			nameSetting.addDisplayValue((value) => value.setValue(this.displayName));
+		} else {
+			nameSetting.addText((text) => {
 				this.nameTextInput = text;
 				text.inputEl.addClass("cs-text-control");
 				text.setPlaceholder(t("editor.displayNamePlaceholder")).setValue(this.displayName);
-				if (this.isBuiltIn) {
-					text.setDisabled(true);
-				} else {
-					text.onChange((value) => {
-						this.displayName = value;
-						// The pinned primary ID mirrors the name; only that
-						// slot is replaced — other IDs are never touched.
-						const newPinned = generateId(value);
-						if (newPinned) {
-							this.calloutId = newPinned;
-							this.hasHadCalloutId = true;
-							this.idsTagInput?.setPinnedTag(newPinned);
-						} else if (!value.trim()) {
-							// Name fully cleared: drop the pinned slot
-							// (aliases stay).
-							this.calloutId = "";
-							this.idsTagInput?.setPinnedTag(null);
-						}
-						// else: the name holds only characters the ID
-						// sanitizer strips (e.g. emoji) — keep the current
-						// pinned primary rather than orphaning the row.
-						if (this.idsTagInput) {
-							const pinned = this.idsTagInput.getPinnedTag();
-							this.aliases = this.idsTagInput
-								.getTags()
-								.filter((tag) => tag !== pinned);
-						}
-						this.updateIdWarning();
-						this.updatePreview();
-						this.updateSaveState();
-					});
-				}
+				text.onChange((value) => {
+					this.displayName = value;
+					// The pinned primary ID mirrors the name; only that
+					// slot is replaced — other IDs are never touched.
+					const newPinned = generateId(value);
+					if (newPinned) {
+						this.calloutId = newPinned;
+						this.hasHadCalloutId = true;
+						this.idsTagInput?.setPinnedTag(newPinned);
+					} else if (!value.trim()) {
+						// Name fully cleared: drop the pinned slot
+						// (aliases stay).
+						this.calloutId = "";
+						this.idsTagInput?.setPinnedTag(null);
+					}
+					// else: the name holds only characters the ID
+					// sanitizer strips (e.g. emoji) — keep the current
+					// pinned primary rather than orphaning the row.
+					if (this.idsTagInput) {
+						const pinned = this.idsTagInput.getPinnedTag();
+						this.aliases = this.idsTagInput
+							.getTags()
+							.filter((tag) => tag !== pinned);
+					}
+					this.updateIdWarning();
+					this.updatePreview();
+					this.updateSaveState();
+				});
 			});
+		}
 
 		// The pristine shipped row gates every field-level built-in reset.
 		const originalDef = this.builtInDefault;
@@ -1720,8 +1724,15 @@ export class CalloutEditor extends Modal {
 		// For existing: enable if valid AND has changes
 		const enabled = !this.saveSession.busy && (this.existingId ? hasChanges && isValid : isValid);
 		this.isSaveActionEnabled = enabled;
-		this.saveBtn.disabled = this.saveSession.busy;
-		this.saveBtn.textContent = t(this.saveSession.busy ? "editor.saving" : this.existingId ? "editor.saveChanges" : "editor.createCallout");
+		// While a save runs, the button keeps its words and its size and shows
+		// Obsidian's own small spinner (`mod-loading`), as Obsidian's buttons do
+		// while they work; `aria-busy` tells a screen reader it is working,
+		// which the old "Saving…" label used to say (finding S5-V3).
+		const busy = this.saveSession.busy;
+		this.saveBtn.disabled = busy;
+		this.saveBtn.toggleClass("mod-loading", busy);
+		this.saveBtn.setAttribute("aria-busy", String(busy));
+		this.saveBtn.textContent = t(this.existingId ? "editor.saveChanges" : "editor.createCallout");
 		this.saveBtn.setAttribute("aria-disabled", enabled ? "false" : "true");
 		this.saveBtn.toggleClass("cs-btn-disabled", !enabled);
 	}

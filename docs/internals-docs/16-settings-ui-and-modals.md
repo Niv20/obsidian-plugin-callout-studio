@@ -2065,12 +2065,13 @@ The callout editor's **Save** (`showSaveBlockedNotice`), the quick-insert
 copy; **Reset everything**'s acknowledgement answers a press with a nudge on
 the checkbox instead (see [`ConfirmModal`](#confirmmodal---the-generic-yesno-dialog)).
 
-**Where `disabled` stays right.** A button that is merely *busy* and whose
-label already says so: **Saving…** and **Importing…**, the discovery button's
-**Scanning…**, the saving banner's **Working on it…**, and the icon picker's
-Confirm while its artwork downloads (which shows Obsidian's own busy button,
-`mod-loading`: a ring in place of the label, at the same width, with
-`aria-busy`). Pressing one of those teaches nothing.
+**Where `disabled` stays right.** A button that is merely *busy* and already
+says so: **Importing…**, the discovery button's **Scanning…**, the saving
+banner's **Working on it…**, and two that show Obsidian's own busy button,
+`mod-loading` (a spinner in place of the label, at the same width, with
+`aria-busy`): the icon picker's Confirm while its artwork downloads, and the
+callout editor's Save while a save runs (it used to read **Saving…**, finding
+S5-V3). Pressing one of those teaches nothing.
 
 **Two consequences to keep.** A dimmed button is focusable, so Enter and Space
 answer too. And a press on one is *not* "clicking away": while a Review
@@ -2123,7 +2124,7 @@ The boundary cases, and why they fall where they do:
   visible label. A button that opens a dropdown wears the chevron instead.
 
 Other `…` in the strings keep their own meaning and are not action labels:
-progress text (**Saving…**, **Scanning…**), placeholders (**Search callouts…**)
+progress text (**Scanning…**, **Importing…**), placeholders (**Search callouts…**)
 and a cut-short list (*…and 3 more*). A busy button may show progress dots where
 its action label had none, or in its place: **Importing…** stands in for **Import…**
 while the work runs.

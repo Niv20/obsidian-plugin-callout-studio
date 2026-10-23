@@ -199,6 +199,11 @@ export class Setting {
 	setDesc(text: string | DocumentFragment): this { this.descEl.setText(text); return this; }
 	setClass(cls: string): this { this.settingEl.classList.add(cls); return this; }
 	setHeading(): this { return this.setClass("setting-item-heading"); }
+	addDisplayValue(callback: (value: { setValue(text: string): unknown }) => unknown): this {
+		const valueEl = this.controlEl.createDiv({ cls: "setting-item-value" });
+		callback({ setValue(text: string) { valueEl.setText(text ?? ""); return this; } });
+		return this;
+	}
 	addButton(callback: (control: ButtonComponent) => unknown): this { callback(new ButtonComponent(this.controlEl)); return this; }
 	addExtraButton(callback: (control: ExtraButtonComponent) => unknown): this { callback(new ExtraButtonComponent(this.controlEl)); return this; }
 	addText(callback: (control: TextComponent) => unknown): this { callback(new TextComponent(this.controlEl)); return this; }
