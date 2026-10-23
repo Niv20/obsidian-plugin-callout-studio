@@ -24,6 +24,9 @@ type Internals = {
 	updateValidity(): void;
 	saveBlockedReason(): string | null;
 	nameSetting: Setting | null;
+	colorCardEl: HTMLElement | null;
+	colorErrorEl: HTMLElement | null;
+	applyDerived(): void;
 };
 
 function editor(options: Options = {}) {
@@ -207,5 +210,31 @@ describe("where the palette editor says what is wrong", () => {
 		const css = readRepoFile("styles.css");
 		assert.ok(!css.includes(".cs-contrast-warning"), "the corner badge is gone");
 		assert.ok(!css.includes("cs-input-invalid"), "no red edge of our own on a field");
+	});
+});
+
+describe("the palette editor's groups (S7-05)", () => {
+	it("builds Palette and Colors as Obsidian setting groups with the editors' row inset", () => {
+		const source = readRepoFile("src/settings/PaletteEditorModal.ts");
+		assert.match(source, /new SettingGroup\(adjustCol\)\s*\.setHeading\(t\("palette\.groupPalette"\)\)\s*\.addClass\("cs-editor-group"\)/);
+		assert.match(source, /\.setHeading\(t\("palette\.advancedColors"\)\)\s*\.addClass\("cs-editor-group"\)/);
+		assert.doesNotMatch(source, /createControlGroup|createSliderRow/, "no plugin-drawn card left");
+		assert.match(source, /\.setName\(t\("palette\.bgIntensity"\)\)\s*\.setClass\("cs-stacked-slider"\)/);
+	});
+
+	it("puts the duplicate-colour line first in the Colors box, and takes it out when the clash goes", () => {
+		const twin = twinOf("Sunrise");
+		const { internals } = editor({ seedName: "Sunrise", seed: twin, takenColors: [twin] });
+		const box = el();
+		box.createDiv({ cls: "setting-item" });
+		internals.colorCardEl = box as unknown as HTMLElement;
+		internals.colorErrorEl = el({ cls: "cs-palette-color-error" }) as unknown as HTMLElement;
+		internals.updateValidity();
+		assert.equal(box.children[0], internals.colorErrorEl, "the first line of the box");
+		assert.match((internals.colorErrorEl as unknown as FakeElement).textContent, /Twin/);
+		internals.baseColor = "#123456";
+		internals.applyDerived();
+		internals.updateValidity();
+		assert.equal(box.children.includes(internals.colorErrorEl as unknown as FakeElement), false, "out of the box, not hidden in it");
 	});
 });

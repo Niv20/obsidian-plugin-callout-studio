@@ -2630,19 +2630,21 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	align-items: start;
 }
 
-/* Every Obsidian `SettingGroup` in the callout editor: the four form rows
-   (Display name, Callout IDs, Color, Icon) in one box without a heading
-   (finding S5-15), and beside the preview the three icon-adjustment groups and
-   Picture, each with a heading (S5-14). Their rows sit 16px in from the box's
-   edge, the window's own inset, rather than Obsidian's default 20px, so the
-   controls of the form box and of the groups below end on one line. */
+/* Every Obsidian `SettingGroup` in the two editors. In the callout editor:
+   the four form rows (Display name, Callout IDs, Color, Icon) in one box
+   without a heading (finding S5-15), and beside the preview the three
+   icon-adjustment groups and Picture, each with a heading (S5-14). In the
+   palette editor: Palette and Colors (S7-05). Their rows sit 16px in from the
+   box's edge, the window's own inset, rather than Obsidian's default 20px, so
+   the controls of the form box and of the groups below end on one line. */
 .cs-editor-group {
 	--setting-items-padding-x: var(--size-4-4);
 }
 
 /* The groups beside the preview are spaced by Obsidian's own
    `.setting-group + .setting-group` margin (24px), so the column adds none. */
-.callout-studio-editor .callout-studio-adjust-col {
+.callout-studio-editor .callout-studio-adjust-col,
+.callout-studio-palette-editor .callout-studio-adjust-col {
 	gap: 0;
 }
 
@@ -2809,8 +2811,8 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	display: none;
 }
 
-/* Both slider-row call sites (GlobalStyleModal, the palette editor's
-   Intensity row) render inside a Modal, where Obsidian's own
+/* The slider row's call site (GlobalStyleModal) renders inside a Modal,
+   where Obsidian's own
    `.modal:not(.mod-settings) .setting-item:not(.setting-item-heading)` rule
    ties the border reset above on specificity (0,5,0) and wins it back on
    source order — drawing a line between the row's own label and its track,
@@ -4869,17 +4871,6 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	max-height: 12em;
 }
 
-/*
- * The duplicate-color error stands alone in the palette editor's options
- * column rather than inside a setting's info block, so it needs even more
- * room than the base ceiling above: its sentence has to wrap around an
- * inline "use it instead" link too.
- */
-.cs-palette-color-error.is-visible {
-	max-height: 6em;
-	margin-bottom: 8px;
-}
-
 /* The + does not take a slice of this row — it is absolutely positioned over
    the field's trailing edge (`.cs-tag-add-slot` below), so the field itself is
    the full width of the row whether the button is showing or not. That is the
@@ -5624,45 +5615,6 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	min-width: 0;
 }
 
-/* ── Card row separators ─────────────────────────────────────────
-   This column holds two `cs-layout-group` cards (see createControlGroup), and
-   that modifier strips every row's chrome — including the border Obsidian draws
-   between consecutive modal rows — so a card of 3-5 rows would run together as
-   one block. Put a hairline back between siblings.
-
-   A universal sibling selector rather than `.setting-item + .setting-item`
-   because the Intensity row is a .callout-studio-slider-row div, not a Setting,
-   and it needs the same line above and below it as every other row. The
-   `:not()` excludes the card's own header band — it is child #1, so the first
-   row would otherwise take a hairline directly under it, which none of the
-   cards in the per-role style popups draw.
-
-   The class is doubled so this outweighs the `border: none` it has to beat,
-   which lives on `.modal .cs-settings-group.cs-layout-group > .setting-item:not(…)`
-   at (0,5,0) — the house style throughout this file, in preference to
-   !important.
-
-   This works only because renderColorSection() REBUILDS the card's rows instead
-   of hiding them: `+` is structural, so a row parked under `display: none`
-   would still count as the previous sibling and hand a stray line to the first
-   row actually on screen. */
-.modal
-	.callout-studio-palette-editor
-	.cs-settings-group.cs-settings-group.cs-layout-group
-	> :not(.cs-settings-group-header) + * {
-	border-top: var(--border-width) solid var(--background-modifier-border);
-}
-
-/* The Intensity row is a .callout-studio-slider-row sharing a card with plain
-   Setting rows, and the two carry different side padding of their own — 10px on
-   the slider row, 14px from the cs-layout-group rule on the Settings — so its
-   label and track sat 4px left of every other label in the card. Only the
-   inline padding is taken over; the vertical rhythm is left exactly as the
-   per-role style popups have it, since that is the look being matched. */
-.callout-studio-palette-editor .callout-studio-slider-row {
-	padding-inline: 14px;
-}
-
 /* The advanced grid's "you are editing {mode} colors" line is a Setting with a
    description but no name. Drop the empty name element so it cannot contribute
    a stray line box above the sentence. */
@@ -5670,15 +5622,19 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	display: none;
 }
 
-/* The duplicate-colour message sits between the two cards, in a flex column
-   with `gap: 8px`. .cs-tag-error hides itself with opacity + max-height rather
-   than `display`, which keeps it a flex item — and so keeps its share of the
-   gap — leaving 8px of dead air between the cards whenever there is no clash.
-   Taking it out of flow costs the 0.3s fade, which is no loss here: this error
-   appears and disappears under a colour drag, where a fade is the wrong effect
-   anyway. */
-.callout-studio-palette-editor .cs-palette-color-error:not(.is-visible) {
-	display: none;
+/* The duplicate-colour message: while there is a clash it is the first line
+   inside the Colors box (PaletteEditorModal.renderColorError), and otherwise
+   not in the DOM at all. Padded like a row, in Obsidian's warning colour, as
+   the name's message under its field (setErrorMessage). Its "use it instead"
+   link keeps the accent. No fade: it comes and goes under a colour drag,
+   where a fade is the wrong effect. */
+.callout-studio-palette-editor .cs-palette-color-error {
+	--link-color: var(--text-accent);
+	--link-color-hover: var(--text-accent-hover);
+	padding: var(--setting-items-padding-y) var(--setting-items-padding-x);
+	color: var(--text-warning);
+	font-size: var(--font-ui-smaller);
+	line-height: var(--line-height-tight);
 }
 
 /* Generic row-hide utility (e.g. the command editor's role-specific rows). It

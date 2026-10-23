@@ -2,10 +2,11 @@
  * settings/PaletteEditorModal.ts — Create/edit a custom color palette.
  *
  * Modal opened from the "Saved color palettes" settings section. Two-column
- * body wearing the same shape as the per-role "Global callout style" popups: a
- * sticky live preview on the left, and on the right two titled control cards —
- * a fixed "Palette" card (name + background style) above a "Colors" card whose
- * rows are rebuilt for whatever the style dropdown is set to. Default (simple)
+ * body: a sticky live preview on the left, and on the right two Obsidian
+ * setting groups (`SettingGroup`: a heading, one rounded box, inset lines
+ * between the rows; finding S7-05) — a fixed "Palette" group (name +
+ * background style) above a "Colors" group whose rows are rebuilt for
+ * whatever the style dropdown is set to. Default (simple)
  * mode: the user picks ONE
  * base color and the full palette — light/dark accents, backgrounds, text —
  * is auto-derived with contrast correction (see derivePaletteFromColor). The
@@ -16,7 +17,7 @@
  * render roles. Resolves the palette (without id) on save, or null on
  * cancel/close.
  */
-import { Modal, Setting } from "obsidian";
+import { Modal, Setting, SettingGroup } from "obsidian";
 import type { App } from "obsidian";
 import type { BgGradient, CalloutDefinition, CustomPalette } from "../types";
 import {
@@ -62,11 +63,7 @@ import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { CSSInjector } from "../manager/CSSInjector";
 import { addCancelButton, applyModalChrome, removeModalChrome } from "./modalChrome";
 import { autofocusOnDesktop } from "./modalAutofocus";
-import {
-	createControlGroup,
-	createSliderRow,
-	setSliderDisplay,
-} from "./styleControls";
+import { setSliderDisplay } from "./styleControls";
 
 export type PaletteEditorResult = Omit<CustomPalette, "id">;
 
@@ -178,13 +175,16 @@ export class PaletteEditorModal extends Modal {
 	 * while painting something else.
 	 */
 	private advancedColors: boolean;
-	/** The "Colors" card. Its header stays put; renderColorSection() rebuilds the rows under it. */
+	/**
+	 * The "Colors" group's box of rows (`SettingGroup.listEl`). Its heading
+	 * stays put; renderColorSection() rebuilds the rows in it.
+	 */
 	private colorCardEl: HTMLElement | null = null;
 	/**
-	 * Every row renderColorSection() has put in the card, so the next pass can
-	 * take them out again. They are direct children of the card rather than
-	 * living in a wrapper div, which is what lets the card's own sibling
-	 * separator rule draw the hairlines between them.
+	 * Every row renderColorSection() has put in the box, so the next pass can
+	 * take them out again. They are direct children of the box, which is what
+	 * lets Obsidian's own divider rule draw the lines between them (a row's
+	 * `::before`, left off the box's first child).
 	 */
 	private colorCardRows: HTMLElement[] = [];
 	// Gradient state. The end (stop-2) colors are tints of gradientToBase,
@@ -214,6 +214,11 @@ export class PaletteEditorModal extends Modal {
 	 * `setErrorMessage` (finding S7-06).
 	 */
 	private nameSetting: Setting | null = null;
+	/**
+	 * The duplicate-colour message. Made once and kept out of the DOM while
+	 * there is no clash; while there is one, it is the first line inside the
+	 * Colors box (see renderColorError).
+	 */
 	private colorErrorEl: HTMLElement | null = null;
 	/** Identity of the clash the error line currently shows; "" when clear. */
 	private renderedClashKey = "";
@@ -403,17 +408,16 @@ export class PaletteEditorModal extends Modal {
 		});
 		const adjustCol = panel.createDiv({ cls: "callout-studio-adjust-col" });
 
-		// The fixed card. It holds the two rows nothing else can change — the
-		// name, and the style dropdown that drives the card below it. Keeping
+		// The fixed group. It holds the two rows nothing else can change — the
+		// name, and the style dropdown that drives the group below it. Keeping
 		// the dropdown out here is what lets its own `change` handler rebuild
-		// that card without tearing the `<select>` out from under the pointer.
-		// `cs-layout-group` is the modifier for a box of plain Setting rows
-		// (the callout editor's Picture box, the style popups' Align box).
-		const paletteCard = createControlGroup(
-			adjustCol,
-			t("palette.groupPalette"),
-			"cs-layout-group",
-		);
+		// that group without tearing the dropdown out from under the pointer.
+		// Both groups are Obsidian's own (`SettingGroup`), with the callout
+		// editor's 16px row inset (`cs-editor-group`).
+		const paletteGroup = new SettingGroup(adjustCol)
+			.setHeading(t("palette.groupPalette"))
+			.addClass("cs-editor-group");
+		const paletteCard = paletteGroup.listEl;
 
 		const nameSetting = new Setting(paletteCard)
 			.setName(t("palette.name"))
@@ -438,20 +442,18 @@ export class PaletteEditorModal extends Modal {
 
 		this.buildBgStyleRow(paletteCard);
 
-		// Between the two cards, and outside both: renderColorSection() tears
-		// its rows down on every switch, and this message must survive that
-		// (see renderColorError on why it is not rebuilt needlessly).
-		this.colorErrorEl = adjustCol.createDiv({
-			cls: "cs-tag-error cs-palette-color-error",
-		});
+		// The duplicate-colour message is made here but not placed:
+		// renderColorError() puts it at the top of the Colors box while there is
+		// a clash. It is not one of the rebuilt rows, so it survives
+		// renderColorSection() tearing those down on every switch.
+		this.colorErrorEl = createDiv({ cls: "cs-palette-color-error" });
 
-		this.colorCardEl = createControlGroup(
-			adjustCol,
+		const colorGroup = new SettingGroup(adjustCol)
 			// The same string the advanced grid used to head itself with — the
-			// card wears it now, so that inner heading is gone.
-			t("palette.advancedColors"),
-			"cs-layout-group",
-		);
+			// group wears it now, so that inner heading is gone.
+			.setHeading(t("palette.advancedColors"))
+			.addClass("cs-editor-group");
+		this.colorCardEl = colorGroup.listEl;
 		this.renderColorSection();
 
 		this.previewEl = previewCol.createDiv({
@@ -621,8 +623,16 @@ export class PaletteEditorModal extends Modal {
 		if (key === this.renderedClashKey) return;
 		this.renderedClashKey = key;
 		el.empty();
-		el.toggleClass("is-visible", clash !== null);
-		if (!clash) return;
+		// Out of the box while there is nothing to say, rather than hidden in
+		// it: Obsidian leaves the divider off the box's FIRST child only, so a
+		// hidden first line would hand a stray divider to the first row on
+		// screen. While there is a clash, it is that first line.
+		if (!clash) {
+			el.detach();
+			return;
+		}
+		const box = this.colorCardEl;
+		if (box) box.insertBefore(el, box.firstChild);
 		if (!this.onUseExisting) {
 			el.setText(t("palette.colorExists", { name: clash.name }));
 			return;
@@ -742,31 +752,32 @@ export class PaletteEditorModal extends Modal {
 	 * grid (whose rows write colors directly, bypassing the derivation this
 	 * steers).
 	 *
-	 * A `callout-studio-slider-row`, not a plain Setting: the card is ~250px
-	 * wide inside its padding, and a track sharing that line with its label
-	 * would be squeezed to half of it. The row puts the label and Obsidian's
-	 * value readout above a full-width track, exactly as the per-role style
-	 * popups do.
+	 * A setting row that stacks (`cs-stacked-slider`, as the callout editor's
+	 * icon adjustments do): the name on its own line, the value readout and a
+	 * full-width track under it. The column is ~250px wide inside its padding,
+	 * and a track sharing one line with its name would be squeezed to half.
 	 */
 	private buildBgIntensityRow(parent: HTMLElement): void {
-		const row = createSliderRow(parent, t("palette.bgIntensity"));
-		new Setting(row).addSlider((slider) => {
-			setSliderDisplay(slider, (v) => `${v}%`);
-			slider
-				.setLimits(
-					Math.round(MIN_BG_COLOR_AMOUNT * 100),
-					Math.round(MAX_BG_COLOR_AMOUNT * 100),
-					1,
-				)
-				.setValue(Math.round(this.bgIntensity * 100))
-				.setInstant(true)
-				.onChange((v) => {
-					this.bgIntensity = v / 100;
-					this.bgIntensityTouched = true;
-					this.applyDerived();
-				});
-		});
-		this.colorCardRows.push(row);
+		const setting = new Setting(parent)
+			.setName(t("palette.bgIntensity"))
+			.setClass("cs-stacked-slider")
+			.addSlider((slider) => {
+				setSliderDisplay(slider, (v) => `${v}%`);
+				slider
+					.setLimits(
+						Math.round(MIN_BG_COLOR_AMOUNT * 100),
+						Math.round(MAX_BG_COLOR_AMOUNT * 100),
+						1,
+					)
+					.setValue(Math.round(this.bgIntensity * 100))
+					.setInstant(true)
+					.onChange((v) => {
+						this.bgIntensity = v / 100;
+						this.bgIntensityTouched = true;
+						this.applyDerived();
+					});
+			});
+		this.colorCardRows.push(setting.settingEl);
 	}
 
 	/**
@@ -783,10 +794,10 @@ export class PaletteEditorModal extends Modal {
 	 * link (dropping the per-channel edits it just hid).
 	 *
 	 * The rows are torn down and rebuilt rather than hidden in place. They are
-	 * direct children of the card so that its sibling-separator rule can draw
-	 * the hairline between them, and `+` is structural: a row left in the DOM
-	 * under `display: none` still counts as the previous sibling, so the first
-	 * *visible* row would draw a stray line right under the card header.
+	 * direct children of the group's box, where Obsidian draws a divider above
+	 * every row but the box's first child, and that is structural: a row left
+	 * in the DOM under `display: none` would still be the first child, so the
+	 * first *visible* row would draw a stray line at the top of the box.
 	 */
 	private renderColorSection(): void {
 		const card = this.colorCardEl;
@@ -844,14 +855,14 @@ export class PaletteEditorModal extends Modal {
 	 * matching value for the hidden mode via inferOppositeModeColor (mirror
 	 * lightness, then contrast-correct for Accent/Text — see that
 	 * function's doc). Deliberately per-channel: editing Accent never
-	 * touches Background or Text. Contrast is enforced as a non-blocking
-	 * warning badge, not an auto-fix, so an edit here never silently
+	 * touches Background or Text. Contrast is a non-blocking warning line
+	 * under the colour, not an auto-fix, so an edit here never silently
 	 * changes a value the user didn't touch.
 	 */
 	private buildAdvancedColorRows(parent: HTMLElement): void {
 		const isDark = activeDocument.body.classList.contains("theme-dark");
 
-		// Description only, no name: the card's own header already reads
+		// Description only, no name: the group's own heading already reads
 		// "Colors", and a row repeating it would be a heading under a heading.
 		const note = new Setting(parent).setClass("cs-palette-mode-note");
 		this.colorCardRows.push(note.settingEl);

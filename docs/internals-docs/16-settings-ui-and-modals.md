@@ -2319,8 +2319,21 @@ strings; only the change line and the two descriptions are the palette's own.
 
 ### `PaletteEditorModal` - simple vs. advanced, two background styles
 
-Two-column layout mirroring the per-role global-style popups: a sticky live
-preview on the left, titled control cards on the right. **Simple mode**: one
+Two-column layout: a sticky live preview on the left (an Obsidian group
+heading above its box), and on the right two Obsidian setting groups,
+**Palette** and **Colors** (`SettingGroup`: a heading, one rounded box, inset
+dividers, 24px between them; finding S7-05), with the editors' 16px row inset
+(`cs-editor-group`). Until 2026-10-23 they were two plugin-drawn cards with a
+grey title strip (`createControlGroup`), and the stylesheet fought Obsidian's
+modal row flattening to put dividers back; a grouped row is outside that rule,
+so the fight is gone. The Colors rows are still torn down and rebuilt on every
+switch rather than hidden: Obsidian leaves the divider off the box's first
+child only, so a hidden first row would hand a stray divider to the first one
+on screen. **Intensity** is a stacked setting row (`cs-stacked-slider`, as
+the callout editor's icon adjustments): the name above, the readout and a
+full-width track below. The duplicate-colour message is the first line inside
+the Colors box while there is a clash, in the warning colour, and out of the
+DOM otherwise (`renderColorError`). **Simple mode**: one
 base colour, and the full six-value palette (light/dark accent, background,
 text) is auto-derived with contrast correction
 (`derivePaletteFromColor` - see [Colour system](12-color-system.md)).
@@ -2334,11 +2347,11 @@ preset direction, an off-by-default "Gradient title text" toggle), or None
 (transparent - see [Colour system](12-color-system.md#preset-palettes---hue-named-not-role-named)
 for why this is the *only* route to a transparent palette).
 
-The palette card keeps **Name** and **Style** at the same control-column width.
-Name is Obsidian's own text field; Style uses the nonsearchable `ListboxPopup`
-rather than a native `<select>`, drawn like Obsidian's dropdown. Both are
-`--input-height` tall with Obsidian's field corners. The popup is destroyed when
-the modal closes.
+The Palette group keeps **Name** and **Style** at the same control-column
+width. Name is Obsidian's own text field; Style is a `SelectDropdown`, a field
+drawn like Obsidian's dropdown that opens Obsidian's own `Menu` (see "Shared
+dropdown controls"). Both are `--input-height` tall with Obsidian's field
+corners. The dropdown is destroyed when the modal closes.
 
 The preview renders on a **reserved demo id** (`PALETTE_DEMO_ID =
 "palette-demo"`), registered through the same registry preview slot the

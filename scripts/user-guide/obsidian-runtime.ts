@@ -221,7 +221,8 @@ export class Setting {
 	addButton(callback: (control: ButtonComponent) => unknown): this { callback(new ButtonComponent(this.controlEl)); return this; }
 	addExtraButton(callback: (control: ExtraButtonComponent) => unknown): this { callback(new ExtraButtonComponent(this.controlEl)); return this; }
 	addText(callback: (control: TextComponent) => unknown): this { callback(new TextComponent(this.controlEl)); return this; }
-	addToggle(callback: (control: ToggleComponent) => unknown): this { callback(new ToggleComponent(this.controlEl)); return this; }
+	/** As Obsidian's: the row is marked `mod-toggle`, which keeps it on one line on a phone. */
+	addToggle(callback: (control: ToggleComponent) => unknown): this { callback(new ToggleComponent(this.controlEl)); this.settingEl.classList.add("mod-toggle"); return this; }
 	addSlider(callback: (control: SliderComponent) => unknown): this { callback(new SliderComponent(this.controlEl)); return this; }
 	addDropdown(callback: (control: DropdownComponent) => unknown): this { callback(new DropdownComponent(this.controlEl)); return this; }
 }
