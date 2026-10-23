@@ -132,15 +132,14 @@ describe("the shared import/export boxes on hover", () => {
 		assert.ok(hovering.length > 0);
 		for (const rule of hovering) {
 			assert.deepEqual(rule.at, [HOVER_MEDIA]);
-			// A chooser's box (`[tabindex="0"]`), a card that a click would
-			// choose (`is-choosable`), and a card's own button — which also
-			// steps off the card's fill while the pointer is on the card but
-			// not on it. The active card and an empty one stay as they are
-			// under the pointer.
+			// A chooser's box (`[tabindex="0"]`) and a card that a click would
+			// choose (`is-choosable`). The active card and an empty one stay as
+			// they are under the pointer, and a card's own button hovers the way
+			// Obsidian's buttons do, with no rule of ours.
 			for (const selector of rule.selector.split(/,\s*/)) {
 				assert.match(
 					selector,
-					/^\.cs-option-box(?:\[tabindex="0"\]:hover(?: \.cs-option-box-mark)?|\.is-choosable:hover| \.cs-import-action:hover|(?:\[tabindex="0"\]|\.is-choosable):hover \.cs-import-action:not\(:hover\))$/,
+					/^\.cs-option-box(?:\[tabindex="0"\]:hover(?: \.cs-option-box-mark)?|\.is-choosable:hover)$/,
 					selector,
 				);
 			}
@@ -184,11 +183,14 @@ describe("the plugin import window's cards", () => {
 		assert.ok(calm);
 	});
 
-	it("gives a card's own button a face of its own, so it stays a button on a phone", () => {
+	it("leaves a card's own button to Obsidian, except that it never shrinks", () => {
+		// Upload and Paste are Obsidian's own buttons (decision 14 of the
+		// native-look plan). The only thing the plugin adds is layout: a long
+		// file name must not squeeze them.
 		const button = only(".cs-option-box .cs-import-action");
-		assert.equal(valueOf(button, "flex-shrink"), "0", "never squeezed by a long file name");
-		assert.equal(valueOf(button, "background-color"), "var(--cs-btn-face, var(--interactive-normal))");
-		assert.match(valueOf(button, "border") ?? "", /^1px solid /);
+		assert.deepEqual(button.props, ["flex-shrink"]);
+		assert.equal(valueOf(button, "flex-shrink"), "0");
+		assert.deepEqual(rules.filter((r) => r.selector.includes(".cs-import-action") && r !== button).map((r) => r.selector), []);
 	});
 });
 

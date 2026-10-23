@@ -12,9 +12,10 @@
  *   focus edge and 2px ring after a mouse click. The plugin only adds layout
  *   (widths, the IDs field's "+" cap, the paste box's height) and the red of an
  *   invalid value.
- * - **Dropdowns still wear the plugin's face** (until they become Obsidian's
- *   combobox look): one fill that never changes, and one thin edge for hover,
- *   focus, a press and an open list.
+ * - **Dropdowns are drawn like Obsidian's combobox button.** The plugin keeps
+ *   its own trigger element (it opens the plugin's list), but paints it from
+ *   Obsidian's dropdown tokens, with Obsidian's states: a hover step, the 3px
+ *   focus ring, and an open fill plus the ring.
  *
  * The CSS is read as text, so this suite needs no browser: each rule is split
  * into its selectors and its body, and the assertions talk about those.
@@ -68,7 +69,6 @@ function ruleFor(selector: string): Rule {
 }
 
 const DROPDOWN_BASE = ".cs-dropdown-control.cs-dropdown-control.cs-dropdown-control";
-const HOVER_EDGE = "var(--cs-field-border-hover, var(--background-modifier-border-hover))";
 
 describe("text fields are Obsidian's own", () => {
 	/** Rules whose selector puts a style on a `.cs-text-control` element. */
@@ -177,19 +177,56 @@ describe("the import window's paste box", () => {
 	});
 });
 
-describe("dropdowns keep the plugin's face and one thin edge", () => {
-	it("answer hover, focus, a press and an open list with the same edge and no ring", () => {
-		const hover = ruleFor(".cs-dropdown-control.cs-dropdown-control:not(:disabled):not(.cs-dropdown-disabled):hover");
-		assert.deepStrictEqual(propertiesOf(hover), ["border-color"], "hover is an edge: no fill, no ring");
-		assert.ok(hover.body.includes(`border-color: ${HOVER_EDGE}`));
+describe("dropdowns are drawn like Obsidian's combobox button", () => {
+	it("rest on Obsidian's dropdown tokens: height, face, shadow, corners", () => {
+		const base = ruleFor(DROPDOWN_BASE);
+		for (const declaration of [
+			"height: var(--input-height)",
+			"border: 0",
+			"background-color: var(--dropdown-background, var(--interactive-normal))",
+			"box-shadow: var(--input-shadow)",
+			"border-radius: var(--input-radius, var(--radius-s))",
+			"corner-shape: var(--input-corner-shape, round)",
+			"padding-inline: var(--cs-dropdown-pad-start) var(--cs-dropdown-pad-end)",
+		]) assert.ok(base.body.includes(declaration), declaration);
+	});
 
-		const engaged = ruleFor(`${DROPDOWN_BASE}:focus-within`);
-		// A tap on a phone does not focus a <button> trigger, so an open list
-		// carries the edge itself; `.mobile-tap` is Obsidian's press class.
-		assert.ok(engaged.selectors.includes(`${DROPDOWN_BASE}.is-open`));
-		assert.ok(engaged.selectors.includes(".cs-dropdown-control.cs-dropdown-control.mobile-tap:not(:disabled):not(.cs-dropdown-disabled)"));
-		assert.ok(engaged.body.includes(`border-color: ${HOVER_EDGE}`));
-		assert.ok(engaged.body.includes("box-shadow: none"));
+	it("step the face and shadow under a mouse and under Obsidian's press class", () => {
+		const hover = ruleFor(".cs-dropdown-control.cs-dropdown-control:not(:disabled):not(.cs-dropdown-disabled):hover");
+		const press = ruleFor(".cs-dropdown-control.cs-dropdown-control.mobile-tap:not(:disabled):not(.cs-dropdown-disabled)");
+		for (const rule of [hover, press]) {
+			assert.ok(rule.body.includes("background-color: var(--dropdown-background-hover, var(--interactive-hover))"));
+			assert.ok(rule.body.includes("box-shadow: var(--input-shadow-hover)"));
+		}
+	});
+
+	it("draw the focus ring, and the open fill plus the ring, above the hover", () => {
+		const hoverSelector = ".cs-dropdown-control.cs-dropdown-control:not(:disabled):not(.cs-dropdown-disabled):hover";
+		const four = ".cs-dropdown-control.cs-dropdown-control.cs-dropdown-control.cs-dropdown-control";
+		const focus = ruleFor(`${four}:focus-within`);
+		const open = ruleFor(`${four}.is-open`);
+		assert.ok(focus.body.includes("box-shadow: 0 0 0 3px var(--background-modifier-border-focus)"));
+		assert.ok(open.body.includes("background-color: var(--metadata-label-background-active)"));
+		assert.ok(open.body.includes("box-shadow: 0 0 0 3px var(--background-modifier-border-focus)"));
+		// Hovering a focused or open control must not hide its ring: each of the
+		// two is at least as specific as the hover and written after it.
+		const hover = ruleFor(hoverSelector);
+		for (const [selector, rule] of [[`${four}:focus-within`, focus], [`${four}.is-open`, open]] as const) {
+			assert.ok(compareSpecificity(specificityOf(selector), specificityOf(hoverSelector)) >= 0, selector);
+			assert.ok(rules.indexOf(rule) > rules.indexOf(hover), `${selector} comes after the hover`);
+		}
+	});
+
+	it("give a plain choice's hidden width-sizer the same room the control keeps around its text", () => {
+		// The sizer makes the trigger as wide as its longest option; it only
+		// works if it adds exactly the control's padding, gap and caret.
+		const sizer = rules.find((rule) => rule.selectors.includes(".cs-dropdown-width-sizer > span"));
+		assert.ok(sizer, "the sizer's span rule exists");
+		assert.ok(sizer.body.includes("var(--cs-dropdown-pad-start)"));
+		assert.ok(/calc\(var\(--cs-dropdown-gap\) \+ var\(--icon-xs\) \+ var\(--cs-dropdown-pad-end\)\)/.test(sizer.body.replace(/\s+/g, " ")));
+		// Both read the variables from the same rule, so they cannot drift.
+		const shared = ruleFor(".cs-dropdown-control");
+		assert.ok(shared.selectors.includes(".cs-dropdown-width-sizer"));
 	});
 
 	it("leave the inner combobox input transparent in every pointer and focus state", () => {

@@ -159,13 +159,11 @@ CTA on the row's outer edge - its right end under LTR, its left under RTL - the
 side every other section in the tab puts its primary button on.
 
 Colour is what separates them, not size. Add wears `.mod-cta`; **Discover
-now** wears `.cs-settings-neutral-btn`, the tab's grey secondary button. The
-class rather than a bare `<button>` for a mobile reason: there
-`--interactive-normal` resolves to `--background-secondary`, which *is* the
-settings pane, and `--input-shadow` is `none` - so Obsidian's plain grey button
-is the pane colour with nothing to separate it from the pane. The class's
-hairline border is what keeps it a button on a phone. (**Load more** is bare and
-does vanish there.)
+now** is Obsidian's own grey button, with no face of the plugin's (decision 14
+of the native-look plan). On a phone that grey (`--background-secondary`) is
+also the colour of the settings pane these rows sit on today, so the button
+reads flat there until the tab moves into Obsidian's setting boxes, which are
+white on a phone.
 
 Both take their height from `--input-height` - already 30px on desktop and 44px
 (`--touch-size-m`) on mobile - so they match **New palette** and every other
@@ -1544,41 +1542,34 @@ The focus ring on a click is deliberate. An earlier version of the plugin drew
 one thin edge for every engaged state so that a click changed nothing; Niv
 chose Obsidian's behaviour instead (decision 14, 2026-10-22).
 
-**Dropdowns still wear the plugin's face**, until they become Obsidian's
-combobox look in the next step of the plan. A dropdown control
-(`.cs-dropdown-control`, three classes) paints `--cs-btn-face` with a 1px
-`--cs-btn-border`, at the 36px minimum height, and never repaints that fill:
+**Dropdowns are drawn like Obsidian's combobox button.** Every trigger that
+opens a list (`.cs-dropdown-control`: the searchable pickers, the plain choices
+built on them, and the editor's Fold selector) keeps the plugin's own element,
+because it opens the plugin's list, but reads Obsidian's dropdown tokens and
+goes through Obsidian's states:
 
 | State | A dropdown control |
 | --- | --- |
-| Rest | `--cs-btn-face`, falling back to `--interactive-normal`; 1px `--cs-btn-border`; no shadow |
-| Pointer hover | **The fill does not change.** The 1px border steps to `--cs-field-border-hover` |
-| Focus, press, or an open list | **The same edge as hover**: no thicker border and no ring |
-| Disabled | No hover or press feedback; half opacity |
+| Rest | `--dropdown-background` (= `--interactive-normal`: white on Windows/Linux light, `#e4e4e4` on macOS light, `#333` in dark); no border; `--input-shadow`; `--input-height` |
+| Pointer hover (mouse only), and a press (`.mobile-tap`) | `--dropdown-background-hover` and `--input-shadow-hover` (on macOS both equal the resting ones, so nothing moves, as with Obsidian's own) |
+| Focus, also after a click | the 3px `--background-modifier-border-focus` ring |
+| Open | `--metadata-label-background-active` plus the ring, like Obsidian's open combobox (`.combobox-button.has-focus`) |
+| Disabled | half opacity |
 
-### A dropdown answers with its edge, not its fill
+The states form a small ladder in `styles.css`: rest (0,3,0), then hover and
+press (0,5,0), then focus and open (0,5,0) written after them, so hovering a
+focused or open control never hides its ring. Padding is Obsidian's combobox
+padding (8px before the text, 6px after the caret; 16px each side on mobile),
+kept in three variables (`--cs-dropdown-pad-start`, `--cs-dropdown-pad-end`,
+`--cs-dropdown-gap`) that the hidden width-sizer of a plain choice reads too,
+so a plain choice is always exactly as wide as its longest translated option
+plus the control's own room.
 
-The list that opens from a dropdown wears the control's own face
-([Dropdown popups wear their control's face](#dropdown-popups-wear-their-controls-face)),
-and a control that repainted itself would be a different grey from its own list
-whenever the pointer was on it. And in dark, and in macOS light, the resting
-border *is* the face's colour, so the control is a borderless grey slab at
-rest, which leaves the edge free to carry the state.
-
-`--cs-field-border-hover` is declared with the other `--cs-btn-*` tokens as
-`color-mix(in srgb, var(--background-modifier-border-focus) 60%, var(--background-modifier-border))`,
-which is not Obsidian's `--background-modifier-border-hover` because that is a
-step nobody sees on these faces. Measured against the real `app.css`, edge
-against face:
-
-| | rest → engaged edge | Obsidian's own hover border |
-| --- | --- | --- |
-| Dark (face `#333333`) | `#333333` → `#474747` (1.36:1) | `#3f3f3f`, 1.20:1 |
-| Light, macOS (face `#e4e4e4`) | `#e4e4e4` → `#cdcdcd` (1.25:1) | `#dadada`, 1.10:1 |
-| Light, Windows/Linux (face `#ffffff`) | `#e4e4e4` → `#cdcdcd` (1.59:1) | `#dadada`, 1.40:1 |
-
-Both ends of the `color-mix` are Obsidian's tokens, so a theme that moves either
-moves the edge with it.
+A plain choice (`.cs-select-dropdown`) is Obsidian's `select.dropdown` rather
+than a combobox, so in Obsidian's macOS settings window it follows the two
+tokens Obsidian sets there: `--dropdown-text-align` puts its text at the end,
+and `--dropdown-icon-background` sits its chevrons on a small dot. Everywhere
+else those are `start` and `transparent`.
 
 Searchable callout and color pickers are comboboxes: their outer
 `cs-dropdown-control` paints the box, and their inner `cs-combobox-input` stays
@@ -1597,11 +1588,10 @@ There are three cascade constraints:
   and the IDs field) keeps its red edge and 1px red ring, hovered or focused:
   `input.cs-input-invalid` with four classes is `(0,5,1)`, above Obsidian's
   `input[type='text']:focus` `(0,2,1)`.
-- **The dropdown edge is one colour.** Hover, focus, press and open all set the
-  same `border-color`, so they cannot undo one another. `.is-open` is part of
-  the engaged rule because a tap on a phone does not focus a `<button>` trigger
-  (the Fold selector), and Obsidian's press class, `.mobile-tap`, is listed
-  there too since a phone has no hover.
+- **A dropdown's ring wins over its hover.** Focus and open are at least as
+  specific as hover and come after it. `.is-open` draws the ring itself because
+  a tap on a phone does not focus a `<button>` trigger (the Fold selector), and
+  Obsidian's press class, `.mobile-tap`, stands in for hover on a phone.
 - **The Callout IDs field and its + cap stay one colour.** `cs-tag-add-slot`
   lies over the field's trailing edge and paints `--cs-tag-field-bg`, which the
   row declares as Obsidian's `--background-modifier-form-field` and moves to
@@ -1669,9 +1659,9 @@ beside the plugin's fields under the harness linked above, with body classes
 ### The one control that is not a field but focuses like one
 
 The **icon tile** in the callout editor (`.cs-icon-tile` - the 44px box that
-*is* the icon picker's button, with the ⓧ badge straddling its corner) is a box
-the user edits without typing into, so it answers the pointer as the form's
-dropdowns do ([see above](#a-dropdown-answers-with-its-edge-not-its-fill)): hover, `:focus-visible` and
+*is* the icon picker's button, with the ⓧ badge straddling its corner) stays
+as it was (decision 16 of the native-look plan): a box the user edits without
+typing into, it answers the pointer with one thin edge: hover, `:focus-visible` and
 press all set `border-color` to `--cs-field-border-hover` and `box-shadow: none`,
 and the fill never changes. (It used to take a 3px focus border and a
 `--background-modifier-hover` fill, which read as a darker box with a heavy
@@ -1744,15 +1734,22 @@ it already points, and back - 3.5 user units on a 24-unit viewBox drawn at
 
 ## How a secondary button paints
 
-The companion to the section above, and it went wrong the same way: four
-places each answering "what does a grey button look like" for themselves.
+**Obsidian paints the plain grey buttons.** A window's Cancel (a bare
+`<button>` in `.cs-modal-footer`), the settings tab's secondary buttons
+(Discover, Import, Export, Reset, and the two in Data management), Pick an
+icon's **Manage libraries** and the import window's Upload/Paste get no face,
+edge, hover or focus ring from the plugin: Obsidian's `button` rules draw them,
+so they look exactly like Obsidian's own buttons (decision 14 of the
+native-look plan). On macOS that is a flat grey (`#e4e4e4` light, `#333` dark)
+that does not change under the pointer, which is how Cancel looks in Obsidian's
+own dialogs there; on Windows and Linux it is white with Obsidian's hairline
+shadow and a small hover step.
 
-Everything that is not a call to action - the settings tab's
-`.cs-settings-neutral-btn` row (Discover, Import, Export, Reset, and the two in
-Data management), the bare `<button>`s a window's `.cs-modal-footer` carries
-(Cancel), and the two segmented rows, `.cs-border-side-btn`
-(All/Top/Right/Bottom/Left) and `.cs-gradient-dir-btn` - now reads one pair of
-tokens, declared once near the top of `styles.css`:
+**Two kinds still wear the plugin's shared grey face**, until they are rebuilt
+as Obsidian controls later in the plan: the two segmented rows,
+`.cs-border-side-btn` (All/Top/Right/Bottom/Left in the style windows) and
+`.cs-gradient-dir-btn` (the palette's gradient direction). They read one pair
+of tokens, declared once near the top of `styles.css`:
 
 ```css
 --cs-btn-face: var(--interactive-normal);
@@ -1764,10 +1761,10 @@ tokens, declared once near the top of `styles.css`:
 ```
 
 `--interactive-normal` is Obsidian's own button face - white
-(`--color-base-00`) in light on Windows and Linux, `#363636` (`--color-base-30`)
+(`--color-base-00`) in light on Windows and Linux, `#333333` (`--color-base-30`)
 in dark, and `#e4e4e4` on macOS, where `.mod-macos` points it at
-`--background-modifier-border` - so the resting look is unchanged and stays
-whatever a theme makes it.
+`--background-modifier-border` - so the resting look stays whatever a theme
+makes it. The list a dropdown opens also rests on `--cs-btn-face`, for now.
 
 ### Why the hover is a `color-mix` and not `--background-modifier-hover`
 
@@ -1841,15 +1838,15 @@ Two more consequences worth keeping:
   hover and was the one dead control in the row. A hovered selection steps
   within the accent (`--interactive-accent-hover`) so it can never be mistaken
   for an unselected segment.
-- **`box-shadow: none` must not eat the focus ring.** `:focus-visible` used to
-  be grouped in with `:hover` on the neutral buttons, and at (0,3,0) that
-  `box-shadow: none` beat Obsidian's (0,1,1) `button:focus-visible` - so six
-  buttons focused invisibly. Each now restates the ring itself, in the grey
-  described in [How an input field focuses](#how-an-input-field-focuses).
+- **`box-shadow: none` must not eat the focus ring.** A segment's own
+  `box-shadow: none` outranks Obsidian's (0,1,1) `button:focus-visible`, so
+  each segment restates the ring itself, in the grey described in
+  [How an input field focuses](#how-an-input-field-focuses).
 
-`tests/secondaryButtons.test.ts` pins all of it: the shared tokens, the four
-faces reading them, the specificity bar, the `.is-active`/`:hover` ordering,
-and the two tokens that must never come back to a button face.
+`tests/secondaryButtons.test.ts` pins all of it: that no rule paints the plain
+grey buttons, the shared tokens, the two faces reading them, the specificity
+bar, the `.is-active`/`:hover` ordering, and the two tokens that must never come
+back to a button face.
 
 > [!NOTE]
 > The overlay is still right for a **list row, an icon button or a chip** -
@@ -2207,9 +2204,10 @@ preset direction, an off-by-default "Gradient title text" toggle), or None
 for why this is the *only* route to a transparent palette).
 
 The palette card keeps **Name** and **Style** at the same control-column width.
-Name is a 36px text field; Style uses the nonsearchable `ListboxPopup` rather
-than a native `<select>`. Both use the shared field radius and the same
-hover/focus edge. The popup is destroyed when the modal closes.
+Name is Obsidian's own text field; Style uses the nonsearchable `ListboxPopup`
+rather than a native `<select>`, drawn like Obsidian's dropdown. Both are
+`--input-height` tall with Obsidian's field corners. The popup is destroyed when
+the modal closes.
 
 The preview renders on a **reserved demo id** (`PALETTE_DEMO_ID =
 "palette-demo"`), registered through the same registry preview slot the
@@ -2742,15 +2740,13 @@ reloaded would differ by a key that means nothing. See
 All list-selection triggers carry `cs-dropdown-control`: the shared callout,
 color, and language listboxes; plain selectors in commands, palettes, Quick
 Insert, the icon picker, and occurrences; and the custom icon-source and Fold
-selectors. They share a 36px minimum height (or `--input-height` when larger),
-6px by 10px padding, Obsidian's own
-[field corners](#field-corners-follow-obsidians-input-tokens), a 1px
-`--background-modifier-border`, and the same `chevrons-up-down` indicator.
-The face uses `--cs-btn-face` with `--interactive-normal` as its fallback,
-hover, focus, press, and the open state use `--cs-btn-face-hover`, and the
-resting control has no shadow. Text-entry fields share these surface states
-through `cs-text-control`; see [How an input field focuses](#how-an-input-field-focuses).
-Widths remain specific to each layout.
+selectors. They are drawn like Obsidian's combobox button - `--input-height`
+tall, Obsidian's combobox padding and
+[field corners](#field-corners-follow-obsidians-input-tokens), no border,
+`--input-shadow`, and the same `chevrons-up-down` indicator - with Obsidian's
+hover, focus and open states; see [How an input field focuses](#how-an-input-field-focuses).
+Text-entry fields are Obsidian's own fields. Widths remain specific to each
+layout.
 
 [`ui/dropdownControl.ts`](../../src/ui/dropdownControl.ts) exposes
 `appendDropdownCaret` for the inert, `aria-hidden` indicator. Both triggers and
@@ -2795,14 +2791,11 @@ field in the default dark theme, and square-shouldered beside a macOS
 `superellipse` corner. Now the popup and its control share fill, corners and
 outline:
 
-- **Fill.** The popup is defined as the expression the field itself rests on, and
-  the field never repaints it - it answers the pointer and focus with its edge
-  ([A dropdown answers with its edge, not its fill](#a-dropdown-answers-with-its-edge-not-its-fill)) -
-  so the two are one grey in every state, not just at the moment the list opens.
-  Tests pin both halves: the popup's face is the control's, and nothing but the
-  shared base paints a fill on a field. An earlier version wore the field's
-  lighter *hover* fill instead (`#434343` in dark); it read as too light for a
-  list and matched the field only while the field was hovered.
+- **Fill.** The popup rests on the same Obsidian grey as the control,
+  `--interactive-normal` (through `--cs-btn-face`). It reads that token rather
+  than the control's `--dropdown-background` because Obsidian turns the latter
+  transparent in its macOS settings window, and a list must stay opaque. While
+  the list is open the control itself takes Obsidian's open fill and ring.
 - **Corners.** `var(--textarea-radius, var(--input-radius, var(--radius-s)))`
   with `corner-shape: var(--input-corner-shape, round)`. A list is taller than a
   line, so it takes the radius Obsidian gives such a box: `--textarea-radius`

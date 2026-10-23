@@ -45,7 +45,6 @@ export function renderImportExportSection(
 					if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
 					new ImportSourceModal(ctx).open();
 				});
-			btn.buttonEl.addClass("cs-settings-neutral-btn");
 		});
 
 	new Setting(containerEl)
@@ -55,7 +54,6 @@ export function renderImportExportSection(
 		.addButton((btn) => {
 			btn.setButtonText(t("settings.export"))
 				.onClick(() => new ExportFormatModal(ctx).open());
-			btn.buttonEl.addClass("cs-settings-neutral-btn");
 		});
 
 	return importSetting.settingEl;
@@ -84,7 +82,6 @@ export function renderBackupSection(
 		.addButton((btn) => {
 			btn.setButtonText(t("settings.versionsButton"))
 				.onClick(() => new SettingsRecoveryModal(ctx.app, ctx.plugin).open());
-			btn.buttonEl.addClass("cs-settings-neutral-btn");
 		});
 	return earlierVersions.settingEl;
 }
@@ -105,7 +102,6 @@ export function renderResetSection(
 		.addButton((btn) => {
 			btn.setButtonText(t("portable.review"))
 				.onClick(() => { void openPortableConversionFromSettings(ctx.app); });
-			btn.buttonEl.addClass("cs-settings-neutral-btn");
 		});
 
 	new Setting(containerEl)

@@ -679,9 +679,9 @@ Material's webfont), so an open menu catches up.
 A text button, **Manage libraries** (`iconPicker.manageLibraries`), ends the
 source row and opens the **Manage icon libraries** window on top. It replaced a
 gear: it is where libraries are downloaded now, which an icon left people to
-guess. It wears the shared grey face (`--cs-btn-face`, held by
-`secondaryButtons.test.ts` like the window footer's Cancel) and the field
-rule's own height, so it stands level with the menu; its label never wraps, and
+guess. It is Obsidian's own grey button (no face of the plugin's, held by
+`secondaryButtons.test.ts` like the window footer's Cancel), `--input-height`
+tall like the library dropdown beside it; its label never wraps, and
 it has no `aria-label`, since its words name it and Obsidian would turn the
 attribute into a tooltip. The editor opens the
 picker as `new IconPicker(plugin, this.icon, { id: this.existingId, name })`:

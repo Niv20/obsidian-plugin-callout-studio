@@ -21,6 +21,5 @@ export function renderContextMenuSettingsSection(
 			btn.setButtonText(t("settings.customizeMenuButton")).onClick(() => {
 				new MenuCustomizationModal(ctx.app, ctx.plugin).open();
 			});
-			btn.buttonEl.addClass("cs-settings-neutral-btn");
 		});
 }

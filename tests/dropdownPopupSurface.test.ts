@@ -5,13 +5,11 @@
  * The two popups that open from a `cs-dropdown-control` (`.cs-combobox-menu`
  * and the Fold selector's `.cs-palette-menu`) were painted the window's colour
  * with a fixed 4px corner, so under a grey 8px field they read as a second
- * object stuck onto it. They now take the control's own face and Obsidian's
- * own input corners. What these tests pin is the *link*, not the colours: the
- * popup's face is literally the field's face, and that face is the same in every
- * state because a field never repaints its fill (it answers the pointer and
- * focus with its edge — see `inputPointerStability.test.ts`). The corners are
- * the same tokens the fields read, and every state that used to lean on the old
- * dark ground (selected rows, the sticky heading, the group divider, the colour
+ * object stuck onto it. They now rest on the same Obsidian grey as the
+ * control (`--interactive-normal`) and take Obsidian's own input corners. What
+ * these tests pin is the *link*, not the colours. The corners are the same
+ * tokens the fields read, and every state that used to lean on the old dark
+ * ground (selected rows, the sticky heading, the group divider, the colour
  * circles' cut-out ring, dimmed id text) is derived from the new face instead.
  *
  * Read from `styles.css` because the cascade itself is not observable here;
@@ -63,25 +61,16 @@ const FACE = "var(--cs-menu-face)";
 const DROPDOWN_BASE = ".cs-dropdown-control.cs-dropdown-control.cs-dropdown-control";
 
 describe("dropdown popups wear their control's face", () => {
-	it("are painted the control's own face, which no state of the control repaints", () => {
-		const restingFace = "var(--cs-btn-face, var(--interactive-normal))";
-		assert.strictEqual(valueOf(DROPDOWN_BASE, "background"), restingFace, "the control rests on the shared button face");
+	it("rest on the same Obsidian grey the control rests on", () => {
+		// The control is drawn like Obsidian's dropdown, on `--dropdown-background`,
+		// which is `--interactive-normal` everywhere except Obsidian's macOS
+		// settings window, where it turns transparent. A list must stay opaque,
+		// so it reads the opaque token itself, through `--cs-btn-face`.
+		assert.strictEqual(valueOf(DROPDOWN_BASE, "background-color"), "var(--dropdown-background, var(--interactive-normal))");
 		for (const popup of POPUPS) {
-			assert.strictEqual(valueOf(popup, "--cs-menu-face"), restingFace, `${popup} must define its face as the control's own`);
+			assert.strictEqual(valueOf(popup, "--cs-menu-face"), "var(--cs-btn-face, var(--interactive-normal))", popup);
 			assert.strictEqual(valueOf(popup, "background-color"), FACE, `${popup} must paint its face`);
 		}
-		// The two are the same grey in every state only while nothing repaints the
-		// control: a hover, focus or open fill on a field would open a gap between
-		// it and the list hanging from it. The shared base is the one and only rule
-		// that paints a fill on a field.
-		// (Text fields are not in this list any more: Obsidian's own input rule
-		// paints them, see tests/inputPointerStability.test.ts.)
-		const painters = rules.filter(
-			(rule) => rule.selectors.some((s) => /^\.cs-dropdown-control/.test(s))
-				&& (rule.decls.has("background") || rule.decls.has("background-color")),
-		);
-		assert.strictEqual(painters.length, 1, "only the shared base paints a field's fill");
-		assert.ok(painters[0]!.selectors.includes(DROPDOWN_BASE));
 	});
 
 	it("no longer paint the window's colour, which is what made them look like a second object", () => {

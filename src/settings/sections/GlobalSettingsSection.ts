@@ -67,7 +67,6 @@ export function renderGlobalSettingsSection(
 				btn
 					.setButtonText(t("settings.globalSettingsCustomize"))
 					.onClick(() => new GlobalStyleModal(ctx.plugin, role).open());
-				btn.buttonEl.addClass("cs-settings-neutral-btn");
 			});
 	}
 }

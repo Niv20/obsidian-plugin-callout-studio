@@ -22,19 +22,16 @@ export function addManualDiscoveryButton(
 		states.set(ctx.plugin, state);
 	}
 	const shared = state;
-	// The tab's grey button, a step below the accent CTA beside it — the same
-	// look **Load more** has, and the same class the other five secondary
-	// buttons in Settings already use.
+	// Obsidian's own grey button, a step below the accent CTA beside it, like
+	// every other secondary button in the tab (decision 14 of the native-look
+	// plan: Obsidian paints them, no face of the plugin's own).
 	//
-	// The class rather than a bare <button>, and the reason is mobile: there
-	// `--interactive-normal` resolves to `--background-secondary`, which IS the
-	// settings pane, so Obsidian's plain grey button is the pane colour with no
-	// shadow to separate it — invisible. `cs-settings-neutral-btn` adds the
-	// hairline border that keeps it a button on a phone. (Load more, one list
-	// below, is bare and does disappear there; that is its bug, not a pattern
-	// to copy.)
+	// On a phone that grey (`--background-secondary`) is also the colour of the
+	// settings pane these rows sit on today, so the button reads flat there
+	// until the tab moves into Obsidian's setting boxes (white on a phone), the
+	// way Obsidian's own buttons sit.
 	const button = controlEl.createEl("button", {
-		cls: "cs-settings-neutral-btn cs-discover-callouts-btn",
+		cls: "cs-discover-callouts-btn",
 		attr: { type: "button" },
 	});
 	setTooltip(button, t("settings.rescanVaultDesc"));

@@ -25,6 +25,5 @@ export function renderHotkeySection(
 			btn.setButtonText(t("settings.customCommandsButton")).onClick(() => {
 				new CommandBuilderModal(ctx.app, ctx.plugin).open();
 			});
-			btn.buttonEl.addClass("cs-settings-neutral-btn");
 		});
 }

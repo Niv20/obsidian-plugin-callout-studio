@@ -726,9 +726,9 @@ from Obsidian, and the other SVG libraries are fetched as described above.
 renders category and named variant filters through `SelectDropdown`, preserving
 its intrinsic option sizing and change-only callbacks. The emoji skin tone filter
 uses a selection-only `ListboxPopup` for its richer rows. Both share the same
-popup engine. The source picker uses the same 36px control,
-focus treatment and up/down chevron, so the toolbar reads as one family of
-fields. Material's three-filter toolbar puts search on its own row at any
+popup engine. The source picker, the filters and the search field are all
+`--input-height` tall, drawn as Obsidian's dropdowns and text field, so the
+toolbar reads as one family of controls. Material's three-filter toolbar puts search on its own row at any
 modal width, leaving the style, weight and category fields room to show their
 selected labels; the fields wrap when they cannot fit together. On wider screens,
 Tabler keeps search beside its two filters but gives it a smaller width so the

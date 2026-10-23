@@ -1,55 +1,33 @@
 /**
- * tests/secondaryButtons.test.ts — one face for every grey button.
+ * tests/secondaryButtons.test.ts — who paints the plugin's grey buttons.
  *
- * The plugin draws four kinds of non-CTA button: the settings tab's
- * `.cs-settings-neutral-btn` (Discover, Import, Export, Reset, Data
- * management), the bare `<button>`s in a window's `.cs-modal-footer`
- * (Cancel), and the two segmented rows — `.cs-border-side-btn`
- * (All/Top/Right/Bottom/Left) and `.cs-gradient-dir-btn`. They were styled
- * four different ways and behaved four different ways, and all four bugs came
- * from the same misreading of one token.
+ * Since decision 14 of the native-look plan, **Obsidian does**. A window's
+ * Cancel (a bare `<button>` in `.cs-modal-footer`), the settings tab's
+ * secondary buttons (Discover, Import, Export, Reset, …), Pick an icon's
+ * **Manage libraries** and the import window's Upload/Paste get no face, edge,
+ * hover or focus ring from the plugin: Obsidian's `button` rules draw them, so
+ * they look exactly like Obsidian's own buttons (on macOS that is a flat grey
+ * button with no hover step, as in Obsidian's own dialogs).
  *
- * **`--background-modifier-hover` is not a colour.** It is a translucent mono
- * overlay — `rgba(var(--mono-rgb-100), 0.067)`, black at 6.7% under
- * `.theme-light`, white at 6.7% under `.theme-dark`. Two consequences, both of
- * which shipped:
+ * Two kinds of button still wear the plugin's shared grey face, until they are
+ * rebuilt as Obsidian controls later in the plan: the two segmented rows,
+ * `.cs-border-side-btn` (the style windows' border sides) and
+ * `.cs-gradient-dir-btn` (the palette's gradient direction). Their face is a
+ * pair of tokens declared once, `--cs-btn-face` and `--cs-btn-face-hover`, the
+ * second mixed into the first with `--mono-rgb-100` for direction.
  *
- * - It composites against whatever is *behind* the button, not against the
- *   button's own fill. Discover rested on `--background-modifier-form-field`
- *   (`--color-base-25`, #2a2a2a) over a #1e1e1e pane and hovered to #2d2d2d —
- *   Δlum 0.3%, i.e. **no hover at all in dark mode**, while the identical rule
- *   in light mode moved #ffffff → #eeeeee and looked fine.
- * - It always moves *away* from the background, so its direction flips with the
- *   theme. The segmented rows rest on Obsidian's own `--interactive-normal`
- *   (#363636 in dark) but hovered to that overlay composited over the group box
- *   behind them (#1e1e1e) — landing at #2d2d2d, **darker than the button
- *   itself**. That is the "these get darker" report, and it is the same trap
- *   reached from the other side.
+ * **Why not `--background-modifier-hover` for that hover?** It is not a colour:
+ * it is a translucent mono overlay (black or white at 6.7%), so it composites
+ * against whatever is *behind* the button and flips direction with the theme.
+ * That shipped twice — a hover that did nothing in dark mode, and segments that
+ * got darker under the pointer.
  *
- * So the contract is a pair of tokens declared once, `--cs-btn-face` and
- * `--cs-btn-face-hover`, the second mixed into the first with `--mono-rgb-100`
- * for direction. Verified in headless Chrome against real `app.css`, both
- * themes, transitions disabled (Chrome reports a mid-transition colour in
- * `oklab`, which is how a first pass at that harness measured the *resting*
- * colour twice and called the fix broken):
- *
- *     light   #ffffff → #ebebeb   Δlum −16.9%
- *     dark    #363636 → #464646   Δlum  +2.4%
- *
- * identically for all four, while a native Obsidian button beside them still
- * moves #ffffff → #fafafa / #363636 → #3f3f3f, untouched.
- *
- * The other half of the contract is **specificity**, and it is the half that is
- * easy to lose. Obsidian paints every button from
+ * And **specificity**: Obsidian paints every button from
  * `button:not(.clickable-icon) { background-color: var(--interactive-normal) }`,
- * which is **(0,1,1)**. A single-class rule is (0,1,0) and simply does not get
- * the resting fill — which is why the `background: transparent` the border-side
- * buttons carried for their whole life never once took effect. Both segmented
- * rows double their class to clear it.
+ * which is (0,1,1). A single-class rule is (0,1,0) and never gets its fill, so
+ * both segmented rows double their class to clear it.
  *
- * This file is arithmetic over the stylesheet, not a rendering test; it cannot
- * see the cascade run. What it can do is stop the four from drifting apart
- * again, which is the thing that actually happened.
+ * This file is arithmetic over the stylesheet, not a rendering test.
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
@@ -106,24 +84,11 @@ const find = (selector: string): Rule | undefined =>
 	rules.find((r) => r.selector.replace(/\s+/g, " ") === selector);
 
 /**
- * The faces, by the selector that owns each one's resting fill: the four above,
- * and the fifth that came later — Pick an icon's **Manage libraries**, which
- * replaced a gear. Kept as a literal list rather than discovered by pattern: a
- * new grey button appearing without an entry here is exactly the drift this
- * file exists to catch, and a pattern would silently adopt it.
+ * The buttons that still wear the shared face, by the selector that owns each
+ * one's resting fill. A literal list on purpose: a new grey button that paints
+ * itself should have to be added here by hand, with a reason.
  */
 const FACES = [
-	{
-		label: "settings tab (Discover, Import, Export, Reset, …)",
-		base: ".callout-studio-settings .cs-settings-neutral-btn",
-		hover: ".callout-studio-settings .cs-settings-neutral-btn:hover:not(:disabled)",
-	},
-	{
-		label: "window footer (Cancel)",
-		base: ".cs-modal > .cs-modal-footer button:not(.mod-cta, .mod-destructive)",
-		hover:
-			".cs-modal > .cs-modal-footer button:not(.mod-cta, .mod-destructive):not( :disabled, .cs-btn-disabled ):hover",
-	},
 	{
 		label: "segmented: border sides",
 		base: ".cs-border-side-btn.cs-border-side-btn",
@@ -134,12 +99,33 @@ const FACES = [
 		base: ".cs-gradient-dir-btn.cs-gradient-dir-btn",
 		hover: ".cs-gradient-dir-btn:hover",
 	},
-	{
-		label: "Pick an icon's Manage libraries",
-		base: ".icon-picker-source-row button.icon-picker-manage-libraries",
-		hover: ".icon-picker-source-row button.icon-picker-manage-libraries:hover",
-	},
 ];
+
+/**
+ * Selectors of grey buttons that Obsidian paints. None of them may appear in a
+ * rule that sets a face, an edge or a shadow.
+ */
+const NATIVE_BUTTONS = [
+	".cs-modal > .cs-modal-footer button",
+	".icon-picker-manage-libraries",
+	".cs-import-action",
+];
+
+describe("Obsidian paints the plain grey buttons", () => {
+	it("no rule of the plugin's gives them a face, an edge or a shadow", () => {
+		const painted = rules.filter(
+			(r) => NATIVE_BUTTONS.some((b) => r.selector.replace(/\s+/g, " ").includes(b))
+				&& /(?:^|;)\s*(background(?:-color)?|border(?:-color)?|box-shadow)\s*:/.test(r.declarations),
+		);
+		assert.deepStrictEqual(painted.map((r) => r.selector.replace(/\s+/g, " ")), []);
+	});
+
+	it("the settings tab's secondary buttons carry no class of the plugin's to paint", () => {
+		// They used to wear `.cs-settings-neutral-btn`; it is gone from both
+		// sides, so a future rule cannot quietly bring the old face back.
+		assert.ok(!css.includes("cs-settings-neutral-btn"));
+	});
+});
 
 describe("every grey button wears the shared face", () => {
 	for (const face of FACES) {

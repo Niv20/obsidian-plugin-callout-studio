@@ -303,7 +303,7 @@
    the tab.
 
    All three, deliberately. What separates them is colour, not size — Add and
-   New palette wear `.mod-cta`, Discover wears `.cs-settings-neutral-btn` — and
+   New palette wear `.mod-cta`, Discover is a plain Obsidian button — and
    nothing here should be what makes them different heights.
 
    Scoped to `.cs-subheader-row` rather than to the callout-list heading alone,
@@ -1044,42 +1044,6 @@ body:not(.is-phone)
 .callout-studio-settings .cs-subheader-row .setting-item-info {
 	margin-bottom: 0;
 	padding-bottom: 0;
-}
-
-/* The tab's grey buttons — Discover, Import, Export, Reset, and the two in
-   Data management. `--background-modifier-form-field` used to sit here, and it
-   is an *input* token: `--color-base-25` in dark, which is both darker than a
-   button ought to be and, fatally, the colour the old hover composited to. See
-   the token block at the top of this file for the arithmetic.
-
-   `box-shadow: none` stays — it suppresses the button shadow themes hang on
-   `--input-shadow` — but it is no longer allowed to swallow the focus ring,
-   which is what grouping `:focus-visible` in with `:hover` used to do. This
-   selector is (0,3,0) against Obsidian's own (0,1,1) `button:focus-visible`,
-   so `box-shadow: none` beat it and these six buttons focused invisibly. They
-   now restate the ring themselves, in the grey the rest of the plugin uses. */
-.callout-studio-settings .cs-settings-neutral-btn {
-	background-color: var(--cs-btn-face, var(--interactive-normal));
-	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
-	color: var(--text-normal);
-	box-shadow: none;
-}
-
-/* `@media (hover: hover)` mirrors how Obsidian guards its own `button:hover`,
-   and keeps a tapped button on a phone from staying lit until the next tap.
-   `:not(:disabled)` because Discover disables itself for the length of a scan
-   and a disabled control must not answer the pointer. */
-@media (hover: hover) {
-	.callout-studio-settings .cs-settings-neutral-btn:hover:not(:disabled) {
-		background-color: var(--cs-btn-face-hover, var(--interactive-hover));
-		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
-		color: var(--text-normal);
-		box-shadow: none;
-	}
-}
-
-.callout-studio-settings .cs-settings-neutral-btn:focus-visible {
-	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
 }
 
 /* Obsidian centers a setting row's control by default, but several themes
@@ -1914,11 +1878,10 @@ body:not(.is-phone)
 
 /* ── Hover, press and focus ──
 
-   The tile is a box the user edits without typing into, so it answers the
-   pointer the way the form's dropdowns do: the 1px border recolours to
-   `--cs-field-border-hover` — the one thin edge a dropdown draws whenever it is
-   engaged (see `.cs-dropdown-control`) — with no thicker border, no ring and no
-   change of fill. Hover, keyboard focus and press all draw that same edge.
+   The tile is a box the user edits without typing into, and it keeps its own
+   look (decision 16 of the native-look plan): the 1px border recolours to
+   `--cs-field-border-hover`, one thin edge, with no thicker border, no ring and
+   no change of fill. Hover, keyboard focus and press all draw that same edge.
 
    ── Why the box needs four classes ──
 
@@ -2632,56 +2595,14 @@ body:not(.is-phone)
 	font-size: var(--font-ui-small);
 }
 
-/* Cancel, and every other neutral action a window's footer carries. These are
-   built as bare `<button>`s — no class — so until now they fell straight
-   through to `app.css` and hovered `--interactive-normal` → `--interactive-hover`,
-   which in light mode is #ffffff → #fafafa: a 4.4% luminance step that reads as
-   nothing happening. That is the "Cancel does not change on hover" report, and
-   it is the same family of bug as Discover's, reached from the opposite side.
+/* Cancel, and every other neutral action a window's footer carries, is a bare
+   `<button>` that Obsidian paints itself: `--interactive-normal`, its hover
+   step and its focus ring, exactly as Cancel looks in Obsidian's own dialogs
+   (decision 14 of the native-look plan). On macOS that is a flat grey button
+   that does not change under the pointer, which is how Obsidian's are there.
 
-   Giving them the shared face rather than a class of their own keeps the
-   call sites bare — there is no `cs-` class to remember to add to the next
-   window's Cancel, and none of the five that exist today had to change.
-
-   The `:not()` is a **list**, so its specificity is that of its most specific
-   argument (0,1,0) rather than the sum of both — the selector stays (0,3,1),
-   enough to outrank Obsidian's (0,1,1) `button:hover` without `!important`.
-   It carves out the coloured variants, which keep Obsidian's own faces and
-   hovers: `.mod-cta` (Save, Confirm) and `.mod-destructive` (Delete, Replace —
-   always `mod-destructive mod-cta`, see ui/destructiveButton.ts).
-
-   Scoped `.cs-modal > .cs-modal-footer` — the bar `applyModalChrome()` builds
-   — so this cannot reach a button in a core Obsidian dialog, or even one in
-   the body of our own windows. */
-.cs-modal
-	> .cs-modal-footer
-	button:not(.mod-cta, .mod-destructive) {
-	background-color: var(--cs-btn-face, var(--interactive-normal));
-	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
-	color: var(--text-normal);
-	box-shadow: none;
-}
-
-@media (hover: hover) {
-	.cs-modal
-		> .cs-modal-footer
-		button:not(.mod-cta, .mod-destructive):not(
-			:disabled,
-			.cs-btn-disabled
-		):hover {
-		background-color: var(--cs-btn-face-hover, var(--interactive-hover));
-		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
-		color: var(--text-normal);
-		box-shadow: none;
-	}
-}
-
-.cs-modal
-	> .cs-modal-footer
-	button:not(.mod-cta, .mod-destructive):focus-visible {
-	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
-}
-
+   A main button that cannot act yet is dimmed rather than disabled (see
+   ui/blockedButton.ts), so a press can say why. */
 .cs-modal > .cs-modal-footer button.cs-btn-disabled {
 	opacity: 0.4;
 	cursor: not-allowed;
@@ -3020,13 +2941,15 @@ body:not(.is-phone)
 /* The IDs control is taller than its text field once chips wrap underneath it.
    Obsidian normally centres an ExtraButton against that whole column, which
    makes the reset arrow drift downward as aliases are added. Pin it to the top
-   and centre its 24px box inside the field's 36px first row instead. */
+   and centre its 24px box inside the field's first row instead: the field is
+   Obsidian's own, `--input-height` tall (30px on the desktop), so the offset is
+   half of what is left over, and never less than nothing. */
 .callout-studio-editor
 	.cs-callout-ids-setting
 	.setting-item-control
 	> .extra-setting-button {
 	align-self: flex-start;
-	margin-block-start: 6px;
+	margin-block-start: max(0px, calc((var(--input-height) - 24px) / 2));
 }
 
 /* `width: auto` + `flex: 1` rather than a width of its own: whatever the column
@@ -3674,77 +3597,113 @@ body:not(.is-phone)
 	min-width: 0;
 }
 
-/* Selection controls share one face and geometry. Explicit opt-in leaves action
-   buttons and the combobox's inner input alone. Repeated classes beat
-   Obsidian's native select/button chrome.
+/* ── Dropdown controls: Obsidian's combobox button ─────────────────────────
+   Every trigger that opens a list — the searchable pickers (`ListboxPopup`),
+   the plain choices built on them (`SelectDropdown`) and the editor's Fold
+   selector — is marked `.cs-dropdown-control`, and this block draws it the way
+   Obsidian draws its own `.combobox-button`: the same tokens, read the same
+   way, so it matches Obsidian's dropdowns on every platform and under every
+   theme (decision 14 of the native-look plan):
 
-   Standalone text fields (`.cs-text-control`) are not painted here any more:
-   Obsidian's own `input[type='text']` and `textarea` rules draw them — white
-   (or the theme's field colour), Obsidian's height, padding and corners, a
-   darker edge under the pointer, and on focus the focus-coloured edge plus a
-   2px ring, after a click too (decision 14 of the native-look plan). The class
-   stays as the hook that per-screen rules (width, the IDs field's "+" cap, the
-   paste box) hang off.
+       height       --input-height            30px desktop, 44px on mobile
+       face         --dropdown-background     --interactive-normal: white on
+                                              Windows/Linux light, #e4e4e4 on
+                                              macOS light, #333 in dark
+       edge         --input-shadow            an inset hairline; none on macOS
+                                              and mobile, where the face alone
+                                              shows the control
+       corners      --input-radius            5px, 8px superellipse on macOS,
+                    --input-corner-shape      a pill on mobile
 
-   The corners are Obsidian's own, not ours: `--input-radius` and
-   `--input-corner-shape` are what its `input`, `select` and `.dropdown` rules
-   read, and they are not constants. They are 5px / round by default, 8px /
-   superellipse on macOS (`.mod-macos`), and pill-sized on mobile
-   (`.is-mobile`), and a theme may set either one. A fixed `--radius-s` (4px)
-   and `round` here drew these fields tighter than the `button` beside them on
-   every platform. `--button-radius` is `var(--input-radius)` unless a theme
-   splits them, so following the input token keeps fields level with buttons in
-   the default case. */
-.cs-dropdown-control.cs-dropdown-control.cs-dropdown-control {
-	height: auto;
-	min-height: max(36px, var(--input-height));
-	box-sizing: border-box;
-	padding: 6px 10px;
-	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
-	border-radius: var(--input-radius, var(--radius-s));
-	corner-shape: var(--input-corner-shape, round);
-	background: var(--cs-btn-face, var(--interactive-normal));
-	color: var(--text-normal);
-	box-shadow: none;
-	font-family: inherit;
-	font-size: var(--font-ui-small);
-	font-weight: var(--font-normal);
-	line-height: var(--line-height-tight);
-	text-align: start;
+   Standalone text fields are not painted here: Obsidian's own
+   `input[type='text']` and `textarea` rules draw them (see `.cs-text-control`
+   uses further down).
+
+   ── The state ladder ──
+   Obsidian's states, each a little more specific than the one before, so the
+   stronger state always wins when two apply at once (hovering an open list):
+
+       (0,3,0)  rest
+       (0,5,0)  hover (mouse only) and a press (`.mobile-tap`): the hover face
+                and shadow
+       (0,5,0)  focus, written after hover so it wins the tie: the 3px focus
+                ring — after a mouse click too, as Obsidian's text fields do
+       (0,5,0)  open, after both: Obsidian's open-combobox fill
+                (`--metadata-label-background-active`) plus the ring
+
+   The repeated classes are only there to climb past Obsidian's own
+   `button`/`input` rules, which would otherwise paint these controls.
+
+   ── Padding ──
+   Kept in three variables so the hidden width-sizer of a plain choice (below)
+   can add up exactly the same room as the control around its text. Obsidian's
+   combobox padding is 8px before the text and 6px after the caret, 16px each
+   side on mobile. */
+.cs-dropdown-control,
+.cs-dropdown-width-sizer {
+	--cs-dropdown-pad-start: var(--size-4-2);
+	--cs-dropdown-pad-end: var(--size-2-3);
+	--cs-dropdown-gap: var(--size-2-2);
+}
+
+.is-mobile .cs-dropdown-control,
+.is-mobile .cs-dropdown-width-sizer {
+	--cs-dropdown-pad-start: var(--size-4-4);
+	--cs-dropdown-pad-end: var(--size-4-4);
 }
 
 .cs-dropdown-control.cs-dropdown-control.cs-dropdown-control {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: var(--cs-dropdown-gap);
+	box-sizing: border-box;
+	height: var(--input-height);
+	min-height: var(--input-height);
+	padding-block: 0;
+	padding-inline: var(--cs-dropdown-pad-start) var(--cs-dropdown-pad-end);
+	border: 0;
+	border-radius: var(--input-radius, var(--radius-s));
+	corner-shape: var(--input-corner-shape, round);
+	background-color: var(--dropdown-background, var(--interactive-normal));
+	box-shadow: var(--input-shadow);
+	color: var(--text-normal);
+	font-family: inherit;
+	font-size: var(--font-ui-small);
+	font-weight: var(--input-font-weight, var(--font-normal));
+	line-height: var(--line-height-tight);
+	text-align: start;
 	cursor: pointer;
 }
 
-/* A dropdown never repaints its fill, and it has one answer for being engaged:
-   the thin edge `--cs-field-border-hover`. Hovering draws it; so do focus, a
-   press and an open list, with no thicker border and no ring — the edge does
-   not change when a hovered dropdown is clicked. Buttons are the ones that
-   change fill on hover.
-
-   Because the list that opens from a dropdown wears the field's own face and
-   the same edge, the two read as one object in every state (see "Dropdown
-   popups wear their control's face").
-
-   All of these set the same colour, so none can undo another and there is no
-   specificity to manage between hover and focus. `.is-open` is listed because
-   a tap on a phone does not focus a `<button>` trigger (the Fold selector), and
-   `.mobile-tap` is Obsidian's press class, there being no hover on a phone. */
+/* Hover only where there is a real pointer: on a phone a tap would leave the
+   control lit. `.mobile-tap` is Obsidian's own press class, its stand-in for
+   hover on touch. On macOS both tokens equal the resting ones, so nothing
+   moves there — exactly as Obsidian's own dropdowns behave on a Mac. */
 @media (hover: hover) {
 	.cs-dropdown-control.cs-dropdown-control:not(:disabled):not(.cs-dropdown-disabled):hover {
-		border-color: var(--cs-field-border-hover, var(--background-modifier-border-hover));
+		background-color: var(--dropdown-background-hover, var(--interactive-hover));
+		box-shadow: var(--input-shadow-hover);
 	}
 }
 
-.cs-dropdown-control.cs-dropdown-control.cs-dropdown-control:focus-within,
-.cs-dropdown-control.cs-dropdown-control.cs-dropdown-control.is-open,
 .cs-dropdown-control.cs-dropdown-control.mobile-tap:not(:disabled):not(.cs-dropdown-disabled) {
-	border-color: var(--cs-field-border-hover, var(--background-modifier-border-hover));
-	box-shadow: none;
+	background-color: var(--dropdown-background-hover, var(--interactive-hover));
+	box-shadow: var(--input-shadow-hover);
+}
+
+/* Focus: the ring Obsidian draws around a focused dropdown. The focused element
+   is the input inside the control, hence `:focus-within` on the control. */
+.cs-dropdown-control.cs-dropdown-control.cs-dropdown-control.cs-dropdown-control:focus-within {
+	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
+	outline: none;
+}
+
+/* Open: Obsidian's open combobox (`.combobox-button.has-focus`) — a slightly
+   stronger fill and the focus ring. `.is-open` rather than focus alone, because
+   a tap on a phone does not focus a `<button>` trigger (the Fold selector). */
+.cs-dropdown-control.cs-dropdown-control.cs-dropdown-control.cs-dropdown-control.is-open {
+	background-color: var(--metadata-label-background-active);
+	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
 	outline: none;
 }
 
@@ -3774,7 +3733,11 @@ body:not(.is-phone)
 
 .cs-dropdown-width-sizer > span {
 	grid-area: 1 / 1;
-	padding-inline: 11px calc(19px + var(--icon-xs));
+	/* The control's own room around its text: padding before it, then the gap,
+	   the caret and the padding after it — the same variables the control
+	   reads, so a longer translation widens both alike. */
+	padding-inline: var(--cs-dropdown-pad-start)
+		calc(var(--cs-dropdown-gap) + var(--icon-xs) + var(--cs-dropdown-pad-end));
 	white-space: nowrap;
 }
 
@@ -3785,6 +3748,20 @@ body:not(.is-phone)
 .cs-select-dropdown .cs-combobox-input {
 	width: 0;
 	text-overflow: ellipsis;
+}
+
+/* A plain choice is Obsidian's `select.dropdown`, not a combobox: in Obsidian's
+   macOS settings window that turns transparent, puts its text at the end and
+   sits its chevrons on a small dot (`--dropdown-text-align` and
+   `--dropdown-icon-background`, both set there by Obsidian; elsewhere they are
+   `start` and `transparent`, so nothing changes). One class more than the base
+   rule for this input (further down), so it wins wherever it sits. */
+.cs-select-dropdown .cs-combobox-control input[type="text"].cs-combobox-input {
+	text-align: var(--dropdown-text-align, start);
+}
+
+.cs-select-dropdown .cs-dropdown-caret {
+	background-image: radial-gradient(ellipse, var(--dropdown-icon-background, transparent) 48%, transparent 50%);
 }
 
 .setting-item-control > .cs-select-dropdown {
@@ -4219,37 +4196,13 @@ body:not(.is-phone)
 }
 
 /* Opens Manage icon libraries. Words rather than a gear, so what it does is
-   read, not guessed. It is a grey button like the window's own Cancel, so it
-   wears the shared face (see the window footer's rule), and it stands exactly
-   as tall as the menu beside it — the field rule's own height. Its label never
-   wraps; on a row too narrow for it and a library's name, it moves to a line
-   of its own (see the menu's rule above). */
+   read, not guessed. It is Obsidian's own grey button, like the window's
+   Cancel, and it stands as tall as the library dropdown beside it because both
+   are `--input-height`. Its label never wraps; on a row too narrow for it and a
+   library's name, it moves to a line of its own (see the menu's rule above). */
 .icon-picker-source-row button.icon-picker-manage-libraries {
 	flex: 1 0 auto;
-	height: auto;
-	min-height: max(36px, var(--input-height));
-	padding: 6px 12px;
-	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
-	background-color: var(--cs-btn-face, var(--interactive-normal));
-	box-shadow: none;
-	color: var(--text-normal);
-	font-size: var(--font-ui-small);
 	white-space: nowrap;
-}
-
-@media (hover: hover) {
-	.icon-picker-source-row button.icon-picker-manage-libraries:hover {
-		background-color: var(--cs-btn-face-hover, var(--interactive-hover));
-		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
-		color: var(--text-normal);
-		box-shadow: none;
-	}
-}
-
-/* `box-shadow: none` above outranks Obsidian's own focus ring, so it is put
-   back, as the window footer does for Cancel. */
-.icon-picker-source-row button.icon-picker-manage-libraries:focus-visible {
-	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
 }
 
 .icon-picker-source-menu-item {
@@ -4442,12 +4395,11 @@ body:not(.is-phone)
 	flex-wrap: wrap;
 }
 
+/* Size and padding are Obsidian's own field's (`--input-height`), the same
+   height as the dropdowns beside it, so the toolbar stays one even row. */
 .icon-picker-toolbar .icon-picker-search-input {
 	flex: 1 1 140px;
 	min-width: 120px;
-	height: 36px;
-	box-sizing: border-box;
-	padding: 6px 10px;
 }
 
 .icon-picker-filter {
@@ -5495,9 +5447,9 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	flex: 1 1 auto;
 }
 
-/* A fatter tap target on touch, which the field's 36px min-height (34px inside
-   its border) has room for. The field's trailing padding is derived from this,
-   so it widens to match on its own. */
+/* A fatter tap target on touch, which the field's 44px touch height has room
+   for. The field's trailing padding is derived from this, so it widens to match
+   on its own. */
 .is-phone .cs-tag-input-row,
 .is-tablet .cs-tag-input-row {
 	--cs-tag-add-size: 34px;
@@ -6698,43 +6650,12 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	margin-inline-start: auto;
 }
 /* A card's own button — Upload, which reads Replace once a file is staged, and
-   Paste: a standard button at the card's trailing edge, never squeezed by a
-   long file name. It wears the shared neutral face and border, as a footer's
-   Cancel does, rather than falling through to `app.css`: on a phone Obsidian's
-   own button face is the card's colour, and the border is what keeps it a
-   button there. */
+   Paste: Obsidian's own button at the card's trailing edge, never squeezed by a
+   long file name. On a phone Obsidian's button face (`--background-secondary`)
+   already differs from the card's (Obsidian's box colour), so it reads as a
+   button there without an outline of its own. */
 .cs-option-box .cs-import-action {
 	flex-shrink: 0;
-	background-color: var(--cs-btn-face, var(--interactive-normal));
-	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
-	color: var(--text-normal);
-	box-shadow: none;
-}
-@media (hover: hover) {
-	.cs-option-box .cs-import-action:hover {
-		background-color: var(--cs-btn-face-hover, var(--interactive-hover));
-		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
-	}
-}
-.cs-option-box .cs-import-action:focus-visible {
-	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
-}
-/* Under the pointer on the card but not on its button, the card steps toward
-   the text colour (see `.cs-option-box.is-choosable:hover`) — which is the
-   very step the button's own face is made of, so the two read as one grey.
-   The button steps the other way, toward the window's own colour, so it keeps
-   standing out of the card; whichever direction the card moved, that one is
-   the opposite. Over the button itself it answers with its usual hover. */
-@media (hover: hover) {
-	.cs-option-box[tabindex="0"]:hover .cs-import-action:not(:hover),
-	.cs-option-box.is-choosable:hover .cs-import-action:not(:hover) {
-		background-color: color-mix(
-			in srgb,
-			var(--cs-btn-face, var(--interactive-normal)) 45%,
-			var(--cs-surface, var(--background-primary))
-		);
-		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
-	}
 }
 
 /* A plain text box of one fixed height, across the paste card's full width: it
