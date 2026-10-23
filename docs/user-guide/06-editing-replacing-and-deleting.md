@@ -2,7 +2,7 @@
 
 Changes to a callout's color, icon, name, or IDs take effect everywhere the callout appears. Your notes themselves change only when you say so: if saving would change something they hold, Callout Studio asks first. See [Remove, rename or move an ID](#remove-rename-or-move-an-id).
 
-A callout's three-dot menu groups its actions, with a line between groups:
+A callout's three-dot menu groups its actions, with a line between groups. It opens under the three-dot button, like **More options** on Obsidian's own plugin list, and pressing the button again closes it. Right-clicking anywhere on a callout row opens the same menu where you clicked.
 
 1. **Find callouts**, with the number of uses.
 2. **Replace in vault…** and **Convert uses to plain text**, which change your notes.

@@ -149,15 +149,15 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 								targetIsBuiltIn,
 							);
 						},
-						onOpenBuiltInMenu: (event, targetDef) => {
+						onOpenBuiltInMenu: (trigger, targetDef) => {
 							void openBuiltInRowMenu(
 								sectionCtx,
-								event,
+								trigger,
 								targetDef,
 							);
 						},
-						onOpenUserMenu: (event, targetDef) => {
-							void openRowMenu(sectionCtx, event, targetDef);
+						onOpenUserMenu: (trigger, targetDef) => {
+							void openRowMenu(sectionCtx, trigger, targetDef);
 						},
 					},
 				);

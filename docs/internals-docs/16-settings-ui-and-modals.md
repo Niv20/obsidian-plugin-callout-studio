@@ -621,9 +621,27 @@ removed or regrouped once the menu is shown.
 ### Callout row menu lifetime
 
 Custom, built-in and theme row actions all use
-`settings/sections/calloutRowMenu.ts`. `openCalloutRowMenu` captures the trigger
-and its owner document/window synchronously, before `prepareUsageMenu` can await
-the usage index. One temporary `Component` owns both the pending opening and
+`settings/sections/calloutRowMenu.ts`. `openCalloutRowMenu(ctx, trigger, build)`
+takes a `RowMenuTrigger`, which says how the menu was asked for and so where it
+opens (findings S2-11, S2-12):
+
+- **`{ kind: "button", button }`** - the row's ⋮ was pressed (mouse, Enter or
+  Space). The menu opens as Obsidian opens **More options** in Installed
+  plugins: `menu.setParentElement(button).showAtPosition({ x: rect.x, y:
+  rect.bottom, width: rect.width, overlap: true, left: true })`. Obsidian then
+  marks the button `has-active-menu` (the pressed look of a `.clickable-icon`)
+  while the menu is open, and ignores a press on it as a click outside. So a
+  second press is a toggle: the opener sees `has-active-menu` and returns, and
+  Obsidian's own click handling closes the menu. Without `setParentElement` the
+  press closed the menu and the click opened a new one, a visible flicker.
+- **`{ kind: "pointer", row, x, y }`** - the row was right-clicked
+  (`contextmenu` on `.callout-studio-row`, with `preventDefault`). The menu opens
+  at the pointer with `showAtPosition({ x, y })`, as on Obsidian's Community
+  plugins rows, and has no parent element.
+
+The opener captures the anchor (the button or the row) and its owner
+document/window synchronously, before `prepareUsageMenu(app, anchor, …)` can
+await the usage index. One temporary `Component` owns both the pending opening and
 the visible menu. A newer row-menu request closes the previous one for that app;
 Settings hide/redraw also disposes it.
 
@@ -651,7 +669,7 @@ skipped once the sheet was shown, so a sheet still waiting for its counts could
 be cancelled by the keyboard closing under it.
 
 Window blur cancels a pending opening and closes a desktop or tablet popup, but
-not a phone sheet once `showAtMouseEvent` has begun. The phone branch of
+not a phone sheet once `showAtPosition` has begun. The phone branch of
 Obsidian's `Menu.showAtPosition` calls Capacitor's `Keyboard.hide()` (only when
 `Platform.isMobileApp`). On iOS that ends editing in the web view, the web view
 gives up first responder, and WebKit blurs the window while the sheet is still
@@ -663,7 +681,7 @@ disposal and a newer menu request still close the sheet.
 
 Cleanup is idempotent and immediate on explicit dismissal. Obsidian's `Menu`
 unloads its old component lifetime while showing, so the unload cleanup is
-registered **after** `showAtMouseEvent`. `ui/menuOnHide.ts` also composes cleanup
+registered **after** `showAtPosition`. `ui/menuOnHide.ts` also composes cleanup
 with the usage item's index unsubscribe: Obsidian's public `onHide` setter
 replaces its callback rather than adding one. That callback covers dismissal
 before the menu's deferred component load; the unload hook handles normal

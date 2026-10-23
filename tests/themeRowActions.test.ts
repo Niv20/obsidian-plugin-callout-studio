@@ -144,6 +144,35 @@ describe("a theme row is not editable", () => {
 		assert.strictEqual(edited, true, "the pencil really opens the editor");
 	});
 
+	it("opens a row's menu from its ⋮ under the button, and from a right-click at the pointer", async () => {
+		// A right-click anywhere on a callout row opens the same menu as its ⋮,
+		// as on Obsidian's Community plugins rows (finding S2-12).
+		const { renderCalloutRow } = await import(
+			"../src/settings/sections/CalloutRowRenderer"
+		);
+		const registry = vaultWithThemeRow({ source: "user" });
+		const { ctx } = fakeCtx(registry, []);
+		const host = createDiv();
+		const opened: Array<{ kind: string; x?: number; y?: number }> = [];
+		renderCalloutRow(ctx, host, registry.get("recite")!, "user", {
+			onEdit: () => {},
+			onOpenBuiltInMenu: () => assert.fail("a user row opens the user menu"),
+			onOpenUserMenu: (trigger) => {
+				opened.push(trigger.kind === "pointer"
+					? { kind: trigger.kind, x: trigger.x, y: trigger.y }
+					: { kind: trigger.kind });
+			},
+		});
+		host.querySelector<HTMLElement>(".callout-studio-more-btn")!
+			.dispatchEvent({ type: "click" } as unknown as Event);
+		let prevented = false;
+		host.querySelector<HTMLElement>(".callout-studio-row")!.dispatchEvent({
+			type: "contextmenu", clientX: 40, clientY: 12, preventDefault: () => { prevented = true; },
+		} as unknown as Event);
+		assert.deepStrictEqual(opened, [{ kind: "button" }, { kind: "pointer", x: 40, y: 12 }]);
+		assert.strictEqual(prevented, true, "the browser's own menu stays away");
+	});
+
 	it("shows the theme's colours, never the ones stored on the row", async () => {
 		// The row carries #336699. Nothing paints it while the theme owns the
 		// id, so a swatch showing it would name a colour that is not on screen.

@@ -25,7 +25,7 @@ import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
 import { addConvertUsesItem, addReplaceItem } from "./rowOwnership";
 import { addUsageMenuItem } from "../../usage/usageMenuItem";
-import { openCalloutRowMenu } from "./calloutRowMenu";
+import { openCalloutRowMenu, type RowMenuTrigger } from "./calloutRowMenu";
 import { ThemeCalloutPreviewModal } from "../ThemeCalloutPreviewModal";
 import { addDuplicateItem } from "./duplicateCallout";
 
@@ -61,10 +61,10 @@ function addRowButton(
  */
 export async function openThemeRowMenu(
 	ctx: SettingsSectionContext,
-	event: MouseEvent,
+	trigger: RowMenuTrigger,
 	def: CalloutDefinition,
 ): Promise<void> {
-	return openCalloutRowMenu(ctx, event, (menu) => buildThemeRowMenu(menu, ctx, def));
+	return openCalloutRowMenu(ctx, trigger, (menu) => buildThemeRowMenu(menu, ctx, def));
 }
 
 /** Find callouts ‖ Replace · Convert ‖ Duplicate, for a saved definition. */
@@ -116,7 +116,7 @@ export function renderThemeRowControls(
 		},
 	});
 	setIcon(moreBtn, "more-vertical");
-	moreBtn.addEventListener("click", (event) => {
-		void openThemeRowMenu(ctx, event, def);
+	moreBtn.addEventListener("click", () => {
+		void openThemeRowMenu(ctx, { kind: "button", button: moreBtn }, def);
 	});
 }

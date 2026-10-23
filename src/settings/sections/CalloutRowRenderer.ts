@@ -31,13 +31,16 @@ import { renderIconInto, renderNoIcon } from "../../icons/renderIcon";
 import { createStatusIconResolver } from "../../icons/resolver";
 import type { SettingsSectionContext } from "./types";
 import type { RowKind } from "./rowOwnership";
-import { renderThemeRowControls } from "./themeRowActions";
+import { openThemeRowMenu, renderThemeRowControls } from "./themeRowActions";
+import type { RowMenuTrigger } from "./calloutRowMenu";
 import { renderThemeIconInto } from "../../manager/theme/renderThemeIcon";
 
 type RowRendererHandlers = {
 	onEdit: (def: CalloutDefinition, isBuiltIn: boolean) => void;
-	onOpenBuiltInMenu: (event: MouseEvent, def: CalloutDefinition) => void;
-	onOpenUserMenu: (event: MouseEvent, def: CalloutDefinition) => void;
+	/** Open a built-in row's menu; `trigger` says from where (⋮ or right-click). */
+	onOpenBuiltInMenu: (trigger: RowMenuTrigger, def: CalloutDefinition) => void;
+	/** Open one of the user's own rows' menu, the same way. */
+	onOpenUserMenu: (trigger: RowMenuTrigger, def: CalloutDefinition) => void;
 };
 
 export function renderCalloutRow(
@@ -140,6 +143,20 @@ export function renderCalloutRow(
 
 	const buttonsEl = row.createDiv({ cls: "callout-studio-row-buttons" });
 
+	// The row's menu, whichever way it is asked for: the ⋮ button below, or a
+	// right-click (two-finger click) anywhere on the row, which opens the same
+	// menu at the pointer — as a right-click on a row of Obsidian's Community
+	// plugins does. `preventDefault` keeps the browser's own menu away.
+	const openMenu = (trigger: RowMenuTrigger): void => {
+		if (fromTheme) void openThemeRowMenu(ctx, trigger, def);
+		else if (def.builtIn) handlers.onOpenBuiltInMenu(trigger, def);
+		else handlers.onOpenUserMenu(trigger, def);
+	};
+	row.addEventListener("contextmenu", (event) => {
+		event.preventDefault();
+		openMenu({ kind: "pointer", row, x: event.clientX, y: event.clientY });
+	});
+
 	if (fromTheme) {
 		renderThemeRowControls(ctx, buttonsEl, def);
 		return;
@@ -165,12 +182,8 @@ export function renderCalloutRow(
 		},
 	});
 	setIcon(moreBtn, "more-vertical");
-	moreBtn.addEventListener("click", (event) => {
-		if (def.builtIn) {
-			handlers.onOpenBuiltInMenu(event, def);
-			return;
-		}
-		handlers.onOpenUserMenu(event, def);
+	moreBtn.addEventListener("click", () => {
+		openMenu({ kind: "button", button: moreBtn });
 	});
 }
 

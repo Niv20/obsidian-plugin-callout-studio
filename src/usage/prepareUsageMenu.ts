@@ -4,18 +4,22 @@ import { getCalloutOccurrenceIndex } from "./occurrenceService";
 const MENU_WAIT_MS = 200;
 const pendingMenus = new WeakMap<App, () => void>();
 
-/** Ready counts open synchronously; cold counts get a short, cancellable head start. */
+/**
+ * Ready counts open synchronously; cold counts get a short, cancellable head start.
+ *
+ * @param anchor The element the menu belongs to (the ⋮ button, or the
+ *   right-clicked row). Its window is the one whose events can cancel the wait,
+ *   and the menu is not shown if it has left the page by the time counts are in.
+ */
 export function prepareUsageMenu(
 	app: App,
-	event: MouseEvent,
+	anchor: HTMLElement | null,
 	registerDisposer: (dispose: () => void) => void,
 ): Promise<boolean> | undefined {
 	pendingMenus.get(app)?.();
 	const index = getCalloutOccurrenceIndex(app);
 	if (index.status === "ready") return undefined;
 
-	// currentTarget is cleared after the click handler returns, before any await.
-	const anchor = event.currentTarget as HTMLElement | null;
 	const ownerDoc = anchor?.ownerDocument ?? activeDocument;
 	const ownerWin = ownerDoc.defaultView ?? activeWindow;
 	const waiting = new Promise<boolean>((resolve) => {

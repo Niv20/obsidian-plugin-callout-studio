@@ -1,20 +1,65 @@
+/**
+ * settings/sections/calloutRowMenu.ts — opening the menu of a callout row in
+ * the settings (Find callouts, Replace, Duplicate, Delete, …).
+ *
+ * Who calls it. The row's ⋮ button, and a right-click anywhere on the row,
+ * through the three row kinds' openers (`CalloutRowActions.ts`,
+ * `themeRowActions.ts`).
+ *
+ * The main idea. The menu is Obsidian's own `Menu`, opened the way Obsidian
+ * opens its "More options" menu in **Installed plugins**:
+ *
+ * - from the ⋮ button it drops down from under the button, lined up with the
+ *   button's end, and a second press on the button closes it;
+ * - from a right-click it opens at the pointer, as a right-click menu does
+ *   everywhere in Obsidian (Community plugins' rows do the same).
+ *
+ * Opening may wait up to 200ms for the vault's callout counts, so the menu's
+ * first line ("Find callouts 12") is right when it appears. Everything from the
+ * press to the visible menu is one "lifetime": a scroll, a resize or the row
+ * leaving the page in that time closes it, so a menu never appears for a row
+ * that is gone or has moved.
+ */
 import { Component, Menu, Platform, type App } from "obsidian";
 import { prepareUsageMenu } from "../../usage/prepareUsageMenu";
 import { onMenuHide } from "../../ui/menuOnHide";
 import type { SettingsSectionContext } from "./types";
 
+/**
+ * How a row's menu was asked for, which decides where it opens.
+ *
+ * (A TypeScript "union": a trigger is one shape or the other, and `kind` says
+ * which, so code can check `trigger.kind` and then use that shape's fields.)
+ */
+export type RowMenuTrigger =
+	/** The row's ⋮ button was pressed, with the mouse, Enter or Space. */
+	| { kind: "button"; button: HTMLElement }
+	/** The row was right-clicked at `x`, `y` (window coordinates). */
+	| { kind: "pointer"; row: HTMLElement; x: number; y: number };
+
+/** The close function of the one row menu each app has open, or is opening. */
 const activeMenus = new WeakMap<App, () => void>();
 
-/** One lifetime from the click through the count wait to the visible menu. */
+/**
+ * One lifetime from the press through the count wait to the visible menu.
+ *
+ * @param ctx The settings section's app and disposer registry.
+ * @param trigger How the menu was asked for (see {@link RowMenuTrigger}).
+ * @param build Adds the row's items to the new menu.
+ */
 export async function openCalloutRowMenu(
 	ctx: Pick<SettingsSectionContext, "app" | "registerDisposer">,
-	event: MouseEvent,
+	trigger: RowMenuTrigger,
 	build: (menu: Menu) => void,
 ): Promise<void> {
+	// A second press on the ⋮ button while its menu is open: Obsidian's menu
+	// already treats it as "close" (the button is its parent element, see
+	// below), so opening a new one here would close and reopen it.
+	if (trigger.kind === "button" && trigger.button.hasClass("has-active-menu")) return;
 	activeMenus.get(ctx.app)?.();
-	// currentTarget is cleared as soon as the original click handler returns.
-	const anchor = event.currentTarget as HTMLElement | null;
-	if (!anchor?.isConnected) return;
+	// The element the menu belongs to: the button, or the right-clicked row.
+	const anchor = trigger.kind === "button" ? trigger.button : trigger.row;
+	if (!anchor.isConnected) return;
 	const doc = anchor.ownerDocument;
 	const view = doc.defaultView;
 	if (!view) return;
@@ -113,7 +158,7 @@ export async function openCalloutRowMenu(
 	}
 
 	try {
-		const preparation = prepareUsageMenu(ctx.app, event, (cancel) => lifetime.register(cancel));
+		const preparation = prepareUsageMenu(ctx.app, anchor, (cancel) => lifetime.register(cancel));
 		if (preparation && !await preparation) { close(); return; }
 		// Also cover a scroll/removal after scan readiness but before this await
 		// resumes. The lifetime stays armed throughout that microtask boundary.
@@ -126,7 +171,7 @@ export async function openCalloutRowMenu(
 		build(openingMenu);
 		if (!active) return;
 		presented = true;
-		openingMenu.showAtMouseEvent(event);
+		showRowMenu(openingMenu, trigger, doc);
 		// Showing an Obsidian Menu unloads its previous component lifetime, so
 		// register only AFTER show. hide() unloads immediately (also on phones),
 		// preserving the usage item's single, possibly animated onHide callback.
@@ -135,4 +180,29 @@ export async function openCalloutRowMenu(
 		close();
 		throw error;
 	}
+}
+
+/**
+ * Show `menu` where `trigger` asks for it.
+ *
+ * Under the button, it uses the position Obsidian itself gives a menu under a
+ * button: `y` at the button's bottom edge, `width` the button's, `overlap` so
+ * it can share the button's edge, and `left` to line the menu's end up with the
+ * button's end. `setParentElement` makes the button the menu's own: Obsidian
+ * marks it `has-active-menu` (the pressed look of a `clickable-icon`) while the
+ * menu is open, and ignores a press on it as a "click outside", which is what
+ * lets a second press close the menu instead of reopening it.
+ *
+ * At the pointer, the menu opens where the right-click happened.
+ */
+function showRowMenu(menu: Menu, trigger: RowMenuTrigger, doc: Document): void {
+	if (trigger.kind === "pointer") {
+		menu.showAtPosition({ x: trigger.x, y: trigger.y }, doc);
+		return;
+	}
+	const rect = trigger.button.getBoundingClientRect();
+	menu.setParentElement(trigger.button).showAtPosition(
+		{ x: rect.x, y: rect.bottom, width: rect.width, overlap: true, left: true },
+		doc,
+	);
 }
