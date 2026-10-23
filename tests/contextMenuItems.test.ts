@@ -177,3 +177,75 @@ describe("adaptive create/edit context-menu action", () => {
 		assert.equal(harness("unknown", false).items.length, 0);
 	});
 });
+
+/**
+ * S10-15: the menu follows Obsidian's own conventions. A one-of-three choice
+ * (the fold state) lists every state with a ✓ on the current one, as
+ * Obsidian's sort menu does, and Delete is red, as every Delete in
+ * Obsidian's menus is (`MenuItem.setWarning`).
+ */
+describe("the right-click menu speaks Obsidian's menu conventions", () => {
+	/** One menu row as the builders configured it. */
+	interface Row { title: string; checked: boolean; warning: boolean; click: (() => void) | null }
+
+	/** A menu that records rows, including `setChecked` and `setWarning`. */
+	function conventionsMenu(): { menu: Menu; rows: Row[] } {
+		const rows: Row[] = [];
+		const menu = {
+			addItem(configure: (item: unknown) => void) {
+				const row: Row = { title: "", checked: false, warning: false, click: null };
+				const item = {
+					setTitle(value: string) { row.title = value; return this; },
+					setIcon() { return this; },
+					setSection() { return this; },
+					setChecked(value: boolean) { row.checked = value; return this; },
+					setWarning(value: boolean) { row.warning = value; return this; },
+					onClick(value: () => void) { row.click = value; return this; },
+				};
+				configure(item);
+				rows.push(row);
+				return menu;
+			},
+		};
+		return { menu: menu as unknown as Menu, rows };
+	}
+
+	/** A plugin whose menu for `role` holds only the one item `id`. */
+	function pluginWith(role: "regular" | "heading", id: "foldDefaults" | "deleteSection"): CalloutStudioPlugin {
+		const registry = new CalloutRegistry();
+		registry.load(null);
+		registry.settings.contextMenu.items[role] = [{ id, enabled: true }];
+		return { app: {}, registry, settings: registry.settings } as unknown as CalloutStudioPlugin;
+	}
+
+	it("lists all three fold states with a ✓ on the callout's current one", () => {
+		const writes: string[] = [];
+		const editor = {
+			getLine: () => "> [!note]- Title",
+			replaceRange: (text: string) => { writes.push(text); },
+		} as unknown as Editor;
+		const { menu, rows } = conventionsMenu();
+		addItems(pluginWith("regular", "foldDefaults"), menu, {
+			role: "regular", id: "note", editor, view: null, surface: "source",
+			targetEl: {} as Element,
+			callout: { id: "note", headerLine: 0, prefix: "> ", quoteDepth: 1 },
+		});
+		assert.deepEqual(rows.map((row) => row.title), [
+			t("contextMenu.setFoldClosed"), t("contextMenu.setFoldOpen"), t("contextMenu.setFoldNone"),
+		]);
+		assert.deepEqual(rows.map((row) => row.checked), [true, false, false], "the callout is folded closed now");
+		rows[0]!.click?.();
+		assert.deepEqual(writes, [], "choosing the current state again changes nothing");
+		rows[1]!.click?.();
+		assert.deepEqual(writes, ["> [!note]+ Title"]);
+	});
+
+	it("paints Delete section red, and nothing else", () => {
+		const { menu, rows } = conventionsMenu();
+		addItems(pluginWith("heading", "deleteSection"), menu, {
+			role: "heading", id: "note", editor: {} as Editor, view: null, surface: "source",
+			targetEl: {} as Element, headingLine: 0, headingLevel: 2,
+		});
+		assert.deepEqual(rows.map((row) => [row.title, row.warning]), [[t("contextMenu.deleteSection"), true]]);
+	});
+});

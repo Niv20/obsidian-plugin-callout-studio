@@ -207,11 +207,16 @@ export class Setting {
 	addDropdown(callback: (control: DropdownComponent) => unknown): this { callback(new DropdownComponent(this.controlEl)); return this; }
 }
 
-/** Obsidian's native menu shell; the plugin supplies every item and action. */
+/**
+ * Obsidian's menu shell, in the DOM Obsidian 1.14 builds for it
+ * (`.menu > .menu-scroll > .menu-group > .menu-item`), so app.css draws it as
+ * the real thing. The plugin supplies every item and action.
+ */
 export class MenuItem {
 	el: HTMLElement; titleEl: HTMLElement; iconEl: HTMLElement;
-	constructor(parent: HTMLElement) {
-		this.el = parent.createDiv({ cls: "menu-item" });
+	/** `afterClick` closes the menu once an item has run, as Obsidian's does. */
+	constructor(parent: HTMLElement, private readonly afterClick: () => void) {
+		this.el = parent.createDiv({ cls: "menu-item tappable" });
 		this.iconEl = this.el.createDiv({ cls: "menu-item-icon" });
 		this.titleEl = this.el.createDiv({ cls: "menu-item-title" });
 	}
@@ -219,22 +224,52 @@ export class MenuItem {
 	setIcon(icon: string): this { setIcon(this.iconEl, icon); return this; }
 	setSection(section: string): this { this.el.dataset.section = section; return this; }
 	setDisabled(disabled: boolean): this { this.el.classList.toggle("is-disabled", disabled); return this; }
-	setChecked(checked: boolean): this { this.el.classList.toggle("is-checked", checked); return this; }
+	/** Obsidian's ✓: `mod-checked` on the item and a trailing check icon. */
+	setChecked(checked: boolean): this {
+		this.el.classList.toggle("mod-checked", checked);
+		this.el.querySelector(".menu-item-icon.mod-checked")?.remove();
+		if (checked) setIcon(this.el.createDiv({ cls: "menu-item-icon mod-checked" }), "check");
+		return this;
+	}
 	setWarning(warning: boolean): this { this.el.classList.toggle("is-warning", warning); return this; }
-	onClick(callback: (event: MouseEvent) => unknown): this { this.el.addEventListener("click", callback); return this; }
+	onClick(callback: (event: MouseEvent) => unknown): this {
+		this.el.addEventListener("click", (event) => { callback(event); this.afterClick(); });
+		return this;
+	}
 	setSubmenu(): Menu { return new Menu(); }
 }
 export class Menu {
 	dom = createDiv({ cls: "menu" });
-	addItem(callback: (item: MenuItem) => unknown): this { callback(new MenuItem(this.dom)); return this; }
-	addSeparator(): this { this.dom.createDiv({ cls: "menu-separator" }); return this; }
+	private scrollEl = this.dom.createDiv({ cls: "menu-scroll" });
+	private groupEl = this.scrollEl.createDiv({ cls: "menu-group" });
+	private parentEl: HTMLElement | null = null;
+	private hideCallback: (() => unknown) | null = null;
+	addItem(callback: (item: MenuItem) => unknown): this { callback(new MenuItem(this.groupEl, () => this.hide())); return this; }
+	addSeparator(): this {
+		this.scrollEl.createDiv({ cls: "menu-separator" });
+		this.groupEl = this.scrollEl.createDiv({ cls: "menu-group" });
+		return this;
+	}
 	setUseNativeMenu(): this { return this; }
-	showAtPosition(position: { x: number; y: number }): this {
-		document.body.appendChild(this.dom); Object.assign(this.dom.style, { position: "absolute", left: `${position.x}px`, top: `${position.y}px` }); return this;
+	setNoIcon(): this { this.dom.classList.add("mod-no-icon"); return this; }
+	setParentElement(el: HTMLElement): this { this.parentEl = el; return this; }
+	showAtPosition(position: { x: number; y: number; width?: number; overlap?: boolean; left?: boolean }): this {
+		document.body.appendChild(this.dom);
+		this.parentEl?.classList.add("has-active-menu");
+		// Obsidian puts the menu 2px below the point it is given.
+		Object.assign(this.dom.style, { position: "absolute", left: `${position.x + scrollX}px`, top: `${position.y + 2 + scrollY}px` });
+		return this;
 	}
 	showAtMouseEvent(event: MouseEvent): this { return this.showAtPosition({ x: event.clientX, y: event.clientY }); }
-	hide(): void { this.dom.remove(); }
-	onHide(): this { return this; }
+	hide(): this {
+		this.dom.remove();
+		this.parentEl?.classList.remove("has-active-menu");
+		const callback = this.hideCallback;
+		this.hideCallback = null;
+		callback?.();
+		return this;
+	}
+	onHide(callback: () => unknown): void { this.hideCallback = callback; }
 }
 
 function renderInline(parent: HTMLElement, text: string): void {

@@ -96,15 +96,20 @@ const buildRegularFoldDefaults: ItemBuilder = (_plugin, menu, context) => {
 	const headerText = editor.getLine(callout.headerLine);
 	const currentMark = (headerText.match(CALLOUT_FOLD_MARK_REGEX)?.[3] ??
 		"") as "" | "+" | "-";
+	// All three states, with a ✓ on the one the callout is in now — how
+	// Obsidian offers a one-of-several choice in its own menus (the sort menu,
+	// the tab list). Choosing the current state again changes nothing.
 	for (const option of foldOptions()) {
-		if (option.mark === currentMark) continue;
+		const isCurrent = option.mark === currentMark;
 		menu.addItem((item) => {
 			item.setTitle(option.title)
 				.setIcon(option.icon)
+				.setChecked(isCurrent)
 				.setSection(MENU_SECTION)
-				.onClick(() =>
-					setRegularFoldMark(editor, callout, option.mark),
-				);
+				.onClick(() => {
+					if (isCurrent) return;
+					setRegularFoldMark(editor, callout, option.mark);
+				});
 		});
 	}
 };
@@ -150,8 +155,10 @@ const buildCopySection: ItemBuilder = (_plugin, menu, context) => {
 const buildDeleteSection: ItemBuilder = (_plugin, menu, context) => {
 	if (context.role !== "heading") return;
 	menu.addItem((item) => {
+		// Red, as every Delete in Obsidian's own menus is (`setWarning`).
 		item.setTitle(t("contextMenu.deleteSection"))
 			.setIcon("trash-2")
+			.setWarning(true)
 			.setSection(MENU_SECTION)
 			.onClick(() => {
 				const range = getHeadingSectionRange(

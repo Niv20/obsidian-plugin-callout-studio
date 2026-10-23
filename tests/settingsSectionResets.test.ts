@@ -98,7 +98,7 @@ describe("settings row resets", () => {
 				reset.fire("click");
 				assert.equal(h.settings.language, DEFAULT_SETTINGS.language);
 				// Following Obsidian shows as Obsidian's own language.
-				assert.equal(host.querySelector(".cs-combobox-input")?.value, "English");
+				assert.equal(host.querySelector(".cs-select-value")?.textContent, "English");
 				assert.equal(reset.hasClass("cs-hidden"), true);
 				await Promise.resolve();
 				await Promise.resolve();

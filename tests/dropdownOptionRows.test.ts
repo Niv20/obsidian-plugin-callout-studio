@@ -8,8 +8,9 @@
  *   gave their option *row* `padding: 8px 12px` while the label inside it
  *   already carried `padding: 6px 12px`. The text then started 25px inside the
  *   popup and the rows were 45px tall instead of 29px. Since 2026-10-23 the
- *   padding lives on the row, as on Obsidian's `.menu-item`, and only there:
- *   the label inside carries none, and nothing pads a row a second time.
+ *   padding lives on the row, as on Obsidian's `.menu-item`, and only there,
+ *   and nothing pads a row a second time. (The plain choices whose labels
+ *   carried it open Obsidian's own menu now.)
  * - **The id line's ellipsis.** Code counted the ids that would fit and drew
  *   `...`, while `text-overflow: ellipsis` drew a `…` of its own on top, so one
  *   list showed clean dots, a glued `…` and the two overlapping. The cut is now
@@ -53,10 +54,12 @@ describe("a select's option rows are padded once", () => {
 	const pads = (rule: Rule): boolean =>
 		[...rule.decls.keys()].some((p) => p === "padding" || p.startsWith("padding-"));
 
-	it("pads the row, as Obsidian pads a menu item, and not the words inside it", () => {
-		assert.ok(ruleFor(".cs-dropdown-option-label").decls.get("padding") === undefined,
-			"the label must not add its own padding inside the padded row");
-		assert.ok(ruleFor(".cs-language-option-label").decls.get("padding") === undefined);
+	it("leaves plain choices' rows to Obsidian's menu, with no row rules of their own", () => {
+		// A plain choice (`SelectDropdown`, the language picker) opens Obsidian's
+		// own menu since 2026-10-23, so the labels it used to draw are gone.
+		for (const gone of [".cs-dropdown-option-label", ".cs-language-option-label"]) {
+			assert.ok(!rules.some((rule) => rule.selectors.includes(gone)), `${gone} has no rule left`);
+		}
 	});
 
 	it("never pads a row a second time from a narrower context", () => {

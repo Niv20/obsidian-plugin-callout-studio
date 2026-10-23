@@ -21,7 +21,6 @@ export function createOccurrencesFrame(content: HTMLElement) {
 	const roleField = controls.createDiv({ cls: "cs-sidebar-filter" });
 	const roleSelect = new SelectDropdown(roleField, t("commandBuilder.format"))
 		.addOption("", t("usage.allRoles"));
-	roleSelect.inputEl.dataset.action = "role";
 	for (const role of OCCURRENCE_ROLES) roleSelect.addOption(role, occurrenceRoleLabel(role));
 	const summary = createSidebarSummary(toolbar, "cs-occurrences-summary");
 	const scroll = content.createDiv({ cls: "cs-occurrences-scroll" });

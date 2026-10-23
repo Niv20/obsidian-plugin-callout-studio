@@ -34,6 +34,17 @@ const FOLD_LABEL_KEY: Record<CustomCommandFold, string> = {
 	collapsed: "commandBuilder.foldCollapsed",
 };
 
+/**
+ * The icon beside each state in the menu: the same three the right-click
+ * menu in a note uses for its fold choices (`editor/contextmenu/items.ts`),
+ * so a fold state looks the same wherever it is offered.
+ */
+const FOLD_ICON: Record<CustomCommandFold, string> = {
+	none: "ban",
+	expanded: "plus",
+	collapsed: "minus",
+};
+
 export interface FoldStateRow {
 	destroy(): void;
 	/** Show the row only for the one format that has fold syntax. */
@@ -50,7 +61,7 @@ export function buildFoldStateRow(
 		.setClass("cs-command-field")
 		.setDesc(t("commandBuilder.foldStateDesc"));
 	const dropdown = new SelectDropdown(setting.controlEl, t("commandBuilder.foldState"));
-	for (const fold of FOLD_ORDER) dropdown.addOption(fold, t(FOLD_LABEL_KEY[fold]));
+	for (const fold of FOLD_ORDER) dropdown.addOption(fold, t(FOLD_LABEL_KEY[fold]), FOLD_ICON[fold]);
 	dropdown.setValue(initial).onChange((raw) => onPick(raw as CustomCommandFold));
 
 	return {

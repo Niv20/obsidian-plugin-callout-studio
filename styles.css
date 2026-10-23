@@ -3622,8 +3622,9 @@ body:not(.is-phone)
 
 /* ── Dropdown controls: Obsidian's combobox button ─────────────────────────
    Every trigger that opens a list — the searchable pickers (`ListboxPopup`),
-   the plain choices built on them (`SelectDropdown`) and the editor's Fold
-   selector — is marked `.cs-dropdown-control`, and this block draws it the way
+   the plain choices (`SelectDropdown`, a button that opens Obsidian's own
+   menu) and the editor's Fold selector — is marked `.cs-dropdown-control`,
+   and this block draws it the way
    Obsidian draws its own `.combobox-button`: the same tokens, read the same
    way, so it matches Obsidian's dropdowns on every platform and under every
    theme (decision 14 of the native-look plan):
@@ -3663,14 +3664,16 @@ body:not(.is-phone)
    combobox padding is 8px before the text and 6px after the caret, 16px each
    side on mobile. */
 .cs-dropdown-control,
-.cs-dropdown-width-sizer {
+.cs-dropdown-width-sizer,
+.cs-language-width-sizer {
 	--cs-dropdown-pad-start: var(--size-4-2);
 	--cs-dropdown-pad-end: var(--size-2-3);
 	--cs-dropdown-gap: var(--size-2-2);
 }
 
 .is-mobile .cs-dropdown-control,
-.is-mobile .cs-dropdown-width-sizer {
+.is-mobile .cs-dropdown-width-sizer,
+.is-mobile .cs-language-width-sizer {
 	--cs-dropdown-pad-start: var(--size-4-4);
 	--cs-dropdown-pad-end: var(--size-4-4);
 }
@@ -3715,7 +3718,9 @@ body:not(.is-phone)
 }
 
 /* Focus: the ring Obsidian draws around a focused dropdown. The focused element
-   is the input inside the control, hence `:focus-within` on the control. */
+   is the input inside a searchable picker, or the button itself for a plain
+   choice; `:focus-within` covers both, since it also matches the focused
+   element itself. */
 .cs-dropdown-control.cs-dropdown-control.cs-dropdown-control.cs-dropdown-control:focus-within {
 	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
 	outline: none;
@@ -3723,7 +3728,8 @@ body:not(.is-phone)
 
 /* Open: Obsidian's open combobox (`.combobox-button.has-focus`) — a slightly
    stronger fill and the focus ring. `.is-open` rather than focus alone, because
-   a tap on a phone does not focus a `<button>` trigger (the Fold selector). */
+   a tap on a phone does not focus a `<button>` trigger (a plain choice, the
+   Fold selector). */
 .cs-dropdown-control.cs-dropdown-control.cs-dropdown-control.cs-dropdown-control.is-open {
 	background-color: var(--metadata-label-background-active);
 	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
@@ -3735,9 +3741,13 @@ body:not(.is-phone)
 	cursor: not-allowed;
 }
 
-/* Plain choices share the listbox popup. A hidden stack gives the trigger the
-   width of its longest translated option without giving the input a fixed size. */
-.cs-select-dropdown.cs-combobox {
+/* ── A plain choice (`SelectDropdown`) ──
+   A `<button class="cs-select-button cs-dropdown-control">` that opens
+   Obsidian's own menu. Its wrapper is a one-column grid: the button sits in it
+   above a hidden stack of every option's words (the width sizer), and the
+   widest of those sets the column's width. So the field is as wide as its
+   longest option and does not change size when the value does. */
+.cs-select-dropdown {
 	display: inline-grid;
 	flex: 0 1 auto;
 	vertical-align: middle;
@@ -3764,22 +3774,24 @@ body:not(.is-phone)
 	white-space: nowrap;
 }
 
-.cs-select-dropdown .cs-combobox-lead {
-	display: none;
+/* The button fills its column; `min-width: 0` lets it shrink below its words
+   when the column is squeezed, and the words below are then cut with "…". */
+.cs-select-button {
+	width: 100%;
+	min-width: 0;
 }
 
-.cs-select-dropdown .cs-combobox-input {
-	width: 0;
-	text-overflow: ellipsis;
-}
-
-/* A plain choice is Obsidian's `select.dropdown`, not a combobox: in Obsidian's
-   macOS settings window that turns transparent, puts its text at the end and
-   sits its chevrons on a small dot (`--dropdown-text-align` and
+/* The current option's words. Obsidian's dropdown is `select.dropdown`, which
+   in Obsidian's macOS settings window turns transparent, puts its text at the
+   end and sits its chevrons on a small dot (`--dropdown-text-align` and
    `--dropdown-icon-background`, both set there by Obsidian; elsewhere they are
-   `start` and `transparent`, so nothing changes). One class more than the base
-   rule for this input (further down), so it wins wherever it sits. */
-.cs-select-dropdown .cs-combobox-control input[type="text"].cs-combobox-input {
+   `start` and `transparent`, so nothing changes). */
+.cs-select-value {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 	text-align: var(--dropdown-text-align, start);
 }
 
@@ -3975,23 +3987,6 @@ body:not(.is-phone)
 	scroll-padding-block-start: calc(var(--font-ui-smaller) * var(--line-height-normal) + 8px);
 }
 
-/* The words of a plain choice. The row around them sets their padding,
-   colour and size; they only take the room left beside the ✓ and are cut
-   with "…" when they do not fit. */
-.cs-language-option-label,
-.cs-dropdown-option-label {
-	flex: 1 1 auto;
-	min-width: 0;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	text-align: start;
-}
-
-.cs-language-setting .cs-combobox-lead {
-	display: none;
-}
-
 /* The menu is absolute and therefore cannot make the closed language picker
    wide enough for its labels. This hidden stack restores that intrinsic-size
    information: every translated option occupies the same grid cell, so the
@@ -4011,7 +4006,8 @@ body:not(.is-phone)
 	min-width: 0;
 }
 
-.cs-reset-setting .setting-item-control > .cs-combobox {
+.cs-reset-setting .setting-item-control > .cs-combobox,
+.cs-reset-setting .setting-item-control > .cs-select-dropdown {
 	flex: 1 1 0;
 	inline-size: auto;
 	min-inline-size: 0;
@@ -4045,7 +4041,10 @@ body:not(.is-phone)
 
 .cs-language-width-sizer > span {
 	grid-area: 1 / 1;
-	padding-inline: 10px 34px;
+	/* The field's own room around its words, from the same variables the
+	   field reads (declared on this sizer beside the field's). */
+	padding-inline: var(--cs-dropdown-pad-start)
+		calc(var(--cs-dropdown-gap) + var(--icon-xs) + var(--cs-dropdown-pad-end));
 	white-space: nowrap;
 }
 
@@ -4095,7 +4094,8 @@ body:not(.is-phone)
 	max-width: 100%;
 }
 
-.cs-command-field .setting-item-control > .cs-combobox {
+.cs-command-field .setting-item-control > .cs-combobox,
+.cs-command-field .setting-item-control > .cs-select-dropdown {
 	width: 100%;
 	min-width: 0;
 }
@@ -4410,10 +4410,6 @@ body:not(.is-phone)
    weight and category can keep their full labels at desktop modal widths too. */
 .icon-picker-toolbar.has-weight-filter > .icon-picker-search-input {
 	flex: 1 0 100%;
-}
-
-.icon-picker-filter:not(.icon-picker-skin-tone-picker) .cs-combobox-lead {
-	display: none;
 }
 
 .icon-picker-skin-tone-sample {

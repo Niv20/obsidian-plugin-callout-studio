@@ -5,7 +5,21 @@ import { getSource, ICON_SOURCE_IDS } from "../src/icons/registry";
 import { PackPanel, type PackPanelHost } from "../src/settings/iconpicker/PackPanel";
 import { PackToolbarFilters } from "../src/settings/iconpicker/PackToolbarFilters";
 import { t } from "../src/i18n";
-import { asEl, el, fakeDom } from "./support/fakeDom";
+import { asEl, el, fakeDom, type FakeElement } from "./support/fakeDom";
+import { dropdownValue, openDropdownMenu } from "./support/selectDropdown";
+
+/**
+ * Assert that the filter under `root` is locked: greyed out, and a key that
+ * would open it opens nothing. A plain choice is a button opening Obsidian's
+ * menu; the skin-tone picker is the plugin's own select-only list.
+ */
+function assertLocked(root: FakeElement): void {
+	const field = root.querySelector(".cs-select-button") ?? root.querySelector(".cs-combobox-input");
+	assert.ok(field);
+	assert.equal((field as unknown as HTMLButtonElement).disabled, true);
+	field.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
+	assert.equal(field.getAttribute("aria-expanded"), "false");
+}
 
 const pack = {
 	hasCategories: true,
@@ -39,10 +53,9 @@ function mount(category = "Animals") {
 		},
 	);
 	const picker = (className: string) => host.querySelector(`.${className}`)!;
+	/** Open a plain choice's menu and click its `index`-th item. */
 	const choose = (className: string, index: number) => {
-		const root = picker(className);
-		root.querySelector(".cs-combobox-input")!.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
-		root.querySelectorAll(".cs-combobox-option")[index]!.fire("click");
+		openDropdownMenu(asEl(picker(className))).clickItemAt(index);
 	};
 	return {
 		host, filters, categoryChanges, variantChanges, beforeListeners,
@@ -78,21 +91,20 @@ describe("icon pack toolbar filters", () => {
 		}
 	});
 
-	it("uses selection-only listboxes for every category and variant filter", () => {
+	it("opens Obsidian's menu for the category and style filters, and keeps the tone picker select-only", () => {
 		const h = mount();
 		try {
 			assert.equal(h.host.querySelectorAll("select").length, 0);
 			assert.equal(h.host.querySelectorAll(".icon-picker-filter").length, 4);
-			for (const root of h.host.querySelectorAll(".icon-picker-filter")) {
-				const input = root.querySelector(".cs-combobox-input")!;
-				assert.equal(input.readOnly, true);
-				assert.equal(input.getAttribute("aria-autocomplete"), "none");
-			}
+			// Style, weight and category are plain choices: a button and a menu.
+			assert.equal(h.host.querySelectorAll(".icon-picker-filter .cs-select-button").length, 3);
+			// The tone picker draws emoji samples in its rows, which a menu cannot,
+			// so it stays the plugin's own list, opened from a read-only field.
+			const tone = h.picker("icon-picker-skin-tone-picker").querySelector(".cs-combobox-input")!;
+			assert.equal(tone.readOnly, true);
+			assert.equal(tone.getAttribute("aria-autocomplete"), "none");
 			assert.equal(h.filters.setCategories(["Animals", "Food"]), "Animals");
-			assert.equal(
-				h.picker("icon-picker-category-picker").querySelector(".cs-combobox-input")?.value,
-				t("iconPicker.cat.Animals"),
-			);
+			assert.equal(dropdownValue(asEl(h.picker("icon-picker-category-picker"))), t("iconPicker.cat.Animals"));
 		} finally { h.destroy(); }
 	});
 
@@ -107,9 +119,7 @@ describe("icon pack toolbar filters", () => {
 				variants: { style: "filled", weight: 400, emojiSkinTone: 2 },
 				kind: "select",
 			});
-			const weightPicker = h.host.querySelectorAll(".icon-picker-variant-picker")[1]!;
-			weightPicker.querySelector(".cs-combobox-input")!.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
-			weightPicker.querySelectorAll(".cs-combobox-option")[0]!.fire("click");
+			openDropdownMenu(asEl(h.host.querySelectorAll(".icon-picker-variant-picker")[1]!)).clickItemAt(0);
 			assert.deepEqual(h.variantChanges[1], {
 				variants: { style: "filled", weight: 100, emojiSkinTone: 2 },
 				kind: "select",
@@ -139,17 +149,9 @@ describe("icon pack toolbar filters", () => {
 		const h = mount("Removed");
 		try {
 			assert.equal(h.filters.setCategories(["Animals"]), "");
-			assert.equal(
-				h.picker("icon-picker-category-picker").querySelector(".cs-combobox-input")?.value,
-				t("iconPicker.allCategories"),
-			);
+			assert.equal(dropdownValue(asEl(h.picker("icon-picker-category-picker"))), t("iconPicker.allCategories"));
 			h.filters.setEnabled(false);
-			for (const root of h.host.querySelectorAll(".icon-picker-filter")) {
-				const input = root.querySelector(".cs-combobox-input")!;
-				assert.equal(input.disabled, true);
-				input.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
-				assert.equal(input.getAttribute("aria-expanded"), "false");
-			}
+			for (const root of h.host.querySelectorAll(".icon-picker-filter")) assertLocked(root);
 		} finally { h.destroy(); }
 		assert.equal(fakeDom.document.listeners.get("click")?.length ?? 0, h.beforeListeners);
 	});
@@ -185,12 +187,7 @@ it("keeps every toolbar picker locked while a pack awaits download", async () =>
 		assert.equal(container.querySelector(".icon-picker-search-input")?.disabled, true);
 		const pickers = container.querySelectorAll(".icon-picker-filter");
 		assert.equal(pickers.length, 2);
-		for (const picker of pickers) {
-			const input = picker.querySelector(".cs-combobox-input")!;
-			assert.equal(input.disabled, true);
-			input.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
-			assert.equal(input.getAttribute("aria-expanded"), "false");
-		}
+		for (const picker of pickers) assertLocked(picker);
 		assert.deepEqual(saved, []);
 	} finally { panel.dispose(); }
 	assert.equal(fakeDom.document.listeners.get("click")?.length ?? 0, beforeListeners);

@@ -828,9 +828,12 @@ that only make sense for some roles.
   callout `a b` edits that definition. A genuinely unknown id merely borrows
   the fallback's *appearance*, not its identity, so the same configured action
   instead opens a new editor seeded with the token's exact normalized id.
-- **Block-role `foldDefaults`** offers the *other two* fold states (never the
-  current one) - open / closed / non-collapsible - by rewriting the header's
-  fold mark in place.
+- **Block-role `foldDefaults`** lists all three fold states - closed / open /
+  non-collapsible - with Obsidian's ✓ (`setChecked`) on the callout's current
+  one, as Obsidian offers a one-of-several choice in its own menus (the sort
+  menu, the tab list). Choosing another rewrites the header's fold mark in
+  place; choosing the current one does nothing. (Until 2026-10-23 it offered
+  only the other two, so the menu never said which state the callout was in.)
 - **Heading-role section operations** (`cutSection`/`copySection`/`deleteSection`)
   compute the section range via `getHeadingSectionRange` in
   [`sectionOps.ts`](../../src/editor/contextmenu/sectionOps.ts): the heading line
@@ -838,6 +841,9 @@ that only make sense for some roles.
   level. `sectionBoundary.ts` uses the current document's native fold service
   when available; the source-only fallback excludes frontmatter, length-aware
   code fences, raw HTML, math and comments, and recognizes indented ATX/setext boundaries.
+  *Delete section* is red (`setWarning(true)`), as every Delete in Obsidian's
+  own menus is. It stays in the plugin's section, so the user's own order of
+  the items still applies.
   A hash-prefixed line inside a code fence never cuts a section in half.
   Without a following section it reaches end-of-document. Cut first awaits clipboard success, then checks
   that the complete document and captured file/editor/leaf ownership still match;

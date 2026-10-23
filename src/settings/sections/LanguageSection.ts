@@ -27,7 +27,7 @@
 import { Setting } from "obsidian";
 import { DEFAULT_SETTINGS } from "../../constants";
 import { getSelectableLocales, resolveLocaleFile, setLocale, t } from "../../i18n";
-import { ListboxPopup } from "../../ui/listboxPopup";
+import { SelectDropdown } from "../../ui/selectDropdown";
 import { addFieldResetButton } from "../editor/fieldResetButton";
 import type { SettingsSectionContext } from "./types";
 
@@ -54,33 +54,28 @@ export function renderLanguageSection(
 		.setClass("cs-reset-setting")
 		.setDesc(t("settings.languageDesc"));
 
-	const picker = new ListboxPopup<LanguageChoice>(setting.controlEl, {
-		ariaLabel: t("settings.language"),
-		placeholder: t("settings.language"),
-		emptyText: () => "",
-		itemsFor: (query) => filterLanguageChoices(query),
-		renderRow: renderLanguageRow,
-		labelOf: (choice) => choice.name,
-		keyOf: (choice) => choice.code,
-		searchable: false,
-		onCommit: (choice) => {
+	// A plain choice opened in Obsidian's own menu, with a ✓ beside the
+	// language shown. Every language is listed under its own native name.
+	const picker = new SelectDropdown(setting.controlEl, t("settings.language"))
+		.setOptions(getSelectableLocales().map(({ code, name }) => ({ value: code, label: name })))
+		.setValue(shownLanguage(ctx.plugin.settings.language))
+		// `onPick` rather than `onChange`: picking the language already shown
+		// must still reach this, because for a language whose download is
+		// still missing, picking it again is how the user retries.
+		.onPick((code) => {
 			const current = ctx.plugin.settings.language;
-			const next = preferenceFor(current, choice.code);
-			// Nothing changed and nothing is missing: no save, no redraw. A
-			// language still waiting for its download goes through again,
-			// which makes re-picking it a retry.
+			const next = preferenceFor(current, code);
+			// Nothing changed and nothing is missing: no save, no redraw.
 			if (next === current && ctx.plugin.locales.isReady(next)) return;
 			void setLanguage(ctx, setting, picker, next);
 			syncReset();
-		},
-	});
-	picker.setSelected(shownLanguage(ctx.plugin.settings.language));
+		});
 	const syncReset = addFieldResetButton(
 		setting,
 		`${t("settings.resetAction")}: ${t("settings.language")}`,
 		() => showsObsidianLanguage(ctx.plugin.settings.language),
 		() => {
-			picker.setSelected(shownLanguage(FOLLOW_OBSIDIAN));
+			picker.setValue(shownLanguage(FOLLOW_OBSIDIAN));
 			void setLanguage(ctx, setting, picker, FOLLOW_OBSIDIAN);
 		},
 	);
@@ -116,11 +111,13 @@ function observeLanguageSettingLayout(
 /**
  * Size the control column from the widest translated option.
  *
- * The popup is absolutely positioned and exactly as wide as the picker, so its
- * rows cannot contribute to the column's width. These overlapping, hidden
- * labels can: each is measured at its own width, without us guessing at glyph
- * widths in proportional fonts. The column also keeps room for the reset arrow
- * whether or not it shows, so the arrow never takes that room from the labels.
+ * The list of languages is Obsidian's menu, which opens apart from the row, so
+ * it cannot widen the column. These overlapping, hidden labels can: each is
+ * measured at its own width, with the field's own padding and caret around it
+ * (styles.css gives them the field's padding variables), without us guessing
+ * at glyph widths in proportional fonts. The column also keeps room for the
+ * reset arrow whether or not it shows, so the arrow never takes that room from
+ * the labels.
  */
 function renderLanguageWidthSizer(
 	containerEl: HTMLElement,
@@ -164,22 +161,6 @@ function resetSlotWidth(controlEl: HTMLElement): number {
 	if (width <= 0) return 0;
 	const gap = parseFloat(getComputedStyle(controlEl).columnGap);
 	return width + (Number.isFinite(gap) ? gap : 0);
-}
-
-function filterLanguageChoices(query: string): LanguageChoice[] {
-	const q = query.trim().toLocaleLowerCase();
-	const choices = getSelectableLocales();
-	if (!q) return choices;
-	return choices.filter(
-		(choice) =>
-			choice.name.toLocaleLowerCase().includes(q) ||
-			choice.code.toLocaleLowerCase().includes(q),
-	);
-}
-
-/** Every row is just the language's own name. */
-function renderLanguageRow(rowEl: HTMLElement, choice: LanguageChoice): void {
-	rowEl.createDiv({ cls: "cs-language-option-label", text: choice.name });
 }
 
 /**
@@ -233,7 +214,7 @@ function languageName(code: string): string {
 async function setLanguage(
 	ctx: SettingsSectionContext,
 	setting: Setting,
-	picker: ListboxPopup<LanguageChoice>,
+	picker: SelectDropdown,
 	val: string,
 ): Promise<void> {
 	ctx.plugin.settings.language = val;

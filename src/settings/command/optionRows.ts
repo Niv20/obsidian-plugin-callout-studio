@@ -37,7 +37,9 @@ export function buildHeadingLevelRow(
 		.setClass("cs-command-field")
 		.setDesc(t("commandBuilder.headingLevelDesc"));
 	const dropdown = new SelectDropdown(setting.controlEl, t("commandBuilder.headingLevel"));
-	for (const level of HEADING_LEVELS) dropdown.addOption(String(level), `H${level}`);
+	// Lucide draws one icon per level, `heading-1` to `heading-6`, so the menu
+	// shows each level's own icon beside its name.
+	for (const level of HEADING_LEVELS) dropdown.addOption(String(level), `H${level}`, `heading-${level}`);
 	dropdown.setValue(String(value)).onChange((v) => onChange(Number(v)));
 	return { el: setting.settingEl, dropdown };
 }

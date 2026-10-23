@@ -4,7 +4,7 @@ import { asEl, el, fakeDom } from "./support/fakeDom";
 import { readRepoFile } from "./support/sourceScan";
 import { buildFormatRow } from "../src/settings/command/commandRoles";
 import { DEFAULT_SETTINGS } from "../src/constants";
-import { dropdownOptions } from "./support/selectDropdown";
+import { dropdownOptions, dropdownValue, pickDropdown } from "./support/selectDropdown";
 import { t } from "../src/i18n";
 import { buildActionRow, buildHeadingLevelRow } from "../src/settings/command/optionRows";
 import { buildFoldStateRow } from "../src/settings/command/foldStateRow";
@@ -70,11 +70,11 @@ describe("command editor field layout", () => {
 			css,
 			/\.cs-command-field\s+\.setting-item-control\s*\{[^}]*flex:\s*0\s+0\s+auto;[^}]*width:\s*var\(--cs-command-control-width\);[^}]*\}/,
 		);
+		// The callout picker and the plain choices fill the same column.
 		assert.match(
 			css,
-			/\.cs-command-field\s+\.setting-item-control\s*>\s*\.cs-combobox\s*\{[^}]*width:\s*100%;[^}]*min-width:\s*0;[^}]*\}/,
+			/\.cs-command-field\s+\.setting-item-control\s*>\s*\.cs-combobox,\s*\.cs-command-field\s+\.setting-item-control\s*>\s*\.cs-select-dropdown\s*\{[^}]*width:\s*100%;[^}]*min-width:\s*0;[^}]*\}/,
 		);
-		assert.match(css, /\.cs-select-dropdown\s+\.cs-combobox-lead\s*\{[^}]*display:\s*none;[^}]*\}/);
 		assert.match(
 			css,
 			/\.is-phone\s+\.cs-command-field\s*\{[^}]*--cs-command-control-width:\s*100%;[^}]*\}/,
@@ -148,7 +148,7 @@ describe("command editor choices", () => {
 		assert.deepEqual(available(legacy), ["-", "note", "theme-only"]);
 	});
 
-	it("uses the shared noneditable picker for heading, action, and fold state", () => {
+	it("uses the shared plain choice, opening Obsidian's menu, for heading, action, and fold state", () => {
 		fakeDom.light();
 		const host = el();
 		const before = fakeDom.document.listeners.get("click")?.length ?? 0;
@@ -159,29 +159,24 @@ describe("command editor choices", () => {
 		const action = buildActionRow(asEl(host), "insert", (value) => actionValues.push(value));
 		const fold = buildFoldStateRow(asEl(host), "none", (value) => foldValues.push(value));
 		try {
-			const controls = host.querySelectorAll(".cs-select-dropdown");
+			const controls = host.querySelectorAll(".cs-select-dropdown").map((control) => asEl(control));
 			assert.equal(controls.length, 3);
 			assert.equal(host.querySelectorAll("select").length, 0);
-			assert.ok(controls.every((control) => control.querySelector(".cs-combobox-input")?.readOnly));
+			assert.equal(host.querySelectorAll("input").length, 0, "plain choices are buttons, not text fields");
 
-			const headingInput = controls[0]?.querySelector(".cs-combobox-input");
-			assert.equal(headingInput?.value, "H3");
-			dropdownOptions(asEl(controls[0]!));
-			const headingOptions = controls[0]?.querySelectorAll(".cs-combobox-option") ?? [];
-			assert.deepEqual(headingOptions.map((option) => option.textContent), ["H1", "H2", "H3", "H4", "H5", "H6"]);
-			headingOptions[1]?.fire("click");
+			assert.equal(dropdownValue(controls[0]!), "H3");
+			assert.deepEqual(dropdownOptions(controls[0]!).map((option) => option.title), ["H1", "H2", "H3", "H4", "H5", "H6"]);
+			pickDropdown(controls[0]!, "H2");
 			assert.deepEqual(headingValues, [2]);
 
-			dropdownOptions(asEl(controls[1]!));
-			controls[1]?.querySelectorAll(".cs-combobox-option")[0]?.fire("click");
+			pickDropdown(controls[1]!, t("commandBuilder.actionWrap"));
 			assert.deepEqual(actionValues, ["wrap"]);
 
 			fold.sync("heading");
 			assert.ok(asEl(host).querySelectorAll(".setting-item")[2]?.hasClass("cs-row-hidden"));
 			fold.sync("regular");
 			assert.ok(!asEl(host).querySelectorAll(".setting-item")[2]?.hasClass("cs-row-hidden"));
-			dropdownOptions(asEl(controls[2]!));
-			controls[2]?.querySelectorAll(".cs-combobox-option")[2]?.fire("click");
+			pickDropdown(controls[2]!, t("commandBuilder.foldCollapsed"));
 			assert.deepEqual(foldValues, ["collapsed"]);
 		} finally {
 			heading.dropdown.destroy();
@@ -237,19 +232,20 @@ describe("command editor choices", () => {
 		const row = buildFormatRow(asEl(host), (value) => picked.push(value));
 		try {
 			assert.equal(row.sync(registry, DEFAULT_SETTINGS, "note", "heading"), "heading");
-			const input = host.querySelector(".cs-combobox-input");
-			assert.equal(input?.value, t("commandBuilder.formatHeading"));
-			dropdownOptions(asEl(host));
+			assert.equal(dropdownValue(asEl(host)), t("commandBuilder.formatHeading"));
+			const openMenu = dropdownOptions(asEl(host));
+			assert.equal(openMenu.length, 3);
 			themeOwned = true;
 			assert.equal(row.sync(registry, DEFAULT_SETTINGS, "note", "heading"), "regular");
-			const options = host.querySelectorAll(".cs-combobox-option");
-			assert.deepEqual(options.map((option) => option.textContent), [t("commandBuilder.formatBlock")]);
-			assert.ok(options[0]?.hasClass("is-selected"));
-			options[0]?.fire("click");
+			// The narrowed options close the open menu; a fresh one offers only Block.
+			const options = dropdownOptions(asEl(host));
+			assert.deepEqual(options.map((option) => option.title), [t("commandBuilder.formatBlock")]);
+			assert.ok(options[0]?.checked);
+			pickDropdown(asEl(host), t("commandBuilder.formatBlock"));
 			assert.deepEqual(picked, [], "a programmatic fallback and same-value click do not synthesize changes");
 			themeOwned = false;
 			row.sync(registry, DEFAULT_SETTINGS, "note", "regular");
-			dropdownOptions(asEl(host))[0]?.fire("click");
+			pickDropdown(asEl(host), t("commandBuilder.formatHeading"));
 			assert.deepEqual(picked, ["heading"]);
 		} finally {
 			row.destroy();

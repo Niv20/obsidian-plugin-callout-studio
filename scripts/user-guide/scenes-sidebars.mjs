@@ -227,8 +227,19 @@ async function quickInsertScene(plugin, filtered) {
 		: "The actual Quick insert modal builds its previews with the plugin's generated CSS and reading processor. A synthetic writable note supplies the insertion target; nothing is inserted." });
 	await waitFor(() => modal.contentEl.querySelector(".cs-qi-preview .callout"));
 	if (filtered) {
-		modal.contentEl.querySelector(".cs-quick-insert-filter input").click();
-		await waitFor(() => modal.contentEl.querySelector(".cs-quick-insert-filter input").getAttribute("aria-expanded") === "true");
+		const field = modal.contentEl.querySelector(".cs-quick-insert-filter .cs-select-button");
+		field.click();
+		await waitFor(() => field.getAttribute("aria-expanded") === "true");
+		// Obsidian adds its menu to <body>. Keep the real menu inside the
+		// exported window, just under its field.
+		const menuEl = document.querySelector("body > .menu");
+		if (!menuEl) throw new Error("The source field did not open Obsidian's menu");
+		const modalRect = modal.modalEl.getBoundingClientRect();
+		const fieldRect = field.getBoundingClientRect();
+		modal.modalEl.appendChild(menuEl);
+		menuEl.style.position = "absolute";
+		menuEl.style.left = `${fieldRect.left - modalRect.left}px`;
+		menuEl.style.top = `${fieldRect.bottom - modalRect.top + 2}px`;
 	}
 	return result;
 }

@@ -219,7 +219,7 @@ describe("the window", () => {
 		assert.equal(h.desc(change), "Every old ID in your notes becomes [!insight].");
 		// Only this callout's own ids, its main id first: never another callout.
 		const dropdown = change.querySelector(".cs-select-dropdown") as unknown as HTMLElement;
-		assert.deepEqual(dropdownOptions(dropdown).map((row) => row.textContent), ["insight", "thought"]);
+		assert.deepEqual(dropdownOptions(dropdown).map((item) => item.title), ["insight", "thought"]);
 		pickDropdown(dropdown, "thought");
 		assert.equal(h.desc(change), "Every old ID in your notes becomes [!thought].");
 		assert.deepEqual(h.chosen(), [t("noteChanges.changeTo")]);

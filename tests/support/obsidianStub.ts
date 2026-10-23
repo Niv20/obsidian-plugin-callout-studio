@@ -178,10 +178,22 @@ export const createdMenus: Menu[] = [];
 export interface MenuItemRecord {
 	title: string | DocumentFragment;
 	titles: Array<string | DocumentFragment>;
+	/** The Lucide id passed to `setIcon`, if any. */
+	icon?: string;
 	section?: string;
 	warning: boolean;
 	disabled: boolean;
+	/** Whether `setChecked(true)` put Obsidian's ✓ on the item. */
+	checked: boolean;
 	click?: () => unknown;
+}
+/** Where `showAtPosition` was asked to put a menu (Obsidian's `MenuPositionDef`). */
+export interface MenuPositionRecord {
+	x: number;
+	y: number;
+	width?: number;
+	overlap?: boolean;
+	left?: boolean;
 }
 export class Menu extends Component {
 	readonly items: MenuItemRecord[] = [];
@@ -189,24 +201,34 @@ export class Menu extends Component {
 	hideCalls = 0;
 	delayHideCallback = false;
 	showEvent?: MouseEvent;
+	/** Set by `showAtPosition`: where the menu was asked to open. */
+	showPosition?: MenuPositionRecord;
+	/** Set by `setNoIcon`: the menu draws no icon column. */
+	noIcon = false;
+	/** Set by `setParentElement`: the element the menu belongs to. */
+	parentEl?: HTMLElement;
 	private hidden?: () => void;
 	constructor() { super(); createdMenus.push(this); }
 	setUseNativeMenu(_native: boolean): this { return this; }
+	setNoIcon(): this { this.noIcon = true; return this; }
+	setParentElement(el: HTMLElement): this { this.parentEl = el; return this; }
 	addItem(callback: (item: {
 		setTitle(title: string | DocumentFragment): unknown;
 		setIcon(icon: string): unknown;
 		setSection(section: string): unknown;
 		setWarning(warning: boolean): unknown;
 		setDisabled(disabled: boolean): unknown;
+		setChecked(checked: boolean): unknown;
 		onClick(callback: () => unknown): unknown;
 	}) => void): this {
-		const record: MenuItemRecord = { title: "", titles: [], warning: false, disabled: false };
+		const record: MenuItemRecord = { title: "", titles: [], warning: false, disabled: false, checked: false };
 		const item = {
 			setTitle(title: string | DocumentFragment) { record.title = title; record.titles.push(title); return this; },
-			setIcon(_icon: string) { return this; },
+			setIcon(icon: string) { record.icon = icon; return this; },
 			setSection(section: string) { record.section = section; return this; },
 			setWarning(warning: boolean) { record.warning = warning; return this; },
 			setDisabled(disabled: boolean) { record.disabled = disabled; return this; },
+			setChecked(checked: boolean) { record.checked = checked; return this; },
 			onClick(callback: () => unknown) { record.click = callback; return this; },
 		};
 		callback(item);
@@ -222,9 +244,32 @@ export class Menu extends Component {
 		this.load();
 		return this;
 	}
+	/** As Obsidian does, marks the parent element `has-active-menu` while shown. */
+	showAtPosition(position: MenuPositionRecord, _doc?: Document): this {
+		this.unload();
+		this.shown = true;
+		this.showPosition = position;
+		this.parentEl?.addClass("has-active-menu");
+		this.load();
+		return this;
+	}
+	/** A click on an item: runs its handler, then closes the menu, as Obsidian does. */
+	clickItem(title: string): void {
+		const index = this.items.findIndex((record) => record.title === title);
+		if (index < 0) throw new Error(`no menu item titled ${title}`);
+		this.clickItemAt(index);
+	}
+	/** The same click, on the item at `index` (0 is the first). */
+	clickItemAt(index: number): void {
+		const item = this.items[index];
+		if (!item) throw new Error(`no menu item at ${index}`);
+		item.click?.();
+		this.hide();
+	}
 	hide(): this {
 		this.hideCalls++;
 		this.shown = false;
+		this.parentEl?.removeClass("has-active-menu");
 		this.unload();
 		if (!this.delayHideCallback) this.finishHide();
 		return this;

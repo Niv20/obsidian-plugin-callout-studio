@@ -1,4 +1,4 @@
-import { dropdownOptions, pickDropdown } from "./support/selectDropdown";
+import { dropdownButton, dropdownValue, openDropdownMenu, pickDropdown } from "./support/selectDropdown";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -141,26 +141,21 @@ describe("callout occurrence sidebar", () => {
 		await ensureOccurrencesSidebarTab(app);
 		assert.deepEqual(calls, [["callout-studio-occurrences", "right", { active: false, reveal: false }]]);
 	});
-	it("gives an open format menu the first Escape and restores the host scope on rebuild and close", async () => {
+	it("leaves the format menu's Escape to Obsidian, and closes the menu on rebuild and close", async () => {
+		// The format filter opens Obsidian's own menu, which brings its own key
+		// scope (Escape and the arrows) in the app. The view must not push one
+		// of its own on top, and must not leave a menu open behind a rebuilt or
+		// closed frame.
 		const h = harness({ "a.md": "[!note]" });
-		let hostEscapes = 0;
-		h.scope.register([], "Escape", () => { hostEscapes++; return false; });
 		await h.view.onOpen();
 		const dropdown = (): HTMLElement => h.view.contentEl.querySelector<HTMLElement>(".cs-select-dropdown")!;
-		const escape = () => h.keymap.handle({ key: "Escape", preventDefault: () => {}, stopPropagation: () => {} } as KeyboardEvent);
-		dropdownOptions(dropdown());
-		assert.equal(h.keymap.scopes.length, 2);
-		escape();
-		assert.equal(hostEscapes, 0);
-		assert.equal(dropdown().querySelector("input")?.getAttribute("aria-expanded"), "false");
-		assert.equal(h.keymap.scopes.length, 1);
-		escape();
-		assert.equal(hostEscapes, 1);
-		dropdownOptions(dropdown());
+		const first = openDropdownMenu(dropdown());
+		assert.equal(h.keymap.scopes.length, 1, "no scope of the plugin's own for a plain choice");
 		h.view.refreshLabels();
-		assert.equal(h.keymap.scopes.length, 1);
-		dropdownOptions(dropdown());
+		assert.equal(first.shown, false, "a rebuilt frame closes the old menu");
+		const second = openDropdownMenu(dropdown());
 		await h.view.onClose();
+		assert.equal(second.shown, false, "closing the view closes the menu");
 		assert.equal(h.keymap.scopes.length, 1);
 		h.index.dispose();
 	});
@@ -273,32 +268,30 @@ describe("callout occurrence sidebar", () => {
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-file").length, 2);
 		assert.deepEqual(Array.from(h.view.contentEl.querySelectorAll(".cs-sidebar-file-link"), (node) => node.textContent),
 			["a.md (105)", "b.md (2)"]);
-		const formatInput = h.view.contentEl.querySelector(".cs-select-dropdown .cs-combobox-input") as unknown as FakeElement;
-		assert.ok(formatInput);
-		assert.equal(formatInput.readOnly, true);
-		assert.equal(formatInput.value, t("usage.allRoles"));
+		const formatSelect = h.view.contentEl.querySelector<HTMLElement>(".cs-select-dropdown")!;
+		const formatButton = dropdownButton(formatSelect);
+		assert.equal(dropdownValue(formatSelect), t("usage.allRoles"));
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-controls select"), null);
-		formatInput.focus();
-		const formatRows = dropdownOptions(h.view.contentEl.querySelector<HTMLElement>(".cs-select-dropdown")!);
-		assert.deepEqual(formatRows.map((row) => row.textContent), [
+		formatButton.focus();
+		const formatMenu = openDropdownMenu(formatSelect);
+		assert.deepEqual(formatMenu.items.map((item) => item.title), [
 			t("usage.allRoles"), t("vaultStats.roleHeading"), t("vaultStats.roleInline"), t("vaultStats.roleBlock"),
 		]);
-		formatRows[1]!.fire("mouseenter");
-		assert.ok(formatRows[1]!.classList.contains("is-active"));
-		formatRows[1]!.fire("click");
-		assert.equal(formatInput.value, t("vaultStats.roleHeading"));
+		assert.deepEqual(formatMenu.items.map((item) => item.checked), [true, false, false, false]);
+		formatMenu.clickItem(t("vaultStats.roleHeading"));
+		assert.equal(dropdownValue(formatSelect), t("vaultStats.roleHeading"));
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 1);
 		assert.deepEqual(h.view.getState(), { ids: [], role: "heading", allTypes: true });
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent,
 			t("usage.summary", { count: 1, files: 1 }));
 		assert.equal(h.view.contentEl.querySelector(".cs-sidebar-file-link")?.textContent, "b.md (1)");
 		assert.equal(h.savedLayouts(), 1);
-		assert.equal(h.view.contentEl.ownerDocument.activeElement, formatInput);
+		assert.equal(h.view.contentEl.ownerDocument.activeElement, formatButton);
 		h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop = 180;
 		await h.view.setState({ ids: ["note", "note"], role: "regular", occurrences: ["never persist"], totalCount: 999 }, { history: false });
 		assert.deepEqual(h.view.getState(), { ids: ["note"], role: "regular" });
 		assert.equal(h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop, 0, "opening another view state begins at the top");
-		assert.equal(formatInput.value, t("vaultStats.roleBlock"));
+		assert.equal(dropdownValue(formatSelect), t("vaultStats.roleBlock"));
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 100);
 		await h.view.onClose();
 		h.index.dispose();
@@ -313,8 +306,7 @@ describe("callout occurrence sidebar", () => {
 		const input = h.view.contentEl.querySelector(".cs-occurrences-picker .cs-combobox-input") as unknown as FakeElement;
 		assert.deepEqual(h.view.getState(), { ids: [], role: undefined, allTypes: true });
 		assert.equal(input.value, t("usage.allTypes"));
-		assert.equal((h.view.contentEl.querySelector(".cs-select-dropdown .cs-combobox-input") as HTMLInputElement).value,
-			t("usage.allRoles"));
+		assert.equal(dropdownValue(h.view.contentEl.querySelector<HTMLElement>(".cs-select-dropdown")!), t("usage.allRoles"));
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 4);
 		input.fire("focus");
 		const allTypes = h.view.contentEl.querySelector(".cs-combobox-iconless-option") as unknown as FakeElement;
@@ -330,14 +322,14 @@ describe("callout occurrence sidebar", () => {
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent,
 			t("usage.summary", { count: 4, files: 3 }));
 
-		const formatInput = h.view.contentEl.querySelector(".cs-select-dropdown .cs-combobox-input") as unknown as FakeElement;
-		pickDropdown(h.view.contentEl.querySelector<HTMLElement>(".cs-select-dropdown")!, t("vaultStats.roleHeading"));
+		const formatSelect = h.view.contentEl.querySelector<HTMLElement>(".cs-select-dropdown")!;
+		pickDropdown(formatSelect, t("vaultStats.roleHeading"));
 		assert.deepEqual(h.view.getState(), { ids: [], role: "heading", allTypes: true });
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 1);
 		await h.view.setState({ ids: ["warning"], role: undefined }, { history: false });
 		assert.deepEqual(h.view.getState(), { ids: h.registry.vaultIdFormsFor(h.registry.get("warning")!), role: undefined });
 		assert.equal(input.value, "warning");
-		assert.equal(formatInput.value, t("usage.allRoles"), "Find callouts clears a previous format filter");
+		assert.equal(dropdownValue(formatSelect), t("usage.allRoles"), "Find callouts clears a previous format filter");
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 1);
 		await h.view.setState({ ids: [], role: undefined, allTypes: true }, { history: false });
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 4);
@@ -974,12 +966,15 @@ describe("callout occurrence sidebar", () => {
 		assert.equal(input.value, "emergent");
 		assert.equal(input.getAttribute("aria-expanded"), "true");
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-combobox-option").length, 1, "newly observed types appear in an open search");
-		assert.equal(listenerCount(), before + 2, "both stable pickers retain one outside-click listener");
+		// The type picker keeps one outside-click listener of its own. The
+		// format filter has none: its list is Obsidian's menu, which listens
+		// for itself only while it is open.
+		assert.equal(listenerCount(), before + 1, "the stable type picker retains one outside-click listener");
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 3);
 		await h.view.onClose();
 		assert.equal(listenerCount(), before);
 		await h.view.onOpen();
-		assert.equal(listenerCount(), before + 2);
+		assert.equal(listenerCount(), before + 1);
 		await h.view.onClose();
 		assert.equal(listenerCount(), before);
 		h.index.dispose();

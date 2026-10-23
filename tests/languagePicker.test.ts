@@ -3,9 +3,11 @@
  * when its reset arrow appears, what a pick saves, and the warning it shows
  * for a language that has not downloaded.
  *
- * The width rule is the one that regressed: the menu is exactly as wide as the
- * picker, so a column that shrank, or gave its room to the reset arrow, cut the
- * longest names short ("Bahasa Indone…"). The fake DOM has no layout, so the
+ * The width rule is the one that regressed: when the list was the picker's own
+ * popup, exactly as wide as the picker, a column that shrank, or gave its room
+ * to the reset arrow, cut the longest names short ("Bahasa Indone…"). The list
+ * is Obsidian's menu now, but the field still has to fit the longest name. The
+ * fake DOM has no layout, so the
  * geometry below is invented, and only the arithmetic and the order of the
  * reads are checked here. Whether the labels fit in Obsidian's real cascade was
  * checked in headless Chrome.
@@ -21,6 +23,8 @@ import { getSelectableLocales, setLocale } from "../src/i18n";
 import { renderLanguageSection } from "../src/settings/sections/LanguageSection";
 import type { SettingsSectionContext } from "../src/settings/sections/types";
 import { asEl, el, FakeElement } from "./support/fakeDom";
+import type { MenuItemRecord } from "./support/obsidianStub";
+import { dropdownValue, openDropdownMenu, pickDropdown } from "./support/selectDropdown";
 
 const RESET_WIDTH = 26;
 const GAP = 8;
@@ -108,7 +112,7 @@ function controlWidth(host: FakeElement): string {
 
 /** The closed picker's text. */
 function face(host: FakeElement): string | undefined {
-	return host.querySelector(".cs-combobox-input")?.value;
+	return dropdownValue(asEl(host));
 }
 
 function resetOf(host: FakeElement): FakeElement {
@@ -119,19 +123,14 @@ function resetOf(host: FakeElement): FakeElement {
 
 const arrowShows = (host: FakeElement): boolean => !resetOf(host).hasClass("cs-hidden");
 
-function openMenu(host: FakeElement): FakeElement[] {
-	const control = host.querySelector(".cs-combobox-control");
-	assert.ok(control);
-	control.fire("mousedown");
-	control.fire("click");
-	return host.querySelectorAll(".cs-combobox-option");
+/** Open the language menu (Obsidian's `Menu`, recorded by the stub). */
+function openMenu(host: FakeElement): MenuItemRecord[] {
+	return openDropdownMenu(asEl(host)).items;
 }
 
+/** Click a language in the menu, as the user would. */
 function pick(host: FakeElement, name: string): void {
-	const row = openMenu(host).find((option) => option.textContent === name);
-	assert.ok(row, `${name} is offered`);
-	row.fire("mousedown");
-	row.fire("click");
+	pickDropdown(asEl(host), name);
 }
 
 /** Long enough for `setLanguage` to get past both of its awaits. */
@@ -157,7 +156,10 @@ describe("language picker", () => {
 	it("offers languages and nothing else, in the menu and in the sizer", () => {
 		const host = render("auto");
 		const names = getSelectableLocales().map((locale) => locale.name);
-		assert.deepEqual(openMenu(host).map((row) => row.textContent), names);
+		assert.deepEqual(openMenu(host).map((item) => item.title), names);
+		// Obsidian's ✓ marks the language on screen: English, which the stub's
+		// Obsidian speaks, while following it.
+		assert.deepEqual(openMenu(host).filter((item) => item.checked).map((item) => item.title), ["English"]);
 		const sized = host.querySelector(".cs-language-width-sizer")?.children ?? [];
 		assert.deepEqual(sized.map((label) => label.textContent), names);
 	});

@@ -192,6 +192,16 @@ function chooseField(modal, name, label) {
 	const row = [...modal.modalEl.querySelectorAll(".setting-item")]
 		.find(el => el.querySelector(".setting-item-name")?.textContent === name);
 	if (!row) throw new Error(`Missing actual command field: ${name}`);
+	const plainChoice = row.querySelector(".cs-select-button");
+	if (plainChoice) {
+		// A plain choice opens Obsidian's menu, which is added to <body>, not to the row.
+		plainChoice.click();
+		const item = [...document.querySelectorAll(".menu .menu-item")]
+			.find(el => el.querySelector(".menu-item-title")?.textContent === label);
+		if (!item) throw new Error(`Missing production command choice: ${label}`);
+		item.click();
+		return;
+	}
 	row.querySelector(".cs-combobox-control").click();
 	const option = [...row.querySelectorAll('[role="option"]')]
 		.find(el => (el.querySelector(".callout-studio-suggestion-name")?.textContent ?? el.textContent) === label);
@@ -214,11 +224,25 @@ function commandEditor(plugin) {
 function languageSelector(plugin) {
 	return mountSettings(plugin, {
 		title: "Choose the interface language",
-		description: "The production LanguageSection opens its real ListboxPopup containing every supported language under its native name. Only the language settings section is shown; the shorter dark-mode panel crops the scrollable language list after its first options.",
+		description: "The production LanguageSection opens Obsidian's own menu listing every supported language under its native name, with a check mark beside the language shown. Only the language settings section is shown; the shorter dark-mode panel crops the menu after its first options.",
 		render(panel, ctx) {
 			renderLanguageSection(ctx, panel);
 			panel.style.height = "420px";
-			panel.querySelector(".cs-language-setting .cs-combobox-control").click();
+			const field = panel.querySelector(".cs-language-setting .cs-select-button");
+			field.click();
+			// Obsidian adds its menu to <body>. Keep the real menu, with its CSS,
+			// inside the exported panel, just under its field, and let the panel
+			// crop it as the window would.
+			const menuEl = document.querySelector("body > .menu");
+			if (!menuEl) throw new Error("The language field did not open Obsidian's menu");
+			const panelRect = panel.getBoundingClientRect();
+			const fieldRect = field.getBoundingClientRect();
+			panel.style.position = "relative";
+			panel.style.overflow = "hidden";
+			panel.appendChild(menuEl);
+			menuEl.style.position = "absolute";
+			menuEl.style.left = `${fieldRect.left - panelRect.left}px`;
+			menuEl.style.top = `${fieldRect.bottom - panelRect.top + 2}px`;
 		},
 	});
 }

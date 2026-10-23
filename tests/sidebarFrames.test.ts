@@ -39,9 +39,10 @@ describe("shared sidebar headers", () => {
 			assert.equal(occurrences.querySelector(".cs-occurrences-metrics"), null);
 			assert.equal(occurrences.querySelector(".cs-sidebar-filter-label"), null);
 			assert.equal(occurrences.querySelectorAll(".cs-sidebar-filter").length, 2);
-			const formatInput = occurrences.querySelector(".cs-select-dropdown .cs-combobox-input");
-			assert.equal(occurrences.querySelector(`#${formatInput?.getAttribute("aria-labelledby")}`)?.textContent,
-				t("commandBuilder.format"));
+			// The format field is named by a hidden label (its first id), then its value.
+			const formatButton = occurrences.querySelector(".cs-select-dropdown .cs-select-button");
+			const labelId = formatButton?.getAttribute("aria-labelledby")?.split(" ")[0];
+			assert.equal(occurrences.querySelector(`#${labelId}`)?.textContent, t("commandBuilder.format"));
 		} finally {
 			usage.roleSelect.destroy();
 			occurrences.remove(); conversion.remove();

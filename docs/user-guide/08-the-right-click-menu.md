@@ -14,7 +14,7 @@ A heading callout's actions can work on the entire section below that heading:
 
 - Cut the section.
 - Copy the section.
-- Delete the section.
+- Delete the section. Like every Delete in Obsidian's menus, it is red.
 - Create or edit the callout type.
 - Open the main Callout Studio settings.
 
@@ -32,7 +32,7 @@ An inline callout keeps the menu simple:
 A block callout offers:
 
 - Copy the callout's Markdown.
-- Change its folding state between open, closed, and non-collapsible.
+- Change its folding state between open, closed, and non-collapsible. All three states are listed, and a check mark shows the one the callout is in now.
 - Create or edit the callout type.
 - Open the main Callout Studio settings.
 

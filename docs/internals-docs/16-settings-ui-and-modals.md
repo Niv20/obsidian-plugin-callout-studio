@@ -2701,9 +2701,10 @@ state*, then a live preview of the command name. Every row is built
 unconditionally and hidden with `cs-row-hidden`; one `syncVisibility()` decides
 all of it, so the controls can never disagree about the current format. Every
 configuration row also carries `cs-command-field`: all five pickers share one
-control-column width. The four format-specific choices use `SelectDropdown`, while the callout picker is searchable. All five show
-the same field shape and hover, press, focus and open feedback. The controls
-become full-width when Obsidian stacks rows on a phone.
+control-column width. The four format-specific choices are `SelectDropdown`s,
+which open Obsidian's own menu, while the callout picker is searchable. All five
+show the same field shape and hover, press, focus and open feedback. The
+controls become full-width when Obsidian stacks rows on a phone.
 
 New commands select the built-in `note` type when available, then the first
 registered type with a visible name. This avoids selecting a discovered fallback
@@ -2727,10 +2728,11 @@ keeps each control beside its option rule and supplies one popup teardown path:
   syntax at all, so the row hides rather than greying out. Both block *actions*
   show it: Wrap selection and Insert new write the same header line.
 
-`SelectDropdown` mounts the four nonsearchable lists through the same
-`ListboxPopup` used by the searchable callout picker. It exposes selection and
-option refresh methods so the modal can sync dependent rows, and returns a
-disposer for every popup.
+`SelectDropdown` builds the four plain lists as Obsidian menus (see
+[Shared dropdown controls](#shared-dropdown-controls)). It exposes selection and
+option refresh methods so the modal can sync dependent rows, and a `destroy()`
+for every field. Heading level shows Lucide's `heading-1` … `heading-6` beside
+each level, and Fold state the fold icons of a note's right-click menu.
 
 `draft()` mirrors the sanitizer's shape, including omitting `fold` when it is
 `"none"` - otherwise a command saved from this window and the same command
@@ -2739,40 +2741,66 @@ reloaded would differ by a key that means nothing. See
 
 ### Shared dropdown controls
 
-All list-selection triggers carry `cs-dropdown-control`: the shared callout,
-color, and language listboxes; plain selectors in commands, palettes, Quick
-Insert, the icon picker, and occurrences; and the custom icon-source and Fold
-selectors. They are drawn like Obsidian's combobox button - `--input-height`
-tall, Obsidian's combobox padding and
-[field corners](#field-corners-follow-obsidians-input-tokens), no border,
-`--input-shadow`, and the same `chevrons-up-down` indicator - with Obsidian's
-hover, focus and open states; see [How an input field focuses](#how-an-input-field-focuses).
-Text-entry fields are Obsidian's own fields. Widths remain specific to each
-layout.
-
+All list-selection triggers carry `cs-dropdown-control`: the searchable
+callout, colour, icon-source and skin-tone pickers; the plain choices in
+commands, palettes, Quick Insert, the icon picker, occurrences and the
+**Language** row; and the callout editor's hidden Fold selector. They are drawn
+like Obsidian's combobox button - `--input-height` tall, Obsidian's combobox
+padding and [field corners](#field-corners-follow-obsidians-input-tokens), no
+border, `--input-shadow`, and the same `chevrons-up-down` indicator - with
+Obsidian's hover, focus and open states; see
+[How an input field focuses](#how-an-input-field-focuses). Text-entry fields
+are Obsidian's own fields. Widths remain specific to each layout.
 [`ui/dropdownControl.ts`](../../src/ui/dropdownControl.ts) exposes
-`appendDropdownCaret` for the inert, `aria-hidden` indicator. Both triggers and
-open lists follow the plugin's theme; none of these value selectors uses an
-OS-native `<select>` menu. Action buttons, confirmation buttons, modal
-launchers, and three-dot action menus keep their own behavior and styling.
+`appendDropdownCaret` for the inert, `aria-hidden` indicator.
 
-[`ui/selectDropdown.ts`](../../src/ui/selectDropdown.ts) adapts
-`ListboxPopup` with `searchable: false` for finite `{ value, label }` choices.
-It owns the options and committed value, supports silent programmatic changes
-and dynamic option replacement, and calls `onChange` only for a changed user
-selection. Replacing options retains a still-valid value or chooses the first
-option. There is no hidden native select. `cs-select-dropdown` adds a hidden
-`cs-dropdown-width-sizer` grid of translated labels to preserve intrinsic
-longest-option width, while fixed-width setting rows can still shrink it.
-Callers destroy the adapter before rebuilding its row or closing its owner.
+What opens differs by kind, and is the rule since 2026-10-23 (decision 25 of
+the native-look plan: "every menu should look the same as Obsidian's"):
 
-Select-only controls stay closed on Tab focus. Click, Space, Enter, or an arrow
-opens the list; arrows, Home/End, and Page Up/Down move its active row. Typing a
-label prefix finds an option, and repeating one character cycles matching
-options. Click, Enter, and Space commit; Escape, Tab, and blur dismiss without
-changing the value. Escape on an already closed list remains available to its
-modal. The readonly input avoids opening a mobile text keyboard. Searchable
-callout and color pickers retain their editable query behavior.
+| Kind | The list | Why |
+| --- | --- | --- |
+| A plain choice (`SelectDropdown`) | Obsidian's own `Menu`, drawn as HTML | a few fixed options: exactly what Obsidian's menus are for |
+| A picker you search in (`ListboxPopup`) | the plugin's popup, drawn like `.menu` (see the next section) | a menu cannot hold a search field |
+| The icon-source and skin-tone pickers (`ListboxPopup`, select-only) | the same popup | their rows carry what a menu item cannot: a second line with a count, and emoji samples |
+
+None of them uses the operating system's `<select>` list.
+
+**`SelectDropdown`** ([`ui/selectDropdown.ts`](../../src/ui/selectDropdown.ts))
+is a `<button class="cs-select-button cs-dropdown-control">` showing the
+current option's words (`.cs-select-value`) and the caret, inside a
+`.cs-select-dropdown` wrapper. A click, or ↓/↑, builds a `Menu`:
+
+- `setUseNativeMenu(false)`, so it is drawn as HTML and can show icons (and is
+  the same on every platform; on a phone it is Obsidian's bottom sheet);
+- one item per option, `setChecked(true)` on the current one;
+- an option's `icon` when **every** option has one, otherwise `setNoIcon()`, so
+  the words start at the row's edge. Today only *Heading level* (`heading-1` …
+  `heading-6`) and *Fold state* (`ban`, `plus`, `minus`, the icons of the fold
+  choices in a note's right-click menu) carry icons;
+- `setParentElement(button)`: Obsidian marks the button `has-active-menu`,
+  treats a press on it as not "outside" (so a second click closes the menu
+  instead of reopening it) and closes the menu if the button disappears;
+- `showAtPosition({ x, y: bottom, width, overlap: true, left: rtl })`, the
+  position Obsidian itself uses for a menu under a button.
+
+While open the button carries `is-open` (Obsidian's open-combobox look) and
+`aria-expanded="true"`; `onHide` clears both. If a click on a menu row left
+focus nowhere, focus returns to the button. Inside the menu the keyboard is
+Obsidian's: its arrows, Enter and Escape come from the menu's own key scope, so
+the plugin's Escape handling (`ui/menuEscape.ts`) is not involved. The field's
+accessible name is a hidden label plus the value (`aria-labelledby="<label>
+<value>"`), because a button has no value to announce, and `aria-label` would
+show as an Obsidian tooltip.
+
+The adapter owns the options and the value: `setValue` is silent, `onChange`
+fires only for a user's pick of a different option, and `onPick` for every pick
+(the language row retries a pending download when its own language is picked
+again). `setOptions` keeps a still-valid value or takes the first option, and
+closes an open menu, which would otherwise offer the old options; a pick of an
+option that is gone is ignored. A hidden `cs-dropdown-width-sizer` grid of every
+label gives the field the width of its longest option, so it does not resize
+when the value changes. Callers destroy the adapter when its row or owner goes;
+`destroy()` closes an open menu and disables the field for good.
 
 ### Dropdown popups look like Obsidian's menus
 
@@ -2829,9 +2857,9 @@ menu's own smaller check (`.cs-source-check`) is gone: it uses the shared one.
 The list keeps its trigger's width (both inline edges pinned, see
 `.cs-palette-menu`), so the ✓ takes its 24px from the chosen row's words. A
 long name is cut a little earlier on that one row. Obsidian's own menus are
-shrink-to-fit instead; the plain choices (`SelectDropdown` and the language
-picker) become real Obsidian menus later in the refactor, and their rows are not
-cut there.
+shrink-to-fit instead, which is why the plain choices open a real Obsidian
+`Menu` rather than this popup (see
+[Shared dropdown controls](#shared-dropdown-controls)).
 
 **Groups.** A `.cs-combobox-group` reaches across the list's 6px side padding
 (negative margin, the same padding put back inside), so that:
@@ -2881,21 +2909,19 @@ one `.mod-checked` with its trailing check), with body classes
 
 ### Option rows are padded once
 
-Every row of a list is padded in one place: the shared row rule
+Every row of a popup list is padded in one place: the shared row rule
 (`.cs-combobox-option`, with the Fold menu's `.cs-palette-menu-item`), `4px 8px`
-as on Obsidian's `.menu-item`. The words inside carry none: a `SelectDropdown`
-row is `.cs-combobox-option > .cs-dropdown-option-label`, and the label (like the
-language list's `.cs-language-option-label`) only takes the room left beside the
-✓ and is cut with "…" when it does not fit.
+as on Obsidian's `.menu-item`. The plain choices draw no rows at all any more:
+their list is Obsidian's `Menu`.
 
-Until 2026-10-23 the label owned the padding (`6px 12px`). Before that, the
+Until 2026-10-23 a plain choice's label owned the padding (`6px 12px`). Before that, the
 command editor's four selects and the palette editor's **Style** select also
 added `padding: 8px 12px` to the *row*, on top of the label's, which put their
 text 25px in and made their rows 45px tall. The icon picker's filters, its skin
 tone picker, its source menu and the Find callouts "every type" row each padded
 their rows themselves too; all of those rules are gone.
-`tests/dropdownOptionRows.test.ts` fails if a label pads itself again, or if any
-rule reaches a row through another class and pads it a second time.
+`tests/dropdownOptionRows.test.ts` fails if the old label rules come back, or if
+any rule reaches a row through another class and pads it a second time.
 
 ### The id line under a callout's name
 
@@ -2975,8 +3001,9 @@ list. Pick an icon's source menu uses it to count the libraries left to
 download.
 
 The occurrence **Format** filter and the command editor's Format, Heading level,
-Action and Fold state rows use `SelectDropdown`, backed by the same shared
-listbox. Their readonly input displays the chosen value without filtering.
+Action and Fold state rows are not this picker: they are `SelectDropdown`s,
+which open Obsidian's own menu (see
+[Shared dropdown controls](#shared-dropdown-controls)).
 
 A query that matches nothing does **not** dead-end. When the call site supplies
 `onCreate`, the empty state is replaced by a real, keyboard-reachable row
