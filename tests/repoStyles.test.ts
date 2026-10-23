@@ -267,6 +267,16 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-combobox-iconless-option", // a test hook for the row with no icon; the shared .cs-combobox-option paints it
 		"cs-btn-disabled", // marks a blocked button (ui/blockedButton.ts); Obsidian's aria-disabled rule draws the 70% dim
 		"cs-is-locked", // marks a confirm locked behind its checkbox; Obsidian's aria-disabled rule draws the dim
+		// Window classes that only set a width until 2026-10-23. The windows are
+		// Obsidian's 560px dialog now; the classes stay as hooks a user's own
+		// snippet may already target.
+		"callout-studio-adm-import-modal",
+		"callout-studio-cm-import-modal",
+		"callout-studio-credits-modal",
+		"callout-studio-export-format-modal",
+		"callout-studio-import-report-modal",
+		"callout-studio-import-source-modal",
+		"cs-portable-modal",
 
 		"callout-studio-more-btn",
 		"callout-studio-replace-modal",

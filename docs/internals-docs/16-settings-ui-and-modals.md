@@ -1274,6 +1274,15 @@ source file builds one itself. Pick an icon's preview ("Lucide: book-open")
 shares the bar as its `mod-secondary` item: at the start on a computer, under
 the buttons on a phone.
 
+**The width is Obsidian's dialog width** (`--dialog-width`, 560px, capped by
+`--dialog-max-width`) for every window except the callout and palette editors,
+whose two columns need 720px (`.callout-studio-editor-modal`), and three that
+keep their own for now: the welcome splash, and Commands and shortcuts and the
+style windows, which become settings pages later. The import chooser, the
+export chooser, the plugin import window, the import report, the icon credits
+and the conversion help used to set 520-700px each (finding S9-V3, GAP-06); their
+classes stay as hooks a user's snippet may target.
+
 **The buttons are Obsidian's**, with no size, padding, outline or dim of the
 plugin's own: Obsidian's `button` height and padding, its grey 3px focus ring,
 and for a blocked button (`aria-disabled`, see

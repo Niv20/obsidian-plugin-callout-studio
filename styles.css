@@ -5997,9 +5997,8 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 }
 
 /* ─── Import report modal ─────────────────────────────────── */
-.callout-studio-import-report-modal {
-	max-width: 640px;
-}
+/* Obsidian's dialog width (560px), like every window but the two editors. A
+   640px cap used to sit here and did nothing under that width. */
 .callout-studio-import-report .cs-import-report-lead {
 	margin-top: 0;
 	font-weight: 600;
@@ -6056,13 +6055,11 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 
 /* ─── Import source / export format chooser modals ────────── */
 /* Import picks a source and Export picks a format, each from a column of
-   option boxes (below) that act the moment one is clicked. As wide as the
-   plugin import window Import's chooser hands over to, so the step from one to
-   the other doesn't resize the window under the pointer. */
-.callout-studio-import-source-modal,
-.callout-studio-export-format-modal {
-	max-width: 520px;
-}
+   option boxes (below) that act the moment one is clicked. They open at
+   Obsidian's dialog width (560px), the same as the plugin import window
+   Import's chooser hands over to, so the step from one to the other still
+   doesn't resize the window under the pointer. (Both were capped at 520px
+   until 2026-10-23, 40px narrower than Obsidian's dialogs; finding S9-V3.) */
 .cs-import-file-input {
 	display: none;
 }
@@ -6230,11 +6227,9 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 
 /* ─── Quick insert window (the ribbon icon) ─────────────────── */
 
-/* Narrower than the callout editor and wider than a confirmation: this is a
-   list to scan, so the rows want length, not width. */
-.cs-quick-insert {
-	--dialog-width: 560px;
-}
+/* Obsidian's dialog width (560px), narrower than the callout editor: this is a
+   list to scan, so the rows want length, not width. (A rule setting 560px
+   used to sit here; it was Obsidian's own default and changed nothing.) */
 
 /* The window body keeps a small top inset for the first row's focus ring (see
    "Room for the first row's focus ring"), but a sticky child measures `top: 0`
@@ -6394,11 +6389,9 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
    window as styling hooks a user's snippet may already target. One screen, at
    most two options, each an option box drawn as a card (see "Option boxes"
    above): "This vault", and the source's one fallback — a file card with an
-   Upload button, or a paste card with a Paste button and a text box. */
-.callout-studio-cm-import-modal,
-.callout-studio-adm-import-modal {
-	max-width: 520px;
-}
+   Upload button, or a paste card with a Paste button and a text box. The
+   window is Obsidian's dialog width (560px), as wide as the chooser that
+   hands over to it. */
 /* What comes over and what is left behind: a caption over the options, set as
    Version history sets its own intro (`.cs-recovery-intro`), not a
    paragraph of body text competing with them. */
@@ -6587,11 +6580,7 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 }
 
 /* ── Icon licenses & credits modal ───────────────────────────── */
-.modal.callout-studio-credits-modal {
-	--dialog-width: 620px;
-	width: min(var(--dialog-width), 95vw);
-	max-width: min(var(--dialog-width), 95vw);
-}
+/* Obsidian's dialog width (560px); it was 620px until 2026-10-23. */
 
 .callout-studio-credits-content {
 	color: var(--text-muted);
@@ -6882,10 +6871,9 @@ body:not(.is-phone)
 	80% { transform: translateX(2px); }
 }
 
-/* Optional conversion help and inline replacement editing in the review sidebar. */
-.cs-portable-modal {
-	width: min(700px, 94vw);
-}
+/* Optional conversion help and inline replacement editing in the review
+   sidebar. The help window is Obsidian's dialog width (560px); it was 700px
+   until 2026-10-23. */
 
 .cs-portable-rules {
 	margin-block: var(--size-4-3);

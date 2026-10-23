@@ -85,8 +85,10 @@ rather than as dialogs of their own:
 - **Type.** The title is `--font-ui-medium` semibold; the status line is
   `--font-ui-smaller` in `--text-muted`, the size of a settings description.
 
-The three windows share one `max-width` (520px), so stepping from Import's
-chooser into a plugin import window doesn't resize the window under the pointer.
+The three windows open at Obsidian's own dialog width (`--dialog-width`, 560px),
+so stepping from Import's chooser into a plugin import window doesn't resize the
+window under the pointer. (They shared a 520px cap until 2026-10-23, 40px
+narrower than Obsidian's dialogs.)
 
 ### Two export formats
 
