@@ -1418,8 +1418,7 @@ painted as Obsidian paints an `a`: `--link-color`, underlined with
 `--link-decoration`, `--link-color-hover` under a pointer. Obsidian's
 `.setting-item-description` redefines those tokens to muted and normal, so in a
 description the link is the grey underlined one Obsidian's own descriptions
-use; elsewhere it is the accent. Inside a red `.cs-tag-error` line the tokens
-are set back to the accent, so the link stays findable in the sentence; in
+use; elsewhere it is the accent. In
 Obsidian's warning line under a field (`.setting-item-error`, where the IDs
 field's "move it here" now sits) they are the accent already. In that line the
 link is in a row's control column, where Obsidian's phone rules stretch and pad
@@ -2862,14 +2861,24 @@ plugin's general save-on-change convention.
 #### `CommandEditorModal` - the rows, and where each one's rule lives
 
 The form is *Callout type*, *Callout format*, *Heading level*, *Action*, *Fold
-state*, then a live preview of the command name. Every row is built
-unconditionally and hidden with `cs-row-hidden`; one `syncVisibility()` decides
-all of it, so the controls can never disagree about the current format. Every
-configuration row also carries `cs-command-field`: all five pickers share one
-control-column width. The four format-specific choices are `SelectDropdown`s,
-which open Obsidian's own menu, while the callout picker is searchable. All five
-show the same field shape and hover, press, focus and open feedback. The
-controls become full-width when Obsidian stacks rows on a phone.
+state*, then **Command name**. Every row is built unconditionally and hidden
+with `cs-row-hidden`; one `syncVisibility()` decides all of it, so the controls
+can never disagree about the current format. **Command name** is one more row
+(finding S8-15): the generated name at its end as Obsidian's read-only value
+(`addDisplayValue`), and a command the user already has said under it through
+the row's `setErrorMessage`. Until 2026-10-23 the name sat in a bordered card
+under the form, with a red line that slid in for a duplicate.
+
+Every configuration row carries `cs-command-field`, a hook. Each picker is as
+wide as its choices, at the end of its row, like Obsidian's dropdowns (finding
+S8-16): a `SelectDropdown` sizes itself to its longest label with its hidden
+sizer - steadier than Obsidian's own `resizeToFit`, which fits the selected
+option and so changes width with the value - and the searchable callout
+picker, which would fill the row, is held to Obsidian's combobox cap of 250px.
+They shared one 180px column until then. All five show the same field shape
+and hover, press, focus and open feedback, and become full-width when Obsidian
+stacks rows on a phone. With no callout to choose from, the window opens on
+Obsidian's warning text (`p.mod-warning`), since that blocks Save.
 
 New commands select the built-in `note` type when available, then the first
 registered type with a visible name. This avoids selecting a discovered fallback
@@ -2882,7 +2891,9 @@ The choice rows live under `settings/command/` rather than in the modal, which
 keeps each control beside its option rule and supplies one popup teardown path:
 
 - **`commandRoles.ts`** - the format list refills itself per callout
-  (a theme-owned callout has only Block), with a line explaining the absence.
+  (a theme-owned callout has only Block), with a line explaining the absence:
+  Obsidian's warning text (`p.mod-warning`) under the description, which
+  simply appears and goes.
 - **`calloutRow.ts`** - the *Callout type* picker, over the shared
   [combobox](#the-shared-callout-picker). This was a `<select>` whose every
   option read `Abstract (abstract)`; the id is now shown only on a row it

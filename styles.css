@@ -3923,26 +3923,18 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	cursor: default;
 }
 
-/* All five command pickers share one control width. They become full-width
-   when Obsidian stacks setting rows on a phone. */
-.cs-command-field {
-	--cs-command-control-width: 180px;
-}
-
-.is-phone .cs-command-field {
-	--cs-command-control-width: 100%;
-}
-
-.cs-command-field .setting-item-control {
-	flex: 0 0 auto;
-	width: var(--cs-command-control-width);
-	max-width: 100%;
-}
-
-.cs-command-field .setting-item-control > .cs-combobox,
-.cs-command-field .setting-item-control > .cs-select-dropdown {
-	width: 100%;
-	min-width: 0;
+/* Each command picker is as wide as its choices, at the end of its row, like
+   Obsidian's dropdowns in Settings (finding S8-16) — no longer one 180px
+   column for all five, which put "H3" in a box as wide as "Foldable,
+   collapsed (-)". A plain choice (`SelectDropdown`) already sizes itself to
+   its longest label with its hidden sizer: steadier than Obsidian's own,
+   which fits the selected option and so changes width as the value changes.
+   The callout picker, which grows to fill whatever it is in, is held to
+   Obsidian's cap for a combobox (250px). On a phone Obsidian's own rules make
+   every control full width. */
+body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
+	flex: 0 1 250px;
+	max-width: 250px;
 }
 
 /* The shared empty state is a page-level block elsewhere; inside a popup it
@@ -4725,49 +4717,6 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	display: none;
 }
 
-/* A link inside a red message ("move it here", "use it instead") keeps the
-   accent rather than the muted grey of the description it may sit in. */
-.cs-tag-error {
-	--link-color: var(--text-accent);
-	--link-color-hover: var(--text-accent-hover);
-	color: var(--text-error);
-	font-size: var(--font-ui-smaller);
-	min-height: 0;
-	overflow: hidden;
-	opacity: 0;
-	max-height: 0;
-	transition:
-		opacity 0.3s ease,
-		max-height 0.3s ease;
-}
-
-/*
- * max-height, not height: auto, so the reveal/collapse can transition (auto
- * can't be animated) and the row still shrinks back to 0 the moment the
- * class comes off. The ceiling has to clear three wrapped lines, not one:
- * these one-sentence messages (duplicate palette name, duplicate ID, "You
- * already have a command that does exactly this.") run longer in several
- * locales than in English, and on a narrow mobile control column they wrap
- * well before a desktop row would — a tight cap here clipped the wrapped
- * line's last word instead of growing to show it.
- */
-.cs-tag-error.is-visible {
-	opacity: 1;
-	min-height: 1.2em;
-	max-height: 4.5em;
-	margin-top: 4px;
-}
-
-/* Not a problem, something worth knowing: the callout editor's "On save,
-   "test" moves here from Abstract." One line per id moving, and one more,
-   so its ceiling is higher than an error's. */
-.cs-tag-error.is-note {
-	color: var(--text-muted);
-}
-.cs-tag-error.is-note.is-visible {
-	max-height: 12em;
-}
-
 /* The + does not take a slice of this row — it is absolutely positioned over
    the field's trailing edge (`.cs-tag-add-slot` below), so the field itself is
    the full width of the row whether the button is showing or not. That is the
@@ -5325,77 +5274,15 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	pointer-events: none;
 }
 
-/* Editor: the generated command name, shown as the user picks. */
-
-/* The card is the last thing in the form, so the eye reads it as one more line
-   of the stack above it and wants the same hairline between them that every
-   pair of Settings gets. Both halves of the gap are Obsidian's own
-   `.setting-item` block padding (`0.75em`): the last option row already pays
-   the half above the rule, and this wrapper pays the half below, so the line
-   sits centred exactly as it does between two rows.
-
-   `em`, not a pixel value, because that is what `.setting-item` uses — the
-   wrapper is a sibling of those rows and inherits the same font size, so the
-   two gaps stay equal at any UI font scale.
-
-   The rule lives on this wrapper rather than on the card because the card
-   carries a full border of its own: a `border-top` there would thicken into
-   the box's own edge and read as part of the card, not as the line between
-   two rows. */
-.cs-command-preview-row {
-	border-top: 1px solid var(--background-modifier-border);
-	padding-top: 0.75em;
-}
-
-/* The phone re-spaces every row of its own accord — `.is-phone .setting-item`
-   is `padding: 1em 0` with `border-width: var(--border-width)` — so the wrapper
-   follows it there instead of holding a desktop gap the rows above no longer
-   use, which would leave the rule sitting high between them. */
-.is-phone .cs-command-preview-row {
-	border-top-width: var(--border-width);
-	padding-top: 1em;
-}
-
-.cs-command-preview {
-	padding: 10px 12px;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-s);
-	corner-shape: var(--corner-shape);
-	background: var(--cs-surface-raised, var(--setting-items-background));
-}
-
-.cs-command-preview-label {
-	font-size: var(--font-ui-smaller);
-	color: var(--text-muted);
-	margin-bottom: 2px;
-}
-
-.cs-command-preview-name {
-	font-size: var(--font-ui-small);
-	color: var(--text-normal);
-}
-
-/* Same show/hide shape as .cs-tag-error, in the warning colour: an off render
-   role is worth flagging but does not stop the command being saved. */
-.cs-command-role-notice {
-	color: var(--text-warning);
-	font-size: var(--font-ui-smaller);
-	overflow: hidden;
-	opacity: 0;
-	max-height: 0;
-	transition:
-		opacity 0.3s ease,
-		max-height 0.3s ease;
-}
-
-.cs-command-role-notice.is-visible {
-	opacity: 1;
-	max-height: 4em;
-	margin-top: 4px;
+/* The command editor's format notice (commandRoles.ts): Obsidian's warning
+   text (`p.mod-warning`), set close under the description it belongs to
+   rather than a paragraph's distance away. */
+.cs-command-format-notice {
+	margin: var(--size-4-1) 0 0;
 }
 
 /* "Paused: your theme supplies this callout…" under a command's name in the
-   list. Warning-coloured like the editor's notice above, because it is the
+   list. Warning-coloured like the editor's format notice, because it is the
    same fact reported after the fact — but a plain line rather than a pill: the
    command has not gone wrong, it is waiting, and a badge silhouette here would
    read as an error beside rows that carry hotkey chips in the very same spot. */

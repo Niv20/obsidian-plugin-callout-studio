@@ -51,40 +51,23 @@ describe("command editor field layout", () => {
 		}
 	});
 
-	it("keeps all five command fields the same width", () => {
-		const commandFieldAt = css.indexOf(".cs-command-field {");
-		const phoneOverrideAt = css.indexOf(
-			".is-phone .cs-command-field {",
-			commandFieldAt,
-		);
-		const narrowMediaAt = css.indexOf(
-			"@media (max-width: 600px)",
-			commandFieldAt,
-		);
+	it("fits each picker to its choices instead of one shared 180px column (S8-16)", () => {
+		assert.doesNotMatch(css, /--cs-command-control-width/, "no shared column width any more");
+		assert.doesNotMatch(css, /\.cs-command-field\s+\.setting-item-control\s*\{/, "the control column sizes to its content");
+		// The searching callout picker would fill the row; it is held to
+		// Obsidian's combobox cap, except on a phone, where every control is
+		// full width.
 		assert.match(
 			css,
-			/\.cs-command-field\s*\{[^}]*--cs-command-control-width:\s*180px;[^}]*\}/,
+			/body:not\(\.is-phone\)\s+\.cs-command-field\s+\.setting-item-control\s*>\s*\.cs-combobox\s*\{[^}]*max-width:\s*250px;[^}]*\}/,
 		);
-		assert.doesNotMatch(css, /\.cs-command-field\.cs-command-callout-setting\s*\{/);
-		assert.match(
-			css,
-			/\.cs-command-field\s+\.setting-item-control\s*\{[^}]*flex:\s*0\s+0\s+auto;[^}]*width:\s*var\(--cs-command-control-width\);[^}]*\}/,
-		);
-		// The callout picker and the plain choices fill the same column.
-		assert.match(
-			css,
-			/\.cs-command-field\s+\.setting-item-control\s*>\s*\.cs-combobox,\s*\.cs-command-field\s+\.setting-item-control\s*>\s*\.cs-select-dropdown\s*\{[^}]*width:\s*100%;[^}]*min-width:\s*0;[^}]*\}/,
-		);
-		assert.match(
-			css,
-			/\.is-phone\s+\.cs-command-field\s*\{[^}]*--cs-command-control-width:\s*100%;[^}]*\}/,
-		);
-		assert.ok(
-			commandFieldAt >= 0 &&
-				phoneOverrideAt > commandFieldAt &&
-				phoneOverrideAt < narrowMediaAt,
-			"the phone width must override the shared desktop width outside a viewport breakpoint",
-		);
+	});
+
+	it("shows the command's name as a row of the form, and a duplicate under it (S8-15)", () => {
+		assert.match(modalSource, /new Setting\(parent\)\s*\.setName\(t\("commandBuilder\.preview"\)\)\s*\.addDisplayValue\(/);
+		assert.match(modalSource, /this\.previewSetting\?\.setErrorMessage\(/);
+		assert.doesNotMatch(css, /\.cs-command-preview/, "no card of the plugin's");
+		assert.doesNotMatch(css, /\.cs-command-role-notice/, "the format notice is Obsidian's warning text");
 	});
 });
 

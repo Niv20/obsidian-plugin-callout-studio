@@ -10,8 +10,8 @@
  * same way the palette editor handles its gradient rows: one sync function
  * decides visibility so the controls can never disagree about the format.
  */
-import { Modal } from "obsidian";
-import type { App } from "obsidian";
+import { Modal, Setting } from "obsidian";
+import type { App, DisplayValueComponent } from "obsidian";
 import { t } from "../i18n";
 import { getLocale } from "../i18n";
 import type { CustomCommandDraft } from "../editor/CustomCommandManager";
@@ -78,8 +78,10 @@ export class CommandEditorModal extends Modal {
 	private formatRow?: FormatRow;
 	private foldRow?: FoldStateRow;
 	private calloutRow?: CalloutRow;
-	private previewEl?: HTMLElement;
-	private errorEl?: HTMLElement;
+	/** The "Command name" row: the generated name, and a duplicate said under it. */
+	private previewSetting?: Setting;
+	/** The read-only value at the end of that row, which shows the name. */
+	private previewValue?: DisplayValueComponent;
 	private saveBtnEl?: HTMLButtonElement;
 
 	constructor(
@@ -139,9 +141,11 @@ export class CommandEditorModal extends Modal {
 				: t("commandBuilder.newTitle"),
 		);
 
+		// It blocks Save, so it is said in Obsidian's warning colour (`.mod-warning`)
+		// rather than as a quiet empty state.
 		if (this.getChoices().length === 0) {
-			contentEl.createDiv({
-				cls: "callout-studio-empty-state",
+			contentEl.createEl("p", {
+				cls: "mod-warning",
 				text: t("commandBuilder.noCallouts"),
 			});
 		}
@@ -208,17 +212,19 @@ export class CommandEditorModal extends Modal {
 		}
 	}
 
+	/**
+	 * The name the command will have, as one more row of the form (finding
+	 * S8-15): **Command name**, and at the row's end the generated name, as
+	 * Obsidian shows a value you cannot change (`addDisplayValue`). A command
+	 * the user already has is said under it, through `setErrorMessage`, in
+	 * Obsidian's warning colour. It used to be a bordered card under the form.
+	 */
 	private buildPreview(parent: HTMLElement): void {
-		// The wrapper carries the divider above the card, and only it can —
-		// see `.cs-command-preview-row` in styles.css.
-		const row = parent.createDiv({ cls: "cs-command-preview-row" });
-		const box = row.createDiv({ cls: "cs-command-preview" });
-		box.createDiv({
-			cls: "cs-command-preview-label",
-			text: t("commandBuilder.preview"),
-		});
-		this.previewEl = box.createDiv({ cls: "cs-command-preview-name" });
-		this.errorEl = parent.createDiv({ cls: "cs-tag-error" });
+		this.previewSetting = new Setting(parent)
+			.setName(t("commandBuilder.preview"))
+			.addDisplayValue((value) => {
+				this.previewValue = value;
+			});
 	}
 
 	/** The draft as the form currently stands. */
@@ -265,19 +271,10 @@ export class CommandEditorModal extends Modal {
 		if (this.role !== "heading") this.headingRow?.dropdown.close();
 
 		const def = this.host.registry.get(this.calloutId);
-		if (this.previewEl) {
-			this.previewEl.setText(
-				def ? describeCommand(this.draft(), def) : "—",
-			);
-		}
-
-		const duplicate = this.isDuplicate();
-		if (this.errorEl) {
-			this.errorEl.setText(
-				duplicate ? t("commandBuilder.duplicate") : "",
-			);
-			this.errorEl.toggleClass("is-visible", duplicate);
-		}
+		this.previewValue?.setValue(def ? describeCommand(this.draft(), def) : "—");
+		this.previewSetting?.setErrorMessage(
+			this.isDuplicate() ? t("commandBuilder.duplicate") : null,
+		);
 
 		if (this.saveBtnEl) paintBlocked(this.saveBtnEl, this.saveBlockedReason());
 	}
