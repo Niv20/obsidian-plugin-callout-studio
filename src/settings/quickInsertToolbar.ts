@@ -8,6 +8,7 @@
 import { t } from "../i18n";
 import { SelectDropdown } from "../ui/selectDropdown";
 import { setFieldAccessibleName } from "../ui/fieldAccessibleName";
+import { createSearchField } from "../ui/searchField";
 import {
 	isCalloutSourceFilter,
 	type CalloutSourceFilter,
@@ -49,14 +50,16 @@ export function buildQuickInsertToolbar(
 	const toolbar = parent.createDiv({ cls: "cs-quick-insert-toolbar" });
 
 	// The query is scoped to one insertion; the source choice is remembered.
+	// Obsidian's search field (magnifier, ×; finding S4-10), whose × filters
+	// too: `onChange` hears it, an `input` listener would not.
 	const searchLabel = t("quickInsert.searchPlaceholder");
-	const search = toolbar.createEl("input", {
-		type: "text",
-		cls: "cs-quick-insert-search cs-text-control",
+	const { inputEl: search } = createSearchField(toolbar, {
 		placeholder: searchLabel,
+		fieldCls: "cs-quick-insert-search-field",
+		inputCls: "cs-quick-insert-search",
+		onChange: (query) => handlers.onQuery(query),
 	});
 	setFieldAccessibleName(search, searchLabel);
-	search.addEventListener("input", () => handlers.onQuery(search.value));
 	// Bound to the field rather than the window so typing and arrowing are the
 	// same gesture. Left/Right are deliberately untouched — they move the caret,
 	// and stealing them would break the search box itself.

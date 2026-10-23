@@ -146,6 +146,24 @@ export class ExtraButtonComponent extends Control {
 	setIcon(name: string): this { setIcon(this.el, name); return this; }
 	onClick(callback: () => unknown): this { this.el.addEventListener("click", callback); return this; }
 }
+/** Obsidian's search field: `div.search-input-container > input[type=search] + clear button`. */
+export class SearchComponent {
+	inputEl: HTMLInputElement; clearButtonEl: HTMLElement;
+	private changeCb: ((value: string) => unknown) | null = null;
+	constructor(parent: HTMLElement) {
+		const container = parent.createDiv({ cls: "search-input-container" });
+		this.inputEl = container.createEl("input", { type: "search", attr: { enterkeyhint: "search" } });
+		this.clearButtonEl = container.createDiv({ cls: "search-input-clear-button" });
+		this.inputEl.addEventListener("input", () => this.onChanged());
+		this.clearButtonEl.addEventListener("click", () => { this.inputEl.value = ""; this.onChanged(); this.inputEl.focus(); });
+	}
+	setPlaceholder(text: string): this { this.inputEl.placeholder = text; return this; }
+	setValue(value: string): this { this.inputEl.value = value; return this; }
+	getValue(): string { return this.inputEl.value; }
+	setDisabled(disabled: boolean): this { this.inputEl.disabled = disabled; return this; }
+	onChange(callback: (value: string) => unknown): this { this.changeCb = callback; return this; }
+	onChanged(): void { this.changeCb?.(this.inputEl.value); }
+}
 export class TextComponent extends Control {
 	inputEl: HTMLInputElement;
 	constructor(parent: HTMLElement) { const input = parent.createEl("input", { type: "text" }); super(input); this.inputEl = input; }

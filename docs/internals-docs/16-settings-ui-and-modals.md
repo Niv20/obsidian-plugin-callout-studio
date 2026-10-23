@@ -1612,11 +1612,27 @@ is doing.
 
 ## How an input field focuses
 
+**Search boxes are Obsidian's search field.** Quick Insert, Replace in vault,
+and every icon source's search (libraries and pictures) are built with
+`createSearchField` (`ui/searchField.ts`), a thin wrapper around Obsidian's
+public `SearchComponent` (findings S6-15, S4-10): `div.search-input-container`
+holding an `input[type=search]` and a clear button, drawn by app.css with the
+magnifier, the × (shown once something is typed) and the pill shape on macOS.
+The wrapper hands back the outer `div`, which is the element a toolbar lays
+out (it is not in Obsidian's typings; it is the input's parent), and routes
+both typing and the × through `onChange` - the × empties the field without an
+`input` event, so a plain `input` listener would leave the list filtered by
+text that is gone. Each input keeps its old class (`cs-quick-insert-search`,
+`callout-studio-replace-search`, `icon-picker-search-input`) as a hook for
+tests and the screenshot scripts; the layout classes are on the outer `div`
+(`cs-quick-insert-search-field`, `callout-studio-replace-search-field`,
+`icon-picker-search`). Quick Insert's "No callouts found" is Obsidian's
+`.suggestion-empty` line. Until 2026-10-23 these were plain text fields.
+
 **Text fields are Obsidian's own.** A field marked `cs-text-control` - the
 callout editor's **Display name** and **Callout IDs**, the palette editor's
-**Name**, the Quick Insert and replacement-dialog searches, the search box in
-every icon source, and the paste box on the plugin import window - gets no
-face, edge, size or focus ring from the plugin. Obsidian's own
+**Name**, and the paste box on the plugin import window - gets no face, edge,
+size or focus ring from the plugin. Obsidian's own
 `input[type='text']` and `textarea` rules draw them, so they look and answer
 exactly like the fields in Obsidian's own Settings, and a theme that restyles
 those restyles these (decision 14 of the native-look plan). The class stays as

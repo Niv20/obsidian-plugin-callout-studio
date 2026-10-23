@@ -229,7 +229,9 @@ export class QuickInsertModal extends Modal {
 			// Two different nothings: a query that found none, and a filter with
 			// none to find. The second is not a failed search.
 			const empty = quickInsertEmptyMessage(filter, this.query, this.plugin.registry.getUserDefined().length > 0);
-			listEl.createDiv({ cls: "callout-studio-empty-state", text: empty });
+			// Obsidian's own "nothing found" line under a search (`.suggestion-empty`:
+			// muted, upright, centred), as its suggestion lists show it (S4-10).
+			listEl.createDiv({ cls: "suggestion-empty", text: empty });
 			return;
 		}
 

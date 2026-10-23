@@ -18,6 +18,7 @@ import { DESTRUCTIVE_BUTTON_CLASSES } from "../ui/destructiveButton";
 import { filterCalloutList } from "./calloutSearch";
 import { applyModalChrome } from "../settings/modalChrome";
 import { autofocusOnDesktop } from "../settings/modalAutofocus";
+import { createSearchField } from "../ui/searchField";
 
 export type ReplaceChoice =
 	| { action: "replace"; replaceWith: string }
@@ -82,12 +83,14 @@ export class ReplaceCalloutModal extends Modal {
 		// window, and the user arrived here knowing which callout they want.
 		// Matches ids and aliases as well as names, like every other callout
 		// search in the plugin.
-		const search = contentEl.createEl("input", {
-			type: "text",
-			cls: "callout-studio-replace-search cs-text-control",
+		// Obsidian's search field (magnifier, ×; finding S6-15). Its × filters
+		// too: `onChange` hears it, an `input` listener would not.
+		const { inputEl: search } = createSearchField(contentEl, {
 			placeholder: t("replaceModal.searchPlaceholder"),
+			fieldCls: "callout-studio-replace-search-field",
+			inputCls: "callout-studio-replace-search",
+			onChange: (query) => this.renderList(query),
 		});
-		search.addEventListener("input", () => this.renderList(search.value));
 		// Bound to the field, so typing and arrowing are one gesture — the same
 		// arrangement the quick-insert window uses.
 		search.addEventListener("keydown", (ev) => this.onSearchKey(ev));

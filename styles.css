@@ -3278,9 +3278,9 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	margin-bottom: 4px;
 }
 
-/* Full width, sitting directly on the list it filters. */
-.callout-studio-replace-search {
-	width: 100%;
+/* Obsidian's search field (ui/searchField.ts), full width, sitting directly
+   on the list it filters. */
+.callout-studio-replace-search-field {
 	margin-bottom: 8px;
 }
 
@@ -4325,9 +4325,11 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	flex-wrap: wrap;
 }
 
-/* Size and padding are Obsidian's own field's (`--input-height`), the same
-   height as the dropdowns beside it, so the toolbar stays one even row. */
-.icon-picker-toolbar .icon-picker-search-input {
+/* Obsidian's search field (ui/searchField.ts): its outer `div` is the toolbar
+   item, and the input fills it. Its height is Obsidian's field's
+   (`--input-height`), the same as the dropdowns beside it, so the toolbar
+   stays one even row. */
+.icon-picker-toolbar .icon-picker-search {
 	flex: 1 1 140px;
 	min-width: 120px;
 }
@@ -4351,7 +4353,7 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 /* Tabler has two filters beside search. Keep search the widest control, but
    share some of its spare width with style and category. */
 @media (min-width: 601px) {
-	.icon-picker-toolbar.has-tablerStyle-filter > .icon-picker-search-input {
+	.icon-picker-toolbar.has-tablerStyle-filter > .icon-picker-search {
 		flex: 8 1 120px;
 		min-width: 112px;
 	}
@@ -4363,7 +4365,7 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 
 /* Material has three filters. Give search its own row so the selected style,
    weight and category can keep their full labels at desktop modal widths too. */
-.icon-picker-toolbar.has-weight-filter > .icon-picker-search-input {
+.icon-picker-toolbar.has-weight-filter > .icon-picker-search {
 	flex: 1 0 100%;
 }
 
@@ -4389,7 +4391,7 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 
 /* On narrow screens, search takes full width and listboxes wrap below. */
 @media (max-width: 600px) {
-	.icon-picker-toolbar .icon-picker-search-input {
+	.icon-picker-toolbar .icon-picker-search {
 		flex-basis: 100%;
 		min-width: 100%;
 	}
@@ -4578,7 +4580,7 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	flex-wrap: nowrap;
 }
 
-.icon-picker-image-panel .icon-picker-toolbar .icon-picker-search-input {
+.icon-picker-image-panel .icon-picker-toolbar .icon-picker-search {
 	flex: 1 1 auto;
 	min-width: 0;
 }
@@ -6134,7 +6136,9 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	background: var(--cs-surface, var(--background-primary));
 }
 
-.cs-quick-insert-search {
+/* Obsidian's search field (ui/searchField.ts); its outer `div` is the
+   toolbar item, and the input fills it. */
+.cs-quick-insert-search-field {
 	flex: 1;
 	min-width: 150px;
 }
@@ -6151,7 +6155,7 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 /* Both controls take the full row on a phone, where 150px of search plus a
    dropdown does not fit side by side. */
 @media (max-width: 600px) {
-	.cs-quick-insert-search,
+	.cs-quick-insert-search-field,
 	.cs-quick-insert-toolbar .cs-select-dropdown {
 		flex-basis: 100%;
 		min-width: 100%;

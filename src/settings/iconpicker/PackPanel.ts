@@ -39,6 +39,7 @@ import { IconGrid, type GridGroupHeading } from "./IconGrid";
 import { PackToolbarFilters } from "./PackToolbarFilters";
 import { t } from "../../i18n";
 import { autofocusOnDesktop } from "../modalAutofocus";
+import { createSearchField } from "../../ui/searchField";
 
 /**
  * Draws grid cells straight from pack data, bypassing the `data.json` cache.
@@ -152,16 +153,18 @@ export class PackPanel {
 	// ── Toolbar ─────────────────────────────────────────────────────────
 
 	private buildToolbar(): void {
-		this.searchInput = this.toolbarEl.createEl("input", {
-			type: "text",
-			cls: "icon-picker-search-input cs-text-control",
+		// Obsidian's search field (magnifier, ×; finding S6-15). Its × filters
+		// too: `onChange` hears it, an `input` listener would not.
+		this.searchInput = createSearchField(this.toolbarEl, {
 			placeholder: t(this.pack.searchPlaceholderKey),
+			fieldCls: "icon-picker-search",
+			inputCls: "icon-picker-search-input",
 			value: this.query,
-		});
-		this.searchInput.addEventListener("input", () => {
-			this.query = this.searchInput?.value ?? "";
-			this.applyFilter();
-		});
+			onChange: (query) => {
+				this.query = query;
+				this.applyFilter();
+			},
+		}).inputEl;
 		this.filters = new PackToolbarFilters(
 			this.toolbarEl, this.pack, this.variants, this.category, {
 				onCategory: (category) => {

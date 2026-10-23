@@ -27,6 +27,7 @@ import { ConfirmModal } from "../../utils/ConfirmModal";
 import { IconGrid } from "./IconGrid";
 import { t } from "../../i18n";
 import { autofocusOnDesktop } from "../modalAutofocus";
+import { createSearchField } from "../../ui/searchField";
 
 /**
  * Draws cells straight from the pack, like PackPanel's own preview resolver:
@@ -122,15 +123,17 @@ export class ImagePanel {
 	private buildToolbar(): void {
 		// Search first, as on every other source (see PackPanel) — otherwise the
 		// search box changes sides on the way in and out of this panel.
-		const search = this.toolbarEl.createEl("input", {
-			type: "text",
-			cls: "icon-picker-search-input cs-text-control",
+		// Obsidian's search field (magnifier, ×; finding S6-15). Its × filters
+		// too: `onChange` hears it, an `input` listener would not.
+		createSearchField(this.toolbarEl, {
 			placeholder: t("iconPicker.searchCustom"),
+			fieldCls: "icon-picker-search",
+			inputCls: "icon-picker-search-input",
 			value: this.query,
-		});
-		search.addEventListener("input", () => {
-			this.query = search.value;
-			this.refresh();
+			onChange: (query) => {
+				this.query = query;
+				this.refresh();
+			},
 		});
 
 		const addBtn = this.toolbarEl.createEl("button", {

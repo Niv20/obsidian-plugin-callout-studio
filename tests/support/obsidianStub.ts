@@ -357,6 +357,56 @@ export const createdSliders: SliderComponent[] = [];
 
 export const createdToggles: ToggleComponent[] = [];
 
+/**
+ * Obsidian's search field, in the DOM app.js builds for it:
+ * `div.search-input-container > input[type=search] + div.search-input-clear-button`.
+ * Typing reports through `onChange`, and so does the clear button — which, as
+ * in Obsidian, empties the field and refocuses it without an `input` event.
+ */
+export class SearchComponent {
+	readonly inputEl: HTMLInputElement;
+	readonly clearButtonEl: HTMLElement;
+	private changeCb: ((value: string) => unknown) | null = null;
+
+	constructor(containerEl: HTMLElement) {
+		const container = containerEl.createDiv({ cls: "search-input-container" });
+		this.inputEl = container.createEl("input", { type: "search" });
+		this.clearButtonEl = container.createDiv({ cls: "search-input-clear-button" });
+		this.inputEl.addEventListener("input", () => this.onChanged());
+		this.clearButtonEl.addEventListener("click", () => {
+			this.inputEl.value = "";
+			this.onChanged();
+			this.inputEl.focus();
+		});
+	}
+
+	setPlaceholder(text: string): this {
+		this.inputEl.setAttribute("placeholder", text);
+		return this;
+	}
+
+	setValue(value: string): this {
+		this.inputEl.value = value;
+		return this;
+	}
+
+	getValue(): string { return this.inputEl.value; }
+
+	setDisabled(disabled: boolean): this {
+		this.inputEl.disabled = disabled;
+		return this;
+	}
+
+	onChange(cb: (value: string) => unknown): this {
+		this.changeCb = cb;
+		return this;
+	}
+
+	onChanged(): void {
+		this.changeCb?.(this.inputEl.value);
+	}
+}
+
 /** Settings reset tests need the displayed value as well as the change event. */
 export class ToggleComponent {
 	readonly toggleEl: ElementLike;
