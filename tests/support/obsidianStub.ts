@@ -314,6 +314,9 @@ type ElementLike = {
 	createDiv(options?: { cls?: string }): ElementLike;
 	appendChild?(node: Node): unknown;
 	addClass?(...classes: string[]): void;
+	removeClass?(...classes: string[]): void;
+	show?(): void;
+	hide?(): void;
 	addEventListener?(type: string, callback: () => void): void;
 	setAttribute?(name: string, value: string): void;
 	value: string;
@@ -521,6 +524,8 @@ export class Setting {
 	readonly sliders: SliderComponent[] = [];
 	/** Extra buttons are exposed so component tests can press their callbacks. */
 	readonly extraButtons: ButtonLike[] = [];
+	/** Obsidian 1.13's error line under the control; made by `setErrorMessage`. */
+	errorEl: ElementLike | null = null;
 
 	constructor(containerEl: ElementLike) {
 		this.settingEl = containerEl.createDiv({ cls: "setting-item" });
@@ -575,6 +580,24 @@ export class Setting {
 
 	setClass(cls: string): this {
 		this.settingEl.addClass?.(cls);
+		return this;
+	}
+
+	/**
+	 * Obsidian 1.13: a message shows `controlEl > div.setting-item-error` with
+	 * that text and marks the row `is-invalid`; `null` or "" hides the line and
+	 * drops the mark, as app.js does.
+	 */
+	setErrorMessage(message: string | null): this {
+		if (message) {
+			this.errorEl ??= this.controlEl.createDiv({ cls: "setting-item-error" });
+			this.errorEl.textContent = message;
+			this.errorEl.show?.();
+			this.settingEl.addClass?.("is-invalid");
+		} else {
+			this.errorEl?.hide?.();
+			this.settingEl.removeClass?.("is-invalid");
+		}
 		return this;
 	}
 

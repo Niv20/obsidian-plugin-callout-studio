@@ -858,6 +858,10 @@ export const en: Record<string, string> = {
 	"editor.noChangesToSave": "No changes were made.",
 	"editor.downloadingIcon": "Downloading icon",
 	"editor.idEmpty": "At least one ID is required",
+	// Refusals of an ID typed into the IDs field: one this callout already has,
+	// and one longer than the field allows.
+	"editor.idAlreadyHere": "This ID already exists",
+	"editor.idTooLong": "ID must be {{max}} characters or less",
 	"editor.idExists": "A callout with this ID already exists",
 	"editor.idConflict": "This ID conflicts with an existing callout",
 	"editor.idFromTheme":

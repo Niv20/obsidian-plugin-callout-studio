@@ -170,9 +170,18 @@ jobs:
             # that takes them out of the parsed theme in every window and puts
             # them back, the gates on the theme's facts, and the setting -
             # 7.9 KB, which leaves the headroom about where it was.
+            # Raised by 8 KiB for the native-look refactor's Native Parts:
+            # Obsidian's own Menu for every plain choice, SettingGroup boxes
+            # and headings in the callout editor, the Properties pills for
+            # IDs with their keys, and errors under the field through
+            # setErrorMessage. What it deleted (the light palette, the
+            # plugin's modal shell, the old chips and timers) paid for most
+            # of it: 2.0 KB over the build before the stage so far, and the
+            # rest of the stage lands inside the headroom. The Clean Sweep
+            # after the declarative settings tab deletes the old tab code.
             - name: Check bundle size
               run: |
-                  limit=2347008  # 2 MiB + 244 KiB
+                  limit=2355200  # 2 MiB + 252 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

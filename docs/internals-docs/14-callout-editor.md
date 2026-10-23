@@ -640,13 +640,34 @@ restore the save calls if its own `add`/`update` is refused. Moved ids are left
 out of the title and fold passes: their notes belonged to another callout until
 this Save, and nobody was asked about them.
 
-`TagInput` carries the field's messages. A refused id stays in the field. A
-`validate` result may be a `TagMessage` renderer - an **offer**, drawn over
-whatever lasting message was showing, kept until the typed text changes, then
-the lasting message comes back. `showExternalNote` draws a lasting message in
-the muted colour, and `addTagUnchecked` adds the moved id without asking
-`validate` again. The link keeps the field's focus on `mousedown`, as the + does:
-a blur would commit the typed id again and redraw the message under the pointer.
+`TagInput` carries the field's messages, in two places (finding S5-V1):
+
+- **Under the field**, where Obsidian shows a rejected value: every error. The
+  editor passes `showFieldError`, which calls `setSettingError(idsSetting, …)`
+  (`ui/settingError.ts`) - the row's `setErrorMessage`, so Obsidian draws its
+  own `div.setting-item-error` in the warning colour, end-aligned, and marks
+  the row `is-invalid`. A message with a link in it (a `TagMessage` renderer)
+  is drawn into that same element, which `Setting.errorEl` makes public. One
+  message shows at a time, in this order: an **offer** (a `validate` result
+  that is a renderer, like "move it here"), a lasting error the editor sets
+  (`showExternalError`: no ID, a taken or theme-supplied ID, the cap), then
+  the plain refusal of what is typed (a duplicate, a too-long ID, a `validate`
+  string). A refused id stays in the field, and its refusal stays with it
+  until the typed text changes - no timer takes it away. An unchanged message
+  is not redrawn, so an offer's button survives the blur that commits the
+  same id again.
+- **Under the label**: a lasting **note** (`showExternalNote`, "On save,
+  "test" moves here from X."), in the muted colour, as more description.
+
+There is no animation: Obsidian's messages appear at once. Without
+`showFieldError` (a field outside a row, as in the tests) TagInput draws the
+same `div.setting-item-error` itself, under the pills. `addTagUnchecked` adds
+the moved id without asking `validate` again. The link keeps the field's focus
+on `mousedown`, as the + does: a blur would commit the typed id again and
+redraw the message under the pointer. Until 2026-10-23 all of this was one red
+line under the label that faded in and out, a passing error left after 2.5s,
+and two of its refusals were English-only (now `editor.idAlreadyHere` and
+`editor.idTooLong`).
 
 ### Material icons fetch on save, not on pick
 

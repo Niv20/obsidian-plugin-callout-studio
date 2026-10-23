@@ -120,7 +120,7 @@ function idMoveHere(plugin) {
 	input.value = "project";
 	input.dispatchEvent(new Event("input", { bubbles: true }));
 	input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
-	if (!editor.modalEl.querySelector(".cs-tag-error .cs-link-btn")) {
+	if (!editor.modalEl.querySelector(".cs-callout-ids-setting .setting-item-error .cs-link-btn")) {
 		throw new Error("ID move scene needs the real move it here offer");
 	}
 	return metadata;

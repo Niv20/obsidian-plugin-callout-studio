@@ -86,7 +86,8 @@ function field(
 	const root = fakeDom.document.body;
 	const input = root.querySelector("input");
 	const button = root.querySelector(".cs-tag-add-btn");
-	const error = root.querySelector(".cs-tag-error");
+	// Without a row, the field draws Obsidian's error line itself (S5-V1).
+	const error = root.querySelector(".setting-item-error");
 	assert.ok(input && button && error);
 	const type = (value: string): void => {
 		input.value = value;
@@ -126,7 +127,6 @@ describe("TagInput — the IDs field stops at MAX_TAGS_COUNT", () => {
 		const f = field({ initialTags: ids(MAX_TAGS_COUNT) });
 		assert.strictEqual(f.error.textContent, maxMessage());
 		assert.ok(f.error.textContent.includes(String(MAX_TAGS_COUNT)));
-		assert.ok(f.error.hasClass("is-visible"));
 	});
 
 	it("takes nothing past the cap, however it arrives", () => {
@@ -152,7 +152,7 @@ describe("TagInput — the IDs field stops at MAX_TAGS_COUNT", () => {
 		const f = field({ initialTags: ids(MAX_TAGS_COUNT) });
 		f.remove("id2");
 		assert.strictEqual(f.input.disabled, false);
-		assert.ok(!f.error.hasClass("is-visible"));
+		assert.strictEqual(f.error.textContent, "", "the cap message goes with the cap");
 		f.type("again");
 		assert.strictEqual(f.tags.getTags().length, MAX_TAGS_COUNT);
 		assert.ok(f.input.disabled);

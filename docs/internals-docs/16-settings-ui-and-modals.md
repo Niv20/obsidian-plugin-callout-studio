@@ -1413,7 +1413,11 @@ painted as Obsidian paints an `a`: `--link-color`, underlined with
 `.setting-item-description` redefines those tokens to muted and normal, so in a
 description the link is the grey underlined one Obsidian's own descriptions
 use; elsewhere it is the accent. Inside a red `.cs-tag-error` line the tokens
-are set back to the accent, so the link stays findable in the sentence. The
+are set back to the accent, so the link stays findable in the sentence; in
+Obsidian's warning line under a field (`.setting-item-error`, where the IDs
+field's "move it here" now sits) they are the accent already. In that line the
+link is in a row's control column, where Obsidian's phone rules stretch and pad
+every button, so the inline variant resets width and padding at 0,5,0. The
 reset that strips Obsidian's button face also strips its focus ring, so the
 link gets back the 2px `--background-modifier-border-focus` ring Obsidian draws
 on a link in a setting row.

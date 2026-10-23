@@ -16,8 +16,14 @@
  * A refused tag stays in the field, so it can be corrected — or acted on: a
  * refusal may carry a way forward (the editor's "move it here" for an id
  * another callout has), drawn as a {@link TagMessage} renderer instead of a
- * plain string. That offer stays up until the typed text changes, and sits
- * over whatever lasting message was showing, which comes back after it.
+ * plain string.
+ *
+ * Where messages appear (finding S5-V1). Errors go UNDER THE FIELD, where
+ * Obsidian shows a rejected value (`Setting.setErrorMessage`, in its warning
+ * colour, with no animation): the refusal of what is typed — which stays until
+ * the typed text changes — and the lasting errors the editor sets ("At least
+ * one ID is required"). Notes, which are not problems ("On save, "test"
+ * moves here…"), go UNDER THE LABEL in the muted colour, as more description.
  */
 import { Notice, setIcon } from "obsidian";
 import { MAX_TAGS_COUNT } from "../constants";
@@ -25,8 +31,11 @@ import { sanitizeCalloutIdInput } from "../utils/calloutId";
 import { t } from "../i18n";
 
 /**
- * What the field's message line shows: plain words, or a renderer that fills
- * the line itself — for a sentence with a control in it.
+ * What a message line shows: plain words, or a renderer that fills the line
+ * itself — for a sentence with a control in it.
+ *
+ * (A TypeScript "union": a value of this type is either a string or a
+ * function, and code checks `typeof message === "string"` to tell which.)
  */
 export type TagMessage = string | ((el: HTMLElement) => void);
 
@@ -41,7 +50,12 @@ export class TagInput {
 	/** Overlay at the field's trailing edge; hosts the + and its text fade. */
 	private addSlotEl: HTMLElement;
 	private addBtnEl: HTMLButtonElement;
-	private errorEl: HTMLElement;
+	/** Under the label: where a lasting note is drawn. */
+	private noteEl: HTMLElement;
+	/** Under the field: draws an error there, or clears it (`null`). */
+	private showFieldError: (message: TagMessage | null) => void;
+	/** What `showFieldError` last drew, so an unchanged message is not redrawn. */
+	private shownFieldMessage: TagMessage | null = null;
 	private tagsRowEl: HTMLElement;
 	private tags: string[] = [];
 	/** The name-linked primary ID: always first in `tags`, never removable. */
@@ -53,11 +67,12 @@ export class TagInput {
 	/** Optional per-tag character cap. When undefined, IDs are unlimited. */
 	private maxLength: number | undefined;
 	private maxTags: number;
-	private errorTimeout: number | null = null;
 	private placeholder: string;
 	private readonlyTags: Set<string>;
 	/** The lasting message, and whether it is a note rather than an error. */
 	private lasting: { message: TagMessage; note: boolean } | null = null;
+	/** Why the typed text was refused, in plain words; gone when the text changes. */
+	private typedError: string | null = null;
 	/** A refusal with a way forward, shown over `lasting` until the input changes. */
 	private offer: TagMessage | null = null;
 	/** The tag the offer is about. */
@@ -84,8 +99,18 @@ export class TagInput {
 			maxLength?: number;
 			/** Max number of tags */
 			maxTags?: number;
-			/** External error element (placed by caller, e.g. in the description column) */
-			errorEl?: HTMLElement;
+			/**
+			 * Where lasting notes go — the caller places it, e.g. in the setting's
+			 * description, under the label. Without one, the field makes its own.
+			 */
+			noteEl?: HTMLElement;
+			/**
+			 * Draws an error under the field, or clears it on `null`. The editor
+			 * passes its row's `setErrorMessage` (see `ui/settingError.ts`).
+			 * Without one, the field draws Obsidian's error line itself, under
+			 * the pills.
+			 */
+			showFieldError?: (message: TagMessage | null) => void;
 			/** Tags that cannot be removed (no × button rendered) */
 			readonlyTags?: string[];
 		},
@@ -154,13 +179,11 @@ export class TagInput {
 		// Tags row (below input)
 		this.tagsRowEl = this.wrapperEl.createDiv({ cls: "cs-tag-row" });
 
-		// Error element — use external one if provided, otherwise create inline
-		if (opts.errorEl) {
-			this.errorEl = opts.errorEl;
-			this.errorEl.addClass("cs-tag-error");
-		} else {
-			this.errorEl = this.wrapperEl.createDiv({ cls: "cs-tag-error" });
-		}
+		// The two message places (see the module comment).
+		this.noteEl = opts.noteEl ?? this.wrapperEl.createDiv();
+		this.noteEl.addClass("cs-tag-note");
+		this.showFieldError =
+			opts.showFieldError ?? this.ownFieldErrorLine(this.wrapperEl);
 
 		// Render existing tags
 		for (const tag of this.tags) {
@@ -187,16 +210,20 @@ export class TagInput {
 			}
 		});
 
-		// Show error when user tries to type past maxLength (if a cap is set)
 		this.inputEl.addEventListener("input", () => {
-			// The offer was about the text that was typed; that text is gone.
-			this.dismissOffer();
+			// A refusal — an offer or plain words — was about the text that was
+			// typed; that text is gone.
+			this.offer = null;
+			this.offerFor = null;
+			this.typedError = null;
 			this.syncAddButton();
 			this.onInput?.(this.inputEl.value);
+			// Say so at once when the typing reaches the cap (if one is set).
 			const cap = this.maxLength;
 			if (cap !== undefined && this.inputEl.value.length >= cap) {
-				this.showError(`ID must be ${cap} characters or less`);
+				this.typedError = t("editor.idTooLong", { max: cap });
 			}
+			this.paintMessages();
 		});
 
 		this.inputEl.addEventListener("blur", () => {
@@ -244,42 +271,54 @@ export class TagInput {
 		this.syncAddButton();
 	}
 
-	/** Draw `message` as the line's lasting content. */
-	private paintMessage(message: TagMessage, note: boolean): void {
-		if (this.errorTimeout) {
-			window.clearTimeout(this.errorTimeout);
-			this.errorTimeout = null;
-		}
-		this.errorEl.empty();
-		if (typeof message === "string") this.errorEl.textContent = message;
-		else message(this.errorEl);
-		this.errorEl.toggleClass("is-note", note);
-		this.errorEl.addClass("is-visible");
-		this.errorEl.addClass("is-persistent");
+	/**
+	 * The default for `showFieldError`: Obsidian's own error line
+	 * (`div.setting-item-error`, which app.css paints in the warning colour),
+	 * made inside `parent` and shown only while it has something to say.
+	 */
+	private ownFieldErrorLine(parent: HTMLElement): (message: TagMessage | null) => void {
+		const lineEl = parent.createDiv({ cls: "setting-item-error" });
+		return (message) => {
+			lineEl.empty();
+			if (typeof message === "string") lineEl.setText(message);
+			else if (message) message(lineEl);
+		};
 	}
 
+	/**
+	 * Draw both message places from the current state. Every change to a
+	 * message ends here, so the two places can never disagree with the state.
+	 *
+	 * Under the field, one message, in this order: an offer (a refusal with a
+	 * way forward), a lasting error, then the plain refusal of what is typed.
+	 * Under the label, the lasting note, if any.
+	 */
+	private paintMessages(): void {
+		const lastingError = this.lasting && !this.lasting.note ? this.lasting.message : null;
+		const fieldMessage = this.offer ?? lastingError ?? this.typedError;
+		// Redrawing an unchanged offer would swap its button for a new one
+		// under a tap that is still landing, so only a change is drawn.
+		if (fieldMessage !== this.shownFieldMessage) {
+			this.shownFieldMessage = fieldMessage;
+			this.showFieldError(fieldMessage);
+		}
+
+		const note = this.lasting?.note ? this.lasting.message : null;
+		this.noteEl.empty();
+		if (typeof note === "string") this.noteEl.setText(note);
+		else if (note) note(this.noteEl);
+	}
+
+	/** Set the lasting message (an error, or a note) and redraw. */
 	private showPersistentError(msg: TagMessage, note = false): void {
 		this.lasting = { message: msg, note };
-		if (!this.offer) this.paintMessage(msg, note);
+		this.paintMessages();
 	}
 
-	/** Fade the line out — unless an offer is up, which keeps it. */
-	private fadeMessage(): void {
-		if (this.offer || !this.errorEl.hasClass("is-persistent")) return;
-		this.errorEl.removeClass("is-visible");
-		this.errorEl.removeClass("is-persistent");
-		// Clear text after CSS fade-out transition completes
-		window.setTimeout(() => {
-			if (!this.errorEl.hasClass("is-visible")) {
-				this.errorEl.empty();
-				this.errorEl.removeClass("is-note");
-			}
-		}, 300);
-	}
-
+	/** Clear the lasting message and redraw. */
 	private clearPersistentError(): void {
 		this.lasting = null;
-		this.fadeMessage();
+		this.paintMessages();
 	}
 
 	/**
@@ -291,16 +330,26 @@ export class TagInput {
 		if (this.offer && this.offerFor === tag) return;
 		this.offer = message;
 		this.offerFor = tag;
-		this.paintMessage(message, false);
+		this.typedError = null;
+		this.paintMessages();
 	}
 
-	/** Take the offer down, putting back the lasting message it covered. */
-	private dismissOffer(): void {
-		if (!this.offer) return;
+	/**
+	 * Refuse the typed text with `message`, in plain words. It stays under the
+	 * field until the text changes — the text stays too, so it can be fixed.
+	 */
+	private refuseTyped(message: string): void {
 		this.offer = null;
 		this.offerFor = null;
-		if (this.lasting) this.paintMessage(this.lasting.message, this.lasting.note);
-		else this.fadeMessage();
+		this.typedError = message;
+		this.paintMessages();
+	}
+
+	/** Forget any refusal of the typed text (it was accepted, or replaced). */
+	private clearRefusal(): void {
+		this.offer = null;
+		this.offerFor = null;
+		this.typedError = null;
 	}
 
 	private commitInput(): void {
@@ -311,26 +360,6 @@ export class TagInput {
 		if (this.addTag(raw) === "refused") return;
 		this.inputEl.value = "";
 		this.syncAddButton();
-	}
-
-	/**
-	 * A passing error, gone after a moment. A lasting error or an offer
-	 * outranks it and it is not shown; a lasting note does not — the error is
-	 * what the user needs right then — and comes back once the error fades.
-	 */
-	private showError(msg: string): void {
-		if (this.offer || (this.lasting && !this.lasting.note)) return;
-		if (this.errorTimeout) window.clearTimeout(this.errorTimeout);
-		this.errorEl.empty();
-		this.errorEl.textContent = msg;
-		this.errorEl.removeClass("is-note");
-		this.errorEl.removeClass("is-persistent");
-		this.errorEl.addClass("is-visible");
-		this.errorTimeout = window.setTimeout(() => {
-			this.errorTimeout = null;
-			if (this.lasting) this.paintMessage(this.lasting.message, this.lasting.note);
-			else this.errorEl.removeClass("is-visible");
-		}, 2500);
 	}
 
 	/**
@@ -346,23 +375,25 @@ export class TagInput {
 
 		// Check max length (only when a cap is configured)
 		if (this.maxLength !== undefined && tag.length > this.maxLength) {
-			this.showError(`ID must be ${this.maxLength} characters or less`);
+			this.refuseTyped(t("editor.idTooLong", { max: this.maxLength }));
 			return "refused";
 		}
 
 		// Check duplicate within current tags
 		if (this.tags.includes(tag)) {
-			this.showError("This ID already exists");
+			this.refuseTyped(t("editor.idAlreadyHere"));
 			return "refused";
 		}
 
 		// External validation (e.g. check registry)
 		const refusal = this.validate?.(tag) ?? null;
 		if (refusal !== null) {
-			if (typeof refusal === "string") this.showError(refusal);
+			if (typeof refusal === "string") this.refuseTyped(refusal);
 			else this.showOffer(tag, refusal);
 			return "refused";
 		}
+		// Accepted: whatever was said about earlier typing no longer applies.
+		this.clearRefusal();
 		this.insertTag(tag);
 		return "added";
 	}
@@ -387,7 +418,7 @@ export class TagInput {
 		if (this.tags.length >= this.maxTags || this.tags.includes(tag)) return;
 		this.inputEl.value = "";
 		this.syncAddButton();
-		this.dismissOffer();
+		this.clearRefusal();
 		this.insertTag(tag);
 	}
 
@@ -605,18 +636,12 @@ export class TagInput {
 		this.showPersistentError(msg, true);
 	}
 
-	/** Clear an externally-set error */
+	/** Clear an externally-set error or note. */
 	clearExternalError(): void {
-		if (this.errorEl.hasClass("is-persistent") || this.lasting) {
-			this.lasting = null;
-			if (!this.offer) {
-				this.errorEl.removeClass("is-visible");
-				this.errorEl.removeClass("is-persistent");
-				this.errorEl.removeClass("is-note");
-				this.errorEl.empty();
-			}
-			// Re-check input state (max tags might need its own persistent error)
-			this.updateInputState();
-		}
+		if (!this.lasting) return;
+		this.lasting = null;
+		// Re-check input state (max tags might need its own lasting error);
+		// it redraws the messages either way.
+		this.updateInputState();
 	}
 }

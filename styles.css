@@ -4838,6 +4838,21 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 	box-shadow: 0 0 0 1px var(--text-error);
 }
 
+/* The IDs field's note, under the label: "On save, "test" moves here from
+   Abstract." Not a problem — more description — so the description's muted
+   colour, and nothing at all while there is none. The field's errors are not
+   drawn here: they go under the field, through Obsidian's setErrorMessage
+   (TagInput, finding S5-V1). */
+.cs-tag-note {
+	margin-top: var(--size-4-1);
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+}
+
+.cs-tag-note:empty {
+	display: none;
+}
+
 /* A link inside a red message ("move it here", "use it instead") keeps the
    accent rather than the muted grey of the description it may sit in. */
 .cs-tag-error {
@@ -5797,12 +5812,22 @@ input.cs-input-invalid.cs-input-invalid.cs-input-invalid.cs-input-invalid:focus 
 .cs-inline-hint {
 	margin-top: 4px;
 }
-/* Inline variant of the button above, so it must outweigh it — one more class
-   (4). Otherwise the base rule's `display: block` wins and the link breaks out
-   of the sentence onto its own line. */
-.cs-inline-hint .cs-link-btn.cs-link-btn.cs-link-btn-inline {
+/* Inline variant of the button above, so it must outweigh it. Otherwise the
+   base rule's `display: block` wins and the link breaks out of the sentence
+   onto its own line. It must also outweigh Obsidian's phone rule that
+   stretches every button in a row's control to the full width
+   (`.is-phone .modal .setting-item-control button:not(.clickable-icon)`,
+   0,4,1) and pads it by 10px (`… .setting-item-control button`): the IDs
+   field's "move it here" sits in the control column, under the field, since
+   its errors moved there (S5-V1). A button keeps a width even when it is
+   `display: inline`, so the width and padding are reset as well, and the
+   class is repeated to reach 0,5,0. */
+.cs-inline-hint .cs-link-btn.cs-link-btn.cs-link-btn.cs-link-btn-inline {
 	display: inline;
+	width: auto;
+	max-width: none;
 	margin: 0;
+	padding: 0;
 	font-size: inherit;
 }
 

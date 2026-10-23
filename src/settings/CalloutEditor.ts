@@ -83,6 +83,7 @@ import { describeIcon } from "../icons/describeIcon";
 import { iconsEqual } from "../icons/lucideId";
 import { renderIconAdjustGroup } from "./editor/iconAdjustGroup";
 import { settingGroupEl } from "../ui/settingGroupEl";
+import { setSettingError } from "../ui/settingError";
 import { addCancelButton, applyModalChrome, removeModalChrome } from "./modalChrome";
 import { autofocusOnDesktop } from "./modalAutofocus";
 import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
@@ -517,15 +518,18 @@ export class CalloutEditor extends Modal {
 				}),
 			);
 
-		// Error element lives in the left description area
-		const idsErrorEl = idsSetting.descEl.createDiv();
+		// Errors go under the field, where Obsidian shows a rejected value
+		// (`setErrorMessage`, finding S5-V1); notes — not problems, just worth
+		// knowing — stay under the label, as more description.
+		const idsNoteEl = idsSetting.descEl.createDiv();
 
 		this.idsTagInput = new TagInput(idsSetting.controlEl, {
 			initialTags: initialIds,
 			initialPinnedTag:
 				!this.isBuiltIn && this.calloutId ? this.calloutId : undefined,
 			placeholder: t("editor.calloutIdsPlaceholder"),
-			errorEl: idsErrorEl,
+			noteEl: idsNoteEl,
+			showFieldError: (message) => setSettingError(idsSetting, message),
 			// A saved custom alias must stay removable on the next open. Only the
 			// identifiers Obsidian itself ships are permanent.
 			readonlyTags: originalDef ? defaultIds : undefined,

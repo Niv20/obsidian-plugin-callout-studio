@@ -199,6 +199,20 @@ export class Setting {
 	setDesc(text: string | DocumentFragment): this { this.descEl.setText(text); return this; }
 	setClass(cls: string): this { this.settingEl.classList.add(cls); return this; }
 	setHeading(): this { return this.setClass("setting-item-heading"); }
+	/** Obsidian 1.13: the warning line under the control, and `is-invalid` on the row. */
+	errorEl: HTMLElement | null = null;
+	setErrorMessage(message: string | null): this {
+		if (message) {
+			this.errorEl ??= this.controlEl.createDiv({ cls: "setting-item-error" });
+			this.errorEl.setText(message);
+			this.errorEl.show();
+			this.settingEl.classList.add("is-invalid");
+		} else {
+			this.errorEl?.hide();
+			this.settingEl.classList.remove("is-invalid");
+		}
+		return this;
+	}
 	addDisplayValue(callback: (value: { setValue(text: string): unknown }) => unknown): this {
 		const valueEl = this.controlEl.createDiv({ cls: "setting-item-value" });
 		callback({ setValue(text: string) { valueEl.setText(text ?? ""); return this; } });
