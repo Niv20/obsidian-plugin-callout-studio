@@ -1681,6 +1681,10 @@ export const en: Record<string, string> = {
 	"footer.contribute": "Contribute",
 	"footer.license": "Plugin license",
 	"footer.iconCredits": "Icon licenses",
+	// The About box at the foot of the settings page: its heading, and the row
+	// with the plugin's version and project links.
+	"settings.about": "About",
+	"settings.version": "Version",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Delete palette "{{name}}"?\n1 callout uses it. It keeps its colors, and you can reconnect it later from the Color row in its editor.',
 	"settings.deletePaletteConfirmLinked":

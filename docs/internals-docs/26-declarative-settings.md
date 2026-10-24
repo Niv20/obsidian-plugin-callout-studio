@@ -147,6 +147,33 @@ are drawn, [`declarative/rowRegistry.ts`](../../src/settings/declarative/rowRegi
 and their cleanup removes it. `get(id)` answers only while the element is on
 the page.
 
+## The main page, part by part
+
+Each part of the tree is a function returning a box (or a row), built from a
+`TreeContext` (the old page's `SettingsSectionContext` plus the row registry
+and the parts store). Most rows are "name, sentence, one button":
+[`declarative/rowParts.ts`](../../src/settings/declarative/rowParts.ts)'s
+`buttonRow` builds them the way every blockable button in the plugin works
+(ui/blockedButton.ts): while it cannot act it is dimmed (`aria-disabled`), and a
+press says why instead of doing nothing. Obsidian's own `disabled` would leave
+it silently dead. `pausedReason(writer)` is the usual reason.
+
+| Box (`id`) | Rows | While saving is paused |
+|---|---|---|
+| Import and export (`import-export`) | Import callouts (`import-callouts`, a jump target), Export callouts | Import dimmed; Export works |
+| Version history (`version-history`) | Earlier versions (`earlier-versions`, a jump target) | works; the box shows only on a host with a recovery service |
+| Danger zone (`danger-zone`) | Convert to standard Markdown, Reset everything (red) | Reset dimmed; the conversion review works (it changes notes, not settings) |
+| About (`about`) | About Callout Studio (action), the contact sentence (a nameless row, not searchable), Icon licenses (action), Version (the project's links; the version links to its release notes) | all work |
+
+Manage icon libraries is an action row of its own (`icon-libraries`), placed
+with the style rows; it opens the same window as Pick an icon's **Manage
+libraries**, after loading the libraries and their icon counts itself
+(`iconpicker/openIconLibraries.ts`).
+Search words that are names (Admonition, Callout Manager, the icon libraries)
+are `aliases` and are not translated. Every button calls the flow the old page
+calls (`resetEverything.ts`, the import and export windows, …), so the two
+pages cannot drift apart while both exist.
+
 ## Never throwing
 
 [`declarative/safeTree.ts`](../../src/settings/declarative/safeTree.ts):

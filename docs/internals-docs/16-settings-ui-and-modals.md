@@ -12,7 +12,12 @@ one scrollable tab: callout lists → fallback → custom palettes → global se
 → context menu → hotkeys → import/export → language → danger zone → footer.
 
 **Danger zone** contains **Convert to standard Markdown** first and
-**Reset everything** second. Its **Review conversion** button opens the registered
+**Reset everything** second. The reset's whole flow (the question listing what
+goes, the backup first, the reset, the notice) is
+[`settings/resetEverything.ts`](../../src/settings/resetEverything.ts), which the
+declarative page's Danger zone calls too; the footer's links come from
+[`settings/aboutLinks.ts`](../../src/settings/aboutLinks.ts), shared with the
+declarative page's About box. Its **Review conversion** button opens the registered
 `PortableConversionView` directly in the right sidebar and closes settings.
 The question-mark button is the one button of the sidebar's nav header. It
 opens `PortableConversionHelpModal`: an **About conversion** explanation

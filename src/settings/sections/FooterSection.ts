@@ -2,15 +2,14 @@
  * settings/sections/FooterSection.ts — Settings tab footer.
  *
  * Keeps support and project links easy to reach without letting licensing
- * details take over the bottom of the settings page.
+ * details take over the bottom of the settings page. The links themselves are
+ * spelled out in ../aboutLinks.ts, which the declarative page's About group
+ * shares.
  */
 import { t } from "../../i18n";
 import { IconCreditsModal } from "../IconCreditsModal";
+import { appendContactSentence, projectLinks, releaseNotesUrl } from "../aboutLinks";
 import type { SettingsSectionContext } from "./types";
-
-const REPOSITORY_URL =
-	"https://github.com/Niv20/obsidian-plugin-callout-studio";
-const CONTACT_LINK_TOKEN = /(\{\{issue\}\}|\{\{email\}\})/g;
 
 export function renderFooterSection(
 	ctx: SettingsSectionContext,
@@ -22,25 +21,15 @@ export function renderFooterSection(
 	const contact = footer.createEl("p", {
 		cls: "callout-studio-footer-contact",
 	});
-	renderContactSentence(contact);
+	appendContactSentence(contact, "callout-studio-footer-contact-link", "callout-studio-footer-contact-links");
 
 	const meta = footer.createDiv({
 		cls: "callout-studio-footer-meta",
 	});
-	createMetaLink(meta, t("footer.sourceCode"), REPOSITORY_URL);
-	createMetaSeparator(meta);
-	createMetaLink(
-		meta,
-		t("footer.contribute"),
-		`${REPOSITORY_URL}/blob/master/docs/CONTRIBUTING.md`,
-	);
-	createMetaSeparator(meta);
-	createMetaLink(
-		meta,
-		t("footer.license"),
-		`${REPOSITORY_URL}/blob/master/LICENSE`,
-	);
-	createMetaSeparator(meta);
+	for (const link of projectLinks()) {
+		createMetaLink(meta, link.label, link.href);
+		createMetaSeparator(meta);
+	}
 
 	const creditsButton = meta.createEl("button", {
 		text: t("footer.iconCredits"),
@@ -58,62 +47,9 @@ export function renderFooterSection(
 	createMetaSeparator(meta);
 	meta.createEl("a", {
 		text: `v${ctx.plugin.manifest.version}`,
-		href: `${REPOSITORY_URL}/releases/tag/${encodeURIComponent(ctx.plugin.manifest.version)}`,
+		href: releaseNotesUrl(ctx.plugin.manifest.version),
 		cls: "callout-studio-footer-meta-link callout-studio-footer-version",
 		attr: { target: "_blank", rel: "noopener noreferrer" },
-	});
-}
-
-function renderContactSentence(parent: HTMLElement): void {
-	const template = t("footer.prompt");
-	const breakAt = template.indexOf("{{break}}");
-	if (breakAt < 0) {
-		renderContactLinks(parent, template);
-		return;
-	}
-
-	parent.appendText(template.slice(0, breakAt));
-	const linksLine = parent.createSpan({
-		cls: "callout-studio-footer-contact-links",
-	});
-	renderContactLinks(linksLine, template.slice(breakAt + "{{break}}".length));
-}
-
-function renderContactLinks(parent: HTMLElement, template: string): void {
-	for (const part of template.split(CONTACT_LINK_TOKEN)) {
-		if (part === "{{issue}}") {
-			createContactLink(
-				parent,
-				t("footer.openIssue"),
-				`${REPOSITORY_URL}/issues/new/choose`,
-				true,
-			);
-		} else if (part === "{{email}}") {
-			createContactLink(
-				parent,
-				t("footer.sendEmail"),
-				"mailto:anivbniv@gmail.com",
-				false,
-			);
-		} else if (part) {
-			parent.appendText(part);
-		}
-	}
-}
-
-function createContactLink(
-	parent: HTMLElement,
-	label: string,
-	href: string,
-	openInNewTab: boolean,
-): void {
-	parent.createEl("a", {
-		text: label,
-		cls: "callout-studio-footer-contact-link",
-		href,
-		attr: openInNewTab
-			? { target: "_blank", rel: "noopener noreferrer" }
-			: undefined,
 	});
 }
 
