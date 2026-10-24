@@ -142,8 +142,10 @@ but specifically through `GlobalStyleSettings` /
 with the merge logic in **`src/utils/globalStyleMerge.ts`** (its own module,
 not `settingsMerge.ts` directly, because this section is deep enough to
 warrant one - see [Colour system](12-color-system.md#globalstylemergets-and-iconadjustts)).
-The UI lives in `GlobalStyleModal.ts`'s per-role popups, driven by
-`styleControls.ts`'s shared slider/toggle builders. Remember: a new numeric
+The UI lives in `GlobalStyleModal.ts`'s per-role popups and the declarative
+style pages, both built from the slider definitions in `styleSpecs.ts` (a new
+slider is one entry there) and `styleControls.ts`'s shared builders (the
+live-drag wiring is `wireStyleSlider`). Remember: a new numeric
 style field almost certainly needs a clamp in `clampGlobalStyle`
 (`settingsGuards.ts`) so a hand-edited or imported `data.json` can't set it
 to something absurd.

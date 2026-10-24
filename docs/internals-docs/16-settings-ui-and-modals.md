@@ -2671,7 +2671,14 @@ toggle rows.
 Also uses a reserved demo id (`STYLE_DEMO_ID = "global-style-demo"`) and the
 same live-preview-on-a-registered-row pattern, letting the border/radius/
 scale/spacing sliders for block, heading, or inline style show their effect
-on a real rendered callout as the user drags them. Its three modal titles are
+on a real rendered callout as the user drags them. The preview (and the
+heading role's stacked gap demo) is
+[`stylePreview.ts`](../../src/settings/stylePreview.ts)'s `StylePreview`, and
+every slider's range, step and readout is one entry in
+[`styleSpecs.ts`](../../src/settings/styleSpecs.ts): the declarative style
+pages use both, so the two places cannot drift apart. `styleControls.ts`'s
+`wireStyleSlider` is the live-drag contract on its own, for a slider a page
+row makes. Its three modal titles are
 separate translation keys rather than a concatenation of “Global callout
 style” and a role name, so each locale can put the words in its natural order.
 

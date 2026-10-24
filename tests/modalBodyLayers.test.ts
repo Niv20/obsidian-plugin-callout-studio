@@ -262,7 +262,7 @@ describe("the surfaces that emulate a note keep painting --background-primary", 
 		// `markdown-preview-view`, which is what makes core's reading-view CSS
 		// and the injected per-callout rules resolve as they do in a note.
 		assert.match(
-			readRepoFile("src/settings/GlobalStyleModal.ts"),
+			readRepoFile("src/settings/stylePreview.ts"),
 			/cs-gap-demo markdown-preview-view/,
 		);
 		assert.match(

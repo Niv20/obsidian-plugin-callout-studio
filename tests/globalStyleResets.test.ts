@@ -29,7 +29,14 @@ function build(
 	} as unknown as SettingsTabPlugin;
 	const modal = Object.assign(Object.create(GlobalStyleModal.prototype) as object, {
 		plugin,
-		preview: { refresh: () => { counts.previews++; } },
+		// The modal's StylePreview: only its refresh is counted.
+		preview: {
+			refresh: () => { counts.previews++; },
+			hideGapDemo: () => {},
+			showGapDemo: () => {},
+			setGapDemoValue: () => {},
+			syncDemoChevrons: () => {},
+		},
 	}) as unknown as {
 		renderRegularControls(col: HTMLElement): void;
 		renderHeadingControls(col: HTMLElement): void;

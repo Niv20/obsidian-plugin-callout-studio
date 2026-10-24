@@ -1,0 +1,246 @@
+/**
+ * settings/stylePreview.ts — the live preview of one role's vault-wide style.
+ *
+ * Who calls it. The per-role style window (GlobalStyleModal.ts) and the
+ * declarative style pages (declarative/stylePages.ts), so both show the same
+ * preview.
+ *
+ * The main idea. A neutral demo callout (grey accent, a solid square for an
+ * icon) is drawn through the real pipeline: the plugin's injected CSS, the
+ * heading and inline decorations, the icon painting. It is registered in the
+ * registry's transient preview slot, never saved, and kept out of the settings
+ * lists (previewOwnership.ts).
+ *
+ * The heading role adds a second, hidden demo: several collapsed heading
+ * callouts stacked in reading view, where the gap above each one actually
+ * applies. While the *Spacing between headers* slider is dragged it takes the
+ * preview's place, because the live editor does not show that gap moving.
+ */
+import { Component, MarkdownRenderer, setIcon } from "obsidian";
+import { t } from "../i18n";
+import type { CalloutDefinition, CalloutRenderRole } from "../types";
+import { STYLE_DEMO_ID } from "../constants";
+import { CSS_FOLD_ARROW, CSS_HEADING_LINE } from "../editor/renderShared";
+import { LiveCalloutPreview } from "./LiveCalloutPreview";
+import { beginDemoPreview, endDemoPreview } from "./previewOwnership";
+import type { SettingsTabPlugin } from "./sections/types";
+
+/** Neutral gray accent used by the demo callout in both theme modes. */
+const STYLE_DEMO_GRAY = "#808080";
+
+/** Number of stacked demo headers in the "Spacing between headers" demo. */
+const GAP_DEMO_COUNT = 4;
+
+export class StylePreview {
+	/** The preview's column, toggled with `cs-showing-gap-demo` during a gap drag. */
+	readonly el: HTMLElement;
+	private preview: LiveCalloutPreview | null;
+	/** Reading-view render host for the gap demo (heading role only). */
+	private gapDemoRender: HTMLElement | null = null;
+	/** Component owning the gap demo's MarkdownRenderer output. */
+	private gapDemoComponent: Component | null = null;
+
+	constructor(
+		private readonly plugin: SettingsTabPlugin,
+		private readonly role: CalloutRenderRole,
+		parent: HTMLElement,
+	) {
+		this.el = parent.createDiv({ cls: "callout-studio-preview-col" });
+		this.preview = new LiveCalloutPreview(plugin.app, this.el, {
+			title: t("settings.previewTitle"),
+			initialText: sampleText(role),
+			beforeRender: () => {
+				// A neutral demo callout for previewing the vault-wide geometry,
+				// never a real row — keep it out of the settings lists.
+				beginDemoPreview(this.plugin, demoDefinition());
+			},
+			onDestroy: () => endDemoPreview(this.plugin),
+		});
+		// A reading-view demo (real hN, where the gap margin applies — the Live
+		// Preview editor's .cm-line is excluded on purpose) that takes over the
+		// preview while the gap slider is dragged.
+		if (role === "heading") this.buildGapDemo();
+	}
+
+	/** Draw the preview again (the static fallback, which no editor refresh reaches). */
+	refresh(): void {
+		this.preview?.refresh();
+	}
+
+	/** Take the preview down and release the demo callout. */
+	destroy(): void {
+		this.preview?.destroy();
+		this.preview = null;
+		this.gapDemoComponent?.unload();
+		this.gapDemoComponent = null;
+		this.gapDemoRender = null;
+	}
+
+	/**
+	 * Build the "Spacing between headers" demo: several stacked heading
+	 * callouts rendered in reading view (real `<hN>`), where the gap margin
+	 * actually applies. Hidden until the gap slider is grabbed.
+	 *
+	 * The bars carry no body — consecutive collapsed heading callouts, exactly
+	 * as they'd stack in a note. Nothing between two bars but the gap margin
+	 * itself, so the slider reads 1:1 (no body wrappers, fold animation, or
+	 * theme heading margins to add invisible slack). A static chevron gives
+	 * each the look of a collapsed callout.
+	 */
+	private buildGapDemo(): void {
+		// Live *inside* the preview card (its frame + "Preview" header stay put),
+		// swapping only the editor body — so the demo reads as the same Preview
+		// box, not a bare panel. Fall back to the column if the card isn't there.
+		const host =
+			this.el.querySelector<HTMLElement>(".cs-live-preview-container") ?? this.el;
+		// `.markdown-preview-view` + `.markdown-rendered` make Obsidian's own
+		// reading-view CSS and the injected per-callout rules resolve as in a
+		// note — same combo LiveCalloutPreview's fallback uses.
+		const demo = host.createDiv({ cls: "cs-gap-demo markdown-preview-view" });
+		const rendered = demo.createDiv({ cls: "markdown-rendered cs-gap-demo-render" });
+		this.gapDemoRender = rendered;
+
+		const component = new Component();
+		component.load();
+		this.gapDemoComponent = component;
+
+		// The demo callout (STYLE_DEMO_ID) is already registered by the
+		// LiveCalloutPreview built just before, so these headers resolve to the
+		// neutral gray demo style.
+		const name = t("settings.styleDemoName");
+		const block = `## [!${STYLE_DEMO_ID}] ${name}`;
+		const md = Array(GAP_DEMO_COUNT).fill(block).join("\n\n");
+
+		void MarkdownRenderer.render(this.plugin.app, md, rendered, "", component).then(() => {
+			if (this.gapDemoRender !== rendered) return; // taken down meanwhile
+			this.syncDemoChevrons();
+			// Seed each bar's inline gap so the demo is already correct the
+			// instant it's revealed, before the first slider move.
+			this.setGapDemoValue(this.plugin.settings.globalStyle.heading.marginTop);
+		});
+	}
+
+	/**
+	 * Bring each demo header's static (collapsed-look) chevron in line with the
+	 * **Show fold arrow** switch — added when it's on, removed when it's off.
+	 * The demo draws its own chevron rather than reusing the real one, so it
+	 * has to honor that switch itself; skipping this is what made the arrow
+	 * show up mid-drag with the switch off.
+	 *
+	 * The drawn arrow mirrors the real trailing `.cs-fold-arrow` of Live Preview
+	 * (widgets.ts's HeadingFoldArrowWidget) rather than reading view's native
+	 * `.heading-collapse-indicator`, which sits before the title but only
+	 * renders inside a real workspace leaf (MarkdownRenderer.render() here
+	 * never gets one) and is hover-only besides — unusable in this demo,
+	 * since the slider drag that reveals it is exactly what steals hover
+	 * away from the heading.
+	 *
+	 * Idempotent, so it can run on every reveal as well as on every toggle.
+	 */
+	syncDemoChevrons(): void {
+		const show = this.plugin.settings.headingCallouts.showFoldArrow;
+		this.gapDemoRender
+			?.querySelectorAll<HTMLElement>(`.${CSS_HEADING_LINE}`)
+			.forEach((h) => {
+				const existing = h.querySelector<HTMLElement>(`:scope > .${CSS_FOLD_ARROW}`);
+				if (!show) {
+					existing?.remove();
+					return;
+				}
+				if (existing) return;
+				const arrow = createSpan({ cls: CSS_FOLD_ARROW });
+				setIcon(arrow, "chevron-right");
+				h.append(arrow);
+			});
+	}
+
+	/**
+	 * Point the demo's gap at an exact em value. The shared
+	 * `.cs-heading-callout:not(.cm-line)` rule reads `--cs-heading-gap-top`, so
+	 * the value is set inline on each demo bar — inline wins over the injected
+	 * sheet's own element-level declaration, so the demo tracks the slider 1:1
+	 * (including a hard 0, where the injector omits the variable entirely).
+	 *
+	 * Every bar gets the same value, the first one included — so the demo
+	 * opens with the gap above its top bar too. styles.css used to carry a
+	 * `.cs-gap-demo-render > :first-child { margin-top: 0 }` rule meaning to
+	 * suppress that, but it never took effect: it tied on specificity with the
+	 * shared `.cs-heading-callout:not(.cm-line)` margin rule and lost on source
+	 * order. It was dropped rather than repaired, to keep the demo looking
+	 * exactly as it always has. To make the top bar sit flush, pass
+	 * `i === 0 ? "0em" : ...` below — that is the whole fix.
+	 */
+	setGapDemoValue(em: number): void {
+		this.gapDemoRender
+			?.querySelectorAll<HTMLElement>(".cs-heading-callout")
+			.forEach((bar) => {
+				bar.style.setProperty("--cs-heading-gap-top", `${em}em`);
+			});
+	}
+
+	/** Instantly swap the live editor out for the stacked gap demo. */
+	showGapDemo(): void {
+		// Sync the demo to the current value before it's revealed, so a fresh
+		// grab shows the right gap even before the first move fires `set`.
+		this.setGapDemoValue(this.plugin.settings.globalStyle.heading.marginTop);
+		// Same for the chevrons: the fold switch may have been flipped since the
+		// demo was built, and it's the reveal — not the build — the user sees.
+		this.syncDemoChevrons();
+		this.el.addClass("cs-showing-gap-demo");
+	}
+
+	/** Restore the live editor. */
+	hideGapDemo(): void {
+		this.el.removeClass("cs-showing-gap-demo");
+	}
+}
+
+/** Sample markdown for the role being styled. */
+export function sampleText(role: CalloutRenderRole): string {
+	const name = t("settings.styleDemoName");
+	switch (role) {
+		case "regular":
+			// The trailing blank line gives the preview's parked caret a
+			// home outside the callout (see EmbeddableMarkdownEditor.parkCursor).
+			return [
+				`> [!${STYLE_DEMO_ID}] ${name}`,
+				`> ${t("editor.loremIpsum")}`,
+				"",
+			].join("\n");
+		case "heading":
+			// Two body paragraphs so the fold arrow visibly hides content.
+			return [
+				`## [!${STYLE_DEMO_ID}] ${name}`,
+				"",
+				t("editor.loremIpsum"),
+				"",
+				t("editor.loremIpsum"),
+			].join("\n");
+		case "inline":
+			// Use the localized label in the syntax revealed by the preview.
+			return t("settings.styleDemoInlineText", {
+				callout: `[!${STYLE_DEMO_ID}]{${t("settings.styleDemoInlineName")}}`,
+			});
+	}
+}
+
+/**
+ * The neutral demo definition: gray accent in both theme modes, and a
+ * Lucide square as the icon. A static styles.css rule keyed on the
+ * reserved id fills the square with the accent color, so it reads as a
+ * solid swatch instead of an outline.
+ */
+function demoDefinition(): CalloutDefinition {
+	return {
+		id: STYLE_DEMO_ID,
+		displayName: t("settings.styleDemoName"),
+		icon: { type: "lucide", value: "square" },
+		colorLight: STYLE_DEMO_GRAY,
+		colorDark: STYLE_DEMO_GRAY,
+		foldable: false,
+		defaultFolded: false,
+		builtIn: false,
+		source: "user",
+		aliases: [],
+	};
+}

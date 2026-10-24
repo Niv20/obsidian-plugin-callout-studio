@@ -20,10 +20,12 @@
  * of the main window never arrives while it is hidden behind them.
  */
 import { Setting, type SliderComponent } from "obsidian";
+import { DEFAULT_SETTINGS } from "../constants";
 import { t } from "../i18n";
-import type { BorderSidesSettings } from "../types";
+import type { BorderSidesSettings, CalloutRenderRole } from "../types";
 import type { SettingsTabPlugin } from "./sections/types";
 import { addHeaderResetButton } from "./headerResetButton";
+import { borderWidthSlider, roleFrame, type StyleSliderDef } from "./styleSpecs";
 import { cancelFrame, requestFrameFor, type FrameHandle } from "../utils/elementFrame";
 
 /**
@@ -192,6 +194,36 @@ export interface StyleSliderSpec {
 }
 
 /**
+ * The {@link StyleSliderSpec} of one of the shared slider definitions
+ * (styleSpecs.ts): it reads and writes the live settings every time.
+ *
+ * @param hooks Extra steps: after each value is set (`afterSet`), and when a
+ *   drag starts and ends.
+ */
+export function specFromDef(
+	plugin: SettingsTabPlugin,
+	def: StyleSliderDef,
+	hooks: Pick<StyleSliderSpec, "onDragStart" | "onDragEnd"> & { afterSet?(value: number): void } = {},
+): StyleSliderSpec {
+	return {
+		label: t(def.label),
+		min: def.min,
+		max: def.max,
+		step: def.step,
+		decimals: def.decimals,
+		prefix: def.prefix,
+		suffix: def.suffix,
+		get: () => def.get(plugin.settings),
+		set: (value) => {
+			def.set(plugin.settings, value);
+			hooks.afterSet?.(value);
+		},
+		onDragStart: hooks.onDragStart,
+		onDragEnd: hooks.onDragEnd,
+	};
+}
+
+/**
  * A labelled slider row: label + animated value readout above a full-width
  * slider, wired to the live-update contract described in the module header.
  */
@@ -202,7 +234,34 @@ export function addStyleSlider(
 ): () => void {
 	const row = createSliderRow(parentEl, spec.label);
 	let syncValue = (): void => {};
+	new Setting(row).addSlider((slider) => {
+		syncValue = wireStyleSlider(plugin, slider, row, spec);
+	});
+	return () => syncValue();
+}
 
+/** What a released slider does by default: paint the change, then save it. */
+async function paintAndSave(plugin: SettingsTabPlugin): Promise<void> {
+	plugin.cssInjector.inject();
+	await plugin.saveSettings();
+}
+
+/**
+ * Wire `slider` to the live-update contract described in the module header:
+ * a drag paints at most once a frame, and the release commits.
+ *
+ * @param frameEl The element whose window gives the animation frames.
+ * @param commit What a release does once the value is in the settings; by
+ *   default it paints and saves.
+ * @returns The function that shows the saved value again (after a reset, say).
+ */
+export function wireStyleSlider(
+	plugin: SettingsTabPlugin,
+	slider: SliderComponent,
+	frameEl: HTMLElement,
+	spec: StyleSliderSpec,
+	commit: () => void | Promise<void> = () => paintAndSave(plugin),
+): () => void {
 	const factor = Math.pow(10, spec.decimals);
 	const round = (v: number): number => Math.round(v * factor) / factor;
 
@@ -213,7 +272,7 @@ export function addStyleSlider(
 	let frame: FrameHandle | null = null;
 	const scheduleLiveInject = (): void => {
 		if (frame !== null) return;
-		frame = requestFrameFor(row, () => {
+		frame = requestFrameFor(frameEl, () => {
 			frame = null;
 			// `false` = skip the css-change re-render: geometry rides CSS
 			// variables and reflows on stylesheet replace, so this stays cheap.
@@ -237,54 +296,50 @@ export function addStyleSlider(
 		spec.onDragEnd?.();
 	};
 
-	new Setting(row).addSlider((slider) => {
-		syncValue = () => {
-			frame = cancelFrame(frame);
-			slider.setValue(spec.get());
-			endDrag();
-		};
-		// The number beside the track is Obsidian's own — SliderComponent keeps it
-		// in sync, so this only says how to spell it.
-		setSliderDisplay(
-			slider,
-			(v) =>
-				`${spec.prefix ?? ""}${v.toFixed(spec.decimals)}${spec.suffix ?? ""}`,
-		);
-		slider.setLimits(spec.min, spec.max, spec.step).setValue(spec.get());
-		slider.sliderEl.addEventListener("input", () => {
-			// Covers keyboard nudges, which fire `input` without a pointerdown.
-			beginDrag();
-			const v = round(parseFloat(slider.sliderEl.value));
-			spec.set(v);
-			scheduleLiveInject();
-		});
-		if (spec.onDragStart || spec.onDragEnd) {
-			slider.sliderEl.addEventListener("pointerdown", beginDrag);
-			slider.sliderEl.addEventListener("pointerup", endDrag);
-			slider.sliderEl.addEventListener("pointercancel", endDrag);
-		}
-		slider.onChange(async (v) => {
-			// `change` marks the end of a drag (release) as well as commit.
-			endDrag();
-			spec.set(round(v));
-			plugin.cssInjector.inject();
-			await plugin.saveSettings();
-		});
+	// The number beside the track is Obsidian's own — SliderComponent keeps it
+	// in sync, so this only says how to spell it.
+	setSliderDisplay(
+		slider,
+		(v) => `${spec.prefix ?? ""}${v.toFixed(spec.decimals)}${spec.suffix ?? ""}`,
+	);
+	slider.setLimits(spec.min, spec.max, spec.step).setValue(spec.get());
+	slider.sliderEl.addEventListener("input", () => {
+		// Covers keyboard nudges, which fire `input` without a pointerdown.
+		beginDrag();
+		const v = round(parseFloat(slider.sliderEl.value));
+		spec.set(v);
+		scheduleLiveInject();
 	});
-	return () => syncValue();
+	if (spec.onDragStart || spec.onDragEnd) {
+		slider.sliderEl.addEventListener("pointerdown", beginDrag);
+		slider.sliderEl.addEventListener("pointerup", endDrag);
+		slider.sliderEl.addEventListener("pointercancel", endDrag);
+	}
+	slider.onChange(async (v) => {
+		// `change` marks the end of a drag (release) as well as commit.
+		endDrag();
+		spec.set(round(v));
+		await commit();
+	});
+	return () => {
+		frame = cancelFrame(frame);
+		slider.setValue(spec.get());
+		endDrag();
+	};
 }
 
 /**
- * The "Borders" group: an All + per-side toggle button row, plus a thickness
- * slider that stays hidden while no side is active. Mutates `frame` in place
- * (the caller passes the live settings object).
+ * The "Borders" group of `role`: an All + per-side toggle button row, plus a
+ * thickness slider that stays hidden while no side is active. It changes the
+ * role's frame in the live settings (styleSpecs.ts's `roleFrame`).
  */
 export function renderBordersGroup(
 	plugin: SettingsTabPlugin,
 	parentEl: HTMLElement,
-	frame: { borderSides: BorderSidesSettings; borderWidth: number },
-	defaults: { borderSides: BorderSidesSettings; borderWidth: number },
+	role: CalloutRenderRole,
 ): void {
+	const frame = roleFrame(plugin.settings, role);
+	const defaults = roleFrame(DEFAULT_SETTINGS, role);
 	const keys: (keyof BorderSidesSettings)[] = ["top", "right", "bottom", "left"];
 	const group = createResettableControlGroup(plugin, parentEl, t("settings.border"), {
 		isModified: () => frame.borderWidth !== defaults.borderWidth ||
@@ -346,19 +401,9 @@ export function renderBordersGroup(
 	}
 
 	const widthRow = groupEl.createDiv({ cls: isAny() ? "" : "cs-hidden" });
-	const syncWidth = addStyleSlider(plugin, widthRow, {
-		label: t("settings.borderWidth"),
-		min: 1,
-		max: 4,
-		step: 0.5,
-		decimals: 1,
-		suffix: "px",
-		get: () => frame.borderWidth,
-		set: (v) => {
-			frame.borderWidth = v;
-			group.syncReset();
-		},
-	});
+	const syncWidth = addStyleSlider(plugin, widthRow, specFromDef(plugin, borderWidthSlider(role), {
+		afterSet: () => group.syncReset(),
+	}));
 
 	const syncUI = (): void => {
 		group.syncReset();
