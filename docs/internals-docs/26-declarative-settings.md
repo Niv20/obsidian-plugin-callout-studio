@@ -360,6 +360,36 @@ definitions of `styleSpecs.ts`, `wireStyleSlider`):
 - **While saving is paused** every control's row is `disabled` (greyed), and a
   box's ↺ says why.
 
+## Commands and shortcuts
+
+[`declarative/commandsPage.ts`](../../src/settings/declarative/commandsPage.ts):
+`commandsPage(ctx)` is the row that opens the page (`commands`), in place of
+the window of the same name. The page is a nameless description row
+(`commands-intro`, not searchable), then:
+
+- **Your commands** (`commands-mine`), one of Obsidian's lists: `+` (the
+  command editor), Obsidian's ✕ and Delete key (`deleteCommand` asks first),
+  the grey row while there is none. A row (`command-<id>`) is the callout's
+  icon (our element before the row, removed by the row's cleanup), the
+  command's name, its shortcuts, ⊕ and ✎; a command whose callout the theme
+  suspended, or which is gone, says so in its description.
+- **Built-in commands** (`commands-builtin`): a row per built-in command
+  (`command-<fixed id>`) with its shortcuts, ⊕ and a switch
+  (`setFixedCommandEnabled`, which registers or unregisters it), and ↺ in the
+  heading that turns them all back on (dimmed while all are on). A command
+  switched off keeps its row as it is (S8-21): only its shortcuts and ⊕ go.
+- **Shortcuts** are drawn as Obsidian's Hotkeys page draws them
+  (`addObsidianHotkeyChips`: `div.setting-command-hotkeys >
+  span.setting-hotkey`, "Blank" as `mod-empty`), without the ✕ each has there
+  (S8-19). ⊕ (`addHotkeyExtraButton`) opens the Hotkeys page searched for the
+  command, and wears `mod-hotkeys`, which Obsidian hides on a phone (S8-20).
+- **The flows** are the window's own (`command/commandFlows.ts`).
+- **While saving is paused** `+`, ✕ and ↺ say why, ✎ is dimmed and says why,
+  and the built-in rows are greyed.
+- **What must redraw it** (unit 12): the commands, the built-ins' switches, the
+  registry (a callout gone or taken by the theme), and the user binding a
+  shortcut on the Hotkeys page.
+
 ## Read-only while saving is paused
 
 While saving is paused a change would live only in memory, so the page takes

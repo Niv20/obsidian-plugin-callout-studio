@@ -17,6 +17,9 @@
  * another surface removes the commands that depended on it, and this window has
  * to stop showing them at the same moment rather than offering rows that no
  * longer exist.
+ *
+ * The flows behind the buttons are command/commandFlows.ts, which the
+ * declarative settings page uses too.
  */
 import { Modal, Setting, ToggleComponent, setIcon } from "obsidian";
 import type { App } from "obsidian";
@@ -31,14 +34,15 @@ import type { CustomCommandManager } from "../editor/CustomCommandManager";
 import type { CalloutEditorPlugin } from "./editor/types";
 import type { CustomCommand } from "../types";
 import { paintCalloutListIcon } from "../manager/theme/calloutListIcon";
+import { isSuspendedByTheme, obsidianCommandId } from "../utils/customCommands";
 import {
-	commandSignature,
-	describeCommand,
-	isSuspendedByTheme,
-	obsidianCommandId,
-} from "../utils/customCommands";
-import { ConfirmModal } from "../utils/ConfirmModal";
-import { CommandEditorModal } from "./CommandEditorModal";
+	allFixedCommandsEnabled,
+	commandName,
+	createCommand,
+	deleteCommand,
+	editCommand,
+	enableAllFixedCommands,
+} from "./command/commandFlows";
 import { addHotkeyButton, addHotkeyChips } from "./command/hotkeyRow";
 import { applyModalChrome } from "./modalChrome";
 import { addFieldResetButton } from "./editor/fieldResetButton";
@@ -106,7 +110,7 @@ export class CommandBuilderModal extends Modal {
 		this.syncFixedReset = addFieldResetButton(
 			fixedHeading,
 			t("settings.resetAction"),
-			() => FIXED_COMMAND_IDS.every((id) => isFixedCommandEnabled(this.host.settings, id)),
+			() => allFixedCommandsEnabled(this.host),
 			() => void this.resetFixedCommands(),
 		);
 		this.fixedListEl = contentEl.createDiv({ cls: "cs-command-fixed-list" });
@@ -122,60 +126,21 @@ export class CommandBuilderModal extends Modal {
 	}
 
 	private async resetFixedCommands(): Promise<void> {
-		// Use the existing registration path so the palette updates immediately.
-		// Obsidian provides no public API for clearing user-assigned hotkeys;
-		// re-enabling commands deliberately preserves those bindings.
-		await Promise.all(FIXED_COMMAND_IDS
-			.filter((id) => !isFixedCommandEnabled(this.host.settings, id))
-			.map((id) => this.host.setFixedCommandEnabled(id, true)));
+		await enableAllFixedCommands(this.host);
 		this.renderFixedList();
 		this.syncFixedReset?.();
 	}
 
-	/** Signatures already in use, optionally ignoring the command being edited. */
-	private takenSignatures(exceptId?: string): Set<string> {
-		const taken = new Set<string>();
-		for (const command of this.host.customCommands.list()) {
-			if (command.id === exceptId) continue;
-			taken.add(commandSignature(command));
-		}
-		return taken;
-	}
-
 	private async createCommand(): Promise<void> {
-		const draft = await new CommandEditorModal(this.app, this.host, {
-			takenSignatures: this.takenSignatures(),
-		}).openAndWait();
-		if (!draft) return;
-		await this.host.customCommands.add(draft);
-		this.renderList();
+		if (await createCommand(this.app, this.host)) this.renderList();
 	}
 
 	private async editCommand(command: CustomCommand): Promise<void> {
-		const draft = await new CommandEditorModal(this.app, this.host, {
-			existing: command,
-			takenSignatures: this.takenSignatures(command.id),
-		}).openAndWait();
-		if (!draft) return;
-		// Same identity, so the command is re-registered in place and whatever
-		// hotkey the user bound to it survives the edit.
-		await this.host.customCommands.update(command.id, draft);
-		this.renderList();
+		if (await editCommand(this.app, this.host, command)) this.renderList();
 	}
 
 	private async deleteCommand(command: CustomCommand): Promise<void> {
-		const def = this.host.registry.get(command.calloutId);
-		const name = def
-			? describeCommand(command, def)
-			: t("commandBuilder.unknownCommand");
-		const ok = await new ConfirmModal(
-			this.app,
-			t("confirm.titleDeleteCommand"),
-			t("commandBuilder.deleteConfirm", { name }),
-		).confirm();
-		if (!ok) return;
-		await this.host.customCommands.remove(command.id);
-		this.renderList();
+		if (await deleteCommand(this.app, this.host, command)) this.renderList();
 	}
 
 	/**
@@ -268,7 +233,7 @@ export class CommandBuilderModal extends Modal {
 
 		for (const command of commands) {
 			const def = this.host.registry.get(command.calloutId);
-			const name = def ? describeCommand(command, def) : command.calloutId;
+			const name = commandName(command, def);
 			const row = listEl.createDiv({
 				cls: "callout-studio-row cs-command-row",
 			});

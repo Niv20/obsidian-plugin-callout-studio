@@ -3051,8 +3051,12 @@ Behaviour to keep in mind before changing it:
 
 Two lists in one modal: the built-in commands (plain rows - nothing to
 configure but a hotkey), and the user's own built commands (full rows with
-add/edit/delete). Both kinds display the same two pieces of information side
-by side, deliberately kept separate:
+add/edit/delete). The flows behind add, edit, delete and re-enabling the
+built-ins are [`command/commandFlows.ts`](../../src/settings/command/commandFlows.ts),
+shared with the declarative page
+([26 § Commands and shortcuts](26-declarative-settings.md#commands-and-shortcuts)).
+Both kinds display the same two pieces of information side by side,
+deliberately kept separate:
 
 - **A hotkey chip** that only *reads* what Obsidian has bound
   (`hotkeyLink.ts`'s `hotkeysForCommand`), because a shortcut is a fact

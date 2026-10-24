@@ -19,10 +19,11 @@
  * {@link addControlComponent}, so the row's `disabled` reaches that control
  * the way it reaches Obsidian's own toggles and buttons.
  */
-import type { BaseComponent, Setting } from "obsidian";
+import type { BaseComponent, ExtraButtonComponent, Setting, SettingGroup } from "obsidian";
 import { t, type LocaleKey } from "../../i18n";
 import { explainIfBlocked, paintBlocked } from "../../ui/blockedButton";
 import { setButtonBusy } from "../../ui/busyButton";
+import { settingGroupEl } from "../../ui/settingGroupEl";
 import type { RowRegistry } from "./rowRegistry";
 import { guardRender } from "./safeTree";
 import type { CsRender } from "./types";
@@ -106,6 +107,50 @@ export function pausedReason(writer: { isFrozen: boolean }): string | null {
 export function countValue(count: number, keys: { one: LocaleKey; many: LocaleKey }): string {
 	if (count === 0) return "";
 	return count === 1 ? t(keys.one) : t(keys.many, { count });
+}
+
+/* ---- ↺ in a box's heading ---- */
+
+/** Marks a box's heading ↺, so the box's rows can find it to dim it. */
+const BOX_RESET_CLASS = "cs-group-reset";
+
+/**
+ * A ↺ for a box's heading: an entry of the box's `extraButtons`. Obsidian
+ * makes it once, when the box is first drawn, so `reset` must read everything
+ * anew when pressed. While saving is paused, a press says why instead.
+ */
+export function boxResetButton(
+	writer: { isFrozen: boolean },
+	label: string,
+	reset: () => void,
+): (button: ExtraButtonComponent) => void {
+	return (button) => {
+		button.extraSettingsEl.addClass(BOX_RESET_CLASS);
+		button
+			.setIcon("rotate-ccw")
+			.setTooltip(`${t("settings.resetAction")}: ${label}`)
+			.onClick(() => {
+				if (explainIfBlocked(pausedReason(writer))) return;
+				reset();
+			});
+	};
+}
+
+/**
+ * Dim a ↺ while there is nothing to reset. Obsidian draws an icon button
+ * marked `aria-disabled` at 40%.
+ */
+export function paintResetIdle(resetEl: HTMLElement, idle: boolean): void {
+	resetEl.setAttribute("aria-disabled", String(idle));
+}
+
+/**
+ * Dim the ↺ in `group`'s heading while nothing in the box is changed. The
+ * box's rows call it as they are drawn (`render` is given the box).
+ */
+export function paintBoxReset(group: SettingGroup, modified: boolean): void {
+	const resetEl = settingGroupEl(group).querySelector<HTMLElement>(`.${BOX_RESET_CLASS}`);
+	if (resetEl) paintResetIdle(resetEl, !modified);
 }
 
 /** A control of the plugin's own that can be switched off, such as a picker. */

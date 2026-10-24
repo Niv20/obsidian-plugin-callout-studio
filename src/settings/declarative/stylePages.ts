@@ -26,12 +26,9 @@
  * every control by its name and a few more words ("radius", "border",
  * "title size"). While saving is paused, every control is greyed.
  */
-import type { SettingGroup } from "obsidian";
 import { DEFAULT_SETTINGS } from "../../constants";
 import { t, type LocaleKey } from "../../i18n";
 import type { BorderSidesSettings, CalloutRenderRole, PluginSettings } from "../../types";
-import { explainIfBlocked } from "../../ui/blockedButton";
-import { settingGroupEl } from "../../ui/settingGroupEl";
 import { specFromDef, wireStyleSlider, type StyleSliderSpec } from "../styleControls";
 import { StylePreview } from "../stylePreview";
 import {
@@ -50,7 +47,7 @@ import {
 import { palettesPage } from "./palettesPage";
 import { disabledWhilePaused } from "./pausedGuards";
 import type { PersistentPart } from "./persistentParts";
-import { pausedReason } from "./rowParts";
+import { boxResetButton, paintBoxReset, paintResetIdle } from "./rowParts";
 import { guardRender } from "./safeTree";
 import type { CsControl, CsGroup, CsPage, CsRender, TreeContext } from "./types";
 
@@ -254,8 +251,8 @@ function sliderRow(ctx: TreeContext, def: StyleSliderDef, options: SliderRowOpti
 			let resetEl: HTMLElement | null = null;
 			/** Dim the ↺s that have nothing to reset. */
 			const paintResets = (): void => {
-				if (resetEl) paintIdle(resetEl, def.get(settings()) === sliderDefault(def));
-				if (options.box) paintGroupReset(group, options.box.isModified(settings()));
+				if (resetEl) paintResetIdle(resetEl, def.get(settings()) === sliderDefault(def));
+				if (options.box) paintBoxReset(group, options.box.isModified(settings()));
 			};
 			let showSavedValue = (): void => {};
 			setting.addExtraButton((button) => {
@@ -314,22 +311,13 @@ function resetBox(ctx: TreeContext, box: ResetBox, items: (CsRender | CsControl)
 		type: "group",
 		id: box.id,
 		heading,
-		// Made once, when the box is first drawn, so it reads everything anew
-		// when pressed.
-		extraButtons: [(button) => {
-			button.extraSettingsEl.addClass("cs-group-reset");
-			button
-				.setIcon("rotate-ccw")
-				.setTooltip(`${t("settings.resetAction")}: ${heading}`)
-				.onClick(() => {
-					if (explainIfBlocked(pausedReason(ctx.plugin.settingsWriter))) return;
-					if (!box.isModified(ctx.plugin.settings)) return;
-					box.reset(ctx.plugin.settings);
-					commitStyle(ctx);
-					// The box's rows show the defaults again.
-					ctx.display();
-				});
-		}],
+		extraButtons: [boxResetButton(ctx.plugin.settingsWriter, heading, () => {
+			if (!box.isModified(ctx.plugin.settings)) return;
+			box.reset(ctx.plugin.settings);
+			commitStyle(ctx);
+			// The box's rows show the defaults again.
+			ctx.display();
+		})],
 		items,
 	};
 }
@@ -414,20 +402,4 @@ function bordersReset(role: CalloutRenderRole): ResetBox {
 			frame.borderWidth = defaults.borderWidth;
 		},
 	};
-}
-
-/* ---- Dimming the ↺s ---- */
-
-/**
- * Dim a ↺ while there is nothing to reset. Obsidian draws an icon button
- * marked `aria-disabled` at 40%; a press then does nothing.
- */
-function paintIdle(resetEl: HTMLElement, idle: boolean): void {
-	resetEl.setAttribute("aria-disabled", String(idle));
-}
-
-/** Dim the ↺ in `group`'s heading while nothing in the box is changed. */
-function paintGroupReset(group: SettingGroup, modified: boolean): void {
-	const resetEl = settingGroupEl(group).querySelector<HTMLElement>(".cs-group-reset");
-	if (resetEl) paintIdle(resetEl, !modified);
 }
