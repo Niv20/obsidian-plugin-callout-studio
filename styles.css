@@ -3213,6 +3213,12 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	}
 }
 
+/* A tap on a phone: the grey press Obsidian gives a suggestion row. Obsidian
+   adds `.mobile-tap` because the row is `.tappable` (finding S10-V2). */
+.callout-studio-replace-item.mobile-tap {
+	background-color: var(--background-modifier-hover);
+}
+
 /* The chosen row: Obsidian's selected-item tint (a tree row's `.is-selected`),
    with the check its menus put beside the current value at the end — so the
    choice still reads under the pointer, where a hover is its own grey. */
@@ -6558,9 +6564,16 @@ button.search-result-file-match.cs-sidebar-result.mobile-tap {
 	}
 }
 
-/* The row the caret is in. */
-.cs-sidebar-result[aria-current="true"] {
-	background-color: var(--background-modifier-active-hover);
+/* The row the caret is in, or the one just clicked: the grey fill and normal
+   text Obsidian's Outline gives the current heading (`.tree-item-self.is-active`),
+   with no border (finding S10-09). A Find callouts row carries the mark itself
+   (`aria-current`); a Review conversion row carries it on its body, so the row
+   is told with `.is-active` and the fill takes in its checkbox too. Until
+   2026-10-24 it was an accent outline over an accent tint. */
+button.cs-sidebar-result[aria-current="true"],
+.cs-portable-row.is-active {
+	color: var(--nav-item-color-active);
+	background-color: var(--nav-item-background-active);
 }
 
 /* Inside the box, which clips what spills over its rounded corners, so the
@@ -6734,8 +6747,12 @@ button.search-result-file-match.cs-sidebar-result.mobile-tap {
 	block-size: 100%;
 }
 
+/* The row whose replacement is being edited: Obsidian's selected-item tint
+   (`.tree-item-self.is-selected`, the accent at 15%), so it differs from the
+   grey current row. Last, so it wins when one row is both. */
 .cs-portable-change.is-editing {
-	background-color: var(--background-modifier-active-hover);
+	color: var(--nav-item-color-selected);
+	background-color: var(--nav-item-background-selected);
 }
 
 button.cs-portable-source,

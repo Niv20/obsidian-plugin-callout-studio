@@ -202,8 +202,10 @@ export class ReplaceCalloutModal extends Modal {
 		container: HTMLElement,
 		def: CalloutDefinition,
 	): HTMLElement {
+		// `tappable`: Obsidian marks a touched element of that class
+		// `.mobile-tap`, so a phone shows the row's press (finding S10-V2).
 		const item = container.createDiv({
-			cls: "callout-studio-replace-item",
+			cls: "callout-studio-replace-item tappable",
 		});
 
 		const isDark = activeDocument.body.classList.contains("theme-dark");

@@ -162,7 +162,11 @@ export class PortableConversionNavigation {
 		for (const card of Array.from(this.root?.querySelectorAll<HTMLElement>(".cs-portable-change-body") ?? [])) {
 			const on = id !== undefined && card.dataset.rowId === id;
 			if (on) marked = card;
-			if ((card.getAttribute("aria-current") === "true") !== on) card.setAttribute("aria-current", String(on));
+			if ((card.getAttribute("aria-current") === "true") !== on) {
+				card.setAttribute("aria-current", String(on));
+				// The fill goes on the whole row, its checkbox included (styles.css).
+				card.closest(".cs-portable-row")?.toggleClass("is-active", on);
+			}
 		}
 		return marked;
 	}

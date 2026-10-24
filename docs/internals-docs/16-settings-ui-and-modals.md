@@ -142,8 +142,16 @@ restores the default when the current value is already saved.
 `portableInlineReplacement.ts` edits **After** inside the card and keeps the
 read-only **Before** row visible, without separate Save or Cancel buttons.
 Entry selects all editable text and keeps the field focused without opening or
-scrolling the note. The card receives its own purple editing highlight;
-the previous source-navigation highlight clears so only one card stays purple.
+scrolling the note. The row being edited takes Obsidian's selected-item tint
+(`--nav-item-background-selected`, the accent at 15%); the previous
+source-navigation mark clears, so only one row is marked. The current row - the
+one the caret is in, or the one just clicked - takes the grey fill and normal
+text Obsidian's Outline gives its current heading (`--nav-item-background-active`,
+finding S10-09): on a Find callouts row through its `aria-current`, on a Review
+conversion row through `.is-active`, which `PortableConversionNavigation.mark`
+sets beside the body's `aria-current` so the fill takes in the checkbox. Until
+2026-10-24 both were an accent outline over an accent tint. Replace in vault's
+rows are `.tappable`, so a phone shows Obsidian's grey press on them (S10-V2).
 Checkbox inclusion is unchanged. Source navigation remains on the format/line
 label and **Before** text.
 The monospace input inherits the card background and removes the host's input

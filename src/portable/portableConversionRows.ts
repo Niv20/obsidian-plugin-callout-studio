@@ -62,6 +62,8 @@ export function renderPortableConversionRows(
 		const card = box.createDiv({ cls: linkOnly ? "cs-portable-link-change cs-portable-row" : "cs-portable-change cs-portable-row cs-sidebar-selectable" });
 		const editing = !linkOnly && change.id === editingId;
 		card.toggleClass("is-editing", editing);
+		// The row the caret is in (see portableConversionNavigation.ts `mark`).
+		card.toggleClass("is-active", current === row.id);
 		card.toggleClass("is-included", selected.has(change.id));
 		if (!linkOnly) {
 			const checkbox = card.createEl("input", { type: "checkbox", attr: {

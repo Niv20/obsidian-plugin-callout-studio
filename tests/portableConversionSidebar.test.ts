@@ -7,6 +7,7 @@ import { resolvePortableSourcePosition } from "../src/portable/portableConversio
 import { portableConversionViewHarness as harness } from "./support/portableConversionViewHarness";
 import { deferred } from "./support/portableVaultHarness";
 import { notifySidebarEditorSelection } from "../src/ui/sidebarSelection";
+import { readRepoFile } from "./support/sourceScan";
 
 const saved = (before: string, content = before, line = 1) =>
 	({ before, line, contentFingerprint: fingerprintCalloutContent(content) });
@@ -50,9 +51,13 @@ describe("conversion file groups and cards", () => {
 			h.root.fire("click", { target: h.root.querySelectorAll('button[data-action="result"]')[0] });
 			await h.settle();
 			assert.equal(h.root.querySelectorAll('[aria-current="true"]').length, 1);
+			// The whole row, its checkbox included, takes the current-row fill.
+			const rows = h.root.querySelectorAll(".cs-portable-row");
+			assert.deepEqual(rows.map((row) => row.hasClass("is-active")), [true, false]);
 			const opened = [...h.opened], revealed = [...h.revealed];
 			h.root.fire("click", { target: h.root.querySelectorAll(".cs-portable-after-button")[1] });
 			assert.equal(h.root.querySelector('[aria-current="true"]'), null);
+			assert.equal(h.root.querySelectorAll(".cs-portable-row.is-active").length, 0, "the edited row is the only marked one");
 			assert.equal(h.root.querySelectorAll(".is-editing").length, 1);
 			assert.ok(h.root.querySelectorAll(".cs-portable-change")[1]!.hasClass("is-editing"));
 			assert.deepEqual(h.opened, opened);
@@ -293,5 +298,26 @@ describe("conversion refresh presentation", () => {
 			await h.view.onClose(); read.resolve(); await wait(20);
 			assert.equal(h.root.children.length, 0);
 		} finally { await h.destroy(); }
+	});
+});
+
+describe("the sidebars' row marks look like Obsidian's", () => {
+	const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, "");
+	/** The declarations of the one rule whose selector list is exactly `selector`. */
+	const rule = (selector: string): string => {
+		const rules: string[] = css.match(/[^{}]+\{[^{}]*\}/g) ?? [];
+		const found = rules.filter((r) => r.split("{")[0]!.trim() === selector);
+		assert.equal(found.length, 1, selector);
+		return found[0]!;
+	};
+
+	it("fills the current row as the Outline fills its current heading, with no border", () => {
+		const current = rule('button.cs-sidebar-result[aria-current="true"],\n.cs-portable-row.is-active');
+		assert.match(current, /background-color:\s*var\(--nav-item-background-active\)/);
+		assert.doesNotMatch(current, /border/);
+	});
+
+	it("tints the row being edited as Obsidian tints a selected item", () => {
+		assert.match(rule(".cs-portable-change.is-editing"), /background-color:\s*var\(--nav-item-background-selected\)/);
 	});
 });

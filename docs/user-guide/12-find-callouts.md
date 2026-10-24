@@ -84,7 +84,7 @@ draws a ring inside the row.
 A summary below the controls shows the matching occurrences and files, such as
 **131 occurrences in 15 files**. It uses the same styling as the conversion
 selection summary. Only the results scroll. Select a
-row to navigate. Clicking a result highlights that row and keeps it in the
+row to navigate. Clicking a result highlights that row with a soft grey fill, as Obsidian's **Outline** marks the current heading, and keeps it in the
 same sidebar position. The row stays highlighted until you click or type in the
 note; from then on the highlight follows your cursor (see
 [Follow your cursor](#follow-your-cursor)). Clicking the file heading opens the

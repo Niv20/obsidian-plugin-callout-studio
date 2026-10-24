@@ -572,7 +572,7 @@ Conversion rows never clamp or ellipsize their source/replacement text. File
 title rows show their count as a faint number at the end and open the note when
 clicked. The source card's format/line label and **Before** text
 navigate to its precise token or heading range; **After** starts inline editing.
-Purple active styling is cleared when that exact editor selection no longer
+The current-row mark is cleared when that exact editor selection no longer
 exists. The fixed header puts the conversion action across the pane in a row of
 its own, under the nav header that holds the help button.
 A single summary checkbox uses the native indeterminate state for partial
