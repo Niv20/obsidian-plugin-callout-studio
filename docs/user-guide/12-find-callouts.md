@@ -70,38 +70,33 @@ out of the picker.
 
 *Choose a type to see its source references, grouped by note. The results scroll below the fixed filters and summary.*
 
-Results are grouped by note, with a bordered card for each occurrence. The file
-heading includes the matching count in parentheses after the file name, including matches not yet
-revealed by **Show more**. Each card shows its format, line number, and at most
+Results are grouped by note, as Obsidian's **Search** pane groups them: the note's name with a small count at the end, then one rounded box with a row for each occurrence, separated by thin lines. The count covers matches not yet
+revealed by **Show more**. Each row shows its format, line number, and at most
 two lines of raw Markdown, including syntax such as `> [!info]`. Block previews
 include a line of body text when available. Choose **All formats**, **Block**,
 **Heading**, or **Inline** to filter the selected type or all types. The format
 picker opens a list of these four choices without a search field. It has the
 same control shape and hover feedback as the type picker. A selected option remains
 identifiable when you hover over it or move to it with the keyboard. With a mouse or
-trackpad, hovering a result subtly brightens its border; keyboard focus keeps
-its stronger outline.
+trackpad, hovering a result tints it, as a search match does; keyboard focus
+draws a ring inside the row.
 
 A summary below the controls shows the matching occurrences and files, such as
 **131 occurrences in 15 files**. It uses the same styling as the conversion
 selection summary. Only the results scroll. Select a
-card to navigate. As you scroll through a note's results, its file heading stays
-below the fixed header until that note's results end; the next file heading
-then takes its place. Clicking a result highlights that card and keeps it in the
-same sidebar position. The card stays highlighted until you click or type in the
+row to navigate. Clicking a result highlights that row and keeps it in the
+same sidebar position. The row stays highlighted until you click or type in the
 note; from then on the highlight follows your cursor (see
 [Follow your cursor](#follow-your-cursor)). Clicking the file heading opens the
 note at its beginning without moving its cursor. Switching to another note moves
-the highlight to the card your cursor is in there, if any; the new note's heading
-identifies the current file. Updating the list keeps
+the highlight to the row your cursor is in there, if any; the new note's name
+takes a grey background, as the current file does in Obsidian's file list. Updating the list keeps
 keyboard focus on the same occurrence when its source is unchanged.
 Ctrl-click (Command-click on macOS) opens a new tab. The list initially shows
 up to 100 results; **Show more** reveals another page.
 
-Widen the sidebar to arrange each file's cards in two columns, read left to right
-and then onto the next row. File headings span both columns. Content has a maximum
-width and stays centered when the pane grows further. The file groups and cards
-use the same layout as **Review conversion**.
+The results use the full width of the sidebar, however wide you make it. The
+file groups and rows use the same layout as **Review conversion**.
 
 The current Markdown note's file heading is highlighted in the results. The
 sidebar opens at the top with the filters visible, even if that note's section
@@ -142,21 +137,21 @@ reach the opened sidebar.
 
 ### Follow your cursor
 
-While you edit a note, the card for the callout your cursor is in is
+While you edit a note, the row for the callout your cursor is in is
 highlighted, much as Obsidian's **Outline** highlights the heading you are in:
 
 - an inline callout, while the cursor touches it;
 - a heading callout, while the cursor is on its heading line;
 - a block callout, while the cursor is anywhere inside it.
 
-In nested callouts, the innermost callout with a card in the current results
+In nested callouts, the innermost callout with a row in the current results
 wins, so a filtered-out inner callout passes the highlight to the one around it.
-When the cursor is in no callout, no card is highlighted.
+When the cursor is in no callout, no row is highlighted.
 
-If the highlighted card is outside the visible part of the list, the sidebar
+If the highlighted row is outside the visible part of the list, the sidebar
 scrolls just far enough to show it in full, clear of the file name that stays
 pinned at the top of the list. It never takes keyboard focus, and it does not
-reveal cards hidden behind **Show more**.
+reveal rows hidden behind **Show more**.
 
 The highlight follows the cursor, not scrolling: scrolling the note without
 clicking leaves it where it is, and Reading view, which has no cursor, highlights

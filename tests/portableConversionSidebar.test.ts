@@ -112,21 +112,24 @@ describe("conversion file groups and cards", () => {
 			assert.deepEqual(h.written, []);
 		} finally { await h.destroy(); }
 	});
-	it("groups source and linked changes by file using shared grids and localized row roles", async () => {
+	it("groups source and linked changes by file, in one box per note, with localized row roles", async () => {
 		const h = harness({ "a.md": "# Report [!note]\n[!tip]", "b.md": "[[a#Report note]]" });
 		try {
 			await h.view.onOpen();
 			const groups = h.root.querySelectorAll(".cs-sidebar-file");
 			assert.deepEqual(groups.map(group => group.dataset.path), ["a.md", "b.md"]);
-			assert.deepEqual(groups.map(group => group.querySelector(".cs-sidebar-file-link")?.textContent), ["a.md 2", "b.md 1"]);
+			assert.deepEqual(groups.map(group => group.querySelector(".cs-sidebar-file-link")?.textContent), ["a 2", "b 1"]);
 			for (const group of groups) {
 				const link = group.querySelector(".cs-sidebar-file-link")!;
 				assert.equal(link.getAttribute("aria-label"), null, "file names rely on visible text without a hover popup");
 				assert.equal(link.getAttribute("title"), null);
-				assert.equal(link.querySelector(".cs-faint-count")?.getAttribute("aria-hidden"), null);
+				assert.equal(link.querySelector(".tree-item-flair")?.getAttribute("aria-hidden"), null, "the count is read out");
 			}
 			assert.deepEqual(groups.map(group => group.querySelectorAll(".cs-sidebar-result").length), [2, 1]);
-			assert.equal(groups[0]!.querySelectorAll(".cs-sidebar-grid").length, 1);
+			assert.equal(groups[0]!.querySelectorAll(".search-result-file-matches").length, 1);
+			// A conversion row is not a control itself, so it is not Obsidian's
+			// match row, whose hover tint would light it up.
+			assert.equal(h.root.querySelectorAll(".search-result-file-match").length, 0);
 			const locations = h.root.querySelectorAll(".cs-portable-change-location");
 			assert.ok(locations[0]!.textContent.includes(t("vaultStats.roleHeading")));
 			assert.ok(locations[1]!.textContent.includes(t("vaultStats.roleInline")));

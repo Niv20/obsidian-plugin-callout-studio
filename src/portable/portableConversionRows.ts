@@ -39,16 +39,18 @@ export function renderPortableConversionRows(
 	const counts = new Map<string, number>();
 	for (const row of rows) counts.set(row.path, (counts.get(row.path) ?? 0) + 1);
 	let path: string | undefined;
-	let grid: HTMLElement | undefined;
+	let box: HTMLElement | undefined;
 	for (const row of rows.slice(0, limit)) {
 		const { change, linkOnly } = row;
-		if (!grid || path !== row.path) {
+		if (!box || path !== row.path) {
 			path = row.path;
 			const group = createSidebarFileGroup(root, { path, count: counts.get(path)!, cls: "cs-portable-file" });
-			grid = group.grid;
+			box = group.matches;
 			onSection(path, group.section);
 		}
-		const card = grid.createDiv({ cls: linkOnly ? "cs-portable-link-change" : "cs-portable-change cs-sidebar-selectable" });
+		// A row of the file's box. Not Obsidian's `.search-result-file-match`,
+		// whose hover tint would light up a row that is not itself a control.
+		const card = box.createDiv({ cls: linkOnly ? "cs-portable-link-change cs-portable-row" : "cs-portable-change cs-portable-row cs-sidebar-selectable" });
 		const editing = !linkOnly && change.id === editingId;
 		card.toggleClass("is-editing", editing);
 		card.toggleClass("is-included", selected.has(change.id));

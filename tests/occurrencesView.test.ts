@@ -125,7 +125,7 @@ function action(view: CalloutOccurrencesView, name: string): HTMLButtonElement {
 
 function fileSection(view: CalloutOccurrencesView, path: string): FakeElement | null {
 	return (view.contentEl.querySelectorAll(".cs-occurrences-file") as unknown as FakeElement[])
-		.find((section) => section.querySelector("h3")?.textContent?.includes(path)) ?? null;
+		.find((section) => section.dataset.path === path) ?? null;
 }
 
 describe("callout occurrence sidebar", () => {
@@ -260,14 +260,14 @@ describe("callout occurrence sidebar", () => {
 		await h.view.onOpen();
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 100);
 		assert.equal(h.view.contentEl.querySelector(".cs-sidebar-file-link")?.textContent,
-			"a.md 105", "file count covers unloaded results too");
+			"a 105", "file count covers unloaded results too");
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent,
 			t("usage.summary", { count: 107, files: 2 }));
 		(h.view.contentEl as unknown as FakeElement).fire("click", { target: action(h.view, "more") });
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 107);
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-file").length, 2);
 		assert.deepEqual(Array.from(h.view.contentEl.querySelectorAll(".cs-sidebar-file-link"), (node) => node.textContent),
-			["a.md 105", "b.md 2"]);
+			["a 105", "b 2"]);
 		const formatSelect = h.view.contentEl.querySelector<HTMLElement>(".cs-select-dropdown")!;
 		const formatButton = dropdownButton(formatSelect);
 		assert.equal(dropdownValue(formatSelect), t("usage.allRoles"));
@@ -284,7 +284,7 @@ describe("callout occurrence sidebar", () => {
 		assert.deepEqual(h.view.getState(), { ids: [], role: "heading", allTypes: true });
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent,
 			t("usage.summary", { count: 1, files: 1 }));
-		assert.equal(h.view.contentEl.querySelector(".cs-sidebar-file-link")?.textContent, "b.md 1");
+		assert.equal(h.view.contentEl.querySelector(".cs-sidebar-file-link")?.textContent, "b 1");
 		assert.equal(h.savedLayouts(), 1);
 		assert.equal(h.view.contentEl.ownerDocument.activeElement, formatButton);
 		h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop = 180;

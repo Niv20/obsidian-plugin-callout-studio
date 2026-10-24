@@ -288,8 +288,6 @@ const STICKY_LAYERS: Record<string, string> = {
 		"the callout / palette / style editors' preview column, inside .modal-content",
 	".icon-picker-toolbar":
 		"the icon picker's per-source search bar, inside .icon-picker-content",
-	".cs-sidebar-file-heading":
-		"each file's heading in either sidebar, bounded by its section, inside either dedicated results scrollport",
 	".cs-quick-insert-toolbar":
 		"the quick-insert window's search + source filter, inside .modal-content",
 	".cs-combobox-group-label":
@@ -428,7 +426,6 @@ describe("sticky layers", () => {
 
 		const own: Record<string, RegExp> = {
 			".cs-combobox-group-label": /^var\(--cs-menu-face\)$/,
-			".cs-sidebar-file-heading": /^var\(--background-secondary\)$/,
 		};
 		for (const rule of painted) {
 			assert.match(

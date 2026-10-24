@@ -125,11 +125,13 @@ function renderOccurrenceResults(
 		if (occurrence.path !== path || !group) {
 			path = occurrence.path;
 			const file = createSidebarFileGroup(content, { path, count: fileCounts.get(path) ?? 0, cls: "cs-occurrences-file" });
-			group = file.grid;
+			group = file.matches;
 			onSection(path, file.section);
 		}
+		// A row of the file's box, as a match is in Obsidian's Search pane: the
+		// whole row is the button that jumps to the callout.
 		const row = occurrenceButton(group, "result", "");
-		row.addClass("cs-occurrences-result", "cs-sidebar-result");
+		row.addClass("search-result-file-match", "cs-occurrences-result", "cs-sidebar-result");
 		row.dataset.result = String(offset);
 		onRow(occurrence, row);
 		renderSidebarLocation(row, { line: occurrence.line + 1, role: occurrenceRoleLabel(occurrence.role), cls: "cs-occurrences-location" });

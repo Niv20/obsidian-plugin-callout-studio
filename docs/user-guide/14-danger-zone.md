@@ -56,28 +56,29 @@ type count as heading text, not as an inline payload.
 
 *Review each proposed replacement before converting. The selected-change summary stays visible while the file groups scroll below it.*
 
-The sidebar groups results by file and shows the number of changes beside each
-file name. Select a file to open its note. Each card shows the format and line
+The sidebar groups results by file, as Obsidian's **Search** pane does: the
+note's name with the number of changes at the end, then one box with a row for
+each change. Select a file's name to open its note. Each row shows the format and line
 number, followed by **Before** and **After** with the original text and proposed
-replacement. Heading cards show the complete heading. Each inline callout gets
-a separate card showing its `[!type]` token and optional `{content}` payload,
+replacement. Heading rows show the complete heading. Each inline callout gets
+a separate row showing its `[!type]` token and optional `{content}` payload,
 even when several are on one line. Long text wraps in full.
 
-Select a card's format label or **Before** text to open its note scrolled to
+Select a row's format label or **Before** text to open its note scrolled to
 that source, which briefly glows; the cursor stays where it was, as in
-[Find callouts](12-find-callouts.md#navigate-through-occurrences). The card stays
+[Find callouts](12-find-callouts.md#navigate-through-occurrences). The row stays
 highlighted until you click or type in the note.
 
 The highlight also follows your cursor, as in
 [Find callouts](12-find-callouts.md#follow-your-cursor): while you edit a note,
-the card for what your cursor is in is highlighted, and the list scrolls just far
+the row for what your cursor is in is highlighted, and the list scrolls just far
 enough to show it. That is an inline callout while the cursor touches it (its
 `{content}` included), a heading callout while the cursor is on its line, and
-otherwise a **Heading link** card for the cursor's line. While you edit a
-replacement, only that card is highlighted. A line you have just typed on
+otherwise a **Heading link** row for the cursor's line. While you edit a
+replacement, only that row is highlighted. A line you have just typed on
 highlights nothing until the review catches up with your edit.
 
-Only the card's checkbox includes or excludes that replacement. The summary
+Only the row's checkbox includes or excludes that replacement. The summary
 checkbox selects all changes, clears them all, or shows a dash when only some
 are selected. Beside it, the summary counts the selected replacements and the
 heading links they will update; when there are none, it leaves heading links
@@ -85,13 +86,13 @@ out. **Show more** reveals additional results; switching notes scrolls
 to that file's results.
 
 To change a proposed replacement, click its **After** text or the pencil in the
-card's upper corner. The pencil fades in when you hover over the card or focus
-its controls, and stays visible on touch devices. Right-clicking the card and
+row's upper corner. The pencil fades in when you hover over the row or focus
+its controls, and stays visible on touch devices. Right-clicking the row and
 choosing **Custom replacement** opens the same inline editor. The **After**
 text becomes an editable field while **Before** stays visible. All editable
-text is selected so typing replaces it immediately. The card gains a purple
-highlight while the note stays in place; any previous card highlight clears.
-Editing does not change the card's
+text is selected so typing replaces it immediately. The row gains a purple
+highlight while the note stays in place; any previous row highlight clears.
+Editing does not change the row's
 checkbox. To see the source in the note, click **Before** or the format and line
 label.
 The field contains only the replacement; surrounding words from the note are
@@ -112,9 +113,9 @@ moved to another level, or changed to introduce another heading or protected
 syntax. Saving changes the preview only; you still need to select and confirm
 the conversion. If a replacement is unsafe or conflicts with a link, it is
 rejected or deselected for review. An invalid draft is discarded with a notice
-if you click away. When the card is not being edited, click the
+if you click away. When the row is not being edited, click the
 return arrow beside the pencil to restore its default replacement. You can
-also right-click the card and choose **Restore default replacement**.
+also right-click the row and choose **Restore default replacement**.
 
 An unfinished draft survives interface-language redraws, but is discarded if
 the review becomes stale or closes. Saved custom
@@ -128,7 +129,7 @@ Links and embeds that point to a changed heading are updated, including wiki
 links and internal Markdown links. This also covers same-note links, relative
 paths, parent or child headings, custom heading titles, and reference-style
 Markdown links. Link labels and optional titles stay the same. The sidebar
-shows these as **Heading link** cards, and updates them automatically when you
+shows these as **Heading link** rows, and updates them automatically when you
 change a heading replacement.
 
 If a heading change would make an existing reference ambiguous, that change is

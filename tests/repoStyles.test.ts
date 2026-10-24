@@ -257,6 +257,8 @@ describe("class names in styles.css and src/ agree", () => {
 	 * line here.
 	 */
 	const EMITTED_WITHOUT_RULES = new Set([
+		"cs-sidebar-file", // a note's group in either sidebar; Obsidian's .tree-item.search-result draws it
+		"cs-sidebar-matches", // a note's box of results; Obsidian's .search-result-file-matches draws it
 		"cs-notice-action", // a notice's action button; Obsidian's .notice-cta draws it
 		"cs-import-issue", // one problem's row in the import report; tests count the rows by it
 		"cs-import-issue-field", // the field a problem is about; Obsidian's .setting-item-description code draws it

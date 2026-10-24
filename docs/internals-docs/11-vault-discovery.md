@@ -94,8 +94,7 @@ provides appearance/status only; fallback artwork never changes usage ownership.
 below the controls reports the filtered occurrence and distinct-file counts;
 the vault-wide metric tiles are not displayed. The shared sidebar heading,
 subtitles, filters and summary stay above a separate result scroll container.
-File headings stick to the top of that container while their own result section
-remains in view, then yield to the next section's heading. Its picker combines committed, non-theme-only
+Its picker combines committed, non-theme-only
 definitions with unregistered identities observed by the read-only index. Saved
 definitions include their aliases; equivalent identities and registered aliases
 are deduplicated before unknown options are added. A sidebar-local adapter supplies
@@ -182,11 +181,10 @@ The active-file highlight remains in place. Filter changes do not reveal extra
 results or scroll to that file's section; an actual active-editor change may
 still request those actions.
 
-`OccurrenceResults` owns card rendering, selection, and focus restoration. A
-file group and its row-major grid come from `ui/sidebarResults.ts`, shared with
-the conversion sidebar. CSS bounds both panes' content at 1000px, switches cards
-to two columns at 680px container width, and keeps each file heading full-width
-and sticky within its section. `ui/sidebarNavigation.ts` owns opening a note and
+`OccurrenceResults` owns row rendering, selection, and focus restoration. A
+file group - Obsidian's search title row over one box of result rows - comes
+from `ui/sidebarResults.ts`, shared with the conversion sidebar (see
+[Settings UI and modals](16-settings-ui-and-modals.md)). `ui/sidebarNavigation.ts` owns opening a note and
 revealing a validated source range; each consumer supplies its source resolver.
 A card's identity includes its path, source fingerprint, token coordinates,
 identity, and role; array offsets are presentation data only. A `WeakMap` maps
@@ -210,11 +208,11 @@ completion or view closure clears it. Partial and failed states remain immediate
 the Settings action and styles. Result cards omit redundant type labels and
 clamp excerpts to two lines while preserving raw Markdown syntax; block excerpts
 prefer a header line and a line of body content. Preview formatting does not
-change source coordinates or token exclusions. A fine-pointer hover changes a
-result card's border to the theme's focus-border colour and gives it the
-hover fill. Selected and keyboard-focus treatments remain distinct. Only the
-Find callouts cards answer this way, because each of them is a whole-card button.
-A Review conversion card is not itself a control, so it never fills. Its source
+change source coordinates or token exclusions. Under the pointer a Find
+callouts row takes Obsidian's match tint (`--text-selection`), and a tap on a
+phone the same; selected and keyboard-focus treatments remain distinct. Only the
+Find callouts rows answer this way, because each of them is a whole-row button.
+A Review conversion row is not itself a control, so it never fills. Its source
 line's location steps up to normal text, and its own icon buttons sharpen.
 `prepareUsageMenu` gives the shared occurrence scan up to 200 ms before any
 custom, built-in or theme row menu is constructed. A ready index bypasses both
@@ -323,10 +321,9 @@ to the DOM only when the marked card changes (`OccurrenceResults.followCaret`,
 `PortableConversionNavigation.followCaret`), and both scroll the list with
 `revealSidebarCard` (`ui/sidebarResults.ts`, over `scrollToReveal`) only when
 that card is out of sight and the scroller is laid out (a hidden sidebar tab has
-zero height). The card's own file heading is sticky at the top of the scroller,
-so its height is passed as `coveredTop`: a card whose top edge sits under that
-heading counts as out of sight, and lands 8 px below it. It never moves focus or
-expands **Show more**.
+zero height). Nothing sticks over the list, so a row lands 8 px inside the
+scroller's edge (`coveredTop` 0; it was the height of a sticky file heading
+until 2026-10-24). It never moves focus or expands **Show more**.
 
 `usage/occurrenceAtCursor.ts` resolves the caret against the **drawn** cards of
 that note (`OccurrenceResults.linesOf`), innermost first: an inline pill the caret
@@ -570,9 +567,9 @@ Obsidian's HTML menu (`setUseNativeMenu(false)`) so the edit and restore icons a
 visible consistently. When a customized card is not being edited, the `rotate-ccw`
 button beside the pencil exposes the same restore-default action.
 
-Conversion cards never clamp or ellipsize their source/replacement text. File
-headings remain sticky, show counts in parentheses after the name, and open the
-note when clicked. The source card's format/line label and **Before** text
+Conversion rows never clamp or ellipsize their source/replacement text. File
+title rows show their count as a faint number at the end and open the note when
+clicked. The source card's format/line label and **Before** text
 navigate to its precise token or heading range; **After** starts inline editing.
 Purple active styling is cleared when that exact editor selection no longer
 exists. The fixed header places the conversion action beside the description.

@@ -6438,88 +6438,104 @@ body:not(.is-phone)
 	display: none;
 }
 
-/* Both vault sidebars share file groups, cards and a bounded row-major grid. */
-.cs-sidebar-file {
-	min-inline-size: 0;
-	padding-block-end: var(--size-4-4);
-}
+/* Both vault sidebars draw a note's results as Obsidian's Search pane draws a
+   file (ui/sidebarResults.ts, findings S10-03 and S10-04): a title row
+   (`.tree-item-self.search-result-file-title`, its count in a faint
+   `.tree-item-flair`) over one `.search-result-file-matches` box with a thin
+   line between its rows, all drawn by app.css. What follows is only what the
+   plugin's own markup needs. Until 2026-10-24 every result was a card of its
+   own, in a two-column grid in a wide pane, under a grey file band that stuck
+   to the top of the list. */
 
-.cs-sidebar-file-heading {
-	position: sticky;
-	top: 0;
-	z-index: 2;
+/* The title row is a <button> (Tab, Enter and Space for free), so the face
+   Obsidian gives buttons comes off: `button:not(.clickable-icon)` (0,1,1)
+   paints a fill and shadow, `button` a height and centring. Obsidian's tree
+   row keeps its colour, hover fill, and the active fill of the open note
+   (`.is-active`). Its start padding is a tree row's less the room for a fold
+   triangle, which these groups do not have. */
+button.cs-sidebar-file-link {
 	display: flex;
 	align-items: baseline;
-	gap: var(--size-4-2);
+	justify-content: flex-start;
+	inline-size: 100%;
+	block-size: auto;
 	margin: 0;
-	padding-block: var(--size-4-3);
-	/* A vault sidebar, not a settings box: stuck at the top, the heading stays
-	   the pane's own colour so it reads flush with it. */
-	background: var(--background-secondary);
-	font-size: var(--font-ui-small);
-	font-weight: var(--font-medium);
-	line-height: 1.4;
+	padding-inline-start: var(--size-4-2);
+	background-color: transparent;
+	box-shadow: none;
+	font-weight: inherit;
+	line-height: var(--line-height-tight);
+	text-align: start;
+	white-space: normal;
+	cursor: var(--cursor);
+}
+
+/* A tap on a phone: Obsidian's `button:not(.clickable-icon).mobile-tap`
+   (0,2,1) would otherwise paint the button grey over the tree row's tap fill. */
+button.cs-sidebar-file-link.mobile-tap {
+	background-color: var(--nav-item-background-hover);
+	box-shadow: none;
 }
 
 .cs-sidebar-file-name {
-	min-inline-size: 0;
 	overflow-wrap: anywhere;
 	unicode-bidi: plaintext;
 }
 
-button.cs-sidebar-file-link {
-	display: block;
-	min-inline-size: 0;
+/* A Find callouts row is a <button> too: the button face comes off it the
+   same way, and Obsidian's match row (padding, the line under it, the hover
+   and tap tint) shows through. `button:not(.clickable-icon)` paints at
+   (0,1,1), so the hover and tap tint are restated here. */
+button.search-result-file-match.cs-sidebar-result {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: flex-start;
+	gap: var(--size-2-2);
 	block-size: auto;
-	padding: 0;
-	border: 0;
-	border-radius: var(--radius-s);
-	corner-shape: var(--corner-shape);
-	background: transparent;
+	margin: 0;
+	padding-block: var(--size-4-2);
+	padding-inline: var(--size-4-3) var(--size-4-5);
+	border-radius: 0;
+	background-color: transparent;
 	box-shadow: none;
-	color: inherit;
-	font: inherit;
+	color: var(--text-muted);
+	font-size: inherit;
+	font-weight: inherit;
+	line-height: inherit;
 	text-align: start;
 	white-space: normal;
-	overflow-wrap: anywhere;
-	cursor: pointer;
+	cursor: var(--cursor);
 }
 
 @media (hover: hover) {
-	button.cs-sidebar-file-link:hover {
-		color: var(--text-accent);
+	button.search-result-file-match.cs-sidebar-result:hover {
+		color: var(--text-normal);
+		background-color: var(--text-selection);
 	}
 }
 
-button.cs-sidebar-file-link:focus-visible {
-	outline: 2px solid var(--interactive-accent);
-	outline-offset: 3px;
+button.search-result-file-match.cs-sidebar-result.mobile-tap {
+	color: var(--text-normal);
+	background-color: var(--text-selection);
+	box-shadow: none;
 }
 
-.cs-sidebar-file.is-active-file .cs-sidebar-file-name {
-	color: var(--text-accent);
+/* A Review conversion row is not a control itself (its source line and its
+   After value are), so it takes Obsidian's row padding and line but no
+   hover; only its own icon buttons sharpen. */
+.cs-portable-row {
+	padding: var(--size-4-2) var(--size-4-3);
+	border-bottom: var(--border-width) solid var(--background-modifier-border);
+	color: var(--text-normal);
 }
 
-.cs-sidebar-grid {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr);
-	grid-auto-flow: row;
-	align-items: stretch;
-	gap: var(--size-4-2);
-	/* Physical left-to-right row order is shared by RTL and LTR panes. */
-	direction: ltr;
+.cs-portable-row:last-child {
+	border-bottom: none;
 }
 
 .cs-sidebar-result {
 	min-inline-size: 0;
-	margin: 0;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-m);
-	corner-shape: var(--corner-shape);
-	/* Obsidian's search-result card colour, as the Search pane paints its file
-	   boxes — a vault sidebar, not a settings box. */
-	background: var(--search-result-background);
-	box-shadow: none;
 	text-align: start;
 	white-space: normal;
 	overflow-wrap: anywhere;
@@ -6529,35 +6545,9 @@ button.cs-sidebar-file-link:focus-visible {
 	direction: rtl;
 }
 
-button.cs-sidebar-result {
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	justify-content: flex-start;
-	gap: var(--size-4-2);
-	inline-size: 100%;
-	block-size: auto;
-	min-block-size: var(--input-height);
-	padding: var(--size-4-3);
-	/* The card colour again: a Find callouts card is a <button>, so Obsidian's
-	   `button:not(.clickable-icon)` face (0,1,1) beat the (0,1,0) card rule
-	   above and painted it button grey. Restated here it ties and wins on
-	   order, and stays under the current card (0,2,0) and the hover (0,2,1). */
-	background: var(--search-result-background);
-	box-shadow: none;
-	color: var(--text-normal);
-}
-
 @media (hover: hover) and (pointer: fine) {
-	/* Find callouts' cards are whole-card buttons, so they answer the pointer. */
-	button.cs-sidebar-result:hover {
-		border-color: var(--background-modifier-border-focus);
-		background: var(--background-modifier-hover);
-	}
-
-	/* A Review conversion card is not a control itself; its source line and its
-	   After value are. So the card never fills: the source line's location
-	   steps up to normal text, and the card's own icon buttons sharpen. */
+	/* The source line's location steps up to normal text, and the row's own
+	   icon buttons sharpen. */
 	button.cs-portable-source:hover .cs-portable-change-location {
 		color: var(--text-normal);
 	}
@@ -6568,14 +6558,16 @@ button.cs-sidebar-result {
 	}
 }
 
+/* The row the caret is in. */
 .cs-sidebar-result[aria-current="true"] {
-	border-color: var(--interactive-accent);
-	background: var(--background-modifier-active-hover);
+	background-color: var(--background-modifier-active-hover);
 }
 
+/* Inside the box, which clips what spills over its rounded corners, so the
+   ring is drawn inside the row. */
 .cs-sidebar-result:focus-visible {
-	outline: 2px solid var(--interactive-accent);
-	outline-offset: 2px;
+	outline: none;
+	box-shadow: inset 0 0 0 2px var(--background-modifier-border-focus);
 }
 
 .cs-sidebar-result:active,
@@ -6594,12 +6586,6 @@ button.cs-sidebar-result {
 	font-variant-numeric: tabular-nums;
 }
 
-@container cs-sidebar (min-width: 680px) {
-	.cs-sidebar-grid {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-}
-
 .view-content.cs-portable-view,
 .view-content.cs-occurrences-view {
 	container: cs-sidebar / inline-size;
@@ -6616,8 +6602,7 @@ button.cs-sidebar-result {
 	display: grid;
 	gap: var(--size-4-3);
 	box-sizing: border-box;
-	inline-size: min(100%, 1032px);
-	margin-inline: auto;
+	inline-size: 100%;
 	padding: var(--size-4-4) var(--size-4-4) 0;
 	border-block-end: 1px solid var(--background-modifier-border);
 }
@@ -6723,14 +6708,9 @@ button.cs-sidebar-result {
 	block-size: 100%;
 	box-sizing: border-box;
 	overflow: auto;
-	padding: 0 var(--size-4-4) var(--size-4-3);
-}
-
-.cs-portable-change-list,
-.cs-portable-hint,
-.cs-portable-review-status {
-	max-inline-size: 1000px;
-	margin-inline: auto;
+	/* Obsidian's Search pane insets its results 12px, and spans the pane
+	   however wide it is (a 1000px centred column until 2026-10-24). */
+	padding: 0 var(--size-4-3) var(--size-4-4);
 }
 
 .cs-portable-review-status {
@@ -6782,7 +6762,7 @@ button.cs-sidebar-result {
 
 .cs-portable-change input[type="checkbox"] {
 	align-self: start;
-	margin: var(--size-4-3) 0 0;
+	margin: 0;
 }
 
 [dir="rtl"] .cs-sidebar-selectable {
@@ -6796,12 +6776,10 @@ button.cs-sidebar-result {
 	gap: var(--size-2-1);
 	min-width: 0;
 	block-size: 100%;
-	padding: var(--size-4-3);
 }
 
-.cs-portable-change.is-editing .cs-portable-change-body {
-	border-color: var(--interactive-accent);
-	background: var(--background-modifier-active-hover);
+.cs-portable-change.is-editing {
+	background-color: var(--background-modifier-active-hover);
 }
 
 button.cs-portable-source,
@@ -8855,13 +8833,9 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	flex: 1 1 0;
 	min-block-size: 0;
 	overflow: auto;
-	padding: 0 var(--size-4-4) var(--size-4-3);
-}
-
-.cs-occurrences-scroll > * {
-	box-sizing: border-box;
-	max-inline-size: 1000px;
-	margin-inline: auto;
+	/* Obsidian's Search pane insets its results 12px, and spans the pane
+	   however wide it is (a 1000px centred column until 2026-10-24). */
+	padding: 0 var(--size-4-3) var(--size-4-4);
 }
 
 .cs-occurrences-controls {
@@ -8915,7 +8889,9 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
 	overflow: hidden;
-	font-size: var(--font-ui-small);
+	/* The callout's own text reads in normal text over the muted line above,
+	   at the box's size. */
+	color: var(--text-normal);
 	white-space: pre-line;
 	unicode-bidi: plaintext;
 }

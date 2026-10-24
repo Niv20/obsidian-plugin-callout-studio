@@ -44,13 +44,28 @@ The indeterminate dash uses Obsidian's checkbox fill and marker colors so it
 matches the checked mark across themes.
 Occurrence filters have localized accessible names without visible labels.
 Each fixed toolbar sits outside its own results scrollport, so controls
-stay visible without a measured sticky offset; file headings stick at zero
-inside the scroller. Keyboard focus has an outline; a pointer press adds none.
+stay visible without a measured sticky offset. Keyboard focus has a ring; a
+pointer press adds none.
 The shared summary owns equal block padding between its top rule and the toolbar's
 bottom rule; the toolbar adds no trailing padding. The conversion checkbox shares
 the summary's center alignment and clears the host's positional checkbox offset.
-Both sidebars use a centered, maximum-1000px layout and a row-major, left-to-right
-two-column card grid at 680px pane width, while file headings span both columns.
+**Both sidebars draw a note's results as Obsidian's Search pane draws a file**
+(`ui/sidebarResults.ts`, findings S10-03, S10-04 and S10-V1): the group is
+`section.tree-item.search-result`, its title row a
+`button.tree-item-self.search-result-file-title.is-clickable` (the path without
+`.md`, then the count in a faint `.tree-item-flair`; the open note's row takes
+`.is-active`, Obsidian's active-item fill), and its results sit in one
+`.search-result-file-matches` box with a thin line between rows. A Find
+callouts row is a `button.search-result-file-match` (the whole row jumps to the
+callout; Obsidian's hover and tap tint); a Review conversion row is a plain
+`.cs-portable-row` with the same padding and line but no hover, because it is
+not a control itself. Both title and Find rows are real buttons, so styles.css
+takes Obsidian's button face off them and restates the tints that face would
+otherwise cover (`button:not(.clickable-icon)` paints at (0,1,1)). The title
+does not stick, and the list spans the pane with Obsidian's 12px inset. Until
+2026-10-24 each result was a bordered card, the cards stood in a two-column grid
+at 680px, the list was a centred 1000px column, and each file heading was a
+grey band that stuck to the top.
 
 `portableConversionNavigation.ts` shares active-file tracking and source opening
 with occurrences via `ui/sidebarActiveFile.ts` and `ui/sidebarNavigation.ts`.

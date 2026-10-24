@@ -16,28 +16,32 @@ function harness() {
 }
 
 describe("occurrence result identity", () => {
-	it("uses shared file groups with a full-width heading and a row-ordered grid within each file", () => {
+	it("draws each file as Obsidian's Search pane does: a title row over one box of result rows", () => {
 		const h = harness();
 		const a = scanCalloutOccurrences("folder/a.md", "[!note]\n# [!note]\n[!tip]");
 		const b = scanCalloutOccurrences("b.md", "[!note]");
 		h.render([...a, ...b]);
 		const sections = Array.from(h.content.querySelectorAll<HTMLElement>(".cs-sidebar-file"));
 		assert.deepEqual(sections.map((section) => section.dataset.path), ["folder/a.md", "b.md"]);
-		assert.deepEqual(sections.map((section) => section.querySelector(".cs-sidebar-file-name")?.textContent), ["folder/a.md", "b.md"]);
-		assert.deepEqual(sections.map((section) => section.querySelector(".cs-faint-count")?.textContent), [" 3", " 1"]);
+		// The note's path without its `.md`, and the count in Obsidian's faint flair.
+		assert.deepEqual(sections.map((section) => section.querySelector(".cs-sidebar-file-name")?.textContent), ["folder/a", "b"]);
+		assert.deepEqual(sections.map((section) => section.querySelector(".tree-item-flair")?.textContent), ["3", "1"]);
 		assert.deepEqual(sections.map((section) => section.querySelector<HTMLButtonElement>('button[data-action="file"]')?.dataset.path),
 			["folder/a.md", "b.md"]);
 		assert.deepEqual(sections.map((section) => section.querySelector(".cs-sidebar-file-link")?.textContent),
-			["folder/a.md 3", "b.md 1"]);
-		assert.deepEqual(sections.map((section) => section.querySelector(".cs-sidebar-grid")?.children.length), [3, 1]);
+			["folder/a 3", "b 1"], "the accessible name has the count, after a space");
+		assert.deepEqual(sections.map((section) => section.querySelector(".search-result-file-matches")?.children.length), [3, 1]);
 		for (const section of sections) {
-			assert.equal(section.children.length, 2, "the sticky heading sits outside its responsive card grid");
-			assert.equal(section.children[0]?.tagName, "H3");
-			const link = section.querySelector(".cs-sidebar-file-link")!;
+			assert.ok(section.hasClass("tree-item") && section.hasClass("search-result"), "Obsidian's search group");
+			assert.equal(section.children.length, 2, "the title row, then the box");
+			const link = section.children[0]!;
+			assert.equal(link.tagName, "BUTTON");
+			for (const cls of ["tree-item-self", "search-result-file-title", "is-clickable"]) assert.ok(link.hasClass(cls), cls);
 			assert.equal(link.getAttribute("aria-label"), null, "the visible file name must not create a redundant hover popup");
 			assert.equal(link.getAttribute("title"), null);
-			assert.equal(link.querySelector(".cs-faint-count")?.getAttribute("aria-hidden"), null,
-				"the accessible name includes the visible count");
+			for (const row of Array.from(section.children[1]!.children)) {
+				assert.ok(row.classList.contains("search-result-file-match"), "each result is a match row of the box");
+			}
 		}
 		assert.deepEqual(h.rows().map((row) => h.cards.getOccurrence(row)?.line), [0, 1, 2, 0]);
 		assert.equal(h.content.querySelectorAll("button.cs-sidebar-result").length, 4);
@@ -95,7 +99,7 @@ describe("occurrence result identity", () => {
 		const first = h.rows()[0];
 		h.cards.render(h.content, results, 100, false, () => {}, () => {});
 		assert.equal(h.rows()[0], first);
-		assert.match(h.content.querySelector("h3")?.textContent ?? "", /205/);
+		assert.match(h.content.querySelector(".search-result-file-title")?.textContent ?? "", /205/);
 		h.render(results, 200);
 		assert.equal(h.rows().length, 200);
 		assert.equal(h.cards.getOccurrence(h.rows()[199]!), results[199]);
