@@ -192,7 +192,7 @@ export class ButtonComponent extends Control {
 }
 export class ExtraButtonComponent extends Control {
 	extraSettingsEl: HTMLElement; buttonEl: HTMLElement;
-	constructor(parent: HTMLElement) { const el = parent.createDiv({ cls: "clickable-icon extra-setting-button" }); super(el); this.extraSettingsEl = this.buttonEl = el; }
+	constructor(parent: HTMLElement) { const el = parent.createDiv({ cls: "clickable-icon extra-setting-button", attr: { tabindex: "0" } }); super(el); this.extraSettingsEl = this.buttonEl = el; }
 	setIcon(name: string): this { setIcon(this.el, name); return this; }
 	onClick(callback: () => unknown): this { this.el.addEventListener("click", callback); return this; }
 }

@@ -602,12 +602,54 @@ section disappears with its last row. The section's visibility rule is what
 moved instead: a theme that styles callouts without naming any id lists no
 rows, and there the switch is not on screen.
 
+### Callout rows are Obsidian setting rows
+
+Every row of the three callout lists is an Obsidian `Setting`
+(`.setting-item.cs-callout-row`), filled by `drawCalloutRow` in
+[`CalloutRowRenderer.ts`](../../src/settings/sections/CalloutRowRenderer.ts)
+(finding S2-14). `renderCalloutRow(ctx, container, def, kind, handlers)` makes
+the `Setting` and calls it; the declarative settings will hand `drawCalloutRow`
+a `Setting` of their own.
+
+| Part of the row | What it holds |
+|---|---|
+| First child | The callout's icon, `.callout-studio-row-icon`: our own element, muted at Obsidian's small icon size, because `Setting.setIcon` takes Lucide names only and a callout's icon can be an emoji, a picture or another library's glyph. It is not Obsidian's `.setting-item-icon`, which a box whose rows declare no icon (`.mod-no-icon`) hides. Obsidian's `.setting-item > *:first-child` gives it the 16px before the name. |
+| `nameEl` | The display name, wrapping when long, then the **Default** / **Default fallback** tag as Obsidian's `span.flair.mod-flat` (its own 8px margin). No tag on a theme's row. |
+| `descEl` | Every spelling as `code.callout-studio-row-syntax` (`[!id]`), sorted, a space between. One line: `white-space: nowrap` plus the description's own `overflow: hidden` and `text-overflow: ellipsis`; each chip is an inline block, so the cut always falls between whole ids. Obsidian draws description `code` with no fill; these keep the id chip's fill. |
+| `controlEl` | The two colour circles (hidden under a 450px row, as before), then ✎ (👁 on a theme's row) and ⋮ (`addRowMenuButton` in `calloutRowMenu.ts`), both `addExtraButton`: a `div.clickable-icon.extra-setting-button` with `tabindex=0`, whose tooltip is its label. |
+
+Being a setting row is what gives Obsidian's keyboard walk (↑/↓ or j/k
+between `.setting-item`s, Enter into the row's first control) and its inset
+focus ring. A right-click anywhere on the row still opens its ⋮ menu at the
+pointer.
+
+**One line until the rows are boxed.** A lone `.setting-item` is a card
+(Obsidian's box colour, radius, 16px padding, 8px below), and two Obsidian
+rules turn it into a column: `@container (max-width: 400px)` in a narrow tab,
+and `.is-phone .modal .setting-item` on a phone, both excluding only rows in a
+`.setting-group.mod-list`. Until Searchable Settings puts the lists in such
+groups, styles.css gives `.cs-callout-row` what `.mod-list` gives a row: one
+centred line, the control column at its own width, and the list-row padding
+(8px 16px, 12px 20px on a phone). Inside a group, Obsidian's own group rules
+outrank these, so they need not be removed first. The row is also the size
+container the narrow-row rule measures, and the iPadOS paint workaround on its
+icon buttons (`translateZ(0)`) sits in `:where()`, so Obsidian's own icon
+transforms win: on macOS and iOS ⋮ is turned on its side, as in Obsidian's
+More options. `tests/calloutSettingRow.test.ts` holds the shape and these
+rules.
+
+Until 2026-10-24 a callout row was a `div.callout-studio-row` of the plugin's
+own: name and ids on one line, `<button>`s, and the ids hidden as a group under
+380px. Palettes, commands, the drag lists and Quick insert still use
+`.callout-studio-row`.
+
 ### List rows and hover
 
 A list row is not clickable; only its buttons are. So, as in every Obsidian
 list, the row itself never changes on hover: no fill, and no transition to one.
 
-That holds for every row that wears `.callout-studio-row`:
+That holds for every row that wears `.callout-studio-row` or, for callouts,
+`.cs-callout-row`:
 - callouts and saved palettes;
 - commands;
 - the right-click menu and icon library lists;
@@ -625,9 +667,9 @@ whatever row lands under it after a re-render, which is how a dragged row on an
 iPhone used to light up. `tests/rowHoverStyles.test.ts` holds all of this.
 
 The callout and palette rows' buttons are Obsidian's own icon buttons:
-`<button class="clickable-icon">`, which keeps the `<button>` semantics.
-Obsidian supplies their size, corners, colour, gated hover, 3px focus ring
-and dimmed state.
+a callout row's are `addExtraButton`s (`div.clickable-icon`, see above), and a
+palette row's are `<button class="clickable-icon">`. Obsidian supplies their
+size, corners, colour, gated hover, 3px focus ring and dimmed state.
 
 - **The menu button** is `more-vertical` (⋮), Obsidian's "More options" icon.
 - **The drag handle** of the menu and library lists is a `.clickable-icon` too,
@@ -708,7 +750,7 @@ opens (findings S2-11, S2-12):
   Obsidian's own click handling closes the menu. Without `setParentElement` the
   press closed the menu and the click opened a new one, a visible flicker.
 - **`{ kind: "pointer", row, x, y }`** - the row was right-clicked
-  (`contextmenu` on `.callout-studio-row`, with `preventDefault`). The menu opens
+  (`contextmenu` on `.cs-callout-row`, with `preventDefault`). The menu opens
   at the pointer with `showAtPosition({ x, y })`, as on Obsidian's Community
   plugins rows, and has no parent element.
 

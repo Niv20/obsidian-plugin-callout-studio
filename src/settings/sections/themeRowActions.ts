@@ -19,31 +19,18 @@
  * the shared index. A saved custom definition also offers Duplicate, which
  * copies its stored Studio style under a new identity without changing this row.
  */
-import { setIcon, setTooltip, type Menu } from "obsidian";
+import type { Menu, Setting } from "obsidian";
 import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsSectionContext } from "./types";
 import { addConvertUsesItem, addReplaceItem } from "./rowOwnership";
 import { addUsageMenuItem } from "../../usage/usageMenuItem";
-import { openCalloutRowMenu, type RowMenuTrigger } from "./calloutRowMenu";
+import { addRowMenuButton, openCalloutRowMenu, type RowMenuTrigger } from "./calloutRowMenu";
 import { ThemeCalloutPreviewModal } from "../ThemeCalloutPreviewModal";
 import { addDuplicateItem } from "./duplicateCallout";
 
-/** One 32×32 icon button, in the same shape the view and `⋯` actions use. */
-function addRowButton(
-	host: HTMLElement,
-	icon: string,
-	label: string,
-	onClick: () => void,
-): void {
-	const btn = host.createEl("button", { cls: "clickable-icon", attr: { "aria-label": label } });
-	setIcon(btn, icon);
-	setTooltip(btn, label);
-	btn.addEventListener("click", onClick);
-}
-
 /**
- * The `⋯` menu for a theme-owned row.
+ * The `⋮` menu for a theme-owned row.
  *
  * Usage and vault actions, plus Duplicate for saved custom definitions.
  * None changes how the existing theme-owned callout looks.
@@ -80,43 +67,30 @@ export function buildThemeRowMenu(
 }
 
 /**
- * Render the theme row's controls: the preview button and the `⋯`.
+ * Add the theme row's controls to its setting row: the preview button and the
+ * `⋮`, both Obsidian icon buttons (`addExtraButton`).
  *
  * A theme row is deliberately the plainest row in the tab — icon, name, the
  * `[!id]` spellings, two measured swatches, two buttons. It carries no label
  * and no use count, because every one of those was a fact about a callout the
  * user cannot change, sitting where the rows they *can* change put something
- * actionable. The count moved into the `⋯` menu, next to the two actions it is
+ * actionable. The count moved into the `⋮` menu, next to the two actions it is
  * actually about.
  *
  * The preview button uses an eye rather than a pencil so its glyph agrees with
  * its read-only behaviour, while keeping the same position as the edit action
  * on rows that Callout Studio owns.
  */
-export function renderThemeRowControls(
+export function addThemeRowControls(
 	ctx: SettingsSectionContext,
-	buttonsEl: HTMLElement,
+	setting: Setting,
 	def: CalloutDefinition,
 ): void {
-	addRowButton(
-		buttonsEl,
-		"eye",
-		t("settings.themePreviewAria", { name: def.displayName }),
-		() => {
-			new ThemeCalloutPreviewModal(ctx.plugin, def).open();
-		},
-	);
-
-	const moreBtn = buttonsEl.createEl("button", {
-		cls: "callout-studio-more-btn clickable-icon",
-		attr: {
-			"aria-label": t("settings.moreRowActionsAria", {
-				name: def.displayName,
-			}),
-		},
+	setting.addExtraButton((button) => {
+		button
+			.setIcon("eye")
+			.setTooltip(t("settings.themePreviewAria", { name: def.displayName }))
+			.onClick(() => new ThemeCalloutPreviewModal(ctx.plugin, def).open());
 	});
-	setIcon(moreBtn, "more-vertical");
-	moreBtn.addEventListener("click", () => {
-		void openThemeRowMenu(ctx, { kind: "button", button: moreBtn }, def);
-	});
+	addRowMenuButton(setting, def.displayName, (trigger) => void openThemeRowMenu(ctx, trigger, def));
 }

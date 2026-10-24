@@ -107,15 +107,17 @@ describe("a theme row is not editable", () => {
 		});
 
 		// Same two controls, same two places, as every other row in the tab —
-		// but the eye makes the read-only action explicit.
+		// but the eye makes the read-only action explicit. Both are Obsidian's
+		// icon buttons in the setting row's controls (S2-14).
+		assert.ok(host.querySelector(".setting-item.cs-callout-row"), "an Obsidian setting row");
 		assert.strictEqual(host.querySelectorAll(".callout-studio-more-btn").length, 1);
 		assert.strictEqual(
-			host.querySelectorAll(".callout-studio-row-buttons button").length,
+			host.querySelectorAll(".setting-item-control .clickable-icon").length,
 			2,
 		);
 		assert.match(
 			readRepoFile("src/settings/sections/themeRowActions.ts"),
-			/addRowButton\(\s*buttonsEl,\s*"eye"/,
+			/\.setIcon\("eye"\)/,
 			"the theme-only preview action must use a view icon",
 		);
 	});
@@ -137,7 +139,7 @@ describe("a theme row is not editable", () => {
 		});
 		assert.strictEqual(host.querySelectorAll(".callout-studio-more-btn").length, 1);
 		const buttons = host.querySelectorAll<HTMLElement>(
-			".callout-studio-row-buttons button",
+			".setting-item-control .clickable-icon",
 		);
 		assert.strictEqual(buttons.length, 2);
 		buttons[0]?.dispatchEvent({ type: "click" } as unknown as Event);
@@ -166,7 +168,7 @@ describe("a theme row is not editable", () => {
 		host.querySelector<HTMLElement>(".callout-studio-more-btn")!
 			.dispatchEvent({ type: "click" } as unknown as Event);
 		let prevented = false;
-		host.querySelector<HTMLElement>(".callout-studio-row")!.dispatchEvent({
+		host.querySelector<HTMLElement>(".cs-callout-row")!.dispatchEvent({
 			type: "contextmenu", clientX: 40, clientY: 12, preventDefault: () => { prevented = true; },
 		} as unknown as Event);
 		assert.deepStrictEqual(opened, [{ kind: "button" }, { kind: "pointer", x: 40, y: 12 }]);

@@ -2,9 +2,9 @@
  * settings/sections/calloutRowMenu.ts — opening the menu of a callout row in
  * the settings (Find callouts, Replace, Duplicate, Delete, …).
  *
- * Who calls it. The row's ⋮ button, and a right-click anywhere on the row,
- * through the three row kinds' openers (`CalloutRowActions.ts`,
- * `themeRowActions.ts`).
+ * Who calls it. The row's ⋮ button (made here, {@link addRowMenuButton}), and
+ * a right-click anywhere on the row, through the three row kinds' openers
+ * (`CalloutRowActions.ts`, `themeRowActions.ts`).
  *
  * The main idea. The menu is Obsidian's own `Menu`, opened the way Obsidian
  * opens its "More options" menu in **Installed plugins**:
@@ -20,7 +20,8 @@
  * leaving the page in that time closes it, so a menu never appears for a row
  * that is gone or has moved.
  */
-import { Component, Menu, Platform, type App } from "obsidian";
+import { Component, Menu, Platform, type App, type Setting } from "obsidian";
+import { t } from "../../i18n";
 import { prepareUsageMenu } from "../../usage/prepareUsageMenu";
 import { onMenuHide } from "../../ui/menuOnHide";
 import type { SettingsSectionContext } from "./types";
@@ -205,4 +206,30 @@ function showRowMenu(menu: Menu, trigger: RowMenuTrigger, doc: Document): void {
 		{ x: rect.x, y: rect.bottom, width: rect.width, overlap: true, left: true },
 		doc,
 	);
+}
+
+/**
+ * Add the ⋮ at the end of a callout's setting row: an Obsidian icon button
+ * (`addExtraButton`) that opens the row's menu under itself.
+ *
+ * @param name The callout's display name, for the button's label ("More
+ *   actions for Note"), which is also its tooltip.
+ * @param openMenu Opens the row's menu; given `{ kind: "button" }` and the
+ *   button, so the menu drops down from it.
+ */
+export function addRowMenuButton(
+	setting: Setting,
+	name: string,
+	openMenu: (trigger: RowMenuTrigger) => void,
+): void {
+	setting.addExtraButton((button) => {
+		// `extraSettingsEl` is the button's element (a `div.clickable-icon`);
+		// the menu opens under it and paints it pressed while open.
+		const buttonEl = button.extraSettingsEl;
+		buttonEl.addClass("callout-studio-more-btn");
+		button
+			.setIcon("more-vertical")
+			.setTooltip(t("settings.moreRowActionsAria", { name }))
+			.onClick(() => openMenu({ kind: "button", button: buttonEl }));
+	});
 }

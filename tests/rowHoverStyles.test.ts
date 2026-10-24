@@ -5,7 +5,8 @@
  * A row is not clickable; only its buttons are. So, as in every Obsidian list:
  *
  * - The row itself never changes on hover — no fill, no transition to one.
- *   Callout, palette, command, menu and library rows share `.callout-studio-row`;
+ *   Palette, command, menu and library rows share `.callout-studio-row`, and a
+ *   callout row is an Obsidian setting row, `.cs-callout-row`;
  *   version rows add `.cs-recovery-row`.
  * - Pointing anywhere on a row only sharpens that row's own icon buttons, with
  *   Obsidian's icon opacity steps (`--icon-opacity` → `--icon-opacity-hover`).
@@ -21,7 +22,7 @@ import { parseRules, valueOf } from "./support/cssInjectorHarness";
 
 const rules = parseRules(readFileSync(join(process.cwd(), "styles.css"), "utf8"));
 
-const ROW = /\.(?:callout-studio-row|cs-recovery-row)\b/;
+const ROW = /\.(?:callout-studio-row|cs-callout-row|cs-recovery-row)\b/;
 
 /** Split a selector list on its top-level commas (not the ones inside `:is()`). */
 function selectors(list: string): string[] {
@@ -60,7 +61,7 @@ describe("list rows on hover", () => {
 
 	it("never fills the row itself", () => {
 		for (const rule of rowHoverRules) {
-			const onRow = selectors(rule.selector).some((s) => /\.(?:callout-studio-row|cs-recovery-row)[^\s>+~]*:hover$/.test(s));
+			const onRow = selectors(rule.selector).some((s) => /\.(?:callout-studio-row|cs-callout-row|cs-recovery-row)[^\s>+~]*:hover$/.test(s));
 			if (!onRow) continue;
 			assert.equal(valueOf(rule, "background"), undefined, `${rule.selector} fills the row`);
 			assert.equal(valueOf(rule, "background-color"), undefined, `${rule.selector} fills the row`);

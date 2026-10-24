@@ -1,6 +1,6 @@
 # The three callout types
 
-Callout Studio includes Obsidian's thirteen built-in callouts. Open the plugin settings and look under **Built-in callouts** to browse them. Each row shows the callout's icon and name, its supported aliases, and its color.
+Callout Studio includes Obsidian's thirteen built-in callouts. Open the plugin settings and look under **Built-in callouts** to browse them. Each row shows the callout's icon and name, its IDs and aliases on one line under the name, and its color. The rows are ordinary Obsidian setting rows: the up and down arrow keys move between them, and Enter goes to the row's first button.
 
 Every built-in or custom callout can appear in three forms: Block, Heading, and Inline. One definition supplies the name, icon, and color for all three.
 

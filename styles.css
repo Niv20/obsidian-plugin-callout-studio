@@ -1103,9 +1103,77 @@ body:not(.is-phone)
 	padding-top: 16px;
 }
 
+/* A callout row in the settings lists is one of Obsidian's setting rows
+   (`.setting-item.cs-callout-row`, CalloutRowRenderer.ts, finding S2-14), so
+   Obsidian draws its box, its name and its description. Until the lists move
+   into Obsidian's boxes (`.setting-group.mod-list`), the rules below do what
+   that class does for a row, so a callout row stays one line, centred,
+   wherever it is: Obsidian's narrow-tab rule (`@container (max-width: 400px)`)
+   and its phone rule would otherwise put the buttons under the name. */
+.setting-item.cs-callout-row {
+	flex-direction: row;
+	align-items: center;
+	/* A list row's padding (`.setting-group.mod-list` sets these two). */
+	padding: var(--size-4-2) var(--size-4-4);
+	/* The row is the size container the narrow-row rules below measure. */
+	container-type: inline-size;
+}
+
+.setting-item.cs-callout-row .setting-item-info {
+	align-self: auto;
+}
+
+.setting-item.cs-callout-row .setting-item-control {
+	flex: 0 1 auto;
+	width: auto;
+	justify-content: flex-end;
+}
+
+.is-phone .modal .setting-item.cs-callout-row {
+	flex-direction: row;
+	align-items: center;
+	padding: var(--size-4-3) var(--size-4-5);
+}
+
+.is-phone .modal .setting-item.cs-callout-row .setting-item-control {
+	flex: 0 1 auto;
+	width: auto;
+}
+
+/* A one-word name longer than the row still breaks, rather than running
+   under the buttons. */
+.cs-callout-row .setting-item-name {
+	overflow-wrap: anywhere;
+}
+
+/* The `[!id]` spellings under the name: one line, cut at its end (Obsidian's
+   description already hides what overflows, with "…"). Each id is an inline
+   block, which the cut hides whole, so it always falls between ids. Obsidian
+   draws a description's `code` in monospace with small corners but no fill;
+   these keep the fill an id chip has always had (below), so they read as
+   things to type. */
+.setting-item.cs-callout-row .setting-item-description {
+	white-space: nowrap;
+}
+
+.cs-callout-row .callout-studio-row-syntax {
+	display: inline-block;
+}
+
+/* Same iPadOS WebKit container-paint workaround as the other rows' buttons
+   (`.callout-studio-row-buttons button svg`): the row is a size container.
+   `:where()` gives it no weight, so any transform of Obsidian's own wins: on
+   macOS and iOS Obsidian turns ⋮ on its side (`.mod-macos
+   .lucide-more-vertical`), as its own More options buttons show it. */
+:where(.cs-callout-row .setting-item-control .clickable-icon) svg {
+	transform: translateZ(0);
+}
+
 /* The row is a pill in Obsidian's own box colour, wherever it sits: on the
    settings tab the token is undefined and the fallback names that colour, and
-   in a window (Commands and shortcuts, version history) the token is it. */
+   in a window (Commands and shortcuts, version history) the token is it.
+   Palettes, commands, the drag lists and Quick insert still use it; callout
+   rows are setting rows now (above). */
 .callout-studio-row {
 	display: flex;
 	align-items: center;
@@ -1124,7 +1192,7 @@ body:not(.is-phone)
    hover onto whatever row is under it after a re-render. One rule for every
    row kind: callouts, palettes, commands, menu and library lists, versions. */
 @media (hover: hover) {
-	:is(.callout-studio-row, .cs-recovery-row):hover :is(.clickable-icon, .callout-studio-row-buttons button, .cs-drag-handle):not(:disabled, .is-disabled, [aria-disabled="true"]) {
+	:is(.callout-studio-row, .cs-callout-row, .cs-recovery-row):hover :is(.clickable-icon, .callout-studio-row-buttons button, .cs-drag-handle):not(:disabled, .is-disabled, [aria-disabled="true"]) {
 		color: var(--icon-color-hover);
 		--icon-opacity: var(--icon-opacity-hover);
 	}
@@ -1192,19 +1260,14 @@ body:not(.is-phone)
 	corner-shape: var(--corner-shape);
 }
 
-.callout-studio-row-syntax-line {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 4px;
-}
-
-/* In the settings lists a callout's or palette's name is set like any Obsidian
-   setting's name: the same size, weight and colour, and a long name wraps onto
-   a second line rather than being cut. Commands and the drag lists keep their
-   own rules. The icon beside it is a muted list icon at Obsidian's small icon
-   size; the callout's own colour is in its swatches. */
-.callout-studio-settings .callout-studio-row :is(.callout-studio-row-name, .cs-palette-list-name) {
+/* In the settings lists a palette's name is set like any Obsidian setting's
+   name: the same size, weight and colour, and a long name wraps onto a second
+   line rather than being cut. (A callout's name is a setting's name already.)
+   Commands and the drag lists keep their own rules. The icon of a callout row
+   is a muted list icon at Obsidian's small icon size, as `.setting-item-icon`
+   is; the callout's own colour is in its swatches. It is our own element, not
+   Obsidian's `.setting-item-icon`, which a box whose rows have no icons hides. */
+.callout-studio-settings .callout-studio-row .cs-palette-list-name {
 	font-size: var(--setting-item-name-size);
 	font-weight: var(--setting-item-name-weight);
 	color: var(--setting-item-name-color);
@@ -4939,18 +5002,6 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	}
 }
 
-/*
- * A row's callout IDs either all fit or all hide together — a row can have
- * anywhere from one ID to several aliases, so hiding them one at a time from
- * the end (as this used to) let multi-alias rows keep their primary ID
- * visible far longer than a single-alias row at the very same width.
- */
-@container (max-width: 380px) {
-	.callout-studio-row-syntax-line {
-		display: none;
-	}
-}
-
 /* When the row gets extremely narrow, drop the display name as a last resort. */
 @container (max-width: 220px) {
 	.callout-studio-row-name {
@@ -5545,18 +5596,13 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	transform: none;
 }
 
-/* Phase 7: name + fallback tag */
+/* A command row's name line (Commands and shortcuts): the name and its
+   shortcut chips side by side, wrapping between whole chips. */
 .callout-studio-row-name-line {
 	display: flex;
 	align-items: center;
 	gap: 8px;
 	flex-wrap: wrap;
-}
-/* A callout row's tag ("Default", "Default fallback") is Obsidian's own flat
-   flair (`.flair.mod-flat`), the tag Obsidian prints after "Regex". The row's
-   name line is a flex row with its own gap, so the flair's margin goes. */
-.callout-studio-row-name-line > .cs-fallback-tag {
-	margin-inline-start: 0;
 }
 
 /* A command's shortcut in the Commands and shortcuts window: a fact about the
