@@ -1,5 +1,19 @@
-import { setIcon } from "obsidian";
-import { HELP_ICON_ID } from "../constants";
+/**
+ * portable/portableConversionFrame.ts — the fixed parts of the Review
+ * conversion sidebar: the Convert button, the selection line, and the
+ * scrolling area the results go in.
+ *
+ * Who calls it. portable/PortableConversionView.ts, and the guide scenes.
+ *
+ * The main idea (finding S10-05). The pane's top is laid out as Obsidian's
+ * panes lay theirs out: the help button is in the view's nav header
+ * (ui/sidebarFrame.ts, added by the view), Convert selected spans the pane in
+ * a row of its own, and the selection line (with its select-all box) is the
+ * muted count over a single line, Obsidian's `.search-results-info`. Until
+ * 2026-10-24 the pane began with a bold title holding the help button and a
+ * sentence beside the Convert button; that sentence is now the first line of
+ * the help window.
+ */
 import { t } from "../i18n";
 import { DESTRUCTIVE_BUTTON_CLASSES } from "../ui/destructiveButton";
 import { createSidebarSummary, createSidebarToolbar } from "../ui/sidebarFrame";
@@ -21,19 +35,9 @@ export interface PortableConversionFrame {
 
 export function createPortableConversionFrame(root: HTMLElement): PortableConversionFrame {
 	root.empty();
-	const toolbar = createSidebarToolbar(root, t("portable.reviewTitle"), t("portable.subtitle"));
-	const title = toolbar.querySelector<HTMLElement>(".cs-sidebar-title");
-	if (title) {
-		title.addClass("cs-portable-title-row");
-		const help = title.createEl("button", { cls: "cs-portable-help clickable-icon", attr: {
-			type: "button", "data-action": "help", "aria-label": t("portable.help"),
-			"aria-haspopup": "dialog",
-		} });
-		setIcon(help, HELP_ICON_ID);
-	}
-	const actions = toolbar.createDiv({ cls: "cs-portable-intro-actions" });
-	const subtitle = toolbar.querySelector(".cs-sidebar-subtitle");
-	if (subtitle) actions.appendChild(subtitle);
+	const toolbar = createSidebarToolbar(root);
+	// Convert selected, across the pane in a row of its own.
+	const actions = toolbar.createDiv({ cls: "cs-portable-convert-row" });
 	const convert = actions.createEl("button", {
 		text: t("portable.convertSelected"), cls: DESTRUCTIVE_BUTTON_CLASSES, attr: { "data-action": "convert" },
 	});

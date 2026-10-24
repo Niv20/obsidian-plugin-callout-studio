@@ -269,7 +269,7 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-version-name", // a version's name after its time; Obsidian's setting name draws it
 		"cs-portable-custom-badge", // a test hook; Obsidian's .flair.mod-flat paints the Custom tag
 		"cs-paused-allowed", // a marker pausedReadOnly reads: the row stays usable while saving is paused
-		"cs-occurrences-summary", // view-specific lookup; shared cs-sidebar-summary supplies the presentation
+		"cs-occurrences-summary", // view-specific lookup; Obsidian's .search-results-result-count supplies the presentation
 		"cs-occurrences-file", // per-view hook; shared cs-sidebar-file supplies the layout
 		"cs-portable-file", // per-view hook; shared cs-sidebar-file supplies the layout
 		"cs-occurrences-result", // identity/query hook; shared cs-sidebar-result supplies the card

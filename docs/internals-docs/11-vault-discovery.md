@@ -92,8 +92,8 @@ provides appearance/status only; fallback artwork never changes usage ownership.
 `CalloutOccurrencesView` is a registered ItemView with a searchable
 `CalloutCombobox`, role filters, counted file groups and paged results. A summary
 below the controls reports the filtered occurrence and distinct-file counts;
-the vault-wide metric tiles are not displayed. The shared sidebar heading,
-subtitles, filters and summary stay above a separate result scroll container.
+the vault-wide metric tiles are not displayed. The type field and the summary
+stay above a separate result scroll container, under the pane's nav header.
 Its picker combines committed, non-theme-only
 definitions with unregistered identities observed by the read-only index. Saved
 definitions include their aliases; equivalent identities and registered aliases
@@ -151,13 +151,13 @@ behavior. **Review conversion** still has no startup tab: any leaf restored by
 Obsidian is closed on every launch, and a new review opens only when requested
 from Settings.
 
-The type and format controls have no visible labels; each keeps a localized
-accessible name. They share one grid row until the sidebar container is 440px
-wide, then stack in one column. The format filter uses the shared
-`SelectDropdown` with the same menu keyboard and pointer behavior as other
-finite-choice controls. The view registers a menu
-scope host so Escape first closes an open picker, and releases the host and both
-pickers when the frame is rebuilt or the view closes.
+The type field has no visible label; it keeps a localized accessible name, and
+fills Obsidian's search row. The format filter is the nav header's button
+(`openFormatMenu` in `usage/occurrencesViewFrame.ts`): Obsidian's menu with a ✓
+on the current format, its keys Obsidian's; the button is lit while a format is
+chosen. The view registers a menu scope host so Escape first closes an open
+picker, releases the host and the picker when the frame is rebuilt, and closes
+an open format menu and removes the nav header when the view closes.
 
 The shared `SidebarActiveFile` (`ui/sidebarActiveFile.ts`) tracks the most recent
 document in the main workspace for both occurrences and conversion review.
@@ -572,7 +572,8 @@ title rows show their count as a faint number at the end and open the note when
 clicked. The source card's format/line label and **Before** text
 navigate to its precise token or heading range; **After** starts inline editing.
 Purple active styling is cleared when that exact editor selection no longer
-exists. The fixed header places the conversion action beside the description.
+exists. The fixed header puts the conversion action across the pane in a row of
+its own, under the nav header that holds the help button.
 A single summary checkbox uses the native indeterminate state for partial
 selection, with a horizontal dash. Clicking an empty or partial state selects
 all; clicking the checked state clears all. Its count measures review units rather than source

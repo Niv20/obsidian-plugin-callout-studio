@@ -1436,6 +1436,8 @@ export const en: Record<string, string> = {
 	"usage.unregisteredCallouts": "Unregistered callouts",
 	"usage.summary": "{{count}} occurrences in {{files}} files",
 	"usage.allRoles": "All formats",
+	// The nav-header button that opens the format menu; also its tooltip.
+	"usage.filterFormat": "Filter by format",
 	"usage.failed": "Could not update callout occurrences.",
 	"usage.loading": "Scanning Markdown notes…",
 	"usage.partial": "Results are incomplete: {{count}} read errors.",

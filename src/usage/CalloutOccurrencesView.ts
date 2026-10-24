@@ -1,4 +1,4 @@
-import { ItemView, type WorkspaceLeaf, type ViewStateResult } from "obsidian";
+import { ItemView, type Menu, type WorkspaceLeaf, type ViewStateResult } from "obsidian";
 import { t } from "../i18n";
 import { registerMenuScopeHost } from "../ui/menuEscape";
 import { STATISTICS_ICON_ID } from "../icons/uiIcons";
@@ -13,7 +13,8 @@ import { ALL_TYPES_ID, OccurrenceTypeChoices, occurrencePickerChoices } from "./
 import { OccurrenceResults } from "./occurrenceResults";
 import { navigateToCalloutOccurrence } from "./navigation";
 import { SidebarCursorSync } from "../ui/sidebarCursorSync";
-import { createOccurrencesFrame, OCCURRENCE_ROLES, type OccurrencesFrame } from "./occurrencesViewFrame";
+import { createOccurrencesFrame, OCCURRENCE_ROLES, openFormatMenu, type OccurrencesFrame } from "./occurrencesViewFrame";
+import { addSidebarNavButton, createSidebarNavHeader } from "../ui/sidebarFrame";
 
 export const CALLOUT_OCCURRENCES_VIEW = "callout-studio-occurrences";
 const PAGE_SIZE = 100;
@@ -43,6 +44,13 @@ export class CalloutOccurrencesView extends ItemView {
 	private busyStatusGeneration = 0;
 	private busyStatusKind: "loading" | "stale" | null = null;
 	private frame: OccurrencesFrame | null = null;
+	/**
+	 * Obsidian's nav header above the content, with its one button, the format
+	 * filter. Made once per open and kept through a redraw of the content.
+	 */
+	private nav: { header: HTMLElement; filter: HTMLElement } | null = null;
+	/** The format menu while it is open, so closing the view closes it too. */
+	private formatMenu: Menu | null = null;
 	private disposeMenuHost?: () => void;
 	private picker: CalloutCombobox | null = null;
 	private lastIndexState = "";
@@ -81,6 +89,7 @@ export class CalloutOccurrencesView extends ItemView {
 	}
 	refreshLabels(): void {
 		if (!this.opened) return;
+		this.nav?.filter.setAttribute("aria-label", t("usage.filterFormat"));
 		this.clearFrame();
 		this.render();
 	}
@@ -101,7 +110,7 @@ export class CalloutOccurrencesView extends ItemView {
 		if (this.frame) this.frame.scroll.scrollTop = 0;
 		this.activeFile.cancelReveal();
 		this.picker?.setValue(this.selectedType);
-		this.frame?.roleSelect.setValue(this.role ?? "");
+		this.paintFilter();
 		if (this.opened) this.render();
 		await super.setState(state, result);
 	}
@@ -110,6 +119,7 @@ export class CalloutOccurrencesView extends ItemView {
 		this.typeChoices.invalidate();
 		this.lastChoicesRevision = -1;
 		this.contentEl.addClass("cs-occurrences-view");
+		this.ensureNav();
 		if (!this.handlersRegistered) {
 			this.handlersRegistered = true;
 			this.registerDomEvent(this.contentEl, "click", (event) => this.onClick(event));
@@ -135,13 +145,46 @@ export class CalloutOccurrencesView extends ItemView {
 		this.registry.offChange(this.registryChanged);
 		this.activeFile.close();
 		this.clearFrame();
+		this.formatMenu?.hide();
+		this.formatMenu = null;
+		this.nav?.header.remove();
+		this.nav = null;
 		this.cachedQuery = null;
 		return Promise.resolve();
+	}
+
+	/**
+	 * Put Obsidian's nav header above the content, with the format filter: a
+	 * button that opens the format menu and stays lit while a format is
+	 * chosen (finding S10-05).
+	 */
+	private ensureNav(): void {
+		if (this.nav) return;
+		const { header, buttons } = createSidebarNavHeader(this.containerEl);
+		const filter = addSidebarNavButton(buttons, {
+			icon: "filter",
+			label: t("usage.filterFormat"),
+			onPress: (button) => {
+				this.formatMenu?.hide();
+				this.formatMenu = openFormatMenu(button, this.role, (role) => {
+					if (role === this.role) return;
+					this.role = role;
+					this.resetResults();
+					this.render();
+				});
+			},
+		});
+		this.nav = { header, filter };
+		this.paintFilter();
+	}
+
+	/** Light the filter button while one format is chosen, as Obsidian lights an active nav button. */
+	private paintFilter(): void {
+		this.nav?.filter.toggleClass("is-active", this.role !== undefined);
 	}
 	private clearFrame(): void {
 		this.picker?.destroy();
 		this.picker = null;
-		this.frame?.roleSelect.destroy();
 		this.disposeMenuHost?.(); this.disposeMenuHost = undefined;
 		this.frame = null;
 		this.resultCards.clear();
@@ -246,11 +289,6 @@ export class CalloutOccurrencesView extends ItemView {
 		if (this.frame) return this.frame;
 		this.disposeMenuHost = registerMenuScopeHost(this.contentEl, this.app);
 		const frame = this.frame = createOccurrencesFrame(this.contentEl);
-		frame.roleSelect.onChange((value) => {
-			this.role = OCCURRENCE_ROLES.includes(value as CalloutRenderRole) ? value as CalloutRenderRole : undefined;
-			this.resetResults();
-			this.render();
-		});
 		this.picker = new CalloutCombobox(frame.pickerHost, {
 			registry: this.registry, choices: () => occurrencePickerChoices(this.typeChoices, this.selectedType), value: this.selectedType,
 			ariaLabel: t("vaultStats.columnType"), labelOf: (def) => def.id === ALL_TYPES_ID ? t("usage.allTypes") : def.id,
@@ -283,7 +321,7 @@ export class CalloutOccurrencesView extends ItemView {
 		const complete = index.status === "ready" && !this.failed;
 		const scrollTop = this.frame?.scroll.scrollTop ?? 0;
 		const frame = this.ensureFrame();
-		frame.roleSelect.setValue(this.role ?? "");
+		this.paintFilter();
 		const busy = !this.failed && (index.status === "idle" || index.status === "loading" || index.status === "stale");
 		this.syncBusyStatus(busy);
 		frame.status.setText(this.failed || index.status === "disposed" ? t("usage.failed")

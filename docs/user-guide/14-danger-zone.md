@@ -9,8 +9,8 @@ everything**. Both ask for confirmation because they can make lasting changes.
 Use this when moving notes to an app without Callout Studio, or when you want
 to stop using the plugin's heading and inline formats. Choose **Review
 conversion** to close settings and open the review directly in the right
-sidebar; this does not edit notes. The question-mark icon at the opposite end
-of the title row opens **About conversion**, with a single **Before**/**After**
+sidebar; this does not edit notes. The question-mark icon at the top of the
+sidebar opens **About conversion**, with a single **Before**/**After**
 example table and backup advice. This tab appears when you open the review,
 rather than at startup. If it was left open in an earlier session, Callout
 Studio closes it on the next launch; use **Review conversion** to open a new review.

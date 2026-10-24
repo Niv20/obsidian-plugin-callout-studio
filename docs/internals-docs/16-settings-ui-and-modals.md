@@ -14,8 +14,8 @@ one scrollable tab: callout lists → fallback → custom palettes → global se
 **Danger zone** contains **Convert to standard Markdown** first and
 **Reset everything** second. Its **Review conversion** button opens the registered
 `PortableConversionView` directly in the right sidebar and closes settings.
-The question-mark button sits at the far trailing edge of the sidebar's title
-row. It opens `PortableConversionHelpModal`: an **About conversion** explanation
+The question-mark button is the one button of the sidebar's nav header. It
+opens `PortableConversionHelpModal`: an **About conversion** explanation
 with one four-row **Before**/**After** table, isolated LTR source text, and a
 backup recommendation. Heading and inline examples share the table without
 separate subheadings. The table is one rounded box with a line between rows, as
@@ -35,9 +35,33 @@ source-navigation button, while **After** starts inline editing. Source and link
 changes on the same selected heading line share one card. Each inline token,
 including its optional payload, has a separate card and selection; headings show
 their complete source line. Both previews wrap without truncation. Rows paginate in batches of
-100; all remain available. `ui/sidebarFrame.ts` supplies the identical heading,
-short subtitle, and result-summary components to both sidebars. The conversion
-subtitle sits opposite the red conversion button. A master checkbox before the
+100; all remain available.
+
+**The top of both sidebars is drawn as Obsidian draws the top of its own panes**
+(`ui/sidebarFrame.ts`, finding S10-05). `createSidebarNavHeader` prepends
+Obsidian's nav header (`.nav-header > .nav-buttons-container`) to the view's
+own `containerEl`, before its content, where Obsidian's Search, Backlinks and
+Outline put theirs, so its phone rules apply (the buttons move to the bottom
+of the drawer as touch targets). Each view makes it once per open, keeps it
+through a content rebuild (a language change only relabels it), and removes it
+on close. `addSidebarNavButton` makes each button as Obsidian's `addNavButton`
+does - `.clickable-icon.nav-action-button`, its `aria-label` also its tooltip -
+plus a Tab stop and Enter/Space. Find callouts has one, the format filter
+(`filter`): it opens Obsidian's HTML menu (All formats, then each format, a ✓
+on the current one) under the button, as Search's sort button does, and is
+lit (`.is-active`) while a format is chosen; the view closes an open menu when
+it closes. Review conversion has one, help. Under the header, the content's
+fixed part: Find callouts' type field in Obsidian's `.search-row`; Review
+conversion's **Convert selected** across the pane in a row of its own
+(`.cs-portable-convert-row`); and in both, the count over a single line,
+Obsidian's `.search-results-info > .search-results-result-count` (a live
+region). Until 2026-10-24 each pane began with a large bold title (now only the
+tab's name, its tooltip on a computer, as for Search), a sentence (the
+conversion one says what **About conversion** already opens with; neither is
+shown now), the format as a second field beside the type field, and the count
+between two lines.
+
+On Review conversion's count line, a master checkbox before the
 summary has empty, indeterminate and checked states. Clicking an empty or partial
 selection selects all; clicking the fully checked state clears all choices.
 The indeterminate dash uses Obsidian's checkbox fill and marker colors so it

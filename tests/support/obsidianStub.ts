@@ -392,11 +392,14 @@ export class WorkspaceLeaf {}
 /** Minimal lifecycle/DOM host for occurrence view tests. */
 export class ItemView {
 	app: unknown;
+	/** The view's own element (`.workspace-leaf-content`); a nav header goes in it, before the content. */
+	containerEl: HTMLElement;
 	contentEl: HTMLElement;
 	private disposers: Array<() => void> = [];
 	constructor(public leaf: { app: unknown }) {
 		this.app = leaf.app;
-		this.contentEl = createDiv();
+		this.containerEl = createDiv({ cls: "workspace-leaf-content" });
+		this.contentEl = this.containerEl.createDiv({ cls: "view-content" });
 	}
 	register(dispose: () => void): void { this.disposers.push(dispose); }
 	registerEvent(_ref: unknown): void { /* The view explicitly removes its event refs on close. */ }

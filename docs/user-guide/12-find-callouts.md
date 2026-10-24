@@ -26,10 +26,13 @@ with **All types** and **All formats**. Opening **Find callouts** from a callout
 three-dot menu starts with that callout type and **All formats**, even if you
 previously selected a different format in the sidebar.
 
-The title and short subtitle stay visible above the type and format
-pickers. The pickers sit side by side when the sidebar is wide and stack when it
-is narrow. The header, pickers, and matching-result summary remain fixed while the
-file groups below scroll. Several inline callouts on one line count as separate
+The sidebar starts like Obsidian's **Search** pane: a small filter icon at the
+top, then the type picker across the pane, then the matching-result summary
+over a thin line. The filter icon opens the formats, with a check mark beside
+the one shown, and stays highlighted while you show only one format. On a
+phone, the filter icon sits at the bottom of the sidebar, as Obsidian's own
+pane buttons do. The picker and summary remain fixed while the file groups
+below scroll. Several inline callouts on one line count as separate
 occurrences. The former vault-wide statistics cards are no longer shown here.
 
 ![The searchable type picker showing registered types and the unregistered idea type](../../assets/user-guide/find-picker.svg)
@@ -73,11 +76,8 @@ out of the picker.
 Results are grouped by note, as Obsidian's **Search** pane groups them: the note's name with a small count at the end, then one rounded box with a row for each occurrence, separated by thin lines. The count covers matches not yet
 revealed by **Show more**. Each row shows its format, line number, and at most
 two lines of raw Markdown, including syntax such as `> [!info]`. Block previews
-include a line of body text when available. Choose **All formats**, **Block**,
-**Heading**, or **Inline** to filter the selected type or all types. The format
-picker opens a list of these four choices without a search field. It has the
-same control shape and hover feedback as the type picker. A selected option remains
-identifiable when you hover over it or move to it with the keyboard. With a mouse or
+include a line of body text when available. From the filter icon, choose **All formats**, **Block**,
+**Heading**, or **Inline** to filter the selected type or all types. With a mouse or
 trackpad, hovering a result tints it, as a search match does; keyboard focus
 draws a ring inside the row.
 

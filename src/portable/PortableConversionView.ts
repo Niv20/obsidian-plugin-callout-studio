@@ -14,6 +14,8 @@ import { PortableCustomReplacementError } from "../utils/portableCalloutCustom";
 import { PortableConversionWatch } from "./portableConversionWatch";
 import { PortableConversionNavigation } from "./portableConversionNavigation";
 import { PortableConversionHelpModal } from "./PortableConversionHelpModal";
+import { HELP_ICON_ID } from "../constants";
+import { addSidebarNavButton, createSidebarNavHeader } from "../ui/sidebarFrame";
 
 export const PORTABLE_CONVERSION_VIEW = "callout-studio-portable-conversion";
 
@@ -25,6 +27,11 @@ export class PortableConversionView extends ItemView {
 	private readonly busy: PortableConversionBusy;
 	private readonly cache = new PortableCalloutPreviewCache();
 	private frame?: PortableConversionFrame;
+	/**
+	 * Obsidian's nav header above the content, with its one button, help.
+	 * Made once per open and kept through a redraw of the content.
+	 */
+	private nav: { header: HTMLElement; help: HTMLElement } | null = null;
 	private basePlan?: PortableCalloutConversionPlan;
 	private plan?: PortableCalloutConversionPlan;
 	private selected = new Set<string>();
@@ -64,6 +71,7 @@ export class PortableConversionView extends ItemView {
 	getIcon(): string { return PORTABLE_CONVERSION_ICON_ID; }
 	refreshLabels(): void {
 		if (!this.opened) return;
+		this.nav?.help.setAttribute("aria-label", t("portable.help"));
 		this.frame = undefined;
 		this.render();
 	}
@@ -73,6 +81,7 @@ export class PortableConversionView extends ItemView {
 		this.unrecoverable = false;
 		if (this.plan?.recovery) this.stale = false;
 		this.contentEl.addClass("cs-portable-view");
+		this.ensureNav();
 		this.watch.open();
 		this.resultNavigation.open();
 		this.render();
@@ -82,7 +91,22 @@ export class PortableConversionView extends ItemView {
 		this.stop();
 		this.contentEl.empty();
 		this.frame = undefined;
+		this.nav?.header.remove();
+		this.nav = null;
 		return Promise.resolve();
+	}
+
+	/** Put Obsidian's nav header above the content, with the help button (finding S10-05). */
+	private ensureNav(): void {
+		if (this.nav) return;
+		const { header, buttons } = createSidebarNavHeader(this.containerEl);
+		const help = addSidebarNavButton(buttons, {
+			icon: HELP_ICON_ID,
+			label: t("portable.help"),
+			onPress: () => new PortableConversionHelpModal(this.app).open(),
+		});
+		help.setAttribute("aria-haspopup", "dialog");
+		this.nav = { header, help };
 	}
 	private stop(): void {
 		this.opened = false;
@@ -180,7 +204,6 @@ export class PortableConversionView extends ItemView {
 		const button = (event.target as HTMLElement | null)?.closest<HTMLButtonElement>("button[data-action]");
 		if (!button || button.disabled) return;
 		const action = button.dataset.action;
-		if (action === "help") { new PortableConversionHelpModal(this.app).open(); return; }
 		if (action === "edit" || action === "restore") {
 			const id = button.closest<HTMLElement>("[data-row-id]")?.dataset.rowId?.replace(/^source:/, "");
 			if (action === "edit") this.custom.edit(id, event); else this.custom.restore(id);

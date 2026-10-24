@@ -17,6 +17,8 @@ import { createPortableConversionFrame, updatePortableSelection } from "../../sr
 import { portableConversionRows, renderPortableConversionRows } from "../../src/portable/portableConversionRows.ts";
 import { preparePortableCalloutConversion } from "../../src/utils/portableCalloutVault.ts";
 import { PortableConversionHelpModal } from "../../src/portable/PortableConversionHelpModal.ts";
+import { addSidebarNavButton, createSidebarNavHeader } from "../../src/ui/sidebarFrame.ts";
+import { HELP_ICON_ID } from "../../src/constants.ts";
 import { QuickInsertModal } from "../../src/settings/QuickInsertModal.ts";
 import { openModal } from "./fixture-host.mjs";
 
@@ -46,9 +48,18 @@ function panel(cls, width = 780) {
 	return el;
 }
 
-function clearFileHeadingBackgrounds(root) {
-	// These static illustrations keep file labels on the surrounding surface.
-	for (const heading of root.querySelectorAll(".cs-sidebar-file-heading")) heading.style.background = "transparent";
+/**
+ * A sidebar view as Obsidian lays it out: the leaf's content with the pane's
+ * nav header first (one icon button per entry of `buttons`), then the view's
+ * content, which is returned.
+ */
+function sidebarPanel(cls, width, height, buttons) {
+	const leaf = document.body.createDiv({ cls: "workspace-leaf-content", attr: { id: "guide-scene" } });
+	leaf.style.width = `${width}px`;
+	leaf.style.height = `${height}px`;
+	const { buttons: row } = createSidebarNavHeader(leaf);
+	for (const button of buttons) addSidebarNavButton(row, { ...button, onPress() {} });
+	return leaf.createDiv({ cls: `view-content ${cls}` });
 }
 
 const noteSources = {
@@ -78,8 +89,7 @@ async function findScene(plugin, pickerOpen) {
 	const all = Object.entries(noteSources).flatMap(([path, text]) => scanCalloutOccurrences(path, text));
 	const index = { dataRevision: 1, query: () => ({ occurrences: all, fileCount: Object.keys(noteSources).length }) };
 	const types = new OccurrenceTypeChoices(plugin.registry, index);
-	const root = panel("view-content cs-occurrences-view", 640);
-	root.style.height = "650px";
+	const root = sidebarPanel("cs-occurrences-view", 640, 650, [{ icon: "filter", label: t("usage.filterFormat") }]);
 	const frame = createOccurrencesFrame(root);
 	let selected = pickerOpen ? ALL_TYPES_ID : "project";
 	const picker = new CalloutCombobox(frame.pickerHost, {
@@ -94,7 +104,6 @@ async function findScene(plugin, pickerOpen) {
 	const shown = pickerOpen ? all : all.filter(row => row.rawId === "project");
 	frame.summary.setText(t("usage.summary", { count: shown.length, files: new Set(shown.map(row => row.path)).size }));
 	new OccurrenceResults(100).render(frame.results, shown, 100, true, () => {}, () => {});
-	clearFileHeadingBackgrounds(frame.results);
 	if (pickerOpen) {
 		const input = frame.pickerHost.querySelector("input");
 		input.click();
@@ -182,13 +191,11 @@ async function conversionScene(plugin) {
 	};
 	syntheticVault(plugin, conversionSources);
 	const plan = await preparePortableCalloutConversion(plugin.app);
-	const root = panel("view-content cs-portable-view", 640);
-	root.style.height = "670px";
+	const root = sidebarPanel("cs-portable-view", 640, 670, [{ icon: HELP_ICON_ID, label: t("portable.help") }]);
 	const frame = createPortableConversionFrame(root);
 	frame.retry.hidden = true;
 	updatePortableSelection(frame, plan, true);
 	renderPortableConversionRows(frame.results, plan, portableConversionRows(plan), 100, false, undefined, () => {});
-	clearFileHeadingBackgrounds(frame.results);
 	return metadata("Review conversion before changing notes", "The actual conversion planner reads only synthetic Markdown. Its proposed heading and inline replacements are rendered by the production sidebar frame, selection summary, and before/after cards.");
 }
 
