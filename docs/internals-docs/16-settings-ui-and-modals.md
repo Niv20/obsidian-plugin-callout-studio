@@ -2036,7 +2036,8 @@ Obsidian paints it solid red on every device. That covers every
 `ConfirmModal` yes that destroys something (its default `confirmKind`,
 `"destructive"`; a yes that loses nothing passes `"cta"`), **Replace in vault**,
 the paused-saving banner's **Replace settings file** and **Discard recovery
-copy**, **Convert selected**, **Reset everything** and a version's **Restore**.
+copy**, **Convert selected** and **Reset everything**. A version's **Restore**
+in Version history is a plain button; the red is on the question it opens.
 A destructive *secondary* action would be `mod-destructive` alone, Obsidian's
 10% red tint with red text; there is none today.
 
@@ -3577,79 +3578,77 @@ button reads **View versions**. The saving banner's **Go to version history**
 scrolls to that row rather than opening the window itself. Its help text is one
 continuous paragraph via `setDesc(string)`; translation newlines are replaced with
 spaces so older locale tables also wrap naturally. The window asks `recovery.listVersions()` once per open
-(a generation counter drops a late answer after close) and draws one timeline,
-newest first, grouped by local calendar day. The day headings start with the
-localized date (`dateStyle: "long"`), then **today**, **yesterday** or **N days ago**
-in parentheses, including for versions older than a week. Relative wording uses
-`Intl.RelativeTimeFormat`, with `numeric: "auto"` for today and yesterday and
-`"always"` for earlier days; day differences use local calendar dates so DST and
-time of day cannot shift the age. Future dates have no relative suffix. A continuous
-vertical line connects one small decorative dot per version across the groups. Day
-headings have padding above and below, with twice as much above as below
-(normally 32px and 16px), to separate them from the preceding versions,
-except the first heading, whose top padding is `--size-4-1` (normally 4px)
-because no versions precede it. Each has a short horizontal connector from the rail to the centre of its first
-text line. The connector and the first rail segment share a position calculated
-from that padding and half the heading's line height, so spacing does not shift
-the connector away from the text. Spacing derives from `--size-4-4`, with a 16px
-fallback, so an undefined spacing token cannot erase the padding or invalidate
-the connector position; logical inline positions also mirror it in RTL. Unknown
-dates have their own final group. This display grouping does not change stored
-timestamps or retention rules. A setup kept in two places is one row; the merge rule and
-where the reasons behind its automatic name are stored are in
+(a generation counter drops a late answer after close) and draws the versions
+newest first, grouped by local calendar day.
+
+**One Obsidian group per day** (finding S9-05). Each day is a `SettingGroup`
+with `mod-list` (`cs-recovery-day`): the date as the group's heading, then one
+rounded box with Obsidian's thin line between its rows, 24px between days.
+`mod-list` keeps a row on one line on a phone (the control stays beside the
+text) and makes the rows a little tighter; app.css draws all of it. The
+heading starts with the localized date (`dateStyle: "long"`), then **today**,
+**yesterday** or **N days ago** in parentheses, including for versions older
+than a week. Relative wording uses `Intl.RelativeTimeFormat`, with
+`numeric: "auto"` for today and yesterday and `"always"` for earlier days; day
+differences use local calendar dates so DST and time of day cannot shift the
+age. Future dates have no relative suffix. Unknown dates have their own final
+group. This display grouping does not change stored timestamps or retention
+rules. The window's description sits 24px above the first group, as one group
+sits from the next. **Loading…** and **No earlier versions** are one row in a
+box of their own with Obsidian's `mod-empty-state` (muted, a little taller),
+as the Hotkeys page says **No results found**.
+
+Until 2026-10-24 this was a timeline: a rail down the side, a dot per version,
+the times in a 6rem column, and each version a raised card. On a phone the
+column took 6rem of the width and the cards needed a 12rem text floor, a
+`ResizeObserver` (`versionRowLayout.ts`) and a size-container patch; all of that
+is gone with it.
+
+A setup kept in two places is one row; the merge rule and where the reasons
+behind its automatic name are stored are in
 [Recovery without file surgery](08-settings-sync-and-recovery.md#recovery-without-file-surgery).
 
-Each row is an ordinary `Setting`:
+Each row is a `Setting` added to its day's group (`cs-recovery-row`, and
+deliberately not `callout-studio-row`, whose pill, padding and size container
+would draw inside the box):
 
-- **Time:** a separate `<time>` element (`.cs-recovery-time`) displays the
-  short time in the interface locale across the timeline from the card, using
-  `--text-faint` and a font one pixel below `--font-ui-smaller`. It sits
-  outside the summary text; the group heading provides the date. Logical
-  positioning mirrors the time, marker and card together in right-to-left UIs.
-- **Timeline marker:** every version has the same small decorative dot on the
-  line, using `--background-modifier-border` to match the rail and day connectors.
-  It is hidden from assistive technology and has no source icon, accessible
-  source label, or tooltip. Storage location and category do not affect it.
-  Hovering a row changes neither the card, the time nor the marker; it only
-  sharpens the row's own icon buttons (see "List rows and hover").
-- **Name line** (`renderVersionName()` in [`versionRow.ts`](../../src/settings/versionRow.ts)):
+- **Time:** a `<time>` element (`.cs-recovery-time`, with a `datetime`) starts
+  the row's name: the short time in the interface locale, muted, digits one
+  width (`tabular-nums`), and `unicode-bidi: isolate` so a right-to-left
+  interface does not reorder it with the name. The group heading provides the
+  date. On a phone (`.is-phone`) the time takes a line of its own above the
+  name, since the row is narrow beside the two icons and Restore. An unknown
+  time is left out.
+- **Name** (`renderVersionName()` in [`versionRow.ts`](../../src/settings/versionRow.ts)):
   plain text naming why the version was kept. If the reason is absent or unknown,
   `versionCategory()` selects **Automatic backup** when any `history` or `backup`
   source is present, or **Sync copy** for a version made entirely of `copy`
   sources. This category is only a fallback title; known reason titles are
   unchanged. The name has no edit button or field.
 - **Summary** (the description): "Same as your current setup", "Can't be read
-  as settings", or the callout-type and difference counts. The callout-type count and difference count always
-  occupy separate lines while the controls sit beside the text, and share a
-  wrapping horizontal group when the controls drop below it; identical or unreadable versions
-  retain their single status line. Sync-copy filenames are not displayed.
+  as settings", or the callout-type and difference counts, a line each. Sync-copy
+  filenames are not displayed.
 - **Controls:** **View details** (eye; every row, including a version identical
   to now, which shows **Same as your current setup**), **Delete** (trash, red only on hover or focus) and, for a
-  readable version, **Restore**.
+  readable version, **Restore**. Hovering a row only sharpens its icon buttons
+  (see "List rows and hover"). On a phone or tablet Restore stays compact
+  beside the icons rather than taking Obsidian's full-width, 10px-padded phone
+  button, and the icons and gaps tighten, so the name keeps as much of the row
+  as it can.
 
 **Delete** confirms removal of the available copies once, adding a warning about
 file deletion syncing only when the version includes backup or sync-copy files.
 Another device's private history may retain the version. Then
 `recovery.removeVersion()` deletes every available copy; the list is read again
-either way. **Restore** is red (`setDestructive().setCta()`), dimmed (not disabled - a press says
+either way. **Restore** is a plain button (finding S9-04): the red belongs to
+the confirmation it opens, whose last button is the destructive one, as in
+Obsidian's own dialogs; a column of red buttons read like a page of warnings.
+It is dimmed (not disabled - a press says
 why, see [Blocked main buttons say why](#blocked-main-buttons-say-why)) while
 saving is paused or when the version equals the current setup, and confirms
 before calling `recovery.restore()`; both confirmations and their notices quote
 the version's name. There is no per-entry export action; the settings page's
 ordinary **Export** continues to export the displayed setup.
-
-The row floor for the text column is `12rem` (`min(12rem, 100%)`): about what a
-version name needs before it breaks a word per line. On a desktop window
-the controls sit beside the text; on a phone there is no room for the floor
-beside them, so the control cluster wraps onto its own line under the text and
-stays at the end - still compact, never Obsidian's full-width phone button.
-`versionRowLayout.ts` observes the rows and their info/control boxes with the
-owning window's `ResizeObserver`, and toggles `.cs-recovery-controls-wrapped`
-when the controls are below the info box. This follows actual flex wrapping
-instead of a viewport breakpoint, including translated button widths. In that
-state the two counts share a line where space allows. The observer is disconnected
-before a list reload and on modal close, with the ordinary stacked counts as the
-fallback without it.
 
 `SettingsRecoveryDetailsModal` (**Version details**) opens over that list as a
 read-only report, including while saving is paused. The source's saved date and
@@ -3660,8 +3659,9 @@ in this window. Details starts directly with **What changed**, without a categor
 badge, source explanation, storage card, or sync-copy filenames. Underlying source
 metadata, dates, grouping, retention, and deletion behavior are unchanged.
 
-The bordered **What changed** panel has a smaller, muted heading
-on a full-width row. Below the heading, the
+**What changed** has no frame (finding S9-12: Obsidian's windows have no boxed
+info panels; it was a bordered card until 2026-10-24). It has a smaller, muted
+heading on a full-width row. Below the heading, the
 difference total and comparison context (such as **24 differences from your
 current setup**) and removed/changed/added pill badges share one row where
 space allows. The flex layout wraps on narrower screens or with longer translations.
@@ -3680,8 +3680,22 @@ section title, a `<button>` that folds the section down to that row, and the col
 headings - and the whole `<thead>` is the sticky layer at `top: 0`, so the two pin
 as one block and let go with the section's last row. The window body's top padding
 moves into the report, so nothing shows above a pinned head (the rules are in
-`tests/modalBodyLayers.test.ts`). Tables use the theme's `--radius-m` for their
-outer corners. An opaque `mask-image: linear-gradient(#fff, #fff)` uses the
+`tests/modalBodyLayers.test.ts`). The section title folds with Obsidian's own
+triangle (`span.collapse-icon` holding `right-triangle`, which app.css sizes and
+turns while it carries `is-collapsed`), as its file explorer and Sync's version
+list draw it; the plugin's bold chevron is used only by the settings lists now.
+
+Every line in the tables is Obsidian's table line (`--table-border-width`,
+`--table-border-color`), solid, and the column headings take
+`--table-header-weight` and `--table-header-color`, so a theme that restyles
+tables restyles these. The fields of one change used to be separated by dashed
+lines; Obsidian draws no dashed separators, so they are solid now, and the
+shaded number column spanning the change is what keeps its rows together.
+Obsidian's `--table-header-background` is not used (it is transparent, and a
+pinned head must be opaque, so the head keeps the `--cs-surface` pair), nor
+`--table-text-size` (the editor's text size). The narrow number column has a
+smaller side padding and keeps **No.** on one line. Tables use the theme's
+`--radius-m` for their outer corners. An opaque `mask-image: linear-gradient(#fff, #fff)` uses the
 default `mask-clip: border-box` to clip the table and cell backgrounds to that
 rounded frame. The prefixed `-webkit-mask-image` declaration preserves this on
 older iOS versions supported by earlier Obsidian builds. The mask creates no

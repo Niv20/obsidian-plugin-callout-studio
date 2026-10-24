@@ -1,10 +1,11 @@
 /**
- * Version history: every earlier setup in one timeline, newest first, whether
- * it was kept on this device, in the vault's backups folder, or left behind by
- * a sync service. A setup kept in several places is one row with one timeline dot; each
- * row is named by why it was kept, and says how far it
- * is from now. Restoring asks first and is unavailable while saving is paused;
- * viewing and deleting remain available.
+ * Version history: every earlier setup, newest first, whether it was kept on
+ * this device, in the vault's backups folder, or left behind by a sync
+ * service. Each day is one of Obsidian's setting groups, its date as the
+ * heading, and each version a row in its box, starting with its time. A setup
+ * kept in several places is one row; each row is named by why it was kept, and
+ * says how far it is from now. Restoring asks first and is unavailable while
+ * saving is paused; viewing and deleting remain available.
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -70,9 +71,14 @@ function open(sources: RecoverySource[], options: Options = {}) {
 	const buttons = (label: string): FakeElement[] =>
 		contentEl.querySelectorAll(".clickable-icon").filter(el => el.dataset.csText === label);
 	const name = (row: FakeElement) => row.querySelector(".cs-version-name");
+	/** Each day's group: its heading text and its rows. */
+	const days = () => contentEl.querySelectorAll(".cs-recovery-day").map(group => ({
+		heading: group.querySelector(".setting-item-heading")?.querySelector(".setting-item-name")?.textContent,
+		rows: group.querySelectorAll(".cs-recovery-row"),
+	}));
 	const press = (key: string) => keymap.handle({ key, ctrlKey: false, metaKey: false, altKey: false, shiftKey: false,
 		isComposing: false, preventDefault() {}, stopPropagation() {} } as unknown as KeyboardEvent);
-	return { contentEl, titleEl, restored, removed, rows, icons, buttons, name, press,
+	return { contentEl, titleEl, restored, removed, rows, days, icons, buttons, name, press,
 		listed: () => listed, isClosed: () => closed,
 		destroy: () => { modal.onClose(); containerEl.remove(); setLocale(previousLocale); } };
 }
@@ -82,7 +88,7 @@ const unchanged: RecoverySource = { kind: "backup", time: Date.UTC(2026, 8, 21, 
 const unreadable: RecoverySource = { kind: "copy", time: null, path: ".obsidian/plugins/callout-studio/data 2.json", historyHash: null, origin: null, data: null };
 
 describe("Version history", () => {
-	it("lists every version in one timeline, newest first, each with one decorative dot", async () => {
+	it("lists every version newest first, as rows in Obsidian's list groups", async () => {
 		const h = open([history, unchanged, unreadable]);
 		try {
 			await setImmediate();
@@ -92,15 +98,13 @@ describe("Version history", () => {
 			assert.deepEqual(rows.map(row => h.name(row)?.textContent),
 				[en["versions.reason.beforeImport"], en["versions.reason.edit"], en["versions.category.syncCopy"]],
 				"newest first; a copy with no time last");
-			assert.equal(h.contentEl.querySelectorAll(".cs-version-badge").length, 0, "no visible location labels in the timeline");
+			assert.equal(h.contentEl.querySelectorAll(".cs-version-badge").length, 0, "no visible location labels");
+			assert.equal(h.contentEl.querySelectorAll(".cs-version-marker").length, 0, "no timeline dots any more");
 			for (const row of rows) {
-				assert.equal(row.querySelectorAll(".cs-version-marker").length, 1);
-				const marker = row.querySelector(".cs-version-marker")!;
-				assert.equal(marker.children.length, 0);
-				assert.equal(marker.textContent, "");
-				assert.equal(marker.getAttribute("aria-hidden"), "true");
-				assert.equal(marker.getAttribute("aria-label"), null);
-				assert.equal(marker.dataset.csTooltip, undefined);
+				const box = row.parentElement!;
+				assert.ok(box.hasClass("setting-items"), "each row sits in a group's box");
+				assert.ok(box.parentElement!.hasClass("setting-group") && box.parentElement!.hasClass("mod-list"),
+					"an Obsidian list group: tighter rows, one line on a phone");
 			}
 			const text = h.contentEl.textContent;
 			for (const key of ["recovery.same", "recovery.unreadable"]) assert.ok(text.includes(en[key]!), key);
@@ -108,11 +112,12 @@ describe("Version history", () => {
 			assert.equal(h.buttons(en["recovery.restore"]!).length, 2, "an unreadable copy offers nothing to restore");
 			assert.equal(h.icons(en["recovery.delete"]!).length, 3, "every version can be deleted, even an unreadable one");
 			assert.equal(h.contentEl.querySelectorAll("button.cs-version-name").length, 0, "version titles are plain text");
-			assert.equal(h.contentEl.querySelectorAll(".cs-recovery-row.callout-studio-row").length, 3);
+			assert.equal(h.contentEl.querySelectorAll(".callout-studio-row").length, 0,
+				"not a settings-list row: its pill, padding and size container stay out of the box");
 		} finally { h.destroy(); }
 	});
 
-	it("shows a setup kept on this device and in the vault once, with one timeline dot", async () => {
+	it("shows a setup kept on this device and in the vault once", async () => {
 		const backup: RecoverySource = { kind: "backup", time: Date.UTC(2026, 8, 20, 10), path: "b/data-y.json", historyHash: null,
 			origin: "this-device", data: { callouts: [] }, reason: "before-import" };
 		const h = open([history, backup]);
@@ -120,7 +125,6 @@ describe("Version history", () => {
 			await setImmediate();
 			const rows = h.rows();
 			assert.equal(rows.length, 1, "one setup, one row");
-			assert.equal(rows[0]!.querySelectorAll(".cs-version-marker").length, 1);
 			assert.equal(h.name(rows[0]!)?.textContent, en["versions.reason.beforeImport"], "named by the newest copy that says why");
 		} finally { h.destroy(); }
 	});
@@ -141,31 +145,57 @@ describe("Version history", () => {
 		});
 	}
 
-	it("groups by local calendar day across midnight and puts times outside the summaries", async () => {
+	it("puts each local calendar day in a group of its own, across midnight, and starts each row with its time", async () => {
 		const times = [new Date(2026, 8, 22, 13).getTime(), new Date(2026, 8, 22, 0, 1).getTime(), new Date(2026, 8, 21, 23, 59).getTime()];
 		const sources = times.map((time, index) => ({ ...history, time, historyHash: `day-${index}`, data: { version: index } }));
 		const h = open([...sources, unreadable]);
 		try {
 			await setImmediate();
-			const headings = h.contentEl.querySelectorAll(".cs-recovery-day");
-			assert.deepEqual(headings.map(el => el.textContent), [
+			const days = h.days();
+			assert.deepEqual(days.map(day => day.heading), [
 				versionDay(times[0]!),
 				versionDay(times[2]!),
 				en["recovery.details.unknownTime"],
-			]);
+			], "the date is the group's heading");
+			assert.deepEqual(days.map(day => day.rows.length), [2, 1, 1], "00:01 and 13:00 are one day; 23:59 the day before");
 			for (const [index, time] of times.entries()) {
-				const clock = h.rows()[index]!.querySelector(".cs-recovery-time");
-				assert.equal(clock?.textContent, new Date(time).toLocaleTimeString("en", { timeStyle: "short" }));
-				assert.equal(clock?.getAttribute("datetime"), new Date(time).toISOString());
+				const nameEl = h.rows()[index]!.querySelector(".setting-item-name")!;
+				const clock = nameEl.children[0]!;
+				assert.ok(clock.hasClass("cs-recovery-time"), "the time comes first in the row's name");
+				assert.equal(clock.tagName, "TIME");
+				assert.equal(clock.textContent, new Date(time).toLocaleTimeString("en", { timeStyle: "short" }));
+				assert.equal(clock.getAttribute("datetime"), new Date(time).toISOString());
+				assert.ok(nameEl.children[1]!.hasClass("cs-version-name"), "then the name");
 				const summary = h.rows()[index]!.querySelector(".setting-item-description")!;
 				assert.equal(summary.querySelector(".cs-recovery-time"), null);
-				const counts = summary.querySelector(".cs-recovery-summary-counts")!;
-				assert.deepEqual(counts.children.map(el => el.textContent), [
+				assert.deepEqual(summary.children.map(el => el.textContent), [
 					t("recovery.summaryCallouts", { callouts: 1 }), t("recovery.summaryChanges", { count: 2 }),
-				], "both counts share a layout group without the date or time");
+				], "the two counts, a line each, without the date or time");
 				assert.ok(summary.children.every(el => el.tagName === "DIV"));
 			}
 			assert.equal(h.rows()[3]!.querySelector(".cs-recovery-time"), null, "unknown times are not invented");
+		} finally { h.destroy(); }
+	});
+
+	it("says it is loading, then that there is nothing, in Obsidian's empty-state row", async () => {
+		const h = open([]);
+		try {
+			const status = () => h.contentEl.querySelectorAll(".mod-empty-state").map(row => row.querySelector(".setting-item-name")?.textContent);
+			assert.deepEqual(status(), [en["versions.loading"]], "before the versions arrive");
+			await setImmediate();
+			assert.deepEqual(status(), [en["versions.empty"]]);
+			const row = h.contentEl.querySelector(".mod-empty-state")!;
+			assert.ok(row.parentElement!.parentElement!.hasClass("mod-list"), "in a box, like a group with no rows");
+			assert.equal(h.rows().length, 0);
+		} finally { h.destroy(); }
+	});
+
+	it("gives Restore a plain button: the red is the confirmation's", async () => {
+		const h = open([history]);
+		try {
+			await setImmediate();
+			const restore = h.buttons(en["recovery.restore"]!)[0]!;
+			assert.equal(restore.hasClass("mod-destructive"), false);
 		} finally { h.destroy(); }
 	});
 
@@ -339,13 +369,18 @@ describe("Version history", () => {
 		} finally { confirm.restore(); h.destroy(); }
 	});
 
-	// The row wears `.callout-studio-row`, a size container. Obsidian's unnamed
-	// `@container (max-width: 400px)` settings rules then pinned its control to
-	// the full row width in any narrow window, collapsing the text column to 0px.
-	it("keeps its rows out of Obsidian's narrow-container settings rules", () => {
+	// The rows used to wear `.callout-studio-row`, a size container, and
+	// Obsidian's unnamed `@container (max-width: 400px)` settings rules then
+	// pinned the control to the full row width, collapsing the text column to
+	// 0px. Now they are plain group rows; the timeline's CSS is gone with them.
+	it("styles no timeline and no row of its own", () => {
 		const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, "");
-		assert.match(css, /\.cs-recovery-row\.callout-studio-row\s*\{\s*container-type:\s*normal;/);
+		for (const gone of ["cs-version-marker", "cs-recovery-rows", "cs-recovery-controls-wrapped", "--cs-timeline"]) {
+			assert.ok(!css.includes(gone), `${gone} is gone`);
+		}
 		const rowRules = css.match(/[^{}]*\.cs-recovery-row[^{}]*\{[^{}]*\}/g) ?? [];
+		assert.ok(!rowRules.some(rule => /background|border-radius|container-type/.test(rule)),
+			"Obsidian's group draws the box and the lines");
 		assert.ok(!rowRules.some(rule => /overflow-wrap:\s*anywhere/.test(rule)),
 			"`anywhere` lets the text column shrink to a letter per line");
 	});

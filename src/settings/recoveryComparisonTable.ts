@@ -50,7 +50,11 @@ function sectionTable(parent: HTMLElement, section: RecoverySection, component: 
 		attr: { colspan: "4", scope: "colgroup" },
 	});
 	const toggle = heading.createEl("button", { cls: "cs-recovery-section-toggle", attr: { type: "button", "aria-expanded": "true" } });
-	setIcon(toggle.createSpan({ cls: "cs-disclosure-chevron", attr: { "aria-hidden": "true" } }), "chevron-right");
+	// Obsidian's own fold triangle (finding S9-12), as its file explorer and
+	// Sync's version list draw it: app.css sizes `.collapse-icon` and turns it
+	// to point along the title while it carries `is-collapsed`.
+	const fold = toggle.createSpan({ cls: "collapse-icon", attr: { "aria-hidden": "true" } });
+	setIcon(fold, "right-triangle");
 	toggle.createSpan({ cls: "cs-recovery-section-title", text: section.title });
 	// Its own flex item rather than inside the title, so a title cut short
 	// with an ellipsis still shows how many changes it holds.
@@ -66,6 +70,7 @@ function sectionTable(parent: HTMLElement, section: RecoverySection, component: 
 		const collapsed = !table.hasClass("is-collapsed");
 		table.toggleClass("is-collapsed", collapsed);
 		heading.toggleClass("is-collapsed", collapsed);
+		fold.toggleClass("is-collapsed", collapsed);
 		toggle.setAttribute("aria-expanded", String(!collapsed));
 	}));
 	return table;

@@ -18,25 +18,27 @@ When importing a Callout Studio backup, matching entries are updated and valid s
 
 ![Version history listing saved setups, including versions kept before an import and a reset](../../assets/user-guide/version-history.svg)
 
-***Version history** combines earlier setups into one timeline. Each row compares that setup with the one currently displayed.*
+***Version history** lists earlier setups by day, newest first. Each row compares that setup with the one currently displayed.*
 
 The **Earlier versions** description flows as one paragraph, wrapping to fit the available width.
 
-Each date heading has space above and below it, with about twice as much above, so it clearly belongs to the versions beneath it. The first heading has only a small gap above it. A short horizontal line connects each heading to the timeline at the centre of the text.
+Each day is a box of its own under its date, with a thin line between the versions inside it, the way Obsidian groups its own settings.
 
 Pointing at a version's row makes its icons a little sharper. The row itself doesn't change, because only its buttons do something.
 
-Open **Settings → Callout Studio**, and under **Version history** choose **View versions**. The window lists every earlier version of your setup that Callout Studio can find, newest first, along a vertical timeline with a small dot for each version. Versions are grouped by your local calendar day. Each heading starts with the full date, followed by **today**, **yesterday** or **N days ago** in parentheses, including for older versions: for example, **October 1, 2026 (3 days ago)**. Dates and relative wording follow the interface language. A future date appears without a relative label. Versions whose dates are unknown appear in a separate group at the end. Each row shows:
+Open **Settings → Callout Studio**, and under **Version history** choose **View versions**. The window lists every earlier version of your setup that Callout Studio can find, newest first. Versions are grouped by your local calendar day. Each heading starts with the full date, followed by **today**, **yesterday** or **N days ago** in parentheses, including for older versions: for example, **October 1, 2026 (3 days ago)**. Dates and relative wording follow the interface language. A future date appears without a relative label. Versions whose dates are unknown appear in a separate group at the end. Each row shows:
 
+- **The time it was saved,** in muted text at the start of the row (on a phone, on a line of its own above the name). The date heading supplies the date, so each row only shows the time.
 - **Its name,** based on why it was saved, such as *Changes saved*, *Before an import* or *Before changes from another device*. These names are automatic and cannot be edited.
-- **The time it was saved,** in smaller, muted text on the opposite side of the timeline from the version's card. The day heading supplies the date, so each row only repeats the time.
-- **How far it is from your current setup:** the number of callout types it holds and the number of callout types and setting groups that differ from now. These appear on separate lines when the buttons sit beside the text, and together on one line when the buttons move below it, wrapping if needed. A version identical to your setup or one that cannot be read shows that status instead.
+- **How far it is from your current setup:** the number of callout types it holds and the number of callout types and setting groups that differ from now, on separate lines. A version identical to your setup or one that cannot be read shows that status instead.
+
+The buttons stay beside the text on every device. **Restore** is an ordinary grey button; the red one is in the question it asks before restoring.
 
 ### One list of versions
 
 **Version history** brings the available copies together. You choose the setup you want to restore, without choosing a storage location.
 
-When several copies would restore exactly the same settings, the list shows one version. Copies saved a moment apart but holding different settings stay separate rows: the copy **Restore** takes of the setup it replaces, and the setup it restores a moment later, are separate versions. Every version uses the same small timeline dot, matching the color of the timeline. The list and details focus on the saved setup and its differences, without source icons, storage badges or filenames.
+When several copies would restore exactly the same settings, the list shows one version. Copies saved a moment apart but holding different settings stay separate rows: the copy **Restore** takes of the setup it replaces, and the setup it restores a moment later, are separate versions. The list and details focus on the saved setup and its differences, without source icons, storage badges or filenames.
 
 Callout Studio keeps some automatic copies in this device's app storage and some in the vault's backups folder. It can also find extra settings files left by a sync service. Their independent limits still apply, so the window can show more than ten versions. Appearing in the list does not confirm that a file has uploaded or is available on another device. See [device history retention](#how-much-device-history-is-kept) and [backups in the vault](#automatic-backups).
 
@@ -78,11 +80,11 @@ Select the trash button, **Delete**, to permanently remove the available copies 
 
 Select the eye button, **View details**, beside any version to open **Version details**. The saved date and time appear in parentheses beside the window title, in smaller, muted text; an unknown date is shown there as **Save time not recorded**. The report starts directly with **What changed**.
 
-The compact **What changed** panel has a smaller, muted heading. The total (such as **24 differences from your current setup**) and the removed, changed and added pill labels share the row below the heading where space allows; they wrap on narrow screens. Changed items are marked in yellow, added in green and removed in red. A version identical to your setup shows **Same as your current setup** without counts. An unreadable version shows **Comparison unavailable**, with an explanation beneath. This is a read-only window: opening it does not restore the version, change your settings, create a backup, or contact a server. It remains available while saving is paused.
+**What changed** is a quiet line or two above the tables, with a smaller, muted heading. The total (such as **24 differences from your current setup**) and the removed, changed and added pill labels share the row below the heading where space allows; they wrap on narrow screens. Changed items are marked in yellow, added in green and removed in red. A version identical to your setup shows **Same as your current setup** without counts. An unreadable version shows **Comparison unavailable**, with an explanation beneath. This is a read-only window: opening it does not restore the version, change your settings, create a backup, or contact a server. It remains available while saving is paused.
 
 The window shows only what would change if you restored the selected version, compared with the setup currently displayed when you open it. It is split into the sections of the settings page, in the same order: **My callout types**, **Built-in callouts**, **Custom Icons** and **Icon picker defaults**, **Default fallback callout**, **Saved color palettes**, the global style options, **Context menu**, **Commands & Hotkeys** and **Language**. Anything saved by a newer version of Callout Studio appears last, under **Other settings**. Only sections with a difference appear.
 
-Each section is a table with four columns: **No.**, **Item**, **Current setup** and **After restoring this version**. Select a section's title to fold the section or open it again. While you scroll through a section, its title and column headings stay pinned at the top of the window.
+Each section is a table with four columns: **No.**, **Item**, **Current setup** and **After restoring this version**. Select a section's title to fold the section or open it again; the small triangle beside it turns, as it does in Obsidian's file list. The tables use Obsidian's own table lines, so a theme that restyles tables restyles these too. While you scroll through a section, its title and column headings stay pinned at the top of the window.
 
 Every change has its own number, counted on across all sections. A change is one thing you would name, such as a callout type, palette, custom icon or command. It is matched between the two versions by its identifier, so everything that differs about it stays together in one numbered row: its name, a picture of it on each side where one can be drawn, then one line per changed setting with the setting's name in the **Item** column. A callout that would be added shows *Not present in the current setup* on the current side; one that would be removed shows *Removed when this version is restored* on the restored side. Resetting a customized built-in callout to its default is shown as a change, not a deletion.
 
@@ -98,7 +100,7 @@ Changed values can include your callout names, command settings, and uploaded ar
 
 ### How much device history is kept?
 
-Device history keeps up to ten most recent distinct setups in Obsidian's app storage, outside the vault. A setup is recorded after a successful settings save or when this device accepts settings from the vault, including settings originally edited on another device. There are no additional daily or weekly copies. Returning to the same setup refreshes its date instead of adding a duplicate; the timeline uses the newest available copy's date.
+Device history keeps up to ten most recent distinct setups in Obsidian's app storage, outside the vault. A setup is recorded after a successful settings save or when this device accepts settings from the vault, including settings originally edited on another device. There are no additional daily or weekly copies. Returning to the same setup refreshes its date instead of adding a duplicate; the list uses the newest available copy's date.
 
 Every change you make in **Settings → Callout Studio** is saved at once, but one visit to the settings adds one version, however many changes it takes. That version is updated with each change and dated by the last one. The version from before you opened the settings is kept. If you undo everything before leaving, no new version is added. The version ends when you close the settings or switch to another tab, when 15 minutes pass without a change, when you restore a version, or when settings arrive from another device. A change made outside the settings, such as from a note's right-click menu or a command, is a version of its own.
 

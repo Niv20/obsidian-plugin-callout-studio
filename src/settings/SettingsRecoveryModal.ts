@@ -1,19 +1,30 @@
 /**
  * settings/SettingsRecoveryModal.ts — Version history: every earlier setup
- * Callout Studio can find, as one timeline, and a way back to each.
+ * Callout Studio can find, newest first, and a way back to each.
+ *
+ * Who calls it. The Version history button in the settings
+ * (sections/DataManagementSection.ts).
  *
  * Versions come from three places: this device's history (IndexedDB, survives
  * uninstall), the backups folder beside the settings file (synced), and stray
  * copies of the settings file a sync service left behind (`data 2.json` and
  * the like, which nothing else would ever mention). A setup kept in two places
- * is one row with one decorative timeline dot, newest first. Its title says
- * why it was kept, and its summary compares it with now.
+ * is one row. Its title says why it was kept, and its summary compares it with
+ * now.
+ *
+ * The main idea of the layout (finding S9-05). Each local calendar day is one
+ * of Obsidian's setting groups: the date as the group's heading, then one
+ * rounded box with a thin line between its rows, as Obsidian's own settings
+ * draw a group. Each version is a row in its day's box, starting with the time
+ * it was saved. It used to be a timeline: a rail down the side, a dot per
+ * version and the times in a column of their own.
  *
  * Restore replaces the current setup after confirmation and a verified backup.
- * View details compares a snapshot with now. Delete
- * removes every listed copy and stays available while saving is paused.
+ * The eye compares a snapshot with now. Delete removes every listed copy and
+ * stays available while saving is paused.
  */
-import { Modal, Notice, Setting } from "obsidian";
+import { Modal, Notice, SettingGroup } from "obsidian";
+import type { Setting } from "obsidian";
 import type { App } from "obsidian";
 import { t } from "../i18n";
 import type { RestoreOutcome, SettingsRecoveryService } from "../manager/settingsRecoveryService";
@@ -24,8 +35,7 @@ import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
 import { blockedWhilePaused } from "./pausedGuard";
 import { SettingsRecoveryDetailsModal } from "./SettingsRecoveryDetailsModal";
-import { renderVersionMarker, renderVersionName, versionClock, versionDay, versionDayKey, versionName, versionTime } from "./versionRow";
-import { observeVersionRowLayout } from "./versionRowLayout";
+import { renderVersionName, versionClock, versionDay, versionDayKey, versionName, versionTime } from "./versionRow";
 
 export interface RecoveryModalPlugin {
 	recovery?: SettingsRecoveryService;
@@ -50,9 +60,10 @@ function renderLines(parent: HTMLElement, text: string, cls: string): void {
 }
 
 export class SettingsRecoveryModal extends Modal {
+	/** Bumped on every (re)load and on close, so a late answer from an older load is dropped. */
 	private generation = 0;
+	/** Where the day groups go; null once the window is closed. */
 	private listEl: HTMLElement | null = null;
-	private stopObservingRows: (() => void) | null = null;
 
 	constructor(app: App, private readonly plugin: RecoveryModalPlugin) {
 		super(app);
@@ -73,8 +84,6 @@ export class SettingsRecoveryModal extends Modal {
 
 	onClose(): void {
 		this.generation++;
-		this.stopObservingRows?.();
-		this.stopObservingRows = null;
 		this.listEl = null;
 		this.contentEl.empty();
 		removeModalChrome(this);
@@ -84,10 +93,7 @@ export class SettingsRecoveryModal extends Modal {
 	private reload(): void {
 		const list = this.listEl;
 		if (!list) return;
-		this.stopObservingRows?.();
-		this.stopObservingRows = null;
-		list.empty();
-		list.createEl("p", { text: t("versions.loading"), cls: "cs-recovery-status" });
+		this.renderStatus(list, t("versions.loading"));
 		const generation = ++this.generation;
 		const recovery = this.plugin.recovery;
 		if (!recovery) { this.render(list, []); return; }
@@ -100,40 +106,63 @@ export class SettingsRecoveryModal extends Modal {
 		);
 	}
 
-	private render(list: HTMLElement, versions: SetupVersion[]): void {
+	/**
+	 * Replace the list with one quiet row in a box of its own, for "Loading…"
+	 * and "No earlier versions": Obsidian's empty-state row (`mod-empty-state`),
+	 * the way its Hotkeys page says "No results found".
+	 */
+	private renderStatus(list: HTMLElement, text: string): void {
 		list.empty();
-		if (versions.length === 0) {
-			list.createEl("p", { text: t("versions.empty"), cls: "cs-recovery-status" });
-			return;
-		}
-		const rows = list.createDiv({ cls: "cs-recovery-rows" });
-		let previousDay: string | null = null;
-		const now = Date.now();
-		for (const version of versions) {
-			const day = versionDayKey(version.time);
-			if (day !== previousDay) {
-				rows.createEl("h3", { text: versionDay(version.time, now), cls: "cs-recovery-day" });
-				previousDay = day;
-			}
-			this.renderRow(rows, version);
-		}
-		this.stopObservingRows = observeVersionRowLayout(rows);
+		new SettingGroup(list).addClass("mod-list").addSetting(row => {
+			row.setName(text);
+			row.settingEl.addClass("mod-empty-state", "cs-recovery-status");
+		});
 	}
 
-	private renderRow(list: HTMLElement, version: SetupVersion): void {
+	/**
+	 * Draw the versions: one group per local calendar day, its date as the
+	 * heading, and a row per version in the group's box. The versions arrive
+	 * newest first, so a day's group is opened by the first of its versions;
+	 * versions whose time is unknown come last and share one group.
+	 */
+	private render(list: HTMLElement, versions: SetupVersion[]): void {
+		if (versions.length === 0) {
+			this.renderStatus(list, t("versions.empty"));
+			return;
+		}
+		list.empty();
+		const now = Date.now();
+		let group: SettingGroup | null = null;
+		let previousDay: string | null = null;
+		for (const version of versions) {
+			const day = versionDayKey(version.time);
+			if (!group || day !== previousDay) {
+				// `mod-list` is Obsidian's list layout: rows a little tighter,
+				// and still on one line on a phone.
+				group = new SettingGroup(list)
+					.setHeading(versionDay(version.time, now))
+					.addClass("mod-list", "cs-recovery-day");
+				previousDay = day;
+			}
+			// After the `if`, TypeScript knows `group` is set: either it was
+			// already, or the line above just made it.
+			group.addSetting(row => this.renderRow(row, version));
+		}
+	}
+
+	/** One version's row: its time and name, how it compares with now, and its buttons. */
+	private renderRow(row: Setting, version: SetupVersion): void {
+		// `!`: this window only lists versions when there is a recovery service.
 		const recovery = this.plugin.recovery!;
-		const row = new Setting(list);
-		// `cs-row-inline` keeps the icons and Restore beside the name on phone,
-		// vertically centred like on desktop, instead of stacked onto a
-		// full-width line of their own. See the class in styles.css.
-		row.settingEl.addClass("callout-studio-row", "cs-recovery-row", "cs-row-inline");
+		row.settingEl.addClass("cs-recovery-row");
+		// The time starts the row; the date is the group's heading. An unknown
+		// time is left out rather than invented.
 		if (version.time !== null) {
-			row.settingEl.createEl("time", {
+			row.nameEl.createEl("time", {
 				text: versionClock(version.time), cls: "cs-recovery-time",
 				attr: { datetime: new Date(version.time).toISOString() },
 			});
 		}
-		renderVersionMarker(row.settingEl);
 		renderVersionName(row.nameEl, version);
 		const data = version.data;
 		const difference = data ? recovery.difference(data) : null;
@@ -149,7 +178,9 @@ export class SettingsRecoveryModal extends Modal {
 		});
 		if (!data || !difference) return;
 		row.addButton(button => {
-			button.setButtonText(t("recovery.restore")).setDestructive().setCta()
+			// A plain button (finding S9-04): the red belongs to the question
+			// that follows, not to every row of the list.
+			button.setButtonText(t("recovery.restore"))
 				.onClick(() => {
 					if (explainIfBlocked(this.restoreBlockedReason(difference.changed))) return;
 					void this.restore(version, data, difference.changed);
@@ -159,21 +190,16 @@ export class SettingsRecoveryModal extends Modal {
 		});
 	}
 
-	/** Counts share a line when the controls wrap; the time belongs to the rail. */
+	/** What the version holds and how far it is from now, a line each. */
 	private renderSummary(descEl: HTMLElement, difference: { callouts: number; changed: number } | null): void {
-		const parts: string[] = [];
-		if (!difference) parts.push(t("recovery.unreadable"));
-		else if (difference.changed === 0) parts.push(t("recovery.same"));
-		else {
-			parts.push(t("recovery.summaryCallouts", { callouts: difference.callouts }));
-			parts.push(t("recovery.summaryChanges", { count: difference.changed }));
-		}
-		const counts = difference && difference.changed > 0 ? parts.splice(-2) : [];
-		for (const text of parts) descEl.createDiv({ text, cls: "cs-recovery-summary-part" });
-		if (counts.length) {
-			const group = descEl.createDiv({ cls: "cs-recovery-summary-counts" });
-			for (const text of counts) group.createDiv({ text, cls: "cs-recovery-summary-part" });
-		}
+		let lines: string[];
+		if (!difference) lines = [t("recovery.unreadable")];
+		else if (difference.changed === 0) lines = [t("recovery.same")];
+		else lines = [
+			t("recovery.summaryCallouts", { callouts: difference.callouts }),
+			t("recovery.summaryChanges", { count: difference.changed }),
+		];
+		for (const text of lines) descEl.createDiv({ text, cls: "cs-recovery-summary-part" });
 	}
 
 	/**

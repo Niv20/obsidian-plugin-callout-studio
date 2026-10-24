@@ -1,10 +1,11 @@
 /**
  * settings/recoveryDetailsView.ts — the body of the Version details window.
  *
- * A compact panel with the change count and comparison
- * context. The date is in the window title. Then the comparison itself: one
- * pinned, foldable table per settings section, built by recoverySections.ts
- * and laid out by recoveryComparisonTable.ts.
+ * First a quiet summary: "What changed", how many differences there are, and
+ * a coloured count of each kind. It has no frame of its own (finding S9-12);
+ * it used to be a bordered card. The date is in the window title. Then the
+ * comparison itself: one pinned, foldable table per settings section, built by
+ * recoverySections.ts and laid out by recoveryComparisonTable.ts.
  */
 import type { Component } from "obsidian";
 import { getLocale, t } from "../i18n";

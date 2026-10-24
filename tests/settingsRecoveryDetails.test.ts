@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { Component, type App } from "obsidian";
+import { Component, Setting, type App } from "obsidian";
 import { DEFAULT_CALLOUTS } from "../src/defaultCallouts";
 import { getLocale, registerLocale, setLocale, t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
@@ -16,6 +16,7 @@ import type { CustomPalette, PluginData } from "../src/types";
 import { definition } from "./support/discoveryHarness";
 import { fakeDom, type FakeElement } from "./support/fakeDom";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";
+import { readRepoFile } from "./support/sourceScan";
 
 function savedSetup(): PluginData {
 	const registry = new CalloutRegistry(); registry.load(null);
@@ -236,12 +237,19 @@ describe("earlier setup detail reports", () => {
 			const toggle = table.querySelector(".cs-recovery-section-toggle")!;
 			assert.equal(toggle.tagName.toLowerCase(), "button");
 			assert.equal(toggle.getAttribute("aria-expanded"), "true");
+			// Obsidian's fold triangle, which app.css turns while it is folded.
+			const fold = toggle.querySelector(".collapse-icon")!;
+			assert.ok(fold, "Obsidian's .collapse-icon leads the title");
+			assert.equal(fold.getAttribute("aria-hidden"), "true");
+			assert.equal(fold.hasClass("is-collapsed"), false);
 			toggle.fire("click");
 			assert.ok(table.hasClass("is-collapsed"));
-			assert.ok(table.querySelector(".cs-recovery-section-heading")!.hasClass("is-collapsed"), "the chevron turns");
+			assert.ok(table.querySelector(".cs-recovery-section-heading")!.hasClass("is-collapsed"));
+			assert.ok(fold.hasClass("is-collapsed"), "the triangle turns");
 			assert.equal(toggle.getAttribute("aria-expanded"), "false");
 			toggle.fire("click");
 			assert.ok(!table.hasClass("is-collapsed"));
+			assert.equal(fold.hasClass("is-collapsed"), false);
 			h.component.unload();
 			toggle.fire("click");
 			assert.ok(!table.hasClass("is-collapsed"), "the listener goes with the window's component");
@@ -468,8 +476,8 @@ describe("viewing details from Version history", () => {
 				Object.assign(modal, { app });
 				const root = fakeDom.document.body.createDiv();
 				try {
-					const renderer = modal as unknown as { renderRow(parent: HTMLElement, version: SetupVersion): void };
-					renderer.renderRow(root as unknown as HTMLElement, version!);
+					const renderer = modal as unknown as { renderRow(row: Setting, version: SetupVersion): void };
+					renderer.renderRow(new Setting(root as unknown as HTMLElement), version!);
 					const view = root.querySelectorAll(".clickable-icon").find(element => element.dataset.csTooltip === t("recovery.details.view"));
 					assert.ok(view, mode);
 					assert.notEqual(view.getAttribute("aria-disabled"), "true");
@@ -485,5 +493,34 @@ describe("viewing details from Version history", () => {
 			else Reflect.deleteProperty(SettingsRecoveryDetailsModal.prototype, "open");
 			setLocale(previous);
 		}
+	});
+});
+
+/**
+ * The window's look (finding S9-12): the summary has no frame, and every line
+ * in the tables is Obsidian's table line, solid, so a theme that restyles
+ * tables restyles these too.
+ */
+describe("Version details look like Obsidian's tables", () => {
+	const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, "");
+	const rules: string[] = css.match(/[^{}]+\{[^{}]*\}/g) ?? [];
+	/** Every rule whose selector names `cls`, with its declarations. */
+	const rulesNaming = (cls: string) => rules.filter(rule => rule.split("{")[0]!.includes(cls));
+
+	it("draws no frame around the summary", () => {
+		for (const rule of rulesNaming(".cs-recovery-detail-outcome")) {
+			assert.doesNotMatch(rule, /border|background|padding/, rule);
+		}
+	});
+
+	it("separates with Obsidian's solid table line, never a dashed one", () => {
+		const lines = [...rulesNaming(".cs-recovery-comparison"), ...rulesNaming(".cs-recovery-item"), ...rulesNaming(".cs-recovery-field-row")]
+			.filter(rule => /border(-[a-z-]+)?:/.test(rule));
+		assert.ok(lines.length >= 4, "found the table's lines");
+		for (const rule of lines) {
+			assert.doesNotMatch(rule, /dashed/, rule);
+			assert.doesNotMatch(rule, /border(-[a-z-]+)?:\s*\d+px solid var\(--background-modifier-border\)/, rule);
+		}
+		assert.ok(rulesNaming(".cs-recovery-column-row > th").some(rule => /--table-header-weight/.test(rule) && /--table-header-color/.test(rule)));
 	});
 });

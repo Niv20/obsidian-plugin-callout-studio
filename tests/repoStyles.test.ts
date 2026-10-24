@@ -257,6 +257,10 @@ describe("class names in styles.css and src/ agree", () => {
 	 * line here.
 	 */
 	const EMITTED_WITHOUT_RULES = new Set([
+		"cs-recovery-day", // a Version history day group; Obsidian's SettingGroup draws it (tests find days by it)
+		"cs-recovery-status", // the Loading/empty row; Obsidian's mod-empty-state draws it
+		"cs-recovery-summary-part", // one line of a version's summary, a plain div; tests read the lines by it
+		"cs-version-name", // a version's name after its time; Obsidian's setting name draws it
 		"cs-portable-custom-badge", // a test hook; Obsidian's .flair.mod-flat paints the Custom tag
 		"cs-paused-allowed", // a marker pausedReadOnly reads: the row stays usable while saving is paused
 		"cs-occurrences-summary", // view-specific lookup; shared cs-sidebar-summary supplies the presentation

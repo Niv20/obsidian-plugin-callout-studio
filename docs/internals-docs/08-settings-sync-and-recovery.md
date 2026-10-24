@@ -958,7 +958,7 @@ checkpoint is replaced with the stamped display, and recovery is retried. The
 settings file is not touched.
 
 **Version history** (`SettingsRecoveryModal`) lists every earlier setup from three
-sources, as one timeline:
+sources, in one list, newest first, a group per day:
 
 - device history (`historyEntries()`)
 - vault backups, from this device, another device, or 2.14 (`listSettingsBackups()`)
