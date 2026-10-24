@@ -88,6 +88,19 @@ describe("PersistentParts", () => {
 		assert.equal(parts.has("banner"), false);
 	});
 
+	it("leaves a part where it is when it is still in place, and hands it to another row", () => {
+		const parts = new PersistentParts(() => {});
+		const parent = createDiv();
+		const part = { el: createDiv(), dispose: () => {}, label: "preview" };
+		parts.mount("preview", parent, () => part);
+		// Something after it: a move would put the part back at the end.
+		parent.createDiv({ cls: "after" });
+		parts.mount("preview", parent, () => part);
+		assert.equal(parent.firstElementChild, part.el, "not moved");
+		assert.equal(parts.get<typeof part>("preview")?.label, "preview");
+		assert.equal(parts.get("nothing"), undefined);
+	});
+
 	it("disposes everything when the settings close", () => {
 		const counts = { built: 0, disposed: 0 };
 		const parts = new PersistentParts(() => {});

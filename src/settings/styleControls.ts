@@ -315,7 +315,12 @@ export function wireStyleSlider(
 		slider.sliderEl.addEventListener("pointerup", endDrag);
 		slider.sliderEl.addEventListener("pointercancel", endDrag);
 	}
+	// Obsidian's `setValue` calls the change callback when the value differs,
+	// so showing a value again (below) would commit it a second time. While
+	// `syncing`, the callback lets that call pass.
+	let syncing = false;
 	slider.onChange(async (v) => {
+		if (syncing) return;
 		// `change` marks the end of a drag (release) as well as commit.
 		endDrag();
 		spec.set(round(v));
@@ -323,7 +328,9 @@ export function wireStyleSlider(
 	});
 	return () => {
 		frame = cancelFrame(frame);
+		syncing = true;
 		slider.setValue(spec.get());
+		syncing = false;
 		endDrag();
 	};
 }

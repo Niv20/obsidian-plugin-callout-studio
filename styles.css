@@ -2836,11 +2836,51 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
    a wider UI face (Windows, a custom font) still fits. flex-shrink stays off so
    a narrow modal squeezes the track instead of the number. */
 .callout-studio-slider-row .setting-item-control .slider-value,
-.cs-stacked-slider .setting-item-control .slider-value {
+.cs-stacked-slider .setting-item-control .slider-value,
+.cs-style-slider-row .setting-item-control .slider-value {
 	flex: 0 0 auto;
 	min-width: 7ch;
 	text-align: end;
 	font-variant-numeric: tabular-nums;
+}
+
+/* ─── Style pages (declarative/stylePages.ts) ─────────────────── */
+
+/* The preview's box stays just under the page's title bar (which is pinned
+   itself) while the controls scroll under it, so each control can be watched
+   as it moves. `--cs-sticky-top` is the title bar's height, measured by the
+   page. Opaque, so rows scrolling past do not show through its margins. On a
+   phone the screen is too short to give up for good, so it scrolls away. */
+.setting-group.cs-style-preview-group {
+	position: sticky;
+	top: var(--cs-sticky-top, 0);
+	z-index: 1;
+	background-color: var(--settings-background);
+}
+
+.is-phone .setting-group.cs-style-preview-group {
+	position: static;
+}
+
+/* The preview draws its own framed box, so the row and the box around it
+   draw nothing, and a long sample scrolls inside its own box. */
+.setting-group.cs-style-preview-group .setting-items {
+	background: none;
+	border: none;
+}
+
+.setting-group.cs-style-preview-group .setting-item.cs-style-preview-row {
+	display: block;
+	padding: 0;
+}
+
+.cs-style-preview-row > .setting-item-info {
+	display: none;
+}
+
+.cs-style-preview .cs-live-preview-container {
+	max-height: 40vh;
+	overflow-y: auto;
 }
 
 /* ─── Color Palette Presets ───────────────────────────────────── */

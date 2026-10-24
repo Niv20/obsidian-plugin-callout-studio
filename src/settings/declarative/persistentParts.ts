@@ -42,21 +42,35 @@ export class PersistentParts {
 
 	/**
 	 * Put the part named `id` into `parent` and return it. The first call
-	 * builds it with `create`; later calls move the same element back.
+	 * builds it with `create`, which builds it straight into `parent` (an
+	 * editor in it is then made on the page, as it expects) or anywhere else,
+	 * and returns it; later calls put the same element back, moving
+	 * it only if it is not already there. (Obsidian's redraw empties a row's
+	 * controls, but not what is beside them: a part kept there never moves,
+	 * so an editor in it keeps its focus.)
 	 *
 	 * (`<Part extends PersistentPart>` is a "generic": a part that carries more
 	 * than its element, such as the picker a row also has to reach, comes back
 	 * with its own type. One name is always built by the same `create`, so the
 	 * part kept under it has that type, which is what the `as` says.)
 	 */
-	mount<Part extends PersistentPart>(id: string, parent: HTMLElement, create: () => Part): Part {
+	mount<Part extends PersistentPart>(id: string, parent: HTMLElement, create: (parent: HTMLElement) => Part): Part {
 		let part = this.parts.get(id) as Part | undefined;
 		if (!part) {
-			part = create();
+			part = create(parent);
 			this.parts.set(id, part);
 		}
-		parent.appendChild(part.el);
+		if (part.el.parentElement !== parent) parent.appendChild(part.el);
 		return part;
+	}
+
+	/**
+	 * The part kept under `id`, for another row that works with it (a slider
+	 * that drives the preview, say), or undefined while there is none.
+	 * (The same `as` as in {@link mount}: one name, one kind of part.)
+	 */
+	get<Part extends PersistentPart>(id: string): Part | undefined {
+		return this.parts.get(id) as Part | undefined;
 	}
 
 	/** Whether a part named `id` is being kept. */

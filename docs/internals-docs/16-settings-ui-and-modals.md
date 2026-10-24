@@ -2678,7 +2678,10 @@ every slider's range, step and readout is one entry in
 [`styleSpecs.ts`](../../src/settings/styleSpecs.ts): the declarative style
 pages use both, so the two places cannot drift apart. `styleControls.ts`'s
 `wireStyleSlider` is the live-drag contract on its own, for a slider a page
-row makes. Its three modal titles are
+row makes. Showing a value again (after a reset) commits nothing: Obsidian's
+`SliderComponent.setValue` calls the change callback when the value differs,
+which used to save once per slider on top of the reset's own save. Its three
+modal titles are
 separate translation keys rather than a concatenation of “Global callout
 style” and a role name, so each locale can put the words in its natural order.
 

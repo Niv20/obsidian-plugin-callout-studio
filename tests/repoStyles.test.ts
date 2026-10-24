@@ -280,6 +280,7 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-fallback-tag", // finds a callout row's Default tag in tests; Obsidian's .flair.mod-flat draws it, with its own margin after the name
 		"cs-btn-disabled", // marks a blocked button (ui/blockedButton.ts); Obsidian's aria-disabled rule draws the 70% dim
 		"cs-icon-adjust-reset", // finds an icon-adjustment group's ↺ in tests; Obsidian draws the button, cs-reset-idle hides it
+		"cs-group-reset", // finds a style page box's heading ↺ to dim it (declarative/stylePages.ts); Obsidian draws the button
 		"cs-tag-chip-remove", // finds an ID pill's x in tests; Obsidian's .multi-select-pill-remove-button draws it
 		"cs-tag-chip-lock", // finds the pinned ID's lock in tests; it sits in Obsidian's remove-button slot
 		"callout-studio-color-input", // finds a palette colour dot in tests and scenes; Obsidian's input[type=color] rules draw it

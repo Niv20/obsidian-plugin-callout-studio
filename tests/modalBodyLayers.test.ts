@@ -300,6 +300,20 @@ const STICKY_LAYERS: Record<string, string> = {
 	".cs-recovery-comparison > thead":
 		"each section of the Setup details comparison — its title row and column headings as one block — " +
 		"inside the details window's .modal-content (its top padding moved into the report) and bounded by the section's table",
+	".setting-group.cs-style-preview-group":
+		"a style page's preview box (declarative/stylePages.ts), inside the settings page's .vertical-tab-content, " +
+		"pinned under Obsidian's own .setting-page-titlebar, which sticks at 0 in the same scroller",
+};
+
+/**
+ * The layers that stick under another sticky layer of the same scroller, so
+ * their `top` is that layer's height (measured by the code into a variable),
+ * not 0. The rule below holds for every other layer: an offset meant to clear
+ * a *static* rule above leaves a strip of bare background, but one that clears
+ * a pinned bar is where the content stops.
+ */
+const BELOW_A_PINNED_BAR: Record<string, string> = {
+	".setting-group.cs-style-preview-group": "var(--cs-sticky-top, 0)",
 };
 
 /**
@@ -370,6 +384,11 @@ describe("sticky layers", () => {
 				top !== undefined,
 				`${label} is sticky with no \`top\` — it never sticks at all (styles.css:${rule.line})`,
 			);
+			const belowBar = BELOW_A_PINNED_BAR[label];
+			if (belowBar !== undefined) {
+				assert.strictEqual(top, belowBar, `${label} sticks at the pinned bar's measured height`);
+				return;
+			}
 			assert.match(
 				top,
 				/^0(px|%|rem|em)?$/,
@@ -426,6 +445,10 @@ describe("sticky layers", () => {
 
 		const own: Record<string, RegExp> = {
 			".cs-combobox-group-label": /^var\(--cs-menu-face\)$/,
+			// Straight under Obsidian's pinned page title bar, so it paints what
+			// that bar paints and the two read as one band. (`inherit` would get
+			// `transparent` from the unpainted page content it sits in.)
+			".setting-group.cs-style-preview-group": /^var\(--settings-background\)$/,
 		};
 		for (const rule of painted) {
 			assert.match(

@@ -1329,6 +1329,7 @@ export const en: Record<string, string> = {
 
 	// Global settings section (per-role style popups)
 	"settings.globalSettings": "Global Callout Studio style options",
+	"settings.calloutStyle": "Callout style",
 	"settings.globalSettingsRegularDesc":
 		"Adjust the border, radius, font scale, and alignment of every block callout in your vault.",
 	"settings.globalSettingsHeadingDesc":

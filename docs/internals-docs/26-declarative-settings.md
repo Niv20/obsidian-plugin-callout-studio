@@ -116,8 +116,11 @@ directly for a change; it asks
   change the signature cannot see, such as an icon finishing its download).
 - **Held while the user is busy:** an open Obsidian `.menu`, an open picker
   list (`.cs-combobox-menu` / `.cs-palette-menu` without their closed class), a
-  drag (`body.is-grabbing`), or a row's ⋮ menu that is still waiting for its
-  counts (`isRowMenuActive(app)` in `calloutRowMenu.ts`). The update waits a
+  drag (`body.is-grabbing`), a field of a settings page with the focus (a text
+  field, a slider, the style pages' preview editor: Obsidian keeps a focused
+  *control* row through a redraw, but not a render row), or a row's ⋮ menu
+  that is still waiting for its counts (`isRowMenuActive(app)` in
+  `calloutRowMenu.ts`). The update waits a
   tick at a time, for at most about ten seconds, then runs anyway.
 - **Delivered when the settings window is hidden or closed:** the wait is the
   next frame of the window showing the tab *or* a 250 ms timer, whichever comes
@@ -138,10 +141,15 @@ render: guardRender("saving notice", (setting) => {
 }),
 ```
 
-`mount` builds the part the first time and moves the same element back into
-the row on every redraw. It returns the part itself, typed as its builder made
-it, so a part can carry more than its element: the fallback picker's part
-holds the picker, which every draw shows the saved value in. The cleanup
+`mount` builds the part the first time, straight into the row (its builder
+is given the parent, so an editor in it is made on the page, as it expects),
+and puts the same element back on every redraw, moving it only if it is not
+already there: Obsidian's redraw empties a row's controls but leaves what is
+beside them, so a part kept there never moves and keeps its focus. It returns
+the part itself, typed as its builder made it, so a part can carry more than
+its element: the fallback picker's part holds the picker, which every draw
+shows the saved value in. `get(id)` hands a kept part to another row (the
+heading page's gap slider drives the preview). The cleanup
 cannot tell a redraw from the user leaving the page, so it calls
 `releaseLater`: 300 ms later (longer than Obsidian's 150 ms page slide), a part
 whose element is back on the page is kept, and any other is disposed. Leaving
@@ -315,6 +323,42 @@ many callouts link to the palette.
 - **The settings search** finds a palette by its name, under this page.
 - **What must redraw it** (unit 12): the palettes, and light or dark mode
   (the colours are the mode on screen).
+
+## The style pages
+
+[`declarative/stylePages.ts`](../../src/settings/declarative/stylePages.ts):
+the main page's **Callout style** box (`callout-style`) opens Heading
+callout, Inline callout and Block callout (`style-heading`, `style-inline`,
+`style-block`), then Saved color palettes. Each page replaces that role's
+style window and is built from the same pieces (`StylePreview`, the slider
+definitions of `styleSpecs.ts`, `wireStyleSlider`):
+
+| Box | Block | Heading | Inline |
+|---|---|---|---|
+| (preview) | the live preview, pinned | same | same |
+| (no heading) | Corner rounding, Align content with title | Corner rounding, Show fold arrow | Corner rounding, Font scale |
+| Borders ↺ | Top, Right, Bottom, Left, Border thickness | same | same |
+| … ↺ | Font scale: Title, Content | Title spacing: Vertical spacing, Spacing between headers | - |
+
+- **The preview** is a kept part in a box of its own (`cs-style-preview-group`),
+  pinned under the page's title bar while the controls scroll (sticky,
+  `--cs-sticky-top` measured from the title bar with a `ResizeObserver`; not on
+  a phone). It holds the demo callout (and `settingsEditOpen`) until the page
+  is left. The heading page's preview follows the registry's change round
+  itself, so the fold-arrow switch and the spacing reach its demo.
+- **Switches** are Obsidian's control rows, keyed into the settings
+  (`globalStyle.borderSides.top`, `headingCallouts.showFoldArrow`, …), saved by
+  the tab's control binding. Border thickness shows while a side has a border.
+- **Sliders** are render rows, so a drag repaints every frame; the release
+  announces through `registry.settingsChanged()`, like a switch. Each has its
+  own ↺ before its value, and a box of several controls has ↺ in its heading
+  (made once, as Obsidian makes a box's heading buttons, so it reads the
+  settings anew when pressed). A ↺ with nothing to reset is dimmed
+  (`aria-disabled`, which Obsidian draws at 40%).
+- **The settings search** finds every control by its name and by words in the
+  slider definitions ("radius", "border", "title size").
+- **While saving is paused** every control's row is `disabled` (greyed), and a
+  box's ↺ says why.
 
 ## Read-only while saving is paused
 

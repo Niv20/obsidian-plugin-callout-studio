@@ -38,6 +38,7 @@ import {
 	addStyleSlider,
 	createSliderRow,
 	setSliderDisplay,
+	wireStyleSlider,
 	type StyleSliderSpec,
 } from "../src/settings/styleControls";
 import type { SettingsTabPlugin } from "../src/settings/sections/types";
@@ -551,5 +552,46 @@ describe("addStyleSlider — start and end, exactly once each", () => {
 			h.sliderEl().fire("pointerdown");
 			h.sliderEl().fire("pointerup");
 		});
+	});
+});
+
+/* -------------------------------------------------------------------------- */
+/* wireStyleSlider — showing a value again                                    */
+/* -------------------------------------------------------------------------- */
+
+describe("wireStyleSlider — showing a value again", () => {
+	it("commits nothing, though Obsidian's setValue calls the change callback", () => {
+		// A slider that does what Obsidian's does: `setValue` calls the change
+		// callback whenever the value differs. (The stub's does not.)
+		let value = 0;
+		let changed: ((v: number) => unknown) | null = null;
+		const slider = {
+			sliderEl: createDiv(),
+			setLimits() { return slider; },
+			setDisplayFormat() { return slider; },
+			getValue: () => value,
+			setValue(next: number) {
+				if (next !== value) {
+					value = next;
+					changed?.(next);
+				}
+				return slider;
+			},
+			onChange(callback: (v: number) => unknown) { changed = callback; return slider; },
+		};
+		let stored = 5;
+		let commits = 0;
+		const showSaved = wireStyleSlider(
+			{ cssInjector: { inject: () => {} } } as unknown as SettingsTabPlugin,
+			slider as unknown as SliderComponent,
+			createDiv(),
+			{ label: "Size", min: 0, max: 10, step: 1, decimals: 0, get: () => stored, set: (v) => { stored = v; } },
+			() => { commits++; },
+		);
+		assert.strictEqual(value, 5, "drawn with the saved value, before the callback exists");
+		stored = 7;
+		showSaved();
+		assert.strictEqual(value, 7);
+		assert.strictEqual(commits, 0);
 	});
 });

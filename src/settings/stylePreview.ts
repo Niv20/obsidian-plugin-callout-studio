@@ -40,14 +40,19 @@ export class StylePreview {
 	/** Component owning the gap demo's MarkdownRenderer output. */
 	private gapDemoComponent: Component | null = null;
 
+	/**
+	 * @param showTitle Whether a "Live preview" heading goes above the box. A
+	 *   style page leaves it out: the page's own title already says what it is.
+	 */
 	constructor(
 		private readonly plugin: SettingsTabPlugin,
 		private readonly role: CalloutRenderRole,
 		parent: HTMLElement,
+		showTitle = true,
 	) {
 		this.el = parent.createDiv({ cls: "callout-studio-preview-col" });
 		this.preview = new LiveCalloutPreview(plugin.app, this.el, {
-			title: t("settings.previewTitle"),
+			title: showTitle ? t("settings.previewTitle") : undefined,
 			initialText: sampleText(role),
 			beforeRender: () => {
 				// A neutral demo callout for previewing the vault-wide geometry,

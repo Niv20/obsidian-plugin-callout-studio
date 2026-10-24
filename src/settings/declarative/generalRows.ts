@@ -70,7 +70,7 @@ export function fallbackRow(ctx: TreeContext): CsRender {
 		disabled: disabledWhilePaused(ctx.plugin.settingsWriter),
 		render: guardRender("fallback callout", (setting) => {
 			setting.setClass("cs-reset-setting");
-			const { picker } = ctx.parts.mount(FALLBACK_PICKER, setting.controlEl, () => buildFallbackPicker(ctx));
+			const { picker } = ctx.parts.mount(FALLBACK_PICKER, setting.controlEl, (parent) => buildFallbackPicker(ctx, parent));
 			// Another device's settings may have changed it since the last draw.
 			picker.setValue(ctx.plugin.settings.fallbackCalloutId);
 			addControlComponent(setting, picker);
@@ -80,8 +80,8 @@ export function fallbackRow(ctx: TreeContext): CsRender {
 	};
 }
 
-/** Build the picker once; the row moves it back in on every draw. */
-function buildFallbackPicker(ctx: TreeContext): FallbackPickerPart {
+/** Build the picker once, into the row's controls; every draw puts it back there. */
+function buildFallbackPicker(ctx: TreeContext, parent: HTMLElement): FallbackPickerPart {
 	const pick = (id: string): void => {
 		void setFallbackCallout(ctx.plugin, id);
 		// Drawn again for the reset arrow, which shows once another fallback is chosen.
@@ -89,8 +89,7 @@ function buildFallbackPicker(ctx: TreeContext): FallbackPickerPart {
 	};
 	// Refused while paused; the redraw then puts the saved fallback back.
 	const onChange = refuseWhilePaused(ctx.plugin.settingsWriter, pick, () => ctx.display());
-	// Built into a spare element: `mount` moves its outer element into the row.
-	const picker = createFallbackPicker(ctx.plugin, createDiv(), onChange);
+	const picker = createFallbackPicker(ctx.plugin, parent, onChange);
 	return { el: picker.el, picker, dispose: () => picker.destroy() };
 }
 

@@ -147,4 +147,19 @@ describe("interactionInProgress", () => {
 		assert.equal(interactionInProgress(doc), true);
 		fakeDom.document.body.removeClass("is-grabbing");
 	});
+
+	it("sees a field being typed in or slid on a settings page, and only there", () => {
+		const doc = fakeDom.document as unknown as Document;
+		const page = fakeDom.document.body.createDiv({ cls: "vertical-tab-content" });
+		const slider = page.createEl("input", { attr: { type: "range" } });
+		slider.focus();
+		assert.equal(interactionInProgress(doc), true);
+		const note = fakeDom.document.body.createEl("input");
+		note.focus();
+		assert.equal(interactionInProgress(doc), false, "a field outside the settings does not count");
+		page.createDiv({ cls: "setting-item" }).focus();
+		assert.equal(interactionInProgress(doc), false, "a focused row is not a field");
+		page.remove();
+		note.remove();
+	});
 });

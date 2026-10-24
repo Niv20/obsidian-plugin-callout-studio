@@ -154,11 +154,30 @@ const PICKER_LISTS = [
 /**
  * Whether the user is in the middle of something in `doc` that a redraw would
  * cut short: a drag (Obsidian and the plugin both put `is-grabbing` on the
- * body while dragging), an open Obsidian menu, or an open picker list.
+ * body while dragging), an open Obsidian menu, an open picker list, or a field
+ * of the settings they are typing in or sliding.
  */
 export function interactionInProgress(doc: Document): boolean {
 	if (doc.body.hasClass("is-grabbing")) return true;
 	if (doc.querySelector(".menu")) return true;
+	if (settingsFieldFocused(doc)) return true;
 	return PICKER_LISTS.some(({ list, closed }) =>
 		Array.from(doc.querySelectorAll(`.${list}`)).some((el) => !el.hasClass(closed)));
+}
+
+/** The tags of the fields a person types into, or slides. */
+const FIELD_TAGS = new Set(["INPUT", "TEXTAREA", "SELECT"]);
+
+/**
+ * Whether the focus is in a field on a settings page (a text field, a slider,
+ * the style pages' preview editor). Obsidian keeps a focused *control* row as
+ * it is through a redraw, but not a render row, whose field a redraw would
+ * take away from under the cursor. (Every settings page, sub-pages too, is
+ * inside a `.vertical-tab-content`.)
+ */
+function settingsFieldFocused(doc: Document): boolean {
+	const el = doc.activeElement as HTMLElement | null;
+	if (!el) return false;
+	const isField = FIELD_TAGS.has(el.tagName) || el.isContentEditable;
+	return isField && el.closest(".vertical-tab-content") !== null;
 }
