@@ -272,14 +272,9 @@ export class ConfirmationModal extends Modal {
 }
 export class Editor {}
 
-/**
- * Settings-pane constructor. This exists so the *bundle links*, and
- * for no other reason: `AutoComplete` imports `CalloutEditor` as a value (it
- * opens one for "Create new"), which drags the whole settings UI into any suite
- * that touches the popover. It is not constructed there, and a suite that
- * did construct one would need a real implementation.
- */
-export class PluginSettingTab {}
+// The settings tab and sub-page base classes, with the parts of Obsidian 1.13's
+// declarative settings the tests drive: tests/support/settingsTabStub.ts.
+export { PluginSettingTab, SettingPage } from "./settingsTabStub";
 /** Menus retain one hide callback, as Obsidian does; later registrations replace it. */
 export const createdMenus: Menu[] = [];
 /** What a stub menu item was told, in the order the builder added it. */
@@ -536,6 +531,13 @@ export class ToggleComponent {
 
 	getValue(): boolean { return this.value; }
 
+	/** Obsidian's toggle marks itself `is-disabled`; `Setting.setDisabled` reaches it. */
+	disabled = false;
+	setDisabled(disabled: boolean): this {
+		this.disabled = disabled;
+		return this;
+	}
+
 	setTooltip(text: string): this {
 		setTooltip(this.toggleEl, text);
 		return this;
@@ -598,6 +600,13 @@ export class SliderComponent {
 	}
 
 	setInstant(): this {
+		return this;
+	}
+
+	/** `Setting.setDisabled` reaches every component of the row, this one too. */
+	disabled = false;
+	setDisabled(disabled: boolean): this {
+		this.disabled = disabled;
 		return this;
 	}
 
@@ -687,6 +696,18 @@ export class Setting {
 	readonly extraButtons: ButtonLike[] = [];
 	/** Obsidian 1.13's error line under the control; made by `setErrorMessage`. */
 	errorEl: ElementLike | null = null;
+	/**
+	 * Every component the row made (buttons, toggles, sliders, …), as
+	 * Obsidian keeps them: `setDisabled` reaches each one, and `clear` forgets
+	 * them.
+	 */
+	components: Array<{ setDisabled?(disabled: boolean): unknown }> = [];
+	/** Whether `setDisabled(true)` is in force. */
+	disabled = false;
+	/** The icon slot `setIcon` makes, first in the row; null until then. */
+	iconEl: ElementLike | null = null;
+	/** What a click on the whole row does (`setAction`, `setNavigable`). */
+	private rowClick: (() => void) | null = null;
 
 	constructor(containerEl: ElementLike) {
 		this.settingEl = containerEl.createDiv({ cls: "setting-item" });
@@ -768,12 +789,78 @@ export class Setting {
 	}
 
 	/**
+	 * Obsidian 1.13's `clear()`, as the declarative renderer uses it before
+	 * drawing a reused row again: the controls go (with the components and the
+	 * error line); the name, description and icon stay.
+	 */
+	clear(): this {
+		(this.controlEl as unknown as { empty(): void }).empty();
+		this.components = [];
+		this.extraButtons.length = 0;
+		this.sliders.length = 0;
+		this.errorEl = null;
+		this.settingEl.removeClass?.("is-invalid");
+		return this;
+	}
+
+	/** Marks the row `is-disabled` and disables every component it made. */
+	setDisabled(disabled: boolean): this {
+		this.disabled = disabled;
+		if (disabled) this.settingEl.addClass?.("is-disabled");
+		else this.settingEl.removeClass?.("is-disabled");
+		for (const component of this.components) component.setDisabled?.(disabled);
+		return this;
+	}
+
+	/**
+	 * The icon at the start of the row: a `div.setting-item-icon`, made on the
+	 * first call and put before everything else, as Obsidian's runtime-only
+	 * `setIcon` does. `null` leaves the slot empty. (Nothing is drawn here; the
+	 * icon's name is kept in `data-cs-icon`.)
+	 */
+	setIcon(icon: string | null): this {
+		if (!this.iconEl) {
+			const row = this.settingEl as ElementLike & { insertBefore(node: unknown, ref: unknown): unknown; firstChild: unknown };
+			this.iconEl = this.settingEl.createDiv({ cls: "setting-item-icon" });
+			row.insertBefore(this.iconEl, row.firstChild);
+		}
+		if (this.iconEl.dataset) this.iconEl.dataset.csIcon = icon ?? "";
+		return this;
+	}
+
+	/** A row that is a button as a whole (Obsidian's `setAction`). */
+	setAction(onClick: () => void): this {
+		this.settingEl.addClass?.("mod-action", "tappable");
+		return this.setRowClick(onClick);
+	}
+
+	/** A row that opens a page, with a chevron at its end (Obsidian's `setNavigable`). */
+	setNavigable(onClick: () => void): this {
+		this.settingEl.addClass?.("mod-navigable", "tappable");
+		this.controlEl.createDiv({ cls: "setting-item-chevron" });
+		return this.setRowClick(onClick);
+	}
+
+	/** One click listener on the row, which a disabled row ignores. */
+	private setRowClick(onClick: () => void): this {
+		if (!this.rowClick) {
+			this.settingEl.addEventListener?.("click", () => {
+				if (!this.disabled) this.rowClick?.();
+			});
+		}
+		this.rowClick = onClick;
+		return this;
+	}
+
+	/**
 	 * Enough of a button for a section to *build* — the sections under test here
 	 * are exercised for what they render, not for what their buttons do, and a
 	 * section that throws while wiring one never gets as far as the rows.
 	 */
 	addButton(cb: (button: ButtonLike) => unknown): this {
-		cb(new ButtonLike(this.controlEl));
+		const button = new ButtonLike(this.controlEl);
+		this.components.push(button);
+		cb(button);
 		return this;
 	}
 
@@ -790,6 +877,7 @@ export class Setting {
 	addExtraButton(cb: (button: ButtonLike) => unknown): this {
 		const button = new ButtonLike(this.controlEl);
 		this.extraButtons.push(button);
+		this.components.push(button);
 		cb(button);
 		return this;
 	}
@@ -797,12 +885,21 @@ export class Setting {
 	addSlider(cb: (slider: SliderComponent) => unknown): this {
 		const slider = new SliderComponent(this.controlEl);
 		this.sliders.push(slider);
+		this.components.push(slider);
 		cb(slider);
 		return this;
 	}
 
 	addToggle(cb: (toggle: ToggleComponent) => unknown): this {
-		cb(new ToggleComponent(this.controlEl));
+		const toggle = new ToggleComponent(this.controlEl);
+		this.components.push(toggle);
+		cb(toggle);
+		return this;
+	}
+
+	/** Obsidian 1.11's `addComponent`: the callback builds a component in the control area. */
+	addComponent<T extends { setDisabled?(disabled: boolean): unknown }>(cb: (controlEl: ElementLike) => T): this {
+		this.components.push(cb(this.controlEl));
 		return this;
 	}
 }
@@ -816,8 +913,11 @@ export class Setting {
 export class SettingGroup {
 	readonly groupEl: ElementLike;
 	readonly listEl: ElementLike;
-	/** Every row added through `addSetting`, in order. */
-	readonly settings: Setting[] = [];
+	/**
+	 * Every row added through `addSetting`, in order. Obsidian's declarative
+	 * renderer replaces the array after each draw, so it is writable.
+	 */
+	settings: Setting[] = [];
 	/** The heading's buttons, so a test can press them. */
 	readonly extraButtons: ButtonLike[] = [];
 	private headerEl: ElementLike | null = null;
@@ -844,9 +944,63 @@ export class SettingGroup {
 		return { nameEl: this.headerNameEl!, controlEl: this.headerControlEl! };
 	}
 
+	/**
+	 * As Obsidian's: the heading row shows while it has text or buttons, and is
+	 * taken out of the group when it has neither.
+	 */
 	setHeading(text: string): this {
-		this.header().nameEl.textContent = text;
+		if (text !== "" || this.extraButtons.length > 0) {
+			this.header().nameEl.textContent = text;
+		} else if (this.headerEl) {
+			(this.headerEl as unknown as { remove(): void }).remove();
+			this.headerEl = null;
+		}
 		return this;
+	}
+
+	/** The search field Obsidian puts above the rows (`div.setting-group-search`). */
+	searchEl: ElementLike | null = null;
+
+	addSearch(cb: (search: SearchComponent) => unknown): this {
+		const group = this.groupEl as ElementLike & { insertBefore(node: unknown, ref: unknown): unknown };
+		this.searchEl = this.groupEl.createDiv({ cls: "setting-group-search" });
+		group.insertBefore(this.searchEl, this.listEl);
+		cb(new SearchComponent(this.searchEl as unknown as HTMLElement));
+		return this;
+	}
+
+	private deleteItemCb: ((index: number) => void) | null = null;
+	private reorderItemCb: ((from: number, to: number) => void) | null = null;
+	/** The index `focusNearestItem` was last asked for, so a test can check it. */
+	focusedIndex: number | null = null;
+
+	/** Delete or Backspace on a focused row calls this with the row's index. */
+	onDeleteItem(cb: (index: number) => void): this {
+		this.deleteItemCb = cb;
+		return this;
+	}
+
+	/** Alt+↑ or Alt+↓ on a focused row calls this with its index and the next one. */
+	onReorderItem(cb: (from: number, to: number) => void): this {
+		this.reorderItemCb = cb;
+		return this;
+	}
+
+	focusNearestItem(index: number): void {
+		this.focusedIndex = index;
+	}
+
+	/** Test seam: Delete pressed on the row at `index`, as Obsidian handles it. */
+	pressDelete(index: number): void {
+		if (index < 0 || index >= this.settings.length) return;
+		this.deleteItemCb?.(index);
+		this.focusNearestItem(index);
+	}
+
+	/** Test seam: Alt+↑ (`-1`) or Alt+↓ (`1`) on the row at `index`, clamped as Obsidian clamps it. */
+	pressAltArrow(index: number, step: -1 | 1): void {
+		const to = Math.min(this.settings.length - 1, Math.max(0, index + step));
+		if (to !== index) this.reorderItemCb?.(index, to);
 	}
 
 	addClass(...classes: string[]): this {

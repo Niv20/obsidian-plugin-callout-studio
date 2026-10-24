@@ -12,6 +12,7 @@
 import { PluginSettingTab } from "obsidian";
 import type { App, SettingDefinitionItem } from "obsidian";
 import { PLUGIN_ICON_ID } from "../constants";
+import { readSettingAt, writeControlValue } from "./declarative/controlBinding";
 import { registerMenuScopeHost } from "../ui/menuEscape";
 import { CalloutEditor } from "./CalloutEditor";
 import { openCalloutEditorFor } from "./openCalloutEditor";
@@ -104,6 +105,29 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 	 */
 	getSettingDefinitions(): SettingDefinitionItem[] {
 		return [];
+	}
+
+	/**
+	 * A declarative control's current value. Obsidian's own reads
+	 * `plugin.settings[key]`; here the keys are dotted paths into the nested
+	 * settings, read live each time. @see declarative/controlBinding.ts
+	 */
+	getControlValue(key: string): unknown {
+		return readSettingAt(this.plugin.settings, key);
+	}
+
+	/**
+	 * Save a declarative control's change through the plugin's own save, never
+	 * through Obsidian's default, which calls `saveData(plugin.settings)` and
+	 * would overwrite data.json with the settings alone, losing every callout.
+	 * While saving is paused the change is refused and the page redrawn, which
+	 * puts the control back. @see declarative/controlBinding.ts
+	 */
+	async setControlValue(key: string, value: unknown): Promise<void> {
+		await writeControlValue(this.plugin, key, value, {
+			afterWrite: () => this.plugin.cssInjector.inject(),
+			onRefused: () => this.update(),
+		});
 	}
 
 	display(): void {

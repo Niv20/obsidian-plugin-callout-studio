@@ -729,6 +729,27 @@ export class FakeElement {
 	show(): void { this.setCssProps({ display: "" }); }
 	hide(): void { this.setCssProps({ display: "none" }); }
 
+	/** Obsidian's `toggle(show)`: `show()` when true, `hide()` when false. */
+	toggle(show: boolean): void {
+		if (show) this.show();
+		else this.hide();
+	}
+
+	/**
+	 * Obsidian's `isShown()`: neither this element nor any ancestor is hidden.
+	 * (The real one asks the layout; here, with no layout, `display: none` is
+	 * the only way to be hidden.)
+	 */
+	isShown(): boolean {
+		if (this.cssProps.get("display") === "none") return false;
+		return this.parentElement ? this.parentElement.isShown() : true;
+	}
+
+	/** A click on this element, heard by it and its ancestors, as `HTMLElement.click()`. */
+	click(): void {
+		this.dispatchEvent({ type: "click", bubbles: true });
+	}
+
 	/**
 	 * Set a CSS custom property the way Obsidian sets `--font-text-size` on
 	 * `<body>`: an inline declaration `getPropertyValue` reads straight back.

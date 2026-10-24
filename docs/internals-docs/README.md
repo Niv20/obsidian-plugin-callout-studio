@@ -78,6 +78,7 @@ covering whatever you're touching.
 | [17-i18n.md](17-i18n.md) | How `t()` resolves strings, the locale download/verification pipeline, and the contribution workflow. |
 | [18-theme-callout-discovery.md](18-theme-callout-discovery.md) | How the active theme's callout types are found, read back and represented - and the compatibility guide for **theme authors**. |
 | [19-upgrading-manual-discovery.md](19-upgrading-manual-discovery.md) | Released 2.12.x compatibility, verified one-time recovery archives, and safe removal of legacy local discovery state. |
+| [26-declarative-settings.md](26-declarative-settings.md) | The settings tab as a tree Obsidian 1.13+ draws and indexes for search: the renderer's rules, the plugin's types, saving a control without `saveData`, never throwing, and the test renderer. |
 
 ## Shipping a change
 

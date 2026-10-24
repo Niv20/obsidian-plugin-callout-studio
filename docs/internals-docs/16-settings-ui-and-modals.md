@@ -404,6 +404,13 @@ deferred (see the [`settings-getsettingdefinitions`](#) memory note if one
 exists in this project's history; functionally, this is a `[]` returned on
 purpose, not a stub someone forgot).
 
+The tab is moving to the declarative tree; that work, and everything Obsidian
+does with the tree, is in [26-declarative-settings.md](26-declarative-settings.md).
+One part of it is live already: the tab overrides `getControlValue` and
+`setControlValue`, so no declarative control can ever reach Obsidian's default
+`saveData(plugin.settings)`, which would overwrite `data.json` with the
+settings alone.
+
 The tab also sets `icon` to `PLUGIN_ICON_ID` (Lucide `paintbrush`, the mark
 that stands for Callout Studio). Obsidian draws a tab's icon beside its rows in
 the settings search results, as it does for every core tab; the sidebar list

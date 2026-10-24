@@ -125,6 +125,12 @@ is a gate, not a substitute for that - it covers the pure utilities, the
 registry, the CSS it generates, both editor surfaces, the public API, and
 the repo's own conventions (below).
 
+The declarative settings tree has a test renderer of its own,
+[`tests/support/declarativeRenderer.ts`](../../tests/support/declarativeRenderer.ts):
+Obsidian 1.14.4's renderer rebuilt step for step, so a test can draw the tree,
+redraw it, open its pages and run the settings search
+([26 § Testing the tree](26-declarative-settings.md#testing-the-tree)).
+
 ### Recovery table browser check
 
 `node scripts/test-recovery-table-corners.mjs` renders the real comparison table

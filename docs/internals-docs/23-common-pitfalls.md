@@ -345,6 +345,14 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
   `requestFrameFor(el, …)` / `cancelFrame(handle)` in
   [`utils/elementFrame.ts`](../../src/utils/elementFrame.ts), which also keeps
   the window for the cancel (frame ids are per window).
+- **A declarative settings control must never use Obsidian's default
+  save.** `PluginSettingTab.setControlValue` writes `plugin.settings[key]` and
+  calls `plugin.saveData(plugin.settings)`, which here would overwrite
+  `data.json` with the settings alone (every callout and sync stamp gone). The
+  tab overrides `getControlValue`/`setControlValue` to go through
+  `saveSettings()` and the paused guard
+  ([26 § Saving a control](26-declarative-settings.md#saving-a-control-never-savedata));
+  keep it that way, and never call `saveData` from a settings row.
 - **`EmbeddableMarkdownEditor` is an undocumented internal API and may
   change or disappear.** Every construction of it is wrapped in a
   `try/catch` with a full-fidelity static-render fallback
