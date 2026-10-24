@@ -34,8 +34,16 @@ checkbox changes inclusion; the format/line label and **Before** text form the
 source-navigation button, while **After** starts inline editing. Source and link
 changes on the same selected heading line share one card. Each inline token,
 including its optional payload, has a separate card and selection; headings show
-their complete source line. Both previews wrap without truncation. Rows paginate in batches of
-100; all remain available.
+their complete source line. Both previews wrap without truncation. Rows are drawn 100 at a time, and
+the next 100 load as the list scrolls (`ui/loadOnScroll.ts`, finding S10-07):
+the list ends in an empty marker (`.cs-load-more-sentinel`) that an
+`IntersectionObserver`, rooted in the list's scroller with a screen of margin
+below, watches; when it comes into reach the view raises its limit and
+redraws, and the observer moves to the new marker. A zero-height scroller (a
+hidden sidebar tab) never loads, and the view stops watching on every redraw
+and on close. Where the window has no `IntersectionObserver` (the tests' fake
+DOM) the list keeps its **Show 100 more** button. Search does the same with a
+private virtual scroller; there was always a button until 2026-10-24.
 
 **The top of both sidebars is drawn as Obsidian draws the top of its own panes**
 (`ui/sidebarFrame.ts`, finding S10-05). `createSidebarNavHeader` prepends

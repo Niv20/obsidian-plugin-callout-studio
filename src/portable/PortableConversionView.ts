@@ -16,6 +16,7 @@ import { PortableConversionNavigation } from "./portableConversionNavigation";
 import { PortableConversionHelpModal } from "./PortableConversionHelpModal";
 import { HELP_ICON_ID } from "../constants";
 import { addSidebarNavButton, createSidebarNavHeader } from "../ui/sidebarFrame";
+import { LoadOnScroll } from "../ui/loadOnScroll";
 
 export const PORTABLE_CONVERSION_VIEW = "callout-studio-portable-conversion";
 
@@ -32,6 +33,11 @@ export class PortableConversionView extends ItemView {
 	 * Made once per open and kept through a redraw of the content.
 	 */
 	private nav: { header: HTMLElement; help: HTMLElement } | null = null;
+	/** Draws the next 100 rows as the list's end scrolls into reach (finding S10-07). */
+	private readonly loadOnScroll = new LoadOnScroll(() => this.frame?.scroll ?? null, () => {
+		this.limit += PORTABLE_PAGE_SIZE;
+		this.render();
+	});
 	private basePlan?: PortableCalloutConversionPlan;
 	private plan?: PortableCalloutConversionPlan;
 	private selected = new Set<string>();
@@ -109,6 +115,7 @@ export class PortableConversionView extends ItemView {
 		this.nav = { header, help };
 	}
 	private stop(): void {
+		this.loadOnScroll.stop();
 		this.opened = false;
 		this.revision++;
 		this.stale = true;
@@ -288,7 +295,7 @@ export class PortableConversionView extends ItemView {
 		frame.retry.hidden = !this.failed || this.unrecoverable;
 		frame.retry.disabled = this.scanning || this.confirming || this.applying;
 		this.busy.update(frame, this.stale, !this.failed && !this.unrecoverable && (this.stale || this.scanning || this.applying));
-		this.resultNavigation.renderRows(frame.results, plan, this.limit, !this.ready() || Boolean(plan?.recovery), this.custom.editingId, this.custom.resetEnabled);
+		const sentinel = this.resultNavigation.renderRows(frame.results, plan, this.limit, !this.ready() || Boolean(plan?.recovery), this.custom.editingId, this.custom.resetEnabled);
 		this.custom.render(frame.results);
 		if (focusedId) Array.from(frame.results.querySelectorAll<HTMLInputElement>("input[data-change-id]"))
 			.find(input => input.dataset.changeId === focusedId && !input.disabled)?.focus({ preventScroll: true });
@@ -296,6 +303,7 @@ export class PortableConversionView extends ItemView {
 			.find(button => button.dataset.action === focusedAction && !button.disabled
 				&& button.closest<HTMLElement>("[data-row-id]")?.dataset.rowId === focusedRow)?.focus({ preventScroll: true });
 		frame.scroll.scrollTop = scrollTop;
+		this.loadOnScroll.watch(sentinel);
 		this.resultNavigation.sync(!this.stale, this.failed);
 	}
 	private async convert(): Promise<void> {

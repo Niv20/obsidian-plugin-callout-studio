@@ -257,6 +257,7 @@ describe("class names in styles.css and src/ agree", () => {
 	 * line here.
 	 */
 	const EMITTED_WITHOUT_RULES = new Set([
+		"cs-load-more-sentinel", // the empty marker a list ends in while more is left to load (ui/loadOnScroll.ts)
 		"cs-sidebar-file", // a note's group in either sidebar; Obsidian's .tree-item.search-result draws it
 		"cs-sidebar-matches", // a note's box of results; Obsidian's .search-result-file-matches draws it
 		"cs-notice-action", // a notice's action button; Obsidian's .notice-cta draws it

@@ -244,7 +244,8 @@ that were added before the count was known; see
 [settings menu groups](16-settings-ui-and-modals.md#callout-row-menu-groups).
 Menus unsubscribe when hidden.
 Views unsubscribe from both index and registry changes when closed.
-The list starts with 100 results and adds 100 per **Show more** action. Per-file
+The list starts with 100 results and adds 100 each time its end scrolls into
+reach (see [Settings UI and modals](16-settings-ui-and-modals.md)). Per-file
 heading counts cover the complete filtered query, including unloaded cards.
 The native sidebar tab is the sole visible occurrences control. It is offered
 once on first install, and the fixed command and **Find callouts** menu reopen
@@ -323,7 +324,7 @@ to the DOM only when the marked card changes (`OccurrenceResults.followCaret`,
 that card is out of sight and the scroller is laid out (a hidden sidebar tab has
 zero height). Nothing sticks over the list, so a row lands 8 px inside the
 scroller's edge (`coveredTop` 0; it was the height of a sticky file heading
-until 2026-10-24). It never moves focus or expands **Show more**.
+until 2026-10-24). It never moves focus or loads another page.
 
 `usage/occurrenceAtCursor.ts` resolves the caret against the **drawn** cards of
 that note (`OccurrenceResults.linesOf`), innermost first: an inline pill the caret

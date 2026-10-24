@@ -1,6 +1,7 @@
 import type { MarkdownView } from "obsidian";
 import { t } from "../i18n";
 import { createSidebarFileGroup, renderSidebarLocation, revealSidebarCard } from "../ui/sidebarResults";
+import { canLoadOnScroll, LOAD_MORE_SENTINEL } from "../ui/loadOnScroll";
 import { occurrenceAtCursor, type OccurrencesByLine } from "./occurrenceAtCursor";
 import type { CalloutOccurrence } from "./occurrenceTypes";
 import { occurrenceButton, occurrenceRoleLabel } from "./occurrencesViewFrame";
@@ -20,6 +21,12 @@ export class OccurrenceResults {
 	private countedResults: readonly CalloutOccurrence[] | null = null;
 	private fileCounts = new Map<string, number>();
 	private previous: { results: readonly CalloutOccurrence[]; limit: number; empty: boolean } | null = null;
+	/**
+	 * The empty marker the list ends in while more results are left to draw,
+	 * for the view's `LoadOnScroll` to watch; null when everything is drawn,
+	 * or when the window cannot watch it (then the list ends in a button).
+	 */
+	sentinel: HTMLElement | null = null;
 
 	constructor(private readonly pageSize: number) {}
 
@@ -31,6 +38,7 @@ export class OccurrenceResults {
 		this.previous = null;
 		this.countedResults = null;
 		this.fileCounts.clear();
+		this.sentinel = null;
 	}
 
 	getOccurrence(button: HTMLElement): CalloutOccurrence | undefined { return this.occurrences.get(button); }
@@ -102,8 +110,15 @@ export class OccurrenceResults {
 			this.byPath.set(occurrence.path, lines);
 			lines.set(occurrence.line, [...lines.get(occurrence.line) ?? [], occurrence]);
 		});
+		// More to draw: an empty marker the view loads the next page at as it
+		// scrolls into reach (finding S10-07), or, where the window cannot watch
+		// it, the old button.
 		const remaining = results.length - limit;
-		const more = remaining > 0 ? occurrenceButton(content, "more", t("usage.more", { count: Math.min(this.pageSize, remaining) })) : null;
+		const watchable = canLoadOnScroll(content.ownerDocument);
+		this.sentinel = remaining > 0 && watchable
+			? content.createDiv({ cls: LOAD_MORE_SENTINEL, attr: { "aria-hidden": "true" } }) : null;
+		const more = remaining > 0 && !watchable
+			? occurrenceButton(content, "more", t("usage.more", { count: Math.min(this.pageSize, remaining) })) : null;
 		this.select(this.selected);
 		const restoreFocus = focusedOccurrence ? this.rows.get(occurrenceKey(focusedOccurrence)) : focusMore ? more : null;
 		restoreFocus?.focus({ preventScroll: true });

@@ -73,8 +73,8 @@ out of the picker.
 
 *Choose a type to see its source references, grouped by note. The results scroll below the fixed filters and summary.*
 
-Results are grouped by note, as Obsidian's **Search** pane groups them: the note's name with a small count at the end, then one rounded box with a row for each occurrence, separated by thin lines. The count covers matches not yet
-revealed by **Show more**. Each row shows its format, line number, and at most
+Results are grouped by note, as Obsidian's **Search** pane groups them: the note's name with a small count at the end, then one rounded box with a row for each occurrence, separated by thin lines. The count covers matches the
+list has not loaded yet. Each row shows its format, line number, and at most
 two lines of raw Markdown, including syntax such as `> [!info]`. Block previews
 include a line of body text when available. From the filter icon, choose **All formats**, **Block**,
 **Heading**, or **Inline** to filter the selected type or all types. With a mouse or
@@ -93,7 +93,7 @@ the highlight to the row your cursor is in there, if any; the new note's name
 takes a grey background, as the current file does in Obsidian's file list. Updating the list keeps
 keyboard focus on the same occurrence when its source is unchanged.
 Ctrl-click (Command-click on macOS) opens a new tab. The list initially shows
-up to 100 results; **Show more** reveals another page.
+up to 100 results, and loads more as you scroll down it, as Obsidian's Search does.
 
 The results use the full width of the sidebar, however wide you make it. The
 file groups and rows use the same layout as **Review conversion**.
@@ -149,9 +149,8 @@ wins, so a filtered-out inner callout passes the highlight to the one around it.
 When the cursor is in no callout, no row is highlighted.
 
 If the highlighted row is outside the visible part of the list, the sidebar
-scrolls just far enough to show it in full, clear of the file name that stays
-pinned at the top of the list. It never takes keyboard focus, and it does not
-reveal rows hidden behind **Show more**.
+scrolls just far enough to show it in full. It never takes keyboard focus, and it
+does not load rows the list has not reached yet.
 
 The highlight follows the cursor, not scrolling: scrolling the note without
 clicking leaves it where it is, and Reading view, which has no cursor, highlights

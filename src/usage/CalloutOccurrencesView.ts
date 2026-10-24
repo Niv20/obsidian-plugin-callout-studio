@@ -15,6 +15,7 @@ import { navigateToCalloutOccurrence } from "./navigation";
 import { SidebarCursorSync } from "../ui/sidebarCursorSync";
 import { createOccurrencesFrame, OCCURRENCE_ROLES, openFormatMenu, type OccurrencesFrame } from "./occurrencesViewFrame";
 import { addSidebarNavButton, createSidebarNavHeader } from "../ui/sidebarFrame";
+import { LoadOnScroll } from "../ui/loadOnScroll";
 
 export const CALLOUT_OCCURRENCES_VIEW = "callout-studio-occurrences";
 const PAGE_SIZE = 100;
@@ -51,6 +52,11 @@ export class CalloutOccurrencesView extends ItemView {
 	private nav: { header: HTMLElement; filter: HTMLElement } | null = null;
 	/** The format menu while it is open, so closing the view closes it too. */
 	private formatMenu: Menu | null = null;
+	/** Draws the next 100 results as the list's end scrolls into reach (finding S10-07). */
+	private readonly loadOnScroll = new LoadOnScroll(() => this.frame?.scroll ?? null, () => {
+		this.limit += PAGE_SIZE;
+		this.render();
+	});
 	private disposeMenuHost?: () => void;
 	private picker: CalloutCombobox | null = null;
 	private lastIndexState = "";
@@ -147,6 +153,7 @@ export class CalloutOccurrencesView extends ItemView {
 		this.clearFrame();
 		this.formatMenu?.hide();
 		this.formatMenu = null;
+		this.loadOnScroll.stop();
 		this.nav?.header.remove();
 		this.nav = null;
 		this.cachedQuery = null;
@@ -339,6 +346,7 @@ export class CalloutOccurrencesView extends ItemView {
 		this.resultCards.render(frame.results, this.results, this.limit, complete,
 			(path, section) => this.activeFile.addSection(path, section), () => this.activeFile.clearSections());
 		frame.scroll.scrollTop = scrollTop;
+		this.loadOnScroll.watch(this.resultCards.sentinel);
 		this.activeFile.sync(this.results, this.limit, index.status, this.failed);
 		// New or moved cards: the caret may sit in a different one now.
 		this.cursor.schedule();

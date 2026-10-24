@@ -75,7 +75,8 @@ export class PortableConversionNavigation {
 	open(): void { this.opened = true; this.activeFile.open(); this.cursor.open(); }
 	close(): void { this.opened = false; this.invalidate(); this.cursor.close(); this.clearCurrent(); this.activeFile.close(); this.root = undefined; }
 	invalidate(): void { this.generation++; }
-	renderRows(root: HTMLElement, plan: PortableCalloutConversionPlan | undefined, limit: number, disabled: boolean, editingId?: string, resetEnabled = false): void {
+	/** Draw the rows; returns the marker the list ends in while more are left (see renderPortableConversionRows). */
+	renderRows(root: HTMLElement, plan: PortableCalloutConversionPlan | undefined, limit: number, disabled: boolean, editingId?: string, resetEnabled = false): HTMLElement | null {
 		this.root = root;
 		this.limit = limit;
 		this.editingId = editingId;
@@ -84,7 +85,7 @@ export class PortableConversionNavigation {
 		for (const row of this.rows.slice(0, limit)) this.drawn.set(row.path, [...this.drawn.get(row.path) ?? [], row]);
 		if (!this.rows.some(row => row.id === this.current)) this.current = undefined;
 		this.activeFile.clearSections();
-		renderPortableConversionRows(root, plan, this.rows, limit, disabled, this.current,
+		return renderPortableConversionRows(root, plan, this.rows, limit, disabled, this.current,
 			(path, section) => this.activeFile.addSection(path, section), editingId, resetEnabled);
 	}
 	sync(ready: boolean, failed: boolean): void {

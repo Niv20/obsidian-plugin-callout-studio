@@ -4,6 +4,7 @@ import { createSidebarFileGroup, renderSidebarLocation } from "../ui/sidebarResu
 import type { PortableCalloutConversionPlan } from "../utils/portableCalloutVault";
 import type { PortableCalloutConversionChange, PortableCalloutLinkChange } from "../utils/portableCalloutPlan";
 import { PORTABLE_PAGE_SIZE } from "./portableConversionFrame";
+import { canLoadOnScroll, LOAD_MORE_SENTINEL } from "../ui/loadOnScroll";
 
 export interface PortableConversionRow {
 	id: string;
@@ -24,15 +25,23 @@ export function portableConversionRows(plan?: PortableCalloutConversionPlan): Po
 	].sort((a, b) => a.path.localeCompare(b.path) || a.change.line - b.change.line || Number(a.linkOnly) - Number(b.linkOnly));
 }
 
+/**
+ * Draw the first `limit` rows, grouped by note.
+ *
+ * @returns The empty marker the list ends in while more rows are left, for
+ *   the view's `LoadOnScroll` to watch (finding S10-07); null when every row
+ *   is drawn, or when the window cannot watch it (the list then ends in the
+ *   old Show more button).
+ */
 export function renderPortableConversionRows(
 	root: HTMLElement, plan: PortableCalloutConversionPlan | undefined, rows: readonly PortableConversionRow[],
 	limit: number, disabled: boolean, current: string | undefined,
 	onSection: (path: string, section: HTMLElement) => void,
 	editingId?: string,
 	resetEnabled = false,
-): void {
+): HTMLElement | null {
 	root.empty();
-	if (!plan) return;
+	if (!plan) return null;
 	if (plan.skipped) root.createEl("p", { text: t("portable.skipped", { count: plan.skipped }), cls: "cs-portable-change-note" });
 	const selected = new Set(plan.selectedIds);
 	const blocked = new Map(plan.blockedChanges.map(entry => [entry.id, entry.reason]));
@@ -95,10 +104,15 @@ export function renderPortableConversionRows(
 		}
 		if (linkOnly) source.setAttribute("aria-description", t("portable.relatedLinksHint"));
 	}
-	if (rows.length > limit) root.createEl("button", {
+	if (rows.length <= limit) return null;
+	if (canLoadOnScroll(root.ownerDocument)) {
+		return root.createDiv({ cls: LOAD_MORE_SENTINEL, attr: { "aria-hidden": "true" } });
+	}
+	root.createEl("button", {
 		text: t("portable.showMore", { count: Math.min(PORTABLE_PAGE_SIZE, rows.length - limit) }),
 		cls: "cs-portable-more", attr: { "data-action": "more" },
 	});
+	return null;
 }
 
 function rowRole(row: PortableConversionRow): string {

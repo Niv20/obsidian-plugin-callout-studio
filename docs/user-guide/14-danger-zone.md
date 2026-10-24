@@ -82,7 +82,7 @@ Only the row's checkbox includes or excludes that replacement. The summary
 checkbox selects all changes, clears them all, or shows a dash when only some
 are selected. Beside it, the summary counts the selected replacements and the
 heading links they will update; when there are none, it leaves heading links
-out. **Show more** reveals additional results; switching notes scrolls
+out. More results load as you scroll down the list; switching notes scrolls
 to that file's results.
 
 To change a proposed replacement, click its **After** text or the pencil in the
