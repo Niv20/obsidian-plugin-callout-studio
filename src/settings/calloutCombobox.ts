@@ -120,6 +120,15 @@ export class CalloutCombobox {
 		return this.popup.value?.id ?? "";
 	}
 
+	/**
+	 * The picker's outer element (field, icon and list). It can be moved to
+	 * another parent as a whole: the declarative settings keep one picker and
+	 * put it back into its row after every redraw (declarative/persistentParts.ts).
+	 */
+	get el(): HTMLElement {
+		return this.popup.el;
+	}
+
 	/** Move the selection without firing `onChange`. */
 	setValue(id: string): void {
 		this.popup.setSelected(id);

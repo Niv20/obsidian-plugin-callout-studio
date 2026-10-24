@@ -49,6 +49,7 @@ import {
 	showIconSource,
 } from "./sourcePicker";
 import { explainIfBlocked, paintBlocked } from "../../ui/blockedButton";
+import { setButtonBusy } from "../../ui/busyButton";
 import type { ListboxPopup } from "../../ui/listboxPopup";
 import { addCancelButton, applyModalChrome, removeModalChrome } from "../modalChrome";
 import { t } from "../../i18n";
@@ -559,21 +560,16 @@ export class IconPicker extends Modal {
 			return;
 		}
 
-		// Obsidian's busy button, as a form shows while it submits: `mod-loading`
-		// hides the label behind a ring without changing the button's width.
-		const busy = this.confirmBtn;
-		busy.disabled = true;
-		busy.addClass("mod-loading");
-		busy.setAttribute("aria-busy", "true");
+		// Obsidian's busy button, as a form shows while it submits: a ring over
+		// the label, without changing the button's width.
+		setButtonBusy(this.confirmBtn, true);
 		try {
 			await this.plugin.ensureIconArtwork(this.selectedIcon);
 		} catch {
 			// Failures surface through the icon's own error state; never trap
 			// the user in the picker over one.
 		} finally {
-			busy.disabled = false;
-			busy.removeClass("mod-loading");
-			busy.removeAttribute("aria-busy");
+			setButtonBusy(this.confirmBtn, false);
 		}
 		// The user may have closed the modal while the fetch was in flight.
 		if (!this.resolve) return;

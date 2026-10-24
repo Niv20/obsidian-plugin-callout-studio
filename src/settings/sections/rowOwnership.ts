@@ -28,6 +28,7 @@
  */
 import { Menu } from "obsidian";
 import { t } from "../../i18n";
+import { activeThemeName } from "../../manager/theme/customCssApi";
 import {
 	handleCalloutDelete,
 	handleCalloutReplace,
@@ -89,6 +90,25 @@ export function partitionByStyleOwner(
 		else own.push(def);
 	}
 	return { fromTheme, own, builtIn };
+}
+
+/** Every callout the plugin knows, split into the three lists. */
+export function partitionCallouts(ctx: SettingsSectionContext): ReturnType<typeof partitionByStyleOwner> {
+	return partitionByStyleOwner(styleOwnerFacts(ctx), [
+		...ctx.plugin.registry.getThemeProvided(),
+		...ctx.plugin.registry.getUserDefined(),
+		...ctx.plugin.registry.getBuiltIn(),
+	]);
+}
+
+/**
+ * The theme's callout styles are switched off while a theme is active —
+ * what keeps its section, and the switch in it, on screen with no rows.
+ * In Obsidian's default theme the switch has nothing to take away.
+ */
+export function themeStylesSwitchedOff(ctx: SettingsSectionContext): boolean {
+	return !ctx.plugin.registry.settings.themeCalloutStyles.enabled &&
+		activeThemeName(ctx.app) !== null;
 }
 
 /**

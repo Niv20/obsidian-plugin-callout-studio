@@ -22,6 +22,7 @@ import { t } from "../../i18n";
 import type { SectionDisclosure } from "./sectionDisclosure";
 import { attachPersistedFold } from "./calloutListsFold";
 import { createStickySection } from "./stickySection";
+import { linesFragment } from "../../ui/textLines";
 import { WelcomeModal } from "../WelcomeModal";
 import { addManualDiscoveryButton } from "./manualDiscoveryButton";
 import { followScanPlacement } from "./scanPlacement";
@@ -210,15 +211,7 @@ function addThemeStylesSwitch(
 	let toggle: ToggleComponent | null = null;
 	const setting = new Setting(bodyEl)
 		.setName(t("settings.themeCalloutStyles"))
-		.setDesc(
-			// One short sentence per line.
-			createFragment((frag) => {
-				t("settings.themeCalloutStylesDesc").split("\n").forEach((line, i) => {
-					if (i > 0) frag.createEl("br");
-					frag.appendText(line);
-				});
-			}),
-		)
+		.setDesc(linesFragment(t("settings.themeCalloutStylesDesc")))
 		.addToggle((tg) => {
 			toggle = tg.setValue(styles().enabled).onChange((enabled) => {
 				if (enabled === styles().enabled) return;

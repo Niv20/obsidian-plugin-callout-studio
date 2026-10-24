@@ -23,13 +23,17 @@
  * happen — offline, or a blocked CDN — the choice is still kept and the UI
  * stays English until it succeeds, which is the honest outcome. Silently
  * reverting the dropdown would look like the click had not registered.
+ *
+ * The steps (the picker with its reset arrow, applying a choice, the missing
+ * language and its retry) are exported, so the declarative settings page
+ * (declarative/generalRows.ts) draws the same row from the same code.
  */
 import { Setting } from "obsidian";
 import { DEFAULT_SETTINGS } from "../../constants";
 import { getSelectableLocales, resolveLocaleFile, setLocale, t } from "../../i18n";
 import { SelectDropdown } from "../../ui/selectDropdown";
 import { addFieldResetButton } from "../editor/fieldResetButton";
-import type { SettingsSectionContext } from "./types";
+import type { SettingsSectionContext, SettingsTabPlugin } from "./types";
 
 type LanguageChoice = {
 	code: string;
@@ -54,47 +58,84 @@ export function renderLanguageSection(
 		.setClass("cs-reset-setting")
 		.setDesc(t("settings.languageDesc"));
 
+	const controls = drawLanguageControls(setting, ctx.plugin, (pref) => {
+		void applyLanguagePreference(ctx.plugin, pref, () => ctx.display(), () => {
+			controls.picker.setDisabled(true);
+			setting.setDesc(t("locale.downloading"));
+		});
+	});
+	ctx.registerDisposer(controls.dispose);
+
+	renderUnavailableWarning(ctx, containerEl);
+}
+
+/** What {@link drawLanguageControls} drew, and how to take it down. */
+export interface LanguageControls {
+	picker: SelectDropdown;
+	/**
+	 * Stop what the controls set up: the picker's menu, the layout watch.
+	 * (A property holding a function, not a method, so it can be handed on
+	 * by itself, as a row's cleanup.)
+	 */
+	dispose: () => void;
+}
+
+/**
+ * Draw the language picker and its reset arrow into `setting`'s controls.
+ *
+ * @param choose Called with the preference to save when the user picks a
+ *   language or resets. It must write the preference into the settings
+ *   before it returns (it may go on saving and downloading afterwards), so
+ *   the reset arrow, checked right after, sees the new preference.
+ */
+export function drawLanguageControls(
+	setting: Setting,
+	plugin: SettingsTabPlugin,
+	choose: (pref: string) => void,
+): LanguageControls {
 	// A plain choice opened in Obsidian's own menu, with a ✓ beside the
 	// language shown. Every language is listed under its own native name.
 	const picker = new SelectDropdown(setting.controlEl, t("settings.language"))
 		.setOptions(getSelectableLocales().map(({ code, name }) => ({ value: code, label: name })))
-		.setValue(shownLanguage(ctx.plugin.settings.language))
+		.setValue(shownLanguage(plugin.settings.language))
 		// `onPick` rather than `onChange`: picking the language already shown
 		// must still reach this, because for a language whose download is
 		// still missing, picking it again is how the user retries.
 		.onPick((code) => {
-			const current = ctx.plugin.settings.language;
+			const current = plugin.settings.language;
 			const next = preferenceFor(current, code);
 			// Nothing changed and nothing is missing: no save, no redraw.
-			if (next === current && ctx.plugin.locales.isReady(next)) return;
-			void setLanguage(ctx, setting, picker, next);
+			if (next === current && plugin.locales.isReady(next)) return;
+			choose(next);
 			syncReset();
 		});
 	const syncReset = addFieldResetButton(
 		setting,
 		`${t("settings.resetAction")}: ${t("settings.language")}`,
-		() => showsObsidianLanguage(ctx.plugin.settings.language),
+		() => showsObsidianLanguage(plugin.settings.language),
 		() => {
 			picker.setValue(shownLanguage(FOLLOW_OBSIDIAN));
-			void setLanguage(ctx, setting, picker, FOLLOW_OBSIDIAN);
+			choose(FOLLOW_OBSIDIAN);
 		},
 	);
 	renderLanguageWidthSizer(picker.el, setting.controlEl, getSelectableLocales());
-	observeLanguageSettingLayout(ctx, setting);
-	ctx.registerDisposer(() => picker.destroy());
-
-	renderUnavailableWarning(ctx, containerEl);
+	const stopWatchingLayout = observeLanguageSettingLayout(setting);
+	return {
+		picker,
+		dispose: () => {
+			stopWatchingLayout();
+			picker.destroy();
+		},
+	};
 }
 
 /**
  * Follow Obsidian's actual setting-row layout instead of copying its current
  * breakpoint. Core and themes are free to change that breakpoint; the picker
- * only needs to know whether its own row has already stacked.
+ * only needs to know whether its own row has already stacked. Returns the
+ * function that stops watching.
  */
-function observeLanguageSettingLayout(
-	ctx: SettingsSectionContext,
-	setting: Setting,
-): void {
+function observeLanguageSettingLayout(setting: Setting): () => void {
 	const sync = (): void => {
 		setting.settingEl.toggleClass(
 			"cs-language-setting-stacked",
@@ -105,7 +146,7 @@ function observeLanguageSettingLayout(
 	sync();
 	const observer = new ResizeObserver(sync);
 	observer.observe(setting.settingEl);
-	ctx.registerDisposer(() => observer.disconnect());
+	return () => observer.disconnect();
 }
 
 /**
@@ -211,33 +252,66 @@ function languageName(code: string): string {
 	return getSelectableLocales().find((choice) => choice.code === code)?.name ?? code;
 }
 
-async function setLanguage(
-	ctx: SettingsSectionContext,
-	setting: Setting,
-	picker: SelectDropdown,
-	val: string,
+/**
+ * Make `pref` the language preference: write it (at once, before the first
+ * wait), save it, and bring the interface to it, downloading the language
+ * first when this device does not have it.
+ *
+ * @param redraw Draws the settings again once there is something new to show.
+ * @param onDownload Runs just before a download starts, so the page can say so.
+ */
+export async function applyLanguagePreference(
+	plugin: SettingsTabPlugin,
+	pref: string,
+	redraw: () => void,
+	onDownload?: () => void,
 ): Promise<void> {
-	ctx.plugin.settings.language = val;
-	await ctx.plugin.saveSettings();
+	plugin.settings.language = pref;
+	await plugin.saveSettings();
 
 	// Nothing to fetch for English, or for a language already on disk —
 	// the common case, and it must not flicker a spinner.
-	if (ctx.plugin.locales.isReady(val)) {
-		setLocale(val);
-		ctx.display();
-		ctx.plugin.applyLocaleChange();
+	if (plugin.locales.isReady(pref)) {
+		setLocale(pref);
+		redraw();
+		plugin.applyLocaleChange();
 		return;
 	}
 
-	picker.setDisabled(true);
-	setting.setDesc(t("locale.downloading"));
+	onDownload?.();
 	// ensureLocale applies the new language itself, including the
 	// command names and the rendered notes, so there is nothing to do
 	// here but redraw: on success every label has changed language, and
 	// on failure the warning below has to replace the "Downloading…"
-	// text this row is still showing.
-	await ctx.plugin.ensureLocale();
-	ctx.display();
+	// text the row may still be showing.
+	await plugin.ensureLocale();
+	redraw();
+}
+
+/**
+ * The name of the chosen language when this device has not downloaded it,
+ * or null when nothing is missing.
+ *
+ * Named also while following Obsidian ("עברית is not downloaded yet"), and
+ * after the row the picker shows, since codes such as `zh-hk` and `no` are
+ * served by another code's file.
+ */
+export function missingLanguageName(plugin: SettingsTabPlugin): string | null {
+	const pref = plugin.settings.language;
+	if (!resolveLocaleFile(pref) || plugin.locales.isReady(pref)) return null;
+	return languageName(shownLanguage(pref));
+}
+
+/** Whether the chosen language is downloading right now. */
+export function languageDownloading(plugin: SettingsTabPlugin): boolean {
+	const file = resolveLocaleFile(plugin.settings.language);
+	return file !== null && plugin.locales.state(file) === "loading";
+}
+
+/** Try the download of the chosen language again, then draw the settings again. */
+export async function retryLanguageDownload(plugin: SettingsTabPlugin, redraw: () => void): Promise<void> {
+	await plugin.ensureLocale();
+	redraw();
 }
 
 /**
@@ -251,14 +325,8 @@ function renderUnavailableWarning(
 	ctx: SettingsSectionContext,
 	containerEl: HTMLElement,
 ): void {
-	const pref = ctx.plugin.settings.language;
-	const file = resolveLocaleFile(pref);
-	if (!file || ctx.plugin.locales.isReady(pref)) return;
-
-	// Name the language that is missing, also while following Obsidian
-	// ("עברית is not downloaded yet"). Named after the row the picker shows,
-	// since codes such as `zh-hk` and `no` are served by another code's file.
-	const name = languageName(shownLanguage(pref));
+	const name = missingLanguageName(ctx.plugin);
+	if (name === null) return;
 
 	new Setting(containerEl)
 		.setClass("callout-studio-locale-warning")
@@ -271,8 +339,7 @@ function renderUnavailableWarning(
 				.onClick(async () => {
 					btn.setDisabled(true);
 					btn.setButtonText(t("locale.downloading"));
-					await ctx.plugin.ensureLocale();
-					ctx.display();
+					await retryLanguageDownload(ctx.plugin, () => ctx.display());
 				}),
 		);
 }

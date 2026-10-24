@@ -108,8 +108,9 @@ field that looks editable (finding S5-V2). `nameTextInput` is therefore `null`
 for a built-in; every reader already uses `?.`.
 
 While a save runs, **Save** keeps its words and its width and shows Obsidian's
-own spinner: `updateSaveState()` toggles `mod-loading` and sets `aria-busy`,
-with `disabled` so a second press cannot start a second save (finding S5-V3).
+own spinner: `updateSaveState()` calls `setButtonBusy`
+([`ui/busyButton.ts`](../../src/ui/busyButton.ts): `mod-loading`, `aria-busy`,
+and `disabled` so a second press cannot start a second save; finding S5-V3).
 It used to read **Saving…**; the `editor.saving` key is no longer used.
 `tests/editorFormValues.test.ts` pins both.
 

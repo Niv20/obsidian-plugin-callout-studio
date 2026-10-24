@@ -41,17 +41,22 @@ export class PersistentParts {
 	constructor(private readonly later: Later = (run) => { window.setTimeout(run, RELEASE_DELAY_MS); }) {}
 
 	/**
-	 * Put the part named `id` into `parent` and return its element. The first
-	 * call builds it with `create`; later calls move the same element.
+	 * Put the part named `id` into `parent` and return it. The first call
+	 * builds it with `create`; later calls move the same element back.
+	 *
+	 * (`<Part extends PersistentPart>` is a "generic": a part that carries more
+	 * than its element, such as the picker a row also has to reach, comes back
+	 * with its own type. One name is always built by the same `create`, so the
+	 * part kept under it has that type, which is what the `as` says.)
 	 */
-	mount(id: string, parent: HTMLElement, create: () => PersistentPart): HTMLElement {
-		let part = this.parts.get(id);
+	mount<Part extends PersistentPart>(id: string, parent: HTMLElement, create: () => Part): Part {
+		let part = this.parts.get(id) as Part | undefined;
 		if (!part) {
 			part = create();
 			this.parts.set(id, part);
 		}
 		parent.appendChild(part.el);
-		return part.el;
+		return part;
 	}
 
 	/** Whether a part named `id` is being kept. */

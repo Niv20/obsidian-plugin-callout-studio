@@ -234,6 +234,23 @@ export class FakeDocumentFragment {
 	drain(): FakeNode[] {
 		return this.childNodes.splice(0, this.childNodes.length);
 	}
+
+	/**
+	 * A detached copy, the whole subtree when `deep`. Obsidian's settings
+	 * renderer copies a description fragment before every draw, so the same
+	 * definition can be drawn again (`cM` in app.js).
+	 */
+	cloneNode(deep = false): FakeDocumentFragment {
+		const copy = new FakeDocumentFragment();
+		if (deep) {
+			for (const child of this.childNodes) {
+				copy.appendChild(
+					child.nodeType === NODE_TEXT ? new FakeText(child.nodeValue) : child.cloneNode(true),
+				);
+			}
+		}
+		return copy;
+	}
 }
 
 class FakeClassList {

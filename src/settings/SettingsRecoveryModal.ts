@@ -35,6 +35,7 @@ import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
 import { blockedWhilePaused } from "./pausedGuard";
 import { SettingsRecoveryDetailsModal } from "./SettingsRecoveryDetailsModal";
+import { appendLines } from "../ui/textLines";
 import { renderVersionName, versionClock, versionDay, versionDayKey, versionName, versionTime } from "./versionRow";
 
 export interface RecoveryModalPlugin {
@@ -52,11 +53,7 @@ const OUTCOMES: Record<Exclude<RestoreOutcome, "restored">, string> = {
 
 /** Help text as it is written: one short sentence per line. */
 function renderLines(parent: HTMLElement, text: string, cls: string): void {
-	const paragraph = parent.createEl("p", { cls });
-	text.split("\n").forEach((line, index) => {
-		if (index > 0) paragraph.createEl("br");
-		paragraph.appendText(line);
-	});
+	appendLines(parent.createEl("p", { cls }), text);
 }
 
 export class SettingsRecoveryModal extends Modal {

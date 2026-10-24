@@ -7,8 +7,8 @@
  * `plugin.saveData(plugin.settings)`, which in Callout Studio would overwrite
  * data.json with the settings alone and lose every callout. These tests pin
  * the replacement: dotted keys into the nested settings, a refusal while saving
- * is paused, the change painted before it is saved, and `saveData` never
- * called. They also draw a real control row through the test renderer, so the
+ * is paused, the change announced through the registry (whose change round
+ * repaints and saves), and `saveData` never called. They also draw a real control row through the test renderer, so the
  * whole path Obsidian takes is covered.
  */
 import assert from "node:assert/strict";
@@ -28,15 +28,14 @@ function nestedSettings() {
 	return { language: "en", globalStyle: { block: { alignContentWithTitle: false } } };
 }
 
-/** A plugin whose every save is recorded, in order, with what happened around it. */
+/** A plugin that records, in order, every announcement and every save. */
 function recordingPlugin(paused = false) {
 	const log: string[] = [];
 	const plugin = {
 		settings: nestedSettings(),
 		settingsWriter: { isFrozen: paused },
-		saveSettings: async () => { log.push("saveSettings"); },
+		registry: { settingsChanged: () => { log.push("settingsChanged"); } },
 		saveData: async () => { log.push("saveData"); },
-		cssInjector: { inject: () => { log.push("inject"); } },
 	};
 	return { plugin, log };
 }
@@ -60,22 +59,22 @@ describe("dotted keys", () => {
 });
 
 describe("writeControlValue", () => {
-	it("writes, paints, then saves", async () => {
+	it("writes, then announces", () => {
 		const { plugin, log } = recordingPlugin();
-		await writeControlValue(plugin, "language", "he", {
-			afterWrite: () => log.push(`paint ${plugin.settings.language}`),
+		writeControlValue(plugin, "language", "he", {
+			announce: () => log.push(`announce ${plugin.settings.language}`),
 			onRefused: () => log.push("refused"),
 		});
-		assert.deepEqual(log, ["paint he", "saveSettings"]);
+		assert.deepEqual(log, ["announce he"]);
 	});
 
-	it("refuses while saving is paused: nothing written, nothing saved", async () => {
+	it("refuses while saving is paused: nothing written, nothing announced", () => {
 		const notices: string[] = [];
 		(globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__ = notices;
 		try {
 			const { plugin, log } = recordingPlugin(true);
-			await writeControlValue(plugin, "language", "he", {
-				afterWrite: () => log.push("paint"),
+			writeControlValue(plugin, "language", "he", {
+				announce: () => log.push("announce"),
 				onRefused: (key) => log.push(`refused ${key}`),
 			});
 			assert.deepEqual(log, ["refused language"]);
@@ -86,9 +85,9 @@ describe("writeControlValue", () => {
 		}
 	});
 
-	it("saves nothing for a key the settings do not have", async () => {
+	it("announces nothing for a key the settings do not have", () => {
 		const { plugin, log } = recordingPlugin();
-		await writeControlValue(plugin, "nope", 1, { afterWrite: () => log.push("paint"), onRefused: () => log.push("refused") });
+		writeControlValue(plugin, "nope", 1, { announce: () => log.push("announce"), onRefused: () => log.push("refused") });
 		assert.deepEqual(log, []);
 	});
 });
@@ -105,12 +104,12 @@ describe("the settings tab's control binding", () => {
 		return { plugin, log, tab, toggle };
 	}
 
-	it("reads a nested key, and saves through saveSettings, never saveData", async () => {
+	it("reads a nested key, and announces the change through the registry, never saveData", async () => {
 		const { plugin, log, toggle } = tabWithToggle();
 		assert.equal(toggle.getValue(), false);
 		await toggle.commit(true);
 		assert.equal(plugin.settings.globalStyle.block.alignContentWithTitle, true);
-		assert.deepEqual(log, ["inject", "saveSettings"]);
+		assert.deepEqual(log, ["settingsChanged"]);
 	});
 
 	it("puts a refused change back by redrawing the page", async () => {

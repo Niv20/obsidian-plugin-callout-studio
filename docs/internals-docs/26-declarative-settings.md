@@ -88,9 +88,13 @@ object alone. The tab therefore overrides both halves, through
   (`"globalStyle.block.alignContentWithTitle"`), every time, never from a copy.
 - **`setControlValue(key, value)`** refuses while saving is paused (with the
   usual notice, `pausedGuard.ts`) and redraws the page to put the control
-  back; otherwise it writes the value, paints (`cssInjector.inject()`), and
-  saves with `saveSettings()`. A key the settings do not have is a mistake in
-  the tree: nothing is written or saved, and the console says so.
+  back; otherwise it writes the value and announces it with
+  `registry.settingsChanged()`, as every direct settings write in the plugin
+  does. That change round repaints everything that reads the settings (the
+  stylesheet, the theme's styles switch, the outline, reading view) and saves
+  with `saveSettings()`; re-injecting the CSS alone would leave the rest
+  stale. A key the settings do not have is a mistake in the tree: nothing is
+  written or saved, and the console says so.
 
 `tests/declarativeControlBinding.test.ts` draws a real control row through the
 test renderer and checks that `saveData` is never reached.
@@ -133,10 +137,13 @@ render: guardRender("saving notice", (setting) => {
 ```
 
 `mount` builds the part the first time and moves the same element back into
-the row on every redraw. The cleanup cannot tell a redraw from the user
-leaving the page, so it calls `releaseLater`: 300 ms later (longer than
-Obsidian's 150 ms page slide), a part whose element is back on the page is
-kept, and any other is disposed. Leaving the settings calls `disposeAll()`.
+the row on every redraw. It returns the part itself, typed as its builder made
+it, so a part can carry more than its element: the fallback picker's part
+holds the picker, which every draw shows the saved value in. The cleanup
+cannot tell a redraw from the user leaving the page, so it calls
+`releaseLater`: 300 ms later (longer than Obsidian's 150 ms page slide), a part
+whose element is back on the page is kept, and any other is disposed. Leaving
+the settings calls `disposeAll()`.
 
 ## Jumping to a row
 
@@ -200,6 +207,38 @@ styles every `.callout[data-callout]` on screen, so the notice would wear the
 user's own `[!warning]`. The `.cs-banners` rules in `styles.css` make the box
 and the two rows invisible, so only the notices show, with the box's gap
 between them.
+
+## Fallback, language and the theme's styles
+
+[`declarative/generalRows.ts`](../../src/settings/declarative/generalRows.ts)
+draws the plugin-wide rows of the main page's first box. Each draws the old
+page's controls from the old page's code (`FallbackSection.ts` and
+`LanguageSection.ts` export their steps: `createFallbackPicker`,
+`setFallbackCallout`, `addFallbackReset`, `drawLanguageControls`,
+`applyLanguagePreference`, `missingLanguageName`, `languageDownloading`,
+`retryLanguageDownload`).
+
+| Row (`id`) | Kind | Notes |
+|---|---|---|
+| Default fallback callout (`fallback-callout`) | render | the callout picker is a kept part; ↺ back to the default |
+| Language (`language`) | render | Obsidian's menu (`SelectDropdown`); aliases are every language's own name, so "Deutsch" finds it; says "Downloading…" and goes grey while the chosen language downloads |
+| *Language* is not downloaded yet (`language-missing`) | button | shown while the chosen language is missing; Retry shows Obsidian's spinner during the download (`busy`); not searchable |
+| Use your theme's callout styles (`theme-callout-styles`) | control (toggle) | key `themeCalloutStyles.enabled`; shown while the theme styles a callout or the switch is off in a community theme |
+
+- **A plugin control as an Obsidian component.** Obsidian disables a row by
+  calling `setDisabled` on each component the row made. The pickers are the
+  plugin's own, so `addControlComponent(setting, control)` (`rowParts.ts`)
+  registers them as components; the row's `disabled` then greys them like a
+  toggle.
+- **The theme's switch is on the main page** (a decision taken for the plan's
+  review): the page its callouts open on is drawn by the plugin (a `page()`
+  factory, GAP-15), and nothing on it is in the settings search.
+- **What must redraw these rows** (the signature, unit 12): the fallback id,
+  the language and its download state (`LocaleStore.onChange`), the
+  switch's value, and what the theme styles.
+
+`ctx.display()` in the tree means "draw the settings again"; once the tab
+switches, it asks the `TreeUpdater`.
 
 ## Read-only while saving is paused
 

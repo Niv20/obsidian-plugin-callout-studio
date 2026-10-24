@@ -28,6 +28,7 @@
  * with. Cancel, Escape and the close button save nothing.
  */
 import { t } from "../i18n";
+import { appendLines } from "../ui/textLines";
 import { addCancelButton } from "./modalChrome";
 import {
 	addOptionRadio,
@@ -80,10 +81,7 @@ function asked(reach: NoteReach | null): string {
 /** Each `\n` of the text starts a new line of it. */
 function writeLines(el: HTMLElement, text: string): void {
 	el.empty();
-	text.split("\n").forEach((line, i) => {
-		if (i > 0) el.createEl("br");
-		el.appendText(line);
-	});
+	appendLines(el, text);
 }
 
 /**

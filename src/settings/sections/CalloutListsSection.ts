@@ -55,7 +55,7 @@
 import { getLocale, t } from "../../i18n";
 import { sortCalloutsByDisplayName } from "../../utils/sorting";
 import { activeThemeName } from "../../manager/theme/customCssApi";
-import { partitionByStyleOwner, styleOwnerFacts } from "./rowOwnership";
+import { partitionCallouts, themeStylesSwitchedOff } from "./rowOwnership";
 import type { RowKind } from "./rowOwnership";
 import { focusFirstRevealed, renderPagedList } from "./listPaging";
 import type { PagingState } from "./listPaging";
@@ -121,22 +121,8 @@ export function createCalloutListsController(
 	const themeLabel = (): string =>
 		activeThemeName(ctx.app) ?? t("settings.themeCalloutsDefaultTheme");
 
-	/**
-	 * The theme's callout styles are switched off while a theme is active —
-	 * what keeps its section, and the switch in it, on screen with no rows.
-	 * In Obsidian's default theme the switch has nothing to take away.
-	 */
-	const themeSwitchedOff = (): boolean =>
-		!ctx.plugin.registry.settings.themeCalloutStyles.enabled &&
-		activeThemeName(ctx.app) !== null;
-
 	/** See `isThemeStyled` for why membership is derived from the theme alone. */
-	const partition = () =>
-		partitionByStyleOwner(styleOwnerFacts(ctx), [
-			...ctx.plugin.registry.getThemeProvided(),
-			...ctx.plugin.registry.getUserDefined(),
-			...ctx.plugin.registry.getBuiltIn(),
-		]);
+	const partition = () => partitionCallouts(ctx);
 
 	const renderList = (
 		host: HTMLElement,
@@ -189,7 +175,7 @@ export function createCalloutListsController(
 		// so hiding it hides both, and neither has to carry `cs-hidden` beside
 		// the `is-collapsed` the fold puts there.
 		const has = fromTheme.length > 0;
-		const shown = has || themeSwitchedOff();
+		const shown = has || themeStylesSwitchedOff(ctx);
 		themeSectionEl.toggleClass("cs-hidden", !shown);
 		// It describes the rows, so it goes when they do.
 		themeDescEl.toggleClass("cs-hidden", !has);

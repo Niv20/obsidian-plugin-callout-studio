@@ -120,12 +120,13 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 	 * Save a declarative control's change through the plugin's own save, never
 	 * through Obsidian's default, which calls `saveData(plugin.settings)` and
 	 * would overwrite data.json with the settings alone, losing every callout.
-	 * While saving is paused the change is refused and the page redrawn, which
-	 * puts the control back. @see declarative/controlBinding.ts
+	 * The registry's change round repaints and saves. While saving is paused
+	 * the change is refused and the page redrawn, which puts the control back.
+	 * @see declarative/controlBinding.ts
 	 */
-	async setControlValue(key: string, value: unknown): Promise<void> {
-		await writeControlValue(this.plugin, key, value, {
-			afterWrite: () => this.plugin.cssInjector.inject(),
+	setControlValue(key: string, value: unknown): void {
+		writeControlValue(this.plugin, key, value, {
+			announce: () => this.plugin.registry.settingsChanged(),
 			onRefused: () => this.update(),
 		});
 	}

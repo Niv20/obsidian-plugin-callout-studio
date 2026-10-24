@@ -164,8 +164,8 @@ what it is waiting for. Dim it with `paintBlocked()` and answer the press with
 `…BlockedReason()` method per button - see
 [Blocked main buttons say why](16-settings-ui-and-modals.md#blocked-main-buttons-say-why).
 Keep `disabled` only for a button that is merely *busy* and says so, in its
-label ("Scanning…") or with Obsidian's own spinner (`mod-loading` and
-`aria-busy`, as the callout editor's Save does).
+label ("Scanning…") or with Obsidian's own spinner (`setButtonBusy` in
+`ui/busyButton.ts`, as the callout editor's Save does).
 
 ## Settings that require a runtime refresh, not just a save
 
@@ -349,8 +349,9 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
   save.** `PluginSettingTab.setControlValue` writes `plugin.settings[key]` and
   calls `plugin.saveData(plugin.settings)`, which here would overwrite
   `data.json` with the settings alone (every callout and sync stamp gone). The
-  tab overrides `getControlValue`/`setControlValue` to go through
-  `saveSettings()` and the paused guard
+  tab overrides `getControlValue`/`setControlValue` to go through the paused
+  guard and `registry.settingsChanged()`, whose change round repaints and
+  saves with `saveSettings()`
   ([26 § Saving a control](26-declarative-settings.md#saving-a-control-never-savedata));
   keep it that way, and never call `saveData` from a settings row.
 - **`EmbeddableMarkdownEditor` is an undocumented internal API and may

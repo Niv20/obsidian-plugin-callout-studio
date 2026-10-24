@@ -84,6 +84,7 @@ import { iconsEqual } from "../icons/lucideId";
 import { renderIconAdjustGroup } from "./editor/iconAdjustGroup";
 import { settingGroupEl } from "../ui/settingGroupEl";
 import { setSettingError } from "../ui/settingError";
+import { setButtonBusy } from "../ui/busyButton";
 import { addCancelButton, applyModalChrome, removeModalChrome } from "./modalChrome";
 import { autofocusOnDesktop } from "./modalAutofocus";
 import { refreshAllCalloutEditors } from "../editor/livepreview/refresh";
@@ -1736,13 +1737,9 @@ export class CalloutEditor extends Modal {
 		const enabled = !this.saveSession.busy && (this.existingId ? hasChanges && isValid : isValid);
 		this.isSaveActionEnabled = enabled;
 		// While a save runs, the button keeps its words and its size and shows
-		// Obsidian's own small spinner (`mod-loading`), as Obsidian's buttons do
-		// while they work; `aria-busy` tells a screen reader it is working,
-		// which the old "Saving…" label used to say (finding S5-V3).
-		const busy = this.saveSession.busy;
-		this.saveBtn.disabled = busy;
-		this.saveBtn.toggleClass("mod-loading", busy);
-		this.saveBtn.setAttribute("aria-busy", String(busy));
+		// Obsidian's own small spinner, instead of the old "Saving…" label
+		// (finding S5-V3).
+		setButtonBusy(this.saveBtn, this.saveSession.busy);
 		this.saveBtn.textContent = t(this.existingId ? "editor.saveChanges" : "editor.createCallout");
 		this.saveBtn.setAttribute("aria-disabled", enabled ? "false" : "true");
 		this.saveBtn.toggleClass("cs-btn-disabled", !enabled);

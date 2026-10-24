@@ -12,6 +12,7 @@
 import { Setting } from "obsidian";
 import { t } from "../../i18n";
 import { SelectDropdown } from "../../ui/selectDropdown";
+import { linesFragment } from "../../ui/textLines";
 import { HEADING_LEVELS } from "../../utils/customCommands";
 import type { CalloutRenderRole, CustomCommandAction } from "../../types";
 
@@ -58,12 +59,7 @@ export function buildActionRow(
 		.setValue(value).onChange((v) => onChange(v as CustomCommandAction));
 	// One short sentence per line.
 	const describe = (role: CalloutRenderRole): void => {
-		setting.setDesc(createFragment((frag) => {
-			t(ACTION_DESC_KEYS[role]).split("\n").forEach((line, i) => {
-				if (i > 0) frag.createEl("br");
-				frag.appendText(line);
-			});
-		}));
+		setting.setDesc(linesFragment(t(ACTION_DESC_KEYS[role])));
 	};
 	describe("regular");
 	return { el: setting.settingEl, dropdown, describe };

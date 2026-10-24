@@ -16,9 +16,12 @@
  * 1. While saving is paused, the change is refused, with the usual notice,
  *    because it could not be kept (settings/pausedGuard.ts).
  * 2. Otherwise the value is written into the live settings object,
- * 3. the change is painted (the caller's `afterWrite`, e.g. re-injecting the
- *    generated CSS) — paint first, so the screen never waits on the disk —
- * 4. and saved with `saveSettings()`. Never `saveData`.
+ * 3. and the change is announced (the caller's `announce`). The settings tab
+ *    announces with `registry.settingsChanged()`, the way every direct
+ *    settings write in the plugin does: its change round repaints everything
+ *    that reads the settings (the stylesheet, the theme's styles switch, the
+ *    outline, reading view) and then saves with `saveSettings()`. Never
+ *    `saveData`. Re-injecting the CSS alone would leave the rest stale.
  *
  * Keys are paths with dots, because the settings are nested:
  * `"globalStyle.block.alignContentWithTitle"` is
@@ -35,13 +38,12 @@ export interface ControlBindingHost {
 	 */
 	readonly settings: object;
 	readonly settingsWriter: { isFrozen: boolean };
-	saveSettings(): Promise<void>;
 }
 
 /** What to do around a write. */
 export interface ControlWriteHooks {
-	/** Paint the change (after the value is in the settings, before the save). */
-	afterWrite(key: string): void;
+	/** The value is in the settings: tell the plugin, which repaints and saves. */
+	announce(key: string): void;
 	/** The change was refused (saving is paused): put the control back. */
 	onRefused(key: string): void;
 }
@@ -76,16 +78,13 @@ export function writeSettingAt(settings: object, key: string, value: unknown): b
 	return true;
 }
 
-/**
- * Save one control's new value, the safe way (see the module comment).
- * Resolves once the save has finished (or was refused or skipped).
- */
-export async function writeControlValue(
+/** Write one control's new value, the safe way (see the module comment). */
+export function writeControlValue(
 	host: ControlBindingHost,
 	key: string,
 	value: unknown,
 	hooks: ControlWriteHooks,
-): Promise<void> {
+): void {
 	if (blockedWhilePaused(host.settingsWriter)) {
 		hooks.onRefused(key);
 		return;
@@ -94,8 +93,7 @@ export async function writeControlValue(
 		console.warn(`Callout Studio: no setting "${key}" to change; nothing saved.`);
 		return;
 	}
-	hooks.afterWrite(key);
-	await host.saveSettings();
+	hooks.announce(key);
 }
 
 /**

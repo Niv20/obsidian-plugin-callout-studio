@@ -79,6 +79,7 @@ import { makeDragSortable } from "../../ui/DragSortList";
 import { animateReorder } from "../../ui/flip";
 import { scrollToReveal } from "../../ui/scrollToReveal";
 import { settingGroupEl } from "../../ui/settingGroupEl";
+import { appendLines } from "../../ui/textLines";
 import { explainIfBlocked, paintBlocked } from "../../ui/blockedButton";
 import { blockedWhilePaused } from "../pausedGuard";
 import { applyModalChrome, removeModalChrome } from "../modalChrome";
@@ -157,14 +158,6 @@ const ACTION_LABEL: Record<LibraryAction, string> = {
 /** The pointer events that end a drag in ui/DragSortList.ts. */
 const DRAG_END_EVENTS = ["pointerup", "pointercancel", "lostpointercapture"] as const;
 
-/** Each `\n` of a translated description starts a new line of it. */
-function writeLines(el: HTMLElement, text: string): void {
-	text.split("\n").forEach((line, i) => {
-		if (i > 0) el.createEl("br");
-		el.appendText(line);
-	});
-}
-
 /**
  * A library the picker does not offer is either still to download or, when it
  * ships with the plugin, hidden: there is nothing to download for those.
@@ -237,7 +230,7 @@ export class IconLibrariesModal extends Modal {
 		// A plain description paragraph, as Commands and shortcuts has, so the
 		// heading under it is spaced from it the same way in every layout.
 		const intro = this.contentEl.createEl("p", { cls: "setting-item-description" });
-		writeLines(intro, t("iconLibraries.desc"));
+		appendLines(intro, t("iconLibraries.desc"));
 
 		// The three groups, in one wrapper that sets them off from the
 		// description above. `mod-list` is Obsidian's list layout: rows a little

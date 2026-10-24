@@ -612,7 +612,10 @@ another device's settings or a Reset can change it under an open tab.
 It used to be the last row of *Global settings*, put there because this
 section disappears with its last row. The section's visibility rule is what
 moved instead: a theme that styles callouts without naming any id lists no
-rows, and there the switch is not on screen.
+rows, and there the switch is not on screen. That rule is shared with the
+declarative page (`partitionCallouts` and `themeStylesSwitchedOff` in
+`rowOwnership.ts`), where the switch is a row on the main page instead
+([26 § Fallback, language and the theme's styles](26-declarative-settings.md#fallback-language-and-the-themes-styles)).
 
 ### Callout rows are Obsidian setting rows
 
@@ -2289,11 +2292,13 @@ the checkbox instead (see [`ConfirmModal`](#confirmmodal---the-generic-yesno-dia
 
 **Where `disabled` stays right.** A button that is merely *busy* and already
 says so: **Importing…**, the discovery button's **Scanning…**, the saving
-banner's **Working on it…**, and two that show Obsidian's own busy button,
-`mod-loading` (a spinner in place of the label, at the same width, with
-`aria-busy`): the icon picker's Confirm while its artwork downloads, and the
-callout editor's Save while a save runs (it used to read **Saving…**, finding
-S5-V3). Pressing one of those teaches nothing.
+banner's **Working on it…**, and the ones that show Obsidian's own busy
+button, `mod-loading` (a spinner in place of the label, at the same width, with
+`aria-busy`), all through `setButtonBusy` in
+[`ui/busyButton.ts`](../../src/ui/busyButton.ts): the icon picker's Confirm
+while its artwork downloads, the callout editor's Save while a save runs (it
+used to read **Saving…**, finding S5-V3), and the declarative page's **Retry**
+while a language downloads. Pressing one of those teaches nothing.
 
 **Two consequences to keep.** A dimmed button is focusable, so Enter and Space
 answer too. And a press on one is *not* "clicking away": while a Review
@@ -2369,6 +2374,15 @@ mean (asks for a detail, in progress, placeholder, cut-short list);
 the asking actions must end in it; a list of the near misses must not; and `...`
 is rejected. Adding a dotted string therefore means choosing a meaning, which is
 the step that used to be skipped.
+
+## Help text: one short sentence per line
+
+Longer help is written as short sentences, each on a line of its own, kept in
+one translated string separated by `\n`, so a translator sees the whole text
+at once. HTML shows a `\n` as a space, so the text is drawn with
+[`ui/textLines.ts`](../../src/ui/textLines.ts): `appendLines(el, text)` into an
+element, or `linesFragment(text)` for a `Setting`'s description. Windows keep
+this style; a row on the settings page gets one sentence, as Obsidian's do.
 
 ## Notable individual modals
 
