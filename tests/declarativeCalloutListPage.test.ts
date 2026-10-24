@@ -175,7 +175,8 @@ describe("Callouts from your theme", () => {
 		registry.setThemeOwnedIds(new Set(["note"]));
 		const page = new CalloutListPage(ctx, "theme", manualSchedule().schedule);
 		page.display();
-		assert.match(page.containerEl.textContent ?? "", /Minimal/);
+		// Obsidian's own page description, as its list pages have.
+		assert.match(page.containerEl.querySelector("p.setting-page-desc")?.textContent ?? "", /Minimal/);
 		assert.deepEqual(shownNames(page), ["Note"]);
 		const row = page.containerEl.querySelector<HTMLElement>(".cs-callout-row")!;
 		assert.equal(row.querySelector('[data-cs-tooltip^="Edit"]'), null, "no ✎ on a theme's row");

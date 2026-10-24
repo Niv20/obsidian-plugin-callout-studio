@@ -13,8 +13,10 @@
  * the rows `searchable: false` would not do, because that also takes them out
  * of the page's own search field.
  *
- * The page is one of Obsidian's boxes holding the same callout rows as My
- * callout types (calloutPages.ts), with a search field of its own above them.
+ * The page is drawn the way Obsidian draws its own list pages: a description
+ * (`p.setting-page-desc`, the theme page only), then one of Obsidian's boxes
+ * holding the same callout rows as My callout types (calloutPages.ts), with a
+ * search field of its own above them.
  * Obsidian never draws such a page again, so while it is open the page listens
  * for what changes its rows (the same signals as the settings tab) and draws
  * them again itself, through its own `TreeUpdater`, which also waits while a
@@ -26,7 +28,6 @@ import { getLocale, t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
 import { calloutMatchesQuery } from "../../utils/calloutSearch";
 import { sortCalloutsByDisplayName } from "../../utils/sorting";
-import { settingGroupEl } from "../../ui/settingGroupEl";
 import { isRowMenuActive } from "../sections/calloutRowMenu";
 import { calloutListsSignature, freshPaging } from "../sections/calloutListsSignature";
 import { drawCalloutRow } from "../sections/CalloutRowRenderer";
@@ -85,8 +86,8 @@ interface DrawnRow {
 export class CalloutListPage extends SettingPage {
 	/** The box of rows; null until the page is displayed. */
 	private list: SettingGroup | null = null;
-	/** The theme page's intro row (the theme's name changes with the theme); null on Built-in. */
-	private intro: { group: SettingGroup; setting: Setting } | null = null;
+	/** The theme page's description (it names the theme, which can change); null on Built-in. */
+	private intro: HTMLElement | null = null;
 	/** The rows on screen. */
 	private rows: DrawnRow[] = [];
 	/** What undoes each row's drawing (the icon and the right-click listener). */
@@ -121,7 +122,7 @@ export class CalloutListPage extends SettingPage {
 		this.hide();
 		this.containerEl.empty();
 		this.query = "";
-		if (this.kind === "theme") this.intro = drawIntro(this.containerEl);
+		if (this.kind === "theme") this.intro = this.containerEl.createEl("p", { cls: "setting-page-desc" });
 		this.list = new SettingGroup(this.containerEl).addClass("mod-list");
 		// As Obsidian does for a box: a search field only if there are rows to search.
 		if (calloutsOf(this.ctx, this.kind).length > 0) {
@@ -168,11 +169,11 @@ export class CalloutListPage extends SettingPage {
 		this.applySearch();
 	}
 
-	/** The intro names the active theme, and goes when there are no rows to describe. */
+	/** The description names the active theme, and goes when there are no rows to describe. */
 	private updateIntro(hasRows: boolean): void {
 		if (!this.intro) return;
-		this.intro.setting.setDesc(t("settings.themeCalloutsDesc", { theme: activeThemeLabel(this.ctx.app) }));
-		settingGroupEl(this.intro.group).toggle(hasRows);
+		this.intro.setText(t("settings.themeCalloutsDesc", { theme: activeThemeLabel(this.ctx.app) }));
+		this.intro.toggle(hasRows);
 	}
 
 	/** Show only the rows whose name or one of whose ids holds the query. */
@@ -202,12 +203,6 @@ export class CalloutListPage extends SettingPage {
 			builtin: builtIn,
 		});
 	}
-}
-
-/** The theme page's intro: a box with one row of description and no name. */
-function drawIntro(parent: HTMLElement): { group: SettingGroup; setting: Setting } {
-	const group = new SettingGroup(parent);
-	return { group, setting: new Setting(group.listEl) };
 }
 
 /** What the page says while it has no rows. */

@@ -272,7 +272,8 @@ holds the one callout row every list uses, and the user's own callouts.
   built-in callout (GAP-15; `searchable: false` would also have taken the rows
   out of the page's own search). The page draws one `mod-list` box of the same
   callout rows, with its own search field (name or any id,
-  `calloutMatchesQuery`), and on the theme page an intro row naming the theme.
+  `calloutMatchesQuery`), and on the theme page a description naming the theme
+  (`p.setting-page-desc`, as Obsidian's own list pages have).
   Obsidian never draws such a page again, so while it is open it listens to
   the settings tab's own signals (`subscribeSettingsTab`) and draws its rows
   again through a `TreeUpdater` of its own (the tab's signature, held while a
