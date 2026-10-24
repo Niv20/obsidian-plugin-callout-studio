@@ -23,7 +23,8 @@ import { en } from "../src/i18n/en";
 import { Notice } from "./support/obsidianStub";
 import { definition } from "./support/discoveryHarness";
 import { savingWriter, stubConfirm } from "./support/importSafetyStubs";
-import { fakeDom, FakeElement, type FakeDocumentFragment } from "./support/fakeDom";
+import { fakeDom } from "./support/fakeDom";
+import { noticeButton } from "./support/noticeButton";
 
 fakeDom.light();
 
@@ -50,14 +51,11 @@ function vault(notes: Record<string, string>) {
 	return { app, ctx, def, registry, contents, get saves() { return saves; } };
 }
 
-/** Press the Undo link in the most recent notice. */
+/** Press the Undo button in the most recent notice. */
 async function undo(): Promise<void> {
-	// A fragment is a bag of nodes, not a tree: the link is one of its children.
-	const message = Notice.last?.message as FakeDocumentFragment | undefined;
-	const link = message?.childNodes.find((node): node is FakeElement => node instanceof FakeElement && node.hasClass("cs-notice-action"));
-	assert.ok(link, "the notice offers no Undo");
-	assert.equal(link.textContent, en["vault.undoRewrite"]);
-	link.fire("click", { type: "click", preventDefault: () => {} });
+	const button = noticeButton(Notice.last);
+	assert.equal(button.textContent, en["vault.undoRewrite"]);
+	button.fire("click", { type: "click", preventDefault: () => {} });
 	for (let i = 0; i < 5; i++) await setImmediate();
 }
 

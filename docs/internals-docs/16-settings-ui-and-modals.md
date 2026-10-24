@@ -1445,6 +1445,32 @@ sentence, and the credit line's, get that same keyboard ring from the plugin. (T
 footer's contact links keep their own no-underline look until the footer
 becomes the About group.)
 
+### Notices with an action
+
+Three notices offer one thing to do: **Undo** after a note rewrite or a delete
+(`settings/rewriteUndoNotice.ts`, 15 seconds), and **Open Callout Studio
+settings** when saving pauses (`settings/pausedIndicator.ts`) or the settings
+file is missing (`manager/settingsNotices.ts`), both up until clicked. All
+three go through `showActionNotice(message, { label, run }, duration)` in
+[`ui/noticeAction.ts`](../../src/ui/noticeAction.ts), which draws what
+Obsidian draws for its own Undo after it updates links (findings S9-14, S9-V1,
+S10-12): the message as plain text in `.notice-message`, then
+`div.notice-button-container > div.notice-cta` in the notice's public
+`containerEl` - accent text, no underline, brighter under the pointer, and on a
+phone at the end of the notice's line, all from app.css. Obsidian builds these
+with `Notice.addButton`, which its typings do not declare, so the helper builds
+the same elements by hand. The button also gets `role="button"`, a Tab stop and
+Enter/Space, which Obsidian's bare div lacks.
+
+Obsidian hides a notice on any click on it, the button included, so the action
+runs with the notice already gone; a notice cannot stay up after its button is
+pressed. The missing-file notice keeps its button (`buttonEl`) and rewrites it,
+and the message through `setMessage`, when a translation arrives late.
+
+Until 2026-10-24 each was a `<p>` and an underlined, semibold white
+`a.cs-notice-action` in a fragment: a line of empty space taller than
+Obsidian's notices. `cs-notice-action` stays on the button as a hook for tests.
+
 ## Where the cursor lands when a window opens
 
 [`src/settings/modalAutofocus.ts`](../../src/settings/modalAutofocus.ts)

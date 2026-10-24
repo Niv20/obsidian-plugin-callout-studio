@@ -25,7 +25,8 @@ import { Notice } from "./support/obsidianStub";
 import { definition } from "./support/discoveryHarness";
 import { savingWriter, stubConfirm } from "./support/importSafetyStubs";
 import { readRepoFile } from "./support/sourceScan";
-import { fakeDom, FakeElement, type FakeDocumentFragment } from "./support/fakeDom";
+import { fakeDom, type FakeDocumentFragment } from "./support/fakeDom";
+import { noticeButton } from "./support/noticeButton";
 
 fakeDom.light();
 
@@ -73,12 +74,9 @@ function lastNoticeText(): string {
 	return frag?.childNodes.map(node => node.textContent ?? "").join(" ") ?? "";
 }
 
-/** Press the Undo link in the most recent notice. */
+/** Press the Undo button in the most recent notice. */
 async function undo(): Promise<void> {
-	const message = Notice.last?.message as FakeDocumentFragment | undefined;
-	const link = message?.childNodes.find((node): node is FakeElement => node instanceof FakeElement && node.hasClass("cs-notice-action"));
-	assert.ok(link, "the notice offers no Undo");
-	link.fire("click", { type: "click", preventDefault: () => {} });
+	noticeButton(Notice.last).fire("click", { type: "click", preventDefault: () => {} });
 	for (let i = 0; i < 5; i++) await setImmediate();
 }
 

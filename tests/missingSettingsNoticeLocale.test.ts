@@ -6,15 +6,15 @@ import { en } from "../src/i18n/en";
 import { LocaleStore } from "../src/i18n/LocaleStore";
 import { registerMissingSettingsNotice } from "../src/manager/settingsNotices";
 import { Notice } from "./support/obsidianStub";
-import { FakeElement, type FakeDocumentFragment } from "./support/fakeDom";
+import { noticeButton } from "./support/noticeButton";
 import { recoveryActionHarness } from "./support/recoveryActionHarness";
 import { readRepoFile } from "./support/sourceScan";
 
+/** What the notice says, and its button, read fresh each time. */
 function noticeNodes(notice: Notice) {
-	const nodes = (notice.message as FakeDocumentFragment).childNodes;
 	return {
-		text: nodes.find((node): node is FakeElement => node instanceof FakeElement && node.tagName.toLowerCase() === "p")!,
-		action: nodes.find((node): node is FakeElement => node instanceof FakeElement && node.hasClass("cs-notice-action"))!,
+		get text() { return { textContent: String(notice.message) }; },
+		action: noticeButton(notice),
 	};
 }
 

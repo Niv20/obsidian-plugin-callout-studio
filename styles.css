@@ -7940,18 +7940,9 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	color: var(--text-warning);
 }
 
-/* The way out of a frozen session, offered inside the notice that announces one
-   (see manager/settingsBoot.ts). A notice is not a place a user expects to be
-   able to act, so this has to read unmistakably as a control rather than as more
-   prose — hence the block display and the underline. */
-.cs-notice-action {
-	display: inline-block;
-	margin-top: 8px;
-	color: var(--text-on-accent);
-	font-weight: var(--font-semibold);
-	text-decoration: underline;
-	cursor: pointer;
-}
+/* A notice's action (Undo, Open settings) is Obsidian's own notice button,
+   `.notice-cta` (ui/noticeAction.ts), drawn by app.css: accent text, brighter
+   under the pointer. It used to be an underlined white link of the plugin's. */
 
 /* A session that is not writing its settings file, said on the page where the
    user is actually making changes (see settings/sections/ReadOnlyBanner.ts).

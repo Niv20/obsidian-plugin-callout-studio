@@ -125,6 +125,20 @@ export class Modal {
 	onClose(): void {}
 }
 
+/** Obsidian's notice, in the DOM it builds: `.notice-container > .notice > .notice-message`; a click anywhere hides it. */
+export class Notice {
+	containerEl: HTMLElement; messageEl: HTMLElement; noticeEl: HTMLElement;
+	constructor(message: string | DocumentFragment, _duration?: number) {
+		const host = document.body.querySelector<HTMLElement>(":scope > .notice-container") ?? document.body.createDiv({ cls: "notice-container" });
+		this.containerEl = host.createDiv({ cls: "notice" });
+		this.messageEl = this.noticeEl = this.containerEl.createDiv({ cls: "notice-message" });
+		this.messageEl.setText(message);
+		this.containerEl.addEventListener("click", () => this.hide());
+	}
+	setMessage(message: string | DocumentFragment): this { this.messageEl.setText(message); return this; }
+	hide(): void { this.containerEl.remove(); }
+}
+
 /** Obsidian 1.13's confirmation button: a press closes the dialog unless the handler returns something truthy. */
 export class ConfirmationButton {
 	buttonEl: HTMLButtonElement; isInitialFocus = false;

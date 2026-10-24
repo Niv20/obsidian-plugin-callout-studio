@@ -870,21 +870,33 @@ export class SettingGroup {
 export class Notice {
 	/**
 	 * The most recently constructed notice. `__CS_NOTICES__` collects the plain
-	 * strings, which is all most suites need; a notice built from a fragment —
-	 * the frozen-settings one, which carries a link — has to be reached as an
-	 * object to click what is inside it.
+	 * strings, which is all most suites need; a notice with an action button
+	 * (ui/noticeAction.ts) has to be reached as an object to press it, through
+	 * its `containerEl`.
 	 */
 	static last: Notice | null = null;
-	readonly message: unknown;
+	message: unknown;
+	readonly duration: number | undefined;
 	hidden = false;
+	private container: HTMLElement | null = null;
 	hide(): void { this.hidden = true; }
-	constructor(message?: string) {
+	constructor(message?: string, duration?: number) {
 		this.message = message;
+		this.duration = duration;
 		Notice.last = this;
 		if (Array.isArray(seams.__CS_NOTICES__) && message !== undefined) {
 			seams.__CS_NOTICES__.push(message);
 		}
 	}
+	/**
+	 * Obsidian's `div.notice`, made on first use: most suites never touch it
+	 * and run without the fake DOM, where the global `createDiv` is missing.
+	 */
+	get containerEl(): HTMLElement {
+		this.container ??= createDiv({ cls: "notice" });
+		return this.container;
+	}
+	setMessage(message: string): this { this.message = message; return this; }
 }
 
 export class MarkdownRenderer {

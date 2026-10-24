@@ -35,7 +35,8 @@ import { stableKeyOrder } from "../src/utils/stableJson";
 import { Menu, Notice, type MenuItemRecord } from "./support/obsidianStub";
 import { definition } from "./support/discoveryHarness";
 import { savingWriter } from "./support/importSafetyStubs";
-import { fakeDom, FakeElement, type FakeDocumentFragment } from "./support/fakeDom";
+import { fakeDom, type FakeDocumentFragment } from "./support/fakeDom";
+import { noticeButton } from "./support/noticeButton";
 
 fakeDom.light();
 
@@ -207,13 +208,9 @@ describe("a count that lands after the menu opened", () => {
 	});
 });
 
-/** Press the Undo link in the most recent notice. */
+/** Press the Undo button in the most recent notice. */
 async function undo(): Promise<void> {
-	const message = Notice.last?.message as FakeDocumentFragment | undefined;
-	const link = message?.childNodes.find((node): node is FakeElement =>
-		node instanceof FakeElement && node.hasClass("cs-notice-action"));
-	assert.ok(link, "the notice offers no Undo");
-	link.fire("click", { type: "click", preventDefault: () => {} });
+	noticeButton(Notice.last).fire("click", { type: "click", preventDefault: () => {} });
 	for (let i = 0; i < 5; i++) await setImmediate();
 }
 

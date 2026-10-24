@@ -4,7 +4,7 @@ import type { Notice } from "obsidian";
 // The value, not the type: `last` is the stub's own, and esbuild aliases both
 // specifiers to this one module (see scripts/run-tests.mjs).
 import { Notice as StubNotice } from "./support/obsidianStub";
-import { FakeElement, type FakeDocumentFragment } from "./support/fakeDom";
+import { noticeButton } from "./support/noticeButton";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { retrySettingsRecovery, startFreshSettings } from "../src/manager/settingsRecoveryActions";
@@ -178,11 +178,7 @@ describe("explicit saving recovery", () => {
 		};
 		offerFreshStart(h.host.app, h.host.manifest.id);
 		const notice = StubNotice.last!;
-		// The link is a direct child of the notice fragment, which has no
-		// `querySelector` of its own — a fragment is a bag of nodes, not a tree.
-		const link = (notice.message as FakeDocumentFragment).childNodes
-			.find((node): node is FakeElement => node instanceof FakeElement && node.hasClass("cs-notice-action"));
-		assert.ok(link, "the notice carries no action link");
+		const link = noticeButton(notice);
 		assert.equal(link.textContent, "Open Callout Studio settings");
 		const click = { type: "click", preventDefault: () => {} };
 		link.dispatchEvent(click);
@@ -200,9 +196,7 @@ describe("explicit saving recovery", () => {
 		status.freeze("missing");
 		offerFreshStart(h.host.app, h.host.manifest.id, status);
 		const notice = StubNotice.last!;
-		const text = (notice.message as FakeDocumentFragment).childNodes
-			.find((node): node is FakeElement => node instanceof FakeElement && node.tagName.toLowerCase() === "p");
-		assert.equal(text?.textContent, "Your notes are safe. Callout Studio has paused saving because it can't find its settings file right now.");
+		assert.equal(notice.message, "Your notes are safe. Callout Studio has paused saving because it can't find its settings file right now.");
 		// A different reason is still a pause, and may be all a phone shows of it.
 		status.freeze("unreadable");
 		assert.equal(notice.hidden, false);

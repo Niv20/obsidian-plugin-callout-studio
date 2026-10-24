@@ -21,6 +21,7 @@ import { Notice, Platform, setIcon } from "obsidian";
 import type { Plugin } from "obsidian";
 import { t } from "../i18n";
 import { openPluginSettings } from "../manager/settingsNotices";
+import { showActionNotice } from "../ui/noticeAction";
 import type { SettingsWriter } from "../manager/SettingsWriter";
 
 export interface PausedIndicatorHost extends Pick<Plugin, "app" | "manifest" | "addStatusBarItem" | "register"> {
@@ -86,14 +87,11 @@ export function registerPausedIndicator(host: PausedIndicatorHost, mobile: boole
 		}
 		if (announced) return;
 		announced = true;
-		const frag = createFragment();
-		frag.createEl("p", { text: t("statusBar.pausedNotice") });
-		const link = frag.createEl("a", { text: t("saveStatus.openSettings"), cls: "cs-notice-action" });
-		notice = new Notice(frag, 0);
-		link.addEventListener("click", (event) => {
-			event.preventDefault();
-			if (openPluginSettings(host.app, host.manifest.id)) notice?.hide();
-		});
+		// Stays up (0) until it is clicked, or saving resumes.
+		notice = showActionNotice(t("statusBar.pausedNotice"), {
+			label: t("saveStatus.openSettings"),
+			run: () => { openPluginSettings(host.app, host.manifest.id); },
+		}, 0).notice;
 	};
 	host.register(writer.status.subscribe(update));
 	host.register(() => { item?.remove(); notice?.hide(); });

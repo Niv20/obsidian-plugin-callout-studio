@@ -418,8 +418,10 @@ link.
   budget counts the first `before` and the latest `after`.
 
 **Delete** rewrites no note, so it has no journal. Its notice comes from
-`noticeWithUndoAction` instead, the same fragment and link around a plain
-callback; see [the delete flow](#delete-flow).
+`noticeWithUndoAction` instead, the same notice and Undo button around a
+plain callback; see [the delete flow](#delete-flow). Both build the notice
+with `showActionNotice` (`ui/noticeAction.ts`; see
+[Notices with an action](16-settings-ui-and-modals.md#notices-with-an-action)).
 
 The portable Markdown conversion below has its own reviewed, confirmed
 irreversible flow and does not use the journal.
