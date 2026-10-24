@@ -142,9 +142,13 @@ describe("rows are laid out like Obsidian's menu items", () => {
 			assert.strictEqual(valueOf(row, "font-size"), "var(--font-ui-small)", row);
 			assert.strictEqual(valueOf(`.is-mobile ${row}`, "font-size"), "var(--font-ui-medium)", row);
 		}
-		// A callout's name takes that size from its row. The base rule keeps the
-		// `[!` popover in a note at Obsidian's 15px suggestion size.
-		assert.strictEqual(valueOf(".cs-combobox-menu .callout-studio-suggestion-name", "font-size"), "inherit");
+		// A callout's name takes that size from its row: no rule sizes the name
+		// itself, here or in the `[!` popover, where Obsidian's suggestion row
+		// sets 15px (S10-16).
+		assert.ok(
+			!rules.some((rule) => rule.selectors.some((sel) => sel.includes("callout-studio-suggestion-name")) && rule.decls.has("font-size")),
+			"the name has no size of its own",
+		);
 	});
 
 	it("highlight the row under the pointer or the arrow keys in Obsidian's hover grey", () => {
@@ -214,13 +218,11 @@ describe("groups, headings and the things that repaint the ground", () => {
 		);
 	});
 
-	it("dims an id's unmatched characters exactly as the `[!` popover does", () => {
-		// A list used to brighten them, because it stood on the lighter control
-		// face. On Obsidian's menu ground the popover's own faint text is right.
-		assert.strictEqual(valueOf(".callout-studio-suggestion-id-dim", "color"), "var(--text-faint)");
-		assert.ok(
-			!rules.some((rule) => rule.selectors.includes(".cs-combobox-menu .callout-studio-suggestion-id-dim")),
-			"no list-only override of the dimmed characters",
-		);
+	it("marks the typed run bold, as Obsidian does, instead of fading the rest", () => {
+		// Until 2026-10-24 the characters around the typed run were faded. The
+		// run is Obsidian's `.suggestion-highlight` now, which app.css draws bold
+		// in a picker and in the `[!` popover alike, so no rule of ours is left.
+		assert.ok(!css.includes("callout-studio-suggestion-id-dim"));
+		assert.ok(!rules.some((rule) => rule.selectors.some((sel) => sel.includes("suggestion-highlight"))));
 	});
 });

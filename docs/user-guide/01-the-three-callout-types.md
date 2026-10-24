@@ -54,7 +54,7 @@ The `{` must touch the closing `]`.
 
 ## Picking from the autocomplete menu
 
-Type `[!` in any of the three positions and a menu of your callouts opens. Choosing one with **Enter** or a click writes the callout, then leaves the cursor where you would type next:
+Type `[!` in any of the three positions and a menu of your callouts opens. It looks like Obsidian's link and tag suggestions: each row shows the callout's icon in its color, its name, and its IDs under the name, with the part you typed in bold. Choosing one with **Enter** or a click writes the callout, then leaves the cursor where you would type next:
 
 - **Block:** on a new `> ` line under the header, ready for the content.
 - **Heading:** on a new line under the heading.

@@ -75,6 +75,7 @@ import {
 } from "./calloutWriter";
 import { scanLineForCalloutTokens, tokenEnd } from "./calloutTokens";
 import type { CalloutRenderRole } from "../types";
+import { createSuggestionRow } from "../ui/suggestionRow";
 
 /** Fewer than Obsidian's 100: flexcyon alone reacts to ~700 words. */
 const ROW_LIMIT = 50;
@@ -228,36 +229,40 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 			});
 			parent.insertBefore(headingEl, el);
 		}
-		el.addClass("callout-studio-suggestion");
-		const iconEl = el.createDiv({ cls: "callout-studio-suggestion-icon" });
-		const textEl = el.createDiv({ cls: "callout-studio-suggestion-text" });
-		const name = (text: string) =>
-			textEl.createDiv({ cls: "callout-studio-suggestion-name", text });
-
+		// Obsidian's suggestion anatomy, as in the `[!` popover (S10-16): a
+		// small icon, then the words in the list's normal text colour.
 		switch (item.kind) {
-			case "finish":
+			case "finish": {
+				const { iconEl } = createSuggestionRow(el, { title: t("metadataSuggest.finish") });
 				setIcon(iconEl, "corner-down-left");
-				name(t("metadataSuggest.finish"));
 				return;
-			case "typed":
-				el.addClass("callout-studio-suggestion-create-new");
+			}
+			case "typed": {
+				const { iconEl } = createSuggestionRow(el, {
+					title: t("metadataSuggest.useTyped", { text: item.text }),
+				});
 				setIcon(iconEl, "text-cursor-input");
-				name(t("metadataSuggest.useTyped", { text: item.text }));
+				// Kept as a hook; the row looks like any other now.
+				el.addClass("callout-studio-suggestion-create-new");
 				return;
-			case "theme":
+			}
+			case "theme": {
+				const { iconEl, titleEl } = createSuggestionRow(el, { title: item.word.word });
 				setIcon(iconEl, "brush");
-				name(item.word.word).addClass("cs-meta-suggestion-word");
+				titleEl.addClass("cs-meta-suggestion-word");
 				return;
+			}
 			case "color": {
-				// The word alone, in its colour: it is what gets written, and the
-				// palette's display name would only say it twice.
-				const colors = resolveCurrentModeColors(item.entry.palette);
-				renderColorCircles(iconEl, colors, { size: 14 });
-				const nameEl = name(item.entry.key);
-				nameEl.addClass("cs-meta-suggestion-word");
-				nameEl.style.color = colors.accent;
+				// The word alone, beside its colours, as Obsidian's own
+				// highlight-colour suggestions put a swatch beside the colour's
+				// name: it is what gets written, and the palette's display name
+				// would only say it twice. The colours are in the circles, so the
+				// word is in normal text (until 2026-10-24 it wore the accent).
+				const { iconEl, titleEl } = createSuggestionRow(el, { title: item.entry.key, slot: "swatch" });
+				renderColorCircles(iconEl, resolveCurrentModeColors(item.entry.palette), { size: 14 });
+				titleEl.addClass("cs-meta-suggestion-word");
 				if (item.viaAlias) {
-					nameEl.createSpan({ cls: "cs-meta-suggestion-alias", text: ` · ${item.viaAlias}` });
+					titleEl.createSpan({ cls: "cs-meta-suggestion-alias", text: ` · ${item.viaAlias}` });
 				}
 				return;
 			}

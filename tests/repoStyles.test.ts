@@ -276,6 +276,7 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-occurrences-result", // identity/query hook; shared cs-sidebar-result supplies the card
 		"cs-occurrences-location", // per-view hook; shared cs-sidebar-location supplies its typography
 		"cs-combobox-iconless-option", // a test hook for the row with no icon; the shared .cs-combobox-option paints it
+		"callout-studio-suggestion-create-new", // finds a "Create …" row in tests and scenes; it is drawn like any suggestion row (S10-16)
 		"cs-btn-disabled", // marks a blocked button (ui/blockedButton.ts); Obsidian's aria-disabled rule draws the 70% dim
 		"cs-icon-adjust-reset", // finds an icon-adjustment group's ↺ in tests; Obsidian draws the button, cs-reset-idle hides it
 		"cs-tag-chip-remove", // finds an ID pill's x in tests; Obsidian's .multi-select-pill-remove-button draws it

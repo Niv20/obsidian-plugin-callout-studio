@@ -3237,7 +3237,10 @@ any rule reaches a row through another class and pads it a second time.
 
 `renderCalloutIdLine` (shared by the picker and the `[!` popover) draws one
 `.callout-studio-suggestion-id-item` per id, each carrying its own trailing
-`", "` (the last has none), inside `.callout-studio-suggestion-id`. The line is
+`", "` (the last has none), inside `.callout-studio-suggestion-id`, which is
+also Obsidian's `.suggestion-note`. The part of an id that matches what was
+typed is Obsidian's `.suggestion-highlight` (bold); until 2026-10-24 the rest
+of the id was faded instead. The line is
 cut by the browser and by nothing else: `text-overflow: ellipsis` on the line
 hides atomic inline boxes whole, so a line that does not fit always ends
 `abstract, …` - cut between ids, the native `…` after a comma and a space,
@@ -3266,12 +3269,21 @@ icon or colour, while the `[!` popover in the editor had done both for a long
 time. The fallback picker uses the shared field face and interaction rules;
 there is no fallback-specific button styling.
 
-The rows are literally the popover's markup
-([`calloutComboboxRow.ts`](../../src/settings/calloutComboboxRow.ts) reuses the
-`callout-studio-suggestion*` classes), and the id/alias second line is the same
-function in both - `renderCalloutIdLine`, which `AutoComplete.renderSuggestion`
-calls too, so a callout cannot describe itself one way in the editor and another
-way in settings. Matching goes through the same `calloutMatchesQuery` - id,
+The rows are literally the popover's rows: `AutoComplete.renderSuggestion`
+calls [`calloutComboboxRow.ts`](../../src/settings/calloutComboboxRow.ts)'s
+`renderCalloutComboboxRow` itself, so a callout cannot describe itself one way
+in the editor and another way in settings. Both are built by
+[`ui/suggestionRow.ts`](../../src/ui/suggestionRow.ts) in Obsidian's suggestion
+anatomy (`.suggestion-icon > .suggestion-flair`, `.suggestion-content` with
+`.suggestion-title` and `.suggestion-note`; see doc 10). In a picker the row is
+a `.cs-combobox-option`, not a `.suggestion-item`, so Obsidian's suggestion
+rules do not reach it and the menu-row rules lay it out (4px 8px, 8px gap).
+The one Obsidian rule that does reach it, the end margin `.is-mobile
+.suggestion-flair` gives every flair, is zeroed for a picker's row, where the
+gap already spaces the icon. The icon is in the callout's colour; the name is
+in the row's normal text and wraps when long (until 2026-10-24 it wore the
+callout's colour and was cut with "…"). The matched run of the name and of
+each id is bold. Matching goes through the same `calloutMatchesQuery` - id,
 display name and **aliases**, substring rather than fuzzy - ordered by
 `matchRank`'s four tiers (exact, name-prefix, id/alias-prefix, anywhere) so that
 typing `no` answers `Note` rather than `Annotation`.
@@ -3291,9 +3303,10 @@ while `showSingleGroupKey` keeps the Browse heading when All types is the only
 matching group.
 The type follows Obsidian's own suggestions. A group heading is small,
 semibold and muted in sentence case, like `.search-suggest-item.mod-group`
-(Obsidian uppercases only badges). A name is the field's 13px
-(`--font-ui-small`), as `.combobox .suggestion-item` is, while the `[!` popover
-in a note keeps Obsidian's 15px suggestion size. A query that matches nothing
+(Obsidian uppercases only badges). A name takes its row's size: the field's
+13px (`--font-ui-small`) in a picker, as `.combobox .suggestion-item` is, and
+Obsidian's 15px suggestion size in the `[!` popover in a note. No rule sizes
+the name itself. A query that matches nothing
 reads upright and centred, like `.suggestion-empty`.
 The All types scope is iconless and remains separate from registry definitions.
 Color pickers retain their headings even with only one matching group.
@@ -3318,7 +3331,9 @@ which open Obsidian's own menu (see
 A query that matches nothing does **not** dead-end. When the call site supplies
 `onCreate`, the empty state is replaced by a real, keyboard-reachable row
 offering to create the callout under that name - the same offer, and the same
-`callout-studio-suggestion-create-new` markup, as the `[!` popover. The picker
+markup (`createSuggestionRow` with a plus, `callout-studio-suggestion-create-new`
+kept as a hook), as the `[!` popover. It is a plain row like the others; until
+2026-10-24 it was italic accent text. The picker
 then adopts what comes back, which is why `choices` is a *function*: the list is
 re-read after the editor closes, so the new row is simply there.
 

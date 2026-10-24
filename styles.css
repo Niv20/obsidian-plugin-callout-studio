@@ -3271,18 +3271,24 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	font-family: var(--font-monospace);
 }
 
-/* ─── Autocomplete Suggestions ────────────────────────────────── */
+/* ─── Suggestion rows ─────────────────────────────────────────── */
 
+/* The rows of the `[!` and `|` popovers in a note, and of a callout picker's
+   popup, all built by ui/suggestionRow.ts. In a note a row is Obsidian's
+   `.suggestion-item.mod-complex`, and Obsidian's stylesheet lays it out — the
+   12px inset, the icon's margins, the small grey note under the name — so
+   nothing here sets a row's padding, gap or alignment (S10-16; until
+   2026-10-24 an inset of 8px here beat Obsidian's 12px). In a picker the row
+   is a `.cs-combobox-option`, laid out by the menu-row rules above. */
 .callout-studio-suggestion {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 6px 8px;
 	min-width: 0;
 	overflow-x: hidden;
 	width: 100%;
 }
 
+/* A fixed box, so every name starts at the same place whatever the icon is: a
+   line icon, an emoji, a picture. A callout's icon is in its own colour, set
+   inline; the other icons are muted. */
 .callout-studio-suggestion-icon {
 	display: flex;
 	align-items: center;
@@ -3298,6 +3304,22 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	height: 16px;
 }
 
+/* On mobile Obsidian gives every flair an end margin of its own, meant for
+   its suggestion rows, where a rule of its own sets the margins anyway. In a
+   picker's row the row's gap already spaces the icon from the name. */
+.cs-combobox-option .suggestion-flair {
+	margin-inline-end: 0;
+}
+
+/* The `|` popover's colour circles sit where Obsidian puts the swatch of its
+   own highlight-colour suggestions, with the same margins
+   (`.suggestion-icon .highlight-swatch` in app.css). They are not a flair,
+   which Obsidian mutes and fades. */
+.suggestion-item.mod-complex .suggestion-icon .cs-suggestion-swatch {
+	margin-block: 0;
+	margin-inline: var(--size-4-1) var(--size-4-3);
+}
+
 .callout-studio-suggestion-text {
 	flex: 1;
 	min-width: 0;
@@ -3305,16 +3327,17 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	overflow-x: hidden;
 }
 
+/* The name is in the list's normal text, at the row's size (15px in a note's
+   popover, a menu row's size in a picker), and a long one wraps, as Obsidian's
+   `.suggestion-title` does. Until 2026-10-24 it wore the callout's colour and
+   was cut with "…". */
 .callout-studio-suggestion-name {
-	min-width: 0;
-	width: 100%;
-	font-size: var(--font-ui-medium);
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+	overflow-wrap: break-word;
 }
 
-/* The ids are code, so the line is left-to-right whatever the window's
+/* The ids under a name: Obsidian's `.suggestion-note` (small, muted) in a
+   note's popover, and the same size and colour, set here, in a picker. The
+   ids are code, so the line is left-to-right whatever the window's
    direction: in a right-to-left window the bidi algorithm would reorder the
    comma-separated run and leave the commas on the wrong side of the words. In
    such a window it still lines up with the name above it, on the right.
@@ -3357,11 +3380,6 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	vertical-align: top;
 }
 
-/* Characters around the matched run of an id/alias fade out. */
-.callout-studio-suggestion-id-dim {
-	color: var(--text-faint);
-}
-
 /* The `[!type|…]` dropdown (editor/CalloutMetadataSuggest.ts) draws its rows
    with the classes above; what follows is its own. One icon column wide
    enough for a gradient's three circles, so every row's word starts at the
@@ -3374,22 +3392,20 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 
 /* With headings, the scrollport starts flush with them so scrolled rows cannot
    show in a strip above the pinned one — as `.cs-combobox-menu-grouped` does —
-   and arrow-key scrolling reserves the heading's height. A Done row on top
-   gets the list's usual inset back as its own margin. */
+   and arrow-key scrolling reserves the height of a pinned heading: its line,
+   the padding above and below it, and the line between groups. A Done row on
+   top gets the list's usual inset back as its own margin. */
 .suggestion.cs-meta-suggestion-list.cs-meta-suggestion-grouped {
 	padding-top: 0;
-	scroll-padding-top: calc(var(--font-ui-smaller) * var(--line-height-normal) + 8px);
+	scroll-padding-top: calc(var(--font-ui-smaller) * var(--line-height-normal) + var(--size-2-3) + var(--size-2-1) + var(--border-width));
 }
 
 .cs-meta-suggestion-grouped > .suggestion-item:first-child {
 	margin-top: var(--size-2-3);
 }
 
-/* One line per row, so a little more air than the type list's two-line rows. */
-.cs-meta-suggestion-list .callout-studio-suggestion {
-	padding-block: 9px;
-}
-
+/* One column for the icon or the circles (up to three, for a gradient), so
+   every row's word starts at the same place. */
 .cs-meta-suggestion-list .callout-studio-suggestion-icon {
 	width: 32px;
 	justify-content: flex-start;
@@ -3425,8 +3441,12 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	user-select: none;
 }
 
+/* A thin line between two groups, as between the groups of Obsidian's search
+   suggestions (`.search-suggest-item.mod-group`). */
 .cs-meta-suggestion-heading:not(:first-child) {
-	margin-top: var(--size-4-1);
+	margin-top: var(--size-2-3);
+	padding-top: var(--size-2-3);
+	border-top: var(--border-width) solid var(--background-modifier-border);
 }
 
 /* What the highlighted row needs, said once at the bottom of the popup. */
@@ -3949,14 +3969,6 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 .cs-combobox-menu .callout-studio-empty-state {
 	padding: var(--size-4-1) var(--size-4-2);
 	text-align: center;
-}
-
-/* A callout's name in a list takes the row's size — 13px on a computer and
-   15px on a phone or tablet, as Obsidian's menu items are. The base rule
-   above gives the `[!` popover in a note, which shares the row's markup,
-   Obsidian's 15px suggestion size everywhere. */
-.cs-combobox-menu .callout-studio-suggestion-name {
-	font-size: inherit;
 }
 
 .cs-combobox.is-disabled .cs-combobox-control {
@@ -5643,15 +5655,6 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 .cs-theme-preview-note {
 	margin: 0 0 var(--size-4-6);
 	line-height: 1.5;
-}
-
-/* Phase 7: autocomplete create-new entry */
-.callout-studio-suggestion-create-new {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	color: var(--text-accent);
-	font-style: italic;
 }
 
 /* ─── Import report modal ─────────────────────────────────── */

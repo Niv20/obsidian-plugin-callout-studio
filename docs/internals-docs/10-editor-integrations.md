@@ -418,6 +418,23 @@ use elsewhere but never adopted through the editor still autocompletes
 normally. A non-empty query with no exact id/alias match appends a synthetic
 "Create new: …" row.
 
+**What a row looks like.** Every row is Obsidian's own rich suggestion, built
+by [`ui/suggestionRow.ts`](../../src/ui/suggestionRow.ts) (`createSuggestionRow`):
+`.suggestion-item.mod-complex` holding `.suggestion-icon > .suggestion-flair`
+and `.suggestion-content` (`.suggestion-title`, then `.suggestion-note`), the
+anatomy of the link and tag suggestions. Obsidian's stylesheet supplies the
+12px inset, the icon's margins and the small grey note, so no rule of ours sets
+a row's padding. A callout row is drawn by `renderCalloutComboboxRow`, the
+function the settings pickers use too: the icon in the callout's colour (inline,
+so Obsidian's muted flair colour is overridden; the flair's `--icon-opacity`
+still applies), the display name in the list's normal text, and under it the
+id and aliases as one monospace line cut between whole ids. The part of the
+name and of each id that matches what was typed is `.suggestion-highlight`,
+which Obsidian draws bold. "Create new" is a plain row with a plus in the
+flair. Until 2026-10-24 (S10-16) the name wore the callout's colour, the
+untyped part of the ids was faded, "Create new" was italic accent text, and an
+8px inset of ours beat Obsidian's 12px.
+
 Picking "Create new" opens `CalloutEditor` pre-filled with the typed name and
 awaits the result. Both block and heading creation preserve the current title
 after the token, including metadata and titles edited while the modal is open;
@@ -555,11 +572,20 @@ What it offers and what each pick writes is pure
   it into a space - that operator never sees across a pipe. The first `|` is
   outside the metadata and never touched.
 
-Each row is one line: a colour's word in its accent beside the editor's
-`renderColorCircles` (a third circle for a gradient), a styling word in code
-type. `metadataRowHeadings` puts a sticky heading over each group - **Colors**,
-the theme's name, each snippet's - but only when the visible rows (after the
-50-row cut) come from two groups or more. The headings are siblings of the
+Each row is one line in the same suggestion anatomy as the type dropdown: a
+colour's word in code type and the list's normal text, beside the editor's
+`renderColorCircles` (a third circle for a gradient); a styling word in code
+type beside a brush. The circles are not a flair, which Obsidian mutes and
+fades: they sit in `.suggestion-icon` as `.cs-suggestion-swatch`, with the
+margins Obsidian gives the swatch of its own highlight-colour suggestions
+(`==text=={`), where the colour's name is plain text too. One 32px column holds
+the icon or the circles, so every word starts at the same place. Until
+2026-10-24 the word wore its colour's accent and the rows had 9px of padding
+above and below. `metadataRowHeadings` puts a sticky heading over each group -
+**Colors**, the theme's name, each snippet's - but only when the visible rows
+(after the 50-row cut) come from two groups or more. A heading after the first
+has a thin line above it, as between the groups of Obsidian's search
+suggestions (`.search-suggest-item.mod-group`). The headings are siblings of the
 rows inside Obsidian's `.suggestion` list, which only walks the elements it
 created, so arrow keys pass them by. What a row needs (spacing, first/last,
 alone, which colour it replaces, the theme reacting too - and for a colour

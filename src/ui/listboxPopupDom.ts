@@ -16,6 +16,7 @@
 import { setIcon } from "obsidian";
 import { appendDropdownCaret } from "./dropdownControl";
 import { setFieldAccessibleName } from "./fieldAccessibleName";
+import { createSuggestionRow } from "./suggestionRow";
 
 export interface ComboboxParts {
 	root: HTMLElement;
@@ -215,7 +216,7 @@ export function appendComboboxCheck(rowEl: HTMLElement): HTMLElement {
  * "no matches".
  *
  * Deliberately the `[!` popover's own create-row markup, class for class
- * (`editor/AutoComplete.ts` renders the same thing), so the offer looks and
+ * (both are built by {@link createSuggestionRow}), so the offer looks and
  * reads identically wherever the user meets it. It is a real row: the caller
  * appends it to the navigable list, so an arrow key reaches it and Enter takes
  * it, which an empty-state paragraph could never do.
@@ -226,14 +227,11 @@ export function renderComboboxCreateRow(
 	rowId: string,
 ): HTMLElement {
 	const rowEl = menuEl.createDiv({
-		cls: "cs-combobox-option callout-studio-suggestion callout-studio-suggestion-create-new",
+		cls: "cs-combobox-option callout-studio-suggestion-create-new",
 		attr: { role: "option", id: rowId },
 	});
-	const iconEl = rowEl.createDiv({ cls: "callout-studio-suggestion-icon" });
+	const { iconEl } = createSuggestionRow(rowEl, { title: label });
 	setIcon(iconEl, "plus");
-	rowEl
-		.createDiv({ cls: "callout-studio-suggestion-text" })
-		.createDiv({ cls: "callout-studio-suggestion-name", text: label });
 	return rowEl;
 }
 

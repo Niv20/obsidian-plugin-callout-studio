@@ -30,7 +30,6 @@ import {
 import type CalloutStudioPlugin from "../main";
 import type { CalloutDefinition, CalloutRenderRole } from "../types";
 import { CalloutEditor } from "../settings/CalloutEditor";
-import { paintCalloutListIcon } from "../manager/theme/calloutListIcon";
 import { getLocale, t } from "../i18n";
 import { suggestableCallouts } from "../utils/usableCallouts";
 import { calloutMatchesQuery } from "../utils/calloutSearch";
@@ -51,7 +50,8 @@ import {
 	titleAfterToken,
 } from "./calloutWriter";
 import { sortCalloutsByDisplayName } from "../utils/sorting";
-import { renderCalloutIdLine } from "../settings/calloutComboboxRow";
+import { renderCalloutComboboxRow } from "../settings/calloutComboboxRow";
+import { createSuggestionRow } from "../ui/suggestionRow";
 
 interface CreateNewSuggestion {
 	__createNew: true;
@@ -185,52 +185,31 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		return result;
 	}
 
+	/**
+	 * Draw one row of the popover, in Obsidian's suggestion anatomy (the icon,
+	 * the name, the ids under it; see ui/suggestionRow.ts), so it looks like the
+	 * link and tag suggestions around it (S10-16).
+	 */
 	renderSuggestion(item: CalloutSuggestion, el: HTMLElement): void {
 		el.closest<HTMLElement>(".suggestion")?.addClass("callout-studio-suggestion-list");
 		if (isCreateNew(item)) {
-			el.addClass("callout-studio-suggestion", "callout-studio-suggestion-create-new");
-			const iconEl = el.createDiv({
-				cls: "callout-studio-suggestion-icon",
+			// The plain look of any other row: a plus where a callout's icon
+			// would be. The class stays as a hook.
+			const { iconEl } = createSuggestionRow(el, {
+				title: t("autocomplete.createNew", { name: item.query }),
 			});
+			el.addClass("callout-studio-suggestion-create-new");
 			setIcon(iconEl, "plus");
-			const textEl = el.createDiv({
-				cls: "callout-studio-suggestion-text",
-			});
-			textEl.createDiv({
-				cls: "callout-studio-suggestion-name",
-				text: t("autocomplete.createNew", { name: item.query }),
-			});
 			return;
 		}
-		const def = item;
-		el.addClass("callout-studio-suggestion");
-
-		const isDark = activeDocument.body.classList.contains("theme-dark");
-
-		// A callout the theme owns keeps its place in the list — it is still a
-		// real id worth inserting — but wears the theme's icon and colour, not
-		// the ones stored on its row. Naming an appearance here that the callout
-		// will not have on the page is the one thing the entry must not do, and
-		// The list-icon painter asks derived theme ownership directly, so the
-		// answer moves immediately when the active theme changes.
-		const iconEl = el.createDiv({
-			cls: "callout-studio-suggestion-icon",
+		// The settings pickers draw their callouts with the same function: the
+		// two lists offer the same callouts and must not describe them
+		// differently. A callout the theme owns wears the theme's icon and
+		// colour there, not the ones stored on its row.
+		renderCalloutComboboxRow(el, item, this.plugin.registry, {
+			isDark: activeDocument.body.classList.contains("theme-dark"),
+			query: this.context?.query ?? "",
 		});
-		const color = paintCalloutListIcon(iconEl, def, this.plugin.registry, isDark);
-		iconEl.style.color = color;
-
-		// Text container
-		const textEl = el.createDiv({ cls: "callout-studio-suggestion-text" });
-		const nameEl = textEl.createDiv({
-			cls: "callout-studio-suggestion-name",
-			text: def.displayName,
-		});
-		nameEl.style.color = color;
-
-		// Second line: id + aliases, drawn by the same function the settings
-		// picker uses — the two lists offer the same callouts and must not
-		// describe them differently.
-		renderCalloutIdLine(textEl, def, this.context?.query ?? "");
 	}
 
 	/**

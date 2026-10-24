@@ -18,6 +18,8 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 // Listed first: importing it installs the DOM globals (see fakeDom.ts).
 import { fakeDom } from "./support/fakeDom";
 import { asEditor, editor, type FakeEditor } from "./support/fakeEditor";
@@ -650,6 +652,37 @@ describe("CalloutMetadataSuggest — what a row looks like", () => {
 		const blue = items[labels(got).indexOf("blue")];
 		assert.strictEqual(blue?.querySelectorAll(".cs-color-circle").length, 2);
 		assert.strictEqual(blue?.querySelector(".callout-studio-suggestion-id"), null, "no second line");
+	});
+
+	it("draws each row in Obsidian's suggestion anatomy, the colour word in plain text", () => {
+		// S10-16: like the `[!` popover, and like Obsidian's own highlight-colour
+		// suggestions, which put a swatch beside the colour's name.
+		const h = harness();
+		withTheme(h);
+		const { got, items } = render(h, "> [!mark|⎸]");
+		const blue = items[labels(got).indexOf("blue")]!;
+		assert.ok(blue.classList.contains("mod-complex"));
+		// (The fake DOM has no `>` in selectors, so each parent is checked by hand.)
+		const swatch = blue.querySelector(".cs-suggestion-swatch");
+		assert.ok(swatch);
+		assert.ok(swatch.parentElement?.classList.contains("suggestion-icon"), "the circles sit in Obsidian's icon slot");
+		assert.ok(!swatch.classList.contains("suggestion-flair"), "not a flair, which Obsidian fades");
+		const word = blue.querySelector(".suggestion-title");
+		assert.ok(word);
+		assert.ok(word.parentElement?.classList.contains("suggestion-content"));
+		assert.strictEqual(word.textContent, "blue");
+		assert.ok(!(word as unknown as HTMLElement).style.color, "the word is in the list's normal text");
+		// The other rows have a line icon in Obsidian's flair.
+		const wide = items[got.findIndex((r) => label(r) === "theme:wide")]!;
+		assert.ok(wide.querySelector(".suggestion-flair")?.parentElement?.classList.contains("suggestion-icon"));
+	});
+
+	it("separates groups with a thin line, as Obsidian's search suggestions do", () => {
+		const css = readFileSync(join(process.cwd(), "styles.css"), "utf8");
+		const rule = /\.cs-meta-suggestion-heading:not\(:first-child\) \{([^}]*)\}/.exec(css)?.[1] ?? "";
+		assert.match(rule, /border-top: var\(--border-width\) solid var\(--background-modifier-border\)/);
+		// One line per row now: no padding of ours beats Obsidian's row inset.
+		assert.ok(!css.includes(".cs-meta-suggestion-list .callout-studio-suggestion {"));
 	});
 
 	it("puts sticky headings between groups, outside the rows", () => {

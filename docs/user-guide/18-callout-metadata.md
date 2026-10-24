@@ -81,7 +81,7 @@ In the menu that opens after `[!`:
 
 Neither key adds or rewrites the `]`, so typing it yourself still works as usual.
 
-The metadata menu lists the colors (your saved palettes, Obsidian's colors and the extra presets), then the words your theme and your enabled CSS snippets react to. Each group is in alphabetical order. Each color shows its word in that color, with the same circles as the color menu in the callout editor: three when the palette has a gradient. When the menu has words from more than one place, each group has a heading, such as **Colors** or the theme's name, that stays on top while you scroll.
+The metadata menu lists the colors (your saved palettes, Obsidian's colors and the extra presets), then the words your theme and your enabled CSS snippets react to. Each group is in alphabetical order. Each color shows its word beside the same circles as the color menu in the callout editor: three when the palette has a gradient. When the menu has words from more than one place, each group has a heading, such as **Colors** or the theme's name, that stays on top while you scroll. A thin line separates the groups.
 
 Type to filter it. Words that start with what you typed come first. You don't need the dashes: `comic red` and `comicred` both find `comic-red`, and picking it writes `comic-red`.
 

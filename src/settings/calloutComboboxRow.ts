@@ -1,69 +1,84 @@
 /**
- * settings/calloutComboboxRow.ts — one callout in a picker's popup.
+ * settings/calloutComboboxRow.ts — one callout in a list that offers callouts:
+ * a picker's popup, and the `> [!` popover in a note.
  *
- * Deliberately the *same markup* as the `[!` popover's rows
- * (`editor/AutoComplete.ts`), class for class: the two lists offer the same
- * choice and should be the same thing to look at, and reusing those classes
- * means the settings popup needs no row CSS of its own.
+ * Who calls it. settings/calloutCombobox.ts (every callout picker: the
+ * fallback, the command editor, Find callouts' type field) and
+ * editor/AutoComplete.ts, which draws its popover rows with this very function:
+ * the two lists offer the same choice and must be the same thing to look at.
  *
- * The id/alias line is drawn by {@link renderCalloutIdLine}, which the popover
- * shares, so a callout cannot describe itself one way in the editor and another
- * way in settings.
+ * The main idea. The row is Obsidian's suggestion anatomy
+ * ({@link createSuggestionRow}): the callout's icon at the start, in the
+ * callout's own colour; its name in the list's normal text colour; and under
+ * the name, small and grey, its id and aliases ({@link renderCalloutIdLine}),
+ * with the part that was typed in bold. Until 2026-10-24 the name wore the
+ * callout's colour too and the untyped part of the ids was faded; Obsidian's
+ * link and tag suggestions colour neither, so neither do these (S10-16).
  */
 import { getLocale } from "../i18n";
 import { paintCalloutListIcon } from "../manager/theme/calloutListIcon";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { CalloutDefinition } from "../types";
+import { appendWithHighlight, createSuggestionRow } from "../ui/suggestionRow";
 import { getSortedCalloutIds } from "../utils/sorting";
 
+/** What {@link renderCalloutComboboxRow} needs besides the callout. */
 export interface CalloutComboboxRowOptions {
+	/** Whether Obsidian is in dark mode: a callout has a colour for each. */
 	isDark: boolean;
 	/** Raw query as typed; lowercased here. */
 	query: string;
 }
 
+/** What follows every id but the last on the id line. */
 const ID_SEPARATOR = ", ";
 
+/**
+ * Draw `def` into `rowEl`: its icon in its colour, its name, and its ids.
+ *
+ * @param rowEl The row, already in the list (a picker's option, or the
+ *   `.suggestion-item` Obsidian made for the `[!` popover).
+ * @param registry Asked who paints the callout now, so a callout the theme
+ *   owns shows the theme's icon and colour.
+ */
 export function renderCalloutComboboxRow(
 	rowEl: HTMLElement,
 	def: CalloutDefinition,
 	registry: CalloutRegistry,
 	options: CalloutComboboxRowOptions,
 ): void {
-	rowEl.addClass("callout-studio-suggestion");
+	const { iconEl, contentEl } = createSuggestionRow(rowEl, {
+		title: def.displayName,
+		query: options.query,
+	});
 
 	// Icon and accent both come from whoever actually paints this callout — the
 	// theme's measured pair when the theme owns the id, a neutral placeholder
 	// when a user snippet does. Naming an appearance the callout will not have
-	// is the one thing a picker must not do.
-	const iconEl = rowEl.createDiv({ cls: "callout-studio-suggestion-icon" });
+	// is the one thing a list must not do. The colour goes on the icon only.
 	const color = paintCalloutListIcon(iconEl, def, registry, options.isDark);
 	iconEl.style.color = color;
 
-	const textEl = rowEl.createDiv({ cls: "callout-studio-suggestion-text" });
-	const nameEl = textEl.createDiv({
-		cls: "callout-studio-suggestion-name",
-		text: def.displayName,
-	});
-	nameEl.style.color = color;
-
-	renderCalloutIdLine(textEl, def, options.query);
+	renderCalloutIdLine(contentEl, def, options.query);
 }
 
 /**
- * The second line: the callout's id and its aliases.
+ * The second line: the callout's id and its aliases, in Obsidian's small grey
+ * `.suggestion-note`.
  *
  * Always drawn, which is the point — the ids are how you find a callout you
  * only half remember, and a line that appears and disappears depending on what
  * you typed is a line you cannot rely on. When a query is present, only the
- * ids/aliases containing it are listed and everything around the matched run is
- * faded; with no query, all of them show unfaded.
+ * ids/aliases containing it are listed, each with the typed run in bold
+ * (`.suggestion-highlight`); with no query, all of them show.
  *
- * Shared with the `[!` popover (`editor/AutoComplete.ts`) so the two lists
- * cannot say different things about the same callout.
+ * Shared by every list that offers callouts, so the lists cannot say
+ * different things about the same callout.
+ *
+ * @param contentEl The row's column of words; the line goes under the name.
  */
 export function renderCalloutIdLine(
-	textEl: HTMLElement,
+	contentEl: HTMLElement,
 	def: CalloutDefinition,
 	rawQuery: string,
 ): void {
@@ -74,10 +89,9 @@ export function renderCalloutIdLine(
 			? allIds.filter((id) => id.toLowerCase().includes(query))
 			: [];
 	const toShow = matches.length > 0 ? matches : allIds;
-	const highlight = query.length > 0 && matches.length > 0;
 	if (toShow.length === 0) return;
 
-	const idEl = textEl.createDiv({ cls: "callout-studio-suggestion-id" });
+	const idEl = contentEl.createDiv({ cls: "suggestion-note callout-studio-suggestion-id" });
 
 	// One element per id, each carrying its own trailing ", ". The line is cut by
 	// the browser (`text-overflow: ellipsis` in styles.css), which drops whole
@@ -88,19 +102,8 @@ export function renderCalloutIdLine(
 	// beforehand disagreed with the final layout by exactly that scrollbar.
 	toShow.forEach((id, index) => {
 		const itemEl = idEl.createSpan({ cls: "callout-studio-suggestion-id-item" });
-		if (!highlight) {
-			itemEl.appendText(id);
-		} else {
-			// Matched run stays at normal weight wherever it falls, not only at the
-			// start; everything around it fades.
-			const at = id.toLowerCase().indexOf(query);
-			const fade = (text: string): void => {
-				if (text) itemEl.createSpan({ cls: "callout-studio-suggestion-id-dim", text });
-			};
-			fade(id.slice(0, at));
-			itemEl.appendText(id.slice(at, at + query.length));
-			fade(id.slice(at + query.length));
-		}
+		// With no match in this list the query is "" here, so nothing is bold.
+		appendWithHighlight(itemEl, id, matches.length > 0 ? query : "");
 		if (index < toShow.length - 1) itemEl.appendText(ID_SEPARATOR);
 	});
 }
