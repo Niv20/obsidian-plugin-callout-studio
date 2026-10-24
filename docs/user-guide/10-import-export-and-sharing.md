@@ -19,14 +19,7 @@ The importer brings over the available custom callout names, colors, icons, and 
 
 Uploading a file, or pasting or typing text, selects that option. To switch, select the other option's box or its dot. What you uploaded or pasted is kept until you close the window, so you can switch back to it, but nothing is imported until you select **Import**, and only the selected option is imported. If you select **Import**, or the second option's box or dot, before uploading a file or pasting text, a notice tells you to do that first.
 
-The import and export choosers use the same rounded grey boxes as this window:
-an icon, a title, and a line of description. In a chooser, click anywhere on a
-box, or focus it and press **Enter** or **Space**; it ends in a small arrow
-because selecting it opens the next step straight away. In an importer, a box
-ends in a dot instead, because selecting it only chooses what **Import** will
-act on.
-The Callout Studio backup option uses the same paintbrush icon in both
-choosers.
+The **Import from** and **Export as** windows look like a page of Obsidian's settings: each choice is a row with an icon, a name and a line about it, and a button at the end that does it (**Upload…**, **Import…** or **Export…**). On a phone the button is under the text, full width. The Callout Studio backup option uses the same paintbrush icon in both windows.
 
 The importer reports unsupported or invalid entries before applying the valid data. Each entry with a problem gets a box of its own, with one line per problem: red for a problem that skips the entry, orange for one that only drops a value. The name of the setting it is about is under it in small monospace.
 When no entry is valid, **Import valid only** stays dimmed and a message says there is nothing to import; cancel, fix the problems the report lists, and import again.
@@ -74,7 +67,7 @@ For sync guidance and recovery steps, see [Syncing & backups](13-syncing-and-bac
 
 ## Export a CSS snippet
 
-Choose the CSS option to generate a standalone copy of your Block callout styles. Callout Studio saves the file in the vault's CSS snippets folder.
+In the **Export as** window, select **Export** on the **Standalone CSS snapshot** row to generate a standalone copy of your Block callout styles. Callout Studio saves the file in the vault's CSS snippets folder.
 
 ![The export chooser, offering the recommended Callout Studio backup and a CSS snippet](../../assets/user-guide/export-format.svg)
 

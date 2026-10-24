@@ -39,8 +39,8 @@ import { pluginSourceFiles, report } from "./support/sourceScan";
  * in `…`.
  */
 const ASKS_NEXT: readonly string[] = [
-	"settings.import", // opens "Import from": which source?
-	"settings.export", // opens "Export as": which format?
+	"settings.import", // opens "Import from": which source? (and a plugin's own import window: what data?)
+	"settings.export", // opens "Export as": which format? (and the backup's save dialog: where?)
 	"import.upload", // opens the file picker
 	"import.replace", // the same button once a file is staged
 	"settings.replaceAction", // opens "Replace with:": which callout?
@@ -133,6 +133,7 @@ const STAYS_PLAIN: Readonly<Record<string, string>> = {
 	"settings.rescanVaultHintAction": "acts at once",
 	"import.pasteButton": "acts at once",
 	"iconPack.download": "acts at once",
+	"export.formatCssAction": "writes the snippet at once; at most a yes/no about overwriting follows",
 
 	// The last step of a dialog: nothing follows it.
 	"vault.confirmReplace": "the dialog's own final step",

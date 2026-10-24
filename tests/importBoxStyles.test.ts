@@ -92,8 +92,7 @@ describe("the shared import/export boxes at rest", () => {
 		);
 	});
 
-	it("marks a chooser's box with a quiet chevron and a plugin import card with a radio dot", () => {
-		assert.equal(valueOf(only(".cs-option-box-mark"), "color"), "var(--text-faint)");
+	it("marks a plugin import card with a radio dot", () => {
 		const dot = only(".cs-option-radio");
 		assert.equal(valueOf(dot, "border-radius"), "50%");
 		assert.equal(valueOf(dot, "color"), "transparent", "its check is there, and uncoloured, until chosen");
@@ -116,8 +115,8 @@ describe("the shared import/export boxes at rest", () => {
 });
 
 describe("the shared import/export boxes on hover", () => {
-	it("steps an enabled box's own fill toward the text colour", () => {
-		const rule = only('.cs-option-box[tabindex="0"]:hover');
+	it("steps a choosable card's own fill toward the text colour", () => {
+		const rule = only(".cs-option-box.is-choosable:hover");
 		assert.deepEqual(rule.at, [HOVER_MEDIA]);
 		assert.match(
 			valueOf(rule, "background") ?? "",
@@ -132,24 +131,14 @@ describe("the shared import/export boxes on hover", () => {
 		assert.ok(hovering.length > 0);
 		for (const rule of hovering) {
 			assert.deepEqual(rule.at, [HOVER_MEDIA]);
-			// A chooser's box (`[tabindex="0"]`) and a card that a click would
-			// choose (`is-choosable`). The active card and an empty one stay as
-			// they are under the pointer, and a card's own button hovers the way
-			// Obsidian's buttons do, with no rule of ours.
+			// Only a card that a click would choose (`is-choosable`). The
+			// active card and an empty one stay as they are under the pointer,
+			// and a card's own button hovers the way Obsidian's buttons do, with
+			// no rule of ours.
 			for (const selector of rule.selector.split(/,\s*/)) {
-				assert.match(
-					selector,
-					/^\.cs-option-box(?:\[tabindex="0"\]:hover(?: \.cs-option-box-mark)?|\.is-choosable:hover)$/,
-					selector,
-				);
+				assert.match(selector, /^\.cs-option-box\.is-choosable:hover$/, selector);
 			}
 		}
-	});
-
-	it("steps a choosable card the same way a chooser's box steps", () => {
-		const box = only('.cs-option-box[tabindex="0"]:hover');
-		const card = only(".cs-option-box.is-choosable:hover");
-		assert.equal(valueOf(card, "background"), valueOf(box, "background"));
 	});
 });
 

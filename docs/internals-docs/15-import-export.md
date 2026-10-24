@@ -10,38 +10,47 @@ and the two foreign-plugin importers (Callout Manager, Admonition).
 opening a chooser - one picks a source, the other picks a format - rather
 than one top-level row per option, per the project's own stated design
 rationale ("a second top-level row for a new format would leave the two
-halves of one section shaped differently"). Both choosers show the backup
-with the same Lucide `paintbrush` icon. Import's chooser sets its two other
-plugins under a **From another plugin** caption (`renderOptionGroupLabel`, a
-plain `div.cs-option-group-label` inside the same list, in the small semibold
-sentence-case label a combobox group wears), so the window reads as "your own backup, or somebody
-else's data" rather than as three equal rows. Export
-marks its backup with the shared grey **Recommended** tag (`settings/recommendedBadge.ts`) on its title line rather
-than a "(recommended)" written into the title. The tag is Obsidian's own flat
-flair (`.flair.mod-flat`), the tag Obsidian prints after "Regex", so Obsidian
-paints it. It is not core's green onboarding variant, because nothing in these
-windows is green. The title line is a flex row with its own gap, so the
-flair's margin is dropped there.
+halves of one section shaped differently").
+
+**Each choice is a row with its own button** (`settings/choiceRow.ts`,
+`addChoiceRow`, finding S9-09), in Obsidian's setting groups, so a chooser
+looks like a page of Obsidian settings: the option's icon
+(`setting-item-icon`, which `Setting.setIcon` builds but the typings do not
+declare), its name, a line about it, and a button at the end of the row. Only
+the button acts; the row takes no click, hover or focus. Import's window is two
+groups: the Callout Studio backup (**Upload…**), then **Callout Manager** and
+**Admonition** (**Import…** each) under the group heading **From another
+plugin**, so it reads as "your own backup, or somebody else's data" rather than
+as three equal rows. Export's is one group: the backup (**Export…**, since the
+save dialog asks where) and the CSS snapshot (**Export**, written at once).
+Both show the backup with the same Lucide `paintbrush` icon. Each button is
+named by its words and its row's name (`aria-labelledby`, never an
+`aria-label`, which Obsidian would pop up as a tooltip), so two **Import…**
+buttons differ for a screen reader. Only a double-click's first click acts, so
+one gesture cannot open the file picker twice or start a second export. On a
+phone Obsidian stacks each row (name, description, full-width button), and the
+icon is hidden there rather than left alone on a line. Until 2026-10-24 each
+choice was a raised grey card with an icon tile and a chevron, the whole card
+one button.
+
+Export marks its backup with the shared grey **Recommended** tag
+(`settings/recommendedBadge.ts`) after its name rather than a "(recommended)"
+written into the title. The tag is Obsidian's own flat flair
+(`.flair.mod-flat`), the tag Obsidian prints after "Regex", so Obsidian paints
+it. It is not core's green onboarding variant, because nothing in these
+windows is green.
 
 `assets/ui-icons/braces.svg` is retained as an unused repository asset for
 possible future UI use; it is not bundled or shown in these choosers.
 
-Both choosers and the plugin import window use `settings/optionBox.ts`:
-`renderOptionList()` provides the column and `renderOptionBox()` provides the
-icon, title, description and badge. A box comes in two forms, told apart by
-whether it is given an `onActivate`:
-
-- **A choice** - a chooser's box. The whole box is the control
-  (`role="button"`, `tabindex="0"`, a chevron at its trailing edge) with click,
-  Enter, and Space handling. Only the first click of a double-click and the
-  first keydown of a held key activate it, so one gesture cannot open the file
-  picker twice or start a second export.
-- **A card** - no `onActivate`: the box alone, with no role, no focus stop,
-  no chevron and no listeners. The plugin import window builds its two
-  options on it and adds what is its own to say - a radio dot, a button, a
-  text box (see [the plugin import window](#the-plugin-import-window)).
-  `renderOptionBox()` returns the card's `titleEl` and `descEl` so that window
-  can rewrite them in place.
+The plugin import window and the "Update your notes?" questions use
+`settings/optionBox.ts`: `renderOptionList()` provides the column and
+`renderOptionBox()` a card with the icon, title, description and badge. The
+card alone has no role, no focus stop and no listeners. The plugin import
+window builds its two options on it and adds what is its own to say - a radio
+dot, a button, a text box (see [the plugin import window](#the-plugin-import-window)).
+`renderOptionBox()` returns the card's `titleEl` and `descEl` so that window
+can rewrite them in place.
 
 ### How an option box is drawn
 
@@ -67,21 +76,12 @@ rather than as dialogs of their own:
   tint laid over the box in a `::after`, so it shows on the chosen card too). `tests/importBoxStyles.test.ts` fails on
   any other option-box or import-card rule that names the accent, and on any
   `.cs-option-*` or `.cs-import-*` rule that names a success colour.
-- **The mark at the trailing edge says what a click does.**
-  `.cs-option-box-mark` is `aria-hidden` decoration with no role and no focus
-  stop: a `chevron-right` in `--text-faint` (Obsidian mirrors it under
-  `.mod-rtl`), drawn on a choice only, because the click opens something. A
-  plugin import card ends in a radio dot instead, because a click there only
-  chooses.
-- **Hover.** A choice steps its own fill 7% toward `--text-normal` - darker
-  over a light window, lighter over a dark one - and its chevron goes from
-  `--text-faint` to `--text-muted`. (A callout row has no hover fill at all:
-  its buttons carry the feedback, which is too little for a box that is itself
-  the button.) A plugin import card takes the same
-  step only while a click would change something (`is-choosable`: it holds
-  something and is not the active one). All hover rules sit inside
-  `@media (hover: hover)`, as Obsidian guards its own button hovers, so a
-  tapped box on a phone doesn't stay lit.
+- **A card ends in a radio dot,** because a click on it only chooses.
+- **Hover.** A card steps its own fill 7% toward `--text-normal` - darker
+  over a light window, lighter over a dark one - only while a click would
+  change something (`is-choosable`: it holds something and is not the active
+  one). The rule sits inside `@media (hover: hover)`, as Obsidian guards its
+  own button hovers, so a tapped card on a phone doesn't stay lit.
 - **Type.** The title is `--font-ui-medium` semibold; the status line is
   `--font-ui-smaller` in `--text-muted`, the size of a settings description.
 

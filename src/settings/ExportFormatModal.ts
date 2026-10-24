@@ -11,10 +11,11 @@
  * modal with a line of prose per row rather than a menu: the backup leaves the
  * vault through the browser's download dialog, while the snippet is written
  * *into* the vault. Both handlers live here, so "everything Export does" is one
- * file. Each format is one option box (settings/optionBox.ts) — the same box
- * Import's source chooser and the plugin import window draw.
+ * file. Each format is a row with its own button (settings/choiceRow.ts), in
+ * one of Obsidian's setting groups, as Import's source chooser draws its
+ * sources.
  */
-import { Modal, Notice } from "obsidian";
+import { Modal, Notice, SettingGroup } from "obsidian";
 import { t } from "../i18n";
 import { ConfirmModal } from "../utils/ConfirmModal";
 import {
@@ -23,7 +24,7 @@ import {
 	type SnippetExportOutcome,
 } from "../manager/cssSnippetExport";
 import { applyModalChrome } from "./modalChrome";
-import { renderOptionBox, renderOptionList, type OptionBoxSpec } from "./optionBox";
+import { addChoiceRow, type ChoiceRowSpec } from "./choiceRow";
 import type { SettingsSectionContext } from "./sections/types";
 import { downloadText } from "../utils/downloadText";
 
@@ -34,18 +35,19 @@ export class ExportFormatModal extends Modal {
 
 	onOpen(): void {
 		this.modalEl.addClass("callout-studio-export-format-modal");
-		// No footer: every box here IS the action.
+		// No footer: each row's button is the action.
 		applyModalChrome(this);
 		this.setTitle(t("export.chooseFormat"));
 
-		const list = renderOptionList(this.contentEl);
-
-		const formats: OptionBoxSpec[] = [
+		const group = new SettingGroup(this.contentEl);
+		const formats: ChoiceRowSpec[] = [
 			{
 				icon: "paintbrush",
 				title: t("export.formatJson"),
 				desc: t("export.formatJsonDesc"),
 				recommended: true,
+				// "…": the browser's save dialog asks where the file goes.
+				buttonText: t("settings.export"),
 				onActivate: () => {
 					this.close();
 					exportCalloutsJSON(this.ctx);
@@ -55,11 +57,14 @@ export class ExportFormatModal extends Modal {
 				icon: "file-code",
 				title: t("export.formatCss"),
 				desc: t("export.formatCssDesc"),
+				// No "…": the snippet is written at once (only a yes/no about
+				// overwriting an older one can follow).
+				buttonText: t("export.formatCssAction"),
 				onActivate: () => {
-					// Close first, like every other chooser box here — the
+					// Close first, like the other choice here — the
 					// snippet path can raise a confirmation of its own, and
 					// stacking it under a window on its way out steals focus.
-					// A double-click's second click never gets here (the box
+					// A double-click's second click never gets here (the button
 					// counts only the first), and a second export started any
 					// other way is stopped one layer down, by cssSnippetExport's
 					// in-flight guard.
@@ -69,7 +74,7 @@ export class ExportFormatModal extends Modal {
 			},
 		];
 
-		for (const format of formats) renderOptionBox(list, format);
+		for (const format of formats) addChoiceRow(group, format);
 	}
 
 	onClose(): void {

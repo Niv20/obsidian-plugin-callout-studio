@@ -1600,6 +1600,8 @@ export const en: Record<string, string> = {
 	"export.formatCss": "Standalone CSS snapshot",
 	"export.formatCssDesc":
 		"For websites or vaults where Callout Studio isn't running. Covers block callouts only; export again after changes.",
+	// The CSS snapshot row's button. Plain: it writes the snippet at once.
+	"export.formatCssAction": "Export",
 
 	// Import — Callout Manager
 	"import.cmTitle": "Import from Callout Manager",

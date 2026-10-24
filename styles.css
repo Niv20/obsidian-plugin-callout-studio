@@ -5680,23 +5680,29 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 }
 
 /* ─── Import source / export format chooser modals ────────── */
-/* Import picks a source and Export picks a format, each from a column of
-   option boxes (below) that act the moment one is clicked. They open at
-   Obsidian's dialog width (560px), the same as the plugin import window
-   Import's chooser hands over to, so the step from one to the other still
-   doesn't resize the window under the pointer. (Both were capped at 520px
-   until 2026-10-23, 40px narrower than Obsidian's dialogs; finding S9-V3.) */
+/* Import picks a source and Export picks a format, each from rows of
+   Obsidian's setting groups with a button per row (settings/choiceRow.ts,
+   finding S9-09), drawn by app.css. They open at Obsidian's dialog width
+   (560px), the same as the plugin import window Import's chooser hands over
+   to, so the step from one to the other still doesn't resize the window under
+   the pointer. (Both were capped at 520px until 2026-10-23, 40px narrower
+   than Obsidian's dialogs; finding S9-V3.) */
 .cs-import-file-input {
 	display: none;
 }
 
+/* On a phone Obsidian stacks a window's row into a column (name, description,
+   then a full-width button), which would leave a choice's emblem alone on a
+   line above its name. It is decoration, so a phone goes without it. */
+.is-phone .cs-choice-row > .setting-item-icon {
+	display: none;
+}
+
 /* ─── Option boxes ────────────────────────────────────────────── */
-/* One box, three windows: Import's source chooser, Export's format chooser and
-   the plugin import window's two cards all draw it with
-   settings/optionBox.ts, so they look alike. A chooser's box is the control —
-   it acts the moment it is clicked, and the chevron at its trailing edge says
-   so. A card in the plugin import window is chosen instead: it ends in a radio
-   dot, and carries a button of its own (see "Plugin import window" below).
+/* The plugin import window's two cards and the answers of "Update your
+   notes?" all draw it with settings/optionBox.ts, so they look alike. A card
+   is chosen: it ends in a radio dot, and can carry a control of its own (see
+   "Plugin import window" below).
 
    Drawn as the settings lists draw a callout row (`.callout-studio-row`): a
    borderless pill raised off the window, its icon on a tile of the window's own
@@ -5717,18 +5723,6 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	flex-direction: column;
 	gap: 6px;
 }
-/* A caption over the boxes that follow — Import's "From another plugin". The
-   same small semibold label a combobox group wears
-   (`.cs-combobox-group-label`). Its top margin, on top of the list's gap, is
-   what sets the group apart from the box above it. */
-.cs-option-group-label {
-	margin-top: 10px;
-	padding-inline: 2px;
-	font-size: var(--font-ui-smaller);
-	font-weight: var(--font-semibold);
-	line-height: var(--line-height-normal);
-	color: var(--text-muted);
-}
 .cs-option-box {
 	position: relative;
 	display: flex;
@@ -5739,13 +5733,6 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	corner-shape: var(--corner-shape);
 	background: var(--cs-surface-raised, var(--setting-items-background));
 	transition: background 120ms ease;
-}
-.cs-option-box[tabindex="0"] {
-	cursor: pointer;
-}
-.cs-option-box:focus-visible {
-	outline: 2px solid var(--background-modifier-border-focus);
-	outline-offset: 2px;
 }
 /* The plugin import window's file card shows where a dragged file will land,
    whether or not a file is already staged on it: Obsidian's drop target, a 10%
@@ -5759,28 +5746,6 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	corner-shape: inherit;
 	background: color-mix(in oklch, var(--interactive-accent) 10%, transparent);
 	pointer-events: none;
-}
-/* Behind `(hover: hover)`, as Obsidian guards its own button hovers, so a
-   tapped box on a phone doesn't stay lit. */
-@media (hover: hover) {
-	/* A box that takes clicks answers the pointer by stepping its fill toward
-	   the text colour: darker over a light window, lighter over a dark one,
-	   and a visible step on either. `.callout-studio-row` used to hover to
-	   `--background-secondary-alt` instead, which on a light desktop is nearly
-	   the window's own white — fine for a row whose buttons carry the
-	   feedback, too faint for a box that is itself the button. A card has no
-	   tabindex, so it stays as it is under the pointer. */
-	.cs-option-box[tabindex="0"]:hover {
-		background: color-mix(
-			in srgb,
-			var(--cs-surface-raised, var(--setting-items-background)) 93%,
-			var(--text-normal)
-		);
-	}
-	/* The chevron answers too: from a hint to a direction. */
-	.cs-option-box[tabindex="0"]:hover .cs-option-box-mark {
-		color: var(--text-muted);
-	}
 }
 /* The icon sits on a tile of the window's own colour, the way a row's syntax
    chip does (`.callout-studio-row-syntax`), in Obsidian's own icon grey — and
@@ -5834,23 +5799,6 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 .cs-option-box-name {
 	overflow-wrap: anywhere;
 }
-/* The mark at the trailing edge of a chooser's box: a chevron, because the
-   click opens something. Obsidian mirrors it under `.mod-rtl` along with every
-   other directional icon. Decoration — the box's role says the same to a
-   screen reader. */
-.cs-option-box-mark {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-shrink: 0;
-	color: var(--text-faint);
-	transition: color 120ms ease;
-}
-.cs-option-box-mark .svg-icon {
-	width: 16px;
-	height: 16px;
-}
-
 /* ─── Quick insert window (the ribbon icon) ─────────────────── */
 
 /* Obsidian's dialog width (560px), narrower than the callout editor: this is a
