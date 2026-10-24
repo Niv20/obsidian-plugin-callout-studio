@@ -26,7 +26,7 @@
  * Its own module because `CalloutRowActions.ts` sits at the line cap the
  * repo's ratchet freezes it at.
  */
-import { Menu } from "obsidian";
+import { Menu, type App } from "obsidian";
 import { t } from "../../i18n";
 import { activeThemeName } from "../../manager/theme/customCssApi";
 import {
@@ -99,6 +99,11 @@ export function partitionCallouts(ctx: SettingsSectionContext): ReturnType<typeo
 		...ctx.plugin.registry.getUserDefined(),
 		...ctx.plugin.registry.getBuiltIn(),
 	]);
+}
+
+/** The active theme's name, or "Your theme" while Obsidian's default theme is on. */
+export function activeThemeLabel(app: App): string {
+	return activeThemeName(app) ?? t("settings.themeCalloutsDefaultTheme");
 }
 
 /**

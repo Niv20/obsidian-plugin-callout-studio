@@ -263,6 +263,24 @@ holds the one callout row every list uses, and the user's own callouts.
   page's button) and draws again when it starts and ends.
 - **Add new callout** (`add-callout`) is the same action as `+`, on the main
   page.
+- **Built-in callouts** (`callouts-builtin`) and **Callouts from your theme**
+  (`callouts-theme`) are *lazy* pages
+  ([`declarative/calloutListPage.ts`](../../src/settings/declarative/calloutListPage.ts)):
+  their rows give Obsidian a factory, `page: () => new CalloutListPage(ctx,
+  kind)`, a `SettingPage` that draws itself, so their callouts are not in the
+  settings search and a search for "note" finds Obsidian's settings, not a
+  built-in callout (GAP-15; `searchable: false` would also have taken the rows
+  out of the page's own search). The page draws one `mod-list` box of the same
+  callout rows, with its own search field (name or any id,
+  `calloutMatchesQuery`), and on the theme page an intro row naming the theme.
+  Obsidian never draws such a page again, so while it is open it listens to
+  the settings tab's own signals (`subscribeSettingsTab`) and draws its rows
+  again through a `TreeUpdater` of its own (the tab's signature, held while a
+  menu is open); the search field keeps its text. `hide()` stops it all. With
+  no rows, Built-in says every built-in is the theme's, and the theme page
+  that its theme styles none right now. The theme page's row shows only while
+  the theme styles a callout; the switch beside it on the main page stays for
+  when the switch itself took them away.
 - **While saving is paused** the rows stay as they are and only ✎ is dimmed
   (it says why); ⋮ still opens, so Find callouts works, and the menu's own
   changes refuse with a reason. `+`, Scan and Add new callout say why.

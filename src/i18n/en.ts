@@ -499,6 +499,7 @@ export const en: Record<string, string> = {
 	"settings.themeCalloutsDesc":
 		"{{theme}} supplies or restyles these, so Callout Studio leaves them exactly as your theme draws them and offers them as Block callouts only. Both kinds appear here: callout types your theme adds, and built-in callouts whose look it replaces. Callout types your theme adds are listed only while it is active.",
 	"settings.themeCalloutsDefaultTheme": "Your theme",
+	"settings.themeCalloutsEmpty": "{{theme}} styles no callouts right now.",
 	"settings.themePreviewAria":
 		'Preview "{{name}}" — see how your theme draws it',
 	"settings.builtInAllThemeStyled":

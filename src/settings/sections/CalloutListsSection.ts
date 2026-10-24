@@ -54,8 +54,7 @@
  */
 import { getLocale, t } from "../../i18n";
 import { sortCalloutsByDisplayName } from "../../utils/sorting";
-import { activeThemeName } from "../../manager/theme/customCssApi";
-import { partitionCallouts, themeStylesSwitchedOff } from "./rowOwnership";
+import { activeThemeLabel, partitionCallouts, themeStylesSwitchedOff } from "./rowOwnership";
 import type { RowKind } from "./rowOwnership";
 import { focusFirstRevealed, renderPagedList } from "./listPaging";
 import type { PagingState } from "./listPaging";
@@ -118,8 +117,7 @@ export function createCalloutListsController(
 	/** What the last completed render drew. `null` until there has been one. */
 	let lastSignature: string | null = null;
 
-	const themeLabel = (): string =>
-		activeThemeName(ctx.app) ?? t("settings.themeCalloutsDefaultTheme");
+	const themeLabel = (): string => activeThemeLabel(ctx.app);
 
 	/** See `isThemeStyled` for why membership is derived from the theme alone. */
 	const partition = () => partitionCallouts(ctx);
