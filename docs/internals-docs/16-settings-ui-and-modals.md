@@ -2701,6 +2701,10 @@ guard still accepts previously saved values up to 64px.
 
 ### `MenuCustomizationModal` - reorder without replacing a grabbed row
 
+The items' labels and icons, and the moves the window makes (on, off, move,
+back to shipped), are [`menuItems.ts`](../../src/settings/menuItems.ts), shared
+with the declarative page
+([26 § Customize right-click menu](26-declarative-settings.md#customize-right-click-menu)).
 Each render role has one persistent list container with a banded list from
 [`ui/bandedSortList.ts`](../../src/ui/bandedSortList.ts) attached. It owns the
 band line, the handles with their ArrowUp/ArrowDown moves, and the one

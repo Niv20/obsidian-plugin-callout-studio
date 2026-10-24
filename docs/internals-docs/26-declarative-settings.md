@@ -390,6 +390,32 @@ the window of the same name. The page is a nameless description row
   registry (a callout gone or taken by the theme), and the user binding a
   shortcut on the Hotkeys page.
 
+## Customize right-click menu
+
+[`declarative/menuPage.ts`](../../src/settings/declarative/menuPage.ts):
+`menuPage(ctx)` is the row that opens the page (`right-click-menu`), laid out
+like Obsidian's Ribbon settings: a nameless description row, then for each
+role (heading, inline, block) two of Obsidian's lists:
+
+- **The role's menu** (`menu-<role>`): the items it shows, in order, each a
+  plain row with its icon (`ITEM_ICON`; Obsidian draws a list row's icon only
+  on plain and action rows, and hides every icon slot in a box whose rows have
+  none), Obsidian's drag handle and Alt+↑/↓ (`onReorder`), and ✕ (`onDelete`),
+  which hides it. ↺ in the heading puts the role back as shipped. It is not
+  dimmed: Obsidian makes a box's heading buttons once, and plain rows have no
+  `render` to repaint it, so a press with nothing to reset changes nothing.
+- **Hidden from the … menu** (`menu-<role>-hidden`), shown only while the
+  role hides something: the hidden items as action rows (Obsidian's accent
+  text); a press brings one back at the end of the menu. Each role's heading is
+  its own (M6), so no two boxes share a key.
+- **Rows are not searchable** (decision 12): the settings search finds the
+  page by its name only.
+- **Every change** goes through `menuItems.ts` (`setMenuItemEnabled`,
+  `moveMenuItem`, `defaultMenuItems`), the same as the window's, reads the live
+  settings when pressed, and is saved at once.
+- **While saving is paused** ✕, a hidden item and ↺ say why, and a drag says
+  why and draws the page again, which puts the row Obsidian moved back.
+
 ## Read-only while saving is paused
 
 While saving is paused a change would live only in memory, so the page takes

@@ -19,7 +19,7 @@ import { describeCommand, resolveAction, resolveFold, resolveHeadingLevel } from
 import { mergeIconLibraries } from "../utils/iconSourcesMerge";
 import { ICON_SOURCES, ICON_SOURCE_IDS } from "../icons/registry";
 import { isDownloadable, libraryOrder } from "../icons/iconLibraries";
-import { ITEM_LABEL_KEY } from "./MenuCustomizationModal";
+import { ITEM_LABEL_KEY } from "./menuItems";
 import {
 	ROLE_LABELS, ROLE_ORDER, absentText, recordFields, type FieldSpec, type RecoveryField, type RecoveryItem,
 	type RecoverySideName, type RecoverySides,

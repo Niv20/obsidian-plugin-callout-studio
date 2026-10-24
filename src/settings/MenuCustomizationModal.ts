@@ -8,20 +8,20 @@
  * with mouse and touch — the plugin also runs on mobile (isDesktopOnly: false).
  * The handle is keyboard-operable too (ArrowUp / ArrowDown). Toggling an item
  * off drops it to the bottom of its list; toggling it on floats it back up as
- * the last enabled item. Every change is saved immediately (matching the
- * plugin's save-on-change convention) — there is no OK/Cancel.
+ * the last enabled item (menuItems.ts, shared with the declarative page).
+ * Every change is saved immediately (matching the plugin's save-on-change
+ * convention) — there is no OK/Cancel.
  */
 import { Modal, Setting, ToggleComponent } from "obsidian";
 import type { App } from "obsidian";
 import { t } from "../i18n";
-import { DEFAULT_CONTEXT_MENU_ITEMS } from "../constants";
 import { attachBandedSortList, type BandedSortList } from "../ui/bandedSortList";
 import { applyModalChrome } from "./modalChrome";
 import { addFieldResetButton } from "./editor/fieldResetButton";
+import { defaultMenuItems, isMenuRoleDefault, ITEM_LABEL_KEY, setMenuItemEnabled } from "./menuItems";
 import type {
 	CalloutRenderRole,
 	ContextMenuItemConfig,
-	ContextMenuItemId,
 	PluginSettings,
 } from "../types";
 
@@ -38,18 +38,6 @@ const ROLE_TITLE_KEY: Record<CalloutRenderRole, string> = {
 	regular: "menuCustomize.regular",
 	heading: "menuCustomize.heading",
 	inline: "menuCustomize.inline",
-};
-
-/** i18n key for each menu item's label. Also names the entries in the setup comparison. */
-export const ITEM_LABEL_KEY: Record<ContextMenuItemId, string> = {
-	// `edit` is the stable persisted id; at runtime it creates unknown tokens.
-	edit: "menuItem.createOrEdit",
-	openSettings: "menuItem.openSettings",
-	copyMarkdown: "menuItem.copyMarkdown",
-	foldDefaults: "menuItem.foldDefaults",
-	cutSection: "menuItem.cutSection",
-	copySection: "menuItem.copySection",
-	deleteSection: "menuItem.deleteSection",
 };
 
 export class MenuCustomizationModal extends Modal {
@@ -111,25 +99,14 @@ export class MenuCustomizationModal extends Modal {
 		this.roleResetSyncs[role] = addFieldResetButton(
 			heading,
 			t("settings.resetAction"),
-			() => this.isRoleDefault(role),
+			() => isMenuRoleDefault(this.host.settings.contextMenu.items[role], role),
 			() => {
-				// Copy both the array and entries: later toggles must never mutate
-				// the shipped defaults or another category's saved layout.
-				this.host.settings.contextMenu.items[role] =
-					DEFAULT_CONTEXT_MENU_ITEMS[role].map((item) => ({ ...item }));
+				this.host.settings.contextMenu.items[role] = defaultMenuItems(role);
 				list.render();
 				void this.host.saveSettings();
 			},
 		);
 		list.render();
-	}
-
-	private isRoleDefault(role: CalloutRenderRole): boolean {
-		const items = this.host.settings.contextMenu.items[role];
-		const defaults = DEFAULT_CONTEXT_MENU_ITEMS[role];
-		return items.length === defaults.length && items.every((item, index) =>
-			item.id === defaults[index]?.id && item.enabled === defaults[index]?.enabled,
-		);
 	}
 
 	/** One menu item's label and toggle; the shared list draws its handle. */
@@ -151,20 +128,7 @@ export class MenuCustomizationModal extends Modal {
 			.setValue(item.enabled)
 			.onChange(async (v) => {
 				const items = this.host.settings.contextMenu.items[role];
-				item.enabled = v;
-				this.lists[role]?.animate(() => {
-					const from = items.indexOf(item);
-					if (from !== -1) items.splice(from, 1);
-					if (v) {
-						let lastEnabled = -1;
-						items.forEach((it, i) => {
-							if (it.enabled) lastEnabled = i;
-						});
-						items.splice(lastEnabled + 1, 0, item);
-					} else {
-						items.push(item);
-					}
-				});
+				this.lists[role]?.animate(() => setMenuItemEnabled(items, item, v));
 				this.roleResetSyncs[role]?.();
 				await this.host.saveSettings();
 			});

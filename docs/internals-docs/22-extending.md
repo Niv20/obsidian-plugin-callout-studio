@@ -107,10 +107,11 @@ command and any custom command sharing the same operation can't drift apart.
    role is simply skipped, so the same `ContextMenuItemConfig` shape can
    carry role-specific ids safely.
 4. **`src/i18n/en.ts`** - add the label key (`menuItem.<id>` convention, see
-   `MenuCustomizationModal.ITEM_LABEL_KEY`) and the menu-item's own display
+   `menuItems.ts`'s `ITEM_LABEL_KEY`) and the menu-item's own display
    string.
-5. **`src/settings/MenuCustomizationModal.ts`** - add it to
-   `ITEM_LABEL_KEY` so it appears in the drag-sortable customization list.
+5. **`src/settings/menuItems.ts`** - add it to `ITEM_LABEL_KEY` and
+   `ITEM_ICON`, so it appears, with its icon, in the customization window and
+   on the settings page.
 6. `mergeMenuItems()` in `settingsMerge.ts` already handles new-id-appended
    automatically for upgrading users - no change needed there unless the
    new item needs a specific *default position* rather than appended last.
