@@ -257,6 +257,9 @@ describe("class names in styles.css and src/ agree", () => {
 	 * line here.
 	 */
 	const EMITTED_WITHOUT_RULES = new Set([
+		"cs-import-issue", // one problem's row in the import report; tests count the rows by it
+		"cs-import-issue-field", // the field a problem is about; Obsidian's .setting-item-description code draws it
+		"cs-import-report-group", // one entry's group in the import report; Obsidian's SettingGroup draws it
 		"cs-recovery-day", // a Version history day group; Obsidian's SettingGroup draws it (tests find days by it)
 		"cs-recovery-status", // the Loading/empty row; Obsidian's mod-empty-state draws it
 		"cs-recovery-summary-part", // one line of a version's summary, a plain div; tests read the lines by it

@@ -6,9 +6,16 @@
  * lets the user either cancel the import or proceed with only the valid rows.
  * A fatal error (unparseable JSON or wrong root type) leaves no import button
  * at all; a report with no valid entry keeps it, dimmed, and pressing it says why.
+ *
+ * The layout (finding S9-08). Each entry with a problem is one of Obsidian's
+ * setting groups: "Entry 3 — idea" as the heading, and one row per problem in
+ * its rounded box, divided by Obsidian's thin lines. Problems with the file as
+ * a whole come first, in a box with no heading. The window body is the only
+ * thing that scrolls. (It used to be a grey box with a scrollbar of its own
+ * inside the scrolling window, with dashed lines between the entries.)
  */
-import { Modal } from "obsidian";
-import type { App } from "obsidian";
+import { Modal, SettingGroup } from "obsidian";
+import type { App, Setting } from "obsidian";
 import { t } from "../i18n";
 import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import type { ValidationIssue } from "./importValidator";
@@ -48,10 +55,7 @@ export class ImportReportModal extends Modal {
 		const lead = this.fatal
 			? t("import.reportLeadInFatal")
 			: t("import.reportLeadIn");
-		contentEl.createEl("p", {
-			text: lead,
-			cls: "cs-import-report-lead",
-		});
+		contentEl.createEl("p", { text: lead, cls: "cs-import-report-lead" });
 
 		// Group issues by entry index. -1 means top-level.
 		const grouped = new Map<number, ValidationIssue[]>();
@@ -63,42 +67,20 @@ export class ImportReportModal extends Modal {
 			if (issue.entryLabel) labels.set(issue.index, reportText(issue.entryLabel));
 		}
 
-		const listEl = contentEl.createDiv({
-			cls: "cs-import-report-list",
-		});
-
+		// The groups, in one wrapper that sets them off from the text above
+		// and below. `mod-list` is Obsidian's list layout: rows a little tighter.
+		const listEl = contentEl.createDiv({ cls: "cs-import-report-list" });
 		const sortedKeys = [...grouped.keys()].sort((a, b) => a - b);
 		for (const key of sortedKeys) {
-			const groupIssues = grouped.get(key) ?? [];
-			const groupEl = listEl.createDiv({ cls: "cs-import-report-group" });
-
+			const group = new SettingGroup(listEl).addClass("mod-list", "cs-import-report-group");
 			if (key >= 0) {
-				groupEl.createDiv({
-					cls: "cs-import-report-group-heading",
-					text: t("import.entryHeading", {
-						index: key + 1,
-						label: labels.get(key) ?? `#${key + 1}`,
-					}),
-				});
+				group.setHeading(t("import.entryHeading", {
+					index: key + 1,
+					label: labels.get(key) ?? `#${key + 1}`,
+				}));
 			}
-
-			const ul = groupEl.createEl("ul", {
-				cls: "cs-import-report-issues",
-			});
-			for (const issue of groupIssues) {
-				const li = ul.createEl("li", {
-					cls: `cs-import-issue cs-import-issue-${issue.level}`,
-				});
-				if (issue.field) {
-					li.createEl("code", {
-						cls: "cs-import-issue-field",
-						text: reportText(issue.field),
-					});
-					li.appendText(" — ");
-				}
-				const params = issue.params && Object.fromEntries(Object.entries(issue.params)
-					.map(([key, value]) => [key, typeof value === "string" ? reportText(value) : value]));
-				li.appendText(t(issue.messageKey, params));
+			for (const issue of grouped.get(key) ?? []) {
+				group.addSetting((row) => this.renderIssue(row, issue));
 			}
 		}
 		if (this.issues.length > MAX_VISIBLE_ISSUES) {
@@ -137,6 +119,24 @@ export class ImportReportModal extends Modal {
 				if (explainIfBlocked(blockedReason)) return;
 				this.finish("importValid");
 			});
+		}
+	}
+
+	/**
+	 * One problem as a row: the message as the row's name, in the error or
+	 * warning colour (Obsidian's `--setting-item-name-color`, set in
+	 * styles.css by the `cs-import-issue-<level>` class), and under it the field
+	 * the problem is about, as `code`, which a setting's description draws in
+	 * Obsidian's small monospace.
+	 */
+	private renderIssue(row: Setting, issue: ValidationIssue): void {
+		row.settingEl.addClass("cs-import-issue", `cs-import-issue-${issue.level}`);
+		// Long values in the message are shortened, as the field is.
+		const params = issue.params && Object.fromEntries(Object.entries(issue.params)
+			.map(([key, value]) => [key, typeof value === "string" ? reportText(value) : value]));
+		row.setName(t(issue.messageKey, params));
+		if (issue.field) {
+			row.descEl.createEl("code", { cls: "cs-import-issue-field", text: reportText(issue.field) });
 		}
 	}
 

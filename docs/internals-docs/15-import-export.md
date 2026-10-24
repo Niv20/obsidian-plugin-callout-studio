@@ -143,6 +143,17 @@ never bails early on one bad entry, and collects **every** issue across the
 whole file in one pass - so `ImportReportModal` can show the complete
 picture at once rather than one error at a time across repeated attempts.
 
+`ImportReportModal` draws that picture as Obsidian settings (finding S9-08):
+problems with the file as a whole first, in a `SettingGroup` with no heading,
+then one group per entry headed **Entry 3 — idea**, all with `mod-list`. Each
+problem is a row (`cs-import-issue cs-import-issue-<level>`): the message as the
+row's name, coloured through Obsidian's `--setting-item-name-color` (error red
+for an error, which skips the entry; warning orange for a warning, which drops
+one value), and the field it concerns as `code` in the description, which
+app.css draws in small monospace. The window body is the only scroller. Until
+2026-10-24 the list was a grey box with a 50vh scrollbar of its own inside the
+scrolling window, with dashed lines between entries and a bold lead line.
+
 ### Resource limits and hostile input
 
 All three importers share `utils/importLimits.ts`. Files are checked against a

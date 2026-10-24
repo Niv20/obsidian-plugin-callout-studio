@@ -5651,58 +5651,32 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 /* ─── Import report modal ─────────────────────────────────── */
 /* Obsidian's dialog width (560px), like every window but the two editors. A
    640px cap used to sit here and did nothing under that width. */
+/* Each entry is one of Obsidian's setting groups (`SettingGroup` with
+   `mod-list`, finding S9-08), drawn by app.css; the window body is the one
+   scroller. The groups sit 24px from the text above and below, as from each
+   other; the lead's own bottom margin folds into that. */
 .callout-studio-import-report .cs-import-report-lead {
 	margin-top: 0;
-	font-weight: 600;
 }
+
 .callout-studio-import-report .cs-import-report-list {
-	max-height: 50vh;
-	overflow-y: auto;
-	margin: 0.75rem 0;
-	padding: 0.5rem 0.75rem;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-m);
-	corner-shape: var(--corner-shape);
-	background: var(--cs-surface-raised, var(--setting-items-background));
+	margin-block: var(--size-4-6);
 }
-.callout-studio-import-report
-	.cs-import-report-group
-	+ .cs-import-report-group {
-	margin-top: 0.75rem;
-	padding-top: 0.5rem;
-	border-top: 1px dashed var(--background-modifier-border);
-}
-.callout-studio-import-report .cs-import-report-group-heading {
-	font-weight: 600;
-	margin-bottom: 0.25rem;
-	color: var(--text-normal);
-}
-.callout-studio-import-report .cs-import-report-issues {
-	margin: 0;
-	padding-inline-start: 1.25rem;
-}
-.callout-studio-import-report .cs-import-issue {
-	margin: 0.15rem 0;
-	line-height: 1.4;
-}
+
+/* A problem's message is the row's name, coloured by how serious it is:
+   an error skips the entry, a warning only drops the one value. */
 .callout-studio-import-report .cs-import-issue-error {
-	color: var(--text-error);
+	--setting-item-name-color: var(--text-error);
 }
+
 .callout-studio-import-report .cs-import-issue-warning {
-	color: var(--text-warning, var(--text-accent));
+	--setting-item-name-color: var(--text-warning);
 }
-.callout-studio-import-report .cs-import-issue-field {
-	font-family: var(--font-monospace);
-	font-size: 0.85em;
-	background: var(--background-modifier-border);
-	padding: 0 4px;
-	border-radius: var(--radius-s);
-	corner-shape: var(--corner-shape);
-}
+
 .callout-studio-import-report .cs-import-report-summary {
-	margin: 0.5rem 0 0.75rem;
+	margin: 0;
 	color: var(--text-muted);
-	font-size: 0.9em;
+	font-size: var(--font-ui-small);
 }
 
 /* ─── Import source / export format chooser modals ────────── */
