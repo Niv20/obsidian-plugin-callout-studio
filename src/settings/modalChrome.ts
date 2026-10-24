@@ -30,7 +30,11 @@
  * Who calls it. Every window's `onOpen` calls {@link applyModalChrome}, puts
  * its buttons in the bar it returns, and makes its Cancel with
  * {@link addCancelButton}. This module also owns the window's keyboard scope,
- * so an open dropdown gets the first Escape (`ui/menuEscape.ts`).
+ * so an open dropdown gets the first Escape (`ui/menuEscape.ts`). The one
+ * exception is the yes/no question (`utils/ConfirmModal.ts`), which is
+ * Obsidian's own `ConfirmationModal` with its own shell; it still takes the
+ * stacking mark from {@link markStackedWindow}, and a long one scrolls through
+ * {@link scrollBodyOnly}.
  */
 import type { Modal } from "obsidian";
 import { installModalMenuScope, removeModalMenuScope } from "../ui/menuEscape";
@@ -72,33 +76,50 @@ export function applyModalChrome(
 	modal: Modal,
 	options: ModalChromeOptions = {},
 ): HTMLElement | null {
-	const { modalEl, containerEl } = modal;
+	const { modalEl } = modal;
 	installModalMenuScope(modal);
 	// `cs-modal` is the plugin's own hook (its surface colours, its row rules);
 	// `mod-scrollable-content` is Obsidian's long-dialog shell.
 	// `...` spreads the list into separate arguments: addClass("cs-modal", …).
 	modalEl.addClass(...WINDOW_CLASSES);
 	detachButtonBar(modalEl);
-
-	// Marks the window's backdrop layer for styles.css, which paints the dim
-	// behind a stacked window on mobile itself (see "Stacked windows on mobile"
-	// there for why Obsidian's own backdrop can't be relied on).
-	//
-	// The count is trustworthy here: `Modal.open()` appends `containerEl` to the
-	// document BEFORE it calls `onOpen()`, and this runs from `onOpen()`, so this
-	// window is already in the tally and `> 1` means one was open underneath it.
-	// `toggleClass` rather than `addClass` because Obsidian reuses `containerEl`
-	// across open/close — a window reopened over nothing must lose the class.
-	containerEl.addClass("cs-modal-container");
-	containerEl.toggleClass(
-		"cs-modal-stacked",
-		containerEl.ownerDocument.querySelectorAll(".modal-container").length > 1,
-	);
+	markStackedWindow(modal);
 
 	if (!options.footer) return null;
 	// After `.modal-content`, as Obsidian's own dialogs build it, so it stays
 	// pinned under the scrolling body.
 	return modalEl.createDiv({ cls: "modal-button-container" });
+}
+
+/**
+ * Mark the window's backdrop layer for styles.css, which paints the dim behind
+ * a window opened over another on mobile itself (see "Stacked windows on
+ * mobile" there for why Obsidian's own backdrop can't be relied on).
+ * Call it from `onOpen()`.
+ *
+ * The count is trustworthy there: `Modal.open()` appends `containerEl` to the
+ * document BEFORE it calls `onOpen()`, so this window is already in the tally
+ * and `> 1` means one was open underneath it. `toggleClass` rather than
+ * `addClass` because Obsidian reuses `containerEl` across open/close — a window
+ * reopened over nothing must lose the class.
+ */
+export function markStackedWindow(modal: Modal): void {
+	const { containerEl } = modal;
+	containerEl.addClass("cs-modal-container");
+	containerEl.toggleClass(
+		"cs-modal-stacked",
+		containerEl.ownerDocument.querySelectorAll(".modal-container").length > 1,
+	);
+}
+
+/**
+ * Give a dialog that does not wear the shell above Obsidian's long-dialog
+ * layout anyway: only the body scrolls, under a title and a button bar that
+ * stay put. The yes/no question (`utils/ConfirmModal.ts`) uses it for Reset
+ * everything, whose message lists everything that goes.
+ */
+export function scrollBodyOnly(modal: Modal): void {
+	modal.modalEl.addClass("mod-scrollable-content");
 }
 
 /**

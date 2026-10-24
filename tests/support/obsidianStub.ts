@@ -162,6 +162,114 @@ export class Component {
 	unload(): void { this.disposers.splice(0).forEach(dispose => dispose()); }
 }
 export class Modal {}
+
+/**
+ * Obsidian 1.13's confirmation button (`ConfirmationButton`): a press runs
+ * the handler and closes the dialog unless the handler returns something
+ * truthy, as app.js does.
+ */
+export class ConfirmationButton {
+	readonly buttonEl: HTMLButtonElement;
+	isInitialFocus = false;
+	private handler: (() => unknown) | null = null;
+
+	constructor(containerEl: HTMLElement, private readonly handleClose: () => void) {
+		this.buttonEl = containerEl.createEl("button");
+		this.buttonEl.addEventListener("click", () => {
+			void (async () => {
+				const keepOpen = await this.handler?.();
+				if (!keepOpen) this.handleClose();
+			})();
+		});
+	}
+
+	setButtonText(text: string): this { this.buttonEl.textContent = text; return this; }
+	setCta(): this { this.buttonEl.addClass("mod-cta"); return this; }
+	setDestructive(): this { this.buttonEl.addClass("mod-destructive"); return this; }
+	setCancel(): this { this.buttonEl.addClass("mod-cancel"); return this; }
+	setSecondary(): this { this.buttonEl.addClass("mod-secondary"); return this; }
+	setInitialFocus(): this { this.isInitialFocus = true; return this; }
+	onClick(handler: () => unknown): this { this.handler = handler; return this; }
+}
+
+/**
+ * Obsidian 1.13's confirmation dialog (`ConfirmationModal`), in the DOM it
+ * builds: `.modal-container.mod-confirmation > .modal > (title, content,
+ * .modal-button-container)`. `open` adds it to the page and runs `onOpen`;
+ * `close` runs `onClose` and takes it off.
+ *
+ * The DOM is built on first use, not in the constructor: many suites create a
+ * `ConfirmModal` only to replace its `confirm()`, without installing the fake
+ * DOM, and the global `createDiv` does not exist there.
+ */
+export class ConfirmationModal extends Modal {
+	app: unknown;
+	readonly scope = {};
+	private dom: {
+		containerEl: HTMLElement;
+		modalEl: HTMLElement;
+		titleEl: HTMLElement;
+		contentEl: HTMLElement;
+		buttonContainerEl: HTMLElement;
+	} | null = null;
+
+	constructor(app: unknown) {
+		super();
+		this.app = app;
+	}
+
+	/** Builds the dialog's elements the first time any of them is asked for. */
+	private get parts(): NonNullable<ConfirmationModal["dom"]> {
+		if (!this.dom) {
+			const containerEl = createDiv({ cls: "modal-container mod-confirmation" });
+			const modalEl = containerEl.createDiv({ cls: "modal" });
+			const titleEl = modalEl.createDiv({ cls: "modal-header" }).createDiv({ cls: "modal-title" });
+			const contentEl = modalEl.createDiv({ cls: "modal-content" });
+			const buttonContainerEl = modalEl.createDiv({ cls: "modal-button-container" });
+			this.dom = { containerEl, modalEl, titleEl, contentEl, buttonContainerEl };
+		}
+		return this.dom;
+	}
+
+	get containerEl(): HTMLElement { return this.parts.containerEl; }
+	get modalEl(): HTMLElement { return this.parts.modalEl; }
+	get titleEl(): HTMLElement { return this.parts.titleEl; }
+	get contentEl(): HTMLElement { return this.parts.contentEl; }
+	get buttonContainerEl(): HTMLElement { return this.parts.buttonContainerEl; }
+
+	setTitle(title: string): this { this.titleEl.setText(title); return this; }
+	addClass(cls: string): this { this.modalEl.addClass(cls); return this; }
+
+	addCheckbox(label: string, cb: (value: boolean) => unknown): this {
+		const labelEl = this.buttonContainerEl.createEl("label", { cls: "mod-checkbox" });
+		const input = labelEl.createEl("input", { type: "checkbox", attr: { tabindex: "-1" } });
+		input.addEventListener("change", () => cb(input.checked));
+		labelEl.appendText(label);
+		return this;
+	}
+
+	addButton(cb: (button: ConfirmationButton) => unknown): this {
+		cb(new ConfirmationButton(this.buttonContainerEl, () => this.close()));
+		return this;
+	}
+
+	addCancelButton(text?: string): this {
+		return this.addButton((button) => button.setButtonText(text ?? "Cancel").setCancel());
+	}
+
+	open(): void {
+		activeDocument.body.appendChild(this.containerEl);
+		this.onOpen();
+	}
+
+	close(): void {
+		this.onClose();
+		this.containerEl.remove();
+	}
+
+	onOpen(): void {}
+	onClose(): void {}
+}
 export class Editor {}
 
 /**

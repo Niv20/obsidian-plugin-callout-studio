@@ -907,7 +907,7 @@ written, so a caller that announces success awaits `saveSettings()` and then
 asks. Reset's confirmation is titled and labelled **Reset everything** rather
 than **Delete**, lists what it removes from this vault as bullets with the count
 first in each, and keeps its button locked until the **I have read and understood** box
-is ticked. With nothing to reset it says so and asks nothing.
+in its button bar is ticked. With nothing to reset it says so and asks nothing.
 
 ### Recovery without file surgery
 

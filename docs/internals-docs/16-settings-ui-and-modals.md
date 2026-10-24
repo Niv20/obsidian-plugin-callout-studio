@@ -1275,6 +1275,8 @@ button bar, or neither.
 applyModalChrome(modal, { footer?: boolean }): HTMLElement | null
 addCancelButton(bar, label, onClick): HTMLButtonElement
 removeModalChrome(modal): void
+markStackedWindow(modal): void   // the stacking mark alone, for ConfirmModal
+scrollBodyOnly(modal): void      // mod-scrollable-content alone, for ConfirmModal
 ```
 
 ```text
@@ -1371,16 +1373,25 @@ and groups too (see
 > headerless one. `ReplaceCalloutModal` defaults its title to **Replace in
 > vault** for the same reason.
 >
-> **`WelcomeModal` is the one deliberate exception** - it's a splash screen,
+> **`WelcomeModal` is one deliberate exception** - it's a splash screen,
 > opts out of the chrome entirely (`this.titleEl.remove()`), and carries its
 > own name as a hero heading in a dedicated left column instead of a
 > generic title bar.
+>
+> **`ConfirmModal` is the other** - it is Obsidian's own `ConfirmationModal`
+> (see [`ConfirmModal`](#confirmmodal---the-generic-yesno-dialog)), which builds
+> its own title, body and button bar, so it never calls `applyModalChrome` and
+> wears no `cs-modal`. It takes the two pieces it still needs from this module
+> one at a time: `markStackedWindow` (the backdrop mark below) and, for a long
+> message, `scrollBodyOnly`. Going through the module keeps the test that only
+> `modalChrome.ts` writes `mod-scrollable-content` true.
 
 `applyModalChrome` is safe to call again on a reopened modal - Obsidian
 reuses `modalEl` across open/close cycles, so a stale button bar from a
 previous open is detached rather than duplicated. It also installs the
 window's keyboard scope, so an open dropdown gets the first Escape
-(`ui/menuEscape.ts`), and stamps `cs-modal-stacked` on the container when
+(`ui/menuEscape.ts`), and (through `markStackedWindow`) stamps
+`cs-modal-stacked` on the container when
 another modal is already open underneath it (used by `styles.css` to paint the
 correct backdrop dimming for stacked modals on mobile, where Obsidian's own
 backdrop layering can't be relied on) - the open count check is reliable
@@ -2221,25 +2232,51 @@ red `mod-destructive mod-cta` - a destructive action reads as one by default
 unless the caller passes `"cta"`, the accent, for a yes that loses nothing). Used throughout for anything destructive that isn't
 specific enough to warrant its own modal (bulk vault edits, full reset).
 
-An optional last argument, `acknowledgement`, is for a confirmation that
-cannot be taken back. It draws a checkbox with that label, in a bordered box,
-as the last line of the message (`.cs-confirm-acknowledge`; the tick and the
-box's outline turn red once it is ticked) and keeps the confirm button locked
-(`aria-disabled`, not `disabled`, so it still receives the click) until the box
-is ticked. Pressing the locked button shakes the box and turns its text, its
-outline and the empty tick square's outline red, then fades them back to their
-normal colour (its weight never changes; under reduced motion only the colour
-fade plays), and scrolls the body to its very end
-(`contentEl.scrollTo({ top: scrollHeight })`): the window's body is the
-scroller, so a long message pushes the box off screen. It is not
-`label.scrollIntoView()`, which lines the label's edge up with the body's and
-so stops one bottom padding (16px) short of the end. **Reset everything** is
-the only caller that passes it (`confirm.acknowledge`).
+**It is Obsidian's own `ConfirmationModal`** (1.13, finding S9-06), the dialog
+Obsidian asks **Delete file?** with. The constructor puts `mod-confirmation` on
+the container and builds `buttonContainerEl` under `.modal-content`;
+`ConfirmModal` sets the title, writes one `<p>` per line of a plain message (or
+appends a fragment), then calls `addCancelButton` and `addButton` - in that
+order, so Cancel comes first and the confirm button sits at the end of the bar.
+What that gives for free, with no CSS of the plugin's:
 
-The existing checkbox change handler mirrors the checked state onto the label's
-`is-checked` class while updating the button lock. CSS reads that class for the
-red outline, so checking and unchecking stay in sync without a parent `:has()`
-selector.
+- **Focus.** The confirm button is `setInitialFocus()`. Obsidian picks the
+  button to focus inside `open()`, *before* `onOpen()`, so the buttons are
+  built in `confirm()` before `open()` is called. With a keyboard, Enter
+  confirms and Escape cancels; on a touch device nothing takes focus.
+- **Phone.** `mod-confirmation` hides the ✕, centres the title, and the bar
+  stacks full-width with the red button on top and Cancel under it.
+- **Answering.** A press runs the `onClick` handler, which Obsidian awaits, and
+  then closes the dialog unless the handler returned something truthy.
+  `onClose` (which must call `super.onClose()`) answers `false` when no button
+  answered, so Cancel, Escape and a click outside all resolve `false`.
+
+An optional last argument, `acknowledgement`, is for a confirmation that
+cannot be taken back. It is `ConfirmationModal.addCheckbox`, the box Obsidian
+puts **Don't ask again** in: `label.mod-checkbox` at the start of the button
+bar, drawn by app.css (finding S9-07). It replaces a bordered box at the end
+of the message, which a long list pushed off screen. Two changes to
+Obsidian's checkbox, both on `.cs-confirm-acknowledge`:
+
+- **Tab reaches it.** Obsidian builds the input with `tabindex=-1`, since its
+  tick is an optional preference; this one is a required gate, so it is set to
+  `0`.
+- **On mobile it goes on top of the bar** (`order: 1`). The bar is
+  `column-reverse` there, with Cancel at `order: -1`, so in DOM order the tick
+  would land between the two buttons. Obsidian has no precedent: it does not
+  offer its own tick on mobile (`Platform.isMobile || addCheckbox(...)` in
+  app.js).
+
+The confirm button stays locked until the box is ticked: `aria-disabled`, not
+`disabled`, so it still receives the click, and Obsidian's
+`button[aria-disabled="true"]` dims it to 70%. Pressing it while locked returns
+`true` from the handler, which keeps the dialog open, and restarts `cs-nudge`
+on the label: the label shakes and its text and the empty tick square's
+outline turn red, then fade back (its weight never changes; under reduced
+motion only the colour fade plays). Nothing scrolls: the bar is pinned, so the
+tick is always on screen. **Reset everything** is the only caller that passes
+it (`confirm.acknowledge`), and its long message also gets `scrollBodyOnly`, so
+only the body scrolls, between a title and a bar that stay put.
 
 Its message is built from `settings/resetInventory.ts`, which reads the
 registry and returns two lists: what the reset deletes (custom callouts,

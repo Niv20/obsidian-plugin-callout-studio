@@ -204,10 +204,9 @@ changed and which settings go back to their defaults. Anything you have none of
 is left off the list.
 
 The **Reset everything** button in that window stays disabled until you tick
-**I have read and understood**, in a box on the last line of the window. If the
-list is long enough to scroll, pressing the button early scrolls all the way
-down to the box, which shakes and turns red, tick square included, for a
-moment before fading back.
+**I have read and understood**, next to the buttons at the bottom of the window
+(on a phone or tablet, above them). Pressing the button early makes the tick
+shake and turn red for a moment before fading back.
 
 If everything is already at its defaults, for example right after a reset, no
 window opens and a message says there is nothing to reset.

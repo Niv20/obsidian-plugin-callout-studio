@@ -45,6 +45,8 @@ Callout Studio's windows - its settings, the callout editor, the pickers and the
 
 The windows themselves are built like Obsidian's own longer dialogs: the title with no line under it, the content scrolling, and the buttons in a bar along the bottom. On a phone or tablet those buttons stack full-width, with the main action on top and Cancel under it, as in Obsidian's own dialogs.
 
+A question that asks before Callout Studio deletes or replaces something is Obsidian's own confirmation dialog, the one it uses for **Delete file?**. With a keyboard, Enter answers yes and Escape cancels; on a phone it rises from the bottom of the screen.
+
 A dropdown with a few fixed choices, such as a command's format or the interface language, opens Obsidian's own menu, with a check mark beside the current choice; on a phone it rises from the bottom like Obsidian's other menus. The lists you can type in to search, such as the callout and color pickers, look the same as Obsidian's menus: the same background, edge, corners and shadow, and the same check mark. On a phone or tablet they are slightly see-through, as Obsidian's menus are.
 
 If you choose a community theme under **Settings → Appearance → Themes**, the windows follow its button, text-box and border colors. Switching theme or color scheme updates open windows immediately; nothing needs to be reloaded.

@@ -125,6 +125,42 @@ export class Modal {
 	onClose(): void {}
 }
 
+/** Obsidian 1.13's confirmation button: a press closes the dialog unless the handler returns something truthy. */
+export class ConfirmationButton {
+	buttonEl: HTMLButtonElement; isInitialFocus = false;
+	private handler: (() => unknown) | null = null;
+	constructor(parent: HTMLElement, private readonly handleClose: () => void) {
+		this.buttonEl = parent.createEl("button");
+		this.buttonEl.addEventListener("click", async () => { if (!(await this.handler?.())) this.handleClose(); });
+	}
+	setButtonText(text: string): this { this.buttonEl.textContent = text; return this; }
+	setCta(): this { this.buttonEl.classList.add("mod-cta"); return this; }
+	setDestructive(): this { this.buttonEl.classList.add("mod-destructive"); return this; }
+	setCancel(): this { this.buttonEl.classList.add("mod-cancel"); return this; }
+	setSecondary(): this { this.buttonEl.classList.add("mod-secondary"); return this; }
+	setInitialFocus(): this { this.isInitialFocus = true; return this; }
+	onClick(handler: () => unknown): this { this.handler = handler; return this; }
+}
+/** Obsidian 1.13's confirmation dialog: `mod-confirmation` on its container, and a button bar under the content. */
+export class ConfirmationModal extends Modal {
+	buttonContainerEl: HTMLElement;
+	constructor(app: any) {
+		super(app);
+		this.containerEl.classList.add("mod-confirmation");
+		this.buttonContainerEl = this.modalEl.createDiv({ cls: "modal-button-container" });
+	}
+	addClass(cls: string): this { this.modalEl.classList.add(cls); return this; }
+	addCheckbox(label: string, cb: (value: boolean) => unknown): this {
+		const labelEl = this.buttonContainerEl.createEl("label", { cls: "mod-checkbox" });
+		const input = labelEl.createEl("input", { type: "checkbox", attr: { tabindex: "-1" } });
+		input.addEventListener("change", () => cb(input.checked));
+		labelEl.appendText(label);
+		return this;
+	}
+	addButton(cb: (button: ConfirmationButton) => unknown): this { cb(new ConfirmationButton(this.buttonContainerEl, () => this.close())); return this; }
+	addCancelButton(text?: string): this { return this.addButton((button) => button.setButtonText(text ?? "Cancel").setCancel()); }
+}
+
 class Control {
 	el: HTMLElement;
 	constructor(el: HTMLElement) { this.el = el; }
