@@ -3481,10 +3481,25 @@ row), the message paragraphs, and `.cs-readonly-banner-actions` holding whatever
 actions apply. The title is chosen from the writer, not from the message -
 `isFrozen || status.frozenReason` reads as *Saving is paused*, a bare
 `status.failure` as *Settings were not saved* - so a frozen session that also
-fails a retry still says it is paused. The card is outlined on all four sides
-rather than barred down one edge, which is also what makes it read the same way
-in an RTL locale; the action row is `flex-start`-aligned with the prose and
-stacks full width under 600px.
+fails a retry still says it is paused. The action row is `flex-start`-aligned
+with the prose and stacks full width under 600px.
+
+**It looks like the warning box Obsidian's Keychain settings show** (finding
+GAP-08), and so does the first-install import prompt, in the accent instead of
+the warning colour: Obsidian's callout corners and padding (`--callout-radius`,
+`--callout-padding`, which core mirrors for right-to-left), the title in
+`--text-warning` and `--callout-title-weight`, and a 10% tint mixed as Obsidian
+mixes a callout's (`color-mix(in oklch, var(--text-warning) 10%, transparent)`).
+Both stay the plugin's own markup rather than a real
+`.callout[data-callout=warning]`: the plugin styles every such callout and
+paints icons into it, so the user's own Warning callout design would have
+reached the banner. The colour is `--text-warning` (or `--interactive-accent`),
+never `--callout-warning`, which some themes still declare as an RGB triplet,
+and never `rgba(var(--callout-…))`, invalid since Obsidian 1.13 made those full
+colours. There is no outline, as Obsidian's box has none; until 2026-10-24 the
+card was outlined on all four sides (rather than barred down one edge, so it
+read the same in an RTL locale). `tests/statusBannerLook.test.ts` holds all of
+this.
 
 The action choices, before/after behavior, confirmation policy, failure reasons
 and editor restrictions are owned by

@@ -7948,7 +7948,18 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
    user is actually making changes (see settings/sections/ReadOnlyBanner.ts).
    The launch notice that announces the same thing is long gone by then. Styled
    as a warning rather than an error: nothing is broken, and in the common case
-   — a sync client mid-swap — it resolves itself. */
+   — a sync client mid-swap — it resolves itself.
+
+   It looks like the warning box Obsidian's Keychain settings show (finding
+   GAP-08): a callout's corners, padding and title weight, from Obsidian's own
+   `--callout-radius`, `--callout-padding` (mirrored for right-to-left by core)
+   and `--callout-title-weight`, and a 10% tint of the warning colour, mixed as
+   Obsidian mixes a callout's. It stays the plugin's own markup, not a real
+   `.callout[data-callout=warning]`: the plugin styles every such callout, so
+   the user's own Warning callout design would have reached this banner. The
+   colour is `--text-warning`, never `--callout-warning`, which some themes
+   still declare as an RGB triplet. No outline, as Obsidian's box has none (the
+   card had a 1px warning outline until 2026-10-24). */
 .cs-readonly-banner {
 	display: flex;
 	flex-direction: column;
@@ -7958,28 +7969,13 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	   it off the title; the larger bottom margin separates it from the first
 	   section heading below. */
 	margin: 4px 0 16px;
-	padding: 12px 14px;
-	/* A thin outline on all four sides rather than a bar down one edge. The bar
-	   only marked the side it was on, so the block ran off into the page on the
-	   other three, and it changed sides between an LTR and an RTL locale. A
-	   closed card says the same thing in either direction and keeps the buttons
-	   below visibly inside the message that offers them. */
-	border: 1px solid color-mix(
-		in srgb,
-		var(--text-warning, var(--color-orange)) 40%,
-		transparent
-	);
-	border-radius: var(--radius-m);
+	padding: var(--callout-padding);
+	border-radius: var(--callout-radius);
 	corner-shape: var(--corner-shape);
-	/* A translucent tint of the warning colour rather than a surface token: the
-	   banner sits on the settings tab, and a raised-shade token would be a claim
-	   about what it is sitting on (see tests/modalSurfaces.test.ts). Lighter
-	   than the bar version was — the outline now carries the emphasis. */
-	background: color-mix(
-		in srgb,
-		var(--text-warning, var(--color-orange)) 9%,
-		transparent
-	);
+	/* A translucent tint rather than a surface token: the banner sits on the
+	   settings tab, and a raised-shade token would be a claim about what it is
+	   sitting on (see tests/modalSurfaces.test.ts). */
+	background: color-mix(in oklch, var(--text-warning) 10%, transparent);
 }
 
 .cs-readonly-banner-header {
@@ -7996,7 +7992,7 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	flex: 0 0 auto;
 	align-items: center;
 	height: calc(var(--font-ui-medium) * 1.4);
-	color: var(--text-warning, var(--color-orange));
+	color: var(--text-warning);
 }
 
 .cs-readonly-banner-icon .svg-icon {
@@ -8004,10 +8000,12 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	height: var(--icon-s);
 }
 
+/* In the warning colour and a callout title's weight, as the title of
+   Obsidian's warning box is. */
 .cs-readonly-banner-title {
-	color: var(--text-normal);
+	color: var(--text-warning);
 	font-size: var(--font-ui-medium);
-	font-weight: var(--font-semibold);
+	font-weight: var(--callout-title-weight);
 	line-height: 1.4;
 }
 
@@ -8830,24 +8828,20 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 }
 
 /* First-install migration suggestion. It shares the title-adjacent notice slot
-   with the save-status banner, but uses the active theme's accent so it reads
-   as an opportunity rather than an error. */
+   with the save-status banner, and the same Obsidian callout geometry (see
+   `.cs-readonly-banner`, finding GAP-08), but uses the active theme's accent so
+   it reads as an opportunity rather than an error. No outline (it had a 1px
+   accent one until 2026-10-24). */
 .cs-competitor-import-banner {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) auto auto;
 	align-items: center;
 	gap: 10px;
 	margin: 4px 0 16px;
-	padding: 10px;
-	padding-inline-start: 14px;
-	border: 1px solid color-mix(
-		in srgb,
-		var(--interactive-accent) 42%,
-		transparent
-	);
-	border-radius: var(--radius-m);
+	padding: var(--callout-padding);
+	border-radius: var(--callout-radius);
 	corner-shape: var(--corner-shape);
-	background: color-mix(in srgb, var(--interactive-accent) 10%, transparent);
+	background: color-mix(in oklch, var(--interactive-accent) 10%, transparent);
 }
 
 .cs-competitor-import-banner-message {
