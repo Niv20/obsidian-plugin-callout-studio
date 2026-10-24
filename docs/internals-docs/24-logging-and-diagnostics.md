@@ -180,6 +180,7 @@ and
 | [safeTree.ts](../../src/settings/declarative/safeTree.ts) | `buildTreeSafely()` | building the settings tree throws (`console.error`); Obsidian gets the fallback instead, so the plugin still loads |
 | [safeTree.ts](../../src/settings/declarative/safeTree.ts) | `guardRender()` | one settings row's `render` throws (`console.error`, naming the row); the rest of the page still draws |
 | [controlBinding.ts](../../src/settings/declarative/controlBinding.ts) | `writeControlValue()` | a control names a setting that does not exist (`console.warn`); nothing is written or saved |
+| [persistentParts.ts](../../src/settings/declarative/persistentParts.ts) | `disposeQuietly()` | disposing one surviving settings part throws (`console.error`); the others are still disposed |
 
 No `Notice` for any of them: each is a mistake in the plugin's own tree, not
 something the user did or can fix, and the page goes on working around it.

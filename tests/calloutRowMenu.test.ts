@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { rowMenuHarness, settleMenu } from "./support/calloutRowMenuHarness";
 import { fakeDom } from "./support/fakeDom";
+import { isRowMenuActive } from "../src/settings/sections/calloutRowMenu";
 
 type Harness = ReturnType<typeof rowMenuHarness>;
 
@@ -37,6 +38,23 @@ describe("callout row menu lifetime", () => {
 			h.cleanup();
 		});
 	}
+
+	it("counts as active from the press until it closes, the wait for its counts included", async () => {
+		// The settings page holds its redraws while a row menu is active
+		// (settings/declarative/treeUpdater.ts): a redraw takes the ⋮ away, and
+		// the menu would close with it.
+		const h = rowMenuHarness();
+		const app = h.app as never;
+		assert.equal(isRowMenuActive(app), false);
+		const opening = h.open();
+		assert.equal(isRowMenuActive(app), true, "while it waits for the counts");
+		await h.ready();
+		await opening;
+		assert.equal(isRowMenuActive(app), true, "while it is shown");
+		h.scroll(h.outer);
+		assert.equal(isRowMenuActive(app), false);
+		h.cleanup();
+	});
 
 	it("closes for an outer ancestor as well as the callout list", async () => {
 		const h = rowMenuHarness();

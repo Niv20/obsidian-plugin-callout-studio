@@ -95,6 +95,58 @@ object alone. The tab therefore overrides both halves, through
 `tests/declarativeControlBinding.test.ts` draws a real control row through the
 test renderer and checks that `saveData` is never reached.
 
+## Keeping the tree current
+
+Every `update()` redraws every row of the open page, so the tab never calls it
+directly for a change; it asks
+[`declarative/treeUpdater.ts`](../../src/settings/declarative/treeUpdater.ts)
+(`TreeUpdater.request()`), which makes updates rare and harmless:
+
+- **Coalesced:** any number of requests before the next frame make one update,
+  and a request made while a row is drawing waits for that frame too.
+- **Skipped when nothing shown changed:** the tab supplies a signature, one
+  string covering everything the pages show; a request whose signature equals
+  the one last drawn is dropped unless it is forced (`request(true)`, for a
+  change the signature cannot see, such as an icon finishing its download).
+- **Held while the user is busy:** an open Obsidian `.menu`, an open picker
+  list (`.cs-combobox-menu` / `.cs-palette-menu` without their closed class), a
+  drag (`body.is-grabbing`), or a row's ⋮ menu that is still waiting for its
+  counts (`isRowMenuActive(app)` in `calloutRowMenu.ts`). The update waits a
+  tick at a time, for at most about ten seconds, then runs anyway.
+- **Delivered when the settings window is hidden or closed:** the wait is the
+  next frame of the window showing the tab *or* a 250 ms timer, whichever comes
+  first (`nextFrameOrSoon`). This matters because opening the settings draws
+  the last stored tree; it does not ask for a new one.
+
+## Parts that survive a redraw
+
+A redraw runs a render row's cleanup, empties it and draws it again. A part
+with state of its own (the "Saving is paused" banner in the middle of a
+restore, a style page's preview someone is typing in) would lose it. Such parts
+live in [`declarative/persistentParts.ts`](../../src/settings/declarative/persistentParts.ts):
+
+```ts
+render: guardRender("Saving is paused", (setting) => {
+	parts.mount("save-status", setting.controlEl, () => buildBanner());
+	return () => parts.releaseLater("save-status");
+}),
+```
+
+`mount` builds the part the first time and moves the same element back into
+the row on every redraw. The cleanup cannot tell a redraw from the user
+leaving the page, so it calls `releaseLater`: 300 ms later (longer than
+Obsidian's 150 ms page slide), a part whose element is back on the page is
+kept, and any other is disposed. Leaving the settings calls `disposeAll()`.
+
+## Jumping to a row
+
+Obsidian finds a definition's element only through a private method. Rows the
+plugin jumps to (the import prompt's **Import**, **Go to version history**, a
+callout just duplicated) register their element under a stable name while they
+are drawn, [`declarative/rowRegistry.ts`](../../src/settings/declarative/rowRegistry.ts),
+and their cleanup removes it. `get(id)` answers only while the element is on
+the page.
+
 ## Never throwing
 
 [`declarative/safeTree.ts`](../../src/settings/declarative/safeTree.ts):

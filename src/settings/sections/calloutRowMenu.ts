@@ -42,6 +42,15 @@ export type RowMenuTrigger =
 const activeMenus = new WeakMap<App, () => void>();
 
 /**
+ * Whether a row menu is open, or opening (it may wait a moment for its counts
+ * before it shows). The settings page must not be redrawn meanwhile: a
+ * redraw takes the ⋮ away, and the menu closes with its button.
+ */
+export function isRowMenuActive(app: App): boolean {
+	return activeMenus.has(app);
+}
+
+/**
  * One lifetime from the press through the count wait to the visible menu.
  *
  * @param ctx The settings section's app and disposer registry.
