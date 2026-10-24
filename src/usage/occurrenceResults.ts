@@ -102,7 +102,8 @@ export class OccurrenceResults {
 		this.previous = { results, limit, empty };
 		content.empty();
 		clearSections();
-		if (empty) content.createEl("p", { text: t("usage.empty") });
+		// Nothing found: a quiet line, as Obsidian's Search says "No matches found".
+		if (empty) content.createDiv({ cls: "search-empty-state", text: t("usage.empty") });
 		renderOccurrenceResults(content, results, limit, this.fileCounts, onSection, (occurrence, row) => {
 			this.rows.set(occurrenceKey(occurrence), row);
 			this.occurrences.set(row, occurrence);

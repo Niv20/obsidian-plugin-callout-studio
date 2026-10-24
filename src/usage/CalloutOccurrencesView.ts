@@ -331,10 +331,18 @@ export class CalloutOccurrencesView extends ItemView {
 		this.paintFilter();
 		const busy = !this.failed && (index.status === "idle" || index.status === "loading" || index.status === "stale");
 		this.syncBusyStatus(busy);
-		frame.status.setText(this.failed || index.status === "disposed" ? t("usage.failed")
-			: busy && this.busyStatusVisible && this.busyStatusKind === "loading" ? t("usage.loading")
-			: index.status === "partial" ? t("usage.partial", { count: index.failures.length })
-			: busy && this.busyStatusVisible ? t("usage.stale") : "");
+		const failed = this.failed || index.status === "disposed";
+		const partial = index.status === "partial";
+		const working = busy && this.busyStatusVisible;
+		frame.status.setText(failed ? t("usage.failed")
+			: working && this.busyStatusKind === "loading" ? t("usage.loading")
+			: partial ? t("usage.partial", { count: index.failures.length })
+			: working ? t("usage.stale") : "");
+		// A long scan shows Obsidian's thin bar across the top of the results
+		// (finding S10-08); its words stay in the live region for a screen
+		// reader, but are not drawn. A problem is drawn, in the warning colour.
+		frame.scroll.toggleClass("is-loading", working);
+		frame.status.toggleClass("cs-visually-hidden", !failed && !partial);
 		frame.failures.empty();
 		if (index.failures.length > 0) {
 			const details = frame.failures.createEl("details");

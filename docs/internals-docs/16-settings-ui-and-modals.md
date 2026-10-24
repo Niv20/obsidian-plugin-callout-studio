@@ -124,9 +124,14 @@ The summary line drops its heading-link half when `plan.linkCount` is 0
 
 `portableConversionWatch.ts` listens only while open, debounces changes by 350 ms
 and invalidates affected cache entries. Stale previews immediately disable
-conversion. Progress appears as an overlay only after 600 ms, so brief refreshes
-do not move the toolbar or flash status text. Persistent errors/recovery guidance
-have their own region in the result scrollport. Exact unchanged row identities preserve
+conversion. Progress shows only after 600 ms, so brief refreshes show nothing:
+then Obsidian's thin loading bar (`.is-loading` on the results shell, drawn by
+app.css) runs across the top of the results while the list stays sharp, and the
+overlay's words go only to a screen reader (it is a visually hidden live region;
+until 2026-10-24 it covered a faded, blurred list). Persistent errors and
+recovery guidance have their own line in the result scrollport, in the warning
+colour with no box; "nothing to convert" instead wears Obsidian's quiet
+`.search-empty-state` (finding S10-08). Exact unchanged row identities preserve
 selection; new or edited rows require fresh selection. Closing releases events,
 timers and preview state. Locale changes redraw the view without losing choices.
 

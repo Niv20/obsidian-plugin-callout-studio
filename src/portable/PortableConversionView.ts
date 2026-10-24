@@ -55,6 +55,8 @@ export class PortableConversionView extends ItemView {
 	private timer?: number;
 	private abort?: AbortController;
 	private status: () => string = () => "";
+	/** The key of what the status line says, so it can be drawn as what it is. */
+	private statusKey = "";
 
 	constructor(leaf: WorkspaceLeaf, private readonly debounceMs = 350, busyDelayMs = 600) {
 		super(leaf);
@@ -276,7 +278,19 @@ export class PortableConversionView extends ItemView {
 	}
 	private setStatus(key: string, vars: Record<string, string | number> = {}): void {
 		this.status = () => key ? t(key, vars) : "";
-		this.frame?.status.setText(this.status());
+		this.statusKey = key;
+		this.paintStatus();
+	}
+	/**
+	 * Write the status line: nothing to convert reads as Obsidian's quiet
+	 * empty line (`search-empty-state`); anything else it says is a problem or
+	 * a warning, drawn in the warning colour (finding S10-08).
+	 */
+	private paintStatus(): void {
+		const status = this.frame?.status;
+		if (!status) return;
+		status.setText(this.status());
+		status.toggleClass("search-empty-state", this.statusKey === "portable.empty");
 	}
 	private render(): void {
 		if (!this.opened) return;
@@ -290,7 +304,7 @@ export class PortableConversionView extends ItemView {
 		const plan = this.plan;
 		updatePortableSelection(frame, plan, this.ready());
 		paintBlocked(frame.convert, this.convertBlockedReason());
-		frame.status.setText(this.status());
+		this.paintStatus();
 		frame.hint.setText(plan?.recovery ? t("portable.recovery") : "");
 		frame.retry.hidden = !this.failed || this.unrecoverable;
 		frame.retry.disabled = this.scanning || this.confirming || this.applying;

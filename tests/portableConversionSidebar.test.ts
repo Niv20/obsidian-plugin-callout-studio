@@ -265,7 +265,7 @@ describe("conversion file groups and cards", () => {
 });
 
 describe("conversion refresh presentation", () => {
-	it("only shows slow work in an overlay and never injects transient text under the toolbar", async () => {
+	it("shows slow work as Obsidian's loading bar, says it only to a screen reader, and never injects text under the toolbar", async () => {
 		const h = harness(undefined, 15), read = deferred();
 		try {
 			await h.view.onOpen();
@@ -277,12 +277,15 @@ describe("conversion refresh presentation", () => {
 			assert.equal(h.status(), "");
 			assert.equal(overlay.hidden, true);
 			assert.equal(h.root.querySelector(".cs-sidebar-toolbar .cs-portable-review-status"), null);
+			assert.equal(shell.hasClass("is-loading"), false, "a brief refresh shows nothing");
 			await wait(25);
 			assert.equal(overlay.hidden, false);
-			assert.ok(overlay.textContent.length > 0);
+			assert.ok(overlay.textContent.length > 0, "read out by the live region");
+			assert.ok(shell.hasClass("is-loading"), "Obsidian's thin bar across the results");
 			assert.equal(h.status(), "");
 			read.resolve(); await h.settle();
 			assert.equal(overlay.hidden, true);
+			assert.equal(shell.hasClass("is-loading"), false);
 			assert.equal(shell.hasClass("is-stale"), false);
 		} finally { read.resolve(); await h.destroy(); }
 	});

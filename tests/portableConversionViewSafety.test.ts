@@ -128,6 +128,8 @@ describe("portable conversion sidebar freshness and confirmation", () => {
 			delete h.hooks.beforeRead; h.click("retry"); await h.settle();
 			assert.equal(h.button("retry").hidden, true);
 			assert.equal(h.status(), t("portable.empty"));
+			// Nothing to convert is Obsidian's quiet empty line, not a warning.
+			assert.ok(h.root.querySelector(".cs-portable-review-status")?.hasClass("search-empty-state"));
 			assert.equal(h.blocked("convert"), true);
 		} finally { await h.destroy(); }
 	});

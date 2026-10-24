@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import { OccurrenceResults } from "../src/usage/occurrenceResults";
 import { scanCalloutOccurrences } from "../src/usage/scanCalloutOccurrences";
 import { installFakeDom } from "./support/fakeDom";
+import { t } from "../src/i18n";
 
 const dom = installFakeDom();
 
@@ -112,5 +113,12 @@ describe("occurrence result identity", () => {
 		foreign.focus();
 		h.render(scanCalloutOccurrences("a.md", "[!note]"));
 		assert.equal(dom.document.activeElement, foreign);
+	});
+	it("says nothing was found in Obsidian's quiet empty line, as Search does", () => {
+		const h = harness();
+		h.render([]);
+		const empty = h.content.querySelector(".search-empty-state");
+		assert.equal(empty?.textContent, t("usage.empty"));
+		assert.equal(h.content.querySelector("p"), null, "not a paragraph of body text");
 	});
 });

@@ -417,10 +417,6 @@ describe("nothing else paints --background-primary unexamined", () => {
  * entry here is outside one, or is not a window surface at all, and says why.
  */
 const KNOWN_RAW_SECONDARY: string[] = [
-	// Deliberate. A vault sidebar, never a window: the refresh overlay is mixed
-	// from the pane's own colour. (The sidebars' file headings no longer stick,
-	// and have no paint of their own since 2026-10-24.)
-	".cs-portable-refresh-overlay | background",
 	// Deliberate, and not a window surface: a dropdown's list is drawn as
 	// Obsidian draws its menus, on `--menu-background`. `--background-secondary`
 	// is only the fallback, and it is the value Obsidian itself gives that

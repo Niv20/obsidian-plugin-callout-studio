@@ -204,6 +204,11 @@ the first two seconds of one continuous idle/loading/stale episode, so ordinary
 navigation and incremental refreshes do not flash progress copy. One cancellable
 timer spans those status transitions; a long-running episode is announced, while
 completion or view closure clears it. Partial and failed states remain immediate.
+A long-running episode shows Obsidian's thin loading bar across the top of the
+results (`.is-loading` on the scroller) and keeps its words in the live region
+for a screen reader only (`cs-visually-hidden`); partial and failed are drawn in
+the warning colour. An empty result is Obsidian's quiet `.search-empty-state`
+line, as Search says "No matches found" (finding S10-08).
 `VaultCalloutStatisticsModal` and its row renderer have been removed, along with
 the Settings action and styles. Result cards omit redundant type labels and
 clamp excerpts to two lines while preserving raw Markdown syntax; block excerpts

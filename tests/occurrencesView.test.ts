@@ -274,6 +274,9 @@ describe("callout occurrence sidebar", () => {
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, "");
 		await new Promise((resolve) => scheduleTimer(resolve, 30));
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, t("usage.loading"));
+		// A long scan is Obsidian's thin bar; its words are only read out.
+		assert.ok(h.view.contentEl.querySelector(".cs-occurrences-scroll")?.classList.contains("is-loading"));
+		assert.ok(h.view.contentEl.querySelector(".cs-occurrences-status")?.classList.contains("cs-visually-hidden"));
 		release("[!note]");
 		await opened;
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, "");
@@ -624,6 +627,7 @@ describe("callout occurrence sidebar", () => {
 		const h = harness({ "broken.md": "[!warning]" }, () => Promise.reject(new Error("Unreadable")), 10);
 		await h.view.onOpen();
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.textContent, t("usage.partial", { count: 1 }));
+		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-status")?.classList.contains("cs-visually-hidden"), false, "a problem is drawn");
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent, "");
 		assert.ok(h.view.contentEl.querySelector(".cs-occurrences-failures")?.textContent?.includes("broken.md"));
 		h.index.invalidate("broken.md");

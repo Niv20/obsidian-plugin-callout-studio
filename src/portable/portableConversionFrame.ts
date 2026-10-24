@@ -111,6 +111,9 @@ export class PortableConversionBusy {
 	private paint(): void {
 		if (!this.frame) return;
 		this.frame.shell.toggleClass("is-busy", this.visible);
+		// Obsidian's thin bar across the top of the results (finding S10-08);
+		// the overlay's words are only read out (styles.css).
+		this.frame.shell.toggleClass("is-loading", this.visible);
 		this.frame.overlay.hidden = !this.visible;
 		this.frame.overlay.setText(this.visible ? this.message() : "");
 	}

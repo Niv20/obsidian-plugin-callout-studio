@@ -6682,15 +6682,20 @@ button.cs-sidebar-result[aria-current="true"],
 	padding: 0 var(--size-4-3) var(--size-4-4);
 }
 
+/* What the review says about itself: a problem or a warning, in the warning
+   colour, as Obsidian says one in its panes, with no box (finding S10-08; it
+   was a bordered box until 2026-10-24). "Nothing to convert" instead wears
+   Obsidian's quiet `.search-empty-state`, so its faint colour is restated
+   over the warning one. */
 .cs-portable-review-status {
 	margin-block-start: var(--size-4-3);
-	padding: var(--size-4-3);
-	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-m);
-	corner-shape: var(--corner-shape);
-	color: var(--text-muted);
+	color: var(--text-warning);
 	font-size: var(--font-ui-small);
 	overflow-wrap: anywhere;
+}
+
+.cs-portable-review-status.search-empty-state {
+	color: var(--text-faint);
 }
 
 .cs-portable-hint:empty,
@@ -6699,26 +6704,22 @@ button.cs-sidebar-result[aria-current="true"],
 	display: none;
 }
 
+/* A long scan: Obsidian's thin bar runs across the top of the results
+   (`.is-loading` on the shell, drawn by app.css) and the list stays sharp. The
+   overlay keeps saying what is going on to a screen reader, but is not drawn.
+   (Until 2026-10-24 it covered a faded, blurred list with its words.) */
 .cs-portable-refresh-overlay {
 	position: absolute;
-	inset: 0;
-	z-index: 3;
-	display: grid;
-	place-content: center;
-	padding: var(--size-4-6);
-	background: color-mix(in srgb, var(--background-secondary) 70%, transparent);
-	color: var(--text-muted);
-	font-size: var(--font-ui-small);
-	text-align: center;
+	inline-size: 1px;
+	block-size: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
 }
 
+/* While the review is out of date its rows take no clicks. */
 .cs-portable-results-shell.is-stale .cs-portable-change-list {
 	pointer-events: none;
-}
-
-.cs-portable-results-shell.is-busy .cs-portable-change-list {
-	opacity: 0.4;
-	filter: blur(1px);
 }
 
 .cs-portable-change {
@@ -8823,9 +8824,24 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	display: none;
 }
 
+/* Find callouts' live region. A problem (results incomplete, could not
+   update) is drawn in the warning colour; while a long scan runs, the words
+   are only read out (`cs-visually-hidden`) and Obsidian's thin bar shows
+   instead (`.is-loading` on the scroller, finding S10-08). */
 .cs-occurrences-status {
-	color: var(--text-muted);
+	color: var(--text-warning);
 	font-size: var(--font-ui-small);
+}
+
+/* Read out by a screen reader, not drawn: the words of a live region whose
+   state something else already shows. */
+.cs-visually-hidden {
+	position: absolute;
+	inline-size: 1px;
+	block-size: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
 }
 
 .cs-occurrences-status:empty,
