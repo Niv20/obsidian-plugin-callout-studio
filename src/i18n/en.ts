@@ -544,6 +544,8 @@ export const en: Record<string, string> = {
 	"settings.customPalettes": "Saved color palettes",
 	"settings.newPalette": "New palette",
 	"settings.customPalettesEmpty": "No saved palettes yet.",
+	"settings.paletteCount": "{{count}} palettes",
+	"settings.paletteCountOne": "1 palette",
 	"settings.editPaletteAria": "Edit palette {{name}}",
 	"settings.deletePaletteAria": "Delete palette {{name}}",
 	"settings.deletePaletteConfirm":

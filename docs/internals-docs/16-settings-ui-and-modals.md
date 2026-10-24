@@ -575,7 +575,9 @@ a parallel implementation: it calls the identical `attachPersistedFold` and
 wraps itself in the same `createStickySection` the trio uses so the heading pins
 too (see [The three sections pin their headings](#the-three-sections-pin-their-headings) -
 palettes is the standalone fourth). Unlike the other sections, it keeps only the
-list of saved palettes and no additional orphan groups.
+list of saved palettes and no additional orphan groups. Its flows (new, edit,
+delete), its A→Z order and its swatches are exported for the declarative page
+([26 § The Saved color palettes page](26-declarative-settings.md#the-saved-color-palettes-page)).
 
 The row's **Use default fallback style** action uses the Lucide `rotate-ccw`
 icon, matching the built-in **Reset to default** action. It calls

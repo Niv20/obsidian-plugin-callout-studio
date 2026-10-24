@@ -240,6 +240,33 @@ page's controls from the old page's code (`FallbackSection.ts` and
 `ctx.display()` in the tree means "draw the settings again"; once the tab
 switches, it asks the `TreeUpdater`.
 
+## The Saved color palettes page
+
+[`declarative/palettesPage.ts`](../../src/settings/declarative/palettesPage.ts):
+`palettesPage(ctx)` is the row that opens the page (`palettes`), with the
+count at its end (`displayValue`: "4 palettes", "1 palette", nothing at
+none). The page is one of Obsidian's lists (`palette-list`), so it gets, from
+Obsidian, a ✕ on every row and the Delete key (`onDelete`), a `+`
+(`addItem`, a last row on mobile) and the grey row while there is none
+(`emptyState`). The flows are the old page's (`createPalette`, `editPalette`,
+`deletePalette` in `CustomPalettesSection.ts`), so ✕ still asks, and says how
+many callouts link to the palette.
+
+- **A palette row** is a render row keyed `palette-<id>` (a rename keeps the
+  key): the palette's colours first, where a list row's icon goes (Obsidian
+  hides the icon slot of a list whose rows declare no `icon`, so the colours
+  are their own element), then the name, then ✎ (`addRowIconButton`) and
+  Obsidian's ✕. The colours sit outside the controls a redraw empties, so the
+  row's cleanup removes them.
+- **Rows are A→Z** (`sortedPalettes`), and `onDelete`'s index is a place in
+  that order.
+- **While saving is paused** `+`, ✕ and the Delete key say why
+  (`refuseWhilePaused`), and ✎ is dimmed to Obsidian's 40% and says why
+  (`addRowIconButton` with `pausedReason`).
+- **The settings search** finds a palette by its name, under this page.
+- **What must redraw it** (unit 12): the palettes, and light or dark mode
+  (the colours are the mode on screen).
+
 ## Read-only while saving is paused
 
 While saving is paused a change would live only in memory, so the page takes
