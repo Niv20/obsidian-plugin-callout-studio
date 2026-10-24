@@ -135,8 +135,10 @@ colour with no box; "nothing to convert" instead wears Obsidian's quiet
 selection; new or edited rows require fresh selection. Closing releases events,
 timers and preview state. Locale changes redraw the view without losing choices.
 
-Each editable source card has a pencil at its upper trailing corner. It fades
-in on hover or focus within the card and remains visible for touch input. The
+Each editable source row has a pencil at the end of its first line, an
+Obsidian icon button at a list row's icon size (`--icon-xs`, larger on mobile;
+finding S10-11, it was forced to 12px until 2026-10-24). It fades in on hover or
+focus within the row and remains visible for touch input. The
 pencil, the replacement text, and the source card's icon-bearing Obsidian context
 menu all start the same inline edit through `portableConversionCustom.ts`.
 The `rotate-ccw` restore button beside the pencil is available only when the
@@ -159,10 +161,15 @@ sets beside the body's `aria-current` so the fill takes in the checkbox. Until
 rows are `.tappable`, so a phone shows Obsidian's grey press on them (S10-V2).
 Checkbox inclusion is unchanged. Source navigation remains on the format/line
 label and **Before** text.
-The monospace input inherits the card background and removes the host's input
+The monospace input inherits the row background and removes the host's input
 border, shadow and outline. Both diff rows use the same explicit font sizing
-and label column so their source text aligns. Hover and editing states use a
-soft accent tint derived from the active theme.
+and label column so their source text aligns. Under the pointer, **After**
+takes the neutral fill Obsidian gives an editable property value; while it is
+edited, the field looks like a file being renamed in the File explorer - a thin
+`--background-modifier-border-focus` ring that turns accent while it has the
+keyboard, with no tint. Keyboard focus on the source and After buttons is
+Obsidian's grey ring. (Until 2026-10-24 hover and editing were accent tints with
+a glow.)
 `portableReplacementEditor.ts` exposes one value for the selected inline token,
 without surrounding source words. Replacement text wraps in full; heading rows
 expose only the title for editing, keeping the visible container prefix, heading

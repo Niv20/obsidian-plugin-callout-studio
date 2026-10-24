@@ -323,4 +323,17 @@ describe("the sidebars' row marks look like Obsidian's", () => {
 	it("tints the row being edited as Obsidian tints a selected item", () => {
 		assert.match(rule(".cs-portable-change.is-editing"), /background-color:\s*var\(--nav-item-background-selected\)/);
 	});
+
+	it("sizes the row's icon buttons as Obsidian sizes a list row's icons", () => {
+		const icons = rule(".cs-portable-card-actions button");
+		assert.match(icons, /--icon-size:\s*var\(--icon-xs\)/);
+		assert.doesNotMatch(icons, /12px|color:/, "no size or colour of the plugin's own");
+	});
+
+	it("rings the field being edited as Obsidian rings a file being renamed, with no tint", () => {
+		const field = rule(".cs-portable-input-grow");
+		assert.match(field, /box-shadow:\s*0 0 0 2px var\(--background-modifier-border-focus\)/);
+		assert.doesNotMatch(field, /(^|[\s;{])background(-color)?\s*:/, "no fill of its own");
+		assert.match(rule(".cs-portable-input-grow:focus-within"), /box-shadow:\s*0 0 0 2px var\(--interactive-accent\)/);
+	});
 });

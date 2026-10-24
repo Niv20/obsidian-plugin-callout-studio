@@ -6369,19 +6369,21 @@ body:not(.is-phone)
 	min-inline-size: 0;
 }
 
+/* The After value being edited looks like a file being renamed in Obsidian's
+   File explorer (`.tree-item-self.is-being-renamed`): a thin focus ring that
+   turns accent while the field has the keyboard, and no tint (finding S10-11;
+   it was an accent-tinted field until 2026-10-24). */
 .cs-portable-input-grow {
 	display: grid;
 	flex: 1 1 0;
 	min-inline-size: 0;
 	border-radius: var(--radius-s);
 	corner-shape: var(--input-corner-shape, round);
-	background: color-mix(in srgb, var(--interactive-accent) 8%, transparent);
-	box-shadow: 0 0 0 1px color-mix(in srgb, var(--interactive-accent) 25%, transparent);
+	box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
 }
 
 .cs-portable-input-grow:focus-within {
-	background: color-mix(in srgb, var(--interactive-accent) 12%, transparent);
-	box-shadow: 0 0 0 1px color-mix(in srgb, var(--interactive-accent) 50%, transparent);
+	box-shadow: 0 0 0 2px var(--interactive-accent);
 }
 
 .cs-portable-input-mirror,
@@ -6417,7 +6419,7 @@ body:not(.is-phone)
 	resize: none;
 	overflow: hidden;
 	caret-color: var(--text-accent);
-	color: color-mix(in srgb, var(--text-normal) 85%, var(--text-accent));
+	color: var(--text-normal);
 }
 
 .cs-portable-inline textarea.cs-portable-custom-input:focus {
@@ -6783,53 +6785,49 @@ button.cs-portable-source {
 	cursor: pointer;
 }
 
+/* After can be edited where it stands. Under the pointer it takes the neutral
+   fill Obsidian gives a property value you can edit in Properties, rather than
+   an accent wash and glow (finding S10-11). */
 button.cs-portable-after-button {
 	cursor: text;
-	transition: background-color 140ms ease, box-shadow 140ms ease;
 }
 
 @media (hover: hover) {
 	button.cs-portable-after-button:not(:disabled):hover {
-		background: color-mix(in srgb, var(--interactive-accent) 8%, transparent);
-		box-shadow: 0 0 0 3px color-mix(in srgb, var(--interactive-accent) 8%, transparent);
+		background: var(--background-modifier-hover);
+		box-shadow: 0 0 0 2px var(--background-modifier-hover);
 	}
 }
 
-@media (hover: hover) {
-	button.cs-portable-after-button:not(:disabled):hover .cs-portable-after {
-		color: var(--text-accent);
-	}
-}
-
+/* Obsidian's grey keyboard ring, not the accent one. */
 button.cs-portable-source:focus-visible,
 button.cs-portable-after-button:focus-visible {
-	outline: 2px solid var(--interactive-accent);
-	outline-offset: 3px;
+	outline: 2px solid var(--background-modifier-border-focus);
+	outline-offset: 2px;
 }
 
+/* Room at the end of the first line for the row's two icon buttons. */
 .cs-portable-change .cs-portable-change-location {
-	padding-inline-end: 60px;
+	padding-inline-end: calc(2 * var(--icon-xs) + 2 * var(--size-4-4));
 }
 
+/* At the end of the row's first line (the row's own padding already spaces
+   them from its edge). */
 .cs-portable-card-actions {
 	position: absolute;
-	inset-block-start: var(--size-4-2);
-	inset-inline-end: var(--size-4-2);
+	inset-block-start: calc(-1 * var(--size-2-2));
+	inset-inline-end: 0;
 	display: flex;
 	align-items: center;
 	gap: var(--size-2-1);
 	transition: opacity 160ms ease;
 }
 
+/* The pencil and the reset arrow are Obsidian's icon buttons at the size of a
+   row's icons in its lists (`--icon-xs`, larger on mobile), in its own icon
+   colour (finding S10-11; they were forced to 12px until 2026-10-24). */
 .cs-portable-card-actions button {
-	--icon-size: 12px;
-	padding: var(--size-4-1);
-	color: var(--text-muted);
-}
-
-.cs-portable-card-actions button svg {
-	inline-size: 12px;
-	block-size: 12px;
+	--icon-size: var(--icon-xs);
 }
 
 .cs-portable-card-actions button[hidden] {
@@ -6851,8 +6849,7 @@ button.cs-portable-after-button:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.cs-portable-card-actions,
-	button.cs-portable-after-button {
+	.cs-portable-card-actions {
 		transition: none;
 	}
 }

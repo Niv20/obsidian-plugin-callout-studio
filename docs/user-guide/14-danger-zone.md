@@ -87,12 +87,12 @@ being updated, a thin line runs across the top of the results; a problem with
 the review is said in orange above them. Switching notes scrolls
 to that file's results.
 
-To change a proposed replacement, click its **After** text or the pencil in the
-row's upper corner. The pencil fades in when you hover over the row or focus
+To change a proposed replacement, click its **After** text or the pencil at the
+end of the row's first line. The pencil fades in when you hover over the row or focus
 its controls, and stays visible on touch devices. Right-clicking the row and
 choosing **Custom replacement** opens the same inline editor. The **After**
 text becomes an editable field while **Before** stays visible. All editable
-text is selected so typing replaces it immediately. The row takes a light
+text is selected so typing replaces it immediately, in a field with a thin ring, as when you rename a file. The row takes a light
 accent tint while the note stays in place; any previous row highlight clears.
 Editing does not change the row's
 checkbox. To see the source in the note, click **Before** or the format and line
