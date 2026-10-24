@@ -65,22 +65,38 @@ export function competitorImportMessage(
 	});
 }
 
-export function renderCompetitorImportBanner(
-	ctx: SettingsSectionContext,
-	containerEl: HTMLElement,
-	importTargetEl: HTMLElement,
-): void {
-	if (!shouldShowCompetitorImportBanner(ctx.plugin)) return;
-	let competitors = detectEnabledCompetitors(ctx.app);
-	if (competitors.length === 0 && isCompetitorImportBannerForced(ctx.plugin)) {
-		competitors = COMPETITORS.map(({ id, name }) => ({ id, name }));
+/**
+ * The plugins whose callouts to offer importing now: none unless the prompt is
+ * armed (or forced from the developer protocol), then the enabled ones, or all
+ * of them when forced with none enabled.
+ */
+export function competitorsToOffer(app: App, plugin: SettingsSectionContext["plugin"]): DetectedCompetitor[] {
+	if (!shouldShowCompetitorImportBanner(plugin)) return [];
+	const competitors = detectEnabledCompetitors(app);
+	if (competitors.length === 0 && isCompetitorImportBannerForced(plugin)) {
+		return COMPETITORS.map(({ id, name }) => ({ id, name }));
 	}
-	if (competitors.length === 0) return;
+	return competitors;
+}
 
-	const highlighter = createTargetHighlighter(importTargetEl);
-	ctx.registerDisposer(highlighter.dispose);
+/** What the prompt's two buttons do. */
+export interface CompetitorImportHandlers {
+	/** Import: take the reader to the Import row. `fromKeyboard`: pressed with a key. */
+	onImport(fromKeyboard: boolean): void;
+	/** ✕: stop offering. */
+	onDismiss(): void;
+}
 
-	const banner = containerEl.createDiv({
+/**
+ * Build the prompt into `parent`: the message naming the plugins, **Import**,
+ * and ✕. Used by both settings pages, so they draw the same prompt.
+ */
+export function buildCompetitorImportBanner(
+	parent: HTMLElement,
+	competitors: readonly DetectedCompetitor[],
+	handlers: CompetitorImportHandlers,
+): HTMLElement {
+	const banner = parent.createDiv({
 		cls: "cs-competitor-import-banner",
 		attr: { role: "status" },
 	});
@@ -94,15 +110,37 @@ export function renderCompetitorImportBanner(
 		text: t("importBanner.action"),
 	});
 	// A click from Enter or Space carries no pointer detail; it shows the ring.
-	importButton.addEventListener("click", (event) => { highlighter.run(event.detail === 0); });
+	importButton.addEventListener("click", (event) => { handlers.onImport(event.detail === 0); });
 
 	const dismissButton = banner.createEl("button", {
 		cls: "clickable-icon cs-competitor-import-banner-dismiss",
 		attr: { "aria-label": t("importBanner.dismiss") },
 	});
 	setIcon(dismissButton, "x");
-	dismissButton.addEventListener("click", () => {
-		banner.remove();
-		void markCompetitorImportBannerHandled(ctx.plugin);
+	dismissButton.addEventListener("click", () => handlers.onDismiss());
+	return banner;
+}
+
+/**
+ * The prompt on the page `display()` draws: **Import** scrolls to and
+ * highlights the Import row (`importTargetEl`), ✕ removes the prompt at once.
+ */
+export function renderCompetitorImportBanner(
+	ctx: SettingsSectionContext,
+	containerEl: HTMLElement,
+	importTargetEl: HTMLElement,
+): void {
+	const competitors = competitorsToOffer(ctx.app, ctx.plugin);
+	if (competitors.length === 0) return;
+
+	const highlighter = createTargetHighlighter(importTargetEl);
+	ctx.registerDisposer(highlighter.dispose);
+
+	const banner = buildCompetitorImportBanner(containerEl, competitors, {
+		onImport: (fromKeyboard) => highlighter.run(fromKeyboard),
+		onDismiss: () => {
+			banner.remove();
+			void markCompetitorImportBannerHandled(ctx.plugin);
+		},
 	});
 }

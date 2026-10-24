@@ -8842,6 +8842,33 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	background: color-mix(in oklch, var(--interactive-accent) 10%, transparent);
 }
 
+/* On the declarative settings page each notice is a row of one box without a
+   heading (declarative/bannerRows.ts). The notice is the box the user sees, so
+   the box and the row around it draw nothing of their own: no fill, no edge,
+   no padding, no line between the two notices, and no margins of the
+   notices' own (the page already spaces its boxes). */
+.setting-group.cs-banners .setting-items {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-3);
+	background: none;
+	border: none;
+}
+
+.setting-group.cs-banners .setting-item.cs-banner-row {
+	display: block;
+	padding: 0;
+}
+
+.setting-group.cs-banners .setting-item.cs-banner-row::before,
+.cs-banner-row > .setting-item-info {
+	display: none;
+}
+
+.cs-banner-row :is(.cs-readonly-banner, .cs-competitor-import-banner) {
+	margin: 0;
+}
+
 .cs-competitor-import-banner-message {
 	color: var(--text-normal);
 	font-size: var(--font-ui-small);

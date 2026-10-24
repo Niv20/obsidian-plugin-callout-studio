@@ -126,9 +126,9 @@ restore, a style page's preview someone is typing in) would lose it. Such parts
 live in [`declarative/persistentParts.ts`](../../src/settings/declarative/persistentParts.ts):
 
 ```ts
-render: guardRender("Saving is paused", (setting) => {
-	parts.mount("save-status", setting.controlEl, () => buildBanner());
-	return () => parts.releaseLater("save-status");
+render: guardRender("saving notice", (setting) => {
+	ctx.parts.mount("saving-notice", setting.settingEl, () => buildSavingNotice(ctx));
+	return () => ctx.parts.releaseLater("saving-notice");
 }),
 ```
 
@@ -145,13 +145,15 @@ plugin jumps to (the import prompt's **Import**, **Go to version history**, a
 callout just duplicated) register their element under a stable name while they
 are drawn, [`declarative/rowRegistry.ts`](../../src/settings/declarative/rowRegistry.ts),
 and their cleanup removes it. `get(id)` answers only while the element is on
-the page.
+the page. A part that leads somewhere calls `ctx.jumpTo(rowId, fromKeyboard)`
+(on `TreeContext`) and never looks for the row itself; the jump (open the
+page, scroll, flash) is the deep-links unit's work.
 
 ## The main page, part by part
 
 Each part of the tree is a function returning a box (or a row), built from a
-`TreeContext` (the old page's `SettingsSectionContext` plus the row registry
-and the parts store). Most rows are "name, sentence, one button":
+`TreeContext` (the old page's `SettingsSectionContext` plus the row registry,
+the parts store and `jumpTo`). Most rows are "name, sentence, one button":
 [`declarative/rowParts.ts`](../../src/settings/declarative/rowParts.ts)'s
 `buttonRow` builds them the way every blockable button in the plugin works
 (ui/blockedButton.ts): while it cannot act it is dimmed (`aria-disabled`), and a
@@ -173,6 +175,47 @@ Search words that are names (Admonition, Callout Manager, the icon libraries)
 are `aliases` and are not translated. Every button calls the flow the old page
 calls (`resetEverything.ts`, the import and export windows, …), so the two
 pages cannot drift apart while both exist.
+
+## The notices at the top
+
+[`declarative/bannerRows.ts`](../../src/settings/declarative/bannerRows.ts)'s
+`bannersGroup` is the first box on the main page (`banners`): one box without
+a heading and two nameless render rows, which the settings search skips
+(`searchable: false`). When neither shows, Obsidian hides the box.
+
+- **Saving is paused** (`saving-notice`) shows while saving is paused or a save
+  failed (`savingNeedsAttention`). It is the same notice as on the old page
+  (`renderSaveStatusBanner`, with the actions `recoveryActionsOf` builds), kept
+  in the parts store: while one of its actions runs its buttons are disabled,
+  and a redraw must not enable them again. **Go to version history** jumps to
+  `earlier-versions`.
+- **The import offer** (`import-offer`) shows while `competitorsToOffer` names
+  a plugin. **Import** jumps to `import-callouts`; ✕ stops offering and redraws.
+  It holds no state, so it is built again on every draw, and the row's cleanup
+  removes it (it sits outside the controls `setting.clear()` empties).
+
+Both keep the plugin's own markup and look (`.cs-readonly-banner`,
+`.cs-competitor-import-banner`, GAP-08), never a real `.callout`: the plugin
+styles every `.callout[data-callout]` on screen, so the notice would wear the
+user's own `[!warning]`. The `.cs-banners` rules in `styles.css` make the box
+and the two rows invisible, so only the notices show, with the box's gap
+between them.
+
+## Read-only while saving is paused
+
+While saving is paused a change would live only in memory, so the page takes
+none. Obsidian's `disabled` only changes the look, and a list's drag, Delete
+key and Alt+↑/↓ still reach their callbacks, so
+[`declarative/pausedGuards.ts`](../../src/settings/declarative/pausedGuards.ts)
+offers two pieces, used together:
+
+- `disabledWhilePaused(writer)` as a row's `disabled`, for the look;
+- `refuseWhilePaused(writer, callback, putBack?)` around every callback that
+  changes something. While paused it shows the usual notice (`pausedGuard.ts`)
+  and runs `putBack` instead, to undo what is already on screen: after a
+  pointer drag Obsidian has moved the row before `onReorder` is called.
+
+A button row does neither: it dims and explains (`buttonRow`, above).
 
 ## Never throwing
 

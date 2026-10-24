@@ -107,6 +107,12 @@ export interface TreeContext extends SettingsSectionContext {
 	rows: RowRegistry;
 	/** Parts that keep their state through a redraw (persistentParts.ts). */
 	parts: PersistentParts;
+	/**
+	 * Scroll to the row registered as `rowId` and flash it, as Obsidian
+	 * flashes a settings search result. `fromKeyboard`: the jump was asked for
+	 * with a key, so the row also takes the focus ring.
+	 */
+	jumpTo(rowId: string, fromKeyboard: boolean): void;
 }
 
 /**

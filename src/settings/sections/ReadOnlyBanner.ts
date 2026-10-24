@@ -1,4 +1,4 @@
-import { renderSaveStatusBanner } from "../saveStatusBanner";
+import { recoveryActionsOf, renderSaveStatusBanner } from "../saveStatusBanner";
 import { createTargetHighlighter } from "../targetHighlighter";
 import type { SettingsSectionContext } from "./types";
 
@@ -16,16 +16,10 @@ export function renderReadOnlyBanner(
 	containerEl: HTMLElement,
 	backupTarget: HTMLElement | null,
 ): void {
-	const recovery = ctx.plugin.recovery;
 	const backup = backupTarget ? createTargetHighlighter(backupTarget) : null;
 	if (backup) ctx.registerDisposer(backup.dispose);
 	ctx.registerDisposer(renderSaveStatusBanner(ctx.plugin, containerEl, {
-		retry: ctx.plugin.retrySettingsRecovery ? () => ctx.plugin.retrySettingsRecovery!() : undefined,
-		startFresh: ctx.plugin.startFreshSettings ? () => ctx.plugin.startFreshSettings!() : undefined,
-		diagnose: recovery ? () => recovery.diagnose() : undefined,
-		replaceUnreadable: recovery ? () => recovery.replaceUnreadable() : undefined,
-		discardRecoveryCopy: recovery ? () => recovery.discardRecoveryCopy() : undefined,
+		...recoveryActionsOf(ctx.plugin),
 		showBackup: backup ? (fromKeyboard) => { backup.run(fromKeyboard); } : undefined,
-		pausedNote: true,
 	}));
 }

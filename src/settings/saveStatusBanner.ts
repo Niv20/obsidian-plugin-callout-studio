@@ -9,6 +9,7 @@ import type { SettingsWriter } from "../manager/SettingsWriter";
 import { DESTRUCTIVE_BUTTON_CLASSES } from "../ui/destructiveButton";
 import { ConfirmModal } from "../utils/ConfirmModal";
 import { diagnosisKey, pausedCopy, type PausedButtons } from "./saveStatusCopy";
+import type { SettingsTabPlugin } from "./sections/types";
 
 interface SaveStatusHost {
 	app: App;
@@ -32,6 +33,25 @@ export interface SaveStatusActions {
 	showBackup?: (fromKeyboard: boolean) => void;
 	/** The settings page is read-only while paused; say so there. */
 	pausedNote?: boolean;
+}
+
+/** What the plugin offers for getting saving back; a minimal host may offer none of it. */
+export type RecoveryActionHost = Pick<SettingsTabPlugin, "retrySettingsRecovery" | "startFreshSettings" | "recovery">;
+
+/**
+ * The banner's actions, from what the plugin offers. Both settings pages use
+ * it, adding their own way to Go to version history.
+ */
+export function recoveryActionsOf(plugin: RecoveryActionHost): SaveStatusActions {
+	const recovery = plugin.recovery;
+	return {
+		retry: plugin.retrySettingsRecovery ? () => plugin.retrySettingsRecovery!() : undefined,
+		startFresh: plugin.startFreshSettings ? () => plugin.startFreshSettings!() : undefined,
+		diagnose: recovery ? () => recovery.diagnose() : undefined,
+		replaceUnreadable: recovery ? () => recovery.replaceUnreadable() : undefined,
+		discardRecoveryCopy: recovery ? () => recovery.discardRecoveryCopy() : undefined,
+		pausedNote: true,
+	};
 }
 
 /** Causes the file cannot recover from by waiting, so replacing it is offered. */

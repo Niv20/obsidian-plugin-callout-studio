@@ -34,6 +34,7 @@ function treeContext(options: { paused?: boolean; recovery?: boolean } = {}): Tr
 		registerDisposer: () => {},
 		rows: new RowRegistry(),
 		parts: new PersistentParts(() => {}),
+		jumpTo: () => {},
 	};
 }
 
