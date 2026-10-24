@@ -23,8 +23,9 @@ import {
 	renderPaletteSwatches,
 	sortedPalettes,
 } from "../sections/CustomPalettesSection";
+import { addBlockableIconButton } from "../../ui/blockedButton";
 import { refuseWhilePaused } from "./pausedGuards";
-import { addRowIconButton, pausedReason } from "./rowParts";
+import { countValue, pausedReason } from "./rowParts";
 import { guardRender } from "./safeTree";
 import type { CsList, CsPage, CsRender, TreeContext } from "./types";
 
@@ -38,15 +39,9 @@ export function palettesPage(ctx: TreeContext): CsPage {
 		type: "page",
 		id: PALETTES_PAGE.page,
 		name: t("settings.customPalettes"),
-		displayValue: paletteCount(palettes.length),
+		displayValue: countValue(palettes.length, { one: "settings.paletteCountOne", many: "settings.paletteCount" }),
 		items: [paletteList(ctx, palettes)],
 	};
-}
-
-/** "4 palettes", "1 palette", or nothing when there is none. */
-function paletteCount(count: number): string {
-	if (count === 0) return "";
-	return count === 1 ? t("settings.paletteCountOne") : t("settings.paletteCount", { count });
 }
 
 /** The list of palettes, A→Z, with Obsidian's +, ✕ and empty row. */
@@ -83,7 +78,7 @@ function paletteRow(ctx: TreeContext, palette: CustomPalette): CsRender {
 			// `createDiv` always appends.
 			const swatches = renderPaletteSwatches(rowEl, palette);
 			rowEl.insertBefore(swatches, rowEl.firstChild);
-			addRowIconButton(setting, {
+			addBlockableIconButton(setting, {
 				icon: "pencil",
 				label: t("settings.editPaletteAria", { name: palette.name }),
 				blockedReason: () => pausedReason(ctx.plugin.settingsWriter),

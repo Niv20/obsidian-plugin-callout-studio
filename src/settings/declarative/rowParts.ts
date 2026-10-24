@@ -12,14 +12,15 @@
  * `disabled` would make the button silently dead, which the plugin avoids
  * everywhere else too.
  *
- * The icon buttons at a row's end (✎) work the same way: {@link addRowIconButton}.
+ * The icon buttons at a row's end (✎) work the same way, through
+ * `addBlockableIconButton` (ui/blockedButton.ts).
  *
  * A row that holds a control of the plugin's own (a picker) uses
  * {@link addControlComponent}, so the row's `disabled` reaches that control
  * the way it reaches Obsidian's own toggles and buttons.
  */
 import type { BaseComponent, Setting } from "obsidian";
-import { t } from "../../i18n";
+import { t, type LocaleKey } from "../../i18n";
 import { explainIfBlocked, paintBlocked } from "../../ui/blockedButton";
 import { setButtonBusy } from "../../ui/busyButton";
 import type { RowRegistry } from "./rowRegistry";
@@ -96,32 +97,15 @@ export function pausedReason(writer: { isFrozen: boolean }): string | null {
 	return writer.isFrozen ? t("notice.blockedWhilePaused") : null;
 }
 
-/** What {@link addRowIconButton} is told. */
-export interface RowIconButtonSpec {
-	/** A Lucide icon name. */
-	icon: string;
-	/** The tooltip, which is also the button's name for a screen reader. */
-	label: string;
-	/** Why the button cannot act now, or null when it can (asked at every draw and press). */
-	blockedReason?: () => string | null;
-	onClick(): void;
-}
-
 /**
- * An icon button at the end of a row (the ✎ of a palette, say), drawn as
- * Obsidian draws one (`addExtraButton`). While it cannot act, it is dimmed to
- * Obsidian's 40% and a press says why, like every blocked button in the plugin.
+ * How many there are, for the end of the row that opens a page ("12 callouts",
+ * "1 callout"), or nothing at none: the page says so itself.
+ *
+ * @param keys The sentence for one, and the one for more (with `{{count}}`).
  */
-export function addRowIconButton(setting: Setting, spec: RowIconButtonSpec): void {
-	const reason = (): string | null => spec.blockedReason?.() ?? null;
-	setting.addExtraButton((button) => {
-		button.setIcon(spec.icon).setTooltip(spec.label);
-		paintBlocked(button.extraSettingsEl, reason());
-		button.onClick(() => {
-			if (explainIfBlocked(reason())) return;
-			spec.onClick();
-		});
-	});
+export function countValue(count: number, keys: { one: LocaleKey; many: LocaleKey }): string {
+	if (count === 0) return "";
+	return count === 1 ? t(keys.one) : t(keys.many, { count });
 }
 
 /** A control of the plugin's own that can be switched off, such as a picker. */

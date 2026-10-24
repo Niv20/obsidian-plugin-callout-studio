@@ -55,7 +55,9 @@ These are the rules every part of the tree is written against.
   once, when the box is first drawn, and read the newest definition when used.
 - **A box's own search field** (`search`, 1.13.1) appears only if the box had
   rows when first drawn. Rows marked `searchable: false` are never filtered by
-  it.
+  it. Its `match` is the one of the box's *first* draw, called with the
+  *newest* row definitions, so it must read everything from the row it is
+  given, never from the list it was built with.
 - **Pages.** A `page` row opens a sub-page. With `items`, Obsidian draws the
   page from the tree and redraws it on `update()`. With `page: () => new
   SomePage()`, the plugin draws the page itself, Obsidian never redraws it, and
@@ -240,6 +242,34 @@ page's controls from the old page's code (`FallbackSection.ts` and
 `ctx.display()` in the tree means "draw the settings again"; once the tab
 switches, it asks the `TreeUpdater`.
 
+## The callout pages
+
+[`declarative/calloutPages.ts`](../../src/settings/declarative/calloutPages.ts)
+holds the one callout row every list uses, and the user's own callouts.
+
+- **A callout row** (`calloutRow`) is a render row keyed `callout-<id>`, named
+  by the display name, with every id the callout answers to as `aliases`, so
+  the settings search finds `[!quote2]` by `quote2`. Its `render` is
+  `drawCalloutRow` (the old page's row, same ✎ and ⋮), and the undo it returns
+  is the row's cleanup. `calloutRowHandlers(ctx)` gives ✎ and ⋮ their flows:
+  ✎ opens the editor (`openCalloutEditorFor`, which saves the callout itself,
+  built-ins too) and redraws; ⋮ opens the old page's menus.
+- **My callout types** (`callouts-mine`, with "12 callouts" at its end) is one
+  of Obsidian's lists (`callouts-mine-list`): its own search
+  (`rowMatchesQuery`: name or any id), a `+` (`addItem`: the editor for a new
+  callout), the grey row while there is none, and below it a box with **Scan
+  for callouts** (`scan-callouts`), a row the whole of which is the button. It
+  says "Scanning…" while a scan runs (`scanRunning`, shared with the old
+  page's button) and draws again when it starts and ends.
+- **Add new callout** (`add-callout`) is the same action as `+`, on the main
+  page.
+- **While saving is paused** the rows stay as they are and only ✎ is dimmed
+  (it says why); ⋮ still opens, so Find callouts works, and the menu's own
+  changes refuse with a reason. `+`, Scan and Add new callout say why.
+- **What must redraw them** (unit 12): the callouts (the registry's change
+  round), the fallback (its Default flair), light or dark mode (the colours),
+  an icon finishing its download, and a scan starting or ending.
+
 ## The Saved color palettes page
 
 [`declarative/palettesPage.ts`](../../src/settings/declarative/palettesPage.ts):
@@ -255,14 +285,14 @@ many callouts link to the palette.
 - **A palette row** is a render row keyed `palette-<id>` (a rename keeps the
   key): the palette's colours first, where a list row's icon goes (Obsidian
   hides the icon slot of a list whose rows declare no `icon`, so the colours
-  are their own element), then the name, then ✎ (`addRowIconButton`) and
+  are their own element), then the name, then ✎ (`addBlockableIconButton`, ui/blockedButton.ts) and
   Obsidian's ✕. The colours sit outside the controls a redraw empties, so the
   row's cleanup removes them.
 - **Rows are A→Z** (`sortedPalettes`), and `onDelete`'s index is a place in
   that order.
 - **While saving is paused** `+`, ✕ and the Delete key say why
   (`refuseWhilePaused`), and ✎ is dimmed to Obsidian's 40% and says why
-  (`addRowIconButton` with `pausedReason`).
+  (`addBlockableIconButton` with `pausedReason`).
 - **The settings search** finds a palette by its name, under this page.
 - **What must redraw it** (unit 12): the palettes, and light or dark mode
   (the colours are the mode on screen).

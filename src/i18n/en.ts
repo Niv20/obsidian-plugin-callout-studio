@@ -476,6 +476,9 @@ export const en: Record<string, string> = {
 
 	// Settings — Empty states
 	"settings.noCalloutsNow": "No custom callouts for now.",
+	"settings.calloutCount": "{{count}} callouts",
+	"settings.calloutCountOne": "1 callout",
+	"settings.searchCallouts": "Search callouts…",
 
 	// Settings — Row actions
 	"settings.editAria": "Edit {{name}}",

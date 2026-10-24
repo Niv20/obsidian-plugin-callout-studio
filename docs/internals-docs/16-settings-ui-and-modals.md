@@ -330,7 +330,9 @@ Scan is built **twice**, on every platform: once in the heading's control and
 once in `.cs-discover-footer`, the last child of the section body. Both come
 from the one `addManualDiscoveryButton`, which keeps one progress state for all
 copies, so a scan started from either greys both
-(`tests/manualDiscoveryButton.test.ts`).
+(`tests/manualDiscoveryButton.test.ts`). The scan itself is `runManualScan`
+(with `scanRunning`), which the declarative page's Scan row shares, so a scan
+shows the same way there.
 
 The footer is **inside the body and the painter never rebuilds it.** Inside,
 because the body owns the section's whole trailing gap and folds with it
@@ -625,8 +627,11 @@ Every row of the three callout lists is an Obsidian `Setting`
 (`.setting-item.cs-callout-row`), filled by `drawCalloutRow` in
 [`CalloutRowRenderer.ts`](../../src/settings/sections/CalloutRowRenderer.ts)
 (finding S2-14). `renderCalloutRow(ctx, container, def, kind, handlers)` makes
-the `Setting` and calls it; the declarative settings will hand `drawCalloutRow`
-a `Setting` of their own.
+the `Setting` and calls it; the declarative settings hand `drawCalloutRow` a
+`Setting` of their own and may draw it again, so it returns what undoes the
+two things it puts outside the row's controls (the icon at its start and the
+right-click listener). Its ✎ takes an optional `editBlockedReason`: while there
+is one, ✎ is dimmed and a press says it (`addBlockableIconButton`).
 
 | Part of the row | What it holds |
 |---|---|

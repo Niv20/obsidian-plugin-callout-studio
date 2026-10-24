@@ -24,8 +24,11 @@
  *
  * Not for a button that is merely busy. Its label already says "Saving…" or
  * "Scanning…", pressing it teaches nothing, and `disabled` is the right tool.
+ *
+ * {@link addBlockableIconButton} is the same for an icon button at the end of
+ * a settings row (the ✎ of a callout or a palette).
  */
-import { Notice } from "obsidian";
+import { Notice, type Setting } from "obsidian";
 
 /** The explanation still on screen, so pressing again replaces it rather than stacking another. */
 let showing: Notice | null = null;
@@ -55,4 +58,32 @@ export function explainIfBlocked(reason: string | null): boolean {
 	showing?.hide();
 	showing = new Notice(reason, readingTime(reason));
 	return true;
+}
+
+/** What {@link addBlockableIconButton} is told. */
+export interface BlockableIconButtonSpec {
+	/** A Lucide icon name. */
+	icon: string;
+	/** The tooltip, which is also the button's name for a screen reader. */
+	label: string;
+	/** Why the button cannot act now, or null when it can (asked at every draw and press). */
+	blockedReason?: () => string | null;
+	onClick(): void;
+}
+
+/**
+ * An icon button at the end of a settings row, drawn as Obsidian draws one
+ * (`addExtraButton`). While it cannot act, it is dimmed (Obsidian draws an
+ * `aria-disabled` icon button at 40%) and a press says why.
+ */
+export function addBlockableIconButton(setting: Setting, spec: BlockableIconButtonSpec): void {
+	const reason = (): string | null => spec.blockedReason?.() ?? null;
+	setting.addExtraButton((button) => {
+		button.setIcon(spec.icon).setTooltip(spec.label);
+		paintBlocked(button.extraSettingsEl, reason());
+		button.onClick(() => {
+			if (explainIfBlocked(reason())) return;
+			spec.onClick();
+		});
+	});
 }

@@ -74,6 +74,7 @@ const IN_PROGRESS: readonly string[] = [
 const PLACEHOLDER: readonly string[] = [
 	"replaceModal.searchPlaceholder",
 	"calloutPicker.placeholder",
+	"settings.searchCallouts",
 	"editor.paletteSearchPlaceholder",
 	"import.cmPlaceholder",
 ];

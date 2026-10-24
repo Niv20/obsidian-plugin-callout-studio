@@ -1,4 +1,10 @@
-/** The single explicit discovery action, kept alive across settings redraws. */
+/**
+ * The single explicit discovery action, kept alive across settings redraws.
+ *
+ * {@link runManualScan} and {@link scanRunning} are the scan itself, shared by
+ * the old page's button below and the declarative page's Scan row, so both
+ * show the same scan.
+ */
 import { Notice, setTooltip } from "obsidian";
 import { t } from "../../i18n";
 import type { SettingsSectionContext, SettingsTabPlugin } from "./types";
@@ -12,16 +18,53 @@ type DiscoveryButtonState = {
 // Share only transient UI state; no storage, timer, or automatic scan.
 const states = new WeakMap<SettingsTabPlugin, DiscoveryButtonState>();
 
+/** This plugin's scan state, made on first use. */
+function stateOf(plugin: SettingsTabPlugin): DiscoveryButtonState {
+	let state = states.get(plugin);
+	if (!state) {
+		state = { running: false, listeners: new Set() };
+		states.set(plugin, state);
+	}
+	return state;
+}
+
+/** Whether a scan started from the settings is running now. */
+export function scanRunning(plugin: SettingsTabPlugin): boolean {
+	return states.get(plugin)?.running ?? false;
+}
+
+/**
+ * Scan the vault for callout types, unless a scan is already running or
+ * saving is paused, and say how many were added. Every Scan button on screen
+ * is told when it starts and when it ends.
+ */
+export async function runManualScan(plugin: SettingsTabPlugin): Promise<void> {
+	const shared = stateOf(plugin);
+	if (shared.running || plugin.settingsWriter.isFrozen) return;
+	const notify = (): void => {
+		for (const listener of shared.listeners) listener();
+	};
+	shared.running = true;
+	notify();
+	try {
+		const added = await plugin.runVaultScan();
+		new Notice(t("settings.rescanComplete", { count: String(added) }));
+		// Registry subscriptions refresh the rows. Rebuilding the settings
+		// page here would discard focus and interfere with scrolling.
+	} catch (error) {
+		console.error("[callout-studio] manual discovery failed", error);
+		new Notice(t("manualDiscovery.failed"), 10000);
+	} finally {
+		shared.running = false;
+		notify();
+	}
+}
+
 export function addManualDiscoveryButton(
 	ctx: SettingsSectionContext,
 	controlEl: HTMLElement,
 ): void {
-	let state = states.get(ctx.plugin);
-	if (!state) {
-		state = { running: false, listeners: new Set() };
-		states.set(ctx.plugin, state);
-	}
-	const shared = state;
+	const shared = stateOf(ctx.plugin);
 	// Obsidian's own grey button, a step below the accent CTA beside it, like
 	// every other secondary button in the tab (decision 14 of the native-look
 	// plan: Obsidian paints them, no face of the plugin's own).
@@ -47,27 +90,9 @@ export function addManualDiscoveryButton(
 		// otherwise shadow the descriptive tooltip set above.
 		button.setText(label);
 	};
-	const notify = (): void => {
-		for (const listener of shared.listeners) listener();
+	const onClick = (): void => {
+		if (active) void runManualScan(ctx.plugin);
 	};
-	const run = async (): Promise<void> => {
-		if (!active || shared.running || ctx.plugin.settingsWriter.isFrozen) return;
-		shared.running = true;
-		notify();
-		try {
-			const added = await ctx.plugin.runVaultScan();
-			new Notice(t("settings.rescanComplete", { count: String(added) }));
-			// Registry subscriptions refresh the rows. Rebuilding the settings
-			// page here would discard focus and interfere with scrolling.
-		} catch (error) {
-			console.error("[callout-studio] manual discovery failed", error);
-			new Notice(t("manualDiscovery.failed"), 10000);
-		} finally {
-			shared.running = false;
-			notify();
-		}
-	};
-	const onClick = (): void => { void run(); };
 	button.addEventListener("click", onClick);
 	shared.listeners.add(paint);
 	ctx.registerDisposer(() => {

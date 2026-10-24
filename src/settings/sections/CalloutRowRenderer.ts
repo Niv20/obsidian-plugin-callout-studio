@@ -30,8 +30,8 @@
  * `div.callout-studio-row` of the plugin's own, which the arrow keys skipped.
  *
  * {@link drawCalloutRow} fills a `Setting` made elsewhere (the declarative
- * settings will hand it one); {@link renderCalloutRow} makes the `Setting`
- * itself, for today's lists.
+ * settings hand it one, and may draw the same row again); {@link renderCalloutRow}
+ * makes the `Setting` itself, for today's lists.
  *
  * ## The `kind` decides the row, and it is not `def.builtIn`
  *
@@ -63,10 +63,16 @@ import type { RowKind } from "./rowOwnership";
 import { addThemeRowControls, openThemeRowMenu } from "./themeRowActions";
 import { addRowMenuButton, type RowMenuTrigger } from "./calloutRowMenu";
 import { renderThemeIconInto } from "../../manager/theme/renderThemeIcon";
+import { addBlockableIconButton } from "../../ui/blockedButton";
 
 /** What a row's buttons do; the lists pass these in. */
-type RowRendererHandlers = {
+export type RowRendererHandlers = {
 	onEdit: (def: CalloutDefinition, isBuiltIn: boolean) => void;
+	/**
+	 * Why ✎ cannot open the editor now (saving is paused), or null when it
+	 * can. While there is a reason, ✎ is dimmed and a press says it.
+	 */
+	editBlockedReason?: () => string | null;
 	/** Open a built-in row's menu; `trigger` says from where (⋮ or right-click). */
 	onOpenBuiltInMenu: (trigger: RowMenuTrigger, def: CalloutDefinition) => void;
 	/** Open one of the user's own rows' menu, the same way. */
@@ -90,6 +96,11 @@ export function renderCalloutRow(
 /**
  * Fill `setting`, an empty Obsidian setting row, with one callout.
  *
+ * Returns what undoes the two things it adds outside the row's controls (the
+ * icon at its start, and the right-click listener), which drawing the same
+ * row again would otherwise add a second time. Obsidian empties the controls,
+ * the name and the description by itself.
+ *
  * @param kind Which list the row is in (see the module comment): a theme's
  *   row gets 👁 instead of ✎, the theme's measured colours, and no tag.
  */
@@ -99,7 +110,7 @@ export function drawCalloutRow(
 	def: CalloutDefinition,
 	kind: RowKind,
 	handlers: RowRendererHandlers,
-): void {
+): () => void {
 	const fromTheme = kind === "theme";
 	const rowEl = setting.settingEl;
 	setting.setClass("cs-callout-row");
@@ -139,23 +150,29 @@ export function drawCalloutRow(
 		else if (def.builtIn) handlers.onOpenBuiltInMenu(trigger, def);
 		else handlers.onOpenUserMenu(trigger, def);
 	};
-	rowEl.addEventListener("contextmenu", (event) => {
+	const onContextMenu = (event: MouseEvent): void => {
 		event.preventDefault();
 		openMenu({ kind: "pointer", row: rowEl, x: event.clientX, y: event.clientY });
-	});
+	};
+	rowEl.addEventListener("contextmenu", onContextMenu);
+	const undo = (): void => {
+		iconEl.remove();
+		rowEl.removeEventListener("contextmenu", onContextMenu);
+	};
 
 	if (fromTheme) {
 		addThemeRowControls(ctx, setting, def);
-		return;
+		return undo;
 	}
 
-	setting.addExtraButton((button) => {
-		button
-			.setIcon("pencil")
-			.setTooltip(t("settings.editAria", { name: def.displayName }))
-			.onClick(() => handlers.onEdit(def, def.builtIn));
+	addBlockableIconButton(setting, {
+		icon: "pencil",
+		label: t("settings.editAria", { name: def.displayName }),
+		blockedReason: handlers.editBlockedReason,
+		onClick: () => handlers.onEdit(def, def.builtIn),
 	});
 	addRowMenuButton(setting, def.displayName, openMenu);
+	return undo;
 }
 
 /**
