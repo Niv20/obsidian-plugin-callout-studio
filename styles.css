@@ -5700,39 +5700,51 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 
 /* ─── Option boxes ────────────────────────────────────────────── */
 /* The plugin import window's two cards and the answers of "Update your
-   notes?" all draw it with settings/optionBox.ts, so they look alike. A card
-   is chosen: it ends in a radio dot, and can carry a control of its own (see
+   notes?" all draw it with settings/optionBox.ts, so they look alike: a
+   card starts with Obsidian's radio, and can carry a control of its own (see
    "Plugin import window" below).
 
-   Drawn as the settings lists draw a callout row (`.callout-studio-row`): a
-   borderless pill raised off the window, its icon on a tile of the window's own
-   colour. The two surfaces are the `--cs-surface` / `--cs-surface-raised` pair
-   and nothing else, which is what keeps the pill visible on mobile dark, where
-   `--background-secondary` IS the window. Chrome stays grey-lit: the accent
-   is spent on one thing only, the active card of the plugin import window, and
-   nothing on a box turns green. */
+   Drawn as Obsidian draws the radio cards it asks with when you set up a
+   vault on a phone (`.mobile-onboarding-radio-option`, finding S9-10): a 2px
+   outline in the border colour, no fill, no hover, and the chosen card's
+   outline in the accent. The accent is spent on that and on a file's drop
+   target only, and nothing on a card turns green. Until 2026-10-24 a card was
+   a raised grey pill with an accent ring and an 8% accent wash when chosen. */
 
-/* No top margin of its own: the body's padding is the air above the first
-   box. Export used to get away with one because its list is the body's first
-   child and so caught `.cs-modal > .modal-content > :first-child` (still the
-   rule that resets a first child's margin); Import's
-   hidden file input comes first, so the reset missed its list and the margin
-   showed. */
+/* The cards stack 16px apart, as Obsidian's radio cards do. No top margin of
+   its own: the body's padding, or the text above, is the air before it. */
 .cs-option-list {
 	display: flex;
 	flex-direction: column;
-	gap: 6px;
+	gap: var(--size-4-4);
 }
 .cs-option-box {
 	position: relative;
 	display: flex;
 	align-items: center;
-	gap: 12px;
-	padding: 10px 12px;
+	gap: var(--size-4-3);
+	padding: var(--size-4-3);
+	border: 2px solid var(--background-modifier-border);
 	border-radius: var(--radius-m);
 	corner-shape: var(--corner-shape);
-	background: var(--cs-surface-raised, var(--setting-items-background));
-	transition: background 120ms ease;
+}
+
+/* The chosen card — the one the window acts on. */
+.cs-option-box.is-selected {
+	border-color: var(--interactive-accent);
+}
+
+/* The radio is Obsidian's own (`input[type=radio]`, drawn by app.css); only its
+   margin goes, since the card's gap spaces it. A disabled one (its card holds
+   nothing yet) lets a click through to the card, which says what to do first,
+   and fades as a disabled control does. */
+.cs-option-radio {
+	margin: 0;
+}
+
+.cs-option-radio:disabled {
+	opacity: 0.5;
+	pointer-events: none;
 }
 /* The plugin import window's file card shows where a dragged file will land,
    whether or not a file is already staged on it: Obsidian's drop target, a 10%
@@ -5747,25 +5759,13 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	background: color-mix(in oklch, var(--interactive-accent) 10%, transparent);
 	pointer-events: none;
 }
-/* The icon sits on a tile of the window's own colour, the way a row's syntax
-   chip does (`.callout-studio-row-syntax`), in Obsidian's own icon grey — and
-   stays that grey whatever the box comes to hold. */
+/* The icon, in Obsidian's own icon grey, as a setting row's icon is
+   (`.setting-item-icon`) — and it stays that grey whatever the card comes to
+   hold. It sat on a tile of its own until the cards lost their fill. */
 .cs-option-box-icon {
 	display: flex;
-	align-items: center;
-	justify-content: center;
 	flex-shrink: 0;
-	width: 36px;
-	height: 36px;
-	border-radius: var(--radius-m);
-	corner-shape: var(--corner-shape);
-	background: var(--cs-surface, var(--background-primary));
 	color: var(--text-muted);
-}
-.cs-option-box-icon .svg-icon {
-	width: 18px;
-	height: 18px;
-	color: inherit;
 }
 .cs-option-box-text {
 	display: flex;
@@ -5963,8 +5963,8 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 /* One window, two sources: PluginImportModal draws both, so the rules are
    shared rather than copied per plugin. The per-plugin classes stay on the
    window as styling hooks a user's snippet may already target. One screen, at
-   most two options, each an option box drawn as a card (see "Option boxes"
-   above): "This vault", and the source's one fallback — a file card with an
+   most two options, each a card (see "Option boxes" above): "This vault",
+   and the source's one fallback — a file card with an
    Upload button, or a paste card with a Paste button and a text box. The
    window is Obsidian's dialog width (560px), as wide as the chooser that
    hands over to it. */
@@ -6002,70 +6002,6 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	row-gap: 10px;
 }
 
-/* The active card — the one the footer Import acts on — while there are two
-   to choose between. A two-pixel accent ring, drawn as an inset shadow so
-   nothing moves when it arrives, over a faint accent wash of the card's own
-   colour; its radio dot fills to match (below). */
-.cs-option-box.is-selected {
-	box-shadow: inset 0 0 0 2px var(--interactive-accent);
-	background: color-mix(
-		in srgb,
-		var(--interactive-accent) 8%,
-		var(--cs-surface-raised, var(--setting-items-background))
-	);
-}
-/* A card that a click would choose — it holds something, and is not the
-   active one — says so under the pointer: the same neutral step a chooser's
-   box takes. */
-.cs-option-box.is-choosable {
-	cursor: pointer;
-}
-@media (hover: hover) {
-	.cs-option-box.is-choosable:hover {
-		background: color-mix(
-			in srgb,
-			var(--cs-surface-raised, var(--setting-items-background)) 93%,
-			var(--text-normal)
-		);
-	}
-}
-
-/* The radio dot at a card's trailing edge, in Obsidian's own checkbox colours:
-   empty until its card is the active one. The check inside it is always there
-   and simply has no colour until then, so choosing moves nothing. With nothing
-   in its card to choose, it fades. */
-.cs-option-radio {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-shrink: 0;
-	width: 18px;
-	height: 18px;
-	border: 1px solid var(--checkbox-border-color);
-	border-radius: 50%;
-	color: transparent;
-	transition:
-		background 120ms ease,
-		border-color 120ms ease;
-}
-.cs-option-radio .svg-icon {
-	width: 12px;
-	height: 12px;
-	stroke-width: 3px;
-}
-.cs-option-radio[aria-disabled="true"] {
-	opacity: 0.45;
-}
-.cs-option-radio:focus-visible {
-	outline: 2px solid var(--background-modifier-border-focus);
-	outline-offset: 2px;
-}
-.cs-option-box.is-selected .cs-option-radio {
-	border-color: var(--checkbox-color);
-	background: var(--checkbox-color);
-	color: var(--text-on-accent);
-}
-
 /* ─── "Update your notes?" (settings/noteQuestion.ts) ─── */
 
 /* One question for everything Save would change, in the callout editor
@@ -6085,9 +6021,9 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	margin-top: 4px;
 }
 /* A card with a dropdown: it sits at the trailing edge, centred on the card's
-   height, just before the dot — where the import card keeps its button. On a
-   narrow window the card wraps, and the dropdown and the dot take a line of
-   their own, still at the trailing edge, rather than squeezing the words. */
+   height — where the import card keeps its button. On a narrow window the
+   card wraps, and the dropdown takes a line of its own, still at the trailing
+   edge, rather than squeezing the words. */
 .cs-option-box.cs-note-change-picking {
 	flex-wrap: wrap;
 	row-gap: 8px;
@@ -6102,9 +6038,8 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 }
 /* A card's own button — Upload, which reads Replace once a file is staged, and
    Paste: Obsidian's own button at the card's trailing edge, never squeezed by a
-   long file name. On a phone Obsidian's button face (`--background-secondary`)
-   already differs from the card's (Obsidian's box colour), so it reads as a
-   button there without an outline of its own. */
+   long file name. The card has no fill, so the button's face reads on it as on
+   the window. */
 .cs-option-box .cs-import-action {
 	flex-shrink: 0;
 }

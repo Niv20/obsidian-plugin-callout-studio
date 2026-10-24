@@ -54,36 +54,38 @@ can rewrite them in place.
 
 ### How an option box is drawn
 
-A box is drawn as the settings lists draw a callout row
-(`.callout-studio-row`), so the three windows read as part of the same plugin
-rather than as dialogs of their own:
+A card is drawn as Obsidian draws the radio cards it asks with when you set up
+a vault on a phone (`.mobile-onboarding-radio-option`, finding S9-10), so the
+plugin import window and "Update your notes?" ask the way Obsidian asks:
 
-- **A borderless pill on the raised surface.** `border-radius: var(--radius-m)` with `corner-shape: var(--corner-shape)`, no border,
-  and `var(--cs-surface-raised, var(--setting-items-background))` - Obsidian's
-  own settings-box colour - as its fill. The icon sits on a 36px tile painted
-  `var(--cs-surface, var(--background-primary))`, the window's own colour, as a
-  row's syntax chip is. Those two tokens are the pair
-  [Settings UI and modals](16-settings-ui-and-modals.md#two-theme-aware-surface-tokens)
-  describes, and nothing else may be used here: on mobile dark
-  `--background-secondary` *is* the window, and a box painted with it directly
-  disappears. On a phone or tablet in light mode the box is white on the white
-  window, as Obsidian's own boxes are in a window there, so it reads faint.
+- **An outline, no fill.** `border: 2px solid var(--background-modifier-border)`,
+  `border-radius: var(--radius-m)` with `corner-shape: var(--corner-shape)`,
+  padding `--size-4-3`, cards `--size-4-4` apart. Nothing under the pointer:
+  only a card's own controls answer it, as in Obsidian.
+- **The chosen card** (`is-selected`) changes only its outline, to
+  `--interactive-accent`. No ring, no wash.
+- **The radio is Obsidian's own,** an `input[type=radio]` at the card's leading
+  edge (`addOptionRadio`), drawn by app.css: an accent disc with a centre dot
+  when checked, Obsidian's focus ring with a keyboard. The radios of a window
+  share a `name`, so the group is one Tab stop and the arrow keys move the
+  choice, as in any radio group. Only its margin is the plugin's (the card's
+  gap spaces it), and a disabled one fades and takes no pointer, so a click on
+  it reaches its card.
 - **Chrome stays grey-lit.** The icon is `--text-muted`, Obsidian's own icon
-  grey, not `--text-accent`, and it stays that grey whatever the box comes to
-  hold: nothing on a box turns green. The accent is spent on exactly one thing,
-  the active card of the plugin import window (and the card a dragged file
-  lands on, `is-drop-target`, which takes Obsidian's drop target: a 10% accent
-  tint laid over the box in a `::after`, so it shows on the chosen card too). `tests/importBoxStyles.test.ts` fails on
-  any other option-box or import-card rule that names the accent, and on any
-  `.cs-option-*` or `.cs-import-*` rule that names a success colour.
-- **A card ends in a radio dot,** because a click on it only chooses.
-- **Hover.** A card steps its own fill 7% toward `--text-normal` - darker
-  over a light window, lighter over a dark one - only while a click would
-  change something (`is-choosable`: it holds something and is not the active
-  one). The rule sits inside `@media (hover: hover)`, as Obsidian guards its
-  own button hovers, so a tapped card on a phone doesn't stay lit.
+  grey, with no tile, and it stays that grey whatever the card comes to hold:
+  nothing on a card turns green. The accent is spent on the chosen card's
+  outline and on the card a dragged file lands on (`is-drop-target`, which takes
+  Obsidian's drop target: a 10% accent tint laid over the card in a `::after`,
+  so it shows on the chosen card too). `tests/importBoxStyles.test.ts` fails on
+  any other option-box or import-card rule that names the accent, on any
+  `.cs-option-*` or `.cs-import-*` rule that names a success colour, and on any
+  hover rule for a card.
 - **Type.** The title is `--font-ui-medium` semibold; the status line is
   `--font-ui-smaller` in `--text-muted`, the size of a settings description.
+
+Until 2026-10-24 a card was a raised grey pill (the callout row's fill) with
+its icon on a tile, a hand-made round "radio" with a check mark at its far end,
+a hover step, and a 2px accent ring with an 8% accent wash when chosen.
 
 The three windows open at Obsidian's own dialog width (`--dialog-width`, 560px),
 so stepping from Import's chooser into a plugin import window doesn't resize the
@@ -433,7 +435,7 @@ rather than merely not drawn:
 still holds something; otherwise the vault once found, as the recommended
 default; and otherwise whatever the fallback holds, being the only thing on
 screen. Filling the fallback - a file staged, text typed or pasted - chooses
-it; a click on the vault card, or on its radio dot, chooses the vault. Each
+it; a click on the vault card, or on its radio, chooses the vault. Each
 option keeps what it was given while the other is active, and Import only ever
 reads the active one.
 
@@ -448,31 +450,33 @@ reads the active one.
 - **Choosing.** While both cards are there, the list is a
   `role="radiogroup"` named by the window's title (`aria-labelledby`, never an
   `aria-label`, which Obsidian would pop up as a tooltip over every card), and
-  each card ends in a radio dot, `.cs-option-radio`: `role="radio"`,
-  `aria-checked`, `aria-labelledby` its card's title line, `aria-describedby`
-  its status line. The dot, not the card, is the radio, because a radio may
-  hold no control and the fallback's card holds a button and, for a paste, a
-  text box. The whole card is still one pointer target for the same thing: a
-  click anywhere on it chooses it - except on its own button or text box
-  (`closest("button, textarea")`), which does what it says instead. Enter and
-  Space on a dot choose it; a held key is claimed but counted once. A dot is a
-  focus stop only while its card holds something; an empty fallback's dot is
-  `aria-disabled` and faded, and a click on the empty card or its dot chooses
-  nothing - it waits to be filled by its own button or box, and a notice says
-  which: `import.uploadFirst` (Admonition) or `import.pasteFirst` (Callout
-  Manager), picked by `source.manual.kind`. Going back into a text box that
+  each card starts with Obsidian's radio, `input.cs-option-radio`: one `name`
+  per window (the title's id), `aria-labelledby` its card's title line,
+  `aria-describedby` its status line. The radio, not the card, is the
+  control, because a radio may hold no control and the fallback's card holds
+  a button and, for a paste, a text box. The whole card is still one pointer
+  target for the same thing: a click anywhere on it chooses it - except on its
+  own button or text box (`closest("button, textarea")`), which does what it
+  says instead. Space on a radio, or the arrow keys moving the check onto it,
+  choose it (`change`). A radio is enabled only while its card holds
+  something, so the arrow keys pass over an empty fallback; a click on the
+  empty card (its disabled radio lets the click through) chooses nothing - it
+  waits to be filled by its own button or box, and a notice says which:
+  `import.uploadFirst` (Admonition) or `import.pasteFirst` (Callout Manager),
+  picked by `source.manual.kind`. The browser checks a radio before the window
+  hears of it, so after every choice `addOptionRadio` puts each radio of the
+  group back to what `paintOptionRadio` last painted: a choice the window
+  takes has just been repainted, one it refuses (an empty card, an import
+  already running) leaves the check where it was. Going back into a text box that
   holds text (`focus`) chooses it; focus entering an *empty* box is silent,
   since the user is about to paste (`onPasteFocus` rather than `onChoose`). Choosing flips `is-selected` and
-  `aria-checked` in place.
-- **The active card** wears `is-selected`: a 2px `--interactive-accent` ring
-  (an inset `box-shadow`, so nothing shifts) over an 8% accent tint of the
-  card's own fill, and its radio dot fills with `--checkbox-color` and shows
-  its check. A card a click would change wears `is-choosable` and steps its
-  fill on hover, like a chooser's box.
+  `checked` in place.
+- **The active card** wears `is-selected`: its outline turns
+  `--interactive-accent`, and its radio is checked.
 - **Nothing in the vault.** When the probe settles on `notInstalled`, `empty`,
   or `unreadable`, the vault card is removed, and with it the radiogroup role
-  and the fallback's radio dot: alone, it has nothing to be chosen against, and
-  wears no ring, and a click on its card says nothing. **Nothing says why** -
+  and the fallback's radio: alone, it has nothing to be chosen against, and
+  wears no accent outline, and a click on its card says nothing. **Nothing says why** -
   no greyed-out card, no line saying the plugin isn't installed, and nothing
   announced. The three probe results stay
   distinct in `probeVault` and the flow; the window simply treats them alike.
@@ -489,7 +493,7 @@ reads the active one.
   found, the vault card carries the shared grey **Recommended** flair
   (Obsidian's `flair mod-flat`, `settings/recommendedBadge.ts`, also used by `ExportFormatModal`'s backup
   row) on its title line. While the probe is still checking, the vault card
-  says "Looking for…", its dot takes no focus, and the card
+  says "Looking for…", its radio is disabled, and the card
   (`.cs-import-vault.is-checking`) is held back 250ms, so a fast probe never
   flashes it before it goes or before the count replaces it. The fallback is
   usable from the start, so a probe that never settles cannot lock the window;
@@ -530,7 +534,7 @@ reads the active one.
   older translation would keep giving.) A read that answers after the
   window was asked to close does nothing.
 - **Uploading a file** (Admonition's window). The file card carries a
-  standard `<button class="cs-import-action">` before its radio dot that reads
+  standard `<button class="cs-import-action">` at its trailing edge that reads
   **Upload**, `aria-describedby` the card's two lines. Picking a file, or
   dropping one onto the card, only stages it (`stageFile()`): the card is
   rewritten in place - its title becomes the file's name

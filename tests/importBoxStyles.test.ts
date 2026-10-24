@@ -7,18 +7,14 @@
  * cascade, so none of this is visible to it. Each rule here is one a tidy-up
  * would plausibly "restore":
  *
- * - A box is drawn as the settings lists draw a callout row: a borderless pill
- *   on the raised surface, its icon on a tile of the window's own colour. Both
- *   are the `--cs-surface` pair, which is what keeps them apart on mobile dark.
- * - Chrome stays grey-lit. The accent belongs to one thing, the active card of
- *   the plugin import window (and the dashed outline a dragged file lands in),
- *   and nothing on a box turns green: a file that was uploaded is confirmed by
- *   a notice, not by its icon. The purple icons the boxes used to wear, and
- *   the green one after them, are the regressions this guards.
- * - A box that a click would act on answers the pointer with a neutral step of
- *   its own fill; nothing else does.
- * - Every hover sits behind `(hover: hover)`, so a tapped box on a phone
- *   doesn't stay lit.
+ * - A card is drawn as Obsidian draws its own radio cards (finding S9-10): a
+ *   2px outline in the border colour, no fill, no hover, and the chosen card's
+ *   outline in the accent. Its radio is Obsidian's own, drawn by app.css.
+ * - Chrome stays grey-lit. The accent belongs to the chosen card (and the tint
+ *   a dragged file lands in), and nothing on a card turns green: a file that
+ *   was uploaded is confirmed by a notice, not by its icon. The purple icons
+ *   the boxes used to wear, and the green one after them, are the regressions
+ *   this guards.
  * - The paste box has one fixed height and scrolls: it neither grows with what
  *   is pasted nor can be dragged larger.
  * - "Recommended" is Obsidian's own flat flair, painted by Obsidian: the plugin
@@ -33,10 +29,6 @@ import { parseRules, valueOf, type CssRule } from "./support/cssInjectorHarness"
 
 const rules = parseRules(readFileSync(join(process.cwd(), "styles.css"), "utf8"));
 
-const HOVER_MEDIA = "@media (hover: hover)";
-/** The window's own colour, and the shade raised off it. */
-const SURFACE = "var(--cs-surface, var(--background-primary))";
-const RAISED = "var(--cs-surface-raised, var(--setting-items-background))";
 
 /** Every rule whose selector list names `selector` as one of its entries. */
 function rulesNaming(selector: string): CssRule[] {
@@ -50,25 +42,18 @@ function only(selector: string): CssRule {
 }
 
 describe("the shared import/export boxes at rest", () => {
-	it("draws a box as a borderless pill on the raised surface, like a callout row", () => {
+	it("draws a card as an outline with no fill, as Obsidian's radio cards are", () => {
 		const box = only(".cs-option-box");
-		assert.equal(valueOf(box, "background"), RAISED);
+		assert.equal(valueOf(box, "border"), "2px solid var(--background-modifier-border)");
 		assert.equal(valueOf(box, "border-radius"), "var(--radius-m)");
 		assert.equal(valueOf(box, "corner-shape"), "var(--corner-shape)");
-		assert.deepEqual(
-			box.props.filter((p) => p.startsWith("border") && p !== "border-radius"),
-			[],
-			"no border: the fill is what makes it a box",
-		);
-		const row = rulesNaming(".callout-studio-row").find((r) => r.at.length === 0 && r.props.includes("background"));
-		assert.ok(row);
-		assert.equal(valueOf(row, "background"), RAISED, "the row it is modelled on");
+		assert.equal(valueOf(box, "background"), undefined, "no fill of its own");
 	});
 
-	it("sets the icon on a tile of the window's own colour, in the icon grey", () => {
-		const tile = only(".cs-option-box-icon");
-		assert.equal(valueOf(tile, "background"), SURFACE);
-		assert.equal(valueOf(tile, "color"), "var(--text-muted)");
+	it("sets the icon in the icon grey, with no tile", () => {
+		const icon = only(".cs-option-box-icon");
+		assert.equal(valueOf(icon, "color"), "var(--text-muted)");
+		assert.equal(valueOf(icon, "background"), undefined);
 	});
 
 	it("spends the accent only on the active card and on a file's drop target", () => {
@@ -92,19 +77,17 @@ describe("the shared import/export boxes at rest", () => {
 		);
 	});
 
-	it("marks a plugin import card with a radio dot", () => {
-		const dot = only(".cs-option-radio");
-		assert.equal(valueOf(dot, "border-radius"), "50%");
-		assert.equal(valueOf(dot, "color"), "transparent", "its check is there, and uncoloured, until chosen");
-		const chosen = only(".cs-option-box.is-selected .cs-option-radio");
-		assert.equal(valueOf(chosen, "background"), "var(--checkbox-color)");
-		assert.equal(valueOf(chosen, "color"), "var(--text-on-accent)");
+	it("leaves the radio to Obsidian, but for its margin and a disabled one's fade", () => {
+		const radio = only(".cs-option-radio");
+		assert.deepEqual(radio.props, ["margin"]);
+		const disabled = only(".cs-option-radio:disabled");
+		assert.equal(valueOf(disabled, "pointer-events"), "none", "a click on it reaches its card");
 	});
 
-	it("rings the active card in the accent without moving anything", () => {
+	it("outlines the chosen card in the accent, with no wash and no ring", () => {
 		const chosen = only(".cs-option-box.is-selected");
-		assert.equal(valueOf(chosen, "box-shadow"), "inset 0 0 0 2px var(--interactive-accent)");
-		assert.match(valueOf(chosen, "background") ?? "", /^color-mix\( in srgb, var\(--interactive-accent\) \d+%, /);
+		assert.deepEqual(chosen.props, ["border-color"]);
+		assert.equal(valueOf(chosen, "border-color"), "var(--interactive-accent)");
 	});
 
 	it("sets the plugin import window's instructions as a caption, not body text", () => {
@@ -114,31 +97,10 @@ describe("the shared import/export boxes at rest", () => {
 	});
 });
 
-describe("the shared import/export boxes on hover", () => {
-	it("steps a choosable card's own fill toward the text colour", () => {
-		const rule = only(".cs-option-box.is-choosable:hover");
-		assert.deepEqual(rule.at, [HOVER_MEDIA]);
-		assert.match(
-			valueOf(rule, "background") ?? "",
-			/^color-mix\( in srgb, var\(--cs-surface-raised, var\(--setting-items-background\)\) \d+%, var\(--text-normal\) \)$/,
-		);
-	});
-
-	it("reserves hover feedback for boxes a click would act on, on hover-capable devices", () => {
-		const hovering = rules.filter(
-			(r) => r.selector.includes(".cs-option-box") && r.selector.includes(":hover"),
-		);
-		assert.ok(hovering.length > 0);
-		for (const rule of hovering) {
-			assert.deepEqual(rule.at, [HOVER_MEDIA]);
-			// Only a card that a click would choose (`is-choosable`). The
-			// active card and an empty one stay as they are under the pointer,
-			// and a card's own button hovers the way Obsidian's buttons do, with
-			// no rule of ours.
-			for (const selector of rule.selector.split(/,\s*/)) {
-				assert.match(selector, /^\.cs-option-box\.is-choosable:hover$/, selector);
-			}
-		}
+describe("the shared cards under the pointer", () => {
+	it("do not answer it: only a card's own controls do, as Obsidian's", () => {
+		const hovering = rules.filter((r) => /\.cs-option-/.test(r.selector) && r.selector.includes(":hover"));
+		assert.deepEqual(hovering.map((r) => r.selector), []);
 	});
 });
 

@@ -246,8 +246,11 @@ describe("every call site carries its own half's fallback", () => {
 		.filter((decl) => /var\(\s*--cs-surface/.test(decl))
 		.filter((decl) => !/--cs-surface(-raised)?\s*:/.test(decl));
 
+	// A floor, so a parser that found nothing cannot pass vacuously. It falls
+	// as windows move onto Obsidian's own surfaces (22 → 19 when the import
+	// cards lost their fill, 2026-10-24); lower it with them, never to zero.
 	it("found the call sites", () => {
-		assert.ok(callSites.length >= 20, `only ${callSites.length} found`);
+		assert.ok(callSites.length >= 12, `only ${callSites.length} found`);
 	});
 
 	for (const [index, decl] of callSites.entries()) {

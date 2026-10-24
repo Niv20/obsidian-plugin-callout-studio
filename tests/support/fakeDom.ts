@@ -774,6 +774,8 @@ export class FakeElement {
 	value = "";
 	disabled = false;
 	readOnly = false;
+	/** A checkbox's or radio's state; the browser sets it on a click, Space or an arrow key. */
+	checked = false;
 	/** How many client rects {@link getClientRects} reports. 0 = not rendered. */
 	rects = 1;
 	/** Bumped by {@link focus} / {@link select}, which have nothing else to do. */

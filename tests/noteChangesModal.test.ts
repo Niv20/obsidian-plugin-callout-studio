@@ -236,12 +236,12 @@ describe("the window", () => {
 		assert.equal(h.lines()[0], "You removed these IDs: test, dfgdf, sss.");
 	});
 
-	it("puts the dropdown at the card's trailing edge, just before the dot", () => {
+	it("starts the card with its radio and puts the dropdown at its trailing edge", () => {
 		const idea = def({ id: "idea", displayName: "Idea", aliases: ["test", "thought"] });
 		const h = open(modalInput(idea, form({ calloutId: "idea", displayName: "Idea", aliases: ["thought"] }),
 			stats({ test: { uses: tally(1, "a.md") } })));
 		const parts = h.cards()[1]!.children.map((child) => child.className.split(" ")[0]);
-		assert.deepEqual(parts, ["cs-option-box-text", "cs-note-change-target", "cs-option-radio"]);
+		assert.deepEqual(parts, ["cs-option-radio", "cs-option-box-text", "cs-note-change-target"]);
 	});
 
 	it("follows a rename back to the main id, titles and all", async () => {

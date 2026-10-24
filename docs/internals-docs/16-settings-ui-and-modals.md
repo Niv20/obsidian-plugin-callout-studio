@@ -2346,12 +2346,15 @@ the window.
   cannot drift apart. Each window adds its own answers and decides what Save
   changes resolves with.
 - **The cards are the plugin import window's**: `renderOptionBox` without an
-  icon tile, `addOptionRadio` for the dot and `paintOptionRadio` for the chosen
-  / choosable state, all from `optionBox.ts` and shared with the import window.
+  icon, `addOptionRadio` for Obsidian's radio at the start of each card (the
+  question's id is the group's `name`) and `paintOptionRadio` for the chosen
+  one, all from `optionBox.ts` and shared with the import window: an outline,
+  the chosen card's in the accent (see
+  [How an option box is drawn](15-import-export.md#how-an-option-box-is-drawn)).
   With more than one id to pick from, Change carries a `SelectDropdown` at its
-  trailing edge, just before the dot - where the import card keeps its button
-  (`.cs-note-change-picking`; on a narrow window the dropdown and dot wrap to a
-  line of their own, still at the trailing edge). Here a click anywhere on a
+  trailing edge - where the import card keeps its button
+  (`.cs-note-change-picking`; on a narrow window the dropdown wraps to a line
+  of its own, still at the trailing edge). Here a click anywhere on a
   card chooses it, a click into its dropdown included; the import window
   exempts its own buttons and text box.
 - **Footer**: **Cancel** and **Save changes** (`mod-cta`). Cancel, Escape and

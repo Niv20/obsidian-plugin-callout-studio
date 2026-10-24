@@ -201,11 +201,10 @@ export class NoteChangesModal extends Modal {
 		});
 		if (choices.length < 2) return;
 
-		// The dropdown at the card's trailing edge, the dot still its last mark.
+		// The dropdown at the card's trailing edge (the radio is at its start).
 		// A click on it answers for the card, as a click anywhere on it does.
 		card.box.el.addClass("cs-note-change-picking");
 		const host = card.box.el.createDiv({ cls: "cs-note-change-target" });
-		card.box.el.appendChild(card.radio);
 		this.dropdown = new SelectDropdown(host, t("noteChanges.changeToIdLabel"))
 			.setOptions(choices.map((id) => ({ value: id, label: id })))
 			.setValue(picked)

@@ -10,17 +10,18 @@
  *   │ This affects 16 callouts in 7 notes.                │
  *   │ What should happen to those callouts?               │
  *   │ ┌─────────────────────────────────────────────────┐ │
- *   │ │ Leave them as they are                       (●)│ │
+ *   │ │ (●) Leave them as they are                      │ │
  *   │ └─────────────────────────────────────────────────┘ │
  *   │ ┌─────────────────────────────────────────────────┐ │
- *   │ │ Change them to …                             ( )│ │
+ *   │ │ ( ) Change them to …                            │ │
  *   │ └─────────────────────────────────────────────────┘ │
  *   │                             [Cancel] [Save changes] │
  *   └─────────────────────────────────────────────────────┘
  *
  * One frame, so the two read as the same question: the changes, how far they
  * reach with the question on a line under it, then the answers as a radio
- * group of cards (./optionBox.ts) that repaint after every choice. Each window
+ * group of cards (./optionBox.ts: Obsidian's radio at the start of each, the
+ * chosen card outlined in the accent) that repaint after every choice. Each window
  * still dresses itself — chrome and title, as every modal file must — then
  * adds its own answers (Leave first, and chosen on opening, so no note
  * changes unless the user says so) and decides what Save changes resolves
@@ -52,7 +53,7 @@ export interface NoteAnswerSpec {
 
 export interface NoteQuestion {
 	/** One answer card, below the ones added before it. */
-	answer(spec: NoteAnswerSpec): { box: OptionBox; radio: HTMLElement };
+	answer(spec: NoteAnswerSpec): { box: OptionBox; radio: HTMLInputElement };
 	/** Show which card is chosen; run once the answers are in, and after a choice made elsewhere. */
 	repaint(): void;
 }
@@ -125,13 +126,13 @@ export function renderNoteQuestion(
 	return {
 		answer(answer) {
 			const box = renderOptionBox(list, { title: answer.title, desc: answer.desc });
-			const radio = addOptionRadio(box, () => {
+			// Every answer's radio shares the question's id as its group name.
+			const radio = addOptionRadio(box, askId, () => {
 				answer.choose();
 				repaint();
 			});
 			paints.push(() => {
-				const chosen = answer.isChosen();
-				paintOptionRadio(box, radio, { chosen, choosable: !chosen, enabled: true });
+				paintOptionRadio(box, radio, { chosen: answer.isChosen(), enabled: true });
 			});
 			return { box, radio };
 		},

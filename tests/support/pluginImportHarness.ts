@@ -340,22 +340,37 @@ export function status(h: Harness, name: Option): FakeElement {
 	return el;
 }
 
-/** The radio dot at the card's trailing edge; null when the card stands alone. */
+/** Obsidian's radio at the start of the card; null when the card stands alone. */
 export function radio(h: Harness, name: Option): FakeElement | null {
 	return option(h, name).querySelector(".cs-option-radio");
 }
 
 /**
- * The active option, checked two ways that must agree: the accent ring on its
- * card, and `aria-checked` on its radio dot. Null when none is active — and
- * when the fallback stands alone, with nothing to be chosen against.
+ * Choose `name` the way the browser does when its radio is clicked, gets
+ * Space, or the arrow keys move the choice onto it: check it, uncheck the
+ * others of its group, and fire `change`. A disabled radio is passed over and
+ * nothing happens. Returns whether the browser would have moved the check.
+ */
+export function pick(h: Harness, name: Option): boolean {
+	const chosen = radio(h, name);
+	assert.ok(chosen, `${name} has a radio`);
+	if (chosen.disabled || chosen.checked) return false;
+	for (const other of group(h).querySelectorAll(".cs-option-radio")) other.checked = other === chosen;
+	chosen.fire("change", { type: "change" });
+	return true;
+}
+
+/**
+ * The active option, checked two ways that must agree: the accent outline on
+ * its card, and its radio checked. Null when none is active — and when the
+ * fallback stands alone, with nothing to be chosen against.
  */
 export function active(h: Harness): Option | null {
-	const ringed = options(h).filter((name) => option(h, name).hasClass("is-selected"));
-	const checked = options(h).filter((name) => radio(h, name)?.getAttribute("aria-checked") === "true");
-	assert.deepEqual(ringed, checked, "the ring and aria-checked agree");
-	assert.ok(ringed.length <= 1, "at most one active option");
-	return ringed[0] ?? null;
+	const outlined = options(h).filter((name) => option(h, name).hasClass("is-selected"));
+	const checked = options(h).filter((name) => radio(h, name)?.checked === true);
+	assert.deepEqual(outlined, checked, "the outline and the checked radio agree");
+	assert.ok(outlined.length <= 1, "at most one active option");
+	return outlined[0] ?? null;
 }
 
 /** The fallback card's own button: Upload, then Replace — or Paste. */
@@ -370,25 +385,6 @@ export function pasteBox(h: Harness): FakeElement {
 	const box = option(h, "paste").querySelector("textarea");
 	assert.ok(box, "the paste card holds a text box");
 	return box;
-}
-
-/**
- * A key pressed on `el`, as its keydown listener sees it — or, with `repeat`,
- * one of the keydowns a key held down sends after the first. Returns whether
- * the key was claimed (`preventDefault`) — for Space, what stops it scrolling
- * the window as well as choosing.
- */
-export function press(el: FakeElement, key: string, repeat = false): boolean {
-	let claimed = false;
-	el.fire("keydown", {
-		type: "keydown",
-		key,
-		repeat,
-		preventDefault: () => {
-			claimed = true;
-		},
-	});
-	return claimed;
 }
 
 /** The screen-reader-only live region: what the probe found. */

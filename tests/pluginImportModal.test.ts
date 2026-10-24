@@ -50,7 +50,7 @@ import {
 	pasteBox,
 	pasteHarness,
 	pasteSource,
-	press,
+	pick,
 	pressPaste,
 	radio,
 	ready,
@@ -340,7 +340,7 @@ describe("the plugin import window: one screen", () => {
 					assert.equal(announcer(h).textContent, "", `${what}: and announces nothing either`);
 
 					// Alone, there is nothing to choose between.
-					assert.equal(radio(h, name), null, `${what}: no radio dot`);
+					assert.equal(radio(h, name), null, `${what}: no radio`);
 					assert.equal(group(h).hasAttribute("role"), false, `${what}: not a radio group`);
 					assert.equal(option(h, name).hasClass("is-selected"), false, what);
 					assert.equal(ready(assertOneImport(h)), false);
@@ -488,7 +488,7 @@ describe("the plugin import window: choosing between the two", () => {
 		}
 	});
 
-	it("ends each card in a radio dot: a focus stop while its card holds something, disabled while it does not", async () => {
+	it("starts each card with Obsidian's radio, enabled while its card holds something", async () => {
 		for (const { name, open, fill } of WINDOWS) {
 			const h = open(FOUND);
 			try {
@@ -496,8 +496,7 @@ describe("the plugin import window: choosing between the two", () => {
 				for (const which of options(h)) {
 					const dot = radio(h, which);
 					assert.ok(dot, which);
-					assert.equal(dot.getAttribute("aria-disabled"), "true", `${which}: nothing to choose while checking`);
-					assert.equal(dot.hasAttribute("tabindex"), false, which);
+					assert.equal(dot.disabled, true, `${which}: nothing to choose while checking`);
 				}
 				await settle();
 
@@ -509,10 +508,15 @@ describe("the plugin import window: choosing between the two", () => {
 						const dot = radio(h, which);
 						assert.ok(dot, what);
 						const choosable = which === "vault" || filled;
-						assert.equal(dot.getAttribute("role"), "radio", what);
-						assert.equal(dot.getAttribute("tabindex"), choosable ? "0" : null, what);
-						assert.equal(dot.getAttribute("aria-disabled"), choosable ? null : "true", what);
-						assert.ok(["true", "false"].includes(dot.getAttribute("aria-checked") ?? ""), what);
+						// Obsidian's own radio, first in its card.
+						assert.equal(dot.tagName, "INPUT", what);
+						assert.equal(dot.getAttribute("type"), "radio", what);
+						assert.equal(card.children[0], dot, `${what}: at the start of the card`);
+						// One group, named after the window's title: one Tab stop,
+						// and the arrow keys move between the two.
+						assert.equal(dot.getAttribute("name"), h.titleEl.id, what);
+						assert.equal(dot.hasAttribute("tabindex"), false, `${what}: the browser decides the Tab stop`);
+						assert.equal(dot.disabled, !choosable, what);
 						// Named by its card's title line, described by its status line.
 						const head = card.querySelector(".cs-option-box-head");
 						assert.ok(head && head.id !== "", what);
@@ -523,7 +527,6 @@ describe("the plugin import window: choosing between the two", () => {
 						for (const attr of ["role", "tabindex", "aria-checked"]) {
 							assert.equal(card.hasAttribute(attr), false, `${what}: ${attr} on the card`);
 						}
-						assert.equal(dot.querySelector("button, textarea"), null, what);
 					}
 				}
 				assertNoTooltips(h, name);
@@ -605,7 +608,7 @@ describe("the plugin import window: choosing between the two", () => {
 		}
 	});
 
-	it("does from the keyboard what a click does: Enter and Space on a radio dot choose its card", async () => {
+	it("does from the keyboard what a click does: the radios move the choice", async () => {
 		const h = harness(FOUND);
 		try {
 			h.modal.onOpen();
@@ -613,19 +616,12 @@ describe("the plugin import window: choosing between the two", () => {
 			stage(h, "a.json", () => Promise.resolve("file"));
 			assert.equal(active(h), "file");
 
-			assert.equal(press(radio(h, "vault")!, " "), true, "Space is claimed, so it does not scroll the window");
+			// Space on a radio, or an arrow key moving the check onto it.
+			assert.equal(pick(h, "vault"), true);
 			assert.equal(active(h), "vault");
-			assert.equal(press(radio(h, "file")!, "Enter"), true);
+			assert.equal(pick(h, "file"), true);
 			assert.equal(active(h), "file");
 			assert.equal(h.pickerOpens(), 0, "choosing opened no picker");
-
-			// A held key is claimed and chooses nothing new; other keys are left alone.
-			assert.equal(press(radio(h, "vault")!, " ", true), true, "a repeat is still claimed");
-			assert.equal(active(h), "file");
-			for (const key of ["a", "Tab", "ArrowDown", "Escape"]) {
-				assert.equal(press(radio(h, "vault")!, key), false, key);
-			}
-			assert.equal(active(h), "file");
 		} finally {
 			h.destroy();
 		}
@@ -638,16 +634,16 @@ describe("the plugin import window: choosing between the two", () => {
 				try {
 					h.modal.onOpen();
 					await settle();
-					// A click on the dot, as the card's listener sees it.
-					clickOn(option(h, name), radio(h, name)!);
+					// Its radio is disabled, so the arrow keys pass over it, and a
+					// click on it goes through to the card (`pointer-events: none`).
+					assert.equal(pick(h, name), false, `${name}: the radio cannot be checked`);
 					option(h, name).fire("click");
-					press(radio(h, name)!, "Enter");
+					option(h, name).fire("click");
 					assert.equal(active(h), "vault", `${name}: still the vault`);
-					assert.equal(option(h, name).hasClass("is-choosable"), false, "and it does not offer itself to the pointer");
 					assert.equal(h.pickerOpens(), 0, "a click on the card is not a click on Upload");
 					assert.equal(ready(importButton(h)), true);
 					const first = t(name === "file" ? "import.uploadFirst" : "import.pasteFirst");
-					assert.deepEqual(seen, [first, first, first], `${name}: one notice per press`);
+					assert.deepEqual(seen, [first, first], `${name}: one notice per click`);
 				} finally {
 					h.destroy();
 				}
@@ -671,17 +667,20 @@ describe("the plugin import window: choosing between the two", () => {
 		}
 	});
 
-	it("marks only the card a click would change as choosable", async () => {
+	it("puts the check back when a choice is refused", async () => {
 		const h = harness(FOUND);
 		try {
 			h.modal.onOpen();
 			await settle();
-			const choosable = () => options(h).filter((name) => option(h, name).hasClass("is-choosable"));
-			assert.deepEqual(choosable(), [], "the vault is already active, the file card is empty");
-			stage(h, "a.json", () => Promise.resolve("x"));
-			assert.deepEqual(choosable(), ["vault"]);
-			option(h, "vault").fire("click");
-			assert.deepEqual(choosable(), ["file"]);
+			// The radio of an empty card is disabled, but a refused choice can
+			// still arrive (it is the window that decides); the check must not
+			// stay on the answer that was not taken.
+			const file = radio(h, "file")!;
+			file.disabled = false;
+			assert.equal(pick(h, "file"), true);
+			assert.equal(active(h), "vault");
+			assert.equal(file.checked, false);
+			assert.equal(radio(h, "vault")!.checked, true);
 		} finally {
 			h.destroy();
 		}
@@ -766,7 +765,7 @@ describe("the plugin import window: choosing between the two", () => {
 
 			for (const name of options(file)) {
 				option(file, name).fire("click");
-				press(radio(file, name)!, "Enter");
+				pick(file, name);
 			}
 			actionButton(file).fire("click");
 			await settle();
@@ -861,7 +860,7 @@ describe("the plugin import window: pasting", () => {
 			const before = clipboard.reads();
 			clipboard.set("must not be read");
 			option(h, "paste").fire("click");
-			press(radio(h, "paste")!, "Enter");
+			pick(h, "paste");
 			pasteBox(h).fire("click");
 			pasteBox(h).fire("focus");
 			typeText(h, "typed");
