@@ -37,7 +37,7 @@ export const ja: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "先に置き換え先のcalloutを選択してください。",
 	"settings.fallbackTag": "デフォルト",
 	"settings.fallbackTagAuto": "自動デフォルト",
-	"settings.rescanVaultDesc": "ノートで使われていて、まだこの一覧にないcalloutタイプを追加します。既存のcalloutとノートは変更されません。",
+	"settings.rescanVaultDesc": "ノートで使われていて、まだこの一覧にないcalloutタイプを追加します。",
 	"settings.rescanVaultHintAction": "calloutをスキャン",
 	"manualDiscovery.failed": "スキャン結果を保存できませんでした。設定ファイルに書き込めることと同期が完了していることを確認し、設定 → マイcalloutタイプ → calloutをスキャンから再試行してください。既存のcalloutは置き換えられていません。",
 	"manualDiscovery.scanning": "スキャン中…",
@@ -85,14 +85,11 @@ export const ja: Record<string, string> = {
 	"deleteModal.keepsRowTheme":
 		"{{theme}}がこのcalloutタイプを定義しているため、引き続き利用可能で見た目もそのまま保たれます。Callout Studioはvault内のノートのみを変更し、テーマに属するものには一切変更を加えません。",
 
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "マイcalloutタイプ",
 	"settings.builtInCallouts": "組み込みcallout",
 	"settings.contextMenu": "コンテキストメニュー",
-	"settings.keyboardShortcuts": "コマンド",
 	"settings.language": "言語",
-	"settings.languageDesc":
-		"Callout Studio の表示言語。デフォルトでは Obsidian のインターフェース言語に従います。",
+	"settings.languageDesc": "Callout Studioの言語。別の言語を選ばない限り、Obsidianの言語になります。",
 	"settings.importExport": "インポートとエクスポート",
 	"settings.import": "インポート…",
 	"settings.export": "エクスポート…",
@@ -108,6 +105,9 @@ export const ja: Record<string, string> = {
 	"settings.addNewCallout": "calloutを追加",
 
 	"settings.noCalloutsNow": "現在カスタムcalloutはありません。",
+	"settings.calloutCount": "{{count}} 件のcallout",
+	"settings.calloutCountOne": "1 件のcallout",
+	"settings.searchCallouts": "calloutを検索…",
 
 	"settings.editAria": "{{name}}を編集",
 	"settings.moreRowActionsAria": "{{name}}のその他の操作",
@@ -126,9 +126,9 @@ export const ja: Record<string, string> = {
 
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "テーマ由来のcallout",
-	"settings.themeCalloutsDesc":
-		"{{theme}}がこれらを提供またはスタイルを上書きしているため、Callout Studioはテーマの描画をそのまま残し、Block calloutとしてのみ提供します。ここにはテーマが追加するcalloutタイプと、見た目が置き換えられる組み込みcalloutの両方が表示されます。テーマが追加するcalloutタイプは、そのテーマが有効な間のみ表示されます。",
+	"settings.themeCalloutsDesc": "{{theme}} がこれらのcalloutを描画するため、Callout Studioはそのまま残し、ブロックcalloutとしてのみ提供します。",
 	"settings.themeCalloutsDefaultTheme": "あなたのテーマ",
+	"settings.themeCalloutsEmpty": "現在、{{theme}} はどのcalloutにもスタイルを適用していません。",
 	"settings.themePreviewAria":
 		'"{{name}}"をプレビュー — テーマでの描画を確認',
 	"settings.builtInAllThemeStyled":
@@ -138,11 +138,7 @@ export const ja: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"vaultで認識されないcalloutタイプはこのcalloutのスタイルを継承します。",
 
-	"settings.globalStyleRegularTitle": "ブロック callout のグローバルスタイル",
-	"settings.globalStyleHeadingTitle": "見出し callout のグローバルスタイル",
-	"settings.globalStyleInlineTitle": "インライン callout のグローバルスタイル",
 	"settings.border": "ボーダー",
-	"settings.borderAll": "すべて",
 	"settings.borderTop": "上",
 	"settings.borderRight": "右",
 	"settings.borderBottom": "下",
@@ -152,14 +148,11 @@ export const ja: Record<string, string> = {
 	"settings.titleScale": "タイトル",
 	"settings.contentScale": "コンテンツ",
 	"settings.inlineTextScale": "テキスト",
-	"settings.shapeGroup": "形状",
 	"settings.borderRadius": "角の丸み",
-	"settings.alignGroup": "整列",
 	"settings.alignContent": "コンテンツをタイトルに合わせて整列",
 	"settings.headingSpacingGroup": "タイトル間隔",
 	"settings.headingPadVertical": "垂直方向の間隔",
 	"settings.headingGap": "見出し間の間隔",
-	"settings.headingFoldGroup": "折りたたみ",
 	"settings.headingFoldArrow": "折りたたみ矢印を表示",
 	"settings.styleDemoName": "サンプル",
 	"settings.styleDemoInlineName": "サンプル",
@@ -171,21 +164,19 @@ export const ja: Record<string, string> = {
 	"settings.customPalettes": "保存済みのカラーパレット",
 	"settings.newPalette": "新規パレット",
 	"settings.customPalettesEmpty": "現在保存済みのパレットはありません。",
+	"settings.paletteCount": "{{count}} 個のパレット",
+	"settings.paletteCountOne": "1 個のパレット",
 	"settings.editPaletteAria": "パレット {{name}} を編集",
-	"settings.deletePaletteAria": "パレット {{name}} を削除",
 	"settings.deletePaletteConfirm":
 		'パレット "{{name}}" を削除しますか？\nこの色を使用しているcalloutには影響しません。',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'メタデータにこの名前 ("{{key}}") を指定している callout は、代わりにその名前の組み込みの色になります。ノートは変更されません。',
 
 	"settings.customCommands": "コマンドとホットキー",
-	"settings.customCommandsDesc":
-		"すべてのCallout Studioコマンドと割り当てられたショートカットを確認し、よく使うcalloutのために独自のコマンドを作成できます。デフォルトではショートカットは割り当てられていません。",
-	"settings.customCommandsButton": "コマンドを管理",
+	"settings.customCommandsDesc": "Callout Studioのすべてのコマンドとそのショートカット、そして独自のコマンド。",
 
 	"commandBuilder.title": "コマンドとショートカット",
-	"commandBuilder.desc":
-		"+ボタンを使って、Obsidianのホットキー設定でショートカットを設定または変更します。",
+	"commandBuilder.pageDesc": "コマンドの ⊕ を押すと、Obsidianのホットキー設定でそのショートカットを設定できます。",
 	"commandBuilder.builtIn": "組み込みコマンド",
 	"commandBuilder.toggleAria": "{{name}}のオン/オフを切り替え",
 	"commandBuilder.hotkeyBlank": "未設定",
@@ -195,7 +186,6 @@ export const ja: Record<string, string> = {
 	"commandBuilder.empty": "まだカスタムコマンドはありません。",
 	"commandBuilder.unknownCommand": "このコマンド",
 	"commandBuilder.editAria": "{{name}}を編集",
-	"commandBuilder.deleteAria": "{{name}}を削除",
 	"commandBuilder.deleteConfirm":
 		"コマンド{{name}}を削除しますか？割り当てられているショートカットは機能しなくなります。",
 	"commandBuilder.newTitle": "新規コマンド",
@@ -209,8 +199,7 @@ export const ja: Record<string, string> = {
 		"この形式はオフになっているため、再度オンにするまでコマンドはプレーンテキストを挿入します。",
 	"commandBuilder.roleThemeOwned":
 		"このcalloutはテーマが提供しているため、Block形式のみ使用できます。",
-	"commandBuilder.commandSuspended":
-		"一時停止中: このcalloutはテーマが提供しているため、Block形式のみ使用できます。テーマがこのcalloutの提供をやめると、このコマンドは再び機能します。",
+	"commandBuilder.commandSuspended": "テーマがこのcalloutを提供している間は一時停止します。その間、このcalloutにはブロック形式のみがあります。",
 	"commandBuilder.callout": "calloutタイプ",
 	"commandBuilder.calloutDesc": "このコマンドが挿入するcallout。",
 	"commandBuilder.headingLevel": "見出しレベル",
@@ -259,7 +248,7 @@ export const ja: Record<string, string> = {
 	"settings.resetItemThemeCalloutStyles": "テーマのcalloutスタイル",
 	"settings.resetItemFallback": "フォールバックスタイル",
 	"settings.resetItemIconLibraries": "アイコンライブラリの順序と非表示のライブラリ",
-	"settings.resetAllConfirmAfter": "ご安心ください。リセットの前に、現在の設定のバックアップを保存します。設定の「バックアップ」セクションからいつでも復元できます。\n同期サービスをお使いの場合、リセットは他の端末にも反映される可能性があります。",
+	"settings.resetAllConfirmAfter": "ご安心ください。リセットの前に、現在の設定のバックアップを保存します。設定のバージョン履歴からいつでも元に戻せます。\n同期サービスを使っている場合、リセットがほかのデバイスにも反映されることがあります。",
 	"settings.resetNothing": "リセットするものはありません。すべてすでにデフォルトです。",
 
 	"notice.customCommandMissingCallout":
@@ -341,13 +330,13 @@ export const ja: Record<string, string> = {
 	"editor.foldClosed": "デフォルトで閉じる",
 	"editor.cancel": "キャンセル",
 	"editor.saveChanges": "変更を保存",
-	"editor.saving": "保存中…",
 	"editor.saveFailed": "保存を完了できませんでした。このエディターがまだ開いている場合は閉じずに、保存先の空き容量と同期を確認してから再試行してください。設定やノートの更新の一部はすでに保存されている可能性があります。",
 	"editor.createCallout": "calloutを作成",
 	"editor.nameRequired": "calloutを作成する前に表示名が必要です。",
 	"editor.noChangesToSave": "変更はありませんでした。",
-	"editor.downloadingIcon": "アイコンをダウンロード中",
 	"editor.idEmpty": "少なくとも1つのIDが必要です",
+	"editor.idAlreadyHere": "このIDはすでに存在します",
+	"editor.idTooLong": "IDは{{max}}文字以内にしてください",
 	"editor.idExists": "このIDのcalloutがすでに存在します",
 	"editor.idConflict": "このIDは既存のcalloutと競合します",
 	"editor.idFromTheme":
@@ -535,7 +524,6 @@ export const ja: Record<string, string> = {
 	"iconPicker.allSources": "すべてのソース",
 	"iconPicker.searchAllSources": "すべてのアイコンソースを検索",
 	"iconPicker.chooseSource": "ソースを選択",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "利用可能なライブラリ",
 	"iconPicker.librariesToDownload": "ダウンロードするライブラリ",
 	"iconPicker.groupCurrent": "現在のアイコン",
@@ -741,32 +729,32 @@ export const ja: Record<string, string> = {
 	"heading.toggleFold": "折りたたみを切り替え",
 
 	"settings.globalSettings": "Callout Studioのグローバルスタイルオプション",
+	"settings.calloutStyle": "calloutのスタイル",
+	"settings.menusAndCommands": "メニューとコマンド",
+	"settings.buildFailed": "Callout Studioが設定画面を表示できませんでした。Obsidianを再起動し、再び起きた場合は報告してください。",
 	"settings.globalSettingsRegularDesc":
 		"vault内のすべてのblock calloutのボーダー、半径、フォントスケール、整列を調整します。",
 	"settings.globalSettingsHeadingDesc":
 		"vault内のすべての見出しcalloutのボーダー、形状、垂直方向の間隔を調整します。",
 	"settings.globalSettingsInlineDesc":
 		"vault内のすべてのインラインcalloutのボーダーと形状を調整します。",
-	"settings.globalSettingsCustomize": "カスタマイズ",
 	"settings.themeCalloutStyles": "テーマのcalloutスタイルを使う",
-	"settings.themeCalloutStylesDesc":
-		"オン：テーマがスタイルを設定しているcalloutは、テーマの見た目のままになります。\nオフ：Callout Studioがすべてのcalloutを自分で描画し、テーマのcalloutスタイルは無効になります。",
+	"settings.themeCalloutStylesDesc": "オンにすると、テーマがスタイルを適用するcalloutはテーマの見た目を保ち、オフにすると、Callout Studioがすべてのcalloutを描画します。",
 
 	"settings.calloutTypeRegular": "ブロックcallout",
 	"settings.calloutTypeHeading": "見出しcallout",
 	"settings.calloutTypeInline": "インラインcallout",
 
-	"settings.customizeMenu": "メニュー項目をカスタマイズ",
-	"settings.customizeMenuDesc":
-		"各calloutタイプに表示する右クリック操作を選択し、順序を並べ替えます。 ソースモード、ライブプレビューで機能します。",
-	"settings.customizeMenuButton": "メニュー項目をカスタマイズ",
+	"settings.customizeMenuDesc": "calloutタイプごとに、右クリックのアクションを選び、並べ替えます。",
 	"menuCustomize.title": "右クリックメニューをカスタマイズ",
-	"menuCustomize.desc":
-		"操作のオン/オフを切り替え、ハンドルをドラッグして並べ替えます。変更は自動的に保存されます。",
+	"menuCustomize.pageDesc": "アクションはハンドルをドラッグして移動でき、✕ で非表示にできます。",
 	"menuCustomize.regular": "ブロックcallout",
 	"menuCustomize.heading": "見出しcallout",
 	"menuCustomize.inline": "インラインcallout",
 	"menuCustomize.dragHandle": "ドラッグして並べ替え",
+	"menuCustomize.hiddenHeading": "見出しcalloutメニューで非表示",
+	"menuCustomize.hiddenInline": "インラインcalloutメニューで非表示",
+	"menuCustomize.hiddenRegular": "ブロックcalloutメニューで非表示",
 	"menuItem.createOrEdit": "calloutを作成または編集",
 	"menuItem.openSettings": "設定を開く",
 	"menuItem.copyMarkdown": "Markdownをコピー",
@@ -828,7 +816,6 @@ export const ja: Record<string, string> = {
 	"vaultStats.roleBlock": "ブロック",
 	"vaultStats.roleHeading": "見出し",
 	"vaultStats.roleInline": "インライン",
-	"portable.subtitle": "Callout Studio の使用をやめる前に、標準 Markdown に変換する見出しコールアウトとインラインコールアウトを選択します。",
 	"portable.customize": "カスタム置換…",
 	"portable.editCustom": "カスタム置換を編集…",
 	"portable.restoreDefault": "既定の置換に戻す",
@@ -841,13 +828,13 @@ export const ja: Record<string, string> = {
 
 	"usage.title": "calloutを探す",
 	"usage.command": "calloutを探す",
-	"usage.subtitle": "保管庫内のcalloutを探し、ソースに移動します。",
 	"usage.browse": "参照",
 	"usage.allTypes": "すべての種類",
 	"usage.registeredCallouts": "登録済みのcallout",
 	"usage.unregisteredCallouts": "未登録のcallout",
 	"usage.summary": "{{files}}個のファイルに{{count}}件の出現箇所",
 	"usage.allRoles": "すべての形式",
+	"usage.filterFormat": "形式で絞り込む",
 	"usage.failed": "calloutの出現箇所を更新できませんでした。",
 	"usage.loading": "Markdownノートをスキャン中…",
 	"usage.partial": "結果は不完全です: {{count}}件の読み取りエラーがあります。",
@@ -860,7 +847,6 @@ export const ja: Record<string, string> = {
 	"usage.missing": "このノートは存在しません。結果を更新中…",
 	"usage.changed": "この出現箇所は変更されたか、移動先を特定できません。結果を更新中…",
 	"usage.openFailed": "このcalloutの出現箇所を開けませんでした。",
-	"usage.menuCount": "calloutを探す ({{count}})",
 	"usage.menuIncomplete": "calloutを探す — スキャンが不完全",
 	"usage.menu": "calloutを探す",
 	"usage.closeSettings": "サイドバーでcalloutの結果を表示するには、設定を閉じてください。",
@@ -1049,6 +1035,8 @@ export const ja: Record<string, string> = {
 	"footer.contribute": "貢献する",
 	"footer.license": "プラグインライセンス",
 	"footer.iconCredits": "アイコンライセンス",
+	"settings.about": "情報",
+	"settings.version": "バージョン",
 	"settings.deletePaletteConfirmLinkedOne":
 		"パレット「{{name}}」を削除しますか？\n1 件の callout が使用しています。色は保持され、後でエディターの色の行から再接続できます。",
 	"settings.deletePaletteConfirmLinked":
@@ -1065,8 +1053,7 @@ export const ja: Record<string, string> = {
 	"palette.colorExistsUseLink": "既存の色を使う",
 	"locale.downloading": "翻訳をダウンロード中…",
 	"locale.notDownloaded": "{{name}}はまだダウンロードされていません",
-	"locale.notDownloadedDesc":
-		"翻訳をダウンロードできるまで、Callout Studioは英語で表示されます。次回Obsidianの起動時に再試行します。",
+	"locale.notDownloadedDesc": "翻訳がダウンロードされるまでCallout Studioは英語で表示し、Obsidianの起動時に再試行します。",
 	"locale.retry": "再試行",
 	"locale.diskWriteFailed":
 		"Callout Studioは翻訳をディスクに保存できませんでした。次回、再度ダウンロードする必要があります。",
@@ -1090,13 +1077,14 @@ export const ja: Record<string, string> = {
 	"export.formatCss": "単独で使用できるCSSスナップショット",
 	"export.formatCssDesc":
 		"Callout Studioが動作していないWebサイトやvault向けです。ブロックcalloutのみが対象で、変更後は再度エクスポートする必要があります。",
+	"export.formatCssAction": "エクスポート",
 	"quickInsert.readingViewHint": "このノートは閲覧モードで開かれているため、何も挿入できません。",
 	"quickInsert.readingView": "calloutを挿入するには、ソースモードまたはライブプレビューに切り替えてください。",
 	"quickInsert.noCursorHint": "このノートにはカーソルがないため、挿入する場所がありません。",
 	"quickInsert.noCursor": "calloutを挿入したい場所にノート内でカーソルを置いてから、もう一度お試しください。",
 	"notice.legacyDiscoveryArchiveFailed": "アップグレード用の復旧コピーを完了できませんでした。以前のローカル検出キャッシュと起動時の CSS は変更されていません。書き込み権限、ストレージへのアクセス、空き容量を確認してから、Obsidian を再起動してもう一度お試しください。",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "一時停止: callout が見つかりません。このコマンドを復元するには見つけるか作成するか、別の種類を選ぶにはコマンドを編集してください。",
+	"commandBuilder.missingCallout": "見つからないcalloutを作り直すか、別のcalloutを選ぶまで一時停止します。",
 	"confirm.titleRestoreSettings": "これらの設定を復元",
 	"confirm.titleCreateSettingsFile": "設定ファイルを作成",
 	"confirm.saveDisplayedSettings":
@@ -1465,7 +1453,7 @@ export const ja: Record<string, string> = {
 	"notice.unsavedChangesKept": "このデバイスの一部の変更はまだ保存されておらず、別のデバイスの新しい設定に置き換えられました。お使いのバージョンは先に保存されています。取り戻すには、Callout Studio の設定でバージョン履歴を開いてください。",
 	"settings.versionHistory": "バージョン履歴",
 	"settings.versions": "以前のバージョン",
-	"settings.versionsDesc": "Callout Studio は構成のバージョンを自動で保存します。\n比較したり、以前のバージョンに戻ったりできます。",
+	"settings.versionsDesc": "自動保存された設定のバージョンを比較するか、いずれかに戻します。",
 	"settings.versionsButton": "バージョンを表示",
 	"noteChanges.callouts": "{{count}}個のCallout",
 	"noteChanges.calloutsOne": "1個のCallout",

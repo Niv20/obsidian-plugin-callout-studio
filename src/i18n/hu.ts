@@ -37,7 +37,7 @@ export const hu: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "Először válassza ki a calloutot, amelyre cserélni szeretné.",
 	"settings.fallbackTag": "Alapértelmezett",
 	"settings.fallbackTagAuto": "Aut. alapértelmezett",
-	"settings.rescanVaultDesc": "Hozzáadja a jegyzeteidben használt, ezen a listán még nem szereplő callout-típusokat. A meglévő calloutjaid és jegyzeteid nem változnak.",
+	"settings.rescanVaultDesc": "Hozzáadja a jegyzeteid által használt callouttípusokat, amelyek még nincsenek ezen a listán.",
 	"settings.rescanVaultHintAction": "Calloutok keresése",
 	"manualDiscovery.failed": "A keresés eredményét nem sikerült menteni. Ellenőrizze, hogy a beállítások írhatók-e, és befejeződött-e a szinkronizálás, majd próbálja újra: Beállítások → Callout-típusaim → Calloutok keresése. A meglévő calloutok nem lettek lecserélve.",
 	"manualDiscovery.scanning": "Keresés…",
@@ -85,14 +85,11 @@ export const hu: Record<string, string> = {
 	"deleteModal.keepsRowTheme":
 		"A(z) {{theme}} határozza meg ezt a callout-típust, ezért elérhető marad, és megtartja a kinézetét. A Callout Studio csak a tárában lévő jegyzeteket módosítja — a témájához tartozó semmi nem változik.",
 
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Callout-típusaim",
 	"settings.builtInCallouts": "Beépített callout-ok",
 	"settings.contextMenu": "Helyi menü",
-	"settings.keyboardShortcuts": "Parancsok",
 	"settings.language": "Nyelv",
-	"settings.languageDesc":
-		"A Callout Studio megjelenítési nyelve. Alapértelmezés szerint az Obsidian felületi nyelvét követi.",
+	"settings.languageDesc": "A Callout Studio nyelve; az Obsidiané, hacsak nem választasz másikat.",
 	"settings.importExport": "Importálás és exportálás",
 	"settings.import": "Importálás…",
 	"settings.export": "Exportálás…",
@@ -108,6 +105,9 @@ export const hu: Record<string, string> = {
 	"settings.addNewCallout": "callout hozzáadása",
 
 	"settings.noCalloutsNow": "Jelenleg nincs egyéni callout.",
+	"settings.calloutCount": "{{count}} callout",
+	"settings.calloutCountOne": "1 callout",
+	"settings.searchCallouts": "Callout-ok keresése…",
 
 	"settings.editAria": "{{name}} szerkesztése",
 	"settings.moreRowActionsAria": "További műveletek a következőhöz: {{name}}",
@@ -125,9 +125,9 @@ export const hu: Record<string, string> = {
 	"settings.colorSwatchAria": "Kiemelés: {{accent}} · Háttér: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "A témájából származó callout-ok",
-	"settings.themeCalloutsDesc":
-		"A(z) {{theme}} biztosítja vagy stílusozza át ezeket, ezért a Callout Studio pontosan úgy hagyja őket, ahogy a témája megrajzolja, és csak Block callout-ként kínálja fel őket. Kétféle itt jelenik meg: a témája által hozzáadott callout-típusok, és azok a beépített callout-ok, amelyek kinézetét lecseréli. A témája által hozzáadott callout-típusok csak addig szerepelnek a listán, amíg az aktív.",
+	"settings.themeCalloutsDesc": "A(z) {{theme}} maga rajzolja ezeket a calloutokat, ezért a Callout Studio érintetlenül hagyja őket, és csak blokk-calloutként kínálja fel.",
 	"settings.themeCalloutsDefaultTheme": "A témája",
+	"settings.themeCalloutsEmpty": "A(z) {{theme}} jelenleg egyetlen calloutot sem formáz.",
 	"settings.themePreviewAria":
 		'Előnézet: "{{name}}" — nézze meg, hogyan rajzolja meg a témája',
 	"settings.builtInAllThemeStyled":
@@ -136,11 +136,7 @@ export const hu: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"A tárban fel nem ismert callout-típusok öröklik ennek a callout-nak a stílusát.",
 
-	"settings.globalStyleRegularTitle": "Blokk callout globális stílusa",
-	"settings.globalStyleHeadingTitle": "Címsor callout globális stílusa",
-	"settings.globalStyleInlineTitle": "Beágyazott callout globális stílusa",
 	"settings.border": "Szegélyek",
-	"settings.borderAll": "Mind",
 	"settings.borderTop": "Felül",
 	"settings.borderRight": "Jobb",
 	"settings.borderBottom": "Alul",
@@ -150,14 +146,11 @@ export const hu: Record<string, string> = {
 	"settings.titleScale": "Cím",
 	"settings.contentScale": "Tartalom",
 	"settings.inlineTextScale": "Szöveg",
-	"settings.shapeGroup": "Alak",
 	"settings.borderRadius": "Sarokkerekítés",
-	"settings.alignGroup": "Igazítás",
 	"settings.alignContent": "Tartalom igazítása a címhez",
 	"settings.headingSpacingGroup": "Címtérköz",
 	"settings.headingPadVertical": "Függőleges térköz",
 	"settings.headingGap": "Térköz a címsorok között",
-	"settings.headingFoldGroup": "Összecsukás",
 	"settings.headingFoldArrow": "Összecsukási nyíl megjelenítése",
 	"settings.styleDemoName": "Minta",
 	"settings.styleDemoInlineName": "Minta",
@@ -169,21 +162,19 @@ export const hu: Record<string, string> = {
 	"settings.customPalettes": "Mentett színpaletták",
 	"settings.newPalette": "Új paletta",
 	"settings.customPalettesEmpty": "Jelenleg nincs mentett paletta.",
+	"settings.paletteCount": "{{count}} paletta",
+	"settings.paletteCountOne": "1 paletta",
 	"settings.editPaletteAria": "{{name}} paletta szerkesztése",
-	"settings.deletePaletteAria": "{{name}} paletta törlése",
 	"settings.deletePaletteConfirm":
 		'"{{name}}" paletta törlése?\nAz ezt a színt használó callout-ok nem változnak.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Azok a calloutok, amelyek a metaadataikban megnevezik ("{{key}}"), helyette az ilyen nevű beépített színt kapják. A jegyzeteid nem változnak.',
 
 	"settings.customCommands": "Parancsok és gyorsbillentyűk",
-	"settings.customCommandsDesc":
-		"Tekintse meg az összes Callout Studio parancsot és a hozzájuk rendelt billentyűparancsot, valamint hozzon létre saját parancsokat a leggyakrabban használt callout-okhoz. Alapértelmezés szerint nincs hozzárendelt billentyűparancs.",
-	"settings.customCommandsButton": "Parancsok kezelése",
+	"settings.customCommandsDesc": "A Callout Studio összes parancsa, azok billentyűparancsai és a saját parancsaid.",
 
 	"commandBuilder.title": "Parancsok és billentyűparancsok",
-	"commandBuilder.desc":
-		"Használja a + gombot billentyűparancs beállításához vagy módosításához az Obsidian billentyűparancs-beállításaiban.",
+	"commandBuilder.pageDesc": "Nyomd meg a ⊕ gombot egy parancsnál, hogy beállítsd a billentyűparancsát az Obsidian gyorsbillentyű-beállításaiban.",
 	"commandBuilder.builtIn": "Beépített parancsok",
 	"commandBuilder.toggleAria": "{{name}} be- vagy kikapcsolása",
 	"commandBuilder.hotkeyBlank": "Üres",
@@ -193,7 +184,6 @@ export const hu: Record<string, string> = {
 	"commandBuilder.empty": "Még nincsenek egyéni parancsok.",
 	"commandBuilder.unknownCommand": "ez a parancs",
 	"commandBuilder.editAria": "{{name}} szerkesztése",
-	"commandBuilder.deleteAria": "{{name}} törlése",
 	"commandBuilder.deleteConfirm":
 		"Törli a(z) {{name}} parancsot? A hozzárendelt billentyűparancs megszűnik működni.",
 	"commandBuilder.newTitle": "Új parancs",
@@ -207,8 +197,7 @@ export const hu: Record<string, string> = {
 		"Ez a formátum ki van kapcsolva, ezért a parancs egyszerű szöveget szúr be, amíg vissza nem kapcsolja.",
 	"commandBuilder.roleThemeOwned":
 		"A témája biztosítja ezt a callout-ot, ezért csak Block formátuma van.",
-	"commandBuilder.commandSuspended":
-		"Szüneteltetve: a témája biztosítja ezt a callout-ot, ezért csak Block formátuma van. Ez a parancs újra működik, ha a téma már nem biztosítja.",
+	"commandBuilder.commandSuspended": "Szüneteltetve, amíg a témád biztosítja ezt a calloutot; ilyenkor csak blokkformátuma van.",
 	"commandBuilder.callout": "Callout típus",
 	"commandBuilder.calloutDesc": "A callout, amelyet ez a parancs beszúr.",
 	"commandBuilder.headingLevel": "Címsorszint",
@@ -257,7 +246,7 @@ export const hu: Record<string, string> = {
 	"settings.resetItemThemeCalloutStyles": "A téma callout-stílusai",
 	"settings.resetItemFallback": "Tartalék stílus",
 	"settings.resetItemIconLibraries": "Az ikonkönyvtárak sorrendje és a rejtett könyvtárak",
-	"settings.resetAllConfirmAfter": "Ne aggódjon: a visszaállítás előtt biztonsági mentést készítünk a jelenlegi beállításairól. Bármikor visszaállíthatja a Beállítások Biztonsági mentések szakaszából.\nHa szinkronizálási szolgáltatást használ, a visszaállítás eljuthat a többi eszközére is.",
+	"settings.resetAllConfirmAfter": "Semmi gond: visszaállítás előtt biztonsági másolatot mentünk a jelenlegi beállításaidról. Bármikor visszahozhatod a beállítások Verzióelőzményeiből.\nHa szinkronizálási szolgáltatást használsz, a visszaállítás eljuthat a többi eszközödre is.",
 	"settings.resetNothing": "Nincs mit visszaállítani: minden már az alapértelmezett állapotban van.",
 
 	"notice.customCommandMissingCallout":
@@ -343,14 +332,14 @@ export const hu: Record<string, string> = {
 	"editor.foldClosed": "Alapértelmezetten zárva",
 	"editor.cancel": "Mégse",
 	"editor.saveChanges": "Változtatások mentése",
-	"editor.saving": "Mentés…",
 	"editor.saveFailed": "A mentést nem sikerült befejezni. Ha ez a szerkesztő még nyitva van, hagyja nyitva, és a tárhely és a szinkronizálás ellenőrzése után próbálja újra. Egyes beállítások vagy jegyzetmódosítások már mentésre kerülhettek.",
 	"editor.createCallout": "Callout létrehozása",
 	"editor.nameRequired":
 		"Callout létrehozása előtt megjelenítési név szükséges.",
 	"editor.noChangesToSave": "Nem történt változtatás.",
-	"editor.downloadingIcon": "Ikon letöltése",
 	"editor.idEmpty": "Legalább egy azonosító szükséges",
+	"editor.idAlreadyHere": "Ez az azonosító már létezik",
+	"editor.idTooLong": "Az azonosító legfeljebb {{max}} karakter lehet",
 	"editor.idExists": "Már létezik callout ezzel az azonosítóval",
 	"editor.idConflict": "Ez az azonosító ütközik egy meglévő callout-tal",
 	"editor.idFromTheme":
@@ -546,7 +535,6 @@ export const hu: Record<string, string> = {
 	"iconPicker.allSources": "Minden forrás",
 	"iconPicker.searchAllSources": "Keresés az összes ikonforrásban",
 	"iconPicker.chooseSource": "Forrás kiválasztása",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "Elérhető könyvtárak",
 	"iconPicker.librariesToDownload": "Letölthető könyvtárak",
 	"iconPicker.groupCurrent": "Jelenlegi ikon",
@@ -750,30 +738,30 @@ export const hu: Record<string, string> = {
 	"contextMenu.deleteSection": "Címsor szakasz törlése",
 	"heading.toggleFold": "Összecsukás váltása",
 	"settings.globalSettings": "Callout Studio globális stílusbeállítások",
+	"settings.calloutStyle": "Callout stílusa",
+	"settings.menusAndCommands": "Menük és parancsok",
+	"settings.buildFailed": "A Callout Studio nem tudta megrajzolni a beállításait; indítsd újra az Obsidiant, és jelezd, ha ismét előfordul.",
 	"settings.globalSettingsRegularDesc":
 		"Állítsa be a tárában lévő összes block callout szegélyét, sugarát, betűméret-arányát és igazítását.",
 	"settings.globalSettingsHeadingDesc":
 		"Állítsa be a tárában lévő összes címsor callout szegélyét, alakját és függőleges térközét.",
 	"settings.globalSettingsInlineDesc":
 		"Állítsa be a tárában lévő összes beágyazott callout szegélyét és alakját.",
-	"settings.globalSettingsCustomize": "Testreszabás",
 	"settings.themeCalloutStyles": "A téma callout-stílusainak használata",
-	"settings.themeCalloutStylesDesc":
-		"Be: a témája által formázott callout-ok megtartják a téma megjelenését.\nKi: a Callout Studio minden callout-ot maga rajzol meg, és a témája callout-stílusai ki vannak kapcsolva.",
+	"settings.themeCalloutStylesDesc": "Bekapcsolva a témád által formázott calloutok megtartják a téma megjelenését; kikapcsolva a Callout Studio rajzol meg minden calloutot.",
 	"settings.calloutTypeRegular": "Blokk callout",
 	"settings.calloutTypeHeading": "Címsor callout",
 	"settings.calloutTypeInline": "Beágyazott callout",
-	"settings.customizeMenu": "Menüelemek testreszabása",
-	"settings.customizeMenuDesc":
-		"Válassza ki, mely jobb gombos műveletek jelenjenek meg az egyes callout-típusoknál, és rendezze át őket. Forrás módban és élő előnézetben is működik.",
-	"settings.customizeMenuButton": "Menüelemek testreszabása",
+	"settings.customizeMenuDesc": "Válaszd ki és rendezd a jobb gombos műveleteket minden callouttípushoz.",
 	"menuCustomize.title": "Jobb gombos menü testreszabása",
-	"menuCustomize.desc":
-		"Kapcsolja be vagy ki a műveleteket, és húzza a fogantyút az átrendezéshez. A módosítások automatikusan mentésre kerülnek.",
+	"menuCustomize.pageDesc": "Húzz egy műveletet a fogantyújánál fogva az áthelyezéséhez, vagy rejtsd el a ✕ gombbal.",
 	"menuCustomize.regular": "Blokk callout",
 	"menuCustomize.heading": "Címsor callout",
 	"menuCustomize.inline": "Beágyazott callout",
 	"menuCustomize.dragHandle": "Húzás az átrendezéshez",
+	"menuCustomize.hiddenHeading": "Elrejtve a címsor-calloutok menüjéből",
+	"menuCustomize.hiddenInline": "Elrejtve a soron belüli calloutok menüjéből",
+	"menuCustomize.hiddenRegular": "Elrejtve a blokk-calloutok menüjéből",
 	"menuItem.createOrEdit": "Callout létrehozása vagy szerkesztése",
 	"menuItem.openSettings": "Beállítások megnyitása",
 	"menuItem.copyMarkdown": "Markdown másolása",
@@ -841,7 +829,6 @@ export const hu: Record<string, string> = {
 	"vaultStats.roleBlock": "Blokk",
 	"vaultStats.roleHeading": "Címsor",
 	"vaultStats.roleInline": "Beágyazott",
-	"portable.subtitle": "A Callout Studio használatának befejezése előtt válassza ki, mely címsorbeli és soron belüli calloutokat alakítja szabványos Markdownná.",
 	"portable.customize": "Egyéni csere…",
 	"portable.editCustom": "Egyéni csere szerkesztése…",
 	"portable.restoreDefault": "Alapértelmezett csere visszaállítása",
@@ -854,13 +841,13 @@ export const hu: Record<string, string> = {
 
 	"usage.title": "Calloutok keresése",
 	"usage.command": "Calloutok keresése",
-	"usage.subtitle": "Keresse meg a calloutokat a széfjében, és ugorjon a forrásukhoz.",
 	"usage.browse": "Böngészés",
 	"usage.allTypes": "Minden típus",
 	"usage.registeredCallouts": "Nyilvántartott callout-ok",
 	"usage.unregisteredCallouts": "Nem nyilvántartott callout-ok",
 	"usage.summary": "{{count}} előfordulás {{files}} fájlban",
 	"usage.allRoles": "Minden formátum",
+	"usage.filterFormat": "Szűrés formátum szerint",
 	"usage.failed": "Nem sikerült frissíteni a callout-előfordulásokat.",
 	"usage.loading": "Markdown-jegyzetek vizsgálata…",
 	"usage.partial": "Az eredmények hiányosak: {{count}} olvasási hiba.",
@@ -873,7 +860,6 @@ export const hu: Record<string, string> = {
 	"usage.missing": "Ez a jegyzet már nem létezik. Az eredmények frissítése…",
 	"usage.changed": "Ez az előfordulás megváltozott, vagy nem egyértelműen más helyre került. Az eredmények frissítése…",
 	"usage.openFailed": "Nem sikerült megnyitni ezt a callout-előfordulást.",
-	"usage.menuCount": "Calloutok keresése ({{count}})",
 	"usage.menuIncomplete": "Calloutok keresése — a vizsgálat nem teljes",
 	"usage.menu": "Calloutok keresése",
 	"usage.closeSettings": "Zárd be a Beállításokat, hogy a callout-eredményeket az oldalsávban lásd.",
@@ -1068,6 +1054,8 @@ export const hu: Record<string, string> = {
 	"footer.contribute": "Közreműködés",
 	"footer.license": "Bővítmény licence",
 	"footer.iconCredits": "Ikonlicencek",
+	"settings.about": "Névjegy",
+	"settings.version": "Verzió",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Törli a(z) "{{name}}" palettát?\n1 callout használja. Megtartja a színeit, és később újra összekapcsolhatod a szerkesztőjében a Szín sorból.',
 	"settings.deletePaletteConfirmLinked":
@@ -1084,8 +1072,7 @@ export const hu: Record<string, string> = {
 	"palette.colorExistsUseLink": "használd a meglévőt",
 	"locale.downloading": "Fordítás letöltése…",
 	"locale.notDownloaded": "A(z) {{name}} még nincs letöltve",
-	"locale.notDownloadedDesc":
-		"A Callout Studio angolul jelenik meg, amíg a fordítás letölthetővé nem válik. Az Obsidian következő indításakor újra próbálkozik.",
+	"locale.notDownloadedDesc": "A Callout Studio angolul jelenik meg, amíg a fordítás le nem töltődik, és az Obsidian indításakor újra próbálkozik.",
 	"locale.retry": "Újrapróbálkozás",
 	"locale.diskWriteFailed":
 		"A Callout Studio nem tudta lemezre menteni a fordítást, ezért legközelebb újra le kell tölteni.",
@@ -1109,13 +1096,14 @@ export const hu: Record<string, string> = {
 	"export.formatCss": "Önálló CSS-pillanatkép",
 	"export.formatCssDesc":
 		"Olyan webhelyekhez vagy vaultokhoz, ahol a Callout Studio nem fut. Csak a blokk-calloutokat tartalmazza, és módosítások után újra exportálni kell.",
+	"export.formatCssAction": "Exportálás",
 	"quickInsert.readingViewHint": "Ez a jegyzet olvasó módban van megnyitva, ezért semmit sem lehet beszúrni.",
 	"quickInsert.readingView": "Váltson forrás módra vagy élő előnézetre a callout beszúrásához.",
 	"quickInsert.noCursorHint": "Ebben a jegyzetben nincs kurzor, ezért nincs hova beszúrni.",
 	"quickInsert.noCursor": "Helyezze a kurzort a jegyzetben oda, ahová be szeretné szúrni a callout-ot, majd próbálja újra.",
 	"notice.legacyDiscoveryArchiveFailed": "A frissítéshez tartozó helyreállítási másolatot nem sikerült elkészíteni. A korábbi helyi felderítési gyorsítótár és az indítási CSS változatlan maradt. Ellenőrizze az írási jogosultságot, a tárhelyhez való hozzáférést és a szabad helyet, majd az újbóli próbálkozáshoz indítsa újra az Obsidian alkalmazást.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "Szüneteltetve: a callout hiányzik. Fedezd fel vagy hozd létre a parancs visszaállításához, vagy szerkeszd a parancsot másik típus kiválasztásához.",
+	"commandBuilder.missingCallout": "Szüneteltetve, amíg újra nem létrehozod a hiányzó calloutot, vagy másikat nem választasz.",
 	"confirm.titleRestoreSettings": "Ezeknek a beállításoknak a visszaállítása",
 	"confirm.titleCreateSettingsFile": "Beállításfájl létrehozása",
 	"confirm.saveDisplayedSettings":
@@ -1498,7 +1486,7 @@ export const hu: Record<string, string> = {
 	"notice.unsavedChangesKept": "Az ezen az eszközön végzett módosítások egy része még nem volt mentve, és egy másik eszköz újabb beállításai felülírták őket. A verziód előbb mentésre került: a visszaállításhoz nyisd meg a verzióelőzményeket a Callout Studio beállításaiban.",
 	"settings.versionHistory": "Verzióelőzmények",
 	"settings.versions": "Korábbi verziók",
-	"settings.versionsDesc": "A Callout Studio automatikusan menti a konfigurációd verzióit.\nHasonlítsd össze őket, vagy térj vissza valamelyikhez.",
+	"settings.versionsDesc": "Hasonlítsd össze a beállításaid automatikusan mentett verzióit, vagy térj vissza az egyikhez.",
 	"settings.versionsButton": "Verziók megtekintése",
 	"noteChanges.callouts": "{{count}}",
 	"noteChanges.calloutsOne": "1",

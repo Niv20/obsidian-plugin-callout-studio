@@ -37,7 +37,7 @@ export const fa: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "ابتدا calloutی را که باید جایگزین آن شود انتخاب کنید.",
 	"settings.fallbackTag": "پیش‌فرض",
 	"settings.fallbackTagAuto": "پیش‌فرض خودکار",
-	"settings.rescanVaultDesc": "انواع callout به‌کاررفته در یادداشت‌های شما را که هنوز در این فهرست نیستند اضافه می‌کند. calloutها و یادداشت‌های موجود شما تغییر نمی‌کنند.",
+	"settings.rescanVaultDesc": "انواع کال‌اوتی را که یادداشت‌هایتان استفاده می‌کنند و هنوز در این فهرست نیستند اضافه می‌کند.",
 	"settings.rescanVaultHintAction": "جستجو برای callout",
 	"manualDiscovery.failed": "نتایج شناسایی ذخیره نشد. بررسی کنید که تنظیمات قابل‌نوشتن باشند و همگام‌سازی پایان یافته باشد؛ سپس از تنظیمات ← انواع callout من ← جستجو برای callout دوباره تلاش کنید. calloutهای موجود جایگزین نشده‌اند.",
 	"manualDiscovery.scanning": "در حال اسکن…",
@@ -85,14 +85,11 @@ export const fa: Record<string, string> = {
 	"deleteModal.keepsRowTheme":
 		"{{theme}} این نوع callout را تعریف می‌کند، بنابراین همچنان در دسترس می‌ماند و ظاهر خود را حفظ می‌کند. Callout Studio فقط یادداشت‌های داخل vault شما را تغییر می‌دهد — چیزی متعلق به تم شما دست‌نخورده باقی می‌ماند.",
 
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "انواع callout من",
 	"settings.builtInCallouts": "Callout‌های داخلی",
 	"settings.contextMenu": "منوی زمینه",
-	"settings.keyboardShortcuts": "دستورها",
 	"settings.language": "زبان",
-	"settings.languageDesc":
-		"زبان نمایش Callout Studio. به‌طور پیش‌فرض از زبان رابط Obsidian پیروی می‌کند.",
+	"settings.languageDesc": "زبان Callout Studio؛ مگر اینکه زبان دیگری انتخاب کنید، همان زبان Obsidian است.",
 	"settings.importExport": "وارد کردن و صادر کردن",
 	"settings.import": "وارد کردن…",
 	"settings.export": "صادر کردن…",
@@ -108,6 +105,9 @@ export const fa: Record<string, string> = {
 	"settings.addNewCallout": "افزودن callout",
 
 	"settings.noCalloutsNow": "در حال حاضر callout سفارشی وجود ندارد.",
+	"settings.calloutCount": "{{count}} کال‌اوت",
+	"settings.calloutCountOne": "۱ کال‌اوت",
+	"settings.searchCallouts": "جستجوی کال‌اوت‌ها…",
 
 	"settings.editAria": "ویرایش {{name}}",
 	"settings.moreRowActionsAria": "اقدامات بیشتر برای {{name}}",
@@ -124,9 +124,9 @@ export const fa: Record<string, string> = {
 
 	"settings.colorSwatchAria": "برجسته: {{accent}} · پس‌زمینه: {{bg}}",
 	"settings.themeCalloutsHeading": "Callout های پوسته‌ی شما",
-	"settings.themeCalloutsDesc":
-		"{{theme}} این‌ها را ارائه می‌دهد یا دوباره استایل می‌دهد، بنابراین Callout Studio آن‌ها را دقیقاً همان‌طور که پوسته‌تان ترسیم می‌کند رها می‌کند و فقط به‌صورت Block callout ارائه می‌دهد. هر دو نوع اینجا نمایش داده می‌شوند: انواع callout که پوسته‌تان اضافه می‌کند، و callout های داخلی که ظاهرشان را جایگزین می‌کند. انواع callout که پوسته‌تان اضافه می‌کند فقط زمانی که فعال است فهرست می‌شوند.",
+	"settings.themeCalloutsDesc": "{{theme}} این کال‌اوت‌ها را خودش رسم می‌کند، پس Callout Studio آن‌ها را همان‌طور که هستند رها می‌کند و فقط به‌صورت کال‌اوت بلوکی ارائه می‌دهد.",
 	"settings.themeCalloutsDefaultTheme": "پوسته‌ی شما",
+	"settings.themeCalloutsEmpty": "{{theme}} در حال حاضر هیچ کال‌اوتی را استایل نمی‌کند.",
 	"settings.themePreviewAria":
 		'پیش‌نمایش "{{name}}" — ببینید پوسته‌تان چگونه آن را ترسیم می‌کند',
 	"settings.builtInAllThemeStyled":
@@ -135,11 +135,7 @@ export const fa: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"انواع callout ناشناخته در vault سبک این callout را به ارث می‌برند.",
 
-	"settings.globalStyleRegularTitle": "سبک کلی callout بلوکی",
-	"settings.globalStyleHeadingTitle": "سبک کلی callout عنوان",
-	"settings.globalStyleInlineTitle": "سبک کلی callout درون‌خطی",
 	"settings.border": "حاشیه",
-	"settings.borderAll": "همه",
 	"settings.borderTop": "بالا",
 	"settings.borderRight": "راست",
 	"settings.borderBottom": "پایین",
@@ -149,14 +145,11 @@ export const fa: Record<string, string> = {
 	"settings.titleScale": "عنوان",
 	"settings.contentScale": "محتوا",
 	"settings.inlineTextScale": "متن",
-	"settings.shapeGroup": "شکل",
 	"settings.borderRadius": "گردی گوشه‌ها",
-	"settings.alignGroup": "تراز",
 	"settings.alignContent": "تراز کردن محتوا با عنوان",
 	"settings.headingSpacingGroup": "فاصله‌گذاری عنوان",
 	"settings.headingPadVertical": "فاصله عمودی",
 	"settings.headingGap": "فاصله بین سرفصل‌ها",
-	"settings.headingFoldGroup": "تا کردن",
 	"settings.headingFoldArrow": "نمایش فلش تا کردن",
 	"settings.styleDemoName": "نمونه",
 	"settings.styleDemoInlineName": "نمونه",
@@ -168,22 +161,20 @@ export const fa: Record<string, string> = {
 	"settings.customPalettes": "پالت‌های رنگ ذخیره‌شده",
 	"settings.newPalette": "پالت جدید",
 	"settings.customPalettesEmpty": "در حال حاضر پالت ذخیره‌شده‌ای وجود ندارد.",
+	"settings.paletteCount": "{{count}} پالت",
+	"settings.paletteCountOne": "۱ پالت",
 	"settings.editPaletteAria": "ویرایش پالت {{name}}",
-	"settings.deletePaletteAria": "حذف پالت {{name}}",
 	"settings.deletePaletteConfirm":
 		'پالت "{{name}}" حذف شود؟\nبلوک‌های callout که از رنگ‌های آن استفاده می‌کنند تغییر نمی‌کنند.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'callout‌هایی که آن را در فراداده‌شان نام برده‌اند ("{{key}}") به‌جای آن رنگ داخلی همان نام را می‌گیرند. یادداشت‌های شما تغییر نمی‌کنند.',
 
 	"settings.customCommands": "دستورها و کلیدهای میانبر",
-	"settings.customCommandsDesc":
-		"همه دستورات Callout Studio و میانبری که به آن‌ها متصل است را ببینید، و برای callout‌هایی که بیشتر استفاده می‌کنید دستورات خودتان را بسازید. به صورت پیش‌فرض هیچ میانبری اختصاص داده نشده است.",
-	"settings.customCommandsButton": "مدیریت دستورات",
+	"settings.customCommandsDesc": "همهٔ دستورهای Callout Studio، میان‌برهایشان و دستورهای خودتان.",
 
 	// سازنده دستور
 	"commandBuilder.title": "دستورات و میانبرها",
-	"commandBuilder.desc":
-		"از دکمه + برای تنظیم یا تغییر یک میانبر در تنظیمات میانبر Obsidian استفاده کنید.",
+	"commandBuilder.pageDesc": "روی ⊕ کنار یک دستور بزنید تا میان‌بر آن را در تنظیمات کلیدهای میان‌بر Obsidian تعیین کنید.",
 	"commandBuilder.builtIn": "دستورات داخلی",
 	"commandBuilder.toggleAria": "روشن یا خاموش کردن {{name}}",
 	"commandBuilder.hotkeyBlank": "خالی",
@@ -193,7 +184,6 @@ export const fa: Record<string, string> = {
 	"commandBuilder.empty": "هنوز دستور سفارشی وجود ندارد.",
 	"commandBuilder.unknownCommand": "این دستور",
 	"commandBuilder.editAria": "ویرایش {{name}}",
-	"commandBuilder.deleteAria": "حذف {{name}}",
 	"commandBuilder.deleteConfirm":
 		"دستور {{name}} حذف شود؟ هر میانبر اختصاص‌یافته به آن دیگر کار نخواهد کرد.",
 	"commandBuilder.newTitle": "دستور جدید",
@@ -210,8 +200,7 @@ export const fa: Record<string, string> = {
 	"commandBuilder.headingLevel": "سطح سرتیتر",
 	"commandBuilder.roleThemeOwned":
 		"پوسته‌ی شما این callout را ارائه می‌دهد، بنابراین فقط قالب Block دارد.",
-	"commandBuilder.commandSuspended":
-		"متوقف‌شده: پوسته‌ی شما این callout را ارائه می‌دهد، بنابراین فقط قالب Block دارد. وقتی پوسته دیگر آن را ارائه ندهد، این دستور دوباره کار می‌کند.",
+	"commandBuilder.commandSuspended": "تا وقتی پوستهٔ شما این کال‌اوت را فراهم می‌کند متوقف است؛ در این حالت فقط قالب بلوکی دارد.",
 	"commandBuilder.headingLevelDesc": "کدام سطح سرتیتر نوشته شود.",
 	"commandBuilder.action": "عملکرد",
 	"commandBuilder.actionDesc":
@@ -257,7 +246,7 @@ export const fa: Record<string, string> = {
 	"settings.resetItemThemeCalloutStyles": "سبک‌های callout پوسته‌ی شما",
 	"settings.resetItemFallback": "سبک جایگزین",
 	"settings.resetItemIconLibraries": "ترتیب کتابخانه‌های نماد و کتابخانه‌های پنهان",
-	"settings.resetAllConfirmAfter": "نگران نباشید: پیش از بازنشانی، از پیکربندی فعلی شما یک پشتیبان ذخیره می‌کنیم. هر زمان می‌توانید آن را از بخش پشتیبان‌ها در تنظیمات بازیابی کنید.\nاگر از سرویس همگام‌سازی استفاده می‌کنید، ممکن است بازنشانی به دستگاه‌های دیگر شما هم برسد.",
+	"settings.resetAllConfirmAfter": "نگران نباشید: پیش از بازنشانی، از چیدمان فعلی‌تان نسخهٔ پشتیبان ذخیره می‌کنیم. هر زمان بخواهید می‌توانید آن را از تاریخچهٔ نسخه‌ها در تنظیمات برگردانید.\nاگر از سرویس همگام‌سازی استفاده می‌کنید، بازنشانی ممکن است به دستگاه‌های دیگرتان هم برسد.",
 	"settings.resetNothing": "چیزی برای بازنشانی نیست: همه چیز از قبل روی پیش‌فرض است.",
 
 	"notice.customCommandMissingCallout":
@@ -342,13 +331,13 @@ export const fa: Record<string, string> = {
 	"editor.foldClosed": "به صورت پیش‌فرض بسته",
 	"editor.cancel": "لغو",
 	"editor.saveChanges": "ذخیره تغییرات",
-	"editor.saving": "در حال ذخیره…",
 	"editor.saveFailed": "ذخیره کامل نشد. اگر این ویرایشگر هنوز باز است، آن را باز نگه دارید و پس از بررسی فضای ذخیره‌سازی و همگام‌سازی دوباره تلاش کنید. ممکن است برخی تنظیمات یا تغییرات یادداشت‌ها پیش‌تر ذخیره شده باشند.",
 	"editor.createCallout": "ایجاد callout",
 	"editor.nameRequired": "قبل از ایجاد callout، نام نمایشی لازم است.",
 	"editor.noChangesToSave": "هیچ تغییری انجام نشد.",
-	"editor.downloadingIcon": "در حال دانلود آیکون",
 	"editor.idEmpty": "حداقل یک شناسه لازم است",
+	"editor.idAlreadyHere": "این شناسه از قبل وجود دارد",
+	"editor.idTooLong": "شناسه باید حداکثر {{max}} نویسه باشد",
 	"editor.idExists": "یک callout با این شناسه از قبل وجود دارد",
 	"editor.idConflict": "این شناسه با یک callout موجود تعارض دارد",
 	"editor.idDashConflict":
@@ -543,7 +532,6 @@ export const fa: Record<string, string> = {
 	"iconPicker.allSources": "همه منابع",
 	"iconPicker.searchAllSources": "جستجو در همه منابع آیکون",
 	"iconPicker.chooseSource": "انتخاب منبع",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "کتابخانه‌های موجود",
 	"iconPicker.librariesToDownload": "کتابخانه‌ها برای دانلود",
 	"iconPicker.groupCurrent": "نماد فعلی",
@@ -744,30 +732,30 @@ export const fa: Record<string, string> = {
 	"contextMenu.deleteSection": "حذف بخش عنوان",
 	"heading.toggleFold": "تغییر وضعیت جمع‌شدن",
 	"settings.globalSettings": "گزینه‌های سراسری استایل Callout Studio",
+	"settings.calloutStyle": "سبک کال‌اوت",
+	"settings.menusAndCommands": "منوها و دستورها",
+	"settings.buildFailed": "Callout Studio نتوانست تنظیمات خود را نمایش دهد؛ Obsidian را دوباره راه‌اندازی کنید و اگر تکرار شد گزارش دهید.",
 	"settings.globalSettingsRegularDesc":
 		"حاشیه، شعاع، مقیاس فونت و ترازِ هر block callout در گاوصندوق‌تان را تنظیم کنید.",
 	"settings.globalSettingsHeadingDesc":
 		"حاشیه، شکل و فاصله عمودیِ هر heading callout در گاوصندوق‌تان را تنظیم کنید.",
 	"settings.globalSettingsInlineDesc":
 		"حاشیه و شکلِ هر inline callout در گاوصندوق‌تان را تنظیم کنید.",
-	"settings.globalSettingsCustomize": "سفارشی‌سازی",
 	"settings.themeCalloutStyles": "استفاده از سبک‌های callout پوسته‌ی شما",
-	"settings.themeCalloutStylesDesc":
-		"روشن: calloutهایی که پوسته‌ی شما استایل می‌دهد، ظاهر پوسته‌ی شما را حفظ می‌کنند.\nخاموش: Callout Studio همه‌ی calloutها را خودش ترسیم می‌کند و سبک‌های callout پوسته‌ی شما غیرفعال می‌شود.",
+	"settings.themeCalloutStylesDesc": "وقتی روشن باشد، کال‌اوت‌هایی که پوستهٔ شما استایل می‌کند ظاهر خودش را نگه می‌دارند؛ وقتی خاموش باشد، Callout Studio همهٔ کال‌اوت‌ها را رسم می‌کند.",
 	"settings.calloutTypeRegular": "کال‌اوت بلوکی",
 	"settings.calloutTypeHeading": "callout عنوان",
 	"settings.calloutTypeInline": "callout درون‌خطی",
-	"settings.customizeMenu": "سفارشی‌سازی موارد منو",
-	"settings.customizeMenuDesc":
-		"انتخاب کنید کدام اقدامات کلیک راست برای هر نوع callout نمایش داده شود و ترتیب آن‌ها را تغییر دهید. در حالت منبع و Live Preview کار می‌کند.",
-	"settings.customizeMenuButton": "سفارشی‌سازی موارد منو",
+	"settings.customizeMenuDesc": "کنش‌های راست‌کلیک را برای هر نوع کال‌اوت انتخاب و مرتب کنید.",
 	"menuCustomize.title": "سفارشی‌سازی منوی کلیک راست",
-	"menuCustomize.desc":
-		"اقدامات را روشن یا خاموش کنید و با کشیدن دستگیره ترتیب آن‌ها را تغییر دهید. تغییرات به‌طور خودکار ذخیره می‌شوند.",
+	"menuCustomize.pageDesc": "یک کنش را با دستگیره‌اش بکشید تا جابه‌جا شود، یا با ✕ پنهانش کنید.",
 	"menuCustomize.regular": "کال‌اوت بلوکی",
 	"menuCustomize.heading": "callout عنوان",
 	"menuCustomize.inline": "callout درون‌خطی",
 	"menuCustomize.dragHandle": "برای تغییر ترتیب بکشید",
+	"menuCustomize.hiddenHeading": "پنهان از منوی کال‌اوت سرتیتر",
+	"menuCustomize.hiddenInline": "پنهان از منوی کال‌اوت درون‌خطی",
+	"menuCustomize.hiddenRegular": "پنهان از منوی کال‌اوت بلوکی",
 	"menuItem.createOrEdit": "ایجاد یا ویرایش callout",
 	"menuItem.openSettings": "باز کردن تنظیمات",
 	"menuItem.copyMarkdown": "کپی Markdown",
@@ -893,7 +881,6 @@ export const fa: Record<string, string> = {
 	"portable.blockedEditing": "ابتدا ویرایش جایگزین را تمام کنید: برای ذخیره Enter و برای صرف‌نظر Esc را بزنید.",
 	"portable.blockedNothingSelected": "دست‌کم یک جایگزین را برای تبدیل انتخاب کنید.",
 	"settings.maintenance": "ناحیه خطر",
-	"portable.subtitle": "پیش از کنار گذاشتن Callout Studio، انتخاب کنید کدام calloutهای عنوان و درون‌خطی به Markdown استاندارد تبدیل شوند.",
 	"portable.customize": "جایگزین سفارشی…",
 	"portable.editCustom": "ویرایش جایگزین سفارشی…",
 	"portable.restoreDefault": "بازگردانی جایگزین پیش‌فرض",
@@ -906,13 +893,13 @@ export const fa: Record<string, string> = {
 
 	"usage.title": "یافتن calloutها",
 	"usage.command": "یافتن calloutها",
-	"usage.subtitle": "calloutها را در خزانه پیدا کنید و به منبع آن‌ها بروید.",
 	"usage.browse": "مرور",
 	"usage.allTypes": "همهٔ انواع",
 	"usage.registeredCallouts": "calloutهای ثبت‌شده",
 	"usage.unregisteredCallouts": "calloutهای ثبت‌نشده",
 	"usage.summary": "{{count}} مورد در {{files}} فایل",
 	"usage.allRoles": "همهٔ قالب‌ها",
+	"usage.filterFormat": "فیلتر بر اساس قالب",
 	"usage.failed": "به‌روزرسانی موارد استفاده از callout ممکن نشد.",
 	"usage.loading": "در حال اسکن یادداشت‌های Markdown…",
 	"usage.partial": "نتایج کامل نیستند: {{count}} خطای خواندن.",
@@ -925,7 +912,6 @@ export const fa: Record<string, string> = {
 	"usage.missing": "این یادداشت دیگر وجود ندارد. در حال به‌روزرسانی نتایج…",
 	"usage.changed": "این مورد تغییر کرده یا به مکانی جابه‌جا شده که نمی‌توان آن را با قطعیت تعیین کرد. در حال به‌روزرسانی نتایج…",
 	"usage.openFailed": "باز کردن این مورد استفاده از callout ممکن نشد.",
-	"usage.menuCount": "یافتن calloutها ({{count}})",
 	"usage.menuIncomplete": "یافتن calloutها — اسکن کامل نیست",
 	"usage.menu": "یافتن calloutها",
 	"usage.closeSettings": "برای دیدن نتایج callout در نوار کناری، تنظیمات را ببندید.",
@@ -1114,6 +1100,8 @@ export const fa: Record<string, string> = {
 	"footer.contribute": "مشارکت",
 	"footer.license": "مجوز افزونه",
 	"footer.iconCredits": "مجوزهای آیکون",
+	"settings.about": "درباره",
+	"settings.version": "نسخه",
 	"settings.deletePaletteConfirmLinkedOne":
 		'پالت "{{name}}" حذف شود؟\n۱ کال‌اوت از آن استفاده می‌کند. رنگ‌هایش حفظ می‌شوند و بعداً می‌توانید از ردیف رنگ در ویرایشگرش دوباره آن را متصل کنید.',
 	"settings.deletePaletteConfirmLinked":
@@ -1130,8 +1118,7 @@ export const fa: Record<string, string> = {
 	"palette.colorExistsUseLink": "از مورد موجود استفاده کنید",
 	"locale.downloading": "در حال دانلود ترجمه…",
 	"locale.notDownloaded": "{{name}} هنوز دانلود نشده است",
-	"locale.notDownloadedDesc":
-		"Callout Studio تا زمان دانلود ترجمه، انگلیسی را نشان می‌دهد. دفعه بعد که Obsidian اجرا شود دوباره تلاش می‌کند.",
+	"locale.notDownloadedDesc": "Callout Studio تا زمانی که ترجمه دانلود نشده انگلیسی نشان می‌دهد و هنگام شروع Obsidian دوباره تلاش می‌کند.",
 	"locale.retry": "تلاش دوباره",
 	"locale.diskWriteFailed":
 		"Callout Studio نتوانست ترجمه را روی دیسک ذخیره کند؛ بنابراین دفعه بعد باید دوباره دانلود شود.",
@@ -1155,13 +1142,14 @@ export const fa: Record<string, string> = {
 	"export.formatCss": "عکس فوری CSS مستقل",
 	"export.formatCssDesc":
 		"برای وب‌سایت‌ها یا vaultهایی که Callout Studio در آن‌ها اجرا نمی‌شود. فقط کال‌اوت‌های بلوکی را پوشش می‌دهد و پس از هر تغییر باید دوباره صادر شود.",
+	"export.formatCssAction": "برون‌بری",
 	"quickInsert.readingViewHint": "این یادداشت در حالت خواندن باز است، بنابراین چیزی قابل درج نیست.",
 	"quickInsert.readingView": "برای درج callout به حالت منبع یا Live Preview بروید.",
 	"quickInsert.noCursorHint": "در این یادداشت مکان‌نمایی وجود ندارد، بنابراین جایی برای درج نیست.",
 	"quickInsert.noCursor": "مکان‌نما را در یادداشت، در جایی که می‌خواهید callout را درج کنید، قرار دهید و دوباره امتحان کنید.",
 	"notice.legacyDiscoveryArchiveFailed": "نسخهٔ بازیابی ارتقا تکمیل نشد. حافظهٔ نهان محلی قدیمیِ شناسایی و CSS راه‌اندازی بدون تغییر باقی مانده‌اند. مجوز نوشتن، دسترسی به فضای ذخیره‌سازی و فضای خالی را بررسی کنید، سپس برای تلاش دوباره Obsidian را راه‌اندازی مجدد کنید.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "متوقف‌شده: callout وجود ندارد. برای بازیابی این دستور آن را کشف یا ایجاد کنید، یا دستور را ویرایش کنید تا نوع دیگری انتخاب شود.",
+	"commandBuilder.missingCallout": "تا وقتی کال‌اوت گم‌شده را دوباره نسازید یا کال‌اوت دیگری انتخاب نکنید متوقف است.",
 	"confirm.titleRestoreSettings": "بازیابی این تنظیمات",
 	"confirm.titleCreateSettingsFile": "ایجاد فایل تنظیمات",
 	"confirm.saveDisplayedSettings":
@@ -1490,7 +1478,7 @@ export const fa: Record<string, string> = {
 	"notice.unsavedChangesKept": "برخی تغییرات این دستگاه هنوز ذخیره نشده بودند و تنظیمات جدیدتر دستگاه دیگری جای آن‌ها را گرفتند. نسخهٔ شما ابتدا ذخیره شد: برای بازیابی آن، تاریخچهٔ نسخه‌ها را در تنظیمات Callout Studio باز کنید.",
 	"settings.versionHistory": "تاریخچهٔ نسخه‌ها",
 	"settings.versions": "نسخه‌های قبلی",
-	"settings.versionsDesc": "Callout Studio نسخه‌های پیکربندی شما را خودکار ذخیره می‌کند.\nآن‌ها را مقایسه کنید یا به یکی از آن‌ها برگردید.",
+	"settings.versionsDesc": "نسخه‌هایی از چیدمانتان را که خودکار ذخیره شده‌اند مقایسه کنید یا به یکی از آن‌ها برگردید.",
 	"settings.versionsButton": "نمایش نسخه‌ها",
 	"noteChanges.callouts": "{{count}} callout",
 	"noteChanges.calloutsOne": "1 callout",

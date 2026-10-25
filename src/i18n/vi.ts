@@ -91,7 +91,7 @@ export const vi: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "Hãy chọn callout sẽ thay thế nó trước.",
 	"settings.fallbackTag": "Mặc định",
 	"settings.fallbackTagAuto": "Mặc định tự động",
-	"settings.rescanVaultDesc": "Thêm các loại callout được dùng trong ghi chú của bạn mà chưa có trong danh sách này. Các callout và ghi chú hiện có của bạn không bị thay đổi.",
+	"settings.rescanVaultDesc": "Thêm các loại callout mà ghi chú của bạn đang dùng nhưng chưa có trong danh sách này.",
 	"settings.rescanVaultHintAction": "Quét tìm callout",
 	"manualDiscovery.failed": "Không thể lưu kết quả quét. Hãy kiểm tra quyền ghi cài đặt và đợi đồng bộ hoàn tất, rồi thử lại qua Cài đặt → Các loại callout của tôi → Quét tìm callout. Các callout hiện có không bị thay thế.",
 	"manualDiscovery.scanning": "Đang quét…",
@@ -140,14 +140,11 @@ export const vi: Record<string, string> = {
 	"deleteModal.keepsRowTheme":
 		"{{theme}} định nghĩa loại callout này, vì vậy nó vẫn khả dụng và giữ nguyên hình thức. Callout Studio chỉ thay đổi ghi chú trong vault của bạn — không có gì thuộc về giao diện của bạn bị ảnh hưởng.",
 
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Các loại callout của tôi",
 	"settings.builtInCallouts": "Callouts tích hợp",
 	"settings.contextMenu": "Menu ngữ cảnh",
-	"settings.keyboardShortcuts": "Lệnh",
 	"settings.language": "Ngôn ngữ",
-	"settings.languageDesc":
-		"Ngôn ngữ hiển thị cho Callout Studio. Mặc định theo ngôn ngữ giao diện của Obsidian.",
+	"settings.languageDesc": "Ngôn ngữ của Callout Studio; theo Obsidian trừ khi bạn chọn ngôn ngữ khác.",
 	"settings.importExport": "Nhập và xuất",
 	"settings.import": "Nhập…",
 	"settings.export": "Xuất…",
@@ -163,6 +160,9 @@ export const vi: Record<string, string> = {
 	"settings.addNewCallout": "thêm callout",
 
 	"settings.noCalloutsNow": "Hiện không có callout tùy chỉnh.",
+	"settings.calloutCount": "{{count}} callout",
+	"settings.calloutCountOne": "1 callout",
+	"settings.searchCallouts": "Tìm kiếm callout…",
 
 	"settings.editAria": "Chỉnh sửa {{name}}",
 	"settings.moreRowActionsAria": "Thêm hành động cho {{name}}",
@@ -181,9 +181,9 @@ export const vi: Record<string, string> = {
 
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callout từ giao diện của bạn",
-	"settings.themeCalloutsDesc":
-		"{{theme}} cung cấp hoặc tạo kiểu lại cho những callout này, vì vậy Callout Studio giữ nguyên như giao diện của bạn vẽ chúng và chỉ cung cấp chúng dưới dạng callout khối. Cả hai loại đều xuất hiện ở đây: các loại callout mà giao diện của bạn thêm vào, và các callout tích hợp mà giao diện thay đổi hình thức. Các loại callout do giao diện thêm vào chỉ được liệt kê khi giao diện đó đang hoạt động.",
+	"settings.themeCalloutsDesc": "{{theme}} tự vẽ các callout này, nên Callout Studio giữ nguyên chúng và chỉ cung cấp dưới dạng callout dạng khối.",
 	"settings.themeCalloutsDefaultTheme": "Giao diện của bạn",
+	"settings.themeCalloutsEmpty": "Hiện {{theme}} không định kiểu callout nào.",
 	"settings.themePreviewAria":
 		'Xem trước "{{name}}" — xem giao diện của bạn vẽ nó như thế nào',
 	"settings.builtInAllThemeStyled":
@@ -193,11 +193,7 @@ export const vi: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Các loại callout không nhận dạng được trong vault sẽ kế thừa kiểu của callout này.",
 
-	"settings.globalStyleRegularTitle": "Kiểu toàn cục cho callout khối",
-	"settings.globalStyleHeadingTitle": "Kiểu toàn cục cho callout tiêu đề",
-	"settings.globalStyleInlineTitle": "Kiểu toàn cục cho callout nội tuyến",
 	"settings.border": "Viền",
-	"settings.borderAll": "Tất cả",
 	"settings.borderTop": "Trên",
 	"settings.borderRight": "Phải",
 	"settings.borderBottom": "Dưới",
@@ -207,14 +203,11 @@ export const vi: Record<string, string> = {
 	"settings.titleScale": "Tiêu đề",
 	"settings.contentScale": "Nội dung",
 	"settings.inlineTextScale": "Văn bản",
-	"settings.shapeGroup": "Hình dạng",
 	"settings.borderRadius": "Độ bo góc",
-	"settings.alignGroup": "Căn chỉnh",
 	"settings.alignContent": "Căn chỉnh nội dung với tiêu đề",
 	"settings.headingSpacingGroup": "Khoảng cách tiêu đề",
 	"settings.headingPadVertical": "Khoảng cách dọc",
 	"settings.headingGap": "Khoảng cách giữa các tiêu đề",
-	"settings.headingFoldGroup": "Thu gọn",
 	"settings.headingFoldArrow": "Hiển thị mũi tên thu gọn",
 	"settings.styleDemoName": "Mẫu",
 	"settings.styleDemoInlineName": "Mẫu",
@@ -226,21 +219,19 @@ export const vi: Record<string, string> = {
 	"settings.customPalettes": "Bảng màu đã lưu",
 	"settings.newPalette": "Bảng màu mới",
 	"settings.customPalettesEmpty": "Hiện không có bảng màu đã lưu.",
+	"settings.paletteCount": "{{count}} bảng màu",
+	"settings.paletteCountOne": "1 bảng màu",
 	"settings.editPaletteAria": "Chỉnh sửa bảng màu {{name}}",
-	"settings.deletePaletteAria": "Xóa bảng màu {{name}}",
 	"settings.deletePaletteConfirm":
 		'Xóa bảng màu "{{name}}"?\nCác callout dùng màu này sẽ không bị ảnh hưởng.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Các callout nêu tên này trong siêu dữ liệu ("{{key}}") sẽ dùng màu tích hợp có tên đó. Ghi chú của bạn không thay đổi.',
 
 	"settings.customCommands": "Lệnh và phím nóng",
-	"settings.customCommandsDesc":
-		"Xem mọi lệnh của Callout Studio và phím tắt được gán cho lệnh đó, đồng thời tạo lệnh riêng cho những callout bạn dùng nhiều nhất. Không có phím tắt nào được gán theo mặc định.",
-	"settings.customCommandsButton": "Quản lý lệnh",
+	"settings.customCommandsDesc": "Mọi lệnh của Callout Studio, phím tắt của chúng và các lệnh của riêng bạn.",
 
 	"commandBuilder.title": "Lệnh và phím tắt",
-	"commandBuilder.desc":
-		"Dùng nút + để đặt hoặc thay đổi phím tắt trong cài đặt phím tắt của Obsidian.",
+	"commandBuilder.pageDesc": "Nhấn ⊕ ở một lệnh để đặt phím tắt cho lệnh đó trong cài đặt phím nóng của Obsidian.",
 	"commandBuilder.builtIn": "Lệnh tích hợp",
 	"commandBuilder.toggleAria": "Bật hoặc tắt {{name}}",
 	"commandBuilder.hotkeyBlank": "Trống",
@@ -250,7 +241,6 @@ export const vi: Record<string, string> = {
 	"commandBuilder.empty": "Chưa có lệnh tùy chỉnh nào.",
 	"commandBuilder.unknownCommand": "lệnh này",
 	"commandBuilder.editAria": "Chỉnh sửa {{name}}",
-	"commandBuilder.deleteAria": "Xóa {{name}}",
 	"commandBuilder.deleteConfirm":
 		"Xóa lệnh {{name}}? Phím tắt gán cho lệnh này sẽ ngừng hoạt động.",
 	"commandBuilder.newTitle": "Lệnh mới",
@@ -289,8 +279,7 @@ export const vi: Record<string, string> = {
 
 	"commandBuilder.roleThemeOwned":
 		"Giao diện của bạn cung cấp callout này, nên nó chỉ có định dạng Khối.",
-	"commandBuilder.commandSuspended":
-		"Đã tạm dừng: giao diện của bạn cung cấp callout này, nên nó chỉ có định dạng Khối. Lệnh này sẽ hoạt động trở lại khi giao diện ngừng cung cấp nó.",
+	"commandBuilder.commandSuspended": "Tạm dừng khi giao diện của bạn cung cấp callout này, lúc đó nó chỉ có định dạng khối.",
 
 	"settings.resetAll": "Đặt lại",
 	"settings.resetAllDesc":
@@ -313,7 +302,7 @@ export const vi: Record<string, string> = {
 	"settings.resetItemThemeCalloutStyles": "Kiểu callout từ giao diện của bạn",
 	"settings.resetItemFallback": "Kiểu dự phòng",
 	"settings.resetItemIconLibraries": "Thứ tự thư viện biểu tượng và thư viện đã ẩn",
-	"settings.resetAllConfirmAfter": "Đừng lo: trước khi đặt lại, chúng tôi lưu một bản sao lưu thiết lập hiện tại của bạn. Bạn có thể khôi phục bất cứ lúc nào từ mục Bản sao lưu trong phần cài đặt.\nNếu bạn dùng dịch vụ đồng bộ, việc đặt lại có thể lan sang các thiết bị khác của bạn.",
+	"settings.resetAllConfirmAfter": "Đừng lo: trước khi đặt lại, chúng tôi lưu một bản sao lưu cài đặt hiện tại của bạn. Bạn có thể khôi phục nó bất cứ lúc nào từ Lịch sử phiên bản trong cài đặt.\nNếu bạn dùng dịch vụ đồng bộ, việc đặt lại có thể lan sang các thiết bị khác của bạn.",
 	"settings.resetNothing": "Không có gì để đặt lại: mọi thứ đã ở mặc định.",
 
 	"notice.customCommandMissingCallout":
@@ -397,13 +386,13 @@ export const vi: Record<string, string> = {
 	"editor.foldClosed": "Mặc định đóng",
 	"editor.cancel": "Hủy",
 	"editor.saveChanges": "Lưu thay đổi",
-	"editor.saving": "Đang lưu…",
 	"editor.saveFailed": "Không thể hoàn tất việc lưu. Nếu cửa sổ chỉnh sửa này vẫn đang mở, hãy giữ nguyên và thử lại sau khi kiểm tra bộ nhớ cùng trạng thái đồng bộ. Một số cài đặt hoặc thay đổi trong ghi chú có thể đã được lưu.",
 	"editor.createCallout": "Tạo callout",
 	"editor.nameRequired": "Cần có tên hiển thị trước khi tạo callout.",
 	"editor.noChangesToSave": "Không có thay đổi nào được thực hiện.",
-	"editor.downloadingIcon": "Đang tải biểu tượng",
 	"editor.idEmpty": "Cần ít nhất một ID",
+	"editor.idAlreadyHere": "ID này đã tồn tại",
+	"editor.idTooLong": "ID tối đa {{max}} ký tự",
 	"editor.idExists": "Đã tồn tại callout với ID này",
 	"editor.idConflict": "ID này xung đột với callout hiện có",
 	"editor.idDashConflict":
@@ -599,7 +588,6 @@ export const vi: Record<string, string> = {
 	"iconPicker.allSources": "Tất cả nguồn",
 	"iconPicker.searchAllSources": "Tìm kiếm trong tất cả nguồn biểu tượng",
 	"iconPicker.chooseSource": "Chọn nguồn",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "Thư viện có sẵn",
 	"iconPicker.librariesToDownload": "Thư viện để tải xuống",
 	"iconPicker.groupCurrent": "Biểu tượng hiện tại",
@@ -805,32 +793,32 @@ export const vi: Record<string, string> = {
 	"heading.toggleFold": "Chuyển đổi gập",
 
 	"settings.globalSettings": "Tùy chọn kiểu toàn cục của Callout Studio",
+	"settings.calloutStyle": "Kiểu callout",
+	"settings.menusAndCommands": "Menu và lệnh",
+	"settings.buildFailed": "Callout Studio không thể hiển thị phần cài đặt của mình; hãy khởi động lại Obsidian và báo lỗi nếu nó tái diễn.",
 	"settings.globalSettingsRegularDesc":
 		"Điều chỉnh viền, độ bo góc, tỷ lệ phông và căn chỉnh của mọi block callout trong vault của bạn.",
 	"settings.globalSettingsHeadingDesc":
 		"Điều chỉnh viền, hình dạng và khoảng cách dọc của mọi callout tiêu đề trong vault của bạn.",
 	"settings.globalSettingsInlineDesc":
 		"Điều chỉnh viền và hình dạng của mọi callout nội tuyến trong vault của bạn.",
-	"settings.globalSettingsCustomize": "Tùy chỉnh",
 	"settings.themeCalloutStyles": "Dùng kiểu callout từ giao diện của bạn",
-	"settings.themeCalloutStylesDesc":
-		"Bật: các callout mà giao diện của bạn định kiểu sẽ giữ nguyên diện mạo của giao diện.\nTắt: Callout Studio tự vẽ mọi callout, và kiểu callout từ giao diện của bạn bị tắt.",
+	"settings.themeCalloutStylesDesc": "Khi bật, các callout mà giao diện của bạn định kiểu sẽ giữ diện mạo của giao diện; khi tắt, Callout Studio vẽ mọi callout.",
 
 	"settings.calloutTypeRegular": "Callout dạng khối",
 	"settings.calloutTypeHeading": "Callout tiêu đề",
 	"settings.calloutTypeInline": "Callout nội tuyến",
 
-	"settings.customizeMenu": "Tùy chỉnh mục menu",
-	"settings.customizeMenuDesc":
-		"Chọn những hành động chuột phải nào xuất hiện cho từng loại callout và sắp xếp lại thứ tự. Hoạt động trong chế độ nguồn và Xem trước trực tiếp.",
-	"settings.customizeMenuButton": "Tùy chỉnh mục menu",
+	"settings.customizeMenuDesc": "Chọn và sắp xếp các thao tác nhấp chuột phải cho từng loại callout.",
 	"menuCustomize.title": "Tùy chỉnh menu chuột phải",
-	"menuCustomize.desc":
-		"Bật hoặc tắt các hành động và kéo tay cầm để sắp xếp lại. Thay đổi được lưu tự động.",
+	"menuCustomize.pageDesc": "Kéo một thao tác bằng tay cầm để di chuyển, hoặc ẩn nó bằng ✕.",
 	"menuCustomize.regular": "Callout dạng khối",
 	"menuCustomize.heading": "Callout tiêu đề",
 	"menuCustomize.inline": "Callout nội tuyến",
 	"menuCustomize.dragHandle": "Kéo để sắp xếp lại",
+	"menuCustomize.hiddenHeading": "Đã ẩn khỏi menu callout của tiêu đề",
+	"menuCustomize.hiddenInline": "Đã ẩn khỏi menu callout nội dòng",
+	"menuCustomize.hiddenRegular": "Đã ẩn khỏi menu callout dạng khối",
 	"menuItem.createOrEdit": "Tạo hoặc chỉnh sửa callout",
 	"menuItem.openSettings": "Mở cài đặt",
 	"menuItem.copyMarkdown": "Sao chép Markdown",
@@ -896,7 +884,6 @@ export const vi: Record<string, string> = {
 	"vaultStats.roleBlock": "Khối",
 	"vaultStats.roleHeading": "Tiêu đề",
 	"vaultStats.roleInline": "Nội dòng",
-	"portable.subtitle": "Chọn callout tiêu đề và nội tuyến cần chuyển sang Markdown chuẩn trước khi ngừng dùng Callout Studio.",
 	"portable.customize": "Nội dung thay thế tùy chỉnh…",
 	"portable.editCustom": "Sửa nội dung thay thế tùy chỉnh…",
 	"portable.restoreDefault": "Khôi phục nội dung thay thế mặc định",
@@ -909,13 +896,13 @@ export const vi: Record<string, string> = {
 
 	"usage.title": "Tìm callout",
 	"usage.command": "Tìm callout",
-	"usage.subtitle": "Tìm callout trong kho lưu trữ và chuyển đến nguồn của chúng.",
 	"usage.browse": "Duyệt",
 	"usage.allTypes": "Tất cả loại",
 	"usage.registeredCallouts": "Callout đã đăng ký",
 	"usage.unregisteredCallouts": "Callout chưa đăng ký",
 	"usage.summary": "{{count}} lần xuất hiện trong {{files}} tệp",
 	"usage.allRoles": "Tất cả định dạng",
+	"usage.filterFormat": "Lọc theo định dạng",
 	"usage.failed": "Không thể cập nhật các vị trí xuất hiện của callout.",
 	"usage.loading": "Đang quét ghi chú Markdown…",
 	"usage.partial": "Kết quả chưa đầy đủ: {{count}} lỗi đọc tệp.",
@@ -928,7 +915,6 @@ export const vi: Record<string, string> = {
 	"usage.missing": "Ghi chú này không còn tồn tại. Đang cập nhật kết quả…",
 	"usage.changed": "Vị trí này đã thay đổi hoặc đã di chuyển nhưng không xác định được vị trí mới. Đang cập nhật kết quả…",
 	"usage.openFailed": "Không thể mở vị trí xuất hiện của callout này.",
-	"usage.menuCount": "Tìm callout ({{count}})",
 	"usage.menuIncomplete": "Tìm callout — chưa quét xong",
 	"usage.menu": "Tìm callout",
 	"usage.closeSettings": "Đóng Cài đặt để xem kết quả callout trong thanh bên.",
@@ -1119,6 +1105,8 @@ export const vi: Record<string, string> = {
 	"footer.contribute": "Đóng góp",
 	"footer.license": "Giấy phép plugin",
 	"footer.iconCredits": "Giấy phép biểu tượng",
+	"settings.about": "Giới thiệu",
+	"settings.version": "Phiên bản",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Xóa bảng màu "{{name}}"?\nCó 1 callout đang dùng nó. Callout đó giữ nguyên màu, và bạn có thể liên kết lại sau từ hàng Màu trong trình chỉnh sửa của nó.',
 	"settings.deletePaletteConfirmLinked":
@@ -1135,8 +1123,7 @@ export const vi: Record<string, string> = {
 	"palette.colorExistsUseLink": "dùng màu hiện có",
 	"locale.downloading": "Đang tải bản dịch…",
 	"locale.notDownloaded": "{{name}} chưa được tải xuống",
-	"locale.notDownloadedDesc":
-		"Callout Studio đang hiển thị tiếng Anh cho đến khi có thể tải bản dịch. Sẽ thử lại vào lần Obsidian khởi động tiếp theo.",
+	"locale.notDownloadedDesc": "Callout Studio hiển thị tiếng Anh cho đến khi bản dịch được tải xuống, và thử lại khi Obsidian khởi động.",
 	"locale.retry": "Thử lại",
 	"locale.diskWriteFailed":
 		"Callout Studio không thể lưu bản dịch vào đĩa, nên lần sau sẽ phải tải xuống lại.",
@@ -1160,13 +1147,14 @@ export const vi: Record<string, string> = {
 	"export.formatCss": "Ảnh chụp CSS độc lập",
 	"export.formatCssDesc":
 		"Dành cho trang web hoặc vault không chạy Callout Studio. Chỉ bao gồm callout dạng khối và phải xuất lại sau khi có thay đổi.",
+	"export.formatCssAction": "Xuất",
 	"quickInsert.readingViewHint": "Ghi chú này đang mở ở chế độ đọc, nên không thể chèn gì cả.",
 	"quickInsert.readingView": "Chuyển sang chế độ nguồn hoặc Xem trước trực tiếp để chèn callout.",
 	"quickInsert.noCursorHint": "Không có con trỏ nào trong ghi chú này, nên không có chỗ để chèn.",
 	"quickInsert.noCursor": "Đặt con trỏ trong ghi chú ở vị trí bạn muốn chèn callout, sau đó thử lại.",
 	"notice.legacyDiscoveryArchiveFailed": "Không thể hoàn tất bản sao khôi phục cho quá trình nâng cấp. Bộ nhớ đệm phát hiện cục bộ trước đó và CSS khởi động đã được giữ nguyên. Kiểm tra quyền ghi vào bộ nhớ và dung lượng trống, sau đó khởi động lại Obsidian để thử lại.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "Đã tạm dừng: callout bị thiếu. Khám phá hoặc tạo lại để khôi phục lệnh này, hoặc chỉnh sửa lệnh để chọn loại khác.",
+	"commandBuilder.missingCallout": "Tạm dừng cho đến khi bạn tạo lại callout bị thiếu hoặc chọn callout khác.",
 	"confirm.titleRestoreSettings": "Khôi phục các cài đặt này",
 	"confirm.titleCreateSettingsFile": "Tạo tệp cài đặt",
 	"confirm.saveDisplayedSettings":
@@ -1493,7 +1481,7 @@ export const vi: Record<string, string> = {
 	"notice.unsavedChangesKept": "Một số thay đổi trên thiết bị này chưa được lưu và đã bị thay thế bởi cài đặt mới hơn từ thiết bị khác. Phiên bản của bạn đã được lưu trước: mở lịch sử phiên bản trong cài đặt Callout Studio để lấy lại.",
 	"settings.versionHistory": "Lịch sử phiên bản",
 	"settings.versions": "Các phiên bản trước",
-	"settings.versionsDesc": "Callout Studio tự động lưu các phiên bản cấu hình của bạn.\nSo sánh hoặc quay lại một phiên bản.",
+	"settings.versionsDesc": "So sánh các phiên bản cài đặt được lưu tự động của bạn, hoặc quay lại một phiên bản.",
 	"settings.versionsButton": "Xem phiên bản",
 	"noteChanges.callouts": "{{count}} callout",
 	"noteChanges.calloutsOne": "1 callout",

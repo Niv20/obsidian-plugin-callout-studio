@@ -91,7 +91,7 @@ export const sv: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "Välj först den callout den ska ersättas med.",
 	"settings.fallbackTag": "Standard",
 	"settings.fallbackTagAuto": "Automatisk standard",
-	"settings.rescanVaultDesc": "Lägger till callout-typer som används i dina anteckningar och som inte redan finns i den här listan. Dina befintliga callouts och anteckningar ändras inte.",
+	"settings.rescanVaultDesc": "Lägger till de callout-typer som dina anteckningar använder och som ännu inte finns i den här listan.",
 	"settings.rescanVaultHintAction": "Sök efter callouts",
 	"manualDiscovery.failed": "Sökresultatet sparades inte. Kontrollera att inställningarna kan skrivas och att synkroniseringen är klar. Försök sedan igen via Inställningar → Mina callout-typer → Sök efter callouts. Befintliga callouts har inte ersatts.",
 	"manualDiscovery.scanning": "Skannar…",
@@ -139,14 +139,11 @@ export const sv: Record<string, string> = {
 	"deleteModal.keepsRowTheme":
 		"{{theme}} definierar denna callout-typ, så den förblir tillgänglig och behåller sitt utseende. Callout Studio ändrar bara anteckningar i ditt vault — inget som tillhör ditt tema rörs.",
 
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Mina callout-typer",
 	"settings.builtInCallouts": "Inbyggda callouts",
 	"settings.contextMenu": "Snabbmeny",
-	"settings.keyboardShortcuts": "Kommandon",
 	"settings.language": "Språk",
-	"settings.languageDesc":
-		"Visningsspråk för Callout Studio. Följer som standard Obsidians gränssnittsspråk.",
+	"settings.languageDesc": "Callout Studios språk – Obsidians, om du inte väljer ett annat.",
 	"settings.importExport": "Importera och exportera",
 	"settings.import": "Importera…",
 	"settings.export": "Exportera…",
@@ -162,6 +159,9 @@ export const sv: Record<string, string> = {
 	"settings.addNewCallout": "lägg till callout",
 
 	"settings.noCalloutsNow": "Inga anpassade callouts för tillfället.",
+	"settings.calloutCount": "{{count}} callouts",
+	"settings.calloutCountOne": "1 callout",
+	"settings.searchCallouts": "Sök callouts…",
 
 	"settings.editAria": "Redigera {{name}}",
 	"settings.moreRowActionsAria": "Fler åtgärder för {{name}}",
@@ -178,9 +178,9 @@ export const sv: Record<string, string> = {
 	"settings.colorSwatchAria": "Accent: {{accent}} · Bakgrund: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts från ditt tema",
-	"settings.themeCalloutsDesc":
-		"{{theme}} tillhandahåller eller stylar om dessa, så Callout Studio lämnar dem exakt som ditt tema ritar dem och erbjuder dem endast som block-callouts. Båda typerna visas här: callout-typer ditt tema lägger till, och inbyggda callouts vars utseende det ersätter. Callout-typer som ditt tema lägger till listas bara medan det är aktivt.",
+	"settings.themeCalloutsDesc": "{{theme}} ritar de här callouts, så Callout Studio låter dem vara som de är och erbjuder dem bara som block-callouts.",
 	"settings.themeCalloutsDefaultTheme": "Ditt tema",
+	"settings.themeCalloutsEmpty": "{{theme}} formaterar inga callouts just nu.",
 	"settings.themePreviewAria":
 		'Förhandsvisa "{{name}}" — se hur ditt tema ritar den',
 	"settings.builtInAllThemeStyled":
@@ -190,11 +190,7 @@ export const sv: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Okända callout-typer i ditt vault ärver stilen från denna callout.",
 
-	"settings.globalStyleRegularTitle": "Global stil för block-callouts",
-	"settings.globalStyleHeadingTitle": "Global stil för rubrik-callouts",
-	"settings.globalStyleInlineTitle": "Global stil för infogade callouts",
 	"settings.border": "Kanter",
-	"settings.borderAll": "Alla",
 	"settings.borderTop": "Topp",
 	"settings.borderRight": "Höger",
 	"settings.borderBottom": "Botten",
@@ -204,14 +200,11 @@ export const sv: Record<string, string> = {
 	"settings.titleScale": "Rubrik",
 	"settings.contentScale": "Innehåll",
 	"settings.inlineTextScale": "Text",
-	"settings.shapeGroup": "Form",
 	"settings.borderRadius": "Hörnrundning",
-	"settings.alignGroup": "Justering",
 	"settings.alignContent": "Justera innehåll med rubrik",
 	"settings.headingSpacingGroup": "Rubrikavstånd",
 	"settings.headingPadVertical": "Vertikalt avstånd",
 	"settings.headingGap": "Avstånd mellan rubriker",
-	"settings.headingFoldGroup": "Hopfällning",
 	"settings.headingFoldArrow": "Visa hopfällningspil",
 	"settings.styleDemoName": "Exempel",
 	"settings.styleDemoInlineName": "Exempel",
@@ -223,21 +216,19 @@ export const sv: Record<string, string> = {
 	"settings.customPalettes": "Sparade färgpaletter",
 	"settings.newPalette": "Ny palett",
 	"settings.customPalettesEmpty": "Inga sparade paletter för tillfället.",
+	"settings.paletteCount": "{{count}} paletter",
+	"settings.paletteCountOne": "1 palett",
 	"settings.editPaletteAria": "Redigera palett {{name}}",
-	"settings.deletePaletteAria": "Ta bort palett {{name}}",
 	"settings.deletePaletteConfirm":
 		'Ta bort paletten "{{name}}"?\nCallouts som använder dess färger påverkas inte.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callouts som anger den i sina metadata ("{{key}}") får i stället den inbyggda färgen med det namnet. Dina anteckningar ändras inte.',
 
 	"settings.customCommands": "Kommandon och kortkommandon",
-	"settings.customCommandsDesc":
-		"Se alla Callout Studio-kommandon och genvägen de är bundna till, och skapa egna kommandon för de callouts du använder mest. Inga genvägar tilldelas som standard.",
-	"settings.customCommandsButton": "Hantera kommandon",
+	"settings.customCommandsDesc": "Alla kommandon i Callout Studio, deras genvägar och dina egna kommandon.",
 
 	"commandBuilder.title": "Kommandon och genvägar",
-	"commandBuilder.desc":
-		"Använd +-knappen för att ställa in eller ändra en genväg i Obsidians genväginställningar.",
+	"commandBuilder.pageDesc": "Tryck på ⊕ vid ett kommando för att ställa in dess genväg i Obsidians inställningar för kortkommandon.",
 	"commandBuilder.builtIn": "Inbyggda kommandon",
 	"commandBuilder.toggleAria": "Slå på eller av {{name}}",
 	"commandBuilder.hotkeyBlank": "Tom",
@@ -247,7 +238,6 @@ export const sv: Record<string, string> = {
 	"commandBuilder.empty": "Inga egna kommandon än.",
 	"commandBuilder.unknownCommand": "detta kommando",
 	"commandBuilder.editAria": "Redigera {{name}}",
-	"commandBuilder.deleteAria": "Ta bort {{name}}",
 	"commandBuilder.deleteConfirm":
 		"Ta bort kommandot {{name}}? Eventuell genväg som tilldelats det slutar fungera.",
 	"commandBuilder.newTitle": "Nytt kommando",
@@ -261,8 +251,7 @@ export const sv: Record<string, string> = {
 		"Detta format är avstängt, så kommandot infogar vanlig text tills du slår på det igen.",
 	"commandBuilder.roleThemeOwned":
 		"Ditt tema tillhandahåller denna callout, så den har bara ett block-format.",
-	"commandBuilder.commandSuspended":
-		"Pausad: ditt tema tillhandahåller denna callout, så den har bara ett block-format. Kommandot fungerar igen när temat slutar tillhandahålla den.",
+	"commandBuilder.commandSuspended": "Pausad medan ditt tema tillhandahåller den här callouten, som då bara har blockformat.",
 	"commandBuilder.callout": "Callout-typ",
 	"commandBuilder.calloutDesc": "Callouten kommandot infogar.",
 	"commandBuilder.headingLevel": "Rubriknivå",
@@ -311,7 +300,7 @@ export const sv: Record<string, string> = {
 	"settings.resetItemThemeCalloutStyles": "Callout-stilarna från ditt tema",
 	"settings.resetItemFallback": "Reservstil",
 	"settings.resetItemIconLibraries": "Ikonbibliotekens ordning och dolda bibliotek",
-	"settings.resetAllConfirmAfter": "Ingen fara: innan återställningen sparar vi en säkerhetskopia av din nuvarande konfiguration. Du kan återställa den när som helst från avsnittet Säkerhetskopior i inställningarna.\nOm du använder en synkroniseringstjänst kan återställningen även nå dina andra enheter.",
+	"settings.resetAllConfirmAfter": "Ingen fara: innan återställningen sparar vi en säkerhetskopia av din nuvarande uppsättning. Du kan hämta tillbaka den när som helst från Versionshistorik i inställningarna.\nOm du använder en synkroniseringstjänst kan återställningen även nå dina andra enheter.",
 	"settings.resetNothing": "Inget att återställa: allt är redan på standard.",
 
 	"notice.customCommandMissingCallout":
@@ -395,13 +384,13 @@ export const sv: Record<string, string> = {
 	"editor.foldClosed": "Stängd som standard",
 	"editor.cancel": "Avbryt",
 	"editor.saveChanges": "Spara ändringar",
-	"editor.saving": "Sparar…",
 	"editor.saveFailed": "Det gick inte att slutföra sparandet. Om den här redigeraren fortfarande är öppen, låt den vara öppen och försök igen efter att du har kontrollerat lagringen och synkroniseringen. Vissa inställningar eller ändringar i anteckningar kan redan ha sparats.",
 	"editor.createCallout": "Skapa callout",
 	"editor.nameRequired": "Ett visningsnamn krävs innan du skapar en callout.",
 	"editor.noChangesToSave": "Inga ändringar gjordes.",
-	"editor.downloadingIcon": "Laddar ned ikon",
 	"editor.idEmpty": "Minst ett ID krävs",
+	"editor.idAlreadyHere": "Det här ID:t finns redan",
+	"editor.idTooLong": "ID:t får vara högst {{max}} tecken",
 	"editor.idExists": "En callout med detta ID finns redan",
 	"editor.idConflict": "Detta ID krockar med en befintlig callout",
 	"editor.idDashConflict":
@@ -593,7 +582,6 @@ export const sv: Record<string, string> = {
 	"iconPicker.allSources": "Alla källor",
 	"iconPicker.searchAllSources": "Sök i alla ikonfontskällor",
 	"iconPicker.chooseSource": "Välj källa",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "Tillgängliga bibliotek",
 	"iconPicker.librariesToDownload": "Bibliotek att ladda ner",
 	"iconPicker.groupCurrent": "Nuvarande ikon",
@@ -795,30 +783,30 @@ export const sv: Record<string, string> = {
 	"contextMenu.deleteSection": "Ta bort rubriksektion",
 	"heading.toggleFold": "Växla vikning",
 	"settings.globalSettings": "Globala stilalternativ för Callout Studio",
+	"settings.calloutStyle": "Callout-stil",
+	"settings.menusAndCommands": "Menyer och kommandon",
+	"settings.buildFailed": "Callout Studio kunde inte rita sina inställningar; starta om Obsidian och rapportera det om det händer igen.",
 	"settings.globalSettingsRegularDesc":
 		"Justera kant, hörnrundning, typsnittsskala och justering för varje block callout i ditt vault.",
 	"settings.globalSettingsHeadingDesc":
 		"Justera kant, form och vertikalt mellanrum för varje rubrik-callout i ditt vault.",
 	"settings.globalSettingsInlineDesc":
 		"Justera kant och form för varje infogad callout i ditt vault.",
-	"settings.globalSettingsCustomize": "Anpassa",
 	"settings.themeCalloutStyles": "Använd callout-stilarna från ditt tema",
-	"settings.themeCalloutStylesDesc":
-		"På: callouts som ditt tema formger behåller temats utseende.\nAv: Callout Studio ritar varje callout själv, och callout-stilarna från ditt tema är avstängda.",
+	"settings.themeCalloutStylesDesc": "När det är på behåller de callouts som ditt tema formaterar temats utseende; när det är av ritar Callout Studio alla callouts.",
 	"settings.calloutTypeRegular": "Block-callout",
 	"settings.calloutTypeHeading": "Rubrik-callout",
 	"settings.calloutTypeInline": "Infogad callout",
-	"settings.customizeMenu": "Anpassa menyalternativ",
-	"settings.customizeMenuDesc":
-		"Välj vilka högerklicksåtgärder som visas för varje callout-typ och ändra deras ordning. Fungerar i källäge och Live Preview.",
-	"settings.customizeMenuButton": "Anpassa menyalternativ",
+	"settings.customizeMenuDesc": "Välj och ordna högerklicksåtgärderna för varje callout-typ.",
 	"menuCustomize.title": "Anpassa högerklicksmenyn",
-	"menuCustomize.desc":
-		"Aktivera eller inaktivera åtgärder och dra i handtaget för att ändra ordningen. Ändringar sparas automatiskt.",
+	"menuCustomize.pageDesc": "Dra en åtgärd i handtaget för att flytta den, eller dölj den med ✕.",
 	"menuCustomize.regular": "Block-callout",
 	"menuCustomize.heading": "Rubrik-callout",
 	"menuCustomize.inline": "Infogad callout",
 	"menuCustomize.dragHandle": "Dra för att ändra ordning",
+	"menuCustomize.hiddenHeading": "Dolda i rubrik-callout-menyn",
+	"menuCustomize.hiddenInline": "Dolda i inline-callout-menyn",
+	"menuCustomize.hiddenRegular": "Dolda i block-callout-menyn",
 	"menuItem.createOrEdit": "Skapa eller redigera callout",
 	"menuItem.openSettings": "Öppna inställningar",
 	"menuItem.copyMarkdown": "Kopiera Markdown",
@@ -884,7 +872,6 @@ export const sv: Record<string, string> = {
 	"vaultStats.roleBlock": "Block",
 	"vaultStats.roleHeading": "Rubrik",
 	"vaultStats.roleInline": "Infogad",
-	"portable.subtitle": "Välj vilka callouts i rubriker och text som ska konverteras till standard-Markdown innan du slutar använda Callout Studio.",
 	"portable.customize": "Anpassad ersättning…",
 	"portable.editCustom": "Redigera anpassad ersättning…",
 	"portable.restoreDefault": "Återställ standardersättning",
@@ -897,13 +884,13 @@ export const sv: Record<string, string> = {
 
 	"usage.title": "Hitta callouts",
 	"usage.command": "Hitta callouts",
-	"usage.subtitle": "Hitta callouts i ditt valv och gå direkt till deras källa.",
 	"usage.browse": "Bläddra",
 	"usage.allTypes": "Alla typer",
 	"usage.registeredCallouts": "Registrerade callouts",
 	"usage.unregisteredCallouts": "Oregistrerade callouts",
 	"usage.summary": "{{count}} förekomster i {{files}} filer",
 	"usage.allRoles": "Alla format",
+	"usage.filterFormat": "Filtrera efter format",
 	"usage.failed": "Det gick inte att uppdatera callout-förekomsterna.",
 	"usage.loading": "Skannar Markdown-anteckningar…",
 	"usage.partial": "Resultaten är ofullständiga: {{count}} läsfel.",
@@ -916,7 +903,6 @@ export const sv: Record<string, string> = {
 	"usage.missing": "Anteckningen finns inte längre. Uppdaterar resultaten…",
 	"usage.changed": "Den här förekomsten har ändrats eller flyttats på ett oklart sätt. Uppdaterar resultaten…",
 	"usage.openFailed": "Det gick inte att öppna den här callout-förekomsten.",
-	"usage.menuCount": "Hitta callouts ({{count}})",
 	"usage.menuIncomplete": "Hitta callouts — skanningen är ofullständig",
 	"usage.menu": "Hitta callouts",
 	"usage.closeSettings": "Stäng Inställningar för att se callout-resultaten i sidofältet.",
@@ -1107,6 +1093,8 @@ export const sv: Record<string, string> = {
 	"footer.contribute": "Bidra",
 	"footer.license": "Pluginlicens",
 	"footer.iconCredits": "Ikonlicenser",
+	"settings.about": "Om",
+	"settings.version": "Version",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Ta bort paletten "{{name}}"?\n1 callout använder den. Den behåller sina färger, och du kan återansluta den senare från färgraden i redigeraren.',
 	"settings.deletePaletteConfirmLinked":
@@ -1123,8 +1111,7 @@ export const sv: Record<string, string> = {
 	"palette.colorExistsUseLink": "använda den befintliga",
 	"locale.downloading": "Laddar ner översättning…",
 	"locale.notDownloaded": "{{name}} har inte laddats ner än",
-	"locale.notDownloadedDesc":
-		"Callout Studio visar engelska tills översättningen kan laddas ner. Det försöker igen nästa gång Obsidian startar.",
+	"locale.notDownloadedDesc": "Callout Studio visar engelska tills översättningen har laddats ned och försöker igen när Obsidian startar.",
 	"locale.retry": "Försök igen",
 	"locale.diskWriteFailed":
 		"Callout Studio kunde inte spara översättningen på disken, så den måste laddas ner igen nästa gång.",
@@ -1148,13 +1135,14 @@ export const sv: Record<string, string> = {
 	"export.formatCss": "Fristående CSS-ögonblicksbild",
 	"export.formatCssDesc":
 		"För webbplatser eller vaults där Callout Studio inte körs. Omfattar endast block-callouts och måste exporteras igen efter ändringar.",
+	"export.formatCssAction": "Exportera",
 	"quickInsert.readingViewHint": "Den här anteckningen är öppen i läsläge, så inget kan infogas.",
 	"quickInsert.readingView": "Växla till källäge eller Live Preview för att infoga en callout.",
 	"quickInsert.noCursorHint": "Det finns ingen markör i den här anteckningen, så det finns ingenstans att infoga.",
 	"quickInsert.noCursor": "Placera markören i anteckningen där du vill infoga callouten och försök igen.",
 	"notice.legacyDiscoveryArchiveFailed": "Återställningskopian för uppgraderingen kunde inte slutföras. Den tidigare lokala identifieringscachen och CSS-koden för uppstart har behållits oförändrade. Kontrollera skrivbehörighet till lagringen och ledigt utrymme och starta sedan om Obsidian för att försöka igen.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "Pausad: callout saknas. Upptäck eller skapa den för att återställa det här kommandot, eller redigera kommandot för att välja en annan typ.",
+	"commandBuilder.missingCallout": "Pausad tills du skapar den saknade callouten igen eller väljer en annan.",
 	"confirm.titleRestoreSettings": "Återställ dessa inställningar",
 	"confirm.titleCreateSettingsFile": "Skapa inställningsfil",
 	"confirm.saveDisplayedSettings":
@@ -1482,7 +1470,7 @@ export const sv: Record<string, string> = {
 	"notice.unsavedChangesKept": "Vissa ändringar på den här enheten hade ännu inte sparats och ersattes av nyare inställningar från en annan enhet. Din version sparades först: öppna versionshistoriken i Callout Studios inställningar för att återställa den.",
 	"settings.versionHistory": "Versionshistorik",
 	"settings.versions": "Tidigare versioner",
-	"settings.versionsDesc": "Callout Studio sparar automatiskt versioner av din konfiguration.\nJämför dem eller återgå till en av dem.",
+	"settings.versionsDesc": "Jämför automatiskt sparade versioner av din uppsättning, eller gå tillbaka till en av dem.",
 	"settings.versionsButton": "Visa versioner",
 	"noteChanges.callouts": "{{count}} callouts",
 	"noteChanges.calloutsOne": "1 callout",

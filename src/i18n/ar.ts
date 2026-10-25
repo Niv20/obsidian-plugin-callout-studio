@@ -39,7 +39,7 @@ export const ar: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "اختر أولًا الـ callout الذي سيحل محله.",
 	"settings.fallbackTag": "افتراضي",
 	"settings.fallbackTagAuto": "افتراضي تلقائي",
-	"settings.rescanVaultDesc": "يضيف أنواع callout المستخدَمة في ملاحظاتك وغير الموجودة في هذه القائمة بعد. لا تتغيّر الـ callout والملاحظات الحالية لديك.",
+	"settings.rescanVaultDesc": "يضيف أنواع الـ callout التي تستخدمها ملاحظاتك وغير الموجودة في هذه القائمة بعد.",
 	"settings.rescanVaultHintAction": "مسح بحثًا عن callout",
 	"manualDiscovery.failed": "لم يتم حفظ نتائج الاكتشاف. تحققوا من إمكانية حفظ الإعدادات واكتمال المزامنة، ثم أعيدوا المحاولة من الإعدادات ← أنواع الـ callout الخاصة بي ← مسح بحثًا عن callout. لم تُستبدل الـ callouts الموجودة.",
 	"manualDiscovery.scanning": "جارٍ المسح…",
@@ -87,14 +87,11 @@ export const ar: Record<string, string> = {
 	"deleteModal.keepsRowTheme":
 		"تُعرّف {{theme}} نوع الـ callout هذا، لذا يبقى متاحًا ويحتفظ بمظهره. يغيّر Callout Studio الملاحظات داخل مخزنك فقط — لا شيء يخص سمتك يتم المساس به.",
 
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "أنواع الـ callout الخاصة بي",
 	"settings.builtInCallouts": "Callouts المدمجة",
 	"settings.contextMenu": "قائمة السياق",
-	"settings.keyboardShortcuts": "الأوامر",
 	"settings.language": "اللغة",
-	"settings.languageDesc":
-		"لغة عرض Callout Studio. تتبع افتراضيًا لغة واجهة Obsidian.",
+	"settings.languageDesc": "لغة Callout Studio؛ هي لغة Obsidian ما لم تختر غيرها.",
 	"settings.importExport": "استيراد وتصدير",
 	"settings.import": "استيراد…",
 	"settings.export": "تصدير…",
@@ -109,6 +106,9 @@ export const ar: Record<string, string> = {
 	"settings.addNewCallout": "إضافة callout جديد",
 
 	"settings.noCalloutsNow": "لا توجد callouts مخصصة حالياً.",
+	"settings.calloutCount": "{{count}} من الـ callouts",
+	"settings.calloutCountOne": "callout واحد",
+	"settings.searchCallouts": "بحث في الـ callouts…",
 
 	"settings.editAria": "تعديل {{name}}",
 	"settings.moreRowActionsAria": "المزيد من الإجراءات لـ {{name}}",
@@ -126,9 +126,9 @@ export const ar: Record<string, string> = {
 	"settings.colorSwatchAria": "التمييز: {{accent}} · الخلفية: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts من سمتك",
-	"settings.themeCalloutsDesc":
-		"توفّر {{theme}} هذه الـ callouts أو تعيد تنسيقها، لذا يتركها Callout Studio تمامًا كما ترسمها سمتك ويعرضها كـ Block callouts فقط. يظهر هنا كلا النوعين: أنواع الـ callout التي تضيفها سمتك، والـ callouts المدمجة التي تستبدل مظهرها. تُعرض أنواع الـ callout التي تضيفها سمتك فقط أثناء تفعيلها.",
+	"settings.themeCalloutsDesc": "تنسّق {{theme}} هذه الـ callouts، لذا يتركها Callout Studio كما هي ويعرضها بتنسيق كتلي فقط.",
 	"settings.themeCalloutsDefaultTheme": "سمتك",
+	"settings.themeCalloutsEmpty": "لا تنسّق {{theme}} أي callout حاليًا.",
 	"settings.themePreviewAria":
 		'معاينة "{{name}}" — شاهد كيف ترسمها سمتك',
 	"settings.builtInAllThemeStyled":
@@ -137,11 +137,7 @@ export const ar: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"ستَرِث أنواع الـ callout غير المعروفة في مخزنك نمط هذا الـ callout.",
 
-	"settings.globalStyleRegularTitle": "النمط العام للـ callout الكتلي",
-	"settings.globalStyleHeadingTitle": "النمط العام لـ callout العنوان",
-	"settings.globalStyleInlineTitle": "النمط العام لـ callout المضمّن",
 	"settings.border": "الحدود",
-	"settings.borderAll": "الكل",
 	"settings.borderTop": "أعلى",
 	"settings.borderRight": "يمين",
 	"settings.borderBottom": "أسفل",
@@ -151,14 +147,11 @@ export const ar: Record<string, string> = {
 	"settings.titleScale": "العنوان",
 	"settings.contentScale": "المحتوى",
 	"settings.inlineTextScale": "النص",
-	"settings.shapeGroup": "الشكل",
 	"settings.borderRadius": "تدوير الزوايا",
-	"settings.alignGroup": "محاذاة",
 	"settings.alignContent": "محاذاة المحتوى مع العنوان",
 	"settings.headingSpacingGroup": "تباعد العنوان",
 	"settings.headingPadVertical": "التباعد الرأسي",
 	"settings.headingGap": "المسافة بين العناوين",
-	"settings.headingFoldGroup": "طي",
 	"settings.headingFoldArrow": "إظهار سهم الطي",
 	"settings.styleDemoName": "مثال",
 	"settings.styleDemoInlineName": "مثال",
@@ -170,21 +163,19 @@ export const ar: Record<string, string> = {
 	"settings.customPalettes": "لوحات الألوان المحفوظة",
 	"settings.newPalette": "لوحة ألوان جديدة",
 	"settings.customPalettesEmpty": "لا توجد لوحات ألوان محفوظة حالياً.",
+	"settings.paletteCount": "{{count}} من اللوحات",
+	"settings.paletteCountOne": "لوحة واحدة",
 	"settings.editPaletteAria": "تعديل لوحة الألوان {{name}}",
-	"settings.deletePaletteAria": "حذف لوحة الألوان {{name}}",
 	"settings.deletePaletteConfirm":
 		'حذف لوحة الألوان "{{name}}"؟\nلن تتأثر عناصر callout التي تستخدم هذه الألوان.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'تأخذ callouts التي تذكرها في بياناتها الوصفية ("{{key}}") اللون المدمج الذي يحمل هذا الاسم بدلًا منها. ملاحظاتك لا تتغير.',
 
 	"settings.customCommands": "الأوامر والمفاتيح السريعة",
-	"settings.customCommandsDesc":
-		"اطّلع على كل أوامر Callout Studio والاختصار المرتبط بكل منها، وأنشئ أوامرك الخاصة للـ callouts التي تستخدمها كثيرًا. لا يتم تعيين أي اختصارات افتراضياً.",
-	"settings.customCommandsButton": "إدارة الأوامر",
+	"settings.customCommandsDesc": "كل أوامر Callout Studio واختصاراتها، وأوامرك الخاصة.",
 
 	"commandBuilder.title": "الأوامر والاختصارات",
-	"commandBuilder.desc":
-		"استخدم زر + لتعيين اختصار أو تغييره في إعدادات اختصارات Obsidian.",
+	"commandBuilder.pageDesc": "اضغط على ⊕ بجانب أي أمر لتعيين اختصاره في إعدادات المفاتيح السريعة في Obsidian.",
 	"commandBuilder.builtIn": "الأوامر المدمجة",
 	"commandBuilder.toggleAria": "تفعيل أو تعطيل {{name}}",
 	"commandBuilder.hotkeyBlank": "فارغ",
@@ -194,7 +185,6 @@ export const ar: Record<string, string> = {
 	"commandBuilder.empty": "لا توجد أوامر مخصصة بعد.",
 	"commandBuilder.unknownCommand": "هذا الأمر",
 	"commandBuilder.editAria": "تعديل {{name}}",
-	"commandBuilder.deleteAria": "حذف {{name}}",
 	"commandBuilder.deleteConfirm":
 		"حذف الأمر {{name}}؟ أي اختصار مُعيَّن له سيتوقف عن العمل.",
 	"commandBuilder.newTitle": "أمر جديد",
@@ -232,8 +222,7 @@ export const ar: Record<string, string> = {
 	"commandBuilder.save": "حفظ",
 	"commandBuilder.roleThemeOwned":
 		"يوفّر القالب الخاص بك هذا الـ callout، لذا لا يتوفر له سوى تنسيق الكتلة.",
-	"commandBuilder.commandSuspended":
-		"متوقف مؤقتًا: يوفّر القالب الخاص بك هذا الـ callout، لذا لا يتوفر له سوى تنسيق الكتلة. سيعمل هذا الأمر مرة أخرى عندما يتوقف القالب عن توفيره.",
+	"commandBuilder.commandSuspended": "متوقف مؤقتًا ما دامت سمتك توفّر هذا الـ callout، وحينها لا يتوفر له سوى التنسيق الكتلي.",
 
 	"settings.resetAll": "إعادة التعيين",
 	"settings.resetAllDesc":
@@ -256,7 +245,7 @@ export const ar: Record<string, string> = {
 	"settings.resetItemThemeCalloutStyles": "أنماط الـ callout في سمتك",
 	"settings.resetItemFallback": "النمط الاحتياطي",
 	"settings.resetItemIconLibraries": "ترتيب مكتبات الأيقونات والمكتبات المخفية",
-	"settings.resetAllConfirmAfter": "لا تقلق: قبل إعادة التعيين نحفظ نسخة احتياطية من إعداداتك الحالية. يمكنك استعادتها في أي وقت من قسم النسخ الاحتياطية في الإعدادات.\nإذا كنت تستخدم خدمة مزامنة، فقد تصل إعادة التعيين إلى أجهزتك الأخرى أيضًا.",
+	"settings.resetAllConfirmAfter": "لا تقلق: قبل إعادة التعيين نحفظ نسخة احتياطية من إعداداتك الحالية. يمكنك استعادتها في أي وقت من سجل الإصدارات في الإعدادات.\nإذا كنت تستخدم خدمة مزامنة، فقد تنتقل إعادة التعيين إلى أجهزتك الأخرى أيضًا.",
 	"settings.resetNothing": "لا يوجد ما يُعاد تعيينه: كل شيء على إعداداته الافتراضية بالفعل.",
 
 	"notice.customCommandMissingCallout":
@@ -338,13 +327,13 @@ export const ar: Record<string, string> = {
 	"editor.foldClosed": "مغلق افتراضياً",
 	"editor.cancel": "إلغاء",
 	"editor.saveChanges": "حفظ التغييرات",
-	"editor.saving": "جارٍ الحفظ…",
 	"editor.saveFailed": "تعذّر إكمال الحفظ. إذا كان هذا المحرر لا يزال مفتوحًا، فأبقوه مفتوحًا وأعيدوا المحاولة بعد التحقق من مساحة التخزين والمزامنة. ربما حُفظت بعض الإعدادات أو تحديثات الملاحظات بالفعل.",
 	"editor.createCallout": "إنشاء callout",
 	"editor.nameRequired": "يلزم تحديد اسم معروض قبل إنشاء callout.",
 	"editor.noChangesToSave": "لم يتم إجراء أي تغييرات.",
-	"editor.downloadingIcon": "جارٍ تحميل الأيقونة",
 	"editor.idEmpty": "مطلوب معرّف واحد على الأقل",
+	"editor.idAlreadyHere": "هذا المعرّف موجود بالفعل",
+	"editor.idTooLong": "يجب ألا يزيد المعرّف على {{max}} من الأحرف",
 	"editor.idExists": "يوجد callout بهذا المعرّف بالفعل",
 	"editor.idConflict": "هذا المعرّف يتعارض مع callout موجود",
 	"editor.idDashConflict":
@@ -534,7 +523,6 @@ export const ar: Record<string, string> = {
 	"iconPicker.allSources": "جميع المصادر",
 	"iconPicker.searchAllSources": "البحث في جميع مصادر الأيقونات",
 	"iconPicker.chooseSource": "اختر مصدرًا",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "المكتبات المتاحة",
 	"iconPicker.librariesToDownload": "مكتبات للتنزيل",
 	"iconPicker.groupCurrent": "الأيقونة الحالية",
@@ -735,30 +723,30 @@ export const ar: Record<string, string> = {
 	"contextMenu.deleteSection": "حذف قسم العنوان",
 	"heading.toggleFold": "تبديل الطي",
 	"settings.globalSettings": "خيارات نمط Callout Studio العامة",
+	"settings.calloutStyle": "نمط الـ callout",
+	"settings.menusAndCommands": "القوائم والأوامر",
+	"settings.buildFailed": "تعذّر على Callout Studio رسم إعداداته؛ أعد تشغيل Obsidian، وبلّغ عن المشكلة إن تكررت.",
 	"settings.globalSettingsRegularDesc":
 		"اضبط الحدود ونصف القطر ومقياس الخط والمحاذاة لكل block callout في خزنتك.",
 	"settings.globalSettingsHeadingDesc":
 		"اضبط الحدود والشكل والمسافة الرأسية لكل heading callout في خزنتك.",
 	"settings.globalSettingsInlineDesc":
 		"اضبط الحدود والشكل لكل inline callout في خزنتك.",
-	"settings.globalSettingsCustomize": "تخصيص",
 	"settings.themeCalloutStyles": "استخدام أنماط الـ callout في سمتك",
-	"settings.themeCalloutStylesDesc":
-		"عند التفعيل: تحتفظ الـ callouts التي تنسّقها سمتك بمظهر سمتك.\nعند الإيقاف: يرسم Callout Studio كل callout، وتُعطَّل أنماط الـ callout في سمتك.",
+	"settings.themeCalloutStylesDesc": "عند التفعيل، تحتفظ الـ callouts التي تنسّقها سمتك بمظهرها؛ وعند الإيقاف، يرسم Callout Studio كل callout.",
 	"settings.calloutTypeRegular": "callout كتلي",
 	"settings.calloutTypeHeading": "callout العنوان",
 	"settings.calloutTypeInline": "callout مضمّن",
-	"settings.customizeMenu": "تخصيص عناصر القائمة",
-	"settings.customizeMenuDesc":
-		"اختر الإجراءات التي تظهر عند النقر بزر الماوس الأيمن لكل نوع callout، وأعد ترتيبها. يعمل في وضع المصدر والمعاينة المباشرة.",
-	"settings.customizeMenuButton": "تخصيص عناصر القائمة",
+	"settings.customizeMenuDesc": "اختر إجراءات النقر بزر الماوس الأيمن لكل نوع callout ورتّبها.",
 	"menuCustomize.title": "تخصيص قائمة النقر بزر الماوس الأيمن",
-	"menuCustomize.desc":
-		"قم بتفعيل الإجراءات أو تعطيلها واسحب المقبض لإعادة ترتيبها. تُحفظ التغييرات تلقائياً.",
+	"menuCustomize.pageDesc": "اسحب أي إجراء من مقبضه لنقله، أو أخفِه بالضغط على ✕.",
 	"menuCustomize.regular": "callout كتلي",
 	"menuCustomize.heading": "callout العنوان",
 	"menuCustomize.inline": "callout مضمّن",
 	"menuCustomize.dragHandle": "اسحب لإعادة الترتيب",
+	"menuCustomize.hiddenHeading": "مخفية من قائمة الـ callout للعناوين",
+	"menuCustomize.hiddenInline": "مخفية من قائمة الـ callout المضمّنة في السطر",
+	"menuCustomize.hiddenRegular": "مخفية من قائمة الـ callout الكتلية",
 	"menuItem.createOrEdit": "إنشاء أو تعديل callout",
 	"menuItem.openSettings": "فتح الإعدادات",
 	"menuItem.copyMarkdown": "نسخ Markdown",
@@ -880,7 +868,6 @@ export const ar: Record<string, string> = {
 	"portable.blockedEditing": "أنهِ تعديل البديل أولًا: اضغط Enter لحفظه أو Esc لتجاهله.",
 	"portable.blockedNothingSelected": "حدّد بديلًا واحدًا على الأقل لتحويله.",
 	"settings.maintenance": "منطقة الخطر",
-	"portable.subtitle": "اختر callout في العناوين وداخل الأسطر التي تريد تحويلها إلى Markdown قياسي قبل التوقف عن استخدام Callout Studio.",
 	"portable.customize": "استبدال مخصص…",
 	"portable.editCustom": "تعديل الاستبدال المخصص…",
 	"portable.restoreDefault": "استعادة الاستبدال الافتراضي",
@@ -893,13 +880,13 @@ export const ar: Record<string, string> = {
 
 	"usage.title": "ابحث عن callout",
 	"usage.command": "ابحث عن callout",
-	"usage.subtitle": "اعثر على callout في خزنتك وانتقل إلى مصدرها.",
 	"usage.browse": "تصفّح",
 	"usage.allTypes": "كل الأنواع",
 	"usage.registeredCallouts": "الـ callouts المسجّلة",
 	"usage.unregisteredCallouts": "الـ callouts غير المسجّلة",
 	"usage.summary": "{{count}} موضع ظهور في {{files}} ملف",
 	"usage.allRoles": "كل التنسيقات",
+	"usage.filterFormat": "تصفية حسب التنسيق",
 	"usage.failed": "تعذّر تحديث مواضع ظهور الـ callout.",
 	"usage.loading": "جارٍ فحص ملاحظات Markdown…",
 	"usage.partial": "النتائج غير مكتملة: {{count}} خطأ في القراءة.",
@@ -912,7 +899,6 @@ export const ar: Record<string, string> = {
 	"usage.missing": "لم تعد هذه الملاحظة موجودة. جارٍ تحديث النتائج…",
 	"usage.changed": "تغيّر موضع الظهور هذا أو انتقل إلى مكان لا يمكن تحديده بدقة. جارٍ تحديث النتائج…",
 	"usage.openFailed": "تعذّر فتح موضع ظهور الـ callout هذا.",
-	"usage.menuCount": "ابحث عن callout ({{count}})",
 	"usage.menuIncomplete": "ابحث عن callout — الفحص غير مكتمل",
 	"usage.menu": "ابحث عن callout",
 	"usage.closeSettings": "أغلق الإعدادات لعرض نتائج الـ callout في الشريط الجانبي.",
@@ -1101,6 +1087,8 @@ export const ar: Record<string, string> = {
 	"footer.contribute": "المساهمة",
 	"footer.license": "ترخيص الإضافة",
 	"footer.iconCredits": "تراخيص الأيقونات",
+	"settings.about": "حول",
+	"settings.version": "الإصدار",
 	"settings.deletePaletteConfirmLinkedOne":
 		'حذف لوحة الألوان "{{name}}"؟\nيوجد 1 callout يستخدمها. سيحتفظ بألوانه، ويمكنك إعادة ربطه لاحقًا من صف اللون في محرره.',
 	"settings.deletePaletteConfirmLinked":
@@ -1117,8 +1105,7 @@ export const ar: Record<string, string> = {
 	"palette.colorExistsUseLink": "استخدام الموجود",
 	"locale.downloading": "جارٍ تنزيل الترجمة…",
 	"locale.notDownloaded": "لم يتم تنزيل {{name}} بعد",
-	"locale.notDownloadedDesc":
-		"يعرض Callout Studio اللغة الإنجليزية حتى يمكن تنزيل الترجمة. ستتم إعادة المحاولة عند تشغيل Obsidian التالي.",
+	"locale.notDownloadedDesc": "يعرض Callout Studio الإنجليزية إلى أن تُنزَّل الترجمة، ويعيد المحاولة عند تشغيل Obsidian.",
 	"locale.retry": "إعادة المحاولة",
 	"locale.diskWriteFailed":
 		"تعذر على Callout Studio حفظ الترجمة على القرص، لذا سيلزم تنزيلها مرة أخرى في المرة القادمة.",
@@ -1142,13 +1129,14 @@ export const ar: Record<string, string> = {
 	"export.formatCss": "لقطة CSS مستقلة بذاتها",
 	"export.formatCssDesc":
 		"مخصص للمواقع أو الخزائن التي لا يعمل فيها Callout Studio. يشمل الـ callouts الكتلية فقط، ويجب تصديره مجددًا بعد التغييرات.",
+	"export.formatCssAction": "تصدير",
 	"quickInsert.readingViewHint": "هذه الملاحظة مفتوحة في وضع القراءة، لذا لا يمكن إدراج أي شيء.",
 	"quickInsert.readingView": "بدّل إلى وضع المصدر أو المعاينة المباشرة لإدراج callout.",
 	"quickInsert.noCursorHint": "لا يوجد مؤشر في هذه الملاحظة، لذا لا يوجد مكان للإدراج.",
 	"quickInsert.noCursor": "ضع المؤشر في الملاحظة في المكان الذي تريد إدراج الـ callout فيه، ثم حاول مرة أخرى.",
 	"notice.legacyDiscoveryArchiveFailed": "تعذّر إكمال نسخة الاسترداد الخاصة بالترقية. بقيت ذاكرة التخزين المؤقت المحلية القديمة للاكتشاف وملف CSS لبدء التشغيل دون تغيير. تحقّق من صلاحيات الكتابة والوصول إلى مساحة التخزين ومن توفّر مساحة خالية، ثم أعد تشغيل Obsidian لإعادة المحاولة.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "متوقف مؤقتًا: الـ callout غير موجود. اكتشفه أو أنشئه لاستعادة هذا الأمر، أو عدّل الأمر لاختيار نوع آخر.",
+	"commandBuilder.missingCallout": "متوقف مؤقتًا إلى أن تنشئ الـ callout المفقود من جديد أو تختار غيره.",
 	"confirm.titleRestoreSettings": "استعادة هذه الإعدادات",
 	"confirm.titleCreateSettingsFile": "إنشاء ملف إعدادات",
 	"confirm.saveDisplayedSettings":
@@ -1472,7 +1460,7 @@ export const ar: Record<string, string> = {
 	"notice.unsavedChangesKept": "لم تكن بعض التغييرات على هذا الجهاز قد حُفظت بعد، واستبدلتها إعدادات أحدث من جهاز آخر. حُفظ إصدارك أولًا: افتح سجل الإصدارات في إعدادات Callout Studio لاستعادته.",
 	"settings.versionHistory": "سجل الإصدارات",
 	"settings.versions": "الإصدارات السابقة",
-	"settings.versionsDesc": "يحفظ Callout Studio إصدارات من إعداداتك تلقائيًا.\nقارن بينها أو ارجع إلى أحدها.",
+	"settings.versionsDesc": "قارن الإصدارات التي حُفظت تلقائيًا من إعداداتك، أو ارجع إلى أحدها.",
 	"settings.versionsButton": "عرض الإصدارات",
 	"noteChanges.callouts": "{{count}} من الـ callout",
 	"noteChanges.calloutsOne": "callout واحد",

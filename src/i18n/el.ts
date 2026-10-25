@@ -42,8 +42,7 @@ export const el: Record<string, string> = {
 		"Επιλέξτε πρώτα το callout με το οποίο θα αντικατασταθεί.",
 	"settings.fallbackTag": "Προεπιλογή",
 	"settings.fallbackTagAuto": "Αυτόματη προεπιλογή",
-	"settings.rescanVaultDesc":
-		"Προσθέτει τύπους callout που χρησιμοποιούνται στις σημειώσεις σας και δεν βρίσκονται ακόμη σε αυτήν τη λίστα. Τα υπάρχοντα callout και οι σημειώσεις σας δεν αλλάζουν.",
+	"settings.rescanVaultDesc": "Προσθέτει τους τύπους callout που χρησιμοποιούν οι σημειώσεις σας και δεν υπάρχουν ακόμη σε αυτή τη λίστα.",
 	"settings.rescanVaultHintAction": "Σάρωση για callout",
 	"manualDiscovery.failed":
 		"Τα callout που εντοπίστηκαν δεν αποθηκεύτηκαν. Ελέγξτε ότι οι ρυθμίσεις μπορούν να εγγραφούν και ότι ο συγχρονισμός ολοκληρώθηκε. Έπειτα δοκιμάστε ξανά από Ρυθμίσεις → Οι τύποι callout μου → Σάρωση για callout. Τα υπάρχοντα callout δεν αντικαταστάθηκαν.",
@@ -92,14 +91,11 @@ export const el: Record<string, string> = {
 		"Αυτό είναι ένα από τα ενσωματωμένα callouts του Obsidian, οπότε ο τύπος παραμένει διαθέσιμος — αλλάζουν μόνο οι χρήσεις του στις σημειώσεις σας.",
 	"deleteModal.keepsRowTheme":
 		"Το {{theme}} ορίζει αυτόν τον τύπο callout, οπότε παραμένει διαθέσιμος και διατηρεί την εμφάνισή του. Το Callout Studio αλλάζει μόνο σημειώσεις μέσα στο vault σας — τίποτα που ανήκει στο θέμα σας δεν επηρεάζεται.",
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Οι τύποι callout μου",
 	"settings.builtInCallouts": "Ενσωματωμένα callouts",
 	"settings.contextMenu": "Μενού περιβάλλοντος",
-	"settings.keyboardShortcuts": "Εντολές",
 	"settings.language": "Γλώσσα",
-	"settings.languageDesc":
-		"Γλώσσα εμφάνισης για το Callout Studio. Ακολουθεί από προεπιλογή τη γλώσσα διεπαφής του Obsidian.",
+	"settings.languageDesc": "Η γλώσσα του Callout Studio· του Obsidian, εκτός αν επιλέξετε άλλη.",
 	"settings.importExport": "Εισαγωγή και εξαγωγή",
 	"settings.import": "Εισαγωγή…",
 	"settings.export": "Εξαγωγή…",
@@ -114,6 +110,9 @@ export const el: Record<string, string> = {
 	"settings.addNewCallout": "προσθήκη callout",
 	"settings.noCalloutsNow":
 		"Δεν υπάρχουν προσαρμοσμένα callouts προς το παρόν.",
+	"settings.calloutCount": "{{count}} callouts",
+	"settings.calloutCountOne": "1 callout",
+	"settings.searchCallouts": "Αναζήτηση callout…",
 	"settings.editAria": "Επεξεργασία {{name}}",
 	"settings.moreRowActionsAria": "Περισσότερες ενέργειες για {{name}}",
 	"settings.replaceAction": "Αντικατάσταση στο vault…",
@@ -131,9 +130,9 @@ export const el: Record<string, string> = {
 	"settings.colorSwatchAria": "Έμφαση: {{accent}} · Φόντο: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts από το θέμα σας",
-	"settings.themeCalloutsDesc":
-		"Το {{theme}} παρέχει ή επαναμορφοποιεί αυτά, οπότε το Callout Studio τα αφήνει ακριβώς όπως τα σχεδιάζει το θέμα σας και τα προσφέρει μόνο ως Block callouts. Εδώ εμφανίζονται και τα δύο είδη: τύποι callout που προσθέτει το θέμα σας, και ενσωματωμένα callouts των οποίων την εμφάνιση αντικαθιστά. Οι τύποι callout που προσθέτει το θέμα σας εμφανίζονται μόνο όσο αυτό είναι ενεργό.",
+	"settings.themeCalloutsDesc": "Το {{theme}} σχεδιάζει αυτά τα callout, οπότε το Callout Studio τα αφήνει ως έχουν και τα προσφέρει μόνο ως callout μπλοκ.",
 	"settings.themeCalloutsDefaultTheme": "Το θέμα σας",
+	"settings.themeCalloutsEmpty": "Το {{theme}} δεν διαμορφώνει κανένα callout αυτή τη στιγμή.",
 	"settings.themePreviewAria":
 		'Προεπισκόπηση "{{name}}" — δείτε πώς το σχεδιάζει το θέμα σας',
 	"settings.builtInAllThemeStyled":
@@ -141,12 +140,7 @@ export const el: Record<string, string> = {
 	"settings.fallbackCallout": "Προεπιλεγμένο εφεδρικό callout",
 	"settings.fallbackCalloutDesc":
 		"Οι άγνωστοι τύποι callout στο vault σας θα κληρονομήσουν το στυλ αυτού του callout.",
-	"settings.globalStyleRegularTitle": "Καθολικό στυλ για callout μπλοκ",
-	"settings.globalStyleHeadingTitle":
-		"Καθολικό στυλ για callout επικεφαλίδας",
-	"settings.globalStyleInlineTitle": "Καθολικό στυλ για ενσωματωμένο callout",
 	"settings.border": "Περιγράμματα",
-	"settings.borderAll": "Όλες",
 	"settings.borderTop": "Πάνω",
 	"settings.borderRight": "Δεξιά",
 	"settings.borderBottom": "Κάτω",
@@ -156,14 +150,11 @@ export const el: Record<string, string> = {
 	"settings.titleScale": "Τίτλος",
 	"settings.contentScale": "Περιεχόμενο",
 	"settings.inlineTextScale": "Κείμενο",
-	"settings.shapeGroup": "Σχήμα",
 	"settings.borderRadius": "Στρογγυλοποίηση γωνιών",
-	"settings.alignGroup": "Στοίχιση",
 	"settings.alignContent": "Στοίχιση περιεχομένου με τον τίτλο",
 	"settings.headingSpacingGroup": "Απόσταση τίτλου",
 	"settings.headingPadVertical": "Κατακόρυφη απόσταση",
 	"settings.headingGap": "Απόσταση μεταξύ επικεφαλίδων",
-	"settings.headingFoldGroup": "Σύμπτυξη",
 	"settings.headingFoldArrow": "Εμφάνιση βέλους σύμπτυξης",
 	"settings.styleDemoName": "Παράδειγμα",
 	"settings.styleDemoInlineName": "Παράδειγμα",
@@ -175,19 +166,17 @@ export const el: Record<string, string> = {
 	"settings.newPalette": "Νέα παλέτα",
 	"settings.customPalettesEmpty":
 		"Δεν υπάρχουν αποθηκευμένες παλέτες προς το παρόν.",
+	"settings.paletteCount": "{{count}} παλέτες",
+	"settings.paletteCountOne": "1 παλέτα",
 	"settings.editPaletteAria": "Επεξεργασία παλέτας {{name}}",
-	"settings.deletePaletteAria": "Διαγραφή παλέτας {{name}}",
 	"settings.deletePaletteConfirm":
 		'Διαγραφή παλέτας "{{name}}";\nΤα callout που χρησιμοποιούν τα χρώματά της δεν επηρεάζονται.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Τα callout που την αναφέρουν στα μεταδεδομένα τους ("{{key}}") παίρνουν αντ᾽ αυτού το ενσωματωμένο χρώμα με αυτό το όνομα. Οι σημειώσεις σας δεν αλλάζουν.',
 	"settings.customCommands": "Εντολές & πλήκτρα συντόμευσης",
-	"settings.customCommandsDesc":
-		"Δείτε κάθε εντολή του Callout Studio και τη συντόμευση στην οποία είναι δεσμευμένη, και δημιουργήστε τις δικές σας εντολές για τα callouts που χρησιμοποιείτε περισσότερο. Καμία συντόμευση δεν έχει ανατεθεί από προεπιλογή.",
-	"settings.customCommandsButton": "Διαχείριση εντολών",
+	"settings.customCommandsDesc": "Όλες οι εντολές του Callout Studio, οι συντομεύσεις τους και δικές σας εντολές.",
 	"commandBuilder.title": "Εντολές και συντομεύσεις",
-	"commandBuilder.desc":
-		"Χρησιμοποιήστε το κουμπί + για να ορίσετε ή να αλλάξετε μια συντόμευση στις ρυθμίσεις συντομεύσεων του Obsidian.",
+	"commandBuilder.pageDesc": "Πατήστε ⊕ σε μια εντολή για να ορίσετε τη συντόμευσή της στις ρυθμίσεις πλήκτρων συντόμευσης του Obsidian.",
 	"commandBuilder.builtIn": "Ενσωματωμένες εντολές",
 	"commandBuilder.toggleAria": "Ενεργοποίηση ή απενεργοποίηση του {{name}}",
 	"commandBuilder.hotkeyBlank": "Κενό",
@@ -197,7 +186,6 @@ export const el: Record<string, string> = {
 	"commandBuilder.empty": "Δεν υπάρχουν ακόμη προσαρμοσμένες εντολές.",
 	"commandBuilder.unknownCommand": "αυτή την εντολή",
 	"commandBuilder.editAria": "Επεξεργασία {{name}}",
-	"commandBuilder.deleteAria": "Διαγραφή {{name}}",
 	"commandBuilder.deleteConfirm":
 		"Διαγραφή της εντολής {{name}}; Τυχόν συντόμευση που της έχει ανατεθεί θα σταματήσει να λειτουργεί.",
 	"commandBuilder.newTitle": "Νέα εντολή",
@@ -211,8 +199,7 @@ export const el: Record<string, string> = {
 		"Αυτή η μορφή είναι απενεργοποιημένη, οπότε η εντολή θα εισάγει απλό κείμενο μέχρι να την ενεργοποιήσετε ξανά.",
 	"commandBuilder.roleThemeOwned":
 		"Το θέμα σας παρέχει αυτό το callout, οπότε έχει μόνο μορφή Block.",
-	"commandBuilder.commandSuspended":
-		"Σε παύση: το θέμα σας παρέχει αυτό το callout, οπότε έχει μόνο μορφή Block. Αυτή η εντολή θα ξαναλειτουργήσει όταν το θέμα σταματήσει να το παρέχει.",
+	"commandBuilder.commandSuspended": "Σε παύση όσο το θέμα σας παρέχει αυτό το callout, το οποίο τότε έχει μόνο μορφή μπλοκ.",
 	"commandBuilder.callout": "Τύπος callout",
 	"commandBuilder.calloutDesc": "Το callout που εισάγει αυτή η εντολή.",
 	"commandBuilder.headingLevel": "Επίπεδο επικεφαλίδας",
@@ -264,8 +251,7 @@ export const el: Record<string, string> = {
 	"settings.resetItemFallback": "Εφεδρικό στυλ",
 	"settings.resetItemIconLibraries":
 		"Σειρά βιβλιοθηκών εικονιδίων και κρυφές βιβλιοθήκες",
-	"settings.resetAllConfirmAfter":
-		"Μην ανησυχείτε: πριν από την επαναφορά αποθηκεύουμε αντίγραφο ασφαλείας της τρέχουσας διαμόρφωσής σας. Μπορείτε να το επαναφέρετε οποτεδήποτε από την ενότητα Αντίγραφα ασφαλείας στις ρυθμίσεις.\nΑν χρησιμοποιείτε υπηρεσία συγχρονισμού, η επαναφορά μπορεί να φτάσει και στις άλλες συσκευές σας.",
+	"settings.resetAllConfirmAfter": "Μην ανησυχείτε: πριν από την επαναφορά αποθηκεύουμε αντίγραφο ασφαλείας της τρέχουσας ρύθμισής σας. Μπορείτε να το επαναφέρετε οποτεδήποτε από το Ιστορικό εκδόσεων στις ρυθμίσεις.\nΑν χρησιμοποιείτε υπηρεσία συγχρονισμού, η επαναφορά μπορεί να φτάσει και στις άλλες συσκευές σας.",
 	"settings.resetNothing":
 		"Δεν υπάρχει τίποτα για επαναφορά: όλα είναι ήδη στις προεπιλογές.",
 	"notice.customCommandMissingCallout":
@@ -354,15 +340,15 @@ export const el: Record<string, string> = {
 	"editor.foldClosed": "Κλειστό από προεπιλογή",
 	"editor.cancel": "Ακύρωση",
 	"editor.saveChanges": "Αποθήκευση αλλαγών",
-	"editor.saving": "Αποθήκευση…",
 	"editor.saveFailed":
 		"Η αποθήκευση δεν ολοκληρώθηκε. Αν αυτός ο επεξεργαστής παραμένει ανοιχτός, κρατήστε τον ανοιχτό και δοκιμάστε ξανά αφού ελέγξετε τον χώρο αποθήκευσης και τον συγχρονισμό. Ορισμένες ρυθμίσεις ή ενημερώσεις σημειώσεων μπορεί να έχουν ήδη αποθηκευτεί.",
 	"editor.createCallout": "Δημιουργία callout",
 	"editor.nameRequired":
 		"Απαιτείται εμφανιζόμενο όνομα πριν τη δημιουργία callout.",
 	"editor.noChangesToSave": "Δεν έγιναν αλλαγές.",
-	"editor.downloadingIcon": "Λήψη εικονιδίου",
 	"editor.idEmpty": "Απαιτείται τουλάχιστον ένα ID",
+	"editor.idAlreadyHere": "Αυτό το αναγνωριστικό υπάρχει ήδη",
+	"editor.idTooLong": "Το αναγνωριστικό πρέπει να έχει έως {{max}} χαρακτήρες",
 	"editor.idExists": "Υπάρχει ήδη callout με αυτό το ID",
 	"editor.idConflict": "Αυτό το ID έρχεται σε σύγκρουση με υπάρχον callout",
 	"editor.idFromTheme":
@@ -564,7 +550,6 @@ export const el: Record<string, string> = {
 	"iconPicker.allSources": "Όλες οι πηγές",
 	"iconPicker.searchAllSources": "Αναζήτηση σε όλες τις πηγές εικονιδίων",
 	"iconPicker.chooseSource": "Επιλογή πηγής",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "Διαθέσιμες βιβλιοθήκες",
 	"iconPicker.librariesToDownload": "Βιβλιοθήκες προς λήψη",
 	"iconPicker.groupCurrent": "Τρέχον εικονίδιο",
@@ -777,30 +762,30 @@ export const el: Record<string, string> = {
 	"contextMenu.deleteSection": "Διαγραφή ενότητας επικεφαλίδας",
 	"heading.toggleFold": "Εναλλαγή αναδίπλωσης",
 	"settings.globalSettings": "Καθολικές επιλογές στυλ Callout Studio",
+	"settings.calloutStyle": "Στυλ callout",
+	"settings.menusAndCommands": "Μενού και εντολές",
+	"settings.buildFailed": "Το Callout Studio δεν μπόρεσε να σχεδιάσει τις ρυθμίσεις του· κάντε επανεκκίνηση του Obsidian και αναφέρετε το πρόβλημα αν επαναληφθεί.",
 	"settings.globalSettingsRegularDesc":
 		"Προσαρμόστε το περίγραμμα, την ακτίνα, την κλίμακα γραμματοσειράς και τη στοίχιση κάθε callout μπλοκ στο vault σας.",
 	"settings.globalSettingsHeadingDesc":
 		"Προσαρμόστε το περίγραμμα, το σχήμα και την κατακόρυφη απόσταση κάθε callout επικεφαλίδας στο vault σας.",
 	"settings.globalSettingsInlineDesc":
 		"Προσαρμόστε το περίγραμμα και το σχήμα κάθε ενσωματωμένου callout στο vault σας.",
-	"settings.globalSettingsCustomize": "Προσαρμογή",
 	"settings.themeCalloutStyles": "Χρήση των στυλ callout του θέματός σας",
-	"settings.themeCalloutStylesDesc":
-		"Ενεργό: τα callout που μορφοποιεί το θέμα σας διατηρούν την εμφάνιση του θέματός σας.\nΑνενεργό: το Callout Studio σχεδιάζει κάθε callout και τα στυλ callout του θέματός σας απενεργοποιούνται.",
+	"settings.themeCalloutStylesDesc": "Όταν είναι ενεργό, τα callout που διαμορφώνει το θέμα σας κρατούν την εμφάνισή του· όταν είναι ανενεργό, το Callout Studio σχεδιάζει όλα τα callout.",
 	"settings.calloutTypeRegular": "Callout μπλοκ",
 	"settings.calloutTypeHeading": "Callout επικεφαλίδας",
 	"settings.calloutTypeInline": "Ενσωματωμένο callout",
-	"settings.customizeMenu": "Προσαρμογή στοιχείων μενού",
-	"settings.customizeMenuDesc":
-		"Επιλέξτε ποιες ενέργειες δεξιού κλικ εμφανίζονται για κάθε τύπο callout και αλλάξτε τη σειρά τους. Λειτουργεί στη λειτουργία πηγής και στην Ζωντανή Προεπισκόπηση.",
-	"settings.customizeMenuButton": "Προσαρμογή στοιχείων μενού",
+	"settings.customizeMenuDesc": "Επιλέξτε και ταξινομήστε τις ενέργειες δεξιού κλικ για κάθε τύπο callout.",
 	"menuCustomize.title": "Προσαρμογή μενού δεξιού κλικ",
-	"menuCustomize.desc":
-		"Ενεργοποιήστε ή απενεργοποιήστε ενέργειες και σύρετε τη λαβή για να τις αναδιατάξετε. Οι αλλαγές αποθηκεύονται αυτόματα.",
+	"menuCustomize.pageDesc": "Σύρετε μια ενέργεια από τη λαβή της για να τη μετακινήσετε ή αποκρύψτε την με ✕.",
 	"menuCustomize.regular": "Callout μπλοκ",
 	"menuCustomize.heading": "Callout επικεφαλίδας",
 	"menuCustomize.inline": "Ενσωματωμένο callout",
 	"menuCustomize.dragHandle": "Σύρετε για αναδιάταξη",
+	"menuCustomize.hiddenHeading": "Κρυφά από το μενού callout των επικεφαλίδων",
+	"menuCustomize.hiddenInline": "Κρυφά από το μενού των ενσωματωμένων callout",
+	"menuCustomize.hiddenRegular": "Κρυφά από το μενού των callout μπλοκ",
 	"menuItem.createOrEdit": "Δημιουργία ή επεξεργασία callout",
 	"menuItem.openSettings": "Άνοιγμα ρυθμίσεων",
 	"menuItem.copyMarkdown": "Αντιγραφή Markdown",
@@ -955,8 +940,6 @@ export const el: Record<string, string> = {
 	"portable.blockedNothingSelected":
 		"Επιλέξτε τουλάχιστον μία αντικατάσταση για μετατροπή.",
 	"settings.maintenance": "Επικίνδυνη ζώνη",
-	"portable.subtitle":
-		"Επιλέξτε ποια callout επικεφαλίδων και εντός κειμένου θα μετατραπούν σε τυπικό Markdown πριν σταματήσετε να χρησιμοποιείτε το Callout Studio.",
 	"portable.customize": "Προσαρμοσμένη αντικατάσταση…",
 	"portable.editCustom": "Επεξεργασία προσαρμοσμένης αντικατάστασης…",
 	"portable.restoreDefault": "Επαναφορά προεπιλεγμένης αντικατάστασης",
@@ -973,14 +956,13 @@ export const el: Record<string, string> = {
 
 	"usage.title": "Εύρεση callout",
 	"usage.command": "Εύρεση callout",
-	"usage.subtitle":
-		"Βρείτε callout στο θησαυροφυλάκιό σας και μεταβείτε στην πηγή τους.",
 	"usage.browse": "Περιήγηση",
 	"usage.allTypes": "Όλοι οι τύποι",
 	"usage.registeredCallouts": "Καταχωρισμένα callout",
 	"usage.unregisteredCallouts": "Μη καταχωρισμένα callout",
 	"usage.summary": "{{count}} εμφανίσεις σε {{files}} αρχεία",
 	"usage.allRoles": "Όλες οι μορφές",
+	"usage.filterFormat": "Φιλτράρισμα ανά μορφή",
 	"usage.failed": "Δεν ήταν δυνατή η ενημέρωση των εμφανίσεων callout.",
 	"usage.loading": "Σάρωση σημειώσεων Markdown…",
 	"usage.partial":
@@ -998,7 +980,6 @@ export const el: Record<string, string> = {
 		"Αυτή η εμφάνιση άλλαξε ή μετακινήθηκε σε θέση που δεν μπορεί να προσδιοριστεί με βεβαιότητα. Ενημέρωση αποτελεσμάτων…",
 	"usage.openFailed":
 		"Δεν ήταν δυνατό το άνοιγμα αυτής της εμφάνισης callout.",
-	"usage.menuCount": "Εύρεση callout ({{count}})",
 	"usage.menuIncomplete": "Εύρεση callout — η σάρωση δεν ολοκληρώθηκε",
 	"usage.menu": "Εύρεση callout",
 	"usage.closeSettings":
@@ -1213,6 +1194,8 @@ export const el: Record<string, string> = {
 	"footer.contribute": "Συνεισφορά",
 	"footer.license": "Άδεια προσθέτου",
 	"footer.iconCredits": "Άδειες εικονιδίων",
+	"settings.about": "Σχετικά",
+	"settings.version": "Έκδοση",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Να διαγραφεί η παλέτα "{{name}}";\n1 callout τη χρησιμοποιεί. Κρατά τα χρώματά του και μπορείτε να το συνδέσετε ξανά αργότερα από τη γραμμή Χρώμα στον επεξεργαστή του.',
 	"settings.deletePaletteConfirmLinked":
@@ -1229,8 +1212,7 @@ export const el: Record<string, string> = {
 	"palette.colorExistsUseLink": "χρησιμοποιήστε το υπάρχον",
 	"locale.downloading": "Λήψη μετάφρασης…",
 	"locale.notDownloaded": "Το {{name}} δεν έχει ληφθεί ακόμη",
-	"locale.notDownloadedDesc":
-		"Το Callout Studio εμφανίζει αγγλικά μέχρι να ληφθεί η μετάφραση. Θα ξαναπροσπαθήσει την επόμενη φορά που θα ξεκινήσει το Obsidian.",
+	"locale.notDownloadedDesc": "Το Callout Studio εμφανίζει αγγλικά μέχρι να γίνει λήψη της μετάφρασης και προσπαθεί ξανά όταν ξεκινά το Obsidian.",
 	"locale.retry": "Επανάληψη",
 	"locale.diskWriteFailed":
 		"Το Callout Studio δεν μπόρεσε να αποθηκεύσει τη μετάφραση στον δίσκο, οπότε θα χρειαστεί νέα λήψη την επόμενη φορά.",
@@ -1254,6 +1236,7 @@ export const el: Record<string, string> = {
 	"export.formatCss": "Αυτόνομο στιγμιότυπο CSS",
 	"export.formatCssDesc":
 		"Για ιστότοπους ή vault όπου δεν εκτελείται το Callout Studio. Καλύπτει μόνο callout τύπου block και πρέπει να εξαχθεί ξανά μετά από αλλαγές.",
+	"export.formatCssAction": "Εξαγωγή",
 	"quickInsert.readingViewHint":
 		"Αυτή η σημείωση είναι ανοιχτή σε λειτουργία ανάγνωσης, οπότε δεν μπορεί να γίνει εισαγωγή.",
 	"quickInsert.readingView":
@@ -1265,8 +1248,7 @@ export const el: Record<string, string> = {
 	"notice.legacyDiscoveryArchiveFailed":
 		"Δεν ήταν δυνατή η ολοκλήρωση του αντιγράφου ανάκτησης για την αναβάθμιση. Η προηγούμενη τοπική προσωρινή μνήμη εντοπισμού και το CSS εκκίνησης διατηρήθηκαν χωρίς αλλαγές. Ελέγξτε τα δικαιώματα εγγραφής, την πρόσβαση στον αποθηκευτικό χώρο και τον διαθέσιμο χώρο και, στη συνέχεια, επανεκκινήστε το Obsidian για να δοκιμάσετε ξανά.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout":
-		"Σε παύση: το callout λείπει. Ανακαλύψτε το ή δημιουργήστε το για να επαναφέρετε αυτήν την εντολή, ή επεξεργαστείτε την εντολή για να επιλέξετε άλλον τύπο.",
+	"commandBuilder.missingCallout": "Σε παύση μέχρι να δημιουργήσετε ξανά το callout που λείπει ή να επιλέξετε άλλο.",
 	"confirm.titleRestoreSettings": "Επαναφορά αυτών των ρυθμίσεων",
 	"confirm.titleCreateSettingsFile": "Δημιουργία αρχείου ρυθμίσεων",
 	"confirm.saveDisplayedSettings":
@@ -1684,8 +1666,7 @@ export const el: Record<string, string> = {
 		"Κάποιες αλλαγές σε αυτή τη συσκευή δεν είχαν ακόμα αποθηκευτεί και αντικαταστάθηκαν από νεότερες ρυθμίσεις άλλης συσκευής. Η έκδοσή σας αποθηκεύτηκε πρώτα: ανοίξτε το ιστορικό εκδόσεων στις ρυθμίσεις του Callout Studio για να την ανακτήσετε.",
 	"settings.versionHistory": "Ιστορικό εκδόσεων",
 	"settings.versions": "Παλαιότερες εκδόσεις",
-	"settings.versionsDesc":
-		"Το Callout Studio αποθηκεύει αυτόματα εκδόσεις της διαμόρφωσής σας.\nΣυγκρίνετέ τις ή επιστρέψτε σε μία από αυτές.",
+	"settings.versionsDesc": "Συγκρίνετε τις εκδόσεις της ρύθμισής σας που αποθηκεύονται αυτόματα ή επιστρέψτε σε μία.",
 	"settings.versionsButton": "Προβολή εκδόσεων",
 	"noteChanges.callouts": "{{count}} callouts",
 	"noteChanges.calloutsOne": "1 callout",

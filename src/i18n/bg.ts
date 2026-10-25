@@ -35,7 +35,7 @@ export const bg: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "Първо изберете callout, с който да го замените.",
 	"settings.fallbackTag": "По подразбиране",
 	"settings.fallbackTagAuto": "Авт. по подразбиране",
-	"settings.rescanVaultDesc": "Добавя типовете callout, използвани в бележките ви, които още ги няма в този списък. Съществуващите ви callout и бележки не се променят.",
+	"settings.rescanVaultDesc": "Добавя типовете callout, които бележките ви използват и които още не са в този списък.",
 	"settings.rescanVaultHintAction": "Сканиране за callout",
 	"manualDiscovery.failed": "Откритите callout-и не бяха запазени. Проверете дали настройките могат да се записват и дали синхронизацията е завършила, след което опитайте отново от Настройки → Моите типове callout → Сканиране за callout. Съществуващите callout-и не са заменени.",
 	"manualDiscovery.scanning": "Сканиране…",
@@ -82,14 +82,11 @@ export const bg: Record<string, string> = {
 		"Това е един от вградените callout-и на Obsidian, затова самият тип остава наличен — променят се само неговите употреби в бележките ви.",
 	"deleteModal.keepsRowTheme":
 		"{{theme}} дефинира този тип callout, затова той остава наличен и запазва външния си вид. Callout Studio променя само бележки във вашето хранилище — нищо, принадлежащо на темата ви, не се засяга.",
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Моите типове callout",
 	"settings.builtInCallouts": "Вградени callout-и",
 	"settings.contextMenu": "Контекстно меню",
-	"settings.keyboardShortcuts": "Команди",
 	"settings.language": "Език",
-	"settings.languageDesc":
-		"Език на показване за Callout Studio. По подразбиране следва езика на интерфейса на Obsidian.",
+	"settings.languageDesc": "Езикът на Callout Studio – този на Obsidian, освен ако изберете друг.",
 	"settings.importExport": "Импорт и експорт",
 	"settings.import": "Импортиране…",
 	"settings.export": "Експортиране…",
@@ -103,6 +100,9 @@ export const bg: Record<string, string> = {
 		"Импортирани са {{count}} тип(а) callout; {{overwritten}} съществуващ(и) запис(а) са презаписани.",
 	"settings.addNewCallout": "добавяне на callout",
 	"settings.noCalloutsNow": "Засега няма персонализирани callout-и.",
+	"settings.calloutCount": "{{count}} callout-а",
+	"settings.calloutCountOne": "1 callout",
+	"settings.searchCallouts": "Търсене на callout…",
 	"settings.editAria": "Редактиране на {{name}}",
 	"settings.moreRowActionsAria": "Още действия за {{name}}",
 	"settings.replaceAction": "Замяна в хранилището…",
@@ -118,9 +118,9 @@ export const bg: Record<string, string> = {
 	"settings.colorSwatchAria": "Акцент: {{accent}} · Фон: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callout-и от вашата тема",
-	"settings.themeCalloutsDesc":
-		"{{theme}} предоставя или преоформя тези callout-и, затова Callout Studio ги оставя точно както темата ви ги изобразява и ги предлага само като блокови callout-и. Тук се показват и двата вида: типове callout, добавени от темата ви, и вградени callout-и, чийто вид тя заменя. Типовете callout, добавени от темата ви, се показват само докато тя е активна.",
+	"settings.themeCalloutsDesc": "{{theme}} изчертава тези callout-и, затова Callout Studio ги оставя такива, каквито са, и ги предлага само като блокови callout.",
 	"settings.themeCalloutsDefaultTheme": "Вашата тема",
+	"settings.themeCalloutsEmpty": "В момента {{theme}} не стилизира нито един callout.",
 	"settings.themePreviewAria":
 		'Преглед на "{{name}}" — вижте как темата ви го изобразява',
 	"settings.builtInAllThemeStyled":
@@ -128,11 +128,7 @@ export const bg: Record<string, string> = {
 	"settings.fallbackCallout": "Стандартен резервен callout",
 	"settings.fallbackCalloutDesc":
 		"Непознатите типове callout в хранилището ви ще наследят стила на този callout.",
-	"settings.globalStyleRegularTitle": "Глобален стил на блоковия callout",
-	"settings.globalStyleHeadingTitle": "Глобален стил на callout за заглавия",
-	"settings.globalStyleInlineTitle": "Глобален стил на вградения callout",
 	"settings.border": "Граници",
-	"settings.borderAll": "Всички",
 	"settings.borderTop": "Горе",
 	"settings.borderRight": "Дясно",
 	"settings.borderBottom": "Долу",
@@ -142,14 +138,11 @@ export const bg: Record<string, string> = {
 	"settings.titleScale": "Заглавие",
 	"settings.contentScale": "Съдържание",
 	"settings.inlineTextScale": "Текст",
-	"settings.shapeGroup": "Форма",
 	"settings.borderRadius": "Закръгляне на ъглите",
-	"settings.alignGroup": "Подравняване",
 	"settings.alignContent": "Подравни съдържанието с заглавието",
 	"settings.headingSpacingGroup": "Разстояние на заглавието",
 	"settings.headingPadVertical": "Вертикално разстояние",
 	"settings.headingGap": "Разстояние между заглавията",
-	"settings.headingFoldGroup": "Сгъване",
 	"settings.headingFoldArrow": "Показване на стрелка за сгъване",
 	"settings.styleDemoName": "Пример",
 	"settings.styleDemoInlineName": "Пример",
@@ -160,19 +153,17 @@ export const bg: Record<string, string> = {
 	"settings.customPalettes": "Запазени цветови палитри",
 	"settings.newPalette": "Нова палитра",
 	"settings.customPalettesEmpty": "Засега няма запазени палитри.",
+	"settings.paletteCount": "{{count}} палитри",
+	"settings.paletteCountOne": "1 палитра",
 	"settings.editPaletteAria": "Редактиране на палитра {{name}}",
-	"settings.deletePaletteAria": "Изтриване на палитра {{name}}",
 	"settings.deletePaletteConfirm":
 		'Изтриване на палитра "{{name}}"?\nCallout-ите, които използват нейните цветове, няма да бъдат засегнати.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callout-ите, които я посочват в метаданните си ("{{key}}"), вместо това получават вградения цвят с това име. Бележките ви не се променят.',
 	"settings.customCommands": "Команди и бързи клавиши",
-	"settings.customCommandsDesc":
-		"Вижте всяка команда на Callout Studio и клавишната комбинация, към която е обвързана, и създайте свои команди за callout-ите, които използвате най-често. По подразбиране не са зададени комбинации.",
-	"settings.customCommandsButton": "Управление на командите",
+	"settings.customCommandsDesc": "Всички команди на Callout Studio, клавишните им комбинации и ваши собствени команди.",
 	"commandBuilder.title": "Команди и клавишни комбинации",
-	"commandBuilder.desc":
-		"Използвайте бутона +, за да зададете или промените клавишна комбинация в настройките на Obsidian.",
+	"commandBuilder.pageDesc": "Натиснете ⊕ до команда, за да зададете клавишна комбинация в настройките за бързи клавиши на Obsidian.",
 	"commandBuilder.builtIn": "Вградени команди",
 	"commandBuilder.toggleAria": "Включване или изключване на {{name}}",
 	"commandBuilder.hotkeyBlank": "Празно",
@@ -182,7 +173,6 @@ export const bg: Record<string, string> = {
 	"commandBuilder.empty": "Все още няма персонализирани команди.",
 	"commandBuilder.unknownCommand": "тази команда",
 	"commandBuilder.editAria": "Редактиране на {{name}}",
-	"commandBuilder.deleteAria": "Изтриване на {{name}}",
 	"commandBuilder.deleteConfirm":
 		"Изтриване на командата {{name}}? Всяка зададена ѝ комбинация ще спре да работи.",
 	"commandBuilder.newTitle": "Нова команда",
@@ -221,8 +211,7 @@ export const bg: Record<string, string> = {
 	"commandBuilder.save": "Запазване",
 	"commandBuilder.roleThemeOwned":
 		"Вашата тема предоставя този callout, затова той има само блоков формат.",
-	"commandBuilder.commandSuspended":
-		"На пауза: вашата тема предоставя този callout, затова той има само блоков формат. Тази команда ще проработи отново, когато темата спре да го предоставя.",
+	"commandBuilder.commandSuspended": "На пауза, докато темата ви предоставя този callout, който тогава има само блоков формат.",
 	"settings.resetAll": "Нулиране",
 	"settings.resetAllDesc":
 		"Изтрива всички callout-и на потребителя, нулира вградените callout-и, глобалните стилове, запазените цветови палитри, персонализирането на контекстното меню и изтеглените SVG файлове на Material.",
@@ -245,7 +234,7 @@ export const bg: Record<string, string> = {
 		"Стиловете на callout-ите от вашата тема",
 	"settings.resetItemFallback": "Резервен стил",
 	"settings.resetItemIconLibraries": "Редът на библиотеките с икони и скритите библиотеки",
-	"settings.resetAllConfirmAfter": "Спокойно: преди нулирането запазваме резервно копие на текущата ви конфигурация. Можете да я възстановите по всяко време от раздела Резервни копия в настройките.\nАко използвате услуга за синхронизиране, нулирането може да стигне и до другите ви устройства.",
+	"settings.resetAllConfirmAfter": "Спокойно: преди нулирането запазваме резервно копие на текущите ви настройки. Можете да го върнете по всяко време от История на версиите в настройките.\nАко използвате услуга за синхронизиране, нулирането може да стигне и до другите ви устройства.",
 	"settings.resetNothing": "Няма какво да се нулира: всичко вече е със стандартните стойности.",
 	"notice.customCommandMissingCallout":
 		"Типът callout на тази команда вече не съществува.",
@@ -327,14 +316,14 @@ export const bg: Record<string, string> = {
 	"editor.foldClosed": "Затворен по подразбиране",
 	"editor.cancel": "Отказ",
 	"editor.saveChanges": "Запазване на промените",
-	"editor.saving": "Запазване…",
 	"editor.saveFailed": "Запазването не можа да завърши. Ако този редактор все още е отворен, оставете го отворен и опитайте отново, след като проверите хранилището и синхронизацията. Някои настройки или промени в бележките може вече да са запазени.",
 	"editor.createCallout": "Създаване на callout",
 	"editor.nameRequired":
 		"Необходимо е показвано име преди създаването на callout.",
 	"editor.noChangesToSave": "Не са направени промени.",
-	"editor.downloadingIcon": "Изтегляне на икона",
 	"editor.idEmpty": "Необходимо е поне едно ID",
+	"editor.idAlreadyHere": "Този идентификатор вече съществува",
+	"editor.idTooLong": "Идентификаторът трябва да е най-много {{max}} знака",
 	"editor.idExists": "Вече съществува callout с това ID",
 	"editor.idConflict": "Това ID е в конфликт с вече съществуващ callout",
 	"editor.idDashConflict":
@@ -527,7 +516,6 @@ export const bg: Record<string, string> = {
 	"iconPicker.allSources": "Всички източници",
 	"iconPicker.searchAllSources": "Търсене във всички източници на икони",
 	"iconPicker.chooseSource": "Изберете източник",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "Налични библиотеки",
 	"iconPicker.librariesToDownload": "Библиотеки за изтегляне",
 	"iconPicker.groupCurrent": "Текуща икона",
@@ -731,31 +719,31 @@ export const bg: Record<string, string> = {
 	"contextMenu.deleteSection": "Изтриване на раздел на заглавие",
 	"heading.toggleFold": "Превключване на сгъването",
 	"settings.globalSettings": "Глобални опции за стил на Callout Studio",
+	"settings.calloutStyle": "Стил на callout",
+	"settings.menusAndCommands": "Менюта и команди",
+	"settings.buildFailed": "Callout Studio не успя да изчертае настройките си; рестартирайте Obsidian и докладвайте, ако се повтори.",
 	"settings.globalSettingsRegularDesc":
 		"Регулирайте границата, радиуса, мащаба на шрифта и подравняването на всеки блоков callout в трезора ви.",
 	"settings.globalSettingsHeadingDesc":
 		"Регулирайте границата, формата и вертикалното разстояние на всеки заглавен callout в трезора ви.",
 	"settings.globalSettingsInlineDesc":
 		"Регулирайте границата и формата на всеки вграден callout в трезора ви.",
-	"settings.globalSettingsCustomize": "Персонализиране",
 	"settings.themeCalloutStyles":
 		"Използване на стиловете на callout-ите от вашата тема",
-	"settings.themeCalloutStylesDesc":
-		"Включено: callout-ите, които вашата тема оформя, запазват външния вид на темата.\nИзключено: Callout Studio изобразява всеки callout, а стиловете на callout-ите от темата са изключени.",
+	"settings.themeCalloutStylesDesc": "Когато е включено, callout-ите, които темата стилизира, запазват нейния вид; когато е изключено, Callout Studio изчертава всички callout-и.",
 	"settings.calloutTypeRegular": "Блоков callout",
 	"settings.calloutTypeHeading": "Callout-заглавие",
 	"settings.calloutTypeInline": "Вграден callout",
-	"settings.customizeMenu": "Персонализиране на елементите на менюто",
-	"settings.customizeMenuDesc":
-		"Изберете кои действия от контекстното меню да се показват за всеки тип callout и променете реда им. Работи в режим на изходен код и Live Preview.",
-	"settings.customizeMenuButton": "Персонализиране на елементите на менюто",
+	"settings.customizeMenuDesc": "Изберете и подредете действията при десен клик за всеки тип callout.",
 	"menuCustomize.title": "Персонализиране на контекстното меню",
-	"menuCustomize.desc":
-		"Включвайте или изключвайте действията и плъзгайте дръжката, за да ги пренаредите. Промените се запазват автоматично.",
+	"menuCustomize.pageDesc": "Плъзнете действие за дръжката му, за да го преместите, или го скрийте с ✕.",
 	"menuCustomize.regular": "Блоков callout",
 	"menuCustomize.heading": "Callout-заглавие",
 	"menuCustomize.inline": "Вграден callout",
 	"menuCustomize.dragHandle": "Плъзгане за пренареждане",
+	"menuCustomize.hiddenHeading": "Скрити от менюто за callout в заглавие",
+	"menuCustomize.hiddenInline": "Скрити от менюто за вградени callout",
+	"menuCustomize.hiddenRegular": "Скрити от менюто за блокови callout",
 	"menuItem.createOrEdit": "Създаване или редактиране на callout",
 	"menuItem.openSettings": "Отваряне на настройките",
 	"menuItem.copyMarkdown": "Копиране на Markdown",
@@ -873,7 +861,6 @@ export const bg: Record<string, string> = {
 	"portable.blockedEditing": "Първо завършете редактирането на замяната: натиснете Enter, за да я запазите, или Esc, за да я отхвърлите.",
 	"portable.blockedNothingSelected": "Изберете поне една замяна за преобразуване.",
 	"settings.maintenance": "Опасна зона",
-	"portable.subtitle": "Изберете кои callout в заглавията и в текста да преобразувате в стандартен Markdown, преди да спрете да използвате Callout Studio.",
 	"portable.customize": "Персонализирана замяна…",
 	"portable.editCustom": "Редактиране на персонализираната замяна…",
 	"portable.restoreDefault": "Възстановяване на замяната по подразбиране",
@@ -886,13 +873,13 @@ export const bg: Record<string, string> = {
 
 	"usage.title": "Намерете callout-и",
 	"usage.command": "Намерете callout-и",
-	"usage.subtitle": "Намерете callout-и в хранилището и преминете към източника им.",
 	"usage.browse": "Разглеждане",
 	"usage.allTypes": "Всички типове",
 	"usage.registeredCallouts": "Регистрирани callout-и",
 	"usage.unregisteredCallouts": "Нерегистрирани callout-и",
 	"usage.summary": "{{count}} срещания в {{files}} файла",
 	"usage.allRoles": "Всички формати",
+	"usage.filterFormat": "Филтриране по формат",
 	"usage.failed": "Срещанията на callout-и не можаха да се обновят.",
 	"usage.loading": "Сканиране на Markdown бележки…",
 	"usage.partial": "Резултатите са непълни: {{count}} грешки при четене.",
@@ -905,7 +892,6 @@ export const bg: Record<string, string> = {
 	"usage.missing": "Тази бележка вече не съществува. Обновяване на резултатите…",
 	"usage.changed": "Това срещане е променено или преместено на нееднозначно място. Обновяване на резултатите…",
 	"usage.openFailed": "Това срещане на callout не можа да се отвори.",
-	"usage.menuCount": "Намерете callout-и ({{count}})",
 	"usage.menuIncomplete": "Намерете callout-и — непълно сканиране",
 	"usage.menu": "Намерете callout-и",
 	"usage.closeSettings": "Затворете настройките, за да видите резултатите за callout-и в страничната лента.",
@@ -1097,6 +1083,8 @@ export const bg: Record<string, string> = {
 	"footer.contribute": "Принос",
 	"footer.license": "Лиценз на плъгина",
 	"footer.iconCredits": "Лицензи на икони",
+	"settings.about": "Относно",
+	"settings.version": "Версия",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Да изтрия ли палитрата "{{name}}"?\n1 callout я използва. Той запазва цветовете си и можете да го свържете отново по-късно от реда „Цвят“ в редактора му.',
 	"settings.deletePaletteConfirmLinked":
@@ -1113,8 +1101,7 @@ export const bg: Record<string, string> = {
 	"palette.colorExistsUseLink": "използвайте съществуващия",
 	"locale.downloading": "Изтегляне на превода…",
 	"locale.notDownloaded": "{{name}} още не е изтеглен",
-	"locale.notDownloadedDesc":
-		"Callout Studio показва английски, докато преводът бъде изтеглен. Ще опита отново при следващото стартиране на Obsidian.",
+	"locale.notDownloadedDesc": "Callout Studio показва английски, докато преводът не се изтегли, и опитва отново при стартиране на Obsidian.",
 	"locale.retry": "Опитай отново",
 	"locale.diskWriteFailed":
 		"Callout Studio не успя да запази превода на диска, затова ще трябва да бъде изтеглен отново следващия път.",
@@ -1138,13 +1125,14 @@ export const bg: Record<string, string> = {
 	"export.formatCss": "Самостоятелна CSS моментна снимка",
 	"export.formatCssDesc":
 		"За уебсайтове или vault-ове, в които Callout Studio не работи. Обхваща само блокови callout-и и трябва да се експортира отново след промени.",
+	"export.formatCssAction": "Експортиране",
 	"quickInsert.readingViewHint": "Тази бележка е отворена в режим на четене, затова нищо не може да бъде вмъкнато.",
 	"quickInsert.readingView": "Превключете към режим на изходен код или Live Preview, за да вмъкнете callout.",
 	"quickInsert.noCursorHint": "В тази бележка няма курсор, затова няма къде да се вмъкне.",
 	"quickInsert.noCursor": "Поставете курсора в бележката там, където искате да вмъкнете callout, след което опитайте отново.",
 	"notice.legacyDiscoveryArchiveFailed": "Копието за възстановяване при надстройката не можа да бъде завършено. Предишният локален кеш за откриване и CSS кодът за стартиране са запазени непроменени. Проверете достъпа за запис, достъпа до хранилището и свободното място, след което рестартирайте Obsidian, за да опитате отново.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "На пауза: callout липсва. Открийте го или го създайте, за да възстановите тази команда, или редактирайте командата, за да изберете друг тип.",
+	"commandBuilder.missingCallout": "На пауза, докато създадете отново липсващия callout или изберете друг.",
 	"confirm.titleRestoreSettings": "Възстановяване на тези настройки",
 	"confirm.titleCreateSettingsFile": "Създаване на файл с настройки",
 	"confirm.saveDisplayedSettings":
@@ -1473,7 +1461,7 @@ export const bg: Record<string, string> = {
 	"notice.unsavedChangesKept": "Някои промени на това устройство още не бяха записани и бяха заменени от по-нови настройки от друго устройство. Вашата версия първо беше записана: отворете историята на версиите в настройките на Callout Studio, за да я върнете.",
 	"settings.versionHistory": "История на версиите",
 	"settings.versions": "По-ранни версии",
-	"settings.versionsDesc": "Callout Studio автоматично записва версии на конфигурацията ви.\nСравнявайте ги или се върнете към някоя от тях.",
+	"settings.versionsDesc": "Сравнете автоматично запазените версии на настройките си или се върнете към някоя от тях.",
 	"settings.versionsButton": "Преглед на версиите",
 	"noteChanges.callouts": "{{count}} callout-а",
 	"noteChanges.calloutsOne": "1 callout",

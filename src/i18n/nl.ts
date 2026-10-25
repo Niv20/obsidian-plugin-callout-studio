@@ -37,7 +37,7 @@ export const nl: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "Kies eerst de callout waarmee je deze wilt vervangen.",
 	"settings.fallbackTag": "Standaard",
 	"settings.fallbackTagAuto": "Automatisch standaard",
-	"settings.rescanVaultDesc": "Voegt callouttypen toe die in je notities worden gebruikt en nog niet in deze lijst staan. Je bestaande callouts en notities worden niet gewijzigd.",
+	"settings.rescanVaultDesc": "Voegt de callout-typen toe die je notities gebruiken en die nog niet in deze lijst staan.",
 	"settings.rescanVaultHintAction": "Scannen op callouts",
 	"manualDiscovery.failed": "De scan is niet opgeslagen. Controleer of de instellingen kunnen worden weggeschreven en of de synchronisatie is voltooid. Probeer het daarna opnieuw via Instellingen → Mijn callout-types → Scannen op callouts. Bestaande callouts zijn niet vervangen.",
 	"manualDiscovery.scanning": "Scannen…",
@@ -86,14 +86,11 @@ export const nl: Record<string, string> = {
 	"deleteModal.keepsRowTheme":
 		"{{theme}} definieert dit callout-type, dus het blijft beschikbaar en behoudt zijn uiterlijk. Callout Studio wijzigt alleen notities binnen uw vault — niets van uw thema wordt aangeraakt.",
 
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Mijn callout-types",
 	"settings.builtInCallouts": "Ingebouwde callouts",
 	"settings.contextMenu": "Contextmenu",
-	"settings.keyboardShortcuts": "Opdrachten",
 	"settings.language": "Taal",
-	"settings.languageDesc":
-		"Weergavetaal voor Callout Studio. Volgt standaard de interfacetaal van Obsidian.",
+	"settings.languageDesc": "De taal van Callout Studio; die van Obsidian, tenzij je een andere kiest.",
 	"settings.importExport": "Importeren en exporteren",
 	"settings.import": "Importeren…",
 	"settings.export": "Exporteren…",
@@ -109,6 +106,9 @@ export const nl: Record<string, string> = {
 	"settings.addNewCallout": "callout toevoegen",
 
 	"settings.noCalloutsNow": "Momenteel geen aangepaste callouts.",
+	"settings.calloutCount": "{{count}} callouts",
+	"settings.calloutCountOne": "1 callout",
+	"settings.searchCallouts": "Callouts zoeken…",
 
 	"settings.editAria": "{{name}} bewerken",
 	"settings.moreRowActionsAria": "Meer acties voor {{name}}",
@@ -126,9 +126,9 @@ export const nl: Record<string, string> = {
 
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts van uw thema",
-	"settings.themeCalloutsDesc":
-		"{{theme}} levert of herstijlt deze, dus Callout Studio laat ze precies zoals uw thema ze tekent en biedt ze alleen als Block Callouts aan. Beide soorten verschijnen hier: callout-types die uw thema toevoegt, en ingebouwde callouts waarvan het thema het uiterlijk vervangt. Callout-types die uw thema toevoegt, worden alleen vermeld terwijl het actief is.",
+	"settings.themeCalloutsDesc": "{{theme}} tekent deze callouts, dus Callout Studio laat ze zoals ze zijn en biedt ze alleen aan als blok-callouts.",
 	"settings.themeCalloutsDefaultTheme": "Uw thema",
+	"settings.themeCalloutsEmpty": "{{theme}} geeft momenteel geen enkele callout een stijl.",
 	"settings.themePreviewAria":
 		'Voorbeeld van "{{name}}" — bekijk hoe uw thema het tekent',
 	"settings.builtInAllThemeStyled":
@@ -138,11 +138,7 @@ export const nl: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Niet-herkende callout-types in uw vault nemen de stijl van deze callout over.",
 
-	"settings.globalStyleRegularTitle": "Globale stijl voor block callouts",
-	"settings.globalStyleHeadingTitle": "Globale stijl voor kop-callouts",
-	"settings.globalStyleInlineTitle": "Globale stijl voor inline callouts",
 	"settings.border": "Randen",
-	"settings.borderAll": "Alle",
 	"settings.borderTop": "Boven",
 	"settings.borderRight": "Rechts",
 	"settings.borderBottom": "Onder",
@@ -152,14 +148,11 @@ export const nl: Record<string, string> = {
 	"settings.titleScale": "Titel",
 	"settings.contentScale": "Inhoud",
 	"settings.inlineTextScale": "Tekst",
-	"settings.shapeGroup": "Vorm",
 	"settings.borderRadius": "Hoekafronding",
-	"settings.alignGroup": "Uitlijning",
 	"settings.alignContent": "Inhoud uitlijnen met titel",
 	"settings.headingSpacingGroup": "Titelafstand",
 	"settings.headingPadVertical": "Verticale afstand",
 	"settings.headingGap": "Ruimte tussen koppen",
-	"settings.headingFoldGroup": "Inklappen",
 	"settings.headingFoldArrow": "Inklapppijl tonen",
 	"settings.styleDemoName": "Voorbeeld",
 	"settings.styleDemoInlineName": "Voorbeeld",
@@ -171,21 +164,19 @@ export const nl: Record<string, string> = {
 	"settings.customPalettes": "Opgeslagen kleurenpaletten",
 	"settings.newPalette": "Nieuw palet",
 	"settings.customPalettesEmpty": "Momenteel geen opgeslagen paletten.",
+	"settings.paletteCount": "{{count}} paletten",
+	"settings.paletteCountOne": "1 palet",
 	"settings.editPaletteAria": "Palet {{name}} bewerken",
-	"settings.deletePaletteAria": "Palet {{name}} verwijderen",
 	"settings.deletePaletteConfirm":
 		'Palet "{{name}}" verwijderen?\nCallouts die de kleuren ervan gebruiken, worden niet beïnvloed.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callouts die het in hun metadata noemen ("{{key}}"), krijgen in plaats daarvan de ingebouwde kleur met die naam. Je notities veranderen niet.',
 
 	"settings.customCommands": "Opdrachten & sneltoetsen",
-	"settings.customCommandsDesc":
-		"Bekijk elke Callout Studio-opdracht en de sneltoets waaraan die is gekoppeld, en maak uw eigen opdrachten voor de callouts die u het meest gebruikt. Standaard zijn er geen sneltoetsen toegewezen.",
-	"settings.customCommandsButton": "Opdrachten beheren",
+	"settings.customCommandsDesc": "Alle opdrachten van Callout Studio, hun sneltoetsen en je eigen opdrachten.",
 
 	"commandBuilder.title": "Opdrachten en sneltoetsen",
-	"commandBuilder.desc":
-		"Gebruik de +-knop om een sneltoets in te stellen of te wijzigen in Obsidians sneltoetsinstellingen.",
+	"commandBuilder.pageDesc": "Druk op ⊕ bij een opdracht om de sneltoets ervan in te stellen in de sneltoetsinstellingen van Obsidian.",
 	"commandBuilder.builtIn": "Ingebouwde opdrachten",
 	"commandBuilder.toggleAria": "{{name}} in- of uitschakelen",
 	"commandBuilder.hotkeyBlank": "Leeg",
@@ -195,7 +186,6 @@ export const nl: Record<string, string> = {
 	"commandBuilder.empty": "Nog geen aangepaste opdrachten.",
 	"commandBuilder.unknownCommand": "deze opdracht",
 	"commandBuilder.editAria": "{{name}} bewerken",
-	"commandBuilder.deleteAria": "{{name}} verwijderen",
 	"commandBuilder.deleteConfirm":
 		"De opdracht {{name}} verwijderen? Een eventueel toegewezen sneltoets stopt met werken.",
 	"commandBuilder.newTitle": "Nieuwe opdracht",
@@ -236,8 +226,7 @@ export const nl: Record<string, string> = {
 
 	"commandBuilder.roleThemeOwned":
 		"Uw thema levert deze callout, dus heeft deze alleen een Blok-indeling.",
-	"commandBuilder.commandSuspended":
-		"Gepauzeerd: uw thema levert deze callout, dus heeft deze alleen een Blok-indeling. Deze opdracht werkt weer zodra het thema deze niet meer levert.",
+	"commandBuilder.commandSuspended": "Gepauzeerd zolang je thema deze callout levert; die heeft dan alleen het blokformaat.",
 
 	"settings.resetAll": "Terugzetten",
 	"settings.resetAllDesc":
@@ -260,7 +249,7 @@ export const nl: Record<string, string> = {
 	"settings.resetItemThemeCalloutStyles": "Callout-stijlen van uw thema",
 	"settings.resetItemFallback": "Terugvalstijl",
 	"settings.resetItemIconLibraries": "Volgorde van pictogrambibliotheken en verborgen bibliotheken",
-	"settings.resetAllConfirmAfter": "Geen zorgen: voordat we terugzetten, slaan we een back-up van je huidige configuratie op. Je kunt die op elk moment herstellen via het onderdeel Back-ups in de instellingen.\nAls je een synchronisatieservice gebruikt, kan het terugzetten ook naar je andere apparaten worden doorgegeven.",
+	"settings.resetAllConfirmAfter": "Geen zorgen: voor het resetten bewaren we een back-up van je huidige instellingen. Je kunt die op elk moment terughalen via Versiegeschiedenis in de instellingen.\nAls je een synchronisatieservice gebruikt, kan de reset ook naar je andere apparaten doorwerken.",
 	"settings.resetNothing": "Niets om terug te zetten: alles staat al op de standaardinstellingen.",
 
 	"notice.customCommandMissingCallout":
@@ -348,14 +337,14 @@ export const nl: Record<string, string> = {
 	"editor.foldClosed": "Standaard gesloten",
 	"editor.cancel": "Annuleren",
 	"editor.saveChanges": "Wijzigingen opslaan",
-	"editor.saving": "Opslaan…",
 	"editor.saveFailed": "Opslaan is niet voltooid. Als deze editor nog open is, laat hem dan open en probeer het opnieuw nadat je de opslagruimte en synchronisatie hebt gecontroleerd. Sommige instellingen of wijzigingen in notities zijn mogelijk al opgeslagen.",
 	"editor.createCallout": "Callout aanmaken",
 	"editor.nameRequired":
 		"Een weergavenaam is vereist voordat u een callout aanmaakt.",
 	"editor.noChangesToSave": "Er zijn geen wijzigingen aangebracht.",
-	"editor.downloadingIcon": "Pictogram downloaden",
 	"editor.idEmpty": "Ten minste één ID is vereist",
+	"editor.idAlreadyHere": "Deze id bestaat al",
+	"editor.idTooLong": "De id mag maximaal {{max}} tekens hebben",
 	"editor.idExists": "Er bestaat al een callout met deze ID",
 	"editor.idConflict": "Deze ID is in conflict met een bestaande callout",
 	"editor.idDashConflict":
@@ -553,7 +542,6 @@ export const nl: Record<string, string> = {
 	"iconPicker.allSources": "Alle bronnen",
 	"iconPicker.searchAllSources": "Zoek in alle iconbronnen",
 	"iconPicker.chooseSource": "Bron kiezen",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "Beschikbare bibliotheken",
 	"iconPicker.librariesToDownload": "Bibliotheken om te downloaden",
 	"iconPicker.groupCurrent": "Huidig pictogram",
@@ -756,30 +744,30 @@ export const nl: Record<string, string> = {
 	"contextMenu.deleteSection": "Kopsectie verwijderen",
 	"heading.toggleFold": "Vouwen omschakelen",
 	"settings.globalSettings": "Globale Callout Studio-stijlopties",
+	"settings.calloutStyle": "Callout-stijl",
+	"settings.menusAndCommands": "Menu's en opdrachten",
+	"settings.buildFailed": "Callout Studio kon zijn instellingen niet tekenen; start Obsidian opnieuw en meld het als het weer gebeurt.",
 	"settings.globalSettingsRegularDesc":
 		"Pas de rand, hoekafronding, lettertypeschaal en uitlijning van elke block callout in uw vault aan.",
 	"settings.globalSettingsHeadingDesc":
 		"Pas de rand, vorm en verticale afstand van elke kop-callout in uw vault aan.",
 	"settings.globalSettingsInlineDesc":
 		"Pas de rand en vorm van elke inline callout in uw vault aan.",
-	"settings.globalSettingsCustomize": "Aanpassen",
 	"settings.themeCalloutStyles": "Callout-stijlen van uw thema gebruiken",
-	"settings.themeCalloutStylesDesc":
-		"Aan: callouts die uw thema opmaakt, behouden de look van uw thema.\nUit: Callout Studio tekent elke callout zelf, en de callout-stijlen van uw thema zijn uitgeschakeld.",
+	"settings.themeCalloutStylesDesc": "Als dit aan staat, behouden de callouts die je thema een stijl geeft het uiterlijk van het thema; als het uit staat, tekent Callout Studio alle callouts.",
 	"settings.calloutTypeRegular": "Blok-callout",
 	"settings.calloutTypeHeading": "Kop-callout",
 	"settings.calloutTypeInline": "Inline callout",
-	"settings.customizeMenu": "Menu-items aanpassen",
-	"settings.customizeMenuDesc":
-		"Kies welke rechtsklikacties worden weergegeven voor elk callout-type en wijzig de volgorde. Werkt in bronmodus en Live Preview.",
-	"settings.customizeMenuButton": "Menu-items aanpassen",
+	"settings.customizeMenuDesc": "Kies en orden de rechtsklikacties voor elk callout-type.",
 	"menuCustomize.title": "Rechtsklikmenu aanpassen",
-	"menuCustomize.desc":
-		"Schakel acties in of uit en sleep de handgreep om de volgorde te wijzigen. Wijzigingen worden automatisch opgeslagen.",
+	"menuCustomize.pageDesc": "Sleep een actie aan de greep om hem te verplaatsen, of verberg hem met ✕.",
 	"menuCustomize.regular": "Blok-callout",
 	"menuCustomize.heading": "Kop-callout",
 	"menuCustomize.inline": "Inline callout",
 	"menuCustomize.dragHandle": "Sleep om te herschikken",
+	"menuCustomize.hiddenHeading": "Verborgen in het kopcallout-menu",
+	"menuCustomize.hiddenInline": "Verborgen in het inline-callout-menu",
+	"menuCustomize.hiddenRegular": "Verborgen in het blokcallout-menu",
 	"menuItem.createOrEdit": "Callout maken of bewerken",
 	"menuItem.openSettings": "Instellingen openen",
 	"menuItem.copyMarkdown": "Markdown kopiëren",
@@ -846,7 +834,6 @@ export const nl: Record<string, string> = {
 	"vaultStats.roleBlock": "Blok",
 	"vaultStats.roleHeading": "Kop",
 	"vaultStats.roleInline": "In de tekst",
-	"portable.subtitle": "Kies welke callouts in koppen en tekst je naar standaard Markdown wilt omzetten voordat je stopt met Callout Studio.",
 	"portable.customize": "Aangepaste vervanging…",
 	"portable.editCustom": "Aangepaste vervanging bewerken…",
 	"portable.restoreDefault": "Standaardvervanging herstellen",
@@ -859,13 +846,13 @@ export const nl: Record<string, string> = {
 
 	"usage.title": "Callouts vinden",
 	"usage.command": "Callouts vinden",
-	"usage.subtitle": "Vind callouts in je kluis en ga direct naar hun bron.",
 	"usage.browse": "Bladeren",
 	"usage.allTypes": "Alle typen",
 	"usage.registeredCallouts": "Geregistreerde callouts",
 	"usage.unregisteredCallouts": "Niet-geregistreerde callouts",
 	"usage.summary": "{{count}} vindplaatsen in {{files}} bestanden",
 	"usage.allRoles": "Alle formaten",
+	"usage.filterFormat": "Filteren op formaat",
 	"usage.failed": "Kan de vindplaatsen van callouts niet bijwerken.",
 	"usage.loading": "Markdown-notities scannen…",
 	"usage.partial": "Resultaten zijn onvolledig: {{count}} leesfouten.",
@@ -878,7 +865,6 @@ export const nl: Record<string, string> = {
 	"usage.missing": "Deze notitie bestaat niet meer. Resultaten worden bijgewerkt…",
 	"usage.changed": "Deze vindplaats is gewijzigd of verplaatst naar een onduidelijke plek. Resultaten worden bijgewerkt…",
 	"usage.openFailed": "Kan deze vindplaats van de callout niet openen.",
-	"usage.menuCount": "Callouts vinden ({{count}})",
 	"usage.menuIncomplete": "Callouts vinden — scan onvolledig",
 	"usage.menu": "Callouts vinden",
 	"usage.closeSettings": "Sluit Instellingen om de callout-resultaten in de zijbalk te bekijken.",
@@ -1072,6 +1058,8 @@ export const nl: Record<string, string> = {
 	"footer.contribute": "Bijdragen",
 	"footer.license": "Pluginlicentie",
 	"footer.iconCredits": "Iconlicenties",
+	"settings.about": "Over",
+	"settings.version": "Versie",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Palet "{{name}}" verwijderen?\n1 callout gebruikt het. Het behoudt zijn kleuren en je kunt het later opnieuw koppelen via de rij Kleur in de editor.',
 	"settings.deletePaletteConfirmLinked":
@@ -1088,8 +1076,7 @@ export const nl: Record<string, string> = {
 	"palette.colorExistsUseLink": "de bestaande gebruiken",
 	"locale.downloading": "Vertaling downloaden…",
 	"locale.notDownloaded": "{{name}} is nog niet gedownload",
-	"locale.notDownloadedDesc":
-		"Callout Studio toont Engels totdat de vertaling kan worden gedownload. De volgende keer dat Obsidian start wordt het opnieuw geprobeerd.",
+	"locale.notDownloadedDesc": "Callout Studio toont Engels tot de vertaling is gedownload en probeert het opnieuw wanneer Obsidian start.",
 	"locale.retry": "Opnieuw proberen",
 	"locale.diskWriteFailed":
 		"Callout Studio kon de vertaling niet op schijf opslaan. De vertaling moet de volgende keer opnieuw worden gedownload.",
@@ -1114,13 +1101,14 @@ export const nl: Record<string, string> = {
 	"export.formatCss": "Zelfstandige CSS-momentopname",
 	"export.formatCssDesc":
 		"Voor websites of vaults waar Callout Studio niet draait. Bevat alleen blokcallouts en moet na wijzigingen opnieuw worden geëxporteerd.",
+	"export.formatCssAction": "Exporteren",
 	"quickInsert.readingViewHint": "Deze notitie is geopend in leesmodus, dus er kan niets worden ingevoegd.",
 	"quickInsert.readingView": "Schakel over naar bronmodus of Live Preview om een callout in te voegen.",
 	"quickInsert.noCursorHint": "Er is geen cursor in deze notitie, dus er is nergens om in te voegen.",
 	"quickInsert.noCursor": "Plaats de cursor in de notitie op de plek waar je de callout wilt invoegen en probeer het opnieuw.",
 	"notice.legacyDiscoveryArchiveFailed": "De herstelkopie voor de upgrade kon niet worden voltooid. De vorige lokale detectiecache en opstart-CSS zijn ongewijzigd behouden. Controleer de schrijftoegang tot de opslag en de vrije ruimte en start Obsidian vervolgens opnieuw om het nogmaals te proberen.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "Gepauzeerd: de callout ontbreekt. Ontdek of maak hem om deze opdracht te herstellen, of bewerk de opdracht om een ander type te kiezen.",
+	"commandBuilder.missingCallout": "Gepauzeerd tot je de ontbrekende callout opnieuw maakt of een andere kiest.",
 	"confirm.titleRestoreSettings": "Deze instellingen herstellen",
 	"confirm.titleCreateSettingsFile": "Instellingenbestand maken",
 	"confirm.saveDisplayedSettings":
@@ -1519,7 +1507,7 @@ export const nl: Record<string, string> = {
 	"notice.unsavedChangesKept": "Sommige wijzigingen op dit apparaat waren nog niet opgeslagen en werden vervangen door nieuwere instellingen van een ander apparaat. Je versie is eerst opgeslagen: open de versiegeschiedenis in de instellingen van Callout Studio om deze terug te halen.",
 	"settings.versionHistory": "Versiegeschiedenis",
 	"settings.versions": "Eerdere versies",
-	"settings.versionsDesc": "Callout Studio slaat automatisch versies van je configuratie op.\nVergelijk ze of keer terug naar een versie.",
+	"settings.versionsDesc": "Vergelijk automatisch opgeslagen versies van je instellingen, of ga terug naar een ervan.",
 	"settings.versionsButton": "Versies bekijken",
 	"noteChanges.callouts": "{{count}} callouts",
 	"noteChanges.calloutsOne": "1 callout",

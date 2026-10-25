@@ -91,7 +91,7 @@ export const ro: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "Alege mai întâi callout-ul cu care va fi înlocuit.",
 	"settings.fallbackTag": "Implicit",
 	"settings.fallbackTagAuto": "Implicit automat",
-	"settings.rescanVaultDesc": "Adaugă tipurile de callout folosite în notițele tale care nu sunt încă în această listă. Callout-urile și notițele tale existente nu sunt modificate.",
+	"settings.rescanVaultDesc": "Adaugă tipurile de callout folosite de notițele tale care nu sunt încă în această listă.",
 	"settings.rescanVaultHintAction": "Scanează după callout-uri",
 	"manualDiscovery.failed": "Rezultatele scanării nu au fost salvate. Verificați dacă setările pot fi scrise și sincronizarea s-a încheiat, apoi reîncercați din Setări → Tipurile mele de callout → Scanează după callout-uri. Callout-urile existente nu au fost înlocuite.",
 	"manualDiscovery.scanning": "Se scanează…",
@@ -139,14 +139,11 @@ export const ro: Record<string, string> = {
 	"deleteModal.keepsRowTheme":
 		"{{theme}} definește acest tip de callout, așa că rămâne disponibil și își păstrează aspectul. Callout Studio modifică doar notele din vault-ul dvs. — nimic ce aparține temei dvs. nu este atins.",
 
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Tipurile mele de callout",
 	"settings.builtInCallouts": "Callouts integrate",
 	"settings.contextMenu": "Meniu contextual",
-	"settings.keyboardShortcuts": "Comenzi",
 	"settings.language": "Limbă",
-	"settings.languageDesc":
-		"Limba de afișare pentru Callout Studio. În mod implicit urmează limba interfeței Obsidian.",
+	"settings.languageDesc": "Limba Callout Studio; cea din Obsidian, dacă nu alegi alta.",
 	"settings.importExport": "Import și export",
 	"settings.import": "Importați…",
 	"settings.export": "Exportați…",
@@ -162,6 +159,9 @@ export const ro: Record<string, string> = {
 	"settings.addNewCallout": "adaugă callout",
 
 	"settings.noCalloutsNow": "Niciun callout personalizat deocamdată.",
+	"settings.calloutCount": "{{count}} callout-uri",
+	"settings.calloutCountOne": "1 callout",
+	"settings.searchCallouts": "Caută callout-uri…",
 
 	"settings.editAria": "Editați {{name}}",
 	"settings.moreRowActionsAria": "Mai multe acțiuni pentru {{name}}",
@@ -179,9 +179,9 @@ export const ro: Record<string, string> = {
 	"settings.colorSwatchAria": "Accent: {{accent}} · Fundal: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts din tema dvs.",
-	"settings.themeCalloutsDesc":
-		"{{theme}} furnizează sau restilizează acestea, așa că Callout Studio le lasă exact așa cum le desenează tema dvs. și le oferă doar ca callouts bloc. Ambele tipuri apar aici: tipurile de callout adăugate de tema dvs. și callouts integrate al căror aspect îl înlocuiește. Tipurile de callout adăugate de temă sunt afișate doar cât timp este activă.",
+	"settings.themeCalloutsDesc": "{{theme}} desenează aceste callout-uri, așa că Callout Studio le lasă neschimbate și le oferă doar ca callout-uri de tip bloc.",
 	"settings.themeCalloutsDefaultTheme": "Tema dvs.",
+	"settings.themeCalloutsEmpty": "{{theme}} nu stilizează niciun callout în acest moment.",
 	"settings.themePreviewAria":
 		'Previzualizare "{{name}}" — vedeți cum îl desenează tema dvs.',
 	"settings.builtInAllThemeStyled":
@@ -190,11 +190,7 @@ export const ro: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Tipurile de callout nerecunoscute din vault vor moșteni stilul acestui callout.",
 
-	"settings.globalStyleRegularTitle": "Stil global pentru callout-uri de bloc",
-	"settings.globalStyleHeadingTitle": "Stil global pentru callout-uri de titlu",
-	"settings.globalStyleInlineTitle": "Stil global pentru callout-uri inline",
 	"settings.border": "Borduri",
-	"settings.borderAll": "Toate",
 	"settings.borderTop": "Sus",
 	"settings.borderRight": "Dreapta",
 	"settings.borderBottom": "Jos",
@@ -204,14 +200,11 @@ export const ro: Record<string, string> = {
 	"settings.titleScale": "Titlu",
 	"settings.contentScale": "Conținut",
 	"settings.inlineTextScale": "Text",
-	"settings.shapeGroup": "Formă",
 	"settings.borderRadius": "Rotunjirea colțurilor",
-	"settings.alignGroup": "Aliniere",
 	"settings.alignContent": "Aliniați conținutul cu titlul",
 	"settings.headingSpacingGroup": "Spațierea titlului",
 	"settings.headingPadVertical": "Spațiere verticală",
 	"settings.headingGap": "Spațiere între titluri",
-	"settings.headingFoldGroup": "Pliere",
 	"settings.headingFoldArrow": "Afișează săgeata de pliere",
 	"settings.styleDemoName": "Exemplu",
 	"settings.styleDemoInlineName": "Exemplu",
@@ -223,21 +216,19 @@ export const ro: Record<string, string> = {
 	"settings.customPalettes": "Palete de culori salvate",
 	"settings.newPalette": "Paletă nouă",
 	"settings.customPalettesEmpty": "Nicio paletă salvată deocamdată.",
+	"settings.paletteCount": "{{count}} palete",
+	"settings.paletteCountOne": "1 paletă",
 	"settings.editPaletteAria": "Editați paleta {{name}}",
-	"settings.deletePaletteAria": "Ștergeți paleta {{name}}",
 	"settings.deletePaletteConfirm":
 		'Ștergeți paleta "{{name}}"?\nCallout-urile care îi folosesc culorile nu sunt afectate.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callout-urile care o menționează în metadate ("{{key}}") preiau în schimb culoarea încorporată cu acel nume. Notițele tale nu se schimbă.',
 
 	"settings.customCommands": "Comenzi și taste rapide",
-	"settings.customCommandsDesc":
-		"Vedeți fiecare comandă Callout Studio și scurtătura la care este asociată, și creați-vă propriile comenzi pentru callouts pe care le folosiți cel mai mult. Implicit nu sunt atribuite scurtături.",
-	"settings.customCommandsButton": "Gestionați comenzile",
+	"settings.customCommandsDesc": "Toate comenzile Callout Studio, scurtăturile lor și propriile tale comenzi.",
 
 	"commandBuilder.title": "Comenzi și scurtături",
-	"commandBuilder.desc":
-		"Folosiți butonul + pentru a seta sau schimba o scurtătură în setările de scurtături ale Obsidian.",
+	"commandBuilder.pageDesc": "Apasă ⊕ lângă o comandă pentru a-i seta scurtătura în setările de taste rapide din Obsidian.",
 	"commandBuilder.builtIn": "Comenzi integrate",
 	"commandBuilder.toggleAria": "Activați sau dezactivați {{name}}",
 	"commandBuilder.hotkeyBlank": "Gol",
@@ -247,7 +238,6 @@ export const ro: Record<string, string> = {
 	"commandBuilder.empty": "Nicio comandă personalizată încă.",
 	"commandBuilder.unknownCommand": "această comandă",
 	"commandBuilder.editAria": "Editați {{name}}",
-	"commandBuilder.deleteAria": "Ștergeți {{name}}",
 	"commandBuilder.deleteConfirm":
 		"Ștergeți comanda {{name}}? Orice scurtătură atribuită acesteia va înceta să funcționeze.",
 	"commandBuilder.newTitle": "Comandă nouă",
@@ -261,8 +251,7 @@ export const ro: Record<string, string> = {
 		"Acest format este dezactivat, așa că această comandă va insera text simplu până când îl reactivați.",
 	"commandBuilder.roleThemeOwned":
 		"Tema dvs. furnizează acest callout, așa că are doar un format bloc.",
-	"commandBuilder.commandSuspended":
-		"În pauză: tema dvs. furnizează acest callout, așa că are doar un format bloc. Această comandă funcționează din nou când tema nu îl mai furnizează.",
+	"commandBuilder.commandSuspended": "În pauză cât timp tema ta oferă acest callout, care are atunci doar formatul bloc.",
 	"commandBuilder.callout": "Tip de callout",
 	"commandBuilder.calloutDesc":
 		"Callout-ul pe care îl inserează această comandă.",
@@ -313,7 +302,7 @@ export const ro: Record<string, string> = {
 		"Stilurile de callout ale temei dvs.",
 	"settings.resetItemFallback": "Stil de rezervă",
 	"settings.resetItemIconLibraries": "Ordinea bibliotecilor de pictograme și bibliotecile ascunse",
-	"settings.resetAllConfirmAfter": "Nu vă faceți griji: înainte de resetare salvăm un backup al configurației curente. Îl puteți restaura oricând din secțiunea Backup-uri din setări.\nDacă folosiți un serviciu de sincronizare, resetarea poate ajunge și pe celelalte dispozitive ale dumneavoastră.",
+	"settings.resetAllConfirmAfter": "Nicio grijă: înainte de resetare salvăm o copie de rezervă a configurației tale actuale. O poți aduce înapoi oricând din Istoricul versiunilor din setări.\nDacă folosești un serviciu de sincronizare, resetarea poate ajunge și pe celelalte dispozitive ale tale.",
 	"settings.resetNothing": "Nimic de resetat: totul este deja la valorile implicite.",
 
 	"notice.customCommandMissingCallout":
@@ -400,14 +389,14 @@ export const ro: Record<string, string> = {
 	"editor.foldClosed": "Închis implicit",
 	"editor.cancel": "Anulare",
 	"editor.saveChanges": "Salvați modificările",
-	"editor.saving": "Se salvează…",
 	"editor.saveFailed": "Salvarea nu a putut fi finalizată. Dacă acest editor este încă deschis, păstrați-l deschis și reîncercați după ce verificați spațiul de stocare și sincronizarea. Este posibil ca unele setări sau modificări ale notelor să fi fost deja salvate.",
 	"editor.createCallout": "Creați callout",
 	"editor.nameRequired":
 		"Este necesar un nume afișat înainte de a crea un callout.",
 	"editor.noChangesToSave": "Nu s-au efectuat modificări.",
-	"editor.downloadingIcon": "Se descarcă pictograma",
 	"editor.idEmpty": "Este necesar cel puțin un ID",
+	"editor.idAlreadyHere": "Acest ID există deja",
+	"editor.idTooLong": "ID-ul poate avea cel mult {{max}} caractere",
 	"editor.idExists": "Există deja un callout cu acest ID",
 	"editor.idConflict": "Acest ID intră în conflict cu un callout existent",
 	"editor.idFromTheme":
@@ -598,7 +587,6 @@ export const ro: Record<string, string> = {
 	"iconPicker.allSources": "Toate sursele",
 	"iconPicker.searchAllSources": "Caută în toate sursele de pictograme",
 	"iconPicker.chooseSource": "Alege sursa",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "Biblioteci disponibile",
 	"iconPicker.librariesToDownload": "Biblioteci de descărcat",
 	"iconPicker.groupCurrent": "Pictograma curentă",
@@ -802,31 +790,31 @@ export const ro: Record<string, string> = {
 	"contextMenu.deleteSection": "Ștergeți secțiunea de titlu",
 	"heading.toggleFold": "Comutare pliere",
 	"settings.globalSettings": "Opțiuni de stil globale Callout Studio",
+	"settings.calloutStyle": "Stilul callout-ului",
+	"settings.menusAndCommands": "Meniuri și comenzi",
+	"settings.buildFailed": "Callout Studio nu a putut afișa setările; repornește Obsidian și raportează problema dacă se repetă.",
 	"settings.globalSettingsRegularDesc":
 		"Ajustați bordura, rotunjirea, scara fontului și alinierea fiecărui block callout din vault-ul dvs.",
 	"settings.globalSettingsHeadingDesc":
 		"Ajustați bordura, forma și spațierea verticală a fiecărui callout tip titlu din vault-ul dvs.",
 	"settings.globalSettingsInlineDesc":
 		"Ajustați bordura și forma fiecărui callout inline din vault-ul dvs.",
-	"settings.globalSettingsCustomize": "Personalizați",
 	"settings.themeCalloutStyles":
 		"Folosiți stilurile de callout ale temei dvs.",
-	"settings.themeCalloutStylesDesc":
-		"Activat: callout-urile pe care le stilizează tema dvs. își păstrează aspectul temei.\nDezactivat: Callout Studio desenează fiecare callout singur, iar stilurile de callout ale temei dvs. sunt dezactivate.",
+	"settings.themeCalloutStylesDesc": "Când e activat, callout-urile pe care le stilizează tema ta își păstrează aspectul ei; când e dezactivat, Callout Studio desenează toate callout-urile.",
 	"settings.calloutTypeRegular": "Callout de tip bloc",
 	"settings.calloutTypeHeading": "Callout tip titlu",
 	"settings.calloutTypeInline": "Callout inline",
-	"settings.customizeMenu": "Personalizați elementele meniului",
-	"settings.customizeMenuDesc":
-		"Alegeți ce acțiuni de clic dreapta apar pentru fiecare tip de callout și reordonați-le. Funcționează în modul sursă și Live Preview.",
-	"settings.customizeMenuButton": "Personalizați elementele meniului",
+	"settings.customizeMenuDesc": "Alege și ordonează acțiunile clicului dreapta pentru fiecare tip de callout.",
 	"menuCustomize.title": "Personalizare meniu clic dreapta",
-	"menuCustomize.desc":
-		"Activați sau dezactivați acțiuni și trageți mânerul pentru a le reordona. Modificările sunt salvate automat.",
+	"menuCustomize.pageDesc": "Trage o acțiune de mâner ca s-o muți sau ascunde-o cu ✕.",
 	"menuCustomize.regular": "Callout de tip bloc",
 	"menuCustomize.heading": "Callout tip titlu",
 	"menuCustomize.inline": "Callout inline",
 	"menuCustomize.dragHandle": "Trageți pentru a reordona",
+	"menuCustomize.hiddenHeading": "Ascunse din meniul callout-urilor din titluri",
+	"menuCustomize.hiddenInline": "Ascunse din meniul callout-urilor în linie",
+	"menuCustomize.hiddenRegular": "Ascunse din meniul callout-urilor de tip bloc",
 	"menuItem.createOrEdit": "Creați sau editați un callout",
 	"menuItem.openSettings": "Deschideți setările",
 	"menuItem.copyMarkdown": "Copiați Markdown",
@@ -894,7 +882,6 @@ export const ro: Record<string, string> = {
 	"vaultStats.roleBlock": "Bloc",
 	"vaultStats.roleHeading": "Titlu",
 	"vaultStats.roleInline": "În linie",
-	"portable.subtitle": "Alegeți ce callouturi din titluri și din text să convertiți în Markdown standard înainte de a renunța la Callout Studio.",
 	"portable.customize": "Înlocuire personalizată…",
 	"portable.editCustom": "Editați înlocuirea personalizată…",
 	"portable.restoreDefault": "Restabiliți înlocuirea implicită",
@@ -907,13 +894,13 @@ export const ro: Record<string, string> = {
 
 	"usage.title": "Găsește callout-uri",
 	"usage.command": "Găsește callout-uri",
-	"usage.subtitle": "Găsiți callout-uri în seif și mergeți la sursa lor.",
 	"usage.browse": "Răsfoire",
 	"usage.allTypes": "Toate tipurile",
 	"usage.registeredCallouts": "Callout-uri înregistrate",
 	"usage.unregisteredCallouts": "Callout-uri neînregistrate",
 	"usage.summary": "{{count}} apariții în {{files}} fișiere",
 	"usage.allRoles": "Toate formatele",
+	"usage.filterFormat": "Filtrează după format",
 	"usage.failed": "Nu s-au putut actualiza aparițiile callout-urilor.",
 	"usage.loading": "Se scanează notele Markdown…",
 	"usage.partial": "Rezultatele sunt incomplete: {{count}} erori de citire.",
@@ -926,7 +913,6 @@ export const ro: Record<string, string> = {
 	"usage.missing": "Această notă nu mai există. Se actualizează rezultatele…",
 	"usage.changed": "Această apariție s-a modificat sau a fost mutată într-un loc incert. Se actualizează rezultatele…",
 	"usage.openFailed": "Nu s-a putut deschide această apariție de callout.",
-	"usage.menuCount": "Găsește callout-uri ({{count}})",
 	"usage.menuIncomplete": "Găsește callout-uri — scanare incompletă",
 	"usage.menu": "Găsește callout-uri",
 	"usage.closeSettings": "Închide Setări pentru a vedea rezultatele pentru callout-uri în bara laterală.",
@@ -1119,6 +1105,8 @@ export const ro: Record<string, string> = {
 	"footer.contribute": "Contribuie",
 	"footer.license": "Licența pluginului",
 	"footer.iconCredits": "Licențe pictograme",
+	"settings.about": "Despre",
+	"settings.version": "Versiune",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Ștergeți paleta "{{name}}"?\n1 callout o folosește. Își păstrează culorile, iar mai târziu îl puteți reconecta din rândul Culoare din editorul lui.',
 	"settings.deletePaletteConfirmLinked":
@@ -1135,8 +1123,7 @@ export const ro: Record<string, string> = {
 	"palette.colorExistsUseLink": "folosiți-o pe cea existentă",
 	"locale.downloading": "Se descarcă traducerea…",
 	"locale.notDownloaded": "{{name}} nu a fost descărcat încă",
-	"locale.notDownloadedDesc":
-		"Callout Studio afișează engleza până când traducerea poate fi descărcată. Va încerca din nou la următoarea pornire a Obsidian.",
+	"locale.notDownloadedDesc": "Callout Studio afișează engleza până se descarcă traducerea și încearcă din nou la pornirea Obsidian.",
 	"locale.retry": "Încearcă din nou",
 	"locale.diskWriteFailed":
 		"Callout Studio nu a putut salva traducerea pe disc, așa că va trebui descărcată din nou data viitoare.",
@@ -1160,13 +1147,14 @@ export const ro: Record<string, string> = {
 	"export.formatCss": "Instantaneu CSS autonom",
 	"export.formatCssDesc":
 		"Pentru site-uri web sau vaulturi în care Callout Studio nu rulează. Include numai callouturi de tip bloc și trebuie exportat din nou după modificări.",
+	"export.formatCssAction": "Exportă",
 	"quickInsert.readingViewHint": "Această notă este deschisă în modul de citire, așa că nimic nu poate fi inserat.",
 	"quickInsert.readingView": "Comută la modul sursă sau la Live Preview pentru a insera un callout.",
 	"quickInsert.noCursorHint": "Nu există niciun cursor în această notă, așa că nu există unde să inserezi.",
 	"quickInsert.noCursor": "Plasează cursorul în notă în locul în care dorești să inserezi callout-ul, apoi încearcă din nou.",
 	"notice.legacyDiscoveryArchiveFailed": "Copia de recuperare pentru actualizare nu a putut fi finalizată. Cache-ul local anterior pentru detectare și CSS-ul de pornire au fost păstrate neschimbate. Verifică accesul de scriere la spațiul de stocare și spațiul liber, apoi repornește Obsidian pentru a încerca din nou.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "În pauză: callout-ul lipsește. Descoperă-l sau creează-l pentru a restabili această comandă, sau editează comanda pentru a alege alt tip.",
+	"commandBuilder.missingCallout": "În pauză până recreezi callout-ul lipsă sau alegi altul.",
 	"confirm.titleRestoreSettings": "Restaurează aceste setări",
 	"confirm.titleCreateSettingsFile": "Creează fișierul de setări",
 	"confirm.saveDisplayedSettings":
@@ -1511,7 +1499,7 @@ export const ro: Record<string, string> = {
 	"notice.unsavedChangesKept": "Unele modificări de pe acest dispozitiv nu fuseseră încă salvate și au fost înlocuite de setări mai noi de pe alt dispozitiv. Versiunea ta a fost salvată mai întâi: deschide istoricul versiunilor din setările Callout Studio pentru a o recupera.",
 	"settings.versionHistory": "Istoricul versiunilor",
 	"settings.versions": "Versiuni anterioare",
-	"settings.versionsDesc": "Callout Studio salvează automat versiuni ale configurației tale.\nCompară-le sau revino la una dintre ele.",
+	"settings.versionsDesc": "Compară versiunile salvate automat ale configurației tale sau revino la una dintre ele.",
 	"settings.versionsButton": "Vezi versiunile",
 	"noteChanges.callouts": "{{count}} callout-uri",
 	"noteChanges.calloutsOne": "1 callout",

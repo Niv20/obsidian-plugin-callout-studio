@@ -57,7 +57,6 @@ const IN_PROGRESS: readonly string[] = [
 	"locale.downloading",
 	"portable.scanning",
 	"portable.converting",
-	"editor.saving",
 	"iconPack.downloading",
 	"iconLibraries.downloading",
 	"iconLibraries.deleting",

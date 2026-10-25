@@ -440,11 +440,9 @@ export const en: Record<string, string> = {
 		"{{theme}} defines this callout type, so it stays available and keeps its look. Callout Studio only changes notes inside your vault — nothing belonging to your theme is touched.",
 
 	// Settings — Section headings
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "My callout types",
 	"settings.builtInCallouts": "Built-in callouts",
 	"settings.contextMenu": "Context menu",
-	"settings.keyboardShortcuts": "Commands",
 	"settings.language": "Language",
 	"settings.languageDesc":
 		"Callout Studio's language, Obsidian's unless you choose another.",
@@ -515,11 +513,7 @@ export const en: Record<string, string> = {
 		"Unrecognized callout types in your vault will inherit the style of this callout.",
 
 	// Settings — Global style
-	"settings.globalStyleRegularTitle": "Global Block callout style",
-	"settings.globalStyleHeadingTitle": "Global Heading callout style",
-	"settings.globalStyleInlineTitle": "Global Inline callout style",
 	"settings.border": "Borders",
-	"settings.borderAll": "All",
 	"settings.borderTop": "Top",
 	"settings.borderRight": "Right",
 	"settings.borderBottom": "Bottom",
@@ -529,14 +523,11 @@ export const en: Record<string, string> = {
 	"settings.titleScale": "Title",
 	"settings.contentScale": "Content",
 	"settings.inlineTextScale": "Text",
-	"settings.shapeGroup": "Shape",
 	"settings.borderRadius": "Corner rounding",
-	"settings.alignGroup": "Align",
 	"settings.alignContent": "Align content with title",
 	"settings.headingSpacingGroup": "Title spacing",
 	"settings.headingPadVertical": "Vertical spacing",
 	"settings.headingGap": "Spacing between headers",
-	"settings.headingFoldGroup": "Fold",
 	"settings.headingFoldArrow": "Show fold arrow",
 	"settings.styleDemoName": "Example",
 	"settings.styleDemoInlineName": "Example",
@@ -551,7 +542,6 @@ export const en: Record<string, string> = {
 	"settings.paletteCount": "{{count}} palettes",
 	"settings.paletteCountOne": "1 palette",
 	"settings.editPaletteAria": "Edit palette {{name}}",
-	"settings.deletePaletteAria": "Delete palette {{name}}",
 	"settings.deletePaletteConfirm":
 		'Delete palette "{{name}}"?\nCallouts that use its colors are not affected.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
@@ -561,12 +551,9 @@ export const en: Record<string, string> = {
 	"settings.customCommands": "Commands & Hotkeys",
 	"settings.customCommandsDesc":
 		"Every Callout Studio command, its shortcut, and commands of your own.",
-	"settings.customCommandsButton": "Manage commands",
 
 	// Command builder
 	"commandBuilder.title": "Commands and shortcuts",
-	"commandBuilder.desc":
-		"Use the + button to set or change a shortcut in Obsidian's hotkey settings.",
 	"commandBuilder.pageDesc": "Press ⊕ on a command to set its shortcut in Obsidian's hotkey settings.",
 	"commandBuilder.builtIn": "Built-in commands",
 	"commandBuilder.toggleAria": "Turn {{name}} on or off",
@@ -577,7 +564,6 @@ export const en: Record<string, string> = {
 	"commandBuilder.empty": "No custom commands yet.",
 	"commandBuilder.unknownCommand": "this command",
 	"commandBuilder.editAria": "Edit {{name}}",
-	"commandBuilder.deleteAria": "Delete {{name}}",
 	"commandBuilder.deleteConfirm":
 		"Delete the command {{name}}? Any shortcut assigned to it will stop working.",
 	"commandBuilder.newTitle": "New command",
@@ -661,7 +647,6 @@ export const en: Record<string, string> = {
 	"portable.reviewTitle": "Review conversion",
 	"portable.help": "About conversion",
 	"portable.helpIntro": "Select the replacements to apply. Click the pencil or replacement text to edit, then press Enter or click away to save. Use the reset icon to discard a draft or restore the default replacement. Notes change only after you choose Convert selected and confirm. Heading links update with their selected headings.",
-	"portable.subtitle": "Choose which heading and inline callouts to convert to standard Markdown before leaving Callout Studio.",
 	"portable.customize": "Custom replacement…",
 	"portable.editCustom": "Edit custom replacement…",
 	"portable.restoreDefault": "Restore default replacement",
@@ -857,13 +842,11 @@ export const en: Record<string, string> = {
 	"editor.foldClosed": "Closed by default",
 	"editor.cancel": "Cancel",
 	"editor.saveChanges": "Save changes",
-	"editor.saving": "Saving…",
 	"editor.saveFailed": "The save could not be completed. If this editor is still open, keep it open and retry after checking storage and synchronization. Some settings or note updates may already have been saved.",
 	"editor.createCallout": "Create callout",
 	"editor.nameRequired":
 		"A display name is required before creating a callout.",
 	"editor.noChangesToSave": "No changes were made.",
-	"editor.downloadingIcon": "Downloading icon",
 	"editor.idEmpty": "At least one ID is required",
 	// Refusals of an ID typed into the IDs field: one this callout already has,
 	// and one longer than the field allows.
@@ -1114,7 +1097,6 @@ export const en: Record<string, string> = {
 	"iconPicker.allSources": "All sources",
 	"iconPicker.searchAllSources": "Search all icon sources",
 	"iconPicker.chooseSource": "Choose source",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	// The Manage icon libraries window's band headings; the source menu used
 	// them too until it stopped listing libraries to download.
 	"iconPicker.librariesAvailable": "Available libraries",
@@ -1339,7 +1321,6 @@ export const en: Record<string, string> = {
 		"Adjust the border, shape, and vertical spacing of every heading callout in your vault.",
 	"settings.globalSettingsInlineDesc":
 		"Adjust the border and shape of every inline callout in your vault.",
-	"settings.globalSettingsCustomize": "Customize",
 	"settings.themeCalloutStyles": "Use your theme's callout styles",
 	"settings.themeCalloutStylesDesc":
 		"When on, the callouts your theme styles keep its look; when off, Callout Studio draws every callout.",
@@ -1350,13 +1331,9 @@ export const en: Record<string, string> = {
 	"settings.calloutTypeInline": "Inline callout",
 
 	// Context menu customization
-	"settings.customizeMenu": "Customize menu items",
 	"settings.customizeMenuDesc":
 		"Choose and order the right-click actions for each callout type.",
-	"settings.customizeMenuButton": "Customize menu items",
 	"menuCustomize.title": "Customize right-click menu",
-	"menuCustomize.desc":
-		"Toggle actions on or off and drag the handle to reorder them. Changes are saved automatically.",
 	"menuCustomize.pageDesc": "Drag an action by its handle to move it, or hide it with ✕.",
 	"menuCustomize.regular": "Block callout",
 	"menuCustomize.heading": "Heading callout",
@@ -1443,7 +1420,6 @@ export const en: Record<string, string> = {
 
 	"usage.title": "Find callouts",
 	"usage.command": "Find callouts",
-	"usage.subtitle": "Find callouts in your vault and jump to their source.",
 	"usage.browse": "Browse",
 	"usage.allTypes": "All types",
 	"usage.registeredCallouts": "Registered callouts",
@@ -1464,7 +1440,6 @@ export const en: Record<string, string> = {
 	"usage.missing": "This note no longer exists. Updating results…",
 	"usage.changed": "This occurrence has changed or moved ambiguously. Updating results…",
 	"usage.openFailed": "Could not open this callout occurrence.",
-	"usage.menuCount": "Find callouts ({{count}})",
 	"usage.menuIncomplete": "Find callouts — scan incomplete",
 	"usage.menu": "Find callouts",
 	"usage.closeSettings": "Close Settings to view the callout results in the sidebar.",

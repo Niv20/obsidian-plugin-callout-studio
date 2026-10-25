@@ -91,7 +91,7 @@ export const uk: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "Спершу виберіть callout, на який його потрібно замінити.",
 	"settings.fallbackTag": "За замовчуванням",
 	"settings.fallbackTagAuto": "Авт. за замовчуванням",
-	"settings.rescanVaultDesc": "Додає типи callout, які використовуються у ваших нотатках і яких ще немає в цьому списку. Наявні callout і нотатки не змінюються.",
+	"settings.rescanVaultDesc": "Додає типи callout, які використовують ваші нотатки й яких ще немає в цьому списку.",
 	"settings.rescanVaultHintAction": "Пошук callout",
 	"manualDiscovery.failed": "Результати пошуку не збережено. Переконайтеся, що файл налаштувань доступний для запису й синхронізацію завершено, а потім повторіть спробу через Налаштування → Мої типи callout → Пошук callout. Наявні callout не замінено.",
 	"manualDiscovery.scanning": "Сканування…",
@@ -140,14 +140,11 @@ export const uk: Record<string, string> = {
 	"deleteModal.keepsRowTheme":
 		"{{theme}} визначає цей тип callout, тому він залишається доступним і зберігає свій вигляд. Callout Studio змінює лише нотатки у вашому сховищі — нічого, що належить вашій темі, не зачіпається.",
 
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Мої типи callout",
 	"settings.builtInCallouts": "Вбудовані callout",
 	"settings.contextMenu": "Контекстне меню",
-	"settings.keyboardShortcuts": "Команди",
 	"settings.language": "Мова",
-	"settings.languageDesc":
-		"Мова інтерфейсу Callout Studio. За замовчуванням відповідає мові інтерфейсу Obsidian.",
+	"settings.languageDesc": "Мова Callout Studio; за замовчуванням мова Obsidian, доки ви не оберете іншу.",
 	"settings.importExport": "Імпорт і експорт",
 	"settings.import": "Імпорт…",
 	"settings.export": "Експорт…",
@@ -163,6 +160,9 @@ export const uk: Record<string, string> = {
 	"settings.addNewCallout": "додати callout",
 
 	"settings.noCalloutsNow": "Наразі немає користувацьких callout.",
+	"settings.calloutCount": "Callout: {{count}}",
+	"settings.calloutCountOne": "1 callout",
+	"settings.searchCallouts": "Пошук callout…",
 
 	"settings.editAria": "Редагувати {{name}}",
 	"settings.moreRowActionsAria": "Інші дії для {{name}}",
@@ -182,9 +182,9 @@ export const uk: Record<string, string> = {
 
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callout з вашої теми",
-	"settings.themeCalloutsDesc":
-		"{{theme}} надає або перестилізовує ці callout, тому Callout Studio залишає їх точно такими, як їх малює ваша тема, і пропонує їх лише як блокові callout. Тут з'являються обидва види: типи callout, які додає ваша тема, і вбудовані callout, вигляд яких вона замінює. Типи callout, які додає ваша тема, показані лише поки вона активна.",
+	"settings.themeCalloutsDesc": "{{theme}} сама малює ці callout, тому Callout Studio залишає їх як є й пропонує лише як блокові callout.",
 	"settings.themeCalloutsDefaultTheme": "Ваша тема",
+	"settings.themeCalloutsEmpty": "{{theme}} зараз не оформлює жодного callout.",
 	"settings.themePreviewAria":
 		'Попередній перегляд "{{name}}" — подивитись, як його малює ваша тема',
 	"settings.builtInAllThemeStyled":
@@ -194,11 +194,7 @@ export const uk: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Нерозпізнані типи callout у сховищі успадкують стиль цього callout.",
 
-	"settings.globalStyleRegularTitle": "Глобальний стиль блокових callout",
-	"settings.globalStyleHeadingTitle": "Глобальний стиль callout-заголовків",
-	"settings.globalStyleInlineTitle": "Глобальний стиль вбудованих callout",
 	"settings.border": "Рамки",
-	"settings.borderAll": "Усі",
 	"settings.borderTop": "Зверху",
 	"settings.borderRight": "Справа",
 	"settings.borderBottom": "Знизу",
@@ -208,14 +204,11 @@ export const uk: Record<string, string> = {
 	"settings.titleScale": "Заголовок",
 	"settings.contentScale": "Вміст",
 	"settings.inlineTextScale": "Текст",
-	"settings.shapeGroup": "Форма",
 	"settings.borderRadius": "Заокруглення кутів",
-	"settings.alignGroup": "Вирівнювання",
 	"settings.alignContent": "Вирівняти вміст за заголовком",
 	"settings.headingSpacingGroup": "Інтервал заголовка",
 	"settings.headingPadVertical": "Вертикальний інтервал",
 	"settings.headingGap": "Відстань між заголовками",
-	"settings.headingFoldGroup": "Згортання",
 	"settings.headingFoldArrow": "Показати стрілку згортання",
 	"settings.styleDemoName": "Приклад",
 	"settings.styleDemoInlineName": "Приклад",
@@ -227,21 +220,19 @@ export const uk: Record<string, string> = {
 	"settings.customPalettes": "Збережені кольорові палітри",
 	"settings.newPalette": "Нова палітра",
 	"settings.customPalettesEmpty": "Наразі немає збережених палітр.",
+	"settings.paletteCount": "Палітр: {{count}}",
+	"settings.paletteCountOne": "1 палітра",
 	"settings.editPaletteAria": "Редагувати палітру {{name}}",
-	"settings.deletePaletteAria": "Видалити палітру {{name}}",
 	"settings.deletePaletteConfirm":
 		'Видалити палітру "{{name}}"?\nБлоки callout, які використовують її кольори, не зміняться.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callout, які вказують її в метаданих ("{{key}}"), натомість отримують вбудований колір із такою назвою. Ваші нотатки не змінюються.',
 
 	"settings.customCommands": "Команди та гарячі клавіші",
-	"settings.customCommandsDesc":
-		"Перегляньте всі команди Callout Studio та прив'язані до них гарячі клавіші, а також створіть власні команди для найуживаніших callout. За замовчуванням гарячі клавіші не призначені.",
-	"settings.customCommandsButton": "Керувати командами",
+	"settings.customCommandsDesc": "Усі команди Callout Studio, їхні скорочення та ваші власні команди.",
 
 	"commandBuilder.title": "Команди та гарячі клавіші",
-	"commandBuilder.desc":
-		"Натисніть +, щоб встановити або змінити гарячу клавішу в налаштуваннях гарячих клавіш Obsidian.",
+	"commandBuilder.pageDesc": "Натисніть ⊕ біля команди, щоб задати її скорочення в налаштуваннях гарячих клавіш Obsidian.",
 	"commandBuilder.builtIn": "Вбудовані команди",
 	"commandBuilder.toggleAria": "Увімкнути або вимкнути {{name}}",
 	"commandBuilder.hotkeyBlank": "Порожньо",
@@ -251,7 +242,6 @@ export const uk: Record<string, string> = {
 	"commandBuilder.empty": "Користувацьких команд ще немає.",
 	"commandBuilder.unknownCommand": "цю команду",
 	"commandBuilder.editAria": "Редагувати {{name}}",
-	"commandBuilder.deleteAria": "Видалити {{name}}",
 	"commandBuilder.deleteConfirm":
 		"Видалити команду {{name}}? Будь-яка призначена їй гаряча клавіша перестане працювати.",
 	"commandBuilder.newTitle": "Нова команда",
@@ -292,8 +282,7 @@ export const uk: Record<string, string> = {
 
 	"commandBuilder.roleThemeOwned":
 		"Ваша тема надає цей callout, тому він має лише блоковий формат.",
-	"commandBuilder.commandSuspended":
-		"Призупинено: ваша тема надає цей callout, тому він має лише блоковий формат. Ця команда знову запрацює, коли тема перестане його надавати.",
+	"commandBuilder.commandSuspended": "Призупинено, поки цей callout надає ваша тема; тоді в нього є лише блоковий формат.",
 
 	"settings.resetAll": "Скинути",
 	"settings.resetAllDesc":
@@ -316,7 +305,7 @@ export const uk: Record<string, string> = {
 	"settings.resetItemThemeCalloutStyles": "Стилі callout вашої теми",
 	"settings.resetItemFallback": "Резервний стиль",
 	"settings.resetItemIconLibraries": "Порядок бібліотек іконок і приховані бібліотеки",
-	"settings.resetAllConfirmAfter": "Не хвилюйтеся: перед скиданням ми збережемо резервну копію вашої поточної конфігурації. Її можна відновити будь-коли в розділі «Резервні копії» в налаштуваннях.\nЯкщо ви користуєтеся службою синхронізації, скидання може дійти й до ваших інших пристроїв.",
+	"settings.resetAllConfirmAfter": "Не хвилюйтеся: перед скиданням ми зберігаємо резервну копію ваших поточних налаштувань. Ви можете повернути її будь-коли через Історію версій у налаштуваннях.\nЯкщо ви користуєтеся службою синхронізації, скидання може дійти й до ваших інших пристроїв.",
 	"settings.resetNothing": "Скидати нічого: усе вже має типові значення.",
 
 	"notice.customCommandMissingCallout":
@@ -403,14 +392,14 @@ export const uk: Record<string, string> = {
 	"editor.foldClosed": "Закритий за замовчуванням",
 	"editor.cancel": "Скасувати",
 	"editor.saveChanges": "Зберегти зміни",
-	"editor.saving": "Збереження…",
 	"editor.saveFailed": "Не вдалося завершити збереження. Якщо це вікно редагування ще відкрите, залиште його відкритим і повторіть спробу після перевірки сховища та синхронізації. Деякі налаштування або зміни нотаток уже могли зберегтися.",
 	"editor.createCallout": "Створити callout",
 	"editor.nameRequired":
 		"Перед створенням callout необхідно вказати відображувану назву.",
 	"editor.noChangesToSave": "Змін не було.",
-	"editor.downloadingIcon": "Завантаження іконки",
 	"editor.idEmpty": "Потрібен принаймні один ID",
+	"editor.idAlreadyHere": "Такий ідентифікатор уже існує",
+	"editor.idTooLong": "Ідентифікатор має містити не більше {{max}} символів",
 	"editor.idExists": "Callout з таким ID вже існує",
 	"editor.idConflict": "Цей ID конфліктує з існуючим callout",
 	"editor.idDashConflict":
@@ -608,7 +597,6 @@ export const uk: Record<string, string> = {
 	"iconPicker.allSources": "Всі джерела",
 	"iconPicker.searchAllSources": "Пошук у всіх джерелах іконок",
 	"iconPicker.chooseSource": "Вибрати джерело",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "Доступні бібліотеки",
 	"iconPicker.librariesToDownload": "Бібліотеки для завантаження",
 	"iconPicker.groupCurrent": "Поточна іконка",
@@ -813,32 +801,32 @@ export const uk: Record<string, string> = {
 	"heading.toggleFold": "Перемкнути складання",
 
 	"settings.globalSettings": "Глобальні параметри стилю Callout Studio",
+	"settings.calloutStyle": "Стиль callout",
+	"settings.menusAndCommands": "Меню та команди",
+	"settings.buildFailed": "Callout Studio не вдалося показати свої налаштування; перезапустіть Obsidian і повідомте про проблему, якщо вона повториться.",
 	"settings.globalSettingsRegularDesc":
 		"Налаштуйте рамку, заокруглення кутів, масштаб шрифту та вирівнювання кожного block callout у вашому сховищі.",
 	"settings.globalSettingsHeadingDesc":
 		"Налаштуйте рамку, форму та вертикальний інтервал кожного callout-заголовка у вашому сховищі.",
 	"settings.globalSettingsInlineDesc":
 		"Налаштуйте рамку та форму кожного вбудованого callout у вашому сховищі.",
-	"settings.globalSettingsCustomize": "Налаштувати",
 	"settings.themeCalloutStyles": "Використовувати стилі callout вашої теми",
-	"settings.themeCalloutStylesDesc":
-		"Увімкнено: callout, які оформлює ваша тема, зберігають вигляд, заданий темою.\nВимкнено: Callout Studio сам малює кожен callout, а стилі callout вашої теми вимкнено.",
+	"settings.themeCalloutStylesDesc": "Якщо ввімкнено, callout, які оформлює ваша тема, зберігають її вигляд; якщо вимкнено, Callout Studio малює всі callout.",
 
 	"settings.calloutTypeRegular": "Блоковий callout",
 	"settings.calloutTypeHeading": "Callout-заголовок",
 	"settings.calloutTypeInline": "Вбудований callout",
 
-	"settings.customizeMenu": "Налаштувати пункти меню",
-	"settings.customizeMenuDesc":
-		"Виберіть, які дії контекстного меню з'являються для кожного типу callout, і змініть їх порядок. Працює у вихідному режимі та живому попередньому перегляді.",
-	"settings.customizeMenuButton": "Налаштувати пункти меню",
+	"settings.customizeMenuDesc": "Виберіть і впорядкуйте дії правого кліку для кожного типу callout.",
 	"menuCustomize.title": "Налаштування контекстного меню",
-	"menuCustomize.desc":
-		"Вмикайте або вимикайте дії та перетягуйте маркер, щоб змінити їх порядок. Зміни зберігаються автоматично.",
+	"menuCustomize.pageDesc": "Перетягніть дію за ручку, щоб перемістити її, або сховайте її кнопкою ✕.",
 	"menuCustomize.regular": "Блоковий callout",
 	"menuCustomize.heading": "Callout-заголовок",
 	"menuCustomize.inline": "Вбудований callout",
 	"menuCustomize.dragHandle": "Перетягніть, щоб змінити порядок",
+	"menuCustomize.hiddenHeading": "Приховані в меню callout заголовків",
+	"menuCustomize.hiddenInline": "Приховані в меню рядкових callout",
+	"menuCustomize.hiddenRegular": "Приховані в меню блокових callout",
 	"menuItem.createOrEdit": "Створити або відредагувати callout",
 	"menuItem.openSettings": "Відкрити налаштування",
 	"menuItem.copyMarkdown": "Копіювати Markdown",
@@ -904,7 +892,6 @@ export const uk: Record<string, string> = {
 	"vaultStats.roleBlock": "Блок",
 	"vaultStats.roleHeading": "Заголовок",
 	"vaultStats.roleInline": "Вбудований",
-	"portable.subtitle": "Виберіть, які callout у заголовках і всередині рядків перетворити на стандартний Markdown, перш ніж припинити використання Callout Studio.",
 	"portable.customize": "Власна заміна…",
 	"portable.editCustom": "Редагувати власну заміну…",
 	"portable.restoreDefault": "Відновити стандартну заміну",
@@ -917,13 +904,13 @@ export const uk: Record<string, string> = {
 
 	"usage.title": "Знайти callout",
 	"usage.command": "Знайти callout",
-	"usage.subtitle": "Знайдіть callout у сховищі та перейдіть до їхнього вихідного тексту.",
 	"usage.browse": "Огляд",
 	"usage.allTypes": "Усі типи",
 	"usage.registeredCallouts": "Зареєстровані типи callout",
 	"usage.unregisteredCallouts": "Незареєстровані типи callout",
 	"usage.summary": "{{count}} входжень у {{files}} файлах",
 	"usage.allRoles": "Усі формати",
+	"usage.filterFormat": "Фільтр за форматом",
 	"usage.failed": "Не вдалося оновити входження callout.",
 	"usage.loading": "Сканування нотаток Markdown…",
 	"usage.partial": "Результати неповні: помилок читання — {{count}}.",
@@ -936,7 +923,6 @@ export const uk: Record<string, string> = {
 	"usage.missing": "Цієї нотатки більше немає. Оновлення результатів…",
 	"usage.changed": "Це входження змінилося або перемістилося, і його нове розташування невідоме. Оновлення результатів…",
 	"usage.openFailed": "Не вдалося відкрити це входження callout.",
-	"usage.menuCount": "Знайти callout ({{count}})",
 	"usage.menuIncomplete": "Знайти callout — сканування не завершено",
 	"usage.menu": "Знайти callout",
 	"usage.closeSettings": "Закрийте налаштування, щоб побачити результати для callout на бічній панелі.",
@@ -1126,6 +1112,8 @@ export const uk: Record<string, string> = {
 	"footer.contribute": "Долучитися",
 	"footer.license": "Ліцензія плагіна",
 	"footer.iconCredits": "Ліцензії іконок",
+	"settings.about": "Про плагін",
+	"settings.version": "Версія",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Видалити палітру "{{name}}"?\nЇї використовує 1 callout. Він збереже свої кольори, і ви зможете знову прив’язати його пізніше з рядка «Колір» у редакторі.',
 	"settings.deletePaletteConfirmLinked":
@@ -1142,8 +1130,7 @@ export const uk: Record<string, string> = {
 	"palette.colorExistsUseLink": "використати наявний",
 	"locale.downloading": "Завантаження перекладу…",
 	"locale.notDownloaded": "{{name}} ще не завантажено",
-	"locale.notDownloadedDesc":
-		"Callout Studio показує англійську, доки переклад не буде завантажено. Наступного запуску Obsidian буде повторна спроба.",
+	"locale.notDownloadedDesc": "Поки переклад не завантажено, Callout Studio показує англійську й повторює спробу під час запуску Obsidian.",
 	"locale.retry": "Повторити",
 	"locale.diskWriteFailed":
 		"Callout Studio не вдалося зберегти переклад на диск, тому наступного разу його потрібно буде завантажити знову.",
@@ -1167,13 +1154,14 @@ export const uk: Record<string, string> = {
 	"export.formatCss": "Автономний знімок CSS",
 	"export.formatCssDesc":
 		"Для вебсайтів або vault, де Callout Studio не працює. Охоплює лише блокові callout і після змін має бути експортований повторно.",
+	"export.formatCssAction": "Експортувати",
 	"quickInsert.readingViewHint": "Ця нотатка відкрита в режимі читання, тому нічого не можна вставити.",
 	"quickInsert.readingView": "Перемкніться в режим джерела або живий попередній перегляд, щоб вставити callout.",
 	"quickInsert.noCursorHint": "У цій нотатці немає курсора, тому нема куди вставити.",
 	"quickInsert.noCursor": "Розмістіть курсор у нотатці там, де хочете вставити callout, а потім спробуйте ще раз.",
 	"notice.legacyDiscoveryArchiveFailed": "Не вдалося створити копію відновлення для оновлення. Попередній локальний кеш виявлення та початковий CSS залишено без змін. Перевірте права на запис і вільне місце на диску, потім перезапустіть Obsidian, щоб повторити спробу.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "Призупинено: callout відсутній. Знайдіть або створіть його, щоб відновити цю команду, або відредагуйте команду, щоб вибрати інший тип.",
+	"commandBuilder.missingCallout": "Призупинено, поки ви не створите відсутній callout знову або не оберете інший.",
 	"confirm.titleRestoreSettings": "Відновити ці налаштування",
 	"confirm.titleCreateSettingsFile": "Створити файл налаштувань",
 	"confirm.saveDisplayedSettings":
@@ -1499,7 +1487,7 @@ export const uk: Record<string, string> = {
 	"notice.unsavedChangesKept": "Деякі зміни на цьому пристрої ще не було збережено, і їх замінили новіші налаштування з іншого пристрою. Вашу версію спочатку було збережено: відкрийте історію версій у налаштуваннях Callout Studio, щоб повернути її.",
 	"settings.versionHistory": "Історія версій",
 	"settings.versions": "Попередні версії",
-	"settings.versionsDesc": "Callout Studio автоматично зберігає версії вашої конфігурації.\nПорівнюйте їх або поверніться до однієї з них.",
+	"settings.versionsDesc": "Порівняйте автоматично збережені версії ваших налаштувань або поверніться до однієї з них.",
 	"settings.versionsButton": "Переглянути версії",
 	"noteChanges.callouts": "{{count}}",
 	"noteChanges.calloutsOne": "1",

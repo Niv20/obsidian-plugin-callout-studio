@@ -37,7 +37,7 @@ export const ko: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "먼저 대체할 callout을 선택하세요.",
 	"settings.fallbackTag": "기본값",
 	"settings.fallbackTagAuto": "자동 기본값",
-	"settings.rescanVaultDesc": "노트에서 사용 중이지만 아직 이 목록에 없는 callout 유형을 추가합니다. 기존 callout과 노트는 변경되지 않습니다.",
+	"settings.rescanVaultDesc": "노트에서 사용하지만 아직 이 목록에 없는 callout 유형을 추가합니다.",
 	"settings.rescanVaultHintAction": "callout 스캔",
 	"manualDiscovery.failed": "스캔 결과를 저장하지 못했습니다. 설정 파일에 쓸 수 있고 동기화가 완료되었는지 확인한 다음 설정 → 내 callout 유형 → callout 스캔에서 다시 시도하세요. 기존 callout은 교체되지 않았습니다.",
 	"manualDiscovery.scanning": "스캔 중…",
@@ -85,14 +85,11 @@ export const ko: Record<string, string> = {
 	"deleteModal.keepsRowTheme":
 		"{{theme}}이(가) 이 callout 유형을 정의하므로 계속 사용할 수 있으며 모양도 그대로 유지됩니다. Callout Studio는 볼트 내의 노트만 변경하며, 테마에 속한 것은 전혀 건드리지 않습니다.",
 
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "내 callout 유형",
 	"settings.builtInCallouts": "기본 제공 callout",
 	"settings.contextMenu": "컨텍스트 메뉴",
-	"settings.keyboardShortcuts": "명령",
 	"settings.language": "언어",
-	"settings.languageDesc":
-		"Callout Studio의 표시 언어입니다. 기본값은 Obsidian의 인터페이스 언어를 따릅니다.",
+	"settings.languageDesc": "Callout Studio의 언어이며, 다른 언어를 고르지 않으면 Obsidian의 언어를 따릅니다.",
 	"settings.importExport": "가져오기 및 내보내기",
 	"settings.import": "가져오기…",
 	"settings.export": "내보내기…",
@@ -108,6 +105,9 @@ export const ko: Record<string, string> = {
 	"settings.addNewCallout": "callout 추가",
 
 	"settings.noCalloutsNow": "현재 사용자 정의 callout이 없습니다.",
+	"settings.calloutCount": "callout {{count}}개",
+	"settings.calloutCountOne": "callout 1개",
+	"settings.searchCallouts": "callout 검색…",
 
 	"settings.editAria": "{{name}} 편집",
 	"settings.moreRowActionsAria": "{{name}}에 대한 추가 작업",
@@ -126,9 +126,9 @@ export const ko: Record<string, string> = {
 
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "테마에서 제공하는 callout",
-	"settings.themeCalloutsDesc":
-		"{{theme}}이(가) 이들을 제공하거나 다시 스타일 지정하므로, Callout Studio는 테마가 그리는 그대로 두고 Block callout으로만 제공합니다. 여기에는 테마가 추가하는 callout 유형과, 모양이 대체되는 기본 제공 callout이 모두 표시됩니다. 테마가 추가하는 callout 유형은 해당 테마가 활성화되어 있는 동안에만 표시됩니다.",
+	"settings.themeCalloutsDesc": "{{theme}}이(가) 이 callout을 직접 그리므로 Callout Studio는 그대로 두고 블록 callout으로만 제공합니다.",
 	"settings.themeCalloutsDefaultTheme": "사용자의 테마",
+	"settings.themeCalloutsEmpty": "현재 {{theme}}은(는) 어떤 callout에도 스타일을 적용하지 않습니다.",
 	"settings.themePreviewAria":
 		'"{{name}}" 미리보기 — 테마가 이를 어떻게 그리는지 확인',
 	"settings.builtInAllThemeStyled":
@@ -138,11 +138,7 @@ export const ko: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"볼트에서 인식되지 않는 callout 유형은 이 callout의 스타일을 상속합니다.",
 
-	"settings.globalStyleRegularTitle": "블록 callout 전역 스타일",
-	"settings.globalStyleHeadingTitle": "제목 callout 전역 스타일",
-	"settings.globalStyleInlineTitle": "인라인 callout 전역 스타일",
 	"settings.border": "테두리",
-	"settings.borderAll": "모두",
 	"settings.borderTop": "위",
 	"settings.borderRight": "오른쪽",
 	"settings.borderBottom": "아래",
@@ -152,14 +148,11 @@ export const ko: Record<string, string> = {
 	"settings.titleScale": "제목",
 	"settings.contentScale": "내용",
 	"settings.inlineTextScale": "텍스트",
-	"settings.shapeGroup": "모양",
 	"settings.borderRadius": "모서리 둥글기",
-	"settings.alignGroup": "정렬",
 	"settings.alignContent": "제목에 맞게 내용 정렬",
 	"settings.headingSpacingGroup": "제목 간격",
 	"settings.headingPadVertical": "수직 간격",
 	"settings.headingGap": "제목 사이 간격",
-	"settings.headingFoldGroup": "접기",
 	"settings.headingFoldArrow": "접기 화살표 표시",
 	"settings.styleDemoName": "예시",
 	"settings.styleDemoInlineName": "예시",
@@ -171,21 +164,19 @@ export const ko: Record<string, string> = {
 	"settings.customPalettes": "저장된 색상 팔레트",
 	"settings.newPalette": "새 팔레트",
 	"settings.customPalettesEmpty": "현재 저장된 팔레트가 없습니다.",
+	"settings.paletteCount": "팔레트 {{count}}개",
+	"settings.paletteCountOne": "팔레트 1개",
 	"settings.editPaletteAria": "팔레트 {{name}} 편집",
-	"settings.deletePaletteAria": "팔레트 {{name}} 삭제",
 	"settings.deletePaletteConfirm":
 		'팔레트 "{{name}}"을(를) 삭제하시겠습니까?\n이 색상을 사용하는 callout은 영향을 받지 않습니다.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'메타데이터에 이 이름("{{key}}")을 적은 callout은 대신 그 이름의 기본 제공 색상을 사용합니다. 노트는 변경되지 않습니다.',
 
 	"settings.customCommands": "명령 및 핫키",
-	"settings.customCommandsDesc":
-		"모든 Callout Studio 명령어와 여기에 지정된 단축키를 확인하고, 자주 사용하는 callout을 위해 직접 명령어를 만들어 보세요. 기본적으로 지정된 단축키는 없습니다.",
-	"settings.customCommandsButton": "명령어 관리",
+	"settings.customCommandsDesc": "Callout Studio의 모든 명령과 단축키, 그리고 직접 만든 명령입니다.",
 
 	"commandBuilder.title": "명령 및 단축키",
-	"commandBuilder.desc":
-		"+ 버튼을 사용하여 Obsidian 단축키 설정에서 단축키를 지정하거나 변경하세요.",
+	"commandBuilder.pageDesc": "명령 옆의 ⊕를 눌러 Obsidian 단축키 설정에서 단축키를 지정하세요.",
 	"commandBuilder.builtIn": "기본 제공 명령어",
 	"commandBuilder.toggleAria": "{{name}} 켜기/끄기",
 	"commandBuilder.hotkeyBlank": "비어 있음",
@@ -195,7 +186,6 @@ export const ko: Record<string, string> = {
 	"commandBuilder.empty": "아직 사용자 정의 명령어가 없습니다.",
 	"commandBuilder.unknownCommand": "이 명령어",
 	"commandBuilder.editAria": "{{name}} 편집",
-	"commandBuilder.deleteAria": "{{name}} 삭제",
 	"commandBuilder.deleteConfirm":
 		"명령어 {{name}}을(를) 삭제하시겠습니까? 여기에 지정된 단축키는 더 이상 작동하지 않습니다.",
 	"commandBuilder.newTitle": "새 명령어",
@@ -209,8 +199,7 @@ export const ko: Record<string, string> = {
 		"이 형식은 꺼져 있어서, 다시 켜기 전까지 명령어는 일반 텍스트를 삽입합니다.",
 	"commandBuilder.roleThemeOwned":
 		"이 callout은 테마가 제공하므로 Block 형식만 사용할 수 있습니다.",
-	"commandBuilder.commandSuspended":
-		"일시 중지됨: 이 callout은 테마가 제공하므로 Block 형식만 사용할 수 있습니다. 테마가 더 이상 이 callout을 제공하지 않으면 이 명령어가 다시 작동합니다.",
+	"commandBuilder.commandSuspended": "테마가 이 callout을 제공하는 동안 일시 중지됩니다. 이때 이 callout에는 블록 형식만 있습니다.",
 	"commandBuilder.callout": "callout 유형",
 	"commandBuilder.calloutDesc": "이 명령어가 삽입하는 callout입니다.",
 	"commandBuilder.headingLevel": "제목 수준",
@@ -258,7 +247,7 @@ export const ko: Record<string, string> = {
 	"settings.resetItemThemeCalloutStyles": "테마의 callout 스타일",
 	"settings.resetItemFallback": "대체 스타일",
 	"settings.resetItemIconLibraries": "아이콘 라이브러리 순서 및 숨긴 라이브러리",
-	"settings.resetAllConfirmAfter": "걱정하지 마세요. 재설정하기 전에 현재 설정의 백업을 저장합니다. 설정의 백업 섹션에서 언제든 복원할 수 있습니다.\n동기화 서비스를 사용한다면 재설정이 다른 기기에도 전달될 수 있습니다.",
+	"settings.resetAllConfirmAfter": "걱정 마세요. 초기화하기 전에 현재 설정의 백업을 저장합니다. 설정의 버전 기록에서 언제든 되돌릴 수 있습니다.\n동기화 서비스를 사용하면 초기화가 다른 기기에도 전달될 수 있습니다.",
 	"settings.resetNothing": "재설정할 항목이 없습니다. 모든 것이 이미 기본값입니다.",
 
 	"notice.customCommandMissingCallout":
@@ -341,13 +330,13 @@ export const ko: Record<string, string> = {
 	"editor.foldClosed": "기본적으로 닫기",
 	"editor.cancel": "취소",
 	"editor.saveChanges": "변경 사항 저장",
-	"editor.saving": "저장 중…",
 	"editor.saveFailed": "저장을 완료하지 못했습니다. 이 편집기가 아직 열려 있다면 닫지 말고 저장 공간과 동기화 상태를 확인한 후 다시 시도하세요. 일부 설정이나 노트 변경 사항은 이미 저장되었을 수 있습니다.",
 	"editor.createCallout": "callout 만들기",
 	"editor.nameRequired": "callout을 만들기 전에 표시 이름이 필요합니다.",
 	"editor.noChangesToSave": "변경 사항이 없습니다.",
-	"editor.downloadingIcon": "아이콘 다운로드 중",
 	"editor.idEmpty": "최소 하나의 ID가 필요합니다",
+	"editor.idAlreadyHere": "이미 존재하는 ID입니다",
+	"editor.idTooLong": "ID는 {{max}}자 이하여야 합니다",
 	"editor.idExists": "이 ID를 가진 callout이 이미 존재합니다",
 	"editor.idConflict": "이 ID는 기존 callout과 충돌합니다",
 	"editor.idFromTheme":
@@ -535,7 +524,6 @@ export const ko: Record<string, string> = {
 	"iconPicker.allSources": "모든 소스",
 	"iconPicker.searchAllSources": "모든 아이콘 소스 검색",
 	"iconPicker.chooseSource": "소스 선택",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "사용 가능한 라이브러리",
 	"iconPicker.librariesToDownload": "다운로드할 라이브러리",
 	"iconPicker.groupCurrent": "현재 아이콘",
@@ -739,32 +727,32 @@ export const ko: Record<string, string> = {
 	"heading.toggleFold": "접기 전환",
 
 	"settings.globalSettings": "Callout Studio 전역 스타일 옵션",
+	"settings.calloutStyle": "callout 스타일",
+	"settings.menusAndCommands": "메뉴와 명령",
+	"settings.buildFailed": "Callout Studio가 설정을 표시하지 못했습니다. Obsidian을 다시 시작하고, 같은 일이 반복되면 알려 주세요.",
 	"settings.globalSettingsRegularDesc":
 		"볼트에 있는 모든 block callout의 테두리, 반지름, 폰트 크기, 정렬을 조정합니다.",
 	"settings.globalSettingsHeadingDesc":
 		"볼트에 있는 모든 제목 callout의 테두리, 모양, 수직 간격을 조정합니다.",
 	"settings.globalSettingsInlineDesc":
 		"볼트에 있는 모든 인라인 callout의 테두리와 모양을 조정합니다.",
-	"settings.globalSettingsCustomize": "사용자 지정",
 	"settings.themeCalloutStyles": "테마의 callout 스타일 사용",
-	"settings.themeCalloutStylesDesc":
-		"켜짐: 테마가 스타일을 지정한 callout은 테마의 모양을 그대로 유지합니다.\n꺼짐: Callout Studio가 모든 callout을 직접 그리며, 테마의 callout 스타일은 꺼집니다.",
+	"settings.themeCalloutStylesDesc": "켜면 테마가 스타일을 적용하는 callout은 테마의 모양을 유지하고, 끄면 Callout Studio가 모든 callout을 그립니다.",
 
 	"settings.calloutTypeRegular": "블록 callout",
 	"settings.calloutTypeHeading": "제목 callout",
 	"settings.calloutTypeInline": "인라인 callout",
 
-	"settings.customizeMenu": "메뉴 항목 사용자 지정",
-	"settings.customizeMenuDesc":
-		"각 callout 유형에 표시할 마우스 오른쪽 버튼 작업을 선택하고 순서를 변경합니다. 소스 모드, 라이브 미리 보기에서 작동합니다.",
-	"settings.customizeMenuButton": "메뉴 항목 사용자 지정",
+	"settings.customizeMenuDesc": "callout 유형별로 오른쪽 클릭 동작을 고르고 순서를 정합니다.",
 	"menuCustomize.title": "마우스 오른쪽 버튼 메뉴 사용자 지정",
-	"menuCustomize.desc":
-		"작업을 켜거나 끄고 핸들을 드래그하여 순서를 변경합니다. 변경 사항은 자동으로 저장됩니다.",
+	"menuCustomize.pageDesc": "동작은 핸들을 끌어 옮기거나 ✕로 숨길 수 있습니다.",
 	"menuCustomize.regular": "블록 callout",
 	"menuCustomize.heading": "제목 callout",
 	"menuCustomize.inline": "인라인 callout",
 	"menuCustomize.dragHandle": "드래그하여 순서 변경",
+	"menuCustomize.hiddenHeading": "제목 callout 메뉴에서 숨김",
+	"menuCustomize.hiddenInline": "인라인 callout 메뉴에서 숨김",
+	"menuCustomize.hiddenRegular": "블록 callout 메뉴에서 숨김",
 	"menuItem.createOrEdit": "callout 만들기 또는 편집",
 	"menuItem.openSettings": "설정 열기",
 	"menuItem.copyMarkdown": "Markdown 복사",
@@ -827,7 +815,6 @@ export const ko: Record<string, string> = {
 	"vaultStats.roleBlock": "블록",
 	"vaultStats.roleHeading": "제목",
 	"vaultStats.roleInline": "인라인",
-	"portable.subtitle": "Callout Studio 사용을 중단하기 전에 표준 Markdown으로 변환할 제목 및 인라인 콜아웃을 선택하세요.",
 	"portable.customize": "사용자 지정 바꾸기…",
 	"portable.editCustom": "사용자 지정 바꾸기 편집…",
 	"portable.restoreDefault": "기본 바꾸기로 복원",
@@ -840,13 +827,13 @@ export const ko: Record<string, string> = {
 
 	"usage.title": "callout 찾기",
 	"usage.command": "callout 찾기",
-	"usage.subtitle": "보관함에서 callout을 찾고 원본 위치로 이동하세요.",
 	"usage.browse": "찾아보기",
 	"usage.allTypes": "모든 유형",
 	"usage.registeredCallouts": "등록된 callout",
 	"usage.unregisteredCallouts": "등록되지 않은 callout",
 	"usage.summary": "{{files}}개의 파일에 {{count}}개의 사용 위치",
 	"usage.allRoles": "모든 형식",
+	"usage.filterFormat": "형식별로 필터링",
 	"usage.failed": "callout 사용 위치를 업데이트하지 못했습니다.",
 	"usage.loading": "Markdown 노트 스캔 중…",
 	"usage.partial": "결과가 완전하지 않습니다: 읽기 오류 {{count}}건.",
@@ -859,7 +846,6 @@ export const ko: Record<string, string> = {
 	"usage.missing": "이 노트는 더 이상 존재하지 않습니다. 결과를 업데이트하는 중…",
 	"usage.changed": "이 사용 위치가 변경되었거나 이동한 위치를 명확히 알 수 없습니다. 결과를 업데이트하는 중…",
 	"usage.openFailed": "이 callout 사용 위치를 열지 못했습니다.",
-	"usage.menuCount": "callout 찾기 ({{count}})",
 	"usage.menuIncomplete": "callout 찾기 — 스캔이 완료되지 않음",
 	"usage.menu": "callout 찾기",
 	"usage.closeSettings": "사이드바에서 callout 결과를 보려면 설정을 닫으세요.",
@@ -1045,6 +1031,8 @@ export const ko: Record<string, string> = {
 	"footer.contribute": "기여하기",
 	"footer.license": "플러그인 라이선스",
 	"footer.iconCredits": "아이콘 라이선스",
+	"settings.about": "정보",
+	"settings.version": "버전",
 	"settings.deletePaletteConfirmLinkedOne":
 		'팔레트 "{{name}}"을 삭제할까요?\n1개의 callout이 이 팔레트를 사용합니다. 색상은 유지되며, 나중에 편집기의 색상 행에서 다시 연결할 수 있습니다.',
 	"settings.deletePaletteConfirmLinked":
@@ -1061,8 +1049,7 @@ export const ko: Record<string, string> = {
 	"palette.colorExistsUseLink": "기존 색상 사용",
 	"locale.downloading": "번역 다운로드 중…",
 	"locale.notDownloaded": "{{name}}이(가) 아직 다운로드되지 않았습니다",
-	"locale.notDownloadedDesc":
-		"번역을 다운로드할 수 있을 때까지 Callout Studio는 영어로 표시됩니다. 다음 Obsidian 시작 시 다시 시도합니다.",
+	"locale.notDownloadedDesc": "번역이 다운로드될 때까지 Callout Studio는 영어로 표시하며, Obsidian을 시작할 때 다시 시도합니다.",
 	"locale.retry": "다시 시도",
 	"locale.diskWriteFailed":
 		"Callout Studio가 번역을 디스크에 저장하지 못했습니다. 다음에 다시 다운로드해야 합니다.",
@@ -1086,13 +1073,14 @@ export const ko: Record<string, string> = {
 	"export.formatCss": "독립형 CSS 스냅샷",
 	"export.formatCssDesc":
 		"Callout Studio가 실행되지 않는 웹사이트나 vault에서 사용합니다. 블록 callout만 포함하며 변경 후에는 다시 내보내야 합니다.",
+	"export.formatCssAction": "내보내기",
 	"quickInsert.readingViewHint": "이 노트는 읽기 모드로 열려 있어 아무것도 삽입할 수 없습니다.",
 	"quickInsert.readingView": "callout을 삽입하려면 소스 모드 또는 라이브 미리 보기로 전환하세요.",
 	"quickInsert.noCursorHint": "이 노트에는 커서가 없어 삽입할 위치가 없습니다.",
 	"quickInsert.noCursor": "callout을 삽입할 위치에 노트의 커서를 놓은 다음 다시 시도하세요.",
 	"notice.legacyDiscoveryArchiveFailed": "업그레이드 복구 사본을 만들지 못했습니다. 이전 로컬 검색 캐시와 시작 CSS는 변경되지 않은 상태로 유지되었습니다. 저장소 쓰기 권한과 여유 공간을 확인한 다음 Obsidian을 다시 시작하여 재시도하세요.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "일시 중지됨: callout이 없습니다. 이 명령을 복원하려면 찾거나 만드세요. 다른 유형을 선택하려면 명령을 편집하세요.",
+	"commandBuilder.missingCallout": "없어진 callout을 다시 만들거나 다른 callout을 고를 때까지 일시 중지됩니다.",
 	"confirm.titleRestoreSettings": "이 설정 복원",
 	"confirm.titleCreateSettingsFile": "설정 파일 만들기",
 	"confirm.saveDisplayedSettings":
@@ -1480,7 +1468,7 @@ export const ko: Record<string, string> = {
 	"notice.unsavedChangesKept": "이 기기에서 변경한 일부 내용이 아직 저장되지 않은 상태에서 다른 기기의 최신 설정으로 바뀌었습니다. 기존 버전은 먼저 저장되었습니다. 복구하려면 Callout Studio 설정에서 버전 기록을 여세요.",
 	"settings.versionHistory": "버전 기록",
 	"settings.versions": "이전 버전",
-	"settings.versionsDesc": "Callout Studio는 구성의 버전을 자동으로 저장합니다.\n비교하거나, 이전 버전으로 돌아갈 수 있습니다.",
+	"settings.versionsDesc": "자동으로 저장된 설정 버전을 비교하거나 그중 하나로 되돌립니다.",
 	"settings.versionsButton": "버전 보기",
 	"noteChanges.callouts": "Callout {{count}}개",
 	"noteChanges.calloutsOne": "Callout 1개",

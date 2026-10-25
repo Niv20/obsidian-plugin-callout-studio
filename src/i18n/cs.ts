@@ -38,7 +38,7 @@ export const cs: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "Nejprve vyberte callout, kterým ho nahradíte.",
 	"settings.fallbackTag": "Výchozí",
 	"settings.fallbackTagAuto": "Aut. výchozí",
-	"settings.rescanVaultDesc": "Přidá typy calloutů použité ve vašich poznámkách, které zatím nejsou v tomto seznamu. Vaše stávající callouty a poznámky se nezmění.",
+	"settings.rescanVaultDesc": "Přidá typy calloutů, které vaše poznámky používají a které ještě nejsou v tomto seznamu.",
 	"settings.rescanVaultHintAction": "Vyhledat callouty",
 	"manualDiscovery.failed": "Nalezené callouty se nepodařilo uložit. Ověřte, že lze zapisovat nastavení a že synchronizace skončila. Poté znovu vyberte Nastavení → Moje typy callout → Vyhledat callouty. Stávající callouty nebyly nahrazeny.",
 	"manualDiscovery.scanning": "Prohledávání…",
@@ -86,14 +86,11 @@ export const cs: Record<string, string> = {
 	"deleteModal.keepsRowTheme":
 		"{{theme}} definuje tento typ callout, takže zůstává dostupný a zachovává si svůj vzhled. Callout Studio mění pouze poznámky ve vašem vaultu — ničeho, co patří vašemu tématu, se nedotýká.",
 
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "Moje typy callout",
 	"settings.builtInCallouts": "Vestavěné callouts",
 	"settings.contextMenu": "Kontextové menu",
-	"settings.keyboardShortcuts": "Příkazy",
 	"settings.language": "Jazyk",
-	"settings.languageDesc":
-		"Jazyk zobrazení Callout Studio. Ve výchozím nastavení odpovídá jazyku rozhraní Obsidianu.",
+	"settings.languageDesc": "Jazyk Callout Studio; výchozí je jazyk Obsidianu.",
 	"settings.importExport": "Import a export",
 	"settings.import": "Importovat…",
 	"settings.export": "Exportovat…",
@@ -109,6 +106,9 @@ export const cs: Record<string, string> = {
 	"settings.addNewCallout": "přidat callout",
 
 	"settings.noCalloutsNow": "Momentálně žádné vlastní callouts.",
+	"settings.calloutCount": "{{count}} calloutů",
+	"settings.calloutCountOne": "1 callout",
+	"settings.searchCallouts": "Hledat callouty…",
 
 	"settings.editAria": "Upravit {{name}}",
 	"settings.moreRowActionsAria": "Další akce pro {{name}}",
@@ -126,9 +126,9 @@ export const cs: Record<string, string> = {
 	"settings.colorSwatchAria": "Akcent: {{accent}} · Pozadí: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts z vašeho tématu",
-	"settings.themeCalloutsDesc":
-		"{{theme}} tyto callouts dodává nebo přestylovává, takže je Callout Studio ponechává přesně tak, jak je vykresluje vaše téma, a nabízí je jen jako blokové callouts. Zobrazují se zde oba druhy: typy callout, které vaše téma přidává, a vestavěné callouts, jejichž vzhled nahrazuje. Typy callout přidané vaším tématem se zobrazují jen dokud je aktivní.",
+	"settings.themeCalloutsDesc": "{{theme}} tyto callouty vykresluje sama, proto je Callout Studio ponechává beze změny a nabízí je jen jako blokové callouty.",
 	"settings.themeCalloutsDefaultTheme": "Vaše téma",
+	"settings.themeCalloutsEmpty": "{{theme}} momentálně nestyluje žádné callouty.",
 	"settings.themePreviewAria":
 		'Náhled "{{name}}" — jak jej vykresluje vaše téma',
 	"settings.builtInAllThemeStyled":
@@ -137,11 +137,7 @@ export const cs: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"Nerozpoznané typy callout ve vaultu zdědí styl tohoto callout.",
 
-	"settings.globalStyleRegularTitle": "Globální styl blokových calloutů",
-	"settings.globalStyleHeadingTitle": "Globální styl nadpisových calloutů",
-	"settings.globalStyleInlineTitle": "Globální styl vložených calloutů",
 	"settings.border": "Ohraničení",
-	"settings.borderAll": "Vše",
 	"settings.borderTop": "Nahoře",
 	"settings.borderRight": "Vpravo",
 	"settings.borderBottom": "Dole",
@@ -151,14 +147,11 @@ export const cs: Record<string, string> = {
 	"settings.titleScale": "Nadpis",
 	"settings.contentScale": "Obsah",
 	"settings.inlineTextScale": "Text",
-	"settings.shapeGroup": "Tvar",
 	"settings.borderRadius": "Zaoblení rohů",
-	"settings.alignGroup": "Zarovnání",
 	"settings.alignContent": "Zarovnat obsah s nadpisem",
 	"settings.headingSpacingGroup": "Rozestupy nadpisu",
 	"settings.headingPadVertical": "Svislé rozestupy",
 	"settings.headingGap": "Mezera mezi nadpisy",
-	"settings.headingFoldGroup": "Sbalení",
 	"settings.headingFoldArrow": "Zobrazit šipku sbalení",
 	"settings.styleDemoName": "Ukázka",
 	"settings.styleDemoInlineName": "Ukázka",
@@ -170,21 +163,19 @@ export const cs: Record<string, string> = {
 	"settings.customPalettes": "Uložené barevné palety",
 	"settings.newPalette": "Nová paleta",
 	"settings.customPalettesEmpty": "Momentálně žádné uložené palety.",
+	"settings.paletteCount": "{{count}} palet",
+	"settings.paletteCountOne": "1 paleta",
 	"settings.editPaletteAria": "Upravit paletu {{name}}",
-	"settings.deletePaletteAria": "Smazat paletu {{name}}",
 	"settings.deletePaletteConfirm":
 		'Smazat paletu "{{name}}"?\nCallouty používající její barvy nebudou ovlivněny.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Calloutů, které ji uvádějí ve svých metadatech ("{{key}}"), místo toho převezmou vestavěnou barvu tohoto jména. Vaše poznámky se nezmění.',
 
 	"settings.customCommands": "Příkazy a klávesové zkratky",
-	"settings.customCommandsDesc":
-		"Prohlédněte si všechny příkazy Callout Studio a zkratku, ke které je každý přiřazen, a vytvořte si vlastní příkazy pro callouty, které používáte nejčastěji. Ve výchozím nastavení nejsou přiřazeny žádné zkratky.",
-	"settings.customCommandsButton": "Spravovat příkazy",
+	"settings.customCommandsDesc": "Všechny příkazy Callout Studio, jejich zkratky a vaše vlastní příkazy.",
 
 	"commandBuilder.title": "Příkazy a zkratky",
-	"commandBuilder.desc":
-		"Pomocí tlačítka + nastavte nebo změňte zkratku v nastavení klávesových zkratek Obsidian.",
+	"commandBuilder.pageDesc": "Stisknutím ⊕ u příkazu nastavíte jeho zkratku v nastavení klávesových zkratek Obsidianu.",
 	"commandBuilder.builtIn": "Vestavěné příkazy",
 	"commandBuilder.toggleAria": "Zapnout nebo vypnout {{name}}",
 	"commandBuilder.hotkeyBlank": "Prázdné",
@@ -194,7 +185,6 @@ export const cs: Record<string, string> = {
 	"commandBuilder.empty": "Zatím žádné vlastní příkazy.",
 	"commandBuilder.unknownCommand": "tento příkaz",
 	"commandBuilder.editAria": "Upravit {{name}}",
-	"commandBuilder.deleteAria": "Smazat {{name}}",
 	"commandBuilder.deleteConfirm":
 		"Smazat příkaz {{name}}? Případná přiřazená zkratka přestane fungovat.",
 	"commandBuilder.newTitle": "Nový příkaz",
@@ -233,8 +223,7 @@ export const cs: Record<string, string> = {
 	"commandBuilder.save": "Uložit",
 	"commandBuilder.roleThemeOwned":
 		"Tento callout dodává vaše téma, takže má pouze blokový formát.",
-	"commandBuilder.commandSuspended":
-		"Pozastaveno: tento callout dodává vaše téma, takže má pouze blokový formát. Tento příkaz bude znovu fungovat, jakmile jej téma přestane dodávat.",
+	"commandBuilder.commandSuspended": "Pozastaveno, dokud tento callout poskytuje vaše téma; má pak jen blokový formát.",
 
 	"settings.resetAll": "Obnovit",
 	"settings.resetAllDesc":
@@ -257,7 +246,7 @@ export const cs: Record<string, string> = {
 	"settings.resetItemThemeCalloutStyles": "Styly callout z vašeho tématu",
 	"settings.resetItemFallback": "Záložní styl",
 	"settings.resetItemIconLibraries": "Pořadí knihoven ikon a skryté knihovny",
-	"settings.resetAllConfirmAfter": "Žádný strach: před obnovením uložíme zálohu vaší aktuální konfigurace. Můžete ji kdykoli obnovit v části Zálohy v nastavení.\nPokud používáte synchronizační službu, obnovení se může přenést i na vaše další zařízení.",
+	"settings.resetAllConfirmAfter": "Nebojte se: před resetem uložíme zálohu vašeho aktuálního nastavení. Kdykoli ji můžete vrátit z Historie verzí v nastavení.\nPokud používáte synchronizační službu, reset se může přenést i na vaše další zařízení.",
 	"settings.resetNothing": "Není co obnovovat: vše je již ve výchozím stavu.",
 
 	"notice.customCommandMissingCallout":
@@ -341,14 +330,14 @@ export const cs: Record<string, string> = {
 	"editor.foldClosed": "Ve výchozím stavu zavřený",
 	"editor.cancel": "Zrušit",
 	"editor.saveChanges": "Uložit změny",
-	"editor.saving": "Ukládání…",
 	"editor.saveFailed": "Ukládání se nepodařilo dokončit. Pokud je tento editor stále otevřený, nechte ho otevřený a po kontrole úložiště a synchronizace to zkuste znovu. Některá nastavení nebo změny poznámek už mohly být uloženy.",
 	"editor.createCallout": "Vytvořit callout",
 	"editor.nameRequired":
 		"Před vytvořením callout je vyžadován zobrazovaný název.",
 	"editor.noChangesToSave": "Nebyly provedeny žádné změny.",
-	"editor.downloadingIcon": "Stahování ikony",
 	"editor.idEmpty": "Je vyžadováno alespoň jedno ID",
+	"editor.idAlreadyHere": "Toto ID už existuje",
+	"editor.idTooLong": "ID může mít nejvýše {{max}} znaků",
 	"editor.idExists": "Callout s tímto ID již existuje",
 	"editor.idConflict": "Toto ID je v konfliktu s existujícím callout",
 	"editor.idDashConflict":
@@ -541,7 +530,6 @@ export const cs: Record<string, string> = {
 	"iconPicker.allSources": "Všechny zdroje",
 	"iconPicker.searchAllSources": "Hledat ve všech zdrojích ikon",
 	"iconPicker.chooseSource": "Vybrat zdroj",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "Dostupné knihovny",
 	"iconPicker.librariesToDownload": "Knihovny ke stažení",
 	"iconPicker.groupCurrent": "Aktuální ikona",
@@ -743,30 +731,30 @@ export const cs: Record<string, string> = {
 	"contextMenu.deleteSection": "Smazat sekci nadpisu",
 	"heading.toggleFold": "Přepnout sbalení",
 	"settings.globalSettings": "Globální možnosti stylu Callout Studio",
+	"settings.calloutStyle": "Styl calloutu",
+	"settings.menusAndCommands": "Nabídky a příkazy",
+	"settings.buildFailed": "Callout Studio se nepodařilo vykreslit nastavení; restartujte Obsidian a pokud se to bude opakovat, nahlaste to.",
 	"settings.globalSettingsRegularDesc":
 		"Upravte ohraničení, poloměr, měřítko písma a zarovnání každého blokového callout ve vašem trezoru.",
 	"settings.globalSettingsHeadingDesc":
 		"Upravte ohraničení, tvar a svislé rozestupy každého nadpisového callout ve vašem trezoru.",
 	"settings.globalSettingsInlineDesc":
 		"Upravte ohraničení a tvar každého vloženého callout ve vašem trezoru.",
-	"settings.globalSettingsCustomize": "Přizpůsobit",
 	"settings.themeCalloutStyles": "Používat styly callout z vašeho tématu",
-	"settings.themeCalloutStylesDesc":
-		"Zapnuto: callouty, které vaše téma stylizuje, si ponechají vzhled z vašeho tématu.\nVypnuto: Callout Studio vykresluje každý callout a styly callout z vašeho tématu jsou vypnuté.",
+	"settings.themeCalloutStylesDesc": "Když je zapnuto, callouty, které stylizuje vaše téma, si zachovají jeho vzhled; když je vypnuto, Callout Studio vykreslí všechny callouty.",
 	"settings.calloutTypeRegular": "Blokový callout",
 	"settings.calloutTypeHeading": "Callout nadpisu",
 	"settings.calloutTypeInline": "Vložený callout",
-	"settings.customizeMenu": "Přizpůsobit položky menu",
-	"settings.customizeMenuDesc":
-		"Vyberte, které akce kontextové nabídky se zobrazí pro každý typ callout, a změňte jejich pořadí. Funguje ve zdrojovém režimu a živém náhledu.",
-	"settings.customizeMenuButton": "Přizpůsobit položky menu",
+	"settings.customizeMenuDesc": "Vyberte a seřaďte akce kontextové nabídky pro každý typ calloutu.",
 	"menuCustomize.title": "Přizpůsobit kontextovou nabídku",
-	"menuCustomize.desc":
-		"Zapínejte nebo vypínejte akce a přetažením úchytu je přeuspořádejte. Změny se ukládají automaticky.",
+	"menuCustomize.pageDesc": "Akci přesunete tažením za její úchyt, nebo ji skryjete pomocí ✕.",
 	"menuCustomize.regular": "Blokový callout",
 	"menuCustomize.heading": "Callout nadpisu",
 	"menuCustomize.inline": "Vložený callout",
 	"menuCustomize.dragHandle": "Přetažením změníte pořadí",
+	"menuCustomize.hiddenHeading": "Skryté z nabídky calloutů v nadpisech",
+	"menuCustomize.hiddenInline": "Skryté z nabídky inline calloutů",
+	"menuCustomize.hiddenRegular": "Skryté z nabídky blokových calloutů",
 	"menuItem.createOrEdit": "Vytvořit nebo upravit callout",
 	"menuItem.openSettings": "Otevřít nastavení",
 	"menuItem.copyMarkdown": "Kopírovat Markdown",
@@ -889,7 +877,6 @@ export const cs: Record<string, string> = {
 	"portable.blockedEditing": "Nejprve dokončete úpravu náhrady: stisknutím Enter ji uložíte, stisknutím Esc ji zahodíte.",
 	"portable.blockedNothingSelected": "Vyberte alespoň jednu náhradu k převodu.",
 	"settings.maintenance": "Nebezpečná zóna",
-	"portable.subtitle": "Než přestanete používat Callout Studio, vyberte, které callouty v nadpisech a textu chcete převést na standardní Markdown.",
 	"portable.customize": "Vlastní náhrada…",
 	"portable.editCustom": "Upravit vlastní náhradu…",
 	"portable.restoreDefault": "Obnovit výchozí náhradu",
@@ -902,13 +889,13 @@ export const cs: Record<string, string> = {
 
 	"usage.title": "Najít callouty",
 	"usage.command": "Najít callouty",
-	"usage.subtitle": "Najděte callouty ve svém trezoru a přejděte k jejich zdroji.",
 	"usage.browse": "Procházet",
 	"usage.allTypes": "Všechny typy",
 	"usage.registeredCallouts": "Registrované callouty",
 	"usage.unregisteredCallouts": "Neregistrované callouty",
 	"usage.summary": "{{count}} výskytů v {{files}} souborech",
 	"usage.allRoles": "Všechny formáty",
+	"usage.filterFormat": "Filtrovat podle formátu",
 	"usage.failed": "Výskyty calloutů se nepodařilo aktualizovat.",
 	"usage.loading": "Prohledávání poznámek Markdown…",
 	"usage.partial": "Výsledky nejsou úplné: {{count}} chyb při čtení.",
@@ -921,7 +908,6 @@ export const cs: Record<string, string> = {
 	"usage.missing": "Tato poznámka již neexistuje. Aktualizace výsledků…",
 	"usage.changed": "Tento výskyt se změnil nebo se přesunul na nejednoznačné místo. Aktualizace výsledků…",
 	"usage.openFailed": "Tento výskyt calloutu se nepodařilo otevřít.",
-	"usage.menuCount": "Najít callouty ({{count}})",
 	"usage.menuIncomplete": "Najít callouty — prohledávání není dokončeno",
 	"usage.menu": "Najít callouty",
 	"usage.closeSettings": "Zavřete nastavení, abyste výsledky pro callouty viděli v postranním panelu.",
@@ -1112,6 +1098,8 @@ export const cs: Record<string, string> = {
 	"footer.contribute": "Přispět",
 	"footer.license": "Licence pluginu",
 	"footer.iconCredits": "Licence ikon",
+	"settings.about": "O pluginu",
+	"settings.version": "Verze",
 	"settings.deletePaletteConfirmLinkedOne":
 		'Smazat paletu "{{name}}"?\nPoužívá ji 1 callout. Zachová si své barvy a později ho můžete znovu propojit z řádku Barva v jeho editoru.',
 	"settings.deletePaletteConfirmLinked":
@@ -1128,8 +1116,7 @@ export const cs: Record<string, string> = {
 	"palette.colorExistsUseLink": "použít existující",
 	"locale.downloading": "Stahování překladu…",
 	"locale.notDownloaded": "{{name}} zatím není stažen",
-	"locale.notDownloadedDesc":
-		"Callout Studio zobrazuje angličtinu, dokud nebude možné stáhnout překlad. Zkusí to znovu při příštím spuštění Obsidianu.",
+	"locale.notDownloadedDesc": "Callout Studio zobrazuje angličtinu, dokud se nestáhne překlad, a zkusí to znovu při spuštění Obsidianu.",
 	"locale.retry": "Zkusit znovu",
 	"locale.diskWriteFailed":
 		"Callout Studio nemohl uložit překlad na disk, takže jej bude nutné příště stáhnout znovu.",
@@ -1153,13 +1140,14 @@ export const cs: Record<string, string> = {
 	"export.formatCss": "Samostatný snímek CSS",
 	"export.formatCssDesc":
 		"Pro weby nebo vaulty, kde Callout Studio neběží. Zahrnuje pouze blokové callouty a po změnách je nutné jej znovu exportovat.",
+	"export.formatCssAction": "Exportovat",
 	"quickInsert.readingViewHint": "Tato poznámka je otevřena v režimu čtení, takže nelze nic vložit.",
 	"quickInsert.readingView": "Přepněte do zdrojového režimu nebo živého náhledu a vložte callout.",
 	"quickInsert.noCursorHint": "V této poznámce není žádný kurzor, takže není kam vložit.",
 	"quickInsert.noCursor": "Umístěte kurzor v poznámce tam, kam chcete vložit callout, a zkuste to znovu.",
 	"notice.legacyDiscoveryArchiveFailed": "Kopii pro obnovení při aktualizaci se nepodařilo dokončit. Předchozí místní mezipaměť zjišťování a spouštěcí CSS zůstaly beze změny. Zkontrolujte oprávnění k zápisu, přístup k úložišti a volné místo a poté restartujte Obsidian, aby se akce zopakovala.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "Pozastaveno: callout chybí. Objevte ho nebo vytvořte, abyste obnovili tento příkaz, nebo příkaz upravte a zvolte jiný typ.",
+	"commandBuilder.missingCallout": "Pozastaveno, dokud chybějící callout znovu nevytvoříte nebo nevyberete jiný.",
 	"confirm.titleRestoreSettings": "Obnovit tato nastavení",
 	"confirm.titleCreateSettingsFile": "Vytvořit soubor nastavení",
 	"confirm.saveDisplayedSettings":
@@ -1487,7 +1475,7 @@ export const cs: Record<string, string> = {
 	"notice.unsavedChangesKept": "Některé změny na tomto zařízení ještě nebyly uloženy a nahradilo je novější nastavení z jiného zařízení. Vaše verze byla nejprve uložena: otevřete historii verzí v nastavení Callout Studio a obnovte ji.",
 	"settings.versionHistory": "Historie verzí",
 	"settings.versions": "Dřívější verze",
-	"settings.versionsDesc": "Callout Studio automaticky ukládá verze vaší konfigurace.\nPorovnejte je nebo se k některé vraťte.",
+	"settings.versionsDesc": "Porovnejte automaticky uložené verze svého nastavení nebo se k některé vraťte.",
 	"settings.versionsButton": "Zobrazit verze",
 	"noteChanges.callouts": "{{count}}",
 	"noteChanges.calloutsOne": "1",

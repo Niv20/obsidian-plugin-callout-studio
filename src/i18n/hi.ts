@@ -37,7 +37,7 @@ export const hi: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "पहले वह callout चुनें जिससे इसे बदलना है।",
 	"settings.fallbackTag": "डिफ़ॉल्ट",
 	"settings.fallbackTagAuto": "स्वतः डिफ़ॉल्ट",
-	"settings.rescanVaultDesc": "आपके नोट्स में इस्तेमाल हो रहे ऐसे callout प्रकार जोड़ता है जो अभी इस सूची में नहीं हैं। आपके मौजूदा callout और नोट्स नहीं बदले जाते।",
+	"settings.rescanVaultDesc": "आपके नोट्स में इस्तेमाल हुए वे callout प्रकार जोड़ता है जो अभी इस सूची में नहीं हैं।",
 	"settings.rescanVaultHintAction": "callout के लिए स्कैन करें",
 	"manualDiscovery.failed": "स्कैन के परिणाम सहेजे नहीं जा सके। जाँचें कि सेटिंग लिखी जा सकती हैं और सिंक पूरा हो गया है, फिर सेटिंग → मेरे callout प्रकार → callout के लिए स्कैन करें से दोबारा प्रयास करें। मौजूदा callout नहीं बदले गए हैं।",
 	"manualDiscovery.scanning": "स्कैन हो रहा है…",
@@ -85,14 +85,11 @@ export const hi: Record<string, string> = {
 	"deleteModal.keepsRowTheme":
 		"{{theme}} इस callout प्रकार को परिभाषित करती है, इसलिए यह उपलब्ध रहता है और अपना रूप बनाए रखता है। Callout Studio केवल आपके vault के अंदर के नोट्स बदलता है — आपकी थीम से जुड़ी कोई चीज़ प्रभावित नहीं होती।",
 
-	"settings.title": "Callout Studio",
 	"settings.myCalloutTypes": "मेरे callout प्रकार",
 	"settings.builtInCallouts": "बिल्ट-इन callouts",
 	"settings.contextMenu": "संदर्भ मेनू",
-	"settings.keyboardShortcuts": "कमांड",
 	"settings.language": "भाषा",
-	"settings.languageDesc":
-		"Callout Studio के लिए प्रदर्शन भाषा। डिफ़ॉल्ट रूप से Obsidian की इंटरफ़ेस भाषा का अनुसरण करती है।",
+	"settings.languageDesc": "Callout Studio की भाषा; जब तक आप दूसरी न चुनें, यह Obsidian की भाषा होती है।",
 	"settings.importExport": "आयात और निर्यात",
 	"settings.import": "आयात…",
 	"settings.export": "निर्यात…",
@@ -108,6 +105,9 @@ export const hi: Record<string, string> = {
 	"settings.addNewCallout": "callout जोड़ें",
 
 	"settings.noCalloutsNow": "फिलहाल कोई कस्टम callout नहीं।",
+	"settings.calloutCount": "{{count}} callout",
+	"settings.calloutCountOne": "1 callout",
+	"settings.searchCallouts": "callout खोजें…",
 
 	"settings.editAria": "{{name}} संपादित करें",
 	"settings.moreRowActionsAria": "{{name}} के लिए और कार्य",
@@ -125,9 +125,9 @@ export const hi: Record<string, string> = {
 	"settings.colorSwatchAria": "एक्सेंट: {{accent}} · पृष्ठभूमि: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "आपकी थीम के callouts",
-	"settings.themeCalloutsDesc":
-		"{{theme}} इन्हें प्रदान करती है या इनकी स्टाइल बदलती है, इसलिए Callout Studio इन्हें बिल्कुल वैसे ही छोड़ता है जैसे आपकी थीम इन्हें बनाती है, और इन्हें केवल ब्लॉक callout के रूप में देता है। यहाँ दोनों तरह के callout दिखते हैं: वे callout प्रकार जो आपकी थीम जोड़ती है, और बिल्ट-इन callout जिनका रूप वह बदल देती है। आपकी थीम द्वारा जोड़े गए callout प्रकार केवल तब तक सूचीबद्ध रहते हैं जब तक वह सक्रिय है।",
+	"settings.themeCalloutsDesc": "{{theme}} इन callout को खुद बनाता है, इसलिए Callout Studio इन्हें जैसा है वैसा ही रखता है और केवल ब्लॉक callout के रूप में देता है।",
 	"settings.themeCalloutsDefaultTheme": "आपकी थीम",
+	"settings.themeCalloutsEmpty": "{{theme}} अभी किसी callout को स्टाइल नहीं करता।",
 	"settings.themePreviewAria":
 		'"{{name}}" का पूर्वावलोकन करें — देखें कि आपकी थीम इसे कैसे बनाती है',
 	"settings.builtInAllThemeStyled":
@@ -136,11 +136,7 @@ export const hi: Record<string, string> = {
 	"settings.fallbackCalloutDesc":
 		"vault में अज्ञात callout प्रकार इस callout की स्टाइल विरासत में लेंगे।",
 
-	"settings.globalStyleRegularTitle": "ब्लॉक callout की वैश्विक शैली",
-	"settings.globalStyleHeadingTitle": "शीर्षक callout की वैश्विक शैली",
-	"settings.globalStyleInlineTitle": "इनलाइन callout की वैश्विक शैली",
 	"settings.border": "बॉर्डर",
-	"settings.borderAll": "सभी",
 	"settings.borderTop": "ऊपर",
 	"settings.borderRight": "दाएँ",
 	"settings.borderBottom": "नीचे",
@@ -150,14 +146,11 @@ export const hi: Record<string, string> = {
 	"settings.titleScale": "शीर्षक",
 	"settings.contentScale": "सामग्री",
 	"settings.inlineTextScale": "टेक्स्ट",
-	"settings.shapeGroup": "आकार",
 	"settings.borderRadius": "कोने का गोलापन",
-	"settings.alignGroup": "संरेखण",
 	"settings.alignContent": "सामग्री को शीर्षक के साथ संरेखित करें",
 	"settings.headingSpacingGroup": "शीर्षक दूरी",
 	"settings.headingPadVertical": "ऊर्ध्वाधर दूरी",
 	"settings.headingGap": "शीर्षकों के बीच स्थान",
-	"settings.headingFoldGroup": "फ़ोल्ड",
 	"settings.headingFoldArrow": "फ़ोल्ड तीर दिखाएं",
 	"settings.styleDemoName": "उदाहरण",
 	"settings.styleDemoInlineName": "उदाहरण",
@@ -169,22 +162,20 @@ export const hi: Record<string, string> = {
 	"settings.customPalettes": "सहेजे गए रंग पैलेट",
 	"settings.newPalette": "नया पैलेट",
 	"settings.customPalettesEmpty": "फिलहाल कोई सहेजा गया पैलेट नहीं।",
+	"settings.paletteCount": "{{count}} पैलेट",
+	"settings.paletteCountOne": "1 पैलेट",
 	"settings.editPaletteAria": "पैलेट {{name}} संपादित करें",
-	"settings.deletePaletteAria": "पैलेट {{name}} हटाएँ",
 	"settings.deletePaletteConfirm":
 		'पैलेट "{{name}}" हटाएँ?\nइसके रंगों का उपयोग करने वाले callout प्रभावित नहीं होंगे.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'जो callout इसे अपने मेटाडेटा ("{{key}}") में नाम देते हैं, वे इसके बजाय उस नाम का बिल्ट-इन रंग ले लेते हैं। आपके नोट नहीं बदलते।',
 
 	"settings.customCommands": "कमांड और हॉटकी",
-	"settings.customCommandsDesc":
-		"हर Callout Studio कमांड और उसे सौंपा गया शॉर्टकट देखें, और अपने सबसे ज़्यादा इस्तेमाल किए जाने वाले callouts के लिए अपने खुद के कमांड बनाएँ। डिफ़ॉल्ट रूप से कोई शॉर्टकट असाइन नहीं है।",
-	"settings.customCommandsButton": "कमांड प्रबंधित करें",
+	"settings.customCommandsDesc": "Callout Studio के सभी कमांड, उनके शॉर्टकट और आपके अपने कमांड।",
 
 	// कमांड बिल्डर
 	"commandBuilder.title": "कमांड और शॉर्टकट",
-	"commandBuilder.desc":
-		"Obsidian की हॉटकी सेटिंग में शॉर्टकट सेट या बदलने के लिए + बटन का उपयोग करें।",
+	"commandBuilder.pageDesc": "किसी कमांड का शॉर्टकट Obsidian की हॉटकी सेटिंग्स में सेट करने के लिए उसके आगे ⊕ दबाएँ।",
 	"commandBuilder.builtIn": "बिल्ट-इन कमांड",
 	"commandBuilder.toggleAria": "{{name}} चालू या बंद करें",
 	"commandBuilder.hotkeyBlank": "खाली",
@@ -194,7 +185,6 @@ export const hi: Record<string, string> = {
 	"commandBuilder.empty": "अभी तक कोई कस्टम कमांड नहीं है।",
 	"commandBuilder.unknownCommand": "यह कमांड",
 	"commandBuilder.editAria": "{{name}} संपादित करें",
-	"commandBuilder.deleteAria": "{{name}} हटाएँ",
 	"commandBuilder.deleteConfirm":
 		"कमांड {{name}} हटाएँ? इसे सौंपा गया कोई भी शॉर्टकट काम करना बंद कर देगा।",
 	"commandBuilder.newTitle": "नया कमांड",
@@ -208,8 +198,7 @@ export const hi: Record<string, string> = {
 		"यह प्रारूप बंद है, इसलिए जब तक आप इसे फिर से चालू नहीं करते, कमांड सादा टेक्स्ट डालेगा।",
 	"commandBuilder.roleThemeOwned":
 		"आपकी थीम यह callout प्रदान करती है, इसलिए इसका केवल ब्लॉक प्रारूप ही है।",
-	"commandBuilder.commandSuspended":
-		"रोका गया: आपकी थीम यह callout प्रदान करती है, इसलिए इसका केवल ब्लॉक प्रारूप ही है। थीम इसे प्रदान करना बंद करने पर यह कमांड फिर से काम करने लगेगी।",
+	"commandBuilder.commandSuspended": "जब तक आपका थीम यह callout देता है तब तक रुका हुआ; तब इसमें केवल ब्लॉक फ़ॉर्मैट होता है।",
 	"commandBuilder.callout": "Callout प्रकार",
 	"commandBuilder.calloutDesc": "वह callout जिसे यह कमांड डालता है।",
 	"commandBuilder.headingLevel": "हेडिंग स्तर",
@@ -258,7 +247,7 @@ export const hi: Record<string, string> = {
 	"settings.resetItemThemeCalloutStyles": "आपकी थीम के callout स्टाइल",
 	"settings.resetItemFallback": "फ़ॉलबैक स्टाइल",
 	"settings.resetItemIconLibraries": "आइकन लाइब्रेरी का क्रम और छिपी हुई लाइब्रेरी",
-	"settings.resetAllConfirmAfter": "चिंता न करें: रीसेट से पहले हम आपके मौजूदा सेटअप का बैकअप सहेजते हैं। आप उसे कभी भी सेटिंग के बैकअप सेक्शन से बहाल कर सकते हैं।\nअगर आप सिंक सेवा का उपयोग करते हैं, तो रीसेट आपके दूसरे डिवाइस तक भी पहुँच सकता है।",
+	"settings.resetAllConfirmAfter": "चिंता न करें: रीसेट से पहले हम आपके मौजूदा सेटअप का बैकअप सहेजते हैं। आप उसे कभी भी सेटिंग्स में संस्करण इतिहास से वापस ला सकते हैं।\nअगर आप सिंक सेवा इस्तेमाल करते हैं, तो रीसेट आपके दूसरे डिवाइसों तक भी पहुँच सकता है।",
 	"settings.resetNothing": "रीसेट करने के लिए कुछ नहीं है: सब कुछ पहले से डिफ़ॉल्ट पर है।",
 
 	"notice.customCommandMissingCallout":
@@ -342,13 +331,13 @@ export const hi: Record<string, string> = {
 	"editor.foldClosed": "डिफ़ॉल्ट रूप से बंद",
 	"editor.cancel": "रद्द करें",
 	"editor.saveChanges": "परिवर्तन सहेजें",
-	"editor.saving": "सहेजा जा रहा है…",
 	"editor.saveFailed": "सहेजना पूरा नहीं हो सका। यदि यह संपादक अभी खुला है, तो इसे खुला रखें और संग्रहण व सिंक की जाँच के बाद फिर से प्रयास करें। कुछ सेटिंग या नोट अपडेट पहले ही सहेजे जा चुके हो सकते हैं।",
 	"editor.createCallout": "callout बनाएँ",
 	"editor.nameRequired": "callout बनाने से पहले प्रदर्शन नाम आवश्यक है।",
 	"editor.noChangesToSave": "कोई परिवर्तन नहीं हुआ।",
-	"editor.downloadingIcon": "आइकन डाउनलोड हो रहा है",
 	"editor.idEmpty": "कम से कम एक ID आवश्यक है",
+	"editor.idAlreadyHere": "यह ID पहले से मौजूद है",
+	"editor.idTooLong": "ID अधिकतम {{max}} अक्षरों की होनी चाहिए",
 	"editor.idExists": "इस ID वाला callout पहले से मौजूद है",
 	"editor.idConflict": "यह ID किसी मौजूदा callout से टकराती है",
 	"editor.idFromTheme":
@@ -543,7 +532,6 @@ export const hi: Record<string, string> = {
 	"iconPicker.allSources": "सभी स्रोत",
 	"iconPicker.searchAllSources": "सभी आइकन स्रोतों में खोजें",
 	"iconPicker.chooseSource": "स्रोत चुनें",
-	"iconPicker.sourceGroup": "{{name}} ({{count}})",
 	"iconPicker.librariesAvailable": "उपलब्ध लाइब्रेरी",
 	"iconPicker.librariesToDownload": "डाउनलोड के लिए लाइब्रेरी",
 	"iconPicker.groupCurrent": "मौजूदा आइकन",
@@ -745,30 +733,30 @@ export const hi: Record<string, string> = {
 	"contextMenu.deleteSection": "शीर्षक अनुभाग हटाएँ",
 	"heading.toggleFold": "मोड़ना टॉगल करें",
 	"settings.globalSettings": "Callout Studio के वैश्विक स्टाइल विकल्प",
+	"settings.calloutStyle": "callout की शैली",
+	"settings.menusAndCommands": "मेनू और कमांड",
+	"settings.buildFailed": "Callout Studio अपनी सेटिंग्स नहीं दिखा सका; Obsidian को फिर से शुरू करें, और दोबारा हो तो इसकी सूचना दें।",
 	"settings.globalSettingsRegularDesc":
 		"अपने वॉल्ट के हर ब्लॉक callout का बॉर्डर, रेडियस, फ़ॉन्ट स्केल और संरेखण समायोजित करें।",
 	"settings.globalSettingsHeadingDesc":
 		"अपने वॉल्ट के हर शीर्षक callout का बॉर्डर, आकार और ऊर्ध्वाधर दूरी समायोजित करें।",
 	"settings.globalSettingsInlineDesc":
 		"अपने वॉल्ट के हर इनलाइन callout का बॉर्डर और आकार समायोजित करें।",
-	"settings.globalSettingsCustomize": "कस्टमाइज़ करें",
 	"settings.themeCalloutStyles": "अपनी थीम के callout स्टाइल का उपयोग करें",
-	"settings.themeCalloutStylesDesc":
-		"चालू: आपकी थीम जिन callouts को स्टाइल करती है, वे आपकी थीम का ही रूप बनाए रखते हैं।\nबंद: Callout Studio हर callout खुद बनाता है, और आपकी थीम के callout स्टाइल बंद हो जाते हैं।",
+	"settings.themeCalloutStylesDesc": "चालू होने पर, जिन callout को आपका थीम स्टाइल करता है वे उसी का रूप रखते हैं; बंद होने पर Callout Studio हर callout बनाता है।",
 	"settings.calloutTypeRegular": "ब्लॉक callout",
 	"settings.calloutTypeHeading": "शीर्षक callout",
 	"settings.calloutTypeInline": "इनलाइन callout",
-	"settings.customizeMenu": "मेनू आइटम कस्टमाइज़ करें",
-	"settings.customizeMenuDesc":
-		"चुनें कि प्रत्येक callout प्रकार के लिए कौन-सी राइट-क्लिक क्रियाएँ दिखाई दें और उनका क्रम बदलें। सोर्स मोड और लाइव प्रीव्यू में काम करता है।",
-	"settings.customizeMenuButton": "मेनू आइटम कस्टमाइज़ करें",
+	"settings.customizeMenuDesc": "हर callout प्रकार के लिए राइट-क्लिक की क्रियाएँ चुनें और उनका क्रम तय करें।",
 	"menuCustomize.title": "राइट-क्लिक मेनू कस्टमाइज़ करें",
-	"menuCustomize.desc":
-		"क्रियाओं को चालू या बंद करें और उन्हें पुनः क्रमबद्ध करने के लिए हैंडल को खींचें। परिवर्तन स्वतः सहेजे जाते हैं।",
+	"menuCustomize.pageDesc": "किसी क्रिया को हैंडल से खींचकर हिलाएँ, या ✕ से छिपा दें।",
 	"menuCustomize.regular": "ब्लॉक callout",
 	"menuCustomize.heading": "शीर्षक callout",
 	"menuCustomize.inline": "इनलाइन callout",
 	"menuCustomize.dragHandle": "पुनः क्रमबद्ध करने के लिए खींचें",
+	"menuCustomize.hiddenHeading": "शीर्षक callout मेनू से छिपे हुए",
+	"menuCustomize.hiddenInline": "इनलाइन callout मेनू से छिपे हुए",
+	"menuCustomize.hiddenRegular": "ब्लॉक callout मेनू से छिपे हुए",
 	"menuItem.createOrEdit": "callout बनाएँ या संपादित करें",
 	"menuItem.openSettings": "सेटिंग खोलें",
 	"menuItem.copyMarkdown": "Markdown कॉपी करें",
@@ -834,7 +822,6 @@ export const hi: Record<string, string> = {
 	"vaultStats.roleBlock": "ब्लॉक",
 	"vaultStats.roleHeading": "शीर्षक",
 	"vaultStats.roleInline": "इनलाइन",
-	"portable.subtitle": "Callout Studio का उपयोग बंद करने से पहले चुनें कि किन शीर्षक और इनलाइन callout को मानक Markdown में बदलना है।",
 	"portable.customize": "कस्टम प्रतिस्थापन…",
 	"portable.editCustom": "कस्टम प्रतिस्थापन संपादित करें…",
 	"portable.restoreDefault": "डिफ़ॉल्ट प्रतिस्थापन बहाल करें",
@@ -847,13 +834,13 @@ export const hi: Record<string, string> = {
 
 	"usage.title": "callout खोजें",
 	"usage.command": "callout खोजें",
-	"usage.subtitle": "अपने वॉल्ट में callout खोजें और सीधे उनके स्रोत पर जाएँ।",
 	"usage.browse": "ब्राउज़ करें",
 	"usage.allTypes": "सभी प्रकार",
 	"usage.registeredCallouts": "पंजीकृत callout",
 	"usage.unregisteredCallouts": "अपंजीकृत callout",
 	"usage.summary": "{{files}} फ़ाइलों में {{count}} उपयोग",
 	"usage.allRoles": "सभी प्रारूप",
+	"usage.filterFormat": "फ़ॉर्मैट के अनुसार फ़िल्टर करें",
 	"usage.failed": "Callout के उपयोगों को अपडेट नहीं किया जा सका।",
 	"usage.loading": "Markdown नोट्स स्कैन किए जा रहे हैं…",
 	"usage.partial": "परिणाम अधूरे हैं: {{count}} फ़ाइलें पढ़ने में त्रुटि हुई।",
@@ -866,7 +853,6 @@ export const hi: Record<string, string> = {
 	"usage.missing": "यह नोट अब मौजूद नहीं है। परिणाम अपडेट किए जा रहे हैं…",
 	"usage.changed": "यह उपयोग स्थान बदल गया है या इसका नया स्थान स्पष्ट नहीं है। परिणाम अपडेट किए जा रहे हैं…",
 	"usage.openFailed": "इस callout के उपयोग स्थान को नहीं खोला जा सका।",
-	"usage.menuCount": "callout खोजें ({{count}})",
 	"usage.menuIncomplete": "callout खोजें — स्कैन अधूरा है",
 	"usage.menu": "callout खोजें",
 	"usage.closeSettings": "साइडबार में callout के परिणाम देखने के लिए सेटिंग बंद करें।",
@@ -1052,6 +1038,8 @@ export const hi: Record<string, string> = {
 	"footer.contribute": "योगदान दें",
 	"footer.license": "प्लगइन लाइसेंस",
 	"footer.iconCredits": "आइकन लाइसेंस",
+	"settings.about": "परिचय",
+	"settings.version": "संस्करण",
 	"settings.deletePaletteConfirmLinkedOne":
 		'"{{name}}" पैलेट हटाएँ?\nइसे 1 callout उपयोग करता है। उसके रंग बने रहेंगे, और आप बाद में उसके एडिटर की Color पंक्ति से फिर से जोड़ सकते हैं।',
 	"settings.deletePaletteConfirmLinked":
@@ -1068,8 +1056,7 @@ export const hi: Record<string, string> = {
 	"palette.colorExistsUseLink": "मौजूदा वाला उपयोग करें",
 	"locale.downloading": "अनुवाद डाउनलोड हो रहा है…",
 	"locale.notDownloaded": "{{name}} अभी डाउनलोड नहीं हुआ है",
-	"locale.notDownloadedDesc":
-		"अनुवाद डाउनलोड होने तक Callout Studio अंग्रेज़ी दिखा रहा है। Obsidian अगली बार शुरू होने पर फिर प्रयास किया जाएगा।",
+	"locale.notDownloadedDesc": "अनुवाद डाउनलोड होने तक Callout Studio अंग्रेज़ी दिखाता है, और Obsidian शुरू होने पर फिर कोशिश करता है।",
 	"locale.retry": "पुनः प्रयास करें",
 	"locale.diskWriteFailed":
 		"Callout Studio अनुवाद को डिस्क पर सहेज नहीं सका, इसलिए अगली बार इसे फिर डाउनलोड करना होगा।",
@@ -1093,13 +1080,14 @@ export const hi: Record<string, string> = {
 	"export.formatCss": "स्वतंत्र CSS स्नैपशॉट",
 	"export.formatCssDesc":
 		"वेबसाइटों या ऐसे vault के लिए जहाँ Callout Studio नहीं चल रहा है। इसमें केवल block callout शामिल होते हैं और बदलावों के बाद इसे फिर से निर्यात करना ज़रूरी है।",
+	"export.formatCssAction": "एक्सपोर्ट करें",
 	"quickInsert.readingViewHint": "यह नोट रीडिंग व्यू में खुला है, इसलिए कुछ भी नहीं डाला जा सकता।",
 	"quickInsert.readingView": "callout डालने के लिए सोर्स मोड या लाइव प्रीव्यू पर स्विच करें।",
 	"quickInsert.noCursorHint": "इस नोट में कोई कर्सर नहीं है, इसलिए डालने के लिए कोई स्थान नहीं है।",
 	"quickInsert.noCursor": "नोट में उस जगह कर्सर रखें जहाँ आप callout डालना चाहते हैं, फिर पुनः प्रयास करें।",
 	"notice.legacyDiscoveryArchiveFailed": "अपग्रेड की पुनर्प्राप्ति प्रति पूरी नहीं हो सकी। पुराना स्थानीय खोज कैश और स्टार्टअप CSS बिना बदलाव के रखा गया है। लिखने की अनुमति, स्टोरेज तक पहुँच और खाली जगह की जाँच करें, फिर दोबारा प्रयास करने के लिए Obsidian को पुनः आरंभ करें।",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "रोका गया: callout गुम है। इस कमांड को पुनर्स्थापित करने के लिए इसे खोजें या बनाएं, या दूसरा प्रकार चुनने के लिए कमांड संपादित करें।",
+	"commandBuilder.missingCallout": "जब तक आप गुम callout दोबारा नहीं बनाते या दूसरा नहीं चुनते, तब तक रुका हुआ।",
 	"confirm.titleRestoreSettings": "ये सेटिंग्स पुनर्स्थापित करें",
 	"confirm.titleCreateSettingsFile": "सेटिंग्स फ़ाइल बनाएँ",
 	"confirm.saveDisplayedSettings":
@@ -1475,7 +1463,7 @@ export const hi: Record<string, string> = {
 	"notice.unsavedChangesKept": "इस उपकरण पर किए गए कुछ बदलाव अभी सहेजे नहीं गए थे और दूसरे उपकरण की नई सेटिंग्स ने उन्हें बदल दिया। आपका संस्करण पहले सहेज लिया गया था: उसे वापस पाने के लिए Callout Studio की सेटिंग्स में संस्करण इतिहास खोलें।",
 	"settings.versionHistory": "संस्करण इतिहास",
 	"settings.versions": "पुराने संस्करण",
-	"settings.versionsDesc": "Callout Studio आपके कॉन्फ़िगरेशन के संस्करण अपने आप सहेजता है।\nउनकी तुलना करें या किसी संस्करण पर वापस जाएँ।",
+	"settings.versionsDesc": "अपने सेटअप के अपने-आप सहेजे गए संस्करणों की तुलना करें, या किसी एक पर लौटें।",
 	"settings.versionsButton": "संस्करण देखें",
 	"noteChanges.callouts": "{{count}} callout",
 	"noteChanges.calloutsOne": "1 callout",
