@@ -180,7 +180,7 @@ function previewRow(ctx: TreeContext, role: CalloutRenderRole): CsRender {
 function buildPreview(ctx: TreeContext, role: CalloutRenderRole, parent: HTMLElement): PreviewPart {
 	const el = parent.createDiv({ cls: "cs-style-preview" });
 	const preview = new StylePreview(ctx.plugin, role, el, false);
-	const stopPinning = pinBelowTitlebar(parent);
+	const stopPinning = pinBelowTitlebar(el);
 	// The heading preview draws its own fold arrows and spacing, so it
 	// follows the switch and the sliders itself.
 	const follow = (): void => {
@@ -204,26 +204,37 @@ function buildPreview(ctx: TreeContext, role: CalloutRenderRole, parent: HTMLEle
  * the top itself: the box's `top` (`--cs-sticky-top`, styles.css) follows the
  * bar's height, which can change with the font size. Returns what stops it.
  *
- * Why it waits: Obsidian draws a row before it puts the row's box on the page,
- * so neither the box nor the bar can be found while the row is being drawn.
- * The observer watches the row, and its first call comes once the row is laid
- * out on the page; the bar is looked up there, and then watched too. The
- * observer is made by the row's own window, because Obsidian 1.14 opens the
- * settings in a window of their own.
+ * Why it watches the preview, and looks everything up each time:
+ * - Obsidian draws a row before it puts the row's box on the page, so neither
+ *   the box nor the bar can be found while the preview is being built. The
+ *   observer's first call comes once the preview is laid out on the page.
+ * - The preview is a kept part: leaving the page and coming back before it is
+ *   let go moves the same preview into the new page's row. Its box and its
+ *   bar are then new ones, so they are found from where the preview is now.
+ * The observer is made by the preview's own window, because Obsidian 1.14
+ * opens the settings in a window of their own.
+ *
+ * @param previewEl The preview's own element, which moves with it.
  */
-function pinBelowTitlebar(rowEl: HTMLElement): () => void {
-	const view = rowEl.ownerDocument.defaultView;
+function pinBelowTitlebar(previewEl: HTMLElement): () => void {
+	const view = previewEl.ownerDocument.defaultView;
 	if (!view || typeof view.ResizeObserver !== "function") return () => {};
-	let titlebar: HTMLElement | null = null;
+	/** The title bar being watched for its height; it changes with the page. */
+	let watchedBar: HTMLElement | null = null;
 	const observer = new view.ResizeObserver(() => {
-		if (!titlebar) {
-			titlebar = rowEl.closest(".setting-page")?.querySelector<HTMLElement>(".setting-page-titlebar") ?? null;
-			if (titlebar) observer.observe(titlebar);
+		const titlebar = previewEl.closest(".setting-page")?.querySelector<HTMLElement>(".setting-page-titlebar");
+		const boxEl = previewEl.closest<HTMLElement>(".setting-group");
+		if (!titlebar || !boxEl) return;
+		// Watch the bar of the page the preview is on now. (Only when it is a
+		// new one: watching an element again makes the observer call back again.)
+		if (titlebar !== watchedBar) {
+			if (watchedBar) observer.unobserve(watchedBar);
+			observer.observe(titlebar);
+			watchedBar = titlebar;
 		}
-		const boxEl = rowEl.closest<HTMLElement>(".setting-group");
-		if (boxEl && titlebar) boxEl.style.setProperty("--cs-sticky-top", `${titlebar.getBoundingClientRect().height}px`);
+		boxEl.style.setProperty("--cs-sticky-top", `${titlebar.getBoundingClientRect().height}px`);
 	});
-	observer.observe(rowEl);
+	observer.observe(previewEl);
 	return () => observer.disconnect();
 }
 

@@ -427,11 +427,14 @@ definitions of `styleSpecs.ts`, `wireStyleSlider`):
 - **The preview** is a kept part in a box of its own (`cs-style-preview-group`),
   pinned under the page's title bar while the controls scroll (sticky,
   `--cs-sticky-top`; not on a phone). The bar's height is measured by a
-  `ResizeObserver` of the row's own window, which watches the row and looks
-  the bar up on its first call: Obsidian draws a row before it puts the row's
-  box on the page, so while the row draws there is no page to find the bar in
-  (looking then left the preview pinned over the bar, found in Obsidian). It
-  holds the demo callout (and `settingsEditOpen`) until the page is left. The heading page's preview follows the registry's change round
+  `ResizeObserver` of the preview's own window, which watches the preview and
+  finds its box and its page's bar each time it is called. Two things make
+  that necessary, both found in Obsidian, where the preview ended up pinned
+  over the bar: Obsidian draws a row before it puts the row's box on the page,
+  so while the preview is built there is no page to find the bar in; and a
+  kept preview moves into the new page's row when the reader comes back before
+  it is let go, so the box and the bar it was first given are gone. It holds
+  the demo callout (and `settingsEditOpen`) until the page is left. The heading page's preview follows the registry's change round
   itself, so the fold-arrow switch and the spacing reach its demo.
 - **Switches** are Obsidian's control rows, keyed into the settings
   (`globalStyle.borderSides.top`, `headingCallouts.showFoldArrow`, …), saved by

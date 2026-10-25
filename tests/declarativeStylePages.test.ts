@@ -189,29 +189,46 @@ describe("a style page", () => {
 		assert.equal(row(harness, `${STYLE_PAGES.inline}-preview`).def.searchable, false);
 	});
 
-	it("pins the preview under the page's title bar once the row is laid out on the page", () => {
-		// A ResizeObserver for the row's own window, recording what it watches.
-		const observed: unknown[] = [];
+	it("pins the preview under its page's title bar once laid out, on every page it moves to", () => {
+		// A ResizeObserver for the preview's own window, recording what it watches.
+		const watching = new Set<unknown>();
 		let laidOut = (): void => {};
 		class Observer {
 			constructor(callback: () => void) { laidOut = callback; }
-			observe(element: unknown): void { observed.push(element); }
-			disconnect(): void {}
+			observe(element: unknown): void { watching.add(element); }
+			unobserve(element: unknown): void { watching.delete(element); }
+			disconnect(): void { watching.clear(); }
 		}
 		const { plugin } = drawStyleWith();
 		const { tab, harness } = plugin;
 		const view = tab.containerEl.ownerDocument.defaultView as object;
 		Object.assign(view, { ResizeObserver: Observer });
+		/** Where the preview is now: its element, its page's title bar, its box. */
+		const where = () => {
+			const previewEl = row(harness, `${STYLE_PAGES.regular}-preview`).settingEl.querySelector(".cs-style-preview")!;
+			return {
+				previewEl,
+				titlebar: previewEl.closest(".setting-page")?.querySelector(".setting-page-titlebar"),
+				boxEl: previewEl.closest(".setting-group") as HTMLElement,
+			};
+		};
 		try {
 			harness.openPage([STYLE_PAGES.regular]);
-			const rowEl = row(harness, `${STYLE_PAGES.regular}-preview`).settingEl;
-			assert.deepEqual(observed, [rowEl], "drawn before its box is on the page, so the row is watched");
+			const first = where();
+			assert.deepEqual([...watching], [first.previewEl], "built before its box is on the page, so the preview is watched");
 			laidOut();
-			const titlebar = rowEl.closest(".setting-page")?.querySelector(".setting-page-titlebar");
-			assert.ok(titlebar, "the page has its title bar");
-			assert.deepEqual(observed, [rowEl, titlebar], "then the bar, for its height");
-			const boxEl = rowEl.closest(".setting-group") as HTMLElement;
-			assert.equal(boxEl.style.getPropertyValue("--cs-sticky-top"), "36px", "the fake bar's height");
+			assert.ok(first.titlebar, "the page has its title bar");
+			assert.deepEqual([...watching], [first.previewEl, first.titlebar], "then the bar, for its height");
+			assert.equal(first.boxEl.style.getPropertyValue("--cs-sticky-top"), "36px", "the fake bar's height");
+
+			// Back to the page before the preview is let go: the same preview moves into the new page.
+			harness.openPage([STYLE_PAGES.regular]);
+			const second = where();
+			assert.equal(second.previewEl, first.previewEl, "the kept preview");
+			assert.notEqual(second.boxEl, first.boxEl, "in the new page's box");
+			laidOut();
+			assert.deepEqual([...watching], [first.previewEl, second.titlebar], "the new page's bar, not the old one");
+			assert.equal(second.boxEl.style.getPropertyValue("--cs-sticky-top"), "36px");
 		} finally {
 			Reflect.deleteProperty(view, "ResizeObserver");
 		}
