@@ -95,7 +95,7 @@ import {
 	tokenAttrSel,
 } from "../utils/calloutSelector";
 import { coreAccentShimCSS } from "./css/coreAccentShim";
-import { coreAccentDialect } from "../utils/calloutColorFormat";
+import { CORE_ACCENT_SPELLING } from "../utils/calloutColorFormat";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import { StartupStyleCache } from "./StartupStyleCache";
 import { OWN_CSS_CHANGE } from "./ownCssChange";
@@ -641,7 +641,7 @@ export class CSSInjector {
 			selectors: sels.join(",\n"),
 			titleSelectors: sels.map((s) => `${s} > .callout-title`).join(",\n"),
 			dialect: this.studioWeights.dialect(),
-			core: coreAccentDialect(),
+			core: CORE_ACCENT_SPELLING,
 			ownsAccentVariable: this.themeAccentVar(def) === undefined,
 			ownsBackground:
 				def.transparentBg === true ||

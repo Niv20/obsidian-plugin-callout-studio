@@ -40,6 +40,8 @@ Thank you all for helping make Callout Studio better!
 
 ## Install
 
+Callout Studio needs Obsidian 1.13.4 or later.
+
 [Obsidian community directory](https://community.obsidian.md/plugins/callout-studio): Find Callout Studio's listing and add it to Obsidian. You can also open **Settings → Community plugins → Browse**, search for **Callout Studio**, and select **Install**, then **Enable**.
 
 [Manual installation](docs/internals-docs/20-build-test-release.md#manual-installation-from-a-release): Instructions for downloading a release and installing its files in your vault.

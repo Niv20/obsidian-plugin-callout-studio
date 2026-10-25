@@ -37,10 +37,10 @@ export class StartupStyleCache {
 	}
 
 	/**
-	 * Vault-scoped localStorage key. Mirrors the `${appId}-${key}` convention
-	 * of `App.loadLocalStorage`, which we can't call directly: it requires
-	 * Obsidian 1.8.7 while our minAppVersion is 1.6.6. `appId` is undocumented
-	 * but long-stable; the vault name is the fallback scope.
+	 * Vault-scoped localStorage key: the same `${appId}-${key}` that
+	 * `App.loadLocalStorage` builds. That API stores JSON and this snapshot is
+	 * plain CSS text, so the key is built by hand. `appId` is undocumented but
+	 * long-stable; the vault name is the fallback scope.
 	 */
 	private scopedKey(key: string): string {
 		const appId = (this.app as App & { appId?: string }).appId;

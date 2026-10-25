@@ -1153,8 +1153,8 @@ widget) must invalidate whatever remembers a slot.
 ## Switching the theme's callout styling off
 
 **Use your theme's callout styles** (`settings.themeCalloutStyles.enabled`), the
-first row under *Callouts from your theme* (see
-[16 § The theme section opens with its switch](16-settings-ui-and-modals.md#the-theme-section-opens-with-its-switch)), is on
+row under *Callouts from your theme* on the main settings page (see
+[26 § Fallback, language and the theme's styles](26-declarative-settings.md#fallback-language-and-the-themes-styles)), is on
 by default, and on, nothing in this section runs: the generated sheet is
 byte-identical to the one before the setting existed, and no stylesheet is
 touched. Off, [`themeCalloutsOff.ts`](../../src/manager/theme/themeCalloutsOff.ts)

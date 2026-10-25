@@ -327,8 +327,8 @@ export function tintColorAt(
  * zeroes its contribution — leaving the mix an algebraic no-op on the colour
  * channels. Written as `color-mix` rather than `rgba()` because it is the exact
  * construct core uses for the same job, so the two stay in step by
- * construction. Safe on every supported build: `minAppVersion` 1.6.6 is
- * Chromium 122 and `color-mix` shipped in 111.
+ * construction. Safe on every supported build: `color-mix` shipped in
+ * Chromium 111, and Obsidian has run on 122 or newer since 1.6.6.
  *
  * `color` may be a hex or a `var()` reference, but never a bare RGB triplet —
  * see {@link calloutAccentValue} for why `--callout-color` cannot be used here

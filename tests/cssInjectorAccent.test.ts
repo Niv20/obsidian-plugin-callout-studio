@@ -23,9 +23,9 @@
  * flag, not a claim on colour) — pinned in tests/hideIcon.test.ts, and restated
  * from this side here because the two answers come out of one comparison.
  *
- * Note on drift, which is now TWO kinds. The `obsidian` stub's
- * `requireApiVersion` returns true, so *core's* spelling here is always the
- * 1.13+ one — a full colour and a bare `var(--callout-…)` reference. But the
+ * Note on drift, which is now TWO kinds. *Core's* spelling is always the
+ * 1.13+ one (`CORE_ACCENT_SPELLING`, since 1.13.4 is the minimum) — a full
+ * colour and a bare `var(--callout-…)` reference. But the
  * spelling actually emitted is the **active theme's**, not core's: a theme that
  * never updated its `rgba(var(--callout-color), …)` gets a triplet on the same
  * Obsidian. `harness()` reports no theme at all, which is the 196-of-257 case

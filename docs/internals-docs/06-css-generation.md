@@ -275,12 +275,13 @@ Three properties of that rule are the whole design, and each is load-bearing:
   about to emit. It also covers both claim sources at once, which two
   recording-site fixes would not.
 
-It is emitted only when `dialect.read !== coreAccentDialect()`, and never for a
-theme-owned row. **The fallback block deliberately gets no shim**: its native
-Block selector is an optional one-class baseline that must remain weaker than an
-ordinary exact theme or snippet definition. Unknown ids still receive a
-correctly-spelled `--callout-color`; registering the callout is the route to the
-full per-id repair and Studio-strength styling.
+It is emitted only when `dialect.read !== CORE_ACCENT_SPELLING` (a theme that
+reads a triplet), and never for a theme-owned row. **The fallback block
+deliberately gets no shim**: its native Block selector is an optional one-class
+baseline that must remain weaker than an ordinary exact theme or snippet
+definition. Unknown ids still receive a correctly-spelled `--callout-color`;
+registering the callout is the route to the full per-id repair and
+Studio-strength styling.
 
 ### Backgrounds are always translucent tints - never the authored hex
 

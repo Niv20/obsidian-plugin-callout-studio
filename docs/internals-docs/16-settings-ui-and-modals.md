@@ -1039,7 +1039,8 @@ is doing.
 > theme, which is a second question and the one that actually regressed. And
 > `background-color: inherit` is the third sanctioned paint beside the two
 > surface tokens - it is the only one available to a band sitting *on* a pane
-> whose colour the plugin does not choose. See [The three sections pin their headings](#the-three-sections-pin-their-headings).
+> whose colour the plugin does not choose. The band went with the old settings
+> page in the *Clean Sweep*; [23](23-common-pitfalls.md) keeps the lesson.
 >
 > Quick Insert applies the same padding rule inside the modal chrome: its
 > `.modal-content` top padding is zero, the introductory paragraph owns the

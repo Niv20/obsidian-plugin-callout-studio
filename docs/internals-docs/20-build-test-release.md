@@ -25,6 +25,8 @@ To install a release manually, download `manifest.json`, `main.js`, and
 `styles.css` from the [latest GitHub release](https://github.com/Niv20/obsidian-plugin-callout-studio/releases/latest).
 Copy the files into `<Vault>/.obsidian/plugins/callout-studio/`, restart
 Obsidian, then enable **Callout Studio** in **Settings → Community plugins**.
+The plugin needs Obsidian 1.13.4 or later (`minAppVersion`; see
+[Raising `minAppVersion`](#raising-minappversion)).
 
 > [!IMPORTANT]
 > **`repo-is-live-plugin-folder`**: this repository *is* the plugin's

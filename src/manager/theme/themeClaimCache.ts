@@ -66,8 +66,8 @@ function parse(raw: string | null): Stored {
 
 /**
  * The `localStorage` store. Mirrors `StartupStyleCache.scopedKey`: the
- * `${appId}-${key}` convention of `App.loadLocalStorage`, which needs a newer
- * Obsidian than this plugin's minimum.
+ * `${appId}-${key}` convention of `App.loadLocalStorage`, built by hand so
+ * every store the plugin keeps on the device is scoped the same way.
  */
 export function localClaimVerdicts(app: App): ClaimVerdictStore {
 	const key = (): string | null => {

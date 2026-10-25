@@ -10,8 +10,9 @@
  * The main idea.
  * - The page is opened by Obsidian's own navigation,
  *   `app.setting.openPagePath(tabId, pagePath)`. It is not in Obsidian's
- *   typings, so it is checked for: without it (another Obsidian version) the
- *   reader stays on the page that is open, and the row is shown if it is there.
+ *   typings, so it is checked for: without it (Obsidian 1.13.x; it arrived in
+ *   1.14) the reader stays on the page that is open, and the row is shown if
+ *   it is there.
  * - The row's element comes from the row registry (rowRegistry.ts): a row the
  *   plugin jumps to registers its element while it is drawn. The row may not
  *   be drawn yet (a page that slides in, a callout that was only just made),

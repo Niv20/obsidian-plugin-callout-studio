@@ -237,47 +237,38 @@ sufficient**. Common cases that also need an explicit follow-up call:
   A `:not()` guard is the opposite - that *is* the default state - and so is
   `.callout` itself.
 - **The settings tab's scroller is Obsidian's, not this plugin's, and a theme
-  can reach it.** `PluginSettingTab.containerEl` **is** `.vertical-tab-content`
- - the element that scrolls - so `.callout-studio-settings` lands on it and any
-  rule this plugin writes about the pane competes directly with the theme's own
-  `.vertical-tab-content` rules, at equal specificity and from an *earlier*
-  sheet. That matters for one property in particular: a sticky `top` is measured
-  from the scrollport's **content** box, so the pane's `padding-top` has to be
-  zero or every pinned section heading parks that far down with rows scrolling
-  through the strip above it. 20 of the 257 themes in the development vault put
-  that padding back, one with `!important` - which is why the reset carries an
-  `!important` of its own and an explicit `body:not(.is-phone)`. The band's
-  *paint* is the same problem one level down and does not have the same answer:
-  `background-color: inherit` copies the pane, a good many themes leave the
-  pane see-through, and three more beat the declaration outright - one of them (Lagom)
-  with an `!important` already at the band rule's own `(0,3,0)`, so there is no
-  weight to win with. That one is answered by a floor instead: a `::before` of
-  the theme's own surface tokens under the band and an `::after` repainting the
-  band over it, contesting nothing. Before adding any other rule about the
-  pane, assume a theme has an opinion about the same property, check the
-  weight, and ask whether being *under* the theme would do the job instead of
-  being above it. See
-  [Settings UI § the three sections pin their headings](16-settings-ui-and-modals.md#the-three-sections-pin-their-headings)
-  and sections 165 and 166 of `tests/modalBodyLayers.test.ts`.
+  can reach it.** The tab is drawn by Obsidian (26), and the plugin writes no
+  rule about `.vertical-tab-content` itself. The one layer that sticks inside
+  it is a style page's pinned preview, whose `top` is the page title bar's
+  height, measured at run time rather than assumed (26 § The style pages).
+  Before adding a rule about the pane, assume a theme has an opinion about the
+  same property, check the weight, and ask whether being *under* the theme
+  would do the job instead of being above it. The old settings page learned
+  this the hard way: its pinned section headings needed an `!important`
+  padding reset that 20 of the 257 themes in the development vault fought,
+  and a painted floor under Lagom; both went with the page in the *Clean
+  Sweep*. See section 165 of `tests/modalBodyLayers.test.ts`.
 - **The spelling of `--callout-color` is a fact about the active *theme*, not
-  about the running Obsidian version.** `requireApiVersion("1.13.0")` answers
-  only what *core* wants; a theme that never updated still reads
+  about the running Obsidian version.** Core (1.13.4 and later, the plugin's
+  minimum) wants a colour; a theme that never updated still reads
   `rgba(var(--callout-color), …)` and a hex makes every such declaration invalid
   at computed-value time - it unsets silently, so the symptom is a missing
   background or a vanished side accent, never an error. See
   [Colour system § accent dialect](12-color-system.md#accent-dialect-version-drift-and-theme-drift).
-- **`.callout-studio-row` is a size container, and Obsidian's settings-tab
-  container queries are unnamed.** Core's `@container (max-width: 400px)`
-  rules (written for `.vertical-tab-content`) give `.setting-item:not(…)
-  .setting-item-control` and its `button:not(.clickable-icon)` `width: 100%`
-  and left-align the control. An unnamed query matches the nearest container
-  of any kind, so a `Setting` row that also wears `.callout-studio-row` (Version
-  history's rows) becomes that container for its own children, in any
-  narrow window on any device class, not just `.is-phone`. With the control
-  also set not to shrink, the text column collapsed to 0px and every row grew
-  hundreds of pixels tall. `.cs-recovery-row.callout-studio-row` resets
-  `container-type: normal`; do the same for any other `Setting` row that
-  borrows the class. `tests/settingsRecoveryModal.test.ts` checks for the reset.
+- **A `Setting` row that is a size container meets Obsidian's unnamed
+  container queries.** Core's `@container (max-width: 400px)` rules (written
+  for `.vertical-tab-content`) give `.setting-item:not(…) .setting-item-control`
+  and its `button:not(.clickable-icon)` `width: 100%` and left-align the
+  control. An unnamed query matches the nearest container of any kind, so a
+  row that is itself a container becomes that container for its own children,
+  in any narrow window on any device class. Version history's rows were once
+  such containers: the text column collapsed to 0px and every row grew
+  hundreds of pixels tall. Today the one such row is the callout row
+  (`.setting-item.cs-callout-row`, measured by its swatch rule), and it is
+  safe only because it always sits in a `.setting-group.mod-list` box, which
+  Obsidian exempts from those rules. A row outside such a box must not be a
+  container. `tests/calloutSettingRow.test.ts` leaves the row's layout to that
+  box, and the callout page tests check that every callout row is in one.
 
 ## A Style Settings class moves nothing you *key a cache on*
 

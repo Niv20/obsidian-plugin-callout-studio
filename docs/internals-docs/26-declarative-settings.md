@@ -233,9 +233,11 @@ The jump is [`declarative/jumpToRow.ts`](../../src/settings/declarative/jumpToRo
 the way Obsidian shows a settings search result:
 
 - **The page** is opened by `app.setting.openPagePath(tabId, pagePath)`
-  (Obsidian's own, since 1.13; declared optional in `src/types.ts` because it is
-  not in the typings, and checked for: without it the reader stays where they
-  are).
+  (Obsidian's own, since 1.14; declared optional in `src/types.ts` because it is
+  not in the typings, and checked for). On 1.13.x, which the plugin still
+  supports, the reader stays on the page that is open: the notices' jumps work,
+  because their rows are on the main page with them, but a callout duplicated
+  from another page is not shown. Checked on a real 1.13.4 (2026-10-25).
 - **The row** is looked up at once and then on the next frames, for about half
   a second: a page that slides in, or a callout duplicated a moment ago, is
   drawn a little later.

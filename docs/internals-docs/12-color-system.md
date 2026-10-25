@@ -546,9 +546,10 @@ with `.theme-light`'s on top, the dark view the same with `.theme-dark`'s, and a
 identical - that is the one caller that has to know the spelling can split
 without the colour splitting.
 
-`coreAccentDialect()` - still the cached `requireApiVersion` check - is what the
-running Obsidian expects, and is the fallback wherever the active styling has no
-opinion. That is 196 of the 257 themes in the dev vault, and it is what keeps
+`CORE_ACCENT_SPELLING` is what the running Obsidian expects, and is the
+fallback wherever the active styling has no opinion. It is the constant
+`"color"`: the plugin needs Obsidian 1.13.4, so core never wants a triplet, and
+the version check that used to answer this is gone. That is 196 of the 257 themes in the dev vault, and it is what keeps
 this machinery invisible in those vaults: their generated CSS is byte-identical
 to what it was before any of it existed.
 

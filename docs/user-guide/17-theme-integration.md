@@ -67,7 +67,7 @@ Callouts you create in Callout Studio follow the layout your theme gives callout
 
 Because the theme draws these callouts, their rows are read-only in Callout Studio. Click the eye icon to preview one; vault actions - **Replace in vault** and **Convert uses to plain text** - remain available from its three-dot menu, but you will not see Callout Studio's normal color picker or customization controls.
 
-If the theme restyles a custom callout you saved in Callout Studio, its menu also offers **Duplicate**. This copies your saved style under a new ID; its appearance may differ from the theme's styling of the original ID. Callouts supplied only by the theme cannot be duplicated.
+If the theme restyles a custom callout you saved in Callout Studio, its menu also offers **Duplicate**. This copies your saved style under a new ID; its appearance may differ from the theme's styling of the original ID. On Obsidian 1.14 and later, **My callout types** then opens and the copy's row flashes; on Obsidian 1.13 the settings stay on this page, and the copy is waiting in **My callout types**. Callouts supplied only by the theme cannot be duplicated.
 
 To change a theme-owned callout, use the community **Style Settings** plugin if the theme author provides a setting for it. Otherwise, the theme's CSS must be changed.
 
