@@ -10,7 +10,8 @@ import { describe, it } from "node:test";
 import { Setting, TFile, type App, type ButtonComponent } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { content } from "../src/manager/syncTree";
-import { renderResetSection } from "../src/settings/sections/DataManagementSection";
+import { dangerZoneGroup } from "../src/settings/declarative/mainPageGroups";
+import type { CsRender, TreeContext } from "../src/settings/declarative/types";
 import type { SettingsSectionContext } from "../src/settings/sections/types";
 import { t } from "../src/i18n";
 import { en } from "../src/i18n/en";
@@ -39,7 +40,7 @@ function setup(writer = savingWriter()) {
 	return { ctx, registry, notices, writer, own, backups, get saves() { return saves; } };
 }
 
-/** The Reset everything button's click handler, as the section wires it. */
+/** The Reset everything button's click handler, as the settings page's Danger zone wires it. */
 function resetButton(ctx: SettingsSectionContext): () => Promise<void> {
 	const root = fakeDom.document.body.createDiv();
 	const original = Object.getOwnPropertyDescriptor(Setting.prototype, "addButton")!;
@@ -57,9 +58,10 @@ function resetButton(ctx: SettingsSectionContext): () => Promise<void> {
 			callback(button);
 			return this;
 		};
-		renderResetSection(ctx, root as unknown as HTMLElement);
+		const resetRow = dangerZoneGroup(ctx as TreeContext).items?.find((row) => row.id === "reset-everything") as CsRender;
+		resetRow.render(new Setting(root as unknown as HTMLElement), undefined as never);
 	} finally { Object.defineProperty(Setting.prototype, "addButton", original); root.remove(); }
-	assert.ok(reset, "the section draws a Reset everything button");
+	assert.ok(reset, "the row draws a Reset everything button");
 	return reset;
 }
 

@@ -8,7 +8,6 @@
  * "(N)" counts to look like that everywhere (item 57 of the native-look plan):
  *
  * - the file headings of the Find callouts and Review conversion sidebars;
- * - the settings tab's lists ("My callout types 4");
  * - the sections of the setup comparison in Version history;
  * - the library headings in Pick an icon's "All sources" grid;
  * - "Find callouts 12" in a callout row's menu.
@@ -19,7 +18,7 @@
  * Search; elsewhere it simply follows the words.
  *
  * The number keeps a space in front of it, in its text, so a screen reader
- * (and a copy and paste) still reads "My callout types 4", not "types4".
+ * (and a copy and paste) still reads "Backups 3", not "Backups3".
  */
 import { getLocale } from "../i18n";
 
@@ -37,19 +36,4 @@ export function appendFaintCount(parent: Node, count: number): HTMLSpanElement {
 		// does: "1,234" in English, "1.234" in German.
 		text: ` ${count.toLocaleString(getLocale())}`,
 	});
-}
-
-/**
- * A title and its count, for a heading that is named in one go — an Obsidian
- * `Setting` heading, whose `setName` replaces its name element's children.
- *
- * The two are siblings, so where the name element is a row of its own (the
- * foldable headings lay it out as one: chevron, then title) the count goes to
- * the row's end, as in Obsidian's Search pane.
- */
-export function headingWithCount(title: string, count: number): DocumentFragment {
-	const fragment = createFragment();
-	fragment.createSpan({ text: title });
-	appendFaintCount(fragment, count);
-	return fragment;
 }

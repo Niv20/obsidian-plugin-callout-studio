@@ -2,9 +2,8 @@
  * settings/command/commandFlows.ts — making, changing and deleting the user's
  * own commands, and turning every built-in command back on.
  *
- * Who calls it. The Commands and shortcuts window (CommandBuilderModal.ts) and
- * the declarative settings page of the same name (declarative/commandsPage.ts),
- * so both change commands the same way.
+ * Who calls it. The Commands and shortcuts settings page
+ * (declarative/commandsPage.ts).
  *
  * The main idea. Each flow asks what it needs (the command editor, or a yes to
  * a delete), changes the commands through the plugin's CustomCommandManager,
@@ -13,12 +12,25 @@
  */
 import type { App } from "obsidian";
 import { t } from "../../i18n";
-import { FIXED_COMMAND_IDS, isFixedCommandEnabled } from "../../editor/commands";
+import { FIXED_COMMAND_IDS, isFixedCommandEnabled, type FixedCommandId } from "../../editor/commands";
+import type { CustomCommandManager } from "../../editor/CustomCommandManager";
 import type { CalloutDefinition, CustomCommand } from "../../types";
 import { ConfirmModal } from "../../utils/ConfirmModal";
 import { commandSignature, describeCommand } from "../../utils/customCommands";
-import type { CommandBuilderHost } from "../CommandBuilderModal";
 import { CommandEditorModal } from "../CommandEditorModal";
+import type { CalloutEditorPlugin } from "../editor/types";
+
+/**
+ * What the flows need from the plugin (the plugin itself fits). It extends
+ * `CalloutEditorPlugin` because the command editor's Callout type row can open
+ * the callout editor.
+ */
+export interface CommandBuilderHost extends CalloutEditorPlugin {
+	customCommands: CustomCommandManager;
+	/** Both halves are needed: the id keys a hotkey, the name prefixes it. */
+	manifest: { id: string; name: string };
+	setFixedCommandEnabled(id: FixedCommandId, enabled: boolean): Promise<void>;
+}
 
 /**
  * A command's name on screen: what it does to which callout, or the callout's

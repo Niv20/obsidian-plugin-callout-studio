@@ -12,7 +12,7 @@ import { QUICK_INSERT_ICON_ID, STATISTICS_ICON_ID } from "../src/icons/uiIcons";
 import { getLocale, setLocale, t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CalloutCombobox } from "../src/settings/calloutCombobox";
-import { renderFallbackSection } from "../src/settings/sections/FallbackSection";
+import { createFallbackPicker, setFallbackCallout } from "../src/settings/sections/FallbackSection";
 import { FakeElement, installFakeDom } from "./support/fakeDom";
 import { notifySidebarEditorSelection } from "../src/ui/sidebarSelection";
 import { createdMenus, type Menu } from "./support/obsidianStub";
@@ -1086,11 +1086,11 @@ describe("callout occurrence sidebar", () => {
 		const plugin = { app: h.app, registry: h.registry, settings: h.registry.settings, registerView: () => {},
 			restyleUncustomizedFallbackRows: () => h.registry.restyleUncustomizedFallbackRows(),
 			saveSettings: () => Promise.resolve(), refreshCallouts: () => {},
-		} as unknown as Parameters<typeof renderFallbackSection>[0]["plugin"];
+		} as unknown as Parameters<typeof createFallbackPicker>[0];
 		registerOccurrencesView(plugin);
 		const settingsHost = createDiv();
-		const disposers: (() => void)[] = [];
-		renderFallbackSection({ app: h.app, plugin, display: () => {}, registerDisposer: (dispose) => disposers.push(dispose) }, settingsHost);
+		// The settings page's Default fallback callout picker.
+		const settingsPicker = createFallbackPicker(plugin, settingsHost, (id) => setFallbackCallout(plugin, id));
 		const settingsInput = settingsHost.querySelector(".cs-combobox-input") as unknown as FakeElement;
 		settingsInput.fire("focus");
 		settingsInput.value = "template";
@@ -1110,7 +1110,7 @@ describe("callout occurrence sidebar", () => {
 		assert.deepEqual(h.view.getState(), { ids: ["unknown"], role: undefined });
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 1);
 		assert.equal(h.registry.get("unknown"), undefined);
-		for (const dispose of disposers) dispose();
+		settingsPicker.destroy();
 		await h.view.onClose();
 		h.index.dispose();
 	});

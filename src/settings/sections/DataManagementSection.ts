@@ -1,16 +1,18 @@
 /**
- * settings/sections/DataManagementSection.ts — Import/export, backup, and reset settings.
+ * settings/sections/DataManagementSection.ts — importing a Callout Studio
+ * backup.
  *
- * Renders the "Import and export", "Backup", and "Danger zone" sections in
- * the settings tab. Handles JSON import with validation (via importValidator),
- * and full data reset. Uses ImportReportModal to surface
- * validation issues before import. Both export formats live behind
- * ExportFormatModal, the way both import sources live behind ImportSourceModal.
+ * Who calls it. The Import from window (ImportSourceModal.ts), once a backup
+ * file is chosen.
+ *
+ * The main idea. The file is checked (size, JSON, every field through
+ * importValidator), the problems are shown with ImportReportModal before
+ * anything changes, and the valid entries are merged into the setup, after a
+ * backup of it is written.
  */
-import { Notice, Setting } from "obsidian";
+import { Notice } from "obsidian";
 import { t } from "../../i18n";
 import { ConfirmModal } from "../../utils/ConfirmModal";
-import { ExportFormatModal } from "../ExportFormatModal";
 import { ImportReportModal } from "../../utils/ImportReportModal";
 import { validateImportPayload } from "../../utils/importValidator";
 import { assertImportSize, ImportLimitError, parseImportJson } from "../../utils/importLimits";
@@ -18,103 +20,9 @@ import { mergeById } from "../../utils/mergeById";
 import { applyPaletteMerge, mergePalettes } from "../../utils/mergePalettes";
 import { userImagesFitResourceBudget } from "../../utils/userImages";
 import { addImportedCallout, applyImportedCallout } from "../../utils/importedCallout";
-import { ImportSourceModal } from "../ImportSourceModal";
-import { openPortableConversionFromSettings } from "../../portable/registerPortableConversionView";
 import { writeSettingsBackup } from "../../manager/settingsBackup";
 import { blockedWhilePaused } from "../pausedGuard";
-import { SettingsRecoveryModal } from "../SettingsRecoveryModal";
-import { confirmAndResetEverything } from "../resetEverything";
-import { PAUSED_ALLOWED } from "./pausedReadOnly";
 import type { SettingsSectionContext } from "./types";
-
-export function renderImportExportSection(
-	ctx: SettingsSectionContext,
-	containerEl: HTMLElement,
-): HTMLElement {
-	new Setting(containerEl).setName(t("settings.importExport")).setHeading();
-
-	const importSetting = new Setting(containerEl)
-		.setName(t("settings.importTitle"))
-		.setDesc(t("settings.importDesc"))
-		.addButton((btn) => {
-			btn.setButtonText(t("settings.import"))
-				.onClick(() => {
-					// An import that cannot be saved would look done and vanish
-					// on restart; say so before a file is even chosen.
-					if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
-					new ImportSourceModal(ctx).open();
-				});
-		});
-
-	new Setting(containerEl)
-		.setName(t("settings.exportTitle"))
-		.setDesc(t("settings.exportDesc"))
-		.setClass(PAUSED_ALLOWED)
-		.addButton((btn) => {
-			btn.setButtonText(t("settings.export"))
-				.onClick(() => new ExportFormatModal(ctx).open());
-		});
-
-	return importSetting.settingEl;
-}
-
-/**
- * Version history; absent on minimal hosts.
- *
- * Returns the **Earlier versions** row, which the saving banner's **Go to
- * version history** scrolls to and highlights, or `null` when there is no
- * section.
- */
-export function renderBackupSection(
-	ctx: SettingsSectionContext,
-	containerEl: HTMLElement,
-): HTMLElement | null {
-	const recovery = ctx.plugin.recovery;
-	if (!recovery) return null;
-
-	new Setting(containerEl).setName(t("settings.versionHistory")).setHeading();
-
-	const earlierVersions = new Setting(containerEl)
-		.setName(t("settings.versions"))
-		.setDesc(t("settings.versionsDesc").replace(/\n/g, " "))
-		.setClass(PAUSED_ALLOWED)
-		.addButton((btn) => {
-			btn.setButtonText(t("settings.versionsButton"))
-				.onClick(() => new SettingsRecoveryModal(ctx.app, ctx.plugin).open());
-		});
-	return earlierVersions.settingEl;
-}
-
-export function renderResetSection(
-	ctx: SettingsSectionContext,
-	containerEl: HTMLElement,
-): void {
-	new Setting(containerEl)
-		.setName(t("settings.maintenance"))
-		.setHeading();
-
-	// Converting rewrites notes, never settings: fine while saving is paused.
-	new Setting(containerEl)
-		.setName(t("portable.title"))
-		.setDesc(t("portable.settingDesc"))
-		.setClass(PAUSED_ALLOWED)
-		.addButton((btn) => {
-			btn.setButtonText(t("portable.review"))
-				.onClick(() => { void openPortableConversionFromSettings(ctx.app); });
-		});
-
-	new Setting(containerEl)
-		.setName(t("settings.resetAll"))
-		.setDesc(t("settings.resetAllDesc"))
-		.addButton((btn) =>
-			btn
-				.setButtonText(t("settings.resetAllButton"))
-				.setDestructive()
-				.setCta()
-				// The flow's promise is handed back, as the handler always did.
-				.onClick(() => confirmAndResetEverything(ctx)),
-		);
-}
 
 /**
  * Parses and applies a Callout Studio JSON export. Takes an already-chosen

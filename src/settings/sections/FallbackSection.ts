@@ -1,21 +1,22 @@
 /**
- * settings/sections/FallbackSection.ts — Fallback callout selector.
+ * settings/sections/FallbackSection.ts — the Default fallback callout's picker.
  *
- * Renders a single picker that lets the user choose which callout type is used
- * as the fallback for unknown/unrecognized callout IDs in the vault. Changing
- * the selection immediately re-styles uncustomized fallback rows and triggers a
- * CSS refresh.
+ * Who calls it. The settings page's Default fallback callout row
+ * (declarative/generalRows.ts).
+ *
+ * The main idea. One picker chooses which callout type styles the callouts
+ * the vault uses but no one defined. Changing it re-styles the callouts that
+ * follow the fallback and refreshes the stylesheet at once.
  *
  * The control is the shared {@link CalloutCombobox}, not a `<select>`: with a
  * few dozen callouts in a vault, scrolling a native dropdown to find one by
  * name — with no icon and no colour to aim at — is the worst way to ask this
  * question, and the `[!` popover in the editor had already answered it better.
  *
- * The steps (the picker, its reset arrow, choosing a fallback) are exported, so
- * the declarative settings page (declarative/generalRows.ts) draws the same row
- * from the same code.
+ * The steps (the picker, its reset arrow, choosing a fallback) are exported
+ * one by one, for the row to put together.
  */
-import { Setting } from "obsidian";
+import type { Setting } from "obsidian";
 import { t } from "../../i18n";
 import { DEFAULT_SETTINGS } from "../../constants";
 import { addFieldResetButton } from "../editor/fieldResetButton";
@@ -23,32 +24,7 @@ import { CalloutCombobox } from "../calloutCombobox";
 import { CalloutEditor } from "../CalloutEditor";
 import { refreshOccurrencesViewAppearance } from "../../usage/registerOccurrencesView";
 import type { CalloutDefinition } from "../../types";
-import type { SettingsSectionContext, SettingsTabPlugin } from "./types";
-
-export function renderFallbackSection(
-	ctx: SettingsSectionContext,
-	containerEl: HTMLElement,
-): void {
-	new Setting(containerEl)
-		.setName(t("settings.fallbackCallout"))
-		.setHeading();
-
-	const setting = new Setting(containerEl)
-		.setName(t("settings.fallbackCallout"))
-		.setClass("cs-reset-setting")
-		.setDesc(t("settings.fallbackCalloutDesc"));
-
-	const picker = createFallbackPicker(ctx.plugin, setting.controlEl, (id) => {
-		const saved = setFallbackCallout(ctx.plugin, id);
-		// The new id is already in the settings; only the save is still running.
-		syncReset();
-		return saved;
-	});
-	const syncReset = addFallbackReset(setting, ctx.plugin, picker);
-	// The picker holds a document-level click listener; the tab owns its
-	// lifetime and clears these on `hide()` and before every re-`display()`.
-	ctx.registerDisposer(() => picker.destroy());
-}
+import type { SettingsTabPlugin } from "./types";
 
 /**
  * The callouts the fallback may be. Re-read on every open, so a callout

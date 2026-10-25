@@ -2,42 +2,21 @@
  * tests/settingsTabWriteSilence.test.ts — opening the settings tab is not a
  * settings change.
  *
- * Three modules the settings tab reaches on its way onto the screen each carry
- * the same promise in a comment and nothing else: they may look at the vault,
- * at the registry and at this device's own state, but none of them may write
- * `data.json`. That promise is issue #41's first property stated at the UI
- * layer — a device that writes nothing gives the sync client nothing to
- * reconcile — and until this file existed all three were held up by prose.
+ * What the tab listens to may ask for a redraw, never write `data.json`: that
+ * promise is issue #41's first property stated at the UI layer (a device that
+ * writes nothing gives the sync client nothing to reconcile).
  *
- * - `openEditorDiscovery.ts` reads the notes already on screen and mints rows
- *   for ids the registry has never seen. Discovery's own rule applies: a row
- *   nobody has claimed is an observation this machine made, not configuration,
- *   so it stays in memory and in `DeviceLocalStore`. The module says "No
- *   saveSettings() — see the note above"; nothing checked.
- * - `calloutListsFold.ts` persists a folded section to the device-local store
- *   *instead of* the settings file. Its host type still carries `saveSettings`,
- *   which is exactly the shape a regression would reach for, and every existing
- *   fold test stubs that method out as `() => Promise.resolve()` — a call would
- *   have been invisible to all of them.
- * - `tabSubscriptions.ts` is subscribed once per **visit**, not per render,
- *   because `display()` re-runs for a synced settings file and for a locale
- *   download. Re-subscribing on each would stack listeners for the life of the
- *   session, and every stacked listener multiplies the repaint that the scroll
- *   anchor then has to hide. The doubling is what the last case here pins.
- *
- * What this file deliberately does not reach for is `SettingsTab` itself: the
- * class renders fifteen sections to say one thing about two lines of `display()`.
- * The units below are where the promises live.
+ * `tabSubscriptions.ts` is subscribed once, for the plugin's life
+ * (declarative/declarativeSettings.ts). Subscribing again would stack
+ * listeners, and every stacked listener doubles the redraw requests. The
+ * doubling is what the last case here pins.
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { Setting } from "obsidian";
 import type { App, EventRef } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import { attachPersistedFold } from "../src/settings/sections/calloutListsFold";
 import { subscribeSettingsTab } from "../src/settings/sections/tabSubscriptions";
 import type { SettingsTabPlugin } from "../src/settings/sections/types";
-import type { CalloutListsFoldState } from "../src/types";
 import { installFakeDom } from "./support/fakeDom";
 
 installFakeDom();
@@ -48,111 +27,6 @@ function builtInsOnly(): CalloutRegistry {
 	registry.load(null);
 	return registry;
 }
-
-/* -------------------------------------------------------------------------- */
-/* The open-editor sweep                                                      */
-/* -------------------------------------------------------------------------- */
-
-/* -------------------------------------------------------------------------- */
-/* A folded section                                                           */
-/* -------------------------------------------------------------------------- */
-
-const click = (el: HTMLElement): void => {
-	el.dispatchEvent({ type: "click" } as unknown as Event);
-};
-
-function foldRow(initiallyExpanded = true) {
-	const host: HTMLElement = createDiv();
-	const setting = new Setting(host);
-	setting.setName("My callout types");
-	const body: HTMLElement = host.createDiv();
-
-	const state: CalloutListsFoldState = {
-		theme: true,
-		user: initiallyExpanded,
-		builtin: true,
-		palettes: true,
-	};
-	const seen = { saves: 0, localWrites: 0 };
-
-	const plugin = {
-		localState: {
-			isExpanded: (kind: keyof CalloutListsFoldState): boolean =>
-				state[kind],
-			setExpanded: (
-				kind: keyof CalloutListsFoldState,
-				expanded: boolean,
-			): void => {
-				state[kind] = expanded;
-				seen.localWrites += 1;
-			},
-		},
-		saveSettings: (): Promise<void> => {
-			seen.saves += 1;
-			return Promise.resolve();
-		},
-	};
-
-	const fold = attachPersistedFold(setting, body, "user", plugin);
-	return { setting, body, state, seen, fold };
-}
-
-describe("a section's fold is device state, not settings", () => {
-	it("opens from whatever this device last left behind", () => {
-		const collapsed = foldRow(false);
-		assert.strictEqual(collapsed.fold.isExpanded(), false);
-
-		const open = foldRow(true);
-		assert.strictEqual(open.fold.isExpanded(), true);
-	});
-
-	it("writes a hand-folded section to the device store", () => {
-		const row = foldRow();
-
-		click(row.setting.nameEl);
-
-		assert.strictEqual(row.state.user, false);
-		assert.strictEqual(row.seen.localWrites, 1);
-	});
-
-	it("never saves the settings file, in either direction", () => {
-		const row = foldRow();
-
-		click(row.setting.nameEl);
-		click(row.setting.nameEl);
-
-		assert.strictEqual(row.state.user, true, "back where it started");
-		assert.strictEqual(
-			row.seen.saves,
-			0,
-			"folding a section used to rewrite the synced file — issue #41",
-		);
-	});
-
-	it("leaves the other three sections alone", () => {
-		const row = foldRow();
-
-		click(row.setting.nameEl);
-
-		assert.strictEqual(row.state.theme, true);
-		assert.strictEqual(row.state.builtin, true);
-		assert.strictEqual(row.state.palettes, true);
-	});
-
-	it("records nothing for a fold a caller drove itself", () => {
-		const row = foldRow();
-
-		row.fold.setExpanded(false);
-
-		assert.strictEqual(row.fold.isExpanded(), false, "the DOM still folds");
-		assert.strictEqual(
-			row.seen.localWrites,
-			0,
-			"only the user's own choice is remembered",
-		);
-		assert.strictEqual(row.seen.saves, 0);
-	});
-});
 
 /* -------------------------------------------------------------------------- */
 /* The four signals                                                           */
@@ -281,7 +155,7 @@ describe("the settings tab's four signals", () => {
 		assert.strictEqual(tab.dropped.offref, 1);
 	});
 
-	it("doubles every repaint when subscribed twice, which is why display() subscribes once", () => {
+	it("doubles every repaint when subscribed twice, which is why the tab subscribes once", () => {
 		// `display()` re-runs for a synced settings file and for a locale
 		// download. It guards with `this.unsubscribe ??=`; this is the cost of
 		// dropping that guard, stated so a regression has something to fail.

@@ -407,14 +407,14 @@ row, comes from the tree, and Obsidian indexes it for **Search settings…**. Ho
 the tree is built, kept current and drawn is all in
 [26-declarative-settings.md](26-declarative-settings.md).
 
-`display()` and the sections under `settings/sections/` still exist, and are
-still what most of this chapter describes, for two reasons. An *empty* answer
-makes Obsidian call `display()` instead, and the tree is empty only when
-building it threw (`buildTreeSafely`), so the old page is the fallback. And
-several of their pieces are shared with the tree (the callout row, the
-fallback and language controls, the flows behind the buttons). The *Clean
-Sweep* that follows the switch deletes `display()` and what only it uses, and
-rewrites this chapter.
+The tab has no `display()` of its own: the old page drawn section by section,
+and the three windows that became pages (style, right-click menu, commands),
+were deleted in the *Clean Sweep*. A tree that fails to build is replaced by
+one row that says so (26 § Never throwing). What remains under
+`settings/sections/` are the pieces the tree's rows are made of (the callout
+row, the fallback and language controls, the palette flows, the scan). Parts
+of this chapter below still describe the old page; the Clean Sweep's docs pass
+rewrites them.
 
 The tab overrides `getControlValue` and `setControlValue`, so no declarative
 control can ever reach Obsidian's default `saveData(plugin.settings)`, which

@@ -116,14 +116,19 @@ describe("Customize right-click menu", () => {
 		assert.equal(registry.settings.contextMenu.items.heading.every((item) => item.enabled), true);
 	});
 
-	it("moves an item with Alt+↓, and ↺ puts the role back as shipped", () => {
+	it("moves an item with Alt+↓, and ↺ puts only that role back as shipped", () => {
 		const { plugin } = fakePlugin();
 		const { harness } = drawMenu(plugin);
 		const [first, second] = names(harness, "menu-regular");
 		box(harness, "menu-regular").settingGroup.pressAltArrow(0, 1);
 		assert.deepEqual(names(harness, "menu-regular").slice(0, 2), [second, first]);
+		// Another role's own order is not the reset's business.
+		box(harness, "menu-heading").settingGroup.pressAltArrow(0, 1);
+		const heading = names(harness, "menu-heading");
+		assert.notDeepEqual(heading, shipped("heading"));
 		(box(harness, "menu-regular").settingGroup.extraButtons[0] as ButtonLike).press();
 		assert.deepEqual(names(harness, "menu-regular"), shipped("regular"));
+		assert.deepEqual(names(harness, "menu-heading"), heading, "the heading menu keeps its order");
 	});
 
 	it("is found by its name, but none of its rows is", () => {

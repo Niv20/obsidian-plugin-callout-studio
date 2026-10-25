@@ -27,7 +27,7 @@ import { getLocale } from "../../i18n";
 import { registerMenuScopeHost } from "../../ui/menuEscape";
 import { competitorsToOffer } from "../competitorImportBanner";
 import { isRowMenuActive } from "../sections/calloutRowMenu";
-import { calloutListsSignature, freshPaging } from "../sections/calloutListsSignature";
+import { calloutListsSignature } from "../sections/calloutListsSignature";
 import { languageDownloading } from "../sections/LanguageSection";
 import { scanRunning } from "../sections/manualDiscoveryButton";
 import { activeThemeLabel, partitionCallouts } from "../sections/rowOwnership";
@@ -37,7 +37,7 @@ import { revealCalloutRow } from "./calloutPages";
 import { jumpToRow } from "./jumpToRow";
 import { PersistentParts } from "./persistentParts";
 import { RowRegistry } from "./rowRegistry";
-import { buildTreeSafely } from "./safeTree";
+import { buildTreeSafely, treeAfterFailure } from "./safeTree";
 import { settingsTree } from "./settingsTree";
 import { interactionInProgress, nextFrameOrSoon, TreeUpdater } from "./treeUpdater";
 import { toObsidianItems, type CsRender, type TreeContext } from "./types";
@@ -98,12 +98,12 @@ export class DeclarativeSettings {
 	}
 
 	/**
-	 * The tree, for `getSettingDefinitions()`. Never throws: a part that does
-	 * gives Obsidian an empty tree, which makes it draw the tab the old way.
+	 * The tree, for `getSettingDefinitions()`. Never throws: if a part does,
+	 * Obsidian gets a tree of one row that says the settings could not be drawn.
 	 */
 	definitions(): SettingDefinitionItem[] {
 		this.listen();
-		const tree = toObsidianItems(buildTreeSafely(() => settingsTree(this.ctx, this.visitRow()), []));
+		const tree = toObsidianItems(buildTreeSafely(() => settingsTree(this.ctx, this.visitRow()), treeAfterFailure()));
 		// What Obsidian draws next is this tree: later requests compare with it.
 		this.updater.markDrawn();
 		return tree;
@@ -183,7 +183,7 @@ export class DeclarativeSettings {
 		const { app, plugin } = this.host;
 		const { fromTheme, own, builtIn } = partitionCallouts(this.ctx);
 		return JSON.stringify([
-			calloutListsSignature(this.ctx, freshPaging(), activeThemeLabel(app), getLocale(), {
+			calloutListsSignature(this.ctx, activeThemeLabel(app), getLocale(), {
 				theme: fromTheme,
 				user: own,
 				builtin: builtIn,

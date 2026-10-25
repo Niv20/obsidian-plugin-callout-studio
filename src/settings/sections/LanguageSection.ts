@@ -1,7 +1,10 @@
 /**
- * settings/sections/LanguageSection.ts — UI display language selector.
+ * settings/sections/LanguageSection.ts — the plugin's interface language.
  *
- * Renders a dropdown that lets the user pick the plugin's display language.
+ * Who calls it. The settings page's Language row and the row under it that
+ * offers a retry when a language is not downloaded (declarative/generalRows.ts).
+ *
+ * The main idea. A picker lets the user choose the plugin's display language.
  * It lists languages and nothing else, each under its own native name (e.g.
  * "עברית", not "Hebrew"). There is no "Automatic" row: following Obsidian is
  * what the picker does until told otherwise, so it simply shows the language
@@ -25,15 +28,15 @@
  * reverting the dropdown would look like the click had not registered.
  *
  * The steps (the picker with its reset arrow, applying a choice, the missing
- * language and its retry) are exported, so the declarative settings page
- * (declarative/generalRows.ts) draws the same row from the same code.
+ * language and its retry) are exported one by one, for the rows to put
+ * together.
  */
-import { Setting } from "obsidian";
+import type { Setting } from "obsidian";
 import { DEFAULT_SETTINGS } from "../../constants";
 import { getSelectableLocales, resolveLocaleFile, setLocale, t } from "../../i18n";
 import { SelectDropdown } from "../../ui/selectDropdown";
 import { addFieldResetButton } from "../editor/fieldResetButton";
-import type { SettingsSectionContext, SettingsTabPlugin } from "./types";
+import type { SettingsTabPlugin } from "./types";
 
 type LanguageChoice = {
 	code: string;
@@ -45,29 +48,6 @@ const FOLLOW_OBSIDIAN = DEFAULT_SETTINGS.language;
 
 /** The row for everything English covers: no file, nothing to download. */
 const ENGLISH = "en";
-
-export function renderLanguageSection(
-	ctx: SettingsSectionContext,
-	containerEl: HTMLElement,
-): void {
-	new Setting(containerEl).setName(t("settings.language")).setHeading();
-
-	const setting = new Setting(containerEl)
-		.setName(t("settings.language"))
-		.setClass("cs-language-setting")
-		.setClass("cs-reset-setting")
-		.setDesc(t("settings.languageDesc"));
-
-	const controls = drawLanguageControls(setting, ctx.plugin, (pref) => {
-		void applyLanguagePreference(ctx.plugin, pref, () => ctx.display(), () => {
-			controls.picker.setDisabled(true);
-			setting.setDesc(t("locale.downloading"));
-		});
-	});
-	ctx.registerDisposer(controls.dispose);
-
-	renderUnavailableWarning(ctx, containerEl);
-}
 
 /** What {@link drawLanguageControls} drew, and how to take it down. */
 export interface LanguageControls {
@@ -312,34 +292,4 @@ export function languageDownloading(plugin: SettingsTabPlugin): boolean {
 export async function retryLanguageDownload(plugin: SettingsTabPlugin, redraw: () => void): Promise<void> {
 	await plugin.ensureLocale();
 	redraw();
-}
-
-/**
- * Explain a language that is selected but not downloaded, and offer a retry.
- *
- * Drawn from settings rather than from the download's failure path, so it is
- * still there after the tab is closed and reopened — the state it describes
- * outlives the click that produced it.
- */
-function renderUnavailableWarning(
-	ctx: SettingsSectionContext,
-	containerEl: HTMLElement,
-): void {
-	const name = missingLanguageName(ctx.plugin);
-	if (name === null) return;
-
-	new Setting(containerEl)
-		.setClass("callout-studio-locale-warning")
-		.setName(t("locale.notDownloaded", { name }))
-		.setDesc(t("locale.notDownloadedDesc"))
-		.addButton((btn) =>
-			btn
-				.setButtonText(t("locale.retry"))
-				.setCta()
-				.onClick(async () => {
-					btn.setDisabled(true);
-					btn.setButtonText(t("locale.downloading"));
-					await retryLanguageDownload(ctx.plugin, () => ctx.display());
-				}),
-		);
 }

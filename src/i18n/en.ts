@@ -1332,6 +1332,7 @@ export const en: Record<string, string> = {
 	"settings.globalSettings": "Global Callout Studio style options",
 	"settings.calloutStyle": "Callout style",
 	"settings.menusAndCommands": "Menus and commands",
+	"settings.buildFailed": "Callout Studio couldn't draw its settings; restart Obsidian, and report it if it happens again.",
 	"settings.globalSettingsRegularDesc":
 		"Adjust the border, radius, font scale, and alignment of every block callout in your vault.",
 	"settings.globalSettingsHeadingDesc":

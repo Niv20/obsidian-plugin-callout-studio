@@ -1,6 +1,6 @@
 /**
- * tests/styleControls.test.ts — the shared slider row, and the live-update
- * contract every global style control follows.
+ * tests/styleControls.test.ts — the live-update contract every style page's
+ * slider follows (settings/styleControls.ts, `wireStyleSlider`).
  *
  * Three things here are easy to break without noticing, and each shows up as
  * something other than an error:
@@ -34,9 +34,8 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import { createdSliders } from "./support/obsidianStub";
 import type { SliderComponent } from "obsidian";
+import { Setting } from "obsidian";
 import {
-	addStyleSlider,
-	createSliderRow,
 	setSliderDisplay,
 	wireStyleSlider,
 	type StyleSliderSpec,
@@ -50,10 +49,8 @@ import type { SettingsTabPlugin } from "../src/settings/sections/types";
 type Harness = {
 	/**
 	 * Cast once here rather than at each of the three dozen call sites below:
-	 * `addStyleSlider` and `createSliderRow` are typed against the real DOM, and
-	 * nothing in this suite asks the parent for anything a real `HTMLElement`
-	 * could not answer — it is passed straight through, compared for identity,
-	 * and read via `children` / `querySelector`.
+	 * `Setting` is typed against the real DOM, and nothing in this suite asks
+	 * the parent for anything a real `HTMLElement` could not answer.
 	 */
 	parent: HTMLElement;
 	plugin: SettingsTabPlugin;
@@ -119,7 +116,7 @@ function harness(): Harness {
 	};
 }
 
-/** The spec `addStyleSlider` is normally handed, over a mutable value. */
+/** The spec a style page hands `wireStyleSlider`, over a mutable value. */
 function spec(over: Partial<StyleSliderSpec> = {}): StyleSliderSpec & {
 	written: number[];
 } {
@@ -142,6 +139,20 @@ function spec(over: Partial<StyleSliderSpec> = {}): StyleSliderSpec & {
 	};
 }
 
+/**
+ * A slider wired the way a style page wires one: Obsidian's slider in a
+ * `Setting` row, the row's window giving the frames. Returns what shows the
+ * saved value again, as `wireStyleSlider` does.
+ */
+function addWiredSlider(plugin: SettingsTabPlugin, parentEl: HTMLElement, sliderSpec: StyleSliderSpec): () => void {
+	const setting = new Setting(parentEl);
+	let syncValue = (): void => {};
+	setting.addSlider((slider) => {
+		syncValue = wireStyleSlider(plugin, slider, setting.settingEl, sliderSpec);
+	});
+	return () => syncValue();
+}
+
 /* -------------------------------------------------------------------------- */
 /* setSliderDisplay                                                           */
 /* -------------------------------------------------------------------------- */
@@ -149,7 +160,7 @@ function spec(over: Partial<StyleSliderSpec> = {}): StyleSliderSpec & {
 describe("setSliderDisplay", () => {
 	it("installs the formatter on a build that has the readout", () => {
 		const h = harness();
-		addStyleSlider(h.plugin, h.parent, spec());
+		addWiredSlider(h.plugin, h.parent, spec());
 		const format = (
 			h.slider() as unknown as { displayFormat: (v: number) => string }
 		).displayFormat;
@@ -168,72 +179,23 @@ describe("setSliderDisplay", () => {
 });
 
 /* -------------------------------------------------------------------------- */
-/* createSliderRow                                                            */
+/* wireStyleSlider — setup                                                    */
 /* -------------------------------------------------------------------------- */
 
-describe("createSliderRow", () => {
-	it("appends a row to the parent and hands it back", () => {
-		const h = harness();
-		const row = createSliderRow(h.parent, "Radius");
-		assert.ok(row.hasClass("callout-studio-slider-row"));
-		assert.strictEqual(row.parentElement, h.parent);
-	});
-
-	it("puts the label in its own element above the track", () => {
-		// Its own element because Obsidian's value readout goes beside it, and
-		// styles.css reserves a width there so the readout cannot squeeze the
-		// track as it changes.
-		const row = createSliderRow(harness().parent, "Radius");
-		const label = row.querySelector(".callout-studio-slider-label");
-		assert.ok(label);
-		assert.strictEqual(label.textContent, "Radius");
-	});
-
-	it("returns the row, not the label — a Setting is built into it", () => {
-		// The palette editor's Intensity slider uses this without the
-		// live-update contract below, and fills the row itself.
-		const row = createSliderRow(harness().parent, "Radius");
-		assert.strictEqual(row.hasClass("callout-studio-slider-label"), false);
-	});
-
-	it("gives each call its own row", () => {
-		const h = harness();
-		const a = createSliderRow(h.parent, "A");
-		const b = createSliderRow(h.parent, "B");
-		assert.notStrictEqual(a, b);
-		assert.strictEqual(h.parent.children.length, 2);
-	});
-});
-
-/* -------------------------------------------------------------------------- */
-/* addStyleSlider — setup                                                     */
-/* -------------------------------------------------------------------------- */
-
-describe("addStyleSlider — how the control starts out", () => {
-	it("builds the same labelled row", () => {
-		const h = harness();
-		addStyleSlider(h.plugin, h.parent, spec());
-		const row = h.parent.querySelector(".callout-studio-slider-row");
-		assert.ok(row);
-		assert.strictEqual(
-			row.querySelector(".callout-studio-slider-label")?.textContent,
-			"Border width",
-		);
-	});
-
+describe("wireStyleSlider — how the control starts out", () => {
 	it("sets the limits BEFORE the value", () => {
 		// Nothing in this module clamps — the range input does, and only once it
 		// knows its own bounds. Reversed, a stored value outside the range would
 		// survive into the control.
 		const h = harness();
-		addStyleSlider(h.plugin, h.parent, spec());
+		addWiredSlider(h.plugin, h.parent, spec());
 		const calls = (h.slider() as unknown as { calls: string[] }).calls;
 		assert.deepStrictEqual(calls, ["setLimits", "setValue"]);
 	});
 
 	it("passes the spec's limits through as they are", () => {
 		const h = harness();
-		addStyleSlider(h.plugin, h.parent, spec());
+		addWiredSlider(h.plugin, h.parent, spec());
 		const s = h.slider() as unknown as {
 			min: number;
 			max: number;
@@ -244,23 +206,23 @@ describe("addStyleSlider — how the control starts out", () => {
 
 	it("seeds the control from the value the settings hold now", () => {
 		const h = harness();
-		addStyleSlider(h.plugin, h.parent, spec({ get: () => 3 }));
+		addWiredSlider(h.plugin, h.parent, spec({ get: () => 3 }));
 		assert.strictEqual(h.sliderEl().value, "3");
 	});
 
 	it("writes nothing back, and repaints nothing, just for being built", () => {
 		const h = harness();
 		const s = spec();
-		addStyleSlider(h.plugin, h.parent, s);
+		addWiredSlider(h.plugin, h.parent, s);
 		assert.deepStrictEqual(s.written, []);
 		assert.deepStrictEqual(h.injects, []);
 	});
 });
 
-describe("addStyleSlider — the readout", () => {
+describe("wireStyleSlider — the readout", () => {
 	const readout = (over: Partial<StyleSliderSpec> = {}): ((v: number) => string) => {
 		const h = harness();
-		addStyleSlider(h.plugin, h.parent, spec(over));
+		addWiredSlider(h.plugin, h.parent, spec(over));
 		return (h.slider() as unknown as { displayFormat: (v: number) => string })
 			.displayFormat;
 	};
@@ -299,14 +261,14 @@ describe("addStyleSlider — the readout", () => {
 });
 
 /* -------------------------------------------------------------------------- */
-/* addStyleSlider — dragging                                                  */
+/* wireStyleSlider — dragging                                                 */
 /* -------------------------------------------------------------------------- */
 
-describe("addStyleSlider — moving the thumb", () => {
+describe("wireStyleSlider — moving the thumb", () => {
 	it("writes the value straight through to the setting", () => {
 		const h = harness();
 		const s = spec();
-		addStyleSlider(h.plugin, h.parent, s);
+		addWiredSlider(h.plugin, h.parent, s);
 		h.drag(3);
 		assert.deepStrictEqual(s.written, [3]);
 	});
@@ -314,7 +276,7 @@ describe("addStyleSlider — moving the thumb", () => {
 	it("rounds to the spec's decimal count on the way", () => {
 		const h = harness();
 		const s = spec({ decimals: 1 });
-		addStyleSlider(h.plugin, h.parent, s);
+		addWiredSlider(h.plugin, h.parent, s);
 		h.drag(1.26);
 		h.drag(1.24);
 		assert.deepStrictEqual(s.written, [1.3, 1.2]);
@@ -323,7 +285,7 @@ describe("addStyleSlider — moving the thumb", () => {
 	it("rounds to whole numbers at zero decimals", () => {
 		const h = harness();
 		const s = spec({ decimals: 0 });
-		addStyleSlider(h.plugin, h.parent, s);
+		addWiredSlider(h.plugin, h.parent, s);
 		h.drag(2.5);
 		h.drag(2.4);
 		assert.deepStrictEqual(s.written, [3, 2]);
@@ -336,7 +298,7 @@ describe("addStyleSlider — moving the thumb", () => {
 		// so a change of harness cannot quietly make that untrue.
 		const h = harness();
 		const s = spec();
-		addStyleSlider(h.plugin, h.parent, s);
+		addWiredSlider(h.plugin, h.parent, s);
 		h.drag(999);
 		assert.deepStrictEqual(s.written, [999]);
 	});
@@ -344,24 +306,24 @@ describe("addStyleSlider — moving the thumb", () => {
 	it("saves nothing while the thumb is still moving", () => {
 		// Dragging previews; releasing commits.
 		const h = harness();
-		addStyleSlider(h.plugin, h.parent, spec());
+		addWiredSlider(h.plugin, h.parent, spec());
 		h.drag(3);
 		fakeDom.window.flushFrames();
 		assert.strictEqual(h.saves, 0);
 	});
 });
 
-describe("addStyleSlider — one inject per frame", () => {
+describe("wireStyleSlider — one inject per frame", () => {
 	it("does not repaint synchronously with the move", () => {
 		const h = harness();
-		addStyleSlider(h.plugin, h.parent, spec());
+		addWiredSlider(h.plugin, h.parent, spec());
 		h.drag(3);
 		assert.deepStrictEqual(h.injects, []);
 	});
 
 	it("repaints once on the next frame", () => {
 		const h = harness();
-		addStyleSlider(h.plugin, h.parent, spec());
+		addWiredSlider(h.plugin, h.parent, spec());
 		h.drag(3);
 		fakeDom.window.flushFrames();
 		assert.deepStrictEqual(h.injects, [false]);
@@ -369,7 +331,7 @@ describe("addStyleSlider — one inject per frame", () => {
 
 	it("coalesces a burst of moves into that one repaint", () => {
 		const h = harness();
-		addStyleSlider(h.plugin, h.parent, spec());
+		addWiredSlider(h.plugin, h.parent, spec());
 		for (const v of [1.5, 2, 2.5, 3, 3.5]) h.drag(v);
 		fakeDom.window.flushFrames();
 		assert.deepStrictEqual(h.injects, [false]);
@@ -380,14 +342,14 @@ describe("addStyleSlider — one inject per frame", () => {
 		// would settle on whichever move happened to win the frame.
 		const h = harness();
 		const s = spec();
-		addStyleSlider(h.plugin, h.parent, s);
+		addWiredSlider(h.plugin, h.parent, s);
 		for (const v of [1.5, 2, 2.5]) h.drag(v);
 		assert.deepStrictEqual(s.written, [1.5, 2, 2.5]);
 	});
 
 	it("takes another frame for the next move", () => {
 		const h = harness();
-		addStyleSlider(h.plugin, h.parent, spec());
+		addWiredSlider(h.plugin, h.parent, spec());
 		h.drag(2);
 		fakeDom.window.flushFrames();
 		h.drag(3);
@@ -402,7 +364,7 @@ describe("addStyleSlider — one inject per frame", () => {
 		const h = harness();
 		const settingsWindow = new FakeWindow();
 		const parent = asEl(new FakeDocument(settingsWindow).body.createDiv({}));
-		addStyleSlider(h.plugin, parent, spec());
+		addWiredSlider(h.plugin, parent, spec());
 		h.drag(3);
 		fakeDom.window.flushFrames();
 		assert.deepStrictEqual(h.injects, [], "the main window's frame ran the repaint");
@@ -415,18 +377,18 @@ describe("addStyleSlider — one inject per frame", () => {
 		// geometry rides CSS variables and reflows when the stylesheet is
 		// replaced, so forcing every open note to re-render would buy nothing.
 		const h = harness();
-		addStyleSlider(h.plugin, h.parent, spec());
+		addWiredSlider(h.plugin, h.parent, spec());
 		h.drag(3);
 		fakeDom.window.flushFrames();
 		assert.strictEqual(h.injects[0], false);
 	});
 });
 
-describe("addStyleSlider — releasing the thumb", () => {
+describe("wireStyleSlider — releasing the thumb", () => {
 	it("repaints in full, and saves", async () => {
 		const h = harness();
 		const s = spec();
-		addStyleSlider(h.plugin, h.parent, s);
+		addWiredSlider(h.plugin, h.parent, s);
 		await (h.slider() as unknown as { commit(v: number): Promise<void> }).commit(
 			3,
 		);
@@ -444,7 +406,7 @@ describe("addStyleSlider — releasing the thumb", () => {
 		const h = harness();
 		(h.plugin as unknown as { saveSettings(): Promise<void> }).saveSettings = () =>
 			new Promise<void>(() => {});
-		addStyleSlider(h.plugin, h.parent, spec());
+		addWiredSlider(h.plugin, h.parent, spec());
 		void (h.slider() as unknown as { commit(v: number): Promise<void> }).commit(3);
 		assert.deepStrictEqual(h.injects, [undefined]);
 	});
@@ -452,7 +414,7 @@ describe("addStyleSlider — releasing the thumb", () => {
 	it("rounds the committed value too", async () => {
 		const h = harness();
 		const s = spec({ decimals: 1 });
-		addStyleSlider(h.plugin, h.parent, s);
+		addWiredSlider(h.plugin, h.parent, s);
 		await (h.slider() as unknown as { commit(v: number): Promise<void> }).commit(
 			2.449,
 		);
@@ -461,10 +423,10 @@ describe("addStyleSlider — releasing the thumb", () => {
 });
 
 /* -------------------------------------------------------------------------- */
-/* addStyleSlider — the drag lifecycle                                        */
+/* wireStyleSlider — the drag lifecycle                                       */
 /* -------------------------------------------------------------------------- */
 
-describe("addStyleSlider — start and end, exactly once each", () => {
+describe("wireStyleSlider — start and end, exactly once each", () => {
 	/** A spec that records the lifecycle callbacks in order. */
 	function lifecycle(): { spec: StyleSliderSpec; log: string[] } {
 		const log: string[] = [];
@@ -480,7 +442,7 @@ describe("addStyleSlider — start and end, exactly once each", () => {
 	it("starts on pointer-down and ends on pointer-up", () => {
 		const h = harness();
 		const { spec: s, log } = lifecycle();
-		addStyleSlider(h.plugin, h.parent, s);
+		addWiredSlider(h.plugin, h.parent, s);
 		h.sliderEl().fire("pointerdown");
 		h.sliderEl().fire("pointerup");
 		assert.deepStrictEqual(log, ["start", "end"]);
@@ -489,7 +451,7 @@ describe("addStyleSlider — start and end, exactly once each", () => {
 	it("ends on a cancelled pointer too", () => {
 		const h = harness();
 		const { spec: s, log } = lifecycle();
-		addStyleSlider(h.plugin, h.parent, s);
+		addWiredSlider(h.plugin, h.parent, s);
 		h.sliderEl().fire("pointerdown");
 		h.sliderEl().fire("pointercancel");
 		assert.deepStrictEqual(log, ["start", "end"]);
@@ -500,7 +462,7 @@ describe("addStyleSlider — start and end, exactly once each", () => {
 		// bespoke preview must not be told to swap it in again each time.
 		const h = harness();
 		const { spec: s, log } = lifecycle();
-		addStyleSlider(h.plugin, h.parent, s);
+		addWiredSlider(h.plugin, h.parent, s);
 		h.sliderEl().fire("pointerdown");
 		for (const v of [2, 2.5, 3]) h.drag(v);
 		assert.deepStrictEqual(log, ["start"]);
@@ -509,7 +471,7 @@ describe("addStyleSlider — start and end, exactly once each", () => {
 	it("starts from a keyboard nudge, which fires no pointer event at all", () => {
 		const h = harness();
 		const { spec: s, log } = lifecycle();
-		addStyleSlider(h.plugin, h.parent, s);
+		addWiredSlider(h.plugin, h.parent, s);
 		h.drag(2.5);
 		assert.deepStrictEqual(log, ["start"]);
 	});
@@ -517,7 +479,7 @@ describe("addStyleSlider — start and end, exactly once each", () => {
 	it("treats the commit as the end of the drag", () => {
 		const h = harness();
 		const { spec: s, log } = lifecycle();
-		addStyleSlider(h.plugin, h.parent, s);
+		addWiredSlider(h.plugin, h.parent, s);
 		h.drag(2.5);
 		void (h.slider() as unknown as { commit(v: number): unknown }).commit(2.5);
 		assert.deepStrictEqual(log, ["start", "end"]);
@@ -526,7 +488,7 @@ describe("addStyleSlider — start and end, exactly once each", () => {
 	it("does not announce an end that never began", () => {
 		const h = harness();
 		const { spec: s, log } = lifecycle();
-		addStyleSlider(h.plugin, h.parent, s);
+		addWiredSlider(h.plugin, h.parent, s);
 		h.sliderEl().fire("pointerup");
 		void (h.slider() as unknown as { commit(v: number): unknown }).commit(2);
 		assert.deepStrictEqual(log, []);
@@ -535,7 +497,7 @@ describe("addStyleSlider — start and end, exactly once each", () => {
 	it("can be dragged again after it ended", () => {
 		const h = harness();
 		const { spec: s, log } = lifecycle();
-		addStyleSlider(h.plugin, h.parent, s);
+		addWiredSlider(h.plugin, h.parent, s);
 		h.sliderEl().fire("pointerdown");
 		h.sliderEl().fire("pointerup");
 		h.sliderEl().fire("pointerdown");
@@ -547,7 +509,7 @@ describe("addStyleSlider — start and end, exactly once each", () => {
 		// Most sliders have no bespoke preview to swap in, and the pointer
 		// listeners are only hung when one of the two is given.
 		const h = harness();
-		addStyleSlider(h.plugin, h.parent, spec());
+		addWiredSlider(h.plugin, h.parent, spec());
 		assert.doesNotThrow(() => {
 			h.sliderEl().fire("pointerdown");
 			h.sliderEl().fire("pointerup");

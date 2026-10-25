@@ -117,6 +117,11 @@ function pickCallout(rowEl: HTMLElement, name: string): void {
 	(input as unknown as { fire(type: string, init?: object): void }).fire("keydown", { key: "Enter", ...press });
 }
 
+/** Whether a row's ↺ is out of sight (nothing to reset). */
+function resetHidden(button: ButtonLike): boolean {
+	return (button.extraSettingsEl as unknown as HTMLElement).hasClass("cs-hidden");
+}
+
 describe("Default fallback callout", () => {
 	it("keeps one picker through redraws, showing the saved fallback each time", () => {
 		const { plugin, registry } = fakePlugin();
@@ -142,6 +147,30 @@ describe("Default fallback callout", () => {
 		assert.deepEqual(calls, ["restyle", "refresh", "save"]);
 		assert.equal(redraws(), 1);
 		assert.equal((reset().extraSettingsEl as unknown as HTMLElement).hasClass("cs-hidden"), true);
+	});
+
+	it("puts Note back with ↺, paints before it saves, and hides the arrow", async () => {
+		const { plugin, registry, calls } = fakePlugin();
+		const { row } = drawGeneral(plugin);
+		const reset = row(GENERAL_ROWS.fallback).setting.extraButtons[0] as ButtonLike;
+		reset.press();
+		assert.equal(registry.settings.fallbackCalloutId, DEFAULT_SETTINGS.fallbackCalloutId);
+		assert.equal(row(GENERAL_ROWS.fallback).settingEl.querySelector<HTMLInputElement>(".cs-combobox-input")?.value, "Note");
+		assert.equal(resetHidden(reset), true);
+		await Promise.resolve();
+		// Painted before the save, which it must never wait on.
+		assert.deepEqual(calls, ["restyle", "refresh", "save"]);
+	});
+
+	it("shows no ↺ at the defaults, and writes nothing for being drawn", () => {
+		const { plugin, registry, calls } = fakePlugin();
+		registry.settings.fallbackCalloutId = DEFAULT_SETTINGS.fallbackCalloutId;
+		registry.settings.language = DEFAULT_SETTINGS.language;
+		const { row } = drawGeneral(plugin);
+		for (const id of [GENERAL_ROWS.fallback, GENERAL_ROWS.language]) {
+			assert.equal(resetHidden(row(id).setting.extraButtons[0] as ButtonLike), true, id);
+		}
+		assert.deepEqual(calls, []);
 	});
 
 	it("goes grey while saving is paused: the picker and its reset arrow too", () => {
@@ -190,6 +219,27 @@ describe("Language", () => {
 		const retry = (row(GENERAL_ROWS.languageMissing).setting.components[0] as ButtonLike).buttonEl as unknown as HTMLButtonElement;
 		assert.equal(retry.hasClass("mod-loading"), true, "Obsidian's spinner on Retry");
 		assert.equal(retry.getAttribute("aria-busy"), "true");
+	});
+
+	it("follows Obsidian's language again with ↺", async () => {
+		// Obsidian is in English here (the stub's default), so Hebrew is a pin.
+		const { plugin, registry, calls } = fakePlugin();
+		registry.settings.language = "he";
+		const { row, redraws } = drawGeneral(plugin);
+		try {
+			const reset = row(GENERAL_ROWS.language).setting.extraButtons[0] as ButtonLike;
+			assert.equal(resetHidden(reset), false);
+			reset.press();
+			assert.equal(registry.settings.language, DEFAULT_SETTINGS.language);
+			// Following Obsidian shows as Obsidian's own language.
+			assert.equal(row(GENERAL_ROWS.language).settingEl.querySelector(".cs-select-value")?.textContent, "English");
+			await Promise.resolve();
+			await Promise.resolve();
+			assert.deepEqual(calls, ["save", "applyLocaleChange"]);
+			assert.ok(redraws() >= 1, "the page is drawn again in the new language");
+		} finally {
+			setLocale("en");
+		}
 	});
 
 	it("goes grey while saving is paused", () => {

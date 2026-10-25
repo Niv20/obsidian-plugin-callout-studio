@@ -2,10 +2,8 @@
 import { setIcon, type App } from "obsidian";
 import { getLocale, t } from "../i18n";
 import type { SettingsSectionContext } from "./sections/types";
-import { createTargetHighlighter } from "./targetHighlighter";
 import {
 	isCompetitorImportBannerForced,
-	markCompetitorImportBannerHandled,
 	shouldShowCompetitorImportBanner,
 } from "./competitorImportState";
 
@@ -89,7 +87,7 @@ export interface CompetitorImportHandlers {
 
 /**
  * Build the prompt into `parent`: the message naming the plugins, **Import**,
- * and ✕. Used by both settings pages, so they draw the same prompt.
+ * and ✕. The settings page shows it as a row (declarative/bannerRows.ts).
  */
 export function buildCompetitorImportBanner(
 	parent: HTMLElement,
@@ -119,28 +117,4 @@ export function buildCompetitorImportBanner(
 	setIcon(dismissButton, "x");
 	dismissButton.addEventListener("click", () => handlers.onDismiss());
 	return banner;
-}
-
-/**
- * The prompt on the page `display()` draws: **Import** scrolls to and
- * highlights the Import row (`importTargetEl`), ✕ removes the prompt at once.
- */
-export function renderCompetitorImportBanner(
-	ctx: SettingsSectionContext,
-	containerEl: HTMLElement,
-	importTargetEl: HTMLElement,
-): void {
-	const competitors = competitorsToOffer(ctx.app, ctx.plugin);
-	if (competitors.length === 0) return;
-
-	const highlighter = createTargetHighlighter(importTargetEl);
-	ctx.registerDisposer(highlighter.dispose);
-
-	const banner = buildCompetitorImportBanner(containerEl, competitors, {
-		onImport: (fromKeyboard) => highlighter.run(fromKeyboard),
-		onDismiss: () => {
-			banner.remove();
-			void markCompetitorImportBannerHandled(ctx.plugin);
-		},
-	});
 }

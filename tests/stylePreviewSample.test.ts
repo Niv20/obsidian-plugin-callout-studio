@@ -1,32 +1,23 @@
+/**
+ * tests/stylePreviewSample.test.ts — the sample note the style pages' preview
+ * draws (settings/stylePreview.ts, `sampleText`).
+ *
+ * What is checked: the inline sample is a real inline callout between two
+ * sentences, and its label follows the interface language.
+ */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { GlobalStyleModal } from "../src/settings/GlobalStyleModal";
 import { sampleText } from "../src/settings/stylePreview";
 import { STYLE_DEMO_ID } from "../src/constants";
 import { scanLineForCalloutTokens, tokenEnd } from "../src/editor/calloutTokens";
 import { registerLocale, setLocale } from "../src/i18n";
 import { he } from "../src/i18n/he";
-import type { SettingsTabPlugin } from "../src/settings/sections/types";
 
-describe("global inline style preview", () => {
-	it("selects a separate localized title for each style role", () => {
-		const plugin = { app: {} } as unknown as SettingsTabPlugin;
-		const cases = [
-			["regular", "settings.globalStyleRegularTitle"],
-			["heading", "settings.globalStyleHeadingTitle"],
-			["inline", "settings.globalStyleInlineTitle"],
-		] as const;
-
-		for (const [role, expectedKey] of cases) {
-			const modal = new GlobalStyleModal(plugin, role);
-			assert.strictEqual(modal["titleKey"](), expectedKey);
-		}
-	});
-
+describe("the inline style preview's sample", () => {
 	it("shows a content pill between two Lorem ipsum sentences", () => {
 		// The sample uses the same token grammar as an ordinary note. Testing the
-		// modal's actual markdown catches a preview that silently falls back to
-		// the bare `[!id]` pill and leaves `{Example}` as plain text.
+		// actual markdown catches a preview that silently falls back to the bare
+		// `[!id]` pill and leaves `{Example}` as plain text.
 		const markdown = sampleText("inline");
 		const tokens = scanLineForCalloutTokens(markdown).filter(
 			(token) => token.role === "inline",

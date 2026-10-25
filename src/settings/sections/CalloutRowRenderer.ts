@@ -2,10 +2,10 @@
  * settings/sections/CalloutRowRenderer.ts — one callout in the settings lists,
  * drawn as one of Obsidian's own setting rows.
  *
- * Who calls it. SettingsTab hands {@link renderCalloutRow} to the callout lists
- * (CalloutListsSection) for every row of *Callouts from your theme*, *My
- * callout types* and *Built-in callouts*; the user guide's scene scripts call
- * it too.
+ * Who calls it. The settings pages that list callouts (declarative/
+ * calloutPages.ts for every row of *My callout types*, and
+ * declarative/calloutListPage.ts for *Built-in callouts* and *Callouts from
+ * your theme*), through {@link drawCalloutRow}.
  *
  * The main idea (finding S2-14). A row is an Obsidian `Setting`
  * (`.setting-item`), filled like this:
@@ -25,13 +25,12 @@
  *
  * Being a real setting row is what gives Obsidian's keyboard navigation (↑/↓
  * or j/k from row to row, Enter into the row's first button), its inset focus
- * ring, and, once the tab moves to Obsidian's declarative settings, a row it
- * can put in a box and find in its search. Until 2026-10-24 the row was a
- * `div.callout-studio-row` of the plugin's own, which the arrow keys skipped.
+ * ring, and a row Obsidian can put in a box and find in its search. Until
+ * 2026-10-24 the row was a `div.callout-studio-row` of the plugin's own, which
+ * the arrow keys skipped.
  *
- * {@link drawCalloutRow} fills a `Setting` made elsewhere (the declarative
- * settings hand it one, and may draw the same row again); {@link renderCalloutRow}
- * makes the `Setting` itself, for today's lists.
+ * {@link drawCalloutRow} fills a `Setting` made elsewhere: Obsidian hands one
+ * to a row of the settings tree, and may ask for the same row again.
  *
  * ## The `kind` decides the row, and it is not `def.builtIn`
  *
@@ -47,7 +46,7 @@
  * are real, but they come from `registry.themeAppearanceOf(def)` rather than
  * from the row: what the theme was measured drawing, never what the row stores.
  */
-import { Setting } from "obsidian";
+import type { Setting } from "obsidian";
 import { getLocale, t } from "../../i18n";
 import { getSortedCalloutIds } from "../../utils/sorting";
 import {
@@ -78,20 +77,6 @@ export type RowRendererHandlers = {
 	/** Open one of the user's own rows' menu, the same way. */
 	onOpenUserMenu: (trigger: RowMenuTrigger, def: CalloutDefinition) => void;
 };
-
-/**
- * Add one callout row to `containerEl`: a new Obsidian `Setting`, filled by
- * {@link drawCalloutRow}.
- */
-export function renderCalloutRow(
-	ctx: SettingsSectionContext,
-	containerEl: HTMLElement,
-	def: CalloutDefinition,
-	kind: RowKind,
-	handlers: RowRendererHandlers,
-): void {
-	drawCalloutRow(ctx, new Setting(containerEl), def, kind, handlers);
-}
 
 /**
  * Fill `setting`, an empty Obsidian setting row, with one callout.

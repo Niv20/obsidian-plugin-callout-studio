@@ -37,7 +37,8 @@ describe("the drop placeholder", () => {
 		for (const side of ["top", "left", "width", "height"]) {
 			assert.match(valueOf(box, side) ?? "", new RegExp(`^var\\(--cs-drag-placeholder-${side},`));
 		}
-		assert.equal(valueOf(only(".cs-menu-customize-list"), "position"), "relative");
+		// The one sortable list left: Manage icon libraries' Available box.
+		assert.equal(valueOf(only(".cs-icon-library-available .setting-items"), "position"), "relative");
 	});
 
 	it("is Obsidian's own drop slot: the accent at 30%, with 5px corners", () => {

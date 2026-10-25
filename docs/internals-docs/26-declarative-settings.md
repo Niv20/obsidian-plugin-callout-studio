@@ -9,13 +9,13 @@ on the right row (the plan's *Searchable Settings* stage).
 
 **Status.** The tab draws from the tree, built under
 [`src/settings/declarative/`](../../src/settings/declarative/)
-(§ The tab and its tree). `display()` is still there, as the fallback
-Obsidian calls when the tree comes back empty, which happens only when
-building it threw (see
-[16 § `getSettingDefinitions()` returns the tab's tree](16-settings-ui-and-modals.md#getsettingdefinitions-returns-the-tabs-tree));
-the *Clean Sweep* deletes it. Each part is tested through a copy of
-Obsidian's renderer (§ Testing the tree), and the whole was checked in
-Obsidian 1.14.5 on a computer and in phone and tablet emulation.
+(§ The tab and its tree). The tab has no `display()` of its own any more
+(the old page drawn section by section was deleted in the *Clean Sweep*):
+Obsidian's base `display()` draws the tree too, and a tree that failed to
+build is replaced by one row that says so (§ Never throwing). Each part is
+tested through a copy of Obsidian's renderer (§ Testing the tree), and the
+whole was checked in Obsidian 1.14.5 on a computer and in phone and tablet
+emulation.
 
 ## How Obsidian draws the tree
 
@@ -530,8 +530,11 @@ A button row does neither: it dims and explains (`buttonRow`, above).
 
 - `buildTreeSafely(build, fallback)` - `addSettingTab` calls `update()` while
   the plugin loads, so an error while building the tree would stop the plugin
-  from loading. On an error it logs and returns `fallback` (`[]` while
-  `display()` still exists, which makes Obsidian draw the old tab).
+  from loading. On an error it logs and returns `fallback`: for the tab,
+  `treeAfterFailure()`, one box with one row that says the settings could not
+  be drawn (`settings.buildFailed`). An empty tree would leave the tab blank:
+  with nothing to draw, Obsidian calls `display()`, and the base class's
+  draws the (empty) tree.
 - `guardRender(name, render)` - an error in one `render` would stop the rest of
   the page drawing. Every render row is wrapped; a failing row keeps its name,
   and the console names it.

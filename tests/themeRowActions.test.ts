@@ -27,6 +27,7 @@
  * put something actionable.
  */
 import assert from "node:assert";
+import { Setting } from "obsidian";
 import { describe, it } from "node:test";
 import { installFakeDom } from "./support/fakeDom";
 import { pluginSourceFiles, readRepoFile } from "./support/sourceScan";
@@ -93,14 +94,14 @@ function fakeCtx(registry: CalloutRegistry, themeIds: string[]) {
 
 describe("a theme row is not editable", () => {
 	it("renders a preview button and a ⋯, and no editor", async () => {
-		const { renderCalloutRow } = await import(
+		const { drawCalloutRow } = await import(
 			"../src/settings/sections/CalloutRowRenderer"
 		);
 		const registry = vaultWithThemeRow();
 		const { ctx } = fakeCtx(registry, ["recite"]);
 		const host = createDiv();
 
-		renderCalloutRow(ctx, host, registry.get("recite")!, "theme", {
+		drawCalloutRow(ctx, new Setting(host), registry.get("recite")!, "theme", {
 			onEdit: () => assert.fail("a theme row must not open the editor"),
 			onOpenBuiltInMenu: () => assert.fail("wrong menu"),
 			onOpenUserMenu: () => assert.fail("wrong menu"),
@@ -123,14 +124,14 @@ describe("a theme row is not editable", () => {
 	});
 
 	it("still gives a user row its pencil and its ⋯", async () => {
-		const { renderCalloutRow } = await import(
+		const { drawCalloutRow } = await import(
 			"../src/settings/sections/CalloutRowRenderer"
 		);
 		const registry = vaultWithThemeRow({ source: "user" });
 		const { ctx } = fakeCtx(registry, []);
 		const host = createDiv();
 		let edited = false;
-		renderCalloutRow(ctx, host, registry.get("recite")!, "user", {
+		drawCalloutRow(ctx, new Setting(host), registry.get("recite")!, "user", {
 			onEdit: () => {
 				edited = true;
 			},
@@ -149,14 +150,14 @@ describe("a theme row is not editable", () => {
 	it("opens a row's menu from its ⋮ under the button, and from a right-click at the pointer", async () => {
 		// A right-click anywhere on a callout row opens the same menu as its ⋮,
 		// as on Obsidian's Community plugins rows (finding S2-12).
-		const { renderCalloutRow } = await import(
+		const { drawCalloutRow } = await import(
 			"../src/settings/sections/CalloutRowRenderer"
 		);
 		const registry = vaultWithThemeRow({ source: "user" });
 		const { ctx } = fakeCtx(registry, []);
 		const host = createDiv();
 		const opened: Array<{ kind: string; x?: number; y?: number }> = [];
-		renderCalloutRow(ctx, host, registry.get("recite")!, "user", {
+		drawCalloutRow(ctx, new Setting(host), registry.get("recite")!, "user", {
 			onEdit: () => {},
 			onOpenBuiltInMenu: () => assert.fail("a user row opens the user menu"),
 			onOpenUserMenu: (trigger) => {
@@ -178,7 +179,7 @@ describe("a theme row is not editable", () => {
 	it("shows the theme's colours, never the ones stored on the row", async () => {
 		// The row carries #336699. Nothing paints it while the theme owns the
 		// id, so a swatch showing it would name a colour that is not on screen.
-		const { renderCalloutRow } = await import(
+		const { drawCalloutRow } = await import(
 			"../src/settings/sections/CalloutRowRenderer"
 		);
 		const registry = vaultWithThemeRow();
@@ -196,7 +197,7 @@ describe("a theme row is not editable", () => {
 		);
 		const { ctx } = fakeCtx(registry, ["recite"]);
 		const host = createDiv();
-		renderCalloutRow(ctx, host, registry.get("recite")!, "theme", {
+		drawCalloutRow(ctx, new Setting(host), registry.get("recite")!, "theme", {
 			onEdit: () => {},
 			onOpenBuiltInMenu: () => {},
 			onOpenUserMenu: () => {},
@@ -212,13 +213,13 @@ describe("a theme row is not editable", () => {
 
 	it("shows no swatch at all when the theme has not been measured", async () => {
 		// Better an empty slot than a confident wrong colour.
-		const { renderCalloutRow } = await import(
+		const { drawCalloutRow } = await import(
 			"../src/settings/sections/CalloutRowRenderer"
 		);
 		const registry = vaultWithThemeRow();
 		const { ctx } = fakeCtx(registry, ["recite"]);
 		const host = createDiv();
-		renderCalloutRow(ctx, host, registry.get("recite")!, "theme", {
+		drawCalloutRow(ctx, new Setting(host), registry.get("recite")!, "theme", {
 			onEdit: () => {},
 			onOpenBuiltInMenu: () => {},
 			onOpenUserMenu: () => {},
@@ -229,7 +230,7 @@ describe("a theme row is not editable", () => {
 
 describe("the retired personal-CSS handoff", () => {
 	it("leaves a Studio row showing its stored icon and colours", async () => {
-		const { renderCalloutRow } = await import(
+		const { drawCalloutRow } = await import(
 			"../src/settings/sections/CalloutRowRenderer"
 		);
 		const registry = vaultWithThemeRow({ source: "user" });
@@ -239,7 +240,7 @@ describe("the retired personal-CSS handoff", () => {
 		});
 		const { ctx } = fakeCtx(registry, []);
 		const host = createDiv();
-		renderCalloutRow(ctx, host, rowDef, "user", {
+		drawCalloutRow(ctx, new Setting(host), rowDef, "user", {
 			onEdit: () => {},
 			onOpenBuiltInMenu: () => {},
 			onOpenUserMenu: () => {},
@@ -379,12 +380,12 @@ describe("a theme row carries nothing it cannot act on", () => {
 		id: string,
 		themeIds: string[],
 	) => {
-		const { renderCalloutRow } = await import(
+		const { drawCalloutRow } = await import(
 			"../src/settings/sections/CalloutRowRenderer"
 		);
 		const { ctx } = fakeCtx(registry, themeIds);
 		const host = createDiv();
-		renderCalloutRow(ctx, host, registry.get(id)!, "theme", {
+		drawCalloutRow(ctx, new Setting(host), registry.get(id)!, "theme", {
 			onEdit: () => {},
 			onOpenBuiltInMenu: () => {},
 			onOpenUserMenu: () => {},

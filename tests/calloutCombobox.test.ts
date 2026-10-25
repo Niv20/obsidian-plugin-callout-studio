@@ -23,7 +23,7 @@ import type { FakeElement } from "./support/fakeDom";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CalloutCombobox } from "../src/settings/calloutCombobox";
 import { buildCalloutRow } from "../src/settings/command/calloutRow";
-import { renderFallbackSection } from "../src/settings/sections/FallbackSection";
+import { createFallbackPicker, setFallbackCallout } from "../src/settings/sections/FallbackSection";
 import { ListboxPopup } from "../src/ui/listboxPopup";
 import type { CalloutDefinition, PluginData } from "../src/types";
 
@@ -716,35 +716,25 @@ describe("New command — Callout type list", () => {
 
 /* -------------------------------------------------------------------------- */
 
-describe("renderFallbackSection — the settings row end to end", () => {
-	/** The slice of the section's context this row actually touches. */
-	function fakeCtx(registry: CalloutRegistry) {
-		const disposers: (() => void)[] = [];
+describe("the Default fallback callout's picker end to end", () => {
+	/** The slice of the plugin the picker and the setter touch. */
+	function fakePlugin(registry: CalloutRegistry) {
 		const settings = { fallbackCalloutId: "note" };
 		const calls: string[] = [];
-		return {
-			disposers,
+		const plugin = {
+			registry,
 			settings,
-			calls,
-			ctx: {
-				app: {},
-				display: () => {},
-				registerDisposer: (d: () => void) => disposers.push(d),
-				plugin: {
-					registry,
-					settings,
-					restyleUncustomizedFallbackRows: () => {
-						calls.push("restyle");
-						return 0;
-					},
-					saveSettings: () => {
-						calls.push("save");
-						return Promise.resolve();
-					},
-					refreshCallouts: () => calls.push("refresh"),
-				},
-			} as unknown as Parameters<typeof renderFallbackSection>[0],
-		};
+			restyleUncustomizedFallbackRows: () => {
+				calls.push("restyle");
+				return 0;
+			},
+			saveSettings: () => {
+				calls.push("save");
+				return Promise.resolve();
+			},
+			refreshCallouts: () => calls.push("refresh"),
+		} as unknown as Parameters<typeof createFallbackPicker>[0];
+		return { plugin, settings, calls };
 	}
 
 	it("offers the callouts, but never a theme overlay row", () => {
@@ -756,9 +746,9 @@ describe("renderFallbackSection — the settings row end to end", () => {
 		// theme's stylesheet and never persisted, so `load` would not keep one.
 		registry.add(def({ id: "themed", displayName: "Themed", source: "theme" }));
 		const host = el();
-		const { ctx } = fakeCtx(registry);
+		const { plugin } = fakePlugin(registry);
 
-		renderFallbackSection(ctx, asEl(host));
+		const picker = createFallbackPicker(plugin, asEl(host), () => {});
 
 		const input = host.querySelector(".cs-combobox-input");
 		assert.ok(input);
@@ -773,15 +763,15 @@ describe("renderFallbackSection — the settings row end to end", () => {
 			assert.ok(names.includes(offered), `${offered} missing`);
 		}
 		assert.ok(!names.includes("Themed"), "a theme row must never be offered");
+		picker.destroy();
 	});
 
-	it("repaints before saving, and registers its teardown", async () => {
+	it("repaints before saving", async () => {
 		fakeDom.light();
 		const host = el();
-		const harness = fakeCtx(registryWith([...CHOICES]));
+		const harness = fakePlugin(registryWith([...CHOICES]));
 
-		renderFallbackSection(harness.ctx, asEl(host));
-		assert.strictEqual(harness.disposers.length, 1);
+		const picker = createFallbackPicker(harness.plugin, asEl(host), (id) => setFallbackCallout(harness.plugin, id));
 
 		const input = host.querySelector(".cs-combobox-input");
 		assert.ok(input);
@@ -803,15 +793,15 @@ describe("renderFallbackSection — the settings row end to end", () => {
 		// queue behind another or fail, and a repaint placed after it was then
 		// late or skipped altogether.
 		assert.deepStrictEqual(harness.calls, ["restyle", "refresh", "save"]);
+		picker.destroy();
 	});
 
-	it("the registered disposer really releases the listener", () => {
+	it("releases its document listener when destroyed", () => {
 		fakeDom.light();
 		const before = fakeDom.document.listeners.get("click")?.length ?? 0;
-		const harness = fakeCtx(registryWith([...CHOICES]));
+		const harness = fakePlugin(registryWith([...CHOICES]));
 
-		renderFallbackSection(harness.ctx, asEl(el()));
-		for (const dispose of harness.disposers) dispose();
+		createFallbackPicker(harness.plugin, asEl(el()), () => {}).destroy();
 
 		assert.strictEqual(
 			fakeDom.document.listeners.get("click")?.length ?? 0,

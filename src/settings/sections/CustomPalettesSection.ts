@@ -1,32 +1,20 @@
 /**
- * settings/sections/CustomPalettesSection.ts — "Saved color palettes" section.
+ * settings/sections/CustomPalettesSection.ts — what the user does to their
+ * saved colour palettes: make one, change one, delete one.
  *
- * Lists the user's custom palettes (current-mode accent/background swatch +
- * name + edit/delete) with a "New palette" button opening PaletteEditorModal.
- * Palettes are stored in settings.customPalettes and surfaced in the callout
- * editor's palette dropdown under the "Custom" group. Colors are baked into
- * callouts at apply time; editing a palette here cascades the new colors onto
- * every callout still linked to it, while deleting a palette leaves existing
- * callouts as-is. Every change goes through the registry's palette writers
- * (`addPalette`, `updatePalette`, `removePalette`), which announce it even
- * when nothing links to the palette — its name is a metadata colour word the
- * stylesheet paints on its own. The first two also adopt the orphans whose
- * colours match.
+ * Who calls it. The Saved color palettes settings page
+ * (declarative/palettesPage.ts).
  *
- * The heading folds, pages and *pins* exactly like the three callout lists
- * above it in the settings tab — `attachPersistedFold` for the chevron and the
- * settings-backed fold state, `renderPagedList` for the first-20-then-a-button
- * behavior, and `createStickySection` for the wrapper that parks the heading at
- * the top of the pane while its rows scroll under it — so this section is a
- * fourth member of that family rather than a parallel implementation of the
- * same thing.
- *
- * The flows (new, edit, delete), the A→Z order and the swatches are exported,
- * so the declarative settings page (declarative/palettesPage.ts) lists the
- * same palettes and changes them through the same code.
+ * The main idea. Each flow opens the palette editor (or asks before a
+ * delete) and changes the palettes through the registry's palette writers
+ * (`addPalette`, `updatePalette`, `removePalette`), which announce the change
+ * even when nothing links to the palette, since its name is a metadata colour
+ * word the stylesheet paints on its own. Editing a palette carries its new
+ * colours onto every callout still linked to it; deleting one leaves those
+ * callouts as they are. The A→Z order and the colour circles a row shows are
+ * here too.
  */
-import { setIcon } from "obsidian";
-import { getLocale, t } from "../../i18n";
+import { t } from "../../i18n";
 import type { CustomPalette } from "../../types";
 import type { SettingsSectionContext, SettingsTabPlugin } from "./types";
 import { generatePaletteId } from "../../utils/colorPalettes";
@@ -36,12 +24,6 @@ import {
 } from "../../ui/ColorCircles";
 import { PaletteEditorModal } from "../PaletteEditorModal";
 import { ConfirmModal } from "../../utils/ConfirmModal";
-import { attachPersistedFold } from "./calloutListsFold";
-import { keepScrollAnchored } from "./foldAnchor";
-import { createStickySection } from "./stickySection";
-import { focusFirstRevealed, renderPagedList } from "./listPaging";
-import type { PagingState } from "./listPaging";
-import { headingWithCount } from "../../ui/faintCount";
 import {
 	applyMetadataRename,
 	askMetadataRename,
@@ -51,142 +33,6 @@ import {
 	renamedMetadataWords,
 	type MetadataRename,
 } from "./paletteMetadataRename";
-
-export function renderCustomPalettesSection(
-	ctx: SettingsSectionContext,
-	containerEl: HTMLElement,
-): void {
-	// A fourth pinned section, built exactly like "My callout types" above it —
-	// same wrapper, same `cs-subheader-row` heading box (tight, no border, and
-	// the layout its CTA button needs). The three wrapper classes are the only
-	// difference: `cs-section-divider` for the hairline a wrapped heading no
-	// longer gets from the generic rule; `cs-sticky-section-last` because
-	// nothing sticky follows, so the band lets go with its own last row rather
-	// than hang over "Global settings"; `cs-palettes-section` for the one thing
-	// styles.css must special-case — the section above it is not itself pinned,
-	// so no body carries a --cs-section-gap down to this divider.
-	const { wrapEl, setting: heading } = createStickySection(
-		containerEl,
-		t("settings.customPalettes"),
-	);
-	heading.settingEl.addClass("cs-subheader-row");
-	wrapEl.addClass(
-		"cs-section-divider",
-		"cs-sticky-section-last",
-		"cs-palettes-section",
-	);
-	heading.addButton((btn) =>
-		btn
-			.setButtonText(t("settings.newPalette"))
-			.setCta()
-			.onClick(() => createPalette(ctx, renderList)),
-	);
-	const bodyEl = wrapEl.createDiv();
-	const fold = attachPersistedFold(heading, bodyEl, "palettes", ctx.plugin);
-	const paging: PagingState = { expanded: false };
-
-	const renderPaletteRow = (listEl: HTMLElement, palette: CustomPalette): void => {
-		const row = listEl.createDiv({
-			cls: "callout-studio-row cs-palette-list-row",
-		});
-		renderPaletteSwatches(row.createDiv({ cls: "callout-studio-row-colors" }), palette);
-		// A long name wraps instead of being cut, so no tooltip repeats it.
-		row.createSpan({
-			cls: "cs-palette-list-name",
-			text: palette.name,
-		});
-
-		const buttonsEl = row.createDiv({
-			cls: "callout-studio-row-buttons",
-		});
-		const editBtn = buttonsEl.createEl("button", {
-			cls: "clickable-icon",
-			attr: {
-				"aria-label": t("settings.editPaletteAria", {
-					name: palette.name,
-				}),
-			},
-		});
-		setIcon(editBtn, "pencil");
-		editBtn.addEventListener("click", () => void editPalette(ctx, palette, renderList));
-		const deleteBtn = buttonsEl.createEl("button", {
-			cls: "clickable-icon",
-			attr: {
-				"aria-label": t("settings.deletePaletteAria", {
-					name: palette.name,
-				}),
-			},
-		});
-		setIcon(deleteBtn, "trash-2");
-		deleteBtn.addEventListener("click", () => void deletePalette(ctx, palette, renderList));
-	};
-
-	/**
-	 * What this section would draw, as one comparable string.
-	 *
-	 * Declared above `renderList` because that is where it is *recorded* — every
-	 * path that redraws goes through there, so recording it at the source is
-	 * what keeps the `css-change` comparison below honest. Storing it only at
-	 * the comparison would leave the stamp describing a page two renders old.
-	 */
-	const paletteSignature = (): string =>
-		JSON.stringify([
-			activeDocument.body.classList.contains("theme-dark"),
-			getLocale(),
-			paging.expanded,
-			ctx.plugin.settings.customPalettes,
-		]);
-	let lastSignature: string | null = null;
-
-	const renderList = (): void => {
-		lastSignature = paletteSignature();
-		bodyEl.empty();
-		const palettes = sortedPalettes(ctx.plugin);
-		// The total, never the visible slice — same rule the three callout
-		// lists follow for their own "(N)".
-		fold.setName(
-			headingWithCount(t("settings.customPalettes"), palettes.length),
-		);
-		if (palettes.length === 0) {
-			bodyEl.createDiv({
-				cls: "callout-studio-empty-state",
-				text: t("settings.customPalettesEmpty"),
-			});
-			return;
-		}
-		renderPagedList(bodyEl, palettes, paging, renderPaletteRow, () => {
-			renderList();
-			focusFirstRevealed(bodyEl);
-		});
-	};
-
-	// The swatches show the CURRENT theme mode, so re-render on a live theme
-	// flip. Debounced: CSSInjector fires "css-change" after every inject.
-	//
-	// Two guards around that, for the same reason the callout lists have them —
-	// this section sits above the eight below it, so a repaint here moves all of
-	// them under whoever is reading one. The signature drops the repaints that
-	// would have drawn the identical thing (which is most of them: `css-change`
-	// fires for any theme, snippet or other plugin, and the palettes themselves
-	// rarely move), and the anchor makes the ones that survive it invisible.
-	let refreshTimer: number | null = null;
-	const cssRef = ctx.app.workspace.on("css-change", () => {
-		if (!bodyEl.isConnected) return;
-		if (refreshTimer !== null) window.clearTimeout(refreshTimer);
-		refreshTimer = window.setTimeout(() => {
-			refreshTimer = null;
-			if (!bodyEl.isConnected) return;
-			if (paletteSignature() === lastSignature) return;
-			keepScrollAnchored(containerEl, renderList);
-		}, 60);
-	});
-	ctx.registerDisposer(() => {
-		ctx.app.workspace.offref(cssRef);
-		if (refreshTimer !== null) window.clearTimeout(refreshTimer);
-	});
-
-	renderList();
-}
 
 /** The saved palettes other than `excludeId` (all of them without one). */
 function othersExcept(plugin: SettingsTabPlugin, excludeId?: string): CustomPalette[] {

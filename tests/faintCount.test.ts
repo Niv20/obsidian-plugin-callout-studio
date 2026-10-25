@@ -12,7 +12,7 @@
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { appendFaintCount, headingWithCount } from "../src/ui/faintCount";
+import { appendFaintCount } from "../src/ui/faintCount";
 import { parseRules, valueOf } from "./support/cssInjectorHarness";
 import { installFakeDom } from "./support/fakeDom";
 import { readRepoFile } from "./support/sourceScan";
@@ -33,16 +33,6 @@ describe("a faint count", () => {
 	it("groups digits the way the interface language does", () => {
 		assert.equal(appendFaintCount(createDiv(), 1234).textContent, " 1,234");
 	});
-
-	// A foldable heading's name element is a row (chevron, then title), so the
-	// title and count are siblings: the count can go to the row's end.
-	it("comes after a Setting heading's title as its sibling", () => {
-		const fragment = headingWithCount("My callout types", 4);
-		assert.equal(fragment.childNodes.length, 2);
-		assert.equal(fragment.childNodes[0]?.textContent, "My callout types");
-		assert.ok((fragment.childNodes[1] as HTMLElement).hasClass("cs-faint-count"));
-		assert.equal(fragment.textContent, "My callout types 4");
-	});
 });
 
 describe("how styles.css draws a faint count", () => {
@@ -50,16 +40,11 @@ describe("how styles.css draws a faint count", () => {
 	const naming = rules.filter((rule) => rule.selector.includes(".cs-faint-count"));
 
 	// A rule of its own for one surface is how the counts came apart before.
-	it("is one rule for every surface, plus a settings heading's and a menu row's", () => {
+	it("is one rule for every surface, plus a menu row's", () => {
 		assert.deepEqual(naming.map((rule) => rule.selector), [
 			".cs-faint-count",
-			".setting-item-heading .cs-faint-count",
 			".menu-item-title > .cs-faint-count",
 		]);
-	});
-
-	it("keeps a settings heading's count beside its title, not against its buttons", () => {
-		assert.equal(valueOf(naming[1]!, "margin-inline-start"), "0");
 	});
 
 	it("is Obsidian's `.tree-item-flair`: faint, a step smaller, at the end of its row", () => {
@@ -74,7 +59,7 @@ describe("how styles.css draws a faint count", () => {
 	});
 
 	it("floats to the end of a menu row, whose title is not a flex row", () => {
-		assert.equal(valueOf(naming[2]!, "float"), "inline-end");
+		assert.equal(valueOf(naming[1]!, "float"), "inline-end");
 	});
 
 	it("is the only count style left: no muted \"(N)\"", () => {

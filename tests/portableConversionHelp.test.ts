@@ -6,8 +6,8 @@ import { getLocale, registerLocale, setLocale, t } from "../src/i18n";
 import { he } from "../src/i18n/he";
 import { PortableConversionHelpModal } from "../src/portable/PortableConversionHelpModal";
 import { renderPortableRules } from "../src/settings/portableCalloutExamples";
-import { renderResetSection } from "../src/settings/sections/DataManagementSection";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import { dangerZoneGroup } from "../src/settings/declarative/mainPageGroups";
+import type { CsRender, TreeContext } from "../src/settings/declarative/types";
 import { convertPortableCallouts } from "../src/utils/portableCallouts";
 import { fakeDom } from "./support/fakeDom";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";
@@ -76,7 +76,10 @@ describe("portable conversion entry and help", () => {
 				callback(button);
 				return this;
 			};
-			renderResetSection({ app: h.app } as SettingsSectionContext, root as unknown as HTMLElement);
+			// The settings page's Convert to standard Markdown row, drawn as Obsidian draws it.
+			const ctx = { app: h.app, plugin: { settingsWriter: { isFrozen: false } } } as unknown as TreeContext;
+			const conversionRow = dangerZoneGroup(ctx).items?.find((row) => row.id === "convert-to-markdown") as CsRender;
+			conversionRow.render(new Setting(root as unknown as HTMLElement), undefined as never);
 			assert.ok(review);
 			review();
 			await setImmediate();

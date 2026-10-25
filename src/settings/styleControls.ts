@@ -1,14 +1,16 @@
 /**
- * settings/styleControls.ts — Shared builders for the global style controls
- * (titled group boxes, slider rows, border-side buttons).
+ * settings/styleControls.ts — how a style slider updates the callouts while it
+ * is dragged, and saves when it is let go.
  *
- * Extracted from the old GlobalStyleSection so the three per-role "Global
- * callout style" popups (regular / heading / inline) compose the same control
- * groups. Every control follows the same live-update contract: dragging
- * previews the change via cssInjector.inject(false), coalesced to one pass per
- * animation frame (see scheduleLiveInject) and skipping the css-change
- * re-render; releasing commits it via cssInjector.inject() + saveSettings().
- * There is no scheduleInject — the injector has no debounce at all.
+ * Who calls it. The style pages (declarative/stylePages.ts) wire every slider
+ * with {@link wireStyleSlider}; the callout editor's icon adjustments use
+ * {@link setSliderDisplay} for their readout.
+ *
+ * The main idea: the live-update contract. Dragging previews the change via
+ * cssInjector.inject(false), coalesced to one pass per animation frame (see
+ * scheduleLiveInject) and skipping the css-change re-render; releasing commits
+ * it, by default via cssInjector.inject() + saveSettings(). There is no
+ * scheduleInject — the injector has no debounce at all.
  *
  * Paint first, then save, at every commit. A save reads the file back, writes
  * a recovery copy and queues behind any save already under way, so painting
@@ -19,13 +21,10 @@
  * in Obsidian 1.14 the settings are a window of their own, and a frame asked
  * of the main window never arrives while it is hidden behind them.
  */
-import { Setting, type SliderComponent } from "obsidian";
-import { DEFAULT_SETTINGS } from "../constants";
+import type { SliderComponent } from "obsidian";
 import { t } from "../i18n";
-import type { BorderSidesSettings, CalloutRenderRole } from "../types";
 import type { SettingsTabPlugin } from "./sections/types";
-import { addHeaderResetButton } from "./headerResetButton";
-import { borderWidthSlider, roleFrame, type StyleSliderDef } from "./styleSpecs";
+import type { StyleSliderDef } from "./styleSpecs";
 import { cancelFrame, requestFrameFor, type FrameHandle } from "../utils/elementFrame";
 
 /**
@@ -42,127 +41,6 @@ export function setSliderDisplay(
 	format: (value: number) => string,
 ): void {
 	slider.setDisplayFormat(format);
-}
-
-/** A titled control group box (bordered section with a muted header). */
-export function createControlGroup(
-	parentEl: HTMLElement,
-	title: string,
-	extraCls = "",
-): HTMLElement {
-	const groupEl = parentEl.createDiv({
-		cls: `callout-studio-adjust-section cs-settings-group${
-			extraCls ? " " + extraCls : ""
-		}`,
-	});
-	groupEl.createDiv({
-		cls: "callout-studio-adjust-header cs-settings-group-header",
-		text: title,
-	});
-	return groupEl;
-}
-
-export interface StyleGroupReset {
-	isModified(): boolean;
-	reset(): void;
-	afterReset?(): void;
-}
-
-/** Defaults for a group's scalar settings, never touching another group. */
-export function styleFieldsReset<T, K extends keyof T>(
-	values: T,
-	defaults: T,
-	keys: readonly K[],
-): StyleGroupReset {
-	return {
-		isModified: () => keys.some((key) => values[key] !== defaults[key]),
-		reset: () => {
-			for (const key of keys) values[key] = defaults[key];
-		},
-	};
-}
-
-/** Keep group resets, live values and visible controls in step without rebuilding. */
-export function createResettableControlGroup(
-	plugin: SettingsTabPlugin,
-	parentEl: HTMLElement,
-	title: string,
-	defaults: StyleGroupReset,
-	extraCls = "",
-): {
-	el: HTMLElement;
-	syncReset(): void;
-	addSync(sync: () => void): void;
-	addSlider(spec: StyleSliderSpec): void;
-	addToggle(label: string, get: () => boolean, set: (value: boolean) => void,
-		afterCommit?: () => void): void;
-} {
-	const el = createControlGroup(parentEl, title, extraCls);
-	const controls: (() => void)[] = [];
-	const reset = addHeaderResetButton(
-		el.querySelector<HTMLElement>(".cs-settings-group-header")!,
-		{
-			label: `${t("settings.resetAction")}: ${title}`,
-			isModified: () => defaults.isModified(),
-			reset: async () => {
-				defaults.reset();
-				for (const sync of controls) sync();
-				reset.sync();
-				plugin.cssInjector.inject();
-				await plugin.saveSettings();
-				defaults.afterReset?.();
-			},
-		},
-	);
-	return {
-		el,
-		syncReset: () => reset.sync(),
-		addSync: (sync) => controls.push(sync),
-		addSlider: (spec) => {
-			controls.push(addStyleSlider(plugin, el, {
-				...spec,
-				set: (value) => {
-					spec.set(value);
-					reset.sync();
-				},
-			}));
-		},
-		addToggle: (label, get, setValue, afterCommit) => {
-			new Setting(el).setName(label).addToggle((toggle) => {
-				controls.push(() => { toggle.setValue(get()); });
-				toggle.setValue(get()).onChange(async (value) => {
-					setValue(value);
-					reset.sync();
-					plugin.cssInjector.inject();
-					await plugin.saveSettings();
-					afterCommit?.();
-				});
-			});
-		},
-	};
-}
-
-/**
- * The shell of a slider row: a muted label (and room for Obsidian's value
- * readout beside it) above a track that takes the row's full width.
- *
- * Split out of {@link addStyleSlider} so a caller that does NOT commit to
- * settings can still get the same row — the palette editor's Intensity slider
- * only re-derives colours and refreshes its preview, so it cannot use the
- * live-update contract `addStyleSlider` is built around. Fill the returned
- * element with `new Setting(row).addSlider(…)`; styles.css hides that Setting's
- * info column and stretches its control to 100%.
- *
- * @returns the row element, ready to take a Setting.
- */
-export function createSliderRow(
-	parentEl: HTMLElement,
-	label: string,
-): HTMLElement {
-	const row = parentEl.createDiv({ cls: "callout-studio-slider-row" });
-	const labelEl = row.createDiv({ cls: "callout-studio-slider-label" });
-	labelEl.createSpan({ text: label });
-	return row;
 }
 
 export interface StyleSliderSpec {
@@ -221,23 +99,6 @@ export function specFromDef(
 		onDragStart: hooks.onDragStart,
 		onDragEnd: hooks.onDragEnd,
 	};
-}
-
-/**
- * A labelled slider row: label + animated value readout above a full-width
- * slider, wired to the live-update contract described in the module header.
- */
-export function addStyleSlider(
-	plugin: SettingsTabPlugin,
-	parentEl: HTMLElement,
-	spec: StyleSliderSpec,
-): () => void {
-	const row = createSliderRow(parentEl, spec.label);
-	let syncValue = (): void => {};
-	new Setting(row).addSlider((slider) => {
-		syncValue = wireStyleSlider(plugin, slider, row, spec);
-	});
-	return () => syncValue();
 }
 
 /** What a released slider does by default: paint the change, then save it. */
@@ -333,95 +194,4 @@ export function wireStyleSlider(
 		syncing = false;
 		endDrag();
 	};
-}
-
-/**
- * The "Borders" group of `role`: an All + per-side toggle button row, plus a
- * thickness slider that stays hidden while no side is active. It changes the
- * role's frame in the live settings (styleSpecs.ts's `roleFrame`).
- */
-export function renderBordersGroup(
-	plugin: SettingsTabPlugin,
-	parentEl: HTMLElement,
-	role: CalloutRenderRole,
-): void {
-	const frame = roleFrame(plugin.settings, role);
-	const defaults = roleFrame(DEFAULT_SETTINGS, role);
-	const keys: (keyof BorderSidesSettings)[] = ["top", "right", "bottom", "left"];
-	const group = createResettableControlGroup(plugin, parentEl, t("settings.border"), {
-		isModified: () => frame.borderWidth !== defaults.borderWidth ||
-			keys.some((key) => frame.borderSides[key] !== defaults.borderSides[key]),
-		reset: () => {
-			Object.assign(frame.borderSides, defaults.borderSides);
-			frame.borderWidth = defaults.borderWidth;
-		},
-	});
-	const groupEl = group.el;
-	const sidesRow = groupEl.createDiv({ cls: "cs-border-sides-row" });
-
-	const sides: { key: keyof BorderSidesSettings; label: string }[] = [
-		{ key: "top", label: t("settings.borderTop") },
-		{ key: "right", label: t("settings.borderRight") },
-		{ key: "bottom", label: t("settings.borderBottom") },
-		{ key: "left", label: t("settings.borderLeft") },
-	];
-
-	const isAll = (): boolean => sides.every((s) => frame.borderSides[s.key]);
-	const isAny = (): boolean => sides.some((s) => frame.borderSides[s.key]);
-
-	const allBtn = sidesRow.createEl("button", {
-		cls: `cs-border-side-btn${isAll() ? " is-active" : ""}`,
-		text: t("settings.borderAll"),
-	});
-
-	const sideButtons = new Map<string, HTMLButtonElement>();
-
-	const commit = async (): Promise<void> => {
-		syncUI();
-		plugin.cssInjector.inject();
-		await plugin.saveSettings();
-		syncUI();
-	};
-
-	allBtn.addEventListener("click", () => {
-		void (async () => {
-			const newVal = !isAll();
-			for (const s of sides) frame.borderSides[s.key] = newVal;
-			await commit();
-		})();
-	});
-
-	for (const side of sides) {
-		const btn = sidesRow.createEl("button", {
-			cls: `cs-border-side-btn${
-				frame.borderSides[side.key] ? " is-active" : ""
-			}`,
-			text: side.label,
-		});
-		sideButtons.set(side.key, btn);
-		btn.addEventListener("click", () => {
-			void (async () => {
-				frame.borderSides[side.key] = !frame.borderSides[side.key];
-				await commit();
-			})();
-		});
-	}
-
-	const widthRow = groupEl.createDiv({ cls: isAny() ? "" : "cs-hidden" });
-	const syncWidth = addStyleSlider(plugin, widthRow, specFromDef(plugin, borderWidthSlider(role), {
-		afterSet: () => group.syncReset(),
-	}));
-
-	const syncUI = (): void => {
-		group.syncReset();
-		allBtn.toggleClass("is-active", isAll());
-		for (const side of sides) {
-			sideButtons
-				.get(side.key)
-				?.toggleClass("is-active", frame.borderSides[side.key]);
-		}
-		widthRow.toggleClass("cs-hidden", !isAny());
-	};
-	group.addSync(syncWidth);
-	group.addSync(syncUI);
 }

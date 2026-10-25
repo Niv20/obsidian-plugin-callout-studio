@@ -46,7 +46,7 @@ function sectionTable(parent: HTMLElement, section: RecoverySection, component: 
 	for (const cls of ["is-number", "is-item", "is-side", "is-side"]) columns.createEl("col", { cls });
 	const head = table.createEl("thead");
 	const heading = head.createEl("tr", { cls: "cs-recovery-section-row" }).createEl("th", {
-		cls: "cs-recovery-section-heading cs-collapsible-heading",
+		cls: "cs-recovery-section-heading",
 		attr: { colspan: "4", scope: "colgroup" },
 	});
 	const toggle = heading.createEl("button", { cls: "cs-recovery-section-toggle", attr: { type: "button", "aria-expanded": "true" } });

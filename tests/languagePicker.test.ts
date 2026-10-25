@@ -20,8 +20,9 @@
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import { getSelectableLocales, setLocale } from "../src/i18n";
-import { renderLanguageSection } from "../src/settings/sections/LanguageSection";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import { Setting } from "obsidian";
+import { applyLanguagePreference, drawLanguageControls, missingLanguageName } from "../src/settings/sections/LanguageSection";
+import type { SettingsTabPlugin } from "../src/settings/sections/types";
 import { asEl, el, FakeElement } from "./support/fakeDom";
 import type { MenuItemRecord } from "./support/obsidianStub";
 import { dropdownValue, openDropdownMenu, pickDropdown } from "./support/selectDropdown";
@@ -66,26 +67,25 @@ after(() => {
 	}
 });
 
-type Mounted = { host: FakeElement; settings: { language: string }; calls: string[] };
+type Mounted = { host: FakeElement; settings: { language: string }; calls: string[]; plugin: SettingsTabPlugin };
 
+/** The settings page's Language row (declarative/generalRows.ts), drawn into `host`. */
 function mount(language: string, ready = true): Mounted {
 	const host = el();
 	const settings = { language };
 	const calls: string[] = [];
-	const ctx = {
-		app: {},
-		display: () => calls.push("display"),
-		registerDisposer: () => {},
-		plugin: {
-			settings,
-			saveSettings: () => { calls.push("save"); return Promise.resolve(); },
-			locales: { isReady: () => ready },
-			ensureLocale: () => { calls.push("ensureLocale"); return Promise.resolve(false); },
-			applyLocaleChange: () => calls.push("applyLocaleChange"),
-		},
-	} as unknown as SettingsSectionContext;
-	renderLanguageSection(ctx, asEl(host));
-	return { host, settings, calls };
+	const plugin = {
+		settings,
+		saveSettings: () => { calls.push("save"); return Promise.resolve(); },
+		locales: { isReady: () => ready },
+		ensureLocale: () => { calls.push("ensureLocale"); return Promise.resolve(false); },
+		applyLocaleChange: () => calls.push("applyLocaleChange"),
+	} as unknown as SettingsTabPlugin;
+	const setting = new Setting(asEl(host)).setClass("cs-language-setting").setClass("cs-reset-setting");
+	drawLanguageControls(setting, plugin, (pref) => {
+		void applyLanguagePreference(plugin, pref, () => calls.push("display"));
+	});
+	return { host, settings, calls, plugin };
 }
 
 function render(language: string, ready = true): FakeElement {
@@ -270,9 +270,7 @@ describe("language picker", () => {
 
 	it("names the missing language when following Obsidian into one not yet downloaded", () =>
 		withObsidianIn("zh-HK", () => {
-			const warning = render("auto", false).querySelector(".callout-studio-locale-warning");
-			assert.ok(warning);
 			// zh-hk is served by the Traditional Chinese file, listed as 繁體中文.
-			assert.match(warning.textContent, /^繁體中文 /);
+			assert.equal(missingLanguageName(mount("auto", false).plugin), "繁體中文");
 		}));
 });

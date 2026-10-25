@@ -19,6 +19,7 @@
  * page carries on.
  */
 import type { Setting, SettingGroup } from "obsidian";
+import { t } from "../../i18n";
 import type { CsItem } from "./types";
 
 /** The signature of a render row's `render`. */
@@ -27,8 +28,8 @@ export type RenderRow = (setting: Setting, group: SettingGroup) => void | (() =>
 /**
  * Build the tree, or return `fallback` if building throws.
  *
- * @param fallback What Obsidian gets instead. An empty array makes Obsidian
- *   draw the tab the old way, through `display()`, while that still exists.
+ * @param fallback What Obsidian draws instead: {@link treeAfterFailure} for the
+ *   settings tab.
  */
 export function buildTreeSafely(build: () => CsItem[], fallback: CsItem[]): CsItem[] {
 	try {
@@ -37,6 +38,14 @@ export function buildTreeSafely(build: () => CsItem[], fallback: CsItem[]): CsIt
 		console.error("Callout Studio: could not build the settings page.", error);
 		return fallback;
 	}
+}
+
+/**
+ * The tab's tree when building the real one threw: one row that says so.
+ * (An empty tree would leave the tab blank: Obsidian draws it as it is.)
+ */
+export function treeAfterFailure(): CsItem[] {
+	return [{ type: "group", id: "build-failed", items: [{ id: "build-failed", name: t("settings.buildFailed") }] }];
 }
 
 /**

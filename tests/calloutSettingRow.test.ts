@@ -24,7 +24,8 @@ import { join } from "node:path";
 import { describe, it } from "node:test";
 import { installFakeDom } from "./support/fakeDom";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import { renderCalloutRow } from "../src/settings/sections/CalloutRowRenderer";
+import { Setting } from "obsidian";
+import { drawCalloutRow } from "../src/settings/sections/CalloutRowRenderer";
 import type { CalloutDefinition } from "../src/types";
 
 installFakeDom();
@@ -66,7 +67,7 @@ function drawRow(rowDef: CalloutDefinition, kind: "user" | "builtin" | "theme" =
 	registry.add(rowDef);
 	if (asFallback) registry.settings.fallbackCalloutId = rowDef.id;
 	const host = createDiv();
-	renderCalloutRow(fakeCtx(registry), host, registry.get(rowDef.id) ?? rowDef, kind, {
+	drawCalloutRow(fakeCtx(registry), new Setting(host), registry.get(rowDef.id) ?? rowDef, kind, {
 		onEdit: (edited) => edits.push(edited.id),
 		onOpenBuiltInMenu: () => {},
 		onOpenUserMenu: () => {},

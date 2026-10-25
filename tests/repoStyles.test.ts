@@ -48,15 +48,6 @@ const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, (m) =>
 );
 const cssRaw = readRepoFile("styles.css");
 
-describe("menu customization layout", () => {
-	it("lets action labels use the available row width", () => {
-		assert.match(
-			cssRaw,
-			/\.cs-menu-row\s+\.callout-studio-row-name\s*\{[\s\S]*?max-width:\s*none;/,
-		);
-	});
-});
-
 /**
  * The two prefixes this plugin owns. Everything else in the file is Obsidian's.
  *
@@ -269,7 +260,6 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-recovery-summary-part", // one line of a version's summary, a plain div; tests read the lines by it
 		"cs-version-name", // a version's name after its time; Obsidian's setting name draws it
 		"cs-portable-custom-badge", // a test hook; Obsidian's .flair.mod-flat paints the Custom tag
-		"cs-paused-allowed", // a marker pausedReadOnly reads: the row stays usable while saving is paused
 		"cs-occurrences-summary", // view-specific lookup; Obsidian's .search-results-result-count supplies the presentation
 		"cs-occurrences-file", // per-view hook; shared cs-sidebar-file supplies the layout
 		"cs-portable-file", // per-view hook; shared cs-sidebar-file supplies the layout

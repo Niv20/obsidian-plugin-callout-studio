@@ -260,9 +260,10 @@ describe("the shared tokens are declared", () => {
 		);
 	});
 
-	it("reaches the settings tab and every window", () => {
+	// The settings pages are Obsidian's own rows and buttons, so only the
+	// plugin's windows and sidebars read these tokens.
+	it("reaches every window", () => {
 		const scope = declaration?.selector.replace(/\s+/g, " ") ?? "";
-		assert.match(scope, /\.callout-studio-settings/);
 		assert.match(scope, /\.cs-modal/);
 	});
 });

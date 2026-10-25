@@ -117,11 +117,8 @@ const STAYS_PLAIN: Readonly<Record<string, string>> = {
 	// A window that is itself the destination.
 	"settings.versionsButton": "opens the window it names",
 	"portable.review": "opens the review it names",
-	"settings.customCommandsButton": "opens a manager",
 	"iconLibraries.manage": "opens a manager",
 	"iconPicker.manageLibraries": "opens a manager",
-	"settings.customizeMenuButton": "opens a settings window",
-	"settings.globalSettingsCustomize": "opens a settings window",
 	"footer.iconCredits": "opens a read-only window",
 	"contextMenu.openSettings": "opens settings",
 	"usage.menu": "opens the Find callouts view",

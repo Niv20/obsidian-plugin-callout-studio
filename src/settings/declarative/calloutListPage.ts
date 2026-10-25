@@ -29,7 +29,7 @@ import type { CalloutDefinition } from "../../types";
 import { calloutMatchesQuery } from "../../utils/calloutSearch";
 import { sortCalloutsByDisplayName } from "../../utils/sorting";
 import { isRowMenuActive } from "../sections/calloutRowMenu";
-import { calloutListsSignature, freshPaging } from "../sections/calloutListsSignature";
+import { calloutListsSignature } from "../sections/calloutListsSignature";
 import { drawCalloutRow } from "../sections/CalloutRowRenderer";
 import { activeThemeLabel, partitionCallouts } from "../sections/rowOwnership";
 import { subscribeSettingsTab } from "../sections/tabSubscriptions";
@@ -197,7 +197,7 @@ export class CalloutListPage extends SettingPage {
 	 */
 	private signature(): string {
 		const { fromTheme, own, builtIn } = partitionCallouts(this.ctx);
-		return calloutListsSignature(this.ctx, freshPaging(), activeThemeLabel(this.ctx.app), getLocale(), {
+		return calloutListsSignature(this.ctx, activeThemeLabel(this.ctx.app), getLocale(), {
 			theme: fromTheme,
 			user: own,
 			builtin: builtIn,
