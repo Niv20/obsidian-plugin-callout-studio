@@ -19,7 +19,6 @@
  *   toggle, and the tab saves it (controlBinding.ts).
  */
 import { getSelectableLocales, t } from "../../i18n";
-import { linesFragment } from "../../ui/textLines";
 import type { CalloutCombobox } from "../calloutCombobox";
 import {
 	addFallbackReset,
@@ -166,7 +165,7 @@ export function themeStylesRow(ctx: TreeContext): CsControl {
 	return {
 		id: GENERAL_ROWS.themeStyles,
 		name: t("settings.themeCalloutStyles"),
-		desc: linesFragment(t("settings.themeCalloutStylesDesc")),
+		desc: t("settings.themeCalloutStylesDesc"),
 		visible: () => partitionCallouts(ctx).fromTheme.length > 0 || themeStylesSwitchedOff(ctx),
 		control: {
 			type: "toggle",

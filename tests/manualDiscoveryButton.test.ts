@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { afterEach, describe, it } from "node:test";
+import { en } from "../src/i18n/en";
 import { addManualDiscoveryButton } from "../src/settings/sections/manualDiscoveryButton";
 import { buildCalloutListsScaffold } from "../src/settings/sections/calloutListsScaffold";
 import type { SettingsSectionContext } from "../src/settings/sections/types";
@@ -107,7 +108,7 @@ describe("the manual discovery header action", () => {
 		// The visible text is the accessible name; no aria-label, so the
 		// descriptive tooltip is not shadowed by a repeat of the label.
 		assert.equal(button.getAttribute("aria-label"), null);
-		assert.match(button.dataset.csTooltip ?? "", /Adds callout types used in your notes/);
+		assert.ok((button.dataset.csTooltip ?? "").includes(en["settings.rescanVaultDesc"]!), "the tooltip is the description");
 		p.resolve(3); await turn();
 		assert.equal(button.disabled, false);
 		assert.equal(button.getAttribute("aria-busy"), "false");

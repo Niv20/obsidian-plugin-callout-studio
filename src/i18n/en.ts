@@ -48,7 +48,7 @@ export const en: Record<string, string> = {
 	// Vault scan / fallback / delete
 	"settings.fallbackTag": "Default",
 	"settings.fallbackTagAuto": "Default fallback",
-	"settings.rescanVaultDesc": "Adds callout types used in your notes that aren't in this list yet. Your existing callouts and notes aren't changed.",
+	"settings.rescanVaultDesc": "Add the callout types your notes use that aren't in this list yet.",
 	"settings.rescanVaultHintAction": "Scan for callouts",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
 	"saveStatus.missing": "Saving is paused because the settings file is missing. Deleting the plugin on another device can sync this deletion here; the file may also be waiting to download. Any settings already loaded on this device remain available. Let your sync service finish and make the vault available offline, then choose Check again. If the file does not return, you can restore the settings shown in Callout Studio settings on this device.",
@@ -378,7 +378,7 @@ export const en: Record<string, string> = {
 		"Saving is paused, so this change cannot be kept right now. Resolve the saving problem shown in Callout Studio settings first.",
 	"notice.openSettingsFailed": "Callout Studio settings could not be opened. Open Settings → Callout Studio to choose what to do.",
 	"notice.settingsBackupFailed": "Settings recovery could not continue because a safety backup could not be saved. Check available storage and write permissions, then retry.",
-	"commandBuilder.missingCallout": "Paused: the callout is missing. Discover or create it to restore this command, or edit the command to choose another type.",
+	"commandBuilder.missingCallout": "Paused until you create the missing callout again or choose another one.",
 	"manualDiscovery.scanning": "Scanning…",
 	"settings.rescanComplete":
 		"Scan complete: {{count}} new callout type(s) added.",
@@ -447,14 +447,14 @@ export const en: Record<string, string> = {
 	"settings.keyboardShortcuts": "Commands",
 	"settings.language": "Language",
 	"settings.languageDesc":
-		"Display language for Callout Studio. Defaults to Obsidian's interface language.",
+		"Callout Studio's language, Obsidian's unless you choose another.",
 
 	// Downloadable translations. English is built in; every other language is
 	// fetched the first time it is needed and kept for later.
 	"locale.downloading": "Downloading translation…",
 	"locale.notDownloaded": "{{name}} is not downloaded yet",
 	"locale.notDownloadedDesc":
-		"Callout Studio is showing English until the translation can be downloaded. It will try again the next time Obsidian starts.",
+		"Callout Studio shows English until the translation downloads, and tries again when Obsidian starts.",
 	"locale.retry": "Retry",
 	"locale.diskWriteFailed":
 		"Callout Studio could not save the translation to disk, so it will need downloading again next time.",
@@ -497,7 +497,7 @@ export const en: Record<string, string> = {
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts from your theme",
 	"settings.themeCalloutsDesc":
-		"{{theme}} supplies or restyles these, so Callout Studio leaves them exactly as your theme draws them and offers them as Block callouts only. Both kinds appear here: callout types your theme adds, and built-in callouts whose look it replaces. Callout types your theme adds are listed only while it is active.",
+		"{{theme}} draws these callouts, so Callout Studio leaves them as they are and offers them as Block callouts only.",
 	"settings.themeCalloutsDefaultTheme": "Your theme",
 	"settings.themeCalloutsEmpty": "{{theme}} styles no callouts right now.",
 	"settings.themePreviewAria":
@@ -560,7 +560,7 @@ export const en: Record<string, string> = {
 	// Settings — Keyboard shortcuts
 	"settings.customCommands": "Commands & Hotkeys",
 	"settings.customCommandsDesc":
-		"See every Callout Studio command and the shortcut it is bound to, and create your own commands for the callouts you use most. No shortcuts are assigned by default.",
+		"Every Callout Studio command, its shortcut, and commands of your own.",
 	"settings.customCommandsButton": "Manage commands",
 
 	// Command builder
@@ -592,7 +592,7 @@ export const en: Record<string, string> = {
 	"commandBuilder.roleThemeOwned":
 		"Your theme supplies this callout, so it only has a Block format.",
 	"commandBuilder.commandSuspended":
-		"Paused: your theme supplies this callout, so it only has a Block format. This command works again when the theme stops supplying it.",
+		"Paused while your theme supplies this callout, which then has a Block format only.",
 	"commandBuilder.callout": "Callout type",
 	"commandBuilder.calloutDesc": "The callout this command inserts.",
 	"commandBuilder.headingLevel": "Heading level",
@@ -759,7 +759,7 @@ export const en: Record<string, string> = {
 	"settings.versionHistory": "Version history",
 	"settings.versions": "Earlier versions",
 	"settings.versionsDesc":
-		"Callout Studio saves versions of your setup automatically. Compare them or go back to one.",
+		"Compare automatically saved versions of your setup, or go back to one.",
 	"settings.versionsButton": "View versions",
 
 	// Notices
@@ -1341,7 +1341,7 @@ export const en: Record<string, string> = {
 	"settings.globalSettingsCustomize": "Customize",
 	"settings.themeCalloutStyles": "Use your theme's callout styles",
 	"settings.themeCalloutStylesDesc":
-		"On: the callouts your theme styles keep your theme's look.\nOff: Callout Studio draws every callout, and your theme's callout styles are switched off.",
+		"When on, the callouts your theme styles keep its look; when off, Callout Studio draws every callout.",
 
 	// Callout types section
 	"settings.calloutTypeRegular": "Block callout",
@@ -1351,7 +1351,7 @@ export const en: Record<string, string> = {
 	// Context menu customization
 	"settings.customizeMenu": "Customize menu items",
 	"settings.customizeMenuDesc":
-		"Choose which right-click actions appear for each callout type and reorder them. Works in source mode and Live Preview.",
+		"Choose and order the right-click actions for each callout type.",
 	"settings.customizeMenuButton": "Customize menu items",
 	"menuCustomize.title": "Customize right-click menu",
 	"menuCustomize.desc":

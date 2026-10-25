@@ -2401,7 +2401,10 @@ one translated string separated by `\n`, so a translator sees the whole text
 at once. HTML shows a `\n` as a space, so the text is drawn with
 [`ui/textLines.ts`](../../src/ui/textLines.ts): `appendLines(el, text)` into an
 element, or `linesFragment(text)` for a `Setting`'s description. Windows keep
-this style; a row on the settings page gets one sentence, as Obsidian's do.
+this style. A row on the settings pages, and a page's opening sentence, get
+one short sentence, as Obsidian's do (decision 6). The ten that had two or more
+were cut to one in English (2026-10-25, Q1); the other languages keep their
+longer wording, still true, until they are translated again.
 
 ## Notable individual modals
 

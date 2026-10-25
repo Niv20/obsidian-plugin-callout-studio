@@ -77,8 +77,7 @@ export function versionHistoryGroup(ctx: TreeContext): CsGroup {
 			buttonRow({
 				id: MAIN_PAGE_ROWS.earlierVersions,
 				name: t("settings.versions"),
-				// A settings row's description is one line.
-				desc: t("settings.versionsDesc").replace(/\n/g, " "),
+				desc: t("settings.versionsDesc"),
 				buttonText: t("settings.versionsButton"),
 				registerIn: ctx.rows,
 				onClick: () => new SettingsRecoveryModal(ctx.app, ctx.plugin).open(),
