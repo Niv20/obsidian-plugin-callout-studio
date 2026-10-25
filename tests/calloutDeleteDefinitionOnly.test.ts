@@ -17,7 +17,7 @@ import {
 	handleClearCalloutUsages,
 } from "../src/settings/sections/calloutVaultActions";
 import { addConvertUsesItem, addDeleteItem } from "../src/settings/sections/rowOwnership";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import type { SettingsContext } from "../src/settings/sections/types";
 import { DEFAULT_SETTINGS } from "../src/constants";
 import { en } from "../src/i18n/en";
 import { t } from "../src/i18n";
@@ -52,10 +52,10 @@ function vault(notes: Record<string, string>, opts: { unreadable?: string; theme
 	registry.add(def);
 	const writer = savingWriter();
 	let saves = 0, refreshes = 0;
-	const ctx = { app, display: () => {}, plugin: {
+	const ctx = { app, redraw: () => {}, plugin: {
 		registry, settingsWriter: writer, saveSettings: () => { saves++; return Promise.resolve(); },
 		refreshCallouts: () => { refreshes++; },
-	} } as unknown as SettingsSectionContext;
+	} } as unknown as SettingsContext;
 	return { ctx, def, registry, contents, writer, get saves() { return saves; }, get refreshes() { return refreshes; } };
 }
 

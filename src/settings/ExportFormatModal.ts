@@ -25,11 +25,11 @@ import {
 } from "../manager/cssSnippetExport";
 import { applyModalChrome } from "./modalChrome";
 import { addChoiceRow, type ChoiceRowSpec } from "./choiceRow";
-import type { SettingsSectionContext } from "./sections/types";
+import type { SettingsContext } from "./sections/types";
 import { downloadText } from "../utils/downloadText";
 
 export class ExportFormatModal extends Modal {
-	constructor(private readonly ctx: SettingsSectionContext) {
+	constructor(private readonly ctx: SettingsContext) {
 		super(ctx.app);
 	}
 
@@ -87,7 +87,7 @@ export class ExportFormatModal extends Modal {
  * role toggles, palettes, user images), handed to the browser's download
  * dialog so it lands wherever the user keeps their files.
  */
-function exportCalloutsJSON(ctx: SettingsSectionContext): void {
+function exportCalloutsJSON(ctx: SettingsContext): void {
 	downloadText(ctx.plugin.registry.exportToJSONv2(), "callout-studio-export.json");
 }
 
@@ -97,7 +97,7 @@ function exportCalloutsJSON(ctx: SettingsSectionContext): void {
  * Everything about *what* is written and *whether* to overwrite lives in
  * `cssSnippetExport`; this is only the part that has to talk to the user.
  */
-async function exportCalloutsCSS(ctx: SettingsSectionContext): Promise<void> {
+async function exportCalloutsCSS(ctx: SettingsContext): Promise<void> {
 	const outcome = await exportCssSnippet(ctx.app, ctx.plugin, () =>
 		new ConfirmModal(
 			ctx.app,
@@ -115,7 +115,7 @@ async function exportCalloutsCSS(ctx: SettingsSectionContext): Promise<void> {
  * here, so the enabled copy can only ever hold an older version of them.
  */
 function announce(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	outcome: SnippetExportOutcome,
 ): void {
 	switch (outcome.status) {

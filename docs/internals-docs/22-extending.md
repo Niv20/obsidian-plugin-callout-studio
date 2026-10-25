@@ -23,7 +23,7 @@ migration/runtime-refresh."
 5. If it belongs to a **list the user builds up** (like `customPalettes`,
    `userImages`, `customCommands`), it must also be added to `mergeById`
    handling in the JSON importer
-   (`DataManagementSection.processImportedJSON`) - see
+   (`backupImport.processImportedJSON`) - see
    [Import and export § the three exceptions](15-import-export.md#settings-import-restore-the-groups-the-file-carries-three-lists-merge-by-id).
    A brand-new such list needs a fourth stop: register it in `mergeById`'s
    call site the same way the existing three are handled, and add it to

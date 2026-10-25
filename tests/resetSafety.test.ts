@@ -12,7 +12,7 @@ import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { content } from "../src/manager/syncTree";
 import { dangerZoneGroup } from "../src/settings/declarative/mainPageGroups";
 import type { CsRender, TreeContext } from "../src/settings/declarative/types";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import type { SettingsContext } from "../src/settings/sections/types";
 import { t } from "../src/i18n";
 import { en } from "../src/i18n/en";
 import { definition } from "./support/discoveryHarness";
@@ -34,14 +34,14 @@ function setup(writer = savingWriter()) {
 			cssInjector: { inject: () => {} },
 			saveSettings: () => { saves++; return Promise.resolve(); },
 		},
-		display: () => {},
-	} as unknown as SettingsSectionContext;
+		redraw: () => {},
+	} as unknown as SettingsContext;
 	const backups = () => [...own.files.entries()].filter(([path]) => /\/backups\/data-/.test(path));
 	return { ctx, registry, notices, writer, own, backups, get saves() { return saves; } };
 }
 
 /** The Reset everything button's click handler, as the settings page's Danger zone wires it. */
-function resetButton(ctx: SettingsSectionContext): () => Promise<void> {
+function resetButton(ctx: SettingsContext): () => Promise<void> {
 	const root = fakeDom.document.body.createDiv();
 	const original = Object.getOwnPropertyDescriptor(Setting.prototype, "addButton")!;
 	let reset: (() => Promise<void>) | undefined;

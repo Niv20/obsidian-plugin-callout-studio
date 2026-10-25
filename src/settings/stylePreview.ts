@@ -1,9 +1,8 @@
 /**
  * settings/stylePreview.ts — the live preview of one role's vault-wide style.
  *
- * Who calls it. The per-role style window (GlobalStyleModal.ts) and the
- * declarative style pages (declarative/stylePages.ts), so both show the same
- * preview.
+ * Who calls it. The style pages (declarative/stylePages.ts), one preview per
+ * page.
  *
  * The main idea. A neutral demo callout (grey accent, a solid square for an
  * icon) is drawn through the real pipeline: the plugin's injected CSS, the

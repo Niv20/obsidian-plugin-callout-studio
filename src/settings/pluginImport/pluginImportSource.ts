@@ -17,7 +17,7 @@
 import { normalizePath, type App } from "obsidian";
 import type { ValidationIssue } from "../../utils/importValidator";
 import { assertImportSize, parseImportJson } from "../../utils/importLimits";
-import type { SettingsSectionContext } from "../sections/types";
+import type { SettingsContext } from "../sections/types";
 
 /** A planned import, ready for the report and then for the registry. */
 export interface PluginImportPlan {
@@ -34,7 +34,7 @@ export interface PluginImportPlan {
 export interface PluginImportBatch {
 	/** Zero makes the report fatal: there is no "import the valid ones". */
 	readonly size: number;
-	plan(ctx: SettingsSectionContext): Promise<PluginImportPlan>;
+	plan(ctx: SettingsContext): Promise<PluginImportPlan>;
 }
 
 /** A file or pasted text, read: entries, or the report message saying why not. */

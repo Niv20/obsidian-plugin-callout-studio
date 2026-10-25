@@ -41,7 +41,7 @@
  */
 import type { CalloutDefinition } from "../../types";
 import type { RowKind } from "./rowOwnership";
-import type { SettingsSectionContext } from "./types";
+import type { SettingsContext } from "./types";
 
 /** The three lists, already partitioned, in the order they are drawn. */
 export type CalloutListRows = Record<RowKind, CalloutDefinition[]>;
@@ -51,7 +51,7 @@ export type CalloutListRows = Record<RowKind, CalloutDefinition[]>;
  * definitions. Equal strings mean drawing the lists again would change nothing.
  */
 export function calloutListsSignature(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	themeLabel: string,
 	locale: string,
 	rows: CalloutListRows,

@@ -735,7 +735,7 @@ disabled. The preview listener is removed on plugin unload.
 | Dropped from the saved payload, unconditionally | `discoveredRowPersistence.ts` |
 | Out of `getUserDefined`, so out of exports | `CalloutRegistry.getUserDefined` |
 | Never counted as "known", so a scan still sees the id | `knownCalloutIds.ts` |
-| Never offered as the fallback target - that id **is** persisted | `settings/sections/FallbackSection.ts` |
+| Never offered as the fallback target - that id **is** persisted | `settings/sections/fallbackPicker.ts` |
 | Never a merge base for an import | `utils/importedCallout.ts` |
 | Never fetches artwork | `IconService.initialize`, `IconFetchManager.ensureAll` |
 | Never keeps an `iconSvgCache` entry alive | `CalloutRegistry.cleanupUnusedIconSvgs` |
@@ -825,7 +825,7 @@ fact:
 | Scan, import or another durable create promotes the id | Promotion first retires the overlay; allowing it to be the target would make that maintenance action reset the fallback mid-operation. |
 | The fallback is needed for Heading or Inline | Theme callouts are Block-only, so the theme has no design that can be reproduced on those plugin-owned DOM surfaces. |
 
-This is why `FallbackSection` filters on `source !== "theme"`, rather than
+This is why `fallbackPicker` filters on `source !== "theme"`, rather than
 showing theme rows disabled after selection, and why a theme row carries no
 *Default fallback* badge. `tests/calloutCombobox.test.ts` pins the picker
 boundary; `tests/themeRowActions.test.ts` pins the missing badge; and

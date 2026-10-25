@@ -1,7 +1,7 @@
 /** First-install migration prompt shown beneath the settings title. */
 import { setIcon, type App } from "obsidian";
 import { getLocale, t } from "../i18n";
-import type { SettingsSectionContext } from "./sections/types";
+import type { SettingsContext } from "./sections/types";
 import {
 	isCompetitorImportBannerForced,
 	shouldShowCompetitorImportBanner,
@@ -68,7 +68,7 @@ export function competitorImportMessage(
  * armed (or forced from the developer protocol), then the enabled ones, or all
  * of them when forced with none enabled.
  */
-export function competitorsToOffer(app: App, plugin: SettingsSectionContext["plugin"]): DetectedCompetitor[] {
+export function competitorsToOffer(app: App, plugin: SettingsContext["plugin"]): DetectedCompetitor[] {
 	if (!shouldShowCompetitorImportBanner(plugin)) return [];
 	const competitors = detectEnabledCompetitors(app);
 	if (competitors.length === 0 && isCompetitorImportBannerForced(plugin)) {

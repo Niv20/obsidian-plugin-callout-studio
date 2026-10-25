@@ -1,5 +1,5 @@
 /**
- * settings/sections/CustomPalettesSection.ts — what the user does to their
+ * settings/sections/paletteFlows.ts — what the user does to their
  * saved colour palettes: make one, change one, delete one.
  *
  * Who calls it. The Saved color palettes settings page
@@ -16,7 +16,7 @@
  */
 import { t } from "../../i18n";
 import type { CustomPalette } from "../../types";
-import type { SettingsSectionContext, SettingsTabPlugin } from "./types";
+import type { SettingsContext, SettingsTabPlugin } from "./types";
 import { generatePaletteId } from "../../utils/colorPalettes";
 import {
 	renderColorCircles,
@@ -76,7 +76,7 @@ export function renderPaletteSwatches(parent: HTMLElement, palette: CustomPalett
  * New palette: open the palette editor and save what it returns.
  * `redraw` draws the list again once the palette is saved.
  */
-export async function createPalette(ctx: SettingsSectionContext, redraw: () => void): Promise<void> {
+export async function createPalette(ctx: SettingsContext, redraw: () => void): Promise<void> {
 	const result = await new PaletteEditorModal(ctx.plugin, {
 		takenNames: takenNamesExcept(ctx.plugin),
 		takenColors: othersExcept(ctx.plugin),
@@ -95,7 +95,7 @@ export async function createPalette(ctx: SettingsSectionContext, redraw: () => v
  * `redraw` draws the list again once the palette is saved.
  */
 export async function editPalette(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	palette: CustomPalette,
 	redraw: () => void,
 ): Promise<void> {
@@ -136,7 +136,7 @@ export async function editPalette(
  * link to it. `redraw` draws the list again once it is gone.
  */
 export async function deletePalette(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	palette: CustomPalette,
 	redraw: () => void,
 ): Promise<void> {

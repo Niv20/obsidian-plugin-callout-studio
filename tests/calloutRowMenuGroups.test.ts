@@ -27,7 +27,7 @@ import { buildBuiltInRowMenu, buildUserRowMenu } from "../src/settings/sections/
 import { buildThemeRowMenu } from "../src/settings/sections/themeRowActions";
 import { applyDefaultFallbackStyle } from "../src/settings/sections/fallbackStyleAction";
 import { ROW_MENU_SECTION } from "../src/settings/sections/rowMenuSections";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import type { SettingsContext } from "../src/settings/sections/types";
 import { getCalloutOccurrenceIndex } from "../src/usage/occurrenceService";
 import type { CalloutDefinition } from "../src/types";
 import { t } from "../src/i18n";
@@ -54,12 +54,12 @@ function vault(notes: Record<string, string>) {
 	registry.add(definition({ id: "owned", displayName: "Owned" }));
 	const writer = savingWriter();
 	const ctx = {
-		app, display: () => {}, registerDisposer: () => {},
+		app, redraw: () => {}, registerDisposer: () => {},
 		plugin: {
 			app, registry, settings: registry.settings, settingsWriter: writer,
 			saveSettings: () => Promise.resolve(), refreshCallouts: () => {},
 		},
-	} as unknown as SettingsSectionContext;
+	} as unknown as SettingsContext;
 	const index = getCalloutOccurrenceIndex(app);
 	return {
 		app, registry, ctx, index, writer,
@@ -72,7 +72,7 @@ function vault(notes: Record<string, string>) {
 	};
 }
 
-type Build = (menu: ObsidianMenu, ctx: SettingsSectionContext, def: CalloutDefinition) => void;
+type Build = (menu: ObsidianMenu, ctx: SettingsContext, def: CalloutDefinition) => void;
 
 function open(h: ReturnType<typeof vault>, build: Build, id: string): Menu {
 	const menu = new Menu();

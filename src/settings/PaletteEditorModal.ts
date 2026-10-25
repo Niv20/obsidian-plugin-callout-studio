@@ -83,9 +83,9 @@ interface PaletteEditorPlugin {
 
 /**
  * Reserved id for the stand-in callout this modal previews the palette on, in
- * the same spirit as GlobalStyleModal's `STYLE_DEMO_ID`. Registered only while
- * the modal is open; if a user callout ever occupies the same id, the preview
- * slot shadows and later restores it.
+ * the same spirit as the style pages' `STYLE_DEMO_ID` (stylePreview.ts).
+ * Registered only while the modal is open; if a user callout ever occupies the
+ * same id, the preview slot shadows and later restores it.
  *
  * Deliberately NOT `PREVIEW_PLACEHOLDER_ID`: the registry's preview slot feeds
  * `getAll()`, which is what CSSInjector generates from, and it never consults

@@ -86,7 +86,7 @@ function drawGeneral(plugin: object, app: object = {}) {
 	const ctx: TreeContext = {
 		app: app as App,
 		plugin: plugin as SettingsTabPlugin,
-		display: () => { redraws++; tab.update(); },
+		redraw: () => { redraws++; tab.update(); },
 		registerDisposer: () => {},
 		rows: new RowRegistry(),
 		parts: new PersistentParts(() => {}),

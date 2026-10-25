@@ -10,8 +10,8 @@
  * reported via `onReorder(from, to)`.
  *
  * While the row floats, a placeholder marks the slot it lands in if released
- * now: an empty grey box from the theme's UI palette, the row's exact size,
- * under every row. It follows the slot from neighbour to neighbour, sliding
+ * now: an empty box in the accent colour, as in Obsidian's own lists, the
+ * row's exact size, under every row. It follows the slot from neighbour to neighbour, sliding
  * with them, and goes when the dropped row has settled onto it.
  *
  * Pointer Events are used (not HTML5 drag) so the same code works with mouse,
@@ -46,13 +46,6 @@ export interface DragSortOptions {
 	rowSelector: string;
 	/** CSS selector for the drag handle inside a row. */
 	handleSelector: string;
-	/**
-	 * Optional grouping key. A dragged row can only be reordered among rows that
-	 * share its group; rows of other groups act as fixed walls it can never cross.
-	 * Omit to treat the whole list as one group (unconstrained reorder). Used to
-	 * keep the enabled and disabled menu-item bands separate.
-	 */
-	groupOf?: (row: HTMLElement) => unknown;
 	/** Called once on release when the row's index actually changed. */
 	onReorder: (fromIndex: number, toIndex: number) => void;
 	/**
@@ -177,20 +170,12 @@ export function makeDragSortable(
 		const dragEl = dragging;
 		if (!dragEl) return;
 
-		// Rows the dragged one may reorder among: its own group only. Rows in
-		// other groups are ignored here, so they act as fixed walls the dragged
-		// row can never cross (e.g. enabled items never sink into the disabled
-		// band, and vice versa).
-		const groupOf = opts.groupOf;
-		const dragGroup = groupOf ? groupOf(dragEl) : undefined;
-		const siblings = rows().filter(
-			(el) => el !== dragEl && (!groupOf || groupOf(el) === dragGroup),
-		);
+		// The other rows, in order: the dragged one is placed among them.
+		const siblings = rows().filter((el) => el !== dragEl);
 
-		// First same-group sibling whose vertical midpoint is below the pointer;
-		// the dragged row should sit just before it. If none, it goes to the end
-		// of its group — right after the last same-group sibling, never past a
-		// wall into the next group.
+		// First row whose vertical midpoint is below the pointer; the dragged row
+		// should sit just before it. If none, it goes to the end of the list,
+		// right after the last row.
 		let ref: HTMLElement | null = null;
 		for (const el of siblings) {
 			const rect = el.getBoundingClientRect();
@@ -207,11 +192,11 @@ export function makeDragSortable(
 			needsMove = dragEl.nextElementSibling !== ref;
 			place = () => container.insertBefore(dragEl, ref);
 		} else if (last) {
-			// Move to the end of the group: immediately after its last member.
+			// Move to the end of the list: immediately after the last row.
 			needsMove = last.nextElementSibling !== dragEl;
 			place = () => container.insertBefore(dragEl, last.nextElementSibling);
 		} else {
-			// Sole member of its group — nothing to reorder against.
+			// The only row: nothing to reorder against.
 			needsMove = false;
 			place = () => {};
 		}

@@ -116,7 +116,7 @@ The source map is deliberately explicit:
 | Earlier-setup inspection | [`setupDetails.ts`](../../src/manager/setupDetails.ts), [`SettingsRecoveryDetailsModal.ts`](../../src/settings/SettingsRecoveryDetailsModal.ts), [`recoveryDetailsView.ts`](../../src/settings/recoveryDetailsView.ts), [`recoverySections.ts`](../../src/settings/recoverySections.ts), [`recoveryCollections.ts`](../../src/settings/recoveryCollections.ts), [`recoveryModel.ts`](../../src/settings/recoveryModel.ts), [`recoveryValues.ts`](../../src/settings/recoveryValues.ts), [`recoveryDetailFields.ts`](../../src/settings/recoveryDetailFields.ts), [`recoveryComparisonTable.ts`](../../src/settings/recoveryComparisonTable.ts), [`recoveryPreview.ts`](../../src/settings/recoveryPreview.ts), [`recoveryRolePreview.ts`](../../src/settings/recoveryRolePreview.ts) |
 | Paused state | [`pausedRecheck.ts`](../../src/manager/pausedRecheck.ts), [`pausedIndicator.ts`](../../src/settings/pausedIndicator.ts), [`withTimeout.ts`](../../src/utils/withTimeout.ts) |
 | Status and user feedback | [`settingsSaveStatus.ts`](../../src/manager/settingsSaveStatus.ts), [`settingsSaveReporter.ts`](../../src/manager/settingsSaveReporter.ts), [`settingsSaveMessage.ts`](../../src/manager/settingsSaveMessage.ts), [`saveStatusBanner.ts`](../../src/settings/saveStatusBanner.ts), [`saveStatusCopy.ts`](../../src/settings/saveStatusCopy.ts), [`settingsNotices.ts`](../../src/manager/settingsNotices.ts) |
-| Destructive actions while paused | [`pausedGuard.ts`](../../src/settings/pausedGuard.ts), [`DataManagementSection.ts`](../../src/settings/sections/DataManagementSection.ts), [`resetEverything.ts`](../../src/settings/resetEverything.ts), [`PluginImportModal.ts`](../../src/settings/pluginImport/PluginImportModal.ts), [`calloutVaultActions.ts`](../../src/settings/sections/calloutVaultActions.ts) |
+| Destructive actions while paused | [`pausedGuard.ts`](../../src/settings/pausedGuard.ts), [`backupImport.ts`](../../src/settings/sections/backupImport.ts), [`resetEverything.ts`](../../src/settings/resetEverything.ts), [`PluginImportModal.ts`](../../src/settings/pluginImport/PluginImportModal.ts), [`calloutVaultActions.ts`](../../src/settings/sections/calloutVaultActions.ts) |
 
 ## Startup and file classification
 
@@ -1210,7 +1210,7 @@ list names *Before changes from another device*.
 `recovery.diagnostics()` builds a plain-English report. It has no settings-page
 entry point of its own anymore - the **Sync diagnostics** row and its **Copy
 diagnostics** button were removed from `renderBackupSection`
-(`settings/sections/DataManagementSection.ts`) - but the method itself is
+(`settings/sections/backupImport.ts`) - but the method itself is
 unchanged and is meant for another caller to invoke and copy on the user's
 behalf. The report:
 

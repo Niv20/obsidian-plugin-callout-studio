@@ -1,6 +1,6 @@
 /**
  * tests/manualScan.test.ts — Scan for callouts, the vault scan started from
- * the settings (settings/sections/manualDiscoveryButton.ts).
+ * the settings (settings/sections/manualScan.ts).
  *
  * What is checked: one scan at a time per plugin, marked as running before it
  * first waits and cleared when it ends (failed or not), a notice with the
@@ -10,7 +10,7 @@
 import assert from "node:assert/strict";
 import { afterEach, describe, it } from "node:test";
 import { t } from "../src/i18n";
-import { runManualScan, scanRunning } from "../src/settings/sections/manualDiscoveryButton";
+import { runManualScan, scanRunning } from "../src/settings/sections/manualScan";
 import type { SettingsTabPlugin } from "../src/settings/sections/types";
 
 const notices: string[] = [];

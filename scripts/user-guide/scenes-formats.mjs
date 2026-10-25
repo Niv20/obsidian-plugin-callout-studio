@@ -5,7 +5,7 @@ import { CalloutAutoComplete } from "../../src/editor/AutoComplete.ts";
 import { createCalloutListsController } from "../../src/settings/sections/CalloutListsSection.ts";
 import { renderCalloutRow } from "../../src/settings/sections/CalloutRowRenderer.ts";
 import { freshPaging } from "../../src/settings/sections/calloutListsSignature.ts";
-import { renderFallbackSection } from "../../src/settings/sections/FallbackSection.ts";
+import { renderFallbackSection } from "../../src/settings/sections/fallbackPicker.ts";
 import { mountNote, mountSettings, seedExample } from "./fixture-host.mjs";
 
 function listController(plugin, panel, ctx) {
@@ -63,7 +63,7 @@ async function fallbackPicker(plugin) {
 	plugin.settings.fallbackCalloutId = "project note";
 	const metadata = mountSettings(plugin, {
 		title: "Choose a default fallback callout",
-		description: "The production FallbackSection shows Project note as the synthetic saved fallback and its real Reset to default arrow. Its actual CalloutCombobox is opened to registered types, with production names, IDs, icons, and colors in dark mode. Nothing is selected or saved by the scene.",
+		description: "The production fallbackPicker shows Project note as the synthetic saved fallback and its real Reset to default arrow. Its actual CalloutCombobox is opened to registered types, with production names, IDs, icons, and colors in dark mode. Nothing is selected or saved by the scene.",
 		render(panel, ctx) {
 			panel.style.height = "650px";
 			renderFallbackSection(ctx, panel);

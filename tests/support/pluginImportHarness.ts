@@ -34,7 +34,7 @@ import type {
 	PluginImportPlan,
 	PluginImportSource,
 } from "../../src/settings/pluginImport/pluginImportSource";
-import type { SettingsSectionContext } from "../../src/settings/sections/types";
+import type { SettingsContext } from "../../src/settings/sections/types";
 import { fakeDom, type FakeElement } from "./fakeDom";
 import { TestKeymap, TestScope } from "./fakeKeymap";
 import { memoryVault, PLUGIN_MANIFEST, savingWriter } from "./importSafetyStubs";
@@ -185,10 +185,10 @@ export function harness(options: HarnessOptions = {}): Harness {
 			registry: { settings, toSaveData: () => ({ settings }) },
 			saveSettings: () => Promise.resolve(),
 		},
-		display: () => {
+		redraw: () => {
 			displays++;
 		},
-	} as unknown as SettingsSectionContext;
+	} as unknown as SettingsContext;
 
 	const source = (options.source ?? recordingSource)(rec);
 	const manual = source.manual.kind;

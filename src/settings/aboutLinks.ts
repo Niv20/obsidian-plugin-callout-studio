@@ -2,9 +2,7 @@
  * settings/aboutLinks.ts — where to find out more about Callout Studio, and how
  * to get in touch: the project's links and the contact sentence.
  *
- * Who calls it. The settings footer (sections/FooterSection.ts) and the About
- * group of the declarative settings page (declarative/mainPageGroups.ts), so
- * the links are spelled out once.
+ * Who calls it. The About box of the settings (declarative/mainPageGroups.ts).
  */
 import { t } from "../i18n";
 

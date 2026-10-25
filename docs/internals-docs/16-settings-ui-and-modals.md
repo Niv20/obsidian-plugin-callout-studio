@@ -330,7 +330,7 @@ Scan is built **twice**, on every platform: once in the heading's control and
 once in `.cs-discover-footer`, the last child of the section body. Both come
 from the one `addManualDiscoveryButton`, which keeps one progress state for all
 copies, so a scan started from either greys both
-(`tests/manualDiscoveryButton.test.ts`). The scan itself is `runManualScan`
+(`tests/manualScan.test.ts`). The scan itself is `runManualScan`
 (with `scanRunning`), which the declarative page's Scan row shares, so a scan
 shows the same way there.
 
@@ -384,7 +384,7 @@ is the whole label: scoped narrowly, a long translation of **New palette**
 ("Neue Farbpalette erstellen") ran off the trailing edge of the pane instead of
 wrapping inside its own box - before this row could wrap and after.
 
-`manualDiscoveryButton.ts` shares only transient running state per plugin through
+`manualScan.ts` shares only transient running state per plugin through
 a `WeakMap`. Settings redraws and reopenings reuse that state and remove obsolete
 DOM listeners through `registerDisposer`; repeated or detached-button clicks do
 nothing. The button catches scan failures, restores its label/disabled state, and
@@ -496,7 +496,7 @@ outright rather than merely shifted.
 
 Both async repaint paths therefore run inside
 `sections/foldAnchor.ts`'s `keepScrollAnchored` - `SettingsTab.refreshLists`
-and `CustomPalettesSection`'s 60 ms `css-change` debounce. It measures the
+and `paletteFlows`'s 60 ms `css-change` debounce. It measures the
 topmost *direct child* of the container still on screen, runs the mutation, and
 hands the difference back to the scroller. Direct children are the right depth
 because they outlive the mutation: the repaints empty and refill containers
@@ -582,7 +582,7 @@ builds *Callouts from your theme*, *My callout types* and *Built-in
 callouts*, in that order, from one pass over one combined list (see
 [Theme callout discovery](18-theme-callout-discovery.md) for who lands
 where). Two behaviours sit on top of that split, each in its own helper -
-and [`CustomPalettesSection.ts`](../../src/settings/sections/CustomPalettesSection.ts)'s
+and [`paletteFlows.ts`](../../src/settings/sections/paletteFlows.ts)'s
 *Saved color palettes* heading is a fourth member of the same family rather than
 a parallel implementation: it calls the identical `attachPersistedFold` and
 `renderPagedList` helpers, just keyed `"palettes"` instead of a `RowKind`, and
@@ -913,7 +913,7 @@ elements as well (the section wrapper hides, the body folds), which makes the
 collision impossible rather than merely avoided.
 
 A user-driven toggle is wrapped in
-[`foldAnchor.keepHeadingInPlace`](../../src/settings/sections/foldAnchor.ts) -
+[`foldAnchor.keepHeadingInPlace`](../../src/ui/foldAnchor.ts) -
 see [Folding a pinned heading](#folding-a-pinned-heading).
 
 Note also that *Built-in callouts* does **not** get `cs-subheader-row` to
@@ -1333,7 +1333,7 @@ Unlike a heading's faint count it stays plain text in the button's colour,
 because it is part of the label (see
 [Faint counts](#faint-counts---how-many-as-obsidians-search-shows-it)). `focusFirstRevealed`
 (below) is an export of `listPaging.ts` rather than a per-section helper,
-which is what lets `CustomPalettesSection.ts` reuse it verbatim instead of
+which is what lets `paletteFlows.ts` reuse it verbatim instead of
 reimplementing the same focus-on-reveal logic.
 
 Nothing above the button is faded. The rows carry an icon, two colour
@@ -1354,7 +1354,7 @@ the callout lists it was written for.
 One `PagingState` and one `SectionDisclosure` per section is what makes the
 sections independent and what makes them survive a repaint.
 `CalloutListsSection.ts`'s `refresh()` rebuilds every callout row on a
-registry change or a theme switch, and `CustomPalettesSection.ts`'s own
+registry change or a theme switch, and `paletteFlows.ts`'s own
 `renderList()` does the same for palettes on a create, edit, delete or theme
 flip; in both cases a list the user expanded must not fold back up under them.
 
@@ -1374,7 +1374,7 @@ every section back behind its `Load more` button. Nobody has asked to keep a
 whole vault's saved palettes on screen by default, and paging past the cap is a
 cheap habit to reform - but losing your place to a repaint you did not cause is
 not that. (Saved color palettes keeps its own single cursor in
-`CustomPalettesSection.ts`, which is rebuilt by the same `display()`; its
+`paletteFlows.ts`, which is rebuilt by the same `display()`; its
 `Load more` is one press on a much shorter list.)
 
 The **fold** is not session-only. `settings/sections/calloutListsFold.ts`
@@ -1386,7 +1386,7 @@ palettes) the moment the user folds or unfolds it by hand -
 when a caller drives `setExpanded` programmatically, so a save only happens
 for a choice the user actually made. `attachPersistedFold` takes any
 `keyof CalloutListsFoldState` (not a bare `RowKind`), which is what let
-`CustomPalettesSection.ts` become a fourth caller without widening `RowKind`
+`paletteFlows.ts` become a fourth caller without widening `RowKind`
 itself to a concept it has nothing to do with. Both `createCalloutListsController`
 and `renderCustomPalettesSection` read the relevant field back as their
 heading's `initiallyExpanded` on render, so a folded section stays folded
@@ -2630,7 +2630,7 @@ the picker shrinks to make room, as in the callout editor's color row.
 
 The **Language** column is sized from its content, not the fixed 260px the other
 reset rows use. The picker's menu is exactly as wide as the picker, so the
-column has to fit the longest option. `LanguageSection` measures a hidden stack
+column has to fit the longest option. `languagePicker` measures a hidden stack
 of every language name and adds the reset arrow's width plus the gap.
 It un-hides the arrow for that one synchronous read, because a picker showing
 Obsidian's language keeps it `display: none`. The sum becomes
@@ -3374,7 +3374,7 @@ Every place the user picks one callout out of a list is the same control:
 [`calloutCombobox.ts`](../../src/settings/calloutCombobox.ts), over
 [`ui/listboxPopup.ts`](../../src/ui/listboxPopup.ts). It replaced two native
 `<select>`s - *Default fallback callout*
-([`FallbackSection.ts`](../../src/settings/sections/FallbackSection.ts)) and
+([`fallbackPicker.ts`](../../src/settings/sections/fallbackPicker.ts)) and
 *Callout type* above - neither of which could be typed into or showed a callout's
 icon or colour, while the `[!` popover in the editor had done both for a long
 time. The fallback picker uses the shared field face and interaction rules;

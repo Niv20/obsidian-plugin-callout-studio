@@ -12,7 +12,7 @@ import { mergeVersions } from "../../src/manager/setupVersions.ts";
 import { setupDetails } from "../../src/manager/setupDetails.ts";
 import { differingEntries } from "../../src/manager/setupDifference.ts";
 import { renderSaveStatusBanner } from "../../src/settings/saveStatusBanner.ts";
-import { renderBackupSection, renderResetSection } from "../../src/settings/sections/DataManagementSection.ts";
+import { renderBackupSection, renderResetSection } from "../../src/settings/sections/backupImport.ts";
 import { createPortableConversionFrame, updatePortableSelection } from "../../src/portable/portableConversionFrame.ts";
 import { portableConversionRows, renderPortableConversionRows } from "../../src/portable/portableConversionRows.ts";
 import { preparePortableCalloutConversion } from "../../src/utils/portableCalloutVault.ts";

@@ -51,7 +51,7 @@ function def(over: Partial<CalloutDefinition> = {}): CalloutDefinition {
 function fakeCtx(registry: CalloutRegistry) {
 	return {
 		app: {},
-		display: () => {},
+		redraw: () => {},
 		registerDisposer: () => {},
 		plugin: { app: {}, registry, settings: registry.settings },
 	} as never;

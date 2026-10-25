@@ -70,7 +70,7 @@ function drawCommands(made: ReturnType<typeof fakePlugin>) {
 	const ctx: TreeContext = {
 		app: made.app as unknown as App,
 		plugin: made.plugin as never,
-		display: () => { redraws++; tab.update(); },
+		redraw: () => { redraws++; tab.update(); },
 		registerDisposer: () => {},
 		rows: new RowRegistry(),
 		parts: new PersistentParts(() => {}),

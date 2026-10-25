@@ -75,22 +75,29 @@ describe("device UI state without a discovery cache", () => {
   assert.strictEqual(store.hasOfferedOccurrencesTab, false);
   assert.strictEqual(storage.writes(), before);
  });
- it("preserves legacy evidence until the verified archive and keeps section preferences", () => {
+ it("preserves legacy evidence until the verified archive", () => {
   const store = fresh({ v: 1, discovered: ["old"], firstRunCompleted: true,
    retiredThemeIds: ["retired"], listsExpanded: { user: false } });
   assert.strictEqual(store.hasInitialized, true);
-  assert.strictEqual(store.isExpanded("user"), false);
   const saved = JSON.parse(storage.map.get(KEY)!) as Record<string, unknown>;
   assert.deepStrictEqual(saved.discovered, ["old"]);
   assert.strictEqual(saved.v, 1);
-  store.markInitialized(); store.setExpanded("theme", false);
+  store.markInitialized(); store.setQuickInsertSource("theme");
   assert.strictEqual((JSON.parse(storage.map.get(KEY)!) as { v: number }).v, 1);
  });
  it("persists only the installation marker and UI preferences", () => {
-  const store = fresh(); store.markInitialized(); store.setExpanded("theme", false);
+  const store = fresh(); store.markInitialized(); store.setQuickInsertSource("theme");
   const restored = new DeviceLocalStore(app);
   assert.strictEqual(restored.hasInitialized, true);
-  assert.strictEqual(restored.isExpanded("theme"), false);
+  assert.strictEqual(restored.quickInsertSource, "theme");
+ });
+ // The old settings page remembered which of its sections were folded; the
+ // page is gone, and so is the memory, from the stored blob too.
+ it("drops the old settings page's folded sections when it loads", () => {
+  fresh({ v: 3, initialized: true, welcomeSeen: true, listsExpanded: { user: false } });
+  const saved = JSON.parse(storage.map.get(KEY)!) as Record<string, unknown>;
+  assert.strictEqual("listsExpanded" in saved, false);
+  assert.strictEqual(saved.initialized, true);
  });
  it("remembers the welcome separately without marking the installation initialized", () => {
   const store = fresh(); store.markWelcomeSeen();
@@ -118,7 +125,7 @@ describe("device UI state without a discovery cache", () => {
  });
  it("does not rewrite identical state", () => {
   const store = fresh(); store.markInitialized(); const before = storage.writes();
-  store.markInitialized(); store.setExpanded("theme", true);
+  store.markInitialized();
   assert.strictEqual(storage.writes(), before);
  });
 });

@@ -319,7 +319,7 @@ export class CalloutRegistry {
 		// `paletteId` onto a row is a rewrite of the stored definitions like any
 		// other, so it flushes; un-flushed the adoption was simply re-derived on
 		// every launch. The flag is raised here rather than inside the pass
-		// because the settings caller (CustomPalettesSection) saves for itself.
+		// because the settings caller (paletteFlows) saves for itself.
 		if (this.adoptOrphansMatchingPalettes() > 0) {
 			this.pendingLoadMigrationSave = true;
 		}

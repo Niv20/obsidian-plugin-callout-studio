@@ -14,7 +14,7 @@
 import type { Menu } from "obsidian";
 import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
-import type { SettingsSectionContext } from "./types";
+import type { SettingsContext } from "./types";
 import { addConvertUsesItem, addDeleteItem, addReplaceItem } from "./rowOwnership";
 import { addUsageMenuItem } from "../../usage/usageMenuItem";
 import { openCalloutRowMenu, type RowMenuTrigger } from "./calloutRowMenu";
@@ -25,7 +25,7 @@ import { handleBuiltInReset } from "./builtInResetAction";
 
 /** Open a built-in callout row's menu, from its ⋮ button or a right-click. */
 export async function openBuiltInRowMenu(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	trigger: RowMenuTrigger,
 	def: CalloutDefinition,
 ): Promise<void> {
@@ -35,7 +35,7 @@ export async function openBuiltInRowMenu(
 /** Find callouts ‖ Replace · Convert ‖ Reset to default, when modified. */
 export function buildBuiltInRowMenu(
 	menu: Menu,
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): void {
 	const usage = addUsageMenuItem(menu, ctx.app, ctx.plugin.registry.vaultIdFormsFor(def));
@@ -58,7 +58,7 @@ export function buildBuiltInRowMenu(
 
 /** Open one of the user's own callout rows' menu, from its ⋮ button or a right-click. */
 export async function openRowMenu(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	trigger: RowMenuTrigger,
 	def: CalloutDefinition,
 ): Promise<void> {
@@ -71,7 +71,7 @@ export async function openRowMenu(
  */
 export function buildUserRowMenu(
 	menu: Menu,
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): void {
 	const usage = addUsageMenuItem(menu, ctx.app, ctx.plugin.registry.vaultIdFormsFor(def));

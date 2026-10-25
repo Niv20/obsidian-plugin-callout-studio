@@ -63,7 +63,7 @@ function treeContext(plugin: object, redraw: () => void): TreeContext {
 	return {
 		app: {} as never,
 		plugin: plugin as never,
-		display: redraw,
+		redraw: redraw,
 		registerDisposer: () => {},
 		rows: new RowRegistry(),
 		parts: new PersistentParts(() => {}),

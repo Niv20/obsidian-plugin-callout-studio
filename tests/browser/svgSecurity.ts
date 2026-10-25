@@ -2,8 +2,8 @@ import { sanitizeUserSvg } from "../../src/icons/svg";
 import { sanitizeUserImages } from "../../src/utils/userImages";
 import { planAdmonitionImport } from "../../src/utils/admonitionImport";
 import { ADMONITION_IMPORT } from "../../src/settings/pluginImport/admonitionImportSource";
-import { processImportedJSON } from "../../src/settings/sections/DataManagementSection";
-import type { SettingsSectionContext } from "../../src/settings/sections/types";
+import { processImportedJSON } from "../../src/settings/sections/backupImport";
+import type { SettingsContext } from "../../src/settings/sections/types";
 import { ImportReportModal } from "../../src/utils/ImportReportModal";
 import { ImportLimitError } from "../../src/utils/importLimits";
 import type { UserImageIcon } from "../../src/types";
@@ -205,7 +205,7 @@ async function importBudgetRaceChecks(fullBudget: UserImageIcon, rasterUri: stri
 	const ctx = { app: {}, plugin: { registry,
 		saveSettings: async () => { mutations++; }, customCommands: { syncAll: () => { mutations++; } },
 		refreshRenderModes: () => { mutations++; }, ensureIconArtworkFor: async () => { mutations++; },
-	}, display: () => { mutations++; } } as unknown as SettingsSectionContext;
+	}, redraw: () => { mutations++; } } as unknown as SettingsContext;
 	const payload = { format: "callout-studio", callouts: [{
 		id: "race-native", displayName: "Race native", icon: { type: "image", value: incoming.id },
 		colorLight: "#448aff", colorDark: "#448aff", foldable: true, defaultFolded: false,

@@ -21,7 +21,7 @@ import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import { getSelectableLocales, setLocale } from "../src/i18n";
 import { Setting } from "obsidian";
-import { applyLanguagePreference, drawLanguageControls, missingLanguageName } from "../src/settings/sections/LanguageSection";
+import { applyLanguagePreference, drawLanguageControls, missingLanguageName } from "../src/settings/sections/languagePicker";
 import type { SettingsTabPlugin } from "../src/settings/sections/types";
 import { asEl, el, FakeElement } from "./support/fakeDom";
 import type { MenuItemRecord } from "./support/obsidianStub";

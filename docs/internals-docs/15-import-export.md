@@ -586,7 +586,7 @@ reads the active one.
 
 Every route then ends in the same sequence: plan, then `ImportReportModal`
 when there are issues or no entries at all, then apply, then
-`markCompetitorImportBannerHandled`, then a notice, then `ctx.display()`, then
+`markCompetitorImportBannerHandled`, then a notice, then `ctx.redraw()`, then
 close. The source's `afterApply` runs last; Admonition uses it for
 `ensureIconArtworkFor`.
 

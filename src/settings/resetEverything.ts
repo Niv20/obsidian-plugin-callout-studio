@@ -2,9 +2,8 @@
  * settings/resetEverything.ts — Danger zone › Reset everything: what it asks,
  * and what it does.
  *
- * Who calls it. The Reset everything button, on the settings page drawn by
- * `display()` (sections/DataManagementSection.ts) and on the declarative one
- * (declarative/mainPageGroups.ts), so both run the very same flow.
+ * Who calls it. The Reset everything button in the settings' Danger zone
+ * (declarative/mainPageGroups.ts).
  *
  * The main idea. A reset deletes the user's callouts and palettes and puts
  * every setting back, so it asks first, listing exactly what would go, and it
@@ -20,10 +19,10 @@ import { countCalloutUsages } from "../utils/vaultCalloutScanner";
 import { writeSettingsBackup } from "../manager/settingsBackup";
 import { blockedWhilePaused } from "./pausedGuard";
 import { isResetInventoryEmpty, resetInventory, type ResetInventory, type ResetInventoryRow } from "./resetInventory";
-import type { SettingsSectionContext } from "./sections/types";
+import type { SettingsContext } from "./sections/types";
 
 /** Ask, then reset everything if the user agrees. */
-export async function confirmAndResetEverything(ctx: SettingsSectionContext): Promise<void> {
+export async function confirmAndResetEverything(ctx: SettingsContext): Promise<void> {
 	if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
 	const inventory = resetInventory(ctx.plugin.registry);
 	// A second reset in a row, or one on a fresh install: say so rather than
@@ -51,7 +50,7 @@ export async function confirmAndResetEverything(ctx: SettingsSectionContext): Pr
  * Uses of the user's own callouts in notes are one more line of what goes:
  * last in the list and in the same colour, not a paragraph above it.
  */
-async function addUsesInNotes(ctx: SettingsSectionContext, inventory: ResetInventory): Promise<void> {
+async function addUsesInNotes(ctx: SettingsContext, inventory: ResetInventory): Promise<void> {
 	const registry = ctx.plugin.registry;
 	const userIds = registry.getUserDefined().flatMap((def) => registry.vaultIdFormsFor(def));
 	if (userIds.length === 0) return;
@@ -88,7 +87,7 @@ function appendInventoryList(parent: DocumentFragment, headingKey: string, rows:
 }
 
 /** Back the setup up, then reset, paint, save, and say how it went. */
-async function resetAfterBackup(ctx: SettingsSectionContext): Promise<void> {
+async function resetAfterBackup(ctx: SettingsContext): Promise<void> {
 	const { plugin } = ctx;
 	if (!await writeSettingsBackup(plugin, plugin.registry.toSaveData(), { reason: "before-reset" })) {
 		new Notice(t("settings.resetBackupFailed"), 10000);
@@ -103,5 +102,5 @@ async function resetAfterBackup(ctx: SettingsSectionContext): Promise<void> {
 	} else {
 		new Notice(t("notice.resetAllDone"));
 	}
-	ctx.display();
+	ctx.redraw();
 }

@@ -250,8 +250,9 @@ callout types (where a duplicate lands, even one of a theme's callouts).
 ## The main page, part by part
 
 Each part of the tree is a function returning a box (or a row), built from a
-`TreeContext` (the old page's `SettingsSectionContext` plus the row registry,
-the parts store and `jumpTo`). Most rows are "name, sentence, one button":
+`TreeContext` (the shared `SettingsContext` of
+[`sections/types.ts`](../../src/settings/sections/types.ts) plus the row
+registry, the parts store and `jumpTo`). Most rows are "name, sentence, one button":
 [`declarative/rowParts.ts`](../../src/settings/declarative/rowParts.ts)'s
 `buttonRow` builds them the way every blockable button in the plugin works
 (ui/blockedButton.ts): while it cannot act it is dimmed (`aria-disabled`), and a
@@ -303,8 +304,8 @@ between them.
 
 [`declarative/generalRows.ts`](../../src/settings/declarative/generalRows.ts)
 draws the plugin-wide rows of the main page's first box. Each draws the old
-page's controls from the old page's code (`FallbackSection.ts` and
-`LanguageSection.ts` export their steps: `createFallbackPicker`,
+page's controls from the old page's code (`fallbackPicker.ts` and
+`languagePicker.ts` export their steps: `createFallbackPicker`,
 `setFallbackCallout`, `addFallbackReset`, `drawLanguageControls`,
 `applyLanguagePreference`, `missingLanguageName`, `languageDownloading`,
 `retryLanguageDownload`).
@@ -328,7 +329,7 @@ page's controls from the old page's code (`FallbackSection.ts` and
   language and its download, the switch's value and what the theme styles;
   `LocaleStore.onChange` and the registry ask for the update.
 
-`ctx.display()` in the tree means "draw the settings again": a forced
+`ctx.redraw()` in the tree means "draw the settings again": a forced
 `TreeUpdater` request (§ The tab and its tree).
 
 ## The callout pages
@@ -377,7 +378,7 @@ holds the one callout row every list uses, and the user's own callouts.
 - **What redraws them:** the callouts (the registry's change round), the
   fallback (its Default flair), light or dark mode (`css-change`), an icon
   finishing its download (a forced request) and a scan starting or ending
-  (`ctx.display()`). A change that arrives while the page is open, a sync for
+  (`ctx.redraw()`). A change that arrives while the page is open, a sync for
   instance, redraws it in place (checked in Obsidian: a callout added from
   outside appeared on the open page).
 
@@ -390,7 +391,7 @@ none). The page is one of Obsidian's lists (`palette-list`), so it gets, from
 Obsidian, a ✕ on every row and the Delete key (`onDelete`), a `+`
 (`addItem`, a last row on mobile) and the grey row while there is none
 (`emptyState`). The flows are the old page's (`createPalette`, `editPalette`,
-`deletePalette` in `CustomPalettesSection.ts`), so ✕ still asks, and says how
+`deletePalette` in `paletteFlows.ts`), so ✕ still asks, and says how
 many callouts link to the palette.
 
 - **A palette row** is a render row keyed `palette-<id>` (a rename keeps the

@@ -22,7 +22,7 @@
 import type { Menu, Setting } from "obsidian";
 import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
-import type { SettingsSectionContext } from "./types";
+import type { SettingsContext } from "./types";
 import { addConvertUsesItem, addReplaceItem } from "./rowOwnership";
 import { addUsageMenuItem } from "../../usage/usageMenuItem";
 import { addRowMenuButton, openCalloutRowMenu, type RowMenuTrigger } from "./calloutRowMenu";
@@ -47,7 +47,7 @@ import { addDuplicateItem } from "./duplicateCallout";
  * confirmation afterwards.
  */
 export async function openThemeRowMenu(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	trigger: RowMenuTrigger,
 	def: CalloutDefinition,
 ): Promise<void> {
@@ -57,7 +57,7 @@ export async function openThemeRowMenu(
 /** Find callouts ‖ Replace · Convert ‖ Duplicate, for a saved definition. */
 export function buildThemeRowMenu(
 	menu: Menu,
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): void {
 	const usage = addUsageMenuItem(menu, ctx.app, ctx.plugin.registry.vaultIdFormsFor(def));
@@ -82,7 +82,7 @@ export function buildThemeRowMenu(
  * on rows that Callout Studio owns.
  */
 export function addThemeRowControls(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	setting: Setting,
 	def: CalloutDefinition,
 ): void {

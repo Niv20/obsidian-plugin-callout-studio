@@ -52,7 +52,7 @@ function treeContext(app: object) {
 	const ctx: TreeContext = {
 		app: app as never,
 		plugin: plugin as never,
-		display: () => {},
+		redraw: () => {},
 		registerDisposer: () => {},
 		rows: new RowRegistry(),
 		parts: new PersistentParts(() => {}),

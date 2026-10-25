@@ -98,7 +98,7 @@ function importOfferRow(ctx: TreeContext): CsRender {
 					// Stops offering at once (the saving happens in the background),
 					// so the redraw that follows hides the row.
 					void markCompetitorImportBannerHandled(ctx.plugin);
-					ctx.display();
+					ctx.redraw();
 				},
 			});
 			// The offer sits outside the row's controls, which a redraw empties,

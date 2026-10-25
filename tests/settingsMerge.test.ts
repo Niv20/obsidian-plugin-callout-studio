@@ -795,7 +795,7 @@ describe("mergeSavedSettings — the lists the user builds up", () => {
 		it(`${field} is an empty array when the file carries none`, () => {
 			// NOT the user's existing list. Everything here is a pure function of
 			// the file; merging by id against the vault's own is the caller's job
-			// (DataManagementSection), and reading this function alone is exactly
+			// (backupImport), and reading this function alone is exactly
 			// what makes `Object.assign` look safe.
 			assert.deepStrictEqual(
 				(mergeSavedSettings({}) as unknown as Record<string, unknown>)[field],

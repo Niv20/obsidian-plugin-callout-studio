@@ -1,3 +1,16 @@
+/**
+ * settings/saveStatusBanner.ts — the "Saving is paused" notice, with the
+ * buttons that get saving back.
+ *
+ * Who calls it. The settings' notices box (declarative/bannerRows.ts) and the
+ * callout editor (CalloutEditor.ts), each into an element of its own.
+ *
+ * The main idea. The words and the buttons come from the same answers
+ * (saveStatusCopy.ts), so the text never names a button that is not there.
+ * The notice redraws itself when the saving status changes. (The settings keep
+ * the same notice through their own redraws, bannerRows.ts, so it remembers an
+ * action under way.)
+ */
 import { setIcon, type App } from "obsidian";
 import { t } from "../i18n";
 import { en } from "../i18n/en";
@@ -24,8 +37,8 @@ export interface SaveStatusActions {
 	replaceUnreadable?: () => Promise<boolean>;
 	discardRecoveryCopy?: () => Promise<boolean>;
 	/**
-	 * **Go to backups**: takes the reader to Backup › Earlier setups on the
-	 * same page. It opens and restores nothing itself — restoring an earlier
+	 * **Go to version history**: takes the reader to Version history › Earlier
+	 * versions on the same page. It opens and restores nothing itself — restoring an earlier
 	 * setup waits until saving works again, and the words above say so.
 	 * `fromKeyboard` says the button was pressed with a key, which decides
 	 * whether the row it lands on shows a focus ring.
@@ -39,8 +52,8 @@ export interface SaveStatusActions {
 export type RecoveryActionHost = Pick<SettingsTabPlugin, "retrySettingsRecovery" | "startFreshSettings" | "recovery">;
 
 /**
- * The banner's actions, from what the plugin offers. Both settings pages use
- * it, adding their own way to Go to version history.
+ * The banner's actions, from what the plugin offers. The settings add their
+ * own way to Go to version history.
  */
 export function recoveryActionsOf(plugin: RecoveryActionHost): SaveStatusActions {
 	const recovery = plugin.recovery;

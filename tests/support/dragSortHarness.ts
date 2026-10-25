@@ -37,7 +37,6 @@ const PLACEHOLDER = "cs-drag-placeholder";
 
 export function dragSortHarness(options: {
 	reducedMotion?: boolean;
-	groups?: boolean[];
 	/** The element the list scrolls in, for the edge auto-scroll. */
 	scroller?: FakeElement;
 } = {}) {
@@ -79,10 +78,9 @@ export function dragSortHarness(options: {
 		x: left, y: top, top, bottom: top + height, left, right: left + width,
 		width, height, toJSON: () => ({}),
 	});
-	const rows = model.map((id, index) => {
+	const rows = model.map((id) => {
 		const row = list.createDiv({ cls: "test-drag-row" });
 		row.dataset.id = id;
-		if (options.groups?.[index]) row.addClass("is-disabled");
 		row.createDiv({ cls: "test-drag-handle" }).createEl("svg");
 		Object.defineProperty(row, "nextElementSibling", {
 			get: () => list.children[list.children.indexOf(row) + 1] ?? null,
@@ -117,7 +115,6 @@ export function dragSortHarness(options: {
 	const cleanup = makeDragSortable(listEl, {
 		rowSelector: ".test-drag-row",
 		handleSelector: ".test-drag-handle",
-		groupOf: options.groups ? (row) => row.hasClass("is-disabled") : undefined,
 		scroller: options.scroller ? () => asEl(options.scroller!) : undefined,
 		onReorder: (from, to) => {
 			moves.push([from, to]);

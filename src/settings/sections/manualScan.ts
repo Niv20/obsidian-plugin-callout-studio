@@ -1,5 +1,5 @@
 /**
- * settings/sections/manualDiscoveryButton.ts — Scan for callouts: the vault
+ * settings/sections/manualScan.ts — Scan for callouts: the vault
  * scan the user starts from the settings.
  *
  * Who calls it. The Scan for callouts row on the My callout types page

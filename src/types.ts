@@ -760,20 +760,6 @@ export interface GlobalStyleSettings {
 	inline: InlineFrameStyleSettings;
 }
 
-/**
- * Whether each of the settings tab's four collapsible sections is expanded:
- * the three callout lists — theme, user, built-in, keyed the same way as
- * `RowKind` (`settings/sections/rowOwnership.ts`) — plus `palettes` for the
- * Saved color palettes section. Persisted so a section the user folded away
- * stays folded across a settings-tab visit and a plugin reload.
- */
-export interface CalloutListsFoldState {
-	theme: boolean;
-	user: boolean;
-	builtin: boolean;
-	palettes: boolean;
-}
-
 export interface PluginSettings {
 	globalStyle: GlobalStyleSettings;
 	contextMenu: ContextMenuSettings;

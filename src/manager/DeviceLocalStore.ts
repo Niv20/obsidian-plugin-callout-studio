@@ -1,7 +1,6 @@
 /** Device-only UI and onboarding state. Legacy discovery is archived, never restored. */
 import type { App, PluginManifest } from "obsidian";
 import { LEGACY_STARTUP_CSS_STORAGE_KEY } from "./startupStyleKeys";
-import type { CalloutListsFoldState } from "../types";
 import { WriteMemo } from "../utils/writeMemo";
 import { writeLegacyDiscoveryArchive } from "./legacyDiscoveryArchive";
 import { SHARED_DEVICE_ID } from "./settingsBackup";
@@ -35,10 +34,13 @@ interface DeviceLocalState {
 	iconCategories?: Record<string, string>;
 	emojiSkinTone?: number;
 	quickInsertSource?: string;
-	listsExpanded: CalloutListsFoldState;
+	// `listsExpanded`, which sections of the old settings page were folded,
+	// is gone with that page. Older blobs still carry it; the state is rebuilt
+	// from the fields above, so the next write drops it, and an older build
+	// reading a blob without it shows every section open.
 }
 
-type ParsedState = Partial<Record<keyof DeviceLocalState, unknown>> & { v?: number; listsExpanded?: Partial<CalloutListsFoldState> };
+type ParsedState = Partial<Record<keyof DeviceLocalState, unknown>> & { v?: number };
 
 /** Valid picker and Quick Insert memory, and a device id, from stored JSON. */
 function memoryFrom(parsed: ParsedState): Partial<DeviceLocalState> {
@@ -60,7 +62,6 @@ export class DeviceLocalStore {
 		v: 3,
 		initialized: false,
 		welcomeSeen: false,
-		listsExpanded: { theme: true, user: true, builtin: true, palettes: true },
 	};
 	private readonly memo = new WriteMemo();
 	private legacyRaw: string | null = null;
@@ -88,12 +89,6 @@ export class DeviceLocalStore {
 					? { autocompleteAlwaysEnabled: parsed.autocompleteAlwaysEnabled } : {}),
 				...(parsed.importBannerHandled === true ? { importBannerHandled: true as const } : {}),
 				...memoryFrom(parsed),
-				listsExpanded: {
-					theme: parsed.listsExpanded?.theme !== false,
-					user: parsed.listsExpanded?.user !== false,
-					builtin: parsed.listsExpanded?.builtin !== false,
-					palettes: parsed.listsExpanded?.palettes !== false,
-				},
 			};
 			this.memo.adopt(raw);
 			if (parsed.v === 1) this.legacyRaw = raw;
@@ -249,15 +244,6 @@ export class DeviceLocalStore {
 
 	setQuickInsertSource(source: string): void {
 		this.state.quickInsertSource = source;
-		this.persist();
-	}
-
-	isExpanded(kind: keyof CalloutListsFoldState): boolean {
-		return this.state.listsExpanded[kind];
-	}
-
-	setExpanded(kind: keyof CalloutListsFoldState, expanded: boolean): void {
-		this.state.listsExpanded[kind] = expanded;
 		this.persist();
 	}
 

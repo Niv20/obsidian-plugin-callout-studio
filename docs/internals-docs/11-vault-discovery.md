@@ -718,7 +718,7 @@ rewrites those notes before resetting when the answer is Change.
 7. registry.cleanupUnusedIconSvgs()
 8. await plugin.saveSettings()                    ← awaited explicitly, see below
 9. plugin.refreshCallouts()   ← notes keep [!id] and now look different
-10. ctx.display(); notice "Deleted …" with Undo (noticeWithUndoAction)
+10. ctx.redraw(); notice "Deleted …" with Undo (noticeWithUndoAction)
 ```
 
 - **Failed count.** A partial count is never taken for "unused", which here
@@ -769,7 +769,7 @@ that count lands on zero after the menu opened.
      deleteModal.bodyInUse + convertModal.explain + who keeps the type
 3. convertCalloutsToPlainTextInVault(..., requireComplete = true, journal)
 4. incomplete → notice.calloutDeleteIncomplete; converted files stay converted
-5. noticeWithUndo(journal); ctx.display()
+5. noticeWithUndo(journal); ctx.redraw()
 ```
 
 The definition is never touched, and nothing is saved. The last line of the

@@ -65,7 +65,7 @@ function fakeCtx(registry: CalloutRegistry, themeIds: string[]) {
 	let displayed = 0;
 	const ctx = {
 		app: {} as never,
-		display: () => {
+		redraw: () => {
 			displayed++;
 		},
 		registerDisposer: () => {},

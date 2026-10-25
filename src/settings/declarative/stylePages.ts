@@ -1,7 +1,6 @@
 /**
  * settings/declarative/stylePages.ts — Heading callout, Inline callout and
- * Block callout: each role's vault-wide style as a settings page, in place of
- * the per-role style windows (GlobalStyleModal.ts).
+ * Block callout: each role's vault-wide style as a settings page.
  *
  * Who calls it. The settings tab, for the main page's Callout style box
  * ({@link calloutStyleGroup}).
@@ -349,7 +348,7 @@ function resetBox(ctx: TreeContext, box: ResetBox, items: (CsRender | CsControl)
 			box.reset(ctx.plugin.settings);
 			commitStyle(ctx);
 			// The box's rows show the defaults again.
-			ctx.display();
+			ctx.redraw();
 		})],
 		items,
 	};

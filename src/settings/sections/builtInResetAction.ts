@@ -31,10 +31,10 @@ import {
 	type NoteChangeFormState,
 	type NoteChoices,
 } from "../editor/noteChanges";
-import type { SettingsSectionContext } from "./types";
+import type { SettingsContext } from "./types";
 
 export async function handleBuiltInReset(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 	/** Opens the question; a test answers in its place. */
 	open: (input: NoteChangesModalInput) => Promise<NoteChoices | null> = (input) => new NoteChangesModal(ctx.app, input).ask(),
@@ -87,5 +87,5 @@ export async function handleBuiltInReset(
 		}
 	}
 	registry.resetBuiltIn(def.id);
-	ctx.display();
+	ctx.redraw();
 }

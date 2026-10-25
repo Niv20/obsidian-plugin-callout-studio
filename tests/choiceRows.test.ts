@@ -9,7 +9,7 @@ import { describe, it } from "node:test";
 import { t } from "../src/i18n";
 import { ExportFormatModal } from "../src/settings/ExportFormatModal";
 import { ImportSourceModal } from "../src/settings/ImportSourceModal";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import type { SettingsContext } from "../src/settings/sections/types";
 import { fakeDom, type FakeElement } from "./support/fakeDom";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";
 
@@ -19,7 +19,7 @@ function mountChooser(ModalClass: typeof ImportSourceModal | typeof ExportFormat
 	destroy: () => void;
 } {
 	const app = { keymap: new TestKeymap(), scope: new TestScope() };
-	const modal = new ModalClass({ app } as unknown as SettingsSectionContext);
+	const modal = new ModalClass({ app } as unknown as SettingsContext);
 	const container = fakeDom.document.body.createDiv({ cls: "modal-container" });
 	const modalEl = container.createDiv({ cls: "modal" });
 	const title = modalEl.createDiv({ cls: "modal-header" }).createDiv({ cls: "modal-title" });

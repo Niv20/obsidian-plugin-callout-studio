@@ -5,9 +5,8 @@
  *
  * Who calls it. The settings tab, when it builds the main page.
  *
- * The main idea. Each row draws the same controls as the old page, from the
- * same code (sections/FallbackSection.ts, sections/LanguageSection.ts); only
- * the way they sit on the page is new:
+ * The main idea. The controls themselves are drawn by sections/fallbackPicker.ts
+ * and sections/languagePicker.ts; this module puts them in rows:
  * - The rows' `disabled` greys them while saving is paused, and every callback
  *   that changes something is also guarded (pausedGuards.ts), since `disabled`
  *   alone does not stop a list that is already open.
@@ -24,14 +23,14 @@ import {
 	addFallbackReset,
 	createFallbackPicker,
 	setFallbackCallout,
-} from "../sections/FallbackSection";
+} from "../sections/fallbackPicker";
 import {
 	applyLanguagePreference,
 	drawLanguageControls,
 	languageDownloading,
 	missingLanguageName,
 	retryLanguageDownload,
-} from "../sections/LanguageSection";
+} from "../sections/languagePicker";
 import { partitionCallouts, themeStylesSwitchedOff } from "../sections/rowOwnership";
 import { disabledWhilePaused, refuseWhilePaused } from "./pausedGuards";
 import type { PersistentPart } from "./persistentParts";
@@ -84,10 +83,10 @@ function buildFallbackPicker(ctx: TreeContext, parent: HTMLElement): FallbackPic
 	const pick = (id: string): void => {
 		void setFallbackCallout(ctx.plugin, id);
 		// Drawn again for the reset arrow, which shows once another fallback is chosen.
-		ctx.display();
+		ctx.redraw();
 	};
 	// Refused while paused; the redraw then puts the saved fallback back.
-	const onChange = refuseWhilePaused(ctx.plugin.settingsWriter, pick, () => ctx.display());
+	const onChange = refuseWhilePaused(ctx.plugin.settingsWriter, pick, () => ctx.redraw());
 	const picker = createFallbackPicker(ctx.plugin, parent, onChange);
 	return { el: picker.el, picker, dispose: () => picker.destroy() };
 }
@@ -104,8 +103,8 @@ function languageRow(ctx: TreeContext): CsRender {
 	const plugin = ctx.plugin;
 	const choose = refuseWhilePaused(
 		plugin.settingsWriter,
-		(pref: string) => { void applyLanguagePreference(plugin, pref, () => ctx.display()); },
-		() => ctx.display(),
+		(pref: string) => { void applyLanguagePreference(plugin, pref, () => ctx.redraw()); },
+		() => ctx.redraw(),
 	);
 	return {
 		id: GENERAL_ROWS.language,
@@ -139,7 +138,7 @@ function missingLanguageRow(ctx: TreeContext): CsRender {
 		cta: true,
 		busy: () => languageDownloading(plugin),
 		// Downloading saves nothing to the settings, so it works while paused.
-		onClick: () => retryLanguageDownload(plugin, () => ctx.display()),
+		onClick: () => retryLanguageDownload(plugin, () => ctx.redraw()),
 	});
 	return {
 		...row,

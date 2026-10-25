@@ -2,9 +2,8 @@
  * settings/styleSpecs.ts — the sliders of each role's vault-wide style,
  * written down once, as data.
  *
- * Who calls it. The per-role style window (GlobalStyleModal.ts) and the
- * declarative style pages (declarative/stylePages.ts): both build their
- * sliders from these, so a range, a step or a unit is never written twice.
+ * Who calls it. The style pages (declarative/stylePages.ts), which build every
+ * slider from these, so a range, a step or a unit is written once.
  *
  * The main idea. A slider is described by what it changes (`get` and `set` on
  * the settings, given the live settings object every time, never a copy) and

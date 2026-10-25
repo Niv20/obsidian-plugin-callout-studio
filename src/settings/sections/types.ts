@@ -1,3 +1,11 @@
+/**
+ * settings/sections/types.ts — the two types every settings module shares.
+ *
+ * - `SettingsTabPlugin`: the part of the plugin the settings may use. Written
+ *   as its own type, not as the plugin class, so a test can hand over a small
+ *   object with just these members, and so this folder never imports main.ts.
+ * - `SettingsContext`: what a settings flow is handed to do its work.
+ */
 import type { SettingsAdoptionOptions } from "../../manager/settingsAdopt";
 import type { App, Plugin, PluginManifest } from "obsidian";
 import type { CalloutRegistry } from "../../manager/CalloutRegistry";
@@ -18,6 +26,7 @@ import type {
 	PluginSettings,
 } from "../../types";
 
+/** The plugin, as far as the settings are concerned (see the module header). */
 export type SettingsTabPlugin = Plugin & {
 	registry: CalloutRegistry;
 	cssInjector: CSSInjector;
@@ -62,12 +71,18 @@ export type SettingsTabPlugin = Plugin & {
 	runVaultScan(): Promise<number>;
 };
 
-export type SettingsSectionContext = {
+/**
+ * What the settings' flows are handed: the rows, the ⋮ menu's actions, the
+ * import, export and reset flows. The settings tab builds one
+ * (declarative/declarativeSettings.ts); tests build small ones by hand.
+ */
+export type SettingsContext = {
 	app: App;
 	plugin: SettingsTabPlugin;
-	display: () => void;
-	/** Reveal a newly created row even when it sorts beyond the first page. */
+	/** Draw the settings again, after a change the pages must show. */
+	redraw: () => void;
+	/** Open My callout types and flash a callout's row (after a duplicate, say). */
 	revealCallout?: (def: CalloutDefinition) => void;
-
+	/** Run `dispose` when the user leaves the settings tab. */
 	registerDisposer: (dispose: () => void) => void;
 };

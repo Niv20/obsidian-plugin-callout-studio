@@ -7,7 +7,7 @@
  * `customCommands` exactly as the file gave them — **empty arrays when the file
  * said nothing** — because a validator reading a file cannot know what the vault
  * already holds. Everything therefore rests on the caller merging by id, and
- * that call used to live entirely inside `DataManagementSection.applyImport`,
+ * that call used to live entirely inside `backupImport.applyImport`,
  * behind a live registry, a live plugin and a modal. It was the one rule in the
  * import path that no test could reach, which is exactly the wrong rule to
  * leave unreachable: getting it wrong is not a visible error, it is the user's
@@ -225,7 +225,7 @@ describe("mergePalettes — a name is how the user tells palettes apart", () => 
 });
 
 describe("the importer still uses it — for all three lists", () => {
-	const source = readRepoFile("src/settings/sections/DataManagementSection.ts");
+	const source = readRepoFile("src/settings/sections/backupImport.ts");
 
 	it("routes three lists through their merge when applied", () => {
 		// Budget checks may also compute a prospective merge. Pin each applied

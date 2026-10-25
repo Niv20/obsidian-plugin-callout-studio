@@ -20,7 +20,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { keepHeadingInPlace } from "../src/settings/sections/foldAnchor";
+import { keepHeadingInPlace } from "../src/ui/foldAnchor";
 import { installFakeDom } from "./support/fakeDom";
 
 installFakeDom();

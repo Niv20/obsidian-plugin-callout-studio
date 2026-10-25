@@ -1,5 +1,5 @@
 /**
- * settings/sections/LanguageSection.ts — the plugin's interface language.
+ * settings/sections/languagePicker.ts — the plugin's interface language.
  *
  * Who calls it. The settings page's Language row and the row under it that
  * offers a retry when a language is not downloaded (declarative/generalRows.ts).

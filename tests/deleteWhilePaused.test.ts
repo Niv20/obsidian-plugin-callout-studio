@@ -9,7 +9,7 @@ import { describe, it } from "node:test";
 import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { handleCalloutDelete } from "../src/settings/sections/calloutVaultActions";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import type { SettingsContext } from "../src/settings/sections/types";
 import { en } from "../src/i18n/en";
 import { definition } from "./support/discoveryHarness";
 import { savingWriter, stubConfirm } from "./support/importSafetyStubs";
@@ -33,9 +33,9 @@ function setup() {
 		},
 	} } as unknown as App;
 	const writer = savingWriter();
-	const ctx = { app, display: () => {}, plugin: {
+	const ctx = { app, redraw: () => {}, plugin: {
 		registry, settingsWriter: writer, saveSettings: () => Promise.resolve(), refreshCallouts: () => {},
-	} } as unknown as SettingsSectionContext;
+	} } as unknown as SettingsContext;
 	return { ctx, def, registry, contents, writer, notices };
 }
 

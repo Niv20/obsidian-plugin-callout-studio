@@ -129,7 +129,7 @@ describe("a callout row", () => {
 		const ctx: TreeContext = {
 			app: {} as never,
 			plugin: { app: {}, registry, get settings() { return registry.settings; }, settingsWriter: { isFrozen: false } } as never,
-			display: () => {},
+			redraw: () => {},
 			registerDisposer: () => {},
 			rows,
 			parts: new PersistentParts(() => {}),

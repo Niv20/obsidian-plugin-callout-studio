@@ -23,7 +23,7 @@ import type { FakeElement } from "./support/fakeDom";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CalloutCombobox } from "../src/settings/calloutCombobox";
 import { buildCalloutRow } from "../src/settings/command/calloutRow";
-import { createFallbackPicker, setFallbackCallout } from "../src/settings/sections/FallbackSection";
+import { createFallbackPicker, setFallbackCallout } from "../src/settings/sections/fallbackPicker";
 import { ListboxPopup } from "../src/ui/listboxPopup";
 import type { CalloutDefinition, PluginData } from "../src/types";
 

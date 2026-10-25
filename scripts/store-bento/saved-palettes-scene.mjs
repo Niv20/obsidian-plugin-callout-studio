@@ -1,7 +1,7 @@
 /** Native saved-palette rows with synthetic solid, transparent and gradient colors. */
 import { installDomHelpers } from "obsidian";
 import { setLocale } from "../../src/i18n/index.ts";
-import { renderCustomPalettesSection } from "../../src/settings/sections/CustomPalettesSection.ts";
+import { renderCustomPalettesSection } from "../../src/settings/sections/paletteFlows.ts";
 import { derivePaletteFromColor } from "../../src/utils/colorUtils.ts";
 import { makeHost, settingsContext } from "../user-guide/fixture-host.mjs";
 

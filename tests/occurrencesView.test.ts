@@ -12,7 +12,7 @@ import { QUICK_INSERT_ICON_ID, STATISTICS_ICON_ID } from "../src/icons/uiIcons";
 import { getLocale, setLocale, t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CalloutCombobox } from "../src/settings/calloutCombobox";
-import { createFallbackPicker, setFallbackCallout } from "../src/settings/sections/FallbackSection";
+import { createFallbackPicker, setFallbackCallout } from "../src/settings/sections/fallbackPicker";
 import { FakeElement, installFakeDom } from "./support/fakeDom";
 import { notifySidebarEditorSelection } from "../src/ui/sidebarSelection";
 import { createdMenus, type Menu } from "./support/obsidianStub";

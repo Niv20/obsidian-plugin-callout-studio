@@ -40,7 +40,7 @@ import { blockedWhilePaused } from "../pausedGuard";
 import { noticeWithUndo, noticeWithUndoAction } from "../rewriteUndoNotice";
 import { NoteRewriteJournal } from "../../utils/noteRewriteUndo";
 import type { CalloutDefinition, IconSvgCacheEntry } from "../../types";
-import type { SettingsSectionContext } from "./types";
+import type { SettingsContext } from "./types";
 
 /**
  * Count the notes that use `def` right now, or null when some could not be
@@ -48,7 +48,7 @@ import type { SettingsSectionContext } from "./types";
  * never taken for "unused": for Delete that would skip the question.
  */
 async function countUsagesNow(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): Promise<{ fileCount: number; totalCount: number } | null> {
 	try {
@@ -69,7 +69,7 @@ export interface DeletedCallout {
 }
 
 export async function handleCalloutDelete(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): Promise<void> {
 	// While saving is paused the removal would be lost on restart: the type
@@ -129,7 +129,7 @@ export async function handleCalloutDelete(
 	// Notes keep their `[!id]`, and they look different now: repaint them.
 	ctx.plugin.refreshCallouts();
 	if (deleted.wasFallback) refreshOccurrencesViewAppearance(ctx.plugin);
-	ctx.display();
+	ctx.redraw();
 	noticeWithUndoAction(t("notice.calloutDeleted", { name: current.displayName }), () => {
 		void restoreDeletedCallout(ctx, deleted);
 	});
@@ -137,7 +137,7 @@ export async function handleCalloutDelete(
 
 /** Undo for Delete: the type, its artwork, and its place as the fallback. */
 export async function restoreDeletedCallout(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	deleted: DeletedCallout,
 ): Promise<void> {
 	if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
@@ -170,11 +170,11 @@ export async function restoreDeletedCallout(
 	await ctx.plugin.saveSettings();
 	ctx.plugin.refreshCallouts();
 	if (deleted.wasFallback) refreshOccurrencesViewAppearance(ctx.plugin);
-	ctx.display();
+	ctx.redraw();
 }
 
 /** The confirmation's last line: who keeps the type once its uses are gone. */
-function typeStaysLine(ctx: SettingsSectionContext, def: CalloutDefinition): string {
+function typeStaysLine(ctx: SettingsContext, def: CalloutDefinition): string {
 	if (def.builtIn) return t("deleteModal.keepsRowBuiltIn");
 	// Named only when the theme is the reason the type survives. A callout of
 	// the user's own stays because nothing removes it, and blaming the theme —
@@ -185,7 +185,7 @@ function typeStaysLine(ctx: SettingsSectionContext, def: CalloutDefinition): str
 }
 
 export async function handleClearCalloutUsages(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): Promise<void> {
 	const usage = await countUsagesNow(ctx, def);
@@ -219,11 +219,11 @@ export async function handleClearCalloutUsages(
 		blocks: String(result.blocks),
 		files: String(result.files),
 	}), journal);
-	ctx.display();
+	ctx.redraw();
 }
 
 export async function handleCalloutReplace(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	def: CalloutDefinition,
 ): Promise<void> {
 	const allIds = ctx.plugin.registry.vaultIdFormsFor(def);
@@ -274,5 +274,5 @@ export async function handleCalloutReplace(
 	} else {
 		new Notice(t("vault.filesUpdated", { count: "0" }));
 	}
-	ctx.display();
+	ctx.redraw();
 }

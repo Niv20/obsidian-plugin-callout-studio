@@ -1,5 +1,5 @@
 /**
- * settings/sections/foldAnchor.ts — fold a section without its heading
+ * ui/foldAnchor.ts — fold a section without its heading
  * jumping away from under the pointer.
  *
  * Who calls it. The version details table (recoveryComparisonTable.ts), whose

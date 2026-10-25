@@ -3,8 +3,8 @@
  *
  * Exports comparators and sort functions (sortCalloutsByDisplayName,
  * sortCalloutsById, getSortedCalloutIds) that use Intl.Collator with a
- * locale chain fallback. Used by CalloutRegistry (initial sort on load),
- * CalloutListsSection (display order), and AutoComplete (suggestion order).
+ * locale chain fallback. Used by CalloutRegistry (initial sort on load), the
+ * settings' callout lists (display order), and AutoComplete (suggestion order).
  */
 import type { CalloutDefinition } from "../types";
 

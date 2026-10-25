@@ -1,6 +1,6 @@
 /**
- * settings/declarative/commandsPage.ts — Commands and shortcuts, as a settings
- * page in place of its window (CommandBuilderModal.ts).
+ * settings/declarative/commandsPage.ts — the Commands and shortcuts settings
+ * page.
  *
  * Who calls it. The settings tab, for the main page's Menus and commands box
  * ({@link commandsPage}).
@@ -79,7 +79,7 @@ function yourCommandsList(ctx: TreeContext): CsList {
 	const writer = plugin.settingsWriter;
 	const commands = plugin.customCommands.list();
 	/** Draw the page again once a flow has changed something. */
-	const redrawIf = (changed: boolean): void => { if (changed) ctx.display(); };
+	const redrawIf = (changed: boolean): void => { if (changed) ctx.redraw(); };
 	return {
 		type: "list",
 		id: COMMANDS_PAGE.mine,
@@ -143,7 +143,7 @@ function builtInCommandsBox(ctx: TreeContext): CsGroup {
 		id: COMMANDS_PAGE.builtIn,
 		heading,
 		extraButtons: [boxResetButton(ctx.plugin.settingsWriter, heading, () => {
-			void enableAllFixedCommands(ctx.plugin).then(() => ctx.display());
+			void enableAllFixedCommands(ctx.plugin).then(() => ctx.redraw());
 		})],
 		items: FIXED_COMMAND_IDS.map((id) => fixedCommandRow(ctx, id)),
 	};
@@ -170,7 +170,7 @@ function fixedCommandRow(ctx: TreeContext, id: FixedCommandId): CsRender {
 					.onChange(async (value) => {
 						// Registers or unregisters the command, then saves.
 						await plugin.setFixedCommandEnabled(id, value);
-						ctx.display();
+						ctx.redraw();
 					});
 			});
 			paintBoxReset(group, !allFixedCommandsEnabled(plugin));

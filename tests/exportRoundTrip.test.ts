@@ -54,9 +54,9 @@ import { describe, it } from "node:test";
 import type { App } from "obsidian";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { EXPORT_FORMAT_ID, EXPORT_FORMAT_VERSION } from "../src/manager/CalloutRegistry";
-import { processImportedJSON } from "../src/settings/sections/DataManagementSection";
+import { processImportedJSON } from "../src/settings/sections/backupImport";
 import { validateImportPayload } from "../src/utils/importValidator";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import type { SettingsContext } from "../src/settings/sections/types";
 import { memoryVault, PLUGIN_MANIFEST, savingWriter, stubConfirm } from "./support/importSafetyStubs";
 import type {
 	CalloutDefinition,
@@ -309,7 +309,7 @@ function emptyVaultOfSameEra(): CalloutRegistry {
 stubConfirm(true);
 
 interface ImportRun {
-	ctx: SettingsSectionContext;
+	ctx: SettingsContext;
 	/** Notices raised, in order — the only user-facing result of an import. */
 	notices: string[];
 	/** Files written through the vault: the pre-import backup lands here. */
@@ -371,11 +371,11 @@ function importRun(registry: CalloutRegistry): ImportRun {
 	const ctx = {
 		app: {} as App,
 		plugin,
-		display: () => {
+		redraw: () => {
 			calls.displays++;
 		},
 		registerDisposer: () => {},
-	} as unknown as SettingsSectionContext;
+	} as unknown as SettingsContext;
 
 	return { ctx, notices, calls, files: vault.files };
 }

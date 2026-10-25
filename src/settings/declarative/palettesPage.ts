@@ -8,8 +8,8 @@
  * gives every palette Obsidian's ✕ (and the Delete key), a + that adds one,
  * and a grey row when there is none. A palette's row starts with its colours,
  * because a palette is its colours, then its name and ✎. Every change goes
- * through the old page's flows (sections/CustomPalettesSection.ts), so ✕
- * still asks first and says how many callouts link to the palette.
+ * through the palette flows (sections/paletteFlows.ts), so ✕ asks first and
+ * says how many callouts link to the palette.
  *
  * While saving is paused nothing changes: + and ✕ (and the Delete key) say
  * why and do nothing, and ✎ is dimmed and says why when pressed.
@@ -22,7 +22,7 @@ import {
 	editPalette,
 	renderPaletteSwatches,
 	sortedPalettes,
-} from "../sections/CustomPalettesSection";
+} from "../sections/paletteFlows";
 import { addBlockableIconButton } from "../../ui/blockedButton";
 import { refuseWhilePaused } from "./pausedGuards";
 import { countValue, pausedReason } from "./rowParts";
@@ -47,7 +47,7 @@ export function palettesPage(ctx: TreeContext): CsPage {
 /** The list of palettes, A→Z, with Obsidian's +, ✕ and empty row. */
 function paletteList(ctx: TreeContext, palettes: readonly CustomPalette[]): CsList {
 	const writer = ctx.plugin.settingsWriter;
-	const redraw = (): void => ctx.display();
+	const redraw = (): void => ctx.redraw();
 	return {
 		type: "list",
 		id: PALETTES_PAGE.list,
@@ -82,7 +82,7 @@ function paletteRow(ctx: TreeContext, palette: CustomPalette): CsRender {
 				icon: "pencil",
 				label: t("settings.editPaletteAria", { name: palette.name }),
 				blockedReason: () => pausedReason(ctx.plugin.settingsWriter),
-				onClick: () => { void editPalette(ctx, palette, () => ctx.display()); },
+				onClick: () => { void editPalette(ctx, palette, () => ctx.redraw()); },
 			});
 			// The colours sit outside the controls, which a redraw empties, so
 			// the row's cleanup takes them away before the next draw.

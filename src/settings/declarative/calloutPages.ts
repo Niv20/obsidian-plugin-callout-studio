@@ -13,7 +13,7 @@
  *   and below it a box with Scan for callouts. The rows are in the settings
  *   search, found by name or by any of the callout's ids.
  * - Each row is drawn by `drawCalloutRow` (sections/CalloutRowRenderer.ts),
- *   the same row as on the old page, with the same ✎ and ⋮.
+ *   with its ✎ and ⋮.
  * - While saving is paused the rows stay as they are; only ✎ is dimmed (it
  *   says why when pressed). ⋮ still opens, so Find callouts works, and the
  *   menu's own changes refuse with a reason. + and Scan say why too.
@@ -26,7 +26,7 @@ import { CalloutEditor } from "../CalloutEditor";
 import { openCalloutEditorFor } from "../openCalloutEditor";
 import { openBuiltInRowMenu, openRowMenu } from "../sections/CalloutRowActions";
 import { drawCalloutRow, type RowRendererHandlers } from "../sections/CalloutRowRenderer";
-import { runManualScan, scanRunning } from "../sections/manualDiscoveryButton";
+import { runManualScan, scanRunning } from "../sections/manualScan";
 import { partitionCallouts, type RowKind } from "../sections/rowOwnership";
 import { refuseWhilePaused } from "./pausedGuards";
 import { countValue, pausedReason } from "./rowParts";
@@ -65,7 +65,7 @@ export function calloutRowHandlers(ctx: TreeContext): RowRendererHandlers {
  */
 async function editCallout(ctx: TreeContext, def: CalloutDefinition): Promise<void> {
 	await openCalloutEditorFor(ctx.plugin, def);
-	ctx.display();
+	ctx.redraw();
 }
 
 /** A callout row's id: its key, and the name a jump to it uses. */
@@ -170,9 +170,9 @@ function scanRow(ctx: TreeContext): CsAction {
  */
 async function scanAndRedraw(ctx: TreeContext): Promise<void> {
 	const scan = runManualScan(ctx.plugin);
-	ctx.display();
+	ctx.redraw();
 	await scan;
-	ctx.display();
+	ctx.redraw();
 }
 
 /* ---- Add new callout ---- */
@@ -193,5 +193,5 @@ function addNewCallout(ctx: TreeContext): () => void {
 
 async function createCallout(ctx: TreeContext): Promise<void> {
 	await new CalloutEditor(ctx.plugin).openAndWait();
-	ctx.display();
+	ctx.redraw();
 }

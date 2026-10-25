@@ -58,7 +58,7 @@ export interface ButtonRowSpec {
 	registerIn?: RowRegistry;
 	/**
 	 * What a press does. A flow that returns its promise keeps Obsidian's
-	 * spinner on the button until it finishes, as the old page's Reset did.
+	 * spinner on the button until it finishes (Reset everything does).
 	 */
 	onClick(): void | Promise<void>;
 }

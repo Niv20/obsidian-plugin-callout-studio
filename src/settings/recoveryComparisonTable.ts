@@ -24,7 +24,7 @@
 import { setIcon, type Component } from "obsidian";
 import { t } from "../i18n";
 import type { RecoveryItem, RecoveryReport, RecoverySection, RecoverySideName } from "./recoveryModel";
-import { keepHeadingInPlace } from "./sections/foldAnchor";
+import { keepHeadingInPlace } from "../ui/foldAnchor";
 import { appendFaintCount } from "../ui/faintCount";
 
 /** Give the loading state and input events a turn between batches. */

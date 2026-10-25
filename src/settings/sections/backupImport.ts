@@ -1,5 +1,5 @@
 /**
- * settings/sections/DataManagementSection.ts — importing a Callout Studio
+ * settings/sections/backupImport.ts — importing a Callout Studio
  * backup.
  *
  * Who calls it. The Import from window (ImportSourceModal.ts), once a backup
@@ -22,7 +22,7 @@ import { userImagesFitResourceBudget } from "../../utils/userImages";
 import { addImportedCallout, applyImportedCallout } from "../../utils/importedCallout";
 import { writeSettingsBackup } from "../../manager/settingsBackup";
 import { blockedWhilePaused } from "../pausedGuard";
-import type { SettingsSectionContext } from "./types";
+import type { SettingsContext } from "./types";
 
 /**
  * Parses and applies a Callout Studio JSON export. Takes an already-chosen
@@ -33,7 +33,7 @@ import type { SettingsSectionContext } from "./types";
  * unreliable for actually showing Chromium's file chooser.
  */
 export async function processImportedJSON(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	file: File,
 ): Promise<void> {
 	let parsed: unknown;
@@ -205,7 +205,7 @@ export async function processImportedJSON(
 	await ctx.plugin.saveSettings();
 	if (ctx.plugin.settingsWriter.persists?.(ctx.plugin.registry.toSaveData()) === false) {
 		new Notice(t("import.notSaved"), 10000);
-		ctx.display();
+		ctx.redraw();
 		return;
 	}
 
@@ -220,7 +220,7 @@ export async function processImportedJSON(
 		} else {
 			new Notice(t("notice.importedJSON", { count: imported }));
 		}
-		ctx.display();
+		ctx.redraw();
 		// An imported callout can name an icon from a source this vault has
 		// never downloaded, and the file carries no artwork. Fetch whatever
 		// is missing rather than leaving those callouts undrawable. One that
@@ -231,7 +231,7 @@ export async function processImportedJSON(
 		);
 	} else if (settingsImported) {
 		new Notice(t("notice.importedSettings"));
-		ctx.display();
+		ctx.redraw();
 	} else {
 		new Notice(t("notice.noNewJSON"));
 	}

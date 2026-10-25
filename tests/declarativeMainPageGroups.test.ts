@@ -30,7 +30,7 @@ function treeContext(options: { paused?: boolean; recovery?: boolean } = {}): Tr
 	return {
 		app: {} as never,
 		plugin: plugin as never,
-		display: () => {},
+		redraw: () => {},
 		registerDisposer: () => {},
 		rows: new RowRegistry(),
 		parts: new PersistentParts(() => {}),

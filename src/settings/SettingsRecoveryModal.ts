@@ -3,7 +3,7 @@
  * Callout Studio can find, newest first, and a way back to each.
  *
  * Who calls it. The Version history button in the settings
- * (sections/DataManagementSection.ts).
+ * (sections/backupImport.ts).
  *
  * Versions come from three places: this device's history (IndexedDB, survives
  * uninstall), the backups folder beside the settings file (synced), and stray

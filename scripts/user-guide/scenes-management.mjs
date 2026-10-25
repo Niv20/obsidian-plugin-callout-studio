@@ -12,7 +12,7 @@ import { CustomCommandManager } from "../../src/editor/CustomCommandManager.ts";
 import { ImportSourceModal } from "../../src/settings/ImportSourceModal.ts";
 import { ExportFormatModal } from "../../src/settings/ExportFormatModal.ts";
 import { addItems } from "../../src/editor/contextmenu/items.ts";
-import { renderLanguageSection } from "../../src/settings/sections/LanguageSection.ts";
+import { renderLanguageSection } from "../../src/settings/sections/languagePicker.ts";
 import { createCalloutListsController } from "../../src/settings/sections/CalloutListsSection.ts";
 import { renderCalloutRow } from "../../src/settings/sections/CalloutRowRenderer.ts";
 import { freshPaging } from "../../src/settings/sections/calloutListsSignature.ts";
@@ -224,7 +224,7 @@ function commandEditor(plugin) {
 function languageSelector(plugin) {
 	return mountSettings(plugin, {
 		title: "Choose the interface language",
-		description: "The production LanguageSection opens Obsidian's own menu listing every supported language under its native name, with a check mark beside the language shown. Only the language settings section is shown; the shorter dark-mode panel crops the menu after its first options.",
+		description: "The production languagePicker opens Obsidian's own menu listing every supported language under its native name, with a check mark beside the language shown. Only the language settings section is shown; the shorter dark-mode panel crops the menu after its first options.",
 		render(panel, ctx) {
 			renderLanguageSection(ctx, panel);
 			panel.style.height = "420px";

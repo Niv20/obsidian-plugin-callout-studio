@@ -16,7 +16,7 @@ import {
 	handleCalloutReplace,
 	handleClearCalloutUsages,
 } from "../src/settings/sections/calloutVaultActions";
-import type { SettingsSectionContext } from "../src/settings/sections/types";
+import type { SettingsContext } from "../src/settings/sections/types";
 import { ReplaceCalloutModal } from "../src/utils/ReplaceCalloutModal";
 import { canUndo, keepForUndo, NoteRewriteJournal, undoNoteRewrite } from "../src/utils/noteRewriteUndo";
 import { en } from "../src/i18n/en";
@@ -44,10 +44,10 @@ function vault(notes: Record<string, string>) {
 	const def = definition({ id: "owned", displayName: "Owned" });
 	registry.add(def);
 	let saves = 0;
-	const ctx = { app, display: () => {}, plugin: {
+	const ctx = { app, redraw: () => {}, plugin: {
 		registry, settingsWriter: savingWriter(), saveSettings: () => { saves++; return Promise.resolve(); },
 		refreshCallouts: () => {},
-	} } as unknown as SettingsSectionContext;
+	} } as unknown as SettingsContext;
 	return { app, ctx, def, registry, contents, get saves() { return saves; } };
 }
 

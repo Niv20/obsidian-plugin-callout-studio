@@ -45,7 +45,7 @@ function drawMenu(plugin: object) {
 	const ctx: TreeContext = {
 		app: {} as never,
 		plugin: plugin as never,
-		display: () => { redraws++; tab.update(); },
+		redraw: () => { redraws++; tab.update(); },
 		registerDisposer: () => {},
 		rows: new RowRegistry(),
 		parts: new PersistentParts(() => {}),

@@ -1,6 +1,6 @@
 /**
- * settings/declarative/menuPage.ts — Customize right-click menu, as a settings
- * page in place of its window (MenuCustomizationModal.ts).
+ * settings/declarative/menuPage.ts — the Customize right-click menu settings
+ * page.
  *
  * Who calls it. The settings tab, for the main page's Menus and commands box
  * ({@link menuPage}).
@@ -71,7 +71,7 @@ function itemsOf(ctx: TreeContext, role: CalloutRenderRole): ContextMenuItemConf
 /** Save the menu, and draw the page again to show it. */
 function saveMenu(ctx: TreeContext): void {
 	void ctx.plugin.saveSettings();
-	ctx.display();
+	ctx.redraw();
 }
 
 /** The items `role`'s menu shows: each with its handle and ✕, and ↺ in the heading. */
@@ -108,7 +108,7 @@ function shownList(ctx: TreeContext, role: CalloutRenderRole): CsList {
 				saveMenu(ctx);
 			},
 			// Obsidian has moved the row already: drawing again puts it back.
-			() => ctx.display(),
+			() => ctx.redraw(),
 		),
 		items: shown.map((item) => itemRow(role, item)),
 	};

@@ -23,7 +23,7 @@
  * excess-property check, so the plugin builds its tree with these local types
  * (prefixed `Cs`) and converts it once, in {@link toObsidianItems}.
  */
-import type { SettingsSectionContext } from "../sections/types";
+import type { SettingsContext } from "../sections/types";
 import type { PersistentParts } from "./persistentParts";
 import type { RowRegistry } from "./rowRegistry";
 import type {
@@ -98,11 +98,11 @@ export type CsList = Omit<SettingDefinitionList, "items"> & WithId & {
 export type CsItem = CsSetting | CsGroup | CsList | CsPage;
 
 /**
- * What every part of the tree is built with: the settings context the old page
- * used (the app, the plugin, a way to redraw), plus the two stores the
- * declarative page needs.
+ * What every part of the tree is built with: the settings context
+ * (sections/types.ts: the app, the plugin, a way to redraw), plus the stores
+ * and jumps the pages need.
  */
-export interface TreeContext extends SettingsSectionContext {
+export interface TreeContext extends SettingsContext {
 	/** Rows the plugin can scroll to and flash (rowRegistry.ts). */
 	rows: RowRegistry;
 	/** Parts that keep their state through a redraw (persistentParts.ts). */

@@ -1,7 +1,3 @@
-import { recoverEditorSaving } from "./editor/recoverEditorSaving";
-import { renderSaveStatusBanner } from "./saveStatusBanner";
-import { addFieldResetButton } from "./editor/fieldResetButton";
-import { addBuiltInIdReset, builtInDefaultIds } from "./editor/builtInIdReset";
 /**
  * settings/CalloutEditor.ts — Modal dialog for creating and editing callouts.
  *
@@ -28,6 +24,10 @@ import {
 import { IconPicker } from "./iconpicker";
 import { LiveCalloutPreview } from "./LiveCalloutPreview";
 import { PREVIEW_PLACEHOLDER_ID } from "../constants";
+import { recoverEditorSaving } from "./editor/recoverEditorSaving";
+import { renderSaveStatusBanner } from "./saveStatusBanner";
+import { addFieldResetButton } from "./editor/fieldResetButton";
+import { addBuiltInIdReset, builtInDefaultIds } from "./editor/builtInIdReset";
 import {
 	bgGradientsEqual,
 	bgTintFor,

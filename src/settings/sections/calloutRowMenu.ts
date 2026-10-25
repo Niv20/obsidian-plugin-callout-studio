@@ -24,7 +24,7 @@ import { Component, Menu, Platform, type App, type Setting } from "obsidian";
 import { t } from "../../i18n";
 import { prepareUsageMenu } from "../../usage/prepareUsageMenu";
 import { onMenuHide } from "../../ui/menuOnHide";
-import type { SettingsSectionContext } from "./types";
+import type { SettingsContext } from "./types";
 
 /**
  * How a row's menu was asked for, which decides where it opens.
@@ -58,7 +58,7 @@ export function isRowMenuActive(app: App): boolean {
  * @param build Adds the row's items to the new menu.
  */
 export async function openCalloutRowMenu(
-	ctx: Pick<SettingsSectionContext, "app" | "registerDisposer">,
+	ctx: Pick<SettingsContext, "app" | "registerDisposer">,
 	trigger: RowMenuTrigger,
 	build: (menu: Menu) => void,
 ): Promise<void> {

@@ -13,8 +13,9 @@
  * - **the updater** (treeUpdater.ts), which asks Obsidian for `update()` at
  *   most once a frame, only when something on the pages has changed (the
  *   signature), and not while the user is in the middle of something;
- * - **the signals** that ask it: the registry and the theme (the same four the
- *   old page listened to), the saving status, and the language's download.
+ * - **the signals** that ask it: the registry and the theme (the four in
+ *   sections/tabSubscriptions.ts), the saving status, and the language's
+ *   download.
  *   They are wired the first time Obsidian asks for the tree, which
  *   `addSettingTab` does while the plugin loads, and undone when it unloads;
  * - **the visit**: Obsidian has no "the tab opened" hook, so a row with
@@ -28,8 +29,8 @@ import { registerMenuScopeHost } from "../../ui/menuEscape";
 import { competitorsToOffer } from "../competitorImportBanner";
 import { isRowMenuActive } from "../sections/calloutRowMenu";
 import { calloutListsSignature } from "../sections/calloutListsSignature";
-import { languageDownloading } from "../sections/LanguageSection";
-import { scanRunning } from "../sections/manualDiscoveryButton";
+import { languageDownloading } from "../sections/languagePicker";
+import { scanRunning } from "../sections/manualScan";
 import { activeThemeLabel, partitionCallouts } from "../sections/rowOwnership";
 import { subscribeSettingsTab } from "../sections/tabSubscriptions";
 import type { SettingsTabPlugin } from "../sections/types";
@@ -78,7 +79,7 @@ export class DeclarativeSettings {
 			plugin: host.plugin,
 			// "Draw the settings again": the parts call it after a change, which
 			// the signature may not see (a scan starting), so it is forced.
-			display: () => this.updater.request(true),
+			redraw: () => this.updater.request(true),
 			revealCallout: (def) => {
 				this.updater.request(true);
 				revealCalloutRow(this.ctx, def);
@@ -155,7 +156,7 @@ export class DeclarativeSettings {
 		};
 	}
 
-	/** What `display()` did when the tab opened, once per visit. */
+	/** Start a visit: what has to happen once each time the tab opens. */
 	private beginVisit(): void {
 		if (this.endVisit) return;
 		const { app, plugin, containerEl } = this.host;

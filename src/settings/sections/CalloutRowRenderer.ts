@@ -57,7 +57,7 @@ import {
 import type { CalloutDefinition } from "../../types";
 import { renderIconInto, renderNoIcon } from "../../icons/renderIcon";
 import { createStatusIconResolver } from "../../icons/resolver";
-import type { SettingsSectionContext } from "./types";
+import type { SettingsContext } from "./types";
 import type { RowKind } from "./rowOwnership";
 import { addThemeRowControls, openThemeRowMenu } from "./themeRowActions";
 import { addRowMenuButton, type RowMenuTrigger } from "./calloutRowMenu";
@@ -90,7 +90,7 @@ export type RowRendererHandlers = {
  *   row gets 👁 instead of ✎, the theme's measured colours, and no tag.
  */
 export function drawCalloutRow(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	setting: Setting,
 	def: CalloutDefinition,
 	kind: RowKind,
@@ -170,7 +170,7 @@ export function drawCalloutRow(
  * theme has temporarily taken over still carries `source: "fallback"`, and so
  * wore *Default fallback* while sitting in the theme's section.
  */
-function rowTag(ctx: SettingsSectionContext, def: CalloutDefinition, fromTheme: boolean): string | null {
+function rowTag(ctx: SettingsContext, def: CalloutDefinition, fromTheme: boolean): string | null {
 	if (fromTheme) return null;
 	if (def.id === ctx.plugin.settings.fallbackCalloutId) return t("settings.fallbackTag");
 	if (def.source === "fallback" && def.customized !== true) return t("settings.fallbackTagAuto");
@@ -204,7 +204,7 @@ function renderIdLine(descEl: HTMLElement, def: CalloutDefinition): void {
  * than a confident wrong colour.
  */
 function renderSwatches(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	controlEl: HTMLElement,
 	def: CalloutDefinition,
 	fromTheme: boolean,
@@ -225,7 +225,7 @@ function renderSwatches(
 }
 
 function renderRowIcon(
-	ctx: SettingsSectionContext,
+	ctx: SettingsContext,
 	container: HTMLElement,
 	def: CalloutDefinition,
 ): void {

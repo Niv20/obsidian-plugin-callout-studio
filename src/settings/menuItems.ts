@@ -2,9 +2,9 @@
  * settings/menuItems.ts — the right-click menu's items as the settings show
  * and change them.
  *
- * Who calls it. The right-click menu window (MenuCustomizationModal.ts), the
- * declarative page of the same name (declarative/menuPage.ts), and the version
- * comparison (recoveryCollections.ts), which names the items the same way.
+ * Who calls it. The Customize right-click menu settings page
+ * (declarative/menuPage.ts), and the version comparison
+ * (recoveryCollections.ts), which names the items the same way.
  *
  * The main idea. Each role keeps an ordered list of `{ id, enabled }`
  * (`settings.contextMenu.items[role]`). The items that are on come first, in

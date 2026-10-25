@@ -149,15 +149,14 @@ describe("drag reorder gesture lifetime", () => {
 	});
 
 	for (const reducedMotion of [false, true]) {
-		it(`reorders repeatedly within enabled/disabled bands with reduced motion ${reducedMotion}`, () => {
-			const h = dragSortHarness({ reducedMotion, groups: [false, false, true, true] });
+		it(`reorders repeatedly, end to end, with reduced motion ${reducedMotion}`, () => {
+			const h = dragSortHarness({ reducedMotion });
 			try {
 				for (let i = 0; i < 4; i++) {
 					h.down(h.rows[0]!);
 					h.move(i % 2 === 0 ? 500 : -100);
 					h.up();
 					assert.deepEqual(h.model, h.order());
-					assert.deepEqual(h.order().slice(2), ["c", "d"]);
 					h.finishAnimations();
 				}
 				assert.equal(h.moves.length, 4);
@@ -201,13 +200,13 @@ describe("drop placeholder", () => {
 		} finally { h.cleanup(); }
 	});
 
-	it("stops where the row stops: at the end of its own band", () => {
-		const h = dragSortHarness({ groups: [false, false, true, true] });
+	it("stops where the row stops: at the end of the list", () => {
+		const h = dragSortHarness();
 		try {
 			h.down(h.rows[0]!);
 			h.move(500);
-			assert.deepEqual(h.order(), ["b", "a", "c", "d"]);
-			assert.equal(h.slot(h.placeholders()[0]!).top, 40);
+			assert.deepEqual(h.order(), ["b", "c", "d", "a"]);
+			assert.equal(h.slot(h.placeholders()[0]!).top, 120);
 		} finally { h.cleanup(); }
 	});
 

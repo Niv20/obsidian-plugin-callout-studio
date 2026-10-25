@@ -39,7 +39,7 @@ import { markCompetitorImportBannerHandled } from "../competitorImportState";
 import { addCancelButton, applyModalChrome, removeModalChrome } from "../modalChrome";
 import { blockedWhilePaused } from "../pausedGuard";
 import { writeSettingsBackup } from "../../manager/settingsBackup";
-import type { SettingsSectionContext } from "../sections/types";
+import type { SettingsContext } from "../sections/types";
 import {
 	activeOption,
 	canImport,
@@ -71,7 +71,7 @@ export class PluginImportModal extends Modal {
 	private view: OptionsView | null = null;
 
 	constructor(
-		private readonly ctx: SettingsSectionContext,
+		private readonly ctx: SettingsContext,
 		private readonly source: PluginImportSource,
 	) {
 		super(ctx.app);
@@ -430,7 +430,7 @@ export class PluginImportModal extends Modal {
 		if (this.ctx.plugin.settingsWriter.persists?.(this.ctx.plugin.registry.toSaveData()) === false) {
 			new Notice(t("import.notSaved"), 10000);
 		} else new Notice(t(this.source.copy.notice, { created, updated }));
-		this.ctx.display();
+		this.ctx.redraw();
 		this.close();
 		plan.afterApply?.();
 	}

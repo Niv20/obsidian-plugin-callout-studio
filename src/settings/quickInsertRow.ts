@@ -1,10 +1,9 @@
 /**
  * settings/quickInsertRow.ts — one row of the quick-insert window.
  *
- * Split from `QuickInsertModal` on the same line `CalloutRowRenderer` is split
- * from `CalloutListsSection`: the window owns the state — what is searched, what
- * is filtered, what the arrow keys are pointing at — and this owns what a single
- * callout looks like while that is going on.
+ * Split from `QuickInsertModal`: the window owns the state — what is searched,
+ * what is filtered, what the arrow keys are pointing at — and this owns what a
+ * single callout looks like while that is going on.
  *
  * **The row is a real rendered callout with the controls beside it, never
  * inside it.** Buttons within the callout box would read as its content — as

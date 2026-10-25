@@ -1,5 +1,5 @@
 /**
- * settings/sections/FallbackSection.ts — the Default fallback callout's picker.
+ * settings/sections/fallbackPicker.ts — the Default fallback callout's picker.
  *
  * Who calls it. The settings page's Default fallback callout row
  * (declarative/generalRows.ts).

@@ -14,18 +14,18 @@
  */
 import { Modal, SettingGroup } from "obsidian";
 import { t } from "../i18n";
-import { processImportedJSON } from "./sections/DataManagementSection";
+import { processImportedJSON } from "./sections/backupImport";
 import { applyModalChrome } from "./modalChrome";
 import { addChoiceRow, type ChoiceRowSpec } from "./choiceRow";
 import { PluginImportModal } from "./pluginImport/PluginImportModal";
 import { ADMONITION_IMPORT } from "./pluginImport/admonitionImportSource";
 import { CALLOUT_MANAGER_IMPORT } from "./pluginImport/calloutManagerImportSource";
-import type { SettingsSectionContext } from "./sections/types";
+import type { SettingsContext } from "./sections/types";
 
 export class ImportSourceModal extends Modal {
 	private fileInput!: HTMLInputElement;
 
-	constructor(private readonly ctx: SettingsSectionContext) {
+	constructor(private readonly ctx: SettingsContext) {
 		super(ctx.app);
 	}
 
