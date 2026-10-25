@@ -73,23 +73,21 @@ interface Host {
 	self: CalloutStudioPlugin;
 	/** Every `addCommand` payload, in order. */
 	added: Command[];
-	/** How many times the settings tab was re-rendered. */
-	displays: () => number;
+	/** How many times the settings tab was asked to draw again (`update()`). */
+	updates: () => number;
 	/** How many times the two preview modes were rebuilt. */
 	renders: () => number;
 	/** How many times the user's own commands were swept. */
 	sweeps: () => number;
 	noticeRefreshes: () => number;
 	settings: PluginSettings;
-	/** Detach the settings tab, as Obsidian does when the pane is closed. */
-	closeSettings: () => void;
 	/** Drop the settings tab entirely, as at startup before it is built. */
 	dropSettings: () => void;
 }
 
 function host(): Host {
 	const added: Command[] = [];
-	let displays = 0;
+	let updates = 0;
 	let renders = 0;
 	let sweeps = 0;
 	let noticeRefreshes = 0;
@@ -99,9 +97,8 @@ function host(): Host {
 		settings,
 		refreshMissingSettingsNotice: () => { noticeRefreshes++; },
 		settingsTab: {
-			containerEl: { isConnected: true },
-			display: () => {
-				displays++;
+			update: () => {
+				updates++;
 			},
 		},
 		addCommand: (command: Command) => {
@@ -135,14 +132,11 @@ function host(): Host {
 	return {
 		self: self as unknown as CalloutStudioPlugin,
 		added,
-		displays: () => displays,
+		updates: () => updates,
 		renders: () => renders,
 		sweeps: () => sweeps,
 		noticeRefreshes: () => noticeRefreshes,
 		settings,
-		closeSettings: () => {
-			self.settingsTab.containerEl.isConnected = false;
-		},
 		dropSettings: () => {
 			(self as { settingsTab?: unknown }).settingsTab = undefined;
 		},
@@ -178,7 +172,7 @@ describe("applyLocaleChange re-renders what snapshots translated text", () => {
 
 		applyLocaleChange(h.self);
 
-		assert.strictEqual(h.displays(), 1, "the settings tab was not re-rendered");
+		assert.strictEqual(h.updates(), 1, "the settings tab was not asked to draw again");
 		assert.strictEqual(h.renders(), 1, "the preview modes were not rebuilt");
 		assert.strictEqual(h.sweeps(), 1, "the user's own commands were not swept");
 		assert.strictEqual(h.noticeRefreshes(), 1, "the missing-settings notice kept its old language");
@@ -211,19 +205,6 @@ describe("applyLocaleChange re-renders what snapshots translated text", () => {
 		);
 	});
 
-	it("leaves a detached settings tab alone", () => {
-		// Re-rendering a container no one is looking at throws away work, and
-		// the path where the *user* picked the language re-renders the picker
-		// itself anyway.
-		const h = host();
-		h.closeSettings();
-
-		applyLocaleChange(h.self);
-
-		assert.strictEqual(h.displays(), 0);
-		assert.strictEqual(h.renders(), 1, "the other surfaces still run");
-		assert.strictEqual(h.sweeps(), 1, "the other surfaces still run");
-	});
 
 	it("survives being called before the settings tab exists", () => {
 		// The startup ordering: the background locale pass can land before

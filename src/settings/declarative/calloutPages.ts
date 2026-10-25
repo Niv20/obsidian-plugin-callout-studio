@@ -68,10 +68,16 @@ async function editCallout(ctx: TreeContext, def: CalloutDefinition): Promise<vo
 	ctx.display();
 }
 
+/** A callout row's id: its key, and the name a jump to it uses. */
+export function calloutRowId(def: CalloutDefinition): string {
+	return `callout-${def.id}`;
+}
+
 /**
  * One callout as a row Obsidian keys, names and finds: keyed by the callout's
  * id, named by its display name, and with every id it answers to as `aliases`,
  * so the settings search (and a list's own search) find it by any of them.
+ * The row registers itself, so the settings can jump to it (a duplicate, say).
  */
 export function calloutRow(
 	ctx: TreeContext,
@@ -79,12 +85,29 @@ export function calloutRow(
 	kind: RowKind,
 	handlers: RowRendererHandlers,
 ): CsRender {
+	const id = calloutRowId(def);
 	return {
-		id: `callout-${def.id}`,
+		id,
 		name: def.displayName,
 		aliases: getSortedCalloutIds(def, getLocale()),
-		render: guardRender(def.displayName, (setting) => drawCalloutRow(ctx, setting, def, kind, handlers)),
+		render: guardRender(def.displayName, (setting) => {
+			const undoRow = drawCalloutRow(ctx, setting, def, kind, handlers);
+			const unregister = ctx.rows.register(id, setting.settingEl);
+			return () => {
+				undoRow();
+				unregister();
+			};
+		}),
 	};
+}
+
+/**
+ * Take the reader to `def`'s row in My callout types, for a callout just
+ * made (a duplicate lands there, even one of a theme's callouts). The row
+ * may only be drawn on the next update; the jump waits for it.
+ */
+export function revealCalloutRow(ctx: TreeContext, def: CalloutDefinition): void {
+	ctx.jumpTo(calloutRowId(def), false, [CALLOUT_PAGES.mine]);
 }
 
 /**

@@ -162,9 +162,26 @@ plugin jumps to (the import prompt's **Import**, **Go to version history**, a
 callout just duplicated) register their element under a stable name while they
 are drawn, [`declarative/rowRegistry.ts`](../../src/settings/declarative/rowRegistry.ts),
 and their cleanup removes it. `get(id)` answers only while the element is on
-the page. A part that leads somewhere calls `ctx.jumpTo(rowId, fromKeyboard)`
-(on `TreeContext`) and never looks for the row itself; the jump (open the
-page, scroll, flash) is the deep-links unit's work.
+the page. A part that leads somewhere calls `ctx.jumpTo(rowId, fromKeyboard,
+pagePath?)` (on `TreeContext`) and never looks for the row itself.
+
+The jump is [`declarative/jumpToRow.ts`](../../src/settings/declarative/jumpToRow.ts),
+the way Obsidian shows a settings search result:
+
+- **The page** is opened by `app.setting.openPagePath(tabId, pagePath)`
+  (Obsidian's own, since 1.13; declared optional in `src/types.ts` because it is
+  not in the typings, and checked for: without it the reader stays where they
+  are).
+- **The row** is looked up at once and then on the next frames, for about half
+  a second: a page that slides in, or a callout duplicated a moment ago, is
+  drawn a little later.
+- **The flash** is Obsidian's: `scrollIntoView({ block: "center" })`,
+  `is-flashing` for 750 ms (app.css highlights it), and the focus on the row
+  only when the jump came from a key press.
+
+Callout rows register themselves (`calloutRowId(def)`), so
+`revealCalloutRow(ctx, def)` takes the reader to a callout just made, in My
+callout types (where a duplicate lands, even one of a theme's callouts).
 
 ## The main page, part by part
 

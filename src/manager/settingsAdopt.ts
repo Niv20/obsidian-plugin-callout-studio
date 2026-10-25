@@ -81,7 +81,12 @@ export interface ExternalReloadHost extends SettingsBootHost {
 	refreshThemeAppearance(): void;
 	customCommands: { syncAll(): void };
 	refreshCallouts(): void;
-	settingsTab?: { containerEl: { isConnected: boolean }; display(): void };
+	/**
+	 * Asked to draw itself again. Obsidian draws it only while it is the open
+	 * settings tab, on whichever of its pages is open, so the caller does not
+	 * check (a check of the tab's own element missed an open sub-page).
+	 */
+	settingsTab?: { update(): void };
 
 	registerDomEvent?: (
 		el: Document,
@@ -247,6 +252,6 @@ async function applyExternalSettings(
 	}
 
 	host.refreshCallouts();
-	if (host.settingsTab?.containerEl.isConnected) host.settingsTab.display();
+	host.settingsTab?.update();
 	return true;
 }

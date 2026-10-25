@@ -108,11 +108,13 @@ export interface TreeContext extends SettingsSectionContext {
 	/** Parts that keep their state through a redraw (persistentParts.ts). */
 	parts: PersistentParts;
 	/**
-	 * Scroll to the row registered as `rowId` and flash it, as Obsidian
-	 * flashes a settings search result. `fromKeyboard`: the jump was asked for
-	 * with a key, so the row also takes the focus ring.
+	 * Open the page the row is on, scroll to the row registered as `rowId`
+	 * and flash it, as Obsidian shows a settings search result (jumpToRow.ts).
+	 * `fromKeyboard`: the jump was asked for with a key, so the row also takes
+	 * the focus. `pagePath`: the page's ids from the tab down; the tab's own
+	 * page when left out.
 	 */
-	jumpTo(rowId: string, fromKeyboard: boolean): void;
+	jumpTo(rowId: string, fromKeyboard: boolean, pagePath?: readonly string[]): void;
 }
 
 /**

@@ -525,7 +525,14 @@ device's `data.json` lands - i.e. on every sync round trip - and
 `applyLocaleChange` does the same when a locale finishes downloading. Neither is
 a gesture the reader made, and `display()` empties the container, so both used
 to drop them at the top of a fifteen-section page mid-scroll **and** fold every
-list back to its first 20 rows. Two things answer that:
+list back to its first 20 rows.
+
+Those callers (and the two recovery services) ask `settingsTab.update()` now,
+with no check of their own: Obsidian draws the tab again only while it is the
+open tab, on whichever of its pages is open, which today, with an empty tree,
+means `display()`. The check they used to make, `containerEl.isConnected`, was
+false while a sub-page was open, so a sync landing then was never drawn (review
+B2). Two things answer the scroll and the paging:
 
 - **Scroll.** `display()` reads `containerEl.scrollTop` on entry and writes it
   back after the last section renders - last, because assigning past the end of

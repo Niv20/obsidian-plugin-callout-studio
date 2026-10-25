@@ -112,6 +112,13 @@ declare module "obsidian" {
 		setting: {
 			open(): void;
 			openTabById(id: string): ObsidianSettingTab | null;
+			/**
+			 * Open settings tab `tabId` on one of its pages: `pagePath` is the
+			 * page ids from the tab down (empty for the tab's own page). Since
+			 * 1.13; optional because it is not in the typings, so every caller
+			 * checks for it (settings/declarative/jumpToRow.ts).
+			 */
+			openPagePath?(tabId: string, pagePath: string[]): unknown;
 		};
 		hotkeyManager?: {
 			printHotkeyForCommand?(commandId: string): string;

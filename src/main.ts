@@ -404,8 +404,8 @@ export default class CalloutStudioPlugin extends Plugin {
 	 */
 	applyLocaleChange(): void {
 		this.refreshMissingSettingsNotice();
-		// Only repaint settings while they are on screen.
-		if (this.settingsTab?.containerEl.isConnected) this.settingsTab.display();
+		// Obsidian draws the tab again only while it is on screen.
+		this.settingsTab?.update();
 		refreshFixedCommandNames(this, this.commandDeps());
 		refreshOccurrencesViewLocale(this);
 		refreshPortableConversionViewLocale(this);
