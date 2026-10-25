@@ -41,6 +41,15 @@ jobs:
                       exit 1
                   fi
 
+                  # Obsidian reads this map to decide which app builds may
+                  # take the update, so it must carry the manifest's minimum.
+                  min=$(jq -r .minAppVersion manifest.json)
+                  mapped=$(jq -r --arg v "$tag" '.[$v]' versions.json)
+                  if [ "$mapped" != "$min" ]; then
+                      echo "::error::versions.json maps '$tag' to '$mapped' but manifest.json's minAppVersion is '$min'."
+                      exit 1
+                  fi
+
                   echo "Version files agree on $tag."
 
             - uses: actions/setup-node@v4

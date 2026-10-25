@@ -627,22 +627,32 @@ Bumping `manifest.json`/`package.json`/`versions.json` happens together, via
 ### Raising `minAppVersion`
 
 `minAppVersion` changes in its own commit, just before the release that needs
-it. Until then `manifest.json` keeps the shipped value, because the
-version-file tests (`tests/repoRelease.test.ts`) hold `versions.json` to it.
+it, and only after the plugin was checked on a real install of that version.
+`npm version` then writes the matching `versions.json` entry. Three checks
+keep the two files honest in between:
 
-Code can still start using newer APIs before that commit. The `obsidian`
-typings are pinned to the target version (1.13.1), and a block in
-`scripts/eslint.config.mts` points `obsidianmd/no-unsupported-api` at the same
-version (`minAppVersion: "1.13.1"`), instead of the manifest's. Without it, the
-rule flags every newer API against the old manifest value, including
-`plugin.settings`, which Obsidian 1.13 declares on `Plugin` itself.
+- `tests/repoRelease.test.ts` lets `manifest.json` be *ahead* of the last
+  released entry (a raise waiting for its release), never behind it.
+- `release.yml` refuses a tag whose `versions.json` entry differs from
+  `manifest.json`'s `minAppVersion`, since Obsidian reads the map to decide
+  which app builds may take the update.
+- `obsidianmd/no-unsupported-api` reads the manifest's value, so the lint
+  flags any API newer than the minimum.
 
-The release commit does three things in order:
-1. Checks the plugin on a real install of the target version.
-2. Raises `manifest.json`'s `minAppVersion`.
-3. Deletes that eslint block.
+Code that needs a newer API before the raise has two choices: guard the call
+(`typeof … === "function"`, with a fallback), or point the lint rule at the
+target version in `scripts/eslint.config.mts` until the raise commit deletes
+that override. The `obsidian` typings in `devDependencies` are pinned to an
+exact version no newer than the minimum, so the compiler cannot offer an API
+the minimum lacks.
 
-`npm version` then writes the matching `versions.json` entry.
+The minimum went from 1.7.2 to **1.13.4** for the declarative settings tab
+(`getSettingDefinitions`, `SettingGroup`, `setErrorMessage`,
+`addDisplayValue`, `ConfirmationModal`); 1.13.4 was the first public 1.13
+build. The typings stay at 1.13.1, the version they were written against. One
+API the plugin uses is newer still and is guarded:
+`app.setting.openPagePath` (1.14), which opens a settings sub-page for a
+jump (26 § Jumping to a row).
 
 ## Husky / pre-commit
 

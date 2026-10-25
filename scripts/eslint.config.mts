@@ -28,17 +28,6 @@ export default tseslint.config(
 		},
 	},
 	{
-		// The code now builds on Obsidian 1.13.1 APIs, but manifest.json keeps
-		// the shipped minAppVersion until the release: the release flow expects
-		// minAppVersion to change in its own commit just before releasing, and
-		// the version-file tests hold versions.json to it until then. So the API
-		// check targets 1.13.1 here instead. Delete this block in that commit.
-		files: ["src/**/*.ts", "tests/**/*.ts"],
-		rules: {
-			"obsidianmd/no-unsupported-api": ["error", { minAppVersion: "1.13.1" }],
-		},
-	},
-	{
 		// The recommended config lints package.json/manifest.json (for
 		// validate-manifest) but leaves them without a TS parser. Parse them so
 		// the manifest rules can run, and turn off the type-aware obsidianmd
