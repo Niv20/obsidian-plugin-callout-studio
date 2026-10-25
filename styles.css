@@ -8909,6 +8909,44 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	margin: 0;
 }
 
+/* Obsidian hides a box or a row with `display: none`, but its spacing rules
+   still count it, because they ask for the first child: the box after a
+   hidden first box keeps the 24px gap that goes between boxes, and the first
+   row shown after hidden rows keeps the line that goes between rows. Two
+   places on the main page start that way (declarative/settingsTree.ts): the
+   notices' box, hidden while there is nothing to say, and the callouts box,
+   whose first two rows only a theme with callouts shows. */
+.setting-group.cs-banners[style*="display: none"] + .setting-group {
+	margin-top: 0;
+}
+
+.setting-group.cs-callouts-box > .setting-items > .setting-item::before {
+	content: none;
+}
+
+/* `A ~ B` matches a row with any shown row before it, which is exactly when
+   the line belongs above it. */
+.setting-group.cs-callouts-box > .setting-items > .setting-item:not([style*="display: none"]) ~ .setting-item:not(.setting-item-heading)::before {
+	content: "";
+}
+
+/* A page's opening sentence (declarative/rowParts.ts, pageIntroBox) is
+   Obsidian's own `p.setting-page-desc`. It has to sit in a box and a row, so
+   both draw nothing of their own, and the row's empty parts are left out. */
+.setting-group.cs-page-intro .setting-items {
+	background: none;
+	border: none;
+}
+
+.setting-group.cs-page-intro .setting-item {
+	display: block;
+	padding: 0;
+}
+
+.setting-group.cs-page-intro .setting-item > :not(.setting-page-desc) {
+	display: none;
+}
+
 .cs-competitor-import-banner-message {
 	color: var(--text-normal);
 	font-size: var(--font-ui-small);

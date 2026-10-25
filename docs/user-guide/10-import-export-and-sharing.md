@@ -4,9 +4,9 @@ Callout Studio can migrate data from other callout plugins, import a Callout Stu
 
 ## Import from another plugin
 
-On first installation, Callout Studio checks whether the vault contains **Callout Manager** or **Admonition**. If it finds either one, a welcome banner appears at the top of the settings with a shortcut to the importer.
+On first installation, Callout Studio checks whether the vault contains **Callout Manager** or **Admonition**. If it finds either one, a welcome banner appears at the top of the settings; its **Import** takes you to the **Import callouts** row.
 
-To open the importer yourself, go to **Settings → Callout Studio → Import and export → Import**. The **Import from** window lists **Callout Studio** first, for your own backups, and then **Callout Manager** and **Admonition** under **From another plugin**.
+To open the importer yourself, go to **Settings → Callout Studio → Import and export** and click **Import…** in the **Import callouts** row. The **Import from** window lists **Callout Studio** first, for your own backups, and then **Callout Manager** and **Admonition** under **From another plugin**.
 
 ![The Import from chooser, offering a Callout Studio backup and imports from Callout Manager or Admonition](../../assets/user-guide/import-source.svg)
 

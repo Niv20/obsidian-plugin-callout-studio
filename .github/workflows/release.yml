@@ -179,9 +179,14 @@ jobs:
             # of it: 2.0 KB over the build before the stage so far, and the
             # rest of the stage lands inside the headroom. The Clean Sweep
             # after the declarative settings tab deletes the old tab code.
+            # Raised by 32 KiB, for now, at the switch to the declarative
+            # settings tab: the new tree (src/settings/declarative/, about
+            # 26 KB) ships while the old page (display() and sections/) stays
+            # as its fallback. The Clean Sweep deletes the old page and lowers
+            # this again.
             - name: Check bundle size
               run: |
-                  limit=2355200  # 2 MiB + 252 KiB
+                  limit=2387968  # 2 MiB + 284 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

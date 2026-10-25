@@ -1,10 +1,14 @@
 # Global styling
 
-Global styling gives every Callout Studio callout a consistent shape and layout. Open the plugin settings and find **Global settings**. Changes apply immediately across the vault.
+Global styling gives every Callout Studio callout a consistent shape and layout. Open the plugin settings and, under **Callout style**, open **Heading callout**, **Inline callout** or **Block callout**. Changes apply immediately across the vault.
 
-Each callout format has its own controls, so changing one format does not force the others to use the same geometry.
+Each callout format has its own page, so changing one format does not force the others to use the same geometry. A live preview sits at the top of the page and stays in view while you scroll through the controls (on a phone it scrolls with the page).
 
-Each option box shows a **Reset to default** arrow in its header when its settings differ from the defaults. Click it to restore that box's settings immediately. Other boxes and callout formats keep their values.
+Each slider has its own **Reset to default** arrow (↺) before its value. A box with several controls, such as **Borders**, also has one in its heading, which restores the whole box. An arrow is dimmed while there is nothing to reset. Other boxes and callout formats keep their values.
+
+Borders are four switches, **Top**, **Right**, **Bottom** and **Left**. **Border thickness** appears once at least one side is on.
+
+You can also reach every control from Obsidian's **Search settings…** field: try "corner", "border" or "title size".
 
 ## Heading callouts
 
@@ -12,8 +16,8 @@ For heading callouts, you can:
 
 - Show borders on selected sides.
 - Set the exact border thickness.
-- Adjust vertical padding and the spacing between headings.
-- Control corner rounding and related heading geometry.
+- Adjust vertical padding and the spacing between headings (**Title spacing**).
+- Control corner rounding, and whether the fold arrow shows (**Show fold arrow**).
 
 ![Heading callout style window with borders, shape, spacing, and a live preview in dark mode](../../assets/user-guide/global-heading.svg)
 

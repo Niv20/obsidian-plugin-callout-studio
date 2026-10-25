@@ -1,18 +1,22 @@
 /**
  * settings/SettingsTab.ts — Main plugin settings tab (Obsidian Settings pane).
  *
- * Composes all settings sections into a single scrollable tab:
- * callout lists (user + built-in), callout type cards (with the per-role
- * global style popups), editor features, fallback, hotkeys, data management
- * (import/export/reset), and the footer. Delegates each section to its own
- * module under sections/.
- * Holds a CalloutListsController for efficient list refresh without full
- * re-renders.
+ * The tab is a tree Obsidian draws (Obsidian 1.13's declarative settings):
+ * `getSettingDefinitions()` hands it over, built by
+ * declarative/declarativeSettings.ts, and Obsidian draws its pages and indexes
+ * every row for its settings search. A non-empty tree means Obsidian never
+ * calls `display()`.
+ *
+ * `display()` below, the page drawn section by section (sections/), stays for
+ * now only as the fallback: a part of the tree that fails to build makes the
+ * tree empty, and Obsidian then draws this page instead. The Clean Sweep
+ * removes it.
  */
 import { PluginSettingTab } from "obsidian";
 import type { App, SettingDefinitionItem } from "obsidian";
 import { PLUGIN_ICON_ID } from "../constants";
 import { readSettingAt, writeControlValue } from "./declarative/controlBinding";
+import { DeclarativeSettings } from "./declarative/declarativeSettings";
 import { registerMenuScopeHost } from "../ui/menuEscape";
 import { CalloutEditor } from "./CalloutEditor";
 import { openCalloutEditorFor } from "./openCalloutEditor";
@@ -86,6 +90,8 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 	 * above is one visit's.
 	 */
 	private endVisit: (() => void) | null = null;
+	/** The tree's side of the tab; made the first time Obsidian asks for the tree. */
+	private declarative: DeclarativeSettings | null = null;
 
 	constructor(app: App, plugin: SettingsTabPlugin) {
 		super(app, plugin);
@@ -93,18 +99,12 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 	}
 
 	/**
-	 * Obsidian 1.13+ declarative-settings hook (powers the settings-search
-	 * index). It still returns an empty array, so the tab renders through
-	 * display() below: an empty result falls back to display(), while a
-	 * *non-empty* one disables display() entirely and renders only from the
-	 * definitions.
-	 *
-	 * Defining the method (even empty) is the sanctioned way to satisfy
-	 * obsidianmd/settings-tab/prefer-setting-definitions. The declarative
-	 * migration replaces both this and display() in one step.
+	 * The tab's tree (declarative/declarativeSettings.ts). Obsidian asks for it
+	 * on every `update()`, the first time while the plugin loads.
 	 */
 	getSettingDefinitions(): SettingDefinitionItem[] {
-		return [];
+		this.declarative ??= new DeclarativeSettings(this);
+		return this.declarative.definitions();
 	}
 
 	/**
@@ -251,6 +251,7 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 	}
 
 	hide(): void {
+		this.declarative?.hide();
 		this.runSectionDisposers();
 		this.unsubscribe?.();
 		this.unsubscribe = null;

@@ -2,6 +2,8 @@
 
 There's a lot to explore in Callout Studio - from callout types and custom colors to icons, styling, and handy workflows. Dive into any topic that catches your eye, or start wherever you like.
 
+Every Callout Studio setting, and each of your own callouts, can be found from Obsidian's **Search settings…** field, at the top of Obsidian's settings. Choosing a result opens the right page and highlights the row.
+
 | Chapter                                                                    | What it covers                                                                                                                  |
 | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | [01 - The three callout types](01-the-three-callout-types.md)              | Use one callout type as a block, heading, or inline callout.                                                                    |

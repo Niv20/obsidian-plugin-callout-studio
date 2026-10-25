@@ -22,15 +22,15 @@ Older versions included a setting that let an individual callout yield to extern
 
 ## Turning your theme's callout styles off
 
-If you'd rather your theme left callouts alone, turn off **Use your theme's callout styles**, the first row under **Callouts from your theme** in **Settings → Callout Studio**. It is on by default.
+If you'd rather your theme left callouts alone, turn off **Use your theme's callout styles**, the row right under **Callouts from your theme** on the first page of **Settings → Callout Studio**. It is on by default.
 
-The switch appears while your theme lists callouts there. Once it is off, the section stays, empty, so you can turn the switch back on.
+The switch appears while your theme styles callouts. Once it is off, **Callouts from your theme** has nothing to list and leaves the page, but the switch stays, so you can turn it back on. Obsidian's **Search settings…** finds it too.
 
 While it is off:
 
 - Callout Studio draws every callout. A callout your theme restyled, built-in or your own, looks the way Callout Studio draws it, and you can edit it again, write it as a Heading or Inline callout, and run its commands.
 - Built-in callouts you haven't changed use Obsidian's original colors and icons, whatever your theme's palette.
-- Callouts keep Obsidian's original shape: its corners, padding, title weight and icon size, and the way the background tint blends with the page, even when your theme changes those for the whole app. Your own **Global settings** for Block callouts still apply on top.
+- Callouts keep Obsidian's original shape: its corners, padding, title weight and icon size, and the way the background tint blends with the page, even when your theme changes those for the whole app. Your own **Block callout** style settings (under **Callout style**) still apply on top.
 - Callout types only your theme defines leave **Callouts from your theme** and Quick Insert. Notes that use one show it like any other type Callout Studio doesn't know, in the fallback appearance (see [Choose the fallback appearance](05-fallback-styles-and-discovery.md#choose-the-fallback-appearance)).
 - Everything your theme did to callouts is switched off: its colors, icons, stripes and borders, backgrounds, shadows, decorations and layouts, its **Style Settings** options for callouts, and its metadata variants such as `[!note|wide]`. Its metadata words leave the list after `|`.
 - Your theme still styles everything else: fonts, text colors and the page. Text inside a callout follows it like any other text, and your CSS snippets still apply.
@@ -41,7 +41,7 @@ On a phone, the very first moment after Obsidian starts can still show your them
 
 ## Callout Studio's own windows
 
-Callout Studio's windows - its settings, the callout editor, the pickers and the other dialogs - use Obsidian's own colors for their text boxes, dropdowns, buttons and lists, in light and dark mode. On macOS in light mode that is the same light grey as Obsidian's own buttons and dropdowns.
+Callout Studio's settings are drawn by Obsidian itself, as one of its own settings pages: the same boxes, rows, sub-pages and search. Its windows - the callout editor, the pickers and the other dialogs - use Obsidian's own colors for their text boxes, dropdowns, buttons and lists, in light and dark mode. On macOS in light mode that is the same light grey as Obsidian's own buttons and dropdowns.
 
 The windows themselves are built like Obsidian's own longer dialogs: the title with no line under it, the content scrolling, and the buttons in a bar along the bottom. On a phone or tablet those buttons stack full-width, with the main action on top and Cancel under it, as in Obsidian's own dialogs.
 

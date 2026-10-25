@@ -38,19 +38,20 @@ A block callout offers:
 
 ## Customize the menu
 
-Open **Settings → Callout Studio → Context menu**, then click **Customize menu items**. Toggle individual actions on or off and drag their handles into your preferred order. While you drag, a slot in your accent colour shows where the row will land if you let go, as in Obsidian's own lists. You can keep dragging the same row or another row without waiting for it to settle. Every change is saved immediately.
+Open **Settings → Callout Studio**, then **Customize right-click menu** under **Menus and commands**. The page is laid out like Obsidian's own ribbon settings: for each callout format, a list of the actions its menu shows, in their order, each with its icon. Every change is saved immediately.
 
-![The menu customization window, with action toggles and drag handles for each callout format](../../assets/user-guide/context-customization.svg)
+![The menu customization page, with each format's actions, their remove buttons and drag handles](../../assets/user-guide/context-customization.svg)
 
-Each category shows a **Reset to default** arrow in its header after you change its toggles or order. Click it to turn every action in that category on and restore the original sorting order. The other categories keep their settings.
+- **Reorder** an action by dragging its handle (≡). It works like Obsidian's own lists: the row lifts, and a slot in your accent colour shows where it will land. On a touch screen, press and hold the row first. With the keyboard, focus a row and press **Alt+↑** or **Alt+↓**.
+- **Hide** an action with its **✕**. It moves to the list below, **Hidden from the … menu**, which shows only while a format hides something.
+- **Bring an action back** by clicking it in that list. It returns at the end of the menu.
+- **Reset** with the arrow (↺) in a format's heading. It shows every action of that format again, in the original order. The other formats keep their settings.
 
 **Create or edit callout** is a single action here. At most one of its two
 runtime labels appears in a note: **Edit callout settings** for a saved type or
 **Create new callout** for an unknown one.
 
-Enabled actions stay above the divider and disabled actions stay below it. Drag within either group; use the toggle to move an action between groups. Turning an action off sends it to the bottom, and turning it on places it after the other enabled actions.
-
-To reorder with the keyboard, focus a drag handle and press **↑** or **↓**. The action moves within its group, and focus follows it.
+Obsidian's **Search settings…** finds this page by its name, as it finds the ribbon page.
 
 ---
 **Next:** [Commands & hotkeys](09-commands-and-hotkeys.md)

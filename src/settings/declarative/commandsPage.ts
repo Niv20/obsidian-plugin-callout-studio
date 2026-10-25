@@ -5,8 +5,10 @@
  * Who calls it. The settings tab, for the main page's Menus and commands box
  * ({@link commandsPage}).
  *
- * The main idea. The page is a nameless description row, then two of
- * Obsidian's boxes, the user's own commands first:
+ * The main idea. The page opens with a sentence about ⊕ (not on a phone,
+ * where ⊕ is hidden), as Obsidian's own pages open with one
+ * (`pageIntroBox`, rowParts.ts), then two of Obsidian's boxes, the user's own
+ * commands first:
  * - **Your commands** is one of Obsidian's lists: a + that opens the command
  *   editor, Obsidian's ✕ (and the Delete key), which asks first, and a grey
  *   row while there is none. A row is the callout's icon, the command's name,
@@ -23,6 +25,7 @@
  * While saving is paused nothing changes: +, ✕ and ↺ say why, ✎ is dimmed and
  * says why, and the built-in rows are greyed.
  */
+import { Platform } from "obsidian";
 import { t } from "../../i18n";
 import { FIXED_COMMAND_IDS, FIXED_COMMAND_NAME_KEYS, isFixedCommandEnabled, type FixedCommandId } from "../../editor/commands";
 import { paintCalloutListIcon } from "../../manager/theme/calloutListIcon";
@@ -39,11 +42,11 @@ import {
 } from "../command/commandFlows";
 import { addHotkeyExtraButton, addObsidianHotkeyChips } from "../command/hotkeyRow";
 import { disabledWhilePaused, refuseWhilePaused } from "./pausedGuards";
-import { boxResetButton, paintBoxReset, pausedReason } from "./rowParts";
+import { boxResetButton, pageIntroBox, paintBoxReset, pausedReason } from "./rowParts";
 import { guardRender } from "./safeTree";
-import type { CsEmpty, CsGroup, CsList, CsPage, CsRender, TreeContext } from "./types";
+import type { CsGroup, CsList, CsPage, CsRender, TreeContext } from "./types";
 
-/** The ids of the page, its boxes and its intro row. */
+/** The ids of the page, its boxes and its opening sentence. */
 export const COMMANDS_PAGE = {
 	page: "commands",
 	intro: "commands-intro",
@@ -58,19 +61,14 @@ export function commandsPage(ctx: TreeContext): CsPage {
 		id: COMMANDS_PAGE.page,
 		name: t("commandBuilder.title"),
 		desc: t("settings.customCommandsDesc"),
-		items: [introBox(), yourCommandsList(ctx), builtInCommandsBox(ctx)],
+		items: [
+			// The sentence is about ⊕, which a phone hides as Obsidian hides its
+			// own hotkey buttons there, so a phone leaves the sentence out too.
+			...(Platform.isPhone ? [] : [pageIntroBox(COMMANDS_PAGE.intro, t("commandBuilder.pageDesc"))]),
+			yourCommandsList(ctx),
+			builtInCommandsBox(ctx),
+		],
 	};
-}
-
-/** What the page is for: a row of description with no name, not something to search for. */
-function introBox(): CsGroup {
-	const intro: CsEmpty = {
-		id: COMMANDS_PAGE.intro,
-		name: "",
-		desc: t("commandBuilder.desc"),
-		searchable: false,
-	};
-	return { type: "group", id: COMMANDS_PAGE.intro, items: [intro] };
 }
 
 /* ---- Your commands ---- */

@@ -567,6 +567,7 @@ export const en: Record<string, string> = {
 	"commandBuilder.title": "Commands and shortcuts",
 	"commandBuilder.desc":
 		"Use the + button to set or change a shortcut in Obsidian's hotkey settings.",
+	"commandBuilder.pageDesc": "Press ⊕ on a command to set its shortcut in Obsidian's hotkey settings.",
 	"commandBuilder.builtIn": "Built-in commands",
 	"commandBuilder.toggleAria": "Turn {{name}} on or off",
 	"commandBuilder.hotkeyBlank": "Blank",
@@ -1330,6 +1331,7 @@ export const en: Record<string, string> = {
 	// Global settings section (per-role style popups)
 	"settings.globalSettings": "Global Callout Studio style options",
 	"settings.calloutStyle": "Callout style",
+	"settings.menusAndCommands": "Menus and commands",
 	"settings.globalSettingsRegularDesc":
 		"Adjust the border, radius, font scale, and alignment of every block callout in your vault.",
 	"settings.globalSettingsHeadingDesc":
@@ -1354,6 +1356,7 @@ export const en: Record<string, string> = {
 	"menuCustomize.title": "Customize right-click menu",
 	"menuCustomize.desc":
 		"Toggle actions on or off and drag the handle to reorder them. Changes are saved automatically.",
+	"menuCustomize.pageDesc": "Drag an action by its handle to move it, or hide it with ✕.",
 	"menuCustomize.regular": "Block callout",
 	"menuCustomize.heading": "Heading callout",
 	"menuCustomize.inline": "Inline callout",

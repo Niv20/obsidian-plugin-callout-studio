@@ -2,6 +2,8 @@
 
 Changes to a callout's color, icon, name, or IDs take effect everywhere the callout appears. Your notes themselves change only when you say so: if saving would change something they hold, Callout Studio asks first. See [Remove, rename or move an ID](#remove-rename-or-move-an-id).
 
+Your callouts are in **Settings → Callout Studio → My callout types**, Obsidian's in **Built-in callouts**, and your theme's in **Callouts from your theme**. Each page lists every callout, with a search field above that finds one by its name or any of its IDs. Obsidian's **Search settings…** finds your own callouts too, the same way.
+
 A callout's three-dot menu groups its actions, with a line between groups. It opens under the three-dot button, like **More options** on Obsidian's own plugin list, and pressing the button again closes it. Right-clicking anywhere on a callout row opens the same menu where you clicked.
 
 1. **Find callouts**, with the number of uses as a small faint number at the end of the line.
@@ -71,7 +73,7 @@ Open a saved custom callout's three-dot menu and choose **Duplicate**. The copy 
 
 The copy receives a new name and ID ending in `copy`, then `copy 2`, `copy 3`, and so on when needed. Additional IDs receive their own unique copy suffixes. Long names and IDs are shortened to leave room for the suffix. Existing callouts in your notes keep using the original.
 
-After the copy is saved, its section opens and the list shows enough items to reveal it immediately, with a notification confirming success. If duplication fails, an error notification appears. No incomplete copy is added; if a later saving step fails after the complete copy has reached storage, that valid copy is kept.
+After the copy is saved, **My callout types** opens and the copy's row flashes, with a notification confirming success. If duplication fails, an error notification appears. No incomplete copy is added; if a later saving step fails after the complete copy has reached storage, that valid copy is kept.
 
 **Duplicate** is available for saved custom callouts; Obsidian's built-in callouts and callouts supplied only by a theme do not offer it.
 

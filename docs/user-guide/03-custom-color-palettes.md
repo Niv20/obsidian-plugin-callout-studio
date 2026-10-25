@@ -20,7 +20,7 @@ Group headings stay visible at the top of the color menu as you scroll.
 
 ## Create a saved palette
 
-Open the main plugin settings, find **Saved color palettes**, and click **New palette**.
+Open the plugin settings, open **Saved color palettes** (under **Callout style**), and click **+** above the list (on a phone or tablet, the **New palette** row at its end).
 
 1. Give the palette a name.
 2. Choose a **Base color**. The background initially follows that color automatically. A new palette starts on a default blue; if you already have a palette with exactly that look, it starts on a blue one shade off, so the window never opens on a "duplicate" message.
@@ -66,6 +66,8 @@ background; the palette's base color still colors the title, icon, and frame.
 ## Edit, delete, and restore palettes
 
 Click the pencil beside a saved palette to edit it. When you save the changes, every callout linked to that palette updates across the vault.
+
+To delete a palette, click its **✕**, or select its row and press **Delete**. Callout Studio asks first, and says how many callouts are linked to it.
 
 If the new name changes the palette's metadata word and your notes use the old one, Callout Studio asks whether to update those notes. It doesn't ask when the old word also means something else: a built-in color's word, such as `pink` for a palette called **Pink**, or a word your theme or a CSS snippet styles. Those notes stay as they are and take that other meaning.
 

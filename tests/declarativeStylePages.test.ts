@@ -27,23 +27,16 @@ import type { SettingsTabPlugin } from "../src/settings/sections/types";
 
 installFakeDom();
 
-// The preview pins itself under the page's title bar; the fake DOM has no
-// ResizeObserver. And the stub has no embedded editor, so the preview draws
-// its static fallback and says so once a page: that one warning is expected.
-const previousObserver = Object.getOwnPropertyDescriptor(globalThis, "ResizeObserver");
+// The stub has no embedded editor, so the preview draws its static fallback
+// and says so once a page: that one warning is expected.
 const { warn } = console;
 before(() => {
-	Object.defineProperty(globalThis, "ResizeObserver", {
-		configurable: true, value: class { observe(): void {} disconnect(): void {} },
-	});
 	console.warn = (...args: unknown[]) => {
 		if (String(args[0]).includes("embedded live preview unavailable")) return;
 		warn(...args);
 	};
 });
 after(() => {
-	if (previousObserver) Object.defineProperty(globalThis, "ResizeObserver", previousObserver);
-	else Reflect.deleteProperty(globalThis, "ResizeObserver");
 	console.warn = warn;
 });
 
@@ -104,13 +97,14 @@ function idle(button: ButtonLike): boolean {
 }
 
 describe("the Callout style box", () => {
-	it("opens the three role pages, Heading first, then the saved palettes", () => {
+	it("opens the three role pages, Heading first, then the saved palettes and the icon libraries", () => {
 		const { harness } = drawStyle(fakePlugin().plugin);
 		assert.deepEqual(box(harness, STYLE_PAGES.box).children.map((r) => r.def.name), [
 			t("settings.calloutTypeHeading"),
 			t("settings.calloutTypeInline"),
 			t("settings.calloutTypeRegular"),
 			t("settings.customPalettes"),
+			t("iconLibraries.manage"),
 		]);
 	});
 
@@ -193,6 +187,34 @@ describe("a style page", () => {
 		tab.update();
 		assert.equal(preview(), first);
 		assert.equal(row(harness, `${STYLE_PAGES.inline}-preview`).def.searchable, false);
+	});
+
+	it("pins the preview under the page's title bar once the row is laid out on the page", () => {
+		// A ResizeObserver for the row's own window, recording what it watches.
+		const observed: unknown[] = [];
+		let laidOut = (): void => {};
+		class Observer {
+			constructor(callback: () => void) { laidOut = callback; }
+			observe(element: unknown): void { observed.push(element); }
+			disconnect(): void {}
+		}
+		const { plugin } = drawStyleWith();
+		const { tab, harness } = plugin;
+		const view = tab.containerEl.ownerDocument.defaultView as object;
+		Object.assign(view, { ResizeObserver: Observer });
+		try {
+			harness.openPage([STYLE_PAGES.regular]);
+			const rowEl = row(harness, `${STYLE_PAGES.regular}-preview`).settingEl;
+			assert.deepEqual(observed, [rowEl], "drawn before its box is on the page, so the row is watched");
+			laidOut();
+			const titlebar = rowEl.closest(".setting-page")?.querySelector(".setting-page-titlebar");
+			assert.ok(titlebar, "the page has its title bar");
+			assert.deepEqual(observed, [rowEl, titlebar], "then the bar, for its height");
+			const boxEl = rowEl.closest(".setting-group") as HTMLElement;
+			assert.equal(boxEl.style.getPropertyValue("--cs-sticky-top"), "36px", "the fake bar's height");
+		} finally {
+			Reflect.deleteProperty(view, "ResizeObserver");
+		}
 	});
 });
 

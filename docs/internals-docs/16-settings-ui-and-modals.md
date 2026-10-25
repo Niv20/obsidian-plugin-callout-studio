@@ -391,32 +391,35 @@ nothing. The button catches scan failures, restores its label/disabled state, an
 never calls `display()` or focuses a control after completion. Existing registry
 subscriptions refresh rows and counts while preserving paging and scroll.
 
-### `getSettingDefinitions()` returns `[]` - deliberately, and only for now
+### `getSettingDefinitions()` returns the tab's tree
 
 ```ts
-getSettingDefinitions(): SettingDefinitionItem[] { return []; }
+getSettingDefinitions(): SettingDefinitionItem[] {
+	this.declarative ??= new DeclarativeSettings(this);
+	return this.declarative.definitions();
+}
 ```
 
-This is Obsidian 1.13+'s declarative-settings hook, which powers the
-in-app settings search index. **Returning an empty array is what keeps
-`display()` running on every Obsidian version**: on <1.13 the method doesn't
-exist and is never called; on 1.13+, an *empty* result falls back to
-`display()` (a **non-empty** result would disable `display()` entirely and
-render only from the declared definitions). Defining the method at all -
-even empty - is the sanctioned way to satisfy the `obsidianmd/settings-tab/
-prefer-setting-definitions` lint rule without actually re-architecting the
-tab. Populating real per-setting entries would mean reproducing all 11
-sections declaratively, verified on a real 1.13 build - deliberately
-deferred (see the [`settings-getsettingdefinitions`](#) memory note if one
-exists in this project's history; functionally, this is a `[]` returned on
-purpose, not a stub someone forgot).
+Since the *Searchable Settings* switch, Obsidian draws the whole tab from a
+tree: this hook's answer. A **non-empty** answer turns `display()` off for the
+whole tab (Obsidian 1.13+), so everything on the tab, every page and every
+row, comes from the tree, and Obsidian indexes it for **Search settings…**. How
+the tree is built, kept current and drawn is all in
+[26-declarative-settings.md](26-declarative-settings.md).
 
-The tab is moving to the declarative tree; that work, and everything Obsidian
-does with the tree, is in [26-declarative-settings.md](26-declarative-settings.md).
-One part of it is live already: the tab overrides `getControlValue` and
-`setControlValue`, so no declarative control can ever reach Obsidian's default
-`saveData(plugin.settings)`, which would overwrite `data.json` with the
-settings alone.
+`display()` and the sections under `settings/sections/` still exist, and are
+still what most of this chapter describes, for two reasons. An *empty* answer
+makes Obsidian call `display()` instead, and the tree is empty only when
+building it threw (`buildTreeSafely`), so the old page is the fallback. And
+several of their pieces are shared with the tree (the callout row, the
+fallback and language controls, the flows behind the buttons). The *Clean
+Sweep* that follows the switch deletes `display()` and what only it uses, and
+rewrites this chapter.
+
+The tab overrides `getControlValue` and `setControlValue`, so no declarative
+control can ever reach Obsidian's default `saveData(plugin.settings)`, which
+would overwrite `data.json` with the settings alone (26 § Saving a control).
+`hide()` ends the visit the tree started (26 § The tab and its tree).
 
 The tab also sets `icon` to `PLUGIN_ICON_ID` (Lucide `paintbrush`, the mark
 that stands for Callout Studio). Obsidian draws a tab's icon beside its rows in
@@ -426,7 +429,9 @@ hides every community plugin's icon, so nothing changes there.
 ### Four subscriptions, one coalesced refresh
 
 They live in `settings/sections/tabSubscriptions.ts`, wired on the first
-`display()` and undone by the single disposer it returns:
+`display()` and undone by the single disposer it returns. (The declarative tab
+wires the same four once, for the plugin's whole life, into its `TreeUpdater`:
+26 § The tab and its tree.)
 
 ```ts
 registry.onChange(sub)          → scheduleListRefresh(false)
@@ -2842,8 +2847,8 @@ list as click-to-restore rows.
   `getSettingDefinitions()` (or a `SettingDefinitionPage`'s `items`). Nothing
   public renders definitions into a `Modal`.
 - **All or nothing.** A non-empty `getSettingDefinitions()` turns `display()`
-  off for the whole tab (see "`getSettingDefinitions()` returns `[]`" above), so
-  using it means moving all 11 sections at once.
+  off for the whole tab (see "`getSettingDefinitions()` returns the tab's tree"
+  above), so using it meant moving all 11 sections at once.
 - **Version.** It needs Obsidian 1.13; `minAppVersion` is 1.7.2.
 - **The behaviour is private.** The drag engine is a function inside `app.js`,
   not one of the `obsidian` module's exports. `SettingGroup.onDeleteItem`,
@@ -2870,9 +2875,12 @@ re-tracks the row too. It keeps scrolling under reduced motion, which only
 removes the slides. Manage icon libraries passes its window body; Customize
 menu items, whose lists are two to five rows long, passes none.
 
-Revisit this only if `minAppVersion` reaches 1.13 *and* the settings tab moves
-to `getSettingDefinitions()`. Until then `MenuCustomizationModal` and
-`ui/DragSortList.ts` stay.
+The settings tab has since moved to `getSettingDefinitions()`, and the
+right-click menu is now one of its pages, built on these very lists
+(`declarative/menuPage.ts`, 26 § Customize right-click menu), with Obsidian's
+drag engine as described above. `MenuCustomizationModal` is no longer opened
+from the settings and goes in the Clean Sweep; `ui/DragSortList.ts` stays, for
+Manage icon libraries.
 
 ### `IconLibrariesModal` - libraries in three Obsidian groups
 

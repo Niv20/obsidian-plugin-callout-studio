@@ -5,9 +5,9 @@
  * Who calls it. The settings tab, for the main page's Menus and commands box
  * ({@link menuPage}).
  *
- * The main idea. The page is laid out like Obsidian's own Ribbon settings: a
- * nameless description row, then for each callout role (heading, inline,
- * block) two of Obsidian's lists:
+ * The main idea. The page is laid out like Obsidian's own Ribbon settings: an
+ * opening sentence (`pageIntroBox`, rowParts.ts), then for each callout role
+ * (heading, inline, block) two of Obsidian's lists:
  * - the items the role's menu shows, in their order, each with its icon, a
  *   drag handle (and Alt+↑/↓) to move it and ✕ to hide it, and ↺ in the
  *   heading that puts the role's menu back as shipped;
@@ -33,10 +33,10 @@ import {
 	setMenuItemEnabled,
 } from "../menuItems";
 import { refuseWhilePaused } from "./pausedGuards";
-import { boxResetButton } from "./rowParts";
-import type { CsAction, CsEmpty, CsGroup, CsList, CsPage, TreeContext } from "./types";
+import { boxResetButton, pageIntroBox } from "./rowParts";
+import type { CsAction, CsEmpty, CsList, CsPage, TreeContext } from "./types";
 
-/** The ids of the page and its intro row. */
+/** The ids of the page and its opening sentence. */
 export const MENU_PAGE = { page: "right-click-menu", intro: "menu-intro" } as const;
 
 /** The roles, in the order the page shows them. */
@@ -56,14 +56,11 @@ export function menuPage(ctx: TreeContext): CsPage {
 		id: MENU_PAGE.page,
 		name: t("menuCustomize.title"),
 		desc: t("settings.customizeMenuDesc"),
-		items: [introBox(), ...ROLES.flatMap((role) => [shownList(ctx, role), hiddenList(ctx, role)])],
+		items: [
+			pageIntroBox(MENU_PAGE.intro, t("menuCustomize.pageDesc")),
+			...ROLES.flatMap((role) => [shownList(ctx, role), hiddenList(ctx, role)]),
+		],
 	};
-}
-
-/** What the page is for: a row of description with no name. */
-function introBox(): CsGroup {
-	const intro: CsEmpty = { id: MENU_PAGE.intro, name: "", desc: t("menuCustomize.desc"), searchable: false };
-	return { type: "group", id: MENU_PAGE.intro, items: [intro] };
 }
 
 /** `role`'s items now, read from the live settings every time. */

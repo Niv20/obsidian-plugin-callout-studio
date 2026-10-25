@@ -111,19 +111,22 @@ An inline callout that holds another one in its text, or whose `{` is never clos
 
 ## Show, hide, and assign shortcuts
 
-Open **Settings → Callout Studio → Commands & hotkeys**, then click **Manage commands**.
+Open **Settings → Callout Studio**, then **Commands and shortcuts** under **Menus and commands**. The page has two boxes: **Your commands** first, then **Built-in commands**.
 
-![The command manager, showing saved custom commands and built-in commands with shortcut labels and toggles](../../assets/user-guide/command-manager.svg)
+![The commands page, showing saved custom commands and built-in commands with shortcut labels and switches](../../assets/user-guide/command-manager.svg)
 
-From this window you can:
+On this page you can:
 
-- Turn built-in commands on or off.
-- See each command's assigned shortcuts while it is on. Turning a command off
-  hides its shortcut labels; turning it back on restores them.
-- Click the plus button beside a command to open Obsidian's Hotkeys settings filtered to that command. On a phone or tablet, Callout Studio does not focus the search field when filling the filter.
-- Review the shortcuts already assigned by Obsidian.
+- Turn built-in commands on or off with their switches.
+- See each command's assigned shortcuts, drawn as on Obsidian's Hotkeys page
+  (**Blank** when there is none). Turning a command off hides its shortcuts and
+  its ⊕; turning it back on restores them.
+- Click **⊕** beside a command to open Obsidian's Hotkeys settings filtered to
+  that command. As on Obsidian's own pages, a phone hides it.
+- Edit one of your commands with its pencil, or delete it with its **✕** (or
+  the **Delete** key). Deleting asks first.
 
-When any built-in command is off, **Reset to default** appears in the **Built-in commands** header. Click it to turn every built-in command on. Assigned shortcuts and your custom commands are preserved.
+The arrow (↺) in the **Built-in commands** heading turns every built-in command on. It is dimmed while all of them are on. Assigned shortcuts and your custom commands are preserved.
 
 Obsidian owns the shortcut itself; Callout Studio provides the command.
 Turning a command off preserves its assigned shortcut. If you want to reuse
@@ -133,23 +136,19 @@ can overlap when you turn the original command back on.
 
 ## Create a custom command
 
-Under **Your commands**, click **New command**. Choose the callout type first,
+Click **+** in the **Your commands** heading (on a phone or tablet, the **New
+command** row at the end of the box). Choose the callout type first,
 then its format and the options for that format. **Callout type** is searchable
 and starts on **Note** when that built-in type is available. You can change it
 before saving. It shows registered types in one list without section headings,
 including types saved through a scan. Types found only in your notes remain
 available in **Find callouts** until you register them.
-**Callout format**, **Heading level**, **Action**, and **Fold state** open lists
-of choices without text search. They share the same rounded field appearance.
-A field's background never changes: hovering, pressing or focusing it draws the
-same thin border, and the list that opens beneath it has the same background as
-the field itself. All five fields share one compact,
-aligned width.
+**Callout format**, **Heading level**, **Action**, and **Fold state** open
+Obsidian's own menu, with a check mark beside the current choice; **Heading
+level** and **Fold state** show an icon beside each choice. Each field is as
+wide as its longest choice.
 
 ![Creating a command that wraps selected text in a collapsed Warning block callout](../../assets/user-guide/command-editor.svg)
-Long menus stay inside the window and scroll. All choices have the same
-comfortable spacing, and menus start and end at the first and last choice
-without empty strips.
 
 **Save** stays dimmed when there is no callout to build the command from, or when you already have a command that does exactly the same. Press it and a message says which.
 

@@ -42,7 +42,7 @@ sample hand beside each tone, so you can see the choice before selecting it.
 
 ## Manage icon libraries
 
-Click **Manage libraries** at the end of the source row to open **Manage icon libraries**. This is also where you download a library: the source menu lists only the libraries already on this device. The libraries are in up to three boxes, like the lists in Obsidian's own settings, each under its heading.
+Click **Manage libraries** at the end of the source row to open **Manage icon libraries**, or open it from **Settings → Callout Studio**, under **Callout style**. This is also where you download a library: the source menu lists only the libraries already on this device. The libraries are in up to three boxes, like the lists in Obsidian's own settings, each under its heading.
 
 Your search text stays in place when you return, including after reordering, downloading, deleting, or hiding a library. The results update to reflect those changes. If removing the active library returns you to **All sources**, the same search continues there.
 

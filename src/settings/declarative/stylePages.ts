@@ -44,6 +44,7 @@ import {
 	TITLE_SCALE_SLIDER,
 	type StyleSliderDef,
 } from "../styleSpecs";
+import { iconLibrariesRow } from "./mainPageGroups";
 import { palettesPage } from "./palettesPage";
 import { disabledWhilePaused } from "./pausedGuards";
 import type { PersistentPart } from "./persistentParts";
@@ -69,13 +70,22 @@ const ROLE_TEXT: Record<CalloutRenderRole, { name: LocaleKey; desc: LocaleKey }>
 /** The four sides a border can be on. */
 const SIDES: (keyof BorderSidesSettings)[] = ["top", "right", "bottom", "left"];
 
-/** The main page's Callout style box: the three style pages, then the saved palettes. */
+/**
+ * The main page's Callout style box: the three style pages, the saved
+ * palettes, and Manage icon libraries.
+ */
 export function calloutStyleGroup(ctx: TreeContext): CsGroup {
 	return {
 		type: "group",
 		id: STYLE_PAGES.box,
 		heading: t("settings.calloutStyle"),
-		items: [stylePage(ctx, "heading"), stylePage(ctx, "inline"), stylePage(ctx, "regular"), palettesPage(ctx)],
+		items: [
+			stylePage(ctx, "heading"),
+			stylePage(ctx, "inline"),
+			stylePage(ctx, "regular"),
+			palettesPage(ctx),
+			iconLibrariesRow(ctx),
+		],
 	};
 }
 
@@ -193,15 +203,27 @@ function buildPreview(ctx: TreeContext, role: CalloutRenderRole, parent: HTMLEle
  * Keep the preview's box just under the page's title bar, which is pinned to
  * the top itself: the box's `top` (`--cs-sticky-top`, styles.css) follows the
  * bar's height, which can change with the font size. Returns what stops it.
+ *
+ * Why it waits: Obsidian draws a row before it puts the row's box on the page,
+ * so neither the box nor the bar can be found while the row is being drawn.
+ * The observer watches the row, and its first call comes once the row is laid
+ * out on the page; the bar is looked up there, and then watched too. The
+ * observer is made by the row's own window, because Obsidian 1.14 opens the
+ * settings in a window of their own.
  */
 function pinBelowTitlebar(rowEl: HTMLElement): () => void {
-	const boxEl = rowEl.closest<HTMLElement>(".setting-group");
-	const titlebar = rowEl.closest(".setting-page")?.querySelector<HTMLElement>(".setting-page-titlebar");
-	if (!boxEl || !titlebar) return () => {};
-	const observer = new ResizeObserver(() => {
-		boxEl.style.setProperty("--cs-sticky-top", `${titlebar.getBoundingClientRect().height}px`);
+	const view = rowEl.ownerDocument.defaultView;
+	if (!view || typeof view.ResizeObserver !== "function") return () => {};
+	let titlebar: HTMLElement | null = null;
+	const observer = new view.ResizeObserver(() => {
+		if (!titlebar) {
+			titlebar = rowEl.closest(".setting-page")?.querySelector<HTMLElement>(".setting-page-titlebar") ?? null;
+			if (titlebar) observer.observe(titlebar);
+		}
+		const boxEl = rowEl.closest<HTMLElement>(".setting-group");
+		if (boxEl && titlebar) boxEl.style.setProperty("--cs-sticky-top", `${titlebar.getBoundingClientRect().height}px`);
 	});
-	observer.observe(titlebar);
+	observer.observe(rowEl);
 	return () => observer.disconnect();
 }
 

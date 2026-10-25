@@ -4,13 +4,11 @@ You can design a callout in the plugin settings or create one directly from auto
 
 ## Create one in settings
 
-Open **Settings → Callout Studio**, then click **Add new callout**.
+Open **Settings → Callout Studio**, then click **Add new callout** on the first page. You can also open **My callout types** and click **+** above its list (on a phone or tablet, the **Add new callout** row at the end of the list).
 
 ![My callout types with the Add new callout button in dark mode](../../assets/user-guide/create-settings.svg)
 
-*Dark-mode render of **My callout types**, with **Add new callout** beside the heading.*
-
-When the heading's line is too narrow for both buttons — on a phone, an iPad in portrait, or a narrow settings window — **Add new callout** stays on the heading's line, at the end of it, and **Scan for callouts** moves to the bottom of the list (see [Fallback styles & discovery](05-fallback-styles-and-discovery.md)). On a very narrow screen, or with a long translation, **Add new callout** moves to a line of its own rather than squeezing the heading.
+*Dark-mode render of **My callout types** and its **+**.*
 
 1. Enter a **Display name**. This is the readable name in Callout Studio and the default title shown when the note does not provide one.
 2. Review the **Callout IDs**. The first ID fills automatically from the display name and is the token you type in your notes. Add more IDs if you want aliases for the same callout. To remove one, click the small **x** on its pill, or press Tab until the pill is selected and press Backspace. An alias looks and behaves exactly like the first ID, but a callout written with it is titled after the alias, as Obsidian titles it: `[!attention]` reads **Attention**, not **Warning**.

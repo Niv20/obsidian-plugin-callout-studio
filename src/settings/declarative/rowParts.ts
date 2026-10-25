@@ -26,7 +26,7 @@ import { setButtonBusy } from "../../ui/busyButton";
 import { settingGroupEl } from "../../ui/settingGroupEl";
 import type { RowRegistry } from "./rowRegistry";
 import { guardRender } from "./safeTree";
-import type { CsRender } from "./types";
+import type { CsGroup, CsRender } from "./types";
 
 /** What {@link buttonRow} is told. */
 export interface ButtonRowSpec {
@@ -107,6 +107,43 @@ export function pausedReason(writer: { isFrozen: boolean }): string | null {
 export function countValue(count: number, keys: { one: LocaleKey; many: LocaleKey }): string {
 	if (count === 0) return "";
 	return count === 1 ? t(keys.one) : t(keys.many, { count });
+}
+
+/* ---- A page's opening sentence ---- */
+
+/** Marks the box of a page's opening sentence (styles.css). */
+const PAGE_INTRO_CLASS = "cs-page-intro";
+
+/**
+ * The sentence that opens a page, drawn the way Obsidian opens its own list
+ * pages: a `p.setting-page-desc` above the boxes, in no box of its own (the
+ * theme's callouts page draws the same paragraph, calloutListPage.ts).
+ *
+ * Why a box with a drawing row: a page holds only boxes of rows, and Obsidian
+ * leaves out a row that has nothing to draw (no name, no render, no control,
+ * no action; `M4` in app.js), so a row with just a description never shows.
+ * A render row is always drawn; the box's `cs-page-intro` class takes the
+ * box's and the row's own look away (styles.css), leaving the paragraph.
+ *
+ * @param id The box's key, and the row's.
+ */
+export function pageIntroBox(id: string, text: string): CsGroup {
+	return {
+		type: "group",
+		id,
+		cls: PAGE_INTRO_CLASS,
+		items: [{
+			id,
+			name: "",
+			searchable: false,
+			render: (setting) => {
+				const intro = setting.settingEl.createEl("p", { cls: "setting-page-desc", text });
+				// Obsidian keeps the row when it draws the page again, so the
+				// paragraph goes before the next one is made.
+				return () => intro.remove();
+			},
+		}],
+	};
 }
 
 /* ---- ↺ in a box's heading ---- */

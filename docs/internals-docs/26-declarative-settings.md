@@ -3,18 +3,19 @@
 Since Obsidian 1.13 a settings tab can describe itself as data instead of
 drawing itself: `getSettingDefinitions()` returns a tree of rows, boxes, lists
 and pages, and Obsidian draws it, keeps it up to date, and indexes every row
-for the **Search settings…** field. Callout Studio is moving its whole tab to
-that tree, so that a search for "palette", "fallback" or one of the user's own
-callouts lands on the right row (the plan's *Searchable Settings* stage).
+for the **Search settings…** field. Callout Studio's whole tab is that tree,
+so a search for "palette", "fallback" or one of the user's own callouts lands
+on the right row (the plan's *Searchable Settings* stage).
 
-**Status.** The tree is being built, one part at a time, under
-[`src/settings/declarative/`](../../src/settings/declarative/). Until the switch
-`getSettingDefinitions()` still returns `[]`, so Obsidian keeps drawing the
-tab through `display()` (see
-[16 § `getSettingDefinitions()` returns `[]`](16-settings-ui-and-modals.md#getsettingdefinitions-returns----deliberately-and-only-for-now)),
-and nothing under `declarative/` is imported by the plugin yet except the
-control binding below. Each part is tested through a copy of Obsidian's
-renderer (§ Testing the tree).
+**Status.** The tab draws from the tree, built under
+[`src/settings/declarative/`](../../src/settings/declarative/)
+(§ The tab and its tree). `display()` is still there, as the fallback
+Obsidian calls when the tree comes back empty, which happens only when
+building it threw (see
+[16 § `getSettingDefinitions()` returns the tab's tree](16-settings-ui-and-modals.md#getsettingdefinitions-returns-the-tabs-tree));
+the *Clean Sweep* deletes it. Each part is tested through a copy of
+Obsidian's renderer (§ Testing the tree), and the whole was checked in
+Obsidian 1.14.5 on a computer and in phone and tablet emulation.
 
 ## How Obsidian draws the tree
 
@@ -48,6 +49,19 @@ These are the rules every part of the tree is written against.
   are all hidden hides too. `disabled` reaches the row's components (on a
   render row too, though the typings do not say so). It is only an
   appearance: it does not stop a drag, the Delete key or Alt+arrows on a list.
+- **Hidden still counts for spacing.** A hidden row or box is only
+  `display: none`, and app.css finds "the first row" and "the first box" with
+  `:first-child`. So a box whose first rows are hidden draws the line between
+  rows above its first shown row, and the box after a hidden first box keeps
+  the 24px gap between boxes. The main page starts both ways (the notices'
+  box, the callouts box), and `styles.css` corrects the two
+  (`.cs-banners[style*="display: none"] + .setting-group`, `.cs-callouts-box`).
+- **A row with nothing to draw is left out.** A row without a name, a
+  `render`, a control or an action is dropped before drawing (`M4`), so a
+  row that is only a description never shows. A page's opening sentence is
+  therefore a render row: `pageIntroBox(id, text)` in `rowParts.ts` draws
+  Obsidian's own `p.setting-page-desc`, in a box whose `cs-page-intro` class
+  takes the box's and the row's look away.
 - **Lists** (`type: "list"`) add, when asked: an empty-state row; `addItem`, a
   `+` in the heading on a computer and a last `+ Name` row on mobile; `onDelete`,
   a ✕ on every row and the Delete key; `onReorder`, a drag handle and
@@ -126,6 +140,56 @@ directly for a change; it asks
   next frame of the window showing the tab *or* a 250 ms timer, whichever comes
   first (`nextFrameOrSoon`). This matters because opening the settings draws
   the last stored tree; it does not ask for a new one.
+
+## The tab and its tree
+
+`SettingsTab.getSettingDefinitions()` makes, once, a
+[`DeclarativeSettings`](../../src/settings/declarative/declarativeSettings.ts)
+and returns its `definitions()`. That object lives as long as the plugin and
+holds everything the tree is built with:
+
+- **The context** (`TreeContext`): the plugin, the row registry, the parts
+  store, `display()` (a forced `TreeUpdater` request: "draw the settings
+  again", for a change the signature may not see, such as a scan starting),
+  `revealCallout` (a forced request, then a jump to the callout's row) and
+  `jumpTo` (`jumpToRow` with the tab's id, the row registry and
+  `nextFrameOrSoon`).
+- **The tree's order**, in
+  [`declarative/settingsTree.ts`](../../src/settings/declarative/settingsTree.ts):
+  the notices; the callouts box (`callouts`: Callouts from your theme, Use your
+  theme's callout styles, My callout types, Add new callout, Built-in
+  callouts, Default fallback callout, Language); Callout style; Menus and
+  commands (`menus-and-commands`: Customize right-click menu, Commands and
+  shortcuts); Import and export; Version history; Danger zone; About. The
+  file only puts the parts in order; each is built in its own module.
+- **The signals.** The first `definitions()` call (which `addSettingTab`
+  makes while the plugin loads) wires, for the plugin's whole life, the old
+  page's four (`subscribeSettingsTab`: the registry, the editor's preview, an
+  icon download, `css-change`), the saving status, and the language's
+  download, all into the `TreeUpdater`. `plugin.register` undoes them on
+  unload. They stay wired while the settings are closed because opening the
+  settings draws the stored tree; the cost while closed is one signature, about
+  0.1 ms (0.36 ms to build the whole tree; measured in Obsidian 1.14.5 with the
+  author's test vault).
+- **The signature** is one JSON string: the three callout lists'
+  (`calloutListsSignature`, as the old page drew them), the whole
+  `plugin.settings` (so a field added later cannot be missed; the uploaded
+  pictures are left out, being large and drawn through the callouts and the
+  icon signal), whether saving is paused and why, the language download, a scan
+  running, and the plugins the import offer names.
+- **The visit.** Obsidian has no "the tab opened" hook. The notices' box
+  starts with a hidden row (`settings-visit`) whose `render` Obsidian runs
+  whenever it draws the main page, which it does on every opening of the tab;
+  its first run starts the visit: one version in the history per visit
+  (`openVisit`), the theme's styles switch applied in the settings window
+  (Obsidian 1.14 opens the settings in a window of their own), and Escape
+  closing the plugin's own pickers first (`registerMenuScopeHost`, on the
+  content area, beside which sub-pages are drawn). `SettingsTab.hide()` ends
+  it, runs what the parts registered and disposes the kept parts.
+
+**Measured** with 500 extra callouts (computer): opening My callout types took
+260 ms and a redraw of it 320 ms; with the CPU slowed four times (a phone),
+1.1 s and 0.4 s. With the usual tens of callouts both are instant.
 
 ## Parts that survive a redraw
 
@@ -260,12 +324,12 @@ page's controls from the old page's code (`FallbackSection.ts` and
 - **The theme's switch is on the main page** (a decision taken for the plan's
   review): the page its callouts open on is drawn by the plugin (a `page()`
   factory, GAP-15), and nothing on it is in the settings search.
-- **What must redraw these rows** (the signature, unit 12): the fallback id,
-  the language and its download state (`LocaleStore.onChange`), the
-  switch's value, and what the theme styles.
+- **What redraws these rows:** the signature holds the fallback id, the
+  language and its download, the switch's value and what the theme styles;
+  `LocaleStore.onChange` and the registry ask for the update.
 
-`ctx.display()` in the tree means "draw the settings again"; once the tab
-switches, it asks the `TreeUpdater`.
+`ctx.display()` in the tree means "draw the settings again": a forced
+`TreeUpdater` request (§ The tab and its tree).
 
 ## The callout pages
 
@@ -310,9 +374,12 @@ holds the one callout row every list uses, and the user's own callouts.
 - **While saving is paused** the rows stay as they are and only ✎ is dimmed
   (it says why); ⋮ still opens, so Find callouts works, and the menu's own
   changes refuse with a reason. `+`, Scan and Add new callout say why.
-- **What must redraw them** (unit 12): the callouts (the registry's change
-  round), the fallback (its Default flair), light or dark mode (the colours),
-  an icon finishing its download, and a scan starting or ending.
+- **What redraws them:** the callouts (the registry's change round), the
+  fallback (its Default flair), light or dark mode (`css-change`), an icon
+  finishing its download (a forced request) and a scan starting or ending
+  (`ctx.display()`). A change that arrives while the page is open, a sync for
+  instance, redraws it in place (checked in Obsidian: a callout added from
+  outside appeared on the open page).
 
 ## The Saved color palettes page
 
@@ -338,8 +405,8 @@ many callouts link to the palette.
   (`refuseWhilePaused`), and ✎ is dimmed to Obsidian's 40% and says why
   (`addBlockableIconButton` with `pausedReason`).
 - **The settings search** finds a palette by its name, under this page.
-- **What must redraw it** (unit 12): the palettes, and light or dark mode
-  (the colours are the mode on screen).
+- **What redraws it:** the palettes (in the settings the signature holds), and
+  light or dark mode (`css-change`; the colours are the mode on screen).
 
 ## The style pages
 
@@ -359,9 +426,12 @@ definitions of `styleSpecs.ts`, `wireStyleSlider`):
 
 - **The preview** is a kept part in a box of its own (`cs-style-preview-group`),
   pinned under the page's title bar while the controls scroll (sticky,
-  `--cs-sticky-top` measured from the title bar with a `ResizeObserver`; not on
-  a phone). It holds the demo callout (and `settingsEditOpen`) until the page
-  is left. The heading page's preview follows the registry's change round
+  `--cs-sticky-top`; not on a phone). The bar's height is measured by a
+  `ResizeObserver` of the row's own window, which watches the row and looks
+  the bar up on its first call: Obsidian draws a row before it puts the row's
+  box on the page, so while the row draws there is no page to find the bar in
+  (looking then left the preview pinned over the bar, found in Obsidian). It
+  holds the demo callout (and `settingsEditOpen`) until the page is left. The heading page's preview follows the registry's change round
   itself, so the fold-arrow switch and the spacing reach its demo.
 - **Switches** are Obsidian's control rows, keyed into the settings
   (`globalStyle.borderSides.top`, `headingCallouts.showFoldArrow`, …), saved by
@@ -381,8 +451,8 @@ definitions of `styleSpecs.ts`, `wireStyleSlider`):
 
 [`declarative/commandsPage.ts`](../../src/settings/declarative/commandsPage.ts):
 `commandsPage(ctx)` is the row that opens the page (`commands`), in place of
-the window of the same name. The page is a nameless description row
-(`commands-intro`, not searchable), then:
+the window of the same name. The page opens with a sentence about ⊕
+(`commands-intro`, `pageIntroBox`; left out on a phone, which hides ⊕), then:
 
 - **Your commands** (`commands-mine`), one of Obsidian's lists: `+` (the
   command editor), Obsidian's ✕ and Delete key (`deleteCommand` asks first),
@@ -403,16 +473,18 @@ the window of the same name. The page is a nameless description row
 - **The flows** are the window's own (`command/commandFlows.ts`).
 - **While saving is paused** `+`, ✕ and ↺ say why, ✎ is dimmed and says why,
   and the built-in rows are greyed.
-- **What must redraw it** (unit 12): the commands, the built-ins' switches, the
-  registry (a callout gone or taken by the theme), and the user binding a
-  shortcut on the Hotkeys page.
+- **What redraws it:** the commands and the built-ins' switches (in the
+  settings), and the registry (a callout gone or taken by the theme). A
+  shortcut bound on the Hotkeys page needs nothing: coming back to the tab
+  draws its rows again, and the chips are read as they are drawn.
 
 ## Customize right-click menu
 
 [`declarative/menuPage.ts`](../../src/settings/declarative/menuPage.ts):
 `menuPage(ctx)` is the row that opens the page (`right-click-menu`), laid out
-like Obsidian's Ribbon settings: a nameless description row, then for each
-role (heading, inline, block) two of Obsidian's lists:
+like Obsidian's Ribbon settings: an opening sentence (`menu-intro`,
+`pageIntroBox`), then for each role (heading, inline, block) two of
+Obsidian's lists:
 
 - **The role's menu** (`menu-<role>`): the items it shows, in order, each a
   plain row with its icon (`ITEM_ICON`; Obsidian draws a list row's icon only
