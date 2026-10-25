@@ -8,8 +8,10 @@ export async function verifyScene(page, name, selector) {
 		require(color && color.slice(0, 3).every(channel => channel < 80), "expected a dark scene surface");
 		if (name === "create-settings") {
 			const labels = root.innerText;
-			for (const label of ["My callout types", "Add new callout", "Built-in callouts", "No custom callouts for now."]) require(labels.includes(label), `missing ${label}`);
-			require(root.querySelector(".cs-discover-callouts-btn"), "missing actual discovery control");
+			for (const label of ["My callout types", "Add new callout", "Built-in callouts", "Default fallback callout"]) require(labels.includes(label), `missing ${label}`);
+			// Drawn by Obsidian's renderer: a row that opens a page, and one that acts.
+			require(root.querySelector(".setting-item.mod-navigable .setting-item-chevron svg"), "missing a page row's chevron");
+			require(root.querySelector(".setting-item.mod-action"), "missing the Add new callout action row");
 		} else if (name === "create-editor") {
 			require(root.querySelector('input[type="text"]').value === "Project note", "wrong example name");
 			require(root.querySelectorAll('input[type="range"]').length === 9, "expected independent adjustment controls for all three roles");

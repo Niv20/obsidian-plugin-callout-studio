@@ -13,6 +13,7 @@ import { exportSvg } from "./user-guide/vector-exporter.mjs";
 import { outlineLanguageText } from "./user-guide/outline-language-text.mjs";
 import { loadObsidianAssets } from "./user-guide/obsidian-assets.mjs";
 import { verifyScene, verifySvg } from "./user-guide/verify-scene.mjs";
+import { guideRuntimeOptions } from "./user-guide/guideRuntime.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(import.meta.url);
@@ -26,6 +27,11 @@ const layoutCss = `
 body { margin:0; padding:32px; overflow:hidden; background:var(--background-primary); }
 *, *::before, *::after { animation:none!important; transition:none!important; caret-color:transparent!important; }
 .guide-settings { width:850px; padding:32px; background:var(--background-secondary); border-radius:12px; max-height:704px; overflow:auto; }
+.guide-settings-page { width:850px; height:auto; display:flex; flex-direction:column; }
+.guide-settings-page .modal-content { display:flex; flex:1 1 auto; min-height:0; padding:0; }
+.guide-settings-page .vertical-tab-content-container { display:flex; flex:1 1 auto; min-height:0; }
+.guide-settings-page .vertical-tab-content { flex:1 1 auto; height:auto; padding-top:var(--size-4-8); padding-bottom:var(--size-4-8); }
+.guide-settings-page .setting-page.vertical-tab-content { padding-top:0; }
 .modal-container { position:static; padding:0; height:auto; min-height:0; }
 .modal-bg { display:none; }
 .modal { position:relative; margin:0; max-height:704px!important; }
@@ -47,7 +53,7 @@ body { margin:0; padding:32px; overflow:hidden; background:var(--background-prim
 const { outputFiles } = await build({
 	entryPoints: [path.join(root, "scripts/user-guide/scenes.mjs")],
 	bundle: true, write: false, format: "iife", globalName: "userGuideScenes",
-	alias: { obsidian: path.join(root, "scripts/user-guide/obsidian-runtime.ts") },
+	...guideRuntimeOptions(root),
 });
 const browser = await chromium.launch({ headless: true, executablePath: process.env.BROWSER_EXECUTABLE });
 const output = path.join(root, "assets/user-guide");

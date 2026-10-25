@@ -9,6 +9,7 @@ import { exportSvg } from "./user-guide/vector-exporter.mjs";
 import { loadObsidianAssets } from "./user-guide/obsidian-assets.mjs";
 import { captions } from "./store-screenshots/composition.mjs";
 import { composeMobile } from "./store-screenshots/composition-mobile.mjs";
+import { guideRuntimeOptions } from "./user-guide/guideRuntime.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(import.meta.url);
@@ -17,7 +18,7 @@ const { appCss, icons, version } = loadObsidianAssets();
 const { outputFiles } = await build({
 	entryPoints: [path.join(root, "scripts/store-screenshots/scenes.mjs")], bundle: true,
 	write: false, format: "iife", globalName: "storeScenes",
-	alias: { obsidian: path.join(root, "scripts/user-guide/obsidian-runtime.ts") },
+	...guideRuntimeOptions(root),
 });
 // Host-window geometry only; controls keep their production phone CSS. The one
 // paint it owns is the settings pane: black, as Obsidian 1.13's dark phone

@@ -83,20 +83,27 @@ export async function exportSvg(page, selector, options = {}) {
 			const mask = vectorUrl(style.maskImage || style.webkitMaskImage || "");
 			if (!mask) return null;
 			const viewBox = (mask.getAttribute("viewBox") || "").split(/[ ,]+/).map(Number);
-			const intrinsicWidth = px(mask.getAttribute("width") || "") || viewBox[2] || r.width;
-			const intrinsicHeight = px(mask.getAttribute("height") || "") || viewBox[3] || r.height;
+			const ownWidth = px(mask.getAttribute("width") || ""), ownHeight = px(mask.getAttribute("height") || "");
+			const intrinsicWidth = ownWidth || viewBox[2] || r.width;
+			const intrinsicHeight = ownHeight || viewBox[3] || r.height;
 			const ratio = intrinsicHeight / intrinsicWidth;
 			const [sx = "auto", sy = "auto"] = style.maskSize.split(" ");
 			const length = (value, total) => value.endsWith("%") ? px(value) / 100 * total : px(value);
 			let width, height;
-			if (sx === "contain" || sx === "cover") {
-				const scale = (sx === "contain" ? Math.min : Math.max)(r.width / intrinsicWidth, r.height / intrinsicHeight);
+			// An image with a shape (a viewBox) but no size of its own is drawn as
+			// large as fits, as `contain` would (CSS background sizing): an icon
+			// mask such as a search field's magnifier fills its box.
+			const sizeless = !ownWidth && !ownHeight && sx === "auto" && sy === "auto";
+			if (sx === "contain" || sx === "cover" || sizeless) {
+				const scale = (sx === "cover" ? Math.max : Math.min)(r.width / intrinsicWidth, r.height / intrinsicHeight);
 				width = intrinsicWidth * scale; height = intrinsicHeight * scale;
 			} else { width = sx === "auto" ? sy === "auto" ? intrinsicWidth : length(sy, r.height) / ratio : length(sx, r.width); height = sy === "auto" ? width * ratio : length(sy, r.height); }
 			const [posX = "50%", posY = "50%"] = style.maskPosition.split(" ");
 			for (const node of [mask, ...mask.querySelectorAll("*")]) {
 				node.removeAttribute("style"); node.removeAttribute("xmlns:xlink");
-				if (node.getAttribute("fill") !== "none") node.setAttribute("fill", color(style.backgroundColor));
+				// A shape without a fill of its own inherits its parent's: a Lucide
+				// icon says `fill="none"` once, on its <svg>, and is drawn by strokes.
+				if (node.closest("[fill]")?.getAttribute("fill") !== "none") node.setAttribute("fill", color(style.backgroundColor));
 				if (node.getAttribute("stroke") === "currentColor") node.setAttribute("stroke", color(style.backgroundColor));
 			}
 			mask.setAttribute("x", n(r.x + length(posX, r.width - width))); mask.setAttribute("y", n(r.y + length(posY, r.height - height)));
@@ -215,7 +222,13 @@ export async function exportSvg(page, selector, options = {}) {
 					height: parentBox.height - top - px(parentStyle.borderBottomWidth) };
 			}
 			const size = (value, total) => value.endsWith("%") ? px(value) / 100 * total : px(value);
-			const width = size(style.width, parentBox.width), height = size(style.height, parentBox.height);
+			// A content-box size leaves out the border and padding, and a box with no
+			// content can still be a line: a settings row's divider is a 0-high
+			// ::before drawn entirely by its top border.
+			const outer = (start, end) => style.boxSizing === "border-box" ? 0
+				: px(style[`border${start}Width`]) + px(style[`border${end}Width`]) + px(style[`padding${start}`]) + px(style[`padding${end}`]);
+			const width = size(style.width, parentBox.width) + outer("Left", "Right");
+			const height = size(style.height, parentBox.height) + outer("Top", "Bottom");
 			if (!width || !height) return "";
 			const r = { x: parentBox.x + px(style.marginLeft), y: parentBox.y + px(style.marginTop), width, height };
 			if (style.left !== "auto") r.x += size(style.left, parentBox.width);
@@ -239,7 +252,15 @@ export async function exportSvg(page, selector, options = {}) {
 				const center = n(r.x + knob / 2 + fraction * (r.width - knob));
 				return `<line x1="${r.x}" x2="${r.x + r.width}" y1="${n(r.y + r.height / 2)}" y2="${n(r.y + r.height / 2)}" stroke="${escape(color(track))}" stroke-width="${r.height}" stroke-linecap="round"/><line x1="${r.x}" x2="${center}" y1="${n(r.y + r.height / 2)}" y2="${n(r.y + r.height / 2)}" stroke="${escape(color(fill))}" stroke-width="${r.height}" stroke-linecap="round"/><circle cx="${center}" cy="${n(r.y + r.height / 2)}" r="${knob / 2}" fill="${escape(color(thumb))}"/>`;
 			}
-			if (element instanceof HTMLInputElement && element.type !== "checkbox" || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement) {
+			// A colour input is Obsidian's round swatch (`::-webkit-color-swatch`,
+			// which the page cannot read): a circle of its value, filling the box.
+			if (element instanceof HTMLInputElement && element.type === "color") {
+				const radius = Math.min(r.width, r.height) / 2;
+				return `<circle cx="${n(r.x + r.width / 2)}" cy="${n(r.y + r.height / 2)}" r="${n(radius)}" fill="${escape(color(element.value))}"/>`;
+			}
+			// Inputs whose value is not text on screen: a radio's value is "on".
+			const textless = ["checkbox", "radio", "color", "file", "hidden", "button", "submit", "reset", "image"];
+			if (element instanceof HTMLInputElement && !textless.includes(element.type) || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement) {
 				const value = element instanceof HTMLSelectElement ? element.selectedOptions[0]?.textContent : element.value || element.placeholder;
 				const inset = px(style.paddingLeft) + px(style.borderLeftWidth), available = r.width - inset - px(style.paddingRight) - px(style.borderRightWidth);
 				metrics.font = font(style); const measured = metrics.measureText(value || "").width;
@@ -253,6 +274,9 @@ export async function exportSvg(page, selector, options = {}) {
 		function paintOrder(element) {
 			if (paintOrders.has(element)) return paintOrders.get(element);
 			const style = getComputedStyle(element), own = Number(style.zIndex) || 0;
+			// An element that is not displayed paints nothing, so it lifts nothing:
+			// a closed picker's list must not raise the page above an open menu.
+			if (style.display === "none") { paintOrders.set(element, 0); return 0; }
 			// A positioned popup participates in its nearest stacking context,
 			// even through wrappers whose z-index is auto. Keep that branch above
 			// ordinary siblings, stopping at real intervening stacking contexts.
@@ -269,7 +293,12 @@ export async function exportSvg(page, selector, options = {}) {
 			if (element instanceof SVGSVGElement) return artwork(element, r);
 			if (element instanceof HTMLImageElement) throw new Error("Raster images are not supported by the vector documentation exporter");
 			const after = pseudo(element, "::after", r), afterBehind = Number(getComputedStyle(element, "::after").zIndex) < 0;
-			let result = paintBox(style, r) + pseudo(element, "::before", r) + (afterBehind ? after : "");
+			// A positioned ::before paints above the element's in-flow children, as
+			// the browser layers it (a search field's magnifier over its input).
+			const beforeStyle = getComputedStyle(element, "::before");
+			const beforeOnTop = beforeStyle.position !== "static" && !(Number(beforeStyle.zIndex) < 0);
+			const before = pseudo(element, "::before", r);
+			let result = paintBox(style, r) + (beforeOnTop ? "" : before) + (afterBehind ? after : "");
 			result = paintMask(style, r) ?? result;
 			result += control(element, style, r);
 			let children = "";
@@ -277,7 +306,7 @@ export async function exportSvg(page, selector, options = {}) {
 			const childNodes = [...element.childNodes].map((node, index) => ({ node, index, z: node.nodeType === Node.ELEMENT_NODE ? paintOrder(node) : 0 })).sort((a, b) => a.z - b.z || a.index - b.index);
 			for (const { node: child } of childNodes) children += child.nodeType === Node.TEXT_NODE ? textNode(child, style, element) : child.nodeType === Node.ELEMENT_NODE ? walk(child) : "";
 			if (["hidden", "clip", "auto", "scroll"].some(value => style.overflowX === value || style.overflowY === value)) children = `<g clip-path="url(#${clip(r, px(style.borderTopLeftRadius))})">${children}</g>`;
-			result += children + (afterBehind ? "" : after);
+			result += children + (beforeOnTop ? before : "") + (afterBehind ? "" : after);
 			return Number(style.opacity) < 1 ? `<g opacity="${style.opacity}">${result}</g>` : result;
 		}
 		pieces.push(rect({ x: 0, y: 0, width, height }, options.background || getComputedStyle(document.body).backgroundColor || "#1e1e1e", 12));

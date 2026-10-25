@@ -11,8 +11,7 @@ import { SettingsRecoveryDetailsModal } from "../../src/settings/SettingsRecover
 import { mergeVersions } from "../../src/manager/setupVersions.ts";
 import { setupDetails } from "../../src/manager/setupDetails.ts";
 import { differingEntries } from "../../src/manager/setupDifference.ts";
-import { renderSaveStatusBanner } from "../../src/settings/saveStatusBanner.ts";
-import { renderBackupSection, renderResetSection } from "../../src/settings/sections/backupImport.ts";
+import { confirmAndResetEverything } from "../../src/settings/resetEverything.ts";
 import { createPortableConversionFrame, updatePortableSelection } from "../../src/portable/portableConversionFrame.ts";
 import { portableConversionRows, renderPortableConversionRows } from "../../src/portable/portableConversionRows.ts";
 import { preparePortableCalloutConversion } from "../../src/utils/portableCalloutVault.ts";
@@ -20,7 +19,7 @@ import { PortableConversionHelpModal } from "../../src/portable/PortableConversi
 import { addSidebarNavButton, createSidebarNavHeader } from "../../src/ui/sidebarFrame.ts";
 import { HELP_ICON_ID } from "../../src/constants.ts";
 import { QuickInsertModal } from "../../src/settings/QuickInsertModal.ts";
-import { openModal } from "./fixture-host.mjs";
+import { mountSettings, openModal, settingsContext } from "./fixture-host.mjs";
 
 const copy = value => JSON.parse(JSON.stringify(value));
 const waitFor = async predicate => {
@@ -42,11 +41,6 @@ function seedCallouts(plugin) {
 	plugin.cssInjector.inject(false);
 }
 
-function panel(cls, width = 780) {
-	const el = document.body.createDiv({ cls, attr: { id: "guide-scene" } });
-	el.style.width = `${width}px`;
-	return el;
-}
 
 /**
  * A sidebar view as Obsidian lays it out: the leaf's content with the pane's
@@ -128,11 +122,21 @@ function recoveryFixture(plugin) {
 	const oldest = copy(previous);
 	oldest.callouts = oldest.callouts.filter(row => row.id !== "meeting");
 	const source = (data, kind, time, reason) => ({ kind, time, reason, data, origin: "this-device", path: kind === "backup" ? ".obsidian/plugins/callout-studio/backups/example.json" : null, historyHash: kind === "history" ? `fixture-${time}` : null });
+	// Times on the day the guide is drawn and the day before, so the day
+	// headings read "today" and "yesterday" whenever the pictures are made.
+	// (The clock time is set, not added to midnight: on a daylight-saving day
+	// the hours from midnight are not the time on the clock.)
+	const at = (daysAgo, hours, minutes) => {
+		const time = new Date();
+		time.setDate(time.getDate() - daysAgo);
+		time.setHours(hours, minutes, 0, 0);
+		return time.getTime();
+	};
 	const sources = [
-		source(current, "history", 1791093600000, "edit"),
-		source(previous, "backup", 1791089400000, "before-import"),
-		source(oldest, "backup", 1791003000000, "before-reset"),
-		source(oldest, "history", 1791002400000, "edit"),
+		source(current, "history", at(0, 9, 0), "edit"),
+		source(previous, "backup", at(0, 7, 50), "before-import"),
+		source(oldest, "backup", at(1, 7, 50), "before-reset"),
+		source(oldest, "history", at(1, 7, 40), "edit"),
 	];
 	const versions = mergeVersions(sources);
 	plugin.recovery = {
@@ -168,20 +172,12 @@ async function pausedScene(plugin) {
 		isFrozen: true, hasRecoveryState: true,
 		status: { reason: "missing", frozenReason: "missing", subscribe: () => () => {} },
 	});
-	const root = panel("guide-saving-panels", 780);
-	const savingPanel = root.createDiv({ cls: "callout-studio-settings cs-settings-paused guide-settings" });
-	// The real settings pane removes its top inset; this standalone crop needs it.
-	savingPanel.style.setProperty("padding", "32px", "important");
-	renderSaveStatusBanner(plugin, savingPanel, { retry: async () => false, startFresh: async () => false, showBackup() {}, pausedNote: true });
-	const historyPanel = root.createDiv({ cls: "callout-studio-settings cs-settings-paused guide-settings" });
-	historyPanel.style.setProperty("padding", "32px", "important");
-	renderBackupSection({ app: plugin.app, plugin, display() {}, registerDisposer() {} }, historyPanel);
-	// A standalone section needs no divider or gap above its first heading.
-	const historyHeading = historyPanel.querySelector(".setting-item-heading");
-	historyHeading.style.setProperty("margin-top", "0");
-	historyHeading.style.setProperty("padding-top", "0");
-	historyHeading.style.setProperty("border-top", "none");
-	return metadata("Saving paused: missing settings file", "Two separately framed settings crops show the actual Saving is paused banner above the production Version history section, with a visible gap between them. No settings file is read or written.");
+	Object.assign(plugin, { retrySettingsRecovery: async () => false, startFreshSettings: async () => false });
+	return mountSettings(plugin, {
+		boxes: ["banners", "version-history"],
+		title: "Saving paused: missing settings file",
+		description: "The settings' main page while saving is paused, showing only its first box, the actual Saving is paused notice, and the Version history box further down the page. No settings file is read or written.",
+	});
 }
 
 async function conversionScene(plugin) {
@@ -202,12 +198,9 @@ async function conversionScene(plugin) {
 async function resetScene(plugin) {
 	seedCallouts(plugin);
 	syntheticVault(plugin);
-	const root = panel("callout-studio-settings guide-settings");
-	renderResetSection({ app: plugin.app, plugin, display() {}, registerDisposer() {} }, root);
-	root.querySelector("button.mod-destructive").click();
+	// The Danger zone's Reset everything runs this very flow.
+	void confirmAndResetEverything(settingsContext(plugin));
 	await waitFor(() => document.querySelector(".cs-confirm-acknowledge"));
-	root.removeAttribute("id");
-	root.style.display = "none";
 	const modal = document.querySelector(".modal-container:last-of-type .modal");
 	modal.id = "guide-scene";
 	return metadata("Reset everything confirmation", "The real Danger zone action computes the inventory and note-reference count from synthetic callouts and notes, then opens its actual confirmation. The acknowledgement stays unticked; no reset is performed.");
@@ -245,7 +238,9 @@ async function quickInsertScene(plugin, filtered) {
 		const fieldRect = field.getBoundingClientRect();
 		modal.modalEl.appendChild(menuEl);
 		menuEl.style.position = "absolute";
-		menuEl.style.left = `${fieldRect.left - modalRect.left}px`;
+		// Obsidian moves a menu left rather than let it run off the window.
+		const left = Math.min(fieldRect.left - modalRect.left, modalRect.width - menuEl.offsetWidth - 16);
+		menuEl.style.left = `${left}px`;
 		menuEl.style.top = `${fieldRect.bottom - modalRect.top + 2}px`;
 	}
 	return result;

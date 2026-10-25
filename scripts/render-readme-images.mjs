@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 import { loadObsidianAssets } from "./user-guide/obsidian-assets.mjs";
 import { exportSvg } from "./user-guide/vector-exporter.mjs";
+import { guideRuntimeOptions } from "./user-guide/guideRuntime.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(import.meta.url);
@@ -17,7 +18,7 @@ mkdirSync(output, { recursive: true });
 const { outputFiles } = await build({
 	entryPoints: [path.join(root, "scripts/readme/scene.mjs")], bundle: true,
 	write: false, format: "iife", globalName: "readmeScene",
-	alias: { obsidian: path.join(root, "scripts/user-guide/obsidian-runtime.ts") },
+	...guideRuntimeOptions(root),
 });
 const layout = `
 body { margin:0; background:transparent; }

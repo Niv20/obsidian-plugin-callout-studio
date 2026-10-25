@@ -7,6 +7,7 @@ import { ThemeAppearanceProbe } from "../../src/manager/theme/ThemeAppearancePro
 import { syncThemeOverlayRows } from "../../src/manager/theme/themeOverlayRows.ts";
 import { CalloutEditor } from "../../src/settings/CalloutEditor.ts";
 import { getAllColorPalettes } from "../../src/utils/colorPalettes.ts";
+import { CALLOUT_LIST_PAGES } from "../../src/settings/declarative/calloutListPage.ts";
 import { mountNote, mountSettings, renderMarkdown, seedExample, openModal } from "./fixture-host.mjs";
 
 const example = "# Launch plan\n\n## [!tip] Start with a small pilot\n\nKeep the first milestone manageable.\n\n## [!warning] Check the dependencies\n\nReview the remaining risks before expanding the scope.";
@@ -74,8 +75,7 @@ async function useTheme(plugin) {
 
 async function themeList(plugin) {
 	await useTheme(plugin);
-	plugin.localState.isExpanded = kind => kind === "theme";
-	return mountSettings(plugin, { title: "Callouts from the AnuPpuccin theme", description: "The locally installed AnuPpuccin CSS is loaded in its dark Mocha mode. The plugin's real theme scanner, overlay reconciliation, and appearance probe derive the read-only theme rows; the actual settings controller renders their measured colors and icons." });
+	return mountSettings(plugin, { path: [CALLOUT_LIST_PAGES.theme], title: "Callouts from the AnuPpuccin theme", description: "The locally installed AnuPpuccin CSS is loaded in its dark Mocha mode. The plugin's real theme scanner, overlay reconciliation, and appearance probe derive the read-only theme rows; the Callouts from your theme page draws them with their measured colors and icons." });
 }
 
 async function themeLayout(plugin) {

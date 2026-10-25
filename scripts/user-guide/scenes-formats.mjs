@@ -2,20 +2,10 @@
 import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import { CalloutAutoComplete } from "../../src/editor/AutoComplete.ts";
-import { createCalloutListsController } from "../../src/settings/sections/CalloutListsSection.ts";
-import { renderCalloutRow } from "../../src/settings/sections/CalloutRowRenderer.ts";
-import { freshPaging } from "../../src/settings/sections/calloutListsSignature.ts";
-import { renderFallbackSection } from "../../src/settings/sections/fallbackPicker.ts";
+import { CALLOUT_PAGES } from "../../src/settings/declarative/calloutPages.ts";
+import { GENERAL_ROWS } from "../../src/settings/declarative/generalRows.ts";
 import { mountNote, mountSettings, seedExample } from "./fixture-host.mjs";
-
-function listController(plugin, panel, ctx) {
-	createCalloutListsController(ctx, {
-		paging: freshPaging(), onAddNewCallout: async () => {},
-		renderRow: (container, def, kind) => renderCalloutRow(ctx, container, def, kind, {
-			onEdit() {}, onOpenBuiltInMenu() {}, onOpenUserMenu() {},
-		}),
-	}).render(panel);
-}
+import { rowById } from "./settingsPage.mjs";
 
 function autocomplete(plugin) {
 	const text = "# Research notes\n\n> [!note";
@@ -52,32 +42,34 @@ function discovery(plugin) {
 	}
 	plugin.cssInjector.inject(false);
 	return mountSettings(plugin, {
+		path: [CALLOUT_PAGES.mine],
 		title: "Callout types saved through discovery",
-		description: "The actual callout-list controller displays two synthetic scan-result definitions registered with source fallback. Production row rendering gives both the Default fallback label and Note's inherited appearance, beside the actual Scan for callouts button. No vault scan or file write is performed.",
-		render(panel, ctx) { listController(plugin, panel, ctx); },
+		description: "The My callout types page lists two synthetic scan-result definitions registered with source fallback. Production row rendering gives both the Default fallback label and Note's inherited appearance, above the actual Scan for callouts row. No vault scan or file write is performed.",
 	});
 }
 
 async function fallbackPicker(plugin) {
 	seedExample(plugin, { id: "project note", displayName: "Project note" });
 	plugin.settings.fallbackCalloutId = "project note";
+	let fallbackRow = null;
 	const metadata = mountSettings(plugin, {
+		height: 650,
 		title: "Choose a default fallback callout",
-		description: "The production fallbackPicker shows Project note as the synthetic saved fallback and its real Reset to default arrow. Its actual CalloutCombobox is opened to registered types, with production names, IDs, icons, and colors in dark mode. Nothing is selected or saved by the scene.",
-		render(panel, ctx) {
-			panel.style.height = "650px";
-			renderFallbackSection(ctx, panel);
-			panel.querySelector(".cs-combobox-control").click();
+		description: "The settings' Default fallback callout row shows Project note as the synthetic saved fallback and its real Reset to default arrow. Its actual CalloutCombobox is opened to registered types, with production names, IDs, icons, and colors in dark mode. Nothing is selected or saved by the scene.",
+		after(harness) {
+			fallbackRow = rowById(harness, GENERAL_ROWS.fallback);
+			fallbackRow.querySelector(".cs-combobox-control").click();
 		},
 	});
 	await document.fonts.ready;
 	await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-	const panel = document.querySelector(metadata.selector);
-	const bounds = panel.getBoundingClientRect();
-	const heading = panel.querySelector(".setting-item-heading").getBoundingClientRect();
-	const popup = panel.querySelector(".cs-combobox-menu").getBoundingClientRect();
-	// Match the space above the section's rule below the open popup.
-	panel.style.height = `${popup.bottom - bounds.top + heading.top - bounds.top}px`;
+	const frame = document.querySelector(metadata.selector);
+	const bounds = frame.getBoundingClientRect();
+	const popup = frame.querySelector(".cs-combobox-menu").getBoundingClientRect();
+	// Crop just under the open list, leaving the same space below it as the
+	// page leaves above the fallback row's box.
+	const box = fallbackRow.closest(".setting-group").getBoundingClientRect();
+	frame.style.height = `${popup.bottom - bounds.top + box.top - bounds.top}px`;
 	return metadata;
 }
 

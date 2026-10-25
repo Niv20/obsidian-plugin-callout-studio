@@ -61,6 +61,8 @@ export function installDomHelpers(table?: IconTable): void {
 		setCssStyles(this: HTMLElement, values: Record<string, string>) { Object.assign(this.style, values); },
 		show(this: HTMLElement) { this.style.removeProperty("display"); },
 		hide(this: HTMLElement) { this.style.display = "none"; },
+		toggle(this: HTMLElement, shown: boolean) { if (shown) this.style.removeProperty("display"); else this.style.display = "none"; },
+		isShown(this: HTMLElement) { return this.style.display !== "none"; },
 	});
 	Object.assign(window, {
 		createEl: (tag: string, options?: any, callback?: any) => make(null, tag, options, callback),
@@ -190,9 +192,15 @@ export class ButtonComponent extends Control {
 	setDestructive(): this { this.buttonEl.classList.add("mod-destructive"); return this; }
 	onClick(callback: () => unknown): this { this.buttonEl.addEventListener("click", callback); return this; }
 }
+/** As Obsidian's: a gear until given an icon; disabled is `is-disabled` and no Tab stop. */
 export class ExtraButtonComponent extends Control {
 	extraSettingsEl: HTMLElement; buttonEl: HTMLElement;
-	constructor(parent: HTMLElement) { const el = parent.createDiv({ cls: "clickable-icon extra-setting-button", attr: { tabindex: "0" } }); super(el); this.extraSettingsEl = this.buttonEl = el; }
+	constructor(parent: HTMLElement) { const el = parent.createDiv({ cls: "clickable-icon extra-setting-button", attr: { tabindex: "0" } }); super(el); this.extraSettingsEl = this.buttonEl = el; setIcon(el, "lucide-settings"); }
+	setDisabled(value: boolean): this {
+		this.el.classList.toggle("is-disabled", value);
+		if (value) this.el.removeAttribute("tabindex"); else this.el.setAttribute("tabindex", "0");
+		return this;
+	}
 	setIcon(name: string): this { setIcon(this.el, name); return this; }
 	onClick(callback: () => unknown): this { this.el.addEventListener("click", callback); return this; }
 }
@@ -229,20 +237,27 @@ export class ToggleComponent extends Control {
 	getValue(): boolean { return this.toggleEl.classList.contains("is-enabled"); }
 	onChange(callback: (value: boolean) => unknown): this { this.toggleEl.addEventListener("change", () => callback(this.getValue())); return this; }
 }
+/** As Obsidian 1.13's: the value in a `span.slider-value` before the track, in `displayFormat`. */
 export class SliderComponent extends Control {
-	sliderEl: HTMLInputElement;
-	constructor(parent: HTMLElement) { const input = parent.createEl("input", { cls: "slider", attr: { type: "range" } }); super(input); this.sliderEl = input; }
-	setLimits(min: number, max: number, step: number): this { this.sliderEl.min = String(min); this.sliderEl.max = String(max); this.sliderEl.step = String(step); return this; }
-	setValue(value: number): this {
-		this.sliderEl.value = String(value);
-		this.sliderEl.style.setProperty("--slider-fill-ratio", String((this.getValue() - Number(this.sliderEl.min)) / (Number(this.sliderEl.max) - Number(this.sliderEl.min))));
-		return this;
+	sliderEl: HTMLInputElement; valueEl: HTMLElement;
+	private displayFormat: ((value: number) => string) | null = null;
+	constructor(parent: HTMLElement) {
+		const valueEl = parent.createEl("span", { cls: "slider-value" });
+		const input = parent.createEl("input", { cls: "slider", attr: { type: "range" } });
+		super(input); this.sliderEl = input; this.valueEl = valueEl;
+	}
+	setLimits(min: number, max: number, step: number): this { this.sliderEl.min = String(min); this.sliderEl.max = String(max); this.sliderEl.step = String(step); this.updateDisplay(); return this; }
+	setValue(value: number): this { this.sliderEl.value = String(value); this.updateDisplay(); return this; }
+	setDisplayFormat(format: (value: number) => string): this { this.displayFormat = format; this.updateDisplay(); return this; }
+	private updateDisplay(): void {
+		const value = this.getValue(), min = Number(this.sliderEl.min || 0), max = Number(this.sliderEl.max || 100);
+		this.valueEl.setText(this.displayFormat ? this.displayFormat(value) : String(value));
+		this.sliderEl.style.setProperty("--slider-fill-ratio", String(max > min ? (value - min) / (max - min) : 0));
 	}
 	getValue(): number { return Number(this.sliderEl.value); }
 	onChange(callback: (value: number) => unknown): this { this.sliderEl.addEventListener("input", () => callback(this.getValue())); return this; }
 	setDynamicTooltip(): this { return this; }
 	setInstant(): this { return this; }
-	setDisplayFormat(): this { return this; }
 }
 export class DropdownComponent extends Control {
 	selectEl: HTMLSelectElement;
@@ -254,10 +269,23 @@ export class DropdownComponent extends Control {
 	onChange(callback: (value: string) => unknown): this { this.selectEl.addEventListener("change", () => callback(this.getValue())); return this; }
 }
 
+/** Anything a row can switch off with the row: its buttons, fields, toggles. */
+interface RowComponent { setDisabled(disabled: boolean): unknown }
+
+/**
+ * Obsidian 1.14.4's `Setting`, in the DOM it builds (app.js `rT`): a
+ * `div.setting-item` (a focus stop for the arrow keys) holding the info column
+ * and the control column, an icon slot added in front on demand, and the
+ * components a disabled row switches off.
+ */
 export class Setting {
 	settingEl: HTMLElement; infoEl: HTMLElement; nameEl: HTMLElement; descEl: HTMLElement; controlEl: HTMLElement;
+	iconEl: HTMLElement | null = null;
+	components: RowComponent[] = [];
+	disabled = false;
+	private rowClick: (() => unknown) | null = null;
 	constructor(parent: HTMLElement) {
-		this.settingEl = parent.createDiv({ cls: "setting-item" });
+		this.settingEl = parent.createDiv({ cls: "setting-item", attr: { tabindex: "-1" } });
 		this.infoEl = this.settingEl.createDiv({ cls: "setting-item-info" });
 		this.nameEl = this.infoEl.createDiv({ cls: "setting-item-name" });
 		this.descEl = this.infoEl.createDiv({ cls: "setting-item-description" });
@@ -265,8 +293,45 @@ export class Setting {
 	}
 	setName(text: string | DocumentFragment): this { this.nameEl.setText(text); return this; }
 	setDesc(text: string | DocumentFragment): this { this.descEl.setText(text); return this; }
-	setClass(cls: string): this { this.settingEl.classList.add(cls); return this; }
+	setClass(cls: string): this { this.settingEl.classList.add(...cls.split(" ").filter(Boolean)); return this; }
 	setHeading(): this { return this.setClass("setting-item-heading"); }
+	/** The icon in front of the name; `null` empties the slot. */
+	setIcon(icon: string | null): this {
+		this.iconEl ??= this.settingEl.createDiv({ cls: "setting-item-icon", prepend: true });
+		if (icon) setIcon(this.iconEl, icon); else this.iconEl.empty();
+		return this;
+	}
+	/** A row that opens a page: a chevron at the end, and the whole row clickable. */
+	setNavigable(callback: () => unknown): this {
+		this.settingEl.classList.add("mod-navigable", "tappable");
+		setIcon(this.controlEl.createDiv({ cls: "setting-item-chevron" }), "lucide-chevron-right");
+		return this.setRowClick(callback);
+	}
+	/** A row that does something when clicked anywhere on it. */
+	setAction(callback: () => unknown): this {
+		this.settingEl.classList.add("mod-action", "tappable");
+		return this.setRowClick(callback);
+	}
+	private setRowClick(callback: () => unknown): this {
+		if (!this.rowClick) this.settingEl.addEventListener("click", (event) => { if (!event.defaultPrevented && !this.disabled) this.rowClick?.(); });
+		this.rowClick = callback;
+		return this;
+	}
+	/** `is-disabled` on the row, and every component switched off with it. */
+	setDisabled(disabled: boolean): this {
+		this.disabled = disabled;
+		this.settingEl.classList.toggle("is-disabled", disabled);
+		for (const component of this.components) component.setDisabled(disabled);
+		return this;
+	}
+	/** Empty the control column for a redraw, as Obsidian does before drawing a row again. */
+	clear(): this {
+		this.controlEl.empty();
+		this.components = [];
+		this.errorEl = null;
+		this.settingEl.classList.remove("is-invalid");
+		return this;
+	}
 	/** Obsidian 1.13: the warning line under the control, and `is-invalid` on the row. */
 	errorEl: HTMLElement | null = null;
 	setErrorMessage(message: string | null): this {
@@ -286,44 +351,80 @@ export class Setting {
 		callback({ setValue(text: string) { valueEl.setText(text ?? ""); return this; } });
 		return this;
 	}
-	addButton(callback: (control: ButtonComponent) => unknown): this { callback(new ButtonComponent(this.controlEl)); return this; }
-	addExtraButton(callback: (control: ExtraButtonComponent) => unknown): this { callback(new ExtraButtonComponent(this.controlEl)); return this; }
-	addText(callback: (control: TextComponent) => unknown): this { callback(new TextComponent(this.controlEl)); return this; }
+	/** A component the caller builds itself (a plugin's own picker, say). */
+	addComponent(callback: (controlEl: HTMLElement) => RowComponent): this { this.components.push(callback(this.controlEl)); return this; }
+	private add<T extends RowComponent>(component: T, callback: (control: T) => unknown): this { this.components.push(component); callback(component); return this; }
+	addButton(callback: (control: ButtonComponent) => unknown): this { return this.add(new ButtonComponent(this.controlEl), callback); }
+	addExtraButton(callback: (control: ExtraButtonComponent) => unknown): this { return this.add(new ExtraButtonComponent(this.controlEl), callback); }
+	addText(callback: (control: TextComponent) => unknown): this { return this.add(new TextComponent(this.controlEl), callback); }
 	/** As Obsidian's: the row is marked `mod-toggle`, which keeps it on one line on a phone. */
-	addToggle(callback: (control: ToggleComponent) => unknown): this { callback(new ToggleComponent(this.controlEl)); this.settingEl.classList.add("mod-toggle"); return this; }
-	addSlider(callback: (control: SliderComponent) => unknown): this { callback(new SliderComponent(this.controlEl)); return this; }
-	addDropdown(callback: (control: DropdownComponent) => unknown): this { callback(new DropdownComponent(this.controlEl)); return this; }
+	addToggle(callback: (control: ToggleComponent) => unknown): this { this.add(new ToggleComponent(this.controlEl), callback); this.settingEl.classList.add("mod-toggle"); return this; }
+	addSlider(callback: (control: SliderComponent) => unknown): this { return this.add(new SliderComponent(this.controlEl), callback); }
+	addDropdown(callback: (control: DropdownComponent) => unknown): this { return this.add(new DropdownComponent(this.controlEl), callback); }
 }
 
 /**
- * Obsidian 1.11's SettingGroup, in the DOM Obsidian builds for it:
- * `div.setting-group > [heading row] + div.setting-items`. The heading row is
- * added in front once a heading or a heading button is set.
+ * Obsidian 1.14.4's `SettingGroup`, in the DOM it builds (app.js `oT`):
+ * `div.setting-group > [heading row] + div.setting-group-search +
+ * div.setting-items`. The heading row is in the box only while it has a
+ * heading or a heading button; a list's Delete key and Alt+arrows work on the
+ * focused row, through `settings`.
  */
 export class SettingGroup {
-	groupEl: HTMLElement; listEl: HTMLElement;
-	private headerEl: HTMLElement | null = null;
-	private headerNameEl: HTMLElement | null = null;
-	private headerControlEl: HTMLElement | null = null;
+	groupEl: HTMLElement; listEl: HTMLElement; searchContainerEl: HTMLElement;
+	settings: Setting[] = [];
+	private readonly headerEl: HTMLElement;
+	private readonly headerNameEl: HTMLElement;
+	private readonly headerControlEl: HTMLElement;
 	constructor(parent: HTMLElement) {
 		this.groupEl = parent.createDiv({ cls: "setting-group" });
+		this.headerEl = createDiv({ cls: "setting-item setting-item-heading" });
+		this.headerNameEl = this.headerEl.createDiv({ cls: "setting-item-name" });
+		this.headerControlEl = this.headerEl.createDiv({ cls: "setting-item-control" });
+		this.searchContainerEl = this.groupEl.createDiv({ cls: "setting-group-search", attr: { tabindex: "-1" } });
 		this.listEl = this.groupEl.createDiv({ cls: "setting-items" });
 	}
-	private header(): { nameEl: HTMLElement; controlEl: HTMLElement } {
-		if (!this.headerEl) {
-			this.headerEl = createDiv({ cls: "setting-item setting-item-heading" });
-			this.headerNameEl = this.headerEl.createDiv({ cls: "setting-item-name" });
-			this.headerControlEl = this.headerEl.createDiv({ cls: "setting-item-control" });
-			this.groupEl.prepend(this.headerEl);
-		}
-		return { nameEl: this.headerNameEl!, controlEl: this.headerControlEl! };
-	}
-	setHeading(text: string | DocumentFragment): this { this.header().nameEl.setText(text); return this; }
-	addClass(...classes: string[]): this { this.groupEl.classList.add(...classes); return this; }
-	addSetting(callback: (setting: Setting) => unknown): this { callback(new Setting(this.listEl)); return this; }
-	addExtraButton(callback: (control: ExtraButtonComponent) => unknown): this {
-		callback(new ExtraButtonComponent(this.header().controlEl));
+	/** Obsidian keeps the heading row only while there is something in it. */
+	setHeading(text: string | DocumentFragment): this {
+		this.headerNameEl.setText(text);
+		const wanted = Boolean(typeof text === "string" ? text : text.textContent) || this.headerControlEl.childElementCount > 0;
+		if (wanted && !this.headerEl.isConnected) this.groupEl.prepend(this.headerEl);
+		else if (!wanted && this.headerEl.isConnected) this.headerEl.detach();
 		return this;
+	}
+	addClass(...classes: string[]): this { this.groupEl.classList.add(...classes); return this; }
+	addSetting(callback: (setting: Setting) => unknown): this { const setting = new Setting(this.listEl); this.settings.push(setting); callback(setting); return this; }
+	addSearch(callback: (search: SearchComponent) => unknown): this { callback(new SearchComponent(this.searchContainerEl)); return this; }
+	addExtraButton(callback: (control: ExtraButtonComponent) => unknown): this {
+		if (!this.headerEl.isConnected) this.groupEl.prepend(this.headerEl);
+		callback(new ExtraButtonComponent(this.headerControlEl));
+		return this;
+	}
+	/** Delete or Backspace on a focused row calls `callback` with its place. */
+	onDeleteItem(callback: (index: number) => unknown): this {
+		this.listEl.addEventListener("keydown", (event) => {
+			if (event.key !== "Delete" && event.key !== "Backspace") return;
+			const index = this.settings.findIndex((setting) => setting.settingEl === event.target);
+			if (index >= 0) { event.preventDefault(); callback(index); }
+		});
+		return this;
+	}
+	/** Alt+↑/↓ on a focused row calls `callback` with its place and the next. */
+	onReorderItem(callback: (from: number, to: number) => unknown): this {
+		this.listEl.addEventListener("keydown", (event) => {
+			if (!event.altKey || (event.key !== "ArrowUp" && event.key !== "ArrowDown")) return;
+			const from = this.settings.findIndex((setting) => setting.settingEl === event.target);
+			const to = Math.min(Math.max(from + (event.key === "ArrowUp" ? -1 : 1), 0), this.settings.length - 1);
+			if (from >= 0 && to !== from) { event.preventDefault(); callback(from, to); }
+		});
+		return this;
+	}
+	/** Focus the row at `index`, or the nearest shown one. */
+	focusNearestItem(index: number): void {
+		const shown = (setting: Setting | undefined) => setting && setting.settingEl.isShown();
+		const after = this.settings.slice(index).find(shown);
+		const before = this.settings.slice(0, index).reverse().find(shown);
+		(after ?? before)?.settingEl.focus({ preventScroll: true });
 	}
 }
 
@@ -414,6 +515,16 @@ function renderInline(parent: HTMLElement, text: string): void {
  * Heading and inline tokens stay as source until the production processors run;
  * block callouts receive Obsidian's documented reading-view DOM structure.
  */
+/**
+ * A callout's icon as Obsidian picks it: the `--callout-icon` its CSS gives the
+ * callout (app.css names one per built-in type; a theme may name others),
+ * else the pencil. An icon the local table lacks also falls back to the pencil.
+ */
+function drawCalloutIcon(callout: HTMLElement, iconEl: HTMLElement): void {
+	const named = callout.isConnected ? getComputedStyle(callout).getPropertyValue("--callout-icon").trim() : "";
+	try { setIcon(iconEl, named || "pencil"); } catch { setIcon(iconEl, "pencil"); }
+}
+
 export class MarkdownRenderer {
 	static async render(app: any, markdown: string, el: HTMLElement, path: string, component: any): Promise<void> {
 		const render = (window as any).__CS_GUIDE_MARKDOWN_RENDER__;
@@ -427,7 +538,7 @@ export class MarkdownRenderer {
 			if (block) {
 				const callout = el.createDiv({ cls: `callout${block[3] ? " is-collapsible" : ""}${block[3] === "-" ? " is-collapsed" : ""}`, attr: { "data-callout": block[1].toLowerCase().replace(/ /g, "-"), "data-callout-metadata": block[2] ?? "", "data-callout-fold": block[3] } });
 				const title = callout.createDiv({ cls: "callout-title" });
-				setIcon(title.createDiv({ cls: "callout-icon" }), "pencil");
+				drawCalloutIcon(callout, title.createDiv({ cls: "callout-icon" }));
 				title.createDiv({ cls: "callout-title-inner", text: block[4] || block[1] });
 				if (block[3]) setIcon(title.createDiv({ cls: "callout-fold" }), "chevron-down");
 				const content = callout.createDiv({ cls: "callout-content" });

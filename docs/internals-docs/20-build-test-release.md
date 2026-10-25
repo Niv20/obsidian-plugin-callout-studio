@@ -207,14 +207,47 @@ each line in logical text order for bidirectional shaping, preserves uppercase
 transforms and letter spacing, and adjusts spacing without stretching glyphs.
 Modern color spaces and gradient stops are converted to portable sRGB values.
 The context menu and fallback picker use measured bottom margins; the Outline
-preview uses compact, vertically centered rows. The language selector shows only
-its own section, while the localized and paused-saving examples use two separate
-framed crops. The paused-saving history crop omits the first heading's section
-divider and top gap, keeping the heading near the top of its frame.
-Absolutely positioned pseudo-elements are exported relative to
-their parent's padding box, preserving the native checkbox marker alignment.
-File-group headings in the find and conversion illustrations have transparent
-backgrounds. These framing overrides are confined to the documentation fixtures.
+preview uses compact, vertically centered rows.
+
+**Settings scenes** draw the declarative tree the plugin hands Obsidian
+(`settingsTree`), through `scripts/user-guide/settingsPage.mjs`: it builds the
+tree's context as the settings tab does and hands the tree to the test renderer
+(`tests/support/declarativeRenderer.ts`, Obsidian 1.14.4's renderer rebuilt
+step for step), inside a frame shaped like the settings window
+(`.modal.mod-settings`). A scene names a sub-page by its page ids, as
+`openPagePath` does; the paused-saving example keeps only the main page's
+notices box and Version history box (`boxes`), and the language selector opens
+Obsidian's own menu inside the frame. The renderer imports the test stub by its
+path, so `scripts/user-guide/guideRuntime.mjs` (used by every render script)
+points that import at the runtime as well as aliasing `obsidian`; the runtime's
+`Setting`, `SettingGroup`, extra button and slider build the DOM app.js builds
+(icon slot, chevron, `mod-action`, components a disabled row switches off, the
+slider's value, the heading row only while it has something in it). Its Markdown
+host gives a callout the icon its CSS names (`--callout-icon`), as Obsidian
+does, so the theme probe measures real icons. The Version history fixture is
+dated the day the guide is drawn and the day before, so its headings read
+"today" and "yesterday".
+
+**What the exporter draws as the browser does** (each was a picture that came
+out wrong): a pseudo-element's size counts its border and padding (a settings
+row's divider is a 0-high `::before` drawn by its top border); a positioned
+`::before` paints above in-flow children (a search field's magnifier over its
+input); a mask image with a viewBox and no size of its own is drawn as large as
+fits, like `contain`; a mask shape without a fill inherits its parent's (Lucide
+says `fill="none"` once, on the `<svg>`); an element that is not displayed
+lifts nothing in the paint order (a closed picker's list, z-index 1000, once
+buried an open menu); a colour input is a circle of its value; a radio's or
+checkbox's value ("on") is not text on screen. Absolutely positioned
+pseudo-elements are exported relative to their parent's padding box, preserving
+the native checkbox marker alignment. Outlined language labels keep their
+proportions: one scale, from the width, because the outline's font is not the
+page's. File-group headings in the find and conversion illustrations have
+transparent backgrounds. These framing overrides are confined to the
+documentation fixtures.
+
+Three pictures in the folder are not scenes: `metadata-color-scope.svg`,
+`metadata-menu.svg` and `metadata-separators.svg` (user guide chapter 18) were
+made by hand and are not regenerated.
 
 ### README illustrations
 

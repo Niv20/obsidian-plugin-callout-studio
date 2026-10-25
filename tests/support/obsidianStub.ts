@@ -92,7 +92,7 @@ export const Keymap = { isModEvent: () => false };
 export function addIcon(): void { /* Custom UI registration has no DOM effect here. */ }
 export function removeIcon(): void { /* No global icon registry in this stand-in. */ }
 
-export function setIcon(): void {
+export function setIcon(_parent?: unknown, _icon?: string): void {
 	/* no-op: nothing here draws */
 }
 
@@ -645,7 +645,8 @@ export class ButtonLike {
 		return this;
 	}
 
-	setIcon(): this {
+	/** Draws nothing here; the icon's name is accepted so callers can pass it. */
+	setIcon(_icon?: string): this {
 		return this;
 	}
 

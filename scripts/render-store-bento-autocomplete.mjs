@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 import { loadObsidianAssets } from "./user-guide/obsidian-assets.mjs";
 import { exportSvg } from "./user-guide/vector-exporter.mjs";
+import { guideRuntimeOptions } from "./user-guide/guideRuntime.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(import.meta.url);
@@ -15,7 +16,7 @@ const { appCss, icons, version } = loadObsidianAssets();
 const { outputFiles } = await build({
 	entryPoints: [path.join(root, "scripts/store-bento/autocomplete-scene.mjs")],
 	bundle: true, write: false, format: "iife", globalName: "bentoAutocomplete",
-	alias: { obsidian: path.join(root, "scripts/user-guide/obsidian-runtime.ts") },
+	...guideRuntimeOptions(root),
 });
 const layout = `
 body { margin:0; padding:20px; overflow:hidden; background:transparent; }
@@ -50,7 +51,11 @@ try {
 	assert.ok(geometry.height <= 420, `Component is too tall: ${geometry.height}`);
 	const svg = await exportSvg(page, metadata.selector, { ...metadata, padding: 0, background: "transparent" });
 	assert.ok(!/<(?:image|script|foreignObject)\b/.test(svg));
-	assert.ok(svg.includes("Idea") && svg.includes("Info") && svg.includes("Meeting"));
+	// The typed letters are their own highlighted span (Obsidian's
+	// suggestion-highlight), so read the picture's text without its tags; the
+	// title and description are left out, or a word there would count.
+	const shown = svg.replace(/<title[\s\S]*?<\/desc>/, "").replace(/<[^>]+>/g, "");
+	assert.ok(["Idea", "Info", "Meeting"].every(name => shown.includes(name)), "the matching names must survive vector export");
 	await page.evaluate(svg => {
 		const document = new DOMParser().parseFromString(svg, "image/svg+xml");
 		if (document.querySelector("parsererror")) throw new Error("Malformed exported SVG");

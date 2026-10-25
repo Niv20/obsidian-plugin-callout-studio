@@ -1,11 +1,11 @@
 /** Palette, icon, and geometry illustrations mounted by their production UI. */
 import { PaletteEditorModal } from "../../src/settings/PaletteEditorModal.ts";
-import { GlobalStyleModal } from "../../src/settings/GlobalStyleModal.ts";
+import { STYLE_PAGES } from "../../src/settings/declarative/stylePages.ts";
 import { IconPicker } from "../../src/settings/iconpicker/IconPickerModal.ts";
 import { IconLibrariesModal } from "../../src/settings/iconpicker/IconLibrariesModal.ts";
 import { ICON_SOURCE_IDS, getSource } from "../../src/icons/registry.ts";
 import { derivePaletteFromColor } from "../../src/utils/colorUtils.ts";
-import { openModal } from "./fixture-host.mjs";
+import { mountSettings, openModal } from "./fixture-host.mjs";
 
 async function waitFor(predicate, label) {
 	for (let frame = 0; frame < 180; frame++) {
@@ -90,8 +90,9 @@ async function iconLibraries(plugin) {
 	});
 }
 
+/** A role's style page, as the settings draw it. */
 function globalStyle(plugin, role, title, description) {
-	return openModal(new GlobalStyleModal(plugin, role), { title, description });
+	return mountSettings(plugin, { path: [STYLE_PAGES[role]], title, description });
 }
 
 export const scenes = {
@@ -106,7 +107,7 @@ export const scenes = {
 		description: "The production IconPicker searches the bundled Emoji catalog for hand. The current raised-hand emoji and medium skin-tone filter are real picker state, rendered with the system emoji font in dark mode.",
 	}),
 	"icon-libraries": iconLibraries,
-	"global-heading": plugin => globalStyle(plugin, "heading", "Set heading callout geometry", "The actual GlobalStyleModal for Heading shows the production borders, shape, and spacing controls beside its real heading preview. The window's body scrolls within a bounded dark-mode modal."),
-	"global-inline": plugin => globalStyle(plugin, "inline", "Set inline callout geometry", "The actual GlobalStyleModal for Inline shows the production border, text scale, and corner controls beside an inline pill rendered by the plugin's reading-view pipeline in dark mode."),
-	"global-block": plugin => globalStyle(plugin, "regular", "Set block callout geometry", "The actual GlobalStyleModal for Block shows the production border, title and content scale, shape, and alignment controls beside its real block preview. The bounded dark-mode window retains its scrolling body."),
+	"global-heading": plugin => globalStyle(plugin, "heading", "Set heading callout geometry", "The Heading callout settings page as Obsidian draws it: the live preview under the page's title bar, then the production corner, spacing and border controls, each with its reset arrow, in dark mode."),
+	"global-inline": plugin => globalStyle(plugin, "inline", "Set inline callout geometry", "The Inline callout settings page as Obsidian draws it: an inline pill rendered by the plugin's reading-view pipeline, then the production corner, border and text size controls, in dark mode."),
+	"global-block": plugin => globalStyle(plugin, "regular", "Set block callout geometry", "The Block callout settings page as Obsidian draws it: the live block preview, then the production corner, alignment, border and font scale controls, each with its reset arrow, in dark mode."),
 };

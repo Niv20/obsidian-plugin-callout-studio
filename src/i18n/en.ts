@@ -748,7 +748,7 @@ export const en: Record<string, string> = {
 	"settings.resetItemFallback": "Fallback style",
 	"settings.resetItemIconLibraries": "Icon library order and hidden libraries",
 	"settings.resetAllConfirmAfter":
-		"Don't worry: before resetting, we save a backup of your current setup. You can restore it at any time from the Backups section in the settings.\nIf you use a sync service, the reset might travel to your other devices too.",
+		"Don't worry: before resetting, we save a backup of your current setup. You can bring it back at any time from Version history in the settings.\nIf you use a sync service, the reset might travel to your other devices too.",
 	// No longer drawn: the list above replaced it. Kept because every locale
 	// still carries it, and a locale may not hold a key English lacks.
 	"settings.resetNothing": "Nothing to reset: everything is already at its defaults.",

@@ -28,8 +28,13 @@
  *
  * What it leaves out: the pointer drag engine, control types other than toggle
  * and slider, animations, and where focus goes.
+ *
+ * The user guide's scenes draw settings pages with it too
+ * (scripts/user-guide/settingsPage.mjs), on a runtime whose `Setting` and
+ * `SettingGroup` build Obsidian's real DOM, so the icons and the page title
+ * bar below are Obsidian's, not just the structure.
  */
-import { Platform, Setting, SettingGroup, SettingPage, type ButtonLike } from "./obsidianStub";
+import { Platform, Setting, SettingGroup, SettingPage, setIcon, type ButtonLike } from "./obsidianStub";
 
 /* -------------------------------------------------------------------------- */
 /* The tree, as the renderer reads it                                         */
@@ -209,9 +214,12 @@ export class DeclarativeHarness {
 	customPage: SettingPage | null = null;
 	/** The element the current page is drawn into. */
 	pageEl: HTMLElement;
+	/** The open page's outer element: its title bar and content, or the tab's own element. */
+	pageRootEl: HTMLElement;
 
 	constructor(private readonly tab: TabLike) {
 		this.pageEl = tab.containerEl;
+		this.pageRootEl = tab.containerEl;
 		// Obsidian's `update()` stores the tree and redraws the open page;
 		// `refreshDomState()` re-applies `visible` and `disabled`. The stub's
 		// methods only do the first part, so the harness adds the rest.
@@ -231,6 +239,7 @@ export class DeclarativeHarness {
 		this.pagePath = [];
 		this.customPage = null;
 		this.pageEl = this.tab.containerEl;
+		this.pageRootEl = this.tab.containerEl;
 		this.redraw();
 		return this;
 	}
@@ -254,14 +263,26 @@ export class DeclarativeHarness {
 			const page = def.page();
 			page.title = def.name ?? "";
 			this.customPage = page;
-			this.pageEl = page.containerEl;
+			this.showPage(page);
 			page.display();
 			return this;
 		}
 		this.customPage = null;
-		this.pageEl = new SettingPage().containerEl;
+		const page = new SettingPage();
+		page.title = def.name ?? "";
+		this.showPage(page);
 		this.redraw();
 		return this;
+	}
+
+	/** A page's title bar, ‹ and its title, as Obsidian fills it when the page opens. */
+	private showPage(page: SettingPage): void {
+		page.titlebarEl.empty();
+		const backEl = page.titlebarEl.createDiv({ cls: "clickable-icon setting-page-back-button" });
+		setIcon(backEl, "lucide-chevron-left");
+		page.titlebarEl.createDiv({ cls: "setting-page-title", text: page.title });
+		this.pageEl = page.containerEl;
+		this.pageRootEl = page.rootEl;
 	}
 
 	/** Leave the open page for the one above it, as `closePage` does. */
@@ -381,7 +402,7 @@ export class DeclarativeHarness {
 				box.addItemEl = row.settingEl as unknown as HTMLElement;
 			} else {
 				group.addExtraButton((button) => {
-					button.setIcon().setTooltip(addItem.name).onClick(() => box.def.addItem?.action(button.extraSettingsEl as unknown as HTMLElement));
+					button.setIcon("lucide-plus").setTooltip(addItem.name).onClick(() => box.def.addItem?.action(button.extraSettingsEl as unknown as HTMLElement));
 				});
 			}
 		}
@@ -487,7 +508,7 @@ export class DeclarativeHarness {
 		}
 		if (list?.onDelete) {
 			setting.addExtraButton((button) => {
-				button.setTooltip("Delete").onClick(() => {
+				button.setIcon("lucide-x").setTooltip("Delete").onClick(() => {
 					const index = box.settingGroup.settings.indexOf(setting);
 					if (index >= 0) list.onDelete?.(index);
 				});
@@ -496,7 +517,7 @@ export class DeclarativeHarness {
 		}
 		if (list?.onReorder) {
 			setting.addExtraButton((button) => {
-				button.setTooltip("Drag to rearrange");
+				button.setIcon("lucide-menu").setTooltip("Drag to rearrange");
 				button.extraSettingsEl.addClass?.("mod-drag-handle");
 			});
 		}

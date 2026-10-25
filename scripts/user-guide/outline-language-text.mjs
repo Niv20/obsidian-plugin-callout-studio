@@ -69,8 +69,11 @@ export async function outlineLanguageText(page, svg) {
 				texts[index].replaceWith(replacement);
 				const box = paths.getBBox();
 				if (!(box.width > 0 && box.height > 0)) throw new Error(`Empty glyph paths for language label: ${value}`);
-				const sx = target.width / box.width, sy = target.height / box.height;
-				paths.setAttribute("transform", `matrix(${sx} 0 0 ${sy} ${target.x - box.x * sx} ${target.y - box.y * sy})`);
+				// One scale for both axes, from the width: the outline is drawn in
+				// another font than the page's, so fitting each axis separately
+				// squashes the letters. The ink's bottom sits where the page's does.
+				const scale = target.width / box.width, bottom = target.y + target.height;
+				paths.setAttribute("transform", `matrix(${scale} 0 0 ${scale} ${target.x - box.x * scale} ${bottom - (box.y + box.height) * scale})`);
 			}
 			return new XMLSerializer().serializeToString(root);
 		} finally { holder.remove(); }

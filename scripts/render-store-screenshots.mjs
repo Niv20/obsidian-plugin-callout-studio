@@ -8,6 +8,7 @@ import { build } from "esbuild";
 import { exportSvg } from "./user-guide/vector-exporter.mjs";
 import { loadObsidianAssets } from "./user-guide/obsidian-assets.mjs";
 import { compose, captions } from "./store-screenshots/composition.mjs";
+import { guideRuntimeOptions } from "./user-guide/guideRuntime.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(import.meta.url);
@@ -16,7 +17,7 @@ const { appCss, icons, version } = loadObsidianAssets();
 const { outputFiles } = await build({
 	entryPoints: [path.join(root, "scripts/store-screenshots/scenes.mjs")], bundle: true,
 	write: false, format: "iife", globalName: "storeScenes",
-	alias: { obsidian: path.join(root, "scripts/user-guide/obsidian-runtime.ts") },
+	...guideRuntimeOptions(root),
 });
 const layout = `
 body { margin:0; padding:24px; overflow:hidden; background:var(--background-primary); }
