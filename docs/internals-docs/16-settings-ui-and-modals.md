@@ -1,26 +1,167 @@
 # Settings UI and modals
 
-Covers [`src/settings/SettingsTab.ts`](../../src/settings/SettingsTab.ts), the
-section modules under `src/settings/sections/`, the shared modal chrome, and
-the individual modals not already covered by
-[Callout editor](14-callout-editor.md) or [Icons](13-icons.md).
+Covers the settings tab ([`src/settings/SettingsTab.ts`](../../src/settings/SettingsTab.ts)),
+the flows its rows call (`src/settings/sections/`), the two vault sidebars, the
+shared modal chrome, and the individual modals not already covered by
+[Callout editor](14-callout-editor.md) or [Icons](13-icons.md). How the tab's
+tree is built, kept current and drawn is [Declarative settings](26-declarative-settings.md);
+this chapter covers what its rows are made of and everything outside the tab.
 
-## `SettingsTab` - composition and refresh plumbing
+## The settings tab
 
-`CalloutStudioSettingsTab.display()` renders its sections in a fixed order into
-one scrollable tab: callout lists → fallback → custom palettes → global settings
-→ context menu → hotkeys → import/export → language → danger zone → footer.
+```ts
+getSettingDefinitions(): SettingDefinitionItem[] {
+	this.declarative ??= new DeclarativeSettings(this);
+	return this.declarative.definitions();
+}
+```
 
-**Danger zone** contains **Convert to standard Markdown** first and
-**Reset everything** second. The reset's whole flow (the question listing what
-goes, the backup first, the reset, the notice) is
-[`settings/resetEverything.ts`](../../src/settings/resetEverything.ts), which the
-declarative page's Danger zone calls too; the footer's links come from
-[`settings/aboutLinks.ts`](../../src/settings/aboutLinks.ts), shared with the
-declarative page's About box. Its **Review conversion** button opens the registered
-`PortableConversionView` directly in the right sidebar and closes settings.
-The question-mark button is the one button of the sidebar's nav header. It
-opens `PortableConversionHelpModal`: an **About conversion** explanation
+Obsidian draws the whole tab from a tree: this hook's answer. A **non-empty**
+answer turns `display()` off for the whole tab (Obsidian 1.13+), so everything
+on the tab, every page and every row, comes from the tree, and Obsidian indexes
+it for **Search settings…**. How the tree is built, kept current and drawn is
+all in [26-declarative-settings.md](26-declarative-settings.md).
+
+The tab has no `display()` of its own. The page it used to draw section by
+section, and the three windows that became pages (the per-role style windows,
+Customize right-click menu, Commands and shortcuts), were deleted in the *Clean
+Sweep* (2026-10-25). A tree that fails to build is replaced by one row that
+says so (26 § Never throwing). What remains under `settings/sections/` are the
+pieces the tree's rows are made of: the callout row and its menus, the
+fallback and language controls, the palette flows, the backup import, the
+scan, and the shared `SettingsContext` (`sections/types.ts`) every flow is
+handed.
+
+The main page, top to bottom: the notices (saving paused, the import offer);
+the callouts box (Callouts from your theme and the switch for its styles, My
+callout types, Add new callout, Built-in callouts, Default fallback callout,
+Language); Callout style (Heading, Inline and Block callout, Saved color
+palettes, Manage icon libraries); Menus and commands; Import and export; Version history; Danger
+zone; About. The table in 26 § The main page, part by part says which module
+builds each.
+
+The tab overrides `getControlValue` and `setControlValue`, so no declarative
+control can ever reach Obsidian's default `saveData(plugin.settings)`, which
+would overwrite `data.json` with the settings alone (26 § Saving a control).
+`hide()` ends the visit the tree started (26 § The tab and its tree).
+
+The tab also sets `icon` to `PLUGIN_ICON_ID` (Lucide `paintbrush`, the mark
+that stands for Callout Studio). Obsidian draws a tab's icon beside its rows in
+the settings search results, as it does for every core tab; the sidebar list
+hides every community plugin's icon, so nothing changes there.
+
+### Four signals, one coalesced redraw
+
+They live in `settings/sections/tabSubscriptions.ts`. The settings tab wires
+them once, for the plugin's whole life, into its `TreeUpdater`; an open
+Built-in or theme callouts page wires them again into its own while it is open
+(26 § The tab and its tree, § The callout pages).
+
+```ts
+registry.onChange(sub)          → request(false)
+registry.onPreviewChange(sub)    → request(true)
+plugin.onIconCacheChange(cb)      → request(true)
+workspace.on("css-change", cb)     → request(false)  // theme-mode swatch colours
+```
+
+All four funnel into one request a frame (`TreeUpdater`), so a burst of
+related events (a registry mutation that *also* triggers `css-change`) costs
+one redraw. The frame is the **tab's own window's** (`nextFrameOrSoon`): in
+Obsidian 1.14 the settings are a window of their own, and a frame asked of the
+main window is held back while it is hidden behind them. The `onPreviewChange`
+subscription is what keeps a row's swatch tracking the callout editor's
+in-progress colour picks live, without the preview reaching `saveSettings()` or
+forcing a document-wide re-render - see
+[Callout registry § the transient live-preview slot](05-callout-registry.md#the-transient-live-preview-slot).
+
+#### `force`, and why only two of the four carry it
+
+A request compares a signature of everything the pages show and skips the
+redraw when nothing moved. Two of the four signals describe changes that
+signature reads for itself; the other two describe changes it structurally
+**cannot** see, and those pass `force`:
+
+| Signal | `force` | Why |
+| --- | --- | --- |
+| `registry.onChange` | no | A real mutation, read straight off the registry |
+| `workspace.on("css-change")` | no | Moves the colour scheme, the theme's name and its measured appearances - all in the signature |
+| `registry.onPreviewChange` | **yes** | Registered transiently and *without* a registry mutation, by contract, so it may not be visible from the signature at all |
+| `plugin.onIconCacheChange` | **yes** | Artwork lives in a download cache keyed by icon name, so a definition naming a not-yet-downloaded icon is byte-identical to the one naming it a second later - guarding this would leave every spinner spinning for good |
+
+`force` is sticky across the coalescing frame: a frame that coalesced an icon
+landing with an unrelated `css-change` still honours the icon.
+
+The callout lists' part of the signature (`sections/calloutListsSignature.ts`)
+serialises **whole definitions**, not the fields a row happens to read today,
+and the module says why at length: a curated list is how the tenth field added
+later goes stale on screen. Both directions of failure are named there too - a
+signature that changes when nothing did costs one redraw, while one that fails
+to change leaves a stale row with nothing to catch it, so it errs toward
+including more.
+
+### Changes from outside redraw the open page
+
+`manager/settingsBoot.ts`'s `adoptExternalSettings` runs whenever another
+device's `data.json` lands - on every sync round trip - and `applyLocaleChange`
+when a locale finishes downloading; the two recovery services run after a
+restore. All four ask `settingsTab.update()`, with no check of their own:
+Obsidian draws the tab again only while it is the open tab, and only the page
+that is open in it, keeping its scroll. The check they used to make,
+`containerEl.isConnected`, was false while a sub-page was open, so a sync
+landing then was never drawn (review B2).
+
+### Opening settings does not discover callouts
+
+Opening the tab builds the tree and starts a visit (26 § The tab and its tree).
+It neither scans open editors for unknown types nor schedules pruning. The
+occurrence sidebar owns read-only statistics and navigation; Settings has no
+separate statistics modal.
+
+### Scan for callouts
+
+The one scan is the **Scan for callouts** row under the list on My callout
+types (`declarative/calloutPages.ts`), which calls `runManualScan` in
+`sections/manualScan.ts`. A scan is per plugin: `scanRunning(plugin)` is true
+while one runs (a `WeakSet`), so a second press does nothing, and the row says
+**Scanning…** for as long as it runs, from any page that draws it. The row is
+in the signature through `scanRunning`, so it redraws when the scan starts and
+ends. Failures are caught and reported; the scan never focuses a control when
+it finishes. The registry's own change signal redraws the rows and counts it
+added (`tests/manualScan.test.ts`).
+
+### Danger zone and About
+
+**Danger zone** has **Convert to standard Markdown** first and **Reset
+everything** second (`declarative/mainPageGroups.ts`). The reset's whole flow
+(the question listing what goes, the backup first, the reset, the notice) is
+[`settings/resetEverything.ts`](../../src/settings/resetEverything.ts).
+**Convert to standard Markdown** opens the registered `PortableConversionView`
+directly in the right sidebar and closes settings (see the sidebars below).
+
+**About** holds About Callout Studio, the contact sentence with its two inline
+links (a GitHub issue for a bug or an idea, and email), **Icon licenses**, and
+the Version row with the source, contribution guide and plugin license links and
+the version, which links to its release notes. The links come from
+[`settings/aboutLinks.ts`](../../src/settings/aboutLinks.ts). **Icon licenses**
+opens `IconCreditsModal`, which renders the registry-backed icon attributions
+and links to the full third-party notices. The attributions are one Obsidian
+setting group (finding S8-17), a row per library as Installed plugins lists
+plugins: the name as a link with the version beside it in Obsidian's
+`u-muted u-small u-numeric` type, and a line per licence, then the
+modifications and any notice, as the row's description. The rows keep
+`role="list"`/`listitem`. They were seven bordered cards in small grey text
+until 2026-10-23.
+
+## The two vault sidebars: Find callouts and Review conversion
+
+**Find callouts** is a right-sidebar tab, added once on first install; a
+built-in command opens it, and a callout row's ⋮ menu opens it on that
+callout. **Review conversion** opens only from the Danger zone's **Convert to
+standard Markdown**, in the right sidebar. Both live in workspace panes, not
+windows.
+
+In Review conversion, the question-mark button is the one button of the
+sidebar's nav header. It opens `PortableConversionHelpModal`: an **About conversion** explanation
 with one four-row **Before**/**After** table, isolated LTR source text, and a
 backup recommendation. Heading and inline examples share the table without
 separate subheadings. The table is one rounded box with a line between rows, as
@@ -204,445 +345,17 @@ reports the outcome. Partial writes retain an exact recovery plan with fixed
 choices, including pending link-only changes. See
 [the conversion contract](11-vault-discovery.md#portable-markdown-conversion).
 
-The footer owns the contact and project links: one friendly sentence embeds an
-inline GitHub issue link for either a bug or an idea and an inline email link.
-Contact links use the basic `text-decoration` shorthand: no underline at rest,
-and a solid, current-color underline on hover. Its thickness comes from the
-browser/font rather than a fixed 1px declaration; only the text color transitions.
-The footer's leading padding and the metadata row's leading margin both use
-`--size-4-4` (16px by default), giving the contact text equal space to the rules
-above and below. The metadata row's leading padding and the footer's trailing
-padding remain `--size-4-3` (12px), keeping the final row compact.
-An inset rule separates the contact sentence from
-the quieter row, which links to the source, contribution guide, plugin license
-and the GitHub release matching the displayed plugin version. The
-**Icon licenses** control opens `IconCreditsModal`; that modal renders
-the registry-backed icon attributions and links to the full third-party notices
-without reserving a long disclosure row at the bottom of the settings page.
-The attributions are one Obsidian setting group (finding S8-17), a row per
-library as Installed plugins lists plugins: the name as a link with the
-version beside it in Obsidian's `u-muted u-small u-numeric` type, and a line per
-licence, then the modifications and any notice, as the row's description. The
-rows keep `role="list"`/`listitem`. They were seven bordered cards in small
-grey text until 2026-10-23.
+## Callout rows in the settings
 
-### Manual discovery in the callout-list heading
-
-`calloutListsScaffold.ts` places the single **Scan for callouts** action beside
-**Add new callout** in the **My callout types** heading. Both are siblings of
-the disclosure control, so clicking an action never folds the list.
-
-Discovery is written into `controlEl` **first** and the CTA last, which puts the
-CTA on the row's outer edge - its right end under LTR, its left under RTL - the
-side every other section in the tab puts its primary button on.
-
-Colour is what separates them, not size. Add wears `.mod-cta`; **Discover
-now** is Obsidian's own grey button, with no face of the plugin's (decision 14
-of the native-look plan). On a phone that grey (`--background-secondary`) is
-also the colour of the settings pane these rows sit on today, so the button
-reads flat there until the tab moves into Obsidian's setting boxes, which are
-white on a phone.
-
-Both take their height from `--input-height` - already 30px on desktop and 44px
-(`--touch-size-m`) on mobile - so they match **New palette** and every other
-button in the tab on each platform; a hardcoded 44px minimum used to sit there
-and made these the only oversized buttons on desktop. It is a *minimum*, so a
-long translation still wraps to a second line rather than spilling out.
-
-Everything about how the row reflows is stated in logical properties against the
-*pane*, never a viewport query, so narrow desktop panes, phones, RTL and larger
-text are one code path rather than four. Three declarations carry it, and they
-are guarded by `tests/subheaderRowWrapping.test.ts`:
-
-- **`flex-wrap: wrap` on `.cs-subheader-row`**, shared with the palettes heading
-  rather than written per row. Obsidian's `.setting-item` is `nowrap`, so its
-  answer to a narrow pane is to shrink the info box while the buttons hold their
-  width - at a phone width that left *Saved color palettes (1)* stacking a word
-  per line beside a button that had not moved. Wrapping picks the other answer:
-  the action group drops whole to the next line and the title takes the width
-  back. Line breaking measures each item at its max-content size, so the break
-  lands exactly where crushing would otherwise begin - no breakpoint to pick, and
-  none to keep in step with a translation.
-- **`margin-inline-start: auto` on the control**, because a wrapped flex item
-  starts its new line at the *leading* edge - the buttons reappeared under the
-  first letter of the title instead of out where they had been a pixel earlier.
-  The auto margin is inert on the unwrapped line (flexing has already taken the
-  free space), so one declaration covers both states.
-- **`flex-wrap: wrap-reverse` on the callout-list control**, which is what stacks
-  **Add new callout** above **Scan for callouts** when even a line of their own
-  is too narrow for both. It hangs the *last* line at the top, so it is true only
-  while the CTA is last in the DOM - the same ordering that lands it on the row's
-  outer edge horizontally. Swapping the two `addButton` calls looks like nothing
-  and silently inverts the stack; the test's DOM half exists for that.
-  `justify-content: flex-end` is restated on the control rather than inherited
-  from Obsidian, since it is per-line and is what holds the lower button to the
-  trailing edge.
-
-**When the line has no room, Scan leaves the heading - on every device.** While
-the title and both buttons fit on the heading's one line, they stay there. When
-they do not - a phone, an iPad in portrait, a narrow settings window, a long
-translation, larger text - **Add new callout** keeps the title's line at the
-trailing edge and **Scan for callouts** goes to the foot of the list, under
-**Load more** when there is one. The heading therefore never splits its two
-buttons over lines of their own; the `wrap-reverse` stack above is only what
-shows where nothing has measured (no `ResizeObserver`). The order at the foot is
-not arbitrary: Load more is the list's own last child and continues it, so it
-must stay against the last row, while a scan is about the section, not one row
-of it - with Scan above Load more, the revealed rows would appear below a scan
-button.
-
-The switch is **measured, not keyed to `.is-phone` or to a width**, in
-`sections/scanPlacement.ts`. It used to be `.is-phone` alone, which left an iPad
-in portrait and a narrow desktop window with two lines of buttons under the
-title. The width it takes is three translated, font-dependent boxes, so only the
-layout can answer it:
-
-- The heading is read **as it would be with Scan**, never as it is. With Scan
-  gone the line has room by construction, and an answer read off that state
-  brings Scan straight back - a flip on every frame. So the heading gets
-  `cs-scan-measure` (the hiding rule skips it), its info and control boxes are
-  read, and the class comes off again in one synchronous turn, before paint.
-  "Fits" is the control on the title's flex line. The title is `flex: 1 1 auto`
-  (it used to reserve 12rem), so the line breaks exactly when the full title and
-  both full buttons stop fitting side by side.
-- The measuring class is on the heading and nothing below it. The footer keeps
-  its state while the heading is read, so the body never shrinks for a moment
-  and the pane's scroller has nothing to clamp.
-- The answer is `.cs-scan-below` on the section wrapper; the stylesheet hides
-  the heading's copy and shows the footer under it.
-- It is asked again when the pane's width changes, through a `ResizeObserver` on
-  the tab's title row ("Callout Studio"), whose box follows the pane and nothing
-  this toggle does. Observing the heading itself would loop: moving Scan changes
-  its height inside the observer's own callback, which ends in "ResizeObserver
-  loop completed with undelivered notifications". It is also asked when the
-  painter rewrites the heading's count (`placeScan`), from a **microtask**: the
-  painter runs inside `display()` too, before the sections under it exist, and a
-  layout read there flushes half a page, so the scroller clamps and the reader
-  loses their place. A language change rebuilds the tab and the observer with it.
-  The label turning into "Scanning…" deliberately does not re-ask: moving the
-  button just pressed is worse than a line a word short for the length of a scan.
-
-`tests/scanPlacement.test.ts` drives the measurement against a fake layout
-(including the flip-every-frame trap); `tests/subheaderRowWrapping.test.ts`
-guards that no rule places either copy by platform.
-
-Scan is built **twice**, on every platform: once in the heading's control and
-once in `.cs-discover-footer`, the last child of the section body. Both come
-from the one `addManualDiscoveryButton`, which keeps one progress state for all
-copies, so a scan started from either greys both
-(`tests/manualScan.test.ts`). The scan itself is `runManualScan`
-(with `scanRunning`), which the declarative page's Scan row shares, so a scan
-shows the same way there.
-
-The footer is **inside the body and the painter never rebuilds it.** Inside,
-because the body owns the section's whole trailing gap and folds with it
-(`tests/sectionTrailingGap.test.ts` fails on a second spender or on anything
-after the body), so the footer needs no gap and no fold rule of its own - which
-also means a folded section with Scan at its foot shows no Scan until it is
-unfolded. Kept, because a scan is followed by exactly the repaint that rebuilds
-the rows, and the button that started it holds focus: a focused node removed
-from a body that is half empty makes Chromium flush layout, the pane's scroller
-clamps and the page jumps. `renderUserList` therefore removes every child but the
-footer, renders (the new rows land after it) and moves the *rows* in front of
-it, so the footer never leaves the DOM. Measured in Obsidian 1.14.4 phone
-emulation with the footer focused and a repaint adding a row: `scrollTop` stayed
-constant on every frame and the same element kept focus. (A real scan still
-drops focus, because the button is `disabled` while it runs and Chromium blurs a
-disabled control; that is the button, not the repaint.)
-
-Why a phone needs its own button sizes: Obsidian's
-`.is-phone .modal .setting-item-control button:not(.clickable-icon)` is
-`width: 100%; margin: 0` at (0,4,1), and its exclusion list covers the control's
-width but not the buttons'. In a real phone window each button took the control's
-whole width - two full-width bars (170px) under a lone title - and a button that
-wide fits beside no title, so the measurement would send Scan down even on a
-phone turned sideways. A bare-pane harness, including the store-screenshot
-renderer, does not show it because it mounts the settings outside `.modal`. The
-phone rules restate `width`, `margin` and `padding` for **both** heading buttons
-at (0,5,1), and `tests/subheaderRowWrapping.test.ts` compares them to that
-selector with `specificityOf`.
-
-English fits the title and the CTA on one phone line from a 370px window up.
-Below that (the common 360px Android width) or with a long translation, Add falls
-to a line of its own at the trailing edge; that is the existing wrap rather than
-a case of its own. The column gap and the buttons' side padding are 12px on a
-phone for this reason - the 16px used elsewhere needs 381px.
-
-Verified in Obsidian 1.14.4 (English, dark, empty title count unless noted): the
-desktop settings window keeps all three on one line down to a 720px window and
-moves Scan from 715px (every width from 730 to 690 checked against an
-independent "would it fit" reading, plus a fast drag, with no observer errors);
-phone emulation moves it at 320-430px portrait and keeps it at 568-932px
-landscape; tablet emulation moves it at 744-834px portrait (iPad mini to iPad
-Pro 11") and keeps it at 1024px and wider; `mod-rtl` mirrors both states; and at
-the narrowest width where "(3)" fits, adding callouts to "(11)" moves Scan.
-
-The button rule that supplies `min-inline-size: 0` and `overflow-wrap: anywhere`
-is scoped to `.cs-subheader-row`, not to the callout-list heading alone. Obsidian's
-`button` is `white-space: nowrap` with a fixed `height`, so its min-content width
-is the whole label: scoped narrowly, a long translation of **New palette**
-("Neue Farbpalette erstellen") ran off the trailing edge of the pane instead of
-wrapping inside its own box - before this row could wrap and after.
-
-`manualScan.ts` shares only transient running state per plugin through
-a `WeakMap`. Settings redraws and reopenings reuse that state and remove obsolete
-DOM listeners through `registerDisposer`; repeated or detached-button clicks do
-nothing. The button catches scan failures, restores its label/disabled state, and
-never calls `display()` or focuses a control after completion. Existing registry
-subscriptions refresh rows and counts while preserving paging and scroll.
-
-### `getSettingDefinitions()` returns the tab's tree
-
-```ts
-getSettingDefinitions(): SettingDefinitionItem[] {
-	this.declarative ??= new DeclarativeSettings(this);
-	return this.declarative.definitions();
-}
-```
-
-Since the *Searchable Settings* switch, Obsidian draws the whole tab from a
-tree: this hook's answer. A **non-empty** answer turns `display()` off for the
-whole tab (Obsidian 1.13+), so everything on the tab, every page and every
-row, comes from the tree, and Obsidian indexes it for **Search settings…**. How
-the tree is built, kept current and drawn is all in
-[26-declarative-settings.md](26-declarative-settings.md).
-
-The tab has no `display()` of its own: the old page drawn section by section,
-and the three windows that became pages (style, right-click menu, commands),
-were deleted in the *Clean Sweep*. A tree that fails to build is replaced by
-one row that says so (26 § Never throwing). What remains under
-`settings/sections/` are the pieces the tree's rows are made of (the callout
-row, the fallback and language controls, the palette flows, the scan). Parts
-of this chapter below still describe the old page; the Clean Sweep's docs pass
-rewrites them.
-
-The tab overrides `getControlValue` and `setControlValue`, so no declarative
-control can ever reach Obsidian's default `saveData(plugin.settings)`, which
-would overwrite `data.json` with the settings alone (26 § Saving a control).
-`hide()` ends the visit the tree started (26 § The tab and its tree).
-
-The tab also sets `icon` to `PLUGIN_ICON_ID` (Lucide `paintbrush`, the mark
-that stands for Callout Studio). Obsidian draws a tab's icon beside its rows in
-the settings search results, as it does for every core tab; the sidebar list
-hides every community plugin's icon, so nothing changes there.
-
-### Four subscriptions, one coalesced refresh
-
-They live in `settings/sections/tabSubscriptions.ts`, wired on the first
-`display()` and undone by the single disposer it returns. (The declarative tab
-wires the same four once, for the plugin's whole life, into its `TreeUpdater`:
-26 § The tab and its tree.)
-
-```ts
-registry.onChange(sub)          → scheduleListRefresh(false)
-registry.onPreviewChange(sub)    → scheduleListRefresh(true)
-plugin.onIconCacheChange(cb)      → scheduleListRefresh(true)
-workspace.on("css-change", cb)     → scheduleListRefresh(false)  // theme-mode swatch colours
-```
-
-All four funnel into one `requestAnimationFrame`-coalesced refresh
-(`scheduleListRefresh`), so a burst of related events (a registry mutation
-that *also* triggers `css-change`) costs exactly one re-render, landing on
-the very next paint rather than a beat later. The frame is the **tab's own
-window's** (`requestFrameFor(this.containerEl, …)`, `utils/elementFrame.ts`):
-in Obsidian 1.14 the settings are a window of their own, and a frame asked of
-the main window is held back while it is hidden behind them - the lists then
-stayed stale until the settings window closed. The callout editor's two
-frames and the global style sliders follow the same rule. The `onPreviewChange`
-subscription specifically is what keeps a row's swatch tracking the callout
-editor's in-progress colour picks live, without the preview reaching
-`saveSettings()` or forcing a document-wide re-render - see
-[Callout registry § the transient live-preview slot](05-callout-registry.md#the-transient-live-preview-slot).
-
-Subscribed **once per visit, not per render.** `display()` re-runs for things
-the reader never asked for (see below), and re-subscribing on each would stack
-duplicate listeners for the life of the session.
-
-#### `force`, and why only two of the four carry it
-
-`refresh` compares a signature of everything it would draw
-(`sections/calloutListsSignature.ts`) and skips the rebuild when nothing moved.
-Two of the four signals describe changes that signature reads for itself; the
-other two describe changes it structurally **cannot** see, and those pass
-`force`:
-
-| Signal | `force` | Why |
-| --- | --- | --- |
-| `registry.onChange` | no | A real mutation, read straight off the registry |
-| `workspace.on("css-change")` | no | Moves the colour scheme, the theme's name and its measured appearances - all in the signature |
-| `registry.onPreviewChange` | **yes** | Registered transiently and *without* a registry mutation, by contract, so it may not be visible from the signature at all |
-| `plugin.onIconCacheChange` | **yes** | Artwork lives in a download cache keyed by icon name, so a definition naming a not-yet-downloaded icon is byte-identical to the one naming it a second later - guarding this would leave every spinner spinning for good |
-
-`force` is sticky across the coalescing frame: a frame that coalesced an icon
-landing with an unrelated `css-change` still honours the icon.
-
-The signature serialises **whole definitions**, not the fields a row happens to
-read today, and the module says why at length: a curated list is how the tenth
-field added later goes stale on screen. Both directions of failure are named
-there too - a signature that changes when nothing did costs one repaint the
-scroll anchor already hides, while one that fails to change leaves a stale row
-with nothing to catch it, so it errs toward including more.
-
-### The repaint must not move the page under the reader
-
-The tab renders **into Obsidian's own scroller** - `containerEl` *is*
-`.vertical-tab-content` - and the four sections that repaint asynchronously all
-sit above the other eleven. So every repaint above happens above the fold for
-anyone reading a section below it: rows appear and vanish, the whole theme
-section comes and goes with `cs-hidden`, and a theme row grows when the
-appearance probe lands it a swatch. Where the transient page comes out shorter
-than the offset the reader was at, the browser clamps it and the place is lost
-outright rather than merely shifted.
-
-Both async repaint paths therefore run inside
-`sections/foldAnchor.ts`'s `keepScrollAnchored` - `SettingsTab.refreshLists`
-and `paletteFlows`'s 60 ms `css-change` debounce. It measures the
-topmost *direct child* of the container still on screen, runs the mutation, and
-hands the difference back to the scroller. Direct children are the right depth
-because they outlive the mutation: the repaints empty and refill containers
-nested inside the section wrappers, never the wrappers themselves.
-
-It is the same two-reads-and-one-write shape as `keepHeadingInPlace`
-([Folding a pinned heading](#folding-a-pinned-heading)), differing in two ways
-that matter - the anchor is chosen rather than handed in, and the correction
-runs in **both** directions, because content above the fold here can grow as
-well as shrink. It does not double-count Chromium's own scroll anchoring:
-reading the second measurement forces layout, so any adjustment the browser
-made has already landed and the drift measured is only the residual.
-
-Two things it deliberately does not touch: the **Load more** jump
-(`focusFirstRevealed`), which is an intended move, and the user-driven fold,
-which `keepHeadingInPlace` already anchors.
-
-### Opening settings does not discover callouts
-
-`display()` builds the settings page and subscribes once per visit. It neither
-scans open editors for unknown types nor schedules pruning. The one **Discover
-now** button lives in the **My callout types** heading; it disables itself while its promise
-is pending, catches failures and reports success only after persistence.
-The occurrence sidebar owns read-only statistics and navigation; Settings has no separate statistics modal or second discovery button.
-
-
-### `display()` is not only run by someone opening the tab
-
-`manager/settingsBoot.ts`'s `adoptExternalSettings` re-runs it whenever another
-device's `data.json` lands - i.e. on every sync round trip - and
-`applyLocaleChange` does the same when a locale finishes downloading. Neither is
-a gesture the reader made, and `display()` empties the container, so both used
-to drop them at the top of a fifteen-section page mid-scroll **and** fold every
-list back to its first 20 rows.
-
-Those callers (and the two recovery services) ask `settingsTab.update()` now,
-with no check of their own: Obsidian draws the tab again only while it is the
-open tab, on whichever of its pages is open, which today, with an empty tree,
-means `display()`. The check they used to make, `containerEl.isConnected`, was
-false while a sub-page was open, so a sync landing then was never drawn (review
-B2). Two things answer the scroll and the paging:
-
-- **Scroll.** `display()` reads `containerEl.scrollTop` on entry and writes it
-  back after the last section renders - last, because assigning past the end of
-  a still-short page would be clamped and lost. It is self-limiting rather than
-  stateful: a freshly opened pane is already at 0, so a genuine open restores
-  nothing and behaves exactly as it always has.
-
-  `scrollRestore.ts` retries on the next frame only if that initial assignment
-  was clamped. Any intervening scroll, up or down, cancels the retry. A newer
-  capture invalidates the older frame so an obsolete display cannot move a
-  newly opened or redrawn pane back to its previous position.
-
-  > [!NOTE]
-  > `containerEl` **is** the scroller, on phones as much as anywhere else, so
-  > reading `scrollTop` off it directly is right and does not need
-  > `foldAnchor`'s `scrollParentOf`. Verified against Obsidian 1.13.7: the tab's
-  > container is `createDiv("vertical-tab-content")`, the only two overflow
-  > rules on the pair are `.vertical-tab-content-container { overflow: hidden }`
-  > and `.vertical-tab-content { overflow-y: auto; height: 100% }` with no
-  > mobile override, and `vertical-tab-content-inner` - which `foldAnchor` used
-  > to warn "could move the overflow up to the container" - appears **zero**
-  > times in `app.js` and only ever as a *descendant* of the scroller in
-  > `app.css`, for the phone's rounded-card look. That warning was wrong in both
-  > halves and is corrected in place, because it points a reader at the wrong
-  > element when they go looking for a scroll bug.
-- **Paging.** The cursors moved out of the controller closure and onto
-  `SettingsTab` - see
-  [Where the state lives, and how long](#where-the-state-lives-and-how-long).
-
-### Section disposers
-
-Each section that registers a resource needing cleanup (an event listener, a
-timer) returns a disposer via `ctx.registerDisposer(fn)`; `display()` runs
-every previously-registered disposer **before** rebuilding, and `hide()`
-runs them on tab close. This is what keeps a section's `MutationObserver` or
-subscription from silently accumulating across repeated `display()` calls.
-
-## Folding and paging - the callout lists, and Saved color palettes
-
-[`CalloutListsSection.ts`](../../src/settings/sections/CalloutListsSection.ts)
-builds *Callouts from your theme*, *My callout types* and *Built-in
-callouts*, in that order, from one pass over one combined list (see
-[Theme callout discovery](18-theme-callout-discovery.md) for who lands
-where). Two behaviours sit on top of that split, each in its own helper -
-and [`paletteFlows.ts`](../../src/settings/sections/paletteFlows.ts)'s
-*Saved color palettes* heading is a fourth member of the same family rather than
-a parallel implementation: it calls the identical `attachPersistedFold` and
-`renderPagedList` helpers, just keyed `"palettes"` instead of a `RowKind`, and
-wraps itself in the same `createStickySection` the trio uses so the heading pins
-too (see [The three sections pin their headings](#the-three-sections-pin-their-headings) -
-palettes is the standalone fourth). Unlike the other sections, it keeps only the
-list of saved palettes and no additional orphan groups. Its flows (new, edit,
-delete), its A→Z order and its swatches are exported for the declarative page
-([26 § The Saved color palettes page](26-declarative-settings.md#the-saved-color-palettes-page)).
-
-The row's **Use default fallback style** action uses the Lucide `rotate-ccw`
-icon, matching the built-in **Reset to default** action. It calls
-`CalloutRegistry.convertToFallback()` to follow the current fallback and
-subsequent changes to its style. The action asks nothing first, so
-`settings/sections/fallbackStyleAction.ts` ends it with a notice carrying
-**Undo**, as Delete does. Undo restores a clone of the row taken before the
-conversion. Because `registry.update` merges, it clears by name every field the
-fallback brought that the old row lacked, such as a gradient or text colors.
-It does nothing while saving is paused, and nothing once the row has moved on:
-deleted, renamed, edited (`customized`), or made the fallback itself.
-
-### The theme section opens with its switch
-
-**Use your theme's callout styles** (`settings.themeCalloutStyles.enabled`,
-see [18 § Switching the theme's callout styling off](18-theme-callout-discovery.md#switching-the-themes-callout-styling-off))
-is the first row of *Callouts from your theme*'s body, under the heading and
-its description and above the rows. `calloutListsScaffold.ts` builds it once
-per `display()`, and `renderThemeList` rebuilds every other child of the body
-around it, as the user list does around Scan's footer - the switch is what is
-pressed right before that repaint. Being inside the body, it folds with the
-section, and the body's trailing gap still falls under whatever comes last.
-
-Turned off, the switch empties its own section: the theme names nothing, so
-no row is the theme's. The section therefore stays on screen with no rows
-while the switch is off and a community theme is active, and the description,
-which describes rows, hides on its own. In Obsidian's default theme the
-switch has nothing to take away, and the section stays hidden as before. With
-no rows, nothing in the signature moves when the switch is flipped, so the
-signature carries `themeCalloutStyles.enabled` itself; and every repaint
-re-reads the saved value into the toggle (`ThemeStylesSwitch.sync`), since
-another device's settings or a Reset can change it under an open tab.
-
-It used to be the last row of *Global settings*, put there because this
-section disappears with its last row. The section's visibility rule is what
-moved instead: a theme that styles callouts without naming any id lists no
-rows, and there the switch is not on screen. That rule is shared with the
-declarative page (`partitionCallouts` and `themeStylesSwitchedOff` in
-`rowOwnership.ts`), where the switch is a row on the main page instead
-([26 § Fallback, language and the theme's styles](26-declarative-settings.md#fallback-language-and-the-themes-styles)).
-
-### Callout rows are Obsidian setting rows
+### A callout row is an Obsidian setting row
 
 Every row of the three callout lists is an Obsidian `Setting`
 (`.setting-item.cs-callout-row`), filled by `drawCalloutRow` in
 [`CalloutRowRenderer.ts`](../../src/settings/sections/CalloutRowRenderer.ts)
-(finding S2-14). `renderCalloutRow(ctx, container, def, kind, handlers)` makes
-the `Setting` and calls it; the declarative settings hand `drawCalloutRow` a
-`Setting` of their own and may draw it again, so it returns what undoes the
-two things it puts outside the row's controls (the icon at its start and the
-right-click listener). Its ✎ takes an optional `editBlockedReason`: while there
+(finding S2-14). The pages hand it the `Setting` Obsidian made for the row
+(`calloutRow` in `declarative/calloutPages.ts`) and may draw it again, so it
+returns what undoes the two things it puts outside the row's controls (the
+icon at its start and the right-click listener). Its ✎ takes an optional `editBlockedReason`: while there
 is one, ✎ is dimmed and a press says it (`addBlockableIconButton`).
 
 | Part of the row | What it holds |
@@ -774,6 +487,17 @@ attaches them to the usage item's subscription, which greys them out if the
 count lands on zero and lights them again if a use appears. Nothing is ever
 removed or regrouped once the menu is shown.
 
+The row's **Use default fallback style** action uses the Lucide `rotate-ccw`
+icon, matching the built-in **Reset to default** action. It calls
+`CalloutRegistry.convertToFallback()` to follow the current fallback and
+subsequent changes to its style. The action asks nothing first, so
+`settings/sections/fallbackStyleAction.ts` ends it with a notice carrying
+**Undo**, as Delete does. Undo restores a clone of the row taken before the
+conversion. Because `registry.update` merges, it clears by name every field the
+fallback brought that the old row lacked, such as a gradient or text colors.
+It does nothing while saving is paused, and nothing once the row has moved on:
+deleted, renamed, edited (`customized`), or made the fallback itself.
+
 ### Callout row menu lifetime
 
 Custom, built-in and theme row actions all use
@@ -870,395 +594,14 @@ a surrogate pair.
 The action validates and commits an isolated settings snapshot through
 `SettingsWriter.commit`, publishing the registry definition only from its
 after-write callback. A completed commit triggers the success `Notice` and
-`revealCallout`, which expands the destination section and its pagination
-before rendering so a duplicate beyond the first 20 rows is visible too.
+`revealCallout`, which opens My callout types, scrolls to the new row and
+flashes it ([26 § Jumping to a row](26-declarative-settings.md#jumping-to-a-row)).
 Validation and pre-write failures leave the registry unchanged and show an
 error `Notice`. If a final recovery-checkpoint failure occurs after the valid
 copy has reached disk and the registry, the action keeps that durable copy,
 refreshes the list and shows the error `Notice`. No vault tokens are rewritten.
 
-### `sectionDisclosure.ts` - a heading you can fold
-
-`attachSectionDisclosure(setting, bodyEl, initiallyExpanded = true, onToggle?)`
-gives a heading a compact rotating chevron and returns
-`{ setName, setExpanded, isExpanded }`. `onToggle`, if given,
-fires with the new state on a user-driven click or keypress only - not when a
-caller drives the returned `setExpanded` - which is what lets a caller
-persist just the user's own choice; see
-[Where the state lives, and how long](#where-the-state-lives-and-how-long)
-for the one caller that does.
-
-Three things about it are decisions, not incidentals:
-
-- **It is not `<details>`/`<summary>`.** These headings are `Setting` rows, and
-  *My callout types* carries the **Add new callout** CTA in its control slot -
-  a `<summary>` wrapping a button is a button that folds the section every time
-  it is pressed. So the state, the keyboard (`Enter`, `Space`) and the aria
-  contract are written out here.
-- **The control is `setting.nameEl`, not `settingEl`.** The name element
-  spans the title line and stops short of `.setting-item-control`, which is
-  what keeps that CTA pressable without a target check. It also keeps the
-  button's accessible name to `"My callout types 4"` rather than the whole
-  row including a paragraph of description. `role="button"`, `tabindex="0"`,
-  `aria-expanded` and `aria-controls` all live on it; the chevron is
-  `aria-hidden`, because `aria-expanded` already says what it says.
-- **`setName` is wrapped.** Each list rewrites its heading on every render to
-  update its count - the fragment `headingWithCount` builds (see
-  [Faint counts](#faint-counts---how-many-as-obsidians-search-shows-it)) - and Obsidian's
-  `setName` *replaces* `nameEl`'s children, which is where the chevron lives.
-  Attributes survive that; elements do not. Callers therefore go through
-  `fold.setName(...)`, never `setting.setName(...)`.
-
-Folding toggles `is-collapsed` on the heading and on the body. That is
-deliberately **not** `cs-hidden`: the theme *section* hides itself with
-`cs-hidden` when it has no rows (unless its switch is off - see
-[The theme section opens with its switch](#the-theme-section-opens-with-its-switch)),
-and one class toggled for two reasons means
-whichever ran last decides - a fold would reopen an empty section, or an
-empty section would reopen a folded one. The two now sit on different
-elements as well (the section wrapper hides, the body folds), which makes the
-collision impossible rather than merely avoided.
-
-A user-driven toggle is wrapped in
-[`foldAnchor.keepHeadingInPlace`](../../src/ui/foldAnchor.ts) -
-see [Folding a pinned heading](#folding-a-pinned-heading).
-
-Note also that *Built-in callouts* does **not** get `cs-subheader-row` to
-reach the chevron styling: that class also sets the smaller type, and this
-heading is a size larger. It is the only one of the four - *Callouts from your
-theme*, *My callout types* and *Saved color palettes* all carry it, for the
-smaller type and the tighter box its CTA-bearing rows need. The chevron layout
-itself rides on `cs-collapsible-heading`, which every foldable heading gets
-from the helper regardless.
-
-### The three sections pin their headings
-
-Each of the three callout lists is built into a `div.cs-sticky-section` by
-[`stickySection.ts`](../../src/settings/sections/stickySection.ts), with its
-heading carrying `cs-sticky-heading`. The wrapper *is* the feature: a sticky
-box cannot be shifted outside its containing block, so a heading wrapped
-together with its own rows is pinned to the top of the settings pane for
-exactly as long as those rows last - it is pushed off by the next section's
-heading, and the last one lets go with its own last row instead of hanging
-over the eight sections below. No scroll listener and no measurement.
-
-The three used to be flat siblings of each other and of everything under
-them, and that is the one arrangement that cannot work: one containing block
-between them, so all three would pin at the same offset, stack, and never let
-go. Un-wrapping them leaves every CSS rule parsing and applying, and silently
-removes the behaviour - which is why the structure is asserted in
-`tests/calloutListsSectionDisclosure.test.ts` rather than left to the
-stylesheet.
-
-**A fourth section pins the same way: *Saved color palettes*.** It is built to
-be a clone of *My callout types* - the same `createStickySection` wrapper, the
-same `cs-subheader-row` heading box (tight, borderless, laid out for a CTA
-button, and wrapping that button below the title on a narrow pane), the same `cs-sticky-heading` / `cs-section-body` classes - so almost
-everything below applies to it unchanged. It is not one of the contiguous
-three, though: *Fallback callout* sits between *Built-in callouts* and it, so
-two things differ, both carried on its wrapper:
-
-- **`cs-sticky-section-last`**, because nothing sticky follows it either. That
-  class is now on two wrappers, and the `cs-sticky-section-last + heading` rule
-  now also spaces the *Global settings* heading below it - the same
-  `margin-top: 0; padding-top: var(--cs-sticky-heading-pad-top)` treatment
-  *Fallback callout* gets under *Built-in callouts*.
-- **`cs-palettes-section`**, for the one thing the stylesheet must special-case.
-  The section above it is not pinned, so no body hands a `--cs-section-gap`
-  down to its divider the way *My callout types*' body does for *Built-in
-  callouts*. The wrapper makes up the gap with its own `margin-top:
-  calc(var(--cs-section-gap) - 0.75em)` - the only place a sticky wrapper is
-  allowed a margin, safe because nothing hands over to it (the space just
-  scrolls). It tracks `--cs-section-gap` rather than a number of its own so it
-  never drifts out of step with the trio; the `0.75em` subtracted is Obsidian's
-  `.setting-item` block padding, which the Fallback dropdown row directly above
-  already spends below its own text, so the two land the last-row-to-divider gap
-  on the same 40px. It is written on the wrapper, not spent on the body through
-  `--cs-section-gap`, because it is *leading* space and has to survive a fold -
-  a folded palettes section still has to clear *Fallback callout* above it.
-  `sectionTrailingGap.test.ts` holds both halves.
-
-There is also a `margin-block: 0` on the shared `.cs-sticky-heading` rule that
-this fourth section is the reason for. Obsidian gives a `.setting-item-heading`
-a `0.75em` top margin whenever it follows a `.setting-item` sibling *or* sits in
-a `<div>` immediately after one (`.setting-item + div > .setting-item-heading`)
- - which is exactly where the palettes wrapper lands, under the Fallback dropdown
-row. On a band meant to sit flush against its divider hairline, that margin
-opens an 11px strip of bare pane between the line and the paint. The trio never
-trips it (each of their wrappers follows another `<div>`), but zeroing it on the
-shared rule covers the fourth and any later reordering; *Callouts from your
-theme*'s own 4px top nudge is higher-specificity and unaffected.
-
-This section's list scrolls under the band like any other row.
-The `.callout-studio-callout-list` 24px-margin zeroing now reaches the palette
-list too (it is inside a `cs-sticky-section` now), trimming 24px between it and
-the heading - which is fine, the heading carries its own full divider.
-
-Nine consequences are written into `styles.css` beside the rules, and are
-worth knowing before touching any of them:
-
-- **The pane's `padding-top` is zeroed and handed to the title row, at a
-  weight that survives a theme.** A sticky `top` is measured from the
-  scrollport's *content* box, so Obsidian's `padding-top: var(--size-4-12)`
-  would park the band 48px down with rows scrolling visibly through the strip
-  above it. Obsidian's own sticky settings header does the same thing one line
-  away - `.setting-page.vertical-tab-content { padding-top: 0 }` beside
-  `.setting-page-titlebar { position: sticky; top: 0 }`.
-
-  The weight is the part that was missing, and it is not defensive padding.
-  `containerEl` **is** `.vertical-tab-content`, so the reset lands on the very
-  element a theme styles, at the same `(0,1,0)` a bare `.vertical-tab-content`
-  carries - and the theme sheet loads after this plugin's. Measured over the
-  257 themes installed in the development vault, **26 declare padding on that
-  element and 20 put a non-zero top inset back**, from `(0,1,0)` (ITS Theme's
-  `padding: 35px`, NotSwift's `padding-top: 60px`, Kakano, Terminal, Sandstorm,
-  Subtlegold, TerraFlow, Cybertron, Ono Sendai, Suddha, Pine Forest Berry)
-  through `(0,7,1)` (Maple), one of them - Elegance - with `!important`. Every
-  one of them un-sticks all four bands identically, at whatever distance it
-  chose. So the reset is written
-  `body:not(.is-phone) .callout-studio-settings×3 { padding-top: 0 !important }`:
-  `!important` because nothing else outranks Elegance's, the class tripled to
-  `(0,4,1)` for headroom over a future important rule, and the phone excluded
-  *explicitly* - with an `!important` in play it would otherwise have beaten
-  Obsidian's own `(0,5,0)` phone rule, whose padding is reserving the top of the
-  screen for the floating back and close buttons. `padding-block-start`
-  (flexcyon's spelling) cascades in the same slot and needs no separate
-  declaration; a `border-top` on the pane (TerraFlow's 1px glass frame) insets
-  the content box the same way and is deliberately left alone. Section **165**
-  of `modalBodyLayers.test.ts` resolves that cascade against the theme rules
-  verbatim.
-- **The band paints `background-color: inherit`, not the `--cs-surface`
-  pair.** That pair is defined inside `.cs-modal` and nowhere else, so on the
-  settings tab it falls through to `--background-primary` - and that is what
-  Obsidian paints this pane on the *desktop only*: under `.is-mobile` the pane
-  takes `--settings-background`, which is itself `--background-secondary`,
-  `--background-primary` or `--background-primary-alt` depending on phone,
-  tablet and colour scheme. Measured, a dark tablet's pane is `rgb(17,17,17)`
-  while `--background-primary` there is `#000`; the token would have made the
-  band a visible stripe, which is the exact failure `modalSurfaces.test.ts`
-  exists for. `inherit` cannot disagree with the pane on any platform. It is a chain:
-  the wrapper declares it too, because `background-color` is not an inherited
-  property and the band would otherwise inherit `transparent`.
-- **Under that paint is a floor, because `inherit` is only as opaque as what
-  it copies.** Replayed through a headless Chrome against the running
-  Obsidian's own `app.css`, this stylesheet and one theme at a time - the 257
-  installed in the development vault, in both colour schemes - the band
-  computes **transparent under a good many of them**. Most of those leave the
-  pane itself see-through (Sodalite paints `.vertical-tab-content` `transparent` and puts the surface
-  on the container behind it; TerraFlow's dark pane is glass; Velocity's whole
-  window is, `--modal-background` included, at `oklch(… / 0.625)`), so the
-  chain has nothing opaque to carry down. Three others beat the band's own
-  declaration: Elegance and Lagom write `background-color: transparent
-  !important` on `.setting-item-heading` - at `(0,2,0)` and, nested under
-  `.mod-settings`, at the band rule's own `(0,3,0)` - and Micro Mike wins a
-  `(0,3,0)` tie through `.modal.mod-settings :is(h1, …,
-  .setting-item-heading)`. Either way rows scroll visibly through a heading
-  that is pinned exactly right.
-
-  The fix is a floor rather than a fight, because `!important` is not
-  available: Lagom's is already at the band rule's specificity, so winning
-  means out-specifying the *next* theme rather than that one. So
-  `.cs-sticky-heading::before` lays an opaque base - `--background-primary`
-  with `var(--settings-background, var(--modal-background))` over it, the
-  theme's own surface tokens and never a colour named here; the top layer is
-  the token core paints this pane *with*, so measured on desktop, tablet and
-  phone in both schemes it comes out the pane's own colour every time - and
-  `.cs-sticky-heading::after` repaints the band's whole
-  background over that with `background: inherit`, image included, so a theme's
-  heading gradient still paints. Both sit at `z-index: -1` inside the band's
-  own stacking context, so they are above its background and below its title,
-  and both are scoped `body:not(.is-phone)`, where the band is `position:
-  static` and so not a containing block. Where the band's paint is opaque - the
-  great majority of themes, and every platform with no theme installed - the
-  `::after` covers the floor completely and nothing changes: with no theme the
-  rendered pane is pixel-identical before and after.
-
-  It reaches all but a few. The ones left over are the themes that name no
-  opaque surface anywhere - see the rules' own comment in `styles.css` for the
-  roll call and the reason each one is out of reach. That is deliberately where it stops: the only floor
-  that could not itself be see-through is a colour named here, and on a theme
-  whose every surface is transparent on purpose it would be the one opaque
-  thing in the window. Section **166** of `modalBodyLayers.test.ts` pins the
-  arrangement and the cascade behind it.
-- **The gap under a section lives on that section's own body, and nothing
-  else contributes to it.** Space outside a wrapper's content box is space
-  with no heading pinned to it, so a 36px margin between wrappers would be
-  36px where one heading has let go and the next has not yet caught - the band
-  blinks out and back instead of handing over. So `--cs-section-gap` (40px) is
-  spent on `.cs-section-body` and only there, the divider between two sections
-  is a hairline `border-top` on the wrapper and nothing more, and folded
-  sections carry no gap at all - the body is `display: none`, so the gap goes
-  with the content it was spacing. (A gap on the heading could not do that
-  anyway: a sticky box is constrained by its *margin* box, so a bottom margin
-  travels with it and buys no pinned distance.) Three details make "and only
-  there" true, and each was a visible bug before it was:
-  - The **last** section spends the same variable as `margin-bottom` rather
-    than `padding-bottom`. Padding would extend the containing block its
-    heading is clamped to and pin the band over its own trailing space; a
-    bottom margin on the last in-flow child collapses out through the wrapper
-    instead, so the space lands outside and the heading lets go with its last
-    row. That gap used to live on the `margin-top` of the plain heading below
-    (Fallback callout), which cannot see a fold - collapsed, "Built-in
-    callouts" carried 40px of empty space no content justified. That heading
-    now sets `margin-top: 0` and keeps only `padding-top:
-    var(--cs-sticky-heading-pad-top)`, which is what puts its title as far
-    below the hairline as a sticky band's is.
-  - **Nothing a section ends with carries trailing space of its own.** A
-    scoped rule zeroes `.callout-studio-callout-list`'s 24px `margin-bottom`
-    and `.callout-studio-empty-state`'s 12px `padding-bottom` inside a section
-    body. Both are still wanted at the source for a list that ends *mid-*view
-    (the Quick insert window), which is why they are dropped here in a
-    `cs-sticky-section`-scoped rule rather than removed outright. Inside the
-    palettes section the zeroing does now reach a list that ends mid-section
- - the palette list inside its section - which is
-    harmless: that sub-heading carries its own full divider.
-  - Both of those rules reach through a **child combinator**, so a wrapper
-    element between a section body and its list would silently stop them
-    matching. `sectionTrailingGap.test.ts` guards the arithmetic against
-    `styles.css` and that structure against the rendered DOM.
-
-  Measured in headless Chrome against Obsidian's real `app.css`, every section
-  in every state now ends 40px above its divider - full list, `Load more`
-  button, or empty state - and every folded one sits on its divider with only
-  the band's own 24px of bottom padding between them.
-- **Not on a phone.** `.is-phone` sets `position: static`, and Obsidian makes
-  the same call for its own header (`.is-phone .setting-page-titlebar {
-  display: none }`). There the pane sits at the top of the modal and reserves
-  the band over it - for the floating back and close buttons at
-  `--layer-modal` - with `padding-top` rather than by starting lower. Padding
-  does not clip, so a band pinned below that strip has rows scrolling through
-  it *above* the heading; pinning flush instead only trades that for a title
-  under the ✕.
-- **The band is square, not rounded.** Obsidian's own `.setting-item-heading`
-  carries a corner radius; the plain headings reset it to `0` through the
-  `:not(.cs-sticky-heading)` divider rule, which these three are excluded
-  from, so they need their own `border-radius: 0` or they are the one rounded
-  bar in a pane of square ones - and a round top corner on a box pinned flush
-  against the pane's own edge reads as a gap the content behind it peeks
-  through.
-- **"Callouts from your theme"'s description is a sibling of the heading, not
-  part of it.** `renderThemeList` used to write the active theme's name onto
-  the heading's own `Setting.setDesc`, which pinned the sentence along with
-  the title for as long as the section was on screen. It is now a plain
-  `<p class="cs-theme-desc">` next to the heading in the wrapper - written
-  from the same place, still folded away with the rest of the section (via a
-  `.cs-collapsible-heading.is-collapsed + .cs-theme-desc` sibling rule, since
-  it is no longer a descendant of the heading that folds) - so it scrolls out
-  from behind the band like any other row instead of staying glued beside the
-  title.
-- **A row's colour circles need their own stacking context, or they float
-  above the band.** `.cs-color-circle-l/-r/-r2` stack front-to-back with
-  `z-index: 2/1/0` so the three overlap correctly, but nothing between that
-  widget and the pane establishes a stacking context of its own - so those
-  values aren't scoped to the widget, they're compared directly against
-  whatever else shares the nearest real one, which for a row inside these
-  three sections is the pinned heading's `z-index: 1`. Left alone, the front
-  circle (`z-index: 2`) outranks the header it's supposed to scroll under, and
-  every row's circles paint on top of the band as they pass beneath it.
-  `.cs-color-circles` carries `isolation: isolate` to contain its own 0/1/2
-  stack - chosen over `position: relative; z-index: 0` because it changes
-  nothing about layout or the scrollport, which matters next to a wrapper
-  that is deliberately forbidden from setting anything that would (see the
-  "nothing between the band and the scroller" test in
-  `modalBodyLayers.test.ts`). The same shared class renders in the *Saved
-  color palettes* section - where the heading pins too, so the fix carries its
-  weight there as well - and inside the callout editor's palette trigger,
-  where nothing is pinned and it is a no-op.
-- **Folded, the heading's bottom padding is bumped to match its top.** Open,
-  the band's top padding is deliberately larger than its bottom - nothing but
-  a hairline sits above the title, while the first row below carries its own
-  visual weight. Folded, `.cs-section-body` is `display: none`, so that row is
-  gone: the next thing down is another folded heading's divider (or, for the
-  last section, an unrelated one) - the same "hairline with nothing else
-  beside it" the top padding exists for, now on both sides. `.cs-sticky-heading.is-collapsed`
-  sets `padding-bottom` to `--cs-sticky-heading-pad-top` so a folded title
-  stays centred between the two dividers instead of sitting closer to the
-  bottom one. The two padding-tuning spots are asserted to reference the same
-  variable in `modalBodyLayers.test.ts`, not just resolve to equal pixels, so
-  a future re-tuning of one can't silently pull them back apart.
-
-### Folding a pinned heading
-
-Folding a section whose heading is pinned takes the content out from under
-it: the heading stops being stuck, drops back to its own place above the
-fold, and everything below jumps up by the height of what went away.
-`keepHeadingInPlace` reads the heading's box on both sides of the fold and
-hands the difference back to the scroller - two reads and one write, on a
-click, with nothing on the scroll path.
-
-It is applied unconditionally on the shared toggle because it is a no-op
-wherever the heading is not actually stuck: only a *stuck* box reports a
-different top before and after a change made below it, so a heading folded
-from its resting place - one below the fold, or any heading on a phone, where
-`position: static` - measures zero and the scroller is never touched. All four
-sticky headings share the helper, so all four are corrected when folded while
-pinned. The measurement is guarded rather than assumed - the test DOM has no
-layout and therefore no `getBoundingClientRect`, and that absence is what
-makes the anchor inert there instead of throwing on every fold.
-
-`foldAnchor.ts` has a second export built on the same three lines,
-`keepScrollAnchored`, which anchors the *asynchronous repaints* rather than the
-click - see
-[The repaint must not move the page under the reader](#the-repaint-must-not-move-the-page-under-the-reader).
-The two differ in the direction they correct, and deliberately: this one returns
-early on a negative drift, because the browser's own `scrollTop` clamp has
-already handled the page getting shorter, while the repaint case has to correct
-both ways.
-
-### The chevron hangs in the gutter
-
-A chevron inserted before the title would push the title along, and three
-section headings that shift right the day a fold arrives read as a
-regression, not a feature. So the chevron does not take space from the title:
-`.cs-collapsible-heading .setting-item-name` carries a
-`margin-inline-start` of `calc(-1 * (var(--cs-disclosure-size) +
-var(--cs-disclosure-gap)))`, moving the whole title line start-ward by
-exactly the chevron's footprint. The chevron fills the space that opens up,
-and the first glyph of the title - and the count after it - lands back on the
-x it had before there was anything to fold.
-
-Two properties, `--cs-disclosure-size` and `--cs-disclosure-gap`, are the
-single source for that: declared once on `.cs-collapsible-heading`, read back
-by the chevron, which is sized to them, and by the heading, which offsets itself
-by their sum. Because a custom property is substituted where it is *used*, the
-`1em` size resolves against each heading's own font-size - 15.75px under
-`cs-subheader-row`, 15px for *Built-in callouts* - so one rule serves all
-three sections and no section carries an offset of its own. The chevron's box
-is pinned to the token (`inline-size`/`block-size`) rather than left to the
-SVG, because that is what keeps the offset and the thing it offsets in step
-whatever `--icon-size` Obsidian or a theme hands the icon.
-
-The chevron hangs into the row's own `--size-4-4` padding, not into content,
-and nothing between there and the settings pane clips it: `.setting-item-name`
-has `overflow: hidden` in Obsidian's own CSS, but the box is *moved* rather
-than overflowed, so the chevron sits inside it; `.setting-item-info` has no
-overflow of its own. `margin-inline-start` also means RTL needs nothing extra
- - the title's inline-start edge is preserved there the same way.
-
-Which way the chevron points is RTL's one catch. Obsidian marks a
-right-to-left interface with `.mod-rtl` on the body - never `dir="rtl"` - and
-already mirrors every `svg.svg-icon` under it, so a folded chevron points along
-the title with no help. An open one must then turn *against* that mirror, or a
-fixed +90° turns the mirrored `<` into `^`. The open rule therefore turns by
-`calc(var(--direction, 1) * 90deg)`: core's `--direction` is 1, or -1 under
-`.mod-rtl`, and core's own fold indicators turn by it too. The folded rule
-must not read it, because core resets `--direction` to 1 on every
-`.is-collapsed:dir(ltr)` - which, with no `dir` attribute in the interface, is
-every folded heading. The icon picker's group chevron follows the same two
-rules.
-
-Its stroke is set, not inherited. Every fold chevron in the plugin's own UI
-sits beside a semibold heading - the settings lists, the sections of
-**Version details**, and the icon picker's source groups - and
-Obsidian's default icon stroke (1.75 of the icon's 24 units) is a
-regular-weight line that reads as a hairline there. One rule,
-`.cs-disclosure-chevron svg, .icon-picker-group-chevron svg`, draws both at
-`stroke-width: 2.5px`; with the icon at `1em` that is about `0.1em` at any
-heading size, a semibold stem. A callout's own fold arrow (heading callout,
-block callout, and their previews) is deliberately left out - it follows
-Obsidian's look for callouts.
-
-### Faint counts - how many, as Obsidian's Search shows it
+## Faint counts - how many, as Obsidian's Search shows it
 
 Every heading or line that counts what it holds ends the same way, the way
 Obsidian's Search pane ends a file's line with its match count
@@ -1267,13 +610,15 @@ no brackets. Niv asked on 2026-10-22 for this everywhere in the plugin (item 57
 of the native-look plan); until 2026-10-23 these were a muted "(N)" just after
 the title. The places:
 
-- the four settings lists (*Callouts from your theme*, *My callout types*,
-  *Built-in callouts*, *Saved color palettes*);
 - the section titles of the setup comparison in **Version details**;
 - the file headings of the **Find callouts** and **Review conversion** sidebars;
 - the library headings in Pick an icon's **All sources** grid ("Lucide", with
   its matches after it);
 - **Find callouts** in a callout row's menu.
+
+The settings' page rows (My callout types, Built-in callouts, Saved color
+palettes) say how many in Obsidian's own way instead: the row's value at its
+end, "12 callouts" (`countValue`, `declarative/rowParts.ts`).
 
 [`ui/faintCount.ts`](../../src/ui/faintCount.ts) builds all of them, and
 `.cs-faint-count` in `styles.css` is the one rule that places and colours them:
@@ -1281,22 +626,13 @@ the title. The places:
 - `appendFaintCount(parent, count)` appends `<span class="cs-faint-count"> N</span>`,
   the number formatted with `toLocaleString(getLocale())`. The space before
   the number is part of the text, so the heading reads - and is announced as -
-  "My callout types 4".
-- `headingWithCount(title, count)` returns a fragment for a `Setting`
-  heading's `setName`: the title and its count as **siblings**, so in a
-  foldable heading's `nameEl` (a row: chevron, title, count) the count goes to
-  the row's end.
+  "Backups 3".
 - The rule is Obsidian's `.tree-item-flair-outer` + `.tree-item-flair`:
   `margin-inline-start: auto` (to the end of a heading that is a flex row; in
   running text it simply follows the words), `padding-inline-start:
   var(--size-4-1)`, `--text-faint`, `--font-ui-smaller`, `line-height: 1`,
   `tabular-nums`, `flex-shrink: 0`, and `white-space: pre` (keeps the leading
   space in a flex row, and the number on one line).
-- A settings heading keeps its count beside its title
-  (`.setting-item-heading .cs-faint-count { margin-inline-start: 0 }`): some
-  share their row with buttons (Scan, Add), and pushed to the end the count
-  would land against them. Searchable Settings turns these headings into page
-  rows, with the count as the row's value at its end.
 - In a menu row the count floats to the end of Obsidian's `.menu-item-title`
   (`float: inline-end`), which is a block, not a row. The row menu's title is a
   fragment (`usageTitle` in `usage/usageMenuItem.ts`): "Find callouts" and the
@@ -1311,107 +647,10 @@ the title. The places:
   shows its count. That row has no flex `gap` - its chevron carries
   `margin-inline-end: var(--cs-disclosure-gap)` instead.
 
-Not every count is drawn this way. **Load more (14)**, **Import valid only
-(3)** and the icon total in an icon source's description are part of a
-button's or a line's own words, and stay plain text in that label's colour.
-`tests/faintCount.test.ts` pins the helpers and the rule; each surface's own
-suite checks that it goes through them.
-
-### `listPaging.ts` - the first 20 rows, then a button
-
-`renderPagedList(host, items, state, renderItem, onLoadMore)` renders at most
-`LIST_PAGE_SIZE` (20) rows and, when anything is left over, appends
-`.callout-studio-load-more` **as the last child of the list element** - the
-list is already a column flex box, so whatever trailing space it sits in (its
-own margin mid-section, the section's `--cs-section-gap` when it ends one)
-falls under the button exactly as it would under a last row. A sibling would
-need spacing of its own, and one more number to keep in step.
-
-One press reveals everything rather than another page: these sections are
-tens of rows, not thousands, and a second press would only be a second chance
-to lose your place. (`iconpicker/IconGrid.ts` pages repeatedly, per segment,
-because its grids run to thousands - a different problem, deliberately not
-shared code.)
-
-The button's label is `t("iconPicker.loadMore")` with the hidden count
-appended in code - `Load more (14)` - a numeric suffix on whatever `t()`
-returns, so it needs no key of its own in any of the 31 translated locales.
-Unlike a heading's faint count it stays plain text in the button's colour,
-because it is part of the label (see
-[Faint counts](#faint-counts---how-many-as-obsidians-search-shows-it)). `focusFirstRevealed`
-(below) is an export of `listPaging.ts` rather than a per-section helper,
-which is what lets `paletteFlows.ts` reuse it verbatim instead of
-reimplementing the same focus-on-reveal logic.
-
-Nothing above the button is faded. The rows carry an icon, two colour
-swatches and two buttons, and dimming an interactive row to hint that more
-follow lowers its contrast and reads as *disabled*. The count on the button
-states the fact a gradient could only gesture at.
-
-Because the button is removed by the repaint that reveals the rest, focus
-would otherwise fall to the document body; `focusFirstRevealed` sends it to
-the first row that just appeared, with `tabindex="-1"` so the row is a target
-for that jump and not a stop on the way through the tab. It finds that row by
-querying for `.callout-studio-callout-list` inside whatever host it is given,
-so it works for any paged section - Saved color palettes included - not just
-the callout lists it was written for.
-
-### Where the state lives, and how long
-
-One `PagingState` and one `SectionDisclosure` per section is what makes the
-sections independent and what makes them survive a repaint.
-`CalloutListsSection.ts`'s `refresh()` rebuilds every callout row on a
-registry change or a theme switch, and `paletteFlows.ts`'s own
-`renderList()` does the same for palettes on a create, edit, delete or theme
-flip; in both cases a list the user expanded must not fold back up under them.
-
-The page cursor is session-only, and *which* lifetime that means was a bug
-report: **"it keeps jumping back to the top and re-collapsing the view more
-callouts list."** The three callout-list cursors used to be closure variables on
-the controller - and a controller lives exactly one `display()`, which re-runs
-for things nobody asked for (above). Pressing **Load more** and then having
-another device's settings file land was enough to lose it.
-
-They are held by `SettingsTab` now (`freshPaging()`, in
-`sections/calloutListsSignature.ts`) and handed to the controller through
-`CreateCalloutListsControllerOptions.paging`, so a rebuild inherits them.
-`hide()` calls `freshPaging()` again, which is what keeps the cursor
-session-only in the sense that was always meant: a genuine reopen still starts
-every section back behind its `Load more` button. Nobody has asked to keep a
-whole vault's saved palettes on screen by default, and paging past the cap is a
-cheap habit to reform - but losing your place to a repaint you did not cause is
-not that. (Saved color palettes keeps its own single cursor in
-`paletteFlows.ts`, which is rebuilt by the same `display()`; its
-`Load more` is one press on a much shorter list.)
-
-The **fold** is not session-only. `settings/sections/calloutListsFold.ts`
-mirrors each section's `SectionDisclosure` into
-`DeviceLocalStore.listsExpanded` (`{ theme, user, builtin, palettes }` - the
-first three keyed the same way as `RowKind`, `palettes` added for Saved color
-palettes) the moment the user folds or unfolds it by hand -
-`attachSectionDisclosure`'s `onToggle` fires only on that user gesture, never
-when a caller drives `setExpanded` programmatically, so a save only happens
-for a choice the user actually made. `attachPersistedFold` takes any
-`keyof CalloutListsFoldState` (not a bare `RowKind`), which is what let
-`paletteFlows.ts` become a fourth caller without widening `RowKind`
-itself to a concept it has nothing to do with. Both `createCalloutListsController`
-and `renderCustomPalettesSection` read the relevant field back as their
-heading's `initiallyExpanded` on render, so a folded section stays folded
-across a settings-tab reopen and a plugin reload alike; a device whose stored
-blob predates a given key defaults it to `true` field by field
-(`DeviceLocalStore.read`), so the tab looks exactly as it did before the
-upgrade.
-
-It lives in `localStorage` rather than `data.json` precisely because it is
-per-device: folding a section away used to rewrite the synced settings file,
-which on a synced vault is one more file event for the sync client to
-reconcile, and what is folded on a phone has nothing to say to a desktop. See
-[Persistence § the device-local store](07-persistence-and-caching.md).
-
-The heading count is always the full list a section has - the partitioned
-length for a callout list, `settings.customPalettes.length` for Saved color
-palettes - never the visible slice. Folding a section, or leaving 20 of 34
-rows on screen, changes what is drawn - not how many the user has.
+Not every count is drawn this way. **Import valid only (3)** and the icon total
+in an icon source's description are part of a button's or a line's own words,
+and stay plain text in that label's colour. `tests/faintCount.test.ts` pins the
+helper and the rule; each surface's own suite checks that it goes through them.
 
 ## Modal chrome - the one shell every window wears
 
@@ -1461,9 +700,8 @@ the buttons on a phone.
 **The width is Obsidian's dialog width** (`--dialog-width`, 560px, capped by
 `--dialog-max-width`) for every window except the callout and palette editors,
 whose two columns need 720px (`.callout-studio-editor-modal`, off phones
-only), and three that
-keep their own for now: the welcome splash, and Commands and shortcuts and the
-style windows, which become settings pages later. The import chooser, the
+only), and the welcome splash, which keeps its own. (Commands and shortcuts and
+the style windows kept theirs until they became settings pages.) The import chooser, the
 export chooser, the plugin import window, the import report, the icon credits
 and the conversion help used to set 520-700px each (finding S9-V3, GAP-06); their
 classes stay as hooks a user's snippet may target.
@@ -2614,105 +1852,66 @@ editor's icon-adjustment groups no longer have such headers: they are Obsidian
 built-in-command resets sit at the trailing edge of their headings, above the
 toggle rows.
 
-### `GlobalStyleModal` - the three per-role style popups
+### The style pages' preview and sliders
 
-Also uses a reserved demo id (`STYLE_DEMO_ID = "global-style-demo"`) and the
-same live-preview-on-a-registered-row pattern, letting the border/radius/
-scale/spacing sliders for block, heading, or inline style show their effect
-on a real rendered callout as the user drags them. The preview (and the
-heading role's stacked gap demo) is
+The Heading, Inline and Block callout pages (26 § The style pages) show their
+effect on a real rendered callout as a slider moves. They use a reserved demo
+id (`STYLE_DEMO_ID = "global-style-demo"`) and the same
+live-preview-on-a-registered-row pattern as the palette editor. The preview
+(and the heading role's stacked gap demo) is
 [`stylePreview.ts`](../../src/settings/stylePreview.ts)'s `StylePreview`, and
 every slider's range, step and readout is one entry in
-[`styleSpecs.ts`](../../src/settings/styleSpecs.ts): the declarative style
-pages use both, so the two places cannot drift apart. `styleControls.ts`'s
-`wireStyleSlider` is the live-drag contract on its own, for a slider a page
-row makes. Showing a value again (after a reset) commits nothing: Obsidian's
+[`styleSpecs.ts`](../../src/settings/styleSpecs.ts). `styleControls.ts`'s
+`wireStyleSlider` is the live-drag contract for a slider a page row makes.
+Showing a value again (after a reset) commits nothing: Obsidian's
 `SliderComponent.setValue` calls the change callback when the value differs,
-which used to save once per slider on top of the reset's own save. Its three
-modal titles are
-separate translation keys rather than a concatenation of “Global callout
-style” and a role name, so each locale can put the words in its natural order.
+which used to save once per slider on top of the reset's own save.
 
-Every option box owns one scoped reset. It restores only the fields represented
-by that box from `DEFAULT_SETTINGS`, including nested border-side flags and the
-heading-fold setting outside `globalStyle`. Resets refresh the affected controls,
-generated styles and preview; heading settings that affect decorations also
-refresh open callout editors. Default objects remain unchanged so subsequent
-edits cannot alter a later reset target.
+Each ↺ restores only the fields it stands for from `DEFAULT_SETTINGS`,
+including nested border-side flags and the heading-fold setting outside
+`globalStyle`. Resets refresh the generated styles and the preview; heading
+settings that affect decorations also refresh open callout editors. Default
+objects remain unchanged so subsequent edits cannot alter a later reset target.
 
 The inline sample places a localized content pill between two localized sample
 sentences. In the embedded Live Preview, clicking the pill reveals its source
 syntax for inspection. The callout id stays fixed across locales; its visible
-label follows the selected language. The
-inline corner-radius slider reaches 25px for the 1.5× text scale. The settings
-guard still accepts previously saved values up to 64px.
+label follows the selected language. The inline corner-radius slider reaches
+25px for the 1.5× text scale. The settings guard still accepts previously saved
+values up to 64px.
 
-### `MenuCustomizationModal` - reorder without replacing a grabbed row
+### Customize right-click menu
 
-The items' labels and icons, and the moves the window makes (on, off, move,
-back to shipped), are [`menuItems.ts`](../../src/settings/menuItems.ts), shared
-with the declarative page
-([26 § Customize right-click menu](26-declarative-settings.md#customize-right-click-menu)).
-Each render role has one persistent list container with a banded list from
-[`ui/bandedSortList.ts`](../../src/ui/bandedSortList.ts) attached. It owns the
-band line, the handles with their ArrowUp/ArrowDown moves, and the one
-`makeDragSortable` attachment whose `groupOf` keeps each band to itself; the
-modal supplies each row's label and toggle. (The Manage icon libraries window
-used the same list, with captions and a follow-scroll, until it became three
-Obsidian setting groups; those options went with it.) Every rebuild swaps the
-whole list in with one `replaceChildren()` (see the libraries window, below,
-for why). Enabled and disabled items occupy separate bands,
-divided by a sibling separator. Pointer and keyboard moves stay within the
-item's band; only its toggle changes bands. Every completed move updates the
-settings array and requests a save immediately.
+A settings page since 2026-10-25 (26 § Customize right-click menu), built on
+Obsidian's own lists and drag engine. The items' labels and icons, and the
+moves it makes (show, hide, move, back to shipped), are
+[`menuItems.ts`](../../src/settings/menuItems.ts), shared with the version
+comparison. The saved `edit` item is labelled **Create or edit callout**
+because it is one item for both runtime outcomes, not two mutually visible
+actions.
 
-Each category heading also owns a reset that replaces only that role's array
-with fresh entries from `DEFAULT_CONTEXT_MENU_ITEMS[role]`. This restores both
-the shipped order and every enabled flag. Visibility compares both fields, so
-reordering an otherwise fully enabled category still exposes the reset. Reset
-rebuilds that role's rows and saves through the same path as other edits.
+### `DragSortList` - reorder without replacing a grabbed row
 
-`ui/DragSortList.ts` moves the existing row nodes as the pointer crosses their
-neighbours. On release it reports the final indices synchronously, and the modal
-keeps those nodes: rebuilding them after a drop could detach the target of the
-next drag. The row's short settling animation is cosmetic and never owns a
-delayed model update or list rebuild. A new gesture cancels that settle and any
-FLIP slide on its row through `cancelReorderAnimation`, preserving the row's
-current visual position before pointer tracking takes over. Otherwise the Web
-Animations transform can override the pointer-following transform, making a
-row appear stuck even though its handle shows the drag cursor.
+[`ui/DragSortList.ts`](../../src/ui/DragSortList.ts) is the plugin's own drag
+engine, used by Manage icon libraries (its Available libraries list). It moves
+the existing row nodes as the pointer crosses their neighbours. On release it
+reports the final indices synchronously, and the window keeps those nodes:
+rebuilding them after a drop could detach the target of the next drag. The
+row's short settling animation is cosmetic and never owns a delayed model
+update or list rebuild. A new gesture cancels that settle and any FLIP slide on
+its row through `cancelReorderAnimation`, preserving the row's current visual
+position before pointer tracking takes over. Otherwise the Web Animations
+transform can override the pointer-following transform, making a row appear
+stuck even though its handle shows the drag cursor.
 
 Pointer capture belongs to the stable container. Move/end events must match
 the active pointer, and release, cancellation, or lost capture detach the
 gesture listeners and clear its state before releasing capture. Closing the
-modal also cancels settle/slide animations and removes transient drag styles.
+window also cancels settle/slide animations and removes transient drag styles.
 Reduced motion skips the visual animations without changing when a move is
-committed.
-
-Toggle and keyboard changes still rebuild their role's rows and animate them
-by stable item id. Since pointer moves preserve rows and their handlers, the
-handle's ArrowUp/ArrowDown listener looks up the item's current array index on
-every key press; a render-time index would become stale after the first drag.
-Keyboard moves return focus to the moved item's handle.
-
-The row label uses all width left by the drag handle and toggle. It deliberately
-drops the shared callout-name `22ch` cap, while retaining overflow ellipsis, so
-long actions such as **Fold defaults (open / closed / none)** are complete when
-the window has room and shorten only at a real narrow-width limit. It is set in
-Obsidian's setting-name type (`--setting-item-name-size`, `-weight`, `-color`),
-like every row in Obsidian's settings.
-
-In the settings tab the callout and palette lists go one step further. A
-name there wraps onto a second line instead of being cut, like a native
-setting's name. Because nothing is cut, the name spans carry no `aria-label`
-tooltip.
-
-The `[!id]` chips are `direction: ltr; unicode-bidi: isolate`, so a
-right-to-left interface still shows `[!note]` and not `[note!]`. The row icon
-is a muted list icon at `--icon-s`, and the callout's colour lives in its
-swatches. Empty states are upright, as Obsidian's are. The saved
-`edit` row is labelled **Create or edit callout** because it is one toggle for
-both runtime outcomes, not two mutually visible actions.
+committed. Since pointer moves preserve rows and their handlers, a handle's
+ArrowUp/ArrowDown listener looks up the item's current index on every key
+press; a render-time index would become stale after the first drag.
 
 #### The drop placeholder
 
@@ -2736,8 +1935,8 @@ Obsidian's key, because no modifier is checked.
   `coverSlot()` reads its `getBoundingClientRect()` less `currentTransform`,
   relative to the list's, and hands top, left, width and height over as
   `--cs-drag-placeholder-*` properties, which `styles.css` turns into an
-  absolutely positioned box. `.cs-menu-customize-list` is `position: relative`
-  for that. Measured rather than styled, so a taller library row gets a taller
+  absolutely positioned box. The list (Available libraries' `.setting-items`)
+  is `position: relative` for that. Measured rather than styled, so a taller library row gets a taller
   slot.
 - **It moves inside the FLIP.** When the row changes slot, the placeholder is
   re-covered within the same `animateReorder` mutation that moves the row, so
@@ -2767,56 +1966,27 @@ Obsidian's key, because no modifier is checked.
 - **Reduced motion draws none.** The row never leaves its slot then, so it
   marks the slot itself.
 
-#### Why this is not Obsidian's own list component
+#### Why the libraries window does not use Obsidian's list
 
-Obsidian 1.13's **Settings → Appearance → Ribbon menu configuration** looks like
-the same job: a list you reorder and remove from. It was checked against the
-1.13.7 `app.js` and the 1.13.1 typings, and it cannot be borrowed here.
-
-It is a declarative settings page. `buildRibbonPage()` returns two
-`type: "list"` definitions - the public `SettingDefinitionList` (1.13.0+, with
-`onReorder`, `onDelete`, `emptyState` and `addItem`). Visible items get an X
-(tooltip **Delete**) and a handle; hidden ones sit in an **Other ribbon items**
-list as click-to-restore rows.
-
-- **No way in from a modal.** A definition list is reachable only through
-  `getSettingDefinitions()` (or a `SettingDefinitionPage`'s `items`). Nothing
-  public renders definitions into a `Modal`.
-- **All or nothing.** A non-empty `getSettingDefinitions()` turns `display()`
-  off for the whole tab (see "`getSettingDefinitions()` returns the tab's tree"
-  above), so using it meant moving all 11 sections at once.
-- **Version.** It needs Obsidian 1.13; `minAppVersion` is 1.7.2.
-- **The behaviour is private.** The drag engine is a function inside `app.js`,
-  not one of the `obsidian` module's exports. `SettingGroup.onDeleteItem`,
-  `onReorderItem` and `focusNearestItem` exist at runtime but not in the
-  typings, so they may change without notice. `SettingGroup` (1.11+) is the only
-  public piece, and the `mod-list` class is just CSS in the app's stylesheet;
-  both are the look, not the drag.
-
-The delete-versus-toggle model is not what rules it out. A declarative row can
-carry a toggle (`control: { type: "toggle" }`, which `mod-list` draws smaller on
-desktop), two lists could stand in for the enabled and disabled bands as the
-Ribbon page does, and `extraButtons` could host the per-category reset. What a
-rebuild would inherit is Obsidian's drag engine as it is: a touch drag starts
-only after a 250 ms press-and-hold, the keyboard reorder is Alt+↑/↓ on a focused
-row (rows and handles are `tabIndex -1`, so the handle is not a Tab stop), and
-neither `app.js` nor `app.css` mentions `prefers-reduced-motion`. This modal's
-handle starts a touch drag at once (`touch-action: none`), is a Tab stop that
-moves its row with ↑/↓, and honours reduced motion. Obsidian's engine also
-scrolls while a row is held near the edge; `makeDragSortable` does the same
+Obsidian's own reorderable list (a declarative `type: "list"`, as on Settings →
+Appearance → Ribbon menu configuration, and on this plugin's Customize
+right-click menu page) is reachable only through `getSettingDefinitions()` or a
+settings page's items: nothing public renders definitions into a `Modal`, and
+its drag engine is a function inside `app.js`, not one of the `obsidian`
+module's exports (`SettingGroup.onDeleteItem`, `onReorderItem` and
+`focusNearestItem` exist at runtime but not in the typings). So the libraries
+window, a `Modal`, keeps `DragSortList`. The two also behave differently:
+Obsidian's touch drag starts only after a 250 ms press-and-hold, its keyboard
+reorder is Alt+↑/↓ on a focused row (rows and handles are `tabIndex -1`), and
+neither `app.js` nor `app.css` mentions `prefers-reduced-motion`.
+`DragSortList`'s handle starts a touch drag at once (`touch-action: none`), is
+a Tab stop that moves its row with ↑/↓ (Alt+↑/↓ too), and honours reduced
+motion. Like Obsidian's engine it scrolls while a row is held near the edge
 when it is handed a `scroller` (finding S4-12): within 50px of the scroller's
 top or bottom edge (or a third of its height, if less), a frame loop scrolls it
 up to 15px a frame and finds the slot again, and a wheel scroll mid-drag
 re-tracks the row too. It keeps scrolling under reduced motion, which only
-removes the slides. Manage icon libraries passes its window body; Customize
-menu items, whose lists are two to five rows long, passes none.
-
-The settings tab has since moved to `getSettingDefinitions()`, and the
-right-click menu is now one of its pages, built on these very lists
-(`declarative/menuPage.ts`, 26 § Customize right-click menu), with Obsidian's
-drag engine as described above. `MenuCustomizationModal` is no longer opened
-from the settings and goes in the Clean Sweep; `ui/DragSortList.ts` stays, for
-Manage icon libraries.
+removes the slides. Manage icon libraries passes its window body.
 
 ### `IconLibrariesModal` - libraries in three Obsidian groups
 
@@ -2948,7 +2118,7 @@ Behaviour to keep in mind before changing it:
   Available rows slide from where each was on screen to where it now is.
   Reduced motion skips the slide but still scrolls. (A drag scrolls the window
   too, when the row is held near its edge - that is the drag's own doing, see
-  the `MenuCustomizationModal` section above.)
+  the `DragSortList` section above.)
 - **A rebuild never leaves a box empty.** `render()` builds each group's rows
   in a detached element and puts them in with one `replaceChildren()` per box;
   the list used to be `empty()`-ed and appended to. The row whose button was just pressed has
@@ -3002,39 +2172,35 @@ Behaviour to keep in mind before changing it:
   seen through first (`deletions`), because the picker reads the pack files
   when it hears back and a half-deleted library would still look downloaded.
 
-### `CommandBuilderModal` - fixed + custom commands, one window
+### Commands and shortcuts
 
-Two lists in one modal: the built-in commands (plain rows - nothing to
-configure but a hotkey), and the user's own built commands (full rows with
-add/edit/delete). The flows behind add, edit, delete and re-enabling the
-built-ins are [`command/commandFlows.ts`](../../src/settings/command/commandFlows.ts),
-shared with the declarative page
-([26 § Commands and shortcuts](26-declarative-settings.md#commands-and-shortcuts)).
-Both kinds display the same two pieces of information side by side,
-deliberately kept separate:
+A settings page since 2026-10-25 (26 § Commands and shortcuts): the user's own
+commands (add, edit, delete) and the built-in commands (a switch each). The
+flows behind add, edit, delete and re-enabling the built-ins are
+[`command/commandFlows.ts`](../../src/settings/command/commandFlows.ts). Both
+kinds show two things side by side, deliberately kept separate:
 
-- **A hotkey chip** that only *reads* what Obsidian has bound
-  (`hotkeyLink.ts`'s `hotkeysForCommand`), because a shortcut is a fact
-  about the row, not something this window can set directly. On a disabled
-  built-in row the chip is hidden and returns when the command is re-enabled;
-  the saved Obsidian binding itself is preserved.
-- **A button** that *opens* Obsidian's own hotkeys pane, filtered to that
-  command (`openHotkeySettings`), because binding a key is Obsidian's job.
+- **Shortcut chips** that only *read* what Obsidian has bound
+  (`hotkeyLink.ts`'s `hotkeysForCommand`), drawn as Obsidian's Hotkeys page
+  draws them, because a shortcut is a fact about the row, not something this
+  page can set directly. A switched-off built-in shows none until it is on
+  again; the saved Obsidian binding itself is preserved.
+- **⊕**, which *opens* Obsidian's own hotkeys pane, filtered to that command
+  (`openHotkeySettings`), because binding a key is Obsidian's job.
 
-The **Built-in commands** heading reset is available while any
-`FIXED_COMMAND_IDS` entry is disabled. It re-enables those commands through the
-existing command-registration path and leaves custom commands untouched.
-Assigned hotkeys are preserved: Obsidian exposes no public API for deleting
-user bindings, and this reset does not write its undocumented hotkey store.
+The **Built-in commands** ↺ is lit while any `FIXED_COMMAND_IDS` entry is off.
+It re-enables those commands through the existing command-registration path and
+leaves custom commands untouched. Assigned hotkeys are preserved: Obsidian
+exposes no public API for deleting user bindings, and this reset does not write
+its undocumented hotkey store.
 
-The list **subscribes to the registry while open** - deleting a callout from
-another surface (the settings row menu) prunes any command depending on it
-(via `CustomCommandManager.syncAll()`, see
+Deleting a callout from another surface (a row's ⋮ menu) prunes any command
+depending on it (via `CustomCommandManager.syncAll()`, see
 [Editor integrations](10-editor-integrations.md#customcommandmanager---one-idempotent-sweep)),
-and this window has to stop showing a now-deleted command in the same
-moment rather than offering a dead row. Everything here **saves itself
-immediately** on every change - there's no separate OK/Cancel, matching the
-plugin's general save-on-change convention.
+and the registry's change signal redraws the page in the same moment, so it
+never offers a dead row. Everything here **saves itself immediately** on every
+change - there's no separate OK/Cancel, matching the plugin's general
+save-on-change convention.
 
 #### `CommandEditorModal` - the rows, and where each one's rule lives
 
@@ -3591,16 +2757,14 @@ why this one does not take them.
 
 ## Saving-status banner
 
-`saveStatusBanner.ts` is shared by the settings page and the callout editor.
-It subscribes to `SettingsWriter.status` and redraws only its own slot, preserving
+`saveStatusBanner.ts` is shared by the settings and the callout editor. It
+subscribes to `SettingsWriter.status` and redraws only its own slot, preserving
 scroll position and form fields.
 
-On the settings page the slot is `CalloutListsScaffold.bannerSlotEl` - an empty
-div the lists scaffold creates directly under the **Callout Studio** title row,
-which is why `SettingsTab.display()` renders the banner *after*
-`calloutLists.render()` rather than first. It is still ahead of every section,
-since it is the reason nothing below it will be saved; above the title it read
-as a message about the settings window rather than about this plugin.
+In the settings it is a row of the notices box, the first box of the main page
+(`declarative/bannerRows.ts`), since it is the reason nothing below it will be
+saved. The notice is a persistent part (26 § Parts that survive a redraw), so
+the page can redraw around it without it forgetting an action under way.
 
 Each redraw builds the same three parts: a header (`alert-triangle` plus a title
 row), the message paragraphs, and `.cs-readonly-banner-actions` holding whatever
@@ -3634,8 +2798,8 @@ Keep this UI as a subscriber to that state rather than inferring write authority
 from a label or from whether callouts happen to be visible.
 
 Buttons are disabled while their action is running. A completed missing-file
-check leaves explicit feedback in the same slot. Disposers run on tab
-hide/re-render and editor close. Action text uses `t()`, and so does the paused
+check leaves explicit feedback in the same slot. The settings' notice is
+disposed of when the visit ends, the editor's when it closes. Action text uses `t()`, and so does the paused
 copy below; a one-off failure's message uses the shared saving-message contract
 described in the canonical chapter.
 
@@ -3649,8 +2813,9 @@ it keeps every setting, so **Replace settings file** is the main button
 diagnoses the file once more and replaces nothing if it is no longer `combined`
 (or readable), because keeping everything was the promise. The retry button
 reads **Try again** (**Check again** for a missing file). **Go to version history**
-is offered in every state on the settings page (below). The settings page passes `plugin.recovery`'s methods in
-`ReadOnlyBanner.ts`; the callout editor passes only its retry.
+is offered in every state in the settings (below). The settings pass
+`recoveryActionsOf(plugin)` and their own **Go to version history** in
+`declarative/bannerRows.ts`; the callout editor passes only its retry.
 
 ### What a paused banner says
 
@@ -3661,10 +2826,10 @@ or three short paragraphs chosen by `pausedCopy()` in
 [`saveStatusCopy.ts`](../../src/settings/saveStatusCopy.ts):
 
 1. **Calm.** "First of all, take a deep breath - everything is going to be
-   okay", then what is safe, then why the page is read-only (`pausedNote`,
-   because `SettingsTab` makes every edit `inert`; see
-   `sections/pausedReadOnly.ts`). The editor gets the same paragraph without
-   the page sentence.
+   okay", then what is safe, then why the page is read-only (`pausedNote`:
+   while saving is paused the pages' rows are disabled and every change
+   refuses with its reason, 26 § Read-only while saving is paused). The editor
+   gets the same paragraph without the page sentence.
 2. **What happened**, from `status.reason` (latest failure, else the frozen
    reason). After a manual **Check again** finds the file still missing, it
    gets more specific and names the cloud-storage "keep it downloaded" setting
@@ -3710,44 +2875,23 @@ be only the built-ins. Every other state, and the editor, keep one order.
 ### Go to version history, and scrolling to a row
 
 **Go to version history** (`showBackup`) does not open the Version history
-window. It scrolls to **Version history › Earlier versions** and highlights that
-row, the way the
-first-install import prompt takes the reader to the **Import** row: while
-saving is paused the window can only be browsed, and the banner is what says
-why. `renderBackupSection` returns the row, `SettingsTab.display()` passes it
-to `renderReadOnlyBanner`, and the row keeps `cs-paused-allowed`, so it stays
-usable and unfaded on a paused page.
-
-Both notices share [`targetHighlighter.ts`](../../src/settings/targetHighlighter.ts).
-`createTargetHighlighter(row)` marks the row `cs-scroll-target`; `run()` scrolls
-it smoothly to the centre, waits until 80% of it is in view (an
-`IntersectionObserver`, with a one-second fallback), then adds
-`cs-scroll-target-highlight`, a 1.5 s accent pulse that starts and ends on the
-row's own computed background and shadow (`--cs-scroll-target-rest-*`), so a
-theme's grey row does not flash. `dispose()` is registered with the tab and runs
-on every re-render and on `hide()`.
-
-Keyboard focus goes with the reader, before the scroll starts and with
-`preventScroll`, so the glide is not cut short and a screen reader announces
-the destination at once. Obsidian 1.13 makes every settings row focusable
-(`tabindex="-1"`) and moves between rows itself - the arrow keys go row to row,
-Enter reaches the row's button - so the row takes focus; older Obsidian rows
-cannot, and there the row's first usable control does. An inert row (Import,
-while saving is paused) is left alone. `run(fromKeyboard)` passes `focusVisible`:
-the buttons report a click with `event.detail === 0` (Enter or Space) as from
-the keyboard, so a key press shows the focus ring and a mouse click does not.
-With `prefers-reduced-motion: reduce` the scroll jumps (`behavior: "auto"`,
-via `prefersReducedMotion()` in `ui/flip.ts`); the pulse only fades a colour and
-stays.
+window. It takes the reader to **Version history › Earlier versions** on the
+main page, the way the first-install import prompt takes the reader to the
+**Import callouts** row: while saving is paused the window can only be
+browsed, and the banner is what says why. Both use the settings' jump
+(`ctx.jumpTo`, `declarative/jumpToRow.ts`, 26 § Jumping to a row), which does
+what a settings search result does: Obsidian's own page path, the row scrolled
+to the centre and flashed with Obsidian's `is-flashing`, and focus on the row
+only after a key press (the buttons report a click with `event.detail === 0`,
+Enter or Space, as from the keyboard). Until 2026-10-25 the old page scrolled
+there itself and pulsed the row in the accent colour.
 
 ## `SettingsRecoveryModal` - Version history
 
-Opened from **Earlier versions** in the **Version history** section
-(`renderBackupSection`, between **Import and export** and **Language**), whose
-button reads **View versions**. The saving banner's **Go to version history**
-scrolls to that row rather than opening the window itself. Its help text is one
-continuous paragraph via `setDesc(string)`; translation newlines are replaced with
-spaces so older locale tables also wrap naturally. The window asks `recovery.listVersions()` once per open
+Opened from **Earlier versions** in the main page's **Version history** box
+(`declarative/mainPageGroups.ts`), whose button reads **View versions**. The
+saving banner's **Go to version history** jumps to that row rather than opening
+the window itself. The window asks `recovery.listVersions()` once per open
 (a generation counter drops a late answer after close) and draws the versions
 newest first, grouped by local calendar day.
 
@@ -3938,16 +3082,18 @@ the next animation without a reload. It is exported from `flip.ts` for
 historical reasons, not because the check belongs to FLIP. Its callers:
 
 - `flip.ts` itself - row reorders skip the FLIP animation and just land.
-- `DragSortList.ts` (and so `bandedSortList.ts`, which drags through it) - read once when a drag starts; the settle and slide
-  animations are skipped and no drop placeholder is drawn (see the drag section above).
-- `settings/targetHighlighter.ts` - `scrollIntoView` uses `behavior: "auto"`
-  instead of `"smooth"`; the pulse only fades a colour.
+- `DragSortList.ts` - read once when a drag starts; the settle and slide
+  animations are skipped and no drop placeholder is drawn (see the drag section
+  above).
+
+A jump to a settings row (26 § Jumping to a row) is Obsidian's own scroll and
+flash, as a settings search result's is, and does what Obsidian does.
 
 **From CSS** - `@media (prefers-reduced-motion: …)` blocks in
 [`styles.css`](../../styles.css). They take two shapes:
 
 - **`reduce` blocks** turn something off: `transition: none` on the portable
-  cards and footer contact link, `animation-duration: 1ms` on the plugin
+  cards' actions, `animation-duration: 1ms` on the plugin
   import window's "checking" vault card, the icon tile transitions, and the heading callout's entrance
   transition (which also never animates into a print or PDF snapshot).
 - **`no-preference` queries** switch something on only when motion is

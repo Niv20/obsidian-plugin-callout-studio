@@ -16,7 +16,7 @@ Obsidian's language is set separately on each device, but your choice here syncs
 
 Changing this option affects only Callout Studio's settings, buttons, and messages. Version history also uses your selected language for version names, deletion confirmations, and the **What changed** heading.
 
-![Two separate settings views: the Spanish language choice above, and Callout Studio's translated callout settings below](../../assets/user-guide/language-localized.svg)
+![Callout Studio's first settings page in Spanish, with Español chosen as the language and its reset arrow](../../assets/user-guide/language-localized.svg)
 
 ## Download once, use offline
 

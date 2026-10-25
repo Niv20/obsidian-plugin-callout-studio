@@ -139,7 +139,7 @@ The folder can sync if your provider includes it, and deleting the plugin folder
 
 ## Recover paused saving
 
-![Two separate settings views: Saving is paused with recovery actions above, and Version history below](../../assets/user-guide/saving-paused.svg)
+![The settings page while saving is paused, showing only the Saving is paused notice with its recovery actions and the Version history box](../../assets/user-guide/saving-paused.svg)
 
 *When the settings file is missing, the banner starts with **Check again** and keeps the recovery and version-history actions available.*
 
@@ -158,7 +158,7 @@ The startup notice uses Callout Studio's selected language when its translation 
    - **The settings file can't be read:** the banner says why. If the file is still downloading, or this device can't open it, wait for sync and select **Try again**. If the file is empty, damaged, has Git merge conflict markers, or was combined from two versions by a sync service, select **Replace settings file**. Callout Studio saves an exact copy of the current file in the backups folder, then writes a readable settings file. If the settings inside the file were intact - a sync service combined two versions of it - they are kept, and the button is shown as the recommended step instead of in red.
    - **This device's recovery copy can't be read:** select **Discard recovery copy**. An exact copy is saved in the backups folder first, and your settings file isn't changed.
    - **The settings file or recovery copy is from a newer version of Callout Studio:** update the plugin on this device. Neither is replaced, even if the settings file is missing or damaged.
-4. To go back to an earlier version, select **Go to version history** in the banner. It scrolls down to **Version history → Earlier versions**, highlights it and moves keyboard focus there. With reduced motion turned on in your system settings, the page jumps instead of scrolling. You can browse and compare versions there right away with **View versions**; once saving resumes, restore one from the same window.
+4. To go back to an earlier version, select **Go to version history** in the banner. It takes you to **Version history → Earlier versions** and highlights it, as a result of Obsidian's settings search does; if you pressed it with the keyboard, focus moves there too. You can browse and compare versions there right away with **View versions**; once saving resumes, restore one from the same window.
 
 These actions work the same on desktop and mobile, including when the problem starts while Obsidian is open, and you don't need to recover from a particular device. Each one checks the file again before writing, and stops if it changed in the meantime. A failed write leaves saving paused so you can retry. A successful local save does not mean cloud synchronization has finished; let it finish before editing the setup on another device.
 

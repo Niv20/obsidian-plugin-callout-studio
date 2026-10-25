@@ -124,14 +124,18 @@ because their previews appear here. See
 
 ## The device-local store
 
-`DeviceLocalStore` v3 stores section folds, prior-install/welcome markers, the
+`DeviceLocalStore` v3 stores prior-install/welcome markers, the
 one-time **Find callouts** offer (`occurrencesTabOffered`), the
 import prompt's dismissal (`importBannerHandled`, for a device that has no
 settings file to record it in), the device's name for backup files
 (`deviceId`), where the icon picker and Quick Insert were left
 (`iconCategories`, `emojiSkinTone`, `quickInsertSource`), and optional
 `pending | seen` markers for the one-time personal-CSS-retirement and
-autocomplete-migration notices in vault-scoped browser storage.
+autocomplete-migration notices in vault-scoped browser storage. Until
+2026-10-25 it also kept which sections of the old settings page were folded
+(`listsExpanded`); a blob that still carries it loads fine, the next write
+drops the key, and an older build reading a blob without it shows every
+section open.
 
 `occurrencesTabOffered` records the initial offer, not whether the tab is open.
 It is saved before the tab is added on a confirmed first install; failed

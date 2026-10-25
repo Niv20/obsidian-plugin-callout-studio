@@ -19,7 +19,7 @@ For heading callouts, you can:
 - Adjust vertical padding and the spacing between headings (**Title spacing**).
 - Control corner rounding, and whether the fold arrow shows (**Show fold arrow**).
 
-![Heading callout style window with borders, shape, spacing, and a live preview in dark mode](../../assets/user-guide/global-heading.svg)
+![The Heading callout settings page in dark mode: the live preview, corner rounding, the fold arrow switch and the border switches](../../assets/user-guide/global-heading.svg)
 
 ## Inline callouts
 
@@ -37,7 +37,7 @@ The Inline preview shows a localized example pill between two sample
 sentences. Click it to reveal its Markdown syntax in the preview editor, using
 the translated label.
 
-![Inline callout style window with borders, text scale, corner rounding, and a live pill preview in dark mode](../../assets/user-guide/global-inline.svg)
+![The Inline callout settings page in dark mode: a live pill preview, corner rounding, the border switches and text size](../../assets/user-guide/global-inline.svg)
 
 ## Block callouts
 
@@ -47,7 +47,7 @@ Block callouts include the broadest set of controls:
 - Separate title and content scale.
 - **Align content with title**, which starts the content text at the same inline edge as the title text, in both left-to-right and right-to-left layouts. The spacing follows the icon's width, including wider images.
 
-![Block callout style window with border, text scale, shape, and alignment controls beside its dark-mode preview](../../assets/user-guide/global-block.svg)
+![The Block callout settings page in dark mode: the live preview, corner rounding and alignment, the border switches and font scale](../../assets/user-guide/global-block.svg)
 
 These settings shape callouts drawn by Callout Studio. If your active theme owns a callout, the theme keeps control of its appearance; see [Theme integration](17-theme-integration.md). Turn off **Use your theme's callout styles** and Callout Studio draws every callout, with these global settings included; see [Turning your theme's callout styles off](17-theme-integration.md#turning-your-themes-callout-styles-off).
 

@@ -172,7 +172,7 @@ holds everything the tree is built with:
   0.1 ms (0.36 ms to build the whole tree; measured in Obsidian 1.14.5 with the
   author's test vault).
 - **The signature** is one JSON string: the three callout lists'
-  (`calloutListsSignature`, as the old page drew them), the whole
+  (`calloutListsSignature`), the whole
   `plugin.settings` (so a field added later cannot be missed; the uploaded
   pictures are left out, being large and drawn through the callouts and the
   icon signal), whether saving is paused and why, the language download, a scan
@@ -271,9 +271,8 @@ with the style rows; it opens the same window as Pick an icon's **Manage
 libraries**, after loading the libraries and their icon counts itself
 (`iconpicker/openIconLibraries.ts`).
 Search words that are names (Admonition, Callout Manager, the icon libraries)
-are `aliases` and are not translated. Every button calls the flow the old page
-calls (`resetEverything.ts`, the import and export windows, …), so the two
-pages cannot drift apart while both exist.
+are `aliases` and are not translated. Every button calls a flow of its own
+module (`resetEverything.ts`, the import and export windows, …), never a copy.
 
 ## The notices at the top
 
@@ -283,7 +282,7 @@ a heading and two nameless render rows, which the settings search skips
 (`searchable: false`). When neither shows, Obsidian hides the box.
 
 - **Saving is paused** (`saving-notice`) shows while saving is paused or a save
-  failed (`savingNeedsAttention`). It is the same notice as on the old page
+  failed (`savingNeedsAttention`). It is the notice the callout editor shows too
   (`renderSaveStatusBanner`, with the actions `recoveryActionsOf` builds), kept
   in the parts store: while one of its actions runs its buttons are disabled,
   and a redraw must not enable them again. **Go to version history** jumps to
@@ -303,9 +302,8 @@ between them.
 ## Fallback, language and the theme's styles
 
 [`declarative/generalRows.ts`](../../src/settings/declarative/generalRows.ts)
-draws the plugin-wide rows of the main page's first box. Each draws the old
-page's controls from the old page's code (`fallbackPicker.ts` and
-`languagePicker.ts` export their steps: `createFallbackPicker`,
+draws the plugin-wide rows of the main page's first box. The controls come from
+`sections/` (`fallbackPicker.ts` and `languagePicker.ts` export their steps: `createFallbackPicker`,
 `setFallbackCallout`, `addFallbackReset`, `drawLanguageControls`,
 `applyLanguagePreference`, `missingLanguageName`, `languageDownloading`,
 `retryLanguageDownload`).
@@ -340,10 +338,11 @@ holds the one callout row every list uses, and the user's own callouts.
 - **A callout row** (`calloutRow`) is a render row keyed `callout-<id>`, named
   by the display name, with every id the callout answers to as `aliases`, so
   the settings search finds `[!quote2]` by `quote2`. Its `render` is
-  `drawCalloutRow` (the old page's row, same ✎ and ⋮), and the undo it returns
+  `drawCalloutRow` (with its ✎ and ⋮), and the undo it returns
   is the row's cleanup. `calloutRowHandlers(ctx)` gives ✎ and ⋮ their flows:
   ✎ opens the editor (`openCalloutEditorFor`, which saves the callout itself,
-  built-ins too) and redraws; ⋮ opens the old page's menus.
+  built-ins too) and redraws; ⋮ opens the row menus (`CalloutRowActions.ts`,
+  `themeRowActions.ts`).
 - **My callout types** (`callouts-mine`, with "12 callouts" at its end) is one
   of Obsidian's lists (`callouts-mine-list`): its own search
   (`rowMatchesQuery`: name or any id), a `+` (`addItem`: the editor for a new
@@ -390,8 +389,8 @@ count at its end (`displayValue`: "4 palettes", "1 palette", nothing at
 none). The page is one of Obsidian's lists (`palette-list`), so it gets, from
 Obsidian, a ✕ on every row and the Delete key (`onDelete`), a `+`
 (`addItem`, a last row on mobile) and the grey row while there is none
-(`emptyState`). The flows are the old page's (`createPalette`, `editPalette`,
-`deletePalette` in `paletteFlows.ts`), so ✕ still asks, and says how
+(`emptyState`). The flows are `createPalette`, `editPalette` and
+`deletePalette` in `sections/paletteFlows.ts`, so ✕ asks first, and says how
 many callouts link to the palette.
 
 - **A palette row** is a render row keyed `palette-<id>` (a rename keeps the

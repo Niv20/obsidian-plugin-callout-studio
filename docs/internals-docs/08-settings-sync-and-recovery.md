@@ -894,12 +894,14 @@ its dialog closes, because saving can pause while the dialog is open.
 | Delete a custom callout | Before the dialog, after it, and before Undo restores it | Nothing: no note is touched, only the row is removed | Unchanged |
 | Callout editor Save | Already refused while frozen | See [Callout editor](14-callout-editor.md#save-pipeline) | Unchanged |
 
-**The settings page is read-only while paused.** `makePausedReadOnly()`
-(`settings/sections/pausedReadOnly.ts`) marks everything that would change a
-setting `inert`, and `SettingsTab` redraws whenever the writer freezes or thaws.
-A change made while paused used to look applied and vanish on the next launch.
-The title, the banner, folding the lists, and the rows marked `cs-paused-allowed`
-(Export, Earlier versions, Review conversion) stay usable.
+**The settings are read-only while paused.** Every row that would change a
+setting is disabled or dimmed, and every change refuses with its reason, even
+one a disabled row cannot stop (a drag, the Delete key): see
+[26 § Read-only while saving is paused](26-declarative-settings.md#read-only-while-saving-is-paused).
+The settings redraw whenever the writer freezes or thaws (the saving status is
+one of their signals). A change made while paused used to look applied and
+vanish on the next launch. Export, Earlier versions, Convert to standard
+Markdown and a callout row's ⋮ (for Find callouts) stay usable.
 
 `SettingsWriter.persists(data)` answers whether the settings file now holds
 `data`, by content. `save()` resolves in every case, including when nothing was
@@ -1363,7 +1365,7 @@ Related existing suites verify other layers:
 | Backups, history, device memory | [`settingsBackup.test.ts`](../../tests/settingsBackup.test.ts), [`settingsConflictBackup.test.ts`](../../tests/settingsConflictBackup.test.ts), [`settingsHistory.test.ts`](../../tests/settingsHistory.test.ts), [`deviceMemory.test.ts`](../../tests/deviceMemory.test.ts) |
 | Recovery without file surgery | [`settingsDiagnosis.test.ts`](../../tests/settingsDiagnosis.test.ts), [`settingsRecoveryService.test.ts`](../../tests/settingsRecoveryService.test.ts), [`settingsRecoveryModal.test.ts`](../../tests/settingsRecoveryModal.test.ts), [`setupVersions.test.ts`](../../tests/setupVersions.test.ts), [`versionLabels.test.ts`](../../tests/versionLabels.test.ts), [`settingsNewerFormat.test.ts`](../../tests/settingsNewerFormat.test.ts), [`pausedSaving.test.ts`](../../tests/pausedSaving.test.ts) |
 | Earlier-setup comparison | [`setupDetails.test.ts`](../../tests/setupDetails.test.ts), [`settingsRecoveryService.test.ts`](../../tests/settingsRecoveryService.test.ts), [`settingsRecoveryDetails.test.ts`](../../tests/settingsRecoveryDetails.test.ts), [`recoveryPreview.test.ts`](../../tests/recoveryPreview.test.ts) |
-| Paused page, unsaved changes, lifecycle, undo | [`pausedReadOnly.test.ts`](../../tests/pausedReadOnly.test.ts), [`unsavedChangesNotice.test.ts`](../../tests/unsavedChangesNotice.test.ts), [`writerLifecycle.test.ts`](../../tests/writerLifecycle.test.ts), [`noteRewriteUndo.test.ts`](../../tests/noteRewriteUndo.test.ts) |
+| Paused page, unsaved changes, lifecycle, undo | [`declarativeBannerRows.test.ts`](../../tests/declarativeBannerRows.test.ts), [`declarativeCalloutPages.test.ts`](../../tests/declarativeCalloutPages.test.ts), [`unsavedChangesNotice.test.ts`](../../tests/unsavedChangesNotice.test.ts), [`writerLifecycle.test.ts`](../../tests/writerLifecycle.test.ts), [`noteRewriteUndo.test.ts`](../../tests/noteRewriteUndo.test.ts) |
 | Destructive actions | [`resetSafety.test.ts`](../../tests/resetSafety.test.ts), [`importSafety.test.ts`](../../tests/importSafety.test.ts), [`deleteWhilePaused.test.ts`](../../tests/deleteWhilePaused.test.ts), [`calloutDeleteDefinitionOnly.test.ts`](../../tests/calloutDeleteDefinitionOnly.test.ts), [`replaceCalloutModal.test.ts`](../../tests/replaceCalloutModal.test.ts) |
 
 The replica harness (`tests/support/syncReplicaHarness.ts`) follows Obsidian's
