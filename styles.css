@@ -32,79 +32,27 @@
 	initial-value: #7d7d7d;
 }
 
-/* ─── The secondary ("grey") button ───────────────────────────────
-   One face, one hover, one border, read by every non-CTA button this
-   plugin draws: the settings tab's five neutral buttons and Discover,
-   every window's Cancel, and the two segmented rows (border sides,
-   gradient direction). Declared here so that "what does a grey button
-   look like" has a single answer instead of six.
+/* ─── The callout editor's icon tile edge ─────────────────────────
+   The edge the editor's icon tile shows when it is hovered, focused or
+   pressed: the tile answers with an edge and never repaints its fill. (Text
+   fields and dropdowns used to share this edge; since 2026-10-23 Obsidian's
+   own rules draw them, and the tile is its last user. The grey-button tokens
+   that sat beside it, `--cs-btn-face` and family, went on 2026-10-25 with
+   their last reader, the style windows' border segments.)
 
-   **Why the hover is a `color-mix` and not `--background-modifier-hover`.**
-   That token is not a colour, it is a *translucent mono overlay* —
-   `rgba(var(--mono-rgb-100), 0.067)`, so black at 6.7% under
-   `.theme-light` and white at 6.7% under `.theme-dark`. Two things follow
-   from that, and both were live bugs:
+   It is not `--background-modifier-border-hover`: in dark that is #3f3f3f
+   against a #333333 face (and #dadada against #e4e4e4 in macOS light), a step
+   nobody sees, and the resting border is the face's own colour there. It is
+   the path from the resting border to the focus border, 60% of the way. It is
+   the ONE edge the tile draws whenever it is engaged — hovered, focused or
+   pressed — with no thicker border and no ring:
 
-   - Being translucent, it composites against whatever is *behind* the
-     button rather than against the button's own fill. A button resting on
-     `--background-modifier-form-field` (`--color-base-25`, #2a2a2a) over a
-     #1e1e1e pane hovered to #2d2d2d — a luminance change of 0.3%, which is
-     nothing. That is why **Scan for callouts had no hover in dark mode at
-     all** while looking correct in light, where the same rule lands
-     #ffffff → #eeeeee.
-   - Being mono, it always moves *away* from the background. That is right
-     for a row highlight and wrong for a button face, which wants a fixed
-     step off its own resting colour.
+       dark    #333333 → #555555   hover edge #474747
+       light   #e4e4e4 → #bdbdbd   hover edge #cdcdcd   (macOS; Windows rests on #ffffff)
 
-   So the step is mixed into the resting fill directly. `--interactive-normal`
-   is Obsidian's own button face — white (`--color-base-00`) in light, grey
-   (`--color-base-30`, #363636) in dark, which is exactly the resting look
-   that was already wanted — and `--mono-rgb-100` supplies the direction the
-   active theme reads as "more contrast":
-
-       light   #ffffff → #ebebeb   Δlum −17.2%   (was −4.4% via native, −14.5% via the overlay)
-       dark    #363636 → #464646   Δlum  +2.5%   (was +0.3% — the invisible one)
-
-   Both are comfortably perceptible, and the dark half *lightens*, which is
-   the rule this refactor exists to make true everywhere. A theme that
-   restyles `--interactive-normal` gets a hover derived from its own colour
-   rather than one we picked, so this stays theme-compatible by construction.
-
-   Call sites read these with a fallback so that a theme which somehow
-   invalidates the `color-mix` degrades to Obsidian's native pair rather
-   than to no hover at all. */
-.cs-modal,
-.callout-studio-editor,
-.cs-occurrences-view,
-.cs-portable-view {
-	/* Every value here is derived from Obsidian's own tokens, so a theme that
-	   restyles those restyles these too, in light and dark alike. */
-	--cs-btn-face: var(--interactive-normal);
-	--cs-btn-face-hover: color-mix(
-		in srgb,
-		var(--interactive-normal) 92%,
-		rgb(var(--mono-rgb-100))
-	);
-	--cs-btn-border: var(--background-modifier-border);
-	--cs-btn-border-hover: var(--background-modifier-border-hover);
-
-	/* The edge the callout editor's icon tile shows when it is hovered, focused
-	   or pressed: the tile answers with an edge and never repaints its fill.
-	   Text fields and dropdowns used to share this edge; since 2026-10-23 they
-	   are drawn by Obsidian's own rules, and the tile is its last user.
-
-	   It is not `--background-modifier-border-hover`: in dark that is #3f3f3f
-	   against a #333333 face (and #dadada against #e4e4e4 in macOS light), a step
-	   nobody sees, and the resting border is the face's own colour there. It is
-	   the path from the resting border to the focus border, 60% of the way. It is
-	   the ONE edge the tile draws whenever it is engaged — hovered, focused or
-	   pressed — with no thicker border and no ring:
-
-	       dark    #333333 → #555555   hover edge #474747
-	       light   #e4e4e4 → #bdbdbd   hover edge #cdcdcd   (macOS; Windows rests on #ffffff)
-
-	   So the three states read as rest < hover < focus, and a theme that moves
-	   either endpoint moves the hover edge with it. */
+   So the three states read as rest < hover < focus, and a theme that moves
+   either endpoint moves the hover edge with it. */
+.callout-studio-editor {
 	--cs-field-border-hover: color-mix(
 		in srgb,
 		var(--background-modifier-border-focus) 60%,
@@ -164,40 +112,16 @@
 }
 
 /* A callout row in the settings lists is one of Obsidian's setting rows
-   (`.setting-item.cs-callout-row`, CalloutRowRenderer.ts, finding S2-14), so
-   Obsidian draws its box, its name and its description. Until the lists move
-   into Obsidian's boxes (`.setting-group.mod-list`), the rules below do what
-   that class does for a row, so a callout row stays one line, centred,
-   wherever it is: Obsidian's narrow-tab rule (`@container (max-width: 400px)`)
-   and its phone rule would otherwise put the buttons under the name. */
+   (`.setting-item.cs-callout-row`, CalloutRowRenderer.ts, finding S2-14) in
+   one of Obsidian's list boxes (`.setting-group.mod-list`), so Obsidian draws
+   its box, its padding, its name and its description, and keeps it one line,
+   centred, in a narrow tab and on a phone too. Until 2026-10-25 the rules here
+   copied what that box does, for the old page's rows that were not in one.
+
+   What is left is the plugin's own: the row is the size container the
+   narrow-row rule (`.callout-studio-row-colors`, below) measures. */
 .setting-item.cs-callout-row {
-	flex-direction: row;
-	align-items: center;
-	/* A list row's padding (`.setting-group.mod-list` sets these two). */
-	padding: var(--size-4-2) var(--size-4-4);
-	/* The row is the size container the narrow-row rules below measure. */
 	container-type: inline-size;
-}
-
-.setting-item.cs-callout-row .setting-item-info {
-	align-self: auto;
-}
-
-.setting-item.cs-callout-row .setting-item-control {
-	flex: 0 1 auto;
-	width: auto;
-	justify-content: flex-end;
-}
-
-.is-phone .modal .setting-item.cs-callout-row {
-	flex-direction: row;
-	align-items: center;
-	padding: var(--size-4-3) var(--size-4-5);
-}
-
-.is-phone .modal .setting-item.cs-callout-row .setting-item-control {
-	flex: 0 1 auto;
-	width: auto;
 }
 
 /* A one-word name longer than the row still breaks, rather than running
@@ -631,8 +555,9 @@
    header stay put, so it reads as the same Preview box: bodyless heading callouts
    stacked exactly as collapsed callouts do in a note, with only the gap margin
    between them — no animation, no special rendering. The gap itself is driven
-   by an inline --cs-heading-gap-top (set from the slider value in
-   GlobalStyleModal), so it tracks the thumb 1:1 all the way down to a hard 0. */
+   by an inline --cs-heading-gap-top (set from the Heading callout page's
+   slider, `StylePreview.setGapDemoValue`), so it tracks the thumb 1:1 all the
+   way down to a hard 0. */
 .cs-gap-demo {
 	display: none;
 	min-height: 120px;
@@ -662,8 +587,8 @@
    .cs-heading-callout:not(.cm-line) margin rule below and lost on source
    order, so the first bar has always carried the gap like every other. It was
    removed rather than given the weight to win, which would have changed how
-   the demo looks. See GlobalStyleModal.setGapDemoValue for the one-line fix
-   if that top gap is ever unwanted. */
+   the demo looks. See StylePreview.setGapDemoValue (stylePreview.ts) for the
+   one-line fix if that top gap is ever unwanted. */
 .cs-gap-demo-render.cs-gap-demo-render > * {
 	margin-bottom: 0;
 }
@@ -1260,11 +1185,9 @@
 	   was ever looked at and came out as a pure-black stripe across an iPad in
 	   dark mode. Following the window instead is right on all three.
 
-	   Defined here and nowhere else, so every call site reads it as
-	   `var(--cs-surface, var(--background-primary))`: outside a chromed modal
-	   the property is undefined and the fallback keeps the old behaviour, which
-	   is what the settings tab (painted `--background-primary` by Obsidian
-	   itself) still wants. */
+	   Defined here and in Obsidian's settings boxes (below), so every call site
+	   reads it as `var(--cs-surface, var(--background-primary))`: anywhere else
+	   the property is undefined and the fallback applies. */
 	--cs-surface: var(--modal-background);
 	/* Its companion: the shade for anything that has to read as RAISED off that
 	   surface — a box, a card, a row, a group box's header strip.
@@ -1279,6 +1202,20 @@
 	   how the group boxes once regressed, a header strip vanishing into the
 	   window on mobile dark. Move one, move the other. */
 	--cs-surface-raised: var(--setting-items-background);
+}
+
+/* Inside one of Obsidian's settings boxes the surface is the box, not the
+   window (finding S7-03). The colour dots of a callout row and the editor's
+   icon tile cut themselves out of what is behind them with a ring of
+   `--cs-surface`; in the settings, where nothing defined it, the ring fell
+   back to `--background-primary`, a shade off the box on every device.
+
+   The raised half moves with it, as the pair always does: the window's own
+   grey, which Obsidian keeps a step off the box on every device. Nothing
+   raised is drawn inside a box today; this keeps it visible if it ever is. */
+.setting-group .setting-items {
+	--cs-surface: var(--setting-items-background);
+	--cs-surface-raised: var(--background-secondary);
 }
 
 /* ── Room for the first row's focus ring ──────────────────────────
@@ -1326,9 +1263,8 @@
    reason; this class extends the same exemption to the few rows that earn it.
 
    Opt-in per row, never blanket: the rows deliberately left stacked (Display
-   name, Callout IDs, palette Name, Background style, the command dropdowns,
-   every button row in the settings tab) hold controls that really do want the
-   width. Grep `cs-row-inline` for the current call sites.
+   name, Callout IDs, palette Name, Background style, the command dropdowns)
+   hold controls that really do want the width. Grep `cs-row-inline` for the current call sites.
 
    The class is tripled so this clears both core rules on specificity rather
    than !important — the house style throughout this file. Phone-only because
@@ -1960,13 +1896,12 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	/* The ring is a cut-out, not a colour: it repaints the surface behind the
 	   circle so the one in front reads as separated from the one behind it. So
 	   it has to be whatever that surface actually is. This widget renders in the
-	   settings tab (rows, custom palettes) AND inside the callout editor — its
-	   trigger swatch and every palette-menu item — and its selector cannot say
-	   which. `--cs-surface` answers both: undefined outside a window, so the
-	   fallback keeps the settings tab exactly as it was, and the window's own
-	   background inside one. Painting `--background-primary` raw drew a pure
-	   black halo on mobile dark, where that variable is `#000` for OLED and the
-	   modal is not. */
+	   settings (the callout rows, in Obsidian's boxes) AND inside the callout
+	   editor — its trigger swatch and every palette-menu item — and its
+	   selector cannot say which. `--cs-surface` answers both: the box's colour
+	   in a settings box, and the window's own background in a window. Painting
+	   `--background-primary` raw drew a pure black halo on mobile dark, where
+	   that variable is `#000` for OLED and the modal is not. */
 	box-shadow: 0 0 0 1.5px var(--cs-surface, var(--background-primary));
 	box-sizing: border-box;
 	position: relative;
@@ -2004,8 +1939,8 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
    invisible.
 
    `--cs-surface` rather than `--background-primary`, and for the same reason as
-   the ring above: this widget is drawn both in the settings tab and inside the
-   callout editor. On mobile dark the raw variable is a true `#000` while the
+   the ring above: this widget is drawn both in the settings' boxes and inside
+   the callout editor. On mobile dark the raw variable is a true `#000` while the
    modal is not, so "empty" came out as a black square on the window instead of
    as a checkerboard — the one thing the pattern exists to avoid being confused
    with is a swatch that failed to render.
@@ -2361,7 +2296,7 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 
 .cs-combobox {
 	position: relative;
-	/* The settings-tab control column is a flex row that ends flush right; a
+	/* A setting row's control column is a flex row that ends flush right; a
 	   fixed-width control would sit in it as a stub, so this fills it. */
 	flex: 1 1 auto;
 	min-width: 0;
@@ -3813,107 +3748,6 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	.callout-studio-row-colors {
 		display: none;
 	}
-}
-
-/* ─── Settings group (sub-sections) ───────────────────────────── */
-
-.cs-settings-group {
-	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-m);
-	corner-shape: var(--corner-shape);
-	padding: 0;
-	margin-bottom: 0;
-	overflow: visible;
-	background: var(--cs-surface, var(--background-primary));
-}
-
-/* `createControlGroup()` hangs BOTH class pairs on the same two elements, so
-   this and `.callout-studio-adjust-header` above have to move together. */
-.cs-settings-group-header {
-	font-size: var(--font-ui-smaller);
-	font-weight: var(--font-semibold);
-	color: var(--text-muted);
-	padding: 6px 10px;
-	background: var(--cs-surface-raised, var(--setting-items-background));
-	border-radius: calc(var(--radius-m) - 1px) calc(var(--radius-m) - 1px) 0 0;
-	corner-shape: var(--corner-shape);
-	margin-bottom: 0;
-}
-
-.cs-settings-group > .setting-item {
-	padding: 8px 10px;
-	border-top: none;
-}
-
-/* All / Top / Right / Bottom / Left. A segmented control, but its segments are
-   secondary buttons and they now say so: the resting face is the shared grey
-   rather than `transparent`. Transparent is what made the old hover misbehave —
-   with no fill of its own, a segment showed the group box behind it, so the
-   translucent `--background-modifier-hover` composited against *that* and moved
-   whichever way the theme's mono direction pointed. Under `.theme-light` that
-   is black at 6.7%, i.e. #ffffff → #eeeeee: the reported "these get darker".
-
-   Sharing the face fixes the direction and the inconsistency in one move —
-   these segments now rest and hover exactly as Cancel and Discover do — and it
-   sharpens the control, since an unselected segment reads as a button rather
-   than as a gap between borders. */
-/* The class is doubled, and it has to be. Obsidian paints every button from
-   `button:not(.clickable-icon) { background-color: var(--interactive-normal) }`,
-   which is (0,1,1) — so a single-class rule here is (0,1,0) and *loses the
-   resting fill outright*. That is not new; it is why the `background:
-   transparent` this rule used to carry never actually took effect, and why the
-   old hover looked like it was darkening from a transparent base when it was
-   really darkening from Obsidian's grey one. Doubling to (0,2,0) is what puts
-   `--cs-btn-face` genuinely in charge rather than agreeing with core by
-   coincidence. */
-.cs-border-side-btn.cs-border-side-btn {
-	font-size: var(--font-ui-smaller);
-	padding: 3px 10px;
-	min-height: 24px;
-	border: 1px solid var(--cs-btn-border, var(--background-modifier-border));
-	border-radius: var(--button-radius);
-	corner-shape: var(--button-corner-shape);
-	background: var(--cs-btn-face, var(--interactive-normal));
-	color: var(--text-muted);
-	cursor: pointer;
-	transition:
-		background 0.12s ease,
-		color 0.12s ease,
-		border-color 0.12s ease;
-}
-
-/* Selected. Declared *before* the hover rules on purpose: this and
-   `.cs-border-side-btn:hover` are both (0,2,0), so at equal specificity the
-   later rule wins the source-order tie-break. It used to sit after, which meant
-   a selected segment swallowed its own hover and answered the pointer with
-   nothing at all — the one segment in the row that felt dead. */
-.cs-border-side-btn.is-active {
-	background: var(--interactive-accent);
-	color: var(--text-on-accent);
-	border-color: var(--interactive-accent);
-}
-
-@media (hover: hover) {
-	.cs-border-side-btn:hover {
-		background: var(--cs-btn-face-hover, var(--interactive-hover));
-		border-color: var(--cs-btn-border-hover, var(--background-modifier-border-hover));
-		color: var(--text-normal);
-	}
-
-	/* Selected + hovered. Keeping the accent is what keeps "selected" legible
-	   while the pointer is over it — a hovered selection must not read as an
-	   unselected segment — so the feedback is Obsidian's own accent hover, as
-	   every purple button takes. */
-	.cs-border-side-btn.is-active:hover {
-		background: var(--interactive-accent-hover);
-		border-color: var(--interactive-accent-hover);
-		color: var(--text-on-accent);
-	}
-}
-
-.cs-border-side-btn:focus-visible {
-	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
-	outline: none;
 }
 
 .cs-hidden {
@@ -6342,8 +6176,9 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
    `.notice-cta` (ui/noticeAction.ts), drawn by app.css: accent text, brighter
    under the pointer. It used to be an underlined white link of the plugin's. */
 
-/* A session that is not writing its settings file, said on the page where the
-   user is actually making changes (see settings/sections/ReadOnlyBanner.ts).
+/* A session that is not writing its settings file, said where the user is
+   actually making changes: the settings' notices box and the callout editor
+   (settings/saveStatusBanner.ts).
    The launch notice that announces the same thing is long gone by then. Styled
    as a warning rather than an error: nothing is broken, and in the common case
    — a sync client mid-swap — it resolves itself.
@@ -6362,17 +6197,17 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	/* The card sits directly under the "Callout Studio" title row, which already
-	   carries 8px of `padding-bottom`, so a small top margin is enough to keep
-	   it off the title; the larger bottom margin separates it from the first
-	   section heading below. */
+	/* In the callout editor it sits above the form: a small top margin, and a
+	   larger one below to keep it off the first box. (In the settings its row
+	   sets both to 0, as the page already spaces its boxes.) */
 	margin: 4px 0 16px;
 	padding: var(--callout-padding);
 	border-radius: var(--callout-radius);
 	corner-shape: var(--corner-shape);
-	/* A translucent tint rather than a surface token: the banner sits on the
-	   settings tab, and a raised-shade token would be a claim about what it is
-	   sitting on (see tests/modalSurfaces.test.ts). */
+	/* A translucent tint rather than a surface token: the banner sits on more
+	   than one surface (a settings page, a window), and a raised-shade token
+	   would be a claim about what it is sitting on (see
+	   tests/modalSurfaces.test.ts). */
 	background: color-mix(in oklch, var(--text-warning) 10%, transparent);
 }
 

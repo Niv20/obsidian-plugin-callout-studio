@@ -137,6 +137,8 @@ describe("Built-in callouts", () => {
 		const page = harness.customPage as unknown as CalloutListPage;
 		const expected = registry.getBuiltIn().map((def) => def.displayName).sort((a, b) => a.localeCompare(b));
 		assert.deepEqual(shownNames(page), expected);
+		// Every row in Obsidian's list box, which keeps it one line.
+		assert.equal(page.containerEl.querySelectorAll(".setting-group.mod-list .cs-callout-row").length, expected.length);
 		searchPage(page, "caution");
 		assert.deepEqual(shownNames(page), ["Warning"]);
 	});

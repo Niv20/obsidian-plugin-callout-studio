@@ -115,6 +115,9 @@ describe("My callout types", () => {
 		const entry = harness.row(t("settings.myCalloutTypes"))!;
 		assert.equal(entry.settingEl.querySelector(".setting-item-value")?.textContent, "2 callouts");
 		harness.openPage([CALLOUT_PAGES.mine]);
+		// Obsidian's list box (`mod-list`) is what keeps a row one line, in a
+		// narrow tab and on a phone; styles.css no longer does it.
+		assert.ok(list(harness).groupEl.hasClass("mod-list"), "in Obsidian's list box");
 		const rows = list(harness).children;
 		assert.deepEqual(rows.map((row) => row.def.name), ["Agenda", "Recite"]);
 		for (const row of rows) {

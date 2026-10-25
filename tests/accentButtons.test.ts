@@ -5,14 +5,13 @@
  * purple in both modes. The plugin used to derive a hover of its own from the
  * resting accent — darker in light mode — across the settings tab, every window
  * and the editor. That is gone, so Save and Confirm hover exactly like
- * Obsidian's. This file keeps it gone, and keeps the two segmented rows'
- * selected segment on the same native hover.
+ * Obsidian's. This file keeps it gone.
  */
 import assert from "node:assert";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
-import { parseRules, valueOf } from "./support/cssInjectorHarness";
+import { parseRules } from "./support/cssInjectorHarness";
 
 const css = readFileSync(join(process.cwd(), "styles.css"), "utf8");
 const rules = parseRules(css);
@@ -32,13 +31,4 @@ describe("the accent hover is Obsidian's", () => {
 		});
 		assert.deepStrictEqual(hovering.map((rule) => rule.selector), []);
 	});
-
-	for (const selector of [".cs-border-side-btn.is-active:hover"]) {
-		it(`${selector} takes Obsidian's accent hover`, () => {
-			const rule = rules.find((r) => r.selector === selector);
-			assert.ok(rule, `${selector} is missing`);
-			assert.equal(valueOf(rule, "background"), "var(--interactive-accent-hover)");
-			assert.equal(valueOf(rule, "border-color"), "var(--interactive-accent-hover)");
-		});
-	}
 });

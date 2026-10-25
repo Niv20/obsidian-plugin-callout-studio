@@ -192,25 +192,25 @@ const definingRules = rules.filter(
 );
 
 describe("--cs-surface and --cs-surface-raised are defined as a pair", () => {
-	it("only ever inside a chromed window", () => {
-		// Defined nowhere else on purpose: outside one, both are undefined and
-		// every call site falls through to the old behaviour — which is what the
-		// settings tab, painted `--background-primary` by Obsidian itself, wants.
+	it("only ever inside a chromed window or one of Obsidian's settings boxes", () => {
+		// Defined nowhere else on purpose: outside these, both are undefined and
+		// every call site falls through to its fallback. In a settings box the
+		// surface is the box (finding S7-03), so a colour dot's ring matches it.
 		for (const rule of definingRules) {
 			assert.ok(
-				rule.selector.includes("cs-modal"),
-				`${rule.selector} defines a surface token outside a window`,
+				rule.selector.includes("cs-modal") || rule.selector === ".setting-group .setting-items",
+				`${rule.selector} defines a surface token outside a window or a settings box`,
 			);
 		}
 	});
 
-	it("introduced together, in exactly one place", () => {
+	it("introduced together, in exactly those two places", () => {
 		const both = definingRules.filter(
 			(r) => defines(r, "--cs-surface") && defines(r, "--cs-surface-raised"),
 		);
 		assert.deepStrictEqual(
 			both.map((r) => r.selector),
-			[".modal.cs-modal"],
+			[".modal.cs-modal", ".setting-group .setting-items"],
 		);
 	});
 

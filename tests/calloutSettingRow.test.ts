@@ -10,10 +10,10 @@
  *   spellings as its description, and the swatches, ✎ and ⋮ as its controls,
  *   the buttons made with `addExtraButton`. A real setting row is what
  *   Obsidian's arrow keys walk and its focus ring outlines.
- * - **One line, wherever it is.** Until the lists are in Obsidian's boxes,
- *   styles.css does for a callout row what `.setting-group.mod-list` does for
- *   a list row, so a narrow tab or a phone does not stack the buttons under the
- *   name; the ids stay one line, cut between whole ids.
+ * - **One line, wherever it is.** The rows sit in Obsidian's list boxes
+ *   (`.setting-group.mod-list`, checked by the page tests), which keep a row
+ *   one line in a narrow tab and on a phone; styles.css leaves that to them.
+ *   The ids stay one line too, cut between whole ids.
  *
  * The CSS is read as text, because the fake DOM these tests run in has no
  * cascade; the look itself was checked against Obsidian 1.14.4's app.css.
@@ -128,20 +128,13 @@ describe("a callout row stays one line", () => {
 		return css.slice(at, css.indexOf("}", at));
 	};
 
-	it("does what a .mod-list row does, in a narrow tab and on a phone", () => {
-		// Obsidian's `@container (max-width: 400px)` and `.is-phone .modal`
-		// rules turn a lone setting row into a column; these keep it a row.
-		for (const selector of [".setting-item.cs-callout-row", ".is-phone .modal .setting-item.cs-callout-row"]) {
-			assert.match(ruleBody(selector), /flex-direction: row/);
-			assert.match(ruleBody(selector), /align-items: center/);
-		}
-		for (const selector of [
-			".setting-item.cs-callout-row .setting-item-control",
-			".is-phone .modal .setting-item.cs-callout-row .setting-item-control",
-		]) {
-			assert.match(ruleBody(selector), /flex: 0 1 auto/);
-			assert.match(ruleBody(selector), /width: auto/);
-		}
+	it("leaves the row's layout to Obsidian's list box", () => {
+		// Copies of `.mod-list`'s rules would only drift from Obsidian's.
+		const body = ruleBody(".setting-item.cs-callout-row");
+		assert.doesNotMatch(body, /flex-direction|align-items|padding/);
+		assert.ok(!css.includes(".is-phone .modal .setting-item.cs-callout-row"));
+		// The row is still the size container that hides its colour dots when narrow.
+		assert.match(body, /container-type: inline-size/);
 	});
 
 	it("keeps the ids one line, cut between whole ids", () => {

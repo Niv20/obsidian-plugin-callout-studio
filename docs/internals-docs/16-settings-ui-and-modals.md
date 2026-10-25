@@ -657,20 +657,23 @@ between `.setting-item`s, Enter into the row's first control) and its inset
 focus ring. A right-click anywhere on the row still opens its ⋮ menu at the
 pointer.
 
-**One line until the rows are boxed.** A lone `.setting-item` is a card
-(Obsidian's box colour, radius, 16px padding, 8px below), and two Obsidian
-rules turn it into a column: `@container (max-width: 400px)` in a narrow tab,
-and `.is-phone .modal .setting-item` on a phone, both excluding only rows in a
-`.setting-group.mod-list`. Until Searchable Settings puts the lists in such
-groups, styles.css gives `.cs-callout-row` what `.mod-list` gives a row: one
-centred line, the control column at its own width, and the list-row padding
-(8px 16px, 12px 20px on a phone). Inside a group, Obsidian's own group rules
-outrank these, so they need not be removed first. The row is also the size
-container the narrow-row rule measures, and the iPadOS paint workaround on its
-icon buttons (`translateZ(0)`) sits in `:where()`, so Obsidian's own icon
-transforms win: on macOS and iOS ⋮ is turned on its side, as in Obsidian's
-More options. `tests/calloutSettingRow.test.ts` holds the shape and these
-rules.
+**One line, because the rows are in a list box.** Two Obsidian rules turn a
+lone `.setting-item` into a column, `@container (max-width: 400px)` in a narrow
+tab and `.is-phone .modal .setting-item` on a phone, and both leave rows in a
+`.setting-group.mod-list` alone. Every callout row is in one: My callout types
+is a `type: "list"` box, to which Obsidian adds `mod-list`, and the Built-in
+and theme pages draw their own `mod-list` box. Obsidian's list rules then give
+the row one centred line, the control column at its own width, and the
+list-row padding (8px 16px, 12px 20px on a phone). Until 2026-10-25 styles.css
+copied those rules for the old page's rows, which sat in no box; the copies
+are gone. What styles.css still adds: the row is the size container the
+narrow-row rule measures (it hides the colour dots), and the iPadOS paint
+workaround on its icon buttons (`translateZ(0)`) sits in `:where()`, so
+Obsidian's own icon transforms win: on macOS and iOS ⋮ is turned on its side,
+as in Obsidian's More options. The colour dots' ring takes the box's colour
+(`--cs-surface` is `--setting-items-background` inside a settings box, finding
+S7-03). `tests/calloutSettingRow.test.ts` holds the shape and the CSS; the page
+tests check that the rows are in a `mod-list` box.
 
 Until 2026-10-24 a callout row was a `div.callout-studio-row` of the plugin's
 own: name and ids on one line, `<button>`s, and the ids hidden as a group under
@@ -1712,14 +1715,20 @@ every device. `tests/replaceCalloutModal.test.ts` pins both.
 
 ## Two theme-aware surface tokens
 
-Defined **only** on `.modal.cs-modal` (never redefined per-modal or per
-device). Every call site names its half's fallback, so outside a window - the
-settings tab - each half falls through to the colour Obsidian itself uses
-there:
+Defined in **two** places only (never per modal or per device): on
+`.modal.cs-modal`, and inside one of Obsidian's settings boxes. Every call site
+names its half's fallback, so anywhere else each half falls through to the
+colour Obsidian itself uses there:
 
 ```css
 .modal.cs-modal { --cs-surface: var(--modal-background); --cs-surface-raised: var(--setting-items-background); }
+.setting-group .setting-items { --cs-surface: var(--setting-items-background); --cs-surface-raised: var(--background-secondary); }
 ```
+
+Inside a box the surface is the box (finding S7-03), so a colour dot's ring,
+which repaints the surface behind it, matches the box it sits on rather than
+the window. The raised half moves with it, to the window's grey, a step off
+the box on every device; nothing raised is drawn inside a box today.
 
 - **`--cs-surface`** (fallback `--background-primary`) - anything meant to
   read as flush with the modal window itself: fixed bands, panels, the ring
@@ -2061,96 +2070,46 @@ it already points, and back - 3.5 user units on a 24-unit viewBox drawn at
 
 ## How a secondary button paints
 
-**Obsidian paints the plain grey buttons.** A window's Cancel (a
-`<button class="mod-cancel">` in Obsidian's `.modal-button-container`), the settings tab's secondary buttons
-(Discover, Import, Export, Reset, and the two in Data management), Pick an
-icon's **Manage libraries** and the import window's Upload/Paste get no face,
-edge, hover or focus ring from the plugin: Obsidian's `button` rules draw them,
-so they look exactly like Obsidian's own buttons (decision 14 of the
-native-look plan). On macOS that is a flat grey (`#e4e4e4` light, `#333` dark)
-that does not change under the pointer, which is how Cancel looks in Obsidian's
-own dialogs there; on Windows and Linux it is white with Obsidian's hairline
-shadow and a small hover step.
+**Obsidian paints every grey button.** A window's Cancel (a
+`<button class="mod-cancel">` in Obsidian's `.modal-button-container`), the
+settings' buttons (Import, Export, Reset everything, …), Pick an icon's
+**Manage libraries** and the import window's Upload/Paste get no face, edge,
+hover or focus ring from the plugin: Obsidian's `button` rules draw them, so
+they look exactly like Obsidian's own buttons (decision 14 of the native-look
+plan). On macOS that is a flat grey (`#e4e4e4` light, `#333` dark) that does not
+change under the pointer, which is how Cancel looks in Obsidian's own dialogs
+there; on Windows and Linux it is white with Obsidian's hairline shadow and a
+small hover step.
 
-**One kind still wears the plugin's shared grey face**, until the style
-windows become settings pages: the segmented row `.cs-border-side-btn`
-(All/Top/Right/Bottom/Left in the style windows). The palette's gradient
-direction arrows (`.cs-gradient-dir-btn`) were the other until 2026-10-23;
-they are Obsidian icon buttons now (`div.clickable-icon` with `role=button`,
-`.is-active` on the chosen one, finding S6-10), drawn by app.css alone, and
-keep their physical direction in a right-to-left Obsidian (a `.mod-rtl` rule
-undoes app.css's icon mirroring, since a gradient's angle does not flip). The
-row reads one pair of tokens, declared once near the top of `styles.css`:
+**No button wears a face of the plugin's any more.** The last one, the style
+windows' segmented row of border sides (`.cs-border-side-btn`), went with those
+windows: the style pages use Obsidian's four switches (finding S7-10). The
+tokens it read, `--cs-btn-face` and `--cs-btn-face-hover`, went with it on
+2026-10-25. The palette's gradient direction arrows had already become
+Obsidian icon buttons (`div.clickable-icon` with `role=button`, `.is-active` on
+the chosen one, finding S6-10), drawn by app.css alone; they keep their
+physical direction in a right-to-left Obsidian (a `.mod-rtl` rule undoes
+app.css's icon mirroring, since a gradient's angle does not flip). If a control
+ever needs a button again, build it as Obsidian's button.
 
-```css
---cs-btn-face: var(--interactive-normal);
---cs-btn-face-hover: color-mix(
-	in srgb,
-	var(--interactive-normal) 92%,
-	rgb(var(--mono-rgb-100))
-);
-```
+### Never `--background-modifier-hover` on a button face
 
-`--interactive-normal` is Obsidian's own button face - white
-(`--color-base-00`) in light on Windows and Linux, `#333333` (`--color-base-30`)
-in dark, and `#e4e4e4` on macOS, where `.mod-macos` points it at
-`--background-modifier-border` - so the resting look stays whatever a theme
-makes it. The list a dropdown opens does not: it is drawn like Obsidian's own
-menus (see
-[Dropdown popups look like Obsidian's menus](#dropdown-popups-look-like-obsidians-menus)).
+That token is not a colour. It is a translucent mono overlay,
+`rgba(var(--mono-rgb-100), 0.067)`: black at 6.7% under `.theme-light`, white at
+6.7% under `.theme-dark`. On a face it went wrong twice. It composites against
+what is *behind* the button, so a grey button on a dark pane hovered by 0.3%
+luminance, no hover at all; and its direction flips with the theme, so the
+segmented row darkened under the pointer in dark mode. The plugin's own face
+then mixed its step into the resting fill (`color-mix` with `--mono-rgb-100`),
+until there was no face of its own left.
 
-### Why the hover is a `color-mix` and not `--background-modifier-hover`
-
-Because **that token is not a colour**. It is a translucent mono overlay,
-`rgba(var(--mono-rgb-100), 0.067)` - black at 6.7% under `.theme-light`, white
-at 6.7% under `.theme-dark`. Two things follow, and both shipped:
-
-- **It composites against what is behind the button, not against the button's
-  own fill.** Discover rested on `--background-modifier-form-field` - an
-  *input* token, `--color-base-25` (`#2a2a2a`) - over a `#1e1e1e` pane, and
-  hovered to `#2d2d2d`. That is a luminance change of 0.3%: **no hover at all
-  in dark mode**, while the very same rule in light moved `#ffffff` → `#eeeeee`
-  and looked correct. One rule, one theme broken.
-- **Its direction flips with the theme**, because it always moves *away* from
-  the background. The segmented rows rest on `--interactive-normal` (`#363636`
-  in dark) but hovered to that overlay composited over the group box behind
-  them (`#1e1e1e`), landing at `#2d2d2d` - *darker than the button*. That is
-  the "these get darker" report, and it is the same trap reached from the
-  other side.
-
-Mixing the step into the resting fill fixes both: the result is opaque, so it
-cannot be pulled around by whatever the button happens to sit on, and
-`--mono-rgb-100` supplies the direction the active theme reads as "more
-contrast". Measured in headless Chrome against real `app.css`:
-
-| | rest → hover | Δlum |
-| --- | --- | --- |
-| light | `#ffffff` → `#ebebeb` | −16.9% |
-| dark | `#363636` → `#464646` | +2.4% |
-
-identical for all four, against `#ffffff` → `#fafafa` (−4.4%) and `#363636` →
-`#3f3f3f` (+1.3%) for a native Obsidian button, which is deliberately left
-alone - the face is only ever worn by the plugin's own segmented rows, so
-nothing reaches a core dialog, and the coloured variants keep Obsidian's own
-faces and hovers. (Window footers used to wear it too, through a
-`.cs-modal > .cs-modal-footer` rule that carved out `.mod-cta` and
-`.mod-destructive` with a `:not()` list; since 2026-10-23 a window's buttons
-are Obsidian's, in Obsidian's `.modal-button-container`.)
-
-### The specificity half, which is the half that gets lost
-
-Obsidian paints every button from
-
-```css
-button:not(.clickable-icon) { background-color: var(--interactive-normal) }
-```
-
-which is **(0,1,1)**. A single-class rule is (0,1,0) and *does not get the
-resting fill at all* - which is why the `background: transparent` the
-border-side buttons carried for their whole life never once took effect, and
-why their hover looked like it was darkening from a transparent base when it
-was really darkening from Obsidian's grey one. The segmented row doubles its
-class to clear the bar.
+> [!NOTE]
+> The overlay is still right for a **list row, an icon button or a chip** -
+> anything that sits on the surface behind it rather than owning a face - so
+> `--background-modifier-hover` is deliberately untouched on
+> `.cs-combobox-option`, `.callout-studio-row-buttons button`, `.cs-icon-tile`,
+> `.cs-drag-handle` and friends. The rule is about which of the two a control
+> is, not about banning a variable.
 
 A cautionary tale from the arrows, before they became icon buttons: Obsidian
 1.13's `.is-phone .modal .setting-item-control button:not(.clickable-icon)
@@ -2163,38 +2122,9 @@ build a small control as Obsidian's icon button. Check a phone override in
 WebKit as well as Chrome (see "Checking a theme against the real cascade" in
 `21-theme-callout-discovery.md` for the harness).
 
-Two more consequences worth keeping:
-
-- **`.is-active` is declared *before* `:hover`.** They tie at (0,2,0), so the
-  later rule wins; with the order reversed a selected segment swallowed its own
-  hover and was the one dead control in the row. A hovered selection steps
-  within the accent (`--interactive-accent-hover`) so it can never be mistaken
-  for an unselected segment.
-- **`box-shadow: none` must not eat the focus ring.** A segment's own
-  `box-shadow: none` outranks Obsidian's (0,1,1) `button:focus-visible`, so
-  each segment restates the ring itself, in the grey described in
-  [How an input field focuses](#how-an-input-field-focuses).
-
-`tests/secondaryButtons.test.ts` pins all of it: that no rule paints the plain
-grey buttons, the shared tokens, the two faces reading them, the specificity
-bar, the `.is-active`/`:hover` ordering, and the two tokens that must never come
-back to a button face.
-
-> [!NOTE]
-> The overlay is still right for a **list row, an icon button or a chip** -
-> anything that sits on the surface behind it rather than owning a face - so
-> `--background-modifier-hover` is deliberately untouched on
-> `.cs-combobox-option`, `.callout-studio-row-buttons button`, `.cs-icon-tile`,
-> `.cs-drag-handle` and friends. The rule is about which of the two a control
-> is, not about banning a variable.
-
-> [!TIP]
-> When measuring this with the headless-Chrome harness, **disable transitions
-> first**. These buttons carry `transition: background 0.12s`, and
-> `getComputedStyle` immediately after forcing the hover state returns the
-> *interpolating* value - which Chrome reports in `oklab`. A first pass at the
-> harness measured the resting colour twice that way and reported the fix as
-> broken.
+`tests/secondaryButtons.test.ts` pins it: no rule of the plugin's paints the
+plain grey buttons, and neither `.cs-settings-neutral-btn` nor the
+`--cs-btn-face` family comes back.
 
 ### Red and purple buttons are Obsidian's
 
@@ -2225,8 +2155,7 @@ purple in both modes. The plugin used to override both: a red stepped darker in
 light and lighter in dark (`--cs-btn-danger-face-hover`), and a purple derived
 from the resting accent, darker in light (`--cs-btn-accent-face-hover`). Both
 tokens and their rules are gone, so these buttons look and behave exactly like
-Obsidian's. The segmented row's selected segment takes the same
-`--interactive-accent-hover`.
+Obsidian's.
 
 `tests/dangerButtons.test.ts` fails on a `mod-warning` string in `src/`, an
 argument-less `.setWarning()`, any `styles.css` rule that names `.mod-warning`

@@ -176,17 +176,17 @@ jobs:
             # IDs with their keys, and errors under the field through
             # setErrorMessage. What it deleted (the light palette, the
             # plugin's modal shell, the old chips and timers) paid for most
-            # of it: 2.0 KB over the build before the stage so far, and the
-            # rest of the stage lands inside the headroom. The Clean Sweep
-            # after the declarative settings tab deletes the old tab code.
-            # Raised by 32 KiB, for now, at the switch to the declarative
-            # settings tab: the new tree (src/settings/declarative/, about
-            # 26 KB) ships while the old page (display() and sections/) stays
-            # as its fallback. The Clean Sweep deletes the old page and lowers
-            # this again.
+            # of it: 2.0 KB over the build before the stage, and the rest of
+            # the stage landed inside the headroom.
+            # Raised by 32 KiB at the switch to the declarative settings tab,
+            # while the old page (display() and its sections) still shipped
+            # beside the new tree (src/settings/declarative/, about 26 KB),
+            # and lowered by the same 32 KiB in the Clean Sweep that deleted
+            # the old page: the settings Obsidian draws ship at 2,348,600
+            # bytes, which leaves about 6.4 KiB of headroom.
             - name: Check bundle size
               run: |
-                  limit=2387968  # 2 MiB + 284 KiB
+                  limit=2355200  # 2 MiB + 252 KiB
                   size=$(wc -c < main.js)
                   printf 'main.js is %s bytes (%.2f MiB), limit %s bytes.\n' \
                       "$size" "$(echo "scale=2; $size/1048576" | bc)" "$limit"

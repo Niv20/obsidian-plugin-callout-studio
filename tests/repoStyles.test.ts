@@ -208,9 +208,7 @@ describe("class names in styles.css and src/ agree", () => {
 	 */
 	const PREFIXES = [
 		"cs-import-issue-",
-		"cs-settings-group",
 		"cs-palette-menu-item",
-		"cs-border-side-btn",
 	];
 
 	/**
