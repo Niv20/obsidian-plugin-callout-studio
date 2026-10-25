@@ -27,9 +27,9 @@ export function composeMobile(name, source, metadata) {
 	for (const [i, line] of headlines[name].entries()) body += text(450, 121 + i * 67, line, 60, "#F7F3FF", 'font-weight="700" letter-spacing="-1.6" text-anchor="middle"');
 	body += '<g clip-path="url(#phone-screen)">';
 	body += `<g transform="translate(${x} ${y}) scale(${scale})">${content}</g>`;
-	if (name === "01-settings") {
+	if (name === "01-settings" && metadata.geometry.visible < 1) {
 		const trackHeight = height * scale - 36;
-		const thumb = trackHeight * metadata.geometry.height / metadata.geometry.scrollHeight;
+		const thumb = trackHeight * metadata.geometry.visible;
 		body += rect(x + width * scale - 9, y + 18, 4, trackHeight, "#39363D", 2);
 		body += rect(x + width * scale - 9, y + 18, 4, thumb, "#6D6479", 2);
 	}

@@ -41,7 +41,20 @@ export async function exportSvg(page, selector, options = {}) {
 		}
 		const visibleColor = color => color && color !== "transparent" && !/rgba\([^)]*,\s*0\)$/.test(color);
 		const box = r => ({ x: n(r.x - origin.x), y: n(r.y - origin.y), width: n(r.width), height: n(r.height) });
-		const rect = (r, fill, radius = 0, extra = "") => `<rect x="${n(r.x)}" y="${n(r.y)}" width="${n(r.width)}" height="${n(r.height)}" rx="${n(radius)}" fill="${escape(color(fill))}" ${extra}/>`;
+		// `radius` is one number for all four corners, or one per corner as
+		// cornerRadii returns them; a box with corners that differ is a path.
+		const rect = (r, fill, radius = 0, extra = "") => {
+			const [tl, tr, br, bl] = Array.isArray(radius) ? radius : [radius, radius, radius, radius];
+			if (tl === tr && tr === br && br === bl) return `<rect x="${n(r.x)}" y="${n(r.y)}" width="${n(r.width)}" height="${n(r.height)}" rx="${n(tl)}" fill="${escape(color(fill))}" ${extra}/>`;
+			const { x, y, width: w, height: h } = r, arc = v => `A${n(v)} ${n(v)} 0 0 1`;
+			const d = `M${n(x + tl)} ${n(y)}H${n(x + w - tr)}${arc(tr)} ${n(x + w)} ${n(y + tr)}V${n(y + h - br)}${arc(br)} ${n(x + w - br)} ${n(y + h)}H${n(x + bl)}${arc(bl)} ${n(x)} ${n(y + h - bl)}V${n(y + tl)}${arc(tl)} ${n(x + tl)} ${n(y)}Z`;
+			return `<path d="${d}" fill="${escape(color(fill))}" ${extra}/>`;
+		};
+		// Each corner's radius, [top-left, top-right, bottom-right, bottom-left]:
+		// a box may round only some corners (a list box under its search field
+		// rounds the bottom two), which one number for all four would draw wrong.
+		const cornerRadii = (style, r) => ["TopLeft", "TopRight", "BottomRight", "BottomLeft"]
+			.map(corner => Math.min(px(style[`border${corner}Radius`]), r.width / 2, r.height / 2));
 		const clip = (r, radius = 0) => {
 			const id = `clip-${++serial}`;
 			defs.push(`<clipPath id="${id}">${rect(r, "white", radius)}</clipPath>`);
@@ -141,7 +154,7 @@ export async function exportSvg(page, selector, options = {}) {
 			return `url(#${id})`;
 		}
 		function paintBox(style, r) {
-			const radius = Math.min(px(style.borderTopLeftRadius), r.width / 2, r.height / 2);
+			const radius = cornerRadii(style, r);
 			const output = [];
 			const background = backgrounds(style);
 			if (background.at(-1).clip !== "text" && visibleColor(style.backgroundColor)) output.push(rect(r, style.backgroundColor, radius));
@@ -152,7 +165,7 @@ export async function exportSvg(page, selector, options = {}) {
 			const borders = ["Top", "Right", "Bottom", "Left"].map(side => ({ side, width: px(style[`border${side}Width`]), color: style[`border${side}Color`], style: style[`border${side}Style`] }));
 			if (borders.every(edge => edge.width === borders[0].width && edge.color === borders[0].color) && borders[0].width && borders[0].style !== "none") {
 				const edge = borders[0], inset = edge.width / 2;
-				output.push(rect({ x: r.x + inset, y: r.y + inset, width: r.width - edge.width, height: r.height - edge.width }, "none", Math.max(0, radius - inset), `stroke="${escape(color(edge.color))}" stroke-width="${n(edge.width)}"`));
+				output.push(rect({ x: r.x + inset, y: r.y + inset, width: r.width - edge.width, height: r.height - edge.width }, "none", radius.map(v => Math.max(0, v - inset)), `stroke="${escape(color(edge.color))}" stroke-width="${n(edge.width)}"`));
 			} else {
 				for (const edge of borders) if (edge.width && edge.style !== "none" && visibleColor(edge.color)) {
 					const b = edge.side === "Top" ? { x: r.x, y: r.y, width: r.width, height: edge.width }
@@ -305,7 +318,7 @@ export async function exportSvg(page, selector, options = {}) {
 			// Sticky toolbars and floating menus paint above their later siblings.
 			const childNodes = [...element.childNodes].map((node, index) => ({ node, index, z: node.nodeType === Node.ELEMENT_NODE ? paintOrder(node) : 0 })).sort((a, b) => a.z - b.z || a.index - b.index);
 			for (const { node: child } of childNodes) children += child.nodeType === Node.TEXT_NODE ? textNode(child, style, element) : child.nodeType === Node.ELEMENT_NODE ? walk(child) : "";
-			if (["hidden", "clip", "auto", "scroll"].some(value => style.overflowX === value || style.overflowY === value)) children = `<g clip-path="url(#${clip(r, px(style.borderTopLeftRadius))})">${children}</g>`;
+			if (["hidden", "clip", "auto", "scroll"].some(value => style.overflowX === value || style.overflowY === value)) children = `<g clip-path="url(#${clip(r, cornerRadii(style, r))})">${children}</g>`;
 			result += children + (beforeOnTop ? before : "") + (afterBehind ? "" : after);
 			return Number(style.opacity) < 1 ? `<g opacity="${style.opacity}">${result}</g>` : result;
 		}

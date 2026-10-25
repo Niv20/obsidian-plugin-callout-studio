@@ -216,7 +216,13 @@ preview uses compact, vertically centered rows.
 tree's context as the settings tab does and hands the tree to the test renderer
 (`tests/support/declarativeRenderer.ts`, Obsidian 1.14.4's renderer rebuilt
 step for step), inside a frame shaped like the settings window
-(`.modal.mod-settings`). A scene names a sub-page by its page ids, as
+(`.modal.mod-settings`). Every renderer sizes that frame through
+`scripts/user-guide/settingsPageLayout.mjs`, each with its own picture's width
+(the guide 850, the store 780, the phone 430 × 684): left to app.css it would
+be a 560-pixel dialog, narrow enough that a callout row hides its colour dots,
+as it does in a narrow tab. On the phone, Obsidian names a page in the
+window's header, which the frame does not draw, so the store's phone picture
+shows the page's own title bar instead. A scene names a sub-page by its page ids, as
 `openPagePath` does; the paused-saving example keeps only the main page's
 notices box and Version history box (`boxes`), and the language selector opens
 Obsidian's own menu inside the frame. The renderer imports the test stub by its
@@ -239,7 +245,9 @@ fits, like `contain`; a mask shape without a fill inherits its parent's (Lucide
 says `fill="none"` once, on the `<svg>`); an element that is not displayed
 lifts nothing in the paint order (a closed picker's list, z-index 1000, once
 buried an open menu); a colour input is a circle of its value; a radio's or
-checkbox's value ("on") is not text on screen. Absolutely positioned
+checkbox's value ("on") is not text on screen; each corner keeps its own radius
+(a list box under its search field rounds only its bottom two, and the field's
+box only its top two). Absolutely positioned
 pseudo-elements are exported relative to their parent's padding box, preserving
 the native checkbox marker alignment. Outlined language labels keep their
 proportions: one scale, from the width, because the outline's font is not the
@@ -277,10 +285,9 @@ assets, offline fixture host, vector exporter, and browser overrides as the
 user-guide renderer. It leaves all store artwork unchanged.
 
 `01-settings.svg` extracts just the settings window from desktop store image
-01, removes the surrounding workspace and promotional heading, and preserves
-the partially clipped bottom row to show that the list continues. Its canvas is
-960 × 681 with transparent outer
-padding. Refresh the store source first with
+01, removing the surrounding workspace and promotional heading. It is 960
+pixels wide with 8 pixels of transparent margin, and as tall as the window
+comes out. Refresh the store source first with
 `node scripts/render-store-screenshots.mjs 01-settings` if its settings content
 changes.
 `02-syntax.svg` is 1080 × 666: a full-width dark syntax reference compares

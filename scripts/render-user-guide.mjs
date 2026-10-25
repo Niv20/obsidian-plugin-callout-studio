@@ -14,6 +14,7 @@ import { outlineLanguageText } from "./user-guide/outline-language-text.mjs";
 import { loadObsidianAssets } from "./user-guide/obsidian-assets.mjs";
 import { verifyScene, verifySvg } from "./user-guide/verify-scene.mjs";
 import { guideRuntimeOptions } from "./user-guide/guideRuntime.mjs";
+import { settingsPageCss } from "./user-guide/settingsPageLayout.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(import.meta.url);
@@ -26,12 +27,7 @@ const themeCss = existsSync(themePath) ? readFileSync(themePath, "utf8").replace
 const layoutCss = `
 body { margin:0; padding:32px; overflow:hidden; background:var(--background-primary); }
 *, *::before, *::after { animation:none!important; transition:none!important; caret-color:transparent!important; }
-.guide-settings { width:850px; padding:32px; background:var(--background-secondary); border-radius:12px; max-height:704px; overflow:auto; }
-.guide-settings-page { width:850px; height:auto; display:flex; flex-direction:column; }
-.guide-settings-page .modal-content { display:flex; flex:1 1 auto; min-height:0; padding:0; }
-.guide-settings-page .vertical-tab-content-container { display:flex; flex:1 1 auto; min-height:0; }
-.guide-settings-page .vertical-tab-content { flex:1 1 auto; height:auto; padding-top:var(--size-4-8); padding-bottom:var(--size-4-8); }
-.guide-settings-page .setting-page.vertical-tab-content { padding-top:0; }
+${settingsPageCss({ width: 850 })}
 .modal-container { position:static; padding:0; height:auto; min-height:0; }
 .modal-bg { display:none; }
 .modal { position:relative; margin:0; max-height:704px!important; }
@@ -40,10 +36,6 @@ body { margin:0; padding:32px; overflow:hidden; background:var(--background-prim
 .guide-note .markdown-rendered { padding:0; }
 .guide-outline { width:280px; padding:20px; align-self:flex-start; background:var(--background-secondary); border-radius:8px; }
 .guide-outline .tree-item-inner { min-height:24px; }
-.guide-language-panels, .guide-saving-panels { width:850px; display:grid; gap:24px; background:var(--background-primary); }
-.guide-language-panels > .guide-settings, .guide-saving-panels > .guide-settings { border:1px solid var(--background-modifier-border); }
-.guide-saving-panels > .guide-settings { width:100%; }
-.guide-saving-panels .cs-readonly-banner { margin:0; }
 .guide-autocomplete { width:720px; padding:32px; border:1px solid var(--background-modifier-border); border-radius:12px; background:var(--background-primary); }
 .guide-autocomplete .cm-editor { font-family:var(--font-monospace); font-size:20px; background:transparent; }
 .guide-autocomplete .cm-content { padding:12px 0; }
