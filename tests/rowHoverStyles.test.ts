@@ -5,9 +5,11 @@
  * A row is not clickable; only its buttons are. So, as in every Obsidian list:
  *
  * - The row itself never changes on hover — no fill, no transition to one.
- *   Palette, command, menu and library rows share `.callout-studio-row`, and a
- *   callout row is an Obsidian setting row, `.cs-callout-row`;
- *   version rows add `.cs-recovery-row`.
+ *   The plugin's own row kinds are the callout rows, `.cs-callout-row`, and
+ *   the version rows, `.cs-recovery-row`, both Obsidian setting rows; every
+ *   other list in the settings is Obsidian's. (`.callout-studio-row`, the
+ *   plugin's old row, is still matched below so it cannot come back with a
+ *   hover.)
  * - Pointing anywhere on a row only sharpens that row's own icon buttons, with
  *   Obsidian's icon opacity steps (`--icon-opacity` → `--icon-opacity-hover`).
  * - Every row hover sits behind `(hover: hover)`. On touch, WebKit replays the

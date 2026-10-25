@@ -136,7 +136,7 @@ describe("the stylesheet reader itself", () => {
 
 	it("descends into media queries", () => {
 		assert.ok(
-			rules.some((r) => r.selector === ".callout-studio-row-buttons button:not(.clickable-icon):hover"),
+			rules.some((r) => r.selector === ".cs-inline-hint .cs-link-btn.cs-link-btn:hover"),
 			"a rule nested in @media (hover: hover) was not reached",
 		);
 		assert.strictEqual(

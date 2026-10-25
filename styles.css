@@ -157,10 +157,10 @@
    changes on hover, as no Obsidian list row does. Pointing anywhere on a row
    only sharpens that row's own icon buttons (Obsidian's icon opacity steps),
    and only on devices that can hover: on touch, WebKit replays the last tap's
-   hover onto whatever row is under it after a re-render. One rule for every
-   row kind: callouts, palettes, commands, menu and library lists, versions. */
+   hover onto whatever row is under it after a re-render. One rule for the
+   plugin's own row kinds: callout rows and Version history rows. */
 @media (hover: hover) {
-	:is(.cs-callout-row, .cs-recovery-row):hover :is(.clickable-icon, .callout-studio-row-buttons button, .cs-drag-handle):not(:disabled, .is-disabled, [aria-disabled="true"]) {
+	:is(.cs-callout-row, .cs-recovery-row):hover :is(.clickable-icon, .cs-drag-handle):not(:disabled, .is-disabled, [aria-disabled="true"]) {
 		color: var(--icon-color-hover);
 		--icon-opacity: var(--icon-opacity-hover);
 	}
@@ -225,31 +225,8 @@
 	flex-shrink: 0;
 }
 
-/* Callout and palette rows use Obsidian's own icon button (`.clickable-icon`:
-   its size, corners, colour, gated hover and focus ring). The rows that have
-   not moved yet — commands, Quick insert — keep the plugin's square below. */
-.callout-studio-row-buttons button:not(.clickable-icon) {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 32px;
-	height: 32px;
-	padding: 0;
-	border-radius: var(--button-radius);
-	corner-shape: var(--button-corner-shape);
-	cursor: pointer;
-	color: var(--text-muted);
-	background: transparent;
-	border: none;
-}
-
-@media (hover: hover) {
-	.callout-studio-row-buttons button:not(.clickable-icon):hover {
-		background: var(--background-modifier-hover);
-		color: var(--text-normal);
-	}
-}
-
+/* Quick insert's Edit and Insert, Obsidian's own icon buttons
+   (`.clickable-icon`: size, corners, colour, gated hover and focus ring). */
 .callout-studio-row-buttons button svg {
 	width: 16px;
 	height: 16px;
@@ -2418,8 +2395,10 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	outline: none;
 }
 
+/* Obsidian's `.combobox-button` is a `<button>`, so a disabled one takes
+   Obsidian's disabled button (`button[disabled]`): 70%. */
 .cs-dropdown-control.cs-dropdown-control:disabled {
-	opacity: 0.5;
+	opacity: 0.7;
 	cursor: not-allowed;
 }
 
@@ -2546,8 +2525,18 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 }
 
 /* The wrapper paints the hover/focus state; its inner input stays transparent
-   and never opts into .cs-text-control or adds a second focus ring. */
-.cs-combobox-control input[type="text"].cs-combobox-input:hover,
+   and never opts into .cs-text-control or adds a second focus ring. The hover
+   half cancels Obsidian's field hover, which only exists where there is a
+   pointer, so it is gated the same way. */
+@media (hover: hover) {
+	.cs-combobox-control input[type="text"].cs-combobox-input:hover {
+		border: 0;
+		background: transparent;
+		box-shadow: none;
+		outline: none;
+	}
+}
+
 .cs-combobox-control input[type="text"].cs-combobox-input:active,
 .cs-combobox-control input[type="text"].cs-combobox-input:focus,
 .cs-combobox-control input[type="text"].cs-combobox-input:focus-visible {
@@ -2782,8 +2771,9 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	text-align: center;
 }
 
+/* The searchable picker wears the same combobox face, so the same 70%. */
 .cs-combobox.is-disabled .cs-combobox-control {
-	opacity: 0.5;
+	opacity: 0.7;
 	cursor: not-allowed;
 }
 
@@ -3501,19 +3491,6 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 .icon-picker-preview-icon svg {
 	width: 24px;
 	height: 24px;
-}
-
-.icon-picker-footer button.is-disabled {
-	opacity: 0.5;
-	pointer-events: none;
-}
-
-/* ─── Accessibility & Mobile ─────────────────────────────────── */
-
-/* Focus-visible for all interactive elements */
-.callout-studio-row-buttons button:not(.clickable-icon):focus-visible {
-	outline: 2px solid var(--text-accent);
-	outline-offset: -2px;
 }
 
 /* ─── Tag Input (Aliases) ─────────────────────────────────────── */
@@ -5657,8 +5634,13 @@ button.cs-portable-after-button:focus-visible {
 	content: "\200B";
 	width: 0;
 }
-.cs-heading-callout .cs-fold-arrow:hover {
-	opacity: 1;
+/* Only where there is a pointer, as Obsidian brightens a heading's own fold
+   arrow (`h1:hover .collapse-indicator`): on touch a tap's hover sticks, and
+   would leave the arrow lit. */
+@media (hover: hover) {
+	.cs-heading-callout .cs-fold-arrow:hover {
+		opacity: 1;
+	}
 }
 
 /* Tap target. The drawn chevron is 0.85em wide by one line-height tall — on a

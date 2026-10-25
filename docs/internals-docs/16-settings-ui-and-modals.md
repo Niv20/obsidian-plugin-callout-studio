@@ -677,31 +677,37 @@ tests check that the rows are in a `mod-list` box.
 
 Until 2026-10-24 a callout row was a `div.callout-studio-row` of the plugin's
 own: name and ids on one line, `<button>`s, and the ids hidden as a group under
-380px. Palettes, commands, the drag lists and Quick insert still use
-`.callout-studio-row`.
+380px. No row wears `.callout-studio-row` any more: palettes, commands and the
+right-click menu are Obsidian's list rows, the icon libraries are Obsidian
+setting rows, and Quick insert's rows are `.cs-qi-row`.
 
 ### List rows and hover
 
 A list row is not clickable; only its buttons are. So, as in every Obsidian
 list, the row itself never changes on hover: no fill, and no transition to one.
 
-That holds for every row that wears `.callout-studio-row` or, for callouts,
-`.cs-callout-row`:
-- callouts and saved palettes;
-- commands;
-- the right-click menu and icon library lists;
-- versions, which add `.cs-recovery-row`.
+That holds for Obsidian's own list rows, and for the plugin's two row kinds,
+both Obsidian setting rows: callout rows (`.cs-callout-row`) and Version
+history rows (`.cs-recovery-row`).
 
-Pointing anywhere on a row only sharpens that row's own icon buttons, through
-one shared rule. It sets `--icon-opacity: var(--icon-opacity-hover)` on the
-row's `.clickable-icon`s, row buttons and drag handle, and skips any that are
-disabled or `aria-disabled`. Obsidian's own `.clickable-icon svg` already reads
-`--icon-opacity`, and the plugin's row buttons and drag-handle svgs read it too.
+Pointing anywhere on one of those two only sharpens that row's own icon
+buttons, through one shared rule. It sets
+`--icon-opacity: var(--icon-opacity-hover)` on the row's `.clickable-icon`s and
+drag handle, and skips any that are disabled or `aria-disabled`. Obsidian's
+own `.clickable-icon svg` already reads `--icon-opacity`, and the drag-handle
+svg reads it too.
 
-Every row hover, the button fills and the red delete included, sits behind
-`@media (hover: hover)`. On touch, WebKit replays the last tap's hover onto
-whatever row lands under it after a re-render, which is how a dragged row on an
-iPhone used to light up. `tests/rowHoverStyles.test.ts` holds all of this.
+Every hover in `styles.css`, the button fills and the red delete included,
+sits behind `@media (hover: hover)`, as Obsidian's do. On touch, WebKit replays
+the last tap's hover onto whatever row lands under it after a re-render, which
+is how a dragged row on an iPhone used to light up. `tests/rowHoverStyles.test.ts`
+holds the rows; `tests/styleGuards.test.ts` holds the gate for the whole file,
+with two more of Obsidian's habits (finding GAP-04): focus rings are grey,
+never the accent colour (one exception, Review conversion's After field, which
+copies Obsidian's file rename), and a disabled control dims to Obsidian's value
+for its kind: a button 70%, an icon button 40%, a field or switch 50%. The
+plugin's dropdowns are drawn as Obsidian's `.combobox-button`, a `<button>`,
+so they take 70% (50% until 2026-10-25).
 
 The callout and palette rows' buttons are Obsidian's own icon buttons:
 a callout row's are `addExtraButton`s (`div.clickable-icon`, see above), and a
@@ -716,8 +722,6 @@ size, corners, colour, gated hover, 3px focus ring and dimmed state.
   is ringed the way Obsidian rings a focused setting row (2px of
   `--background-modifier-border-focus`), and its cursor is Obsidian's
   `--cursor`.
-- **Rows that have not moved keep the plugin's 32px square,** narrowed to
-  `button:not(.clickable-icon)`. Those are the command rows.
 
 ### Corners
 
