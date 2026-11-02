@@ -77,6 +77,7 @@ import type { SettingsWriter } from "../../manager/SettingsWriter";
 import { getLocale, t, type LocaleKey } from "../../i18n";
 import { makeDragSortable } from "../../ui/DragSortList";
 import { animateReorder } from "../../ui/flip";
+import { paintResetIdle } from "../../ui/resetArrow";
 import { scrollToReveal } from "../../ui/scrollToReveal";
 import { settingGroupEl } from "../../ui/settingGroupEl";
 import { appendLines } from "../../ui/textLines";
@@ -263,7 +264,9 @@ export class IconLibrariesModal extends Modal {
 			resetEl = button.extraSettingsEl;
 			resetEl.addClass("cs-icon-library-reset");
 		});
-		this.syncReset = () => resetEl?.toggleClass("cs-reset-idle", this.isDefault());
+		this.syncReset = () => {
+			if (resetEl) paintResetIdle(resetEl, this.isDefault());
+		};
 
 		this.boxes = {
 			available: available.box,

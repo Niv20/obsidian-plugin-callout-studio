@@ -93,7 +93,10 @@ function row(harness: DeclarativeHarness, id: string) {
 
 /** Whether a ↺ is dimmed (nothing to reset). */
 function idle(button: ButtonLike): boolean {
-	return (button.extraSettingsEl as unknown as HTMLElement).getAttribute("aria-disabled") === "true";
+	const el = button.extraSettingsEl as unknown as HTMLElement;
+	// Invisible (`cs-reset-idle`) and said to be disabled: never one without the other.
+	assert.equal(el.hasClass("cs-reset-idle"), el.getAttribute("aria-disabled") === "true");
+	return el.hasClass("cs-reset-idle");
 }
 
 describe("the Callout style box", () => {

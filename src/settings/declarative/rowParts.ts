@@ -23,6 +23,7 @@ import type { BaseComponent, ExtraButtonComponent, Setting, SettingGroup } from 
 import { t, type LocaleKey } from "../../i18n";
 import { explainIfBlocked, paintBlocked } from "../../ui/blockedButton";
 import { setButtonBusy } from "../../ui/busyButton";
+import { paintResetIdle } from "../../ui/resetArrow";
 import { settingGroupEl } from "../../ui/settingGroupEl";
 import type { RowRegistry } from "./rowRegistry";
 import { guardRender } from "./safeTree";
@@ -179,15 +180,7 @@ export function boxResetButton(
 }
 
 /**
- * Dim a ↺ while there is nothing to reset. Obsidian draws an icon button
- * marked `aria-disabled` at 40%.
- */
-export function paintResetIdle(resetEl: HTMLElement, idle: boolean): void {
-	resetEl.setAttribute("aria-disabled", String(idle));
-}
-
-/**
- * Dim the ↺ in `group`'s heading while nothing in the box is changed. The
+ * Hide the ↺ in `group`'s heading while nothing in the box is changed. The
  * box's rows call it as they are drawn (`render` is given the box).
  */
 export function paintBoxReset(group: SettingGroup, modified: boolean): void {

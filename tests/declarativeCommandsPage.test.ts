@@ -156,7 +156,7 @@ describe("Commands and shortcuts", () => {
 		const made = fakePlugin([]);
 		const { harness, redraws } = drawCommands(made);
 		const reset = box(harness, COMMANDS_PAGE.builtIn).settingGroup.extraButtons[0] as ButtonLike;
-		const idle = (): boolean => (reset.extraSettingsEl as unknown as HTMLElement).getAttribute("aria-disabled") === "true";
+		const idle = (): boolean => (reset.extraSettingsEl as unknown as HTMLElement).hasClass("cs-reset-idle");
 		assert.equal(idle(), true);
 		await (row(harness, "command-create-callout").setting.components.at(-1) as ToggleComponent).commit(false);
 		assert.deepEqual(made.registry.settings.disabledFixedCommands, ["create-callout"]);

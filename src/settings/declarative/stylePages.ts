@@ -15,8 +15,8 @@
  *   a border;
  * - Font scale (block) or Title spacing (heading).
  * A box with more than one control has ↺ in its heading, which resets the
- * box; every slider has its own ↺. Both are dimmed while there is nothing
- * to reset.
+ * box; every slider has its own ↺. Both are invisible while there is nothing
+ * to reset, and show once a value differs.
  *
  * The switches are Obsidian's control rows, saved by the tab
  * (controlBinding.ts). The sliders are render rows: a drag repaints every
@@ -28,6 +28,7 @@
 import { DEFAULT_SETTINGS } from "../../constants";
 import { t, type LocaleKey } from "../../i18n";
 import type { BorderSidesSettings, CalloutRenderRole, PluginSettings } from "../../types";
+import { paintResetIdle } from "../../ui/resetArrow";
 import { specFromDef, wireStyleSlider, type StyleSliderSpec } from "../styleControls";
 import { StylePreview } from "../stylePreview";
 import {
@@ -47,7 +48,7 @@ import { iconLibrariesRow } from "./mainPageGroups";
 import { palettesPage } from "./palettesPage";
 import { disabledWhilePaused } from "./pausedGuards";
 import type { PersistentPart } from "./persistentParts";
-import { boxResetButton, paintBoxReset, paintResetIdle } from "./rowParts";
+import { boxResetButton, paintBoxReset } from "./rowParts";
 import { guardRender } from "./safeTree";
 import type { CsControl, CsGroup, CsPage, CsRender, TreeContext } from "./types";
 
@@ -281,7 +282,7 @@ function sliderRow(ctx: TreeContext, def: StyleSliderDef, options: SliderRowOpti
 		render: guardRender(def.id, (setting, group) => {
 			setting.setClass("cs-style-slider-row");
 			let resetEl: HTMLElement | null = null;
-			/** Dim the ↺s that have nothing to reset. */
+			/** Hide the ↺s that have nothing to reset. */
 			const paintResets = (): void => {
 				if (resetEl) paintResetIdle(resetEl, def.get(settings()) === sliderDefault(def));
 				if (options.box) paintBoxReset(group, options.box.isModified(settings()));

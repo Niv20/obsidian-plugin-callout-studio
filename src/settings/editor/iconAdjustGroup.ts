@@ -25,6 +25,7 @@ import {
 	type ResolvedIconAdjust,
 } from "../../utils/iconAdjust";
 import { setSliderDisplay } from "../styleControls";
+import { paintResetIdle } from "../../ui/resetArrow";
 import { settingGroupEl } from "../../ui/settingGroupEl";
 
 /** Translate the complete heading so each locale controls its word order. */
@@ -132,13 +133,10 @@ export function renderIconAdjustGroup(
 	 * Invisible (`cs-reset-idle`, `visibility: hidden`) rather than removed: an
 	 * invisible button still takes its room, so the heading keeps one height and
 	 * the sliders below do not jump the moment it appears. It cannot be reached
-	 * with Tab or by a screen reader while it is invisible.
+	 * with Tab or by a screen reader while it is invisible (ui/resetArrow.ts).
 	 */
 	const syncReset = (): void => {
-		resetEl?.toggleClass(
-			"cs-reset-idle",
-			!defaults || equalIconAdjust(adjust, defaults),
-		);
+		if (resetEl) paintResetIdle(resetEl, !defaults || equalIconAdjust(adjust, defaults));
 	};
 
 	for (const control of controls) {
