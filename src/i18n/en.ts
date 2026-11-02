@@ -1442,7 +1442,6 @@ export const en: Record<string, string> = {
 	"vault.titlesUpdated":
 		"Updated {{count}} callout title(s) in vault files: {{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated": "Updated the fold mark of {{count}} callout(s) in vault files.",
-	"vault.replaceWith": "Replace with:",
 	"vault.confirmReplace": "Replace",
 	"vault.undoRewrite": "Undo",
 	"vault.undoRestored": "Restored {{count}} note(s).",

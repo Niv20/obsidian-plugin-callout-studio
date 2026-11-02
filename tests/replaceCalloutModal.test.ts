@@ -59,7 +59,7 @@ describe("the replacement picker", () => {
 			const chosen = h.contentEl.querySelectorAll(".callout-studio-replace-item.is-selected");
 			assert.equal(chosen.length, 1);
 			assert.equal(h.confirm().getAttribute("aria-disabled"), "false");
-			const id = chosen[0]!.querySelector(".callout-studio-replace-item-id")!.textContent;
+			const id = chosen[0]!.getAttribute("data-callout-id");
 			h.confirm().fire("click");
 			await setImmediate();
 			assert.deepEqual(h.answer(), { action: "replace", replaceWith: id });
@@ -95,7 +95,7 @@ describe("the replacement picker", () => {
 		try {
 			const rows = h.contentEl.querySelectorAll(".callout-studio-replace-item");
 			assert.ok(rows.length > 0);
-			for (const row of rows) assert.ok(row.querySelector(".callout-studio-replace-item-id"), "a row that is not a callout");
+			for (const row of rows) assert.ok(row.getAttribute("data-callout-id"), "a row that is not a callout");
 		} finally { h.close(); }
 	});
 
@@ -103,8 +103,8 @@ describe("the replacement picker", () => {
 		const h = open();
 		try {
 			const key = (name: string) => h.search().fire("keydown", { type: "keydown", key: name, preventDefault: () => {} });
-			const chosenId = () => h.contentEl.querySelector(".callout-studio-replace-item.is-selected .callout-studio-replace-item-id")?.textContent;
-			const ids = h.contentEl.querySelectorAll(".callout-studio-replace-item-id").map((el) => el.textContent);
+			const chosenId = () => h.contentEl.querySelector(".callout-studio-replace-item.is-selected")?.getAttribute("data-callout-id");
+			const ids = h.contentEl.querySelectorAll(".callout-studio-replace-item").map((el) => el.getAttribute("data-callout-id"));
 			key("ArrowDown");
 			assert.equal(chosenId(), ids[0]);
 			key("ArrowDown");
@@ -113,5 +113,83 @@ describe("the replacement picker", () => {
 			key("ArrowUp");
 			assert.equal(chosenId(), ids[0], "stops at the top");
 		} finally { h.close(); }
+	});
+
+	it("draws each callout as a row of the Built-in callouts list", () => {
+		const h = open();
+		try {
+			const row = h.contentEl.querySelector(".callout-studio-replace-item")!;
+			assert.ok(row.hasClass("setting-item"), "not one of Obsidian's setting rows");
+			assert.ok(row.hasClass("cs-callout-row"), "not dressed like the settings' callout rows");
+			assert.ok(row.querySelector(".callout-studio-row-icon"));
+			assert.ok(row.querySelector(".setting-item-name .cs-row-name"));
+			assert.ok(row.querySelector(".setting-item-description .callout-studio-row-syntax"), "no [!id] line");
+			assert.ok(row.querySelector(".callout-studio-row-colors"), "no colour circles");
+			assert.ok(row.querySelector(".callout-studio-replace-item-check"));
+			assert.ok(h.contentEl.querySelector(".setting-group.mod-list .setting-items"), "not in Obsidian's list box");
+		} finally { h.close(); }
+	});
+
+	it("keeps its choice when the filter hides the chosen row", () => {
+		const h = open();
+		try {
+			h.search().fire("keydown", { type: "keydown", key: "Enter", preventDefault: () => {} });
+			const input = h.search() as unknown as FakeElement & { value: string };
+			input.value = "zzzz-no-such-callout";
+			input.fire("input");
+			assert.equal(h.contentEl.querySelectorAll(".callout-studio-replace-item").length, 0);
+			assert.equal(h.confirm().getAttribute("aria-disabled"), "false");
+		} finally { h.close(); }
+	});
+
+	it("says nothing matches, in words, where the mascot cannot be drawn", () => {
+		const h = open();
+		try {
+			const query = "zzzz-no-such-callout";
+			const input = h.search() as unknown as FakeElement & { value: string };
+			input.value = query;
+			input.fire("input");
+			const empty = h.contentEl.querySelector(".callout-studio-empty-state");
+			assert.ok(empty, "no empty state");
+			assert.equal(empty.textContent, t("calloutPicker.noMatches", { query }));
+			assert.equal(h.contentEl.querySelectorAll(".cs-mascot-box").length, 0);
+		} finally { h.close(); }
+	});
+
+	it("puts the sad brush over the words of a search that found nothing, and takes it away", () => {
+		const globals = globalThis as Record<string, unknown>;
+		const createEl = globals.createEl as (tag: string, options?: unknown) => FakeElement;
+		// The mascot can only be drawn where Obsidian's `createSvg` is.
+		globals.createSvg = (tag: string, options?: unknown) => createEl(tag, options);
+		fakeDom.window.clearTimers();
+		const h = open();
+		try {
+			const input = h.search() as unknown as FakeElement & { value: string };
+			const type = (text: string): void => { input.value = text; input.fire("input"); };
+			assert.equal(h.contentEl.querySelectorAll(".cs-mascot-box").length, 0, "a mascot with nothing searched");
+
+			type("zzzz-no-such-callout");
+			const empty = h.contentEl.querySelector(".callout-studio-empty-state");
+			assert.ok(empty, "no empty state");
+			assert.ok(empty.hasClass("cs-mascot-line"), "the empty state is not the mascot's line");
+			assert.equal(empty.querySelectorAll(".cs-mascot-box").length, 1);
+			assert.match(empty.textContent, /zzzz-no-such-callout/, "the words went with the picture");
+
+			// Another key of the same dead end keeps the one mascot.
+			type("zzzz-no-such-callout-x");
+			assert.equal(h.contentEl.querySelectorAll(".cs-mascot-box").length, 1);
+
+			// A match brings the list back and the mascot goes.
+			type("tip");
+			assert.equal(h.contentEl.querySelectorAll(".cs-mascot-box").length, 0);
+			assert.equal(h.contentEl.querySelector(".callout-studio-empty-state"), null);
+			assert.ok(h.contentEl.querySelectorAll(".callout-studio-replace-item").length > 0);
+		} finally {
+			h.close();
+			delete globals.createSvg;
+			fakeDom.window.clearTimers();
+			// The brush's frames end once its drawing has left the page, which it never was in.
+			fakeDom.window.flushFrames();
+		}
 	});
 });

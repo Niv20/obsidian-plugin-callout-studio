@@ -1326,8 +1326,9 @@
    (src/settings/modalChrome.ts). It is Obsidian's own shell for long dialogs
    (Publish, Keychain): `.modal.mod-scrollable-content` with a
    `.modal-button-container` bar, so the title, the 16px insets, the one
-   scrolling body and the pinned bar with its line all come from Obsidian's
-   stylesheet. Only what Obsidian leaves to each dialog is written here.
+   scrolling body and the pinned bar all come from Obsidian's stylesheet. Only
+   what Obsidian leaves to each dialog is written here (and the one thing it
+   adds that the plugin's windows do without: the line over the bar, below).
 
    Until 2026-10-23 the plugin drew its own: a title band with a line under it,
    a wider inset in the editors, and its own footer row. Decision 15 of the
@@ -1457,7 +1458,7 @@
 
 /* ── The button bar ───────────────────────────────────────────────
    Obsidian's `.modal-button-container`, drawn by Obsidian alone: its padding,
-   its line, its buttons at their own size and padding, the grey 3px focus ring
+   its buttons at their own size and padding, the grey 3px focus ring
    and, for a button that cannot act yet (`aria-disabled`, see
    ui/blockedButton.ts), its 70% dim. On a phone or tablet it stacks the
    buttons full-width, the main action on top and Cancel (`mod-cancel`, see
@@ -1466,7 +1467,19 @@
    Until 2026-10-23 the plugin restyled them: 2px 14px of padding, a purple
    inner outline on top of the focus ring, and a 40% dim for a blocked button,
    fainter than any disabled button in Obsidian (findings S5-03, S6-01,
-   S6-V4). */
+   S6-V4).
+
+   The one thing taken away is the line over the bar. Obsidian draws it on any
+   `mod-scrollable-content` dialog (`border-top` on `.modal-button-container`),
+   but not on its short ones — the yes/no question, Settings' pop-ups — and a
+   plugin window that has it stands out beside them. `cs-modal` marks a window
+   hung by `applyModalChrome()`, `cs-scroll-body` the long yes/no question
+   (`scrollBodyOnly()`); both are the plugin's own, so Obsidian's and other
+   plugins' dialogs keep theirs. The bar's padding stays: it is the gap. */
+.modal-container .modal.cs-modal.mod-scrollable-content > .modal-button-container,
+.modal-container .modal.cs-scroll-body.mod-scrollable-content > .modal-button-container {
+	border-top: none;
+}
 
 /* ── Red buttons are Obsidian's ────────────────────────────────────
    A destructive button is `mod-destructive` alone (ui/destructiveButton.ts):
@@ -2115,24 +2128,25 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
    (Obsidian's long-dialog body), and restating it here only cost the scroller
    its top padding.) */
 
-.callout-studio-replace-label {
-	font-weight: var(--font-semibold);
-	margin-bottom: 4px;
-}
-
 /* Obsidian's search field (ui/searchField.ts), full width, sitting directly
    on the list it filters. */
 .callout-studio-replace-search-field {
 	margin-bottom: 8px;
 }
 
+/* The list is Obsidian's list box (`.setting-group.mod-list`) of the rows the
+   settings' *Built-in callouts* list draws (`.cs-callout-row`, "Callout List
+   Rows" above), so the box keeps its own rounded border and the rows scroll
+   inside it. Nothing is added under it: the window's own bottom inset and the
+   button bar's padding are already the gap to Replace (a further margin here
+   once doubled it). */
 .callout-studio-replace-list {
-	max-height: 240px;
+	margin-bottom: 0;
+}
+
+.callout-studio-replace-list .setting-items {
+	max-height: 300px;
 	overflow-y: auto;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: var(--radius-s);
-	corner-shape: var(--corner-shape);
-	margin-bottom: 12px;
 }
 
 /* The shared empty state is a page-level block elsewhere; in this list it only
@@ -2141,17 +2155,15 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	padding: 8px 12px;
 }
 
-.callout-studio-replace-item {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 6px 10px;
-	cursor: pointer;
-	border-bottom: 1px solid var(--background-modifier-border);
+/* With the mascot over the words (SearchMascot adds `cs-mascot-line`), the
+   state is a picture and a line, and wants the room a picture does. */
+.callout-studio-replace-list .callout-studio-empty-state.cs-mascot-line {
+	padding-block: var(--size-4-4);
 }
 
-.callout-studio-replace-item:last-child {
-	border-bottom: none;
+/* Unlike the settings' rows, these are the thing to press. */
+.callout-studio-replace-item {
+	cursor: pointer;
 }
 
 @media (hover: hover) {
@@ -2186,36 +2198,6 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 .callout-studio-replace-item-check .svg-icon {
 	--icon-size: var(--icon-s);
 	--icon-stroke: var(--icon-s-stroke-width);
-}
-
-.callout-studio-replace-item-icon {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 20px;
-	height: 20px;
-	flex-shrink: 0;
-	color: var(--text-muted);
-}
-
-.callout-studio-replace-item-icon svg {
-	width: 16px;
-	height: 16px;
-}
-
-.callout-studio-replace-item-text {
-	flex: 1;
-	min-width: 0;
-}
-
-.callout-studio-replace-item-name {
-	font-size: var(--font-ui-medium);
-}
-
-.callout-studio-replace-item-id {
-	font-size: var(--font-ui-smaller);
-	color: var(--text-muted);
-	font-family: var(--font-monospace);
 }
 
 /* ─── Suggestion rows ─────────────────────────────────────────── */

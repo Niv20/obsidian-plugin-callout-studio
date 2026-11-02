@@ -10,8 +10,8 @@
  *   ┌───────────────────────────────┐
  *   │ title                       ✕ │  header  — fixed, no line under it
  *   │ content …                     │  body    — the ONLY part that scrolls
- *   ├───────────────────────────────┤
- *   │              [Cancel] [Save]  │  button bar — fixed, a line over it; optional
+ *   │                               │
+ *   │              [Cancel] [Save]  │  button bar — fixed, no line over it; optional
  *   └───────────────────────────────┘
  *
  * The main idea. Two of Obsidian's own classes do all of it, so the look comes
@@ -21,7 +21,9 @@
  *   with Obsidian's 16px insets and no line under the title;
  * - `modal-button-container` is the button bar. Obsidian lines its buttons up
  *   at the end on a computer and stacks them full-width on a phone or tablet,
- *   with the main action on top and Cancel (`mod-cancel`) under it.
+ *   with the main action on top and Cancel (`mod-cancel`) under it. Obsidian
+ *   also draws a line over the bar; the plugin's windows drop it (styles.css,
+ *   "The button bar"), as Obsidian's own short dialogs have none.
  *
  * Until 2026-10-23 the plugin drew its own shell instead: a ruled title band,
  * wider margins in the editors and its own footer row (decision 15 of the
@@ -119,7 +121,9 @@ export function markStackedWindow(modal: Modal): void {
  * everything, whose message lists everything that goes.
  */
 export function scrollBodyOnly(modal: Modal): void {
-	modal.modalEl.addClass("mod-scrollable-content");
+	// `cs-scroll-body` is the hook for dropping the line over the button bar,
+	// which `cs-modal` does for the windows that wear the full shell.
+	modal.modalEl.addClass("mod-scrollable-content", "cs-scroll-body");
 }
 
 /**

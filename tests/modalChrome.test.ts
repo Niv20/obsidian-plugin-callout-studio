@@ -39,6 +39,7 @@ import {
 	addCancelButton,
 	applyModalChrome,
 	removeModalChrome,
+	scrollBodyOnly,
 } from "../src/settings/modalChrome";
 
 /**
@@ -110,7 +111,8 @@ describe("applyModalChrome — the classes it hangs", () => {
 
 	it("asks for Obsidian's long-dialog shell", () => {
 		// `mod-scrollable-content` is Obsidian's class: its stylesheet makes the
-		// body the one scroller and pins the button bar under a line.
+		// body the one scroller and pins the button bar under it (the line it
+		// draws over the bar is taken off again in styles.css).
 		const { modal, modalEl } = freshModal();
 		applyModalChrome(modal);
 		assert.ok(modalEl.hasClass("mod-scrollable-content"));
@@ -124,6 +126,16 @@ describe("applyModalChrome — the classes it hangs", () => {
 		applyModalChrome(modal);
 		assert.ok(modalEl.hasClass("cs-modal"));
 		assert.ok(modalEl.hasClass("mod-scrollable-content"));
+	});
+});
+
+describe("scrollBodyOnly — the long yes/no question", () => {
+	it("asks for the long-dialog shell and the mark that drops the line over its bar", () => {
+		const { modal, modalEl } = freshModal();
+		scrollBodyOnly(modal);
+		assert.ok(modalEl.hasClass("mod-scrollable-content"));
+		assert.ok(modalEl.hasClass("cs-scroll-body"));
+		assert.ok(!modalEl.hasClass("cs-modal"), "the full shell's surfaces are not wanted here");
 	});
 });
 
@@ -434,11 +446,29 @@ describe("the shell is Obsidian's, with only the gaps it leaves filled in", () =
 		assert.match(content, /padding-inline:\s*var\(--cs-modal-inset\)/);
 	});
 
-	it("leaves the button bar and its buttons entirely to Obsidian", () => {
+	it("leaves the button bar and its buttons to Obsidian, but for the line over the bar", () => {
 		// No size, padding, outline or dim of the plugin's own on them: the 40%
 		// dim and the purple outline are gone on purpose (S5-03, S6-01).
-		for (const hook of [".modal-button-container", "cs-modal-footer", "button.cs-btn-disabled", "button.cs-is-locked"]) {
+		for (const hook of ["cs-modal-footer", "button.cs-btn-disabled", "button.cs-is-locked"]) {
 			assert.strictEqual(cssRules.includes(hook), false, hook);
+		}
+		// The one rule on the bar takes the line away, and nothing else: the
+		// padding Obsidian gives it is the gap above the buttons.
+		const barRules = [...cssRules.matchAll(/([^{}]*\.modal-button-container[^{}]*)\{([^}]*)\}/g)];
+		assert.strictEqual(barRules.length, 1, "more than one rule on the button bar");
+		const [, selector, body] = barRules[0]!;
+		assert.match(selector!, /\.cs-modal\.mod-scrollable-content > \.modal-button-container/);
+		assert.match(selector!, /\.cs-scroll-body\.mod-scrollable-content > \.modal-button-container/);
+		assert.strictEqual(body!.replace(/\s+/g, ""), "border-top:none;");
+	});
+
+	it("takes the line off the bar of every window that has one, and of no one else's", () => {
+		// Obsidian's own long dialogs (Publish) and other plugins' keep theirs:
+		// both selectors lead with a class only this plugin writes.
+		for (const selector of cssRules.matchAll(/([^{}]*\.modal-button-container[^{}]*)\{/g)) {
+			for (const part of selector[1]!.split(",")) {
+				assert.match(part, /\.(cs-modal|cs-scroll-body)\./, part.trim());
+			}
 		}
 	});
 
