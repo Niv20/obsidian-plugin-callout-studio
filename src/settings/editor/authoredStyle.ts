@@ -22,11 +22,7 @@
  * `--callout-*` variables.
  */
 import type { CalloutDefinition } from "../../types";
-import {
-	DEFAULT_TEXT_COLOR_DARK,
-	DEFAULT_TEXT_COLOR_LIGHT,
-	derivedBgAmount,
-} from "../../utils/colorUtils";
+import { DEFAULT_TEXT_COLOR_DARK, DEFAULT_TEXT_COLOR_LIGHT, derivedBgAmount } from "../../utils/colorUtils";
 import { isDefaultIconAdjust } from "../../utils/iconAdjust";
 import type { ResolvedIconAdjust } from "../../utils/iconAdjust";
 
@@ -61,8 +57,7 @@ export function hasAuthoredBackground(state: AuthoredBackgroundState): boolean {
 	return (
 		!state.transparentBg &&
 		(state.bgGradient !== undefined ||
-			derivedBgAmount(state.colorLight, state.bgColorLight, false) ===
-				null ||
+			derivedBgAmount(state.colorLight, state.bgColorLight, false) === null ||
 			derivedBgAmount(state.colorDark, state.bgColorDark, true) === null)
 	);
 }
@@ -81,16 +76,10 @@ export function hasAuthoredTextColors(
 	textColorLight: string,
 	textColorDark: string,
 ): boolean {
-	if (
-		baseline?.textColorLight !== undefined ||
-		baseline?.textColorDark !== undefined
-	) {
+	if (baseline?.textColorLight !== undefined || baseline?.textColorDark !== undefined) {
 		return true;
 	}
-	return (
-		textColorLight !== DEFAULT_TEXT_COLOR_LIGHT ||
-		textColorDark !== DEFAULT_TEXT_COLOR_DARK
-	);
+	return textColorLight !== DEFAULT_TEXT_COLOR_LIGHT || textColorDark !== DEFAULT_TEXT_COLOR_DARK;
 }
 
 /**
@@ -99,10 +88,7 @@ export function hasAuthoredTextColors(
  * `iconAdjust` map and the flat legacy trio, either of which counts as the
  * definition having carried an adjustment).
  */
-export function hasAuthoredIconAdjust(
-	baseline: CalloutDefinition | undefined,
-	regular: ResolvedIconAdjust,
-): boolean {
+export function hasAuthoredIconAdjust(baseline: CalloutDefinition | undefined, regular: ResolvedIconAdjust): boolean {
 	if (
 		baseline?.iconAdjust !== undefined ||
 		baseline?.iconOffsetX !== undefined ||

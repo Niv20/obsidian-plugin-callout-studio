@@ -74,9 +74,7 @@ const collapse = (text: string): string => text.replace(/\s+/g, " ").trim();
  * never match a heading written `# [!bug|urgent] A`.
  */
 const outlineTextOf = (token: OutlineHeadingToken): string =>
-	collapse(
-		`!${token.rawId}${token.hasMetadata ? `|${token.metadata}` : ""}${token.rest}`,
-	);
+	collapse(`!${token.rawId}${token.hasMetadata ? `|${token.metadata}` : ""}${token.rest}`);
 
 export class OutlineDecorator {
 	private readonly attachments = new Map<WorkspaceLeaf, OutlineAttachment>();
@@ -151,19 +149,14 @@ export class OutlineDecorator {
 
 	private runPass(att: OutlineAttachment, restoreOnly = false): void {
 		const { headingCallouts } = this.host.settings;
-		const active =
-			!restoreOnly &&
-			headingCallouts.enabled &&
-			headingCallouts.refCleanTitles;
+		const active = !restoreOnly && headingCallouts.enabled && headingCallouts.refCleanTitles;
 
 		// One metadata lookup per pass, not per item.
 		const source = active ? this.readSourceHeadings(att) : null;
 
 		att.muted = true;
 		try {
-			for (const el of Array.from(
-				att.container.querySelectorAll<HTMLElement>(ITEM_SELECTOR),
-			)) {
+			for (const el of Array.from(att.container.querySelectorAll<HTMLElement>(ITEM_SELECTOR))) {
 				if (source) this.processItem(el, source);
 				else this.restoreItem(el);
 			}
@@ -194,8 +187,7 @@ export class OutlineDecorator {
 		// and go through getCache(path) so no TFile identity check is needed.
 		const file = (att.leaf.view as { file?: { path?: unknown } }).file;
 		if (typeof file?.path !== "string") return src;
-		const headings =
-			this.host.app.metadataCache.getCache(file.path)?.headings ?? [];
+		const headings = this.host.app.metadataCache.getCache(file.path)?.headings ?? [];
 
 		// Pass 1: the unambiguous `[!id]` headings, which also define the set of
 		// ids the bracketless parse is allowed to extend to in pass 2.
@@ -208,9 +200,7 @@ export class OutlineDecorator {
 		// Pass 2: headings the user wrote as plain `!id ...`. Parsed exactly the
 		// way the outline pane will parse them, so the ids line up.
 		for (const h of headings) {
-			const token = parseOutlineHeadingText(h.heading, (raw) =>
-				src.bracketedIds.has(normalizeCalloutId(raw)),
-			);
+			const token = parseOutlineHeadingText(h.heading, (raw) => src.bracketedIds.has(normalizeCalloutId(raw)));
 			if (!token || token.bracketed) continue;
 			src.literalIds.add(normalizeCalloutId(token.rawId));
 		}
@@ -222,11 +212,7 @@ export class OutlineDecorator {
 	 * `[!id]` is callout syntax — a heading the user wrote as `# !bug Title`
 	 * must stay plain text, even though the outline displays the two alike.
 	 */
-	private isRealCallout(
-		token: OutlineHeadingToken,
-		original: string,
-		source: SourceHeadings,
-	): boolean {
+	private isRealCallout(token: OutlineHeadingToken, original: string, source: SourceHeadings): boolean {
 		if (token.bracketed) return true;
 		const id = normalizeCalloutId(token.rawId);
 		if (!source.bracketedIds.has(id)) return false;
@@ -262,9 +248,7 @@ export class OutlineDecorator {
 		// Resolving multi-word ids against the file's own headings rather than
 		// against the registry keeps the greedy extension honest — and gives
 		// the bracketless form the source check it needs to be trusted at all.
-		const token = parseOutlineHeadingText(original, (raw) =>
-			source.bracketedIds.has(normalizeCalloutId(raw)),
-		);
+		const token = parseOutlineHeadingText(original, (raw) => source.bracketedIds.has(normalizeCalloutId(raw)));
 		if (!token || !this.isRealCallout(token, original, source)) {
 			this.restoreItem(el);
 			return;
@@ -280,12 +264,8 @@ export class OutlineDecorator {
 		}
 		const { def, unknown } = resolved;
 		const customTitle = token.title.trim();
-		const title =
-			customTitle !== ""
-				? customTitle
-				: calloutTokenLabel(unknown ? undefined : def, token.rawId);
-		const showIcon =
-			this.host.settings.headingCallouts.refShowIcon && !!def;
+		const title = customTitle !== "" ? customTitle : calloutTokenLabel(unknown ? undefined : def, token.rawId);
+		const showIcon = this.host.settings.headingCallouts.refShowIcon && !!def;
 
 		const key = this.renderKey(token.rawId, unknown, def?.id, title, showIcon);
 		if (el.dataset.csKey === key) return; // already up to date
@@ -334,14 +314,10 @@ export class OutlineDecorator {
 	private findLeadingTextNode(el: HTMLElement): Text | null {
 		for (const child of Array.from(el.childNodes)) {
 			if (child.nodeType === Node.TEXT_NODE) {
-				if ((child.textContent ?? "").trim().length > 0)
-					return child as Text;
+				if ((child.textContent ?? "").trim().length > 0) return child as Text;
 				continue;
 			}
-			if (
-				child.nodeType === Node.ELEMENT_NODE &&
-				(child as Element).classList.contains(CSS_REF_TOKEN)
-			) {
+			if (child.nodeType === Node.ELEMENT_NODE && (child as Element).classList.contains(CSS_REF_TOKEN)) {
 				continue;
 			}
 			return null;
@@ -368,13 +344,6 @@ export class OutlineDecorator {
 		// the icon itself is untouched, so nothing else here would notice, and
 		// the `dataset.csKey` early-return would keep the stale row forever.
 		const iconKey = tokenIconKey(def, this.host.registry, "inline");
-		return [
-			rawId,
-			unknown ? "u" : "",
-			defId ?? "",
-			title,
-			showIcon ? "i" : "",
-			iconKey,
-		].join("|");
+		return [rawId, unknown ? "u" : "", defId ?? "", title, showIcon ? "i" : "", iconKey].join("|");
 	}
 }

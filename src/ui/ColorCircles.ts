@@ -76,18 +76,12 @@ export function resolveCurrentModeColors(source: {
 	if (source.transparentBg) {
 		return { accent, bg: "", transparent: true };
 	}
-	const bg =
-		(isDark ? source.bgColorDark : source.bgColorLight) ??
-		bgTintFor(accent, isDark);
+	const bg = (isDark ? source.bgColorDark : source.bgColorLight) ?? bgTintFor(accent, isDark);
 	const gradient = source.bgGradient;
 	return {
 		accent,
 		bg,
-		bgTo: gradient
-			? isDark
-				? gradient.toColorDark
-				: gradient.toColorLight
-			: undefined,
+		bgTo: gradient ? (isDark ? gradient.toColorDark : gradient.toColorLight) : undefined,
 	};
 }
 

@@ -61,10 +61,7 @@ export function readingHarness(): ReadingHarness {
 	const process = createCalloutReadingPostProcessor(host);
 	let sectionReads = 0;
 
-	const run = (
-		root: FakeElement,
-		source?: string | SectionSource,
-	): FakeElement => {
+	const run = (root: FakeElement, source?: string | SectionSource): FakeElement => {
 		const ctx = {
 			getSectionInfo: () => {
 				sectionReads++;
@@ -91,10 +88,7 @@ export function readingHarness(): ReadingHarness {
 }
 
 /** One neutral user callout to vary from — Lucide, so no artwork is involved. */
-export function addCallout(
-	registry: Registry,
-	over: Partial<CalloutDefinition> = {},
-): void {
+export function addCallout(registry: Registry, over: Partial<CalloutDefinition> = {}): void {
 	registry.add({
 		id: "quiet",
 		displayName: "Quiet",

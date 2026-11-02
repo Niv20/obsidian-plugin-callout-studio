@@ -29,8 +29,7 @@ export function occurrenceAtCursor(
 	byLine: OccurrencesByLine,
 ): CalloutOccurrence | null {
 	if (byLine.size === 0 || cursor.line < 0 || cursor.line >= lines.lineCount()) return null;
-	const current = (occurrence: CalloutOccurrence): boolean =>
-		occurrence.lineText === lines.getLine(occurrence.line);
+	const current = (occurrence: CalloutOccurrence): boolean => occurrence.lineText === lines.getLine(occurrence.line);
 	const here = (byLine.get(cursor.line) ?? []).filter(current);
 	if (here.some((occurrence) => occurrence.role === "inline")) {
 		// The index keeps the bracket only; the pill also covers its `{…}` payload.
@@ -49,8 +48,9 @@ export function occurrenceAtCursor(
 	let depth = Number.POSITIVE_INFINITY;
 	for (let line = cursor.line; line >= 0; line--) {
 		const text = lines.getLine(line);
-		const headers = (byLine.get(line) ?? []).filter((occurrence) =>
-			occurrence.role === "regular" && current(occurrence));
+		const headers = (byLine.get(line) ?? []).filter(
+			(occurrence) => occurrence.role === "regular" && current(occurrence),
+		);
 		// A header under a list item (`- > [!x]`) starts with the bullet, which
 		// hides its `>` from a line-start count; the token knows its own depth.
 		const lineDepth = Math.max(countQuoteMarkers(text), ...headers.map(blockDepth));

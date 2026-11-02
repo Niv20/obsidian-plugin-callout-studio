@@ -66,9 +66,7 @@ function siblingOf(node: FakeNode, delta: number): FakeNode | null {
 }
 
 /** Expand any fragment in `nodes` into its children, emptying it as it goes. */
-function flattenNodes(
-	nodes: ReadonlyArray<FakeNode | FakeDocumentFragment>,
-): FakeNode[] {
+function flattenNodes(nodes: ReadonlyArray<FakeNode | FakeDocumentFragment>): FakeNode[] {
 	const flat: FakeNode[] = [];
 	for (const node of nodes) {
 		if (node instanceof FakeDocumentFragment) flat.push(...node.drain());
@@ -78,10 +76,7 @@ function flattenNodes(
 }
 
 /** Shared body of `FakeText.replaceWith` and `FakeElement.replaceWith`. */
-function replaceNode(
-	node: FakeNode,
-	incoming: ReadonlyArray<FakeNode | FakeDocumentFragment>,
-): void {
+function replaceNode(node: FakeNode, incoming: ReadonlyArray<FakeNode | FakeDocumentFragment>): void {
 	const parent = node.parentElement;
 	if (!parent) return;
 	const flat = flattenNodes(incoming);
@@ -244,9 +239,7 @@ export class FakeDocumentFragment {
 		const copy = new FakeDocumentFragment();
 		if (deep) {
 			for (const child of this.childNodes) {
-				copy.appendChild(
-					child.nodeType === NODE_TEXT ? new FakeText(child.nodeValue) : child.cloneNode(true),
-				);
+				copy.appendChild(child.nodeType === NODE_TEXT ? new FakeText(child.nodeValue) : child.cloneNode(true));
 			}
 		}
 		return copy;
@@ -306,8 +299,7 @@ function createStyle(custom: Map<string, string>): FakeStyle {
 }
 
 /** `csOrig` → `data-cs-orig`, the mapping `dataset` is defined by. */
-const dataAttrName = (key: string): string =>
-	`data-${key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`;
+const dataAttrName = (key: string): string => `data-${key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`;
 
 /** Options accepted by Obsidian's `createEl` / `createDiv` / `createSpan`. */
 export interface ElOptions {
@@ -419,9 +411,7 @@ export class FakeElement {
 			{},
 			{
 				get: (_target, key) =>
-					typeof key === "string"
-						? (this.getAttribute(dataAttrName(key)) ?? undefined)
-						: undefined,
+					typeof key === "string" ? (this.getAttribute(dataAttrName(key)) ?? undefined) : undefined,
 				set: (_target, key, value) => {
 					if (typeof key === "string") {
 						this.setAttribute(dataAttrName(key), String(value));
@@ -434,8 +424,7 @@ export class FakeElement {
 					}
 					return true;
 				},
-				has: (_target, key) =>
-					typeof key === "string" && this.hasAttribute(dataAttrName(key)),
+				has: (_target, key) => typeof key === "string" && this.hasAttribute(dataAttrName(key)),
 			},
 		) as Record<string, string | undefined>;
 		return this.datasetView;
@@ -444,9 +433,7 @@ export class FakeElement {
 	/* ---- tree ---- */
 
 	get children(): FakeElement[] {
-		return this.childNodes.filter(
-			(node): node is FakeElement => node.nodeType === NODE_ELEMENT,
-		);
+		return this.childNodes.filter((node): node is FakeElement => node.nodeType === NODE_ELEMENT);
 	}
 
 	/**
@@ -491,9 +478,7 @@ export class FakeElement {
 	/** The serialized children — see {@link outerHTML}. */
 	get innerHTML(): string {
 		return this.childNodes
-			.map((node) =>
-				node.nodeType === NODE_ELEMENT ? node.outerHTML : node.nodeValue,
-			)
+			.map((node) => (node.nodeType === NODE_ELEMENT ? node.outerHTML : node.nodeValue))
 			.join("");
 	}
 
@@ -589,9 +574,7 @@ export class FakeElement {
 		copy.classList.add(...this.classList.toArray());
 		if (deep) {
 			for (const child of this.childNodes) {
-				copy.appendChild(
-					child.nodeType === NODE_TEXT ? new FakeText(child.nodeValue) : child.cloneNode(true),
-				);
+				copy.appendChild(child.nodeType === NODE_TEXT ? new FakeText(child.nodeValue) : child.cloneNode(true));
 			}
 		}
 		return copy;
@@ -636,9 +619,7 @@ export class FakeElement {
 
 	get textContent(): string {
 		return this.childNodes
-			.map((node) =>
-				node.nodeType === NODE_TEXT ? node.nodeValue : node.textContent,
-			)
+			.map((node) => (node.nodeType === NODE_TEXT ? node.nodeValue : node.textContent))
 			.join("");
 	}
 
@@ -668,9 +649,7 @@ export class FakeElement {
 		const scoped = SCOPE_CHILD_RE.exec(selector.trim());
 		if (scoped) {
 			const compound = scoped[1] ?? "";
-			return this.children.filter((child) =>
-				matchesSelector(child, compound),
-			);
+			return this.children.filter((child) => matchesSelector(child, compound));
 		}
 		const found: FakeElement[] = [];
 		for (const child of this.children) {
@@ -766,8 +745,12 @@ export class FakeElement {
 	}
 
 	/** Obsidian's convenience visibility methods used by paged picker rows. */
-	show(): void { this.setCssProps({ display: "" }); }
-	hide(): void { this.setCssProps({ display: "none" }); }
+	show(): void {
+		this.setCssProps({ display: "" });
+	}
+	hide(): void {
+		this.setCssProps({ display: "none" });
+	}
 
 	/** Obsidian's `toggle(show)`: `show()` when true, `hide()` when false. */
 	toggle(show: boolean): void {
@@ -941,11 +924,7 @@ export class FakeElement {
 	dispatchEvent(event: { type: string; bubbles?: boolean }): boolean {
 		this.fire(event.type, event);
 		if (event.bubbles !== true) return true;
-		for (
-			let node = this.parentElement;
-			node;
-			node = node.parentElement
-		) {
+		for (let node = this.parentElement; node; node = node.parentElement) {
 			node.fire(event.type, event);
 		}
 		return true;
@@ -954,11 +933,7 @@ export class FakeElement {
 
 /** {@link FakeElement.closest}, as a free function — `this` is an argument. */
 function closestFrom(start: FakeElement, selector: string): FakeElement | null {
-	for (
-		let current: FakeElement | null = start;
-		current;
-		current = current.parentElement
-	) {
+	for (let current: FakeElement | null = start; current; current = current.parentElement) {
 		if (matchesSelector(current, selector)) return current;
 	}
 	return null;
@@ -971,9 +946,7 @@ function applyElOptions(el: FakeElement, options?: ElOptions | string): void {
 		return;
 	}
 	if (options.cls) {
-		const classes = Array.isArray(options.cls)
-			? options.cls
-			: options.cls.split(/\s+/);
+		const classes = Array.isArray(options.cls) ? options.cls : options.cls.split(/\s+/);
 		el.classList.add(...classes.filter(Boolean));
 	}
 	if (options.text !== undefined) el.textContent = options.text;
@@ -1051,11 +1024,7 @@ function matchesDescendantChain(el: FakeElement, part: string): boolean {
 	if (!matchesCompound(el, last)) return false;
 
 	let pending = compounds.length - 1;
-	for (
-		let node = el.parentElement;
-		node && pending >= 0;
-		node = node.parentElement
-	) {
+	for (let node = el.parentElement; node && pending >= 0; node = node.parentElement) {
 		if (matchesCompound(node, compounds[pending] as string)) pending--;
 	}
 	return pending < 0;
@@ -1071,10 +1040,7 @@ export const FILTER_SKIP = 3;
 export const SHOW_ELEMENT = 1;
 export const SHOW_TEXT = 4;
 
-type WalkerFilter =
-	| { acceptNode(node: FakeNode): number }
-	| ((node: FakeNode) => number)
-	| null;
+type WalkerFilter = { acceptNode(node: FakeNode): number } | ((node: FakeNode) => number) | null;
 
 /** Pre-order successor of `from`, never leaving `root`'s subtree. */
 function advance(from: FakeNode, root: FakeNode): FakeNode | null {
@@ -1085,7 +1051,7 @@ function advance(from: FakeNode, root: FakeNode): FakeNode | null {
 	// Climbing off a node whose parent chain was cut mid-walk simply ends the
 	// walk — the real TreeWalker keeps going in the detached tree, and either
 	// way the production code is written never to mutate while walking.
-	for (let cur: FakeNode | null = from; cur && cur !== root; ) {
+	for (let cur: FakeNode | null = from; cur && cur !== root;) {
 		const next = siblingOf(cur, 1);
 		if (next) return next;
 		cur = cur.parentElement;
@@ -1128,9 +1094,7 @@ class FakeTreeWalker {
 
 	private verdict(node: FakeNode): number {
 		if (!this.filter) return FILTER_ACCEPT;
-		return typeof this.filter === "function"
-			? this.filter(node)
-			: this.filter.acceptNode(node);
+		return typeof this.filter === "function" ? this.filter(node) : this.filter.acceptNode(node);
 	}
 }
 
@@ -1163,12 +1127,7 @@ export class FakeMutationObserver {
 	private targets: FakeElement[] = [];
 	options: unknown;
 
-	constructor(
-		private readonly callback: (
-			records: FakeMutationRecord[],
-			observer: FakeMutationObserver,
-		) => void,
-	) {}
+	constructor(private readonly callback: (records: FakeMutationRecord[], observer: FakeMutationObserver) => void) {}
 
 	observe(target: FakeElement, options?: unknown): void {
 		this.options = options;
@@ -1388,10 +1347,7 @@ export class FakeDocument {
 		if (at >= 0) this.observers.splice(at, 1);
 	}
 
-	recordMutation(
-		type: FakeMutationRecord["type"],
-		target: FakeElement,
-	): void {
+	recordMutation(type: FakeMutationRecord["type"], target: FakeElement): void {
 		if (this.observers.length === 0) return;
 		for (const observer of this.observers) observer.record({ type, target });
 	}
@@ -1601,8 +1557,7 @@ export function el(spec: ElementSpec = {}): FakeElement {
 }
 
 /** One tag, one closing tag, or a run of text, in source order. */
-const HTML_TOKEN_RE =
-	/<\/([a-zA-Z][\w-]*)\s*>|<([a-zA-Z][\w-]*)((?:\s+[\w:-]+(?:="[^"]*")?)*)\s*(\/?)>/g;
+const HTML_TOKEN_RE = /<\/([a-zA-Z][\w-]*)\s*>|<([a-zA-Z][\w-]*)((?:\s+[\w:-]+(?:="[^"]*")?)*)\s*(\/?)>/g;
 const HTML_ATTR_RE = /([\w:-]+)(?:="([^"]*)")?/g;
 /** Tags that never have children, so they never look for a closing tag. */
 const HTML_VOID = new Set(["br", "hr", "img", "input"]);
@@ -1663,8 +1618,7 @@ export function html(markup: string): FakeElement {
 }
 
 /** Cast helper: the code under test is typed against the real DOM. */
-export const asEl = (node: FakeElement): HTMLElement =>
-	node as unknown as HTMLElement;
+export const asEl = (node: FakeElement): HTMLElement => node as unknown as HTMLElement;
 
 /**
  * Installed the moment this module is evaluated, and exported as a handle.

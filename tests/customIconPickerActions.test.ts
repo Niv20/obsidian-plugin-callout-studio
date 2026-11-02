@@ -13,8 +13,15 @@ import { Notice } from "./support/obsidianStub";
 
 function picture(id: string, name: string, addedAt: number): UserImageIcon {
 	return {
-		id, name, addedAt, format: "svg", svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z"/></svg>',
-		width: 24, height: 24, monochrome: false, rev: 1,
+		id,
+		name,
+		addedAt,
+		format: "svg",
+		svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z"/></svg>',
+		width: 24,
+		height: 24,
+		monochrome: false,
+		rev: 1,
 	};
 }
 
@@ -33,18 +40,33 @@ function panelHarness(initial: UserImageIcon[] = []) {
 			saves.push(images.map((image) => image.id));
 		},
 		selectedIcon: () => null,
-		onSelect: (icon) => { selections.push(icon); },
-		onDelete: (id) => { deletions.push(id); },
+		onSelect: (icon) => {
+			selections.push(icon);
+		},
+		onDelete: (id) => {
+			deletions.push(id);
+		},
 	};
 	const panel = new ImagePanel(asEl(root), host);
-	return { root, panel, host, images: () => images, selections, deletions, saves,
-		destroy: () => { panel.dispose(); root.remove(); } };
+	return {
+		root,
+		panel,
+		host,
+		images: () => images,
+		selections,
+		deletions,
+		saves,
+		destroy: () => {
+			panel.dispose();
+			root.remove();
+		},
+	};
 }
 
 function wrapperFor(root: FakeElement, name: string): FakeElement {
-	const wrapper = root.querySelectorAll(".icon-picker-cell-wrap").find((candidate) =>
-		candidate.querySelector(".icon-picker-cell")?.getAttribute("aria-label") === name,
-	);
+	const wrapper = root
+		.querySelectorAll(".icon-picker-cell-wrap")
+		.find((candidate) => candidate.querySelector(".icon-picker-cell")?.getAttribute("aria-label") === name);
 	assert.ok(wrapper, `missing grid cell for ${name}`);
 	return wrapper;
 }
@@ -63,9 +85,13 @@ describe("custom icon picker actions", () => {
 					assert.ok(search);
 					assert.equal(search.focusCount, isMobile ? 0 : 1);
 					assert.equal(fakeDom.document.activeElement, isMobile ? null : search);
-				} finally { h.destroy(); }
+				} finally {
+					h.destroy();
+				}
 			}
-		} finally { Platform.isMobile = wasMobile; }
+		} finally {
+			Platform.isMobile = wasMobile;
+		}
 	});
 
 	it("centers empty collections while keeping unmatched searches in the normal notice layout", async () => {
@@ -92,7 +118,9 @@ describe("custom icon picker actions", () => {
 			assert.equal(body.hasClass("icon-picker-grid-empty"), true);
 			assert.ok(body.querySelector(".icon-picker-image-empty-title"));
 			assert.equal(body.querySelector(".icon-picker-notice"), null);
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("keeps the upload control icon only and accessible even when the grid is empty", async () => {
@@ -106,20 +134,33 @@ describe("custom icon picker actions", () => {
 			assert.equal(upload.tagName, "BUTTON");
 			assert.equal(upload.getAttribute("aria-label"), t("iconPicker.uploadCustom"));
 			assert.equal(upload.textContent, "", "the upload button has no visible label");
-			assert.equal(h.root.querySelector(".icon-picker-image-delete"), null,
-				"deletion belongs to each image, not the toolbar");
-			assert.equal(h.root.querySelector(".icon-picker-image-empty-title")?.textContent,
-				t("iconPicker.customEmptyTitle"));
-			assert.equal(h.root.querySelector(".icon-picker-image-empty-hint")?.textContent,
-				t("iconPicker.customEmptyHint"));
-			assert.equal(h.root.querySelector(".icon-picker-image-empty-formats")?.textContent,
-				t("iconPicker.customEmptyFormats"));
+			assert.equal(
+				h.root.querySelector(".icon-picker-image-delete"),
+				null,
+				"deletion belongs to each image, not the toolbar",
+			);
+			assert.equal(
+				h.root.querySelector(".icon-picker-image-empty-title")?.textContent,
+				t("iconPicker.customEmptyTitle"),
+			);
+			assert.equal(
+				h.root.querySelector(".icon-picker-image-empty-hint")?.textContent,
+				t("iconPicker.customEmptyHint"),
+			);
+			assert.equal(
+				h.root.querySelector(".icon-picker-image-empty-formats")?.textContent,
+				t("iconPicker.customEmptyFormats"),
+			);
 
 			let chooserOpens = 0;
-			(fileInput as unknown as { click: () => void }).click = () => { chooserOpens++; };
+			(fileInput as unknown as { click: () => void }).click = () => {
+				chooserOpens++;
+			};
 			upload.fire("click");
 			assert.equal(chooserOpens, 1);
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("deletes the hovered image only after confirmation without selecting its cell", async () => {
@@ -132,7 +173,9 @@ describe("custom icon picker actions", () => {
 		try {
 			ConfirmModal.prototype.confirm = () => {
 				prompts++;
-				return new Promise<boolean>((resolve) => { answer = resolve; });
+				return new Promise<boolean>((resolve) => {
+					answer = resolve;
+				});
 			};
 			await h.panel.render();
 			assert.equal(h.root.querySelectorAll(".icon-picker-cell-wrap").length, 2);
@@ -143,9 +186,11 @@ describe("custom icon picker actions", () => {
 			assert.ok(remove);
 			assert.equal(cell.parentElement, wrapper);
 			assert.equal(remove.parentElement, wrapper, "the X is a sibling of the selectable cell");
-			assert.equal(remove.getAttribute("aria-label"),
+			assert.equal(
+				remove.getAttribute("aria-label"),
 				t("iconPicker.customDeleteConfirm", { name: first.name }),
-				"the icon-only X names the image it will delete");
+				"the icon-only X names the image it will delete",
+			);
 
 			remove.fire("click");
 			assert.equal(prompts, 1);
@@ -153,7 +198,10 @@ describe("custom icon picker actions", () => {
 			assert.deepEqual(h.saves, [], "the image remains while confirmation is open");
 			answer(false);
 			await Promise.resolve();
-			assert.deepEqual(h.images().map((image) => image.id), [first.id, second.id]);
+			assert.deepEqual(
+				h.images().map((image) => image.id),
+				[first.id, second.id],
+			);
 
 			remove.fire("click");
 			assert.equal(prompts, 2);
@@ -178,7 +226,9 @@ describe("custom icon picker actions", () => {
 			settings: structuredClone(DEFAULT_SETTINGS),
 			registry: {
 				getUserImages: () => images,
-				setUserImages: (next: readonly UserImageIcon[]) => { images = [...next]; },
+				setUserImages: (next: readonly UserImageIcon[]) => {
+					images = [...next];
+				},
 				getAll: () => [],
 				getCommitted: () => [],
 			},

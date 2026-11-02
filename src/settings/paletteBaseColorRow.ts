@@ -22,12 +22,7 @@
  * it is the whole reason `CustomPalette.baseColor` exists.
  */
 import { Setting } from "obsidian";
-import {
-	derivePaletteFromColor,
-	hexToRgb,
-	isValidHexColor,
-	rgbToHex,
-} from "../utils/colorUtils";
+import { derivePaletteFromColor, hexToRgb, isValidHexColor, rgbToHex } from "../utils/colorUtils";
 import { palettesVisuallyEqual, type ColorPalette } from "../utils/colorPalettes";
 import { createColorSwatchInput } from "../ui/ColorSwatchInput";
 import type { CustomPalette } from "../types";
@@ -49,10 +44,7 @@ import { t } from "../i18n";
  * existed, or a seed built by `paletteSeedFromDefinition` from a baked callout,
  * has nothing better to offer — the correction is not invertible.
  */
-export function seedBaseColor(
-	base: Pick<CustomPalette, "baseColor" | "colorLight"> | null,
-	fallback: string,
-): string {
+export function seedBaseColor(base: Pick<CustomPalette, "baseColor" | "colorLight"> | null, fallback: string): string {
 	if (base?.baseColor && isValidHexColor(base.baseColor)) return base.baseColor;
 	if (base?.colorLight && isValidHexColor(base.colorLight)) {
 		return base.colorLight;
@@ -76,11 +68,7 @@ export function seedBaseColor(
  * channel at 255 steps down instead of up. Returns `preferred` untouched when
  * nothing is taken, which is the common case and costs one derivation.
  */
-export function unclaimedBaseColor(
-	preferred: string,
-	amount: number,
-	taken: readonly ColorPalette[],
-): string {
+export function unclaimedBaseColor(preferred: string, amount: number, taken: readonly ColorPalette[]): string {
 	const isTaken = (hex: string): boolean => {
 		const candidate: ColorPalette = {
 			id: "",
@@ -119,9 +107,7 @@ export function renderBaseColorRow(
 	// Every colour row in this card carries `cs-row-inline`: the control is
 	// one small swatch, which the phone would otherwise park on a full-width
 	// row of its own under the label. See the class in styles.css.
-	const setting = new Setting(parent)
-		.setName(t("palette.baseColor"))
-		.setClass("cs-row-inline");
+	const setting = new Setting(parent).setName(t("palette.baseColor")).setClass("cs-row-inline");
 	createColorSwatchInput(setting.controlEl, options.base, options.onPick);
 
 	return setting.settingEl;

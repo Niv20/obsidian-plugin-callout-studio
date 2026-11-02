@@ -24,7 +24,7 @@ import { addCancelButton, applyModalChrome } from "../settings/modalChrome";
 export type ImportReportChoice = "cancel" | "importValid";
 
 const MAX_VISIBLE_ISSUES = 200;
-const reportText = (value: string): string => value.length > 500 ? `${value.slice(0, 500)}…` : value;
+const reportText = (value: string): string => (value.length > 500 ? `${value.slice(0, 500)}…` : value);
 
 /**
  * Centered modal that lists every validation issue found in an imported JSON
@@ -52,9 +52,7 @@ export class ImportReportModal extends Modal {
 
 		this.setTitle(t("import.title"));
 
-		const lead = this.fatal
-			? t("import.reportLeadInFatal")
-			: t("import.reportLeadIn");
+		const lead = this.fatal ? t("import.reportLeadInFatal") : t("import.reportLeadIn");
 		contentEl.createEl("p", { text: lead, cls: "cs-import-report-lead" });
 
 		// Group issues by entry index. -1 means top-level.
@@ -74,19 +72,24 @@ export class ImportReportModal extends Modal {
 		for (const key of sortedKeys) {
 			const group = new SettingGroup(listEl).addClass("mod-list", "cs-import-report-group");
 			if (key >= 0) {
-				group.setHeading(t("import.entryHeading", {
-					index: key + 1,
-					label: labels.get(key) ?? `#${key + 1}`,
-				}));
+				group.setHeading(
+					t("import.entryHeading", {
+						index: key + 1,
+						label: labels.get(key) ?? `#${key + 1}`,
+					}),
+				);
 			}
 			for (const issue of grouped.get(key) ?? []) {
 				group.addSetting((row) => this.renderIssue(row, issue));
 			}
 		}
 		if (this.issues.length > MAX_VISIBLE_ISSUES) {
-			contentEl.createEl("p", { text: t("import.reportTruncated", {
-				shown: MAX_VISIBLE_ISSUES, total: this.issues.length,
-			}) });
+			contentEl.createEl("p", {
+				text: t("import.reportTruncated", {
+					shown: MAX_VISIBLE_ISSUES,
+					total: this.issues.length,
+				}),
+			});
 		}
 
 		// Summary line
@@ -132,8 +135,14 @@ export class ImportReportModal extends Modal {
 	private renderIssue(row: Setting, issue: ValidationIssue): void {
 		row.settingEl.addClass("cs-import-issue", `cs-import-issue-${issue.level}`);
 		// Long values in the message are shortened, as the field is.
-		const params = issue.params && Object.fromEntries(Object.entries(issue.params)
-			.map(([key, value]) => [key, typeof value === "string" ? reportText(value) : value]));
+		const params =
+			issue.params &&
+			Object.fromEntries(
+				Object.entries(issue.params).map(([key, value]) => [
+					key,
+					typeof value === "string" ? reportText(value) : value,
+				]),
+			);
 		row.setName(t(issue.messageKey, params));
 		if (issue.field) {
 			row.descEl.createEl("code", { cls: "cs-import-issue-field", text: reportText(issue.field) });

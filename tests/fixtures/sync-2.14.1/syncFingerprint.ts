@@ -5,7 +5,8 @@
 import { canonical, content } from "./syncTree";
 export function syncFingerprint(data: unknown, stamps: unknown): string {
 	const json = canonical({ body: content(data), stamps });
-	let a = 0x811c9dc5, b = 0x9e3779b9;
+	let a = 0x811c9dc5,
+		b = 0x9e3779b9;
 	for (let i = 0; i < json.length; i++) {
 		const code = json.charCodeAt(i);
 		a = Math.imul(a ^ code, 0x01000193);

@@ -55,7 +55,12 @@ function place(parent: HTMLElement, box: HTMLElement, where: Where): void {
  * A mascot in a box of its own inside `parent`. Returns null where the
  * mascot cannot be drawn; the caller then simply goes on without it.
  */
-export function addMascot(parent: HTMLElement, size: MascotSize, where: Where = "end", extraCls: string[] = []): BrushMascot | null {
+export function addMascot(
+	parent: HTMLElement,
+	size: MascotSize,
+	where: Where = "end",
+	extraCls: string[] = [],
+): BrushMascot | null {
 	if (!canDrawMascot()) return null;
 	const box = mascotBox(size, extraCls);
 	place(parent, box, where);
@@ -162,7 +167,9 @@ export class SearchMascot {
 		this.kept.setMood(NO_RESULTS_MOOD);
 		if (!this.empty) {
 			this.searching = true;
-			void this.kept.play("lookTwice").then(() => { this.searching = false; });
+			void this.kept.play("lookTwice").then(() => {
+				this.searching = false;
+			});
 		} else {
 			// A redraw of the same empty search (the next key): no new round of looking,
 			// but when the typing pauses with nothing found it shakes its head again.
@@ -362,4 +369,3 @@ export function addConfirmMascot(
 		headerEl.removeClass("cs-mascot-header");
 	};
 }
-

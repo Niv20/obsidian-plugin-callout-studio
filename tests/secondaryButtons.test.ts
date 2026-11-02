@@ -53,29 +53,26 @@ function parseRules(css: string): Rule[] {
 	return out;
 }
 
-const css = readFileSync(join(process.cwd(), "styles.css"), "utf8").replace(
-	/\/\*[\s\S]*?\*\//g,
-	"",
-);
+const css = readFileSync(join(process.cwd(), "styles.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
 const rules = parseRules(css);
 
 /**
  * Selectors of grey buttons that Obsidian paints. None of them may appear in a
  * rule that sets a face, an edge or a shadow.
  */
-const NATIVE_BUTTONS = [
-	".modal-button-container",
-	".icon-picker-manage-libraries",
-	".cs-import-action",
-];
+const NATIVE_BUTTONS = [".modal-button-container", ".icon-picker-manage-libraries", ".cs-import-action"];
 
 describe("Obsidian paints the plain grey buttons", () => {
 	it("no rule of the plugin's gives them a face, an edge or a shadow", () => {
 		const painted = rules.filter(
-			(r) => NATIVE_BUTTONS.some((b) => r.selector.replace(/\s+/g, " ").includes(b))
-				&& /(?:^|;)\s*(background(?:-color)?|border(?:-color)?|box-shadow)\s*:/.test(r.declarations),
+			(r) =>
+				NATIVE_BUTTONS.some((b) => r.selector.replace(/\s+/g, " ").includes(b)) &&
+				/(?:^|;)\s*(background(?:-color)?|border(?:-color)?|box-shadow)\s*:/.test(r.declarations),
 		);
-		assert.deepStrictEqual(painted.map((r) => r.selector.replace(/\s+/g, " ")), []);
+		assert.deepStrictEqual(
+			painted.map((r) => r.selector.replace(/\s+/g, " ")),
+			[],
+		);
 	});
 
 	it("the settings' buttons carry no class of the plugin's to paint", () => {

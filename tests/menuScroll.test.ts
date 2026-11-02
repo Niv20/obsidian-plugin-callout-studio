@@ -14,7 +14,11 @@ import { describe, it } from "node:test";
 import { findOpenMenu, scrollMenuWithWheel } from "../src/ui/menuScroll";
 import { asEl, fakeDom } from "./support/fakeDom";
 
-interface Listener { type: string; capture: boolean; run: () => void }
+interface Listener {
+	type: string;
+	capture: boolean;
+	run: () => void;
+}
 
 /** A menu with a list of `rows` rows, 30px tall each, in a 200px window on the list. */
 function menu(rowCount = 20) {
@@ -34,7 +38,8 @@ function menu(rowCount = 20) {
 	const menuEl = {
 		addClass: (cls: string) => classes.add(cls),
 		querySelector: () => scroller,
-		addEventListener: (type: string, run: () => void, capture?: boolean) => listeners.push({ type, capture: capture === true, run }),
+		addEventListener: (type: string, run: () => void, capture?: boolean) =>
+			listeners.push({ type, capture: capture === true, run }),
 	};
 	/** What a browser does for one event: capture listeners, Obsidian's, then bubble listeners. */
 	function dispatch(type: string, obsidianDoes: () => void): void {
@@ -56,7 +61,9 @@ describe("a menu that scrolls with the wheel", () => {
 		const { menuEl, scroller, dispatch } = menu();
 		scrollMenuWithWheel(menuEl, 0);
 		scroller.scrollTop = 40; // the wheel got us here
-		dispatch("mousemove", () => { scroller.scrollTop = 310; }); // Obsidian's `ME()` scrub
+		dispatch("mousemove", () => {
+			scroller.scrollTop = 310;
+		}); // Obsidian's `ME()` scrub
 		assert.equal(scroller.scrollTop, 40);
 	});
 
@@ -64,7 +71,9 @@ describe("a menu that scrolls with the wheel", () => {
 		const { menuEl, scroller, dispatch } = menu();
 		scrollMenuWithWheel(menuEl, 0);
 		scroller.scrollTop = 40;
-		dispatch("pointerover", () => { scroller.scrollTop = 52; }); // `Menu.select` → scrollIntoView
+		dispatch("pointerover", () => {
+			scroller.scrollTop = 52;
+		}); // `Menu.select` → scrollIntoView
 		assert.equal(scroller.scrollTop, 40);
 	});
 
@@ -76,7 +85,9 @@ describe("a menu that scrolls with the wheel", () => {
 		assert.equal(scroller.scrollTop, 40);
 		// A wheel step lands between two moves: the next move keeps the new place.
 		scroller.scrollTop = 90;
-		dispatch("mousemove", () => { scroller.scrollTop = 0; });
+		dispatch("mousemove", () => {
+			scroller.scrollTop = 0;
+		});
 		assert.equal(scroller.scrollTop, 90);
 	});
 
@@ -85,7 +96,11 @@ describe("a menu that scrolls with the wheel", () => {
 		scrollMenuWithWheel(menuEl, 0);
 		for (const type of ["mousemove", "pointerover"]) {
 			const own = listeners.filter((l) => l.type === type);
-			assert.deepEqual(own.map((l) => l.capture), [true, false], `${type}: capture first, bubble second`);
+			assert.deepEqual(
+				own.map((l) => l.capture),
+				[true, false],
+				`${type}: capture first, bubble second`,
+			);
 		}
 	});
 

@@ -33,9 +33,14 @@ function fakePlugin(paused = false) {
 	let saves = 0;
 	const plugin = {
 		registry,
-		get settings() { return registry.settings; },
+		get settings() {
+			return registry.settings;
+		},
 		settingsWriter: { isFrozen: paused },
-		saveSettings: () => { saves++; return Promise.resolve(); },
+		saveSettings: () => {
+			saves++;
+			return Promise.resolve();
+		},
 	};
 	return { plugin, registry, saves: () => saves };
 }
@@ -46,7 +51,10 @@ function drawMenu(plugin: object) {
 	const ctx: TreeContext = {
 		app: {} as never,
 		plugin: plugin as never,
-		redraw: () => { redraws++; tab.update(); },
+		redraw: () => {
+			redraws++;
+			tab.update();
+		},
 		registerDisposer: () => {},
 		rows: new RowRegistry(),
 		parts: new PersistentParts(() => {}),
@@ -95,12 +103,18 @@ const shipped = (role: CalloutRenderRole): string[] =>
 describe("Customize right-click menu", () => {
 	it("is the intro, then each role's menu and what it hides, every box keyed apart", () => {
 		const { harness } = drawMenu(fakePlugin().plugin);
-		assert.deepEqual(harness.rendered.map((b) => b.def.id), [
-			MENU_PAGE.intro,
-			"menu-heading", "menu-heading-hidden",
-			"menu-inline", "menu-inline-hidden",
-			"menu-regular", "menu-regular-hidden",
-		]);
+		assert.deepEqual(
+			harness.rendered.map((b) => b.def.id),
+			[
+				MENU_PAGE.intro,
+				"menu-heading",
+				"menu-heading-hidden",
+				"menu-inline",
+				"menu-inline-hidden",
+				"menu-regular",
+				"menu-regular-hidden",
+			],
+		);
 		assert.deepEqual(harness.duplicateKeys, []);
 		assert.deepEqual(names(harness, "menu-heading"), shipped("heading"));
 		// The shipped menus hide nothing, so no hidden box shows.
@@ -127,7 +141,10 @@ describe("Customize right-click menu", () => {
 		assert.equal(box(harness, "menu-heading-hidden").groupEl.isShown(), true);
 		box(harness, "menu-heading-hidden").children[0]!.settingEl.click();
 		assert.equal(names(harness, "menu-heading").at(-1), firstName, "back at the end");
-		assert.equal(registry.settings.contextMenu.items.heading.every((item) => item.enabled), true);
+		assert.equal(
+			registry.settings.contextMenu.items.heading.every((item) => item.enabled),
+			true,
+		);
 	});
 
 	it("moves an item with Alt+↓, and ↺ puts only that role back as shipped", () => {
@@ -187,14 +204,23 @@ describe("Customize right-click menu", () => {
 		const list = box(harness, "menu-heading");
 		assert.equal(list.settingGroup.settings.length, shipped("heading").length);
 		const intro = box(harness, MENU_PAGE.intro);
-		assert.equal(intro.children.some((row) => row.def.id === "menu-resets-repaint"), true);
+		assert.equal(
+			intro.children.some((row) => row.def.id === "menu-resets-repaint"),
+			true,
+		);
 		assert.equal(intro.children.find((row) => row.def.id === "menu-resets-repaint")!.settingEl.isShown(), false);
 	});
 
 	it("is found by its name, but none of its rows is", () => {
 		const { tab } = drawMenu(fakePlugin().plugin);
-		assert.deepEqual(searchSettings(tab.settingItems, "right-click").map((hit) => hit.name), [t("menuCustomize.title")]);
-		assert.deepEqual(searchSettings(tab.settingItems, label("cutSection")).map((hit) => hit.name), []);
+		assert.deepEqual(
+			searchSettings(tab.settingItems, "right-click").map((hit) => hit.name),
+			[t("menuCustomize.title")],
+		);
+		assert.deepEqual(
+			searchSettings(tab.settingItems, label("cutSection")).map((hit) => hit.name),
+			[],
+		);
 	});
 });
 

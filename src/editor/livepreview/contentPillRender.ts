@@ -59,9 +59,7 @@ function remember(key: string, fragment: DocumentFragment): void {
 }
 
 /** One child of a finished MarkdownRenderer container, for the guard below. */
-export type RenderedChild =
-	| { kind: "text"; text: string }
-	| { kind: "element"; tag: string };
+export type RenderedChild = { kind: "text"; text: string } | { kind: "element"; tag: string };
 
 /**
  * The unwrap guard, as a rule rather than as DOM: did this payload render as
@@ -72,12 +70,8 @@ export type RenderedChild =
  * — a list, a heading, two paragraphs, a bare text node — means the payload was
  * block markdown and has no business inside a line of prose.
  */
-export function rendersAsOneParagraph(
-	children: readonly RenderedChild[],
-): boolean {
-	const meaningful = children.filter(
-		(child) => child.kind !== "text" || child.text.trim() !== "",
-	);
+export function rendersAsOneParagraph(children: readonly RenderedChild[]): boolean {
+	const meaningful = children.filter((child) => child.kind !== "text" || child.text.trim() !== "");
 	const only = meaningful.length === 1 ? meaningful[0] : undefined;
 	return only?.kind === "element" && only.tag === "P";
 }

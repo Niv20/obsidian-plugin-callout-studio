@@ -40,12 +40,7 @@ import { join } from "node:path";
 import { describe, it } from "node:test";
 import { FIXED_COMMAND_IDS, FIXED_COMMAND_NAME_KEYS } from "../src/editor/commands";
 import { obsidianCommandId } from "../src/utils/customCommands";
-import {
-	REPO_ROOT,
-	readRepoFile,
-	readRepoJson,
-	repoFileExists,
-} from "./support/sourceScan";
+import { REPO_ROOT, readRepoFile, readRepoJson, repoFileExists } from "./support/sourceScan";
 
 interface Manifest {
 	id: string;
@@ -92,11 +87,7 @@ describe("version files agree", () => {
 			SEMVER,
 			"manifest.json version must be bare `x.y.z` — Obsidian matches the tag literally, so a leading `v` or a pre-release suffix never installs",
 		);
-		assert.strictEqual(
-			pkg.version,
-			manifest.version,
-			"package.json disagrees with manifest.json",
-		);
+		assert.strictEqual(pkg.version, manifest.version, "package.json disagrees with manifest.json");
 		// `npm version` writes the number twice: once at the top level for
 		// older consumers, once in the synthetic root package entry. A hand
 		// edit typically updates the first and leaves the second stale.
@@ -156,11 +147,7 @@ describe("version files agree", () => {
 			if (compareSemver(prev, curr) >= 0) outOfOrder.push(`${prev} → ${curr}`);
 		}
 		assert.deepStrictEqual(outOfOrder, [], "versions.json is not ascending");
-		assert.strictEqual(
-			new Set(keys).size,
-			keys.length,
-			"versions.json has a duplicate key",
-		);
+		assert.strictEqual(new Set(keys).size, keys.length, "versions.json has a duplicate key");
 	});
 
 	it("every minAppVersion in the map is a real version number", () => {
@@ -181,36 +168,16 @@ describe("manifest.json passes the community-plugin entry rules", () => {
 	// registry and the repo/author cross-check are not.
 
 	it("has every required field", () => {
-		for (const field of [
-			"id",
-			"name",
-			"version",
-			"minAppVersion",
-			"description",
-			"author",
-		] as const) {
+		for (const field of ["id", "name", "version", "minAppVersion", "description", "author"] as const) {
 			const value = manifest[field];
-			assert.ok(
-				typeof value === "string" && value.length > 0,
-				`manifest.json is missing "${field}"`,
-			);
+			assert.ok(typeof value === "string" && value.length > 0, `manifest.json is missing "${field}"`);
 		}
 	});
 
 	it("id is lowercase kebab, without 'obsidian' and without a '-plugin' tail", () => {
-		assert.match(
-			manifest.id,
-			/^[a-z0-9-]+$/,
-			"plugin ids are lowercase letters, digits and hyphens only",
-		);
-		assert.ok(
-			!manifest.id.includes("obsidian"),
-			'a plugin id may not contain "obsidian"',
-		);
-		assert.ok(
-			!manifest.id.endsWith("-plugin"),
-			'a plugin id may not end with "-plugin"',
-		);
+		assert.match(manifest.id, /^[a-z0-9-]+$/, "plugin ids are lowercase letters, digits and hyphens only");
+		assert.ok(!manifest.id.includes("obsidian"), 'a plugin id may not contain "obsidian"');
+		assert.ok(!manifest.id.endsWith("-plugin"), 'a plugin id may not end with "-plugin"');
 	});
 
 	it("id is the one that shipped and can never change", () => {
@@ -221,14 +188,8 @@ describe("manifest.json passes the community-plugin entry rules", () => {
 	});
 
 	it("name does not repeat 'Obsidian' or end in 'Plugin'", () => {
-		assert.ok(
-			!/obsidian/i.test(manifest.name),
-			'the display name may not contain "Obsidian"',
-		);
-		assert.ok(
-			!/plugin$/i.test(manifest.name.trim()),
-			'the display name may not end with "Plugin"',
-		);
+		assert.ok(!/obsidian/i.test(manifest.name), 'the display name may not contain "Obsidian"');
+		assert.ok(!/plugin$/i.test(manifest.name.trim()), 'the display name may not end with "Plugin"');
 	});
 
 	it("description is short, is not padded with boilerplate, and ends in a period", () => {
@@ -324,9 +285,7 @@ describe("main.js stays inside its budget", () => {
 				!process.env.CI,
 				"main.js has not been built, but this is CI, where `npm run build` runs before `npm test` — the size gate just silently lost its subject",
 			);
-			console.warn(
-				"  ! main.js has not been built — bundle size not checked (run `npm run build`)",
-			);
+			console.warn("  ! main.js has not been built — bundle size not checked (run `npm run build`)");
 			return;
 		}
 		if (/^\/\/# sourceMappingURL=data:application\/json/m.test(readRepoFile("main.js"))) {
@@ -393,10 +352,7 @@ describe("command ids have not moved since release", () => {
 	});
 
 	it("every fixed id has a name key, and nothing else does", () => {
-		assert.deepStrictEqual(
-			Object.keys(FIXED_COMMAND_NAME_KEYS).sort(),
-			[...RELEASED_COMMAND_IDS].sort(),
-		);
+		assert.deepStrictEqual(Object.keys(FIXED_COMMAND_NAME_KEYS).sort(), [...RELEASED_COMMAND_IDS].sort());
 	});
 
 	it("the full Obsidian id is built from the frozen plugin id", () => {
@@ -414,10 +370,7 @@ describe("command ids have not moved since release", () => {
 		// it, the sweep would unregister a built-in command.
 		assert.strictEqual(obsidianCommandId("cc-abc123"), "custom-cc-abc123");
 		for (const id of RELEASED_COMMAND_IDS) {
-			assert.ok(
-				!id.startsWith("custom-"),
-				`fixed command "${id}" collides with the custom-command namespace`,
-			);
+			assert.ok(!id.startsWith("custom-"), `fixed command "${id}" collides with the custom-command namespace`);
 		}
 	});
 });

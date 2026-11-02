@@ -7,7 +7,10 @@ import { showNotice } from "../ui/mascot/mascotNotices";
 interface RetirementHost {
 	registry: CalloutRegistry;
 	settingsWriter: SettingsWriter;
-	localState: Pick<DeviceLocalStore, "hasPendingExternalCssNotice" | "queueExternalCssNotice" | "markExternalCssNoticeSeen">;
+	localState: Pick<
+		DeviceLocalStore,
+		"hasPendingExternalCssNotice" | "queueExternalCssNotice" | "markExternalCssNoticeSeen"
+	>;
 	register(cleanup: () => void): void;
 }
 
@@ -39,6 +42,12 @@ export function trackExternalCssRetirement(host: RetirementHost): () => void {
 		host.localState.markExternalCssNoticeSeen();
 	};
 	const unsubscribe = host.settingsWriter.status.subscribe(check);
-	host.register(() => { disposed = true; unsubscribe(); });
-	return () => { ready = true; check(); };
+	host.register(() => {
+		disposed = true;
+		unsubscribe();
+	});
+	return () => {
+		ready = true;
+		check();
+	};
 }

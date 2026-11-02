@@ -76,10 +76,7 @@ function harness(suggests?: unknown): Harness {
 	};
 }
 
-function addCallout(
-	registry: Registry,
-	over: Partial<Parameters<Registry["add"]>[0]> = {},
-): void {
+function addCallout(registry: Registry, over: Partial<Parameters<Registry["add"]>[0]> = {}): void {
 	registry.add({
 		id: "quiet",
 		displayName: "Quiet",
@@ -95,7 +92,10 @@ function addCallout(
 }
 
 /** A rendered suggestion row: one `.suggestion-title` holding the raw text. */
-function row(text: string, cls = "suggestion-title"): {
+function row(
+	text: string,
+	cls = "suggestion-title",
+): {
 	root: FakeElement;
 	title: FakeElement;
 } {
@@ -112,8 +112,7 @@ function render(h: Harness, value: unknown, element: unknown): unknown {
 }
 
 /** The classes on an element, as an array. */
-const classes = (element: unknown): string[] =>
-	(element as { classList: { toArray(): string[] } }).classList.toArray();
+const classes = (element: unknown): string[] => (element as { classList: { toArray(): string[] } }).classList.toArray();
 
 /* -------------------------------------------------------------------------- */
 /* install / uninstall                                                         */
@@ -167,10 +166,7 @@ describe("install", () => {
 		h.decorator.install([]);
 
 		// An element the decorator cannot read at all.
-		assert.strictEqual(
-			render(h, heading("[!quiet] Title"), { querySelector: null }),
-			"from core",
-		);
+		assert.strictEqual(render(h, heading("[!quiet] Title"), { querySelector: null }), "from core");
 	});
 });
 
@@ -293,10 +289,7 @@ describe("the rewrite", () => {
 		render(h, heading("[!quiet|purple] My Title"), asEl(root));
 
 		assert.strictEqual(title.textContent, "My Title");
-		assert.strictEqual(
-			title.children[0]?.getAttribute("data-callout"),
-			"quiet",
-		);
+		assert.strictEqual(title.children[0]?.getAttribute("data-callout"), "quiet");
 	});
 });
 
@@ -421,10 +414,7 @@ function pickHarness(key = "Enter") {
 		replaceRange(insert: string, at: { line: number; ch: number }) {
 			state.line = state.line.slice(0, at.ch) + insert + state.line.slice(at.ch);
 		},
-		setSelection(
-			anchor: { line: number; ch: number },
-			head: { line: number; ch: number } = anchor,
-		) {
+		setSelection(anchor: { line: number; ch: number }, head: { line: number; ch: number } = anchor) {
 			state.selection = [anchor.ch, head.ch];
 		},
 	};

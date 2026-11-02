@@ -89,7 +89,7 @@ export class PaletteCombobox {
 			onCommit: (entry) => options.onCommit(entry),
 			onHighlight: (entry) => options.onPreview(entry?.palette ?? null),
 			emptyAction: {
-			label: (query) => t("autocomplete.createNew", { name: query.trim() }),
+				label: (query) => t("autocomplete.createNew", { name: query.trim() }),
 				onSelect: (query) => options.onNewColor(query.trim()),
 			},
 		});

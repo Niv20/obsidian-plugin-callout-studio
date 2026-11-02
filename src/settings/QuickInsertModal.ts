@@ -31,11 +31,7 @@
  */
 import { Modal, type EventRef } from "obsidian";
 import { wrapSelectionInCallout } from "../editor/CalloutBlockTools";
-import {
-	currentTargetEditor,
-	resolveTargetEditor,
-	type TargetEditorResult,
-} from "../editor/targetMarkdownEditor";
+import { currentTargetEditor, resolveTargetEditor, type TargetEditorResult } from "../editor/targetMarkdownEditor";
 import { getLocale, t } from "../i18n";
 import { activeThemeName } from "../manager/theme/customCssApi";
 import type { CalloutDefinition } from "../types";
@@ -49,11 +45,7 @@ import { committedDefinitions } from "../utils/usableCallouts";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
 import { autofocusOnDesktop } from "./modalAutofocus";
 import { openCalloutEditorFor } from "./openCalloutEditor";
-import {
-	quickInsertEmptyMessage,
-	quickInsertHint,
-	quickInsertNotice,
-} from "./quickInsertMessages";
+import { quickInsertEmptyMessage, quickInsertHint, quickInsertNotice } from "./quickInsertMessages";
 import { QuickInsertPreviews } from "./quickInsertPreview";
 import {
 	buildQuickInsertToolbar,
@@ -83,7 +75,10 @@ export class QuickInsertModal extends Modal {
 	private visible: CalloutDefinition[] = [];
 	/** The empty marker the list ends in while there is more to draw. */
 	private sentinel: HTMLElement | null = null;
-	private readonly loadOnScroll = new LoadOnScroll(() => this.contentEl, () => this.drawMore());
+	private readonly loadOnScroll = new LoadOnScroll(
+		() => this.contentEl,
+		() => this.drawMore(),
+	);
 	private refreshQueued = false;
 
 	/**
@@ -177,8 +172,7 @@ export class QuickInsertModal extends Modal {
 		this.toolbar?.destroy();
 		this.toolbar = buildQuickInsertToolbar(parent, {
 			filter: this.filter,
-			themeLabel:
-				activeThemeName(this.plugin.app) ?? t("quickInsert.sourceTheme"),
+			themeLabel: activeThemeName(this.plugin.app) ?? t("quickInsert.sourceTheme"),
 			onQuery: (query) => {
 				this.query = query;
 				this.restartList();
@@ -205,14 +199,19 @@ export class QuickInsertModal extends Modal {
 	}
 
 	private onSearchKey(ev: KeyboardEvent): void {
-		quickInsertSearchKey(ev,
+		quickInsertSearchKey(
+			ev,
 			(delta) => {
 				// Arrowing past the last drawn row draws the next page first, as
 				// scrolling to the end of the list does.
-				if (this.activeIndex + delta >= this.rows.length && this.rows.length < this.visible.length) this.drawMore();
+				if (this.activeIndex + delta >= this.rows.length && this.rows.length < this.visible.length)
+					this.drawMore();
 				this.setActive(Math.max(0, Math.min(this.activeIndex + delta, this.rows.length - 1)));
 			},
-			() => { const row = this.rows[Math.max(0, this.activeIndex)]; if (row) this.insert(row.def, this.matchedIdFor(row.def)); },
+			() => {
+				const row = this.rows[Math.max(0, this.activeIndex)];
+				if (row) this.insert(row.def, this.matchedIdFor(row.def));
+			},
 		);
 	}
 
@@ -232,9 +231,7 @@ export class QuickInsertModal extends Modal {
 	// ── List ────────────────────────────────────────────────────────────
 	private usableCallouts(): CalloutDefinition[] {
 		const { registry } = this.plugin;
-		const committed = committedDefinitions(registry).map(
-			(def) => registry.getReal(def.id) ?? def,
-		);
+		const committed = committedDefinitions(registry).map((def) => registry.getReal(def.id) ?? def);
 		return committed;
 	}
 
@@ -346,15 +343,19 @@ export class QuickInsertModal extends Modal {
 				onInsert: (target) => this.insert(target, matchedId),
 				onHover: (rowEl) => {
 					if (rowEl || this.pointerActive) {
-						this.setActive(this.rows.findIndex((r) => r.el === rowEl), true);
+						this.setActive(
+							this.rows.findIndex((r) => r.el === rowEl),
+							true,
+						);
 					}
 				},
 			});
 			this.rows.push({ def, el });
 		}
-		this.sentinel = end < this.visible.length
-			? listEl.createDiv({ cls: LOAD_MORE_SENTINEL, attr: { "aria-hidden": "true" } })
-			: null;
+		this.sentinel =
+			end < this.visible.length
+				? listEl.createDiv({ cls: LOAD_MORE_SENTINEL, attr: { "aria-hidden": "true" } })
+				: null;
 		this.loadOnScroll.watch(this.sentinel);
 		void this.previews?.ensure(
 			this.rows.map((row) => row.def),
@@ -406,10 +407,7 @@ export class QuickInsertModal extends Modal {
 	 * written is the line the row showed.
 	 */
 	private insert(def: CalloutDefinition, matchedId?: string): void {
-		const result = currentTargetEditor(
-			this.plugin.app,
-			this.captured.ok ? this.captured.target : null,
-		);
+		const result = currentTargetEditor(this.plugin.app, this.captured.ok ? this.captured.target : null);
 		if (!result.ok) {
 			// The window stays open on a refusal. It is a modal, so the note
 			// behind it cannot be touched until it closes — but closing on the

@@ -26,12 +26,21 @@ class FakeObserver {
 	static all: FakeObserver[] = [];
 	readonly targets: unknown[] = [];
 	disconnected = false;
-	constructor(readonly callback: (entries: FakeEntry[]) => void, readonly options: { root?: unknown; rootMargin?: string }) {
+	constructor(
+		readonly callback: (entries: FakeEntry[]) => void,
+		readonly options: { root?: unknown; rootMargin?: string },
+	) {
 		FakeObserver.all.push(this);
 	}
-	observe(target: unknown): void { this.targets.push(target); }
-	disconnect(): void { this.disconnected = true; }
-	report(entries: FakeEntry[]): void { this.callback(entries); }
+	observe(target: unknown): void {
+		this.targets.push(target);
+	}
+	disconnect(): void {
+		this.disconnected = true;
+	}
+	report(entries: FakeEntry[]): void {
+		this.callback(entries);
+	}
 }
 
 /** Run `body` with the fake window able to watch, then take that away again. */
@@ -39,7 +48,11 @@ function withObserver(body: () => void): void {
 	const view = dom.document.defaultView as unknown as Record<string, unknown>;
 	view.IntersectionObserver = FakeObserver;
 	FakeObserver.all = [];
-	try { body(); } finally { delete view.IntersectionObserver; }
+	try {
+		body();
+	} finally {
+		delete view.IntersectionObserver;
+	}
 }
 
 /** A scroller (a laid-out one, `clientHeight` tall) holding a list of `count` note groups. */
@@ -49,14 +62,18 @@ function drawList(count: number, clientHeight = 400) {
 	const list = scroller.createDiv();
 	const fold = new SidebarFold();
 	const groups = Array.from({ length: count }, (_, i) =>
-		createSidebarFileGroup(list, { path: `note ${i}.md`, count: 1, fold }));
+		createSidebarFileGroup(list, { path: `note ${i}.md`, count: 1, fold }),
+	);
 	return { scroller, list, groups, sections: groups.map((group) => group.section) };
 }
 
 const sizeOf = (section: HTMLElement): string =>
 	(section as unknown as { getCssPropertyValue(name: string): string }).getCssPropertyValue("--cs-parked-size");
-const reportFor = (target: HTMLElement, isIntersecting: boolean, height = 120): FakeEntry =>
-	({ target, isIntersecting, boundingClientRect: { height } });
+const reportFor = (target: HTMLElement, isIntersecting: boolean, height = 120): FakeEntry => ({
+	target,
+	isIntersecting,
+	boundingClientRect: { height },
+});
 
 describe("parking file groups that are far from the screen", () => {
 	it("watches the groups straight inside the list, within a screen of the scroller's edge", () => {
@@ -97,8 +114,16 @@ describe("parking file groups that are far from the screen", () => {
 			const [unmeasured, focused, gone] = sections as [HTMLElement, HTMLElement, HTMLElement];
 			(groups[1]!.link as unknown as { focus(): void }).focus();
 			gone.remove();
-			FakeObserver.all[0]!.report([reportFor(unmeasured, false, 0), reportFor(focused, false), reportFor(gone, false)]);
-			assert.equal(unmeasured.hasClass(PARKED_CLASS), false, "not laid out: there is nothing to keep the height of");
+			FakeObserver.all[0]!.report([
+				reportFor(unmeasured, false, 0),
+				reportFor(focused, false),
+				reportFor(gone, false),
+			]);
+			assert.equal(
+				unmeasured.hasClass(PARKED_CLASS),
+				false,
+				"not laid out: there is nothing to keep the height of",
+			);
 			assert.equal(focused.hasClass(PARKED_CLASS), false, "an element that is not drawn cannot keep the focus");
 			assert.equal(gone.hasClass(PARKED_CLASS), false);
 		});
@@ -159,9 +184,15 @@ describe("drawing a parked group again before it is measured", () => {
 			FakeObserver.all[0]!.report([reportFor(sections[0]!, false, 300)]);
 			assert.equal(sections[0]!.hasClass(PARKED_CLASS), true);
 			// A scroller 100px tall at the top of the page; the row is 500px down once its group is drawn.
-			Object.assign(scroller, { clientTop: 0, scrollTop: 0, getBoundingClientRect: () => ({ top: 0, bottom: 100 }) });
-			Object.assign(row, { getBoundingClientRect: () => sections[0]!.hasClass(PARKED_CLASS)
-				? { top: 0, bottom: 0 } : { top: 500, bottom: 520 } });
+			Object.assign(scroller, {
+				clientTop: 0,
+				scrollTop: 0,
+				getBoundingClientRect: () => ({ top: 0, bottom: 100 }),
+			});
+			Object.assign(row, {
+				getBoundingClientRect: () =>
+					sections[0]!.hasClass(PARKED_CLASS) ? { top: 0, bottom: 0 } : { top: 500, bottom: 520 },
+			});
 			revealSidebarCard(scroller, row);
 			assert.equal(sections[0]!.hasClass(PARKED_CLASS), false, "drawn again first");
 			assert.ok(scroller.scrollTop > 0, "then measured where it really is, and scrolled to");

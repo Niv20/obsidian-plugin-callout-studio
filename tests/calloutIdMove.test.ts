@@ -18,8 +18,15 @@ import { DEFAULT_TEXT_COLOR_DARK, DEFAULT_TEXT_COLOR_LIGHT } from "../src/utils/
 
 function def(over: Partial<CalloutDefinition> & { id: string }): CalloutDefinition {
 	return {
-		displayName: over.id, icon: { type: "lucide", value: "star" }, colorLight: "#448aff", colorDark: "#448aff",
-		foldable: true, defaultFolded: false, builtIn: false, source: "user", ...over,
+		displayName: over.id,
+		icon: { type: "lucide", value: "star" },
+		colorLight: "#448aff",
+		colorDark: "#448aff",
+		foldable: true,
+		defaultFolded: false,
+		builtIn: false,
+		source: "user",
+		...over,
 	};
 }
 
@@ -105,10 +112,14 @@ describe("taking the ids", () => {
 
 	it("refuses, changing nothing, when an id has another owner than the one chosen", () => {
 		const registry = registryWith(def({ id: "a", aliases: ["test"] }), def({ id: "c", aliases: ["mine"] }));
-		const restore = takeMovedIds(registry, [
-			{ id: "mine", from: "c", removeRow: false },
-			{ id: "test", from: "elsewhere", removeRow: false },
-		], null);
+		const restore = takeMovedIds(
+			registry,
+			[
+				{ id: "mine", from: "c", removeRow: false },
+				{ id: "test", from: "elsewhere", removeRow: false },
+			],
+			null,
+		);
 		assert.equal(restore, null);
 		assert.deepEqual(registry.get("a")?.aliases, ["test"]);
 		assert.deepEqual(registry.get("c")?.aliases, ["mine"]);
@@ -120,28 +131,54 @@ describe("Save with a moved id", () => {
 		const registry = registryWith(...callouts);
 		const migrations: Array<[string, string]> = [];
 		let events = 0;
-		registry.onChange(() => { events++; });
+		registry.onChange(() => {
+			events++;
+		});
 		const files = new Map(Object.entries(notes));
 		const handles = [...files.keys()].map((path) => ({ path }));
-		const app = { vault: {
-			getMarkdownFiles: () => handles,
-			getAbstractFileByPath: (path: string) => handles.find((file) => file.path === path) ?? null,
-			cachedRead: (file: { path: string }) => Promise.resolve(files.get(file.path)!),
-			process: (file: { path: string }, fn: (text: string) => string) => {
-				files.set(file.path, fn(files.get(file.path)!));
-				return Promise.resolve();
+		const app = {
+			vault: {
+				getMarkdownFiles: () => handles,
+				getAbstractFileByPath: (path: string) => handles.find((file) => file.path === path) ?? null,
+				cachedRead: (file: { path: string }) => Promise.resolve(files.get(file.path)!),
+				process: (file: { path: string }, fn: (text: string) => string) => {
+					files.set(file.path, fn(files.get(file.path)!));
+					return Promise.resolve();
+				},
 			},
-		} } as unknown as App;
+		} as unknown as App;
 		const plugin = {
-			app, registry, settings: registry.settings, saveSettings: () => Promise.resolve(),
-			refreshCallouts: () => undefined, ensureIconArtwork: () => Promise.resolve(),
-			customCommands: { migrateCalloutId: (from: string, to: string) => { migrations.push([from, to]); } },
+			app,
+			registry,
+			settings: registry.settings,
+			saveSettings: () => Promise.resolve(),
+			refreshCallouts: () => undefined,
+			ensureIconArtwork: () => Promise.resolve(),
+			customCommands: {
+				migrateCalloutId: (from: string, to: string) => {
+					migrations.push([from, to]);
+				},
+			},
 		} as unknown as CalloutEditorPlugin;
 		const form = (over: Partial<CalloutEditorSaveState>): CalloutEditorSaveState => ({
-			displayName: "Tip", calloutId: "tip", icon: { type: "lucide", value: "star" }, hideIcon: false,
-			colorLight: "#448aff", colorDark: "#448aff", bgColorLight: "", bgColorDark: "", transparentBg: false,
-			textColorLight: DEFAULT_TEXT_COLOR_LIGHT, textColorDark: DEFAULT_TEXT_COLOR_DARK,
-			foldable: true, defaultFolded: false, iconOffsetX: 0, iconOffsetY: 0, iconSize: 1, aliases: [], ...over,
+			displayName: "Tip",
+			calloutId: "tip",
+			icon: { type: "lucide", value: "star" },
+			hideIcon: false,
+			colorLight: "#448aff",
+			colorDark: "#448aff",
+			bgColorLight: "",
+			bgColorDark: "",
+			transparentBg: false,
+			textColorLight: DEFAULT_TEXT_COLOR_LIGHT,
+			textColorDark: DEFAULT_TEXT_COLOR_DARK,
+			foldable: true,
+			defaultFolded: false,
+			iconOffsetX: 0,
+			iconOffsetY: 0,
+			iconSize: 1,
+			aliases: [],
+			...over,
 		});
 		const save = (
 			existingId: string | null,
@@ -150,20 +187,33 @@ describe("Save with a moved id", () => {
 			noteChoices = LEAVE_NOTES,
 		) =>
 			performCalloutEditorSave({
-				app, plugin, existingId, isBuiltIn: false, state,
+				app,
+				plugin,
+				existingId,
+				isBuiltIn: false,
+				state,
 				baselineDef: existingId ? registry.get(existingId) : undefined,
-				hasStyleChanges: true, saveAsFallback: false, overwriteAutoFallback: false,
-				canUseCalloutId: () => true, getFallbackBase: () => undefined,
-				noteChoices, moves, announceNoteRewrite: () => undefined,
+				hasStyleChanges: true,
+				saveAsFallback: false,
+				overwriteAutoFallback: false,
+				canUseCalloutId: () => true,
+				getFallbackBase: () => undefined,
+				noteChoices,
+				moves,
+				announceNoteRewrite: () => undefined,
 			});
 		return { registry, migrations, events: () => events, files, form, save };
 	}
 
 	it("moves an extra id from one callout to another without touching a note", async () => {
-		const h = harness([def({ id: "abstract2", aliases: ["test", "keep"] }), def({ id: "tip", displayName: "Tip" })],
-			{ "a.md": "> [!test] Test" });
+		const h = harness(
+			[def({ id: "abstract2", aliases: ["test", "keep"] }), def({ id: "tip", displayName: "Tip" })],
+			{ "a.md": "> [!test] Test" },
+		);
 		const before = h.events();
-		const saved = await h.save("tip", h.form({ aliases: ["test"] }), [{ id: "test", from: "abstract2", removeRow: false }]);
+		const saved = await h.save("tip", h.form({ aliases: ["test"] }), [
+			{ id: "test", from: "abstract2", removeRow: false },
+		]);
 		assert.ok(saved);
 		assert.deepEqual(h.registry.get("tip")?.aliases, ["test"]);
 		assert.deepEqual(h.registry.get("abstract2")?.aliases, ["keep"]);
@@ -174,8 +224,9 @@ describe("Save with a moved id", () => {
 
 	it("takes a placeholder row's id as a new callout's own id", async () => {
 		const h = harness([def({ id: "test", source: "fallback" })]);
-		const saved = await h.save(null, h.form({ calloutId: "test", displayName: "Test" }),
-			[{ id: "test", from: "test", removeRow: true }]);
+		const saved = await h.save(null, h.form({ calloutId: "test", displayName: "Test" }), [
+			{ id: "test", from: "test", removeRow: true },
+		]);
 		assert.ok(saved);
 		assert.equal(h.registry.get("test")?.source, "user");
 		assert.deepEqual(h.migrations, [], "its commands already name this id");
@@ -183,7 +234,9 @@ describe("Save with a moved id", () => {
 
 	it("takes a placeholder row's id as an extra id, and its commands come along", async () => {
 		const h = harness([def({ id: "found", source: "fallback" }), def({ id: "tip", displayName: "Tip" })]);
-		const saved = await h.save("tip", h.form({ aliases: ["found"] }), [{ id: "found", from: "found", removeRow: true }]);
+		const saved = await h.save("tip", h.form({ aliases: ["found"] }), [
+			{ id: "found", from: "found", removeRow: true },
+		]);
 		assert.ok(saved);
 		assert.equal(h.registry.get("found"), undefined);
 		assert.deepEqual(h.registry.get("tip")?.aliases, ["found"]);
@@ -194,8 +247,9 @@ describe("Save with a moved id", () => {
 		// The add is refused — `taken` is someone else's main id — after the move
 		// already took `test`. A batch undoes nothing, so the save must.
 		const h = harness([def({ id: "abstract2", aliases: ["test"] }), def({ id: "taken" })]);
-		const saved = await h.save(null, h.form({ calloutId: "taken", aliases: ["test"] }),
-			[{ id: "test", from: "abstract2", removeRow: false }]);
+		const saved = await h.save(null, h.form({ calloutId: "taken", aliases: ["test"] }), [
+			{ id: "test", from: "abstract2", removeRow: false },
+		]);
 		assert.equal(saved, null);
 		assert.deepEqual(h.registry.get("abstract2")?.aliases, ["test"]);
 		assert.equal(h.registry.findAttrIdConflict("test", null)?.id, "abstract2");
@@ -206,13 +260,18 @@ describe("Save with a moved id", () => {
 		// `[!insight]` — the moved id — so passes that skip moved ids skipped them
 		// too. The passes now run first, over the ids the notes carry before it.
 		const h = harness(
-			[def({ id: "idea", displayName: "Idea" }), def({ id: "other", displayName: "Other", aliases: ["insight"] })],
+			[
+				def({ id: "idea", displayName: "Idea" }),
+				def({ id: "other", displayName: "Other", aliases: ["insight"] }),
+			],
 			{ "a.md": "> [!idea]+ Idea\n> body", "b.md": "> [!insight]+ Idea" },
 		);
-		const saved = await h.save("idea",
+		const saved = await h.save(
+			"idea",
 			h.form({ displayName: "Insight", calloutId: "insight", foldable: true, defaultFolded: true }),
 			[{ id: "insight", from: "other", removeRow: false }],
-			{ rewrite: new Map([["idea", "insight"]]), titles: true, fold: true });
+			{ rewrite: new Map([["idea", "insight"]]), titles: true, fold: true },
+		);
 		assert.ok(saved);
 		assert.equal(h.files.get("a.md"), "> [!insight]- Insight\n> body");
 		assert.equal(h.files.get("b.md"), "> [!insight]+ Idea", "the moved id's own notes were Other's: untouched");
@@ -221,10 +280,16 @@ describe("Save with a moved id", () => {
 	it("gives this callout's own notes the new fold mark, never the moved id's", async () => {
 		// Those notes belonged to another callout until this Save, and nobody was
 		// asked about them.
-		const h = harness([def({ id: "abstract2", aliases: ["test"] }), def({ id: "tip", foldable: false })],
-			{ "a.md": "> [!test] Test", "b.md": "> [!tip] Tip" });
-		const saved = await h.save("tip", h.form({ aliases: ["test"], foldable: true, defaultFolded: true }),
-			[{ id: "test", from: "abstract2", removeRow: false }], { ...LEAVE_NOTES, fold: true });
+		const h = harness([def({ id: "abstract2", aliases: ["test"] }), def({ id: "tip", foldable: false })], {
+			"a.md": "> [!test] Test",
+			"b.md": "> [!tip] Tip",
+		});
+		const saved = await h.save(
+			"tip",
+			h.form({ aliases: ["test"], foldable: true, defaultFolded: true }),
+			[{ id: "test", from: "abstract2", removeRow: false }],
+			{ ...LEAVE_NOTES, fold: true },
+		);
 		assert.ok(saved);
 		assert.equal(h.files.get("a.md"), "> [!test] Test");
 		assert.equal(h.files.get("b.md"), "> [!tip]- Tip");

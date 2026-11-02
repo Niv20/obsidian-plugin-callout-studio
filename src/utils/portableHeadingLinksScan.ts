@@ -8,7 +8,11 @@ export interface PortableHeadingDestination {
 	wiki: boolean;
 }
 
-interface DestinationEnd { from: number; to: number; end: number }
+interface DestinationEnd {
+	from: number;
+	to: number;
+	end: number;
+}
 
 function markdownDestination(source: string, from: number, definition: boolean): DestinationEnd | null {
 	let breaks = 0;
@@ -43,7 +47,8 @@ function markdownDestination(source: string, from: number, definition: boolean):
 }
 
 function linkEnd(source: string, from: number): number | null {
-	let at = from, breaks = 0;
+	let at = from,
+		breaks = 0;
 	while (/[ \t\r\n]/.test(source[at] ?? "")) {
 		if (source[at] === "\n" && ++breaks > 1) return null;
 		at++;
@@ -80,7 +85,8 @@ function referenceEnd(source: string, from: number): number | null {
 		at++;
 		while (/[ \t\r]/.test(source[at] ?? "")) at++;
 	} else if (at === from) return null;
-	const quote = source[at], close = quote === "(" ? ")" : quote;
+	const quote = source[at],
+		close = quote === "(" ? ")" : quote;
 	if (quote !== '"' && quote !== "'" && quote !== "(") return nextLine ? destinationEnd : null;
 	for (at++; at < source.length; at++) {
 		if (source[at] === "\0" || (source[at] === "\n" && /^\n[ \t\r]*\n/.test(source.slice(at)))) break;
@@ -135,7 +141,10 @@ export function portableHeadingDestinations(content: string): PortableHeadingDes
 				if (visible[inside] === "[") brackets++;
 				else if (visible[inside] === "]") brackets--;
 			}
-			while (brackets > 0 && visible[end + 2] === "]") { end++; brackets--; }
+			while (brackets > 0 && visible[end + 2] === "]") {
+				end++;
+				brackets--;
+			}
 			const inside = visible.slice(at + 2, end);
 			if (/[\n\0]/.test(inside)) continue;
 			const alias = inside.indexOf("|");
@@ -145,7 +154,10 @@ export function portableHeadingDestinations(content: string): PortableHeadingDes
 			at = end + 1;
 			continue;
 		}
-		if (visible[at] === "[") { opens.push(at); continue; }
+		if (visible[at] === "[") {
+			opens.push(at);
+			continue;
+		}
 		if (visible[at] !== "]") continue;
 		const labelStart = opens.pop();
 		if (labelStart === undefined || visible[at + 1] !== "(") continue;
@@ -157,6 +169,7 @@ export function portableHeadingDestinations(content: string): PortableHeadingDes
 		destinations.push({ from: destination.from, to: destination.to, wiki: false });
 		at = end - 1;
 	}
-	return destinations.filter(destination => !labels.some(label => destination.from >= label.from && destination.to <= label.to))
+	return destinations
+		.filter((destination) => !labels.some((label) => destination.from >= label.from && destination.to <= label.to))
 		.sort((a, b) => a.from - b.from);
 }

@@ -11,8 +11,7 @@ export const cs: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "Zabalit do blokového callout {{name}} (zavřený)",
 	"cmd.customInsertBlockExpanded": "Vložit blokový callout {{name}} (otevřený)",
 	"cmd.customInsertBlockCollapsed": "Vložit blokový callout {{name}} (zavřený)",
-	"cmd.customWrapHeading":
-		"Zabalit do nadpisového callout {{name}} (H{{level}})",
+	"cmd.customWrapHeading": "Zabalit do nadpisového callout {{name}} (H{{level}})",
 	"cmd.customInsertHeading": "Vložit nadpisový callout {{name}} (H{{level}})",
 	"cmd.customWrapInline": "Zabalit do vloženého callout {{name}}",
 	"cmd.customInsertInline": "Vložit vložený callout {{name}}",
@@ -39,19 +38,18 @@ export const cs: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "Nejprve vyberte callout, kterým ho nahradíte.",
 	"settings.fallbackTag": "Výchozí",
 	"settings.fallbackTagAuto": "Auto",
-	"settings.rescanVaultDesc": "Přidá typy calloutů, které vaše poznámky používají a které ještě nejsou v tomto seznamu.",
+	"settings.rescanVaultDesc":
+		"Přidá typy calloutů, které vaše poznámky používají a které ještě nejsou v tomto seznamu.",
 	"settings.rescanVaultHintAction": "Vyhledat callouty",
-	"manualDiscovery.failed": "Nalezené callouty se nepodařilo uložit. Ověřte, že lze zapisovat nastavení a že synchronizace skončila. Poté znovu vyberte Nastavení → Moje typy callout → Vyhledat callouty. Stávající callouty nebyly nahrazeny.",
+	"manualDiscovery.failed":
+		"Nalezené callouty se nepodařilo uložit. Ověřte, že lze zapisovat nastavení a že synchronizace skončila. Poté znovu vyberte Nastavení → Moje typy callout → Vyhledat callouty. Stávající callouty nebyly nahrazeny.",
 	"manualDiscovery.scanning": "Prohledávání…",
-	"settings.rescanComplete":
-		"Prohledávání dokončeno: přidáno {{count}} nových typů calloutů.",
+	"settings.rescanComplete": "Prohledávání dokončeno: přidáno {{count}} nových typů calloutů.",
 	"replaceModal.titleReplace": "Nahradit ve vaultu",
 
 	"welcome.title": "Vítejte v Callout Studio!",
-	"welcome.tagline":
-		"Vaše komplexní řešení pro vytváření, stylování a správu calloutů v Obsidianu.",
-	"importBanner.message":
-		"Všimli jsme si, že používáte {{plugins}}. Chcete importovat své callouty?",
+	"welcome.tagline": "Vaše komplexní řešení pro vytváření, stylování a správu calloutů v Obsidianu.",
+	"importBanner.message": "Všimli jsme si, že používáte {{plugins}}. Chcete importovat své callouty?",
 	"importBanner.action": "Importovat",
 	"importBanner.dismiss": "Zavřít",
 	"welcome.demoName": "Callout Studio",
@@ -66,8 +64,7 @@ export const cs: Record<string, string> = {
 		"Callout Studio má mnohem víc co nabídnout! [Zjistit více]({{repoUrl}}).\n",
 	"deleteModal.title": "Smazat callout",
 
-	"deleteModal.bodyInUse":
-		"Tento callout se vyskytuje {{count}}krát v {{files}} souboru(ech).",
+	"deleteModal.bodyInUse": "Tento callout se vyskytuje {{count}}krát v {{files}} souboru(ech).",
 	"deleteModal.notesUntouched":
 		"Tím se smaže jen definice calloutu. Vašich poznámek se to nedotkne, takže stávající callouts jednoduše přejdou na výchozí styl.",
 	"deleteModal.fallbackTarget":
@@ -98,8 +95,7 @@ export const cs: Record<string, string> = {
 	"settings.exportTitle": "Export calloutů",
 	"settings.importDesc":
 		"Importujte svá data Callout Studia z jiného vaultu nebo přeneste callouty z jiného pluginu.",
-	"settings.exportDesc":
-		"Uložte své callouty jako zálohu Callout Studia nebo jako úryvek CSS pro použití jinde.",
+	"settings.exportDesc": "Uložte své callouty jako zálohu Callout Studia nebo jako úryvek CSS pro použití jinde.",
 	"settings.importConflictNotice":
 		"Importováno {{count}} typ(ů) callout; {{overwritten}} stávajících záznamů bylo přepsáno.",
 
@@ -128,13 +124,11 @@ export const cs: Record<string, string> = {
 	"settings.themeCalloutsHeading": "Callouts z vašeho tématu",
 	"settings.themeCalloutsDefaultTheme": "Vaše téma",
 	"settings.themeCalloutsEmpty": "{{theme}} momentálně nestyluje žádné callouty.",
-	"settings.themePreviewAria":
-		'Náhled "{{name}}" — jak jej vykresluje vaše téma',
+	"settings.themePreviewAria": 'Náhled "{{name}}" — jak jej vykresluje vaše téma',
 	"settings.builtInAllThemeStyled":
 		"{{theme}} stylizuje všechny vestavěné callouty, takže je Callout Studio všechny ponechává beze změny. Chcete-li navrhnout vlastní, přidejte callout s jiným ID.",
 	"settings.fallbackCallout": "Výchozí záložní callout",
-	"settings.fallbackCalloutDesc":
-		"Neznámé typy callout zdědí tento styl.",
+	"settings.fallbackCalloutDesc": "Neznámé typy callout zdědí tento styl.",
 
 	"settings.border": "Ohraničení",
 	"settings.borderTop": "Nahoře",
@@ -166,8 +160,7 @@ export const cs: Record<string, string> = {
 	"settings.paletteCountOne": "1 paleta",
 	"settings.editPaletteAria": "Upravit paletu {{name}}",
 	"settings.deletePaletteTitle": "Smazat paletu",
-	"settings.deletePaletteBody":
-		'Callouty používající její barvy nebudou ovlivněny.',
+	"settings.deletePaletteBody": "Callouty používající její barvy nebudou ovlivněny.",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Calloutů, které ji uvádějí ve svých metadatech ("{{key}}"), místo toho převezmou vestavěnou barvu tohoto jména. Vaše poznámky se nezmění.',
 
@@ -199,8 +192,7 @@ export const cs: Record<string, string> = {
 	"commandBuilder.headingLevel": "Úroveň nadpisu",
 	"commandBuilder.headingLevelDesc": "Jakou úroveň nadpisu zapsat.",
 	"commandBuilder.action": "Akce",
-	"commandBuilder.actionDesc":
-		"Zabalení promění výběr v callout; vložení přidá prázdný.",
+	"commandBuilder.actionDesc": "Zabalení promění výběr v callout; vložení přidá prázdný.",
 	"commandBuilder.actionDescHeading":
 		"Zabalení promění řádek s kurzorem v nadpisový callout.\nVložení přidá prázdný na nový řádek.",
 	"commandBuilder.actionDescInline":
@@ -208,26 +200,23 @@ export const cs: Record<string, string> = {
 	"commandBuilder.actionWrap": "Zabalit výběr",
 	"commandBuilder.actionInsert": "Vložit nový",
 	"commandBuilder.foldState": "Stav sbalení",
-	"commandBuilder.foldStateDesc":
-		"Zda lze callout sbalit, a v jakém stavu začíná.",
+	"commandBuilder.foldStateDesc": "Zda lze callout sbalit, a v jakém stavu začíná.",
 	"commandBuilder.foldNone": "Nesbalitelný",
 	"commandBuilder.foldExpanded": "Sbalitelný, otevřený (+)",
 	"commandBuilder.foldCollapsed": "Sbalitelný, zavřený (-)",
 	"commandBuilder.preview": "Název příkazu",
 	"commandBuilder.duplicate": "Takový příkaz už máte.",
-	"commandBuilder.noCallouts":
-		"Zatím neexistují žádné typy callout, ze kterých by šlo příkaz vytvořit.",
+	"commandBuilder.noCallouts": "Zatím neexistují žádné typy callout, ze kterých by šlo příkaz vytvořit.",
 	"commandBuilder.noCalloutChosen": "Nejprve vyberte callout pro tento příkaz.",
 	"commandBuilder.save": "Uložit",
-	"commandBuilder.roleThemeOwned":
-		"Tento callout dodává vaše téma, takže má pouze blokový formát.",
-	"commandBuilder.commandSuspended": "Pozastaveno, dokud tento callout poskytuje vaše téma; má pak jen blokový formát.",
+	"commandBuilder.roleThemeOwned": "Tento callout dodává vaše téma, takže má pouze blokový formát.",
+	"commandBuilder.commandSuspended":
+		"Pozastaveno, dokud tento callout poskytuje vaše téma; má pak jen blokový formát.",
 	"commandBuilder.pausedTag": "Pozastaveno kvůli tématu",
 	"commandBuilder.missingTag": "Chybí callout",
 
 	"settings.resetAll": "Obnovit",
-	"settings.resetAllDesc":
-		"Obnoví všechna nastavení a přizpůsobení na výchozí hodnoty.",
+	"settings.resetAllDesc": "Obnoví všechna nastavení a přizpůsobení na výchozí hodnoty.",
 	"settings.resetAllButton": "Obnovit vše",
 	"notice.resetAllDone": "Vše bylo obnoveno na výchozí hodnoty.",
 	"settings.resetIntro": "Udělejte si chvíli a oceňte vše, co jste s Callout Studio vytvořili.",
@@ -248,48 +237,41 @@ export const cs: Record<string, string> = {
 	"settings.resetItemAutocomplete": "Nastavení automatického doplňování a metadat",
 	"settings.resetItemFallback": "Záložní styl",
 	"settings.resetItemIconLibraries": "Pořadí knihoven ikon a skryté knihovny",
-	"settings.resetAllConfirmAfter": "Nebojte se: před resetem uložíme zálohu vašeho aktuálního nastavení. Kdykoli ji můžete vrátit pomocí Obnovit dřívější verzi v nastavení.\nPokud používáte synchronizační službu, reset se může přenést i na vaše další zařízení.",
+	"settings.resetAllConfirmAfter":
+		"Nebojte se: před resetem uložíme zálohu vašeho aktuálního nastavení. Kdykoli ji můžete vrátit pomocí Obnovit dřívější verzi v nastavení.\nPokud používáte synchronizační službu, reset se může přenést i na vaše další zařízení.",
 	"settings.resetNothing": "Není co obnovovat: vše je již ve výchozím stavu.",
 
-	"notice.customCommandMissingCallout":
-		"Typ callout tohoto příkazu již neexistuje.",
+	"notice.customCommandMissingCallout": "Typ callout tohoto příkazu již neexistuje.",
 	"notice.importedJSON": "Importováno {{count}} typ(ů) callout z JSON.",
 	"notice.importedSettings": "Importováno nastavení doplňku.",
-	"notice.importedCalloutManager":
-		"Importováno z Callout Manager: {{created}} vytvořeno, {{updated}} aktualizováno.",
-	"notice.importedAdmonition":
-		"Importováno z Admonition: {{created}} vytvořeno, {{updated}} " +
-		"aktualizováno.",
-	"notice.noNewJSON":
-		"Žádné nové typy callout nebyly importovány (ID mohou již existovat).",
+	"notice.importedCalloutManager": "Importováno z Callout Manager: {{created}} vytvořeno, {{updated}} aktualizováno.",
+	"notice.importedAdmonition": "Importováno z Admonition: {{created}} vytvořeno, {{updated}} " + "aktualizováno.",
+	"notice.noNewJSON": "Žádné nové typy callout nebyly importovány (ID mohou již existovat).",
 	"notice.iconDownloadFailed":
 		'Ikonu Material "{{name}}" nelze stáhnout. Může být nedostupná pro tento styl/tloušťku nebo jste offline.',
-	"notice.vaultScanFailed": "Počet použití calloutu nebylo možné zjistit, protože nebylo možné přečíst {{count}} poznámku/poznámek. Zkontrolujte ukládání a synchronizaci a zkuste to znovu.",
+	"notice.vaultScanFailed":
+		"Počet použití calloutu nebylo možné zjistit, protože nebylo možné přečíst {{count}} poznámku/poznámek. Zkontrolujte ukládání a synchronizaci a zkuste to znovu.",
 
 	"notice.externalCssRetired":
 		"Možnost osobního CSS stylování byla odstraněna. Tyto callouty nyní používají svůj uložený design v Callout Studio, pokud je nestyluje vaše téma. Vaše poznámky ani osobní CSS snippety nebyly změněny.",
 	"notice.vaultRewritePartial":
 		"{{count}} poznámku(y) se nepodařilo aktualizovat a zůstaly beze změny. Podrobnosti najdete v konzoli pro vývojáře.",
-	"notice.calloutDeleteIncomplete": "Některé poznámky se nepodařilo převést. Typ calloutu byl zachován. Dokončené převody jsou uloženy; vyřešte problém se souborem a poté akci spusťte znovu, abyste ji dokončili.",
+	"notice.calloutDeleteIncomplete":
+		"Některé poznámky se nepodařilo převést. Typ calloutu byl zachován. Dokončené převody jsou uloženy; vyřešte problém se souborem a poté akci spusťte znovu, abyste ji dokončili.",
 	"notice.nothingToWrap": "Není co zabalit.",
 	"notice.cursorNotInsideCallout": "Kurzor není uvnitř callout.",
 	"notice.headingAlreadyCallout": "Tento nadpis už je callout.",
-	"notice.unwrapLeftAsIs":
-		"Tento callout se nepodařilo bezpečně odebrat, proto zůstal beze změny.",
-	"notice.autocompleteTargetMoved":
-		"Nic nebylo vloženo — řádek se změnil, zatímco byl editor otevřený.",
+	"notice.unwrapLeftAsIs": "Tento callout se nepodařilo bezpečně odebrat, proto zůstal beze změny.",
+	"notice.autocompleteTargetMoved": "Nic nebylo vloženo — řádek se změnil, zatímco byl editor otevřený.",
 	"notice.autocompleteAlwaysEnabled": "Automatické doplňování je nyní základní funkce a je vždy zapnuté.",
-	"notice.openHotkeysFailed":
-		"Nelze otevřít nastavení klávesových zkratek Obsidian.",
-	"notice.filterHotkeysFailed":
-		"Klávesové zkratky Obsidian otevřeny, ale filtr Callout Studio nelze použít.",
+	"notice.openHotkeysFailed": "Nelze otevřít nastavení klávesových zkratek Obsidian.",
+	"notice.filterHotkeysFailed": "Klávesové zkratky Obsidian otevřeny, ale filtr Callout Studio nelze použít.",
 
 	"editor.editCallout": "Upravit callout",
 	"editor.newCallout": "Nový callout",
 	"editor.displayName": "Zobrazovaný název",
 	"editor.displayNameDesc": "Čitelný popis zobrazený v rozhraní",
-	"editor.displayNameBuiltIn":
-		"Zobrazovaný název vestavěných callouts nelze změnit",
+	"editor.displayNameBuiltIn": "Zobrazovaný název vestavěných callouts nelze změnit",
 	"editor.displayNamePlaceholder": "Můj callout",
 	"editor.calloutIds": "ID callout",
 	"editor.calloutIdsDesc":
@@ -315,41 +297,35 @@ export const cs: Record<string, string> = {
 	"editor.horizontalOffset": "Horizontální posun",
 	"editor.verticalOffset": "Vertikální posun",
 	"editor.colors": "Barvy",
-	"editor.colorsDesc":
-		"Nastavuje barvy ohraničení, pozadí a textu tohoto calloutu.",
+	"editor.colorsDesc": "Nastavuje barvy ohraničení, pozadí a textu tohoto calloutu.",
 	"editor.resetColors": "Obnovit barvy na výchozí",
 	"editor.paletteDeleted": "Smazaná barva",
 	"editor.paletteGroupObsidian": "Callouts Obsidian",
 	"editor.paletteGroupPresets": "Barevné předvolby",
 	"editor.paletteGroupCustom": "Vlastní",
-	"editor.contrastWarning":
-		"Nízký kontrast vůči pozadí — může být obtížně čitelné",
+	"editor.contrastWarning": "Nízký kontrast vůči pozadí — může být obtížně čitelné",
 	"editor.foldable": "Sbalitelný",
-	"editor.foldableDesc":
-		"Vyberte, zda lze callout sbalit, a jaký výchozí stav se použije v celém vaultu.",
+	"editor.foldableDesc": "Vyberte, zda lze callout sbalit, a jaký výchozí stav se použije v celém vaultu.",
 	"editor.foldOff": "Vypnuto",
 	"editor.foldOpen": "Ve výchozím stavu otevřený",
 	"editor.foldClosed": "Ve výchozím stavu zavřený",
 	"editor.cancel": "Zrušit",
 	"editor.saveChanges": "Uložit změny",
-	"editor.saveFailed": "Ukládání se nepodařilo dokončit. Pokud je tento editor stále otevřený, nechte ho otevřený a po kontrole úložiště a synchronizace to zkuste znovu. Některá nastavení nebo změny poznámek už mohly být uloženy.",
+	"editor.saveFailed":
+		"Ukládání se nepodařilo dokončit. Pokud je tento editor stále otevřený, nechte ho otevřený a po kontrole úložiště a synchronizace to zkuste znovu. Některá nastavení nebo změny poznámek už mohly být uloženy.",
 	"editor.createCallout": "Vytvořit callout",
-	"editor.nameRequired":
-		"Před vytvořením callout je vyžadován zobrazovaný název.",
+	"editor.nameRequired": "Před vytvořením callout je vyžadován zobrazovaný název.",
 	"editor.noChangesToSave": "Nebyly provedeny žádné změny.",
 	"editor.idEmpty": "Je vyžadováno alespoň jedno ID",
 	"editor.idAlreadyHere": "Toto ID už existuje",
 	"editor.idTooLong": "ID může mít nejvýše {{max}} znaků",
 	"editor.idExists": "Callout s tímto ID již existuje",
 	"editor.idConflict": "Toto ID je v konfliktu s existujícím callout",
-	"editor.idDashConflict":
-		"Obsidian zapisuje mezery jako pomlčky, takže toto ID koliduje s „{{other}}“",
+	"editor.idDashConflict": "Obsidian zapisuje mezery jako pomlčky, takže toto ID koliduje s „{{other}}“",
 	"editor.idOwnedBy": "„{{id}}“ je ID callout {{name}}. Můžete jej {{link}}.",
 	"editor.idMoveHere": "přesunout sem",
-	"editor.idOwnedByMain":
-		"„{{id}}“ je hlavní ID callout {{name}}. Chcete-li ho použít zde, nejprve smažte {{name}}.",
-	"editor.idBuiltInStock":
-		"„{{id}}“ je jedno z vlastních ID Obsidianu pro {{name}}.",
+	"editor.idOwnedByMain": "„{{id}}“ je hlavní ID callout {{name}}. Chcete-li ho použít zde, nejprve smažte {{name}}.",
+	"editor.idBuiltInStock": "„{{id}}“ je jedno z vlastních ID Obsidianu pro {{name}}.",
 	"editor.idMoving": "Při uložení se „{{id}}“ přesune sem z {{name}}.",
 	"editor.idMovingNotes": "Vaše poznámky se nezmění. Převezmou styl tohoto calloutu.",
 	"editor.idFromTheme":
@@ -361,34 +337,27 @@ export const cs: Record<string, string> = {
 	"editor.idThemePattern":
 		"Upozornění: vaše téma stylizuje každý callout odpovídající {{pattern}}, takže může přepsat vzhled tohoto.",
 	"editor.untitledCallout": "Callout bez názvu",
-	"editor.loremIpsum":
-		"Mezi stromy vane jemný vánek. Teplé sluneční světlo zalévá tichou stezku a oživuje krajinu.",
-	"editor.loremIpsumShort":
-		"Mezi stromy vane jemný vánek.",
-	"editor.sampleInlineText":
-		"Zde je vložená pilulka [!{id}]{{title}} uvnitř odstavce.",
+	"editor.loremIpsum": "Mezi stromy vane jemný vánek. Teplé sluneční světlo zalévá tichou stezku a oživuje krajinu.",
+	"editor.loremIpsumShort": "Mezi stromy vane jemný vánek.",
+	"editor.sampleInlineText": "Zde je vložená pilulka [!{id}]{{title}} uvnitř odstavce.",
 	"editor.previewReadOnly": "Živý náhled nelze upravovat",
 	"noteChanges.title": "Aktualizovat vaše poznámky?",
 	"noteChanges.leave": "Ponechat je, jak jsou",
-	"noteChanges.leaveDesc":
-		"Ponechají si [!{{id}}] a vrátí se k výchozímu stylu.",
+	"noteChanges.leaveDesc": "Ponechají si [!{{id}}] a vrátí se k výchozímu stylu.",
 	"noteChanges.changeTo": "Změnit je na",
 	"noteChanges.renameChange": "Změnit je na „{{id}}“",
 	"noteChanges.titlesChange": "Změnit je na „{{new}}“",
 	"noteChanges.titlesLeaveDesc": "Dál budou znít „{{old}}“.",
 	"noteChanges.foldChange": "Nastavit je na „{{state}}“",
-	"noteChanges.foldLeaveDesc":
-		"Nové nastavení používají jen callouty, které vložíte od teď.",
+	"noteChanges.foldLeaveDesc": "Nové nastavení používají jen callouty, které vložíte od teď.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": '{{name}} — poskytnuto vaším tématem',
+	"themePreview.title": "{{name}} — poskytnuto vaším tématem",
 	"themePreview.summary":
 		"Poskytuje téma {{theme}} (pouze pro čtení). Barvu, ikonu ani ID zde nelze změnit a formáty Nadpis/Vložený nejsou k dispozici. Chcete-li jej přizpůsobit, vytvořte nový callout.",
 	"themePreview.previewTitle": "Jak vypadá nyní",
-	"themePreview.blockSample":
-		"> [!{{id}}] {{name}}\n" +
-		"> Takto vypadá obsah tohoto callout.\n",
+	"themePreview.blockSample": "> [!{{id}}] {{name}}\n" + "> Takto vypadá obsah tohoto callout.\n",
 	"editor.themePreviewClose": "Rozumím",
 
 	// Palette editor modal
@@ -399,8 +368,7 @@ export const cs: Record<string, string> = {
 	"palette.namePlaceholder": "Moje paleta",
 	"palette.nameExists": "Paleta s tímto názvem již existuje",
 	"palette.saveBlockedName": "Paleta s tímto názvem již existuje. Pro uložení zvolte jiný název.",
-	"palette.metadataNameExists":
-		'Jiná paleta je již v metadatech calloutu zapsána jako "{{key}}". Zvolte jiný název.',
+	"palette.metadataNameExists": 'Jiná paleta je již v metadatech calloutu zapsána jako "{{key}}". Zvolte jiný název.',
 	"palette.metadataNameShared":
 		"V metadatech calloutu: {{key}}. Toto slovo má i jiná uložená paleta, takže na něj odpovídá jen jedna z nich.",
 	"palette.renameNotesChange":
@@ -415,8 +383,10 @@ export const cs: Record<string, string> = {
 	"palette.advancedColors": "Barvy",
 	"palette.lightModeColors": "Barvy světlého režimu",
 	"palette.darkModeColors": "Barvy tmavého režimu",
-	"palette.modeColorsHintLight": "Tyto změny platí jen pro světlý režim. Tmavý režim si ponechává vlastní barvy.\nChcete-li je upravit, stiskněte nahoře tlačítko s měsícem.",
-	"palette.modeColorsHintDark": "Tyto změny platí jen pro tmavý režim. Světlý režim si ponechává vlastní barvy.\nChcete-li je upravit, stiskněte nahoře tlačítko se sluncem.",
+	"palette.modeColorsHintLight":
+		"Tyto změny platí jen pro světlý režim. Tmavý režim si ponechává vlastní barvy.\nChcete-li je upravit, stiskněte nahoře tlačítko s měsícem.",
+	"palette.modeColorsHintDark":
+		"Tyto změny platí jen pro tmavý režim. Světlý režim si ponechává vlastní barvy.\nChcete-li je upravit, stiskněte nahoře tlačítko se sluncem.",
 	"palette.showLightMode": "Zobrazit světlý režim",
 	"palette.showDarkMode": "Zobrazit tmavý režim",
 	"palette.accentColor": "Zvýrazňovací barva",
@@ -508,12 +478,10 @@ export const cs: Record<string, string> = {
 	"iconPicker.searchSimpleIcons": "Hledat v Simple Icons",
 	"iconPicker.custom": "Vlastní ikony",
 	"iconPicker.searchCustom": "Hledat ve vlastních ikonách",
-	"iconPicker.customTooLarge":
-		"{{name}} je příliš velká. Vlastní ikony mohou mít nejvýše 5 MB.",
+	"iconPicker.customTooLarge": "{{name}} je příliš velká. Vlastní ikony mohou mít nejvýše 5 MB.",
 	"iconPicker.customUnsupported":
 		"{{name}} není podporovaný soubor vlastní ikony. Použijte SVG, PNG, JPEG nebo WebP.",
-	"iconPicker.customInvalidSvg":
-		"{{name}} nelze načíst jako bezpečný SVG, proto nebyl přidán.",
+	"iconPicker.customInvalidSvg": "{{name}} nelze načíst jako bezpečný SVG, proto nebyl přidán.",
 	"iconPicker.customDecodeFailed": "{{name}} nelze načíst jako vlastní ikonu.",
 	"iconPicker.customDuplicate":
 		"{{name}} už je mezi vašimi vlastními ikonami. Přejmenujte soubor nebo smažte stávající ikonu.",
@@ -668,12 +636,10 @@ export const cs: Record<string, string> = {
 
 	// Downloadable icon packs
 	"iconPack.downloadTitle": "{{name}} ještě nebylo staženo",
-	"iconPack.downloadDetail":
-		"{{count}} ikon · {{size}} · jednorázové stažení",
+	"iconPack.downloadDetail": "{{count}} ikon · {{size}} · jednorázové stažení",
 	"iconPack.download": "Stáhnout",
 	"iconPack.downloading": "Stahování {{name}}…",
-	"iconPack.downloadFailed":
-		"{{name}} nelze stáhnout. Zkontrolujte připojení a zkuste to znovu.",
+	"iconPack.downloadFailed": "{{name}} nelze stáhnout. Zkontrolujte připojení a zkuste to znovu.",
 	"iconPack.retry": "Zkusit znovu",
 	"iconPack.faBrandsNotice":
 		"Ikony značek jsou ochranné známky příslušných vlastníků. Jejich zahrnutí neznamená schválení. Používejte je pouze k zastupování společnosti, produktu nebo služby, které představují.",
@@ -734,7 +700,8 @@ export const cs: Record<string, string> = {
 	"contextMenu.setFoldNone": "Nastavit callout jako nesbalitelný",
 	"contextMenu.cutSection": "Vyjmout sekci nadpisu",
 	"notice.clipboardWriteFailed": "Nepodařilo se zkopírovat do schránky. Poznámka zůstala beze změny.",
-	"notice.sectionChangedAfterCopy": "Sekce byla zkopírována, ale poznámka se změnila dříve, než ji bylo možné vyjmout. Nic nebylo odebráno.",
+	"notice.sectionChangedAfterCopy":
+		"Sekce byla zkopírována, ale poznámka se změnila dříve, než ji bylo možné vyjmout. Nic nebylo odebráno.",
 	"contextMenu.copySection": "Kopírovat sekci nadpisu",
 	"contextMenu.deleteSection": "Smazat sekci nadpisu",
 	"heading.toggleFold": "Přepnout sbalení",
@@ -763,15 +730,14 @@ export const cs: Record<string, string> = {
 	"settings.metadataWordAlreadyHere": "Toto slovo už v seznamu je",
 	"settings.metadataWordTooLong": "Slovo může mít nejvýše {{max}} znaků",
 	"settings.maxMetadataWords": "Nejvýše {{max}} slov. Smažte jedno, abyste mohli přidat další.",
-	"settings.buildFailed": "Callout Studio se nepodařilo vykreslit nastavení; restartujte Obsidian a pokud se to bude opakovat, nahlaste to.",
-	"settings.globalSettingsRegularDesc":
-		"Ohraničení, poloměr, měřítko písma a zarovnání.",
-	"settings.globalSettingsHeadingDesc":
-		"Ohraničení, tvar a svislé rozestupy.",
-	"settings.globalSettingsInlineDesc":
-		"Ohraničení a tvar.",
+	"settings.buildFailed":
+		"Callout Studio se nepodařilo vykreslit nastavení; restartujte Obsidian a pokud se to bude opakovat, nahlaste to.",
+	"settings.globalSettingsRegularDesc": "Ohraničení, poloměr, měřítko písma a zarovnání.",
+	"settings.globalSettingsHeadingDesc": "Ohraničení, tvar a svislé rozestupy.",
+	"settings.globalSettingsInlineDesc": "Ohraničení a tvar.",
 	"settings.themeCalloutStyles": "Používat styly callout z vašeho tématu",
-	"settings.themeCalloutStylesDesc": "Když je zapnuto, callouty, které stylizuje vaše téma, si zachovají jeho vzhled a objeví se jen jako blokové callouty. Když je vypnuto, Callout Studio vykreslí všechny callouty.",
+	"settings.themeCalloutStylesDesc":
+		"Když je zapnuto, callouty, které stylizuje vaše téma, si zachovají jeho vzhled a objeví se jen jako blokové callouty. Když je vypnuto, Callout Studio vykreslí všechny callouty.",
 	"settings.calloutTypeRegular": "Styl blokového calloutu",
 	"settings.calloutTypeHeading": "Styl callout nadpisu",
 	"settings.calloutTypeInline": "Styl vloženého calloutu",
@@ -787,8 +753,7 @@ export const cs: Record<string, string> = {
 	"menuItem.createOrEdit": "Vytvořit nebo upravit callout",
 	"menuItem.openSettings": "Otevřít nastavení",
 	"menuItem.copyMarkdown": "Kopírovat Markdown",
-	"menuItem.foldDefaults":
-		"Výchozí stav sbalení (otevřeno / zavřeno / žádné)",
+	"menuItem.foldDefaults": "Výchozí stav sbalení (otevřeno / zavřeno / žádné)",
 	"menuItem.cutSection": "Vyjmout sekci",
 	"menuItem.copySection": "Kopírovat sekci",
 	"menuItem.deleteSection": "Smazat sekci",
@@ -804,23 +769,16 @@ export const cs: Record<string, string> = {
 	"confirm.titleDeleteLibrary": "Smazat knihovnu ikon",
 	"confirm.titleResetLibraries": "Obnovit knihovny ikon",
 
-	"vault.filesUpdated":
-		"Aktualizováno {{count}} odkazů na callout v souborech vaultu.",
-	"vault.idsUpdated":
-		"Aktualizováno {{count}} ID callout v souborech vaultu: {{oldIds}} → {{newId}}",
-	"vault.titlesUpdated":
-		"Aktualizováno {{count}} nadpisů callout v souborech vaultu: {{oldTitle}} → {{newTitle}}",
-	"vault.foldUpdated":
-		"Aktualizována značka sbalení u {{count}} calloutů v souborech vaultu.",
+	"vault.filesUpdated": "Aktualizováno {{count}} odkazů na callout v souborech vaultu.",
+	"vault.idsUpdated": "Aktualizováno {{count}} ID callout v souborech vaultu: {{oldIds}} → {{newId}}",
+	"vault.titlesUpdated": "Aktualizováno {{count}} nadpisů callout v souborech vaultu: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated": "Aktualizována značka sbalení u {{count}} calloutů v souborech vaultu.",
 	"vault.confirmReplace": "Nahradit",
 	"vault.replacePromptInUse":
 		'"{{name}}" se používá {{count}}krát v {{files}} souboru(ech). Vyberte callout, kterým ho chcete nahradit:',
-	"vault.replacePromptUnused":
-		'Vyberte callout, kterým chcete nahradit "{{name}}":',
-	"vault.noReplacementAvailable":
-		"Nejsou k dispozici žádné jiné callouts pro nahrazení.",
-	"vault.convertedToPlainText":
-		"{{blocks}} bloků callout v {{files}} souboru(ech) převedeno na prostý text.",
+	"vault.replacePromptUnused": 'Vyberte callout, kterým chcete nahradit "{{name}}":',
+	"vault.noReplacementAvailable": "Nejsou k dispozici žádné jiné callouts pro nahrazení.",
+	"vault.convertedToPlainText": "{{blocks}} bloků callout v {{files}} souboru(ech) převedeno na prostý text.",
 	"vault.resetNotesFailed":
 		"Některé poznámky se nepodařilo aktualizovat, takže callout nebyl obnoven. Pro dokončení znovu zvolte Obnovit výchozí.",
 
@@ -837,7 +795,8 @@ export const cs: Record<string, string> = {
 	"quickInsert.noResults": "Nebyly nalezeny žádné callouty",
 	"quickInsert.noBuiltInCallouts": "Momentálně nejsou k dispozici žádné vestavěné callouty.",
 	"quickInsert.noThemeCallouts": "Momentálně nejsou k dispozici žádné callouty specifické pro téma.",
-	"quickInsert.targetMoved": "Poznámka, ze které jste otevřeli Rychlé vložení, se změnila nebo byla zavřena. Otevřete Rychlé vložení znovu v poznámce, kterou chcete upravit.",
+	"quickInsert.targetMoved":
+		"Poznámka, ze které jste otevřeli Rychlé vložení, se změnila nebo byla zavřena. Otevřete Rychlé vložení znovu v poznámce, kterou chcete upravit.",
 	"quickInsert.targetMovedHint": "Původní poznámka již není pro toto vložení k dispozici.",
 	"quickInsert.noUserCallouts":
 		"Zatím jste nevytvořili žádné vlastní callouty. Spusťte „Callout Studio: Vytvořit nový typ callout“ z palety příkazů.",
@@ -852,14 +811,15 @@ export const cs: Record<string, string> = {
 	"vaultStats.roleInline": "Vložený v textu",
 
 	"portable.reviewTitle": "Zkontrolovat převod",
-	"portable.helpIntro": "Vyberte náhrady, které chcete použít. Kliknutím na tužku nebo text náhrady ji upravíte; uložte ji klávesou Enter nebo kliknutím mimo pole. Ikonou resetu zahoďte rozpracovanou změnu nebo obnovte výchozí náhradu. Poznámky se změní až po výběru možnosti Převést vybrané a potvrzení. Odkazy na nadpisy se aktualizují spolu s vybranými nadpisy.",
+	"portable.helpIntro":
+		"Vyberte náhrady, které chcete použít. Kliknutím na tužku nebo text náhrady ji upravíte; uložte ji klávesou Enter nebo kliknutím mimo pole. Ikonou resetu zahoďte rozpracovanou změnu nebo obnovte výchozí náhradu. Poznámky se změní až po výběru možnosti Převést vybrané a potvrzení. Odkazy na nadpisy se aktualizují spolu s vybranými nadpisy.",
 	"portable.help": "O převodu",
 	"portable.roleLink": "Odkaz na nadpis",
 	"portable.convertSelected": "Převést vybrané",
 	"portable.selectionSummary": "Vybráno {{selected}} z {{total}} náhrad · {{links}} odkazů na nadpisy k aktualizaci",
-	"portable.selectionSummaryNoLinks":
-		"Vybráno {{selected}} z {{total}} náhrad",
-	"portable.selectionConflict": "Tato volba by způsobila nejednoznačnost odkazů na nadpisy. Váš předchozí výběr byl zachován.",
+	"portable.selectionSummaryNoLinks": "Vybráno {{selected}} z {{total}} náhrad",
+	"portable.selectionConflict":
+		"Tato volba by způsobila nejednoznačnost odkazů na nadpisy. Váš předchozí výběr byl zachován.",
 	"portable.selectAll": "Vybrat vše",
 	"portable.selectNone": "Zrušit výběr",
 	"portable.relatedLinksHint": "Odkazy a vložené obsahy následují vybrané nadpisy a převádějí se spolu s nimi.",
@@ -870,14 +830,19 @@ export const cs: Record<string, string> = {
 	"portable.retry": "Zkusit znovu",
 	"portable.blockedAmbiguous": "Tento nadpis je přeskočen, protože cíl odkazu na něj je nejednoznačný.",
 	"portable.blockedTarget": "Tento nadpis je přeskočen, protože cíl odkazu na něj nelze bezpečně zachovat.",
-	"portable.recovery": "Zbývají některé změny. Před restartováním nebo vypnutím pluginu dokončete tento převod a aktualizace odkazů na nadpisy; čekající plán se uchovává pouze v paměti.",
-	"portable.recoveryChanged": "Poznámky se po zastavení převodu změnily. Čekající aktualizace odkazů jsou zachovány; každá poznámka se před zápisem znovu zkontroluje.",
+	"portable.recovery":
+		"Zbývají některé změny. Před restartováním nebo vypnutím pluginu dokončete tento převod a aktualizace odkazů na nadpisy; čekající plán se uchovává pouze v paměti.",
+	"portable.recoveryChanged":
+		"Poznámky se po zastavení převodu změnily. Čekající aktualizace odkazů jsou zachovány; každá poznámka se před zápisem znovu zkontroluje.",
 	"portable.finishConversion": "Dokončit převod",
-	"portable.recoveryUnavailable": "Některé čekající aktualizace odkazů se nepodařilo bezpečně obnovit. Před zahájením nového převodu zkontrolujte dotčené poznámky.",
+	"portable.recoveryUnavailable":
+		"Některé čekající aktualizace odkazů se nepodařilo bezpečně obnovit. Před zahájením nového převodu zkontrolujte dotčené poznámky.",
 	"portable.title": "Převést na standardní Markdown",
-	"portable.settingDesc": "Nahraďte callouty v nadpisech a v textu v celém trezoru běžným textem, připraveným k použití bez Callout Studio.",
+	"portable.settingDesc":
+		"Nahraďte callouty v nadpisech a v textu v celém trezoru běžným textem, připraveným k použití bez Callout Studio.",
 	"portable.review": "Zkontrolovat převod",
-	"portable.intro": "Pokud plánujete přestat používat Callout Studio nebo přesunout trezor do aplikace, která jej nepodporuje, převeďte callouty v nadpisech a v textu na standardní Markdown.",
+	"portable.intro":
+		"Pokud plánujete přestat používat Callout Studio nebo přesunout trezor do aplikace, která jej nepodporuje, převeďte callouty v nadpisech a v textu na standardní Markdown.",
 	"portable.before": "Před",
 	"portable.after": "Po",
 	"portable.replacement": "Náhrada",
@@ -885,24 +850,30 @@ export const cs: Record<string, string> = {
 	"portable.type": "typ",
 	"portable.text": "Text",
 	"portable.headingText": "Nadpis",
-	"portable.backup": "Doporučujeme před převodem trezor zálohovat. Převod upraví původní poznámky a v Callout Studio jej nelze vrátit zpět.",
+	"portable.backup":
+		"Doporučujeme před převodem trezor zálohovat. Převod upraví původní poznámky a v Callout Studio jej nelze vrátit zpět.",
 	"portable.scanning": "Čtení poznámek Markdown…",
 	"portable.progress": "Čtení poznámek: {{done}} z {{total}}",
 	"portable.empty": "Nebyly nalezeny žádné vhodné callouty v nadpisech ani v textu. Nic se nezmění.",
 	"portable.confirmTitle": "Trvale převést tento trezor?",
 	"portable.confirmSubtitle": "Automatická záloha se nevytváří",
-	"portable.confirmBody": "Převést {{count}} výskytů a aktualizovat {{links}} odkazů na nadpisy v {{files}} poznámkách?\nTím se změní původní soubory a v Callout Studio to nelze vrátit zpět. Automatická záloha se nevytváří. Nejprve trezor zálohujte, uložte otevřené poznámky a až do dokončení převodu pozastavte úpravy i synchronizaci.\nPokud se soubor změní nebo zápis selže, převod se zastaví. Již převedené poznámky zůstanou změněné.",
+	"portable.confirmBody":
+		"Převést {{count}} výskytů a aktualizovat {{links}} odkazů na nadpisy v {{files}} poznámkách?\nTím se změní původní soubory a v Callout Studio to nelze vrátit zpět. Automatická záloha se nevytváří. Nejprve trezor zálohujte, uložte otevřené poznámky a až do dokončení převodu pozastavte úpravy i synchronizaci.\nPokud se soubor změní nebo zápis selže, převod se zastaví. Již převedené poznámky zůstanou změněné.",
 	"portable.confirmAction": "Trvale převést",
 	"portable.converting": "Převádějí se vybrané změny… Zavření tohoto panelu převod nezastaví.",
-	"portable.complete": "Převedeno {{count}} výskytů a aktualizováno {{links}} odkazů na nadpisy v {{files}} poznámkách.",
-	"portable.stopped": "Převod byl zastaven. {{count}} výskytů a {{links}} odkazů na nadpisy v {{files}} poznámkách již bylo změněno; tyto úpravy zůstávají.",
+	"portable.complete":
+		"Převedeno {{count}} výskytů a aktualizováno {{links}} odkazů na nadpisy v {{files}} poznámkách.",
+	"portable.stopped":
+		"Převod byl zastaven. {{count}} výskytů a {{links}} odkazů na nadpisy v {{files}} poznámkách již bylo změněno; tyto úpravy zůstávají.",
 	"portable.errorEditor": "Uložte otevřené poznámky, aby se náhled automaticky aktualizoval.",
 	"portable.errorChanged": "Poznámky se změnily. Před převodem zkontrolujte aktualizované změny.",
 	"portable.errorBusy": "Probíhá jiný převod. Počkejte na jeho dokončení.",
-	"portable.error": "Trezor se nepodařilo bezpečně přečíst nebo aktualizovat. Zkontrolujte přístup k souborům a zkuste to znovu.",
+	"portable.error":
+		"Trezor se nepodařilo bezpečně přečíst nebo aktualizovat. Zkontrolujte přístup k souborům a zkuste to znovu.",
 	"portable.blockedConverting": "Převod již probíhá. Počkejte na jeho dokončení.",
 	"portable.blockedUpdating": "Kontrola se stále aktualizuje. Před převodem počkejte na její dokončení.",
-	"portable.blockedEditing": "Nejprve dokončete úpravu náhrady: stisknutím Enter ji uložíte, stisknutím Esc ji zahodíte.",
+	"portable.blockedEditing":
+		"Nejprve dokončete úpravu náhrady: stisknutím Enter ji uložíte, stisknutím Esc ji zahodíte.",
 	"portable.blockedNothingSelected": "Vyberte alespoň jednu náhradu k převodu.",
 	"settings.maintenance": "Nebezpečná zóna",
 	"portable.customize": "Vlastní náhrada…",
@@ -910,9 +881,11 @@ export const cs: Record<string, string> = {
 	"portable.restoreDefault": "Obnovit výchozí náhradu",
 	"portable.cancelEdit": "Zahodit změny",
 	"portable.customInvalid": "Ponechte náhradu na jednom řádku, aniž byste změnili okolní strukturu Markdownu.",
-	"portable.customUnsafe": "Tato náhrada by způsobila nejednoznačnost nadpisu nebo odkazů na něj. Zvolte jiný nadpis.",
+	"portable.customUnsafe":
+		"Tato náhrada by způsobila nejednoznačnost nadpisu nebo odkazů na něj. Zvolte jiný nadpis.",
 	"portable.customStale": "Kontrola se změnila. Znovu otevřete editor náhrad.",
-	"portable.customDiscarded": "Bylo odstraněno {{count}} vlastních náhrad, protože se jejich zdrojový text změnil nebo jej nebylo možné bezpečně najít.",
+	"portable.customDiscarded":
+		"Bylo odstraněno {{count}} vlastních náhrad, protože se jejich zdrojový text změnil nebo jej nebylo možné bezpečně najít.",
 	"portable.customBadge": "Vlastní",
 
 	"usage.title": "Najít callouty",
@@ -941,34 +914,31 @@ export const cs: Record<string, string> = {
 	"usage.closeSettings": "Zavřete nastavení, abyste výsledky pro callouty viděli v postranním panelu.",
 
 	"import.title": "Problémy s importem",
-	"import.reportLeadIn":
-		"Než budete pokračovat, zkontrolujte tyto problémy při importu:",
-	"import.reportLeadInFatal":
-		"Tato data se nepodařilo importovat:",
+	"import.reportLeadIn": "Než budete pokračovat, zkontrolujte tyto problémy při importu:",
+	"import.reportLeadInFatal": "Tato data se nepodařilo importovat:",
 	"import.entryHeading": "Položka {{index}} — {{label}}",
-	"import.summary":
-		"{{valid}} z {{total}} položek je platných · nalezeno {{issues}} problémů.",
+	"import.summary": "{{valid}} z {{total}} položek je platných · nalezeno {{issues}} problémů.",
 	"import.btnCancel": "Zrušit",
 	"import.btnImportValid": "Importovat pouze platné ({{count}})",
-	"import.nothingValid": "Žádná z položek není platná, takže není co importovat. Zrušte import, opravte zde uvedené problémy a importujte znovu.",
-	"import.err.notRecognized":
-		"Nerozpoznaný soubor: očekávalo se pole definic callout nebo export z Callout Studia.",
-	"import.warn.settingsIgnored":
-		"Blok nastavení nebyl platným objektem a byl ignorován.",
-	"import.warn.invalidGradient":
-		"Přechod pozadí byl neplatný a byl ignorován.",
+	"import.nothingValid":
+		"Žádná z položek není platná, takže není co importovat. Zrušte import, opravte zde uvedené problémy a importujte znovu.",
+	"import.err.notRecognized": "Nerozpoznaný soubor: očekávalo se pole definic callout nebo export z Callout Studia.",
+	"import.warn.settingsIgnored": "Blok nastavení nebyl platným objektem a byl ignorován.",
+	"import.warn.invalidGradient": "Přechod pozadí byl neplatný a byl ignorován.",
 	"import.err.parseFailed": "Soubor není platný JSON a nelze ho analyzovat.",
-	"import.err.tooLarge": "Tento import překračuje limit velikosti 16 MiB. Rozdělte ho na menší soubory a zkuste to znovu.",
-	"import.err.tooComplex": "Tento import je příliš složitý: v každém seznamu nebo objektu použijte nejvýše 1 000 položek, celkem 50 000 hodnot a maximálně 32 úrovní vnoření.",
-	"import.err.imageBudget": "Celá kolekce obrázků překračuje limity velikosti nebo složitosti. Před importem odeberte velké obrázky nebo je zjednodušte.",
+	"import.err.tooLarge":
+		"Tento import překračuje limit velikosti 16 MiB. Rozdělte ho na menší soubory a zkuste to znovu.",
+	"import.err.tooComplex":
+		"Tento import je příliš složitý: v každém seznamu nebo objektu použijte nejvýše 1 000 položek, celkem 50 000 hodnot a maximálně 32 úrovní vnoření.",
+	"import.err.imageBudget":
+		"Celá kolekce obrázků překračuje limity velikosti nebo složitosti. Před importem odeberte velké obrázky nebo je zjednodušte.",
 	"import.err.processingFailed": "Import se nepodařilo dokončit. Zkontrolujte data a zkuste to znovu.",
-	"import.reportTruncated": "Zobrazuje se prvních {{shown}} problémů z celkových {{total}}. Dlouhé hodnoty jsou v tomto přehledu zkrácené.",
+	"import.reportTruncated":
+		"Zobrazuje se prvních {{shown}} problémů z celkových {{total}}. Dlouhé hodnoty jsou v tomto přehledu zkrácené.",
 	"import.err.entryNotObject": "Položka musí být objekt.",
-	"import.err.requiredMissing":
-		'Povinné pole "{{field}}" chybí nebo má nesprávný typ.',
+	"import.err.requiredMissing": 'Povinné pole "{{field}}" chybí nebo má nesprávný typ.',
 	"import.err.idEmpty": "ID nesmí být prázdné.",
-	"import.err.idTooLong":
-		'ID "{{value}}" má {{length}} znaků; maximum je {{max}}.',
+	"import.err.idTooLong": 'ID "{{value}}" má {{length}} znaků; maximum je {{max}}.',
 	"import.err.idBadChar":
 		'ID "{{value}}" obsahuje neplatné znaky ("|", "[", "]", tabulátory a konce řádků nejsou povoleny).',
 	"import.err.idMetadata":
@@ -976,55 +946,40 @@ export const cs: Record<string, string> = {
 	"import.err.idReserved":
 		'ID "{{value}}" je vyhrazeno pro Callout Studio a jeho vlastní náhledy a nelze je importovat.',
 	"import.err.displayNameEmpty": "Zobrazovaný název nesmí být prázdný.",
-	"import.err.displayNameTooLong":
-		"Zobrazovaný název má {{length}} znaků; maximum je {{max}}.",
-	"import.err.boolField":
-		'"{{field}}" musí být booleovská hodnota (true nebo false).',
+	"import.err.displayNameTooLong": "Zobrazovaný název má {{length}} znaků; maximum je {{max}}.",
+	"import.err.boolField": '"{{field}}" musí být booleovská hodnota (true nebo false).',
 	"import.err.iconNotObject": "Ikona musí být objekt.",
-	"import.err.iconTypeInvalid":
-		'Typ ikony "{{value}}" není jedním z: {{types}}.',
+	"import.err.iconTypeInvalid": 'Typ ikony "{{value}}" není jedním z: {{types}}.',
 	"import.warn.iconFieldIgnored":
 		'"{{field}}" se vztahuje pouze na ikony Material a je ignorováno pro typ ikony {{type}}.',
 	"import.err.iconValueEmpty": "Hodnota ikony musí být neprázdný řetězec.",
-	"import.err.iconValueTooLong":
-		"Hodnota ikony překračuje limit 200 znaků ({{length}} znaků).",
-	"import.err.materialStyle":
-		'Styl ikony Material "{{value}}" není jedním z: outlined, filled, rounded, sharp.',
-	"import.err.materialWeight":
-		'Tloušťka ikony Material "{{value}}" musí být celé číslo mezi 100 a 700, po 100.',
+	"import.err.iconValueTooLong": "Hodnota ikony překračuje limit 200 znaků ({{length}} znaků).",
+	"import.err.materialStyle": 'Styl ikony Material "{{value}}" není jedním z: outlined, filled, rounded, sharp.',
+	"import.err.materialWeight": 'Tloušťka ikony Material "{{value}}" musí být celé číslo mezi 100 a 700, po 100.',
 	"import.warn.iconRecolorIgnored":
 		'"recolor" se vztahuje pouze na vaše vlastní obrázky a je ignorováno pro typ ikony {{type}}.',
-	"import.err.iconRecolorInvalid":
-		'"recolor" musí být true nebo false (získáno: "{{value}}").',
-	"import.err.colorInvalid":
-		'"{{field}}" musí být hexadecimální barva jako "#448aff" (obdrženo "{{value}}").',
-	"import.err.numberRange":
-		'"{{field}}" musí být číslo mezi {{min}} a {{max}} (obdrženo "{{value}}").',
-	"import.err.iconSizeRange":
-		'"{{field}}" musí být číslo mezi {{min}} a {{max}} (obdrženo "{{value}}").',
+	"import.err.iconRecolorInvalid": '"recolor" musí být true nebo false (získáno: "{{value}}").',
+	"import.err.colorInvalid": '"{{field}}" musí být hexadecimální barva jako "#448aff" (obdrženo "{{value}}").',
+	"import.err.numberRange": '"{{field}}" musí být číslo mezi {{min}} a {{max}} (obdrženo "{{value}}").',
+	"import.err.iconSizeRange": '"{{field}}" musí být číslo mezi {{min}} a {{max}} (obdrženo "{{value}}").',
 	"import.err.iconAdjustShape":
-		"\"iconAdjust\" musí být objekt, který mapuje typ calloutu (\"regular\", \"heading\", \"inline\") na velikost a posuny jeho ikony.",
+		'"iconAdjust" musí být objekt, který mapuje typ calloutu ("regular", "heading", "inline") na velikost a posuny jeho ikony.',
 	"import.err.aliasesNotArray": '"aliases" musí být pole řetězců.',
 	"import.err.aliasNotString": "Alias musí být řetězec.",
 	"import.err.aliasDup": 'Alias "{{value}}" je v této položce duplikován.',
 	"import.err.tooManyIds":
 		"Příliš mnoho ID ({{count}}); každý callout může mít nejvýše {{max}} ID (primární + aliasy).",
-	"import.err.metadataShape":
-		'"metadata" musí být objekt, jehož všechny hodnoty jsou řetězce.',
+	"import.err.metadataShape": '"metadata" musí být objekt, jehož všechny hodnoty jsou řetězce.',
 	"import.warn.unknownFields": "Neznámá pole ignorována: {{fields}}.",
-	"import.err.duplicateInFile":
-		'ID/alias "{{value}}" již používá položka #{{first}} v tomto souboru.',
-	"import.err.aliasConflict":
-		'Alias "{{value}}" již používá jiný callout ("{{other}}") ve vašem vaultu.',
+	"import.err.duplicateInFile": 'ID/alias "{{value}}" již používá položka #{{first}} v tomto souboru.',
+	"import.err.aliasConflict": 'Alias "{{value}}" již používá jiný callout ("{{other}}") ve vašem vaultu.',
 	"import.warn.defaultFoldedAutofix":
 		'"defaultFolded" bylo true, zatímco "foldable" bylo false; defaultFolded bylo obnoveno na false.',
 	"import.warn.imageMissing":
 		"Tento Callout používá obrázek, který není v souboru ani v tomto vault, proto zobrazí zástupnou ikonu, dokud neuvedete nový.",
 
-	"import.err.paletteIdInvalid":
-		'"paletteId" musí být neprázdný textový identifikátor (obdrženo "{{value}}").',
-	"import.warn.iconNameUnknown":
-		'Ikona "{{value}}" v {{type}} neexistuje, proto byla použita výchozí ikona.',
+	"import.err.paletteIdInvalid": '"paletteId" musí být neprázdný textový identifikátor (obdrženo "{{value}}").',
+	"import.warn.iconNameUnknown": 'Ikona "{{value}}" v {{type}} neexistuje, proto byla použita výchozí ikona.',
 	"import.warn.cmIconUnknownNew":
 		'Ikona "{{value}}" není v tomto trezoru dostupná, proto byla použita výchozí ikona.',
 	"import.warn.cmIconUnknownExisting":
@@ -1057,31 +1012,27 @@ export const cs: Record<string, string> = {
 	"import.cmVaultChecking": "Hledání pluginu Callout Manager…",
 	"import.cmVaultFound": "Nalezeno přizpůsobených calloutů: {{count}}.",
 	"import.cmFromPaste": "Zkopírované styly",
-	"import.cmFromPasteDesc":
-		"To, co zkopíruje tlačítko Copy v Callout Manager, nebo soubor data.json.",
-	"import.cmPlaceholder":
-		"Vložte zkopírované styly nebo soubor data.json sem…",
+	"import.cmFromPasteDesc": "To, co zkopíruje tlačítko Copy v Callout Manager, nebo soubor data.json.",
+	"import.cmPlaceholder": "Vložte zkopírované styly nebo soubor data.json sem…",
 	"import.cmBtnCancel": "Zrušit",
 	"import.cmBtnImport": "Importovat",
-	"import.err.cmNoBlocksFound":
-		"V souboru ani ve vloženém textu nebyly nalezeny žádné styly Callout Manager.",
+	"import.err.cmNoBlocksFound": "V souboru ani ve vloženém textu nebyly nalezeny žádné styly Callout Manager.",
 	"import.err.cmNotRecognized":
 		"Nerozpoznaný soubor: očekávány byly styly generované tlačítkem Copy " +
 		"v Callout Manager, nebo soubor data.json z Callout Manager.",
-	"import.err.cmNoEntries":
-		"Nebyly nalezeny žádné přizpůsobené callouty k importu.",
-	"import.err.cmNoColorForNew":
-		'Pro nový callout "{{value}}" nebyla nalezena použitelná barva; byl přeskočen.',
+	"import.err.cmNoEntries": "Nebyly nalezeny žádné přizpůsobené callouty k importu.",
+	"import.err.cmNoColorForNew": 'Pro nový callout "{{value}}" nebyla nalezena použitelná barva; byl přeskočen.',
 	"import.err.cmIdConflict":
 		'ID "{{value}}" je již používáno jako alias jiným calloutem ("{{other}}") a bylo přeskočeno.',
-	"import.warn.cmNoColorDefault":
-		"V Callout Manager nebyla nastavena barva, proto byla použita výchozí " +
-		"šedá.",
+	"import.warn.cmNoColorDefault": "V Callout Manager nebyla nastavena barva, proto byla použita výchozí " + "šedá.",
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "Styly závislé na motivu nelze zachovat. Přednost mají nepodmíněné hodnoty; případná podmíněná náhradní hodnota se použije pro všechny motivy.",
-	"import.warn.cmCustomStylesSkipped": "Vlastní CSS z Callout Manageru se neimportuje. Přenést lze pouze podporované nastavení ikony a barvy.",
-	"import.warn.cmSchemeIcon": "Callout Studio používá jednu ikonu pro obě barevná schémata; importovaná ikona se použije v obou.",
+	"import.warn.cmThemeConditionPartial":
+		"Styly závislé na motivu nelze zachovat. Přednost mají nepodmíněné hodnoty; případná podmíněná náhradní hodnota se použije pro všechny motivy.",
+	"import.warn.cmCustomStylesSkipped":
+		"Vlastní CSS z Callout Manageru se neimportuje. Přenést lze pouze podporované nastavení ikony a barvy.",
+	"import.warn.cmSchemeIcon":
+		"Callout Studio používá jednu ikonu pro obě barevná schémata; importovaná ikona se použije v obou.",
 	"import.err.cmDuplicateId": "ID „{{value}}“ se v tomto importu překrývá s „{{other}}“ a bylo přeskočeno.",
 	"import.admTitle": "Import z Admonition",
 	"import.admInstructions":
@@ -1096,40 +1047,33 @@ export const cs: Record<string, string> = {
 	"import.admBtnCancel": "Zrušit",
 	"import.admBtnImport": "Importovat",
 	"import.err.admNotRecognized":
-		"Nerozpoznaný soubor: očekáván seznam admonition nebo data.json " +
-		"pluginu Admonition.",
+		"Nerozpoznaný soubor: očekáván seznam admonition nebo data.json " + "pluginu Admonition.",
 	"import.err.admNoEntries": "Nebyly nalezeny žádné admonition k importu.",
-	"import.err.admTypeMissing":
-		'Tento admonition nemá "type" a byl přeskočen.',
+	"import.err.admTypeMissing": 'Tento admonition nemá "type" a byl přeskočen.',
 	"import.warn.admIconUnknown":
-		'V žádné knihovně ikon není ikona s názvem "{{value}}", proto ' +
-		"byla použita výchozí ikona.",
+		'V žádné knihovně ikon není ikona s názvem "{{value}}", proto ' + "byla použita výchozí ikona.",
 	"import.warn.admIconUnknownExisting":
-		'V žádné knihovně ikon není ikona s názvem "{{value}}", proto si ' +
-		'"{{id}}" ponechal svou dosavadní ikonu.',
+		'V žádné knihovně ikon není ikona s názvem "{{value}}", proto si ' + '"{{id}}" ponechal svou dosavadní ikonu.',
 	"import.warn.admUnsupportedOptions": "Tyto možnosti pluginu Admonition se neimportují: {{fields}}.",
 	"import.warn.admImageSkipped": "Nahraný obrázek se nepodařilo přečíst a nebyl importován.",
 	"import.warn.admIconWithCss":
 		"Tento admonition je v pluginu Admonition stylován úryvkem CSS. " +
 		"Ten není součástí importu, takže se přenesl jen název, ikona a " +
 		"barva.",
-	"import.warn.admNoColor":
-		"Nebyla nastavena žádná barva, proto byla použita výchozí modrá.",
-	"import.warn.admTitleTruncated":
-		"Název má {{length}} znaků; byl zkrácen na {{max}}.",
+	"import.warn.admNoColor": "Nebyla nastavena žádná barva, proto byla použita výchozí modrá.",
+	"import.warn.admTitleTruncated": "Název má {{length}} znaků; byl zkrácen na {{max}}.",
 
 	"footer.openIssue": "Otevřít issue",
 	"footer.sourceCode": "Zdrojový kód",
 	"settings.about": "O pluginu",
 	"settings.version": "Verze",
 	"settings.deletePaletteBodyLinkedOne":
-		'Používá ji 1 callout. Zachová si své barvy a později ho můžete znovu propojit z řádku Barva v jeho editoru.',
+		"Používá ji 1 callout. Zachová si své barvy a později ho můžete znovu propojit z řádku Barva v jeho editoru.",
 	"settings.deletePaletteBodyLinked":
-		'Používá ji {{count}} calloutů. Zachovají si své barvy a později je můžete znovu propojit z řádku Barva v kterémkoli z jejich editorů.',
+		"Používá ji {{count}} calloutů. Zachovají si své barvy a později je můžete znovu propojit z řádku Barva v kterémkoli z jejich editorů.",
 	"notice.palettesMerged":
 		"Sloučeno {{count}} uložených barev se stejnými barvami: {{names}}. Callouty, které je používají, si ponechají své barvy a nyní jsou propojené se zbývající barvou.",
-	"editor.colorsDescDeleted":
-		"Uložená barva tohoto calloutu byla smazána. {{link}}",
+	"editor.colorsDescDeleted": "Uložená barva tohoto calloutu byla smazána. {{link}}",
 	"editor.colorsDescDeletedLink": "Obnovit",
 	"palette.colorExists":
 		'Tyto barvy jsou stejné jako "{{name}}". Dvě uložené barvy nemohou být stejné — změňte jednu barvu, aby se odlišily.',
@@ -1146,8 +1090,7 @@ export const cs: Record<string, string> = {
 	"notice.exportedCssUpdated": "CSS fragment byl aktualizován v {{path}}",
 	"notice.exportedCssUnchanged": "CSS fragment je již aktuální.",
 	"notice.exportCssEmpty": "Nejsou žádné vlastní callouty k exportu.",
-	"notice.exportCssFailed":
-		"CSS fragment nelze uložit. Podrobnosti najdete v konzoli pro vývojáře.",
+	"notice.exportCssFailed": "CSS fragment nelze uložit. Podrobnosti najdete v konzoli pro vývojáře.",
 	"notice.exportCssEnabled":
 		"Tento fragment je v tomto vaultu zapnutý. Callout Studio tyto callouty již styluje a fragment zachovává podobu z doby exportu.",
 	"confirm.titleOverwriteSnippet": "Přepsat CSS fragment",
@@ -1168,50 +1111,70 @@ export const cs: Record<string, string> = {
 	"quickInsert.readingView": "Přepněte do zdrojového režimu nebo živého náhledu a vložte callout.",
 	"quickInsert.noCursorHint": "V této poznámce není žádný kurzor, takže není kam vložit.",
 	"quickInsert.noCursor": "Umístěte kurzor v poznámce tam, kam chcete vložit callout, a zkuste to znovu.",
-	"notice.legacyDiscoveryArchiveFailed": "Kopii pro obnovení při aktualizaci se nepodařilo dokončit. Předchozí místní mezipaměť zjišťování a spouštěcí CSS zůstaly beze změny. Zkontrolujte oprávnění k zápisu, přístup k úložišti a volné místo a poté restartujte Obsidian, aby se akce zopakovala.",
+	"notice.legacyDiscoveryArchiveFailed":
+		"Kopii pro obnovení při aktualizaci se nepodařilo dokončit. Předchozí místní mezipaměť zjišťování a spouštěcí CSS zůstaly beze změny. Zkontrolujte oprávnění k zápisu, přístup k úložišti a volné místo a poté restartujte Obsidian, aby se akce zopakovala.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Pozastaveno, dokud chybějící callout znovu nevytvoříte nebo nevyberete jiný.",
 	"confirm.titleRestoreSettings": "Obnovit tato nastavení",
 	"confirm.titleCreateSettingsFile": "Vytvořit soubor nastavení",
 	"confirm.saveDisplayedSettings":
 		"Tímto uložíte nastavení, které nyní vidíte, jako soubor nastavení a znovu zapnete ukládání. Záložní kopie, kterou toto zařízení uchovává, se nejprve zazálohuje.\nPokud může mít jiné zařízení novější změny, které chcete zachovat, nechte ho před pokračováním dokončit synchronizaci. Vaše synchronizační aplikace může tento soubor poslat na vaše další zařízení.\nPřed uložením se Callout Studio ještě jednou podívá, zda soubor nastavení existuje. Pokud se vrátil, ponechá ho.",
-	"notice.settingsBackupFailed": "Obnovu nastavení nebylo možné dokončit, protože se nepodařilo uložit bezpečnostní zálohu. Zkontrolujte dostupný úložný prostor a oprávnění k zápisu, poté to zkuste znovu.",
-	"notice.settingsNewerVersion": "Nastavení Callout Studia byla uložena novější verzí doplňku, takže na tomto zařízení nebude nic zapsáno, dokud jej neaktualizujete. Vaše nastavení jsou v bezpečí — aktualizujte Callout Studio zde a znovu načtěte Obsidian.",
+	"notice.settingsBackupFailed":
+		"Obnovu nastavení nebylo možné dokončit, protože se nepodařilo uložit bezpečnostní zálohu. Zkontrolujte dostupný úložný prostor a oprávnění k zápisu, poté to zkuste znovu.",
+	"notice.settingsNewerVersion":
+		"Nastavení Callout Studia byla uložena novější verzí doplňku, takže na tomto zařízení nebude nic zapsáno, dokud jej neaktualizujete. Vaše nastavení jsou v bezpečí — aktualizujte Callout Studio zde a znovu načtěte Obsidian.",
 	"saveStatus.changed":
 		"Soubor nastavení se změnil, zatímco jste upravovali. Váš koncept je stále k dispozici. Zvolte Zkusit znovu, načtěte příchozí nastavení a pak koncept zkontrolujte a uložte znovu.",
-	"saveStatus.missing": "Ukládání je pozastaveno, protože soubor s nastavením chybí. To se může stát po přeinstalování nebo během probíhající synchronizace. Dokončete synchronizaci a zkuste to znovu. Chcete-li chybějící soubor záměrně nahradit, použijte Vytvořit nový soubor s nastavením v nastavení Callout Studia.",
+	"saveStatus.missing":
+		"Ukládání je pozastaveno, protože soubor s nastavením chybí. To se může stát po přeinstalování nebo během probíhající synchronizace. Dokončete synchronizaci a zkuste to znovu. Chcete-li chybějící soubor záměrně nahradit, použijte Vytvořit nový soubor s nastavením v nastavení Callout Studia.",
 	"saveStatus.restoreSettings": "Obnovit tato nastavení",
 	"saveStatus.createSettingsFile": "Vytvořit soubor nastavení",
 	"saveStatus.checkAgain": "Zkontrolovat znovu",
-	"saveStatus.recoverInSettings": "Chcete-li na tomto zařízení obnovit chybějící soubor, otevřete nastavení Callout Studio. Před zavřením tohoto editoru zkopírujte všechny neuložené úpravy, které chcete zachovat; nebyly uloženy.",
+	"saveStatus.recoverInSettings":
+		"Chcete-li na tomto zařízení obnovit chybějící soubor, otevřete nastavení Callout Studio. Před zavřením tohoto editoru zkopírujte všechny neuložené úpravy, které chcete zachovat; nebyly uloženy.",
 	"saveStatus.openSettings": "Otevřít nastavení Callout Studio",
-	"notice.openSettingsFailed": "Nastavení Callout Studio se nepodařilo otevřít. Otevřete Nastavení → Callout Studio a zvolte, co dál.",
-	"saveStatus.notesFailed": "Definice calloutu byla uložena, ale některé aktualizace poznámek se nepodařilo dokončit. Nechte tento editor otevřený a zvolte Uložit, abyste zkusili dokončit nedokončené aktualizace.",
-	"saveStatus.recoveryRead": "Ukládání je pozastaveno, protože nelze přečíst místní zálohu pro obnovení. Váš soubor s nastavením může být stále neporušený. Zkontrolujte dostupný úložný prostor a poté zkuste obnovu znovu. Stávající data pro obnovení nebudou přepsána.",
-	"saveStatus.recoveryWrite": "Místní zálohu pro obnovení se nepodařilo uložit. Zkontrolujte dostupný úložný prostor a poté to zkuste znovu. Nechte svůj koncept otevřený, dokud se úspěšně neuloží.",
-	"saveStatus.retryFailed": "Ukládání je stále blokováno. Zkontrolujte stav ukládání v nastavení Callout Studia, abyste zjistili příčinu, a poté to zkuste znovu.",
-	"saveStatus.reviewDraft": "Příchozí nastavení a kontroly obnovy jsou dokončeny. Váš koncept je beze změny. Zkontrolujte ho a znovu uložte.",
+	"notice.openSettingsFailed":
+		"Nastavení Callout Studio se nepodařilo otevřít. Otevřete Nastavení → Callout Studio a zvolte, co dál.",
+	"saveStatus.notesFailed":
+		"Definice calloutu byla uložena, ale některé aktualizace poznámek se nepodařilo dokončit. Nechte tento editor otevřený a zvolte Uložit, abyste zkusili dokončit nedokončené aktualizace.",
+	"saveStatus.recoveryRead":
+		"Ukládání je pozastaveno, protože nelze přečíst místní zálohu pro obnovení. Váš soubor s nastavením může být stále neporušený. Zkontrolujte dostupný úložný prostor a poté zkuste obnovu znovu. Stávající data pro obnovení nebudou přepsána.",
+	"saveStatus.recoveryWrite":
+		"Místní zálohu pro obnovení se nepodařilo uložit. Zkontrolujte dostupný úložný prostor a poté to zkuste znovu. Nechte svůj koncept otevřený, dokud se úspěšně neuloží.",
+	"saveStatus.retryFailed":
+		"Ukládání je stále blokováno. Zkontrolujte stav ukládání v nastavení Callout Studia, abyste zjistili příčinu, a poté to zkuste znovu.",
+	"saveStatus.reviewDraft":
+		"Příchozí nastavení a kontroly obnovy jsou dokončeny. Váš koncept je beze změny. Zkontrolujte ho a znovu uložte.",
 	"saveStatus.settingsArrived": "Existující nastavení dorazilo a bylo načteno. Náhradní soubor nebyl vytvořen.",
-	"saveStatus.syncConflict": "Příchozí nastavení je v konfliktu s calloutem potřebným pro nedokončené aktualizace poznámek. Váš koncept a čekající aktualizace byly zachovány. Před opakováním vyřešte konflikt v nastavení.",
+	"saveStatus.syncConflict":
+		"Příchozí nastavení je v konfliktu s calloutem potřebným pro nedokončené aktualizace poznámek. Váš koncept a čekající aktualizace byly zachovány. Před opakováním vyřešte konflikt v nastavení.",
 	"saveStatus.titlePaused": "Ukládání je pozastaveno",
 	"saveStatus.titleFailed": "Nastavení nebylo uloženo",
 	"saveStatus.tryAgain": "Zkusit znovu",
 	"saveStatus.working": "Pracuji na tom…",
-	"saveStatus.unreadable": "Ukládání je pozastaveno, protože soubor s nastavením nelze bezpečně přečíst. Dokončete synchronizaci nebo obnovte platnou kopii, poté to zkuste znovu. Stávající soubor byl zachován.",
-	"saveStatus.write": "Soubor s nastavením se nepodařilo uložit. Zkontrolujte dostupný úložný prostor, oprávnění složky a synchronizaci, poté to zkuste znovu, než zavřete Obsidian.",
-	"saveStatus.writePermission": "Soubor s nastavením se nepodařilo uložit, protože úložiště odepřelo přístup k zápisu. Zkontrolujte, že trezor a složka doplňku jsou zapisovatelné, poté to zkuste znovu.",
-	"saveStatus.writeSpace": "Soubor s nastavením se nepodařilo uložit, protože úložiště je plné nebo byla překročena jeho kvóta. Uvolněte místo a poté to zkuste znovu.",
-	"settings.readOnly": "Callout Studio nemohlo při spuštění Obsidianu použít svůj soubor s nastavením, takže se na této stránce na tomto zařízení nic neukládá. Vaše změny vydrží, dokud Obsidian nezavřete. Jakmile se soubor vrátí, znovu načtěte Obsidian — pokud tento trezor synchronizujete, nechte nejprve synchronizaci doběhnout.",
+	"saveStatus.unreadable":
+		"Ukládání je pozastaveno, protože soubor s nastavením nelze bezpečně přečíst. Dokončete synchronizaci nebo obnovte platnou kopii, poté to zkuste znovu. Stávající soubor byl zachován.",
+	"saveStatus.write":
+		"Soubor s nastavením se nepodařilo uložit. Zkontrolujte dostupný úložný prostor, oprávnění složky a synchronizaci, poté to zkuste znovu, než zavřete Obsidian.",
+	"saveStatus.writePermission":
+		"Soubor s nastavením se nepodařilo uložit, protože úložiště odepřelo přístup k zápisu. Zkontrolujte, že trezor a složka doplňku jsou zapisovatelné, poté to zkuste znovu.",
+	"saveStatus.writeSpace":
+		"Soubor s nastavením se nepodařilo uložit, protože úložiště je plné nebo byla překročena jeho kvóta. Uvolněte místo a poté to zkuste znovu.",
+	"settings.readOnly":
+		"Callout Studio nemohlo při spuštění Obsidianu použít svůj soubor s nastavením, takže se na této stránce na tomto zařízení nic neukládá. Vaše změny vydrží, dokud Obsidian nezavřete. Jakmile se soubor vrátí, znovu načtěte Obsidian — pokud tento trezor synchronizujete, nechte nejprve synchronizaci doběhnout.",
 
 	// Sync safety hardening
 	"saveStatus.diagnosis.unavailable":
 		"Toto zařízení nyní nemůže soubor otevřít. Možná se ještě stahuje, trezor nemusí být dostupný offline, nebo úložiště neodpovídá. Callout Studio to automaticky zkouší znovu.",
-	"saveStatus.diagnosis.empty": "Soubor je prázdný, což obvykle znamená přerušenou synchronizaci. Pokud vaše nastavení stále má jiné zařízení, nechte ho synchronizovat. Jinak soubor nahraďte.",
-	"saveStatus.diagnosis.mergeMarkers": "Soubor obsahuje nevyřešené značky konfliktu sloučení, například z Gitu. Vyřešte konflikt ve svém nástroji Git, nebo soubor nahraďte.",
+	"saveStatus.diagnosis.empty":
+		"Soubor je prázdný, což obvykle znamená přerušenou synchronizaci. Pokud vaše nastavení stále má jiné zařízení, nechte ho synchronizovat. Jinak soubor nahraďte.",
+	"saveStatus.diagnosis.mergeMarkers":
+		"Soubor obsahuje nevyřešené značky konfliktu sloučení, například z Gitu. Vyřešte konflikt ve svém nástroji Git, nebo soubor nahraďte.",
 	"saveStatus.diagnosis.damaged": "Soubor je neúplný nebo poškozený, takže ho nelze načíst jako nastavení.",
 	"saveStatus.diagnosis.combined":
 		"Vaše synchronizační služba sloučila dvě verze souboru, takže jeho interní kontrola už neodpovídá. Nastavení uvnitř je neporušené a nahrazení souboru ho zachová.",
-	"saveStatus.diagnosis.invalidEntries": "Soubor obsahuje položky, které Callout Studio nemůže použít, například stejný typ calloutu uvedený dvakrát.",
+	"saveStatus.diagnosis.invalidEntries":
+		"Soubor obsahuje položky, které Callout Studio nemůže použít, například stejný typ calloutu uvedený dvakrát.",
 	"saveStatus.replaceUnreadable": "Nahradit soubor s nastavením",
 	"saveStatus.discardRecoveryCopy": "Zahodit záložní kopii pro obnovu",
 	"saveStatus.calm.opening": "Nejprve se zhluboka nadechněte — všechno bude v pořádku.",
@@ -1224,43 +1187,58 @@ export const cs: Record<string, string> = {
 		"Callout Studio nemůže najít svůj soubor nastavení. Obvykle se to stane, když ho synchronizační aplikace ještě stahuje, nebo poté, co byl Callout Studio odebrán na jiném zařízení.",
 	"saveStatus.explain.stillMissing":
 		"Soubor nastavení se stále nevrátil. Kontrola ho jen hledá a nikdy nevytváří nový. Pokud je váš vault v iCloudu, OneDrive, Google Drive nebo Dropboxu, ujistěte se, že je nastaven tak, aby zůstal stažený na tomto zařízení.",
-	"saveStatus.explain.unreadable": "Callout Studio teď nemůže přečíst svůj soubor nastavení, proto ho nechal přesně tak, jak je.",
+	"saveStatus.explain.unreadable":
+		"Callout Studio teď nemůže přečíst svůj soubor nastavení, proto ho nechal přesně tak, jak je.",
 	"saveStatus.explain.recoveryRead":
 		"Callout Studio uchovává na tomto zařízení záložní kopii vašeho nastavení a tu se teď nedaří přečíst. Samotný soubor nastavení může být v pořádku.",
-	"saveStatus.explain.newerVersion": "Vaše nastavení uložila novější verze Callout Studio, proto je tato starší verze nezmění.",
+	"saveStatus.explain.newerVersion":
+		"Vaše nastavení uložila novější verze Callout Studio, proto je tato starší verze nezmění.",
 	"saveStatus.explain.changed":
 		"Soubor nastavení se změnil, zatímco s ním Callout Studio pracoval, a proto se zastavil, aniž by cokoli nahradil.",
-	"saveStatus.guide.rechecks": "Callout Studio kontroluje znovu každou minutu, dokud je Obsidian otevřený, takže se to často spraví samo.",
+	"saveStatus.guide.rechecks":
+		"Callout Studio kontroluje znovu každou minutu, dokud je Obsidian otevřený, takže se to často spraví samo.",
 	"saveStatus.guide.rechecksCheckNow":
 		"Callout Studio kontroluje znovu každou minutu, dokud je Obsidian otevřený, takže se to často spraví samo — nebo zvolte Zkontrolovat znovu a zkontrolujte to hned.",
 	"saveStatus.guide.restore":
 		"Pokud se vaše nastavení nevrátí, zvolte Obnovit tato nastavení, abyste si ponechali callouty, které tu vidíte.",
-	"saveStatus.guide.create": "Pokud se vaše nastavení nevrátí, zvolte Vytvořit soubor nastavení a začněte znovu ukládat.",
-	"saveStatus.guide.recoveryRetry": "Ujistěte se, že je na tomto zařízení trochu volného místa, a pak zvolte Zkusit znovu.",
+	"saveStatus.guide.create":
+		"Pokud se vaše nastavení nevrátí, zvolte Vytvořit soubor nastavení a začněte znovu ukládat.",
+	"saveStatus.guide.recoveryRetry":
+		"Ujistěte se, že je na tomto zařízení trochu volného místa, a pak zvolte Zkusit znovu.",
 	"saveStatus.guide.recoveryDiscard":
 		"Pokud to nepomůže, zvolte Zahodit záložní kopii pro obnovu. Nejprve se uloží přesná kopie a soubor nastavení zůstane nedotčený.",
-	"saveStatus.guide.newerVersion": "Aktualizujte Callout Studio v Nastavení → Komunitní pluginy a pak znovu načtěte Obsidian.",
+	"saveStatus.guide.newerVersion":
+		"Aktualizujte Callout Studio v Nastavení → Komunitní pluginy a pak znovu načtěte Obsidian.",
 	"saveStatus.missingNotice":
 		"Vaše poznámky jsou v bezpečí. Callout Studio pozastavil ukládání, protože teď nemůže najít svůj soubor nastavení.",
 	"statusBar.paused": "Ukládání pozastaveno",
 	"statusBar.pausedTooltip": "Callout Studio neukládá změny nastavení. Klikněte pro zjištění důvodu.",
 	"statusBar.pausedNotice": "Callout Studio nyní neukládá změny nastavení.",
 	"saveStatus.resumed": "Ukládání je znovu zapnuté. Callout Studio zase ukládá změny nastavení.",
-	"notice.replaceUnreadableUnavailable": "Soubor s nastavením nyní nelze nahradit: právě se mění, nebo ho toto zařízení nedokáže přečíst. Zkuste to za chvíli znovu.",
-	"notice.recoveryStorageUnavailable": "Úložiště pro obnovu tohoto zařízení neodpovídá, takže kopii nelze zahodit. Restartujte Obsidian a zkuste to znovu.",
+	"notice.replaceUnreadableUnavailable":
+		"Soubor s nastavením nyní nelze nahradit: právě se mění, nebo ho toto zařízení nedokáže přečíst. Zkuste to za chvíli znovu.",
+	"notice.recoveryStorageUnavailable":
+		"Úložiště pro obnovu tohoto zařízení neodpovídá, takže kopii nelze zahodit. Restartujte Obsidian a zkuste to znovu.",
 	"recovery.unreadable": "Nelze načíst jako nastavení",
 	"recovery.same": "Stejné jako vaše aktuální konfigurace",
 	"recovery.restore": "Obnovit",
-	"recovery.stale": "Nic nebylo obnoveno: vaše nastavení se změnilo nebo ho nešlo zkontrolovat. Otevřete toto okno znovu a projděte seznam.",
-	"notice.recoveryCopyStale": "Vaše nastavení bylo uloženo, ale záložní kopii pro obnovu na tomto zařízení se nepodařilo aktualizovat. Zkontrolujte dostupný úložný prostor na tomto zařízení. Callout Studio to zkusí znovu při vaší příští změně.",
-	"notice.blockedWhilePaused": "Ukládání je pozastaveno, takže tuto změnu nyní nelze zachovat. Nejprve vyřešte problém s ukládáním zobrazený v nastavení Callout Studia.",
-	"welcome.syncNote": "Už používáte Callout Studio na jiném zařízení? Nechte nejprve synchronizační službu doběhnout. Vaše callouty a nastavení se zde objeví, jakmile dorazí.",
-	"settings.resetBackupFailed": "Nic nebylo resetováno: nejprve se nepodařilo uložit zálohu vaší aktuální konfigurace. Zkontrolujte dostupný úložný prostor a poté to zkuste znovu.",
-	"settings.resetNotSaved": "Resetování je zobrazeno, ale ještě se nepodařilo ho uložit, takže váš soubor s nastavením stále obsahuje předchozí konfiguraci. Zkontrolujte stav ukládání v nastavení Callout Studia.",
+	"recovery.stale":
+		"Nic nebylo obnoveno: vaše nastavení se změnilo nebo ho nešlo zkontrolovat. Otevřete toto okno znovu a projděte seznam.",
+	"notice.recoveryCopyStale":
+		"Vaše nastavení bylo uloženo, ale záložní kopii pro obnovu na tomto zařízení se nepodařilo aktualizovat. Zkontrolujte dostupný úložný prostor na tomto zařízení. Callout Studio to zkusí znovu při vaší příští změně.",
+	"notice.blockedWhilePaused":
+		"Ukládání je pozastaveno, takže tuto změnu nyní nelze zachovat. Nejprve vyřešte problém s ukládáním zobrazený v nastavení Callout Studia.",
+	"welcome.syncNote":
+		"Už používáte Callout Studio na jiném zařízení? Nechte nejprve synchronizační službu doběhnout. Vaše callouty a nastavení se zde objeví, jakmile dorazí.",
+	"settings.resetBackupFailed":
+		"Nic nebylo resetováno: nejprve se nepodařilo uložit zálohu vaší aktuální konfigurace. Zkontrolujte dostupný úložný prostor a poté to zkuste znovu.",
+	"settings.resetNotSaved":
+		"Resetování je zobrazeno, ale ještě se nepodařilo ho uložit, takže váš soubor s nastavením stále obsahuje předchozí konfiguraci. Zkontrolujte stav ukládání v nastavení Callout Studia.",
 	"confirm.titleResetEverything": "Resetovat vše",
 	"confirm.titleReplaceUnreadable": "Nahradit soubor s nastavením",
 	"confirm.subtitleReplaceUnreadable": "Nejdřív se uloží přesná kopie",
-	"confirm.replaceUnreadable": "Nejprve se do složky záloh doplňku uloží přesná kopie aktuálního souboru. Soubor je pak nahrazen konfigurací zobrazenou zde a vaše synchronizační služba ji odešle na ostatní vaše zařízení.",
+	"confirm.replaceUnreadable":
+		"Nejprve se do složky záloh doplňku uloží přesná kopie aktuálního souboru. Soubor je pak nahrazen konfigurací zobrazenou zde a vaše synchronizační služba ji odešle na ostatní vaše zařízení.",
 	"confirm.replaceUnreadableSalvage":
 		"Nejprve se do složky záloh doplňku uloží přesná kopie aktuálního souboru. Nastavení v něm se sloučí s konfigurací zobrazenou zde a soubor se přepíše, aby ho mohlo znovu číst každé zařízení.",
 	"confirm.titleDiscardRecoveryCopy": "Zahodit záložní kopii pro obnovu",
@@ -1269,12 +1247,16 @@ export const cs: Record<string, string> = {
 		"Záložní kopii pro obnovu tohoto zařízení nelze přečíst, takže je na tomto zařízení ukládání pozastaveno. Nejprve se do složky záloh doplňku uloží její přesná kopie. Poté je nahrazena konfigurací zobrazenou zde. Váš soubor s nastavením se nemění.",
 	"vault.undoRewrite": "Zpět",
 	"vault.undoRestored": "Obnoveno {{count}} poznámek.",
-	"vault.undoPartial": "Obnoveno {{count}} poznámek. {{skipped}} poznámek se po přepsání změnilo, takže byly ponechány tak, jak jsou.",
+	"vault.undoPartial":
+		"Obnoveno {{count}} poznámek. {{skipped}} poznámek se po přepsání změnilo, takže byly ponechány tak, jak jsou.",
 	"import.confirmTitle": "Importovat zálohu Callout Studia",
-	"import.confirmSummary": "Tím se přidá {{added}} typ(ů) calloutu, nahradí {{replaced}} existujících verzí ze souboru a obnoví {{settings}} skupin(y) nastavení ze souboru. Nejprve se uloží záloha vaší aktuální konfigurace.",
+	"import.confirmSummary":
+		"Tím se přidá {{added}} typ(ů) calloutu, nahradí {{replaced}} existujících verzí ze souboru a obnoví {{settings}} skupin(y) nastavení ze souboru. Nejprve se uloží záloha vaší aktuální konfigurace.",
 	"import.confirmAction": "Importovat",
-	"import.backupFailed": "Nic nebylo importováno: nejprve se nepodařilo uložit zálohu vaší aktuální konfigurace. Zkontrolujte dostupný úložný prostor a poté to zkuste znovu.",
-	"import.notSaved": "Import je zobrazen, ale ještě se nepodařilo ho uložit. Zkontrolujte stav ukládání v nastavení Callout Studia.",
+	"import.backupFailed":
+		"Nic nebylo importováno: nejprve se nepodařilo uložit zálohu vaší aktuální konfigurace. Zkontrolujte dostupný úložný prostor a poté to zkuste znovu.",
+	"import.notSaved":
+		"Import je zobrazen, ale ještě se nepodařilo ho uložit. Zkontrolujte stav ukládání v nastavení Callout Studia.",
 
 	"recovery.summaryCallouts": "Uložené typy calloutů: {{callouts}}",
 	"recovery.summaryChanges": "Rozdíly oproti současnému stavu: {{count}}",
@@ -1294,7 +1276,8 @@ export const cs: Record<string, string> = {
 	"recovery.details.unknownTime": "Čas uložení není zaznamenán",
 	"recovery.details.current": "Aktuální nastavení",
 	"recovery.details.restored": "Po obnovení této verze",
-	"recovery.details.unreadable": "Tato verze Callout Studio nedokáže tuto kopii vyložit jako obnovitelné nastavení. Může být poškozená, nedostupná nebo ve vyšším formátu. Porovnání a zpráva o obnovených nastaveních nejsou k dispozici. Níže je uveden veškerý původní obsah, který bylo možné přečíst.",
+	"recovery.details.unreadable":
+		"Tato verze Callout Studio nedokáže tuto kopii vyložit jako obnovitelné nastavení. Může být poškozená, nedostupná nebo ve vyšším formátu. Porovnání a zpráva o obnovených nastaveních nejsou k dispozici. Níže je uveden veškerý původní obsah, který bylo možné přečíst.",
 	"recovery.details.null": "Žádná hodnota (null)",
 	"recovery.details.yes": "Ano",
 	"recovery.details.no": "Ne",
@@ -1462,11 +1445,14 @@ export const cs: Record<string, string> = {
 	"recovery.delete": "Smazat",
 
 	// Version history
-	"saveStatus.guide.versions": "Jakmile bude ukládání opět fungovat, můžete se vrátit k uložené verzi pomocí Obnovit dřívější verzi.",
+	"saveStatus.guide.versions":
+		"Jakmile bude ukládání opět fungovat, můžete se vrátit k uložené verzi pomocí Obnovit dřívější verzi.",
 	"saveStatus.goToVersions": "Přejít do historie verzí",
 	"versions.title": "Historie verzí",
-	"versions.intro": "Callout Studio automaticky ukládá verze vaší konfigurace.\nStarší se postupně odstraňují.\nObnovení verze nahradí aktuální konfiguraci na všech synchronizovaných zařízeních.",
-	"versions.pausedHint": "Ukládání je pozastaveno, takže obnovení není dostupné. Verze můžete nadále porovnávat a mazat.",
+	"versions.intro":
+		"Callout Studio automaticky ukládá verze vaší konfigurace.\nStarší se postupně odstraňují.\nObnovení verze nahradí aktuální konfiguraci na všech synchronizovaných zařízeních.",
+	"versions.pausedHint":
+		"Ukládání je pozastaveno, takže obnovení není dostupné. Verze můžete nadále porovnávat a mazat.",
 	"versions.loading": "Hledání verzí…",
 	"versions.empty": "Nebyly nalezeny žádné verze.",
 	"versions.dayWithDate": "{{date}} ({{relative}})",
@@ -1483,14 +1469,17 @@ export const cs: Record<string, string> = {
 	"versions.reason.beforeRepair": "Před opravou souboru nastavení",
 	"versions.restoreTitle": "Obnovit tuto verzi",
 	"versions.subtitle": "„{{name}}“ · {{when}}",
-	"versions.restoreBody": "Vaše aktuální nastavení bude nahrazeno (rozdílů: {{count}}).\nNejdřív se uloží jako verze, takže se k němu můžete vrátit.\nVaše synchronizační služba pak obnovené nastavení pošle do ostatních zařízení.",
+	"versions.restoreBody":
+		"Vaše aktuální nastavení bude nahrazeno (rozdílů: {{count}}).\nNejdřív se uloží jako verze, takže se k němu můžete vrátit.\nVaše synchronizační služba pak obnovené nastavení pošle do ostatních zařízení.",
 	"versions.restoreSame": "Tato verze je stejná jako aktuální konfigurace, takže není co obnovovat.",
 	"versions.restored": "Obnovena verze „{{name}}“ z {{when}}.",
-	"versions.backupFailed": "Nic nebylo obnoveno: aktuální konfiguraci se nepodařilo nejprve uložit jako verzi. Zkontrolujte volné místo a zkuste to znovu.",
+	"versions.backupFailed":
+		"Nic nebylo obnoveno: aktuální konfiguraci se nepodařilo nejprve uložit jako verzi. Zkontrolujte volné místo a zkuste to znovu.",
 	"versions.restoreFailed": "Verzi se nepodařilo obnovit. Nic nebylo změněno.",
 	"versions.deleteTitle": "Smazat tuto verzi",
 	"versions.deleteAvailableBody": "Bude trvale smazána spolu se všemi svými dostupnými kopiemi.",
-	"versions.deleteSyncedFiles": "Smazání těchto souborů se může synchronizovat s vašimi ostatními zařízeními. Místní kopie na těchto zařízeních mohou zůstat.",
+	"versions.deleteSyncedFiles":
+		"Smazání těchto souborů se může synchronizovat s vašimi ostatními zařízeními. Místní kopie na těchto zařízeních mohou zůstat.",
 	"versions.deleteFinal": "Tuto akci nelze vrátit zpět. Aktuální konfigurace nebude ovlivněna.",
 	"versions.deleted": "Smazána verze „{{name}}“ z {{when}}.",
 	"versions.deleteFailed": "Některé kopie této verze se nepodařilo smazat. Seznam nyní zobrazuje zbývající kopie.",
@@ -1498,7 +1487,8 @@ export const cs: Record<string, string> = {
 	"versions.details.difference": "Rozdíl oproti vašemu aktuálnímu nastavení: {{count}}",
 	"versions.details.differences": "Rozdíly oproti vašemu aktuálnímu nastavení: {{count}}",
 	"versions.details.comparisonUnavailable": "Porovnání není k dispozici",
-	"notice.unsavedChangesKept": "Některé změny na tomto zařízení ještě nebyly uloženy a nahradilo je novější nastavení z jiného zařízení. Vaše verze byla nejprve uložena: otevřete Obnovit dřívější verzi v nastavení Callout Studio a získáte ji zpět.",
+	"notice.unsavedChangesKept":
+		"Některé změny na tomto zařízení ještě nebyly uloženy a nahradilo je novější nastavení z jiného zařízení. Vaše verze byla nejprve uložena: otevřete Obnovit dřívější verzi v nastavení Callout Studio a získáte ji zpět.",
 	"settings.versionHistory": "Obnovit dřívější verzi",
 	"settings.versions": "Dřívější verze",
 	"settings.versionsDesc": "Nahraďte své aktuální nastavení dříve uloženou verzí.",
@@ -1509,7 +1499,8 @@ export const cs: Record<string, string> = {
 	"noteChanges.notesOne": "1",
 	"noteChanges.askCallout": "Co se má stát s tímto calloutem?",
 	"noteChanges.askCallouts": "Co se má stát s těmito callouty?",
-	"noteChanges.changeRenamed": "Změnili jste zobrazovaný název z „{{old}}“ na „{{new}}“, takže se hlavní ID změní z „{{oldId}}“ na „{{newId}}“.",
+	"noteChanges.changeRenamed":
+		"Změnili jste zobrazovaný název z „{{old}}“ na „{{new}}“, takže se hlavní ID změní z „{{oldId}}“ na „{{newId}}“.",
 	"noteChanges.changeMainId": "Hlavní ID se změní z „{{oldId}}“ na „{{newId}}“.",
 	"noteChanges.changeName": "Změnili jste zobrazovaný název z „{{old}}“ na „{{new}}“.",
 	"noteChanges.changeRemoved": "Odebrali jste ID „{{id}}“.",
@@ -1523,7 +1514,8 @@ export const cs: Record<string, string> = {
 	"noteChanges.rewriteManyDesc": "Každé staré ID ve vašich poznámkách se změní na [!{{to}}].",
 	"noteChanges.changeToIdLabel": "ID, na které je změnit",
 	"noteChanges.rewriteDesc": "Každé [!{{id}}] ve vašich poznámkách se změní na [!{{to}}].",
-	"noteChanges.renameFollowDesc": "Každé [!{{oldId}}] ve vašich poznámkách se změní na [!{{newId}}] a názvy znějící „{{old}}“ se změní na „{{new}}“.",
+	"noteChanges.renameFollowDesc":
+		"Každé [!{{oldId}}] ve vašich poznámkách se změní na [!{{newId}}] a názvy znějící „{{old}}“ se změní na „{{new}}“.",
 	"noteChanges.titlesChangeDesc": "Názvy znějící „{{old}}“ se změní na „{{new}}“.",
 	"noteChanges.foldChangeDesc": "Jejich značka + nebo - se odpovídajícím způsobem změní.",
 };

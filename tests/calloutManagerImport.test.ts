@@ -17,12 +17,14 @@ import { describe, it } from "node:test";
 import { planCalloutManagerImport, toCalloutManagerEntries } from "../src/utils/calloutManagerImport";
 import { parseCalloutManagerExport } from "../src/utils/calloutCssParse";
 import { parseCalloutManagerData, type CalloutManagerRaw } from "../src/utils/calloutManagerFormat";
-import { ImportLimitError, MAX_IMPORT_BYTES, MAX_IMPORT_COLLECTION, MAX_IMPORT_VALUES } from "../src/utils/importLimits";
-import { harness } from "./support/cssInjectorHarness";
 import {
-	derivePaletteFromColor,
-	derivePaletteFromColors,
-} from "../src/utils/colorUtils";
+	ImportLimitError,
+	MAX_IMPORT_BYTES,
+	MAX_IMPORT_COLLECTION,
+	MAX_IMPORT_VALUES,
+} from "../src/utils/importLimits";
+import { harness } from "./support/cssInjectorHarness";
+import { derivePaletteFromColor, derivePaletteFromColors } from "../src/utils/colorUtils";
 
 function raw(over: Partial<CalloutManagerRaw> = {}): CalloutManagerRaw {
 	return { id: "x", declared: false, notes: [], ...over };
@@ -30,17 +32,13 @@ function raw(over: Partial<CalloutManagerRaw> = {}): CalloutManagerRaw {
 
 describe("toCalloutManagerEntries — the light/dark collapse", () => {
 	it("carries two accents when the source really stated two", () => {
-		const [entry] = toCalloutManagerEntries([
-			raw({ colorLight: "255, 0, 0", colorDark: "0, 0, 255" }),
-		]);
+		const [entry] = toCalloutManagerEntries([raw({ colorLight: "255, 0, 0", colorDark: "0, 0, 255" })]);
 		assert.equal(entry?.color, "#ff0000");
 		assert.equal(entry?.colorDark, "#0000ff");
 	});
 
 	it("collapses an identical pair to one accent", () => {
-		const [entry] = toCalloutManagerEntries([
-			raw({ colorLight: "255, 0, 0", colorDark: "rgb(255, 0, 0)" }),
-		]);
+		const [entry] = toCalloutManagerEntries([raw({ colorLight: "255, 0, 0", colorDark: "rgb(255, 0, 0)" })]);
 		assert.equal(entry?.color, "#ff0000");
 		assert.equal(entry?.colorDark, undefined);
 	});
@@ -114,9 +112,7 @@ describe("parseCalloutManagerExport — recovering from generated CSS", () => {
 		// stylesheet, and the paste box is what turns it back into callouts.
 		// Every custom property in that sheet is `!important`, so this is also
 		// the regression test for parsing around it.
-		const { harness, definition } = await import(
-			"./support/cssInjectorHarness"
-		);
+		const { harness, definition } = await import("./support/cssInjectorHarness");
 		const h = harness();
 		const def = definition({
 			id: "insight",
@@ -136,11 +132,7 @@ describe("parseCalloutManagerExport — recovering from generated CSS", () => {
 			{ type: "lucide", value: "lightbulb" },
 			"`!important` leaked into the icon name",
 		);
-		assert.equal(
-			insight.color,
-			"#ff88bb",
-			"no colour survived; the dark block wins the per-property merge",
-		);
+		assert.equal(insight.color, "#ff88bb", "no colour survived; the dark block wins the per-property merge");
 	});
 
 	it("tolerates !important on either declaration", () => {
@@ -150,9 +142,7 @@ describe("parseCalloutManagerExport — recovering from generated CSS", () => {
 				--callout-icon: lucide-star !important;
 			}`,
 		);
-		assert.deepEqual(entries, [
-			{ id: "tip", icon: { type: "lucide", value: "star" }, color: "#ff0000" },
-		]);
+		assert.deepEqual(entries, [{ id: "tip", icon: { type: "lucide", value: "star" }, color: "#ff0000" }]);
 	});
 
 	it("uses the last declaration inside the same block, as CM's settings cascade does", () => {
@@ -171,10 +161,10 @@ describe("parseCalloutManagerExport — recovering from generated CSS", () => {
 				.callout[data-callout="note"] { --callout-icon: lucide-star; }
 			`);
 			assert.equal(entries.length, 2);
-			assert.equal(entries.find(entry => entry.id === "note")?.color, undefined);
+			assert.equal(entries.find((entry) => entry.id === "note")?.color, undefined);
 			const { toApply, issues } = planCalloutManagerImport(entries, harness().registry);
-			assert.ok(issues.some(issue => issue.level === "error" && issue.entryLabel === invalid));
-			assert.ok(toApply.every(item => item.entry.color === undefined));
+			assert.ok(issues.some((issue) => issue.level === "error" && issue.entryLabel === invalid));
+			assert.ok(toApply.every((item) => item.entry.color === undefined));
 		}
 	});
 
@@ -202,8 +192,16 @@ describe("parseCalloutManagerExport — recovering from generated CSS", () => {
 
 	it("enforces size, entry and token budgets before returning a partial import", () => {
 		assert.throws(() => parseCalloutManagerExport("x".repeat(MAX_IMPORT_BYTES + 1)), ImportLimitError);
-		assert.throws(() => parseCalloutManagerExport(Array.from({ length: MAX_IMPORT_COLLECTION + 1 }, (_, i) =>
-			`.callout[data-callout="x${i}"] { --callout-color: 1,2,3; }`).join("\n")), ImportLimitError);
+		assert.throws(
+			() =>
+				parseCalloutManagerExport(
+					Array.from(
+						{ length: MAX_IMPORT_COLLECTION + 1 },
+						(_, i) => `.callout[data-callout="x${i}"] { --callout-color: 1,2,3; }`,
+					).join("\n"),
+				),
+			ImportLimitError,
+		);
 		assert.throws(() => parseCalloutManagerExport("{}".repeat(MAX_IMPORT_VALUES)), ImportLimitError);
 	});
 });
@@ -211,10 +209,13 @@ describe("parseCalloutManagerExport — recovering from generated CSS", () => {
 describe("planCalloutManagerImport — reports match applied work", () => {
 	it("rejects duplicate identities within the batch before minting extra palettes", () => {
 		const h = harness();
-		const { toApply, issues } = planCalloutManagerImport([
-			{ id: "batch callout", color: "#ff0000" },
-			{ id: "BATCH-CALLOUT", color: "#0000ff" },
-		], h.registry);
+		const { toApply, issues } = planCalloutManagerImport(
+			[
+				{ id: "batch callout", color: "#ff0000" },
+				{ id: "BATCH-CALLOUT", color: "#0000ff" },
+			],
+			h.registry,
+		);
 		assert.equal(toApply.length, 1);
 		assert.equal(issues[0]?.messageKey, "import.err.cmDuplicateId");
 		assert.deepEqual(h.registry.applyCalloutManagerImport(toApply), { created: 1, updated: 0 });
@@ -222,10 +223,13 @@ describe("planCalloutManagerImport — reports match applied work", () => {
 	});
 
 	it("rejects duplicate updates as well as duplicate creations", () => {
-		const { toApply, issues } = planCalloutManagerImport([
-			{ id: "note", color: "#ff0000" },
-			{ id: " NOTE ", color: "#0000ff" },
-		], harness().registry);
+		const { toApply, issues } = planCalloutManagerImport(
+			[
+				{ id: "note", color: "#ff0000" },
+				{ id: " NOTE ", color: "#0000ff" },
+			],
+			harness().registry,
+		);
 		assert.equal(toApply.length, 1);
 		assert.equal(issues[0]?.messageKey, "import.err.cmDuplicateId");
 	});
@@ -239,7 +243,10 @@ describe("planCalloutManagerImport — reports match applied work", () => {
 	});
 
 	it("does not hide invalid boundary whitespace by trimming it before validation", () => {
-		const entries = parseCalloutManagerData({ custom: ["note\n"], settings: { "note\n": [{ changes: { color: "1, 2, 3" } }] } });
+		const entries = parseCalloutManagerData({
+			custom: ["note\n"],
+			settings: { "note\n": [{ changes: { color: "1, 2, 3" } }] },
+		});
 		assert.ok(entries);
 		const { toApply, issues } = planCalloutManagerImport(toCalloutManagerEntries(entries), harness().registry);
 		assert.equal(toApply.length, 0);

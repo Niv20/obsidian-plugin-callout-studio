@@ -98,8 +98,7 @@ export function metadataWords(metadata: string): MetadataWord[] {
  * `toLowerCase()` here would let the PDF export colour a callout that the
  * screen leaves alone.
  */
-export const foldMetadataCase = (word: string): string =>
-	word.replace(/[A-Z]/g, (c) => c.toLowerCase());
+export const foldMetadataCase = (word: string): string => word.replace(/[A-Z]/g, (c) => c.toLowerCase());
 
 /**
  * How the stylesheet finds one word in `data-callout-metadata` — the six
@@ -127,10 +126,14 @@ export function metadataNamesWord(metadata: string, word: string): boolean {
 	return METADATA_WORD_FORMS.some(({ op, value }) => {
 		const v = value(target);
 		switch (op) {
-			case "~": return attr.split(/[ \t\n\r\f]+/).includes(v);
-			case "^": return attr.startsWith(v);
-			case "$": return attr.endsWith(v);
-			default: return attr.includes(v);
+			case "~":
+				return attr.split(/[ \t\n\r\f]+/).includes(v);
+			case "^":
+				return attr.startsWith(v);
+			case "$":
+				return attr.endsWith(v);
+			default:
+				return attr.includes(v);
 		}
 	});
 }
@@ -254,16 +257,11 @@ export function activeMetadataColorEntries(
 	settings: Pick<PluginSettings, "metadataColors" | "customPalettes">,
 	reserved?: ReadonlySet<string>,
 ): MetadataColorEntry[] {
-	return settings.metadataColors.enabled
-		? metadataColorEntries(settings.customPalettes, reserved)
-		: [];
+	return settings.metadataColors.enabled ? metadataColorEntries(settings.customPalettes, reserved) : [];
 }
 
 /** Every word an entry answers to, canonical first. */
-export const entryWords = (entry: MetadataColorEntry): string[] => [
-	entry.key,
-	...entry.aliases,
-];
+export const entryWords = (entry: MetadataColorEntry): string[] => [entry.key, ...entry.aliases];
 
 /**
  * The colour a metadata string names, or null — the strongest entry any of

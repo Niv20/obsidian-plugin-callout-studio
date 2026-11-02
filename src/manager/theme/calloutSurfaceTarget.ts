@@ -41,9 +41,7 @@ function namesCalloutId(part: string): boolean {
 
 /** Preserve root metadata/state predicates without repeating its type or class. */
 function rootQualifier(step: string): string {
-	return step
-		.replace(/^[a-z][\w-]*/i, "")
-		.replace(/\.callout(?![\w-])/, "");
+	return step.replace(/^[a-z][\w-]*/i, "").replace(/\.callout(?![\w-])/, "");
 }
 
 /**
@@ -134,11 +132,7 @@ export function compoundClasses(step: string, allowAttributes = false): string[]
 
 /** The callout root — `.callout`, however else the compound is qualified. */
 function isCalloutRoot(classes: readonly string[]): boolean {
-	return (
-		classes.includes("callout") &&
-		!classes.includes("callout-title") &&
-		!classes.includes("callout-content")
-	);
+	return classes.includes("callout") && !classes.includes("callout-title") && !classes.includes("callout-content");
 }
 
 /** `.callout-title` or `.callout-content` — the two boxes a theme frames. */
@@ -268,9 +262,7 @@ export function boxFillTargetOf(part: string): BoxFillHit | null {
 	if (before === "") return { box, pseudo, guard: "", rootQualifier: "" };
 	const hit = surfaceTargetOf(before);
 	if (hit !== null) {
-		return hit.target === "root"
-			? { box, pseudo, guard: hit.guard, rootQualifier: hit.rootQualifier }
-			: null;
+		return hit.target === "root" ? { box, pseudo, guard: hit.guard, rootQualifier: hit.rootQualifier } : null;
 	}
 	// No callout root above the child: the whole prefix is the guard. A step
 	// that IS a callout root got here only because its guard was refused, and

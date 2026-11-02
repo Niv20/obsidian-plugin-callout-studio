@@ -4,11 +4,7 @@ import type { CalloutRegistry } from "../../manager/CalloutRegistry";
 import type { SettingsWriter } from "../../manager/SettingsWriter";
 import type { CSSInjector } from "../../manager/CSSInjector";
 import type { IconService } from "../../icons/IconService";
-import type {
-	CalloutIcon,
-	CalloutRenderRole,
-	PluginSettings,
-} from "../../types";
+import type { CalloutIcon, CalloutRenderRole, PluginSettings } from "../../types";
 
 export interface CalloutEditorOptions {
 	seedDisplayName?: string;
@@ -24,7 +20,8 @@ export interface CalloutEditorPlugin {
 	cssInjector: CSSInjector;
 	settings: PluginSettings;
 	settingsEditOpen: boolean;
-	settingsWriter: Pick<SettingsWriter, "isFrozen" | "isDestroyed" | "matchesLastWrite"> & Partial<Pick<SettingsWriter, "status">>;
+	settingsWriter: Pick<SettingsWriter, "isFrozen" | "isDestroyed" | "matchesLastWrite"> &
+		Partial<Pick<SettingsWriter, "status">>;
 	saveSettings(): Promise<void>;
 	retrySettingsRecovery?(options?: SettingsAdoptionOptions): Promise<boolean>;
 	startFreshSettings?(): Promise<boolean>;

@@ -30,11 +30,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	CalloutRegistry,
-	EXPORT_FORMAT_ID,
-	EXPORT_FORMAT_VERSION,
-} from "../src/manager/CalloutRegistry";
+import { CalloutRegistry, EXPORT_FORMAT_ID, EXPORT_FORMAT_VERSION } from "../src/manager/CalloutRegistry";
 import type { CalloutDefinition, PluginData } from "../src/types";
 
 function def(over: Partial<CalloutDefinition> = {}): CalloutDefinition {
@@ -79,12 +75,7 @@ describe("getAll / getUserDefined / getExportableDefinitions — the plain case"
 		// Added after load, not through it: a `"theme"` row arriving in
 		// `data.json` predates that meaning and is re-homed to `"user"` on the
 		// way in (see manager/styleModeMigration.ts).
-		const registry = loaded(
-			saved([
-				def({ id: "mine", source: "user" }),
-				def({ id: "found", source: "fallback" }),
-			]),
-		);
+		const registry = loaded(saved([def({ id: "mine", source: "user" }), def({ id: "found", source: "fallback" })]));
 		registry.add(def({ id: "themed", source: "theme" }));
 		assert.deepStrictEqual(ids(registry.getUserDefined()), ["found", "mine"]);
 		assert.deepStrictEqual(ids(registry.getThemeProvided()), ["themed"]);
@@ -176,10 +167,7 @@ describe("a DEMO preview — hidden from the lists entirely", () => {
 		// real `[!example]` note repainted behind the modal AND the row went
 		// missing from the list. The id is reserved now; this is the other half.
 		const registry = loaded(null);
-		registry.setPreviewDefinition(
-			def({ id: "note", displayName: "DEMO", colorLight: "#ff0000" }),
-			true,
-		);
+		registry.setPreviewDefinition(def({ id: "note", displayName: "DEMO", colorLight: "#ff0000" }), true);
 
 		assert.strictEqual(
 			registry.getBuiltIn().find((d) => d.id === "note")?.displayName,
@@ -207,7 +195,10 @@ describe("a DEMO preview — hidden from the lists entirely", () => {
 		const registry = loaded(saved([def({ id: "mine" })]));
 		registry.setPreviewDefinition(def({ id: "brand-new" }), true);
 
-		assert.deepStrictEqual(registry.toSaveData().callouts.map((d) => d.id), ["mine"]);
+		assert.deepStrictEqual(
+			registry.toSaveData().callouts.map((d) => d.id),
+			["mine"],
+		);
 	});
 });
 
@@ -224,16 +215,11 @@ describe("a NON-demo preview — the live edit of a real callout", () => {
 		// state alone; `withIdentityOf` re-stamps the ownership fields, or a
 		// built-in row would move sections mid-edit.
 		const registry = loaded(null);
-		registry.setPreviewDefinition(
-			def({ id: "note", displayName: "Typing…", builtIn: false, source: "user" }),
-		);
+		registry.setPreviewDefinition(def({ id: "note", displayName: "Typing…", builtIn: false, source: "user" }));
 
 		assert.deepStrictEqual(registry.getUserDefined(), []);
 		assert.strictEqual(registry.getBuiltIn().length, 13);
-		assert.strictEqual(
-			registry.getBuiltIn().find((d) => d.id === "note")?.displayName,
-			"Typing…",
-		);
+		assert.strictEqual(registry.getBuiltIn().find((d) => d.id === "note")?.displayName, "Typing…");
 	});
 
 	it("cannot strip the shadowed callout's aliases, un-styling open notes mid-edit", () => {

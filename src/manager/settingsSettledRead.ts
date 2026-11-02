@@ -17,8 +17,11 @@ function sameRead(a: SettingsRead, b: SettingsRead): boolean {
 	// A later build's file stays a later build's file; say so rather than "unreadable".
 	if (a.kind === "unreadable" && b.kind === "unreadable" && a.newer && b.newer) return true;
 	// Identical text is the usual answer and settles it without sorting both.
-	return a.kind === "loaded" && b.kind === "loaded" && (a.json === b.json ||
-		JSON.stringify(stableKeyOrder(a.data)) === JSON.stringify(stableKeyOrder(b.data)));
+	return (
+		a.kind === "loaded" &&
+		b.kind === "loaded" &&
+		(a.json === b.json || JSON.stringify(stableKeyOrder(a.data)) === JSON.stringify(stableKeyOrder(b.data)))
+	);
 }
 
 /**
@@ -28,13 +31,19 @@ function sameRead(a: SettingsRead, b: SettingsRead): boolean {
  * The writer still performs its own immediate freshness check before saving.
  */
 export async function readSettledSettingsFile(
-	host: SettledSettingsFileHost, options: SettledReadOptions = {},
+	host: SettledSettingsFileHost,
+	options: SettledReadOptions = {},
 ): Promise<SettingsRead> {
 	const cancelled = options.isCancelled ?? (() => false);
-	const wait = options.wait ?? host.waitForSettingsSettle ??
-		(() => new Promise<void>(resolve => { window.setTimeout(resolve, 150); }));
+	const wait =
+		options.wait ??
+		host.waitForSettingsSettle ??
+		(() =>
+			new Promise<void>((resolve) => {
+				window.setTimeout(resolve, 150);
+			}));
 	if (cancelled()) return { kind: "unreadable" };
-	let previous = options.initial ?? await readSettingsFile(host);
+	let previous = options.initial ?? (await readSettingsFile(host));
 	let observedFile = previous.kind !== "absent";
 	let observedSettings = previous.kind === "loaded";
 	for (let attempt = 0; attempt < 3; attempt++) {

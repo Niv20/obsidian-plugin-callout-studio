@@ -196,10 +196,7 @@ describe("a data.json written by 1.0.0", () => {
 
 		assert.deepStrictEqual(style.heading, DEFAULT_SETTINGS.globalStyle.heading);
 		assert.deepStrictEqual(style.inline, DEFAULT_SETTINGS.globalStyle.inline);
-		assert.strictEqual(
-			style.alignContentWithTitle,
-			DEFAULT_SETTINGS.globalStyle.alignContentWithTitle,
-		);
+		assert.strictEqual(style.alignContentWithTitle, DEFAULT_SETTINGS.globalStyle.alignContentWithTitle);
 	});
 
 	it("fills in every whole section added since", () => {
@@ -242,8 +239,7 @@ describe("a data.json written by 1.0.0", () => {
 	it("drops the retired autocomplete preview toggles", () => {
 		// The dropdown always shows an icon and a colour now. A key nothing
 		// reads would otherwise be re-saved forever and copied into every export.
-		const autocomplete = load(vaultFrom_1_0_0()).settings
-			.autocomplete as unknown as Record<string, unknown>;
+		const autocomplete = load(vaultFrom_1_0_0()).settings.autocomplete as unknown as Record<string, unknown>;
 
 		assert.ok(!("showIconPreviews" in autocomplete));
 		assert.ok(!("showColorPreviews" in autocomplete));
@@ -269,10 +265,7 @@ describe("a data.json written by 1.0.0", () => {
 			["foldDefaults", "edit", "openSettings"],
 			"and the two the file left on are still on",
 		);
-		const menu = load(vaultFrom_1_0_0()).settings.contextMenu as unknown as Record<
-			string,
-			unknown
-		>;
+		const menu = load(vaultFrom_1_0_0()).settings.contextMenu as unknown as Record<string, unknown>;
 		assert.ok(!("showCopyMarkdown" in menu), "and the dead key is dropped");
 	});
 
@@ -296,12 +289,7 @@ describe("a data.json written by 1.0.0", () => {
 	});
 });
 
-const DEFAULT_CONTEXT_MENU_REGULAR = [
-	"copyMarkdown",
-	"foldDefaults",
-	"edit",
-	"openSettings",
-];
+const DEFAULT_CONTEXT_MENU_REGULAR = ["copyMarkdown", "foldDefaults", "edit", "openSettings"];
 
 /* ────────────────────────────────────────────────────────────────────────────
  * 2.0.0 — the shape after the two extra roles landed
@@ -391,8 +379,7 @@ describe("a data.json written by 2.0.0", () => {
 	});
 
 	it("drops `heading.paddingStart`, which is a static 10px in CSS now", () => {
-		const heading = load(vaultFrom_2_0_0()).settings.globalStyle
-			.heading as unknown as Record<string, unknown>;
+		const heading = load(vaultFrom_2_0_0()).settings.globalStyle.heading as unknown as Record<string, unknown>;
 
 		assert.ok(!("paddingStart" in heading));
 		assert.strictEqual(heading.paddingTop, 0.25, "the rest of the block is kept");
@@ -401,14 +388,8 @@ describe("a data.json written by 2.0.0", () => {
 	it("adds `showFoldArrow` and `allowContent`, which the file predates", () => {
 		const settings = load(vaultFrom_2_0_0()).settings;
 
-		assert.strictEqual(
-			settings.headingCallouts.showFoldArrow,
-			DEFAULT_SETTINGS.headingCallouts.showFoldArrow,
-		);
-		assert.strictEqual(
-			settings.inlineCallouts.allowContent,
-			DEFAULT_SETTINGS.inlineCallouts.allowContent,
-		);
+		assert.strictEqual(settings.headingCallouts.showFoldArrow, DEFAULT_SETTINGS.headingCallouts.showFoldArrow);
+		assert.strictEqual(settings.inlineCallouts.allowContent, DEFAULT_SETTINGS.inlineCallouts.allowContent);
 		assert.strictEqual(settings.inlineCallouts.enabled, false, "and keeps the toggle");
 	});
 
@@ -425,15 +406,12 @@ describe("a data.json written by 2.0.0", () => {
 	it("keeps the saved menu order and appends the items added since", () => {
 		const regular = load(vaultFrom_2_0_0()).settings.contextMenu.items.regular;
 
-		assert.deepStrictEqual(regular.slice(0, 2).map((i) => i.id), [
-			"edit",
-			"copyMarkdown",
-		]);
-		assert.strictEqual(regular[1]?.enabled, false, "and the user's own `false`");
 		assert.deepStrictEqual(
-			regular.map((i) => i.id).sort(),
-			[...DEFAULT_CONTEXT_MENU_REGULAR].sort(),
+			regular.slice(0, 2).map((i) => i.id),
+			["edit", "copyMarkdown"],
 		);
+		assert.strictEqual(regular[1]?.enabled, false, "and the user's own `false`");
+		assert.deepStrictEqual(regular.map((i) => i.id).sort(), [...DEFAULT_CONTEXT_MENU_REGULAR].sort());
 	});
 
 	it("defaults the roles the file said nothing about", () => {
@@ -494,16 +472,13 @@ describe("icons from older builds", () => {
 		// The prefix tells `getIcon` to look in Obsidian's core Lucide table and
 		// NOWHERE else, so on another plugin's `addIcon()` id it named nothing at
 		// all and the callout lost its icon everywhere at once.
-		const icon = load(
-			withIcon({ type: "lucide", value: "lucide-remix-QuestionnaireFill" }),
-		).get("row")?.icon;
+		const icon = load(withIcon({ type: "lucide", value: "lucide-remix-QuestionnaireFill" })).get("row")?.icon;
 
 		assert.strictEqual(icon?.value, "remix-QuestionnaireFill");
 	});
 
 	it("undoes it on Obsidian's own internal ids too", () => {
-		const icon = load(withIcon({ type: "lucide", value: "lucide-dice" })).get("row")
-			?.icon;
+		const icon = load(withIcon({ type: "lucide", value: "lucide-dice" })).get("row")?.icon;
 		assert.strictEqual(icon?.value, "dice");
 	});
 
@@ -511,8 +486,7 @@ describe("icons from older builds", () => {
 		// That spelling is what `getIconIds()` hands back for a core icon, and it
 		// is what the picker stores. Stripping it would be the same mistake in
 		// the other direction.
-		const icon = load(withIcon({ type: "lucide", value: "lucide-star" })).get("row")
-			?.icon;
+		const icon = load(withIcon({ type: "lucide", value: "lucide-star" })).get("row")?.icon;
 		assert.strictEqual(icon?.value, "lucide-star");
 	});
 
@@ -532,9 +506,7 @@ describe("the pre-2.4 Material caches", () => {
 			version: 2,
 			callouts: [],
 			materialIconsCache: { note: ["metadata", "nobody", "reads"] },
-			materialSvgCache: [
-				{ name: "rocket", style: "rounded", weight: 300, svg: "<svg>rocket</svg>" },
-			],
+			materialSvgCache: [{ name: "rocket", style: "rounded", weight: 300, svg: "<svg>rocket</svg>" }],
 		}) as unknown as Partial<PluginData>;
 
 	it("folds `materialSvgCache` into the pack-agnostic `iconSvgCache`", () => {
@@ -563,10 +535,7 @@ describe("the pre-2.4 Material caches", () => {
 	it("never writes either legacy cache back", () => {
 		// Writing both would let them drift apart. Downgrading to a pre-2.4
 		// build simply re-downloads the SVGs, which is the cheap direction.
-		const saved = load(legacy()).toSaveData() as unknown as Record<
-			string,
-			unknown
-		>;
+		const saved = load(legacy()).toSaveData() as unknown as Record<string, unknown>;
 
 		assert.ok(!("materialSvgCache" in saved));
 		assert.ok(!("materialIconsCache" in saved));
@@ -576,15 +545,10 @@ describe("the pre-2.4 Material caches", () => {
 	it("prefers an already-migrated `iconSvgCache` and folds the legacy one in beside it", () => {
 		const registry = load({
 			...legacy(),
-			iconSvgCache: [
-				{ pack: "tabler-outline", name: "flame", variant: "", svg: "<svg/>" },
-			],
+			iconSvgCache: [{ pack: "tabler-outline", name: "flame", variant: "", svg: "<svg/>" }],
 		} as unknown as Partial<PluginData>);
 
-		assert.deepStrictEqual(
-			registry.iconSvgCache.map((e) => e.name).sort(),
-			["flame", "rocket"],
-		);
+		assert.deepStrictEqual(registry.iconSvgCache.map((e) => e.name).sort(), ["flame", "rocket"]);
 	});
 });
 
@@ -607,10 +571,7 @@ describe("`data.version` is never read", () => {
 	it("repairs content stamped with a version that does not exist", () => {
 		const data = vaultFrom_2_0_0();
 		data.version = 99;
-		const heading = load(data).settings.globalStyle.heading as unknown as Record<
-			string,
-			unknown
-		>;
+		const heading = load(data).settings.globalStyle.heading as unknown as Record<string, unknown>;
 
 		assert.ok(!("paddingStart" in heading));
 	});
@@ -642,14 +603,8 @@ describe("a file that says almost nothing", () => {
 	});
 
 	it("callouts without settings, and settings without callouts, both load", () => {
-		assert.deepStrictEqual(
-			load({ callouts: vaultFrom_1_0_0().callouts }).settings,
-			DEFAULT_SETTINGS,
-		);
-		assert.deepStrictEqual(
-			userIds(load({ settings: vaultFrom_1_0_0().settings })),
-			[],
-		);
+		assert.deepStrictEqual(load({ callouts: vaultFrom_1_0_0().callouts }).settings, DEFAULT_SETTINGS);
+		assert.deepStrictEqual(userIds(load({ settings: vaultFrom_1_0_0().settings })), []);
 	});
 
 	it("seeds the built-ins even when the file lists none of them", () => {
@@ -719,9 +674,7 @@ describe("a file that says almost nothing", () => {
 		const registry = load({ callouts: [retiredBuiltIn()] });
 
 		assert.strictEqual(registry.needsSaveAfterLoad(), true);
-		const saved = registry.toSaveData().callouts.find(
-			(c) => c.id === "retired-builtin",
-		);
+		const saved = registry.toSaveData().callouts.find((c) => c.id === "retired-builtin");
 		assert.strictEqual(saved?.builtIn, false);
 		assert.strictEqual(saved.source, "user");
 	});

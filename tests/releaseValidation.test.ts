@@ -20,9 +20,7 @@ describe("tagged release validation", () => {
 	it("requires build, lint and tests before attesting or publishing artifacts", () => {
 		const workflow = parse(readRepoFile(".github/workflows/release.yml")) as ReleaseWorkflow;
 		const steps = workflow.jobs.release.steps;
-		const publish = steps.findIndex((step) =>
-			/attest-build-provenance|action-gh-release/.test(step.uses ?? ""),
-		);
+		const publish = steps.findIndex((step) => /attest-build-provenance|action-gh-release/.test(step.uses ?? ""));
 		assert.ok(publish >= 0, "release artifacts must have a validation boundary");
 		let previous = -1;
 		for (const command of ["npm run build", "npm run lint", "npm test"]) {

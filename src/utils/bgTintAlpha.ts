@@ -43,13 +43,7 @@
  * was converging on.
  */
 import type { CalloutDefinition } from "../types";
-import {
-	hexToRgb,
-	isValidHexColor,
-	minTintAlpha,
-	resolveTintAlpha,
-	tintBackdrop,
-} from "./colorUtils";
+import { hexToRgb, isValidHexColor, minTintAlpha, resolveTintAlpha, tintBackdrop } from "./colorUtils";
 
 /**
  * How far a colour sits from the mode's own page background, as one number.
@@ -92,11 +86,7 @@ function backdropDistance(hex: string, isDark: boolean): number {
  * keeps hand-edited data (`"transparent"`, a CSS colour name) out of the maths
  * instead of turning the alpha into `NaN`.
  */
-export function accentAnchorAlpha(
-	accent: string,
-	opaque: string,
-	isDark: boolean,
-): number {
+export function accentAnchorAlpha(accent: string, opaque: string, isDark: boolean): number {
 	if (!isValidHexColor(accent) || !isValidHexColor(opaque)) return 0;
 	const reach = backdropDistance(accent, isDark);
 	if (reach === 0) return 0;
@@ -140,27 +130,20 @@ export function accentAnchorAlpha(
  * solving it emits `color-mix(in oklch, #NaNNaNNaN …)` and is dropped by the
  * parser.
  */
-export function resolveBgAlpha(
-	def: CalloutDefinition,
-	mode: "light" | "dark",
-): number | null {
+export function resolveBgAlpha(def: CalloutDefinition, mode: "light" | "dark"): number | null {
 	const isDark = mode === "dark";
 	const bg = isDark ? def.bgColorDark : def.bgColorLight;
 	if (!bg || !isValidHexColor(bg)) return null;
 
 	const minima = [minTintAlpha(bg, isDark)];
-	const caps = [
-		accentAnchorAlpha(isDark ? def.colorDark : def.colorLight, bg, isDark),
-	];
+	const caps = [accentAnchorAlpha(isDark ? def.colorDark : def.colorLight, bg, isDark)];
 
 	const gradient = def.bgGradient;
 	if (gradient) {
 		const to = isDark ? gradient.toColorDark : gradient.toColorLight;
 		if (isValidHexColor(to)) {
 			minima.push(minTintAlpha(to, isDark));
-			const stopAccent = isDark
-				? gradient.textToColorDark
-				: gradient.textToColorLight;
+			const stopAccent = isDark ? gradient.textToColorDark : gradient.textToColorLight;
 			if (stopAccent) caps.push(accentAnchorAlpha(stopAccent, to, isDark));
 		}
 	}

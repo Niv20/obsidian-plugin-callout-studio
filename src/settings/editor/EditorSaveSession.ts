@@ -19,14 +19,20 @@ export class EditorSaveSession {
 	private pendingRow: { id: string; json: string } | null = null;
 
 	/** Store before awaiting: a failed write or partial rewrite remains retryable. */
-	async applyVaultChanges(host: CalloutEditorPlugin, plan: CalloutVaultSavePlan, definition?: CalloutDefinition): Promise<void> {
+	async applyVaultChanges(
+		host: CalloutEditorPlugin,
+		plan: CalloutVaultSavePlan,
+		definition?: CalloutDefinition,
+	): Promise<void> {
 		this.pendingVaultChanges = plan;
-		this.pendingRow = definition ? { id: definition.id, json: this.rowSnapshot(host.registry.toSaveData(), definition.id) } : null;
+		this.pendingRow = definition
+			? { id: definition.id, json: this.rowSnapshot(host.registry.toSaveData(), definition.id) }
+			: null;
 		await this.resumeVaultChanges(host);
 	}
 
 	private rowSnapshot(data: Partial<PluginData>, id: string): string {
-		const row = data.callouts?.find(row => row.id === id);
+		const row = data.callouts?.find((row) => row.id === id);
 		return row ? canonical({ ...row, icon: { ...row.icon, value: canonicalIconValue(row.icon) } }) : "";
 	}
 
@@ -36,22 +42,42 @@ export class EditorSaveSession {
 		this.busy = true;
 		try {
 			onBusyChange();
-			const recovered = await host.retrySettingsRecovery({ editor: true, canApply: data =>
-				!this.pendingRow || this.rowSnapshot(data, this.pendingRow.id) === this.pendingRow.json });
+			const recovered = await host.retrySettingsRecovery({
+				editor: true,
+				canApply: (data) =>
+					!this.pendingRow || this.rowSnapshot(data, this.pendingRow.id) === this.pendingRow.json,
+			});
 			if (recovered) showNotice("info", t("saveStatus.reviewDraft"));
 			return recovered;
-		} finally { this.busy = false; onBusyChange(); }
+		} finally {
+			this.busy = false;
+			onBusyChange();
+		}
 	}
 
 	private async resumeVaultChanges(host: CalloutEditorPlugin): Promise<void> {
 		if (!this.pendingVaultChanges) return;
-		if (this.pendingRow && this.rowSnapshot(host.registry.toSaveData(), this.pendingRow.id) !== this.pendingRow.json) {
+		if (
+			this.pendingRow &&
+			this.rowSnapshot(host.registry.toSaveData(), this.pendingRow.id) !== this.pendingRow.json
+		) {
 			host.settingsWriter.status?.fail("sync-conflict");
-			throw new SettingsPersistenceError("sync-conflict", "Pending note updates need the saved callout definition");
+			throw new SettingsPersistenceError(
+				"sync-conflict",
+				"Pending note updates need the saved callout definition",
+			);
 		}
-		if (!await persistEditorSettings(host)) throw new SettingsPersistenceError(host.settingsWriter.status?.reason ?? "changed", "Callout must be saved before rewriting notes");
-		try { await this.pendingVaultChanges(); }
-		catch (error) { console.error("[callout-studio] note updates failed", error); throw new NoteUpdateError(t("saveStatus.notesFailed")); }
+		if (!(await persistEditorSettings(host)))
+			throw new SettingsPersistenceError(
+				host.settingsWriter.status?.reason ?? "changed",
+				"Callout must be saved before rewriting notes",
+			);
+		try {
+			await this.pendingVaultChanges();
+		} catch (error) {
+			console.error("[callout-studio] note updates failed", error);
+			throw new NoteUpdateError(t("saveStatus.notesFailed"));
+		}
 		this.pendingVaultChanges = null;
 		this.pendingRow = null;
 	}
@@ -73,14 +99,21 @@ export class EditorSaveSession {
 			await this.resumeVaultChanges(host);
 			const def = await apply();
 			if (!def) return null;
-			if (!await persistEditorSettings(host)) {
-				throw new SettingsPersistenceError(host.settingsWriter.status?.reason ?? "changed", "Current callout settings were not persisted");
+			if (!(await persistEditorSettings(host))) {
+				throw new SettingsPersistenceError(
+					host.settingsWriter.status?.reason ?? "changed",
+					"Current callout settings were not persisted",
+				);
 			}
 			clearSettingsSaveFailure(host.settingsWriter);
 			return def;
 		} catch (error) {
 			console.error("[Callout Studio] callout save failed", error);
-			reportSettingsSaveFailure(host.settingsWriter, error, error instanceof NoteUpdateError ? error.message : undefined);
+			reportSettingsSaveFailure(
+				host.settingsWriter,
+				error,
+				error instanceof NoteUpdateError ? error.message : undefined,
+			);
 			return null;
 		} finally {
 			this.busy = false;

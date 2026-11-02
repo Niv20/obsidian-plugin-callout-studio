@@ -76,8 +76,7 @@ export function pageRootTest(doc: Document): (rule: CSSRule) => boolean {
 		if (known !== undefined) return known;
 		const parent = rule.parentRule;
 		const result =
-			(isStyleRule(rule) && pageRootFails(rule.selectorText, matches)) ||
-			(parent !== null && ruleOff(parent));
+			(isStyleRule(rule) && pageRootFails(rule.selectorText, matches)) || (parent !== null && ruleOff(parent));
 		off.set(rule, result);
 		return result;
 	};
@@ -109,11 +108,7 @@ export const OBSIDIAN_BODY_STATE: ReadonlySet<string> = new Set([
  * or one of Obsidian's own {@link OBSIDIAN_BODY_STATE} classes (the other mode,
  * another platform).
  */
-export function optionGatedRule(
-	rule: CSSRule,
-	options: ReadonlySet<string>,
-	doc: Document,
-): boolean {
+export function optionGatedRule(rule: CSSRule, options: ReadonlySet<string>, doc: Document): boolean {
 	const off = (cls: string): boolean =>
 		(options.has(cls) || OBSIDIAN_BODY_STATE.has(cls)) &&
 		!doc.body.classList.contains(cls) &&
@@ -178,11 +173,7 @@ function groupsHold(rule: CSSRule, doc: Document): boolean {
  * hover exactly as one that writes `.callout[…]:hover` beside it, and the
  * render sees neither.
  */
-export function nestedRulesSeen(
-	rule: StyleRule,
-	seen: (rule: StyleRule) => boolean,
-	doc: Document,
-): boolean {
+export function nestedRulesSeen(rule: StyleRule, seen: (rule: StyleRule) => boolean, doc: Document): boolean {
 	const walk = (list: CSSRuleList | undefined, owner: StyleRule): boolean => {
 		if (!list) return true;
 		for (const child of Array.from(list)) {

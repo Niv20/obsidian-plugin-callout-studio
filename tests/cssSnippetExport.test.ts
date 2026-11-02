@@ -76,9 +76,7 @@ interface Fake {
 	zeroUsage: Set<string>;
 }
 
-function fake(
-	opts: { onDisk?: string; snippetEnabled?: boolean; customCss?: false } = {},
-): Fake {
+function fake(opts: { onDisk?: string; snippetEnabled?: boolean; customCss?: false } = {}): Fake {
 	const vault: Vault = {
 		stats: [],
 		reads: [],
@@ -126,9 +124,7 @@ function fake(
 			? {}
 			: {
 					customCss: {
-						enabledSnippets: new Set(
-							opts.snippetEnabled ? [SNIPPET_BASENAME] : [],
-						),
+						enabledSnippets: new Set(opts.snippetEnabled ? [SNIPPET_BASENAME] : []),
 					},
 				}),
 	} as unknown as App;
@@ -170,8 +166,7 @@ function seeded(opts?: Parameters<typeof fake>[0]): Fake {
 	return f;
 }
 
-const selectors = (css: string): string[] =>
-	parseRules(css).map((r) => r.selector);
+const selectors = (css: string): string[] => parseRules(css).map((r) => r.selector);
 
 /* --- What lands on disk ---------------------------------------------------- */
 
@@ -232,10 +227,7 @@ describe("writing the snippet", () => {
 		await exportCssSnippet(f.app, f.plugin, noPrompt);
 		await exportCssSnippet(f.app, f.plugin, noPrompt);
 
-		assert.deepStrictEqual(
-			[...new Set(f.vault.writes.map(([p]) => p))],
-			[PATH],
-		);
+		assert.deepStrictEqual([...new Set(f.vault.writes.map(([p]) => p))], [PATH]);
 		assert.deepStrictEqual([...new Set(f.vault.reads)], [PATH]);
 		assert.strictEqual(f.vault.files.get(`${DIR}/someone-elses.css`), "/* theirs */");
 	});
@@ -392,9 +384,7 @@ describe("the generated stylesheet", () => {
 
 		assert.ok(
 			parseRules(buildSnippetCss(f.plugin)).some(
-				(r) =>
-					r.selector.startsWith(".callout") &&
-					r.decls.some((d) => d.startsWith("border-radius: 12px")),
+				(r) => r.selector.startsWith(".callout") && r.decls.some((d) => d.startsWith("border-radius: 12px")),
 			),
 			"the user's radius should be in the snippet",
 		);
@@ -407,16 +397,8 @@ describe("the generated stylesheet", () => {
 
 		const css = buildSnippetCss(f.plugin);
 
-		for (const dead of [
-			"cs-heading-callout",
-			"cs-inline-callout",
-			"cs-ref-token",
-			"cs-heading-token",
-		]) {
-			assert.ok(
-				!css.includes(dead),
-				`${dead} only exists while the plugin runs, so it is dead weight here`,
-			);
+		for (const dead of ["cs-heading-callout", "cs-inline-callout", "cs-ref-token", "cs-heading-token"]) {
+			assert.ok(!css.includes(dead), `${dead} only exists while the plugin runs, so it is dead weight here`);
 		}
 	});
 
@@ -431,9 +413,7 @@ describe("the generated stylesheet", () => {
 		// `standalone` must be opt-in: the same emitter still has to produce the
 		// token rules for the sheet the plugin actually injects.
 		const f = seeded();
-		const css = f.plugin.cssInjector.generateCalloutCSS(
-			f.registry.get("quiet") as CalloutDefinition,
-		);
+		const css = f.plugin.cssInjector.generateCalloutCSS(f.registry.get("quiet") as CalloutDefinition);
 		assert.ok(css.includes("cs-inline-callout"));
 	});
 });
@@ -454,9 +434,7 @@ describe("untouched built-ins", () => {
 		const f = seeded();
 		borderOn(f);
 
-		const rule = parseRules(buildSnippetCss(f.plugin)).find(
-			(r) => r.selector === '.callout[data-callout="note"]',
-		);
+		const rule = parseRules(buildSnippetCss(f.plugin)).find((r) => r.selector === '.callout[data-callout="note"]');
 
 		// The live sheet defines --cs-accent for every callout because it walks
 		// the whole registry; this export walks a subset, so without this an
@@ -469,16 +447,11 @@ describe("untouched built-ins", () => {
 		const f = seeded();
 		borderOn(f);
 
-		const rule = parseRules(buildSnippetCss(f.plugin)).find(
-			(r) => r.selector === '.callout[data-callout="note"]',
-		);
+		const rule = parseRules(buildSnippetCss(f.plugin)).find((r) => r.selector === '.callout[data-callout="note"]');
 
 		// `note` is Obsidian's unrecognized-type default, hence the name.
 		assert.ok(rule?.decls.some((d) => d.includes("--callout-default")));
-		assert.ok(
-			!rule?.props.includes("--callout-color"),
-			"pinning --callout-color would override the target theme",
-		);
+		assert.ok(!rule?.props.includes("--callout-color"), "pinning --callout-color would override the target theme");
 	});
 
 	it("carry the @property registration that gives them a meaning", () => {
@@ -505,11 +478,7 @@ describe("untouched built-ins", () => {
 			left: false,
 		};
 
-		assert.ok(
-			!selectors(buildSnippetCss(f.plugin)).includes(
-				'.callout[data-callout="note"]',
-			),
-		);
+		assert.ok(!selectors(buildSnippetCss(f.plugin)).includes('.callout[data-callout="note"]'));
 	});
 });
 
@@ -529,9 +498,7 @@ describe("the accent registration", () => {
 describe("which callouts are covered", () => {
 	it("exports a saved discovery result regardless of usage", () => {
 		const f = seeded();
-		f.registry.add(
-			definition({ id: "ghost", source: "fallback", customized: false }),
-		);
+		f.registry.add(definition({ id: "ghost", source: "fallback", customized: false }));
 		f.zeroUsage.add("ghost");
 
 		assert.deepStrictEqual(
@@ -542,21 +509,15 @@ describe("which callouts are covered", () => {
 
 	it("keeps a discovered row the user adopted", () => {
 		const f = seeded();
-		f.registry.add(
-			definition({ id: "adopted", source: "fallback", customized: true }),
-		);
+		f.registry.add(definition({ id: "adopted", source: "fallback", customized: true }));
 		f.zeroUsage.add("adopted");
 
-		assert.ok(
-			exportableDefinitions(f.plugin).some((d) => d.id === "adopted"),
-		);
+		assert.ok(exportableDefinitions(f.plugin).some((d) => d.id === "adopted"));
 	});
 
 	it("keeps a discovered row still written in the vault", () => {
 		const f = seeded();
-		f.registry.add(
-			definition({ id: "inuse", source: "fallback", customized: false }),
-		);
+		f.registry.add(definition({ id: "inuse", source: "fallback", customized: false }));
 
 		assert.ok(exportableDefinitions(f.plugin).some((d) => d.id === "inuse"));
 	});
@@ -575,11 +536,7 @@ describe("which callouts are covered", () => {
 
 		// Strong global geometry is an allow-list of registered Studio-owned ids,
 		// so a theme-owned id is absent there as well as from its own block.
-		assert.ok(
-			!selectors(buildSnippetCss(f.plugin)).some((s) =>
-				s.includes('.callout[data-callout="theirs"]'),
-			),
-		);
+		assert.ok(!selectors(buildSnippetCss(f.plugin)).some((s) => s.includes('.callout[data-callout="theirs"]')));
 	});
 
 	it("keeps every name of a callout the theme claims only in part", () => {
@@ -587,9 +544,7 @@ describe("which callouts are covered", () => {
 		// active theme is not, so a name *this* theme draws must not thin it out:
 		// `[!описание]` there would be left unstyled.
 		const f = fake();
-		f.registry.add(
-			definition({ id: "описание", aliases: ["вид", "description"], hideIcon: false }),
-		);
+		f.registry.add(definition({ id: "описание", aliases: ["вид", "description"], hideIcon: false }));
 		f.registry.setThemeOwnedIds(new Set(["описание"]));
 		const live = f.plugin.cssInjector.generateCalloutCSS(f.registry.get("описание")!);
 		assert.ok(
@@ -634,9 +589,7 @@ describe("styles that are easy to drop", () => {
 		const f = fake();
 		f.registry.add(definition({ id: "clear", transparentBg: true }));
 
-		const rule = parseRules(buildSnippetCss(f.plugin)).find(
-			(r) => r.selector === '.callout[data-callout="clear"]',
-		);
+		const rule = parseRules(buildSnippetCss(f.plugin)).find((r) => r.selector === '.callout[data-callout="clear"]');
 		assert.ok(rule?.decls.includes("background-color: transparent !important"));
 	});
 
@@ -646,10 +599,13 @@ describe("styles that are easy to drop", () => {
 		f.registry.add(definition({ id: "bare", hideIcon: true }));
 
 		const css = buildSnippetCss(f.plugin);
-		assert.ok(parseRules(css).some((r) =>
-			r.selector.includes('[data-callout="bare"] > .callout-title > .callout-icon') &&
-			r.decls.includes("display: none !important"),
-		));
+		assert.ok(
+			parseRules(css).some(
+				(r) =>
+					r.selector.includes('[data-callout="bare"] > .callout-title > .callout-icon') &&
+					r.decls.includes("display: none !important"),
+			),
+		);
 		// Only correct because the export carries the global indent as well.
 		assert.ok(
 			parseRules(css).some(
@@ -694,9 +650,7 @@ describe("styles that are easy to drop", () => {
 
 	it("follows the fallback callout the discovered rows mirror", () => {
 		const f = fake();
-		f.registry.add(
-			definition({ id: "found", source: "fallback", customized: false }),
-		);
+		f.registry.add(definition({ id: "found", source: "fallback", customized: false }));
 		const before = buildSnippetCss(f.plugin);
 
 		f.registry.settings.fallbackCalloutId = "warning";

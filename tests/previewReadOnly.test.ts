@@ -32,13 +32,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	EditorSelection,
-	EditorState,
-	StateEffect,
-	type Extension,
-	type TransactionSpec,
-} from "@codemirror/state";
+import { EditorSelection, EditorState, StateEffect, type Extension, type TransactionSpec } from "@codemirror/state";
 import { readOnlyPreviewExtensions } from "../src/settings/previewReadOnly";
 
 const DOC = "> [!note] Note\n> body\n\ntail";
@@ -159,12 +153,7 @@ describe("the read-only preview filter leaves everything else alone", () => {
 		});
 		assert.strictEqual(state.readOnly, true);
 		assert.strictEqual(gate.isOpen, false);
-		assert.strictEqual(
-			state
-				.update({ changes: { from: 0, insert: "x" } })
-				.state.doc.toString(),
-			DOC,
-		);
+		assert.strictEqual(state.update({ changes: { from: 0, insert: "x" } }).state.doc.toString(), DOC);
 	});
 });
 
@@ -178,9 +167,7 @@ describe("the write gate", () => {
 		// changes. Without a way through, the filter would freeze the preview
 		// on its first sample forever.
 		const h = harness();
-		const next = h.gate.allow(() =>
-			h.apply({ changes: { from: 0, to: DOC.length, insert: "new" } }),
-		);
+		const next = h.gate.allow(() => h.apply({ changes: { from: 0, to: DOC.length, insert: "new" } }));
 		assert.strictEqual(next, "new");
 		assert.strictEqual(h.attempts(), 0);
 	});
@@ -189,10 +176,7 @@ describe("the write gate", () => {
 		const h = harness();
 		h.gate.allow(() => h.apply({ changes: { from: 0, insert: "ok " } }));
 		const after = h.state.doc.toString();
-		assert.strictEqual(
-			h.apply({ changes: { from: 0, insert: "x" } }),
-			after,
-		);
+		assert.strictEqual(h.apply({ changes: { from: 0, insert: "x" } }), after);
 		assert.strictEqual(h.attempts(), 1);
 	});
 

@@ -43,7 +43,13 @@ export function scrollMenuWithWheel(menuEl: HTMLElement, currentIndex: number): 
 	// menu, and the pointer landing on a row.
 	let kept = 0;
 	for (const type of ["mousemove", "pointerover"]) {
-		menuEl.addEventListener(type, () => { kept = scroller.scrollTop; }, true);
+		menuEl.addEventListener(
+			type,
+			() => {
+				kept = scroller.scrollTop;
+			},
+			true,
+		);
 		menuEl.addEventListener(type, () => {
 			// Only a change is undone: setting the same value would stop a wheel
 			// scroll that is still gliding.

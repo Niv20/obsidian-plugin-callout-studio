@@ -2,9 +2,7 @@ import { CURRENT_DATA_VERSION, DEFAULT_SETTINGS } from "../constants";
 import type { PluginData, PluginSettings } from "../types";
 import { SYNC_KEY } from "./syncTree";
 
-const KNOWN_SETTINGS_KEYS: ReadonlySet<string> = new Set(
-	Object.keys(DEFAULT_SETTINGS),
-);
+const KNOWN_SETTINGS_KEYS: ReadonlySet<string> = new Set(Object.keys(DEFAULT_SETTINGS));
 
 const RETIRED_SETTINGS_KEYS: ReadonlySet<string> = new Set([
 	// Retired discovery settings must never be carried back into data.json.
@@ -35,7 +33,6 @@ const KNOWN_DATA_KEYS: ReadonlySet<string> = new Set([
 ]);
 
 export interface ForeignFields {
-
 	data: Record<string, unknown>;
 
 	settings: Record<string, unknown>;
@@ -55,35 +52,28 @@ function unrecognised(
 	known: ReadonlySet<string>,
 	retired: ReadonlySet<string> = new Set(),
 ): Record<string, unknown> {
-	return Object.fromEntries(entriesOf(value).filter(([key, entry]) => {
-		if (known.has(key) || retired.has(key)) return false;
-		// An explicit `undefined` is not a value another build is keeping — it
-		// does not survive `JSON.stringify` either way, and reproducing the key
-		// would only make the two files look different.
-		// fromEntries preserves every name as an own property, including
-		// __proto__, without invoking the prototype setter on a plain object.
-		return entry !== undefined;
-	}));
+	return Object.fromEntries(
+		entriesOf(value).filter(([key, entry]) => {
+			if (known.has(key) || retired.has(key)) return false;
+			// An explicit `undefined` is not a value another build is keeping — it
+			// does not survive `JSON.stringify` either way, and reproducing the key
+			// would only make the two files look different.
+			// fromEntries preserves every name as an own property, including
+			// __proto__, without invoking the prototype setter on a plain object.
+			return entry !== undefined;
+		}),
+	);
 }
 
-export function collectForeignFields(
-	saved: Partial<PluginData> | null,
-): ForeignFields {
+export function collectForeignFields(saved: Partial<PluginData> | null): ForeignFields {
 	if (!saved) return NO_FOREIGN_FIELDS;
 	return {
 		data: unrecognised(saved, KNOWN_DATA_KEYS),
-		settings: unrecognised(
-			saved.settings,
-			KNOWN_SETTINGS_KEYS,
-			RETIRED_SETTINGS_KEYS,
-		),
+		settings: unrecognised(saved.settings, KNOWN_SETTINGS_KEYS, RETIRED_SETTINGS_KEYS),
 	};
 }
 
-export function withForeignSettings(
-	settings: PluginSettings,
-	foreign: ForeignFields,
-): PluginSettings {
+export function withForeignSettings(settings: PluginSettings, foreign: ForeignFields): PluginSettings {
 	return { ...foreign.settings, ...settings };
 }
 
@@ -101,6 +91,7 @@ export function isNewerSettingsFormat(saved: unknown): boolean {
 	if (!saved || typeof saved !== "object") return false;
 	const { version, [SYNC_KEY]: envelope } = saved as Record<string, unknown>;
 	if (typeof version === "number" && version > CURRENT_DATA_VERSION) return true;
-	const envelopeVersion = envelope && typeof envelope === "object" ? (envelope as { version?: unknown }).version : undefined;
+	const envelopeVersion =
+		envelope && typeof envelope === "object" ? (envelope as { version?: unknown }).version : undefined;
 	return typeof envelopeVersion === "number" && envelopeVersion > 2;
 }

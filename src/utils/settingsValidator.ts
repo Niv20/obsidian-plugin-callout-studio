@@ -17,9 +17,7 @@ export interface SettingsValidationResult {
 	issues: ValidationIssue[];
 }
 
-export function sanitizeImportedSettings(
-	raw: unknown,
-): SettingsValidationResult {
+export function sanitizeImportedSettings(raw: unknown): SettingsValidationResult {
 	if (raw === undefined || raw === null) {
 		return { settings: null, issues: [] };
 	}

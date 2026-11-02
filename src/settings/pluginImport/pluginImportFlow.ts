@@ -32,12 +32,7 @@
  *   empty         its folder, with nothing in it to import
  *   unreadable    its settings file, which can't be read, parsed or recognized
  */
-export type ProbeState =
-	| "checking"
-	| "found"
-	| "empty"
-	| "notInstalled"
-	| "unreadable";
+export type ProbeState = "checking" | "found" | "empty" | "notInstalled" | "unreadable";
 
 export type ImportOption = "vault" | "manual";
 

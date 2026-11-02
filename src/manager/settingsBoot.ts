@@ -15,7 +15,6 @@ import { PRIMARY_IO_TIMEOUT_MS } from "./settingsFile";
 import { withTimeout } from "../utils/withTimeout";
 
 export interface SettingsBootResult {
-
 	isFreshInstall: boolean;
 }
 
@@ -23,18 +22,22 @@ export interface SettingsBootResult {
 async function pruneAtBoot(host: ExternalReloadHost): Promise<void> {
 	let finished = false;
 	try {
-		await withTimeout(Promise.all([
-			pruneSettingsBackups(host, new Set(), () => finished || host.settingsWriter.isDestroyed),
-			host.settingsWriter.pruneHistory(),
-		]), PRIMARY_IO_TIMEOUT_MS, () => new Error("Settings retention did not respond"));
+		await withTimeout(
+			Promise.all([
+				pruneSettingsBackups(host, new Set(), () => finished || host.settingsWriter.isDestroyed),
+				host.settingsWriter.pruneHistory(),
+			]),
+			PRIMARY_IO_TIMEOUT_MS,
+			() => new Error("Settings retention did not respond"),
+		);
 	} catch (error) {
 		console.debug("[callout-studio] could not finish settings retention", error);
-	} finally { finished = true; }
+	} finally {
+		finished = true;
+	}
 }
 
-export async function loadSettingsInto(
-	host: ExternalReloadHost,
-): Promise<SettingsBootResult> {
+export async function loadSettingsInto(host: ExternalReloadHost): Promise<SettingsBootResult> {
 	// Finish retention before adoption can start a protected backup batch.
 	// Also runs for paused/missing settings: upgrading requires no new save.
 	if (host.settingsWriter.isDestroyed) return { isFreshInstall: false };
@@ -48,12 +51,14 @@ export async function loadSettingsInto(
 	if (read.kind === "unreadable") {
 		host.settingsWriter.freeze(read.newer ? "newer-version" : "unreadable");
 		console.error(
-			"[callout-studio] data.json exists but could not be read; " +
-				"settings will not be written this session",
+			"[callout-studio] data.json exists but could not be read; " + "settings will not be written this session",
 		);
 		warnSettingsUnreadable(host.settingsWriter);
 
-		await applySettingsRead(host, host.settingsWriter.hasCheckpoint ? await recoveryDisplay(host) : { kind: "absent" });
+		await applySettingsRead(
+			host,
+			host.settingsWriter.hasCheckpoint ? await recoveryDisplay(host) : { kind: "absent" },
+		);
 
 		if (!host.settingsWriter.isDestroyed) watchForLateSettings(host);
 		return { isFreshInstall: false };
@@ -61,8 +66,9 @@ export async function loadSettingsInto(
 
 	let missingRecovery: Partial<PluginData> | null = null;
 	if (read.kind === "absent" && host.settingsWriter.hasCheckpoint) {
-		try { missingRecovery = await host.settingsWriter.recoveryCopy() as Partial<PluginData> | null; }
-		catch (error) {
+		try {
+			missingRecovery = (await host.settingsWriter.recoveryCopy()) as Partial<PluginData> | null;
+		} catch (error) {
 			host.settingsWriter.freeze("recovery-read");
 			reportSettingsSaveFailure(host.settingsWriter, error);
 			await applySettingsRead(host, { kind: "absent" });
@@ -85,7 +91,8 @@ export async function loadSettingsInto(
 
 		// Display the durable copy without making it the baseline for a file
 		// that is absent. Confirmed recreation preserves these definitions.
-		const recoveryBaseline = missingRecovery && !isFromNewerBuild(missingRecovery) ? structuredClone(missingRecovery) : null;
+		const recoveryBaseline =
+			missingRecovery && !isFromNewerBuild(missingRecovery) ? structuredClone(missingRecovery) : null;
 		await host.settingsWriter.hold(async () => {
 			// A later build's copy may not pass this build's gate; show built-ins then.
 			host.registry.load(missingRecovery && hasSafeSettingsFileShape(missingRecovery) ? missingRecovery : null);
@@ -101,9 +108,11 @@ export async function loadSettingsInto(
 		// a background save meeting it is not a lost change.
 		host.settingsWriter.freeze("missing", false);
 	}
-	const recovered = read.kind === "loaded" && host.settingsWriter.hasCheckpoint ? await recoverSettingsAtBoot(host, read) : read;
-	try { await applySettingsRead(host, recovered, read.kind === "loaded" ? read.json : undefined); }
-	catch (error) {
+	const recovered =
+		read.kind === "loaded" && host.settingsWriter.hasCheckpoint ? await recoverSettingsAtBoot(host, read) : read;
+	try {
+		await applySettingsRead(host, recovered, read.kind === "loaded" ? read.json : undefined);
+	} catch (error) {
 		// A failed migration flush must leave the loaded UI available to retry.
 		if (!(error instanceof SettingsPersistenceError)) throw error;
 		reportSettingsSaveFailure(host.settingsWriter, error);
@@ -128,7 +137,11 @@ export async function loadSettingsSafely(host: ExternalReloadHost): Promise<Sett
 	} catch (error) {
 		console.error("[callout-studio] settings could not be loaded; showing built-in callouts", error);
 		host.settingsWriter.freeze("unreadable");
-		try { host.registry.load(null); } catch (reset) { console.error("[callout-studio] could not reset the registry", reset); }
+		try {
+			host.registry.load(null);
+		} catch (reset) {
+			console.error("[callout-studio] could not reset the registry", reset);
+		}
 		reportSettingsSaveFailure(host.settingsWriter, error);
 		if (!host.settingsWriter.isDestroyed) watchForLateSettings(host);
 		return { isFreshInstall: false };

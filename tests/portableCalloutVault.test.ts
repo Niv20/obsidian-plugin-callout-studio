@@ -41,7 +41,9 @@ describe("portable conversion approval plans", () => {
 
 	it("rejects an unreadable note rather than offering an incomplete plan, and releases its lock", async () => {
 		const h = portableVault(two);
-		h.hooks.beforeRead = (path) => { if (path === "b.md") throw new Error("EACCES"); };
+		h.hooks.beforeRead = (path) => {
+			if (path === "b.md") throw new Error("EACCES");
+		};
 		await assert.rejects(prepare(h.app), { code: "read-failed", path: "b.md" });
 		assert.deepEqual(h.written, []);
 		delete h.hooks.beforeRead;
@@ -61,7 +63,9 @@ describe("portable conversion approval plans", () => {
 
 	it("rejects changes to an earlier note while reading a later note", async () => {
 		const h = portableVault(two);
-		h.hooks.afterRead = (path) => { if (path === "b.md") h.edit("a.md", "New paragraph"); };
+		h.hooks.afterRead = (path) => {
+			if (path === "b.md") h.edit("a.md", "New paragraph");
+		};
 		await assert.rejects(prepare(h.app), { code: "changed", path: "a.md" });
 		assert.deepEqual(h.written, []);
 	});
@@ -83,9 +87,17 @@ describe("portable conversion approval plans", () => {
 		const abort = new AbortController();
 		const previous = Object.getOwnPropertyDescriptor(globalThis, "window");
 		let yields = 0;
-		Object.defineProperty(globalThis, "window", { configurable: true, value: {
-			setTimeout: (resolve: () => void) => { yields++; abort.abort(); resolve(); return 1; },
-		} });
+		Object.defineProperty(globalThis, "window", {
+			configurable: true,
+			value: {
+				setTimeout: (resolve: () => void) => {
+					yields++;
+					abort.abort();
+					resolve();
+					return 1;
+				},
+			},
+		});
 		try {
 			await assert.rejects(prepare(h.app, { signal: abort.signal }), { code: "aborted" });
 			assert.equal(yields, 1);
@@ -103,7 +115,15 @@ describe("portable conversion preflight", () => {
 		const h = portableVault({ ...two, "plain.md": "Unchanged\r\n", "photo.png": "[!note]" });
 		const plan = await prepare(h.app);
 		const result = await apply(h.app, plan);
-		assert.deepEqual(result, { status: "complete", files: 2, count: 2, headings: 1, inline: 1, skipped: plan.skipped, linkCount: 0 });
+		assert.deepEqual(result, {
+			status: "complete",
+			files: 2,
+			count: 2,
+			headings: 1,
+			inline: 1,
+			skipped: plan.skipped,
+			linkCount: 0,
+		});
 		assert.deepEqual(h.written, ["a.md", "b.md"]);
 		assert.equal(h.contents.get("a.md"), "A note pill");
 		assert.equal(h.contents.get("b.md"), "## Heading");
@@ -150,7 +170,9 @@ describe("portable conversion preflight", () => {
 	it("blocks a failed preflight read before writing any earlier file", async () => {
 		const h = portableVault(two);
 		const plan = await prepare(h.app);
-		h.hooks.beforeRead = (path) => { if (path === "b.md") throw new Error("Unavailable"); };
+		h.hooks.beforeRead = (path) => {
+			if (path === "b.md") throw new Error("Unavailable");
+		};
 		assert.equal((await apply(h.app, plan)).error?.code, "read-failed");
 		assert.deepEqual(h.processes, []);
 	});
@@ -158,7 +180,9 @@ describe("portable conversion preflight", () => {
 	it("rechecks previously read files after the complete preflight", async () => {
 		const h = portableVault(two);
 		const plan = await prepare(h.app);
-		h.hooks.afterRead = (path) => { if (path === "b.md") h.edit("a.md", "Changed during preflight"); };
+		h.hooks.afterRead = (path) => {
+			if (path === "b.md") h.edit("a.md", "Changed during preflight");
+		};
 		assert.equal((await apply(h.app, plan)).error?.code, "changed");
 		assert.deepEqual(h.processes, []);
 	});
@@ -195,7 +219,10 @@ describe("portable conversion open editors", () => {
 			const h = portableVault(two);
 			const editor = h.open("a.md");
 			const plan = await prepare(h.app);
-			if (atCommit) h.hooks.beforeProcess = () => { editor.text = "Unsaved paragraph"; };
+			if (atCommit)
+				h.hooks.beforeProcess = () => {
+					editor.text = "Unsaved paragraph";
+				};
 			else editor.text = "Unsaved paragraph";
 			const result = await apply(h.app, plan);
 			assert.equal(result.error?.code, "editor-changed");
@@ -221,10 +248,24 @@ describe("portable conversion concurrent changes and failures", () => {
 	it("stops after the first write failure and reports only completed files, without rollback", async () => {
 		const h = portableVault({ ...two, "c.md": "Another [!note]" });
 		const plan = await prepare(h.app);
-		h.hooks.beforeProcess = (path) => { if (path === "b.md") throw new Error("Disk full"); };
+		h.hooks.beforeProcess = (path) => {
+			if (path === "b.md") throw new Error("Disk full");
+		};
 		const result = await apply(h.app, plan);
-		assert.deepEqual({ ...result, remainingPlan: undefined }, { status: "stopped", files: 1, count: 1, headings: 0, inline: 1, linkCount: 0, remainingPlan: undefined,
-			skipped: plan.skipped, error: { code: "write-failed", path: "b.md" } });
+		assert.deepEqual(
+			{ ...result, remainingPlan: undefined },
+			{
+				status: "stopped",
+				files: 1,
+				count: 1,
+				headings: 0,
+				inline: 1,
+				linkCount: 0,
+				remainingPlan: undefined,
+				skipped: plan.skipped,
+				error: { code: "write-failed", path: "b.md" },
+			},
+		);
 		assert.deepEqual(h.written, ["a.md"]);
 		assert.equal(h.contents.get("a.md"), "A note pill");
 		assert.equal(h.contents.get("c.md"), "Another [!note]");
@@ -266,7 +307,10 @@ describe("portable conversion concurrent changes and failures", () => {
 		h.hooks.beforeRead = () => gate.promise;
 		const first = apply(h.app, plan);
 		assert.equal((await apply(h.app, plan)).error?.code, "busy");
-		await assert.rejects(prepare(h.app), (error: unknown) => error instanceof PortableCalloutVaultError && error.code === "busy");
+		await assert.rejects(
+			prepare(h.app),
+			(error: unknown) => error instanceof PortableCalloutVaultError && error.code === "busy",
+		);
 		gate.resolve();
 		assert.equal((await first).status, "complete");
 		assert.equal((await prepare(h.app)).files, 0);

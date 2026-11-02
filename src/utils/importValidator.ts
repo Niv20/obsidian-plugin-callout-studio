@@ -7,31 +7,16 @@
  * structured list of issues (errors + warnings) so the ImportReportModal can
  * show the user exactly what was wrong before committing anything.
  */
-import type {
-	CalloutDefinition,
-	CalloutIcon,
-	CalloutRenderRole,
-	IconAdjust,
-	PluginSettings,
-} from "../types";
+import type { CalloutDefinition, CalloutIcon, CalloutRenderRole, IconAdjust, PluginSettings } from "../types";
 import { CALLOUT_RENDER_ROLES } from "../types";
 import { ICON_ADJUST_LIMITS } from "./iconAdjust";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import { EXPORT_FORMAT_ID } from "../manager/CalloutRegistry";
-import {
-	FALLBACK_ICON,
-	MAX_TAG_LENGTH,
-	MAX_TAGS_COUNT,
-	RESERVED_DEMO_IDS,
-} from "../constants";
+import { FALLBACK_ICON, MAX_TAG_LENGTH, MAX_TAGS_COUNT, RESERVED_DEMO_IDS } from "../constants";
 import { createIconNameCheck } from "../icons/nameCheck";
 import { ICON_PACK_IDS } from "../icons/registry";
 import { calloutIdentity, normalizeCalloutId } from "./calloutId";
-import {
-	KNOWN_FIELDS,
-	KNOWN_ICON_FIELDS,
-	RETIRED_FIELDS,
-} from "./importFields";
+import { KNOWN_FIELDS, KNOWN_ICON_FIELDS, RETIRED_FIELDS } from "./importFields";
 import { sanitizeBgGradient } from "./colorUtils";
 import { sanitizeImportedSettings } from "./settingsValidator";
 import { assertImportStructure, ImportLimitError } from "./importLimits";
@@ -76,12 +61,7 @@ const ID_BAD_CHAR_RE = /[|\][\t\n\r]/;
 // Derived from the pack registry rather than written out, so adding a pack can
 // never leave the validator rejecting icons the plugin itself produces.
 const VALID_ICON_TYPES = new Set<string>(ICON_PACK_IDS);
-const VALID_MATERIAL_STYLES = new Set([
-	"outlined",
-	"filled",
-	"rounded",
-	"sharp",
-]);
+const VALID_MATERIAL_STYLES = new Set(["outlined", "filled", "rounded", "sharp"]);
 /** Exported for the Admonition importer, which caps an imported title to it. */
 export const MAX_DISPLAY_NAME = 80;
 
@@ -98,11 +78,7 @@ function fmt(value: unknown): string {
 	if (value === null) return "null";
 	if (value === undefined) return "undefined";
 	if (typeof value === "string") return value;
-	if (
-		typeof value === "number" ||
-		typeof value === "boolean" ||
-		typeof value === "bigint"
-	) {
+	if (typeof value === "number" || typeof value === "boolean" || typeof value === "bigint") {
 		return String(value);
 	}
 	try {
@@ -116,15 +92,11 @@ function isFiniteNumber(value: unknown): value is number {
 	return typeof value === "number" && Number.isFinite(value);
 }
 
-function deriveLabel(
-	raw: Record<string, unknown> | null,
-	index: number,
-): string {
+function deriveLabel(raw: Record<string, unknown> | null, index: number): string {
 	if (raw) {
 		const id = typeof raw.id === "string" ? raw.id.trim() : "";
 		if (id) return id;
-		const name =
-			typeof raw.displayName === "string" ? raw.displayName.trim() : "";
+		const name = typeof raw.displayName === "string" ? raw.displayName.trim() : "";
 		if (name) return name;
 	}
 	return `#${index + 1}`;
@@ -249,10 +221,7 @@ function validateIcon(
 				messageKey: "import.warn.iconFieldIgnored",
 				params: { field: "style", type: fmt(type) },
 			});
-		} else if (
-			typeof icon.style !== "string" ||
-			!VALID_MATERIAL_STYLES.has(icon.style)
-		) {
+		} else if (typeof icon.style !== "string" || !VALID_MATERIAL_STYLES.has(icon.style)) {
 			push({
 				field: "icon.style",
 				level: "error",
@@ -271,13 +240,7 @@ function validateIcon(
 				messageKey: "import.warn.iconFieldIgnored",
 				params: { field: "weight", type: fmt(type) },
 			});
-		} else if (
-			!isFiniteNumber(w) ||
-			!Number.isInteger(w) ||
-			w < 100 ||
-			w > 700 ||
-			w % 100 !== 0
-		) {
+		} else if (!isFiniteNumber(w) || !Number.isInteger(w) || w < 100 || w > 700 || w % 100 !== 0) {
 			push({
 				field: "icon.weight",
 				level: "error",
@@ -449,16 +412,7 @@ function validateIconAdjust(
 		for (const { key, min, max, messageKey } of numericFields) {
 			const field = raw[key];
 			if (field === undefined) continue;
-			if (
-				!validateNumberRange(
-					field,
-					`iconAdjust.${role}.${key}`,
-					min,
-					max,
-					push,
-					messageKey,
-				)
-			) {
+			if (!validateNumberRange(field, `iconAdjust.${role}.${key}`, min, max, push, messageKey)) {
 				ok = false;
 				continue;
 			}
@@ -511,23 +465,21 @@ function validateMetadata(
  * - v2: an object envelope `{ format, formatVersion, callouts, settings }`
  *   carrying callouts AND full plugin settings.
  */
-export async function validateImportPayload(
-	raw: unknown,
-	registry: CalloutRegistry,
-): Promise<ValidationResult> {
+export async function validateImportPayload(raw: unknown, registry: CalloutRegistry): Promise<ValidationResult> {
 	try {
 		assertImportStructure(raw);
 	} catch (error) {
 		if (!(error instanceof ImportLimitError)) throw error;
-		return { validDefs: [], fatal: true, issues: [{ index: -1, entryLabel: "",
-			level: "error", messageKey: error.messageKey }] };
+		return {
+			validDefs: [],
+			fatal: true,
+			issues: [{ index: -1, entryLabel: "", level: "error", messageKey: error.messageKey }],
+		};
 	}
 	// v2 object envelope.
 	if (isPlainObject(raw) && !Array.isArray(raw)) {
 		const looksLikeV2 =
-			raw.format === EXPORT_FORMAT_ID ||
-			typeof raw.formatVersion === "number" ||
-			Array.isArray(raw.callouts);
+			raw.format === EXPORT_FORMAT_ID || typeof raw.formatVersion === "number" || Array.isArray(raw.callouts);
 		if (!looksLikeV2) {
 			return {
 				validDefs: [],
@@ -548,20 +500,30 @@ export async function validateImportPayload(
 			: { validDefs: [], issues: [] };
 		const settingsResult = sanitizeImportedSettings(raw.settings);
 		const incomingImages = settingsResult.settings?.userImages ?? [];
-		if (incomingImages.length && !userImagesFitResourceBudget(mergeById(registry.getUserImages(), incomingImages))) {
-			return { validDefs: [], fatal: true, issues: [{ index: -1, entryLabel: "",
-				field: "settings.userImages", level: "error", messageKey: "import.err.imageBudget" }] };
+		if (
+			incomingImages.length &&
+			!userImagesFitResourceBudget(mergeById(registry.getUserImages(), incomingImages))
+		) {
+			return {
+				validDefs: [],
+				fatal: true,
+				issues: [
+					{
+						index: -1,
+						entryLabel: "",
+						field: "settings.userImages",
+						level: "error",
+						messageKey: "import.err.imageBudget",
+					},
+				],
+			};
 		}
 		return {
 			validDefs: base.validDefs,
 			issues: [
 				...base.issues,
 				...settingsResult.issues,
-				...missingImageIssues(
-					base.validDefs,
-					settingsResult.settings,
-					registry,
-				),
+				...missingImageIssues(base.validDefs, settingsResult.settings, registry),
 				...(await unknownIconNameIssues(base.validDefs)),
 			],
 			fatal: false,
@@ -588,8 +550,11 @@ export async function validateImportPayload(
 	const base = validateCalloutArray(raw, registry);
 	return {
 		...base,
-		issues: [...base.issues, ...missingImageIssues(base.validDefs, undefined, registry),
-			...(await unknownIconNameIssues(base.validDefs))],
+		issues: [
+			...base.issues,
+			...missingImageIssues(base.validDefs, undefined, registry),
+			...(await unknownIconNameIssues(base.validDefs)),
+		],
 		fatal: false,
 	};
 }
@@ -606,9 +571,7 @@ export async function validateImportPayload(
  * Mutates the already-sanitized defs in place; they exist only to be handed to
  * the registry, and the modal that shows these issues can still cancel.
  */
-async function unknownIconNameIssues(
-	defs: CalloutDefinition[],
-): Promise<ValidationIssue[]> {
+async function unknownIconNameIssues(defs: CalloutDefinition[]): Promise<ValidationIssue[]> {
 	if (defs.length === 0) return [];
 	const nameExists = await createIconNameCheck(defs.map((def) => def.icon));
 
@@ -684,9 +647,7 @@ function validateCalloutArray(
 		const isObj = isPlainObject(entry);
 		const label = deriveLabel(isObj ? entry : null, index);
 		const entryIssues: ValidationIssue[] = [];
-		const push = (
-			issue: Omit<ValidationIssue, "index" | "entryLabel">,
-		): void => {
+		const push = (issue: Omit<ValidationIssue, "index" | "entryLabel">): void => {
 			entryIssues.push({ ...issue, index, entryLabel: label });
 		};
 
@@ -742,17 +703,13 @@ function validateCalloutArray(
 		// ── id ─────────────────────────────────────────────────
 		// Canonicalize (trim, collapse whitespace, lowercase) so imported IDs
 		// match the form the editor produces and the vault scanner expects.
-		const idRaw =
-			typeof entry.id === "string" ? normalizeCalloutId(entry.id) : "";
+		const idRaw = typeof entry.id === "string" ? normalizeCalloutId(entry.id) : "";
 		if (typeof entry.id === "string") {
 			if (!validateIdString(idRaw, push, "id", entry.id)) entryOk = false;
 		}
 
 		// ── displayName ─────────────────────────────────────────
-		const displayNameRaw =
-			typeof entry.displayName === "string"
-				? entry.displayName.trim()
-				: "";
+		const displayNameRaw = typeof entry.displayName === "string" ? entry.displayName.trim() : "";
 		if (typeof entry.displayName === "string") {
 			if (displayNameRaw.length === 0) {
 				push({
@@ -791,26 +748,17 @@ function validateCalloutArray(
 		}
 
 		// ── colors ────────────────────────────────────────────
-		if (!validateColor(entry.colorLight, "colorLight", push, true))
-			entryOk = false;
-		if (!validateColor(entry.colorDark, "colorDark", push, true))
-			entryOk = false;
-		if (!validateColor(entry.bgColorLight, "bgColorLight", push, false))
-			entryOk = false;
-		if (!validateColor(entry.bgColorDark, "bgColorDark", push, false))
-			entryOk = false;
-		if (!validateColor(entry.textColorLight, "textColorLight", push, false))
-			entryOk = false;
-		if (!validateColor(entry.textColorDark, "textColorDark", push, false))
-			entryOk = false;
+		if (!validateColor(entry.colorLight, "colorLight", push, true)) entryOk = false;
+		if (!validateColor(entry.colorDark, "colorDark", push, true)) entryOk = false;
+		if (!validateColor(entry.bgColorLight, "bgColorLight", push, false)) entryOk = false;
+		if (!validateColor(entry.bgColorDark, "bgColorDark", push, false)) entryOk = false;
+		if (!validateColor(entry.textColorLight, "textColorLight", push, false)) entryOk = false;
+		if (!validateColor(entry.textColorDark, "textColorDark", push, false)) entryOk = false;
 
 		// ── background gradient (optional) ───────────────────
 		// Warning-level only: a broken gradient degrades the entry to a solid
 		// background instead of blocking the import.
-		if (
-			entry.bgGradient !== undefined &&
-			sanitizeBgGradient(entry.bgGradient) === null
-		) {
+		if (entry.bgGradient !== undefined && sanitizeBgGradient(entry.bgGradient) === null) {
 			push({
 				field: "bgGradient",
 				level: "warning",
@@ -820,42 +768,15 @@ function validateCalloutArray(
 
 		// ── optional numeric fields ──────────────────────────
 		if (entry.iconOffsetX !== undefined) {
-			if (
-				!validateNumberRange(
-					entry.iconOffsetX,
-					"iconOffsetX",
-					-10,
-					10,
-					push,
-					"import.err.numberRange",
-				)
-			)
+			if (!validateNumberRange(entry.iconOffsetX, "iconOffsetX", -10, 10, push, "import.err.numberRange"))
 				entryOk = false;
 		}
 		if (entry.iconOffsetY !== undefined) {
-			if (
-				!validateNumberRange(
-					entry.iconOffsetY,
-					"iconOffsetY",
-					-10,
-					10,
-					push,
-					"import.err.numberRange",
-				)
-			)
+			if (!validateNumberRange(entry.iconOffsetY, "iconOffsetY", -10, 10, push, "import.err.numberRange"))
 				entryOk = false;
 		}
 		if (entry.iconSize !== undefined) {
-			if (
-				!validateNumberRange(
-					entry.iconSize,
-					"iconSize",
-					0.5,
-					1.5,
-					push,
-					"import.err.iconSizeRange",
-				)
-			)
+			if (!validateNumberRange(entry.iconSize, "iconSize", 0.5, 1.5, push, "import.err.iconSizeRange"))
 				entryOk = false;
 		}
 
@@ -891,9 +812,7 @@ function validateCalloutArray(
 						return;
 					}
 					const trimmed = normalizeCalloutId(alias);
-					if (
-						!validateIdString(trimmed, push, `aliases[${ai}]`, alias)
-					) {
+					if (!validateIdString(trimmed, push, `aliases[${ai}]`, alias)) {
 						entryOk = false;
 						return;
 					}
@@ -934,8 +853,7 @@ function validateCalloutArray(
 		// a palette the user deleted. It usually arrives in the same file's
 		// `settings.customPalettes` anyway.
 		if (entry.paletteId !== undefined) {
-			const paletteId =
-				typeof entry.paletteId === "string" ? entry.paletteId.trim() : "";
+			const paletteId = typeof entry.paletteId === "string" ? entry.paletteId.trim() : "";
 			if (paletteId.length === 0 || paletteId.length > MAX_TAG_LENGTH) {
 				push({
 					field: "paletteId",
@@ -962,10 +880,7 @@ function validateCalloutArray(
 		// Same shape as `customized` above: a malformed value is an error like
 		// every other typed field, while a well-formed `false` passes here and is
 		// normalized to an absent key on the rebuild below.
-		if (
-			entry.transparentBg !== undefined &&
-			typeof entry.transparentBg !== "boolean"
-		) {
+		if (entry.transparentBg !== undefined && typeof entry.transparentBg !== "boolean") {
 			push({
 				field: "transparentBg",
 				level: "error",
@@ -995,9 +910,7 @@ function validateCalloutArray(
 		}
 
 		// ── unknown fields (warning, non-fatal) ──────────────
-		const unknown = Object.keys(entry).filter(
-			(k) => !KNOWN_FIELDS.has(k) && !RETIRED_FIELDS.has(k),
-		);
+		const unknown = Object.keys(entry).filter((k) => !KNOWN_FIELDS.has(k) && !RETIRED_FIELDS.has(k));
 		if (unknown.length > 0) {
 			push({
 				level: "warning",
@@ -1087,10 +1000,7 @@ function validateCalloutArray(
 			// Only for "image": the flag is the *callout's* choice about the
 			// user's own picture, and validateIcon already warned that it means
 			// nothing on any other pack.
-			if (
-				cleanIcon.type === "image" &&
-				typeof iconRaw.recolor === "boolean"
-			) {
+			if (cleanIcon.type === "image" && typeof iconRaw.recolor === "boolean") {
 				cleanIcon.recolor = iconRaw.recolor;
 			}
 
@@ -1116,8 +1026,7 @@ function validateCalloutArray(
 				colorLight: entry.colorLight as string,
 				colorDark: entry.colorDark as string,
 				foldable: entry.foldable as boolean,
-				defaultFolded:
-					autoDefaultFolded ?? (entry.defaultFolded as boolean),
+				defaultFolded: autoDefaultFolded ?? (entry.defaultFolded as boolean),
 				builtIn: isBuiltIn,
 				source: isBuiltIn ? "builtin" : "user",
 			};
@@ -1147,16 +1056,10 @@ function validateCalloutArray(
 			// damaged by the old merge, where deleting the flag is right.
 			const importTransparent = entry.transparentBg === true;
 			def.bgColorLight =
-				!importTransparent && typeof entry.bgColorLight === "string"
-					? entry.bgColorLight
-					: undefined;
+				!importTransparent && typeof entry.bgColorLight === "string" ? entry.bgColorLight : undefined;
 			def.bgColorDark =
-				!importTransparent && typeof entry.bgColorDark === "string"
-					? entry.bgColorDark
-					: undefined;
-			def.bgGradient = importTransparent
-				? undefined
-				: (bgGradientClean ?? undefined);
+				!importTransparent && typeof entry.bgColorDark === "string" ? entry.bgColorDark : undefined;
+			def.bgGradient = importTransparent ? undefined : (bgGradientClean ?? undefined);
 			// Only `true` survives: the field is `?: true` on a definition, where
 			// "off" is an absent key rather than `false` (an explicit `false`
 			// would read as a difference in `CalloutRegistry.isModified` and
@@ -1167,15 +1070,11 @@ function validateCalloutArray(
 			// what lets an import that turns the icon back on clear the flag on a
 			// row that still has it.
 			def.hideIcon = entry.hideIcon === true ? true : undefined;
-			if (typeof entry.textColorLight === "string")
-				def.textColorLight = entry.textColorLight;
-			if (typeof entry.textColorDark === "string")
-				def.textColorDark = entry.textColorDark;
+			if (typeof entry.textColorLight === "string") def.textColorLight = entry.textColorLight;
+			if (typeof entry.textColorDark === "string") def.textColorDark = entry.textColorDark;
 			if (iconAdjustClean) def.iconAdjust = iconAdjustClean;
-			if (isFiniteNumber(entry.iconOffsetX))
-				def.iconOffsetX = entry.iconOffsetX;
-			if (isFiniteNumber(entry.iconOffsetY))
-				def.iconOffsetY = entry.iconOffsetY;
+			if (isFiniteNumber(entry.iconOffsetX)) def.iconOffsetX = entry.iconOffsetX;
+			if (isFiniteNumber(entry.iconOffsetY)) def.iconOffsetY = entry.iconOffsetY;
 			if (isFiniteNumber(entry.iconSize)) def.iconSize = entry.iconSize;
 			if (aliasesClean.length > 0) def.aliases = aliasesClean;
 			if (typeof entry.paletteId === "string") {
@@ -1189,8 +1088,11 @@ function validateCalloutArray(
 			if (isPlainObject(entry.metadata)) {
 				// Literal metadata names must survive, including __proto__. Ordinary
 				// indexed assignment would invoke the inherited prototype setter.
-				def.metadata = Object.fromEntries(Object.entries(entry.metadata)
-					.filter((entry): entry is [string, string] => typeof entry[1] === "string"));
+				def.metadata = Object.fromEntries(
+					Object.entries(entry.metadata).filter(
+						(entry): entry is [string, string] => typeof entry[1] === "string",
+					),
+				);
 			}
 			validDefs.push(def);
 		}

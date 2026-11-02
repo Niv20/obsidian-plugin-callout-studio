@@ -21,7 +21,6 @@ import { stripUnsafeSvg } from "./svgSafety";
 import { embeddedRasterSize, MAX_RASTER_PIXELS } from "./rasterSafety";
 import { SVG_CSS_PROPERTIES, safeSvgCssValue, sanitizeSvgStyleAttribute, sanitizeSvgStylesheet } from "./svgCss";
 
-
 /**
  * Strip anything executable from an SVG document and normalize it.
  *
@@ -42,10 +41,7 @@ export function sanitizeSVG(raw: string): string | null {
 	if (!svg.hasAttribute("viewBox")) {
 		const w = svg.getAttribute("width");
 		const h = svg.getAttribute("height");
-		svg.setAttribute(
-			"viewBox",
-			w && h ? `0 0 ${parseFloat(w)} ${parseFloat(h)}` : "0 0 24 24",
-		);
+		svg.setAttribute("viewBox", w && h ? `0 0 ${parseFloat(w)} ${parseFloat(h)}` : "0 0 24 24");
 	}
 
 	stripUnsafeSvg(svg);
@@ -102,8 +98,11 @@ export function sanitizeUserSvg(raw: string): SanitizedUserSvg | null {
 	if (doc.querySelector("parsererror")) return null;
 
 	const svg = doc.documentElement;
-	if (svg.localName.toLowerCase() !== "svg" ||
-		(svg.namespaceURI !== null && svg.namespaceURI !== "http://www.w3.org/2000/svg")) return null;
+	if (
+		svg.localName.toLowerCase() !== "svg" ||
+		(svg.namespaceURI !== null && svg.namespaceURI !== "http://www.w3.org/2000/svg")
+	)
+		return null;
 
 	const { width, height } = normalizeViewBox(svg);
 	// The root's own width/height would pin the artwork to whatever pixel size
@@ -119,8 +118,13 @@ export function sanitizeUserSvg(raw: string): SanitizedUserSvg | null {
 	const serialized = new XMLSerializer().serializeToString(svg);
 	if (serialized.length > MAX_USER_SVG_BYTES) return null;
 
-	return { svg: serialized, width, height, rasterPixels: MAX_RASTER_PIXELS - budget.pixels,
-		elementCount: MAX_USER_SVG_ELEMENTS - budget.remaining };
+	return {
+		svg: serialized,
+		width,
+		height,
+		rasterPixels: MAX_RASTER_PIXELS - budget.pixels,
+		elementCount: MAX_USER_SVG_ELEMENTS - budget.remaining,
+	};
 }
 
 /**
@@ -129,18 +133,17 @@ export function sanitizeUserSvg(raw: string): SanitizedUserSvg | null {
  * Returns false when the element budget runs out, which fails the whole file
  * rather than silently keeping the first 5,000 shapes of it.
  */
-function cleanUserElement(
-	el: Element,
-	budget: { remaining: number; pixels: number },
-	depth: number,
-): boolean {
+function cleanUserElement(el: Element, budget: { remaining: number; pixels: number }, depth: number): boolean {
 	if (budget.remaining-- <= 0 || depth > MAX_USER_SVG_DEPTH) return false;
 
 	const toRemove: Element[] = [];
 	for (const child of Array.from(el.children)) {
 		const name = child.localName.toLowerCase();
-		if (!USER_SVG_ELEMENTS.has(name) || name === "svg" ||
-			(child.namespaceURI !== null && child.namespaceURI !== "http://www.w3.org/2000/svg")) {
+		if (
+			!USER_SVG_ELEMENTS.has(name) ||
+			name === "svg" ||
+			(child.namespaceURI !== null && child.namespaceURI !== "http://www.w3.org/2000/svg")
+		) {
 			toRemove.push(child);
 			continue;
 		}
@@ -224,11 +227,12 @@ function normalizeViewBox(svg: Element): { width: number; height: number } {
 	return { width, height };
 }
 
-function parseViewBox(
-	value: string | null,
-): { width: number; height: number } | null {
+function parseViewBox(value: string | null): { width: number; height: number } | null {
 	if (!value) return null;
-	const parts = value.trim().split(/[\s,]+/).map(Number);
+	const parts = value
+		.trim()
+		.split(/[\s,]+/)
+		.map(Number);
 	if (parts.length !== 4 || parts.some((n) => !Number.isFinite(n))) return null;
 	const [, , width, height] = parts as [number, number, number, number];
 	if (width <= 0 || height <= 0) return null;
@@ -237,8 +241,6 @@ function parseViewBox(
 
 /** Encode SVG markup for use in a CSS `url()` value. */
 export function svgToDataUri(svg: string): string {
-	const encoded = encodeURIComponent(svg)
-		.replace(/'/g, "%27")
-		.replace(/"/g, "%22");
+	const encoded = encodeURIComponent(svg).replace(/'/g, "%27").replace(/"/g, "%22");
 	return `url("data:image/svg+xml,${encoded}")`;
 }

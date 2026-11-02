@@ -5,10 +5,7 @@ import { WriteMemo } from "../utils/writeMemo";
 import { writeLegacyDiscoveryArchive } from "./legacyDiscoveryArchive";
 import { SHARED_DEVICE_ID } from "./settingsBackup";
 
-export type LegacyDiscoveryMigration =
-	| { kind: "none" }
-	| { kind: "archived"; path: string }
-	| { kind: "failed" };
+export type LegacyDiscoveryMigration = { kind: "none" } | { kind: "archived"; path: string } | { kind: "failed" };
 
 interface DeviceLocalState {
 	v: 3;
@@ -48,12 +45,16 @@ function memoryFrom(parsed: ParsedState): Partial<DeviceLocalState> {
 	if (typeof parsed.deviceId === "string" && /^[a-z0-9]{8}$/.test(parsed.deviceId)) out.deviceId = parsed.deviceId;
 	const categories = parsed.iconCategories;
 	if (categories && typeof categories === "object" && !Array.isArray(categories)) {
-		out.iconCategories = Object.fromEntries(Object.entries(categories)
-			.filter((entry): entry is [string, string] => typeof entry[1] === "string" && entry[1].length <= 200));
+		out.iconCategories = Object.fromEntries(
+			Object.entries(categories).filter(
+				(entry): entry is [string, string] => typeof entry[1] === "string" && entry[1].length <= 200,
+			),
+		);
 	}
 	const tone = parsed.emojiSkinTone;
 	if (typeof tone === "number" && Number.isInteger(tone) && tone >= 0 && tone <= 5) out.emojiSkinTone = tone;
-	if (typeof parsed.quickInsertSource === "string" && parsed.quickInsertSource.length <= 32) out.quickInsertSource = parsed.quickInsertSource;
+	if (typeof parsed.quickInsertSource === "string" && parsed.quickInsertSource.length <= 32)
+		out.quickInsertSource = parsed.quickInsertSource;
 	return out;
 }
 
@@ -84,9 +85,11 @@ export class DeviceLocalStore {
 				welcomeSeen: parsed.v === 3 && parsed.welcomeSeen === true,
 				...(parsed.occurrencesTabOffered === true ? { occurrencesTabOffered: true as const } : {}),
 				...(parsed.externalCssRetirement === "pending" || parsed.externalCssRetirement === "seen"
-					? { externalCssRetirement: parsed.externalCssRetirement } : {}),
+					? { externalCssRetirement: parsed.externalCssRetirement }
+					: {}),
 				...(parsed.autocompleteAlwaysEnabled === "pending" || parsed.autocompleteAlwaysEnabled === "seen"
-					? { autocompleteAlwaysEnabled: parsed.autocompleteAlwaysEnabled } : {}),
+					? { autocompleteAlwaysEnabled: parsed.autocompleteAlwaysEnabled }
+					: {}),
 				...(parsed.importBannerHandled === true ? { importBannerHandled: true as const } : {}),
 				...memoryFrom(parsed),
 			};
@@ -107,7 +110,9 @@ export class DeviceLocalStore {
 	/** Run once before settings load can replace the previous startup CSS. */
 	archiveLegacyDiscovery(manifest: PluginManifest): Promise<LegacyDiscoveryMigration> {
 		if (this.migration) return this.migration;
-		this.migration = this.archiveLegacy(manifest).finally(() => { this.migration = null; });
+		this.migration = this.archiveLegacy(manifest).finally(() => {
+			this.migration = null;
+		});
 		return this.migration;
 	}
 

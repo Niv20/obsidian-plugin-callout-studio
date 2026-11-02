@@ -61,7 +61,8 @@ function harness(
 	const settings = structuredClone(DEFAULT_SETTINGS);
 	prepare(settings);
 	const plugin = {
-		app: { keymap: new TestKeymap(), scope: new TestScope() }, settings,
+		app: { keymap: new TestKeymap(), scope: new TestScope() },
+		settings,
 		saveSettings: () => Promise.resolve(),
 		registry: { getUserImages: () => [], getAll: () => [], getCommitted: () => [] },
 		settingsWriter: { isFrozen: false },
@@ -80,11 +81,19 @@ function harness(
 	const modalEl = containerEl.createDiv({ cls: "modal" });
 	const contentEl = modalEl.createDiv({ cls: "modal-content" });
 	Object.assign(modal, {
-		containerEl, modalEl, titleEl: modalEl.createDiv({ cls: "modal-title" }), contentEl,
-		app: plugin.app, scope: plugin.app.scope,
+		containerEl,
+		modalEl,
+		titleEl: modalEl.createDiv({ cls: "modal-title" }),
+		contentEl,
+		app: plugin.app,
+		scope: plugin.app.scope,
 	});
 	return {
-		modal, contentEl, settings, ready, plugin,
+		modal,
+		contentEl,
+		settings,
+		ready,
+		plugin,
 		picker: modal as unknown as Picker,
 		sourceField: (): FakeElement => contentEl.querySelector(".icon-picker-source-dropdown .cs-dropdown-field")!,
 		destroy: () => {
@@ -130,7 +139,17 @@ describe("Pick an icon — the library menu", () => {
 	it("lists only the offered libraries, in the saved order, and counts the rest", async () => {
 		const h = harness({ type: "lucide", value: "star" }, (settings) => {
 			settings.iconLibraries = {
-				order: ["image", "material", "lucide", "tabler", "emoji", "octicons", "fa", "rpg-awesome", "simple-icons"],
+				order: [
+					"image",
+					"material",
+					"lucide",
+					"tabler",
+					"emoji",
+					"octicons",
+					"fa",
+					"rpg-awesome",
+					"simple-icons",
+				],
 				hidden: ["emoji"],
 			};
 		});
@@ -148,7 +167,9 @@ describe("Pick an icon — the library menu", () => {
 			assert.equal(rows.length, 1 + 3, "All sources and the three on offer");
 			assert.deepEqual(headings(h), [t("iconPicker.groupSearch"), t("iconPicker.groupLibraries")]);
 			assert.equal(closingLine(h), "5 more libraries available for download");
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("sets the edited icon's library apart when it is not on this device", async () => {
@@ -159,22 +180,37 @@ describe("Pick an icon — the library menu", () => {
 			h.modal.onOpen();
 			await setImmediate();
 			assert.equal(h.picker.activeSource, "tabler", "the picker opens on the icon's own library");
-			assert.equal(h.sourceField().querySelector(".cs-dropdown-field-label")?.textContent, t("iconPicker.tabler"));
+			assert.equal(
+				h.sourceField().querySelector(".cs-dropdown-field-label")?.textContent,
+				t("iconPicker.tabler"),
+			);
 			open(h);
-			assert.deepEqual(headings(h), [t("iconPicker.groupDeleted"), t("iconPicker.groupSearch"), t("iconPicker.groupLibraries")]);
+			assert.deepEqual(headings(h), [
+				t("iconPicker.groupDeleted"),
+				t("iconPicker.groupSearch"),
+				t("iconPicker.groupLibraries"),
+			]);
 			const first = h.contentEl.querySelector(".icon-picker-source-menu-item")!;
 			assert.ok(first.textContent.includes(t("iconPicker.tabler")));
-			assert.equal(closingLine(h), "5 more libraries available for download", "the retained icon does not install Tabler");
+			assert.equal(
+				closingLine(h),
+				"5 more libraries available for download",
+				"the retained icon does not install Tabler",
+			);
 			// The panel offers the download, in place of the grid.
-			assert.equal(h.contentEl.querySelector(".icon-picker-notice-title")?.textContent,
-				t("iconPack.downloadTitle", { name: getSource("tabler").attribution.title }));
-		} finally { h.destroy(); }
+			assert.equal(
+				h.contentEl.querySelector(".icon-picker-notice-title")?.textContent,
+				t("iconPack.downloadTitle", { name: getSource("tabler").attribution.title }),
+			);
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("still counts the edited icon's library when it is the only one left to download", async () => {
-		const ready = new Set<string>(ICON_SOURCE_IDS
-			.filter((id) => id !== "tabler")
-			.flatMap((id) => [...libraryFiles(id)]));
+		const ready = new Set<string>(
+			ICON_SOURCE_IDS.filter((id) => id !== "tabler").flatMap((id) => [...libraryFiles(id)]),
+		);
 		const h = harness({ type: "tabler-outline", value: "bulb" }, () => {}, ready);
 		try {
 			h.modal.onOpen();
@@ -183,7 +219,9 @@ describe("Pick an icon — the library menu", () => {
 			assert.deepEqual(h.picker.menuLibraries().toDownload, ["tabler"]);
 			assert.equal(closingLine(h), t("iconPicker.moreToDownloadOne"));
 			assert.equal(headings(h)[0], t("iconPicker.groupDeleted"));
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("counts a deleted current library while preserving the callout's icon", async () => {
@@ -196,19 +234,33 @@ describe("Pick an icon — the library menu", () => {
 			open(h);
 			assert.equal(closingLine(h), t("iconPicker.moreToDownload", { count: 4 }));
 			assert.equal(h.picker.menuLibraries().current, null);
-			await withLibraryWindow((_settings, files) => {
-				for (const file of libraryFiles("tabler")) files.delete(file);
-			}, async () => { await h.picker.openLibraries(); }, ready);
+			await withLibraryWindow(
+				(_settings, files) => {
+					for (const file of libraryFiles("tabler")) files.delete(file);
+				},
+				async () => {
+					await h.picker.openLibraries();
+				},
+				ready,
+			);
 			assert.equal(h.picker.activeSource, "tabler");
 			assert.deepEqual(h.picker.selectedIcon, icon, "the callout retains its stored icon");
 			assert.equal(h.picker.menuLibraries().current, "tabler");
-			assert.deepEqual(headings(h), [t("iconPicker.groupDeleted"), t("iconPicker.groupSearch"), t("iconPicker.groupLibraries")]);
+			assert.deepEqual(headings(h), [
+				t("iconPicker.groupDeleted"),
+				t("iconPicker.groupSearch"),
+				t("iconPicker.groupLibraries"),
+			]);
 			assert.equal(closingLine(h), t("iconPicker.moreToDownload", { count: 5 }));
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("sets a hidden library of the edited icon apart the same way", async () => {
-		const h = harness({ type: "lucide", value: "star" }, (settings) => { settings.iconLibraries.hidden = ["lucide"]; });
+		const h = harness({ type: "lucide", value: "star" }, (settings) => {
+			settings.iconLibraries.hidden = ["lucide"];
+		});
 		try {
 			h.modal.onOpen();
 			await setImmediate();
@@ -216,7 +268,9 @@ describe("Pick an icon — the library menu", () => {
 			assert.ok(!h.picker.menuLibraries().libraries.includes("lucide"));
 			open(h);
 			assert.equal(headings(h)[0], t("iconPicker.groupCurrent"), "hiding a built-in library does not delete it");
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("says nothing about downloads once every library is on the device", async () => {
@@ -229,7 +283,9 @@ describe("Pick an icon — the library menu", () => {
 			assert.equal(closingLine(h), undefined);
 			assert.equal(h.picker.menuLibraries().toDownload.length, 0);
 			assert.deepEqual(headings(h), [t("iconPicker.groupSearch"), t("iconPicker.groupLibraries")]);
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("does not count libraries to download before the pack files have been read", async () => {
@@ -237,7 +293,9 @@ describe("Pick an icon — the library menu", () => {
 		// and the line would quote a number about to drop.
 		const h = harness({ type: "lucide", value: "star" });
 		let release: () => void = () => {};
-		const gate = new Promise<void>((resolve) => { release = resolve; });
+		const gate = new Promise<void>((resolve) => {
+			release = resolve;
+		});
 		(h.plugin.icons.packs as unknown as { loadAllFromDisk: () => Promise<void> }).loadAllFromDisk = () => gate;
 		try {
 			h.modal.onOpen();
@@ -247,7 +305,9 @@ describe("Pick an icon — the library menu", () => {
 			release();
 			await setImmediate();
 			assert.equal(closingLine(h), "5 more libraries available for download", "the open menu catches up");
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("ends the source row with a Manage libraries button in words", async () => {
@@ -264,7 +324,9 @@ describe("Pick an icon — the library menu", () => {
 			// The words name it; an aria-label would only add a tooltip.
 			assert.equal(button.getAttribute("aria-label"), null);
 			assert.equal(row.children[row.children.length - 1], button);
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 });
 
@@ -280,11 +342,20 @@ describe("Pick an icon — what it tells the Icon libraries window about the edi
 			h.modal.onOpen();
 			await setImmediate();
 			let seen: IconLibrariesHost["editing"] = undefined;
-			await withLibraryWindow(null, async () => {
-				await h.picker.openLibraries();
-			}, new Set(), (host) => { seen = host.editing; });
+			await withLibraryWindow(
+				null,
+				async () => {
+					await h.picker.openLibraries();
+				},
+				new Set(),
+				(host) => {
+					seen = host.editing;
+				},
+			);
 			assert.deepEqual(seen, { id: "note", name: "Note", icon: current });
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("hands over a new callout as one with no id", async () => {
@@ -293,11 +364,20 @@ describe("Pick an icon — what it tells the Icon libraries window about the edi
 			h.modal.onOpen();
 			await setImmediate();
 			let seen: IconLibrariesHost["editing"] = undefined;
-			await withLibraryWindow(null, async () => {
-				await h.picker.openLibraries();
-			}, new Set(), (host) => { seen = host.editing; });
+			await withLibraryWindow(
+				null,
+				async () => {
+					await h.picker.openLibraries();
+				},
+				new Set(),
+				(host) => {
+					seen = host.editing;
+				},
+			);
 			assert.deepEqual(seen, { id: null, name: "Untitled callout", icon: current });
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("hands over nothing when the picker was not opened for a callout", async () => {
@@ -307,12 +387,22 @@ describe("Pick an icon — what it tells the Icon libraries window about the edi
 			await setImmediate();
 			let called = false;
 			let seen: IconLibrariesHost["editing"] = { id: "x", name: "x", icon: current };
-			await withLibraryWindow(null, async () => {
-				await h.picker.openLibraries();
-			}, new Set(), (host) => { called = true; seen = host.editing; });
+			await withLibraryWindow(
+				null,
+				async () => {
+					await h.picker.openLibraries();
+				},
+				new Set(),
+				(host) => {
+					called = true;
+					seen = host.editing;
+				},
+			);
 			assert.equal(called, true);
 			assert.equal(seen, undefined);
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("is told by the callout editor, which opens the picker with its own name and id", () => {
@@ -334,7 +424,9 @@ describe("Pick an icon — opening the window before the disk has been read", ()
 	const current: CalloutIcon = { type: "lucide", value: "star" };
 	const gated = (h: ReturnType<typeof harness>) => {
 		let release: () => void = () => {};
-		const gate = new Promise<void>((resolve) => { release = resolve; });
+		const gate = new Promise<void>((resolve) => {
+			release = resolve;
+		});
 		(h.plugin.icons.packs as unknown as { loadAllFromDisk: () => Promise<void> }).loadAllFromDisk = () => gate;
 		return release;
 	};
@@ -346,15 +438,24 @@ describe("Pick an icon — opening the window before the disk has been read", ()
 			await setImmediate();
 			const release = gated(h);
 			let opened = false;
-			await withLibraryWindow(null, async () => {
-				const pending = h.picker.openLibraries();
-				await setImmediate();
-				assert.equal(opened, false, "the files are still being read");
-				release();
-				await pending;
-				assert.equal(opened, true);
-			}, new Set(), () => { opened = true; });
-		} finally { h.destroy(); }
+			await withLibraryWindow(
+				null,
+				async () => {
+					const pending = h.picker.openLibraries();
+					await setImmediate();
+					assert.equal(opened, false, "the files are still being read");
+					release();
+					await pending;
+					assert.equal(opened, true);
+				},
+				new Set(),
+				() => {
+					opened = true;
+				},
+			);
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("does not open at all when the picker was closed in the meantime", async () => {
@@ -364,14 +465,23 @@ describe("Pick an icon — opening the window before the disk has been read", ()
 			await setImmediate();
 			const release = gated(h);
 			let opened = false;
-			await withLibraryWindow(null, async () => {
-				const pending = h.picker.openLibraries();
-				h.modal.onClose();
-				release();
-				await pending;
-				assert.equal(opened, false);
-			}, new Set(), () => { opened = true; });
-		} finally { h.destroy(); }
+			await withLibraryWindow(
+				null,
+				async () => {
+					const pending = h.picker.openLibraries();
+					h.modal.onClose();
+					release();
+					await pending;
+					assert.equal(opened, false);
+				},
+				new Set(),
+				() => {
+					opened = true;
+				},
+			);
+		} finally {
+			h.destroy();
+		}
 	});
 });
 
@@ -385,13 +495,23 @@ describe("Pick an icon — after the Icon libraries window", () => {
 			h.picker.selectedIcon = { type: "emoji", value: "😀" };
 			// Material goes too, so the pool All sources falls back to has no
 			// webfont to load in a test.
-			await withLibraryWindow((settings) => { settings.iconLibraries.hidden = ["emoji", "material"]; }, async () => {
-				await h.picker.openLibraries();
-			});
+			await withLibraryWindow(
+				(settings) => {
+					settings.iconLibraries.hidden = ["emoji", "material"];
+				},
+				async () => {
+					await h.picker.openLibraries();
+				},
+			);
 			assert.equal(h.picker.activeSource, "all");
 			assert.equal(h.picker.selectedIcon, null, "confirming it would bring the library back");
-			assert.equal(h.sourceField().querySelector(".cs-dropdown-field-label")?.textContent, t("iconPicker.allSources"));
-		} finally { h.destroy(); }
+			assert.equal(
+				h.sourceField().querySelector(".cs-dropdown-field-label")?.textContent,
+				t("iconPicker.allSources"),
+			);
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("keeps the edited icon's library and selection, hidden or not", async () => {
@@ -399,12 +519,19 @@ describe("Pick an icon — after the Icon libraries window", () => {
 		try {
 			h.modal.onOpen();
 			await setImmediate();
-			await withLibraryWindow((settings) => { settings.iconLibraries.hidden = ["lucide"]; }, async () => {
-				await h.picker.openLibraries();
-			});
+			await withLibraryWindow(
+				(settings) => {
+					settings.iconLibraries.hidden = ["lucide"];
+				},
+				async () => {
+					await h.picker.openLibraries();
+				},
+			);
 			assert.equal(h.picker.activeSource, "lucide");
 			assert.deepEqual(h.picker.selectedIcon, { type: "lucide", value: "star" });
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("leaves everything as it was when the window changed nothing", async () => {
@@ -419,7 +546,9 @@ describe("Pick an icon — after the Icon libraries window", () => {
 			});
 			assert.equal(h.picker.activeSource, "emoji");
 			assert.equal(h.contentEl.querySelector(".icon-picker-panel"), panel, "the panel was not rebuilt");
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 });
 
@@ -435,33 +564,71 @@ describe("Pick an icon — the panel after the Icon libraries window", () => {
 			await setImmediate();
 			const panel = panelOf(h);
 			assert.ok(panel);
-			await withLibraryWindow((settings) => { settings.iconLibraries.hidden = ["emoji"]; }, async () => {
-				await h.picker.openLibraries();
-			});
+			await withLibraryWindow(
+				(settings) => {
+					settings.iconLibraries.hidden = ["emoji"];
+				},
+				async () => {
+					await h.picker.openLibraries();
+				},
+			);
 			assert.equal(panelOf(h), panel, "Lucide's grid stayed where it was");
 			assert.equal(h.picker.activeSource, "lucide");
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	// Material is hidden from the start in the two tests below: a pool that holds
 	// it loads Google's webfont, which a test has no network for.
-	const withoutMaterial = (settings: PluginSettings): void => { settings.iconLibraries.hidden = ["material"]; };
+	const withoutMaterial = (settings: PluginSettings): void => {
+		settings.iconLibraries.hidden = ["material"];
+	};
 
 	const searchableIndex: IconIndex = {
 		entries: ["star", "moon"].map((name) => ({ name, categories: [], keywords: [] })),
 		categories: [],
 	};
-	const changes: { name: string; downloaded: boolean; change: (settings: PluginSettings, files: Set<string>) => void }[] = [
-		{ name: "reordering", downloaded: false, change: (settings) => { settings.iconLibraries.order = ["emoji", "lucide"]; } },
-		{ name: "hiding", downloaded: false, change: (settings) => { settings.iconLibraries.hidden.push("emoji"); } },
-		{ name: "downloading", downloaded: false, change: (_settings, files) => { TABLER.forEach((file) => files.add(file)); } },
-		{ name: "deleting", downloaded: true, change: (_settings, files) => { TABLER.forEach((file) => files.delete(file)); } },
+	const changes: {
+		name: string;
+		downloaded: boolean;
+		change: (settings: PluginSettings, files: Set<string>) => void;
+	}[] = [
+		{
+			name: "reordering",
+			downloaded: false,
+			change: (settings) => {
+				settings.iconLibraries.order = ["emoji", "lucide"];
+			},
+		},
+		{
+			name: "hiding",
+			downloaded: false,
+			change: (settings) => {
+				settings.iconLibraries.hidden.push("emoji");
+			},
+		},
+		{
+			name: "downloading",
+			downloaded: false,
+			change: (_settings, files) => {
+				TABLER.forEach((file) => files.add(file));
+			},
+		},
+		{
+			name: "deleting",
+			downloaded: true,
+			change: (_settings, files) => {
+				TABLER.forEach((file) => files.delete(file));
+			},
+		},
 	];
 	for (const { name, downloaded, change } of changes) {
 		it(`keeps the search and filtered results after ${name} a pooled library`, async () => {
 			const ready = new Set(downloaded ? TABLER : []);
-			const h = harness({ type: "lucide", value: "star" }, withoutMaterial, ready, undefined,
-				(id) => id === "image" ? emptyIndex : searchableIndex);
+			const h = harness({ type: "lucide", value: "star" }, withoutMaterial, ready, undefined, (id) =>
+				id === "image" ? emptyIndex : searchableIndex,
+			);
 			try {
 				h.modal.onOpen();
 				await setImmediate();
@@ -480,15 +647,21 @@ describe("Pick an icon — the panel after the Icon libraries window", () => {
 				// Each library's name, and its match count as a faint count after it.
 				const headings = h.contentEl.querySelectorAll(".icon-picker-group-header").map((el) => el.textContent);
 				const sources = h.picker.menuLibraries().libraries.filter((id) => id !== "image");
-				assert.deepEqual(headings, sources.map((id) => `${t(getSource(id).labelKey)} 1`));
-			} finally { h.destroy(); }
+				assert.deepEqual(
+					headings,
+					sources.map((id) => `${t(getSource(id).labelKey)} 1`),
+				);
+			} finally {
+				h.destroy();
+			}
 		});
 	}
 
 	for (const source of ["emoji", "image"] as const) {
 		it(`keeps the ${source} search when hiding its active panel returns to All sources`, async () => {
-			const h = harness({ type: "lucide", value: "star" }, withoutMaterial, new Set(), undefined,
-				(id) => id === "lucide" ? searchableIndex : emptyIndex);
+			const h = harness({ type: "lucide", value: "star" }, withoutMaterial, new Set(), undefined, (id) =>
+				id === "lucide" ? searchableIndex : emptyIndex,
+			);
 			try {
 				h.modal.onOpen();
 				await setImmediate();
@@ -497,14 +670,25 @@ describe("Pick an icon — the panel after the Icon libraries window", () => {
 				const search = h.contentEl.querySelector(".icon-picker-search-input")!;
 				search.value = "star";
 				search.fire("input");
-				await withLibraryWindow((settings) => { settings.iconLibraries.hidden.push(source); }, () => h.picker.openLibraries());
+				await withLibraryWindow(
+					(settings) => {
+						settings.iconLibraries.hidden.push(source);
+					},
+					() => h.picker.openLibraries(),
+				);
 				assert.equal(h.picker.activeSource, "all");
 				assert.equal(h.contentEl.querySelector(".icon-picker-search-input")?.value, "star");
 				assert.equal(h.contentEl.querySelectorAll(".icon-picker-cell").length, 1);
 				h.picker.selectSource("lucide");
 				await setImmediate();
-				assert.equal(h.contentEl.querySelector(".icon-picker-search-input")?.value, "", "choosing a source starts a fresh search");
-			} finally { h.destroy(); }
+				assert.equal(
+					h.contentEl.querySelector(".icon-picker-search-input")?.value,
+					"",
+					"choosing a source starts a fresh search",
+				);
+			} finally {
+				h.destroy();
+			}
 		});
 	}
 
@@ -515,12 +699,19 @@ describe("Pick an icon — the panel after the Icon libraries window", () => {
 			await setImmediate();
 			h.picker.selectSource("all");
 			const panel = panelOf(h);
-			await withLibraryWindow((settings) => { settings.iconLibraries.hidden = ["material", "emoji"]; }, async () => {
-				await h.picker.openLibraries();
-			});
+			await withLibraryWindow(
+				(settings) => {
+					settings.iconLibraries.hidden = ["material", "emoji"];
+				},
+				async () => {
+					await h.picker.openLibraries();
+				},
+			);
 			assert.equal(h.picker.activeSource, "all");
 			assert.notEqual(panelOf(h), panel, "the pool lost a library");
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("is rebuilt in All sources when the order changed, since the pool follows it", async () => {
@@ -530,11 +721,28 @@ describe("Pick an icon — the panel after the Icon libraries window", () => {
 			await setImmediate();
 			h.picker.selectSource("all");
 			const panel = panelOf(h);
-			await withLibraryWindow((settings) => {
-				settings.iconLibraries.order = ["emoji", "lucide", "tabler", "material", "octicons", "fa", "rpg-awesome", "simple-icons", "image"];
-			}, async () => { await h.picker.openLibraries(); });
+			await withLibraryWindow(
+				(settings) => {
+					settings.iconLibraries.order = [
+						"emoji",
+						"lucide",
+						"tabler",
+						"material",
+						"octicons",
+						"fa",
+						"rpg-awesome",
+						"simple-icons",
+						"image",
+					];
+				},
+				async () => {
+					await h.picker.openLibraries();
+				},
+			);
 			assert.notEqual(panelOf(h), panel);
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("shows the grid of a library the window just downloaded", async () => {
@@ -546,12 +754,20 @@ describe("Pick an icon — the panel after the Icon libraries window", () => {
 			h.picker.selectSource("tabler");
 			const prompt = panelOf(h);
 			assert.ok(prompt);
-			await withLibraryWindow((_settings, files) => { for (const file of TABLER) files.add(file); }, async () => {
-				await h.picker.openLibraries();
-			}, ready);
+			await withLibraryWindow(
+				(_settings, files) => {
+					for (const file of TABLER) files.add(file);
+				},
+				async () => {
+					await h.picker.openLibraries();
+				},
+				ready,
+			);
 			assert.notEqual(panelOf(h), prompt, "the prompt gave way to the grid");
 			assert.equal(h.picker.activeSource, "tabler");
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("stays on a library to download when the window changed something else", async () => {
@@ -561,12 +777,19 @@ describe("Pick an icon — the panel after the Icon libraries window", () => {
 			await setImmediate();
 			h.picker.selectSource("tabler");
 			const prompt = panelOf(h);
-			await withLibraryWindow((settings) => { settings.iconLibraries.hidden = ["emoji"]; }, async () => {
-				await h.picker.openLibraries();
-			});
+			await withLibraryWindow(
+				(settings) => {
+					settings.iconLibraries.hidden = ["emoji"];
+				},
+				async () => {
+					await h.picker.openLibraries();
+				},
+			);
 			assert.equal(h.picker.activeSource, "tabler", "it was never on offer, so it did not leave");
 			assert.equal(panelOf(h), prompt, "the download prompt is still the one on screen");
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("gives way to All sources, and drops its icon, when the library on screen was deleted", async () => {
@@ -577,12 +800,20 @@ describe("Pick an icon — the panel after the Icon libraries window", () => {
 			await setImmediate();
 			h.picker.selectSource("tabler");
 			h.picker.selectedIcon = { type: "tabler-outline", value: "bulb" };
-			await withLibraryWindow((_settings, files) => { for (const file of TABLER) files.delete(file); }, async () => {
-				await h.picker.openLibraries();
-			}, ready);
+			await withLibraryWindow(
+				(_settings, files) => {
+					for (const file of TABLER) files.delete(file);
+				},
+				async () => {
+					await h.picker.openLibraries();
+				},
+				ready,
+			);
 			assert.equal(h.picker.activeSource, "all");
 			assert.equal(h.picker.selectedIcon, null, "confirming it would download the library again");
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 });
 

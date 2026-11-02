@@ -33,11 +33,7 @@ export async function openBuiltInRowMenu(
 }
 
 /** Find callouts ‖ Replace · Convert ‖ Reset to default, when modified. */
-export function buildBuiltInRowMenu(
-	menu: Menu,
-	ctx: SettingsContext,
-	def: CalloutDefinition,
-): void {
+export function buildBuiltInRowMenu(menu: Menu, ctx: SettingsContext, def: CalloutDefinition): void {
 	const usage = addUsageMenuItem(menu, ctx.app, ctx.plugin.registry.vaultIdFormsFor(def));
 	addReplaceItem(menu, ctx, def, usage);
 	addConvertUsesItem(menu, ctx, def, usage);
@@ -69,11 +65,7 @@ export async function openRowMenu(
  * Find callouts ‖ Replace · Convert ‖ Duplicate · Use default fallback style
  * ‖ Delete.
  */
-export function buildUserRowMenu(
-	menu: Menu,
-	ctx: SettingsContext,
-	def: CalloutDefinition,
-): void {
+export function buildUserRowMenu(menu: Menu, ctx: SettingsContext, def: CalloutDefinition): void {
 	const usage = addUsageMenuItem(menu, ctx.app, ctx.plugin.registry.vaultIdFormsFor(def));
 	addReplaceItem(menu, ctx, def, usage);
 	addConvertUsesItem(menu, ctx, def, usage);

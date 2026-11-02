@@ -77,9 +77,11 @@ function buildSavingNotice(ctx: TreeContext): PersistentPart {
 	const hasHistory = ctx.plugin.recovery !== undefined;
 	const dispose = renderSaveStatusBanner(ctx.plugin, el, {
 		...recoveryActionsOf(ctx.plugin),
-		showBackup: hasHistory && canOpenSettingsPage(ctx.app)
-			? (fromKeyboard) => ctx.jumpTo(MAIN_PAGE_ROWS.earlierVersions, fromKeyboard, [MAIN_PAGE_ROWS.earlierVersions])
-			: undefined,
+		showBackup:
+			hasHistory && canOpenSettingsPage(ctx.app)
+				? (fromKeyboard) =>
+						ctx.jumpTo(MAIN_PAGE_ROWS.earlierVersions, fromKeyboard, [MAIN_PAGE_ROWS.earlierVersions])
+				: undefined,
 	});
 	return { el, dispose };
 }

@@ -27,9 +27,11 @@ export class IconTaskScope {
 	async pause(ms: number): Promise<void> {
 		let timer = 0;
 		try {
-			await this.wait(new Promise<void>((resolve) => {
-				timer = window.setTimeout(resolve, ms);
-			}));
+			await this.wait(
+				new Promise<void>((resolve) => {
+					timer = window.setTimeout(resolve, ms);
+				}),
+			);
 		} finally {
 			window.clearTimeout(timer);
 		}

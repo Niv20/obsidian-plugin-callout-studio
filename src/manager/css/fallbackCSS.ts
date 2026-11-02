@@ -27,16 +27,9 @@ export interface FallbackCssContext {
 	/** `CalloutRegistry.themeOwns` — see the early return it guards. */
 	themeOwns(def: CalloutDefinition): boolean;
 	getIconCSS(def: CalloutDefinition): string;
-	fallbackAccentProps(
-		def: CalloutDefinition,
-		mode: "light" | "dark",
-	): string[];
+	fallbackAccentProps(def: CalloutDefinition, mode: "light" | "dark"): string[];
 	ownAccentProps(def: CalloutDefinition, mode: "light" | "dark"): string[];
-	bgProps(
-		def: CalloutDefinition,
-		mode: "light" | "dark",
-		important?: boolean,
-	): string[];
+	bgProps(def: CalloutDefinition, mode: "light" | "dark", important?: boolean): string[];
 	transparentBorderProps(important?: boolean): string[];
 	needsDarkBlock(def: CalloutDefinition): boolean;
 	printGradientCSS(
@@ -51,10 +44,7 @@ export interface FallbackCssContext {
  * callout whose data-callout ID is not explicitly defined.
  * Uses `:not()` selectors to exclude all known IDs/aliases.
  */
-export function generateFallbackCSS(
-	callouts: CalloutDefinition[],
-	ctx: FallbackCssContext,
-): string {
+export function generateFallbackCSS(callouts: CalloutDefinition[], ctx: FallbackCssContext): string {
 	const fallbackId = ctx.settings.fallbackCalloutId;
 	if (!fallbackId) return "";
 
@@ -93,15 +83,11 @@ export function generateFallbackCSS(
 	const darkUnknownSelector = `:where(.theme-dark) ${unknownSelector}`;
 	const iconCSS = ctx.getIconCSS(fallbackDef);
 
-	const parts: string[] = [
-		"/* Fallback callout style for unrecognized types */",
-	];
+	const parts: string[] = ["/* Fallback callout style for unrecognized types */"];
 	// It matches at any nesting depth. `bgProps` emits translucent tints rather
 	// than opaque fills, so nested unknown callouts keep the same stepped visual
 	// depth as registered callouts.
-	const lightProps: string[] = [
-		...ctx.fallbackAccentProps(fallbackDef, "light"),
-	];
+	const lightProps: string[] = [...ctx.fallbackAccentProps(fallbackDef, "light")];
 	if (iconCSS) lightProps.push(`  --callout-icon: ${iconCSS};`);
 	lightProps.push(...ctx.bgProps(fallbackDef, "light", false));
 	// Same border pass the registered ids get, so an unknown id inherits a
@@ -112,27 +98,16 @@ export function generateFallbackCSS(
 	parts.push(`${unknownSelector} {\n${lightProps.join("\n")}\n}`);
 
 	if (ctx.needsDarkBlock(fallbackDef)) {
-		const darkProps: string[] = [
-			...ctx.fallbackAccentProps(fallbackDef, "dark"),
-		];
+		const darkProps: string[] = [...ctx.fallbackAccentProps(fallbackDef, "dark")];
 		darkProps.push(...ctx.bgProps(fallbackDef, "dark", false));
-		parts.push(
-			`${darkUnknownSelector} {\n${darkProps.join("\n")}\n}`,
-		);
+		parts.push(`${darkUnknownSelector} {\n${darkProps.join("\n")}\n}`);
 	}
 
 	if (fallbackDef.textColorLight) {
-		parts.push(
-			`${unknownSelector} > .callout-content {\n  color: ${fallbackDef.textColorLight};\n}`,
-		);
+		parts.push(`${unknownSelector} > .callout-content {\n  color: ${fallbackDef.textColorLight};\n}`);
 	}
-	if (
-		fallbackDef.textColorDark &&
-		fallbackDef.textColorDark !== fallbackDef.textColorLight
-	) {
-		parts.push(
-			`${darkUnknownSelector} > .callout-content {\n  color: ${fallbackDef.textColorDark};\n}`,
-		);
+	if (fallbackDef.textColorDark && fallbackDef.textColorDark !== fallbackDef.textColorLight) {
+		parts.push(`${darkUnknownSelector} > .callout-content {\n  color: ${fallbackDef.textColorDark};\n}`);
 	}
 
 	// The plugin's own heading / inline / ref token DOM for these same unknown

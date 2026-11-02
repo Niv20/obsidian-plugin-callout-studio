@@ -68,8 +68,7 @@ function subscribed() {
 		},
 	} as unknown as SettingsTabPlugin;
 
-	const subscribe = () =>
-		subscribeSettingsTab(app, plugin, (force) => forced.push(force));
+	const subscribe = () => subscribeSettingsTab(app, plugin, (force) => forced.push(force));
 
 	return {
 		registry,

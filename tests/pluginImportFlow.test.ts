@@ -37,8 +37,7 @@ function everyFlow(): ImportFlow[] {
 	for (const probe of PROBES)
 		for (const chosen of [null, ...OPTIONS])
 			for (const hasManual of [false, true])
-				for (const busy of [false, true])
-					out.push({ probe, chosen, hasManual, busy });
+				for (const busy of [false, true]) out.push({ probe, chosen, hasManual, busy });
 	return out;
 }
 
@@ -89,7 +88,11 @@ describe("the import flow", () => {
 		// A probe that never settles must not lock the window.
 		const looking = { ...initialFlow(), chosen: "manual" as const, hasManual: true };
 		assert.equal(activeOption(looking), "manual");
-		assert.equal(activeOption({ ...looking, probe: "found" }), "manual", "and the probe settling leaves the choice alone");
+		assert.equal(
+			activeOption({ ...looking, probe: "found" }),
+			"manual",
+			"and the probe settling leaves the choice alone",
+		);
 	});
 
 	it("only ever imports an option that holds something", () => {
@@ -137,9 +140,7 @@ describe("the Admonition and Callout Manager sources", () => {
 	it("Callout Manager tells a data.json from copied styles by the first character", () => {
 		assert.deepEqual(CALLOUT_MANAGER_IMPORT.fromText("{not json"), { errorKey: "import.err.parseFailed" });
 		assert.deepEqual(CALLOUT_MANAGER_IMPORT.fromText('{"x": 1}'), { errorKey: "import.err.cmNotRecognized" });
-		const css = CALLOUT_MANAGER_IMPORT.fromText(
-			'.callout[data-callout="note-x"] { --callout-color: 255, 0, 0; }',
-		);
+		const css = CALLOUT_MANAGER_IMPORT.fromText('.callout[data-callout="note-x"] { --callout-color: 255, 0, 0; }');
 		assert.ok("batch" in css && css.batch.size === 1);
 	});
 
@@ -150,7 +151,11 @@ describe("the Admonition and Callout Manager sources", () => {
 
 	for (const [source, empty, populated] of [
 		[ADMONITION_IMPORT, '{"userAdmonitions":{}}', '{"userAdmonitions":{"idea":{"type":"idea"}}}'],
-		[CALLOUT_MANAGER_IMPORT, '{"callouts":{"custom":[],"settings":{}}}', '{"callouts":{"custom":["idea"],"settings":{}}}'],
+		[
+			CALLOUT_MANAGER_IMPORT,
+			'{"callouts":{"custom":[],"settings":{}}}',
+			'{"callouts":{"custom":["idea"],"settings":{}}}',
+		],
 	] as const) {
 		it(`${source.pluginId}: distinguishes a missing folder from an installed plugin with nothing to import`, async () => {
 			for (const [folderExists, dataJson, expected] of [
@@ -172,7 +177,9 @@ describe("the Admonition and Callout Manager sources", () => {
 							stat: () => Promise.resolve(null),
 							exists: (candidate: string) => {
 								paths.push(candidate);
-								return Promise.resolve(candidate === path ? dataJson !== undefined : candidate === folder && folderExists);
+								return Promise.resolve(
+									candidate === path ? dataJson !== undefined : candidate === folder && folderExists,
+								);
 							},
 							read: (candidate: string) => {
 								reads.push(candidate);
@@ -210,9 +217,10 @@ describe("the Admonition and Callout Manager sources", () => {
 						configDir: ".obsidian",
 						adapter: {
 							stat: () => Promise.resolve(null),
-							exists: (path: string) => path.endsWith("/data.json")
-								? Promise.resolve(fileExists)
-								: Promise.reject(new Error("folder inaccessible")),
+							exists: (path: string) =>
+								path.endsWith("/data.json")
+									? Promise.resolve(fileExists)
+									: Promise.reject(new Error("folder inaccessible")),
 							read: () => Promise.reject(new Error("file inaccessible")),
 						},
 					},

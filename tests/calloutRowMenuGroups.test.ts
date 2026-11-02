@@ -45,24 +45,37 @@ const SECTION_ORDER: readonly string[] = Object.values(ROW_MENU_SECTION);
 function vault(notes: Record<string, string>) {
 	const contents = new Map(Object.entries(notes));
 	const files = [...contents.keys()].map((path) => ({ path, stat: { mtime: 1, size: 1 } }));
-	const app = { vault: {
-		getMarkdownFiles: () => files,
-		getAbstractFileByPath: (path: string) => files.find((file) => file.path === path) ?? null,
-		cachedRead: (file: { path: string }) => Promise.resolve(contents.get(file.path)!),
-	} } as unknown as App;
-	const registry = new CalloutRegistry(); registry.load(null);
+	const app = {
+		vault: {
+			getMarkdownFiles: () => files,
+			getAbstractFileByPath: (path: string) => files.find((file) => file.path === path) ?? null,
+			cachedRead: (file: { path: string }) => Promise.resolve(contents.get(file.path)!),
+		},
+	} as unknown as App;
+	const registry = new CalloutRegistry();
+	registry.load(null);
 	registry.add(definition({ id: "owned", displayName: "Owned" }));
 	const writer = savingWriter();
 	const ctx = {
-		app, redraw: () => {}, registerDisposer: () => {},
+		app,
+		redraw: () => {},
+		registerDisposer: () => {},
 		plugin: {
-			app, registry, settings: registry.settings, settingsWriter: writer,
-			saveSettings: () => Promise.resolve(), refreshCallouts: () => {},
+			app,
+			registry,
+			settings: registry.settings,
+			settingsWriter: writer,
+			saveSettings: () => Promise.resolve(),
+			refreshCallouts: () => {},
 		},
 	} as unknown as SettingsContext;
 	const index = getCalloutOccurrenceIndex(app);
 	return {
-		app, registry, ctx, index, writer,
+		app,
+		registry,
+		ctx,
+		index,
+		writer,
 		/** Rewrite a note the way Obsidian reports it: new mtime, invalidated path. */
 		write(path: string, text: string) {
 			contents.set(path, text);
@@ -81,7 +94,7 @@ function open(h: ReturnType<typeof vault>, build: Build, id: string): Menu {
 }
 
 function label(item: MenuItemRecord): string {
-	const title = typeof item.title === "string" ? item.title : item.title.textContent ?? "";
+	const title = typeof item.title === "string" ? item.title : (item.title.textContent ?? "");
 	return title + (item.disabled ? " [grey]" : "") + (item.warning ? " [red]" : "");
 }
 
@@ -92,11 +105,16 @@ function groups(menu: Menu): string[][] {
 		const section = item.section;
 		assert.ok(section, `"${label(item)}" has no section, so Obsidian would sink it below every group`);
 		const last = drawn.at(-1);
-		if (last?.section === section) { last.labels.push(label(item)); continue; }
+		if (last?.section === section) {
+			last.labels.push(label(item));
+			continue;
+		}
 		assert.ok(!drawn.some((group) => group.section === section), `${section} is split in two`);
 		if (last) {
-			assert.ok(SECTION_ORDER.indexOf(section) > SECTION_ORDER.indexOf(last.section),
-				`${section} is added after ${last.section}, so Obsidian would draw it there`);
+			assert.ok(
+				SECTION_ORDER.indexOf(section) > SECTION_ORDER.indexOf(last.section),
+				`${section} is added after ${last.section}, so Obsidian would draw it there`,
+			);
 		}
 		drawn.push({ section, labels: [label(item)] });
 	}
@@ -116,7 +134,10 @@ describe("the row menu's four groups", () => {
 		const h = vault({ "a.md": "> [!owned] One\n\n> [!owned] Two" });
 		await h.index.ensureFresh();
 		assert.deepEqual(groups(open(h, buildUserRowMenu, "owned")), [
-			[find(2)], [REPLACE, CONVERT], [DUPLICATE, FALLBACK], [DELETE],
+			[find(2)],
+			[REPLACE, CONVERT],
+			[DUPLICATE, FALLBACK],
+			[DELETE],
 		]);
 		h.index.dispose();
 	});
@@ -125,7 +146,9 @@ describe("the row menu's four groups", () => {
 		const h = vault({ "a.md": "plain text" });
 		await h.index.ensureFresh();
 		assert.deepEqual(groups(open(h, buildUserRowMenu, "owned")), [
-			[`${find(0)} [grey]`], [DUPLICATE, FALLBACK], [DELETE],
+			[`${find(0)} [grey]`],
+			[DUPLICATE, FALLBACK],
+			[DELETE],
 		]);
 		h.index.dispose();
 	});
@@ -136,9 +159,7 @@ describe("the row menu's four groups", () => {
 		h.registry.settings.fallbackCalloutId = "owned";
 		await h.index.ensureFresh();
 		for (const id of ["owned", "follower"]) {
-			assert.deepEqual(groups(open(h, buildUserRowMenu, id)), [
-				[`${find(0)} [grey]`], [DUPLICATE], [DELETE],
-			], id);
+			assert.deepEqual(groups(open(h, buildUserRowMenu, id)), [[`${find(0)} [grey]`], [DUPLICATE], [DELETE]], id);
 		}
 		h.index.dispose();
 	});
@@ -147,9 +168,7 @@ describe("the row menu's four groups", () => {
 		const h = vault({ "a.md": "> [!note] Hi" });
 		h.registry.update("note", { colorLight: "#ff0000" });
 		await h.index.ensureFresh();
-		assert.deepEqual(groups(open(h, buildBuiltInRowMenu, "note")), [
-			[find(1)], [REPLACE, CONVERT], [RESET],
-		]);
+		assert.deepEqual(groups(open(h, buildBuiltInRowMenu, "note")), [[find(1)], [REPLACE, CONVERT], [RESET]]);
 		h.index.dispose();
 	});
 
@@ -175,8 +194,11 @@ describe("a count that lands after the menu opened", () => {
 		const h = vault({ "a.md": "plain text" });
 		const menu = open(h, buildUserRowMenu, "owned");
 		const titles = (): string[] => menu.items.map(label);
-		assert.deepEqual(titles().slice(0, 3), [t("usage.menu"), REPLACE, CONVERT],
-			"an unknown count offers both rewrites");
+		assert.deepEqual(
+			titles().slice(0, 3),
+			[t("usage.menu"), REPLACE, CONVERT],
+			"an unknown count offers both rewrites",
+		);
 		await h.index.ensureFresh();
 		assert.deepEqual(titles().slice(0, 3), [`${find(0)} [grey]`, `${REPLACE} [grey]`, `${CONVERT} [grey]`]);
 		assert.equal(titles()[3], DUPLICATE, "only the items that need a use are greyed");
@@ -188,13 +210,21 @@ describe("a count that lands after the menu opened", () => {
 
 	it("never takes a partial scan for unused", async () => {
 		const h = vault({ "a.md": "plain text" });
-		(h.app.vault as unknown as { cachedRead: () => Promise<string> }).cachedRead =
-			() => Promise.reject(new Error("EIO"));
+		(h.app.vault as unknown as { cachedRead: () => Promise<string> }).cachedRead = () =>
+			Promise.reject(new Error("EIO"));
 		const menu = open(h, buildUserRowMenu, "owned");
-		const warn = console.warn; console.warn = () => {};
-		try { await h.index.ensureFresh(); } finally { console.warn = warn; }
+		const warn = console.warn;
+		console.warn = () => {};
+		try {
+			await h.index.ensureFresh();
+		} finally {
+			console.warn = warn;
+		}
 		assert.equal(h.index.status, "partial");
-		assert.deepEqual(menu.items.slice(0, 3).map((item) => item.disabled), [false, false, false]);
+		assert.deepEqual(
+			menu.items.slice(0, 3).map((item) => item.disabled),
+			[false, false, false],
+		);
 		h.index.dispose();
 	});
 
@@ -203,7 +233,10 @@ describe("a count that lands after the menu opened", () => {
 		const menu = open(h, buildUserRowMenu, "owned");
 		menu.hide();
 		await h.index.ensureFresh();
-		assert.deepEqual(menu.items.slice(0, 3).map((item) => item.disabled), [false, false, false]);
+		assert.deepEqual(
+			menu.items.slice(0, 3).map((item) => item.disabled),
+			[false, false, false],
+		);
 		h.index.dispose();
 	});
 });
@@ -217,20 +250,29 @@ async function undo(): Promise<void> {
 function noticeText(): string {
 	const message = Notice.last?.message;
 	if (typeof message === "string") return message;
-	return (message as FakeDocumentFragment | undefined)?.childNodes
-		.map((node) => node.textContent ?? "").join(" ") ?? "";
+	return (
+		(message as FakeDocumentFragment | undefined)?.childNodes.map((node) => node.textContent ?? "").join(" ") ?? ""
+	);
 }
 
 describe("Use default fallback style", () => {
 	/** A fallback that brings fields the callout never had. */
 	function withRichFallback() {
 		const h = vault({});
-		h.registry.add(definition({
-			id: "base", displayName: "Base", icon: { type: "lucide", value: "lucide-info" },
-			colorLight: "#aa0000", colorDark: "#ff4444", bgColorLight: "#ffeeee", bgColorDark: "#330000",
-			bgGradient: { angleDeg: 90, toColorLight: "#ffffff", toColorDark: "#000000" },
-			textColorLight: "#111111", textColorDark: "#eeeeee",
-		}));
+		h.registry.add(
+			definition({
+				id: "base",
+				displayName: "Base",
+				icon: { type: "lucide", value: "lucide-info" },
+				colorLight: "#aa0000",
+				colorDark: "#ff4444",
+				bgColorLight: "#ffeeee",
+				bgColorDark: "#330000",
+				bgGradient: { angleDeg: 90, toColorLight: "#ffffff", toColorDark: "#000000" },
+				textColorLight: "#111111",
+				textColorDark: "#eeeeee",
+			}),
+		);
 		h.registry.settings.fallbackCalloutId = "base";
 		h.registry.update("owned", { customized: true });
 		return h;
@@ -248,8 +290,11 @@ describe("Use default fallback style", () => {
 		assert.ok(noticeText().includes(t("notice.fallbackStyleApplied", { name: "Owned" })));
 		await undo();
 		const stable = (value: unknown): string => JSON.stringify(stableKeyOrder(value));
-		assert.equal(stable(h.registry.get("owned")), stable(before),
-			"every field back, and nothing the fallback brought left behind");
+		assert.equal(
+			stable(h.registry.get("owned")),
+			stable(before),
+			"every field back, and nothing the fallback brought left behind",
+		);
 		h.index.dispose();
 	});
 

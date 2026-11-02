@@ -28,12 +28,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	bareLucideName,
-	canonicalIconValue,
-	iconsEqual,
-	resolveLucideId,
-} from "../src/icons/lucideId";
+import { bareLucideName, canonicalIconValue, iconsEqual, resolveLucideId } from "../src/icons/lucideId";
 import { HELP_ICON_ID } from "../src/constants";
 import { createIconNameCheck, createLucideNameCheck } from "../src/icons/nameCheck";
 import type { CalloutIcon, IconPackId } from "../src/types";
@@ -60,8 +55,7 @@ const ICON_IDS = [
 	"remix-QuestionnaireFill",
 ];
 
-(globalThis as unknown as { __CS_ICON_IDS__?: string[] }).__CS_ICON_IDS__ =
-	ICON_IDS;
+(globalThis as unknown as { __CS_ICON_IDS__?: string[] }).__CS_ICON_IDS__ = ICON_IDS;
 
 const icon = (over: Partial<CalloutIcon> = {}): CalloutIcon => ({
 	type: "lucide",
@@ -113,10 +107,7 @@ describe("resolveLucideId — the spelling Obsidian can actually draw", () => {
 		// rewriting a bare id, and dropping it hands the id back to the three
 		// other tables that might know it.
 		assert.equal(resolveLucideId("lucide-dice"), "dice");
-		assert.equal(
-			resolveLucideId("lucide-remix-QuestionnaireFill"),
-			"remix-QuestionnaireFill",
-		);
+		assert.equal(resolveLucideId("lucide-remix-QuestionnaireFill"), "remix-QuestionnaireFill");
 	});
 
 	it("leaves a bare id untouched — it is already the forgiving spelling", () => {
@@ -156,10 +147,7 @@ describe("canonicalIconValue — for comparison, never for storage", () => {
 		// An emoji glyph, a user-image id and a pack icon name are not names in
 		// a table with two spellings; touching them would be inventing a rule.
 		assert.equal(canonicalIconValue({ type: "emoji", value: "😀" }), "😀");
-		assert.equal(
-			canonicalIconValue({ type: "octicons", value: "lucide-alert" }),
-			"lucide-alert",
-		);
+		assert.equal(canonicalIconValue({ type: "octicons", value: "lucide-alert" }), "lucide-alert");
 	});
 
 	it("does not even trim a non-Lucide value", () => {
@@ -187,10 +175,7 @@ describe("iconsEqual", () => {
 		// The reason the whole module exists: `isModified` and the editor's
 		// revert affordance both diff icons, and neither may report a change the
 		// user never made.
-		assert.equal(
-			iconsEqual(icon({ value: "pencil" }), icon({ value: "lucide-pencil" })),
-			true,
-		);
+		assert.equal(iconsEqual(icon({ value: "pencil" }), icon({ value: "lucide-pencil" })), true);
 	});
 
 	it("separates two different Lucide icons", () => {
@@ -198,13 +183,7 @@ describe("iconsEqual", () => {
 	});
 
 	it("separates the same name in two different libraries", () => {
-		assert.equal(
-			iconsEqual(
-				{ type: "octicons", value: "alert" },
-				{ type: "fa-solid", value: "alert" },
-			),
-			false,
-		);
+		assert.equal(iconsEqual({ type: "octicons", value: "alert" }, { type: "fa-solid", value: "alert" }), false);
 	});
 
 	it("ignores the order the fields were written in", () => {
@@ -223,10 +202,7 @@ describe("iconsEqual", () => {
 	it("treats an explicit undefined as an absent field", () => {
 		// Which is what a round-trip through data.json produces.
 		assert.equal(
-			iconsEqual(
-				{ type: "material", value: "home", style: undefined },
-				{ type: "material", value: "home" },
-			),
+			iconsEqual({ type: "material", value: "home", style: undefined }, { type: "material", value: "home" }),
 			true,
 		);
 	});
@@ -242,20 +218,14 @@ describe("iconsEqual", () => {
 			false,
 		);
 		assert.equal(
-			iconsEqual(
-				{ type: "image", value: "img-1", recolor: true },
-				{ type: "image", value: "img-1" },
-			),
+			iconsEqual({ type: "image", value: "img-1", recolor: true }, { type: "image", value: "img-1" }),
 			false,
 		);
 	});
 
 	it("normalizes only Lucide's spelling, not everyone's", () => {
 		assert.equal(
-			iconsEqual(
-				{ type: "octicons", value: "alert" },
-				{ type: "octicons", value: "lucide-alert" },
-			),
+			iconsEqual({ type: "octicons", value: "alert" }, { type: "octicons", value: "lucide-alert" }),
 			false,
 		);
 	});

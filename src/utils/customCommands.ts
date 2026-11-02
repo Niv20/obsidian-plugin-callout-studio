@@ -57,10 +57,7 @@ export function obsidianCommandId(commandId: string): string {
  * id, because it changes whenever the command is edited.
  */
 export function commandSignature(
-	command: Pick<
-		CustomCommand,
-		"role" | "calloutId" | "headingLevel" | "action" | "fold"
-	>,
+	command: Pick<CustomCommand, "role" | "calloutId" | "headingLevel" | "action" | "fold">,
 ): string {
 	const level = command.role === "heading" ? resolveHeadingLevel(command) : "";
 	const action = resolveAction(command);
@@ -72,9 +69,7 @@ export function commandSignature(
 }
 
 /** The heading level a command targets, with the stored value clamped. */
-export function resolveHeadingLevel(
-	command: Pick<CustomCommand, "headingLevel">,
-): number {
+export function resolveHeadingLevel(command: Pick<CustomCommand, "headingLevel">): number {
 	const level = command.headingLevel;
 	if (typeof level !== "number" || !Number.isInteger(level)) {
 		return DEFAULT_HEADING_LEVEL;
@@ -89,9 +84,7 @@ export function resolveHeadingLevel(
  * and inline commands always took the line or selection they were run on —
  * what Wrap does now, so a command saved back then keeps working unchanged.
  */
-export function resolveAction(
-	command: Pick<Partial<CustomCommand>, "action" | "role">,
-): CustomCommandAction {
+export function resolveAction(command: Pick<Partial<CustomCommand>, "action" | "role">): CustomCommandAction {
 	if (command.role === "regular") return command.action === "wrap" ? "wrap" : "insert";
 	return command.action === "insert" ? "insert" : "wrap";
 }
@@ -102,9 +95,9 @@ export function resolveAction(
  * is written — the sanitizer and the command editor — so a saved command and
  * the same command reloaded never differ by a key that means nothing.
  */
-export function storedAction(
-	command: Pick<Partial<CustomCommand>, "action" | "role">,
-): { action?: CustomCommandAction } {
+export function storedAction(command: Pick<Partial<CustomCommand>, "action" | "role">): {
+	action?: CustomCommandAction;
+} {
 	const action = resolveAction(command);
 	if (command.role === "regular" || action === "insert") return { action };
 	return {};
@@ -124,12 +117,8 @@ export function storedAction(
  * those wrote `+` that nobody chose, from a setting whose UI is hidden. The
  * command now owns its own answer, which is what makes the dropdown honest.
  */
-export function resolveFold(
-	command: Pick<CustomCommand, "fold">,
-): CustomCommandFold {
-	return command.fold === "expanded" || command.fold === "collapsed"
-		? command.fold
-		: "none";
+export function resolveFold(command: Pick<CustomCommand, "fold">): CustomCommandFold {
+	return command.fold === "expanded" || command.fold === "collapsed" ? command.fold : "none";
 }
 
 /** The header marker each fold state writes after the `]`. */
@@ -177,10 +166,7 @@ export function isSuspendedByTheme(
  * Re-deriving the name on every sync is what keeps the palette label accurate
  * after a callout is renamed.
  */
-export function describeCommand(
-	command: Omit<CustomCommand, "id">,
-	def: CalloutDefinition,
-): string {
+export function describeCommand(command: Omit<CustomCommand, "id">, def: CalloutDefinition): string {
 	const name = def.displayName;
 	const wrap = resolveAction(command) === "wrap";
 	if (command.role === "heading") {
@@ -218,8 +204,7 @@ const INSERT_KEYS: Record<CustomCommandFold, string> = {
 };
 
 const isRenderRole = (value: unknown): value is CalloutRenderRole =>
-	typeof value === "string" &&
-	(CALLOUT_RENDER_ROLES as readonly string[]).includes(value);
+	typeof value === "string" && (CALLOUT_RENDER_ROLES as readonly string[]).includes(value);
 
 /**
  * Validates untrusted saved/imported command data: keeps only entries with a
@@ -248,9 +233,7 @@ export function sanitizeCustomCommands(raw: unknown): CustomCommand[] {
 			id: c.id,
 			calloutId: c.calloutId,
 			role: c.role,
-			...(c.role === "heading"
-				? { headingLevel: resolveHeadingLevel(c) }
-				: {}),
+			...(c.role === "heading" ? { headingLevel: resolveHeadingLevel(c) } : {}),
 			...storedAction({ role: c.role, action: c.action }),
 			// Written only when it says something. `"none"` is what absence
 			// already means, so stamping it would rewrite every command in
@@ -258,9 +241,7 @@ export function sanitizeCustomCommands(raw: unknown): CustomCommand[] {
 			// to record a default. `tests/upgradeFromAutoDiscovery.test.ts`
 			// holds this to the stronger promise: a command saved by a released
 			// version must load back identical, not merely equivalent.
-			...(c.role === "regular" && resolveFold(c) !== "none"
-				? { fold: resolveFold(c) }
-				: {}),
+			...(c.role === "regular" && resolveFold(c) !== "none" ? { fold: resolveFold(c) } : {}),
 		});
 	}
 	return result;

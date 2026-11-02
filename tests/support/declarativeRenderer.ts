@@ -57,7 +57,15 @@ export interface LooseDef {
 	visible?: Predicate;
 	disabled?: Predicate;
 	icon?: string;
-	control?: { key: string; type: string; defaultValue?: unknown; disabled?: Predicate; min?: number; max?: number; step?: number };
+	control?: {
+		key: string;
+		type: string;
+		defaultValue?: unknown;
+		disabled?: Predicate;
+		min?: number;
+		max?: number;
+		step?: number;
+	};
 	action?: (el: HTMLElement, index: number) => void;
 	render?: (setting: Setting, group: SettingGroup) => void | (() => void);
 	items?: LooseDef[];
@@ -224,9 +232,15 @@ export class DeclarativeHarness {
 		// `refreshDomState()` re-applies `visible` and `disabled`. The stub's
 		// methods only do the first part, so the harness adds the rest.
 		const storeTree = tab.update.bind(tab);
-		tab.update = () => { storeTree(); this.redraw(); };
+		tab.update = () => {
+			storeTree();
+			this.redraw();
+		};
 		const countRefresh = tab.refreshDomState.bind(tab);
-		tab.refreshDomState = () => { countRefresh(); this.applyDomState(); };
+		tab.refreshDomState = () => {
+			countRefresh();
+			this.applyDomState();
+		};
 	}
 
 	/** The tab's tree, as the renderer reads it. */
@@ -247,7 +261,7 @@ export class DeclarativeHarness {
 	/** Draw the open page again, as `refreshCurrentPage` does. Factory pages are left alone. */
 	redraw(): void {
 		if (this.customPage) return;
-		const items = this.pagePath.length === 0 ? this.tree : findPage(this.tree, this.pagePath)?.items ?? [];
+		const items = this.pagePath.length === 0 ? this.tree : (findPage(this.tree, this.pagePath)?.items ?? []);
 		this.drawBoxes(items, this.pageEl);
 		this.applyDomState();
 	}
@@ -402,7 +416,10 @@ export class DeclarativeHarness {
 				box.addItemEl = row.settingEl as unknown as HTMLElement;
 			} else {
 				group.addExtraButton((button) => {
-					button.setIcon("lucide-plus").setTooltip(addItem.name).onClick(() => box.def.addItem?.action(button.extraSettingsEl as unknown as HTMLElement));
+					button
+						.setIcon("lucide-plus")
+						.setTooltip(addItem.name)
+						.onClick(() => box.def.addItem?.action(button.extraSettingsEl as unknown as HTMLElement));
 				});
 			}
 		}
@@ -434,7 +451,11 @@ export class DeclarativeHarness {
 				if (old.key !== next.key) return false;
 				old.def = next.def;
 				const controlEl = old.setting.controlEl as unknown as HTMLElement;
-				const controlHasFocus = Boolean(next.def.control) && focused !== null && controlEl.contains(focused) && controlEl !== focused;
+				const controlHasFocus =
+					Boolean(next.def.control) &&
+					focused !== null &&
+					controlEl.contains(focused) &&
+					controlEl !== focused;
 				if (!controlHasFocus) {
 					this.runCleanup(old);
 					old.setting.clear();
@@ -444,7 +465,13 @@ export class DeclarativeHarness {
 			},
 			(next) => {
 				const setting = new Setting(group.listEl);
-				const row: RenderedRow = { type: "def", key: next.key, def: next.def, settingEl: setting.settingEl as unknown as HTMLElement, setting };
+				const row: RenderedRow = {
+					type: "def",
+					key: next.key,
+					def: next.def,
+					settingEl: setting.settingEl as unknown as HTMLElement,
+					setting,
+				};
 				this.drawRow(row, box);
 				return row;
 			},
@@ -467,7 +494,11 @@ export class DeclarativeHarness {
 		const empty = box.children.length === 0;
 		if (empty && box.def.emptyState && !box.emptyStateEl) {
 			const row = new Setting(box.settingGroup.listEl);
-			row.setName(typeof box.def.emptyState === "string" ? box.def.emptyState : box.def.emptyState.cloneNode(true) as DocumentFragment);
+			row.setName(
+				typeof box.def.emptyState === "string"
+					? box.def.emptyState
+					: (box.def.emptyState.cloneNode(true) as DocumentFragment),
+			);
 			row.settingEl.addClass?.("mod-empty-state");
 			box.emptyStateEl = row.settingEl as unknown as HTMLElement;
 		} else if (!empty && box.emptyStateEl) {
@@ -508,10 +539,13 @@ export class DeclarativeHarness {
 		}
 		if (list?.onDelete) {
 			setting.addExtraButton((button) => {
-				button.setIcon("lucide-x").setTooltip("Delete").onClick(() => {
-					const index = box.settingGroup.settings.indexOf(setting);
-					if (index >= 0) list.onDelete?.(index);
-				});
+				button
+					.setIcon("lucide-x")
+					.setTooltip("Delete")
+					.onClick(() => {
+						const index = box.settingGroup.settings.indexOf(setting);
+						if (index >= 0) list.onDelete?.(index);
+					});
 				button.extraSettingsEl.addClass?.("cs-test-delete");
 			});
 		}
@@ -533,7 +567,12 @@ export class DeclarativeHarness {
 		if (control.type === "toggle") {
 			setting.addToggle((toggle) => toggle.setValue(Boolean(value)).onChange((next) => save(next)));
 		} else if (control.type === "slider") {
-			setting.addSlider((slider) => slider.setLimits(control.min ?? 0, control.max ?? 100, control.step ?? 1).setValue(Number(value)).onChange((next) => save(next)));
+			setting.addSlider((slider) =>
+				slider
+					.setLimits(control.min ?? 0, control.max ?? 100, control.step ?? 1)
+					.setValue(Number(value))
+					.onChange((next) => save(next)),
+			);
 		} else {
 			throw new Error(`the test renderer does not draw "${control.type}" controls`);
 		}
@@ -590,7 +629,7 @@ export class DeclarativeHarness {
 
 /** A description is copied into each row, so a fragment is cloned [cM]. */
 function copyOf(desc: string | DocumentFragment): string | DocumentFragment {
-	return typeof desc === "string" ? desc : desc.cloneNode(true) as DocumentFragment;
+	return typeof desc === "string" ? desc : (desc.cloneNode(true) as DocumentFragment);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -631,7 +670,7 @@ export function searchSettings(items: unknown[], query: string): SearchHit[] {
 				walk(def.items ?? [], path);
 			} else {
 				if (!evaluate(def.visible, true) || !evaluate(def.searchable, true)) continue;
-				const desc = typeof def.desc === "string" ? def.desc : def.desc?.textContent ?? undefined;
+				const desc = typeof def.desc === "string" ? def.desc : (def.desc?.textContent ?? undefined);
 				if (matches(def.name) || matches(desc) || (def.aliases ?? []).some(matches)) {
 					hits.push({ name: def.name ?? "", pagePath: path, kind: "row" });
 				}

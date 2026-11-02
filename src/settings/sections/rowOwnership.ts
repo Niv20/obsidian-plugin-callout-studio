@@ -29,11 +29,7 @@
 import { Menu, type App } from "obsidian";
 import { t } from "../../i18n";
 import { activeThemeName } from "../../manager/theme/customCssApi";
-import {
-	handleCalloutDelete,
-	handleCalloutReplace,
-	handleClearCalloutUsages,
-} from "./calloutVaultActions";
+import { handleCalloutDelete, handleCalloutReplace, handleClearCalloutUsages } from "./calloutVaultActions";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsContext } from "./types";
 import { disableWhenUnused } from "../../usage/usageMenuItem";
@@ -53,18 +49,12 @@ export function styleOwnerFacts(ctx: SettingsContext): StyleOwnerFacts {
 }
 
 /** {@link isThemeStyled}, asked of the live plugin. */
-export function isThemeSupplied(
-	ctx: SettingsContext,
-	def: CalloutDefinition,
-): boolean {
+export function isThemeSupplied(ctx: SettingsContext, def: CalloutDefinition): boolean {
 	return ctx.plugin.registry.themeOwns(def);
 }
 
 /** Whether this row belongs under *Callouts from your theme*. */
-export function isThemeStyled(
-	facts: StyleOwnerFacts,
-	def: CalloutDefinition,
-): boolean {
+export function isThemeStyled(facts: StyleOwnerFacts, def: CalloutDefinition): boolean {
 	return facts.themeOwns(def);
 }
 
@@ -112,8 +102,7 @@ export function activeThemeLabel(app: App): string {
  * In Obsidian's default theme the switch has nothing to take away.
  */
 export function themeStylesSwitchedOff(ctx: SettingsContext): boolean {
-	return !ctx.plugin.registry.settings.themeCalloutStyles.enabled &&
-		activeThemeName(ctx.app) !== null;
+	return !ctx.plugin.registry.settings.themeCalloutStyles.enabled && activeThemeName(ctx.app) !== null;
 }
 
 /**
@@ -126,10 +115,7 @@ export function themeStylesSwitchedOff(ctx: SettingsContext): boolean {
  * the next theme sweep. Those rows offer no Delete — only
  * {@link addConvertUsesItem}, which every row has.
  */
-export function deleteRemovesRow(
-	ctx: SettingsContext,
-	def: CalloutDefinition,
-): boolean {
+export function deleteRemovesRow(ctx: SettingsContext, def: CalloutDefinition): boolean {
 	return !def.builtIn && !isThemeSupplied(ctx, def);
 }
 
@@ -146,8 +132,7 @@ export function addReplaceItem(
 ): void {
 	if (usage?.fileCount === 0) return;
 	menu.addItem((item) => {
-		item
-			.setTitle(t("settings.replaceAction"))
+		item.setTitle(t("settings.replaceAction"))
 			.setIcon("arrow-left-right")
 			.setSection(ROW_MENU_SECTION.notes)
 			.onClick(() => {
@@ -177,8 +162,7 @@ export function addConvertUsesItem(
 ): void {
 	if (usage?.fileCount === 0) return;
 	menu.addItem((item) => {
-		item
-			.setTitle(t("settings.convertUsesAction"))
+		item.setTitle(t("settings.convertUsesAction"))
 			.setIcon("eraser")
 			.setSection(ROW_MENU_SECTION.notes)
 			.onClick(() => {
@@ -194,11 +178,7 @@ export function addConvertUsesItem(
  * Delete never touches a note, so there is always something it can do. Red
  * and last, in a section of its own.
  */
-export function addDeleteItem(
-	menu: Menu,
-	ctx: SettingsContext,
-	def: CalloutDefinition,
-): void {
+export function addDeleteItem(menu: Menu, ctx: SettingsContext, def: CalloutDefinition): void {
 	if (!deleteRemovesRow(ctx, def)) return;
 	menu.addItem((item) =>
 		item

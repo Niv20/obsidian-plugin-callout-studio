@@ -115,9 +115,7 @@ export function apiHarness(): ApiHarness {
  * One neutral user callout to vary from. Light and dark accents differ, because
  * that is the ordinary case and it is what makes `details.color` observable.
  */
-export function definition(
-	over: Partial<CalloutDefinition> = {},
-): CalloutDefinition {
+export function definition(over: Partial<CalloutDefinition> = {}): CalloutDefinition {
 	return {
 		id: "quiet",
 		displayName: "Quiet",
@@ -138,10 +136,7 @@ export function definition(
  * filter treats as a candidate for dropping, so every discovery test starts
  * here and changes one field at a time.
  */
-export function discovered(
-	id: string,
-	over: Partial<CalloutDefinition> = {},
-): CalloutDefinition {
+export function discovered(id: string, over: Partial<CalloutDefinition> = {}): CalloutDefinition {
 	return definition({
 		id,
 		displayName: id,
@@ -151,5 +146,4 @@ export function discovered(
 }
 
 /** The ids in a list of API results, in the order the API returned them. */
-export const ids = (list: readonly { id: string }[]): string[] =>
-	list.map((c) => c.id);
+export const ids = (list: readonly { id: string }[]): string[] => list.map((c) => c.id);

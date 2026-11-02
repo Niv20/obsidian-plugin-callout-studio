@@ -25,15 +25,16 @@
  * Replace is the same button, and typing never moves the caret.
  */
 import { t } from "../../i18n";
-import { addOptionRadio, optionBoxId, paintOptionRadio, renderOptionBox, renderOptionList, type OptionBox } from "../optionBox";
-import { renderRecommendedBadge } from "../recommendedBadge";
 import {
-	activeOption,
-	isFilled,
-	vaultOffered,
-	type ImportFlow,
-	type ImportOption,
-} from "./pluginImportFlow";
+	addOptionRadio,
+	optionBoxId,
+	paintOptionRadio,
+	renderOptionBox,
+	renderOptionList,
+	type OptionBox,
+} from "../optionBox";
+import { renderRecommendedBadge } from "../recommendedBadge";
+import { activeOption, isFilled, vaultOffered, type ImportFlow, type ImportOption } from "./pluginImportFlow";
 import type { PluginImportCopy, PluginImportManual } from "./pluginImportSource";
 
 export interface ViewState {
@@ -103,9 +104,7 @@ export function renderOptions(
 		attr: { "aria-describedby": card.box.describedBy },
 	});
 	action.addEventListener("click", () => (file ? handlers.onUpload() : handlers.onPaste()));
-	const pasteInput = manual.kind === "paste"
-		? renderPasteInput(card, t(manual.placeholder), handlers)
-		: null;
+	const pasteInput = manual.kind === "paste" ? renderPasteInput(card, t(manual.placeholder), handlers) : null;
 	if (!file) {
 		card.box.titleEl.setText(t(copy.manual));
 		card.box.descEl.setText(t(copy.manualDesc));
@@ -140,7 +139,10 @@ export function renderOptions(
 
 		if (file) showStagedFile(card.box, action, copy, state.fileName);
 
-		for (const [option, { box, radio }] of [["vault", vault], ["manual", card]] as const) {
+		for (const [option, { box, radio }] of [
+			["vault", vault],
+			["manual", card],
+		] as const) {
 			const on = two && option === active;
 			const filled = isFilled(flow, option);
 			// A radio is enabled only while its card has something to choose, so
@@ -183,12 +185,7 @@ function renderCard(
  * Write a staged file's name onto its card, or take it back to the empty card.
  * The one place the card's three changing parts are written.
  */
-function showStagedFile(
-	box: OptionBox,
-	button: HTMLElement,
-	copy: PluginImportCopy,
-	fileName: string | null,
-): void {
+function showStagedFile(box: OptionBox, button: HTMLElement, copy: PluginImportCopy, fileName: string | null): void {
 	const staged = fileName !== null;
 	box.titleEl.setText(fileName ?? t(copy.manual));
 	// A file name rather than a label: it breaks anywhere, and an LTR name
@@ -207,11 +204,7 @@ function showStagedFile(
  * pasted, so the footer's Import stays where it was. The user pastes into it
  * themselves, or presses Paste; either way the text is there to see.
  */
-function renderPasteInput(
-	card: Card,
-	placeholder: string,
-	handlers: ViewHandlers,
-): HTMLTextAreaElement {
+function renderPasteInput(card: Card, placeholder: string, handlers: ViewHandlers): HTMLTextAreaElement {
 	const [headId, descId] = card.box.describedBy.split(" ");
 	const input = card.box.el.createEl("textarea", {
 		cls: "cs-import-paste-input cs-text-control",

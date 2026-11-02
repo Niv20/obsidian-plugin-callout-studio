@@ -9,13 +9,18 @@ import { CSS_KEY, CURRENT_CSS_KEY, DATA_PATH, LOCAL_KEY, ORIGINAL_CSS, upgradeHa
 
 installFakeDom();
 type HistoricalFixture = { saved: PluginData; legacyLocalRaw: string; oldReadOfNewerData: PluginData };
-const fixture = (tag: string): HistoricalFixture => JSON.parse(readRepoFile(`tests/fixtures/upgrade-${tag}.json`)) as HistoricalFixture;
+const fixture = (tag: string): HistoricalFixture =>
+	JSON.parse(readRepoFile(`tests/fixtures/upgrade-${tag}.json`)) as HistoricalFixture;
 const legacy = fixture("2.12.2");
 
 async function silence(body: () => Promise<void>): Promise<void> {
 	const error = console.error;
 	console.error = () => {};
-	try { await body(); } finally { console.error = error; }
+	try {
+		await body();
+	} finally {
+		console.error = error;
+	}
 }
 
 describe("upgrade from released automatic-discovery versions", () => {
@@ -47,7 +52,11 @@ describe("upgrade from released automatic-discovery versions", () => {
 			assert.equal(h.registry.get("unclaimed"), undefined);
 			assert.equal(h.state.noteReads, 0);
 			assert.equal(h.registry.toSaveData().version, 5);
-			assert.deepEqual(Object.keys(JSON.parse(h.local.get(LOCAL_KEY)!) as Record<string, unknown>).sort(), ["initialized", "v", "welcomeSeen"]);
+			assert.deepEqual(Object.keys(JSON.parse(h.local.get(LOCAL_KEY)!) as Record<string, unknown>).sort(), [
+				"initialized",
+				"v",
+				"welcomeSeen",
+			]);
 			h.css.persist("new live CSS");
 			assert.equal(h.local.get(CURRENT_CSS_KEY), "new live CSS");
 			assert.equal(h.local.get(CSS_KEY), ORIGINAL_CSS);
@@ -59,14 +68,19 @@ describe("upgrade from released automatic-discovery versions", () => {
 			// Captured by running the historical registry against a version-5
 			// payload, rather than assuming all old builds have the later guard.
 			assert.equal(old.oldReadOfNewerData.version, 4);
-			assert.equal(old.oldReadOfNewerData.callouts.some(def => def.id === "new-manual-result"), false);
+			assert.equal(
+				old.oldReadOfNewerData.callouts.some((def) => def.id === "new-manual-result"),
+				false,
+			);
 		});
 	}
 
 	it("keeps a previously used device read-only while settings arrive later than the upgrade", async () => {
 		const h = upgradeHarness(legacy.legacyLocalRaw);
 		await h.archive();
-		await silence(async () => { await h.boot(); });
+		await silence(async () => {
+			await h.boot();
+		});
 		assert.equal(h.writer.isFrozen, true);
 		await h.writer.save();
 		assert.equal(h.state.settingsWrites, 0);
@@ -81,15 +95,29 @@ describe("upgrade from released automatic-discovery versions", () => {
 	it("removes retired automatic settings, preserves unknown preferences and retains old saved theme rows", () => {
 		const registry = new CalloutRegistry();
 		const saved = structuredClone(legacy.saved);
-		Object.assign(saved.settings, { autoDiscoverCallouts: true, firstRunCompleted: true, retiredThemeIds: ["x"], ignoredCalloutIds: ["y"], futurePreference: { keep: true } });
-		saved.callouts.push({ ...saved.callouts[0]!, id: "old-theme-row", aliases: undefined, source: "theme", customized: false });
+		Object.assign(saved.settings, {
+			autoDiscoverCallouts: true,
+			firstRunCompleted: true,
+			retiredThemeIds: ["x"],
+			ignoredCalloutIds: ["y"],
+			futurePreference: { keep: true },
+		});
+		saved.callouts.push({
+			...saved.callouts[0]!,
+			id: "old-theme-row",
+			aliases: undefined,
+			source: "theme",
+			customized: false,
+		});
 		registry.load(saved);
 		const first = registry.toSaveData();
 		const settings = first.settings as unknown as Record<string, unknown>;
-		for (const key of ["autoDiscoverCallouts", "firstRunCompleted", "retiredThemeIds", "ignoredCalloutIds"]) assert.equal(key in settings, false);
+		for (const key of ["autoDiscoverCallouts", "firstRunCompleted", "retiredThemeIds", "ignoredCalloutIds"])
+			assert.equal(key in settings, false);
 		assert.deepEqual(settings.futurePreference, { keep: true });
-		assert.equal(first.callouts.find(def => def.id === "old-theme-row")?.source, "fallback");
-		const second = new CalloutRegistry(); second.load(first);
+		assert.equal(first.callouts.find((def) => def.id === "old-theme-row")?.source, "fallback");
+		const second = new CalloutRegistry();
+		second.load(first);
 		assert.deepEqual(second.toSaveData(), first, "repeated upgrade is idempotent");
 	});
 });
@@ -97,9 +125,13 @@ describe("upgrade from released automatic-discovery versions", () => {
 describe("legacy cleanup requires a durable verified recovery copy", () => {
 	for (const fault of ["failArchiveWrite", "failArchiveRead", "corruptArchive"] as const) {
 		it(`keeps original discovery and CSS when ${fault} occurs`, async () => {
-			const h = upgradeHarness(legacy.legacyLocalRaw); h.state[fault] = true;
-			await silence(async () => { assert.equal((await h.archive()).kind, "failed"); });
-			h.localState.markInitialized(); h.localState.setQuickInsertSource("theme");
+			const h = upgradeHarness(legacy.legacyLocalRaw);
+			h.state[fault] = true;
+			await silence(async () => {
+				assert.equal((await h.archive()).kind, "failed");
+			});
+			h.localState.markInitialized();
+			h.localState.setQuickInsertSource("theme");
 			h.css.persist("would erase original styles");
 			assert.equal(h.local.get(LOCAL_KEY), legacy.legacyLocalRaw);
 			assert.equal(h.local.get(CSS_KEY), ORIGINAL_CSS);
@@ -107,8 +139,11 @@ describe("legacy cleanup requires a durable verified recovery copy", () => {
 	}
 
 	it("retries a failed archive and reuses an already written verified copy", async () => {
-		const h = upgradeHarness(legacy.legacyLocalRaw); h.state.failArchiveRead = true;
-		await silence(async () => { assert.equal((await h.archive()).kind, "failed"); });
+		const h = upgradeHarness(legacy.legacyLocalRaw);
+		h.state.failArchiveRead = true;
+		await silence(async () => {
+			assert.equal((await h.archive()).kind, "failed");
+		});
 		assert.equal(h.state.archiveWrites, 1);
 		h.state.failArchiveRead = false;
 		assert.equal((await h.archive()).kind, "archived");
@@ -118,8 +153,11 @@ describe("legacy cleanup requires a durable verified recovery copy", () => {
 	});
 
 	it("recovers on retry after a partial archive write without overwriting the partial evidence", async () => {
-		const h = upgradeHarness(legacy.legacyLocalRaw); h.state.corruptArchive = true;
-		await silence(async () => { assert.equal((await h.archive()).kind, "failed"); });
+		const h = upgradeHarness(legacy.legacyLocalRaw);
+		h.state.corruptArchive = true;
+		await silence(async () => {
+			assert.equal((await h.archive()).kind, "failed");
+		});
 		const partial = [...h.disk.entries()].find(([path]) => path.endsWith(".json"));
 		assert.ok(partial);
 		h.state.corruptArchive = false;
@@ -130,16 +168,20 @@ describe("legacy cleanup requires a durable verified recovery copy", () => {
 
 	it("coalesces simultaneous upgrade requests into one archive", async () => {
 		const h = upgradeHarness(legacy.legacyLocalRaw);
-		const first = h.archive(); const second = h.archive();
+		const first = h.archive();
+		const second = h.archive();
 		assert.equal(first, second);
 		assert.equal((await first).kind, "archived");
 		assert.equal(h.state.archiveWrites, 1);
 	});
 
 	it("retains a verified recovery copy and old CSS when local cleanup is refused", async () => {
-		const h = upgradeHarness(legacy.legacyLocalRaw); h.state.failLocalWrite = true;
-		const first = await h.archive(); assert.equal(first.kind, "archived");
-		h.css.persist("new style"); assert.equal(h.local.get(CSS_KEY), ORIGINAL_CSS);
+		const h = upgradeHarness(legacy.legacyLocalRaw);
+		h.state.failLocalWrite = true;
+		const first = await h.archive();
+		assert.equal(first.kind, "archived");
+		h.css.persist("new style");
+		assert.equal(h.local.get(CSS_KEY), ORIGINAL_CSS);
 		h.state.failLocalWrite = false;
 		assert.equal((await new DeviceLocalStore(h.app).archiveLegacyDiscovery(h.manifest)).kind, "archived");
 		assert.equal(h.state.archiveWrites, 1);
@@ -148,10 +190,16 @@ describe("legacy cleanup requires a durable verified recovery copy", () => {
 	for (const key of [LOCAL_KEY, CSS_KEY]) {
 		it(`does not clean up a ${key} changed by an old window while archiving`, async () => {
 			const h = upgradeHarness(legacy.legacyLocalRaw);
-			const replacement = key === LOCAL_KEY ? legacy.legacyLocalRaw.replace("local-only", "later-observation") : "later original CSS";
-			h.state.duringArchiveWrite = () => { h.local.set(key, replacement); };
+			const replacement =
+				key === LOCAL_KEY
+					? legacy.legacyLocalRaw.replace("local-only", "later-observation")
+					: "later original CSS";
+			h.state.duringArchiveWrite = () => {
+				h.local.set(key, replacement);
+			};
 			assert.equal((await h.archive()).kind, "failed");
-			h.localState.markInitialized(); h.css.persist("new style");
+			h.localState.markInitialized();
+			h.css.persist("new style");
 			assert.equal(h.local.get(key), replacement);
 		});
 	}
@@ -160,7 +208,8 @@ describe("legacy cleanup requires a durable verified recovery copy", () => {
 		for (const raw of ['{"v":99,"discovered":["keep"]}', '{"v":1,broken']) {
 			const h = upgradeHarness(raw);
 			assert.equal(h.localState.hasInitialized, true);
-			h.localState.markInitialized(); h.css.persist("new style");
+			h.localState.markInitialized();
+			h.css.persist("new style");
 			assert.equal(h.local.get(LOCAL_KEY), raw);
 			assert.equal(h.local.get(CSS_KEY), ORIGINAL_CSS);
 		}

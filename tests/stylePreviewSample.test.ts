@@ -19,18 +19,13 @@ describe("the inline style preview's sample", () => {
 		// actual markdown catches a preview that silently falls back to the bare
 		// `[!id]` pill and leaves `{Example}` as plain text.
 		const markdown = sampleText("inline");
-		const tokens = scanLineForCalloutTokens(markdown).filter(
-			(token) => token.role === "inline",
-		);
+		const tokens = scanLineForCalloutTokens(markdown).filter((token) => token.role === "inline");
 		assert.strictEqual(tokens.length, 1);
 		const [pill] = tokens;
 		assert.ok(pill);
 		assert.strictEqual(pill.rawId, STYLE_DEMO_ID);
 		assert.strictEqual(pill.content?.text, "Example");
-		assert.strictEqual(
-			markdown.slice(pill.from, tokenEnd(pill)),
-			`[!${STYLE_DEMO_ID}]{Example}`,
-		);
+		assert.strictEqual(markdown.slice(pill.from, tokenEnd(pill)), `[!${STYLE_DEMO_ID}]{Example}`);
 		assert.match(markdown.slice(0, pill.from), /^Lorem ipsum .+\. $/);
 		assert.match(markdown.slice(tokenEnd(pill)), /^ .+\.$/);
 	});
@@ -39,10 +34,7 @@ describe("the inline style preview's sample", () => {
 		registerLocale("he", he);
 		setLocale("he");
 		try {
-			assert.match(
-				sampleText("inline"),
-				/\[!global-style-demo\]\{דוגמה\}/,
-			);
+			assert.match(sampleText("inline"), /\[!global-style-demo\]\{דוגמה\}/);
 		} finally {
 			setLocale("en");
 		}

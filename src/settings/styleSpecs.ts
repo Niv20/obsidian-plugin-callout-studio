@@ -75,7 +75,9 @@ export function cornerRoundingSlider(role: CalloutRenderRole): StyleSliderDef {
 		decimals: 0,
 		suffix: "px",
 		get: (settings) => roleFrame(settings, role).borderRadius,
-		set: (settings, value) => { roleFrame(settings, role).borderRadius = value; },
+		set: (settings, value) => {
+			roleFrame(settings, role).borderRadius = value;
+		},
 	};
 }
 
@@ -91,7 +93,9 @@ export function borderWidthSlider(role: CalloutRenderRole): StyleSliderDef {
 		decimals: 1,
 		suffix: "px",
 		get: (settings) => roleFrame(settings, role).borderWidth,
-		set: (settings, value) => { roleFrame(settings, role).borderWidth = value; },
+		set: (settings, value) => {
+			roleFrame(settings, role).borderWidth = value;
+		},
 	};
 }
 
@@ -106,7 +110,9 @@ export const TITLE_SCALE_SLIDER: StyleSliderDef = {
 	decimals: 2,
 	prefix: "×",
 	get: (settings) => settings.globalStyle.titleScale,
-	set: (settings, value) => { settings.globalStyle.titleScale = value; },
+	set: (settings, value) => {
+		settings.globalStyle.titleScale = value;
+	},
 };
 
 /** Block callouts: the content's font scale. */
@@ -120,7 +126,9 @@ export const CONTENT_SCALE_SLIDER: StyleSliderDef = {
 	decimals: 2,
 	prefix: "×",
 	get: (settings) => settings.globalStyle.contentScale,
-	set: (settings, value) => { settings.globalStyle.contentScale = value; },
+	set: (settings, value) => {
+		settings.globalStyle.contentScale = value;
+	},
 };
 
 /** Inline callouts: the text's font scale. */
@@ -134,7 +142,9 @@ export const INLINE_TEXT_SCALE_SLIDER: StyleSliderDef = {
 	decimals: 2,
 	prefix: "×",
 	get: (settings) => settings.globalStyle.inline.fontScale,
-	set: (settings, value) => { settings.globalStyle.inline.fontScale = value; },
+	set: (settings, value) => {
+		settings.globalStyle.inline.fontScale = value;
+	},
 };
 
 /**
@@ -172,5 +182,7 @@ export const HEADING_GAP_SLIDER: StyleSliderDef = {
 	decimals: 2,
 	suffix: "em",
 	get: (settings) => settings.globalStyle.heading.marginTop,
-	set: (settings, value) => { settings.globalStyle.heading.marginTop = value; },
+	set: (settings, value) => {
+		settings.globalStyle.heading.marginTop = value;
+	},
 };

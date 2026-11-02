@@ -57,7 +57,11 @@ describe("the palette editor's colour dot", () => {
 		assert.ok(!css.includes("cs-color-cell"));
 		const palette = readRepoFile("src/settings/PaletteEditorModal.ts");
 		assert.match(palette, /\(\) => refreshLine\(\),/, "the line runs on commit");
-		assert.doesNotMatch(palette, /refreshLine\(\);\s*this\.preview\?\.refresh\(\);/, "the line is not on every move");
+		assert.doesNotMatch(
+			palette,
+			/refreshLine\(\);\s*this\.preview\?\.refresh\(\);/,
+			"the line is not on every move",
+		);
 		assert.match(palette, /refreshBadges\(\);\s*this\.preview\?\.refresh\(\);/, "the triangles are");
 	});
 });

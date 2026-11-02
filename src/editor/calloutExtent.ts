@@ -71,7 +71,8 @@ export function calloutExtentAt(lines: SourceLines, line: number, from: number, 
 	if (line < 0 || line >= lines.lineCount()) return null;
 	const text = lines.getLine(line);
 	const tokens = scanLineForCalloutTokens(text);
-	const token = tokens.find((candidate) => candidate.from === from) ??
+	const token =
+		tokens.find((candidate) => candidate.from === from) ??
 		tokens.find((candidate) => candidate.from < Math.max(to, from + 1) && tokenEnd(candidate) > from);
 	if (!token) return { kind: "span", startLine: line, endLine: line, from, to: Math.max(from, to) };
 	const extent = { startLine: line, endLine: line, from: token.from, to: tokenEnd(token) };

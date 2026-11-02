@@ -12,27 +12,42 @@ export function rememberMissingSettingsDisplay(host: ExternalReloadHost): void {
 }
 
 /** Retry a failed boot-time checkpoint read without authorizing a new file. */
-export async function retryMissingSettingsRecovery(host: ExternalReloadHost, options: SettingsAdoptionOptions): Promise<void> {
+export async function retryMissingSettingsRecovery(
+	host: ExternalReloadHost,
+	options: SettingsAdoptionOptions,
+): Promise<void> {
 	const writer = host.settingsWriter;
 	if (!writer.isFrozen || writer.status.frozenReason !== "recovery-read") return;
-	const held = () => writer.isDestroyed || (options.editor
-		? writer.busy || host.registry.hasPreviewDefinition() : registryIsOwned(host));
+	const held = () =>
+		writer.isDestroyed ||
+		(options.editor ? writer.busy || host.registry.hasPreviewDefinition() : registryIsOwned(host));
 	if (held()) return;
 	const before = canonical(content(host.registry.toSaveData()));
-	const saved = await writer.recoveryCopy() as Partial<PluginData> | null;
+	const saved = (await writer.recoveryCopy()) as Partial<PluginData> | null;
 	const read = await readSettledSettingsFile(host, { isCancelled: held });
 	if (held() || read.kind !== "absent" || canonical(content(host.registry.toSaveData())) !== before) return;
-	if (isFromNewerBuild(saved)) { writer.freeze("newer-version"); return; }
-	if (saved && options.canApply && !options.canApply(saved)) { writer.status.fail("sync-conflict"); return; }
+	if (isFromNewerBuild(saved)) {
+		writer.freeze("newer-version");
+		return;
+	}
+	if (saved && options.canApply && !options.canApply(saved)) {
+		writer.status.fail("sync-conflict");
+		return;
+	}
 	writer.freeze("missing");
 	// Restore automatically only while this is still the empty display loaded
 	// at boot. Later local changes stay visible; explicit creation backs up the
 	// recovered settings before saving the current display.
 	if (saved && before === initialDisplays.get(host)) {
 		const recoveryBaseline = structuredClone(saved);
-		await writer.hold(async () => { host.registry.load(saved); writer.seedRecovery(recoveryBaseline); });
+		await writer.hold(async () => {
+			host.registry.load(saved);
+			writer.seedRecovery(recoveryBaseline);
+		});
 	}
 	initialDisplays.delete(host);
-	host.refreshThemeAppearance(); host.customCommands.syncAll(); host.refreshCallouts();
+	host.refreshThemeAppearance();
+	host.customCommands.syncAll();
+	host.refreshCallouts();
 	host.settingsTab?.update();
 }

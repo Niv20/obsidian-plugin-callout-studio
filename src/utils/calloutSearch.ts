@@ -33,10 +33,7 @@ import { sortCalloutsByDisplayName } from "./sorting";
  * real character the user typed into the document, while a search box's leading
  * spaces are an accident. An empty query matches everything.
  */
-export function calloutMatchesQuery(
-	def: CalloutDefinition,
-	lowerQuery: string,
-): boolean {
+export function calloutMatchesQuery(def: CalloutDefinition, lowerQuery: string): boolean {
 	return (
 		def.id.toLowerCase().includes(lowerQuery) ||
 		def.displayName.toLowerCase().includes(lowerQuery) ||
@@ -57,10 +54,7 @@ export function calloutMatchesQuery(
  * write different tokens for the same typed word. **`lowerQuery` must already be
  * lowercased**, as for {@link calloutMatchesQuery}.
  */
-export function matchedCalloutId(
-	def: Pick<CalloutDefinition, "id" | "aliases">,
-	lowerQuery: string,
-): string {
+export function matchedCalloutId(def: Pick<CalloutDefinition, "id" | "aliases">, lowerQuery: string): string {
 	const ids = [def.id, ...(def.aliases ?? [])];
 	return (
 		ids.find((id) => id.toLowerCase() === lowerQuery) ??
@@ -70,29 +64,19 @@ export function matchedCalloutId(
 }
 
 /** The four states of the quick-insert window's source filter. */
-export const CALLOUT_SOURCE_FILTERS = [
-	"all",
-	"builtin",
-	"theme",
-	"user",
-] as const;
+export const CALLOUT_SOURCE_FILTERS = ["all", "builtin", "theme", "user"] as const;
 
 export type CalloutSourceFilter = (typeof CALLOUT_SOURCE_FILTERS)[number];
 
 /**
  * Is this a filter the plugin still understands?
  *
-	 * Besides validating the live dropdown, this sanitizes the remembered
-	 * `quickInsertSource` setting. Anything else falls back to `"all"` rather than
-	 * opening the window on a category this build cannot explain.
+ * Besides validating the live dropdown, this sanitizes the remembered
+ * `quickInsertSource` setting. Anything else falls back to `"all"` rather than
+ * opening the window on a category this build cannot explain.
  */
-export function isCalloutSourceFilter(
-	value: unknown,
-): value is CalloutSourceFilter {
-	return (
-		typeof value === "string" &&
-		(CALLOUT_SOURCE_FILTERS as readonly string[]).includes(value)
-	);
+export function isCalloutSourceFilter(value: unknown): value is CalloutSourceFilter {
+	return typeof value === "string" && (CALLOUT_SOURCE_FILTERS as readonly string[]).includes(value);
 }
 
 /**
@@ -108,8 +92,7 @@ export function isCalloutSourceFilter(
 export function matchesSourceFilter(
 	def: CalloutDefinition,
 	filter: CalloutSourceFilter,
-	themeOwns: (def: CalloutDefinition) => boolean = (candidate) =>
-		candidate.source === "theme",
+	themeOwns: (def: CalloutDefinition) => boolean = (candidate) => candidate.source === "theme",
 ): boolean {
 	if (filter === "all") return true;
 	const fromTheme = themeOwns(def);

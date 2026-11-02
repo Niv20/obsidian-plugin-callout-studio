@@ -24,10 +24,7 @@ import { bareLucideName } from "./lucideId";
  * values); `image` stores a `UserImageIcon.id`, which the JSON importer already
  * reports on separately when the picture did not travel with the file.
  */
-const UNCHECKABLE: ReadonlySet<IconPackId> = new Set<IconPackId>([
-	"emoji",
-	"image",
-]);
+const UNCHECKABLE: ReadonlySet<IconPackId> = new Set<IconPackId>(["emoji", "image"]);
 
 /**
  * A membership test over Obsidian's icon set, built once for a whole batch.
@@ -56,9 +53,7 @@ export function createLucideNameCheck(): (value: string) => boolean {
  * Returns true for anything it cannot check, so the caller only ever acts on a
  * definite "no such name".
  */
-export async function createIconNameCheck(
-	icons: readonly CalloutIcon[],
-): Promise<(icon: CalloutIcon) => boolean> {
+export async function createIconNameCheck(icons: readonly CalloutIcon[]): Promise<(icon: CalloutIcon) => boolean> {
 	const wanted = new Set<IconPackId>();
 	for (const icon of icons) {
 		if (!UNCHECKABLE.has(icon.type)) wanted.add(icon.type);
@@ -77,12 +72,8 @@ export async function createIconNameCheck(
 				const index = await pack.loadIndex();
 				// Both sides normalized for Lucide, so the comparison holds
 				// whichever spelling `getIconIds()` happens to hand back.
-				const normalize =
-					type === "lucide" ? bareLucideName : (name: string) => name;
-				namesByType.set(
-					type,
-					new Set(index.entries.map((entry) => normalize(entry.name))),
-				);
+				const normalize = type === "lucide" ? bareLucideName : (name: string) => name;
+				namesByType.set(type, new Set(index.entries.map((entry) => normalize(entry.name))));
 			} catch {
 				// An index that will not decode is our problem, not the file's.
 				// Leaving the pack unmapped means "cannot check", not "invalid".

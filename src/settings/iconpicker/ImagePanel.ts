@@ -14,15 +14,8 @@ import type { CalloutDefinition, CalloutIcon, UserImageIcon } from "../../types"
 import type { IconEntry } from "../../icons/types";
 import { renderIconInto } from "../../icons/renderIcon";
 import { userImagesPack } from "../../icons/packs/userImages";
-import {
-	USER_IMAGE_ACCEPT,
-	importImageFile,
-} from "../../icons/userImageImport";
-import {
-	normalizeUserImageName,
-	takenUserImageNames,
-	userImageNameFromFilename,
-} from "../../utils/userImages";
+import { USER_IMAGE_ACCEPT, importImageFile } from "../../icons/userImageImport";
+import { normalizeUserImageName, takenUserImageNames, userImageNameFromFilename } from "../../utils/userImages";
 import { ConfirmModal } from "../../utils/ConfirmModal";
 import { IconGrid } from "./IconGrid";
 import { t } from "../../i18n";
@@ -111,15 +104,9 @@ export class ImagePanel {
 				// Waiting for the first picture, friendly rather than a still icon: it
 				// says hello (and is excited while a file is dragged over, enableDrop).
 				this.emptyMascot.setMood(this.container.hasClass("is-drop-target") ? "excited" : "hello");
-				host.createDiv("icon-picker-image-empty-title").setText(
-					t("iconPicker.customEmptyTitle"),
-				);
-				host.createDiv("icon-picker-image-empty-hint").setText(
-					t("iconPicker.customEmptyHint"),
-				);
-				host.createDiv("icon-picker-image-empty-formats").setText(
-					t("iconPicker.customEmptyFormats"),
-				);
+				host.createDiv("icon-picker-image-empty-title").setText(t("iconPicker.customEmptyTitle"));
+				host.createDiv("icon-picker-image-empty-hint").setText(t("iconPicker.customEmptyHint"));
+				host.createDiv("icon-picker-image-empty-formats").setText(t("iconPicker.customEmptyFormats"));
 			},
 			isSelected: (entry) => this.isSelected(entry),
 			onSelect: (entry) => this.select(entry),
@@ -306,20 +293,15 @@ export class ImagePanel {
 	}
 
 	private renderCell(cell: HTMLElement, entry: IconEntry): void {
-		renderIconInto(
-			cell,
-			{ type: "image", value: entry.name },
-			previewResolver,
-			{
-				role: "regular",
-				// A picture keeps its own colours in the grid whatever its
-				// recolour setting: the cell has no callout colour to follow.
-				fill: "currentColor",
-				followCalloutColor: false,
-				missing: { kind: "placeholder", lucideId: "image-off" },
-				errorText: "?",
-			},
-		);
+		renderIconInto(cell, { type: "image", value: entry.name }, previewResolver, {
+			role: "regular",
+			// A picture keeps its own colours in the grid whatever its
+			// recolour setting: the cell has no callout colour to follow.
+			fill: "currentColor",
+			followCalloutColor: false,
+			missing: { kind: "placeholder", lucideId: "image-off" },
+			errorText: "?",
+		});
 	}
 
 	private renderDeleteButton(host: HTMLElement, entry: IconEntry): void {
@@ -360,9 +342,7 @@ export class ImagePanel {
 	private async confirmDelete(image: UserImageIcon): Promise<void> {
 		const inUse = this.host
 			.allCallouts()
-			.filter(
-				(def) => def.icon.type === "image" && def.icon.value === image.id,
-			).length;
+			.filter((def) => def.icon.type === "image" && def.icon.value === image.id).length;
 
 		// The heading names the image; the message says only what deleting it costs.
 		const message = createFragment();
@@ -375,16 +355,12 @@ export class ImagePanel {
 			});
 		}
 
-		const confirmed = await new ConfirmModal(
-			this.host.app,
-			t("confirm.titleDeleteImage"),
-			message,
-		).withMascot(t("confirm.subtitleName", { name: image.name })).confirm();
+		const confirmed = await new ConfirmModal(this.host.app, t("confirm.titleDeleteImage"), message)
+			.withMascot(t("confirm.subtitleName", { name: image.name }))
+			.confirm();
 		if (!confirmed || this.disposed) return;
 
-		this.host.saveImages(
-			this.host.images().filter((entry) => entry.id !== image.id),
-		);
+		this.host.saveImages(this.host.images().filter((entry) => entry.id !== image.id));
 		if (this.activeId === image.id) this.activeId = null;
 		this.host.onDelete(image.id);
 		this.refresh();

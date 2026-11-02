@@ -52,7 +52,10 @@ while ((match = pattern.exec(css)) !== null) {
 		decls.set(declaration.slice(0, colon).trim(), tidy(declaration.slice(colon + 1)));
 	}
 	rules.push({
-		selectors: (match[1] ?? "").trim().split(/,\s*\n/).map((s) => tidy(s)),
+		selectors: (match[1] ?? "")
+			.trim()
+			.split(/,\s*\n/)
+			.map((s) => tidy(s)),
 		decls,
 	});
 }
@@ -79,17 +82,22 @@ describe("a picker's list is Obsidian's combobox popover", () => {
 	});
 
 	it("names the popover's ground once, for what must repaint it", () => {
-		assert.strictEqual(valueOf(".cs-combobox-popup", "--cs-menu-face"), "var(--suggestion-background, var(--background-primary))");
+		assert.strictEqual(
+			valueOf(".cs-combobox-popup", "--cs-menu-face"),
+			"var(--suggestion-background, var(--background-primary))",
+		);
 	});
 
 	it("paints none of the frame: app.css draws the ground, edge, corners, shadow and padding", () => {
-		const PAINT = /^(background(-[a-z-]+)?|box-shadow|border(-[a-z-]+)?|corner-shape|padding(-[a-z-]+)?|backdrop-filter)$/;
+		const PAINT =
+			/^(background(-[a-z-]+)?|box-shadow|border(-[a-z-]+)?|corner-shape|padding(-[a-z-]+)?|backdrop-filter)$/;
 		const subject = (selector: string) => selector.split(/\s*[\s>+~]\s*/).pop() ?? "";
 		for (const rule of rules) {
 			for (const selector of rule.selectors) {
 				if (!/\.cs-combobox-(popup|menu)(?![-\w])/.test(subject(selector))) continue;
 				for (const property of rule.decls.keys()) {
-					if (selector.includes("cs-combobox-menu-grouped") && property.startsWith("padding-block-start")) continue;
+					if (selector.includes("cs-combobox-menu-grouped") && property.startsWith("padding-block-start"))
+						continue;
 					assert.ok(!PAINT.test(property), `${selector} sets ${property}: that is app.css's to draw`);
 				}
 			}
@@ -117,23 +125,35 @@ describe("rows are laid out like Obsidian's menu items", () => {
 		// itself, here or in the `[!` popover, where Obsidian's suggestion row
 		// sets 15px (S10-16).
 		assert.ok(
-			!rules.some((rule) => rule.selectors.some((sel) => sel.includes("callout-studio-suggestion-name")) && rule.decls.has("font-size")),
+			!rules.some(
+				(rule) =>
+					rule.selectors.some((sel) => sel.includes("callout-studio-suggestion-name")) &&
+					rule.decls.has("font-size"),
+			),
 			"the name has no size of its own",
 		);
 	});
 
 	it("highlight the row under the pointer or the arrow keys in Obsidian's hover grey", () => {
 		for (const row of ROWS) {
-			assert.strictEqual(valueOf(`${row}.is-active`, "background-color"), "var(--background-modifier-hover)", row);
+			assert.strictEqual(
+				valueOf(`${row}.is-active`, "background-color"),
+				"var(--background-modifier-hover)",
+				row,
+			);
 		}
 	});
 
 	it("never fill the chosen row: it carries a ✓ instead", () => {
-		const fills = rules.filter((rule) =>
-			rule.selectors.some((s) => /\.is-selected\b/.test(s) && ROWS.some((row) => s.includes(row)))
-			&& (rule.decls.has("background") || rule.decls.has("background-color")),
+		const fills = rules.filter(
+			(rule) =>
+				rule.selectors.some((s) => /\.is-selected\b/.test(s) && ROWS.some((row) => s.includes(row))) &&
+				(rule.decls.has("background") || rule.decls.has("background-color")),
 		);
-		assert.deepStrictEqual(fills.map((rule) => rule.selectors), []);
+		assert.deepStrictEqual(
+			fills.map((rule) => rule.selectors),
+			[],
+		);
 		// The two tokens that painted the old fill are gone with it.
 		assert.doesNotMatch(rawCss, /--cs-menu-row-selected/);
 	});
@@ -150,7 +170,10 @@ describe("rows are laid out like Obsidian's menu items", () => {
 describe("groups, headings and the things that repaint the ground", () => {
 	it("draws the line between groups as Obsidian's menu separator: one border line, 6px of air each side", () => {
 		const between = ".cs-combobox-group + .cs-combobox-group";
-		assert.strictEqual(valueOf(between, "border-top"), "var(--border-width, 1px) solid var(--background-modifier-border)");
+		assert.strictEqual(
+			valueOf(between, "border-top"),
+			"var(--border-width, 1px) solid var(--background-modifier-border)",
+		);
 		assert.strictEqual(valueOf(between, "margin-top"), "var(--size-2-3)");
 		assert.strictEqual(valueOf(between, "padding-top"), "var(--size-2-3)");
 		// The token that used to colour it, the field's hover edge, is gone.

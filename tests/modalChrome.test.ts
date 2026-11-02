@@ -35,12 +35,7 @@ import { join } from "node:path";
 import { describe, it } from "node:test";
 import type { Modal } from "obsidian";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";
-import {
-	addCancelButton,
-	applyModalChrome,
-	removeModalChrome,
-	scrollBodyOnly,
-} from "../src/settings/modalChrome";
+import { addCancelButton, applyModalChrome, removeModalChrome, scrollBodyOnly } from "../src/settings/modalChrome";
 
 /**
  * A window as Obsidian builds it: `containerEl.modal-container > modalEl.modal`,
@@ -61,7 +56,13 @@ function fakeModal(): {
 	modalEl.createDiv({ cls: "modal-header" }).createDiv({ cls: "modal-title" });
 	const contentEl = modalEl.createDiv({ cls: "modal-content" });
 	return {
-		modal: { modalEl, containerEl, contentEl, scope: new TestScope(), app: { keymap: new TestKeymap() } } as unknown as Modal,
+		modal: {
+			modalEl,
+			containerEl,
+			contentEl,
+			scope: new TestScope(),
+			app: { keymap: new TestKeymap() },
+		} as unknown as Modal,
 		modalEl,
 		containerEl,
 		contentEl,
@@ -87,8 +88,7 @@ function clearScreen(): void {
 }
 
 /** The window's own button bars (direct children of `.modal`). */
-const footersIn = (modalEl: FakeElement): FakeElement[] =>
-	modalEl.findAll(":scope > .modal-button-container");
+const footersIn = (modalEl: FakeElement): FakeElement[] => modalEl.findAll(":scope > .modal-button-container");
 
 /* -------------------------------------------------------------------------- */
 /* 129 — applyModalChrome                                                     */
@@ -312,10 +312,7 @@ describe("every Modal in the project wears the chrome", () => {
 	it("found the modals at all", () => {
 		// Guards the scan itself: a broken pattern would make every assertion
 		// below vacuously true.
-		assert.ok(
-			modalFiles.length >= 15,
-			`only ${modalFiles.length} modal files found — has the scan drifted?`,
-		);
+		assert.ok(modalFiles.length >= 15, `only ${modalFiles.length} modal files found — has the scan drifted?`);
 		assert.ok(modalFiles.some((f) => f.name === SPLASH));
 	});
 

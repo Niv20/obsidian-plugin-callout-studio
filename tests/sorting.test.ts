@@ -65,11 +65,7 @@ describe("compareText — the basics", () => {
 		const words = ["a", "A", "ä", "b", "note", "Note", "Step 2", "Step 10", ""];
 		for (const x of words) {
 			for (const y of words) {
-				assert.equal(
-					sign(compareText(x, y)),
-					-sign(compareText(y, x)),
-					`${x} vs ${y}`,
-				);
+				assert.equal(sign(compareText(x, y)), -sign(compareText(y, x)), `${x} vs ${y}`);
 			}
 		}
 	});
@@ -86,14 +82,8 @@ describe("compareText — the tie-breaker is what keeps sorting stable", () => {
 
 	it("still groups case variants next to each other", () => {
 		const sorted = sortIds(["zebra", "Note", "apple", "note"]);
-		const noteIndexes = [sorted.indexOf("Note"), sorted.indexOf("note")].sort(
-			(a, b) => a - b,
-		);
-		assert.equal(
-			noteIndexes[1]! - noteIndexes[0]!,
-			1,
-			`expected the two Notes adjacent, got ${sorted.join(", ")}`,
-		);
+		const noteIndexes = [sorted.indexOf("Note"), sorted.indexOf("note")].sort((a, b) => a - b);
+		assert.equal(noteIndexes[1]! - noteIndexes[0]!, 1, `expected the two Notes adjacent, got ${sorted.join(", ")}`);
 	});
 
 	it("gives a deterministic order for a case-only difference", () => {
@@ -118,11 +108,7 @@ describe("compareText — the locale is really consulted", () => {
 	it("orders the Hebrew alphabet", () => {
 		assert.ok(compareText("א", "ב", "he") < 0);
 		assert.ok(compareText("ת", "א", "he") > 0);
-		assert.deepStrictEqual(sortIds(["גימל", "אלף", "בית"], "he"), [
-			"אלף",
-			"בית",
-			"גימל",
-		]);
+		assert.deepStrictEqual(sortIds(["גימל", "אלף", "בית"], "he"), ["אלף", "בית", "גימל"]);
 	});
 
 	it("falls back through the language chain to the base tag", () => {
@@ -238,10 +224,7 @@ describe("sortCalloutsById", () => {
 	});
 
 	it("is the mirror image of sortCalloutsByDisplayName's tie rule", () => {
-		const items = [
-			def({ id: "b", displayName: "A" }),
-			def({ id: "a", displayName: "B" }),
-		];
+		const items = [def({ id: "b", displayName: "A" }), def({ id: "a", displayName: "B" })];
 		assert.deepStrictEqual(
 			sortCalloutsById(items).map((d) => d.id),
 			["a", "b"],
@@ -268,16 +251,15 @@ describe("getSortedCalloutIds", () => {
 	});
 
 	it("sorts the id in among its aliases rather than pinning it first", () => {
-		assert.deepStrictEqual(
-			getSortedCalloutIds(def({ id: "note", aliases: ["alert", "zebra"] })),
-			["alert", "note", "zebra"],
-		);
+		assert.deepStrictEqual(getSortedCalloutIds(def({ id: "note", aliases: ["alert", "zebra"] })), [
+			"alert",
+			"note",
+			"zebra",
+		]);
 	});
 
 	it("treats an empty alias array as none", () => {
-		assert.deepStrictEqual(getSortedCalloutIds(def({ id: "note", aliases: [] })), [
-			"note",
-		]);
+		assert.deepStrictEqual(getSortedCalloutIds(def({ id: "note", aliases: [] })), ["note"]);
 	});
 
 	it("honours the locale", () => {

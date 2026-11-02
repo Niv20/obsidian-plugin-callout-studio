@@ -20,10 +20,7 @@ function element(classes: string[], parent?: FakeElement): FakeElement {
 
 function harness() {
 	const root = element(["cm-editor"]);
-	const heading = element(
-		["cm-line", CSS_HEADING_LINE, CSS_HEADING_HIDE_MARKS],
-		root,
-	);
+	const heading = element(["cm-line", CSS_HEADING_LINE, CSS_HEADING_HIDE_MARKS], root);
 	const title = element(["cs-heading-title"], heading);
 	const token = element([CSS_HEADING_TOKEN, CSS_CM_WIDGET], heading);
 	const inline = element([CSS_INLINE_TOKEN, CSS_CM_WIDGET], root);
@@ -81,10 +78,7 @@ describe("callout context-click selection guard", () => {
 
 	it("protects plain inline pills and payload links without consuming their menus", () => {
 		const h = harness();
-		const content = element(
-			[CSS_INLINE_TOKEN, CSS_CM_WIDGET, CSS_INLINE_HAS_CONTENT],
-			h.root,
-		);
+		const content = element([CSS_INLINE_TOKEN, CSS_CM_WIDGET, CSS_INLINE_HAS_CONTENT], h.root);
 		const link = new FakeElement("a");
 		content.appendChild(link);
 		for (const target of [h.inline, content, link, h.title]) {

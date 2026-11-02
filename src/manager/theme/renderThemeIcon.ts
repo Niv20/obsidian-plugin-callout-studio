@@ -32,10 +32,7 @@ const GLYPH_CLASS = "cs-theme-icon-glyph";
  * dashed placeholder `renderNoIcon` draws for a stalled download, while
  * `hidden` leaves a genuinely empty slot.
  */
-export function renderThemeIconInto(
-	target: HTMLElement,
-	icon: ThemeIcon,
-): boolean {
+export function renderThemeIconInto(target: HTMLElement, icon: ThemeIcon): boolean {
 	target.empty();
 	target.removeClass(MASK_CLASS);
 	target.removeClass(GLYPH_CLASS);

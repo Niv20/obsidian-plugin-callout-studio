@@ -103,8 +103,7 @@ export function parseCssColorToHex(value: string): string | null {
 	}
 
 	// rgb()/rgba() with comma- or space-separated channels (alpha ignored)
-	const fnMatch =
-		/^rgba?\(\s*(\d{1,3})[\s,]+(\d{1,3})[\s,]+(\d{1,3})/i.exec(v);
+	const fnMatch = /^rgba?\(\s*(\d{1,3})[\s,]+(\d{1,3})[\s,]+(\d{1,3})/i.exec(v);
 	if (fnMatch && fnMatch[1] && fnMatch[2] && fnMatch[3]) {
 		return rgbTripletToHex(fnMatch[1], fnMatch[2], fnMatch[3]);
 	}
@@ -125,11 +124,7 @@ export function parseCssColorToHex(value: string): string | null {
 export function blendHex(hex1: string, hex2: string, amount: number): string {
 	const c1 = hexToRgb(hex1);
 	const c2 = hexToRgb(hex2);
-	return rgbToHex(
-		c1.r + (c2.r - c1.r) * amount,
-		c1.g + (c2.g - c1.g) * amount,
-		c1.b + (c2.b - c1.b) * amount,
-	);
+	return rgbToHex(c1.r + (c2.r - c1.r) * amount, c1.g + (c2.g - c1.g) * amount, c1.b + (c2.b - c1.b) * amount);
 }
 
 /** Default callout content text colors (shared by the editor and palette derivation). */
@@ -179,16 +174,8 @@ export const DEFAULT_BG_INTENSITY_GRADIENT = 0.2;
  * The pale background tint for an accent color, resolved for one theme mode.
  * `amount` is the share of accent kept (see {@link DEFAULT_BG_COLOR_AMOUNT}).
  */
-export function bgTintFor(
-	accent: string,
-	isDark: boolean,
-	amount = DEFAULT_BG_COLOR_AMOUNT,
-): string {
-	return blendHex(
-		accent,
-		isDark ? BG_PRIMARY_DARK : BG_PRIMARY_LIGHT,
-		1 - amount,
-	);
+export function bgTintFor(accent: string, isDark: boolean, amount = DEFAULT_BG_COLOR_AMOUNT): string {
+	return blendHex(accent, isDark ? BG_PRIMARY_DARK : BG_PRIMARY_LIGHT, 1 - amount);
 }
 
 /**
@@ -232,10 +219,7 @@ const MAX_TINT_ALPHA = 0.6;
  * tint would be near-opaque anyway — the caller paints it solid and accepts no
  * step for that one callout.
  */
-export function translucentTintFor(
-	opaque: string,
-	isDark: boolean,
-): { color: string; alpha: number } | null {
+export function translucentTintFor(opaque: string, isDark: boolean): { color: string; alpha: number } | null {
 	const alpha = resolveTintAlpha(minTintAlpha(opaque, isDark));
 	if (alpha === null) return null;
 	return { color: tintColorAt(opaque, isDark, alpha), alpha };
@@ -266,10 +250,7 @@ export function minTintAlpha(opaque: string, isDark: boolean): number {
 		// Below the backdrop the binding constraint is `color >= 0`; above it,
 		// `color <= 255`; equal needs no alpha at all. The guards keep a theme
 		// whose background is pure black or pure white from dividing by zero.
-		const needed =
-			c < b ? (b === 0 ? 1 : (b - c) / b)
-			: c > b ? (b === 255 ? 1 : (c - b) / (255 - b))
-			: 0;
+		const needed = c < b ? (b === 0 ? 1 : (b - c) / b) : c > b ? (b === 255 ? 1 : (c - b) / (255 - b)) : 0;
 		if (needed > min) min = needed;
 	}
 	return min;
@@ -291,10 +272,7 @@ export function minTintAlpha(opaque: string, isDark: boolean): number {
 export function resolveTintAlpha(...minima: number[]): number | null {
 	const needed = Math.max(0, ...minima);
 	if (needed > MAX_TINT_ALPHA) return null;
-	return Math.min(
-		MAX_TINT_ALPHA,
-		Math.max(MIN_TINT_ALPHA, Math.ceil(needed * 1.02 * 100) / 100),
-	);
+	return Math.min(MAX_TINT_ALPHA, Math.max(MIN_TINT_ALPHA, Math.ceil(needed * 1.02 * 100) / 100));
 }
 
 /**
@@ -303,19 +281,11 @@ export function resolveTintAlpha(...minima: number[]): number | null {
  * {@link minTintAlpha}; below it the solve leaves the sRGB cube and the
  * channels clamp.
  */
-export function tintColorAt(
-	opaque: string,
-	isDark: boolean,
-	alpha: number,
-): string {
+export function tintColorAt(opaque: string, isDark: boolean, alpha: number): string {
 	const backdrop = tintBackdrop(isDark);
 	const target = hexToRgb(opaque);
 	const solve = (c: number, b: number): number => (c - (1 - alpha) * b) / alpha;
-	return rgbToHex(
-		solve(target.r, backdrop.r),
-		solve(target.g, backdrop.g),
-		solve(target.b, backdrop.b),
-	);
+	return rgbToHex(solve(target.r, backdrop.r), solve(target.g, backdrop.g), solve(target.b, backdrop.b));
 }
 
 /**
@@ -373,25 +343,15 @@ const LEGACY_BG_PRIMARY_DARK = "#1e1e1e";
  * a palette's `bgColorLight` is a tint of a colour the definition never stores.
  * Those correctly come back null and keep their background.
  */
-export function derivedBgAmount(
-	accent: string,
-	background: string,
-	isDark: boolean,
-): number | null {
-	for (const base of isDark
-		? [BG_PRIMARY_DARK, LEGACY_BG_PRIMARY_DARK]
-		: [BG_PRIMARY_LIGHT]) {
+export function derivedBgAmount(accent: string, background: string, isDark: boolean): number | null {
+	for (const base of isDark ? [BG_PRIMARY_DARK, LEGACY_BG_PRIMARY_DARK] : [BG_PRIMARY_LIGHT]) {
 		const amount = solveTintAmount(accent, background, base);
 		if (amount !== null) return amount;
 	}
 	return null;
 }
 
-function solveTintAmount(
-	accent: string,
-	background: string,
-	base: string,
-): number | null {
+function solveTintAmount(accent: string, background: string, base: string): number | null {
 	const a = hexToRgb(accent);
 	const s = hexToRgb(background);
 	const b = hexToRgb(base);
@@ -403,9 +363,7 @@ function solveTintAmount(
 		[a.g, s.g, b.g],
 		[a.b, s.b, b.b],
 	];
-	spans.sort(
-		([a1, , b1], [a2, , b2]) => Math.abs(a2 - b2) - Math.abs(a1 - b1),
-	);
+	spans.sort(([a1, , b1], [a2, , b2]) => Math.abs(a2 - b2) - Math.abs(a1 - b1));
 	const widest = spans[0];
 	if (!widest) return null;
 	const [accentCh, storedCh, baseCh] = widest;
@@ -414,16 +372,9 @@ function solveTintAmount(
 	}
 
 	const exact = (storedCh - baseCh) / (accentCh - baseCh);
-	for (const amount of [
-		exact,
-		Math.round(exact * 100) / 100,
-		Math.round(exact * 1000) / 1000,
-	]) {
+	for (const amount of [exact, Math.round(exact * 100) / 100, Math.round(exact * 1000) / 1000]) {
 		if (amount <= 0 || amount > 1) continue;
-		if (
-			blendHex(accent, base, 1 - amount).toLowerCase() ===
-			background.toLowerCase()
-		) {
+		if (blendHex(accent, base, 1 - amount).toLowerCase() === background.toLowerCase()) {
 			return amount;
 		}
 	}
@@ -469,12 +420,7 @@ export function contrastRatio(hex1: string, hex2: string): number {
  * endpoint (#000000 on a pale background / #ffffff on a dark one) exceeds any
  * ratio this plugin asks for.
  */
-export function ensureContrast(
-	hex: string,
-	bg: string,
-	towards: string,
-	minRatio = 3,
-): string {
+export function ensureContrast(hex: string, bg: string, towards: string, minRatio = 3): string {
 	if (contrastRatio(hex, bg) >= minRatio) return hex;
 	for (let step = 1; step <= 20; step++) {
 		const candidate = blendHex(hex, towards, step * 0.05);
@@ -527,11 +473,7 @@ export function normalizeAngleDeg(deg: number): number {
  * CSS background-image value for a two-stop gradient starting at `from`
  * (the solid bg color of the current mode) and ending at `to`.
  */
-export function bgGradientCss(
-	from: string,
-	to: string,
-	gradient: BgGradient,
-): string {
+export function bgGradientCss(from: string, to: string, gradient: BgGradient): string {
 	return `linear-gradient(${normalizeAngleDeg(gradient.angleDeg)}deg, ${from}, ${to})`;
 }
 
@@ -575,13 +517,9 @@ export function sanitizeBgGradient(raw: unknown): BgGradient | null {
 }
 
 /** True when both are the same gradient (or both absent). */
-export function bgGradientsEqual(
-	a: BgGradient | undefined,
-	b: BgGradient | undefined,
-): boolean {
+export function bgGradientsEqual(a: BgGradient | undefined, b: BgGradient | undefined): boolean {
 	if (!a || !b) return !a && !b;
-	const sameHex = (x?: string, y?: string): boolean =>
-		(x ?? "").toLowerCase() === (y ?? "").toLowerCase();
+	const sameHex = (x?: string, y?: string): boolean => (x ?? "").toLowerCase() === (y ?? "").toLowerCase();
 	return (
 		normalizeAngleDeg(a.angleDeg) === normalizeAngleDeg(b.angleDeg) &&
 		a.toColorLight.toLowerCase() === b.toColorLight.toLowerCase() &&
@@ -640,9 +578,6 @@ export function derivePaletteFromColors(
 }
 
 /** Derives a full palette from one base color, for both modes. */
-export function derivePaletteFromColor(
-	hex: string,
-	amount = DEFAULT_BG_COLOR_AMOUNT,
-): DerivedPalette {
+export function derivePaletteFromColor(hex: string, amount = DEFAULT_BG_COLOR_AMOUNT): DerivedPalette {
 	return derivePaletteFromColors(hex, hex, amount);
 }

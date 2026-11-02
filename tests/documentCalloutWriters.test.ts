@@ -1,18 +1,30 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { App } from "obsidian";
-import { convertCalloutsToPlainTextInVault, countCalloutUsages, normalizeFoldMarkersInVault, replaceCalloutIdsInVault, replaceCalloutTitlesInVault } from "../src/utils/vaultCalloutScanner";
+import {
+	convertCalloutsToPlainTextInVault,
+	countCalloutUsages,
+	normalizeFoldMarkersInVault,
+	replaceCalloutIdsInVault,
+	replaceCalloutTitlesInVault,
+} from "../src/utils/vaultCalloutScanner";
 import { iterateDocumentCallouts } from "../src/editor/documentCallouts";
 
 function vault(source: string): { app: App; read: () => string } {
 	let text = source;
 	const file = { path: "note.md" };
-	const app = { vault: {
-		getMarkdownFiles: () => [file],
-		getAbstractFileByPath: (path: string) => path === file.path ? file : null,
-		cachedRead: () => Promise.resolve(text), read: () => Promise.resolve(text),
-		process: (_file: unknown, transform: (source: string) => string) => { text = transform(text); return Promise.resolve(text); },
-	} } as unknown as App;
+	const app = {
+		vault: {
+			getMarkdownFiles: () => [file],
+			getAbstractFileByPath: (path: string) => (path === file.path ? file : null),
+			cachedRead: () => Promise.resolve(text),
+			read: () => Promise.resolve(text),
+			process: (_file: unknown, transform: (source: string) => string) => {
+				text = transform(text);
+				return Promise.resolve(text);
+			},
+		},
+	} as unknown as App;
 	return { app, read: () => text };
 }
 

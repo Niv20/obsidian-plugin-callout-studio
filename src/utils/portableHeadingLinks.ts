@@ -27,38 +27,64 @@ export interface PortableHeadingLinkPlan {
 	edits: PortableHeadingLinkEdit[];
 	issues: PortableHeadingLinkIssue[];
 }
-interface Note { path: string; content: string }
-interface Change { path: string; before: PortableHeading; after: PortableHeading; lines: number[] }
+interface Note {
+	path: string;
+	content: string;
+}
+interface Change {
+	path: string;
+	before: PortableHeading;
+	after: PortableHeading;
+	lines: number[];
+}
 
-function missingHeadings(originals: readonly Note[], proposed: ReadonlyMap<string, string>, cache: PortableHeadingLinkCache): PortableHeadingLinkIssue[] {
+function missingHeadings(
+	originals: readonly Note[],
+	proposed: ReadonlyMap<string, string>,
+	cache: PortableHeadingLinkCache,
+): PortableHeadingLinkIssue[] {
 	const issues: PortableHeadingLinkIssue[] = [];
 	for (const note of originals) {
 		const after = proposed.get(note.path) ?? note.content;
 		if (after === note.content) continue;
-		const targets = new Set(cache.headings(note.path, after).map(heading => heading.line));
-		const originalLines = note.content.split("\n"), newLines = after.split("\n");
+		const targets = new Set(cache.headings(note.path, after).map((heading) => heading.line));
+		const originalLines = note.content.split("\n"),
+			newLines = after.split("\n");
 		for (const heading of cache.headings(note.path, note.content)) {
 			if (targets.has(heading.line)) continue;
-			for (let line = heading.line; line <= heading.endLine; line++) if (originalLines[line - 1] !== newLines[line - 1]) {
-				issues.push({ path: note.path, line, targetPath: note.path, targetLine: line, reason: "unrepresentable-target" });
-			}
+			for (let line = heading.line; line <= heading.endLine; line++)
+				if (originalLines[line - 1] !== newLines[line - 1]) {
+					issues.push({
+						path: note.path,
+						line,
+						targetPath: note.path,
+						targetLine: line,
+						reason: "unrepresentable-target",
+					});
+				}
 		}
 	}
 	return issues;
 }
 
-function changes(originals: readonly Note[], proposed: ReadonlyMap<string, string>, cache: PortableHeadingLinkCache): Change[] {
+function changes(
+	originals: readonly Note[],
+	proposed: ReadonlyMap<string, string>,
+	cache: PortableHeadingLinkCache,
+): Change[] {
 	const result: Change[] = [];
 	for (const note of originals) {
 		const after = proposed.get(note.path) ?? note.content;
 		if (after === note.content) continue;
-		const originalLines = note.content.split("\n"), newLines = after.split("\n");
-		const targets = new Map(cache.headings(note.path, after).map(heading => [heading.line, heading]));
+		const originalLines = note.content.split("\n"),
+			newLines = after.split("\n");
+		const targets = new Map(cache.headings(note.path, after).map((heading) => [heading.line, heading]));
 		for (const before of cache.headings(note.path, note.content)) {
 			const next = targets.get(before.line);
 			if (!next || before.title === next.title) continue;
 			const lines: number[] = [];
-			for (let line = before.line; line <= before.endLine; line++) if (originalLines[line - 1] !== newLines[line - 1]) lines.push(line);
+			for (let line = before.line; line <= before.endLine; line++)
+				if (originalLines[line - 1] !== newLines[line - 1]) lines.push(line);
 			result.push({ path: note.path, before, after: next, lines });
 		}
 	}
@@ -67,8 +93,11 @@ function changes(originals: readonly Note[], proposed: ReadonlyMap<string, strin
 
 function decode(text: string, wiki: boolean): string | null {
 	if (wiki) return text.replace(/\u00A0/g, " ").normalize("NFC");
-	try { return decodeURI(text.replace(/\\([!"#$%&'()*+,\-./:;<=>?@[\]\\^_`{|}~])/g, "$1")).normalize("NFC"); }
-	catch { return null; }
+	try {
+		return decodeURI(text.replace(/\\([!"#$%&'()*+,\-./:;<=>?@[\]\\^_`{|}~])/g, "$1")).normalize("NFC");
+	} catch {
+		return null;
+	}
 }
 
 function linkTitle(heading: PortableHeading): string {
@@ -78,39 +107,57 @@ function linkTitle(heading: PortableHeading): string {
 	return /&(?:#\d+|#x[\da-f]+|[a-z][a-z\d]+);/i.test(title) ? stripHeadingForLink(heading.key) : title;
 }
 
-function issueFor(change: Change, reason: PortableHeadingLinkIssue["reason"], path = change.path, line = change.before.line): PortableHeadingLinkIssue[] {
-	return change.lines.map(targetLine => ({ path, line, targetPath: change.path, targetLine, reason }));
+function issueFor(
+	change: Change,
+	reason: PortableHeadingLinkIssue["reason"],
+	path = change.path,
+	line = change.before.line,
+): PortableHeadingLinkIssue[] {
+	return change.lines.map((targetLine) => ({ path, line, targetPath: change.path, targetLine, reason }));
 }
 
 function apply(content: string, edits: readonly PortableHeadingLinkEdit[]): string {
 	let output = content;
-	for (const edit of [...edits].sort((a, b) => b.from - a.from)) output = output.slice(0, edit.from) + edit.text + output.slice(edit.to);
+	for (const edit of [...edits].sort((a, b) => b.from - a.from))
+		output = output.slice(0, edit.from) + edit.text + output.slice(edit.to);
 	return output;
 }
 
 /** One pass always scans the immutable selected proposal; transitive repairs are recalculated. */
-function planPass(app: App, originals: readonly Note[], base: ReadonlyMap<string, string>, current: ReadonlyMap<string, string>, cache: PortableHeadingLinkCache): PortableHeadingLinkPlan {
+function planPass(
+	app: App,
+	originals: readonly Note[],
+	base: ReadonlyMap<string, string>,
+	current: ReadonlyMap<string, string>,
+	cache: PortableHeadingLinkCache,
+): PortableHeadingLinkPlan {
 	const changed = changes(originals, current, cache);
 	const result: PortableHeadingLinkPlan = { edits: [], issues: missingHeadings(originals, current, cache) };
 	if (!changed.length) return result;
-	const oldHeadings = new Map(originals.map(note => [note.path, cache.headings(note.path, note.content)]));
-	const newHeadings = new Map(originals.map(note => [note.path, cache.headings(note.path, current.get(note.path) ?? note.content)]));
-	const byTarget = new Map(changed.map(change => [`${change.path}\0${change.before.line}`, change]));
+	const oldHeadings = new Map(originals.map((note) => [note.path, cache.headings(note.path, note.content)]));
+	const newHeadings = new Map(
+		originals.map((note) => [note.path, cache.headings(note.path, current.get(note.path) ?? note.content)]),
+	);
+	const byTarget = new Map(changed.map((change) => [`${change.path}\0${change.before.line}`, change]));
 	const counts = (headings: Map<string, PortableHeading[]>): Map<string, number> => {
 		const keys = new Map<string, number>();
-		for (const [path, entries] of headings) for (const heading of entries) {
-			const key = `${path}\0${heading.key}`;
-			keys.set(key, (keys.get(key) ?? 0) + 1);
-		}
+		for (const [path, entries] of headings)
+			for (const heading of entries) {
+				const key = `${path}\0${heading.key}`;
+				keys.set(key, (keys.get(key) ?? 0) + 1);
+			}
 		return keys;
 	};
-	const oldCounts = counts(oldHeadings), newCounts = counts(newHeadings);
+	const oldCounts = counts(oldHeadings),
+		newCounts = counts(newHeadings);
 	for (const change of changed) {
 		const oldMatches = oldCounts.get(`${change.path}\0${change.before.key}`) ?? 0;
 		const newMatches = newCounts.get(`${change.path}\0${change.after.key}`) ?? 0;
-		if (change.before.key !== change.after.key && (oldMatches > 1 || newMatches > 1)) result.issues.push(...issueFor(change, "ambiguous-target"));
+		if (change.before.key !== change.after.key && (oldMatches > 1 || newMatches > 1))
+			result.issues.push(...issueFor(change, "ambiguous-target"));
 		const target = linkTitle(change.after);
-		if (!target || portableHeadingKey(target) !== change.after.key) result.issues.push(...issueFor(change, "unrepresentable-target"));
+		if (!target || portableHeadingKey(target) !== change.after.key)
+			result.issues.push(...issueFor(change, "unrepresentable-target"));
 	}
 	for (const note of originals) {
 		const source = base.get(note.path) ?? note.content;
@@ -121,7 +168,14 @@ function planPass(app: App, originals: readonly Note[], base: ReadonlyMap<string
 			const pathEnd = hash - (!destination.wiki && isMarkdownEscaped(raw, hash) ? 1 : 0);
 			const linkpath = decode(raw.slice(0, pathEnd), destination.wiki);
 			const fragment = decode(raw.slice(hash + 1), destination.wiki);
-			if (linkpath === null || fragment === null || !fragment || /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(linkpath) || /^[\^]|^\[\^/.test(fragment)) continue;
+			if (
+				linkpath === null ||
+				fragment === null ||
+				!fragment ||
+				/^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(linkpath) ||
+				/^[\^]|^\[\^/.test(fragment)
+			)
+				continue;
 			const path = linkpath ? app.metadataCache?.getFirstLinkpathDest?.(linkpath, note.path)?.path : note.path;
 			if (!path) continue;
 			const headings = oldHeadings.get(path);
@@ -129,20 +183,40 @@ function planPass(app: App, originals: readonly Note[], base: ReadonlyMap<string
 			if (!headings || !parts.length) continue;
 			const chain = portableHeadingChain(headings, parts);
 			if (!chain) continue;
-			const affected = chain.map(heading => byTarget.get(`${path}\0${heading.line}`));
+			const affected = chain.map((heading) => byTarget.get(`${path}\0${heading.line}`));
 			const first = affected.find((change): change is Change => Boolean(change));
 			if (!first) continue;
-			const replacement = parts.map((part, index) => affected[index] ? linkTitle(affected[index].after) : part);
+			const replacement = parts.map((part, index) => (affected[index] ? linkTitle(affected[index].after) : part));
 			const targetChain = portableHeadingChain(newHeadings.get(path)!, replacement);
 			const line = source.slice(0, destination.from).split("\n").length;
 			if (!targetChain || targetChain.some((heading, index) => heading.line !== chain[index]!.line)) {
-				for (const change of affected) if (change) result.issues.push(...issueFor(change, "ambiguous-target", note.path, line));
+				for (const change of affected)
+					if (change) result.issues.push(...issueFor(change, "ambiguous-target", note.path, line));
 				continue;
 			}
-			const encoded = replacement.map(part => destination.wiki ? part : encodeURI(part).replace(/[()]/g, character => `%${character.charCodeAt(0).toString(16).toUpperCase()}`)).join("#");
+			const encoded = replacement
+				.map((part) =>
+					destination.wiki
+						? part
+						: encodeURI(part).replace(
+								/[()]/g,
+								(character) => `%${character.charCodeAt(0).toString(16).toUpperCase()}`,
+							),
+				)
+				.join("#");
 			const text = raw.slice(0, hash + 1) + encoded;
-			if (text !== raw) result.edits.push({ path: note.path, from: destination.from, to: destination.to, text, line,
-				before: raw, after: text, targetPath: path, targetLine: first.lines[0] ?? first.before.line });
+			if (text !== raw)
+				result.edits.push({
+					path: note.path,
+					from: destination.from,
+					to: destination.to,
+					text,
+					line,
+					before: raw,
+					after: text,
+					targetPath: path,
+					targetLine: first.lines[0] ?? first.before.line,
+				});
 		}
 	}
 	return result;
@@ -154,9 +228,12 @@ function planPass(app: App, originals: readonly Note[], base: ReadonlyMap<string
  * No I/O occurs here. Link-only notes remain part of the caller's atomic approval.
  */
 export function planPortableHeadingLinks(
-	app: App, originals: readonly Note[], proposed: ReadonlyMap<string, string>, cache = new PortableHeadingLinkCache(),
+	app: App,
+	originals: readonly Note[],
+	proposed: ReadonlyMap<string, string>,
+	cache = new PortableHeadingLinkCache(),
 ): PortableHeadingLinkPlan {
-	cache.retainPaths(new Set(originals.map(note => note.path)));
+	cache.retainPaths(new Set(originals.map((note) => note.path)));
 	const missing = missingHeadings(originals, proposed, cache);
 	if (missing.length) return { edits: [], issues: missing };
 	const roots = changes(originals, proposed, cache);
@@ -165,19 +242,28 @@ export function planPortableHeadingLinks(
 	for (let pass = 0; pass < 12; pass++) {
 		const plan = planPass(app, originals, proposed, current, cache);
 		if (plan.issues.length) {
-			const issues = plan.issues.flatMap(issue => roots.some(root => root.path === issue.targetPath && root.lines.includes(issue.targetLine))
-				? [issue] : roots.flatMap(root => issueFor(root, issue.reason, issue.path, issue.line)));
+			const issues = plan.issues.flatMap((issue) =>
+				roots.some((root) => root.path === issue.targetPath && root.lines.includes(issue.targetLine))
+					? [issue]
+					: roots.flatMap((root) => issueFor(root, issue.reason, issue.path, issue.line)),
+			);
 			return { edits: plan.edits, issues };
 		}
 		const byPath = new Map<string, PortableHeadingLinkEdit[]>();
 		for (const edit of plan.edits) {
 			const edits = byPath.get(edit.path) ?? [];
-			edits.push(edit); byPath.set(edit.path, edits);
+			edits.push(edit);
+			byPath.set(edit.path, edits);
 		}
-		const next = new Map(originals.map(note => [note.path, apply(proposed.get(note.path) ?? note.content, byPath.get(note.path) ?? [])]));
-		if (originals.every(note => next.get(note.path) === (current.get(note.path) ?? note.content))) return plan;
+		const next = new Map(
+			originals.map((note) => [
+				note.path,
+				apply(proposed.get(note.path) ?? note.content, byPath.get(note.path) ?? []),
+			]),
+		);
+		if (originals.every((note) => next.get(note.path) === (current.get(note.path) ?? note.content))) return plan;
 		current = next;
 	}
 	// Cyclic links embedded in headings can recursively change each other's anchors.
-	return { edits: [], issues: roots.flatMap(root => issueFor(root, "unrepresentable-target")) };
+	return { edits: [], issues: roots.flatMap((root) => issueFor(root, "unrepresentable-target")) };
 }

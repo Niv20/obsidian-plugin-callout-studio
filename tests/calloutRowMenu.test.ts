@@ -16,9 +16,13 @@ describe("callout row menu lifetime", () => {
 		// Under the ⋮ button, as Obsidian opens "More options": tied to the
 		// button, at its bottom edge, its own width, lined up with its end.
 		assert.equal(h.menu().parentEl, h.anchor as unknown as HTMLElement);
-		assert.deepEqual(h.menu().showPosition && {
-			overlap: h.menu().showPosition?.overlap, left: h.menu().showPosition?.left,
-		}, { overlap: true, left: true });
+		assert.deepEqual(
+			h.menu().showPosition && {
+				overlap: h.menu().showPosition?.overlap,
+				left: h.menu().showPosition?.left,
+			},
+			{ overlap: true, left: true },
+		);
 		assert.equal(h.reads(), 1);
 		await opening;
 		h.cleanup();
@@ -121,19 +125,45 @@ describe("callout row menu lifetime", () => {
 		["window resize", (h) => h.view.fire("resize")],
 		["tablet orientation change", (h) => h.view.fire("orientationchange")],
 		["window blur", (h) => h.view.fire("blur")],
-		["visual viewport resize", (h) => { h.view.visualViewport.height -= 10; h.view.fire("visualViewport:resize"); }],
-		["visual viewport movement", (h) => {
-			Object.assign(h.view.visualViewport, { offsetTop: 10 }); h.view.fire("visualViewport:scroll");
-		}],
+		[
+			"visual viewport resize",
+			(h) => {
+				h.view.visualViewport.height -= 10;
+				h.view.fire("visualViewport:resize");
+			},
+		],
+		[
+			"visual viewport movement",
+			(h) => {
+				Object.assign(h.view.visualViewport, { offsetTop: 10 });
+				h.view.fire("visualViewport:scroll");
+			},
+		],
 		["settings disposal", (h) => h.dispose()],
-		["button removal", (h) => { h.anchor.isConnected = false; h.anchor.remove(); h.document.flushMutations(); }],
-		["button reparenting", (h) => { h.outer.appendChild(h.anchor); h.document.flushMutations(); }],
-		["a refresh moving the row", (h) => {
-			const previous = h.anchor.getBoundingClientRect();
-			h.anchor.getBoundingClientRect = () => ({ ...previous, top: previous.top + 20 });
-			h.scroller.createDiv();
-			h.document.flushMutations();
-		}],
+		[
+			"button removal",
+			(h) => {
+				h.anchor.isConnected = false;
+				h.anchor.remove();
+				h.document.flushMutations();
+			},
+		],
+		[
+			"button reparenting",
+			(h) => {
+				h.outer.appendChild(h.anchor);
+				h.document.flushMutations();
+			},
+		],
+		[
+			"a refresh moving the row",
+			(h) => {
+				const previous = h.anchor.getBoundingClientRect();
+				h.anchor.getBoundingClientRect = () => ({ ...previous, top: previous.top + 20 });
+				h.scroller.createDiv();
+				h.document.flushMutations();
+			},
+		],
 	];
 	for (const [label, change] of changes) {
 		it(`dismisses an open menu on ${label}`, async () => {
@@ -205,7 +235,9 @@ describe("callout row menu lifetime", () => {
 		it(`honors ${label} after readiness resolves but before its await resumes`, async () => {
 			const h = rowMenuHarness();
 			const opening = h.open();
-			const unsubscribe = h.index.subscribe(() => { if (h.index.status === "ready") cancel(h); });
+			const unsubscribe = h.index.subscribe(() => {
+				if (h.index.status === "ready") cancel(h);
+			});
 			h.release();
 			await opening;
 			assert.equal(h.builds(), 0, "same-notification invalidation must win over readiness");
@@ -218,7 +250,9 @@ describe("callout row menu lifetime", () => {
 	it("honors ancestor scroll after readiness but before the waiting click resumes", async () => {
 		const h = rowMenuHarness();
 		const opening = h.open();
-		const unsubscribe = h.index.subscribe(() => { if (h.index.status === "ready") h.scroll(h.scroller); });
+		const unsubscribe = h.index.subscribe(() => {
+			if (h.index.status === "ready") h.scroll(h.scroller);
+		});
 		h.release();
 		await opening;
 		assert.equal(h.builds(), 0);
@@ -268,7 +302,11 @@ describe("callout row menu lifetime", () => {
 		const h = rowMenuHarness();
 		await h.ready();
 		let hidden = 0;
-		await h.open((menu) => menu.onHide(() => { hidden++; }));
+		await h.open((menu) =>
+			menu.onHide(() => {
+				hidden++;
+			}),
+		);
 		h.menu().hide();
 		assert.equal(hidden, 1);
 		assert.equal(h.menu().hideCalls, 1);
@@ -329,7 +367,12 @@ describe("callout row menu lifetime", () => {
 	it("cleans observers, opening timers and subscriptions if building an item throws", async () => {
 		const h = rowMenuHarness();
 		await h.ready();
-		await assert.rejects(h.open(() => { throw new Error("menu builder failed"); }), /menu builder failed/);
+		await assert.rejects(
+			h.open(() => {
+				throw new Error("menu builder failed");
+			}),
+			/menu builder failed/,
+		);
 		h.assertClean();
 		h.cleanup();
 	});

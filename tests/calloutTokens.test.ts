@@ -11,11 +11,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	scanLineForCalloutTokens,
-	tokenEnd,
-	type LineCalloutToken,
-} from "../src/editor/calloutTokens";
+import { scanLineForCalloutTokens, tokenEnd, type LineCalloutToken } from "../src/editor/calloutTokens";
 
 /** The inline tokens of a line, which is what the pill surfaces render. */
 function inlineTokens(line: string): LineCalloutToken[] {
@@ -29,9 +25,7 @@ function inlineShape(line: string): Array<[string, string | null]> {
 
 describe("inline callout content — the documented grammar", () => {
 	it("parses a bare content pill", () => {
-		assert.deepStrictEqual(inlineShape("[!warning]{text}"), [
-			["warning", "text"],
-		]);
+		assert.deepStrictEqual(inlineShape("[!warning]{text}"), [["warning", "text"]]);
 	});
 
 	it("parses one mid-paragraph, leaving the surrounding text alone", () => {
@@ -42,10 +36,7 @@ describe("inline callout content — the documented grammar", () => {
 		assert.strictEqual(token.content?.text, "text");
 		// `from`/`to` still span ONLY the bracket — the vault rewriters rely on it.
 		assert.strictEqual(line.slice(token.from, token.to), "[!warning]");
-		assert.strictEqual(
-			line.slice(token.from, tokenEnd(token)),
-			"[!warning]{text}",
-		);
+		assert.strictEqual(line.slice(token.from, tokenEnd(token)), "[!warning]{text}");
 	});
 
 	it("keeps multiple words", () => {
@@ -70,42 +61,29 @@ describe("inline callout content — the documented grammar", () => {
 	});
 
 	it("keeps inline markup in the payload verbatim", () => {
-		assert.deepStrictEqual(inlineShape("[!warning]{text with **bold**}"), [
-			["warning", "text with **bold**"],
+		assert.deepStrictEqual(inlineShape("[!warning]{text with **bold**}"), [["warning", "text with **bold**"]]);
+		assert.deepStrictEqual(inlineShape("[!warning]{text with *italic*}"), [["warning", "text with *italic*"]]);
+		assert.deepStrictEqual(inlineShape("[!warning]{text with [links](https://example.com)}"), [
+			["warning", "text with [links](https://example.com)"],
 		]);
-		assert.deepStrictEqual(inlineShape("[!warning]{text with *italic*}"), [
-			["warning", "text with *italic*"],
-		]);
-		assert.deepStrictEqual(
-			inlineShape("[!warning]{text with [links](https://example.com)}"),
-			[["warning", "text with [links](https://example.com)"]],
-		);
 	});
 
 	it("keeps inline code in the payload as real text, not blanks", () => {
 		// The braces are matched on a blanked copy; the text must come from the
 		// original line or the backticked span would return as spaces.
-		assert.deepStrictEqual(inlineShape("[!warning]{text with `code`}"), [
-			["warning", "text with `code`"],
-		]);
+		assert.deepStrictEqual(inlineShape("[!warning]{text with `code`}"), [["warning", "text with `code`"]]);
 	});
 
 	it("does not let a brace inside inline code close the payload", () => {
-		assert.deepStrictEqual(inlineShape("[!warning]{use `}` here}"), [
-			["warning", "use `}` here"],
-		]);
+		assert.deepStrictEqual(inlineShape("[!warning]{use `}` here}"), [["warning", "use `}` here"]]);
 	});
 
 	it("nests braces", () => {
-		assert.deepStrictEqual(inlineShape("[!warning]{text {with braces}}"), [
-			["warning", "text {with braces}"],
-		]);
+		assert.deepStrictEqual(inlineShape("[!warning]{text {with braces}}"), [["warning", "text {with braces}"]]);
 	});
 
 	it("closes at the first balancing brace", () => {
-		assert.deepStrictEqual(inlineShape("[!warning]{text with } braces}"), [
-			["warning", "text with "],
-		]);
+		assert.deepStrictEqual(inlineShape("[!warning]{text with } braces}"), [["warning", "text with "]]);
 	});
 
 	it("flags an unclosed payload without dropping the token", () => {
@@ -130,12 +108,8 @@ describe("inline callout content — the documented grammar", () => {
 	});
 
 	it("parses unknown and custom ids the same as known ones", () => {
-		assert.deepStrictEqual(inlineShape("[!unknown-type]{text}"), [
-			["unknown-type", "text"],
-		]);
-		assert.deepStrictEqual(inlineShape("[!my-custom-callout]{text}"), [
-			["my-custom-callout", "text"],
-		]);
+		assert.deepStrictEqual(inlineShape("[!unknown-type]{text}"), [["unknown-type", "text"]]);
+		assert.deepStrictEqual(inlineShape("[!my-custom-callout]{text}"), [["my-custom-callout", "text"]]);
 	});
 
 	it("keeps metadata and content separate", () => {

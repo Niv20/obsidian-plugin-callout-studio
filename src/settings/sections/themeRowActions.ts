@@ -55,11 +55,7 @@ export async function openThemeRowMenu(
 }
 
 /** Find callouts ‖ Replace · Convert ‖ Duplicate, for a saved definition. */
-export function buildThemeRowMenu(
-	menu: Menu,
-	ctx: SettingsContext,
-	def: CalloutDefinition,
-): void {
+export function buildThemeRowMenu(menu: Menu, ctx: SettingsContext, def: CalloutDefinition): void {
 	const usage = addUsageMenuItem(menu, ctx.app, ctx.plugin.registry.vaultIdFormsFor(def));
 	addReplaceItem(menu, ctx, def, usage);
 	addConvertUsesItem(menu, ctx, def, usage);
@@ -81,11 +77,7 @@ export function buildThemeRowMenu(
  * its read-only behaviour, while keeping the same position as the edit action
  * on rows that Callout Studio owns.
  */
-export function addThemeRowControls(
-	ctx: SettingsContext,
-	setting: Setting,
-	def: CalloutDefinition,
-): void {
+export function addThemeRowControls(ctx: SettingsContext, setting: Setting, def: CalloutDefinition): void {
 	setting.addExtraButton((button) => {
 		button
 			.setIcon("eye")

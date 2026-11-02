@@ -21,7 +21,14 @@ const rules = parseRules(readFileSync(join(process.cwd(), "styles.css"), "utf8")
 
 /** The one rule written exactly for `selector`, outside any media query. */
 function only(selector: string): CssRule {
-	const hits = rules.filter((r) => r.at.length === 0 && r.selector.split(",").map((s) => s.trim()).includes(selector));
+	const hits = rules.filter(
+		(r) =>
+			r.at.length === 0 &&
+			r.selector
+				.split(",")
+				.map((s) => s.trim())
+				.includes(selector),
+	);
 	assert.equal(hits.length, 1, `expected one rule for ${selector}, found ${hits.length}`);
 	return hits[0]!;
 }
@@ -36,7 +43,10 @@ describe("the banners under the settings title", () => {
 			assert.equal(valueOf(rule, "border-radius"), "var(--callout-radius)");
 			assert.equal(valueOf(rule, "padding"), "var(--callout-padding)");
 			assert.equal(valueOf(rule, "background"), `color-mix(in oklch, var(${colour}) 10%, transparent)`);
-			assert.deepEqual(rule.props.filter((p) => p === "border" || p.startsWith("border-") && p !== "border-radius"), []);
+			assert.deepEqual(
+				rule.props.filter((p) => p === "border" || (p.startsWith("border-") && p !== "border-radius")),
+				[],
+			);
 		});
 	}
 
@@ -50,7 +60,8 @@ describe("the banners under the settings title", () => {
 		const banners = rules.filter((r) => /\.cs-(?:readonly-banner|competitor-import-banner)/.test(r.selector));
 		assert.ok(banners.length >= 4, "found the banner rules");
 		for (const rule of banners) {
-			for (const decl of rule.decls) assert.doesNotMatch(decl, /--callout-(?:warning|color)\b/, `${rule.selector}: ${decl}`);
+			for (const decl of rule.decls)
+				assert.doesNotMatch(decl, /--callout-(?:warning|color)\b/, `${rule.selector}: ${decl}`);
 		}
 	});
 });

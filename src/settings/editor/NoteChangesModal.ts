@@ -77,17 +77,21 @@ function changeLines({ question, pending, saved, action }: NoteChangesModalInput
 	const main = question.ids.find(({ leaving }) => leaving.wasPrimary);
 	if (main) {
 		const ids = { oldId: main.leaving.id, newId: saved.id };
-		lines.push(pending.name
-			? t("noteChanges.changeRenamed", { old: pending.name.from, new: pending.name.to, ...ids })
-			: t("noteChanges.changeMainId", ids));
+		lines.push(
+			pending.name
+				? t("noteChanges.changeRenamed", { old: pending.name.from, new: pending.name.to, ...ids })
+				: t("noteChanges.changeMainId", ids),
+		);
 	} else if (question.name) {
 		lines.push(t("noteChanges.changeName", { old: question.name.from, new: question.name.to }));
 	}
 	const removed = question.ids.filter(({ leaving }) => !leaving.wasPrimary).map(({ leaving }) => leaving.id);
 	if (removed.length > 0) {
-		lines.push(action
-			? action.removed(removed)
-			: removedIdsLine(removed, "noteChanges.changeRemoved", "noteChanges.changeRemovedMany"));
+		lines.push(
+			action
+				? action.removed(removed)
+				: removedIdsLine(removed, "noteChanges.changeRemoved", "noteChanges.changeRemovedMany"),
+		);
 	}
 	if (question.fold !== null) lines.push(t("noteChanges.changeFold"));
 	return lines;
@@ -111,7 +115,10 @@ export class NoteChangesModal extends Modal {
 	private to: string | null = null;
 	private dropdown: SelectDropdown | null = null;
 
-	constructor(app: App, private readonly input: NoteChangesModalInput) {
+	constructor(
+		app: App,
+		private readonly input: NoteChangesModalInput,
+	) {
 		super(app);
 	}
 
@@ -164,7 +171,9 @@ export class NoteChangesModal extends Modal {
 			title: t("noteChanges.leave"),
 			desc,
 			isChosen: () => this.to === null,
-			choose: () => { this.to = null; },
+			choose: () => {
+				this.to = null;
+			},
 		});
 	}
 
@@ -174,10 +183,16 @@ export class NoteChangesModal extends Modal {
 		// Nothing to rewrite: only titles or fold marks would change.
 		if (ids.length === 0) {
 			ask.answer({
-				title: name ? t("noteChanges.titlesChange", { new: name.to }) : t("noteChanges.foldChange", { state: foldLabel(fold ?? "") }),
-				desc: name ? t("noteChanges.titlesChangeDesc", { old: name.from, new: name.to }) : t("noteChanges.foldChangeDesc"),
+				title: name
+					? t("noteChanges.titlesChange", { new: name.to })
+					: t("noteChanges.foldChange", { state: foldLabel(fold ?? "") }),
+				desc: name
+					? t("noteChanges.titlesChangeDesc", { old: name.from, new: name.to })
+					: t("noteChanges.foldChangeDesc"),
 				isChosen: () => this.to !== null,
-				choose: () => { this.to = saved.id; },
+				choose: () => {
+					this.to = saved.id;
+				},
 			});
 			return;
 		}
@@ -187,7 +202,12 @@ export class NoteChangesModal extends Modal {
 			const { leaving } = ids[0]!;
 			// A rename followed back to the main id: its titles follow too.
 			if (leaving.wasPrimary && pending.name && to === saved.id) {
-				return t("noteChanges.renameFollowDesc", { oldId: leaving.id, newId: to, old: pending.name.from, new: pending.name.to });
+				return t("noteChanges.renameFollowDesc", {
+					oldId: leaving.id,
+					newId: to,
+					old: pending.name.from,
+					new: pending.name.to,
+				});
 			}
 			return t("noteChanges.rewriteDesc", { id: leaving.id, to });
 		};
@@ -197,7 +217,9 @@ export class NoteChangesModal extends Modal {
 			title: choices.length > 1 ? t("noteChanges.changeTo") : t("noteChanges.renameChange", { id: saved.id }),
 			desc: describe(picked),
 			isChosen: () => this.to !== null,
-			choose: () => { this.to = picked; },
+			choose: () => {
+				this.to = picked;
+			},
 		});
 		if (choices.length < 2) return;
 

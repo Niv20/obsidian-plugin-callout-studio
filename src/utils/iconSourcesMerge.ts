@@ -16,8 +16,9 @@ const MAX_LIBRARY_IDS = 64;
  */
 function libraryIds(value: unknown): string[] {
 	if (!Array.isArray(value)) return [];
-	const ids = value.filter((id): id is string =>
-		typeof id === "string" && id.length > 0 && id.length <= MAX_LIBRARY_ID_LENGTH);
+	const ids = value.filter(
+		(id): id is string => typeof id === "string" && id.length > 0 && id.length <= MAX_LIBRARY_ID_LENGTH,
+	);
 	return [...new Set(ids)].slice(0, MAX_LIBRARY_IDS);
 }
 
@@ -34,8 +35,7 @@ const FA_STYLES = ["solid", "regular", "brands"] as const;
 const TABLER_STYLES = ["outline", "filled"] as const;
 
 function choice<T extends string>(value: unknown, choices: readonly T[]): T | undefined {
-	return typeof value === "string" && (choices as readonly string[]).includes(value)
-		? value as T : undefined;
+	return typeof value === "string" && (choices as readonly string[]).includes(value) ? (value as T) : undefined;
 }
 
 export function mergeIconSources(saved: Partial<IconSourceSettings> | undefined): IconSourceSettings {
@@ -45,9 +45,12 @@ export function mergeIconSources(saved: Partial<IconSourceSettings> | undefined)
 	if (categories && typeof categories === "object" && !Array.isArray(categories)) {
 		// fromEntries preserves literal prototype-named keys as data. Old source
 		// ids may stay, but objects must never reach category picker controls.
-		Object.defineProperties(lastCategory, Object.getOwnPropertyDescriptors(
-			Object.fromEntries(Object.entries(categories).filter(([, value]) => typeof value === "string")),
-		));
+		Object.defineProperties(
+			lastCategory,
+			Object.getOwnPropertyDescriptors(
+				Object.fromEntries(Object.entries(categories).filter(([, value]) => typeof value === "string")),
+			),
+		);
 	}
 	if (typeof saved?.lastMaterialCategory === "string" && saved.lastMaterialCategory) {
 		lastCategory.material = saved.lastMaterialCategory;
@@ -56,11 +59,19 @@ export function mergeIconSources(saved: Partial<IconSourceSettings> | undefined)
 	const tone = saved?.lastEmojiSkinTone;
 	const merged: IconSourceSettings = {
 		materialStyleDefault: choice(saved?.materialStyleDefault, MATERIAL_STYLES) ?? defaults.materialStyleDefault,
-		materialWeightDefault: typeof weight === "number" && Number.isInteger(weight) &&
-			weight >= 100 && weight <= 700 && weight % 100 === 0 ? weight : defaults.materialWeightDefault,
+		materialWeightDefault:
+			typeof weight === "number" &&
+			Number.isInteger(weight) &&
+			weight >= 100 &&
+			weight <= 700 &&
+			weight % 100 === 0
+				? weight
+				: defaults.materialWeightDefault,
 		lastCategory,
-		lastEmojiSkinTone: typeof tone === "number" && Number.isInteger(tone) && tone >= 0 && tone <= 5
-			? tone : defaults.lastEmojiSkinTone,
+		lastEmojiSkinTone:
+			typeof tone === "number" && Number.isInteger(tone) && tone >= 0 && tone <= 5
+				? tone
+				: defaults.lastEmojiSkinTone,
 	};
 	const fa = choice(saved?.faStyleDefault, FA_STYLES);
 	const tabler = choice(saved?.tablerStyleDefault, TABLER_STYLES);

@@ -4,7 +4,9 @@ type Example = readonly [before: string, after: string];
 
 /** One comparison table; examples stay literal text rather than rendered Markdown. */
 export function renderPortableRules(container: HTMLElement): void {
-	const word = t("portable.word"), type = t("portable.type"), text = t("portable.text");
+	const word = t("portable.word"),
+		type = t("portable.type"),
+		text = t("portable.text");
 	const title = t("portable.headingText");
 	const examples: readonly Example[] = [
 		[`# [!${type}]`, `# ${type}`],

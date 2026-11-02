@@ -23,11 +23,7 @@ import { compareSpecificity } from "../../utils/cssSpecificity";
 import type { PatternOp, ThemeClaim, ThemeScan } from "./themeCalloutScan";
 
 /** Whether a pattern operator's value matches a concrete attribute id. */
-export function patternMatches(
-	op: PatternOp,
-	value: string,
-	attrId: string,
-): boolean {
+export function patternMatches(op: PatternOp, value: string, attrId: string): boolean {
 	switch (op) {
 		case "^":
 			return attrId.startsWith(value);
@@ -54,10 +50,7 @@ export function patternMatches(
  * `attrId` must already be the dasherized attribute form — the one Obsidian
  * actually writes — because that is what a theme's selector is written against.
  */
-export function claimForId(
-	scan: ThemeScan,
-	attrId: string,
-): ThemeClaim | undefined {
+export function claimForId(scan: ThemeScan, attrId: string): ThemeClaim | undefined {
 	const exact = scan.byId.get(attrId);
 	if (exact) return exact;
 	let best: ThemeClaim | undefined;

@@ -81,12 +81,7 @@ export interface RenderIconOptions {
 	errorAriaLabel?: string;
 }
 
-export type RenderIconResult =
-	| "painted"
-	| "placeholder"
-	| "loading"
-	| "failed"
-	| "skipped";
+export type RenderIconResult = "painted" | "placeholder" | "loading" | "failed" | "skipped";
 
 /**
  * Paint `icon` into `target`, replacing whatever it held.
@@ -197,15 +192,13 @@ function paintSvgIcon(
 
 	if (options.className) svgEl.classList.add(options.className);
 
-	const color =
-		options.fill === "currentColor" ? "currentColor" : options.fill.literal;
+	const color = options.fill === "currentColor" ? "currentColor" : options.fill.literal;
 	// A picture the user supplied is the one artwork that carries colours of its
 	// own, so it is also the only one there is anything to decide: the callout
 	// either claims those colours whole (stencil) or leaves every one of them
 	// alone. Every library glyph is monochrome and simply takes the colour.
 	const picture = userImageFor(icon);
-	const stencil =
-		options.followCalloutColor !== false && followsCalloutColor(icon, picture);
+	const stencil = options.followCalloutColor !== false && followsCalloutColor(icon, picture);
 	const keepsOwnColors = picture !== undefined && !stencil;
 	// An outline drawing is defined by the ink it withholds: its root fills
 	// `none` and strokes `currentColor` (see buildPackSvg). It therefore needs
@@ -297,15 +290,7 @@ const UNPAINTED = new Set(["none", "transparent"]);
  * but they collect no `style` of their own — a `<style>` element carrying a
  * `fill` is noise in the DOM inspector and nothing else.
  */
-const NON_DRAWABLE = new Set([
-	"style",
-	"title",
-	"desc",
-	"defs",
-	"lineargradient",
-	"radialgradient",
-	"stop",
-]);
+const NON_DRAWABLE = new Set(["style", "title", "desc", "defs", "lineargradient", "radialgradient", "stop"]);
 
 /**
  * Subtrees left exactly as they were drawn.
@@ -334,8 +319,7 @@ const INITIAL_PAINT: PaintState = { fill: "black", stroke: "none" };
  * permissive pattern swallows both as one value. `fill-opacity` and
  * `stroke-width` do not match, because the property has to be followed by `:`.
  */
-const CSS_PAINT_RE =
-	/(fill|stroke|stop-color|color)(\s*:\s*)(#[0-9a-f]{3,8}|[a-z-]+\([^)]*\)|[a-z]+)/gi;
+const CSS_PAINT_RE = /(fill|stroke|stop-color|color)(\s*:\s*)(#[0-9a-f]{3,8}|[a-z-]+\([^)]*\)|[a-z]+)/gi;
 
 /** The paint an element passes down to its children. */
 interface PaintState {
@@ -436,12 +420,8 @@ function rewriteDeclaredPaint(el: Element, color: string): void {
 }
 
 function rewriteCssPaint(css: string, color: string): string {
-	return css.replace(
-		CSS_PAINT_RE,
-		(whole: string, prop: string, separator: string, value: string) =>
-			UNPAINTED.has(value.toLowerCase())
-				? whole
-				: `${prop}${separator}${color}`,
+	return css.replace(CSS_PAINT_RE, (whole: string, prop: string, separator: string, value: string) =>
+		UNPAINTED.has(value.toLowerCase()) ? whole : `${prop}${separator}${color}`,
 	);
 }
 
@@ -497,27 +477,17 @@ function paintMissing(
  * placeholder painted while a download was in flight is replaced with the real
  * glyph as soon as the download lands, without a full re-render of the note.
  */
-export function iconRenderKey(
-	icon: CalloutIcon,
-	resolver: IconResolver,
-	role: CalloutRenderRole,
-): string {
+export function iconRenderKey(icon: CalloutIcon, resolver: IconResolver, role: CalloutRenderRole): string {
 	const pack = packFor(icon);
 	// Packs drawn by Obsidian or by the system font have nothing to wait for.
-	const needsArtwork =
-		pack !== undefined && pack.kind !== "builtin" && pack.kind !== "glyph";
+	const needsArtwork = pack !== undefined && pack.kind !== "builtin" && pack.kind !== "glyph";
 	const ready = !needsArtwork || resolver.resolveSvg(icon, role) !== null;
 	// The pack's own cache variant rather than `style`/`weight`: those two cover
 	// Material and nothing else, so a source that varies its drawing any other
 	// way would keep a stale widget. `cacheVariant` is by contract everything
 	// besides the name that changes the artwork — Octicons' per-role sizes and a
 	// re-uploaded picture's revision both land here.
-	return [
-		icon.type,
-		icon.value,
-		pack?.cacheVariant(icon, role) ?? "",
-		ready ? "r" : "",
-	].join(":");
+	return [icon.type, icon.value, pack?.cacheVariant(icon, role) ?? "", ready ? "r" : ""].join(":");
 }
 
 /**

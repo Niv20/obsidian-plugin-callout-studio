@@ -28,10 +28,7 @@
  */
 
 /** Result of looking for a `{…}` payload at a given offset. */
-export type InlineContentMatch =
-	| { kind: "none" }
-	| { kind: "open" }
-	| { kind: "content"; from: number; to: number };
+export type InlineContentMatch = { kind: "none" } | { kind: "open" } | { kind: "content"; from: number; to: number };
 
 /**
  * Blanks out `$inline math$` spans with spaces, preserving string length so
@@ -50,10 +47,7 @@ export type InlineContentMatch =
  */
 export function blankInlineMath(line: string): string {
 	if (!line.includes("$")) return line;
-	return line.replace(
-		/\$(?![\s$])(?:[^$\n]*[^\s$])?\$(?!\d)/g,
-		(m) => " ".repeat(m.length),
-	);
+	return line.replace(/\$(?![\s$])(?:[^$\n]*[^\s$])?\$(?!\d)/g, (m) => " ".repeat(m.length));
 }
 
 /**
@@ -67,10 +61,7 @@ export function blankInlineMath(line: string): string {
  * Returns `from` = the `{` offset and `to` = one past the matching `}`, so
  * `line.slice(from + 1, to - 1)` is the payload text.
  */
-export function matchInlineContent(
-	line: string,
-	openIdx: number,
-): InlineContentMatch {
+export function matchInlineContent(line: string, openIdx: number): InlineContentMatch {
 	if (line[openIdx] !== "{") return { kind: "none" };
 
 	let depth = 0;

@@ -4,21 +4,38 @@ import { portableCalloutApprovals } from "./portableCalloutApproval";
 import { copyPortableReplacements, portableReplacementText, type PortableReplacements } from "./portableCalloutCustom";
 import { convertPortableCallouts, type PortableCalloutLineChange } from "./portableCallouts";
 import {
-	buildPortableCalloutPlan, emptyPortableCounts, remainingPortableCalloutPlan,
-	type PortableCalloutConversionPlan, type PortableCalloutCounts,
-	type PortableCalloutSnapshot as Snapshot, type PortableCalloutOutput,
+	buildPortableCalloutPlan,
+	emptyPortableCounts,
+	remainingPortableCalloutPlan,
+	type PortableCalloutConversionPlan,
+	type PortableCalloutCounts,
+	type PortableCalloutSnapshot as Snapshot,
+	type PortableCalloutOutput,
 } from "./portableCalloutPlan";
-import { cachePortableSnapshots, cachedPortableSnapshot, portableHeadingPreviewCache, type PortableCalloutPreviewCache } from "./portableCalloutPreviewCache";
+import {
+	cachePortableSnapshots,
+	cachedPortableSnapshot,
+	portableHeadingPreviewCache,
+	type PortableCalloutPreviewCache,
+} from "./portableCalloutPreviewCache";
 export { retainPortableCalloutReplacements } from "./portableCalloutRetention";
 export { PortableCalloutPreviewCache } from "./portableCalloutPreviewCache";
-export type { PortableCalloutConversionPlan, PortableCalloutConversionExample,
-	PortableCalloutConversionChange, PortableCalloutLinkChange, PortableCalloutBlockedChange } from "./portableCalloutPlan";
+export type {
+	PortableCalloutConversionPlan,
+	PortableCalloutConversionExample,
+	PortableCalloutConversionChange,
+	PortableCalloutLinkChange,
+	PortableCalloutBlockedChange,
+} from "./portableCalloutPlan";
 
-export type PortableCalloutErrorCode = "busy" | "aborted" | "changed" | "editor-changed" |
-	"read-failed" | "write-failed" | "unavailable" | "invalid-plan";
+export type PortableCalloutErrorCode =
+	"busy" | "aborted" | "changed" | "editor-changed" | "read-failed" | "write-failed" | "unavailable" | "invalid-plan";
 
 export class PortableCalloutVaultError extends Error {
-	constructor(readonly code: PortableCalloutErrorCode, readonly path?: string) {
+	constructor(
+		readonly code: PortableCalloutErrorCode,
+		readonly path?: string,
+	) {
 		super(`Portable callout conversion: ${code}${path ? ` (${path})` : ""}`);
 		this.name = "PortableCalloutVaultError";
 	}
@@ -33,15 +50,17 @@ const pendingRecoveries = new WeakMap<App, PortableCalloutConversionPlan>();
 const running = new WeakSet<App>();
 
 function assertAvailable(app: App): void {
-	if (typeof app.vault.process !== "function" ||
-		typeof app.workspace?.getLeavesOfType !== "function") {
+	if (typeof app.vault.process !== "function" || typeof app.workspace?.getLeavesOfType !== "function") {
 		throw new PortableCalloutVaultError("unavailable");
 	}
 }
 
 function assertIdentity(app: App, entry: Pick<Snapshot, "file" | "path" | "mtime" | "size">, metadata = true): void {
-	if (entry.file.path !== entry.path || app.vault.getAbstractFileByPath(entry.path) !== entry.file ||
-		(metadata && (entry.file.stat.mtime !== entry.mtime || entry.file.stat.size !== entry.size))) {
+	if (
+		entry.file.path !== entry.path ||
+		app.vault.getAbstractFileByPath(entry.path) !== entry.file ||
+		(metadata && (entry.file.stat.mtime !== entry.mtime || entry.file.stat.size !== entry.size))
+	) {
 		throw new PortableCalloutVaultError("changed", entry.path);
 	}
 }
@@ -69,8 +88,11 @@ function assertEditors(app: App, file: TFile, source: string): void {
 }
 
 async function read(app: App, file: TFile): Promise<string> {
-	try { return await app.vault.read(file); }
-	catch { throw new PortableCalloutVaultError("read-failed", file.path); }
+	try {
+		return await app.vault.read(file);
+	} catch {
+		throw new PortableCalloutVaultError("read-failed", file.path);
+	}
 }
 
 function addCounts(counts: PortableCalloutCounts, output: PortableCalloutOutput): void {
@@ -88,7 +110,11 @@ async function yieldScan(index: number): Promise<void> {
 /** Reads saved Markdown only. Any missing/dirty/unreadable input rejects the entire preview. */
 export async function preparePortableCalloutConversion(
 	app: App,
-	options: { signal?: AbortSignal; onProgress?: (done: number, total: number) => void; cache?: PortableCalloutPreviewCache } = {},
+	options: {
+		signal?: AbortSignal;
+		onProgress?: (done: number, total: number) => void;
+		cache?: PortableCalloutPreviewCache;
+	} = {},
 ): Promise<PortableCalloutConversionPlan> {
 	if (running.has(app)) throw new PortableCalloutVaultError("busy");
 	if (options.signal?.aborted) throw new PortableCalloutVaultError("aborted");
@@ -103,17 +129,21 @@ export async function preparePortableCalloutConversion(
 		checkCancelled();
 		const entries: Snapshot[] = [];
 		const files = app.vault.getMarkdownFiles().map((file) => ({
-			file, path: file.path, mtime: file.stat.mtime, size: file.stat.size,
+			file,
+			path: file.path,
+			mtime: file.stat.mtime,
+			size: file.stat.size,
 		}));
 		for (const file of files) {
 			checkCancelled();
 			assertIdentity(app, file);
 			const cached = cachedPortableSnapshot(options.cache, app, file.file);
-			const original = cached?.original ?? await read(app, file.file);
+			const original = cached?.original ?? (await read(app, file.file));
 			assertIdentity(app, file);
 			assertEditors(app, file.file, original);
 			const changes: PortableCalloutLineChange[] = cached?.changes ?? [];
-			const conversion = cached?.conversion ?? convertPortableCallouts(original, change => changes.push(change));
+			const conversion =
+				cached?.conversion ?? convertPortableCallouts(original, (change) => changes.push(change));
 			const entry = { ...file, original, conversion, changes };
 			entries.push(entry);
 			options.onProgress?.(entries.length, files.length);
@@ -127,32 +157,51 @@ export async function preparePortableCalloutConversion(
 		portableCalloutApprovals.set(plan, { app, entries, outputs, headings, replacements: new Map() });
 		cachePortableSnapshots(options.cache, app, entries);
 		return plan;
-	} finally { running.delete(app); }
+	} finally {
+		running.delete(app);
+	}
 }
 
 /** Review selection without rereading notes; final approval still verifies every byte. */
 export function reviewPortableCalloutSelection(
-	app: App, plan: PortableCalloutConversionPlan, selectedIds: ReadonlySet<string>,
+	app: App,
+	plan: PortableCalloutConversionPlan,
+	selectedIds: ReadonlySet<string>,
 	replacements?: PortableReplacements,
 ): PortableCalloutConversionPlan {
 	if (running.has(app)) throw new PortableCalloutVaultError("busy");
 	const approval = portableCalloutApprovals.get(plan);
 	if (!approval || approval.app !== app) throw new PortableCalloutVaultError("invalid-plan");
 	if (plan.recovery) {
-		if (replacements && (replacements.size !== approval.replacements.size || [...replacements].some(([id, text]) => (!approval.replacements.has(id) || portableReplacementText(approval.replacements.get(id)!) !== portableReplacementText(text))))) throw new PortableCalloutVaultError("invalid-plan");
-		if (selectedIds.size !== plan.selectedIds.length || plan.selectedIds.some(id => !selectedIds.has(id))) {
+		if (
+			replacements &&
+			(replacements.size !== approval.replacements.size ||
+				[...replacements].some(
+					([id, text]) =>
+						!approval.replacements.has(id) ||
+						portableReplacementText(approval.replacements.get(id)!) !== portableReplacementText(text),
+				))
+		)
+			throw new PortableCalloutVaultError("invalid-plan");
+		if (selectedIds.size !== plan.selectedIds.length || plan.selectedIds.some((id) => !selectedIds.has(id))) {
 			throw new PortableCalloutVaultError("invalid-plan");
 		}
 		return plan;
 	}
 	const custom = copyPortableReplacements(replacements ?? approval.replacements);
-	const ids = new Set(plan.changes.map(change => change.id));
-	if ([...custom.keys()].some(id => !ids.has(id))) throw new PortableCalloutVaultError("invalid-plan");
-	const result = buildPortableCalloutPlan(app, approval.entries, selectedIds, plan.blockedChanges, approval.headings, custom);
+	const ids = new Set(plan.changes.map((change) => change.id));
+	if ([...custom.keys()].some((id) => !ids.has(id))) throw new PortableCalloutVaultError("invalid-plan");
+	const result = buildPortableCalloutPlan(
+		app,
+		approval.entries,
+		selectedIds,
+		plan.blockedChanges,
+		approval.headings,
+		custom,
+	);
 	portableCalloutApprovals.set(result.plan, { ...approval, outputs: result.outputs, replacements: custom });
 	return result.plan;
 }
-
 
 /**
  * Validate the entire preview before the first write, then compare bytes again
@@ -167,11 +216,12 @@ export async function applyPortableCalloutConversion(
 	if (running.has(app)) return { ...result, error: { code: "busy" } };
 	const approval = portableCalloutApprovals.get(plan);
 	if (!approval || approval.app !== app) return { ...result, error: { code: "invalid-plan" } };
-	if (pendingRecoveries.has(app) && pendingRecoveries.get(app) !== plan) return { ...result, error: { code: "invalid-plan" } };
+	if (pendingRecoveries.has(app) && pendingRecoveries.get(app) !== plan)
+		return { ...result, error: { code: "invalid-plan" } };
 	portableCalloutApprovals.delete(plan);
 	pendingRecoveries.delete(app);
 	// Related selection plans must keep their own immutable expected snapshots.
-	const operation = { ...approval, entries: approval.entries.map(entry => ({ ...entry })) };
+	const operation = { ...approval, entries: approval.entries.map((entry) => ({ ...entry })) };
 	running.add(app);
 	let currentPath: string | undefined;
 	let writeAttempted = false;
@@ -188,12 +238,16 @@ export async function applyPortableCalloutConversion(
 			if (current !== entry.original) {
 				// An adapter can reject after persisting bytes. Recognize exactly the
 				// approved output on retry, never derive fresh edits from unknown text.
-				if (!plan.recovery || current !== output.content) throw new PortableCalloutVaultError("changed", entry.path);
+				if (!plan.recovery || current !== output.content)
+					throw new PortableCalloutVaultError("changed", entry.path);
 				entry.original = current;
 				addCounts(result, output);
 			}
 			assertIdentity(app, plan.recovery ? identity : entry);
-			if (plan.recovery) { entry.mtime = identity.mtime; entry.size = identity.size; }
+			if (plan.recovery) {
+				entry.mtime = identity.mtime;
+				entry.size = identity.size;
+			}
 			assertEditors(app, entry.file, current);
 			await yieldScan(++checked);
 		}
@@ -229,16 +283,20 @@ export async function applyPortableCalloutConversion(
 		result.status = "complete";
 		pendingRecoveries.delete(app);
 	} catch (error) {
-		result.error = error instanceof PortableCalloutVaultError
-			? { code: error.code, path: error.path }
-			: { code: "write-failed", path: currentPath };
+		result.error =
+			error instanceof PortableCalloutVaultError
+				? { code: error.code, path: error.path }
+				: { code: "write-failed", path: currentPath };
 		let preservePending = result.files > 0 || plan.recovery;
 		if (!preservePending && writeAttempted) {
-			const attempted = operation.entries.find(entry => entry.path === currentPath)!;
+			const attempted = operation.entries.find((entry) => entry.path === currentPath)!;
 			try {
 				const current = await read(app, attempted.file);
-				preservePending = current !== attempted.original && current === operation.outputs.get(attempted.path)!.content;
-			} catch { preservePending = true; }
+				preservePending =
+					current !== attempted.original && current === operation.outputs.get(attempted.path)!.content;
+			} catch {
+				preservePending = true;
+			}
 		}
 		if (preservePending) {
 			const remaining = remainingPortableCalloutPlan(plan, operation.entries, operation.outputs);
@@ -248,6 +306,8 @@ export async function applyPortableCalloutConversion(
 				result.remainingPlan = remaining;
 			}
 		}
-	} finally { running.delete(app); }
+	} finally {
+		running.delete(app);
+	}
 	return result;
 }

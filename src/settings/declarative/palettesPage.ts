@@ -55,7 +55,9 @@ function paletteList(ctx: TreeContext, palettes: readonly CustomPalette[]): CsLi
 		emptyState: emptyListState(t("settings.customPalettesEmpty"), t("settings.newPalette")),
 		addItem: {
 			name: t("settings.newPalette"),
-			action: refuseWhilePaused(writer, () => { void createPalette(ctx, redraw); }),
+			action: refuseWhilePaused(writer, () => {
+				void createPalette(ctx, redraw);
+			}),
 		},
 		// The rows are drawn in the order of `palettes`, so an index is a place in it.
 		onDelete: refuseWhilePaused(writer, (index: number) => {
@@ -83,7 +85,9 @@ function paletteRow(ctx: TreeContext, palette: CustomPalette): CsRender {
 				icon: "pencil",
 				label: t("settings.editPaletteAria", { name: palette.name }),
 				blockedReason: () => pausedReason(ctx.plugin.settingsWriter),
-				onClick: () => { void editPalette(ctx, palette, () => ctx.redraw()); },
+				onClick: () => {
+					void editPalette(ctx, palette, () => ctx.redraw());
+				},
 			});
 			// The colours sit outside the controls, which a redraw empties, so
 			// the row's cleanup takes them away before the next draw.

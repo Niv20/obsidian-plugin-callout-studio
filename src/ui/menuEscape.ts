@@ -25,11 +25,7 @@ export function registerMenuScopeHost(
 }
 
 /** Install only while open: popping restores the host's actual previous scope. */
-export function captureMenuEscape(
-	root: HTMLElement,
-	isOpen: () => boolean,
-	close: () => void,
-): () => void {
+export function captureMenuEscape(root: HTMLElement, isOpen: () => boolean, close: () => void): () => void {
 	let host: MenuHost | undefined;
 	for (let node: Node | null = root; node && !host; node = node.parentNode) host = hosts.get(node);
 	if (!host || !isOpen()) return () => {};

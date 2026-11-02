@@ -11,10 +11,8 @@ export const ar: Record<string, string> = {
 	"cmd.customWrapBlockCollapsed": "التفاف في callout الكتلي {{name}} (مغلق)",
 	"cmd.customInsertBlockExpanded": "إدراج callout الكتلي {{name}} (مفتوح)",
 	"cmd.customInsertBlockCollapsed": "إدراج callout الكتلي {{name}} (مغلق)",
-	"cmd.customWrapHeading":
-		"التفاف في عنوان callout {{name}} من المستوى H{{level}}",
-	"cmd.customInsertHeading":
-		"إدراج عنوان callout {{name}} من المستوى H{{level}}",
+	"cmd.customWrapHeading": "التفاف في عنوان callout {{name}} من المستوى H{{level}}",
+	"cmd.customInsertHeading": "إدراج عنوان callout {{name}} من المستوى H{{level}}",
 	"cmd.customWrapInline": "التفاف في callout {{name}} ضمن السطر",
 	"cmd.customInsertInline": "إدراج callout {{name}} ضمن السطر",
 	"cmd.openQuickInsert": "إدراج سريع لـ callout كتلة",
@@ -42,17 +40,15 @@ export const ar: Record<string, string> = {
 	"settings.fallbackTagAuto": "تلقائي",
 	"settings.rescanVaultDesc": "يضيف أنواع الـ callout التي تستخدمها ملاحظاتك وغير الموجودة في هذه القائمة بعد.",
 	"settings.rescanVaultHintAction": "مسح بحثًا عن callout",
-	"manualDiscovery.failed": "لم يتم حفظ نتائج الاكتشاف. تحققوا من إمكانية حفظ الإعدادات واكتمال المزامنة، ثم أعيدوا المحاولة من الإعدادات ← أنواع الـ callout الخاصة بي ← مسح بحثًا عن callout. لم تُستبدل الـ callouts الموجودة.",
+	"manualDiscovery.failed":
+		"لم يتم حفظ نتائج الاكتشاف. تحققوا من إمكانية حفظ الإعدادات واكتمال المزامنة، ثم أعيدوا المحاولة من الإعدادات ← أنواع الـ callout الخاصة بي ← مسح بحثًا عن callout. لم تُستبدل الـ callouts الموجودة.",
 	"manualDiscovery.scanning": "جارٍ المسح…",
-	"settings.rescanComplete":
-		"اكتمل المسح: تمت إضافة {{count}} نوع callout جديد.",
+	"settings.rescanComplete": "اكتمل المسح: تمت إضافة {{count}} نوع callout جديد.",
 	"replaceModal.titleReplace": "استبدال في المخزن",
 
 	"welcome.title": "مرحبًا بك في Callout Studio!",
-	"welcome.tagline":
-		"حلّك الشامل لإنشاء callouts في Obsidian وتصميمها وإدارتها.",
-	"importBanner.message":
-		"لاحظنا أنك تستخدم {{plugins}}. هل ترغب في استيراد callouts الخاصة بك؟",
+	"welcome.tagline": "حلّك الشامل لإنشاء callouts في Obsidian وتصميمها وإدارتها.",
+	"importBanner.message": "لاحظنا أنك تستخدم {{plugins}}. هل ترغب في استيراد callouts الخاصة بك؟",
 	"importBanner.action": "استيراد",
 	"importBanner.dismiss": "تجاهل",
 	"welcome.demoName": "Callout Studio",
@@ -67,8 +63,7 @@ export const ar: Record<string, string> = {
 		"هناك الكثير مما يقدمه Callout Studio! [معرفة المزيد]({{repoUrl}}).\n",
 	"deleteModal.title": "حذف callout",
 
-	"deleteModal.bodyInUse":
-		"يظهر هذا الـ callout {{count}} مرة في {{files}} ملف.",
+	"deleteModal.bodyInUse": "يظهر هذا الـ callout {{count}} مرة في {{files}} ملف.",
 	"deleteModal.notesUntouched":
 		"يحذف هذا تعريف الـ callout فقط. لن تُمَسّ ملاحظاتك، لذا ستعود الـ callouts الموجودة ببساطة إلى النمط الافتراضي.",
 	"deleteModal.fallbackTarget":
@@ -77,8 +72,7 @@ export const ar: Record<string, string> = {
 	"convertModal.title": "التحويل إلى نص عادي",
 	"convertModal.subtitle": "كل «{{name}}» في خزنتك",
 	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
-	"convertModal.explain":
-		"يصبح كل واحد منها نصًا عاديًا: يبقى العنوان والمحتوى، ويزول تنسيق الـ callout فقط.",
+	"convertModal.explain": "يصبح كل واحد منها نصًا عاديًا: يبقى العنوان والمحتوى، ويزول تنسيق الـ callout فقط.",
 	"convertModal.typeStays": "يبقى نوع الـ callout نفسه في قائمتك.",
 	"convertModal.confirm": "تحويل",
 	// The variant for a callout whose definition Callout Studio cannot remove:
@@ -99,9 +93,9 @@ export const ar: Record<string, string> = {
 	"settings.exportTitle": "تصدير callouts",
 	"settings.importDesc":
 		"استوردوا بيانات Callout Studio الخاصة بكم من خزنة أخرى، أو انقلوا الـ callouts الخاصة بكم من إضافة أخرى.",
-	"settings.exportDesc": "احفظ الـ callouts الخاصة بك كنسخة احتياطية من Callout Studio أو كمقتطف CSS يمكن استخدامه في مكان آخر.",
-	"settings.importConflictNotice":
-		"تم استيراد {{count}} نوع callout؛ تم الكتابة فوق {{overwritten}} إدخال موجود.",
+	"settings.exportDesc":
+		"احفظ الـ callouts الخاصة بك كنسخة احتياطية من Callout Studio أو كمقتطف CSS يمكن استخدامه في مكان آخر.",
+	"settings.importConflictNotice": "تم استيراد {{count}} نوع callout؛ تم الكتابة فوق {{overwritten}} إدخال موجود.",
 
 	"settings.addNewCallout": "إضافة callout جديد",
 
@@ -117,7 +111,7 @@ export const ar: Record<string, string> = {
 	"settings.convertUsesAction": "تحويل الاستخدامات إلى نص عادي",
 	"notice.calloutDeleted": 'تم حذف "{{name}}".',
 	"settings.duplicateAction": "تكرار",
-	"notice.calloutDuplicated": "تم تكرار التنبيه باسم \"{{name}}\".",
+	"notice.calloutDuplicated": 'تم تكرار التنبيه باسم "{{name}}".',
 	"notice.calloutDuplicateFailed": "تعذّر تكرار التنبيه. تحقّق من حالة الحفظ ثم حاول مرة أخرى.",
 	"settings.resetAction": "إعادة التعيين إلى الافتراضي",
 	"settings.makeFallbackAction": "استخدام النمط الاحتياطي الافتراضي",
@@ -128,13 +122,11 @@ export const ar: Record<string, string> = {
 	"settings.themeCalloutsHeading": "Callouts من سمتك",
 	"settings.themeCalloutsDefaultTheme": "سمتك",
 	"settings.themeCalloutsEmpty": "لا تنسّق {{theme}} أي callout حاليًا.",
-	"settings.themePreviewAria":
-		'معاينة "{{name}}" — شاهد كيف ترسمها سمتك',
+	"settings.themePreviewAria": 'معاينة "{{name}}" — شاهد كيف ترسمها سمتك',
 	"settings.builtInAllThemeStyled":
 		"تنسّق {{theme}} كل الـ callouts المدمجة، لذا يتركها Callout Studio كلها كما هي. لتصميم callout خاص بك، أضف callout بمعرّف مختلف.",
 	"settings.fallbackCallout": "Callout الاحتياطي الافتراضي",
-	"settings.fallbackCalloutDesc":
-		"ترث أنواع الـ callout غير المعروفة هذا النمط.",
+	"settings.fallbackCalloutDesc": "ترث أنواع الـ callout غير المعروفة هذا النمط.",
 
 	"settings.border": "الحدود",
 	"settings.borderTop": "أعلى",
@@ -166,8 +158,7 @@ export const ar: Record<string, string> = {
 	"settings.paletteCountOne": "لوحة واحدة",
 	"settings.editPaletteAria": "تعديل لوحة الألوان {{name}}",
 	"settings.deletePaletteTitle": "حذف لوحة الألوان",
-	"settings.deletePaletteBody":
-		'لن تتأثر عناصر callout التي تستخدم هذه الألوان.',
+	"settings.deletePaletteBody": "لن تتأثر عناصر callout التي تستخدم هذه الألوان.",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'تأخذ callouts التي تذكرها في بياناتها الوصفية ("{{key}}") اللون المدمج الذي يحمل هذا الاسم بدلًا منها. ملاحظاتك لا تتغير.',
 
@@ -192,15 +183,13 @@ export const ar: Record<string, string> = {
 	"commandBuilder.formatHeading": "عنوان",
 	"commandBuilder.formatInline": "ضمن السطر",
 	"commandBuilder.formatBlock": "كتلة",
-	"commandBuilder.roleDisabled":
-		"هذا التنسيق معطّل، لذا سيُدرج الأمر نصًا عاديًا حتى تُعيد تفعيله.",
+	"commandBuilder.roleDisabled": "هذا التنسيق معطّل، لذا سيُدرج الأمر نصًا عاديًا حتى تُعيد تفعيله.",
 	"commandBuilder.callout": "نوع الـ callout",
 	"commandBuilder.calloutDesc": "الـ callout الذي يُدرجه هذا الأمر.",
 	"commandBuilder.headingLevel": "مستوى العنوان",
 	"commandBuilder.headingLevelDesc": "مستوى العنوان الذي سيُكتب.",
 	"commandBuilder.action": "الإجراء",
-	"commandBuilder.actionDesc":
-		"الالتفاف يحوّل التحديد إلى callout؛ الإدراج يضيف واحدًا فارغًا.",
+	"commandBuilder.actionDesc": "الالتفاف يحوّل التحديد إلى callout؛ الإدراج يضيف واحدًا فارغًا.",
 	"commandBuilder.actionDescHeading":
 		"الالتفاف يحوّل السطر الذي عليه المؤشر إلى callout على هيئة عنوان.\nالإدراج يضيف واحدًا فارغًا في سطر جديد.",
 	"commandBuilder.actionDescInline":
@@ -208,8 +197,7 @@ export const ar: Record<string, string> = {
 	"commandBuilder.actionWrap": "التفاف حول التحديد",
 	"commandBuilder.actionInsert": "إدراج جديد",
 	"commandBuilder.foldState": "حالة الطي",
-	"commandBuilder.foldStateDesc":
-		"هل الـ callout قابل للطي، وكيف تبدأ حالته.",
+	"commandBuilder.foldStateDesc": "هل الـ callout قابل للطي، وكيف تبدأ حالته.",
 	"commandBuilder.foldNone": "غير قابل للطي",
 	"commandBuilder.foldExpanded": "قابل للطي، مفتوح (+)",
 	"commandBuilder.foldCollapsed": "قابل للطي، مغلق (-)",
@@ -218,15 +206,14 @@ export const ar: Record<string, string> = {
 	"commandBuilder.noCallouts": "لا توجد أنواع callout لإنشاء أمر منها بعد.",
 	"commandBuilder.noCalloutChosen": "اختر callout لهذا الأمر أولًا.",
 	"commandBuilder.save": "حفظ",
-	"commandBuilder.roleThemeOwned":
-		"يوفّر القالب الخاص بك هذا الـ callout، لذا لا يتوفر له سوى تنسيق الكتلة.",
-	"commandBuilder.commandSuspended": "متوقف مؤقتًا ما دامت سمتك توفّر هذا الـ callout، وحينها لا يتوفر له سوى التنسيق الكتلي.",
+	"commandBuilder.roleThemeOwned": "يوفّر القالب الخاص بك هذا الـ callout، لذا لا يتوفر له سوى تنسيق الكتلة.",
+	"commandBuilder.commandSuspended":
+		"متوقف مؤقتًا ما دامت سمتك توفّر هذا الـ callout، وحينها لا يتوفر له سوى التنسيق الكتلي.",
 	"commandBuilder.pausedTag": "متوقف مؤقتًا بسبب السمة",
 	"commandBuilder.missingTag": "الـ callout مفقود",
 
 	"settings.resetAll": "إعادة التعيين",
-	"settings.resetAllDesc":
-		"يستعيد جميع الإعدادات والتخصيصات إلى قيمها الافتراضية.",
+	"settings.resetAllDesc": "يستعيد جميع الإعدادات والتخصيصات إلى قيمها الافتراضية.",
 	"settings.resetAllButton": "إعادة تعيين الكل",
 	"notice.resetAllDone": "تمت إعادة تعيين كل شيء إلى الإعدادات الافتراضية.",
 	"settings.resetIntro": "خذ لحظة لتقدّر كل ما بنيته مع Callout Studio.",
@@ -247,57 +234,49 @@ export const ar: Record<string, string> = {
 	"settings.resetItemAutocomplete": "إعدادات الإكمال التلقائي والبيانات الوصفية",
 	"settings.resetItemFallback": "النمط الاحتياطي",
 	"settings.resetItemIconLibraries": "ترتيب مكتبات الأيقونات والمكتبات المخفية",
-	"settings.resetAllConfirmAfter": "لا تقلق: قبل إعادة التعيين نحفظ نسخة احتياطية من إعداداتك الحالية. يمكنك إرجاعها في أي وقت عبر استعادة إصدار سابق في الإعدادات.\nإذا كنت تستخدم خدمة مزامنة، فقد تنتقل إعادة التعيين إلى أجهزتك الأخرى أيضًا.",
+	"settings.resetAllConfirmAfter":
+		"لا تقلق: قبل إعادة التعيين نحفظ نسخة احتياطية من إعداداتك الحالية. يمكنك إرجاعها في أي وقت عبر استعادة إصدار سابق في الإعدادات.\nإذا كنت تستخدم خدمة مزامنة، فقد تنتقل إعادة التعيين إلى أجهزتك الأخرى أيضًا.",
 	"settings.resetNothing": "لا يوجد ما يُعاد تعيينه: كل شيء على إعداداته الافتراضية بالفعل.",
 
-	"notice.customCommandMissingCallout":
-		"نوع الـ callout لهذا الأمر لم يعد موجودًا.",
+	"notice.customCommandMissingCallout": "نوع الـ callout لهذا الأمر لم يعد موجودًا.",
 	"notice.importedJSON": "تم استيراد {{count}} نوع callout من JSON.",
 	"notice.importedSettings": "تم استيراد إعدادات الإضافة.",
-	"notice.importedCalloutManager":
-		"تم الاستيراد من Callout Manager: تم إنشاء {{created}}، وتحديث {{updated}}.",
-	"notice.importedAdmonition":
-		"تم الاستيراد من Admonition: تم إنشاء {{created}}، وتحديث " +
-		"{{updated}}.",
-	"notice.noNewJSON":
-		"لم يتم استيراد أنواع callout جديدة (قد تكون المعرّفات موجودة بالفعل).",
+	"notice.importedCalloutManager": "تم الاستيراد من Callout Manager: تم إنشاء {{created}}، وتحديث {{updated}}.",
+	"notice.importedAdmonition": "تم الاستيراد من Admonition: تم إنشاء {{created}}، وتحديث " + "{{updated}}.",
+	"notice.noNewJSON": "لم يتم استيراد أنواع callout جديدة (قد تكون المعرّفات موجودة بالفعل).",
 	"notice.iconDownloadFailed":
 		'تعذّر تنزيل أيقونة Material "{{name}}". قد تكون غير متاحة لهذا الأسلوب/الوزن، أو قد يكون اتصالك بالإنترنت منقطعًا.',
-	"notice.vaultScanFailed": "تعذّرت عملية عدّ استخدامات الـcallout لأن {{count}} ملاحظة/ملاحظات لا يمكن قراءتها. تحقق من التخزين والمزامنة ثم أعد المحاولة.",
+	"notice.vaultScanFailed":
+		"تعذّرت عملية عدّ استخدامات الـcallout لأن {{count}} ملاحظة/ملاحظات لا يمكن قراءتها. تحقق من التخزين والمزامنة ثم أعد المحاولة.",
 
 	"notice.externalCssRetired":
 		"تمت إزالة خيار تنسيق CSS الشخصي. تستخدم هذه الـ callouts الآن تصميم Callout Studio المحفوظ لها ما لم تكن سمتك تنسقها. لم يتم تغيير ملاحظاتك ولا مقتطفات CSS الشخصية لديك.",
 	"notice.vaultRewritePartial":
 		"تعذّر تحديث {{count}} ملاحظة (ملاحظات) وبقيت دون تغيير. راجع وحدة تحكم المطور للتفاصيل.",
-	"notice.calloutDeleteIncomplete": "تعذّر تحويل بعض الملاحظات. تم الاحتفاظ بنوع الـ callout. التحويلات المكتملة محفوظة؛ عالج مشكلة الملف ثم شغّل الإجراء مرة أخرى لإتمامه.",
+	"notice.calloutDeleteIncomplete":
+		"تعذّر تحويل بعض الملاحظات. تم الاحتفاظ بنوع الـ callout. التحويلات المكتملة محفوظة؛ عالج مشكلة الملف ثم شغّل الإجراء مرة أخرى لإتمامه.",
 	"notice.nothingToWrap": "لا يوجد شيء للالتفاف.",
 	"notice.cursorNotInsideCallout": "المؤشر ليس داخل callout.",
 	"notice.headingAlreadyCallout": "هذا العنوان هو callout بالفعل.",
-	"notice.unwrapLeftAsIs":
-		"تعذّرت إزالة هذا الـ callout بأمان، لذا تُرك كما هو.",
-	"notice.autocompleteTargetMoved":
-		"لم يُدرج أي شيء — تغيّر السطر أثناء فتح المحرّر.",
+	"notice.unwrapLeftAsIs": "تعذّرت إزالة هذا الـ callout بأمان، لذا تُرك كما هو.",
+	"notice.autocompleteTargetMoved": "لم يُدرج أي شيء — تغيّر السطر أثناء فتح المحرّر.",
 	"notice.autocompleteAlwaysEnabled": "أصبح الإكمال التلقائي الآن ميزة أساسية وهو مفعّل دائمًا.",
 	"notice.openHotkeysFailed": "تعذّر فتح إعدادات الاختصارات في Obsidian.",
-	"notice.filterHotkeysFailed":
-		"تم فتح اختصارات Obsidian، لكن تعذّر تطبيق مرشح Callout Studio.",
+	"notice.filterHotkeysFailed": "تم فتح اختصارات Obsidian، لكن تعذّر تطبيق مرشح Callout Studio.",
 
 	"editor.editCallout": "تعديل الـ callout",
 	"editor.newCallout": "callout جديد",
 	"editor.displayName": "الاسم المعروض",
 	"editor.displayNameDesc": "التسمية المقروءة المعروضة في واجهة المستخدم",
-	"editor.displayNameBuiltIn":
-		"لا يمكن تغيير الاسم المعروض للـ callouts المدمجة",
+	"editor.displayNameBuiltIn": "لا يمكن تغيير الاسم المعروض للـ callouts المدمجة",
 	"editor.displayNamePlaceholder": "calloutي",
 	"editor.calloutIds": "معرّفات الـ callout",
-	"editor.calloutIdsDesc":
-		"جميع معرّفات هذا الـ callout. يُسمح باستخدام المسافات.\nاضغط Enter أو زر + للإضافة.",
+	"editor.calloutIdsDesc": "جميع معرّفات هذا الـ callout. يُسمح باستخدام المسافات.\nاضغط Enter أو زر + للإضافة.",
 	"editor.calloutIdsPlaceholder": "إضافة معرّف",
 	"editor.addId": "إضافة معرّف",
 	"editor.maxIds": "الحد الأقصى {{max}} من المعرّفات. احذف أحدها لإضافة معرّف آخر.",
 	"editor.idLinkedToName": "مرتبط بالاسم المعروض",
-	"editor.idCannotDelete":
-		"هذا المعرّف مرتبط بالاسم المعروض ولا يمكن حذفه — عدّل الاسم لتغييره",
+	"editor.idCannotDelete": "هذا المعرّف مرتبط بالاسم المعروض ولا يمكن حذفه — عدّل الاسم لتغييره",
 	"editor.icon": "أيقونة",
 	"editor.pickIcon": "تغيير الأيقونة",
 	"editor.replaceIcon": "استبدال الأيقونة",
@@ -313,8 +292,7 @@ export const ar: Record<string, string> = {
 	"editor.horizontalOffset": "الإزاحة الأفقية",
 	"editor.verticalOffset": "الإزاحة الرأسية",
 	"editor.colors": "الألوان",
-	"editor.colorsDesc":
-		"يحدد ألوان إطار هذا الـ callout وخلفيته ونصه.",
+	"editor.colorsDesc": "يحدد ألوان إطار هذا الـ callout وخلفيته ونصه.",
 	"editor.resetColors": "إعادة تعيين الألوان إلى الافتراضي",
 	"editor.paletteDeleted": "لون محذوف",
 	"editor.paletteGroupObsidian": "Callouts Obsidian",
@@ -322,14 +300,14 @@ export const ar: Record<string, string> = {
 	"editor.paletteGroupCustom": "مخصص",
 	"editor.contrastWarning": "تباين منخفض مع الخلفية — قد يصعب قراءته",
 	"editor.foldable": "قابل للطي",
-	"editor.foldableDesc":
-		"اختر ما إذا كان يمكن طي الـ callout وأي حالة افتراضية تُطبَّق عبر المخزن.",
+	"editor.foldableDesc": "اختر ما إذا كان يمكن طي الـ callout وأي حالة افتراضية تُطبَّق عبر المخزن.",
 	"editor.foldOff": "معطّل",
 	"editor.foldOpen": "مفتوح افتراضياً",
 	"editor.foldClosed": "مغلق افتراضياً",
 	"editor.cancel": "إلغاء",
 	"editor.saveChanges": "حفظ التغييرات",
-	"editor.saveFailed": "تعذّر إكمال الحفظ. إذا كان هذا المحرر لا يزال مفتوحًا، فأبقوه مفتوحًا وأعيدوا المحاولة بعد التحقق من مساحة التخزين والمزامنة. ربما حُفظت بعض الإعدادات أو تحديثات الملاحظات بالفعل.",
+	"editor.saveFailed":
+		"تعذّر إكمال الحفظ. إذا كان هذا المحرر لا يزال مفتوحًا، فأبقوه مفتوحًا وأعيدوا المحاولة بعد التحقق من مساحة التخزين والمزامنة. ربما حُفظت بعض الإعدادات أو تحديثات الملاحظات بالفعل.",
 	"editor.createCallout": "إنشاء callout",
 	"editor.nameRequired": "يلزم تحديد اسم معروض قبل إنشاء callout.",
 	"editor.noChangesToSave": "لم يتم إجراء أي تغييرات.",
@@ -338,20 +316,16 @@ export const ar: Record<string, string> = {
 	"editor.idTooLong": "يجب ألا يزيد المعرّف على {{max}} من الأحرف",
 	"editor.idExists": "يوجد callout بهذا المعرّف بالفعل",
 	"editor.idConflict": "هذا المعرّف يتعارض مع callout موجود",
-	"editor.idDashConflict":
-		'أوبسيديان يكتب المسافات كشرطات، لذلك يتعارض هذا المعرّف مع "{{other}}"',
+	"editor.idDashConflict": 'أوبسيديان يكتب المسافات كشرطات، لذلك يتعارض هذا المعرّف مع "{{other}}"',
 	"editor.idOwnedBy": '"{{id}}" هو أحد معرّفات {{name}}. يمكنك {{link}}.',
 	"editor.idMoveHere": "نقله إلى هنا",
-	"editor.idOwnedByMain":
-		'"{{id}}" هو المعرّف الرئيسي لـ {{name}}. لاستخدامه هنا، احذف {{name}} أولاً.',
-	"editor.idBuiltInStock":
-		'"{{id}}" أحد معرّفات Obsidian الخاصة بـ {{name}}.',
+	"editor.idOwnedByMain": '"{{id}}" هو المعرّف الرئيسي لـ {{name}}. لاستخدامه هنا، احذف {{name}} أولاً.',
+	"editor.idBuiltInStock": '"{{id}}" أحد معرّفات Obsidian الخاصة بـ {{name}}.',
 	"editor.idMoving": 'عند الحفظ، سينتقل "{{id}}" إلى هنا من {{name}}.',
 	"editor.idMovingNotes": "لا تتغير ملاحظاتك. تأخذ نمط هذا الـ callout.",
 	"editor.idFromTheme":
 		"{{theme}} يوفّر بالفعل callout بهذا المعرّف، لذا لا يمكن لـ Callout Studio تنسيقه. اختر معرّفًا مختلفًا.",
-	"editor.namesFromTheme":
-		"{{theme}} يرسم الـ callouts الكتلية {{names}} بنفسه. تحتفظ معرّفاتك الأخرى بهذا التصميم.",
+	"editor.namesFromTheme": "{{theme}} يرسم الـ callouts الكتلية {{names}} بنفسه. تحتفظ معرّفاتك الأخرى بهذا التصميم.",
 	"editor.namesFromThemeAndObsidian":
 		"{{theme}} يرسم الـ callouts الكتلية {{names}} بنفسه، ويرسم Obsidian {{stock}}. تحتفظ معرّفاتك الأخرى بهذا التصميم.",
 	"editor.idThemePattern":
@@ -359,8 +333,7 @@ export const ar: Record<string, string> = {
 	"editor.untitledCallout": "Callout بدون عنوان",
 	"editor.loremIpsum":
 		"تداعب نسمة لطيفة أوراق الأشجار. وتغمر أشعة الشمس الدافئة ممراً هادئاً، فتبعث الحياة في المشهد.",
-	"editor.loremIpsumShort":
-		"تداعب نسمة لطيفة أوراق الأشجار.",
+	"editor.loremIpsumShort": "تداعب نسمة لطيفة أوراق الأشجار.",
 	"editor.sampleInlineText": "إليك شارة [!{id}]{{title}} مضمّنة داخل فقرة.",
 	"editor.previewReadOnly": "لا يمكن تعديل المعاينة المباشرة",
 	"noteChanges.title": "هل تريد تحديث ملاحظاتك؟",
@@ -371,18 +344,15 @@ export const ar: Record<string, string> = {
 	"noteChanges.titlesChange": 'غيّرها إلى "{{new}}"',
 	"noteChanges.titlesLeaveDesc": 'تبقى تقرأ "{{old}}".',
 	"noteChanges.foldChange": 'اضبطها على "{{state}}"',
-	"noteChanges.foldLeaveDesc":
-		"فقط الـ callout التي تُدرجها من الآن فصاعداً تستخدم الإعداد الجديد.",
+	"noteChanges.foldLeaveDesc": "فقط الـ callout التي تُدرجها من الآن فصاعداً تستخدم الإعداد الجديد.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": '{{name}} — يوفّره القالب الخاص بك',
+	"themePreview.title": "{{name}} — يوفّره القالب الخاص بك",
 	"themePreview.summary":
 		"مقدّم من {{theme}} (للقراءة فقط). لا يمكن تعديل اللون أو الأيقونة أو المعرّف هنا، كما أن تنسيقي العنوان وضمن السطر غير متاحين. للتخصيص، أنشئ callout جديدًا.",
 	"themePreview.previewTitle": "كيف يظهر الآن",
-	"themePreview.blockSample":
-		"> [!{{id}}] {{name}}\n" +
-		"> هذا هو شكل محتوى الـ callout.\n",
+	"themePreview.blockSample": "> [!{{id}}] {{name}}\n" + "> هذا هو شكل محتوى الـ callout.\n",
 	"editor.themePreviewClose": "فهمت",
 
 	// Palette editor modal
@@ -398,8 +368,8 @@ export const ar: Record<string, string> = {
 	"palette.metadataNameShared":
 		"في البيانات الوصفية لـ callout: {{key}}. توجد لوحة محفوظة أخرى بهذه الكلمة أيضًا، لذا تستجيب لها واحدة منهما فقط.",
 	"palette.renameNotesChange":
-		"غيّرت اسم اللوحة من \"{{old}}\" إلى \"{{new}}\"، لذا تتغير كلمتها في البيانات الوصفية لـ callout من \"{{oldWord}}\" إلى \"{{newWord}}\".",
-	"palette.renameNotesLeaveDesc": "تحتفظ بـ \"{{word}}\" وتعود إلى لونها الخاص.",
+		'غيّرت اسم اللوحة من "{{old}}" إلى "{{new}}"، لذا تتغير كلمتها في البيانات الوصفية لـ callout من "{{oldWord}}" إلى "{{newWord}}".',
+	"palette.renameNotesLeaveDesc": 'تحتفظ بـ "{{word}}" وتعود إلى لونها الخاص.',
 	"palette.renameNotesChangeDesc": "كل |{{old}} في ملاحظاتك يصبح |{{new}}.",
 	"palette.renameNotesFailed":
 		"تعذّر تحديث بعض الملاحظات. التي تم تحديثها محفوظة، وما تبقى لا يزال يستخدم الاسم القديم.",
@@ -409,8 +379,10 @@ export const ar: Record<string, string> = {
 	"palette.advancedColors": "الألوان",
 	"palette.lightModeColors": "ألوان الوضع الفاتح",
 	"palette.darkModeColors": "ألوان الوضع الداكن",
-	"palette.modeColorsHintLight": "تنطبق هذه التغييرات على الوضع الفاتح فقط. يحتفظ الوضع الداكن بألوانه الخاصة.\nلتعديلها، اضغط على زر القمر أعلاه.",
-	"palette.modeColorsHintDark": "تنطبق هذه التغييرات على الوضع الداكن فقط. يحتفظ الوضع الفاتح بألوانه الخاصة.\nلتعديلها، اضغط على زر الشمس أعلاه.",
+	"palette.modeColorsHintLight":
+		"تنطبق هذه التغييرات على الوضع الفاتح فقط. يحتفظ الوضع الداكن بألوانه الخاصة.\nلتعديلها، اضغط على زر القمر أعلاه.",
+	"palette.modeColorsHintDark":
+		"تنطبق هذه التغييرات على الوضع الداكن فقط. يحتفظ الوضع الفاتح بألوانه الخاصة.\nلتعديلها، اضغط على زر الشمس أعلاه.",
 	"palette.showLightMode": "إظهار الوضع الفاتح",
 	"palette.showDarkMode": "إظهار الوضع الداكن",
 	"palette.accentColor": "لون التمييز",
@@ -502,12 +474,9 @@ export const ar: Record<string, string> = {
 	"iconPicker.searchSimpleIcons": "البحث في Simple Icons",
 	"iconPicker.custom": "أيقونات مخصصة",
 	"iconPicker.searchCustom": "البحث في الأيقونات المخصصة",
-	"iconPicker.customTooLarge":
-		"{{name}} كبير جدًا. يجب ألا يتجاوز حجم الأيقونات المخصصة 5 ميغابايت.",
-	"iconPicker.customUnsupported":
-		"{{name}} ليس ملف أيقونة مخصصة مدعومًا. استخدم SVG أو PNG أو JPEG أو WebP.",
-	"iconPicker.customInvalidSvg":
-		"{{name}} لا يمكن قراءته كـ SVG آمن، لذا لم تتم إضافته.",
+	"iconPicker.customTooLarge": "{{name}} كبير جدًا. يجب ألا يتجاوز حجم الأيقونات المخصصة 5 ميغابايت.",
+	"iconPicker.customUnsupported": "{{name}} ليس ملف أيقونة مخصصة مدعومًا. استخدم SVG أو PNG أو JPEG أو WebP.",
+	"iconPicker.customInvalidSvg": "{{name}} لا يمكن قراءته كـ SVG آمن، لذا لم تتم إضافته.",
 	"iconPicker.customDecodeFailed": "تعذّرت قراءة {{name}} كأيقونة مخصصة.",
 	"iconPicker.customDuplicate":
 		"{{name}} موجودة بالفعل ضمن الأيقونات المخصصة. أعد تسمية الملف أو احذف الأيقونة الموجودة.",
@@ -665,8 +634,7 @@ export const ar: Record<string, string> = {
 	"iconPack.downloadDetail": "{{count}} أيقونة · {{size}} · تنزيل لمرة واحدة",
 	"iconPack.download": "تنزيل",
 	"iconPack.downloading": "جاري تنزيل {{name}}…",
-	"iconPack.downloadFailed":
-		"تعذر تنزيل {{name}}. تحقق من الاتصال وحاول مرة أخرى.",
+	"iconPack.downloadFailed": "تعذر تنزيل {{name}}. تحقق من الاتصال وحاول مرة أخرى.",
 	"iconPack.retry": "إعادة المحاولة",
 	"iconPack.faBrandsNotice":
 		"أيقونات العلامات التجارية هي علامات تجارية مسجلة لأصحابها. لا يعني تضمينها أي تأييد. يرجى استخدامها فقط لتمثيل الشركة أو المنتج أو الخدمة التي تشير إليها.",
@@ -757,14 +725,12 @@ export const ar: Record<string, string> = {
 	"settings.metadataWordTooLong": "يجب ألا تتجاوز الكلمة {{max}} حرفًا",
 	"settings.maxMetadataWords": "الحد الأقصى {{max}} كلمة. احذف كلمة لإضافة أخرى.",
 	"settings.buildFailed": "تعذّر على Callout Studio رسم إعداداته؛ أعد تشغيل Obsidian، وبلّغ عن المشكلة إن تكررت.",
-	"settings.globalSettingsRegularDesc":
-		"الحدود ونصف القطر ومقياس الخط والمحاذاة.",
-	"settings.globalSettingsHeadingDesc":
-		"الحدود والشكل والمسافة الرأسية.",
-	"settings.globalSettingsInlineDesc":
-		"الحدود والشكل.",
+	"settings.globalSettingsRegularDesc": "الحدود ونصف القطر ومقياس الخط والمحاذاة.",
+	"settings.globalSettingsHeadingDesc": "الحدود والشكل والمسافة الرأسية.",
+	"settings.globalSettingsInlineDesc": "الحدود والشكل.",
 	"settings.themeCalloutStyles": "استخدام أنماط الـ callout في سمتك",
-	"settings.themeCalloutStylesDesc": "عند التفعيل، تحتفظ الـ callouts التي تنسّقها سمتك بمظهرها وتظهر كـ callouts كتلية فقط. وعند الإيقاف، يرسم Callout Studio كل callout.",
+	"settings.themeCalloutStylesDesc":
+		"عند التفعيل، تحتفظ الـ callouts التي تنسّقها سمتك بمظهرها وتظهر كـ callouts كتلية فقط. وعند الإيقاف، يرسم Callout Studio كل callout.",
 	"settings.calloutTypeRegular": "نمط callout الكتلي",
 	"settings.calloutTypeHeading": "نمط callout العنوان",
 	"settings.calloutTypeInline": "نمط callout المضمّن",
@@ -801,19 +767,14 @@ export const ar: Record<string, string> = {
 	// callout ids, which are normally Latin, so the bidi algorithm resolves that
 	// fragment left-to-right and a mirrored "←" would point from the new id back
 	// to the old one. Prose paths such as `firstRun.laterHint` do mirror.
-	"vault.idsUpdated":
-		"تم تحديث {{count}} معرّف callout في ملفات المخزن: {{oldIds}} → {{newId}}",
-	"vault.titlesUpdated":
-		"تم تحديث {{count}} عنوان callout في ملفات المخزن: {{oldTitle}} → {{newTitle}}",
-	"vault.foldUpdated":
-		"تم تحديث علامة الطيّ لـ {{count}} callout في ملفات المخزن.",
+	"vault.idsUpdated": "تم تحديث {{count}} معرّف callout في ملفات المخزن: {{oldIds}} → {{newId}}",
+	"vault.titlesUpdated": "تم تحديث {{count}} عنوان callout في ملفات المخزن: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated": "تم تحديث علامة الطيّ لـ {{count}} callout في ملفات المخزن.",
 	"vault.confirmReplace": "استبدال",
-	"vault.replacePromptInUse":
-		'يُستخدم "{{name}}" {{count}} مرة في {{files}} ملف. اختر callout لاستبداله:',
+	"vault.replacePromptInUse": 'يُستخدم "{{name}}" {{count}} مرة في {{files}} ملف. اختر callout لاستبداله:',
 	"vault.replacePromptUnused": 'اختر callout لاستبدال "{{name}}":',
 	"vault.noReplacementAvailable": "لا توجد callouts أخرى متاحة لاستبدال هذا.",
-	"vault.convertedToPlainText":
-		"تم تحويل {{blocks}} كتلة callout في {{files}} ملف إلى نص عادي.",
+	"vault.convertedToPlainText": "تم تحويل {{blocks}} كتلة callout في {{files}} ملف إلى نص عادي.",
 	"vault.resetNotesFailed":
 		"تعذّر تحديث بعض الملاحظات، لذا لم تتم إعادة تعيين الـ callout. اختر إعادة التعيين إلى الافتراضي مرة أخرى للإنهاء.",
 
@@ -830,11 +791,13 @@ export const ar: Record<string, string> = {
 	"quickInsert.noResults": "لم يتم العثور على أي callout",
 	"quickInsert.noBuiltInCallouts": "لا تتوفر أي callouts مدمجة حاليًا.",
 	"quickInsert.noThemeCallouts": "لا تتوفر أي callouts خاصة بالسمة حاليًا.",
-	"quickInsert.targetMoved": "الملاحظة التي فتحت منها الإدراج السريع تغيّرت أو أُغلقت. أعد فتح الإدراج السريع في الملاحظة التي تريد تحريرها.",
+	"quickInsert.targetMoved":
+		"الملاحظة التي فتحت منها الإدراج السريع تغيّرت أو أُغلقت. أعد فتح الإدراج السريع في الملاحظة التي تريد تحريرها.",
 	"quickInsert.targetMovedHint": "الملاحظة الأصلية لم تعد متاحة لهذا الإدراج.",
 	"quickInsert.noUserCallouts":
 		"لم تُنشئوا أي callout مخصص بعد. شغّلوا «Callout Studio: إنشاء نوع callout جديد» من لوحة الأوامر.",
-	"quickInsert.noAvailableUserCallouts": "تظهر الـ callouts المخصصة لديك حاليًا ضمن فلتر السمة لأن السمة النشطة تتحكم بها.",
+	"quickInsert.noAvailableUserCallouts":
+		"تظهر الـ callouts المخصصة لديك حاليًا ضمن فلتر السمة لأن السمة النشطة تتحكم بها.",
 	"quickInsert.noEditorHint": "لا توجد ملاحظة مفتوحة في وضع التحرير، لذا لا يمكن إدراج شيء.",
 	"quickInsert.noEditor": "افتح ملاحظة في وضع التحرير لإدراج callout.",
 
@@ -844,13 +807,13 @@ export const ar: Record<string, string> = {
 	"vaultStats.roleInline": "ضمن السطر",
 
 	"portable.reviewTitle": "مراجعة التحويل",
-	"portable.helpIntro": "حدّد الاستبدالات التي تريد تطبيقها. انقر على رمز القلم أو نص الاستبدال لتعديله، ثم اضغط على Enter أو انقر خارج الحقل للحفظ. استخدم رمز إعادة الضبط للتخلّص من مسودة أو استعادة الاستبدال الافتراضي. لن تتغير الملاحظات إلا بعد اختيار «تحويل المحدد» والتأكيد. تُحدَّث روابط العناوين مع العناوين المحددة.",
+	"portable.helpIntro":
+		"حدّد الاستبدالات التي تريد تطبيقها. انقر على رمز القلم أو نص الاستبدال لتعديله، ثم اضغط على Enter أو انقر خارج الحقل للحفظ. استخدم رمز إعادة الضبط للتخلّص من مسودة أو استعادة الاستبدال الافتراضي. لن تتغير الملاحظات إلا بعد اختيار «تحويل المحدد» والتأكيد. تُحدَّث روابط العناوين مع العناوين المحددة.",
 	"portable.help": "حول التحويل",
 	"portable.roleLink": "رابط عنوان",
 	"portable.convertSelected": "تحويل المحدد",
 	"portable.selectionSummary": "تم تحديد {{selected}} من {{total}} استبدالات · {{links}} روابط عناوين للتحديث",
-	"portable.selectionSummaryNoLinks":
-		"تم تحديد {{selected}} من {{total}} استبدالات",
+	"portable.selectionSummaryNoLinks": "تم تحديد {{selected}} من {{total}} استبدالات",
 	"portable.selectionConflict": "سيجعل هذا الاختيار روابط العناوين ملتبسة. تم الاحتفاظ باختيارك السابق.",
 	"portable.selectAll": "تحديد الكل",
 	"portable.selectNone": "إلغاء تحديد الكل",
@@ -862,14 +825,19 @@ export const ar: Record<string, string> = {
 	"portable.retry": "إعادة المحاولة",
 	"portable.blockedAmbiguous": "تم تخطي هذا العنوان لأن وجهة رابطه ملتبسة.",
 	"portable.blockedTarget": "تم تخطي هذا العنوان لأنه لا يمكن الحفاظ على وجهة رابطه بأمان.",
-	"portable.recovery": "لا تزال بعض التغييرات متبقية. أكمل هذا التحويل وتحديث روابط العناوين قبل إعادة تشغيل الإضافة أو تعطيلها؛ تُحفظ الخطة المعلقة في الذاكرة فقط.",
-	"portable.recoveryChanged": "تغيّرت الملاحظات بعد توقف التحويل. تم الاحتفاظ بتحديثات الروابط المعلقة؛ تُفحص كل ملاحظة مجددًا قبل الكتابة.",
+	"portable.recovery":
+		"لا تزال بعض التغييرات متبقية. أكمل هذا التحويل وتحديث روابط العناوين قبل إعادة تشغيل الإضافة أو تعطيلها؛ تُحفظ الخطة المعلقة في الذاكرة فقط.",
+	"portable.recoveryChanged":
+		"تغيّرت الملاحظات بعد توقف التحويل. تم الاحتفاظ بتحديثات الروابط المعلقة؛ تُفحص كل ملاحظة مجددًا قبل الكتابة.",
 	"portable.finishConversion": "إكمال التحويل",
-	"portable.recoveryUnavailable": "تعذّر استعادة بعض تحديثات الروابط المعلقة بأمان. تحقق من الملاحظات المتأثرة قبل بدء تحويل جديد.",
+	"portable.recoveryUnavailable":
+		"تعذّر استعادة بعض تحديثات الروابط المعلقة بأمان. تحقق من الملاحظات المتأثرة قبل بدء تحويل جديد.",
 	"portable.title": "التحويل إلى Markdown قياسي",
-	"portable.settingDesc": "استبدل callout في العناوين وداخل الأسطر عبر الخزنة بنص عادي جاهز للاستخدام دون Callout Studio.",
+	"portable.settingDesc":
+		"استبدل callout في العناوين وداخل الأسطر عبر الخزنة بنص عادي جاهز للاستخدام دون Callout Studio.",
 	"portable.review": "مراجعة التحويل",
-	"portable.intro": "إذا كنت تنوي التوقف عن استخدام Callout Studio أو نقل خزنتك إلى تطبيق لا يدعمه، فحوّل callout في العناوين وداخل الأسطر إلى Markdown قياسي.",
+	"portable.intro":
+		"إذا كنت تنوي التوقف عن استخدام Callout Studio أو نقل خزنتك إلى تطبيق لا يدعمه، فحوّل callout في العناوين وداخل الأسطر إلى Markdown قياسي.",
 	"portable.before": "قبل",
 	"portable.after": "بعد",
 	"portable.replacement": "الاستبدال",
@@ -877,17 +845,20 @@ export const ar: Record<string, string> = {
 	"portable.type": "نوع",
 	"portable.text": "نص",
 	"portable.headingText": "عنوان",
-	"portable.backup": "نوصي بإنشاء نسخة احتياطية من خزنتك قبل التحويل. تُعدَّل الملاحظات الأصلية ولا يمكن التراجع عن ذلك في Callout Studio.",
+	"portable.backup":
+		"نوصي بإنشاء نسخة احتياطية من خزنتك قبل التحويل. تُعدَّل الملاحظات الأصلية ولا يمكن التراجع عن ذلك في Callout Studio.",
 	"portable.scanning": "جارٍ قراءة ملاحظات Markdown…",
 	"portable.progress": "قراءة الملاحظات: {{done}} من {{total}}",
 	"portable.empty": "لم يُعثر على callout صالح للتحويل في العناوين أو داخل الأسطر. لن يتغير شيء.",
 	"portable.confirmTitle": "هل تريد تحويل هذه الخزنة نهائيًا؟",
 	"portable.confirmSubtitle": "لا يتم إنشاء نسخة احتياطية تلقائية",
-	"portable.confirmBody": "هل تريد تحويل {{count}} مواضع وتحديث {{links}} روابط عناوين في {{files}} ملاحظات؟\nيؤدي ذلك إلى تغيير الملفات الأصلية ولا يمكن التراجع عنه في Callout Studio. لا تُنشأ نسخة احتياطية تلقائيًا. أنشئ نسخة احتياطية من خزنتك أولًا، واحفظ الملاحظات المفتوحة، وأوقف التحرير والمزامنة مؤقتًا حتى انتهاء التحويل.\nإذا تغيّر ملف أو فشلت الكتابة، يتوقف التحويل. تظل الملاحظات التي حُوِّلت بالفعل معدّلة.",
+	"portable.confirmBody":
+		"هل تريد تحويل {{count}} مواضع وتحديث {{links}} روابط عناوين في {{files}} ملاحظات؟\nيؤدي ذلك إلى تغيير الملفات الأصلية ولا يمكن التراجع عنه في Callout Studio. لا تُنشأ نسخة احتياطية تلقائيًا. أنشئ نسخة احتياطية من خزنتك أولًا، واحفظ الملاحظات المفتوحة، وأوقف التحرير والمزامنة مؤقتًا حتى انتهاء التحويل.\nإذا تغيّر ملف أو فشلت الكتابة، يتوقف التحويل. تظل الملاحظات التي حُوِّلت بالفعل معدّلة.",
 	"portable.confirmAction": "التحويل نهائيًا",
 	"portable.converting": "جارٍ تحويل التغييرات المحددة… لن يؤدي إغلاق هذه اللوحة إلى إيقاف التحويل.",
 	"portable.complete": "تم تحويل {{count}} مواضع وتحديث {{links}} روابط عناوين في {{files}} ملاحظات.",
-	"portable.stopped": "توقف التحويل. تم بالفعل تغيير {{count}} مواضع و{{links}} روابط عناوين في {{files}} ملاحظات؛ وتبقى هذه التعديلات.",
+	"portable.stopped":
+		"توقف التحويل. تم بالفعل تغيير {{count}} مواضع و{{links}} روابط عناوين في {{files}} ملاحظات؛ وتبقى هذه التعديلات.",
 	"portable.errorEditor": "احفظ الملاحظات المفتوحة لتحديث المراجعة تلقائيًا.",
 	"portable.errorChanged": "تغيّرت الملاحظات. راجع التغييرات المحدّثة قبل التحويل.",
 	"portable.errorBusy": "هناك تحويل آخر قيد التنفيذ. انتظر حتى ينتهي.",
@@ -904,7 +875,8 @@ export const ar: Record<string, string> = {
 	"portable.customInvalid": "أبقِ النص البديل في سطر واحد دون تغيير بنية Markdown المحيطة به.",
 	"portable.customUnsafe": "سيجعل هذا الاستبدال عنوانًا أو روابطه ملتبسة. اختر عنوانًا آخر.",
 	"portable.customStale": "تغيّرت المراجعة. أعد فتح محرر الاستبدال.",
-	"portable.customDiscarded": "أُزيلت {{count}} من الاستبدالات المخصصة لأن نصها الأصلي تغيّر أو تعذّر تحديد موقعه بأمان.",
+	"portable.customDiscarded":
+		"أُزيلت {{count}} من الاستبدالات المخصصة لأن نصها الأصلي تغيّر أو تعذّر تحديد موقعه بأمان.",
 	"portable.customBadge": "مخصص",
 
 	"usage.title": "ابحث عن callout",
@@ -933,90 +905,67 @@ export const ar: Record<string, string> = {
 	"usage.closeSettings": "أغلق الإعدادات لعرض نتائج الـ callout في الشريط الجانبي.",
 
 	"import.title": "مشاكل الاستيراد",
-	"import.reportLeadIn":
-		"راجعوا مشكلات الاستيراد هذه قبل المتابعة:",
-	"import.reportLeadInFatal":
-		"تعذّر استيراد هذه البيانات:",
+	"import.reportLeadIn": "راجعوا مشكلات الاستيراد هذه قبل المتابعة:",
+	"import.reportLeadInFatal": "تعذّر استيراد هذه البيانات:",
 	"import.entryHeading": "الإدخال {{index}} — {{label}}",
-	"import.summary":
-		"{{valid}} من {{total}} إدخالات صالحة · تم العثور على {{issues}} مشكلة.",
+	"import.summary": "{{valid}} من {{total}} إدخالات صالحة · تم العثور على {{issues}} مشكلة.",
 	"import.btnCancel": "إلغاء",
 	"import.btnImportValid": "استيراد الصالحة فقط ({{count}})",
-	"import.nothingValid": "لا توجد أي إدخالات صالحة، لذا لا شيء للاستيراد. ألغِ العملية، وأصلح المشكلات المدرجة هنا، ثم استورد مرة أخرى.",
-	"import.err.notRecognized":
-		"ملف غير معروف: كان متوقعاً مصفوفة من تعريفات الـ callout أو تصدير من Callout Studio.",
-	"import.warn.settingsIgnored":
-		"كتلة الإعدادات لم تكن كائناً صالحاً، وتم تجاهلها.",
-	"import.warn.invalidGradient":
-		"كان التدرج اللوني للخلفية غير صالح وتم تجاهله.",
+	"import.nothingValid":
+		"لا توجد أي إدخالات صالحة، لذا لا شيء للاستيراد. ألغِ العملية، وأصلح المشكلات المدرجة هنا، ثم استورد مرة أخرى.",
+	"import.err.notRecognized": "ملف غير معروف: كان متوقعاً مصفوفة من تعريفات الـ callout أو تصدير من Callout Studio.",
+	"import.warn.settingsIgnored": "كتلة الإعدادات لم تكن كائناً صالحاً، وتم تجاهلها.",
+	"import.warn.invalidGradient": "كان التدرج اللوني للخلفية غير صالح وتم تجاهله.",
 	"import.err.parseFailed": "الملف ليس JSON صالحاً ولا يمكن تحليله.",
 	"import.err.tooLarge": "يتجاوز هذا الاستيراد حد الحجم البالغ 16 MiB. قسّمه إلى ملفات أصغر ثم حاول مرة أخرى.",
-	"import.err.tooComplex": "هذا الاستيراد معقد جدًا: استخدم 1,000 عنصر كحد أقصى لكل قائمة أو كائن، و50,000 قيمة إجمالًا، و32 مستوى من التداخل.",
+	"import.err.tooComplex":
+		"هذا الاستيراد معقد جدًا: استخدم 1,000 عنصر كحد أقصى لكل قائمة أو كائن، و50,000 قيمة إجمالًا، و32 مستوى من التداخل.",
 	"import.err.imageBudget": "تتجاوز مجموعة الصور حدود الحجم أو التعقيد. أزل الصور الكبيرة أو بسّطها قبل الاستيراد.",
 	"import.err.processingFailed": "تعذر إكمال الاستيراد. راجع البيانات وحاول مرة أخرى.",
 	"import.reportTruncated": "يتم عرض أول {{shown}} مشكلة من أصل {{total}}. تم اختصار القيم الطويلة في هذا التقرير.",
 	"import.err.entryNotObject": "يجب أن يكون الإدخال كائناً.",
-	"import.err.requiredMissing":
-		'الحقل المطلوب "{{field}}" مفقود أو من نوع خاطئ.',
+	"import.err.requiredMissing": 'الحقل المطلوب "{{field}}" مفقود أو من نوع خاطئ.',
 	"import.err.idEmpty": "لا يجب أن يكون المعرّف فارغاً.",
-	"import.err.idTooLong":
-		'المعرّف "{{value}}" يتكون من {{length}} حرفاً؛ الحد الأقصى هو {{max}}.',
+	"import.err.idTooLong": 'المعرّف "{{value}}" يتكون من {{length}} حرفاً؛ الحد الأقصى هو {{max}}.',
 	"import.err.idBadChar":
 		'يحتوي المعرّف "{{value}}" على أحرف غير صالحة ("|" و"[" و"]" وعلامات الجدولة وفواصل الأسطر غير مسموح بها).',
 	"import.err.idMetadata":
 		'المعرّف "{{value}}" يحتوي على "|". في Obsidian كل ما يأتي بعد "|" الأولى هو بيانات وصفية للـ callout وليس جزءاً من النوع، لذا فإن هذا الإدخال يصف الـ callout "{{id}}". تم التخطي، وبالتالي يبقى "{{id}}" الحالي دون تغيير.',
-	"import.err.idReserved":
-		'المعرّف "{{value}}" محجوز لـ Callout Studio من أجل معايناته الخاصة ولا يمكن استيراده.',
+	"import.err.idReserved": 'المعرّف "{{value}}" محجوز لـ Callout Studio من أجل معايناته الخاصة ولا يمكن استيراده.',
 	"import.err.displayNameEmpty": "يجب ألا يكون الاسم المعروض فارغاً.",
-	"import.err.displayNameTooLong":
-		"الاسم المعروض يتكون من {{length}} حرفاً؛ الحد الأقصى هو {{max}}.",
-	"import.err.boolField":
-		'"{{field}}" يجب أن يكون قيمة منطقية (true أو false).',
+	"import.err.displayNameTooLong": "الاسم المعروض يتكون من {{length}} حرفاً؛ الحد الأقصى هو {{max}}.",
+	"import.err.boolField": '"{{field}}" يجب أن يكون قيمة منطقية (true أو false).',
 	"import.err.iconNotObject": "يجب أن تكون الأيقونة كائناً.",
-	"import.err.iconTypeInvalid":
-		'نوع الأيقونة "{{value}}" ليس أحد: {{types}}.',
-	"import.warn.iconFieldIgnored":
-		'"{{field}}" ينطبق فقط على أيقونات Material ويتم تجاهله لنوع الأيقونة {{type}}.',
-	"import.err.iconValueEmpty":
-		"يجب أن تكون قيمة الأيقونة سلسلة نصية غير فارغة.",
-	"import.err.iconValueTooLong":
-		"تتجاوز قيمة الأيقونة الحد الأقصى البالغ 200 حرف ({{length}} حرفًا).",
-	"import.err.materialStyle":
-		'نمط أيقونة Material "{{value}}" ليس أحد: outlined أو filled أو rounded أو sharp.',
-	"import.err.materialWeight":
-		'ثقل أيقونة Material "{{value}}" يجب أن يكون عدداً صحيحاً بين 100 و700 بخطوات 100.',
-	"import.warn.iconRecolorIgnored":
-		'"recolor" ينطبق فقط على صورك الخاصة ويتم تجاهله لنوع الأيقونة {{type}}.',
-	"import.err.iconRecolorInvalid":
-		'"recolor" يجب أن يكون true أو false (القيمة: "{{value}}").',
+	"import.err.iconTypeInvalid": 'نوع الأيقونة "{{value}}" ليس أحد: {{types}}.',
+	"import.warn.iconFieldIgnored": '"{{field}}" ينطبق فقط على أيقونات Material ويتم تجاهله لنوع الأيقونة {{type}}.',
+	"import.err.iconValueEmpty": "يجب أن تكون قيمة الأيقونة سلسلة نصية غير فارغة.",
+	"import.err.iconValueTooLong": "تتجاوز قيمة الأيقونة الحد الأقصى البالغ 200 حرف ({{length}} حرفًا).",
+	"import.err.materialStyle": 'نمط أيقونة Material "{{value}}" ليس أحد: outlined أو filled أو rounded أو sharp.',
+	"import.err.materialWeight": 'ثقل أيقونة Material "{{value}}" يجب أن يكون عدداً صحيحاً بين 100 و700 بخطوات 100.',
+	"import.warn.iconRecolorIgnored": '"recolor" ينطبق فقط على صورك الخاصة ويتم تجاهله لنوع الأيقونة {{type}}.',
+	"import.err.iconRecolorInvalid": '"recolor" يجب أن يكون true أو false (القيمة: "{{value}}").',
 	"import.err.colorInvalid":
 		'"{{field}}" يجب أن يكون لوناً بالتنسيق السداسي عشري مثل "#448aff" (تم استلام "{{value}}").',
-	"import.err.numberRange":
-		'"{{field}}" يجب أن يكون رقماً بين {{min}} و{{max}} (تم استلام "{{value}}").',
-	"import.err.iconSizeRange":
-		'"{{field}}" يجب أن يكون رقماً بين {{min}} و{{max}} (تم استلام "{{value}}").',
+	"import.err.numberRange": '"{{field}}" يجب أن يكون رقماً بين {{min}} و{{max}} (تم استلام "{{value}}").',
+	"import.err.iconSizeRange": '"{{field}}" يجب أن يكون رقماً بين {{min}} و{{max}} (تم استلام "{{value}}").',
 	"import.err.iconAdjustShape":
-		"يجب أن يكون \"iconAdjust\" كائنًا يربط نوع الـ callout (\"regular\", \"heading\", \"inline\") بحجم أيقونته وإزاحاتها.",
-	"import.err.aliasesNotArray":
-		'"aliases" يجب أن يكون مصفوفة من السلاسل النصية.',
+		'يجب أن يكون "iconAdjust" كائنًا يربط نوع الـ callout ("regular", "heading", "inline") بحجم أيقونته وإزاحاتها.',
+	"import.err.aliasesNotArray": '"aliases" يجب أن يكون مصفوفة من السلاسل النصية.',
 	"import.err.aliasNotString": "يجب أن يكون الاسم المستعار سلسلة نصية.",
 	"import.err.aliasDup": 'الاسم المستعار "{{value}}" مكرر في هذا الإدخال.',
 	"import.err.tooManyIds":
 		"معرّفات كثيرة جداً ({{count}})؛ يمكن لكل callout أن يمتلك {{max}} معرّفات كحد أقصى (أساسي + أسماء مستعارة).",
-	"import.err.metadataShape":
-		'"metadata" يجب أن يكون كائناً تكون جميع قيمه سلاسل نصية.',
+	"import.err.metadataShape": '"metadata" يجب أن يكون كائناً تكون جميع قيمه سلاسل نصية.',
 	"import.warn.unknownFields": "تم تجاهل الحقول غير المعروفة: {{fields}}.",
 	"import.err.duplicateInFile":
 		'المعرّف/الاسم المستعار "{{value}}" مستخدم بالفعل من قِبَل الإدخال #{{first}} في هذا الملف.',
-	"import.err.aliasConflict":
-		'الاسم المستعار "{{value}}" مستخدم بالفعل من قِبَل callout آخر ("{{other}}") في مخزنك.',
+	"import.err.aliasConflict": 'الاسم المستعار "{{value}}" مستخدم بالفعل من قِبَل callout آخر ("{{other}}") في مخزنك.',
 	"import.warn.defaultFoldedAutofix":
 		'كانت "defaultFolded" true بينما كانت "foldable" false؛ تمت إعادة تعيين defaultFolded إلى false.',
 	"import.warn.imageMissing":
 		"يستخدم هذا الـ callout صورة غير موجودة في الملف ولا في هذه الخزنة، لذا سيُعرض رمز بديل إلى أن تختار له صورة جديدة.",
 
-	"import.err.paletteIdInvalid":
-		'"paletteId" يجب أن يكون معرّف نصي غير فارغ (تم استلام "{{value}}").',
+	"import.err.paletteIdInvalid": '"paletteId" يجب أن يكون معرّف نصي غير فارغ (تم استلام "{{value}}").',
 	"import.warn.iconNameUnknown":
 		'لا يوجد أيقونة باسم "{{value}}" في {{type}}، لذلك تم استخدام الأيقونة الافتراضية بدلاً منها.',
 	"import.warn.cmIconUnknownNew":
@@ -1050,28 +999,25 @@ export const ar: Record<string, string> = {
 	"import.cmVaultChecking": "جارٍ البحث عن إضافة Callout Manager…",
 	"import.cmVaultFound": "تم العثور على {{count}} تلميح(ات) مخصصة.",
 	"import.cmFromPaste": "الأنماط المنسوخة",
-	"import.cmFromPasteDesc":
-		"ما ينسخه زر Copy في Callout Manager، أو ملف data.json.",
+	"import.cmFromPasteDesc": "ما ينسخه زر Copy في Callout Manager، أو ملف data.json.",
 	"import.cmPlaceholder": "الصق الأنماط المنسوخة، أو ملف data.json، هنا…",
 	"import.cmBtnCancel": "إلغاء",
 	"import.cmBtnImport": "استيراد",
-	"import.err.cmNoBlocksFound":
-		"لم يتم العثور على أي أنماط Callout Manager في الملف أو النص الملصق.",
+	"import.err.cmNoBlocksFound": "لم يتم العثور على أي أنماط Callout Manager في الملف أو النص الملصق.",
 	"import.err.cmNotRecognized":
-		"ملف غير معروف: كان متوقعاً الأنماط الناتجة عن زر Copy في Callout " +
-		"Manager، أو ملف data.json الخاص به.",
+		"ملف غير معروف: كان متوقعاً الأنماط الناتجة عن زر Copy في Callout " + "Manager، أو ملف data.json الخاص به.",
 	"import.err.cmNoEntries": "لم يتم العثور على أي تلميحات مخصصة لاستيرادها.",
-	"import.err.cmNoColorForNew":
-		'لم يتم العثور على لون قابل للاستخدام للتلميح الجديد "{{value}}"; تم تخطيه.',
-	"import.err.cmIdConflict":
-		'المعرّف "{{value}}" مستخدم بالفعل كاسم مستعار لتلميح آخر ("{{other}}")، وتم تخطيه.',
-	"import.warn.cmNoColorDefault":
-		"لم يتم تعيين لون في Callout Manager، لذلك تم استخدام الرمادي الافتراضي.",
+	"import.err.cmNoColorForNew": 'لم يتم العثور على لون قابل للاستخدام للتلميح الجديد "{{value}}"; تم تخطيه.',
+	"import.err.cmIdConflict": 'المعرّف "{{value}}" مستخدم بالفعل كاسم مستعار لتلميح آخر ("{{other}}")، وتم تخطيه.',
+	"import.warn.cmNoColorDefault": "لم يتم تعيين لون في Callout Manager، لذلك تم استخدام الرمادي الافتراضي.",
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "لا يمكن الحفاظ على التنسيق المعتمد على السمة. تُفضّل القيم غير المشروطة؛ ويُطبّق أي بديل مشروط على جميع السمات.",
-	"import.warn.cmCustomStylesSkipped": "لن يتم استيراد CSS المخصص من Callout Manager. يمكن نقل إعدادات الأيقونة واللون المدعومة فقط.",
-	"import.warn.cmSchemeIcon": "يستخدم Callout Studio أيقونة واحدة لكلا نظامي الألوان؛ وستُستخدم الأيقونة المستوردة في كليهما.",
+	"import.warn.cmThemeConditionPartial":
+		"لا يمكن الحفاظ على التنسيق المعتمد على السمة. تُفضّل القيم غير المشروطة؛ ويُطبّق أي بديل مشروط على جميع السمات.",
+	"import.warn.cmCustomStylesSkipped":
+		"لن يتم استيراد CSS المخصص من Callout Manager. يمكن نقل إعدادات الأيقونة واللون المدعومة فقط.",
+	"import.warn.cmSchemeIcon":
+		"يستخدم Callout Studio أيقونة واحدة لكلا نظامي الألوان؛ وستُستخدم الأيقونة المستوردة في كليهما.",
 	"import.err.cmDuplicateId": "المعرّف {{value}} مكرر مع {{other}} في هذا الاستيراد وتم تخطيه.",
 	"import.admTitle": "استيراد من Admonition",
 	"import.admInstructions":
@@ -1086,40 +1032,33 @@ export const ar: Record<string, string> = {
 	"import.admBtnCancel": "إلغاء",
 	"import.admBtnImport": "استيراد",
 	"import.err.admNotRecognized":
-		"ملف غير معروف: كان المتوقع قائمة admonition أو ملف data.json " +
-		"الخاص بـ Admonition.",
+		"ملف غير معروف: كان المتوقع قائمة admonition أو ملف data.json " + "الخاص بـ Admonition.",
 	"import.err.admNoEntries": "لم يتم العثور على أي admonition لاستيراده.",
-	"import.err.admTypeMissing":
-		'هذا الـ admonition لا يحتوي على "type"، وقد تم تخطيه.',
+	"import.err.admTypeMissing": 'هذا الـ admonition لا يحتوي على "type"، وقد تم تخطيه.',
 	"import.warn.admIconUnknown":
-		'لا توجد أيقونة باسم "{{value}}" في أي مكتبة أيقونات، لذلك تم ' +
-		"استخدام الأيقونة الافتراضية.",
+		'لا توجد أيقونة باسم "{{value}}" في أي مكتبة أيقونات، لذلك تم ' + "استخدام الأيقونة الافتراضية.",
 	"import.warn.admIconUnknownExisting":
-		'لا توجد أيقونة باسم "{{value}}" في أي مكتبة أيقونات، لذلك احتفظ ' +
-		'"{{id}}" بالأيقونة الموجودة لديه.',
+		'لا توجد أيقونة باسم "{{value}}" في أي مكتبة أيقونات، لذلك احتفظ ' + '"{{id}}" بالأيقونة الموجودة لديه.',
 	"import.warn.admUnsupportedOptions": "لن يتم استيراد خيارات Admonition هذه: {{fields}}.",
 	"import.warn.admImageSkipped": "تعذرت قراءة الصورة المرفوعة ولم يتم استيرادها.",
 	"import.warn.admIconWithCss":
 		"يتم تنسيق هذا الـ admonition عبر مقتطف CSS في Admonition. هذا " +
 		"التنسيق ليس جزءًا من الاستيراد، لذلك انتقل الاسم والأيقونة " +
 		"واللون فقط.",
-	"import.warn.admNoColor":
-		"لم يُحدَّد أي لون، لذلك تم استخدام الأزرق الافتراضي.",
-	"import.warn.admTitleTruncated":
-		"طول العنوان {{length}} حرفًا؛ تم اختصاره إلى {{max}}.",
+	"import.warn.admNoColor": "لم يُحدَّد أي لون، لذلك تم استخدام الأزرق الافتراضي.",
+	"import.warn.admTitleTruncated": "طول العنوان {{length}} حرفًا؛ تم اختصاره إلى {{max}}.",
 
 	"footer.openIssue": "افتح مشكلة",
 	"footer.sourceCode": "الشيفرة المصدرية",
 	"settings.about": "حول",
 	"settings.version": "الإصدار",
 	"settings.deletePaletteBodyLinkedOne":
-		'يوجد 1 callout يستخدمها. سيحتفظ بألوانه، ويمكنك إعادة ربطه لاحقًا من صف اللون في محرره.',
+		"يوجد 1 callout يستخدمها. سيحتفظ بألوانه، ويمكنك إعادة ربطه لاحقًا من صف اللون في محرره.",
 	"settings.deletePaletteBodyLinked":
-		'يوجد {{count}} callout يستخدمونها. سيحتفظون بألوانهم، ويمكنك إعادة ربطهم لاحقًا من صف اللون في أي محرر منهم.',
+		"يوجد {{count}} callout يستخدمونها. سيحتفظون بألوانهم، ويمكنك إعادة ربطهم لاحقًا من صف اللون في أي محرر منهم.",
 	"notice.palettesMerged":
 		"تم دمج {{count}} لون محفوظ كان يحمل ألوانًا متطابقة: {{names}}. الـ callouts التي تستخدمها تحتفظ بألوانها وهي الآن مرتبطة باللون المتبقي.",
-	"editor.colorsDescDeleted":
-		"تم حذف اللون المحفوظ لهذا الـ callout. {{link}}",
+	"editor.colorsDescDeleted": "تم حذف اللون المحفوظ لهذا الـ callout. {{link}}",
 	"editor.colorsDescDeletedLink": "استعادة",
 	"palette.colorExists":
 		'هذه الألوان مطابقة لـ "{{name}}". لا يمكن أن يكون لونان محفوظان متطابقين — غيّر لونًا واحدًا لتمييزهما.',
@@ -1136,8 +1075,7 @@ export const ar: Record<string, string> = {
 	"notice.exportedCssUpdated": "تم تحديث مقطع CSS في {{path}}",
 	"notice.exportedCssUnchanged": "مقطع CSS محدث بالفعل.",
 	"notice.exportCssEmpty": "لا توجد أنواع نداء مخصصة لتصديرها.",
-	"notice.exportCssFailed":
-		"تعذر حفظ مقطع CSS. راجع وحدة تحكم المطور للحصول على التفاصيل.",
+	"notice.exportCssFailed": "تعذر حفظ مقطع CSS. راجع وحدة تحكم المطور للحصول على التفاصيل.",
 	"notice.exportCssEnabled":
 		"هذا المقطع مفعّل في هذه الخزنة. يقوم Callout Studio بتنسيق هذه النداءات بالفعل، والمقطع يحتفظ بالتنسيق الذي كان عليه عند تصديره.",
 	"confirm.titleOverwriteSnippet": "استبدال مقطع CSS",
@@ -1158,56 +1096,76 @@ export const ar: Record<string, string> = {
 	"quickInsert.readingView": "بدّل إلى وضع المصدر أو المعاينة المباشرة لإدراج callout.",
 	"quickInsert.noCursorHint": "لا يوجد مؤشر في هذه الملاحظة، لذا لا يوجد مكان للإدراج.",
 	"quickInsert.noCursor": "ضع المؤشر في الملاحظة في المكان الذي تريد إدراج الـ callout فيه، ثم حاول مرة أخرى.",
-	"notice.legacyDiscoveryArchiveFailed": "تعذّر إكمال نسخة الاسترداد الخاصة بالترقية. بقيت ذاكرة التخزين المؤقت المحلية القديمة للاكتشاف وملف CSS لبدء التشغيل دون تغيير. تحقّق من صلاحيات الكتابة والوصول إلى مساحة التخزين ومن توفّر مساحة خالية، ثم أعد تشغيل Obsidian لإعادة المحاولة.",
+	"notice.legacyDiscoveryArchiveFailed":
+		"تعذّر إكمال نسخة الاسترداد الخاصة بالترقية. بقيت ذاكرة التخزين المؤقت المحلية القديمة للاكتشاف وملف CSS لبدء التشغيل دون تغيير. تحقّق من صلاحيات الكتابة والوصول إلى مساحة التخزين ومن توفّر مساحة خالية، ثم أعد تشغيل Obsidian لإعادة المحاولة.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "متوقف مؤقتًا إلى أن تنشئ الـ callout المفقود من جديد أو تختار غيره.",
 	"confirm.titleRestoreSettings": "استعادة هذه الإعدادات",
 	"confirm.titleCreateSettingsFile": "إنشاء ملف إعدادات",
 	"confirm.saveDisplayedSettings":
 		"يحفظ هذا الإعداد الذي تراه الآن كملف إعداداتك ويعيد تشغيل الحفظ. تُحفظ أولًا نسخة احتياطية من النسخة الاحتياطية التي يحتفظ بها هذا الجهاز.\nإذا كان من الممكن أن يحتوي جهاز آخر على تغييرات أحدث تريد الاحتفاظ بها، فدعه ينهي المزامنة قبل المتابعة. قد يرسل تطبيق المزامنة هذا الملف إلى أجهزتك الأخرى.\nيبحث Callout Studio عن ملف الإعدادات مرة أخيرة قبل الحفظ. إذا عاد، فإن Callout Studio يبقي عليه بدلًا من ذلك.",
-	"notice.settingsBackupFailed": "تعذّر متابعة استرداد الإعدادات لأنه تعذّر حفظ نسخة احتياطية للأمان. تحقق من المساحة المتاحة وأذونات الكتابة، ثم أعد المحاولة.",
-	"notice.settingsNewerVersion": "تم حفظ إعدادات Callout Studio بواسطة إصدار أحدث من الإضافة، لذا لن يُكتب شيء على هذا الجهاز حتى تُحدّثها. إعداداتك آمنة — حدّث Callout Studio من هنا وأعد تحميل Obsidian.",
+	"notice.settingsBackupFailed":
+		"تعذّر متابعة استرداد الإعدادات لأنه تعذّر حفظ نسخة احتياطية للأمان. تحقق من المساحة المتاحة وأذونات الكتابة، ثم أعد المحاولة.",
+	"notice.settingsNewerVersion":
+		"تم حفظ إعدادات Callout Studio بواسطة إصدار أحدث من الإضافة، لذا لن يُكتب شيء على هذا الجهاز حتى تُحدّثها. إعداداتك آمنة — حدّث Callout Studio من هنا وأعد تحميل Obsidian.",
 	"saveStatus.changed":
 		"تغيّر ملف الإعدادات أثناء التحرير. مسودتك ما زالت متاحة. اختر إعادة المحاولة لتحميل الإعدادات الواردة، ثم راجع مسودتك واحفظها مرة أخرى.",
-	"saveStatus.missing": "الحفظ متوقف مؤقتًا لأن ملف الإعدادات مفقود. يمكن أن يحدث هذا بعد إعادة التثبيت أو أثناء استمرار المزامنة. أنهِ المزامنة ثم أعد المحاولة. لاستبدال الملف المفقود عن قصد، استخدم إنشاء ملف إعدادات جديد في إعدادات Callout Studio.",
+	"saveStatus.missing":
+		"الحفظ متوقف مؤقتًا لأن ملف الإعدادات مفقود. يمكن أن يحدث هذا بعد إعادة التثبيت أو أثناء استمرار المزامنة. أنهِ المزامنة ثم أعد المحاولة. لاستبدال الملف المفقود عن قصد، استخدم إنشاء ملف إعدادات جديد في إعدادات Callout Studio.",
 	"saveStatus.restoreSettings": "استعادة هذه الإعدادات",
 	"saveStatus.createSettingsFile": "إنشاء ملف إعدادات",
 	"saveStatus.checkAgain": "التحقق مرة أخرى",
-	"saveStatus.recoverInSettings": "لاستعادة الملف المفقود على هذا الجهاز، افتح إعدادات Callout Studio. قبل إغلاق هذا المحرر، انسخ أي تعديلات غير محفوظة تريد الاحتفاظ بها؛ فهي لم تُحفظ.",
+	"saveStatus.recoverInSettings":
+		"لاستعادة الملف المفقود على هذا الجهاز، افتح إعدادات Callout Studio. قبل إغلاق هذا المحرر، انسخ أي تعديلات غير محفوظة تريد الاحتفاظ بها؛ فهي لم تُحفظ.",
 	"saveStatus.openSettings": "فتح إعدادات Callout Studio",
-	"notice.openSettingsFailed": "تعذّر فتح إعدادات Callout Studio. افتح الإعدادات ← Callout Studio لاختيار ما تريد فعله.",
-	"saveStatus.notesFailed": "تم حفظ تعريف الـ callout، لكن تعذّر إكمال بعض تحديثات الملاحظات. أبقِ هذا المحرر مفتوحًا واختر حفظ لإعادة محاولة التحديثات غير المكتملة.",
-	"saveStatus.recoveryRead": "الحفظ متوقف مؤقتًا لأنه يتعذّر قراءة نسخة الاسترداد المحلية. قد يظل ملف إعداداتك سليمًا. تحقق من المساحة المتاحة، ثم أعد محاولة الاسترداد. لن تُستبدل بيانات الاسترداد الحالية.",
-	"saveStatus.recoveryWrite": "تعذّر حفظ نسخة الاسترداد المحلية. تحقق من المساحة المتاحة، ثم أعد المحاولة. أبقِ مسودتك مفتوحة إلى أن ينجح الحفظ.",
-	"saveStatus.retryFailed": "لا يزال الحفظ محظورًا. تحقق من حالة الحفظ في إعدادات Callout Studio لمعرفة السبب، ثم أعد المحاولة.",
+	"notice.openSettingsFailed":
+		"تعذّر فتح إعدادات Callout Studio. افتح الإعدادات ← Callout Studio لاختيار ما تريد فعله.",
+	"saveStatus.notesFailed":
+		"تم حفظ تعريف الـ callout، لكن تعذّر إكمال بعض تحديثات الملاحظات. أبقِ هذا المحرر مفتوحًا واختر حفظ لإعادة محاولة التحديثات غير المكتملة.",
+	"saveStatus.recoveryRead":
+		"الحفظ متوقف مؤقتًا لأنه يتعذّر قراءة نسخة الاسترداد المحلية. قد يظل ملف إعداداتك سليمًا. تحقق من المساحة المتاحة، ثم أعد محاولة الاسترداد. لن تُستبدل بيانات الاسترداد الحالية.",
+	"saveStatus.recoveryWrite":
+		"تعذّر حفظ نسخة الاسترداد المحلية. تحقق من المساحة المتاحة، ثم أعد المحاولة. أبقِ مسودتك مفتوحة إلى أن ينجح الحفظ.",
+	"saveStatus.retryFailed":
+		"لا يزال الحفظ محظورًا. تحقق من حالة الحفظ في إعدادات Callout Studio لمعرفة السبب، ثم أعد المحاولة.",
 	"saveStatus.reviewDraft": "اكتملت الإعدادات الواردة وفحوصات الاسترداد. مسودتك لم تتغيّر. راجعها واحفظ مرة أخرى.",
 	"saveStatus.settingsArrived": "وصلت الإعدادات الحالية وتم تحميلها. لم يُنشأ ملف بديل.",
-	"saveStatus.syncConflict": "تتعارض الإعدادات الواردة مع نوع callout مطلوب لتحديثات ملاحظات غير مكتملة. تم الاحتفاظ بمسودتك وبالتحديثات المعلّقة. حل تعارض الإعدادات قبل إعادة المحاولة.",
+	"saveStatus.syncConflict":
+		"تتعارض الإعدادات الواردة مع نوع callout مطلوب لتحديثات ملاحظات غير مكتملة. تم الاحتفاظ بمسودتك وبالتحديثات المعلّقة. حل تعارض الإعدادات قبل إعادة المحاولة.",
 	"saveStatus.titlePaused": "الحفظ متوقف مؤقتًا",
 	"saveStatus.titleFailed": "لم تُحفظ الإعدادات",
 	"saveStatus.tryAgain": "إعادة المحاولة",
 	"saveStatus.working": "جارٍ العمل على ذلك…",
-	"saveStatus.unreadable": "الحفظ متوقف مؤقتًا لأنه يتعذّر قراءة ملف الإعدادات بأمان. أنهِ المزامنة أو استعد نسخة صالحة، ثم أعد المحاولة. تم الاحتفاظ بالملف الحالي.",
-	"saveStatus.write": "تعذّر حفظ ملف الإعدادات. تحقق من المساحة المتاحة وأذونات المجلد والمزامنة، ثم أعد المحاولة قبل إغلاق Obsidian.",
-	"saveStatus.writePermission": "تعذّر حفظ ملف الإعدادات لأن التخزين رفض إذن الكتابة. تحقق من أن الخزنة ومجلد الإضافة قابلان للكتابة، ثم أعد المحاولة.",
-	"saveStatus.writeSpace": "تعذّر حفظ ملف الإعدادات لأن التخزين ممتلئ أو تم تجاوز حصته. حرّر بعض المساحة، ثم أعد المحاولة.",
-	"settings.readOnly": "تعذّر على Callout Studio استخدام ملف إعداداته عند بدء تشغيل Obsidian، لذا لا يُحفظ أي شيء في هذه الصفحة على هذا الجهاز. ستبقى تغييراتك حتى تُغلق Obsidian. أعد تحميل Obsidian بمجرد عودة الملف — إذا كنت تُزامن هذه الخزنة، فدع المزامنة تنتهي أولاً.",
+	"saveStatus.unreadable":
+		"الحفظ متوقف مؤقتًا لأنه يتعذّر قراءة ملف الإعدادات بأمان. أنهِ المزامنة أو استعد نسخة صالحة، ثم أعد المحاولة. تم الاحتفاظ بالملف الحالي.",
+	"saveStatus.write":
+		"تعذّر حفظ ملف الإعدادات. تحقق من المساحة المتاحة وأذونات المجلد والمزامنة، ثم أعد المحاولة قبل إغلاق Obsidian.",
+	"saveStatus.writePermission":
+		"تعذّر حفظ ملف الإعدادات لأن التخزين رفض إذن الكتابة. تحقق من أن الخزنة ومجلد الإضافة قابلان للكتابة، ثم أعد المحاولة.",
+	"saveStatus.writeSpace":
+		"تعذّر حفظ ملف الإعدادات لأن التخزين ممتلئ أو تم تجاوز حصته. حرّر بعض المساحة، ثم أعد المحاولة.",
+	"settings.readOnly":
+		"تعذّر على Callout Studio استخدام ملف إعداداته عند بدء تشغيل Obsidian، لذا لا يُحفظ أي شيء في هذه الصفحة على هذا الجهاز. ستبقى تغييراتك حتى تُغلق Obsidian. أعد تحميل Obsidian بمجرد عودة الملف — إذا كنت تُزامن هذه الخزنة، فدع المزامنة تنتهي أولاً.",
 
 	// Sync safety hardening
 	"saveStatus.diagnosis.unavailable":
 		"يتعذّر على هذا الجهاز فتح الملف الآن. قد يكون لا يزال قيد التنزيل، أو الخزنة غير متاحة دون اتصال، أو التخزين لا يستجيب. يتحقق Callout Studio مرة أخرى تلقائيًا.",
-	"saveStatus.diagnosis.empty": "الملف فارغ، ما يعني عادةً أن المزامنة توقفت في المنتصف. إذا كان جهاز آخر لا يزال يحتفظ بإعداداتك، دعه يُزامن. وإلا، استبدل الملف.",
-	"saveStatus.diagnosis.mergeMarkers": "يحتوي الملف على علامات تعارض دمج غير محلولة، مثلًا من Git. حل التعارض في أداة Git الخاصة بك، أو استبدل الملف.",
+	"saveStatus.diagnosis.empty":
+		"الملف فارغ، ما يعني عادةً أن المزامنة توقفت في المنتصف. إذا كان جهاز آخر لا يزال يحتفظ بإعداداتك، دعه يُزامن. وإلا، استبدل الملف.",
+	"saveStatus.diagnosis.mergeMarkers":
+		"يحتوي الملف على علامات تعارض دمج غير محلولة، مثلًا من Git. حل التعارض في أداة Git الخاصة بك، أو استبدل الملف.",
 	"saveStatus.diagnosis.damaged": "الملف غير مكتمل أو تالف، لذا لا يمكن قراءته كإعدادات.",
 	"saveStatus.diagnosis.combined":
 		"دمجت خدمة المزامنة لديك نسختين من الملف، لذا لم يعد فحصه الداخلي مطابقًا. الإعدادات بداخله سليمة، واستبدال الملف يحافظ عليها.",
-	"saveStatus.diagnosis.invalidEntries": "يحتوي الملف على إدخالات لا يمكن لـ Callout Studio استخدامها، مثلًا نوع callout واحد مُدرج مرتين.",
+	"saveStatus.diagnosis.invalidEntries":
+		"يحتوي الملف على إدخالات لا يمكن لـ Callout Studio استخدامها، مثلًا نوع callout واحد مُدرج مرتين.",
 	"saveStatus.replaceUnreadable": "استبدال ملف الإعدادات",
 	"saveStatus.discardRecoveryCopy": "تجاهل نسخة الاسترداد",
 	"saveStatus.calm.opening": "أولًا، خذ نفسًا عميقًا — كل شيء سيكون على ما يرام.",
 	"saveStatus.calm.kept": "ملاحظاتك بأمان، وما زالت callouts الخاصة بك موجودة هنا على هذا الجهاز.",
 	"saveStatus.calm.safe": "ملاحظاتك بأمان.",
-	"saveStatus.calm.pausedPage": "لقد أوقف Callout Studio الحفظ مؤقتًا فقط لحماية إعداداتك، لذلك هذه الصفحة للقراءة فقط الآن.",
+	"saveStatus.calm.pausedPage":
+		"لقد أوقف Callout Studio الحفظ مؤقتًا فقط لحماية إعداداتك، لذلك هذه الصفحة للقراءة فقط الآن.",
 	"saveStatus.calm.paused": "لقد أوقف Callout Studio الحفظ مؤقتًا فقط لحماية إعداداتك.",
 	"saveStatus.explain.missing":
 		"لا يستطيع Callout Studio العثور على ملف إعداداته. يحدث هذا عادةً بينما ما زال تطبيق المزامنة يُنزّله، أو بعد إزالة Callout Studio على جهاز آخر.",
@@ -1216,7 +1174,8 @@ export const ar: Record<string, string> = {
 	"saveStatus.explain.unreadable": "لا يستطيع Callout Studio قراءة ملف إعداداته الآن، لذلك ترك الملف تمامًا كما هو.",
 	"saveStatus.explain.recoveryRead":
 		"يحتفظ Callout Studio بنسخة احتياطية من إعداداتك على هذا الجهاز، ولا يمكن قراءة هذه النسخة الآن. قد يكون ملف الإعدادات نفسه سليمًا.",
-	"saveStatus.explain.newerVersion": "تم حفظ إعداداتك بواسطة إصدار أحدث من Callout Studio، لذلك لن يغيّرها هذا الإصدار الأقدم.",
+	"saveStatus.explain.newerVersion":
+		"تم حفظ إعداداتك بواسطة إصدار أحدث من Callout Studio، لذلك لن يغيّرها هذا الإصدار الأقدم.",
 	"saveStatus.explain.changed": "تغيّر ملف الإعدادات أثناء عمل Callout Studio عليه، لذلك توقف دون استبدال أي شيء.",
 	"saveStatus.guide.rechecks":
 		"يتحقق Callout Studio مرة أخرى كل دقيقة ما دام Obsidian مفتوحًا، لذلك كثيرًا ما تُحلّ المشكلة من تلقاء نفسها.",
@@ -1225,28 +1184,39 @@ export const ar: Record<string, string> = {
 	"saveStatus.guide.restore": "إذا لم تعد إعداداتك، فاختر استعادة هذه الإعدادات للاحتفاظ بـ callouts التي تراها هنا.",
 	"saveStatus.guide.create": "إذا لم تعد إعداداتك، فاختر إنشاء ملف إعدادات لبدء الحفظ من جديد.",
 	"saveStatus.guide.recoveryRetry": "تأكد من وجود مساحة تخزين خالية على هذا الجهاز، ثم اختر إعادة المحاولة.",
-	"saveStatus.guide.recoveryDiscard": "إذا لم يفد ذلك، فاختر تجاهل نسخة الاسترداد. تُحفظ نسخة مطابقة أولًا، ولا يُمَسّ ملف الإعدادات.",
+	"saveStatus.guide.recoveryDiscard":
+		"إذا لم يفد ذلك، فاختر تجاهل نسخة الاسترداد. تُحفظ نسخة مطابقة أولًا، ولا يُمَسّ ملف الإعدادات.",
 	"saveStatus.guide.newerVersion": "حدّث Callout Studio من الإعدادات ← الإضافات المجتمعية، ثم أعد تحميل Obsidian.",
-	"saveStatus.missingNotice": "ملاحظاتك بأمان. أوقف Callout Studio الحفظ مؤقتًا لأنه لا يستطيع العثور على ملف إعداداته الآن.",
+	"saveStatus.missingNotice":
+		"ملاحظاتك بأمان. أوقف Callout Studio الحفظ مؤقتًا لأنه لا يستطيع العثور على ملف إعداداته الآن.",
 	"statusBar.paused": "الحفظ متوقف مؤقتًا",
 	"statusBar.pausedTooltip": "لا يحفظ Callout Studio تغييرات الإعدادات. انقر لمعرفة السبب.",
 	"statusBar.pausedNotice": "لا يحفظ Callout Studio تغييرات الإعدادات في الوقت الحالي.",
 	"saveStatus.resumed": "عاد الحفظ للعمل. يحفظ Callout Studio تغييرات الإعدادات من جديد.",
-	"notice.replaceUnreadableUnavailable": "يتعذّر استبدال ملف الإعدادات الآن: إنه قيد التغيير، أو يتعذّر على هذا الجهاز قراءته. أعد المحاولة بعد قليل.",
-	"notice.recoveryStorageUnavailable": "لا يستجيب تخزين الاسترداد على هذا الجهاز، لذا لا يمكن تجاهل النسخة. أعد تشغيل Obsidian، ثم أعد المحاولة.",
+	"notice.replaceUnreadableUnavailable":
+		"يتعذّر استبدال ملف الإعدادات الآن: إنه قيد التغيير، أو يتعذّر على هذا الجهاز قراءته. أعد المحاولة بعد قليل.",
+	"notice.recoveryStorageUnavailable":
+		"لا يستجيب تخزين الاسترداد على هذا الجهاز، لذا لا يمكن تجاهل النسخة. أعد تشغيل Obsidian، ثم أعد المحاولة.",
 	"recovery.unreadable": "يتعذّر قراءته كإعدادات",
 	"recovery.same": "مطابق لإعدادك الحالي",
 	"recovery.restore": "استعادة",
-	"recovery.stale": "لم تُستعد أي إعدادات: تغيّرت إعداداتك أو تعذّر التحقق منها. افتح هذه النافذة مرة أخرى وراجع القائمة.",
-	"notice.recoveryCopyStale": "حُفظت إعداداتك، لكن تعذّر تحديث نسخة الاسترداد على هذا الجهاز. تحقق من المساحة المتاحة على هذا الجهاز. يعيد Callout Studio المحاولة مع تغييرك التالي.",
-	"notice.blockedWhilePaused": "الحفظ متوقف مؤقتًا، لذا لا يمكن الاحتفاظ بهذا التغيير الآن. حل مشكلة الحفظ الموضحة في إعدادات Callout Studio أولًا.",
-	"welcome.syncNote": "هل تستخدم Callout Studio بالفعل على جهاز آخر؟ دع خدمة المزامنة لديك تنتهي أولًا. تظهر callouts وإعداداتك هنا بمجرد وصولها.",
-	"settings.resetBackupFailed": "لم يُعاد تعيين شيء: تعذّر حفظ نسخة احتياطية من إعدادك الحالي أولًا. تحقق من المساحة المتاحة، ثم أعد المحاولة.",
-	"settings.resetNotSaved": "إعادة التعيين مُعروضة لكن تعذّر حفظها بعد، لذا لا يزال ملف إعداداتك يحمل الإعداد السابق. تحقق من حالة الحفظ في إعدادات Callout Studio.",
+	"recovery.stale":
+		"لم تُستعد أي إعدادات: تغيّرت إعداداتك أو تعذّر التحقق منها. افتح هذه النافذة مرة أخرى وراجع القائمة.",
+	"notice.recoveryCopyStale":
+		"حُفظت إعداداتك، لكن تعذّر تحديث نسخة الاسترداد على هذا الجهاز. تحقق من المساحة المتاحة على هذا الجهاز. يعيد Callout Studio المحاولة مع تغييرك التالي.",
+	"notice.blockedWhilePaused":
+		"الحفظ متوقف مؤقتًا، لذا لا يمكن الاحتفاظ بهذا التغيير الآن. حل مشكلة الحفظ الموضحة في إعدادات Callout Studio أولًا.",
+	"welcome.syncNote":
+		"هل تستخدم Callout Studio بالفعل على جهاز آخر؟ دع خدمة المزامنة لديك تنتهي أولًا. تظهر callouts وإعداداتك هنا بمجرد وصولها.",
+	"settings.resetBackupFailed":
+		"لم يُعاد تعيين شيء: تعذّر حفظ نسخة احتياطية من إعدادك الحالي أولًا. تحقق من المساحة المتاحة، ثم أعد المحاولة.",
+	"settings.resetNotSaved":
+		"إعادة التعيين مُعروضة لكن تعذّر حفظها بعد، لذا لا يزال ملف إعداداتك يحمل الإعداد السابق. تحقق من حالة الحفظ في إعدادات Callout Studio.",
 	"confirm.titleResetEverything": "إعادة تعيين كل شيء",
 	"confirm.titleReplaceUnreadable": "استبدال ملف الإعدادات",
 	"confirm.subtitleReplaceUnreadable": "تُحفظ نسخة مطابقة أولًا",
-	"confirm.replaceUnreadable": "تُحفظ نسخة مطابقة من الملف الحالي في مجلد نسخ الإضافة الاحتياطية أولًا. ثم يُستبدل الملف بالإعداد المعروض هنا، وترسله خدمة المزامنة لديك إلى أجهزتك الأخرى.",
+	"confirm.replaceUnreadable":
+		"تُحفظ نسخة مطابقة من الملف الحالي في مجلد نسخ الإضافة الاحتياطية أولًا. ثم يُستبدل الملف بالإعداد المعروض هنا، وترسله خدمة المزامنة لديك إلى أجهزتك الأخرى.",
 	"confirm.replaceUnreadableSalvage":
 		"تُحفظ نسخة مطابقة من الملف الحالي في مجلد نسخ الإضافة الاحتياطية أولًا. تُدمج الإعدادات بداخله مع الإعداد المعروض هنا، ويُعاد كتابة الملف كي يتمكن كل جهاز من قراءته مرة أخرى.",
 	"confirm.titleDiscardRecoveryCopy": "تجاهل نسخة الاسترداد",
@@ -1257,9 +1227,11 @@ export const ar: Record<string, string> = {
 	"vault.undoRestored": "استُعيدت {{count}} ملاحظة.",
 	"vault.undoPartial": "استُعيدت {{count}} ملاحظة. تغيّرت {{skipped}} ملاحظة بعد إعادة الكتابة، لذا تُركت كما هي.",
 	"import.confirmTitle": "استيراد نسخة Callout Studio الاحتياطية",
-	"import.confirmSummary": "هذا يضيف {{added}} نوع callout، ويستبدل {{replaced}} نوعًا موجودًا بإصدار الملف، ويستعيد {{settings}} مجموعة إعدادات من الملف. يُحفظ نسخ احتياطي من إعدادك الحالي أولًا.",
+	"import.confirmSummary":
+		"هذا يضيف {{added}} نوع callout، ويستبدل {{replaced}} نوعًا موجودًا بإصدار الملف، ويستعيد {{settings}} مجموعة إعدادات من الملف. يُحفظ نسخ احتياطي من إعدادك الحالي أولًا.",
 	"import.confirmAction": "استيراد",
-	"import.backupFailed": "لم يُستورد شيء: تعذّر حفظ نسخة احتياطية من إعدادك الحالي أولًا. تحقق من المساحة المتاحة، ثم أعد المحاولة.",
+	"import.backupFailed":
+		"لم يُستورد شيء: تعذّر حفظ نسخة احتياطية من إعدادك الحالي أولًا. تحقق من المساحة المتاحة، ثم أعد المحاولة.",
 	"import.notSaved": "الاستيراد مُعروض لكن تعذّر حفظه بعد. تحقق من حالة الحفظ في إعدادات Callout Studio.",
 
 	"recovery.summaryCallouts": "{{callouts}} من أنواع الـ callout المحفوظة",
@@ -1280,7 +1252,8 @@ export const ar: Record<string, string> = {
 	"recovery.details.unknownTime": "وقت الحفظ غير مسجَّل",
 	"recovery.details.current": "الإعدادات الحالية",
 	"recovery.details.restored": "بعد استعادة هذه النسخة",
-	"recovery.details.unreadable": "لا يمكن لهذا الإصدار من Callout Studio تفسير هذه النسخة على أنها إعدادات قابلة للاستعادة. قد تكون تالفة أو غير متاحة أو بتنسيق أحدث. المقارنة وتقرير الإعدادات المستعادة غير متاحَين. يتضمن ما يلي أي محتوى أصلي أمكن قراءته.",
+	"recovery.details.unreadable":
+		"لا يمكن لهذا الإصدار من Callout Studio تفسير هذه النسخة على أنها إعدادات قابلة للاستعادة. قد تكون تالفة أو غير متاحة أو بتنسيق أحدث. المقارنة وتقرير الإعدادات المستعادة غير متاحَين. يتضمن ما يلي أي محتوى أصلي أمكن قراءته.",
 	"recovery.details.null": "لا توجد قيمة (null)",
 	"recovery.details.yes": "نعم",
 	"recovery.details.no": "لا",
@@ -1448,10 +1421,12 @@ export const ar: Record<string, string> = {
 	"recovery.delete": "حذف",
 
 	// Version history
-	"saveStatus.guide.versions": "عندما يعمل الحفظ مجددًا، يمكنك أيضًا الرجوع إلى إصدار محفوظ من خلال استعادة إصدار سابق.",
+	"saveStatus.guide.versions":
+		"عندما يعمل الحفظ مجددًا، يمكنك أيضًا الرجوع إلى إصدار محفوظ من خلال استعادة إصدار سابق.",
 	"saveStatus.goToVersions": "الانتقال إلى سجل الإصدارات",
 	"versions.title": "سجل الإصدارات",
-	"versions.intro": "يحفظ Callout Studio إصدارات من إعداداتك تلقائيًا.\nتُحذف الإصدارات القديمة تدريجيًا.\nاستعادة إصدار تستبدل إعداداتك الحالية على كل جهاز متزامن.",
+	"versions.intro":
+		"يحفظ Callout Studio إصدارات من إعداداتك تلقائيًا.\nتُحذف الإصدارات القديمة تدريجيًا.\nاستعادة إصدار تستبدل إعداداتك الحالية على كل جهاز متزامن.",
 	"versions.pausedHint": "الحفظ متوقف مؤقتًا، لذا لا تتوفر الاستعادة. لا يزال بإمكانك مقارنة الإصدارات وحذفها.",
 	"versions.loading": "جارٍ البحث عن إصدارات…",
 	"versions.empty": "لم يُعثر على إصدارات.",
@@ -1469,10 +1444,12 @@ export const ar: Record<string, string> = {
 	"versions.reason.beforeRepair": "قبل إصلاح ملف الإعدادات",
 	"versions.restoreTitle": "استعادة هذا الإصدار",
 	"versions.subtitle": "«{{name}}» · {{when}}",
-	"versions.restoreBody": "سيتم استبدال إعداداتك الحالية ({{count}} من الاختلافات).\nيُحفظ الإعداد الحالي كنسخة أولًا، فيمكنك العودة إليه.\nثم ترسل خدمة المزامنة الإعداد المستعاد إلى أجهزتك الأخرى.",
+	"versions.restoreBody":
+		"سيتم استبدال إعداداتك الحالية ({{count}} من الاختلافات).\nيُحفظ الإعداد الحالي كنسخة أولًا، فيمكنك العودة إليه.\nثم ترسل خدمة المزامنة الإعداد المستعاد إلى أجهزتك الأخرى.",
 	"versions.restoreSame": "هذا الإصدار مطابق لإعداداتك الحالية، لذا لا يوجد ما يمكن استعادته.",
 	"versions.restored": "تمت استعادة «{{name}}» من {{when}}.",
-	"versions.backupFailed": "لم تتم استعادة شيء: تعذر حفظ إعداداتك الحالية كإصدار أولًا. تحقق من مساحة التخزين المتاحة، ثم حاول مجددًا.",
+	"versions.backupFailed":
+		"لم تتم استعادة شيء: تعذر حفظ إعداداتك الحالية كإصدار أولًا. تحقق من مساحة التخزين المتاحة، ثم حاول مجددًا.",
 	"versions.restoreFailed": "تعذرت استعادة الإصدار. لم يتغير شيء.",
 	"versions.deleteTitle": "حذف هذا الإصدار",
 	"versions.deleteAvailableBody": "سيتم حذفه هو وجميع نسخه المتاحة نهائيًا.",
@@ -1484,7 +1461,8 @@ export const ar: Record<string, string> = {
 	"versions.details.difference": "{{count}} اختلاف عن إعداداتك الحالية",
 	"versions.details.differences": "{{count}} اختلافات عن إعداداتك الحالية",
 	"versions.details.comparisonUnavailable": "المقارنة غير متاحة",
-	"notice.unsavedChangesKept": "لم تكن بعض التغييرات على هذا الجهاز قد حُفظت بعد، واستبدلتها إعدادات أحدث من جهاز آخر. حُفظ إصدارك أولًا: افتح استعادة إصدار سابق في إعدادات Callout Studio لاستعادته.",
+	"notice.unsavedChangesKept":
+		"لم تكن بعض التغييرات على هذا الجهاز قد حُفظت بعد، واستبدلتها إعدادات أحدث من جهاز آخر. حُفظ إصدارك أولًا: افتح استعادة إصدار سابق في إعدادات Callout Studio لاستعادته.",
 	"settings.versionHistory": "استعادة إصدار سابق",
 	"settings.versions": "الإصدارات السابقة",
 	"settings.versionsDesc": "استبدل إعدادك الحالي بإصدار سابق محفوظ.",
@@ -1495,12 +1473,13 @@ export const ar: Record<string, string> = {
 	"noteChanges.notesOne": "ملاحظة واحدة",
 	"noteChanges.askCallout": "ماذا يجب أن يحدث لذلك الـ callout؟",
 	"noteChanges.askCallouts": "ماذا يجب أن يحدث لتلك الـ callout؟",
-	"noteChanges.changeRenamed": "غيّرت الاسم المعروض من \"{{old}}\" إلى \"{{new}}\"، لذا يتغير المعرّف الرئيسي من \"{{oldId}}\" إلى \"{{newId}}\".",
-	"noteChanges.changeMainId": "يتغير المعرّف الرئيسي من \"{{oldId}}\" إلى \"{{newId}}\".",
-	"noteChanges.changeName": "غيّرت الاسم المعروض من \"{{old}}\" إلى \"{{new}}\".",
-	"noteChanges.changeRemoved": "أزلت المعرّف \"{{id}}\".",
+	"noteChanges.changeRenamed":
+		'غيّرت الاسم المعروض من "{{old}}" إلى "{{new}}"، لذا يتغير المعرّف الرئيسي من "{{oldId}}" إلى "{{newId}}".',
+	"noteChanges.changeMainId": 'يتغير المعرّف الرئيسي من "{{oldId}}" إلى "{{newId}}".',
+	"noteChanges.changeName": 'غيّرت الاسم المعروض من "{{old}}" إلى "{{new}}".',
+	"noteChanges.changeRemoved": 'أزلت المعرّف "{{id}}".',
 	"noteChanges.changeRemovedMany": "أزلت هذه المعرّفات: {{ids}}.",
-	"noteChanges.changeResetRemoved": "إعادة التعيين إلى الافتراضي تزيل المعرّف \"{{id}}\" الذي أضفته.",
+	"noteChanges.changeResetRemoved": 'إعادة التعيين إلى الافتراضي تزيل المعرّف "{{id}}" الذي أضفته.',
 	"noteChanges.changeResetRemovedMany": "إعادة التعيين إلى الافتراضي تزيل المعرّفات التي أضفتها: {{ids}}.",
 	"noteChanges.changeFold": "غيّرت طريقة طيّ هذا الـ callout.",
 	"noteChanges.affects": "يؤثر هذا في {{callouts}} داخل {{notes}}.",
@@ -1509,7 +1488,8 @@ export const ar: Record<string, string> = {
 	"noteChanges.rewriteManyDesc": "كل معرّف قديم في ملاحظاتك يصبح [!{{to}}].",
 	"noteChanges.changeToIdLabel": "المعرّف الذي ستُغيَّر إليه",
 	"noteChanges.rewriteDesc": "كل [!{{id}}] في ملاحظاتك يصبح [!{{to}}].",
-	"noteChanges.renameFollowDesc": "كل [!{{oldId}}] في ملاحظاتك يصبح [!{{newId}}]، وتتحول العناوين التي تحمل \"{{old}}\" إلى \"{{new}}\".",
-	"noteChanges.titlesChangeDesc": "تتحول العناوين التي تحمل \"{{old}}\" إلى \"{{new}}\".",
+	"noteChanges.renameFollowDesc":
+		'كل [!{{oldId}}] في ملاحظاتك يصبح [!{{newId}}]، وتتحول العناوين التي تحمل "{{old}}" إلى "{{new}}".',
+	"noteChanges.titlesChangeDesc": 'تتحول العناوين التي تحمل "{{old}}" إلى "{{new}}".',
 	"noteChanges.foldChangeDesc": "تتغير علامة + أو - فيها لتتوافق.",
 };

@@ -49,12 +49,7 @@ import {
 	type PackFile,
 	type PackStroke,
 } from "../src/icons/packData";
-import {
-	PACKS_TAG,
-	PACK_FORMAT,
-	PACK_MANIFEST,
-	packUrls,
-} from "../src/icons/data/packManifest";
+import { PACKS_TAG, PACK_FORMAT, PACK_MANIFEST, packUrls } from "../src/icons/data/packManifest";
 import type { IconPackId } from "../src/types";
 import { tablerPack } from "../src/icons/packs/tabler";
 import { octiconsPack } from "../src/icons/packs/octicons";
@@ -62,8 +57,7 @@ import { faPack } from "../src/icons/packs/fontAwesome";
 
 const PACKS_DIR = join(process.cwd(), "packs");
 
-const readPack = (id: IconPackId): string =>
-	readFileSync(join(PACKS_DIR, `${id}.json`), "utf8");
+const readPack = (id: IconPackId): string => readFileSync(join(PACKS_DIR, `${id}.json`), "utf8");
 
 /**
  * Load the packs whose artwork the drawing tests need, out of the real files.
@@ -135,10 +129,7 @@ describe("parsePackFile — what a pack file has to be", () => {
 	});
 
 	it("refuses a drawing with no usable geometry", () => {
-		assert.match(
-			reject(packFile({ icons: { alert: null as never } })),
-			/bad record for "alert"/,
-		);
+		assert.match(reject(packFile({ icons: { alert: null as never } })), /bad record for "alert"/);
 		assert.match(
 			reject(packFile({ icons: { alert: { "16": { w: "16", p: [{ d: "M1 1" }] } } } as never })),
 			/bad drawing for "alert@16"/,
@@ -147,10 +138,7 @@ describe("parsePackFile — what a pack file has to be", () => {
 			reject(packFile({ icons: { alert: { "16": { w: Number.NaN, p: [{ d: "M1 1" }] } } } as never })),
 			/bad drawing for "alert@16"/,
 		);
-		assert.match(
-			reject(packFile({ icons: { alert: { "16": { w: 16, p: [] } } } })),
-			/bad drawing for "alert@16"/,
-		);
+		assert.match(reject(packFile({ icons: { alert: { "16": { w: 16, p: [] } } } })), /bad drawing for "alert@16"/);
 		assert.match(
 			reject(packFile({ icons: { alert: { "16": { w: 16, p: "M1 1" } } } as never })),
 			/bad drawing for "alert@16"/,
@@ -184,14 +172,8 @@ describe("parsePackFile — what a pack file has to be", () => {
 	});
 
 	it("refuses an empty or missing path string", () => {
-		assert.match(
-			reject(packFile({ icons: { alert: { "16": { w: 16, p: [{ d: "" }] } } } })),
-			/bad path data/,
-		);
-		assert.match(
-			reject(packFile({ icons: { alert: { "16": { w: 16, p: [{} as never] } } } })),
-			/bad path data/,
-		);
+		assert.match(reject(packFile({ icons: { alert: { "16": { w: 16, p: [{ d: "" }] } } } })), /bad path data/);
+		assert.match(reject(packFile({ icons: { alert: { "16": { w: 16, p: [{} as never] } } } })), /bad path data/);
 	});
 
 	it("accepts the whole path grammar and nothing beyond it", () => {
@@ -208,11 +190,7 @@ describe("parsePackFile — what a pack file has to be", () => {
 	const GRAMMAR = /^[MmLlHhVvCcSsQqTtAaZz0-9eE+\-.,\s]+$/;
 
 	const accepts = (d: string): boolean =>
-		parsePackFile(
-			packFile({ icons: { alert: { "16": { w: 16, p: [{ d }] } } } }),
-			"octicons",
-			PACK_FORMAT,
-		).ok;
+		parsePackFile(packFile({ icons: { alert: { "16": { w: 16, p: [{ d }] } } } }), "octicons", PACK_FORMAT).ok;
 
 	it("agrees with the grammar's own expression on every character there is", () => {
 		// The check is a lookup table and a loop, for speed, so its claim to be
@@ -237,11 +215,7 @@ describe("parsePackFile — what a pack file has to be", () => {
 		for (const hostile of ['"', "<", ">", "&", "#", "\u0000"]) {
 			assert.equal(accepts(hostile + legal), false, `leading ${JSON.stringify(hostile)}`);
 			assert.equal(accepts(legal + hostile), false, `trailing ${JSON.stringify(hostile)}`);
-			assert.equal(
-				accepts(legal + hostile + legal),
-				false,
-				`embedded ${JSON.stringify(hostile)}`,
-			);
+			assert.equal(accepts(legal + hostile + legal), false, `embedded ${JSON.stringify(hostile)}`);
 		}
 	});
 
@@ -249,10 +223,7 @@ describe("parsePackFile — what a pack file has to be", () => {
 		// Two halves of one promise — "checked when the file is built and again
 		// when it is loaded" — kept in two languages. The expression is quoted
 		// here a third time so that editing either half alone fails something.
-		const generator = readFileSync(
-			join(process.cwd(), "scripts", "generate-icon-packs.mjs"),
-			"utf8",
-		);
+		const generator = readFileSync(join(process.cwd(), "scripts", "generate-icon-packs.mjs"), "utf8");
 		assert.ok(
 			generator.includes(`const PATH_DATA_RE = ${String(GRAMMAR)};`),
 			"scripts/generate-icon-packs.mjs no longer declares this grammar",
@@ -394,11 +365,7 @@ describe("buildPackSvg — stroked artwork (Tabler Outline)", () => {
 		// solids inside an outline; without `f` they come out as three rings.
 		const svg = buildPackSvg("tabler-outline", "dice-3", ["24"], STROKE) ?? "";
 		assert.ok(svg.includes(`fill="currentColor"`), "no pip was filled");
-		assert.equal(
-			(svg.match(/fill="currentColor"/g) ?? []).length,
-			3,
-			"dice-3 has three pips",
-		);
+		assert.equal((svg.match(/fill="currentColor"/g) ?? []).length, 3, "dice-3 has three pips");
 	});
 
 	it("draws the very same icon with no paint when the stroke is withheld", () => {
@@ -414,7 +381,17 @@ describe("buildPackSvg — stroked artwork (Tabler Outline)", () => {
 			format: PACK_FORMAT,
 			pack: "fa-solid",
 			packVersion: "test",
-			icons: { mix: { "24": { w: 24, p: [{ d: "M0 0Z", n: 1 }, { d: "M1 1Z", f: 1 }] } } },
+			icons: {
+				mix: {
+					"24": {
+						w: 24,
+						p: [
+							{ d: "M0 0Z", n: 1 },
+							{ d: "M1 1Z", f: 1 },
+						],
+					},
+				},
+			},
 		});
 		const svg = buildPackSvg("fa-solid", "mix", ["24"], STROKE) ?? "";
 		assert.ok(svg.includes(`<path d="M0 0Z" stroke="none"/>`));
@@ -438,14 +415,8 @@ describe("buildPackSvg — stroked artwork (Tabler Outline)", () => {
 	it("refuses to aim a pack's builder at another pack's file", () => {
 		// Hand-edited data.json is the case: without the guard, `tabler-outline`
 		// styling would be applied to whatever file the type named.
-		assert.equal(
-			tablerPack.buildSvg?.({ type: "octicons", value: "alert" }, "regular"),
-			null,
-		);
-		assert.equal(
-			faPack.buildSvg?.({ type: "tabler-outline", value: "dice-3" }, "regular"),
-			null,
-		);
+		assert.equal(tablerPack.buildSvg?.({ type: "octicons", value: "alert" }, "regular"), null);
+		assert.equal(faPack.buildSvg?.({ type: "tabler-outline", value: "dice-3" }, "regular"), null);
 	});
 });
 
@@ -522,11 +493,7 @@ describe("packs/ matches the manifest compiled into the build", () => {
 		});
 
 		it(`${id}.json carries the shape the runtime accepts`, () => {
-			const result = parsePackFile(
-				JSON.parse(readPack(id)),
-				id,
-				PACK_FORMAT,
-			);
+			const result = parsePackFile(JSON.parse(readPack(id)), id, PACK_FORMAT);
 			assert.ok(result.ok, result.ok ? "" : result.reason);
 			assert.equal(result.file.pack, id);
 			assert.equal(result.file.format, PACK_FORMAT);
@@ -550,12 +517,7 @@ describe("packs/ matches the manifest compiled into the build", () => {
 			// structurally rather than by grepping for "stroke", because several
 			// packs have icons *named* things like `mars-stroke`.
 			const raw = JSON.parse(readPack(id)) as PackFile;
-			assert.deepStrictEqual(Object.keys(raw).sort(), [
-				"format",
-				"icons",
-				"pack",
-				"packVersion",
-			]);
+			assert.deepStrictEqual(Object.keys(raw).sort(), ["format", "icons", "pack", "packVersion"]);
 			for (const [name, sizes] of Object.entries(raw.icons)) {
 				for (const [key, size] of Object.entries(sizes)) {
 					assert.deepStrictEqual(

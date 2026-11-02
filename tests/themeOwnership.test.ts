@@ -20,13 +20,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import { STUDIO_WEIGHT_BASE } from "../src/manager/theme/studioWeight";
 import { calloutSel, calloutSelAt } from "../src/utils/calloutSelector";
-import {
-	definition,
-	harness,
-	parseRules,
-	rulesMatching,
-	valueOf,
-} from "./support/cssInjectorHarness";
+import { definition, harness, parseRules, rulesMatching, valueOf } from "./support/cssInjectorHarness";
 import type { CalloutDefinition } from "../src/types";
 
 describe("themeOwns — derived from the theme, never stored", () => {
@@ -53,9 +47,7 @@ describe("themeOwns — derived from the theme, never stored", () => {
 		// `[!вид]` and `[!описание]` styled by nobody: the theme never named
 		// them, and this plugin stood down for them.
 		const { registry } = harness();
-		registry.add(
-			definition({ id: "описание", aliases: ["вид", "description"] }),
-		);
+		registry.add(definition({ id: "описание", aliases: ["вид", "description"] }));
 		const def = () => registry.get("описание")!;
 
 		registry.setThemeOwnedIds(new Set(["description"]));
@@ -145,9 +137,7 @@ describe("the unknown-id fallback follows its template", () => {
 		registry.settings.fallbackCalloutId = "note";
 		const out = css.generateFallbackCSS(registry.getAll());
 		assert.match(out, /\.callout:not\(:where\(/);
-		const native = parseRules(out).find((rule) =>
-			rule.selector.startsWith(".callout:not(:where("),
-		);
+		const native = parseRules(out).find((rule) => rule.selector.startsWith(".callout:not(:where("));
 		assert.ok(native);
 		assert.ok(native.decls.every((decl) => !decl.includes("!important")));
 	});
@@ -160,10 +150,7 @@ describe("calloutSelAt — the weighted selector", () => {
 
 	it("repeats .callout, keeping the attribute and the theme prefix", () => {
 		const sel = calloutSelAt("quiet", 3, ".theme-dark ");
-		assert.strictEqual(
-			sel,
-			'.theme-dark .callout.callout.callout[data-callout="quiet"]',
-		);
+		assert.strictEqual(sel, '.theme-dark .callout.callout.callout[data-callout="quiet"]');
 	});
 
 	it("escapes a hostile id at every weight", () => {
@@ -203,18 +190,12 @@ describe("studio mode — taking the callout completely", () => {
 		// Core's own blockquote DOM only — `.cs-*` is ours and is asserted the
 		// other way round in the next test.
 		const coreRules = parseRules(out).filter(
-			(r) =>
-				r.selector.includes("[data-callout=") &&
-				!r.selector.includes(".cs-"),
+			(r) => r.selector.includes("[data-callout=") && !r.selector.includes(".cs-"),
 		);
 		assert.ok(coreRules.length > 0);
 		for (const rule of coreRules) {
 			for (const decl of rule.decls) {
-				assert.match(
-					decl,
-					/!important/,
-					`unmarked declaration on core DOM: ${rule.selector} { ${decl} }`,
-				);
+				assert.match(decl, /!important/, `unmarked declaration on core DOM: ${rule.selector} { ${decl} }`);
 			}
 		}
 	});
@@ -225,9 +206,7 @@ describe("studio mode — taking the callout completely", () => {
 		// escape hatch has to live somewhere.
 		const out = studioCss();
 		const tokenRules = parseRules(out).filter(
-			(r) =>
-				r.selector.includes(".cs-inline-callout") ||
-				r.selector.includes(".cs-heading-callout"),
+			(r) => r.selector.includes(".cs-inline-callout") || r.selector.includes(".cs-heading-callout"),
 		);
 		assert.ok(tokenRules.length > 0, "expected token rules");
 		for (const rule of tokenRules) {
@@ -252,15 +231,10 @@ describe("studio mode — taking the callout completely", () => {
 			},
 		});
 		const printReset = parseRules(out).find(
-			(r) =>
-				r.at.some((a) => a.includes("print")) &&
-				r.props.includes("-webkit-text-fill-color"),
+			(r) => r.at.some((a) => a.includes("print")) && r.props.includes("-webkit-text-fill-color"),
 		);
 		assert.ok(printReset, "expected a print reset for the sweep");
-		assert.match(
-			valueOf(printReset, "-webkit-text-fill-color") ?? "",
-			/currentColor !important/,
-		);
+		assert.match(valueOf(printReset, "-webkit-text-fill-color") ?? "", /currentColor !important/);
 	});
 
 	it("does not leak its weight into the next callout", () => {
@@ -417,8 +391,7 @@ describe("a callout the theme names only in part", () => {
 		const out = partlyClaimed(["description"]);
 		const tokenRules = parseRules(out).filter(
 			(rule) =>
-				rule.selector.includes(".cs-heading-callout") &&
-				rule.selector.includes('[data-callout="description"]'),
+				rule.selector.includes(".cs-heading-callout") && rule.selector.includes('[data-callout="description"]'),
 		);
 		assert.ok(tokenRules.length > 0);
 	});

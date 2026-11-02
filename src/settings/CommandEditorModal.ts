@@ -40,12 +40,7 @@ import { buildCalloutRow, type CalloutRow } from "./command/calloutRow";
 import type { CalloutEditorPlugin } from "./editor/types";
 import { buildFormatRow, type FormatRow } from "./command/commandRoles";
 import { buildFoldStateRow, type FoldStateRow } from "./command/foldStateRow";
-import {
-	buildActionRow,
-	buildHeadingLevelRow,
-	type ActionRow,
-	type ChoiceRow,
-} from "./command/optionRows";
+import { buildActionRow, buildHeadingLevelRow, type ActionRow, type ChoiceRow } from "./command/optionRows";
 
 /**
  * Narrow structural host — the plugin instance, which both call sites already
@@ -95,29 +90,24 @@ export class CommandEditorModal extends Modal {
 
 		const existing = options.existing;
 		this.role = existing?.role ?? "regular";
-		this.headingLevel = existing
-			? resolveHeadingLevel(existing)
-			: DEFAULT_HEADING_LEVEL;
+		this.headingLevel = existing ? resolveHeadingLevel(existing) : DEFAULT_HEADING_LEVEL;
 		// Wrap for a new command, whatever its format: on a blank line or with
 		// nothing selected it inserts anyway, so it is the one that does both.
 		this.action = existing ? resolveAction(existing) : "wrap";
 		this.fold = existing ? resolveFold(existing) : "none";
 		// A discovered callout can have a whitespace-only name and sort first.
 		// Start a new command on the familiar Note type instead of a blank field.
-		const initial = initialChoices.find((def) => def.id === "note")
-			?? initialChoices.find((def) => def.displayName.trim());
+		const initial =
+			initialChoices.find((def) => def.id === "note") ?? initialChoices.find((def) => def.displayName.trim());
 		this.calloutId = existing?.calloutId ?? initial?.id ?? "";
 	}
 
 	private getChoices(): CalloutDefinition[] {
-		const offerable = committedDefinitions(this.host.registry)
-			.filter((def) => def.source !== "theme");
+		const offerable = committedDefinitions(this.host.registry).filter((def) => def.source !== "theme");
 
 		// Keep an existing command's selected type even when it is no longer
 		// offered for new commands, so editing never silently repoints it.
-		const pinned = this.options.existing
-			? this.host.registry.get(this.options.existing.calloutId)
-			: undefined;
+		const pinned = this.options.existing ? this.host.registry.get(this.options.existing.calloutId) : undefined;
 		if (pinned && !offerable.some((def) => def.id === pinned.id)) {
 			offerable.push(pinned);
 		}
@@ -136,11 +126,7 @@ export class CommandEditorModal extends Modal {
 		contentEl.empty();
 		contentEl.addClass("cs-command-editor");
 		const footer = applyModalChrome(this, { footer: true });
-		this.setTitle(
-			this.options.existing
-				? t("commandBuilder.editTitle")
-				: t("commandBuilder.newTitle"),
-		);
+		this.setTitle(this.options.existing ? t("commandBuilder.editTitle") : t("commandBuilder.newTitle"));
 
 		// It blocks Save, so it is said in Obsidian's warning colour (`.mod-warning`)
 		// rather than as a quiet empty state.
@@ -247,16 +233,12 @@ export class CommandEditorModal extends Modal {
 		return {
 			calloutId: this.calloutId,
 			role: this.role,
-			...(this.role === "heading"
-				? { headingLevel: this.headingLevel }
-				: {}),
+			...(this.role === "heading" ? { headingLevel: this.headingLevel } : {}),
 			...storedAction({ role: this.role, action: this.action }),
 			// Omitted when it is the default, matching what the sanitizer
 			// stores — otherwise a saved command and the same command reloaded
 			// would differ by a key that means nothing.
-			...(this.role === "regular" && this.fold !== "none"
-				? { fold: this.fold }
-				: {}),
+			...(this.role === "regular" && this.fold !== "none" ? { fold: this.fold } : {}),
 		};
 	}
 
@@ -269,17 +251,9 @@ export class CommandEditorModal extends Modal {
 		// The format control settles first: it may withdraw the current role
 		// when the theme owns this callout, and every line below reads it.
 		if (this.formatRow) {
-			this.role = this.formatRow.sync(
-				this.host.registry,
-				this.host.settings,
-				this.calloutId,
-				this.role,
-			);
+			this.role = this.formatRow.sync(this.host.registry, this.host.settings, this.calloutId, this.role);
 		}
-		this.headingRow?.el.toggleClass(
-			"cs-row-hidden",
-			this.role !== "heading",
-		);
+		this.headingRow?.el.toggleClass("cs-row-hidden", this.role !== "heading");
 		// Every format has the choice; what each option means differs.
 		this.actionRow?.describe(this.role);
 		this.foldRow?.sync(this.role);
@@ -287,9 +261,7 @@ export class CommandEditorModal extends Modal {
 
 		const def = this.host.registry.get(this.calloutId);
 		this.previewValue?.setValue(def ? describeCommand(this.draft(), def) : "—");
-		this.previewSetting?.setErrorMessage(
-			this.isDuplicate() ? t("commandBuilder.duplicate") : null,
-		);
+		this.previewSetting?.setErrorMessage(this.isDuplicate() ? t("commandBuilder.duplicate") : null);
 
 		if (this.saveBtnEl) paintBlocked(this.saveBtnEl, this.saveBlockedReason());
 	}
@@ -316,10 +288,7 @@ export class CommandEditorModal extends Modal {
 		if (this.resolved) return;
 		// Re-check rather than trusting the button: the callout could have been
 		// deleted from another surface while this modal sat open.
-		const result =
-			save && this.host.registry.has(this.calloutId)
-				? this.draft()
-				: null;
+		const result = save && this.host.registry.has(this.calloutId) ? this.draft() : null;
 		this.resolved = true;
 		this.close();
 		this.resolve?.(result);

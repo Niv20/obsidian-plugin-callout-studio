@@ -152,10 +152,7 @@ describe("t() interpolates {{placeholder}} tokens", () => {
 		// diagnostic — the alternative, throwing, would take a whole modal down
 		// over one label.
 		setLocale("partial");
-		assert.strictEqual(
-			t("probe.template", { other: "X" }),
-			"one {{name}}, two {{name}}",
-		);
+		assert.strictEqual(t("probe.template", { other: "X" }), "one {{name}}, two {{name}}");
 	});
 
 	it("leaves every token when no parameters are passed at all", () => {
@@ -173,10 +170,7 @@ describe("t() interpolates {{placeholder}} tokens", () => {
 		// `tests/localeContent.test.ts` compares them across all 31 locales:
 		// nothing at runtime notices a translator who changed the casing.
 		setLocale("partial");
-		assert.strictEqual(
-			t("probe.template", { Name: "X" }),
-			"one {{name}}, two {{name}}",
-		);
+		assert.strictEqual(t("probe.template", { Name: "X" }), "one {{name}}, two {{name}}");
 	});
 
 	it("interpolates into the English fallback, not only into a translation", () => {
@@ -222,21 +216,12 @@ describe("t() interpolates {{placeholder}} tokens", () => {
 		assert.strictEqual(t("probe.template", { name: "$" }), "one $, two $");
 		// `` $` `` / `$'` — the text before and after the match. Used to splice
 		// the rest of the sentence in, at a position that differs per occurrence.
-		assert.strictEqual(
-			t("probe.template", { name: "X$`Y" }),
-			"one X$`Y, two X$`Y",
-		);
-		assert.strictEqual(
-			t("probe.template", { name: "X$'Y" }),
-			"one X$'Y, two X$'Y",
-		);
+		assert.strictEqual(t("probe.template", { name: "X$`Y" }), "one X$`Y, two X$`Y");
+		assert.strictEqual(t("probe.template", { name: "X$'Y" }), "one X$'Y, two X$'Y");
 		// `$n` / `$<n>` — capture groups. The token regex has none, so these
 		// already survived; pinned so a future capturing group cannot break them.
 		assert.strictEqual(t("probe.template", { name: "$1" }), "one $1, two $1");
-		assert.strictEqual(
-			t("probe.template", { name: "$<name>" }),
-			"one $<name>, two $<name>",
-		);
+		assert.strictEqual(t("probe.template", { name: "$<name>" }), "one $<name>, two $<name>");
 	});
 
 	it("substitutes a real display name that is nothing but dollars", () => {
@@ -257,11 +242,7 @@ describe("t() interpolates {{placeholder}} tokens", () => {
 describe("a locale code resolves to the file that serves it", () => {
 	it("points every code at a file the manifest ships", () => {
 		for (const [code, fileId] of Object.entries(LOCALE_FILES)) {
-			assert.strictEqual(
-				resolveLocaleFile(code),
-				fileId,
-				`${code} did not resolve to ${fileId}`,
-			);
+			assert.strictEqual(resolveLocaleFile(code), fileId, `${code} did not resolve to ${fileId}`);
 			assert.ok(fileId in LOCALE_MANIFEST, `${code} → ${fileId}, undownloadable`);
 		}
 	});
@@ -369,11 +350,7 @@ describe("registering a downloaded file reaches every code it serves", () => {
 			assert.ok(isLocaleRegistered(code), `${code} was never registered`);
 			setLocale(code);
 			assert.strictEqual(getLocale(), code, `${code} did not become active`);
-			assert.strictEqual(
-				t("probe.own"),
-				`from:${fileId}`,
-				`${code} rendered the wrong file`,
-			);
+			assert.strictEqual(t("probe.own"), `from:${fileId}`, `${code} rendered the wrong file`);
 		}
 	});
 
@@ -385,10 +362,7 @@ describe("registering a downloaded file reaches every code it serves", () => {
 		assert.ok(isLocaleRegistered("nb"), "nb is a code as well as a file id");
 
 		const unexpected = getAvailableLocales().filter(
-			(code) =>
-				code !== "en" &&
-				!(code in LOCALE_FILES) &&
-				!["partial", "qq"].includes(code),
+			(code) => code !== "en" && !(code in LOCALE_FILES) && !["partial", "qq"].includes(code),
 		);
 		assert.deepStrictEqual(unexpected, []);
 	});

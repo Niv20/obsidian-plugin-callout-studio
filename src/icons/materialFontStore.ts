@@ -52,7 +52,9 @@ class MaterialFontStore {
 		this.destroyed = true;
 	}
 
-	get isDestroyed(): boolean { return this.destroyed; }
+	get isDestroyed(): boolean {
+		return this.destroyed;
+	}
 
 	/**
 	 * The plugin's own folder, so uninstalling takes the fonts with it.
@@ -60,9 +62,7 @@ class MaterialFontStore {
 	 * the same shape `PackDataStore.packDir()` uses.
 	 */
 	private dir(): string {
-		const base =
-			this.manifest.dir ??
-			`${this.app.vault.configDir}/plugins/${this.manifest.id}`;
+		const base = this.manifest.dir ?? `${this.app.vault.configDir}/plugins/${this.manifest.id}`;
 		return normalizePath(`${base}/icon-fonts`);
 	}
 
@@ -98,9 +98,7 @@ class MaterialFontStore {
 			const bytes = await this.app.vault.adapter.readBinary(path);
 			if (this.destroyed) return null;
 			if (!isWoff2(bytes)) {
-				console.warn(
-					`[CalloutStudio] cached webfont at ${path} is not woff2; discarding`,
-				);
+				console.warn(`[CalloutStudio] cached webfont at ${path} is not woff2; discarding`);
 				await this.remove(family);
 				return null;
 			}

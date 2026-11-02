@@ -53,9 +53,14 @@ function fakePlugin(callouts: CalloutDefinition[], paused = false) {
 	const plugin = {
 		app: {},
 		registry,
-		get settings() { return registry.settings; },
+		get settings() {
+			return registry.settings;
+		},
 		settingsWriter: { isFrozen: paused },
-		runVaultScan: () => new Promise<number>((resolve) => { finishScan = resolve; }),
+		runVaultScan: () =>
+			new Promise<number>((resolve) => {
+				finishScan = resolve;
+			}),
 	};
 	return { plugin, registry, finishScan: (added: number) => finishScan(added) };
 }
@@ -76,11 +81,13 @@ function treeContext(plugin: object, redraw: () => void): TreeContext {
 /** The main page's row that opens My callout types, drawn by the test renderer. */
 function drawMine(plugin: object) {
 	let redraws = 0;
-	const ctx = treeContext(plugin, () => { redraws++; tab.update(); });
+	const ctx = treeContext(plugin, () => {
+		redraws++;
+		tab.update();
+	});
 	const tab = new PluginSettingTab({}, {});
-	tab.getSettingDefinitions = () => toObsidianItems([
-		{ type: "group", id: "callouts", items: [myCalloutsPage(ctx)] },
-	]);
+	tab.getSettingDefinitions = () =>
+		toObsidianItems([{ type: "group", id: "callouts", items: [myCalloutsPage(ctx)] }]);
 	const harness = new DeclarativeHarness(tab);
 	tab.update();
 	return { tab, harness, redraws: () => redraws };
@@ -88,7 +95,9 @@ function drawMine(plugin: object) {
 
 /** The page's list of callouts (under its own id while it has none). */
 function list(harness: DeclarativeHarness): RenderedBox {
-	const box = harness.rendered.find((b) => b.def.id === CALLOUT_PAGES.mineList || b.def.id === CALLOUT_PAGES.mineListEmpty);
+	const box = harness.rendered.find(
+		(b) => b.def.id === CALLOUT_PAGES.mineList || b.def.id === CALLOUT_PAGES.mineListEmpty,
+	);
 	assert.ok(box, "no list");
 	return box;
 }
@@ -116,7 +125,11 @@ function searchList(box: RenderedBox, query: string): void {
 async function noticesDuring(run: () => Promise<void> | void): Promise<string[]> {
 	const notices: string[] = [];
 	(globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__ = notices;
-	try { await run(); } finally { delete (globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__; }
+	try {
+		await run();
+	} finally {
+		delete (globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__;
+	}
 	return notices;
 }
 
@@ -133,7 +146,10 @@ describe("My callout types", () => {
 		// narrow tab and on a phone; styles.css no longer does it.
 		assert.ok(list(harness).groupEl.hasClass("mod-list"), "in Obsidian's list box");
 		const rows = calloutRows(list(harness));
-		assert.deepEqual(rows.map((row) => row.def.name), ["Agenda", "Recite"]);
+		assert.deepEqual(
+			rows.map((row) => row.def.name),
+			["Agenda", "Recite"],
+		);
 		for (const row of rows) {
 			assert.ok(row.settingEl.hasClass("cs-callout-row"));
 			assert.ok(row.settingEl.firstElementChild?.hasClass("callout-studio-row-icon"), "the icon first");
@@ -144,7 +160,10 @@ describe("My callout types", () => {
 		const { tab, harness } = drawMine(fakePlugin([RECITE, AGENDA]).plugin);
 		harness.openPage([CALLOUT_PAGES.mine]);
 		tab.update();
-		const shown = (): string[] => calloutRows(list(harness)).filter((row) => row.settingEl.isShown()).map((row) => row.def.name ?? "");
+		const shown = (): string[] =>
+			calloutRows(list(harness))
+				.filter((row) => row.settingEl.isShown())
+				.map((row) => row.def.name ?? "");
 		searchList(list(harness), "QUOTE2");
 		assert.deepEqual(shown(), ["Recite"]);
 		searchList(list(harness), "agen");
@@ -158,11 +177,17 @@ describe("My callout types", () => {
 		assert.equal(shown(), false, "hidden until something is searched for");
 		searchList(list(harness), "zzz");
 		assert.equal(shown(), true);
-		assert.equal(noMatchesRow(list(harness)).setting.nameEl.textContent, t("calloutPicker.noMatches", { query: "zzz" }));
+		assert.equal(
+			noMatchesRow(list(harness)).setting.nameEl.textContent,
+			t("calloutPicker.noMatches", { query: "zzz" }),
+		);
 		assert.ok(noMatchesRow(list(harness)).settingEl.hasClass("mod-empty-state"), "Obsidian's grey row");
 		// The words follow the query, and the row goes when something matches again.
 		searchList(list(harness), "yyy");
-		assert.equal(noMatchesRow(list(harness)).setting.nameEl.textContent, t("calloutPicker.noMatches", { query: "yyy" }));
+		assert.equal(
+			noMatchesRow(list(harness)).setting.nameEl.textContent,
+			t("calloutPicker.noMatches", { query: "yyy" }),
+		);
 		searchList(list(harness), "agen");
 		assert.equal(shown(), false);
 		searchList(list(harness), "zzz");
@@ -173,7 +198,10 @@ describe("My callout types", () => {
 	it("has the row only while there is a list to search, and it is no result of the settings search", () => {
 		const some = drawMine(fakePlugin([RECITE]).plugin);
 		some.harness.openPage([CALLOUT_PAGES.mine]);
-		assert.equal(list(some.harness).children.some((row) => row.def.id === CALLOUT_PAGES.noMatches), true);
+		assert.equal(
+			list(some.harness).children.some((row) => row.def.id === CALLOUT_PAGES.noMatches),
+			true,
+		);
 		const none = drawMine(fakePlugin([]).plugin);
 		none.harness.openPage([CALLOUT_PAGES.mine]);
 		assert.equal(list(none.harness).children.length, 0, "an empty list is only its grey row, which has no search");
@@ -194,7 +222,10 @@ describe("My callout types", () => {
 		tab.update();
 		assert.ok(list(harness).searchInputEl, "the search field is there for the callouts the scan found");
 		assert.equal(list(harness).emptyStateEl, undefined, "and the grey row is gone");
-		const shown = (): string[] => calloutRows(list(harness)).filter((row) => row.settingEl.isShown()).map((row) => row.def.name ?? "");
+		const shown = (): string[] =>
+			calloutRows(list(harness))
+				.filter((row) => row.settingEl.isShown())
+				.map((row) => row.def.name ?? "");
 		searchList(list(harness), "quote2");
 		assert.deepEqual(shown(), ["Recite"]);
 		searchList(list(harness), "zzz");
@@ -213,7 +244,10 @@ describe("My callout types", () => {
 		registry.add(AGENDA);
 		tab.update();
 		assert.ok(list(harness).searchInputEl);
-		assert.deepEqual(calloutRows(list(harness)).map((row) => row.def.name), ["Agenda"]);
+		assert.deepEqual(
+			calloutRows(list(harness)).map((row) => row.def.name),
+			["Agenda"],
+		);
 	});
 
 	it("keeps one search field, and what was typed in it, while the callouts change under it", () => {
@@ -247,7 +281,10 @@ describe("My callout types", () => {
 	it("shows Obsidian's grey row when there is none", () => {
 		const { harness } = drawMine(fakePlugin([]).plugin);
 		// "None" at none, where the count would be: the end of the row is never blank.
-		assert.equal(harness.row(t("settings.myCalloutTypes"))!.settingEl.querySelector(".setting-item-value")?.textContent, t("recovery.details.value.none"));
+		assert.equal(
+			harness.row(t("settings.myCalloutTypes"))!.settingEl.querySelector(".setting-item-value")?.textContent,
+			t("recovery.details.value.none"),
+		);
 		harness.openPage([CALLOUT_PAGES.mine]);
 		assert.equal(list(harness).emptyStateEl?.textContent, t("settings.noCalloutsNow"));
 	});
@@ -256,10 +293,14 @@ describe("My callout types", () => {
 		const { plugin, finishScan } = fakePlugin([RECITE]);
 		const { harness, redraws } = drawMine(plugin);
 		harness.openPage([CALLOUT_PAGES.mine]);
-		const scanName = (): string | null | undefined => harness.rows().find((row) => row.def.id === CALLOUT_PAGES.scanRow)?.setting.nameEl.textContent;
+		const scanName = (): string | null | undefined =>
+			harness.rows().find((row) => row.def.id === CALLOUT_PAGES.scanRow)?.setting.nameEl.textContent;
 		assert.equal(scanName(), t("settings.rescanVaultHintAction"));
 		await noticesDuring(async () => {
-			harness.rows().find((row) => row.def.id === CALLOUT_PAGES.scanRow)!.settingEl.click();
+			harness
+				.rows()
+				.find((row) => row.def.id === CALLOUT_PAGES.scanRow)!
+				.settingEl.click();
 			assert.equal(scanName(), t("manualDiscovery.scanning"));
 			// The scan starts once "Scanning…" has been drawn, one wait later.
 			await new Promise((resolve) => setImmediate(resolve));
@@ -278,14 +319,23 @@ describe("a callout row drawn twice on the same setting", () => {
 		registry.add(RECITE);
 		const ctx = { app: {}, plugin: { app: {}, registry, settings: registry.settings } } as never;
 		const opened: string[] = [];
-		const handlers = { onEdit: () => {}, onOpenBuiltInMenu: () => {}, onOpenUserMenu: (_: unknown, def: CalloutDefinition) => { opened.push(def.id); } };
+		const handlers = {
+			onEdit: () => {},
+			onOpenBuiltInMenu: () => {},
+			onOpenUserMenu: (_: unknown, def: CalloutDefinition) => {
+				opened.push(def.id);
+			},
+		};
 		const setting = new Setting(createDiv() as never);
 		const undo = drawCalloutRow(ctx, setting as never, RECITE, "user", handlers);
 		// What Obsidian does to redraw a row: its cleanup, then `clear()`, then draw.
 		undo();
 		setting.clear();
 		drawCalloutRow(ctx, setting as never, RECITE, "user", handlers);
-		const rowEl = setting.settingEl as unknown as { fire(type: string, init: object): void; querySelectorAll(sel: string): unknown[] };
+		const rowEl = setting.settingEl as unknown as {
+			fire(type: string, init: object): void;
+			querySelectorAll(sel: string): unknown[];
+		};
 		rowEl.fire("contextmenu", { preventDefault: () => {}, clientX: 0, clientY: 0 });
 		assert.deepEqual(opened, ["recite"]);
 		assert.equal(rowEl.querySelectorAll(".callout-studio-row-icon").length, 1);
@@ -299,7 +349,9 @@ describe("a callout row drawn twice on the same setting", () => {
 		const handlers = { onEdit: () => {}, onOpenBuiltInMenu: () => {}, onOpenUserMenu: () => {} };
 		const setting = new Setting(createDiv() as never);
 		const undo = drawCalloutRow(ctx, setting as never, RECITE, "user", handlers);
-		const rowEl = setting.settingEl as unknown as { querySelector(sel: string): { textContent: string | null } | null };
+		const rowEl = setting.settingEl as unknown as {
+			querySelector(sel: string): { textContent: string | null } | null;
+		};
 		const iconBefore = rowEl.querySelector(".callout-studio-row-icon");
 		assert.ok(iconBefore?.textContent, "the icon is drawn");
 		// Obsidian's `closePage` runs every row's cleanup and only then slides the
@@ -324,10 +376,17 @@ describe("while saving is paused", () => {
 			assert.equal(row.settingEl.hasClass("is-disabled"), false, "the row is not faded");
 			const [edit, menu] = row.setting.extraButtons;
 			assert.equal((edit!.extraSettingsEl as unknown as HTMLElement).getAttribute("aria-disabled"), "true");
-			assert.notEqual((menu!.extraSettingsEl as unknown as HTMLElement).getAttribute("aria-disabled"), "true", "⋮ still opens");
+			assert.notEqual(
+				(menu!.extraSettingsEl as unknown as HTMLElement).getAttribute("aria-disabled"),
+				"true",
+				"⋮ still opens",
+			);
 			edit!.press();
 			(list(harness).settingGroup.extraButtons[0] as ButtonLike).press();
-			harness.rows().find((r) => r.def.id === CALLOUT_PAGES.scanRow)!.settingEl.click();
+			harness
+				.rows()
+				.find((r) => r.def.id === CALLOUT_PAGES.scanRow)!
+				.settingEl.click();
 		});
 		assert.equal(notices.length, 3);
 		assert.equal(registry.getUserDefined().length, 1);

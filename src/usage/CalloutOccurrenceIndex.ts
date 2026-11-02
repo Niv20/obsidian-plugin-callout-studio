@@ -4,8 +4,11 @@ import { openOccurrenceEditors } from "./editorOccurrenceSources";
 import { queryOccurrences } from "./occurrenceQuery";
 import { scanCalloutOccurrencesAsync, yieldOccurrenceScan } from "./scanCalloutOccurrences";
 import type {
-	CalloutOccurrence, CalloutOccurrenceQuery, OccurrenceIndexSnapshot,
-	OccurrenceIndexStatus, OccurrenceScanFailure,
+	CalloutOccurrence,
+	CalloutOccurrenceQuery,
+	OccurrenceIndexSnapshot,
+	OccurrenceIndexStatus,
+	OccurrenceScanFailure,
 } from "./occurrenceTypes";
 
 interface FileSnapshot {
@@ -45,12 +48,18 @@ export class CalloutOccurrenceIndex {
 
 	constructor(private readonly app: App) {}
 
-	get scannedFileCount(): number { return this.records.size; }
+	get scannedFileCount(): number {
+		return this.records.size;
+	}
 
 	getSnapshot(): OccurrenceIndexSnapshot {
 		return {
-			status: this.status, revision: this.revision, dataRevision: this.dataRevision, failures: this.failures,
-			markdownFileCount: this.markdownFileCount, scannedFileCount: this.scannedFileCount,
+			status: this.status,
+			revision: this.revision,
+			dataRevision: this.dataRevision,
+			failures: this.failures,
+			markdownFileCount: this.markdownFileCount,
+			scannedFileCount: this.scannedFileCount,
 		};
 	}
 
@@ -61,7 +70,9 @@ export class CalloutOccurrenceIndex {
 
 	subscribe(listener: () => void): () => void {
 		if (this.status !== "disposed") this.listeners.add(listener);
-		return () => { this.listeners.delete(listener); };
+		return () => {
+			this.listeners.delete(listener);
+		};
 	}
 
 	/** Events only invalidate; the next UI request performs reads. Folder paths work too. */
@@ -118,7 +129,11 @@ export class CalloutOccurrenceIndex {
 	ensureFresh(): Promise<void> {
 		if (this.status === "disposed") return Promise.resolve();
 		if (this.running) return this.running;
-		this.running = Promise.resolve().then(() => this.scan()).finally(() => { this.running = null; });
+		this.running = Promise.resolve()
+			.then(() => this.scan())
+			.finally(() => {
+				this.running = null;
+			});
 		return this.running;
 	}
 
@@ -141,16 +156,28 @@ export class CalloutOccurrenceIndex {
 
 	private capture(file: TFile): FileSnapshot {
 		const path = file.path;
-		return { file, path, mtime: file.stat?.mtime, size: file.stat?.size,
-			epoch: this.epoch, version: this.versions.get(path) ?? 0, content: this.editorSources.get(file) };
+		return {
+			file,
+			path,
+			mtime: file.stat?.mtime,
+			size: file.stat?.size,
+			epoch: this.epoch,
+			version: this.versions.get(path) ?? 0,
+			content: this.editorSources.get(file),
+		};
 	}
 
 	private current(entry: FileSnapshot): boolean {
-		return this.status !== "disposed" && entry.epoch === this.epoch &&
-			entry.version === (this.versions.get(entry.path) ?? 0) && entry.file.path === entry.path &&
-			entry.file.stat?.mtime === entry.mtime && entry.file.stat?.size === entry.size &&
+		return (
+			this.status !== "disposed" &&
+			entry.epoch === this.epoch &&
+			entry.version === (this.versions.get(entry.path) ?? 0) &&
+			entry.file.path === entry.path &&
+			entry.file.stat?.mtime === entry.mtime &&
+			entry.file.stat?.size === entry.size &&
 			(typeof this.app.vault.getAbstractFileByPath !== "function" ||
-				this.app.vault.getAbstractFileByPath(entry.path) === entry.file);
+				this.app.vault.getAbstractFileByPath(entry.path) === entry.file)
+		);
 	}
 
 	private synchronizeEditors(): void {
@@ -174,29 +201,45 @@ export class CalloutOccurrenceIndex {
 			this.synchronizeEditors();
 			const files = this.app.vault.getMarkdownFiles().map((file) => this.capture(file));
 			this.markdownFileCount = files.length;
-			if (this.status === "ready" && files.length === this.records.size && files.every((entry) => {
-				const cached = this.records.get(entry.path);
-				return cached?.file === entry.file && this.current(cached);
-			})) return;
+			if (
+				this.status === "ready" &&
+				files.length === this.records.size &&
+				files.every((entry) => {
+					const cached = this.records.get(entry.path);
+					return cached?.file === entry.file && this.current(cached);
+				})
+			)
+				return;
 			this.status = "loading";
 			this.notify();
 			let budgetStart = Date.now();
 			for (const [position, entry] of files.entries()) {
 				if (this.isDisposed()) return;
-				if (!this.current(entry)) { changed = true; continue; }
+				if (!this.current(entry)) {
+					changed = true;
+					continue;
+				}
 				const cached = this.records.get(entry.path);
 				if (cached?.file === entry.file && this.current(cached)) next.set(entry.path, cached);
 				else {
 					try {
-						const content = entry.content ?? await this.app.vault.cachedRead(entry.file);
-						if (!this.current(entry)) { changed = true; continue; }
-						const occurrences = await scanCalloutOccurrencesAsync(entry.path, content, () => this.current(entry));
+						const content = entry.content ?? (await this.app.vault.cachedRead(entry.file));
+						if (!this.current(entry)) {
+							changed = true;
+							continue;
+						}
+						const occurrences = await scanCalloutOccurrencesAsync(entry.path, content, () =>
+							this.current(entry),
+						);
 						if (occurrences) next.set(entry.path, { ...entry, occurrences });
 						else changed = true;
 					} catch (error) {
 						if (!this.current(entry)) changed = true;
 						else {
-							failures.push({ path: entry.path, message: error instanceof Error ? error.message : String(error) });
+							failures.push({
+								path: entry.path,
+								message: error instanceof Error ? error.message : String(error),
+							});
 							failedSnapshots.set(entry.path, entry);
 						}
 					}
@@ -233,9 +276,11 @@ export class CalloutOccurrenceIndex {
 			}
 			// A canceled update keeps its previous visible rows until replacement.
 			// Explicit deletion/invalidation has already removed those records.
-			if (changed) for (const [path, previous] of this.records) {
-				if (!next.has(path) && !failedPaths.has(path) && live.get(path) === previous.file) next.set(path, previous);
-			}
+			if (changed)
+				for (const [path, previous] of this.records) {
+					if (!next.has(path) && !failedPaths.has(path) && live.get(path) === previous.file)
+						next.set(path, previous);
+				}
 		} catch (error) {
 			failures.push({ path: "", message: error instanceof Error ? error.message : String(error) });
 		}
@@ -249,7 +294,9 @@ export class CalloutOccurrenceIndex {
 		this.notify();
 	}
 
-	private isDisposed(): boolean { return this.status === "disposed"; }
+	private isDisposed(): boolean {
+		return this.status === "disposed";
+	}
 
 	private rebuildLookup(): void {
 		this.lookupDirty = false;
@@ -266,8 +313,11 @@ export class CalloutOccurrenceIndex {
 	private notify(): void {
 		this.revision++;
 		for (const listener of this.listeners) {
-			try { listener(); }
-			catch (error) { console.warn("[callout-studio] occurrence subscriber failed", error); }
+			try {
+				listener();
+			} catch (error) {
+				console.warn("[callout-studio] occurrence subscriber failed", error);
+			}
 		}
 	}
 }

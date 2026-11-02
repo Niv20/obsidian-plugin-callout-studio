@@ -56,36 +56,24 @@ function loaded(callouts: CalloutDefinition[] = []): CalloutRegistry {
 	return registry;
 }
 
-const ids = (defs: readonly CalloutDefinition[]): string[] =>
-	defs.map((d) => d.id);
+const ids = (defs: readonly CalloutDefinition[]): string[] => defs.map((d) => d.id);
 
 /* -------------------------------------------------------------------------- */
 /* The two surfaces, spelled the way their callers spell them                 */
 /* -------------------------------------------------------------------------- */
 
 /** The "My callout types" list. */
-const settingsUserList = (registry: CalloutRegistry): string[] =>
-	ids(registry.getUserDefined());
+const settingsUserList = (registry: CalloutRegistry): string[] => ids(registry.getUserDefined());
 
 /** The built-ins list beside it. */
-const settingsBuiltInList = (registry: CalloutRegistry): string[] =>
-	ids(registry.getBuiltIn());
+const settingsBuiltInList = (registry: CalloutRegistry): string[] => ids(registry.getBuiltIn());
 
 /** What `AutoComplete` and `CommandEditorModal` offer: the raw map, filtered. */
-const offerableFromMap = (
-	registry: CalloutRegistry,
-	unused: Set<string>,
-): string[] =>
-	ids(registry.getAll());
+const offerableFromMap = (registry: CalloutRegistry, unused: Set<string>): string[] => ids(registry.getAll());
 
 /** What the public API offers: the two list views unioned, then filtered. */
-const offerableFromLists = (
-	registry: CalloutRegistry,
-	unused: Set<string>,
-): string[] =>
-	ids(
-		[...registry.getBuiltIn(), ...registry.getUserDefined()],
-	);
+const offerableFromLists = (registry: CalloutRegistry, unused: Set<string>): string[] =>
+	ids([...registry.getBuiltIn(), ...registry.getUserDefined()]);
 
 /* -------------------------------------------------------------------------- */
 /* A discovered row nobody writes any more                                    */
@@ -104,17 +92,12 @@ describe("a discovered row the scan found written nowhere", () => {
 
 	it("remains offered until the user removes it", () => {
 		assert.strictEqual(offerableFromMap(registry, unused).includes("stale"), true);
-		assert.strictEqual(
-			offerableFromLists(registry, unused).includes("stale"),
-			true,
-		);
+		assert.strictEqual(offerableFromLists(registry, unused).includes("stale"), true);
 	});
 });
 
 describe("a discovered row the user adopted", () => {
-	const registry = loaded([
-		def({ id: "mine", source: "fallback", customized: true }),
-	]);
+	const registry = loaded([def({ id: "mine", source: "fallback", customized: true })]);
 	const unused = new Set(["mine"]);
 
 	it("is everywhere, zero usage or not", () => {
@@ -148,14 +131,8 @@ describe("a demo preview on an id of its own", () => {
 	registry.setPreviewDefinition(def({ id: PREVIEW_PLACEHOLDER_ID }), true);
 
 	it("never appears in either settings list", () => {
-		assert.strictEqual(
-			settingsUserList(registry).includes(PREVIEW_PLACEHOLDER_ID),
-			false,
-		);
-		assert.strictEqual(
-			settingsBuiltInList(registry).includes(PREVIEW_PLACEHOLDER_ID),
-			false,
-		);
+		assert.strictEqual(settingsUserList(registry).includes(PREVIEW_PLACEHOLDER_ID), false);
+		assert.strictEqual(settingsBuiltInList(registry).includes(PREVIEW_PLACEHOLDER_ID), false);
 	});
 
 	it("IS in the raw map, so the CSS pipeline can still paint it", () => {
@@ -171,16 +148,11 @@ describe("a demo preview shadowing a real callout", () => {
 	// is what made every real `[!example]` note repaint behind the modal.
 	const registry = loaded();
 	const shipped = registry.get("example");
-	registry.setPreviewDefinition(
-		def({ id: "example", displayName: "DRAFT", builtIn: true, source: "builtin" }),
-		true,
-	);
+	registry.setPreviewDefinition(def({ id: "example", displayName: "DRAFT", builtIn: true, source: "builtin" }), true);
 
 	it("shows the real callout in the list, not the draft", () => {
 		assert.ok(shipped);
-		const listed = registry
-			.getBuiltIn()
-			.find((d) => d.id === "example");
+		const listed = registry.getBuiltIn().find((d) => d.id === "example");
 		assert.strictEqual(listed?.displayName, shipped.displayName);
 		assert.notStrictEqual(listed?.displayName, "DRAFT");
 	});
@@ -241,16 +213,11 @@ describe("the pick-a-callout surfaces do not all read the same list view", () =>
 	registry.setPreviewDefinition(def({ id: PREVIEW_PLACEHOLDER_ID }), true);
 
 	it("the API's union cannot carry a preview row", () => {
-		assert.strictEqual(
-			offerableFromLists(registry, new Set()).includes(PREVIEW_PLACEHOLDER_ID),
-			false,
-		);
+		assert.strictEqual(offerableFromLists(registry, new Set()).includes(PREVIEW_PLACEHOLDER_ID), false);
 	});
 
 	it("the raw-map callers do carry it", () => {
-		assert.ok(
-			offerableFromMap(registry, new Set()).includes(PREVIEW_PLACEHOLDER_ID),
-		);
+		assert.ok(offerableFromMap(registry, new Set()).includes(PREVIEW_PLACEHOLDER_ID));
 	});
 
 	it("they agree about everything else", () => {
@@ -260,9 +227,6 @@ describe("the pick-a-callout surfaces do not all read the same list view", () =>
 			def({ id: "kept", source: "fallback", customized: true }),
 		]);
 		const unused = new Set(["stale"]);
-		assert.deepStrictEqual(
-			offerableFromMap(clean, unused).sort(),
-			offerableFromLists(clean, unused).sort(),
-		);
+		assert.deepStrictEqual(offerableFromMap(clean, unused).sort(), offerableFromLists(clean, unused).sort());
 	});
 });

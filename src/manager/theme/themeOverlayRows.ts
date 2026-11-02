@@ -80,9 +80,7 @@ export function syncThemeOverlayRows(
 	// actual callout token can become a row. Reserved demo ids are excluded
 	// outright — a theme that happens to name one must not be able to mint a
 	// row over the settings preview's placeholder.
-	const themeIds = new Set(
-		[...usableThemeIds(declared)].filter((id) => !RESERVED_DEMO_IDS.has(id)),
-	);
+	const themeIds = new Set([...usableThemeIds(declared)].filter((id) => !RESERVED_DEMO_IDS.has(id)));
 	const existing = registry.getAll();
 
 	// Every attribute form already spoken for, so a minted row can never
@@ -103,20 +101,14 @@ export function syncThemeOverlayRows(
 	// list — not stale, because the set still has it; not fresh, because a row
 	// already claims it. A direct theme switch therefore leaves it owned
 	// throughout, with no delete-and-remint flicker in the middle.
-	const stale = existing.filter(
-		(def) =>
-			def.source === "theme" && !themeIds.has(obsidianCalloutAttrId(def.id)),
-	);
+	const stale = existing.filter((def) => def.source === "theme" && !themeIds.has(obsidianCalloutAttrId(def.id)));
 	const fresh = [...themeIds].filter((id) => !claimed.has(id));
 
 	// Ownership moves even when no row does — a theme that starts naming a
 	// built-in mints and retires nothing yet changes who paints it — so it is
 	// published unconditionally, and inside the batch so that listeners see the
 	// rows and the ownership as one change rather than two halves of a sweep.
-	const owned =
-		notDrawn.size === 0
-			? themeIds
-			: new Set([...themeIds].filter((id) => !notDrawn.has(id)));
+	const owned = notDrawn.size === 0 ? themeIds : new Set([...themeIds].filter((id) => !notDrawn.has(id)));
 	return registry.batch(() => {
 		registry.setThemeOwnedIds(owned);
 		let changed = 0;
@@ -124,10 +116,7 @@ export function syncThemeOverlayRows(
 			if (registry.remove(def.id)) changed++;
 		}
 		if (fresh.length > 0) {
-			const fallback = fallbackSourceFor(
-				registry,
-				registry.settings.fallbackCalloutId,
-			);
+			const fallback = fallbackSourceFor(registry, registry.settings.fallbackCalloutId);
 			for (const id of fresh) {
 				// Modelled on the fallback callout so the row has *something* to
 				// show in the pickers, where a colourless entry reads as broken.

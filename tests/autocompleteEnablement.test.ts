@@ -39,10 +39,7 @@ function saved(enabled: unknown, include = true): PluginData {
 	return data as unknown as PluginData;
 }
 
-function device(
-	data: PluginData,
-	appId = `autocomplete-enable-${nextDevice++}`,
-) {
+function device(data: PluginData, appId = `autocomplete-enable-${nextDevice++}`) {
 	notices.length = 0;
 	const app = {
 		appId,
@@ -160,14 +157,9 @@ describe("the affected-user autocomplete notice", () => {
 
 		release();
 		await loading;
-		assert.deepEqual(notices, [
-			"Autocomplete is now a core feature and is always enabled.",
-		]);
+		assert.deepEqual(notices, ["Autocomplete is now a core feature and is always enabled."]);
 		assert.equal(d.disk.writes, 1);
-		assert.equal(
-			(JSON.parse(d.disk.json) as PluginData).settings.autocomplete.enabled,
-			true,
-		);
+		assert.equal((JSON.parse(d.disk.json) as PluginData).settings.autocomplete.enabled, true);
 		assert.equal(d.localState.hasPendingAutocompleteNotice, false);
 		d.ready();
 		assert.equal(notices.length, 1, "ready is idempotent");
@@ -202,10 +194,7 @@ describe("the affected-user autocomplete notice", () => {
 		await d.load(late);
 		assert.deepEqual(notices, []);
 		assert.equal(d.localState.hasPendingAutocompleteNotice, false);
-		assert.equal(
-			(JSON.parse(d.disk.json) as PluginData).settings.autocomplete.enabled,
-			true,
-		);
+		assert.equal((JSON.parse(d.disk.json) as PluginData).settings.autocomplete.enabled, true);
 		d.destroy();
 	});
 

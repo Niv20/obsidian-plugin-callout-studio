@@ -21,10 +21,7 @@
  * `StudioWeightCache` already documents, and it is also what made the old
  * behaviour impossible to test per theme.
  */
-import type {
-	AccentDialect,
-	AccentSpelling,
-} from "../manager/theme/accentDialect";
+import type { AccentDialect, AccentSpelling } from "../manager/theme/accentDialect";
 import { hexToRgbString } from "./colorUtils";
 
 /**
@@ -61,14 +58,8 @@ export function calloutColorValue(hex: string, dialect: AccentDialect): string {
  * keeps deciding the accent — while `--cs-accent` still resolves to something
  * `color-mix()` can consume.
  */
-export function calloutAccentVarRef(
-	cssVar: string,
-	dialect: AccentDialect,
-	mode: "light" | "dark",
-): string {
-	return accentVarSpelling(cssVar, dialect, mode) === "triplet"
-		? `rgb(var(${cssVar}))`
-		: `var(${cssVar})`;
+export function calloutAccentVarRef(cssVar: string, dialect: AccentDialect, mode: "light" | "dark"): string {
+	return accentVarSpelling(cssVar, dialect, mode) === "triplet" ? `rgb(var(${cssVar}))` : `var(${cssVar})`;
 }
 
 /**
@@ -80,10 +71,6 @@ export function calloutAccentVarRef(
  * other mode on core's value — see `ModeSpelling` in
  * `manager/theme/accentDialect.ts`.
  */
-export function accentVarSpelling(
-	cssVar: string,
-	dialect: AccentDialect,
-	mode: "light" | "dark",
-): AccentSpelling {
+export function accentVarSpelling(cssVar: string, dialect: AccentDialect, mode: "light" | "dark"): AccentSpelling {
 	return dialect.declared.get(cssVar)?.[mode] ?? CORE_ACCENT_SPELLING;
 }

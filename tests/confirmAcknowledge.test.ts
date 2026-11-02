@@ -29,7 +29,15 @@ function open(acknowledgement?: string, kind?: ConfirmKind) {
 	};
 	const contentEl = modal.contentEl as unknown as FakeElement;
 	const containerEl = modal.containerEl as unknown as FakeElement;
-	return { modal, answer, bar, contentEl, containerEl, confirm: button("Go"), cancel: button(en["confirm.cancel"] ?? "Cancel") };
+	return {
+		modal,
+		answer,
+		bar,
+		contentEl,
+		containerEl,
+		confirm: button("Go"),
+		cancel: button(en["confirm.cancel"] ?? "Cancel"),
+	};
 }
 
 /** Let a button's press, which Obsidian awaits, run to its end. */
@@ -40,13 +48,22 @@ describe("ConfirmModal — Obsidian's confirmation dialog", () => {
 		const h = open();
 		try {
 			assert.ok(h.containerEl.hasClass("mod-confirmation"), "Obsidian's confirmation dialog");
-			assert.deepEqual(h.contentEl.querySelectorAll("p").map((p) => p.textContent), ["First.", "Second."]);
+			assert.deepEqual(
+				h.contentEl.querySelectorAll("p").map((p) => p.textContent),
+				["First.", "Second."],
+			);
 			const buttons = h.bar.querySelectorAll("button");
-			assert.deepEqual(buttons.map((b) => b.textContent), [en["confirm.cancel"], "Go"], "Cancel first, as Obsidian orders them");
+			assert.deepEqual(
+				buttons.map((b) => b.textContent),
+				[en["confirm.cancel"], "Go"],
+				"Cancel first, as Obsidian orders them",
+			);
 			assert.ok(h.cancel.hasClass("mod-cancel"));
 			assert.ok(h.confirm.hasClass("mod-destructive"), "the red of a destructive yes");
-				assert.equal(h.confirm.hasClass("mod-cta"), false, "the quiet red of Log out, not a solid one");
-		} finally { h.modal.close(); }
+			assert.equal(h.confirm.hasClass("mod-cta"), false, "the quiet red of Log out, not a solid one");
+		} finally {
+			h.modal.close();
+		}
 	});
 
 	it("uses the accent for a yes that loses nothing", () => {
@@ -54,7 +71,9 @@ describe("ConfirmModal — Obsidian's confirmation dialog", () => {
 		try {
 			assert.ok(h.confirm.hasClass("mod-cta"));
 			assert.equal(h.confirm.hasClass("mod-destructive"), false);
-		} finally { h.modal.close(); }
+		} finally {
+			h.modal.close();
+		}
 	});
 
 	it("answers true for the confirm button, false for Cancel", async () => {
@@ -73,7 +92,9 @@ describe("ConfirmModal acknowledgement", () => {
 		try {
 			assert.equal(h.bar.querySelector(".cs-confirm-acknowledge"), null);
 			assert.notEqual(h.confirm.getAttribute("aria-disabled"), "true");
-		} finally { h.modal.close(); }
+		} finally {
+			h.modal.close();
+		}
 	});
 
 	it("puts Obsidian's checkbox at the start of the button bar, reachable with Tab", () => {
@@ -86,7 +107,9 @@ describe("ConfirmModal acknowledgement", () => {
 			assert.equal(label.textContent, en["confirm.acknowledge"]);
 			assert.equal(label.querySelector("input")!.getAttribute("tabindex"), "0", "a required gate is a Tab stop");
 			assert.equal(h.contentEl.querySelector(".cs-confirm-acknowledge"), null, "not in the message any more");
-		} finally { h.modal.close(); }
+		} finally {
+			h.modal.close();
+		}
 	});
 
 	it("keeps the confirm button locked until the box is ticked", async () => {
@@ -117,7 +140,9 @@ describe("ConfirmModal acknowledgement", () => {
 			assert.equal(h.confirm.getAttribute("aria-disabled"), "false");
 			assert.equal(classes(), locked, "ticking the box changes no class, so no colour of ours");
 			assert.ok(h.confirm.hasClass("mod-destructive"));
-		} finally { h.modal.close(); }
+		} finally {
+			h.modal.close();
+		}
 	});
 
 	it("flashes the tick and stays open when the locked button is pressed", async () => {
@@ -128,6 +153,8 @@ describe("ConfirmModal acknowledgement", () => {
 			const label = h.bar.querySelector(".cs-confirm-acknowledge")!;
 			assert.ok(label.hasClass("cs-nudge"), "the tick flashes");
 			assert.ok(h.containerEl.parentElement, "the dialog is still open");
-		} finally { h.modal.close(); }
+		} finally {
+			h.modal.close();
+		}
 	});
 });

@@ -13,6 +13,9 @@ export async function persistEditorSettings(host: EditorPersistenceHost): Promis
 	await host.saveSettings();
 	// A frozen or stale write resolves without writing. Awaiting alone cannot
 	// distinguish that protection from a successful save.
-	return !host.settingsWriter.isFrozen && !host.settingsWriter.isDestroyed &&
-		host.settingsWriter.matchesLastWrite(JSON.stringify(host.registry.toSaveData()), true);
+	return (
+		!host.settingsWriter.isFrozen &&
+		!host.settingsWriter.isDestroyed &&
+		host.settingsWriter.matchesLastWrite(JSON.stringify(host.registry.toSaveData()), true)
+	);
 }

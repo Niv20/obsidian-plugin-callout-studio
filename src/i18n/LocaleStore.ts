@@ -35,12 +35,7 @@
  */
 import { normalizePath, requestUrl } from "obsidian";
 import type { App, PluginManifest } from "obsidian";
-import {
-	LOCALE_FORMAT,
-	LOCALE_MANIFEST,
-	type LocaleFileId,
-	type LocaleManifestEntry,
-} from "./localeManifest";
+import { LOCALE_FORMAT, LOCALE_MANIFEST, type LocaleFileId, type LocaleManifestEntry } from "./localeManifest";
 import { registerLocaleFile, resolveLocaleFile, t } from "./index";
 import { showNotice } from "../ui/mascot/mascotNotices";
 
@@ -85,12 +80,7 @@ export function localeUrls(id: LocaleFileId, version: string): string[] {
 /** Whether the copy on disk is the one this build expects. */
 export type LocaleDiskResult = "fresh" | "stale" | "missing" | "invalid";
 
-export type LocaleLoadState =
-	| "absent"
-	| "loading"
-	| "ready"
-	| "stale"
-	| "failed";
+export type LocaleLoadState = "absent" | "loading" | "ready" | "stale" | "failed";
 
 interface LocaleFile {
 	format: number;
@@ -212,9 +202,7 @@ export class LocaleStore {
 	 * are served from `packs/` but cached into `icon-packs/`.
 	 */
 	private dir(): string {
-		const base =
-			this.manifest.dir ??
-			`${this.app.vault.configDir}/plugins/${this.manifest.id}`;
+		const base = this.manifest.dir ?? `${this.app.vault.configDir}/plugins/${this.manifest.id}`;
 		return normalizePath(`${base}/translations`);
 	}
 
@@ -415,10 +403,7 @@ export class LocaleStore {
 	}
 
 	/** Is this text byte-for-byte the file this build expects? */
-	private async matches(
-		text: string,
-		expected: LocaleManifestEntry | undefined,
-	): Promise<boolean> {
+	private async matches(text: string, expected: LocaleManifestEntry | undefined): Promise<boolean> {
 		if (this.destroyed || !expected) return false;
 		const bytes = new TextEncoder().encode(text);
 		if (bytes.byteLength !== expected.bytes) return false;
@@ -431,12 +416,7 @@ export class LocaleStore {
 	}
 
 	/** Parse, shape-check and publish locale text. */
-	private accept(
-		id: LocaleFileId,
-		text: string,
-		source: string,
-		fresh: boolean,
-	): boolean {
+	private accept(id: LocaleFileId, text: string, source: string, fresh: boolean): boolean {
 		if (this.destroyed) return false;
 		let raw: unknown;
 		try {
@@ -447,9 +427,7 @@ export class LocaleStore {
 		}
 		const result = parseLocaleFile(raw, id);
 		if (!result.ok) {
-			console.warn(
-				`[CalloutStudio] locale "${id}" from ${source} rejected: ${result.reason}`,
-			);
+			console.warn(`[CalloutStudio] locale "${id}" from ${source} rejected: ${result.reason}`);
 			return false;
 		}
 		registerLocaleFile(id, result.file.strings);

@@ -11,9 +11,5 @@ export const OWN_CSS_CHANGE = { source: "callout-studio" } as const;
 
 /** True for the `css-change` payload {@link OWN_CSS_CHANGE}. */
 export function isOwnCssChange(data: unknown): boolean {
-	return (
-		typeof data === "object" &&
-		data !== null &&
-		(data as { source?: unknown }).source === OWN_CSS_CHANGE.source
-	);
+	return typeof data === "object" && data !== null && (data as { source?: unknown }).source === OWN_CSS_CHANGE.source;
 }

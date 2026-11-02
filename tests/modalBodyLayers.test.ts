@@ -73,9 +73,7 @@ const cssRaw = readRepoFile("styles.css");
  * explanations contain the very declarations asserted about below.
  */
 function parseRules(css: string): Rule[] {
-	const blanked = css.replace(/\/\*[\s\S]*?\*\//g, (m) =>
-		m.replace(/[^\n]/g, " "),
-	);
+	const blanked = css.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, " "));
 	const out: Rule[] = [];
 
 	const walk = (text: string, offset: number, at: string[]): void => {
@@ -181,14 +179,7 @@ const NOTE_SURFACES = [
 	},
 	{
 		selector: ".cs-gap-demo",
-		allowedProps: [
-			"display",
-			"min-height",
-			"max-height",
-			"overflow",
-			"padding",
-			"background",
-		],
+		allowedProps: ["display", "min-height", "max-height", "overflow", "padding", "background"],
 		why: "the heading-gap drag demo, stacked reading-view headings inside the same card",
 	},
 ] as const;
@@ -229,9 +220,7 @@ describe("the surfaces that emulate a note keep painting --background-primary", 
 			// The promise is 1:1 with a note. A colour, a font or a padding on
 			// the *content* would break it silently — it would still look fine,
 			// just not like the note.
-			const extra = rule().props.filter(
-				(p) => !(surface.allowedProps as readonly string[]).includes(p),
-			);
+			const extra = rule().props.filter((p) => !(surface.allowedProps as readonly string[]).includes(p));
 			assert.deepStrictEqual(
 				extra,
 				[],
@@ -245,14 +234,8 @@ describe("the surfaces that emulate a note keep painting --background-primary", 
 		// The paint is only half of it: both elements carry Obsidian's own
 		// `markdown-preview-view`, which is what makes core's reading-view CSS
 		// and the injected per-callout rules resolve as they do in a note.
-		assert.match(
-			readRepoFile("src/settings/stylePreview.ts"),
-			/cs-gap-demo markdown-preview-view/,
-		);
-		assert.match(
-			readRepoFile("src/settings/LiveCalloutPreview.ts"),
-			/markdown-preview-view/,
-		);
+		assert.match(readRepoFile("src/settings/stylePreview.ts"), /cs-gap-demo markdown-preview-view/);
+		assert.match(readRepoFile("src/settings/LiveCalloutPreview.ts"), /markdown-preview-view/);
 	});
 });
 
@@ -268,12 +251,9 @@ describe("the surfaces that emulate a note keep painting --background-primary", 
  * and the list exists to keep the next one there too.
  */
 const STICKY_LAYERS: Record<string, string> = {
-	".callout-studio-preview-col":
-		"the callout / palette / style editors' preview column, inside .modal-content",
-	".icon-picker-toolbar":
-		"the icon picker's per-source search bar, inside .icon-picker-content",
-	".cs-quick-insert-toolbar":
-		"the quick-insert window's search + source filter, inside .modal-content",
+	".callout-studio-preview-col": "the callout / palette / style editors' preview column, inside .modal-content",
+	".icon-picker-toolbar": "the icon picker's per-source search bar, inside .icon-picker-content",
+	".cs-quick-insert-toolbar": "the quick-insert window's search + source filter, inside .modal-content",
 	".cs-combobox-group-label":
 		"a picker's group heading, inside the .cs-combobox-menu scrollport and bounded by its group",
 	".cs-meta-suggestion-heading":
@@ -309,9 +289,7 @@ function paintOf(rule: Rule): string | undefined {
 	return valueOf(rule, "background") ?? valueOf(rule, "background-color");
 }
 
-const stickyRules = rules.filter((r) =>
-	r.decls.some((d) => /^position:\s*(-webkit-)?sticky$/.test(d)),
-);
+const stickyRules = rules.filter((r) => r.decls.some((d) => /^position:\s*(-webkit-)?sticky$/.test(d)));
 
 describe("sticky layers", () => {
 	it("found them", () => {
@@ -334,10 +312,7 @@ describe("sticky layers", () => {
 		//
 		// The popover's ground is app.css's (`--suggestion-background`); the
 		// heading repaints the very token the popover names it by.
-		assert.strictEqual(
-			paintOf(ruleFor(".cs-combobox-group-label")),
-			"var(--cs-menu-face)",
-		);
+		assert.strictEqual(paintOf(ruleFor(".cs-combobox-group-label")), "var(--cs-menu-face)");
 		assert.strictEqual(
 			valueOf(ruleFor(".cs-combobox-popup"), "--cs-menu-face"),
 			"var(--suggestion-background, var(--background-primary))",
@@ -470,14 +445,12 @@ describe("sticky layers", () => {
 		const circles = ruleFor(".cs-color-circles");
 		assert.ok(
 			valueOf(circles, "isolation") === "isolate" ||
-				(valueOf(circles, "position") !== undefined &&
-					valueOf(circles, "z-index") !== undefined),
+				(valueOf(circles, "position") !== undefined && valueOf(circles, "z-index") !== undefined),
 			`${circles.selector} has no stacking context of its own, so its ` +
 				`circles' z-index leaks past the widget and can outrank a sticky ` +
 				`heading elsewhere on the page (styles.css:${circles.line})`,
 		);
 	});
-
 });
 
 /* -------------------------------------------------------------------------- */
@@ -490,15 +463,10 @@ describe("sticky layers", () => {
  * logical and physical longhands cascade in the same slot, so a check that read
  * only `padding-top` would call a real collision a miss.
  */
-function topPaddingOf(
-	rule: Rule,
-): { value: string; important: boolean } | undefined {
+function topPaddingOf(rule: Rule): { value: string; important: boolean } | undefined {
 	let found: { value: string; important: boolean } | undefined;
 	for (const decl of rule.decls) {
-		const match =
-			/^(padding|padding-top|padding-block|padding-block-start)\s*:\s*(.+)$/.exec(
-				decl,
-			);
+		const match = /^(padding|padding-top|padding-block|padding-block-start)\s*:\s*(.+)$/.exec(decl);
 		if (!match) continue;
 		const raw = match[2] as string;
 		const important = /!important\s*$/.test(raw);
@@ -523,12 +491,9 @@ function firstComponent(value: string): string {
 
 describe("the quick-insert sticky toolbar's scrollport inset", () => {
 	// Repeats the shell's classes, to outrank the window body's 4px ring room.
-	const body = (): Rule =>
-		ruleFor(".cs-quick-insert.cs-modal.mod-scrollable-content > .modal-content");
+	const body = (): Rule => ruleFor(".cs-quick-insert.cs-modal.mod-scrollable-content > .modal-content");
 	const intro = (): Rule =>
-		ruleFor(
-			".cs-quick-insert.cs-modal > .modal-content > .setting-item-description:first-child",
-		);
+		ruleFor(".cs-quick-insert.cs-modal > .modal-content > .setting-item-description:first-child");
 	const toolbar = (): Rule => ruleFor(".cs-quick-insert-toolbar");
 
 	it("starts the scrollport at zero so rows cannot pass through a gap", () => {
@@ -538,18 +503,12 @@ describe("the quick-insert sticky toolbar's scrollport inset", () => {
 	it("moves the resting inset onto content that scrolls away", () => {
 		// The same 4px every other window keeps in its body, so the intro sits
 		// as far under the title as any first row does.
-		assert.strictEqual(
-			valueOf(intro(), "padding-top"),
-			"var(--size-2-2)",
-		);
+		assert.strictEqual(valueOf(intro(), "padding-top"), "var(--size-2-2)");
 	});
 
 	it("keeps the search focus ring inside the toolbar's own opaque paint", () => {
 		assert.strictEqual(valueOf(toolbar(), "padding-top"), "12px");
-		assert.strictEqual(
-			paintOf(toolbar()),
-			"var(--cs-surface, var(--background-primary))",
-		);
+		assert.strictEqual(paintOf(toolbar()), "var(--cs-surface, var(--background-primary))");
 		assert.ok(valueOf(toolbar(), "z-index"));
 	});
 });

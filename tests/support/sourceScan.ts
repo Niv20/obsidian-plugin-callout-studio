@@ -49,10 +49,8 @@ import { join, relative, sep } from "node:path";
 export const REPO_ROOT = process.cwd();
 
 assert.ok(
-	existsSync(join(REPO_ROOT, "manifest.json")) &&
-		existsSync(join(REPO_ROOT, "src")),
-	`sourceScan: cwd is not the repository root (${REPO_ROOT}). ` +
-		"Run the suites through `npm test`.",
+	existsSync(join(REPO_ROOT, "manifest.json")) && existsSync(join(REPO_ROOT, "src")),
+	`sourceScan: cwd is not the repository root (${REPO_ROOT}). ` + "Run the suites through `npm test`.",
 );
 
 /** Reads a repo-relative path as UTF-8. */
@@ -95,11 +93,7 @@ export interface SourceFile {
  *   `cs-yolo`) collide head-on with this plugin's own `cs-` class prefix.
  * - `src/data/` — the emoji and (formerly) Material metadata tables.
  */
-const GENERATED_OR_DATA = [
-	"src/i18n/",
-	"src/icons/data/",
-	"src/data/",
-] as const;
+const GENERATED_OR_DATA = ["src/i18n/", "src/icons/data/", "src/data/"] as const;
 
 /** True when `path` is one of the data/generated trees above. */
 export function isGeneratedOrData(path: string): boolean {
@@ -428,7 +422,10 @@ export function codeLineCount(text: string): number {
 	for (const { start, end } of found) {
 		for (let i = start; i < end; i++) uncommented[i] = text[i] as string;
 	}
-	return uncommented.join("").split(/\r\n|\n|\r/).filter((line) => line.trim()).length;
+	return uncommented
+		.join("")
+		.split(/\r\n|\n|\r/)
+		.filter((line) => line.trim()).length;
 }
 
 /** Every string/template/regex literal body in `text`, with its offsets. */
@@ -467,10 +464,7 @@ export function at(file: SourceFile, index: number): string {
  * either view. Returns `null` for an unbalanced call, which cannot happen in
  * code that compiles but would otherwise be an infinite hunt.
  */
-export function argSpan(
-	code: string,
-	openParen: number,
-): { start: number; end: number } | null {
+export function argSpan(code: string, openParen: number): { start: number; end: number } | null {
 	let depth = 0;
 	for (let i = openParen; i < code.length; i++) {
 		const c = code[i];
@@ -487,10 +481,7 @@ export function argSpan(
  * Every match of `re` in a file's *code* (literals blanked), as
  * `{ match, index }`. `re` must be global.
  */
-export function codeMatches(
-	file: SourceFile,
-	re: RegExp,
-): { match: RegExpMatchArray; index: number }[] {
+export function codeMatches(file: SourceFile, re: RegExp): { match: RegExpMatchArray; index: number }[] {
 	const out: { match: RegExpMatchArray; index: number }[] = [];
 	for (const m of file.code.matchAll(re)) {
 		out.push({ match: m, index: m.index ?? 0 });

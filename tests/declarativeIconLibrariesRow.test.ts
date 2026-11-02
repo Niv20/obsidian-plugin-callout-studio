@@ -42,7 +42,12 @@ function setup(options: { editorOpen?: boolean } = {}) {
 		saveSettings: () => Promise.resolve(),
 		registry: { getCommitted: () => [], getUserImages: () => [] },
 		icons: {
-			packs: { loadAllFromDisk: () => { steps.push("read"); return Promise.resolve(); } },
+			packs: {
+				loadAllFromDisk: () => {
+					steps.push("read");
+					return Promise.resolve();
+				},
+			},
 			deleteLibrary: () => Promise.resolve(false),
 		},
 	};
@@ -62,9 +67,15 @@ function setup(options: { editorOpen?: boolean } = {}) {
 /** Draw the row in a box of its own, as the Colors and icons box holds it. */
 function drawRow(ctx: TreeContext) {
 	const tab = new PluginSettingTab({}, {});
-	tab.getSettingDefinitions = () => toObsidianItems([
-		{ type: "group", id: "colors-and-icons", heading: t("settings.colorsAndIcons"), items: [iconLibrariesRow(ctx)] },
-	]);
+	tab.getSettingDefinitions = () =>
+		toObsidianItems([
+			{
+				type: "group",
+				id: "colors-and-icons",
+				heading: t("settings.colorsAndIcons"),
+				items: [iconLibrariesRow(ctx)],
+			},
+		]);
 	const harness = new DeclarativeHarness(tab);
 	tab.update();
 	return { tab, harness };
@@ -84,11 +95,21 @@ describe("the Icon libraries row", () => {
 		const { harness } = drawRow(ctx);
 		const box = harness.rendered[0]!;
 		assert.equal(box.def.heading, "Colors and icons");
-		assert.deepEqual(box.children.map((row) => row.def.name), ["Icon libraries"]);
+		assert.deepEqual(
+			box.children.map((row) => row.def.name),
+			["Icon libraries"],
+		);
 		const row = harness.row("Icon libraries")!;
 		assert.equal(row.def.desc, t("settings.iconLibrariesDesc"));
-		assert.equal((buttonOf(harness).buttonEl as unknown as HTMLElement).dataset.csText, t("iconPicker.manageLibraries"));
-		assert.equal(t("iconPicker.manageLibraries"), "Manage libraries", "the words of Pick an icon's button, so the two doors agree");
+		assert.equal(
+			(buttonOf(harness).buttonEl as unknown as HTMLElement).dataset.csText,
+			t("iconPicker.manageLibraries"),
+		);
+		assert.equal(
+			t("iconPicker.manageLibraries"),
+			"Manage libraries",
+			"the words of Pick an icon's button, so the two doors agree",
+		);
 		assert.deepEqual(harness.duplicateKeys, []);
 	});
 
@@ -107,7 +128,16 @@ describe("the Icon libraries row", () => {
 		const { tab } = drawRow(ctx);
 		const names = (query: string): string[] => searchSettings(tab.settingItems, query).map((hit) => hit.name);
 		assert.deepEqual(names("icon libraries"), ["Icon libraries"]);
-		for (const library of ["Tabler", "Font Awesome", "Simple Icons", "RPG Awesome", "Octicons", "Lucide", "Material", "Emoji"]) {
+		for (const library of [
+			"Tabler",
+			"Font Awesome",
+			"Simple Icons",
+			"RPG Awesome",
+			"Octicons",
+			"Lucide",
+			"Material",
+			"Emoji",
+		]) {
 			assert.deepEqual(names(library), ["Icon libraries"], library);
 		}
 		assert.deepEqual(names("download"), ["Icon libraries"], "the sentence says where to download");
@@ -119,7 +149,11 @@ describe("pressing Manage libraries in the settings", () => {
 		const { ctx, plugin, steps } = setup();
 		const restoreIndexes = stubSourceIndexes((id) => ICON_SOURCE_IDS.indexOf(id) + 100);
 		let seen: IconLibrariesHost | undefined;
-		const restoreWindow = standInForLibrariesWindow((host) => { steps.push("open"); seen = host; return false; });
+		const restoreWindow = standInForLibrariesWindow((host) => {
+			steps.push("open");
+			seen = host;
+			return false;
+		});
 		try {
 			const { harness } = drawRow(ctx);
 			buttonOf(harness).press();
@@ -141,7 +175,11 @@ describe("pressing Manage libraries in the settings", () => {
 		const warn = console.warn;
 		console.warn = () => {};
 		let seen: IconLibrariesHost | undefined;
-		const restoreWindow = standInForLibrariesWindow((host) => { steps.push("open"); seen = host; return false; });
+		const restoreWindow = standInForLibrariesWindow((host) => {
+			steps.push("open");
+			seen = host;
+			return false;
+		});
 		try {
 			buttonOf(drawRow(ctx).harness).press();
 			await setImmediate();
@@ -166,19 +204,27 @@ describe("while a callout editor is open", () => {
 
 	it("explains instead of opening the window, and reads nothing", async () => {
 		const { ctx, steps } = setup({ editorOpen: true });
-		const restoreWindow = standInForLibrariesWindow(() => { steps.push("open"); return false; });
+		const restoreWindow = standInForLibrariesWindow(() => {
+			steps.push("open");
+			return false;
+		});
 		try {
 			buttonOf(drawRow(ctx).harness).press();
 			await setImmediate();
 			assert.deepEqual(steps, [], "no file was read and no window opened");
 			assert.equal(String(Notice.last?.message), t("settings.iconLibrariesEditorOpen"));
-		} finally { restoreWindow(); }
+		} finally {
+			restoreWindow();
+		}
 	});
 
 	it("asks again at the press, so an editor closed since the page was drawn no longer blocks it", async () => {
 		const { ctx, plugin, steps } = setup({ editorOpen: true });
 		const restoreIndexes = stubSourceIndexes(() => 1);
-		const restoreWindow = standInForLibrariesWindow(() => { steps.push("open"); return false; });
+		const restoreWindow = standInForLibrariesWindow(() => {
+			steps.push("open");
+			return false;
+		});
 		try {
 			const { harness } = drawRow(ctx);
 			plugin.settingsEditOpen = false;

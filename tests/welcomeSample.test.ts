@@ -29,10 +29,7 @@ import { en } from "../src/i18n/en";
 import { RESERVED_DEMO_IDS, WELCOME_DEMO_ID } from "../src/constants";
 import { sanitizeCalloutIdInput } from "../src/utils/calloutId";
 import { buildWelcomeDemoDefinition } from "../src/settings/welcomeDemo";
-import {
-	scanLineForCalloutTokens,
-	type LineCalloutToken,
-} from "../src/editor/calloutTokens";
+import { scanLineForCalloutTokens, type LineCalloutToken } from "../src/editor/calloutTokens";
 
 const RAW = en["welcome.sample"] as string;
 
@@ -44,9 +41,7 @@ const SAMPLE = RAW.replace(/\{\{id\}\}/g, WELCOME_DEMO_ID).replace(
 
 /** Every callout token in the sample, in document order. */
 function tokens(): LineCalloutToken[] {
-	return SAMPLE.split("\n").flatMap((line) =>
-		scanLineForCalloutTokens(line, { inlineContent: true }),
-	);
+	return SAMPLE.split("\n").flatMap((line) => scanLineForCalloutTokens(line, { inlineContent: true }));
 }
 
 /* -------------------------------------------------------------------------- */
@@ -55,22 +50,12 @@ function tokens(): LineCalloutToken[] {
 
 describe("the welcome sample's copy", () => {
 	it("calls the heading example 'Heading Callout', with no 'As a' prefix", () => {
-		assert.ok(
-			SAMPLE.includes("Heading Callout"),
-			"the heading example lost its name",
-		);
-		assert.ok(
-			!/As a Heading Callout/i.test(SAMPLE),
-			"the retired 'As a' prefix is back",
-		);
+		assert.ok(SAMPLE.includes("Heading Callout"), "the heading example lost its name");
+		assert.ok(!/As a Heading Callout/i.test(SAMPLE), "the retired 'As a' prefix is back");
 	});
 
 	it("names all three roles", () => {
-		for (const name of [
-			"Heading Callout",
-			"Inline Callout",
-			"Block Callout",
-		]) {
+		for (const name of ["Heading Callout", "Inline Callout", "Block Callout"]) {
 			assert.ok(SAMPLE.includes(name), name);
 		}
 	});
@@ -78,10 +63,7 @@ describe("the welcome sample's copy", () => {
 	it("still links to the repo through the interpolated placeholder", () => {
 		// Hard-coding the URL in the string would put it in 31 translations,
 		// where a stale copy of it would outlive every rename of the repo.
-		assert.ok(
-			RAW.includes("{{repoUrl}}"),
-			"welcome.sample lost {{repoUrl}}",
-		);
+		assert.ok(RAW.includes("{{repoUrl}}"), "welcome.sample lost {{repoUrl}}");
 		assert.ok(/\[Learn more\]\(https:\/\/github\.com\//.test(SAMPLE));
 	});
 });
@@ -129,11 +111,7 @@ describe("the welcome sample styles itself with its own demo id", () => {
 
 	it("uses that id for every one of the three examples", () => {
 		const found = tokens().map((t) => t.rawId);
-		assert.deepStrictEqual(
-			[...new Set(found)],
-			[WELCOME_DEMO_ID],
-			`sample references ${found.join(", ")}`,
-		);
+		assert.deepStrictEqual([...new Set(found)], [WELCOME_DEMO_ID], `sample references ${found.join(", ")}`);
 	});
 
 	// >>> REGRESSION: the theme-override report <<<
@@ -183,10 +161,7 @@ describe("the welcome sample parses as all three roles", () => {
 	it("gives the inline example a `{…}` payload", () => {
 		const inline = tokens().find((t) => t.role === "inline");
 		assert.ok(inline, "no inline token in the sample");
-		assert.ok(
-			inline.content !== undefined,
-			"the inline example is still a bare pill, not `[!id]{text}`",
-		);
+		assert.ok(inline.content !== undefined, "the inline example is still a bare pill, not `[!id]{text}`");
 	});
 
 	it("also shows the bare `[!type]{text}` form as literal text", () => {
@@ -200,10 +175,7 @@ describe("the welcome sample parses as all three roles", () => {
 		// `matchInlineContent` requires them to touch. A translator who adds a
 		// space turns the payload into literal prose, and the splash then shows
 		// a bare pill followed by a stray `{Inline Callout}`.
-		assert.ok(
-			!/\]\s+\{/.test(SAMPLE),
-			"a space crept between `]` and `{`, which makes the payload literal",
-		);
+		assert.ok(!/\]\s+\{/.test(SAMPLE), "a space crept between `]` and `{`, which makes the payload literal");
 	});
 });
 
@@ -220,9 +192,6 @@ describe("the welcome sample ends where the caret can be parked", () => {
 	it("has a last non-empty line that is not part of a block callout", () => {
 		const lines = SAMPLE.split("\n").filter((l) => l.trim().length > 0);
 		const last = lines[lines.length - 1] as string;
-		assert.ok(
-			!/^\s*>/.test(last),
-			`sample ends inside a block callout: ${JSON.stringify(last)}`,
-		);
+		assert.ok(!/^\s*>/.test(last), `sample ends inside a block callout: ${JSON.stringify(last)}`);
 	});
 });

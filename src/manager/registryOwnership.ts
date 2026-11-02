@@ -36,6 +36,10 @@ export interface RegistryOwnershipHost {
  * Callers must not adopt an incoming settings file while this is true.
  */
 export function registryIsOwned(host: RegistryOwnershipHost): boolean {
-	return host.settingsEditOpen || host.registry.hasPreviewDefinition() ||
-		host.settingsWriter?.busy === true || host.settingsWriter?.isDestroyed === true;
+	return (
+		host.settingsEditOpen ||
+		host.registry.hasPreviewDefinition() ||
+		host.settingsWriter?.busy === true ||
+		host.settingsWriter?.isDestroyed === true
+	);
 }

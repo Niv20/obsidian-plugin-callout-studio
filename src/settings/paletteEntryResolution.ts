@@ -42,12 +42,9 @@ export function resolvePaletteEntry(
 	];
 	const entry =
 		(paletteId
-			? known.find(
-					(e) => e.id === paletteId || e.palette.legacyIds?.includes(paletteId) === true,
-				)
+			? known.find((e) => e.id === paletteId || e.palette.legacyIds?.includes(paletteId) === true)
 			: undefined) ?? known.find((e) => matches(e.palette));
 	if (!entry) return null;
-	const keepsOldId =
-		paletteId !== undefined && entry.palette.legacyIds?.includes(paletteId) === true;
+	const keepsOldId = paletteId !== undefined && entry.palette.legacyIds?.includes(paletteId) === true;
 	return { entry, paletteId: keepsOldId ? paletteId : entry.id };
 }

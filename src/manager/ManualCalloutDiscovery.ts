@@ -62,11 +62,15 @@ export class ManualCalloutDiscovery {
 		// A scan reads saved notes only. Any failure or changing file cancels the
 		// whole operation, leaving both the registry and data.json untouched.
 		const files = app.vault.getMarkdownFiles().map((file) => ({
-			file, path: file.path, mtime: file.stat.mtime, size: file.stat.size,
+			file,
+			path: file.path,
+			mtime: file.stat.mtime,
+			size: file.stat.size,
 		}));
-		const unchanged = (entry: typeof files[number]): boolean =>
+		const unchanged = (entry: (typeof files)[number]): boolean =>
 			app.vault.getAbstractFileByPath(entry.path) === entry.file &&
-			entry.file.path === entry.path && entry.file.stat.mtime === entry.mtime &&
+			entry.file.path === entry.path &&
+			entry.file.stat.mtime === entry.mtime &&
 			entry.file.stat.size === entry.size;
 		// What the new rows are built from and saved over: the settings and the theme.
 		const settingsCurrent = (): boolean => {

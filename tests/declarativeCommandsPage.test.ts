@@ -43,18 +43,35 @@ function fakePlugin(commands: CustomCommand[], options: { paused?: boolean; off?
 	const hotkeySearches: string[] = [];
 	const app = {
 		// Obsidian's one-shortcut helper: Open settings is bound, nothing else is.
-		hotkeyManager: { printHotkeyForCommand: (id: string) => (id === "callout-studio:open-settings" ? "Ctrl + ," : "") },
-		setting: { open: () => {}, openTabById: () => ({ setQuery: (query: string) => { hotkeySearches.push(query); } }) },
+		hotkeyManager: {
+			printHotkeyForCommand: (id: string) => (id === "callout-studio:open-settings" ? "Ctrl + ," : ""),
+		},
+		setting: {
+			open: () => {},
+			openTabById: () => ({
+				setQuery: (query: string) => {
+					hotkeySearches.push(query);
+				},
+			}),
+		},
 	};
 	const plugin = {
 		app,
 		registry,
-		get settings() { return registry.settings; },
+		get settings() {
+			return registry.settings;
+		},
 		settingsWriter: { isFrozen: options.paused === true },
 		manifest: { id: "callout-studio", name: "Callout Studio" },
 		customCommands: {
 			list: () => list,
-			remove: async (id: string) => { list.splice(list.findIndex((c) => c.id === id), 1); return true; },
+			remove: async (id: string) => {
+				list.splice(
+					list.findIndex((c) => c.id === id),
+					1,
+				);
+				return true;
+			},
 		},
 		setFixedCommandEnabled: async (id: FixedCommandId, enabled: boolean) => {
 			const off = registry.settings.disabledFixedCommands;
@@ -70,7 +87,10 @@ function drawCommands(made: ReturnType<typeof fakePlugin>) {
 	const ctx: TreeContext = {
 		app: made.app as unknown as App,
 		plugin: made.plugin as never,
-		redraw: () => { redraws++; tab.update(); },
+		redraw: () => {
+			redraws++;
+			tab.update();
+		},
 		registerDisposer: () => {},
 		rows: new RowRegistry(),
 		parts: new PersistentParts(() => {}),
@@ -100,7 +120,10 @@ function row(harness: DeclarativeHarness, id: string) {
 
 /** The text of a row's shortcut chips. */
 function chips(rowEl: HTMLElement): string[] {
-	return Array.from(rowEl.querySelectorAll(".setting-command-hotkeys .setting-hotkey"), (chip) => chip.textContent ?? "");
+	return Array.from(
+		rowEl.querySelectorAll(".setting-command-hotkeys .setting-hotkey"),
+		(chip) => chip.textContent ?? "",
+	);
 }
 
 /** Wait for a flow (a question, then a save) to finish. */
@@ -111,7 +134,10 @@ async function settle(): Promise<void> {
 describe("Commands and shortcuts", () => {
 	it("is the user's commands, then the built-in ones", () => {
 		const { harness } = drawCommands(fakePlugin([WRAP_NOTE]));
-		assert.deepEqual(harness.rendered.map((b) => b.def.id), [COMMANDS_PAGE.mine, COMMANDS_PAGE.builtIn]);
+		assert.deepEqual(
+			harness.rendered.map((b) => b.def.id),
+			[COMMANDS_PAGE.mine, COMMANDS_PAGE.builtIn],
+		);
 		assert.equal(box(harness, COMMANDS_PAGE.mine).def.heading, t("commandBuilder.yourCommands"));
 		assert.equal(box(harness, COMMANDS_PAGE.builtIn).children.length, FIXED_COMMAND_IDS.length);
 	});
@@ -124,8 +150,14 @@ describe("Commands and shortcuts", () => {
 		assert.ok(command.settingEl.firstElementChild?.hasClass("callout-studio-row-icon"), "the icon first");
 		assert.deepEqual(chips(command.settingEl), [t("commandBuilder.hotkeyBlank")]);
 		const [hotkey, edit, remove] = command.setting.extraButtons;
-		assert.ok((hotkey!.extraSettingsEl as unknown as HTMLElement).hasClass("mod-hotkeys"), "Obsidian hides it on a phone");
-		assert.equal((edit!.extraSettingsEl as unknown as HTMLElement).dataset.csTooltip, t("commandBuilder.editAria", { name: command.def.name ?? "" }));
+		assert.ok(
+			(hotkey!.extraSettingsEl as unknown as HTMLElement).hasClass("mod-hotkeys"),
+			"Obsidian hides it on a phone",
+		);
+		assert.equal(
+			(edit!.extraSettingsEl as unknown as HTMLElement).dataset.csTooltip,
+			t("commandBuilder.editAria", { name: command.def.name ?? "" }),
+		);
 		assert.ok((remove!.extraSettingsEl as unknown as HTMLElement).hasClass("cs-test-delete"));
 	});
 
@@ -145,7 +177,10 @@ describe("Commands and shortcuts", () => {
 		assert.equal(tag?.textContent, t("commandBuilder.missingTag"));
 		assert.equal(tag?.dataset.csTooltip, t("commandBuilder.missingCallout"));
 		assert.ok(paused.settingEl.hasClass("is-command-paused"), "the row is dimmed");
-		assert.ok(paused.settingEl.querySelector(".callout-studio-row-icon")?.hasClass("cs-icon-none"), "the dashed ring where the icon would be");
+		assert.ok(
+			paused.settingEl.querySelector(".callout-studio-row-icon")?.hasClass("cs-icon-none"),
+			"the dashed ring where the icon would be",
+		);
 		assert.equal(paused.setting.descEl.textContent, "", "no sentence under the name");
 	});
 
@@ -156,8 +191,16 @@ describe("Commands and shortcuts", () => {
 			const { harness } = drawCommands(fakePlugin([GONE, WRAP_NOTE]));
 			const paused = row(harness, "command-c2");
 			assert.equal(paused.setting.descEl.textContent, t("commandBuilder.missingCallout"));
-			assert.equal(paused.settingEl.querySelector<HTMLElement>(".cs-paused-tag")?.textContent, t("commandBuilder.missingTag"), "the tag stays");
-			assert.equal(row(harness, "command-c1").setting.descEl.textContent, "", "a command that can run has nothing to explain");
+			assert.equal(
+				paused.settingEl.querySelector<HTMLElement>(".cs-paused-tag")?.textContent,
+				t("commandBuilder.missingTag"),
+				"the tag stays",
+			);
+			assert.equal(
+				row(harness, "command-c1").setting.descEl.textContent,
+				"",
+				"a command that can run has nothing to explain",
+			);
 		} finally {
 			Platform.isMobile = wasMobile;
 		}
@@ -203,14 +246,18 @@ describe("Commands and shortcuts", () => {
 			box(harness, COMMANDS_PAGE.mine).settingGroup.pressDelete(0);
 			await settle();
 			assert.equal(made.list.length, 1);
-		} finally { no.restore(); }
+		} finally {
+			no.restore();
+		}
 		const yes = stubConfirm(true);
 		try {
 			box(harness, COMMANDS_PAGE.mine).settingGroup.pressDelete(0);
 			await settle();
 			assert.equal(made.list.length, 0);
 			assert.equal(box(harness, COMMANDS_PAGE.mine).emptyStateEl?.textContent, t("commandBuilder.empty"));
-		} finally { yes.restore(); }
+		} finally {
+			yes.restore();
+		}
 	});
 
 	it("is where the settings search finds a command by its name", () => {

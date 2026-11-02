@@ -118,8 +118,7 @@ export function emptySurfaceEvidence(): SurfaceEvidence {
  * would be believing a declaration that never applied. Oxygen's `rgba(0,0,0,0)`
  * is the one spelled-out transparent in the corpus.
  */
-const NEUTRAL_BG =
-	/^(?:transparent|unset|initial|revert|revert-layer|rgba?\(\s*0\s*,\s*0\s*,\s*0\s*,\s*0\s*\))$/i;
+const NEUTRAL_BG = /^(?:transparent|unset|initial|revert|revert-layer|rgba?\(\s*0\s*,\s*0\s*,\s*0\s*,\s*0\s*\))$/i;
 
 /**
  * The border shorthands that reset the colour to `currentColor` when they omit
@@ -127,8 +126,7 @@ const NEUTRAL_BG =
  * are longhands, and a `border-style: solid` beside a `border-color` elsewhere
  * is a frame the theme *has* coloured.
  */
-const BORDER_SHORTHAND =
-	/^border(?:-(?:top|right|bottom|left|block|inline)(?:-(?:start|end))?)?$/;
+const BORDER_SHORTHAND = /^border(?:-(?:top|right|bottom|left|block|inline)(?:-(?:start|end))?)?$/;
 
 /** A line style — i.e. a border that actually draws. */
 const BORDER_STYLE = /\b(?:solid|dashed|dotted|double|groove|ridge|inset|outset)\b/i;
@@ -151,11 +149,9 @@ const ACCENT_READ = /--callout-color\b/i;
 const ZERO = /^-?0(?:\.0+)?(?:px|%|r?em)?$/i;
 
 /** The fill one rule paints, or `null` when it paints none (or removes one). */
-function fillOf(
-	decls: ReadonlyArray<[string, string]>,
-): { accent: boolean; opaque: boolean } | null {
-	const fills = decls.filter(([name, value]) =>
-		FILL_PROPS.has(name) && !NEUTRAL_BG.test(value) && !/^none$/i.test(value),
+function fillOf(decls: ReadonlyArray<[string, string]>): { accent: boolean; opaque: boolean } | null {
+	const fills = decls.filter(
+		([name, value]) => FILL_PROPS.has(name) && !NEUTRAL_BG.test(value) && !/^none$/i.test(value),
 	);
 	if (fills.length === 0) return null;
 	return {
@@ -235,8 +231,7 @@ function fillAlpha(value: string): number {
  * `inset-inline` longhands.
  */
 function coversBox(decls: ReadonlyArray<[string, string]>): boolean {
-	const get = (name: string): string | undefined =>
-		decls.find(([n]) => n === name)?.[1].trim();
+	const get = (name: string): string | undefined => decls.find(([n]) => n === name)?.[1].trim();
 	if (!/^(?:absolute|fixed)$/i.test(get("position") ?? "")) return false;
 	const inset = get("inset");
 	if (inset !== undefined && inset.split(/\s+/).every((v) => ZERO.test(v))) return true;
@@ -294,10 +289,7 @@ function readRoot(
 			background: { guard, rootQualifier, color: "transparent" },
 			requiresAccentTitle: false,
 		});
-	} else if (
-		name === "background-color" &&
-		!/(?:--callout-color\b|currentcolor\b)/i.test(value)
-	) {
+	} else if (name === "background-color" && !/(?:--callout-color\b|currentcolor\b)/i.test(value)) {
 		// A fixed or theme-variable root colour is only a neutral surface if
 		// the matching title rule uses the callout accent. Checked after scanning
 		// so source order between the two rules does not matter.
@@ -364,17 +356,13 @@ export function scanCalloutSurface(css: string): SurfaceEvidence {
 			for (const [name, value] of decls) {
 				if (hit.target === "root") {
 					readRoot(name, value, hit.guard, hit.rootQualifier, backgrounds);
-				}
-				else readChild(name, value, hit.guard, ev);
+				} else readChild(name, value, hit.guard, ev);
 			}
 		}
 	});
 	for (const candidate of backgrounds) {
 		const bg = candidate.background;
-		if (
-			!candidate.requiresAccentTitle ||
-			accentTitles.has(scopeKey(bg.guard, bg.rootQualifier))
-		) {
+		if (!candidate.requiresAccentTitle || accentTitles.has(scopeKey(bg.guard, bg.rootQualifier))) {
 			ev.neutralBackground.push(bg);
 		}
 	}

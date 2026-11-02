@@ -87,11 +87,14 @@ export function installResizeObserver(win: FakeWindow, gapPx = 4): ObserverLog {
 			for (const observer of [...observers]) {
 				const entries = sizes
 					.filter(([target]) => observer.targets.has(target))
-					.map(([target, width]) => ({
-						target,
-						contentRect: { width },
-						borderBoxSize: [{ inlineSize: width, blockSize: 20 }],
-					}) as unknown as ResizeObserverEntry);
+					.map(
+						([target, width]) =>
+							({
+								target,
+								contentRect: { width },
+								borderBoxSize: [{ inlineSize: width, blockSize: 20 }],
+							}) as unknown as ResizeObserverEntry,
+					);
 				if (entries.length > 0) observer.callback(entries, observer);
 			}
 		},

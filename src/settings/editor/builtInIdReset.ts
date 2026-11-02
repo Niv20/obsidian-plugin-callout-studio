@@ -31,9 +31,11 @@ export function addBuiltInIdReset(input: {
 	const defaultIds = builtInDefaultIds(input.defaultDef);
 	const matchesDefault = (): boolean => {
 		const current = input.read();
-		return current.calloutId === input.defaultDef.id &&
+		return (
+			current.calloutId === input.defaultDef.id &&
 			current.aliases.length === defaultIds.length - 1 &&
-			current.aliases.every((id, index) => id === defaultIds[index + 1]);
+			current.aliases.every((id, index) => id === defaultIds[index + 1])
+		);
 	};
 
 	return addFieldResetButton(

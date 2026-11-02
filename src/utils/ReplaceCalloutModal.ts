@@ -25,9 +25,7 @@ import { autofocusOnDesktop } from "../settings/modalAutofocus";
 import { createSearchField } from "../ui/searchField";
 import { SearchMascot } from "../ui/mascot/mascotPlaces";
 
-export type ReplaceChoice =
-	| { action: "replace"; replaceWith: string }
-	| { action: "cancel" };
+export type ReplaceChoice = { action: "replace"; replaceWith: string } | { action: "cancel" };
 
 export interface ReplaceCalloutModalOptions {
 	/** Window heading. Defaults to **Replace in vault**, which is what every
@@ -247,7 +245,9 @@ export class ReplaceCalloutModal extends Modal {
 		const accent = paintCalloutListIcon(iconEl, def, this.registry, isDark);
 
 		// The name's words are a span of their own so that it can end in "…".
-		const nameWords = createFragment((fragment) => fragment.createSpan({ cls: "cs-row-name", text: def.displayName }));
+		const nameWords = createFragment((fragment) =>
+			fragment.createSpan({ cls: "cs-row-name", text: def.displayName }),
+		);
 		setting.setName(nameWords);
 		renderIdLine(setting.descEl, def);
 		this.stopFitting.push(fitIdsLine(setting.descEl));

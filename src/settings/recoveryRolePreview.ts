@@ -27,9 +27,12 @@ function paintFrame(el: HTMLElement, def: CalloutDefinition, frame: RoleFrameSty
 	el.setCssProps({
 		"--cs-recovery-accent": accent,
 		"--cs-recovery-radius": `${frame.borderRadius}px`,
-		"--cs-recovery-border-color": def.transparentBg ? "transparent" : `color-mix(in srgb, ${accent} 25%, transparent)`,
+		"--cs-recovery-border-color": def.transparentBg
+			? "transparent"
+			: `color-mix(in srgb, ${accent} 25%, transparent)`,
 		"--cs-recovery-border-width": (["top", "right", "bottom", "left"] as const)
-			.map(side => `${frame.borderSides[side] ? frame.borderWidth : 0}px`).join(" "),
+			.map((side) => `${frame.borderSides[side] ? frame.borderWidth : 0}px`)
+			.join(" "),
 	});
 }
 
@@ -38,8 +41,15 @@ function roleOff(parent: HTMLElement): void {
 }
 
 /** A heading callout bar: its frame, inner spacing, icon, title and fold arrow. */
-export function renderRecoveryHeadingPreview(parent: HTMLElement, data: Partial<PluginData>, definition: CalloutDefinition): void {
-	if (data.settings?.headingCallouts?.enabled === false) { roleOff(parent); return; }
+export function renderRecoveryHeadingPreview(
+	parent: HTMLElement,
+	data: Partial<PluginData>,
+	definition: CalloutDefinition,
+): void {
+	if (data.settings?.headingCallouts?.enabled === false) {
+		roleOff(parent);
+		return;
+	}
 	const def = previewDefinition(definition);
 	const style = clampGlobalStyle(mergeGlobalStyle(data.settings?.globalStyle)).heading;
 	const bar = parent.createDiv({ cls: "cs-recovery-heading-preview" });
@@ -56,8 +66,15 @@ export function renderRecoveryHeadingPreview(parent: HTMLElement, data: Partial<
 }
 
 /** An inline callout pill: its frame, scale, icon and label. */
-export function renderRecoveryInlinePreview(parent: HTMLElement, data: Partial<PluginData>, definition: CalloutDefinition): void {
-	if (data.settings?.inlineCallouts?.enabled === false) { roleOff(parent); return; }
+export function renderRecoveryInlinePreview(
+	parent: HTMLElement,
+	data: Partial<PluginData>,
+	definition: CalloutDefinition,
+): void {
+	if (data.settings?.inlineCallouts?.enabled === false) {
+		roleOff(parent);
+		return;
+	}
 	const def = previewDefinition(definition);
 	const style = clampGlobalStyle(mergeGlobalStyle(data.settings?.globalStyle)).inline;
 	const pill = parent.createSpan({ cls: "cs-recovery-inline-preview" });

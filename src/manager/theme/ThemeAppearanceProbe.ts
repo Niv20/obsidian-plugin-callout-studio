@@ -55,17 +55,9 @@
  */
 import { Component, MarkdownRenderer, type App } from "obsidian";
 import { obsidianCalloutAttrId } from "../../utils/calloutId";
-import {
-	readThemeAppearance,
-	UNKNOWN_APPEARANCE,
-	type ThemeAppearance,
-} from "./themeAppearance";
+import { readThemeAppearance, UNKNOWN_APPEARANCE, type ThemeAppearance } from "./themeAppearance";
 import { stylingSignature } from "./customCssApi";
-import {
-	domReader,
-	readCalloutStyle,
-	type ComputedStyleReader,
-} from "./readCalloutStyle";
+import { domReader, readCalloutStyle, type ComputedStyleReader } from "./readCalloutStyle";
 
 export type { ComputedStyleReader } from "./readCalloutStyle";
 
@@ -79,8 +71,7 @@ export class ThemeAppearanceProbe {
 	private running = false;
 	private destroyed = false;
 	/** The one request that arrived mid-pass. See {@link ensure}. */
-	private pending: { ids: readonly string[]; onReady: () => void } | null =
-		null;
+	private pending: { ids: readonly string[]; onReady: () => void } | null = null;
 
 	constructor(
 		private readonly app: App,
@@ -174,18 +165,13 @@ export class ThemeAppearanceProbe {
 		const wanted = [...new Set(ids.map(obsidianCalloutAttrId))]
 			.filter((id) => id.length > 0 && !/[[\]\r\n|]/.test(id))
 			.sort();
-		const signature = `${stylingSignature(this.app)}|${
-			this.isDark() ? "dark" : "light"
-		}|${wanted.join(" ")}`;
+		const signature = `${stylingSignature(this.app)}|${this.isDark() ? "dark" : "light"}|${wanted.join(" ")}`;
 		if (signature === this.signature) return;
 
 		this.running = true;
 		const generation = this.generation;
 		try {
-			const measured =
-				wanted.length > 0
-					? await this.measure(wanted)
-					: new Map<string, ThemeAppearance>();
+			const measured = wanted.length > 0 ? await this.measure(wanted) : new Map<string, ThemeAppearance>();
 			// Even A → B → A or an in-place CSS edit invalidates the old pass.
 			if (this.destroyed || generation !== this.generation) return;
 			this.cache = measured;
@@ -230,9 +216,7 @@ export class ThemeAppearanceProbe {
 		return this.mainDocument().body.classList.contains("theme-dark");
 	}
 
-	private async measure(
-		attrIds: readonly string[],
-	): Promise<Map<string, ThemeAppearance>> {
+	private async measure(attrIds: readonly string[]): Promise<Map<string, ThemeAppearance>> {
 		const host = this.mainDocument().body.createDiv({
 			cls: `${HOST_CLASS} markdown-preview-view`,
 		});
@@ -263,13 +247,9 @@ export class ThemeAppearanceProbe {
 			// callout nested inside a theme's own markup from claiming a row,
 			// and the first reading of an id wins.
 			const wanted = new Set(attrIds);
-			const rendered = Array.from(
-				target.querySelectorAll<HTMLElement>(".callout"),
-			);
+			const rendered = Array.from(target.querySelectorAll<HTMLElement>(".callout"));
 			for (const el of rendered) {
-				const id = obsidianCalloutAttrId(
-					el.getAttribute("data-callout") ?? "",
-				);
+				const id = obsidianCalloutAttrId(el.getAttribute("data-callout") ?? "");
 				if (!wanted.has(id) || out.has(id)) continue;
 				out.set(id, readThemeAppearance(readCalloutStyle(el, this.read)));
 			}

@@ -109,10 +109,7 @@ export interface EditorOwner {
  * or raw source is decided by `sourceMode` on the *instance*, which
  * `forceLivePreview` pins independently.
  */
-export function createEditorOwner(
-	app: App,
-	target: OwnedEditorAccess,
-): EditorOwner {
+export function createEditorOwner(app: App, target: OwnedEditorAccess): EditorOwner {
 	return {
 		app,
 		onMarkdownScroll: () => {},
@@ -150,10 +147,7 @@ export function createEditorOwner(
 		 * it.
 		 */
 		get editor(): Editor {
-			return (
-				target.editor() ??
-				({ getSelection: () => target.selection() } as Editor)
-			);
+			return target.editor() ?? ({ getSelection: () => target.selection() } as Editor);
 		},
 
 		/*

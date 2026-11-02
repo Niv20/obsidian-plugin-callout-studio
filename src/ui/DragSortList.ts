@@ -93,10 +93,7 @@ function removePlaceholder(box: HTMLElement | null): void {
  * Make `container`'s rows drag-reorderable. Returns a cleanup function that
  * detaches all listeners.
  */
-export function makeDragSortable(
-	container: HTMLElement,
-	opts: DragSortOptions,
-): () => void {
+export function makeDragSortable(container: HTMLElement, opts: DragSortOptions): () => void {
 	let dragging: HTMLElement | null = null;
 	let startIndex = -1;
 	let pointerId = -1;
@@ -224,8 +221,7 @@ export function makeDragSortable(
 		// flow shift caused by the reorder above — no accumulator needed:
 		//   new = (desiredTop) - (flowTop + oldTransform) + oldTransform
 		//       = desiredTop - flowTop
-		currentTransform =
-			y - grabOffset - dragEl.getBoundingClientRect().top + currentTransform;
+		currentTransform = y - grabOffset - dragEl.getBoundingClientRect().top + currentTransform;
 		dragEl.style.transform = `translateY(${currentTransform}px)`;
 	};
 
@@ -307,13 +303,10 @@ export function makeDragSortable(
 		if (!reduceMotion && Math.abs(offset) >= 0.5) {
 			// Save independently of this slide: a later gesture must never be
 			// interrupted by a stale animation callback rebuilding its rows.
-			const anim = dragEl.animate(
-				[
-					{ transform: `translateY(${offset}px)` },
-					{ transform: "translateY(0px)" },
-				],
-				{ duration: REORDER_DURATION_MS, easing: REORDER_EASING },
-			);
+			const anim = dragEl.animate([{ transform: `translateY(${offset}px)` }, { transform: "translateY(0px)" }], {
+				duration: REORDER_DURATION_MS,
+				easing: REORDER_EASING,
+			});
 			// Drop the inline follow-transform now: the animation overrides it while
 			// running and, with no fill, the row rests at its natural slot after.
 			dragEl.style.removeProperty("transform");

@@ -84,12 +84,7 @@ import type { CalloutDefinition, PluginSettings } from "../types";
  * Fields the merge never takes from the losing row. See the module doc — the
  * first two are the identity being merged, the last two are provenance.
  */
-const NEVER_MERGED: ReadonlySet<string> = new Set([
-	"id",
-	"aliases",
-	"builtIn",
-	"source",
-]);
+const NEVER_MERGED: ReadonlySet<string> = new Set(["id", "aliases", "builtIn", "source"]);
 
 /** What the caller needs to report and to decide whether to flush. */
 export interface IdCollisionMergeReport {
@@ -98,8 +93,7 @@ export interface IdCollisionMergeReport {
 }
 
 /** An uncustomized auto-created row: disposable, and never the survivor. */
-const isDisposable = (d: CalloutDefinition): boolean =>
-	d.source === "fallback" && d.customized !== true;
+const isDisposable = (d: CalloutDefinition): boolean => d.source === "fallback" && d.customized !== true;
 
 /**
  * Copy every field the survivor never set from the loser onto it.
@@ -205,12 +199,7 @@ function reconcileCollisionPass(
  * `defaultFallbackId` is only reached when the survivor is somehow unusable;
  * the fallback selection must never be left dangling. See the module doc.
  */
-function repoint(
-	settings: PluginSettings,
-	oldId: string,
-	newId: string,
-	defaultFallbackId: string,
-): void {
+function repoint(settings: PluginSettings, oldId: string, newId: string, defaultFallbackId: string): void {
 	if (settings.fallbackCalloutId === oldId) {
 		settings.fallbackCalloutId = newId || defaultFallbackId;
 	}

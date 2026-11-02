@@ -52,11 +52,7 @@ import { calloutSel } from "../utils/calloutSelector";
 import type { CalloutDefinition } from "../types";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import type { CSSInjector } from "./CSSInjector";
-import {
-	buildSnippetFile,
-	classifyExisting,
-	type Existing,
-} from "./cssSnippetFile";
+import { buildSnippetFile, classifyExisting, type Existing } from "./cssSnippetFile";
 
 /** The snippet's filename, and so the name Obsidian shows in Appearance. */
 export const SNIPPET_BASENAME = "callout-studio-custom";
@@ -98,15 +94,12 @@ interface CustomCssApi {
  * they cannot see. Sorted by codepoint, never with a locale-aware comparator:
  * the file must come out byte-identical whatever language the UI is in.
  */
-export function exportableDefinitions(
-	plugin: SnippetExportPlugin,
-): CalloutDefinition[] {
+export function exportableDefinitions(plugin: SnippetExportPlugin): CalloutDefinition[] {
 	const usable = plugin.registry.getExportableDefinitions();
 	return usable.sort(byId);
 }
 
-const byId = (a: CalloutDefinition, b: CalloutDefinition): number =>
-	a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+const byId = (a: CalloutDefinition, b: CalloutDefinition): number => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 
 /**
  * `--cs-accent` for the built-ins the user never touched.
@@ -123,8 +116,7 @@ const byId = (a: CalloutDefinition, b: CalloutDefinition): number =>
  * variable the value is already the same in both themes.
  */
 function supportAccentRules(plugin: SnippetExportPlugin): string[] {
-	const { top, right, bottom, left } =
-		plugin.registry.settings.globalStyle.borderSides;
+	const { top, right, bottom, left } = plugin.registry.settings.globalStyle.borderSides;
 	if (!(top || right || bottom || left)) return [];
 
 	const rules: string[] = [];
@@ -179,9 +171,7 @@ export function buildSnippetCss(plugin: SnippetExportPlugin): string {
 		plugin.cssInjector.generateMetadataColorCSS(true),
 	];
 	const body = parts.filter((p) => p.trim()).join("\n\n");
-	const head = body.includes("--cs-accent-theme")
-		? `${ACCENT_PROPERTY_RULE}\n\n`
-		: "";
+	const head = body.includes("--cs-accent-theme") ? `${ACCENT_PROPERTY_RULE}\n\n` : "";
 	return `${head}${body}\n`;
 }
 

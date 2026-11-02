@@ -15,7 +15,13 @@ import { Platform } from "obsidian";
 import { SelectDropdown } from "../src/ui/selectDropdown";
 import { asEl, el, fakeDom, type FakeElement } from "./support/fakeDom";
 import { createdMenus } from "./support/obsidianStub";
-import { dropdownButton, dropdownOptions, dropdownValue, openDropdownMenu, pickDropdown } from "./support/selectDropdown";
+import {
+	dropdownButton,
+	dropdownOptions,
+	dropdownValue,
+	openDropdownMenu,
+	pickDropdown,
+} from "./support/selectDropdown";
 import { buildHeadingLevelRow, buildActionRow } from "../src/settings/command/optionRows";
 import { buildFoldStateRow } from "../src/settings/command/foldStateRow";
 import { buildPaletteBgStyleRow } from "../src/settings/paletteBgStyleRow";
@@ -29,7 +35,8 @@ function mount() {
 	const changed: string[] = [];
 	const select = new SelectDropdown(asEl(host), "Choices")
 		.addOptions({ a: "Alpha", b: "Beta", c: "Gamma" })
-		.setValue("b").onChange((value) => changed.push(value));
+		.setValue("b")
+		.onChange((value) => changed.push(value));
 	const button = dropdownButton(select.el);
 	return { host, select, button, changed };
 }
@@ -37,7 +44,12 @@ function mount() {
 /** A key press on the field. `preventDefault` is recorded, as the real one would act. */
 function press(target: FakeElement, key: string): { prevented: boolean } {
 	const result = { prevented: false };
-	target.fire("keydown", { key, preventDefault: () => { result.prevented = true; } });
+	target.fire("keydown", {
+		key,
+		preventDefault: () => {
+			result.prevented = true;
+		},
+	});
 	return result;
 }
 
@@ -48,14 +60,22 @@ describe("SelectDropdown — the field", () => {
 			assert.equal(host.querySelector("select"), null, "not the operating system's <select>");
 			assert.equal(host.querySelector("input"), null);
 			assert.equal(button as unknown, select.el as unknown, "the field is the dropdown's own element");
-			assert.equal(button.tagName.toLowerCase(), "div", "a <button> would take Obsidian's button rules over .dropdown");
+			assert.equal(
+				button.tagName.toLowerCase(),
+				"div",
+				"a <button> would take Obsidian's button rules over .dropdown",
+			);
 			assert.ok(button.hasClass("dropdown"), "Obsidian's own class draws it");
 			assert.equal(button.getAttribute("tabindex"), "0");
 			assert.equal(button.getAttribute("role"), "button");
 			assert.equal(button.getAttribute("aria-haspopup"), "menu");
 			assert.equal(button.getAttribute("aria-expanded"), "false");
 			assert.equal(dropdownValue(select.el), "Beta");
-			assert.equal(host.querySelector(".cs-dropdown-width-sizer"), null, "as wide as its words, as Obsidian's <select> is");
+			assert.equal(
+				host.querySelector(".cs-dropdown-width-sizer"),
+				null,
+				"as wide as its words, as Obsidian's <select> is",
+			);
 			// The name is the hidden label followed by the value: "Choices, Beta".
 			const [labelId, valueId] = (button.getAttribute("aria-labelledby") ?? "").split(" ");
 			const label = host.querySelector(`#${labelId}`);
@@ -65,7 +85,9 @@ describe("SelectDropdown — the field", () => {
 			assert.equal(button.hasAttribute("aria-label"), false, "aria-label would become a tooltip");
 			assert.equal(button.hasAttribute("title"), false);
 			assert.equal(select.getValue(), "b");
-		} finally { select.destroy(); }
+		} finally {
+			select.destroy();
+		}
 	});
 });
 
@@ -74,8 +96,14 @@ describe("SelectDropdown — Obsidian's menu", () => {
 		const { select, button } = mount();
 		try {
 			const menu = openDropdownMenu(select.el);
-			assert.deepEqual(menu.items.map((item) => item.title), ["Alpha", "Beta", "Gamma"]);
-			assert.deepEqual(menu.items.map((item) => item.checked), [false, true, false]);
+			assert.deepEqual(
+				menu.items.map((item) => item.title),
+				["Alpha", "Beta", "Gamma"],
+			);
+			assert.deepEqual(
+				menu.items.map((item) => item.checked),
+				[false, true, false],
+			);
 			// Opened at the field's bottom edge and as wide as it, as Obsidian
 			// opens its own menus under a button.
 			assert.equal(menu.showPosition?.overlap, true);
@@ -85,7 +113,9 @@ describe("SelectDropdown — Obsidian's menu", () => {
 			assert.ok(button.hasClass("has-active-menu"));
 			assert.equal(button.hasClass("is-open"), false, "Obsidian's <select> shows nothing while open");
 			assert.equal(button.getAttribute("aria-expanded"), "true");
-		} finally { select.destroy(); }
+		} finally {
+			select.destroy();
+		}
 	});
 
 	it("reports a different pick through onChange, and the same pick not at all", () => {
@@ -99,13 +129,18 @@ describe("SelectDropdown — Obsidian's menu", () => {
 			assert.equal(select.getValue(), "c");
 			assert.equal(dropdownValue(select.el), "Gamma");
 			// The ✓ follows the choice the next time the menu opens.
-			assert.deepEqual(dropdownOptions(select.el).map((item) => item.checked), [false, false, true]);
+			assert.deepEqual(
+				dropdownOptions(select.el).map((item) => item.checked),
+				[false, false, true],
+			);
 			// A value set by code is shown, but is not a user's change.
 			select.close();
 			select.setValue("a");
 			assert.equal(dropdownValue(select.el), "Alpha");
 			assert.deepEqual(changed, ["c"]);
-		} finally { select.destroy(); }
+		} finally {
+			select.destroy();
+		}
 	});
 
 	it("reports every pick, the current one included, through onPick", () => {
@@ -116,7 +151,9 @@ describe("SelectDropdown — Obsidian's menu", () => {
 			pickDropdown(select.el, "Beta");
 			pickDropdown(select.el, "Alpha");
 			assert.deepEqual(picked, ["b", "a"]);
-		} finally { select.destroy(); }
+		} finally {
+			select.destroy();
+		}
 	});
 
 	it("closes on a second click on the field, as Obsidian's menus do", () => {
@@ -128,7 +165,9 @@ describe("SelectDropdown — Obsidian's menu", () => {
 			assert.equal(button.getAttribute("aria-expanded"), "false");
 			assert.equal(button.hasClass("is-open"), false);
 			assert.equal(button.hasClass("has-active-menu"), false);
-		} finally { select.destroy(); }
+		} finally {
+			select.destroy();
+		}
 	});
 
 	it("opens on ↓, ↑, Enter or Space, and leaves the keys to the menu once it is open", () => {
@@ -153,14 +192,19 @@ describe("SelectDropdown — Obsidian's menu", () => {
 			}
 			select.close();
 			assert.equal(press(button, "a").prevented, false, "other keys are left alone");
-		} finally { select.destroy(); }
+		} finally {
+			select.destroy();
+		}
 	});
 
 	it("is an icon button with no caret: words hidden and a tooltip alone, words shown and no tooltip with showValue", () => {
 		fakeDom.light();
-		const alone = new SelectDropdown(asEl(el()), "Choices", { icon: "globe" }).addOptions({ a: "Alpha" }).setValue("a");
+		const alone = new SelectDropdown(asEl(el()), "Choices", { icon: "globe" })
+			.addOptions({ a: "Alpha" })
+			.setValue("a");
 		const labelled = new SelectDropdown(asEl(el()), "Choices", { icon: "globe", showValue: true })
-			.addOptions({ a: "Alpha" }).setValue("a");
+			.addOptions({ a: "Alpha" })
+			.setValue("a");
 		try {
 			for (const select of [alone, labelled]) {
 				assert.ok(select.el.querySelector(".cs-select-icon"));
@@ -172,24 +216,40 @@ describe("SelectDropdown — Obsidian's menu", () => {
 			assert.equal(labelled.el.querySelector(".cs-select-value")?.hasClass("cs-visually-hidden"), false);
 			assert.equal(labelled.el.querySelector(".cs-select-value")?.textContent, "Alpha");
 			assert.equal(dropdownButton(labelled.el).dataset.csTooltip, undefined);
-		} finally { alone.destroy(); labelled.destroy(); }
+		} finally {
+			alone.destroy();
+			labelled.destroy();
+		}
 	});
 
 	it("draws icons only when every option has one", () => {
 		fakeDom.light();
-		const withIcons = new SelectDropdown(asEl(el()), "Levels")
-			.setOptions([{ value: "1", label: "H1", icon: "heading-1" }, { value: "2", label: "H2", icon: "heading-2" }]);
-		const mixed = new SelectDropdown(asEl(el()), "Mixed")
-			.setOptions([{ value: "1", label: "H1", icon: "heading-1" }, { value: "x", label: "Other" }]);
+		const withIcons = new SelectDropdown(asEl(el()), "Levels").setOptions([
+			{ value: "1", label: "H1", icon: "heading-1" },
+			{ value: "2", label: "H2", icon: "heading-2" },
+		]);
+		const mixed = new SelectDropdown(asEl(el()), "Mixed").setOptions([
+			{ value: "1", label: "H1", icon: "heading-1" },
+			{ value: "x", label: "Other" },
+		]);
 		try {
 			const full = openDropdownMenu(withIcons.el);
-			assert.deepEqual(full.items.map((item) => item.icon), ["heading-1", "heading-2"]);
+			assert.deepEqual(
+				full.items.map((item) => item.icon),
+				["heading-1", "heading-2"],
+			);
 			assert.equal(full.noIcon, false);
 			const partial = openDropdownMenu(mixed.el);
-			assert.deepEqual(partial.items.map((item) => item.icon), [undefined, undefined]);
+			assert.deepEqual(
+				partial.items.map((item) => item.icon),
+				[undefined, undefined],
+			);
 			// No icon column at all, so the words start at the row's edge.
 			assert.equal(partial.noIcon, true);
-		} finally { withIcons.destroy(); mixed.destroy(); }
+		} finally {
+			withIcons.destroy();
+			mixed.destroy();
+		}
 	});
 
 	it("gives focus back to the field when a pick leaves it nowhere", () => {
@@ -201,7 +261,9 @@ describe("SelectDropdown — Obsidian's menu", () => {
 			fakeDom.document.activeElement = null;
 			menu.clickItem("Alpha");
 			assert.equal(fakeDom.document.activeElement, button);
-		} finally { select.destroy(); }
+		} finally {
+			select.destroy();
+		}
 	});
 });
 
@@ -221,7 +283,8 @@ describe("SelectDropdown — the page scrolling behind the menu", () => {
 			Object.assign(element, { scrollLeft: 0 });
 		}
 		const select = new SelectDropdown(asEl(scroller), "Choices")
-			.addOptions({ a: "Alpha", b: "Beta" }).setValue("a");
+			.addOptions({ a: "Alpha", b: "Beta" })
+			.setValue("a");
 		/** A scroll event, which does not bubble: the capture listener on the document sees it. */
 		const scroll = (target: FakeElement | typeof doc, y: number): void => {
 			if (target === doc) doc.documentElement.scrollTop = y;
@@ -229,7 +292,10 @@ describe("SelectDropdown — the page scrolling behind the menu", () => {
 			doc.fire("scroll", { type: "scroll", target });
 		};
 		const scrollListeners = (): number => doc.listeners.get("scroll")?.length ?? 0;
-		const done = (): void => { select.destroy(); outer.remove(); };
+		const done = (): void => {
+			select.destroy();
+			outer.remove();
+		};
 		return { doc, scroller, sibling, outer, select, scroll, scrollListeners, done };
 	}
 
@@ -243,7 +309,9 @@ describe("SelectDropdown — the page scrolling behind the menu", () => {
 			assert.equal(menu.hideCalls, 1);
 			assert.equal(dropdownButton(select.el).getAttribute("aria-expanded"), "false");
 			assert.equal(scrollListeners(), 0, "no document hook is left behind");
-		} finally { done(); }
+		} finally {
+			done();
+		}
 	});
 
 	it("closes when the page itself scrolls", () => {
@@ -253,7 +321,9 @@ describe("SelectDropdown — the page scrolling behind the menu", () => {
 			scroll(doc, 120);
 			assert.equal(menu.shown, false);
 			assert.equal(scrollListeners(), 0);
-		} finally { done(); }
+		} finally {
+			done();
+		}
 	});
 
 	it("keeps the menu for a scroll that moved nothing, the menu's own list, or an unrelated element", () => {
@@ -269,7 +339,9 @@ describe("SelectDropdown — the page scrolling behind the menu", () => {
 			scroll(list, 30);
 			scroll(sibling, 30);
 			assert.equal(menu.shown, true);
-		} finally { done(); }
+		} finally {
+			done();
+		}
 	});
 
 	it("stops watching once a pick has closed the menu", () => {
@@ -279,7 +351,9 @@ describe("SelectDropdown — the page scrolling behind the menu", () => {
 			assert.equal(scrollListeners(), 0);
 			scroll(scroller, 10);
 			assert.equal(select.getValue(), "b");
-		} finally { done(); }
+		} finally {
+			done();
+		}
 	});
 
 	it("leaves a phone's bottom sheet alone: it never uses the field's position", () => {
@@ -291,7 +365,10 @@ describe("SelectDropdown — the page scrolling behind the menu", () => {
 			assert.equal(scrollListeners(), 0);
 			scroll(scroller, 75);
 			assert.equal(menu.shown, true);
-		} finally { Platform.isPhone = was; done(); }
+		} finally {
+			Platform.isPhone = was;
+			done();
+		}
 	});
 });
 
@@ -299,10 +376,16 @@ describe("SelectDropdown — options, disabling and teardown", () => {
 	it("replaces live options without reporting a change", () => {
 		const { select, changed } = mount();
 		try {
-			select.setOptions([{ value: "b", label: "Renamed beta" }, { value: "d", label: "Delta" }]);
+			select.setOptions([
+				{ value: "b", label: "Renamed beta" },
+				{ value: "d", label: "Delta" },
+			]);
 			assert.equal(dropdownValue(select.el), "Renamed beta");
 			assert.equal(select.getValue(), "b");
-			assert.deepEqual(dropdownOptions(select.el).map((item) => item.title), ["Renamed beta", "Delta"]);
+			assert.deepEqual(
+				dropdownOptions(select.el).map((item) => item.title),
+				["Renamed beta", "Delta"],
+			);
 			select.close();
 			select.setOptions([{ value: "e", label: "Epsilon" }]);
 			assert.equal(select.getValue(), "e", "the first option when the old value is gone");
@@ -311,7 +394,9 @@ describe("SelectDropdown — options, disabling and teardown", () => {
 			assert.equal(select.getValue(), "");
 			assert.equal(dropdownValue(select.el), "");
 			assert.deepEqual(changed, []);
-		} finally { select.destroy(); }
+		} finally {
+			select.destroy();
+		}
 	});
 
 	it("opens no menu without options", () => {
@@ -321,7 +406,9 @@ describe("SelectDropdown — options, disabling and teardown", () => {
 			const before = createdMenus.length;
 			dropdownButton(empty.el).fire("click");
 			assert.equal(createdMenus.length, before);
-		} finally { empty.destroy(); }
+		} finally {
+			empty.destroy();
+		}
 	});
 
 	it("closes when disabled and refuses the mouse and the keyboard until enabled", () => {
@@ -346,7 +433,9 @@ describe("SelectDropdown — options, disabling and teardown", () => {
 			assert.equal(button.getAttribute("tabindex"), "0");
 			pickDropdown(select.el, "Alpha");
 			assert.deepEqual(changed, ["a"]);
-		} finally { select.destroy(); }
+		} finally {
+			select.destroy();
+		}
 	});
 
 	it("closes its menu on destroy and stays disabled after it, however often called", () => {
@@ -377,7 +466,10 @@ describe("the rows built on it", () => {
 			pickDropdown(palette.el, t("palette.bgGradient"));
 			assert.deepEqual(changed, [4, "wrap", "collapsed", "gradient"]);
 		} finally {
-			heading.dropdown.destroy(); action.dropdown.destroy(); fold.destroy(); palette.destroy();
+			heading.dropdown.destroy();
+			action.dropdown.destroy();
+			fold.destroy();
+			palette.destroy();
 		}
 	});
 
@@ -388,15 +480,24 @@ describe("the rows built on it", () => {
 		const fold = buildFoldStateRow(foldHost, "none", () => {});
 		const action = buildActionRow(host, "wrap", () => {});
 		try {
-			assert.deepEqual(dropdownOptions(heading.dropdown.el).map((item) => item.icon),
-				["heading-1", "heading-2", "heading-3", "heading-4", "heading-5", "heading-6"]);
+			assert.deepEqual(
+				dropdownOptions(heading.dropdown.el).map((item) => item.icon),
+				["heading-1", "heading-2", "heading-3", "heading-4", "heading-5", "heading-6"],
+			);
 			heading.dropdown.close();
 			// The same three icons as the fold choices in a note's right-click menu.
-			assert.deepEqual(dropdownOptions(foldHost).map((item) => item.icon), ["ban", "plus", "minus"]);
+			assert.deepEqual(
+				dropdownOptions(foldHost).map((item) => item.icon),
+				["ban", "plus", "minus"],
+			);
 			fold.sync("regular");
 			const actionMenu = openDropdownMenu(action.dropdown.el);
 			assert.equal(actionMenu.noIcon, true);
-		} finally { heading.dropdown.destroy(); fold.destroy(); action.dropdown.destroy(); }
+		} finally {
+			heading.dropdown.destroy();
+			fold.destroy();
+			action.dropdown.destroy();
+		}
 	});
 
 	it("close the fold menu when the row hides for a format without fold syntax", () => {
@@ -407,7 +508,9 @@ describe("the rows built on it", () => {
 			fold.sync("heading");
 			assert.equal(menu.shown, false);
 			assert.equal(dropdownButton(foldHost).getAttribute("aria-expanded"), "false");
-		} finally { fold.destroy(); }
+		} finally {
+			fold.destroy();
+		}
 	});
 
 	it("keep Quick insert's source keys away from the search's list navigation", () => {
@@ -415,7 +518,10 @@ describe("the rows built on it", () => {
 		const searchKeys: string[] = [];
 		const filters: string[] = [];
 		const toolbar = buildQuickInsertToolbar(host, {
-			filter: "all", themeLabel: "Nord", onQuery: () => {}, onFilter: (filter) => filters.push(filter),
+			filter: "all",
+			themeLabel: "Nord",
+			onQuery: () => {},
+			onFilter: (filter) => filters.push(filter),
 			onKey: (event) => searchKeys.push(event.key),
 		});
 		try {
@@ -426,6 +532,8 @@ describe("the rows built on it", () => {
 			assert.deepEqual(filters, ["builtin"]);
 			(toolbar.search as unknown as FakeElement).fire("keydown", { key: "ArrowDown" });
 			assert.deepEqual(searchKeys, ["ArrowDown"]);
-		} finally { toolbar.destroy(); }
+		} finally {
+			toolbar.destroy();
+		}
 	});
 });

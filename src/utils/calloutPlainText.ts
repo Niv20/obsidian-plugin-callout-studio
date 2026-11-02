@@ -23,33 +23,41 @@ function withoutHeader({ lineText, visible, prefix, tokens }: DocumentCalloutLin
 	const header = tokens[0]!;
 	const { foldMark, title } = splitFoldMark(lineText.slice(header.to), header.role);
 	const gap = title.length - title.replace(/^[ \t]+/, "").length;
-	const from = outer ? 0 : header.from, to = header.to + foldMark.length + gap;
+	const from = outer ? 0 : header.from,
+		to = header.to + foldMark.length + gap;
 	const label = outer || title.trim() ? "" : plainTextLabel(header.rawId);
 	const line = lineText.slice(0, from) + label + lineText.slice(to);
 	const shown = visible.slice(0, from) + label + visible.slice(to);
 	return {
-		line, visible: shown,
+		line,
+		visible: shown,
 		tokens: scanLineForCalloutTokens(line, { visibleLine: shown, contentFrom: from, blockQuote: false }),
 		prefix: { from, quoteDepth: outer ? 0 : prefix.quoteDepth },
 	};
 }
 
 /** Convert every use of `ids`, unwrapping each outermost block only once. */
-export function calloutsToPlainText(content: string, ids: ReadonlySet<string>): { content: string; count: number } | null {
+export function calloutsToPlainText(
+	content: string,
+	ids: ReadonlySet<string>,
+): { content: string; count: number } | null {
 	const lines = Array.from(iterateDocumentCalloutLines(content));
 	const take = (token: LineCalloutToken): boolean => ids.has(calloutIdentity(token.rawId));
-	let unwrapping = false, count = 0;
+	let unwrapping = false,
+		count = 0;
 	/** Visible text outside any quote, which a title written after it would join. */
 	const isOpenProse = (index: number): boolean => {
 		const above = lines[index];
-		return above !== undefined && !/^[ \t]*>/.test(above.lineText) &&
-			above.visible.replace(/\0/g, "").trim() !== "";
+		return (
+			above !== undefined && !/^[ \t]*>/.test(above.lineText) && above.visible.replace(/\0/g, "").trim() !== ""
+		);
 	};
 	const converted = lines.map((source, index) => {
 		const { lineText, tokens, visible, prefix } = source;
 		if (!/^[ \t]*>/.test(lineText)) unwrapping = false;
 		const header = tokens[0]?.role === "regular" && take(tokens[0]) ? tokens[0] : undefined;
-		const outer = header !== undefined && prefix.listIndent === 0 && /^[ \t]*>[ \t]*$/.test(lineText.slice(0, header.from));
+		const outer =
+			header !== undefined && prefix.listIndent === 0 && /^[ \t]*>[ \t]*$/.test(lineText.slice(0, header.from));
 		if (outer) unwrapping = true;
 		if (header) count++;
 		const result = convertCalloutLine({

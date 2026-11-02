@@ -34,8 +34,14 @@ function recordingPlugin(paused = false) {
 	const plugin = {
 		settings: nestedSettings(),
 		settingsWriter: { isFrozen: paused },
-		registry: { settingsChanged: () => { log.push("settingsChanged"); } },
-		saveData: async () => { log.push("saveData"); },
+		registry: {
+			settingsChanged: () => {
+				log.push("settingsChanged");
+			},
+		},
+		saveData: async () => {
+			log.push("saveData");
+		},
 	};
 	return { plugin, log };
 }
@@ -87,7 +93,10 @@ describe("writeControlValue", () => {
 
 	it("announces nothing for a key the settings do not have", () => {
 		const { plugin, log } = recordingPlugin();
-		writeControlValue(plugin, "nope", 1, { announce: () => log.push("announce"), onRefused: () => log.push("refused") });
+		writeControlValue(plugin, "nope", 1, {
+			announce: () => log.push("announce"),
+			onRefused: () => log.push("refused"),
+		});
 		assert.deepEqual(log, []);
 	});
 });
@@ -97,7 +106,9 @@ describe("the settings tab's control binding", () => {
 	function tabWithToggle(paused = false) {
 		const { plugin, log } = recordingPlugin(paused);
 		const tab = new CalloutStudioSettingsTab({} as App, plugin as unknown as SettingsTabPlugin);
-		tab.getSettingDefinitions = () => [{ name: "Align", control: { type: "toggle", key: "globalStyle.block.alignContentWithTitle" } }];
+		tab.getSettingDefinitions = () => [
+			{ name: "Align", control: { type: "toggle", key: "globalStyle.block.alignContentWithTitle" } },
+		];
 		const harness = new DeclarativeHarness(tab as never);
 		tab.update();
 		const toggle = harness.row("Align")!.setting.components[0] as ToggleComponent;

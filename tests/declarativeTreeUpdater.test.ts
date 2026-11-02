@@ -10,7 +10,12 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { fakeDom, installFakeDom, type FakeWindow } from "./support/fakeDom";
-import { TreeUpdater, interactionInProgress, nextFrameOrSoon, type Scheduler } from "../src/settings/declarative/treeUpdater";
+import {
+	TreeUpdater,
+	interactionInProgress,
+	nextFrameOrSoon,
+	type Scheduler,
+} from "../src/settings/declarative/treeUpdater";
 
 installFakeDom();
 
@@ -26,8 +31,12 @@ function manualScheduler() {
 	};
 	return {
 		schedule,
-		tick(): void { for (const run of waiting.splice(0)) run(); },
-		get pending(): number { return waiting.length; },
+		tick(): void {
+			for (const run of waiting.splice(0)) run();
+		},
+		get pending(): number {
+			return waiting.length;
+		},
 	};
 }
 
@@ -37,7 +46,9 @@ function updaterFor(state: { signature: string; busy?: boolean }) {
 	let updates = 0;
 	const updater = new TreeUpdater({
 		signature: () => state.signature,
-		update: () => { updates++; },
+		update: () => {
+			updates++;
+		},
 		isBusy: () => state.busy === true,
 		schedule: clock.schedule,
 	});
@@ -106,7 +117,9 @@ describe("nextFrameOrSoon", () => {
 
 	it("runs once, at the frame, and drops the backup timer", () => {
 		let runs = 0;
-		nextFrameOrSoon(() => fakeDom.document.body as unknown as Element)(() => { runs++; });
+		nextFrameOrSoon(() => fakeDom.document.body as unknown as Element)(() => {
+			runs++;
+		});
 		win().flushFrames();
 		win().flushTimers();
 		assert.equal(runs, 1);
@@ -115,7 +128,9 @@ describe("nextFrameOrSoon", () => {
 
 	it("runs from the timer when no frame comes (a hidden or closed window)", () => {
 		let runs = 0;
-		nextFrameOrSoon(() => fakeDom.document.body as unknown as Element)(() => { runs++; });
+		nextFrameOrSoon(() => fakeDom.document.body as unknown as Element)(() => {
+			runs++;
+		});
 		win().flushTimers();
 		win().flushFrames();
 		assert.equal(runs, 1);
@@ -123,7 +138,9 @@ describe("nextFrameOrSoon", () => {
 
 	it("runs neither once cancelled", () => {
 		let runs = 0;
-		const cancel = nextFrameOrSoon(() => fakeDom.document.body as unknown as Element)(() => { runs++; });
+		const cancel = nextFrameOrSoon(() => fakeDom.document.body as unknown as Element)(() => {
+			runs++;
+		});
 		cancel();
 		win().flushFrames();
 		win().flushTimers();

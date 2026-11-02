@@ -85,13 +85,16 @@ describe("the same selector with one id switched off", () => {
 });
 
 describe("a <body> or <html> condition that fails right now", () => {
-	const page = (body: string[], html: string[] = []) =>
+	const page =
+		(body: string[], html: string[] = []) =>
 		(compound: string, root: PageRoot): boolean => {
 			const classes = root === "body" ? body : html;
 			const want = compound.match(/\.[\w-]+/g)?.map((c) => c.slice(1)) ?? [];
 			const banned = /:not\(\.([\w-]+)\)/.exec(compound)?.[1];
-			return want.every((c) => classes.includes(c) || c === banned) &&
-				(banned === undefined || !classes.includes(banned));
+			return (
+				want.every((c) => classes.includes(c) || c === banned) &&
+				(banned === undefined || !classes.includes(banned))
+			);
 		};
 
 	it("fails a rule wrapped in an option that is off — Retroma's 312 types", () => {
@@ -207,7 +210,11 @@ describe("whether a difference reaches the screen", () => {
 
 	it("does not count interaction-only properties", () => {
 		assert.strictEqual(
-			changesVisibly(PROPS, reading("i", { title: { cursor: "pointer" } }), reading("i", { title: { cursor: "auto" } })),
+			changesVisibly(
+				PROPS,
+				reading("i", { title: { cursor: "pointer" } }),
+				reading("i", { title: { cursor: "auto" } }),
+			),
 			false,
 		);
 	});
@@ -246,8 +253,14 @@ describe("whether a difference reaches the screen", () => {
 
 	it("counts an offset only on a positioned box", () => {
 		const at = (top: string, position: string) => ({ icon: { top, position } });
-		assert.strictEqual(changesVisibly(PROPS, reading("i", at("2px", "static")), reading("i", at("0px", "static"))), false);
-		assert.strictEqual(changesVisibly(PROPS, reading("i", at("2px", "relative")), reading("i", at("0px", "relative"))), true);
+		assert.strictEqual(
+			changesVisibly(PROPS, reading("i", at("2px", "static")), reading("i", at("0px", "static"))),
+			false,
+		);
+		assert.strictEqual(
+			changesVisibly(PROPS, reading("i", at("2px", "relative")), reading("i", at("0px", "relative"))),
+			true,
+		);
 	});
 });
 
@@ -272,10 +285,7 @@ describe("matching a parsed rule against the callout the check rendered", () => 
 		);
 		assert.strictEqual(resolveNested("&.is-collapsed", ".callout"), ":is(.callout).is-collapsed");
 		assert.strictEqual(resolveNested("> .callout-title", ".callout"), ":is(.callout) > .callout-title");
-		assert.strictEqual(
-			resolveNested(".a, & .b", ".p"),
-			":is(.p) .a, :is(.p) .b",
-		);
+		assert.strictEqual(resolveNested(".a, & .b", ".p"), ":is(.p) .a, :is(.p) .b");
 		assert.strictEqual(resolveNested('[title="&"]', ".p"), ':is(.p) [title="&"]');
 	});
 
@@ -339,7 +349,8 @@ settings:
 
 	it("reads items indented with a tab beside items indented with spaces", () => {
 		// ITS: `    -` items followed by `\t-` items. Style Settings expands tabs.
-		const css = "/* @settings\nname: T\nid: t\nsettings:\n    -\n        id: a-one\n        type: class-toggle\n\t-\n\t\tid: a-two\n\t\ttype: class-toggle\n*/";
+		const css =
+			"/* @settings\nname: T\nid: t\nsettings:\n    -\n        id: a-one\n        type: class-toggle\n\t-\n\t\tid: a-two\n\t\ttype: class-toggle\n*/";
 		assert.deepStrictEqual([...styleSettingsClasses(css)].sort(), ["a-one", "a-two"]);
 	});
 

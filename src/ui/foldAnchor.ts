@@ -26,9 +26,7 @@
  * is found by name first, without asking for styles.)
  */
 function scrollParentOf(el: HTMLElement): HTMLElement | null {
-	const known = el.closest<HTMLElement>(
-		".vertical-tab-content, .vertical-tab-content-container",
-	);
+	const known = el.closest<HTMLElement>(".vertical-tab-content, .vertical-tab-content-container");
 	if (known) return known;
 	const view = el.ownerDocument?.defaultView;
 	if (!view?.getComputedStyle) return null;
@@ -49,9 +47,7 @@ function scrollParentOf(el: HTMLElement): HTMLElement | null {
  * must go on working with no correction at all.
  */
 function topOf(el: Element): number | null {
-	return typeof el.getBoundingClientRect === "function"
-		? el.getBoundingClientRect().top
-		: null;
+	return typeof el.getBoundingClientRect === "function" ? el.getBoundingClientRect().top : null;
 }
 
 /**
@@ -61,10 +57,7 @@ function topOf(el: Element): number | null {
  * absence of a rect is the guard, and why the fold itself must never depend on
  * one being there.
  */
-export function keepHeadingInPlace(
-	headingEl: HTMLElement,
-	fold: () => void,
-): void {
+export function keepHeadingInPlace(headingEl: HTMLElement, fold: () => void): void {
 	const before = topOf(headingEl);
 	fold();
 	if (before === null) return;

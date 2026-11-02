@@ -70,10 +70,7 @@ describe("sanitizeImportedSettings — a blob that is not an object", () => {
 			assert.equal(result.issues.length, 1);
 			// A warning, not an error: the callouts in the same file still import.
 			assert.equal(result.issues[0]?.level, "warning");
-			assert.equal(
-				result.issues[0]?.messageKey,
-				"import.warn.settingsIgnored",
-			);
+			assert.equal(result.issues[0]?.messageKey, "import.warn.settingsIgnored");
 			assert.equal(result.issues[0]?.index, -1);
 		});
 	}
@@ -84,18 +81,9 @@ describe("sanitizeImportedSettings — the merge against defaults", () => {
 		const { settings, issues } = sanitizeImportedSettings({});
 		assert.deepStrictEqual(issues, []);
 		assert.ok(settings);
-		assert.equal(
-			settings.globalStyle.borderWidth,
-			DEFAULT_SETTINGS.globalStyle.borderWidth,
-		);
-		assert.equal(
-			settings.autocomplete.enabled,
-			DEFAULT_SETTINGS.autocomplete.enabled,
-		);
-		assert.equal(
-			settings.contextMenu.enabled,
-			DEFAULT_SETTINGS.contextMenu.enabled,
-		);
+		assert.equal(settings.globalStyle.borderWidth, DEFAULT_SETTINGS.globalStyle.borderWidth);
+		assert.equal(settings.autocomplete.enabled, DEFAULT_SETTINGS.autocomplete.enabled);
+		assert.equal(settings.contextMenu.enabled, DEFAULT_SETTINGS.contextMenu.enabled);
 		assert.equal(settings.language, DEFAULT_SETTINGS.language);
 	});
 
@@ -138,14 +126,8 @@ describe("sanitizeImportedSettings — the merge against defaults", () => {
 			globalStyle: { heading: { borderWidth: 3 } },
 		});
 		assert.equal(settings?.globalStyle.heading.borderWidth, 3);
-		assert.equal(
-			settings?.globalStyle.heading.borderRadius,
-			DEFAULT_SETTINGS.globalStyle.heading.borderRadius,
-		);
-		assert.equal(
-			settings?.globalStyle.inline.fontScale,
-			DEFAULT_SETTINGS.globalStyle.inline.fontScale,
-		);
+		assert.equal(settings?.globalStyle.heading.borderRadius, DEFAULT_SETTINGS.globalStyle.heading.borderRadius);
+		assert.equal(settings?.globalStyle.inline.fontScale, DEFAULT_SETTINGS.globalStyle.inline.fontScale);
 	});
 
 	it("tolerates junk in place of a whole section", () => {
@@ -156,14 +138,8 @@ describe("sanitizeImportedSettings — the merge against defaults", () => {
 			iconSources: [],
 		});
 		assert.ok(settings);
-		assert.equal(
-			settings.globalStyle.borderWidth,
-			DEFAULT_SETTINGS.globalStyle.borderWidth,
-		);
-		assert.equal(
-			settings.autocomplete.enabled,
-			DEFAULT_SETTINGS.autocomplete.enabled,
-		);
+		assert.equal(settings.globalStyle.borderWidth, DEFAULT_SETTINGS.globalStyle.borderWidth);
+		assert.equal(settings.autocomplete.enabled, DEFAULT_SETTINGS.autocomplete.enabled);
 	});
 
 	it("refuses a language that is not a string", () => {
@@ -172,10 +148,7 @@ describe("sanitizeImportedSettings — the merge against defaults", () => {
 		// startup, not a mislabelled button. An unknown *string* is fine and
 		// stays untouched: the i18n resolver falls back to English by itself.
 		assert.equal(sanitizeImportedSettings({ language: 5 }).settings?.language, "auto");
-		assert.equal(
-			sanitizeImportedSettings({ language: { code: "he" } }).settings?.language,
-			"auto",
-		);
+		assert.equal(sanitizeImportedSettings({ language: { code: "he" } }).settings?.language, "auto");
 		assert.equal(sanitizeImportedSettings({ language: "kl-DK" }).settings?.language, "kl-DK");
 	});
 
@@ -208,10 +181,7 @@ describe("sanitizeImportedSettings — the merge against defaults", () => {
 		const { settings } = sanitizeImportedSettings({
 			globalStyle: { borderRadius: "0px; } .callout { display: none } .x {" },
 		});
-		assert.equal(
-			settings?.globalStyle.borderRadius,
-			DEFAULT_SETTINGS.globalStyle.borderRadius,
-		);
+		assert.equal(settings?.globalStyle.borderRadius, DEFAULT_SETTINGS.globalStyle.borderRadius);
 	});
 
 	it("leaves a value the sliders can actually produce exactly as given", () => {
@@ -262,10 +232,7 @@ describe("sanitizeImportedSettings — the three lists the user builds up", () =
 
 	it("drops a duplicate palette id rather than keeping both", () => {
 		const { settings } = sanitizeImportedSettings({
-			customPalettes: [
-				palette({ id: "cp-1", name: "First" }),
-				palette({ id: "cp-1", name: "Second" }),
-			],
+			customPalettes: [palette({ id: "cp-1", name: "First" }), palette({ id: "cp-1", name: "Second" })],
 		});
 		assert.equal(settings?.customPalettes.length, 1);
 		assert.equal(settings?.customPalettes[0]?.name, "First");
@@ -304,9 +271,6 @@ describe("sanitizeImportedSettings — the three lists the user builds up", () =
 		assert.notEqual(settings?.customPalettes, DEFAULT_SETTINGS.customPalettes);
 		assert.notEqual(settings?.userImages, DEFAULT_SETTINGS.userImages);
 		assert.notEqual(settings?.customCommands, DEFAULT_SETTINGS.customCommands);
-		assert.notEqual(
-			settings?.globalStyle.borderSides,
-			DEFAULT_SETTINGS.globalStyle.borderSides,
-		);
+		assert.notEqual(settings?.globalStyle.borderSides, DEFAULT_SETTINGS.globalStyle.borderSides);
 	});
 });

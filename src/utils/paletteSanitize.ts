@@ -9,11 +9,7 @@
  * field added to the interface and not added here is silently dropped on the
  * next load, with no type error to catch it.
  */
-import {
-	clampBgIntensity,
-	isValidHexColor,
-	sanitizeBgGradient,
-} from "./colorUtils";
+import { clampBgIntensity, isValidHexColor, sanitizeBgGradient } from "./colorUtils";
 import type { CustomPalette } from "../types";
 
 /**

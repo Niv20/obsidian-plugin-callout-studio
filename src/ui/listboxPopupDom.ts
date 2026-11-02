@@ -50,10 +50,7 @@ export interface ComboboxSkeletonOptions {
 	onQuery(query: string): void;
 }
 
-export function buildComboboxSkeleton(
-	parent: HTMLElement,
-	options: ComboboxSkeletonOptions,
-): ComboboxParts {
+export function buildComboboxSkeleton(parent: HTMLElement, options: ComboboxSkeletonOptions): ComboboxParts {
 	const root = parent.createDiv({ cls: "cs-combobox" });
 	const field = new DropdownField(root, { accessibleName: options.ariaLabel, popup: "listbox" });
 	field.el.setAttribute("aria-controls", options.listboxId);
@@ -80,7 +77,8 @@ export function buildComboboxSkeleton(
 			// Mobile: the keyboard's action key finishes the search rather than
 			// offering to insert a newline into a field that holds one line.
 			enterkeyhint: "done",
-		})) input.setAttribute(name, value);
+		}))
+			input.setAttribute(name, value);
 		setFieldAccessibleName(input, options.ariaLabel);
 	} else {
 		field.el.setAttribute("role", "combobox");
@@ -143,17 +141,15 @@ export interface ComboboxRowsSpec<T> extends ComboboxRowContract<T> {
  * Returns them rather than storing them because *where the highlight is* is
  * state, and state belongs to the popup; this only puts things on the page.
  */
-export function renderComboboxRows<T>(
-	menuEl: HTMLElement,
-	spec: ComboboxRowsSpec<T>,
-): HTMLElement[] {
+export function renderComboboxRows<T>(menuEl: HTMLElement, spec: ComboboxRowsSpec<T>): HTMLElement[] {
 	menuEl.empty();
 	const rowEls: HTMLElement[] = [];
 	let openGroup: string | undefined;
 	let hasGroups = false;
 	let rowParent = menuEl;
 	const groups = spec.items.map((item) => spec.groupOf?.(item));
-	const showGroups = !spec.hideSingleGroup ||
+	const showGroups =
+		!spec.hideSingleGroup ||
 		new Set(groups.map((group) => group?.key)).size > 1 ||
 		groups[0]?.key === spec.showSingleGroupKey;
 
@@ -242,11 +238,7 @@ export function appendComboboxCheck(rowEl: HTMLElement): HTMLElement {
  * appends it to the navigable list, so an arrow key reaches it and Enter takes
  * it, which an empty-state paragraph could never do.
  */
-export function renderComboboxCreateRow(
-	menuEl: HTMLElement,
-	label: string,
-	rowId: string,
-): HTMLElement {
+export function renderComboboxCreateRow(menuEl: HTMLElement, label: string, rowId: string): HTMLElement {
 	const rowEl = menuEl.createDiv({
 		cls: "cs-combobox-option callout-studio-suggestion-create-new",
 		attr: { role: "option", id: rowId },
@@ -257,10 +249,7 @@ export function renderComboboxCreateRow(
 }
 
 /** The dead end: no matches, and nothing to offer instead. */
-export function renderComboboxEmptyState(
-	menuEl: HTMLElement,
-	text: string,
-): void {
+export function renderComboboxEmptyState(menuEl: HTMLElement, text: string): void {
 	menuEl.createDiv({ cls: "callout-studio-empty-state", text });
 }
 

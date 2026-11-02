@@ -27,9 +27,10 @@ export function askDeleteLibrary(app: App, id: IconSourceId, users: readonly str
 	const name = t(getSource(id).labelKey);
 	const message = createFragment();
 	message.createEl("p", {
-		text: users.length === 1
-			? t("iconLibraries.inUseOne", { name })
-			: t("iconLibraries.inUse", { name, count: String(users.length) }),
+		text:
+			users.length === 1
+				? t("iconLibraries.inUseOne", { name })
+				: t("iconLibraries.inUse", { name, count: String(users.length) }),
 	});
 	const list = message.createEl("ul", { cls: "cs-icon-library-users" });
 	for (const callout of users.slice(0, MAX_LISTED_CALLOUTS)) {
@@ -41,7 +42,9 @@ export function askDeleteLibrary(app: App, id: IconSourceId, users: readonly str
 		});
 	}
 	message.createEl("p", { text: t("iconLibraries.inUseKeeps", { name }) });
-	return new ConfirmModal(app, t("confirm.titleDeleteLibrary"), message).withMascot(t("confirm.subtitleName", { name })).confirm();
+	return new ConfirmModal(app, t("confirm.titleDeleteLibrary"), message)
+		.withMascot(t("confirm.subtitleName", { name }))
+		.confirm();
 }
 
 /**
@@ -54,10 +57,7 @@ export function askResetLibraries(app: App, doomed: readonly IconSourceId[]): Pr
 	const list = message.createEl("ul", { cls: "cs-icon-library-users" });
 	for (const id of doomed) list.createEl("li", { text: t(getSource(id).labelKey) });
 	message.createEl("p", { text: t("iconLibraries.resetKeeps") });
-	return new ConfirmModal(
-		app,
-		t("confirm.titleResetLibraries"),
-		message,
-		t("iconLibraries.resetButton"),
-	).withMascot(t("iconLibraries.resetSubtitle")).confirm();
+	return new ConfirmModal(app, t("confirm.titleResetLibraries"), message, t("iconLibraries.resetButton"))
+		.withMascot(t("iconLibraries.resetSubtitle"))
+		.confirm();
 }

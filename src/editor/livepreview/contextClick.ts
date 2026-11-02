@@ -1,9 +1,4 @@
-import {
-	CSS_CM_WIDGET,
-	CSS_HEADING_HIDE_MARKS,
-	CSS_HEADING_LINE,
-	CSS_INLINE_TOKEN,
-} from "../renderShared";
+import { CSS_CM_WIDGET, CSS_HEADING_HIDE_MARKS, CSS_HEADING_LINE, CSS_INLINE_TOKEN } from "../renderShared";
 
 /** Keep a context click from selecting text or revealing a rendered callout. */
 export function registerCalloutContextClickGuard(dom: HTMLElement): () => void {
@@ -13,16 +8,12 @@ export function registerCalloutContextClickGuard(dom: HTMLElement): () => void {
 	};
 	const onMouseDown = (event: MouseEvent) => {
 		const node = event.target as Node | null;
-		const target =
-			node?.nodeType === Node.ELEMENT_NODE
-				? (node as Element)
-				: node?.parentElement;
+		const target = node?.nodeType === Node.ELEMENT_NODE ? (node as Element) : node?.parentElement;
 		contextClick =
 			event.button === 2 &&
 			target?.closest(".cm-editor") === dom &&
 			target.closest(
-				`.cm-line.${CSS_HEADING_LINE}.${CSS_HEADING_HIDE_MARKS}, ` +
-					`.${CSS_INLINE_TOKEN}.${CSS_CM_WIDGET}`,
+				`.cm-line.${CSS_HEADING_LINE}.${CSS_HEADING_HIDE_MARKS}, ` + `.${CSS_INLINE_TOKEN}.${CSS_CM_WIDGET}`,
 			) !== null;
 		if (contextClick) event.preventDefault();
 	};

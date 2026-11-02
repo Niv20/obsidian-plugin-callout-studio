@@ -19,7 +19,8 @@ export async function initializeSidebarTabs(
 	app.workspace.detachLeavesOfType(PORTABLE_CONVERSION_VIEW);
 	// Untouched older installs can still lack data.json. Their welcome markers
 	// distinguish them from a new install without imposing a tab during upgrade.
-	if (!isFreshInstall || settings.welcomeSeen || localState.hasSeenWelcome || localState.hasOfferedOccurrencesTab) return;
+	if (!isFreshInstall || settings.welcomeSeen || localState.hasSeenWelcome || localState.hasOfferedOccurrencesTab)
+		return;
 	// Record before the async creation, including when it fails. If storage is
 	// unavailable, skip the automatic offer rather than repeating it on reload.
 	if (!localState.markOccurrencesTabOffered()) return;

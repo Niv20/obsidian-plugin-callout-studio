@@ -37,7 +37,8 @@ export async function handleBuiltInReset(
 	ctx: SettingsContext,
 	def: CalloutDefinition,
 	/** Opens the question; a test answers in its place. */
-	open: (input: NoteChangesModalInput) => Promise<NoteChoices | null> = (input) => new NoteChangesModal(ctx.app, input).ask(),
+	open: (input: NoteChangesModalInput) => Promise<NoteChoices | null> = (input) =>
+		new NoteChangesModal(ctx.app, input).ask(),
 ): Promise<void> {
 	const { registry } = ctx.plugin;
 	const original = registry.getBuiltInDefault(def.id);
@@ -61,13 +62,15 @@ export async function handleBuiltInReset(
 		state,
 		moves: [],
 		stillWanted: () => true,
-		open: (input) => open({
-			...input,
-			action: {
-				removed: (ids) => removedIdsLine(ids, "noteChanges.changeResetRemoved", "noteChanges.changeResetRemovedMany"),
-				confirm: t("settings.resetAction"),
-			},
-		}),
+		open: (input) =>
+			open({
+				...input,
+				action: {
+					removed: (ids) =>
+						removedIdsLine(ids, "noteChanges.changeResetRemoved", "noteChanges.changeResetRemovedMany"),
+					confirm: t("settings.resetAction"),
+				},
+			}),
 	});
 	if (!choices) return;
 

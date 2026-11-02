@@ -28,8 +28,7 @@ function fakeApp(files: Record<string, string>): {
 } {
 	const store = new Map(Object.entries(files));
 	const handles = Array.from(store.keys()).map((path) => ({ path }));
-	const read = (file: { path: string }): Promise<string> =>
-		Promise.resolve(store.get(file.path) ?? "");
+	const read = (file: { path: string }): Promise<string> => Promise.resolve(store.get(file.path) ?? "");
 	const app = {
 		vault: {
 			getMarkdownFiles: () => handles,
@@ -38,8 +37,7 @@ function fakeApp(files: Record<string, string>): {
 			// The writers go through `process`, which owns the read/write pair;
 			// the fake keeps the same identity contract the real vault has, so
 			// the staleness guard in `forEachVaultFile` resolves each handle.
-			getAbstractFileByPath: (path: string) =>
-				handles.find((h) => h.path === path) ?? null,
+			getAbstractFileByPath: (path: string) => handles.find((h) => h.path === path) ?? null,
 			process: (file: { path: string }, fn: (data: string) => string) => {
 				const next = fn(store.get(file.path) ?? "");
 				store.set(file.path, next);
@@ -55,10 +53,7 @@ function fakeApp(files: Record<string, string>): {
 }
 
 /** Runs one line through a writer and hands back what the line became. */
-async function rewrite(
-	line: string,
-	run: (app: App) => Promise<number>,
-): Promise<{ line: string; count: number }> {
+async function rewrite(line: string, run: (app: App) => Promise<number>): Promise<{ line: string; count: number }> {
 	const { app, content } = fakeApp({ "note.md": line });
 	const count = await run(app);
 	return { line: content("note.md"), count };
@@ -66,50 +61,29 @@ async function rewrite(
 
 describe("replaceCalloutIdsInVault", () => {
 	const swap = (line: string, titleSwap?: { from: string; to: string }) =>
-		rewrite(line, (app) =>
-			replaceCalloutIdsInVault(app, ["old"], "new", titleSwap),
-		);
-	const named = (line: string) =>
-		swap(line, { from: "Old Name", to: "New Name" });
+		rewrite(line, (app) => replaceCalloutIdsInVault(app, ["old"], "new", titleSwap));
+	const named = (line: string) => swap(line, { from: "Old Name", to: "New Name" });
 
 	it("swaps only the bracket span when no title swap is asked for", async () => {
-		assert.strictEqual(
-			(await swap("> [!old] Old Name")).line,
-			"> [!new] Old Name",
-		);
+		assert.strictEqual((await swap("> [!old] Old Name")).line, "> [!new] Old Name");
 		assert.strictEqual((await swap("> [!old]")).line, "> [!new]");
 	});
 
 	it("carries the name across when the title is the old default", async () => {
-		assert.strictEqual(
-			(await named("> [!old] Old Name")).line,
-			"> [!new] New Name",
-		);
+		assert.strictEqual((await named("> [!old] Old Name")).line, "> [!new] New Name");
 	});
 
 	it("matches a default title case-insensitively and trimmed", async () => {
-		assert.strictEqual(
-			(await named("> [!old]   old NAME  ")).line,
-			"> [!new] New Name",
-		);
+		assert.strictEqual((await named("> [!old]   old NAME  ")).line, "> [!new] New Name");
 	});
 
 	it("keeps a fold mark on its own side of the title", async () => {
-		assert.strictEqual(
-			(await named("> [!old]- Old Name")).line,
-			"> [!new]- New Name",
-		);
-		assert.strictEqual(
-			(await named("> [!old]+ Old Name")).line,
-			"> [!new]+ New Name",
-		);
+		assert.strictEqual((await named("> [!old]- Old Name")).line, "> [!new]- New Name");
+		assert.strictEqual((await named("> [!old]+ Old Name")).line, "> [!new]+ New Name");
 	});
 
 	it("leaves a title the user wrote themselves alone", async () => {
-		assert.strictEqual(
-			(await named("> [!old] read this first")).line,
-			"> [!new] read this first",
-		);
+		assert.strictEqual((await named("> [!old] read this first")).line, "> [!new] read this first");
 	});
 
 	it("leaves a title-less header title-less", async () => {
@@ -120,57 +94,37 @@ describe("replaceCalloutIdsInVault", () => {
 	});
 
 	it("renames a heading callout's default title too", async () => {
-		assert.strictEqual(
-			(await named("### [!old] Old Name")).line,
-			"### [!new] New Name",
-		);
+		assert.strictEqual((await named("### [!old] Old Name")).line, "### [!new] New Name");
 		assert.strictEqual((await named("### [!old]")).line, "### [!new]");
 	});
 
 	it("treats a heading's `-` as title text, not a fold mark", async () => {
 		// A heading has no fold syntax, so `- Old Name` is the whole title and
 		// correctly fails to match a swap of `Old Name`.
-		assert.strictEqual(
-			(await named("### [!old]- Old Name")).line,
-			"### [!new]- Old Name",
-		);
+		assert.strictEqual((await named("### [!old]- Old Name")).line, "### [!new]- Old Name");
 	});
 
 	it("never titles an inline pill", async () => {
-		assert.strictEqual(
-			(await named("see [!old] for details")).line,
-			"see [!new] for details",
-		);
+		assert.strictEqual((await named("see [!old] for details")).line, "see [!new] for details");
 	});
 
 	it("carries |metadata over, on both the id-only and the titled path", async () => {
-		assert.strictEqual(
-			(await swap("> [!old|purple] Old Name")).line,
-			"> [!new|purple] Old Name",
-		);
-		assert.strictEqual(
-			(await named("> [!old|purple] Old Name")).line,
-			"> [!new|purple] New Name",
-		);
+		assert.strictEqual((await swap("> [!old|purple] Old Name")).line, "> [!new|purple] Old Name");
+		assert.strictEqual((await named("> [!old|purple] Old Name")).line, "> [!new|purple] New Name");
 	});
 
 	it("never adds a title when the old name is empty", async () => {
 		// An empty `from` would match every title-less header and invent a title
 		// for it, which is never what a type swap means.
-		assert.strictEqual(
-			(await swap("> [!old]", { from: "   ", to: "New Name" })).line,
-			"> [!new]",
-		);
+		assert.strictEqual((await swap("> [!old]", { from: "   ", to: "New Name" })).line, "> [!new]");
 	});
 
 	it("reports one replacement per token, titled or not", async () => {
-		const { count } = await rewrite(
-			"### [!old] Old Name and [!old] again",
-			(app) =>
-				replaceCalloutIdsInVault(app, ["old"], "new", {
-					from: "Old Name",
-					to: "New Name",
-				}),
+		const { count } = await rewrite("### [!old] Old Name and [!old] again", (app) =>
+			replaceCalloutIdsInVault(app, ["old"], "new", {
+				from: "Old Name",
+				to: "New Name",
+			}),
 		);
 		assert.strictEqual(count, 2);
 	});
@@ -185,37 +139,20 @@ describe("replaceCalloutIdsInVault", () => {
 
 describe("replaceCalloutTitlesInVault", () => {
 	const rename = (line: string) =>
-		rewrite(line, (app) =>
-			replaceCalloutTitlesInVault(app, ["note"], "Old Title", "New Title"),
-		);
+		rewrite(line, (app) => replaceCalloutTitlesInVault(app, ["note"], "Old Title", "New Title"));
 
 	it("renames a block header's default title, fold mark intact", async () => {
-		assert.strictEqual(
-			(await rename("> [!note] Old Title")).line,
-			"> [!note] New Title",
-		);
-		assert.strictEqual(
-			(await rename("> [!note]- Old Title")).line,
-			"> [!note]- New Title",
-		);
+		assert.strictEqual((await rename("> [!note] Old Title")).line, "> [!note] New Title");
+		assert.strictEqual((await rename("> [!note]- Old Title")).line, "> [!note]- New Title");
 	});
 
 	it("leaves a title the user wrote alone", async () => {
-		assert.strictEqual(
-			(await rename("> [!note] something else")).line,
-			"> [!note] something else",
-		);
+		assert.strictEqual((await rename("> [!note] something else")).line, "> [!note] something else");
 	});
 
 	it("treats a heading's `-` as title text", async () => {
-		assert.strictEqual(
-			(await rename("## [!note]- Old Title")).line,
-			"## [!note]- Old Title",
-		);
-		assert.strictEqual(
-			(await rename("## [!note] Old Title")).line,
-			"## [!note] New Title",
-		);
+		assert.strictEqual((await rename("## [!note]- Old Title")).line, "## [!note]- Old Title");
+		assert.strictEqual((await rename("## [!note] Old Title")).line, "## [!note] New Title");
 	});
 
 	it("never adds a title to a title-less header", async () => {
@@ -225,11 +162,7 @@ describe("replaceCalloutTitlesInVault", () => {
 
 describe("convertCalloutsToPlainTextInVault", () => {
 	const convert = (source: string) =>
-		rewrite(source, (app) =>
-			convertCalloutsToPlainTextInVault(app, ["zzz"]).then(
-				(r) => r.blocks,
-			),
-		);
+		rewrite(source, (app) => convertCalloutsToPlainTextInVault(app, ["zzz"]).then((r) => r.blocks));
 	it("converts matching tokens inside a matching parent body and title", async () => {
 		const source = "> [!zzz] Parent [!zzz]\n> before [!zzz] after\n>> [!zzz] Nested";
 		const result = await convert(source);
@@ -239,16 +172,35 @@ describe("convertCalloutsToPlainTextInVault", () => {
 
 	it("uses original source exclusions while unwrapping fences and escaped prose", async () => {
 		const source = [
-			"---", "example: '[!zzz]'", "---", "> [!zzz] Parent",
-			"> \\[!zzz] and `[!zzz]`", "> ```md", "> [!zzz] code example", "> ```",
-			"> [!zzz] Real", "", "### [!zzz] After",
+			"---",
+			"example: '[!zzz]'",
+			"---",
+			"> [!zzz] Parent",
+			"> \\[!zzz] and `[!zzz]`",
+			"> ```md",
+			"> [!zzz] code example",
+			"> ```",
+			"> [!zzz] Real",
+			"",
+			"### [!zzz] After",
 		].join("\n");
 		const result = await convert(source);
-		assert.strictEqual(result.line, [
-			"---", "example: '[!zzz]'", "---", "Parent",
-			"\\[!zzz] and `[!zzz]`", "```md", "[!zzz] code example", "```",
-			"Real", "", "### After",
-		].join("\n"));
+		assert.strictEqual(
+			result.line,
+			[
+				"---",
+				"example: '[!zzz]'",
+				"---",
+				"Parent",
+				"\\[!zzz] and `[!zzz]`",
+				"```md",
+				"[!zzz] code example",
+				"```",
+				"Real",
+				"",
+				"### After",
+			].join("\n"),
+		);
 		assert.strictEqual(result.count, 3);
 	});
 
@@ -279,10 +231,7 @@ describe("convertCalloutsToPlainTextInVault", () => {
 		// The `>` prefix belongs to the parent callout; unwrapping it here would
 		// break the parent. Leaving the token would keep a live `[!zzz]`.
 		assert.strictEqual((await convert(">> [!zzz] Title")).line, ">> Title");
-		assert.strictEqual(
-			(await convert("> > [!zzz] Title")).line,
-			"> > Title",
-		);
+		assert.strictEqual((await convert("> > [!zzz] Title")).line, "> > Title");
 	});
 
 	it("falls back to the id as written when a nested block had no title", async () => {
@@ -300,17 +249,11 @@ describe("convertCalloutsToPlainTextInVault", () => {
 		// outermost one still unwraps whole and the nested one still loses its
 		// token — a piped spelling must not be a way to survive a delete.
 		assert.strictEqual((await convert("> [!zzz|purple] Title")).line, "Title");
-		assert.strictEqual(
-			(await convert(">> [!zzz|purple] Title")).line,
-			">> Title",
-		);
+		assert.strictEqual((await convert(">> [!zzz|purple] Title")).line, ">> Title");
 	});
 
 	it("leaves a nested block of another type alone", async () => {
-		assert.strictEqual(
-			(await convert(">> [!other] Title")).line,
-			">> [!other] Title",
-		);
+		assert.strictEqual((await convert(">> [!other] Title")).line, ">> [!other] Title");
 	});
 
 	it("still converts headings and pills", async () => {
@@ -336,10 +279,7 @@ describe("convertCalloutsToPlainTextInVault", () => {
 			].join("\n"),
 		});
 		await convertCalloutsToPlainTextInVault(app, ["zzz"]);
-		assert.ok(
-			!content("note.md").includes("[!zzz]"),
-			`leftover reference in:\n${content("note.md")}`,
-		);
+		assert.ok(!content("note.md").includes("[!zzz]"), `leftover reference in:\n${content("note.md")}`);
 		// The parent callout is untouched.
 		assert.ok(content("note.md").includes("> [!note] Parent"));
 	});
@@ -378,9 +318,7 @@ function hostileVault(
 			read,
 			cachedRead: read,
 			getAbstractFileByPath: (path: string) =>
-				vanished.has(path)
-					? null
-					: (handles.find((h) => h.path === path) ?? null),
+				vanished.has(path) ? null : (handles.find((h) => h.path === path) ?? null),
 			process: (file: { path: string }, fn: (data: string) => string) => {
 				if (unreadable.has(file.path)) {
 					return Promise.reject(new Error(`EACCES: ${file.path}`));
@@ -416,11 +354,7 @@ describe("a bulk rewrite survives a hostile vault", () => {
 		assert.strictEqual(content("b.md"), "> [!old] Two", "left untouched");
 		assert.strictEqual(content("c.md"), "> [!new] Three", "not stranded");
 		assert.strictEqual(count, 2, "counts only what it actually rewrote");
-		assert.strictEqual(
-			notices.length,
-			1,
-			"the user is told some notes were skipped",
-		);
+		assert.strictEqual(notices.length, 1, "the user is told some notes were skipped");
 	});
 
 	it("skips a note that vanished after the file list was taken", async () => {
@@ -453,10 +387,7 @@ describe("a bulk rewrite survives a hostile vault", () => {
 		const { app } = hostileVault(store);
 		const vault = app.vault as unknown as {
 			cachedRead: (f: { path: string }) => Promise<string>;
-			process: (
-				f: { path: string },
-				fn: (data: string) => string,
-			) => Promise<string>;
+			process: (f: { path: string }, fn: (data: string) => string) => Promise<string>;
 		};
 		const probe = vault.cachedRead;
 		let landed = "";
@@ -477,17 +408,12 @@ describe("a bulk rewrite survives a hostile vault", () => {
 			});
 
 		await replaceCalloutIdsInVault(app, ["old"], "new");
-		assert.strictEqual(
-			landed,
-			"> [!new] One\n\nTyped.",
-			"the paragraph typed mid-pass survives the rewrite",
-		);
+		assert.strictEqual(landed, "> [!new] One\n\nTyped.", "the paragraph typed mid-pass survives the rewrite");
 	});
 });
 
 describe("replaceMetadataWordInVault — a renamed palette's notes", () => {
-	const swap = (line: string) =>
-		rewrite(line, (app) => replaceMetadataWordInVault(app, "red-2", "comic-red"));
+	const swap = (line: string) => rewrite(line, (app) => replaceMetadataWordInVault(app, "red-2", "comic-red"));
 
 	it("swaps the word in every role, keeping everything around it", async () => {
 		assert.strictEqual((await swap("> [!mark|red-2]- Page break")).line, "> [!mark|comic-red]- Page break");

@@ -48,27 +48,17 @@ import type { IconSvgLookup } from "../src/icons/resolver";
 import { parsePackFile, setPackData } from "../src/icons/packData";
 import { PACK_FORMAT } from "../src/icons/data/packManifest";
 import { iconCacheKey } from "../src/icons/registry";
-import type {
-	CalloutDefinition,
-	CalloutIcon,
-	CalloutRenderRole,
-	IconPackId,
-} from "../src/types";
+import type { CalloutDefinition, CalloutIcon, CalloutRenderRole, IconPackId } from "../src/types";
 import { CALLOUT_RENDER_ROLES } from "../src/types";
 
 const PACKS_DIR = join(process.cwd(), "packs");
 
 /** The committed pack file, verbatim — checksum and all, as a device would hold it. */
-const realPackText = (id: IconPackId): string =>
-	readFileSync(join(PACKS_DIR, `${id}.json`), "utf8");
+const realPackText = (id: IconPackId): string => readFileSync(join(PACKS_DIR, `${id}.json`), "utf8");
 
 /** Load a real pack into the module-level store, as a download would. */
 function loadRealPack(id: IconPackId): void {
-	const result = parsePackFile(
-		JSON.parse(realPackText(id)),
-		id,
-		PACK_FORMAT,
-	);
+	const result = parsePackFile(JSON.parse(realPackText(id)), id, PACK_FORMAT);
 	assert.ok(result.ok, `packs/${id}.json did not parse`);
 	setPackData(id, result.file);
 }
@@ -124,10 +114,7 @@ describe("createIconResolver — resolution order", () => {
 		const resolver = createIconResolver(
 			lookup({ [iconCacheKey("octicons", "alert", "24")]: "<svg id='synced'/>" }),
 		);
-		assert.equal(
-			resolver.resolveSvg({ type: "octicons", value: "alert" }, "regular"),
-			"<svg id='synced'/>",
-		);
+		assert.equal(resolver.resolveSvg({ type: "octicons", value: "alert" }, "regular"), "<svg id='synced'/>");
 	});
 
 	it("falls back to the pack when data.json has no copy", () => {
@@ -138,40 +125,23 @@ describe("createIconResolver — resolution order", () => {
 
 	it("returns null when neither has it", () => {
 		const resolver = createIconResolver(lookup({}));
-		assert.equal(
-			resolver.resolveSvg({ type: "octicons", value: "no-such-icon" }, "regular"),
-			null,
-		);
+		assert.equal(resolver.resolveSvg({ type: "octicons", value: "no-such-icon" }, "regular"), null);
 		// Font Awesome is not loaded in this file — the "pack not downloaded yet"
 		// case, which the renderer paints as a placeholder.
-		assert.equal(
-			resolver.resolveSvg({ type: "fa-solid", value: "star" }, "regular"),
-			null,
-		);
+		assert.equal(resolver.resolveSvg({ type: "fa-solid", value: "star" }, "regular"), null);
 	});
 
 	it("returns null for a library this build does not know", () => {
 		const resolver = createIconResolver(lookup({}));
-		assert.equal(
-			resolver.resolveSvg({ type: "future" as IconPackId, value: "x" }, "regular"),
-			null,
-		);
+		assert.equal(resolver.resolveSvg({ type: "future" as IconPackId, value: "x" }, "regular"), null);
 	});
 
 	it("looks the cache up under the icon's own type, not its source", () => {
 		// One source can own several bodies of artwork, and each keeps its own
 		// entry — a Brands drawing must never be served for a Solid icon.
-		const resolver = createIconResolver(
-			lookup({ [iconCacheKey("fa-brands", "star", "")]: "<svg id='brands'/>" }),
-		);
-		assert.equal(
-			resolver.resolveSvg({ type: "fa-brands", value: "star" }, "regular"),
-			"<svg id='brands'/>",
-		);
-		assert.equal(
-			resolver.resolveSvg({ type: "fa-solid", value: "star" }, "regular"),
-			null,
-		);
+		const resolver = createIconResolver(lookup({ [iconCacheKey("fa-brands", "star", "")]: "<svg id='brands'/>" }));
+		assert.equal(resolver.resolveSvg({ type: "fa-brands", value: "star" }, "regular"), "<svg id='brands'/>");
+		assert.equal(resolver.resolveSvg({ type: "fa-solid", value: "star" }, "regular"), null);
 	});
 
 	it("asks a different cache entry per surface where the pack draws per surface", () => {
@@ -324,10 +294,7 @@ describe("cleanupUnusedIconSvgs", () => {
 		reg.add(definition({ id: "b", icon: { type: "octicons", value: "alert" } }));
 		seed(reg, "octicons", "alert", "24");
 		reg.cleanupUnusedIconSvgs();
-		assert.equal(
-			reg.iconSvgCache.filter((e) => e.name === "alert" && e.variant === "24").length,
-			1,
-		);
+		assert.equal(reg.iconSvgCache.filter((e) => e.name === "alert" && e.variant === "24").length, 1);
 	});
 });
 
@@ -366,9 +333,7 @@ function service(): ServiceHarness {
 		},
 		read: (path: string) => {
 			const text = h.files.get(path);
-			return text === undefined
-				? Promise.reject(new Error("ENOENT"))
-				: Promise.resolve(text);
+			return text === undefined ? Promise.reject(new Error("ENOENT")) : Promise.resolve(text);
 		},
 		write: () => Promise.resolve(),
 		mkdir: () => Promise.resolve(),
@@ -409,10 +374,7 @@ describe("ensureArtworkFor — the one repair path", () => {
 		// Tabler's cacheVariant is "" for every role — one picture, one drawing.
 		const h = service();
 		await h.service.ensureArtworkFor([{ type: "tabler-outline", value: "dice-3" }]);
-		assert.equal(
-			h.registry.iconSvgCache.filter((e) => e.name === "dice-3").length,
-			1,
-		);
+		assert.equal(h.registry.iconSvgCache.filter((e) => e.name === "dice-3").length, 1);
 	});
 
 	it("repaints and saves once for the whole batch, not once per icon", async () => {
@@ -464,11 +426,7 @@ describe("ensureArtworkFor — the one repair path", () => {
 			1,
 			"Brands was fetched more than once",
 		);
-		assert.equal(
-			h.looked.filter((p) => p.endsWith("fa-solid.json")).length,
-			1,
-			"Solid was fetched more than once",
-		);
+		assert.equal(h.looked.filter((p) => p.endsWith("fa-solid.json")).length, 1, "Solid was fetched more than once");
 		assert.ok(h.registry.findIconSvg("fa-brands", "apple", ""));
 	});
 
@@ -596,9 +554,7 @@ describe("IconService.initialize — what a launch actually reads", () => {
 
 	it("does read the pack of a callout that is drawing its icon", async () => {
 		const h = service();
-		h.registry.add(
-			definition({ id: "loud", icon: { type: "rpg-awesome", value: "acid" } }),
-		);
+		h.registry.add(definition({ id: "loud", icon: { type: "rpg-awesome", value: "acid" } }));
 		await h.service.initialize();
 		assert.ok(
 			h.looked.some((p) => p.includes("rpg-awesome")),
@@ -663,14 +619,8 @@ describe("IconFetchManager", () => {
 			}),
 		);
 		await h.fetch.ensureAll();
-		assert.equal(
-			h.fetch.hasFailed({ type: "material", value: "home", style: "filled", weight: 700 }),
-			true,
-		);
-		assert.equal(
-			h.fetch.hasFailed({ type: "material", value: "home", style: "outlined", weight: 400 }),
-			false,
-		);
+		assert.equal(h.fetch.hasFailed({ type: "material", value: "home", style: "filled", weight: 700 }), true);
+		assert.equal(h.fetch.hasFailed({ type: "material", value: "home", style: "outlined", weight: 400 }), false);
 		assert.equal(h.fetch.hasFailed({ type: "material", value: "house" }), false);
 	});
 

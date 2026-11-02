@@ -8,10 +8,7 @@ export interface PreviewOwner {
 	cssInjector: { inject(emitCssChange?: boolean): void };
 }
 
-export function beginDemoPreview(
-	owner: PreviewOwner,
-	def: CalloutDefinition,
-): void {
+export function beginDemoPreview(owner: PreviewOwner, def: CalloutDefinition): void {
 	owner.settingsEditOpen = true;
 	owner.registry.setPreviewDefinition(def, true);
 	owner.cssInjector.inject(false);

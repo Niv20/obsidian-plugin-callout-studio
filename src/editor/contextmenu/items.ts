@@ -14,11 +14,7 @@ import { t } from "../../i18n";
 import { CalloutEditor } from "../../settings/CalloutEditor";
 import { openCalloutEditorFor } from "../../settings/openCalloutEditor";
 import { resolveCalloutDef } from "../renderShared";
-import {
-	CALLOUT_FOLD_MARK_REGEX,
-	type CalloutInfo,
-	type ResolvedCalloutContext,
-} from "./resolve";
+import { CALLOUT_FOLD_MARK_REGEX, type CalloutInfo, type ResolvedCalloutContext } from "./resolve";
 import {
 	copyHeadingSection,
 	captureSectionTarget,
@@ -29,11 +25,7 @@ import {
 
 const MENU_SECTION = "callout-studio";
 
-type ItemBuilder = (
-	plugin: CalloutStudioPlugin,
-	menu: Menu,
-	context: ResolvedCalloutContext,
-) => void;
+type ItemBuilder = (plugin: CalloutStudioPlugin, menu: Menu, context: ResolvedCalloutContext) => void;
 
 // ─── Shared item builders ────────────────────────────────────────────────────
 
@@ -94,8 +86,7 @@ const buildRegularFoldDefaults: ItemBuilder = (_plugin, menu, context) => {
 	if (context.role !== "regular") return;
 	const { editor, callout } = context;
 	const headerText = editor.getLine(callout.headerLine);
-	const currentMark = (headerText.match(CALLOUT_FOLD_MARK_REGEX)?.[3] ??
-		"") as "" | "+" | "-";
+	const currentMark = (headerText.match(CALLOUT_FOLD_MARK_REGEX)?.[3] ?? "") as "" | "+" | "-";
 	// Only the two states the callout is NOT in: "set it to what it already is"
 	// does nothing, so that row is left out instead of being shown with a ✓.
 	for (const option of foldOptions()) {
@@ -120,11 +111,7 @@ const buildCutSection: ItemBuilder = (plugin, menu, context) => {
 			.setSection(MENU_SECTION)
 			.onClick(() => {
 				if (!canDelete()) return;
-				const range = getHeadingSectionRange(
-					context.editor,
-					context.headingLine,
-					context.headingLevel,
-				);
+				const range = getHeadingSectionRange(context.editor, context.headingLine, context.headingLevel);
 				void cutHeadingSection(context.editor, range, canDelete);
 			});
 	});
@@ -137,11 +124,7 @@ const buildCopySection: ItemBuilder = (_plugin, menu, context) => {
 			.setIcon("clipboard-copy")
 			.setSection(MENU_SECTION)
 			.onClick(() => {
-				const range = getHeadingSectionRange(
-					context.editor,
-					context.headingLine,
-					context.headingLevel,
-				);
+				const range = getHeadingSectionRange(context.editor, context.headingLine, context.headingLevel);
 				void copyHeadingSection(range);
 			});
 	});
@@ -156,11 +139,7 @@ const buildDeleteSection: ItemBuilder = (_plugin, menu, context) => {
 			.setWarning(true)
 			.setSection(MENU_SECTION)
 			.onClick(() => {
-				const range = getHeadingSectionRange(
-					context.editor,
-					context.headingLine,
-					context.headingLevel,
-				);
+				const range = getHeadingSectionRange(context.editor, context.headingLine, context.headingLevel);
 				deleteHeadingSection(context.editor, range);
 			});
 	});
@@ -168,10 +147,7 @@ const buildDeleteSection: ItemBuilder = (_plugin, menu, context) => {
 
 // ─── Builder registry ────────────────────────────────────────────────────────
 
-const BUILDERS: Record<
-	CalloutRenderRole,
-	Partial<Record<ContextMenuItemId, ItemBuilder>>
-> = {
+const BUILDERS: Record<CalloutRenderRole, Partial<Record<ContextMenuItemId, ItemBuilder>>> = {
 	regular: {
 		edit: buildCreateOrEdit,
 		openSettings: buildOpenSettings,
@@ -195,11 +171,7 @@ const BUILDERS: Record<
  * Add the configured, enabled menu items for the resolved context's role,
  * in the user's saved order.
  */
-export function addItems(
-	plugin: CalloutStudioPlugin,
-	menu: Menu,
-	context: ResolvedCalloutContext,
-): void {
+export function addItems(plugin: CalloutStudioPlugin, menu: Menu, context: ResolvedCalloutContext): void {
 	const configured = plugin.settings.contextMenu.items[context.role];
 	const builders = BUILDERS[context.role];
 	for (const { id, enabled } of configured) {
@@ -235,22 +207,14 @@ function copyCalloutMarkdown(editor: Editor, info: CalloutInfo): void {
 	void navigator.clipboard.writeText(lines.join("\n"));
 }
 
-function setRegularFoldMark(
-	editor: Editor,
-	info: CalloutInfo,
-	mark: "" | "+" | "-",
-): void {
+function setRegularFoldMark(editor: Editor, info: CalloutInfo, mark: "" | "+" | "-"): void {
 	const line = editor.getLine(info.headerLine);
 	const nextLine = line.replace(
 		CALLOUT_FOLD_MARK_REGEX,
 		(_match, prefix: string, id: string) => `${prefix}[!${id}]${mark}`,
 	);
 	if (nextLine === line) return;
-	editor.replaceRange(
-		nextLine,
-		{ line: info.headerLine, ch: 0 },
-		{ line: info.headerLine, ch: line.length },
-	);
+	editor.replaceRange(nextLine, { line: info.headerLine, ch: 0 }, { line: info.headerLine, ch: line.length });
 }
 
 function openPluginSettings(plugin: CalloutStudioPlugin): void {

@@ -15,12 +15,7 @@
 import { parseCssColorToHex } from "./colorUtils";
 import { calloutIdentity, normalizeCalloutId } from "./calloutId";
 import { validateIdString } from "./importValidator";
-import {
-	assertImportTextSize,
-	ImportLimitError,
-	MAX_IMPORT_COLLECTION,
-	MAX_IMPORT_VALUES,
-} from "./importLimits";
+import { assertImportTextSize, ImportLimitError, MAX_IMPORT_COLLECTION, MAX_IMPORT_VALUES } from "./importLimits";
 import type { CalloutIcon } from "../types";
 import type { CalloutManagerEntry } from "./calloutManagerImport";
 
@@ -33,14 +28,26 @@ function withoutComments(text: string, spend: () => void): string {
 	let quote = "";
 	for (let i = 0; i < text.length; i++) {
 		const char = text[i];
-		if (char === "\\") { i++; continue; }
-		if (quote) { if (char === quote) quote = ""; continue; }
-		if (char === '"' || char === "'") { quote = char; continue; }
+		if (char === "\\") {
+			i++;
+			continue;
+		}
+		if (quote) {
+			if (char === quote) quote = "";
+			continue;
+		}
+		if (char === '"' || char === "'") {
+			quote = char;
+			continue;
+		}
 		if (char !== "/" || text[i + 1] !== "*") continue;
 		spend();
 		chunks.push(text.slice(start, i));
 		const end = text.indexOf("*/", i + 2);
-		if (end < 0) { start = text.length; break; }
+		if (end < 0) {
+			start = text.length;
+			break;
+		}
 		i = end + 1;
 		start = end + 2;
 	}
@@ -68,9 +75,18 @@ function declarations(body: string, spend: () => void): Pick<CalloutManagerEntry
 	let parentheses = 0;
 	for (let i = 0; i < body.length; i++) {
 		const char = body[i];
-		if (char === "\\") { i++; continue; }
-		if (quote) { if (char === quote) quote = ""; continue; }
-		if (char === '"' || char === "'") { quote = char; continue; }
+		if (char === "\\") {
+			i++;
+			continue;
+		}
+		if (quote) {
+			if (char === quote) quote = "";
+			continue;
+		}
+		if (char === '"' || char === "'") {
+			quote = char;
+			continue;
+		}
 		if (char === "(") parentheses++;
 		else if (char === ")") parentheses = Math.max(0, parentheses - 1);
 		else if (char === ";" && parentheses === 0) {
@@ -100,9 +116,7 @@ function declarations(body: string, spend: () => void): Pick<CalloutManagerEntry
 export function parseIconDecl(raw: string): CalloutIcon | undefined {
 	const trimmed = raw.trim();
 	if (!trimmed) return undefined;
-	const value = trimmed.startsWith("lucide-")
-		? trimmed.slice("lucide-".length)
-		: trimmed;
+	const value = trimmed.startsWith("lucide-") ? trimmed.slice("lucide-".length) : trimmed;
 	if (!value) return undefined;
 	return { type: "lucide", value };
 }
@@ -129,9 +143,18 @@ export function parseCalloutManagerExport(text: string): CalloutManagerEntry[] {
 	// retry an ever-shorter suffix at every character, freezing the UI.
 	for (let i = 0; i < css.length; i++) {
 		const char = css[i];
-		if (char === "\\") { i++; continue; }
-		if (quote) { if (char === quote) quote = ""; continue; }
-		if (char === '"' || char === "'") { quote = char; continue; }
+		if (char === "\\") {
+			i++;
+			continue;
+		}
+		if (quote) {
+			if (char === quote) quote = "";
+			continue;
+		}
+		if (char === '"' || char === "'") {
+			quote = char;
+			continue;
+		}
 		if (char === "{") {
 			spend();
 			selectorStart = boundary;

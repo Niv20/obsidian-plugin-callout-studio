@@ -19,15 +19,8 @@
 import { Component, type App, type Editor, type TFile } from "obsidian";
 import type { EditorView } from "@codemirror/view";
 import { EditorSelection, StateEffect } from "@codemirror/state";
-import {
-	createEditorOwner,
-	releaseActiveEditor,
-	type EditorOwner,
-} from "./embeddedEditorOwner";
-import {
-	readOnlyPreviewExtensions,
-	type PreviewWriteGate,
-} from "./previewReadOnly";
+import { createEditorOwner, releaseActiveEditor, type EditorOwner } from "./embeddedEditorOwner";
+import { readOnlyPreviewExtensions, type PreviewWriteGate } from "./previewReadOnly";
 
 /** Minimal shape of the internal edit view we touch. */
 interface InternalMarkdownEditor extends Component {
@@ -46,11 +39,7 @@ interface InternalMarkdownEditor extends Component {
 	cm?: EditorView;
 }
 
-type MarkdownEditorCtor = new (
-	app: App,
-	container: HTMLElement,
-	owner: EditorOwner,
-) => InternalMarkdownEditor;
+type MarkdownEditorCtor = new (app: App, container: HTMLElement, owner: EditorOwner) => InternalMarkdownEditor;
 
 /** `app` widened to the internal embed registry. */
 interface EmbedRegistryApp extends App {
@@ -120,9 +109,7 @@ function resolveMarkdownEditorCtor(app: App): MarkdownEditorCtor {
 		if (!editMode) {
 			throw new Error("editMode unavailable after showEditor()");
 		}
-		const proto = Object.getPrototypeOf(Object.getPrototypeOf(editMode)) as
-			| { constructor?: unknown }
-			| null;
+		const proto = Object.getPrototypeOf(Object.getPrototypeOf(editMode)) as { constructor?: unknown } | null;
 		const ctor = proto?.constructor;
 		if (typeof ctor !== "function") {
 			throw new Error("could not resolve MarkdownEditor constructor");
@@ -172,11 +159,7 @@ export class EmbeddableMarkdownEditor {
 	 */
 	private readonly owner: EditorOwner;
 
-	constructor(
-		app: App,
-		container: HTMLElement,
-		options: EmbeddableMarkdownEditorOptions,
-	) {
+	constructor(app: App, container: HTMLElement, options: EmbeddableMarkdownEditorOptions) {
 		const Ctor = resolveMarkdownEditorCtor(app);
 		this.app = app;
 		// Arrow closures so the owner (whose own `this` is the owner object)

@@ -66,18 +66,9 @@ const WINDOW_CLASSES = ["cs-modal", "mod-scrollable-content"];
  *
  * @returns the button bar when `footer` is set, otherwise `null`.
  */
-export function applyModalChrome(
-	modal: Modal,
-	options: ModalChromeOptions & { footer: true },
-): HTMLElement;
-export function applyModalChrome(
-	modal: Modal,
-	options?: ModalChromeOptions,
-): HTMLElement | null;
-export function applyModalChrome(
-	modal: Modal,
-	options: ModalChromeOptions = {},
-): HTMLElement | null {
+export function applyModalChrome(modal: Modal, options: ModalChromeOptions & { footer: true }): HTMLElement;
+export function applyModalChrome(modal: Modal, options?: ModalChromeOptions): HTMLElement | null;
+export function applyModalChrome(modal: Modal, options: ModalChromeOptions = {}): HTMLElement | null {
 	const { modalEl } = modal;
 	installModalMenuScope(modal);
 	// `cs-modal` is the plugin's own hook (its surface colours, its row rules);
@@ -139,11 +130,7 @@ export function scrollBodyOnly(modal: Modal): void {
  * @param onClick What a press does, usually closing the window.
  * @returns The button, for a caller that needs to keep it.
  */
-export function addCancelButton(
-	bar: HTMLElement,
-	label: string,
-	onClick: () => void,
-): HTMLButtonElement {
+export function addCancelButton(bar: HTMLElement, label: string, onClick: () => void): HTMLButtonElement {
 	const button = bar.createEl("button", { text: label, cls: "mod-cancel" });
 	button.addEventListener("click", onClick);
 	return button;

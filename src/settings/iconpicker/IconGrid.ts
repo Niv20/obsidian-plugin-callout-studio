@@ -135,9 +135,7 @@ export class IconGrid {
 	 * tone — so scroll position and loaded pages survive.
 	 */
 	repaintVisible(): void {
-		const cells = Array.from(
-			this.gridEl.querySelectorAll<HTMLElement>(".icon-picker-cell"),
-		);
+		const cells = Array.from(this.gridEl.querySelectorAll<HTMLElement>(".icon-picker-cell"));
 		// Cells are created in exactly this order — segment by segment, up to
 		// each one's own `displayed` — so the same walk lines entries back up
 		// with the cells that currently hold them, collapsed or not.
@@ -152,9 +150,7 @@ export class IconGrid {
 
 	/** Move the highlight without rebuilding the grid; the chosen cell becomes the Tab stop. */
 	markSelected(cell: HTMLElement): void {
-		this.gridEl
-			.querySelectorAll(".is-selected")
-			.forEach((el) => el.removeClass("is-selected"));
+		this.gridEl.querySelectorAll(".is-selected").forEach((el) => el.removeClass("is-selected"));
 		cell.addClass("is-selected");
 		this.setTabStop(cell);
 	}
@@ -169,8 +165,9 @@ export class IconGrid {
 
 	/** The cells on screen: every rendered cell outside a collapsed group. */
 	private visibleCells(): HTMLElement[] {
-		return Array.from(this.gridEl.querySelectorAll<HTMLElement>(".icon-picker-cell"))
-			.filter((cell) => !cell.hasClass("is-group-collapsed"));
+		return Array.from(this.gridEl.querySelectorAll<HTMLElement>(".icon-picker-cell")).filter(
+			(cell) => !cell.hasClass("is-group-collapsed"),
+		);
 	}
 
 	/**
@@ -194,9 +191,7 @@ export class IconGrid {
 	 * paging through everything ahead of it.
 	 */
 	revealSelected(): void {
-		const segment = this.segments.find((s) =>
-			s.entries.some((e) => this.options.isSelected(e)),
-		);
+		const segment = this.segments.find((s) => s.entries.some((e) => this.options.isSelected(e)));
 		if (!segment) return;
 		if (segment.collapsed) this.toggleSegment(segment);
 
@@ -301,7 +296,8 @@ export class IconGrid {
 
 			const cellClass = this.options.cellClass?.(entry);
 			const cellHost = this.options.renderCellAction
-				? this.gridEl.createDiv("icon-picker-cell-wrap") : this.gridEl;
+				? this.gridEl.createDiv("icon-picker-cell-wrap")
+				: this.gridEl;
 			const cell = cellHost.createDiv({
 				cls:
 					`icon-picker-cell${cellClass ? ` ${cellClass}` : ""}` +
@@ -366,9 +362,9 @@ export class IconGrid {
 	 */
 	private enableKeyNav(): void {
 		this.gridEl.addEventListener("keydown", (e) => {
-			const cells = Array.from(
-				this.gridEl.querySelectorAll<HTMLElement>(".icon-picker-cell"),
-			).filter((cell) => !cell.hasClass("is-group-collapsed"));
+			const cells = Array.from(this.gridEl.querySelectorAll<HTMLElement>(".icon-picker-cell")).filter(
+				(cell) => !cell.hasClass("is-group-collapsed"),
+			);
 			const current = activeDocument.activeElement as HTMLElement | null;
 			const idx = current ? cells.indexOf(current) : -1;
 			if (idx < 0) return;
@@ -409,8 +405,6 @@ function countColumns(cells: readonly HTMLElement[]): number {
 	const first = cells[0];
 	if (!first || cells.length < 2) return 1;
 	const top = first.getBoundingClientRect().top;
-	const sameRow = cells.filter(
-		(c) => Math.abs(c.getBoundingClientRect().top - top) < 2,
-	);
+	const sameRow = cells.filter((c) => Math.abs(c.getBoundingClientRect().top - top) < 2);
 	return Math.max(sameRow.length, 1);
 }

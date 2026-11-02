@@ -34,15 +34,27 @@ const saved = {
 	warn: console.warn,
 };
 before(() => {
-	Object.defineProperty(globalThis, "getComputedStyle", { configurable: true, value: () => ({ flexDirection: "row" }) });
-	Object.defineProperty(globalThis, "ResizeObserver", { configurable: true, value: class { observe(): void {} disconnect(): void {} } });
+	Object.defineProperty(globalThis, "getComputedStyle", {
+		configurable: true,
+		value: () => ({ flexDirection: "row" }),
+	});
+	Object.defineProperty(globalThis, "ResizeObserver", {
+		configurable: true,
+		value: class {
+			observe(): void {}
+			disconnect(): void {}
+		},
+	});
 	console.warn = (...args: unknown[]) => {
 		if (String(args[0]).includes("embedded live preview unavailable")) return;
 		saved.warn(...args);
 	};
 });
 after(() => {
-	for (const [key, descriptor] of [["getComputedStyle", saved.style], ["ResizeObserver", saved.observer]] as const) {
+	for (const [key, descriptor] of [
+		["getComputedStyle", saved.style],
+		["ResizeObserver", saved.observer],
+	] as const) {
 		if (descriptor) Object.defineProperty(globalThis, key, descriptor);
 		else Reflect.deleteProperty(globalThis, key);
 	}
@@ -73,13 +85,17 @@ function fakePlugin() {
 	const plugin = {
 		app,
 		registry,
-		get settings() { return registry.settings; },
+		get settings() {
+			return registry.settings;
+		},
 		settingsWriter: {
 			isFrozen: false,
 			status: new SettingsSaveStatus(),
 			openVisit: () => {
 				visits.opened++;
-				return () => { visits.ended++; };
+				return () => {
+					visits.ended++;
+				};
 			},
 		},
 		locales: { isReady: () => true, state: () => "ready", onChange: () => () => {} },
@@ -87,9 +103,14 @@ function fakePlugin() {
 		manifest: { id: "callout-studio", name: "Callout Studio", version: "2.18.0" },
 		recovery: {},
 		onIconCacheChange: () => () => {},
-		cssInjector: { inject: () => {}, metadataCatalog: { snippetWords: () => new Set<string>(), sourcesNow: () => [] } },
+		cssInjector: {
+			inject: () => {},
+			metadataCatalog: { snippetWords: () => new Set<string>(), sourcesNow: () => [] },
+		},
 		saveSettings: () => Promise.resolve(),
-		register: (unload: () => void) => { unloads.push(unload); },
+		register: (unload: () => void) => {
+			unloads.push(unload);
+		},
 	};
 	return { plugin, app, registry, visits, unload: () => unloads.forEach((unload) => unload()) };
 }
@@ -118,17 +139,27 @@ function itemsPages(items: LooseDef[], path: string[] = []): string[][] {
 }
 
 /** The fake window the tab's frames come from. */
-const win = (tab: CalloutStudioSettingsTab): FakeWindow => tab.containerEl.ownerDocument.defaultView as unknown as FakeWindow;
+const win = (tab: CalloutStudioSettingsTab): FakeWindow =>
+	tab.containerEl.ownerDocument.defaultView as unknown as FakeWindow;
 
 describe("the settings tab as a tree", () => {
 	it("lays the main page out in its boxes, in order", () => {
 		const { harness } = drawTab();
 		// The danger zone ends the settings; the footer, with the globe, the
 		// links, License and the version, comes after it.
-		assert.deepEqual(harness.rendered.map((box) => box.def.id), [
-			"banners", "callouts", "colors-and-icons", "callout-style", "menus-and-commands",
-			"import-export", "danger-zone", "footer",
-		]);
+		assert.deepEqual(
+			harness.rendered.map((box) => box.def.id),
+			[
+				"banners",
+				"callouts",
+				"colors-and-icons",
+				"callout-style",
+				"menus-and-commands",
+				"import-export",
+				"danger-zone",
+				"footer",
+			],
+		);
 		assert.equal(harness.rendered[0]!.groupEl.isShown(), false, "no notices, so no box");
 	});
 
@@ -148,16 +179,24 @@ describe("the settings tab as a tree", () => {
 
 	it("marks every box, at every depth, with the plugin's box class and keeps the classes it had", () => {
 		const { tab, harness } = drawTab();
-		for (const box of harness.rendered) assert.ok(box.groupEl.hasClass("cs-box"), `${box.def.id} carries the box class`);
-		assert.ok(harness.rendered.find((box) => box.def.id === "callouts")!.groupEl.hasClass("cs-callouts-box"), "and keeps the class it already had");
+		for (const box of harness.rendered)
+			assert.ok(box.groupEl.hasClass("cs-box"), `${box.def.id} carries the box class`);
+		assert.ok(
+			harness.rendered.find((box) => box.def.id === "callouts")!.groupEl.hasClass("cs-callouts-box"),
+			"and keeps the class it already had",
+		);
 		// The pages' own boxes too (the lists, the style pages' groups).
-		const pageBoxes = (items: LooseDef[]): LooseDef[] => items.flatMap((item) => [
-			...(item.type === "group" || item.type === "list" ? [item] : []),
-			...pageBoxes(item.items ?? []),
-		]);
+		const pageBoxes = (items: LooseDef[]): LooseDef[] =>
+			items.flatMap((item) => [
+				...(item.type === "group" || item.type === "list" ? [item] : []),
+				...pageBoxes(item.items ?? []),
+			]);
 		const boxes = pageBoxes(tab.settingItems as LooseDef[]);
 		assert.ok(boxes.length > 10, "the tree has many boxes");
-		assert.deepEqual(boxes.filter((box) => !(box.cls ?? "").split(" ").includes("cs-box")).map((box) => box.id), []);
+		assert.deepEqual(
+			boxes.filter((box) => !(box.cls ?? "").split(" ").includes("cs-box")).map((box) => box.id),
+			[],
+		);
 	});
 
 	it("has no Add new callout and no theme switch on the main page: the list's + adds a callout, the theme's page holds the switch", () => {
@@ -173,8 +212,14 @@ describe("the settings tab as a tree", () => {
 		const pages = itemsPages(tab.settingItems as LooseDef[]);
 		// Built-in callouts and the theme's are drawn by the plugin, so they are not here.
 		assert.deepEqual(pages.map((path) => path.join(" › ")).sort(), [
-			"autocomplete-and-metadata", "callouts-mine", "commands", "palettes", "right-click-menu", "style-block",
-			"style-heading", "style-inline",
+			"autocomplete-and-metadata",
+			"callouts-mine",
+			"commands",
+			"palettes",
+			"right-click-menu",
+			"style-block",
+			"style-heading",
+			"style-inline",
 		]);
 		for (const path of pages) harness.openPage(path);
 		assert.deepEqual(harness.duplicateKeys, []);
@@ -197,7 +242,8 @@ describe("the settings tab as a tree", () => {
 			}
 		};
 		for (const path of [[], ...itemsPages(tab.settingItems as LooseDef[])]) {
-			if (path.length > 0) harness.openPage(path); else harness.draw();
+			if (path.length > 0) harness.openPage(path);
+			else harness.draw();
 			const page = path.join(" › ") || "main page";
 			for (const box of harness.rendered) {
 				inspect(`${page}: box ${box.def.heading ?? box.def.id}`, box.settingGroup.extraButtons);
@@ -207,8 +253,14 @@ describe("the settings tab as a tree", () => {
 		assert.deepEqual(showing, [], "a ↺ shows although nothing differs from the default");
 		// Not a vacuous pass: the sliders, the three menus' headings, the commands' and the two pickers.
 		assert.ok(found.length >= 20, `found only ${found.length} arrows`);
-		assert.ok(found.some((where) => where.startsWith("right-click-menu: box")), "the right-click menu's arrows");
-		assert.ok(found.some((where) => where.startsWith("main page: row")), "the pickers' arrows");
+		assert.ok(
+			found.some((where) => where.startsWith("right-click-menu: box")),
+			"the right-click menu's arrows",
+		);
+		assert.ok(
+			found.some((where) => where.startsWith("main page: row")),
+			"the pickers' arrows",
+		);
 	});
 
 	it("starts one visit per opening of the tab, and ends it when the tab is left", () => {
@@ -227,10 +279,17 @@ describe("the settings tab as a tree", () => {
 		made.plugin.locales.isReady = () => false;
 		made.registry.settings.language = "fr";
 		const before = Notice.last;
-		const tab = new CalloutStudioSettingsTab(made.app as unknown as App, made.plugin as unknown as SettingsTabPlugin);
+		const tab = new CalloutStudioSettingsTab(
+			made.app as unknown as App,
+			made.plugin as unknown as SettingsTabPlugin,
+		);
 		const harness = new DeclarativeHarness(tab as never);
 		tab.update();
-		assert.equal(harness.rendered.some((box) => box.def.id === "language-box"), false, "no row for it");
+		assert.equal(
+			harness.rendered.some((box) => box.def.id === "language-box"),
+			false,
+			"no row for it",
+		);
 		const told = Notice.last;
 		assert.notEqual(told, before, "a notice");
 		assert.equal(told?.message, t("locale.notDownloaded", { name: "Français" }));
@@ -246,7 +305,10 @@ describe("the settings tab as a tree", () => {
 		const names = (query: string): string[] => searchSettings(tab.settingItems, query).map((hit) => hit.name);
 		assert.ok(names("fallback").includes(t("settings.fallbackCallout")));
 		assert.ok(names("palette").includes(t("settings.customPalettes")));
-		assert.ok(names("font awesome").includes(t("iconLibraries.title")), "the libraries are found by their own names");
+		assert.ok(
+			names("font awesome").includes(t("iconLibraries.title")),
+			"the libraries are found by their own names",
+		);
 		assert.deepEqual(names("recite"), ["Recite"]);
 		assert.ok(names("corner").length >= 3);
 		assert.ok(!names("warning").includes("Warning"), "a built-in callout is not a search result");
@@ -259,7 +321,10 @@ describe("the settings tab as a tree", () => {
 		win(tab).flushFrames();
 		assert.equal((tab as unknown as { updateCount: number }).updateCount, before + 1);
 		assert.ok(harness.rows().some((row) => row.def.name === t("settings.myCalloutTypes")));
-		assert.deepEqual(searchSettings(tab.settingItems, "memo").map((hit) => hit.name), ["Memo"]);
+		assert.deepEqual(
+			searchSettings(tab.settingItems, "memo").map((hit) => hit.name),
+			["Memo"],
+		);
 		unload();
 		registry.add({ ...RECITE, id: "later", displayName: "Later" });
 		win(tab).flushFrames();

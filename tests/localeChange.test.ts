@@ -40,10 +40,7 @@ import { describe, it } from "node:test";
 import { MarkdownView } from "obsidian";
 import type { Command, WorkspaceLeaf } from "obsidian";
 import CalloutStudioPlugin from "../src/main";
-import {
-	FIXED_COMMAND_IDS,
-	FIXED_COMMAND_NAME_KEYS,
-} from "../src/editor/commands";
+import { FIXED_COMMAND_IDS, FIXED_COMMAND_NAME_KEYS } from "../src/editor/commands";
 import { DEFAULT_SETTINGS } from "../src/constants";
 import { en } from "../src/i18n/en";
 import { getLocale, registerLocale, setLocale, t } from "../src/i18n";
@@ -95,7 +92,9 @@ function host(): Host {
 
 	const self = {
 		settings,
-		refreshMissingSettingsNotice: () => { noticeRefreshes++; },
+		refreshMissingSettingsNotice: () => {
+			noticeRefreshes++;
+		},
 		settingsTab: {
 			update: () => {
 				updates++;
@@ -158,8 +157,7 @@ function useCommandLocale(code: string): void {
 }
 
 /** The names `t()` would render for them, right now. */
-const currentNames = (): string[] =>
-	FIXED_COMMAND_IDS.map((id) => t(FIXED_COMMAND_NAME_KEYS[id]));
+const currentNames = (): string[] => FIXED_COMMAND_IDS.map((id) => t(FIXED_COMMAND_NAME_KEYS[id]));
 
 /* -------------------------------------------------------------------------- */
 /* The surfaces                                                               */
@@ -205,7 +203,6 @@ describe("applyLocaleChange re-renders what snapshots translated text", () => {
 		);
 	});
 
-
 	it("survives being called before the settings tab exists", () => {
 		// The startup ordering: the background locale pass can land before
 		// `onLayoutReady` has built the tab.
@@ -243,7 +240,10 @@ describe("a command's name follows the locale without losing its hotkey", () => 
 		const h = host();
 		applyLocaleChange(h.self);
 		const first = h.added.splice(0);
-		assert.deepStrictEqual(first.map((c) => c.id), [...FIXED_COMMAND_IDS]);
+		assert.deepStrictEqual(
+			first.map((c) => c.id),
+			[...FIXED_COMMAND_IDS],
+		);
 
 		useCommandLocale("after");
 		applyLocaleChange(h.self);
@@ -307,7 +307,10 @@ describe("a command's name follows the locale without losing its hotkey", () => 
 		setLocale("one-changed");
 		applyLocaleChange(h.self);
 
-		assert.deepStrictEqual(h.added.map((c) => c.id), ["callout-wrap"]);
+		assert.deepStrictEqual(
+			h.added.map((c) => c.id),
+			["callout-wrap"],
+		);
 		assert.strictEqual(h.added[0]?.name, "only:wrap");
 	});
 
@@ -323,9 +326,7 @@ describe("a command's name follows the locale without losing its hotkey", () => 
 
 		assert.deepStrictEqual(
 			h.added.map((c) => c.id),
-			FIXED_COMMAND_IDS.filter(
-				(id) => id !== "callout-wrap" && id !== "open-settings",
-			),
+			FIXED_COMMAND_IDS.filter((id) => id !== "callout-wrap" && id !== "open-settings"),
 		);
 	});
 
@@ -339,10 +340,7 @@ describe("a command's name follows the locale without losing its hotkey", () => 
 		applyLocaleChange(h.self);
 
 		for (const command of h.added) {
-			assert.ok(
-				!first.includes(command),
-				"the same object was handed over twice",
-			);
+			assert.ok(!first.includes(command), "the same object was handed over twice");
 		}
 	});
 });
@@ -371,7 +369,9 @@ describe("ensureLocale applies the change only when there is one", () => {
 		return {
 			self: self as unknown as CalloutStudioPlugin,
 			applied: () => applied,
-			destroy: () => { self.settingsWriter.isDestroyed = true; },
+			destroy: () => {
+				self.settingsWriter.isDestroyed = true;
+			},
 		};
 	}
 
@@ -441,16 +441,13 @@ describe("refreshRenderModes rebuilds reading view as well as live preview", () 
 		// post-processors, which is what strips or adds already-baked inline
 		// and heading callouts — and what re-reads the fold chevron's tooltip.
 		const rerendered: boolean[] = [];
-		const markdown = Object.assign(
-			new MarkdownView(undefined as unknown as WorkspaceLeaf),
-			{
-				previewMode: {
-					rerender: (full: boolean) => {
-						rerendered.push(full);
-					},
-				} as unknown as MarkdownView["previewMode"],
-			},
-		);
+		const markdown = Object.assign(new MarkdownView(undefined as unknown as WorkspaceLeaf), {
+			previewMode: {
+				rerender: (full: boolean) => {
+					rerendered.push(full);
+				},
+			} as unknown as MarkdownView["previewMode"],
+		});
 
 		const self = {
 			app: {
@@ -472,9 +469,7 @@ describe("refreshRenderModes rebuilds reading view as well as live preview", () 
 		const self = {
 			app: {
 				workspace: {
-					getLeavesOfType: () => [
-						{ view: new MarkdownView(undefined as unknown as WorkspaceLeaf) },
-					],
+					getLeavesOfType: () => [{ view: new MarkdownView(undefined as unknown as WorkspaceLeaf) }],
 				},
 			},
 		} as unknown as CalloutStudioPlugin;

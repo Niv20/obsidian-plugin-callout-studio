@@ -112,17 +112,12 @@ describe("hideIcon — the generated block-callout CSS", () => {
 		const { css } = harness();
 		const icon = { type: "emoji" as const, value: "🌵" };
 		assert.match(css.generateCalloutCSS(definition({ icon })), /🌵/);
-		assert.doesNotMatch(
-			css.generateCalloutCSS(definition({ icon, hideIcon: true })),
-			/🌵/,
-		);
+		assert.doesNotMatch(css.generateCalloutCSS(definition({ icon, hideIcon: true })), /🌵/);
 	});
 
 	it("covers every alias, not just the primary id", () => {
 		const { css } = harness();
-		const out = css.generateCalloutCSS(
-			definition({ hideIcon: true, aliases: ["hush", "still"] }),
-		);
+		const out = css.generateCalloutCSS(definition({ hideIcon: true, aliases: ["hush", "still"] }));
 
 		for (const id of ["quiet", "hush", "still"]) {
 			assert.ok(
@@ -202,26 +197,16 @@ describe("hideIcon — callouts this plugin does not paint", () => {
 		const { registry, css } = harness();
 		registry.add(definition({ id: "quiet", hideIcon: true }));
 		registry.setThemeOwnedIds(new Set(["quiet"]));
-		assert.strictEqual(
-			css.generateCalloutCSS(registry.get("quiet")!),
-			"",
-		);
+		assert.strictEqual(css.generateCalloutCSS(registry.get("quiet")!), "");
 
 		registry.setThemeOwnedIds(new Set());
-		assert.match(
-			css.generateCalloutCSS(registry.get("quiet")!),
-			/display: none/,
-		);
+		assert.match(css.generateCalloutCSS(registry.get("quiet")!), /display: none/);
 	});
 });
 
 describe("hideIcon — the unknown-id fallback", () => {
 	const unknownIdRule = (out: string, needle: string): boolean =>
-		out
-			.split("\n\n")
-			.some((rule) =>
-				rule.startsWith(".callout:not(:where(") && rule.includes(needle),
-			);
+		out.split("\n\n").some((rule) => rule.startsWith(".callout:not(:where(") && rule.includes(needle));
 
 	it("marks the computed icon path for DOM-level hiding", () => {
 		const { registry, css } = harness();
@@ -284,9 +269,6 @@ describe("hideIcon — persistence vs. colour deference", () => {
 		const { registry } = harness();
 		registry.update("note", { hideIcon: true, colorLight: "#ff0000" });
 
-		assert.strictEqual(
-			registry.isUnmodifiedBuiltIn(builtInNote(registry)),
-			false,
-		);
+		assert.strictEqual(registry.isUnmodifiedBuiltIn(builtInNote(registry)), false);
 	});
 });

@@ -18,24 +18,11 @@
  */
 import type { App } from "obsidian";
 import { enabledSnippetCss, stylingSignature, themeCss } from "./customCssApi";
-import {
-	mergeScans,
-	scanCalloutClaims,
-	type ThemeClaim,
-	type ThemeScan,
-} from "./themeCalloutScan";
+import { mergeScans, scanCalloutClaims, type ThemeClaim, type ThemeScan } from "./themeCalloutScan";
 import { claimForId } from "./themeClaimLookup";
-import {
-	resolveAccentDialect,
-	type AccentDialect,
-	type AccentSpelling,
-} from "./accentDialect";
+import { resolveAccentDialect, type AccentDialect, type AccentSpelling } from "./accentDialect";
 import { scanAccentDialect } from "./accentDialectScan";
-import {
-	emptySurfaceEvidence,
-	scanCalloutSurface,
-	type SurfaceEvidence,
-} from "./calloutSurfaceScan";
+import { emptySurfaceEvidence, scanCalloutSurface, type SurfaceEvidence } from "./calloutSurfaceScan";
 import { resolveCalloutSurface, type CalloutSurface } from "./calloutSurface";
 
 const EMPTY_SCAN: ThemeScan = { byId: new Map(), patterns: [], genericImportant: [0, 0, 0] };
@@ -89,10 +76,7 @@ export class ThemeCalloutStore {
 		const css = off ? "" : themeCss(this.app);
 		this.themeScan = scanCalloutClaims(css);
 		const snippets = enabledSnippetCss(this.app);
-		this.allScan = mergeScans([
-			this.themeScan,
-			...snippets.map(scanCalloutClaims),
-		]);
+		this.allScan = mergeScans([this.themeScan, ...snippets.map(scanCalloutClaims)]);
 		// Theme AND snippets, for the same reason `maxImportantClasses` takes
 		// both: the spelling that has to work is the one on the page, whoever
 		// wrote it.

@@ -180,11 +180,14 @@ describe("a demo preview in the preview layer", () => {
 	it("takes the old step's rules away whole, so a gradient does not outlive its style", () => {
 		withEnv((env) => {
 			// The first stop of a gradient is the callout's own background colour.
-			step(env, demo("#a1b2c3", {
-				bgColorLight: "#eef0f6",
-				bgColorDark: "#202433",
-				bgGradient: { angleDeg: 135, toColorLight: "#ddeeff", toColorDark: "#112244" },
-			}));
+			step(
+				env,
+				demo("#a1b2c3", {
+					bgColorLight: "#eef0f6",
+					bgColorDark: "#202433",
+					bgGradient: { angleDeg: 135, toColorLight: "#ddeeff", toColorDark: "#112244" },
+				}),
+			);
 			const layer = env.sheets[1] as FakeSheet;
 			assert.match(layer.text, /linear-gradient/);
 
@@ -265,7 +268,10 @@ describe("a demo preview in the preview layer", () => {
 
 			// A later step touches the layer and sweeps just the pane.
 			swept.length = 0;
-			env.registry.setPreviewDefinition(demo("#445566", { icon: { type: "lucide", value: "lucide-star" } }), true);
+			env.registry.setPreviewDefinition(
+				demo("#445566", { icon: { type: "lucide", value: "lucide-star" } }),
+				true,
+			);
 			env.injector.repaintDemoPreview(pane);
 			assert.deepEqual(swept, [pane]);
 

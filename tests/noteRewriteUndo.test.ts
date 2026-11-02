@@ -30,25 +30,46 @@ fakeDom.light();
 
 function vault(notes: Record<string, string>) {
 	const contents = new Map(Object.entries(notes));
-	const handles = [...contents.keys()].map(path => ({ path }));
-	const app = { vault: {
-		getMarkdownFiles: () => handles,
-		getAbstractFileByPath: (path: string) => handles.find(file => file.path === path) ?? null,
-		cachedRead: (file: { path: string }) => Promise.resolve(contents.get(file.path)!),
-		process: (file: { path: string }, fn: (text: string) => string) => {
-			contents.set(file.path, fn(contents.get(file.path)!));
-			return Promise.resolve();
+	const handles = [...contents.keys()].map((path) => ({ path }));
+	const app = {
+		vault: {
+			getMarkdownFiles: () => handles,
+			getAbstractFileByPath: (path: string) => handles.find((file) => file.path === path) ?? null,
+			cachedRead: (file: { path: string }) => Promise.resolve(contents.get(file.path)!),
+			process: (file: { path: string }, fn: (text: string) => string) => {
+				contents.set(file.path, fn(contents.get(file.path)!));
+				return Promise.resolve();
+			},
 		},
-	} } as unknown as App;
-	const registry = new CalloutRegistry(); registry.load(null);
+	} as unknown as App;
+	const registry = new CalloutRegistry();
+	registry.load(null);
 	const def = definition({ id: "owned", displayName: "Owned" });
 	registry.add(def);
 	let saves = 0;
-	const ctx = { app, redraw: () => {}, plugin: {
-		registry, settingsWriter: savingWriter(), saveSettings: () => { saves++; return Promise.resolve(); },
-		refreshCallouts: () => {},
-	} } as unknown as SettingsContext;
-	return { app, ctx, def, registry, contents, get saves() { return saves; } };
+	const ctx = {
+		app,
+		redraw: () => {},
+		plugin: {
+			registry,
+			settingsWriter: savingWriter(),
+			saveSettings: () => {
+				saves++;
+				return Promise.resolve();
+			},
+			refreshCallouts: () => {},
+		},
+	} as unknown as SettingsContext;
+	return {
+		app,
+		ctx,
+		def,
+		registry,
+		contents,
+		get saves() {
+			return saves;
+		},
+	};
 }
 
 /** Press the Undo button in the most recent notice. */
@@ -70,7 +91,9 @@ describe("undoing a note rewrite", () => {
 			assert.notEqual(h.contents.get("a.md"), before.get("a.md"));
 			await undo();
 			assert.deepEqual(h.contents, before);
-		} finally { Object.defineProperty(ReplaceCalloutModal.prototype, "prompt", prompt); }
+		} finally {
+			Object.defineProperty(ReplaceCalloutModal.prototype, "prompt", prompt);
+		}
 	});
 
 	it("leaves a note edited since the rewrite as it is, and says so", async () => {
@@ -85,7 +108,13 @@ describe("undoing a note rewrite", () => {
 			await undo();
 			assert.equal(h.contents.get("a.md"), "> [!owned] A");
 			assert.equal(h.contents.get("b.md"), "typed after the rewrite");
-			assert.ok(notices.some(text => typeof text === "string" && text.startsWith("Restored 1 note(s). 1 note(s) changed after the rewrite")));
+			assert.ok(
+				notices.some(
+					(text) =>
+						typeof text === "string" &&
+						text.startsWith("Restored 1 note(s). 1 note(s) changed after the rewrite"),
+				),
+			);
 		} finally {
 			Object.defineProperty(ReplaceCalloutModal.prototype, "prompt", prompt);
 			delete (globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__;
@@ -102,7 +131,9 @@ describe("undoing a note rewrite", () => {
 			await undo();
 			assert.equal(h.contents.get("a.md"), "> [!owned] Kept text");
 			assert.equal(h.registry.has("owned"), true);
-		} finally { confirm.restore(); }
+		} finally {
+			confirm.restore();
+		}
 	});
 
 	it("brings a deleted callout type back, its notes never having changed", async () => {
@@ -115,7 +146,9 @@ describe("undoing a note rewrite", () => {
 			await undo();
 			assert.equal(h.registry.has("owned"), true);
 			assert.equal(h.contents.get("a.md"), "> [!owned] Kept text");
-		} finally { confirm.restore(); }
+		} finally {
+			confirm.restore();
+		}
 	});
 
 	it("chains several passes over one note into one step back", async () => {
@@ -145,7 +178,8 @@ describe("undoing a note rewrite", () => {
 	});
 
 	it("undoes only the most recent rewrite, and never an empty one", () => {
-		const first = new NoteRewriteJournal(), second = new NoteRewriteJournal();
+		const first = new NoteRewriteJournal(),
+			second = new NoteRewriteJournal();
 		first.record("a.md", "x", "y");
 		second.record("b.md", "x", "y");
 		assert.equal(keepForUndo(first), true);
@@ -160,9 +194,12 @@ describe("undoing a note rewrite", () => {
 		const icon = { type: "material", value: "star", style: "outlined", weight: 400 } as const;
 		h.registry.update("owned", { icon });
 		const def = h.registry.get("owned")!;
-		const artwork = { pack: icon.type, name: icon.value,
+		const artwork = {
+			pack: icon.type,
+			name: icon.value,
 			variant: packFor(icon)!.cacheVariant(icon, "regular"),
-			svg: '<svg viewBox="0 0 24 24"><path d="M0 0h24v24z"/></svg>' };
+			svg: '<svg viewBox="0 0 24 24"><path d="M0 0h24v24z"/></svg>',
+		};
 		h.registry.addIconSvg(artwork);
 		const resolver = createIconResolver(h.registry);
 		assert.equal(resolver.resolveSvg(icon, "regular"), artwork.svg);
@@ -173,6 +210,8 @@ describe("undoing a note rewrite", () => {
 			await undo();
 			assert.equal(h.registry.has("owned"), true);
 			assert.equal(resolver.resolveSvg(icon, "regular"), artwork.svg);
-		} finally { confirm.restore(); }
+		} finally {
+			confirm.restore();
+		}
 	});
 });

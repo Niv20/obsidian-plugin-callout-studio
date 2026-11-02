@@ -25,7 +25,10 @@ const rules = parseRules(readFileSync(join(process.cwd(), "styles.css"), "utf8")
 const EXCEPTIONS = new Map<string, string>([
 	[".cs-inline-callout", "callout rendering in notes, not plugin chrome"],
 	[".cs-heading-callout", "callout rendering in notes, not plugin chrome"],
-	[".cs-recovery-preview, .cs-recovery-heading-preview, .cs-recovery-inline-preview", "renders a callout as a note would"],
+	[
+		".cs-recovery-preview, .cs-recovery-heading-preview, .cs-recovery-inline-preview",
+		"renders a callout as a note would",
+	],
 	[".cs-drag-placeholder", "Obsidian's own drop slot is a literal 5px"],
 ]);
 

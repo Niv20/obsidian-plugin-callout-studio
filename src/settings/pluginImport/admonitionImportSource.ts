@@ -23,32 +23,25 @@ import type { CalloutIcon } from "../../types";
 import { ImportLimitError, parseImportJson } from "../../utils/importLimits";
 import { mergeById } from "../../utils/mergeById";
 import { userImagesFitResourceBudget } from "../../utils/userImages";
-import {
-	parseAdmonitionExport,
-	type AdmonitionRaw,
-} from "../../utils/admonitionFormat";
+import { parseAdmonitionExport, type AdmonitionRaw } from "../../utils/admonitionFormat";
 import { planAdmonitionImport } from "../../utils/admonitionImport";
-import type {
-	PluginImportBatch,
-	PluginImportSource,
-} from "./pluginImportSource";
+import type { PluginImportBatch, PluginImportSource } from "./pluginImportSource";
 
 function batchOf(entries: readonly AdmonitionRaw[]): PluginImportBatch {
 	return {
 		size: entries.length,
 		async plan(ctx) {
 			const { registry } = ctx.plugin;
-			const plan = await planAdmonitionImport(
-				entries,
-				registry,
-				registry.getUserImages(),
-			);
+			const plan = await planAdmonitionImport(entries, registry, registry.getUserImages());
 			return {
 				issues: plan.issues,
 				applyCount: plan.toApply.length,
 				apply: () => {
 					// Sync may have added pictures while the report was open.
-					if (plan.newImages.length && !userImagesFitResourceBudget(mergeById(registry.getUserImages(), plan.newImages))) {
+					if (
+						plan.newImages.length &&
+						!userImagesFitResourceBudget(mergeById(registry.getUserImages(), plan.newImages))
+					) {
 						throw new ImportLimitError("import.err.imageBudget");
 					}
 					return registry.applyAdmonitionImport(plan);
@@ -59,9 +52,7 @@ function batchOf(entries: readonly AdmonitionRaw[]): PluginImportBatch {
 				// repair pass the JSON importer runs.
 				afterApply: () => {
 					void ctx.plugin.ensureIconArtworkFor(
-						plan.toApply
-							.map((item) => item.entry.icon)
-							.filter((icon): icon is CalloutIcon => !!icon),
+						plan.toApply.map((item) => item.entry.icon).filter((icon): icon is CalloutIcon => !!icon),
 					);
 				},
 			};
@@ -101,8 +92,6 @@ export const ADMONITION_IMPORT: PluginImportSource = {
 			return { errorKey: error instanceof ImportLimitError ? error.messageKey : "import.err.parseFailed" };
 		}
 		const entries = parseAdmonitionExport(parsed);
-		return entries
-			? { batch: batchOf(entries) }
-			: { errorKey: "import.err.admNotRecognized" };
+		return entries ? { batch: batchOf(entries) } : { errorKey: "import.err.admNotRecognized" };
 	},
 };

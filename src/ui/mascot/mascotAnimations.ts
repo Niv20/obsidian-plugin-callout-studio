@@ -114,7 +114,14 @@ const TEMPLE: Vec = [5.0, 9.1];
  * `count` drops from one point, spread evenly across a fan of angles
  * (in degrees: 0 is to the right, -90 straight up).
  */
-function fan(from: Vec, count: number, fromDeg: number, toDeg: number, speed: number, rest: Pick<Spawn, "gravity" | "life" | "radius">): Spawn[] {
+function fan(
+	from: Vec,
+	count: number,
+	fromDeg: number,
+	toDeg: number,
+	speed: number,
+	rest: Pick<Spawn, "gravity" | "life" | "radius">,
+): Spawn[] {
 	return Array.from({ length: count }, (_, i) => {
 		const angle = ((fromDeg + ((toDeg - fromDeg) * i) / (count - 1)) * Math.PI) / 180;
 		// Every other drop a little slower, so the spray is not a perfect arc.
@@ -230,7 +237,12 @@ export const ANIMATIONS = {
 			{ ms: 200, to: { y: -0.35, sx: 1, sy: 1 } },
 		],
 		body: [...blink("dot"), wait(220)],
-		loop: [{ ms: 1000, to: { y: -0.6, sy: 1.015 } }, { ms: 1000, to: { y: -0.35, sy: 1 } }, ...blink("dot"), wait(500)],
+		loop: [
+			{ ms: 1000, to: { y: -0.6, sy: 1.015 } },
+			{ ms: 1000, to: { y: -0.35, sy: 1 } },
+			...blink("dot"),
+			wait(500),
+		],
 	},
 
 	/** A smile, held a moment, then one long wink and the smile again. Meant to be played once, never held. */
@@ -287,7 +299,10 @@ export const ANIMATIONS = {
 			{ ms: 160, to: { y: -0.3, sx: 1, sy: 1 }, ease: "outBack" },
 			wait(160),
 		],
-		loop: [{ ms: 480, to: { rot: -7, y: -0.6 } }, { ms: 480, to: { rot: 1, y: -0.3 } }],
+		loop: [
+			{ ms: 480, to: { rot: -7, y: -0.6 } },
+			{ ms: 480, to: { rot: 1, y: -0.3 } },
+		],
 	},
 
 	/** Wide eyes, mouth open, can't keep still: for hovering an "add" button. */
@@ -300,7 +315,13 @@ export const ANIMATIONS = {
 	/** A high jump, confetti from the handle, a little dance. */
 	celebrate: {
 		intro: [{ ms: 150, to: { eyes: "happy", mouth: "grin", x: 0, y: 0.6, rot: 0, sx: 1.08, sy: 0.88 } }],
-		body: [...leap, { ms: 180, to: { rot: -6 } }, { ms: 180, to: { rot: 5 } }, { ms: 160, to: { rot: 0 } }, wait(220)],
+		body: [
+			...leap,
+			{ ms: 180, to: { rot: -6 } },
+			{ ms: 180, to: { rot: 5 } },
+			{ ms: 160, to: { rot: 0 } },
+			wait(220),
+		],
 		loop: [{ ms: 150, to: { y: 0.6, sx: 1.08, sy: 0.88 } }, ...leap, wait(300)],
 	},
 
@@ -320,7 +341,10 @@ export const ANIMATIONS = {
 
 	/** Sobs, and every sob throws a drop of paint from each eye. */
 	cry: {
-		intro: [{ ms: 120, to: { y: 0.2 } }, { ms: 300, to: { eyes: "weep", mouth: "frown", fill: 1, rot: 4, y: 0.4 } }],
+		intro: [
+			{ ms: 120, to: { y: 0.2 } },
+			{ ms: 300, to: { eyes: "weep", mouth: "frown", fill: 1, rot: 4, y: 0.4 } },
+		],
 		body: [...sob, ...sob, wait(260)],
 		exitMs: 380,
 	},
@@ -352,19 +376,29 @@ export const ANIMATIONS = {
 		// A pose carries over from the face before it, and relief follows "scared"
 		// (the pointer reaches Cancel while the window is still afraid): the shaking
 		// has to be stopped here, or the brush breathes out while still trembling.
-		intro: [{ ...crouch, to: { ...crouch.to, tremble: 0 } }, face({ eyes: "shut", mouth: "smile", fill: 0, y: -0.3 }, 260)],
+		intro: [
+			{ ...crouch, to: { ...crouch.to, tremble: 0 } },
+			face({ eyes: "shut", mouth: "smile", fill: 0, y: -0.3 }, 260),
+		],
 		body: [
 			{ ms: 520, to: { sy: 0.93, sx: 1.03, y: 0.7 }, spawn: [SWEAT_FALL] },
 			{ ms: 360, to: { sy: 1.01, sx: 1, y: -0.2 }, ease: "outBack" },
 			{ ms: 160, to: { eyes: "dot" } },
 			wait(320),
 		],
-		loop: [{ ms: 700, to: { sy: 0.96, y: 0.4 } }, { ms: 700, to: { sy: 1, y: 0 } }],
+		loop: [
+			{ ms: 700, to: { sy: 0.96, y: 0.4 } },
+			{ ms: 700, to: { sy: 1, y: 0 } },
+		],
 	},
 
 	/** Paints a stroke underneath, lifts, goes back for the next one: for work in progress. */
 	paint: {
-		intro: [crouch, face({ eyes: "dot", gaze: [0.35, 0.35], mouth: "tiny", fill: 0 }), { ms: 320, to: { x: -4.5, rot: -10 } }],
+		intro: [
+			crouch,
+			face({ eyes: "dot", gaze: [0.35, 0.35], mouth: "tiny", fill: 0 }),
+			{ ms: 320, to: { x: -4.5, rot: -10 } },
+		],
 		body: [
 			{ ms: 950, to: { x: 4.5, rot: 8, ink: 1 }, stroke: true },
 			{ ms: 320, to: { y: -0.9 } },

@@ -33,9 +33,7 @@ export type CalloutSelectors = string | readonly string[];
 
 /** `suffix` appended to each selector, as one selector list. */
 function under(sels: CalloutSelectors, suffix: string): string {
-	return (typeof sels === "string" ? [sels] : sels)
-		.map((sel) => `${sel}${suffix}`)
-		.join(",\n");
+	return (typeof sels === "string" ? [sels] : sels).map((sel) => `${sel}${suffix}`).join(",\n");
 }
 
 /** No selectors, no rule: an empty list would leave a rule with no selector. */
@@ -52,12 +50,7 @@ function isEmpty(sels: CalloutSelectors): boolean {
  * inlined SVG is by far the largest thing in it, so halving each occurrence is
  * worth the indirection.
  */
-export function iconMaskOverrideCSS(
-	sel: CalloutSelectors,
-	svg: string,
-	picture?: UserImageIcon,
-	imp = "",
-): string {
+export function iconMaskOverrideCSS(sel: CalloutSelectors, svg: string, picture?: UserImageIcon, imp = ""): string {
 	if (isEmpty(sel)) return "";
 	return (
 		`@media screen {\n` +
@@ -87,12 +80,7 @@ export function iconMaskOverrideCSS(
  * own colours instead of as a one-colour stencil. A mask is a stencil, and
  * running a logo or a photograph through one throws its colours away.
  */
-export function imageOverrideCSS(
-	sel: CalloutSelectors,
-	svg: string,
-	picture: UserImageIcon,
-	imp = "",
-): string {
+export function imageOverrideCSS(sel: CalloutSelectors, svg: string, picture: UserImageIcon, imp = ""): string {
 	if (isEmpty(sel)) return "";
 	return (
 		`@media screen {\n` +
@@ -117,11 +105,7 @@ export function imageOverrideCSS(
  * An emoji glyph, as `content:`. Emojis keep their own colours, so no mask and
  * no `background-color`.
  */
-export function emojiOverrideCSS(
-	sel: CalloutSelectors,
-	emoji: string,
-	imp = "",
-): string {
+export function emojiOverrideCSS(sel: CalloutSelectors, emoji: string, imp = ""): string {
 	if (isEmpty(sel)) return "";
 	// Imported/synced values are arbitrary strings, including CSS newlines.
 	const safe = cssAttrValue(emoji);
@@ -149,12 +133,7 @@ export function emojiOverrideCSS(
  * colours away and leaves a silhouette. Those get a background image instead —
  * the same reasoning that already keeps emoji out of the mask path.
  */
-export function iconOverrideCSS(
-	sel: CalloutSelectors,
-	icon: CalloutIcon,
-	svg: string,
-	imp = "",
-): string {
+export function iconOverrideCSS(sel: CalloutSelectors, icon: CalloutIcon, svg: string, imp = ""): string {
 	const picture = userImageFor(icon);
 	if (picture && !followsCalloutColor(icon, picture)) {
 		return imageOverrideCSS(sel, svg, picture, imp);

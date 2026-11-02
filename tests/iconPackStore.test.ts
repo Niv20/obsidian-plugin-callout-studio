@@ -34,8 +34,7 @@ import { PACK_MANIFEST } from "../src/icons/data/packManifest";
 import type { IconPackId } from "../src/types";
 
 const PACKS_DIR = join(process.cwd(), "packs");
-const real = (id: IconPackId): string =>
-	readFileSync(join(PACKS_DIR, `${id}.json`), "utf8");
+const real = (id: IconPackId): string => readFileSync(join(PACKS_DIR, `${id}.json`), "utf8");
 
 /** Every path the store asked about, in order, so a test can see what it read. */
 interface Harness {
@@ -71,9 +70,7 @@ function harness(): Harness {
 			readCalls.push(path);
 			if (unreadable.has(path)) return Promise.reject(new Error("EIO"));
 			const text = files.get(path);
-			return text === undefined
-				? Promise.reject(new Error("ENOENT"))
-				: Promise.resolve(text);
+			return text === undefined ? Promise.reject(new Error("ENOENT")) : Promise.resolve(text);
 		},
 		write(path: string, text: string): Promise<void> {
 			writes.set(path, text);
@@ -115,11 +112,7 @@ function harness(): Harness {
 }
 
 /** Put a pack file on the fake disk, optionally after damaging it. */
-function place(
-	h: Harness,
-	id: IconPackId,
-	damage?: (text: string) => string,
-): void {
+function place(h: Harness, id: IconPackId, damage?: (text: string) => string): void {
 	const text = real(id);
 	h.files.set(h.store.packPath(id), damage ? damage(text) : text);
 }
@@ -131,10 +124,7 @@ function place(
 describe("PackDataStore — where a pack file lives", () => {
 	it("keeps packs inside the plugin's own folder, so uninstalling takes them", () => {
 		const { store } = harness();
-		assert.equal(
-			store.packPath("octicons"),
-			".obsidian/plugins/callout-studio/icon-packs/octicons.json",
-		);
+		assert.equal(store.packPath("octicons"), ".obsidian/plugins/callout-studio/icon-packs/octicons.json");
 	});
 
 	it("reconstructs the folder when the manifest does not state one", () => {
@@ -148,10 +138,7 @@ describe("PackDataStore — where a pack file lives", () => {
 		};
 		const app = { vault: { adapter, configDir: ".obsidian" } } as unknown as App;
 		const store = new PackDataStore(app, { id: "callout-studio" } as PluginManifest);
-		assert.equal(
-			store.packPath("octicons"),
-			".obsidian/plugins/callout-studio/icon-packs/octicons.json",
-		);
+		assert.equal(store.packPath("octicons"), ".obsidian/plugins/callout-studio/icon-packs/octicons.json");
 	});
 
 	it("reports what the picker shows before anything is downloaded", () => {
@@ -213,10 +200,13 @@ describe("loadFromDisk — a file that is not the one this build expects", () =>
 		// The case a size check alone would wave through: same length, different
 		// content. Only the digest can tell.
 		const h = harness();
-		place(h, "fa-regular", (text) =>
-			// Swap one path command for another of equal width. Still legal path
-			// data, so `parsePackFile` would happily accept the result.
-			`${text.slice(0, text.length - 1)} `,
+		place(
+			h,
+			"fa-regular",
+			(text) =>
+				// Swap one path command for another of equal width. Still legal path
+				// data, so `parsePackFile` would happily accept the result.
+				`${text.slice(0, text.length - 1)} `,
 		);
 		return h.store.loadFromDisk("fa-regular").then((result) => {
 			assert.equal(result, "corrupt");
@@ -327,10 +317,7 @@ describe("loadAllFromDisk — what the picker needs to know", () => {
 	it("does not look again at a pack already in memory", async () => {
 		const h = harness();
 		await h.store.loadAllFromDisk();
-		assert.ok(
-			!h.existsCalls.includes(h.store.packPath("octicons")),
-			"octicons is already loaded",
-		);
+		assert.ok(!h.existsCalls.includes(h.store.packPath("octicons")), "octicons is already loaded");
 	});
 });
 

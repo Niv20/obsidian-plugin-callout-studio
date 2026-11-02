@@ -50,9 +50,7 @@ export class IconService implements IconResolver {
 			cssInjector: host.cssInjector,
 			saveSettings: () => host.saveSettings(),
 		});
-		this.resolver = createIconResolver(host.registry, (icon, role) =>
-			this.fetch.hasFailed(icon, role),
-		);
+		this.resolver = createIconResolver(host.registry, (icon, role) => this.fetch.hasFailed(icon, role));
 		// Either supply route finishing is the same event to the UI: artwork
 		// that was a placeholder can now be painted.
 		this.fetch.onChange(() => this.notify());
@@ -127,9 +125,7 @@ export class IconService implements IconResolver {
 
 		for (const [id, result] of results) {
 			if (result === "corrupt") {
-				console.warn(
-					`[CalloutStudio] pack "${id}" on disk is damaged; replacing it`,
-				);
+				console.warn(`[CalloutStudio] pack "${id}" on disk is damaged; replacing it`);
 			}
 		}
 
@@ -152,7 +148,7 @@ export class IconService implements IconResolver {
 	 * Called when the user confirms a choice in the picker and again on save.
 	 */
 	async ensureArtwork(icon: CalloutIcon): Promise<void> {
-		if (!this.destroyed && await this.fetchArtwork(icon)) await this.publish();
+		if (!this.destroyed && (await this.fetchArtwork(icon))) await this.publish();
 	}
 
 	/**
@@ -216,10 +212,7 @@ export class IconService implements IconResolver {
 	 * The caller refuses while saving is paused: the copy has to reach the disk
 	 * before the file it was taken from is deleted.
 	 */
-	async deleteLibrary(
-		source: IconSourceId,
-		alsoKeep: readonly CalloutIcon[] = [],
-	): Promise<boolean> {
+	async deleteLibrary(source: IconSourceId, alsoKeep: readonly CalloutIcon[] = []): Promise<boolean> {
 		if (this.destroyed) return false;
 		const files = libraryFiles(source);
 		if (files.length === 0) return false;
@@ -324,6 +317,4 @@ export class IconService implements IconResolver {
 			);
 		}
 	}
-
-
 }

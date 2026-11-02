@@ -11,7 +11,9 @@ const excluded = /codeblock|frontmatter|yaml|inline-code|math|comment/i;
 function sourceLine(state: EditorState, from: number): MarkdownSourceLine | undefined {
 	let lines = contexts.get(state.doc);
 	if (!lines) {
-		lines = new Map(Array.from(iterateMarkdownSourceLines(state.doc.toString()), line => [line.lineOffset, line]));
+		lines = new Map(
+			Array.from(iterateMarkdownSourceLines(state.doc.toString()), (line) => [line.lineOffset, line]),
+		);
 		contexts.set(state.doc, lines);
 	}
 	return lines.get(state.doc.lineAt(from).from);
@@ -22,13 +24,14 @@ export function excludedEditorRange(state: EditorState, from: number, to: number
 	if (!state.facet(language)) {
 		const line = sourceLine(state, from);
 		if (!line) return true;
-		const start = from - line.lineOffset, end = to - line.lineOffset;
+		const start = from - line.lineOffset,
+			end = to - line.lineOffset;
 		return line.visible.slice(start, end) !== line.lineText.slice(start, end);
 	}
 	const tree = syntaxTree(state);
 	if (to > tree.length) return true;
 	for (const position of [from + 1, Math.max(from + 1, to - 1)]) {
-		for (let node = tree.resolveInner(position, 0); node; ) {
+		for (let node = tree.resolveInner(position, 0); node;) {
 			if (excluded.test(node.name)) return true;
 			const parent = node.parent;
 			if (!parent) break;
@@ -38,13 +41,22 @@ export function excludedEditorRange(state: EditorState, from: number, to: number
 	return false;
 }
 
-export function editorLineCalloutTokens(state: EditorState, from: number, text: string, options: ScanLineOptions = {}): LineCalloutToken[] {
+export function editorLineCalloutTokens(
+	state: EditorState,
+	from: number,
+	text: string,
+	options: ScanLineOptions = {},
+): LineCalloutToken[] {
 	if (!state.facet(language)) {
 		const context = sourceLine(state, from);
-		return context ? scanLineForCalloutTokens(text, {
-			...options, visibleLine: context.visible, contentFrom: context.prefix.from,
-			blockQuote: context.prefix.lastContainer === "quote",
-		}) : [];
+		return context
+			? scanLineForCalloutTokens(text, {
+					...options,
+					visibleLine: context.visible,
+					contentFrom: context.prefix.from,
+					blockQuote: context.prefix.lastContainer === "quote",
+				})
+			: [];
 	}
 	// The language tree decides indented-code context; list continuations may
 	// legitimately indent a token by four or more spaces.
@@ -52,7 +64,9 @@ export function editorLineCalloutTokens(state: EditorState, from: number, text: 
 	const prefix = markdownPrefix(text.slice(indent));
 	const inline = Array.from(iterateMarkdownSourceLines(`x ${text}`))[0];
 	return scanLineForCalloutTokens(text, {
-		...options, visibleLine: inline?.visible.slice(2) ?? "", contentFrom: indent + prefix.from,
+		...options,
+		visibleLine: inline?.visible.slice(2) ?? "",
+		contentFrom: indent + prefix.from,
 		blockQuote: prefix.lastContainer === "quote",
-	}).filter(token => !excludedEditorRange(state, from + token.from, from + tokenEnd(token)));
+	}).filter((token) => !excludedEditorRange(state, from + token.from, from + tokenEnd(token)));
 }

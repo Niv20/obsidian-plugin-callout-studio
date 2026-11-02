@@ -4,23 +4,48 @@ import { syncFingerprint } from "./syncFingerprint";
 import { canonical, content, flatten, inflate, SYNC_KEY, type Tree } from "./syncTree";
 
 type Stamp = [number, string];
-interface Metadata { version: 1 | 2; stamps: Record<string, Stamp>; fingerprint?: string }
-interface State { tree: Tree; stamps: Record<string, Stamp> }
+interface Metadata {
+	version: 1 | 2;
+	stamps: Record<string, Stamp>;
+	fingerprint?: string;
+}
+interface State {
+	tree: Tree;
+	stamps: Record<string, Stamp>;
+}
 const ZERO: Stamp = [0, ""];
 
 export function validSyncMetadata(value: unknown): boolean {
 	if (value === undefined) return true;
 	if (!value || typeof value !== "object" || Array.isArray(value)) return false;
 	const meta = value as Metadata;
-	if ((meta.version !== 1 && meta.version !== 2) || !meta.stamps || typeof meta.stamps !== "object" || Array.isArray(meta.stamps)) return false;
-	if (meta.version === 2 && (typeof meta.fingerprint !== "string" || !/^[a-f0-9]{16}$/.test(meta.fingerprint))) return false;
+	if (
+		(meta.version !== 1 && meta.version !== 2) ||
+		!meta.stamps ||
+		typeof meta.stamps !== "object" ||
+		Array.isArray(meta.stamps)
+	)
+		return false;
+	if (meta.version === 2 && (typeof meta.fingerprint !== "string" || !/^[a-f0-9]{16}$/.test(meta.fingerprint)))
+		return false;
 	return Object.entries(meta.stamps).every(([key, stamp]) => {
 		try {
 			const path: unknown = JSON.parse(key);
-			return Array.isArray(path) && JSON.stringify(path) === key && path.length <= 64 && path.every(part => typeof part === "string") &&
-				Array.isArray(stamp) && stamp.length === 2 && Number.isSafeInteger(stamp[0]) && stamp[0] >= 0 &&
-				typeof stamp[1] === "string" && stamp[1].length <= 128;
-		} catch { return false; }
+			return (
+				Array.isArray(path) &&
+				JSON.stringify(path) === key &&
+				path.length <= 64 &&
+				path.every((part) => typeof part === "string") &&
+				Array.isArray(stamp) &&
+				stamp.length === 2 &&
+				Number.isSafeInteger(stamp[0]) &&
+				stamp[0] >= 0 &&
+				typeof stamp[1] === "string" &&
+				stamp[1].length <= 128
+			);
+		} catch {
+			return false;
+		}
 	});
 }
 
@@ -30,7 +55,8 @@ export function validSyncEnvelope(data: Record<string, unknown>): boolean {
 }
 
 function read(data: unknown): State {
-	if (!validSyncEnvelope(data as Record<string, unknown>)) throw new Error("Settings sync envelope does not match its content");
+	if (!validSyncEnvelope(data as Record<string, unknown>))
+		throw new Error("Settings sync envelope does not match its content");
 	const meta = (data as Record<string, unknown>)[SYNC_KEY] as Metadata | undefined;
 	const stamps = structuredClone(meta?.stamps ?? {});
 	// Earlier snapshots stamped icon subfields independently. Fold their
@@ -52,7 +78,10 @@ function compare(a: Stamp, b: Stamp): number {
 
 function serialize(state: State): Record<string, unknown> {
 	const body = inflate(state.tree);
-	return { ...body, [SYNC_KEY]: { version: 2, stamps: state.stamps, fingerprint: syncFingerprint(body, state.stamps) } };
+	return {
+		...body,
+		[SYNC_KEY]: { version: 2, stamps: state.stamps, fingerprint: syncFingerprint(body, state.stamps) },
+	};
 }
 
 function clock(state: State): number {
@@ -61,26 +90,38 @@ function clock(state: State): number {
 
 /** Only changed atoms receive a new stamp; a read never becomes an edit. */
 function edited(base: State, data: unknown, actor: string): State {
-	const tree = flatten(data), stamps = { ...base.stamps };
+	const tree = flatten(data),
+		stamps = { ...base.stamps };
 	const next = clock(base) + 1;
 	if (!Number.isSafeInteger(next)) throw new Error("Settings sync clock exhausted");
 	for (const key of new Set([...tree.keys(), ...base.tree.keys()])) {
 		if (canonical(tree.get(key)) !== canonical(base.tree.get(key))) {
-			Object.defineProperty(stamps, key, { value: [next, actor], enumerable: true, configurable: true, writable: true });
+			Object.defineProperty(stamps, key, {
+				value: [next, actor],
+				enumerable: true,
+				configurable: true,
+				writable: true,
+			});
 		}
 	}
 	return { tree, stamps };
 }
 
 function joined(a: State, b: State): State {
-	const tree: Tree = new Map(), stamps: Record<string, Stamp> = {};
+	const tree: Tree = new Map(),
+		stamps: Record<string, Stamp> = {};
 	const keys = new Set([...a.tree.keys(), ...b.tree.keys(), ...Object.keys(a.stamps), ...Object.keys(b.stamps)]);
 	for (const key of keys) {
-		const left = a.stamps[key] ?? ZERO, right = b.stamps[key] ?? ZERO;
+		const left = a.stamps[key] ?? ZERO,
+			right = b.stamps[key] ?? ZERO;
 		const comparison = compare(left, right);
 		// Equal stamps occur in initial legacy snapshots. A stable tie-break
 		// avoids depending on which device receives a file first.
-		const winner = comparison > 0 || (comparison === 0 && (canonical(a.tree.get(key)) ?? "") >= (canonical(b.tree.get(key)) ?? "")) ? a : b;
+		const winner =
+			comparison > 0 ||
+			(comparison === 0 && (canonical(a.tree.get(key)) ?? "") >= (canonical(b.tree.get(key)) ?? ""))
+				? a
+				: b;
 		const atom = winner.tree.get(key);
 		if (atom) tree.set(key, atom);
 		const stamp = winner.stamps[key];

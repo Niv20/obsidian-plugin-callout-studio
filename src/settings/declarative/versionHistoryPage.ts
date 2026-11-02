@@ -41,7 +41,15 @@ import { appendLines } from "../../ui/textLines";
 import { ConfirmModal } from "../../utils/ConfirmModal";
 import { blockedWhilePaused } from "../pausedGuard";
 import { SettingsRecoveryDetailsModal } from "../SettingsRecoveryDetailsModal";
-import { renderVersionMarker, renderVersionName, versionClock, versionDay, versionDayKey, versionName, versionTime } from "../versionRow";
+import {
+	renderVersionMarker,
+	renderVersionName,
+	versionClock,
+	versionDay,
+	versionDayKey,
+	versionName,
+	versionTime,
+} from "../versionRow";
 import { observeVersionRowLayout } from "../versionRowLayout";
 import type { CsPage, TreeContext } from "./types";
 
@@ -115,9 +123,14 @@ export class VersionHistoryPage extends SettingPage {
 		this.renderStatus(list, t("versions.loading"));
 		const generation = ++this.generation;
 		const recovery = this.ctx.plugin.recovery;
-		if (!recovery) { this.render(list, []); return; }
+		if (!recovery) {
+			this.render(list, []);
+			return;
+		}
 		void recovery.listVersions().then(
-			versions => { if (generation === this.generation) this.render(list, versions); },
+			(versions) => {
+				if (generation === this.generation) this.render(list, versions);
+			},
 			(error: unknown) => {
 				console.error("[callout-studio] versions could not be listed", error);
 				if (generation === this.generation) this.render(list, []);
@@ -176,7 +189,11 @@ export class VersionHistoryPage extends SettingPage {
 	 * One version's card: its time and dot on the rail, its name, how it
 	 * compares with now (`compare`), and its buttons.
 	 */
-	private renderRow(list: HTMLElement, version: SetupVersion, compare: (data: Partial<PluginData>) => SetupDifference): void {
+	private renderRow(
+		list: HTMLElement,
+		version: SetupVersion,
+		compare: (data: Partial<PluginData>) => SetupDifference,
+	): void {
 		// `!`: this page only lists versions when there is a recovery service.
 		const recovery = this.ctx.plugin.recovery!;
 		const row = new Setting(list);
@@ -187,7 +204,8 @@ export class VersionHistoryPage extends SettingPage {
 		// unknown time is left out rather than invented.
 		if (version.time !== null) {
 			row.settingEl.createEl("time", {
-				text: versionClock(version.time), cls: "cs-recovery-time",
+				text: versionClock(version.time),
+				cls: "cs-recovery-time",
 				attr: { datetime: new Date(version.time).toISOString() },
 			});
 		}
@@ -196,20 +214,33 @@ export class VersionHistoryPage extends SettingPage {
 		const data = version.data;
 		const difference = data ? compare(data) : null;
 		this.renderSummary(row.descEl, difference);
-		row.addExtraButton(button => button
-			.setIcon("eye")
-			.setTooltip(t("recovery.details.view"))
-			.onClick(() => new SettingsRecoveryDetailsModal(this.ctx.app, recovery.details(version.copies[0]!, version)).open()));
-		row.addExtraButton(button => {
-			button.setIcon("trash-2").setTooltip(t("recovery.delete"))
-				.onClick(() => { void this.remove(version); });
+		row.addExtraButton((button) =>
+			button
+				.setIcon("eye")
+				.setTooltip(t("recovery.details.view"))
+				.onClick(() =>
+					new SettingsRecoveryDetailsModal(
+						this.ctx.app,
+						recovery.details(version.copies[0]!, version),
+					).open(),
+				),
+		);
+		row.addExtraButton((button) => {
+			button
+				.setIcon("trash-2")
+				.setTooltip(t("recovery.delete"))
+				.onClick(() => {
+					void this.remove(version);
+				});
 			button.extraSettingsEl.addClass("cs-recovery-delete-btn");
 		});
 		if (!data || !difference) return;
-		row.addButton(button => {
+		row.addButton((button) => {
 			// Red, as it was before the 1.13 rewrite: restoring replaces the whole setup
 			// on every synced device. Obsidian's red button is `setDestructive()`.
-			button.setButtonText(t("recovery.restore")).setDestructive()
+			button
+				.setButtonText(t("recovery.restore"))
+				.setDestructive()
 				.onClick(() => {
 					if (explainIfBlocked(this.restoreBlockedReason(difference.changed))) return;
 					void this.restore(version, data, difference.changed);
@@ -247,16 +278,23 @@ export class VersionHistoryPage extends SettingPage {
 		return changed === 0 ? t("versions.restoreSame") : null;
 	}
 
-	private async restore(version: SetupVersion, data: NonNullable<SetupVersion["data"]>, count: number): Promise<void> {
+	private async restore(
+		version: SetupVersion,
+		data: NonNullable<SetupVersion["data"]>,
+		count: number,
+	): Promise<void> {
 		const recovery = this.ctx.plugin.recovery;
 		if (!recovery || blockedWhilePaused(this.ctx.plugin.settingsWriter)) return;
-		const name = versionName(version), when = versionTime(version.time);
+		const name = versionName(version),
+			when = versionTime(version.time);
 		const confirmed = await new ConfirmModal(
 			this.ctx.app,
 			t("versions.restoreTitle"),
 			t("versions.restoreBody", { count }),
 			t("recovery.restore"),
-		).withMascot(t("versions.subtitle", { name, when })).confirm();
+		)
+			.withMascot(t("versions.subtitle", { name, when }))
+			.confirm();
 		if (!confirmed) return;
 		const outcome = await recovery.restore(data);
 		if (outcome === "restored") {
@@ -271,17 +309,22 @@ export class VersionHistoryPage extends SettingPage {
 	private async remove(version: SetupVersion): Promise<void> {
 		const recovery = this.ctx.plugin.recovery;
 		if (!recovery) return;
-		const name = versionName(version), when = versionTime(version.time);
+		const name = versionName(version),
+			when = versionTime(version.time);
 		// A presentation category does not say whether deletion can propagate.
-		const deletesFiles = version.copies.some(copy => copy.kind !== "history" && copy.path !== null);
+		const deletesFiles = version.copies.some((copy) => copy.kind !== "history" && copy.path !== null);
 		const body = [
 			t("versions.deleteAvailableBody"),
 			deletesFiles ? t("versions.deleteSyncedFiles") : "",
 			t("versions.deleteFinal"),
-		].filter(Boolean).join("\n");
-		const confirmed = await new ConfirmModal(this.ctx.app, t("versions.deleteTitle"), body, t("recovery.delete")).withMascot(t("versions.subtitle", { name, when })).confirm();
+		]
+			.filter(Boolean)
+			.join("\n");
+		const confirmed = await new ConfirmModal(this.ctx.app, t("versions.deleteTitle"), body, t("recovery.delete"))
+			.withMascot(t("versions.subtitle", { name, when }))
+			.confirm();
 		if (!confirmed) return;
-		if (!await recovery.removeVersion(version)) {
+		if (!(await recovery.removeVersion(version))) {
 			showNotice("warning", t("versions.deleteFailed"));
 			this.reload();
 			return;

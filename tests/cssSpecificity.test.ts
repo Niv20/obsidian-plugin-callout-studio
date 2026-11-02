@@ -11,25 +11,14 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	STUDIO_WEIGHT_BASE,
-	STUDIO_WEIGHT_MAX,
-	studioWeightFor,
-} from "../src/manager/theme/studioWeight";
-import {
-	classCountOf,
-	compareSpecificity,
-	specificityOf,
-	type Specificity,
-} from "../src/utils/cssSpecificity";
+import { STUDIO_WEIGHT_BASE, STUDIO_WEIGHT_MAX, studioWeightFor } from "../src/manager/theme/studioWeight";
+import { classCountOf, compareSpecificity, specificityOf, type Specificity } from "../src/utils/cssSpecificity";
 import { blankNegations, splitSelectorList } from "../src/utils/selectorText";
 import { calloutSelAt } from "../src/utils/calloutSelector";
 
 describe("specificityOf — the three components", () => {
 	it("counts classes, attributes and pseudo-classes as b", () => {
-		assert.deepStrictEqual(specificityOf(".callout[data-callout=x]"), [
-			0, 2, 0,
-		]);
+		assert.deepStrictEqual(specificityOf(".callout[data-callout=x]"), [0, 2, 0]);
 		assert.deepStrictEqual(specificityOf(".a.b.c"), [0, 3, 0]);
 		assert.deepStrictEqual(specificityOf("li:first-child"), [0, 1, 1]);
 	});
@@ -50,10 +39,7 @@ describe("specificityOf — the three components", () => {
 	it("does not read a dot or colon inside an attribute value", () => {
 		// The old regex counted `.b` here as a class.
 		assert.deepStrictEqual(specificityOf('[data-callout="a.b"]'), [0, 1, 0]);
-		assert.deepStrictEqual(
-			specificityOf('[data-callout="a:hover"]'),
-			[0, 1, 0],
-		);
+		assert.deepStrictEqual(specificityOf('[data-callout="a:hover"]'), [0, 1, 0]);
 	});
 });
 
@@ -65,10 +51,7 @@ describe("functional pseudo-classes", () => {
 	it("gives :where() zero even when the contents are nested", () => {
 		// The exact bug: `:where\([^()]*\)` cannot match this, so the inner
 		// attribute survived the strip and scored. Willemstad writes it.
-		assert.strictEqual(
-			classCountOf(':where(:is([data-callout="success"]))'),
-			0,
-		);
+		assert.strictEqual(classCountOf(':where(:is([data-callout="success"]))'), 0);
 	});
 
 	it("takes the max of :is() / :not() arguments, not the sum", () => {
@@ -101,9 +84,7 @@ describe("splitSelectorList", () => {
 	it("does not split inside a functional pseudo-class", () => {
 		// ITS Theme's real selector. A plain `.split(",")` tears this in two and
 		// scores a fragment that was never written.
-		const its =
-			"body:not(.default-callout-quote, .callout-no-quote) " +
-			".callout.callout[data-callout=quote]";
+		const its = "body:not(.default-callout-quote, .callout-no-quote) " + ".callout.callout[data-callout=quote]";
 		assert.deepStrictEqual(splitSelectorList(its), [its]);
 	});
 
@@ -195,7 +176,7 @@ const REAL: Array<{ theme: string; selector: string; expect: Specificity }> = [
 		// The nested-:where() case. (old scanner: b=8)
 		theme: "Willemstad",
 		selector:
-			'body:not(.ssopt-callout-standard).theme-dark .callout' +
+			"body:not(.ssopt-callout-standard).theme-dark .callout" +
 			':where(:is([data-callout="success"])) .callout-title-inner',
 		expect: [0, 4, 1],
 	},
@@ -234,10 +215,7 @@ describe("real theme selectors", () => {
 		for (const { theme, selector } of REAL) {
 			const b = classCountOf(selector);
 			const w = studioWeightFor(b);
-			assert.ok(
-				w + 1 > b,
-				`studio at weight ${w} does not clear ${theme}'s ${b}`,
-			);
+			assert.ok(w + 1 > b, `studio at weight ${w} does not clear ${theme}'s ${b}`);
 			assert.ok(w <= STUDIO_WEIGHT_MAX, theme);
 		}
 	});
@@ -258,8 +236,7 @@ describe("real theme selectors", () => {
 			const ours = specificityOf(calloutSelAt("x", studioWeightFor(b)));
 			assert.ok(
 				compareSpecificity(ours, specificityOf(selector)) > 0,
-				`${theme}: ${JSON.stringify(ours)} does not outrank ` +
-					`${JSON.stringify(specificityOf(selector))}`,
+				`${theme}: ${JSON.stringify(ours)} does not outrank ` + `${JSON.stringify(specificityOf(selector))}`,
 			);
 		}
 	});

@@ -28,10 +28,7 @@ import { t } from "../src/i18n";
 import { PACK_MANIFEST } from "../src/icons/data/packManifest";
 import type { PackDataStore } from "../src/icons/PackDataStore";
 import { libraryFiles, type EditedCallout } from "../src/icons/iconLibraries";
-import {
-	IconLibrariesModal,
-	type IconLibrariesHost,
-} from "../src/settings/iconpicker/IconLibrariesModal";
+import { IconLibrariesModal, type IconLibrariesHost } from "../src/settings/iconpicker/IconLibrariesModal";
 import { ConfirmModal } from "../src/utils/ConfirmModal";
 import type { CalloutDefinition, CalloutIcon, IconPackId, IconSourceId } from "../src/types";
 import { parseRules } from "./support/cssInjectorHarness";
@@ -44,7 +41,15 @@ installFakeDom();
 Object.assign(window, { matchMedia: () => ({ matches: true }) });
 
 const CATALOG: readonly IconSourceId[] = [
-	"lucide", "tabler", "material", "emoji", "octicons", "fa", "rpg-awesome", "simple-icons", "image",
+	"lucide",
+	"tabler",
+	"material",
+	"emoji",
+	"octicons",
+	"fa",
+	"rpg-awesome",
+	"simple-icons",
+	"image",
 ];
 
 interface Options {
@@ -69,8 +74,15 @@ interface Options {
 
 function callout(id: string, icon: CalloutDefinition["icon"]): CalloutDefinition {
 	return {
-		id, displayName: `Callout ${id}`, icon, colorLight: "#3b82f6", colorDark: "#3b82f6",
-		foldable: true, defaultFolded: false, builtIn: false, source: "user",
+		id,
+		displayName: `Callout ${id}`,
+		icon,
+		colorLight: "#3b82f6",
+		colorDark: "#3b82f6",
+		foldable: true,
+		defaultFolded: false,
+		builtIn: false,
+		source: "user",
 	};
 }
 
@@ -84,7 +96,11 @@ function mount(options: Options = {}) {
 	settings.iconLibraries = { order: [...(options.order ?? [])], hidden: [...(options.hidden ?? [])] };
 	let saves = 0;
 	let release = (): void => {};
-	const gate = options.hold ? new Promise<void>((resolve) => { release = resolve; }) : undefined;
+	const gate = options.hold
+		? new Promise<void>((resolve) => {
+				release = resolve;
+			})
+		: undefined;
 	const deleted: IconSourceId[] = [];
 	/** The unsaved icons each deletion was told to keep, in call order. */
 	const kept: CalloutIcon[][] = [];
@@ -92,7 +108,9 @@ function mount(options: Options = {}) {
 	const loading = new Set<IconPackId>();
 	let finishDownload = (): void => {};
 	const downloadGate = options.holdDownload
-		? new Promise<void>((resolve) => { finishDownload = resolve; })
+		? new Promise<void>((resolve) => {
+				finishDownload = resolve;
+			})
 		: undefined;
 	const packs = {
 		state: (id: IconPackId) => (loading.has(id) ? "loading" : ready.has(id) ? "ready" : "unavailable"),
@@ -167,8 +185,9 @@ function mount(options: Options = {}) {
 	const rows = (): FakeElement[] => list().querySelectorAll(".cs-icon-library-row");
 	/** One group: the window marks each with `data-cs-group`. */
 	const groupEl = (group: "available" | "download" | "hidden"): FakeElement => {
-		const found = content.querySelector(".cs-icon-library-list")!.children
-			.find((child) => child.dataset.csGroup === group);
+		const found = content
+			.querySelector(".cs-icon-library-list")!
+			.children.find((child) => child.dataset.csGroup === group);
 		assert.ok(found, `no ${group} group`);
 		return found;
 	};
@@ -181,7 +200,17 @@ function mount(options: Options = {}) {
 		return found;
 	};
 	return {
-		modal, content, settings, ready, deleted, kept, downloads, list, rows, row, notify,
+		modal,
+		content,
+		settings,
+		ready,
+		deleted,
+		kept,
+		downloads,
+		list,
+		rows,
+		row,
+		notify,
 		release: () => release(),
 		finishDownload: () => finishDownload(),
 		saves: () => saves,
@@ -226,13 +255,14 @@ describe("Icon libraries — the title", () => {
 			const title = (h.modal as unknown as { titleEl: FakeElement }).titleEl;
 			assert.equal(title.textContent, t("iconLibraries.manage"));
 			assert.equal(t("iconLibraries.manage"), "Manage icon libraries");
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 });
 
 describe("Icon libraries — the description", () => {
-	const descOf = (h: ReturnType<typeof mount>): FakeElement =>
-		h.content.querySelector(".setting-item-description")!;
+	const descOf = (h: ReturnType<typeof mount>): FakeElement => h.content.querySelector(".setting-item-description")!;
 
 	it("puts each sentence on a line of its own, not in one paragraph", async () => {
 		const h = mount();
@@ -242,7 +272,9 @@ describe("Icon libraries — the description", () => {
 			assert.equal(lines.length, 3, "one line for each thing it says");
 			assert.equal(descOf(h).querySelectorAll("br").length, lines.length - 1);
 			assert.equal(descOf(h).textContent, lines.join(""), "the breaks are elements, never a stray \\n");
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("says in one short line that the libraries that come with the plugin can only be hidden", async () => {
@@ -254,7 +286,9 @@ describe("Icon libraries — the description", () => {
 			for (const name of [t("iconPicker.lucide"), t("iconPicker.emoji"), t("iconPicker.material")]) {
 				assert.ok(lines[2].includes(name), `${name} cannot be deleted`);
 			}
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("does not repeat that callouts keep their icons: the delete dialog says it", async () => {
@@ -265,7 +299,9 @@ describe("Icon libraries — the description", () => {
 			assert.ok(!/Deleting a library/.test(text));
 			assert.ok(!/already use its icons/.test(text));
 			assert.ok(!/keep/i.test(text));
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("carries no reset arrow of its own: that sits on the Available libraries heading", async () => {
@@ -273,7 +309,9 @@ describe("Icon libraries — the description", () => {
 		try {
 			await h.settle();
 			assert.equal(h.content.querySelector(".setting-item-description")!.querySelector(".clickable-icon"), null);
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 });
 
@@ -286,15 +324,24 @@ describe("Icon libraries — the groups", () => {
 		h.group(group).querySelector(".setting-item-heading")?.querySelector(".setting-item-name")?.textContent;
 	const shown = (h: ReturnType<typeof mount>, group: Group): boolean => !h.group(group).hasClass("cs-hidden");
 	const EVERYTHING: IconPackId[] = [
-		"tabler-outline", "tabler-filled", "octicons", "fa-solid", "fa-regular", "fa-brands",
-		"rpg-awesome", "simple-icons",
+		"tabler-outline",
+		"tabler-filled",
+		"octicons",
+		"fa-solid",
+		"fa-regular",
+		"fa-brands",
+		"rpg-awesome",
+		"simple-icons",
 	];
 
 	it("are three Obsidian list groups under the description, headed in the Choose source menu's words", async () => {
 		const h = mount({ hidden: ["emoji"] });
 		try {
 			await h.settle();
-			assert.deepEqual(h.list().children.map((child) => child.dataset.csGroup), ["available", "download", "hidden"]);
+			assert.deepEqual(
+				h.list().children.map((child) => child.dataset.csGroup),
+				["available", "download", "hidden"],
+			);
 			for (const group of ["available", "download", "hidden"] as const) {
 				assert.ok(h.group(group).hasClass("setting-group"), `${group} is an Obsidian group`);
 				assert.ok(h.group(group).hasClass("mod-list"), `${group} uses Obsidian's list layout`);
@@ -308,18 +355,25 @@ describe("Icon libraries — the groups", () => {
 			// Below the description.
 			const order = h.content.children;
 			assert.ok(order.indexOf(h.list()) > order.indexOf(h.content.querySelector(".setting-item-description")!));
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("puts the reset arrow at the end of the Available libraries heading", async () => {
 		const h = mount({ ready: ["octicons"] });
 		try {
 			await h.settle();
-			const arrows = h.group("available").querySelector(".setting-item-heading")!.querySelectorAll(".clickable-icon");
+			const arrows = h
+				.group("available")
+				.querySelector(".setting-item-heading")!
+				.querySelectorAll(".clickable-icon");
 			assert.equal(arrows.length, 1);
 			assert.equal(arrows[0], h.reset());
 			assert.equal(h.reset().hasClass("cs-reset-idle"), false, "something differs, so it shows");
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("keeps Available libraries and its arrow when nothing is left to download, and shows no empty group", async () => {
@@ -331,7 +385,9 @@ describe("Icon libraries — the groups", () => {
 			assert.equal(shown(h, "hidden"), false);
 			assert.deepEqual(h.below(), []);
 			assert.ok(h.reset(), "the arrow keeps its heading");
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("lists the libraries still to download in a group of their own", async () => {
@@ -341,7 +397,9 @@ describe("Icon libraries — the groups", () => {
 			assert.ok(shown(h, "download"));
 			assert.deepEqual(h.inGroup("download"), ["tabler", "octicons", "fa", "rpg-awesome", "simple-icons"]);
 			assert.equal(shown(h, "hidden"), false, "nothing is hidden");
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("brings Libraries to download back the moment a library is deleted", async () => {
@@ -354,7 +412,9 @@ describe("Icon libraries — the groups", () => {
 			});
 			assert.ok(shown(h, "download"));
 			assert.deepEqual(h.inGroup("download"), ["octicons"]);
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("lists a hidden library in Hidden libraries, never under Libraries to download", async () => {
@@ -364,7 +424,9 @@ describe("Icon libraries — the groups", () => {
 			assert.deepEqual(h.inGroup("download"), ["tabler", "octicons", "fa", "rpg-awesome", "simple-icons"]);
 			assert.deepEqual(h.inGroup("hidden"), ["emoji"]);
 			assert.ok(shown(h, "hidden"));
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("shows only Hidden libraries when nothing is left to download", async () => {
@@ -373,7 +435,9 @@ describe("Icon libraries — the groups", () => {
 			await h.settle();
 			assert.equal(shown(h, "download"), false);
 			assert.deepEqual(h.inGroup("hidden"), ["material", "emoji"], "in catalog order");
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("moves a library between the groups as it is hidden and shown", async () => {
@@ -387,7 +451,9 @@ describe("Icon libraries — the groups", () => {
 			h.button("emoji").fire("click");
 			assert.equal(shown(h, "hidden"), false);
 			assert.ok(h.above().includes("emoji"));
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 });
 
@@ -401,9 +467,14 @@ describe("Icon libraries — the rows", () => {
 		try {
 			await h.settle();
 			assert.deepEqual(h.above(), ["image", "octicons", "lucide", "material"]);
-			assert.deepEqual(h.below(), ["tabler", "fa", "rpg-awesome", "simple-icons", "emoji"],
-				"to download in catalog order, then hidden in catalog order");
-		} finally { h.modal.onClose(); }
+			assert.deepEqual(
+				h.below(),
+				["tabler", "fa", "rpg-awesome", "simple-icons", "emoji"],
+				"to download in catalog order, then hidden in catalog order",
+			);
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("is an Obsidian setting row: the emblem, the name, the line under it, then the button", async () => {
@@ -417,7 +488,9 @@ describe("Icon libraries — the rows", () => {
 			const action = h.button("lucide");
 			assert.ok(action.closest(".setting-item-control"), "the button is in the row's control");
 			assert.equal(action.tagName.toLowerCase(), "div", "an Obsidian extra button, the handle's size on a phone");
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("gives each kind of library its own button", async () => {
@@ -431,7 +504,9 @@ describe("Icon libraries — the rows", () => {
 			assert.equal(label("octicons"), t("iconLibraries.download", { name: t("iconPicker.octicons") }));
 			assert.ok(h.button("tabler").hasClass("cs-icon-library-delete"));
 			assert.ok(!h.button("lucide").hasClass("cs-icon-library-delete"));
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("gives a handle only to the rows of Available libraries, at the very end", async () => {
@@ -447,7 +522,9 @@ describe("Icon libraries — the rows", () => {
 			for (const id of h.below()) {
 				assert.equal(h.row(id as IconSourceId).querySelector(".cs-drag-handle"), null, `${id} has no handle`);
 			}
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("says what each library costs on the line under its name", async () => {
@@ -458,10 +535,16 @@ describe("Icon libraries — the rows", () => {
 			assert.match(meta("octicons") ?? "", /375\u00a0KB/, "number and unit kept on one line");
 			assert.match(meta("lucide") ?? "", new RegExp(t("iconLibraries.noDownload")));
 			assert.match(meta("material") ?? "", new RegExp(t("iconLibraries.perIcon")));
-			const missing = (PACK_MANIFEST["fa-solid"]!.bytes + PACK_MANIFEST["fa-regular"]!.bytes +
-				PACK_MANIFEST["fa-brands"]!.bytes) / 1024 / 1024;
+			const missing =
+				(PACK_MANIFEST["fa-solid"]!.bytes +
+					PACK_MANIFEST["fa-regular"]!.bytes +
+					PACK_MANIFEST["fa-brands"]!.bytes) /
+				1024 /
+				1024;
 			assert.match(meta("fa") ?? "", new RegExp(`${missing.toFixed(1)}\u00a0MB`));
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 });
 
@@ -479,7 +562,9 @@ describe("Icon libraries — hiding and showing", () => {
 			assert.deepEqual(h.settings.iconLibraries.hidden, []);
 			assert.deepEqual(h.above(), ["lucide", "material", "emoji", "image"], "back in its slot");
 			assert.equal(h.saves(), 2);
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("keeps the last library in the picker, and says why", async () => {
@@ -493,7 +578,9 @@ describe("Icon libraries — hiding and showing", () => {
 			assert.equal(String(Notice.last?.message), t("iconLibraries.keepOne"));
 			assert.deepEqual(h.settings.iconLibraries.hidden, ["lucide", "material", "emoji"]);
 			assert.equal(h.saves(), 0);
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 });
 
@@ -507,7 +594,9 @@ describe("Icon libraries — downloading and deleting", () => {
 			assert.deepEqual(h.downloads, ["octicons"]);
 			assert.deepEqual(h.above(), ["lucide", "material", "emoji", "octicons", "image"]);
 			assert.equal(h.saves(), 0, "a download is this device's business, not a setting");
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("downloads only the files a library still lacks", async () => {
@@ -519,7 +608,9 @@ describe("Icon libraries — downloading and deleting", () => {
 			await h.settle();
 			assert.deepEqual(h.downloads, ["fa-solid", "fa-regular"]);
 			assert.ok(h.above().includes("fa"));
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("deletes a library nothing uses at once, without asking", async () => {
@@ -533,7 +624,9 @@ describe("Icon libraries — downloading and deleting", () => {
 			});
 			assert.deepEqual(h.deleted, ["tabler"]);
 			assert.ok(h.below().includes("tabler"));
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("asks before deleting a library callouts use, naming them", async () => {
@@ -555,7 +648,9 @@ describe("Icon libraries — downloading and deleting", () => {
 				assert.ok(dialog.text.includes(t("iconLibraries.inUseKeeps", { name })));
 			});
 			assert.deepEqual(h.deleted, ["tabler"]);
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("says one callout, not one callouts", async () => {
@@ -569,7 +664,9 @@ describe("Icon libraries — downloading and deleting", () => {
 			});
 			assert.deepEqual(h.deleted, [], "cancelling deletes nothing");
 			assert.ok(h.above().includes("octicons"));
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("asks before deleting a library the callout being edited uses, though it is not saved yet", async () => {
@@ -577,7 +674,11 @@ describe("Icon libraries — downloading and deleting", () => {
 		// callout editor, open Pick an icon again and delete the library. The
 		// registry knows no callout using it — the editor holds the icon until
 		// Save — but the person has just applied it and must be told.
-		const editing: EditedCallout = { id: null, name: "My new callout", icon: { type: "octicons", value: "rocket" } };
+		const editing: EditedCallout = {
+			id: null,
+			name: "My new callout",
+			icon: { type: "octicons", value: "rocket" },
+		};
 		const h = mount({ ready: ["octicons"], editing });
 		try {
 			await h.settle();
@@ -591,11 +692,17 @@ describe("Icon libraries — downloading and deleting", () => {
 			});
 			assert.deepEqual(h.deleted, ["octicons"]);
 			assert.deepEqual(h.kept, [[editing.icon]], "its drawing is kept with the others");
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("counts the callout being edited together with the saved ones", async () => {
-		const editing: EditedCallout = { id: null, name: "My new callout", icon: { type: "octicons", value: "rocket" } };
+		const editing: EditedCallout = {
+			id: null,
+			name: "My new callout",
+			icon: { type: "octicons", value: "rocket" },
+		};
 		const users = [callout("solo", { type: "octicons", value: "alert" })];
 		const h = mount({ ready: ["octicons"], users, editing });
 		try {
@@ -607,12 +714,18 @@ describe("Icon libraries — downloading and deleting", () => {
 				assert.ok(text.includes(t("iconLibraries.inUse", { name: t("iconPicker.octicons"), count: "2" })));
 				assert.ok(text.includes("Callout solo") && text.includes("My new callout"));
 			});
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("names a saved callout once when its edit uses the library as well", async () => {
 		const users = [callout("solo", { type: "octicons", value: "alert" })];
-		const editing: EditedCallout = { id: "solo", name: "Callout solo", icon: { type: "octicons", value: "rocket" } };
+		const editing: EditedCallout = {
+			id: "solo",
+			name: "Callout solo",
+			icon: { type: "octicons", value: "rocket" },
+		};
 		const h = mount({ ready: ["octicons"], users, editing });
 		try {
 			await h.settle();
@@ -621,11 +734,17 @@ describe("Icon libraries — downloading and deleting", () => {
 				await h.settle();
 				assert.ok(asked()?.text.includes(t("iconLibraries.inUseOne", { name: t("iconPicker.octicons") })));
 			});
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("deletes at once when the callout being edited uses another library", async () => {
-		const editing: EditedCallout = { id: null, name: "My new callout", icon: { type: "tabler-outline", value: "bulb" } };
+		const editing: EditedCallout = {
+			id: null,
+			name: "My new callout",
+			icon: { type: "tabler-outline", value: "bulb" },
+		};
 		const h = mount({ ready: ["octicons", "tabler-outline", "tabler-filled"], editing });
 		try {
 			await h.settle();
@@ -636,11 +755,17 @@ describe("Icon libraries — downloading and deleting", () => {
 			});
 			assert.deepEqual(h.deleted, ["octicons"]);
 			assert.deepEqual(h.kept, [[]], "the edit's icon is not Octicons', so it is not passed along");
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("refuses to delete a library only the edit uses while saving is paused", async () => {
-		const editing: EditedCallout = { id: null, name: "My new callout", icon: { type: "octicons", value: "rocket" } };
+		const editing: EditedCallout = {
+			id: null,
+			name: "My new callout",
+			icon: { type: "octicons", value: "rocket" },
+		};
 		const h = mount({ ready: ["octicons"], frozen: true, editing });
 		try {
 			await h.settle();
@@ -651,12 +776,16 @@ describe("Icon libraries — downloading and deleting", () => {
 			});
 			assert.equal(String(Notice.last?.message), t("notice.blockedWhilePaused"));
 			assert.deepEqual(h.deleted, []);
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("refuses to delete a library in use while saving is paused", async () => {
 		const h = mount({
-			ready: ["octicons"], frozen: true, users: [callout("solo", { type: "octicons", value: "alert" })],
+			ready: ["octicons"],
+			frozen: true,
+			users: [callout("solo", { type: "octicons", value: "alert" })],
 		});
 		try {
 			await h.settle();
@@ -667,7 +796,9 @@ describe("Icon libraries — downloading and deleting", () => {
 			});
 			assert.equal(String(Notice.last?.message), t("notice.blockedWhilePaused"));
 			assert.deepEqual(h.deleted, []);
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("follows a download that finishes somewhere else", async () => {
@@ -679,7 +810,9 @@ describe("Icon libraries — downloading and deleting", () => {
 			const packs = (h.modal as unknown as { host: IconLibrariesHost }).host.icons.packs;
 			await packs.download("rpg-awesome");
 			assert.ok(h.above().includes("rpg-awesome"));
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 });
 
@@ -691,10 +824,21 @@ describe("Icon libraries — the order", () => {
 			const handle = h.row("lucide").querySelector(".cs-drag-handle")!;
 			handle.fire("keydown", { key: "ArrowDown", preventDefault: () => {} });
 			assert.deepEqual(h.above(), ["material", "lucide", "emoji", "image"]);
-			assert.deepEqual(h.settings.iconLibraries.order,
-				["material", "tabler", "lucide", "emoji", "octicons", "fa", "rpg-awesome", "simple-icons", "image"]);
+			assert.deepEqual(h.settings.iconLibraries.order, [
+				"material",
+				"tabler",
+				"lucide",
+				"emoji",
+				"octicons",
+				"fa",
+				"rpg-awesome",
+				"simple-icons",
+				"image",
+			]);
 			assert.equal(h.saves(), 1);
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("never moves a library across the line by keyboard", async () => {
@@ -705,7 +849,9 @@ describe("Icon libraries — the order", () => {
 			handle.fire("keydown", { key: "ArrowDown", preventDefault: () => {} });
 			assert.deepEqual(h.above(), ["lucide", "material", "emoji", "image"]);
 			assert.equal(h.saves(), 0);
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("saves a drag in Available libraries", async () => {
@@ -721,10 +867,22 @@ describe("Icon libraries — the order", () => {
 				Object.defineProperty(r, "nextElementSibling", {
 					get: () => list.children[list.children.indexOf(r) + 1] ?? null,
 				});
-				r.style.removeProperty = (name: string) => { delete r.style[name]; };
+				r.style.removeProperty = (name: string) => {
+					delete r.style[name];
+				};
 				r.getBoundingClientRect = () => {
 					const top = list.children.indexOf(r) * 40;
-					return { x: 0, y: top, top, bottom: top + 36, left: 0, right: 240, width: 240, height: 36, toJSON: () => ({}) };
+					return {
+						x: 0,
+						y: top,
+						top,
+						bottom: top + 36,
+						left: 0,
+						right: 240,
+						width: 240,
+						height: 36,
+						toJSON: () => ({}),
+					};
 				};
 			}
 			const target = h.row("lucide").querySelector(".cs-drag-handle")!;
@@ -733,10 +891,21 @@ describe("Icon libraries — the order", () => {
 			list.fire("pointermove", { ...event, clientY: 110 });
 			list.fire("pointerup", event);
 			assert.deepEqual(h.above(), ["material", "emoji", "lucide", "image"]);
-			assert.deepEqual(h.settings.iconLibraries.order,
-				["material", "tabler", "emoji", "lucide", "octicons", "fa", "rpg-awesome", "simple-icons", "image"]);
+			assert.deepEqual(h.settings.iconLibraries.order, [
+				"material",
+				"tabler",
+				"emoji",
+				"lucide",
+				"octicons",
+				"fa",
+				"rpg-awesome",
+				"simple-icons",
+				"image",
+			]);
 			assert.equal(h.saves(), 1);
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("hides the reset arrow while nothing differs from the default", async () => {
@@ -744,7 +913,9 @@ describe("Icon libraries — the order", () => {
 		try {
 			await h.settle();
 			assert.equal(h.reset().hasClass("cs-reset-idle"), true);
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 });
 
@@ -765,7 +936,9 @@ describe("Icon libraries — the reset arrow", () => {
 			assert.equal(reset.hasClass("cs-reset-idle"), true);
 			assert.equal(h.saves(), 1);
 			assert.deepEqual(h.deleted, []);
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("offers itself while a library is downloaded, even in the default order", async () => {
@@ -773,7 +946,9 @@ describe("Icon libraries — the reset arrow", () => {
 		try {
 			await h.settle();
 			assert.equal(h.reset().hasClass("cs-reset-idle"), false);
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("deletes every downloaded library, after naming them, and puts the order and hidden list back", async () => {
@@ -798,10 +973,15 @@ describe("Icon libraries — the reset arrow", () => {
 			});
 			assert.deepEqual(h.deleted, ["tabler", "octicons"], "one at a time, in catalog order");
 			assert.deepEqual(h.settings.iconLibraries, { order: [], hidden: [] });
-			assert.deepEqual(h.above(), ["lucide", "material", "emoji", "image"],
-				"only what ships with the plugin is left on offer");
+			assert.deepEqual(
+				h.above(),
+				["lucide", "material", "emoji", "image"],
+				"only what ships with the plugin is left on offer",
+			);
 			assert.equal(h.reset().hasClass("cs-reset-idle"), true, "back to how the plugin came");
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("deletes a library with only some of its files, which no menu offers", async () => {
@@ -813,11 +993,17 @@ describe("Icon libraries — the reset arrow", () => {
 				await h.settle();
 			});
 			assert.deepEqual(h.deleted, ["fa"]);
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("changes nothing when the question is declined", async () => {
-		const h = mount({ ready: ["octicons"], order: ["image", ...CATALOG.filter((id) => id !== "image")], hidden: ["emoji"] });
+		const h = mount({
+			ready: ["octicons"],
+			order: ["image", ...CATALOG.filter((id) => id !== "image")],
+			hidden: ["emoji"],
+		});
 		try {
 			await h.settle();
 			await withConfirm(false, async () => {
@@ -829,12 +1015,16 @@ describe("Icon libraries — the reset arrow", () => {
 			assert.equal(h.settings.iconLibraries.order[0], "image");
 			assert.equal(h.saves(), 0);
 			assert.ok(h.above().includes("octicons"));
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("refuses while saving is paused when callouts use a library it would delete", async () => {
 		const h = mount({
-			ready: ["octicons"], frozen: true, hidden: ["emoji"],
+			ready: ["octicons"],
+			frozen: true,
+			hidden: ["emoji"],
 			users: [callout("solo", { type: "octicons", value: "alert" })],
 		});
 		try {
@@ -847,11 +1037,17 @@ describe("Icon libraries — the reset arrow", () => {
 			assert.equal(String(Notice.last?.message), t("notice.blockedWhilePaused"));
 			assert.deepEqual(h.deleted, []);
 			assert.deepEqual(h.settings.iconLibraries.hidden, ["emoji"], "nothing was reset");
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("hands the callout editor's unsaved icon only to the library it belongs to", async () => {
-		const editing: EditedCallout = { id: null, name: "My new callout", icon: { type: "octicons", value: "rocket" } };
+		const editing: EditedCallout = {
+			id: null,
+			name: "My new callout",
+			icon: { type: "octicons", value: "rocket" },
+		};
 		const h = mount({ ready: ["tabler-outline", "tabler-filled", "octicons"], editing });
 		try {
 			await h.settle();
@@ -861,11 +1057,17 @@ describe("Icon libraries — the reset arrow", () => {
 			});
 			assert.deepEqual(h.deleted, ["tabler", "octicons"]);
 			assert.deepEqual(h.kept, [[], [editing.icon]]);
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("refuses while saving is paused when only the unsaved edit uses a library it would delete", async () => {
-		const editing: EditedCallout = { id: null, name: "My new callout", icon: { type: "octicons", value: "rocket" } };
+		const editing: EditedCallout = {
+			id: null,
+			name: "My new callout",
+			icon: { type: "octicons", value: "rocket" },
+		};
 		const h = mount({ ready: ["octicons"], frozen: true, hidden: ["emoji"], editing });
 		try {
 			await h.settle();
@@ -877,7 +1079,9 @@ describe("Icon libraries — the reset arrow", () => {
 			assert.equal(String(Notice.last?.message), t("notice.blockedWhilePaused"));
 			assert.deepEqual(h.deleted, []);
 			assert.deepEqual(h.settings.iconLibraries.hidden, ["emoji"], "nothing was reset");
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("goes on when one library cannot be deleted, says so, and keeps the arrow", async () => {
@@ -889,11 +1093,16 @@ describe("Icon libraries — the reset arrow", () => {
 				await h.settle();
 			});
 			assert.deepEqual(h.deleted, ["tabler", "octicons"], "the second was still tried");
-			assert.equal(String(Notice.last?.message), t("iconLibraries.deleteFailed", { name: t("iconPicker.tabler") }));
+			assert.equal(
+				String(Notice.last?.message),
+				t("iconLibraries.deleteFailed", { name: t("iconPicker.tabler") }),
+			);
 			assert.ok(h.above().includes("tabler"), "its files are still here");
 			assert.ok(h.below().includes("octicons"));
 			assert.equal(h.reset().hasClass("cs-reset-idle"), false, "so there is still something to reset");
-		} finally { h.modal.onClose(); }
+		} finally {
+			h.modal.onClose();
+		}
 	});
 
 	it("tells the picker something changed", async () => {
@@ -976,7 +1185,17 @@ const EVERYTHING = CATALOG.flatMap((id) => [...libraryFiles(id)]);
 type Harness = ReturnType<typeof mount>;
 
 const rect = (top: number, bottom: number): DOMRect =>
-	({ x: 0, y: top, top, bottom, left: 0, right: 240, width: 240, height: bottom - top, toJSON: () => ({}) }) as DOMRect;
+	({
+		x: 0,
+		y: top,
+		top,
+		bottom,
+		left: 0,
+		right: 240,
+		width: 240,
+		height: bottom - top,
+		toJSON: () => ({}),
+	}) as DOMRect;
 
 /** Lay the window out, and return the way back. */
 function withLayout(h: Harness, view = VIEW): () => void {
@@ -1224,7 +1443,8 @@ describe("Icon libraries — everything else leaves the scroll alone", () => {
 		try {
 			await h.settle();
 			h.content.scrollTop = 40;
-			h.row("lucide").querySelector(".cs-drag-handle")!
+			h.row("lucide")
+				.querySelector(".cs-drag-handle")!
 				.fire("keydown", { key: "ArrowDown", preventDefault: () => {} });
 			assert.deepEqual(h.above(), ["material", "lucide", "emoji", "image"]);
 			assert.equal(h.content.scrollTop, 40);
@@ -1245,8 +1465,9 @@ describe("Icon libraries — each group is rebuilt in one step", () => {
 		const h = mount();
 		try {
 			await h.settle();
-			const boxes = (["available", "download", "hidden"] as const)
-				.map((group) => h.group(group).querySelector(".setting-items")!);
+			const boxes = (["available", "download", "hidden"] as const).map((group) =>
+				h.group(group).querySelector(".setting-items")!,
+			);
 			let emptied = 0;
 			const swaps: number[] = [];
 			for (const box of boxes) {
@@ -1263,8 +1484,14 @@ describe("Icon libraries — each group is rebuilt in one step", () => {
 			}
 			h.button("emoji").fire("click");
 			assert.equal(emptied, 0, "no box is ever emptied on its own");
-			assert.deepEqual(swaps, boxes.map((box) => box.children.length), "one swap per box, carrying all its rows");
-		} finally { h.modal.onClose(); }
+			assert.deepEqual(
+				swaps,
+				boxes.map((box) => box.children.length),
+				"one swap per box, carrying all its rows",
+			);
+		} finally {
+			h.modal.onClose();
+		}
 	});
 });
 

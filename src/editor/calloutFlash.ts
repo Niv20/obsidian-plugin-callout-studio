@@ -25,13 +25,7 @@ import {
 	type Extension,
 	type Range,
 } from "@codemirror/state";
-import {
-	Decoration,
-	EditorView,
-	ViewPlugin,
-	type DecorationSet,
-	type ViewUpdate,
-} from "@codemirror/view";
+import { Decoration, EditorView, ViewPlugin, type DecorationSet, type ViewUpdate } from "@codemirror/view";
 import { foldedRanges, unfoldEffect } from "@codemirror/language";
 import type { Editor, EditorPosition } from "obsidian";
 import { obsidianCalloutAttrId } from "../utils/calloutId";
@@ -92,7 +86,8 @@ function flashDecorations(state: EditorState, { extent, delayed }: CalloutFlash)
 			const inline = extent.kind === "inline";
 			// Inclusive, so the mark opens before the pill's replace widget at the
 			// same offset and wraps it; a plain mark starts after it and never shows.
-			if (inline) ranges.push(Decoration.mark({ class: CSS_FLASH_MARK + suffix, inclusive: true }).range(from, to));
+			if (inline)
+				ranges.push(Decoration.mark({ class: CSS_FLASH_MARK + suffix, inclusive: true }).range(from, to));
 			// The tint. On an inline token it is that plain mark, so a drawn pill
 			// hides it (the pill flashes itself) and the token's raw text keeps it:
 			// styles.css never has to ask which one is showing. A span holds no
@@ -133,7 +128,11 @@ export function renderedBlockCallout(view: EditorView, extent: CalloutExtent): H
 	let outer: { widget: HTMLElement; line: number } | null = null;
 	for (const widget of Array.from(view.contentDOM.querySelectorAll<HTMLElement>(".cm-embed-block.cm-callout"))) {
 		let line: number;
-		try { line = doc.lineAt(view.posAtDOM(widget)).number - 1; } catch { continue; }
+		try {
+			line = doc.lineAt(view.posAtDOM(widget)).number - 1;
+		} catch {
+			continue;
+		}
 		if (line <= extent.startLine && (!outer || line > outer.line)) outer = { widget, line };
 	}
 	if (!outer) return null;
@@ -146,10 +145,12 @@ export function renderedBlockCallout(view: EditorView, extent: CalloutExtent): H
 	// Nested callouts render inside the outer widget in source order.
 	let index = 0;
 	for (let line = outer.line + 1; line <= extent.startLine; line++) if (isBlockHeaderLine(lines, line)) index++;
-	const rawId = scanLineForCalloutTokens(lines.getLine(extent.startLine))
-		.find((token) => token.from === extent.from)?.rawId;
+	const rawId = scanLineForCalloutTokens(lines.getLine(extent.startLine)).find(
+		(token) => token.from === extent.from,
+	)?.rawId;
 	const nested = callouts[index];
-	if (nested && rawId !== undefined && nested.getAttribute("data-callout") === obsidianCalloutAttrId(rawId)) return nested;
+	if (nested && rawId !== undefined && nested.getAttribute("data-callout") === obsidianCalloutAttrId(rawId))
+		return nested;
 	return callouts[0] ?? null;
 }
 
@@ -171,14 +172,19 @@ class CalloutFlashPlugin {
 		}
 	}
 
-	destroy(): void { this.stop(); }
+	destroy(): void {
+		this.stop();
+	}
 
 	private start(flash: CalloutFlash): void {
-		this.timer = window.setTimeout(() => {
-			this.timer = null;
-			if (!this.view.dom.isConnected) return;
-			this.view.dispatch({ effects: setCalloutFlash.of(null) });
-		}, FLASH_MS + (flash.delayed ? FLASH_DELAY_MS : 0));
+		this.timer = window.setTimeout(
+			() => {
+				this.timer = null;
+				if (!this.view.dom.isConnected) return;
+				this.view.dispatch({ effects: setCalloutFlash.of(null) });
+			},
+			FLASH_MS + (flash.delayed ? FLASH_DELAY_MS : 0),
+		);
 		if (flash.extent.kind === "regular") this.lightWidget(flash, 0);
 	}
 
@@ -222,8 +228,12 @@ export function revealCalloutInEditor(
 	range: { from: EditorPosition; to: EditorPosition },
 	delayed = false,
 ): void {
-	const extent = calloutExtentAt(lines, range.from.line, range.from.ch,
-		range.to.line === range.from.line ? range.to.ch : range.from.ch);
+	const extent = calloutExtentAt(
+		lines,
+		range.from.line,
+		range.from.ch,
+		range.to.line === range.from.line ? range.to.ch : range.from.ch,
+	);
 	if (!extent) return;
 	const wholeLines = extent.kind === "regular" || extent.kind === "heading";
 	const start = { line: extent.startLine, ch: wholeLines ? 0 : extent.from };
@@ -246,7 +256,9 @@ export function revealCalloutInEditor(
 	});
 	// Head before anchor, as core's own search highlight does: a callout that
 	// fits is centred, one taller than the editor is aligned by its top.
-	effects.push(EditorView.scrollIntoView(EditorSelection.range(to, from), { y: "center", yMargin: SCROLL_MARGIN_PX }));
+	effects.push(
+		EditorView.scrollIntoView(EditorSelection.range(to, from), { y: "center", yMargin: SCROLL_MARGIN_PX }),
+	);
 	const flash: CalloutFlash = { extent, delayed };
 	if (!view.state.field(calloutFlashField, false)?.flash) {
 		view.dispatch({ effects: [...effects, setCalloutFlash.of(flash)] });
@@ -255,8 +267,10 @@ export function revealCalloutInEditor(
 	// A flash still showing has to be painted off for one frame first, or a
 	// second click on the same callout would not replay the animation.
 	view.dispatch({ effects: [...effects, setCalloutFlash.of(null)] });
-	window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
-		if (!view.dom.isConnected) return;
-		view.dispatch({ effects: setCalloutFlash.of(flash) });
-	}));
+	window.requestAnimationFrame(() =>
+		window.requestAnimationFrame(() => {
+			if (!view.dom.isConnected) return;
+			view.dispatch({ effects: setCalloutFlash.of(flash) });
+		}),
+	);
 }

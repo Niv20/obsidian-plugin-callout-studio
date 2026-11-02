@@ -113,9 +113,7 @@ function cursorOf(editor: Editor | undefined): EditorPosition | null {
  * only other value — is Reading view and nothing else. That is what lets the
  * message name the two modes that do work.
  */
-export function classifyTargetEditor(
-	view: MarkdownView | null,
-): TargetEditorResult {
+export function classifyTargetEditor(view: MarkdownView | null): TargetEditorResult {
 	if (!view?.file) return { ok: false, problem: "no-note" };
 	if (view.getMode() !== "source") return { ok: false, problem: "reading-view" };
 	const { editor } = view;
@@ -202,10 +200,17 @@ export function isTargetStillValid(app: App, target: TargetEditor): boolean {
 
 function hasTargetIdentity(app: App, { view, editor, file }: TargetEditor): boolean {
 	try {
-		return !!file && view.file === file && view.editor === editor &&
-			!!view.leaf && view.leaf.view === view &&
-			app.workspace.getLeavesOfType("markdown").includes(view.leaf);
-	} catch { return false; }
+		return (
+			!!file &&
+			view.file === file &&
+			view.editor === editor &&
+			!!view.leaf &&
+			view.leaf.view === view &&
+			app.workspace.getLeavesOfType("markdown").includes(view.leaf)
+		);
+	} catch {
+		return false;
+	}
 }
 
 /**
@@ -219,10 +224,7 @@ function hasTargetIdentity(app: App, { view, editor, file }: TargetEditor): bool
  * than returned as-is: `isTargetStillValid` asks whether it is the *same* live
  * editor, which is not the same question as whether it can be written into.
  */
-export function currentTargetEditor(
-	app: App,
-	captured: TargetEditor | null,
-): TargetEditorResult {
+export function currentTargetEditor(app: App, captured: TargetEditor | null): TargetEditorResult {
 	if (captured) {
 		if (!hasTargetIdentity(app, captured)) return { ok: false, problem: "target-moved" };
 		return classifyTargetEditor(captured.view);

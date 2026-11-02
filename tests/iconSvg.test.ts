@@ -30,10 +30,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import { svgToDataUri } from "../src/icons/svg";
 import { followsCalloutColor } from "../src/icons/packs/userImages";
-import {
-	USER_IMAGE_ACCEPT,
-	importImageFile,
-} from "../src/icons/userImageImport";
+import { USER_IMAGE_ACCEPT, importImageFile } from "../src/icons/userImageImport";
 import type { CalloutIcon, UserImageIcon } from "../src/types";
 
 /* ------------------------------------------------------------------ *
@@ -108,10 +105,7 @@ describe("svgToDataUri", () => {
 		const svg =
 			`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">` +
 			`<path d="M1 1L2 2Z" fill="#3b82f6"/><title>a&amp;b</title></svg>`;
-		assert.equal(
-			decodeURIComponent(payload(svgToDataUri(svg)).replace(/%22/g, '"')),
-			svg,
-		);
+		assert.equal(decodeURIComponent(payload(svgToDataUri(svg)).replace(/%22/g, '"')), svg);
 	});
 
 	it("escapes the whitespace an unquoted url() token would end on", () => {
@@ -173,11 +167,7 @@ describe("followsCalloutColor", () => {
 		// The capability is the artwork's: a mask is a stencil, so recolouring a
 		// photograph would come out as a silhouette.
 		for (const format of ["png", "jpeg", "webp"] as const) {
-			assert.equal(
-				followsCalloutColor(icon({ recolor: true }), image({ format })),
-				false,
-				format,
-			);
+			assert.equal(followsCalloutColor(icon({ recolor: true }), image({ format })), false, format);
 		}
 	});
 
@@ -187,10 +177,7 @@ describe("followsCalloutColor", () => {
 	});
 
 	it("says no for a library icon, which has no colours of its own to keep", () => {
-		assert.equal(
-			followsCalloutColor({ type: "octicons", value: "alert", recolor: true }, undefined),
-			false,
-		);
+		assert.equal(followsCalloutColor({ type: "octicons", value: "alert", recolor: true }, undefined), false);
 	});
 });
 
@@ -200,8 +187,7 @@ describe("followsCalloutColor", () => {
 
 /** A `File` built from raw bytes, as the picker or a drop would hand one over. */
 function file(name: string, bytes: number[] | string, size?: number): File {
-	const body =
-		typeof bytes === "string" ? bytes : new Uint8Array(bytes);
+	const body = typeof bytes === "string" ? bytes : new Uint8Array(bytes);
 	const real = new File([body], name);
 	if (size === undefined) return real;
 	// `File.size` is read-only; a five-megabyte fixture would be five megabytes
@@ -236,18 +222,12 @@ describe("importImageFile — what the file actually is", () => {
 	};
 
 	it("refuses a file whose first bytes are no picture at all", async () => {
-		assert.equal(
-			await reason(file("notes.txt", "just some text")),
-			"iconPicker.customUnsupported",
-		);
+		assert.equal(await reason(file("notes.txt", "just some text")), "iconPicker.customUnsupported");
 		assert.equal(await reason(file("empty.png", "")), "iconPicker.customUnsupported");
 	});
 
 	it("refuses a PDF, whatever it has been renamed to", async () => {
-		assert.equal(
-			await reason(file("logo.png", "%PDF-1.7\n")),
-			"iconPicker.customUnsupported",
-		);
+		assert.equal(await reason(file("logo.png", "%PDF-1.7\n")), "iconPicker.customUnsupported");
 	});
 
 	it("refuses a GIF — a real picture, but not one of the four offered", async () => {
@@ -269,11 +249,7 @@ describe("importImageFile — what the file actually is", () => {
 			["logo.jpg", PNG],
 			["shot.png", WEBP],
 		] as const) {
-			assert.equal(
-				await reason(file(name, [...bytes])),
-				"iconPicker.customDecodeFailed",
-				name,
-			);
+			assert.equal(await reason(file(name, [...bytes])), "iconPicker.customDecodeFailed", name);
 		}
 	});
 
@@ -301,12 +277,7 @@ describe("importImageFile — what the file actually is", () => {
 	it("never throws, whatever it is handed", async () => {
 		// A bad file is an outcome the picker reports, not an error that should
 		// abandon the rest of a multi-file drop.
-		for (const f of [
-			file("x.svg", "<svg"),
-			file("x.png", PNG),
-			file("x", ""),
-			file("x.webp", [0x52, 0x49]),
-		]) {
+		for (const f of [file("x.svg", "<svg"), file("x.png", PNG), file("x", ""), file("x.webp", [0x52, 0x49])]) {
 			const result = await importImageFile(f);
 			assert.equal(typeof result.ok, "boolean");
 		}

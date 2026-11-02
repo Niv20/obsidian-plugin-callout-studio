@@ -74,7 +74,5 @@ export function fallbackCalloutIconProp(def: CalloutDefinition): string {
 	if (def.hideIcon === true) return FALLBACK_ICON_SENTINEL;
 	const pack = packFor(def.icon);
 	if (!pack) return "";
-	return pack.kind === "builtin"
-		? calloutIconProp(def)
-		: FALLBACK_ICON_SENTINEL;
+	return pack.kind === "builtin" ? calloutIconProp(def) : FALLBACK_ICON_SENTINEL;
 }

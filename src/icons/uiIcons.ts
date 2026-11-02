@@ -76,14 +76,23 @@ const outline = (brush: string, badge: string): string =>
 
 /** SVG inner markup, also used to export the editable standalone SVGs. */
 export const UI_ICON_CONTENT: Readonly<Record<string, string>> = {
-	[QUICK_INSERT_ICON_ID]: outline(quickInsertBrush, `
-  <path d="M15 18.5h7M18.5 15v7"/>`),
-	[STATISTICS_ICON_ID]: outline(occurrencesBrush, `
+	[QUICK_INSERT_ICON_ID]: outline(
+		quickInsertBrush,
+		`
+  <path d="M15 18.5h7M18.5 15v7"/>`,
+	),
+	[STATISTICS_ICON_ID]: outline(
+		occurrencesBrush,
+		`
   <circle cx="16.5" cy="16.5" r="4"/>
-  <path d="m19.3 19.3 2.7 2.7"/>`),
-	[PORTABLE_CONVERSION_ICON_ID]: outline(conversionBrush, `
+  <path d="m19.3 19.3 2.7 2.7"/>`,
+	),
+	[PORTABLE_CONVERSION_ICON_ID]: outline(
+		conversionBrush,
+		`
   <path d="M19.5 12.5H22V15"/>
   <path d="M15.5 12.5H13V15"/>
   <path d="M17.5 22v-4.15a2 2 0 0 0-.586-1.436L13 12.5"/>
-  <path d="m19 15.5 3-3"/>`),
+  <path d="m19 15.5 3-3"/>`,
+	),
 };

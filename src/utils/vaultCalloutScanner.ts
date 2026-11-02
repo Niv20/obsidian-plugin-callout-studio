@@ -24,13 +24,8 @@ import { calloutIdentity, mergeDashSpaceVariants, normalizeCalloutId } from "./c
 import { rewriteVaultFiles, scanVaultFiles } from "./vaultRewrite";
 import type { NoteRewriteJournal } from "./noteRewriteUndo";
 import type { LineCalloutToken } from "../editor/calloutTokens";
-import {
-	forEachCalloutToken,
-} from "../editor/calloutTokens";
-import {
-	iterateDocumentCalloutLines,
-	iterateDocumentCallouts,
-} from "../editor/documentCallouts";
+import { forEachCalloutToken } from "../editor/calloutTokens";
+import { iterateDocumentCalloutLines, iterateDocumentCallouts } from "../editor/documentCallouts";
 import { splitCalloutMetadata } from "./calloutId";
 import { foldMetadataCase, metadataWords } from "./calloutMetadata";
 import { splitFoldMark } from "../editor/calloutWriter";
@@ -70,10 +65,7 @@ function metadataSuffix(token: LineCalloutToken): string {
  * the rule itself lives in `calloutWriter.splitFoldMark`, next to the writer
  * that emits the mark, rather than being spelled out once per caller.
  */
-function splitFoldAndTitle(
-	line: string,
-	token: LineCalloutToken,
-): { foldMark: string; title: string } {
+function splitFoldAndTitle(line: string, token: LineCalloutToken): { foldMark: string; title: string } {
 	return splitFoldMark(line.slice(token.to), token.role);
 }
 
@@ -110,10 +102,7 @@ function rewriteTokensOnLine(
  */
 function rewriteCalloutLines(
 	content: string,
-	rewriteLine: (
-		line: string,
-		tokens: LineCalloutToken[],
-	) => { line: string; count: number },
+	rewriteLine: (line: string, tokens: LineCalloutToken[]) => { line: string; count: number },
 ): { content: string; count: number } | null {
 	if (content.indexOf("[!") === -1) return null;
 
@@ -137,10 +126,7 @@ function rewriteCalloutLines(
  *
  * Dash/space spellings merge into one — {@link mergeDashSpaceVariants}.
  */
-export function scanStringForUnknownCallouts(
-	content: string,
-	knownIds: Set<string>,
-): string[] {
+export function scanStringForUnknownCallouts(content: string, knownIds: Set<string>): string[] {
 	const found = new Set<string>();
 	forEachCalloutToken(content, (rawId) => {
 		const id = normalizeCalloutId(rawId);
@@ -155,10 +141,7 @@ export function scanStringForUnknownCallouts(
  * Count how many markdown files reference any of the given callout IDs.
  * Uses `cachedRead`; skips stale handles and rejects incomplete scans.
  */
-export async function countCalloutUsages(
-	app: App,
-	ids: string[],
-): Promise<{ fileCount: number; totalCount: number }> {
+export async function countCalloutUsages(app: App, ids: string[]): Promise<{ fileCount: number; totalCount: number }> {
 	if (ids.length === 0) return { fileCount: 0, totalCount: 0 };
 
 	const idSet = new Set(ids.map((id) => calloutIdentity(id)));
@@ -307,7 +290,9 @@ export async function replaceCalloutIdsInVault(
 	// in replaceCalloutTitlesInVault — swapTitles drops it.
 	const wanted = swapTitles(titleSwap);
 
-	const { count } = await rewriteVaultFiles(app, (content) =>
+	const { count } = await rewriteVaultFiles(
+		app,
+		(content) =>
 			rewriteCalloutLines(content, (line, tokens) =>
 				rewriteTokensOnLine(line, tokens, (token) => {
 					if (!idSet.has(calloutIdentity(token.rawId))) return null;
@@ -362,16 +347,24 @@ export async function normalizeFoldMarkersInVault(
 	if (ids.length === 0) return 0;
 
 	const idSet = new Set(ids.map(calloutIdentity));
-	const { count } = await rewriteVaultFiles(app, (content) =>
-		rewriteCalloutLines(content, (line, tokens) =>
-			rewriteTokensOnLine(line, tokens, (token) => {
-				// Keep the full written quote prefix, including repeated spaces.
-				if (token.role !== "regular" || !idSet.has(calloutIdentity(token.rawId))) return null;
-				const current = /^[+-]/.exec(line.slice(token.to))?.[0] ?? "";
-				if (current === desiredMarker) return null;
-				return { text: `${line.slice(token.from, token.to)}${desiredMarker}`, end: token.to + current.length };
-			}),
-		), requireComplete, journal);
+	const { count } = await rewriteVaultFiles(
+		app,
+		(content) =>
+			rewriteCalloutLines(content, (line, tokens) =>
+				rewriteTokensOnLine(line, tokens, (token) => {
+					// Keep the full written quote prefix, including repeated spaces.
+					if (token.role !== "regular" || !idSet.has(calloutIdentity(token.rawId))) return null;
+					const current = /^[+-]/.exec(line.slice(token.to))?.[0] ?? "";
+					if (current === desiredMarker) return null;
+					return {
+						text: `${line.slice(token.from, token.to)}${desiredMarker}`,
+						end: token.to + current.length,
+					};
+				}),
+			),
+		requireComplete,
+		journal,
+	);
 	return count;
 }
 
@@ -400,7 +393,9 @@ export async function replaceCalloutTitlesInVault(
 	// to it, which is never what a rename means.
 	if (!wanted) return 0;
 
-	const { count } = await rewriteVaultFiles(app, (content) =>
+	const { count } = await rewriteVaultFiles(
+		app,
+		(content) =>
 			rewriteCalloutLines(content, (line, tokens) =>
 				rewriteTokensOnLine(line, tokens, (token) => {
 					if (token.role === "inline") return null;
@@ -427,12 +422,7 @@ export async function replaceCalloutTitlesInVault(
  * type as written, the separators around them, and everything after the `]`
  * are left exactly as they were.
  */
-function withMetadataWord(
-	line: string,
-	token: LineCalloutToken,
-	word: string,
-	replacement: string,
-): string | null {
+function withMetadataWord(line: string, token: LineCalloutToken, word: string, replacement: string): string | null {
 	if (!token.hasMetadata) return null;
 	const target = foldMetadataCase(word);
 	// The bracket's own text, so the type keeps the spelling the note gave it.

@@ -182,7 +182,8 @@ export class BrushMascot {
 		const win = parent.ownerDocument.defaultView ?? window;
 		// Someone who asked their system for less motion still sees the faces,
 		// but the brush itself never jumps, shakes or throws paint.
-		this.reducedMotion = typeof win.matchMedia === "function" && win.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		this.reducedMotion =
+			typeof win.matchMedia === "function" && win.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 		this.svg = svgEl("svg", {
 			class: "cs-mascot",
@@ -212,7 +213,13 @@ export class BrushMascot {
 		const cheek = { class: "cs-mascot-paint", r: String(CHEEK_RADIUS), stroke: "none", fill: "currentColor" };
 		this.cheeks = [add(this.body, "circle", cheek), add(this.body, "circle", cheek)];
 		this.dropLayer = add(this.svg, "g", { class: "cs-mascot-paint", stroke: "none", fill: "currentColor" });
-		this.rippleEl = add(this.svg, "circle", { class: "cs-mascot-paint", fill: "none", "stroke-width": "0.7", r: "0", opacity: "0" });
+		this.rippleEl = add(this.svg, "circle", {
+			class: "cs-mascot-paint",
+			fill: "none",
+			"stroke-width": "0.7",
+			r: "0",
+			opacity: "0",
+		});
 		parent.appendChild(this.svg);
 		this.draw();
 		if (options.interactive ?? true) this.stopPlay = playWith(this, parent as HTMLElement);
@@ -611,7 +618,10 @@ export class BrushMascot {
 		drawEye(this.eyes[1], p.eyeR, gaze);
 
 		// Each cheek with its place on the face, left then right.
-		const cheeks: [SVGCircleElement, Vec][] = [[this.cheeks[0], CHEEKS[0]], [this.cheeks[1], CHEEKS[1]]];
+		const cheeks: [SVGCircleElement, Vec][] = [
+			[this.cheeks[0], CHEEKS[0]],
+			[this.cheeks[1], CHEEKS[1]],
+		];
 		for (const [cheek, [cs, ct]] of cheeks) {
 			const [x, y] = toIcon(cs + gs * 0.5, ct + gt * 0.5);
 			cheek.setAttribute("cx", num(x));
@@ -667,7 +677,11 @@ function drawEye(path: SVGPathElement, e: Eye, [gs, gt]: Vec): void {
 }
 
 /** Make an SVG element with `attrs` and put it at the end of `parent`. */
-function add<K extends keyof SVGElementTagNameMap>(parent: Element, tag: K, attrs: Record<string, string>): SVGElementTagNameMap[K] {
+function add<K extends keyof SVGElementTagNameMap>(
+	parent: Element,
+	tag: K,
+	attrs: Record<string, string>,
+): SVGElementTagNameMap[K] {
 	const el = svgEl(tag, attrs);
 	parent.appendChild(el);
 	return el;

@@ -30,21 +30,13 @@ import type { CustomPalette } from "../src/types";
 describe("resolveCalloutManagerColors — every preset is reachable", () => {
 	for (const preset of getAllColorPalettes()) {
 		it(`${preset.name} (${preset.colorLight}/${preset.colorDark}) resolves to itself`, () => {
-			const resolved = resolveCalloutManagerColors(
-				preset.colorLight,
-				preset.colorDark,
-				[],
-			);
+			const resolved = resolveCalloutManagerColors(preset.colorLight, preset.colorDark, []);
 			assert.equal(
 				resolved.paletteId,
 				preset.id,
 				`expected the ${preset.name} preset, got ${resolved.paletteId}`,
 			);
-			assert.equal(
-				resolved.createdPalette,
-				undefined,
-				`${preset.name} minted a duplicate instead of matching`,
-			);
+			assert.equal(resolved.createdPalette, undefined, `${preset.name} minted a duplicate instead of matching`);
 		});
 	}
 
@@ -149,13 +141,22 @@ describe("the preset list — groups, and every id ever saved", () => {
 	// dropping one turns that user's callouts into "Deleted color".
 	const SAVED_ONCE: Record<string, string> = {
 		// Role names, before the presets were named for their hue.
-		note: "blue", abstract: "cyan", tip: "teal", success: "green",
-		question: "orange", failure: "red", danger: "crimson", example: "purple",
+		note: "blue",
+		abstract: "cyan",
+		tip: "teal",
+		success: "green",
+		question: "orange",
+		failure: "red",
+		danger: "crimson",
+		example: "purple",
 		quote: "gray",
 		// Hue names that later took Obsidian's own word for the colour.
-		violet: "purple", bubblegum: "pink",
+		violet: "purple",
+		bubblegum: "pink",
 		// Retired from the menu, still known: see tests/retiredPresets.test.ts.
-		amber: "amber", lime: "lime", crimson: "crimson",
+		amber: "amber",
+		lime: "lime",
+		crimson: "crimson",
 	};
 	for (const [saved, now] of Object.entries(SAVED_ONCE)) {
 		it(`a callout saved on "${saved}" resolves to ${now}`, () => {
@@ -168,8 +169,20 @@ describe("the preset list — groups, and every id ever saved", () => {
 	// saves their colours as a palette — ever since. Pinned so that stays a
 	// decision rather than an accident.
 	it("2.0.0's short-lived presets are deleted colours, not renamed ones", () => {
-		for (const id of ["ocean", "cobalt", "emerald", "forest", "mint", "rose",
-			"lavender", "sunset", "gold", "slate", "graphite", "storm"]) {
+		for (const id of [
+			"ocean",
+			"cobalt",
+			"emerald",
+			"forest",
+			"mint",
+			"rose",
+			"lavender",
+			"sunset",
+			"gold",
+			"slate",
+			"graphite",
+			"storm",
+		]) {
 			assert.equal(findPresetByPaletteId(id), null, id);
 		}
 	});
@@ -200,7 +213,11 @@ describe("the preset list — groups, and every id ever saved", () => {
 function deltaE2000(hexA: string, hexB: string): number {
 	const lab = (hex: string): [number, number, number] => {
 		const lin = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
-		const [r, g, b] = [1, 3, 5].map((i) => lin(parseInt(hex.slice(i, i + 2), 16) / 255)) as [number, number, number];
+		const [r, g, b] = [1, 3, 5].map((i) => lin(parseInt(hex.slice(i, i + 2), 16) / 255)) as [
+			number,
+			number,
+			number,
+		];
 		const f = (v: number) => (v > 0.008856 ? Math.cbrt(v) : 7.787 * v + 16 / 116);
 		const x = f((0.4124 * r + 0.3576 * g + 0.1805 * b) / 0.95047);
 		const y = f(0.2126 * r + 0.7152 * g + 0.0722 * b);
@@ -227,7 +244,12 @@ function deltaE2000(hexA: string, hexB: string): number {
 	const Lb = (L1 + L2) / 2;
 	const Cb = (C1 + C2) / 2;
 	const hb = C1 * C2 === 0 ? h1 + h2 : Math.abs(h1 - h2) <= 180 ? (h1 + h2) / 2 : (h1 + h2 + 360) / 2;
-	const T = 1 - 0.17 * Math.cos(rad(hb - 30)) + 0.24 * Math.cos(rad(2 * hb)) + 0.32 * Math.cos(rad(3 * hb + 6)) - 0.2 * Math.cos(rad(4 * hb - 63));
+	const T =
+		1 -
+		0.17 * Math.cos(rad(hb - 30)) +
+		0.24 * Math.cos(rad(2 * hb)) +
+		0.32 * Math.cos(rad(3 * hb + 6)) -
+		0.2 * Math.cos(rad(4 * hb - 63));
 	const Rc = 2 * Math.sqrt(Cb ** 7 / (Cb ** 7 + 25 ** 7));
 	const Rt = -Math.sin(rad(2 * 30 * Math.exp(-(((hb - 275) / 25) ** 2)))) * Rc;
 	const Sl = 1 + (0.015 * (Lb - 50) ** 2) / Math.sqrt(20 + (Lb - 50) ** 2);

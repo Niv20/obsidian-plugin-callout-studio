@@ -49,9 +49,7 @@ export interface VaultCalloutStatistics {
 	failedFileCount?: number;
 }
 
-export async function scanVaultCalloutStatistics(
-	app: App,
-): Promise<VaultCalloutStatistics> {
+export async function scanVaultCalloutStatistics(app: App): Promise<VaultCalloutStatistics> {
 	const index = getCalloutOccurrenceIndex(app);
 	await index.ensureFresh();
 	return getVaultCalloutStatistics(index);
@@ -66,8 +64,7 @@ export function getVaultCalloutStatistics(index: CalloutOccurrenceIndex): VaultC
 		const key = occurrence.identity;
 		let entry = byId.get(key);
 		if (!entry) {
-			entry = { id: normalizeCalloutId(occurrence.rawId), fileCount: 0,
-				totalCount: 0, roles: emptyRoleCounts() };
+			entry = { id: normalizeCalloutId(occurrence.rawId), fileCount: 0, totalCount: 0, roles: emptyRoleCounts() };
 			byId.set(key, entry);
 			filesById.set(key, new Set());
 		}
@@ -82,9 +79,7 @@ export function getVaultCalloutStatistics(index: CalloutOccurrenceIndex): VaultC
 		filesWithCallouts: result.fileCount,
 		totalCount: result.totalCount,
 		roleTotals: result.roles,
-		types: Array.from(byId.values()).sort(
-			(a, b) => b.totalCount - a.totalCount || a.id.localeCompare(b.id),
-		),
+		types: Array.from(byId.values()).sort((a, b) => b.totalCount - a.totalCount || a.id.localeCompare(b.id)),
 		incomplete: index.status !== "ready",
 		failedFileCount: index.failures.length,
 	};

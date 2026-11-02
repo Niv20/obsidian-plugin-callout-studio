@@ -106,7 +106,9 @@ export class DeclarativeSettings {
 	 */
 	definitions(): SettingDefinitionItem[] {
 		this.listen();
-		const tree = toObsidianItems(buildTreeSafely(() => settingsTree(this.ctx, this.visitRow()), treeAfterFailure()));
+		const tree = toObsidianItems(
+			buildTreeSafely(() => settingsTree(this.ctx, this.visitRow()), treeAfterFailure()),
+		);
 		// What Obsidian draws next is this tree: later requests compare with it.
 		this.updater.markDrawn();
 		return tree;
@@ -117,7 +119,11 @@ export class DeclarativeSettings {
 		this.endVisit?.();
 		this.endVisit = null;
 		for (const dispose of this.visitDisposers.splice(0)) {
-			try { dispose(); } catch { /* one failing cleanup must not stop the rest */ }
+			try {
+				dispose();
+			} catch {
+				/* one failing cleanup must not stop the rest */
+			}
 		}
 		this.parts.disposeAll();
 	}
@@ -191,18 +197,21 @@ export class DeclarativeSettings {
 	private signature(): string {
 		const { app, plugin } = this.host;
 		const { fromTheme, own, builtIn } = partitionCallouts(this.ctx);
-		return JSON.stringify([
-			calloutListsSignature(this.ctx, activeThemeLabel(app), getLocale(), {
-				theme: fromTheme,
-				user: own,
-				builtin: builtIn,
-			}),
-			plugin.settings,
-			plugin.settingsWriter.isFrozen,
-			plugin.settingsWriter.status?.reason ?? null,
-			languageDownloading(plugin),
-			scanRunning(plugin),
-			competitorsToOffer(app, plugin).map((competitor) => competitor.id),
-		], (key, value: unknown) => (key === "userImages" ? undefined : value));
+		return JSON.stringify(
+			[
+				calloutListsSignature(this.ctx, activeThemeLabel(app), getLocale(), {
+					theme: fromTheme,
+					user: own,
+					builtin: builtIn,
+				}),
+				plugin.settings,
+				plugin.settingsWriter.isFrozen,
+				plugin.settingsWriter.status?.reason ?? null,
+				languageDownloading(plugin),
+				scanRunning(plugin),
+				competitorsToOffer(app, plugin).map((competitor) => competitor.id),
+			],
+			(key, value: unknown) => (key === "userImages" ? undefined : value),
+		);
 	}
 }

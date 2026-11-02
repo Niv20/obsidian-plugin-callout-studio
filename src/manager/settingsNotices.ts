@@ -82,13 +82,18 @@ export function offerFreshStart(
 	// Stays up (0) until it is clicked, or the pause ends. A click anywhere on
 	// a notice hides it (Obsidian does that), the button included, so pressing
 	// it is the end of the notice either way.
-	const { notice, buttonEl } = showActionNotice("paused", t("saveStatus.missingNotice"), {
-		label: t("saveStatus.openSettings"),
-		run: () => {
-			openPluginSettings(app, pluginId);
-			dispose();
+	const { notice, buttonEl } = showActionNotice(
+		"paused",
+		t("saveStatus.missingNotice"),
+		{
+			label: t("saveStatus.openSettings"),
+			run: () => {
+				openPluginSettings(app, pluginId);
+				dispose();
+			},
 		},
-	}, 0);
+		0,
+	);
 	const dispose = () => {
 		unsubscribe?.();
 		notice.hide();

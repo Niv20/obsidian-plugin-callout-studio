@@ -37,14 +37,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import { hexToRgb } from "../src/utils/colorUtils";
 import { transparentBorderProps } from "../src/manager/css/transparentBorder";
-import {
-	definition,
-	harness,
-	must,
-	parseRules,
-	ruleFor,
-	valueOf,
-} from "./support/cssInjectorHarness";
+import { definition, harness, must, parseRules, ruleFor, valueOf } from "./support/cssInjectorHarness";
 
 /**
  * `colorUtils`' own alpha band, restated rather than imported — the constants
@@ -67,10 +60,7 @@ describe("bgAlphaFor — one alpha per mode", () => {
 
 	it("lands inside the plugin's own alpha band for a pale tint", () => {
 		const { css } = harness();
-		const alpha = css.bgAlphaFor(
-			definition({ bgColorLight: PALE_LIGHT }),
-			"light",
-		);
+		const alpha = css.bgAlphaFor(definition({ bgColorLight: PALE_LIGHT }), "light");
 		assert.ok(alpha !== null);
 		assert.ok(alpha >= MIN_TINT_ALPHA && alpha <= MAX_TINT_ALPHA);
 	});
@@ -81,18 +71,12 @@ describe("bgAlphaFor — one alpha per mode", () => {
 		// reach 0, which is past MAX_TINT_ALPHA. Null is the caller's cue to
 		// paint opaque and lose the nesting step for this one callout — the
 		// documented, deliberate fallback.
-		assert.strictEqual(
-			css.bgAlphaFor(definition({ bgColorLight: "#ff0000" }), "light"),
-			null,
-		);
+		assert.strictEqual(css.bgAlphaFor(definition({ bgColorLight: "#ff0000" }), "light"), null);
 	});
 
 	it("makes a gradient's two stops share the alpha that clears BOTH", () => {
 		const { css } = harness();
-		const near = css.bgAlphaFor(
-			definition({ bgColorLight: PALE_LIGHT }),
-			"light",
-		);
+		const near = css.bgAlphaFor(definition({ bgColorLight: PALE_LIGHT }), "light");
 		const withFarStop = css.bgAlphaFor(
 			definition({
 				bgColorLight: PALE_LIGHT,
@@ -108,10 +92,7 @@ describe("bgAlphaFor — one alpha per mode", () => {
 			"light",
 		);
 		assert.ok(near !== null && withFarStop !== null);
-		assert.ok(
-			withFarStop > near,
-			`the further stop must raise the shared alpha (${near} → ${withFarStop})`,
-		);
+		assert.ok(withFarStop > near, `the further stop must raise the shared alpha (${near} → ${withFarStop})`);
 	});
 
 	it("returns null when only the gradient's far stop is unreachable", () => {
@@ -166,10 +147,7 @@ describe("bgAlphaFor — the cap on how far a nested stack may drift", () => {
 			bgColorLight: DERIVED_BG,
 		});
 		const value = must(css.bgProps(def, "light")[0], "declaration");
-		const match =
-			/color-mix\(in oklch, (#[0-9a-f]{6}) ([\d.]+)%, transparent\)/.exec(
-				value,
-			);
+		const match = /color-mix\(in oklch, (#[0-9a-f]{6}) ([\d.]+)%, transparent\)/.exec(value);
 		assert.ok(match, `expected a color-mix() declaration, got: ${value}`);
 		const [, source, pct] = match as unknown as [string, string, string];
 		const alpha = Number(pct) / 100;
@@ -186,10 +164,7 @@ describe("bgAlphaFor — the cap on how far a nested stack may drift", () => {
 
 	it("scales with how bold the background really is", () => {
 		const { css } = harness();
-		const alpha = css.bgAlphaFor(
-			definition({ colorLight: ACCENT, bgColorLight: BOLD_BG }),
-			"light",
-		);
+		const alpha = css.bgAlphaFor(definition({ colorLight: ACCENT, bgColorLight: BOLD_BG }), "light");
 		// The same accent at 45% rather than 18%, and the cap tracks it.
 		assert.strictEqual(alpha, 0.47);
 	});
@@ -281,9 +256,7 @@ describe("bgAlphaFor — the cap on how far a nested stack may drift", () => {
 		// `color-mix(in oklch, #NaNNaNNaN …)`, which the parser drops.
 		const def = definition({ bgColorLight: "transparent" });
 		assert.strictEqual(css.bgAlphaFor(def, "light"), null);
-		assert.deepStrictEqual(css.bgProps(def, "light"), [
-			"  background-color: transparent;",
-		]);
+		assert.deepStrictEqual(css.bgProps(def, "light"), ["  background-color: transparent;"]);
 	});
 });
 
@@ -295,27 +268,15 @@ describe("bgProps — the background is always a tint", () => {
 
 	it("never emits the authored hex as the background-color", () => {
 		const { css } = harness();
-		const props = css.bgProps(
-			definition({ bgColorLight: PALE_LIGHT }),
-			"light",
-		);
+		const props = css.bgProps(definition({ bgColorLight: PALE_LIGHT }), "light");
 		const value = must(props[0], "declaration");
-		assert.ok(
-			!value.includes(PALE_LIGHT),
-			`the authored hex must not be painted opaque, got: ${value}`,
-		);
-		assert.match(
-			value,
-			/^ {2}background-color: color-mix\(in oklch, #[0-9a-f]{6} [\d.]+%, transparent\);$/,
-		);
+		assert.ok(!value.includes(PALE_LIGHT), `the authored hex must not be painted opaque, got: ${value}`);
+		assert.match(value, /^ {2}background-color: color-mix\(in oklch, #[0-9a-f]{6} [\d.]+%, transparent\);$/);
 	});
 
 	it("falls back to the opaque hex only when no alpha can reproduce it", () => {
 		const { css } = harness();
-		const props = css.bgProps(
-			definition({ bgColorLight: "#ff0000" }),
-			"light",
-		);
+		const props = css.bgProps(definition({ bgColorLight: "#ff0000" }), "light");
 		assert.deepStrictEqual(props, ["  background-color: #ff0000;"]);
 	});
 
@@ -332,10 +293,7 @@ describe("bgProps — the background is always a tint", () => {
 
 	it("adds print-color-adjust only alongside a gradient image", () => {
 		const { css } = harness();
-		const flat = css.bgProps(
-			definition({ bgColorLight: PALE_LIGHT }),
-			"light",
-		);
+		const flat = css.bgProps(definition({ bgColorLight: PALE_LIGHT }), "light");
 		assert.deepStrictEqual(flat.length, 1);
 
 		const swept = css.bgProps(
@@ -351,12 +309,7 @@ describe("bgProps — the background is always a tint", () => {
 		);
 		assert.deepStrictEqual(
 			swept.map((p) => p.trim().split(":")[0]),
-			[
-				"background-color",
-				"background-image",
-				"-webkit-print-color-adjust",
-				"print-color-adjust",
-			],
+			["background-color", "background-image", "-webkit-print-color-adjust", "print-color-adjust"],
 		);
 	});
 
@@ -382,8 +335,7 @@ describe("bgProps — a dark-mode background darker than the page", () => {
 	// Core draws a dark-mode callout with `mix-blend-mode: lighten`, which keeps
 	// the lighter of the callout and the page in each channel: black came out
 	// as the page (#1c1c1c) in Reading view, while Live Preview showed black.
-	const blend = (props: string[]): string[] =>
-		props.filter((p) => p.trim().startsWith("mix-blend-mode"));
+	const blend = (props: string[]): string[] => props.filter((p) => p.trim().startsWith("mix-blend-mode"));
 
 	it("is drawn as it is, without core's lighten", () => {
 		const { css } = harness();
@@ -426,10 +378,10 @@ describe("bgProps — transparentBg", () => {
 		// A transparent def carries no bg hex, so without the early check it
 		// would fall out of `if (!bg) return []` emitting nothing — and nothing
 		// is not transparent, it is core's own default tint.
-		assert.deepStrictEqual(
-			css.bgProps(definition({ transparentBg: true }), "light"),
-			["  background-color: transparent;", "  background-image: none;"],
-		);
+		assert.deepStrictEqual(css.bgProps(definition({ transparentBg: true }), "light"), [
+			"  background-color: transparent;",
+			"  background-image: none;",
+		]);
 	});
 
 	it("wins over a gradient left behind by hand-edited data", () => {
@@ -444,9 +396,7 @@ describe("bgProps — transparentBg", () => {
 			},
 		});
 		assert.strictEqual(css.bgImageFor(def, "light"), null);
-		assert.ok(
-			css.bgProps(def, "light").includes("  background-image: none;"),
-		);
+		assert.ok(css.bgProps(def, "light").includes("  background-image: none;"));
 	});
 });
 
@@ -458,10 +408,10 @@ describe("transparentBorderProps — the outline half", () => {
 		// outline in their custom colour. Some themes draw the same frame (or an
 		// elevation ring) as an inset box-shadow off the same variable, so both
 		// have to go.
-		assert.deepStrictEqual(
-			transparentBorderProps(registry.settings.globalStyle.borderSides),
-			["  box-shadow: none;", "  border-color: transparent;"],
-		);
+		assert.deepStrictEqual(transparentBorderProps(registry.settings.globalStyle.borderSides), [
+			"  box-shadow: none;",
+			"  border-color: transparent;",
+		]);
 	});
 
 	it("leaves border-color alone once the plugin's own border is on", () => {
@@ -471,18 +421,15 @@ describe("transparentBorderProps — the outline half", () => {
 		// generateGlobalStyleCSS at one class less than this rule, so clearing
 		// the colour here would quietly erase it. box-shadow carries no such
 		// conflict — the plugin never draws its own border that way.
-		assert.deepStrictEqual(
-			transparentBorderProps(registry.settings.globalStyle.borderSides),
-			["  box-shadow: none;"],
-		);
+		assert.deepStrictEqual(transparentBorderProps(registry.settings.globalStyle.borderSides), [
+			"  box-shadow: none;",
+		]);
 	});
 
 	it("never touches border-width, so the box keeps its place in the flow", () => {
 		const { registry } = harness();
 		assert.ok(
-			transparentBorderProps(
-				registry.settings.globalStyle.borderSides,
-			).every((p) => !p.includes("border-width")),
+			transparentBorderProps(registry.settings.globalStyle.borderSides).every((p) => !p.includes("border-width")),
 		);
 	});
 
@@ -521,10 +468,7 @@ describe("transparentBorderProps — the outline half", () => {
 describe("bgImageFor — the gradient layer", () => {
 	it("is null without a gradient, and null without a base colour to sweep from", () => {
 		const { css } = harness();
-		assert.strictEqual(
-			css.bgImageFor(definition({ bgColorLight: PALE_LIGHT }), "light"),
-			null,
-		);
+		assert.strictEqual(css.bgImageFor(definition({ bgColorLight: PALE_LIGHT }), "light"), null);
 		assert.strictEqual(
 			css.bgImageFor(
 				definition({
@@ -552,19 +496,9 @@ describe("bgImageFor — the gradient layer", () => {
 		});
 		const layer = css.bgImageFor(def, "light");
 		assert.ok(layer);
-		const alphas = [
-			...layer.image.matchAll(/ ([\d.]+)%, transparent\)/g),
-		].map((m) => m[1]);
-		assert.strictEqual(
-			alphas.length,
-			2,
-			`expected two tinted stops: ${layer.image}`,
-		);
-		assert.strictEqual(
-			alphas[0],
-			alphas[1],
-			"an alpha ramp across a single linear-gradient would tilt the sweep",
-		);
+		const alphas = [...layer.image.matchAll(/ ([\d.]+)%, transparent\)/g)].map((m) => m[1]);
+		assert.strictEqual(alphas.length, 2, `expected two tinted stops: ${layer.image}`);
+		assert.strictEqual(alphas[0], alphas[1], "an alpha ramp across a single linear-gradient would tilt the sweep");
 		// And neither stop survives as the raw hex, which would re-hide the
 		// backdrop the background-color tint just exposed.
 		assert.ok(!layer.image.includes(PALE_LIGHT));
@@ -585,10 +519,7 @@ describe("bgImageFor — the gradient layer", () => {
 			"light",
 		);
 		assert.ok(layer);
-		assert.strictEqual(
-			layer.image,
-			`linear-gradient(90deg, ${PALE_LIGHT}, #ff0000)`,
-		);
+		assert.strictEqual(layer.image, `linear-gradient(90deg, ${PALE_LIGHT}, #ff0000)`);
 	});
 
 	it("normalizes the angle", () => {
@@ -622,24 +553,13 @@ describe("the tint reaches every surface that paints a callout", () => {
 
 	it("never emits an opaque authored hex as any background, anywhere", () => {
 		const { css } = harness();
-		const out =
-			css.generateCalloutCSS(swept()) +
-			"\n" +
-			css.generateTokenColorCSS(swept());
+		const out = css.generateCalloutCSS(swept()) + "\n" + css.generateTokenColorCSS(swept());
 		for (const rule of parseRules(out)) {
 			for (const prop of ["background-color", "background-image"]) {
 				const value = valueOf(rule, prop);
 				if (!value) continue;
-				for (const hex of [
-					PALE_LIGHT,
-					PALE_DARK,
-					"#fdf0e6",
-					"#2b1f16",
-				]) {
-					assert.ok(
-						!value.includes(hex),
-						`${rule.selector} paints ${hex} opaque via ${prop}: ${value}`,
-					);
+				for (const hex of [PALE_LIGHT, PALE_DARK, "#fdf0e6", "#2b1f16"]) {
+					assert.ok(!value.includes(hex), `${rule.selector} paints ${hex} opaque via ${prop}: ${value}`);
 				}
 			}
 		}
@@ -647,10 +567,7 @@ describe("the tint reaches every surface that paints a callout", () => {
 
 	it("gives the heading bar and the inline pill the same background as the block", () => {
 		const { css } = harness();
-		const block = ruleFor(
-			css.generateCalloutCSS(swept()),
-			'.callout[data-callout="quiet"]',
-		);
+		const block = ruleFor(css.generateCalloutCSS(swept()), '.callout[data-callout="quiet"]');
 		const tokens = ruleFor(
 			css.generateTokenColorCSS(swept()),
 			'.cs-inline-callout[data-callout="quiet"], .cs-heading-callout[data-callout="quiet"]',
@@ -660,26 +577,15 @@ describe("the tint reaches every surface that paints a callout", () => {
 		// studio mode marks it. The token rules land on `.cs-*`, which no theme
 		// selector can reach — marking those would only take away the user's
 		// own ability to restyle them in a snippet.
-		const bare = (v: string | undefined): string | undefined =>
-			v?.replace(/ !important$/, "");
-		assert.strictEqual(
-			bare(valueOf(tokens, "background-color")),
-			bare(valueOf(block, "background-color")),
-		);
-		assert.strictEqual(
-			bare(valueOf(tokens, "background-image")),
-			bare(valueOf(block, "background-image")),
-		);
+		const bare = (v: string | undefined): string | undefined => v?.replace(/ !important$/, "");
+		assert.strictEqual(bare(valueOf(tokens, "background-color")), bare(valueOf(block, "background-color")));
+		assert.strictEqual(bare(valueOf(tokens, "background-image")), bare(valueOf(block, "background-image")));
 	});
 
 	it("skips the dark background rule only when the emitted props are identical", () => {
 		const { css } = harness();
 		const darkBgRules = (out: string) =>
-			parseRules(out).filter(
-				(r) =>
-					r.selector.startsWith(".theme-dark") &&
-					r.props.includes("background-color"),
-			);
+			parseRules(out).filter((r) => r.selector.startsWith(".theme-dark") && r.props.includes("background-color"));
 
 		// The same hex in both modes is NOT the same declaration: each mode
 		// solves its tint against its own backdrop, so `#eef4fa` comes out as two
@@ -700,11 +606,6 @@ describe("the tint reaches every surface that paints a callout", () => {
 		// two literal declarations whatever the mode — so the dark copy is
 		// dropped and the unscoped light rule carries both themes. That is the
 		// explicit-undefined cascade the comparison exists for.
-		assert.strictEqual(
-			darkBgRules(
-				css.generateTokenColorCSS(definition({ transparentBg: true })),
-			).length,
-			0,
-		);
+		assert.strictEqual(darkBgRules(css.generateTokenColorCSS(definition({ transparentBg: true }))).length, 0);
 	});
 });

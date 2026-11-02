@@ -53,17 +53,10 @@ export type IdOwnership =
 	/** Another callout's main id. */
 	| { kind: "main"; owner: CalloutDefinition };
 
-type OwnershipRegistry = Pick<
-	CalloutRegistry,
-	"findAttrIdConflict" | "getBuiltInDefault" | "themeOwns" | "settings"
->;
+type OwnershipRegistry = Pick<CalloutRegistry, "findAttrIdConflict" | "getBuiltInDefault" | "themeOwns" | "settings">;
 
 /** Who has `id`, apart from the callout being edited (`existingId`). */
-export function idOwnership(
-	registry: OwnershipRegistry,
-	id: string,
-	existingId: string | null,
-): IdOwnership {
+export function idOwnership(registry: OwnershipRegistry, id: string, existingId: string | null): IdOwnership {
 	const owner = registry.findAttrIdConflict(id, existingId);
 	if (!owner) return { kind: "free" };
 	if (owner.source === "theme" || registry.themeOwns(owner)) return { kind: "theme", owner };
@@ -112,9 +105,7 @@ export function takeMovedIds(
 	const fallbackId = registry.settings.fallbackCalloutId;
 
 	for (const [id, before] of sources) {
-		const leaving = new Set(
-			moves.filter((move) => move.from === id).map((move) => calloutIdentity(move.id)),
-		);
+		const leaving = new Set(moves.filter((move) => move.from === id).map((move) => calloutIdentity(move.id)));
 		if (moves.some((move) => move.from === id && move.removeRow)) {
 			registry.remove(id);
 			continue;

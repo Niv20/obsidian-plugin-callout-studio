@@ -19,7 +19,11 @@ import { isNewerSettingsFormat } from "./foreignFields";
 import { registryIsOwned } from "./registryOwnership";
 import { tryAdoptExternalSettings, type ExternalReloadHost } from "./settingsAdopt";
 import {
-	backupDeviceOf, listSettingsBackups, settingsBackupDir, writeRawSettingsCopy, writeSettingsBackup,
+	backupDeviceOf,
+	listSettingsBackups,
+	settingsBackupDir,
+	writeRawSettingsCopy,
+	writeSettingsBackup,
 } from "./settingsBackup";
 import { inspectSettingsFile, type SettingsDiagnosis } from "./settingsDiagnosis";
 import { settingsDataPath } from "./settingsFile";
@@ -75,8 +79,11 @@ function normalized(data: unknown): Partial<PluginData> | null {
 		const scratch = new CalloutRegistry();
 		scratch.load(body);
 		return scratch.toSaveData();
-	} catch { return null; }
-	finally { setUserImages(images); }
+	} catch {
+		return null;
+	} finally {
+		setUserImages(images);
+	}
 }
 
 export class SettingsRecoveryService {
@@ -103,9 +110,10 @@ export class SettingsRecoveryService {
 	 * rather than one after another.
 	 */
 	async listSources(): Promise<RecoverySource[]> {
-		const known = this.normalizedCopies, seen = new Map<string, Partial<PluginData> | null>();
+		const known = this.normalizedCopies,
+			seen = new Map<string, Partial<PluginData> | null>();
 		const normalize = (key: string, raw: () => unknown): Partial<PluginData> | null => {
-			const data = known.has(key) ? known.get(key) ?? null : normalized(raw());
+			const data = known.has(key) ? (known.get(key) ?? null) : normalized(raw());
 			seen.set(key, data);
 			return data;
 		};
@@ -114,41 +122,72 @@ export class SettingsRecoveryService {
 			try {
 				const text = await adapter.read(path);
 				return { data: normalize(`file:${hash64(text)}`, () => JSON.parse(text)) };
-			} catch { return { data: null }; }
+			} catch {
+				return { data: null };
+			}
 		};
 		const history = async (): Promise<RecoverySource[]> => {
 			try {
-				return (await this.host.settingsWriter.historyEntries()).map(entry => ({
-					kind: "history", time: entry.savedAt, path: null, historyHash: entry.hash, origin: "this-device",
-					data: normalize(`history:${entry.hash}`, () => entry.data), reason: entry.reason ?? null,
+				return (await this.host.settingsWriter.historyEntries()).map((entry) => ({
+					kind: "history",
+					time: entry.savedAt,
+					path: null,
+					historyHash: entry.hash,
+					origin: "this-device",
+					data: normalize(`history:${entry.hash}`, () => entry.data),
+					reason: entry.reason ?? null,
 				}));
-			} catch (error) { console.warn("[callout-studio] settings history could not be read", error); return []; }
+			} catch (error) {
+				console.warn("[callout-studio] settings history could not be read", error);
+				return [];
+			}
 		};
 		const backups = async (): Promise<RecoverySource[]> => {
 			try {
 				const [labels, entries] = await Promise.all([
-					readVersionLabels(adapter, settingsBackupDir(this.host)), listSettingsBackups(this.host),
+					readVersionLabels(adapter, settingsBackupDir(this.host)),
+					listSettingsBackups(this.host),
 				]);
 				const device = backupDeviceOf(this.host);
-				return await Promise.all(entries.map(async (entry): Promise<RecoverySource> => ({
-					kind: "backup", time: entry.time, path: entry.path, historyHash: null,
-					origin: entry.device === null ? "older-version" : entry.device === device ? "this-device" : "other-device",
-					reason: labels.reasons.get(baseName(entry.path)) ?? null, ...await read(entry.path),
-				})));
-			} catch (error) { console.warn("[callout-studio] settings backups could not be listed", error); return []; }
+				return await Promise.all(
+					entries.map(async (entry): Promise<RecoverySource> => ({
+						kind: "backup",
+						time: entry.time,
+						path: entry.path,
+						historyHash: null,
+						origin:
+							entry.device === null
+								? "older-version"
+								: entry.device === device
+									? "this-device"
+									: "other-device",
+						reason: labels.reasons.get(baseName(entry.path)) ?? null,
+						...(await read(entry.path)),
+					})),
+				);
+			} catch (error) {
+				console.warn("[callout-studio] settings backups could not be listed", error);
+				return [];
+			}
 		};
 		const copies = async (): Promise<RecoverySource[]> => {
 			try {
 				const primary = settingsDataPath(this.host);
 				const dir = primary.slice(0, primary.lastIndexOf("/"));
 				// Any sync service's copy: `data 2.json`, `data (conflicted copy …).json`, …
-				const paths = (await adapter.list(dir)).files.sort()
-					.filter(path => path !== primary && /^data\b.*\.json$/i.test(path.slice(dir.length + 1)));
-				return await Promise.all(paths.map(async (path): Promise<RecoverySource> => {
-					const [time, contents] = await Promise.all([this.modifiedTime(path), read(path)]);
-					return { kind: "copy", time, path, historyHash: null, origin: null, reason: null, ...contents };
-				}));
-			} catch (error) { console.warn("[callout-studio] settings copies could not be listed", error); return []; }
+				const paths = (await adapter.list(dir)).files
+					.sort()
+					.filter((path) => path !== primary && /^data\b.*\.json$/i.test(path.slice(dir.length + 1)));
+				return await Promise.all(
+					paths.map(async (path): Promise<RecoverySource> => {
+						const [time, contents] = await Promise.all([this.modifiedTime(path), read(path)]);
+						return { kind: "copy", time, path, historyHash: null, origin: null, reason: null, ...contents };
+					}),
+				);
+			} catch (error) {
+				console.warn("[callout-studio] settings copies could not be listed", error);
+				return [];
+			}
 		};
 		const sources = (await Promise.all([history(), backups(), copies()])).flat();
 		this.normalizedCopies = seen;
@@ -169,7 +208,9 @@ export class SettingsRecoveryService {
 		try {
 			const mtime = (await this.host.app.vault.adapter.stat(path))?.mtime;
 			return typeof mtime === "number" && Number.isFinite(mtime) && mtime > 0 ? mtime : null;
-		} catch { return null; }
+		} catch {
+			return null;
+		}
 	}
 
 	/** How `data` differs from what is displayed now. */
@@ -180,7 +221,7 @@ export class SettingsRecoveryService {
 	/** {@link difference} for a whole list of setups: what is displayed now is read once, for all of them. */
 	differences(): (data: Partial<PluginData>) => SetupDifference {
 		const fromNow = differencesFrom(this.host.registry.toSaveData());
-		return data => ({ callouts: data.callouts?.length ?? 0, changed: fromNow(data).size });
+		return (data) => ({ callouts: data.callouts?.length ?? 0, changed: fromNow(data).size });
 	}
 
 	/**
@@ -189,7 +230,7 @@ export class SettingsRecoveryService {
 	 * where that version is kept.
 	 */
 	details(source: RecoverySource, version?: SetupVersion): SetupDetails {
-		return { ...setupDetails(source, this.host.registry.toSaveData()), ...version ? { version } : {} };
+		return { ...setupDetails(source, this.host.registry.toSaveData()), ...(version ? { version } : {}) };
 	}
 
 	/**
@@ -197,25 +238,33 @@ export class SettingsRecoveryService {
 	 * Only while saving works: a paused session has its own recovery actions.
 	 */
 	async restore(data: Partial<PluginData>): Promise<RestoreOutcome> {
-		const { host } = this, writer = host.settingsWriter;
+		const { host } = this,
+			writer = host.settingsWriter;
 		if (writer.isFrozen || writer.isDestroyed) return "paused";
 		const candidate = normalized(data);
 		if (!candidate) return "invalid";
 		// Decide against the newest file this device can see, not a stale view of it.
-		if (await tryAdoptExternalSettings(host, { force: true }) !== "applied") return "stale";
+		if ((await tryAdoptExternalSettings(host, { force: true })) !== "applied") return "stale";
 		if (writer.isFrozen) return "paused";
 		const before = host.registry.toSaveData();
 		const snapshot = canonical(before);
-		const isCurrent = () => !host.settingsEditOpen && !host.registry.hasPreviewDefinition() &&
+		const isCurrent = () =>
+			!host.settingsEditOpen &&
+			!host.registry.hasPreviewDefinition() &&
 			canonical(host.registry.toSaveData()) === snapshot;
-		if (!await writeSettingsBackup(host, before, { reason: "before-restore" })) return "backup";
+		if (!(await writeSettingsBackup(host, before, { reason: "before-restore" }))) return "backup";
 		if (!isCurrent()) return "stale";
 		let published = false;
 		try {
-			const saved = await writer.commit(candidate, isCurrent, () => {
-				host.registry.load(structuredClone(candidate));
-				published = true;
-			}, "restore");
+			const saved = await writer.commit(
+				candidate,
+				isCurrent,
+				() => {
+					host.registry.load(structuredClone(candidate));
+					published = true;
+				},
+				"restore",
+			);
 			if (!saved || !published) return "failed";
 		} catch (error) {
 			console.error("[callout-studio] could not restore an earlier setup", error);
@@ -257,11 +306,12 @@ export class SettingsRecoveryService {
 	 */
 	async removeVersion(version: SetupVersion): Promise<boolean> {
 		const { adapter } = this.host.app.vault;
-		const dir = settingsBackupDir(this.host), device = backupDeviceOf(this.host);
+		const dir = settingsBackupDir(this.host),
+			device = backupDeviceOf(this.host);
 		const gone: RecoverySource[] = [];
 		for (const copy of version.copies) if (await this.remove(copy)) gone.push(copy);
-		const vault = gone.filter(copy => copy.kind !== "history");
-		const backups = vault.flatMap(copy => copy.kind === "backup" && copy.path ? [copy.path] : []);
+		const vault = gone.filter((copy) => copy.kind !== "history");
+		const backups = vault.flatMap((copy) => (copy.kind === "backup" && copy.path ? [copy.path] : []));
 		if (backups.length > 0) await forgetBackupReasons(adapter, dir, device, backups);
 		return gone.length === version.copies.length;
 	}
@@ -273,9 +323,11 @@ export class SettingsRecoveryService {
 	 * the replacement loses nothing the file held.
 	 */
 	async replaceUnreadable(): Promise<boolean> {
-		const { host } = this, writer = host.settingsWriter;
+		const { host } = this,
+			writer = host.settingsWriter;
 		if (writer.status.frozenReason !== "unreadable" || registryIsOwned(host)) return false;
-		const first = await inspectSettingsFile(host), second = await inspectSettingsFile(host);
+		const first = await inspectSettingsFile(host),
+			second = await inspectSettingsFile(host);
 		if (first.diagnosis === "readable" && second.diagnosis === "readable") return retrySettingsRecovery(host);
 		const raw = first.raw;
 		// Only bytes that hold still, and never a later build's file.
@@ -289,21 +341,35 @@ export class SettingsRecoveryService {
 			this.refresh();
 		}
 		const snapshot = canonical(host.registry.toSaveData());
-		const isCurrent = () => !writer.isDestroyed && !host.settingsEditOpen && !host.registry.hasPreviewDefinition() &&
+		const isCurrent = () =>
+			!writer.isDestroyed &&
+			!host.settingsEditOpen &&
+			!host.registry.hasPreviewDefinition() &&
 			canonical(host.registry.toSaveData()) === snapshot;
 		const unchanged = async () => {
-			try { return await host.app.vault.adapter.read(settingsDataPath(host)) === raw; } catch { return false; }
+			try {
+				return (await host.app.vault.adapter.read(settingsDataPath(host))) === raw;
+			} catch {
+				return false;
+			}
 		};
 		try {
-			const replaced = await writer.replaceUnreadable(isCurrent, async () => {
-				if (await writeRawSettingsCopy(host, "unreadable", raw)) return isCurrent();
-				writer.status.fail("backup");
-				return false;
-			}, unchanged);
+			const replaced = await writer.replaceUnreadable(
+				isCurrent,
+				async () => {
+					if (await writeRawSettingsCopy(host, "unreadable", raw)) return isCurrent();
+					writer.status.fail("backup");
+					return false;
+				},
+				unchanged,
+			);
 			if (!replaced || writer.isDestroyed) return false;
 			await host.saveSettings();
-			return !writer.isDestroyed && !writer.isFrozen &&
-				writer.matchesLastWrite(JSON.stringify(host.registry.toSaveData()), true);
+			return (
+				!writer.isDestroyed &&
+				!writer.isFrozen &&
+				writer.matchesLastWrite(JSON.stringify(host.registry.toSaveData()), true)
+			);
 		} catch (error) {
 			console.error("[callout-studio] could not replace the unreadable settings file", error);
 			return false;
@@ -317,24 +383,39 @@ export class SettingsRecoveryService {
 	 * usual. The settings file itself is not touched.
 	 */
 	async discardRecoveryCopy(): Promise<boolean> {
-		const { host } = this, writer = host.settingsWriter;
+		const { host } = this,
+			writer = host.settingsWriter;
 		if (writer.status.frozenReason !== "recovery-read" || registryIsOwned(host)) return false;
 		let stored: unknown;
-		try { stored = await writer.recoveryCopyRaw(); } catch (error) {
+		try {
+			stored = await writer.recoveryCopyRaw();
+		} catch (error) {
 			console.error("[callout-studio] the device recovery copy could not be read", error);
 			showNotice("problem", t("notice.recoveryStorageUnavailable"));
 			return false;
 		}
 		if (stored === undefined) return false;
-		if (isNewerSettingsFormat(stored)) { writer.freeze("newer-version"); return false; }
+		if (isNewerSettingsFormat(stored)) {
+			writer.freeze("newer-version");
+			return false;
+		}
 		// Readable again: nothing to discard.
-		if (stored === null || (typeof stored === "object" && !Array.isArray(stored) &&
-			hasSafeSettingsFileShape(stored as Record<string, unknown>))) return retrySettingsRecovery(host);
-		if (!await writeRawSettingsCopy(host, "recovery-copy", JSON.stringify(stored, undefined, 2) ?? "null")) {
+		if (
+			stored === null ||
+			(typeof stored === "object" &&
+				!Array.isArray(stored) &&
+				hasSafeSettingsFileShape(stored as Record<string, unknown>))
+		)
+			return retrySettingsRecovery(host);
+		if (!(await writeRawSettingsCopy(host, "recovery-copy", JSON.stringify(stored, undefined, 2) ?? "null"))) {
 			writer.status.fail("backup");
 			return false;
 		}
-		try { await writer.remember(writer.stamped(host.registry.toSaveData())); } catch { return false; }
+		try {
+			await writer.remember(writer.stamped(host.registry.toSaveData()));
+		} catch {
+			return false;
+		}
 		// The checkpoint is readable now, but the primary may still need its
 		// own repair. Keep saving paused while the retry classifies that file.
 		if (writer.status.frozenReason === "recovery-read") writer.freeze("unreadable");
@@ -346,21 +427,40 @@ export class SettingsRecoveryService {
 	 * English on purpose; it is read by whoever answers the report.
 	 */
 	async diagnostics(platform: string): Promise<string> {
-		const { host } = this, writer = host.settingsWriter, status = writer.status;
+		const { host } = this,
+			writer = host.settingsWriter,
+			status = writer.status;
 		const file = await inspectSettingsFile(host);
-		let envelope = "none", stamps = 0;
+		let envelope = "none",
+			stamps = 0;
 		try {
 			const meta = (JSON.parse(file.raw ?? "null") as Record<string, unknown> | null)?.calloutStudioSync as
 				{ version?: unknown; stamps?: object } | undefined;
-			if (meta) { envelope = String(meta.version); stamps = Object.keys(meta.stamps ?? {}).length; }
-		} catch { /* Diagnosed above. */ }
+			if (meta) {
+				envelope = String(meta.version);
+				stamps = Object.keys(meta.stamps ?? {}).length;
+			}
+		} catch {
+			/* Diagnosed above. */
+		}
 		let recovery: string;
 		try {
 			const copy = await writer.recoveryCopyRaw();
-			recovery = copy === undefined ? "not kept on this host" : copy === null ? "none" :
-				isNewerSettingsFormat(copy) ? "from a newer version" :
-				typeof copy === "object" && !Array.isArray(copy) && hasSafeSettingsFileShape(copy as Record<string, unknown>) ? "readable" : "invalid";
-		} catch { recovery = "storage not responding"; }
+			recovery =
+				copy === undefined
+					? "not kept on this host"
+					: copy === null
+						? "none"
+						: isNewerSettingsFormat(copy)
+							? "from a newer version"
+							: typeof copy === "object" &&
+								  !Array.isArray(copy) &&
+								  hasSafeSettingsFileShape(copy as Record<string, unknown>)
+								? "readable"
+								: "invalid";
+		} catch {
+			recovery = "storage not responding";
+		}
 		const sources = await this.listSources();
 		const count = (predicate: (source: RecoverySource) => boolean) => sources.filter(predicate).length;
 		return [
@@ -370,10 +470,10 @@ export class SettingsRecoveryService {
 			`Settings file: ${file.diagnosis}, ${file.raw?.length ?? 0} characters, envelope ${envelope}, ${stamps} stamps`,
 			`Recovery copy: ${recovery}`,
 			`Device: ${host.localState.deviceId}`,
-			`History on this device: ${count(source => source.kind === "history")} states`,
-			`Backups: ${count(source => source.origin === "this-device" && source.kind === "backup")} from this device, ` +
-				`${count(source => source.origin === "other-device")} from other devices, ${count(source => source.origin === "older-version")} from older versions`,
-			`Other copies of the settings file: ${count(source => source.kind === "copy")}`,
+			`History on this device: ${count((source) => source.kind === "history")} states`,
+			`Backups: ${count((source) => source.origin === "this-device" && source.kind === "backup")} from this device, ` +
+				`${count((source) => source.origin === "other-device")} from other devices, ${count((source) => source.origin === "older-version")} from older versions`,
+			`Other copies of the settings file: ${count((source) => source.kind === "copy")}`,
 		].join("\n");
 	}
 

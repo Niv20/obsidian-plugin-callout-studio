@@ -20,20 +20,23 @@ export function differingEntries(a: Partial<PluginData>, b: Partial<PluginData>)
  * again for each one, and that was most of the work.
  */
 export function differencesFrom(a: Partial<PluginData>): (b: Partial<PluginData>) => Set<string> {
-	const mine = rows(a), x = groups(a);
-	return b => {
+	const mine = rows(a),
+		x = groups(a);
+	return (b) => {
 		const found = new Set<string>();
 		const theirs = rows(b);
-		for (const id of new Set([...mine.keys(), ...theirs.keys()])) if (mine.get(id) !== theirs.get(id)) found.add(`row:${id}`);
+		for (const id of new Set([...mine.keys(), ...theirs.keys()]))
+			if (mine.get(id) !== theirs.get(id)) found.add(`row:${id}`);
 		const y = groups(b);
-		for (const key of new Set([...x.keys(), ...y.keys()])) if (x.get(key) !== y.get(key)) found.add(`settings:${key}`);
+		for (const key of new Set([...x.keys(), ...y.keys()]))
+			if (x.get(key) !== y.get(key)) found.add(`settings:${key}`);
 		return found;
 	};
 }
 
 /** Each callout type as text, by id. */
 function rows(d: Partial<PluginData>): Map<string, string> {
-	return new Map((d.callouts ?? []).map(row => [row.id, canonical(row)]));
+	return new Map((d.callouts ?? []).map((row) => [row.id, canonical(row)]));
 }
 
 /** Each group of settings as text, by name; a group that is absent and one that is `undefined` read the same. */
@@ -46,7 +49,11 @@ function groups(d: Partial<PluginData>): Map<string, string> {
  * Changes made on this device and not yet saved (`before` differs from what
  * was last `saved`) that an adoption replaced (`merged` differs from `before`).
  */
-export function unsavedChangesReplaced(saved: Partial<PluginData>, before: Partial<PluginData>, merged: Partial<PluginData>): number {
+export function unsavedChangesReplaced(
+	saved: Partial<PluginData>,
+	before: Partial<PluginData>,
+	merged: Partial<PluginData>,
+): number {
 	const replaced = differingEntries(before, merged);
-	return [...differingEntries(saved, before)].filter(entry => replaced.has(entry)).length;
+	return [...differingEntries(saved, before)].filter((entry) => replaced.has(entry)).length;
 }

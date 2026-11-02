@@ -84,10 +84,14 @@ function rows(
 /** A row as one short string, for readable assertions. */
 const label = (r: MetadataSuggestion): string => {
 	switch (r.kind) {
-		case "finish": return "<done>";
-		case "typed": return `<use ${r.text}>`;
-		case "theme": return `theme:${r.word.word}`;
-		case "color": return `${r.entry.key}${r.replaces ? `>${r.replaces.text}` : ""}`;
+		case "finish":
+			return "<done>";
+		case "typed":
+			return `<use ${r.text}>`;
+		case "theme":
+			return `theme:${r.word.word}`;
+		case "color":
+			return `${r.entry.key}${r.replaces ? `>${r.replaces.text}` : ""}`;
 	}
 };
 const labels = (rs: MetadataSuggestion[]): string[] => rs.map(label);
@@ -95,7 +99,10 @@ const labels = (rs: MetadataSuggestion[]): string[] => rs.map(label);
 describe("buildMetadataSuggestions — rows and their order", () => {
 	it("right after the first pipe: every colour A→Z, palettes among them, no Done", () => {
 		const got = labels(rows("⎸", { palettes: [palette("Zebra"), palette("Comic Red")] }));
-		assert.deepStrictEqual(got, [...got].sort((a, b) => a.localeCompare(b, "en")));
+		assert.deepStrictEqual(
+			got,
+			[...got].sort((a, b) => a.localeCompare(b, "en")),
+		);
 		assert.ok(got.indexOf("blue") < got.indexOf("comic-red"), "a palette is not put first");
 		assert.ok(got.indexOf("comic-red") < got.indexOf("zebra"));
 		assert.ok(!got.includes("<done>"));
@@ -171,14 +178,12 @@ describe("buildMetadataSuggestions — rows and their order", () => {
 			word("kin", "alone", [{ op: "", value: "kith" }]),
 			word("wide", "spaced"),
 		];
-		assert.deepStrictEqual(
-			labels(rows("⎸", { words, themeOwned: true })),
-			["theme:lead", "theme:solo", "theme:wide"],
-		);
-		assert.deepStrictEqual(
-			labels(rows("x ⎸", { words, themeOwned: true })),
-			["<done>", "theme:wide"],
-		);
+		assert.deepStrictEqual(labels(rows("⎸", { words, themeOwned: true })), [
+			"theme:lead",
+			"theme:solo",
+			"theme:wide",
+		]);
+		assert.deepStrictEqual(labels(rows("x ⎸", { words, themeOwned: true })), ["<done>", "theme:wide"]);
 		assert.ok(labels(rows("⎸", { words, calloutId: "kith", themeOwned: true })).includes("theme:kin"));
 	});
 
@@ -239,7 +244,10 @@ describe("metadataRowHeadings — a heading over each group, when there are two"
 	});
 
 	it("draws none when one group is all there is", () => {
-		assert.ok(names(rows("⎸")).every((h) => h === null), "colours alone, no theme");
+		assert.ok(
+			names(rows("⎸")).every((h) => h === null),
+			"colours alone, no theme",
+		);
 		assert.ok(
 			names(rows("⎸", { themeOwned: true, words: [word("wide")] })).every((h) => h === null),
 			"a theme's words alone",
@@ -368,9 +376,11 @@ function settle(): void {
 }
 
 const key = (k: string): KeyboardEvent =>
-	new (globalThis as unknown as {
-		KeyboardEvent: new (t: string, i: { key: string }) => KeyboardEvent;
-	}).KeyboardEvent("keydown", { key: k });
+	new (
+		globalThis as unknown as {
+			KeyboardEvent: new (t: string, i: { key: string }) => KeyboardEvent;
+		}
+	).KeyboardEvent("keydown", { key: k });
 
 /** Trigger the metadata dropdown, pick the row labelled `which` with `how`. */
 function pickMeta(h: Harness, source: string, which: string, how: "Enter" | "Tab"): FakeEditor {
@@ -503,14 +513,8 @@ describe("CalloutMetadataSuggest — Tab stays, Enter finishes", () => {
 
 	it("Enter on a heading and an inline callout lands as their own Enter does", () => {
 		const h = harness();
-		assert.strictEqual(
-			pickMeta(h, "## [!note|pu⎸]", "purple", "Enter").valueWithCursor(),
-			"## [!note|purple]\n|",
-		);
-		assert.strictEqual(
-			pickMeta(h, "a [!note|pu⎸]b", "purple", "Enter").valueWithCursor(),
-			"a [!note|purple] |b",
-		);
+		assert.strictEqual(pickMeta(h, "## [!note|pu⎸]", "purple", "Enter").valueWithCursor(), "## [!note|purple]\n|");
+		assert.strictEqual(pickMeta(h, "a [!note|pu⎸]b", "purple", "Enter").valueWithCursor(), "a [!note|purple] |b");
 		assert.strictEqual(
 			pickMeta(h, "a [!note|pu⎸]{text} b", "purple", "Enter").valueWithCursor(),
 			"a [!note|purple]{text} |b",
@@ -581,12 +585,19 @@ describe("CalloutAutoComplete — Tab and | on a type", () => {
 		// Typed by hand with Auto pair brackets on: `> [` gives `> []`, and a `]`
 		// typed at the end steps over the tracked one. Rewrite that `]` and the
 		// typed one is inserted instead: `> [!note|wide]]`.
-		for (const [source, k] of [["> [!no⎸]", "|"], ["> [!no⎸]", "Tab"], ["> [!no⎸|pink]", "|"]] as const) {
+		for (const [source, k] of [
+			["> [!no⎸]", "|"],
+			["> [!no⎸]", "Tab"],
+			["> [!no⎸|pink]", "|"],
+		] as const) {
 			const { ed } = accept(source, "note", k);
 			const close = ed.getLine(0).indexOf("]");
 			for (const edit of ed.edits) {
 				const to = edit.to?.ch ?? edit.from.ch;
-				assert.ok(to <= close, `${source} + ${k}: an edit reached the \`]\` at ${close}: ${JSON.stringify(edit)}`);
+				assert.ok(
+					to <= close,
+					`${source} + ${k}: an edit reached the \`]\` at ${close}: ${JSON.stringify(edit)}`,
+				);
 			}
 		}
 	});
@@ -601,12 +612,28 @@ describe("CalloutAutoComplete — Tab and | on a type", () => {
 		let handler: ((evt: KeyboardEvent) => boolean | void) | null = null;
 		let picks = 0;
 		const suggest = {
-			scope: { register: (_m: unknown, _k: string, fn: (evt: KeyboardEvent) => boolean | void) => { handler = fn; } },
-			suggestions: { useSelectedItem: () => { picks++; return true; } },
+			scope: {
+				register: (_m: unknown, _k: string, fn: (evt: KeyboardEvent) => boolean | void) => {
+					handler = fn;
+				},
+			},
+			suggestions: {
+				useSelectedItem: () => {
+					picks++;
+					return true;
+				},
+			},
 		};
 		acceptOnKey(suggest as never, null, "|");
 		const press = (mods: Partial<KeyboardEvent>) =>
-			(handler as unknown as (evt: KeyboardEvent) => boolean)({ key: "|", isComposing: false, metaKey: false, ctrlKey: false, altKey: false, ...mods } as KeyboardEvent);
+			(handler as unknown as (evt: KeyboardEvent) => boolean)({
+				key: "|",
+				isComposing: false,
+				metaKey: false,
+				ctrlKey: false,
+				altKey: false,
+				...mods,
+			} as KeyboardEvent);
 		assert.strictEqual(press({ metaKey: true }), true);
 		assert.strictEqual(press({ ctrlKey: true }), true);
 		assert.strictEqual(picks, 0);
@@ -677,7 +704,10 @@ describe("CalloutMetadataSuggest — what a row looks like", () => {
 		// (The fake DOM has no `>` in selectors, so each parent is checked by hand.)
 		const swatch = blue.querySelector(".cs-suggestion-swatch");
 		assert.ok(swatch);
-		assert.ok(swatch.parentElement?.classList.contains("suggestion-icon"), "the circles sit in Obsidian's icon slot");
+		assert.ok(
+			swatch.parentElement?.classList.contains("suggestion-icon"),
+			"the circles sit in Obsidian's icon slot",
+		);
 		assert.ok(!swatch.classList.contains("suggestion-flair"), "not a flair, which Obsidian fades");
 		const word = blue.querySelector(".suggestion-title");
 		assert.ok(word);
@@ -702,7 +732,10 @@ describe("CalloutMetadataSuggest — what a row looks like", () => {
 		withTheme(h);
 		const { list } = render(h, "> [!mark|⎸]");
 		const headings = list.querySelectorAll(".cs-meta-suggestion-heading");
-		assert.deepStrictEqual(headings.map((el) => el.textContent), ["Colors", "Fixture theme"]);
+		assert.deepStrictEqual(
+			headings.map((el) => el.textContent),
+			["Colors", "Fixture theme"],
+		);
 		assert.ok(headings.every((el) => !el.classList.contains("suggestion-item")));
 	});
 

@@ -44,8 +44,7 @@ function macApp(hotkeys: StoredHotkey[]): App {
 	} as unknown as App;
 }
 
-const one = (hotkey: StoredHotkey): string =>
-	hotkeysForCommand(macApp([hotkey]), "id")[0] ?? "";
+const one = (hotkey: StoredHotkey): string => hotkeysForCommand(macApp([hotkey]), "id")[0] ?? "";
 
 describe("the seam itself", () => {
 	it("really did put the module in macOS mode", () => {
@@ -79,18 +78,12 @@ describe("hotkeysForCommand on macOS — the glyphs", () => {
 
 describe("hotkeysForCommand on macOS — the joiner", () => {
 	it("stacks the glyphs with a space rather than spelling the chord out", () => {
-		assert.strictEqual(
-			one({ modifiers: ["Mod", "Shift"], key: "K" }),
-			"⌘ ⇧ K",
-		);
+		assert.strictEqual(one({ modifiers: ["Mod", "Shift"], key: "K" }), "⌘ ⇧ K");
 	});
 
 	it("emits them in Obsidian's order, not the order they were stored in", () => {
 		// ⌘⇧K must never render as ⇧⌘K on one surface and ⌘⇧K on another.
-		assert.strictEqual(
-			one({ modifiers: ["Shift", "Alt", "Mod"], key: "K" }),
-			"⌘ ⌥ ⇧ K",
-		);
+		assert.strictEqual(one({ modifiers: ["Shift", "Alt", "Mod"], key: "K" }), "⌘ ⌥ ⇧ K");
 	});
 
 	it("leaves a bare key with no joiner to dangle off", () => {
@@ -117,10 +110,7 @@ describe("hotkeysForCommand on macOS — the parts that do NOT change", () => {
 	});
 
 	it("still drops a binding with no key at all", () => {
-		assert.deepStrictEqual(
-			hotkeysForCommand(macApp([{ modifiers: ["Mod"] }]), "id"),
-			[],
-		);
+		assert.deepStrictEqual(hotkeysForCommand(macApp([{ modifiers: ["Mod"] }]), "id"), []);
 	});
 
 	it("still returns every binding, not just the first", () => {

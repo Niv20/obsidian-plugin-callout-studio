@@ -128,9 +128,7 @@ export class ReadingStructureWatch {
 		if (moved.size === 0 && !fallbackMoved) return;
 		for (const view of markdownViews(this.app)) {
 			const mentioned = mentionedNames(view.getViewData());
-			const affected = [...mentioned].some((name) =>
-				moved.has(name) || (fallbackMoved && !names.has(name)),
-			);
+			const affected = [...mentioned].some((name) => moved.has(name) || (fallbackMoved && !names.has(name)));
 			if (affected) view.previewMode?.rerender(true);
 		}
 	}

@@ -8,15 +8,8 @@ const affected = new WeakSet<object>();
  * setting's current type is the literal `true`, so the legacy shape stays
  * deliberately narrow and unknown here rather than weakening the live model.
  */
-export function recordAutocompleteEnablement(
-	owner: object,
-	data: Partial<PluginData> | null,
-): boolean {
-	const legacy = (
-		data?.settings as unknown as
-			| { autocomplete?: { enabled?: unknown } }
-			| undefined
-	)?.autocomplete;
+export function recordAutocompleteEnablement(owner: object, data: Partial<PluginData> | null): boolean {
+	const legacy = (data?.settings as unknown as { autocomplete?: { enabled?: unknown } } | undefined)?.autocomplete;
 	const wasDisabled = legacy?.enabled === false;
 	if (wasDisabled) affected.add(owner);
 	else affected.delete(owner);

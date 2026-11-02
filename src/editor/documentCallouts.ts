@@ -13,19 +13,32 @@ export interface DocumentCallout {
 }
 
 /** Null steps let async consumers yield during preparation and very long lines. */
-export function* iterateDocumentCalloutSteps(content: string, options: ScanLineOptions = {}): Generator<DocumentCalloutLine | null> {
+export function* iterateDocumentCalloutSteps(
+	content: string,
+	options: ScanLineOptions = {},
+): Generator<DocumentCalloutLine | null> {
 	for (const line of iterateMarkdownSourceSteps(content)) {
-		if (!line) { yield null; continue; }
-		const tokens = line.visible.includes("[!") ? scanLineForCalloutTokens(line.lineText, {
-			...options, visibleLine: line.visible, contentFrom: line.prefix.from,
-			blockQuote: line.prefix.lastContainer === "quote",
-		}) : [];
+		if (!line) {
+			yield null;
+			continue;
+		}
+		const tokens = line.visible.includes("[!")
+			? scanLineForCalloutTokens(line.lineText, {
+					...options,
+					visibleLine: line.visible,
+					contentFrom: line.prefix.from,
+					blockQuote: line.prefix.lastContainer === "quote",
+				})
+			: [];
 		yield { ...line, tokens };
 	}
 }
 
 /** Every source line is yielded exactly once, including empty/excluded lines. */
-export function* iterateDocumentCalloutLines(content: string, options: ScanLineOptions = {}): Generator<DocumentCalloutLine> {
+export function* iterateDocumentCalloutLines(
+	content: string,
+	options: ScanLineOptions = {},
+): Generator<DocumentCalloutLine> {
 	for (const line of iterateDocumentCalloutSteps(content, options)) if (line) yield line;
 }
 
@@ -33,7 +46,11 @@ export function* iterateDocumentCalloutLines(content: string, options: ScanLineO
  * One line as the whole document reads it: a fence opened ten lines up makes
  * it code, which the line on its own cannot know. Null past the last line.
  */
-export function documentCalloutLineAt(content: string, lineIndex: number, options: ScanLineOptions = {}): DocumentCalloutLine | null {
+export function documentCalloutLineAt(
+	content: string,
+	lineIndex: number,
+	options: ScanLineOptions = {},
+): DocumentCalloutLine | null {
 	for (const line of iterateDocumentCalloutLines(content, options)) {
 		if (line.lineIndex === lineIndex) return line;
 	}

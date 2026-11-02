@@ -46,12 +46,7 @@
  * those are opt-outs (`revert`, `anp-sleek`), still words a user writes.
  */
 import { eachBlock, stripComments } from "./cssBlocks";
-import {
-	matchParen,
-	skipBrackets,
-	skipString,
-	splitSelectorList,
-} from "../../utils/selectorText";
+import { matchParen, skipBrackets, skipString, splitSelectorList } from "../../utils/selectorText";
 import { obsidianCalloutAttrId } from "../../utils/calloutId";
 
 /** Where a metadata word may stand for the theme to still see it. */
@@ -81,7 +76,7 @@ const PLACEMENT_FOR_OP: Record<string, MetadataPlacement> = {
 	"*": "anywhere",
 	"~": "spaced",
 	"^": "first",
-	"$": "last",
+	$: "last",
 	"": "alone",
 	"|": "alone",
 };
@@ -97,8 +92,7 @@ const PLACEMENT_RANK: Record<MetadataPlacement, number> = {
 
 const METADATA_ATTR_RE =
 	/\[\s*data-callout-metadata\s*([~^*$|]?)=\s*(?:"([^"]*)"|'([^']*)'|([^\]\s]+))\s*(?:[iIsS]\s*)?\]/g;
-const CALLOUT_ATTR_RE =
-	/\[\s*data-callout\s*([~^*$|]?)=\s*(?:"([^"]*)"|'([^']*)'|([^\]\s]+))\s*(?:[iIsS]\s*)?\]/g;
+const CALLOUT_ATTR_RE = /\[\s*data-callout\s*([~^*$|]?)=\s*(?:"([^"]*)"|'([^']*)'|([^\]\s]+))\s*(?:[iIsS]\s*)?\]/g;
 
 /**
  * One selector cut into its compounds — the runs between combinators — with
@@ -176,10 +170,7 @@ function attrsIn(text: string, re: RegExp): Array<{ op: string; value: string }>
 }
 
 const isWord = (value: string): boolean =>
-	value.length > 0 &&
-	!/\s/.test(value) &&
-	!value.startsWith("-") &&
-	!value.endsWith("-");
+	value.length > 0 && !/\s/.test(value) && !value.startsWith("-") && !value.endsWith("-");
 
 /** Every metadata word one stylesheet reacts to, in the order it first names them. */
 export function scanMetadataWords(css: string): ThemeMetadataWord[] {
@@ -245,11 +236,16 @@ export function wordAppliesTo(word: ThemeMetadataWord, calloutId: string): boole
 	const attr = obsidianCalloutAttrId(calloutId);
 	return word.guards.some(({ op, value }) => {
 		switch (op) {
-			case "^": return attr.startsWith(value);
-			case "$": return attr.endsWith(value);
-			case "*": return attr.includes(value);
-			case "|": return attr === value || attr.startsWith(`${value}-`);
-			default: return attr === value;
+			case "^":
+				return attr.startsWith(value);
+			case "$":
+				return attr.endsWith(value);
+			case "*":
+				return attr.includes(value);
+			case "|":
+				return attr === value || attr.startsWith(`${value}-`);
+			default:
+				return attr === value;
 		}
 	});
 }

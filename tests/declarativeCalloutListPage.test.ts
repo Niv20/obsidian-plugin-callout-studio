@@ -47,7 +47,9 @@ function treeContext(app: object, options: { paused?: boolean } = {}) {
 	const plugin = {
 		app,
 		registry,
-		get settings() { return registry.settings; },
+		get settings() {
+			return registry.settings;
+		},
 		settingsWriter: { isFrozen: options.paused === true },
 		onIconCacheChange: () => () => {},
 	};
@@ -68,18 +70,21 @@ function manualSchedule() {
 	const waiting: (() => void)[] = [];
 	const schedule: Scheduler = (run) => {
 		waiting.push(run);
-		return () => { waiting.splice(waiting.indexOf(run), 1); };
+		return () => {
+			waiting.splice(waiting.indexOf(run), 1);
+		};
 	};
-	const flush = (): void => { for (const run of waiting.splice(0)) run(); };
+	const flush = (): void => {
+		for (const run of waiting.splice(0)) run();
+	};
 	return { schedule, flush, pending: () => waiting.length };
 }
 
 /** The two rows that open the pages, drawn by the test renderer. */
 function drawEntries(ctx: TreeContext) {
 	const tab = new PluginSettingTab({}, {});
-	tab.getSettingDefinitions = () => toObsidianItems([
-		{ type: "group", id: "callouts", items: [themeCalloutsPage(ctx), builtInCalloutsPage(ctx)] },
-	]);
+	tab.getSettingDefinitions = () =>
+		toObsidianItems([{ type: "group", id: "callouts", items: [themeCalloutsPage(ctx), builtInCalloutsPage(ctx)] }]);
 	const harness = new DeclarativeHarness(tab);
 	tab.update();
 	return { tab, harness };
@@ -103,18 +108,24 @@ function searchPage(page: CalloutListPage, query: string): void {
 }
 
 describe("the rows that open the pages", () => {
-	it("say \"None\" at none, never nothing", () => {
+	it('say "None" at none, never nothing', () => {
 		const { ctx, registry } = treeContext(fakeApp("Minimal"));
 		registry.setThemeOwnedIds(new Set(registry.getBuiltIn().map((def) => def.id)));
 		const { harness } = drawEntries(ctx);
-		assert.equal(harness.row(t("settings.builtInCallouts"))?.settingEl.querySelector(".setting-item-value")?.textContent, "None");
+		assert.equal(
+			harness.row(t("settings.builtInCallouts"))?.settingEl.querySelector(".setting-item-value")?.textContent,
+			"None",
+		);
 	});
 
 	it("keep the theme's row while its switch is off, with Off where the count would be", () => {
 		const { ctx, registry } = treeContext(fakeApp("Minimal"));
 		const entry = (): { shown: boolean; value: string | null | undefined } => {
 			const row = drawEntries(ctx).harness.row(t("settings.themeCalloutsHeading"))!;
-			return { shown: row.settingEl.isShown(), value: row.settingEl.querySelector(".setting-item-value")?.textContent };
+			return {
+				shown: row.settingEl.isShown(),
+				value: row.settingEl.querySelector(".setting-item-value")?.textContent,
+			};
 		};
 		// A theme that styles no callout, and the switch on: nothing to show.
 		assert.equal(entry().shown, false);
@@ -124,7 +135,10 @@ describe("the rows that open the pages", () => {
 		// Obsidian's default theme has nothing to switch off.
 		const noTheme = treeContext(fakeApp());
 		noTheme.registry.settings.themeCalloutStyles.enabled = false;
-		assert.equal(drawEntries(noTheme.ctx).harness.row(t("settings.themeCalloutsHeading"))!.settingEl.isShown(), false);
+		assert.equal(
+			drawEntries(noTheme.ctx).harness.row(t("settings.themeCalloutsHeading"))!.settingEl.isShown(),
+			false,
+		);
 	});
 
 	it("say how many callouts each holds, and the theme's shows only while the theme styles one", () => {
@@ -146,8 +160,14 @@ describe("the rows that open the pages", () => {
 		const { ctx, registry } = treeContext(fakeApp("Minimal"));
 		registry.setThemeOwnedIds(new Set(["note"]));
 		const { tab } = drawEntries(ctx);
-		assert.deepEqual(searchSettings(tab.settingItems, "note").map((hit) => hit.name), []);
-		assert.deepEqual(searchSettings(tab.settingItems, "warning").map((hit) => hit.name), []);
+		assert.deepEqual(
+			searchSettings(tab.settingItems, "note").map((hit) => hit.name),
+			[],
+		);
+		assert.deepEqual(
+			searchSettings(tab.settingItems, "warning").map((hit) => hit.name),
+			[],
+		);
 	});
 });
 
@@ -157,10 +177,16 @@ describe("Built-in callouts", () => {
 		const { harness } = drawEntries(ctx);
 		harness.openPage([CALLOUT_LIST_PAGES.builtIn]);
 		const page = harness.customPage as unknown as CalloutListPage;
-		const expected = registry.getBuiltIn().map((def) => def.displayName).sort((a, b) => a.localeCompare(b));
+		const expected = registry
+			.getBuiltIn()
+			.map((def) => def.displayName)
+			.sort((a, b) => a.localeCompare(b));
 		assert.deepEqual(shownNames(page), expected);
 		// Every row in Obsidian's list box, which keeps it one line.
-		assert.equal(page.containerEl.querySelectorAll(".setting-group.mod-list .cs-callout-row").length, expected.length);
+		assert.equal(
+			page.containerEl.querySelectorAll(".setting-group.mod-list .cs-callout-row").length,
+			expected.length,
+		);
 		searchPage(page, "caution");
 		assert.deepEqual(shownNames(page), ["Warning"]);
 	});
@@ -176,7 +202,7 @@ describe("Built-in callouts", () => {
 		registry.setThemeOwnedIds(new Set(["note"]));
 		assert.equal(pending(), 1);
 		flush();
-		assert.deepEqual(shownNames(page), [], "Note left the page, and the search still holds \"no\"");
+		assert.deepEqual(shownNames(page), [], 'Note left the page, and the search still holds "no"');
 		page.hide();
 		registry.setThemeOwnedIds(new Set());
 		assert.equal(pending(), 0, "a left page no longer listens");
@@ -187,8 +213,15 @@ describe("Built-in callouts", () => {
 		registry.setThemeOwnedIds(new Set(registry.getBuiltIn().map((def) => def.id)));
 		const page = new CalloutListPage(ctx, "builtin", manualSchedule().schedule);
 		page.display();
-		assert.equal(page.containerEl.querySelector(".mod-empty-state .setting-item-name")?.textContent, t("settings.builtInAllThemeStyled", { theme: "Minimal" }));
-		assert.equal(page.containerEl.querySelector(".setting-group-search"), null, "no search field in the page without rows, as for any Obsidian box");
+		assert.equal(
+			page.containerEl.querySelector(".mod-empty-state .setting-item-name")?.textContent,
+			t("settings.builtInAllThemeStyled", { theme: "Minimal" }),
+		);
+		assert.equal(
+			page.containerEl.querySelector(".setting-group-search"),
+			null,
+			"no search field in the page without rows, as for any Obsidian box",
+		);
 		page.hide();
 	});
 
@@ -201,11 +234,17 @@ describe("Built-in callouts", () => {
 		searchPage(page, "zzz");
 		assert.equal(row().isShown(), true);
 		assert.ok(row().hasClass("mod-empty-state"), "Obsidian's grey row");
-		assert.equal(row().querySelector(".setting-item-name")?.textContent, t("calloutPicker.noMatches", { query: "zzz" }));
+		assert.equal(
+			row().querySelector(".setting-item-name")?.textContent,
+			t("calloutPicker.noMatches", { query: "zzz" }),
+		);
 		assert.deepEqual(shownNames(page), []);
 		// The words follow the query, and the row goes when something matches again.
 		searchPage(page, "  yyy ");
-		assert.equal(row().querySelector(".setting-item-name")?.textContent, t("calloutPicker.noMatches", { query: "yyy" }));
+		assert.equal(
+			row().querySelector(".setting-item-name")?.textContent,
+			t("calloutPicker.noMatches", { query: "yyy" }),
+		);
 		searchPage(page, "caution");
 		assert.equal(row().isShown(), false);
 		assert.deepEqual(shownNames(page), ["Warning"]);
@@ -231,7 +270,9 @@ describe("Built-in callouts", () => {
 });
 
 describe("the switch at the top of Callouts from your theme", () => {
-	afterEach(() => { createdToggles.length = 0; });
+	afterEach(() => {
+		createdToggles.length = 0;
+	});
 
 	/** The theme's page, open in a theme that owns Note. */
 	function openThemePage(options: { paused?: boolean } = {}) {
@@ -251,7 +292,10 @@ describe("the switch at the top of Callouts from your theme", () => {
 		const [switchBox, listBox] = Array.from(page.containerEl.children);
 		assert.ok(switchBox!.hasClass("setting-group") && switchBox!.hasClass("cs-box"));
 		assert.equal(switchBox!.querySelector(".setting-item-name")?.textContent, t("settings.themeCalloutStyles"));
-		assert.equal(switchBox!.querySelector(".setting-item-description")?.textContent, t("settings.themeCalloutStylesDesc"));
+		assert.equal(
+			switchBox!.querySelector(".setting-item-description")?.textContent,
+			t("settings.themeCalloutStylesDesc"),
+		);
 		assert.ok(listBox!.hasClass("mod-list"));
 		assert.equal(theSwitch().getValue(), true, "on, as the setting is");
 		page.hide();
@@ -268,7 +312,9 @@ describe("the switch at the top of Callouts from your theme", () => {
 	it("saves a flip through the registry's change round, which repaints and saves", async () => {
 		const { page, registry } = openThemePage();
 		const rounds: boolean[] = [];
-		registry.onChange((change) => { rounds.push(change.persists); });
+		registry.onChange((change) => {
+			rounds.push(change.persists);
+		});
 		await theSwitch().commit(false);
 		assert.equal(registry.settings.themeCalloutStyles.enabled, false);
 		assert.deepEqual(rounds, [true]);
@@ -298,18 +344,37 @@ describe("the switch at the top of Callouts from your theme", () => {
 		registry.setThemeOwnedIds(new Set());
 		flush();
 		assert.deepEqual(shownNames(page), []);
-		assert.equal(page.containerEl.querySelector(".mod-empty-state"), null, "no line about it: the page is the switch alone");
-		assert.equal(page.containerEl.querySelector<HTMLElement>(".mod-list .setting-items")?.isShown(), false, "the empty box is hidden too");
-		assert.equal(page.containerEl.querySelector(".setting-group-search"), null, "the field leaves the page: hidden, it would still square the rows' corners");
+		assert.equal(
+			page.containerEl.querySelector(".mod-empty-state"),
+			null,
+			"no line about it: the page is the switch alone",
+		);
+		assert.equal(
+			page.containerEl.querySelector<HTMLElement>(".mod-list .setting-items")?.isShown(),
+			false,
+			"the empty box is hidden too",
+		);
+		assert.equal(
+			page.containerEl.querySelector(".setting-group-search"),
+			null,
+			"the field leaves the page: hidden, it would still square the rows' corners",
+		);
 		void theSwitch().commit(true);
 		registry.setThemeOwnedIds(new Set(["note"]));
 		flush();
 		assert.deepEqual(shownNames(page), ["Note"]);
-		assert.equal(page.containerEl.querySelector<HTMLElement>(".mod-list .setting-items")?.isShown(), true, "the box is back with the rows");
+		assert.equal(
+			page.containerEl.querySelector<HTMLElement>(".mod-list .setting-items")?.isShown(),
+			true,
+			"the box is back with the rows",
+		);
 		const search = page.containerEl.querySelector(".setting-group-search");
 		assert.ok(search, "the same field comes back with the rows");
 		const inBox = Array.from(search.parentElement!.children);
-		assert.ok((inBox[inBox.indexOf(search) + 1] as HTMLElement | undefined)?.hasClass("setting-items"), "right above the rows, where Obsidian draws it");
+		assert.ok(
+			(inBox[inBox.indexOf(search) + 1] as HTMLElement | undefined)?.hasClass("setting-items"),
+			"right above the rows, where Obsidian draws it",
+		);
 		page.hide();
 	});
 

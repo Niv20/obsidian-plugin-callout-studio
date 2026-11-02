@@ -14,7 +14,12 @@ import { OccurrenceResults } from "./occurrenceResults";
 import { navigateToCalloutOccurrence } from "./navigation";
 import { SidebarCursorSync } from "../ui/sidebarCursorSync";
 import { SidebarParking } from "../ui/sidebarParking";
-import { createOccurrencesFrame, OCCURRENCE_ROLES, openFormatMenu, type OccurrencesFrame } from "./occurrencesViewFrame";
+import {
+	createOccurrencesFrame,
+	OCCURRENCE_ROLES,
+	openFormatMenu,
+	type OccurrencesFrame,
+} from "./occurrencesViewFrame";
 import { LoadOnScroll } from "../ui/loadOnScroll";
 
 export const CALLOUT_OCCURRENCES_VIEW = "callout-studio-occurrences";
@@ -48,10 +53,13 @@ export class CalloutOccurrencesView extends ItemView {
 	/** The format menu while it is open, so closing the view closes it too. */
 	private formatMenu: Menu | null = null;
 	/** Draws the next 100 results as the list's end scrolls into reach (finding S10-07). */
-	private readonly loadOnScroll = new LoadOnScroll(() => this.frame?.scroll ?? null, () => {
-		this.limit += PAGE_SIZE;
-		this.render();
-	});
+	private readonly loadOnScroll = new LoadOnScroll(
+		() => this.frame?.scroll ?? null,
+		() => {
+			this.limit += PAGE_SIZE;
+			this.render();
+		},
+	);
 	/** Keeps the file groups far from the screen from being drawn, so a long list does not slow the editor. */
 	private readonly parking = new SidebarParking(() => this.frame?.scroll ?? null);
 	private disposeMenuHost?: () => void;
@@ -67,26 +75,44 @@ export class CalloutOccurrencesView extends ItemView {
 		if (this.opened) this.render();
 	};
 
-	constructor(leaf: WorkspaceLeaf, private readonly registry: CalloutRegistry,
-		private readonly busyStatusDelayMs = BUSY_STATUS_DELAY_MS) {
+	constructor(
+		leaf: WorkspaceLeaf,
+		private readonly registry: CalloutRegistry,
+		private readonly busyStatusDelayMs = BUSY_STATUS_DELAY_MS,
+	) {
 		super(leaf);
 		this.index = getCalloutOccurrenceIndex(this.app);
 		this.typeChoices = new OccurrenceTypeChoices(registry, this.index);
-		this.activeFile = new SidebarActiveFile(this.app,
+		this.activeFile = new SidebarActiveFile(
+			this.app,
 			(ref) => this.registerEvent(ref),
 			(path) => {
 				this.resultCards.setActiveFile(path);
 				// A result being opened owns the mark; any other note switch hands it to the caret.
 				if (!this.navigating) this.cursor.release();
-				if (this.opened && this.frame) this.activeFile.sync(this.results, this.limit, this.index.status, this.failed);
+				if (this.opened && this.frame)
+					this.activeFile.sync(this.results, this.limit, this.index.status, this.failed);
 			},
-			(limit) => { this.limit = limit; this.render(); }, PAGE_SIZE);
-		this.cursor = new SidebarCursorSync(() => this.activeFile.currentView(),
-			(view) => this.resultCards.followCaret(view, this.frame?.scroll ?? null));
+			(limit) => {
+				this.limit = limit;
+				this.render();
+			},
+			PAGE_SIZE,
+		);
+		this.cursor = new SidebarCursorSync(
+			() => this.activeFile.currentView(),
+			(view) => this.resultCards.followCaret(view, this.frame?.scroll ?? null),
+		);
 	}
-	getViewType(): string { return CALLOUT_OCCURRENCES_VIEW; }
-	getDisplayText(): string { return t("usage.title"); }
-	getIcon(): string { return STATISTICS_ICON_ID; }
+	getViewType(): string {
+		return CALLOUT_OCCURRENCES_VIEW;
+	}
+	getDisplayText(): string {
+		return t("usage.title");
+	}
+	getIcon(): string {
+		return STATISTICS_ICON_ID;
+	}
 	refreshAppearance(): void {
 		if (this.opened) this.registryChanged();
 	}
@@ -96,20 +122,26 @@ export class CalloutOccurrencesView extends ItemView {
 		this.clearFrame();
 		this.render();
 	}
-	getState(): Record<string, unknown> { return { ids: [...this.ids], role: this.role, ...(this.allTypes ? { allTypes: true } : {}) }; }
+	getState(): Record<string, unknown> {
+		return { ids: [...this.ids], role: this.role, ...(this.allTypes ? { allTypes: true } : {}) };
+	}
 	async setState(state: unknown, result: ViewStateResult): Promise<void> {
-		const input = typeof state === "object" && state !== null ? state as Record<string, unknown> : {};
+		const input = typeof state === "object" && state !== null ? (state as Record<string, unknown>) : {};
 		const ids = Array.isArray(input.ids)
-			? input.ids.filter((id): id is string => typeof id === "string" && id.length > 0) : this.ids;
-		if (input.allTypes === true || Array.isArray(input.ids) && ids.length === 0 && input.allTypes !== false) {
+			? input.ids.filter((id): id is string => typeof id === "string" && id.length > 0)
+			: this.ids;
+		if (input.allTypes === true || (Array.isArray(input.ids) && ids.length === 0 && input.allTypes !== false)) {
 			this.allTypes = true;
 			this.selectedType = ALL_TYPES_ID;
 			this.ids = [];
 		} else if (Array.isArray(input.ids) || input.allTypes === false) this.resolveType(ids);
-		this.role = OCCURRENCE_ROLES.includes(input.role as CalloutRenderRole) ? input.role as CalloutRenderRole : undefined;
+		this.role = OCCURRENCE_ROLES.includes(input.role as CalloutRenderRole)
+			? (input.role as CalloutRenderRole)
+			: undefined;
 		this.limit = PAGE_SIZE;
 		this.navigationGeneration++;
-		this.resultCards.select(null); this.cursor.reset();
+		this.resultCards.select(null);
+		this.cursor.reset();
 		if (this.frame) this.frame.scroll.scrollTop = 0;
 		this.activeFile.cancelReveal();
 		this.picker?.setValue(this.selectedType);
@@ -140,7 +172,8 @@ export class CalloutOccurrencesView extends ItemView {
 	onClose(): Promise<void> {
 		this.opened = false;
 		this.navigationGeneration++;
-		this.resultCards.select(null); this.cursor.close();
+		this.resultCards.select(null);
+		this.cursor.close();
 		this.resetBusyStatus();
 		this.unsubscribe?.();
 		this.unsubscribe = null;
@@ -177,7 +210,8 @@ export class CalloutOccurrencesView extends ItemView {
 		this.parking.stop();
 		this.picker?.destroy();
 		this.picker = null;
-		this.disposeMenuHost?.(); this.disposeMenuHost = undefined;
+		this.disposeMenuHost?.();
+		this.disposeMenuHost = undefined;
 		this.frame = null;
 		this.resultCards.clear();
 		this.activeFile.clearSections();
@@ -204,7 +238,8 @@ export class CalloutOccurrencesView extends ItemView {
 	private resetResults(): void {
 		this.limit = PAGE_SIZE;
 		this.navigationGeneration++;
-		this.resultCards.select(null); this.cursor.reset();
+		this.resultCards.select(null);
+		this.cursor.reset();
 		// A new search starts with every note's results showing.
 		this.resultCards.fold.clear();
 		// render() preserves the current scroll offset after a picker commit.
@@ -223,7 +258,7 @@ export class CalloutOccurrencesView extends ItemView {
 			if (generation !== this.busyStatusGeneration) return;
 			this.busyStatusTimer = null;
 			const status = this.index.status;
-			if (!this.opened || status !== "idle" && status !== "loading" && status !== "stale") return;
+			if (!this.opened || (status !== "idle" && status !== "loading" && status !== "stale")) return;
 			this.busyStatusVisible = true;
 			this.render();
 		}, this.busyStatusDelayMs);
@@ -237,16 +272,26 @@ export class CalloutOccurrencesView extends ItemView {
 	}
 	private async refresh(): Promise<void> {
 		this.failed = false;
-		try { await this.index.ensureFresh(); }
-		catch { this.failed = true; }
+		try {
+			await this.index.ensureFresh();
+		} catch {
+			this.failed = true;
+		}
 		if (this.opened) this.render();
 	}
 	private onClick(event: MouseEvent): void {
 		const button = (event.target as HTMLElement | null)?.closest<HTMLButtonElement>("button[data-action]");
 		if (!button || button.disabled) return;
 		const action = button.dataset.action;
-		if (action === "more") { this.limit += PAGE_SIZE; this.render(); return; }
-		if (action === "file" && button.dataset.path) { void this.openResult(button.dataset.path, event.metaKey || event.ctrlKey); return; }
+		if (action === "more") {
+			this.limit += PAGE_SIZE;
+			this.render();
+			return;
+		}
+		if (action === "file" && button.dataset.path) {
+			void this.openResult(button.dataset.path, event.metaKey || event.ctrlKey);
+			return;
+		}
 		if (action !== "result") return;
 		const occurrence = this.resultCards.getOccurrence(button);
 		if (occurrence) void this.openResult(occurrence, event.metaKey || event.ctrlKey);
@@ -262,16 +307,26 @@ export class CalloutOccurrencesView extends ItemView {
 		let opened = false;
 		let landedIn: (() => void) | undefined;
 		const options = { newTab, isCurrent, origin: this.leaf };
-		try { opened = await (typeof occurrence === "string"
-			? navigateToSidebarFile(this.app, path, options)
-			: navigateToCalloutOccurrence(this.app, occurrence, { ...options,
-				onSelected: (editor) => { landedIn = () => this.cursor.landedIn(editor); } })); }
-		finally { this.activeFile.endResultNavigation(path); this.navigating = false; }
+		try {
+			opened = await (typeof occurrence === "string"
+				? navigateToSidebarFile(this.app, path, options)
+				: navigateToCalloutOccurrence(this.app, occurrence, {
+						...options,
+						onSelected: (editor) => {
+							landedIn = () => this.cursor.landedIn(editor);
+						},
+					}));
+		} finally {
+			this.activeFile.endResultNavigation(path);
+			this.navigating = false;
+		}
 		if (!isCurrent()) return;
 		if (opened) {
 			this.activeFile.openedResult(path);
-			if (typeof occurrence !== "string" && landedIn) { landedIn(); this.resultCards.select(occurrence); }
-			else this.cursor.release();
+			if (typeof occurrence !== "string" && landedIn) {
+				landedIn();
+				this.resultCards.select(occurrence);
+			} else this.cursor.release();
 		} else {
 			this.cursor.release();
 			this.index.invalidate(path);
@@ -282,21 +337,28 @@ export class CalloutOccurrencesView extends ItemView {
 	private ensureFrame(): OccurrencesFrame {
 		if (this.frame) return this.frame;
 		this.disposeMenuHost = registerMenuScopeHost(this.contentEl, this.app);
-		const frame = this.frame = createOccurrencesFrame(this.contentEl, (button) => this.openFormats(button));
+		const frame = (this.frame = createOccurrencesFrame(this.contentEl, (button) => this.openFormats(button)));
 		this.picker = new CalloutCombobox(frame.pickerHost, {
-			registry: this.registry, choices: () => occurrencePickerChoices(this.typeChoices, this.selectedType), value: this.selectedType,
-			ariaLabel: t("vaultStats.columnType"), labelOf: (def) => def.id === ALL_TYPES_ID ? t("usage.allTypes") : def.id,
+			registry: this.registry,
+			choices: () => occurrencePickerChoices(this.typeChoices, this.selectedType),
+			value: this.selectedType,
+			ariaLabel: t("vaultStats.columnType"),
+			labelOf: (def) => (def.id === ALL_TYPES_ID ? t("usage.allTypes") : def.id),
 			iconlessOptionId: ALL_TYPES_ID,
 			hideSingleGroup: true,
 			showSingleGroupKey: "browse",
-			groupOf: (def) => def.id === ALL_TYPES_ID
-				? { key: "browse", label: t("usage.browse"), order: -1 }
-				: this.typeChoices.isRegistered(def)
-				? { key: "registered", label: t("usage.registeredCallouts"), order: 0 }
-				: { key: "unregistered", label: t("usage.unregisteredCallouts"), order: 1 },
+			groupOf: (def) =>
+				def.id === ALL_TYPES_ID
+					? { key: "browse", label: t("usage.browse"), order: -1 }
+					: this.typeChoices.isRegistered(def)
+						? { key: "registered", label: t("usage.registeredCallouts"), order: 0 }
+						: { key: "unregistered", label: t("usage.unregisteredCallouts"), order: 1 },
 			onChange: (id) => {
-				if (id === ALL_TYPES_ID) { this.allTypes = true; this.ids = []; this.selectedType = ALL_TYPES_ID; }
-				else this.resolveType([id]);
+				if (id === ALL_TYPES_ID) {
+					this.allTypes = true;
+					this.ids = [];
+					this.selectedType = ALL_TYPES_ID;
+				} else this.resolveType([id]);
 				this.resetResults();
 				this.render();
 			},
@@ -309,22 +371,34 @@ export class CalloutOccurrencesView extends ItemView {
 		this.lastIndexState = this.indexState();
 		const key = JSON.stringify([this.allTypes, this.ids, this.role]);
 		if (this.cachedQuery?.revision !== index.dataRevision || this.cachedQuery.key !== key) {
-			this.cachedQuery = { revision: index.dataRevision, key, result: index.query(this.allTypes ? undefined : this.ids, this.role) };
+			this.cachedQuery = {
+				revision: index.dataRevision,
+				key,
+				result: index.query(this.allTypes ? undefined : this.ids, this.role),
+			};
 		}
 		this.results = this.cachedQuery.result.occurrences;
 		const complete = index.status === "ready" && !this.failed;
 		const scrollTop = this.frame?.scroll.scrollTop ?? 0;
 		const frame = this.ensureFrame();
 		this.paintFilter();
-		const busy = !this.failed && (index.status === "idle" || index.status === "loading" || index.status === "stale");
+		const busy =
+			!this.failed && (index.status === "idle" || index.status === "loading" || index.status === "stale");
 		this.syncBusyStatus(busy);
 		const failed = this.failed || index.status === "disposed";
 		const partial = index.status === "partial";
 		const working = busy && this.busyStatusVisible;
-		frame.status.setText(failed ? t("usage.failed")
-			: working && this.busyStatusKind === "loading" ? t("usage.loading")
-			: partial ? t("usage.partial", { count: index.failures.length })
-			: working ? t("usage.stale") : "");
+		frame.status.setText(
+			failed
+				? t("usage.failed")
+				: working && this.busyStatusKind === "loading"
+					? t("usage.loading")
+					: partial
+						? t("usage.partial", { count: index.failures.length })
+						: working
+							? t("usage.stale")
+							: "",
+		);
 		// A long scan shows Obsidian's thin bar across the top of the results
 		// (finding S10-08); its words stay in the live region for a screen
 		// reader, but are not drawn. A problem is drawn, in the warning colour.
@@ -334,12 +408,22 @@ export class CalloutOccurrencesView extends ItemView {
 		if (index.failures.length > 0) {
 			const details = frame.failures.createEl("details");
 			details.createEl("summary", { text: t("usage.failedFiles") });
-			for (const failure of index.failures.slice(0, PAGE_SIZE)) details.createDiv({ text: failure.path || t("usage.vaultReadFailed") });
+			for (const failure of index.failures.slice(0, PAGE_SIZE))
+				details.createDiv({ text: failure.path || t("usage.vaultReadFailed") });
 		}
-		frame.summary.setText(complete || this.results.length > 0
-			? t("usage.summary", { count: this.results.length, files: this.cachedQuery.result.fileCount }) : "");
-		const drawn = this.resultCards.render(frame.results, this.results, this.limit, complete,
-			(path, section) => this.activeFile.addSection(path, section), () => this.activeFile.clearSections());
+		frame.summary.setText(
+			complete || this.results.length > 0
+				? t("usage.summary", { count: this.results.length, files: this.cachedQuery.result.fileCount })
+				: "",
+		);
+		const drawn = this.resultCards.render(
+			frame.results,
+			this.results,
+			this.limit,
+			complete,
+			(path, section) => this.activeFile.addSection(path, section),
+			() => this.activeFile.clearSections(),
+		);
 		frame.scroll.scrollTop = scrollTop;
 		// New groups to keep an eye on: the far ones are parked, so a long list does not slow the editor.
 		if (drawn) this.parking.watch(frame.results);
@@ -348,5 +432,7 @@ export class CalloutOccurrencesView extends ItemView {
 		// New or moved cards: the caret may sit in a different one now.
 		this.cursor.schedule();
 	}
-	private indexState(): string { return `${this.index.dataRevision}:${this.index.status}:${this.index.failures.length}`; }
+	private indexState(): string {
+		return `${this.index.dataRevision}:${this.index.status}:${this.index.failures.length}`;
+	}
 }

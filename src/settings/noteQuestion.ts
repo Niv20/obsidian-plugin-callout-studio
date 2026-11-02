@@ -62,7 +62,8 @@ export interface NoteQuestion {
 /** "3 callouts" and "1 note", for the `{{callouts}} in {{notes}}` of the count. */
 function counted(reach: NoteReach): { callouts: string; notes: string } {
 	return {
-		callouts: reach.callouts === 1 ? t("noteChanges.calloutsOne") : t("noteChanges.callouts", { count: reach.callouts }),
+		callouts:
+			reach.callouts === 1 ? t("noteChanges.calloutsOne") : t("noteChanges.callouts", { count: reach.callouts }),
 		notes: reach.notes === 1 ? t("noteChanges.notesOne") : t("noteChanges.notes", { count: reach.notes }),
 	};
 }
@@ -113,7 +114,8 @@ export function renderNoteQuestion(
 	list.setAttribute("aria-labelledby", askId);
 
 	addCancelButton(footer, t("editor.cancel"), () => spec.finish(false));
-	footer.createEl("button", { text: spec.confirm ?? t("editor.saveChanges"), cls: "mod-cta" })
+	footer
+		.createEl("button", { text: spec.confirm ?? t("editor.saveChanges"), cls: "mod-cta" })
 		.addEventListener("click", () => spec.finish(true));
 
 	/** Each answer card's own repaint, run after every choice. */

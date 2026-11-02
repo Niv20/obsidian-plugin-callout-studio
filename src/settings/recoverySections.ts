@@ -18,24 +18,64 @@
  */
 import type { Component } from "obsidian";
 import { getLocale, t, type LocaleKey } from "../i18n";
-import { effectiveCallouts, type SetupCalloutComparison, type SetupChange, type SetupDetails } from "../manager/setupDetails";
+import {
+	effectiveCallouts,
+	type SetupCalloutComparison,
+	type SetupChange,
+	type SetupDetails,
+} from "../manager/setupDetails";
 import { canonical } from "../manager/syncTree";
 import type { CalloutDefinition, CalloutRenderRole, PluginData } from "../types";
 import { compareText } from "../utils/sorting";
 import {
-	builtInCommandItems, contextMenuItems, customCommandItems, iconLibraryItems, imageItems, paletteItems,
+	builtInCommandItems,
+	contextMenuItems,
+	customCommandItems,
+	iconLibraryItems,
+	imageItems,
+	paletteItems,
 } from "./recoveryCollections";
 import { recoveryFieldLabel } from "./recoveryDetailFields";
 import {
-	ROLE_LABELS, ROLE_ORDER, absentText, pathLabel, recordFields, type FieldSpec, type RecordFieldOptions,
-	type RecoveryField, type RecoveryItem, type RecoveryReport, type RecoverySection, type RecoverySideName, type RecoverySides,
+	ROLE_LABELS,
+	ROLE_ORDER,
+	absentText,
+	pathLabel,
+	recordFields,
+	type FieldSpec,
+	type RecordFieldOptions,
+	type RecoveryField,
+	type RecoveryItem,
+	type RecoveryReport,
+	type RecoverySection,
+	type RecoverySideName,
+	type RecoverySides,
 } from "./recoveryModel";
 import { renderRecoveryPreview } from "./recoveryPreview";
 import { renderRecoveryHeadingPreview, renderRecoveryInlinePreview } from "./recoveryRolePreview";
 import {
-	MATERIAL_STYLES, isRecord, renderAliases, renderBorderSides, renderCalloutRef, renderChoice, renderColor, renderEm,
-	renderGeneric, renderGradient, renderIcon, renderIconAdjust, renderLanguage, renderMaterialWeight, renderOnOff,
-	renderPaletteRef, renderPx, renderScale, renderText, renderYesNo, type RecoverySide, type ValueRenderer,
+	MATERIAL_STYLES,
+	isRecord,
+	renderAliases,
+	renderBorderSides,
+	renderCalloutRef,
+	renderChoice,
+	renderColor,
+	renderEm,
+	renderGeneric,
+	renderGradient,
+	renderIcon,
+	renderIconAdjust,
+	renderLanguage,
+	renderMaterialWeight,
+	renderOnOff,
+	renderPaletteRef,
+	renderPx,
+	renderScale,
+	renderText,
+	renderYesNo,
+	type RecoverySide,
+	type ValueRenderer,
 } from "./recoveryValues";
 
 /** The icon and its visibility come first, as in the callout editor. */
@@ -47,68 +87,104 @@ const CALLOUT_HEAD: readonly FieldSpec[] = [
 
 const CALLOUT_TAIL: readonly FieldSpec[] = [
 	["paletteId", renderPaletteRef, absentText.none],
-	["colorLight", renderColor], ["colorDark", renderColor],
-	["bgColorLight", renderColor, absentText.automatic], ["bgColorDark", renderColor, absentText.automatic],
+	["colorLight", renderColor],
+	["colorDark", renderColor],
+	["bgColorLight", renderColor, absentText.automatic],
+	["bgColorDark", renderColor, absentText.automatic],
 	["bgGradient", renderGradient, absentText.none],
 	["transparentBg", renderYesNo, absentText.no],
-	["textColorLight", renderColor, absentText.themeDefault], ["textColorDark", renderColor, absentText.themeDefault],
-	["foldable", renderYesNo], ["defaultFolded", renderYesNo],
+	["textColorLight", renderColor, absentText.themeDefault],
+	["textColorDark", renderColor, absentText.themeDefault],
+	["foldable", renderYesNo],
+	["defaultFolded", renderYesNo],
 	["aliases", renderAliases, absentText.none],
 	["metadata", renderGeneric, absentText.none],
-	["iconOffsetX", renderPx, absentText.default], ["iconOffsetY", renderPx, absentText.default],
+	["iconOffsetX", renderPx, absentText.default],
+	["iconOffsetY", renderPx, absentText.default],
 	["iconSize", renderScale, absentText.default],
 	["customized", renderYesNo, absentText.no],
-	["source", renderText], ["builtIn", renderYesNo],
+	["source", renderText],
+	["builtIn", renderYesNo],
 ];
 
 function calloutFields(row: SetupCalloutComparison): RecoveryField[] {
-	const before = row.before!, after = row.after!;
+	const before = row.before!,
+		after = row.after!;
 	// Icon nudges sit right under the icon: one row per render role that differs.
-	const nudges: RecoveryField[] = ROLE_ORDER
-		.filter(role => canonical(before.iconAdjust?.[role]) !== canonical(after.iconAdjust?.[role]))
-		.map(role => ({
-			label: t("recovery.details.field.iconAdjustRole", { role: t(ROLE_LABELS[role]) }),
-			before: before.iconAdjust?.[role], after: after.iconAdjust?.[role],
-			render: renderIconAdjust, absent: absentText.default(),
-		}));
+	const nudges: RecoveryField[] = ROLE_ORDER.filter(
+		(role) => canonical(before.iconAdjust?.[role]) !== canonical(after.iconAdjust?.[role]),
+	).map((role) => ({
+		label: t("recovery.details.field.iconAdjustRole", { role: t(ROLE_LABELS[role]) }),
+		before: before.iconAdjust?.[role],
+		after: after.iconAdjust?.[role],
+		render: renderIconAdjust,
+		absent: absentText.default(),
+	}));
 	const fields = [
 		...recordFields(before, after, CALLOUT_HEAD, { unknown: false }),
 		...nudges,
 		...recordFields(before, after, CALLOUT_TAIL, { skip: [...CALLOUT_HEAD.map(([key]) => key), "iconAdjust"] }),
 	];
 	if (row.artworkChanged && canonical(before.icon) === canonical(after.icon)) {
-		fields.push({ label: t("recovery.details.field.iconArtwork"), before: before.icon, after: after.icon, render: renderIcon });
+		fields.push({
+			label: t("recovery.details.field.iconArtwork"),
+			before: before.icon,
+			after: after.icon,
+			render: renderIcon,
+		});
 	}
 	return fields;
 }
 
 function calloutItems(details: SetupDetails, sides: RecoverySides, builtIn: boolean): RecoveryItem[] {
-	return details.callouts
-		.filter(row => (row.kind !== "unchanged" || row.artworkChanged) && ((row.before ?? row.after)?.builtIn === true) === builtIn)
-		.map((row): RecoveryItem => ({
-			key: `callout:${row.id}`,
-			kind: row.kind === "unchanged" ? "changed" : row.kind,
-			title: (row.before ?? row.after)?.displayName || row.id,
-			code: `[!${row.id}]`,
-			summary: (parent, side, component) => renderRecoveryPreview(parent, sides[side].data,
-				(side === "before" ? row.before : row.after)!, component),
-			fields: row.before && row.after ? calloutFields(row) : [],
-		}))
-		// The settings page lists callout types by display name.
-		.sort((a, b) => compareText(a.title, b.title, getLocale()));
+	return (
+		details.callouts
+			.filter(
+				(row) =>
+					(row.kind !== "unchanged" || row.artworkChanged) &&
+					((row.before ?? row.after)?.builtIn === true) === builtIn,
+			)
+			.map((row): RecoveryItem => ({
+				key: `callout:${row.id}`,
+				kind: row.kind === "unchanged" ? "changed" : row.kind,
+				title: (row.before ?? row.after)?.displayName || row.id,
+				code: `[!${row.id}]`,
+				summary: (parent, side, component) =>
+					renderRecoveryPreview(
+						parent,
+						sides[side].data,
+						(side === "before" ? row.before : row.after)!,
+						component,
+					),
+				fields: row.before && row.after ? calloutFields(row) : [],
+			}))
+			// The settings page lists callout types by display name.
+			.sort((a, b) => compareText(a.title, b.title, getLocale()))
+	);
 }
 
 /** Differing fields of one settings group, from its comparable (incidental-free) changes. */
-function groupFields(change: SetupChange | undefined, specs: readonly FieldSpec[], options: RecordFieldOptions = {}): RecoveryField[] {
+function groupFields(
+	change: SetupChange | undefined,
+	specs: readonly FieldSpec[],
+	options: RecordFieldOptions = {},
+): RecoveryField[] {
 	if (!change) return [];
-	if (change.fields.some(field => field.path.length === 0)) {
-		return [{ label: t("recovery.details.value.wholeGroup"), before: change.before, after: change.after, render: renderGeneric }];
+	if (change.fields.some((field) => field.path.length === 0)) {
+		return [
+			{
+				label: t("recovery.details.value.wholeGroup"),
+				before: change.before,
+				after: change.after,
+				render: renderGeneric,
+			},
+		];
 	}
 	// `fields` already leaves out picker memory and onboarding flags; keep only
 	// the keys it names, so those never surface as "unknown" either.
-	const changed = new Set(change.fields.map(field => field.path[0]!));
-	const pick = (value: unknown) => isRecord(value)
-		? Object.fromEntries(Object.entries(value).filter(([key]) => changed.has(key))) : value;
+	const changed = new Set(change.fields.map((field) => field.path[0]!));
+	const pick = (value: unknown) =>
+		isRecord(value) ? Object.fromEntries(Object.entries(value).filter(([key]) => changed.has(key))) : value;
 	return recordFields(pick(change.before), pick(change.after), specs, options);
 }
 
@@ -124,10 +200,17 @@ function sampleCallout(side: RecoverySide): CalloutDefinition | undefined {
 }
 
 const FRAME_FIELDS: readonly FieldSpec[] = [
-	["borderSides", renderBorderSides], ["borderWidth", renderPx], ["borderRadius", renderPx],
+	["borderSides", renderBorderSides],
+	["borderWidth", renderPx],
+	["borderRadius", renderPx],
 ];
 
-type RolePreview = (parent: HTMLElement, data: Partial<PluginData>, def: CalloutDefinition, component: Component) => void;
+type RolePreview = (
+	parent: HTMLElement,
+	data: Partial<PluginData>,
+	def: CalloutDefinition,
+	component: Component,
+) => void;
 
 const ROLE_PREVIEWS: Readonly<Record<CalloutRenderRole, RolePreview>> = {
 	heading: renderRecoveryHeadingPreview,
@@ -140,18 +223,38 @@ function styleItems(changes: ReadonlyMap<string, SetupChange>, sides: RecoverySi
 	const style = changes.get("settings:globalStyle");
 	const byRole: Record<CalloutRenderRole, RecoveryField[]> = {
 		heading: [
-			...nestedFields(style, "heading", [...FRAME_FIELDS, ["paddingTop", renderEm], ["paddingBottom", renderEm], ["marginTop", renderEm]]),
-			...groupFields(changes.get("settings:headingCallouts"), [["enabled", renderOnOff], ["showFoldArrow", renderOnOff],
-				["refCleanTitles", renderOnOff], ["refShowIcon", renderOnOff]]),
+			...nestedFields(style, "heading", [
+				...FRAME_FIELDS,
+				["paddingTop", renderEm],
+				["paddingBottom", renderEm],
+				["marginTop", renderEm],
+			]),
+			...groupFields(changes.get("settings:headingCallouts"), [
+				["enabled", renderOnOff],
+				["showFoldArrow", renderOnOff],
+				["refCleanTitles", renderOnOff],
+				["refShowIcon", renderOnOff],
+			]),
 		],
 		inline: [
 			...nestedFields(style, "inline", [...FRAME_FIELDS, ["fontScale", renderScale]]),
-			...groupFields(changes.get("settings:inlineCallouts"), [["enabled", renderOnOff], ["allowContent", renderOnOff]]),
+			...groupFields(changes.get("settings:inlineCallouts"), [
+				["enabled", renderOnOff],
+				["allowContent", renderOnOff],
+			]),
 		],
-		regular: groupFields(style, [...FRAME_FIELDS, ["titleScale", renderScale], ["contentScale", renderScale],
-			["alignContentWithTitle", renderOnOff]], { skip: ["heading", "inline"] }),
+		regular: groupFields(
+			style,
+			[
+				...FRAME_FIELDS,
+				["titleScale", renderScale],
+				["contentScale", renderScale],
+				["alignContentWithTitle", renderOnOff],
+			],
+			{ skip: ["heading", "inline"] },
+		),
 	};
-	return ROLE_ORDER.filter(role => byRole[role].length > 0).map((role): RecoveryItem => ({
+	return ROLE_ORDER.filter((role) => byRole[role].length > 0).map((role): RecoveryItem => ({
 		key: `style:${role}`,
 		kind: "changed",
 		title: t(ROLE_LABELS[role]),
@@ -179,13 +282,18 @@ type NamedFieldSpec = readonly [key: string, label: LocaleKey, render: ValueRend
  * keys (`themeMetadata`, …) mean nothing to someone choosing a version. A
  * group that is new or gone as a whole is one field, named `groupLabel`.
  */
-function namedFields(change: SetupChange | undefined, groupLabel: string, specs: readonly NamedFieldSpec[]): RecoveryField[] {
+function namedFields(
+	change: SetupChange | undefined,
+	groupLabel: string,
+	specs: readonly NamedFieldSpec[],
+): RecoveryField[] {
 	if (!change) return [];
-	if (change.fields.some(field => field.path.length === 0)) {
-		return groupFields(change, []).map(field => ({ ...field, label: groupLabel }));
+	if (change.fields.some((field) => field.path.length === 0)) {
+		return groupFields(change, []).map((field) => ({ ...field, label: groupLabel }));
 	}
 	return specs.flatMap(([key, label, render]) =>
-		groupFields(change, [[key, render]], { unknown: false }).map(field => ({ ...field, label: t(label) })));
+		groupFields(change, [[key, render]], { unknown: false }).map((field) => ({ ...field, label: t(label) })),
+	);
 }
 
 /**
@@ -195,18 +303,22 @@ function namedFields(change: SetupChange | undefined, groupLabel: string, specs:
  * field, under the first.
  */
 function editorItems(suggestions: SetupChange | undefined, metadataColors: SetupChange | undefined): RecoveryItem[] {
-	const whole = suggestions?.fields.some(field => field.path.length === 0) ?? false;
+	const whole = suggestions?.fields.some((field) => field.path.length === 0) ?? false;
 	const fields = [
 		...namedFields(suggestions, t("settings.resetItemAutocomplete"), [
 			["callouts", "settings.calloutAutocomplete", renderOnOff],
 			["themeCallouts", "settings.suggestThemeCallouts", renderOnOff],
 		]),
-		...namedFields(metadataColors, t("settings.metadataColors"), [["enabled", "settings.metadataColors", renderOnOff]]),
-		...(whole ? [] : namedFields(suggestions, "", [
-			["metadata", "settings.metadataAutocomplete", renderOnOff],
-			["themeMetadata", "settings.suggestThemeMetadata", renderOnOff],
-			["metadataWords", "settings.metadataWords", renderGeneric],
-		])),
+		...namedFields(metadataColors, t("settings.metadataColors"), [
+			["enabled", "settings.metadataColors", renderOnOff],
+		]),
+		...(whole
+			? []
+			: namedFields(suggestions, "", [
+					["metadata", "settings.metadataAutocomplete", renderOnOff],
+					["themeMetadata", "settings.suggestThemeMetadata", renderOnOff],
+					["metadataWords", "settings.metadataWords", renderGeneric],
+				])),
 	];
 	return fields.length
 		? [{ key: "autocompleteAndMetadata", kind: "changed", title: t("settings.autocompleteAndMetadata"), fields }]
@@ -217,77 +329,172 @@ function iconSourceItems(change: SetupChange | undefined): RecoveryItem[] {
 	const fields = groupFields(change, [
 		["materialStyleDefault", renderChoice(MATERIAL_STYLES)],
 		["materialWeightDefault", renderMaterialWeight],
-		["faStyleDefault", renderChoice({ solid: "iconPicker.faStyleSolid", regular: "iconPicker.faStyleRegular",
-			brands: "iconPicker.faStyleBrands" }), absentText.default],
-		["tablerStyleDefault", renderChoice({ outline: "iconPicker.tablerStyleOutline", filled: "iconPicker.tablerStyleFilled" }),
-			absentText.default],
+		[
+			"faStyleDefault",
+			renderChoice({
+				solid: "iconPicker.faStyleSolid",
+				regular: "iconPicker.faStyleRegular",
+				brands: "iconPicker.faStyleBrands",
+			}),
+			absentText.default,
+		],
+		[
+			"tablerStyleDefault",
+			renderChoice({ outline: "iconPicker.tablerStyleOutline", filled: "iconPicker.tablerStyleFilled" }),
+			absentText.default,
+		],
 		["lastMaterialCategory", renderText, absentText.none],
 	]);
-	return fields.length ? [{ key: "iconSources", kind: "changed", title: t("recovery.details.section.iconSources"), fields }] : [];
+	return fields.length
+		? [{ key: "iconSources", kind: "changed", title: t("recovery.details.section.iconSources"), fields }]
+		: [];
 }
 
 type SingleValueDraw = (parent: HTMLElement, value: unknown, side: RecoverySideName, component: Component) => void;
 
 /** A setting that is one value: the title names it and each side draws it. */
-function singleValueItem(change: SetupChange | undefined, key: string, title: string, draw: SingleValueDraw): RecoveryItem[] {
+function singleValueItem(
+	change: SetupChange | undefined,
+	key: string,
+	title: string,
+	draw: SingleValueDraw,
+): RecoveryItem[] {
 	if (!change) return [];
-	return [{ key, kind: change.kind, title, fields: [],
-		summary: (parent, side, component) => draw(parent, side === "before" ? change.before : change.after, side, component) }];
+	return [
+		{
+			key,
+			kind: change.kind,
+			title,
+			fields: [],
+			summary: (parent, side, component) =>
+				draw(parent, side === "before" ? change.before : change.after, side, component),
+		},
+	];
 }
 
 /** Settings groups this version does not know, labelled by their saved keys. */
-function otherItems(changes: readonly SetupChange[], handled: ReadonlySet<string>, sides: RecoverySides): RecoveryItem[] {
-	return changes.filter(change => change.key.startsWith("settings:") && !handled.has(change.key)).map((change): RecoveryItem => {
-		const name = change.key.slice("settings:".length);
-		const whole = change.fields.length === 0 || change.fields.some(field => field.path.length === 0);
-		return {
-			key: `other:${name}`, kind: change.kind, title: recoveryFieldLabel(name),
-			summary: whole ? (parent, side) => renderGeneric(parent, side === "before" ? change.before : change.after, sides[side]) : undefined,
-			fields: whole ? [] : change.fields.map(field => ({ label: pathLabel(field.path), before: field.before,
-				after: field.after, render: renderGeneric })),
-		};
-	});
+function otherItems(
+	changes: readonly SetupChange[],
+	handled: ReadonlySet<string>,
+	sides: RecoverySides,
+): RecoveryItem[] {
+	return changes
+		.filter((change) => change.key.startsWith("settings:") && !handled.has(change.key))
+		.map((change): RecoveryItem => {
+			const name = change.key.slice("settings:".length);
+			const whole = change.fields.length === 0 || change.fields.some((field) => field.path.length === 0);
+			return {
+				key: `other:${name}`,
+				kind: change.kind,
+				title: recoveryFieldLabel(name),
+				summary: whole
+					? (parent, side) =>
+							renderGeneric(parent, side === "before" ? change.before : change.after, sides[side])
+					: undefined,
+				fields: whole
+					? []
+					: change.fields.map((field) => ({
+							label: pathLabel(field.path),
+							before: field.before,
+							after: field.after,
+							render: renderGeneric,
+						})),
+			};
+		});
 }
 
 /** Settings groups with a section of their own; everything else is "Other settings". */
-const HANDLED_GROUPS: ReadonlySet<string> = new Set(["userImages", "iconSources", "iconLibraries", "fallbackCalloutId",
-	"customPalettes", "globalStyle", "headingCallouts", "inlineCallouts", "themeCalloutStyles", "suggestions", "metadataColors",
-	"contextMenu", "customCommands", "disabledFixedCommands", "language"]
-	.map(name => `settings:${name}`));
+const HANDLED_GROUPS: ReadonlySet<string> = new Set(
+	[
+		"userImages",
+		"iconSources",
+		"iconLibraries",
+		"fallbackCalloutId",
+		"customPalettes",
+		"globalStyle",
+		"headingCallouts",
+		"inlineCallouts",
+		"themeCalloutStyles",
+		"suggestions",
+		"metadataColors",
+		"contextMenu",
+		"customCommands",
+		"disabledFixedCommands",
+		"language",
+	].map((name) => `settings:${name}`),
+);
 
 /** Every difference restoring would make, grouped and ordered as the settings page is. */
 export function recoveryReport(details: SetupDetails): RecoveryReport {
 	const side = (data: Partial<PluginData>): RecoverySide => ({ data, callouts: effectiveCallouts(data) });
 	const sides: RecoverySides = { before: side(details.current), after: side(details.source.data ?? {}) };
 	if (!details.source.data) return { sections: [], sides };
-	const changes = new Map(details.changes.map(change => [change.key, change]));
+	const changes = new Map(details.changes.map((change) => [change.key, change]));
 	const group = (name: string) => changes.get(`settings:${name}`);
 	const sections: RecoverySection[] = [
 		{ id: "user", title: t("settings.myCalloutTypes"), items: calloutItems(details, sides, false) },
 		{ id: "builtin", title: t("settings.builtInCallouts"), items: calloutItems(details, sides, true) },
-		{ id: "fallback", title: t("settings.fallbackCallout"), items: singleValueItem(group("fallbackCalloutId"), "fallback",
-			t("settings.fallbackCallout"), (parent, value, which, component) => {
-				renderCalloutRef(parent, value, sides[which]);
-				const def = typeof value === "string" ? sides[which].callouts.get(value) : undefined;
-				if (def) renderRecoveryPreview(parent.createDiv({ cls: "cs-recovery-side-preview" }), sides[which].data, def, component);
-			}) },
+		{
+			id: "fallback",
+			title: t("settings.fallbackCallout"),
+			items: singleValueItem(
+				group("fallbackCalloutId"),
+				"fallback",
+				t("settings.fallbackCallout"),
+				(parent, value, which, component) => {
+					renderCalloutRef(parent, value, sides[which]);
+					const def = typeof value === "string" ? sides[which].callouts.get(value) : undefined;
+					if (def)
+						renderRecoveryPreview(
+							parent.createDiv({ cls: "cs-recovery-side-preview" }),
+							sides[which].data,
+							def,
+							component,
+						);
+				},
+			),
+		},
 		{ id: "palettes", title: t("settings.customPalettes"), items: paletteItems(group("customPalettes"), sides) },
 		{ id: "images", title: t("iconPicker.custom"), items: imageItems(group("userImages"), sides) },
-		{ id: "iconSources", title: t("recovery.details.section.iconSources"), items: [
-			...iconSourceItems(group("iconSources")), ...iconLibraryItems(group("iconLibraries")),
-		] },
-		{ id: "style", title: t("settings.globalSettings"), items: [
-			...styleItems(changes, sides), ...themeCalloutStyleItems(group("themeCalloutStyles")),
-		] },
-		{ id: "editor", title: t("settings.editorBox"),
-			items: editorItems(group("suggestions"), group("metadataColors")) },
+		{
+			id: "iconSources",
+			title: t("recovery.details.section.iconSources"),
+			items: [...iconSourceItems(group("iconSources")), ...iconLibraryItems(group("iconLibraries"))],
+		},
+		{
+			id: "style",
+			title: t("settings.globalSettings"),
+			items: [...styleItems(changes, sides), ...themeCalloutStyleItems(group("themeCalloutStyles"))],
+		},
+		{
+			id: "editor",
+			title: t("settings.editorBox"),
+			items: editorItems(group("suggestions"), group("metadataColors")),
+		},
 		{ id: "contextMenu", title: t("settings.contextMenu"), items: contextMenuItems(group("contextMenu")) },
-		{ id: "commands", title: t("settings.customCommands"), items: [
-			...customCommandItems(group("customCommands"), sides), ...builtInCommandItems(group("disabledFixedCommands"), sides),
-		] },
-		{ id: "language", title: t("settings.language"), items: singleValueItem(group("language"), "language",
-			t("recovery.details.field.language"), (parent, value, which) => renderLanguage(parent, value, sides[which])) },
-		{ id: "other", title: t("recovery.details.section.other"), items: otherItems(details.changes, HANDLED_GROUPS, sides) },
+		{
+			id: "commands",
+			title: t("settings.customCommands"),
+			items: [
+				...customCommandItems(group("customCommands"), sides),
+				...builtInCommandItems(group("disabledFixedCommands"), sides),
+			],
+		},
+		{
+			id: "language",
+			title: t("settings.language"),
+			items: singleValueItem(
+				group("language"),
+				"language",
+				t("recovery.details.field.language"),
+				(parent, value, which) => renderLanguage(parent, value, sides[which]),
+			),
+		},
+		{
+			id: "other",
+			title: t("recovery.details.section.other"),
+			items: otherItems(details.changes, HANDLED_GROUPS, sides),
+		},
 	];
-	return { sections: sections.filter(section => section.items.length > 0), sides };
+	return { sections: sections.filter((section) => section.items.length > 0), sides };
 }

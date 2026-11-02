@@ -37,7 +37,9 @@ export const RESUME_NOTICE_AFTER_MS = 5_000;
 
 export function registerPausedIndicator(host: PausedIndicatorHost, mobile: boolean = Platform.isMobile): void {
 	const writer = host.settingsWriter;
-	const open = () => { openPluginSettings(host.app, host.manifest.id); };
+	const open = () => {
+		openPluginSettings(host.app, host.manifest.id);
+	};
 	let item: HTMLElement | null = null;
 	let notice: Notice | null = null;
 	// A missing file at launch already has a notice that stays; do not add a second.
@@ -89,12 +91,22 @@ export function registerPausedIndicator(host: PausedIndicatorHost, mobile: boole
 		if (announced) return;
 		announced = true;
 		// Stays up (0) until it is clicked, or saving resumes.
-		notice = showActionNotice("paused", t("statusBar.pausedNotice"), {
-			label: t("saveStatus.openSettings"),
-			run: () => { openPluginSettings(host.app, host.manifest.id); },
-		}, 0).notice;
+		notice = showActionNotice(
+			"paused",
+			t("statusBar.pausedNotice"),
+			{
+				label: t("saveStatus.openSettings"),
+				run: () => {
+					openPluginSettings(host.app, host.manifest.id);
+				},
+			},
+			0,
+		).notice;
 	};
 	host.register(writer.status.subscribe(update));
-	host.register(() => { item?.remove(); notice?.hide(); });
+	host.register(() => {
+		item?.remove();
+		notice?.hide();
+	});
 	update();
 }

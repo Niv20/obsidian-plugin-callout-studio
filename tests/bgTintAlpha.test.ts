@@ -90,11 +90,7 @@ function reach(hex: string, isDark: boolean): number {
 function widestChannel(hex: string, isDark: boolean): number {
 	const b = hexToRgb(isDark ? BG_PRIMARY_DARK : BG_PRIMARY_LIGHT);
 	const c = hexToRgb(hex);
-	return Math.max(
-		Math.abs(c.r - b.r),
-		Math.abs(c.g - b.g),
-		Math.abs(c.b - b.b),
-	);
+	return Math.max(Math.abs(c.r - b.r), Math.abs(c.g - b.g), Math.abs(c.b - b.b));
 }
 
 /** The answer before either cap existed: the smallest viable alpha, and nothing else. */
@@ -102,16 +98,9 @@ function uncappedAlpha(bg: string, isDark: boolean): number | null {
 	return resolveTintAlpha(minTintAlpha(bg, isDark));
 }
 
-function alphaFor(
-	accent: string,
-	bg: string,
-	isDark: boolean,
-	over: Partial<CalloutDefinition> = {},
-): number | null {
+function alphaFor(accent: string, bg: string, isDark: boolean, over: Partial<CalloutDefinition> = {}): number | null {
 	const def = definition(
-		isDark
-			? { colorDark: accent, bgColorDark: bg, ...over }
-			: { colorLight: accent, bgColorLight: bg, ...over },
+		isDark ? { colorDark: accent, bgColorDark: bg, ...over } : { colorLight: accent, bgColorLight: bg, ...over },
 	);
 	return resolveBgAlpha(def, isDark ? "dark" : "light");
 }
@@ -119,11 +108,7 @@ function alphaFor(
 /** Every accent × background × mode combination the properties below range over. */
 function* grid(): Generator<{ accent: string; bg: string; isDark: boolean }> {
 	for (const isDark of [false, true]) {
-		const backgrounds = [
-			...SAMPLE_HEXES.map((h) => bgTintFor(h, isDark)),
-			...HAND_PICKED,
-			...SAMPLE_HEXES,
-		];
+		const backgrounds = [...SAMPLE_HEXES.map((h) => bgTintFor(h, isDark)), ...HAND_PICKED, ...SAMPLE_HEXES];
 		for (const accent of SAMPLE_HEXES) {
 			for (const bg of backgrounds) yield { accent, bg, isDark };
 		}
@@ -156,10 +141,7 @@ describe("accentAnchorAlpha — the accent's own intensity, as an alpha", () => 
 		// alpha 1.5 — past the ceiling, i.e. an opaque background. Measured as
 		// one distance, that channel is a rounding detail of a much longer line.
 		const anchor = accentAnchorAlpha("#4287f5", "#dde9f0", false);
-		assert.ok(
-			anchor > 0.1 && anchor < 0.3,
-			`a background this pale cannot want a heavy alpha, got ${anchor}`,
-		);
+		assert.ok(anchor > 0.1 && anchor < 0.3, `a background this pale cannot want a heavy alpha, got ${anchor}`);
 	});
 
 	it("is zero for an accent that is the page colour itself", () => {
@@ -183,10 +165,7 @@ describe("resolveBgAlpha — a cap can never cost the nesting step", () => {
 		for (const { accent, bg, isDark } of grid()) {
 			const capped = alphaFor(accent, bg, isDark);
 			if (uncappedAlpha(bg, isDark) === null) continue;
-			assert.ok(
-				capped !== null,
-				`${accent} on ${bg} ${isDark ? "dark" : "light"} went opaque`,
-			);
+			assert.ok(capped !== null, `${accent} on ${bg} ${isDark ? "dark" : "light"} went opaque`);
 		}
 	});
 
@@ -195,10 +174,7 @@ describe("resolveBgAlpha — a cap can never cost the nesting step", () => {
 			const uncapped = uncappedAlpha(bg, isDark);
 			const capped = alphaFor(accent, bg, isDark);
 			if (uncapped === null || capped === null) continue;
-			assert.ok(
-				capped >= uncapped,
-				`${accent} on ${bg}: ${capped} < ${uncapped}`,
-			);
+			assert.ok(capped >= uncapped, `${accent} on ${bg}: ${capped} < ${uncapped}`);
 		}
 	});
 
@@ -231,10 +207,7 @@ describe("resolveBgAlpha — a cap can never cost the nesting step", () => {
 			if (alpha === null) continue;
 			const distance = widestChannel(bg, isDark);
 			if (distance === 0) continue; // a background that IS the page
-			assert.ok(
-				(1 - alpha) * distance >= 2,
-				`${bg} @ ${alpha}: step of ${(1 - alpha) * distance} levels`,
-			);
+			assert.ok((1 - alpha) * distance >= 2, `${bg} @ ${alpha}: step of ${(1 - alpha) * distance} levels`);
 		}
 	});
 });
@@ -254,11 +227,9 @@ describe("resolveBgAlpha — what the cap actually bounds", () => {
 			if (alpha === null) continue;
 			const cap = accentAnchorAlpha(accent, bg, isDark);
 			if (cap === 0) continue; // an accent that IS the page
-			if (resolveTintAlpha(minTintAlpha(bg, isDark), cap) === null)
-				continue;
+			if (resolveTintAlpha(minTintAlpha(bg, isDark), cap) === null) continue;
 			assert.ok(
-				reach(tintColorAt(bg, isDark, alpha), isDark) <=
-					reach(accent, isDark) + 3,
+				reach(tintColorAt(bg, isDark, alpha), isDark) <= reach(accent, isDark) + 3,
 				`${accent}/${bg} @ ${alpha}: source reaches ${reach(tintColorAt(bg, isDark, alpha), isDark)}, accent ${reach(accent, isDark)}`,
 			);
 		}
@@ -281,13 +252,9 @@ describe("resolveBgAlpha — what the cap actually bounds", () => {
 		const bg = bgTintFor(accent, false, 0.45);
 		const alpha = alphaFor(accent, bg, false);
 		assert.ok(alpha !== null);
+		assert.ok(alpha > 0.4, `the accent cap should bind well above the minimum here, got ${alpha}`);
 		assert.ok(
-			alpha > 0.4,
-			`the accent cap should bind well above the minimum here, got ${alpha}`,
-		);
-		assert.ok(
-			reach(tintColorAt(bg, false, alpha), false) <=
-				reach(accent, false) + 3,
+			reach(tintColorAt(bg, false, alpha), false) <= reach(accent, false) + 3,
 			"the source out-reached the accent it was capped against",
 		);
 	});
@@ -309,10 +276,7 @@ describe("resolveBgAlpha — what the cap actually bounds", () => {
 		for (const bg of ["#dde9f0", "#dde9fa"]) {
 			const alpha = alphaFor("#4287f5", bg, false);
 			assert.ok(alpha !== null, `${bg} went opaque`);
-			assert.ok(
-				alpha < 0.5,
-				`${bg} resolved at ${alpha}, which all but flattens the step`,
-			);
+			assert.ok(alpha < 0.5, `${bg} resolved at ${alpha}, which all but flattens the step`);
 		}
 	});
 

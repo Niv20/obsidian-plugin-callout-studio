@@ -50,10 +50,7 @@ import type { BorderSidesSettings } from "../../types";
  * such conflict — the plugin never draws its own border that way — so it is
  * unconditional.
  */
-export function transparentBorderProps(
-	borderSides: BorderSidesSettings,
-	important = false,
-): string[] {
+export function transparentBorderProps(borderSides: BorderSidesSettings, important = false): string[] {
 	const imp = important ? " !important" : "";
 	const { top, right, bottom, left } = borderSides;
 	const props = [`  box-shadow: none${imp};`];

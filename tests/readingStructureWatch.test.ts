@@ -51,7 +51,11 @@ function harness(...texts: string[]) {
 	const leaves = notes.map((note) => ({
 		view: Object.assign(Object.create(MarkdownView.prototype) as object, {
 			getViewData: () => note.text,
-			previewMode: { rerender: () => { note.rerenders++; } },
+			previewMode: {
+				rerender: () => {
+					note.rerenders++;
+				},
+			},
 		}),
 	}));
 	const app = { workspace: { getLeavesOfType: () => leaves } } as unknown as App;
@@ -62,7 +66,11 @@ function harness(...texts: string[]) {
 describe("ReadingStructureWatch — what moves it", () => {
 	it("a colour, an icon or a name re-renders nothing", () => {
 		const h = harness("## [!note] Title");
-		h.registry.update("note", { colorLight: "#ff0000", displayName: "Renamed", icon: { type: "lucide", value: "pencil" } });
+		h.registry.update("note", {
+			colorLight: "#ff0000",
+			displayName: "Renamed",
+			icon: { type: "lucide", value: "pencil" },
+		});
 		h.watch.check();
 		assert.deepStrictEqual(h.rerenders(), [0]);
 	});
@@ -137,8 +145,16 @@ describe("refreshCallouts — asks the watch after the repaint", () => {
 	it("so a registry reloaded from disk reaches reading view too", () => {
 		const calls: string[] = [];
 		refreshCallouts({
-			cssInjector: { inject: () => { calls.push("inject"); } },
-			readingStructure: { check: () => { calls.push("check"); } },
+			cssInjector: {
+				inject: () => {
+					calls.push("inject");
+				},
+			},
+			readingStructure: {
+				check: () => {
+					calls.push("check");
+				},
+			},
 		});
 		assert.deepStrictEqual(calls, ["inject", "check"]);
 	});

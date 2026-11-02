@@ -23,8 +23,13 @@ export function assertImportTextSize(text: string): void {
 		const code = text.charCodeAt(i);
 		if (code < 0x80) bytes++;
 		else if (code < 0x800) bytes += 2;
-		else if (code >= 0xd800 && code <= 0xdbff &&
-			i + 1 < text.length && text.charCodeAt(i + 1) >= 0xdc00 && text.charCodeAt(i + 1) <= 0xdfff) {
+		else if (
+			code >= 0xd800 &&
+			code <= 0xdbff &&
+			i + 1 < text.length &&
+			text.charCodeAt(i + 1) >= 0xdc00 &&
+			text.charCodeAt(i + 1) <= 0xdfff
+		) {
 			bytes += 4;
 			i++;
 		} else bytes += 3;
@@ -39,7 +44,9 @@ function preflightJson(text: string): void {
 	let quoted = false;
 	let escaped = false;
 	let primitive = false;
-	const complex = () => { throw new ImportLimitError("import.err.tooComplex"); };
+	const complex = () => {
+		throw new ImportLimitError("import.err.tooComplex");
+	};
 	const value = () => {
 		if (++values > MAX_IMPORT_VALUES) complex();
 		const parent = frames[frames.length - 1];
@@ -63,9 +70,11 @@ function preflightJson(text: string): void {
 			frames.push({ object: char === "{", key: char === "{", items: 0 });
 			if (frames.length > MAX_IMPORT_DEPTH) complex();
 		} else if (char === "}" || char === "]") frames.pop();
-		else if (char === ":") { if (parent) parent.key = false; }
-		else if (char === ",") { if (parent?.object) parent.key = true; }
-		else if (char !== " " && char !== "\n" && char !== "\r" && char !== "\t" && char !== "\uFEFF") {
+		else if (char === ":") {
+			if (parent) parent.key = false;
+		} else if (char === ",") {
+			if (parent?.object) parent.key = true;
+		} else if (char !== " " && char !== "\n" && char !== "\r" && char !== "\t" && char !== "\uFEFF") {
 			if (!primitive) value();
 			primitive = true;
 			continue;
@@ -100,7 +109,8 @@ export function assertImportStructure(raw: unknown): void {
 			// Depth bounds terminate cycles, while harmless shared references remain
 			// valid for callers passing objects rather than JSON text.
 			if (depth >= MAX_IMPORT_DEPTH) throw new ImportLimitError("import.err.tooComplex");
-			if (Array.isArray(value) && value.length > MAX_IMPORT_COLLECTION) throw new ImportLimitError("import.err.tooComplex");
+			if (Array.isArray(value) && value.length > MAX_IMPORT_COLLECTION)
+				throw new ImportLimitError("import.err.tooComplex");
 			const keys = Object.keys(value);
 			if (keys.length > MAX_IMPORT_COLLECTION) throw new ImportLimitError("import.err.tooComplex");
 			for (const key of keys) {

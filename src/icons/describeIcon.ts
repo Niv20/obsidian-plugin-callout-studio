@@ -12,10 +12,7 @@ import { tablerStyleOf } from "./packs/tabler";
 import { emojiLabelFor } from "./packs/emoji";
 import { t } from "../i18n";
 
-export function describeIcon(
-	icon: CalloutIcon,
-	userImages: readonly UserImageIcon[],
-): string {
+export function describeIcon(icon: CalloutIcon, userImages: readonly UserImageIcon[]): string {
 	const pack = packFor(icon);
 	const source = pack ? t(pack.labelKey) : icon.type;
 	if (icon.type === "material") {

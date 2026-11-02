@@ -42,7 +42,9 @@ const SNIPPET_PATH = `${CONFIG_DIR}/snippets/${SNIPPET}.css`;
 
 function deferred() {
 	let resolve!: () => void;
-	const promise = new Promise<void>(done => { resolve = done; });
+	const promise = new Promise<void>((done) => {
+		resolve = done;
+	});
 	return { promise, resolve };
 }
 
@@ -138,10 +140,13 @@ function fake(
 					if (text === undefined) throw new Error("ENOENT");
 					return text;
 				},
-				async mkdir(path: string): Promise<void> { vault.present.add(path); },
+				async mkdir(path: string): Promise<void> {
+					vault.present.add(path);
+				},
 				async write(path: string, text: string): Promise<void> {
 					if (vault.failArchiveWrite) throw new Error("ENOSPC");
-					vault.content.set(path, text); vault.present.add(path);
+					vault.content.set(path, text);
+					vault.present.add(path);
 					if (vault.changeSource) vault.content.set(SNIPPET_PATH, "new edit during backup");
 				},
 				exists(path: string): Promise<boolean> {
@@ -168,9 +173,7 @@ function fake(
 }
 
 /** Run `body` with `console.warn` swallowed, and hand back what it was told. */
-async function withQuietWarnings(
-	body: () => Promise<void>,
-): Promise<unknown[][]> {
+async function withQuietWarnings(body: () => Promise<void>): Promise<unknown[][]> {
 	const seen: unknown[][] = [];
 	const real = console.warn;
 	console.warn = (...args: unknown[]) => {
@@ -197,7 +200,8 @@ describe("removeLegacyStartupSnippet — the vault that still has one", () => {
 	});
 	for (const fault of ["failArchiveWrite", "corruptArchive", "changeSource"] as const) {
 		it(`preserves the source and enabled state when ${fault} prevents safe archival`, async () => {
-			const f = fake({ fileExists: true, snippetEnabled: true }); f.vault[fault] = true;
+			const f = fake({ fileExists: true, snippetEnabled: true });
+			f.vault[fault] = true;
 			await withQuietWarnings(() => removeLegacyStartupSnippet(f.app));
 			assert.deepStrictEqual(f.vault.removed, []);
 			assert.strictEqual(f.css.enabled.has(SNIPPET), true);
@@ -230,9 +234,7 @@ describe("removeLegacyStartupSnippet — the vault that still has one", () => {
 		const f = fake({ fileExists: true, snippetEnabled: true });
 		f.vault.failRemove = true;
 
-		const warnings = await withQuietWarnings(() =>
-			removeLegacyStartupSnippet(f.app),
-		);
+		const warnings = await withQuietWarnings(() => removeLegacyStartupSnippet(f.app));
 
 		assert.strictEqual(f.css.enabled.has(SNIPPET), false, "switched off anyway");
 		assert.strictEqual(warnings.length, 1, "and the user is told to remove it");
@@ -315,9 +317,7 @@ describe("removeLegacyStartupSnippet — the vault that never had one", () => {
 		(f.app.vault as unknown as { configDir: string }).configDir = ".obsidian-beta";
 		await removeLegacyStartupSnippet(f.app);
 
-		assert.deepStrictEqual(f.vault.stats, [
-			`.obsidian-beta/snippets/${SNIPPET}.css`,
-		]);
+		assert.deepStrictEqual(f.vault.stats, [`.obsidian-beta/snippets/${SNIPPET}.css`]);
 	});
 });
 
@@ -347,9 +347,7 @@ describe("removeLegacyStartupSnippet — nothing here may throw", () => {
 		const f = fake({ fileExists: true });
 		f.vault.failExists = true;
 
-		const warnings = await withQuietWarnings(() =>
-			removeLegacyStartupSnippet(f.app),
-		);
+		const warnings = await withQuietWarnings(() => removeLegacyStartupSnippet(f.app));
 
 		assert.strictEqual(warnings.length, 1);
 		assert.match(String(warnings[0]?.[0]), /callout-studio-do-not-delete\.css/);
@@ -371,9 +369,7 @@ describe("removeLegacyStartupSnippet — nothing here may throw", () => {
 		const f = fake({ fileExists: true });
 		f.vault.failRemove = true;
 
-		const warnings = await withQuietWarnings(() =>
-			removeLegacyStartupSnippet(f.app),
-		);
+		const warnings = await withQuietWarnings(() => removeLegacyStartupSnippet(f.app));
 
 		assert.match(String(warnings[0]?.[0]), /snippets folder manually/);
 	});
@@ -390,21 +386,35 @@ describe("removeLegacyStartupSnippet — unload during cleanup", () => {
 	for (const stage of ["first-read", "mkdir", "write", "final-read"] as const) {
 		it(`preserves the active source if unloaded during ${stage}`, async () => {
 			const f = fake({ fileExists: true, snippetEnabled: true });
-			const entered = deferred(), resume = deferred();
+			const entered = deferred(),
+				resume = deferred();
 			const adapter = f.app.vault.adapter;
-			const read = adapter.read.bind(adapter), mkdir = adapter.mkdir.bind(adapter), write = adapter.write.bind(adapter);
-			let sourceReads = 0, active = true;
-			const pause = async () => { entered.resolve(); await resume.promise; };
-			adapter.read = async path => {
+			const read = adapter.read.bind(adapter),
+				mkdir = adapter.mkdir.bind(adapter),
+				write = adapter.write.bind(adapter);
+			let sourceReads = 0,
+				active = true;
+			const pause = async () => {
+				entered.resolve();
+				await resume.promise;
+			};
+			adapter.read = async (path) => {
 				const result = await read(path);
 				if (path === SNIPPET_PATH) {
 					sourceReads++;
-					if ((stage === "first-read" && sourceReads === 1) || (stage === "final-read" && sourceReads === 2)) await pause();
+					if ((stage === "first-read" && sourceReads === 1) || (stage === "final-read" && sourceReads === 2))
+						await pause();
 				}
 				return result;
 			};
-			adapter.mkdir = async path => { await mkdir(path); if (stage === "mkdir") await pause(); };
-			adapter.write = async (path, text) => { await write(path, text); if (stage === "write") await pause(); };
+			adapter.mkdir = async (path) => {
+				await mkdir(path);
+				if (stage === "mkdir") await pause();
+			};
+			adapter.write = async (path, text) => {
+				await write(path, text);
+				if (stage === "write") await pause();
+			};
 			const pending = removeLegacyStartupSnippet(f.app, () => active);
 			await entered.promise;
 			active = false;
@@ -420,10 +430,16 @@ describe("removeLegacyStartupSnippet — unload during cleanup", () => {
 
 	it("does not reload snippets when an already-started removal completes after unload", async () => {
 		const f = fake({ fileExists: true, snippetEnabled: true });
-		const entered = deferred(), resume = deferred();
-		const adapter = f.app.vault.adapter, remove = adapter.remove.bind(adapter);
+		const entered = deferred(),
+			resume = deferred();
+		const adapter = f.app.vault.adapter,
+			remove = adapter.remove.bind(adapter);
 		let active = true;
-		adapter.remove = async path => { await remove(path); entered.resolve(); await resume.promise; };
+		adapter.remove = async (path) => {
+			await remove(path);
+			entered.resolve();
+			await resume.promise;
+		};
 		const pending = removeLegacyStartupSnippet(f.app, () => active);
 		await entered.promise;
 		active = false;

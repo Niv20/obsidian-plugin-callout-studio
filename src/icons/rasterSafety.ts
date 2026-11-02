@@ -10,8 +10,15 @@ export interface RasterDimensions {
 }
 
 export function safeRasterSize(width: number, height: number): boolean {
-	return Number.isInteger(width) && Number.isInteger(height) && width > 0 && height > 0 &&
-		width <= MAX_RASTER_SIDE && height <= MAX_RASTER_SIDE && width * height <= MAX_RASTER_PIXELS;
+	return (
+		Number.isInteger(width) &&
+		Number.isInteger(height) &&
+		width > 0 &&
+		height > 0 &&
+		width <= MAX_RASTER_SIDE &&
+		height <= MAX_RASTER_SIDE &&
+		width * height <= MAX_RASTER_PIXELS
+	);
 }
 
 function matches(bytes: Uint8Array, offset: number, text: string): boolean {
@@ -54,16 +61,24 @@ export function rasterDimensions(bytes: Uint8Array): RasterDimensions | null {
 /** PNG/APNG chunk structure; CRCs and compressed bytes remain the decoder's job. */
 function pngDimensions(bytes: Uint8Array, view: DataView): RasterDimensions | null {
 	if (bytes.length < 33 || view.getUint32(8) !== 13 || !matches(bytes, 12, "IHDR")) return null;
-	const width = view.getUint32(16); const height = view.getUint32(20);
+	const width = view.getUint32(16);
+	const height = view.getUint32(20);
 	if (!safeRasterSize(width, height)) return null;
 	const canvasPixels = width * height;
 	let at = 33;
-	let declaredFrames = 0; let frames = 0; let sequence = 0;
-	let defaultIncluded = false; let defaultData = false;
-	let idatSeen = false; let idatClosed = false;
-	let frameData = false; let frameUsesDefault = false;
+	let declaredFrames = 0;
+	let frames = 0;
+	let sequence = 0;
+	let defaultIncluded = false;
+	let defaultData = false;
+	let idatSeen = false;
+	let idatClosed = false;
+	let frameData = false;
+	let frameUsesDefault = false;
 	while (at + 12 <= bytes.length) {
-		const length = view.getUint32(at); const body = at + 8; const end = body + length + 4;
+		const length = view.getUint32(at);
+		const body = at + 8;
+		const end = body + length + 4;
 		if (length > 0x7fffffff || end > bytes.length) return null;
 		const isIdat = matches(bytes, at + 4, "IDAT");
 		if (matches(bytes, at + 4, "IHDR")) return null;
@@ -72,29 +87,61 @@ function pngDimensions(bytes: Uint8Array, view: DataView): RasterDimensions | nu
 			declaredFrames = view.getUint32(body);
 			if (!declaredFrames || canvasPixels * declaredFrames > MAX_RASTER_PIXELS) return null;
 		} else if (matches(bytes, at + 4, "fcTL")) {
-			if (length !== 26 || !declaredFrames || (frames > 0 && !frameData) || view.getUint32(body) !== sequence++) return null;
-			const w = view.getUint32(body + 4); const h = view.getUint32(body + 8);
-			const x = view.getUint32(body + 12); const y = view.getUint32(body + 16);
-			if (!safeRasterSize(w, h) || x + w > width || y + h > height || bytes[body + 24]! > 2 || bytes[body + 25]! > 1) return null;
+			if (length !== 26 || !declaredFrames || (frames > 0 && !frameData) || view.getUint32(body) !== sequence++)
+				return null;
+			const w = view.getUint32(body + 4);
+			const h = view.getUint32(body + 8);
+			const x = view.getUint32(body + 12);
+			const y = view.getUint32(body + 16);
+			if (
+				!safeRasterSize(w, h) ||
+				x + w > width ||
+				y + h > height ||
+				bytes[body + 24]! > 2 ||
+				bytes[body + 25]! > 1
+			)
+				return null;
 			frameUsesDefault = !idatSeen;
 			if (frameUsesDefault) {
 				if (frames || x || y || w !== width || h !== height) return null;
 				defaultIncluded = true;
 			}
-			frames++; frameData = false;
-			if (frames > declaredFrames || canvasPixels * (frames + (defaultIncluded ? 0 : 1)) > MAX_RASTER_PIXELS) return null;
+			frames++;
+			frameData = false;
+			if (frames > declaredFrames || canvasPixels * (frames + (defaultIncluded ? 0 : 1)) > MAX_RASTER_PIXELS)
+				return null;
 		} else if (matches(bytes, at + 4, "fdAT")) {
-			if (length < 4 || !declaredFrames || !frames || !idatSeen || frameUsesDefault || view.getUint32(body) !== sequence++) return null;
+			if (
+				length < 4 ||
+				!declaredFrames ||
+				!frames ||
+				!idatSeen ||
+				frameUsesDefault ||
+				view.getUint32(body) !== sequence++
+			)
+				return null;
 			if (length > 4) frameData = true;
 		} else if (isIdat) {
 			if (idatClosed || (frames > 0 && !frameUsesDefault)) return null;
 			idatSeen = true;
-			if (length > 0) { defaultData = true; if (frameUsesDefault) frameData = true; }
+			if (length > 0) {
+				defaultData = true;
+				if (frameUsesDefault) frameData = true;
+			}
 		} else if (matches(bytes, at + 4, "IEND")) {
-			if (length !== 0 || end !== bytes.length || !defaultData ||
-				(declaredFrames && (frames !== declaredFrames || !frameData))) return null;
-			return { format: "png", width, height,
-				...(declaredFrames ? { decodedPixels: canvasPixels * (frames + (defaultIncluded ? 0 : 1)) } : {}) };
+			if (
+				length !== 0 ||
+				end !== bytes.length ||
+				!defaultData ||
+				(declaredFrames && (frames !== declaredFrames || !frameData))
+			)
+				return null;
+			return {
+				format: "png",
+				width,
+				height,
+				...(declaredFrames ? { decodedPixels: canvasPixels * (frames + (defaultIncluded ? 0 : 1)) } : {}),
+			};
 		}
 		if (idatSeen && !isIdat) idatClosed = true;
 		at = end;
@@ -105,9 +152,10 @@ function pngDimensions(bytes: Uint8Array, view: DataView): RasterDimensions | nu
 /** GIF frame rectangles may be larger than the logical screen header. */
 function gifDimensions(bytes: Uint8Array, view: DataView): RasterDimensions | null {
 	if (bytes.length < 13) return null;
-	const width = view.getUint16(6, true); const height = view.getUint16(8, true);
+	const width = view.getUint16(6, true);
+	const height = view.getUint16(8, true);
 	if (!safeRasterSize(width, height)) return null;
-	let at = 13 + ((bytes[10]! & 0x80) ? 3 * (2 ** ((bytes[10]! & 7) + 1)) : 0);
+	let at = 13 + (bytes[10]! & 0x80 ? 3 * 2 ** ((bytes[10]! & 7) + 1) : 0);
 	let frames = 0;
 	const skipBlocks = (): boolean => {
 		while (at < bytes.length) {
@@ -119,16 +167,25 @@ function gifDimensions(bytes: Uint8Array, view: DataView): RasterDimensions | nu
 	};
 	while (at < bytes.length) {
 		const kind = bytes[at++];
-		if (kind === 0x3b) return frames > 0 ? { format: "gif", width, height,
-			...(frames > 1 ? { decodedPixels: width * height * frames } : {}) } : null;
-		if (kind === 0x21) { at++; if (!skipBlocks()) return null; continue; }
+		if (kind === 0x3b)
+			return frames > 0
+				? { format: "gif", width, height, ...(frames > 1 ? { decodedPixels: width * height * frames } : {}) }
+				: null;
+		if (kind === 0x21) {
+			at++;
+			if (!skipBlocks()) return null;
+			continue;
+		}
 		if (kind !== 0x2c || at + 9 > bytes.length) return null;
-		const x = view.getUint16(at, true); const y = view.getUint16(at + 2, true);
-		const w = view.getUint16(at + 4, true); const h = view.getUint16(at + 6, true);
+		const x = view.getUint16(at, true);
+		const y = view.getUint16(at + 2, true);
+		const w = view.getUint16(at + 4, true);
+		const h = view.getUint16(at + 6, true);
 		frames++;
-		if (!safeRasterSize(w, h) || x + w > width || y + h > height || width * height * frames > MAX_RASTER_PIXELS) return null;
+		if (!safeRasterSize(w, h) || x + w > width || y + h > height || width * height * frames > MAX_RASTER_PIXELS)
+			return null;
 		const flags = bytes[at + 8]!;
-		at += 9 + ((flags & 0x80) ? 3 * (2 ** ((flags & 7) + 1)) : 0);
+		at += 9 + (flags & 0x80 ? 3 * 2 ** ((flags & 7) + 1) : 0);
 		at++; // LZW minimum code size, then length-prefixed compressed blocks.
 		if (!skipBlocks()) return null;
 	}
@@ -143,7 +200,8 @@ function webpDimensions(bytes: Uint8Array, view: DataView): RasterDimensions | n
 	const chunks = (start: number, end: number, frame?: { width: number; height: number }): boolean => {
 		let at = start;
 		while (at + 8 <= end) {
-			const length = view.getUint32(at + 4, true); const body = at + 8;
+			const length = view.getUint32(at + 4, true);
+			const body = at + 8;
 			if (body + length > end) return false;
 			let size: { width: number; height: number } | undefined;
 			if (matches(bytes, at, "VP8X")) {
@@ -154,18 +212,30 @@ function webpDimensions(bytes: Uint8Array, view: DataView): RasterDimensions | n
 				if (length < 16 || !canvas || frame) return false;
 				const rect = { width: le24(body + 6) + 1, height: le24(body + 9) + 1 };
 				const before = images;
-				if (!safeRasterSize(rect.width, rect.height) || le24(body) * 2 + rect.width > canvas.width ||
-					le24(body + 3) * 2 + rect.height > canvas.height || !chunks(body + 16, body + length, rect) || images !== before + 1) return false;
+				if (
+					!safeRasterSize(rect.width, rect.height) ||
+					le24(body) * 2 + rect.width > canvas.width ||
+					le24(body + 3) * 2 + rect.height > canvas.height ||
+					!chunks(body + 16, body + length, rect) ||
+					images !== before + 1
+				)
+					return false;
 			} else if (matches(bytes, at, "VP8 ") && length >= 10 && matches(bytes, body + 3, "\x9d\x01\x2a")) {
-				size = { width: view.getUint16(body + 6, true) & 0x3fff, height: view.getUint16(body + 8, true) & 0x3fff };
+				size = {
+					width: view.getUint16(body + 6, true) & 0x3fff,
+					height: view.getUint16(body + 8, true) & 0x3fff,
+				};
 			} else if (matches(bytes, at, "VP8L") && length >= 5 && bytes[body] === 0x2f) {
 				const bits = view.getUint32(body + 1, true);
 				size = { width: (bits & 0x3fff) + 1, height: ((bits >>> 14) & 0x3fff) + 1 };
 			}
 			if (size) {
 				const expected = frame ?? canvas;
-				if (!safeRasterSize(size.width, size.height) ||
-					(expected && (expected.width !== size.width || expected.height !== size.height))) return false;
+				if (
+					!safeRasterSize(size.width, size.height) ||
+					(expected && (expected.width !== size.width || expected.height !== size.height))
+				)
+					return false;
 				canvas ??= size;
 				images++;
 				if (canvas.width * canvas.height * images > MAX_RASTER_PIXELS) return false;
@@ -174,8 +244,9 @@ function webpDimensions(bytes: Uint8Array, view: DataView): RasterDimensions | n
 		}
 		return at === end || at === end + 1;
 	};
-	return chunks(12, bytes.length) && canvas && images > 0 ? { ...canvas, format: "webp",
-		...(images > 1 ? { decodedPixels: canvas.width * canvas.height * images } : {}) } : null;
+	return chunks(12, bytes.length) && canvas && images > 0
+		? { ...canvas, format: "webp", ...(images > 1 ? { decodedPixels: canvas.width * canvas.height * images } : {}) }
+		: null;
 }
 
 /** Only a bounded raster whose bytes match its MIME type may survive in SVG. */
@@ -184,9 +255,11 @@ export function embeddedRasterSize(uri: string): RasterDimensions | null {
 	if (!match) return null;
 	try {
 		const decoded = atob(match[2]!.replace(/\s/g, ""));
-		const bytes = Uint8Array.from(decoded, char => char.charCodeAt(0));
+		const bytes = Uint8Array.from(decoded, (char) => char.charCodeAt(0));
 		const size = rasterDimensions(bytes);
 		const format = match[1]!.toLowerCase().replace("jpg", "jpeg");
 		return size && size.format === format && safeRasterSize(size.width, size.height) ? size : null;
-	} catch { return null; }
+	} catch {
+		return null;
+	}
 }

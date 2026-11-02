@@ -25,10 +25,7 @@ import { type App } from "obsidian";
 import { t } from "../../i18n";
 import type { CustomPalette } from "../../types";
 import { entryWords, foldMetadataCase, metadataColorEntries } from "../../utils/calloutMetadata";
-import {
-	countMetadataWordUsages,
-	replaceMetadataWordInVault,
-} from "../../utils/vaultCalloutScanner";
+import { countMetadataWordUsages, replaceMetadataWordInVault } from "../../utils/vaultCalloutScanner";
 import { NoteRewriteJournal } from "../../utils/noteRewriteUndo";
 import { noticeWithUndo } from "../rewriteUndoNotice";
 import { PaletteNotesModal, type PaletteNotesModalInput } from "../PaletteNotesModal";
@@ -46,9 +43,8 @@ export function ownedMetadataKey(
 	reserved?: ReadonlySet<string>,
 ): string {
 	return (
-		metadataColorEntries(palettes, reserved).find(
-			(e) => e.palette.group === "custom" && e.palette.id === paletteId,
-		)?.key ?? ""
+		metadataColorEntries(palettes, reserved).find((e) => e.palette.group === "custom" && e.palette.id === paletteId)
+			?.key ?? ""
 	);
 }
 

@@ -85,10 +85,7 @@ function parseRules(css: string): Rule[] {
 	return out;
 }
 
-const css = readFileSync(join(process.cwd(), "styles.css"), "utf8").replace(
-	/\/\*[\s\S]*?\*\//g,
-	"",
-);
+const css = readFileSync(join(process.cwd(), "styles.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
 const rules = parseRules(css);
 
 const RAW_PRIMARY = /var\(\s*--background-primary\s*\)/;
@@ -114,14 +111,8 @@ function rawPaints(rule: Rule, raw: RegExp): string[] {
 		.filter((decl) =>
 			raw.test(
 				decl
-					.replace(
-						/var\(\s*--cs-surface\s*,\s*var\(\s*--background-primary\s*\)\s*\)/g,
-						"",
-					)
-					.replace(
-						/var\(\s*--cs-surface-raised\s*,\s*var\(\s*--setting-items-background\s*\)\s*\)/g,
-						"",
-					),
+					.replace(/var\(\s*--cs-surface\s*,\s*var\(\s*--background-primary\s*\)\s*\)/g, "")
+					.replace(/var\(\s*--cs-surface-raised\s*,\s*var\(\s*--setting-items-background\s*\)\s*\)/g, ""),
 			),
 		)
 		.map((decl) => decl.split(":")[0]?.trim() ?? "");
@@ -184,12 +175,9 @@ describe("a rule scoped to a chromed window never paints the raw variables", () 
 /* The pair                                                                   */
 /* -------------------------------------------------------------------------- */
 
-const defines = (rule: Rule, token: string): boolean =>
-	new RegExp(`${token}\\s*:`).test(rule.declarations);
+const defines = (rule: Rule, token: string): boolean => new RegExp(`${token}\\s*:`).test(rule.declarations);
 
-const definingRules = rules.filter(
-	(r) => defines(r, "--cs-surface") || defines(r, "--cs-surface-raised"),
-);
+const definingRules = rules.filter((r) => defines(r, "--cs-surface") || defines(r, "--cs-surface-raised"));
 
 describe("--cs-surface and --cs-surface-raised are defined as a pair", () => {
 	it("only ever inside a chromed window or one of Obsidian's settings boxes", () => {
@@ -205,9 +193,7 @@ describe("--cs-surface and --cs-surface-raised are defined as a pair", () => {
 	});
 
 	it("introduced together, in exactly those two places", () => {
-		const both = definingRules.filter(
-			(r) => defines(r, "--cs-surface") && defines(r, "--cs-surface-raised"),
-		);
+		const both = definingRules.filter((r) => defines(r, "--cs-surface") && defines(r, "--cs-surface-raised"));
 		assert.deepStrictEqual(
 			both.map((r) => r.selector),
 			[".modal.cs-modal", ".setting-group .setting-items"],
@@ -217,10 +203,11 @@ describe("--cs-surface and --cs-surface-raised are defined as a pair", () => {
 	it("never has the flush half moved on its own", () => {
 		// Moving `--cs-surface` while the raised one stays pinned to
 		// `--background-secondary` is precisely the group-box regression.
-		const alone = definingRules.filter(
-			(r) => defines(r, "--cs-surface") && !defines(r, "--cs-surface-raised"),
+		const alone = definingRules.filter((r) => defines(r, "--cs-surface") && !defines(r, "--cs-surface-raised"));
+		assert.deepStrictEqual(
+			alone.map((r) => r.selector),
+			[],
 		);
-		assert.deepStrictEqual(alone.map((r) => r.selector), []);
 	});
 
 	it("takes the raised half from Obsidian's own box colour, with no device override", () => {
@@ -228,10 +215,11 @@ describe("--cs-surface and --cs-surface-raised are defined as a pair", () => {
 		// device itself (on mobile dark it is `--color-secondary-2`, a shade off
 		// the `--background-secondary` that there IS the window), so there is no
 		// override of the raised half left to keep in step.
-		const alone = definingRules.filter(
-			(r) => defines(r, "--cs-surface-raised") && !defines(r, "--cs-surface"),
+		const alone = definingRules.filter((r) => defines(r, "--cs-surface-raised") && !defines(r, "--cs-surface"));
+		assert.deepStrictEqual(
+			alone.map((r) => r.selector),
+			[],
 		);
-		assert.deepStrictEqual(alone.map((r) => r.selector), []);
 		const pair = definingRules.find((r) => r.selector === ".modal.cs-modal");
 		assert.ok(pair);
 		assert.match(pair.declarations, /--cs-surface-raised\s*:\s*var\(--setting-items-background\)/);
@@ -257,9 +245,7 @@ describe("every call site carries its own half's fallback", () => {
 		const flat = decl.replace(/\s+/g, " ").trim();
 		it(`#${index + 1} ${flat.slice(0, 60)}`, () => {
 			const surface = flat.match(/var\(\s*--cs-surface\s*,[^)]*\)[^)]*\)/g);
-			const raised = flat.match(
-				/var\(\s*--cs-surface-raised\s*,[^)]*\)[^)]*\)/g,
-			);
+			const raised = flat.match(/var\(\s*--cs-surface-raised\s*,[^)]*\)[^)]*\)/g);
 			for (const use of raised ?? []) {
 				assert.match(use, /var\(--cs-surface-raised, var\(--setting-items-background\)\)/);
 			}
@@ -277,14 +263,8 @@ describe("every call site carries its own half's fallback", () => {
 
 /** The one rule written exactly as `selector`, with its whitespace flattened. */
 function ruleFor(selector: string): Rule {
-	const found = rules.filter(
-		(r) => r.selector.replace(/\s+/g, " ") === selector,
-	);
-	assert.strictEqual(
-		found.length,
-		1,
-		`expected exactly one \`${selector}\` rule, found ${found.length}`,
-	);
+	const found = rules.filter((r) => r.selector.replace(/\s+/g, " ") === selector);
+	assert.strictEqual(found.length, 1, `expected exactly one \`${selector}\` rule, found ${found.length}`);
 	return found[0] as Rule;
 }
 
@@ -321,10 +301,7 @@ describe("the swatch widget follows the surface it is drawn on", () => {
 		// Both tones: the pale square is a `color-mix` toward the surface and the
 		// other square IS the surface. Fixing one alone would leave the pattern
 		// mixing a colour from one window against a colour from another.
-		const decl = declaration(
-			ruleFor(".cs-color-circle.is-transparent"),
-			"background-image",
-		);
+		const decl = declaration(ruleFor(".cs-color-circle.is-transparent"), "background-image");
 		assert.match(decl, /^background-image: repeating-conic-gradient\(/);
 		assert.strictEqual(
 			decl.match(/var\(--cs-surface, var\(--background-primary\)\)/g)?.length,
@@ -345,13 +322,20 @@ describe("a disabled text field is Obsidian's own", () => {
 		// merely says `:not(:disabled)` or names "input" inside a class.
 		const disabledInput = /(?:^|[\s>])input\b[^\s>,]*(?<!:not\():disabled/;
 		const fills = rules.filter(
-			(r) => disabledInput.test(r.selector)
-				&& !/cs-combobox|cs-dropdown/.test(r.selector)
-				&& /^(background|background-color)$/m.test(
-					r.declarations.split(";").map((d) => d.split(":")[0]?.trim() ?? "").join("\n"),
+			(r) =>
+				disabledInput.test(r.selector) &&
+				!/cs-combobox|cs-dropdown/.test(r.selector) &&
+				/^(background|background-color)$/m.test(
+					r.declarations
+						.split(";")
+						.map((d) => d.split(":")[0]?.trim() ?? "")
+						.join("\n"),
 				),
 		);
-		assert.deepStrictEqual(fills.map((r) => r.selector.replace(/\s+/g, " ")), []);
+		assert.deepStrictEqual(
+			fills.map((r) => r.selector.replace(/\s+/g, " ")),
+			[],
+		);
 	});
 });
 
@@ -397,11 +381,7 @@ describe("nothing else paints --background-primary unexamined", () => {
 		// This plugin's own rules. A bare Obsidian selector here would be a rule
 		// about the app's surfaces, which is a different question.
 		.filter((r) => /\.(cs-|callout-studio-)/.test(r.selector))
-		.flatMap((r) =>
-			rawPaints(r, RAW_PRIMARY).map(
-				(prop) => `${r.selector.replace(/\s+/g, " ")} | ${prop}`,
-			),
-		);
+		.flatMap((r) => rawPaints(r, RAW_PRIMARY).map((prop) => `${r.selector.replace(/\s+/g, " ")} | ${prop}`));
 
 	it("matches the reviewed list exactly", () => {
 		assert.deepStrictEqual(found.sort(), [...KNOWN_RAW_PRIMARY].sort());
@@ -418,11 +398,7 @@ const KNOWN_RAW_SECONDARY: string[] = [];
 describe("nothing else paints --background-secondary unexamined", () => {
 	const found = rules
 		.filter((r) => /\.(cs-|callout-studio-)/.test(r.selector))
-		.flatMap((r) =>
-			rawPaints(r, RAW_SECONDARY).map(
-				(prop) => `${r.selector.replace(/\s+/g, " ")} | ${prop}`,
-			),
-		);
+		.flatMap((r) => rawPaints(r, RAW_SECONDARY).map((prop) => `${r.selector.replace(/\s+/g, " ")} | ${prop}`));
 
 	it("matches the reviewed list exactly", () => {
 		assert.deepStrictEqual(found.sort(), [...KNOWN_RAW_SECONDARY].sort());

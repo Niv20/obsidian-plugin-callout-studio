@@ -5,7 +5,9 @@ import { renderPortableRules } from "../settings/portableCalloutExamples";
 
 /** Optional guidance for the review sidebar; never reads or changes notes. */
 export class PortableConversionHelpModal extends Modal {
-	constructor(app: App) { super(app); }
+	constructor(app: App) {
+		super(app);
+	}
 
 	onOpen(): void {
 		this.contentEl.empty();

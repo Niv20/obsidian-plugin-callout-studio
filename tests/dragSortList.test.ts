@@ -18,7 +18,9 @@ describe("drag reorder gesture lifetime", () => {
 			assert.ok(h.animations.some((animation) => animation.running));
 			h.finishAnimations();
 			assert.equal(h.moves.length, 1, "settling is cosmetic, with no later save");
-		} finally { h.cleanup(); }
+		} finally {
+			h.cleanup();
+		}
 	});
 
 	for (const next of ["same", "different"] as const) {
@@ -42,7 +44,9 @@ describe("drag reorder gesture lifetime", () => {
 				assert.deepEqual(h.model, h.order());
 				h.finishAnimations();
 				assert.equal(h.moves.length, 2);
-			} finally { h.cleanup(); }
+			} finally {
+				h.cleanup();
+			}
 		});
 	}
 
@@ -62,7 +66,9 @@ describe("drag reorder gesture lifetime", () => {
 			h.down(h.rows[0]!);
 			h.cleanup();
 			assert.ok(!body.hasClass("is-grabbing"), "closing the window mid-drag clears it");
-		} finally { h.cleanup(); }
+		} finally {
+			h.cleanup();
+		}
 	});
 
 	it("cancels a neighbour's slide when its handle is grabbed", () => {
@@ -79,7 +85,9 @@ describe("drag reorder gesture lifetime", () => {
 			h.move(150);
 			h.up();
 			assert.deepEqual(h.model, h.order());
-		} finally { h.cleanup(); }
+		} finally {
+			h.cleanup();
+		}
 	});
 
 	it("ignores another pointer and recovers after capture is lost", () => {
@@ -99,7 +107,9 @@ describe("drag reorder gesture lifetime", () => {
 			h.up(9);
 			assert.equal(h.moves.length, 2);
 			assert.deepEqual(h.model, ["a", "b", "c", "d"]);
-		} finally { h.cleanup(); }
+		} finally {
+			h.cleanup();
+		}
 	});
 
 	it("can start a fresh gesture after pointer cancellation", () => {
@@ -113,7 +123,9 @@ describe("drag reorder gesture lifetime", () => {
 			h.up();
 			assert.equal(h.moves.length, 2);
 			assert.deepEqual(h.model, h.order());
-		} finally { h.cleanup(); }
+		} finally {
+			h.cleanup();
+		}
 	});
 
 	it("cleanup removes drag state and pending settling cannot save again", () => {
@@ -161,7 +173,9 @@ describe("drag reorder gesture lifetime", () => {
 				}
 				assert.equal(h.moves.length, 4);
 				if (reducedMotion) assert.equal(h.animations.length, 0);
-			} finally { h.cleanup(); }
+			} finally {
+				h.cleanup();
+			}
 		});
 	}
 });
@@ -178,7 +192,9 @@ describe("drop placeholder", () => {
 			assert.equal(box.getAttribute("aria-hidden"), "true");
 			assert.equal(box.children.length, 0);
 			assert.deepEqual(h.slot(box), { top: 40, left: 0, width: 240, height: 36 });
-		} finally { h.cleanup(); }
+		} finally {
+			h.cleanup();
+		}
 	});
 
 	it("follows the slot past each neighbour, sliding there like the rows", () => {
@@ -190,14 +206,20 @@ describe("drop placeholder", () => {
 			assert.deepEqual(h.order(), ["b", "c", "a", "d"]);
 			assert.equal(h.slot(box).top, 80, "the third slot, where a now lands");
 			const slides = () => h.animations.filter((animation) => animation.row === box);
-			assert.deepEqual(slides().map((s) => s.transform), ["translateY(-80px)"], "from where it was drawn");
+			assert.deepEqual(
+				slides().map((s) => s.transform),
+				["translateY(-80px)"],
+				"from where it was drawn",
+			);
 			h.move(112);
 			assert.equal(slides().length, 1, "a move within the slot restarts nothing");
 			h.move(8);
 			assert.deepEqual(h.order(), ["a", "b", "c", "d"]);
 			assert.equal(h.slot(box).top, 0);
 			assert.deepEqual(h.placeholders(), [box], "moved, not redrawn");
-		} finally { h.cleanup(); }
+		} finally {
+			h.cleanup();
+		}
 	});
 
 	it("stops where the row stops: at the end of the list", () => {
@@ -207,7 +229,9 @@ describe("drop placeholder", () => {
 			h.move(500);
 			assert.deepEqual(h.order(), ["b", "c", "d", "a"]);
 			assert.equal(h.slot(h.placeholders()[0]!).top, 120);
-		} finally { h.cleanup(); }
+		} finally {
+			h.cleanup();
+		}
 	});
 
 	it("stays under the dropped row until the row has settled onto it", () => {
@@ -223,7 +247,9 @@ describe("drop placeholder", () => {
 			h.finishAnimations();
 			assert.deepEqual(h.placeholders(), [], "gone as the row lands");
 			assert.ok(!h.rows[0]!.hasClass("is-dragging"));
-		} finally { h.cleanup(); }
+		} finally {
+			h.cleanup();
+		}
 	});
 
 	it("goes at once when the row is let go in the slot it never left", () => {
@@ -233,7 +259,9 @@ describe("drop placeholder", () => {
 			h.up();
 			assert.deepEqual(h.placeholders(), []);
 			assert.equal(h.moves.length, 0);
-		} finally { h.cleanup(); }
+		} finally {
+			h.cleanup();
+		}
 	});
 
 	it("is never doubled when another row is grabbed mid-settle", () => {
@@ -250,7 +278,9 @@ describe("drop placeholder", () => {
 			assert.equal(h.slot(boxes[0]!).top, 120, "the slot of the row now held");
 			h.up();
 			assert.deepEqual(h.placeholders(), []);
-		} finally { h.cleanup(); }
+		} finally {
+			h.cleanup();
+		}
 	});
 
 	for (const settling of [false, true]) {
@@ -274,7 +304,9 @@ describe("drop placeholder", () => {
 			assert.deepEqual(h.placeholders(), []);
 			h.up();
 			assert.deepEqual(h.order(), ["b", "c", "a", "d"]);
-		} finally { h.cleanup(); }
+		} finally {
+			h.cleanup();
+		}
 	});
 });
 
@@ -289,7 +321,15 @@ describe("drag reorder edge auto-scroll", () => {
 		const box = el();
 		Object.assign(box, { scrollTop: 0 });
 		box.getBoundingClientRect = () => ({
-			x: 0, y: 0, top: 0, bottom: 150, left: 0, right: 240, width: 240, height: 150, toJSON: () => ({}),
+			x: 0,
+			y: 0,
+			top: 0,
+			bottom: 150,
+			left: 0,
+			right: 240,
+			width: 240,
+			height: 150,
+			toJSON: () => ({}),
 		});
 		return box;
 	}
@@ -309,7 +349,9 @@ describe("drag reorder edge auto-scroll", () => {
 			h.view().flushFrames();
 			assert.equal(box.scrollTop, scrolled, "nothing scrolls once the row is dropped");
 			assert.equal(h.view().pendingFrames(), 0, "and no frame is left waiting");
-		} finally { h.cleanup(); }
+		} finally {
+			h.cleanup();
+		}
 	});
 
 	it("scrolls up near the top edge", () => {
@@ -321,7 +363,9 @@ describe("drag reorder edge auto-scroll", () => {
 			h.move(5);
 			h.view().flushFrames();
 			assert.ok(box.scrollTop < 100);
-		} finally { h.cleanup(); }
+		} finally {
+			h.cleanup();
+		}
 	});
 
 	it("leaves the scroller alone while the row is held away from its edges", () => {
@@ -332,7 +376,9 @@ describe("drag reorder edge auto-scroll", () => {
 			h.move(75);
 			h.view().flushFrames();
 			assert.equal(box.scrollTop, 0);
-		} finally { h.cleanup(); }
+		} finally {
+			h.cleanup();
+		}
 	});
 
 	it("asks for no frame at all without a scroller", () => {
@@ -340,6 +386,8 @@ describe("drag reorder edge auto-scroll", () => {
 		try {
 			h.down(h.rows[0]!);
 			assert.equal(h.view().pendingFrames(), 0);
-		} finally { h.cleanup(); }
+		} finally {
+			h.cleanup();
+		}
 	});
 });

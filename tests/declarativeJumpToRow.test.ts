@@ -17,7 +17,12 @@ import { installFakeDom, fakeDom, type FakeWindow } from "./support/fakeDom";
 import { DeclarativeHarness } from "./support/declarativeRenderer";
 import { PluginSettingTab } from "./support/obsidianStub";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import { CALLOUT_PAGES, calloutRowId, myCalloutsPage, revealCalloutRow } from "../src/settings/declarative/calloutPages";
+import {
+	CALLOUT_PAGES,
+	calloutRowId,
+	myCalloutsPage,
+	revealCalloutRow,
+} from "../src/settings/declarative/calloutPages";
 import { jumpToRow, type JumpHost } from "../src/settings/declarative/jumpToRow";
 import { PersistentParts } from "../src/settings/declarative/persistentParts";
 import { RowRegistry } from "../src/settings/declarative/rowRegistry";
@@ -36,18 +41,36 @@ function manualSchedule() {
 		waiting.push(run);
 		return () => {};
 	};
-	return { schedule, flush: () => { for (const run of waiting.splice(0)) run(); }, waits: () => waits };
+	return {
+		schedule,
+		flush: () => {
+			for (const run of waiting.splice(0)) run();
+		},
+		waits: () => waits,
+	};
 }
 
 /** A jump host whose `openPagePath` is recorded (or missing). */
 function jumpHost(options: { canOpenPages?: boolean } = {}) {
 	const opened: [string, string[]][] = [];
-	const setting = options.canOpenPages === false
-		? { open: () => {}, openTabById: () => null }
-		: { open: () => {}, openTabById: () => null, openPagePath: (tabId: string, path: string[]) => { opened.push([tabId, path]); } };
+	const setting =
+		options.canOpenPages === false
+			? { open: () => {}, openTabById: () => null }
+			: {
+					open: () => {},
+					openTabById: () => null,
+					openPagePath: (tabId: string, path: string[]) => {
+						opened.push([tabId, path]);
+					},
+				};
 	const rows = new RowRegistry();
 	const timing = manualSchedule();
-	const host: JumpHost = { app: { setting } as unknown as App, tabId: "callout-studio", rows, schedule: timing.schedule };
+	const host: JumpHost = {
+		app: { setting } as unknown as App,
+		tabId: "callout-studio",
+		rows,
+		schedule: timing.schedule,
+	};
 	return { host, rows, opened, ...timing };
 }
 
@@ -128,15 +151,25 @@ describe("a callout row", () => {
 		const rows = new RowRegistry();
 		const ctx: TreeContext = {
 			app: {} as never,
-			plugin: { app: {}, registry, get settings() { return registry.settings; }, settingsWriter: { isFrozen: false } } as never,
+			plugin: {
+				app: {},
+				registry,
+				get settings() {
+					return registry.settings;
+				},
+				settingsWriter: { isFrozen: false },
+			} as never,
 			redraw: () => {},
 			registerDisposer: () => {},
 			rows,
 			parts: new PersistentParts(() => {}),
-			jumpTo: (rowId, _fromKeyboard, pagePath) => { jumps.push([rowId, pagePath]); },
+			jumpTo: (rowId, _fromKeyboard, pagePath) => {
+				jumps.push([rowId, pagePath]);
+			},
 		};
 		const tab = new PluginSettingTab({}, {});
-		tab.getSettingDefinitions = () => toObsidianItems([{ type: "group", id: "callouts", items: [myCalloutsPage(ctx)] }]);
+		tab.getSettingDefinitions = () =>
+			toObsidianItems([{ type: "group", id: "callouts", items: [myCalloutsPage(ctx)] }]);
 		const harness = new DeclarativeHarness(tab);
 		tab.update();
 		harness.openPage([CALLOUT_PAGES.mine]);

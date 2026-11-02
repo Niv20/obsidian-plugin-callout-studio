@@ -79,11 +79,7 @@ export interface FixedCommandDeps {
  * `addCommand` from {@link setFixedCommandEnabled} when a single command is
  * switched back on, without the two falling out of sync.
  */
-function buildFixedCommand(
-	id: FixedCommandId,
-	plugin: CommandHostPlugin,
-	deps: FixedCommandDeps,
-): Command {
+function buildFixedCommand(id: FixedCommandId, plugin: CommandHostPlugin, deps: FixedCommandDeps): Command {
 	const name = t(FIXED_COMMAND_NAME_KEYS[id]);
 	switch (id) {
 		case "open-settings":
@@ -109,11 +105,7 @@ function buildFixedCommand(
 				name,
 				editorCallback: (editor) => {
 					if (insertAtCursor(editor, plugin.settings)) {
-						plugin.autoComplete.triggerNow(
-							editor,
-							plugin.app.workspace.getActiveFile(),
-							true,
-						);
+						plugin.autoComplete.triggerNow(editor, plugin.app.workspace.getActiveFile(), true);
 					}
 				},
 			};
@@ -123,11 +115,7 @@ function buildFixedCommand(
 				name,
 				editorCallback: (editor) => {
 					if (wrapAtCursor(editor, plugin.settings)) {
-						plugin.autoComplete.triggerNow(
-							editor,
-							plugin.app.workspace.getActiveFile(),
-							true,
-						);
+						plugin.autoComplete.triggerNow(editor, plugin.app.workspace.getActiveFile(), true);
 					}
 				},
 			};
@@ -173,10 +161,7 @@ function assertNever(value: never): never {
  * {@link isFixedCommandEnabled}) is skipped here — it is only (re)registered
  * once the user switches it back on, through {@link setFixedCommandEnabled}.
  */
-export function registerCalloutCommands(
-	plugin: CommandHostPlugin,
-	deps: FixedCommandDeps,
-): void {
+export function registerCalloutCommands(plugin: CommandHostPlugin, deps: FixedCommandDeps): void {
 	for (const id of FIXED_COMMAND_IDS) {
 		if (!isFixedCommandEnabled(plugin.settings, id)) continue;
 		const command = buildFixedCommand(id, plugin, deps);
@@ -204,10 +189,7 @@ const registeredNames = new Map<FixedCommandId, string>();
  * triggers the call, because `addCommand` mutates its argument and appends an
  * unload callback — doing it needlessly would accumulate both.
  */
-export function refreshFixedCommandNames(
-	plugin: CommandHostPlugin,
-	deps: FixedCommandDeps,
-): void {
+export function refreshFixedCommandNames(plugin: CommandHostPlugin, deps: FixedCommandDeps): void {
 	for (const id of FIXED_COMMAND_IDS) {
 		if (!isFixedCommandEnabled(plugin.settings, id)) continue;
 		const name = t(FIXED_COMMAND_NAME_KEYS[id]);

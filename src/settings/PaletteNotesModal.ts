@@ -46,7 +46,10 @@ export class PaletteNotesModal extends Modal {
 	/** Whether Change is the answer showing; Leave is, on opening. */
 	private change = false;
 
-	constructor(app: App, private readonly input: PaletteNotesModalInput) {
+	constructor(
+		app: App,
+		private readonly input: PaletteNotesModalInput,
+	) {
 		super(app);
 	}
 
@@ -63,7 +66,9 @@ export class PaletteNotesModal extends Modal {
 		this.setTitle(t("noteChanges.title"));
 		const { name, word, reach } = this.input;
 		const ask = renderNoteQuestion(this.contentEl, footer, {
-			changes: [t("palette.renameNotesChange", { old: name.from, new: name.to, oldWord: word.from, newWord: word.to })],
+			changes: [
+				t("palette.renameNotesChange", { old: name.from, new: name.to, oldWord: word.from, newWord: word.to }),
+			],
 			reach,
 			finish: (save) => this.finish(save),
 		});
@@ -71,13 +76,17 @@ export class PaletteNotesModal extends Modal {
 			title: t("noteChanges.leave"),
 			desc: t("palette.renameNotesLeaveDesc", { word: word.from }),
 			isChosen: () => !this.change,
-			choose: () => { this.change = false; },
+			choose: () => {
+				this.change = false;
+			},
 		});
 		ask.answer({
 			title: t("noteChanges.renameChange", { id: word.to }),
 			desc: t("palette.renameNotesChangeDesc", { old: word.from, new: word.to }),
 			isChosen: () => this.change,
-			choose: () => { this.change = true; },
+			choose: () => {
+				this.change = true;
+			},
 		});
 		ask.repaint();
 	}

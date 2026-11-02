@@ -12,11 +12,7 @@
  */
 import type { CalloutDefinition, CalloutRenderRole } from "../types";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
-import {
-	calloutIdentity,
-	calloutTokenLabel,
-	normalizeCalloutId,
-} from "../utils/calloutId";
+import { calloutIdentity, calloutTokenLabel, normalizeCalloutId } from "../utils/calloutId";
 
 /** Class names shared between Live Preview widgets and reading-view DOM. */
 export const CSS_INLINE_TOKEN = "cs-inline-callout";
@@ -228,13 +224,9 @@ export function shouldRenderToken(resolved: ResolvedCalloutDef): boolean {
  * own space-preserving id, so without this step the same spelling would render
  * here as an unknown callout.
  */
-export function resolveCalloutDef(
-	registry: CalloutRegistry,
-	rawId: string,
-): ResolvedCalloutDef {
+export function resolveCalloutDef(registry: CalloutRegistry, rawId: string): ResolvedCalloutDef {
 	const id = normalizeCalloutId(rawId);
-	const direct =
-		registry.get(id) ?? registry.findByAlias(id) ?? registry.findByAttrId(id);
+	const direct = registry.get(id) ?? registry.findByAlias(id) ?? registry.findByAttrId(id);
 	if (direct)
 		return {
 			def: direct,
@@ -271,10 +263,7 @@ export function resolveCalloutDef(
  * Unknown tokens keep the raw spelling, which is what `.cs-unknown` styling and
  * the raw-id label expect.
  */
-export function calloutDomId(
-	rawId: string,
-	resolved: ResolvedCalloutDef,
-): string {
+export function calloutDomId(rawId: string, resolved: ResolvedCalloutDef): string {
 	const id = normalizeCalloutId(rawId);
 	const { def, unknown } = resolved;
 	if (!def || unknown) return id;
@@ -349,9 +338,7 @@ export interface CalloutTokenDomOptions {
  * `data-callout-metadata` mirrors what Obsidian stamps on a block callout
  * so a theme can style these two roles by the same hook.
  */
-export function buildCalloutTokenDom(
-	options: CalloutTokenDomOptions,
-): HTMLElement {
+export function buildCalloutTokenDom(options: CalloutTokenDomOptions): HTMLElement {
 	const { rawId, metadata = "", registry, variant, showName } = options;
 	const resolved = resolveCalloutDef(registry, rawId);
 	const { def, unknown } = resolved;
@@ -411,10 +398,7 @@ export function contentPillClasses(resolved: ResolvedCalloutDef): string[] {
  * label, and repeating "Warning" before the author's own words reads as noise
  * (see CSS_CALLOUT_LEAD for why it is a separate element at all).
  */
-export function buildCalloutLeadDom(
-	rawId: string,
-	registry: CalloutRegistry,
-): HTMLElement {
+export function buildCalloutLeadDom(rawId: string, registry: CalloutRegistry): HTMLElement {
 	const lead = createSpan();
 	lead.classList.add(CSS_CALLOUT_LEAD);
 	const { def } = resolveCalloutDef(registry, rawId);
@@ -448,11 +432,10 @@ export function buildCalloutLeadDom(
  * Preview has only the raw source at that point, so it renders the payload
  * itself (livepreview/contentPillRender.ts) into this same shape.
  */
-export function buildContentPillDom(options: {
-	rawId: string;
-	metadata?: string;
-	registry: CalloutRegistry;
-}): { root: HTMLElement; payload: HTMLElement } {
+export function buildContentPillDom(options: { rawId: string; metadata?: string; registry: CalloutRegistry }): {
+	root: HTMLElement;
+	payload: HTMLElement;
+} {
 	const { rawId, metadata = "", registry } = options;
 	const resolved = resolveCalloutDef(registry, rawId);
 

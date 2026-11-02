@@ -42,18 +42,8 @@
  * it — see `utils/cssSpecificity.ts`, which owns that arithmetic and the
  * reasons the three regexes this used to carry were wrong.
  */
-import {
-	compareSpecificity,
-	specificityOf,
-	type Specificity,
-} from "../../utils/cssSpecificity";
-import {
-	blankNegations,
-	matchParen,
-	skipBrackets,
-	skipString,
-	splitSelectorList,
-} from "../../utils/selectorText";
+import { compareSpecificity, specificityOf, type Specificity } from "../../utils/cssSpecificity";
+import { blankNegations, matchParen, skipBrackets, skipString, splitSelectorList } from "../../utils/selectorText";
 import { obsidianCalloutAttrId } from "../../utils/calloutId";
 import { eachBlock, stripComments } from "./cssBlocks";
 
@@ -202,8 +192,7 @@ export function namesRenderedId(value: string, flag: string | undefined): boolea
 /** Every `[data-callout<op>=<value>]` in one selector. */
 function calloutAttrs(selector: string): Array<{ op: string; value: string }> {
 	const out: Array<{ op: string; value: string }> = [];
-	const re =
-		/\[\s*data-callout\s*([~^*$|]?)=\s*("([^"]*)"|'([^']*)'|([^\]\s]+))\s*(?:([iIsS])\s*)?\]/g;
+	const re = /\[\s*data-callout\s*([~^*$|]?)=\s*("([^"]*)"|'([^']*)'|([^\]\s]+))\s*(?:([iIsS])\s*)?\]/g;
 	let m: RegExpExecArray | null;
 	while ((m = re.exec(selector)) !== null) {
 		const op = m[1] ?? "";
@@ -233,11 +222,7 @@ function exactClaim(map: Map<string, ThemeClaim>, key: string): ThemeClaim {
 	return claim;
 }
 
-function patternClaim(
-	list: PatternClaim[],
-	op: PatternOp,
-	value: string,
-): ThemeClaim {
+function patternClaim(list: PatternClaim[], op: PatternOp, value: string): ThemeClaim {
 	const found = list.find((p) => p.op === op && p.value === value);
 	if (found) return found.claim;
 	const claim = emptyClaim(false);
@@ -258,11 +243,7 @@ function declarationsOf(body: string): Array<{ name: string; bang: boolean }> {
 	return out;
 }
 
-function absorb(
-	claim: ThemeClaim,
-	weight: Specificity,
-	decls: Array<{ name: string; bang: boolean }>,
-): void {
+function absorb(claim: ThemeClaim, weight: Specificity, decls: Array<{ name: string; bang: boolean }>): void {
 	if (compareSpecificity(weight, claim.weight) > 0) claim.weight = weight;
 	for (const { name, bang } of decls) {
 		claim.props.add(name);

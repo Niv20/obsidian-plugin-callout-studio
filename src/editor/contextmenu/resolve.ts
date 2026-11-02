@@ -9,22 +9,11 @@
  *      unchanged from the pre-role implementation.
  */
 import { EditorView } from "@codemirror/view";
-import {
-	Editor,
-	type MarkdownSectionInformation,
-	MarkdownView,
-} from "obsidian";
+import { Editor, type MarkdownSectionInformation, MarkdownView } from "obsidian";
 import type CalloutStudioPlugin from "../../main";
-import {
-	normalizeCalloutId,
-	obsidianCalloutAttrId,
-} from "../../utils/calloutId";
+import { normalizeCalloutId, obsidianCalloutAttrId } from "../../utils/calloutId";
 import { scanLineForCalloutTokens } from "../calloutTokens";
-import {
-	CSS_HEADING_LINE,
-	CSS_HEADING_TOKEN,
-	CSS_INLINE_TOKEN,
-} from "../renderShared";
+import { CSS_HEADING_LINE, CSS_HEADING_TOKEN, CSS_INLINE_TOKEN } from "../renderShared";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -84,10 +73,7 @@ interface CalloutWidgetElement extends HTMLElement {
 
 // ─── Top-level resolver ──────────────────────────────────────────────────────
 
-export function resolveContext(
-	plugin: CalloutStudioPlugin,
-	trigger: PointerContext,
-): ResolvedCalloutContext | null {
+export function resolveContext(plugin: CalloutStudioPlugin, trigger: PointerContext): ResolvedCalloutContext | null {
 	return (
 		resolveInlinePillContext(plugin, trigger.targetEl) ??
 		resolveHeadingContext(plugin, trigger) ??
@@ -95,28 +81,19 @@ export function resolveContext(
 	);
 }
 
-function resolveRegularContext(
-	plugin: CalloutStudioPlugin,
-	trigger: PointerContext,
-): ResolvedCalloutContext | null {
+function resolveRegularContext(plugin: CalloutStudioPlugin, trigger: PointerContext): ResolvedCalloutContext | null {
 	const widgetContext = resolveCalloutWidgetContext(plugin, trigger.targetEl);
 	if (widgetContext) return widgetContext;
 
 	const view = findMarkdownViewForTarget(plugin, trigger.targetEl);
 	if (!view) return null;
 
-	return (
-		resolveEditorContext(view, trigger) ??
-		resolveReadingContext(view, trigger.targetEl)
-	);
+	return resolveEditorContext(view, trigger) ?? resolveReadingContext(view, trigger.targetEl);
 }
 
 // ─── Inline callout ──────────────────────────────────────────────────────────
 
-function resolveInlinePillContext(
-	plugin: CalloutStudioPlugin,
-	targetEl: Element,
-): ResolvedCalloutContext | null {
+function resolveInlinePillContext(plugin: CalloutStudioPlugin, targetEl: Element): ResolvedCalloutContext | null {
 	const pill = targetEl.closest(`.${CSS_INLINE_TOKEN}[data-callout]`);
 	if (!pill) return null;
 	// A content pill (`[!warning]{see [docs](url)}`) holds the user's own
@@ -144,13 +121,8 @@ function resolveInlinePillContext(
 
 // ─── Heading callout ─────────────────────────────────────────────────────────
 
-function resolveHeadingContext(
-	plugin: CalloutStudioPlugin,
-	trigger: PointerContext,
-): ResolvedCalloutContext | null {
-	const headingEl = trigger.targetEl.closest(
-		`.${CSS_HEADING_LINE}, .${CSS_HEADING_TOKEN}`,
-	);
+function resolveHeadingContext(plugin: CalloutStudioPlugin, trigger: PointerContext): ResolvedCalloutContext | null {
+	const headingEl = trigger.targetEl.closest(`.${CSS_HEADING_LINE}, .${CSS_HEADING_TOKEN}`);
 	if (!(headingEl instanceof HTMLElement)) return null;
 
 	const view = findMarkdownViewForTarget(plugin, trigger.targetEl);
@@ -176,16 +148,12 @@ function resolveHeadingContext(
 			// whole menu disappears — which is why right-click only worked
 			// when it landed exactly on the heading's text.
 			try {
-				headingLine = view.editor.offsetToPos(
-					editorView.posAtDOM(headingEl),
-				).line;
+				headingLine = view.editor.offsetToPos(editorView.posAtDOM(headingEl)).line;
 			} catch {
 				// Element not part of this view's content (detached mid-menu):
 				// fall back to the pointer, which is better than no menu.
 				const coords = { x: trigger.clientX, y: trigger.clientY };
-				const offset =
-					editorView.posAtCoords(coords) ??
-					editorView.posAtCoords(coords, false);
+				const offset = editorView.posAtCoords(coords) ?? editorView.posAtCoords(coords, false);
 				if (offset != null) {
 					headingLine = view.editor.offsetToPos(offset).line;
 				}
@@ -198,9 +166,7 @@ function resolveHeadingContext(
 	if (headingLine == null) return null;
 
 	// Re-verify against the source — the DOM class alone is not authoritative.
-	const token = scanLineForCalloutTokens(
-		view.editor.getLine(headingLine),
-	).find((tk) => tk.role === "heading");
+	const token = scanLineForCalloutTokens(view.editor.getLine(headingLine)).find((tk) => tk.role === "heading");
 	if (!token) return null;
 
 	return {
@@ -217,10 +183,7 @@ function resolveHeadingContext(
 
 // ─── Block callout resolvers (pre-existing behavior) ────────────────────────
 
-function resolveCalloutWidgetContext(
-	plugin: CalloutStudioPlugin,
-	targetEl: Element,
-): ResolvedCalloutContext | null {
+function resolveCalloutWidgetContext(plugin: CalloutStudioPlugin, targetEl: Element): ResolvedCalloutContext | null {
 	const calloutEl = targetEl.closest<CalloutWidgetElement>(".cm-callout");
 	const widget = calloutEl?.cmView?.widget;
 	const editor = widget?.editor?.editor;
@@ -245,19 +208,14 @@ function resolveCalloutWidgetContext(
 		},
 		editor,
 		view,
-		surface: targetEl.closest(LIVE_PREVIEW_SELECTOR)
-			? "live-preview"
-			: "source",
+		surface: targetEl.closest(LIVE_PREVIEW_SELECTOR) ? "live-preview" : "source",
 		targetEl,
 	};
 }
 
 // Source mode and Live Preview: use the official CM6 API to map click
 // coordinates to a document position, then walk up to the callout header.
-function resolveEditorContext(
-	view: MarkdownView,
-	trigger: PointerContext,
-): ResolvedCalloutContext | null {
+function resolveEditorContext(view: MarkdownView, trigger: PointerContext): ResolvedCalloutContext | null {
 	const cmRoot = trigger.targetEl.closest(".cm-editor");
 	if (!(cmRoot instanceof HTMLElement)) return null;
 
@@ -265,8 +223,7 @@ function resolveEditorContext(
 	if (!editorView) return null;
 
 	const coords = { x: trigger.clientX, y: trigger.clientY };
-	const offset =
-		editorView.posAtCoords(coords) ?? editorView.posAtCoords(coords, false);
+	const offset = editorView.posAtCoords(coords) ?? editorView.posAtCoords(coords, false);
 	if (offset == null) return null;
 
 	const position = view.editor.offsetToPos(offset);
@@ -279,19 +236,14 @@ function resolveEditorContext(
 		callout,
 		editor: view.editor,
 		view,
-		surface: trigger.targetEl.closest(LIVE_PREVIEW_SELECTOR)
-			? "live-preview"
-			: "source",
+		surface: trigger.targetEl.closest(LIVE_PREVIEW_SELECTOR) ? "live-preview" : "source",
 		targetEl: trigger.targetEl,
 	};
 }
 
 // Reading view: find the rendered callout element, look up its source section,
 // then match back to the raw markdown line.
-function resolveReadingContext(
-	view: MarkdownView,
-	targetEl: Element,
-): ResolvedCalloutContext | null {
+function resolveReadingContext(view: MarkdownView, targetEl: Element): ResolvedCalloutContext | null {
 	const calloutEl = targetEl.closest(READING_CALLOUT_SELECTOR);
 	if (!(calloutEl instanceof HTMLElement)) return null;
 
@@ -301,16 +253,10 @@ function resolveReadingContext(
 	// Obsidian writes the DASH form here (`> [!multi word callout]` becomes
 	// `data-callout="multi-word-callout"`), so match the source lines in that
 	// same space rather than against the space-form normalized id.
-	const calloutAttrId = obsidianCalloutAttrId(
-		calloutEl.getAttribute("data-callout") ?? "",
-	);
+	const calloutAttrId = obsidianCalloutAttrId(calloutEl.getAttribute("data-callout") ?? "");
 	if (!calloutAttrId) return null;
 
-	const callout = findCalloutInSection(
-		sectionInfo,
-		calloutAttrId,
-		getCalloutDomDepth(calloutEl),
-	);
+	const callout = findCalloutInSection(sectionInfo, calloutAttrId, getCalloutDomDepth(calloutEl));
 	if (!callout) return null;
 
 	return {
@@ -327,10 +273,7 @@ function resolveReadingContext(
 // ─── Callout finders ─────────────────────────────────────────────────────────
 
 // Walk up from startLine until we hit a callout header or a non-quote line.
-function findCalloutAtLine(
-	editor: Editor,
-	startLine: number,
-): CalloutInfo | null {
+function findCalloutAtLine(editor: Editor, startLine: number): CalloutInfo | null {
 	for (let line = startLine; line >= 0; line--) {
 		const text = editor.getLine(line);
 		const match = CALLOUT_HEADER_REGEX.exec(text);
@@ -388,8 +331,7 @@ function findCalloutInSection(
 		}
 
 		if (!sameIdMatch && attrId === calloutAttrId) sameIdMatch = callout;
-		if (!sameDepthMatch && callout.quoteDepth === quoteDepth)
-			sameDepthMatch = callout;
+		if (!sameDepthMatch && callout.quoteDepth === quoteDepth) sameDepthMatch = callout;
 	}
 
 	return sameIdMatch ?? sameDepthMatch ?? firstCallout;
@@ -397,35 +339,23 @@ function findCalloutInSection(
 
 // ─── Shared helpers ──────────────────────────────────────────────────────────
 
-function resolveSurface(
-	targetEl: Element,
-): "source" | "live-preview" | "reading" {
+function resolveSurface(targetEl: Element): "source" | "live-preview" | "reading" {
 	if (!targetEl.closest(".cm-editor")) return "reading";
 	return targetEl.closest(LIVE_PREVIEW_SELECTOR) ? "live-preview" : "source";
 }
 
-export function findMarkdownViewForTarget(
-	plugin: CalloutStudioPlugin,
-	targetEl: Element,
-): MarkdownView | null {
+export function findMarkdownViewForTarget(plugin: CalloutStudioPlugin, targetEl: Element): MarkdownView | null {
 	for (const leaf of plugin.app.workspace.getLeavesOfType("markdown")) {
 		const { view } = leaf;
-		if (
-			view instanceof MarkdownView &&
-			view.containerEl.contains(targetEl)
-		) {
+		if (view instanceof MarkdownView && view.containerEl.contains(targetEl)) {
 			return view;
 		}
 	}
 	return null;
 }
 
-function getSectionInfo(
-	view: MarkdownView,
-	targetEl: HTMLElement,
-): MarkdownSectionInformation | null {
-	const previewMode = view.previewMode as MarkdownView["previewMode"] &
-		Partial<PreviewSectionLookup>;
+function getSectionInfo(view: MarkdownView, targetEl: HTMLElement): MarkdownSectionInformation | null {
+	const previewMode = view.previewMode as MarkdownView["previewMode"] & Partial<PreviewSectionLookup>;
 	let current: HTMLElement | null = targetEl;
 
 	while (current && view.previewMode.containerEl.contains(current)) {
@@ -443,8 +373,7 @@ function getCalloutDomDepth(calloutEl: HTMLElement): number {
 
 	while (current) {
 		if (current.matches(READING_CALLOUT_SELECTOR)) depth += 1;
-		current =
-			current.parentElement?.closest(READING_CALLOUT_SELECTOR) ?? null;
+		current = current.parentElement?.closest(READING_CALLOUT_SELECTOR) ?? null;
 	}
 
 	return depth;

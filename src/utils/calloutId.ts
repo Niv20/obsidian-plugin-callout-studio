@@ -76,10 +76,7 @@ export const splitCalloutMetadata = (raw: string): CalloutIdParts => {
  * link-suggest popup — already funnels through this one function.
  */
 export const normalizeCalloutId = (raw: string): string =>
-	splitCalloutMetadata(raw)
-		.id.replace(/\s+/g, " ")
-		.trim()
-		.toLowerCase();
+	splitCalloutMetadata(raw).id.replace(/\s+/g, " ").trim().toLowerCase();
 
 /**
  * Sanitize raw text typed into the editor's ID field into a valid callout ID.
@@ -132,11 +129,7 @@ export const sanitizeCalloutIdInput = (raw: string): string =>
  * a stray piped ID that slipped into storage — and would then collapse it onto a
  * real callout's selector, silently hijacking that callout's CSS rule.
  */
-export const obsidianCalloutAttrId = (raw: string): string =>
-	raw
-		.trim()
-		.toLowerCase()
-		.replace(/\s+/g, "-");
+export const obsidianCalloutAttrId = (raw: string): string => raw.trim().toLowerCase().replace(/\s+/g, "-");
 
 /**
  * The canonical identity of a callout ID: the one function every comparison,
@@ -168,8 +161,7 @@ export const obsidianCalloutAttrId = (raw: string): string =>
  * Idempotent, and identity-equal to `obsidianCalloutAttrId` for every ID without
  * a pipe or a whitespace run — which is every ID the editor can produce.
  */
-export const calloutIdentity = (raw: string): string =>
-	obsidianCalloutAttrId(normalizeCalloutId(raw));
+export const calloutIdentity = (raw: string): string => obsidianCalloutAttrId(normalizeCalloutId(raw));
 
 /**
  * The title Obsidian shows for a block callout that carries no explicit
@@ -186,10 +178,7 @@ export const obsidianDefaultTitle = (raw: string): string => {
 };
 
 /** The three fields {@link calloutTokenLabel} reads off a definition. */
-export type CalloutLabelSource = Pick<
-	CalloutDefinition,
-	"id" | "displayName" | "aliases"
->;
+export type CalloutLabelSource = Pick<CalloutDefinition, "id" | "displayName" | "aliases">;
 
 /**
  * The label a `[!typed]` token shows, and the title written for it. The typed
@@ -216,10 +205,7 @@ export type CalloutLabelSource = Pick<
  * about it. Surfaces that show a *definition* (settings lists, the editor, the
  * suggestion rows) show `displayName` directly and do not belong here.
  */
-export const calloutTokenLabel = (
-	def: CalloutLabelSource | undefined,
-	typedId: string,
-): string => {
+export const calloutTokenLabel = (def: CalloutLabelSource | undefined, typedId: string): string => {
 	if (def) {
 		const typed = calloutIdentity(typedId);
 		if (typed === calloutIdentity(def.id)) return def.displayName;

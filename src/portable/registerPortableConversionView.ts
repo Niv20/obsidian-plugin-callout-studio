@@ -21,12 +21,22 @@ export async function openPortableConversionFromSettings(app: App): Promise<void
 	const settings = app.setting as (App["setting"] & { close?: () => void }) | undefined;
 	let closed = false;
 	try {
-		if (typeof settings?.close === "function") { settings.close(); closed = true; }
-	} catch { /* Optional host seam: the public sidebar still opens. */ }
+		if (typeof settings?.close === "function") {
+			settings.close();
+			closed = true;
+		}
+	} catch {
+		/* Optional host seam: the public sidebar still opens. */
+	}
 	try {
-		const leaf = await app.workspace.ensureSideLeaf(PORTABLE_CONVERSION_VIEW, "right", { active: true, reveal: true });
+		const leaf = await app.workspace.ensureSideLeaf(PORTABLE_CONVERSION_VIEW, "right", {
+			active: true,
+			reveal: true,
+		});
 		await leaf.loadIfDeferred();
 		await app.workspace.revealLeaf(leaf);
 		if (!closed) showNotice("info", t("portable.closeSettings"));
-	} catch { showNotice("problem", t("portable.openFailed")); }
+	} catch {
+		showNotice("problem", t("portable.openFailed"));
+	}
 }

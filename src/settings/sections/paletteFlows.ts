@@ -18,10 +18,7 @@ import { t } from "../../i18n";
 import type { CustomPalette } from "../../types";
 import type { SettingsContext, SettingsTabPlugin } from "./types";
 import { generatePaletteId } from "../../utils/colorPalettes";
-import {
-	renderColorCircles,
-	resolveCurrentModeColors,
-} from "../../ui/ColorCircles";
+import { renderColorCircles, resolveCurrentModeColors } from "../../ui/ColorCircles";
 import { PaletteEditorModal } from "../PaletteEditorModal";
 import { ConfirmModal } from "../../utils/ConfirmModal";
 import {
@@ -94,11 +91,7 @@ export async function createPalette(ctx: SettingsContext, redraw: () => void): P
  * notes that use its old name when the user asked for that.
  * `redraw` draws the list again once the palette is saved.
  */
-export async function editPalette(
-	ctx: SettingsContext,
-	palette: CustomPalette,
-	redraw: () => void,
-): Promise<void> {
+export async function editPalette(ctx: SettingsContext, palette: CustomPalette, redraw: () => void): Promise<void> {
 	// A new name is a new metadata word. What the notes still using the old
 	// one should do is asked by the editor's Save, before anything is saved,
 	// so the question's Cancel goes back to the editor.
@@ -111,7 +104,12 @@ export async function editPalette(
 			const answer = await askMetadataRename({
 				app: ctx.app,
 				name: { from: palette.name, to: draft.name },
-				word: renamedMetadataWords(ctx.plugin.settings.customPalettes, palette.id, draft.name, reservedWords(ctx.plugin)),
+				word: renamedMetadataWords(
+					ctx.plugin.settings.customPalettes,
+					palette.id,
+					draft.name,
+					reservedWords(ctx.plugin),
+				),
 				sharedWord: (word) =>
 					isBuiltInColorWord(word) ||
 					isStylingWord(word, ctx.plugin.cssInjector.metadataCatalog.sourcesNow()),
@@ -135,16 +133,14 @@ export async function editPalette(
  * Delete `palette` once the user confirms, saying first how many callouts
  * link to it. `redraw` draws the list again once it is gone.
  */
-export async function deletePalette(
-	ctx: SettingsContext,
-	palette: CustomPalette,
-	redraw: () => void,
-): Promise<void> {
+export async function deletePalette(ctx: SettingsContext, palette: CustomPalette, redraw: () => void): Promise<void> {
 	const ok = await new ConfirmModal(
 		ctx.app,
 		t("settings.deletePaletteTitle"),
 		deletePaletteQuestion(ctx.plugin, palette),
-	).withMascot(t("confirm.subtitleName", { name: palette.name })).confirm();
+	)
+		.withMascot(t("confirm.subtitleName", { name: palette.name }))
+		.confirm();
 	if (!ok) return;
 	ctx.plugin.registry.removePalette(palette.id);
 	await ctx.plugin.saveSettings();
@@ -161,15 +157,15 @@ function deletePaletteQuestion(plugin: SettingsTabPlugin, palette: CustomPalette
 	// user before they confirm.
 	const linked = plugin.registry.countPaletteLinks(palette.id);
 	const base =
-		linked === 0 ? t("settings.deletePaletteBody")
-		: linked === 1 ? t("settings.deletePaletteBodyLinkedOne")
-		: t("settings.deletePaletteBodyLinked", { count: linked });
+		linked === 0
+			? t("settings.deletePaletteBody")
+			: linked === 1
+				? t("settings.deletePaletteBodyLinkedOne")
+				: t("settings.deletePaletteBodyLinked", { count: linked });
 	// What happens to `[!type|its-word]` in notes: nothing, by design.
 	// Only the case that is not obvious is said: a palette named "Pink"
 	// was holding the word of a built-in colour, which takes over again.
 	const key = ownedMetadataKey(plugin.settings.customPalettes, palette.id, reservedWords(plugin));
-	const note = !key ? ""
-		: isBuiltInColorWord(key) ? t("settings.deletePaletteMetadataNoteBuiltIn", { key })
-		: "";
+	const note = !key ? "" : isBuiltInColorWord(key) ? t("settings.deletePaletteMetadataNoteBuiltIn", { key }) : "";
 	return note ? `${base}\n${note}` : base;
 }

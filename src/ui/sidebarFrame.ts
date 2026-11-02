@@ -29,11 +29,14 @@ import { setIcon } from "obsidian";
  * @param options The Lucide `icon`, the `label` (read out, and shown as the
  *   tooltip), and what a press does (`onPress`, given the button).
  */
-export function addSidebarIconButton(parent: HTMLElement, options: {
-	icon: string;
-	label: string;
-	onPress: (button: HTMLElement) => void;
-}): HTMLElement {
+export function addSidebarIconButton(
+	parent: HTMLElement,
+	options: {
+		icon: string;
+		label: string;
+		onPress: (button: HTMLElement) => void;
+	},
+): HTMLElement {
 	const button = parent.createDiv({
 		cls: "clickable-icon cs-sidebar-icon-button",
 		attr: { "aria-label": options.label, role: "button", tabindex: "0" },

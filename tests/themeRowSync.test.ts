@@ -112,84 +112,104 @@ function vault(): CalloutRegistry {
 }
 
 describe("theme appearance updates never persist anything", () => {
- it("refreshes claims when an enabled snippet is edited without a name or length change", () => {
-  const t = themeHost("");
-  t.setSnippet('.callout[data-callout="probe"] { color:tan; }');
-  const registry = vault(); const { host, store, disposers } = syncHost(registry, t.app);
-  registerThemeAppearance(host);
-  assert.ok(store.claimedProps("probe").has("color"));
-  t.setSnippet('.callout[data-callout="probe"] { width:1px; }'); t.cssChange();
-  assert.ok(store.claimedProps("probe").has("width"));
-  assert.ok(!store.claimedProps("probe").has("color"));
-  assert.ok(!store.themeDefinedIds().has("probe"));
-  assert.strictEqual(registry.get("probe"), undefined);
-  for (const dispose of disposers) dispose();
- });
- it("lists nothing of a theme whose callout styling is switched off, and gives it all back", () => {
-  const t = themeHost('.callout[data-callout="recite"] { color: red; } .callout[data-callout="note"] { color: red; }');
-  const registry = vault(); const saved = registry.toSaveData();
-  let off = false;
-  const { host } = syncHost(registry, t.app, () => off);
-  const refresh = registerThemeAppearance(host);
-  assert.strictEqual(registry.get("recite")?.source, "theme");
-  assert.strictEqual(registry.themeOwns(registry.get("note")!), true);
-  off = true; refresh();
-  assert.strictEqual(registry.get("recite"), undefined, "the theme's own type left with its styling");
-  assert.strictEqual(registry.themeOwns(registry.get("note")!), false, "Note is Callout Studio's again");
-  off = false; refresh();
-  assert.strictEqual(registry.get("recite")?.source, "theme");
-  assert.strictEqual(registry.themeOwns(registry.get("note")!), true);
-  assert.deepStrictEqual(registry.toSaveData(), saved, "data.json did not move");
- });
- it("mints an overlay row for a theme id without persisting it", () => {
-  const t = themeHost('.callout[data-callout="recite"] { color: red; }');
-  const registry = vault(); const saved = registry.toSaveData();
-  const { host } = syncHost(registry, t.app);
-  registerThemeAppearance(host);
-  const row = registry.get("recite");
-  assert.ok(row, "the theme's own type is listed without a scan");
-  assert.strictEqual(row.source, "theme");
-  assert.strictEqual(registry.themeOwns(row), true);
-  assert.deepStrictEqual(registry.toSaveData(), saved, "data.json did not move");
- });
- it("leaves an existing row's source alone when the theme declares its id", () => {
-  const t = themeHost('.callout[data-callout="recite"] { color: red; }');
-  const registry = vault(); registry.add(discovered("recite"));
-  const saved = registry.toSaveData();
-  const { host } = syncHost(registry, t.app);
-  const refresh = registerThemeAppearance(host); refresh();
-  assert.strictEqual(registry.get("recite")?.source, "fallback");
-  assert.strictEqual(registry.themeOwns(registry.get("recite")!), true);
-  assert.deepStrictEqual(registry.toSaveData(), saved);
- });
- it("retires only the rows it minted when the theme lets go", () => {
-  const t = themeHost('.callout[data-callout="recite"] { color: red; }');
-  const registry = vault(); const { host } = syncHost(registry, t.app);
-  registerThemeAppearance(host);
-  assert.strictEqual(registry.get("recite")?.source, "theme");
-  const saved = registry.toSaveData();
-  t.setTheme({ css: "" }); t.cssChange();
-  assert.strictEqual(registry.get("recite"), undefined, "the overlay went with the theme");
-  assert.deepStrictEqual(registry.toSaveData(), saved, "data.json did not move");
- });
- it("preserves saved rows when a theme stops defining them", () => {
-  const t = themeHost('.callout[data-callout="recite"] { color: red; }');
-  const registry = vault(); registry.add(discovered("recite"));
-  const saved = registry.toSaveData(); const { host } = syncHost(registry, t.app);
-  registerThemeAppearance(host); t.setTheme({ css: "" }); t.cssChange();
-  assert.ok(registry.get("recite")); assert.strictEqual(registry.themeOwns(registry.get("recite")!), false);
-  assert.deepStrictEqual(registry.toSaveData(), saved);
- });
- it("recognizes a theme edited in place even when its length is unchanged", () => {
-  const t = themeHost('.callout[data-callout="alpha"] { color: red; }');
-  const registry = vault(); registry.add(discovered("alpha")); registry.add(discovered("bravo"));
-  const { host } = syncHost(registry, t.app); registerThemeAppearance(host);
-  t.setTheme({ css: '.callout[data-callout="bravo"] { color: red; }' }); t.cssChange();
-  assert.strictEqual(registry.themeOwns(registry.get("alpha")!), false);
-  assert.strictEqual(registry.themeOwns(registry.get("bravo")!), true);
- });
+	it("refreshes claims when an enabled snippet is edited without a name or length change", () => {
+		const t = themeHost("");
+		t.setSnippet('.callout[data-callout="probe"] { color:tan; }');
+		const registry = vault();
+		const { host, store, disposers } = syncHost(registry, t.app);
+		registerThemeAppearance(host);
+		assert.ok(store.claimedProps("probe").has("color"));
+		t.setSnippet('.callout[data-callout="probe"] { width:1px; }');
+		t.cssChange();
+		assert.ok(store.claimedProps("probe").has("width"));
+		assert.ok(!store.claimedProps("probe").has("color"));
+		assert.ok(!store.themeDefinedIds().has("probe"));
+		assert.strictEqual(registry.get("probe"), undefined);
+		for (const dispose of disposers) dispose();
+	});
+	it("lists nothing of a theme whose callout styling is switched off, and gives it all back", () => {
+		const t = themeHost(
+			'.callout[data-callout="recite"] { color: red; } .callout[data-callout="note"] { color: red; }',
+		);
+		const registry = vault();
+		const saved = registry.toSaveData();
+		let off = false;
+		const { host } = syncHost(registry, t.app, () => off);
+		const refresh = registerThemeAppearance(host);
+		assert.strictEqual(registry.get("recite")?.source, "theme");
+		assert.strictEqual(registry.themeOwns(registry.get("note")!), true);
+		off = true;
+		refresh();
+		assert.strictEqual(registry.get("recite"), undefined, "the theme's own type left with its styling");
+		assert.strictEqual(registry.themeOwns(registry.get("note")!), false, "Note is Callout Studio's again");
+		off = false;
+		refresh();
+		assert.strictEqual(registry.get("recite")?.source, "theme");
+		assert.strictEqual(registry.themeOwns(registry.get("note")!), true);
+		assert.deepStrictEqual(registry.toSaveData(), saved, "data.json did not move");
+	});
+	it("mints an overlay row for a theme id without persisting it", () => {
+		const t = themeHost('.callout[data-callout="recite"] { color: red; }');
+		const registry = vault();
+		const saved = registry.toSaveData();
+		const { host } = syncHost(registry, t.app);
+		registerThemeAppearance(host);
+		const row = registry.get("recite");
+		assert.ok(row, "the theme's own type is listed without a scan");
+		assert.strictEqual(row.source, "theme");
+		assert.strictEqual(registry.themeOwns(row), true);
+		assert.deepStrictEqual(registry.toSaveData(), saved, "data.json did not move");
+	});
+	it("leaves an existing row's source alone when the theme declares its id", () => {
+		const t = themeHost('.callout[data-callout="recite"] { color: red; }');
+		const registry = vault();
+		registry.add(discovered("recite"));
+		const saved = registry.toSaveData();
+		const { host } = syncHost(registry, t.app);
+		const refresh = registerThemeAppearance(host);
+		refresh();
+		assert.strictEqual(registry.get("recite")?.source, "fallback");
+		assert.strictEqual(registry.themeOwns(registry.get("recite")!), true);
+		assert.deepStrictEqual(registry.toSaveData(), saved);
+	});
+	it("retires only the rows it minted when the theme lets go", () => {
+		const t = themeHost('.callout[data-callout="recite"] { color: red; }');
+		const registry = vault();
+		const { host } = syncHost(registry, t.app);
+		registerThemeAppearance(host);
+		assert.strictEqual(registry.get("recite")?.source, "theme");
+		const saved = registry.toSaveData();
+		t.setTheme({ css: "" });
+		t.cssChange();
+		assert.strictEqual(registry.get("recite"), undefined, "the overlay went with the theme");
+		assert.deepStrictEqual(registry.toSaveData(), saved, "data.json did not move");
+	});
+	it("preserves saved rows when a theme stops defining them", () => {
+		const t = themeHost('.callout[data-callout="recite"] { color: red; }');
+		const registry = vault();
+		registry.add(discovered("recite"));
+		const saved = registry.toSaveData();
+		const { host } = syncHost(registry, t.app);
+		registerThemeAppearance(host);
+		t.setTheme({ css: "" });
+		t.cssChange();
+		assert.ok(registry.get("recite"));
+		assert.strictEqual(registry.themeOwns(registry.get("recite")!), false);
+		assert.deepStrictEqual(registry.toSaveData(), saved);
+	});
+	it("recognizes a theme edited in place even when its length is unchanged", () => {
+		const t = themeHost('.callout[data-callout="alpha"] { color: red; }');
+		const registry = vault();
+		registry.add(discovered("alpha"));
+		registry.add(discovered("bravo"));
+		const { host } = syncHost(registry, t.app);
+		registerThemeAppearance(host);
+		t.setTheme({ css: '.callout[data-callout="bravo"] { color: red; }' });
+		t.cssChange();
+		assert.strictEqual(registry.themeOwns(registry.get("alpha")!), false);
+		assert.strictEqual(registry.themeOwns(registry.get("bravo")!), true);
+	});
 });
-
 
 describe("theme rows after transient editors and removals", () => {
 	it("restores a theme row when a new-callout draft closes, even with fallback disabled", () => {
@@ -203,7 +223,7 @@ describe("theme rows after transient editors and removals", () => {
 		t.cssChange();
 		registry.setPreviewDefinition(null);
 		assert.strictEqual(registry.get("recite")?.source, "theme");
-		assert.ok(!registry.toSaveData().callouts.some(row => row.id === "recite"));
+		assert.ok(!registry.toSaveData().callouts.some((row) => row.id === "recite"));
 		for (const dispose of disposers) dispose();
 	});
 
@@ -499,7 +519,11 @@ describe("what a css-change re-reads, and how often", () => {
 		const t = themeHost(CSS);
 		const { host } = syncHost(vault(), t.app);
 		const probe = recordingProbe();
-		registerThemeAppearance(host, { appearance: probe, claims: countingClaims(), schedule: manualClock().schedule });
+		registerThemeAppearance(host, {
+			appearance: probe,
+			claims: countingClaims(),
+			schedule: manualClock().schedule,
+		});
 		assert.deepStrictEqual(probe.log, ["ensure"]);
 	});
 
@@ -527,7 +551,11 @@ describe("what a css-change re-reads, and how often", () => {
 			t.cssChange({ source: "style-settings" });
 			clock.advance(40);
 		}
-		assert.strictEqual(probe.log.filter((l) => l === "ensure").length, 1, "the first step read at once, the rest are owed");
+		assert.strictEqual(
+			probe.log.filter((l) => l === "ensure").length,
+			1,
+			"the first step read at once, the rest are owed",
+		);
 		assert.ok(!probe.log.includes("invalidate"), "never the dropping kind");
 		clock.advance(250);
 		assert.strictEqual(probe.log.filter((l) => l === "ensure").length, 2);

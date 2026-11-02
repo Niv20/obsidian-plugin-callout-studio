@@ -20,12 +20,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	analyzeTheme,
-	BUILT_IN_ATTR_IDS,
-	sortThemeReports,
-	type ThemeInput,
-} from "../src/manager/theme/themeReport";
+import { analyzeTheme, BUILT_IN_ATTR_IDS, sortThemeReports, type ThemeInput } from "../src/manager/theme/themeReport";
 import { renderThemeReport } from "../src/manager/theme/themeReportMarkdown";
 
 const theme = (css: string, name = "Test Theme"): ThemeInput => ({
@@ -68,11 +63,7 @@ describe("alphabetical ordering", () => {
 	});
 
 	it("sorts a typographic apostrophe as part of the word", () => {
-		const rows = sortThemeReports([
-			{ name: "Origami" },
-			{ name: "Olivier’s Theme" },
-			{ name: "Oxygen" },
-		]);
+		const rows = sortThemeReports([{ name: "Origami" }, { name: "Olivier’s Theme" }, { name: "Oxygen" }]);
 		assert.deepStrictEqual(
 			rows.map((r) => r.name),
 			["Olivier’s Theme", "Origami", "Oxygen"],
@@ -105,8 +96,7 @@ describe("alphabetical ordering", () => {
 describe("what the theme adds", () => {
 	it("lists ids the theme names and Obsidian does not ship", () => {
 		const r = report(
-			'.callout[data-callout="recite"] { color: red; }\n' +
-				'.callout[data-callout="note"] { color: blue; }',
+			'.callout[data-callout="recite"] { color: red; }\n' + '.callout[data-callout="note"] { color: blue; }',
 		);
 		assert.deepStrictEqual(r.addedIds, ["recite"]);
 		assert.strictEqual(r.builtInsRestyled, 1);
@@ -144,9 +134,7 @@ describe("what the theme adds", () => {
 		// Verbatim shape from ITS Theme's `.callout-bordered` rule, which names
 		// nine of its own ids purely to exempt them. Counting those would put
 		// nine phantom types on the row.
-		const r = report(
-			".callout-bordered .callout:not([data-callout=aside], [data-callout=blank]) { border: 1px; }",
-		);
+		const r = report(".callout-bordered .callout:not([data-callout=aside], [data-callout=blank]) { border: 1px; }");
 		assert.deepStrictEqual(r.addedIds, []);
 	});
 
@@ -154,8 +142,7 @@ describe("what the theme adds", () => {
 		// 117 of the 257 themes in the dev vault embed a Style Settings
 		// `@settings` YAML block in a comment, and its prose parses as CSS.
 		const r = report(
-			'/* .callout[data-callout="ghost"] { color: red !important; } */\n' +
-				".callout { padding: 8px; }",
+			'/* .callout[data-callout="ghost"] { color: red !important; } */\n' + ".callout { padding: 8px; }",
 		);
 		assert.deepStrictEqual(r.addedIds, []);
 		assert.strictEqual(r.importantCount, 0);
@@ -170,35 +157,19 @@ describe("how far a theme reaches", () => {
 	});
 
 	it("reports the icon mechanism, strongest first", () => {
-		assert.strictEqual(
-			report('.callout[data-callout=x] { --callout-icon: lucide-star; }').icons,
-			"var",
-		);
-		assert.strictEqual(
-			report(".callout-icon { -webkit-mask-image: url(a.svg); }").icons,
-			"mask",
-		);
+		assert.strictEqual(report(".callout[data-callout=x] { --callout-icon: lucide-star; }").icons, "var");
+		assert.strictEqual(report(".callout-icon { -webkit-mask-image: url(a.svg); }").icons, "mask");
 		// Hidden beats both: whatever the theme set underneath, nothing shows.
-		assert.strictEqual(
-			report(
-				".callout-icon { -webkit-mask-image: url(a.svg); display: none; }",
-			).icons,
-			"hidden",
-		);
+		assert.strictEqual(report(".callout-icon { -webkit-mask-image: url(a.svg); display: none; }").icons, "hidden");
 	});
 
 	it("calls a grid layout but not an icon's display:none", () => {
-		assert.deepStrictEqual(
-			report('.callout[data-callout="2"] { display: grid; }').layout,
-			["display"],
-		);
+		assert.deepStrictEqual(report('.callout[data-callout="2"] { display: grid; }').layout, ["display"]);
 		assert.deepStrictEqual(report(".callout-icon { display: none; }").layout, []);
 	});
 
 	it("counts !important and the heaviest selector", () => {
-		const r = report(
-			".a.b.c .callout[data-callout=x] { color: red !important; background: blue !important; }",
-		);
+		const r = report(".a.b.c .callout[data-callout=x] { color: red !important; background: blue !important; }");
 		assert.strictEqual(r.importantCount, 2);
 		// `.a .b .c .callout` plus the attribute selector: CSS counts an
 		// attribute in the same column as a class, which is exactly why the
@@ -212,9 +183,7 @@ describe("how far a theme reaches", () => {
 		// *claim* reader legitimately does to the same string — scored these
 		// four units too low, and the whole point of the column is to say how
 		// hard the plugin has to push.
-		const r = report(
-			"body:not(.table-100):not(.table-max):not(.table-wide) .callout { color: red; }",
-		);
+		const r = report("body:not(.table-100):not(.table-max):not(.table-wide) .callout { color: red; }");
 		// One per negation plus `.callout`; `body` is an element, so column c.
 		assert.strictEqual(r.maxClasses, 4);
 	});
@@ -247,8 +216,7 @@ describe("how far a theme reaches", () => {
 		// Verbatim from Prism, one of six themes shipping an off switch for
 		// their own callout styling — the most useful single fact on its row.
 		const r = report(
-			"/* @settings\nname: Prism\n*/\n" +
-				"body:not(.pt-disable-callout-styling) .callout { border: 0; }",
+			"/* @settings\nname: Prism\n*/\n" + "body:not(.pt-disable-callout-styling) .callout { border: 0; }",
 		);
 		assert.deepStrictEqual(r.styleSettings, ["pt-disable-callout-styling"]);
 		assert.ok(r.checks.some((c) => c.includes("pt-disable-callout-styling")));
@@ -273,9 +241,7 @@ describe("the checks are entailed by the columns", () => {
 	});
 
 	it("tells the tester what a masked icon should look like in the list", () => {
-		const r = report(
-			'.callout[data-callout="x"] .callout-icon { -webkit-mask-image: url(a.svg); }',
-		);
+		const r = report('.callout[data-callout="x"] .callout-icon { -webkit-mask-image: url(a.svg); }');
 		assert.ok(r.checks.some((c) => c.includes("CSS mask")));
 	});
 
@@ -318,10 +284,10 @@ describe("the rendered worksheet", () => {
 	});
 
 	it("escapes a pipe so one theme cannot break the table", () => {
-		const md = renderThemeReport(
-			[analyzeTheme(theme(".callout { color: red; }", "A | B"))],
-			{ activeTheme: null, themesPath: "/themes" },
-		);
+		const md = renderThemeReport([analyzeTheme(theme(".callout { color: red; }", "A | B"))], {
+			activeTheme: null,
+			themesPath: "/themes",
+		});
 		const line = md.split("\n").find((l) => l.includes("A \\| B"));
 		assert.ok(line, "the name's pipe is escaped");
 		assert.strictEqual(line.split(/(?<!\\)\|/).length - 1, 13);

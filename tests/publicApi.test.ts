@@ -60,10 +60,7 @@ describe("getCallouts — every value is frozen", () => {
 		const { api } = apiHarness();
 		for (const callout of api.getCallouts()) {
 			assert.ok(Object.isFrozen(callout), `${callout.id} was not frozen`);
-			assert.ok(
-				Object.isFrozen(callout.aliases),
-				`${callout.id}'s aliases were not frozen`,
-			);
+			assert.ok(Object.isFrozen(callout.aliases), `${callout.id}'s aliases were not frozen`);
 		}
 	});
 
@@ -211,12 +208,7 @@ describe("getCalloutsDetailed — what a row carries", () => {
 		const { api } = apiHarness();
 		const note = api.getCalloutsDetailed().find((d) => d.id === "note");
 		assert.ok(note);
-		for (const key of [
-			"bgColorLight",
-			"bgColorDark",
-			"textColorLight",
-			"textColorDark",
-		]) {
+		for (const key of ["bgColorLight", "bgColorDark", "textColorLight", "textColorDark"]) {
 			assert.ok(!(key in note), `${key} should be absent, not undefined`);
 		}
 	});
@@ -293,16 +285,11 @@ describe("getCalloutsDetailed — what a row carries", () => {
 				},
 			}),
 		);
-		registry.add(
-			definition({ id: "luc", icon: { type: "lucide", value: "star" } }),
-		);
+		registry.add(definition({ id: "luc", icon: { type: "lucide", value: "star" } }));
 		const detailed = api.getCalloutsDetailed();
 		const mat = detailed.find((d) => d.id === "mat");
 		const luc = detailed.find((d) => d.id === "luc");
-		assert.deepStrictEqual(
-			{ ...mat?.icon },
-			{ pack: "material", name: "rocket", style: "rounded", weight: 500 },
-		);
+		assert.deepStrictEqual({ ...mat?.icon }, { pack: "material", name: "rocket", style: "rounded", weight: 500 });
 		assert.ok(luc?.icon && !("style" in luc.icon));
 		assert.ok(luc?.icon && !("weight" in luc.icon));
 	});
@@ -337,10 +324,7 @@ describe("getCalloutsDetailed — what a row carries", () => {
 		const { api, registry } = apiHarness();
 		registry.add(definition());
 		registry.add(definition({ id: "loud", displayName: "Loud" }));
-		assert.deepStrictEqual(
-			ids(api.getCalloutsDetailed()),
-			ids(api.getCallouts()),
-		);
+		assert.deepStrictEqual(ids(api.getCalloutsDetailed()), ids(api.getCallouts()));
 	});
 });
 
@@ -486,15 +470,10 @@ describe("getCallout — only ever answers with what the list shows", () => {
 		// real built-in back in here — returning `resolved` directly would hand
 		// out the demo's colours as if the user had chosen them.
 		const { api, registry } = apiHarness();
-		registry.setPreviewDefinition(
-			definition({ id: "example", displayName: "DEMO", colorLight: "#123456" }),
-			true,
-		);
+		registry.setPreviewDefinition(definition({ id: "example", displayName: "DEMO", colorLight: "#123456" }), true);
 		const example = api.getCallout("example");
 		assert.equal(example?.title, "Example");
-		const detailed = api
-			.getCalloutsDetailed()
-			.find((d) => d.id === "example");
+		const detailed = api.getCalloutsDetailed().find((d) => d.id === "example");
 		assert.equal(detailed?.colorLight, "#7852ee");
 	});
 
@@ -517,9 +496,7 @@ describe("getCallout — only ever answers with what the list shows", () => {
 		registry.add(definition({ id: "quiet", displayName: "Quiet" }));
 		const before = ids(api.getCallouts());
 
-		registry.setPreviewDefinition(
-			definition({ id: "quiet", displayName: "Quiet (draft)" }),
-		);
+		registry.setPreviewDefinition(definition({ id: "quiet", displayName: "Quiet (draft)" }));
 		assert.deepStrictEqual(ids(api.getCallouts()), before, "no row appeared");
 		assert.equal(api.getCallout("quiet")?.title, "Quiet");
 
@@ -534,9 +511,7 @@ describe("getCallout — only ever answers with what the list shows", () => {
 		const { api, registry } = apiHarness();
 		registry.add(definition({ id: "quiet", colorLight: "#336699" }));
 
-		registry.setPreviewDefinition(
-			definition({ id: "quiet", colorLight: "#ff0000" }),
-		);
+		registry.setPreviewDefinition(definition({ id: "quiet", colorLight: "#ff0000" }));
 		const detailed = api.getCalloutsDetailed().find((d) => d.id === "quiet");
 		assert.equal(detailed?.colorLight, "#336699");
 	});
@@ -549,9 +524,7 @@ describe("getCallout — only ever answers with what the list shows", () => {
 		const { api, registry } = apiHarness();
 		registry.add(definition({ id: "quiet", displayName: "Quiet" }));
 
-		registry.setPreviewDefinition(
-			definition({ id: "quiet", displayName: "Never saved" }),
-		);
+		registry.setPreviewDefinition(definition({ id: "quiet", displayName: "Never saved" }));
 		// Something unrelated changes, so the consumer re-reads.
 		registry.add(definition({ id: "other", displayName: "Other" }));
 		const seen = api.getCallouts().find((c) => c.id === "quiet");
@@ -652,10 +625,7 @@ describe("the published list — what is dropped from it", () => {
 
 	it("lets a demo preview neither add nor displace the row it shadows", () => {
 		const { api, registry } = apiHarness();
-		registry.setPreviewDefinition(
-			definition({ id: "example", displayName: "DEMO" }),
-			true,
-		);
+		registry.setPreviewDefinition(definition({ id: "example", displayName: "DEMO" }), true);
 		const list = api.getCallouts();
 		assert.deepStrictEqual(ids(list), BUILT_IN_IDS);
 		assert.equal(list.find((c) => c.id === "example")?.title, "Example");

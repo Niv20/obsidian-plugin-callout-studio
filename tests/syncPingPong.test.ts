@@ -87,10 +87,16 @@ function device(name: string, disk: Disk) {
 			configDir: ".obsidian",
 			adapter: {
 				mkdir: () => Promise.resolve(),
-				write: (path: string, text: string) => { files.set(path, text); return Promise.resolve(); },
+				write: (path: string, text: string) => {
+					files.set(path, text);
+					return Promise.resolve();
+				},
 				read: (path: string) => Promise.resolve(files.get(path) ?? ""),
 				list: () => Promise.resolve({ files: [...files.keys()], folders: [] }),
-				remove: (path: string) => { files.delete(path); return Promise.resolve(); },
+				remove: (path: string) => {
+					files.delete(path);
+					return Promise.resolve();
+				},
 				// The file is there whenever the disk holds anything at all,
 				// including the empty string — which is the case that matters.
 				exists: () => Promise.resolve(disk.content !== null),
@@ -183,17 +189,12 @@ function device(name: string, disk: Disk) {
  * Throws rather than hanging when it does not settle — a runaway exchange is the
  * bug, so it has to fail loudly and quickly rather than time the suite out.
  */
-async function settle(
-	disk: Disk,
-	devices: Device[],
-	maxRounds = 12,
-): Promise<number> {
+async function settle(disk: Disk, devices: Device[], maxRounds = 12): Promise<number> {
 	let rounds = 0;
 	while (disk.pending.length > 0) {
 		if (++rounds > maxRounds) {
 			throw new Error(
-				`data.json is still being rewritten after ${maxRounds} rounds: ` +
-					`${disk.writes.join(" → ")}`,
+				`data.json is still being rewritten after ${maxRounds} rounds: ` + `${disk.writes.join(" → ")}`,
 			);
 		}
 		const from = disk.pending.shift() as string;
@@ -411,10 +412,7 @@ describe("a data.json that cannot be read", () => {
 		// still being thrown away.
 		a.registry.add(authored("made-after-recovery"));
 		await a.save();
-		assert.ok(
-			(disk.content ?? "").includes("made-after-recovery"),
-			"stayed read-only after recovering the file",
-		);
+		assert.ok((disk.content ?? "").includes("made-after-recovery"), "stayed read-only after recovering the file");
 	});
 
 	it("still treats a genuinely missing file as a fresh install", async () => {

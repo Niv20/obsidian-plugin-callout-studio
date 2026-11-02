@@ -7,7 +7,7 @@ const WOFF2_IN_CSS = /url\(["']?(https:\/\/fonts\.gstatic\.com\/[^)"']+?\.woff2)
 /** Google returns the variable FILL font only to the browser's user-agent. */
 export function loadMaterialFontLink(doc: Document, family: string, session: MaterialFontSession): Promise<boolean> {
 	if (!session.active) return Promise.resolve(false);
-	return new Promise<boolean>(resolve => {
+	return new Promise<boolean>((resolve) => {
 		let settled = false;
 		let timer = 0;
 		let release = () => {};
@@ -18,21 +18,30 @@ export function loadMaterialFontLink(doc: Document, family: string, session: Mat
 			window.clearTimeout(timer);
 			link.onload = null;
 			link.onerror = null;
-			if (!ok) { link.remove(); release(); }
+			if (!ok) {
+				link.remove();
+				release();
+			}
 			resolve(ok && session.active);
 		};
-		release = session.own(() => { link.remove(); finish(false); });
+		release = session.own(() => {
+			link.remove();
+			finish(false);
+		});
 		const verify = async () => {
 			if (settled || !session.active) return;
 			try {
 				await doc.fonts.load(`24px "${family}"`);
 				finish(session.active && isFamilyLoaded(doc, family));
-			} catch { finish(false); }
+			} catch {
+				finish(false);
+			}
 		};
 		// Replace stale module-owned links: a non-null sheet can still be a failed
 		// cross-origin request whose cssRules throws, so sheet alone proves nothing.
-		doc.head.querySelectorAll<HTMLLinkElement>(`link[data-cs-material-font="${family}"]`)
-			.forEach(stale => stale.remove());
+		doc.head
+			.querySelectorAll<HTMLLinkElement>(`link[data-cs-material-font="${family}"]`)
+			.forEach((stale) => stale.remove());
 		link.rel = "stylesheet";
 		link.href = cssUrl(family);
 		link.setAttribute("data-cs-material-font", family);
@@ -48,9 +57,13 @@ export function loadMaterialFontLink(doc: Document, family: string, session: Mat
  * woff2 URL. media="not all" keeps it from supplying a second font; a failure
  * only skips disk caching and cannot affect the already-loaded picker font.
  */
-export function resolveMaterialWoff2Url(doc: Document, family: string, session: MaterialFontSession): Promise<string | undefined> {
+export function resolveMaterialWoff2Url(
+	doc: Document,
+	family: string,
+	session: MaterialFontSession,
+): Promise<string | undefined> {
 	if (!session.active) return Promise.resolve(undefined);
-	return new Promise<string | undefined>(resolve => {
+	return new Promise<string | undefined>((resolve) => {
 		let settled = false;
 		let timer = 0;
 		let release = () => {};
@@ -73,9 +86,13 @@ export function resolveMaterialWoff2Url(doc: Document, family: string, session: 
 		link.onload = () => {
 			if (settled || !session.active) return;
 			try {
-				const css = Array.from(link.sheet?.cssRules ?? []).map(rule => rule.cssText).join("");
+				const css = Array.from(link.sheet?.cssRules ?? [])
+					.map((rule) => rule.cssText)
+					.join("");
 				finish(WOFF2_IN_CSS.exec(css)?.[1]);
-			} catch { finish(); }
+			} catch {
+				finish();
+			}
 		};
 		link.onerror = () => finish();
 		timer = window.setTimeout(() => finish(), LINK_TIMEOUT_MS);
@@ -91,9 +108,11 @@ function cssUrl(family: string): string {
 export function isFamilyLoaded(doc: Document, family: string): boolean {
 	let loaded = false;
 	try {
-		doc.fonts.forEach(face => {
+		doc.fonts.forEach((face) => {
 			if (face.family.replace(/^["']|["']$/g, "") === family && face.status === "loaded") loaded = true;
 		});
-	} catch { return false; }
+	} catch {
+		return false;
+	}
 	return loaded;
 }

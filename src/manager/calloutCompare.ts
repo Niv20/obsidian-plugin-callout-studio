@@ -27,10 +27,7 @@ import { iconsEqual } from "../icons/lucideId";
  * `source` are what makes this a built-in in the first place. Everything else
  * is a difference the user can see.
  */
-export const COMPARED_FIELDS: Record<
-	Exclude<keyof CalloutDefinition, "id" | "builtIn" | "source">,
-	true
-> = {
+export const COMPARED_FIELDS: Record<Exclude<keyof CalloutDefinition, "id" | "builtIn" | "source">, true> = {
 	displayName: true,
 	icon: true,
 	hideIcon: true,
@@ -67,8 +64,7 @@ export const COMPARED_FIELDS: Record<
  *
  * It is the only such field.
  */
-export const COLOUR_NEUTRAL_FIELDS: ReadonlySet<keyof CalloutDefinition> =
-	new Set(["hideIcon"]);
+export const COLOUR_NEUTRAL_FIELDS: ReadonlySet<keyof CalloutDefinition> = new Set(["hideIcon"]);
 
 /**
  * Structural diff over {@link COMPARED_FIELDS}, optionally ignoring a set of
@@ -93,9 +89,6 @@ export function isCalloutModified(
 		const key = field as keyof CalloutDefinition;
 		if (ignore?.has(key)) return false;
 		if (key === "icon") return !iconsEqual(current.icon, original.icon);
-		return (
-			JSON.stringify(current[key] ?? null) !==
-			JSON.stringify(original[key] ?? null)
-		);
+		return JSON.stringify(current[key] ?? null) !== JSON.stringify(original[key] ?? null);
 	});
 }

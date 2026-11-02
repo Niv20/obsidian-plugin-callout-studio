@@ -1,14 +1,7 @@
 /** Theme layouts with an accent-tinted title and a neutral callout body. */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	definition,
-	must,
-	parseRules,
-	themedHarness,
-	valueOf,
-	type CssRule,
-} from "./support/cssInjectorHarness";
+import { definition, must, parseRules, themedHarness, valueOf, type CssRule } from "./support/cssInjectorHarness";
 import { splitSelectorList } from "../src/utils/selectorText";
 import { compareSpecificity, specificityOf } from "../src/utils/cssSpecificity";
 
@@ -85,9 +78,7 @@ const palette = (over: Record<string, unknown> = {}) =>
 
 const ruleFor = (css: string, guard: string): CssRule =>
 	must(
-		parseRules(css).find(
-			(r) => r.selector.startsWith(guard) && r.props.includes("background-color"),
-		),
+		parseRules(css).find((r) => r.selector.startsWith(guard) && r.props.includes("background-color")),
 		`background rule under ${guard}`,
 	);
 
@@ -101,18 +92,13 @@ describe("AnuPpuccin neutral content", () => {
 			assert.ok(rule.selector.includes("data-callout-metadata"));
 		}
 		const sleek = ruleFor(out, ".anp-callout-sleek");
-		assert.strictEqual(
-			valueOf(sleek, "background-color"),
-			"rgba(var(--ctp-mantle), 0.4) !important",
-		);
+		assert.strictEqual(valueOf(sleek, "background-color"), "rgba(var(--ctp-mantle), 0.4) !important");
 		assert.ok(out.includes("--callout-color:"), "the title still receives the custom accent");
 		assert.ok(!sleek.decls.some((decl) => decl.includes("--background-primary")));
 	});
 
 	it("keeps metadata overrides, aliases, and print gradients scoped", () => {
-		const out = themedHarness(ANUPPUCCIN).css.generateCalloutCSS(
-			palette({ aliases: ["pomme"] }),
-		);
+		const out = themedHarness(ANUPPUCCIN).css.generateCalloutCSS(palette({ aliases: ["pomme"] }));
 		const normal = ruleFor(out, ".anp-callout-vanilla-normal");
 		assert.ok(normal.selector.includes("anp-sleek"));
 		assert.ok(normal.selector.includes("anp-block"));
@@ -120,17 +106,19 @@ describe("AnuPpuccin neutral content", () => {
 		assert.strictEqual(splitSelectorList(normal.selector).length, 2);
 		assert.ok(normal.selector.includes('[data-callout="apple"]'));
 		assert.ok(normal.selector.includes('[data-callout="pomme"]'));
-		const optIn = parseRules(out).find((r) =>
-			r.selector.startsWith(".callout") &&
-			r.selector.includes("[data-callout-metadata*=anp-vanilla-normal]") &&
-			r.props.includes("background-color"),
+		const optIn = parseRules(out).find(
+			(r) =>
+				r.selector.startsWith(".callout") &&
+				r.selector.includes("[data-callout-metadata*=anp-vanilla-normal]") &&
+				r.props.includes("background-color"),
 		);
 		assert.ok(optIn, "metadata can select Vanilla Normal without its body class");
 		const print = must(
-			parseRules(out).find((r) =>
-				r.selector.startsWith(".anp-callout-vanilla-normal") &&
-				r.selector.includes("::before") &&
-				r.at.includes("@media print"),
+			parseRules(out).find(
+				(r) =>
+					r.selector.startsWith(".anp-callout-vanilla-normal") &&
+					r.selector.includes("::before") &&
+					r.at.includes("@media print"),
 			),
 			"print cancellation",
 		);
@@ -144,17 +132,15 @@ describe("Soft Paper light and dark surfaces", () => {
 		const out = themedHarness(SOFT_PAPER).css.generateCalloutCSS(palette());
 		const light = ruleFor(out, ".theme-light");
 		const dark = must(
-			parseRules(out).find((r) =>
-				r.selector.startsWith(".theme-dark") &&
-				r.selector.includes("data-callout-metadata*=revert") &&
-				r.props.includes("background-color"),
+			parseRules(out).find(
+				(r) =>
+					r.selector.startsWith(".theme-dark") &&
+					r.selector.includes("data-callout-metadata*=revert") &&
+					r.props.includes("background-color"),
 			),
 			"dark theme surface cancellation",
 		);
-		assert.strictEqual(
-			valueOf(light, "background-color"),
-			"rgba(var(--ctp-mantle), 0.4) !important",
-		);
+		assert.strictEqual(valueOf(light, "background-color"), "rgba(var(--ctp-mantle), 0.4) !important");
 		assert.strictEqual(valueOf(dark, "background-color"), "transparent !important");
 		const authoredDark = ruleFor(out, ".theme-dark");
 		assert.ok(

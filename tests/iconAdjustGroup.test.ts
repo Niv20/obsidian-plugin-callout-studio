@@ -13,10 +13,7 @@ import { describe, it } from "node:test";
 import { createdSliders, type SliderComponent } from "./support/obsidianStub";
 import { renderIconAdjustGroup } from "../src/settings/editor/iconAdjustGroup";
 import { t } from "../src/i18n";
-import {
-	DEFAULT_ICON_ADJUST,
-	type ResolvedIconAdjust,
-} from "../src/utils/iconAdjust";
+import { DEFAULT_ICON_ADJUST, type ResolvedIconAdjust } from "../src/utils/iconAdjust";
 import { readRepoFile } from "./support/sourceScan";
 
 const css = readRepoFile("styles.css")
@@ -25,8 +22,9 @@ const css = readRepoFile("styles.css")
 
 /** Declarations for an exact selector, including shared comma-separated rules. */
 function cssRule(selector: string): string {
-	const rule = Array.from(css.matchAll(/([^{}]+)\{([^{}]*)\}/g))
-		.find((match) => match[1]!.split(",").some((entry) => entry.trim() === selector));
+	const rule = Array.from(css.matchAll(/([^{}]+)\{([^{}]*)\}/g)).find((match) =>
+		match[1]!.split(",").some((entry) => entry.trim() === selector),
+	);
 	assert.ok(rule, `missing CSS rule for ${selector}`);
 	return rule[2]!;
 }
@@ -99,10 +97,7 @@ describe("renderIconAdjustGroup — reset affordance", () => {
 	});
 
 	it("starts hidden when the role still matches its shipped values", () => {
-		const { box } = build(
-			{ ...DEFAULT_ICON_ADJUST },
-			{ ...DEFAULT_ICON_ADJUST },
-		);
+		const { box } = build({ ...DEFAULT_ICON_ADJUST }, { ...DEFAULT_ICON_ADJUST });
 		const button = resetButton(box);
 		assert.ok(button.hasClass("cs-reset-idle"));
 		assert.ok(button.closest(".setting-item-heading"), "the reset sits in the group's heading");

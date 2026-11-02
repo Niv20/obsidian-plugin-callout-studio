@@ -18,7 +18,8 @@ import { installFakeDom } from "./support/fakeDom";
 // The button of an action notice is drawn into the notice's element.
 installFakeDom();
 
-const lastDuration = (): number | undefined => (Notice as unknown as { last: { duration: number | undefined } }).last.duration;
+const lastDuration = (): number | undefined =>
+	(Notice as unknown as { last: { duration: number | undefined } }).last.duration;
 const words = (count: number): string => Array.from({ length: count }, () => "word").join(" ");
 
 describe("the duration worked out from a sentence", () => {
@@ -47,7 +48,9 @@ describe("the duration worked out from a sentence", () => {
 		assert.ok(noticeDuration(japanese) > MIN_NOTICE_MS);
 	});
 	it("gives every language about the same time as English for the same notices", () => {
-		const keys = Object.keys(en).filter((key) => /^(notice|vault|import\.err|saveStatus|portable\.(error|blocked|custom))/.test(key));
+		const keys = Object.keys(en).filter((key) =>
+			/^(notice|vault|import\.err|saveStatus|portable\.(error|blocked|custom))/.test(key),
+		);
 		const average = (table: Record<string, string>): number =>
 			keys.reduce((total, key) => total + noticeDuration(table[key] ?? en[key]!), 0) / keys.length;
 		const english = average(en);
@@ -55,7 +58,9 @@ describe("the duration worked out from a sentence", () => {
 		const files = readdirSync(folder).filter((name) => name.endsWith(".json"));
 		assert.ok(files.length >= 30, "the language files were not found");
 		for (const file of files) {
-			const { strings } = JSON.parse(readFileSync(join(folder, file), "utf8")) as { strings: Record<string, string> };
+			const { strings } = JSON.parse(readFileSync(join(folder, file), "utf8")) as {
+				strings: Record<string, string>;
+			};
 			const ratio = average(strings) / english;
 			assert.ok(ratio > 0.75 && ratio < 1.3, `${file}: ${ratio.toFixed(2)} times English`);
 		}

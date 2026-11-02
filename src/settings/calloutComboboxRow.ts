@@ -77,17 +77,10 @@ export function renderCalloutComboboxRow(
  *
  * @param contentEl The row's column of words; the line goes under the name.
  */
-export function renderCalloutIdLine(
-	contentEl: HTMLElement,
-	def: CalloutDefinition,
-	rawQuery: string,
-): void {
+export function renderCalloutIdLine(contentEl: HTMLElement, def: CalloutDefinition, rawQuery: string): void {
 	const query = rawQuery.trim().toLowerCase();
 	const allIds = getSortedCalloutIds(def, getLocale());
-	const matches =
-		query.length > 0
-			? allIds.filter((id) => id.toLowerCase().includes(query))
-			: [];
+	const matches = query.length > 0 ? allIds.filter((id) => id.toLowerCase().includes(query)) : [];
 	const toShow = matches.length > 0 ? matches : allIds;
 	if (toShow.length === 0) return;
 

@@ -133,20 +133,13 @@ describe("FIXED_COMMAND_IDS — no drift", () => {
 	it("carries a name key for every id and an id for every name key", () => {
 		// A total record either way: a new fixed command cannot be declared
 		// without a name, and a name key cannot outlive its command.
-		assert.deepStrictEqual(
-			Object.keys(FIXED_COMMAND_NAME_KEYS).sort(),
-			[...FIXED_COMMAND_IDS].sort(),
-		);
+		assert.deepStrictEqual(Object.keys(FIXED_COMMAND_NAME_KEYS).sort(), [...FIXED_COMMAND_IDS].sort());
 	});
 
 	it("names every command from a key English actually defines", () => {
 		for (const id of FIXED_COMMAND_IDS) {
 			const key = FIXED_COMMAND_NAME_KEYS[id];
-			assert.notStrictEqual(
-				t(key),
-				key,
-				`"${key}" falls through to the raw key`,
-			);
+			assert.notStrictEqual(t(key), key, `"${key}" falls through to the raw key`);
 		}
 	});
 
@@ -164,10 +157,7 @@ describe("FIXED_COMMAND_IDS — no drift", () => {
 		const h = host();
 		registerCalloutCommands(h.plugin, deps());
 
-		assert.strictEqual(
-			new Set(h.added.map((c) => c.name)).size,
-			FIXED_COMMAND_IDS.length,
-		);
+		assert.strictEqual(new Set(h.added.map((c) => c.name)).size, FIXED_COMMAND_IDS.length);
 	});
 
 	it("splits them into the two callback kinds Obsidian offers", () => {
@@ -210,8 +200,12 @@ describe("open-quick-insert", () => {
 
 	it("appends Find callouts after the existing built-ins", () => {
 		assert.deepStrictEqual(FIXED_COMMAND_IDS.slice(0, 6), [
-			"open-settings", "create-callout", "insert-empty-callout",
-			"callout-wrap", "callout-unwrap", "open-quick-insert",
+			"open-settings",
+			"create-callout",
+			"insert-empty-callout",
+			"callout-wrap",
+			"callout-unwrap",
+			"open-quick-insert",
 		]);
 		assert.equal(FIXED_COMMAND_IDS.at(-1), "show-callout-occurrences");
 	});
@@ -221,7 +215,12 @@ describe("show-callout-occurrences", () => {
 	it("opens the occurrence view through its injected owner", () => {
 		const h = host();
 		let opens = 0;
-		registerCalloutCommands(h.plugin, { ...deps(), openOccurrences: () => { opens += 1; } });
+		registerCalloutCommands(h.plugin, {
+			...deps(),
+			openOccurrences: () => {
+				opens += 1;
+			},
+		});
 		const command = h.added.find((item) => item.id === "show-callout-occurrences");
 		assert.ok(command?.callback);
 		assert.equal(command.name, "Find callouts");
@@ -298,10 +297,7 @@ describe("the editor commands", () => {
 describe("isFixedCommandEnabled", () => {
 	it("treats an unlisted command as on — the empty list means all five", () => {
 		for (const id of FIXED_COMMAND_IDS) {
-			assert.strictEqual(
-				isFixedCommandEnabled({ disabledFixedCommands: [] }, id),
-				true,
-			);
+			assert.strictEqual(isFixedCommandEnabled({ disabledFixedCommands: [] }, id), true);
 		}
 	});
 

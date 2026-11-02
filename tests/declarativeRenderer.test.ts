@@ -27,12 +27,18 @@ function tabWith(tree: () => LooseDef[]) {
 }
 
 /** A render row that counts its draws and its cleanups. */
-function countingRow(name: string, counts: { draws: number; cleanups: number }, extra: Partial<LooseDef> = {}): LooseDef {
+function countingRow(
+	name: string,
+	counts: { draws: number; cleanups: number },
+	extra: Partial<LooseDef> = {},
+): LooseDef {
 	return {
 		name,
 		render: () => {
 			counts.draws++;
-			return () => { counts.cleanups++; };
+			return () => {
+				counts.cleanups++;
+			};
 		},
 		...extra,
 	};
@@ -46,7 +52,10 @@ describe("boxes and keys", () => {
 			{ type: "group", heading: "Later", items: [{ name: "Third" }] },
 		]);
 		assert.equal(harness.rendered.length, 2);
-		assert.deepEqual(harness.rendered[0]!.children.map((row) => row.def.name), ["First", "Second"]);
+		assert.deepEqual(
+			harness.rendered[0]!.children.map((row) => row.def.name),
+			["First", "Second"],
+		);
 		assert.equal(harness.rendered[1]!.def.heading, "Later");
 	});
 
@@ -79,7 +88,9 @@ describe("a redraw", () => {
 	it("drops a row that left the tree, running its cleanup", () => {
 		const counts = { draws: 0, cleanups: 0 };
 		let present = true;
-		const { tab, harness } = tabWith(() => (present ? [countingRow("Gone", counts), { name: "Stays" }] : [{ name: "Stays" }]));
+		const { tab, harness } = tabWith(() =>
+			present ? [countingRow("Gone", counts), { name: "Stays" }] : [{ name: "Stays" }],
+		);
 		present = false;
 		tab.update();
 		assert.equal(harness.row("Gone"), undefined);
@@ -90,7 +101,9 @@ describe("a redraw", () => {
 describe("visible and disabled", () => {
 	it("hides a row, and a group whose rows are all hidden", () => {
 		let show = true;
-		const { tab, harness } = tabWith(() => [{ type: "group", heading: "Box", items: [{ name: "Only", visible: () => show }] }]);
+		const { tab, harness } = tabWith(() => [
+			{ type: "group", heading: "Box", items: [{ name: "Only", visible: () => show }] },
+		]);
 		show = false;
 		tab.refreshDomState();
 		assert.equal(harness.row("Only")!.settingEl.isShown(), false);
@@ -99,11 +112,15 @@ describe("visible and disabled", () => {
 
 	it("disables a row's components through its `disabled` predicate", () => {
 		let paused = false;
-		const { tab, harness } = tabWith(() => [{
-			name: "Row",
-			disabled: () => paused,
-			render: (setting) => { setting.addExtraButton(() => {}); },
-		}]);
+		const { tab, harness } = tabWith(() => [
+			{
+				name: "Row",
+				disabled: () => paused,
+				render: (setting) => {
+					setting.addExtraButton(() => {});
+				},
+			},
+		]);
 		paused = true;
 		tab.refreshDomState();
 		const row = harness.row("Row")!;
@@ -116,7 +133,9 @@ describe("visible and disabled", () => {
 describe("lists", () => {
 	it("shows the empty-state row only while the list has no rows", () => {
 		let entries: LooseDef[] = [];
-		const { tab, harness } = tabWith(() => [{ type: "list", heading: "List", emptyState: "Nothing yet", items: entries }]);
+		const { tab, harness } = tabWith(() => [
+			{ type: "list", heading: "List", emptyState: "Nothing yet", items: entries },
+		]);
 		assert.ok(harness.box("List")!.emptyStateEl?.hasClass("mod-empty-state"));
 		entries = [{ name: "One" }];
 		tab.update();
@@ -125,7 +144,19 @@ describe("lists", () => {
 
 	it("puts addItem in the heading on a computer and as a last row on mobile", () => {
 		let added = 0;
-		const list = (): LooseDef[] => [{ type: "list", heading: "List", addItem: { name: "Add", action: () => { added++; } }, items: [{ name: "One" }] }];
+		const list = (): LooseDef[] => [
+			{
+				type: "list",
+				heading: "List",
+				addItem: {
+					name: "Add",
+					action: () => {
+						added++;
+					},
+				},
+				items: [{ name: "One" }],
+			},
+		];
 		const desktop = tabWith(list).harness.box("List")!;
 		assert.equal(desktop.addItemEl, undefined);
 		desktop.settingGroup.extraButtons[0]!.press();
@@ -143,7 +174,16 @@ describe("lists", () => {
 
 	it("gives each row a ✕ and the Delete key when the list has onDelete", () => {
 		const deleted: number[] = [];
-		const { harness } = tabWith(() => [{ type: "list", heading: "List", onDelete: (index) => { deleted.push(index); }, items: [{ name: "A" }, { name: "B" }] }]);
+		const { harness } = tabWith(() => [
+			{
+				type: "list",
+				heading: "List",
+				onDelete: (index) => {
+					deleted.push(index);
+				},
+				items: [{ name: "A" }, { name: "B" }],
+			},
+		]);
 		harness.row("B")!.setting.extraButtons[0]!.press();
 		harness.box("List")!.settingGroup.pressDelete(0);
 		assert.deepEqual(deleted, [1, 0]);
@@ -151,7 +191,16 @@ describe("lists", () => {
 
 	it("reorders with Alt+arrows when the list has onReorder", () => {
 		const moves: Array<[number, number]> = [];
-		const { harness } = tabWith(() => [{ type: "list", heading: "List", onReorder: (from, to) => { moves.push([from, to]); }, items: [{ name: "A" }, { name: "B" }] }]);
+		const { harness } = tabWith(() => [
+			{
+				type: "list",
+				heading: "List",
+				onReorder: (from, to) => {
+					moves.push([from, to]);
+				},
+				items: [{ name: "A" }, { name: "B" }],
+			},
+		]);
 		const group = harness.box("List")!.settingGroup;
 		group.pressAltArrow(0, 1);
 		group.pressAltArrow(0, -1);
@@ -160,23 +209,39 @@ describe("lists", () => {
 	});
 
 	it("filters a box's rows with its own search, leaving unsearchable rows alone", () => {
-		const { harness } = tabWith(() => [{
-			type: "list",
-			heading: "List",
-			search: { match: (def, query) => (def.name ?? "").toLowerCase().includes(query.toLowerCase()) },
-			items: [{ name: "Apple" }, { name: "Banana" }, { name: "Note", searchable: false }],
-		}]);
+		const { harness } = tabWith(() => [
+			{
+				type: "list",
+				heading: "List",
+				search: { match: (def, query) => (def.name ?? "").toLowerCase().includes(query.toLowerCase()) },
+				items: [{ name: "Apple" }, { name: "Banana" }, { name: "Note", searchable: false }],
+			},
+		]);
 		const input = harness.box("List")!.searchInputEl!;
 		input.value = "ban";
 		input.dispatchEvent(new Event("input"));
-		assert.deepEqual(harness.rows().filter((row) => row.settingEl.isShown()).map((row) => row.def.name), ["Banana", "Note"]);
+		assert.deepEqual(
+			harness
+				.rows()
+				.filter((row) => row.settingEl.isShown())
+				.map((row) => row.def.name),
+			["Banana", "Note"],
+		);
 	});
 });
 
 describe("pages", () => {
 	it("opens a page's own rows from its navigable row, and redraws them on update", () => {
 		let count = 1;
-		const { tab, harness } = tabWith(() => [{ type: "page", id: "inner", name: "Inner", displayValue: `${count} things`, items: [{ name: `Row ${count}` }] }]);
+		const { tab, harness } = tabWith(() => [
+			{
+				type: "page",
+				id: "inner",
+				name: "Inner",
+				displayValue: `${count} things`,
+				items: [{ name: `Row ${count}` }],
+			},
+		]);
 		const pageRow = harness.row("Inner")!;
 		assert.ok(pageRow.settingEl.hasClass("mod-navigable"));
 		assert.equal(pageRow.settingEl.querySelector(".setting-item-value")!.textContent, "1 things");
@@ -190,7 +255,10 @@ describe("pages", () => {
 	it("draws a factory page with its own display, and leaves it alone on update", () => {
 		let displays = 0;
 		class OwnPage extends SettingPage {
-			display(): void { displays++; this.containerEl.createDiv({ text: "drawn here" }); }
+			display(): void {
+				displays++;
+				this.containerEl.createDiv({ text: "drawn here" });
+			}
 		}
 		const { tab, harness } = tabWith(() => [{ type: "page", id: "own", name: "Own", page: () => new OwnPage() }]);
 		harness.openPage(["own"]);
@@ -212,16 +280,30 @@ describe("the settings search", () => {
 	];
 
 	it("finds rows by name, description and alias, every word counting", () => {
-		assert.deepEqual(searchSettings(tree, "fallback").map((hit) => hit.name), ["Default fallback callout"]);
-		assert.deepEqual(searchSettings(tree, "unknown").map((hit) => hit.name), ["Default fallback callout"]);
-		assert.deepEqual(searchSettings(tree, "palette").map((hit) => hit.name), ["Reset everything"]);
-		assert.deepEqual(searchSettings(tree, "reset palette").map((hit) => hit.name), []);
+		assert.deepEqual(
+			searchSettings(tree, "fallback").map((hit) => hit.name),
+			["Default fallback callout"],
+		);
+		assert.deepEqual(
+			searchSettings(tree, "unknown").map((hit) => hit.name),
+			["Default fallback callout"],
+		);
+		assert.deepEqual(
+			searchSettings(tree, "palette").map((hit) => hit.name),
+			["Reset everything"],
+		);
+		assert.deepEqual(
+			searchSettings(tree, "reset palette").map((hit) => hit.name),
+			[],
+		);
 	});
 
 	it("skips unsearchable and invisible rows, and finds pages by name and the rows inside them", () => {
 		assert.deepEqual(searchSettings(tree, "hidden"), []);
 		assert.deepEqual(searchSettings(tree, "invisible"), []);
 		assert.deepEqual(searchSettings(tree, "idea"), [{ name: "Idea", pagePath: ["lists"], kind: "row" }]);
-		assert.deepEqual(searchSettings(tree, "built-in"), [{ name: "Built-in callouts", pagePath: ["own"], kind: "page" }]);
+		assert.deepEqual(searchSettings(tree, "built-in"), [
+			{ name: "Built-in callouts", pagePath: ["own"], kind: "page" },
+		]);
 	});
 });

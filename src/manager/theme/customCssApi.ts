@@ -152,7 +152,5 @@ export function enabledSnippetNames(app: App): string[] {
 export function enabledSnippetCss(app: App): string[] {
 	const els = api(app)?.extraStyleEls;
 	if (!Array.isArray(els)) return [];
-	return enabledSnippetNames(app).map(
-		(_name, i) => els[i]?.textContent ?? "",
-	);
+	return enabledSnippetNames(app).map((_name, i) => els[i]?.textContent ?? "");
 }

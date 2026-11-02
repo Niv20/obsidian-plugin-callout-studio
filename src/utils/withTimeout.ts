@@ -9,17 +9,29 @@
  */
 export function withTimeout<T>(work: Promise<T>, ms: number, timedOut: () => Error): Promise<T> {
 	// A host without real timers (some test harnesses) simply waits.
-	if (typeof window === "undefined" || typeof window.setTimeout !== "function" ||
-		typeof window.clearTimeout !== "function") return work;
+	if (
+		typeof window === "undefined" ||
+		typeof window.setTimeout !== "function" ||
+		typeof window.clearTimeout !== "function"
+	)
+		return work;
 	return new Promise<T>((resolve, reject) => {
 		// A real timer never fires during setTimeout itself; a stub that runs
 		// callbacks at once must not turn every read into a timeout.
 		let armed = false;
-		const timer = window.setTimeout(() => { if (armed) reject(timedOut()); }, ms);
+		const timer = window.setTimeout(() => {
+			if (armed) reject(timedOut());
+		}, ms);
 		armed = true;
 		work.then(
-			value => { window.clearTimeout(timer); resolve(value); },
-			(error: unknown) => { window.clearTimeout(timer); reject(error instanceof Error ? error : new Error(String(error))); },
+			(value) => {
+				window.clearTimeout(timer);
+				resolve(value);
+			},
+			(error: unknown) => {
+				window.clearTimeout(timer);
+				reject(error instanceof Error ? error : new Error(String(error)));
+			},
 		);
 	});
 }

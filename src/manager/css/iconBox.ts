@@ -22,10 +22,7 @@ const MAX_ICON_ASPECT = 4;
 export function iconBoxWidth(picture: UserImageIcon | undefined): string {
 	const size = "var(--icon-size, 1.2em)";
 	if (!picture || picture.height <= 0) return size;
-	const aspect = Math.min(
-		Math.max(picture.width / picture.height, 1 / MAX_ICON_ASPECT),
-		MAX_ICON_ASPECT,
-	);
+	const aspect = Math.min(Math.max(picture.width / picture.height, 1 / MAX_ICON_ASPECT), MAX_ICON_ASPECT);
 	// Within a hair of square, the multiplication is noise in the output CSS.
 	if (Math.abs(aspect - 1) < 0.01) return size;
 	return `calc(${size} * ${aspect.toFixed(3)})`;

@@ -36,14 +36,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	definition,
-	harness,
-	must,
-	parseRules,
-	ruleFor,
-	valueOf,
-} from "./support/cssInjectorHarness";
+import { definition, harness, must, parseRules, ruleFor, valueOf } from "./support/cssInjectorHarness";
 
 const PALE_LIGHT = "#eef4fa";
 const PALE_DARK = "#16202b";
@@ -109,24 +102,15 @@ describe("textGradientCss — the sweep runs between ACCENT colours", () => {
 		const { css } = harness();
 		// The background's stops are pale tints designed to sit BEHIND text;
 		// painted through the glyphs they would be all but invisible.
-		assert.strictEqual(
-			css.textGradientCss(sweptDef(), "light"),
-			"linear-gradient(90deg, #336699, #cc5500)",
-		);
-		assert.strictEqual(
-			css.textGradientCss(sweptDef(), "dark"),
-			"linear-gradient(90deg, #88bbee, #ffaa66)",
-		);
+		assert.strictEqual(css.textGradientCss(sweptDef(), "light"), "linear-gradient(90deg, #336699, #cc5500)");
+		assert.strictEqual(css.textGradientCss(sweptDef(), "dark"), "linear-gradient(90deg, #88bbee, #ffaa66)");
 	});
 
 	it("keeps the sweep at accent strength — no tint solve here", () => {
 		const { css } = harness();
 		const value = css.textGradientCss(sweptDef(), "light");
 		assert.ok(value);
-		assert.ok(
-			!value.includes("color-mix"),
-			"text is painted, not composited behind — a tint would wash it out",
-		);
+		assert.ok(!value.includes("color-mix"), "text is painted, not composited behind — a tint would wash it out");
 	});
 });
 
@@ -186,11 +170,7 @@ describe("textSweepRules — light/dark cascade and the print escape", () => {
 			colorLight: "#336699",
 			colorDark: "#336699",
 		});
-		const rules = css.textSweepRules(
-			def,
-			(prefix) => `${prefix}.x`,
-			false,
-		);
+		const rules = css.textSweepRules(def, (prefix) => `${prefix}.x`, false);
 		const parsed = rules.flatMap((r) => parseRules(r));
 		const screen = parsed.filter((r) => r.at.length === 0);
 		assert.strictEqual(screen.length, 1);
@@ -211,9 +191,7 @@ describe("textSweepRules — light/dark cascade and the print escape", () => {
 	it("drops the sweep entirely in print, for both themes at once", () => {
 		const { css } = harness();
 		const rules = css.textSweepRules(sweptDef(), (p) => `${p}.x`, false);
-		const printed = rules
-			.flatMap((r) => parseRules(r))
-			.filter((r) => r.at.includes("@media print"));
+		const printed = rules.flatMap((r) => parseRules(r)).filter((r) => r.at.includes("@media print"));
 		assert.strictEqual(printed.length, 1);
 		// Grouping both prefixes puts this later rule ahead of the screen rules
 		// in either mode by source order.
@@ -254,22 +232,14 @@ describe("the sweep on each render role", () => {
 		// .callout-title is full width and holds the icon as a sibling;
 		// .callout-title-inner hugs the words, so the sweep spans them and the
 		// icon stays solid.
-		assert.ok(
-			out.includes(
-				'.callout[data-callout="quiet"] > .callout-title > .callout-title-inner',
-			),
-		);
+		assert.ok(out.includes('.callout[data-callout="quiet"] > .callout-title > .callout-title-inner'));
 	});
 
 	it("doubles the pill's class so the sweep outranks its own background rules", () => {
 		const { css } = harness();
 		const out = css.generateTokenColorCSS(sweptDef());
 		// The bg rules above it are 2 selectors; repeating the class makes this 3.
-		assert.ok(
-			out.includes(
-				'.cs-inline-callout.cs-inline-callout[data-callout="quiet"]',
-			),
-		);
+		assert.ok(out.includes('.cs-inline-callout.cs-inline-callout[data-callout="quiet"]'));
 	});
 
 	it("sweeps the heading bar's two hugging text runs, never the full-width bar", () => {
@@ -278,14 +248,8 @@ describe("the sweep on each render role", () => {
 		// Sweeping the block directly would stretch the gradient across the whole
 		// line and leave the text showing only its opening slice. The two runs are
 		// mutually exclusive (`showName: !hasTitle`), so only one ever paints.
-		assert.ok(
-			out.includes(
-				'.cs-heading-callout[data-callout="quiet"] .cs-heading-title',
-			),
-		);
-		assert.ok(
-			out.includes('.cs-heading-token[data-callout="quiet"] > .cs-callout-name'),
-		);
+		assert.ok(out.includes('.cs-heading-callout[data-callout="quiet"] .cs-heading-title'));
+		assert.ok(out.includes('.cs-heading-token[data-callout="quiet"] > .cs-callout-name'));
 	});
 
 	it("gives ref tokens no sweep — they are bare icons", () => {
@@ -300,11 +264,7 @@ describe("the sweep on each render role", () => {
 	it("covers every alias", () => {
 		const { css } = harness();
 		const out = css.generateCalloutCSS(sweptDef({ aliases: ["hush"] }));
-		assert.ok(
-			out.includes(
-				'.callout[data-callout="hush"] > .callout-title > .callout-title-inner',
-			),
-		);
+		assert.ok(out.includes('.callout[data-callout="hush"] > .callout-title > .callout-title-inner'));
 	});
 });
 
@@ -314,11 +274,7 @@ describe("printGradientCSS — the CoreGraphics repaint", () => {
 	it("emits nothing for a solid background", () => {
 		const { css } = harness();
 		assert.strictEqual(
-			css.printGradientCSS(
-				definition({ bgColorLight: PALE_LIGHT }),
-				(p, s) => `${p}.x${s}`,
-				false,
-			),
+			css.printGradientCSS(definition({ bgColorLight: PALE_LIGHT }), (p, s) => `${p}.x${s}`, false),
 			"",
 		);
 	});
@@ -393,11 +349,7 @@ describe("printGradientCSS — the CoreGraphics repaint", () => {
 
 	it("emits a dark ::before only when the sweep actually differs", () => {
 		const { css } = harness();
-		const differs = css.printGradientCSS(
-			sweptDef(),
-			(p, s) => `${p}.x${s}`,
-			false,
-		);
+		const differs = css.printGradientCSS(sweptDef(), (p, s) => `${p}.x${s}`, false);
 		assert.ok(differs.includes(".theme-dark .x::before"));
 
 		// Identical *emitted* values, not merely identical hexes: each mode solves
@@ -501,15 +453,11 @@ describe("generateFoldArrowCSS — the chevron closes the sweep", () => {
 
 	it("mixes the two id conventions deliberately, and only one way round", () => {
 		const { css } = harness();
-		const out = css.generateFoldArrowCSS(
-			sweptDef({ id: "multi word callout" }),
-		);
+		const out = css.generateFoldArrowCSS(sweptDef({ id: "multi word callout" }));
 		// Obsidian's own DOM takes the dasherized attr; the heading bar is ours
 		// and takes the space form. Unifying them breaks one surface or the other.
 		assert.ok(out.includes('.callout[data-callout="multi-word-callout"]'));
-		assert.ok(
-			out.includes('.cs-heading-callout[data-callout="multi word callout"]'),
-		);
+		assert.ok(out.includes('.cs-heading-callout[data-callout="multi word callout"]'));
 	});
 
 	it("falls back to the light colour when no dark end is set", () => {

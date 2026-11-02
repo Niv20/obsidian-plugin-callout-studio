@@ -57,13 +57,7 @@
  */
 import { Modal, Setting, SettingGroup, setIcon } from "obsidian";
 import type { App } from "obsidian";
-import type {
-	CalloutDefinition,
-	CalloutIcon,
-	IconSourceId,
-	PluginSettings,
-	UserImageIcon,
-} from "../../types";
+import type { CalloutDefinition, CalloutIcon, IconSourceId, PluginSettings, UserImageIcon } from "../../types";
 import type { IconService } from "../../icons/IconService";
 import { ICON_SOURCE_IDS, getSource } from "../../icons/registry";
 import {
@@ -344,8 +338,10 @@ export class IconLibrariesModal extends Modal {
 		const rest = ICON_SOURCE_IDS.filter((id) => !shown.includes(id));
 		return [
 			...shown.map((id) => ({ id, shown: true })),
-			...[...rest.filter(isDownloadable), ...rest.filter((id) => !isDownloadable(id))]
-				.map((id) => ({ id, shown: false })),
+			...[...rest.filter(isDownloadable), ...rest.filter((id) => !isDownloadable(id))].map((id) => ({
+				id,
+				shown: false,
+			})),
 		];
 	}
 
@@ -411,8 +407,9 @@ export class IconLibrariesModal extends Modal {
 
 	/** The row element of `id`, in whichever group it is. */
 	private rowEl(id: IconSourceId): HTMLElement | undefined {
-		return Array.from(this.contentEl.querySelectorAll<HTMLElement>(".cs-icon-library-row"))
-			.find((el) => el.dataset.csItemId === id);
+		return Array.from(this.contentEl.querySelectorAll<HTMLElement>(".cs-icon-library-row")).find(
+			(el) => el.dataset.csItemId === id,
+		);
 	}
 
 	/**
@@ -445,10 +442,7 @@ export class IconLibrariesModal extends Modal {
 	 * has, which is nearly every refresh: a download still under way only changes
 	 * the row's spinner, and the band flips once, when its last file arrives.
 	 */
-	private takeMovedFollowed(
-		before: readonly LibraryRow[],
-		after: readonly LibraryRow[],
-	): IconSourceId | undefined {
+	private takeMovedFollowed(before: readonly LibraryRow[], after: readonly LibraryRow[]): IconSourceId | undefined {
 		for (const row of after) {
 			if (!this.following.has(row.id)) continue;
 			const was = before.find((earlier) => earlier.id === row.id);
@@ -481,9 +475,7 @@ export class IconLibrariesModal extends Modal {
 	 */
 	private renderRow(parent: HTMLElement, row: LibraryRow): void {
 		const pack = getSource(row.id);
-		const setting = new Setting(parent)
-			.setName(t(pack.labelKey))
-			.setDesc(this.metaFor(row));
+		const setting = new Setting(parent).setName(t(pack.labelKey)).setDesc(this.metaFor(row));
 		const rowEl = setting.settingEl;
 		rowEl.addClass("cs-icon-library-row");
 		rowEl.dataset.csItemId = row.id;
@@ -552,15 +544,15 @@ export class IconLibrariesModal extends Modal {
 		}
 		if (!shown && !isDownloadable(id)) return t("iconLibraries.hidden");
 		const parts: string[] = [];
-		const count = id === "image"
-			? this.host.registry.getUserImages().length
-			: this.host.countFor(id);
+		const count = id === "image" ? this.host.registry.getUserImages().length : this.host.countFor(id);
 		// Numbers are isolated (FSI…PDI), as in the source menu: in a
 		// right-to-left interface "1.6K+" would otherwise come out "+1.6K".
 		if (count !== undefined) {
-			parts.push(t("iconLibraries.iconCount", {
-				count: `\u2068${formatIconCount(count, getLocale(), id === "image")}\u2069`,
-			}));
+			parts.push(
+				t("iconLibraries.iconCount", {
+					count: `\u2068${formatIconCount(count, getLocale(), id === "image")}\u2069`,
+				}),
+			);
 		}
 		if (isDownloadable(id)) {
 			// A no-break space too: a narrow phone row must not part "625" from "KB".
@@ -657,9 +649,7 @@ export class IconLibrariesModal extends Modal {
 
 	private setHidden(id: IconSourceId, hidden: boolean): void {
 		const prefs = this.host.settings.iconLibraries;
-		prefs.hidden = hidden
-			? [...new Set([...prefs.hidden, id])]
-			: prefs.hidden.filter((entry) => entry !== id);
+		prefs.hidden = hidden ? [...new Set([...prefs.hidden, id])] : prefs.hidden.filter((entry) => entry !== id);
 		this.changed = true;
 		this.refresh();
 		void this.host.saveSettings();
@@ -716,15 +706,18 @@ export class IconLibrariesModal extends Modal {
 	 * line through the store's change events, as each file goes.
 	 */
 	private deleteFiles(id: IconSourceId): Promise<void> {
-		return this.tracked((async () => {
-			this.deleting.add(id);
-			this.changed = true;
-			this.refresh();
-			const removed = await this.host.icons.deleteLibrary(id, this.unsavedIconsOf(id));
-			this.deleting.delete(id);
-			if (!removed) showNotice("problem", t("iconLibraries.deleteFailed", { name: t(getSource(id).labelKey) }));
-			this.refresh();
-		})());
+		return this.tracked(
+			(async () => {
+				this.deleting.add(id);
+				this.changed = true;
+				this.refresh();
+				const removed = await this.host.icons.deleteLibrary(id, this.unsavedIconsOf(id));
+				this.deleting.delete(id);
+				if (!removed)
+					showNotice("problem", t("iconLibraries.deleteFailed", { name: t(getSource(id).labelKey) }));
+				this.refresh();
+			})(),
+		);
 	}
 
 	/** Keep `work` on the list of deletions closing the window waits for. */
@@ -757,16 +750,16 @@ export class IconLibrariesModal extends Modal {
 		const prefs = this.host.settings.iconLibraries;
 		const packs = this.host.icons.packs;
 		const order = libraryOrder(prefs);
-		return ICON_SOURCE_IDS.every((id, index) => order[index] === id) &&
-			!ICON_SOURCE_IDS.some((id) =>
-				isDownloadable(id) ? isInstalled(id, packs) : prefs.hidden.includes(id));
+		return (
+			ICON_SOURCE_IDS.every((id, index) => order[index] === id) &&
+			!ICON_SOURCE_IDS.some((id) => (isDownloadable(id) ? isInstalled(id, packs) : prefs.hidden.includes(id)))
+		);
 	}
 
 	/** The libraries downloaded here that a reset deletes, in catalog order. */
 	private installedLibraries(): IconSourceId[] {
 		const packs = this.host.icons.packs;
-		return ICON_SOURCE_IDS.filter((id) =>
-			isDownloadable(id) && isInstalled(id, packs) && !this.deleting.has(id));
+		return ICON_SOURCE_IDS.filter((id) => isDownloadable(id) && isInstalled(id, packs) && !this.deleting.has(id));
 	}
 
 	/**
@@ -782,8 +775,8 @@ export class IconLibrariesModal extends Modal {
 		const doomed = this.installedLibraries();
 		if (doomed.length > 0) {
 			// The copy of their icons has to reach the disk before the files go.
-			if (doomed.some((id) => this.usersOf(id).length > 0) &&
-				blockedWhilePaused(this.host.settingsWriter)) return;
+			if (doomed.some((id) => this.usersOf(id).length > 0) && blockedWhilePaused(this.host.settingsWriter))
+				return;
 			if (!(await askResetLibraries(this.host.app, doomed))) return;
 		}
 		this.resetting = true;

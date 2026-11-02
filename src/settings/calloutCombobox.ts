@@ -95,8 +95,9 @@ export class CalloutCombobox {
 					return;
 				}
 				renderCalloutComboboxRow(rowEl, def, options.registry, {
-				isDark: isDarkTheme(), query,
-			});
+					isDark: isDarkTheme(),
+					query,
+				});
 			},
 			labelOf: (def) => options.labelOf?.(def) ?? def.displayName,
 			keyOf: (def) => def.id,
@@ -177,9 +178,7 @@ export class CalloutCombobox {
 	 * command editor greys the row out while it explains the emptiness above.
 	 */
 	private syncDisabled(): void {
-		this.popup.setDisabled(
-			this.explicitlyDisabled || this.choices().length === 0,
-		);
+		this.popup.setDisabled(this.explicitlyDisabled || this.choices().length === 0);
 	}
 
 	/** Must be called — see {@link ListboxPopup.destroy}. */
@@ -201,12 +200,7 @@ export class CalloutCombobox {
 		// No colour to clear: `is-empty` hides the slot, and the next callout
 		// painted into it sets its own.
 		if (!def || def.id === this.options.iconlessOptionId) return;
-		lead.style.color = paintCalloutListIcon(
-			lead,
-			def,
-			this.options.registry,
-			isDarkTheme(),
-		);
+		lead.style.color = paintCalloutListIcon(lead, def, this.options.registry, isDarkTheme());
 	}
 }
 

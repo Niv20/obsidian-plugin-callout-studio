@@ -87,7 +87,10 @@ export function pausedCopy(input: PausedCopyInput): string[] {
 
 /** Sentences are whole keys, joined into one paragraph. */
 function sentences(...keys: (string | false | undefined)[]): string {
-	return keys.filter((key): key is string => typeof key === "string").map((key) => t(key)).join(" ");
+	return keys
+		.filter((key): key is string => typeof key === "string")
+		.map((key) => t(key))
+		.join(" ");
 }
 
 function calm({ kept, onSettingsPage }: PausedCopyInput): string {
@@ -103,16 +106,22 @@ function whatHappened({ reason, stillMissing }: PausedCopyInput): string {
 		// After a check came back empty, the more specific follow-up: the one
 		// setting that most often keeps a synced file away, which the first
 		// message leaves out so as not to open with homework.
-		case "missing": return t(stillMissing ? "saveStatus.explain.stillMissing" : "saveStatus.explain.missing");
-		case "unreadable": return t("saveStatus.explain.unreadable");
-		case "recovery-read": return t("saveStatus.explain.recoveryRead");
-		case "newer-version": return t("saveStatus.explain.newerVersion");
+		case "missing":
+			return t(stillMissing ? "saveStatus.explain.stillMissing" : "saveStatus.explain.missing");
+		case "unreadable":
+			return t("saveStatus.explain.unreadable");
+		case "recovery-read":
+			return t("saveStatus.explain.recoveryRead");
+		case "newer-version":
+			return t("saveStatus.explain.newerVersion");
 		// Its usual message names Try again, a button a paused banner may be
 		// showing as Check again.
-		case "changed": return t("saveStatus.explain.changed");
+		case "changed":
+			return t("saveStatus.explain.changed");
 		// A failure while paused — a backup or a write that did not succeed
 		// during a restore — is said plainly, as it is everywhere else.
-		default: return settingsSaveMessage(reason);
+		default:
+			return settingsSaveMessage(reason);
 	}
 }
 
@@ -123,29 +132,36 @@ function whatToDo(input: PausedCopyInput): string {
 	// gone or unreadable. A spare copy or a newer version is not fixed by one.
 	const backup = buttons.backup && (frozenReason === "missing" || frozenReason === "unreadable");
 	switch (frozenReason) {
-		case "missing": return sentences(
-			// Once a check has come back empty the follow-up has said so; lead
-			// with the next step rather than the promise to keep looking.
-			rechecks && !stillMissing && (buttons.checkFirst ? "saveStatus.guide.rechecksCheckNow" : "saveStatus.guide.rechecks"),
-			// Not while the file that turned up is unreadable: restoring would
-			// only stop again. Checking moves the banner on to that file.
-			reason !== "unreadable" && buttons.restore === "restore" && "saveStatus.guide.restore",
-			reason !== "unreadable" && buttons.restore === "create" && "saveStatus.guide.create",
-			// The editor cannot restore; the settings page can.
-			!onSettingsPage && "saveStatus.recoverInSettings",
-			backup && "saveStatus.guide.versions",
-		);
-		case "unreadable": return sentences(
-			// A known cause says what to do about it, and Replace settings file
-			// is offered for exactly the causes it tells the reader to replace.
-			diagnosisKey(input.diagnosis) ?? (rechecks && "saveStatus.guide.rechecks"),
-			backup && "saveStatus.guide.versions",
-		);
-		case "recovery-read": return sentences(
-			buttons.retry && "saveStatus.guide.recoveryRetry",
-			buttons.discard && "saveStatus.guide.recoveryDiscard",
-		);
-		case "newer-version": return sentences("saveStatus.guide.newerVersion");
-		default: return "";
+		case "missing":
+			return sentences(
+				// Once a check has come back empty the follow-up has said so; lead
+				// with the next step rather than the promise to keep looking.
+				rechecks &&
+					!stillMissing &&
+					(buttons.checkFirst ? "saveStatus.guide.rechecksCheckNow" : "saveStatus.guide.rechecks"),
+				// Not while the file that turned up is unreadable: restoring would
+				// only stop again. Checking moves the banner on to that file.
+				reason !== "unreadable" && buttons.restore === "restore" && "saveStatus.guide.restore",
+				reason !== "unreadable" && buttons.restore === "create" && "saveStatus.guide.create",
+				// The editor cannot restore; the settings page can.
+				!onSettingsPage && "saveStatus.recoverInSettings",
+				backup && "saveStatus.guide.versions",
+			);
+		case "unreadable":
+			return sentences(
+				// A known cause says what to do about it, and Replace settings file
+				// is offered for exactly the causes it tells the reader to replace.
+				diagnosisKey(input.diagnosis) ?? (rechecks && "saveStatus.guide.rechecks"),
+				backup && "saveStatus.guide.versions",
+			);
+		case "recovery-read":
+			return sentences(
+				buttons.retry && "saveStatus.guide.recoveryRetry",
+				buttons.discard && "saveStatus.guide.recoveryDiscard",
+			);
+		case "newer-version":
+			return sentences("saveStatus.guide.newerVersion");
+		default:
+			return "";
 	}
 }

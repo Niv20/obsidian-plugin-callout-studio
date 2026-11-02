@@ -125,66 +125,17 @@ function makePalette(
 export function getObsidianPalettes(): ColorPalette[] {
 	return [
 		getDefaultNewCalloutPalette(),
-		makePalette(
-			"cyan",
-			t("colorName.cyan"),
-			"obsidian",
-			"#00bfbc",
-			"#53dfdd",
-			undefined,
-			undefined,
-			["abstract"],
-		),
-		makePalette(
-			"green",
-			t("colorName.green"),
-			"obsidian",
-			"#08b94e",
-			"#44cf6e",
-			undefined,
-			undefined,
-			["success"],
-		),
-		makePalette(
-			"orange",
-			t("colorName.orange"),
-			"obsidian",
-			"#ec7500",
-			"#e9973f",
-			undefined,
-			undefined,
-			["question"],
-		),
-		makePalette(
-			"red",
-			t("colorName.red"),
-			"obsidian",
-			"#e93147",
-			"#fb464c",
-			undefined,
-			undefined,
-			["failure"],
-		),
-		makePalette(
-			"purple",
-			t("colorName.violet"),
-			"obsidian",
-			"#7852ee",
-			"#a882ff",
-			undefined,
-			undefined,
-			["example", "violet"],
-		),
-		makePalette(
-			"gray",
-			t("colorName.gray"),
-			"obsidian",
-			"#9e9e9e",
-			"#9e9e9e",
-			undefined,
-			undefined,
-			["quote"],
-		),
+		makePalette("cyan", t("colorName.cyan"), "obsidian", "#00bfbc", "#53dfdd", undefined, undefined, ["abstract"]),
+		makePalette("green", t("colorName.green"), "obsidian", "#08b94e", "#44cf6e", undefined, undefined, ["success"]),
+		makePalette("orange", t("colorName.orange"), "obsidian", "#ec7500", "#e9973f", undefined, undefined, [
+			"question",
+		]),
+		makePalette("red", t("colorName.red"), "obsidian", "#e93147", "#fb464c", undefined, undefined, ["failure"]),
+		makePalette("purple", t("colorName.violet"), "obsidian", "#7852ee", "#a882ff", undefined, undefined, [
+			"example",
+			"violet",
+		]),
+		makePalette("gray", t("colorName.gray"), "obsidian", "#9e9e9e", "#9e9e9e", undefined, undefined, ["quote"]),
 	];
 }
 
@@ -212,37 +163,13 @@ export function getObsidianPalettes(): ColorPalette[] {
 export function getExtraPalettes(): ColorPalette[] {
 	return [
 		makePalette("coral", t("colorName.coral"), "preset", "#ff5722", "#ff8a65"),
-		makePalette(
-			"yellow",
-			t("colorName.yellow"),
-			"preset",
-			"#e0ac00",
-			"#e0de71",
-		),
-		makePalette(
-			"teal",
-			t("colorName.teal"),
-			"preset",
-			"#00bfa5",
-			"#00bfa5",
-			undefined,
-			undefined,
-			["tip"],
-		),
+		makePalette("yellow", t("colorName.yellow"), "preset", "#e0ac00", "#e0de71"),
+		makePalette("teal", t("colorName.teal"), "preset", "#00bfa5", "#00bfa5", undefined, undefined, ["tip"]),
 		makePalette("sky", t("colorName.sky"), "preset", "#039be5", "#4fc3f7"),
 		makePalette("indigo", t("colorName.indigo"), "preset", "#3949ab", "#9fa8da"),
 		makePalette("grape", t("colorName.grape"), "preset", "#9c27b0", "#ce93d8"),
 		makePalette("plum", t("colorName.plum"), "preset", "#6a1b9a", "#ab47bc"),
-		makePalette(
-			"pink",
-			t("colorName.pink"),
-			"preset",
-			"#e91e63",
-			"#f48fb1",
-			undefined,
-			undefined,
-			["bubblegum"],
-		),
+		makePalette("pink", t("colorName.pink"), "preset", "#e91e63", "#f48fb1", undefined, undefined, ["bubblegum"]),
 		makePalette("brown", t("colorName.brown"), "preset", "#795548", "#a1887f"),
 	];
 }
@@ -271,16 +198,9 @@ export function getRetiredPalettes(): ColorPalette[] {
 	return [
 		makePalette("amber", t("colorName.amber"), "preset", "#ff8f00", "#ffd54f"),
 		makePalette("lime", t("colorName.lime"), "preset", "#afb42b", "#dce775"),
-		makePalette(
-			"crimson",
-			t("colorName.crimson"),
-			"obsidian",
-			"#ff1744",
-			"#ff1744",
-			undefined,
-			undefined,
-			["danger"],
-		),
+		makePalette("crimson", t("colorName.crimson"), "obsidian", "#ff1744", "#ff1744", undefined, undefined, [
+			"danger",
+		]),
 	];
 }
 
@@ -383,33 +303,17 @@ export function generatePaletteId(): string {
  * control. Stricter also means fewer collisions, and so fewer of the
  * consolidations below — which is the safe direction to err in.
  */
-export function palettesVisuallyEqual(
-	a: ColorPalette,
-	b: ColorPalette,
-): boolean {
+export function palettesVisuallyEqual(a: ColorPalette, b: ColorPalette): boolean {
 	if ((a.transparentBg === true) !== (b.transparentBg === true)) return false;
 	if (!bgGradientsEqual(a.bgGradient, b.bgGradient)) return false;
-	const eq = (x: string, y: string): boolean =>
-		x.toLowerCase() === y.toLowerCase();
+	const eq = (x: string, y: string): boolean => x.toLowerCase() === y.toLowerCase();
 	return (
 		eq(a.colorLight, b.colorLight) &&
 		eq(a.colorDark, b.colorDark) &&
-		eq(
-			a.bgColorLight ?? bgTintFor(a.colorLight, false),
-			b.bgColorLight ?? bgTintFor(b.colorLight, false),
-		) &&
-		eq(
-			a.bgColorDark ?? bgTintFor(a.colorDark, true),
-			b.bgColorDark ?? bgTintFor(b.colorDark, true),
-		) &&
-		eq(
-			a.textColorLight ?? DEFAULT_TEXT_COLOR_LIGHT,
-			b.textColorLight ?? DEFAULT_TEXT_COLOR_LIGHT,
-		) &&
-		eq(
-			a.textColorDark ?? DEFAULT_TEXT_COLOR_DARK,
-			b.textColorDark ?? DEFAULT_TEXT_COLOR_DARK,
-		)
+		eq(a.bgColorLight ?? bgTintFor(a.colorLight, false), b.bgColorLight ?? bgTintFor(b.colorLight, false)) &&
+		eq(a.bgColorDark ?? bgTintFor(a.colorDark, true), b.bgColorDark ?? bgTintFor(b.colorDark, true)) &&
+		eq(a.textColorLight ?? DEFAULT_TEXT_COLOR_LIGHT, b.textColorLight ?? DEFAULT_TEXT_COLOR_LIGHT) &&
+		eq(a.textColorDark ?? DEFAULT_TEXT_COLOR_DARK, b.textColorDark ?? DEFAULT_TEXT_COLOR_DARK)
 	);
 }
 
@@ -419,11 +323,7 @@ export function findPaletteWithSameColors(
 	palettes: CustomPalette[],
 	exceptId?: string,
 ): CustomPalette | undefined {
-	return palettes.find(
-		(p) =>
-			p.id !== exceptId &&
-			palettesVisuallyEqual(customPaletteToColorPalette(p), candidate),
-	);
+	return palettes.find((p) => p.id !== exceptId && palettesVisuallyEqual(customPaletteToColorPalette(p), candidate));
 }
 
 /**
@@ -442,9 +342,7 @@ export function findPaletteWithSameColors(
  * colors are derivable from one base color, and the simple control's Intensity
  * slider would re-derive (and so discard) them on a single drag.
  */
-export function paletteSeedFromDefinition(
-	def: CalloutDefinition,
-): Omit<CustomPalette, "id" | "name"> {
+export function paletteSeedFromDefinition(def: CalloutDefinition): Omit<CustomPalette, "id" | "name"> {
 	return {
 		colorLight: def.colorLight,
 		colorDark: def.colorDark,
@@ -492,17 +390,12 @@ export interface PaletteConsolidation {
  * perfectly valid when the user made it. The editor blocks that collision at
  * creation time instead, where the user is present to react.
  */
-export function consolidatePalettesByColor(
-	palettes: CustomPalette[],
-): PaletteConsolidation {
+export function consolidatePalettesByColor(palettes: CustomPalette[]): PaletteConsolidation {
 	const survivors: CustomPalette[] = [];
 	const remap = new Map<string, string>();
 	const merged: Array<{ from: string; to: string }> = [];
 	for (const palette of palettes) {
-		const survivor = findPaletteWithSameColors(
-			customPaletteToColorPalette(palette),
-			survivors,
-		);
+		const survivor = findPaletteWithSameColors(customPaletteToColorPalette(palette), survivors);
 		if (survivor) {
 			remap.set(palette.id, survivor.id);
 			merged.push({ from: palette.name, to: survivor.name });
@@ -545,9 +438,7 @@ export interface CalloutManagerColorResolution {
  * an existing definition clears whatever the previous palette left behind
  * (`CalloutRegistry.applyPaletteColors` relies on exactly that).
  */
-export function bakePaletteColors(
-	palette: ColorPalette,
-): CalloutManagerBakedColors {
+export function bakePaletteColors(palette: ColorPalette): CalloutManagerBakedColors {
 	// A transparent palette bakes to the flag ALONE. The tint fallbacks below
 	// fire on a missing background, which is precisely the state transparency
 	// leaves the palette in — running them would hand the callout an opaque
@@ -622,8 +513,7 @@ export function resolveCalloutManagerColors(
 		...customPalettes.map(customPaletteToColorPalette),
 	];
 
-	const eqHex = (a: string, b: string): boolean =>
-		a.toLowerCase() === b.toLowerCase();
+	const eqHex = (a: string, b: string): boolean => a.toLowerCase() === b.toLowerCase();
 
 	const match = candidates.find(
 		(p) =>
@@ -650,8 +540,7 @@ export function resolveCalloutManagerColors(
 			// choosing that preset in the editor's dropdown already gives, so this
 			// makes import agree with the editor instead of quietly inventing a
 			// palette the dropdown cannot name.
-			((eqHex(p.colorLight, derived.colorLight) &&
-				eqHex(p.colorDark, derived.colorDark)) ||
+			((eqHex(p.colorLight, derived.colorLight) && eqHex(p.colorDark, derived.colorDark)) ||
 				(eqHex(p.colorLight, hexLight) && eqHex(p.colorDark, hexDark))) &&
 			// Unchanged, and still correct on both branches: a preset's backgrounds
 			// are `bgTintFor(accent, mode)` at the same DEFAULT_BG_COLOR_AMOUNT the
@@ -664,11 +553,7 @@ export function resolveCalloutManagerColors(
 		return { paletteId: match.id, colors: bakePaletteColors(match) };
 	}
 
-	const takenNames = new Set(
-		[...getAllColorPalettes(), ...customPalettes].map((p) =>
-			normalizeName(p.name),
-		),
-	);
+	const takenNames = new Set([...getAllColorPalettes(), ...customPalettes].map((p) => normalizeName(p.name)));
 	const createdPalette: CustomPalette = {
 		id: generatePaletteId(),
 		name: dedupeColorName(suggestColorName(hexLight), takenNames),

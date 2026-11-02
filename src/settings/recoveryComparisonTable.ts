@@ -29,9 +29,12 @@ import { appendFaintCount } from "../ui/faintCount";
 
 /** Give the loading state and input events a turn between batches. */
 export function yieldRecoveryRender(component: Component, delay = 0): Promise<void> {
-	return new Promise(resolve => {
+	return new Promise((resolve) => {
 		const timer = window.setTimeout(resolve, delay);
-		component.register(() => { window.clearTimeout(timer); resolve(); });
+		component.register(() => {
+			window.clearTimeout(timer);
+			resolve();
+		});
 	});
 }
 
@@ -41,7 +44,10 @@ const BATCH = 8;
 
 /** One section's table with its head: the folding title row, then the column headings. */
 function sectionTable(parent: HTMLElement, section: RecoverySection, component: Component): HTMLTableElement {
-	const table = parent.createEl("table", { cls: "cs-recovery-comparison", attr: { "data-recovery-section": section.id } });
+	const table = parent.createEl("table", {
+		cls: "cs-recovery-comparison",
+		attr: { "data-recovery-section": section.id },
+	});
 	const columns = table.createEl("colgroup");
 	for (const cls of ["is-number", "is-item", "is-side", "is-side"]) columns.createEl("col", { cls });
 	const head = table.createEl("thead");
@@ -49,7 +55,10 @@ function sectionTable(parent: HTMLElement, section: RecoverySection, component: 
 		cls: "cs-recovery-section-heading",
 		attr: { colspan: "4", scope: "colgroup" },
 	});
-	const toggle = heading.createEl("button", { cls: "cs-recovery-section-toggle", attr: { type: "button", "aria-expanded": "true" } });
+	const toggle = heading.createEl("button", {
+		cls: "cs-recovery-section-toggle",
+		attr: { type: "button", "aria-expanded": "true" },
+	});
 	// Obsidian's own fold triangle (finding S9-12), as its file explorer and
 	// Sync's version list draw it: app.css sizes `.collapse-icon` and turns it
 	// to point along the title while it carries `is-collapsed`.
@@ -60,19 +69,29 @@ function sectionTable(parent: HTMLElement, section: RecoverySection, component: 
 	// with an ellipsis still shows how many changes it holds.
 	appendFaintCount(toggle, section.items.length);
 	const labels = head.createEl("tr", { cls: "cs-recovery-column-row" });
-	labels.createEl("th", { cls: "cs-recovery-column-number", text: t("recovery.details.column.number"), attr: { scope: "col" } });
-	labels.createEl("th", { cls: "cs-recovery-column-item", text: t("recovery.details.column.item"), attr: { scope: "col" } });
+	labels.createEl("th", {
+		cls: "cs-recovery-column-number",
+		text: t("recovery.details.column.number"),
+		attr: { scope: "col" },
+	});
+	labels.createEl("th", {
+		cls: "cs-recovery-column-item",
+		text: t("recovery.details.column.item"),
+		attr: { scope: "col" },
+	});
 	for (const key of ["recovery.details.current", "recovery.details.restored"]) {
 		labels.createEl("th", { cls: "cs-recovery-column-side", text: t(key), attr: { scope: "col" } });
 	}
 	// Folding keeps the title row; a pinned title stays where it was pressed.
-	component.registerDomEvent(toggle, "click", () => keepHeadingInPlace(heading, () => {
-		const collapsed = !table.hasClass("is-collapsed");
-		table.toggleClass("is-collapsed", collapsed);
-		heading.toggleClass("is-collapsed", collapsed);
-		fold.toggleClass("is-collapsed", collapsed);
-		toggle.setAttribute("aria-expanded", String(!collapsed));
-	}));
+	component.registerDomEvent(toggle, "click", () =>
+		keepHeadingInPlace(heading, () => {
+			const collapsed = !table.hasClass("is-collapsed");
+			table.toggleClass("is-collapsed", collapsed);
+			heading.toggleClass("is-collapsed", collapsed);
+			fold.toggleClass("is-collapsed", collapsed);
+			toggle.setAttribute("aria-expanded", String(!collapsed));
+		}),
+	);
 	return table;
 }
 
@@ -82,7 +101,11 @@ function exists(item: RecoveryItem, side: RecoverySideName): boolean {
 }
 
 function renderItem(
-	table: HTMLTableElement, item: RecoveryItem, number: number, report: RecoveryReport, component: Component,
+	table: HTMLTableElement,
+	item: RecoveryItem,
+	number: number,
+	report: RecoveryReport,
+	component: Component,
 ): void {
 	const group = table.createEl("tbody", {
 		cls: `cs-recovery-item is-${item.kind}`,
@@ -98,12 +121,19 @@ function renderItem(
 	title.createSpan({ cls: "cs-recovery-item-name", text: item.title });
 	if (item.code) title.createEl("code", { cls: "cs-recovery-code", text: item.code });
 	if (item.note) title.createSpan({ cls: "cs-recovery-item-note", text: item.note });
-	title.createSpan({ cls: `cs-recovery-state is-${item.kind}`, text: t(`recovery.details.calloutState.${item.kind}`) });
+	title.createSpan({
+		cls: `cs-recovery-state is-${item.kind}`,
+		text: t(`recovery.details.calloutState.${item.kind}`),
+	});
 	if (item.summary) {
 		for (const side of SIDES) {
 			const cell = first.createEl("td", { cls: "cs-recovery-side" });
 			if (exists(item, side)) item.summary(cell, side, component);
-			else cell.createSpan({ cls: "cs-recovery-muted", text: t(side === "before" ? "recovery.details.onlySaved" : "recovery.details.willRemove") });
+			else
+				cell.createSpan({
+					cls: "cs-recovery-muted",
+					text: t(side === "before" ? "recovery.details.onlySaved" : "recovery.details.willRemove"),
+				});
 		}
 	} else {
 		// Nothing to draw for the item as a whole: its title heads the row instead.
@@ -115,7 +145,8 @@ function renderItem(
 		SIDES.forEach((side, index) => {
 			const cell = row.createEl("td", { cls: "cs-recovery-side" });
 			const value = side === "before" ? field.before : field.after;
-			if (value === undefined) cell.createSpan({ cls: "cs-recovery-muted", text: field.absent ?? t("recovery.details.value.notSet") });
+			if (value === undefined)
+				cell.createSpan({ cls: "cs-recovery-muted", text: field.absent ?? t("recovery.details.value.notSet") });
 			else field.render(cell, value, report.sides[side], field.owners?.[index]);
 		});
 	}
@@ -123,7 +154,10 @@ function renderItem(
 
 /** Every section of `report`, in batches; stops as soon as `isCurrent` says the window moved on. */
 export async function renderRecoveryComparison(
-	parent: HTMLElement, report: RecoveryReport, component: Component, isCurrent: () => boolean,
+	parent: HTMLElement,
+	report: RecoveryReport,
+	component: Component,
+	isCurrent: () => boolean,
 ): Promise<void> {
 	let number = 0;
 	for (const section of report.sections) {

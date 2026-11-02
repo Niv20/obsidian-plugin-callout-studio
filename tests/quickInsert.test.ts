@@ -44,17 +44,10 @@ import {
 	type TargetEditorResult,
 } from "../src/editor/targetMarkdownEditor";
 import { en } from "../src/i18n/en";
-import {
-	quickInsertEmptyMessage,
-	quickInsertHint,
-	quickInsertNotice,
-} from "../src/settings/quickInsertMessages";
+import { quickInsertEmptyMessage, quickInsertHint, quickInsertNotice } from "../src/settings/quickInsertMessages";
 import { previewMarkdown, QuickInsertPreviews } from "../src/settings/quickInsertPreview";
 import { renderQuickInsertRow } from "../src/settings/quickInsertRow";
-import {
-	buildQuickInsertToolbar,
-	syncQuickInsertThemeOption,
-} from "../src/settings/quickInsertToolbar";
+import { buildQuickInsertToolbar, syncQuickInsertThemeOption } from "../src/settings/quickInsertToolbar";
 import { dropdownOptions, dropdownValue, pickDropdown } from "./support/selectDropdown";
 import { QuickInsertModal } from "../src/settings/QuickInsertModal";
 import { LOAD_MORE_SENTINEL, LoadOnScroll } from "../src/ui/loadOnScroll";
@@ -80,8 +73,7 @@ import {
  * only part of the event the row's handler reads, and the part that decides
  * whether the click was a button's or the row's.
  */
-const clickOn = (target: unknown): Event =>
-	({ type: "click", bubbles: true, target }) as unknown as Event;
+const clickOn = (target: unknown): Event => ({ type: "click", bubbles: true, target }) as unknown as Event;
 
 const def = (over: Partial<CalloutDefinition> = {}): CalloutDefinition => ({
 	id: "warning",
@@ -108,8 +100,7 @@ const pagingFields = {
 	loadOnScroll: { watch() {}, stop() {} },
 };
 
-const names = (defs: readonly CalloutDefinition[]): string[] =>
-	defs.map((d) => d.displayName);
+const names = (defs: readonly CalloutDefinition[]): string[] => defs.map((d) => d.displayName);
 
 /* -------------------------------------------------------------------------- */
 /* What the list shows                                                        */
@@ -155,12 +146,7 @@ describe("calloutMatchesQuery", () => {
 
 describe("isCalloutSourceFilter", () => {
 	it("accepts exactly the four it declares, in UI order", () => {
-		assert.deepStrictEqual(CALLOUT_SOURCE_FILTERS, [
-			"all",
-			"builtin",
-			"theme",
-			"user",
-		]);
+		assert.deepStrictEqual(CALLOUT_SOURCE_FILTERS, ["all", "builtin", "theme", "user"]);
 		for (const value of CALLOUT_SOURCE_FILTERS) {
 			assert.ok(isCalloutSourceFilter(value), value);
 		}
@@ -186,8 +172,7 @@ describe("matchesSourceFilter", () => {
 			def({ id: "minted-theme", builtIn: false, source: "theme" }),
 		];
 		const themed = new Set(["themed-built-in", "themed-user", "minted-theme"]);
-		const themeOwns = (candidate: CalloutDefinition): boolean =>
-			themed.has(candidate.id);
+		const themeOwns = (candidate: CalloutDefinition): boolean => themed.has(candidate.id);
 
 		const expected: Record<string, string> = {
 			"plain-built-in": "builtin",
@@ -197,8 +182,8 @@ describe("matchesSourceFilter", () => {
 			"minted-theme": "theme",
 		};
 		for (const row of rows) {
-			const buckets = (["builtin", "theme", "user"] as const).filter(
-				(filter) => matchesSourceFilter(row, filter, themeOwns),
+			const buckets = (["builtin", "theme", "user"] as const).filter((filter) =>
+				matchesSourceFilter(row, filter, themeOwns),
 			);
 			assert.deepStrictEqual(buckets, [expected[row.id]], row.id);
 		}
@@ -246,18 +231,13 @@ describe("filterCalloutList", () => {
 	});
 
 	it("narrows to one source without re-ordering what is left", () => {
-		assert.deepStrictEqual(
-			names(filterCalloutList(list, { query: "", filter: "user" })),
-			["budget", "Recipe"],
-		);
-		assert.deepStrictEqual(
-			names(filterCalloutList(list, { query: "", filter: "builtin" })),
-			["Abstract", "Note", "Warning"],
-		);
-		assert.deepStrictEqual(
-			filterCalloutList(list, { query: "", filter: "theme" }),
-			[],
-		);
+		assert.deepStrictEqual(names(filterCalloutList(list, { query: "", filter: "user" })), ["budget", "Recipe"]);
+		assert.deepStrictEqual(names(filterCalloutList(list, { query: "", filter: "builtin" })), [
+			"Abstract",
+			"Note",
+			"Warning",
+		]);
+		assert.deepStrictEqual(filterCalloutList(list, { query: "", filter: "theme" }), []);
 	});
 
 	it("puts theme-restyled built-ins and saved rows only in the theme bucket", () => {
@@ -269,45 +249,29 @@ describe("filterCalloutList", () => {
 			def({ id: "cards", displayName: "Cards", builtIn: false, source: "theme" }),
 		];
 		const owned = new Set(["warning", "recipe", "cards"]);
-		const themeOwns = (candidate: CalloutDefinition): boolean =>
-			owned.has(candidate.id);
+		const themeOwns = (candidate: CalloutDefinition): boolean => owned.has(candidate.id);
 		const filtered = (filter: CalloutSourceFilter): string[] =>
 			names(filterCalloutList(styled, { query: "", filter, themeOwns }));
 
 		assert.deepStrictEqual(filtered("theme"), ["Cards", "Recipe", "Warning"]);
 		assert.deepStrictEqual(filtered("builtin"), ["Note"]);
 		assert.deepStrictEqual(filtered("user"), ["Budget"]);
-		assert.deepStrictEqual(filtered("all"), [
-			"Budget",
-			"Cards",
-			"Note",
-			"Recipe",
-			"Warning",
-		]);
+		assert.deepStrictEqual(filtered("all"), ["Budget", "Cards", "Note", "Recipe", "Warning"]);
 	});
 
 	it("applies the filter and the query together", () => {
-		assert.deepStrictEqual(
-			names(filterCalloutList(list, { query: "e", filter: "user" })),
-			["budget", "Recipe"],
-		);
-		assert.deepStrictEqual(
-			names(filterCalloutList(list, { query: "e", filter: "builtin" })),
-			["Note"],
-		);
+		assert.deepStrictEqual(names(filterCalloutList(list, { query: "e", filter: "user" })), ["budget", "Recipe"]);
+		assert.deepStrictEqual(names(filterCalloutList(list, { query: "e", filter: "builtin" })), ["Note"]);
 	});
 
 	it("ranks a prefix above a match buried mid-word", () => {
 		// Alphabetical order alone answered "no" with Annotation before Note,
 		// because A sorts before N — which is never what the typist meant.
-		const ranked = [
-			def({ id: "annotation", displayName: "Annotation" }),
-			def({ id: "note", displayName: "Note" }),
-		];
-		assert.deepStrictEqual(
-			names(filterCalloutList(ranked, { query: "no", filter: "all" })),
-			["Note", "Annotation"],
-		);
+		const ranked = [def({ id: "annotation", displayName: "Annotation" }), def({ id: "note", displayName: "Note" })];
+		assert.deepStrictEqual(names(filterCalloutList(ranked, { query: "no", filter: "all" })), [
+			"Note",
+			"Annotation",
+		]);
 	});
 
 	it("ranks the name's own prefix above an alias's", () => {
@@ -315,10 +279,10 @@ describe("filterCalloutList", () => {
 			def({ id: "abstract", displayName: "Abstract", aliases: ["summary"] }),
 			def({ id: "success", displayName: "Success" }),
 		];
-		assert.deepStrictEqual(
-			names(filterCalloutList(ranked, { query: "su", filter: "all" })),
-			["Success", "Abstract"],
-		);
+		assert.deepStrictEqual(names(filterCalloutList(ranked, { query: "su", filter: "all" })), [
+			"Success",
+			"Abstract",
+		]);
 	});
 
 	it("puts an exact alias first, ahead of a longer name that starts the same", () => {
@@ -326,50 +290,32 @@ describe("filterCalloutList", () => {
 			def({ id: "tipsy", displayName: "Tipsy" }),
 			def({ id: "hint", displayName: "Hint", aliases: ["tip"] }),
 		];
-		assert.deepStrictEqual(
-			names(filterCalloutList(ranked, { query: "tip", filter: "all" })),
-			["Hint", "Tipsy"],
-		);
+		assert.deepStrictEqual(names(filterCalloutList(ranked, { query: "tip", filter: "all" })), ["Hint", "Tipsy"]);
 	});
 
 	it("keeps one tier alphabetical, so the order stays predictable", () => {
-		assert.deepStrictEqual(
-			names(filterCalloutList(list, { query: "e", filter: "user" })),
-			["budget", "Recipe"],
-		);
+		assert.deepStrictEqual(names(filterCalloutList(list, { query: "e", filter: "user" })), ["budget", "Recipe"]);
 	});
 
 	it("trims the query, so a stray space is not a failed search", () => {
-		assert.deepStrictEqual(
-			names(filterCalloutList(list, { query: "  NOTE  ", filter: "all" })),
-			["Note"],
-		);
+		assert.deepStrictEqual(names(filterCalloutList(list, { query: "  NOTE  ", filter: "all" })), ["Note"]);
 	});
 
 	it("treats a whitespace-only query as no query at all", () => {
-		assert.strictEqual(
-			filterCalloutList(list, { query: "   ", filter: "all" }).length,
-			list.length,
-		);
+		assert.strictEqual(filterCalloutList(list, { query: "   ", filter: "all" }).length, list.length);
 	});
 
 	it("returns an empty list rather than everything when nothing matches", () => {
-		assert.deepStrictEqual(
-			filterCalloutList(list, { query: "zzz", filter: "all" }),
-			[],
-		);
+		assert.deepStrictEqual(filterCalloutList(list, { query: "zzz", filter: "all" }), []);
 	});
 
 	it("orders numbered ids the way a person reads them", () => {
-		const steps = [
-			def({ id: "step-10", displayName: "Step 10" }),
-			def({ id: "step-2", displayName: "Step 2" }),
-		];
+		const steps = [def({ id: "step-10", displayName: "Step 10" }), def({ id: "step-2", displayName: "Step 2" })];
 
-		assert.deepStrictEqual(
-			names(filterCalloutList(steps, { query: "step", filter: "all" })),
-			["Step 2", "Step 10"],
-		);
+		assert.deepStrictEqual(names(filterCalloutList(steps, { query: "step", filter: "all" })), [
+			"Step 2",
+			"Step 10",
+		]);
 	});
 
 	it("does not mutate the list it was given", () => {
@@ -451,9 +397,14 @@ describe("quick-insert source controls and empty states", () => {
 		}
 		assert.strictEqual(host.querySelector("select"), null);
 		assert.strictEqual(select.getValue(), "all");
-		assert.deepStrictEqual(dropdownOptions(select.el).map((item) => item.title),
-			["All", "Built-in", "Nord", "My callouts"]);
-		assert.ok(select.controlEl.hasClass("clickable-icon"), "Obsidian's flat icon button, like Find callouts' funnel");
+		assert.deepStrictEqual(
+			dropdownOptions(select.el).map((item) => item.title),
+			["All", "Built-in", "Nord", "My callouts"],
+		);
+		assert.ok(
+			select.controlEl.hasClass("clickable-icon"),
+			"Obsidian's flat icon button, like Find callouts' funnel",
+		);
 		assert.ok(select.controlEl.querySelector(".svg-icon, .cs-select-icon"), "an icon, not a field");
 		assert.strictEqual(select.controlEl.hasClass("is-active"), false, "All: nothing narrowed, so not lit");
 		pickDropdown(select.el, "Nord");
@@ -462,10 +413,16 @@ describe("quick-insert source controls and empty states", () => {
 		assert.strictEqual(syncQuickInsertThemeOption(select, "Minimal", true, "theme"), "theme");
 		assert.strictEqual(dropdownValue(select.el), "Minimal");
 		assert.strictEqual(syncQuickInsertThemeOption(select, "Minimal", false, "theme"), "all");
-		assert.deepStrictEqual(dropdownOptions(select.el).map((item) => item.title), ["All", "Built-in", "My callouts"]);
+		assert.deepStrictEqual(
+			dropdownOptions(select.el).map((item) => item.title),
+			["All", "Built-in", "My callouts"],
+		);
 		assert.strictEqual(select.getValue(), "all");
 		syncQuickInsertThemeOption(select, "Solarized", true, "theme");
-		assert.deepStrictEqual(dropdownOptions(select.el).map((item) => item.title), ["All", "Built-in", "Solarized", "My callouts"]);
+		assert.deepStrictEqual(
+			dropdownOptions(select.el).map((item) => item.title),
+			["All", "Built-in", "Solarized", "My callouts"],
+		);
 		assert.strictEqual(select.getValue(), "theme");
 		assert.deepStrictEqual(chosen, ["theme"], "live choices never persist a synthetic change");
 		toolbar.destroy();
@@ -483,7 +440,8 @@ describe("quick-insert source controls and empty states", () => {
 		const listEl = contentEl.createDiv();
 		let themeOwns = false;
 		const modal = Object.assign(Object.create(QuickInsertModal.prototype), {
-			contentEl, toolbar,
+			contentEl,
+			toolbar,
 			listEl,
 			rows: [],
 			activeIndex: -1,
@@ -507,52 +465,41 @@ describe("quick-insert source controls and empty states", () => {
 		const styledBuiltIn = def({ id: "note", builtIn: true, source: "builtin" });
 		const select = toolbar.filter;
 		modal.renderList([styledBuiltIn]);
-		assert.deepStrictEqual(dropdownOptions(select.el).map((item) => item.title), ["All", "Built-in", "My callouts"]);
+		assert.deepStrictEqual(
+			dropdownOptions(select.el).map((item) => item.title),
+			["All", "Built-in", "My callouts"],
+		);
 		assert.strictEqual(select.getValue(), "all");
 		assert.strictEqual(modal.filter, "theme", "remembered preference was erased");
 		assert.strictEqual(listEl.querySelectorAll(".cs-qi-row").length, 1);
 		themeOwns = true;
 		modal.renderList([styledBuiltIn]);
-		assert.deepStrictEqual(dropdownOptions(select.el).map((item) => item.title), ["All", "Built-in", "Lumines", "My callouts"]);
+		assert.deepStrictEqual(
+			dropdownOptions(select.el).map((item) => item.title),
+			["All", "Built-in", "Lumines", "My callouts"],
+		);
 		assert.strictEqual(select.getValue(), "theme");
 		assert.strictEqual(listEl.querySelectorAll(".cs-qi-row").length, 1);
 		toolbar.destroy();
 	});
 
 	it("explains an empty category, but keeps failed searches generic", () => {
-		assert.strictEqual(
-			quickInsertEmptyMessage("builtin", ""),
-			en["quickInsert.noBuiltInCallouts"],
-		);
-		assert.strictEqual(
-			quickInsertEmptyMessage("theme", "   "),
-			en["quickInsert.noThemeCallouts"],
-		);
-		assert.strictEqual(
-			quickInsertEmptyMessage("user", ""),
-			en["quickInsert.noUserCallouts"],
-		);
-		assert.strictEqual(
-			quickInsertEmptyMessage("user", "", true),
-			en["quickInsert.noAvailableUserCallouts"],
-		);
+		assert.strictEqual(quickInsertEmptyMessage("builtin", ""), en["quickInsert.noBuiltInCallouts"]);
+		assert.strictEqual(quickInsertEmptyMessage("theme", "   "), en["quickInsert.noThemeCallouts"]);
+		assert.strictEqual(quickInsertEmptyMessage("user", ""), en["quickInsert.noUserCallouts"]);
+		assert.strictEqual(quickInsertEmptyMessage("user", "", true), en["quickInsert.noAvailableUserCallouts"]);
 		for (const filter of CALLOUT_SOURCE_FILTERS) {
-			assert.strictEqual(
-				quickInsertEmptyMessage(filter, "missing"),
-				en["quickInsert.noResults"],
-				filter,
-			);
+			assert.strictEqual(quickInsertEmptyMessage(filter, "missing"), en["quickInsert.noResults"], filter);
 		}
-		assert.match(
-			quickInsertEmptyMessage("user", ""),
-			/Create new callout type/,
-		);
+		assert.match(quickInsertEmptyMessage("user", ""), /Create new callout type/);
 	});
 
 	it("starts on All once, then restores the last source from this device, never from a settings write", () => {
 		const memory = (source?: string) => ({
 			quickInsertSource: source,
-			setQuickInsertSource(next: string) { this.quickInsertSource = next; },
+			setQuickInsertSource(next: string) {
+				this.quickInsertSource = next;
+			},
 		});
 		const firstPlugin = {
 			app: {
@@ -570,7 +517,10 @@ describe("quick-insert source controls and empty states", () => {
 		assert.strictEqual(first.filter, "all");
 
 		// A synced value left by an older build seeds a device with no memory.
-		const seeded = new QuickInsertModal({ ...firstPlugin, settings: { quickInsertSource: "theme" } } as typeof firstPlugin) as unknown as {
+		const seeded = new QuickInsertModal({
+			...firstPlugin,
+			settings: { quickInsertSource: "theme" },
+		} as typeof firstPlugin) as unknown as {
 			filter: CalloutSourceFilter;
 		};
 		assert.strictEqual(seeded.filter, "theme");
@@ -647,10 +597,7 @@ class Buffer {
 		const selStart = source.indexOf("«");
 		const selEnd = source.indexOf("»");
 		if (selStart !== -1 && selEnd !== -1) {
-			this.text =
-				source.slice(0, selStart) +
-				source.slice(selStart + 1, selEnd) +
-				source.slice(selEnd + 1);
+			this.text = source.slice(0, selStart) + source.slice(selStart + 1, selEnd) + source.slice(selEnd + 1);
 			this.anchor = this.posOf(selStart);
 			this.head = this.posOf(selEnd - 1);
 			return;
@@ -708,11 +655,7 @@ class Buffer {
 		return this.text.slice(Math.min(a, h), Math.max(a, h));
 	}
 
-	replaceRange(
-		replacement: string,
-		from: EditorPosition,
-		to?: EditorPosition,
-	): void {
+	replaceRange(replacement: string, from: EditorPosition, to?: EditorPosition): void {
 		this.edits++;
 		const start = this.offsetOf(from);
 		const end = to ? this.offsetOf(to) : start;
@@ -739,10 +682,7 @@ describe("the Insert button writes block callouts", () => {
 		const b = buffer("first line\nsec|ond line\nthird line");
 		assert.strictEqual(insert(b), true);
 
-		assert.strictEqual(
-			b.value(),
-			"> [!warning] Warning\n> first line\n> second line\n> third line",
-		);
+		assert.strictEqual(b.value(), "> [!warning] Warning\n> first line\n> second line\n> third line");
 	});
 
 	it("wraps the paragraph from column 0 too", () => {
@@ -768,10 +708,7 @@ describe("the Insert button writes block callouts", () => {
 		const b = buffer("before\n\n|\n\nafter");
 		insert(b);
 
-		assert.strictEqual(
-			b.valueWithCursor(),
-			"before\n\n> [!warning] Warning\n> |\n\nafter",
-		);
+		assert.strictEqual(b.valueWithCursor(), "before\n\n> [!warning] Warning\n> |\n\nafter");
 	});
 
 	it("treats a whitespace-only line as blank", () => {
@@ -787,30 +724,21 @@ describe("the Insert button writes block callouts", () => {
 		const b = buffer("para|graph");
 		insert(b);
 
-		assert.strictEqual(
-			b.valueWithCursor(),
-			"> [!warning] Warning|\n> paragraph",
-		);
+		assert.strictEqual(b.valueWithCursor(), "> [!warning] Warning|\n> paragraph");
 	});
 
 	it("carries several paragraphs into one callout, blank lines and all", () => {
 		const b = buffer("«one\n\ntwo\n\nthree»");
 		insert(b);
 
-		assert.strictEqual(
-			b.value(),
-			"> [!warning] Warning\n> one\n>\n> two\n>\n> three",
-		);
+		assert.strictEqual(b.value(), "> [!warning] Warning\n> one\n>\n> two\n>\n> three");
 	});
 
 	it("keeps list markers and their indentation", () => {
 		const b = buffer("«- one\n  - nested\n1. numbered»");
 		insert(b);
 
-		assert.strictEqual(
-			b.value(),
-			"> [!warning] Warning\n> - one\n>   - nested\n> 1. numbered",
-		);
+		assert.strictEqual(b.value(), "> [!warning] Warning\n> - one\n>   - nested\n> 1. numbered");
 	});
 
 	it("nests inside an existing blockquote rather than doubling its marker", () => {
@@ -839,20 +767,14 @@ describe("the Insert button writes block callouts", () => {
 		const b = buffer("> [!note] Note\n> in|ner");
 		insert(b);
 
-		assert.strictEqual(
-			b.value(),
-			"> [!note] Note\n> > [!warning] Warning\n> > inner",
-		);
+		assert.strictEqual(b.value(), "> [!note] Note\n> > [!warning] Warning\n> > inner");
 	});
 
 	it("encloses an existing callout when the cursor is on its header", () => {
 		const b = buffer("> [!note] No|te\n> inner");
 		insert(b);
 
-		assert.strictEqual(
-			b.value(),
-			"> [!warning] Warning\n> > [!note] Note\n> > inner",
-		);
+		assert.strictEqual(b.value(), "> [!warning] Warning\n> > [!note] Note\n> > inner");
 	});
 
 	it("writes the fold mark the definition asks for", () => {
@@ -934,10 +856,7 @@ describe("the window writes no markdown of its own", () => {
 	it("never reaches for workspace.activeEditor", () => {
 		// It can be an embedded editor inside one of this plugin's own modals,
 		// so a window that trusted it could type into a live preview.
-		for (const file of [
-			"src/settings/QuickInsertModal.ts",
-			"src/editor/targetMarkdownEditor.ts",
-		]) {
+		for (const file of ["src/settings/QuickInsertModal.ts", "src/editor/targetMarkdownEditor.ts"]) {
 			const code = readRepoFile(file).replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, "");
 			assert.ok(!code.includes("activeEditor"), file);
 		}
@@ -981,9 +900,7 @@ function view(options: {
 	/** Present to hand out something other than an editor — including nothing. */
 	editor?: unknown;
 }): MarkdownView {
-	const v = new MarkdownView(
-		undefined as unknown as WorkspaceLeaf,
-	) as unknown as Record<string, unknown>;
+	const v = new MarkdownView(undefined as unknown as WorkspaceLeaf) as unknown as Record<string, unknown>;
 	v.editor =
 		"editor" in options
 			? options.editor
@@ -996,16 +913,13 @@ function view(options: {
 }
 
 /** The view a result points at, or `null` when it is a refusal. */
-const targetView = (result: TargetEditorResult): MarkdownView | null =>
-	result.ok ? result.target.view : null;
+const targetView = (result: TargetEditorResult): MarkdownView | null => (result.ok ? result.target.view : null);
 
 /** The refusal a result names, or `null` when there is an editor to write to. */
-const problemOf = (result: TargetEditorResult): TargetEditorProblem | null =>
-	result.ok ? null : result.problem;
+const problemOf = (result: TargetEditorResult): TargetEditorProblem | null => (result.ok ? null : result.problem);
 
 /** The editor a fake view is handing out right now. */
-const editorOf = (v: MarkdownView): Editor =>
-	(v as unknown as { editor: Editor }).editor;
+const editorOf = (v: MarkdownView): Editor => (v as unknown as { editor: Editor }).editor;
 
 /** An `App` whose workspace answers only what the resolver asks it. */
 function app(options: {
@@ -1035,10 +949,7 @@ describe("resolveTargetEditor", () => {
 	it("says no-note when nothing markdown is in front", () => {
 		// A canvas, the graph, the settings tab, or no leaf at all — one answer
 		// covers them, because `getActiveViewOfType` returns null for each.
-		assert.strictEqual(
-			problemOf(resolveTargetEditor(app({ active: null }))),
-			"no-note",
-		);
+		assert.strictEqual(problemOf(resolveTargetEditor(app({ active: null }))), "no-note");
 	});
 
 	it("refuses a note that is being read, and says so", () => {
@@ -1046,10 +957,7 @@ describe("resolveTargetEditor", () => {
 		// looking at is not this feature's call to make. Which is exactly why
 		// the reason has to travel — the way out is a move only the user can
 		// make, so the message has to name it.
-		assert.strictEqual(
-			problemOf(resolveTargetEditor(app({ active: view({ mode: "preview" }) }))),
-			"reading-view",
-		);
+		assert.strictEqual(problemOf(resolveTargetEditor(app({ active: view({ mode: "preview" }) }))), "reading-view");
 	});
 
 	it("never writes into a note it had to hunt for", () => {
@@ -1071,9 +979,7 @@ describe("resolveTargetEditor", () => {
 		// the note plainly on screen is no longer the "active view". Without
 		// the fallback this said "open a note in editing mode" to someone whose
 		// note was open right in front of them.
-		const behind = problemOf(
-			resolveTargetEditor(app({ active: null, mostRecent: { view: view({}) } })),
-		);
+		const behind = problemOf(resolveTargetEditor(app({ active: null, mostRecent: { view: view({}) } })));
 		const nothing = problemOf(resolveTargetEditor(app({ active: null })));
 
 		assert.strictEqual(behind, "no-cursor");
@@ -1085,9 +991,7 @@ describe("resolveTargetEditor", () => {
 		// is not a guess, so the fallback is consulted second, never first.
 		const focused = view({});
 		const other = view({});
-		const result = resolveTargetEditor(
-			app({ active: focused, mostRecent: { view: other } }),
-		);
+		const result = resolveTargetEditor(app({ active: focused, mostRecent: { view: other } }));
 
 		assert.strictEqual(targetView(result), focused);
 	});
@@ -1096,9 +1000,7 @@ describe("resolveTargetEditor", () => {
 		// Every refusal is still the *specific* one: a note being read is a
 		// mode problem the user can act on, and saying "place the cursor" to
 		// someone in Reading view would send them somewhere they cannot go.
-		const result = resolveTargetEditor(
-			app({ active: null, mostRecent: { view: view({ mode: "preview" }) } }),
-		);
+		const result = resolveTargetEditor(app({ active: null, mostRecent: { view: view({ mode: "preview" }) } }));
 
 		assert.strictEqual(problemOf(result), "reading-view");
 	});
@@ -1106,9 +1008,7 @@ describe("resolveTargetEditor", () => {
 	it("says no-note when the leaf last worked in is not a note", () => {
 		// `getMostRecentLeaf` walks the root split and popout windows, so it
 		// can just as easily hand back a canvas, a graph or a base.
-		const result = resolveTargetEditor(
-			app({ active: null, mostRecent: { view: { canvas: true } } }),
-		);
+		const result = resolveTargetEditor(app({ active: null, mostRecent: { view: { canvas: true } } }));
 
 		assert.strictEqual(problemOf(result), "no-note");
 	});
@@ -1117,9 +1017,7 @@ describe("resolveTargetEditor", () => {
 		// The distinction this whole result type exists for: both used to be a
 		// bare `null`, so both got the message about opening a note — advice
 		// that is useless when the note is already open in front of you.
-		const reading = problemOf(
-			resolveTargetEditor(app({ active: view({ mode: "preview" }) })),
-		);
+		const reading = problemOf(resolveTargetEditor(app({ active: view({ mode: "preview" }) })));
 		const nothing = problemOf(resolveTargetEditor(app({ active: null })));
 
 		assert.notStrictEqual(reading, nothing);
@@ -1133,50 +1031,32 @@ describe("classifyTargetEditor: an editing view with nowhere to write", () => {
 	// send them to. Telling them to switch would be telling them to stay put.
 
 	it("says no-cursor when the editor cannot name a position", () => {
-		assert.strictEqual(
-			problemOf(classifyTargetEditor(view({ cursor: null }))),
-			"no-cursor",
-		);
+		assert.strictEqual(problemOf(classifyTargetEditor(view({ cursor: null }))), "no-cursor");
 	});
 
 	it("says no-cursor when asking for the cursor throws", () => {
 		// A half-torn-down edit mode. Without the catch this is a `TypeError`
 		// out of the Insert click handler — the failure the notice replaces.
-		assert.strictEqual(
-			problemOf(classifyTargetEditor(view({ cursor: "throws" }))),
-			"no-cursor",
-		);
+		assert.strictEqual(problemOf(classifyTargetEditor(view({ cursor: "throws" }))), "no-cursor");
 	});
 
 	it("says no-cursor when the view has no editor at all", () => {
 		// `MarkdownView.editor` is typed non-nullable and reaches through
 		// `editMode`, which can be missing.
-		assert.strictEqual(
-			problemOf(classifyTargetEditor(view({ editor: undefined }))),
-			"no-cursor",
-		);
+		assert.strictEqual(problemOf(classifyTargetEditor(view({ editor: undefined }))), "no-cursor");
 	});
 
 	it("says no-cursor for a position that is not a position", () => {
 		// `NaN` passes a null check and then travels all the way into
 		// `replaceRange`, where it corrupts the note instead of failing.
-		assert.strictEqual(
-			problemOf(classifyTargetEditor(view({ cursor: { line: NaN, ch: 0 } }))),
-			"no-cursor",
-		);
-		assert.strictEqual(
-			problemOf(classifyTargetEditor(view({ cursor: { line: 0, ch: NaN } }))),
-			"no-cursor",
-		);
+		assert.strictEqual(problemOf(classifyTargetEditor(view({ cursor: { line: NaN, ch: 0 } }))), "no-cursor");
+		assert.strictEqual(problemOf(classifyTargetEditor(view({ cursor: { line: 0, ch: NaN } }))), "no-cursor");
 	});
 
 	it("reads the note's mode before its cursor", () => {
 		// A note in Reading view has no cursor either. It is still the mode
 		// that is in the way, and the mode is what the user can act on.
-		assert.strictEqual(
-			problemOf(classifyTargetEditor(view({ mode: "preview", cursor: null }))),
-			"reading-view",
-		);
+		assert.strictEqual(problemOf(classifyTargetEditor(view({ mode: "preview", cursor: null }))), "reading-view");
 	});
 
 	it("accepts a cursor sitting at the very start of the note", () => {
@@ -1254,14 +1134,20 @@ describe("currentTargetEditor", () => {
 		const captured = classifyTargetEditor(v);
 		assert.ok(captured.ok);
 		Object.assign(v, { editor: fakeEditor({ line: 0, ch: 0 }) });
-		assert.strictEqual(problemOf(currentTargetEditor(app({ active: v, markdownLeaves: [v.leaf] }), captured.target)), "target-moved");
+		assert.strictEqual(
+			problemOf(currentTargetEditor(app({ active: v, markdownLeaves: [v.leaf] }), captured.target)),
+			"target-moved",
+		);
 	});
 	it("allows the captured file to be renamed without changing identity", () => {
 		const v = view({});
 		const captured = classifyTargetEditor(v);
 		assert.ok(captured.ok);
 		captured.target.file.path = "renamed.md";
-		assert.strictEqual(targetView(currentTargetEditor(app({ active: v, markdownLeaves: [v.leaf] }), captured.target)), v);
+		assert.strictEqual(
+			targetView(currentTargetEditor(app({ active: v, markdownLeaves: [v.leaf] }), captured.target)),
+			v,
+		);
 	});
 	it("does not capture a view that has no file", () => {
 		assert.strictEqual(problemOf(classifyTargetEditor(view({ file: null }))), "no-note");
@@ -1275,10 +1161,7 @@ describe("currentTargetEditor", () => {
 		const otherLeaf = (other as unknown as { leaf: FakeLeaf }).leaf;
 		const captured: TargetEditor = { view: opened, editor: editorOf(opened), file: opened.file! };
 
-		const resolved = currentTargetEditor(
-			app({ active: other, markdownLeaves: [openedLeaf, otherLeaf] }),
-			captured,
-		);
+		const resolved = currentTargetEditor(app({ active: other, markdownLeaves: [openedLeaf, otherLeaf] }), captured);
 
 		assert.strictEqual(targetView(resolved), opened);
 	});
@@ -1289,10 +1172,7 @@ describe("currentTargetEditor", () => {
 		const activeLeaf = (nowActive as unknown as { leaf: FakeLeaf }).leaf;
 		const captured: TargetEditor = { view: closed, editor: editorOf(closed), file: closed.file! };
 
-		const resolved = currentTargetEditor(
-			app({ active: nowActive, markdownLeaves: [activeLeaf] }),
-			captured,
-		);
+		const resolved = currentTargetEditor(app({ active: nowActive, markdownLeaves: [activeLeaf] }), captured);
 
 		assert.strictEqual(problemOf(resolved), "target-moved");
 	});
@@ -1317,10 +1197,7 @@ describe("currentTargetEditor", () => {
 		const leaf = (flipped as unknown as { leaf: FakeLeaf }).leaf;
 		const captured: TargetEditor = { view: flipped, editor: editorOf(flipped), file: flipped.file! };
 
-		const resolved = currentTargetEditor(
-			app({ active: flipped, markdownLeaves: [leaf] }),
-			captured,
-		);
+		const resolved = currentTargetEditor(app({ active: flipped, markdownLeaves: [leaf] }), captured);
 
 		assert.strictEqual(problemOf(resolved), "reading-view");
 	});
@@ -1334,10 +1211,7 @@ describe("currentTargetEditor", () => {
 		const leaf = (opened as unknown as { leaf: FakeLeaf }).leaf;
 		const captured: TargetEditor = { view: opened, editor: editorOf(opened), file: opened.file! };
 
-		const resolved = currentTargetEditor(
-			app({ active: null, markdownLeaves: [leaf] }),
-			captured,
-		);
+		const resolved = currentTargetEditor(app({ active: null, markdownLeaves: [leaf] }), captured);
 
 		assert.strictEqual(targetView(resolved), opened);
 	});
@@ -1350,10 +1224,7 @@ describe("currentTargetEditor", () => {
 		const leaf = (v as unknown as { leaf: FakeLeaf }).leaf;
 		const captured: TargetEditor = { view: v, editor: editorOf(v), file: v.file! };
 
-		const resolved = currentTargetEditor(
-			app({ active: v, markdownLeaves: [leaf] }),
-			captured,
-		);
+		const resolved = currentTargetEditor(app({ active: v, markdownLeaves: [leaf] }), captured);
 
 		assert.strictEqual(problemOf(resolved), "no-cursor");
 	});
@@ -1373,12 +1244,7 @@ describe("currentTargetEditor", () => {
  * this replaced.
  */
 describe("every refusal has its own message", () => {
-	const PROBLEMS: TargetEditorProblem[] = [
-		"no-note",
-		"reading-view",
-		"no-cursor",
-		"target-moved",
-	];
+	const PROBLEMS: TargetEditorProblem[] = ["no-note", "reading-view", "no-cursor", "target-moved"];
 
 	// `t()` answers in English until a locale is downloaded, so these are the
 	// strings in `en.ts` — the only table the repo edits by hand.
@@ -1406,11 +1272,7 @@ describe("every refusal has its own message", () => {
 		// notice answers a press of Insert and names the way out. "Then try
 		// again" is meaningless before anything has been tried.
 		for (const problem of PROBLEMS) {
-			assert.notStrictEqual(
-				quickInsertHint(problem),
-				quickInsertNotice(problem),
-				problem,
-			);
+			assert.notStrictEqual(quickInsertHint(problem), quickInsertNotice(problem), problem);
 		}
 	});
 
@@ -1547,17 +1409,13 @@ describe("the row keeps its controls outside the callout", () => {
 		const rendered = asEl(el({ cls: "cs-qi-preview" }));
 		const inserted: string[] = [];
 		const edited: string[] = [];
-		const rowEl = renderQuickInsertRow(
-			list,
-			def({ id: "warning", displayName: "Warning", aliases: ["caution"] }),
-			{
-				canInsert: true,
-				preview: () => (hasPreview ? rendered : null),
-				onInsert: (d) => void inserted.push(d.id),
-				onEdit: (d) => void edited.push(d.id),
-				onHover: () => {},
-			},
-		);
+		const rowEl = renderQuickInsertRow(list, def({ id: "warning", displayName: "Warning", aliases: ["caution"] }), {
+			canInsert: true,
+			preview: () => (hasPreview ? rendered : null),
+			onInsert: (d) => void inserted.push(d.id),
+			onEdit: (d) => void edited.push(d.id),
+			onHover: () => {},
+		});
 		return { rowEl, rendered, inserted, edited };
 	}
 
@@ -1597,10 +1455,7 @@ describe("the row keeps its controls outside the callout", () => {
 		const buttons = rowEl.querySelectorAll("button");
 		assert.strictEqual(buttons.length, 2);
 		for (const button of Array.from(buttons)) {
-			assert.ok(
-				!rendered.contains(button),
-				"a control rendered inside the callout reads as its content",
-			);
+			assert.ok(!rendered.contains(button), "a control rendered inside the callout reads as its content");
 		}
 		// And the preview really is in the row, in its own slot.
 		const slot = rowEl.querySelector(".cs-qi-slot");
@@ -1621,9 +1476,7 @@ describe("the row keeps its controls outside the callout", () => {
 		const { rowEl } = renderRow(true);
 		assert.strictEqual(rowEl.getAttribute("title"), null);
 		assert.deepStrictEqual(Array.from(rowEl.querySelectorAll("[title]")), []);
-		const labels = Array.from(rowEl.querySelectorAll("button")).map((b) =>
-			b.getAttribute("aria-label"),
-		);
+		const labels = Array.from(rowEl.querySelectorAll("button")).map((b) => b.getAttribute("aria-label"));
 		assert.strictEqual(labels.length, 2);
 		for (const label of labels) {
 			assert.ok(label?.includes("Warning"), `unlabelled: ${label}`);
@@ -1649,8 +1502,15 @@ describe("quick-insert pointer highlights", () => {
 		// Exercise the real row wiring and keyboard handlers without opening a
 		// host Modal: the stub has no modal DOM or workspace focus lifecycle.
 		const modal = Object.assign(Object.create(QuickInsertModal.prototype), {
-			listEl, contentEl: asEl(el()), rows: [], activeIndex: -1, pointerActive: false,
-			query: "", filter: "all", captured: { ok: true }, previews: null,
+			listEl,
+			contentEl: asEl(el()),
+			rows: [],
+			activeIndex: -1,
+			pointerActive: false,
+			query: "",
+			filter: "all",
+			captured: { ok: true },
+			previews: null,
 			...pagingFields,
 			plugin: {
 				app: {},
@@ -1662,10 +1522,7 @@ describe("quick-insert pointer highlights", () => {
 			renderList(items: CalloutDefinition[]): void;
 			onSearchKey(event: KeyboardEvent): void;
 		};
-		modal.renderList([
-			def({ id: "alpha", displayName: "Alpha" }),
-			def({ id: "beta", displayName: "Beta" }),
-		]);
+		modal.renderList([def({ id: "alpha", displayName: "Alpha" }), def({ id: "beta", displayName: "Beta" })]);
 		const rows = Array.from(modal.listEl.querySelectorAll<HTMLElement>(".cs-qi-row"));
 		const key = (key: string) => modal.onSearchKey({ key, preventDefault() {} } as KeyboardEvent);
 		return { rows, key, inserted };
@@ -1675,7 +1532,9 @@ describe("quick-insert pointer highlights", () => {
 		const { rows, inserted } = harness();
 		const row = rows[1]!;
 		let scrolled = false;
-		row.scrollIntoView = () => { scrolled = true; };
+		row.scrollIntoView = () => {
+			scrolled = true;
+		};
 		row.dispatchEvent({ type: "mouseenter" } as Event);
 		assert.ok(row.hasClass("is-active"));
 		row.dispatchEvent({ type: "mouseleave" } as Event);
@@ -1707,8 +1566,14 @@ describe("a callout found by an alias is shown and inserted as that alias", () =
 		const asked: { id: string; matchedId: string | undefined }[] = [];
 		const listEl = asEl(el());
 		const modal = Object.assign(Object.create(QuickInsertModal.prototype), {
-			listEl, contentEl: asEl(el()), rows: [], activeIndex: -1, pointerActive: false,
-			query, filter: "all", captured: { ok: true },
+			listEl,
+			contentEl: asEl(el()),
+			rows: [],
+			activeIndex: -1,
+			pointerActive: false,
+			query,
+			filter: "all",
+			captured: { ok: true },
 			previews: {
 				get: (id: string, matchedId?: string) => {
 					asked.push({ id, matchedId });
@@ -1721,8 +1586,7 @@ describe("a callout found by an alias is shown and inserted as that alias", () =
 				app: {},
 				registry: { themeOwns: () => false, getUserDefined: () => [] },
 			},
-			insert: (item: CalloutDefinition, matchedId?: string) =>
-				inserted.push({ id: item.id, matchedId }),
+			insert: (item: CalloutDefinition, matchedId?: string) => inserted.push({ id: item.id, matchedId }),
 		}) as {
 			listEl: HTMLElement;
 			renderList(items: CalloutDefinition[]): void;
@@ -1775,10 +1639,7 @@ describe("a callout found by an alias is shown and inserted as that alias", () =
 	});
 
 	it("hands Insert's spelling to the shared writer, not a header of its own", () => {
-		const code = readRepoFile("src/settings/QuickInsertModal.ts").replace(
-			/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g,
-			"",
-		);
+		const code = readRepoFile("src/settings/QuickInsertModal.ts").replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, "");
 		assert.match(code, /matchedCalloutId\(def, /, "not the popover's rule");
 		assert.ok(!code.includes("aliases"), "re-deriving the alias rule instead of sharing it");
 	});
@@ -1796,10 +1657,16 @@ class FakeObserver {
 		FakeObserver.all.push(this);
 	}
 	observe(): void {}
-	disconnect(): void { this.disconnected = true; }
+	disconnect(): void {
+		this.disconnected = true;
+	}
 	/** The end marker came within reach. */
-	reach(): void { this.callback([{ isIntersecting: true }]); }
-	static latest(): FakeObserver { return FakeObserver.all[FakeObserver.all.length - 1]!; }
+	reach(): void {
+		this.callback([{ isIntersecting: true }]);
+	}
+	static latest(): FakeObserver {
+		return FakeObserver.all[FakeObserver.all.length - 1]!;
+	}
 }
 
 /** Run `body` in a window that can watch the list's end (as Obsidian's can). */
@@ -1807,7 +1674,11 @@ function withObserver(body: () => void): void {
 	const view = fakeDom.document.defaultView as unknown as Record<string, unknown>;
 	view.IntersectionObserver = FakeObserver;
 	FakeObserver.all = [];
-	try { body(); } finally { delete view.IntersectionObserver; }
+	try {
+		body();
+	} finally {
+		delete view.IntersectionObserver;
+	}
 }
 
 const manyCallouts = (count: number): CalloutDefinition[] =>
@@ -1825,10 +1696,21 @@ describe("a long list is drawn a page at a time", () => {
 		const asked: string[][] = [];
 		const inserted: string[] = [];
 		const modal = Object.assign(Object.create(QuickInsertModal.prototype), {
-			listEl, contentEl, rows: [], activeIndex: -1, pointerActive: false,
-			query: "", filter: "all", captured: { ok: true },
-			previews: { get: () => null, ensure: (defs: CalloutDefinition[]) => void asked.push(defs.map((d) => d.id)) },
-			limit: 30, visible: [], sentinel: null,
+			listEl,
+			contentEl,
+			rows: [],
+			activeIndex: -1,
+			pointerActive: false,
+			query: "",
+			filter: "all",
+			captured: { ok: true },
+			previews: {
+				get: () => null,
+				ensure: (defs: CalloutDefinition[]) => void asked.push(defs.map((d) => d.id)),
+			},
+			limit: 30,
+			visible: [],
+			sentinel: null,
 			plugin: { app: {}, registry: { themeOwns: () => false, getUserDefined: () => [] } },
 			usableCallouts: () => all,
 			insert: (item: CalloutDefinition) => inserted.push(item.id),
@@ -1844,7 +1726,10 @@ describe("a long list is drawn a page at a time", () => {
 			fillPreviews(): void;
 			onSearchKey(event: KeyboardEvent): void;
 		};
-		modal.loadOnScroll = new LoadOnScroll(() => contentEl, () => (modal as unknown as { drawMore(): void }).drawMore());
+		modal.loadOnScroll = new LoadOnScroll(
+			() => contentEl,
+			() => (modal as unknown as { drawMore(): void }).drawMore(),
+		);
 		const rowCount = () => modal.listEl.querySelectorAll(".cs-qi-row").length;
 		const sentinels = () => modal.listEl.querySelectorAll(`.${LOAD_MORE_SENTINEL}`).length;
 		return { modal, defs: all, asked, inserted, rowCount, sentinels };
@@ -1856,8 +1741,16 @@ describe("a long list is drawn a page at a time", () => {
 			modal.renderList(defs);
 			assert.strictEqual(rowCount(), 30);
 			assert.strictEqual(sentinels(), 1);
-			assert.strictEqual(modal.listEl.lastElementChild?.classList.contains(LOAD_MORE_SENTINEL), true, "at the very end");
-			assert.deepStrictEqual(asked, [defs.slice(0, 30).map((d) => d.id)], "no render for rows nobody has reached");
+			assert.strictEqual(
+				modal.listEl.lastElementChild?.classList.contains(LOAD_MORE_SENTINEL),
+				true,
+				"at the very end",
+			);
+			assert.deepStrictEqual(
+				asked,
+				[defs.slice(0, 30).map((d) => d.id)],
+				"no render for rows nobody has reached",
+			);
 		});
 	});
 
@@ -1868,12 +1761,19 @@ describe("a long list is drawn a page at a time", () => {
 			const firstRow = modal.listEl.querySelector(".cs-qi-row");
 			FakeObserver.latest().reach();
 			assert.strictEqual(rowCount(), 60);
-			assert.strictEqual(modal.listEl.querySelector(".cs-qi-row"), firstRow, "the rows already there are kept, not redrawn");
+			assert.strictEqual(
+				modal.listEl.querySelector(".cs-qi-row"),
+				firstRow,
+				"the rows already there are kept, not redrawn",
+			);
 			assert.strictEqual(sentinels(), 1, "one marker, moved below the new rows");
 			FakeObserver.latest().reach();
 			assert.strictEqual(rowCount(), 75);
 			assert.strictEqual(sentinels(), 0, "everything is drawn: nothing left to load");
-			assert.deepStrictEqual(asked[2], defs.slice(0, 75).map((d) => d.id));
+			assert.deepStrictEqual(
+				asked[2],
+				defs.slice(0, 75).map((d) => d.id),
+			);
 		});
 	});
 
@@ -1915,7 +1815,8 @@ describe("a long list is drawn a page at a time", () => {
 	it("puts a preview that lands into the row waiting for it, without redrawing the list", () => {
 		const { modal, defs } = harness(3);
 		const landed = new Map<string, HTMLElement>();
-		(modal as unknown as { previews: { get(id: string): HTMLElement | null } }).previews.get = (id) => landed.get(id) ?? null;
+		(modal as unknown as { previews: { get(id: string): HTMLElement | null } }).previews.get = (id) =>
+			landed.get(id) ?? null;
 		modal.renderList(defs);
 		const before = Array.from(modal.listEl.querySelectorAll(".cs-qi-row"));
 		assert.strictEqual(modal.listEl.querySelectorAll(".cs-qi-pending").length, 3);
@@ -1945,7 +1846,9 @@ describe("previews are rendered for the rows asked for, once each", () => {
 			blocks.forEach(() => target.createDiv({ cls: "callout" }));
 			return Promise.resolve();
 		};
-		return body(batches).finally(() => { stub.render = original; });
+		return body(batches).finally(() => {
+			stub.render = original;
+		});
 	}
 	const [a, b, c] = manyCallouts(3) as [CalloutDefinition, CalloutDefinition, CalloutDefinition];
 	const app = {} as never;
@@ -1953,7 +1856,9 @@ describe("previews are rendered for the rows asked for, once each", () => {
 	it("renders only what is asked for, keeps it, and says when it lands", async () => {
 		await withRenderer(async (batches) => {
 			let landed = 0;
-			const previews = new QuickInsertPreviews(app, () => { landed++; });
+			const previews = new QuickInsertPreviews(app, () => {
+				landed++;
+			});
 			await previews.ensure([a, b]);
 			assert.deepStrictEqual(batches, [[previewMarkdown(a), previewMarkdown(b)]]);
 			assert.ok(previews.get(a.id)?.hasClass("cs-qi-preview"));
@@ -2036,7 +1941,9 @@ describe("previews are rendered for the rows asked for, once each", () => {
 	it("keeps nothing from a render that finishes after the window closed", async () => {
 		await withRenderer(async () => {
 			let landed = 0;
-			const previews = new QuickInsertPreviews(app, () => { landed++; });
+			const previews = new QuickInsertPreviews(app, () => {
+				landed++;
+			});
 			const pending = previews.ensure([a]);
 			previews.destroy();
 			await pending;

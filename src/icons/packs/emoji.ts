@@ -71,10 +71,7 @@ export const emojiPack: IconPack = {
 		const tone = variants.emojiSkinTone ?? 0;
 		// Tone 0 is the base glyph; 1–5 index the light → dark variants, which
 		// only skin-tone-capable emoji carry.
-		const value =
-			tone >= 1 && tone <= 5
-				? (entry.variants?.[tone - 1] ?? entry.name)
-				: entry.name;
+		const value = tone >= 1 && tone <= 5 ? (entry.variants?.[tone - 1] ?? entry.name) : entry.name;
 		return { type: "emoji" as const, value };
 	},
 

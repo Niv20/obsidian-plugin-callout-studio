@@ -44,11 +44,7 @@ import {
 	type LineCalloutToken,
 } from "../src/editor/calloutTokens";
 import { CALLOUT_FOLD_MARK_REGEX } from "../src/editor/contextmenu/resolve";
-import {
-	buildBlockHeaderToken,
-	buildHeadingToken,
-	splitFoldMark,
-} from "../src/editor/calloutWriter";
+import { buildBlockHeaderToken, buildHeadingToken, splitFoldMark } from "../src/editor/calloutWriter";
 import { normalizeFoldMarkersInVault } from "../src/utils/vaultCalloutScanner";
 import type { App } from "obsidian";
 import type { CalloutDefinition } from "../src/types";
@@ -146,33 +142,21 @@ describe("the heading token stops at the bracket", () => {
 
 describe("the writers", () => {
 	it("write no marker into a heading, whatever the fold defaults say", () => {
-		assert.strictEqual(
-			buildHeadingToken(def({ foldable: true, defaultFolded: true })),
-			"[!warning]",
-		);
-		assert.strictEqual(
-			buildHeadingToken(def({ foldable: true, defaultFolded: false })),
-			"[!warning]",
-		);
+		assert.strictEqual(buildHeadingToken(def({ foldable: true, defaultFolded: true })), "[!warning]");
+		assert.strictEqual(buildHeadingToken(def({ foldable: true, defaultFolded: false })), "[!warning]");
 	});
 
 	it("still write one into a blockquote header, which does fold that way", () => {
 		// The contrast is the point: this is not a plugin-wide retreat from fold
 		// markers, it is one role losing a syntax that was never Obsidian's.
-		assert.strictEqual(
-			buildBlockHeaderToken(def({ foldable: true, defaultFolded: true })),
-			"[!warning]- Warning",
-		);
+		assert.strictEqual(buildBlockHeaderToken(def({ foldable: true, defaultFolded: true })), "[!warning]- Warning");
 	});
 
 	it("keep a leading `-` that the user's own title starts with", () => {
 		// The line `### [!warning]- Title` round-trips through a type swap: the
 		// scanner hands `- Title` over as the existing title, and the writer has
 		// to put it back rather than read it as a marker it is about to reissue.
-		assert.strictEqual(
-			buildHeadingToken(def(), { existingTitle: "- Title" }),
-			"[!warning] - Title",
-		);
+		assert.strictEqual(buildHeadingToken(def(), { existingTitle: "- Title" }), "[!warning] - Title");
 	});
 });
 
@@ -243,7 +227,6 @@ describe("splitFoldMark reads the mark from the role, not from the caller", () =
 	});
 });
 
-
 /* -------------------------------------------------------------------------- */
 /* The blockquote role, which is untouched                                    */
 /* -------------------------------------------------------------------------- */
@@ -261,10 +244,7 @@ describe("`> [!note]-` still means what it always meant", () => {
 	it("is what CALLOUT_FOLD_MARK_REGEX reads the mark out of", () => {
 		assert.strictEqual(CALLOUT_FOLD_MARK_REGEX.exec("> [!note]- x")?.[3], "-");
 		assert.strictEqual(CALLOUT_FOLD_MARK_REGEX.exec("> [!note]+ x")?.[3], "+");
-		assert.strictEqual(
-			CALLOUT_FOLD_MARK_REGEX.exec("> [!note] x")?.[3],
-			undefined,
-		);
+		assert.strictEqual(CALLOUT_FOLD_MARK_REGEX.exec("> [!note] x")?.[3], undefined);
 	});
 
 	it("and that regex cannot reach a heading line at all", () => {
@@ -292,15 +272,13 @@ function fakeApp(files: Record<string, string>): {
 	const store = new Map(Object.entries(files));
 	const handles = Array.from(store.keys()).map((path) => ({ path }));
 	const writes: string[] = [];
-	const read = (file: { path: string }): Promise<string> =>
-		Promise.resolve(store.get(file.path) ?? "");
+	const read = (file: { path: string }): Promise<string> => Promise.resolve(store.get(file.path) ?? "");
 	const app = {
 		vault: {
 			getMarkdownFiles: () => handles,
 			read,
 			cachedRead: read,
-			getAbstractFileByPath: (path: string) =>
-				handles.find((h) => h.path === path) ?? null,
+			getAbstractFileByPath: (path: string) => handles.find((h) => h.path === path) ?? null,
 			// The writer goes through `process`, which owns the read/write pair.
 			// Recording the write here is what keeps "does not open the file for
 			// writing when nothing changed" meaningful: the real `process` writes
@@ -355,14 +333,8 @@ describe("normalizeFoldMarkersInVault — what it rewrites", () => {
 		// The mark sits after the closing bracket, so the metadata is only ever
 		// carried across — but an id-only pattern would skip the line entirely
 		// and leave a piped occurrence with the wrong default.
-		assert.strictEqual(
-			(await normalize("> [!note|purple]+ Hi", "-")).text,
-			"> [!note|purple]- Hi",
-		);
-		assert.strictEqual(
-			(await normalize("> [!note|purple] Hi", "-")).text,
-			"> [!note|purple]- Hi",
-		);
+		assert.strictEqual((await normalize("> [!note|purple]+ Hi", "-")).text, "> [!note|purple]- Hi");
+		assert.strictEqual((await normalize("> [!note|purple] Hi", "-")).text, "> [!note|purple]- Hi");
 	});
 
 	it("matches the id however it is cased", async () => {
@@ -370,11 +342,7 @@ describe("normalizeFoldMarkersInVault — what it rewrites", () => {
 	});
 
 	it("rewrites every id it is given, which is how aliases are covered", async () => {
-		const { text } = await normalize(
-			"> [!note] a\n> [!nb] b",
-			"-",
-			["note", "nb"],
-		);
+		const { text } = await normalize("> [!note] a\n> [!nb] b", "-", ["note", "nb"]);
 		assert.strictEqual(text, "> [!note]- a\n> [!nb]- b");
 	});
 });
@@ -392,10 +360,7 @@ describe("normalizeFoldMarkersInVault — what it must not touch", () => {
 	});
 
 	it("leaves an inline pill alone", async () => {
-		assert.strictEqual(
-			(await normalize("see [!note] for details", "-")).text,
-			"see [!note] for details",
-		);
+		assert.strictEqual((await normalize("see [!note] for details", "-")).text, "see [!note] for details");
 	});
 
 	it("leaves a callout it was not asked about alone", async () => {
@@ -429,31 +394,19 @@ describe("normalizeFoldMarkersInVault — nesting", () => {
 	it("reads the spaced spelling of the same nesting", async () => {
 		// `> > [!note]` and `>> [!note]` are one thing to Obsidian, so they must
 		// be one thing here — this is the tokenizer's own prefix, not a new one.
-		assert.strictEqual(
-			(await normalize("> > [!note]+ Hi", "-")).text,
-			"> > [!note]- Hi",
-		);
-		assert.strictEqual(
-			(await normalize(">>> [!note] Hi", "-")).text,
-			">>> [!note]- Hi",
-		);
+		assert.strictEqual((await normalize("> > [!note]+ Hi", "-")).text, "> > [!note]- Hi");
+		assert.strictEqual((await normalize(">>> [!note] Hi", "-")).text, ">>> [!note]- Hi");
 	});
 
 	it("keeps the quote prefix exactly as it was written", async () => {
 		// The prefix is captured and re-emitted, so a rewrite must not tidy the
 		// user's spacing into some canonical form.
 		assert.strictEqual((await normalize(">>[!note] Hi", "-")).text, ">>[!note]- Hi");
-		assert.strictEqual(
-			(await normalize(">  [!note] Hi", "-")).text,
-			">  [!note]- Hi",
-		);
+		assert.strictEqual((await normalize(">  [!note] Hi", "-")).text, ">  [!note]- Hi");
 	});
 
 	it("counts a nested occurrence beside its parent", async () => {
-		const { text, count } = await normalize(
-			"> [!note] outer\n>> [!note]+ inner",
-			"-",
-		);
+		const { text, count } = await normalize("> [!note] outer\n>> [!note]+ inner", "-");
 		assert.strictEqual(text, "> [!note]- outer\n>> [!note]- inner");
 		assert.strictEqual(count, 2);
 	});
@@ -490,10 +443,7 @@ describe("normalizeFoldMarkersInVault — how much it writes", () => {
 	it("settles after one pass", async () => {
 		const { app, content } = fakeApp({ "note.md": "> [!note] Hi" });
 		await normalizeFoldMarkersInVault(app, ["note"], "-");
-		assert.strictEqual(
-			await normalizeFoldMarkersInVault(app, ["note"], "-"),
-			0,
-		);
+		assert.strictEqual(await normalizeFoldMarkersInVault(app, ["note"], "-"), 0);
 		assert.strictEqual(content("note.md"), "> [!note]- Hi");
 	});
 });

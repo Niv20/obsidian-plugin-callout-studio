@@ -40,10 +40,7 @@ import { showNotice } from "../ui/mascot/mascotNotices";
  *   Editor saves additionally request `requireComplete`: after visiting every
  *   file, an incomplete pass rejects so its saved retry plan is not discarded.
  */
-async function forEachVaultFile(
-	app: App,
-	visit: (file: TFile) => Promise<void>,
-): Promise<string[]> {
+async function forEachVaultFile(app: App, visit: (file: TFile) => Promise<void>): Promise<string[]> {
 	const files = app.vault.getMarkdownFiles();
 	const failed: string[] = [];
 
@@ -54,10 +51,7 @@ async function forEachVaultFile(
 		try {
 			await visit(file);
 		} catch (error) {
-			console.warn(
-				`[callout-studio] vault traversal skipped ${file.path}`,
-				error,
-			);
+			console.warn(`[callout-studio] vault traversal skipped ${file.path}`, error);
 			failed.push(file.path);
 		}
 	}
@@ -70,10 +64,7 @@ async function forEachVaultFile(
  * Usage counts drive delete confirmations, so a partial zero must never be
  * returned as proof that a callout is unused. Report once before rejecting.
  */
-export async function scanVaultFiles(
-	app: App,
-	visit: (file: TFile) => Promise<void>,
-): Promise<void> {
+export async function scanVaultFiles(app: App, visit: (file: TFile) => Promise<void>): Promise<void> {
 	const failed = await forEachVaultFile(app, visit);
 	if (failed.length === 0) return;
 	showNotice("warning", t("notice.vaultScanFailed", { count: failed.length }));
@@ -125,7 +116,8 @@ export async function rewriteVaultFiles(
 		if (!transform(await app.vault.cachedRead(file))) return;
 
 		let count = 0;
-		let before = "", after = "";
+		let before = "",
+			after = "";
 		await app.vault.process(file, (content) => {
 			const result = transform(content);
 			count = result?.count ?? 0;

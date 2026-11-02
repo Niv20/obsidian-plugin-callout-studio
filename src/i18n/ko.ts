@@ -40,17 +40,15 @@ export const ko: Record<string, string> = {
 	"settings.fallbackTagAuto": "자동",
 	"settings.rescanVaultDesc": "노트에서 사용하지만 아직 이 목록에 없는 callout 유형을 추가합니다.",
 	"settings.rescanVaultHintAction": "callout 스캔",
-	"manualDiscovery.failed": "스캔 결과를 저장하지 못했습니다. 설정 파일에 쓸 수 있고 동기화가 완료되었는지 확인한 다음 설정 → 내 callout 유형 → callout 스캔에서 다시 시도하세요. 기존 callout은 교체되지 않았습니다.",
+	"manualDiscovery.failed":
+		"스캔 결과를 저장하지 못했습니다. 설정 파일에 쓸 수 있고 동기화가 완료되었는지 확인한 다음 설정 → 내 callout 유형 → callout 스캔에서 다시 시도하세요. 기존 callout은 교체되지 않았습니다.",
 	"manualDiscovery.scanning": "스캔 중…",
-	"settings.rescanComplete":
-		"스캔 완료: {{count}}개의 새 callout 유형이 추가되었습니다.",
+	"settings.rescanComplete": "스캔 완료: {{count}}개의 새 callout 유형이 추가되었습니다.",
 	"replaceModal.titleReplace": "볼트에서 교체",
 
 	"welcome.title": "Callout Studio에 오신 것을 환영합니다!",
-	"welcome.tagline":
-		"Obsidian callout을 만들고, 스타일을 지정하고, 관리하기 위한 완벽한 솔루션입니다.",
-	"importBanner.message":
-		"{{plugins}}을(를) 사용 중이신 것을 확인했습니다. callout을 가져오시겠습니까?",
+	"welcome.tagline": "Obsidian callout을 만들고, 스타일을 지정하고, 관리하기 위한 완벽한 솔루션입니다.",
+	"importBanner.message": "{{plugins}}을(를) 사용 중이신 것을 확인했습니다. callout을 가져오시겠습니까?",
 	"importBanner.action": "가져오기",
 	"importBanner.dismiss": "닫기",
 	"welcome.demoName": "Callout Studio",
@@ -65,8 +63,7 @@ export const ko: Record<string, string> = {
 		"Callout Studio에는 훨씬 더 많은 기능이 있습니다! [자세히 보기]({{repoUrl}}).\n",
 	"deleteModal.title": "callout 삭제",
 
-	"deleteModal.bodyInUse":
-		"이 callout은 {{files}}개의 파일에서 {{count}}번 나타납니다.",
+	"deleteModal.bodyInUse": "이 callout은 {{files}}개의 파일에서 {{count}}번 나타납니다.",
 	"deleteModal.notesUntouched":
 		"callout 정의만 삭제합니다. 노트는 건드리지 않으므로 기존 callout은 기본 스타일로 돌아갈 뿐입니다.",
 	"deleteModal.fallbackTarget":
@@ -95,10 +92,8 @@ export const ko: Record<string, string> = {
 	"settings.export": "내보내기…",
 	"settings.importTitle": "callout 가져오기",
 	"settings.exportTitle": "callout 내보내기",
-	"settings.importDesc":
-		"다른 볼트에서 Callout Studio 데이터를 가져오거나 다른 플러그인에서 callout을 가져옵니다.",
-	"settings.exportDesc":
-		"callout을 Callout Studio 백업이나 다른 곳에서 사용할 수 있는 CSS 스니펫으로 저장합니다.",
+	"settings.importDesc": "다른 볼트에서 Callout Studio 데이터를 가져오거나 다른 플러그인에서 callout을 가져옵니다.",
+	"settings.exportDesc": "callout을 Callout Studio 백업이나 다른 곳에서 사용할 수 있는 CSS 스니펫으로 저장합니다.",
 	"settings.importConflictNotice":
 		"{{count}}개의 callout 유형을 가져왔습니다. {{overwritten}}개의 기존 항목을 덮어썼습니다.",
 
@@ -116,11 +111,11 @@ export const ko: Record<string, string> = {
 	"settings.convertUsesAction": "사용을 일반 텍스트로 변환",
 	"notice.calloutDeleted": '"{{name}}"을(를) 삭제했습니다.',
 	"settings.duplicateAction": "복제",
-	"notice.calloutDuplicated": "콜아웃이 \"{{name}}\"(으)로 복제되었습니다.",
+	"notice.calloutDuplicated": '콜아웃이 "{{name}}"(으)로 복제되었습니다.',
 	"notice.calloutDuplicateFailed": "콜아웃을 복제할 수 없습니다. 저장 상태를 확인한 후 다시 시도하세요.",
 	"settings.resetAction": "기본값으로 재설정",
 	"settings.makeFallbackAction": "기본 폴백 스타일 사용",
-	"notice.fallbackStyleApplied": "\"{{name}}\"이(가) 이제 기본 폴백 스타일을 사용합니다.",
+	"notice.fallbackStyleApplied": '"{{name}}"이(가) 이제 기본 폴백 스타일을 사용합니다.',
 
 	"settings.colorSwatchAria": "강조색: {{accent}} · 배경: {{bg}}",
 
@@ -128,14 +123,12 @@ export const ko: Record<string, string> = {
 	"settings.themeCalloutsHeading": "테마에서 제공하는 callout",
 	"settings.themeCalloutsDefaultTheme": "사용자의 테마",
 	"settings.themeCalloutsEmpty": "현재 {{theme}}은(는) 어떤 callout에도 스타일을 적용하지 않습니다.",
-	"settings.themePreviewAria":
-		'"{{name}}" 미리보기 — 테마가 이를 어떻게 그리는지 확인',
+	"settings.themePreviewAria": '"{{name}}" 미리보기 — 테마가 이를 어떻게 그리는지 확인',
 	"settings.builtInAllThemeStyled":
 		"{{theme}}이(가) 모든 기본 제공 callout에 스타일을 적용하므로 Callout Studio는 모두 그대로 둡니다. 직접 디자인하려면 다른 ID로 callout을 추가하세요.",
 
 	"settings.fallbackCallout": "기본 폴백 callout",
-	"settings.fallbackCalloutDesc":
-		"알 수 없는 callout 유형은 이 스타일을 상속합니다.",
+	"settings.fallbackCalloutDesc": "알 수 없는 callout 유형은 이 스타일을 상속합니다.",
 
 	"settings.border": "테두리",
 	"settings.borderTop": "위",
@@ -167,8 +160,7 @@ export const ko: Record<string, string> = {
 	"settings.paletteCountOne": "팔레트 1개",
 	"settings.editPaletteAria": "팔레트 {{name}} 편집",
 	"settings.deletePaletteTitle": "팔레트 삭제",
-	"settings.deletePaletteBody":
-		'이 색상을 사용하는 callout은 영향을 받지 않습니다.',
+	"settings.deletePaletteBody": "이 색상을 사용하는 callout은 영향을 받지 않습니다.",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'메타데이터에 이 이름("{{key}}")을 적은 callout은 대신 그 이름의 기본 제공 색상을 사용합니다. 노트는 변경되지 않습니다.',
 
@@ -193,11 +185,10 @@ export const ko: Record<string, string> = {
 	"commandBuilder.formatHeading": "제목",
 	"commandBuilder.formatInline": "인라인",
 	"commandBuilder.formatBlock": "블록",
-	"commandBuilder.roleDisabled":
-		"이 형식은 꺼져 있어서, 다시 켜기 전까지 명령어는 일반 텍스트를 삽입합니다.",
-	"commandBuilder.roleThemeOwned":
-		"이 callout은 테마가 제공하므로 Block 형식만 사용할 수 있습니다.",
-	"commandBuilder.commandSuspended": "테마가 이 callout을 제공하는 동안 일시 중지됩니다. 이때 이 callout에는 블록 형식만 있습니다.",
+	"commandBuilder.roleDisabled": "이 형식은 꺼져 있어서, 다시 켜기 전까지 명령어는 일반 텍스트를 삽입합니다.",
+	"commandBuilder.roleThemeOwned": "이 callout은 테마가 제공하므로 Block 형식만 사용할 수 있습니다.",
+	"commandBuilder.commandSuspended":
+		"테마가 이 callout을 제공하는 동안 일시 중지됩니다. 이때 이 callout에는 블록 형식만 있습니다.",
 	"commandBuilder.pausedTag": "테마 때문에 일시 중지",
 	"commandBuilder.missingTag": "callout 없음",
 	"commandBuilder.callout": "callout 유형",
@@ -205,8 +196,7 @@ export const ko: Record<string, string> = {
 	"commandBuilder.headingLevel": "제목 수준",
 	"commandBuilder.headingLevelDesc": "작성할 제목 수준입니다.",
 	"commandBuilder.action": "작업",
-	"commandBuilder.actionDesc":
-		"감싸기는 선택 영역을 callout으로 바꾸고, 삽입은 빈 callout을 추가합니다.",
+	"commandBuilder.actionDesc": "감싸기는 선택 영역을 callout으로 바꾸고, 삽입은 빈 callout을 추가합니다.",
 	"commandBuilder.actionDescHeading":
 		"감싸기는 커서가 있는 줄을 제목 callout으로 바꿉니다.\n삽입은 새 줄에 빈 callout을 추가합니다.",
 	"commandBuilder.actionDescInline":
@@ -214,21 +204,18 @@ export const ko: Record<string, string> = {
 	"commandBuilder.actionWrap": "선택 영역 감싸기",
 	"commandBuilder.actionInsert": "새로 삽입",
 	"commandBuilder.foldState": "접기 상태",
-	"commandBuilder.foldStateDesc":
-		"callout을 접을 수 있는지와 시작 상태를 지정합니다.",
+	"commandBuilder.foldStateDesc": "callout을 접을 수 있는지와 시작 상태를 지정합니다.",
 	"commandBuilder.foldNone": "접을 수 없음",
 	"commandBuilder.foldExpanded": "접을 수 있음, 열림 (+)",
 	"commandBuilder.foldCollapsed": "접을 수 있음, 닫힘 (-)",
 	"commandBuilder.preview": "명령어 이름",
 	"commandBuilder.duplicate": "이미 똑같은 작업을 하는 명령어가 있습니다.",
-	"commandBuilder.noCallouts":
-		"아직 명령어를 만들 수 있는 callout 유형이 없습니다.",
+	"commandBuilder.noCallouts": "아직 명령어를 만들 수 있는 callout 유형이 없습니다.",
 	"commandBuilder.noCalloutChosen": "먼저 이 명령어에 사용할 callout을 선택하세요.",
 	"commandBuilder.save": "저장",
 
 	"settings.resetAll": "재설정",
-	"settings.resetAllDesc":
-		"모든 설정과 사용자 지정을 기본값으로 복원합니다.",
+	"settings.resetAllDesc": "모든 설정과 사용자 지정을 기본값으로 복원합니다.",
 	"settings.resetAllButton": "모두 재설정",
 	"notice.resetAllDone": "모든 항목이 기본값으로 재설정되었습니다.",
 	"settings.resetIntro": "잠시 시간을 내어 Callout Studio로 만든 모든 것을 돌아보세요.",
@@ -249,47 +236,43 @@ export const ko: Record<string, string> = {
 	"settings.resetItemAutocomplete": "자동 완성 및 메타데이터 설정",
 	"settings.resetItemFallback": "대체 스타일",
 	"settings.resetItemIconLibraries": "아이콘 라이브러리 순서 및 숨긴 라이브러리",
-	"settings.resetAllConfirmAfter": "걱정 마세요. 초기화하기 전에 현재 설정의 백업을 저장합니다. 설정의 이전 버전 복원에서 언제든 되돌릴 수 있습니다.\n동기화 서비스를 사용하면 초기화가 다른 기기에도 전달될 수 있습니다.",
+	"settings.resetAllConfirmAfter":
+		"걱정 마세요. 초기화하기 전에 현재 설정의 백업을 저장합니다. 설정의 이전 버전 복원에서 언제든 되돌릴 수 있습니다.\n동기화 서비스를 사용하면 초기화가 다른 기기에도 전달될 수 있습니다.",
 	"settings.resetNothing": "재설정할 항목이 없습니다. 모든 것이 이미 기본값입니다.",
 
-	"notice.customCommandMissingCallout":
-		"해당 명령어의 callout 유형이 더 이상 존재하지 않습니다.",
+	"notice.customCommandMissingCallout": "해당 명령어의 callout 유형이 더 이상 존재하지 않습니다.",
 
-	"notice.importedJSON":
-		"JSON에서 {{count}}개의 callout 유형을 가져왔습니다.",
+	"notice.importedJSON": "JSON에서 {{count}}개의 callout 유형을 가져왔습니다.",
 	"notice.importedSettings": "플러그인 설정을 가져왔습니다.",
 	"notice.importedCalloutManager":
 		"Callout Manager에서 가져왔습니다: {{created}}개 생성됨, {{updated}}개 업데이트됨.",
-	"notice.importedAdmonition":
-		"Admonition에서 가져왔습니다: {{created}}개 생성, {{updated}}개 업데이트.",
-	"notice.noNewJSON":
-		"새로운 callout 유형을 가져오지 못했습니다 (ID가 이미 존재할 수 있습니다).",
+	"notice.importedAdmonition": "Admonition에서 가져왔습니다: {{created}}개 생성, {{updated}}개 업데이트.",
+	"notice.noNewJSON": "새로운 callout 유형을 가져오지 못했습니다 (ID가 이미 존재할 수 있습니다).",
 	"notice.iconDownloadFailed":
 		'Material 아이콘 "{{name}}"을(를) 다운로드할 수 없습니다. 이 스타일/굵기에서 사용할 수 없거나 연결이 오프라인 상태일 수 있습니다.',
-	"notice.vaultScanFailed": "callout 사용량을 계산할 수 없었습니다. {{count}}개의 노트를 읽을 수 없었습니다. 저장소 및 동기화를 확인하고 다시 시도하세요.",
+	"notice.vaultScanFailed":
+		"callout 사용량을 계산할 수 없었습니다. {{count}}개의 노트를 읽을 수 없었습니다. 저장소 및 동기화를 확인하고 다시 시도하세요.",
 
 	"notice.externalCssRetired":
 		"개인 CSS 스타일링 옵션이 제거되었습니다. 이제 이 callout들은 테마가 스타일을 지정하지 않는 한 저장된 Callout Studio 디자인을 사용합니다. 노트와 개인 CSS 스니펫은 변경되지 않았습니다.",
 	"notice.vaultRewritePartial":
 		"{{count}}개의 노트를 업데이트할 수 없어 변경되지 않은 상태로 남았습니다. 자세한 내용은 개발자 콘솔을 확인하세요.",
-	"notice.calloutDeleteIncomplete": "일부 노트를 변환하지 못했습니다. callout 유형은 유지되었습니다. 완료된 변환은 저장되었습니다. 파일 문제를 해결한 다음 작업을 다시 실행하여 완료하세요.",
+	"notice.calloutDeleteIncomplete":
+		"일부 노트를 변환하지 못했습니다. callout 유형은 유지되었습니다. 완료된 변환은 저장되었습니다. 파일 문제를 해결한 다음 작업을 다시 실행하여 완료하세요.",
 	"notice.nothingToWrap": "감쌀 내용이 없습니다.",
 	"notice.cursorNotInsideCallout": "커서가 callout 안에 있지 않습니다.",
 	"notice.headingAlreadyCallout": "이 제목은 이미 callout입니다.",
 	"notice.unwrapLeftAsIs": "이 callout은 안전하게 제거할 수 없어 그대로 두었습니다.",
-	"notice.autocompleteTargetMoved":
-		"아무것도 삽입되지 않았습니다 — 편집기가 열려 있는 동안 줄이 변경되었습니다.",
+	"notice.autocompleteTargetMoved": "아무것도 삽입되지 않았습니다 — 편집기가 열려 있는 동안 줄이 변경되었습니다.",
 	"notice.autocompleteAlwaysEnabled": "자동 완성은 이제 핵심 기능이며 항상 켜져 있습니다.",
 	"notice.openHotkeysFailed": "Obsidian 단축키 설정을 열 수 없습니다.",
-	"notice.filterHotkeysFailed":
-		"Obsidian 단축키를 열었지만 Callout Studio 필터를 적용할 수 없습니다.",
+	"notice.filterHotkeysFailed": "Obsidian 단축키를 열었지만 Callout Studio 필터를 적용할 수 없습니다.",
 
 	"editor.editCallout": "callout 편집",
 	"editor.newCallout": "새 callout",
 	"editor.displayName": "표시 이름",
 	"editor.displayNameDesc": "UI에 표시되는 읽기 가능한 레이블",
-	"editor.displayNameBuiltIn":
-		"기본 제공 callout의 표시 이름은 변경할 수 없습니다",
+	"editor.displayNameBuiltIn": "기본 제공 callout의 표시 이름은 변경할 수 없습니다",
 	"editor.displayNamePlaceholder": "내 callout",
 	"editor.calloutIds": "Callout ID",
 	"editor.calloutIdsDesc":
@@ -298,8 +281,7 @@ export const ko: Record<string, string> = {
 	"editor.addId": "ID 추가",
 	"editor.maxIds": "ID는 최대 {{max}}개까지 추가할 수 있습니다. 다른 ID를 추가하려면 하나를 삭제하세요.",
 	"editor.idLinkedToName": "표시 이름에 연결됨",
-	"editor.idCannotDelete":
-		"이 ID는 표시 이름에 연결되어 있어 삭제할 수 없습니다 — 이름을 편집하여 변경하세요",
+	"editor.idCannotDelete": "이 ID는 표시 이름에 연결되어 있어 삭제할 수 없습니다 — 이름을 편집하여 변경하세요",
 	"editor.icon": "아이콘",
 	"editor.pickIcon": "아이콘 변경",
 	"editor.replaceIcon": "아이콘 교체",
@@ -315,24 +297,22 @@ export const ko: Record<string, string> = {
 	"editor.horizontalOffset": "수평 오프셋",
 	"editor.verticalOffset": "수직 오프셋",
 	"editor.colors": "색상",
-	"editor.colorsDesc":
-		"이 callout의 테두리, 배경, 텍스트 색상을 설정합니다.",
+	"editor.colorsDesc": "이 callout의 테두리, 배경, 텍스트 색상을 설정합니다.",
 	"editor.resetColors": "색상을 기본값으로 재설정",
 	"editor.paletteDeleted": "삭제된 색상",
 	"editor.paletteGroupObsidian": "Obsidian callout",
 	"editor.paletteGroupPresets": "색상 사전 설정",
 	"editor.paletteGroupCustom": "사용자 지정",
-	"editor.contrastWarning":
-		"배경과의 대비가 낮습니다 — 읽기 어려울 수 있습니다",
+	"editor.contrastWarning": "배경과의 대비가 낮습니다 — 읽기 어려울 수 있습니다",
 	"editor.foldable": "접을 수 있음",
-	"editor.foldableDesc":
-		"callout을 접을 수 있는지와 볼트 전체에 적용할 기본 상태를 선택합니다.",
+	"editor.foldableDesc": "callout을 접을 수 있는지와 볼트 전체에 적용할 기본 상태를 선택합니다.",
 	"editor.foldOff": "끄기",
 	"editor.foldOpen": "기본적으로 열기",
 	"editor.foldClosed": "기본적으로 닫기",
 	"editor.cancel": "취소",
 	"editor.saveChanges": "변경 사항 저장",
-	"editor.saveFailed": "저장을 완료하지 못했습니다. 이 편집기가 아직 열려 있다면 닫지 말고 저장 공간과 동기화 상태를 확인한 후 다시 시도하세요. 일부 설정이나 노트 변경 사항은 이미 저장되었을 수 있습니다.",
+	"editor.saveFailed":
+		"저장을 완료하지 못했습니다. 이 편집기가 아직 열려 있다면 닫지 말고 저장 공간과 동기화 상태를 확인한 후 다시 시도하세요. 일부 설정이나 노트 변경 사항은 이미 저장되었을 수 있습니다.",
 	"editor.createCallout": "callout 만들기",
 	"editor.nameRequired": "callout을 만들기 전에 표시 이름이 필요합니다.",
 	"editor.noChangesToSave": "변경 사항이 없습니다.",
@@ -349,21 +329,18 @@ export const ko: Record<string, string> = {
 		"{{theme}}이(가) {{names}} 블록 callout을 직접 그리고, {{stock}}은(는) Obsidian이 그립니다. 다른 ID는 이 디자인을 유지합니다.",
 	"editor.idThemePattern":
 		"참고: 사용자의 테마는 {{pattern}}과(와) 일치하는 모든 callout을 스타일 지정하므로, 이 callout의 모양을 덮어쓸 수 있습니다.",
-	"editor.idDashConflict":
-		'Obsidian은 공백을 대시로 저장하므로 이 ID는 "{{other}}"와(과) 충돌합니다',
+	"editor.idDashConflict": 'Obsidian은 공백을 대시로 저장하므로 이 ID는 "{{other}}"와(과) 충돌합니다',
 	"editor.idOwnedBy": '"{{id}}"은(는) {{name}}의 ID입니다. {{link}}.',
 	"editor.idMoveHere": "여기로 옮길 수 있습니다",
 	"editor.idOwnedByMain":
 		'"{{id}}"은(는) {{name}}의 기본 ID입니다. 여기서 사용하려면 먼저 {{name}}을(를) 삭제하세요.',
-	"editor.idBuiltInStock":
-		'"{{id}}"은(는) {{name}}에 대한 Obsidian 자체 ID 중 하나입니다.',
+	"editor.idBuiltInStock": '"{{id}}"은(는) {{name}}에 대한 Obsidian 자체 ID 중 하나입니다.',
 	"editor.idMoving": '저장하면 "{{id}}"이(가) {{name}}에서 여기로 이동합니다.',
 	"editor.idMovingNotes": "노트는 그대로 유지되며 이 Callout의 스타일을 따릅니다.",
 	"editor.untitledCallout": "제목 없는 Callout",
 	"editor.loremIpsum":
 		"산들바람이 나무 사이로 지나갑니다. 따뜻한 햇살이 고요한 오솔길을 비추며 풍경에 생기를 더합니다.",
-	"editor.loremIpsumShort":
-		"산들바람이 나무 사이로 지나갑니다.",
+	"editor.loremIpsumShort": "산들바람이 나무 사이로 지나갑니다.",
 	"editor.sampleInlineText": "다음은 단락 안에 있는 인라인 [!{id}]{{title}} 필입니다.",
 	"editor.previewReadOnly": "실시간 미리보기는 편집할 수 없습니다",
 	"noteChanges.title": "노트를 업데이트할까요?",
@@ -378,13 +355,11 @@ export const ko: Record<string, string> = {
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": '{{name}} — 테마에서 제공',
+	"themePreview.title": "{{name}} — 테마에서 제공",
 	"themePreview.summary":
 		"{{theme}}에서 제공(읽기 전용). 여기서는 색상, 아이콘 및 ID를 변경할 수 없으며 제목/인라인 형식을 사용할 수 없습니다. 사용자 지정하려면 새 callout을 만드세요.",
 	"themePreview.previewTitle": "현재 렌더링 모습",
-	"themePreview.blockSample":
-		"> [!{{id}}] {{name}}\n" +
-		"> callout 내용은 이렇게 보입니다.\n",
+	"themePreview.blockSample": "> [!{{id}}] {{name}}\n" + "> callout 내용은 이렇게 보입니다.\n",
 
 	// Theme callout preview window
 	"editor.themePreviewClose": "확인",
@@ -397,21 +372,26 @@ export const ko: Record<string, string> = {
 	"palette.namePlaceholder": "내 팔레트",
 	"palette.nameExists": "이 이름의 팔레트가 이미 있습니다",
 	"palette.saveBlockedName": "이 이름의 팔레트가 이미 있습니다. 저장하려면 다른 이름을 선택하세요.",
-	"palette.metadataNameExists": '다른 팔레트가 이미 callout 메타데이터에 "{{key}}"(으)로 쓰여 있습니다. 다른 이름을 선택하세요.',
-	"palette.metadataNameShared": "callout 메타데이터에서: {{key}}. 저장된 다른 팔레트에도 이 단어가 있어서 둘 중 하나만 반응합니다.",
+	"palette.metadataNameExists":
+		'다른 팔레트가 이미 callout 메타데이터에 "{{key}}"(으)로 쓰여 있습니다. 다른 이름을 선택하세요.',
+	"palette.metadataNameShared":
+		"callout 메타데이터에서: {{key}}. 저장된 다른 팔레트에도 이 단어가 있어서 둘 중 하나만 반응합니다.",
 	"palette.renameNotesChange":
-		"팔레트 이름을 \"{{old}}\"에서 \"{{new}}\"(으)로 변경했으므로, callout 메타데이터의 팔레트 단어도 \"{{oldWord}}\"에서 \"{{newWord}}\"(으)로 바뀝니다.",
-	"palette.renameNotesLeaveDesc": "\"{{word}}\"을(를) 유지하며 자체 색상으로 돌아갑니다.",
+		'팔레트 이름을 "{{old}}"에서 "{{new}}"(으)로 변경했으므로, callout 메타데이터의 팔레트 단어도 "{{oldWord}}"에서 "{{newWord}}"(으)로 바뀝니다.',
+	"palette.renameNotesLeaveDesc": '"{{word}}"을(를) 유지하며 자체 색상으로 돌아갑니다.',
 	"palette.renameNotesChangeDesc": "노트의 모든 |{{old}}이(가) |{{new}}(으)로 바뀝니다.",
-	"palette.renameNotesFailed": "일부 노트를 업데이트하지 못했습니다. 업데이트된 노트는 저장되었으며, 나머지는 여전히 이전 이름을 사용합니다.",
+	"palette.renameNotesFailed":
+		"일부 노트를 업데이트하지 못했습니다. 업데이트된 노트는 저장되었으며, 나머지는 여전히 이전 이름을 사용합니다.",
 	"palette.baseColor": "기본 색상",
 	"palette.colorViewAdvanced": "각 색상을 개별적으로 설정",
 	"palette.colorViewSimple": "단일 기본 색상으로 되돌리기",
 	"palette.advancedColors": "색상",
 	"palette.lightModeColors": "라이트 모드 색상",
 	"palette.darkModeColors": "다크 모드 색상",
-	"palette.modeColorsHintLight": "이 변경 사항은 라이트 모드에만 적용됩니다. 다크 모드는 자체 색상을 유지합니다.\n다크 모드 색상을 편집하려면 위의 달 버튼을 누르세요.",
-	"palette.modeColorsHintDark": "이 변경 사항은 다크 모드에만 적용됩니다. 라이트 모드는 자체 색상을 유지합니다.\n라이트 모드 색상을 편집하려면 위의 해 버튼을 누르세요.",
+	"palette.modeColorsHintLight":
+		"이 변경 사항은 라이트 모드에만 적용됩니다. 다크 모드는 자체 색상을 유지합니다.\n다크 모드 색상을 편집하려면 위의 달 버튼을 누르세요.",
+	"palette.modeColorsHintDark":
+		"이 변경 사항은 다크 모드에만 적용됩니다. 라이트 모드는 자체 색상을 유지합니다.\n라이트 모드 색상을 편집하려면 위의 해 버튼을 누르세요.",
 	"palette.showLightMode": "라이트 모드 보기",
 	"palette.showDarkMode": "다크 모드 보기",
 	"palette.accentColor": "강조 색상",
@@ -503,12 +483,10 @@ export const ko: Record<string, string> = {
 	"iconPicker.searchSimpleIcons": "Simple Icons 검색",
 	"iconPicker.custom": "사용자 지정 아이콘",
 	"iconPicker.searchCustom": "사용자 지정 아이콘 검색",
-	"iconPicker.customTooLarge":
-		"{{name}}이(가) 너무 큽니다. 사용자 지정 아이콘은 최대 5 MB까지 허용됩니다.",
+	"iconPicker.customTooLarge": "{{name}}이(가) 너무 큽니다. 사용자 지정 아이콘은 최대 5 MB까지 허용됩니다.",
 	"iconPicker.customUnsupported":
 		"{{name}}은(는) 지원되는 사용자 지정 아이콘 파일이 아닙니다. SVG, PNG, JPEG 또는 WebP를 사용하세요.",
-	"iconPicker.customInvalidSvg":
-		"{{name}}을(를) 안전한 SVG로 읽을 수 없어 추가되지 않았습니다.",
+	"iconPicker.customInvalidSvg": "{{name}}을(를) 안전한 SVG로 읽을 수 없어 추가되지 않았습니다.",
 	"iconPicker.customDecodeFailed": "{{name}}을(를) 사용자 지정 아이콘으로 읽을 수 없습니다.",
 	"iconPicker.customDuplicate":
 		"{{name}}이(가) 이미 사용자 지정 아이콘에 있습니다. 파일 이름을 변경하거나 기존 아이콘을 삭제하세요.",
@@ -538,8 +516,7 @@ export const ko: Record<string, string> = {
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "모든 라이브러리를 한 번에 검색",
 	"iconPicker.descLucide": "Obsidian 자체 세트, 항상 오프라인",
-	"iconPicker.descTabler":
-		"깔끔하고 일관된 UI 아이콘, 아웃라인과 채워진 스타일",
+	"iconPicker.descTabler": "깔끔하고 일관된 UI 아이콘, 아웃라인과 채워진 스타일",
 	"iconPicker.descMaterial": "Google 세트, 네 가지 스타일과 일곱 가지 두께",
 	"iconPicker.descEmoji": "컬러 글리프, 모든 피부 톤",
 	"iconPicker.descOcticons": "GitHub 인터페이스 아이콘",
@@ -667,15 +644,13 @@ export const ko: Record<string, string> = {
 	"iconPack.downloadDetail": "{{count}}개 아이콘 · {{size}} · 1회 다운로드",
 	"iconPack.download": "다운로드",
 	"iconPack.downloading": "{{name}} 다운로드 중…",
-	"iconPack.downloadFailed":
-		"{{name}}을(를) 다운로드할 수 없습니다. 연결을 확인하고 다시 시도하세요.",
+	"iconPack.downloadFailed": "{{name}}을(를) 다운로드할 수 없습니다. 연결을 확인하고 다시 시도하세요.",
 	"iconPack.retry": "재시도",
 	"iconPack.faBrandsNotice":
 		"브랜드 아이콘은 각 소유자의 상표입니다. 포함되었다고 해서 지지를 의미하지 않습니다. 해당 회사, 제품 또는 서비스를 나타내기 위해서만 사용하세요.",
 	"iconPack.simpleIconsNotice":
 		"로고는 각 소유자의 상표이며, 여기에 포함되었다고 해서 보증을 의미하지는 않습니다. 로고는 해당 브랜드를 나타내는 용도로만 사용하고 그 브랜드의 가이드라인을 따르세요. 일부 로고에는 자체 라이선스도 있으니 아이콘 크레딧을 확인하세요.",
-	"iconPack.artworkRestored":
-		"{{names}}의 아이콘 아트워크를 다운로드했습니다.",
+	"iconPack.artworkRestored": "{{names}}의 아이콘 아트워크를 다운로드했습니다.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio가 아이콘 팩을 디스크에 저장할 수 없어 다음에 다시 다운로드해야 합니다. 선택한 아이콘은 설정에 저장되어 있습니다.",
 	"settings.colorsAndIcons": "색상 및 아이콘",
@@ -708,7 +683,8 @@ export const ko: Record<string, string> = {
 	"iconLibraries.resetSubtitle": "플러그인 원래 라이브러리로 되돌리기",
 	"iconLibraries.resetConfirm":
 		"라이브러리를 플러그인 설치 당시 상태로 되돌립니다. 기본 순서로 돌아가고, 숨긴 항목이 없어지고, 다운로드한 라이브러리는 모두 사라집니다. 다음 라이브러리가 삭제됩니다:",
-	"iconLibraries.resetKeeps": "이미 아이콘을 사용 중인 callout은 그대로 유지합니다. 나중에 이 라이브러리에서 새 아이콘을 고르려면 다시 다운로드하세요.",
+	"iconLibraries.resetKeeps":
+		"이미 아이콘을 사용 중인 callout은 그대로 유지합니다. 나중에 이 라이브러리에서 새 아이콘을 고르려면 다시 다운로드하세요.",
 	"iconLibraries.resetButton": "재설정",
 
 	// Icon licences & credits
@@ -729,7 +705,8 @@ export const ko: Record<string, string> = {
 	"contextMenu.setFoldNone": "callout을 접을 수 없게 설정",
 	"contextMenu.cutSection": "제목 섹션 잘라내기",
 	"notice.clipboardWriteFailed": "클립보드에 복사하지 못했습니다. 노트는 변경되지 않았습니다.",
-	"notice.sectionChangedAfterCopy": "섹션을 복사했지만 잘라내기 전에 노트가 변경되었습니다. 아무것도 제거되지 않았습니다.",
+	"notice.sectionChangedAfterCopy":
+		"섹션을 복사했지만 잘라내기 전에 노트가 변경되었습니다. 아무것도 제거되지 않았습니다.",
 	"contextMenu.copySection": "제목 섹션 복사",
 	"contextMenu.deleteSection": "제목 섹션 삭제",
 
@@ -760,15 +737,14 @@ export const ko: Record<string, string> = {
 	"settings.metadataWordAlreadyHere": "이미 목록에 있는 단어입니다",
 	"settings.metadataWordTooLong": "단어는 {{max}}자 이하여야 합니다",
 	"settings.maxMetadataWords": "단어는 최대 {{max}}개입니다. 다른 단어를 추가하려면 하나를 삭제하세요.",
-	"settings.buildFailed": "Callout Studio가 설정을 표시하지 못했습니다. Obsidian을 다시 시작하고, 같은 일이 반복되면 알려 주세요.",
-	"settings.globalSettingsRegularDesc":
-		"테두리, 반지름, 폰트 크기, 정렬.",
-	"settings.globalSettingsHeadingDesc":
-		"테두리, 모양, 수직 간격.",
-	"settings.globalSettingsInlineDesc":
-		"테두리와 모양.",
+	"settings.buildFailed":
+		"Callout Studio가 설정을 표시하지 못했습니다. Obsidian을 다시 시작하고, 같은 일이 반복되면 알려 주세요.",
+	"settings.globalSettingsRegularDesc": "테두리, 반지름, 폰트 크기, 정렬.",
+	"settings.globalSettingsHeadingDesc": "테두리, 모양, 수직 간격.",
+	"settings.globalSettingsInlineDesc": "테두리와 모양.",
 	"settings.themeCalloutStyles": "테마의 callout 스타일 사용",
-	"settings.themeCalloutStylesDesc": "켜면 테마가 스타일을 적용하는 callout은 테마의 모양을 유지하며 블록 callout으로만 표시됩니다. 끄면 Callout Studio가 모든 callout을 그립니다.",
+	"settings.themeCalloutStylesDesc":
+		"켜면 테마가 스타일을 적용하는 callout은 테마의 모양을 유지하며 블록 callout으로만 표시됩니다. 끄면 Callout Studio가 모든 callout을 그립니다.",
 
 	"settings.calloutTypeRegular": "블록 callout 스타일",
 	"settings.calloutTypeHeading": "제목 callout 스타일",
@@ -802,22 +778,18 @@ export const ko: Record<string, string> = {
 	"confirm.titleDeleteLibrary": "아이콘 라이브러리 삭제",
 	"confirm.titleResetLibraries": "아이콘 라이브러리 재설정",
 
-	"vault.filesUpdated":
-		"볼트 파일에서 {{count}}개의 callout 참조를 업데이트했습니다.",
-	"vault.idsUpdated":
-		"볼트 파일에서 {{count}}개의 callout ID를 업데이트했습니다: {{oldIds}} → {{newId}}",
-	"vault.titlesUpdated":
-		"볼트 파일에서 {{count}}개의 callout 제목을 업데이트했습니다: {{oldTitle}} → {{newTitle}}",
+	"vault.filesUpdated": "볼트 파일에서 {{count}}개의 callout 참조를 업데이트했습니다.",
+	"vault.idsUpdated": "볼트 파일에서 {{count}}개의 callout ID를 업데이트했습니다: {{oldIds}} → {{newId}}",
+	"vault.titlesUpdated": "볼트 파일에서 {{count}}개의 callout 제목을 업데이트했습니다: {{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated": "볼트 파일에서 Callout {{count}}개의 접기 표시를 업데이트했습니다.",
 	"vault.confirmReplace": "교체",
 	"vault.replacePromptInUse":
 		'"{{name}}"은(는) {{files}}개의 파일에서 {{count}}번 사용됩니다. 교체할 callout을 선택하세요:',
-	"vault.replacePromptUnused":
-		'"{{name}}"을(를) 교체할 callout을 선택하세요:',
+	"vault.replacePromptUnused": '"{{name}}"을(를) 교체할 callout을 선택하세요:',
 	"vault.noReplacementAvailable": "이것을 교체할 다른 callout이 없습니다.",
-	"vault.convertedToPlainText":
-		"{{files}}개의 파일에서 {{blocks}}개의 callout 블록을 일반 텍스트로 변환했습니다.",
-	"vault.resetNotesFailed": "일부 노트를 업데이트하지 못해 callout이 재설정되지 않았습니다. 마무리하려면 기본값으로 재설정을 다시 선택하세요.",
+	"vault.convertedToPlainText": "{{files}}개의 파일에서 {{blocks}}개의 callout 블록을 일반 텍스트로 변환했습니다.",
+	"vault.resetNotesFailed":
+		"일부 노트를 업데이트하지 못해 callout이 재설정되지 않았습니다. 마무리하려면 기본값으로 재설정을 다시 선택하세요.",
 
 	"quickInsert.title": "블록 callout 빠른 삽입",
 	"quickInsert.desc": "커서 위치에 삽입할 callout을 선택하세요. 블록 callout만 해당됩니다.",
@@ -832,11 +804,13 @@ export const ko: Record<string, string> = {
 	"quickInsert.noResults": "callout을 찾을 수 없습니다",
 	"quickInsert.noBuiltInCallouts": "현재 사용할 수 있는 기본 제공 callout이 없습니다.",
 	"quickInsert.noThemeCallouts": "현재 사용할 수 있는 테마별 callout이 없습니다.",
-	"quickInsert.targetMoved": "빠른 삽입을 연 노트가 변경되었거나 닫혔습니다. 편집하려는 노트에서 빠른 삽입을 다시 여세요.",
+	"quickInsert.targetMoved":
+		"빠른 삽입을 연 노트가 변경되었거나 닫혔습니다. 편집하려는 노트에서 빠른 삽입을 다시 여세요.",
 	"quickInsert.targetMovedHint": "이 삽입에 사용할 원본 노트를 더 이상 사용할 수 없습니다.",
 	"quickInsert.noUserCallouts":
 		"아직 사용자 지정 callout을 만들지 않았습니다. 명령 팔레트에서 “Callout Studio: 새 callout 유형 만들기”를 실행하세요.",
-	"quickInsert.noAvailableUserCallouts": "사용자 지정 callout은 활성 테마가 제어하고 있기 때문에 현재 테마 필터 아래에 표시됩니다.",
+	"quickInsert.noAvailableUserCallouts":
+		"사용자 지정 callout은 활성 테마가 제어하고 있기 때문에 현재 테마 필터 아래에 표시됩니다.",
 	"quickInsert.noEditorHint": "편집 모드로 열린 노트가 없어 아무것도 삽입할 수 없습니다.",
 	"quickInsert.noEditor": "callout을 삽입하려면 노트를 편집 모드로 여세요.",
 
@@ -851,7 +825,8 @@ export const ko: Record<string, string> = {
 	"portable.customInvalid": "주변 Markdown 구조를 변경하지 않고 대체 내용을 한 줄로 유지하세요.",
 	"portable.customUnsafe": "이렇게 바꾸면 제목이나 해당 링크의 참조 대상이 모호해집니다. 다른 제목을 선택하세요.",
 	"portable.customStale": "검토 내용이 변경되었습니다. 대체 편집기를 다시 여세요.",
-	"portable.customDiscarded": "원본 텍스트가 변경되었거나 안전하게 찾을 수 없어 사용자 지정 바꾸기 {{count}}개를 제거했습니다.",
+	"portable.customDiscarded":
+		"원본 텍스트가 변경되었거나 안전하게 찾을 수 없어 사용자 지정 바꾸기 {{count}}개를 제거했습니다.",
 	"portable.customBadge": "사용자 지정",
 
 	"usage.title": "callout 찾기",
@@ -881,33 +856,29 @@ export const ko: Record<string, string> = {
 
 	"import.title": "가져오기 문제",
 	"import.reportLeadIn": "계속하기 전에 다음 가져오기 문제를 확인하세요:",
-	"import.reportLeadInFatal":
-		"이 데이터를 가져올 수 없습니다:",
+	"import.reportLeadInFatal": "이 데이터를 가져올 수 없습니다:",
 	"import.entryHeading": "항목 {{index}} — {{label}}",
-	"import.summary":
-		"{{total}}개 중 {{valid}}개 항목이 유효합니다 · {{issues}}개의 문제가 발견되었습니다.",
+	"import.summary": "{{total}}개 중 {{valid}}개 항목이 유효합니다 · {{issues}}개의 문제가 발견되었습니다.",
 	"import.btnCancel": "취소",
 	"import.btnImportValid": "유효한 항목만 가져오기 ({{count}}개)",
-	"import.nothingValid": "유효한 항목이 없어 가져올 것이 없습니다. 취소하고 여기에 나열된 문제를 해결한 다음 다시 가져오세요.",
-	"import.err.notRecognized":
-		"인식할 수 없는 파일: callout 정의 배열 또는 Callout Studio 내보내기가 필요합니다.",
-	"import.warn.settingsIgnored":
-		"설정 블록이 유효한 객체가 아니어서 무시되었습니다.",
-	"import.warn.invalidGradient":
-		"배경 그라데이션이 유효하지 않아 무시되었습니다.",
-	"import.err.parseFailed":
-		"파일이 유효한 JSON이 아니므로 파싱할 수 없습니다.",
+	"import.nothingValid":
+		"유효한 항목이 없어 가져올 것이 없습니다. 취소하고 여기에 나열된 문제를 해결한 다음 다시 가져오세요.",
+	"import.err.notRecognized": "인식할 수 없는 파일: callout 정의 배열 또는 Callout Studio 내보내기가 필요합니다.",
+	"import.warn.settingsIgnored": "설정 블록이 유효한 객체가 아니어서 무시되었습니다.",
+	"import.warn.invalidGradient": "배경 그라데이션이 유효하지 않아 무시되었습니다.",
+	"import.err.parseFailed": "파일이 유효한 JSON이 아니므로 파싱할 수 없습니다.",
 	"import.err.tooLarge": "이 가져오기는 16 MiB 크기 제한을 초과합니다. 더 작은 파일로 나눈 다음 다시 시도하세요.",
-	"import.err.tooComplex": "이 가져오기는 너무 복잡합니다. 목록이나 객체마다 항목은 최대 1,000개, 전체 값은 50,000개, 중첩은 최대 32단계로 제한하세요.",
-	"import.err.imageBudget": "전체 이미지 모음이 크기 또는 복잡도 제한을 초과합니다. 가져오기 전에 큰 이미지를 제거하거나 단순화하세요.",
+	"import.err.tooComplex":
+		"이 가져오기는 너무 복잡합니다. 목록이나 객체마다 항목은 최대 1,000개, 전체 값은 50,000개, 중첩은 최대 32단계로 제한하세요.",
+	"import.err.imageBudget":
+		"전체 이미지 모음이 크기 또는 복잡도 제한을 초과합니다. 가져오기 전에 큰 이미지를 제거하거나 단순화하세요.",
 	"import.err.processingFailed": "가져오기를 완료하지 못했습니다. 데이터를 확인한 다음 다시 시도하세요.",
-	"import.reportTruncated": "전체 {{total}}개 문제 중 처음 {{shown}}개를 표시합니다. 이 보고서에서는 긴 값이 축약됩니다.",
+	"import.reportTruncated":
+		"전체 {{total}}개 문제 중 처음 {{shown}}개를 표시합니다. 이 보고서에서는 긴 값이 축약됩니다.",
 	"import.err.entryNotObject": "항목은 객체여야 합니다.",
-	"import.err.requiredMissing":
-		'필수 필드 "{{field}}"이(가) 없거나 잘못된 유형입니다.',
+	"import.err.requiredMissing": '필수 필드 "{{field}}"이(가) 없거나 잘못된 유형입니다.',
 	"import.err.idEmpty": "ID는 비어 있으면 안 됩니다.",
-	"import.err.idTooLong":
-		'ID "{{value}}"는 {{length}}자입니다. 최대 {{max}}자입니다.',
+	"import.err.idTooLong": 'ID "{{value}}"는 {{length}}자입니다. 최대 {{max}}자입니다.',
 	"import.err.idBadChar":
 		'ID "{{value}}"에 유효하지 않은 문자가 포함되어 있습니다 ("|", "[", "]", 탭, 줄 바꿈은 허용되지 않습니다).',
 	"import.err.idMetadata":
@@ -915,27 +886,20 @@ export const ko: Record<string, string> = {
 	"import.err.idReserved":
 		'ID "{{value}}"는 Callout Studio가 자체 미리 보기를 위해 예약해 두었으므로 가져올 수 없습니다.',
 	"import.err.displayNameEmpty": "표시 이름은 비어 있으면 안 됩니다.",
-	"import.err.displayNameTooLong":
-		"표시 이름은 {{length}}자입니다. 최대 {{max}}자입니다.",
-	"import.err.boolField":
-		'"{{field}}"은(는) 불리언 값(true 또는 false)이어야 합니다.',
+	"import.err.displayNameTooLong": "표시 이름은 {{length}}자입니다. 최대 {{max}}자입니다.",
+	"import.err.boolField": '"{{field}}"은(는) 불리언 값(true 또는 false)이어야 합니다.',
 	"import.err.iconNotObject": "아이콘은 객체여야 합니다.",
-	"import.err.iconTypeInvalid":
-		'아이콘 유형 "{{value}}"은(는) {{types}} 중 하나여야 합니다.',
+	"import.err.iconTypeInvalid": '아이콘 유형 "{{value}}"은(는) {{types}} 중 하나여야 합니다.',
 	"import.warn.iconFieldIgnored":
 		'"{{field}}"은(는) Material 아이콘에만 적용되며 아이콘 유형 {{type}}에 대해서는 무시됩니다.',
-	"import.err.iconValueEmpty":
-		"아이콘 값은 비어 있지 않은 문자열이어야 합니다.",
-	"import.err.iconValueTooLong":
-		"아이콘 값이 200자 제한을 초과했습니다 ({{length}}자).",
+	"import.err.iconValueEmpty": "아이콘 값은 비어 있지 않은 문자열이어야 합니다.",
+	"import.err.iconValueTooLong": "아이콘 값이 200자 제한을 초과했습니다 ({{length}}자).",
 	"import.err.materialStyle":
 		'Material 아이콘 스타일 "{{value}}"은(는) outlined, filled, rounded, sharp 중 하나여야 합니다.',
-	"import.err.materialWeight":
-		'Material 아이콘 두께 "{{value}}"은(는) 100에서 700 사이의 100 단위 정수여야 합니다.',
+	"import.err.materialWeight": 'Material 아이콘 두께 "{{value}}"은(는) 100에서 700 사이의 100 단위 정수여야 합니다.',
 	"import.warn.iconRecolorIgnored":
 		'"recolor"은(는) 직접 추가한 이미지에만 적용되며 아이콘 유형 {{type}}에 대해서는 무시됩니다.',
-	"import.err.iconRecolorInvalid":
-		'"recolor"은(는) true 또는 false여야 합니다 (받음: "{{value}}").',
+	"import.err.iconRecolorInvalid": '"recolor"은(는) true 또는 false여야 합니다 (받음: "{{value}}").',
 	"import.err.colorInvalid":
 		'"{{field}}"은(는) "#448aff"와 같은 16진수 색상이어야 합니다 ("{{value}}"을(를) 받았습니다).',
 	"import.err.numberRange":
@@ -949,23 +913,17 @@ export const ko: Record<string, string> = {
 	"import.err.aliasDup": '"{{value}}" 별칭이 이 항목 내에서 중복됩니다.',
 	"import.err.tooManyIds":
 		"ID가 너무 많습니다 ({{count}}개). 각 callout은 최대 {{max}}개의 ID(기본 + 별칭)를 가질 수 있습니다.",
-	"import.err.metadataShape":
-		'"metadata"는 모든 값이 문자열인 객체여야 합니다.',
-	"import.warn.unknownFields":
-		"알 수 없는 필드가 무시되었습니다: {{fields}}.",
-	"import.err.duplicateInFile":
-		'ID/별칭 "{{value}}"은(는) 이 파일의 항목 #{{first}}에서 이미 사용 중입니다.',
-	"import.err.aliasConflict":
-		'별칭 "{{value}}"은(는) 볼트의 다른 callout ("{{other}}")에서 이미 사용 중입니다.',
+	"import.err.metadataShape": '"metadata"는 모든 값이 문자열인 객체여야 합니다.',
+	"import.warn.unknownFields": "알 수 없는 필드가 무시되었습니다: {{fields}}.",
+	"import.err.duplicateInFile": 'ID/별칭 "{{value}}"은(는) 이 파일의 항목 #{{first}}에서 이미 사용 중입니다.',
+	"import.err.aliasConflict": '별칭 "{{value}}"은(는) 볼트의 다른 callout ("{{other}}")에서 이미 사용 중입니다.',
 	"import.warn.defaultFoldedAutofix":
 		'"defaultFolded"가 true이고 "foldable"이 false였습니다. defaultFolded가 false로 재설정되었습니다.',
 	"import.warn.imageMissing":
 		"이 Callout은 파일에도, 이 vault에도 없는 이미지를 사용하므로 새 이미지를 지정할 때까지 자리 표시자 아이콘이 표시됩니다.",
 
-	"import.err.paletteIdInvalid":
-		'"paletteId"는 비어 있지 않은 텍스트 ID여야 합니다("{{value}}" 수신).',
-	"import.warn.iconNameUnknown":
-		'"{{value}}" 아이콘이 {{type}}에 없어 기본 아이콘이 대신 사용되었습니다.',
+	"import.err.paletteIdInvalid": '"paletteId"는 비어 있지 않은 텍스트 ID여야 합니다("{{value}}" 수신).',
+	"import.warn.iconNameUnknown": '"{{value}}" 아이콘이 {{type}}에 없어 기본 아이콘이 대신 사용되었습니다.',
 	"import.warn.cmIconUnknownNew":
 		'"{{value}}" 아이콘을 이 vault에서 사용할 수 없어 기본 아이콘이 대신 사용되었습니다.',
 	"import.warn.cmIconUnknownExisting":
@@ -997,29 +955,26 @@ export const ko: Record<string, string> = {
 	"import.cmVaultChecking": "Callout Manager 플러그인을 찾는 중…",
 	"import.cmVaultFound": "사용자 지정 callout {{count}}개를 찾았습니다.",
 	"import.cmFromPaste": "복사한 스타일",
-	"import.cmFromPasteDesc":
-		"Callout Manager의 Copy 버튼이 복사하는 내용, 또는 data.json 파일.",
-	"import.cmPlaceholder":
-		"복사한 스타일 또는 data.json의 내용을 여기에 붙여넣으세요…",
+	"import.cmFromPasteDesc": "Callout Manager의 Copy 버튼이 복사하는 내용, 또는 data.json 파일.",
+	"import.cmPlaceholder": "복사한 스타일 또는 data.json의 내용을 여기에 붙여넣으세요…",
 	"import.cmBtnCancel": "취소",
 	"import.cmBtnImport": "가져오기",
-	"import.err.cmNoBlocksFound":
-		"파일 또는 붙여넣은 텍스트에서 Callout Manager 스타일을 찾을 수 없습니다.",
+	"import.err.cmNoBlocksFound": "파일 또는 붙여넣은 텍스트에서 Callout Manager 스타일을 찾을 수 없습니다.",
 	"import.err.cmNotRecognized":
 		"인식할 수 없는 파일입니다. Callout Manager의 Copy 버튼으로 생성한 스타일 또는 Callout Manager의 data.json 파일이 필요합니다.",
-	"import.err.cmNoEntries":
-		"가져올 수 있는 사용자 지정 callout을 찾지 못했습니다.",
-	"import.err.cmNoColorForNew":
-		'새 callout "{{value}}"에 사용 가능한 색상을 찾을 수 없어 건너뛰었습니다.',
+	"import.err.cmNoEntries": "가져올 수 있는 사용자 지정 callout을 찾지 못했습니다.",
+	"import.err.cmNoColorForNew": '새 callout "{{value}}"에 사용 가능한 색상을 찾을 수 없어 건너뛰었습니다.',
 	"import.err.cmIdConflict":
 		'ID "{{value}}"는 이미 다른 callout("{{other}}")의 alias로 사용 중이어서 건너뛰었습니다.',
-	"import.warn.cmNoColorDefault":
-		"Callout Manager에 색상이 설정되어 있지 않아 기본 회색이 사용되었습니다.",
+	"import.warn.cmNoColorDefault": "Callout Manager에 색상이 설정되어 있지 않아 기본 회색이 사용되었습니다.",
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "테마에 따라 달라지는 스타일은 유지할 수 없습니다. 조건 없는 값을 우선하며 조건부 대체 값은 모든 테마에 적용됩니다.",
-	"import.warn.cmCustomStylesSkipped": "Callout Manager의 사용자 지정 CSS는 가져오지 않습니다. 지원되는 아이콘 및 색상 설정만 가져올 수 있습니다.",
-	"import.warn.cmSchemeIcon": "Callout Studio는 두 색상 구성 모두에 같은 아이콘을 사용합니다. 가져온 아이콘이 두 구성에 적용됩니다.",
+	"import.warn.cmThemeConditionPartial":
+		"테마에 따라 달라지는 스타일은 유지할 수 없습니다. 조건 없는 값을 우선하며 조건부 대체 값은 모든 테마에 적용됩니다.",
+	"import.warn.cmCustomStylesSkipped":
+		"Callout Manager의 사용자 지정 CSS는 가져오지 않습니다. 지원되는 아이콘 및 색상 설정만 가져올 수 있습니다.",
+	"import.warn.cmSchemeIcon":
+		"Callout Studio는 두 색상 구성 모두에 같은 아이콘을 사용합니다. 가져온 아이콘이 두 구성에 적용됩니다.",
 	"import.err.cmDuplicateId": "ID {{value}}이(가) 이 가져오기에서 {{other}}와 중복되어 건너뛰었습니다.",
 	"import.admTitle": "Admonition에서 가져오기",
 	"import.admInstructions":
@@ -1035,8 +990,7 @@ export const ko: Record<string, string> = {
 	"import.err.admNotRecognized":
 		"인식할 수 없는 파일입니다: admonition 목록 또는 Admonition의 data.json이 필요합니다.",
 	"import.err.admNoEntries": "가져올 admonition을 찾지 못했습니다.",
-	"import.err.admTypeMissing":
-		'이 admonition에는 "type"이 없어 건너뛰었습니다.',
+	"import.err.admTypeMissing": '이 admonition에는 "type"이 없어 건너뛰었습니다.',
 	"import.warn.admIconUnknown":
 		'"{{value}}" 이름의 아이콘을 어떤 아이콘 라이브러리에서도 찾지 못해 기본 아이콘을 사용했습니다.',
 	"import.warn.admIconUnknownExisting":
@@ -1047,23 +1001,20 @@ export const ko: Record<string, string> = {
 	"import.warn.admIconWithCss":
 		"이 admonition은 Admonition의 CSS 스니펫으로 스타일이 지정되어 있습니다. 해당 스타일은 " +
 		"가져오기에 포함되지 않으므로 이름, 아이콘, 색상만 가져왔습니다.",
-	"import.warn.admNoColor":
-		"색상이 설정되어 있지 않아 기본 파란색을 사용했습니다.",
-	"import.warn.admTitleTruncated":
-		"제목이 {{length}}자입니다. {{max}}자로 줄였습니다.",
+	"import.warn.admNoColor": "색상이 설정되어 있지 않아 기본 파란색을 사용했습니다.",
+	"import.warn.admTitleTruncated": "제목이 {{length}}자입니다. {{max}}자로 줄였습니다.",
 
 	"footer.openIssue": "issue 열기",
 	"footer.sourceCode": "소스 코드",
 	"settings.about": "정보",
 	"settings.version": "버전",
 	"settings.deletePaletteBodyLinkedOne":
-		'1개의 callout이 이 팔레트를 사용합니다. 색상은 유지되며, 나중에 편집기의 색상 행에서 다시 연결할 수 있습니다.',
+		"1개의 callout이 이 팔레트를 사용합니다. 색상은 유지되며, 나중에 편집기의 색상 행에서 다시 연결할 수 있습니다.",
 	"settings.deletePaletteBodyLinked":
-		'{{count}}개의 callout이 이 팔레트를 사용합니다. 색상은 유지되며, 나중에 각 편집기의 색상 행에서 다시 연결할 수 있습니다.',
+		"{{count}}개의 callout이 이 팔레트를 사용합니다. 색상은 유지되며, 나중에 각 편집기의 색상 행에서 다시 연결할 수 있습니다.",
 	"notice.palettesMerged":
 		"동일한 색상을 가진 저장된 색상 {{count}}개를 병합했습니다: {{names}}. 이를 사용하는 callout은 색상을 유지하며, 이제 남은 색상에 연결됩니다.",
-	"editor.colorsDescDeleted":
-		"이 callout의 저장된 색상이 삭제되었습니다. {{link}}",
+	"editor.colorsDescDeleted": "이 callout의 저장된 색상이 삭제되었습니다. {{link}}",
 	"editor.colorsDescDeletedLink": "복원",
 	"palette.colorExists":
 		'이 색상은 "{{name}}"과 동일합니다. 저장된 색상 두 개는 같을 수 없습니다. 구분하려면 색상 하나를 변경하세요.',
@@ -1074,14 +1025,12 @@ export const ko: Record<string, string> = {
 	"locale.downloaded": "번역을 다운로드했습니다.",
 	"locale.notDownloaded": "{{name}}이(가) 아직 다운로드되지 않았습니다",
 	"locale.retry": "다시 시도",
-	"locale.diskWriteFailed":
-		"Callout Studio가 번역을 디스크에 저장하지 못했습니다. 다음에 다시 다운로드해야 합니다.",
+	"locale.diskWriteFailed": "Callout Studio가 번역을 디스크에 저장하지 못했습니다. 다음에 다시 다운로드해야 합니다.",
 	"notice.exportedCssCreated": "CSS 스니펫을 {{path}}에 저장했습니다",
 	"notice.exportedCssUpdated": "CSS 스니펫을 {{path}}에서 업데이트했습니다",
 	"notice.exportedCssUnchanged": "CSS 스니펫이 이미 최신 상태입니다.",
 	"notice.exportCssEmpty": "내보낼 사용자 지정 callout이 없습니다.",
-	"notice.exportCssFailed":
-		"CSS 스니펫을 저장하지 못했습니다. 자세한 내용은 개발자 콘솔을 확인하세요.",
+	"notice.exportCssFailed": "CSS 스니펫을 저장하지 못했습니다. 자세한 내용은 개발자 콘솔을 확인하세요.",
 	"notice.exportCssEnabled":
 		"이 스니펫은 이 vault에서 켜져 있습니다. Callout Studio가 이미 이 callout을 스타일링하며, 스니펫은 내보낼 당시의 스타일을 유지합니다.",
 	"confirm.titleOverwriteSnippet": "CSS 스니펫 덮어쓰기",
@@ -1102,47 +1051,65 @@ export const ko: Record<string, string> = {
 	"quickInsert.readingView": "callout을 삽입하려면 소스 모드 또는 라이브 미리 보기로 전환하세요.",
 	"quickInsert.noCursorHint": "이 노트에는 커서가 없어 삽입할 위치가 없습니다.",
 	"quickInsert.noCursor": "callout을 삽입할 위치에 노트의 커서를 놓은 다음 다시 시도하세요.",
-	"notice.legacyDiscoveryArchiveFailed": "업그레이드 복구 사본을 만들지 못했습니다. 이전 로컬 검색 캐시와 시작 CSS는 변경되지 않은 상태로 유지되었습니다. 저장소 쓰기 권한과 여유 공간을 확인한 다음 Obsidian을 다시 시작하여 재시도하세요.",
+	"notice.legacyDiscoveryArchiveFailed":
+		"업그레이드 복구 사본을 만들지 못했습니다. 이전 로컬 검색 캐시와 시작 CSS는 변경되지 않은 상태로 유지되었습니다. 저장소 쓰기 권한과 여유 공간을 확인한 다음 Obsidian을 다시 시작하여 재시도하세요.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "없어진 callout을 다시 만들거나 다른 callout을 고를 때까지 일시 중지됩니다.",
 	"confirm.titleRestoreSettings": "이 설정 복원",
 	"confirm.titleCreateSettingsFile": "설정 파일 만들기",
 	"confirm.saveDisplayedSettings":
 		"지금 보이는 설정을 설정 파일로 저장하고 저장을 다시 켭니다. 이 기기가 보관 중인 예비 사본은 먼저 백업됩니다.\n다른 기기에 유지하고 싶은 더 최신 변경 사항이 있을 수 있다면, 계속하기 전에 그 기기의 동기화가 끝나도록 기다리세요. 동기화 앱이 이 파일을 다른 기기로 보낼 수 있습니다.\nCallout Studio는 저장하기 전에 설정 파일을 한 번 더 찾습니다. 파일이 돌아왔다면 Callout Studio는 그 파일을 대신 유지합니다.",
-	"notice.settingsBackupFailed": "안전 백업을 저장할 수 없어 설정 복구를 계속할 수 없습니다. 사용 가능한 저장 공간과 쓰기 권한을 확인한 후 다시 시도하세요.",
-	"notice.settingsNewerVersion": "Callout Studio의 설정이 더 새로운 버전의 플러그인에 의해 저장되어, 업데이트할 때까지 이 기기에는 아무것도 기록되지 않습니다. 설정은 안전합니다 — 여기에서 Callout Studio를 업데이트하고 Obsidian을 다시 불러오세요.",
-	"saveStatus.changed": "편집하는 동안 설정 파일이 변경되었습니다. 초안은 그대로 남아 있습니다. 다시 시도을(를) 선택해 들어온 설정을 불러온 다음, 초안을 검토하고 다시 저장하세요.",
-	"saveStatus.missing": "설정 파일이 없어 저장이 일시 중지되었습니다. 재설치 후나 동기화가 아직 실행 중일 때 발생할 수 있습니다. 동기화를 완료한 후 다시 시도하세요. 누락된 파일을 의도적으로 교체하려면 Callout Studio 설정에서 새 설정 파일 만들기를 사용하세요.",
+	"notice.settingsBackupFailed":
+		"안전 백업을 저장할 수 없어 설정 복구를 계속할 수 없습니다. 사용 가능한 저장 공간과 쓰기 권한을 확인한 후 다시 시도하세요.",
+	"notice.settingsNewerVersion":
+		"Callout Studio의 설정이 더 새로운 버전의 플러그인에 의해 저장되어, 업데이트할 때까지 이 기기에는 아무것도 기록되지 않습니다. 설정은 안전합니다 — 여기에서 Callout Studio를 업데이트하고 Obsidian을 다시 불러오세요.",
+	"saveStatus.changed":
+		"편집하는 동안 설정 파일이 변경되었습니다. 초안은 그대로 남아 있습니다. 다시 시도을(를) 선택해 들어온 설정을 불러온 다음, 초안을 검토하고 다시 저장하세요.",
+	"saveStatus.missing":
+		"설정 파일이 없어 저장이 일시 중지되었습니다. 재설치 후나 동기화가 아직 실행 중일 때 발생할 수 있습니다. 동기화를 완료한 후 다시 시도하세요. 누락된 파일을 의도적으로 교체하려면 Callout Studio 설정에서 새 설정 파일 만들기를 사용하세요.",
 	"saveStatus.restoreSettings": "이 설정 복원",
 	"saveStatus.createSettingsFile": "설정 파일 만들기",
 	"saveStatus.checkAgain": "다시 확인",
-	"saveStatus.recoverInSettings": "이 기기에서 누락된 파일을 복원하려면 Callout Studio 설정을 여세요. 이 편집기를 닫기 전에 보관하려는 저장되지 않은 편집 내용을 복사하세요. 해당 내용은 저장되지 않았습니다.",
+	"saveStatus.recoverInSettings":
+		"이 기기에서 누락된 파일을 복원하려면 Callout Studio 설정을 여세요. 이 편집기를 닫기 전에 보관하려는 저장되지 않은 편집 내용을 복사하세요. 해당 내용은 저장되지 않았습니다.",
 	"saveStatus.openSettings": "Callout Studio 설정 열기",
-	"notice.openSettingsFailed": "Callout Studio 설정을 열 수 없습니다. 설정 → Callout Studio를 열어 어떻게 할지 선택하세요.",
-	"saveStatus.notesFailed": "callout 정의는 저장되었지만 일부 노트 업데이트를 완료할 수 없었습니다. 이 편집기를 열어 둔 상태에서 저장을 선택해 완료되지 않은 업데이트를 다시 시도하세요.",
-	"saveStatus.recoveryRead": "로컬 복구 사본을 읽을 수 없어 저장이 일시 중지되었습니다. 설정 파일은 아직 손상되지 않았을 수 있습니다. 사용 가능한 저장 공간을 확인한 후 복구를 다시 시도하세요. 기존 복구 데이터는 덮어쓰이지 않습니다.",
-	"saveStatus.recoveryWrite": "로컬 복구 사본을 저장할 수 없었습니다. 사용 가능한 저장 공간을 확인한 후 다시 시도하세요. 저장이 성공할 때까지 초안을 열어 두세요.",
-	"saveStatus.retryFailed": "저장이 계속 차단되어 있습니다. 원인을 확인하려면 Callout Studio 설정에서 저장 상태를 확인한 후 다시 시도하세요.",
-	"saveStatus.reviewDraft": "수신된 설정과 복구 검사가 완료되었습니다. 초안은 변경되지 않았습니다. 검토한 후 다시 저장하세요.",
+	"notice.openSettingsFailed":
+		"Callout Studio 설정을 열 수 없습니다. 설정 → Callout Studio를 열어 어떻게 할지 선택하세요.",
+	"saveStatus.notesFailed":
+		"callout 정의는 저장되었지만 일부 노트 업데이트를 완료할 수 없었습니다. 이 편집기를 열어 둔 상태에서 저장을 선택해 완료되지 않은 업데이트를 다시 시도하세요.",
+	"saveStatus.recoveryRead":
+		"로컬 복구 사본을 읽을 수 없어 저장이 일시 중지되었습니다. 설정 파일은 아직 손상되지 않았을 수 있습니다. 사용 가능한 저장 공간을 확인한 후 복구를 다시 시도하세요. 기존 복구 데이터는 덮어쓰이지 않습니다.",
+	"saveStatus.recoveryWrite":
+		"로컬 복구 사본을 저장할 수 없었습니다. 사용 가능한 저장 공간을 확인한 후 다시 시도하세요. 저장이 성공할 때까지 초안을 열어 두세요.",
+	"saveStatus.retryFailed":
+		"저장이 계속 차단되어 있습니다. 원인을 확인하려면 Callout Studio 설정에서 저장 상태를 확인한 후 다시 시도하세요.",
+	"saveStatus.reviewDraft":
+		"수신된 설정과 복구 검사가 완료되었습니다. 초안은 변경되지 않았습니다. 검토한 후 다시 저장하세요.",
 	"saveStatus.settingsArrived": "기존 설정이 도착해 불러와졌습니다. 대체 파일은 만들어지지 않았습니다.",
-	"saveStatus.syncConflict": "수신된 설정이 완료되지 않은 노트 업데이트에 필요한 callout과 충돌합니다. 초안과 대기 중인 업데이트는 유지되었습니다. 다시 시도하기 전에 설정 충돌을 해결하세요.",
+	"saveStatus.syncConflict":
+		"수신된 설정이 완료되지 않은 노트 업데이트에 필요한 callout과 충돌합니다. 초안과 대기 중인 업데이트는 유지되었습니다. 다시 시도하기 전에 설정 충돌을 해결하세요.",
 	"saveStatus.titlePaused": "저장이 일시 중지되었습니다",
 	"saveStatus.titleFailed": "설정이 저장되지 않았습니다",
 	"saveStatus.tryAgain": "다시 시도",
 	"saveStatus.working": "처리 중…",
-	"saveStatus.unreadable": "설정 파일을 안전하게 읽을 수 없어 저장이 일시 중지되었습니다. 동기화를 완료하거나 유효한 사본을 복원한 후 다시 시도하세요. 기존 파일은 유지되었습니다.",
-	"saveStatus.write": "설정 파일을 저장할 수 없었습니다. 사용 가능한 저장 공간, 폴더 권한, 동기화를 확인한 후 Obsidian을 닫기 전에 다시 시도하세요.",
-	"saveStatus.writePermission": "저장소가 쓰기 접근을 거부해 설정 파일을 저장할 수 없었습니다. 볼트와 플러그인 폴더에 쓸 수 있는지 확인한 후 다시 시도하세요.",
-	"saveStatus.writeSpace": "저장소가 가득 찼거나 할당량을 초과해 설정 파일을 저장할 수 없었습니다. 공간을 좀 확보한 후 다시 시도하세요.",
-	"settings.readOnly": "Obsidian이 시작될 때 Callout Studio가 설정 파일을 사용할 수 없어 이 페이지의 내용이 이 기기에 저장되지 않습니다. 변경 사항은 Obsidian을 닫을 때까지 유지됩니다. 파일이 돌아오면 Obsidian을 다시 불러오세요 — 이 볼트를 동기화하는 경우 먼저 동기화를 완료하세요.",
+	"saveStatus.unreadable":
+		"설정 파일을 안전하게 읽을 수 없어 저장이 일시 중지되었습니다. 동기화를 완료하거나 유효한 사본을 복원한 후 다시 시도하세요. 기존 파일은 유지되었습니다.",
+	"saveStatus.write":
+		"설정 파일을 저장할 수 없었습니다. 사용 가능한 저장 공간, 폴더 권한, 동기화를 확인한 후 Obsidian을 닫기 전에 다시 시도하세요.",
+	"saveStatus.writePermission":
+		"저장소가 쓰기 접근을 거부해 설정 파일을 저장할 수 없었습니다. 볼트와 플러그인 폴더에 쓸 수 있는지 확인한 후 다시 시도하세요.",
+	"saveStatus.writeSpace":
+		"저장소가 가득 찼거나 할당량을 초과해 설정 파일을 저장할 수 없었습니다. 공간을 좀 확보한 후 다시 시도하세요.",
+	"settings.readOnly":
+		"Obsidian이 시작될 때 Callout Studio가 설정 파일을 사용할 수 없어 이 페이지의 내용이 이 기기에 저장되지 않습니다. 변경 사항은 Obsidian을 닫을 때까지 유지됩니다. 파일이 돌아오면 Obsidian을 다시 불러오세요 — 이 볼트를 동기화하는 경우 먼저 동기화를 완료하세요.",
 	"portable.reviewTitle": "변환 검토",
-	"portable.helpIntro": "적용할 대체 항목을 선택하세요. 연필 아이콘이나 대체 텍스트를 클릭해 편집한 다음 Enter 키를 누르거나 입력란 바깥을 클릭해 저장하세요. 재설정 아이콘으로 초안을 버리거나 기본 대체 항목을 복원할 수 있습니다. 선택 항목 변환을 선택하고 확인한 뒤에만 노트가 변경됩니다. 제목 링크는 선택한 제목과 함께 업데이트됩니다.",
+	"portable.helpIntro":
+		"적용할 대체 항목을 선택하세요. 연필 아이콘이나 대체 텍스트를 클릭해 편집한 다음 Enter 키를 누르거나 입력란 바깥을 클릭해 저장하세요. 재설정 아이콘으로 초안을 버리거나 기본 대체 항목을 복원할 수 있습니다. 선택 항목 변환을 선택하고 확인한 뒤에만 노트가 변경됩니다. 제목 링크는 선택한 제목과 함께 업데이트됩니다.",
 	"portable.help": "변환 안내",
 	"portable.roleLink": "제목 링크",
 	"portable.convertSelected": "선택 항목 변환",
 	"portable.selectionSummary": "{{total}}개 대체 항목 중 {{selected}}개 선택 · 제목 링크 {{links}}개 업데이트 예정",
-	"portable.selectionSummaryNoLinks":
-		"{{total}}개 대체 항목 중 {{selected}}개 선택",
+	"portable.selectionSummaryNoLinks": "{{total}}개 대체 항목 중 {{selected}}개 선택",
 	"portable.selectionConflict": "이 항목을 선택하면 제목 링크의 대상이 모호해집니다. 이전 선택을 유지했습니다.",
 	"portable.selectAll": "모두 선택",
 	"portable.selectNone": "모두 선택 해제",
@@ -1154,14 +1121,19 @@ export const ko: Record<string, string> = {
 	"portable.retry": "다시 시도",
 	"portable.blockedAmbiguous": "링크 대상이 모호하여 이 제목을 건너뜁니다.",
 	"portable.blockedTarget": "링크 대상을 안전하게 유지할 수 없어 이 제목을 건너뜁니다.",
-	"portable.recovery": "아직 완료되지 않은 변경 사항이 있습니다. 플러그인을 다시 시작하거나 비활성화하기 전에 이 변환과 제목 링크 업데이트를 완료하세요. 대기 중인 계획은 메모리에만 저장됩니다.",
-	"portable.recoveryChanged": "변환이 중지된 후 노트가 변경되었습니다. 대기 중인 링크 업데이트는 유지되며, 쓰기 전에 모든 노트를 다시 확인합니다.",
+	"portable.recovery":
+		"아직 완료되지 않은 변경 사항이 있습니다. 플러그인을 다시 시작하거나 비활성화하기 전에 이 변환과 제목 링크 업데이트를 완료하세요. 대기 중인 계획은 메모리에만 저장됩니다.",
+	"portable.recoveryChanged":
+		"변환이 중지된 후 노트가 변경되었습니다. 대기 중인 링크 업데이트는 유지되며, 쓰기 전에 모든 노트를 다시 확인합니다.",
 	"portable.finishConversion": "변환 완료",
-	"portable.recoveryUnavailable": "일부 대기 중인 링크 업데이트를 안전하게 복구하지 못했습니다. 새 변환을 시작하기 전에 해당 노트를 확인하세요.",
+	"portable.recoveryUnavailable":
+		"일부 대기 중인 링크 업데이트를 안전하게 복구하지 못했습니다. 새 변환을 시작하기 전에 해당 노트를 확인하세요.",
 	"portable.title": "표준 Markdown으로 변환",
-	"portable.settingDesc": "보관함 전체의 제목 및 인라인 콜아웃을 Callout Studio 없이 사용할 수 있는 일반 텍스트로 바꿉니다.",
+	"portable.settingDesc":
+		"보관함 전체의 제목 및 인라인 콜아웃을 Callout Studio 없이 사용할 수 있는 일반 텍스트로 바꿉니다.",
 	"portable.review": "변환 검토",
-	"portable.intro": "Callout Studio 사용을 중단하거나 이를 지원하지 않는 앱으로 보관함을 옮기려면 제목 및 인라인 콜아웃을 표준 Markdown으로 변환하세요.",
+	"portable.intro":
+		"Callout Studio 사용을 중단하거나 이를 지원하지 않는 앱으로 보관함을 옮기려면 제목 및 인라인 콜아웃을 표준 Markdown으로 변환하세요.",
 	"portable.before": "변경 전",
 	"portable.after": "변경 후",
 	"portable.replacement": "대체",
@@ -1169,17 +1141,20 @@ export const ko: Record<string, string> = {
 	"portable.type": "유형",
 	"portable.text": "텍스트",
 	"portable.headingText": "제목",
-	"portable.backup": "변환 전에 보관함을 백업하는 것이 좋습니다. 원본 노트가 변경되며 Callout Studio에서 되돌릴 수 없습니다.",
+	"portable.backup":
+		"변환 전에 보관함을 백업하는 것이 좋습니다. 원본 노트가 변경되며 Callout Studio에서 되돌릴 수 없습니다.",
 	"portable.scanning": "Markdown 노트 읽는 중…",
 	"portable.progress": "노트 읽는 중: {{total}}개 중 {{done}}개",
 	"portable.empty": "변환할 수 있는 제목 또는 인라인 콜아웃이 없습니다. 아무것도 변경되지 않습니다.",
 	"portable.confirmTitle": "이 보관함을 영구적으로 변환할까요?",
 	"portable.confirmSubtitle": "자동 백업이 만들어지지 않습니다",
-	"portable.confirmBody": "노트 {{files}}개에서 {{count}}개 항목을 변환하고 제목 링크 {{links}}개를 업데이트할까요?\n원본 파일이 변경되며 Callout Studio에서 되돌릴 수 없습니다. 자동 백업은 생성되지 않습니다. 먼저 보관함을 백업하고 열린 노트를 저장한 뒤, 변환이 끝날 때까지 편집과 동기화를 일시 중지하세요.\n파일이 변경되거나 쓰기에 실패하면 변환이 중지됩니다. 이미 변환된 노트는 변경된 상태로 유지됩니다.",
+	"portable.confirmBody":
+		"노트 {{files}}개에서 {{count}}개 항목을 변환하고 제목 링크 {{links}}개를 업데이트할까요?\n원본 파일이 변경되며 Callout Studio에서 되돌릴 수 없습니다. 자동 백업은 생성되지 않습니다. 먼저 보관함을 백업하고 열린 노트를 저장한 뒤, 변환이 끝날 때까지 편집과 동기화를 일시 중지하세요.\n파일이 변경되거나 쓰기에 실패하면 변환이 중지됩니다. 이미 변환된 노트는 변경된 상태로 유지됩니다.",
 	"portable.confirmAction": "영구적으로 변환",
 	"portable.converting": "선택한 변경 사항을 변환하는 중… 이 창을 닫아도 변환은 중지되지 않습니다.",
 	"portable.complete": "노트 {{files}}개에서 {{count}}개 항목을 변환하고 제목 링크 {{links}}개를 업데이트했습니다.",
-	"portable.stopped": "변환이 중지되었습니다. 노트 {{files}}개에서 {{count}}개 항목과 제목 링크 {{links}}개가 이미 변경되었으며, 해당 변경 사항은 유지됩니다.",
+	"portable.stopped":
+		"변환이 중지되었습니다. 노트 {{files}}개에서 {{count}}개 항목과 제목 링크 {{links}}개가 이미 변경되었으며, 해당 변경 사항은 유지됩니다.",
 	"portable.errorEditor": "열린 노트를 저장하면 검토 내용이 자동으로 업데이트됩니다.",
 	"portable.errorChanged": "노트가 변경되었습니다. 변환하기 전에 업데이트된 변경 사항을 검토하세요.",
 	"portable.errorBusy": "다른 변환이 진행 중입니다. 완료될 때까지 기다리세요.",
@@ -1206,25 +1181,36 @@ export const ko: Record<string, string> = {
 	"saveStatus.calm.opening": "우선 심호흡을 하세요. 모두 잘 해결될 거예요.",
 	"saveStatus.calm.kept": "노트는 안전하고, callout도 이 기기에 그대로 있습니다.",
 	"saveStatus.calm.safe": "노트는 안전합니다.",
-	"saveStatus.calm.pausedPage": "Callout Studio는 설정을 보호하기 위해 저장만 일시 중지했습니다. 그래서 이 페이지는 지금은 읽기 전용입니다.",
+	"saveStatus.calm.pausedPage":
+		"Callout Studio는 설정을 보호하기 위해 저장만 일시 중지했습니다. 그래서 이 페이지는 지금은 읽기 전용입니다.",
 	"saveStatus.calm.paused": "Callout Studio는 설정을 보호하기 위해 저장만 일시 중지했습니다.",
-	"saveStatus.explain.missing": "Callout Studio가 자신의 설정 파일을 찾을 수 없습니다. 동기화 앱이 아직 파일을 내려받는 중이거나, 다른 기기에서 Callout Studio가 제거된 뒤에 주로 발생합니다.",
+	"saveStatus.explain.missing":
+		"Callout Studio가 자신의 설정 파일을 찾을 수 없습니다. 동기화 앱이 아직 파일을 내려받는 중이거나, 다른 기기에서 Callout Studio가 제거된 뒤에 주로 발생합니다.",
 	"saveStatus.explain.stillMissing":
 		"설정 파일이 아직 돌아오지 않았습니다. 확인은 파일을 찾기만 하며 새 파일을 만들지 않습니다. 보관함이 iCloud, OneDrive, Google Drive 또는 Dropbox에 있다면 이 기기에 계속 내려받은 상태로 유지되도록 설정되어 있는지 확인하세요.",
 	"saveStatus.explain.unreadable": "Callout Studio가 지금은 설정 파일을 읽을 수 없어서, 파일을 그대로 두었습니다.",
-	"saveStatus.explain.recoveryRead": "Callout Studio는 이 기기에 설정의 예비 사본을 보관하는데, 지금은 그 사본을 읽을 수 없습니다. 설정 파일 자체는 괜찮을 수 있습니다.",
-	"saveStatus.explain.newerVersion": "설정이 더 최신 버전의 Callout Studio에서 저장되었으므로, 이 이전 버전은 설정을 변경하지 않습니다.",
-	"saveStatus.explain.changed": "Callout Studio가 작업하는 동안 설정 파일이 변경되어, 아무것도 바꾸지 않고 중단했습니다.",
-	"saveStatus.guide.rechecks": "Obsidian이 열려 있는 동안 Callout Studio가 1분마다 다시 확인하므로, 저절로 해결되는 경우가 많습니다.",
-	"saveStatus.guide.rechecksCheckNow": "Obsidian이 열려 있는 동안 Callout Studio가 1분마다 다시 확인하므로, 저절로 해결되는 경우가 많습니다. 지금 바로 확인하려면 다시 확인을(를) 선택하세요.",
+	"saveStatus.explain.recoveryRead":
+		"Callout Studio는 이 기기에 설정의 예비 사본을 보관하는데, 지금은 그 사본을 읽을 수 없습니다. 설정 파일 자체는 괜찮을 수 있습니다.",
+	"saveStatus.explain.newerVersion":
+		"설정이 더 최신 버전의 Callout Studio에서 저장되었으므로, 이 이전 버전은 설정을 변경하지 않습니다.",
+	"saveStatus.explain.changed":
+		"Callout Studio가 작업하는 동안 설정 파일이 변경되어, 아무것도 바꾸지 않고 중단했습니다.",
+	"saveStatus.guide.rechecks":
+		"Obsidian이 열려 있는 동안 Callout Studio가 1분마다 다시 확인하므로, 저절로 해결되는 경우가 많습니다.",
+	"saveStatus.guide.rechecksCheckNow":
+		"Obsidian이 열려 있는 동안 Callout Studio가 1분마다 다시 확인하므로, 저절로 해결되는 경우가 많습니다. 지금 바로 확인하려면 다시 확인을(를) 선택하세요.",
 	"saveStatus.guide.restore": "설정이 돌아오지 않으면 이 설정 복원을(를) 선택해 여기에 보이는 callout을 유지하세요.",
 	"saveStatus.guide.create": "설정이 돌아오지 않으면 설정 파일 만들기을(를) 선택해 다시 저장을 시작하세요.",
 	"saveStatus.guide.recoveryRetry": "이 기기에 여유 저장 공간이 있는지 확인한 다음 다시 시도을(를) 선택하세요.",
-	"saveStatus.guide.recoveryDiscard": "그래도 해결되지 않으면 복구 사본 삭제을(를) 선택하세요. 먼저 정확한 사본이 저장되며 설정 파일은 건드리지 않습니다.",
-	"saveStatus.guide.newerVersion": "설정 → 커뮤니티 플러그인에서 Callout Studio를 업데이트한 다음 Obsidian을 다시 불러오세요.",
-	"saveStatus.missingNotice": "노트는 안전합니다. Callout Studio가 지금 설정 파일을 찾을 수 없어 저장을 일시 중지했습니다.",
+	"saveStatus.guide.recoveryDiscard":
+		"그래도 해결되지 않으면 복구 사본 삭제을(를) 선택하세요. 먼저 정확한 사본이 저장되며 설정 파일은 건드리지 않습니다.",
+	"saveStatus.guide.newerVersion":
+		"설정 → 커뮤니티 플러그인에서 Callout Studio를 업데이트한 다음 Obsidian을 다시 불러오세요.",
+	"saveStatus.missingNotice":
+		"노트는 안전합니다. Callout Studio가 지금 설정 파일을 찾을 수 없어 저장을 일시 중지했습니다.",
 	"statusBar.paused": "저장 일시 중지됨",
-	"statusBar.pausedTooltip": "Callout Studio가 설정 변경 사항을 저장하지 않고 있습니다. 클릭하면 이유를 볼 수 있습니다.",
+	"statusBar.pausedTooltip":
+		"Callout Studio가 설정 변경 사항을 저장하지 않고 있습니다. 클릭하면 이유를 볼 수 있습니다.",
 	"statusBar.pausedNotice": "Callout Studio가 지금 설정 변경 사항을 저장하지 않고 있습니다.",
 	"saveStatus.resumed": "저장이 다시 켜졌습니다. Callout Studio가 설정 변경 사항을 다시 저장하고 있습니다.",
 	"notice.replaceUnreadableUnavailable":
@@ -1288,7 +1274,8 @@ export const ko: Record<string, string> = {
 	"recovery.details.unknownTime": "저장 시각이 기록되지 않음",
 	"recovery.details.current": "현재 설정",
 	"recovery.details.restored": "이 버전을 복원한 후",
-	"recovery.details.unreadable": "이 버전의 Callout Studio는 이 사본을 복원 가능한 설정으로 해석할 수 없습니다. 손상되었거나, 사용할 수 없거나, 더 새로운 형식일 수 있습니다. 비교와 복원된 설정 보고서를 사용할 수 없습니다. 읽을 수 있었던 원본 내용은 모두 아래에 포함되어 있습니다.",
+	"recovery.details.unreadable":
+		"이 버전의 Callout Studio는 이 사본을 복원 가능한 설정으로 해석할 수 없습니다. 손상되었거나, 사용할 수 없거나, 더 새로운 형식일 수 있습니다. 비교와 복원된 설정 보고서를 사용할 수 없습니다. 읽을 수 있었던 원본 내용은 모두 아래에 포함되어 있습니다.",
 	"recovery.details.null": "값 없음(null)",
 	"recovery.details.yes": "예",
 	"recovery.details.no": "아니요",
@@ -1459,7 +1446,8 @@ export const ko: Record<string, string> = {
 	"saveStatus.guide.versions": "저장이 다시 작동하면 이전 버전 복원에서 저장된 버전으로 되돌릴 수도 있습니다.",
 	"saveStatus.goToVersions": "버전 기록으로 이동",
 	"versions.title": "버전 기록",
-	"versions.intro": "Callout Studio는 구성의 버전을 자동으로 저장합니다.\n오래된 버전은 시간이 지나면 정리됩니다.\n버전을 복원하면 동기화된 모든 기기의 현재 구성이 바뀝니다.",
+	"versions.intro":
+		"Callout Studio는 구성의 버전을 자동으로 저장합니다.\n오래된 버전은 시간이 지나면 정리됩니다.\n버전을 복원하면 동기화된 모든 기기의 현재 구성이 바뀝니다.",
 	"versions.pausedHint": "저장이 일시 중지되어 복원할 수 없습니다. 버전 비교 및 삭제는 계속할 수 있습니다.",
 	"versions.loading": "버전 찾는 중…",
 	"versions.empty": "버전을 찾지 못했습니다.",
@@ -1477,14 +1465,17 @@ export const ko: Record<string, string> = {
 	"versions.reason.beforeRepair": "설정 파일 복구 전",
 	"versions.restoreTitle": "이 버전 복원",
 	"versions.subtitle": "“{{name}}” · {{when}}",
-	"versions.restoreBody": "현재 설정이 교체됩니다(차이 {{count}}개).\n먼저 버전으로 저장되므로 언제든 돌아갈 수 있습니다.\n그다음 동기화 서비스가 복원된 설정을 다른 기기로 보냅니다.",
+	"versions.restoreBody":
+		"현재 설정이 교체됩니다(차이 {{count}}개).\n먼저 버전으로 저장되므로 언제든 돌아갈 수 있습니다.\n그다음 동기화 서비스가 복원된 설정을 다른 기기로 보냅니다.",
 	"versions.restoreSame": "이 버전은 현재 구성과 같으므로 복원할 내용이 없습니다.",
 	"versions.restored": "{{when}}의 “{{name}}”을(를) 복원했습니다.",
-	"versions.backupFailed": "아무것도 복원되지 않았습니다. 현재 구성을 먼저 버전으로 저장하지 못했습니다. 사용 가능한 저장 공간을 확인한 후 다시 시도하세요.",
+	"versions.backupFailed":
+		"아무것도 복원되지 않았습니다. 현재 구성을 먼저 버전으로 저장하지 못했습니다. 사용 가능한 저장 공간을 확인한 후 다시 시도하세요.",
 	"versions.restoreFailed": "버전을 복원하지 못했습니다. 아무것도 변경되지 않았습니다.",
 	"versions.deleteTitle": "이 버전 삭제",
 	"versions.deleteAvailableBody": "이 버전과 사용 가능한 모든 사본이 영구적으로 삭제됩니다.",
-	"versions.deleteSyncedFiles": "이 파일의 삭제가 다른 기기에도 동기화될 수 있습니다. 해당 기기의 로컬 사본은 남아 있을 수 있습니다.",
+	"versions.deleteSyncedFiles":
+		"이 파일의 삭제가 다른 기기에도 동기화될 수 있습니다. 해당 기기의 로컬 사본은 남아 있을 수 있습니다.",
 	"versions.deleteFinal": "이 작업은 되돌릴 수 없습니다. 현재 구성에는 영향을 주지 않습니다.",
 	"versions.deleted": "{{when}}의 “{{name}}”을(를) 삭제했습니다.",
 	"versions.deleteFailed": "이 버전의 일부 사본을 삭제하지 못했습니다. 목록에 남은 사본이 표시됩니다.",
@@ -1492,7 +1483,8 @@ export const ko: Record<string, string> = {
 	"versions.details.difference": "현재 설정과의 차이 {{count}}개",
 	"versions.details.differences": "현재 설정과의 차이 {{count}}개",
 	"versions.details.comparisonUnavailable": "비교를 사용할 수 없습니다",
-	"notice.unsavedChangesKept": "이 기기에서 변경한 일부 내용이 아직 저장되지 않은 상태에서 다른 기기의 최신 설정으로 바뀌었습니다. 기존 버전은 먼저 저장되었습니다. 복구하려면 Callout Studio 설정에서 이전 버전 복원을 여세요.",
+	"notice.unsavedChangesKept":
+		"이 기기에서 변경한 일부 내용이 아직 저장되지 않은 상태에서 다른 기기의 최신 설정으로 바뀌었습니다. 기존 버전은 먼저 저장되었습니다. 복구하려면 Callout Studio 설정에서 이전 버전 복원을 여세요.",
 	"settings.versionHistory": "이전 버전 복원",
 	"settings.versions": "이전 버전",
 	"settings.versionsDesc": "현재 설정을 저장된 이전 버전으로 바꿉니다.",
@@ -1503,12 +1495,13 @@ export const ko: Record<string, string> = {
 	"noteChanges.notesOne": "노트 1개",
 	"noteChanges.askCallout": "그 Callout을 어떻게 할까요?",
 	"noteChanges.askCallouts": "그 Callout들을 어떻게 할까요?",
-	"noteChanges.changeRenamed": "표시 이름을 \"{{old}}\"에서 \"{{new}}\"(으)로 변경했으므로 기본 ID가 \"{{oldId}}\"에서 \"{{newId}}\"(으)로 바뀝니다.",
-	"noteChanges.changeMainId": "기본 ID가 \"{{oldId}}\"에서 \"{{newId}}\"(으)로 바뀝니다.",
-	"noteChanges.changeName": "표시 이름을 \"{{old}}\"에서 \"{{new}}\"(으)로 변경했습니다.",
-	"noteChanges.changeRemoved": "ID \"{{id}}\"을(를) 제거했습니다.",
+	"noteChanges.changeRenamed":
+		'표시 이름을 "{{old}}"에서 "{{new}}"(으)로 변경했으므로 기본 ID가 "{{oldId}}"에서 "{{newId}}"(으)로 바뀝니다.',
+	"noteChanges.changeMainId": '기본 ID가 "{{oldId}}"에서 "{{newId}}"(으)로 바뀝니다.',
+	"noteChanges.changeName": '표시 이름을 "{{old}}"에서 "{{new}}"(으)로 변경했습니다.',
+	"noteChanges.changeRemoved": 'ID "{{id}}"을(를) 제거했습니다.',
 	"noteChanges.changeRemovedMany": "다음 ID를 제거했습니다: {{ids}}.",
-	"noteChanges.changeResetRemoved": "기본값으로 재설정하면 추가한 ID \"{{id}}\"이(가) 제거됩니다.",
+	"noteChanges.changeResetRemoved": '기본값으로 재설정하면 추가한 ID "{{id}}"이(가) 제거됩니다.',
 	"noteChanges.changeResetRemovedMany": "기본값으로 재설정하면 추가한 다음 ID가 제거됩니다: {{ids}}.",
 	"noteChanges.changeFold": "이 Callout의 접힘 방식을 변경했습니다.",
 	"noteChanges.affects": "{{notes}}의 {{callouts}}에 영향을 줍니다.",
@@ -1517,7 +1510,8 @@ export const ko: Record<string, string> = {
 	"noteChanges.rewriteManyDesc": "노트의 이전 ID는 모두 [!{{to}}]이(가) 됩니다.",
 	"noteChanges.changeToIdLabel": "변경할 ID",
 	"noteChanges.rewriteDesc": "노트의 모든 [!{{id}}]이(가) [!{{to}}](으)로 바뀝니다.",
-	"noteChanges.renameFollowDesc": "노트의 모든 [!{{oldId}}]이(가) [!{{newId}}](으)로 바뀌고, \"{{old}}\"라고 적힌 제목은 \"{{new}}\"(으)로 바뀝니다.",
-	"noteChanges.titlesChangeDesc": "\"{{old}}\"라고 적힌 제목은 \"{{new}}\"(으)로 바뀝니다.",
+	"noteChanges.renameFollowDesc":
+		'노트의 모든 [!{{oldId}}]이(가) [!{{newId}}](으)로 바뀌고, "{{old}}"라고 적힌 제목은 "{{new}}"(으)로 바뀝니다.',
+	"noteChanges.titlesChangeDesc": '"{{old}}"라고 적힌 제목은 "{{new}}"(으)로 바뀝니다.',
 	"noteChanges.foldChangeDesc": "해당 + 또는 - 표시가 그에 맞게 바뀝니다.",
 };

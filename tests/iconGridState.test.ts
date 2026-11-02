@@ -116,10 +116,18 @@ it("moves along the reading direction with the left and right arrows", () => {
 		try {
 			cells[1]!.focus();
 			press("ArrowRight");
-			assert.equal(fakeDom.document.activeElement, cells[direction === "ltr" ? 2 : 0], `${direction}: right arrow`);
+			assert.equal(
+				fakeDom.document.activeElement,
+				cells[direction === "ltr" ? 2 : 0],
+				`${direction}: right arrow`,
+			);
 			cells[1]!.focus();
 			press("ArrowLeft");
-			assert.equal(fakeDom.document.activeElement, cells[direction === "ltr" ? 0 : 2], `${direction}: left arrow`);
+			assert.equal(
+				fakeDom.document.activeElement,
+				cells[direction === "ltr" ? 0 : 2],
+				`${direction}: left arrow`,
+			);
 		} finally {
 			Reflect.deleteProperty(win, "getComputedStyle");
 		}
@@ -132,7 +140,8 @@ it("moves along the reading direction with the left and right arrows", () => {
  * arrow keys and a click still reach every cell.
  */
 function tabStops(body: ReturnType<typeof el>): string[] {
-	return body.querySelectorAll(".icon-picker-cell")
+	return body
+		.querySelectorAll(".icon-picker-cell")
 		.filter((cell) => cell.getAttribute("tabindex") === "0")
 		.map((cell) => cell.textContent);
 }
@@ -148,7 +157,8 @@ function roverGrid(selected: string | null, grouped = false) {
 		emptyText: "Empty collection",
 		loadMoreText: "Load more",
 		groupLabelFor: grouped
-			? (entry, previous) => previous?.categories[0] === entry.categories[0] ? undefined : { name: entry.categories[0]! }
+			? (entry, previous) =>
+					previous?.categories[0] === entry.categories[0] ? undefined : { name: entry.categories[0]! }
 			: undefined,
 	});
 	const entries = [

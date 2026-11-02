@@ -36,7 +36,12 @@ import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CSSInjector } from "../src/manager/CSSInjector";
 import { CalloutAutoComplete } from "../src/editor/AutoComplete";
 import { CalloutMetadataSuggest } from "../src/editor/CalloutMetadataSuggest";
-import { buildMetadataSuggestions, metadataRowHeadings, slotAt, type MetadataSuggestion } from "../src/editor/metadataSuggestions";
+import {
+	buildMetadataSuggestions,
+	metadataRowHeadings,
+	slotAt,
+	type MetadataSuggestion,
+} from "../src/editor/metadataSuggestions";
 import type { MetadataWordSource } from "../src/manager/theme/ThemeMetadataCatalog";
 import { CalloutStudioSettingsTab } from "../src/settings/SettingsTab";
 import { AUTOCOMPLETE_ROWS } from "../src/settings/declarative/autocompleteRows";
@@ -60,12 +65,22 @@ describe("the saved Autocomplete settings", () => {
 	it("are all on, with no words, when the file has none", () => {
 		assert.deepEqual(mergeSavedSettings({}).suggestions, DEFAULT_SETTINGS.suggestions);
 		assert.deepEqual(DEFAULT_SETTINGS.suggestions, {
-			callouts: true, themeCallouts: true, metadata: true, themeMetadata: true, metadataWords: [],
+			callouts: true,
+			themeCallouts: true,
+			metadata: true,
+			themeMetadata: true,
+			metadataWords: [],
 		});
 	});
 
 	it("come back as saved", () => {
-		const saved = { callouts: false, themeCallouts: false, metadata: false, themeMetadata: false, metadataWords: ["wide", "50"] };
+		const saved = {
+			callouts: false,
+			themeCallouts: false,
+			metadata: false,
+			themeMetadata: false,
+			metadataWords: ["wide", "50"],
+		};
 		assert.deepEqual(mergeSavedSettings({ suggestions: saved }).suggestions, saved);
 	});
 
@@ -78,7 +93,17 @@ describe("the saved Autocomplete settings", () => {
 
 	it("clean a list of words the way typing does", () => {
 		assert.deepEqual(
-			sanitizeMetadataWords(["wide", " [50] ", "a|b c", "wide", 7, null, "", "x".repeat(MAX_METADATA_WORD_LENGTH + 1), "Wide"]),
+			sanitizeMetadataWords([
+				"wide",
+				" [50] ",
+				"a|b c",
+				"wide",
+				7,
+				null,
+				"",
+				"x".repeat(MAX_METADATA_WORD_LENGTH + 1),
+				"Wide",
+			]),
 			["wide", "50", "a", "b", "c", "Wide"],
 		);
 		assert.deepEqual(sanitizeMetadataWords("wide"), [], "not a list: no words");
@@ -95,7 +120,10 @@ describe("the saved Autocomplete settings", () => {
 		assert.ok(resetInventory(registry).restored.some((row) => row.labelKey === label));
 		registry.settings.suggestions.metadataWords = [];
 		registry.settings.metadataColors.enabled = false;
-		assert.ok(resetInventory(registry).restored.some((row) => row.labelKey === label), "metadata colours count too");
+		assert.ok(
+			resetInventory(registry).restored.some((row) => row.labelKey === label),
+			"metadata colours count too",
+		);
 		registry.settings.suggestions.callouts = false;
 		registry.resetAll();
 		assert.deepEqual(registry.settings.suggestions, DEFAULT_SETTINGS.suggestions);
@@ -157,7 +185,13 @@ function typeRows(h: Harness, source: string): string[] | null {
 	const { ed, line, ch } = at(source);
 	const info = h.auto.onTrigger({ line, ch }, asEditor(ed), null);
 	if (!info) return null;
-	const rows = h.auto.getSuggestions({ editor: asEditor(ed), file: null, start: info.start, end: info.end, query: info.query } as never);
+	const rows = h.auto.getSuggestions({
+		editor: asEditor(ed),
+		file: null,
+		start: info.start,
+		end: info.end,
+		query: info.query,
+	} as never);
 	return rows.map((row) => ("__createNew" in row ? `<create ${row.query}>` : row.id));
 }
 
@@ -166,11 +200,21 @@ function metaRows(h: Harness, source: string): MetadataSuggestion[] | null {
 	const { ed, line, ch } = at(source);
 	const info = h.meta.onTrigger({ line, ch }, asEditor(ed), null);
 	if (!info) return null;
-	return h.meta.getSuggestions({ editor: asEditor(ed), file: null, start: info.start, end: info.end, query: info.query } as never);
+	return h.meta.getSuggestions({
+		editor: asEditor(ed),
+		file: null,
+		start: info.start,
+		end: info.end,
+		query: info.query,
+	} as never);
 }
 
 const word = (w: string) => ({ word: w, placement: "anywhere" as const, guards: null });
-const themeSource = (...words: string[]): MetadataWordSource => ({ label: "Fixture theme", origin: "theme", words: words.map(word) });
+const themeSource = (...words: string[]): MetadataWordSource => ({
+	label: "Fixture theme",
+	origin: "theme",
+	words: words.map(word),
+});
 const label = (row: MetadataSuggestion): string =>
 	row.kind === "theme" ? `${row.origin}:${row.word.word}` : row.kind === "color" ? row.entry.key : `<${row.kind}>`;
 
@@ -243,7 +287,7 @@ describe("the | list and its switches", () => {
 		assert.ok(typeRows(h, "> [!no⎸"), "and this one off leaves the [! list on");
 	});
 
-	it("draws Use \"…\" below a line of its own, apart from the group above it", () => {
+	it('draws Use "…" below a line of its own, apart from the group above it', () => {
 		const h = harness([themeSource("wide")]);
 		h.settings.metadataColors.enabled = false;
 		const rows = metaRows(h, "> [!note|wid⎸") ?? [];
@@ -258,7 +302,7 @@ describe("the | list and its switches", () => {
 		assert.equal(list.querySelectorAll(".cs-meta-suggestion-separator").length, 1);
 	});
 
-	it("draws no line above Use \"…\" when it is the only row", () => {
+	it('draws no line above Use "…" when it is the only row', () => {
 		const h = harness();
 		h.settings.metadataColors.enabled = false;
 		const rows = metaRows(h, "> [!note|zzz⎸") ?? [];
@@ -275,7 +319,9 @@ describe("the | list and its switches", () => {
 		h.settings.metadataColors.enabled = false;
 		const rows = metaRows(h, "> [!note|⎸") ?? [];
 		assert.deepEqual(rows.map(label), ["user:50", "user:center", "theme:wide"]);
-		const headings = metadataRowHeadings(rows).map((heading) => (heading?.kind === "source" ? heading.label : heading));
+		const headings = metadataRowHeadings(rows).map((heading) =>
+			heading?.kind === "source" ? heading.label : heading,
+		);
 		assert.deepEqual(headings, [t("metadataSuggest.yourWords"), null, "Fixture theme"]);
 	});
 
@@ -337,8 +383,14 @@ function drawPage(options: { themeCallouts?: boolean; themeWords?: boolean; paus
 	registry.onChange(() => void state.changes++);
 	const plugin = {
 		registry,
-		get settings() { return registry.settings; },
-		settingsWriter: { get isFrozen() { return state.paused; } },
+		get settings() {
+			return registry.settings;
+		},
+		settingsWriter: {
+			get isFrozen() {
+				return state.paused;
+			},
+		},
 		cssInjector: { metadataCatalog: { sourcesNow: () => (options.themeWords ? [themeSource("wide")] : []) } },
 	};
 	const app = {} as App;
@@ -365,7 +417,9 @@ function drawPage(options: { themeCallouts?: boolean; themeWords?: boolean; paus
 	const input = () => {
 		const row = harness.rows().find((r) => r.def.id === METADATA_ROWS.words);
 		assert.ok(row);
-		return (row.settingEl as unknown as FakeElement).querySelector(".cs-tag-input-field") as unknown as FakeElement & { value: string };
+		return (row.settingEl as unknown as FakeElement).querySelector(
+			".cs-tag-input-field",
+		) as unknown as FakeElement & { value: string };
 	};
 	return { registry, state, page, tab, harness, shown, input };
 }
@@ -379,23 +433,41 @@ describe("the Autocomplete and metadata page", () => {
 	it("hides what would change nothing right now", () => {
 		const h = drawPage();
 		// No theme callouts, no theme words: no theme switches.
-		assert.deepEqual(shownIds(h), ["callout-autocomplete", "metadata-colors", "metadata-autocomplete", "metadata-words"]);
+		assert.deepEqual(shownIds(h), [
+			"callout-autocomplete",
+			"metadata-colors",
+			"metadata-autocomplete",
+			"metadata-words",
+		]);
 
 		const themed = drawPage({ themeCallouts: true, themeWords: true });
 		assert.deepEqual(shownIds(themed), [
-			"callout-autocomplete", "suggest-theme-callouts",
-			"metadata-colors", "metadata-autocomplete", "suggest-theme-metadata", "metadata-words",
+			"callout-autocomplete",
+			"suggest-theme-callouts",
+			"metadata-colors",
+			"metadata-autocomplete",
+			"suggest-theme-metadata",
+			"metadata-words",
 		]);
 
 		// Each list's off switch hides only its own rows.
 		themed.registry.settings.suggestions.metadata = false;
 		themed.tab.update();
-		assert.deepEqual(shownIds(themed), ["callout-autocomplete", "suggest-theme-callouts", "metadata-colors", "metadata-autocomplete"]);
+		assert.deepEqual(shownIds(themed), [
+			"callout-autocomplete",
+			"suggest-theme-callouts",
+			"metadata-colors",
+			"metadata-autocomplete",
+		]);
 		themed.registry.settings.suggestions.metadata = true;
 		themed.registry.settings.suggestions.callouts = false;
 		themed.tab.update();
 		assert.deepEqual(shownIds(themed), [
-			"callout-autocomplete", "metadata-colors", "metadata-autocomplete", "suggest-theme-metadata", "metadata-words",
+			"callout-autocomplete",
+			"metadata-colors",
+			"metadata-autocomplete",
+			"suggest-theme-metadata",
+			"metadata-words",
 		]);
 	});
 
@@ -413,8 +485,11 @@ describe("the Autocomplete and metadata page", () => {
 			h.flatMap((item) => [...(item.control ? [item.control.key] : []), ...keys(item.items ?? [])]);
 		const h = drawPage();
 		assert.deepEqual(keys(h.tab.settingItems as LooseDef[]), [
-			"suggestions.callouts", "suggestions.themeCallouts", "metadataColors.enabled",
-			"suggestions.metadata", "suggestions.themeMetadata",
+			"suggestions.callouts",
+			"suggestions.themeCallouts",
+			"metadataColors.enabled",
+			"suggestions.metadata",
+			"suggestions.themeMetadata",
 		]);
 	});
 });
@@ -438,7 +513,12 @@ describe("Your words", () => {
 		for (const key of [" ", "|"]) {
 			input.value = key === " " ? "fifty" : "[center]";
 			let prevented = false;
-			input.fire("keydown", { key, preventDefault: () => { prevented = true; } });
+			input.fire("keydown", {
+				key,
+				preventDefault: () => {
+					prevented = true;
+				},
+			});
 			assert.ok(prevented, `${JSON.stringify(key)} is not typed into the word`);
 		}
 		assert.deepEqual(h.registry.settings.suggestions.metadataWords, ["fifty", "center"]);
@@ -480,7 +560,10 @@ describe("Your words", () => {
 		h.tab.update();
 		const row = h.harness.rows().find((r) => r.def.id === METADATA_ROWS.words);
 		const pills = (row?.settingEl as unknown as FakeElement).querySelectorAll(".cs-tag-chip");
-		assert.deepEqual(pills.map((pill) => pill.textContent), ["synced"]);
+		assert.deepEqual(
+			pills.map((pill) => pill.textContent),
+			["synced"],
+		);
 	});
 
 	it("keeps the field beside the row's controls, where a redraw never moves it", () => {

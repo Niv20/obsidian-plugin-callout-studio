@@ -32,11 +32,7 @@ import {
 	hasAuthoredTextColors,
 	type AuthoredBackgroundState,
 } from "../src/settings/editor/authoredStyle";
-import {
-	DEFAULT_TEXT_COLOR_DARK,
-	DEFAULT_TEXT_COLOR_LIGHT,
-	bgTintFor,
-} from "../src/utils/colorUtils";
+import { DEFAULT_TEXT_COLOR_DARK, DEFAULT_TEXT_COLOR_LIGHT, bgTintFor } from "../src/utils/colorUtils";
 import { DEFAULT_ICON_ADJUST } from "../src/utils/iconAdjust";
 import type { CalloutDefinition } from "../src/types";
 
@@ -47,10 +43,7 @@ const ACCENT_DARK = "#5c9bff";
  * The form as the modal fills it for a definition carrying NO background: the
  * accent, tinted, at whatever strength is being asked about.
  */
-function derivedState(
-	over: Partial<AuthoredBackgroundState> = {},
-	amount?: number,
-): AuthoredBackgroundState {
+function derivedState(over: Partial<AuthoredBackgroundState> = {}, amount?: number): AuthoredBackgroundState {
 	return {
 		colorLight: ACCENT_LIGHT,
 		colorDark: ACCENT_DARK,
@@ -103,18 +96,12 @@ describe("hasAuthoredBackground — the derived case", () => {
 
 describe("hasAuthoredBackground — the authored cases", () => {
 	it("is true for a light background that does not solve", () => {
-		assert.strictEqual(
-			hasAuthoredBackground(derivedState({ bgColorLight: "#ffeeaa" })),
-			true,
-		);
+		assert.strictEqual(hasAuthoredBackground(derivedState({ bgColorLight: "#ffeeaa" })), true);
 	});
 
 	it("is true for a dark background that does not solve", () => {
 		// Either half is enough — the two modes are independent picks.
-		assert.strictEqual(
-			hasAuthoredBackground(derivedState({ bgColorDark: "#402000" })),
-			true,
-		);
+		assert.strictEqual(hasAuthoredBackground(derivedState({ bgColorDark: "#402000" })), true);
 	});
 
 	it("is true whenever there is a gradient at all", () => {
@@ -178,23 +165,12 @@ describe("hasAuthoredTextColors — a definition that already carried one", () =
 	// the next save.
 	it("is true when the light colour is stored, defaults in the form or not", () => {
 		const baseline = def({ textColorLight: DEFAULT_TEXT_COLOR_LIGHT });
-		assert.strictEqual(
-			hasAuthoredTextColors(
-				baseline,
-				DEFAULT_TEXT_COLOR_LIGHT,
-				DEFAULT_TEXT_COLOR_DARK,
-			),
-			true,
-		);
+		assert.strictEqual(hasAuthoredTextColors(baseline, DEFAULT_TEXT_COLOR_LIGHT, DEFAULT_TEXT_COLOR_DARK), true);
 	});
 
 	it("is true when only the dark colour is stored", () => {
 		assert.strictEqual(
-			hasAuthoredTextColors(
-				def({ textColorDark: "#ffffff" }),
-				DEFAULT_TEXT_COLOR_LIGHT,
-				DEFAULT_TEXT_COLOR_DARK,
-			),
+			hasAuthoredTextColors(def({ textColorDark: "#ffffff" }), DEFAULT_TEXT_COLOR_LIGHT, DEFAULT_TEXT_COLOR_DARK),
 			true,
 		);
 	});
@@ -204,40 +180,17 @@ describe("hasAuthoredTextColors — a definition that carried none", () => {
 	const fresh = def();
 
 	it("is false while the form still holds both invented defaults", () => {
-		assert.strictEqual(
-			hasAuthoredTextColors(
-				fresh,
-				DEFAULT_TEXT_COLOR_LIGHT,
-				DEFAULT_TEXT_COLOR_DARK,
-			),
-			false,
-		);
+		assert.strictEqual(hasAuthoredTextColors(fresh, DEFAULT_TEXT_COLOR_LIGHT, DEFAULT_TEXT_COLOR_DARK), false);
 	});
 
 	it("is true once either half moves off its default", () => {
-		assert.strictEqual(
-			hasAuthoredTextColors(fresh, "#000000", DEFAULT_TEXT_COLOR_DARK),
-			true,
-		);
-		assert.strictEqual(
-			hasAuthoredTextColors(fresh, DEFAULT_TEXT_COLOR_LIGHT, "#ffffff"),
-			true,
-		);
+		assert.strictEqual(hasAuthoredTextColors(fresh, "#000000", DEFAULT_TEXT_COLOR_DARK), true);
+		assert.strictEqual(hasAuthoredTextColors(fresh, DEFAULT_TEXT_COLOR_LIGHT, "#ffffff"), true);
 	});
 
 	it("treats a brand-new callout (no baseline at all) the same way", () => {
-		assert.strictEqual(
-			hasAuthoredTextColors(
-				undefined,
-				DEFAULT_TEXT_COLOR_LIGHT,
-				DEFAULT_TEXT_COLOR_DARK,
-			),
-			false,
-		);
-		assert.strictEqual(
-			hasAuthoredTextColors(undefined, "#123456", DEFAULT_TEXT_COLOR_DARK),
-			true,
-		);
+		assert.strictEqual(hasAuthoredTextColors(undefined, DEFAULT_TEXT_COLOR_LIGHT, DEFAULT_TEXT_COLOR_DARK), false);
+		assert.strictEqual(hasAuthoredTextColors(undefined, "#123456", DEFAULT_TEXT_COLOR_DARK), true);
 	});
 
 	it("compares the hex as written, without normalizing case", () => {
@@ -245,11 +198,7 @@ describe("hasAuthoredTextColors — a definition that carried none", () => {
 		// the colour input produced, which is lowercase, so an uppercase spelling
 		// reaching here means it came from somewhere else and is a real value.
 		assert.strictEqual(
-			hasAuthoredTextColors(
-				fresh,
-				DEFAULT_TEXT_COLOR_LIGHT.toUpperCase(),
-				DEFAULT_TEXT_COLOR_DARK,
-			),
+			hasAuthoredTextColors(fresh, DEFAULT_TEXT_COLOR_LIGHT.toUpperCase(), DEFAULT_TEXT_COLOR_DARK),
 			true,
 		);
 	});
@@ -273,10 +222,7 @@ describe("hasAuthoredIconAdjust — a definition that already carried one", () =
 
 	for (const [name, over] of cases) {
 		it(`is true for ${name}, even at the default value`, () => {
-			assert.strictEqual(
-				hasAuthoredIconAdjust(def(over), { ...DEFAULT_ICON_ADJUST }),
-				true,
-			);
+			assert.strictEqual(hasAuthoredIconAdjust(def(over), { ...DEFAULT_ICON_ADJUST }), true);
 		});
 	}
 });
@@ -285,33 +231,22 @@ describe("hasAuthoredIconAdjust — a definition that carried none", () => {
 	const fresh = def();
 
 	it("is false while every slider sits where the modal started it", () => {
-		assert.strictEqual(
-			hasAuthoredIconAdjust(fresh, { ...DEFAULT_ICON_ADJUST }),
-			false,
-		);
+		assert.strictEqual(hasAuthoredIconAdjust(fresh, { ...DEFAULT_ICON_ADJUST }), false);
 	});
 
 	it("is true once any one slider moves", () => {
-		const moved: Array<[string, Parameters<typeof hasAuthoredIconAdjust>[1]]> =
-			[
-				["offsetX", { ...DEFAULT_ICON_ADJUST, offsetX: -2 }],
-				["offsetY", { ...DEFAULT_ICON_ADJUST, offsetY: 3 }],
-				["size", { ...DEFAULT_ICON_ADJUST, size: 1.2 }],
-			];
+		const moved: Array<[string, Parameters<typeof hasAuthoredIconAdjust>[1]]> = [
+			["offsetX", { ...DEFAULT_ICON_ADJUST, offsetX: -2 }],
+			["offsetY", { ...DEFAULT_ICON_ADJUST, offsetY: 3 }],
+			["size", { ...DEFAULT_ICON_ADJUST, size: 1.2 }],
+		];
 		for (const [name, adjust] of moved) {
-			assert.strictEqual(
-				hasAuthoredIconAdjust(fresh, adjust),
-				true,
-				`${name} did not register`,
-			);
+			assert.strictEqual(hasAuthoredIconAdjust(fresh, adjust), true, `${name} did not register`);
 		}
 	});
 
 	it("treats a brand-new callout (no baseline at all) the same way", () => {
-		assert.strictEqual(
-			hasAuthoredIconAdjust(undefined, { ...DEFAULT_ICON_ADJUST }),
-			false,
-		);
+		assert.strictEqual(hasAuthoredIconAdjust(undefined, { ...DEFAULT_ICON_ADJUST }), false);
 		assert.strictEqual(
 			hasAuthoredIconAdjust(undefined, {
 				...DEFAULT_ICON_ADJUST,

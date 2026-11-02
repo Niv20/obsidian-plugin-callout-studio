@@ -111,9 +111,7 @@ export class ListboxPopup<T> {
 	 * `missingLabel` in the field; a nonempty label also keeps the lead visible.
 	 */
 	setSelected(key: string, missingLabel = ""): void {
-		const match = this.options
-			.itemsFor("")
-			.find((item) => this.options.keyOf(item) === key);
+		const match = this.options.itemsFor("").find((item) => this.options.keyOf(item) === key);
 		this.selected = match;
 		this.missingSelectionLabel = missingLabel;
 		this.field.setText(match ? this.options.labelOf(match) : missingLabel);
@@ -149,7 +147,11 @@ export class ListboxPopup<T> {
 		this.open = true;
 		this.popupEl.removeClass("cs-combobox-popup-hidden");
 		this.setExpanded(true);
-		this.removeMenuScope = captureMenuEscape(this.el, () => this.open, () => this.dismiss());
+		this.removeMenuScope = captureMenuEscape(
+			this.el,
+			() => this.open,
+			() => this.dismiss(),
+		);
 		// The empty query is the first rule of the header.
 		if (this.inputEl) this.inputEl.value = "";
 		this.rebuild("");
@@ -219,9 +221,7 @@ export class ListboxPopup<T> {
 	private rebuild(query = this.inputEl?.value ?? ""): void {
 		this.activeIndex = -1;
 		this.items = this.options.itemsFor(query);
-		const selectedKey = this.selected
-			? this.options.keyOf(this.selected)
-			: undefined;
+		const selectedKey = this.selected ? this.options.keyOf(this.selected) : undefined;
 
 		this.rowEls = renderComboboxRows(this.menuEl, {
 			items: this.items,
@@ -265,19 +265,18 @@ export class ListboxPopup<T> {
 
 		// Open on the committed row. An unresolved selection opens idle rather
 		// than making the first real option look chosen; typing still activates it.
-		const at = this.items.findIndex(
-			(item) => this.options.keyOf(item) === selectedKey,
-		);
+		const at = this.items.findIndex((item) => this.options.keyOf(item) === selectedKey);
 		const idleMissing = query === "" && this.missingSelectionLabel !== "";
 		const active = at >= 0 ? at : idleMissing ? -1 : this.items.length > 0 ? 0 : -1;
 		this.applyMenuHeightCap();
 		this.setActive(active, { preview: false });
 	}
 
-	private clearPointerHighlight(): void { if (this.pointerActive) this.setActive(-1); }
+	private clearPointerHighlight(): void {
+		if (this.pointerActive) this.setActive(-1);
+	}
 	private restorePointerHighlight(index: number): void {
-		if (!this.pointerActive || this.activeIndex !== index)
-			this.setActive(index, { pointer: true });
+		if (!this.pointerActive || this.activeIndex !== index) this.setActive(index, { pointer: true });
 	}
 	private setActive(index: number, opts?: { preview?: boolean; pointer?: boolean }): void {
 		this.rowEls[this.activeIndex]?.removeClass("is-active");

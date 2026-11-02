@@ -28,9 +28,7 @@ export interface FenceBlock {
 	depth: number;
 }
 
-const getFenceToken = (
-	line: string,
-): { kind: "code"; marker: "```" | "~~~" } | { kind: "math" } | null => {
+const getFenceToken = (line: string): { kind: "code"; marker: "```" | "~~~" } | { kind: "math" } | null => {
 	const normalized = stripLeadingQuoteTokens(line).text.trimStart();
 	if (normalized.trim() === "$$") {
 		return { kind: "math" };
@@ -80,9 +78,7 @@ export const collectFenceBlocks = (editor: Editor): FenceBlock[] => {
 
 		if (
 			(openFence.kind === "math" && token.kind === "math") ||
-			(openFence.kind === "code" &&
-				token.kind === "code" &&
-				openFence.marker === token.marker)
+			(openFence.kind === "code" && token.kind === "code" && openFence.marker === token.marker)
 		) {
 			close(line);
 		}
@@ -94,10 +90,7 @@ export const collectFenceBlocks = (editor: Editor): FenceBlock[] => {
 };
 
 /** The fenced block containing `line`, if any. */
-export const findFenceBlockAtLine = (
-	fenceBlocks: FenceBlock[],
-	line: number,
-): FenceBlock | null => {
+export const findFenceBlockAtLine = (fenceBlocks: FenceBlock[], line: number): FenceBlock | null => {
 	for (const block of fenceBlocks) {
 		if (line >= block.startLine && line <= block.endLine) {
 			return block;

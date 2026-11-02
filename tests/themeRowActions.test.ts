@@ -94,9 +94,7 @@ function fakeCtx(registry: CalloutRegistry, themeIds: string[]) {
 
 describe("a theme row is not editable", () => {
 	it("renders a preview button and a ⋯, and no editor", async () => {
-		const { drawCalloutRow } = await import(
-			"../src/settings/sections/CalloutRowRenderer"
-		);
+		const { drawCalloutRow } = await import("../src/settings/sections/CalloutRowRenderer");
 		const registry = vaultWithThemeRow();
 		const { ctx } = fakeCtx(registry, ["recite"]);
 		const host = createDiv();
@@ -112,10 +110,7 @@ describe("a theme row is not editable", () => {
 		// icon buttons in the setting row's controls (S2-14).
 		assert.ok(host.querySelector(".setting-item.cs-callout-row"), "an Obsidian setting row");
 		assert.strictEqual(host.querySelectorAll(".callout-studio-more-btn").length, 1);
-		assert.strictEqual(
-			host.querySelectorAll(".setting-item-control .clickable-icon").length,
-			2,
-		);
+		assert.strictEqual(host.querySelectorAll(".setting-item-control .clickable-icon").length, 2);
 		assert.match(
 			readRepoFile("src/settings/sections/themeRowActions.ts"),
 			/\.setIcon\("eye"\)/,
@@ -124,9 +119,7 @@ describe("a theme row is not editable", () => {
 	});
 
 	it("still gives a user row its pencil and its ⋯", async () => {
-		const { drawCalloutRow } = await import(
-			"../src/settings/sections/CalloutRowRenderer"
-		);
+		const { drawCalloutRow } = await import("../src/settings/sections/CalloutRowRenderer");
 		const registry = vaultWithThemeRow({ source: "user" });
 		const { ctx } = fakeCtx(registry, []);
 		const host = createDiv();
@@ -139,9 +132,7 @@ describe("a theme row is not editable", () => {
 			onOpenUserMenu: () => {},
 		});
 		assert.strictEqual(host.querySelectorAll(".callout-studio-more-btn").length, 1);
-		const buttons = host.querySelectorAll<HTMLElement>(
-			".setting-item-control .clickable-icon",
-		);
+		const buttons = host.querySelectorAll<HTMLElement>(".setting-item-control .clickable-icon");
 		assert.strictEqual(buttons.length, 2);
 		buttons[0]?.dispatchEvent({ type: "click" } as unknown as Event);
 		assert.strictEqual(edited, true, "the pencil really opens the editor");
@@ -150,9 +141,7 @@ describe("a theme row is not editable", () => {
 	it("opens a row's menu from its ⋮ under the button, and from a right-click at the pointer", async () => {
 		// A right-click anywhere on a callout row opens the same menu as its ⋮,
 		// as on Obsidian's Community plugins rows (finding S2-12).
-		const { drawCalloutRow } = await import(
-			"../src/settings/sections/CalloutRowRenderer"
-		);
+		const { drawCalloutRow } = await import("../src/settings/sections/CalloutRowRenderer");
 		const registry = vaultWithThemeRow({ source: "user" });
 		const { ctx } = fakeCtx(registry, []);
 		const host = createDiv();
@@ -161,16 +150,24 @@ describe("a theme row is not editable", () => {
 			onEdit: () => {},
 			onOpenBuiltInMenu: () => assert.fail("a user row opens the user menu"),
 			onOpenUserMenu: (trigger) => {
-				opened.push(trigger.kind === "pointer"
-					? { kind: trigger.kind, x: trigger.x, y: trigger.y }
-					: { kind: trigger.kind });
+				opened.push(
+					trigger.kind === "pointer"
+						? { kind: trigger.kind, x: trigger.x, y: trigger.y }
+						: { kind: trigger.kind },
+				);
 			},
 		});
-		host.querySelector<HTMLElement>(".callout-studio-more-btn")!
-			.dispatchEvent({ type: "click" } as unknown as Event);
+		host.querySelector<HTMLElement>(".callout-studio-more-btn")!.dispatchEvent({
+			type: "click",
+		} as unknown as Event);
 		let prevented = false;
 		host.querySelector<HTMLElement>(".cs-callout-row")!.dispatchEvent({
-			type: "contextmenu", clientX: 40, clientY: 12, preventDefault: () => { prevented = true; },
+			type: "contextmenu",
+			clientX: 40,
+			clientY: 12,
+			preventDefault: () => {
+				prevented = true;
+			},
 		} as unknown as Event);
 		assert.deepStrictEqual(opened, [{ kind: "button" }, { kind: "pointer", x: 40, y: 12 }]);
 		assert.strictEqual(prevented, true, "the browser's own menu stays away");
@@ -179,9 +176,7 @@ describe("a theme row is not editable", () => {
 	it("shows the theme's colours, never the ones stored on the row", async () => {
 		// The row carries #336699. Nothing paints it while the theme owns the
 		// id, so a swatch showing it would name a colour that is not on screen.
-		const { drawCalloutRow } = await import(
-			"../src/settings/sections/CalloutRowRenderer"
-		);
+		const { drawCalloutRow } = await import("../src/settings/sections/CalloutRowRenderer");
 		const registry = vaultWithThemeRow();
 		registry.setThemeAppearances(
 			new Map([
@@ -217,9 +212,7 @@ describe("a theme row is not editable", () => {
 
 	it("shows no swatch at all when the theme has not been measured", async () => {
 		// Better an empty slot than a confident wrong colour.
-		const { drawCalloutRow } = await import(
-			"../src/settings/sections/CalloutRowRenderer"
-		);
+		const { drawCalloutRow } = await import("../src/settings/sections/CalloutRowRenderer");
 		const registry = vaultWithThemeRow();
 		const { ctx } = fakeCtx(registry, ["recite"]);
 		const host = createDiv();
@@ -238,9 +231,7 @@ describe("a theme row is not editable", () => {
 
 describe("the retired personal-CSS handoff", () => {
 	it("leaves a Studio row showing its stored icon and colours", async () => {
-		const { drawCalloutRow } = await import(
-			"../src/settings/sections/CalloutRowRenderer"
-		);
+		const { drawCalloutRow } = await import("../src/settings/sections/CalloutRowRenderer");
 		const registry = vaultWithThemeRow({ source: "user" });
 		const rowDef = def({
 			source: "user",
@@ -253,29 +244,20 @@ describe("the retired personal-CSS handoff", () => {
 			onOpenBuiltInMenu: () => {},
 			onOpenUserMenu: () => {},
 		});
-		assert.equal(
-			host.querySelector(".callout-studio-row-icon")?.textContent,
-			"📌",
-		);
+		assert.equal(host.querySelector(".callout-studio-row-icon")?.textContent, "📌");
 		assert.ok(host.querySelector(".callout-studio-row-colors"));
 	});
 
 	it("leaves no control, row tag, or locale key behind", () => {
-		const settingsSources = pluginSourceFiles().filter((file) =>
-			file.path.startsWith("src/settings/"),
-		);
+		const settingsSources = pluginSourceFiles().filter((file) => file.path.startsWith("src/settings/"));
 		const offenders = settingsSources
 			.filter((file) =>
-				/externalCssMenu|settings\.externalCss|notice\.externalCss(?:On|Off)|cs-external-tag/.test(
-					file.text,
-				),
+				/externalCssMenu|settings\.externalCss|notice\.externalCss(?:On|Off)|cs-external-tag/.test(file.text),
 			)
 			.map((file) => file.path);
 		assert.deepStrictEqual(offenders, []);
 		assert.ok(!readRepoFile("styles.css").includes("cs-external-tag"));
-		for (const file of pluginSourceFiles().filter((candidate) =>
-			candidate.path.startsWith("src/i18n/"),
-		)) {
+		for (const file of pluginSourceFiles().filter((candidate) => candidate.path.startsWith("src/i18n/"))) {
 			assert.ok(!/settings\.externalCss|notice\.externalCss(?:On|Off)/.test(file.text));
 		}
 	});
@@ -284,10 +266,7 @@ describe("the retired personal-CSS handoff", () => {
 describe("taking a theme callout over is gone", () => {
 	it("exports no adopt action any more", async () => {
 		const mod = await import("../src/settings/sections/themeRowActions");
-		assert.ok(
-			!("adoptThemeCallout" in mod),
-			"while the theme names the id, the theme paints it",
-		);
+		assert.ok(!("adoptThemeCallout" in mod), "while the theme names the id, the theme paints it");
 	});
 
 	it("leaves no source file calling one", () => {
@@ -300,27 +279,21 @@ describe("taking a theme callout over is gone", () => {
 
 describe("deleting what cannot be deleted", () => {
 	it("refuses to remove the row for a type the theme supplies", async () => {
-		const { deleteRemovesRow } = await import(
-			"../src/settings/sections/rowOwnership"
-		);
+		const { deleteRemovesRow } = await import("../src/settings/sections/rowOwnership");
 		const registry = vaultWithThemeRow();
 		const { ctx } = fakeCtx(registry, ["recite"]);
 		assert.strictEqual(deleteRemovesRow(ctx, registry.get("recite")!), false);
 	});
 
 	it("refuses for a built-in, for the same reason", async () => {
-		const { deleteRemovesRow } = await import(
-			"../src/settings/sections/rowOwnership"
-		);
+		const { deleteRemovesRow } = await import("../src/settings/sections/rowOwnership");
 		const registry = vaultWithThemeRow();
 		const { ctx } = fakeCtx(registry, []);
 		assert.strictEqual(deleteRemovesRow(ctx, registry.get("note")!), false);
 	});
 
 	it("allows it for a callout nothing else declares", async () => {
-		const { deleteRemovesRow } = await import(
-			"../src/settings/sections/rowOwnership"
-		);
+		const { deleteRemovesRow } = await import("../src/settings/sections/rowOwnership");
 		const registry = vaultWithThemeRow({ id: "mine", source: "user" });
 		const { ctx } = fakeCtx(registry, ["recite"]);
 		assert.strictEqual(deleteRemovesRow(ctx, registry.get("mine")!), true);
@@ -335,11 +308,7 @@ describe("deleting what cannot be deleted", () => {
 		assert.ok(source.includes("addConvertUsesItem"));
 		assert.ok(!source.includes("addDeleteItem"));
 		assert.ok(!source.includes("settings.deleteAction"));
-		assert.ok(
-			readRepoFile("src/settings/sections/rowOwnership.ts").includes(
-				'"settings.convertUsesAction"',
-			),
-		);
+		assert.ok(readRepoFile("src/settings/sections/rowOwnership.ts").includes('"settings.convertUsesAction"'));
 	});
 });
 
@@ -366,9 +335,7 @@ describe("the Theme / Studio labels are gone", () => {
 		const offenders = pluginSourceFiles()
 			.filter((f) => f.path.startsWith("src/i18n/"))
 			.filter((f) =>
-				/stylePill|styleOwnerStudioAction|styleOwnerThemeAction|themeCalloutsResetAction/.test(
-					f.text,
-				),
+				/stylePill|styleOwnerStudioAction|styleOwnerThemeAction|themeCalloutsResetAction/.test(f.text),
 			)
 			.map((f) => f.path);
 		assert.deepStrictEqual(offenders, []);
@@ -383,14 +350,8 @@ describe("a theme row carries nothing it cannot act on", () => {
 	 * *cost*, on a row whose styling is not the user's and whose cost is a
 	 * question the `⋯` menu answers next to the two actions about it.
 	 */
-	const render = async (
-		registry: CalloutRegistry,
-		id: string,
-		themeIds: string[],
-	) => {
-		const { drawCalloutRow } = await import(
-			"../src/settings/sections/CalloutRowRenderer"
-		);
+	const render = async (registry: CalloutRegistry, id: string, themeIds: string[]) => {
+		const { drawCalloutRow } = await import("../src/settings/sections/CalloutRowRenderer");
 		const { ctx } = fakeCtx(registry, themeIds);
 		const host = createDiv();
 		drawCalloutRow(ctx, new Setting(host), registry.get(id)!, "theme", {
@@ -451,10 +412,11 @@ describe("the ⋯ menu on a theme row", () => {
 	});
 
 	it("leaves no source file calling a derive action", () => {
-		const callers = pluginSourceFiles().filter((f) =>
-			f.code.includes("openDerivedCallout"),
+		const callers = pluginSourceFiles().filter((f) => f.code.includes("openDerivedCallout"));
+		assert.deepStrictEqual(
+			callers.map((f) => f.path),
+			[],
 		);
-		assert.deepStrictEqual(callers.map((f) => f.path), []);
 	});
 
 	it("has no locale carrying the retired string", () => {
@@ -475,9 +437,8 @@ describe("the theme preview window writes nothing", () => {
 	// window's own header explains at length what it *stopped* doing, and a raw
 	// text search would find every one of those words in the prose.
 	const src = (): string =>
-		pluginSourceFiles().find(
-			(f) => f.path === "src/settings/ThemeCalloutPreviewModal.ts",
-		)?.code ?? assert.fail("the preview window is gone");
+		pluginSourceFiles().find((f) => f.path === "src/settings/ThemeCalloutPreviewModal.ts")?.code ??
+		assert.fail("the preview window is gone");
 
 	it("has no icon-adjust control", () => {
 		assert.ok(!src().includes("renderIconAdjustGroup"));
@@ -517,11 +478,7 @@ describe("the theme preview window writes nothing", () => {
 			/collapseTrailingBlankLine:\s*this\.plugin\.registry\.themeOwns\(this\.def\)/,
 			"theme ownership must decide whether the final preview line is hidden",
 		);
-		assert.match(
-			modal,
-			/initialText:\s*sample/,
-			"retain the terminal line in the document as a safe caret target",
-		);
+		assert.match(modal, /initialText:\s*sample/, "retain the terminal line in the document as a safe caret target");
 		const preview = readRepoFile("src/settings/LiveCalloutPreview.ts");
 		assert.match(preview, /this\.text\.endsWith\("\\n"\)/);
 		const optInFiles = pluginSourceFiles()

@@ -11,19 +11,8 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	definition,
-	parseRules,
-	rulesMatching,
-	themedHarness,
-	valueOf,
-	must,
-} from "./support/cssInjectorHarness";
-import {
-	classCountOf,
-	compareSpecificity,
-	specificityOf,
-} from "../src/utils/cssSpecificity";
+import { definition, parseRules, rulesMatching, themedHarness, valueOf, must } from "./support/cssInjectorHarness";
+import { classCountOf, compareSpecificity, specificityOf } from "../src/utils/cssSpecificity";
 
 /** A theme that reads the accent the way everything before Obsidian 1.13 did. */
 const LEGACY_THEME = `
@@ -48,7 +37,9 @@ const preset = () => definition({ id: "apple", colorLight: "#ff8800", colorDark:
 function shimRule(css: string) {
 	return must(
 		parseRules(css).find(
-			(r) => r.selector === ':where(.callout)[data-callout="apple"]' && !r.decls.some((d) => d.includes("!important")),
+			(r) =>
+				r.selector === ':where(.callout)[data-callout="apple"]' &&
+				!r.decls.some((d) => d.includes("!important")),
 		),
 		"shim rule",
 	);
@@ -96,9 +87,7 @@ describe("core accent shim — when it exists at all", () => {
 		const { registry, css } = themedHarness(LEGACY_THEME);
 		const note = must(registry.get("note"), "built-in note");
 		const shim = must(
-			parseRules(css.generateCalloutCSS(note)).find(
-				(r) => r.props.includes("--table-border-color"),
-			),
+			parseRules(css.generateCalloutCSS(note)).find((r) => r.props.includes("--table-border-color")),
 			"shim rule",
 		);
 		const bg = must(valueOf(shim, "background-color"));
@@ -113,21 +102,16 @@ describe("core accent shim — when it exists at all", () => {
 		const { css } = themedHarness(LEGACY_THEME);
 		const out = css.generateCalloutCSS(preset());
 		const shim = shimRule(out);
-		assert.deepStrictEqual(
-			shim.props,
-			[
-				"background-color",
-				"border-color",
-				"--bases-table-header-background-hover",
-				"--bases-embed-border-color",
-				"--bases-table-border-color",
-				"--table-border-color",
-			],
-		);
+		assert.deepStrictEqual(shim.props, [
+			"background-color",
+			"border-color",
+			"--bases-table-header-background-hover",
+			"--bases-embed-border-color",
+			"--bases-table-border-color",
+			"--table-border-color",
+		]);
 		const title = must(
-			parseRules(out).find(
-				(r) => r.selector === ':where(.callout)[data-callout="apple"] > .callout-title',
-			),
+			parseRules(out).find((r) => r.selector === ':where(.callout)[data-callout="apple"] > .callout-title'),
 			"title rule",
 		);
 		assert.equal(valueOf(title, "color"), "rgb(var(--callout-color))");
@@ -180,10 +164,7 @@ describe("core accent shim — how hard it pushes", () => {
 			// Blue Topaz, "Shade".
 			"body.shade-callout-style .callout",
 		]) {
-			assert.ok(
-				compareSpecificity(shim, specificityOf(themeSelector)) < 0,
-				`shim must lose to ${themeSelector}`,
-			);
+			assert.ok(compareSpecificity(shim, specificityOf(themeSelector)) < 0, `shim must lose to ${themeSelector}`);
 		}
 	});
 });
@@ -267,9 +248,7 @@ describe("core accent shim — what it refuses to paint over", () => {
 			const out = css.generateCalloutCSS(preset());
 			assert.equal(
 				parseRules(out).some(
-					(r) =>
-						r.selector === ':where(.callout)[data-callout="apple"]' &&
-						r.props.includes("border-color"),
+					(r) => r.selector === ':where(.callout)[data-callout="apple"]' && r.props.includes("border-color"),
 				),
 				false,
 				decl,
@@ -293,9 +272,7 @@ describe("core accent shim — what it refuses to paint over", () => {
 		// `[data-callout*=…]` names no callout, so it mints no row and never
 		// makes one theme-owned — but it does paint one, and it ties the shim at
 		// (0,2,0) and loses on source order.
-		const { css } = themedHarness(
-			`${LEGACY_THEME}\n.callout[data-callout*="app"] { background-color: #123456; }`,
-		);
+		const { css } = themedHarness(`${LEGACY_THEME}\n.callout[data-callout*="app"] { background-color: #123456; }`);
 		const shim = shimRule(css.generateCalloutCSS(preset()));
 		assert.equal(valueOf(shim, "background-color"), undefined);
 	});
@@ -323,7 +300,7 @@ describe("the ownership line a theme actually feels", () => {
 	 */
 	function blockBackgrounds(css: string) {
 		const decls = parseRules(css)
-			.filter((r) => r.selector.includes(".callout[") || r.selector.includes(')[data-callout'))
+			.filter((r) => r.selector.includes(".callout[") || r.selector.includes(")[data-callout"))
 			.flatMap((r) => r.decls)
 			.filter((d) => /^background(-color|-image)?:/.test(d));
 		return {
@@ -356,10 +333,9 @@ describe("the ownership line a theme actually feels", () => {
 			blockBackgrounds(themedHarness(MODERN_THEME).css.generateCalloutCSS(preset())).derived,
 			[],
 		);
-		assert.deepStrictEqual(
-			blockBackgrounds(themedHarness(LEGACY_THEME).css.generateCalloutCSS(preset())).derived,
-			["background-color: color-mix(in oklch, rgb(var(--callout-color)) 10%, transparent)"],
-		);
+		assert.deepStrictEqual(blockBackgrounds(themedHarness(LEGACY_THEME).css.generateCalloutCSS(preset())).derived, [
+			"background-color: color-mix(in oklch, rgb(var(--callout-color)) 10%, transparent)",
+		]);
 	});
 
 	it("an AUTHORED background does paint, and wins", () => {
@@ -401,7 +377,10 @@ describe("the ownership line a theme actually feels", () => {
 			parseRules(out).find((r) => r.selector.endsWith(".callout-icon::after")),
 			"icon ::after rule",
 		);
-		assert.ok(after.decls.every((d) => d.includes("!important")), after.decls.join(" | "));
+		assert.ok(
+			after.decls.every((d) => d.includes("!important")),
+			after.decls.join(" | "),
+		);
 		assert.ok(classCountOf(must(after.selector.split(" ")[0])) > 1, after.selector);
 	});
 });
@@ -426,9 +405,7 @@ describe("core accent shim — coverage", () => {
 		// higher specificity than the light rule, which is how it would start
 		// quietly winning arguments.
 		const { css } = themedHarness(LEGACY_THEME);
-		const out = css.generateCalloutCSS(
-			definition({ id: "apple", colorLight: "#ff8800", colorDark: "#0088ff" }),
-		);
+		const out = css.generateCalloutCSS(definition({ id: "apple", colorLight: "#ff8800", colorDark: "#0088ff" }));
 		assert.ok(out.includes(".theme-dark"), "the plugin's own dark rule is still there");
 		assert.equal(
 			parseRules(out).filter(

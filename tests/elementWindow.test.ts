@@ -68,7 +68,11 @@ describe("followWindow", () => {
 		migrateElement(el as unknown as FakeElement, settings);
 		stop();
 		assert.deepStrictEqual(log, ["start main", "undo main", "start window 1", "undo window 1"]);
-		assert.strictEqual((el as unknown as FakeElement).migrationListeners.length, 0, "no longer listening for a move");
+		assert.strictEqual(
+			(el as unknown as FakeElement).migrationListeners.length,
+			0,
+			"no longer listening for a move",
+		);
 		migrateElement(el as unknown as FakeElement, newWindow());
 		assert.strictEqual(log.length, 4, "a move after that is not followed");
 	});

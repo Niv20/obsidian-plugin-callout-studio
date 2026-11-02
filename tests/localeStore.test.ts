@@ -63,8 +63,7 @@ const VERSION = "9.9.9";
 const PLUGIN_DIR = ".obsidian/plugins/callout-studio";
 
 /** The exact bytes this build expects for a locale. */
-const realFile = (id: LocaleFileId): string =>
-	readFileSync(join(process.cwd(), "locales", `${id}.json`), "utf8");
+const realFile = (id: LocaleFileId): string => readFileSync(join(process.cwd(), "locales", `${id}.json`), "utf8");
 
 /**
  * A well-formed file this build does *not* expect — what a device that has not
@@ -139,9 +138,7 @@ function harness(manifestDir: string | undefined = PLUGIN_DIR): Harness {
 			reads.push(path);
 			if (unreadable.has(path)) return Promise.reject(new Error("EIO"));
 			const text = files.get(path);
-			return text === undefined
-				? Promise.reject(new Error("ENOENT"))
-				: Promise.resolve(text);
+			return text === undefined ? Promise.reject(new Error("ENOENT")) : Promise.resolve(text);
 		},
 		write(path: string, text: string): Promise<void> {
 			if (failWrites.value) return Promise.reject(new Error("EROFS"));
@@ -173,9 +170,7 @@ function harness(manifestDir: string | undefined = PLUGIN_DIR): Harness {
 	globals.__CS_REQUEST_URL__ = (url: string): Promise<StubResponse> => {
 		requests.push(url);
 		const body = serve.get(url);
-		return body === undefined
-			? Promise.reject(new Error(`no route to ${url}`))
-			: Promise.resolve({ text: body });
+		return body === undefined ? Promise.reject(new Error(`no route to ${url}`)) : Promise.resolve({ text: body });
 	};
 
 	return {
@@ -261,10 +256,7 @@ describe("a cached file this build expects costs nothing", () => {
 
 	it("reconstructs the folder when the manifest has no dir", async () => {
 		const h = harness(undefined);
-		assert.strictEqual(
-			h.path("he"),
-			".obsidian/plugins/callout-studio/translations/he.json",
-		);
+		assert.strictEqual(h.path("he"), ".obsidian/plugins/callout-studio/translations/he.json");
 		await h.store.prepare("he");
 	});
 });
@@ -280,10 +272,7 @@ describe("a cached file older than this build is used anyway", () => {
 		assert.strictEqual(await h.store.prepare("he"), "stale");
 		assert.deepStrictEqual(h.requests, []);
 		assert.strictEqual(h.store.state("he"), "stale");
-		assert.ok(
-			h.store.isReady("he"),
-			"a stale translation is still readable",
-		);
+		assert.ok(h.store.isReady("he"), "a stale translation is still readable");
 		assert.ok(isLocaleRegistered("he"));
 	});
 
@@ -335,10 +324,7 @@ describe("a cached file that is not a locale file is refused", () => {
 
 	it("rejects one that is not JSON", async () => {
 		const h = harness();
-		h.files.set(
-			h.path("ru"),
-			"<!doctype html><title>captive portal</title>",
-		);
+		h.files.set(h.path("ru"), "<!doctype html><title>captive portal</title>");
 
 		assert.strictEqual(await h.store.loadFromDisk("ru"), "invalid");
 		assert.ok(!isLocaleRegistered("ru"));
@@ -346,10 +332,7 @@ describe("a cached file that is not a locale file is refused", () => {
 
 	it("rejects one whose strings are not strings", async () => {
 		const h = harness();
-		h.files.set(
-			h.path("pl"),
-			JSON.stringify({ format: 1, locale: "pl", strings: { a: 42 } }),
-		);
+		h.files.set(h.path("pl"), JSON.stringify({ format: 1, locale: "pl", strings: { a: 42 } }));
 
 		assert.strictEqual(await h.store.loadFromDisk("pl"), "invalid");
 		assert.ok(!isLocaleRegistered("pl"));
@@ -357,10 +340,7 @@ describe("a cached file that is not a locale file is refused", () => {
 
 	it("rejects an empty table", async () => {
 		const h = harness();
-		h.files.set(
-			h.path("uk"),
-			JSON.stringify({ format: 1, locale: "uk", strings: {} }),
-		);
+		h.files.set(h.path("uk"), JSON.stringify({ format: 1, locale: "uk", strings: {} }));
 
 		assert.strictEqual(await h.store.loadFromDisk("uk"), "invalid");
 		assert.ok(!isLocaleRegistered("uk"));
@@ -368,10 +348,7 @@ describe("a cached file that is not a locale file is refused", () => {
 
 	it("rejects a format this build does not understand", async () => {
 		const h = harness();
-		h.files.set(
-			h.path("sv"),
-			JSON.stringify({ format: 99, locale: "sv", strings: { a: "b" } }),
-		);
+		h.files.set(h.path("sv"), JSON.stringify({ format: 99, locale: "sv", strings: { a: "b" } }));
 
 		assert.strictEqual(await h.store.loadFromDisk("sv"), "invalid");
 	});
@@ -437,10 +414,7 @@ describe("a download is verified before it is believed", () => {
 		// must hash to the same thing.
 		assert.deepStrictEqual(h.writes, [h.path("es")]);
 		assert.strictEqual(h.files.get(h.path("es")), realFile("es"));
-		assert.strictEqual(
-			Buffer.byteLength(h.files.get(h.path("es")) ?? "", "utf8"),
-			LOCALE_MANIFEST.es.bytes,
-		);
+		assert.strictEqual(Buffer.byteLength(h.files.get(h.path("es")) ?? "", "utf8"), LOCALE_MANIFEST.es.bytes);
 	});
 
 	it("tries jsDelivr first and falls through to raw.githubusercontent", async () => {
@@ -482,11 +456,7 @@ describe("a download is verified before it is believed", () => {
 
 	it("discards a captive portal's login page", async () => {
 		const h = harness();
-		serveEverywhere(
-			h,
-			"el",
-			"<!doctype html><title>Sign in to Wi-Fi</title>",
-		);
+		serveEverywhere(h, "el", "<!doctype html><title>Sign in to Wi-Fi</title>");
 
 		assert.strictEqual(await h.store.ensure("el"), false);
 		assert.strictEqual(h.store.state("el"), "failed");
@@ -520,11 +490,7 @@ describe("a failed refresh never damages the copy already on disk", () => {
 	 * readable.
 	 */
 	const survives = (h: Harness, id: LocaleFileId, before: string): void => {
-		assert.strictEqual(
-			h.files.get(h.path(id)),
-			before,
-			"the file was altered",
-		);
+		assert.strictEqual(h.files.get(h.path(id)), before, "the file was altered");
 		assert.deepStrictEqual(h.writes, [], "a write was attempted");
 		assert.strictEqual(h.store.state(id), "stale");
 		assert.ok(h.store.isReady(id), "the language stopped being readable");
@@ -612,9 +578,7 @@ describe("a vault that cannot be written to only loses the cache", () => {
 		assert.strictEqual(h.store.state("hi"), "ready");
 		assert.ok(isLocaleRegistered("hi"));
 		assert.deepStrictEqual(h.writes, []);
-		assert.deepStrictEqual(globals.__CS_NOTICES__, [
-			en["locale.diskWriteFailed"],
-		]);
+		assert.deepStrictEqual(globals.__CS_NOTICES__, [en["locale.diskWriteFailed"]]);
 
 		// A second failure must not tell them again.
 		assert.strictEqual(await h.store.download("ms"), true);
@@ -633,10 +597,7 @@ describe("concurrent callers share one request", () => {
 		const h = harness();
 		serveEverywhere(h, "ro", realFile("ro"));
 
-		const [a, b] = await Promise.all([
-			h.store.download("ro"),
-			h.store.download("ro"),
-		]);
+		const [a, b] = await Promise.all([h.store.download("ro"), h.store.download("ro")]);
 		assert.strictEqual(a, true);
 		assert.strictEqual(b, true);
 		assert.strictEqual(h.requests.length, 1);

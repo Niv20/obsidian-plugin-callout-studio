@@ -40,12 +40,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import {
-	DEFAULT_CALLOUTS,
-	PREVIEW_PLACEHOLDER_ID,
-	RESERVED_DEMO_IDS,
-	STYLE_DEMO_ID,
-} from "../src/constants";
+import { DEFAULT_CALLOUTS, PREVIEW_PLACEHOLDER_ID, RESERVED_DEMO_IDS, STYLE_DEMO_ID } from "../src/constants";
 import { buildKnownCalloutIds } from "../src/manager/knownCalloutIds";
 import { scanStringForUnknownCallouts } from "../src/utils/vaultCalloutScanner";
 import { suggestableCallouts } from "../src/utils/usableCallouts";
@@ -80,8 +75,7 @@ function loaded(callouts: CalloutDefinition[] = []): CalloutRegistry {
 	return registry;
 }
 
-const ids = (defs: readonly CalloutDefinition[]): string[] =>
-	defs.map((d) => d.id);
+const ids = (defs: readonly CalloutDefinition[]): string[] => defs.map((d) => d.id);
 
 /* -------------------------------------------------------------------------- */
 /* The id                                                                     */
@@ -130,11 +124,7 @@ describe("no reserved demo id names anything real", () => {
 				for (const spelling of [
 					demoId,
 					demoId.replace(/-/g, " "),
-					demoId.replace(
-						/(^|-)(\w)/g,
-						(_m: string, sep: string, c: string) =>
-							`${sep}${c.toUpperCase()}`,
-					),
+					demoId.replace(/(^|-)(\w)/g, (_m: string, sep: string, c: string) => `${sep}${c.toUpperCase()}`),
 					demoId.replace(/-/g, " - "),
 				]) {
 					const sanitized = sanitizeCalloutIdInput(spelling);
@@ -190,20 +180,14 @@ describe("no reserved demo id names anything real", () => {
 				const registry = loaded();
 				registry.setPreviewDefinition(def({ id: demoId }), true);
 				for (const role of ["regular", "heading", "inline"] as const) {
-					const offered = suggestableCallouts(
-						registry,
-						role).map((d) => d.id);
+					const offered = suggestableCallouts(registry, role).map((d) => d.id);
 					assert.ok(!offered.includes(demoId), `${demoId} / ${role}`);
 				}
 			});
 
 			it("is rejected by the import validator", () => {
 				const issues: Array<{ messageKey: string }> = [];
-				const ok = validateIdString(
-					demoId,
-					(issue) => issues.push(issue),
-					"id",
-				);
+				const ok = validateIdString(demoId, (issue) => issues.push(issue), "id");
 				assert.strictEqual(ok, false, demoId);
 				assert.ok(
 					issues.some((i) => i.messageKey === "import.err.idReserved"),
@@ -217,9 +201,7 @@ describe("no reserved demo id names anything real", () => {
 				// reserved id with no preview active at all — an older
 				// data.json, or a crash mid-preview — must still not leave in
 				// a backup file.
-				const registry = loaded([
-					def({ id: demoId, displayName: "Leaked" }),
-				]);
+				const registry = loaded([def({ id: demoId, displayName: "Leaked" })]);
 				const exported = ids(registry.getExportableDefinitions());
 				assert.ok(!exported.includes(demoId), exported.join(", "));
 			});
@@ -240,10 +222,7 @@ describe("no reserved demo id names anything real", () => {
 describe("a demo preview standing on the placeholder id", () => {
 	const withDemo = (): CalloutRegistry => {
 		const registry = loaded();
-		registry.setPreviewDefinition(
-			def({ id: PREVIEW_PLACEHOLDER_ID, displayName: "DRAFT" }),
-			true,
-		);
+		registry.setPreviewDefinition(def({ id: PREVIEW_PLACEHOLDER_ID, displayName: "DRAFT" }), true);
 		return registry;
 	};
 
@@ -253,32 +232,18 @@ describe("a demo preview standing on the placeholder id", () => {
 
 	it("reaches neither settings list", () => {
 		const registry = withDemo();
-		assert.strictEqual(
-			ids(registry.getUserDefined()).includes(PREVIEW_PLACEHOLDER_ID),
-			false,
-		);
-		assert.strictEqual(
-			ids(registry.getBuiltIn()).includes(PREVIEW_PLACEHOLDER_ID),
-			false,
-		);
+		assert.strictEqual(ids(registry.getUserDefined()).includes(PREVIEW_PLACEHOLDER_ID), false);
+		assert.strictEqual(ids(registry.getBuiltIn()).includes(PREVIEW_PLACEHOLDER_ID), false);
 	});
 
 	it("never reaches data.json", () => {
 		// The phantom row was temporary; a persisted row is not. `toSaveData`
 		// skips the active preview id outright when it shadows nothing.
-		assert.strictEqual(
-			ids(withDemo().toSaveData().callouts).includes(PREVIEW_PLACEHOLDER_ID),
-			false,
-		);
+		assert.strictEqual(ids(withDemo().toSaveData().callouts).includes(PREVIEW_PLACEHOLDER_ID), false);
 	});
 
 	it("never reaches the export file", () => {
-		assert.strictEqual(
-			ids(withDemo().getExportableDefinitions()).includes(
-				PREVIEW_PLACEHOLDER_ID,
-			),
-			false,
-		);
+		assert.strictEqual(ids(withDemo().getExportableDefinitions()).includes(PREVIEW_PLACEHOLDER_ID), false);
 	});
 
 	it("leaves nothing behind when the modal closes", () => {
@@ -286,10 +251,7 @@ describe("a demo preview standing on the placeholder id", () => {
 		registry.setPreviewDefinition(null);
 
 		assert.strictEqual(registry.get(PREVIEW_PLACEHOLDER_ID), undefined);
-		assert.strictEqual(
-			ids(registry.getAll()).includes(PREVIEW_PLACEHOLDER_ID),
-			false,
-		);
+		assert.strictEqual(ids(registry.getAll()).includes(PREVIEW_PLACEHOLDER_ID), false);
 	});
 });
 
@@ -335,9 +297,7 @@ describe("a demo preview raised over the built-in `example`", () => {
 		registry.update("example", { colorLight: "#ff0000" });
 		withDemo(registry);
 
-		const saved = registry
-			.toSaveData()
-			.callouts.find((d) => d.id === "example");
+		const saved = registry.toSaveData().callouts.find((d) => d.id === "example");
 		assert.strictEqual(saved?.colorLight, "#ff0000");
 	});
 
@@ -346,10 +306,7 @@ describe("a demo preview raised over the built-in `example`", () => {
 		// compares the *shadowed* definition against the shipped default, and
 		// the draft's own colours are not part of that comparison.
 		const registry = withDemo(loaded());
-		assert.strictEqual(
-			ids(registry.toSaveData().callouts).includes("example"),
-			false,
-		);
+		assert.strictEqual(ids(registry.toSaveData().callouts).includes("example"), false);
 	});
 
 	it("puts the real callout back when the modal closes", () => {
@@ -376,10 +333,7 @@ describe("`isDemo` is what decides this, and it defaults to false", () => {
 		const registry = loaded([def({ id: "mine", displayName: "Before" })]);
 		registry.setPreviewDefinition(def({ id: "mine", displayName: "Typing…" }));
 
-		assert.strictEqual(
-			registry.getUserDefined().find((d) => d.id === "mine")?.displayName,
-			"Typing…",
-		);
+		assert.strictEqual(registry.getUserDefined().find((d) => d.id === "mine")?.displayName, "Typing…");
 	});
 
 	it("a demo on a fresh id is dropped from the lists whatever it is called", () => {
@@ -388,10 +342,7 @@ describe("`isDemo` is what decides this, and it defaults to false", () => {
 		const registry = loaded();
 		registry.setPreviewDefinition(def({ id: "style-popup-demo" }), true);
 
-		assert.strictEqual(
-			ids(registry.getUserDefined()).includes("style-popup-demo"),
-			false,
-		);
+		assert.strictEqual(ids(registry.getUserDefined()).includes("style-popup-demo"), false);
 		assert.ok(ids(registry.getAll()).includes("style-popup-demo"));
 	});
 });
@@ -433,24 +384,14 @@ describe("no comment still says a shipped callout is the placeholder", () => {
 
 	for (const { file, phrase, since } of RETIRED) {
 		it(`${file} no longer says "${phrase}"`, () => {
-			assert.strictEqual(
-				readRepoFile(file).includes(phrase),
-				false,
-				`${file} still says "${phrase}" — ${since}`,
-			);
+			assert.strictEqual(readRepoFile(file).includes(phrase), false, `${file} still says "${phrase}" — ${since}`);
 		});
 	}
 
 	it("and the files being read are the ones that own this", () => {
 		// A rename would otherwise make every assertion above pass by reading a
 		// file that no longer contains the subject at all.
-		assert.match(
-			readRepoFile("src/manager/CalloutRegistry.ts"),
-			/setPreviewDefinition\(/,
-		);
-		assert.match(
-			readRepoFile("src/settings/CalloutEditor.ts"),
-			/PREVIEW_PLACEHOLDER_ID/,
-		);
+		assert.match(readRepoFile("src/manager/CalloutRegistry.ts"), /setPreviewDefinition\(/);
+		assert.match(readRepoFile("src/settings/CalloutEditor.ts"), /PREVIEW_PLACEHOLDER_ID/);
 	});
 });

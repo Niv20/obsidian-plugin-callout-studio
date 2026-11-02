@@ -22,9 +22,7 @@ import { registryIsOwned } from "./registryOwnership";
  * turned up and been adopted, or one has turned up that cannot be read and the
  * session has gone read-only.
  */
-export async function stillFreshInstall(
-	host: ExternalReloadHost,
-): Promise<boolean> {
+export async function stillFreshInstall(host: ExternalReloadHost): Promise<boolean> {
 	const read = await readSettledSettingsFile(host, {
 		isCancelled: () => host.settingsWriter.isDestroyed,
 	});
@@ -36,17 +34,13 @@ export async function stillFreshInstall(
 		// cannot read is not a file we may replace.
 		host.settingsWriter.freeze(read.newer ? "newer-version" : "unreadable");
 		console.error(
-			"[callout-studio] data.json appeared but could not be read; " +
-				"settings will not be written this session",
+			"[callout-studio] data.json appeared but could not be read; " + "settings will not be written this session",
 		);
 		warnSettingsUnreadable(host.settingsWriter);
 		return false;
 	}
 
-	console.warn(
-		"[callout-studio] data.json arrived after startup; adopting it " +
-			"instead of creating one",
-	);
+	console.warn("[callout-studio] data.json arrived after startup; adopting it " + "instead of creating one");
 	await reloadFrom(host, read);
 	return false;
 }
@@ -59,9 +53,7 @@ export async function stillFreshInstall(
  * Never call for a missing file on a previously used device: its frozen state
  * looks identical, but absence is precisely why that device must not write.
  */
-export async function confirmFreshInstall(
-	host: ExternalReloadHost,
-): Promise<boolean> {
+export async function confirmFreshInstall(host: ExternalReloadHost): Promise<boolean> {
 	if (!host.settingsWriter.isFrozen) return false;
 
 	let stillFresh: boolean;
@@ -71,11 +63,7 @@ export async function confirmFreshInstall(
 		// The failed operation may have been adopting a file that JUST arrived.
 		// An exception is never evidence that no file exists; keep it protected
 		// and let the ordinary foreground/external-change path retry recovery.
-		console.error(
-			"[callout-studio] could not confirm a fresh install; " +
-				"settings remain protected",
-			err,
-		);
+		console.error("[callout-studio] could not confirm a fresh install; " + "settings remain protected", err);
 		host.settingsWriter.freeze();
 		warnSettingsUnreadable(host.settingsWriter);
 		stillFresh = false;

@@ -13,12 +13,7 @@ import { Editor } from "obsidian";
 import type { EditorPosition } from "obsidian";
 import { t } from "../i18n";
 import type { CalloutDefinition } from "../types";
-import {
-	buildBlockHeaderToken,
-	buildHeadingToken,
-	buildInlineContentToken,
-	buildInlineToken,
-} from "./calloutWriter";
+import { buildBlockHeaderToken, buildHeadingToken, buildInlineContentToken, buildInlineToken } from "./calloutWriter";
 import { HEADING_CALLOUT_RE } from "./calloutTokens";
 import { splitCalloutMetadata } from "../utils/calloutId";
 import { splitFoldMark } from "./calloutWriter";
@@ -43,8 +38,7 @@ interface CalloutBlockInfo {
 	calloutLevel: number;
 }
 
-const arePositionsEqual = (a: EditorPosition, b: EditorPosition): boolean =>
-	a.line === b.line && a.ch === b.ch;
+const arePositionsEqual = (a: EditorPosition, b: EditorPosition): boolean => a.line === b.line && a.ch === b.ch;
 
 /**
  * Whether `line` is a callout's header, the way unwrap reads a note: through
@@ -52,11 +46,7 @@ const arePositionsEqual = (a: EditorPosition, b: EditorPosition): boolean =>
  * A `[!…]` further down a quote is a line of that callout's body, and a line
  * inside a fence is code — taking either for a header is what deleted it.
  */
-const isHeaderAt = (
-	editor: Editor,
-	fences: FenceBlock[],
-	line: number,
-): boolean => {
+const isHeaderAt = (editor: Editor, fences: FenceBlock[], line: number): boolean => {
 	if (findFenceBlockAtLine(fences, line)) return false;
 	const text = editor.getLine(line);
 	return opensCallout(
@@ -66,11 +56,7 @@ const isHeaderAt = (
 	);
 };
 
-const findContainingCallout = (
-	editor: Editor,
-	fences: FenceBlock[],
-	line: number,
-): CalloutBlockInfo | null => {
+const findContainingCallout = (editor: Editor, fences: FenceBlock[], line: number): CalloutBlockInfo | null => {
 	let deepestAllowedLevel = countLeadingQuoteTokens(editor.getLine(line));
 	if (deepestAllowedLevel === 0) {
 		return null;
@@ -91,10 +77,7 @@ const findContainingCallout = (
 			deepestAllowedLevel = currentLevel;
 		}
 
-		if (
-			currentLevel <= deepestAllowedLevel &&
-			isHeaderAt(editor, fences, current)
-		) {
+		if (currentLevel <= deepestAllowedLevel && isHeaderAt(editor, fences, current)) {
 			headerLine = current;
 			calloutLevel = currentLevel;
 			break;
@@ -106,11 +89,7 @@ const findContainingCallout = (
 	}
 
 	let lastLine = headerLine;
-	for (
-		let current = headerLine + 1;
-		current < editor.lineCount();
-		current++
-	) {
+	for (let current = headerLine + 1; current < editor.lineCount(); current++) {
 		const text = editor.getLine(current);
 		if (text.trim() === "") break;
 		if (countLeadingQuoteTokens(text) < calloutLevel) break;
@@ -156,11 +135,8 @@ const getOrderedCursorLines = (
  * autocomplete. A user-built command already knows its type, so it gets the
  * finished header and no popover.
  */
-const openingHeaderToken = (
-	def?: CalloutDefinition,
-	foldMark?: "" | "+" | "-",
-	matchedId?: string,
-): string => (def ? buildBlockHeaderToken(def, { foldMark, matchedId }) : "[!");
+const openingHeaderToken = (def?: CalloutDefinition, foldMark?: "" | "+" | "-", matchedId?: string): string =>
+	def ? buildBlockHeaderToken(def, { foldMark, matchedId }) : "[!";
 
 /**
  * The blank quoted line a finished, empty block callout opens with — `> ` at
@@ -174,8 +150,7 @@ const openingHeaderToken = (
  * autocomplete is about to finish, so the cursor belongs up there and there is
  * no body line to write.
  */
-const emptyBodyLine = (prefix: string, def?: CalloutDefinition): string | null =>
-	def ? `${prefix}> ` : null;
+const emptyBodyLine = (prefix: string, def?: CalloutDefinition): string | null => (def ? `${prefix}> ` : null);
 
 /**
  * A wrapped line, moved one level below `level`: the depth the new callout
@@ -216,15 +191,8 @@ export const wrapSelectionInCallout = (
 
 	const anchor = editor.getCursor("anchor");
 	const head = editor.getCursor("head");
-	const anchorFirst =
-		anchor.line < head.line ||
-		(anchor.line === head.line && anchor.ch <= head.ch);
-	const plan = planWrap(
-		editor,
-		anchorFirst ? anchor : head,
-		anchorFirst ? head : anchor,
-		selectionPresent,
-	);
+	const anchorFirst = anchor.line < head.line || (anchor.line === head.line && anchor.ch <= head.ch);
+	const plan = planWrap(editor, anchorFirst ? anchor : head, anchorFirst ? head : anchor, selectionPresent);
 	if (!plan) {
 		showNotice("notFound", t("notice.nothingToWrap"));
 		return false;
@@ -241,9 +209,7 @@ export const wrapSelectionInCallout = (
 	// empty line in the note itself.
 	const separator = prefix.trimEnd();
 
-	const replacementLines: string[] = plan.separateAbove
-		? [separator, headerLine]
-		: [headerLine];
+	const replacementLines: string[] = plan.separateAbove ? [separator, headerLine] : [headerLine];
 	if (emptyBody !== null) {
 		replacementLines.push(emptyBody);
 	} else {
@@ -286,8 +252,7 @@ export const insertEmptyCallout = (
 	const lineCount = editor.lineCount();
 	const top = findFrontmatterEnd(editor) + 1;
 	const read = (line: number) => splitQuoteMarkers(editor.getLine(line));
-	const hasContent = (line: number): boolean =>
-		line >= top && line < lineCount && read(line).text.trim() !== "";
+	const hasContent = (line: number): boolean => line >= top && line < lineCount && read(line).text.trim() !== "";
 
 	const head = editor.getCursor("head");
 	// Properties are never written into. From inside them, the callout goes
@@ -302,16 +267,9 @@ export const insertEmptyCallout = (
 
 	/** The header of the callout this one is written into, right above it. */
 	const opensContainer = (above: number): boolean =>
-		read(above).depth === level &&
-		opensCallout(
-			read(above).text,
-			level,
-			above > 0 ? read(above - 1).depth : 0,
-		);
+		read(above).depth === level && opensCallout(read(above).text, level, above > 0 ? read(above - 1).depth : 0);
 	const separateAbove = replacesLine
-		? hasContent(line - 1) &&
-			read(line - 1).depth >= level &&
-			!opensContainer(line - 1)
+		? hasContent(line - 1) && read(line - 1).depth >= level && !opensContainer(line - 1)
 		: !inProperties;
 	// Any line of content below counts, however shallow: a header-only
 	// callout has nothing between the two for a lazy continuation to stop at.
@@ -329,31 +287,23 @@ export const insertEmptyCallout = (
 	].join("\n");
 
 	if (replacesLine) {
-		editor.replaceRange(
-			lines,
-			{ line, ch: 0 },
-			{ line, ch: editor.getLine(line).length },
-		);
+		editor.replaceRange(lines, { line, ch: 0 }, { line, ch: editor.getLine(line).length });
 	} else {
 		editor.replaceRange(`\n${lines}`, {
 			line,
 			ch: editor.getLine(line).length,
 		});
 	}
-	const headerLine =
-		(replacesLine ? line : line + 1) + (separateAbove ? 1 : 0);
+	const headerLine = (replacesLine ? line : line + 1) + (separateAbove ? 1 : 0);
 	editor.setCursor(
-		body === null
-			? { line: headerLine, ch: header.length }
-			: { line: headerLine + 1, ch: body.length },
+		body === null ? { line: headerLine, ch: header.length } : { line: headerLine + 1, ch: body.length },
 	);
 
 	return true;
 };
 
 /** The `#` run for a heading level, clamped to a real one. */
-const headingHashes = (level: number): string =>
-	"#".repeat(Math.min(Math.max(Math.round(level), 1), 6));
+const headingHashes = (level: number): string => "#".repeat(Math.min(Math.max(Math.round(level), 1), 6));
 
 /**
  * Turn the cursor's line into a heading callout: `## [!note] Title`.
@@ -381,10 +331,7 @@ export const insertHeadingCallout = (
 	const frontmatterEnd = findFrontmatterEnd(editor);
 	if (appendAfterFrontmatter(editor, frontmatterEnd, `${hashes} ${buildHeadingToken(def)}`)) return true;
 	const head = editor.getCursor("head");
-	const targetLine = Math.min(
-		Math.max(head.line, frontmatterEnd + 1),
-		editor.lineCount() - 1,
-	);
+	const targetLine = Math.min(Math.max(head.line, frontmatterEnd + 1), editor.lineCount() - 1);
 	const lineText = editor.getLine(targetLine);
 
 	if (countLeadingQuoteTokens(lineText) > 0) {
@@ -405,9 +352,7 @@ export const insertHeadingCallout = (
 	// known display name" rule applies either way.
 	const headingMatch = HEADING_CALLOUT_RE.exec(lineText);
 	const plainHeading = /^#{1,6}[ \t]+(.*)$/.exec(lineText);
-	const existingTitle = headingMatch
-		? (headingMatch[3] ?? "")
-		: (plainHeading?.[1] ?? lineText);
+	const existingTitle = headingMatch ? (headingMatch[3] ?? "") : (plainHeading?.[1] ?? lineText);
 	// The `|metadata` belongs to this heading, not to its old type — a colour
 	// written there (`### [!mark|pink]`) must survive a change of type.
 	const meta = headingMatch ? splitCalloutMetadata(headingMatch[2] ?? "") : null;
@@ -415,16 +360,10 @@ export const insertHeadingCallout = (
 	const token = buildHeadingToken(def, {
 		existingTitle,
 		...(meta?.hasMetadata ? { metaSuffix: `|${meta.metadata}` } : {}),
-		...(options?.isKnownDisplayName
-			? { isKnownDisplayName: options.isKnownDisplayName }
-			: {}),
+		...(options?.isKnownDisplayName ? { isKnownDisplayName: options.isKnownDisplayName } : {}),
 	});
 	const replacement = `${hashes} ${token}`;
-	editor.replaceRange(
-		replacement,
-		{ line: targetLine, ch: 0 },
-		{ line: targetLine, ch: lineText.length },
-	);
+	editor.replaceRange(replacement, { line: targetLine, ch: 0 }, { line: targetLine, ch: lineText.length });
 	editor.setCursor({ line: targetLine, ch: replacement.length });
 
 	return true;
@@ -438,11 +377,7 @@ export const insertHeadingCallout = (
  * on the first line after them instead, and into a quote, which it leaves with
  * a blank line between.
  */
-export const insertNewHeadingCallout = (
-	editor: Editor,
-	def: CalloutDefinition,
-	level: number,
-): boolean => {
+export const insertNewHeadingCallout = (editor: Editor, def: CalloutDefinition, level: number): boolean => {
 	if (editor.lineCount() === 0) return false;
 
 	const heading = `${headingHashes(level)} ${buildHeadingToken(def)}`;
@@ -534,8 +469,7 @@ export const insertInlineCallout = (
  * A line with one quote level taken off. Whatever indents its first `>` stays,
  * so a callout indented under a list item is still inside that item after it.
  */
-const removeQuoteLevel = (line: string): string =>
-	line.replace(/^([ \t]*)> ?/, "$1");
+const removeQuoteLevel = (line: string): string => line.replace(/^([ \t]*)> ?/, "$1");
 
 /**
  * Take one callout level off the innermost callout around the cursor.
@@ -562,10 +496,7 @@ export const unwrapCalloutAtSelection = (editor: Editor): boolean => {
 	const tokenStart = opened.indexOf("[!");
 	/** What quotes (or indents) the container the callout sat in. */
 	const containerPrefix = opened.slice(0, tokenStart);
-	const title = splitFoldMark(
-		opened.slice(opened.indexOf("]", tokenStart) + 1),
-		"regular",
-	).title.trim();
+	const title = splitFoldMark(opened.slice(opened.indexOf("]", tokenStart) + 1), "regular").title.trim();
 
 	const containerDepth = countQuoteMarkers(headerText) - 1;
 	const above = block.headerLine - 1;
@@ -575,10 +506,7 @@ export const unwrapCalloutAtSelection = (editor: Editor): boolean => {
 		!isBlankCalloutLine(aboveText) &&
 		countQuoteMarkers(aboveText) === containerDepth &&
 		!isHeaderAt(editor, fences, above);
-	const lead = [
-		...(joinsAbove ? [containerPrefix.trimEnd()] : []),
-		...(title ? [`${containerPrefix}${title}`] : []),
-	];
+	const lead = [...(joinsAbove ? [containerPrefix.trimEnd()] : []), ...(title ? [`${containerPrefix}${title}`] : [])];
 
 	const bodyLines: string[] = [];
 	const removedLengths: number[] = [];
@@ -610,10 +538,7 @@ export const unwrapCalloutAtSelection = (editor: Editor): boolean => {
 	);
 	editor.setCursor({
 		line: bodyStart + bodyIndex,
-		ch: Math.min(
-			Math.max(head.ch - (removedLengths[bodyIndex] ?? 0), 0),
-			bodyLines[bodyIndex]?.length ?? 0,
-		),
+		ch: Math.min(Math.max(head.ch - (removedLengths[bodyIndex] ?? 0), 0), bodyLines[bodyIndex]?.length ?? 0),
 	});
 
 	return true;

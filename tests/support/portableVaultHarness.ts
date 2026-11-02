@@ -15,9 +15,14 @@ export function portableVault(notes: Record<string, string>) {
 		afterProcess?: (path: string) => void | Promise<void>;
 	} = {};
 	function add(path: string, source: string): void {
-		handles.set(path, Object.assign(new TFile(), {
-			path, extension: path.split(".").pop(), stat: { mtime: 1, ctime: 1, size: source.length },
-		}));
+		handles.set(
+			path,
+			Object.assign(new TFile(), {
+				path,
+				extension: path.split(".").pop(),
+				stat: { mtime: 1, ctime: 1, size: source.length },
+			}),
+		);
 		contents.set(path, source);
 	}
 	function edit(path: string, source: string, touch = true): void {
@@ -30,12 +35,18 @@ export function portableVault(notes: Record<string, string>) {
 	}
 	function open(path: string, source = contents.get(path)!): { text: string } {
 		const state = { text: source };
-		leaves.push({ view: Object.assign(new MarkdownView({} as WorkspaceLeaf), {
-			file: handles.get(path), editor: { getValue: () => state.text },
-		}) });
+		leaves.push({
+			view: Object.assign(new MarkdownView({} as WorkspaceLeaf), {
+				file: handles.get(path),
+				editor: { getValue: () => state.text },
+			}),
+		});
 		return state;
 	}
-	function remove(path: string): void { handles.delete(path); contents.delete(path); }
+	function remove(path: string): void {
+		handles.delete(path);
+		contents.delete(path);
+	}
 	function rename(from: string, to: string): void {
 		const file = handles.get(from)!;
 		const source = contents.get(from)!;
@@ -65,8 +76,12 @@ export function portableVault(notes: Record<string, string>) {
 				await hooks.afterRead?.(file.path);
 				return source;
 			},
-			cachedRead: () => { throw new Error("Conversion must not use cached reads"); },
-			modify: () => { throw new Error("Conversion must not bypass atomic process"); },
+			cachedRead: () => {
+				throw new Error("Conversion must not use cached reads");
+			},
+			modify: () => {
+				throw new Error("Conversion must not bypass atomic process");
+			},
 			process: async (file: TFile, transform: (source: string) => string) => {
 				processes.push(file.path);
 				await hooks.beforeProcess?.(file.path);
@@ -84,6 +99,8 @@ export function portableVault(notes: Record<string, string>) {
 
 export function deferred(): { promise: Promise<void>; resolve: () => void } {
 	let resolve!: () => void;
-	const promise = new Promise<void>((done) => { resolve = done; });
+	const promise = new Promise<void>((done) => {
+		resolve = done;
+	});
 	return { promise, resolve };
 }

@@ -19,12 +19,7 @@ import type { OutlineDecorator } from "../../outline/OutlineDecorator";
 import type { IconService } from "../../icons/IconService";
 import type { LocaleStore } from "../../i18n/LocaleStore";
 import type { ThemeCalloutsOff } from "../../manager/theme/themeCalloutsOff";
-import type {
-	CalloutDefinition,
-	CalloutIcon,
-	CalloutRenderRole,
-	PluginSettings,
-} from "../../types";
+import type { CalloutDefinition, CalloutIcon, CalloutRenderRole, PluginSettings } from "../../types";
 
 /** The plugin, as far as the settings are concerned (see the module header). */
 export type SettingsTabPlugin = Plugin & {
@@ -35,7 +30,8 @@ export type SettingsTabPlugin = Plugin & {
 	settings: PluginSettings;
 	settingsEditOpen: boolean;
 
-	settingsWriter: Pick<SettingsWriter, "isFrozen" | "isDestroyed" | "matchesLastWrite" | "commit"> & Partial<Pick<SettingsWriter, "status" | "persists" | "openVisit">>;
+	settingsWriter: Pick<SettingsWriter, "isFrozen" | "isDestroyed" | "matchesLastWrite" | "commit"> &
+		Partial<Pick<SettingsWriter, "status" | "persists" | "openVisit">>;
 
 	localState: DeviceLocalStore;
 	onIconCacheChange(cb: () => void): () => void;

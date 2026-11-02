@@ -20,8 +20,10 @@ import { FakeElement, installFakeDom } from "./support/fakeDom";
 
 const dom = installFakeDom();
 
-const flashOf = (content: string, line: number, from: number, delayed = false): CalloutFlash =>
-	({ extent: calloutExtentAt(linesOf(content), line, from)!, delayed });
+const flashOf = (content: string, line: number, from: number, delayed = false): CalloutFlash => ({
+	extent: calloutExtentAt(linesOf(content), line, from)!,
+	delayed,
+});
 
 function decorations(state: EditorState): Array<[number, number, string]> {
 	const out: Array<[number, number, string]> = [];
@@ -46,7 +48,9 @@ function drawn(state: EditorState, pill?: [number, number]): Array<[string, stri
 	const out: Array<[string, string[]]> = [];
 	const classes = (active: readonly Decoration[]) => active.map(classOf).sort();
 	RangeSet.spans(sets, 0, state.doc.length, {
-		span: (from, to, active) => { if (to > from) out.push([state.doc.sliceString(from, to), classes(active)]); },
+		span: (from, to, active) => {
+			if (to > from) out.push([state.doc.sliceString(from, to), classes(active)]);
+		},
 		point: (from, to, _value, active) => out.push([`<pill ${state.doc.sliceString(from, to)}>`, classes(active)]),
 	});
 	return out;
@@ -57,11 +61,21 @@ function fakeEditor(content: string, extensions: Extension[] = [calloutFlashFiel
 	let state = EditorState.create({ doc: content, extensions });
 	const dispatched: TransactionSpec[] = [];
 	const cm = {
-		get state() { return state; },
+		get state() {
+			return state;
+		},
 		dom: { isConnected: true },
-		dispatch(spec: TransactionSpec) { dispatched.push(spec); state = state.update(spec).state; },
+		dispatch(spec: TransactionSpec) {
+			dispatched.push(spec);
+			state = state.update(spec).state;
+		},
 	};
-	const editor = { cm, scrollIntoView: () => { throw new Error("must go through CodeMirror"); } } as unknown as Editor;
+	const editor = {
+		cm,
+		scrollIntoView: () => {
+			throw new Error("must go through CodeMirror");
+		},
+	} as unknown as Editor;
 	const effects = (at: number): readonly StateEffect<unknown>[] => {
 		const value: StateEffect<unknown> | readonly StateEffect<unknown>[] = dispatched[at]?.effects ?? [];
 		return ([] as StateEffect<unknown>[]).concat(value);
@@ -72,14 +86,19 @@ function fakeEditor(content: string, extensions: Extension[] = [calloutFlashFiel
 describe("landing flash decorations", () => {
 	const BLOCK = "intro\n> [!note] Title\n> body\n\nafter";
 	it("decorates every line of a block callout and nothing else", () => {
-		const state = EditorState.create({ doc: BLOCK, extensions: [calloutFlashField] })
-			.update({ effects: setCalloutFlash.of(flashOf(BLOCK, 1, 2)) }).state;
-		assert.deepEqual(decorations(state), [[6, 6, CSS_FLASH_LINE], [22, 22, CSS_FLASH_LINE]]);
+		const state = EditorState.create({ doc: BLOCK, extensions: [calloutFlashField] }).update({
+			effects: setCalloutFlash.of(flashOf(BLOCK, 1, 2)),
+		}).state;
+		assert.deepEqual(decorations(state), [
+			[6, 6, CSS_FLASH_LINE],
+			[22, 22, CSS_FLASH_LINE],
+		]);
 	});
 	it("marks an inline pill with its payload, delayed on request, and follows edits above it", () => {
 		const content = "Say [!tip]{word} now";
-		let state = EditorState.create({ doc: content, extensions: [calloutFlashField] })
-			.update({ effects: setCalloutFlash.of(flashOf(content, 0, 4, true)) }).state;
+		let state = EditorState.create({ doc: content, extensions: [calloutFlashField] }).update({
+			effects: setCalloutFlash.of(flashOf(content, 0, 4, true)),
+		}).state;
 		assert.deepEqual(decorations(state), [
 			[4, 16, `${CSS_FLASH_MARK} ${CSS_FLASH_DELAYED}`],
 			[4, 16, `${CSS_FLASH_TEXT} ${CSS_FLASH_DELAYED}`],
@@ -92,7 +111,13 @@ describe("landing flash decorations", () => {
 		});
 		assert.deepEqual(inclusive, [true, false], "the pill's mark is inclusive, the tint is not");
 		state = state.update({ changes: { from: 0, insert: ">> " } }).state;
-		assert.deepEqual(decorations(state).map(([from, to]) => [from, to]), [[7, 19], [7, 19]]);
+		assert.deepEqual(
+			decorations(state).map(([from, to]) => [from, to]),
+			[
+				[7, 19],
+				[7, 19],
+			],
+		);
 		state = state.update({ effects: setCalloutFlash.of(null) }).state;
 		assert.deepEqual(decorations(state), []);
 		assert.equal(state.field(calloutFlashField).flash, null);
@@ -102,22 +127,39 @@ describe("landing flash decorations", () => {
 		// .cs-inline-callout`. Without a `:has()` to ask what the mark holds, the
 		// tint must simply not exist over a pill.
 		const content = "Say [!tip]{word} now";
-		const state = EditorState.create({ doc: content, extensions: [calloutFlashField] })
-			.update({ effects: setCalloutFlash.of(flashOf(content, 0, 4)) }).state;
-		assert.deepEqual(drawn(state), [["Say ", []], ["[!tip]{word}", [CSS_FLASH_MARK, CSS_FLASH_TEXT]], [" now", []]]);
-		assert.deepEqual(drawn(state, [4, 16]), [["Say ", []], ["<pill [!tip]{word}>", [CSS_FLASH_MARK]], [" now", []]]);
+		const state = EditorState.create({ doc: content, extensions: [calloutFlashField] }).update({
+			effects: setCalloutFlash.of(flashOf(content, 0, 4)),
+		}).state;
+		assert.deepEqual(drawn(state), [
+			["Say ", []],
+			["[!tip]{word}", [CSS_FLASH_MARK, CSS_FLASH_TEXT]],
+			[" now", []],
+		]);
+		assert.deepEqual(drawn(state, [4, 16]), [
+			["Say ", []],
+			["<pill [!tip]{word}>", [CSS_FLASH_MARK]],
+			[" now", []],
+		]);
 	});
 	it("tints a span with one inclusive mark, as before", () => {
 		const content = "See [[Note#Old]] here";
-		const span: CalloutFlash = { extent: { kind: "span", startLine: 0, endLine: 0, from: 4, to: 16 }, delayed: false };
-		const state = EditorState.create({ doc: content, extensions: [calloutFlashField] })
-			.update({ effects: setCalloutFlash.of(span) }).state;
+		const span: CalloutFlash = {
+			extent: { kind: "span", startLine: 0, endLine: 0, from: 4, to: 16 },
+			delayed: false,
+		};
+		const state = EditorState.create({ doc: content, extensions: [calloutFlashField] }).update({
+			effects: setCalloutFlash.of(span),
+		}).state;
 		assert.deepEqual(decorations(state), [[4, 16, CSS_FLASH_TEXT]]);
 		state.field(calloutFlashField).decorations.between(0, state.doc.length, (_from, _to, value) => {
 			assert.equal((value.spec as { inclusive?: boolean }).inclusive, true);
 		});
 		// Inclusive, so a widget drawn over the whole span is still tinted.
-		assert.deepEqual(drawn(state, [4, 16]), [["See ", []], ["<pill [[Note#Old]]>", [CSS_FLASH_TEXT]], [" here", []]]);
+		assert.deepEqual(drawn(state, [4, 16]), [
+			["See ", []],
+			["<pill [[Note#Old]]>", [CSS_FLASH_TEXT]],
+			[" here", []],
+		]);
 	});
 });
 
@@ -128,9 +170,15 @@ describe("revealing a sidebar result", () => {
 		revealCalloutInEditor(h.editor, linesOf(content), { from: { line: 1, ch: 2 }, to: { line: 1, ch: 9 } });
 		assert.equal(h.dispatched.length, 1);
 		assert.equal(h.dispatched[0]!.selection, undefined);
-		const scroll = h.effects(0).map((effect) => (effect.value as { range?: { anchor: number; head: number } }).range)
+		const scroll = h
+			.effects(0)
+			.map((effect) => (effect.value as { range?: { anchor: number; head: number } }).range)
 			.find(Boolean);
-		assert.deepEqual(scroll && [scroll.head, scroll.anchor], [6, 28], "head at the start, anchor at the end of the body");
+		assert.deepEqual(
+			scroll && [scroll.head, scroll.anchor],
+			[6, 28],
+			"head at the start, anchor at the end of the body",
+		);
 		assert.equal(h.state().field(calloutFlashField).flash?.extent.endLine, 2);
 	});
 	it("opens a fold hiding the callout but never the callout's own fold", () => {
@@ -144,7 +192,10 @@ describe("revealing a sidebar result", () => {
 		const headingEnd = content.indexOf("\nits body");
 		own.cm.dispatch({ effects: foldEffect.of({ from: headingEnd, to: content.length }) });
 		revealCalloutInEditor(own.editor, linesOf(content), { from: { line: 2, ch: 3 }, to: { line: 2, ch: 10 } });
-		assert.equal(own.effects(1).some((effect) => effect.is(unfoldEffect)), false);
+		assert.equal(
+			own.effects(1).some((effect) => effect.is(unfoldEffect)),
+			false,
+		);
 	});
 	it("paints a running flash off for a frame so a second click replays it", () => {
 		const content = "[!note] and more";
@@ -160,8 +211,13 @@ describe("revealing a sidebar result", () => {
 	});
 	it("falls back to the editor's own scroll without a CodeMirror view", () => {
 		const scrolled: unknown[] = [];
-		const editor = { scrollIntoView: (range: unknown, center: unknown) => scrolled.push([range, center]) } as unknown as Editor;
-		revealCalloutInEditor(editor, linesOf("## [!note] Title"), { from: { line: 0, ch: 3 }, to: { line: 0, ch: 10 } });
+		const editor = {
+			scrollIntoView: (range: unknown, center: unknown) => scrolled.push([range, center]),
+		} as unknown as Editor;
+		revealCalloutInEditor(editor, linesOf("## [!note] Title"), {
+			from: { line: 0, ch: 3 },
+			to: { line: 0, ch: 10 },
+		});
 		assert.deepEqual(scrolled, [[{ from: { line: 0, ch: 16 }, to: { line: 0, ch: 0 } }, true]]);
 	});
 });
@@ -179,20 +235,36 @@ describe("the Live Preview block widget a flash lights", () => {
 			positions.set(el, state.doc.line(widget.line + 1).from);
 		}
 		return {
-			state, contentDOM,
-			posAtDOM: (node: unknown) => { const pos = positions.get(node); if (pos === undefined) throw new Error("not a widget"); return pos; },
+			state,
+			contentDOM,
+			posAtDOM: (node: unknown) => {
+				const pos = positions.get(node);
+				if (pos === undefined) throw new Error("not a widget");
+				return pos;
+			},
 		} as unknown as EditorView;
 	}
 	const extent = (line: number, from: number) => calloutExtentAt(linesOf(CONTENT), line, from)!;
 	it("finds a nested callout inside its outer widget, and each top-level callout in its own", () => {
-		const v = view([{ line: 0, ids: ["note", "tip"] }, { line: 5, ids: ["info"] }]);
+		const v = view([
+			{ line: 0, ids: ["note", "tip"] },
+			{ line: 5, ids: ["info"] },
+		]);
 		assert.equal(renderedBlockCallout(v, extent(0, 2))?.getAttribute("data-callout"), "note");
 		assert.equal(renderedBlockCallout(v, extent(2, 4))?.getAttribute("data-callout"), "tip");
 		assert.equal(renderedBlockCallout(v, extent(5, 2))?.getAttribute("data-callout"), "info");
 	});
 	it("waits while the target's widget is not drawn, and falls back to the outer callout on a mismatch", () => {
-		assert.equal(renderedBlockCallout(view([{ line: 0, ids: ["note", "tip"] }]), extent(5, 2)), null,
-			"the widget above ended before the target");
-		assert.equal(renderedBlockCallout(view([{ line: 0, ids: ["note", "other"] }]), extent(2, 4))?.getAttribute("data-callout"), "note");
+		assert.equal(
+			renderedBlockCallout(view([{ line: 0, ids: ["note", "tip"] }]), extent(5, 2)),
+			null,
+			"the widget above ended before the target",
+		);
+		assert.equal(
+			renderedBlockCallout(view([{ line: 0, ids: ["note", "other"] }]), extent(2, 4))?.getAttribute(
+				"data-callout",
+			),
+			"note",
+		);
 	});
 });

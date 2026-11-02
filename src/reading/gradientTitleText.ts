@@ -67,10 +67,7 @@ function graphemes(text: string): string[] {
 function inNestedToken(node: Node, root: HTMLElement): boolean {
 	let el = node.parentElement;
 	while (el && el !== root) {
-		if (
-			el.classList.contains(CSS_INLINE_TOKEN) ||
-			el.classList.contains(CSS_TOKEN_ICON)
-		) {
+		if (el.classList.contains(CSS_INLINE_TOKEN) || el.classList.contains(CSS_TOKEN_ICON)) {
 			return true;
 		}
 		el = el.parentElement;
@@ -107,9 +104,9 @@ function wrapChars(root: HTMLElement): void {
 
 /** The root's own char spans, excluding any inside a nested pill. */
 function ownSpans(root: HTMLElement): HTMLElement[] {
-	return Array.from(
-		root.querySelectorAll<HTMLElement>(`.${CSS_GRAD_CHAR}`),
-	).filter((span) => !inNestedToken(span, root));
+	return Array.from(root.querySelectorAll<HTMLElement>(`.${CSS_GRAD_CHAR}`)).filter(
+		(span) => !inNestedToken(span, root),
+	);
 }
 
 /**
@@ -117,11 +114,7 @@ function ownSpans(root: HTMLElement): HTMLElement[] {
  * sweep (re-wrapping whatever a name rewrite stripped). A single grapheme
  * takes the midpoint rather than a bare start color.
  */
-export function paintGradientChars(
-	el: HTMLElement,
-	from: string,
-	to: string,
-): void {
+export function paintGradientChars(el: HTMLElement, from: string, to: string): void {
 	wrapChars(el);
 	const spans = ownSpans(el);
 	const n = spans.length;
@@ -129,10 +122,7 @@ export function paintGradientChars(
 	const rtl = isRtlText(el.textContent ?? "");
 	spans.forEach((span, i) => {
 		const fraction = n === 1 ? 0.5 : i / (n - 1);
-		span.style.setProperty(
-			GRAD_CHAR_PROP,
-			blendHex(from, to, rtl ? 1 - fraction : fraction),
-		);
+		span.style.setProperty(GRAD_CHAR_PROP, blendHex(from, to, rtl ? 1 - fraction : fraction));
 	});
 }
 
@@ -147,17 +137,13 @@ export function paintGradientChars(
  * the document is currently in, the same "current theme wins" compromise the
  * baked material/emoji export icons make.
  */
-export function applyTitleGradient(
-	el: HTMLElement,
-	def: CalloutDefinition,
-): void {
+export function applyTitleGradient(el: HTMLElement, def: CalloutDefinition): void {
 	const g = def.bgGradient;
 	if (!g?.textGradient || !g.textToColorLight) {
 		clearGradientChars(el);
 		return;
 	}
-	const isDark =
-		el.ownerDocument.body?.classList.contains("theme-dark") ?? false;
+	const isDark = el.ownerDocument.body?.classList.contains("theme-dark") ?? false;
 	const to = (isDark ? g.textToColorDark : undefined) ?? g.textToColorLight;
 	const from = isDark && g.textToColorDark ? def.colorDark : def.colorLight;
 	paintGradientChars(el, from, to);

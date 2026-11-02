@@ -8,7 +8,8 @@ import { Notice } from "obsidian";
 import { explainIfBlocked, paintBlocked } from "../src/ui/blockedButton";
 import { asEl, el } from "./support/fakeDom";
 
-const last = (): { message: string; hidden: boolean } | null => (Notice as unknown as { last: { message: string; hidden: boolean } | null }).last;
+const last = (): { message: string; hidden: boolean } | null =>
+	(Notice as unknown as { last: { message: string; hidden: boolean } | null }).last;
 
 describe("a blocked button", () => {
 	it("is dimmed for a reason and undimmed without one, never disabled", () => {

@@ -102,12 +102,7 @@ const paintedChosen = new WeakMap<HTMLInputElement, boolean>();
  *   the card chooses it, a click into its picker included.
  * @returns The radio.
  */
-export function addOptionRadio(
-	box: OptionBox,
-	group: string,
-	onChoose: () => void,
-	exempt?: string,
-): HTMLInputElement {
+export function addOptionRadio(box: OptionBox, group: string, onChoose: () => void, exempt?: string): HTMLInputElement {
 	const [headId, descId] = box.describedBy.split(" ");
 	const radio = createEl("input", {
 		cls: "cs-option-radio",

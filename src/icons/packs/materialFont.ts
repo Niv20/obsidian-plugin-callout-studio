@@ -75,7 +75,9 @@ export function startMaterialFontLoader(): void {
 }
 
 /** Discard font resources and retries while keeping this enabled loader usable. */
-export function resetMaterialFontLoader(): void { startMaterialFontLoader(); }
+export function resetMaterialFontLoader(): void {
+	startMaterialFontLoader();
+}
 
 /** Cancel waiters and remove only resources this loader registered. */
 export function stopMaterialFontLoader(): void {
@@ -113,10 +115,7 @@ export function materialFontFamily(style: MaterialIconStyle): string {
  * starting work — and it is the only honest answer, since a font can arrive or
  * (in a pop-out) never have arrived without this module being told.
  */
-export function isMaterialFontReady(
-	style: MaterialIconStyle,
-	doc: Document = activeDocument,
-): boolean {
+export function isMaterialFontReady(style: MaterialIconStyle, doc: Document = activeDocument): boolean {
 	return session?.active === true && isFamilyLoaded(doc, materialFontFamily(style));
 }
 
@@ -148,11 +147,7 @@ export function ensureMaterialFontLoaded(
 	if (pending) return pending;
 
 	const last = failedAt.get(family);
-	if (
-		!opts?.force &&
-		last !== undefined &&
-		Date.now() - last < FAILURE_COOLDOWN_MS
-	) {
+	if (!opts?.force && last !== undefined && Date.now() - last < FAILURE_COOLDOWN_MS) {
 		return Promise.resolve<FontLoadResult>("failed");
 	}
 
@@ -174,11 +169,7 @@ export function ensureMaterialFontLoaded(
 	return load;
 }
 
-async function loadFamily(
-	doc: Document,
-	family: string,
-	scope: MaterialFontSession,
-): Promise<FontLoadResult> {
+async function loadFamily(doc: Document, family: string, scope: MaterialFontSession): Promise<FontLoadResult> {
 	if (await addFromCache(doc, family, scope)) return "ready";
 	if (!scope.active || !(await loadMaterialFontLink(doc, family, scope))) return "failed";
 	if (!scope.active) return "failed";

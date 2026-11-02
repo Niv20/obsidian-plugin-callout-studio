@@ -127,8 +127,7 @@ const localeNames: Record<string, string> = {
 let currentLocale = "en";
 
 /** Saved names must name a table entry, never an inherited Object property. */
-const owns = (table: object, key: string): boolean =>
-	Object.prototype.hasOwnProperty.call(table, key);
+const owns = (table: object, key: string): boolean => Object.prototype.hasOwnProperty.call(table, key);
 
 /**
  * Register a downloaded locale so `setLocale` can select it.
@@ -138,10 +137,7 @@ const owns = (table: object, key: string): boolean =>
  * different times: a file read at startup is registered before the first paint,
  * while one that had to be downloaded arrives well after it.
  */
-export function registerLocale(
-	code: string,
-	strings: Record<string, string>,
-): void {
+export function registerLocale(code: string, strings: Record<string, string>): void {
 	locales[code] = strings;
 }
 
@@ -153,10 +149,7 @@ export function registerLocale(
  * translation sitting right there in memory. All the codes share one object, so
  * the aliases cost nothing.
  */
-export function registerLocaleFile(
-	file: LocaleFileId,
-	strings: Record<string, string>,
-): void {
+export function registerLocaleFile(file: LocaleFileId, strings: Record<string, string>): void {
 	for (const [code, id] of Object.entries(LOCALE_FILES)) {
 		if (id === file) locales[code] = strings;
 	}
@@ -259,10 +252,7 @@ export function t(key: string, vars?: Record<string, string | number>): string {
 	if (vars) {
 		for (const [k, v] of Object.entries(vars)) {
 			const literal = String(v);
-			value = value.replace(
-				new RegExp(`\\{\\{${k}\\}\\}`, "g"),
-				() => literal,
-			);
+			value = value.replace(new RegExp(`\\{\\{${k}\\}\\}`, "g"), () => literal);
 		}
 	}
 

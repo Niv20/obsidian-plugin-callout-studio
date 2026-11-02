@@ -41,7 +41,12 @@ function setup() {
 		settingsWriter: { isFrozen: false },
 		registry: { getCommitted: () => [], getUserImages: () => [] },
 		icons: {
-			packs: { loadAllFromDisk: () => { steps.push("read"); return Promise.resolve(); } },
+			packs: {
+				loadAllFromDisk: () => {
+					steps.push("read");
+					return Promise.resolve();
+				},
+			},
 			deleteLibrary: () => Promise.resolve(false),
 		},
 	};
@@ -51,27 +56,45 @@ function setup() {
 describe("opening the Manage icon libraries window", () => {
 	it("reads the pack files before the door is asked, and the door is asked before the window opens", async () => {
 		const { steps, asPlugin } = setup();
-		const restore = standInForLibrariesWindow(() => { steps.push("open"); return false; });
+		const restore = standInForLibrariesWindow(() => {
+			steps.push("open");
+			return false;
+		});
 		try {
-			await openIconLibraries(asPlugin, { beforeOpen: () => { steps.push("beforeOpen"); return true; } });
+			await openIconLibraries(asPlugin, {
+				beforeOpen: () => {
+					steps.push("beforeOpen");
+					return true;
+				},
+			});
 			assert.deepEqual(steps, ["read", "beforeOpen", "open"]);
-		} finally { restore(); }
+		} finally {
+			restore();
+		}
 	});
 
 	it("opens nothing when the door says no once the files have been read, and answers that nothing changed", async () => {
 		const { steps, asPlugin } = setup();
-		const restore = standInForLibrariesWindow(() => { steps.push("open"); return true; });
+		const restore = standInForLibrariesWindow(() => {
+			steps.push("open");
+			return true;
+		});
 		try {
 			const changed = await openIconLibraries(asPlugin, { beforeOpen: () => false });
 			assert.deepEqual(steps, ["read"], "the files were read, the window was not opened");
 			assert.equal(changed, false);
-		} finally { restore(); }
+		} finally {
+			restore();
+		}
 	});
 
 	it("gives the window the plugin's own settings, writer, registry, packs and app", async () => {
 		const { plugin, asPlugin } = setup();
 		let seen: IconLibrariesHost | undefined;
-		const restore = standInForLibrariesWindow((host) => { seen = host; return false; });
+		const restore = standInForLibrariesWindow((host) => {
+			seen = host;
+			return false;
+		});
 		try {
 			await openIconLibraries(asPlugin);
 			assert.ok(seen);
@@ -80,7 +103,9 @@ describe("opening the Manage icon libraries window", () => {
 			assert.equal(seen.registry, plugin.registry);
 			assert.equal(seen.icons, plugin.icons);
 			assert.equal(seen.app, plugin.app);
-		} finally { restore(); }
+		} finally {
+			restore();
+		}
 	});
 
 	it("saves through the plugin, as the plugin", async () => {
@@ -92,20 +117,27 @@ describe("opening the Manage icon libraries window", () => {
 		try {
 			await openIconLibraries(asPlugin);
 			assert.equal(plugin.saves, 1);
-		} finally { restore(); }
+		} finally {
+			restore();
+		}
 	});
 
 	it("hands over what the door knows: the counts and the callout being edited", async () => {
 		const { asPlugin } = setup();
 		const editing: EditedCallout = { id: "note", name: "Note", icon: { type: "lucide", value: "star" } };
 		let seen: IconLibrariesHost | undefined;
-		const restore = standInForLibrariesWindow((host) => { seen = host; return false; });
+		const restore = standInForLibrariesWindow((host) => {
+			seen = host;
+			return false;
+		});
 		try {
 			await openIconLibraries(asPlugin, { editing, countFor: (id) => (id === "lucide" ? 1700 : undefined) });
 			assert.equal(seen?.editing, editing);
 			assert.equal(seen?.countFor("lucide"), 1700);
 			assert.equal(seen?.countFor("tabler"), undefined);
-		} finally { restore(); }
+		} finally {
+			restore();
+		}
 	});
 
 	it("hands over nothing for what the door does not know", async () => {
@@ -113,12 +145,17 @@ describe("opening the Manage icon libraries window", () => {
 		// picker's; the window then shows no count and asks about no draft.
 		const { asPlugin } = setup();
 		let seen: IconLibrariesHost | undefined;
-		const restore = standInForLibrariesWindow((host) => { seen = host; return false; });
+		const restore = standInForLibrariesWindow((host) => {
+			seen = host;
+			return false;
+		});
 		try {
 			await openIconLibraries(asPlugin);
 			assert.equal(seen?.editing, undefined);
 			for (const id of ICON_SOURCE_IDS) assert.equal(seen?.countFor(id), undefined, id);
-		} finally { restore(); }
+		} finally {
+			restore();
+		}
 	});
 
 	it("answers with what the window answers", async () => {
@@ -127,7 +164,9 @@ describe("opening the Manage icon libraries window", () => {
 			const restore = standInForLibrariesWindow(() => answer);
 			try {
 				assert.equal(await openIconLibraries(asPlugin), answer);
-			} finally { restore(); }
+			} finally {
+				restore();
+			}
 		}
 	});
 });
@@ -137,7 +176,9 @@ describe("counting the icons of every library", () => {
 	async function warnings(body: () => Promise<void>): Promise<string[]> {
 		const original = console.warn;
 		const told: string[] = [];
-		console.warn = (...args: unknown[]) => { told.push(String(args[0])); };
+		console.warn = (...args: unknown[]) => {
+			told.push(String(args[0]));
+		};
 		try {
 			await body();
 		} finally {
@@ -155,7 +196,9 @@ describe("counting the icons of every library", () => {
 				ICON_SOURCE_IDS.map((id) => counts.get(id)),
 				ICON_SOURCE_IDS.map((_id, index) => index + 1),
 			);
-		} finally { restore(); }
+		} finally {
+			restore();
+		}
 	});
 
 	it("leaves out a library whose index cannot be read, says so, and counts the rest", async () => {
@@ -163,13 +206,17 @@ describe("counting the icons of every library", () => {
 		try {
 			const counts = new Map<IconSourceId, number>();
 			let finished = false;
-			const told = await warnings(async () => { finished = await loadSourceCounts(counts); });
+			const told = await warnings(async () => {
+				finished = await loadSourceCounts(counts);
+			});
 			assert.equal(finished, true);
 			assert.equal(counts.has("tabler"), false, "no count rather than a wrong one");
 			assert.equal(counts.size, ICON_SOURCE_IDS.length - 1);
 			assert.equal(told.length, 1);
 			assert.ok(told[0]!.includes("tabler"));
-		} finally { restore(); }
+		} finally {
+			restore();
+		}
 	});
 
 	it("stops as soon as it is told it is out of date, and says it did not finish", async () => {
@@ -180,16 +227,22 @@ describe("counting the icons of every library", () => {
 			const finished = await loadSourceCounts(counts, () => ++asked <= 2);
 			assert.equal(finished, false);
 			assert.equal(counts.size, 2, "the two counted while it was current, and no more");
-		} finally { restore(); }
+		} finally {
+			restore();
+		}
 	});
 
 	it("stops the same way while a library that cannot be counted is being reported", async () => {
 		const restore = stubSourceIndexes(() => new Error("no index"));
 		try {
 			let finished = true;
-			const told = await warnings(async () => { finished = await loadSourceCounts(new Map(), () => false); });
+			const told = await warnings(async () => {
+				finished = await loadSourceCounts(new Map(), () => false);
+			});
 			assert.equal(finished, false);
 			assert.deepEqual(told, [], "an out-of-date count is not worth a warning");
-		} finally { restore(); }
+		} finally {
+			restore();
+		}
 	});
 });

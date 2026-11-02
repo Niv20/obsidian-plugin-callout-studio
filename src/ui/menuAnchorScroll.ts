@@ -32,8 +32,7 @@ export function closeOnAnchorScroll(anchor: HTMLElement, close: () => void): () 
 	}
 	const onScroll = (event: Event): void => {
 		// A scroll of the page itself is reported on the document.
-		const target = event.target === doc
-			? doc.scrollingElement ?? doc.documentElement : event.target;
+		const target = event.target === doc ? (doc.scrollingElement ?? doc.documentElement) : event.target;
 		const before = positions.get(target as Element);
 		if (!before) return;
 		const el = target as Element;

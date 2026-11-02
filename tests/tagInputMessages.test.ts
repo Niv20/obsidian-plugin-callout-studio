@@ -107,7 +107,13 @@ describe("TagInput — what the IDs field says, and where", () => {
 
 	it("shows an offer, with its button, under the label while the short lasting error stays under the field", () => {
 		let pressed = 0;
-		const h = setup((tag) => (tag === "test" ? offer(() => { pressed++; }) : null));
+		const h = setup((tag) =>
+			tag === "test"
+				? offer(() => {
+						pressed++;
+					})
+				: null,
+		);
 		h.tags.showExternalError("At least one ID is required");
 		assert.equal(h.fieldError(), "At least one ID is required");
 		assert.equal(h.wideMessage(), "");
@@ -124,7 +130,7 @@ describe("TagInput — what the IDs field says, and where", () => {
 
 	it("draws a wide sentence that is only words under the label, not under the field", () => {
 		// "…is the main ID of X. To use it here, delete X first." names a callout.
-		const h = setup(() => wide("\"test\" is the main ID of Abstract. To use it here, delete Abstract first."));
+		const h = setup(() => wide('"test" is the main ID of Abstract. To use it here, delete Abstract first.'));
 		h.type("test");
 		h.enter();
 		assert.equal(h.input.value, "test", "the refused id stays, to be corrected");
@@ -210,7 +216,11 @@ describe("TagInput — what the IDs field says, and where", () => {
 		});
 		field.addTagUnchecked("test");
 		assert.match((noteEl as unknown as FakeElement).textContent, /moves here from Abstract/);
-		assert.equal((setting.settingEl as unknown as FakeElement).hasClass("is-invalid"), false, "a note is not an error");
+		assert.equal(
+			(setting.settingEl as unknown as FakeElement).hasClass("is-invalid"),
+			false,
+			"a note is not an error",
+		);
 	});
 
 	it("shows a note and a refusal side by side, each in its place", () => {

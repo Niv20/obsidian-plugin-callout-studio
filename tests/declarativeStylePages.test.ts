@@ -46,11 +46,15 @@ function fakePlugin(paused = false) {
 	const registry = new CalloutRegistry();
 	registry.load(null);
 	const rounds: boolean[] = [];
-	registry.onChange((change) => { rounds.push(change.persists); });
+	registry.onChange((change) => {
+		rounds.push(change.persists);
+	});
 	const plugin = {
 		app: {},
 		registry,
-		get settings() { return registry.settings; },
+		get settings() {
+			return registry.settings;
+		},
 		settingsWriter: { isFrozen: paused },
 		cssInjector: { inject: () => {} },
 		saveSettings: () => Promise.resolve(),
@@ -65,7 +69,10 @@ function drawStyle(plugin: object) {
 	const ctx: TreeContext = {
 		app: {} as App,
 		plugin: plugin as SettingsTabPlugin,
-		redraw: () => { redraws++; tab.update(); },
+		redraw: () => {
+			redraws++;
+			tab.update();
+		},
 		registerDisposer: () => {},
 		rows: new RowRegistry(),
 		parts: new PersistentParts(() => {}),
@@ -103,11 +110,10 @@ function idle(button: ButtonLike): boolean {
 describe("the Callout style box", () => {
 	it("opens the three role pages, Heading first", () => {
 		const { harness } = drawStyle(fakePlugin().plugin);
-		assert.deepEqual(box(harness, STYLE_PAGES.box).children.map((r) => r.def.name), [
-			t("settings.calloutTypeHeading"),
-			t("settings.calloutTypeInline"),
-			t("settings.calloutTypeRegular"),
-		]);
+		assert.deepEqual(
+			box(harness, STYLE_PAGES.box).children.map((r) => r.def.name),
+			[t("settings.calloutTypeHeading"), t("settings.calloutTypeInline"), t("settings.calloutTypeRegular")],
+		);
 	});
 
 	it("has no row for the icon libraries: they live in the Colors and icons box and Pick an icon", () => {
@@ -135,12 +141,22 @@ describe("a style page", () => {
 			return harness.rendered.map((b) => [b.def.heading, b.settingGroup.extraButtons.length]);
 		};
 		assert.deepEqual(layout(STYLE_PAGES.regular), [
-			[undefined, 0], [undefined, 0], [t("settings.border"), 1], [t("settings.fontScaleGroup"), 1],
+			[undefined, 0],
+			[undefined, 0],
+			[t("settings.border"), 1],
+			[t("settings.fontScaleGroup"), 1],
 		]);
 		assert.deepEqual(layout(STYLE_PAGES.heading), [
-			[undefined, 0], [undefined, 0], [t("settings.border"), 1], [t("settings.headingSpacingGroup"), 1],
+			[undefined, 0],
+			[undefined, 0],
+			[t("settings.border"), 1],
+			[t("settings.headingSpacingGroup"), 1],
 		]);
-		assert.deepEqual(layout(STYLE_PAGES.inline), [[undefined, 0], [undefined, 0], [t("settings.border"), 1]]);
+		assert.deepEqual(layout(STYLE_PAGES.inline), [
+			[undefined, 0],
+			[undefined, 0],
+			[t("settings.border"), 1],
+		]);
 		// The inline text size, alone in its box, is named for what it is.
 		assert.ok(harness.rows().some((r) => r.def.name === t("settings.fontScaleGroup")));
 	});
@@ -166,7 +182,10 @@ describe("a style page", () => {
 		assert.equal(idle(reset), false);
 		reset.press();
 		assert.equal(registry.settings.globalStyle.borderRadius, DEFAULT_SETTINGS.globalStyle.borderRadius);
-		assert.equal((row(harness, "regular-corner-rounding").setting.components[1] as SliderComponent).getValue(), DEFAULT_SETTINGS.globalStyle.borderRadius);
+		assert.equal(
+			(row(harness, "regular-corner-rounding").setting.components[1] as SliderComponent).getValue(),
+			DEFAULT_SETTINGS.globalStyle.borderRadius,
+		);
 		assert.deepEqual(rounds, [true], "saved once");
 		assert.equal(idle(reset), true);
 	});
@@ -190,7 +209,8 @@ describe("a style page", () => {
 		const { plugin } = drawStyleWith();
 		const { tab, harness } = plugin;
 		harness.openPage([STYLE_PAGES.inline]);
-		const preview = (): Element | null => row(harness, `${STYLE_PAGES.inline}-preview`).settingEl.querySelector(".cs-style-preview");
+		const preview = (): Element | null =>
+			row(harness, `${STYLE_PAGES.inline}-preview`).settingEl.querySelector(".cs-style-preview");
 		const first = preview();
 		assert.ok(first, "the preview is drawn");
 		tab.update();
@@ -203,10 +223,18 @@ describe("a style page", () => {
 		const watching = new Set<unknown>();
 		let laidOut = (): void => {};
 		class Observer {
-			constructor(callback: () => void) { laidOut = callback; }
-			observe(element: unknown): void { watching.add(element); }
-			unobserve(element: unknown): void { watching.delete(element); }
-			disconnect(): void { watching.clear(); }
+			constructor(callback: () => void) {
+				laidOut = callback;
+			}
+			observe(element: unknown): void {
+				watching.add(element);
+			}
+			unobserve(element: unknown): void {
+				watching.delete(element);
+			}
+			disconnect(): void {
+				watching.clear();
+			}
 		}
 		const { plugin } = drawStyleWith();
 		const { tab, harness } = plugin;
@@ -214,7 +242,9 @@ describe("a style page", () => {
 		Object.assign(view, { ResizeObserver: Observer });
 		/** Where the preview is now: its element, its page's title bar, its box. */
 		const where = () => {
-			const previewEl = row(harness, `${STYLE_PAGES.regular}-preview`).settingEl.querySelector(".cs-style-preview")!;
+			const previewEl = row(harness, `${STYLE_PAGES.regular}-preview`).settingEl.querySelector(
+				".cs-style-preview",
+			)!;
 			return {
 				previewEl,
 				titlebar: previewEl.closest(".setting-page")?.querySelector(".setting-page-titlebar"),
@@ -224,7 +254,11 @@ describe("a style page", () => {
 		try {
 			harness.openPage([STYLE_PAGES.regular]);
 			const first = where();
-			assert.deepEqual([...watching], [first.previewEl], "built before its box is on the page, so the preview is watched");
+			assert.deepEqual(
+				[...watching],
+				[first.previewEl],
+				"built before its box is on the page, so the preview is watched",
+			);
 			laidOut();
 			assert.ok(first.titlebar, "the page has its title bar");
 			assert.deepEqual([...watching], [first.previewEl, first.titlebar], "then the bar, for its height");
@@ -251,7 +285,9 @@ describe("the preview's pin under the title bar, in a window of its own", () => 
 		const main = installResizeObserver(tab.containerEl.ownerDocument.defaultView as unknown as FakeWindow);
 		try {
 			harness.openPage([STYLE_PAGES.regular]);
-			const previewEl = row(harness, `${STYLE_PAGES.regular}-preview`).settingEl.querySelector(".cs-style-preview") as unknown as FakeElement;
+			const previewEl = row(harness, `${STYLE_PAGES.regular}-preview`).settingEl.querySelector(
+				".cs-style-preview",
+			) as unknown as FakeElement;
 			// The row was drawn by the main window, after the observer was put on it…
 			const settingsDoc = newWindow();
 			const settings = installResizeObserver(settingsDoc.defaultView);
@@ -275,7 +311,12 @@ describe("while saving is paused", () => {
 			const { harness } = plugin;
 			registry.settings.globalStyle.titleScale = 1.2;
 			harness.openPage([STYLE_PAGES.regular]);
-			for (const id of ["regular-corner-rounding", "regular-title-scale", "regular-border-top", "regular-align"]) {
+			for (const id of [
+				"regular-corner-rounding",
+				"regular-title-scale",
+				"regular-border-top",
+				"regular-align",
+			]) {
 				assert.equal(row(harness, id).setting.disabled, true, id);
 			}
 			(box(harness, "style-block-font-scale").settingGroup.extraButtons[0] as ButtonLike).press();

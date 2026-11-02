@@ -85,11 +85,7 @@ export class FakeEditor {
 
 	/* ---- writes ---- */
 
-	replaceRange(
-		text: string,
-		from: EditorPosition,
-		to?: EditorPosition,
-	): void {
+	replaceRange(text: string, from: EditorPosition, to?: EditorPosition): void {
 		this.edits.push({ text, from, to });
 		const start = this.posToOffset(from);
 		const end = to ? this.posToOffset(to) : start;
@@ -114,7 +110,6 @@ export class FakeEditor {
 }
 
 /** The code under test is typed against the real `Editor`. */
-export const asEditor = (editor: FakeEditor): Editor =>
-	editor as unknown as Editor;
+export const asEditor = (editor: FakeEditor): Editor => editor as unknown as Editor;
 
 export const editor = (source: string): FakeEditor => new FakeEditor(source);

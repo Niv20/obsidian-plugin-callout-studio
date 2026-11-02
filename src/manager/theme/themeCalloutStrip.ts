@@ -72,7 +72,9 @@ const CORE_CALLOUT_DEFAULTS: readonly string[] = [
 ];
 
 /** End `sheet` with {@link CORE_CALLOUT_DEFAULTS}; returns how many rules went in. */
-export function pinCoreCalloutDefaults(sheet: RuleContainer & { insertRule(rule: string, index?: number): number }): number {
+export function pinCoreCalloutDefaults(
+	sheet: RuleContainer & { insertRule(rule: string, index?: number): number },
+): number {
 	let pinned = 0;
 	for (const rule of CORE_CALLOUT_DEFAULTS) {
 		try {

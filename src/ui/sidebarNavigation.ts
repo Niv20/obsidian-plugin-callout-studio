@@ -1,10 +1,21 @@
-import { MarkdownView, Platform, TFile, type App, type Editor, type EditorPosition, type WorkspaceLeaf } from "obsidian";
+import {
+	MarkdownView,
+	Platform,
+	TFile,
+	type App,
+	type Editor,
+	type EditorPosition,
+	type WorkspaceLeaf,
+} from "obsidian";
 import { t } from "../i18n";
 import { linesOf } from "../editor/calloutExtent";
 import { revealCalloutInEditor } from "../editor/calloutFlash";
 import { showNotice } from "./mascot/mascotNotices";
 
-export interface SidebarSourceRange { from: EditorPosition; to: EditorPosition; }
+export interface SidebarSourceRange {
+	from: EditorPosition;
+	to: EditorPosition;
+}
 export type SidebarSourceSelected = (editor: Editor, range: SidebarSourceRange) => void;
 
 export interface SidebarNavigationOptions {
@@ -19,7 +30,11 @@ export interface SidebarNavigationOptions {
 }
 
 /** File headings open the note at the top, without moving its caret. */
-export function navigateToSidebarFile(app: App, path: string, options: SidebarNavigationOptions = {}): Promise<boolean> {
+export function navigateToSidebarFile(
+	app: App,
+	path: string,
+	options: SidebarNavigationOptions = {},
+): Promise<boolean> {
 	return openSidebarNote(app, path, options, (view, _content, stillOpen) => {
 		if (!stillOpen()) return Promise.resolve(false);
 		closeSidebarDrawer(app, options.origin);
@@ -37,8 +52,10 @@ export function navigateToSidebarFile(app: App, path: string, options: SidebarNa
 export function navigateToSidebarResult(
 	app: App,
 	path: string,
-	resolvePosition: (content: string, stillOpen: () => boolean) =>
-		SidebarSourceRange | null | Promise<SidebarSourceRange | null>,
+	resolvePosition: (
+		content: string,
+		stillOpen: () => boolean,
+	) => SidebarSourceRange | null | Promise<SidebarSourceRange | null>,
 	options: SidebarNavigationOptions = {},
 ): Promise<boolean> {
 	return openSidebarNote(app, path, options, async (view, content, stillOpen) => {
@@ -73,12 +90,16 @@ async function openSidebarNote(
 		}
 		const workspace = app.workspace;
 		const isTarget = (candidate: WorkspaceLeaf | null): candidate is WorkspaceLeaf =>
-			candidate !== null && candidate.getRoot() === workspace.rootSplit &&
-			candidate.view instanceof MarkdownView && candidate.view.file === file;
+			candidate !== null &&
+			candidate.getRoot() === workspace.rootSplit &&
+			candidate.view instanceof MarkdownView &&
+			candidate.view.file === file;
 		const recent = workspace.getMostRecentLeaf(workspace.rootSplit);
-		let leaf = options.newTab ? workspace.getLeaf("tab") :
-			isTarget(recent) ? recent :
-			workspace.getLeavesOfType("markdown").find(isTarget) ?? workspace.getLeaf(false);
+		let leaf = options.newTab
+			? workspace.getLeaf("tab")
+			: isTarget(recent)
+				? recent
+				: (workspace.getLeavesOfType("markdown").find(isTarget) ?? workspace.getLeaf(false));
 		if (leaf.getRoot() !== workspace.rootSplit) leaf = workspace.getLeaf("tab");
 		// A pane already editing keeps Live Preview or Source, whichever its user
 		// left it in. Anything else (Reading view, a new tab, another view type)

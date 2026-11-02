@@ -59,10 +59,16 @@ export function calloutCount(count: number): string {
 /** What a callout row's ✎ and ⋮ do on the declarative pages. */
 export function calloutRowHandlers(ctx: TreeContext): RowRendererHandlers {
 	return {
-		onEdit: (def) => { void editCallout(ctx, def); },
+		onEdit: (def) => {
+			void editCallout(ctx, def);
+		},
 		editBlockedReason: () => pausedReason(ctx.plugin.settingsWriter),
-		onOpenBuiltInMenu: (trigger, def) => { void openBuiltInRowMenu(ctx, trigger, def); },
-		onOpenUserMenu: (trigger, def) => { void openRowMenu(ctx, trigger, def); },
+		onOpenBuiltInMenu: (trigger, def) => {
+			void openBuiltInRowMenu(ctx, trigger, def);
+		},
+		onOpenUserMenu: (trigger, def) => {
+			void openRowMenu(ctx, trigger, def);
+		},
 	};
 }
 
@@ -219,8 +225,9 @@ function noMatchesRow(): CsRender {
  */
 function drawNoMatchesRow(setting: Setting): () => void {
 	const row = new NoMatchesRow(setting);
-	const field = setting.settingEl.closest(".setting-group")
-		?.querySelector<HTMLInputElement>(".setting-group-search input") ?? null;
+	const field =
+		setting.settingEl.closest(".setting-group")?.querySelector<HTMLInputElement>(".setting-group-search input") ??
+		null;
 	const onInput = (): void => {
 		if (setting.settingEl.style.display === "none") {
 			row.hide();
@@ -247,7 +254,9 @@ function scanRow(ctx: TreeContext): CsAction {
 		id: CALLOUT_PAGES.scanRow,
 		name: t(scanRunning(ctx.plugin) ? "manualDiscovery.scanning" : "settings.rescanVaultHintAction"),
 		desc: t("settings.rescanVaultDesc"),
-		action: refuseWhilePaused(ctx.plugin.settingsWriter, () => { void scanAndRedraw(ctx); }),
+		action: refuseWhilePaused(ctx.plugin.settingsWriter, () => {
+			void scanAndRedraw(ctx);
+		}),
 	};
 }
 
@@ -267,7 +276,9 @@ async function scanAndRedraw(ctx: TreeContext): Promise<void> {
 
 /** Open the editor for a new callout, then draw again; refused while saving is paused. */
 function addNewCallout(ctx: TreeContext): () => void {
-	return refuseWhilePaused(ctx.plugin.settingsWriter, () => { void createCallout(ctx); });
+	return refuseWhilePaused(ctx.plugin.settingsWriter, () => {
+		void createCallout(ctx);
+	});
 }
 
 async function createCallout(ctx: TreeContext): Promise<void> {

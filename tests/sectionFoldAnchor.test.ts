@@ -47,8 +47,7 @@ function rig(withRect = true): Rig {
 
 	let top = 0;
 	if (withRect) {
-		headingEl.getBoundingClientRect = () =>
-			({ top }) as unknown as DOMRect;
+		headingEl.getBoundingClientRect = () => ({ top }) as unknown as DOMRect;
 	}
 	return { headingEl, scroller, setTop: (next: number) => (top = next) };
 }

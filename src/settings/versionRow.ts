@@ -31,7 +31,8 @@ export function automaticVersionName(version: SetupVersion): string {
 /** Resolve a known save reason without exposing an unknown internal identifier. */
 export function recordedVersionReason(reason: string | null | undefined): string | null {
 	return reason && Object.prototype.hasOwnProperty.call(REASON_NAMES, reason)
-		? t(REASON_NAMES[reason as HistoryReason | BackupReason]) : null;
+		? t(REASON_NAMES[reason as HistoryReason | BackupReason])
+		: null;
 }
 
 /** The same automatic title is used in the list and confirmations. */
@@ -78,8 +79,11 @@ export function versionClock(time: number | null): string {
 
 function formatVersionTime(time: number | null, options: Intl.DateTimeFormatOptions): string {
 	if (time === null) return t("recovery.details.unknownTime");
-	try { return new Date(time).toLocaleString(dateLocale(), options); }
-	catch { return new Date(time).toLocaleString(undefined, options); }
+	try {
+		return new Date(time).toLocaleString(dateLocale(), options);
+	} catch {
+		return new Date(time).toLocaleString(undefined, options);
+	}
 }
 
 /** A plain title: versions cannot be renamed. */

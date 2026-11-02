@@ -1,8 +1,13 @@
 import assert from "node:assert/strict";
 import { afterEach, describe, it } from "node:test";
 import {
-	getLocale, isLocaleRegistered, registerLocaleFile,
-	resolveLocaleCode, resolveLocaleFile, setLocale, t,
+	getLocale,
+	isLocaleRegistered,
+	registerLocaleFile,
+	resolveLocaleCode,
+	resolveLocaleFile,
+	setLocale,
+	t,
 } from "../src/i18n";
 import { en } from "../src/i18n/en";
 

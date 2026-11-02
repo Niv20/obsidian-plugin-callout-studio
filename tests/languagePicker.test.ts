@@ -16,7 +16,11 @@
 import assert from "node:assert/strict";
 import { afterEach, describe, it } from "node:test";
 import { getSelectableLocales, setLocale, t } from "../src/i18n";
-import { applyLanguagePreference, drawLanguageMenu, tellMissingLanguage } from "../src/settings/sections/languagePicker";
+import {
+	applyLanguagePreference,
+	drawLanguageMenu,
+	tellMissingLanguage,
+} from "../src/settings/sections/languagePicker";
 import type { SettingsTabPlugin } from "../src/settings/sections/types";
 import { WORK_ONE_PASS_MS } from "../src/ui/mascot/mascotNotices";
 import { asEl, el, fakeDom, FakeElement } from "./support/fakeDom";
@@ -26,7 +30,9 @@ import { dropdownButton, dropdownValue, openDropdownMenu, pickDropdown } from ".
 
 const notices: string[] = [];
 (globalThis as unknown as { __CS_NOTICES__: string[] }).__CS_NOTICES__ = notices;
-afterEach(() => { notices.length = 0; });
+afterEach(() => {
+	notices.length = 0;
+});
 
 type Mounted = { host: FakeElement; settings: { language: string }; calls: string[]; plugin: SettingsTabPlugin };
 
@@ -37,10 +43,16 @@ function mount(language: string, ready = true): Mounted {
 	const calls: string[] = [];
 	const plugin = {
 		settings,
-		saveSettings: () => { calls.push("save"); return Promise.resolve(); },
+		saveSettings: () => {
+			calls.push("save");
+			return Promise.resolve();
+		},
 		locales: { isReady: () => ready, prepare: () => Promise.resolve("missing") },
 		settingsWriter: { isDestroyed: false },
-		ensureLocale: () => { calls.push("ensureLocale"); return Promise.resolve(false); },
+		ensureLocale: () => {
+			calls.push("ensureLocale");
+			return Promise.resolve(false);
+		},
 		applyLocaleChange: () => calls.push("applyLocaleChange"),
 	} as unknown as SettingsTabPlugin;
 	drawLanguageMenu(asEl(host), plugin, (pref) => {
@@ -101,10 +113,18 @@ describe("language menu", () => {
 	it("offers languages and nothing else", () => {
 		const host = render("auto");
 		const names = getSelectableLocales().map((locale) => locale.name);
-		assert.deepEqual(openMenu(host).map((item) => item.title), names);
+		assert.deepEqual(
+			openMenu(host).map((item) => item.title),
+			names,
+		);
 		// Obsidian's ✓ marks the language on screen: English, which the stub's
 		// Obsidian speaks, while following it.
-		assert.deepEqual(openMenu(host).filter((item) => item.checked).map((item) => item.title), ["English"]);
+		assert.deepEqual(
+			openMenu(host)
+				.filter((item) => item.checked)
+				.map((item) => item.title),
+			["English"],
+		);
 	});
 
 	it("shows the language Obsidian is in while following it", () =>
@@ -129,7 +149,12 @@ describe("language menu", () => {
 		withObsidianIn("he", () => {
 			const { host } = mount("fr");
 			assert.equal(face(host), "Français");
-			assert.deepEqual(openMenu(host).filter((item) => item.checked).map((item) => item.title), ["Français"]);
+			assert.deepEqual(
+				openMenu(host)
+					.filter((item) => item.checked)
+					.map((item) => item.title),
+				["Français"],
+			);
 		}));
 
 	it("leaves a pin of Obsidian's own language alone, without a rewrite", async () => {
@@ -157,7 +182,10 @@ describe("language menu", () => {
 
 	it("pins any other language", () =>
 		withObsidianIn("he", () => {
-			for (const [name, code] of [["Français", "fr"], ["English", "en"]] as const) {
+			for (const [name, code] of [
+				["Français", "fr"],
+				["English", "en"],
+			] as const) {
 				const { host, settings } = mount("auto");
 				pick(host, name);
 				assert.equal(settings.language, code);
@@ -183,7 +211,11 @@ describe("language menu", () => {
 		await settle();
 		assert.equal(settings.language, "fr");
 		assert.deepEqual(calls, ["save", "ensureLocale", "display"]);
-		assert.deepEqual(notices, [t("locale.notDownloaded", { name: "Français" })], "told in a notice, not in the page");
+		assert.deepEqual(
+			notices,
+			[t("locale.notDownloaded", { name: "Français" })],
+			"told in a notice, not in the page",
+		);
 	});
 
 	it("shows a saved value no row offers as English, and picking Obsidian's language puts it right", () =>
@@ -219,12 +251,19 @@ function fetching(options: FetchOptions = {}) {
 	const plugin = {
 		settings: { language: options.language ?? "fr" },
 		settingsWriter: { isDestroyed: false },
-		saveSettings: () => { calls.push("save"); return Promise.resolve(); },
+		saveSettings: () => {
+			calls.push("save");
+			return Promise.resolve();
+		},
 		locales: {
 			isReady: () => ready,
 			state: () => (options.loading ? "loading" : "absent"),
 			// Reading the cache finds the language on disk, or does not.
-			prepare: () => { calls.push("prepare"); ready = options.onDisk ?? false; return Promise.resolve(ready ? "fresh" : "missing"); },
+			prepare: () => {
+				calls.push("prepare");
+				ready = options.onDisk ?? false;
+				return Promise.resolve(ready ? "fresh" : "missing");
+			},
 		},
 		ensureLocale: () => {
 			calls.push("ensureLocale");
@@ -244,7 +283,11 @@ describe("a language that is not on the device", () => {
 		try {
 			const { calls, apply } = fetching({ onDisk: true });
 			await apply("fr");
-			assert.deepEqual(calls, ["save", "prepare", "display", "applyLocaleChange"], "read from disk, never fetched");
+			assert.deepEqual(
+				calls,
+				["save", "prepare", "display", "applyLocaleChange"],
+				"read from disk, never fetched",
+			);
 			assert.deepEqual(notices, []);
 		} finally {
 			setLocale("en");
@@ -282,7 +325,9 @@ describe("a language that is not on the device", () => {
 		const { apply } = fetching({ ensures: [new Error("disk full")] });
 		const error = console.error;
 		const logged: unknown[][] = [];
-		console.error = (...args: unknown[]) => { logged.push(args); };
+		console.error = (...args: unknown[]) => {
+			logged.push(args);
+		};
 		try {
 			await apply("fr");
 		} finally {
@@ -300,7 +345,9 @@ describe("a language that is not on the device", () => {
 		let answer!: (arrived: boolean) => void;
 		plugin.ensureLocale = () => {
 			calls.push("ensureLocale");
-			return new Promise<boolean>((resolve) => { answer = resolve; });
+			return new Promise<boolean>((resolve) => {
+				answer = resolve;
+			});
 		};
 		const press = () => noticeButton(failed).fire("click", { type: "click", preventDefault: () => {} });
 		press();

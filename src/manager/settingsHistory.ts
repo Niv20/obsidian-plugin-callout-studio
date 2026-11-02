@@ -78,7 +78,9 @@ export interface SettingsHistoryStore {
 }
 
 /** At most the ten newest distinct states, within the size budget. */
-export function historyToKeep(entries: readonly Pick<SettingsHistoryEntry, "hash" | "savedAt" | "bytes">[]): Set<string> {
+export function historyToKeep(
+	entries: readonly Pick<SettingsHistoryEntry, "hash" | "savedAt" | "bytes">[],
+): Set<string> {
 	const keep = new Set<string>();
 	const newest = [...entries].sort((a, b) => b.savedAt - a.savedAt).slice(0, KEEP_RECENT);
 	let bytes = 0;
@@ -100,8 +102,10 @@ export class SettingsHistory implements SettingsHistoryStore {
 	private queue: Promise<void> = Promise.resolve();
 
 	constructor(
-		private readonly app: App, private readonly manifest: PluginManifest,
-		private readonly timeoutMs = 10000, private readonly now = () => Date.now(),
+		private readonly app: App,
+		private readonly manifest: PluginManifest,
+		private readonly timeoutMs = 10000,
+		private readonly now = () => Date.now(),
 	) {}
 
 	/** The same scope as the recovery checkpoint's key. Read late: a host may be partial. */
@@ -118,36 +122,52 @@ export class SettingsHistory implements SettingsHistoryStore {
 			// Captured now: the caller's object can change while this waits its turn.
 			const body = content(data);
 			const text = canonical(body);
-			entry = { scope: this.scope, hash: hash64(text), savedAt: this.now(), bytes: text.length * 2, data: body, reason };
+			entry = {
+				scope: this.scope,
+				hash: hash64(text),
+				savedAt: this.now(),
+				bytes: text.length * 2,
+				data: body,
+				reason,
+			};
 			if (visit !== undefined && reason === "edit") entry.visit = visit;
 		} catch (error) {
 			console.debug("[callout-studio] could not record settings history", error);
 			return Promise.resolve();
 		}
-		this.queue = this.queue.then(() => this.put(entry)).catch((error: unknown) => {
-			console.debug("[callout-studio] could not record settings history", error);
-		});
+		this.queue = this.queue
+			.then(() => this.put(entry))
+			.catch((error: unknown) => {
+				console.debug("[callout-studio] could not record settings history", error);
+			});
 		return this.queue;
 	}
 
 	/** Upgrade existing history even when startup cannot accept a settings file. */
 	prune(): Promise<void> {
 		if (typeof indexedDB === "undefined") return Promise.resolve();
-		this.queue = this.queue.then(() => this.transact("readwrite", store =>
-			this.all(store, entries => this.dropExcess(store, entries)),
-		)).then(() => undefined).catch((error: unknown) => {
-			console.debug("[callout-studio] could not prune settings history", error);
-		});
+		this.queue = this.queue
+			.then(() =>
+				this.transact("readwrite", (store) => this.all(store, (entries) => this.dropExcess(store, entries))),
+			)
+			.then(() => undefined)
+			.catch((error: unknown) => {
+				console.debug("[callout-studio] could not prune settings history", error);
+			});
 		return this.queue;
 	}
 
 	async list(): Promise<SettingsHistoryEntry[]> {
 		if (typeof indexedDB === "undefined") return [];
-		const entries = await this.transact("readonly", store => this.all(store));
-		return entries.sort((a, b) => b.savedAt - a.savedAt)
+		const entries = await this.transact("readonly", (store) => this.all(store));
+		return entries
+			.sort((a, b) => b.savedAt - a.savedAt)
 			.map(({ hash, savedAt, bytes, data, reason }) => ({
-				hash, savedAt, bytes, data,
-				...typeof reason === "string" ? { reason } : {},
+				hash,
+				savedAt,
+				bytes,
+				data,
+				...(typeof reason === "string" ? { reason } : {}),
 			}));
 	}
 
@@ -161,10 +181,12 @@ export class SettingsHistory implements SettingsHistoryStore {
 	 */
 	delete(hash: string): Promise<void> {
 		if (typeof indexedDB === "undefined") return Promise.resolve();
-		const attempt = this.queue.then(() => this.transact("readwrite", store => {
-			store.delete(this.key(hash));
-			return Promise.resolve();
-		}));
+		const attempt = this.queue.then(() =>
+			this.transact("readwrite", (store) => {
+				store.delete(this.key(hash));
+				return Promise.resolve();
+			}),
+		);
 		this.queue = attempt.catch(() => undefined);
 		return attempt;
 	}
@@ -178,8 +200,13 @@ export class SettingsHistory implements SettingsHistoryStore {
 		return new Promise((resolve, reject) => {
 			const request = store.getAll(IDBKeyRange.bound(`${this.scope}\u0001`, `${this.scope}\u0002`, false, true));
 			request.onsuccess = () => {
-				const entries = (request.result as StoredEntry[]).filter(entry => entry.scope === this.scope);
-				try { then(entries); } catch (error) { reject(error instanceof Error ? error : new Error(String(error))); return; }
+				const entries = (request.result as StoredEntry[]).filter((entry) => entry.scope === this.scope);
+				try {
+					then(entries);
+				} catch (error) {
+					reject(error instanceof Error ? error : new Error(String(error)));
+					return;
+				}
 				resolve(entries);
 			};
 			request.onerror = () => reject(request.error ?? new Error("Settings history could not be read"));
@@ -195,29 +222,33 @@ export class SettingsHistory implements SettingsHistoryStore {
 	 * continuations ran.
 	 */
 	private put(entry: StoredEntry): Promise<void> {
-		return this.transact("readwrite", store => this.all(store, existing => {
-			const stored: StoredEntry = { ...entry };
-			const previous = existing.find(other => other.hash === entry.hash);
-			if (previous) {
-				// Reading a state this device already had — every startup does —
-				// says nothing new about how it came about, so it keeps its reason.
-				if (entry.reason === "load") {
-					if (previous.reason === undefined) delete stored.reason;
-					else stored.reason = previous.reason;
+		return this.transact("readwrite", (store) =>
+			this.all(store, (existing) => {
+				const stored: StoredEntry = { ...entry };
+				const previous = existing.find((other) => other.hash === entry.hash);
+				if (previous) {
+					// Reading a state this device already had — every startup does —
+					// says nothing new about how it came about, so it keeps its reason.
+					if (entry.reason === "load") {
+						if (previous.reason === undefined) delete stored.reason;
+						else stored.reason = previous.reason;
+					}
+					// A state kept before this visit is not the visit's to replace,
+					// even when an edit returns to it.
+					if (previous.visit === undefined) delete stored.visit;
+					else stored.visit = previous.visit;
 				}
-				// A state kept before this visit is not the visit's to replace,
-				// even when an edit returns to it.
-				if (previous.visit === undefined) delete stored.visit;
-				else stored.visit = previous.visit;
-			}
-			const replaced = entry.visit === undefined ? [] :
-				existing.filter(other => other.visit === entry.visit && other.hash !== entry.hash);
-			for (const other of replaced) store.delete(this.key(other.hash));
-			const entries = existing.filter(other => other.hash !== entry.hash && !replaced.includes(other));
-			entries.push(stored);
-			store.put(stored, this.key(entry.hash));
-			this.dropExcess(store, entries);
-		})).then(() => undefined);
+				const replaced =
+					entry.visit === undefined
+						? []
+						: existing.filter((other) => other.visit === entry.visit && other.hash !== entry.hash);
+				for (const other of replaced) store.delete(this.key(other.hash));
+				const entries = existing.filter((other) => other.hash !== entry.hash && !replaced.includes(other));
+				entries.push(stored);
+				store.put(stored, this.key(entry.hash));
+				this.dropExcess(store, entries);
+			}),
+		).then(() => undefined);
 	}
 
 	/** Called from a read's success callback while its transaction is still live. */
@@ -230,26 +261,47 @@ export class SettingsHistory implements SettingsHistoryStore {
 
 	private open(): Promise<IDBDatabase> {
 		return new Promise((resolve, reject) => {
-			if (typeof indexedDB === "undefined") { reject(new Error("Settings history storage is unavailable")); return; }
+			if (typeof indexedDB === "undefined") {
+				reject(new Error("Settings history storage is unavailable"));
+				return;
+			}
 			let finished = false;
 			const request = indexedDB.open(DATABASE, 1);
 			const fail = (error: Error) => {
 				if (finished) return;
-				finished = true; window.clearTimeout(timer); reject(error);
+				finished = true;
+				window.clearTimeout(timer);
+				reject(error);
 			};
-			const timer = window.setTimeout(() => fail(new Error("Settings history storage did not respond")), this.timeoutMs);
+			const timer = window.setTimeout(
+				() => fail(new Error("Settings history storage did not respond")),
+				this.timeoutMs,
+			);
 			request.onupgradeneeded = () => {
-				if (finished) { request.transaction?.abort(); return; }
+				if (finished) {
+					request.transaction?.abort();
+					return;
+				}
 				request.result.createObjectStore(STORE);
 			};
 			request.onsuccess = () => {
-				if (finished) { request.result.close(); return; }
-				finished = true; window.clearTimeout(timer);
-				request.result.onversionchange = () => { request.result.close(); };
+				if (finished) {
+					request.result.close();
+					return;
+				}
+				finished = true;
+				window.clearTimeout(timer);
+				request.result.onversionchange = () => {
+					request.result.close();
+				};
 				resolve(request.result);
 			};
-			request.onerror = () => { fail(request.error ?? new Error("Cannot open settings history storage")); };
-			request.onblocked = () => { fail(new Error("Settings history storage is blocked")); };
+			request.onerror = () => {
+				fail(request.error ?? new Error("Cannot open settings history storage"));
+			};
+			request.onblocked = () => {
+				fail(new Error("Settings history storage is blocked"));
+			};
 		});
 	}
 
@@ -259,21 +311,38 @@ export class SettingsHistory implements SettingsHistoryStore {
 		try {
 			return await new Promise<T>((resolve, reject) => {
 				const transaction = db.transaction(STORE, mode);
-				let finished = false, result: T | undefined;
+				let finished = false,
+					result: T | undefined;
 				const fail = (error: unknown) => {
 					if (finished) return;
-					finished = true; window.clearTimeout(timer);
-					try { transaction.abort(); } catch { /* It may already have aborted. */ }
+					finished = true;
+					window.clearTimeout(timer);
+					try {
+						transaction.abort();
+					} catch {
+						/* It may already have aborted. */
+					}
 					reject(error instanceof Error ? error : new Error(String(error)));
 				};
-				const timer = window.setTimeout(() => fail(new Error("Settings history did not respond")), this.timeoutMs);
+				const timer = window.setTimeout(
+					() => fail(new Error("Settings history did not respond")),
+					this.timeoutMs,
+				);
 				transaction.oncomplete = () => {
 					if (finished) return;
-					finished = true; window.clearTimeout(timer); resolve(result as T);
+					finished = true;
+					window.clearTimeout(timer);
+					resolve(result as T);
 				};
-				transaction.onabort = transaction.onerror = () => { fail(transaction.error ?? new Error("Settings history transaction failed")); };
-				body(transaction.objectStore(STORE)).then(value => { result = value; }, fail);
+				transaction.onabort = transaction.onerror = () => {
+					fail(transaction.error ?? new Error("Settings history transaction failed"));
+				};
+				body(transaction.objectStore(STORE)).then((value) => {
+					result = value;
+				}, fail);
 			});
-		} finally { db.close(); }
+		} finally {
+			db.close();
+		}
 	}
 }

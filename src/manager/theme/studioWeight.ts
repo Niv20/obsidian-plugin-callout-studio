@@ -100,8 +100,5 @@ export const STUDIO_WEIGHT_MAX = 14;
  * see.
  */
 export function studioWeightFor(maxImportantClasses: number): number {
-	return Math.min(
-		STUDIO_WEIGHT_MAX,
-		Math.max(STUDIO_WEIGHT_BASE, maxImportantClasses + 1),
-	);
+	return Math.min(STUDIO_WEIGHT_MAX, Math.max(STUDIO_WEIGHT_BASE, maxImportantClasses + 1));
 }

@@ -7,9 +7,11 @@ import { navigateToCalloutOccurrence, resolveOccurrencePosition } from "../src/u
 import { t } from "../src/i18n";
 import { navigateToSidebarFile } from "../src/ui/sidebarNavigation";
 
-Object.assign(globalThis, { window: {
-	setTimeout: (callback: () => void, delay: number) => Number(scheduleTimer(callback, delay)),
-} });
+Object.assign(globalThis, {
+	window: {
+		setTimeout: (callback: () => void, delay: number) => Number(scheduleTimer(callback, delay)),
+	},
+});
 
 const original = "Before [!warning|orange] and [!warning] after";
 const saved = () => scanCalloutOccurrences("note.md", original)[1]!;
@@ -68,41 +70,87 @@ function navigationHarness(content = original, mode: "source" | "preview" = "sou
 		getMode: () => mode,
 		editor: {
 			getValue: () => content,
-			setSelection: (from: EditorPosition, to?: EditorPosition) => { selections.push([from, to]); },
-			scrollIntoView: (range: { from: EditorPosition; to: EditorPosition }) => { scrolled.push(range); },
-			scrollTo: (x?: number | null, y?: number | null) => { scrolledTo.push([x, y]); },
-			focus: () => { focus++; },
+			setSelection: (from: EditorPosition, to?: EditorPosition) => {
+				selections.push([from, to]);
+			},
+			scrollIntoView: (range: { from: EditorPosition; to: EditorPosition }) => {
+				scrolled.push(range);
+			},
+			scrollTo: (x?: number | null, y?: number | null) => {
+				scrolledTo.push([x, y]);
+			},
+			focus: () => {
+				focus++;
+			},
 		},
 	});
 	const documentLeaf = {
-		view, getRoot: () => root,
-		openFile: (_file: TFile, state: unknown) => { opened.push(state); return Promise.resolve(); },
-		loadIfDeferred: () => { deferredLoaded = true; return Promise.resolve(); },
-		setEphemeralState: (state: unknown) => { ephemeral.push(state); },
+		view,
+		getRoot: () => root,
+		openFile: (_file: TFile, state: unknown) => {
+			opened.push(state);
+			return Promise.resolve();
+		},
+		loadIfDeferred: () => {
+			deferredLoaded = true;
+			return Promise.resolve();
+		},
+		setEphemeralState: (state: unknown) => {
+			ephemeral.push(state);
+		},
 	};
-	const sidebarLeaf = { getRoot: () => side, openFile: () => { throw new Error("Must not replace sidebar"); } };
+	const sidebarLeaf = {
+		getRoot: () => side,
+		openFile: () => {
+			throw new Error("Must not replace sidebar");
+		},
+	};
 	let activeView: MarkdownView | null = view;
 	let recentLeaf: WorkspaceLeaf | null = documentLeaf as unknown as WorkspaceLeaf;
-	const drawer = (name: string) => ({ collapsed: false, collapse() { collapsed.push(name); this.collapsed = true; } });
+	const drawer = (name: string) => ({
+		collapsed: false,
+		collapse() {
+			collapsed.push(name);
+			this.collapsed = true;
+		},
+	});
 	const app = {
 		vault: { getAbstractFileByPath: () => file },
 		workspace: {
 			rootSplit: root,
 			leftSplit: drawer("left"),
 			rightSplit: drawer("right"),
-			setActiveLeaf: (_leaf: unknown, params: unknown) => { activations.push(params); },
+			setActiveLeaf: (_leaf: unknown, params: unknown) => {
+				activations.push(params);
+			},
 			getLeavesOfType: () => [],
 			getActiveViewOfType: () => activeView,
 			getMostRecentLeaf: () => recentLeaf,
-			getLeaf: (mode: unknown) => { requestedLeaves.push(mode); return mode === "tab" ? documentLeaf : sidebarLeaf; },
+			getLeaf: (mode: unknown) => {
+				requestedLeaves.push(mode);
+				return mode === "tab" ? documentLeaf : sidebarLeaf;
+			},
 		},
 	} as unknown as App;
-	return { app, view, documentLeaf, selections, opened, requestedLeaves, ephemeral, scrolled, scrolledTo, activations, collapsed,
+	return {
+		app,
+		view,
+		documentLeaf,
+		selections,
+		opened,
+		requestedLeaves,
+		ephemeral,
+		scrolled,
+		scrolledTo,
+		activations,
+		collapsed,
 		activate: (active: MarkdownView | null, leaf?: WorkspaceLeaf | null) => {
 			activeView = active;
 			if (leaf !== undefined) recentLeaf = leaf;
 		},
-		focused: () => focus, loaded: () => deferredLoaded };
+		focused: () => focus,
+		loaded: () => deferredLoaded,
+	};
 }
 
 describe("occurrence navigation", () => {
@@ -133,10 +181,15 @@ describe("occurrence navigation", () => {
 	it("opens a pane in Reading view in the vault's default editing mode, and leaves an editing pane as it is", async () => {
 		const reading = navigationHarness(original, "preview");
 		assert.equal(await navigateToCalloutOccurrence(reading.app, saved()), true);
-		assert.deepEqual(reading.opened, [{ active: false, state: { mode: "source", source: false } }],
-			"without `source`, core restores whatever the pane last edited in");
+		assert.deepEqual(
+			reading.opened,
+			[{ active: false, state: { mode: "source", source: false } }],
+			"without `source`, core restores whatever the pane last edited in",
+		);
 		const sourceDefault = navigationHarness(original, "preview");
-		Object.assign(sourceDefault.app.vault, { getConfig: (key: string) => key === "livePreview" ? false : undefined });
+		Object.assign(sourceDefault.app.vault, {
+			getConfig: (key: string) => (key === "livePreview" ? false : undefined),
+		});
 		assert.equal(await navigateToCalloutOccurrence(sourceDefault.app, saved()), true);
 		assert.deepEqual(sourceDefault.opened, [{ active: false, state: { mode: "source", source: true } }]);
 		const editing = navigationHarness(original, "source");
@@ -156,7 +209,9 @@ describe("occurrence navigation", () => {
 			for (const side of ["left", "right", "main"] as const) {
 				const h = navigationHarness();
 				const workspace = h.app.workspace as unknown as Record<string, unknown>;
-				const origin = { getRoot: () => side === "main" ? workspace.rootSplit : workspace[`${side}Split`] } as unknown as WorkspaceLeaf;
+				const origin = {
+					getRoot: () => (side === "main" ? workspace.rootSplit : workspace[`${side}Split`]),
+				} as unknown as WorkspaceLeaf;
 				assert.equal(await navigateToCalloutOccurrence(h.app, saved(), { origin }), true);
 				assert.deepEqual(h.collapsed, side === "main" ? [] : [side]);
 			}
@@ -165,12 +220,14 @@ describe("occurrence navigation", () => {
 			const origin = { getRoot: () => h.app.workspace.rightSplit } as unknown as WorkspaceLeaf;
 			assert.equal(await navigateToCalloutOccurrence(h.app, saved(), { origin }), true);
 			assert.deepEqual(h.collapsed, [], "a desktop sidebar stays open");
-		} finally { Platform.isMobile = mobile; }
+		} finally {
+			Platform.isMobile = mobile;
+		}
 	});
 	it("rejects edits that land while an asynchronous scan is in progress", async () => {
 		const h = navigationHarness(original);
 		let reads = 0;
-		h.view.editor.getValue = () => ++reads === 1 ? original : `${original}\nchanged`;
+		h.view.editor.getValue = () => (++reads === 1 ? original : `${original}\nchanged`);
 		assert.equal(await navigateToCalloutOccurrence(h.app, saved()), false);
 		assert.deepEqual(h.scrolled, []);
 	});
@@ -180,10 +237,12 @@ describe("occurrence navigation", () => {
 		const occurrence = occurrences[occurrences.length - 1]!;
 		const h = navigationHarness(content);
 		let yieldedBeforeSelection = false;
-		const checkpoint = new Promise<void>((resolve) => window.setTimeout(() => {
-			yieldedBeforeSelection = h.scrolled.length === 0;
-			resolve();
-		}, 0));
+		const checkpoint = new Promise<void>((resolve) =>
+			window.setTimeout(() => {
+				yieldedBeforeSelection = h.scrolled.length === 0;
+				resolve();
+			}, 0),
+		);
 		assert.equal(await navigateToCalloutOccurrence(h.app, occurrence), true);
 		await checkpoint;
 		assert.equal(yieldedBeforeSelection, true);
@@ -196,10 +255,12 @@ describe("occurrence navigation", () => {
 		const other = Object.assign(new MarkdownView({} as WorkspaceLeaf), {
 			file: Object.assign(new TFile(), { path: "other.md" }),
 		});
-		const switched = new Promise<void>((resolve) => window.setTimeout(() => {
-			h.activate(other);
-			resolve();
-		}, 0));
+		const switched = new Promise<void>((resolve) =>
+			window.setTimeout(() => {
+				h.activate(other);
+				resolve();
+			}, 0),
+		);
 		assert.equal(await navigateToCalloutOccurrence(h.app, occurrence), false);
 		await switched;
 		assert.deepEqual(h.scrolled, []);
@@ -219,10 +280,12 @@ describe("occurrence navigation", () => {
 		assert.equal(await navigateToCalloutOccurrence(h.app, occurrence, { isCurrent: () => false }), false);
 		assert.deepEqual(h.opened, []);
 		let current = true;
-		const cancelled = new Promise<void>((resolve) => window.setTimeout(() => {
-			current = false;
-			resolve();
-		}, 0));
+		const cancelled = new Promise<void>((resolve) =>
+			window.setTimeout(() => {
+				current = false;
+				resolve();
+			}, 0),
+		);
 		assert.equal(await navigateToCalloutOccurrence(h.app, occurrence, { isCurrent: () => current }), false);
 		await cancelled;
 		assert.deepEqual(h.scrolled, []);
@@ -233,8 +296,11 @@ describe("occurrence navigation", () => {
 		const stale = new MarkdownView({} as WorkspaceLeaf);
 		stale.file = h.view.file;
 		const staleLeaf = {
-			view: stale, getRoot: h.documentLeaf.getRoot,
-			openFile: () => { throw new Error("Must not reopen a stale duplicate"); },
+			view: stale,
+			getRoot: h.documentLeaf.getRoot,
+			openFile: () => {
+				throw new Error("Must not reopen a stale duplicate");
+			},
 		} as unknown as WorkspaceLeaf;
 		h.app.workspace.getLeavesOfType = () => [staleLeaf, h.documentLeaf as unknown as WorkspaceLeaf];
 		assert.equal(await navigateToCalloutOccurrence(h.app, saved()), true);
@@ -253,6 +319,8 @@ describe("occurrence navigation", () => {
 			h.app.vault.getAbstractFileByPath = () => null;
 			assert.equal(await navigateToCalloutOccurrence(h.app, saved()), false);
 			assert.equal(notices[1], t("usage.missing"));
-		} finally { delete globals.__CS_NOTICES__; }
+		} finally {
+			delete globals.__CS_NOTICES__;
+		}
 	});
 });

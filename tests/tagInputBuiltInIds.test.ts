@@ -5,10 +5,7 @@ import { describe, it } from "node:test";
 import { Setting } from "obsidian";
 import { TagInput } from "../src/ui/TagInput";
 import { DEFAULT_CALLOUTS } from "../src/defaultCallouts";
-import {
-	addBuiltInIdReset,
-	builtInDefaultIds,
-} from "../src/settings/editor/builtInIdReset";
+import { addBuiltInIdReset, builtInDefaultIds } from "../src/settings/editor/builtInIdReset";
 
 function chip(parent: FakeElement, id: string): FakeElement {
 	const found = parent.querySelector(`[data-tag="${id}"]`);
@@ -33,13 +30,8 @@ describe("TagInput — built-in ID ownership", () => {
 		const root = fakeDom.document.body;
 
 		assert.ok(chip(root, "abstract").hasClass("is-readonly"));
-		assert.strictEqual(
-			chip(root, "abstract").querySelector(".cs-tag-chip-remove"),
-			null,
-		);
-		const removeMine = chip(root, "mine").querySelector(
-			".cs-tag-chip-remove",
-		);
+		assert.strictEqual(chip(root, "abstract").querySelector(".cs-tag-chip-remove"), null);
+		const removeMine = chip(root, "mine").querySelector(".cs-tag-chip-remove");
 		assert.ok(removeMine, "custom alias should have a remove action");
 		removeMine.fire("click", { stopPropagation: () => undefined });
 		assert.deepStrictEqual(input.getTags(), ["abstract"]);
@@ -51,11 +43,7 @@ describe("TagInput — built-in ID ownership", () => {
 		input.setTags(["abstract", "summary", "tldr"]);
 		for (const id of ["abstract", "summary", "tldr"]) {
 			assert.ok(chip(root, id).hasClass("is-readonly"), id);
-			assert.strictEqual(
-				chip(root, id).querySelector(".cs-tag-chip-remove"),
-				null,
-				id,
-			);
+			assert.strictEqual(chip(root, id).querySelector(".cs-tag-chip-remove"), null, id);
 		}
 		assert.deepStrictEqual(changes, [["abstract"]]);
 	});
@@ -79,15 +67,19 @@ describe("TagInput — built-in ID ownership", () => {
 			tagInput,
 			defaultDef: original,
 			read: () => draft,
-			write: (next) => { draft = next; },
+			write: (next) => {
+				draft = next;
+			},
 			onReset: () => refreshes++,
 		});
-		const [reset] = (setting as unknown as {
-			extraButtons: Array<{
-				extraSettingsEl: FakeElement;
-				press(): void;
-			}>;
-		}).extraButtons;
+		const [reset] = (
+			setting as unknown as {
+				extraButtons: Array<{
+					extraSettingsEl: FakeElement;
+					press(): void;
+				}>;
+			}
+		).extraButtons;
 		assert.ok(reset, "expected the Callout IDs reset button");
 		const button = reset.extraSettingsEl;
 		assert.ok(!button.hasClass("cs-hidden"));
@@ -120,14 +112,20 @@ describe("TagInput — built-in ID ownership", () => {
 			tagInput,
 			defaultDef: original,
 			read: () => draft,
-			write: (next) => { draft = next; },
+			write: (next) => {
+				draft = next;
+			},
 			onReset: () => assert.fail("a conflicting reset must not refresh"),
-			validate: (id) => id === "summary" ? "ID conflict" : null,
-			onBlocked: (message) => { blocked = message; },
+			validate: (id) => (id === "summary" ? "ID conflict" : null),
+			onBlocked: (message) => {
+				blocked = message;
+			},
 		});
-		const [reset] = (setting as unknown as {
-			extraButtons: Array<{ press(): void }>;
-		}).extraButtons;
+		const [reset] = (
+			setting as unknown as {
+				extraButtons: Array<{ press(): void }>;
+			}
+		).extraButtons;
 		assert.ok(reset);
 
 		reset.press();

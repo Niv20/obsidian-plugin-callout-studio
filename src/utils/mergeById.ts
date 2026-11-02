@@ -35,10 +35,7 @@ interface Identified {
  *
  * Neither argument is touched; the result is a fresh array.
  */
-export function mergeById<T extends Identified>(
-	existing: readonly T[],
-	incoming: readonly T[],
-): T[] {
+export function mergeById<T extends Identified>(existing: readonly T[], incoming: readonly T[]): T[] {
 	const byId = new Map(existing.map((entry) => [entry.id, entry]));
 	for (const entry of incoming) byId.set(entry.id, entry);
 	return [...byId.values()];

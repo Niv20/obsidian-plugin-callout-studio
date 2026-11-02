@@ -20,10 +20,7 @@ export interface QuoteStripResult {
 const LEADING_QUOTE_TOKEN_REGEX = /^(?:\s*> ?|\t)/;
 
 /** Peel quote tokens off the front of a line, up to `maxTokens` of them. */
-export const stripLeadingQuoteTokens = (
-	line: string,
-	maxTokens = Number.POSITIVE_INFINITY,
-): QuoteStripResult => {
+export const stripLeadingQuoteTokens = (line: string, maxTokens = Number.POSITIVE_INFINITY): QuoteStripResult => {
 	let remaining = line;
 	let removedLength = 0;
 	let removedUnits = 0;
@@ -44,16 +41,13 @@ export const stripLeadingQuoteTokens = (
 };
 
 /** How deep inside blockquotes a line sits. */
-export const countLeadingQuoteTokens = (line: string): number =>
-	stripLeadingQuoteTokens(line).removedUnits;
+export const countLeadingQuoteTokens = (line: string): number => stripLeadingQuoteTokens(line).removedUnits;
 
 /** Whether a line is empty once its quote markers are taken off. */
-export const isBlankCalloutLine = (line: string): boolean =>
-	stripLeadingQuoteTokens(line).text.trim() === "";
+export const isBlankCalloutLine = (line: string): boolean => stripLeadingQuoteTokens(line).text.trim() === "";
 
 /** The `> ` run that puts a line at `nestLevel` deep. */
-export const buildPrefix = (nestLevel: number): string =>
-	"> ".repeat(nestLevel);
+export const buildPrefix = (nestLevel: number): string => "> ".repeat(nestLevel);
 
 const QUOTE_MARKER_REGEX = /^> ?/;
 
@@ -104,8 +98,5 @@ const CALLOUT_HEADER_REGEX = /^\[![^\]]*\]/;
  * which renders as an inline pill, and treating it as a header is how a
  * transform ends up splitting a callout or deleting the line.
  */
-export const opensCallout = (
-	text: string,
-	depth: number,
-	depthAbove: number,
-): boolean => depth > 0 && depth > depthAbove && CALLOUT_HEADER_REGEX.test(text);
+export const opensCallout = (text: string, depth: number, depthAbove: number): boolean =>
+	depth > 0 && depth > depthAbove && CALLOUT_HEADER_REGEX.test(text);

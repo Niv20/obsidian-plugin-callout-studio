@@ -33,10 +33,7 @@ import {
 import { definitionIconAdjustFields } from "../src/settings/editor/definitionIconAdjust";
 import type { CalloutDefinition, CalloutRenderRole } from "../src/types";
 
-type Source = Pick<
-	CalloutDefinition,
-	"iconAdjust" | "iconOffsetX" | "iconOffsetY" | "iconSize"
->;
+type Source = Pick<CalloutDefinition, "iconAdjust" | "iconOffsetX" | "iconOffsetY" | "iconSize">;
 
 const ROLES: CalloutRenderRole[] = ["regular", "heading", "inline"];
 
@@ -47,10 +44,7 @@ function adjust(over: Partial<ResolvedIconAdjust> = {}): ResolvedIconAdjust {
 describe("resolveIconAdjust — the neutral case", () => {
 	it("returns the default for a missing definition", () => {
 		assert.deepStrictEqual(resolveIconAdjust(null, "regular"), DEFAULT_ICON_ADJUST);
-		assert.deepStrictEqual(
-			resolveIconAdjust(undefined, "heading"),
-			DEFAULT_ICON_ADJUST,
-		);
+		assert.deepStrictEqual(resolveIconAdjust(undefined, "heading"), DEFAULT_ICON_ADJUST);
 	});
 
 	it("returns a fresh object, never DEFAULT_ICON_ADJUST itself", () => {
@@ -72,11 +66,7 @@ describe("resolveIconAdjust — the two layers", () => {
 	it("reads the legacy trio when there is no per-role map", () => {
 		const def: Source = { iconOffsetX: 3, iconOffsetY: -2, iconSize: 1.2 };
 		for (const role of ROLES) {
-			assert.deepStrictEqual(
-				resolveIconAdjust(def, role),
-				{ offsetX: 3, offsetY: -2, size: 1.2 },
-				role,
-			);
+			assert.deepStrictEqual(resolveIconAdjust(def, role), { offsetX: 3, offsetY: -2, size: 1.2 }, role);
 		}
 	});
 
@@ -170,11 +160,7 @@ describe("resolveIconAdjust — clamping untrusted values", () => {
 				iconOffsetY: junk,
 				iconSize: junk,
 			} as unknown as Source;
-			assert.deepStrictEqual(
-				resolveIconAdjust(def, "regular"),
-				DEFAULT_ICON_ADJUST,
-				JSON.stringify(junk),
-			);
+			assert.deepStrictEqual(resolveIconAdjust(def, "regular"), DEFAULT_ICON_ADJUST, JSON.stringify(junk));
 		}
 	});
 
@@ -228,13 +214,7 @@ describe("iconAdjustSourcesEqual — rendered equality", () => {
 	});
 
 	it("rejects a difference in any one role", () => {
-		assert.equal(
-			iconAdjustSourcesEqual(
-				{},
-				{ iconAdjust: { heading: { offsetY: 1 } } },
-			),
-			false,
-		);
+		assert.equal(iconAdjustSourcesEqual({}, { iconAdjust: { heading: { offsetY: 1 } } }), false);
 	});
 
 	it("clones the raw fields without inventing absent defaults", () => {
@@ -323,16 +303,12 @@ describe("buildIconAdjust — what reaches data.json", () => {
 	});
 
 	it("never stores `regular` itself — the trio is where it goes", () => {
-		const out = buildIconAdjust(
-			byRole(adjust({ offsetY: 3 }), adjust({ offsetY: 1 }), adjust({ offsetY: 3 })),
-		);
+		const out = buildIconAdjust(byRole(adjust({ offsetY: 3 }), adjust({ offsetY: 1 }), adjust({ offsetY: 3 })));
 		assert.deepStrictEqual(Object.keys(out ?? {}), ["heading"]);
 	});
 
 	it("stores only the roles that differ from regular", () => {
-		const out = buildIconAdjust(
-			byRole(adjust(), adjust({ offsetY: 2 }), adjust({ size: 0.9 })),
-		);
+		const out = buildIconAdjust(byRole(adjust(), adjust({ offsetY: 2 }), adjust({ size: 0.9 })));
 		assert.deepStrictEqual(out, {
 			heading: { offsetX: 0, offsetY: 2, size: 1 },
 			inline: { offsetX: 0, offsetY: 0, size: 0.9 },
@@ -343,30 +319,19 @@ describe("buildIconAdjust — what reaches data.json", () => {
 		// The whole reason the omission rule is "matches regular" and not
 		// "matches neutral": omitting this entry would send `resolveIconAdjust`
 		// back to the trio and silently resurrect regular's offset.
-		const out = buildIconAdjust(
-			byRole(adjust({ offsetY: 4 }), adjust({ offsetY: 0 }), adjust({ offsetY: 4 })),
-		);
+		const out = buildIconAdjust(byRole(adjust({ offsetY: 4 }), adjust({ offsetY: 0 }), adjust({ offsetY: 4 })));
 		assert.deepStrictEqual(out, { heading: { offsetX: 0, offsetY: 0, size: 1 } });
 		// Read back the way the renderer will, with regular mirrored into the
 		// trio: the zero has to survive. Had the entry been omitted, this would
 		// resolve to regular's 4.
-		assert.equal(
-			isDefaultIconAdjust(
-				resolveIconAdjust({ iconAdjust: out, iconOffsetY: 4 }, "heading"),
-			),
-			true,
-		);
+		assert.equal(isDefaultIconAdjust(resolveIconAdjust({ iconAdjust: out, iconOffsetY: 4 }, "heading")), true);
 	});
 
 	it("writes every field, never a partial entry", () => {
 		// The per-field fallback in resolveIconAdjust exists for hand-edited
 		// files, not for this writer.
 		const out = buildIconAdjust(byRole(adjust(), adjust({ offsetX: 1 })));
-		assert.deepStrictEqual(Object.keys(out?.heading ?? {}).sort(), [
-			"offsetX",
-			"offsetY",
-			"size",
-		]);
+		assert.deepStrictEqual(Object.keys(out?.heading ?? {}).sort(), ["offsetX", "offsetY", "size"]);
 	});
 
 	it("round-trips through resolveIconAdjust", () => {

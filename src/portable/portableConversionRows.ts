@@ -18,12 +18,20 @@ export interface PortableConversionRow {
 export function portableConversionRows(plan?: PortableCalloutConversionPlan): PortableConversionRow[] {
 	if (!plan) return [];
 	const chosen = new Set(plan.selectedIds);
-	const selectedLines = new Set(plan.changes.filter(row => row.headingLine && chosen.has(row.id)).map(row => JSON.stringify([row.path, row.line])));
+	const selectedLines = new Set(
+		plan.changes
+			.filter((row) => row.headingLine && chosen.has(row.id))
+			.map((row) => JSON.stringify([row.path, row.line])),
+	);
 	return [
-		...plan.changes.map(change => ({ id: `source:${change.id}`, path: change.path, change, linkOnly: false })),
-		...plan.linkChanges.filter(change => !selectedLines.has(JSON.stringify([change.path, change.line])))
-			.map(change => ({ id: `link:${change.id}`, path: change.path, change, linkOnly: true })),
-	].sort((a, b) => a.path.localeCompare(b.path) || a.change.line - b.change.line || Number(a.linkOnly) - Number(b.linkOnly));
+		...plan.changes.map((change) => ({ id: `source:${change.id}`, path: change.path, change, linkOnly: false })),
+		...plan.linkChanges
+			.filter((change) => !selectedLines.has(JSON.stringify([change.path, change.line])))
+			.map((change) => ({ id: `link:${change.id}`, path: change.path, change, linkOnly: true })),
+	].sort(
+		(a, b) =>
+			a.path.localeCompare(b.path) || a.change.line - b.change.line || Number(a.linkOnly) - Number(b.linkOnly),
+	);
 }
 
 /**
@@ -50,8 +58,12 @@ const tickedWhenDrawn = new WeakMap<HTMLElement, Map<string, boolean>>();
  *   old Show more button).
  */
 export function renderPortableConversionRows(
-	root: HTMLElement, plan: PortableCalloutConversionPlan | undefined, rows: readonly PortableConversionRow[],
-	limit: number, disabled: boolean, current: string | undefined,
+	root: HTMLElement,
+	plan: PortableCalloutConversionPlan | undefined,
+	rows: readonly PortableConversionRow[],
+	limit: number,
+	disabled: boolean,
+	current: string | undefined,
 	onSection: (path: string, section: HTMLElement) => void,
 	editingId?: string,
 	resetEnabled = false,
@@ -63,7 +75,7 @@ export function renderPortableConversionRows(
 	root.empty();
 	if (!plan) return null;
 	const selected = new Set(plan.selectedIds);
-	const blocked = new Map(plan.blockedChanges.map(entry => [entry.id, entry.reason]));
+	const blocked = new Map(plan.blockedChanges.map((entry) => [entry.id, entry.reason]));
 	const counts = new Map<string, number>();
 	for (const row of rows) counts.set(row.path, (counts.get(row.path) ?? 0) + 1);
 	let path: string | undefined;
@@ -74,58 +86,106 @@ export function renderPortableConversionRows(
 		const { change, linkOnly } = row;
 		if (!box || path !== row.path) {
 			path = row.path;
-			const group = createSidebarFileGroup(root, { path, count: counts.get(path)!, cls: "cs-portable-file", fold });
+			const group = createSidebarFileGroup(root, {
+				path,
+				count: counts.get(path)!,
+				cls: "cs-portable-file",
+				fold,
+			});
 			box = group.matches;
 			onSection(path, group.section);
 		}
 		// A row of the file's box. Not Obsidian's `.search-result-file-match`,
 		// whose hover tint would light up a row that is not itself a control.
-		const card = box.createDiv({ cls: linkOnly ? "cs-portable-link-change cs-portable-row" : "cs-portable-change cs-portable-row cs-sidebar-selectable" });
+		const card = box.createDiv({
+			cls: linkOnly
+				? "cs-portable-link-change cs-portable-row"
+				: "cs-portable-change cs-portable-row cs-sidebar-selectable",
+		});
 		const editing = !linkOnly && change.id === editingId;
 		card.toggleClass("is-editing", editing);
 		// The row the caret is in (see portableConversionNavigation.ts `mark`).
 		card.toggleClass("is-active", current === row.id);
 		card.toggleClass("is-included", selected.has(change.id));
 		if (!linkOnly) {
-			const checkbox = card.createEl("input", { type: "checkbox", attr: {
-				"data-change-id": change.id,
-				"aria-label": t("portable.selectChange", { path: change.path, line: change.line }),
-			} });
+			const checkbox = card.createEl("input", {
+				type: "checkbox",
+				attr: {
+					"data-change-id": change.id,
+					"aria-label": t("portable.selectChange", { path: change.path, line: change.line }),
+				},
+			});
 			const ticked = selected.has(change.id);
 			const was = before?.get(change.id);
 			nowTicked.set(change.id, ticked);
 			checkbox.checked = was ?? ticked;
-			if (was !== undefined && was !== ticked) turnOvers.push(() => { checkbox.checked = ticked; });
+			if (was !== undefined && was !== ticked)
+				turnOvers.push(() => {
+					checkbox.checked = ticked;
+				});
 			checkbox.disabled = disabled;
 		}
-		const body = card.createDiv({ cls: "cs-sidebar-result cs-portable-change-body", attr: {
-			"data-row-id": row.id, "aria-current": String(current === row.id),
-		} });
-		const source = body.createEl("button", { cls: "cs-portable-source", attr: {
-			type: "button", "data-action": "result", "data-row-id": row.id,
-		} });
-		const location = renderSidebarLocation(source, { role: rowRole(row), line: change.line, cls: "cs-portable-change-location" });
-		if (!linkOnly && (change as PortableCalloutConversionChange).custom) location.createSpan({ cls: "flair mod-flat cs-portable-custom-badge", text: t("portable.customBadge") });
+		const body = card.createDiv({
+			cls: "cs-sidebar-result cs-portable-change-body",
+			attr: {
+				"data-row-id": row.id,
+				"aria-current": String(current === row.id),
+			},
+		});
+		const source = body.createEl("button", {
+			cls: "cs-portable-source",
+			attr: {
+				type: "button",
+				"data-action": "result",
+				"data-row-id": row.id,
+			},
+		});
+		const location = renderSidebarLocation(source, {
+			role: rowRole(row),
+			line: change.line,
+			cls: "cs-portable-change-location",
+		});
+		if (!linkOnly && (change as PortableCalloutConversionChange).custom)
+			location.createSpan({ cls: "flair mod-flat cs-portable-custom-badge", text: t("portable.customBadge") });
 		for (const which of ["before", "after"] as const) {
 			const line = (which === "before" ? source : body).createSpan({ cls: "cs-portable-diff-line" });
 			line.createSpan({ text: t(`portable.${which}`), cls: "cs-portable-diff-label" });
-			const slot = which === "after" && !linkOnly
-				? line.createSpan({ attr: { "data-replacement": change.id } }) : line;
-			const text = which === "after" && !linkOnly
-				? slot.createEl("button", { cls: "cs-portable-after-button", attr: {
-					type: "button", "data-action": "edit", "aria-description": t("portable.editCustom"),
-				} }) : slot;
+			const slot =
+				which === "after" && !linkOnly ? line.createSpan({ attr: { "data-replacement": change.id } }) : line;
+			const text =
+				which === "after" && !linkOnly
+					? slot.createEl("button", {
+							cls: "cs-portable-after-button",
+							attr: {
+								type: "button",
+								"data-action": "edit",
+								"aria-description": t("portable.editCustom"),
+							},
+						})
+					: slot;
 			if (text !== slot) (text as HTMLButtonElement).disabled = disabled;
 			if (text !== slot && !change.after.trim()) text.setAttribute("aria-label", t("portable.editCustom"));
-			text.createEl("code", { text: change[which], cls: which === "before" ? "cs-portable-before" : "cs-portable-after", attr: { dir: "ltr" } });
+			text.createEl("code", {
+				text: change[which],
+				cls: which === "before" ? "cs-portable-before" : "cs-portable-after",
+				attr: { dir: "ltr" },
+			});
 		}
 		const reason = blocked.get(change.id);
-		if (reason) body.createSpan({ cls: "cs-portable-change-note", text: t(reason === "ambiguous-target"
-			? "portable.blockedAmbiguous" : "portable.blockedTarget") });
+		if (reason)
+			body.createSpan({
+				cls: "cs-portable-change-note",
+				text: t(reason === "ambiguous-target" ? "portable.blockedAmbiguous" : "portable.blockedTarget"),
+			});
 		if (!linkOnly) {
 			const actions = body.createDiv({ cls: "cs-portable-card-actions" });
-			const reset = createCardAction(actions, "restore", "rotate-ccw",
-				t(editing ? "portable.cancelEdit" : "portable.restoreDefault"), disabled);
+			const reset = createCardAction(
+				actions,
+				"restore",
+				"rotate-ccw",
+				t(editing ? "portable.cancelEdit" : "portable.restoreDefault"),
+				disabled,
+			);
 			reset.hidden = !(editing ? resetEnabled : (change as PortableCalloutConversionChange).custom);
 			createCardAction(actions, "edit", "pencil", t("portable.editCustom"), disabled);
 		}
@@ -141,7 +201,8 @@ export function renderPortableConversionRows(
 	}
 	root.createEl("button", {
 		text: t("portable.showMore", { count: Math.min(PORTABLE_PAGE_SIZE, rows.length - limit) }),
-		cls: "cs-portable-more", attr: { "data-action": "more" },
+		cls: "cs-portable-more",
+		attr: { "data-action": "more" },
 	});
 	return null;
 }
@@ -152,10 +213,21 @@ function rowRole(row: PortableConversionRow): string {
 	return t(change.headingLine ? "vaultStats.roleHeading" : "vaultStats.roleInline");
 }
 
-function createCardAction(host: HTMLElement, action: string, icon: string, label: string, disabled: boolean): HTMLButtonElement {
-	const button = host.createEl("button", { cls: "clickable-icon", attr: {
-		type: "button", "data-action": action, "aria-label": label,
-	} });
+function createCardAction(
+	host: HTMLElement,
+	action: string,
+	icon: string,
+	label: string,
+	disabled: boolean,
+): HTMLButtonElement {
+	const button = host.createEl("button", {
+		cls: "clickable-icon",
+		attr: {
+			type: "button",
+			"data-action": action,
+			"aria-label": label,
+		},
+	});
 	button.disabled = disabled;
 	setIcon(button, icon);
 	return button;

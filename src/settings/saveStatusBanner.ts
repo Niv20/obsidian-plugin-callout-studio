@@ -26,7 +26,8 @@ import type { SettingsTabPlugin } from "./sections/types";
 
 interface SaveStatusHost {
 	app: App;
-	settingsWriter: Pick<SettingsWriter, "isFrozen" | "isDestroyed"> & Partial<Pick<SettingsWriter, "status" | "hasRecoveryState">>;
+	settingsWriter: Pick<SettingsWriter, "isFrozen" | "isDestroyed"> &
+		Partial<Pick<SettingsWriter, "status" | "hasRecoveryState">>;
 }
 
 export interface SaveStatusActions {
@@ -68,23 +69,43 @@ export function recoveryActionsOf(plugin: RecoveryActionHost): SaveStatusActions
 }
 
 /** Causes the file cannot recover from by waiting, so replacing it is offered. */
-const REPLACEABLE: ReadonlySet<SettingsDiagnosis> = new Set(["empty", "merge-markers", "damaged", "combined", "invalid-entries"]);
+const REPLACEABLE: ReadonlySet<SettingsDiagnosis> = new Set([
+	"empty",
+	"merge-markers",
+	"damaged",
+	"combined",
+	"invalid-entries",
+]);
 
 /**
  * Ask, and run `action` only on a yes. Every one of these replaces something,
  * so the yes is red unless `keeps` says the replacement loses nothing.
  */
-async function confirmed(app: App, title: string, body: string, subtitle: string, label: string, action: () => Promise<boolean>, keeps = false): Promise<boolean> {
+async function confirmed(
+	app: App,
+	title: string,
+	body: string,
+	subtitle: string,
+	label: string,
+	action: () => Promise<boolean>,
+	keeps = false,
+): Promise<boolean> {
 	const question = new ConfirmModal(app, t(title), t(body), t(label), undefined, keeps ? "cta" : "destructive");
 	// A red yes is worrying, so the mascot worries with it, as in every other red question.
 	if (!keeps) question.withMascot(t(subtitle));
-	return await question.confirm() ? action() : false;
+	return (await question.confirm()) ? action() : false;
 }
 
 /** Updates just the banner, preserving the settings page's scroll and form. */
-export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElement, actions: SaveStatusActions): () => void {
+export function renderSaveStatusBanner(
+	host: SaveStatusHost,
+	container: HTMLElement,
+	actions: SaveStatusActions,
+): () => void {
 	const slot = container.createDiv();
-	let active = true, busy = false, stillMissing = false;
+	let active = true,
+		busy = false,
+		stillMissing = false;
 	/**
 	 * A manual check has found the file missing during this missing episode.
 	 * Unlike `stillMissing`, which only colours the message right after a check,
@@ -92,7 +113,9 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 	 * back to "check again" while an action runs or after a cancelled dialog.
 	 */
 	let checkedMissing = false;
-	let diagnosis: SettingsDiagnosis | null = null, diagnosing = false, diagnosed = false;
+	let diagnosis: SettingsDiagnosis | null = null,
+		diagnosing = false,
+		diagnosed = false;
 	/**
 	 * The brush mascot at the start of the banner's title, in the warning
 	 * triangle's place and orange, kept while the banner is drawn again: standing
@@ -104,13 +127,31 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 		slot.empty();
 		const status = host.settingsWriter.status;
 		const missing = status?.frozenReason === "missing";
-		if (!missing) { stillMissing = false; checkedMissing = false; }
+		if (!missing) {
+			stillMissing = false;
+			checkedMissing = false;
+		}
 		const unreadable = status?.reason === "unreadable";
-		if (!unreadable) { diagnosis = null; diagnosed = false; }
-		else if (actions.diagnose && !diagnosed && !diagnosing) {
+		if (!unreadable) {
+			diagnosis = null;
+			diagnosed = false;
+		} else if (actions.diagnose && !diagnosed && !diagnosing) {
 			diagnosing = true;
-			void actions.diagnose().then(found => { diagnosis = found; }, () => { diagnosis = null; })
-				.finally(() => { diagnosing = false; diagnosed = true; render(); });
+			void actions
+				.diagnose()
+				.then(
+					(found) => {
+						diagnosis = found;
+					},
+					() => {
+						diagnosis = null;
+					},
+				)
+				.finally(() => {
+					diagnosing = false;
+					diagnosed = true;
+					render();
+				});
 		}
 		if (!status?.reason && !host.settingsWriter.isFrozen && !busy) return;
 		const banner = slot.createDiv({ cls: "cs-readonly-banner", attr: { role: "status" } });
@@ -121,9 +162,13 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 		const header = banner.createDiv({ cls: "cs-readonly-banner-header" });
 		// The brush stands where the warning triangle would, in the same orange;
 		// where it cannot be drawn the triangle stays.
-		if (!mascot.attach(header, "start")) setIcon(header.createSpan({ cls: "cs-readonly-banner-icon" }), "alert-triangle");
+		if (!mascot.attach(header, "start"))
+			setIcon(header.createSpan({ cls: "cs-readonly-banner-icon" }), "alert-triangle");
 		const frozen = host.settingsWriter.isFrozen || !!status?.frozenReason;
-		header.createDiv({ cls: "cs-readonly-banner-title", text: t(frozen ? "saveStatus.titlePaused" : "saveStatus.titleFailed") });
+		header.createDiv({
+			cls: "cs-readonly-banner-title",
+			text: t(frozen ? "saveStatus.titlePaused" : "saveStatus.titleFailed"),
+		});
 		mascot.setMood(frozen ? "hold" : "sad");
 
 		// Every button this state offers, decided once. The buttons below and the
@@ -152,10 +197,16 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 				diagnosis: unreadable ? diagnosis : null,
 				busy,
 				buttons,
-			})) banner.createEl("p", { text });
+			}))
+				banner.createEl("p", { text });
 		} else {
-			banner.createEl("p", { text: busy ? t("saveStatus.working") :
-				status?.reason ? settingsSaveMessage(status.reason) : t("settings.readOnly") });
+			banner.createEl("p", {
+				text: busy
+					? t("saveStatus.working")
+					: status?.reason
+						? settingsSaveMessage(status.reason)
+						: t("settings.readOnly"),
+			});
 			const detail = !busy && unreadable ? diagnosisKey(diagnosis) : undefined;
 			if (detail) banner.createEl("p", { text: t(detail), cls: "cs-readonly-banner-detail" });
 		}
@@ -163,9 +214,12 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 		const actionsEl = banner.createDiv({ cls: "cs-readonly-banner-actions" });
 		const run = async (action: () => Promise<boolean>, checking = false) => {
 			if (busy || host.settingsWriter.isDestroyed) return;
-			busy = true; stillMissing = false; render();
+			busy = true;
+			stillMissing = false;
+			render();
 			try {
-				if (!await action() && !host.settingsWriter.status?.reason) reportSettingsSaveFailure(host.settingsWriter, undefined, t("saveStatus.retryFailed"));
+				if (!(await action()) && !host.settingsWriter.status?.reason)
+					reportSettingsSaveFailure(host.settingsWriter, undefined, t("saveStatus.retryFailed"));
 			} catch (error) {
 				console.error("[callout-studio] saving recovery action failed", error);
 				reportSettingsSaveFailure(host.settingsWriter, error);
@@ -187,7 +241,9 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 				cls: recovered && !buttons.checkFirst ? "mod-cta" : "",
 			});
 			restore.disabled = busy;
-			restore.addEventListener("click", () => { void run(() => confirmFreshStart(host.app, null, actions.startFresh!, recovered)); });
+			restore.addEventListener("click", () => {
+				void run(() => confirmFreshStart(host.app, null, actions.startFresh!, recovered));
+			});
 		};
 		if (buttons.restore && !buttons.checkFirst) addRestore();
 		if (buttons.replace) {
@@ -195,25 +251,51 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 			// replacing it keeps them all: the step to take, not a warning. Every
 			// other cause loses what the file held (an exact copy is kept first).
 			const keeps = diagnosis === "combined";
-			const replace = actionsEl.createEl("button", { text: t("saveStatus.replaceUnreadable"), cls: keeps ? "mod-cta" : DESTRUCTIVE_BUTTON_CLASSES });
+			const replace = actionsEl.createEl("button", {
+				text: t("saveStatus.replaceUnreadable"),
+				cls: keeps ? "mod-cta" : DESTRUCTIVE_BUTTON_CLASSES,
+			});
 			replace.disabled = busy;
 			const body = keeps ? "confirm.replaceUnreadableSalvage" : "confirm.replaceUnreadable";
 			// Keeping everything was promised, so look once more after the yes: a
 			// file that has since become another kind of broken is not replaced,
 			// and the banner diagnoses it again and says what it is now.
-			const replaceNow = keeps && actions.diagnose
-				? async () => ["combined", "readable"].includes(await actions.diagnose!()) && actions.replaceUnreadable!()
-				: actions.replaceUnreadable!;
+			const replaceNow =
+				keeps && actions.diagnose
+					? async () =>
+							["combined", "readable"].includes(await actions.diagnose!()) && actions.replaceUnreadable!()
+					: actions.replaceUnreadable!;
 			replace.addEventListener("click", () => {
-				void run(() => confirmed(host.app, "confirm.titleReplaceUnreadable", body, "confirm.subtitleReplaceUnreadable", "saveStatus.replaceUnreadable", replaceNow, keeps));
+				void run(() =>
+					confirmed(
+						host.app,
+						"confirm.titleReplaceUnreadable",
+						body,
+						"confirm.subtitleReplaceUnreadable",
+						"saveStatus.replaceUnreadable",
+						replaceNow,
+						keeps,
+					),
+				);
 			});
 		}
 		if (buttons.discard) {
-			const discard = actionsEl.createEl("button", { text: t("saveStatus.discardRecoveryCopy"), cls: DESTRUCTIVE_BUTTON_CLASSES });
+			const discard = actionsEl.createEl("button", {
+				text: t("saveStatus.discardRecoveryCopy"),
+				cls: DESTRUCTIVE_BUTTON_CLASSES,
+			});
 			discard.disabled = busy;
 			discard.addEventListener("click", () => {
-				void run(() => confirmed(host.app, "confirm.titleDiscardRecoveryCopy", "confirm.discardRecoveryCopy", "confirm.subtitleDiscardRecoveryCopy",
-					"saveStatus.discardRecoveryCopy", actions.discardRecoveryCopy!));
+				void run(() =>
+					confirmed(
+						host.app,
+						"confirm.titleDiscardRecoveryCopy",
+						"confirm.discardRecoveryCopy",
+						"confirm.subtitleDiscardRecoveryCopy",
+						"saveStatus.discardRecoveryCopy",
+						actions.discardRecoveryCopy!,
+					),
+				);
 			});
 		}
 		if (actions.retry) {
@@ -222,17 +304,25 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 				cls: buttons.checkFirst || !(missing || replaceable) ? "mod-cta" : "",
 			});
 			retry.disabled = busy;
-			retry.addEventListener("click", () => { void run(actions.retry!, true); });
+			retry.addEventListener("click", () => {
+				void run(actions.retry!, true);
+			});
 		}
 		if (buttons.restore && buttons.checkFirst) addRestore();
 		if (actions.showBackup) {
 			const backup = actionsEl.createEl("button", { text: t("saveStatus.goToVersions") });
 			backup.disabled = busy;
 			// A click from Enter or Space carries no pointer detail.
-			backup.addEventListener("click", (event) => { actions.showBackup!(event.detail === 0); });
+			backup.addEventListener("click", (event) => {
+				actions.showBackup!(event.detail === 0);
+			});
 		}
 	};
 	const unsubscribe = host.settingsWriter.status?.subscribe(render);
 	render();
-	return () => { active = false; mascot.detach(); unsubscribe?.(); };
+	return () => {
+		active = false;
+		mascot.detach();
+		unsubscribe?.();
+	};
 }

@@ -10,12 +10,10 @@ export function armCompetitorImportBanner(plugin: SettingsTabPlugin): void {
 	armedPlugins.add(plugin);
 }
 
-export function shouldShowCompetitorImportBanner(
-	plugin: SettingsTabPlugin,
-): boolean {
-	return forcedPlugins.has(plugin) || (
-		armedPlugins.has(plugin) &&
-		plugin.registry.settings.competitorImportBannerHandled !== true
+export function shouldShowCompetitorImportBanner(plugin: SettingsTabPlugin): boolean {
+	return (
+		forcedPlugins.has(plugin) ||
+		(armedPlugins.has(plugin) && plugin.registry.settings.competitorImportBannerHandled !== true)
 	);
 }
 
@@ -24,16 +22,12 @@ export function forceCompetitorImportBanner(plugin: SettingsTabPlugin): void {
 	forcedPlugins.add(plugin);
 }
 
-export function isCompetitorImportBannerForced(
-	plugin: SettingsTabPlugin,
-): boolean {
+export function isCompetitorImportBannerForced(plugin: SettingsTabPlugin): boolean {
 	return forcedPlugins.has(plugin);
 }
 
 /** Shared by explicit dismissal and every successfully applied import. */
-export async function markCompetitorImportBannerHandled(
-	plugin: SettingsTabPlugin,
-): Promise<void> {
+export async function markCompetitorImportBannerHandled(plugin: SettingsTabPlugin): Promise<void> {
 	armedPlugins.delete(plugin);
 	forcedPlugins.delete(plugin);
 	// A device without a settings file will not write one for this flag alone.

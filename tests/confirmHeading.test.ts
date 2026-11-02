@@ -21,7 +21,15 @@ const app = (): App => ({ keymap: new TestKeymap(), scope: new TestScope() }) as
 
 /** A question; with the mascot and this subtitle unless `subtitle` is null. */
 function open(subtitle: string | null, acknowledgement?: string): ConfirmModal {
-	const modal = new ConfirmModal(app(), "Delete palette", "Callouts that use its colors are not affected.", undefined, undefined, undefined, acknowledgement);
+	const modal = new ConfirmModal(
+		app(),
+		"Delete palette",
+		"Callouts that use its colors are not affected.",
+		undefined,
+		undefined,
+		undefined,
+		acknowledgement,
+	);
 	if (subtitle !== null) modal.withMascot(subtitle);
 	void modal.confirm();
 	return modal;

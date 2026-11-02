@@ -82,11 +82,7 @@ function rankOf(entry: IconEntry, phrase: string): number {
  * Returns the index's own entry array untouched when nothing is being filtered,
  * so opening a source does no work at all beyond decoding it.
  */
-export function filterIcons(
-	index: IconIndex,
-	query: string,
-	category = "",
-): readonly IconEntry[] {
+export function filterIcons(index: IconIndex, query: string, category = ""): readonly IconEntry[] {
 	const words = queryWords(query);
 	if (words.length === 0 && !category) return index.entries;
 

@@ -23,8 +23,7 @@ function clippingAncestors(menuEl: HTMLElement, clipEl?: HTMLElement): ClipBound
 	}
 	// Keep the explicit boundary for callers whose content box is the limit,
 	// including while its overflow styling is being applied during opening.
-	if (clipEl && !boundaries.some(({ el }) => el === clipEl))
-		boundaries.push({ el: clipEl, x: true, y: true });
+	if (clipEl && !boundaries.some(({ el }) => el === clipEl)) boundaries.push({ el: clipEl, x: true, y: true });
 	return boundaries;
 }
 
@@ -63,8 +62,7 @@ export function syncListboxMenuHeightCap(
 
 	const rect = controlEl.getBoundingClientRect();
 	const viewport = view.visualViewport;
-	const viewportHeight =
-		viewport?.height ?? doc.documentElement.clientHeight;
+	const viewportHeight = viewport?.height ?? doc.documentElement.clientHeight;
 	if (!Number.isFinite(viewportHeight) || viewportHeight <= 0) {
 		return currentTeardown;
 	}
@@ -106,8 +104,7 @@ export function syncListboxMenuHeightCap(
 	// back and forth on each resize or surrounding scroll. Everything around
 	// the scrolling part (the edge, a search box) is added back.
 	const around = Math.max(0, (menuEl.offsetHeight ?? 0) - scrollEl.clientHeight);
-	const naturalHeight = Math.min(COMBOBOX_MAX_HEIGHT_PX,
-		(scrollEl.scrollHeight || COMBOBOX_MAX_HEIGHT_PX) + around);
+	const naturalHeight = Math.min(COMBOBOX_MAX_HEIGHT_PX, (scrollEl.scrollHeight || COMBOBOX_MAX_HEIGHT_PX) + around);
 	const opensAbove = naturalHeight > below && above > below;
 	menuEl.toggleClass("cs-dropdown-menu-above", opensAbove);
 	const triggerVisible = rect.bottom > top && rect.top < bottom;
@@ -124,8 +121,7 @@ export function syncListboxMenuHeightCap(
 		if (!(ev.target instanceof view.Node) || !menuEl.contains(ev.target)) onResize();
 	};
 	doc.addEventListener("scroll", onScroll, true);
-	const observer = typeof view.ResizeObserver === "function"
-		? new view.ResizeObserver(onResize) : undefined;
+	const observer = typeof view.ResizeObserver === "function" ? new view.ResizeObserver(onResize) : undefined;
 	observer?.observe(controlEl);
 	for (const { el } of boundaries) observer?.observe(el);
 	return () => {

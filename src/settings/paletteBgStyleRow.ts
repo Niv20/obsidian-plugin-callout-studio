@@ -13,13 +13,16 @@ import { SelectDropdown } from "../ui/selectDropdown";
 export type BgStyle = "solid" | "gradient" | "none";
 
 /** The palette's finite background choices share the standard themed popup. */
-export function buildPaletteBgStyleRow(parent: HTMLElement, value: BgStyle, onChange: (value: BgStyle) => void): SelectDropdown {
-	const setting = new Setting(parent)
-		.setName(t("palette.bgStyle"))
-		.setClass("cs-palette-bgstyle-setting");
+export function buildPaletteBgStyleRow(
+	parent: HTMLElement,
+	value: BgStyle,
+	onChange: (value: BgStyle) => void,
+): SelectDropdown {
+	const setting = new Setting(parent).setName(t("palette.bgStyle")).setClass("cs-palette-bgstyle-setting");
 	return new SelectDropdown(setting.controlEl, t("palette.bgStyle"))
 		.addOption("solid", t("palette.bgSolid"))
 		.addOption("gradient", t("palette.bgGradient"))
 		.addOption("none", t("palette.bgTransparent"))
-		.setValue(value).onChange((raw) => onChange(raw as BgStyle));
+		.setValue(value)
+		.onChange((raw) => onChange(raw as BgStyle));
 }

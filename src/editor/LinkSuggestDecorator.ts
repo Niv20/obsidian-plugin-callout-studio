@@ -24,15 +24,8 @@
 import type { App } from "obsidian";
 import type { PluginSettings } from "../types";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
-import {
-	findWikilinkCalloutRefs,
-	parseOutlineHeadingText,
-} from "./calloutTokens";
-import {
-	buildCalloutTokenDom,
-	resolveCalloutDef,
-	shouldRenderToken,
-} from "./renderShared";
+import { findWikilinkCalloutRefs, parseOutlineHeadingText } from "./calloutTokens";
+import { buildCalloutTokenDom, resolveCalloutDef, shouldRenderToken } from "./renderShared";
 import { calloutTokenLabel, normalizeCalloutId } from "../utils/calloutId";
 
 /** Narrow structural host type (avoids importing the concrete plugin class). */
@@ -42,17 +35,9 @@ export interface LinkSuggestHost {
 	settings: PluginSettings;
 }
 
-type RenderSuggestionFn = (
-	value: unknown,
-	el: unknown,
-	...rest: unknown[]
-) => unknown;
+type RenderSuggestionFn = (value: unknown, el: unknown, ...rest: unknown[]) => unknown;
 
-type SelectSuggestionFn = (
-	value: unknown,
-	evt: unknown,
-	...rest: unknown[]
-) => unknown;
+type SelectSuggestionFn = (value: unknown, evt: unknown, ...rest: unknown[]) => unknown;
 
 interface SuggestLike {
 	renderSuggestion?: RenderSuggestionFn;
@@ -66,10 +51,7 @@ interface EditorLike {
 	getLine(line: number): string;
 	getCursor(): { line: number; ch: number };
 	replaceRange(text: string, from: { line: number; ch: number }): void;
-	setSelection(
-		anchor: { line: number; ch: number },
-		head?: { line: number; ch: number },
-	): void;
+	setSelection(anchor: { line: number; ch: number }, head?: { line: number; ch: number }): void;
 }
 
 export class LinkSuggestDecorator {
@@ -156,11 +138,7 @@ export class LinkSuggestDecorator {
  * the core link suggester emits); everything else passes through untouched,
  * so wrapping unrelated suggesters is harmless.
  */
-function decorateHeadingSuggestion(
-	host: LinkSuggestHost,
-	value: unknown,
-	el: unknown,
-): void {
+function decorateHeadingSuggestion(host: LinkSuggestHost, value: unknown, el: unknown): void {
 	const { headingCallouts } = host.settings;
 	if (!headingCallouts.enabled || !headingCallouts.refCleanTitles) return;
 	if (!value || typeof value !== "object") return;
@@ -232,12 +210,7 @@ function decorateHeadingSuggestion(
  * so a `#` pressed to continue into a sub-heading, or an alias core kept from
  * the text after the caret, never matches.
  */
-function aliasTitlelessHeadingLink(
-	host: LinkSuggestHost,
-	value: unknown,
-	evt: unknown,
-	context: unknown,
-): void {
+function aliasTitlelessHeadingLink(host: LinkSuggestHost, value: unknown, evt: unknown, context: unknown): void {
 	const { headingCallouts } = host.settings;
 	if (!headingCallouts.enabled || !headingCallouts.refCleanTitles) return;
 	if (!value || typeof value !== "object") return;
@@ -272,9 +245,7 @@ function aliasTitlelessHeadingLink(
 	}
 	const line = start.line;
 	const lineText = editor.getLine(line);
-	const ref = findWikilinkCalloutRefs(lineText).find(
-		(r) => r.linkFrom === (start.ch as number) - 2,
-	);
+	const ref = findWikilinkCalloutRefs(lineText).find((r) => r.linkFrom === (start.ch as number) - 2);
 	if (!ref || ref.hasAlias || ref.hasTitle || ref.to !== ref.linkTo - 2) {
 		return;
 	}
@@ -285,10 +256,7 @@ function aliasTitlelessHeadingLink(
 	editor.replaceRange(alias, at);
 	if (key === "Tab") {
 		// Core's Tab selects an alias it inserted, ready to overtype.
-		editor.setSelection(
-			{ line, ch: at.ch + 1 },
-			{ line, ch: at.ch + alias.length },
-		);
+		editor.setSelection({ line, ch: at.ch + 1 }, { line, ch: at.ch + alias.length });
 	} else if (caret.line === line && caret.ch >= at.ch) {
 		const ch = caret.ch + alias.length;
 		editor.setSelection({ line, ch }, { line, ch });

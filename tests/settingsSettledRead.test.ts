@@ -7,9 +7,14 @@ import { readSettledSettingsFile } from "../src/manager/settingsSettledRead";
 function source(samples: unknown[], present = true) {
 	let reads = 0;
 	const host: SettingsFileHost = {
-		app: { vault: { configDir: ".obsidian", adapter: {
-			exists: () => Promise.resolve(present),
-		} } } as unknown as App,
+		app: {
+			vault: {
+				configDir: ".obsidian",
+				adapter: {
+					exists: () => Promise.resolve(present),
+				},
+			},
+		} as unknown as App,
 		manifest: { id: "callout-studio" } as PluginManifest,
 		loadData: () => Promise.resolve(samples[Math.min(reads++, samples.length - 1)]),
 	};
@@ -37,7 +42,7 @@ describe("settings content settling", () => {
 	});
 
 	it("does not accept a file that keeps changing within the bounded window", async () => {
-		const s = source([1, 2, 3, 4].map(revision => ({ futureRevision: revision })));
+		const s = source([1, 2, 3, 4].map((revision) => ({ futureRevision: revision })));
 		assert.equal((await readSettledSettingsFile(s.host, { wait })).kind, "unreadable");
 		assert.equal(s.reads(), 4);
 	});
@@ -73,7 +78,10 @@ describe("settings content settling", () => {
 		const result = await readSettledSettingsFile(s.host, {
 			initial: { kind: "loaded", data: {}, json: "{}" },
 			isCancelled: () => cancelled,
-			wait: () => { cancelled = true; return Promise.resolve(); },
+			wait: () => {
+				cancelled = true;
+				return Promise.resolve();
+			},
 		});
 		assert.equal(result.kind, "unreadable");
 		assert.equal(s.reads(), 0);
@@ -82,9 +90,10 @@ describe("settings content settling", () => {
 	for (const initial of [{}, undefined]) {
 		it(`retains evidence of ${initial === undefined ? "unreadable" : "loaded"} data when sync removes the file`, async () => {
 			const s = source([null], false);
-			const first = initial === undefined
-				? { kind: "unreadable" as const }
-				: { kind: "loaded" as const, data: initial, json: "{}" };
+			const first =
+				initial === undefined
+					? { kind: "unreadable" as const }
+					: { kind: "loaded" as const, data: initial, json: "{}" };
 			assert.equal((await readSettledSettingsFile(s.host, { initial: first, wait })).kind, "unreadable");
 			assert.equal(s.reads(), 3);
 		});

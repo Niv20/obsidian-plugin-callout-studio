@@ -9,18 +9,8 @@
  */
 import { Modal, Setting, SettingGroup, setIcon } from "obsidian";
 import type { TextComponent, ToggleComponent } from "obsidian";
-import type {
-	BgGradient,
-	CalloutDefinition,
-	CalloutIcon,
-	CalloutRenderRole,
-	CustomPalette,
-} from "../types";
-import {
-	buildIconAdjust,
-	resolveIconAdjust,
-	type ResolvedIconAdjust,
-} from "../utils/iconAdjust";
+import type { BgGradient, CalloutDefinition, CalloutIcon, CalloutRenderRole, CustomPalette } from "../types";
+import { buildIconAdjust, resolveIconAdjust, type ResolvedIconAdjust } from "../utils/iconAdjust";
 import { IconPicker } from "./iconpicker";
 import { LiveCalloutPreview } from "./LiveCalloutPreview";
 import { PREVIEW_PLACEHOLDER_ID } from "../constants";
@@ -28,12 +18,7 @@ import { recoverEditorSaving } from "./editor/recoverEditorSaving";
 import { renderSaveStatusBanner } from "./saveStatusBanner";
 import { addFieldResetButton } from "./editor/fieldResetButton";
 import { addBuiltInIdReset, builtInDefaultIds } from "./editor/builtInIdReset";
-import {
-	bgGradientsEqual,
-	bgTintFor,
-	DEFAULT_TEXT_COLOR_LIGHT,
-	DEFAULT_TEXT_COLOR_DARK,
-} from "../utils/colorUtils";
+import { bgGradientsEqual, bgTintFor, DEFAULT_TEXT_COLOR_LIGHT, DEFAULT_TEXT_COLOR_DARK } from "../utils/colorUtils";
 import {
 	getObsidianPalettes,
 	getExtraPalettes,
@@ -72,10 +57,7 @@ import { askNoteChanges } from "./editor/askNoteChanges";
 import { idOwnership, type IdMove } from "./editor/idMoves";
 import type { NoteChoices } from "./editor/noteChanges";
 import type { TagMessage, TagRefusal } from "../ui/TagInput";
-import {
-	hasAuthoredBackground,
-	hasAuthoredTextColors,
-} from "./editor/authoredStyle";
+import { hasAuthoredBackground, hasAuthoredTextColors } from "./editor/authoredStyle";
 import { definitionIconAdjustFields } from "./editor/definitionIconAdjust";
 import { findUserImage } from "../icons/packs/userImages";
 import { describeIcon } from "../icons/describeIcon";
@@ -112,11 +94,7 @@ function generateId(displayName: string): string {
  * touched, while the two token roles — which share a baseline-aligned icon and
  * so are the ones a nudge is usually for — lead.
  */
-const ICON_ADJUST_ORDER: readonly CalloutRenderRole[] = [
-	"heading",
-	"inline",
-	"regular",
-];
+const ICON_ADJUST_ORDER: readonly CalloutRenderRole[] = ["heading", "inline", "regular"];
 
 // Derive a display name from a user-typed ID: sentence-case the first letter
 // and keep everything else (spaces, dashes) intact so generateId() on the
@@ -198,9 +176,7 @@ function defaultColorStateFor(def: CalloutDefinition): EditorColorState {
  * beside the simple control re-derives all six from the base colour on a single
  * drag. The grid's "prefer a single base color" link is the way back.
  */
-function paletteSeedFromColorState(
-	state: EditorColorState,
-): Omit<CustomPalette, "id" | "name"> {
+function paletteSeedFromColorState(state: EditorColorState): Omit<CustomPalette, "id" | "name"> {
 	return {
 		colorLight: state.colorLight,
 		colorDark: state.colorDark,
@@ -321,11 +297,7 @@ export class CalloutEditor extends Modal {
 	/** The Color row's picker; holds a document listener until destroyed. */
 	private palettePicker: PaletteCombobox | null = null;
 
-	constructor(
-		plugin: CalloutEditorPlugin,
-		existing?: CalloutDefinition,
-		options?: CalloutEditorOptions,
-	) {
+	constructor(plugin: CalloutEditorPlugin, existing?: CalloutDefinition, options?: CalloutEditorOptions) {
 		super(plugin.app);
 		this.plugin = plugin;
 		this.existingId = existing?.id ?? null;
@@ -343,9 +315,8 @@ export class CalloutEditor extends Modal {
 		// from the fallback is omitted from the save rather than baked on.
 		const seed = existing ?? fallbackBase;
 		this.baselineDef = seed;
-		this.builtInDefault = this.isBuiltIn && this.existingId
-			? plugin.registry.getBuiltInDefault(this.existingId)
-			: undefined;
+		this.builtInDefault =
+			this.isBuiltIn && this.existingId ? plugin.registry.getBuiltInDefault(this.existingId) : undefined;
 		// Last resort for the accents, only reachable if the registry somehow holds
 		// neither the configured fallback nor `note`. It must be a real palette:
 		// colours matching none open the dropdown reading "Deleted color".
@@ -353,20 +324,13 @@ export class CalloutEditor extends Modal {
 		// won, or a non-blue fallback would open wearing blue's tint.
 		const defaultPalette = getDefaultNewCalloutPalette();
 
-		this.displayName =
-			existing?.displayName ?? options?.seedDisplayName ?? "";
-		this.calloutId =
-			existing?.id ??
-			options?.seedCalloutId ??
-			generateId(options?.seedDisplayName ?? "");
-		this.icon = seed?.icon
-			? { ...seed.icon }
-			: { type: "lucide", value: "lucide-pencil" };
+		this.displayName = existing?.displayName ?? options?.seedDisplayName ?? "";
+		this.calloutId = existing?.id ?? options?.seedCalloutId ?? generateId(options?.seedDisplayName ?? "");
+		this.icon = seed?.icon ? { ...seed.icon } : { type: "lucide", value: "lucide-pencil" };
 		this.hideIcon = seed?.hideIcon === true;
 		this.colorLight = seed?.colorLight ?? defaultPalette.colorLight;
 		this.colorDark = seed?.colorDark ?? defaultPalette.colorDark;
-		this.bgColorLight =
-			seed?.bgColorLight ?? bgTintFor(this.colorLight, false);
+		this.bgColorLight = seed?.bgColorLight ?? bgTintFor(this.colorLight, false);
 		this.bgColorDark = seed?.bgColorDark ?? bgTintFor(this.colorDark, true);
 		const baseGradient = seed?.bgGradient;
 		this.bgGradient = baseGradient ? { ...baseGradient } : undefined;
@@ -391,12 +355,9 @@ export class CalloutEditor extends Modal {
 		// a fallback saved before paletteId existed carries none, and defaulting it
 		// to blue would label the dropdown "Blue" over that callout's real hexes.
 		// With no seed, the colours above ARE the blue preset, so the id fits.
-		this.paletteId = seed
-			? seed.paletteId
-			: DEFAULT_NEW_CALLOUT_PALETTE_ID;
+		this.paletteId = seed ? seed.paletteId : DEFAULT_NEW_CALLOUT_PALETTE_ID;
 		this.previewFoldCollapsed = this.foldable && this.defaultFolded;
-		this.hasHadCalloutId =
-			this.calloutId.trim().length > 0 || this.aliases.length > 0;
+		this.hasHadCalloutId = this.calloutId.trim().length > 0 || this.aliases.length > 0;
 	}
 
 	openAndWait(): Promise<CalloutDefinition | null> {
@@ -433,9 +394,7 @@ export class CalloutEditor extends Modal {
 		this.initialSnapshot = this.stateSnapshot();
 		this.initialStyleSnapshot = this.styleSnapshot();
 
-		const editorTitle = this.existingId
-			? t("editor.editCallout")
-			: t("editor.newCallout");
+		const editorTitle = this.existingId ? t("editor.editCallout") : t("editor.newCallout");
 		this.setTitle(editorTitle);
 
 		// The four rows that describe the callout — Display name, Callout IDs,
@@ -448,11 +407,7 @@ export class CalloutEditor extends Modal {
 		// Display Name
 		const nameSetting = new Setting(general.listEl)
 			.setName(t("editor.displayName"))
-			.setDesc(
-				this.isBuiltIn
-					? t("editor.displayNameBuiltIn")
-					: t("editor.displayNameDesc"),
-			);
+			.setDesc(this.isBuiltIn ? t("editor.displayNameBuiltIn") : t("editor.displayNameDesc"));
 		if (this.isBuiltIn) {
 			// A built-in's name is fixed (Obsidian declares it), so it is shown
 			// inside a field-shaped box that cannot be focused or clicked. It
@@ -486,9 +441,7 @@ export class CalloutEditor extends Modal {
 					// pinned primary rather than orphaning the row.
 					if (this.idsTagInput) {
 						const pinned = this.idsTagInput.getPinnedTag();
-						this.aliases = this.idsTagInput
-							.getTags()
-							.filter((tag) => tag !== pinned);
+						this.aliases = this.idsTagInput.getTags().filter((tag) => tag !== pinned);
 					}
 					this.updateIdWarning();
 					this.updatePreview();
@@ -499,8 +452,7 @@ export class CalloutEditor extends Modal {
 
 		// The pristine shipped row gates every field-level built-in reset.
 		const originalDef = this.builtInDefault;
-		const defaultIds = originalDef
-			? builtInDefaultIds(originalDef) : [];
+		const defaultIds = originalDef ? builtInDefaultIds(originalDef) : [];
 		let syncIdsRevert = (): void => undefined;
 		// Callout IDs (primary + aliases) — unified tag input
 		const initialIds = [this.calloutId, ...this.aliases].filter(Boolean);
@@ -528,8 +480,7 @@ export class CalloutEditor extends Modal {
 
 		this.idsTagInput = new TagInput(idsSetting.controlEl, {
 			initialTags: initialIds,
-			initialPinnedTag:
-				!this.isBuiltIn && this.calloutId ? this.calloutId : undefined,
+			initialPinnedTag: !this.isBuiltIn && this.calloutId ? this.calloutId : undefined,
 			placeholder: t("editor.calloutIdsPlaceholder"),
 			noteEl: idsNoteEl,
 			showFieldError: (message) => setSettingError(idsSetting, message),
@@ -568,10 +519,7 @@ export class CalloutEditor extends Modal {
 				}
 				this.idsTagInput?.setPinnedTag(tag);
 				this.calloutId = tag;
-				this.aliases =
-					this.idsTagInput
-						?.getTags()
-						.filter((other) => other !== tag) ?? [];
+				this.aliases = this.idsTagInput?.getTags().filter((other) => other !== tag) ?? [];
 				this.updateIdWarning();
 				this.updatePreview();
 				this.updateSaveState();
@@ -580,9 +528,7 @@ export class CalloutEditor extends Modal {
 			validate: (tag) => {
 				// A tag added while no pinned primary exists will be promoted
 				// to primary by the reverse sync above.
-				const willBePinned =
-					!this.isBuiltIn &&
-					this.idsTagInput?.getPinnedTag() == null;
+				const willBePinned = !this.isBuiltIn && this.idsTagInput?.getPinnedTag() == null;
 				const role = willBePinned ? "primary" : "alias";
 				const clash = this.findAttrIdCollision(tag);
 				if (this.canUseCalloutId(tag, role) && !clash) return null;
@@ -590,9 +536,7 @@ export class CalloutEditor extends Modal {
 				// it can come: the field then takes it with no further check.
 				const taken = this.takenIdMessage(tag, () => this.idsTagInput?.addTagUnchecked(tag));
 				if (taken) return taken;
-				return clash
-					? wide(t("editor.idDashConflict", { other: clash }))
-					: t("editor.idConflict");
+				return clash ? wide(t("editor.idDashConflict", { other: clash })) : t("editor.idConflict");
 			},
 		});
 		if (originalDef) {
@@ -630,9 +574,7 @@ export class CalloutEditor extends Modal {
 		// exists, since selecting a palette refreshes it — and lands here.
 		// The picker is as wide as its palette's name, as every dropdown is,
 		// and the revert button below follows it at the row's end.
-		const colorSetting = new Setting(general.listEl)
-			.setName(t("editor.colors"))
-			.setDesc(t("editor.colorsDesc"));
+		const colorSetting = new Setting(general.listEl).setName(t("editor.colors")).setDesc(t("editor.colorsDesc"));
 
 		// Icon
 		// `cs-row-inline` keeps the tile beside the label on the phone instead
@@ -676,8 +618,7 @@ export class CalloutEditor extends Modal {
 		// opened, having changed nothing.
 		const iconMatchesDefault = (): boolean =>
 			!originalDef ||
-			(iconsEqual(this.icon, originalDef.icon) &&
-				this.hideIcon === (originalDef.hideIcon === true));
+			(iconsEqual(this.icon, originalDef.icon) && this.hideIcon === (originalDef.hideIcon === true));
 		let syncIconRevert = (): void => undefined;
 
 		// Everything the icon row shows, in one place: three call sites used to
@@ -738,17 +679,12 @@ export class CalloutEditor extends Modal {
 		});
 
 		if (originalDef) {
-			syncIconRevert = addFieldResetButton(
-				iconSetting,
-				t("editor.resetIcon"),
-				iconMatchesDefault,
-				() => {
-					this.icon = { ...originalDef.icon };
-					this.hideIcon = originalDef.hideIcon === true;
-					syncIconTile();
-					this.updatePreview();
-				},
-			);
+			syncIconRevert = addFieldResetButton(iconSetting, t("editor.resetIcon"), iconMatchesDefault, () => {
+				this.icon = { ...originalDef.icon };
+				this.hideIcon = originalDef.hideIcon === true;
+				syncIconTile();
+				this.updatePreview();
+			});
 		}
 		// First paint. `syncPictureBox`/`syncIconAdjust` are still their no-op
 		// defaults here — the boxes they hide do not exist yet — so both are
@@ -812,9 +748,7 @@ export class CalloutEditor extends Modal {
 		// Stacked rather than tabbed so all nine values stay on screen at once
 		// with no mode to remember; the preview column is sticky (styles.css),
 		// so it stays in view while this column scrolls.
-		const adjustBoxes = ICON_ADJUST_ORDER.map((role) =>
-			this.renderIconAdjustGroup(adjustCol, role),
-		);
+		const adjustBoxes = ICON_ADJUST_ORDER.map((role) => this.renderIconAdjustGroup(adjustCol, role));
 		this.syncIconAdjust = () => {
 			for (const box of adjustBoxes) {
 				box.toggleClass("cs-hidden", this.hideIcon);
@@ -831,26 +765,21 @@ export class CalloutEditor extends Modal {
 			.setHeading(t("editor.picture"))
 			.addClass("cs-editor-group")
 			.addSetting((setting) => {
-				setting
-					.setName(t("iconPicker.customRecolor"))
-					.addToggle((toggle) => {
-						this.recolorToggle = toggle;
-						toggle.onChange((value: boolean) => {
-							// Straight onto the icon, which the save flow and the
-							// dirty check already carry — so this stages like every
-							// other field here, and Cancel puts it back.
-							this.icon = { ...this.icon, recolor: value };
-							syncIconRevert();
-							this.updatePreview();
-						});
+				setting.setName(t("iconPicker.customRecolor")).addToggle((toggle) => {
+					this.recolorToggle = toggle;
+					toggle.onChange((value: boolean) => {
+						// Straight onto the icon, which the save flow and the
+						// dirty check already carry — so this stages like every
+						// other field here, and Cancel puts it back.
+						this.icon = { ...this.icon, recolor: value };
+						syncIconRevert();
+						this.updatePreview();
 					});
+				});
 			});
 		const pictureBox = settingGroupEl(pictureGroup);
 		this.syncPictureBox = () => {
-			const picture =
-				!this.hideIcon && this.icon.type === "image"
-					? findUserImage(this.icon.value)
-					: undefined;
+			const picture = !this.hideIcon && this.icon.type === "image" ? findUserImage(this.icon.value) : undefined;
 			// A mask is a stencil, so only a flat drawing can follow the callout;
 			// a photo would come out a silhouette. Rather than showing the switch
 			// disabled beside a line of prose explaining why, the box just stays
@@ -908,10 +837,7 @@ export class CalloutEditor extends Modal {
 				rebuildPaletteEntries();
 				return paletteEntries;
 			},
-			onPreview: (palette) =>
-				this.previewColorsTransient(
-					palette ? paletteToColorState(palette) : null,
-				),
+			onPreview: (palette) => this.previewColorsTransient(palette ? paletteToColorState(palette) : null),
 			onCommit: (entry) => selectPaletteEntry(entry),
 			onNewColor: (name) => void pickNewPaletteColor(name),
 		});
@@ -921,9 +847,7 @@ export class CalloutEditor extends Modal {
 		// values; only shown once they have actually diverged from that
 		// default. Mirrors `iconMatchesDefault`/`syncIconRevert` above.
 		const colorMatchesDefault = (): boolean =>
-			!originalDef ||
-			JSON.stringify(readColorState()) ===
-				JSON.stringify(defaultColorStateFor(originalDef));
+			!originalDef || JSON.stringify(readColorState()) === JSON.stringify(defaultColorStateFor(originalDef));
 		let syncColorRevert = (): void => undefined;
 
 		/**
@@ -935,9 +859,7 @@ export class CalloutEditor extends Modal {
 			this.colorDark = state.colorDark;
 			this.bgColorLight = state.bgColorLight;
 			this.bgColorDark = state.bgColorDark;
-			this.bgGradient = state.bgGradient
-				? { ...state.bgGradient }
-				: undefined;
+			this.bgGradient = state.bgGradient ? { ...state.bgGradient } : undefined;
 			this.transparentBg = state.transparentBg;
 			this.textColorLight = state.textColorLight;
 			this.textColorDark = state.textColorDark;
@@ -963,14 +885,11 @@ export class CalloutEditor extends Modal {
 			// match on, and comparing what the form merely derived would push
 			// every such callout onto the "Deleted color" branch.
 			(palette.transparentBg === true) === this.transparentBg &&
-			palette.colorLight.toLowerCase() ===
-				this.colorLight.toLowerCase() &&
+			palette.colorLight.toLowerCase() === this.colorLight.toLowerCase() &&
 			palette.colorDark.toLowerCase() === this.colorDark.toLowerCase() &&
 			(this.transparentBg ||
-				((palette.bgColorLight?.toLowerCase() ?? "") ===
-					this.bgColorLight.toLowerCase() &&
-					(palette.bgColorDark?.toLowerCase() ?? "") ===
-						this.bgColorDark.toLowerCase() &&
+				((palette.bgColorLight?.toLowerCase() ?? "") === this.bgColorLight.toLowerCase() &&
+					(palette.bgColorDark?.toLowerCase() ?? "") === this.bgColorDark.toLowerCase() &&
 					bgGradientsEqual(palette.bgGradient, this.bgGradient)));
 
 		// ── "Deleted color" state ──
@@ -1039,11 +958,7 @@ export class CalloutEditor extends Modal {
 		const refreshTriggerFromCurrentColors = (): void => {
 			// Retired presets and pre-rename ids included — see
 			// paletteEntryResolution.ts for the rules.
-			const resolved = resolvePaletteEntry(
-				paletteEntries,
-				this.paletteId,
-				matchesPalette,
-			);
+			const resolved = resolvePaletteEntry(paletteEntries, this.paletteId, matchesPalette);
 			const matched = resolved?.entry;
 			if (resolved && matched) {
 				this.paletteId = resolved.paletteId;
@@ -1080,19 +995,14 @@ export class CalloutEditor extends Modal {
 		this.initialSnapshot = this.stateSnapshot();
 
 		if (originalDef) {
-			syncColorRevert = addFieldResetButton(
-				colorSetting,
-				t("editor.resetColors"),
-				colorMatchesDefault,
-				() => {
-					// Otherwise refreshTriggerFromCurrentColors resolves the stale
-					// id first and keeps showing whatever palette was last picked,
-					// even though the colors underneath just reverted.
-					this.paletteId = originalDef.paletteId;
-					applyColorState(defaultColorStateFor(originalDef));
-					refreshTriggerFromCurrentColors();
-				},
-			);
+			syncColorRevert = addFieldResetButton(colorSetting, t("editor.resetColors"), colorMatchesDefault, () => {
+				// Otherwise refreshTriggerFromCurrentColors resolves the stale
+				// id first and keeps showing whatever palette was last picked,
+				// even though the colors underneath just reverted.
+				this.paletteId = originalDef.paletteId;
+				applyColorState(defaultColorStateFor(originalDef));
+				refreshTriggerFromCurrentColors();
+			});
 		}
 
 		/**
@@ -1104,21 +1014,13 @@ export class CalloutEditor extends Modal {
 		 * it behind. Custom palettes carry their own text colors; presets fall
 		 * back to the defaults.
 		 */
-		const paletteToColorState = (
-			palette: ColorPalette,
-		): EditorColorState => ({
+		const paletteToColorState = (palette: ColorPalette): EditorColorState => ({
 			...readColorState(),
 			colorLight: palette.colorLight,
 			colorDark: palette.colorDark,
-			...(palette.bgColorLight !== undefined
-				? { bgColorLight: palette.bgColorLight }
-				: {}),
-			...(palette.bgColorDark !== undefined
-				? { bgColorDark: palette.bgColorDark }
-				: {}),
-			bgGradient: palette.bgGradient
-				? { ...palette.bgGradient }
-				: undefined,
+			...(palette.bgColorLight !== undefined ? { bgColorLight: palette.bgColorLight } : {}),
+			...(palette.bgColorDark !== undefined ? { bgColorDark: palette.bgColorDark } : {}),
+			bgGradient: palette.bgGradient ? { ...palette.bgGradient } : undefined,
 			transparentBg: palette.transparentBg === true,
 			textColorLight: palette.textColorLight ?? DEFAULT_TEXT_COLOR_LIGHT,
 			textColorDark: palette.textColorDark ?? DEFAULT_TEXT_COLOR_DARK,
@@ -1147,7 +1049,6 @@ export class CalloutEditor extends Modal {
 			this.updateSaveState();
 		};
 
-
 		/**
 		 * Select a palette that already exists, optionally taking a group of
 		 * orphaned siblings along with it.
@@ -1156,10 +1057,7 @@ export class CalloutEditor extends Modal {
 		 * user who lands on colors another palette already has is offered that
 		 * palette instead of a Save button that will not move.
 		 */
-		const adoptExistingPalette = (
-			paletteId: string,
-			orphanId: string | null | undefined,
-		): void => {
+		const adoptExistingPalette = (paletteId: string, orphanId: string | null | undefined): void => {
 			rebuildPaletteEntries();
 			const entry = paletteEntries.find((e) => e.id === paletteId);
 			if (!entry) return;
@@ -1168,15 +1066,8 @@ export class CalloutEditor extends Modal {
 			// callout is excluded from both — the editor owns its own row until
 			// Save, and selectPaletteEntry below is what moves it.
 			if (orphanId) {
-				this.plugin.registry.relinkPalette(
-					orphanId,
-					paletteId,
-					this.existingId,
-				);
-				this.plugin.registry.applyPaletteColors(
-					paletteId,
-					bakePaletteColors(entry.palette),
-				);
+				this.plugin.registry.relinkPalette(orphanId, paletteId, this.existingId);
+				this.plugin.registry.applyPaletteColors(paletteId, bakePaletteColors(entry.palette));
 				void this.plugin.saveSettings();
 			}
 			selectPaletteEntry(entry);
@@ -1193,8 +1084,7 @@ export class CalloutEditor extends Modal {
 				seedName,
 				takenNames: this.plugin.settings.customPalettes.map((p) => p.name),
 				takenColors: this.plugin.settings.customPalettes,
-				onUseExisting: (paletteId) =>
-					adoptExistingPalette(paletteId, null),
+				onUseExisting: (paletteId) => adoptExistingPalette(paletteId, null),
 			}).openAndWait();
 			if (!result) return;
 			const palette: CustomPalette = {
@@ -1244,12 +1134,9 @@ export class CalloutEditor extends Modal {
 			}
 			const result = await new PaletteEditorModal(this.plugin, {
 				seed,
-				takenNames: this.plugin.settings.customPalettes.map(
-					(p) => p.name,
-				),
+				takenNames: this.plugin.settings.customPalettes.map((p) => p.name),
 				takenColors: this.plugin.settings.customPalettes,
-				onUseExisting: (paletteId) =>
-					adoptExistingPalette(paletteId, orphanId),
+				onUseExisting: (paletteId) => adoptExistingPalette(paletteId, orphanId),
 			}).openAndWait();
 			if (!result) return;
 			const palette: CustomPalette = {
@@ -1265,11 +1152,7 @@ export class CalloutEditor extends Modal {
 			this.plugin.registry.batch(() => {
 				this.plugin.settings.customPalettes.push(palette);
 				if (orphanId) {
-					this.plugin.registry.relinkPalette(
-						orphanId,
-						palette.id,
-						this.existingId,
-					);
+					this.plugin.registry.relinkPalette(orphanId, palette.id, this.existingId);
 					this.plugin.registry.applyPaletteColors(
 						palette.id,
 						bakePaletteColors(customPaletteToColorPalette(palette)),
@@ -1288,7 +1171,6 @@ export class CalloutEditor extends Modal {
 			clearOrphanState();
 			this.updateSaveState();
 		};
-
 
 		// Foldable — dropdown in the same adjustment column.
 		// NOTE: The foldable option is currently hidden from the Edit callout
@@ -1336,9 +1218,7 @@ export class CalloutEditor extends Modal {
 		addCancelButton(buttonContainer, t("editor.cancel"), () => this.close());
 
 		const saveBtn = buttonContainer.createEl("button", {
-			text: this.existingId
-				? t("editor.saveChanges")
-				: t("editor.createCallout"),
+			text: this.existingId ? t("editor.saveChanges") : t("editor.createCallout"),
 			cls: "mod-cta",
 		});
 		this.saveBtn = saveBtn;
@@ -1370,10 +1250,7 @@ export class CalloutEditor extends Modal {
 	 *
 	 * Returns the group so the caller can hide it when the callout draws no icon.
 	 */
-	private renderIconAdjustGroup(
-		parent: HTMLElement,
-		role: CalloutRenderRole,
-	): HTMLElement {
+	private renderIconAdjustGroup(parent: HTMLElement, role: CalloutRenderRole): HTMLElement {
 		return renderIconAdjustGroup(
 			parent,
 			role,
@@ -1381,9 +1258,7 @@ export class CalloutEditor extends Modal {
 			() => {
 				this.scheduleUpdatePreview();
 			},
-			this.builtInDefault
-				? resolveIconAdjust(this.builtInDefault, role)
-				: undefined,
+			this.builtInDefault ? resolveIconAdjust(this.builtInDefault, role) : undefined,
 		);
 	}
 
@@ -1469,10 +1344,7 @@ export class CalloutEditor extends Modal {
 
 	private getFallbackBase(): CalloutDefinition | undefined {
 		const fallbackId = this.plugin.settings.fallbackCalloutId || "note";
-		return (
-			this.plugin.registry.get(fallbackId) ??
-			this.plugin.registry.get("note")
-		);
+		return this.plugin.registry.get(fallbackId) ?? this.plugin.registry.get("note");
 	}
 
 	private shouldSaveNewTokenCalloutAsFallback(): boolean {
@@ -1498,8 +1370,7 @@ export class CalloutEditor extends Modal {
 			existingId: this.existingId,
 			id,
 			getById: (targetId) => this.plugin.registry.getReal(targetId),
-			findByAlias: (targetId) =>
-				this.plugin.registry.findByAlias(targetId),
+			findByAlias: (targetId) => this.plugin.registry.findByAlias(targetId),
 		});
 	}
 
@@ -1569,9 +1440,11 @@ export class CalloutEditor extends Modal {
 			case "free":
 				return null;
 			case "theme":
-				return wide(t("editor.idFromTheme", {
-					theme: activeThemeName(this.plugin.app) ?? t("settings.themeCalloutsDefaultTheme"),
-				}));
+				return wide(
+					t("editor.idFromTheme", {
+						theme: activeThemeName(this.plugin.app) ?? t("settings.themeCalloutsDefaultTheme"),
+					}),
+				);
 			case "stock":
 				return wide(t("editor.idBuiltInStock", { id, name: owner.owner.displayName }));
 			case "main":
@@ -1584,7 +1457,9 @@ export class CalloutEditor extends Modal {
 						vars: { id, name: owner.owner.displayName },
 						onClick: () => {
 							this.idMoves.set(calloutIdentity(id), {
-								id, from: owner.owner.id, removeRow: owner.removeRow,
+								id,
+								from: owner.owner.id,
+								removeRow: owner.removeRow,
 							});
 							onMove();
 						},
@@ -1609,15 +1484,18 @@ export class CalloutEditor extends Modal {
 	private movingNote(): TagMessage | null {
 		const moves = [...this.idMoves.values()];
 		if (moves.length === 0) return null;
-		const lines = moves.map((move) => t("editor.idMoving", {
-			id: move.id,
-			name: this.plugin.registry.getReal(move.from)?.displayName ?? move.from,
-		}));
+		const lines = moves.map((move) =>
+			t("editor.idMoving", {
+				id: move.id,
+				name: this.plugin.registry.getReal(move.from)?.displayName ?? move.from,
+			}),
+		);
 		lines.push(t("editor.idMovingNotes"));
-		return (el) => lines.forEach((line, index) => {
-			if (index > 0) el.createEl("br");
-			el.appendText(line);
-		});
+		return (el) =>
+			lines.forEach((line, index) => {
+				if (index > 0) el.createEl("br");
+				el.appendText(line);
+			});
 	}
 
 	private updateSaveState(): void {
@@ -1639,14 +1517,9 @@ export class CalloutEditor extends Modal {
 
 	private showSaveBlockedNotice(): void {
 		const hasChanges = this.hasStateChanges();
-		const requireDisplayName =
-			!this.createFromToken || this.existingId !== null;
+		const requireDisplayName = !this.createFromToken || this.existingId !== null;
 
-		if (
-			!this.existingId &&
-			requireDisplayName &&
-			!this.displayName.trim()
-		) {
+		if (!this.existingId && requireDisplayName && !this.displayName.trim()) {
 			showNotice("blocked", t("editor.nameRequired"));
 			return;
 		}
@@ -1702,9 +1575,7 @@ export class CalloutEditor extends Modal {
 		// primary pinned instead.
 		const pinned = generateId(name) || this.calloutId;
 		if (!pinned || pinned === this.calloutId) return;
-		const rest = [this.calloutId, ...this.aliases].filter(
-			(id) => id && id !== pinned,
-		);
+		const rest = [this.calloutId, ...this.aliases].filter((id) => id && id !== pinned);
 		this.calloutId = pinned;
 		this.aliases = [...new Set(rest)];
 	}
@@ -1762,16 +1633,14 @@ export class CalloutEditor extends Modal {
 				this.themeSuppliesId(this.calloutId)
 					? wide(
 							t("editor.idFromTheme", {
-								theme:
-									activeThemeName(this.plugin.app) ??
-									t("settings.themeCalloutsDefaultTheme"),
+								theme: activeThemeName(this.plugin.app) ?? t("settings.themeCalloutsDefaultTheme"),
 							}),
 						)
-					: this.takenIdMessage(this.calloutId, () => {
+					: (this.takenIdMessage(this.calloutId, () => {
 							this.updateIdWarning();
 							this.updatePreview();
 							this.updateSaveState();
-						}) ?? t("editor.idExists"),
+						}) ?? t("editor.idExists")),
 			);
 			return;
 		}
@@ -1783,9 +1652,7 @@ export class CalloutEditor extends Modal {
 		// above.
 		const fuzzy = this.themeFuzzyClaim(this.calloutId);
 		if (fuzzy) {
-			this.idsTagInput.showExternalError(
-				wide(t("editor.idThemePattern", { pattern: fuzzy })),
-			);
+			this.idsTagInput.showExternalError(wide(t("editor.idThemePattern", { pattern: fuzzy })));
 			return;
 		}
 
@@ -1797,9 +1664,7 @@ export class CalloutEditor extends Modal {
 		for (const id of [this.calloutId, ...this.aliases]) {
 			const clash = this.findAttrIdCollision(id);
 			if (clash) {
-				this.idsTagInput.showExternalError(
-					wide(t("editor.idDashConflict", { other: clash })),
-				);
+				this.idsTagInput.showExternalError(wide(t("editor.idDashConflict", { other: clash })));
 				return;
 			}
 		}
@@ -1813,18 +1678,13 @@ export class CalloutEditor extends Modal {
 		// while the theme claims the built-in's id - the stylesheet's own
 		// per-name answer, `registry.leavesBlockName` - so it does not keep this
 		// design either, and saying "your other names" would include it.
-		const builtIn =
-			this.isBuiltIn && this.existingId ? this.plugin.registry.get(this.existingId) : undefined;
+		const builtIn = this.isBuiltIn && this.existingId ? this.plugin.registry.get(this.existingId) : undefined;
 		const obsidianNames = builtIn
-			? names.filter(
-					(id) =>
-						!this.themeSuppliesId(id) && this.plugin.registry.leavesBlockName(builtIn, id),
-				)
+			? names.filter((id) => !this.themeSuppliesId(id) && this.plugin.registry.leavesBlockName(builtIn, id))
 			: [];
 		if (themeNames.length > 0) {
 			const list = (ids: string[]): string => ids.map((id) => `[!${id}]`).join(", ");
-			const theme =
-				activeThemeName(this.plugin.app) ?? t("settings.themeCalloutsDefaultTheme");
+			const theme = activeThemeName(this.plugin.app) ?? t("settings.themeCalloutsDefaultTheme");
 			this.idsTagInput.showExternalError(
 				wide(
 					obsidianNames.length > 0
@@ -1868,9 +1728,7 @@ export class CalloutEditor extends Modal {
 	private themeFuzzyClaim(id: string): string | null {
 		const scan = this.plugin.cssInjector.themeCallouts().patternClaims();
 		for (const { op, value } of scan) {
-			if (
-				patternMatches(op as PatternOp, value, obsidianCalloutAttrId(id))
-			) {
+			if (patternMatches(op as PatternOp, value, obsidianCalloutAttrId(id))) {
 				return `${op}=${value}`;
 			}
 		}
@@ -2031,12 +1889,7 @@ export class CalloutEditor extends Modal {
 		// the form state.
 		const colors = this.previewColorOverride ?? this.colorState();
 		const adjust = this.iconAdjustState();
-		const storedAdjust = definitionIconAdjustFields(
-			adjust,
-			this.baselineDef,
-			undefined,
-			this.builtInDefault,
-		);
+		const storedAdjust = definitionIconAdjustFields(adjust, this.baselineDef, undefined, this.builtInDefault);
 		return {
 			id: this.currentPreviewId(),
 			displayName: this.displayName.trim() || t("editor.untitledCallout"),
@@ -2059,11 +1912,7 @@ export class CalloutEditor extends Modal {
 					}
 				: {}),
 			bgGradient: colors.transparentBg ? undefined : colors.bgGradient,
-			...(hasAuthoredTextColors(
-				this.baselineDef,
-				colors.textColorLight,
-				colors.textColorDark,
-			)
+			...(hasAuthoredTextColors(this.baselineDef, colors.textColorLight, colors.textColorDark)
 				? {
 						textColorLight: colors.textColorLight,
 						textColorDark: colors.textColorDark,
@@ -2085,14 +1934,21 @@ export class CalloutEditor extends Modal {
 
 	private recoverSaving(): Promise<boolean> {
 		return recoverEditorSaving(this.plugin, this.saveSession, {
-			prepare: () => { this.previewColorOverride = null; },
+			prepare: () => {
+				this.previewColorOverride = null;
+			},
 			busyChanged: () => {
 				if (this.editorOpen) this.updateSaveState();
 				else this.plugin.settingsEditOpen = this.saveSession.busy;
 			},
-			finish: recovered => {
-				if (recovered && this.existingId && !this.plugin.registry.getReal(this.existingId)) this.existingId = null;
-				if (this.editorOpen) { this.updateIdWarning(); this.updateSaveState(); this.updatePreview(); }
+			finish: (recovered) => {
+				if (recovered && this.existingId && !this.plugin.registry.getReal(this.existingId))
+					this.existingId = null;
+				if (this.editorOpen) {
+					this.updateIdWarning();
+					this.updateSaveState();
+					this.updatePreview();
+				}
 			},
 		});
 	}
@@ -2153,34 +2009,41 @@ export class CalloutEditor extends Modal {
 		const moves = [...this.idMoves.values()];
 		// Hover colours must never become committed data.
 		this.previewColorOverride = null;
-		const def = await this.saveSession.run(this.plugin, async () => {
-			const answer = await this.askNoteChanges(state, moves, before);
-			if (!answer) return null;
-			// Transient previews must never become committed data either. Cleared
-			// only now, so the question was asked over the callout as edited, and
-			// going back to the editor found the preview still standing.
-			this.plugin.registry.setPreviewDefinition(null);
-			return performCalloutEditorSave({
-				app: this.app,
-				plugin: this.plugin,
-				existingId: this.existingId,
-				isBuiltIn: this.isBuiltIn,
-				baselineDef: this.baselineDef,
-				state,
-				hasStyleChanges,
-				saveAsFallback,
-				overwriteAutoFallback,
-				canUseCalloutId: (id, role) => this.canUseCalloutId(id, role),
-				getFallbackBase: () => this.getFallbackBase(),
-				noteChoices: answer,
-				moves,
-				onDefinitionApplied: (saved) => { this.existingId = saved.id; },
-				onVaultChangesReady: (plan, definition) => this.saveSession.applyVaultChanges(this.plugin, plan, definition),
-			});
-		}, () => {
-			if (this.editorOpen) this.updateSaveState();
-			else this.plugin.settingsEditOpen = this.saveSession.busy;
-		});
+		const def = await this.saveSession.run(
+			this.plugin,
+			async () => {
+				const answer = await this.askNoteChanges(state, moves, before);
+				if (!answer) return null;
+				// Transient previews must never become committed data either. Cleared
+				// only now, so the question was asked over the callout as edited, and
+				// going back to the editor found the preview still standing.
+				this.plugin.registry.setPreviewDefinition(null);
+				return performCalloutEditorSave({
+					app: this.app,
+					plugin: this.plugin,
+					existingId: this.existingId,
+					isBuiltIn: this.isBuiltIn,
+					baselineDef: this.baselineDef,
+					state,
+					hasStyleChanges,
+					saveAsFallback,
+					overwriteAutoFallback,
+					canUseCalloutId: (id, role) => this.canUseCalloutId(id, role),
+					getFallbackBase: () => this.getFallbackBase(),
+					noteChoices: answer,
+					moves,
+					onDefinitionApplied: (saved) => {
+						this.existingId = saved.id;
+					},
+					onVaultChangesReady: (plan, definition) =>
+						this.saveSession.applyVaultChanges(this.plugin, plan, definition),
+				});
+			},
+			() => {
+				if (this.editorOpen) this.updateSaveState();
+				else this.plugin.settingsEditOpen = this.saveSession.busy;
+			},
+		);
 		if (def) this.idMoves.clear();
 		if (!this.editorOpen) return;
 		if (!def || this.stateSnapshot() !== before) {

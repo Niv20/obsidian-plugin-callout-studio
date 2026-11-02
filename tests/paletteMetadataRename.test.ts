@@ -45,20 +45,31 @@ const palette = (id: string, name: string): CustomPalette => ({
 /** An app whose vault fails the test if anything reads it. */
 const untouchableApp = (): App =>
 	({
-		vault: new Proxy({}, { get: (_t, prop) => { throw new Error(`vault.${String(prop)} was read`); } }),
+		vault: new Proxy(
+			{},
+			{
+				get: (_t, prop) => {
+					throw new Error(`vault.${String(prop)} was read`);
+				},
+			},
+		),
 	}) as unknown as App;
 
 /** An app whose vault holds `notes`, by path. */
 function vaultOf(notes: Record<string, string>): App {
 	const handles = Object.keys(notes).map((path) => ({ path }));
-	return { vault: {
-		getMarkdownFiles: () => handles,
-		getAbstractFileByPath: (path: string) => handles.find((file) => file.path === path) ?? null,
-		cachedRead: (file: { path: string }) => Promise.resolve(notes[file.path]!),
-	} } as unknown as App;
+	return {
+		vault: {
+			getMarkdownFiles: () => handles,
+			getAbstractFileByPath: (path: string) => handles.find((file) => file.path === path) ?? null,
+			cachedRead: (file: { path: string }) => Promise.resolve(notes[file.path]!),
+		},
+	} as unknown as App;
 }
 
-const renameInput = (over: Partial<AskMetadataRenameInput> & Pick<AskMetadataRenameInput, "word">): AskMetadataRenameInput => ({
+const renameInput = (
+	over: Partial<AskMetadataRenameInput> & Pick<AskMetadataRenameInput, "word">,
+): AskMetadataRenameInput => ({
 	app: untouchableApp(),
 	name: { from: "Comic Red", to: "Comic Blue" },
 	sharedWord: () => false,
@@ -74,7 +85,13 @@ describe("which words mean something else too", () => {
 	});
 
 	it("knows a styling word in any case the stylesheet would match", () => {
-		const sources = [{ label: "Dune", origin: "theme" as const, words: [{ word: "Rot", placement: "spaced" as const, guards: null }] }];
+		const sources = [
+			{
+				label: "Dune",
+				origin: "theme" as const,
+				words: [{ word: "Rot", placement: "spaced" as const, guards: null }],
+			},
+		];
 		assert.ok(isStylingWord("rot", sources));
 		assert.ok(!isStylingWord("blau", sources));
 	});
@@ -103,35 +120,68 @@ describe("renamedMetadataWords", () => {
 
 describe("askMetadataRename", () => {
 	it("asks nothing — and reads no note — for a word that means something else", async () => {
-		assert.deepEqual(await askMetadataRename(renameInput({ word: { from: "pink", to: "rose" }, sharedWord: isBuiltInColorWord })), { rewrite: null });
-		assert.deepEqual(await askMetadataRename(renameInput({ word: { from: "rot", to: "ruby" }, sharedWord: (word) => word === "rot" })), { rewrite: null });
+		assert.deepEqual(
+			await askMetadataRename(
+				renameInput({ word: { from: "pink", to: "rose" }, sharedWord: isBuiltInColorWord }),
+			),
+			{ rewrite: null },
+		);
+		assert.deepEqual(
+			await askMetadataRename(
+				renameInput({ word: { from: "rot", to: "ruby" }, sharedWord: (word) => word === "rot" }),
+			),
+			{ rewrite: null },
+		);
 	});
 
 	it("asks nothing when the word did not change, or there is no word", async () => {
-		for (const word of [{ from: "comic-red", to: "comic-red" }, { from: "", to: "comic-red" }, { from: "comic-red", to: "" }]) {
+		for (const word of [
+			{ from: "comic-red", to: "comic-red" },
+			{ from: "", to: "comic-red" },
+			{ from: "comic-red", to: "" },
+		]) {
 			assert.deepEqual(await askMetadataRename(renameInput({ word })), { rewrite: null });
 		}
 	});
 
 	it("asks nothing when no note uses the old word", async () => {
 		const app = vaultOf({ "a.md": "> [!note|comic-blue] Already new" });
-		assert.deepEqual(await askMetadataRename(renameInput({ app, word: { from: "comic-red", to: "comic-blue" } })), { rewrite: null });
+		assert.deepEqual(await askMetadataRename(renameInput({ app, word: { from: "comic-red", to: "comic-blue" } })), {
+			rewrite: null,
+		});
 	});
 
 	it("opens the window on what the notes hold, and turns its answer into the rewrite", async () => {
-		const app = vaultOf({ "a.md": "> [!note|comic-red] One\n\n> [!tip|comic-red wide] Two", "b.md": "> [!mark|comic-red] Three" });
+		const app = vaultOf({
+			"a.md": "> [!note|comic-red] One\n\n> [!tip|comic-red wide] Two",
+			"b.md": "> [!mark|comic-red] Three",
+		});
 		const word = { from: "comic-red", to: "comic-blue" };
 		let asked: PaletteNotesModalInput | undefined;
-		const answering = (change: boolean | null) => renameInput({ app, word, open: (input) => { asked = input; return Promise.resolve(change); } });
+		const answering = (change: boolean | null) =>
+			renameInput({
+				app,
+				word,
+				open: (input) => {
+					asked = input;
+					return Promise.resolve(change);
+				},
+			});
 		assert.deepEqual(await askMetadataRename(answering(true)), { rewrite: word });
-		assert.deepEqual(asked, { name: { from: "Comic Red", to: "Comic Blue" }, word, reach: { callouts: 3, notes: 2 } });
+		assert.deepEqual(asked, {
+			name: { from: "Comic Red", to: "Comic Blue" },
+			word,
+			reach: { callouts: 3, notes: 2 },
+		});
 		assert.deepEqual(await askMetadataRename(answering(false)), { rewrite: null }, "Leave saves, notes untouched");
 		assert.equal(await askMetadataRename(answering(null)), null, "Cancel goes back to the editor");
 	});
 
 	it("does not ask about a save the editor has closed on", async () => {
 		const app = vaultOf({ "a.md": "> [!note|comic-red] One" });
-		const answer = await askMetadataRename(renameInput({ app, word: { from: "comic-red", to: "comic-blue" }, stillWanted: () => false }));
+		const answer = await askMetadataRename(
+			renameInput({ app, word: { from: "comic-red", to: "comic-blue" }, stillWanted: () => false }),
+		);
 		assert.equal(answer, null);
 	});
 });
@@ -151,23 +201,41 @@ function open(input: PaletteNotesModalInput) {
 	const titleEl = modalEl.createDiv({ cls: "modal-header" }).createDiv({ cls: "modal-title" });
 	const contentEl = modalEl.createDiv({ cls: "modal-content" });
 	Object.assign(modal, {
-		containerEl, modalEl, titleEl, contentEl, app, scope: app.scope,
-		setTitle: (title: string) => { titleEl.setText(title); return modal; },
+		containerEl,
+		modalEl,
+		titleEl,
+		contentEl,
+		app,
+		scope: app.scope,
+		setTitle: (title: string) => {
+			titleEl.setText(title);
+			return modal;
+		},
 		open: () => modal.onOpen(),
 		close: () => modal.onClose(),
 	});
 	let answer: boolean | null | undefined;
-	void modal.ask().then((result) => { answer = result; });
+	void modal.ask().then((result) => {
+		answer = result;
+	});
 	const button = (label: string): FakeElement =>
 		modalEl.querySelectorAll(".modal-button-container button").find((el) => el.textContent === label)!;
 	const cards = () => contentEl.querySelectorAll(".cs-option-box");
 	return {
-		titleEl, contentEl, cards,
-		answer: async () => { await setImmediate(); return answer; },
+		titleEl,
+		contentEl,
+		cards,
+		answer: async () => {
+			await setImmediate();
+			return answer;
+		},
 		lines: () => contentEl.querySelectorAll(".cs-note-change-line").map(lineText),
 		titles: () => cards().map((card) => card.querySelector(".cs-option-box-title")!.textContent),
 		desc: (card: FakeElement) => card.querySelector(".cs-option-box-desc")?.textContent,
-		chosen: () => contentEl.querySelectorAll(".cs-option-box.is-selected").map((el) => el.querySelector(".cs-option-box-title")!.textContent),
+		chosen: () =>
+			contentEl
+				.querySelectorAll(".cs-option-box.is-selected")
+				.map((el) => el.querySelector(".cs-option-box-title")!.textContent),
 		save: () => button(t("editor.saveChanges")).fire("click"),
 		cancel: () => button(t("editor.cancel")).fire("click"),
 		escape: () => modal.onClose(),
@@ -224,26 +292,43 @@ describe("the palette editor's Save asks before it closes", () => {
 	type Internals = { finish(save: boolean): void; onClose(): void };
 
 	function editor(beforeSave: (draft: PaletteEditorResult, stillOpen: () => boolean) => Promise<boolean>) {
-		const modal = new PaletteEditorModal({ app: {} as App } as ConstructorParameters<typeof PaletteEditorModal>[0], {
-			seedName: "Comic Blue",
-			beforeSave,
-		});
+		const modal = new PaletteEditorModal(
+			{ app: {} as App } as ConstructorParameters<typeof PaletteEditorModal>[0],
+			{
+				seedName: "Comic Blue",
+				beforeSave,
+			},
+		);
 		let closed = 0;
-		Object.assign(modal, { open: () => undefined, close: () => { closed++; } });
+		Object.assign(modal, {
+			open: () => undefined,
+			close: () => {
+				closed++;
+			},
+		});
 		let result: PaletteEditorResult | null | undefined;
-		void modal.openAndWait().then((value) => { result = value; });
+		void modal.openAndWait().then((value) => {
+			result = value;
+		});
 		const internals = modal as unknown as Internals;
 		return {
 			save: () => internals.finish(true),
 			cancel: () => internals.finish(false),
-			result: async () => { await setImmediate(); return result; },
+			result: async () => {
+				await setImmediate();
+				return result;
+			},
 			closed: () => closed,
 		};
 	}
 
 	it("stays open with nothing saved when the question is cancelled", async () => {
 		let drafts = 0;
-		const h = editor((draft) => { drafts++; assert.equal(draft.name, "Comic Blue"); return Promise.resolve(false); });
+		const h = editor((draft) => {
+			drafts++;
+			assert.equal(draft.name, "Comic Blue");
+			return Promise.resolve(false);
+		});
 		h.save();
 		assert.equal(await h.result(), undefined);
 		assert.equal(h.closed(), 0);
@@ -262,7 +347,12 @@ describe("the palette editor's Save asks before it closes", () => {
 	it("takes a second press while still asking as the same Save", async () => {
 		let asks = 0;
 		let agree: (yes: boolean) => void = () => undefined;
-		const h = editor(() => { asks++; return new Promise((resolve) => { agree = resolve; }); });
+		const h = editor(() => {
+			asks++;
+			return new Promise((resolve) => {
+				agree = resolve;
+			});
+		});
 		h.save();
 		h.save();
 		assert.equal(asks, 1);
@@ -273,7 +363,12 @@ describe("the palette editor's Save asks before it closes", () => {
 	it("saves nothing when the editor closes while the question is prepared", async () => {
 		let stillOpen: () => boolean = () => true;
 		let agree: (yes: boolean) => void = () => undefined;
-		const h = editor((_draft, open) => { stillOpen = open; return new Promise((resolve) => { agree = resolve; }); });
+		const h = editor((_draft, open) => {
+			stillOpen = open;
+			return new Promise((resolve) => {
+				agree = resolve;
+			});
+		});
 		h.save();
 		h.cancel();
 		assert.equal(await h.result(), null);

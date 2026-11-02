@@ -10,28 +10,14 @@
  * opening the icon picker never touches the network.
  */
 import { setIcon } from "obsidian";
-import type {
-	CalloutIcon,
-	IconPackId,
-	IconSourceId,
-	MaterialIconStyle,
-} from "../../types";
-import type {
-	IconEntry,
-	IconIndex,
-	IconPack,
-	IconVariantState,
-} from "../../icons/types";
+import type { CalloutIcon, IconPackId, IconSourceId, MaterialIconStyle } from "../../types";
+import type { IconEntry, IconIndex, IconPack, IconVariantState } from "../../icons/types";
 import { filterIcons } from "../../icons/search";
 import { renderIconInto } from "../../icons/renderIcon";
 import { getSource, packFor } from "../../icons/registry";
 import { canonicalIconValue } from "../../icons/lucideId";
 import { MATERIAL_DEFAULT_STYLE, materialPack } from "../../icons/packs/material";
-import {
-	ensureMaterialFontLoaded,
-	isMaterialFontReady,
-	materialFontFamily,
-} from "../../icons/packs/materialFont";
+import { ensureMaterialFontLoaded, isMaterialFontReady, materialFontFamily } from "../../icons/packs/materialFont";
 import type { PackDataStore } from "../../icons/PackDataStore";
 import { formatBytes } from "../../icons/iconLibraries";
 import { isAllSources } from "./allSources";
@@ -135,8 +121,7 @@ export class PackPanel {
 			onSelect: (entry) => this.select(entry),
 			labelFor: (entry) => this.labelFor(entry),
 			cellClass: (entry) => this.cellClass(entry),
-			groupLabelFor: (entry, previous) =>
-				this.groupLabelFor(entry, previous),
+			groupLabelFor: (entry, previous) => this.groupLabelFor(entry, previous),
 			emptyText: t("iconPicker.noResults"),
 			renderEmpty: (host) => {
 				host.setText(t("iconPicker.noResults"));
@@ -174,24 +159,22 @@ export class PackPanel {
 				this.searchMascot.typed();
 			},
 		}).inputEl;
-		this.filters = new PackToolbarFilters(
-			this.toolbarEl, this.pack, this.variants, this.category, {
-				onCategory: (category) => {
-					this.category = category;
-					this.host.saveCategory(this.pack.id, category);
-					this.applyFilter();
-				},
-				onVariant: (variants, kind) => {
-					this.variants = variants;
-					this.host.saveVariants(this.pack.id, variants);
-					if (kind === "skin-tone") {
-						this.syncSelectionToVariants();
-						// Tone changes only the glyphs; keep scroll and loaded pages.
-						this.grid?.repaintVisible();
-					} else void this.onVariantChanged();
-				},
+		this.filters = new PackToolbarFilters(this.toolbarEl, this.pack, this.variants, this.category, {
+			onCategory: (category) => {
+				this.category = category;
+				this.host.saveCategory(this.pack.id, category);
+				this.applyFilter();
 			},
-		);
+			onVariant: (variants, kind) => {
+				this.variants = variants;
+				this.host.saveVariants(this.pack.id, variants);
+				if (kind === "skin-tone") {
+					this.syncSelectionToVariants();
+					// Tone changes only the glyphs; keep scroll and loaded pages.
+					this.grid?.repaintVisible();
+				} else void this.onVariantChanged();
+			},
+		});
 	}
 
 	/**
@@ -244,11 +227,7 @@ export class PackPanel {
 		// needs to resync.
 		const entry =
 			this.selectedEntry ??
-			this.index?.entries.find(
-				(e) =>
-					e.name === selected.value ||
-					e.variants?.includes(selected.value),
-			);
+			this.index?.entries.find((e) => e.name === selected.value || e.variants?.includes(selected.value));
 		if (!entry) return;
 		this.selectedEntry = entry;
 		this.host.onSelect(this.pack.makeIcon(entry, this.variants), entry);
@@ -263,9 +242,7 @@ export class PackPanel {
 	}
 
 	private missingPacks(): IconPackId[] {
-		return this.dataPacks().filter(
-			(id) => this.host.packs.state(id) !== "ready",
-		);
+		return this.dataPacks().filter((id) => this.host.packs.state(id) !== "ready");
 	}
 
 	private needsDownload(): boolean {
@@ -302,9 +279,7 @@ export class PackPanel {
 		// A pack may also rule entries out by variant — Font Awesome's style
 		// picks which icons exist, not just how they are drawn.
 		const matches = this.pack.entryMatches?.bind(this.pack);
-		const shown = matches
-			? entries.filter((entry) => matches(entry, this.variants))
-			: entries;
+		const shown = matches ? entries.filter((entry) => matches(entry, this.variants)) : entries;
 		this.countGroups(shown);
 		this.grid?.setEntries(shown);
 		if (shown.length > 0) this.searchMascot.hide();
@@ -320,10 +295,7 @@ export class PackPanel {
 		if (!isAllSources(this.pack)) return;
 		for (const entry of entries) {
 			if (!entry.pack) continue;
-			this.groupCounts.set(
-				entry.pack,
-				(this.groupCounts.get(entry.pack) ?? 0) + 1,
-			);
+			this.groupCounts.set(entry.pack, (this.groupCounts.get(entry.pack) ?? 0) + 1);
 		}
 	}
 
@@ -334,10 +306,7 @@ export class PackPanel {
 	 * `filterIcons` ranks within a source, not across the list — so a source
 	 * change is exactly a group boundary, and no sorting is needed to find one.
 	 */
-	private groupLabelFor(
-		entry: IconEntry,
-		previous: IconEntry | undefined,
-	): GridGroupHeading | undefined {
+	private groupLabelFor(entry: IconEntry, previous: IconEntry | undefined): GridGroupHeading | undefined {
 		if (!isAllSources(this.pack) || !entry.pack) return undefined;
 		if (previous && previous.pack === entry.pack) return undefined;
 		// The library's name, with how many of its icons match as a faint
@@ -358,13 +327,8 @@ export class PackPanel {
 	private showDownloadPrompt(): void {
 		this.setToolbarEnabled(false);
 		const missing = this.missingPacks();
-		const failed = missing.some(
-			(id) => this.host.packs.state(id) === "failed",
-		);
-		const bytes = missing.reduce(
-			(total, id) => total + (this.host.packs.info(id)?.bytes ?? 0),
-			0,
-		);
+		const failed = missing.some((id) => this.host.packs.state(id) === "failed");
+		const bytes = missing.reduce((total, id) => total + (this.host.packs.info(id)?.bytes ?? 0), 0);
 		// The index's own length, not the manifest's: one Font Awesome name
 		// drawn in two styles is one icon to choose from, not two.
 		const count = this.index?.entries.length ?? 0;
@@ -474,9 +438,7 @@ export class PackPanel {
 	 * is that font, not the default one, that has to be fetched.
 	 */
 	private materialStyle(): MaterialIconStyle {
-		const variants = isAllSources(this.pack)
-			? this.host.variantsFor(materialPack.id)
-			: this.variants;
+		const variants = isAllSources(this.pack) ? this.host.variantsFor(materialPack.id) : this.variants;
 		return variants.style ?? MATERIAL_DEFAULT_STYLE;
 	}
 
@@ -519,8 +481,7 @@ export class PackPanel {
 	 */
 	private refreshFontState(): void {
 		const ready =
-			!this.showsMaterialCells() ||
-			isMaterialFontReady(this.materialStyle(), this.bodyEl.ownerDocument);
+			!this.showsMaterialCells() || isMaterialFontReady(this.materialStyle(), this.bodyEl.ownerDocument);
 		this.bodyEl.toggleClass("is-material-font-missing", !ready);
 		this.fontNoticeEl?.toggleClass("is-hidden", ready);
 	}
@@ -551,9 +512,7 @@ export class PackPanel {
 	/** The toolbar values that apply to an entry's own source. */
 	private variantsOf(entry: IconEntry): IconVariantState {
 		const owner = this.packOf(entry);
-		return owner.id === this.pack.id
-			? this.variants
-			: this.host.variantsFor(owner.id);
+		return owner.id === this.pack.id ? this.variants : this.host.variantsFor(owner.id);
 	}
 
 	private renderCell(cell: HTMLElement, entry: IconEntry): void {
@@ -570,8 +529,7 @@ export class PackPanel {
 				"--cs-material-font": `"${materialFontFamily(style)}"`,
 				"--cs-material-weight": String(variants.weight ?? 400),
 			});
-			if (style === "filled")
-				span.setCssProps({ "--cs-material-fill": "1" });
+			if (style === "filled") span.setCssProps({ "--cs-material-fill": "1" });
 			return;
 		}
 
@@ -611,10 +569,7 @@ export class PackPanel {
 	private select(entry: IconEntry): void {
 		const owner = this.packOf(entry);
 		this.selectedEntry = entry;
-		this.host.onSelect(
-			owner.makeIcon(entry, this.variantsOf(entry)),
-			entry,
-		);
+		this.host.onSelect(owner.makeIcon(entry, this.variantsOf(entry)), entry);
 	}
 
 	// ── Attribution ─────────────────────────────────────────────────────
@@ -658,9 +613,7 @@ export class PackPanel {
 	private updateNotice(): void {
 		const el = this.noticeEl;
 		if (!el) return;
-		const key = this.pack.pickerNotice
-			? this.pack.pickerNotice(this.variants)
-			: this.pack.attribution.noticeKey;
+		const key = this.pack.pickerNotice ? this.pack.pickerNotice(this.variants) : this.pack.attribution.noticeKey;
 		el.setText(key ? t(key) : "");
 		el.toggleClass("is-hidden", !key);
 	}

@@ -1,12 +1,13 @@
 export const th: Record<string, string> = {
 	"portable.reviewTitle": "ตรวจสอบการแปลง",
-	"portable.helpIntro": "เลือกรายการแทนที่ที่ต้องการใช้ คลิกไอคอนดินสอหรือข้อความแทนที่เพื่อแก้ไข จากนั้นกด Enter หรือคลิกนอกช่องเพื่อบันทึก ใช้ไอคอนรีเซ็ตเพื่อทิ้งฉบับร่างหรือคืนค่ารายการแทนที่เริ่มต้น บันทึกจะเปลี่ยนก็ต่อเมื่อคุณเลือกแปลงรายการที่เลือกและยืนยัน ลิงก์หัวข้อจะอัปเดตไปพร้อมกับหัวข้อที่เลือก",
+	"portable.helpIntro":
+		"เลือกรายการแทนที่ที่ต้องการใช้ คลิกไอคอนดินสอหรือข้อความแทนที่เพื่อแก้ไข จากนั้นกด Enter หรือคลิกนอกช่องเพื่อบันทึก ใช้ไอคอนรีเซ็ตเพื่อทิ้งฉบับร่างหรือคืนค่ารายการแทนที่เริ่มต้น บันทึกจะเปลี่ยนก็ต่อเมื่อคุณเลือกแปลงรายการที่เลือกและยืนยัน ลิงก์หัวข้อจะอัปเดตไปพร้อมกับหัวข้อที่เลือก",
 	"portable.help": "เกี่ยวกับการแปลง",
 	"portable.roleLink": "ลิงก์ไปยังหัวข้อ",
 	"portable.convertSelected": "แปลงรายการที่เลือก",
-	"portable.selectionSummary": "เลือก {{selected}} จาก {{total}} รายการแทนที่ · ลิงก์หัวข้อที่ต้องอัปเดต {{links}} รายการ",
-	"portable.selectionSummaryNoLinks":
-		"เลือก {{selected}} จาก {{total}} รายการแทนที่",
+	"portable.selectionSummary":
+		"เลือก {{selected}} จาก {{total}} รายการแทนที่ · ลิงก์หัวข้อที่ต้องอัปเดต {{links}} รายการ",
+	"portable.selectionSummaryNoLinks": "เลือก {{selected}} จาก {{total}} รายการแทนที่",
 	"portable.selectionConflict": "ตัวเลือกนี้จะทำให้ลิงก์หัวข้อกำกวม จึงคงการเลือกเดิมไว้",
 	"portable.selectAll": "เลือกทั้งหมด",
 	"portable.selectNone": "ยกเลิกการเลือกทั้งหมด",
@@ -18,14 +19,19 @@ export const th: Record<string, string> = {
 	"portable.retry": "ลองอีกครั้ง",
 	"portable.blockedAmbiguous": "ข้ามหัวข้อนี้เนื่องจากเป้าหมายของลิงก์กำกวม",
 	"portable.blockedTarget": "ข้ามหัวข้อนี้เนื่องจากไม่สามารถรักษาเป้าหมายของลิงก์ไว้ได้อย่างปลอดภัย",
-	"portable.recovery": "ยังมีการเปลี่ยนแปลงที่ค้างอยู่ โปรดแปลงและอัปเดตลิงก์หัวข้อให้เสร็จก่อนเริ่มใหม่หรือปิดใช้งานปลั๊กอิน เพราะแผนที่ค้างอยู่จะเก็บไว้ในหน่วยความจำเท่านั้น",
-	"portable.recoveryChanged": "โน้ตเปลี่ยนแปลงหลังจากการแปลงหยุดลง การอัปเดตลิงก์ที่ค้างอยู่ยังคงเก็บไว้ และจะตรวจสอบทุกโน้ตอีกครั้งก่อนเขียน",
+	"portable.recovery":
+		"ยังมีการเปลี่ยนแปลงที่ค้างอยู่ โปรดแปลงและอัปเดตลิงก์หัวข้อให้เสร็จก่อนเริ่มใหม่หรือปิดใช้งานปลั๊กอิน เพราะแผนที่ค้างอยู่จะเก็บไว้ในหน่วยความจำเท่านั้น",
+	"portable.recoveryChanged":
+		"โน้ตเปลี่ยนแปลงหลังจากการแปลงหยุดลง การอัปเดตลิงก์ที่ค้างอยู่ยังคงเก็บไว้ และจะตรวจสอบทุกโน้ตอีกครั้งก่อนเขียน",
 	"portable.finishConversion": "ดำเนินการแปลงให้เสร็จ",
-	"portable.recoveryUnavailable": "ไม่สามารถกู้คืนการอัปเดตลิงก์ที่ค้างอยู่บางรายการได้อย่างปลอดภัย โปรดตรวจสอบโน้ตที่เกี่ยวข้องก่อนเริ่มการแปลงใหม่",
+	"portable.recoveryUnavailable":
+		"ไม่สามารถกู้คืนการอัปเดตลิงก์ที่ค้างอยู่บางรายการได้อย่างปลอดภัย โปรดตรวจสอบโน้ตที่เกี่ยวข้องก่อนเริ่มการแปลงใหม่",
 	"portable.title": "แปลงเป็น Markdown มาตรฐาน",
-	"portable.settingDesc": "แทนที่ callout ในหัวข้อและแบบอินไลน์ทั่วทั้งคลังด้วยข้อความปกติที่พร้อมใช้งานโดยไม่ต้องมี Callout Studio",
+	"portable.settingDesc":
+		"แทนที่ callout ในหัวข้อและแบบอินไลน์ทั่วทั้งคลังด้วยข้อความปกติที่พร้อมใช้งานโดยไม่ต้องมี Callout Studio",
 	"portable.review": "ตรวจสอบการแปลง",
-	"portable.intro": "หากต้องการเลิกใช้ Callout Studio หรือย้ายคลังไปยังแอปที่ไม่รองรับ ให้แปลง callout ในหัวข้อและแบบอินไลน์เป็น Markdown มาตรฐาน",
+	"portable.intro":
+		"หากต้องการเลิกใช้ Callout Studio หรือย้ายคลังไปยังแอปที่ไม่รองรับ ให้แปลง callout ในหัวข้อและแบบอินไลน์เป็น Markdown มาตรฐาน",
 	"portable.before": "ก่อน",
 	"portable.after": "หลัง",
 	"portable.replacement": "รายการแทนที่",
@@ -33,17 +39,20 @@ export const th: Record<string, string> = {
 	"portable.type": "ประเภท",
 	"portable.text": "ข้อความ",
 	"portable.headingText": "หัวข้อ",
-	"portable.backup": "แนะนำให้สำรองข้อมูลคลังก่อนแปลง การดำเนินการนี้แก้ไขโน้ตต้นฉบับและไม่สามารถเลิกทำใน Callout Studio ได้",
+	"portable.backup":
+		"แนะนำให้สำรองข้อมูลคลังก่อนแปลง การดำเนินการนี้แก้ไขโน้ตต้นฉบับและไม่สามารถเลิกทำใน Callout Studio ได้",
 	"portable.scanning": "กำลังอ่านโน้ต Markdown…",
 	"portable.progress": "กำลังอ่านโน้ต: {{done}} จาก {{total}}",
 	"portable.empty": "ไม่พบ callout ในหัวข้อหรือแบบอินไลน์ที่แปลงได้ จะไม่มีการเปลี่ยนแปลงใด ๆ",
 	"portable.confirmTitle": "แปลงคลังนี้อย่างถาวรหรือไม่?",
 	"portable.confirmSubtitle": "ระบบไม่สร้างข้อมูลสำรองอัตโนมัติ",
-	"portable.confirmBody": "แปลง {{count}} รายการและอัปเดตลิงก์หัวข้อ {{links}} รายการใน {{files}} โน้ตหรือไม่?\nการดำเนินการนี้แก้ไขไฟล์ต้นฉบับและไม่สามารถเลิกทำใน Callout Studio ได้ ระบบจะไม่สร้างข้อมูลสำรองโดยอัตโนมัติ โปรดสำรองคลังก่อน บันทึกโน้ตที่เปิดอยู่ และหยุดแก้ไขและซิงค์ชั่วคราวจนกว่าการแปลงจะเสร็จ\nหากไฟล์เปลี่ยนแปลงหรือเขียนไม่สำเร็จ การแปลงจะหยุดลง โน้ตที่แปลงแล้วจะยังคงการเปลี่ยนแปลงไว้",
+	"portable.confirmBody":
+		"แปลง {{count}} รายการและอัปเดตลิงก์หัวข้อ {{links}} รายการใน {{files}} โน้ตหรือไม่?\nการดำเนินการนี้แก้ไขไฟล์ต้นฉบับและไม่สามารถเลิกทำใน Callout Studio ได้ ระบบจะไม่สร้างข้อมูลสำรองโดยอัตโนมัติ โปรดสำรองคลังก่อน บันทึกโน้ตที่เปิดอยู่ และหยุดแก้ไขและซิงค์ชั่วคราวจนกว่าการแปลงจะเสร็จ\nหากไฟล์เปลี่ยนแปลงหรือเขียนไม่สำเร็จ การแปลงจะหยุดลง โน้ตที่แปลงแล้วจะยังคงการเปลี่ยนแปลงไว้",
 	"portable.confirmAction": "แปลงอย่างถาวร",
 	"portable.converting": "กำลังแปลงการเปลี่ยนแปลงที่เลือก… การปิดแผงนี้จะไม่หยุดการแปลง",
 	"portable.complete": "แปลง {{count}} รายการและอัปเดตลิงก์หัวข้อ {{links}} รายการใน {{files}} โน้ตแล้ว",
-	"portable.stopped": "การแปลงหยุดลง มีการเปลี่ยนแปลงแล้ว {{count}} รายการและลิงก์หัวข้อ {{links}} รายการใน {{files}} โน้ต โดยการเปลี่ยนแปลงเหล่านั้นยังคงอยู่",
+	"portable.stopped":
+		"การแปลงหยุดลง มีการเปลี่ยนแปลงแล้ว {{count}} รายการและลิงก์หัวข้อ {{links}} รายการใน {{files}} โน้ต โดยการเปลี่ยนแปลงเหล่านั้นยังคงอยู่",
 	"portable.errorEditor": "บันทึกโน้ตที่เปิดอยู่เพื่ออัปเดตรายการตรวจสอบโดยอัตโนมัติ",
 	"portable.errorChanged": "โน้ตมีการเปลี่ยนแปลง โปรดตรวจสอบรายการที่อัปเดตก่อนแปลง",
 	"portable.errorBusy": "มีการแปลงอื่นกำลังดำเนินการอยู่ โปรดรอให้เสร็จก่อน",
@@ -94,17 +103,15 @@ export const th: Record<string, string> = {
 	"settings.fallbackTagAuto": "อัตโนมัติ",
 	"settings.rescanVaultDesc": "เพิ่มประเภท callout ที่โน้ตของคุณใช้และยังไม่อยู่ในรายการนี้",
 	"settings.rescanVaultHintAction": "สแกนหา callout",
-	"manualDiscovery.failed": "ไม่ได้บันทึกผลการสแกน ตรวจสอบว่าสามารถเขียนไฟล์การตั้งค่าได้และการซิงค์เสร็จสิ้นแล้ว จากนั้นลองอีกครั้งผ่าน การตั้งค่า → ประเภท callout ของฉัน → สแกนหา callout โดย callout ที่มีอยู่ไม่ได้ถูกแทนที่",
+	"manualDiscovery.failed":
+		"ไม่ได้บันทึกผลการสแกน ตรวจสอบว่าสามารถเขียนไฟล์การตั้งค่าได้และการซิงค์เสร็จสิ้นแล้ว จากนั้นลองอีกครั้งผ่าน การตั้งค่า → ประเภท callout ของฉัน → สแกนหา callout โดย callout ที่มีอยู่ไม่ได้ถูกแทนที่",
 	"manualDiscovery.scanning": "กำลังสแกน…",
-	"settings.rescanComplete":
-		"สแกนเสร็จแล้ว: เพิ่มชนิด callout ใหม่ {{count}} รายการ",
+	"settings.rescanComplete": "สแกนเสร็จแล้ว: เพิ่มชนิด callout ใหม่ {{count}} รายการ",
 	"replaceModal.titleReplace": "แทนที่ใน vault",
 
 	"welcome.title": "ยินดีต้อนรับสู่ Callout Studio!",
-	"welcome.tagline":
-		"โซลูชันครบวงจรของคุณสำหรับสร้าง จัดรูปแบบ และจัดการ callout ใน Obsidian",
-	"importBanner.message":
-		"เราสังเกตเห็นว่าคุณใช้ {{plugins}} คุณต้องการนำเข้า callout ของคุณหรือไม่?",
+	"welcome.tagline": "โซลูชันครบวงจรของคุณสำหรับสร้าง จัดรูปแบบ และจัดการ callout ใน Obsidian",
+	"importBanner.message": "เราสังเกตเห็นว่าคุณใช้ {{plugins}} คุณต้องการนำเข้า callout ของคุณหรือไม่?",
 	"importBanner.action": "นำเข้า",
 	"importBanner.dismiss": "ปิด",
 	"welcome.demoName": "Callout Studio",
@@ -119,8 +126,7 @@ export const th: Record<string, string> = {
 		"Callout Studio ยังมีอะไรให้มากกว่านี้อีกมาก! [เรียนรู้เพิ่มเติม]({{repoUrl}})\n",
 	"deleteModal.title": "ลบ callout",
 
-	"deleteModal.bodyInUse":
-		"callout นี้ปรากฏ {{count}} ครั้งใน {{files}} ไฟล์",
+	"deleteModal.bodyInUse": "callout นี้ปรากฏ {{count}} ครั้งใน {{files}} ไฟล์",
 	"deleteModal.notesUntouched":
 		"การดำเนินการนี้จะลบเฉพาะคำจำกัดความของ callout เท่านั้น โน้ตของคุณจะไม่ถูกแตะต้อง ดังนั้น callout ที่มีอยู่จะกลับไปใช้สไตล์เริ่มต้น",
 	"deleteModal.fallbackTarget":
@@ -149,12 +155,10 @@ export const th: Record<string, string> = {
 	"settings.export": "ส่งออก…",
 	"settings.importTitle": "นำเข้า callout",
 	"settings.exportTitle": "ส่งออก callout",
-	"settings.importDesc":
-		"นำเข้าข้อมูล Callout Studio จาก vault อื่น หรือย้าย callout ของคุณมาจากปลั๊กอินอื่น",
+	"settings.importDesc": "นำเข้าข้อมูล Callout Studio จาก vault อื่น หรือย้าย callout ของคุณมาจากปลั๊กอินอื่น",
 	"settings.exportDesc":
 		"บันทึก callout ของคุณเป็นข้อมูลสำรองของ Callout Studio หรือเป็นส่วนย่อย CSS สำหรับใช้งานที่อื่น",
-	"settings.importConflictNotice":
-		"นำเข้า {{count}} ประเภท callout แล้ว; เขียนทับ {{overwritten}} รายการที่มีอยู่",
+	"settings.importConflictNotice": "นำเข้า {{count}} ประเภท callout แล้ว; เขียนทับ {{overwritten}} รายการที่มีอยู่",
 
 	"settings.addNewCallout": "เพิ่ม callout",
 
@@ -174,20 +178,18 @@ export const th: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "ทำสำเนา callout ไม่ได้ โปรดตรวจสอบสถานะการบันทึกแล้วลองอีกครั้ง",
 	"settings.resetAction": "รีเซ็ตเป็นค่าเริ่มต้น",
 	"settings.makeFallbackAction": "ใช้สไตล์สำรองเริ่มต้น",
-	"notice.fallbackStyleApplied": "\"{{name}}\" ใช้สไตล์สำรองเริ่มต้นแล้ว",
+	"notice.fallbackStyleApplied": '"{{name}}" ใช้สไตล์สำรองเริ่มต้นแล้ว',
 
 	"settings.colorSwatchAria": "จุดเน้น: {{accent}} · พื้นหลัง: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callout จากธีมของคุณ",
 	"settings.themeCalloutsDefaultTheme": "ธีมของคุณ",
 	"settings.themeCalloutsEmpty": "ขณะนี้ {{theme}} ไม่ได้จัดสไตล์ callout ใด ๆ",
-	"settings.themePreviewAria":
-		'ดูตัวอย่าง "{{name}}" — ดูว่าธีมของคุณวาดมันอย่างไร',
+	"settings.themePreviewAria": 'ดูตัวอย่าง "{{name}}" — ดูว่าธีมของคุณวาดมันอย่างไร',
 	"settings.builtInAllThemeStyled":
 		"{{theme}} จัดสไตล์ callout ในตัวทุกรายการ Callout Studio จึงปล่อยทั้งหมดไว้ตามเดิม หากต้องการออกแบบของคุณเอง ให้เพิ่ม callout ที่มี ID ต่างออกไป",
 	"settings.fallbackCallout": "Callout สำรองเริ่มต้น",
-	"settings.fallbackCalloutDesc":
-		"ประเภท callout ที่ไม่รู้จักจะสืบทอดสไตล์นี้",
+	"settings.fallbackCalloutDesc": "ประเภท callout ที่ไม่รู้จักจะสืบทอดสไตล์นี้",
 
 	"settings.border": "ขอบ",
 	"settings.borderTop": "บน",
@@ -219,8 +221,7 @@ export const th: Record<string, string> = {
 	"settings.paletteCountOne": "1 แผงสี",
 	"settings.editPaletteAria": "แก้ไขชุดสี {{name}}",
 	"settings.deletePaletteTitle": "ลบจานสี",
-	"settings.deletePaletteBody":
-		'Callout ที่ใช้สีนี้จะไม่ได้รับผลกระทบ',
+	"settings.deletePaletteBody": "Callout ที่ใช้สีนี้จะไม่ได้รับผลกระทบ",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'callout ที่ระบุชื่อนี้ในเมทาดาทา ("{{key}}") จะใช้สีในตัวที่มีชื่อนั้นแทน บันทึกของคุณจะไม่เปลี่ยนแปลง',
 
@@ -245,10 +246,8 @@ export const th: Record<string, string> = {
 	"commandBuilder.formatHeading": "หัวข้อ",
 	"commandBuilder.formatInline": "อินไลน์",
 	"commandBuilder.formatBlock": "บล็อก",
-	"commandBuilder.roleDisabled":
-		"รูปแบบนี้ถูกปิดอยู่ คำสั่งจึงจะแทรกข้อความธรรมดาจนกว่าคุณจะเปิดใช้อีกครั้ง",
-	"commandBuilder.roleThemeOwned":
-		"ธีมของคุณกำหนด callout นี้ไว้ จึงมีเฉพาะรูปแบบ Block เท่านั้น",
+	"commandBuilder.roleDisabled": "รูปแบบนี้ถูกปิดอยู่ คำสั่งจึงจะแทรกข้อความธรรมดาจนกว่าคุณจะเปิดใช้อีกครั้ง",
+	"commandBuilder.roleThemeOwned": "ธีมของคุณกำหนด callout นี้ไว้ จึงมีเฉพาะรูปแบบ Block เท่านั้น",
 	"commandBuilder.commandSuspended": "หยุดชั่วคราวขณะที่ธีมของคุณให้ callout นี้ ซึ่งจะมีเฉพาะรูปแบบบล็อก",
 	"commandBuilder.pausedTag": "หยุดชั่วคราวโดยธีม",
 	"commandBuilder.missingTag": "ไม่พบ callout",
@@ -257,8 +256,7 @@ export const th: Record<string, string> = {
 	"commandBuilder.headingLevel": "ระดับหัวข้อ",
 	"commandBuilder.headingLevelDesc": "ระดับหัวข้อที่จะเขียน",
 	"commandBuilder.action": "การกระทำ",
-	"commandBuilder.actionDesc":
-		"ห่อจะเปลี่ยนข้อความที่เลือกให้เป็น callout ส่วนแทรกจะเพิ่ม callout เปล่า",
+	"commandBuilder.actionDesc": "ห่อจะเปลี่ยนข้อความที่เลือกให้เป็น callout ส่วนแทรกจะเพิ่ม callout เปล่า",
 	"commandBuilder.actionDescHeading":
 		"ห่อจะเปลี่ยนบรรทัดที่เคอร์เซอร์อยู่ให้เป็น callout หัวข้อ\nแทรกจะเพิ่ม callout เปล่าในบรรทัดใหม่",
 	"commandBuilder.actionDescInline":
@@ -266,8 +264,7 @@ export const th: Record<string, string> = {
 	"commandBuilder.actionWrap": "ห่อข้อความที่เลือก",
 	"commandBuilder.actionInsert": "แทรกใหม่",
 	"commandBuilder.foldState": "สถานะการพับ",
-	"commandBuilder.foldStateDesc":
-		"callout สามารถพับได้หรือไม่ และเริ่มต้นในสถานะใด",
+	"commandBuilder.foldStateDesc": "callout สามารถพับได้หรือไม่ และเริ่มต้นในสถานะใด",
 	"commandBuilder.foldNone": "พับไม่ได้",
 	"commandBuilder.foldExpanded": "พับได้ เปิด (+)",
 	"commandBuilder.foldCollapsed": "พับได้ ปิด (-)",
@@ -278,8 +275,7 @@ export const th: Record<string, string> = {
 	"commandBuilder.save": "บันทึก",
 
 	"settings.resetAll": "รีเซ็ต",
-	"settings.resetAllDesc":
-		"คืนค่าการตั้งค่าและการปรับแต่งทั้งหมดเป็นค่าเริ่มต้น",
+	"settings.resetAllDesc": "คืนค่าการตั้งค่าและการปรับแต่งทั้งหมดเป็นค่าเริ่มต้น",
 	"settings.resetAllButton": "รีเซ็ตทั้งหมด",
 	"notice.resetAllDone": "รีเซ็ตทุกอย่างเป็นค่าเริ่มต้นแล้ว",
 	"settings.resetIntro": "ใช้เวลาสักครู่เพื่อชื่นชมทุกสิ่งที่คุณสร้างไว้กับ Callout Studio",
@@ -300,57 +296,50 @@ export const th: Record<string, string> = {
 	"settings.resetItemAutocomplete": "การตั้งค่าการเติมข้อความอัตโนมัติและ metadata",
 	"settings.resetItemFallback": "สไตล์สำรอง",
 	"settings.resetItemIconLibraries": "ลำดับคลังไอคอนและคลังที่ซ่อนไว้",
-	"settings.resetAllConfirmAfter": "ไม่ต้องกังวล ก่อนรีเซ็ตเราจะบันทึกข้อมูลสำรองของการตั้งค่าปัจจุบัน คุณนำกลับมาได้ทุกเมื่อจาก กู้คืนเวอร์ชันก่อนหน้า ในการตั้งค่า\nหากคุณใช้บริการซิงก์ การรีเซ็ตอาจส่งไปถึงอุปกรณ์เครื่องอื่นของคุณด้วย",
+	"settings.resetAllConfirmAfter":
+		"ไม่ต้องกังวล ก่อนรีเซ็ตเราจะบันทึกข้อมูลสำรองของการตั้งค่าปัจจุบัน คุณนำกลับมาได้ทุกเมื่อจาก กู้คืนเวอร์ชันก่อนหน้า ในการตั้งค่า\nหากคุณใช้บริการซิงก์ การรีเซ็ตอาจส่งไปถึงอุปกรณ์เครื่องอื่นของคุณด้วย",
 	"settings.resetNothing": "ไม่มีอะไรให้รีเซ็ต: ทุกอย่างเป็นค่าเริ่มต้นอยู่แล้ว",
 
-	"notice.customCommandMissingCallout":
-		"ประเภท callout ของคำสั่งนี้ไม่มีอยู่แล้ว",
+	"notice.customCommandMissingCallout": "ประเภท callout ของคำสั่งนี้ไม่มีอยู่แล้ว",
 	"notice.importedJSON": "นำเข้า {{count}} ประเภท callout จาก JSON แล้ว",
 	"notice.importedSettings": "นำเข้าการตั้งค่าปลั๊กอินแล้ว",
 	"notice.importedCalloutManager":
 		"นำเข้าจาก Callout Manager: สร้างแล้ว {{created}} รายการ, อัปเดตแล้ว {{updated}} รายการ",
-	"notice.importedAdmonition":
-		"นำเข้าจาก Admonition แล้ว: สร้าง {{created}} รายการ อัปเดต " +
-		"{{updated}} รายการ",
+	"notice.importedAdmonition": "นำเข้าจาก Admonition แล้ว: สร้าง {{created}} รายการ อัปเดต " + "{{updated}} รายการ",
 	"notice.noNewJSON": "ไม่มีประเภท callout ใหม่ที่นำเข้า (ID อาจมีอยู่แล้ว)",
 	"notice.iconDownloadFailed":
 		'ไม่สามารถดาวน์โหลดไอคอน Material "{{name}}" ได้ อาจไม่มีให้บริการสำหรับสไตล์/น้ำหนักนี้ หรือการเชื่อมต่อของคุณออฟไลน์อยู่',
-	"notice.vaultScanFailed": "ไม่สามารถนับการใช้งานคอลเอาท์ได้ เนื่องจากไม่สามารถอ่านโน้ต {{count}} รายการได้ กรุณาตรวจสอบการจัดเก็บและการซิงก์แล้วลองอีกครั้ง",
+	"notice.vaultScanFailed":
+		"ไม่สามารถนับการใช้งานคอลเอาท์ได้ เนื่องจากไม่สามารถอ่านโน้ต {{count}} รายการได้ กรุณาตรวจสอบการจัดเก็บและการซิงก์แล้วลองอีกครั้ง",
 
 	"notice.externalCssRetired":
 		"ตัวเลือกการกำหนดสไตล์ CSS ส่วนตัวถูกลบออกแล้ว callout เหล่านี้จะใช้ดีไซน์ Callout Studio ที่บันทึกไว้ เว้นแต่ธีมของคุณจะกำหนดสไตล์ให้ โน้ตและ snippet CSS ส่วนตัวของคุณไม่ได้ถูกเปลี่ยนแปลง",
 	"notice.vaultRewritePartial":
 		"ไม่สามารถอัปเดตโน้ตได้ {{count}} รายการ และถูกปล่อยไว้โดยไม่มีการเปลี่ยนแปลง ดูรายละเอียดในคอนโซลสำหรับนักพัฒนา",
-	"notice.calloutDeleteIncomplete": "ไม่สามารถแปลงบางโน้ตได้ ระบบเก็บประเภท callout ไว้ การแปลงที่เสร็จแล้วถูกบันทึกไว้ แก้ไขปัญหาไฟล์แล้วเรียกใช้การกระทำนี้อีกครั้งเพื่อให้เสร็จสมบูรณ์",
+	"notice.calloutDeleteIncomplete":
+		"ไม่สามารถแปลงบางโน้ตได้ ระบบเก็บประเภท callout ไว้ การแปลงที่เสร็จแล้วถูกบันทึกไว้ แก้ไขปัญหาไฟล์แล้วเรียกใช้การกระทำนี้อีกครั้งเพื่อให้เสร็จสมบูรณ์",
 	"notice.nothingToWrap": "ไม่มีอะไรให้ห่อ",
 	"notice.cursorNotInsideCallout": "เคอร์เซอร์ไม่อยู่ใน callout",
 	"notice.headingAlreadyCallout": "หัวข้อนี้เป็น callout อยู่แล้ว",
-	"notice.unwrapLeftAsIs":
-		"ไม่สามารถนำ callout นี้ออกได้อย่างปลอดภัย จึงคงไว้ตามเดิม",
-	"notice.autocompleteTargetMoved":
-		"ไม่ได้แทรกสิ่งใด — บรรทัดเปลี่ยนไปขณะที่ตัวแก้ไขเปิดอยู่",
+	"notice.unwrapLeftAsIs": "ไม่สามารถนำ callout นี้ออกได้อย่างปลอดภัย จึงคงไว้ตามเดิม",
+	"notice.autocompleteTargetMoved": "ไม่ได้แทรกสิ่งใด — บรรทัดเปลี่ยนไปขณะที่ตัวแก้ไขเปิดอยู่",
 	"notice.autocompleteAlwaysEnabled": "การเติมข้อความอัตโนมัติเป็นฟีเจอร์หลักแล้ว และเปิดใช้งานอยู่เสมอ",
-	"notice.openHotkeysFailed":
-		"ไม่สามารถเปิดการตั้งค่าแป้นพิมพ์ลัดของ Obsidian ได้",
-	"notice.filterHotkeysFailed":
-		"เปิดแป้นพิมพ์ลัด Obsidian แล้ว แต่ไม่สามารถใช้ตัวกรอง Callout Studio ได้",
+	"notice.openHotkeysFailed": "ไม่สามารถเปิดการตั้งค่าแป้นพิมพ์ลัดของ Obsidian ได้",
+	"notice.filterHotkeysFailed": "เปิดแป้นพิมพ์ลัด Obsidian แล้ว แต่ไม่สามารถใช้ตัวกรอง Callout Studio ได้",
 
 	"editor.editCallout": "แก้ไข callout",
 	"editor.newCallout": "callout ใหม่",
 	"editor.displayName": "ชื่อที่แสดง",
 	"editor.displayNameDesc": "ป้ายกำกับที่อ่านได้ที่แสดงใน UI",
-	"editor.displayNameBuiltIn":
-		"ไม่สามารถเปลี่ยนชื่อที่แสดงสำหรับ callout ในตัวได้",
+	"editor.displayNameBuiltIn": "ไม่สามารถเปลี่ยนชื่อที่แสดงสำหรับ callout ในตัวได้",
 	"editor.displayNamePlaceholder": "callout ของฉัน",
 	"editor.calloutIds": "ID callout",
-	"editor.calloutIdsDesc":
-		"ตัวระบุทั้งหมดสำหรับ callout นี้ อนุญาตให้ใช้ช่องว่างได้\nกด Enter หรือปุ่ม + เพื่อเพิ่ม",
+	"editor.calloutIdsDesc": "ตัวระบุทั้งหมดสำหรับ callout นี้ อนุญาตให้ใช้ช่องว่างได้\nกด Enter หรือปุ่ม + เพื่อเพิ่ม",
 	"editor.calloutIdsPlaceholder": "เพิ่ม ID",
 	"editor.addId": "เพิ่ม ID",
 	"editor.maxIds": "ใส่ ID ได้สูงสุด {{max}} รายการ ลบหนึ่งรายการเพื่อเพิ่มรายการอื่น",
 	"editor.idLinkedToName": "เชื่อมโยงกับชื่อที่แสดง",
-	"editor.idCannotDelete":
-		"ID นี้เชื่อมโยงกับชื่อที่แสดงและไม่สามารถลบได้ — แก้ไขชื่อเพื่อเปลี่ยน",
+	"editor.idCannotDelete": "ID นี้เชื่อมโยงกับชื่อที่แสดงและไม่สามารถลบได้ — แก้ไขชื่อเพื่อเปลี่ยน",
 	"editor.icon": "ไอคอน",
 	"editor.pickIcon": "เปลี่ยนไอคอน",
 	"editor.replaceIcon": "แทนที่ไอคอน",
@@ -366,8 +355,7 @@ export const th: Record<string, string> = {
 	"editor.horizontalOffset": "ระยะเลื่อนแนวนอน",
 	"editor.verticalOffset": "ระยะเลื่อนแนวตั้ง",
 	"editor.colors": "สี",
-	"editor.colorsDesc":
-		"กำหนดสีขอบ พื้นหลัง และข้อความของ callout นี้",
+	"editor.colorsDesc": "กำหนดสีขอบ พื้นหลัง และข้อความของ callout นี้",
 	"editor.resetColors": "รีเซ็ตสีเป็นค่าเริ่มต้น",
 	"editor.paletteDeleted": "สีที่ถูกลบ",
 	"editor.paletteGroupObsidian": "Callout Obsidian",
@@ -375,14 +363,14 @@ export const th: Record<string, string> = {
 	"editor.paletteGroupCustom": "กำหนดเอง",
 	"editor.contrastWarning": "คอนทราสต์ต่ำเมื่อเทียบกับพื้นหลัง — อาจอ่านยาก",
 	"editor.foldable": "พับได้",
-	"editor.foldableDesc":
-		"เลือกว่า callout พับได้หรือไม่และสถานะเริ่มต้นที่จะใช้กับ vault ทั้งหมด",
+	"editor.foldableDesc": "เลือกว่า callout พับได้หรือไม่และสถานะเริ่มต้นที่จะใช้กับ vault ทั้งหมด",
 	"editor.foldOff": "ปิด",
 	"editor.foldOpen": "เปิดโดยค่าเริ่มต้น",
 	"editor.foldClosed": "ปิดโดยค่าเริ่มต้น",
 	"editor.cancel": "ยกเลิก",
 	"editor.saveChanges": "บันทึกการเปลี่ยนแปลง",
-	"editor.saveFailed": "ไม่สามารถบันทึกให้เสร็จสมบูรณ์ได้ หากตัวแก้ไขนี้ยังเปิดอยู่ ให้เปิดค้างไว้และลองอีกครั้งหลังตรวจสอบพื้นที่จัดเก็บและการซิงค์ การตั้งค่าหรือการแก้ไขโน้ตบางส่วนอาจถูกบันทึกไปแล้ว",
+	"editor.saveFailed":
+		"ไม่สามารถบันทึกให้เสร็จสมบูรณ์ได้ หากตัวแก้ไขนี้ยังเปิดอยู่ ให้เปิดค้างไว้และลองอีกครั้งหลังตรวจสอบพื้นที่จัดเก็บและการซิงค์ การตั้งค่าหรือการแก้ไขโน้ตบางส่วนอาจถูกบันทึกไปแล้ว",
 	"editor.createCallout": "สร้าง callout",
 	"editor.nameRequired": "ต้องใส่ชื่อที่แสดงก่อนสร้าง callout",
 	"editor.noChangesToSave": "ไม่มีการเปลี่ยนแปลง",
@@ -393,27 +381,22 @@ export const th: Record<string, string> = {
 	"editor.idConflict": "ID นี้ขัดแย้งกับ callout ที่มีอยู่",
 	"editor.idFromTheme":
 		"{{theme}} มี callout ที่ใช้ ID นี้อยู่แล้ว Callout Studio จึงไม่สามารถจัดสไตล์ได้ กรุณาเลือก ID อื่น",
-	"editor.namesFromTheme":
-		"{{theme}} วาด callout แบบบล็อก {{names}} เอง ID อื่นๆ ของคุณยังคงใช้ดีไซน์นี้",
+	"editor.namesFromTheme": "{{theme}} วาด callout แบบบล็อก {{names}} เอง ID อื่นๆ ของคุณยังคงใช้ดีไซน์นี้",
 	"editor.namesFromThemeAndObsidian":
 		"{{theme}} วาด callout แบบบล็อก {{names}} เอง และ Obsidian วาด {{stock}} ID อื่นๆ ของคุณยังคงใช้ดีไซน์นี้",
 	"editor.idThemePattern":
 		"โปรดทราบ: ธีมของคุณจัดสไตล์ callout ทุกรายการที่ตรงกับ {{pattern}} จึงอาจแทนที่รูปลักษณ์ของ callout นี้",
-	"editor.idDashConflict":
-		'Obsidian เขียนช่องว่างเป็นขีดกลาง ดังนั้น ID นี้จึงขัดแย้งกับ "{{other}}"',
+	"editor.idDashConflict": 'Obsidian เขียนช่องว่างเป็นขีดกลาง ดังนั้น ID นี้จึงขัดแย้งกับ "{{other}}"',
 	"editor.idOwnedBy": '"{{id}}" เป็น ID ของ {{name}} คุณสามารถ{{link}}',
 	"editor.idMoveHere": "ย้ายมาไว้ที่นี่ได้",
-	"editor.idOwnedByMain":
-		'"{{id}}" เป็น ID หลักของ {{name}} หากต้องการใช้ที่นี่ ให้ลบ {{name}} ก่อน',
-	"editor.idBuiltInStock":
-		'"{{id}}" เป็นหนึ่งใน ID ของ Obsidian เองสำหรับ {{name}}',
+	"editor.idOwnedByMain": '"{{id}}" เป็น ID หลักของ {{name}} หากต้องการใช้ที่นี่ ให้ลบ {{name}} ก่อน',
+	"editor.idBuiltInStock": '"{{id}}" เป็นหนึ่งใน ID ของ Obsidian เองสำหรับ {{name}}',
 	"editor.idMoving": 'เมื่อบันทึก "{{id}}" จะย้ายมาที่นี่จาก {{name}}',
 	"editor.idMovingNotes": "โน้ตของคุณจะไม่เปลี่ยน และจะใช้สไตล์ของ callout นี้",
 	"editor.untitledCallout": "Callout ไม่มีชื่อ",
 	"editor.loremIpsum":
 		"สายลมอ่อน ๆ พัดผ่านต้นไม้ แสงแดดอบอุ่นส่องลงบนทางเดินอันเงียบสงบและทำให้ทิวทัศน์ดูมีชีวิตชีวา",
-	"editor.loremIpsumShort":
-		"สายลมอ่อน ๆ พัดผ่านต้นไม้",
+	"editor.loremIpsumShort": "สายลมอ่อน ๆ พัดผ่านต้นไม้",
 	"editor.sampleInlineText": "นี่คือแคปซูล [!{id}]{{title}} แบบอินไลน์ภายในย่อหน้า",
 	"editor.previewReadOnly": "ไม่สามารถแก้ไขตัวอย่างสดได้",
 	"noteChanges.title": "อัปเดตโน้ตของคุณไหม",
@@ -424,18 +407,15 @@ export const th: Record<string, string> = {
 	"noteChanges.titlesChange": 'เปลี่ยนเป็น "{{new}}"',
 	"noteChanges.titlesLeaveDesc": 'ยังคงเขียนว่า "{{old}}" ต่อไป',
 	"noteChanges.foldChange": 'ตั้งเป็น "{{state}}"',
-	"noteChanges.foldLeaveDesc":
-		"เฉพาะ callout ที่คุณแทรกจากนี้ไปเท่านั้นที่ใช้การตั้งค่าใหม่",
+	"noteChanges.foldLeaveDesc": "เฉพาะ callout ที่คุณแทรกจากนี้ไปเท่านั้นที่ใช้การตั้งค่าใหม่",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": '{{name}} — กำหนดโดยธีมของคุณ',
+	"themePreview.title": "{{name}} — กำหนดโดยธีมของคุณ",
 	"themePreview.summary":
 		"กำหนดโดย {{theme}} (อ่านอย่างเดียว) ไม่สามารถแก้ไขสี ไอคอน และ ID ได้ที่นี่ และไม่มีรูปแบบหัวข้อ/อินไลน์ หากต้องการปรับแต่ง ให้สร้าง callout ใหม่",
 	"themePreview.previewTitle": "รูปลักษณ์ปัจจุบัน",
-	"themePreview.blockSample":
-		"> [!{{id}}] {{name}}\n" +
-		"> นี่คือลักษณะเนื้อหาของ callout\n",
+	"themePreview.blockSample": "> [!{{id}}] {{name}}\n" + "> นี่คือลักษณะเนื้อหาของ callout\n",
 
 	// Theme callout preview window
 	"editor.themePreviewClose": "เข้าใจแล้ว",
@@ -448,24 +428,24 @@ export const th: Record<string, string> = {
 	"palette.namePlaceholder": "ชุดสีของฉัน",
 	"palette.nameExists": "มีชุดสีชื่อนี้อยู่แล้ว",
 	"palette.saveBlockedName": "มีชุดสีชื่อนี้อยู่แล้ว เลือกชื่ออื่นเพื่อบันทึก",
-	"palette.metadataNameExists":
-		'มีชุดสีอื่นเขียนเป็น "{{key}}" ในเมทาดาทาของ callout อยู่แล้ว เลือกชื่ออื่น',
+	"palette.metadataNameExists": 'มีชุดสีอื่นเขียนเป็น "{{key}}" ในเมทาดาทาของ callout อยู่แล้ว เลือกชื่ออื่น',
 	"palette.metadataNameShared":
 		"ในเมทาดาทาของ callout: {{key}} ชุดสีอื่นที่บันทึกไว้ก็มีคำนี้เช่นกัน จึงมีเพียงชุดเดียวที่ตอบสนองต่อคำนี้",
 	"palette.renameNotesChange":
-		"คุณเปลี่ยนชื่อชุดสีจาก \"{{old}}\" เป็น \"{{new}}\" คำของชุดสีนี้ในเมทาดาทาของ callout จึงเปลี่ยนจาก \"{{oldWord}}\" เป็น \"{{newWord}}\"",
-	"palette.renameNotesLeaveDesc": "ยังคงใช้ \"{{word}}\" และกลับไปใช้สีของตัวเอง",
+		'คุณเปลี่ยนชื่อชุดสีจาก "{{old}}" เป็น "{{new}}" คำของชุดสีนี้ในเมทาดาทาของ callout จึงเปลี่ยนจาก "{{oldWord}}" เป็น "{{newWord}}"',
+	"palette.renameNotesLeaveDesc": 'ยังคงใช้ "{{word}}" และกลับไปใช้สีของตัวเอง',
 	"palette.renameNotesChangeDesc": "ทุก |{{old}} ในโน้ตของคุณจะกลายเป็น |{{new}}",
-	"palette.renameNotesFailed":
-		"อัปเดตบางบันทึกไม่สำเร็จ ที่อัปเดตแล้วถูกบันทึกไว้ ส่วนที่เหลือยังใช้ชื่อเดิม",
+	"palette.renameNotesFailed": "อัปเดตบางบันทึกไม่สำเร็จ ที่อัปเดตแล้วถูกบันทึกไว้ ส่วนที่เหลือยังใช้ชื่อเดิม",
 	"palette.baseColor": "สีพื้นฐาน",
 	"palette.colorViewAdvanced": "ตั้งค่าแต่ละสีแยกกัน",
 	"palette.colorViewSimple": "กลับไปใช้สีพื้นฐานเพียงสีเดียว",
 	"palette.advancedColors": "สี",
 	"palette.lightModeColors": "สีของโหมดสว่าง",
 	"palette.darkModeColors": "สีของโหมดมืด",
-	"palette.modeColorsHintLight": "การเปลี่ยนแปลงนี้ใช้กับโหมดสว่างเท่านั้น โหมดมืดยังคงใช้สีของตัวเอง\nหากต้องการแก้ไข ให้กดปุ่มพระจันทร์ด้านบน",
-	"palette.modeColorsHintDark": "การเปลี่ยนแปลงนี้ใช้กับโหมดมืดเท่านั้น โหมดสว่างยังคงใช้สีของตัวเอง\nหากต้องการแก้ไข ให้กดปุ่มดวงอาทิตย์ด้านบน",
+	"palette.modeColorsHintLight":
+		"การเปลี่ยนแปลงนี้ใช้กับโหมดสว่างเท่านั้น โหมดมืดยังคงใช้สีของตัวเอง\nหากต้องการแก้ไข ให้กดปุ่มพระจันทร์ด้านบน",
+	"palette.modeColorsHintDark":
+		"การเปลี่ยนแปลงนี้ใช้กับโหมดมืดเท่านั้น โหมดสว่างยังคงใช้สีของตัวเอง\nหากต้องการแก้ไข ให้กดปุ่มดวงอาทิตย์ด้านบน",
 	"palette.showLightMode": "แสดงโหมดสว่าง",
 	"palette.showDarkMode": "แสดงโหมดมืด",
 	"palette.accentColor": "สีเน้น",
@@ -557,15 +537,11 @@ export const th: Record<string, string> = {
 	"iconPicker.searchSimpleIcons": "ค้นหาใน Simple Icons",
 	"iconPicker.custom": "ไอคอนกำหนดเอง",
 	"iconPicker.searchCustom": "ค้นหาไอคอนกำหนดเอง",
-	"iconPicker.customTooLarge":
-		"{{name}} มีขนาดใหญ่เกินไป ไอคอนกำหนดเองต้องมีขนาดไม่เกิน 5 MB",
-	"iconPicker.customUnsupported":
-		"{{name}} ไม่ใช่ไฟล์ไอคอนกำหนดเองที่รองรับ ใช้ SVG, PNG, JPEG หรือ WebP",
-	"iconPicker.customInvalidSvg":
-		"ไม่สามารถอ่าน {{name}} เป็น SVG ที่ปลอดภัยได้จึงไม่ได้เพิ่ม",
+	"iconPicker.customTooLarge": "{{name}} มีขนาดใหญ่เกินไป ไอคอนกำหนดเองต้องมีขนาดไม่เกิน 5 MB",
+	"iconPicker.customUnsupported": "{{name}} ไม่ใช่ไฟล์ไอคอนกำหนดเองที่รองรับ ใช้ SVG, PNG, JPEG หรือ WebP",
+	"iconPicker.customInvalidSvg": "ไม่สามารถอ่าน {{name}} เป็น SVG ที่ปลอดภัยได้จึงไม่ได้เพิ่ม",
 	"iconPicker.customDecodeFailed": "ไม่สามารถอ่าน {{name}} เป็นไอคอนกำหนดเองได้",
-	"iconPicker.customDuplicate":
-		"{{name}} มีอยู่แล้วในไอคอนกำหนดเองของคุณ เปลี่ยนชื่อไฟล์หรือลบไอคอนที่มีอยู่",
+	"iconPicker.customDuplicate": "{{name}} มีอยู่แล้วในไอคอนกำหนดเองของคุณ เปลี่ยนชื่อไฟล์หรือลบไอคอนที่มีอยู่",
 	"iconPicker.uploadCustom": "อัปโหลดไฟล์รูปภาพ",
 	"iconPicker.customEmpty":
 		"ยังไม่มีไอคอนกำหนดเอง เพิ่มไฟล์ SVG, PNG, JPEG หรือ WebP จากคอมพิวเตอร์ของคุณ หรือลากมาวางที่นี่",
@@ -717,12 +693,10 @@ export const th: Record<string, string> = {
 
 	// Downloadable icon packs
 	"iconPack.downloadTitle": "{{name}} ยังไม่ได้ดาวน์โหลด",
-	"iconPack.downloadDetail":
-		"{{count}} ไอคอน · {{size}} · ดาวน์โหลดครั้งเดียว",
+	"iconPack.downloadDetail": "{{count}} ไอคอน · {{size}} · ดาวน์โหลดครั้งเดียว",
 	"iconPack.download": "ดาวน์โหลด",
 	"iconPack.downloading": "กำลังดาวน์โหลด {{name}}…",
-	"iconPack.downloadFailed":
-		"ไม่สามารถดาวน์โหลด {{name}} ได้ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง",
+	"iconPack.downloadFailed": "ไม่สามารถดาวน์โหลด {{name}} ได้ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง",
 	"iconPack.retry": "ลองอีกครั้ง",
 	"iconPack.faBrandsNotice":
 		"ไอคอนแบรนด์เป็นเครื่องหมายการค้าของเจ้าของแต่ละราย การรวมไว้ไม่ได้หมายความว่าได้รับการรับรอง โปรดใช้เฉพาะเพื่อแทนบริษัท ผลิตภัณฑ์ หรือบริการที่อ้างถึง",
@@ -815,14 +789,12 @@ export const th: Record<string, string> = {
 	"settings.metadataWordTooLong": "คำหนึ่งคำต้องยาวไม่เกิน {{max}} อักขระ",
 	"settings.maxMetadataWords": "สูงสุด {{max}} คำ ลบหนึ่งคำเพื่อเพิ่มคำอื่น",
 	"settings.buildFailed": "Callout Studio แสดงหน้าการตั้งค่าไม่ได้ ให้รีสตาร์ท Obsidian และแจ้งปัญหาหากเกิดซ้ำ",
-	"settings.globalSettingsRegularDesc":
-		"ขอบ ความโค้งมุม ขนาดตัวอักษร และการจัดแนว",
-	"settings.globalSettingsHeadingDesc":
-		"ขอบ รูปร่าง และระยะห่างแนวตั้ง",
-	"settings.globalSettingsInlineDesc":
-		"ขอบและรูปร่าง",
+	"settings.globalSettingsRegularDesc": "ขอบ ความโค้งมุม ขนาดตัวอักษร และการจัดแนว",
+	"settings.globalSettingsHeadingDesc": "ขอบ รูปร่าง และระยะห่างแนวตั้ง",
+	"settings.globalSettingsInlineDesc": "ขอบและรูปร่าง",
 	"settings.themeCalloutStyles": "ใช้สไตล์ callout ของธีมของคุณ",
-	"settings.themeCalloutStylesDesc": "เมื่อเปิด callout ที่ธีมของคุณจัดสไตล์จะคงรูปลักษณ์ของธีมไว้และแสดงเป็น callout แบบบล็อกเท่านั้น เมื่อปิด Callout Studio จะวาด callout ทั้งหมดเอง",
+	"settings.themeCalloutStylesDesc":
+		"เมื่อเปิด callout ที่ธีมของคุณจัดสไตล์จะคงรูปลักษณ์ของธีมไว้และแสดงเป็น callout แบบบล็อกเท่านั้น เมื่อปิด Callout Studio จะวาด callout ทั้งหมดเอง",
 
 	"settings.calloutTypeRegular": "สไตล์ callout แบบบล็อก",
 	"settings.calloutTypeHeading": "สไตล์ callout หัวข้อ",
@@ -856,22 +828,15 @@ export const th: Record<string, string> = {
 	"confirm.titleDeleteLibrary": "ลบคลังไอคอน",
 	"confirm.titleResetLibraries": "รีเซ็ตคลังไอคอน",
 
-	"vault.filesUpdated":
-		"อัปเดต {{count}} การอ้างอิง callout ในไฟล์ vault แล้ว",
-	"vault.idsUpdated":
-		"อัปเดต {{count}} ID callout ในไฟล์ vault แล้ว: {{oldIds}} → {{newId}}",
-	"vault.titlesUpdated":
-		"อัปเดต {{count}} หัวเรื่อง callout ในไฟล์ vault แล้ว: {{oldTitle}} → {{newTitle}}",
-	"vault.foldUpdated":
-		"อัปเดตเครื่องหมายการพับของ callout {{count}} รายการในไฟล์ vault แล้ว",
+	"vault.filesUpdated": "อัปเดต {{count}} การอ้างอิง callout ในไฟล์ vault แล้ว",
+	"vault.idsUpdated": "อัปเดต {{count}} ID callout ในไฟล์ vault แล้ว: {{oldIds}} → {{newId}}",
+	"vault.titlesUpdated": "อัปเดต {{count}} หัวเรื่อง callout ในไฟล์ vault แล้ว: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated": "อัปเดตเครื่องหมายการพับของ callout {{count}} รายการในไฟล์ vault แล้ว",
 	"vault.confirmReplace": "แทนที่",
-	"vault.replacePromptInUse":
-		'"{{name}}" ถูกใช้งาน {{count}} ครั้งใน {{files}} ไฟล์ เลือก callout เพื่อแทนที่:',
+	"vault.replacePromptInUse": '"{{name}}" ถูกใช้งาน {{count}} ครั้งใน {{files}} ไฟล์ เลือก callout เพื่อแทนที่:',
 	"vault.replacePromptUnused": 'เลือก callout เพื่อแทนที่ "{{name}}":',
-	"vault.noReplacementAvailable":
-		"ไม่มี callout อื่นที่พร้อมใช้งานเพื่อแทนที่",
-	"vault.convertedToPlainText":
-		"แปลง {{blocks}} บล็อก callout ใน {{files}} ไฟล์เป็นข้อความธรรมดาแล้ว",
+	"vault.noReplacementAvailable": "ไม่มี callout อื่นที่พร้อมใช้งานเพื่อแทนที่",
+	"vault.convertedToPlainText": "แปลง {{blocks}} บล็อก callout ใน {{files}} ไฟล์เป็นข้อความธรรมดาแล้ว",
 	"vault.resetNotesFailed":
 		"อัปเดตบางบันทึกไม่สำเร็จ จึงไม่ได้รีเซ็ต callout เลือกรีเซ็ตเป็นค่าเริ่มต้นอีกครั้งเพื่อให้เสร็จสิ้น",
 
@@ -888,7 +853,8 @@ export const th: Record<string, string> = {
 	"quickInsert.noResults": "ไม่พบ callout",
 	"quickInsert.noBuiltInCallouts": "ไม่มี callout ในตัวที่พร้อมใช้งานในขณะนี้",
 	"quickInsert.noThemeCallouts": "ไม่มี callout เฉพาะธีมที่พร้อมใช้งานในขณะนี้",
-	"quickInsert.targetMoved": "โน้ตที่คุณเปิดแทรกอย่างรวดเร็วมามีการเปลี่ยนแปลงหรือถูกปิดไปแล้ว เปิดแทรกอย่างรวดเร็วอีกครั้งในโน้ตที่คุณต้องการแก้ไข",
+	"quickInsert.targetMoved":
+		"โน้ตที่คุณเปิดแทรกอย่างรวดเร็วมามีการเปลี่ยนแปลงหรือถูกปิดไปแล้ว เปิดแทรกอย่างรวดเร็วอีกครั้งในโน้ตที่คุณต้องการแก้ไข",
 	"quickInsert.targetMovedHint": "โน้ตต้นฉบับไม่พร้อมใช้งานสำหรับการแทรกนี้อีกต่อไป",
 	"quickInsert.noUserCallouts":
 		"คุณยังไม่ได้สร้าง callout แบบกำหนดเอง เรียกใช้ “Callout Studio: สร้างประเภท callout ใหม่” จากพาเล็ตคำสั่ง",
@@ -908,7 +874,8 @@ export const th: Record<string, string> = {
 	"portable.customInvalid": "ให้ข้อความแทนที่อยู่ในบรรทัดเดียวโดยไม่เปลี่ยนโครงสร้าง Markdown โดยรอบ",
 	"portable.customUnsafe": "การแทนที่นี้จะทำให้หัวข้อหรือลิงก์ของหัวข้อนั้นกำกวม โปรดเลือกหัวข้ออื่น",
 	"portable.customStale": "การตรวจสอบมีการเปลี่ยนแปลง เปิดตัวแก้ไขรายการแทนที่อีกครั้ง",
-	"portable.customDiscarded": "นำข้อความแทนที่แบบกำหนดเอง {{count}} รายการออก เนื่องจากข้อความต้นฉบับเปลี่ยนไปหรือไม่สามารถระบุตำแหน่งได้อย่างแน่นอน",
+	"portable.customDiscarded":
+		"นำข้อความแทนที่แบบกำหนดเอง {{count}} รายการออก เนื่องจากข้อความต้นฉบับเปลี่ยนไปหรือไม่สามารถระบุตำแหน่งได้อย่างแน่นอน",
 	"portable.customBadge": "กำหนดเอง",
 
 	"usage.title": "ค้นหา callout",
@@ -938,33 +905,28 @@ export const th: Record<string, string> = {
 
 	"import.title": "ปัญหาการนำเข้า",
 	"import.reportLeadIn": "ตรวจสอบปัญหาการนำเข้าเหล่านี้ก่อนดำเนินการต่อ:",
-	"import.reportLeadInFatal":
-		"ไม่สามารถนำเข้าข้อมูลนี้ได้:",
+	"import.reportLeadInFatal": "ไม่สามารถนำเข้าข้อมูลนี้ได้:",
 	"import.entryHeading": "รายการ {{index}} — {{label}}",
-	"import.summary":
-		"{{valid}} จาก {{total}} รายการถูกต้อง · พบ {{issues}} ปัญหา",
+	"import.summary": "{{valid}} จาก {{total}} รายการถูกต้อง · พบ {{issues}} ปัญหา",
 	"import.btnCancel": "ยกเลิก",
 	"import.btnImportValid": "นำเข้าเฉพาะที่ถูกต้อง ({{count}})",
-	"import.nothingValid": "ไม่มีรายการใดถูกต้อง จึงไม่มีอะไรให้นำเข้า ยกเลิก แก้ไขปัญหาที่แสดงไว้ที่นี่ แล้วนำเข้าอีกครั้ง",
-	"import.err.notRecognized":
-		"ไฟล์ที่ไม่รู้จัก: คาดว่าเป็น array ของนิยาม callout หรือไฟล์ส่งออกของ Callout Studio",
-	"import.warn.settingsIgnored":
-		"บล็อกการตั้งค่าไม่ใช่ object ที่ถูกต้องและถูกละเว้น",
-	"import.warn.invalidGradient":
-		"การไล่ระดับสีพื้นหลังไม่ถูกต้องและถูกละเว้น",
-	"import.err.parseFailed":
-		"ไฟล์ไม่ใช่ JSON ที่ถูกต้องและไม่สามารถแยกวิเคราะห์ได้",
+	"import.nothingValid":
+		"ไม่มีรายการใดถูกต้อง จึงไม่มีอะไรให้นำเข้า ยกเลิก แก้ไขปัญหาที่แสดงไว้ที่นี่ แล้วนำเข้าอีกครั้ง",
+	"import.err.notRecognized": "ไฟล์ที่ไม่รู้จัก: คาดว่าเป็น array ของนิยาม callout หรือไฟล์ส่งออกของ Callout Studio",
+	"import.warn.settingsIgnored": "บล็อกการตั้งค่าไม่ใช่ object ที่ถูกต้องและถูกละเว้น",
+	"import.warn.invalidGradient": "การไล่ระดับสีพื้นหลังไม่ถูกต้องและถูกละเว้น",
+	"import.err.parseFailed": "ไฟล์ไม่ใช่ JSON ที่ถูกต้องและไม่สามารถแยกวิเคราะห์ได้",
 	"import.err.tooLarge": "การนำเข้านี้เกินขีดจำกัดขนาด 16 MiB โปรดแบ่งเป็นไฟล์ขนาดเล็กลงแล้วลองอีกครั้ง",
-	"import.err.tooComplex": "การนำเข้านี้ซับซ้อนเกินไป: แต่ละรายการหรือออบเจ็กต์มีได้ไม่เกิน 1,000 รายการ รวมทั้งหมดไม่เกิน 50,000 ค่า และซ้อนกันได้ไม่เกิน 32 ระดับ",
-	"import.err.imageBudget": "คอลเลกชันรูปภาพทั้งหมดเกินขีดจำกัดด้านขนาดหรือความซับซ้อน โปรดลบหรือทำให้รูปภาพขนาดใหญ่เรียบง่ายลงก่อนนำเข้า",
+	"import.err.tooComplex":
+		"การนำเข้านี้ซับซ้อนเกินไป: แต่ละรายการหรือออบเจ็กต์มีได้ไม่เกิน 1,000 รายการ รวมทั้งหมดไม่เกิน 50,000 ค่า และซ้อนกันได้ไม่เกิน 32 ระดับ",
+	"import.err.imageBudget":
+		"คอลเลกชันรูปภาพทั้งหมดเกินขีดจำกัดด้านขนาดหรือความซับซ้อน โปรดลบหรือทำให้รูปภาพขนาดใหญ่เรียบง่ายลงก่อนนำเข้า",
 	"import.err.processingFailed": "ดำเนินการนำเข้าไม่สำเร็จ โปรดตรวจสอบข้อมูลแล้วลองอีกครั้ง",
 	"import.reportTruncated": "แสดงปัญหา {{shown}} รายการแรกจากทั้งหมด {{total}} รายการ ค่าแบบยาวจะถูกย่อในรายงานนี้",
 	"import.err.entryNotObject": "รายการต้องเป็น object",
-	"import.err.requiredMissing":
-		'ฟิลด์ที่จำเป็น "{{field}}" หายไปหรือมีประเภทที่ไม่ถูกต้อง',
+	"import.err.requiredMissing": 'ฟิลด์ที่จำเป็น "{{field}}" หายไปหรือมีประเภทที่ไม่ถูกต้อง',
 	"import.err.idEmpty": "ID ต้องไม่ว่างเปล่า",
-	"import.err.idTooLong":
-		'ID "{{value}}" มี {{length}} อักขระ สูงสุด {{max}}',
+	"import.err.idTooLong": 'ID "{{value}}" มี {{length}} อักขระ สูงสุด {{max}}',
 	"import.err.idBadChar":
 		'ID "{{value}}" มีอักขระที่ไม่ถูกต้อง (ไม่อนุญาตให้ใช้ "|" "[" "]" แท็บ และการขึ้นบรรทัดใหม่)',
 	"import.err.idMetadata":
@@ -972,55 +934,41 @@ export const th: Record<string, string> = {
 	"import.err.idReserved":
 		'ID "{{value}}" ถูกสงวนไว้โดย Callout Studio สำหรับการแสดงตัวอย่างของตัวเอง และไม่สามารถนำเข้าได้',
 	"import.err.displayNameEmpty": "ชื่อที่แสดงต้องไม่ว่างเปล่า",
-	"import.err.displayNameTooLong":
-		"ชื่อที่แสดงมี {{length}} อักขระ สูงสุด {{max}}",
+	"import.err.displayNameTooLong": "ชื่อที่แสดงมี {{length}} อักขระ สูงสุด {{max}}",
 	"import.err.boolField": '"{{field}}" ต้องเป็น boolean (true หรือ false)',
 	"import.err.iconNotObject": "ไอคอนต้องเป็น object",
-	"import.err.iconTypeInvalid":
-		'ประเภทไอคอน "{{value}}" ต้องเป็นหนึ่งใน: {{types}}',
+	"import.err.iconTypeInvalid": 'ประเภทไอคอน "{{value}}" ต้องเป็นหนึ่งใน: {{types}}',
 	"import.warn.iconFieldIgnored":
 		'"{{field}}" ใช้เฉพาะกับไอคอน Material เท่านั้น และถูกละเว้นสำหรับประเภทไอคอน {{type}}',
 	"import.err.iconValueEmpty": "ค่าไอคอนต้องเป็น string ที่ไม่ว่างเปล่า",
 	"import.err.iconValueTooLong": "ค่าไอคอนเกินขีดจำกัด 200 อักขระ ({{length}} อักขระ)",
-	"import.err.materialStyle":
-		'สไตล์ไอคอน Material "{{value}}" ต้องเป็นหนึ่งใน: outlined, filled, rounded, sharp',
+	"import.err.materialStyle": 'สไตล์ไอคอน Material "{{value}}" ต้องเป็นหนึ่งใน: outlined, filled, rounded, sharp',
 	"import.err.materialWeight":
 		'น้ำหนักไอคอน Material "{{value}}" ต้องเป็นจำนวนเต็มระหว่าง 100 ถึง 700 ด้วยขั้นตอน 100',
 	"import.warn.iconRecolorIgnored":
 		'"recolor" ใช้เฉพาะกับรูปภาพของคุณเองเท่านั้น และถูกละเว้นสำหรับประเภทไอคอน {{type}}',
-	"import.err.iconRecolorInvalid":
-		'"recolor" ต้องเป็น true หรือ false (ได้รับ: "{{value}}")',
-	"import.err.colorInvalid":
-		'"{{field}}" ต้องเป็นสี hex เช่น "#448aff" (ได้รับ "{{value}}")',
-	"import.err.numberRange":
-		'"{{field}}" ต้องเป็นตัวเลขระหว่าง {{min}} ถึง {{max}} (ได้รับ "{{value}}")',
-	"import.err.iconSizeRange":
-		'"{{field}}" ต้องเป็นตัวเลขระหว่าง {{min}} ถึง {{max}} (ได้รับ "{{value}}")',
+	"import.err.iconRecolorInvalid": '"recolor" ต้องเป็น true หรือ false (ได้รับ: "{{value}}")',
+	"import.err.colorInvalid": '"{{field}}" ต้องเป็นสี hex เช่น "#448aff" (ได้รับ "{{value}}")',
+	"import.err.numberRange": '"{{field}}" ต้องเป็นตัวเลขระหว่าง {{min}} ถึง {{max}} (ได้รับ "{{value}}")',
+	"import.err.iconSizeRange": '"{{field}}" ต้องเป็นตัวเลขระหว่าง {{min}} ถึง {{max}} (ได้รับ "{{value}}")',
 	"import.err.iconAdjustShape":
-		"\"iconAdjust\" ต้องเป็นออบเจ็กต์ที่จับคู่ประเภท callout (\"regular\", \"heading\", \"inline\") กับขนาดและระยะเลื่อนของไอคอน",
+		'"iconAdjust" ต้องเป็นออบเจ็กต์ที่จับคู่ประเภท callout ("regular", "heading", "inline") กับขนาดและระยะเลื่อนของไอคอน',
 	"import.err.aliasesNotArray": '"aliases" ต้องเป็น array ของ string',
 	"import.err.aliasNotString": "นามแฝงต้องเป็น string",
 	"import.err.aliasDup": 'นามแฝง "{{value}}" ซ้ำกันในรายการนี้',
-	"import.err.tooManyIds":
-		"มี ID มากเกินไป ({{count}}) แต่ละ callout มีได้สูงสุด {{max}} ID (หลัก + นามแฝง)",
-	"import.err.metadataShape":
-		'"metadata" ต้องเป็น object ที่ค่าทั้งหมดเป็น string',
+	"import.err.tooManyIds": "มี ID มากเกินไป ({{count}}) แต่ละ callout มีได้สูงสุด {{max}} ID (หลัก + นามแฝง)",
+	"import.err.metadataShape": '"metadata" ต้องเป็น object ที่ค่าทั้งหมดเป็น string',
 	"import.warn.unknownFields": "ละเว้นฟิลด์ที่ไม่รู้จัก: {{fields}}",
-	"import.err.duplicateInFile":
-		'ID/นามแฝง "{{value}}" ถูกใช้โดยรายการ #{{first}} ในไฟล์นี้แล้ว',
-	"import.err.aliasConflict":
-		'นามแฝง "{{value}}" ถูกใช้โดย callout อื่น ("{{other}}") ใน vault ของคุณแล้ว',
+	"import.err.duplicateInFile": 'ID/นามแฝง "{{value}}" ถูกใช้โดยรายการ #{{first}} ในไฟล์นี้แล้ว',
+	"import.err.aliasConflict": 'นามแฝง "{{value}}" ถูกใช้โดย callout อื่น ("{{other}}") ใน vault ของคุณแล้ว',
 	"import.warn.defaultFoldedAutofix":
 		'"defaultFolded" เป็น true ในขณะที่ "foldable" เป็น false; defaultFolded ถูกรีเซ็ตเป็น false แล้ว',
 	"import.warn.imageMissing":
 		"Callout นี้ใช้รูปภาพที่ไม่มีในไฟล์และไม่มีใน vault นี้ จึงจะแสดงไอคอนตัวแทนจนกว่าคุณจะกำหนดใหม่",
 
-	"import.err.paletteIdInvalid":
-		'"paletteId" ต้องเป็น ID ข้อความที่ไม่ว่างเปล่า (ได้รับ "{{value}}")',
-	"import.warn.iconNameUnknown":
-		'ไม่มีไอคอน "{{value}}" ใน {{type}} จึงใช้ไอคอนเริ่มต้นแทน',
-	"import.warn.cmIconUnknownNew":
-		'ไอคอน "{{value}}" ไม่พร้อมใช้งานในโวลต์นี้ จึงใช้ไอคอนเริ่มต้นแทน',
+	"import.err.paletteIdInvalid": '"paletteId" ต้องเป็น ID ข้อความที่ไม่ว่างเปล่า (ได้รับ "{{value}}")',
+	"import.warn.iconNameUnknown": 'ไม่มีไอคอน "{{value}}" ใน {{type}} จึงใช้ไอคอนเริ่มต้นแทน',
+	"import.warn.cmIconUnknownNew": 'ไอคอน "{{value}}" ไม่พร้อมใช้งานในโวลต์นี้ จึงใช้ไอคอนเริ่มต้นแทน',
 	"import.warn.cmIconUnknownExisting":
 		'ไอคอน "{{value}}" ไม่พร้อมใช้งานในโวลต์นี้ ดังนั้น "{{id}}" จึงยังคงใช้ไอคอนเดิม',
 	"import.chooseSource": "นำเข้าจาก",
@@ -1048,8 +996,7 @@ export const th: Record<string, string> = {
 	"import.cmVaultChecking": "กำลังค้นหาปลั๊กอิน Callout Manager…",
 	"import.cmVaultFound": "พบ callout ที่กำหนดเอง {{count}} รายการ",
 	"import.cmFromPaste": "สไตล์ที่คัดลอก",
-	"import.cmFromPasteDesc":
-		"สิ่งที่ปุ่ม Copy ของ Callout Manager คัดลอก หรือไฟล์ data.json",
+	"import.cmFromPasteDesc": "สิ่งที่ปุ่ม Copy ของ Callout Manager คัดลอก หรือไฟล์ data.json",
 	"import.cmInstructions":
 		"callout ที่กำหนดเองแต่ละรายการจะนำเข้าพร้อมไอคอนและสี แต่สไตล์เฉพาะธีมและ CSS แบบกำหนดเองไม่มีรูปแบบเทียบเท่าที่นี่ จึงไม่ถูกนำเข้า",
 	"import.cmPlaceholder": "วางสไตล์ที่คัดลอกหรือไฟล์ data.json ที่นี่…",
@@ -1059,17 +1006,17 @@ export const th: Record<string, string> = {
 		"ไม่รู้จักไฟล์นี้: ต้องเป็นสไตล์ที่สร้างจากปุ่ม Copy ของ Callout Manager หรือไฟล์ data.json ของ Callout Manager",
 	"import.err.cmNoEntries": "ไม่พบ callout ที่กำหนดเองเพื่อนำเข้า",
 	"import.err.cmNoBlocksFound": "ไม่พบสไตล์ Callout Manager ในไฟล์หรือข้อความที่วาง",
-	"import.err.cmNoColorForNew":
-		'ไม่พบสีที่ใช้งานได้สำหรับ callout ใหม่ "{{value}}" จึงถูกข้ามไป',
-	"import.warn.cmNoColorDefault":
-		"ไม่ได้ตั้งค่าสีไว้ใน Callout Manager จึงใช้สีเทาเริ่มต้น",
-	"import.err.cmIdConflict":
-		'ID "{{value}}" ถูกใช้เป็น alias โดย callout อื่น ("{{other}}") แล้ว จึงถูกข้ามไป',
+	"import.err.cmNoColorForNew": 'ไม่พบสีที่ใช้งานได้สำหรับ callout ใหม่ "{{value}}" จึงถูกข้ามไป',
+	"import.warn.cmNoColorDefault": "ไม่ได้ตั้งค่าสีไว้ใน Callout Manager จึงใช้สีเทาเริ่มต้น",
+	"import.err.cmIdConflict": 'ID "{{value}}" ถูกใช้เป็น alias โดย callout อื่น ("{{other}}") แล้ว จึงถูกข้ามไป',
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "ไม่สามารถคงรูปแบบที่ขึ้นกับธีมไว้ได้ โดยจะเลือกใช้ค่าแบบไม่มีเงื่อนไขก่อน ส่วนค่าทดแทนแบบมีเงื่อนไขจะใช้กับทุกธีม",
-	"import.warn.cmCustomStylesSkipped": "จะไม่นำเข้า CSS ที่กำหนดเองจาก Callout Manager สามารถย้ายได้เฉพาะการตั้งค่าไอคอนและสีที่รองรับ",
-	"import.warn.cmSchemeIcon": "Callout Studio ใช้ไอคอนเดียวกันสำหรับชุดสีทั้งสองแบบ โดยไอคอนที่นำเข้าจะใช้กับทั้งสองแบบ",
+	"import.warn.cmThemeConditionPartial":
+		"ไม่สามารถคงรูปแบบที่ขึ้นกับธีมไว้ได้ โดยจะเลือกใช้ค่าแบบไม่มีเงื่อนไขก่อน ส่วนค่าทดแทนแบบมีเงื่อนไขจะใช้กับทุกธีม",
+	"import.warn.cmCustomStylesSkipped":
+		"จะไม่นำเข้า CSS ที่กำหนดเองจาก Callout Manager สามารถย้ายได้เฉพาะการตั้งค่าไอคอนและสีที่รองรับ",
+	"import.warn.cmSchemeIcon":
+		"Callout Studio ใช้ไอคอนเดียวกันสำหรับชุดสีทั้งสองแบบ โดยไอคอนที่นำเข้าจะใช้กับทั้งสองแบบ",
 	"import.err.cmDuplicateId": "ID {{value}} ซ้ำกับ {{other}} ในการนำเข้านี้ จึงข้ามรายการดังกล่าว",
 	"import.admTitle": "นำเข้าจาก Admonition",
 	"import.admInstructions":
@@ -1083,38 +1030,31 @@ export const th: Record<string, string> = {
 	"import.admFromFileDesc": "ไฟล์ admonitions.json หรือชุดที่แชร์กันมา",
 	"import.admBtnCancel": "ยกเลิก",
 	"import.admBtnImport": "นำเข้า",
-	"import.err.admNotRecognized":
-		"ไม่รู้จักไฟล์นี้: ต้องเป็นรายการ admonition หรือไฟล์ data.json " +
-		"ของ Admonition",
+	"import.err.admNotRecognized": "ไม่รู้จักไฟล์นี้: ต้องเป็นรายการ admonition หรือไฟล์ data.json " + "ของ Admonition",
 	"import.err.admNoEntries": "ไม่พบ admonition ที่จะนำเข้า",
 	"import.err.admTypeMissing": 'admonition นี้ไม่มี "type" จึงถูกข้ามไป',
-	"import.warn.admIconUnknown":
-		'ไม่พบไอคอนชื่อ "{{value}}" ในคลังไอคอนใดเลย ' +
-		"จึงใช้ไอคอนเริ่มต้นแทน",
+	"import.warn.admIconUnknown": 'ไม่พบไอคอนชื่อ "{{value}}" ในคลังไอคอนใดเลย ' + "จึงใช้ไอคอนเริ่มต้นแทน",
 	"import.warn.admIconUnknownExisting":
-		'ไม่พบไอคอนชื่อ "{{value}}" ในคลังไอคอนใดเลย "{{id}}" ' +
-		"จึงยังคงใช้ไอคอนเดิม",
+		'ไม่พบไอคอนชื่อ "{{value}}" ในคลังไอคอนใดเลย "{{id}}" ' + "จึงยังคงใช้ไอคอนเดิม",
 	"import.warn.admUnsupportedOptions": "ไม่นำเข้าตัวเลือก Admonition เหล่านี้: {{fields}}",
 	"import.warn.admImageSkipped": "อ่านรูปภาพที่อัปโหลดไม่ได้ จึงไม่นำเข้ารูปภาพดังกล่าว",
 	"import.warn.admIconWithCss":
 		"admonition นี้จัดรูปแบบด้วยสไนปเป็ต CSS ใน Admonition " +
 		"สไตล์นั้นไม่ได้รวมอยู่ในการนำเข้า จึงนำมาเฉพาะชื่อ ไอคอน และสี",
 	"import.warn.admNoColor": "ไม่ได้ตั้งค่าสีไว้ จึงใช้สีน้ำเงินเริ่มต้น",
-	"import.warn.admTitleTruncated":
-		"หัวเรื่องยาว {{length}} อักขระ ถูกย่อเหลือ {{max}}",
+	"import.warn.admTitleTruncated": "หัวเรื่องยาว {{length}} อักขระ ถูกย่อเหลือ {{max}}",
 
 	"footer.openIssue": "เปิด issue",
 	"footer.sourceCode": "ซอร์สโค้ด",
 	"settings.about": "เกี่ยวกับ",
 	"settings.version": "เวอร์ชัน",
 	"settings.deletePaletteBodyLinkedOne":
-		'มี 1 callout ใช้งานอยู่ มันจะคงสีเดิมไว้ และคุณสามารถเชื่อมโยงกลับได้ภายหลังจากแถวสีในตัวแก้ไขของมัน',
+		"มี 1 callout ใช้งานอยู่ มันจะคงสีเดิมไว้ และคุณสามารถเชื่อมโยงกลับได้ภายหลังจากแถวสีในตัวแก้ไขของมัน",
 	"settings.deletePaletteBodyLinked":
-		'มี {{count}} callout ใช้งานอยู่ พวกมันจะคงสีเดิมไว้ และคุณสามารถเชื่อมโยงกลับได้ภายหลังจากแถวสีในตัวแก้ไขของแต่ละรายการ',
+		"มี {{count}} callout ใช้งานอยู่ พวกมันจะคงสีเดิมไว้ และคุณสามารถเชื่อมโยงกลับได้ภายหลังจากแถวสีในตัวแก้ไขของแต่ละรายการ",
 	"notice.palettesMerged":
 		"รวมสีที่บันทึกไว้ {{count}} รายการที่มีสีเหมือนกัน: {{names}} callout ที่ใช้สีเหล่านี้จะยังคงสีเดิม และตอนนี้เชื่อมโยงกับสีที่เหลืออยู่แล้ว",
-	"editor.colorsDescDeleted":
-		"สีที่บันทึกไว้ของ callout นี้ถูกลบแล้ว {{link}}",
+	"editor.colorsDescDeleted": "สีที่บันทึกไว้ของ callout นี้ถูกลบแล้ว {{link}}",
 	"editor.colorsDescDeletedLink": "กู้คืน",
 	"palette.colorExists":
 		'สีเหล่านี้เหมือนกับ "{{name}}" ทุกประการ ไม่สามารถมีสีที่บันทึกไว้สองรายการที่เหมือนกันได้ — เปลี่ยนสีหนึ่งสีเพื่อให้แยกกันได้',
@@ -1125,14 +1065,12 @@ export const th: Record<string, string> = {
 	"locale.downloaded": "ดาวน์โหลดคำแปลแล้ว",
 	"locale.notDownloaded": "ยังไม่ได้ดาวน์โหลด {{name}}",
 	"locale.retry": "ลองอีกครั้ง",
-	"locale.diskWriteFailed":
-		"Callout Studio ไม่สามารถบันทึกคำแปลลงดิสก์ได้ จึงต้องดาวน์โหลดใหม่ในครั้งถัดไป",
+	"locale.diskWriteFailed": "Callout Studio ไม่สามารถบันทึกคำแปลลงดิสก์ได้ จึงต้องดาวน์โหลดใหม่ในครั้งถัดไป",
 	"notice.exportedCssCreated": "บันทึก CSS snippet ไว้ที่ {{path}} แล้ว",
 	"notice.exportedCssUpdated": "อัปเดต CSS snippet ที่ {{path}} แล้ว",
 	"notice.exportedCssUnchanged": "CSS snippet เป็นข้อมูลล่าสุดอยู่แล้ว",
 	"notice.exportCssEmpty": "ไม่มี callout แบบกำหนดเองให้ส่งออก",
-	"notice.exportCssFailed":
-		"ไม่สามารถบันทึก CSS snippet ได้ ดูรายละเอียดในคอนโซลนักพัฒนา",
+	"notice.exportCssFailed": "ไม่สามารถบันทึก CSS snippet ได้ ดูรายละเอียดในคอนโซลนักพัฒนา",
 	"notice.exportCssEnabled":
 		"เปิดใช้ snippet นี้ใน vault นี้อยู่ Callout Studio จัดรูปแบบ callout เหล่านี้อยู่แล้ว และ snippet จะคงรูปแบบ ณ เวลาที่ส่งออก",
 	"confirm.titleOverwriteSnippet": "เขียนทับ CSS snippet",
@@ -1153,108 +1091,147 @@ export const th: Record<string, string> = {
 	"quickInsert.readingView": "สลับไปยังโหมดต้นฉบับหรือ Live Preview เพื่อแทรก callout",
 	"quickInsert.noCursorHint": "ไม่มีเคอร์เซอร์ในบันทึกนี้ จึงไม่มีตำแหน่งให้แทรก",
 	"quickInsert.noCursor": "วางเคอร์เซอร์ในบันทึกตรงตำแหน่งที่ต้องการแทรก callout แล้วลองอีกครั้ง",
-	"notice.legacyDiscoveryArchiveFailed": "ไม่สามารถดำเนินการสร้างสำเนาการกู้คืนสำหรับการอัปเกรดให้เสร็จสมบูรณ์ได้ ระบบได้เก็บแคชการค้นหาในเครื่องและ CSS เริ่มต้นเดิมไว้โดยไม่เปลี่ยนแปลง โปรดตรวจสอบสิทธิ์การเขียนข้อมูลและพื้นที่ว่างในพื้นที่จัดเก็บข้อมูล แล้วเริ่ม Obsidian ใหม่เพื่อลองอีกครั้ง",
+	"notice.legacyDiscoveryArchiveFailed":
+		"ไม่สามารถดำเนินการสร้างสำเนาการกู้คืนสำหรับการอัปเกรดให้เสร็จสมบูรณ์ได้ ระบบได้เก็บแคชการค้นหาในเครื่องและ CSS เริ่มต้นเดิมไว้โดยไม่เปลี่ยนแปลง โปรดตรวจสอบสิทธิ์การเขียนข้อมูลและพื้นที่ว่างในพื้นที่จัดเก็บข้อมูล แล้วเริ่ม Obsidian ใหม่เพื่อลองอีกครั้ง",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "หยุดชั่วคราวจนกว่าคุณจะสร้าง callout ที่หายไปใหม่หรือเลือกอันอื่น",
 	"confirm.titleRestoreSettings": "กู้คืนการตั้งค่าเหล่านี้",
 	"confirm.titleCreateSettingsFile": "สร้างไฟล์การตั้งค่า",
 	"confirm.saveDisplayedSettings":
 		"การกระทำนี้จะบันทึกการตั้งค่าที่คุณเห็นอยู่ตอนนี้เป็นไฟล์การตั้งค่าของคุณ และเปิดการบันทึกอีกครั้ง สำเนาสำรองที่อุปกรณ์เครื่องนี้เก็บไว้จะถูกสำรองก่อน\nหากอุปกรณ์เครื่องอื่นอาจมีการเปลี่ยนแปลงที่ใหม่กว่าซึ่งคุณต้องการเก็บไว้ ให้รอให้อุปกรณ์นั้นซิงก์ให้เสร็จก่อนดำเนินการต่อ แอปซิงก์ของคุณอาจส่งไฟล์นี้ไปยังอุปกรณ์เครื่องอื่นของคุณ\nCallout Studio จะค้นหาไฟล์การตั้งค่าอีกครั้งก่อนบันทึก หากไฟล์กลับมาแล้ว Callout Studio จะเก็บไฟล์นั้นไว้แทน",
-	"notice.settingsBackupFailed": "การกู้คืนการตั้งค่าไม่สามารถดำเนินต่อได้ เนื่องจากไม่สามารถบันทึกข้อมูลสำรองเพื่อความปลอดภัยได้ ตรวจสอบพื้นที่จัดเก็บข้อมูลที่ว่างและสิทธิ์ในการเขียน แล้วลองใหม่อีกครั้ง",
-	"notice.settingsNewerVersion": "การตั้งค่าของ Callout Studio ถูกบันทึกโดยปลั๊กอินเวอร์ชันใหม่กว่า ดังนั้นจะไม่มีการเขียนสิ่งใดบนอุปกรณ์นี้จนกว่าคุณจะอัปเดต การตั้งค่าของคุณปลอดภัย — อัปเดต Callout Studio ที่นี่แล้วโหลด Obsidian ใหม่",
+	"notice.settingsBackupFailed":
+		"การกู้คืนการตั้งค่าไม่สามารถดำเนินต่อได้ เนื่องจากไม่สามารถบันทึกข้อมูลสำรองเพื่อความปลอดภัยได้ ตรวจสอบพื้นที่จัดเก็บข้อมูลที่ว่างและสิทธิ์ในการเขียน แล้วลองใหม่อีกครั้ง",
+	"notice.settingsNewerVersion":
+		"การตั้งค่าของ Callout Studio ถูกบันทึกโดยปลั๊กอินเวอร์ชันใหม่กว่า ดังนั้นจะไม่มีการเขียนสิ่งใดบนอุปกรณ์นี้จนกว่าคุณจะอัปเดต การตั้งค่าของคุณปลอดภัย — อัปเดต Callout Studio ที่นี่แล้วโหลด Obsidian ใหม่",
 	"saveStatus.changed":
 		"ไฟล์การตั้งค่าเปลี่ยนแปลงระหว่างที่คุณแก้ไข ฉบับร่างของคุณยังอยู่ เลือก ลองอีกครั้ง เพื่อโหลดการตั้งค่าที่เข้ามา จากนั้นตรวจสอบฉบับร่างแล้วบันทึกอีกครั้ง",
-	"saveStatus.missing": "การบันทึกถูกหยุดชั่วคราวเนื่องจากไม่มีไฟล์การตั้งค่า สิ่งนี้อาจเกิดขึ้นหลังการติดตั้งใหม่หรือขณะที่การซิงค์ยังทำงานอยู่ ทำการซิงค์ให้เสร็จแล้วลองใหม่อีกครั้ง หากต้องการแทนที่ไฟล์ที่หายไปโดยตั้งใจ ให้ใช้สร้างไฟล์การตั้งค่าใหม่ ในการตั้งค่าของ Callout Studio",
+	"saveStatus.missing":
+		"การบันทึกถูกหยุดชั่วคราวเนื่องจากไม่มีไฟล์การตั้งค่า สิ่งนี้อาจเกิดขึ้นหลังการติดตั้งใหม่หรือขณะที่การซิงค์ยังทำงานอยู่ ทำการซิงค์ให้เสร็จแล้วลองใหม่อีกครั้ง หากต้องการแทนที่ไฟล์ที่หายไปโดยตั้งใจ ให้ใช้สร้างไฟล์การตั้งค่าใหม่ ในการตั้งค่าของ Callout Studio",
 	"saveStatus.restoreSettings": "กู้คืนการตั้งค่าเหล่านี้",
 	"saveStatus.createSettingsFile": "สร้างไฟล์การตั้งค่า",
 	"saveStatus.checkAgain": "ตรวจสอบอีกครั้ง",
-	"saveStatus.recoverInSettings": "หากต้องการกู้คืนไฟล์ที่หายไปบนอุปกรณ์นี้ ให้เปิดการตั้งค่า Callout Studio ก่อนปิดตัวแก้ไขนี้ ให้คัดลอกการแก้ไขที่ยังไม่ได้บันทึกซึ่งคุณต้องการเก็บไว้ การแก้ไขเหล่านั้นยังไม่ได้ถูกบันทึก",
+	"saveStatus.recoverInSettings":
+		"หากต้องการกู้คืนไฟล์ที่หายไปบนอุปกรณ์นี้ ให้เปิดการตั้งค่า Callout Studio ก่อนปิดตัวแก้ไขนี้ ให้คัดลอกการแก้ไขที่ยังไม่ได้บันทึกซึ่งคุณต้องการเก็บไว้ การแก้ไขเหล่านั้นยังไม่ได้ถูกบันทึก",
 	"saveStatus.openSettings": "เปิดการตั้งค่า Callout Studio",
-	"notice.openSettingsFailed": "ไม่สามารถเปิดการตั้งค่า Callout Studio ได้ เปิดการตั้งค่า → Callout Studio เพื่อเลือกสิ่งที่จะทำ",
-	"saveStatus.notesFailed": "นิยาม callout ถูกบันทึกแล้ว แต่การอัปเดตบันทึกบางส่วนไม่สามารถทำให้เสร็จสมบูรณ์ได้ เปิดตัวแก้ไขนี้ค้างไว้แล้วเลือกบันทึกเพื่อลองการอัปเดตที่ยังไม่เสร็จอีกครั้ง",
-	"saveStatus.recoveryRead": "การบันทึกถูกหยุดชั่วคราวเนื่องจากไม่สามารถอ่านสำเนากู้คืนในเครื่องได้ ไฟล์การตั้งค่าของคุณอาจยังคงสมบูรณ์ ตรวจสอบพื้นที่จัดเก็บข้อมูลที่ว่าง แล้วลองกู้คืนอีกครั้ง ข้อมูลกู้คืนที่มีอยู่จะไม่ถูกเขียนทับ",
-	"saveStatus.recoveryWrite": "ไม่สามารถบันทึกสำเนากู้คืนในเครื่องได้ ตรวจสอบพื้นที่จัดเก็บข้อมูลที่ว่าง แล้วลองใหม่อีกครั้ง เปิดฉบับร่างของคุณค้างไว้จนกว่าการบันทึกจะสำเร็จ",
-	"saveStatus.retryFailed": "การบันทึกยังคงถูกบล็อกอยู่ ตรวจสอบสถานะการบันทึกในการตั้งค่าของ Callout Studio เพื่อดูสาเหตุ แล้วลองใหม่อีกครั้ง",
-	"saveStatus.reviewDraft": "การตั้งค่าที่เข้ามาและการตรวจสอบการกู้คืนเสร็จสมบูรณ์แล้ว ฉบับร่างของคุณไม่มีการเปลี่ยนแปลง ตรวจสอบแล้วบันทึกอีกครั้ง",
+	"notice.openSettingsFailed":
+		"ไม่สามารถเปิดการตั้งค่า Callout Studio ได้ เปิดการตั้งค่า → Callout Studio เพื่อเลือกสิ่งที่จะทำ",
+	"saveStatus.notesFailed":
+		"นิยาม callout ถูกบันทึกแล้ว แต่การอัปเดตบันทึกบางส่วนไม่สามารถทำให้เสร็จสมบูรณ์ได้ เปิดตัวแก้ไขนี้ค้างไว้แล้วเลือกบันทึกเพื่อลองการอัปเดตที่ยังไม่เสร็จอีกครั้ง",
+	"saveStatus.recoveryRead":
+		"การบันทึกถูกหยุดชั่วคราวเนื่องจากไม่สามารถอ่านสำเนากู้คืนในเครื่องได้ ไฟล์การตั้งค่าของคุณอาจยังคงสมบูรณ์ ตรวจสอบพื้นที่จัดเก็บข้อมูลที่ว่าง แล้วลองกู้คืนอีกครั้ง ข้อมูลกู้คืนที่มีอยู่จะไม่ถูกเขียนทับ",
+	"saveStatus.recoveryWrite":
+		"ไม่สามารถบันทึกสำเนากู้คืนในเครื่องได้ ตรวจสอบพื้นที่จัดเก็บข้อมูลที่ว่าง แล้วลองใหม่อีกครั้ง เปิดฉบับร่างของคุณค้างไว้จนกว่าการบันทึกจะสำเร็จ",
+	"saveStatus.retryFailed":
+		"การบันทึกยังคงถูกบล็อกอยู่ ตรวจสอบสถานะการบันทึกในการตั้งค่าของ Callout Studio เพื่อดูสาเหตุ แล้วลองใหม่อีกครั้ง",
+	"saveStatus.reviewDraft":
+		"การตั้งค่าที่เข้ามาและการตรวจสอบการกู้คืนเสร็จสมบูรณ์แล้ว ฉบับร่างของคุณไม่มีการเปลี่ยนแปลง ตรวจสอบแล้วบันทึกอีกครั้ง",
 	"saveStatus.settingsArrived": "การตั้งค่าที่มีอยู่มาถึงและถูกโหลดแล้ว ไม่มีการสร้างไฟล์ทดแทน",
-	"saveStatus.syncConflict": "การตั้งค่าที่เข้ามาขัดแย้งกับ callout ที่จำเป็นสำหรับการอัปเดตบันทึกที่ยังไม่เสร็จ ฉบับร่างของคุณและการอัปเดตที่ค้างอยู่ถูกเก็บรักษาไว้ แก้ไขความขัดแย้งของการตั้งค่าก่อนลองใหม่อีกครั้ง",
+	"saveStatus.syncConflict":
+		"การตั้งค่าที่เข้ามาขัดแย้งกับ callout ที่จำเป็นสำหรับการอัปเดตบันทึกที่ยังไม่เสร็จ ฉบับร่างของคุณและการอัปเดตที่ค้างอยู่ถูกเก็บรักษาไว้ แก้ไขความขัดแย้งของการตั้งค่าก่อนลองใหม่อีกครั้ง",
 	"saveStatus.titlePaused": "การบันทึกถูกหยุดชั่วคราว",
 	"saveStatus.titleFailed": "การตั้งค่าไม่ถูกบันทึก",
 	"saveStatus.tryAgain": "ลองอีกครั้ง",
 	"saveStatus.working": "กำลังดำเนินการ…",
-	"saveStatus.unreadable": "การบันทึกถูกหยุดชั่วคราวเนื่องจากไม่สามารถอ่านไฟล์การตั้งค่าได้อย่างปลอดภัย ทำการซิงค์ให้เสร็จหรือกู้คืนสำเนาที่ถูกต้อง แล้วลองใหม่อีกครั้ง ไฟล์ที่มีอยู่ถูกเก็บรักษาไว้",
-	"saveStatus.write": "ไม่สามารถบันทึกไฟล์การตั้งค่าได้ ตรวจสอบพื้นที่จัดเก็บข้อมูลที่ว่าง สิทธิ์ของโฟลเดอร์ และการซิงค์ แล้วลองใหม่อีกครั้งก่อนปิด Obsidian",
-	"saveStatus.writePermission": "ไม่สามารถบันทึกไฟล์การตั้งค่าได้ เนื่องจากพื้นที่จัดเก็บข้อมูลปฏิเสธการเข้าถึงเพื่อเขียน ตรวจสอบว่า vault และโฟลเดอร์ปลั๊กอินสามารถเขียนได้ แล้วลองใหม่อีกครั้ง",
-	"saveStatus.writeSpace": "ไม่สามารถบันทึกไฟล์การตั้งค่าได้ เนื่องจากพื้นที่จัดเก็บข้อมูลเต็มหรือเกินโควตา เพิ่มพื้นที่ว่างแล้วลองใหม่อีกครั้ง",
-	"settings.readOnly": "Callout Studio ไม่สามารถใช้ไฟล์การตั้งค่าของตนตอนที่ Obsidian เริ่มทำงาน ดังนั้นสิ่งใดในหน้านี้จะไม่ถูกบันทึกบนอุปกรณ์นี้ การเปลี่ยนแปลงของคุณจะคงอยู่จนกว่าคุณจะปิด Obsidian โหลด Obsidian ใหม่ทันทีที่ไฟล์กลับมา — หากคุณซิงค์ vault นี้ ให้รอให้การซิงค์เสร็จสิ้นก่อน",
+	"saveStatus.unreadable":
+		"การบันทึกถูกหยุดชั่วคราวเนื่องจากไม่สามารถอ่านไฟล์การตั้งค่าได้อย่างปลอดภัย ทำการซิงค์ให้เสร็จหรือกู้คืนสำเนาที่ถูกต้อง แล้วลองใหม่อีกครั้ง ไฟล์ที่มีอยู่ถูกเก็บรักษาไว้",
+	"saveStatus.write":
+		"ไม่สามารถบันทึกไฟล์การตั้งค่าได้ ตรวจสอบพื้นที่จัดเก็บข้อมูลที่ว่าง สิทธิ์ของโฟลเดอร์ และการซิงค์ แล้วลองใหม่อีกครั้งก่อนปิด Obsidian",
+	"saveStatus.writePermission":
+		"ไม่สามารถบันทึกไฟล์การตั้งค่าได้ เนื่องจากพื้นที่จัดเก็บข้อมูลปฏิเสธการเข้าถึงเพื่อเขียน ตรวจสอบว่า vault และโฟลเดอร์ปลั๊กอินสามารถเขียนได้ แล้วลองใหม่อีกครั้ง",
+	"saveStatus.writeSpace":
+		"ไม่สามารถบันทึกไฟล์การตั้งค่าได้ เนื่องจากพื้นที่จัดเก็บข้อมูลเต็มหรือเกินโควตา เพิ่มพื้นที่ว่างแล้วลองใหม่อีกครั้ง",
+	"settings.readOnly":
+		"Callout Studio ไม่สามารถใช้ไฟล์การตั้งค่าของตนตอนที่ Obsidian เริ่มทำงาน ดังนั้นสิ่งใดในหน้านี้จะไม่ถูกบันทึกบนอุปกรณ์นี้ การเปลี่ยนแปลงของคุณจะคงอยู่จนกว่าคุณจะปิด Obsidian โหลด Obsidian ใหม่ทันทีที่ไฟล์กลับมา — หากคุณซิงค์ vault นี้ ให้รอให้การซิงค์เสร็จสิ้นก่อน",
 
 	// Sync safety hardening
 	"saveStatus.diagnosis.unavailable":
 		"อุปกรณ์นี้ไม่สามารถเปิดไฟล์ได้ในขณะนี้ อาจเป็นเพราะไฟล์ยังดาวน์โหลดไม่เสร็จ vault อาจไม่พร้อมใช้งานแบบออฟไลน์ หรือระบบจัดเก็บข้อมูลไม่ตอบสนอง Callout Studio จะตรวจสอบอีกครั้งโดยอัตโนมัติ",
-	"saveStatus.diagnosis.empty": "ไฟล์ว่างเปล่า ซึ่งมักหมายความว่าการซิงค์ถูกขัดจังหวะ หากอุปกรณ์อื่นยังมีการตั้งค่าของคุณอยู่ ให้รอให้มันซิงค์ มิฉะนั้นให้แทนที่ไฟล์",
-	"saveStatus.diagnosis.mergeMarkers": "ไฟล์มีเครื่องหมายความขัดแย้งจากการผสานที่ยังไม่ได้แก้ไข เช่น จาก Git ให้แก้ไขความขัดแย้งในเครื่องมือ Git ของคุณ หรือแทนที่ไฟล์",
+	"saveStatus.diagnosis.empty":
+		"ไฟล์ว่างเปล่า ซึ่งมักหมายความว่าการซิงค์ถูกขัดจังหวะ หากอุปกรณ์อื่นยังมีการตั้งค่าของคุณอยู่ ให้รอให้มันซิงค์ มิฉะนั้นให้แทนที่ไฟล์",
+	"saveStatus.diagnosis.mergeMarkers":
+		"ไฟล์มีเครื่องหมายความขัดแย้งจากการผสานที่ยังไม่ได้แก้ไข เช่น จาก Git ให้แก้ไขความขัดแย้งในเครื่องมือ Git ของคุณ หรือแทนที่ไฟล์",
 	"saveStatus.diagnosis.damaged": "ไฟล์ไม่สมบูรณ์หรือเสียหาย จึงไม่สามารถอ่านเป็นการตั้งค่าได้",
 	"saveStatus.diagnosis.combined":
 		"บริการซิงค์ของคุณได้รวมไฟล์สองเวอร์ชันเข้าด้วยกัน ทำให้การตรวจสอบภายในของไฟล์ไม่ตรงกันอีกต่อไป การตั้งค่าภายในยังคงสมบูรณ์ และการแทนที่ไฟล์จะรักษาไว้ได้",
-	"saveStatus.diagnosis.invalidEntries": "ไฟล์มีรายการที่ Callout Studio ไม่สามารถใช้งานได้ เช่น callout ประเภทเดียวกันที่ระบุซ้ำสองครั้ง",
+	"saveStatus.diagnosis.invalidEntries":
+		"ไฟล์มีรายการที่ Callout Studio ไม่สามารถใช้งานได้ เช่น callout ประเภทเดียวกันที่ระบุซ้ำสองครั้ง",
 	"saveStatus.replaceUnreadable": "แทนที่ไฟล์การตั้งค่า",
 	"saveStatus.discardRecoveryCopy": "ยกเลิกสำเนากู้คืน",
 	"saveStatus.calm.opening": "ก่อนอื่น หายใจลึก ๆ — ทุกอย่างจะเรียบร้อยดี",
 	"saveStatus.calm.kept": "โน้ตของคุณปลอดภัย และ callout ของคุณยังอยู่ที่นี่บนอุปกรณ์เครื่องนี้",
 	"saveStatus.calm.safe": "โน้ตของคุณปลอดภัย",
-	"saveStatus.calm.pausedPage": "Callout Studio เพียงหยุดการบันทึกชั่วคราวเพื่อปกป้องการตั้งค่าของคุณ หน้านี้จึงอ่านได้อย่างเดียวในตอนนี้",
+	"saveStatus.calm.pausedPage":
+		"Callout Studio เพียงหยุดการบันทึกชั่วคราวเพื่อปกป้องการตั้งค่าของคุณ หน้านี้จึงอ่านได้อย่างเดียวในตอนนี้",
 	"saveStatus.calm.paused": "Callout Studio เพียงหยุดการบันทึกชั่วคราวเพื่อปกป้องการตั้งค่าของคุณ",
 	"saveStatus.explain.missing":
 		"Callout Studio หาไฟล์การตั้งค่าของตัวเองไม่พบ ซึ่งมักเกิดขึ้นขณะที่แอปซิงก์ของคุณยังดาวน์โหลดไฟล์อยู่ หรือหลังจากที่ Callout Studio ถูกลบบนอุปกรณ์อื่น",
 	"saveStatus.explain.stillMissing":
 		"ไฟล์การตั้งค่ายังไม่กลับมา การตรวจสอบเพียงค้นหาไฟล์และไม่เคยสร้างไฟล์ใหม่ หากคลังของคุณอยู่ใน iCloud, OneDrive, Google Drive หรือ Dropbox โปรดตรวจสอบว่าตั้งค่าให้คงการดาวน์โหลดไว้บนอุปกรณ์เครื่องนี้",
-	"saveStatus.explain.unreadable": "ตอนนี้ Callout Studio อ่านไฟล์การตั้งค่าของตัวเองไม่ได้ จึงปล่อยไฟล์ไว้ตามเดิมทุกประการ",
+	"saveStatus.explain.unreadable":
+		"ตอนนี้ Callout Studio อ่านไฟล์การตั้งค่าของตัวเองไม่ได้ จึงปล่อยไฟล์ไว้ตามเดิมทุกประการ",
 	"saveStatus.explain.recoveryRead":
 		"Callout Studio เก็บสำเนาสำรองของการตั้งค่าไว้บนอุปกรณ์เครื่องนี้ และตอนนี้อ่านสำเนานั้นไม่ได้ ตัวไฟล์การตั้งค่าเองอาจยังปกติดี",
 	"saveStatus.explain.newerVersion":
 		"การตั้งค่าของคุณถูกบันทึกโดย Callout Studio เวอร์ชันที่ใหม่กว่า เวอร์ชันเก่านี้จึงจะไม่เปลี่ยนแปลงการตั้งค่า",
-	"saveStatus.explain.changed": "ไฟล์การตั้งค่าเปลี่ยนแปลงขณะที่ Callout Studio กำลังทำงานกับไฟล์นั้น จึงหยุดโดยไม่แทนที่สิ่งใด",
-	"saveStatus.guide.rechecks": "Callout Studio จะตรวจสอบอีกครั้งทุกนาทีตราบเท่าที่ Obsidian เปิดอยู่ ปัญหานี้จึงมักหายเอง",
+	"saveStatus.explain.changed":
+		"ไฟล์การตั้งค่าเปลี่ยนแปลงขณะที่ Callout Studio กำลังทำงานกับไฟล์นั้น จึงหยุดโดยไม่แทนที่สิ่งใด",
+	"saveStatus.guide.rechecks":
+		"Callout Studio จะตรวจสอบอีกครั้งทุกนาทีตราบเท่าที่ Obsidian เปิดอยู่ ปัญหานี้จึงมักหายเอง",
 	"saveStatus.guide.rechecksCheckNow":
 		"Callout Studio จะตรวจสอบอีกครั้งทุกนาทีตราบเท่าที่ Obsidian เปิดอยู่ ปัญหานี้จึงมักหายเอง หรือเลือก ตรวจสอบอีกครั้ง เพื่อดูทันที",
-	"saveStatus.guide.restore": "หากการตั้งค่าของคุณไม่กลับมา ให้เลือก กู้คืนการตั้งค่าเหล่านี้ เพื่อเก็บ callout ที่คุณเห็นอยู่ตรงนี้ไว้",
+	"saveStatus.guide.restore":
+		"หากการตั้งค่าของคุณไม่กลับมา ให้เลือก กู้คืนการตั้งค่าเหล่านี้ เพื่อเก็บ callout ที่คุณเห็นอยู่ตรงนี้ไว้",
 	"saveStatus.guide.create": "หากการตั้งค่าของคุณไม่กลับมา ให้เลือก สร้างไฟล์การตั้งค่า เพื่อเริ่มบันทึกอีกครั้ง",
 	"saveStatus.guide.recoveryRetry": "ตรวจสอบว่าอุปกรณ์เครื่องนี้มีพื้นที่จัดเก็บว่างอยู่บ้าง แล้วเลือก ลองอีกครั้ง",
 	"saveStatus.guide.recoveryDiscard":
 		"หากยังไม่ได้ผล ให้เลือก ยกเลิกสำเนากู้คืน ระบบจะบันทึกสำเนาที่ตรงกันทุกประการก่อน และไม่แตะต้องไฟล์การตั้งค่าของคุณ",
 	"saveStatus.guide.newerVersion": "อัปเดต Callout Studio ที่การตั้งค่า → ปลั๊กอินชุมชน แล้วโหลด Obsidian ใหม่",
-	"saveStatus.missingNotice": "โน้ตของคุณปลอดภัย Callout Studio หยุดการบันทึกชั่วคราวเพราะตอนนี้หาไฟล์การตั้งค่าของตัวเองไม่พบ",
+	"saveStatus.missingNotice":
+		"โน้ตของคุณปลอดภัย Callout Studio หยุดการบันทึกชั่วคราวเพราะตอนนี้หาไฟล์การตั้งค่าของตัวเองไม่พบ",
 	"statusBar.paused": "หยุดการบันทึกชั่วคราว",
 	"statusBar.pausedTooltip": "Callout Studio ไม่ได้บันทึกการเปลี่ยนแปลงการตั้งค่า คลิกเพื่อดูสาเหตุ",
 	"statusBar.pausedNotice": "ขณะนี้ Callout Studio ไม่ได้บันทึกการเปลี่ยนแปลงการตั้งค่า",
 	"saveStatus.resumed": "การบันทึกกลับมาทำงานแล้ว Callout Studio กำลังบันทึกการเปลี่ยนแปลงการตั้งค่าอีกครั้ง",
-	"notice.replaceUnreadableUnavailable": "ไม่สามารถแทนที่ไฟล์การตั้งค่าได้ในขณะนี้ เนื่องจากกำลังมีการเปลี่ยนแปลง หรืออุปกรณ์นี้ไม่สามารถอ่านไฟล์ได้ ลองอีกครั้งในอีกสักครู่",
-	"notice.recoveryStorageUnavailable": "ระบบจัดเก็บข้อมูลสำหรับกู้คืนของอุปกรณ์นี้ไม่ตอบสนอง จึงไม่สามารถยกเลิกสำเนาได้ ให้รีสตาร์ท Obsidian แล้วลองอีกครั้ง",
+	"notice.replaceUnreadableUnavailable":
+		"ไม่สามารถแทนที่ไฟล์การตั้งค่าได้ในขณะนี้ เนื่องจากกำลังมีการเปลี่ยนแปลง หรืออุปกรณ์นี้ไม่สามารถอ่านไฟล์ได้ ลองอีกครั้งในอีกสักครู่",
+	"notice.recoveryStorageUnavailable":
+		"ระบบจัดเก็บข้อมูลสำหรับกู้คืนของอุปกรณ์นี้ไม่ตอบสนอง จึงไม่สามารถยกเลิกสำเนาได้ ให้รีสตาร์ท Obsidian แล้วลองอีกครั้ง",
 	"recovery.unreadable": "ไม่สามารถอ่านเป็นการตั้งค่าได้",
 	"recovery.same": "เหมือนกับชุดตั้งค่าปัจจุบันของคุณ",
 	"recovery.restore": "กู้คืน",
-	"recovery.stale": "ไม่มีการกู้คืนใดๆ เนื่องจากการตั้งค่าของคุณเปลี่ยนไปหรือไม่สามารถตรวจสอบได้ เปิดหน้าต่างนี้อีกครั้งแล้วตรวจสอบรายการ",
-	"notice.recoveryCopyStale": "บันทึกการตั้งค่าของคุณแล้ว แต่ไม่สามารถอัปเดตสำเนากู้คืนของอุปกรณ์นี้ได้ ตรวจสอบพื้นที่จัดเก็บข้อมูลที่ว่างบนอุปกรณ์นี้ Callout Studio จะลองใหม่อีกครั้งในการเปลี่ยนแปลงครั้งถัดไปของคุณ",
-	"notice.blockedWhilePaused": "การบันทึกถูกหยุดชั่วคราว จึงไม่สามารถเก็บการเปลี่ยนแปลงนี้ไว้ได้ในขณะนี้ ให้แก้ไขปัญหาการบันทึกที่แสดงในการตั้งค่าของ Callout Studio ก่อน",
-	"welcome.syncNote": "ใช้ Callout Studio บนอุปกรณ์อื่นอยู่แล้วหรือไม่ ให้รอบริการซิงค์ของคุณเสร็จสิ้นก่อน callout และการตั้งค่าของคุณจะปรากฏที่นี่เมื่อมาถึง",
-	"settings.resetBackupFailed": "ไม่มีการรีเซ็ตใดๆ เนื่องจากไม่สามารถบันทึกสำเนาสำรองของชุดตั้งค่าปัจจุบันได้ก่อน ตรวจสอบพื้นที่จัดเก็บข้อมูลที่ว่างแล้วลองอีกครั้ง",
-	"settings.resetNotSaved": "การรีเซ็ตแสดงอยู่แต่ยังไม่สามารถบันทึกได้ ดังนั้นไฟล์การตั้งค่าของคุณจึงยังคงเป็นชุดตั้งค่าก่อนหน้า ตรวจสอบสถานะการบันทึกในการตั้งค่าของ Callout Studio",
+	"recovery.stale":
+		"ไม่มีการกู้คืนใดๆ เนื่องจากการตั้งค่าของคุณเปลี่ยนไปหรือไม่สามารถตรวจสอบได้ เปิดหน้าต่างนี้อีกครั้งแล้วตรวจสอบรายการ",
+	"notice.recoveryCopyStale":
+		"บันทึกการตั้งค่าของคุณแล้ว แต่ไม่สามารถอัปเดตสำเนากู้คืนของอุปกรณ์นี้ได้ ตรวจสอบพื้นที่จัดเก็บข้อมูลที่ว่างบนอุปกรณ์นี้ Callout Studio จะลองใหม่อีกครั้งในการเปลี่ยนแปลงครั้งถัดไปของคุณ",
+	"notice.blockedWhilePaused":
+		"การบันทึกถูกหยุดชั่วคราว จึงไม่สามารถเก็บการเปลี่ยนแปลงนี้ไว้ได้ในขณะนี้ ให้แก้ไขปัญหาการบันทึกที่แสดงในการตั้งค่าของ Callout Studio ก่อน",
+	"welcome.syncNote":
+		"ใช้ Callout Studio บนอุปกรณ์อื่นอยู่แล้วหรือไม่ ให้รอบริการซิงค์ของคุณเสร็จสิ้นก่อน callout และการตั้งค่าของคุณจะปรากฏที่นี่เมื่อมาถึง",
+	"settings.resetBackupFailed":
+		"ไม่มีการรีเซ็ตใดๆ เนื่องจากไม่สามารถบันทึกสำเนาสำรองของชุดตั้งค่าปัจจุบันได้ก่อน ตรวจสอบพื้นที่จัดเก็บข้อมูลที่ว่างแล้วลองอีกครั้ง",
+	"settings.resetNotSaved":
+		"การรีเซ็ตแสดงอยู่แต่ยังไม่สามารถบันทึกได้ ดังนั้นไฟล์การตั้งค่าของคุณจึงยังคงเป็นชุดตั้งค่าก่อนหน้า ตรวจสอบสถานะการบันทึกในการตั้งค่าของ Callout Studio",
 	"confirm.titleResetEverything": "รีเซ็ตทั้งหมด",
 	"confirm.titleReplaceUnreadable": "แทนที่ไฟล์การตั้งค่า",
 	"confirm.subtitleReplaceUnreadable": "ระบบจะบันทึกสำเนาที่ตรงกันทุกประการก่อน",
-	"confirm.replaceUnreadable": "จะมีการบันทึกสำเนาที่เหมือนกันของไฟล์ปัจจุบันไว้ในโฟลเดอร์สำรองข้อมูลของปลั๊กอินก่อน จากนั้นไฟล์จะถูกแทนที่ด้วยชุดตั้งค่าที่แสดงที่นี่ และบริการซิงค์ของคุณจะส่งไฟล์ไปยังอุปกรณ์อื่นของคุณ",
-	"confirm.replaceUnreadableSalvage": "จะมีการบันทึกสำเนาที่เหมือนกันของไฟล์ปัจจุบันไว้ในโฟลเดอร์สำรองข้อมูลของปลั๊กอินก่อน การตั้งค่าภายในไฟล์นั้นจะถูกรวมเข้ากับชุดตั้งค่าที่แสดงที่นี่ และไฟล์จะถูกเขียนใหม่เพื่อให้ทุกอุปกรณ์อ่านได้อีกครั้ง",
+	"confirm.replaceUnreadable":
+		"จะมีการบันทึกสำเนาที่เหมือนกันของไฟล์ปัจจุบันไว้ในโฟลเดอร์สำรองข้อมูลของปลั๊กอินก่อน จากนั้นไฟล์จะถูกแทนที่ด้วยชุดตั้งค่าที่แสดงที่นี่ และบริการซิงค์ของคุณจะส่งไฟล์ไปยังอุปกรณ์อื่นของคุณ",
+	"confirm.replaceUnreadableSalvage":
+		"จะมีการบันทึกสำเนาที่เหมือนกันของไฟล์ปัจจุบันไว้ในโฟลเดอร์สำรองข้อมูลของปลั๊กอินก่อน การตั้งค่าภายในไฟล์นั้นจะถูกรวมเข้ากับชุดตั้งค่าที่แสดงที่นี่ และไฟล์จะถูกเขียนใหม่เพื่อให้ทุกอุปกรณ์อ่านได้อีกครั้ง",
 	"confirm.titleDiscardRecoveryCopy": "ยกเลิกสำเนากู้คืน",
 	"confirm.subtitleDiscardRecoveryCopy": "การบันทึกถูกหยุดชั่วคราวบนอุปกรณ์นี้",
 	"confirm.discardRecoveryCopy":
 		"ไม่สามารถอ่านสำเนากู้คืนของอุปกรณ์นี้ได้ ดังนั้นการบันทึกจึงถูกหยุดชั่วคราวบนอุปกรณ์นี้ จะมีการบันทึกสำเนาที่เหมือนกันของสำเนานั้นไว้ในโฟลเดอร์สำรองข้อมูลของปลั๊กอินก่อน จากนั้นจะถูกแทนที่ด้วยชุดตั้งค่าที่แสดงที่นี่ ไฟล์การตั้งค่าของคุณจะไม่เปลี่ยนแปลง",
 	"vault.undoRewrite": "เลิกทำ",
 	"vault.undoRestored": "กู้คืนโน้ตแล้ว {{count}} ฉบับ",
-	"vault.undoPartial": "กู้คืนโน้ตแล้ว {{count}} ฉบับ มีโน้ต {{skipped}} ฉบับที่เปลี่ยนแปลงหลังการเขียนใหม่ จึงถูกปล่อยไว้ตามเดิม",
+	"vault.undoPartial":
+		"กู้คืนโน้ตแล้ว {{count}} ฉบับ มีโน้ต {{skipped}} ฉบับที่เปลี่ยนแปลงหลังการเขียนใหม่ จึงถูกปล่อยไว้ตามเดิม",
 	"import.confirmTitle": "นำเข้าข้อมูลสำรองของ Callout Studio",
-	"import.confirmSummary": "การดำเนินการนี้จะเพิ่ม callout {{added}} ประเภท แทนที่ callout ที่มีอยู่ {{replaced}} ประเภทด้วยเวอร์ชันจากไฟล์ และกู้คืนการตั้งค่า {{settings}} กลุ่มจากไฟล์ จะมีการบันทึกสำเนาสำรองของชุดตั้งค่าปัจจุบันของคุณก่อน",
+	"import.confirmSummary":
+		"การดำเนินการนี้จะเพิ่ม callout {{added}} ประเภท แทนที่ callout ที่มีอยู่ {{replaced}} ประเภทด้วยเวอร์ชันจากไฟล์ และกู้คืนการตั้งค่า {{settings}} กลุ่มจากไฟล์ จะมีการบันทึกสำเนาสำรองของชุดตั้งค่าปัจจุบันของคุณก่อน",
 	"import.confirmAction": "นำเข้า",
-	"import.backupFailed": "ไม่มีการนำเข้าใดๆ เนื่องจากไม่สามารถบันทึกสำเนาสำรองของชุดตั้งค่าปัจจุบันได้ก่อน ตรวจสอบพื้นที่จัดเก็บข้อมูลที่ว่างแล้วลองอีกครั้ง",
+	"import.backupFailed":
+		"ไม่มีการนำเข้าใดๆ เนื่องจากไม่สามารถบันทึกสำเนาสำรองของชุดตั้งค่าปัจจุบันได้ก่อน ตรวจสอบพื้นที่จัดเก็บข้อมูลที่ว่างแล้วลองอีกครั้ง",
 	"import.notSaved": "การนำเข้าแสดงอยู่แต่ยังไม่สามารถบันทึกได้ ตรวจสอบสถานะการบันทึกในการตั้งค่าของ Callout Studio",
 
 	"recovery.summaryCallouts": "ประเภท callout ที่บันทึกไว้ {{callouts}} รายการ",
@@ -1275,7 +1252,8 @@ export const th: Record<string, string> = {
 	"recovery.details.unknownTime": "ไม่ได้บันทึกเวลาที่บันทึก",
 	"recovery.details.current": "การตั้งค่าปัจจุบัน",
 	"recovery.details.restored": "หลังกู้คืนเวอร์ชันนี้",
-	"recovery.details.unreadable": "Callout Studio เวอร์ชันนี้ไม่สามารถตีความสำเนานี้เป็นการตั้งค่าที่กู้คืนได้ สำเนาอาจเสียหาย ไม่พร้อมใช้งาน หรือใช้รูปแบบที่ใหม่กว่า จึงไม่มีการเปรียบเทียบและรายงานการตั้งค่าที่กู้คืน เนื้อหาต้นฉบับทั้งหมดที่อ่านได้แสดงอยู่ด้านล่าง",
+	"recovery.details.unreadable":
+		"Callout Studio เวอร์ชันนี้ไม่สามารถตีความสำเนานี้เป็นการตั้งค่าที่กู้คืนได้ สำเนาอาจเสียหาย ไม่พร้อมใช้งาน หรือใช้รูปแบบที่ใหม่กว่า จึงไม่มีการเปรียบเทียบและรายงานการตั้งค่าที่กู้คืน เนื้อหาต้นฉบับทั้งหมดที่อ่านได้แสดงอยู่ด้านล่าง",
 	"recovery.details.null": "ไม่มีค่า (null)",
 	"recovery.details.yes": "ใช่",
 	"recovery.details.no": "ไม่ใช่",
@@ -1443,10 +1421,12 @@ export const th: Record<string, string> = {
 	"recovery.delete": "ลบ",
 
 	// Version history
-	"saveStatus.guide.versions": "เมื่อบันทึกได้อีกครั้ง คุณยังย้อนกลับไปยังเวอร์ชันที่บันทึกไว้ได้ด้วย กู้คืนเวอร์ชันก่อนหน้า",
+	"saveStatus.guide.versions":
+		"เมื่อบันทึกได้อีกครั้ง คุณยังย้อนกลับไปยังเวอร์ชันที่บันทึกไว้ได้ด้วย กู้คืนเวอร์ชันก่อนหน้า",
 	"saveStatus.goToVersions": "ไปที่ประวัติเวอร์ชัน",
 	"versions.title": "ประวัติเวอร์ชัน",
-	"versions.intro": "Callout Studio บันทึกเวอร์ชันของการตั้งค่าของคุณโดยอัตโนมัติ\nเวอร์ชันเก่าจะถูกลบออกตามเวลา\nการคืนค่าเวอร์ชันจะแทนที่การตั้งค่าปัจจุบันบนทุกอุปกรณ์ที่ซิงค์",
+	"versions.intro":
+		"Callout Studio บันทึกเวอร์ชันของการตั้งค่าของคุณโดยอัตโนมัติ\nเวอร์ชันเก่าจะถูกลบออกตามเวลา\nการคืนค่าเวอร์ชันจะแทนที่การตั้งค่าปัจจุบันบนทุกอุปกรณ์ที่ซิงค์",
 	"versions.pausedHint": "การบันทึกหยุดชั่วคราว จึงยังคืนค่าไม่ได้ คุณยังเปรียบเทียบและลบเวอร์ชันได้",
 	"versions.loading": "กำลังค้นหาเวอร์ชัน…",
 	"versions.empty": "ไม่พบเวอร์ชัน",
@@ -1464,14 +1444,17 @@ export const th: Record<string, string> = {
 	"versions.reason.beforeRepair": "ก่อนซ่อมแซมไฟล์การตั้งค่า",
 	"versions.restoreTitle": "คืนค่าเวอร์ชันนี้",
 	"versions.subtitle": "“{{name}}” · {{when}}",
-	"versions.restoreBody": "การตั้งค่าปัจจุบันของคุณจะถูกแทนที่ (ต่างกัน {{count}} จุด)\nระบบจะบันทึกเป็นเวอร์ชันก่อน คุณจึงย้อนกลับมาได้\nจากนั้นบริการซิงก์ของคุณจะส่งการตั้งค่าที่กู้คืนไปยังอุปกรณ์เครื่องอื่นของคุณ",
+	"versions.restoreBody":
+		"การตั้งค่าปัจจุบันของคุณจะถูกแทนที่ (ต่างกัน {{count}} จุด)\nระบบจะบันทึกเป็นเวอร์ชันก่อน คุณจึงย้อนกลับมาได้\nจากนั้นบริการซิงก์ของคุณจะส่งการตั้งค่าที่กู้คืนไปยังอุปกรณ์เครื่องอื่นของคุณ",
 	"versions.restoreSame": "เวอร์ชันนี้เหมือนกับการตั้งค่าปัจจุบัน จึงไม่มีอะไรให้คืนค่า",
 	"versions.restored": "คืนค่า “{{name}}” จาก {{when}} แล้ว",
-	"versions.backupFailed": "ไม่ได้คืนค่าอะไร: ไม่สามารถบันทึกการตั้งค่าปัจจุบันเป็นเวอร์ชันก่อนได้ ตรวจสอบพื้นที่ว่างแล้วลองอีกครั้ง",
+	"versions.backupFailed":
+		"ไม่ได้คืนค่าอะไร: ไม่สามารถบันทึกการตั้งค่าปัจจุบันเป็นเวอร์ชันก่อนได้ ตรวจสอบพื้นที่ว่างแล้วลองอีกครั้ง",
 	"versions.restoreFailed": "คืนค่าเวอร์ชันไม่ได้ ไม่มีอะไรเปลี่ยนแปลง",
 	"versions.deleteTitle": "ลบเวอร์ชันนี้",
 	"versions.deleteAvailableBody": "เวอร์ชันนี้และสำเนาที่มีอยู่ทั้งหมดจะถูกลบถาวร",
-	"versions.deleteSyncedFiles": "การลบไฟล์เหล่านี้อาจซิงค์ไปยังอุปกรณ์อื่นของคุณ สำเนาในเครื่องบนอุปกรณ์เหล่านั้นอาจยังคงอยู่",
+	"versions.deleteSyncedFiles":
+		"การลบไฟล์เหล่านี้อาจซิงค์ไปยังอุปกรณ์อื่นของคุณ สำเนาในเครื่องบนอุปกรณ์เหล่านั้นอาจยังคงอยู่",
 	"versions.deleteFinal": "การดำเนินการนี้ย้อนกลับไม่ได้ การตั้งค่าปัจจุบันจะไม่ได้รับผลกระทบ",
 	"versions.deleted": "ลบ “{{name}}” จาก {{when}} แล้ว",
 	"versions.deleteFailed": "ลบสำเนาบางส่วนของเวอร์ชันนี้ไม่ได้ รายการแสดงสำเนาที่ยังเหลืออยู่แล้ว",
@@ -1479,7 +1462,8 @@ export const th: Record<string, string> = {
 	"versions.details.difference": "แตกต่างจากการตั้งค่าปัจจุบันของคุณ {{count}} รายการ",
 	"versions.details.differences": "แตกต่างจากการตั้งค่าปัจจุบันของคุณ {{count}} รายการ",
 	"versions.details.comparisonUnavailable": "ไม่สามารถเปรียบเทียบได้",
-	"notice.unsavedChangesKept": "การเปลี่ยนแปลงบางอย่างบนอุปกรณ์นี้ยังไม่ได้บันทึก และถูกแทนที่ด้วยการตั้งค่าใหม่กว่าจากอุปกรณ์อื่น เวอร์ชันของคุณถูกบันทึกไว้ก่อนแล้ว: เปิด กู้คืนเวอร์ชันก่อนหน้า ในการตั้งค่า Callout Studio เพื่อนำกลับมา",
+	"notice.unsavedChangesKept":
+		"การเปลี่ยนแปลงบางอย่างบนอุปกรณ์นี้ยังไม่ได้บันทึก และถูกแทนที่ด้วยการตั้งค่าใหม่กว่าจากอุปกรณ์อื่น เวอร์ชันของคุณถูกบันทึกไว้ก่อนแล้ว: เปิด กู้คืนเวอร์ชันก่อนหน้า ในการตั้งค่า Callout Studio เพื่อนำกลับมา",
 	"settings.versionHistory": "กู้คืนเวอร์ชันก่อนหน้า",
 	"settings.versions": "เวอร์ชันก่อนหน้า",
 	"settings.versionsDesc": "แทนที่การตั้งค่าปัจจุบันของคุณด้วยเวอร์ชันก่อนหน้าที่บันทึกไว้",
@@ -1490,12 +1474,13 @@ export const th: Record<string, string> = {
 	"noteChanges.notesOne": "1 โน้ต",
 	"noteChanges.askCallout": "ต้องการทำอย่างไรกับ callout นั้น?",
 	"noteChanges.askCallouts": "ต้องการทำอย่างไรกับ callout เหล่านั้น?",
-	"noteChanges.changeRenamed": "คุณเปลี่ยนชื่อที่แสดงจาก \"{{old}}\" เป็น \"{{new}}\" ID หลักจึงเปลี่ยนจาก \"{{oldId}}\" เป็น \"{{newId}}\"",
-	"noteChanges.changeMainId": "ID หลักจะเปลี่ยนจาก \"{{oldId}}\" เป็น \"{{newId}}\"",
-	"noteChanges.changeName": "คุณเปลี่ยนชื่อที่แสดงจาก \"{{old}}\" เป็น \"{{new}}\"",
-	"noteChanges.changeRemoved": "คุณลบ ID \"{{id}}\" แล้ว",
+	"noteChanges.changeRenamed":
+		'คุณเปลี่ยนชื่อที่แสดงจาก "{{old}}" เป็น "{{new}}" ID หลักจึงเปลี่ยนจาก "{{oldId}}" เป็น "{{newId}}"',
+	"noteChanges.changeMainId": 'ID หลักจะเปลี่ยนจาก "{{oldId}}" เป็น "{{newId}}"',
+	"noteChanges.changeName": 'คุณเปลี่ยนชื่อที่แสดงจาก "{{old}}" เป็น "{{new}}"',
+	"noteChanges.changeRemoved": 'คุณลบ ID "{{id}}" แล้ว',
 	"noteChanges.changeRemovedMany": "คุณลบ ID เหล่านี้แล้ว: {{ids}}",
-	"noteChanges.changeResetRemoved": "การรีเซ็ตเป็นค่าเริ่มต้นจะลบ ID \"{{id}}\" ที่คุณเพิ่มไว้",
+	"noteChanges.changeResetRemoved": 'การรีเซ็ตเป็นค่าเริ่มต้นจะลบ ID "{{id}}" ที่คุณเพิ่มไว้',
 	"noteChanges.changeResetRemovedMany": "การรีเซ็ตเป็นค่าเริ่มต้นจะลบ ID ที่คุณเพิ่มไว้: {{ids}}",
 	"noteChanges.changeFold": "คุณเปลี่ยนวิธีที่ callout นี้พับ",
 	"noteChanges.affects": "การเปลี่ยนแปลงนี้มีผลกับ {{callouts}} ใน {{notes}}",
@@ -1504,7 +1489,8 @@ export const th: Record<string, string> = {
 	"noteChanges.rewriteManyDesc": "ID เดิมทุกตัวในโน้ตของคุณจะกลายเป็น [!{{to}}]",
 	"noteChanges.changeToIdLabel": "ID ที่จะเปลี่ยนไปเป็น",
 	"noteChanges.rewriteDesc": "ทุก [!{{id}}] ในโน้ตของคุณจะกลายเป็น [!{{to}}]",
-	"noteChanges.renameFollowDesc": "ทุก [!{{oldId}}] ในโน้ตของคุณจะกลายเป็น [!{{newId}}] และชื่อเรื่องที่เขียนว่า \"{{old}}\" จะกลายเป็น \"{{new}}\"",
-	"noteChanges.titlesChangeDesc": "ชื่อเรื่องที่เขียนว่า \"{{old}}\" จะกลายเป็น \"{{new}}\"",
+	"noteChanges.renameFollowDesc":
+		'ทุก [!{{oldId}}] ในโน้ตของคุณจะกลายเป็น [!{{newId}}] และชื่อเรื่องที่เขียนว่า "{{old}}" จะกลายเป็น "{{new}}"',
+	"noteChanges.titlesChangeDesc": 'ชื่อเรื่องที่เขียนว่า "{{old}}" จะกลายเป็น "{{new}}"',
 	"noteChanges.foldChangeDesc": "เครื่องหมาย + หรือ - ของ callout เหล่านั้นจะเปลี่ยนให้ตรงกัน",
 };

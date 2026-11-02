@@ -53,11 +53,20 @@ export function toFace(dx: number, dy: number): Vec {
 }
 
 /** Where each eye waits inside the stripe, and where it sits once it is out. */
-const EYE_HOME: [Vec, Vec] = [[3.9, 0], [7.3, 0]];
-export const EYE_OUT: [Vec, Vec] = [[3.9, -2.9], [7.3, -2.9]];
+const EYE_HOME: [Vec, Vec] = [
+	[3.9, 0],
+	[7.3, 0],
+];
+export const EYE_OUT: [Vec, Vec] = [
+	[3.9, -2.9],
+	[7.3, -2.9],
+];
 
 /** The two cheeks for blushing, one either side of the mouth. */
-export const CHEEKS: [Vec, Vec] = [[2.3, -1.0], [9.0, -1.2]];
+export const CHEEKS: [Vec, Vec] = [
+	[2.3, -1.0],
+	[9.0, -1.2],
+];
 
 /**
  * One eye: its centre (s, t), its stroke width, then three points relative
@@ -69,7 +78,17 @@ export const CHEEKS: [Vec, Vec] = [[2.3, -1.0], [9.0, -1.2]];
  * (The `[s: number, …]` labels only name the positions for the reader; to
  * TypeScript it is a list of nine numbers.)
  */
-export type Eye = [s: number, t: number, width: number, x0: number, y0: number, x1: number, y1: number, x2: number, y2: number];
+export type Eye = [
+	s: number,
+	t: number,
+	width: number,
+	x0: number,
+	y0: number,
+	x1: number,
+	y1: number,
+	x2: number,
+	y2: number,
+];
 
 /** An eye's stroke width and its three points, without the centre. */
 type EyeShape = [width: number, x0: number, y0: number, x1: number, y1: number, x2: number, y2: number];

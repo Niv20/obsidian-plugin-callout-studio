@@ -66,9 +66,7 @@ function row(report: ThemeReport): string {
 		report.layout.length > 0 ? "yes" : "—",
 		report.importantCount === 0 ? "—" : String(report.importantCount),
 		report.maxClasses === 0 ? "—" : String(report.maxClasses),
-		report.styleSettings.length > 0
-			? report.styleSettings.map(code).join(" ")
-			: "—",
+		report.styleSettings.length > 0 ? report.styleSettings.map(code).join(" ") : "—",
 		report.checks.join(" "),
 		"",
 		"",
@@ -118,10 +116,7 @@ export interface ThemeReportContext {
 }
 
 /** Render the whole worksheet. */
-export function renderThemeReport(
-	reports: ThemeReport[],
-	context: ThemeReportContext,
-): string {
+export function renderThemeReport(reports: ThemeReport[], context: ThemeReportContext): string {
 	const sorted = sortThemeReports(reports);
 	const withIds = sorted.filter((r) => r.addedIds.length > 0);
 	const touching = sorted.filter((r) => r.involvement !== "none");

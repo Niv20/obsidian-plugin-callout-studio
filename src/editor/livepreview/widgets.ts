@@ -72,11 +72,7 @@ export class CalloutTokenWidget extends WidgetType {
 
 	private computeRenderKey(): string {
 		const { def, unknown } = resolveCalloutDef(this.registry, this.rawId);
-		const iconKey = tokenIconKey(
-			def,
-			this.registry,
-			VARIANT_ROLE[this.variant],
-		);
+		const iconKey = tokenIconKey(def, this.registry, VARIANT_ROLE[this.variant]);
 		return [
 			this.variant,
 			this.showName ? "n" : "",
@@ -179,20 +175,13 @@ export class CalloutTokenWidget extends WidgetType {
 				const pos = view.posAtDOM(el);
 				const line = view.state.doc.lineAt(pos);
 				const rel = pos - line.from;
-				const ref = findWikilinkCalloutRefs(line.text).find(
-					(r) => rel > r.linkFrom && rel < r.linkTo,
-				);
+				const ref = findWikilinkCalloutRefs(line.text).find((r) => rel > r.linkFrom && rel < r.linkTo);
 				if (!ref) return;
 				const inner = line.text.slice(ref.linkFrom + 2, ref.linkTo - 2);
 				const pipeIdx = inner.indexOf("|");
-				const target =
-					pipeIdx === -1 ? inner : inner.slice(0, pipeIdx);
+				const target = pipeIdx === -1 ? inner : inner.slice(0, pipeIdx);
 				const mdView = resolveMarkdownView(this.app, view);
-				void this.app.workspace.openLinkText(
-					target,
-					mdView?.file?.path ?? "",
-					Keymap.isModEvent(evt),
-				);
+				void this.app.workspace.openLinkText(target, mdView?.file?.path ?? "", Keymap.isModEvent(evt));
 			});
 		}
 		return el;
@@ -214,11 +203,7 @@ export class CalloutTokenWidget extends WidgetType {
 	 * Hence: test every candidate against the text, and fall back to the point
 	 * that was actually clicked before giving up.
 	 */
-	private resolveFrom(
-		view: EditorView,
-		el: HTMLElement,
-		evt: MouseEvent,
-	): number | null {
+	private resolveFrom(view: EditorView, el: HTMLElement, evt: MouseEvent): number | null {
 		const doc = view.state.doc;
 		const candidates: number[] = [];
 		try {
@@ -294,19 +279,12 @@ function dropCaret(view: EditorView, pos: number): void {
  * deprecated half from being a lint suppression.
  */
 interface CaretPointDocument {
-	caretPositionFromPoint?: (
-		x: number,
-		y: number,
-	) => { offsetNode: Node; offset: number } | null;
+	caretPositionFromPoint?: (x: number, y: number) => { offsetNode: Node; offset: number } | null;
 	caretRangeFromPoint?: (x: number, y: number) => Range | null;
 }
 
 /** The text position under a viewport point, or null when there is none. */
-function caretFromPoint(
-	doc: Document,
-	x: number,
-	y: number,
-): { node: Node; offset: number } | null {
+function caretFromPoint(doc: Document, x: number, y: number): { node: Node; offset: number } | null {
 	const api = doc as unknown as CaretPointDocument;
 	const position = api.caretPositionFromPoint?.(x, y);
 	if (position) return { node: position.offsetNode, offset: position.offset };
@@ -409,13 +387,7 @@ export class CalloutContentPillWidget extends WidgetType {
 		const component = new Component();
 		component.load();
 		this.component = component;
-		renderPayloadInto(
-			this.app,
-			payload,
-			this.payload,
-			this.sourcePath,
-			component,
-		);
+		renderPayloadInto(this.app, payload, this.payload, this.sourcePath, component);
 
 		// Clicking reveals the raw `[!id]{…}` for editing (the decoration is
 		// skipped while the selection touches the pill) and puts the caret on
@@ -431,10 +403,7 @@ export class CalloutContentPillWidget extends WidgetType {
 			// instanceof against this one's silently answers false and the guard
 			// would quietly stop working there.
 			const node = evt.target as Node | null;
-			const target =
-				node?.nodeType === Node.ELEMENT_NODE
-					? (node as Element)
-					: (node?.parentElement ?? null);
+			const target = node?.nodeType === Node.ELEMENT_NODE ? (node as Element) : (node?.parentElement ?? null);
 			if (target?.closest("a")) return;
 			// Both measurements are taken before the caret moves: clickOffset
 			// hit-tests the rendered payload, which this dispatch replaces with
@@ -468,11 +437,7 @@ export class CalloutContentPillWidget extends WidgetType {
 	 * lands in the neighbouring pill. The payload is what actually identifies
 	 * THIS pill, so that is what gets tested.
 	 */
-	private resolveFrom(
-		view: EditorView,
-		el: HTMLElement,
-		evt: MouseEvent,
-	): number | null {
+	private resolveFrom(view: EditorView, el: HTMLElement, evt: MouseEvent): number | null {
 		const doc = view.state.doc;
 		const candidates: number[] = [];
 		try {
@@ -486,10 +451,7 @@ export class CalloutContentPillWidget extends WidgetType {
 		for (const from of candidates) {
 			if (from < 0 || from + this.sourceLen > doc.length) continue;
 			const start = this.payloadStart(from);
-			if (
-				doc.sliceString(start, start + this.payload.length) ===
-				this.payload
-			) {
+			if (doc.sliceString(start, start + this.payload.length) === this.payload) {
 				return from;
 			}
 		}
@@ -624,11 +586,7 @@ export class HeadingRefLinkWidget extends WidgetType {
 		// The name is plain text inside the link-styled span (not a
 		// cs-callout-name), mirroring reading view where it is ordinary
 		// anchor text — link color, native underline.
-		el.appendChild(
-			doc.createTextNode(
-				calloutTokenLabel(unknown ? undefined : def, this.rawId),
-			),
-		);
+		el.appendChild(doc.createTextNode(calloutTokenLabel(unknown ? undefined : def, this.rawId)));
 
 		el.addEventListener("mousedown", (evt) => {
 			if (evt.button !== 0) return; // left click only; right-click → context menu
@@ -668,11 +626,7 @@ export class HeadingRefLinkWidget extends WidgetType {
 	 */
 	private follow(view: EditorView, evt: MouseEvent): void {
 		const mdView = resolveMarkdownView(this.app, view);
-		void this.app.workspace.openLinkText(
-			this.target,
-			mdView?.file?.path ?? "",
-			Keymap.isModEvent(evt),
-		);
+		void this.app.workspace.openLinkText(this.target, mdView?.file?.path ?? "", Keymap.isModEvent(evt));
 	}
 
 	override ignoreEvent(): boolean {

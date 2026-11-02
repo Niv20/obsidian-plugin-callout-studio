@@ -42,10 +42,7 @@ export interface InlineLinkHintOptions {
  * sentence with the link after it, rather than dropping the only way out of
  * whatever state the hint is explaining.
  */
-export function renderInlineLinkHint(
-	parent: HTMLElement,
-	options: InlineLinkHintOptions,
-): HTMLElement {
+export function renderInlineLinkHint(parent: HTMLElement, options: InlineLinkHintOptions): HTMLElement {
 	const { textKey, linkKey, vars, cls, onClick } = options;
 	const [before, after] = t(textKey, vars).split("{{link}}");
 	const line = parent.createDiv({

@@ -41,7 +41,8 @@ describe("a red button's classes", () => {
 	it("never pair setDestructive() with setCta(), which is the solid red", () => {
 		const found: string[] = [];
 		for (const file of pluginSourceFiles()) {
-			for (const match of file.code.matchAll(/\.setDestructive\(\s*\)\s*\.setCta\(\s*\)/g)) found.push(at(file, match.index ?? 0));
+			for (const match of file.code.matchAll(/\.setDestructive\(\s*\)\s*\.setCta\(\s*\)/g))
+				found.push(at(file, match.index ?? 0));
 		}
 		assert.deepStrictEqual(found, [], report("a red button is setDestructive() alone", found));
 	});
@@ -75,12 +76,18 @@ describe("a red button's classes", () => {
 describe("styles.css leaves red buttons to Obsidian", () => {
 	it("has no rule for the legacy mod-warning class", () => {
 		const named = rules.filter((rule) => /\.mod-warning\b/.test(rule.selector));
-		assert.deepStrictEqual(named.map((rule) => rule.selector), []);
+		assert.deepStrictEqual(
+			named.map((rule) => rule.selector),
+			[],
+		);
 	});
 
 	it("repaints no red button, at rest or under the pointer", () => {
 		const painting = rules.filter((rule) => /\.mod-destructive\b/.test(selecting(rule.selector)));
-		assert.deepStrictEqual(painting.map((rule) => rule.selector), []);
+		assert.deepStrictEqual(
+			painting.map((rule) => rule.selector),
+			[],
+		);
 	});
 
 	it("declares no red hover token of its own", () => {
@@ -88,7 +95,9 @@ describe("styles.css leaves red buttons to Obsidian", () => {
 	});
 
 	it("paints its two ✕ badges in the quiet red, with no solid red, white glyph or hover of their own", () => {
-		const badges = rules.filter((rule) => /\b(?:cs-icon-tile-clear|icon-picker-image-delete)\b/.test(rule.selector));
+		const badges = rules.filter((rule) =>
+			/\b(?:cs-icon-tile-clear|icon-picker-image-delete)\b/.test(rule.selector),
+		);
 		assert.ok(badges.length >= 2, "the badge rules are found");
 		const painted = badges.filter((rule) => rule.props.includes("background-color"));
 		assert.equal(painted.length, 2, "one painting rule per badge");

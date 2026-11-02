@@ -29,11 +29,7 @@ const GRADIENT_DIRECTIONS: { deg: number; icon: string }[] = [
  * @param initialDeg The angle chosen when the picker opens.
  * @param onPick Called with the new angle when the user picks one.
  */
-export function renderDirectionPicker(
-	parent: HTMLElement,
-	initialDeg: number,
-	onPick: (deg: number) => void,
-): void {
+export function renderDirectionPicker(parent: HTMLElement, initialDeg: number, onPick: (deg: number) => void): void {
 	const dirWrap = parent.createDiv({
 		cls: "cs-gradient-dir-row",
 		attr: { role: "group" },

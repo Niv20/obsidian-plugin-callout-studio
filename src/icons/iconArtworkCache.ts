@@ -16,19 +16,11 @@ export function isIconFullyCached(registry: CalloutRegistry, icon: CalloutIcon):
 	// Lucide and emoji carry no artwork of their own to be missing, and a
 	// user's own picture is already sitting in settings — none of the three
 	// has anything a download could add.
-	if (
-		pack.kind === "builtin" ||
-		pack.kind === "glyph" ||
-		pack.kind === "local"
-	) {
+	if (pack.kind === "builtin" || pack.kind === "glyph" || pack.kind === "local") {
 		return true;
 	}
 	return CALLOUT_RENDER_ROLES.every((role) =>
-		registry.findIconSvg(
-			icon.type,
-			icon.value,
-			pack.cacheVariant(icon, role),
-		),
+		registry.findIconSvg(icon.type, icon.value, pack.cacheVariant(icon, role)),
 	);
 }
 

@@ -53,13 +53,10 @@ export async function removeLegacyStartupSnippet(app: App, isActive: () => boole
 	if (!isActive()) return;
 	try {
 		const adapter = app.vault.adapter;
-		const path = normalizePath(
-			`${app.vault.configDir}/snippets/${LEGACY_SNIPPET_NAME}.css`,
-		);
+		const path = normalizePath(`${app.vault.configDir}/snippets/${LEGACY_SNIPPET_NAME}.css`);
 		const customCss = (app as App & { customCss?: CustomCssApi }).customCss;
 
-		const wasEnabled =
-			customCss?.enabledSnippets?.has?.(LEGACY_SNIPPET_NAME) ?? false;
+		const wasEnabled = customCss?.enabledSnippets?.has?.(LEGACY_SNIPPET_NAME) ?? false;
 		const exists = await adapter.exists(path);
 		if (!isActive()) return;
 		// The normal path on every launch after the first cleanup.

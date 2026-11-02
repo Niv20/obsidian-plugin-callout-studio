@@ -15,7 +15,9 @@ function press(box: FakeElement, key: string, repeat = false): boolean {
 		type: "keydown",
 		key,
 		repeat,
-		preventDefault: () => { prevented = true; },
+		preventDefault: () => {
+			prevented = true;
+		},
 	});
 	return prevented;
 }

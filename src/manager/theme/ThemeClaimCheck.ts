@@ -136,8 +136,9 @@ function classesUnder(root: Element): Set<string> {
  */
 function finishTransitions(el: Element): void {
 	const running =
-		(el as Element & { getAnimations?: (options?: { subtree?: boolean }) => Animation[] })
-			.getAnimations?.({ subtree: true }) ?? [];
+		(el as Element & { getAnimations?: (options?: { subtree?: boolean }) => Animation[] }).getAnimations?.({
+			subtree: true,
+		}) ?? [];
 	for (const animation of running) {
 		if (typeof (animation as Animation & { transitionProperty?: unknown }).transitionProperty !== "string") {
 			continue;
@@ -284,8 +285,7 @@ export class ThemeClaimCheck {
 		const pageOff = pageRootTest(doc);
 		const options = this.optionClasses();
 		const bits: string[] = [];
-		const bit = (rule: CSSRule): string =>
-			pageOff(rule) ? "p" : optionGatedRule(rule, options, doc) ? "o" : "-";
+		const bit = (rule: CSSRule): string => (pageOff(rule) ? "p" : optionGatedRule(rule, options, doc) ? "o" : "-");
 		for (const id of [...new Set(ids)].sort()) {
 			// The rules nested inside each are part of the verdict too
 			// (`nestedRulesSeen`), so they are part of the key.
@@ -384,10 +384,7 @@ export class ThemeClaimCheck {
 		return index;
 	}
 
-	private async measure(
-		request: ClaimCheckRequest,
-		generation: number,
-	): Promise<Map<string, boolean> | null> {
+	private async measure(request: ClaimCheckRequest, generation: number): Promise<Map<string, boolean> | null> {
 		await this.nextTask();
 		if (this.destroyed || generation !== this.generation) return null;
 		const index = this.currentIndex();

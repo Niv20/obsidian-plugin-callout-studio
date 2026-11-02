@@ -52,9 +52,7 @@ function mergeBorderSides(
  * a static 10px in styles.css since 2.7.0 — and, unlike the `delete` it
  * replaced, everything else a future version drops too.
  */
-function mergeHeadingStyle(
-	saved: Partial<HeadingFrameStyleSettings> | undefined,
-): HeadingFrameStyleSettings {
+function mergeHeadingStyle(saved: Partial<HeadingFrameStyleSettings> | undefined): HeadingFrameStyleSettings {
 	const defaults = DEFAULT_SETTINGS.globalStyle.heading;
 	return {
 		borderSides: mergeBorderSides(saved?.borderSides, defaults.borderSides),
@@ -67,9 +65,7 @@ function mergeHeadingStyle(
 }
 
 /** Merge a saved inline frame style over the defaults. See mergeHeadingStyle. */
-function mergeInlineStyle(
-	saved: Partial<InlineFrameStyleSettings> | undefined,
-): InlineFrameStyleSettings {
+function mergeInlineStyle(saved: Partial<InlineFrameStyleSettings> | undefined): InlineFrameStyleSettings {
 	const defaults = DEFAULT_SETTINGS.globalStyle.inline;
 	return {
 		borderSides: mergeBorderSides(saved?.borderSides, defaults.borderSides),
@@ -83,9 +79,7 @@ function mergeInlineStyle(
  * Merge a saved global (block callout) style, and the two role frame styles
  * nested under it, over the defaults.
  */
-export function mergeGlobalStyle(
-	saved: Partial<GlobalStyleSettings> | undefined,
-): GlobalStyleSettings {
+export function mergeGlobalStyle(saved: Partial<GlobalStyleSettings> | undefined): GlobalStyleSettings {
 	const defaults = DEFAULT_SETTINGS.globalStyle;
 	return {
 		borderSides: mergeBorderSides(saved?.borderSides, defaults.borderSides),
@@ -93,8 +87,7 @@ export function mergeGlobalStyle(
 		titleScale: saved?.titleScale ?? defaults.titleScale,
 		contentScale: saved?.contentScale ?? defaults.contentScale,
 		borderRadius: saved?.borderRadius ?? defaults.borderRadius,
-		alignContentWithTitle:
-			booleanPreference(saved?.alignContentWithTitle, defaults.alignContentWithTitle),
+		alignContentWithTitle: booleanPreference(saved?.alignContentWithTitle, defaults.alignContentWithTitle),
 		heading: mergeHeadingStyle(saved?.heading),
 		inline: mergeInlineStyle(saved?.inline),
 	};

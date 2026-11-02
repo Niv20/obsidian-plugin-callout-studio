@@ -58,7 +58,11 @@ export class NoteRewriteJournal {
 			this.notes.push(note);
 			this.byPath.set(path, note);
 		}
-		if (this.size > BUDGET) { this.overflowed = true; this.notes.length = 0; this.byPath.clear(); }
+		if (this.size > BUDGET) {
+			this.overflowed = true;
+			this.notes.length = 0;
+			this.byPath.clear();
+		}
 	}
 }
 
@@ -76,15 +80,22 @@ export function canUndo(journal: NoteRewriteJournal): boolean {
 }
 
 /** Reverse `journal`, once: see the module comment for what is and is not restored. */
-export async function undoNoteRewrite(app: App, journal: NoteRewriteJournal): Promise<{ restored: number; skipped: number }> {
+export async function undoNoteRewrite(
+	app: App,
+	journal: NoteRewriteJournal,
+): Promise<{ restored: number; skipped: number }> {
 	if (last !== journal) return { restored: 0, skipped: 0 };
 	last = null;
-	let restored = 0, skipped = 0;
-	const files = new Map<string, TFile>(app.vault.getMarkdownFiles().map(file => [file.path, file]));
+	let restored = 0,
+		skipped = 0;
+	const files = new Map<string, TFile>(app.vault.getMarkdownFiles().map((file) => [file.path, file]));
 	for (const note of journal.notes) {
 		// Moved or deleted since: nothing at that path to put back.
 		const file = files.get(note.path);
-		if (!file || note.broken) { skipped++; continue; }
+		if (!file || note.broken) {
+			skipped++;
+			continue;
+		}
 		let putBack = false;
 		try {
 			await app.vault.process(file, (content) => {
@@ -96,7 +107,8 @@ export async function undoNoteRewrite(app: App, journal: NoteRewriteJournal): Pr
 			console.warn("[callout-studio] could not undo the rewrite of", note.path, error);
 			putBack = false;
 		}
-		if (putBack) restored++; else skipped++;
+		if (putBack) restored++;
+		else skipped++;
 	}
 	return { restored, skipped };
 }

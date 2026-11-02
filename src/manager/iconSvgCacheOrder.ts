@@ -41,14 +41,9 @@ function compare(a: string, b: string): number {
  * Returns `undefined` rather than `[]` so an empty cache stays out of the file
  * entirely, which is what it did before this function existed.
  */
-export function persistedIconSvgCache(
-	entries: readonly IconSvgCacheEntry[],
-): IconSvgCacheEntry[] | undefined {
+export function persistedIconSvgCache(entries: readonly IconSvgCacheEntry[]): IconSvgCacheEntry[] | undefined {
 	if (entries.length === 0) return undefined;
 	return [...entries].sort(
-		(a, b) =>
-			compare(a.pack, b.pack) ||
-			compare(a.name, b.name) ||
-			compare(a.variant, b.variant),
+		(a, b) => compare(a.pack, b.pack) || compare(a.name, b.name) || compare(a.variant, b.variant),
 	);
 }

@@ -38,11 +38,7 @@
  * anything mode-dependent differ?" stopped being a question about the
  * definition alone and became one about these declarations.
  */
-import {
-	accentVarSpelling,
-	calloutAccentVarRef,
-	calloutColorValue,
-} from "../utils/calloutColorFormat";
+import { accentVarSpelling, calloutAccentVarRef, calloutColorValue } from "../utils/calloutColorFormat";
 import type { AccentDialect } from "./theme/accentDialect";
 import { hexToRgbString } from "../utils/colorUtils";
 import type { CalloutDefinition } from "../types";
@@ -99,9 +95,7 @@ export function accentDeclarations(
 	if (!themeVar) {
 		props.push(`  --callout-color: ${calloutColorValue(hex, dialect)}${imp};`);
 	} else if (imposed) {
-		props.push(
-			`  --callout-color: ${imposedValue(hex, themeVar, dialect, mode)}${imp};`,
-		);
+		props.push(`  --callout-color: ${imposedValue(hex, themeVar, dialect, mode)}${imp};`);
 	}
 	props.push(...ownAccentDeclarations(hex, themeVar, imp, dialect, mode));
 	return props;
@@ -123,16 +117,9 @@ export function accentDeclarations(
  *   weak fallback, every unknown callout on which it wins still needs a valid
  *   value — the same reasoning that put `--cs-accent-theme` in the first case.
  */
-function imposedValue(
-	hex: string,
-	themeVar: string,
-	dialect: AccentDialect,
-	mode: CalloutMode,
-): string {
+function imposedValue(hex: string, themeVar: string, dialect: AccentDialect, mode: CalloutMode): string {
 	if (dialect.read === "color") return "var(--cs-accent-theme)";
-	return accentVarSpelling(themeVar, dialect, mode) === "triplet"
-		? `var(${themeVar})`
-		: hexToRgbString(hex);
+	return accentVarSpelling(themeVar, dialect, mode) === "triplet" ? `var(${themeVar})` : hexToRgbString(hex);
 }
 
 /**
@@ -165,7 +152,6 @@ export function needsDarkBlock(
 		def.colorLight !== def.colorDark ||
 		!!(def.bgColorLight || def.bgColorDark) ||
 		(themeVar !== undefined &&
-			accentVarSpelling(themeVar, dialect, "light") !==
-				accentVarSpelling(themeVar, dialect, "dark"))
+			accentVarSpelling(themeVar, dialect, "light") !== accentVarSpelling(themeVar, dialect, "dark"))
 	);
 }

@@ -16,10 +16,21 @@ import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it } from "node:test";
 import { Notice, type App } from "obsidian";
 import { BrushMascot, canDrawMascot, type MascotHold } from "../src/ui/mascot/brushMascot";
-import { ANIMATIONS, NO_RESULTS_MOOD, type MascotAnimation, type MascotAnimationName } from "../src/ui/mascot/mascotAnimations";
+import {
+	ANIMATIONS,
+	NO_RESULTS_MOOD,
+	type MascotAnimation,
+	type MascotAnimationName,
+} from "../src/ui/mascot/mascotAnimations";
 import { STRIPE_D } from "../src/ui/mascot/mascotFace";
 import { NOTICE_MOODS, showNotice, WORK_ONE_PASS_MS, workNotice } from "../src/ui/mascot/mascotNotices";
-import { addMascot, emptyListState, KeptMascot, SearchMascot, watchEmptyListMascots } from "../src/ui/mascot/mascotPlaces";
+import {
+	addMascot,
+	emptyListState,
+	KeptMascot,
+	SearchMascot,
+	watchEmptyListMascots,
+} from "../src/ui/mascot/mascotPlaces";
 import { ConfirmModal } from "../src/utils/ConfirmModal";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";
 
@@ -94,7 +105,12 @@ function corner(at: [number, number], middle: [number, number]): string | null {
 }
 
 /** The corners the eyes turn to, in order, as `m` plays from `from` to `to` ms; also how often they sat still in the middle. */
-function corners(m: BrushMascot, middle: [number, number], from: number, to: number): { seen: string[]; stoppedInMiddle: number } {
+function corners(
+	m: BrushMascot,
+	middle: [number, number],
+	from: number,
+	to: number,
+): { seen: string[]; stoppedInMiddle: number } {
 	const seen: string[] = [];
 	let stoppedInMiddle = 0;
 	let last = eyePoint(m);
@@ -104,7 +120,11 @@ function corners(m: BrushMascot, middle: [number, number], from: number, to: num
 		const where = corner(at, middle);
 		if (where && seen[seen.length - 1] !== where) seen.push(where);
 		// Passing the middle at the speed of a sweep does not count; easing to a stop there does.
-		if (Math.hypot(at[0] - middle[0], at[1] - middle[1]) < 0.2 && Math.hypot(at[0] - last[0], at[1] - last[1]) < 0.02) stoppedInMiddle++;
+		if (
+			Math.hypot(at[0] - middle[0], at[1] - middle[1]) < 0.2 &&
+			Math.hypot(at[0] - last[0], at[1] - last[1]) < 0.02
+		)
+			stoppedInMiddle++;
 		last = at;
 	}
 	return { seen, stoppedInMiddle };
@@ -349,10 +369,11 @@ describe("the brush mascot", () => {
 		assert.equal(at[4560], NO_RESULTS_MOOD);
 	});
 
-	it("shakes its head \"no\" after the three glances, with its eyes open again, and only then goes on as sad", () => {
+	it('shakes its head "no" after the three glances, with its eyes open again, and only then goes on as sad', () => {
 		const m = mascot();
 		void m.play("lookTwice");
-		const tilt = (): number => Number(/rotate\((-?[\d.]+) 12 13\)/.exec(parts(m).body.getAttribute("transform") ?? "")?.[1] ?? 0);
+		const tilt = (): number =>
+			Number(/rotate\((-?[\d.]+) 12 13\)/.exec(parts(m).body.getAttribute("transform") ?? "")?.[1] ?? 0);
 		const eyeWidth = (): number => Number(parts(m).eyes[0].getAttribute("stroke-width"));
 		let whileLooking = 0;
 		for (let t = 0; t < 3200; t += 16) {
@@ -431,7 +452,10 @@ describe("the brush mascot", () => {
 		// Most of the frames the cheeks are on the way in or out, not full or gone: about 230 ms in, 420 ms out.
 		const onTheWay = opacity.filter((v) => v > 0.03 && v < 0.57).length;
 		assert.ok(onTheWay >= 30, `${onTheWay} frames on the way`);
-		assert.ok(radius.some((r) => r > 0.1 && r < 0.8), "they grow rather than appear at full size");
+		assert.ok(
+			radius.some((r) => r > 0.1 && r < 0.8),
+			"they grow rather than appear at full size",
+		);
 		assert.equal(Math.max(...radius), 0.85);
 	});
 
@@ -528,7 +552,10 @@ describe("the mascot's places", () => {
 			const parent = el();
 			assert.equal(addMascot(asEl(parent), "large"), null);
 			assert.equal(parent.children.length, 0);
-			assert.equal(emptyListState("No custom callouts for now.", "Add new callout"), "No custom callouts for now.");
+			assert.equal(
+				emptyListState("No custom callouts for now.", "Add new callout"),
+				"No custom callouts for now.",
+			);
 			const kept = new KeptMascot("medium");
 			assert.equal(kept.attach(asEl(parent)), null);
 			kept.setMood("sad");
@@ -620,7 +647,9 @@ describe("the mascot's places", () => {
 				const work = workNotice("Scanning…", { minMs: WORK_ONE_PASS_MS, gapMs: 800 });
 				const notice = lastNotice();
 				let finished = false;
-				void work.done().then(() => { finished = true; });
+				void work.done().then(() => {
+					finished = true;
+				});
 				await settle();
 				assert.equal(notice.hidden, false, "the work took no time, yet the notice stays");
 				// The minimum has passed: the notice goes, and the gap begins.
@@ -655,7 +684,10 @@ describe("the mascot's places", () => {
 
 			it("is one whole pass of the painting: getting ready, then a whole stroke", () => {
 				const { intro, body } = ANIMATIONS.paint;
-				assert.equal(WORK_ONE_PASS_MS, [...intro, ...body].reduce((total, step) => total + step.ms, 0));
+				assert.equal(
+					WORK_ONE_PASS_MS,
+					[...intro, ...body].reduce((total, step) => total + step.ms, 0),
+				);
 			});
 		});
 
@@ -831,7 +863,9 @@ describe("the mascot's places", () => {
 		it("puts a scared mascot beside a confirmation's two-line heading, and takes it down when it closes", () => {
 			fakeDom.light();
 			const app = { keymap: new TestKeymap(), scope: new TestScope() } as unknown as App;
-			const modal = new ConfirmModal(app, "Delete callout", "Notes keep their text.").withMascot("“Project note”");
+			const modal = new ConfirmModal(app, "Delete callout", "Notes keep their text.").withMascot(
+				"“Project note”",
+			);
 			void modal.confirm();
 			const header = modal.titleEl.parentElement as unknown as FakeElement;
 			const box = child(header, 0);
@@ -842,7 +876,11 @@ describe("the mascot's places", () => {
 			assert.ok(box.hasClass("is-medium"));
 			assert.ok(header.hasClass("cs-mascot-header"));
 			assert.ok(header.hasClass("cs-confirm-heading"));
-			assert.equal((modal.contentEl as unknown as FakeElement).querySelector(".cs-mascot-box"), null, "nothing above the message");
+			assert.equal(
+				(modal.contentEl as unknown as FakeElement).querySelector(".cs-mascot-box"),
+				null,
+				"nothing above the message",
+			);
 			modal.close();
 			assert.equal(header.querySelector(".cs-mascot-box"), null);
 			assert.equal(header.querySelector(".cs-confirm-subtitle"), null);
@@ -853,7 +891,9 @@ describe("the mascot's places", () => {
 		it("breathes out in relief over the ✕ as over Cancel, and cries over the confirm button", () => {
 			fakeDom.light();
 			const app = { keymap: new TestKeymap(), scope: new TestScope() } as unknown as App;
-			const modal = new ConfirmModal(app, "Delete callout", "Notes keep their text.").withMascot("“Project note”");
+			const modal = new ConfirmModal(app, "Delete callout", "Notes keep their text.").withMascot(
+				"“Project note”",
+			);
 			// The window's own ✕, as the stand-in builds it like Obsidian does.
 			const closeX = (modal.modalEl as unknown as FakeElement).querySelector(".modal-header-button");
 			assert.ok(closeX, "the stand-in window has a ✕");

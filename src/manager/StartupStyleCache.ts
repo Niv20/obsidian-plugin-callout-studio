@@ -50,9 +50,7 @@ export class StartupStyleCache {
 	/** Synchronous read of the previous session's CSS. */
 	loadCachedCss(): string | null {
 		try {
-			const cached = window.localStorage.getItem(
-				this.scopedKey(STARTUP_CSS_STORAGE_KEY),
-			);
+			const cached = window.localStorage.getItem(this.scopedKey(STARTUP_CSS_STORAGE_KEY));
 			return cached && cached.length > 0 ? cached : null;
 		} catch {
 			return null;
@@ -71,10 +69,7 @@ export class StartupStyleCache {
 				const parsed = JSON.parse(local) as { v?: unknown } | null;
 				if (parsed?.v !== 2 && parsed?.v !== 3) return;
 			}
-			window.localStorage.setItem(
-				this.scopedKey(STARTUP_CSS_STORAGE_KEY),
-				cssText,
-			);
+			window.localStorage.setItem(this.scopedKey(STARTUP_CSS_STORAGE_KEY), cssText);
 			// Only once the write has actually landed — the rule, and the bug
 			// that produced it, are in utils/writeMemo.ts.
 			this.memo.commit(cssText);

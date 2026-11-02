@@ -78,11 +78,7 @@ export function calloutStyleGroup(ctx: TreeContext): CsGroup {
 		type: "group",
 		id: STYLE_PAGES.box,
 		heading: t("settings.calloutStyle"),
-		items: [
-			stylePage(ctx, "heading"),
-			stylePage(ctx, "inline"),
-			stylePage(ctx, "regular"),
-		],
+		items: [stylePage(ctx, "heading"), stylePage(ctx, "inline"), stylePage(ctx, "regular")],
 	};
 }
 
@@ -114,7 +110,9 @@ function controlBoxes(ctx: TreeContext, role: CalloutRenderRole): CsGroup[] {
 			return [
 				standaloneBox(role, [
 					rounding,
-					toggleRow(ctx, "heading-fold-arrow", "settings.headingFoldArrow", "headingCallouts.showFoldArrow", ["chevron"]),
+					toggleRow(ctx, "heading-fold-arrow", "settings.headingFoldArrow", "headingCallouts.showFoldArrow", [
+						"chevron",
+					]),
 				]),
 				bordersBox(ctx, role),
 				titleSpacingBox(ctx),
@@ -345,13 +343,15 @@ function resetBox(ctx: TreeContext, box: ResetBox, items: (CsRender | CsControl)
 		type: "group",
 		id: box.id,
 		heading,
-		extraButtons: [boxResetButton(ctx.plugin.settingsWriter, heading, () => {
-			if (!box.isModified(ctx.plugin.settings)) return;
-			box.reset(ctx.plugin.settings);
-			commitStyle(ctx);
-			// The box's rows show the defaults again.
-			ctx.redraw();
-		})],
+		extraButtons: [
+			boxResetButton(ctx.plugin.settingsWriter, heading, () => {
+				if (!box.isModified(ctx.plugin.settings)) return;
+				box.reset(ctx.plugin.settings);
+				commitStyle(ctx);
+				// The box's rows show the defaults again.
+				ctx.redraw();
+			}),
+		],
 		items,
 	};
 }
@@ -362,13 +362,18 @@ function slidersReset(id: string, heading: LocaleKey, defs: StyleSliderDef[]): R
 		id,
 		heading,
 		isModified: (settings) => defs.some((def) => def.get(settings) !== sliderDefault(def)),
-		reset: (settings) => { for (const def of defs) def.set(settings, sliderDefault(def)); },
+		reset: (settings) => {
+			for (const def of defs) def.set(settings, sliderDefault(def));
+		},
 	};
 }
 
 /** Font scale (block role): the title's and the content's. */
 function fontScaleBox(ctx: TreeContext): CsGroup {
-	const box = slidersReset("style-block-font-scale", "settings.fontScaleGroup", [TITLE_SCALE_SLIDER, CONTENT_SCALE_SLIDER]);
+	const box = slidersReset("style-block-font-scale", "settings.fontScaleGroup", [
+		TITLE_SCALE_SLIDER,
+		CONTENT_SCALE_SLIDER,
+	]);
 	return resetBox(ctx, box, [
 		sliderRow(ctx, TITLE_SCALE_SLIDER, { box }),
 		sliderRow(ctx, CONTENT_SCALE_SLIDER, { box }),
@@ -377,7 +382,10 @@ function fontScaleBox(ctx: TreeContext): CsGroup {
 
 /** Title spacing (heading role): the space inside the bar, and the gap above it. */
 function titleSpacingBox(ctx: TreeContext): CsGroup {
-	const box = slidersReset("style-heading-title-spacing", "settings.headingSpacingGroup", [HEADING_PADDING_SLIDER, HEADING_GAP_SLIDER]);
+	const box = slidersReset("style-heading-title-spacing", "settings.headingSpacingGroup", [
+		HEADING_PADDING_SLIDER,
+		HEADING_GAP_SLIDER,
+	]);
 	return resetBox(ctx, box, [
 		sliderRow(ctx, HEADING_PADDING_SLIDER, { box }),
 		sliderRow(ctx, HEADING_GAP_SLIDER, {
@@ -405,13 +413,12 @@ function bordersBox(ctx: TreeContext, role: CalloutRenderRole): CsGroup {
 		bottom: "settings.borderBottom",
 		left: "settings.borderLeft",
 	};
-	const sides = SIDES.map((side) => toggleRow(
-		ctx,
-		`${role}-border-${side}`,
-		sideNames[side],
-		`${roleFramePath(role)}.borderSides.${side}`,
-		["border", "outline"],
-	));
+	const sides = SIDES.map((side) =>
+		toggleRow(ctx, `${role}-border-${side}`, sideNames[side], `${roleFramePath(role)}.borderSides.${side}`, [
+			"border",
+			"outline",
+		]),
+	);
 	const width = sliderRow(ctx, borderWidthSlider(role), {
 		box,
 		visible: () => SIDES.some((side) => roleFrame(ctx.plugin.settings, role).borderSides[side]),
@@ -427,8 +434,10 @@ function bordersReset(role: CalloutRenderRole): ResetBox {
 		heading: "settings.border",
 		isModified: (settings) => {
 			const frame = roleFrame(settings, role);
-			return frame.borderWidth !== defaults.borderWidth ||
-				SIDES.some((side) => frame.borderSides[side] !== defaults.borderSides[side]);
+			return (
+				frame.borderWidth !== defaults.borderWidth ||
+				SIDES.some((side) => frame.borderSides[side] !== defaults.borderSides[side])
+			);
 		},
 		reset: (settings) => {
 			const frame = roleFrame(settings, role);

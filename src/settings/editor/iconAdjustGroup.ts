@@ -19,11 +19,7 @@
 import { SettingGroup, type SliderComponent } from "obsidian";
 import { t } from "../../i18n";
 import type { CalloutRenderRole } from "../../types";
-import {
-	equalIconAdjust,
-	ICON_ADJUST_LIMITS,
-	type ResolvedIconAdjust,
-} from "../../utils/iconAdjust";
+import { equalIconAdjust, ICON_ADJUST_LIMITS, type ResolvedIconAdjust } from "../../utils/iconAdjust";
 import { setSliderDisplay } from "../styleControls";
 import { paintResetIdle } from "../../ui/resetArrow";
 import { settingGroupEl } from "../../ui/settingGroupEl";
@@ -79,9 +75,7 @@ export function renderIconAdjustGroup(
 	defaults?: ResolvedIconAdjust,
 ): HTMLElement {
 	const header = groupHeader(role);
-	const group = new SettingGroup(parent)
-		.setHeading(header)
-		.addClass("cs-editor-group");
+	const group = new SettingGroup(parent).setHeading(header).addClass("cs-editor-group");
 
 	const { offset, size } = ICON_ADJUST_LIMITS;
 
@@ -142,24 +136,22 @@ export function renderIconAdjustGroup(
 	for (const control of controls) {
 		group.addSetting((setting) => {
 			// Obsidian's usual row: the name on the left, the track beside it.
-			setting
-				.setName(control.label)
-				.addSlider((slider: SliderComponent) => {
-					control.slider = slider;
-					// The number beside the track is Obsidian's own, kept in sync
-					// by the SliderComponent; this only says how to spell it. All
-					// three values are whole numbers, so there are no decimals.
-					setSliderDisplay(slider, (v) => `${v}${control.suffix}`);
-					slider
-						.setLimits(...control.limits)
-						.setValue(control.get())
-						.setInstant(true)
-						.onChange((value: number) => {
-							control.set(value);
-							syncReset();
-							onChange();
-						});
-				});
+			setting.setName(control.label).addSlider((slider: SliderComponent) => {
+				control.slider = slider;
+				// The number beside the track is Obsidian's own, kept in sync
+				// by the SliderComponent; this only says how to spell it. All
+				// three values are whole numbers, so there are no decimals.
+				setSliderDisplay(slider, (v) => `${v}${control.suffix}`);
+				slider
+					.setLimits(...control.limits)
+					.setValue(control.get())
+					.setInstant(true)
+					.onChange((value: number) => {
+						control.set(value);
+						syncReset();
+						onChange();
+					});
+			});
 		});
 	}
 

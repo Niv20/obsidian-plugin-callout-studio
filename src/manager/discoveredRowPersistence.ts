@@ -2,7 +2,6 @@ import type { CalloutDefinition } from "../types";
 import { isCalloutModified } from "./calloutCompare";
 
 export interface PersistedRowContext {
-
 	previewActiveId: string | null;
 	previewShadowedDef: CalloutDefinition | null;
 

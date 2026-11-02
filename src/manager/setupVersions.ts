@@ -45,8 +45,7 @@ export type VersionCategory = "automatic" | "sync-copy";
 
 /** A plugin-created copy takes precedence even when a newer sync copy exists. */
 export function versionCategory(version: SetupVersion): VersionCategory {
-	return version.copies.some(copy => copy.kind === "history" || copy.kind === "backup")
-		? "automatic" : "sync-copy";
+	return version.copies.some((copy) => copy.kind === "history" || copy.kind === "backup") ? "automatic" : "sync-copy";
 }
 
 /** Where a kind of copy sits when two copies were saved at the same moment. */
@@ -73,7 +72,7 @@ const contentKeys = new WeakMap<Partial<PluginData>, string>();
 function keyOf(source: RecoverySource, index: number): string {
 	if (source.data) {
 		let key = contentKeys.get(source.data);
-		if (key === undefined) contentKeys.set(source.data, key = `content:${hash64(canonical(source.data))}`);
+		if (key === undefined) contentKeys.set(source.data, (key = `content:${hash64(canonical(source.data))}`));
 		return key;
 	}
 	return `unreadable:${source.kind}:${source.path ?? source.historyHash ?? index}`;
@@ -82,13 +81,13 @@ function keyOf(source: RecoverySource, index: number): string {
 function versionOf(key: string, copies: RecoverySource[]): SetupVersion {
 	copies.sort((a, b) => newestFirst(order(a), order(b)));
 	const newest = copies[0]!;
-	const explained = copies.find(copy => copy.reason) ?? newest;
+	const explained = copies.find((copy) => copy.reason) ?? newest;
 	return {
 		key,
 		copies,
 		time: newest.time,
 		reason: { kind: explained.kind, reason: explained.reason ?? null },
-		data: copies.find(copy => copy.data)?.data ?? null,
+		data: copies.find((copy) => copy.data)?.data ?? null,
 	};
 }
 
@@ -101,15 +100,18 @@ export function mergeVersions(sources: readonly RecoverySource[]): SetupVersion[
 		if (group) group.push(source);
 		else groups.set(key, [source]);
 	});
-	return [...groups].map(([key, copies]) => versionOf(key, copies))
-		.sort((a, b) => newestFirst(
-			{ time: a.time, kind: a.copies[0]!.kind, tie: a.key },
-			{ time: b.time, kind: b.copies[0]!.kind, tie: b.key },
-		));
+	return [...groups]
+		.map(([key, copies]) => versionOf(key, copies))
+		.sort((a, b) =>
+			newestFirst(
+				{ time: a.time, kind: a.copies[0]!.kind, tie: a.key },
+				{ time: b.time, kind: b.copies[0]!.kind, tie: b.key },
+			),
+		);
 }
 
 /** Underlying storage kinds, independent of the version's presentation category. */
 export function versionPlaces(version: SetupVersion): RecoverySourceKind[] {
-	const kinds = new Set(version.copies.map(copy => copy.kind));
-	return (Object.keys(KIND_ORDER) as RecoverySourceKind[]).filter(kind => kinds.has(kind));
+	const kinds = new Set(version.copies.map((copy) => copy.kind));
+	return (Object.keys(KIND_ORDER) as RecoverySourceKind[]).filter((kind) => kinds.has(kind));
 }

@@ -32,16 +32,8 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { mergeSavedSettings } from "../src/utils/settingsMerge";
-import {
-	DEFAULT_CONTEXT_MENU_ITEMS,
-	DEFAULT_SETTINGS,
-} from "../src/constants";
-import type {
-	ContextMenuItemConfig,
-	CustomCommand,
-	CustomPalette,
-	PluginSettings,
-} from "../src/types";
+import { DEFAULT_CONTEXT_MENU_ITEMS, DEFAULT_SETTINGS } from "../src/constants";
+import type { ContextMenuItemConfig, CustomCommand, CustomPalette, PluginSettings } from "../src/types";
 
 /* ────────────────────────────────────────────────────────────────────────────
  * Place 1 — the interface, pinned at compile time
@@ -138,7 +130,6 @@ const LEAVES = leaves(DEFAULT_SETTINGS);
  * to decide whether it also needs a hand-written test below.
  */
 const EXPECTED_LEAVES: string[] = [
-
 	"autocomplete.enabled",
 	"competitorImportBannerHandled",
 	"contextMenu.enabled",
@@ -196,11 +187,7 @@ const EXPECTED_LEAVES: string[] = [
  * user-configurable; a saved `false` from a build where they were is ignored
  * because the feature it switched off no longer exists to switch off.
  */
-const FORCED = new Set([
-	"autocomplete.enabled",
-	"headingCallouts.refCleanTitles",
-	"headingCallouts.refShowIcon",
-]);
+const FORCED = new Set(["autocomplete.enabled", "headingCallouts.refCleanTitles", "headingCallouts.refShowIcon"]);
 
 /**
  * Leaves whose accepted values are an enum rather than free text, so the
@@ -251,10 +238,7 @@ describe("mergeSavedSettings — the three places", () => {
 		// the one gap tsc leaves is an OPTIONAL key declared in the interface and
 		// omitted from the defaults, which typechecks and then reads as
 		// `undefined` forever.
-		assert.deepStrictEqual(
-			Object.keys(DEFAULT_SETTINGS).sort(),
-			Object.keys(FIELD_KIND).sort(),
-		);
+		assert.deepStrictEqual(Object.keys(DEFAULT_SETTINGS).sort(), Object.keys(FIELD_KIND).sort());
 	});
 
 	it("a merge of nothing produces every one of those keys, and no other", () => {
@@ -285,20 +269,14 @@ describe("mergeSavedSettings — the three places", () => {
 		// save guard could never find two writes identical, and every launch of
 		// an untouched vault rewrote `data.json` for a sync client to pick up.
 		// Sorted comparison is the test above; this one is deliberately unsorted.
-		assert.deepStrictEqual(
-			Object.keys(mergeSavedSettings({})),
-			Object.keys(DEFAULT_SETTINGS),
-		);
+		assert.deepStrictEqual(Object.keys(mergeSavedSettings({})), Object.keys(DEFAULT_SETTINGS));
 	});
 
 	it("the defaults round-trip through the merge unchanged", () => {
 		// What every launch of an untouched vault does: save the defaults, read
 		// them back. A field that normalizes on the way in but not on the way out
 		// would drift a little further on each launch.
-		assert.deepStrictEqual(
-			mergeSavedSettings(structuredClone(DEFAULT_SETTINGS)),
-			DEFAULT_SETTINGS,
-		);
+		assert.deepStrictEqual(mergeSavedSettings(structuredClone(DEFAULT_SETTINGS)), DEFAULT_SETTINGS);
 	});
 
 	it("is a fixed point on rich data too", () => {
@@ -327,9 +305,7 @@ describe("mergeSavedSettings — every saved value comes back", () => {
 		if (FORCED.has(leaf.name)) continue;
 		it(`${leaf.name}`, () => {
 			const wanted = ENUM_LEAVES[leaf.name] ?? twist(leaf.value);
-			const merged = mergeSavedSettings(
-				nest(leaf.path, wanted) as Partial<PluginSettings>,
-			);
+			const merged = mergeSavedSettings(nest(leaf.path, wanted) as Partial<PluginSettings>);
 			assert.deepStrictEqual(
 				read(merged, leaf.path),
 				wanted,
@@ -341,9 +317,7 @@ describe("mergeSavedSettings — every saved value comes back", () => {
 	for (const name of FORCED) {
 		it(`${name} is forced on, whatever the file says`, () => {
 			const path = name.split(".");
-			const merged = mergeSavedSettings(
-				nest(path, false) as Partial<PluginSettings>,
-			);
+			const merged = mergeSavedSettings(nest(path, false) as Partial<PluginSettings>);
 			assert.strictEqual(read(merged, path), true);
 		});
 	}
@@ -423,17 +397,13 @@ describe("mergeSavedSettings — keys that must NOT survive", () => {
 			iconSources: { fromTheFuture: 4 },
 		} as unknown as Partial<PluginSettings>);
 
-		const unknownIn = (node: unknown): boolean =>
-			"fromTheFuture" in (node as Record<string, unknown>);
+		const unknownIn = (node: unknown): boolean => "fromTheFuture" in (node as Record<string, unknown>);
 
 		assert.ok(!unknownIn(merged.globalStyle), "globalStyle");
 		assert.ok(!unknownIn(merged.globalStyle.heading), "globalStyle.heading");
 		assert.ok(!unknownIn(merged.globalStyle.inline), "globalStyle.inline");
 		assert.ok(!unknownIn(merged.globalStyle.borderSides), "borderSides");
-		assert.ok(
-			!unknownIn(merged.globalStyle.heading.borderSides),
-			"heading.borderSides",
-		);
+		assert.ok(!unknownIn(merged.globalStyle.heading.borderSides), "heading.borderSides");
 		assert.ok(!unknownIn(merged.iconSources), "iconSources");
 	});
 
@@ -501,9 +471,8 @@ describe("mergeSavedSettings — keys that must NOT survive", () => {
 		// be a floating popup, and its on/off switch is the only part of it that
 		// still means anything.
 		assert.strictEqual(
-			mergeSavedSettings({ popup: { enabled: false } } as Parameters<
-				typeof mergeSavedSettings
-			>[0]).contextMenu.enabled,
+			mergeSavedSettings({ popup: { enabled: false } } as Parameters<typeof mergeSavedSettings>[0]).contextMenu
+				.enabled,
 			false,
 		);
 	});
@@ -558,10 +527,7 @@ describe("mergeSavedSettings — the icon library order and hidden list", () => 
 
 describe("mergeSavedSettings — the context menu's item lists", () => {
 	it("defaults every role when the file says nothing", () => {
-		assert.deepStrictEqual(
-			mergeSavedSettings({}).contextMenu.items,
-			DEFAULT_CONTEXT_MENU_ITEMS,
-		);
+		assert.deepStrictEqual(mergeSavedSettings({}).contextMenu.items, DEFAULT_CONTEXT_MENU_ITEMS);
 	});
 
 	it("keeps the user's own order", () => {
@@ -625,10 +591,7 @@ describe("mergeSavedSettings — the context menu's item lists", () => {
 			},
 		} as Partial<PluginSettings>);
 
-		assert.strictEqual(
-			ids(merged.contextMenu.items.regular).filter((id) => id === "edit").length,
-			1,
-		);
+		assert.strictEqual(ids(merged.contextMenu.items.regular).filter((id) => id === "edit").length, 1);
 	});
 
 	it("reads a missing `enabled` as on", () => {
@@ -657,14 +620,8 @@ describe("mergeSavedSettings — the context menu's item lists", () => {
 			contextMenu: { items: { inline: [{ id: "openSettings", enabled: true }] } },
 		} as Partial<PluginSettings>);
 
-		assert.deepStrictEqual(ids(merged.contextMenu.items.inline), [
-			"openSettings",
-			"edit",
-		]);
-		assert.deepStrictEqual(
-			merged.contextMenu.items.regular,
-			DEFAULT_CONTEXT_MENU_ITEMS.regular,
-		);
+		assert.deepStrictEqual(ids(merged.contextMenu.items.inline), ["openSettings", "edit"]);
+		assert.deepStrictEqual(merged.contextMenu.items.regular, DEFAULT_CONTEXT_MENU_ITEMS.regular);
 	});
 });
 
@@ -678,9 +635,7 @@ function state(
 	role: "regular" | "heading" | "inline",
 	id: string,
 ): boolean | undefined {
-	return mergeSavedSettings(saved).contextMenu.items[role].find(
-		(i) => i.id === id,
-	)?.enabled;
+	return mergeSavedSettings(saved).contextMenu.items[role].find((i) => i.id === id)?.enabled;
 }
 
 describe("mergeSavedSettings — 1.x's three menu booleans", () => {
@@ -755,10 +710,7 @@ describe("mergeSavedSettings — 1.x's three menu booleans", () => {
 		const saved = {
 			contextMenu: { showCopyMarkdown: "no", showEditCallout: false },
 		} as unknown as Parameters<typeof mergeSavedSettings>[0];
-		const menu = mergeSavedSettings(saved).contextMenu as unknown as Record<
-			string,
-			unknown
-		>;
+		const menu = mergeSavedSettings(saved).contextMenu as unknown as Record<string, unknown>;
 
 		assert.strictEqual(state(saved, "regular", "copyMarkdown"), true);
 		assert.strictEqual(state(saved, "regular", "edit"), false);
@@ -802,10 +754,7 @@ describe("mergeSavedSettings — the lists the user builds up", () => {
 			// the file; merging by id against the vault's own is the caller's job
 			// (backupImport), and reading this function alone is exactly
 			// what makes `Object.assign` look safe.
-			assert.deepStrictEqual(
-				(mergeSavedSettings({}) as unknown as Record<string, unknown>)[field],
-				[],
-			);
+			assert.deepStrictEqual((mergeSavedSettings({}) as unknown as Record<string, unknown>)[field], []);
 		});
 
 		it(`${field} is a fresh array, never DEFAULT_SETTINGS' own`, () => {
@@ -865,19 +814,10 @@ describe("mergeSavedSettings — the lists the user builds up", () => {
 
 	it("de-duplicates `disabledFixedCommands` and drops non-strings", () => {
 		const merged = mergeSavedSettings({
-			disabledFixedCommands: [
-				"insert-empty",
-				"insert-empty",
-				7,
-				null,
-				"wrap-selection",
-			],
+			disabledFixedCommands: ["insert-empty", "insert-empty", 7, null, "wrap-selection"],
 		} as unknown as Partial<PluginSettings>);
 
-		assert.deepStrictEqual(merged.disabledFixedCommands, [
-			"insert-empty",
-			"wrap-selection",
-		]);
+		assert.deepStrictEqual(merged.disabledFixedCommands, ["insert-empty", "wrap-selection"]);
 	});
 
 	it("reads a non-array as none, for every list", () => {
@@ -908,24 +848,12 @@ describe("mergeSavedSettings — what the caller is handed", () => {
 		const merged = mergeSavedSettings({});
 
 		assert.notStrictEqual(merged.globalStyle, DEFAULT_SETTINGS.globalStyle);
-		assert.notStrictEqual(
-			merged.globalStyle.borderSides,
-			DEFAULT_SETTINGS.globalStyle.borderSides,
-		);
-		assert.notStrictEqual(
-			merged.globalStyle.heading,
-			DEFAULT_SETTINGS.globalStyle.heading,
-		);
-		assert.notStrictEqual(
-			merged.globalStyle.inline,
-			DEFAULT_SETTINGS.globalStyle.inline,
-		);
+		assert.notStrictEqual(merged.globalStyle.borderSides, DEFAULT_SETTINGS.globalStyle.borderSides);
+		assert.notStrictEqual(merged.globalStyle.heading, DEFAULT_SETTINGS.globalStyle.heading);
+		assert.notStrictEqual(merged.globalStyle.inline, DEFAULT_SETTINGS.globalStyle.inline);
 		assert.notStrictEqual(merged.contextMenu, DEFAULT_SETTINGS.contextMenu);
 		assert.notStrictEqual(merged.contextMenu.items, DEFAULT_CONTEXT_MENU_ITEMS);
-		assert.notStrictEqual(
-			merged.contextMenu.items.regular,
-			DEFAULT_CONTEXT_MENU_ITEMS.regular,
-		);
+		assert.notStrictEqual(merged.contextMenu.items.regular, DEFAULT_CONTEXT_MENU_ITEMS.regular);
 		assert.notStrictEqual(merged.iconSources, DEFAULT_SETTINGS.iconSources);
 	});
 
@@ -951,10 +879,7 @@ describe("mergeSavedSettings — what the caller is handed", () => {
 		// which REPLACES the object rather than assigning into it. The assertion
 		// below is about the day someone writes `lastCategory[id] = cat`.
 		const merged = mergeSavedSettings({});
-		assert.notStrictEqual(
-			merged.iconSources.lastCategory,
-			DEFAULT_SETTINGS.iconSources.lastCategory,
-		);
+		assert.notStrictEqual(merged.iconSources.lastCategory, DEFAULT_SETTINGS.iconSources.lastCategory);
 		assert.deepStrictEqual(
 			merged.iconSources.lastCategory,
 			DEFAULT_SETTINGS.iconSources.lastCategory,
@@ -964,8 +889,7 @@ describe("mergeSavedSettings — what the caller is handed", () => {
 
 	it("an in-place write to it reaches neither the defaults nor the next merge", () => {
 		const first = mergeSavedSettings({});
-		(first.iconSources.lastCategory as Record<string, string>).material =
-			"Household";
+		(first.iconSources.lastCategory as Record<string, string>).material = "Household";
 
 		assert.strictEqual(
 			DEFAULT_SETTINGS.iconSources.lastCategory?.material,
@@ -983,9 +907,6 @@ describe("mergeSavedSettings — what the caller is handed", () => {
 		const merged = mergeSavedSettings({
 			iconSources: { lastCategory: { material: "Social" } },
 		} as Partial<PluginSettings>);
-		assert.notStrictEqual(
-			merged.iconSources.lastCategory,
-			DEFAULT_SETTINGS.iconSources.lastCategory,
-		);
+		assert.notStrictEqual(merged.iconSources.lastCategory, DEFAULT_SETTINGS.iconSources.lastCategory);
 	});
 });

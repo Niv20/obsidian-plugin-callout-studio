@@ -73,7 +73,10 @@ describe("focus rings are grey", () => {
 
 	it("keeps its one exception live", () => {
 		for (const selector of ACCENT_RINGS) {
-			assert.ok(rules.some((rule) => rule.selector === selector), `${selector} has no rule left — remove it`);
+			assert.ok(
+				rules.some((rule) => rule.selector === selector),
+				`${selector} has no rule left — remove it`,
+			);
 		}
 	});
 });
@@ -99,9 +102,7 @@ describe("disabled looks the way Obsidian's does", () => {
 	};
 	const DISABLED = /:disabled|\.is-disabled|\[aria-disabled="?true"?\]|\.cs-btn-disabled/;
 
-	const dimming = rules.filter(
-		(rule) => DISABLED.test(selecting(rule.selector)) && rule.props.includes("opacity"),
-	);
+	const dimming = rules.filter((rule) => DISABLED.test(selecting(rule.selector)) && rule.props.includes("opacity"));
 
 	it("dims only what it has named, at Obsidian's value for its kind", () => {
 		const wrong = dimming

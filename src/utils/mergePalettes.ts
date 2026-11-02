@@ -19,11 +19,7 @@
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { CustomPalette } from "../types";
 import { normalizeName } from "./colorNames";
-import {
-	bakePaletteColors,
-	customPaletteToColorPalette,
-	palettesVisuallyEqual,
-} from "./colorPalettes";
+import { bakePaletteColors, customPaletteToColorPalette, palettesVisuallyEqual } from "./colorPalettes";
 
 export interface PaletteMerge {
 	/** The vault's palettes with the file's folded in; a fresh array. */
@@ -55,10 +51,7 @@ export interface PaletteMerge {
  *
  * Neither argument is touched.
  */
-export function mergePalettes(
-	existing: readonly CustomPalette[],
-	incoming: readonly CustomPalette[],
-): PaletteMerge {
+export function mergePalettes(existing: readonly CustomPalette[], incoming: readonly CustomPalette[]): PaletteMerge {
 	const before = new Map(existing.map((p) => [p.id, p]));
 	const byId = new Map(before);
 	const written = new Set<string>();
@@ -67,9 +60,7 @@ export function mergePalettes(
 	for (const next of incoming) {
 		const name = normalizeName(next.name);
 		const targets = [...byId.values()].filter(
-			(p) =>
-				p.id === next.id ||
-				(name !== "" && !written.has(p.id) && normalizeName(p.name) === name),
+			(p) => p.id === next.id || (name !== "" && !written.has(p.id) && normalizeName(p.name) === name),
 		);
 		if (targets.length === 0) {
 			byId.set(next.id, next);

@@ -33,11 +33,7 @@ import {
 	t,
 } from "../src/i18n";
 import { en } from "../src/i18n/en";
-import {
-	LOCALE_FORMAT,
-	LOCALE_MANIFEST,
-	type LocaleFileId,
-} from "../src/i18n/localeManifest";
+import { LOCALE_FORMAT, LOCALE_MANIFEST, type LocaleFileId } from "../src/i18n/localeManifest";
 
 const LOCALE_DIR = join(process.cwd(), "locales");
 
@@ -72,18 +68,17 @@ describe("locales/ matches the manifest compiled into the build", () => {
 		});
 
 		it(`${id}.json carries the shape the runtime accepts`, () => {
-			const file = JSON.parse(
-				readFileSync(join(LOCALE_DIR, `${id}.json`), "utf8"),
-			) as { format: number; locale: string; strings: Record<string, string> };
+			const file = JSON.parse(readFileSync(join(LOCALE_DIR, `${id}.json`), "utf8")) as {
+				format: number;
+				locale: string;
+				strings: Record<string, string>;
+			};
 
 			// The runtime rejects a payload whose identity does not match what it
 			// asked for, so a mis-generated file must fail here, not on a device.
 			assert.strictEqual(file.format, LOCALE_FORMAT);
 			assert.strictEqual(file.locale, id);
-			assert.strictEqual(
-				Object.keys(file.strings).length,
-				LOCALE_MANIFEST[id].keys,
-			);
+			assert.strictEqual(Object.keys(file.strings).length, LOCALE_MANIFEST[id].keys);
 			for (const [key, value] of Object.entries(file.strings)) {
 				assert.strictEqual(typeof value, "string", `${key} is not a string`);
 			}
@@ -93,9 +88,9 @@ describe("locales/ matches the manifest compiled into the build", () => {
 			// The reverse is allowed and normal: en.ts is edited alone, so a
 			// locale trails it until the translation pass. A key with no English
 			// counterpart is different — nothing can ever look it up.
-			const file = JSON.parse(
-				readFileSync(join(LOCALE_DIR, `${id}.json`), "utf8"),
-			) as { strings: Record<string, string> };
+			const file = JSON.parse(readFileSync(join(LOCALE_DIR, `${id}.json`), "utf8")) as {
+				strings: Record<string, string>;
+			};
 			const orphans = Object.keys(file.strings).filter((k) => !(k in en));
 			assert.deepStrictEqual(orphans, []);
 		});

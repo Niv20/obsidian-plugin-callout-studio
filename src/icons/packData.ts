@@ -179,10 +179,7 @@ export function parsePackFile(
  * matters: Octicons draws nine icons at 12px only and `bookmark-fill` at 24px
  * only, so a strict preference would render nothing at all for them.
  */
-export function pickSizeKey(
-	available: readonly string[],
-	preferred: readonly string[],
-): string | null {
+export function pickSizeKey(available: readonly string[], preferred: readonly string[]): string | null {
 	for (const key of preferred) {
 		if (available.includes(key)) return key;
 	}
@@ -242,8 +239,5 @@ export function buildPackSvg(
 			` stroke-linejoin="${stroke.linejoin}"`
 		: "";
 
-	return (
-		`<svg xmlns="http://www.w3.org/2000/svg" ` +
-		`viewBox="0 0 ${size.w} ${key}"${rootPaint}>${paths}</svg>`
-	);
+	return `<svg xmlns="http://www.w3.org/2000/svg" ` + `viewBox="0 0 ${size.w} ${key}"${rootPaint}>${paths}</svg>`;
 }

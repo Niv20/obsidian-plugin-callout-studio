@@ -114,8 +114,12 @@ export async function openCalloutRowMenu(
 		if (parent) return true;
 		if (phoneSheet) return false;
 		const rect = anchor.getBoundingClientRect();
-		return rect.left !== initialRect.left || rect.top !== initialRect.top ||
-			rect.width !== initialRect.width || rect.height !== initialRect.height;
+		return (
+			rect.left !== initialRect.left ||
+			rect.top !== initialRect.top ||
+			rect.width !== initialRect.width ||
+			rect.height !== initialRect.height
+		);
 	};
 	lifetime.registerDomEvent(view, "orientationchange", close);
 	// Presenting a phone sheet hides the keyboard, and on iOS that takes focus
@@ -125,11 +129,10 @@ export async function openCalloutRowMenu(
 	});
 	lifetime.registerDomEvent(view, "pagehide", close);
 	if (!phoneSheet) {
-		const scrollPositions = new Map(ancestors.map((el) =>
-			[el, { x: el.scrollLeft, y: el.scrollTop }] as const));
+		const scrollPositions = new Map(ancestors.map((el) => [el, { x: el.scrollLeft, y: el.scrollTop }] as const));
 		const onScroll = (scrollEvent: Event): void => {
-			const target = scrollEvent.target === doc
-				? doc.scrollingElement ?? doc.documentElement : scrollEvent.target;
+			const target =
+				scrollEvent.target === doc ? (doc.scrollingElement ?? doc.documentElement) : scrollEvent.target;
 			const position = scrollPositions.get(target as HTMLElement);
 			if (!position) return;
 			const el = target as HTMLElement;
@@ -142,8 +145,13 @@ export async function openCalloutRowMenu(
 		lifetime.registerDomEvent(view, "resize", close);
 		const viewport = view.visualViewport;
 		if (viewport) {
-			const geometry = (): number[] => [viewport.width, viewport.height,
-				viewport.offsetLeft, viewport.offsetTop, viewport.scale];
+			const geometry = (): number[] => [
+				viewport.width,
+				viewport.height,
+				viewport.offsetLeft,
+				viewport.offsetTop,
+				viewport.scale,
+			];
 			const initialViewport = geometry();
 			const viewportChanged = (): void => {
 				if (geometry().some((value, i) => value !== initialViewport[i])) close();
@@ -169,13 +177,22 @@ export async function openCalloutRowMenu(
 
 	try {
 		const preparation = prepareUsageMenu(ctx.app, anchor, (cancel) => lifetime.register(cancel));
-		if (preparation && !await preparation) { close(); return; }
+		if (preparation && !(await preparation)) {
+			close();
+			return;
+		}
 		// Also cover a scroll/removal after scan readiness but before this await
 		// resumes. The lifetime stays armed throughout that microtask boundary.
-		if (!active || anchorChanged()) { close(); return; }
+		if (!active || anchorChanged()) {
+			close();
+			return;
+		}
 		const openingMenu = new Menu();
 		menu = openingMenu;
-		const hidden = (): void => { menu = undefined; close(); };
+		const hidden = (): void => {
+			menu = undefined;
+			close();
+		};
 		// Also covers a native dismissal before Menu's deferred component load.
 		onMenuHide(openingMenu, hidden);
 		build(openingMenu);
@@ -226,11 +243,7 @@ function showRowMenu(menu: Menu, trigger: RowMenuTrigger, doc: Document): void {
  * @param openMenu Opens the row's menu; given `{ kind: "button" }` and the
  *   button, so the menu drops down from it.
  */
-export function addRowMenuButton(
-	setting: Setting,
-	name: string,
-	openMenu: (trigger: RowMenuTrigger) => void,
-): void {
+export function addRowMenuButton(setting: Setting, name: string, openMenu: (trigger: RowMenuTrigger) => void): void {
 	setting.addExtraButton((button) => {
 		// `extraSettingsEl` is the button's element (a `div.clickable-icon`);
 		// the menu opens under it and paints it pressed while open.

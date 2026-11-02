@@ -153,7 +153,9 @@ const ELLIPSIS = "…";
 const dotted = Object.keys(en).filter((key) => (en[key] ?? "").includes(ELLIPSIS));
 
 /** Every hand-written plugin source file in one string; `src/i18n/` is not in it. */
-const sourceText = pluginSourceFiles().map((file) => file.text).join("\n");
+const sourceText = pluginSourceFiles()
+	.map((file) => file.text)
+	.join("\n");
 const isRead = (key: string): boolean => sourceText.includes(`"${key}"`);
 
 /* -------------------------------------------------------------------------- */
@@ -177,12 +179,16 @@ describe("every ellipsis in the English strings has a meaning on file", () => {
 				unfiled,
 			),
 		);
-		const twice = [...where].filter(([, meanings]) => meanings.length > 1).map(([key, m]) => `${key}: ${m.join(" + ")}`);
+		const twice = [...where]
+			.filter(([, meanings]) => meanings.length > 1)
+			.map(([key, m]) => `${key}: ${m.join(" + ")}`);
 		assert.deepStrictEqual(twice, [], report("These keys are filed under more than one meaning:", twice));
 	});
 
 	it("keeps no entry for a string that has lost its dots or its key", () => {
-		const stale = Object.values(FILED).flat().filter((key) => !dotted.includes(key));
+		const stale = Object.values(FILED)
+			.flat()
+			.filter((key) => !dotted.includes(key));
 		assert.deepStrictEqual(
 			stale,
 			[],
@@ -224,7 +230,6 @@ describe("an action label ends in the ellipsis exactly when its next step asks f
 			report("No English string, or no code that reads it, for these keys. Drop or fix the entry:", missing),
 		);
 	});
-
 });
 
 /* -------------------------------------------------------------------------- */

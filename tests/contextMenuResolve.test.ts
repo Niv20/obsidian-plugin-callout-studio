@@ -83,8 +83,7 @@ function plugin(...views: unknown[]): Plugin {
 	return {
 		app: {
 			workspace: {
-				getLeavesOfType: (type: string) =>
-					type === "markdown" ? views.map((v) => ({ view: v })) : [],
+				getLeavesOfType: (type: string) => (type === "markdown" ? views.map((v) => ({ view: v })) : []),
 			},
 		},
 	} as unknown as Plugin;
@@ -114,10 +113,7 @@ function attachEditorView(
 	cmEditor: FakeElement,
 	impl: {
 		posAtDOM?: (element: unknown) => number;
-		posAtCoords?: (
-			coords: { x: number; y: number },
-			precise?: false,
-		) => number | null;
+		posAtCoords?: (coords: { x: number; y: number }, precise?: false) => number | null;
 	},
 ): void {
 	(cmEditor as unknown as { cmView: unknown }).cmView = {
@@ -181,8 +177,7 @@ describe("CALLOUT_HEADER_REGEX", () => {
 describe("CALLOUT_FOLD_MARK_REGEX", () => {
 	// items.ts reads group 3 as `match?.[3] ?? ""`, so "no mark" must be
 	// undefined rather than an empty capture that swallows the `??`.
-	const mark = (line: string): string | undefined =>
-		CALLOUT_FOLD_MARK_REGEX.exec(line)?.[3];
+	const mark = (line: string): string | undefined => CALLOUT_FOLD_MARK_REGEX.exec(line)?.[3];
 
 	it("reports the fold mark when there is one", () => {
 		assert.strictEqual(mark("> [!note]-"), "-");
@@ -241,10 +236,7 @@ describe("findMarkdownViewForTarget", () => {
 			editor: editor(""),
 		});
 
-		assert.strictEqual(
-			findMarkdownViewForTarget(plugin(other, mine), asEl(target)),
-			mine,
-		);
+		assert.strictEqual(findMarkdownViewForTarget(plugin(other, mine), asEl(target)), mine);
 	});
 
 	it("ignores a leaf whose view is not a MarkdownView", () => {
@@ -254,27 +246,18 @@ describe("findMarkdownViewForTarget", () => {
 		const container = el({ children: [target] });
 		const notMarkdown = { containerEl: container };
 
-		assert.strictEqual(
-			findMarkdownViewForTarget(plugin(notMarkdown), asEl(target)),
-			null,
-		);
+		assert.strictEqual(findMarkdownViewForTarget(plugin(notMarkdown), asEl(target)), null);
 	});
 
 	it("returns null for an element no open view contains", () => {
 		const v = view({ containerEl: el({}), editor: editor("") });
-		assert.strictEqual(
-			findMarkdownViewForTarget(plugin(v), asEl(el({ tag: "span" }))),
-			null,
-		);
+		assert.strictEqual(findMarkdownViewForTarget(plugin(v), asEl(el({ tag: "span" }))), null);
 	});
 
 	it("counts the container itself as containing the element", () => {
 		const container = el({});
 		const v = view({ containerEl: container, editor: editor("") });
-		assert.strictEqual(
-			findMarkdownViewForTarget(plugin(v), asEl(container)),
-			v,
-		);
+		assert.strictEqual(findMarkdownViewForTarget(plugin(v), asEl(container)), v);
 	});
 });
 
@@ -359,10 +342,7 @@ describe("resolveContext — inline pill", () => {
 			containerEl: sourceContainer,
 			editor: editor(""),
 		});
-		assert.strictEqual(
-			resolveContext(plugin(sourceView), trigger(pill))?.surface,
-			"source",
-		);
+		assert.strictEqual(resolveContext(plugin(sourceView), trigger(pill))?.surface, "source");
 
 		const lpPill = el({
 			tag: "span",
@@ -378,10 +358,7 @@ describe("resolveContext — inline pill", () => {
 			],
 		});
 		const lpView = view({ containerEl: lpContainer, editor: editor("") });
-		assert.strictEqual(
-			resolveContext(plugin(lpView), trigger(lpPill))?.surface,
-			"live-preview",
-		);
+		assert.strictEqual(resolveContext(plugin(lpView), trigger(lpPill))?.surface, "live-preview");
 	});
 });
 
@@ -400,9 +377,7 @@ describe("resolveContext — heading callout, reading view", () => {
 		});
 		const preview = el({ children: [bar] });
 		const container = el({ children: [preview] });
-		const sections = new Map([
-			[bar, { lineStart, lineEnd: lineStart, text: source.split("\n")[lineStart] ?? "" }],
-		]);
+		const sections = new Map([[bar, { lineStart, lineEnd: lineStart, text: source.split("\n")[lineStart] ?? "" }]]);
 		const v = view({
 			containerEl: container,
 			editor: editor(source),
@@ -428,10 +403,7 @@ describe("resolveContext — heading callout, reading view", () => {
 	it("matches the bar itself as well as the token inside it", () => {
 		const c = headingCase("## [!tip] Title", 0);
 		assert.strictEqual(resolveContext(c.plugin, trigger(c.bar))?.role, "heading");
-		assert.strictEqual(
-			resolveContext(c.plugin, trigger(c.title))?.role,
-			"heading",
-		);
+		assert.strictEqual(resolveContext(c.plugin, trigger(c.title))?.role, "heading");
 	});
 
 	it("reads the level off the source, not off the tag name", () => {
@@ -468,10 +440,7 @@ describe("resolveContext — heading callout, reading view", () => {
 			sections: new Map([[block, { lineStart: 0, lineEnd: 0, text: "" }]]),
 		});
 
-		assert.strictEqual(
-			resolveContext(plugin(v), trigger(token))?.role,
-			"heading",
-		);
+		assert.strictEqual(resolveContext(plugin(v), trigger(token))?.role, "heading");
 	});
 
 	it("gives up when nothing up the chain knows the section", () => {
@@ -492,10 +461,7 @@ describe("resolveContext — heading callout, reading view", () => {
 });
 
 describe("resolveContext — heading callout, live preview", () => {
-	function lpHeadingCase(
-		source: string,
-		posAt: { atDOM?: number; atCoords?: number | null },
-	) {
+	function lpHeadingCase(source: string, posAt: { atDOM?: number; atCoords?: number | null }) {
 		const token = el({ tag: "span", cls: "cs-heading-token" });
 		const bar = el({ cls: "cs-heading-callout cm-line", children: [token] });
 		const cmEditor = el({ cls: "cm-editor", children: [bar] });
@@ -640,13 +606,10 @@ describe("resolveContext — editor coordinates", () => {
 		const target = el({ tag: "span", cls: "cm-line" });
 		const cmEditor = el({ cls: "cm-editor", children: [target] });
 		const container = el({
-			children: [
-				el({ cls: "markdown-source-view", children: [cmEditor] }),
-			],
+			children: [el({ cls: "markdown-source-view", children: [cmEditor] })],
 		});
 		attachEditorView(cmEditor, {
-			posAtCoords: (_coords, exact) =>
-				exact === false ? offset : precise ? offset : null,
+			posAtCoords: (_coords, exact) => (exact === false ? offset : precise ? offset : null),
 		});
 		const v = view({ containerEl: container, editor: editor(source) });
 		return { target, plugin: plugin(v) };
@@ -677,10 +640,7 @@ describe("resolveContext — editor coordinates", () => {
 		const result = resolveContext(c.plugin, trigger(c.target));
 
 		assert.strictEqual(result?.id, "warning");
-		assert.strictEqual(
-			result?.role === "regular" && result.callout.quoteDepth,
-			2,
-		);
+		assert.strictEqual(result?.role === "regular" && result.callout.quoteDepth, 2);
 	});
 
 	it("falls back to the imprecise lookup when the exact one misses", () => {
@@ -700,11 +660,7 @@ describe("resolveContext — editor coordinates", () => {
 /* -------------------------------------------------------------------------- */
 
 describe("resolveContext — reading view", () => {
-	function readingCase(
-		attrId: string,
-		section: SectionInfo,
-		nesting: string[] = [],
-	) {
+	function readingCase(attrId: string, section: SectionInfo, nesting: string[] = []) {
 		const target = el({ tag: "p", text: "body" });
 		let node = el({
 			cls: "callout",
@@ -732,11 +688,7 @@ describe("resolveContext — reading view", () => {
 
 	it("matches id and quote depth together", () => {
 		const text = "> [!note] Outer\n> > [!warning] Inner\n> > body";
-		const c = readingCase(
-			"warning",
-			{ lineStart: 4, lineEnd: 6, text },
-			["note"],
-		);
+		const c = readingCase("warning", { lineStart: 4, lineEnd: 6, text }, ["note"]);
 		const result = resolveContext(c.plugin, trigger(c.target));
 
 		assert.ok(result);
@@ -764,10 +716,7 @@ describe("resolveContext — reading view", () => {
 		const result = resolveContext(c.plugin, trigger(c.target));
 
 		assert.strictEqual(result?.id, "warning");
-		assert.strictEqual(
-			result?.role === "regular" && result.callout.quoteDepth,
-			2,
-		);
+		assert.strictEqual(result?.role === "regular" && result.callout.quoteDepth, 2);
 	});
 
 	it("falls back to another callout at the same depth", () => {

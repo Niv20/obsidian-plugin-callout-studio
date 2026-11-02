@@ -12,11 +12,7 @@
 import assert from "node:assert";
 import { afterEach, describe, it } from "node:test";
 import { installFakeDom } from "./support/fakeDom";
-import {
-	CSS_FALLBACK_ICON_HIDDEN,
-	restoreCoreIcon,
-	slotAlreadyShows,
-} from "../src/manager/css/fallbackIcon";
+import { CSS_FALLBACK_ICON_HIDDEN, restoreCoreIcon, slotAlreadyShows } from "../src/manager/css/fallbackIcon";
 
 installFakeDom();
 

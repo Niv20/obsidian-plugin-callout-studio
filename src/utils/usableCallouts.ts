@@ -11,9 +11,12 @@ import { normalizeCalloutId } from "./calloutId";
  * overlay so the two never disagree about which ids exist.
  */
 export function usableThemeIds(ids: ReadonlySet<string>): Set<string> {
-	return new Set([...ids]
-		.filter((id) => !/[[\]|\\\r\n\0]/.test(id))
-		.map(normalizeCalloutId).filter(Boolean));
+	return new Set(
+		[...ids]
+			.filter((id) => !/[[\]|\\\r\n\0]/.test(id))
+			.map(normalizeCalloutId)
+			.filter(Boolean),
+	);
 }
 
 interface CalloutLists {
@@ -22,14 +25,8 @@ interface CalloutLists {
 	getThemeProvided(): CalloutDefinition[];
 }
 
-export function committedDefinitions(
-	registry: CalloutLists,
-): CalloutDefinition[] {
-	return [
-		...registry.getBuiltIn(),
-		...registry.getUserDefined(),
-		...registry.getThemeProvided(),
-	];
+export function committedDefinitions(registry: CalloutLists): CalloutDefinition[] {
+	return [...registry.getBuiltIn(), ...registry.getUserDefined(), ...registry.getThemeProvided()];
 }
 
 export interface SuggestionSource {
@@ -37,12 +34,7 @@ export interface SuggestionSource {
 	themeOwns(def: CalloutDefinition): boolean;
 }
 
-export function suggestableCallouts(
-	registry: SuggestionSource,
-	role: CalloutRenderRole,
-): CalloutDefinition[] {
+export function suggestableCallouts(registry: SuggestionSource, role: CalloutRenderRole): CalloutDefinition[] {
 	const usable = registry.getAll().filter((def) => !RESERVED_DEMO_IDS.has(def.id));
-	return role === "regular"
-		? usable
-		: usable.filter((def) => !registry.themeOwns(def));
+	return role === "regular" ? usable : usable.filter((def) => !registry.themeOwns(def));
 }

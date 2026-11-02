@@ -72,9 +72,10 @@ export function createSuggestionRow(rowEl: HTMLElement, options: SuggestionRowOp
 	rowEl.addClass("mod-complex", "callout-studio-suggestion");
 
 	const slotEl = rowEl.createDiv({ cls: "suggestion-icon" });
-	const iconEl = options.slot === "swatch"
-		? slotEl.createDiv({ cls: "callout-studio-suggestion-icon cs-suggestion-swatch" })
-		: slotEl.createSpan({ cls: "suggestion-flair callout-studio-suggestion-icon" });
+	const iconEl =
+		options.slot === "swatch"
+			? slotEl.createDiv({ cls: "callout-studio-suggestion-icon cs-suggestion-swatch" })
+			: slotEl.createSpan({ cls: "suggestion-flair callout-studio-suggestion-icon" });
 
 	const contentEl = rowEl.createDiv({ cls: "suggestion-content callout-studio-suggestion-text" });
 	const titleEl = contentEl.createDiv({ cls: "suggestion-title callout-studio-suggestion-name" });

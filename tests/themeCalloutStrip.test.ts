@@ -10,11 +10,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	pinCoreCalloutDefaults,
-	stripCalloutRules,
-	type RuleContainer,
-} from "../src/manager/theme/themeCalloutStrip";
+import { pinCoreCalloutDefaults, stripCalloutRules, type RuleContainer } from "../src/manager/theme/themeCalloutStrip";
 
 interface FakeStyle {
 	readonly length: number;
@@ -81,12 +77,20 @@ describe("stripping a theme's callout styling", () => {
 			styleRule("blockquote:not(.callout)", { "border-left": "2px solid" }),
 		]);
 		const counts = stripCalloutRules(sheet);
-		assert.deepStrictEqual(selectors(sheet.cssRules), [".markdown-rendered p", ".blockquote", "blockquote:not(.callout)"]);
+		assert.deepStrictEqual(selectors(sheet.cssRules), [
+			".markdown-rendered p",
+			".blockquote",
+			"blockquote:not(.callout)",
+		]);
 		assert.deepStrictEqual(counts, { removed: 1, narrowed: 1, variables: 0 });
 	});
 
 	it("removes the callout variables from every rule that stays, and nothing else", () => {
-		const body = styleRule("body", { "--callout-radius": "0", "--callout-default": "1, 2, 3", "--color-blue": "#00f" });
+		const body = styleRule("body", {
+			"--callout-radius": "0",
+			"--callout-default": "1, 2, 3",
+			"--color-blue": "#00f",
+		});
 		const sheet = list([body]);
 		const counts = stripCalloutRules(sheet);
 		const kept = body.style as FakeStyle;
@@ -118,7 +122,10 @@ describe("stripping a theme's callout styling", () => {
 			{ name: "--cs-accent-theme", syntax: "<color>", inherits: false },
 		]);
 		stripCalloutRules(sheet);
-		assert.deepStrictEqual(sheet.cssRules.map((r) => r.name), ["--cs-accent-theme"]);
+		assert.deepStrictEqual(
+			sheet.cssRules.map((r) => r.name),
+			["--cs-accent-theme"],
+		);
 	});
 
 	it("leaves @keyframes alone, whose deleteRule takes a keyframe's text", () => {
@@ -169,7 +176,11 @@ describe("stripping a theme's callout styling", () => {
 		});
 		assert.strictEqual(pinCoreCalloutDefaults(sheet), 6);
 		assert.ok(inserted[0]?.startsWith("body {") && inserted[0].includes("--callout-radius: 4px"));
-		assert.ok(inserted.some((rule) => rule.startsWith(".mod-rtl, .is-rtl, .rtl {") && rule.includes("12px 24px 12px 12px")));
+		assert.ok(
+			inserted.some(
+				(rule) => rule.startsWith(".mod-rtl, .is-rtl, .rtl {") && rule.includes("12px 24px 12px 12px"),
+			),
+		);
 		assert.ok(inserted.some((rule) => rule === ".theme-dark { --callout-blend-mode: lighten; }"));
 		assert.ok(inserted.some((rule) => rule.startsWith("@media print")));
 		assert.ok(inserted.some((rule) => rule === ".callout-icon { --icon-size: 16px; --icon-stroke: 2px; }"));
@@ -186,7 +197,10 @@ describe("stripping a theme's callout styling", () => {
 	});
 
 	it("finds nothing more to take the second time", () => {
-		const sheet = list([styleRule(".callout-content, .blockquote", { "--callout-padding": "0" }), styleRule(".callout")]);
+		const sheet = list([
+			styleRule(".callout-content, .blockquote", { "--callout-padding": "0" }),
+			styleRule(".callout"),
+		]);
 		stripCalloutRules(sheet);
 		assert.deepStrictEqual(stripCalloutRules(sheet), { removed: 0, narrowed: 0, variables: 0 });
 	});

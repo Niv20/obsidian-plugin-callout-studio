@@ -23,10 +23,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import {
-	CustomCommandManager,
-	type CustomCommandHostPlugin,
-} from "../src/editor/CustomCommandManager";
+import { CustomCommandManager, type CustomCommandHostPlugin } from "../src/editor/CustomCommandManager";
 import type { CalloutDefinition, CustomCommand } from "../src/types";
 
 function def(over: Partial<CalloutDefinition> = {}): CalloutDefinition {
@@ -141,9 +138,7 @@ describe("migrateCalloutId", () => {
 	});
 
 	it("keeps everything else about the command", () => {
-		const { registry, manager } = harness([
-			command({ role: "heading", headingLevel: 4, action: "wrap" }),
-		]);
+		const { registry, manager } = harness([command({ role: "heading", headingLevel: 4, action: "wrap" })]);
 		registry.add(def({ id: "old" }));
 
 		manager.migrateCalloutId("old", "new");
@@ -210,10 +205,7 @@ describe("the rename as the editor performs it", () => {
 		const { registry, manager } = harness();
 		registry.add(def({ id: "old", aliases: ["shared"] }));
 
-		assert.strictEqual(
-			rename(registry, manager, "old", def({ id: "new", aliases: ["shared"] })),
-			true,
-		);
+		assert.strictEqual(rename(registry, manager, "old", def({ id: "new", aliases: ["shared"] })), true);
 	});
 
 	it("carries the palette link, so the group survives the rename", () => {

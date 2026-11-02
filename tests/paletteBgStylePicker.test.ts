@@ -19,22 +19,20 @@ describe("palette background style picker", () => {
 		fakeDom.light();
 		const host = el();
 		const picked: string[] = [];
-		const picker = buildPaletteBgStyleRow(
-			asEl(host),
-			"solid",
-			(style) => picked.push(style),
-		);
+		const picker = buildPaletteBgStyleRow(asEl(host), "solid", (style) => picked.push(style));
 		try {
 			assert.equal(dropdownValue(asEl(host)), t("palette.bgSolid"));
 			dropdownButton(asEl(host)).fire("keydown", { key: "ArrowDown", preventDefault: () => {} });
 			const menu = createdMenus[createdMenus.length - 1]!;
 			assert.ok(menu.shown, "↓ opens the menu");
-			assert.deepEqual(menu.items.map((item) => item.title), [
-				t("palette.bgSolid"),
-				t("palette.bgGradient"),
-				t("palette.bgTransparent"),
-			]);
-			assert.deepEqual(menu.items.map((item) => item.checked), [true, false, false]);
+			assert.deepEqual(
+				menu.items.map((item) => item.title),
+				[t("palette.bgSolid"), t("palette.bgGradient"), t("palette.bgTransparent")],
+			);
+			assert.deepEqual(
+				menu.items.map((item) => item.checked),
+				[true, false, false],
+			);
 			menu.clickItem(t("palette.bgGradient"));
 			assert.deepEqual(picked, ["gradient"]);
 			assert.equal(dropdownValue(asEl(host)), t("palette.bgGradient"));

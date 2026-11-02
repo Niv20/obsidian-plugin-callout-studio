@@ -42,9 +42,15 @@ export class SidebarActiveFile {
 		this.sections.clear();
 	}
 
-	clearSections(): void { this.sections.clear(); }
-	addSection(path: string, section: HTMLElement): void { this.sections.set(path, section); }
-	cancelReveal(): void { this.pendingPath = null; }
+	clearSections(): void {
+		this.sections.clear();
+	}
+	addSection(path: string, section: HTMLElement): void {
+		this.sections.set(path, section);
+	}
+	cancelReveal(): void {
+		this.pendingPath = null;
+	}
 	beginResultNavigation(path: string): void {
 		this.resultNavigationPath = path;
 		this.cancelReveal();
@@ -112,7 +118,10 @@ export class SidebarActiveFile {
 	}
 
 	private onActiveLeafChange(leaf: WorkspaceLeaf | null): void {
-		if (!leaf) { this.setFile(this.currentDocument()); return; }
+		if (!leaf) {
+			this.setFile(this.currentDocument());
+			return;
+		}
 		if (leaf.getRoot() !== this.app.workspace.rootSplit) return;
 		this.setFile(leaf.view instanceof MarkdownView ? leaf.view.file : null);
 	}

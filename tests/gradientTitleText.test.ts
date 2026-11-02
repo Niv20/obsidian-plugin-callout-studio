@@ -49,16 +49,13 @@ import type { BgGradient, CalloutDefinition } from "../src/types";
 /* -------------------------------------------------------------------------- */
 
 /** The char spans of `root`, in document order. */
-const spans = (root: FakeElement): FakeElement[] =>
-	root.querySelectorAll(`.${CSS_GRAD_CHAR}`);
+const spans = (root: FakeElement): FakeElement[] => root.querySelectorAll(`.${CSS_GRAD_CHAR}`);
 
 /** What each char span holds — one grapheme apiece. */
-const letters = (root: FakeElement): string[] =>
-	spans(root).map((span) => span.textContent);
+const letters = (root: FakeElement): string[] => spans(root).map((span) => span.textContent);
 
 /** The sampled colour on each char span, in order. */
-const colors = (root: FakeElement): string[] =>
-	spans(root).map((span) => span.style.getPropertyValue("--cs-gch"));
+const colors = (root: FakeElement): string[] => spans(root).map((span) => span.style.getPropertyValue("--cs-gch"));
 
 /** Paint a plain text title and hand the element back. */
 function painted(text: string, from = "#000000", to = "#ffffff"): FakeElement {
@@ -144,9 +141,7 @@ describe("paintGradientChars — wrapping", () => {
 	it("reaches text inside ordinary inline markup", () => {
 		// `## [!tip] a **b**` — the bold is part of the title and is swept with
 		// the rest of it.
-		const root = html(
-			`<span class="cs-heading-title">a<strong>b</strong>c</span>`,
-		);
+		const root = html(`<span class="cs-heading-title">a<strong>b</strong>c</span>`);
 		paintGradientChars(asEl(root), "#000000", "#ffffff");
 
 		assert.deepStrictEqual(letters(root), ["a", "b", "c"]);
@@ -166,12 +161,7 @@ describe("paintGradientChars — wrapping", () => {
 
 describe("paintGradientChars — the ramp", () => {
 	it("samples by index, from the first grapheme to the last", () => {
-		assert.deepStrictEqual(colors(painted("abcd")), [
-			"#000000",
-			"#555555",
-			"#aaaaaa",
-			"#ffffff",
-		]);
+		assert.deepStrictEqual(colors(painted("abcd")), ["#000000", "#555555", "#aaaaaa", "#ffffff"]);
 	});
 
 	it("gives a single grapheme the midpoint, not the start colour", () => {
@@ -190,11 +180,7 @@ describe("paintGradientChars — the ramp", () => {
 	it("runs the ramp backwards for an RTL title", () => {
 		// CSS gradient angles are physical: the preset directions all run
 		// left→right, and an RTL title's first logical character is on the right.
-		assert.deepStrictEqual(colors(painted("אבג")), [
-			"#ffffff",
-			"#808080",
-			"#000000",
-		]);
+		assert.deepStrictEqual(colors(painted("אבג")), ["#ffffff", "#808080", "#000000"]);
 	});
 
 	it("lets the first strong character decide, not the first character", () => {
@@ -204,20 +190,12 @@ describe("paintGradientChars — the ramp", () => {
 	});
 
 	it("treats a title with no strong character as LTR", () => {
-		assert.deepStrictEqual(colors(painted("123")), [
-			"#000000",
-			"#808080",
-			"#ffffff",
-		]);
+		assert.deepStrictEqual(colors(painted("123")), ["#000000", "#808080", "#ffffff"]);
 	});
 
 	it("reads Latin, Greek and Cyrillic as strong LTR", () => {
 		for (const text of ["ab", "αβ", "аб"]) {
-			assert.deepStrictEqual(
-				colors(painted(text)),
-				["#000000", "#ffffff"],
-				text,
-			);
+			assert.deepStrictEqual(colors(painted(text)), ["#000000", "#ffffff"], text);
 		}
 	});
 
@@ -318,13 +296,7 @@ describe("paintGradientChars — what it refuses to touch", () => {
 		paintGradientChars(asEl(root), "#000000", "#ffffff");
 
 		assert.deepStrictEqual(letters(root), ["a", "T", "i", "p", "b"]);
-		assert.deepStrictEqual(colors(root), [
-			"#000000",
-			"#ff0000",
-			"#808000",
-			"#00ff00",
-			"#ffffff",
-		]);
+		assert.deepStrictEqual(colors(root), ["#000000", "#ff0000", "#808000", "#00ff00", "#ffffff"]);
 	});
 });
 
@@ -407,12 +379,7 @@ describe("applyTitleGradient — when it paints", () => {
 
 	it("uses the dark pair in dark mode when the palette set one", () => {
 		const root = html(`<span class="cs-heading-title">ab</span>`);
-		inDark(() =>
-			applyTitleGradient(
-				asEl(root),
-				definition({ bgGradient: sweep({ textToColorDark: "#ddeeff" }) }),
-			),
-		);
+		inDark(() => applyTitleGradient(asEl(root), definition({ bgGradient: sweep({ textToColorDark: "#ddeeff" }) })));
 
 		assert.deepStrictEqual(colors(root), ["#445566", "#ddeeff"]);
 	});
@@ -422,9 +389,7 @@ describe("applyTitleGradient — when it paints", () => {
 		// pair the CSS never draws, so the print colours would not match the
 		// screen. This is the cascade CSSInjector emits, mirrored here.
 		const root = html(`<span class="cs-heading-title">ab</span>`);
-		inDark(() =>
-			applyTitleGradient(asEl(root), definition({ bgGradient: sweep() })),
-		);
+		inDark(() => applyTitleGradient(asEl(root), definition({ bgGradient: sweep() })));
 
 		assert.deepStrictEqual(colors(root), ["#112233", "#aabbcc"]);
 	});
@@ -461,16 +426,12 @@ describe("applyTitleGradient — when it clears instead", () => {
 	it("clears when the background sweeps but the text does not", () => {
 		// `textGradient` is off by default — the background gradient alone must
 		// not colour a single glyph.
-		const root = reapply(
-			definition({ bgGradient: sweep({ textGradient: false }) }),
-		);
+		const root = reapply(definition({ bgGradient: sweep({ textGradient: false }) }));
 		assert.strictEqual(spans(root).length, 0);
 	});
 
 	it("clears when the sweep is on but has no end colour to run to", () => {
-		const root = reapply(
-			definition({ bgGradient: sweep({ textToColorLight: undefined }) }),
-		);
+		const root = reapply(definition({ bgGradient: sweep({ textToColorLight: undefined }) }));
 		assert.strictEqual(spans(root).length, 0);
 	});
 

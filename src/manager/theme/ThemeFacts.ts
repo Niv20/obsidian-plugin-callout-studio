@@ -28,11 +28,7 @@
  * theme would also have painted, for one frame.
  */
 import { obsidianCalloutAttrId } from "../../utils/calloutId";
-import {
-	sameThemeAppearances,
-	UNKNOWN_APPEARANCE,
-	type ThemeAppearance,
-} from "./themeAppearance";
+import { sameThemeAppearances, UNKNOWN_APPEARANCE, type ThemeAppearance } from "./themeAppearance";
 import type { CalloutDefinition } from "../../types";
 
 export class ThemeFacts {

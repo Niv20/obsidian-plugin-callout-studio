@@ -81,7 +81,9 @@ export function dangerZoneGroup(ctx: TreeContext): CsGroup {
 				name: t("portable.title"),
 				desc: t("portable.settingDesc"),
 				buttonText: t("portable.review"),
-				onClick: () => { void openPortableConversionFromSettings(ctx.app); },
+				onClick: () => {
+					void openPortableConversionFromSettings(ctx.app);
+				},
 			}),
 			buttonRow({
 				id: "reset-everything",

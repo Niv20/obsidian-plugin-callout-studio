@@ -133,8 +133,9 @@ const IDS = ["a", "b", "c", "d"];
 
 /** The ids of `desc` (not the `+N`), in order. */
 function idBoxes(desc: HTMLElement): HTMLElement[] {
-	return Array.from(desc.querySelectorAll<HTMLElement>(".callout-studio-row-syntax"))
-		.filter((box) => !box.classList.contains("callout-studio-row-more"));
+	return Array.from(desc.querySelectorAll<HTMLElement>(".callout-studio-row-syntax")).filter(
+		(box) => !box.classList.contains("callout-studio-row-more"),
+	);
 }
 
 /** The `+N` chip of `desc`, if it has one. */
@@ -146,18 +147,26 @@ const chipOf = (desc: HTMLElement): HTMLElement | null => desc.querySelector(".c
  */
 function everything(desc: HTMLElement, room: number): Size[] {
 	const chip = chipOf(desc);
-	return [[desc, room], ...idBoxes(desc).map((id): Size => [id, widths.id]), ...(chip ? [[chip, widths.chip] as Size] : [])];
+	return [
+		[desc, room],
+		...idBoxes(desc).map((id): Size => [id, widths.id]),
+		...(chip ? [[chip, widths.chip] as Size] : []),
+	];
 }
 
 /** The ids of `desc` that are cut. */
 function cutIds(desc: HTMLElement): string[] {
-	return idBoxes(desc).filter((box) => box.classList.contains("cs-id-cut")).map((box) => box.textContent ?? "");
+	return idBoxes(desc)
+		.filter((box) => box.classList.contains("cs-id-cut"))
+		.map((box) => box.textContent ?? "");
 }
 
 /** What the line says to the eye: the ids on show, then the count if it is on show. */
 function shown(desc: HTMLElement): string {
 	const chip = chipOf(desc);
-	const ids = idBoxes(desc).filter((box) => !box.classList.contains("cs-id-cut")).map((box) => box.textContent);
+	const ids = idBoxes(desc)
+		.filter((box) => !box.classList.contains("cs-id-cut"))
+		.map((box) => box.textContent);
 	return [...ids, chip && !chip.classList.contains("cs-id-cut") ? chip.textContent : null].filter(Boolean).join(" ");
 }
 
@@ -401,7 +410,11 @@ describe("the ids line", () => {
 		assert.strictEqual(shown(rows[0] as HTMLElement), "[!a] +3");
 		observers.deliver(...rows.map((row): Size => [row, 300]));
 		assert.strictEqual(shown(rows[0] as HTMLElement), "[!a] [!b] [!c] [!d]");
-		assert.strictEqual(measured, 0, "reading a width after a write makes the browser lay the page out again, for every row");
+		assert.strictEqual(
+			measured,
+			0,
+			"reading a width after a write makes the browser lay the page out again, for every row",
+		);
 	});
 
 	it("stops watching when the row goes, and the last row out takes the observer down", () => {
@@ -478,7 +491,11 @@ describe("the ids line in a window of its own", () => {
 		migrateElement(desc as unknown as FakeElement, settingsDoc);
 		settings.deliver(...everything(desc, 300));
 		for (const [room, expected] of [
-			[100, "[!a] [!b] +2"], [60, "[!a] +3"], [30, "+4"], [100, "[!a] [!b] +2"], [300, "[!a] [!b] [!c] [!d]"],
+			[100, "[!a] [!b] +2"],
+			[60, "[!a] +3"],
+			[30, "+4"],
+			[100, "[!a] [!b] +2"],
+			[300, "[!a] [!b] [!c] [!d]"],
 		] as const) {
 			settings.deliver([desc, room]);
 			assert.strictEqual(shown(desc), expected, `${room}px`);
@@ -502,7 +519,11 @@ describe("the ids line in a window of its own", () => {
 		stop();
 		assert.strictEqual(settings.observers[0]?.targets.size, 0);
 		assert.strictEqual(settings.observers[0]?.disconnected, true);
-		assert.strictEqual((desc as unknown as FakeElement).migrationListeners.length, 0, "and stops listening for a move");
+		assert.strictEqual(
+			(desc as unknown as FakeElement).migrationListeners.length,
+			0,
+			"and stops listening for a move",
+		);
 	});
 
 	it("is watched by its own window from the start when the row was drawn there", () => {

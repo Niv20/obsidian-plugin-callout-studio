@@ -40,10 +40,12 @@ export async function confirmAndResetEverything(ctx: SettingsContext): Promise<v
 		undefined,
 		undefined,
 		t("confirm.acknowledge"),
-	).withMascot(
-		// Something to lose: the reminder; only settings going back: what happens to them.
-		inventory.deleted.length > 0 ? t("settings.resetIntro") : t("settings.resetSubtitleDefaults"),
-	).confirm();
+	)
+		.withMascot(
+			// Something to lose: the reminder; only settings going back: what happens to them.
+			inventory.deleted.length > 0 ? t("settings.resetIntro") : t("settings.resetSubtitleDefaults"),
+		)
+		.confirm();
 	// Saving may have paused while the question was open.
 	if (!confirmed || blockedWhilePaused(ctx.plugin.settingsWriter)) return;
 	await resetAfterBackup(ctx);
@@ -90,7 +92,7 @@ function appendInventoryList(parent: DocumentFragment, headingKey: string, rows:
 /** Back the setup up, then reset, paint, save, and say how it went. */
 async function resetAfterBackup(ctx: SettingsContext): Promise<void> {
 	const { plugin } = ctx;
-	if (!await writeSettingsBackup(plugin, plugin.registry.toSaveData(), { reason: "before-reset" })) {
+	if (!(await writeSettingsBackup(plugin, plugin.registry.toSaveData(), { reason: "before-reset" }))) {
 		showNotice("problem", t("settings.resetBackupFailed"));
 		return;
 	}

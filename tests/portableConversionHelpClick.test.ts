@@ -11,20 +11,27 @@ it("opens conversion help from the sidebar without changing notes or review choi
 	const opened: PortableConversionHelpModal[] = [];
 	Object.defineProperty(PortableConversionHelpModal.prototype, "open", {
 		configurable: true,
-		value(this: PortableConversionHelpModal) { opened.push(this); },
+		value(this: PortableConversionHelpModal) {
+			opened.push(this);
+		},
 	});
 	try {
 		await h.view.onOpen();
 		h.choose(0, false);
-		const choices = h.inputs().map(input => input.checked);
+		const choices = h.inputs().map((input) => input.checked);
 		// Help is the small icon button at the end of the Convert row (finding S10-05).
-		const help = (h.view.contentEl as unknown as FakeElement).querySelector(".cs-portable-convert-row .cs-sidebar-icon-button");
+		const help = (h.view.contentEl as unknown as FakeElement).querySelector(
+			".cs-portable-convert-row .cs-sidebar-icon-button",
+		);
 		assert.ok(help, "the Convert row has the help button");
 		assert.equal(help.getAttribute("aria-label"), t("portable.help"));
 		assert.equal(help.getAttribute("aria-haspopup"), "dialog");
 		help.fire("click");
 		assert.equal(opened.length, 1);
-		assert.deepEqual(h.inputs().map(input => input.checked), choices);
+		assert.deepEqual(
+			h.inputs().map((input) => input.checked),
+			choices,
+		);
 		assert.deepEqual(h.written, []);
 		assert.deepEqual(h.confirmations, []);
 	} finally {

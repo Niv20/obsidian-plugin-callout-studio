@@ -25,9 +25,11 @@ export function createSettingsWriter(
 	history: SettingsHistoryStore = new SettingsHistory(owner.app, owner.manifest),
 ): SettingsWriter {
 	const writer = new SettingsWriter({
-		mergeConcurrent: true, checkpoint, history,
+		mergeConcurrent: true,
+		checkpoint,
+		history,
 		genesis: settingsGenesis,
-		isUntouched: data => isUntouchedSettings(data),
+		isUntouched: (data) => isUntouchedSettings(data),
 		build: () => owner.registry.toSaveData(),
 		write: async (data) => {
 			// Some Obsidian versions swallow adapter failures inside saveData.
@@ -37,26 +39,38 @@ export function createSettingsWriter(
 			// A write that never answers is a failed write; the read-back below
 			// still accepts it if it did land.
 			try {
-				await withTimeout(owner.saveData(data), PRIMARY_IO_TIMEOUT_MS,
-					() => new SettingsPersistenceError("write", "Storage did not respond"));
-			} catch (error) { failure = error; }
+				await withTimeout(
+					owner.saveData(data),
+					PRIMARY_IO_TIMEOUT_MS,
+					() => new SettingsPersistenceError("write", "Storage did not respond"),
+				);
+			} catch (error) {
+				failure = error;
+			}
 			const read = await readSettingsFile(owner);
 			if (read.kind !== "loaded" || canonical(read.data) !== canonical(data)) {
-				throw failure instanceof Error ? failure :
-					new SettingsPersistenceError(settingsWriteReason(failure), failure ?? "Settings write could not be verified");
+				throw failure instanceof Error
+					? failure
+					: new SettingsPersistenceError(
+							settingsWriteReason(failure),
+							failure ?? "Settings write could not be verified",
+						);
 			}
 			owner.localState?.markInitialized();
 		},
 		readCurrent: async () => {
 			const read = await readSettingsFile(owner);
 			if (read.kind === "unreadable") {
-				throw new SettingsPersistenceError(read.newer ? "newer-version" : "unreadable", "Settings are unreadable");
+				throw new SettingsPersistenceError(
+					read.newer ? "newer-version" : "unreadable",
+					"Settings are unreadable",
+				);
 			}
 			return read.kind === "loaded" ? read.json : null;
 		},
 		onStaleWrite: () => {
 			reportSettingsSaveFailure(writer);
-			void owner.onExternalSettingsChange().catch(error => {
+			void owner.onExternalSettingsChange().catch((error) => {
 				console.error("[callout-studio] settings reload failed", error);
 			});
 		},
@@ -69,7 +83,9 @@ export function createSettingsWriter(
 		},
 		// Not a failure: the settings file holds every change. Said once, so a
 		// device whose recovery storage is full knows it is less protected.
-		onCheckpointStale: () => { showNotice("warning", t("notice.recoveryCopyStale")); },
+		onCheckpointStale: () => {
+			showNotice("warning", t("notice.recoveryCopyStale"));
+		},
 	});
 	return writer;
 }

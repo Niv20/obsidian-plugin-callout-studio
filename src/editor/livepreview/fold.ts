@@ -54,10 +54,7 @@ export function foldsChanged(a: EditorState, b: EditorState): boolean {
 }
 
 /** The folded range that starts on the given 0-based line, if any. */
-function foldStartingAt(
-	view: EditorView,
-	headingLine: number,
-): FoldRange | null {
+function foldStartingAt(view: EditorView, headingLine: number): FoldRange | null {
 	let found: FoldRange | null = null;
 	const doc = view.state.doc;
 	foldedRanges(view.state).between(0, doc.length, (from, to) => {
@@ -132,10 +129,7 @@ function scheduleParseCatchUp(view: EditorView): void {
 }
 
 /** Toggle the fold of the heading section starting on the given 0-based line. */
-export function toggleHeadingFold(
-	view: EditorView,
-	headingLine: number,
-): void {
+export function toggleHeadingFold(view: EditorView, headingLine: number): void {
 	const existing = foldStartingAt(view, headingLine);
 	if (existing) {
 		view.dispatch({ effects: unfoldEffect.of(existing) });

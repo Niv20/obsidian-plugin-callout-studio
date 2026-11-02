@@ -206,11 +206,7 @@ function flatten(settings: unknown, scheme: Scheme): SchemeResult {
 	return { layer, conditional, customStyles };
 }
 
-function readCallout(
-	id: string,
-	declared: boolean,
-	settings: unknown,
-): CalloutManagerRaw {
+function readCallout(id: string, declared: boolean, settings: unknown): CalloutManagerRaw {
 	const light = flatten(settings, "light");
 	const dark = flatten(settings, "dark");
 
@@ -280,9 +276,7 @@ function readCallouts(custom: unknown, settings: unknown): CalloutManagerRaw[] {
  * callouts and no overrides parses fine and simply has nothing to import. Only
  * an unrecognizable shape is null.
  */
-export function parseCalloutManagerData(
-	raw: unknown,
-): CalloutManagerRaw[] | null {
+export function parseCalloutManagerData(raw: unknown): CalloutManagerRaw[] | null {
 	// Direct callers get the same depth/work limits as file and paste routes.
 	assertImportStructure(raw);
 	if (!isRecord(raw)) return null;
@@ -304,11 +298,7 @@ export function parseCalloutManagerData(
 	const values = Object.values(raw);
 	if (
 		values.length > 0 &&
-		values.every(
-			(value) =>
-				Array.isArray(value) &&
-				value.every((item) => isRecord(item) && isRecord(item.changes)),
-		)
+		values.every((value) => Array.isArray(value) && value.every((item) => isRecord(item) && isRecord(item.changes)))
 	) {
 		return readCallouts(undefined, raw);
 	}

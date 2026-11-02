@@ -14,10 +14,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	resolveAccentDialect,
-	type AccentSpelling,
-} from "../src/manager/theme/accentDialect";
+import { resolveAccentDialect, type AccentSpelling } from "../src/manager/theme/accentDialect";
 import { scanAccentDialect } from "../src/manager/theme/accentDialectScan";
 import { resolveDeclaredSpelling } from "../src/manager/theme/accentValueFormat";
 import { StudioWeightCache } from "../src/manager/theme/StudioWeightCache";
@@ -34,11 +31,7 @@ function dialectOf(css: string, core: AccentSpelling = "color") {
  * `accentVarSpelling` to core. Most fixtures below declare unscoped, so the two
  * modes agree and `light` stands for both; the per-mode cases say so.
  */
-function declaredIn(
-	d: ReturnType<typeof dialectOf>,
-	name: string,
-	mode: "light" | "dark" = "light",
-) {
+function declaredIn(d: ReturnType<typeof dialectOf>, name: string, mode: "light" | "dark" = "light") {
 	return d.declared.get(name)?.[mode];
 }
 
@@ -47,9 +40,7 @@ describe("accentDialect — what the read sites expect", () => {
 		// AnuPpuccin's whole callout system, in one line: it never wraps
 		// --callout-color in color-mix(), so a hex makes every one of these
 		// invalid at computed-value time and the colour silently vanishes.
-		const d = dialectOf(
-			`.callout > .callout-title { background-color: rgba(var(--callout-color), 0.1); }`,
-		);
+		const d = dialectOf(`.callout > .callout-title { background-color: rgba(var(--callout-color), 0.1); }`);
 		assert.equal(d.read, "triplet");
 	});
 
@@ -68,9 +59,7 @@ describe("accentDialect — what the read sites expect", () => {
 	});
 
 	it("takes the INNERMOST wrapper, not the outermost", () => {
-		const d = dialectOf(
-			`.callout { background: color-mix(in srgb, rgb(var(--callout-color)) 25%, transparent); }`,
-		);
+		const d = dialectOf(`.callout { background: color-mix(in srgb, rgb(var(--callout-color)) 25%, transparent); }`);
 		assert.equal(d.read, "triplet");
 	});
 
@@ -104,9 +93,7 @@ describe("accentDialect — what the read sites expect", () => {
 	it("still counts an aliased read that is wrapped", () => {
 		// `--x: color-mix(… var(--callout-color) …)` is a real read: the theme
 		// committed to a spelling even though the target is a custom property.
-		const d = dialectOf(
-			`.callout { --my-bg: color-mix(in srgb, var(--callout-color) 10%, transparent); }`,
-		);
+		const d = dialectOf(`.callout { --my-bg: color-mix(in srgb, var(--callout-color) 10%, transparent); }`);
 		assert.equal(d.read, "color");
 	});
 
@@ -145,10 +132,7 @@ describe("accentDialect — what the read sites expect", () => {
 		// Same reason `maxImportantClasses` takes both: the spelling that has to
 		// work is whatever is on the page, whoever wrote it.
 		const d = resolveAccentDialect(
-			[
-				scanAccentDialect(""),
-				scanAccentDialect(`.callout { color: rgb(var(--callout-color)); }`),
-			],
+			[scanAccentDialect(""), scanAccentDialect(`.callout { color: rgb(var(--callout-color)); }`)],
 			"color",
 		);
 		assert.equal(d.read, "triplet");
@@ -192,9 +176,7 @@ describe("accentDialect — what the theme's own variables hold", () => {
 
 	it("follows a var() FALLBACK when the primary is undeclared", () => {
 		// The Catppuccin chain, which every AnuPpuccin derivative inherits.
-		const d = dialectOf(
-			`body { --callout-info: var(--ctp-custom-blue, var(--ctp-ext-blue, 42, 110, 245)); }`,
-		);
+		const d = dialectOf(`body { --callout-info: var(--ctp-custom-blue, var(--ctp-ext-blue, 42, 110, 245)); }`);
 		assert.equal(declaredIn(d, "--callout-info"), "triplet");
 	});
 
@@ -328,11 +310,7 @@ describe("accentDialect — what the theme's own variables hold", () => {
 			.callout { background: rgba(var(--callout-color), 0.1); }
 		`);
 		assert.equal(d.read, "triplet");
-		assert.equal(
-			declaredIn(d, "--callout-info"),
-			undefined,
-			"unknowable guard — core supplies the live value",
-		);
+		assert.equal(declaredIn(d, "--callout-info"), undefined, "unknowable guard — core supplies the live value");
 	});
 
 	it("trusts a `:not()` guard, which is the theme's normal state", () => {
@@ -340,9 +318,7 @@ describe("accentDialect — what the theme's own variables hold", () => {
 		// callout styling — the class only appears when the reader ticks "Restore
 		// default Callout styling". Reading that as unknowable would throw away a
 		// declaration that is live for almost every reader.
-		const d = dialectOf(
-			`body:not(.disable-callout-styling) { --callout-quote: 150, 150, 160; }`,
-		);
+		const d = dialectOf(`body:not(.disable-callout-styling) { --callout-quote: 150, 150, 160; }`);
 		assert.equal(declaredIn(d, "--callout-quote"), "triplet");
 	});
 
@@ -408,18 +384,14 @@ describe("accentDialect — what the theme paints unconditionally", () => {
 		// AnuPpuccin's Vanilla Normal. We cannot know whether the class is on,
 		// and when it is its (0,4,0) beats the derived surface on its own — so
 		// suppressing here would strand every callout the guard does not reach.
-		const d = dialectOf(
-			`.anp-callout-vanilla-normal .callout { background-color: transparent; }`,
-		);
+		const d = dialectOf(`.anp-callout-vanilla-normal .callout { background-color: transparent; }`);
 		assert.equal(d.unguarded.size, 0);
 	});
 
 	it("does NOT record a rule gated by callout metadata", () => {
 		// Opt-in per callout, via `> [!note|anp-vanilla-normal]`. Conditional on
 		// what the user typed, so it says nothing about callouts in general.
-		const d = dialectOf(
-			`.callout[data-callout-metadata*=anp-vanilla-normal] { background-color: transparent; }`,
-		);
+		const d = dialectOf(`.callout[data-callout-metadata*=anp-vanilla-normal] { background-color: transparent; }`);
 		assert.equal(d.unguarded.size, 0);
 	});
 

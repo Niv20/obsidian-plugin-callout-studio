@@ -11,14 +11,9 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	scanMetadataWords,
-	wordAppliesTo,
-	type ThemeMetadataWord,
-} from "../src/manager/theme/themeMetadataScan";
+import { scanMetadataWords, wordAppliesTo, type ThemeMetadataWord } from "../src/manager/theme/themeMetadataScan";
 
-const byWord = (css: string): Map<string, ThemeMetadataWord> =>
-	new Map(scanMetadataWords(css).map((w) => [w.word, w]));
+const byWord = (css: string): Map<string, ThemeMetadataWord> => new Map(scanMetadataWords(css).map((w) => [w.word, w]));
 
 describe("scanMetadataWords — the operator decides the placement", () => {
 	it("~= (ITS Theme) needs spaces", () => {
@@ -55,8 +50,7 @@ describe("scanMetadataWords — the operator decides the placement", () => {
 
 	it("a word matched several ways takes the most forgiving", () => {
 		const words = byWord(
-			".callout[data-callout-metadata=left] { a: b }\n" +
-				'.callout[data-callout-metadata*="left"] { a: b }',
+			".callout[data-callout-metadata=left] { a: b }\n" + '.callout[data-callout-metadata*="left"] { a: b }',
 		);
 		assert.strictEqual(words.get("left")?.placement, "anywhere");
 	});
@@ -100,9 +94,7 @@ describe("scanMetadataWords — words tied to one callout", () => {
 	});
 
 	it("a callout named only inside :not() is no guard", () => {
-		const words = byWord(
-			'.callout:not([data-callout="note"])[data-callout-metadata~="wide"] { a: b }',
-		);
+		const words = byWord('.callout:not([data-callout="note"])[data-callout-metadata~="wide"] { a: b }');
 		assert.strictEqual(words.get("wide")?.guards, null);
 	});
 });
@@ -118,9 +110,7 @@ describe("scanMetadataWords — what is not a word", () => {
 	});
 
 	it("keeps opt-outs named inside :not() (AnuPpuccin)", () => {
-		const words = byWord(
-			'.callout:not([data-callout-metadata*="anp-sleek"]) { a: b }',
-		);
+		const words = byWord('.callout:not([data-callout-metadata*="anp-sleek"]) { a: b }');
 		assert.strictEqual(words.get("anp-sleek")?.placement, "anywhere");
 	});
 
@@ -140,9 +130,7 @@ describe("scanMetadataWords — what is not a word", () => {
 	});
 
 	it("reads nested CSS as its flat equivalent", () => {
-		const words = byWord(
-			'.callout { &[data-callout-metadata~="wide"] { width: 100% } }',
-		);
+		const words = byWord('.callout { &[data-callout-metadata~="wide"] { width: 100% } }');
 		assert.strictEqual(words.get("wide")?.placement, "spaced");
 	});
 });

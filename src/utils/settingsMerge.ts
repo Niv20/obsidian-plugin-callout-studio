@@ -60,12 +60,11 @@ export type LegacySavedSettings = Partial<PluginSettings> & {
 };
 
 /** Which menu item each 1.x boolean switched off. */
-const LEGACY_MENU_TOGGLES: Record<keyof LegacyMenuToggles, ContextMenuItemId> =
-	{
-		showEditCallout: "edit",
-		showOpenSettings: "openSettings",
-		showCopyMarkdown: "copyMarkdown",
-	};
+const LEGACY_MENU_TOGGLES: Record<keyof LegacyMenuToggles, ContextMenuItemId> = {
+	showEditCallout: "edit",
+	showOpenSettings: "openSettings",
+	showCopyMarkdown: "copyMarkdown",
+};
 
 /**
  * The 1.x booleans read as the item states they meant, `{}` for any file that
@@ -81,9 +80,7 @@ const LEGACY_MENU_TOGGLES: Record<keyof LegacyMenuToggles, ContextMenuItemId> =
  * nobody expressed an opinion about their menus — and "I don't want an Edit
  * entry in the callout right-click menu" is the opinion that was expressed.
  */
-function legacyMenuState(
-	savedSettings: LegacySavedSettings,
-): Partial<Record<ContextMenuItemId, boolean>> {
+function legacyMenuState(savedSettings: LegacySavedSettings): Partial<Record<ContextMenuItemId, boolean>> {
 	const state: Partial<Record<ContextMenuItemId, boolean>> = {};
 	// `popup` first so the later `contextMenu` block wins, matching how
 	// `enabled` below prefers the newer of the two names.
@@ -141,36 +138,22 @@ function mergeMenuItems(
  * or it will be silently dropped on load. Shared by the registry loader and
  * the settings importer (import/export v2).
  */
-export function mergeSavedSettings(
-	savedSettings: LegacySavedSettings,
-): PluginSettings {
-	const savedGlobal = savedSettings.globalStyle as
-		Partial<PluginSettings["globalStyle"]> | undefined;
+export function mergeSavedSettings(savedSettings: LegacySavedSettings): PluginSettings {
+	const savedGlobal = savedSettings.globalStyle as Partial<PluginSettings["globalStyle"]> | undefined;
 	const legacyPopup = savedSettings.popup;
 	const savedMenuItems = savedSettings.contextMenu?.items;
 	const legacyMenu = legacyMenuState(savedSettings);
 	return {
 		globalStyle: clampGlobalStyle(mergeGlobalStyle(savedGlobal)),
 		contextMenu: {
-			enabled:
-				booleanPreference(savedSettings.contextMenu?.enabled,
-					booleanPreference(legacyPopup?.enabled, DEFAULT_SETTINGS.contextMenu.enabled)),
+			enabled: booleanPreference(
+				savedSettings.contextMenu?.enabled,
+				booleanPreference(legacyPopup?.enabled, DEFAULT_SETTINGS.contextMenu.enabled),
+			),
 			items: {
-				regular: mergeMenuItems(
-					savedMenuItems?.regular,
-					DEFAULT_CONTEXT_MENU_ITEMS.regular,
-					legacyMenu,
-				),
-				heading: mergeMenuItems(
-					savedMenuItems?.heading,
-					DEFAULT_CONTEXT_MENU_ITEMS.heading,
-					legacyMenu,
-				),
-				inline: mergeMenuItems(
-					savedMenuItems?.inline,
-					DEFAULT_CONTEXT_MENU_ITEMS.inline,
-					legacyMenu,
-				),
+				regular: mergeMenuItems(savedMenuItems?.regular, DEFAULT_CONTEXT_MENU_ITEMS.regular, legacyMenu),
+				heading: mergeMenuItems(savedMenuItems?.heading, DEFAULT_CONTEXT_MENU_ITEMS.heading, legacyMenu),
+				inline: mergeMenuItems(savedMenuItems?.inline, DEFAULT_CONTEXT_MENU_ITEMS.inline, legacyMenu),
 			},
 		},
 		autocomplete: {
@@ -179,56 +162,52 @@ export function mergeSavedSettings(
 			enabled: true,
 		},
 		suggestions: {
-			callouts:
-				booleanPreference(savedSettings.suggestions?.callouts,
-					DEFAULT_SETTINGS.suggestions.callouts),
-			themeCallouts:
-				booleanPreference(savedSettings.suggestions?.themeCallouts,
-					DEFAULT_SETTINGS.suggestions.themeCallouts),
-			metadata:
-				booleanPreference(savedSettings.suggestions?.metadata,
-					DEFAULT_SETTINGS.suggestions.metadata),
-			themeMetadata:
-				booleanPreference(savedSettings.suggestions?.themeMetadata,
-					DEFAULT_SETTINGS.suggestions.themeMetadata),
+			callouts: booleanPreference(savedSettings.suggestions?.callouts, DEFAULT_SETTINGS.suggestions.callouts),
+			themeCallouts: booleanPreference(
+				savedSettings.suggestions?.themeCallouts,
+				DEFAULT_SETTINGS.suggestions.themeCallouts,
+			),
+			metadata: booleanPreference(savedSettings.suggestions?.metadata, DEFAULT_SETTINGS.suggestions.metadata),
+			themeMetadata: booleanPreference(
+				savedSettings.suggestions?.themeMetadata,
+				DEFAULT_SETTINGS.suggestions.themeMetadata,
+			),
 			metadataWords: sanitizeMetadataWords(savedSettings.suggestions?.metadataWords),
 		},
 		iconSources: mergeIconSources(savedSettings.iconSources),
 		iconLibraries: mergeIconLibraries(savedSettings.iconLibraries),
 		headingCallouts: {
-			enabled:
-				booleanPreference(savedSettings.headingCallouts?.enabled,
-					DEFAULT_SETTINGS.headingCallouts.enabled),
+			enabled: booleanPreference(
+				savedSettings.headingCallouts?.enabled,
+				DEFAULT_SETTINGS.headingCallouts.enabled,
+			),
 			// Outline/link cleaning + icons are always on and no longer
 			// user-configurable; ignore any saved-off value from old data.
 			refCleanTitles: true,
 			refShowIcon: true,
-			showFoldArrow:
-				booleanPreference(savedSettings.headingCallouts?.showFoldArrow,
-					DEFAULT_SETTINGS.headingCallouts.showFoldArrow),
+			showFoldArrow: booleanPreference(
+				savedSettings.headingCallouts?.showFoldArrow,
+				DEFAULT_SETTINGS.headingCallouts.showFoldArrow,
+			),
 		},
 		inlineCallouts: {
-			enabled:
-				booleanPreference(savedSettings.inlineCallouts?.enabled,
-					DEFAULT_SETTINGS.inlineCallouts.enabled),
-			allowContent:
-				booleanPreference(savedSettings.inlineCallouts?.allowContent,
-					DEFAULT_SETTINGS.inlineCallouts.allowContent),
+			enabled: booleanPreference(savedSettings.inlineCallouts?.enabled, DEFAULT_SETTINGS.inlineCallouts.enabled),
+			allowContent: booleanPreference(
+				savedSettings.inlineCallouts?.allowContent,
+				DEFAULT_SETTINGS.inlineCallouts.allowContent,
+			),
 		},
 		metadataColors: {
-			enabled:
-				booleanPreference(savedSettings.metadataColors?.enabled,
-					DEFAULT_SETTINGS.metadataColors.enabled),
+			enabled: booleanPreference(savedSettings.metadataColors?.enabled, DEFAULT_SETTINGS.metadataColors.enabled),
 		},
 		themeCalloutStyles: {
-			enabled:
-				booleanPreference(savedSettings.themeCalloutStyles?.enabled,
-					DEFAULT_SETTINGS.themeCalloutStyles.enabled),
+			enabled: booleanPreference(
+				savedSettings.themeCalloutStyles?.enabled,
+				DEFAULT_SETTINGS.themeCalloutStyles.enabled,
+			),
 		},
-		welcomeSeen:
-			booleanPreference(savedSettings.welcomeSeen, DEFAULT_SETTINGS.welcomeSeen ?? false),
-		competitorImportBannerHandled:
-			savedSettings.competitorImportBannerHandled === true,
+		welcomeSeen: booleanPreference(savedSettings.welcomeSeen, DEFAULT_SETTINGS.welcomeSeen ?? false),
+		competitorImportBannerHandled: savedSettings.competitorImportBannerHandled === true,
 		fallbackCalloutId:
 			typeof savedSettings.fallbackCalloutId === "string"
 				? savedSettings.fallbackCalloutId
@@ -238,13 +217,7 @@ export function mergeSavedSettings(
 		userImages: sanitizeUserImages(savedSettings.userImages),
 		customCommands: sanitizeCustomCommands(savedSettings.customCommands),
 		disabledFixedCommands: Array.isArray(savedSettings.disabledFixedCommands)
-			? [
-					...new Set(
-						savedSettings.disabledFixedCommands.filter(
-							(id): id is string => typeof id === "string",
-						),
-					),
-				]
+			? [...new Set(savedSettings.disabledFixedCommands.filter((id): id is string => typeof id === "string"))]
 			: [],
 		// An unknown value is not corruption to report — it may come from a newer
 		// build. "all" is the safe first-run/fallback state because it cannot make

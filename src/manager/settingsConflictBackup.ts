@@ -20,17 +20,18 @@ function authored(settings: unknown): unknown {
 }
 
 export function settingsWouldDiscardRows(current: Partial<PluginData>, incoming: Partial<PluginData>): boolean {
-	const rows = new Map((incoming.callouts ?? []).map(row => [row.id, row]));
-	return (current.callouts ?? []).some(row =>
-		canonical(row) !== canonical(rows.get(row.id)));
+	const rows = new Map((incoming.callouts ?? []).map((row) => [row.id, row]));
+	return (current.callouts ?? []).some((row) => canonical(row) !== canonical(rows.get(row.id)));
 }
 
 /** Palettes, image artwork, commands and preferences are authored data too. */
 function settingsWouldReplacePreferences(current: Partial<PluginData>, incoming: Partial<PluginData>): boolean {
 	const incomingForeign = collectForeignFields(content(incoming));
 	const preferences = withForeignSettings(mergeSavedSettings(incoming.settings ?? {}), incomingForeign);
-	return canonical(authored(current.settings ?? mergeSavedSettings({}))) !== canonical(authored(preferences)) ||
-		canonical(collectForeignFields(content(current)).data) !== canonical(incomingForeign.data);
+	return (
+		canonical(authored(current.settings ?? mergeSavedSettings({}))) !== canonical(authored(preferences)) ||
+		canonical(collectForeignFields(content(current)).data) !== canonical(incomingForeign.data)
+	);
 }
 
 /**
@@ -38,10 +39,13 @@ function settingsWouldReplacePreferences(current: Partial<PluginData>, incoming:
  * copy one adoption saves, so tidying after a later copy keeps the earlier ones.
  */
 export async function backUpBeforeAdoption(
-	host: SettingsBackupHost & { settingsWriter?: Pick<SettingsWriter, "status"> }, current: Partial<PluginData>, incoming: Partial<PluginData>,
+	host: SettingsBackupHost & { settingsWriter?: Pick<SettingsWriter, "status"> },
+	current: Partial<PluginData>,
+	incoming: Partial<PluginData>,
 	batch?: Set<string>,
 ): Promise<boolean> {
-	if (!settingsWouldDiscardRows(current, incoming) && !settingsWouldReplacePreferences(current, incoming)) return true;
+	if (!settingsWouldDiscardRows(current, incoming) && !settingsWouldReplacePreferences(current, incoming))
+		return true;
 	const path = await writeSettingsBackup(host, current, { batch, reason: "before-sync" });
 	if (!path) {
 		host.settingsWriter?.status.fail("backup");

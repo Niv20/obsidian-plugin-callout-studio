@@ -9,7 +9,11 @@ import type { App } from "obsidian";
 import { DEFAULT_SETTINGS } from "../src/constants";
 import { t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import { CommandEditorModal, type CommandEditorHost, type CommandEditorOptions } from "../src/settings/CommandEditorModal";
+import {
+	CommandEditorModal,
+	type CommandEditorHost,
+	type CommandEditorOptions,
+} from "../src/settings/CommandEditorModal";
 import type { CustomCommandDraft } from "../src/editor/CustomCommandManager";
 import { commandSignature } from "../src/utils/customCommands";
 import { fakeDom } from "./support/fakeDom";
@@ -27,16 +31,40 @@ function open(options: CommandEditorOptions = {}) {
 	const modalEl = containerEl.createDiv({ cls: "modal" });
 	const titleEl = modalEl.createDiv({ cls: "modal-header" }).createDiv({ cls: "modal-title" });
 	const contentEl = modalEl.createDiv({ cls: "modal-content" });
-	Object.assign(modal, { containerEl, modalEl, titleEl, contentEl, app, scope: app.scope,
-		setTitle: (title: string) => { titleEl.setText(title); return modal; },
-		open: () => modal.onOpen(), close: () => modal.onClose() });
+	Object.assign(modal, {
+		containerEl,
+		modalEl,
+		titleEl,
+		contentEl,
+		app,
+		scope: app.scope,
+		setTitle: (title: string) => {
+			titleEl.setText(title);
+			return modal;
+		},
+		open: () => modal.onOpen(),
+		close: () => modal.onClose(),
+	});
 	let answer: CustomCommandDraft | null | undefined;
-	void modal.openAndWait().then((result) => { answer = result; });
+	void modal.openAndWait().then((result) => {
+		answer = result;
+	});
 	const save = modalEl.querySelector(".modal-button-container button.mod-cta")!;
 	assert.ok(save);
-	return { modal, save, registry, answer: () => answer,
-		choose: (id: string) => { (modal as unknown as { calloutId: string }).calloutId = id; (modal as unknown as { syncVisibility(): void }).syncVisibility(); },
-		destroy: () => { modal.onClose(); containerEl.remove(); } };
+	return {
+		modal,
+		save,
+		registry,
+		answer: () => answer,
+		choose: (id: string) => {
+			(modal as unknown as { calloutId: string }).calloutId = id;
+			(modal as unknown as { syncVisibility(): void }).syncVisibility();
+		},
+		destroy: () => {
+			modal.onClose();
+			containerEl.remove();
+		},
+	};
 }
 
 describe("the command editor's Save", () => {
@@ -44,9 +72,12 @@ describe("the command editor's Save", () => {
 		const h = open();
 		try {
 			assert.equal(h.save.getAttribute("aria-disabled"), "false");
-			h.save.fire("click"); await setImmediate();
+			h.save.fire("click");
+			await setImmediate();
 			assert.equal(h.answer()?.calloutId, "note");
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 	it("is dimmed when no callout is chosen, and says to choose one", async () => {
 		const h = open();
@@ -54,27 +85,43 @@ describe("the command editor's Save", () => {
 			h.choose("");
 			assert.equal(h.save.getAttribute("aria-disabled"), "true");
 			assert.equal(h.save.hasClass("cs-btn-disabled"), true);
-			assert.notEqual((h.save as unknown as { disabled?: boolean }).disabled, true, "a disabled button would swallow the press");
-			h.save.fire("click"); await setImmediate();
+			assert.notEqual(
+				(h.save as unknown as { disabled?: boolean }).disabled,
+				true,
+				"a disabled button would swallow the press",
+			);
+			h.save.fire("click");
+			await setImmediate();
 			assert.equal(String(Notice.last?.message), t("commandBuilder.noCalloutChosen"));
 			assert.equal(h.answer(), undefined, "the window stays open");
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 	it("is dimmed when the chosen callout was deleted while the window sat open", async () => {
 		const h = open();
 		try {
 			h.choose("deleted-meanwhile");
-			h.save.fire("click"); await setImmediate();
+			h.save.fire("click");
+			await setImmediate();
 			assert.equal(String(Notice.last?.message), t("commandBuilder.noCalloutChosen"));
 			assert.equal(h.answer(), undefined);
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 	it("says there are no callouts to build from when the list is empty", () => {
 		const none = {
-			getBuiltIn: () => [], getUserDefined: () => [], getThemeProvided: () => [], get: () => undefined,
+			getBuiltIn: () => [],
+			getUserDefined: () => [],
+			getThemeProvided: () => [],
+			get: () => undefined,
 		};
 		const modal = new CommandEditorModal({} as App, { registry: none } as unknown as CommandEditorHost);
-		assert.equal((modal as unknown as { saveBlockedReason(): string | null }).saveBlockedReason(), t("commandBuilder.noCallouts"));
+		assert.equal(
+			(modal as unknown as { saveBlockedReason(): string | null }).saveBlockedReason(),
+			t("commandBuilder.noCallouts"),
+		);
 	});
 	it("saves a heading or inline command's action the way the sanitizer stores it", async () => {
 		// Every format has the Action row now; Wrap is what an absent action
@@ -86,12 +133,16 @@ describe("the command editor's Save", () => {
 				form.role = role;
 				form.action = action;
 				form.syncVisibility();
-				const row = Array.from(h.modal.contentEl.querySelectorAll<HTMLElement>(".setting-item"))
-					.find((item) => item.textContent?.includes(t("commandBuilder.action")));
+				const row = Array.from(h.modal.contentEl.querySelectorAll<HTMLElement>(".setting-item")).find((item) =>
+					item.textContent?.includes(t("commandBuilder.action")),
+				);
 				assert.equal(row?.hasClass("cs-row-hidden"), false, `${role}: the Action row is shown`);
-				h.save.fire("click"); await setImmediate();
+				h.save.fire("click");
+				await setImmediate();
 				return h.answer();
-			} finally { h.destroy(); }
+			} finally {
+				h.destroy();
+			}
 		};
 		assert.equal((await save("heading", "wrap"))?.action, undefined);
 		assert.equal((await save("heading", "insert"))?.action, "insert");
@@ -104,14 +155,18 @@ describe("the command editor's Save", () => {
 		const h = open({ takenSignatures: new Set([taken]) });
 		try {
 			assert.equal(h.save.getAttribute("aria-disabled"), "true");
-			h.save.fire("click"); await setImmediate();
+			h.save.fire("click");
+			await setImmediate();
 			assert.equal(String(Notice.last?.message), t("commandBuilder.duplicate"));
 			assert.equal(h.answer(), undefined);
 			// A different callout is a different command, so the same press now saves.
 			h.choose("tip");
 			assert.equal(h.save.getAttribute("aria-disabled"), "false");
-			h.save.fire("click"); await setImmediate();
+			h.save.fire("click");
+			await setImmediate();
 			assert.equal(h.answer()?.calloutId, "tip");
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 });

@@ -135,9 +135,7 @@ describe("StartupStyleCache — the key is scoped to the vault", () => {
 	it("prefers `appId` over the vault's name, which the user can rename", () => {
 		const store = storage();
 		withWindow(store, () => {
-			new StartupStyleCache(
-				app({ appId: "abc123", vaultName: "Renamed Tomorrow" }),
-			).persist("/* css */");
+			new StartupStyleCache(app({ appId: "abc123", vaultName: "Renamed Tomorrow" })).persist("/* css */");
 			assert.strictEqual(must(store.writes[0]).key, `abc123-${CSS_KEY}`);
 		});
 	});
@@ -175,10 +173,7 @@ describe("StartupStyleCache — the key is scoped to the vault", () => {
 
 			assert.strictEqual(b.loadCachedCss(), null);
 			b.persist(".b{}");
-			assert.strictEqual(
-				new StartupStyleCache(app({ appId: "vault-a" })).loadCachedCss(),
-				".a{}",
-			);
+			assert.strictEqual(new StartupStyleCache(app({ appId: "vault-a" })).loadCachedCss(), ".a{}");
 		});
 	});
 });
@@ -231,10 +226,7 @@ describe("StartupStyleCache — persist → loadCachedCss", () => {
 
 	it("returns null before anything was ever persisted", () => {
 		withWindow(storage(), () => {
-			assert.strictEqual(
-				new StartupStyleCache(app({ appId: "v" })).loadCachedCss(),
-				null,
-			);
+			assert.strictEqual(new StartupStyleCache(app({ appId: "v" })).loadCachedCss(), null);
 		});
 	});
 
@@ -267,10 +259,7 @@ describe("StartupStyleCache — persist → loadCachedCss", () => {
 		const store = storage();
 		withWindow(store, () => {
 			new StartupStyleCache(app({ appId: "v" })).persist(".x{}");
-			assert.strictEqual(
-				new StartupStyleCache(app({ appId: "v" })).loadCachedCss(),
-				".x{}",
-			);
+			assert.strictEqual(new StartupStyleCache(app({ appId: "v" })).loadCachedCss(), ".x{}");
 		});
 	});
 });
@@ -354,10 +343,7 @@ describe("StartupStyleCache — a store that refuses", () => {
 		const store = storage();
 		store.failRead = true;
 		withWindow(store, () => {
-			assert.strictEqual(
-				new StartupStyleCache(app({ appId: "v" })).loadCachedCss(),
-				null,
-			);
+			assert.strictEqual(new StartupStyleCache(app({ appId: "v" })).loadCachedCss(), null);
 		});
 	});
 
@@ -487,8 +473,7 @@ function harness(opts: { cached?: string; adopted?: boolean } = {}): Recorder {
 				el.isConnected = true;
 			},
 		},
-		getElementById: (id: string) =>
-			attached && id === styleEl.id ? styleEl : null,
+		getElementById: (id: string) => (attached && id === styleEl.id ? styleEl : null),
 		querySelectorAll: () => [],
 		body: { classList: { contains: () => false } },
 	};
@@ -549,10 +534,7 @@ function harness(opts: { cached?: string; adopted?: boolean } = {}): Recorder {
 	};
 }
 
-function withHarness(
-	opts: { cached?: string; adopted?: boolean },
-	body: (h: Recorder) => void,
-): void {
+function withHarness(opts: { cached?: string; adopted?: boolean }, body: (h: Recorder) => void): void {
 	const h = harness(opts);
 	try {
 		body(h);

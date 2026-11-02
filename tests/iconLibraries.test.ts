@@ -42,12 +42,7 @@ import {
 } from "../src/icons/iconLibraries";
 import { ICON_SOURCE_IDS } from "../src/icons/registry";
 import { PACK_MANIFEST } from "../src/icons/data/packManifest";
-import type {
-	CalloutDefinition,
-	IconLibrarySettings,
-	IconPackId,
-	IconSourceId,
-} from "../src/types";
+import type { CalloutDefinition, IconLibrarySettings, IconPackId, IconSourceId } from "../src/types";
 
 /** A device holding exactly these pack files. */
 function device(ready: readonly IconPackId[] = []): PackStates {
@@ -77,7 +72,15 @@ function callout(id: string, over: Partial<CalloutDefinition> = {}): CalloutDefi
 }
 
 const CATALOG: readonly IconSourceId[] = [
-	"lucide", "tabler", "material", "emoji", "octicons", "fa", "rpg-awesome", "simple-icons", "image",
+	"lucide",
+	"tabler",
+	"material",
+	"emoji",
+	"octicons",
+	"fa",
+	"rpg-awesome",
+	"simple-icons",
+	"image",
 ];
 
 describe("the catalog these helpers are written against", () => {
@@ -88,8 +91,7 @@ describe("the catalog these helpers are written against", () => {
 	});
 
 	it("splits into libraries to download and libraries that ship with the plugin", () => {
-		assert.deepEqual(CATALOG.filter(isDownloadable),
-			["tabler", "octicons", "fa", "rpg-awesome", "simple-icons"]);
+		assert.deepEqual(CATALOG.filter(isDownloadable), ["tabler", "octicons", "fa", "rpg-awesome", "simple-icons"]);
 		assert.deepEqual(libraryFiles("fa"), ["fa-solid", "fa-regular", "fa-brands"]);
 		assert.deepEqual(libraryFiles("tabler"), ["tabler-outline", "tabler-filled"]);
 		assert.deepEqual(libraryFiles("lucide"), []);
@@ -103,17 +105,45 @@ describe("libraryOrder — the user's order, made complete", () => {
 	});
 
 	it("keeps the saved order and skips ids this build does not know", () => {
-		const saved = ["emoji", "phosphor", "image", "lucide", "tabler", "material", "octicons", "fa",
-			"rpg-awesome", "simple-icons"];
-		assert.deepEqual(libraryOrder(prefs({ order: saved })),
-			["emoji", "image", "lucide", "tabler", "material", "octicons", "fa", "rpg-awesome", "simple-icons"]);
+		const saved = [
+			"emoji",
+			"phosphor",
+			"image",
+			"lucide",
+			"tabler",
+			"material",
+			"octicons",
+			"fa",
+			"rpg-awesome",
+			"simple-icons",
+		];
+		assert.deepEqual(libraryOrder(prefs({ order: saved })), [
+			"emoji",
+			"image",
+			"lucide",
+			"tabler",
+			"material",
+			"octicons",
+			"fa",
+			"rpg-awesome",
+			"simple-icons",
+		]);
 	});
 
 	it("puts a library the saved list lacks right after its catalog neighbour", () => {
 		// What a release adding a library meets: a full order without it.
 		const saved = ["emoji", "lucide", "tabler", "material", "octicons", "fa", "rpg-awesome", "image"];
-		assert.deepEqual(libraryOrder(prefs({ order: saved })),
-			["emoji", "lucide", "tabler", "material", "octicons", "fa", "rpg-awesome", "simple-icons", "image"]);
+		assert.deepEqual(libraryOrder(prefs({ order: saved })), [
+			"emoji",
+			"lucide",
+			"tabler",
+			"material",
+			"octicons",
+			"fa",
+			"rpg-awesome",
+			"simple-icons",
+			"image",
+		]);
 	});
 
 	it("puts a missing first library first", () => {
@@ -138,8 +168,11 @@ describe("isInPicker — what this device offers", () => {
 
 	it("offers a downloadable library only once every file of it is here", () => {
 		assert.equal(isInPicker("fa", prefs(), device()), false);
-		assert.equal(isInPicker("fa", prefs(), device(["fa-brands"])), false,
-			"Brands alone would leave Solid and Regular as blank cells");
+		assert.equal(
+			isInPicker("fa", prefs(), device(["fa-brands"])),
+			false,
+			"Brands alone would leave Solid and Regular as blank cells",
+		);
 		assert.equal(isDownloaded("fa", device(["fa-brands"])), false);
 		assert.equal(isInPicker("fa", prefs(), device(["fa-solid", "fa-regular", "fa-brands"])), true);
 	});
@@ -160,8 +193,7 @@ describe("pickerSources and menuLibraries — the picker's lists", () => {
 			order: ["octicons", "image", "lucide", "tabler", "material", "emoji", "fa", "rpg-awesome", "simple-icons"],
 			hidden: ["emoji"],
 		});
-		assert.deepEqual(pickerSources(settings, device(["octicons"])),
-			["octicons", "image", "lucide", "material"]);
+		assert.deepEqual(pickerSources(settings, device(["octicons"])), ["octicons", "image", "lucide", "material"]);
 	});
 
 	it("falls back to Lucide when nothing at all would be offered", () => {
@@ -187,8 +219,14 @@ describe("pickerSources and menuLibraries — the picker's lists", () => {
 
 	it("has nothing left to download once every library is on the device", () => {
 		const everything = device([
-			"tabler-outline", "tabler-filled", "octicons", "fa-solid", "fa-regular", "fa-brands",
-			"rpg-awesome", "simple-icons",
+			"tabler-outline",
+			"tabler-filled",
+			"octicons",
+			"fa-solid",
+			"fa-regular",
+			"fa-brands",
+			"rpg-awesome",
+			"simple-icons",
 		]);
 		assert.deepEqual(menuLibraries(prefs(), everything).toDownload, []);
 		assert.deepEqual(menuLibraries(prefs(), everything).libraries, CATALOG);
@@ -216,8 +254,11 @@ describe("menuLibraries — the library of the icon being edited", () => {
 		const menu = menuLibraries(prefs(), device(), "tabler");
 		assert.equal(menu.current, "tabler");
 		assert.ok(!menu.libraries.includes("tabler"), "it is not one of the libraries on offer");
-		assert.deepEqual(menu.toDownload, ["tabler", "octicons", "fa", "rpg-awesome", "simple-icons"],
-			"its retained icon does not make the library downloaded");
+		assert.deepEqual(
+			menu.toDownload,
+			["tabler", "octicons", "fa", "rpg-awesome", "simple-icons"],
+			"its retained icon does not make the library downloaded",
+		);
 	});
 
 	it("does the same for one with only some of its files", () => {
@@ -231,8 +272,11 @@ describe("menuLibraries — the library of the icon being edited", () => {
 		const menu = menuLibraries(settings, device(), "material");
 		assert.equal(menu.current, "material");
 		assert.deepEqual(menu.libraries, ["lucide", "emoji", "image"]);
-		assert.deepEqual(menu.toDownload, menuLibraries(settings, device()).toDownload,
-			"a built-in library was never one to download");
+		assert.deepEqual(
+			menu.toDownload,
+			menuLibraries(settings, device()).toDownload,
+			"a built-in library was never one to download",
+		);
 	});
 
 	it("leaves it among the others when the picker offers it", () => {
@@ -275,8 +319,11 @@ describe("menuLibraries — the library of the icon being edited", () => {
 			const packs = device(files);
 			const expected = menuLibraries(settings, packs).toDownload;
 			for (const current of ICON_SOURCE_IDS) {
-				assert.deepEqual(menuLibraries(settings, packs, current).toDownload, expected,
-					`${current} with ${files.join(",") || "nothing"} downloaded`);
+				assert.deepEqual(
+					menuLibraries(settings, packs, current).toDownload,
+					expected,
+					`${current} with ${files.join(",") || "nothing"} downloaded`,
+				);
 			}
 		}
 	});
@@ -298,8 +345,17 @@ describe("isInstalled — any file on the device", () => {
 describe("reorderShown and savedLibraryOrder — saving a drag", () => {
 	it("moves only the shown libraries, each into a slot one of them held", () => {
 		const shownNow: IconSourceId[] = ["emoji", "lucide", "material", "image"];
-		assert.deepEqual(reorderShown(CATALOG, shownNow),
-			["emoji", "tabler", "lucide", "material", "octicons", "fa", "rpg-awesome", "simple-icons", "image"]);
+		assert.deepEqual(reorderShown(CATALOG, shownNow), [
+			"emoji",
+			"tabler",
+			"lucide",
+			"material",
+			"octicons",
+			"fa",
+			"rpg-awesome",
+			"simple-icons",
+			"image",
+		]);
 	});
 
 	it("leaves the order alone when nothing moved", () => {
@@ -314,8 +370,11 @@ describe("reorderShown and savedLibraryOrder — saving a drag", () => {
 	it("keeps an id a newer build wrote, after this build's own", () => {
 		const arranged: IconSourceId[] = ["emoji", ...CATALOG.filter((id) => id !== "emoji")];
 		assert.deepEqual(savedLibraryOrder(["phosphor", ...CATALOG], arranged), [...arranged, "phosphor"]);
-		assert.deepEqual(savedLibraryOrder(["phosphor"], CATALOG), [...CATALOG, "phosphor"],
-			"the catalog order cannot be written as empty while an unknown id rides along");
+		assert.deepEqual(
+			savedLibraryOrder(["phosphor"], CATALOG),
+			[...CATALOG, "phosphor"],
+			"the catalog order cannot be written as empty while an unknown id rides along",
+		);
 	});
 });
 
@@ -343,8 +402,14 @@ describe("calloutsUsingLibrary — who has to keep drawing", () => {
 			callout("note", { icon: { type: "lucide", value: "pencil" } }),
 			callout("tip", { icon: { type: "tabler-outline", value: "bulb" } }),
 		];
-		assert.deepEqual(calloutsUsingLibrary(defs, "fa").map((def) => def.id), ["bug", "quote"]);
-		assert.deepEqual(calloutsUsingLibrary(defs, "tabler").map((def) => def.id), ["tip"]);
+		assert.deepEqual(
+			calloutsUsingLibrary(defs, "fa").map((def) => def.id),
+			["bug", "quote"],
+		);
+		assert.deepEqual(
+			calloutsUsingLibrary(defs, "tabler").map((def) => def.id),
+			["tip"],
+		);
 	});
 
 	it("leaves out theme rows, which are rebuilt on every load and never saved", () => {

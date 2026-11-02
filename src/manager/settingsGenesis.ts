@@ -45,9 +45,11 @@ export function withoutIncidental(data: unknown): Record<string, unknown> {
 	for (const path of INCIDENTAL) {
 		let parent: unknown = copy;
 		for (const name of path.slice(0, -1)) {
-			parent = parent !== null && typeof parent === "object" ? (parent as Record<string, unknown>)[name] : undefined;
+			parent =
+				parent !== null && typeof parent === "object" ? (parent as Record<string, unknown>)[name] : undefined;
 		}
-		if (parent !== null && typeof parent === "object") delete (parent as Record<string, unknown>)[path[path.length - 1]!];
+		if (parent !== null && typeof parent === "object")
+			delete (parent as Record<string, unknown>)[path[path.length - 1]!];
 	}
 	return copy;
 }

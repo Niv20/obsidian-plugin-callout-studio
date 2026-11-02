@@ -28,8 +28,7 @@ function vault(initial: Record<string, string> = {}, device = "mac00001") {
 	const fail = { write: false, list: false, mkdir: false, garble: false };
 
 	const adapter = {
-		exists: (path: string) =>
-			Promise.resolve(folders.has(path) || files.has(path)),
+		exists: (path: string) => Promise.resolve(folders.has(path) || files.has(path)),
 		mkdir: (path: string) => {
 			if (fail.mkdir) return Promise.reject(new Error("read-only"));
 			calls.push(`mkdir ${path}`);
@@ -72,22 +71,19 @@ function vault(initial: Record<string, string> = {}, device = "mac00001") {
 		calls,
 		fail,
 		/** Only the backups, oldest first. */
-		backups: () =>
-			[...files.keys()]
-				.filter((f) => f.includes("/backups/data-"))
-				.sort(),
+		backups: () => [...files.keys()].filter((f) => f.includes("/backups/data-")).sort(),
 		/** The `n` each of this device's remaining copies holds, oldest first. */
 		kept: (id = device) =>
-			[...files.keys()].filter((f) => f.includes(`-${id}-`)).sort()
+			[...files.keys()]
+				.filter((f) => f.includes(`-${id}-`))
+				.sort()
 				.map((p) => (JSON.parse(files.get(p)!) as { n: number }).n),
 	};
 }
 
 /** Distinct, ordered timestamps without reaching for a clock. */
-const at = (minute: number): Date =>
-	new Date(Date.UTC(2026, 0, 1, 12, minute, 0));
-const day = (offset: number, minute = 0): Date =>
-	new Date(Date.UTC(2026, 0, 1, 12, minute, 0) + offset * 86_400_000);
+const at = (minute: number): Date => new Date(Date.UTC(2026, 0, 1, 12, minute, 0));
+const day = (offset: number, minute = 0): Date => new Date(Date.UTC(2026, 0, 1, 12, minute, 0) + offset * 86_400_000);
 
 describe("writing a settings backup", () => {
 	it("puts a copy beside data.json, named for its time, its device and its content", async () => {
@@ -96,16 +92,20 @@ describe("writing a settings backup", () => {
 		const path = await writeSettingsBackup(v.host, { callouts: ["a"] }, { now: at(0) });
 
 		assert.ok(path);
-		assert.match(path, /^\.obsidian\/plugins\/callout-studio\/backups\/data-2026-01-01T12-00-00-000Z-mac00001-[a-f0-9]{16}\.json$/);
-		assert.deepStrictEqual(
-			JSON.parse(v.files.get(path)!) as unknown,
-			{ callouts: ["a"] },
+		assert.match(
+			path,
+			/^\.obsidian\/plugins\/callout-studio\/backups\/data-2026-01-01T12-00-00-000Z-mac00001-[a-f0-9]{16}\.json$/,
 		);
+		assert.deepStrictEqual(JSON.parse(v.files.get(path)!) as unknown, { callouts: ["a"] });
 	});
 
 	it("keeps the content only, never a sync envelope from another moment", async () => {
 		const v = vault();
-		const path = await writeSettingsBackup(v.host, { callouts: [], calloutStudioSync: { version: 2 } }, { now: at(0) });
+		const path = await writeSettingsBackup(
+			v.host,
+			{ callouts: [], calloutStudioSync: { version: 2 } },
+			{ now: at(0) },
+		);
 		assert.deepStrictEqual(JSON.parse(v.files.get(path!)!) as unknown, { callouts: [] });
 	});
 
@@ -174,16 +174,18 @@ describe("keeping the folder from growing", () => {
 		}
 
 		// The newest ten span days 19 to 16; older daily copies no longer remain.
-		assert.deepStrictEqual(v.kept(), [
-			162, 170, 171, 172, 180, 181, 182, 190, 191, 192,
-		]);
+		assert.deepStrictEqual(v.kept(), [162, 170, 171, 172, 180, 181, 182, 190, 191, 192]);
 	});
 
 	it("leaves unrecognized files and legacy copies within their limit alone", async () => {
 		// The folder is inside the plugin directory, which syncs. Anything else
 		// in there belongs to the user, another tool, or an older build.
 		const legacy = `${DIR}/data-2026-01-01T00-00-00-000Z-4c6ac6e0-4032-4541-9446-9a06b9655ab3.json`;
-		const v = vault({ [`${DIR}/notes-of-my-own.json`]: "{}", [`${DIR}/data-my-recovery.json`]: "{}", [legacy]: "{}" });
+		const v = vault({
+			[`${DIR}/notes-of-my-own.json`]: "{}",
+			[`${DIR}/data-my-recovery.json`]: "{}",
+			[legacy]: "{}",
+		});
 		v.folders.add(DIR);
 
 		for (let i = 0; i < 15; i++) {
@@ -251,8 +253,11 @@ describe("applying retention to existing backups", () => {
 		v.folders.add(DIR);
 		return Array.from({ length: count }, (_, n) => {
 			const time = day(n).toISOString().replace(/[:.]/g, "-");
-			const suffix = device ? `-${device}-${n.toString(16).padStart(16, "0")}`
-				: n % 2 ? "-4c6ac6e0-4032-4541-9446-9a06b9655ab3" : "";
+			const suffix = device
+				? `-${device}-${n.toString(16).padStart(16, "0")}`
+				: n % 2
+					? "-4c6ac6e0-4032-4541-9446-9a06b9655ab3"
+					: "";
 			const path = `${DIR}/data-${time}${suffix}.json`;
 			v.files.set(path, JSON.stringify({ n }));
 			return path;
@@ -261,16 +266,31 @@ describe("applying retention to existing backups", () => {
 
 	it("deletes existing excess from this device and both legacy name formats without creating a backup", async () => {
 		const v = vault();
-		const own = seed(v, "mac00001"), legacy = seed(v, null), phone = seed(v, "phone001");
-		const untouched = [`${DIR}/notes.json`, `${DIR}/unreadable-old.txt`, `${DIR}/recovery-copy-old.txt`,
-			`${DIR}/nested/data-2026-01-01T12-00-00-000Z.json`];
+		const own = seed(v, "mac00001"),
+			legacy = seed(v, null),
+			phone = seed(v, "phone001");
+		const untouched = [
+			`${DIR}/notes.json`,
+			`${DIR}/unreadable-old.txt`,
+			`${DIR}/recovery-copy-old.txt`,
+			`${DIR}/nested/data-2026-01-01T12-00-00-000Z.json`,
+		];
 		for (const path of untouched) v.files.set(path, "kept");
 		const now = day(24).getTime();
 		await pruneSettingsBackups(v.host, new Set(), undefined, now);
-		assert.deepStrictEqual(v.backups().filter(path => own.includes(path)), own.slice(-10));
-		assert.deepStrictEqual(v.backups().filter(path => legacy.includes(path)), legacy.slice(-10));
-		assert.ok(phone.every(path => v.files.has(path)), "other devices enforce their own limit on upgrade");
-		assert.ok(untouched.every(path => v.files.has(path)));
+		assert.deepStrictEqual(
+			v.backups().filter((path) => own.includes(path)),
+			own.slice(-10),
+		);
+		assert.deepStrictEqual(
+			v.backups().filter((path) => legacy.includes(path)),
+			legacy.slice(-10),
+		);
+		assert.ok(
+			phone.every((path) => v.files.has(path)),
+			"other devices enforce their own limit on upgrade",
+		);
+		assert.ok(untouched.every((path) => v.files.has(path)));
 		const remaining = [...v.files];
 		await pruneSettingsBackups(v.host, new Set(), undefined, now);
 		assert.deepStrictEqual([...v.files], remaining, "cleanup is idempotent");
@@ -289,7 +309,7 @@ describe("applying retention to existing backups", () => {
 		const v = vault();
 		const legacy = seed(v, null, 4);
 		const mine = await writeSettingsBackup(v.host, { n: 1 }, { now: day(100) });
-		assert.ok(legacy.every(path => !v.files.has(path)));
+		assert.ok(legacy.every((path) => !v.files.has(path)));
 		assert.deepStrictEqual(v.backups(), [mine]);
 	});
 
@@ -297,7 +317,7 @@ describe("applying retention to existing backups", () => {
 		const v = vault();
 		const phone = seed(v, "phone001");
 		await pruneSettingsBackups(v.host);
-		assert.ok(phone.every(path => v.files.has(path)));
+		assert.ok(phone.every((path) => v.files.has(path)));
 	});
 
 	it("also cleans up when identical content reuses an existing backup", async () => {
@@ -311,7 +331,8 @@ describe("applying retention to existing backups", () => {
 	});
 
 	it("reduces a completed oversized batch on the next cleanup", async () => {
-		const v = vault(), batch = new Set<string>();
+		const v = vault(),
+			batch = new Set<string>();
 		for (let n = 0; n < 13; n++) await writeSettingsBackup(v.host, { n }, { now: at(n), batch });
 		await pruneSettingsBackups(v.host);
 		assert.deepStrictEqual(v.kept(), [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
@@ -323,13 +344,17 @@ describe("applying retention to existing backups", () => {
 		seed(v, "mac00001");
 		let finishRemove: () => void = () => {};
 		let started: () => void = () => {};
-		const removing = new Promise<void>(resolve => { started = resolve; });
+		const removing = new Promise<void>((resolve) => {
+			started = resolve;
+		});
 		let cancelled = false;
 		const remove = v.host.app.vault.adapter.remove.bind(v.host.app.vault.adapter);
-		v.host.app.vault.adapter.remove = async path => {
+		v.host.app.vault.adapter.remove = async (path) => {
 			if (path === first) {
 				started();
-				await new Promise<void>(resolve => { finishRemove = resolve; });
+				await new Promise<void>((resolve) => {
+					finishRemove = resolve;
+				});
 			}
 			await remove(path);
 		};
@@ -363,7 +388,11 @@ describe("why a copy was kept", () => {
 		assert.deepEqual(labels(v).reasons, { [fileName(path)]: "before-import" });
 		assert.deepStrictEqual(JSON.parse(v.files.get(path)!) as unknown, { n: 1 }, "the copy itself carries no label");
 		assert.equal(await writeSettingsBackup(v.host, { n: 1 }, { now: at(5), reason: "before-reset" }), path);
-		assert.deepEqual(labels(v).reasons, { [fileName(path)]: "before-import" }, "the same content keeps its first reason");
+		assert.deepEqual(
+			labels(v).reasons,
+			{ [fileName(path)]: "before-import" },
+			"the same content keeps its first reason",
+		);
 	});
 
 	it("forgets the reasons of the copies it prunes, and only its own", async () => {
@@ -371,15 +400,20 @@ describe("why a copy was kept", () => {
 		v.files.set(`${DIR}/labels-pho00001.json`, JSON.stringify({ reasons: { "data-gone.json": "before-sync" } }));
 		for (let n = 0; n <= 11; n++) await writeSettingsBackup(v.host, { n }, { now: at(n), reason: "before-import" });
 		assert.deepStrictEqual(Object.keys(labels(v).reasons ?? {}).sort(), v.backups().map(fileName).sort());
-		assert.deepEqual(labels(v, `${DIR}/labels-pho00001.json`).reasons, { "data-gone.json": "before-sync" }, "another device's file is its own to tidy");
+		assert.deepEqual(
+			labels(v, `${DIR}/labels-pho00001.json`).reasons,
+			{ "data-gone.json": "before-sync" },
+			"another device's file is its own to tidy",
+		);
 	});
 
-	it("still counts a copy as written when its label could not be", async t => {
+	it("still counts a copy as written when its label could not be", async (t) => {
 		t.mock.method(console, "error", () => undefined);
 		const v = vault();
 		const adapter = v.host.app.vault.adapter;
 		const write = adapter.write.bind(adapter);
-		adapter.write = (path, text) => path.includes("/labels-") ? Promise.reject(new Error("read-only")) : write(path, text);
+		adapter.write = (path, text) =>
+			path.includes("/labels-") ? Promise.reject(new Error("read-only")) : write(path, text);
 		const path = await writeSettingsBackup(v.host, { n: 1 }, { now: at(0), reason: "before-reset" });
 		assert.ok(path);
 		assert.equal(v.backups().length, 1);
@@ -429,7 +463,7 @@ describe("a backup that cannot be written", () => {
 		const v = vault();
 		const data = { callouts: [{ id: "original" }] };
 		const originalExists = v.host.app.vault.adapter.exists.bind(v.host.app.vault.adapter);
-		v.host.app.vault.adapter.exists = async path => {
+		v.host.app.vault.adapter.exists = async (path) => {
 			data.callouts[0]!.id = "changed during await";
 			return originalExists(path);
 		};

@@ -40,17 +40,15 @@ export const ja: Record<string, string> = {
 	"settings.fallbackTagAuto": "自動",
 	"settings.rescanVaultDesc": "ノートで使われていて、まだこの一覧にないcalloutタイプを追加します。",
 	"settings.rescanVaultHintAction": "calloutをスキャン",
-	"manualDiscovery.failed": "スキャン結果を保存できませんでした。設定ファイルに書き込めることと同期が完了していることを確認し、設定 → マイcalloutタイプ → calloutをスキャンから再試行してください。既存のcalloutは置き換えられていません。",
+	"manualDiscovery.failed":
+		"スキャン結果を保存できませんでした。設定ファイルに書き込めることと同期が完了していることを確認し、設定 → マイcalloutタイプ → calloutをスキャンから再試行してください。既存のcalloutは置き換えられていません。",
 	"manualDiscovery.scanning": "スキャン中…",
-	"settings.rescanComplete":
-		"スキャン完了: {{count}}件の新しいcalloutタイプを追加しました。",
+	"settings.rescanComplete": "スキャン完了: {{count}}件の新しいcalloutタイプを追加しました。",
 	"replaceModal.titleReplace": "vaultで置き換え",
 
 	"welcome.title": "Callout Studioへようこそ！",
-	"welcome.tagline":
-		"Obsidianのcalloutを作成、スタイル設定、管理するための総合ソリューション。",
-	"importBanner.message":
-		"{{plugins}} をお使いのようです。calloutをインポートしますか?",
+	"welcome.tagline": "Obsidianのcalloutを作成、スタイル設定、管理するための総合ソリューション。",
+	"importBanner.message": "{{plugins}} をお使いのようです。calloutをインポートしますか?",
 	"importBanner.action": "インポート",
 	"importBanner.dismiss": "閉じる",
 	"welcome.demoName": "Callout Studio",
@@ -65,8 +63,7 @@ export const ja: Record<string, string> = {
 		"Callout Studioにはまだまだ多くの機能があります！[詳しく見る]({{repoUrl}})。\n",
 	"deleteModal.title": "calloutを削除",
 
-	"deleteModal.bodyInUse":
-		"このcalloutは{{files}}個のファイルに{{count}}回出現しています。",
+	"deleteModal.bodyInUse": "このcalloutは{{files}}個のファイルに{{count}}回出現しています。",
 	"deleteModal.notesUntouched":
 		"calloutの定義だけを削除します。ノートには一切手を加えないため、既存のcalloutはデフォルトのスタイルに戻るだけです。",
 	"deleteModal.fallbackTarget":
@@ -128,14 +125,12 @@ export const ja: Record<string, string> = {
 	"settings.themeCalloutsHeading": "テーマ由来のcallout",
 	"settings.themeCalloutsDefaultTheme": "あなたのテーマ",
 	"settings.themeCalloutsEmpty": "現在、{{theme}} はどのcalloutにもスタイルを適用していません。",
-	"settings.themePreviewAria":
-		'"{{name}}"をプレビュー — テーマでの描画を確認',
+	"settings.themePreviewAria": '"{{name}}"をプレビュー — テーマでの描画を確認',
 	"settings.builtInAllThemeStyled":
 		"{{theme}}はすべての組み込みcalloutにスタイルを適用しているため、Callout Studioはそれらをすべてそのままにします。独自にデザインするには、別のIDでcalloutを追加してください。",
 
 	"settings.fallbackCallout": "デフォルトフォールバックcallout",
-	"settings.fallbackCalloutDesc":
-		"不明なcalloutタイプはこのスタイルを継承します。",
+	"settings.fallbackCalloutDesc": "不明なcalloutタイプはこのスタイルを継承します。",
 
 	"settings.border": "ボーダー",
 	"settings.borderTop": "上",
@@ -167,8 +162,7 @@ export const ja: Record<string, string> = {
 	"settings.paletteCountOne": "1 個のパレット",
 	"settings.editPaletteAria": "パレット {{name}} を編集",
 	"settings.deletePaletteTitle": "パレットを削除",
-	"settings.deletePaletteBody":
-		'この色を使用しているcalloutには影響しません。',
+	"settings.deletePaletteBody": "この色を使用しているcalloutには影響しません。",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'メタデータにこの名前 ("{{key}}") を指定している callout は、代わりにその名前の組み込みの色になります。ノートは変更されません。',
 
@@ -195,9 +189,9 @@ export const ja: Record<string, string> = {
 	"commandBuilder.formatBlock": "ブロック",
 	"commandBuilder.roleDisabled":
 		"この形式はオフになっているため、再度オンにするまでコマンドはプレーンテキストを挿入します。",
-	"commandBuilder.roleThemeOwned":
-		"このcalloutはテーマが提供しているため、Block形式のみ使用できます。",
-	"commandBuilder.commandSuspended": "テーマがこのcalloutを提供している間は一時停止します。その間、このcalloutにはブロック形式のみがあります。",
+	"commandBuilder.roleThemeOwned": "このcalloutはテーマが提供しているため、Block形式のみ使用できます。",
+	"commandBuilder.commandSuspended":
+		"テーマがこのcalloutを提供している間は一時停止します。その間、このcalloutにはブロック形式のみがあります。",
 	"commandBuilder.pausedTag": "テーマにより一時停止",
 	"commandBuilder.missingTag": "calloutが見つかりません",
 	"commandBuilder.callout": "calloutタイプ",
@@ -205,8 +199,7 @@ export const ja: Record<string, string> = {
 	"commandBuilder.headingLevel": "見出しレベル",
 	"commandBuilder.headingLevelDesc": "どの見出しレベルを書き込むか。",
 	"commandBuilder.action": "アクション",
-	"commandBuilder.actionDesc":
-		"「囲む」は選択範囲をcalloutに変換し、「挿入」は空のcalloutを追加します。",
+	"commandBuilder.actionDesc": "「囲む」は選択範囲をcalloutに変換し、「挿入」は空のcalloutを追加します。",
 	"commandBuilder.actionDescHeading":
 		"「囲む」はカーソルのある行を見出しcalloutに変換します。\n「挿入」は新しい行に空のcalloutを追加します。",
 	"commandBuilder.actionDescInline":
@@ -214,22 +207,18 @@ export const ja: Record<string, string> = {
 	"commandBuilder.actionWrap": "選択範囲を囲む",
 	"commandBuilder.actionInsert": "新規挿入",
 	"commandBuilder.foldState": "折りたたみ状態",
-	"commandBuilder.foldStateDesc":
-		"calloutが折りたたみ可能かどうか、およびどの状態で開始するか。",
+	"commandBuilder.foldStateDesc": "calloutが折りたたみ可能かどうか、およびどの状態で開始するか。",
 	"commandBuilder.foldNone": "折りたたみ不可",
 	"commandBuilder.foldExpanded": "折りたたみ可能、開いた状態 (+)",
 	"commandBuilder.foldCollapsed": "折りたたみ可能、閉じた状態 (-)",
 	"commandBuilder.preview": "コマンド名",
-	"commandBuilder.duplicate":
-		"まったく同じことを行うコマンドが既に存在します。",
-	"commandBuilder.noCallouts":
-		"コマンドを作成するためのcalloutタイプがまだありません。",
+	"commandBuilder.duplicate": "まったく同じことを行うコマンドが既に存在します。",
+	"commandBuilder.noCallouts": "コマンドを作成するためのcalloutタイプがまだありません。",
 	"commandBuilder.noCalloutChosen": "先にこのコマンド用のcalloutを選択してください。",
 	"commandBuilder.save": "保存",
 
 	"settings.resetAll": "リセット",
-	"settings.resetAllDesc":
-		"すべての設定とカスタマイズを初期状態に戻します。",
+	"settings.resetAllDesc": "すべての設定とカスタマイズを初期状態に戻します。",
 	"settings.resetAllButton": "すべてリセット",
 	"notice.resetAllDone": "すべてデフォルトにリセットされました。",
 	"settings.resetIntro": "Callout Studioで作り上げてきたものを、少しだけ振り返ってみてください。",
@@ -250,36 +239,33 @@ export const ja: Record<string, string> = {
 	"settings.resetItemAutocomplete": "オートコンプリートとメタデータの設定",
 	"settings.resetItemFallback": "フォールバックスタイル",
 	"settings.resetItemIconLibraries": "アイコンライブラリの順序と非表示のライブラリ",
-	"settings.resetAllConfirmAfter": "ご安心ください。リセットの前に、現在の設定のバックアップを保存します。設定の「以前のバージョンを復元」からいつでも元に戻せます。\n同期サービスを使っている場合、リセットがほかのデバイスにも反映されることがあります。",
+	"settings.resetAllConfirmAfter":
+		"ご安心ください。リセットの前に、現在の設定のバックアップを保存します。設定の「以前のバージョンを復元」からいつでも元に戻せます。\n同期サービスを使っている場合、リセットがほかのデバイスにも反映されることがあります。",
 	"settings.resetNothing": "リセットするものはありません。すべてすでにデフォルトです。",
 
-	"notice.customCommandMissingCallout":
-		"このコマンドのcalloutタイプはもう存在しません。",
+	"notice.customCommandMissingCallout": "このコマンドのcalloutタイプはもう存在しません。",
 
-	"notice.importedJSON":
-		"JSONから{{count}}件のcalloutタイプをインポートしました。",
+	"notice.importedJSON": "JSONから{{count}}件のcalloutタイプをインポートしました。",
 	"notice.importedSettings": "プラグインの設定をインポートしました。",
-	"notice.importedCalloutManager":
-		"Callout Manager からインポートしました：{{created}} 件作成、{{updated}} 件更新。",
-	"notice.importedAdmonition":
-		"Admonition からインポートしました：{{created}} 件作成、{{updated}} 件更新。",
-	"notice.noNewJSON":
-		"新しいcalloutタイプはインポートされませんでした（IDがすでに存在する可能性があります）。",
+	"notice.importedCalloutManager": "Callout Manager からインポートしました：{{created}} 件作成、{{updated}} 件更新。",
+	"notice.importedAdmonition": "Admonition からインポートしました：{{created}} 件作成、{{updated}} 件更新。",
+	"notice.noNewJSON": "新しいcalloutタイプはインポートされませんでした（IDがすでに存在する可能性があります）。",
 	"notice.iconDownloadFailed":
 		'Materialアイコン"{{name}}"をダウンロードできませんでした。このスタイル/ウェイトでは利用できないか、接続がオフラインの可能性があります。',
-	"notice.vaultScanFailed": "コールアウトの使用数を集計できませんでした。{{count}} 件のノートを読み取れませんでした。ストレージと同期を確認してから再試行してください。",
+	"notice.vaultScanFailed":
+		"コールアウトの使用数を集計できませんでした。{{count}} 件のノートを読み取れませんでした。ストレージと同期を確認してから再試行してください。",
 
 	"notice.externalCssRetired":
 		"個人用CSSスタイル設定オプションは削除されました。これらのcalloutは、テーマがスタイルを適用しない限り、保存済みのCallout Studioデザインを使用します。ノートと個人用CSSスニペットは変更されていません。",
 	"notice.vaultRewritePartial":
 		"{{count}} 件のノートを更新できなかったため、変更されずに残されました。詳細は開発者コンソールを確認してください。",
-	"notice.calloutDeleteIncomplete": "一部のノートを変換できませんでした。callout タイプは保持されました。完了した変換は保存されています。ファイルの問題を解決してから、操作をもう一度実行して完了してください。",
+	"notice.calloutDeleteIncomplete":
+		"一部のノートを変換できませんでした。callout タイプは保持されました。完了した変換は保存されています。ファイルの問題を解決してから、操作をもう一度実行して完了してください。",
 	"notice.nothingToWrap": "囲むものがありません。",
 	"notice.cursorNotInsideCallout": "カーソルがcallout内にありません。",
 	"notice.headingAlreadyCallout": "この見出しはすでにcalloutです。",
 	"notice.unwrapLeftAsIs": "このcalloutは安全に解除できなかったため、そのままにしました。",
-	"notice.autocompleteTargetMoved":
-		"何も挿入されませんでした — エディタを開いている間に行が変更されました。",
+	"notice.autocompleteTargetMoved": "何も挿入されませんでした — エディタを開いている間に行が変更されました。",
 	"notice.autocompleteAlwaysEnabled": "オートコンプリートはコア機能になり、常に有効です。",
 	"notice.openHotkeysFailed": "Obsidianのホットキー設定を開けませんでした。",
 	"notice.filterHotkeysFailed":
@@ -298,8 +284,7 @@ export const ja: Record<string, string> = {
 	"editor.addId": "IDを追加",
 	"editor.maxIds": "IDは最大{{max}}個までです。別のIDを追加するには、1つ削除してください。",
 	"editor.idLinkedToName": "表示名にリンクされています",
-	"editor.idCannotDelete":
-		"このIDは表示名にリンクされているため削除できません。名前を編集して変更してください",
+	"editor.idCannotDelete": "このIDは表示名にリンクされているため削除できません。名前を編集して変更してください",
 	"editor.icon": "アイコン",
 	"editor.pickIcon": "アイコンを変更",
 	"editor.replaceIcon": "アイコンを置き換え",
@@ -315,15 +300,13 @@ export const ja: Record<string, string> = {
 	"editor.horizontalOffset": "水平オフセット",
 	"editor.verticalOffset": "垂直オフセット",
 	"editor.colors": "カラー",
-	"editor.colorsDesc":
-		"このcalloutの枠線、背景、文字の色を設定します。",
+	"editor.colorsDesc": "このcalloutの枠線、背景、文字の色を設定します。",
 	"editor.resetColors": "カラーをデフォルトにリセット",
 	"editor.paletteDeleted": "削除された色",
 	"editor.paletteGroupObsidian": "Obsidian callout",
 	"editor.paletteGroupPresets": "カラープリセット",
 	"editor.paletteGroupCustom": "カスタム",
-	"editor.contrastWarning":
-		"背景とのコントラストが低く、読みにくい場合があります",
+	"editor.contrastWarning": "背景とのコントラストが低く、読みにくい場合があります",
 	"editor.foldable": "折りたたみ可能",
 	"editor.foldableDesc":
 		"calloutを折りたたみ可能にするかどうか、およびvault全体に適用するデフォルト状態を選択します。",
@@ -332,7 +315,8 @@ export const ja: Record<string, string> = {
 	"editor.foldClosed": "デフォルトで閉じる",
 	"editor.cancel": "キャンセル",
 	"editor.saveChanges": "変更を保存",
-	"editor.saveFailed": "保存を完了できませんでした。このエディターがまだ開いている場合は閉じずに、保存先の空き容量と同期を確認してから再試行してください。設定やノートの更新の一部はすでに保存されている可能性があります。",
+	"editor.saveFailed":
+		"保存を完了できませんでした。このエディターがまだ開いている場合は閉じずに、保存先の空き容量と同期を確認してから再試行してください。設定やノートの更新の一部はすでに保存されている可能性があります。",
 	"editor.createCallout": "calloutを作成",
 	"editor.nameRequired": "calloutを作成する前に表示名が必要です。",
 	"editor.noChangesToSave": "変更はありませんでした。",
@@ -349,20 +333,16 @@ export const ja: Record<string, string> = {
 		"{{theme}}は{{names}}のブロックcalloutを独自に描画し、{{stock}}はObsidianが描画します。その他のIDはこのデザインのままです。",
 	"editor.idThemePattern":
 		"注意: あなたのテーマは{{pattern}}に一致するすべてのcalloutをスタイル設定するため、この見た目が上書きされる可能性があります。",
-	"editor.idDashConflict":
-		"Obsidianはスペースをハイフンとして書き込むため、このIDは「{{other}}」と衝突します",
+	"editor.idDashConflict": "Obsidianはスペースをハイフンとして書き込むため、このIDは「{{other}}」と衝突します",
 	"editor.idOwnedBy": "「{{id}}」は{{name}}のIDです。{{link}}ことができます。",
 	"editor.idMoveHere": "ここに移す",
-	"editor.idOwnedByMain":
-		"「{{id}}」は{{name}}のメインIDです。ここで使うには、先に{{name}}を削除してください。",
+	"editor.idOwnedByMain": "「{{id}}」は{{name}}のメインIDです。ここで使うには、先に{{name}}を削除してください。",
 	"editor.idBuiltInStock": "「{{id}}」は{{name}}用のObsidian標準のIDの1つです。",
 	"editor.idMoving": "保存すると、「{{id}}」は{{name}}からここに移ります。",
 	"editor.idMovingNotes": "ノートはそのままで、このCalloutのスタイルになります。",
 	"editor.untitledCallout": "タイトルなしCallout",
-	"editor.loremIpsum":
-		"木々の間をそよ風が吹き抜けます。暖かな日差しが静かな小道を照らし、景色に彩りを添えます。",
-	"editor.loremIpsumShort":
-		"木々の間をそよ風が吹き抜けます。",
+	"editor.loremIpsum": "木々の間をそよ風が吹き抜けます。暖かな日差しが静かな小道を照らし、景色に彩りを添えます。",
+	"editor.loremIpsumShort": "木々の間をそよ風が吹き抜けます。",
 	"editor.sampleInlineText": "段落内にインラインの [!{id}]{{title}} ピルがあります。",
 	"editor.previewReadOnly": "ライブプレビューは編集できません",
 	"noteChanges.title": "ノートを更新しますか？",
@@ -377,13 +357,11 @@ export const ja: Record<string, string> = {
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": '{{name}} — あなたのテーマが提供',
+	"themePreview.title": "{{name}} — あなたのテーマが提供",
 	"themePreview.summary":
 		"{{theme}}が提供（読み取り専用）。色、アイコン、IDはここでは変更できず、見出し／インライン形式は使用できません。カスタマイズするには、新しいcalloutを作成してください。",
 	"themePreview.previewTitle": "現在の表示",
-	"themePreview.blockSample":
-		"> [!{{id}}] {{name}}\n" +
-		"> これはcalloutの内容の見た目です。\n",
+	"themePreview.blockSample": "> [!{{id}}] {{name}}\n" + "> これはcalloutの内容の見た目です。\n",
 
 	// Theme callout preview window
 	"editor.themePreviewClose": "了解",
@@ -396,21 +374,26 @@ export const ja: Record<string, string> = {
 	"palette.namePlaceholder": "マイパレット",
 	"palette.nameExists": "この名前のパレットはすでに存在します",
 	"palette.saveBlockedName": "この名前のパレットはすでに存在します。別の名前を選んで保存してください。",
-	"palette.metadataNameExists": '別のパレットがすでに calloutのメタデータで "{{key}}" と書かれています。別の名前を選んでください。',
-	"palette.metadataNameShared": "calloutのメタデータでの表記: {{key}}。保存済みの別のパレットにもこの語があるため、どちらか一方だけが反応します。",
+	"palette.metadataNameExists":
+		'別のパレットがすでに calloutのメタデータで "{{key}}" と書かれています。別の名前を選んでください。',
+	"palette.metadataNameShared":
+		"calloutのメタデータでの表記: {{key}}。保存済みの別のパレットにもこの語があるため、どちらか一方だけが反応します。",
 	"palette.renameNotesChange":
 		"パレット名を「{{old}}」から「{{new}}」に変更したため、calloutのメタデータでのパレットの語も「{{oldWord}}」から「{{newWord}}」に変わります。",
 	"palette.renameNotesLeaveDesc": "「{{word}}」のまま残り、それぞれ自身の色に戻ります。",
 	"palette.renameNotesChangeDesc": "ノート内の|{{old}}がすべて|{{new}}に変わります。",
-	"palette.renameNotesFailed": "一部のノートを更新できませんでした。更新できたものは保存されています。残りは古い名前のままです。",
+	"palette.renameNotesFailed":
+		"一部のノートを更新できませんでした。更新できたものは保存されています。残りは古い名前のままです。",
 	"palette.baseColor": "ベースカラー",
 	"palette.colorViewAdvanced": "色を個別に設定",
 	"palette.colorViewSimple": "単一のベースカラーに戻す",
 	"palette.advancedColors": "色",
 	"palette.lightModeColors": "ライトモードの色",
 	"palette.darkModeColors": "ダークモードの色",
-	"palette.modeColorsHintLight": "この変更はライトモードにのみ適用されます。ダークモードは独自の色を保持します。\nダークモードの色を編集するには、上の月のボタンを押してください。",
-	"palette.modeColorsHintDark": "この変更はダークモードにのみ適用されます。ライトモードは独自の色を保持します。\nライトモードの色を編集するには、上の太陽のボタンを押してください。",
+	"palette.modeColorsHintLight":
+		"この変更はライトモードにのみ適用されます。ダークモードは独自の色を保持します。\nダークモードの色を編集するには、上の月のボタンを押してください。",
+	"palette.modeColorsHintDark":
+		"この変更はダークモードにのみ適用されます。ライトモードは独自の色を保持します。\nライトモードの色を編集するには、上の太陽のボタンを押してください。",
 	"palette.showLightMode": "ライトモードを表示",
 	"palette.showDarkMode": "ダークモードを表示",
 	"palette.accentColor": "アクセントカラー",
@@ -502,14 +485,11 @@ export const ja: Record<string, string> = {
 	"iconPicker.searchSimpleIcons": "Simple Icons を検索",
 	"iconPicker.custom": "カスタムアイコン",
 	"iconPicker.searchCustom": "カスタムアイコンを検索",
-	"iconPicker.customTooLarge":
-		"{{name}}は大きすぎます。カスタムアイコンのサイズは最大5 MBです。",
+	"iconPicker.customTooLarge": "{{name}}は大きすぎます。カスタムアイコンのサイズは最大5 MBです。",
 	"iconPicker.customUnsupported":
 		"{{name}}はサポートされているカスタムアイコンファイルではありません。SVG、PNG、JPEG、またはWebPを使用してください。",
-	"iconPicker.customInvalidSvg":
-		"{{name}}は安全なSVGとして読み取れなかったため、追加されませんでした。",
-	"iconPicker.customDecodeFailed":
-		"{{name}}をカスタムアイコンとして読み取れませんでした。",
+	"iconPicker.customInvalidSvg": "{{name}}は安全なSVGとして読み取れなかったため、追加されませんでした。",
+	"iconPicker.customDecodeFailed": "{{name}}をカスタムアイコンとして読み取れませんでした。",
 	"iconPicker.customDuplicate":
 		"{{name}}はすでにカスタムアイコンにあります。ファイル名を変更するか、既存のアイコンを削除してください。",
 	"iconPicker.uploadCustom": "画像ファイルをアップロード",
@@ -538,8 +518,7 @@ export const ja: Record<string, string> = {
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "すべてのライブラリを一度に検索",
 	"iconPicker.descLucide": "Obsidian固有のセット、常にオフライン",
-	"iconPicker.descTabler":
-		"シンプルで統一感のあるUIアイコン、アウトラインと塗りつぶし",
+	"iconPicker.descTabler": "シンプルで統一感のあるUIアイコン、アウトラインと塗りつぶし",
 	"iconPicker.descMaterial": "Googleのセット、4スタイルと7ウェイト",
 	"iconPicker.descEmoji": "カラフルなグリフ、すべての肌色",
 	"iconPicker.descOcticons": "GitHubのインターフェイスアイコン",
@@ -664,19 +643,16 @@ export const ja: Record<string, string> = {
 
 	// Downloadable icon packs
 	"iconPack.downloadTitle": "{{name}}はまだダウンロードされていません",
-	"iconPack.downloadDetail":
-		"{{count}}個のアイコン · {{size}} · 一度限りのダウンロード",
+	"iconPack.downloadDetail": "{{count}}個のアイコン · {{size}} · 一度限りのダウンロード",
 	"iconPack.download": "ダウンロード",
 	"iconPack.downloading": "{{name}}をダウンロード中…",
-	"iconPack.downloadFailed":
-		"{{name}}をダウンロードできませんでした。接続を確認して再試行してください。",
+	"iconPack.downloadFailed": "{{name}}をダウンロードできませんでした。接続を確認して再試行してください。",
 	"iconPack.retry": "再試行",
 	"iconPack.faBrandsNotice":
 		"ブランドアイコンはそれぞれの所有者の商標です。それらの掲載は推薦を意味しません。それらが指す会社、製品、またはサービスを表すためにのみ使用してください。",
 	"iconPack.simpleIconsNotice":
 		"ロゴはそれぞれの所有者の商標であり、ここに含まれていることは推奨を意味しません。ロゴはそのブランド自体を示す目的にのみ使用し、そのブランドのガイドラインに従ってください。一部のロゴには独自のライセンスもあります。アイコンのクレジットをご覧ください。",
-	"iconPack.artworkRestored":
-		"{{names}}のアイコンアートワークをダウンロードしました。",
+	"iconPack.artworkRestored": "{{names}}のアイコンアートワークをダウンロードしました。",
 	"iconPack.diskWriteFailed":
 		"Callout Studioはアイコンパックをディスクに保存できませんでした。次回また再ダウンロードが必要です。選んだアイコンは設定に保存されています。",
 	"settings.colorsAndIcons": "色とアイコン",
@@ -731,7 +707,8 @@ export const ja: Record<string, string> = {
 	"contextMenu.setFoldNone": "calloutを折りたたみ不可にする",
 	"contextMenu.cutSection": "見出しセクションを切り取り",
 	"notice.clipboardWriteFailed": "クリップボードにコピーできませんでした。ノートは変更されていません。",
-	"notice.sectionChangedAfterCopy": "セクションはコピーされましたが、切り取る前にノートが変更されました。何も削除されていません。",
+	"notice.sectionChangedAfterCopy":
+		"セクションはコピーされましたが、切り取る前にノートが変更されました。何も削除されていません。",
 	"contextMenu.copySection": "見出しセクションをコピー",
 	"contextMenu.deleteSection": "見出しセクションを削除",
 
@@ -762,15 +739,14 @@ export const ja: Record<string, string> = {
 	"settings.metadataWordAlreadyHere": "この語はすでに一覧にあります",
 	"settings.metadataWordTooLong": "語は{{max}}文字以内にしてください",
 	"settings.maxMetadataWords": "最大{{max}}語です。別の語を追加するには、どれか1つを削除してください。",
-	"settings.buildFailed": "Callout Studioが設定画面を表示できませんでした。Obsidianを再起動し、再び起きた場合は報告してください。",
-	"settings.globalSettingsRegularDesc":
-		"ボーダー、半径、フォントスケール、整列。",
-	"settings.globalSettingsHeadingDesc":
-		"ボーダー、形状、垂直方向の間隔。",
-	"settings.globalSettingsInlineDesc":
-		"ボーダーと形状。",
+	"settings.buildFailed":
+		"Callout Studioが設定画面を表示できませんでした。Obsidianを再起動し、再び起きた場合は報告してください。",
+	"settings.globalSettingsRegularDesc": "ボーダー、半径、フォントスケール、整列。",
+	"settings.globalSettingsHeadingDesc": "ボーダー、形状、垂直方向の間隔。",
+	"settings.globalSettingsInlineDesc": "ボーダーと形状。",
 	"settings.themeCalloutStyles": "テーマのcalloutスタイルを使う",
-	"settings.themeCalloutStylesDesc": "オンにすると、テーマがスタイルを適用するcalloutはテーマの見た目を保ち、ブロックcalloutとしてのみ表示されます。オフにすると、Callout Studioがすべてのcalloutを描画します。",
+	"settings.themeCalloutStylesDesc":
+		"オンにすると、テーマがスタイルを適用するcalloutはテーマの見た目を保ち、ブロックcalloutとしてのみ表示されます。オフにすると、Callout Studioがすべてのcalloutを描画します。",
 
 	"settings.calloutTypeRegular": "ブロックcalloutのスタイル",
 	"settings.calloutTypeHeading": "見出しcalloutのスタイル",
@@ -804,22 +780,19 @@ export const ja: Record<string, string> = {
 	"confirm.titleDeleteLibrary": "アイコンライブラリを削除",
 	"confirm.titleResetLibraries": "アイコンライブラリをリセット",
 
-	"vault.filesUpdated":
-		"vaultファイルの{{count}}件のcallout参照を更新しました。",
-	"vault.idsUpdated":
-		"vaultファイルの{{count}}件のcallout IDを更新しました: {{oldIds}} → {{newId}}",
-	"vault.titlesUpdated":
-		"vaultファイルの{{count}}件のcalloutタイトルを更新しました: {{oldTitle}} → {{newTitle}}",
+	"vault.filesUpdated": "vaultファイルの{{count}}件のcallout参照を更新しました。",
+	"vault.idsUpdated": "vaultファイルの{{count}}件のcallout IDを更新しました: {{oldIds}} → {{newId}}",
+	"vault.titlesUpdated": "vaultファイルの{{count}}件のcalloutタイトルを更新しました: {{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated": "vaultファイル内の{{count}}件のCalloutの折りたたみ記号を更新しました。",
 	"vault.confirmReplace": "置き換え",
 	"vault.replacePromptInUse":
 		'"{{name}}"は{{files}}個のファイルで{{count}}回使用されています。置き換えるcalloutを選択してください:',
-	"vault.replacePromptUnused":
-		'"{{name}}"を置き換えるcalloutを選択してください:',
+	"vault.replacePromptUnused": '"{{name}}"を置き換えるcalloutを選択してください:',
 	"vault.noReplacementAvailable": "置き換え可能な他のcalloutがありません。",
 	"vault.convertedToPlainText":
 		"{{files}}個のファイルの{{blocks}}個のcalloutブロックをプレーンテキストに変換しました。",
-	"vault.resetNotesFailed": "一部のノートを更新できなかったため、calloutはリセットされませんでした。完了するには、もう一度「デフォルトにリセット」を選んでください。",
+	"vault.resetNotesFailed":
+		"一部のノートを更新できなかったため、calloutはリセットされませんでした。完了するには、もう一度「デフォルトにリセット」を選んでください。",
 
 	"quickInsert.title": "ブロックcalloutをクイック挿入",
 	"quickInsert.desc": "カーソル位置に挿入するcalloutを選択します。ブロックcalloutのみです。",
@@ -834,10 +807,13 @@ export const ja: Record<string, string> = {
 	"quickInsert.noResults": "calloutが見つかりません",
 	"quickInsert.noBuiltInCallouts": "現在利用できる組み込みcalloutはありません。",
 	"quickInsert.noThemeCallouts": "現在利用できるテーマ固有のcalloutはありません。",
-	"quickInsert.targetMoved": "クイック挿入を開いたノートが変更されたか閉じられました。編集したいノートでクイック挿入を開き直してください。",
+	"quickInsert.targetMoved":
+		"クイック挿入を開いたノートが変更されたか閉じられました。編集したいノートでクイック挿入を開き直してください。",
 	"quickInsert.targetMovedHint": "この挿入には元のノートが利用できなくなりました。",
-	"quickInsert.noUserCallouts": "まだカスタムcalloutを作成していません。コマンドパレットから「Callout Studio: 新しいcalloutタイプを作成」を実行してください。",
-	"quickInsert.noAvailableUserCallouts": "カスタムcalloutは現在、アクティブなテーマが制御しているためテーマフィルターの下に表示されています。",
+	"quickInsert.noUserCallouts":
+		"まだカスタムcalloutを作成していません。コマンドパレットから「Callout Studio: 新しいcalloutタイプを作成」を実行してください。",
+	"quickInsert.noAvailableUserCallouts":
+		"カスタムcalloutは現在、アクティブなテーマが制御しているためテーマフィルターの下に表示されています。",
 	"quickInsert.noEditorHint": "編集モードで開いているノートがないため、何も挿入できません。",
 	"quickInsert.noEditor": "calloutを挿入するには、ノートを編集モードで開いてください。",
 
@@ -850,9 +826,11 @@ export const ja: Record<string, string> = {
 	"portable.restoreDefault": "既定の置換に戻す",
 	"portable.cancelEdit": "変更を破棄",
 	"portable.customInvalid": "周囲のMarkdown構造を変えずに、置換内容を1行に収めてください。",
-	"portable.customUnsafe": "この置換では、見出しまたはそのリンクの参照先が曖昧になります。別の見出しを選んでください。",
+	"portable.customUnsafe":
+		"この置換では、見出しまたはそのリンクの参照先が曖昧になります。別の見出しを選んでください。",
 	"portable.customStale": "レビュー内容が変わりました。置換エディターを開き直してください。",
-	"portable.customDiscarded": "元のテキストが変更されたか、安全に特定できなかったため、{{count}}件のカスタム置換を解除しました。",
+	"portable.customDiscarded":
+		"元のテキストが変更されたか、安全に特定できなかったため、{{count}}件のカスタム置換を解除しました。",
 	"portable.customBadge": "カスタム",
 
 	"usage.title": "calloutを探す",
@@ -881,63 +859,52 @@ export const ja: Record<string, string> = {
 	"usage.closeSettings": "サイドバーでcalloutの結果を表示するには、設定を閉じてください。",
 
 	"import.title": "インポートの問題",
-	"import.reportLeadIn":
-		"続行する前に、次のインポート時の問題を確認してください:",
-	"import.reportLeadInFatal":
-		"このデータをインポートできませんでした:",
+	"import.reportLeadIn": "続行する前に、次のインポート時の問題を確認してください:",
+	"import.reportLeadInFatal": "このデータをインポートできませんでした:",
 	"import.entryHeading": "エントリ {{index}} — {{label}}",
-	"import.summary":
-		"{{total}}件中{{valid}}件のエントリが有効 · {{issues}}件の問題が見つかりました。",
+	"import.summary": "{{total}}件中{{valid}}件のエントリが有効 · {{issues}}件の問題が見つかりました。",
 	"import.btnCancel": "キャンセル",
 	"import.btnImportValid": "有効なもののみインポート（{{count}}件）",
-	"import.nothingValid": "有効なエントリーがないため、インポートするものがありません。キャンセルして、ここに表示された問題を修正してから、もう一度インポートしてください。",
-	"import.err.notRecognized":
-		"認識できないファイル: callout定義の配列またはCallout Studioのエクスポートが必要です。",
-	"import.warn.settingsIgnored":
-		"設定ブロックが有効なオブジェクトではなかったため、無視されました。",
-	"import.warn.invalidGradient":
-		"背景のグラデーションが無効だったため、無視されました。",
-	"import.err.parseFailed":
-		"ファイルは有効なJSONではなく、解析できませんでした。",
-	"import.err.tooLarge": "このインポートは16 MiBのサイズ上限を超えています。小さなファイルに分割して、もう一度お試しください。",
-	"import.err.tooComplex": "このインポートは複雑すぎます。リストまたはオブジェクトごとに最大1,000項目、合計50,000値、入れ子は最大32階層にしてください。",
-	"import.err.imageBudget": "画像コレクション全体がサイズまたは複雑さの上限を超えています。大きな画像を削除するか簡素化してからインポートしてください。",
+	"import.nothingValid":
+		"有効なエントリーがないため、インポートするものがありません。キャンセルして、ここに表示された問題を修正してから、もう一度インポートしてください。",
+	"import.err.notRecognized": "認識できないファイル: callout定義の配列またはCallout Studioのエクスポートが必要です。",
+	"import.warn.settingsIgnored": "設定ブロックが有効なオブジェクトではなかったため、無視されました。",
+	"import.warn.invalidGradient": "背景のグラデーションが無効だったため、無視されました。",
+	"import.err.parseFailed": "ファイルは有効なJSONではなく、解析できませんでした。",
+	"import.err.tooLarge":
+		"このインポートは16 MiBのサイズ上限を超えています。小さなファイルに分割して、もう一度お試しください。",
+	"import.err.tooComplex":
+		"このインポートは複雑すぎます。リストまたはオブジェクトごとに最大1,000項目、合計50,000値、入れ子は最大32階層にしてください。",
+	"import.err.imageBudget":
+		"画像コレクション全体がサイズまたは複雑さの上限を超えています。大きな画像を削除するか簡素化してからインポートしてください。",
 	"import.err.processingFailed": "インポートを完了できませんでした。データを確認して、もう一度お試しください。",
-	"import.reportTruncated": "{{total}}件中、最初の{{shown}}件の問題を表示しています。長い値はこのレポート内で短縮されています。",
+	"import.reportTruncated":
+		"{{total}}件中、最初の{{shown}}件の問題を表示しています。長い値はこのレポート内で短縮されています。",
 	"import.err.entryNotObject": "エントリはオブジェクトでなければなりません。",
-	"import.err.requiredMissing":
-		'必須フィールド"{{field}}"が欠けているか、型が間違っています。',
+	"import.err.requiredMissing": '必須フィールド"{{field}}"が欠けているか、型が間違っています。',
 	"import.err.idEmpty": "IDは空であってはなりません。",
-	"import.err.idTooLong":
-		'ID"{{value}}"は{{length}}文字です。最大は{{max}}文字です。',
-	"import.err.idBadChar":
-		'ID"{{value}}"に無効な文字が含まれています（"|"、"["、"]"、タブ、改行は使用できません）。',
+	"import.err.idTooLong": 'ID"{{value}}"は{{length}}文字です。最大は{{max}}文字です。',
+	"import.err.idBadChar": 'ID"{{value}}"に無効な文字が含まれています（"|"、"["、"]"、タブ、改行は使用できません）。',
 	"import.err.idMetadata":
 		'ID"{{value}}"に"|"が含まれています。Obsidianでは最初の"|"以降はすべてcalloutのメタデータであり、タイプの一部ではありません。このため、このエントリは"{{id}}"calloutを説明しています。スキップされました。既存の"{{id}}"はそのまま変更されていません。',
 	"import.err.idReserved":
 		'ID"{{value}}"はCallout Studioが独自のプレビュー用に予約しているため、インポートできません。',
 	"import.err.displayNameEmpty": "表示名は空であってはなりません。",
-	"import.err.displayNameTooLong":
-		"表示名は{{length}}文字です。最大は{{max}}文字です。",
-	"import.err.boolField":
-		'"{{field}}"はブール値（trueまたはfalse）でなければなりません。',
+	"import.err.displayNameTooLong": "表示名は{{length}}文字です。最大は{{max}}文字です。",
+	"import.err.boolField": '"{{field}}"はブール値（trueまたはfalse）でなければなりません。',
 	"import.err.iconNotObject": "アイコンはオブジェクトでなければなりません。",
-	"import.err.iconTypeInvalid":
-		'アイコンタイプ"{{value}}"は{{types}}のいずれかでなければなりません。',
+	"import.err.iconTypeInvalid": 'アイコンタイプ"{{value}}"は{{types}}のいずれかでなければなりません。',
 	"import.warn.iconFieldIgnored":
 		'"{{field}}"はMaterialアイコンにのみ適用され、アイコンタイプ{{type}}では無視されます。',
-	"import.err.iconValueEmpty":
-		"アイコンの値は空でない文字列でなければなりません。",
-	"import.err.iconValueTooLong":
-		"アイコンの値が200文字の上限を超えています（{{length}}文字）。",
+	"import.err.iconValueEmpty": "アイコンの値は空でない文字列でなければなりません。",
+	"import.err.iconValueTooLong": "アイコンの値が200文字の上限を超えています（{{length}}文字）。",
 	"import.err.materialStyle":
 		'Materialアイコンスタイル"{{value}}"はoutlined、filled、rounded、sharpのいずれかでなければなりません。',
 	"import.err.materialWeight":
 		'Materialアイコンの太さ"{{value}}"は100〜700の範囲で100刻みの整数でなければなりません。',
 	"import.warn.iconRecolorIgnored":
 		'"recolor"はあなた自身の画像にのみ適用され、アイコンタイプ{{type}}では無視されます。',
-	"import.err.iconRecolorInvalid":
-		'"recolor"はtrueまたはfalseでなければなりません（受け取った値: "{{value}}")。',
+	"import.err.iconRecolorInvalid": '"recolor"はtrueまたはfalseでなければなりません（受け取った値: "{{value}}")。',
 	"import.err.colorInvalid":
 		'"{{field}}"は"#448aff"のような16進数カラーでなければなりません（"{{value}}"を受け取りました）。',
 	"import.err.numberRange":
@@ -946,21 +913,16 @@ export const ja: Record<string, string> = {
 		'"{{field}}"は{{min}}〜{{max}}の数値でなければなりません（"{{value}}"を受け取りました）。',
 	"import.err.iconAdjustShape":
 		'"iconAdjust" はcalloutの種類（"regular"、"heading"、"inline"）ごとにアイコンのサイズと位置のオフセットを指定するオブジェクトである必要があります。',
-	"import.err.aliasesNotArray":
-		'"aliases"は文字列の配列でなければなりません。',
+	"import.err.aliasesNotArray": '"aliases"は文字列の配列でなければなりません。',
 	"import.err.aliasNotString": "エイリアスは文字列でなければなりません。",
-	"import.err.aliasDup":
-		'"{{value}}"エイリアスがこのエントリ内で重複しています。',
+	"import.err.aliasDup": '"{{value}}"エイリアスがこのエントリ内で重複しています。',
 	"import.err.tooManyIds":
 		"IDが多すぎます（{{count}}件）。各calloutには最大{{max}}件のID（プライマリ＋エイリアス）を持てます。",
-	"import.err.metadataShape":
-		'"metadata"はすべての値が文字列のオブジェクトでなければなりません。',
-	"import.warn.unknownFields":
-		"不明なフィールドは無視されました: {{fields}}。",
+	"import.err.metadataShape": '"metadata"はすべての値が文字列のオブジェクトでなければなりません。',
+	"import.warn.unknownFields": "不明なフィールドは無視されました: {{fields}}。",
 	"import.err.duplicateInFile":
 		'ID/エイリアス"{{value}}"はこのファイルのエントリ#{{first}}ですでに使用されています。',
-	"import.err.aliasConflict":
-		'エイリアス"{{value}}"はvault内の別のcallout（"{{other}}"）ですでに使用されています。',
+	"import.err.aliasConflict": 'エイリアス"{{value}}"はvault内の別のcallout（"{{other}}"）ですでに使用されています。',
 	"import.warn.defaultFoldedAutofix":
 		'"defaultFolded"がtrueで"foldable"がfalseでした。defaultFoldedはfalseにリセットされました。',
 	"import.warn.imageMissing":
@@ -971,9 +933,9 @@ export const ja: Record<string, string> = {
 	"import.warn.iconNameUnknown":
 		'"{{value}}" アイコンは {{type}} に存在しないため、デフォルトのアイコンが使用されました。',
 	"import.warn.cmIconUnknownNew":
-		'「{{value}}」アイコンはこのvaultで利用できないため、代わりにデフォルトのアイコンを使用しました。',
+		"「{{value}}」アイコンはこのvaultで利用できないため、代わりにデフォルトのアイコンを使用しました。",
 	"import.warn.cmIconUnknownExisting":
-		'「{{value}}」アイコンはこのvaultで利用できないため、「{{id}}」は元のアイコンを維持しました。',
+		"「{{value}}」アイコンはこのvaultで利用できないため、「{{id}}」は元のアイコンを維持しました。",
 	"import.chooseSource": "インポート元",
 	"import.sourceStudio": "Callout Studio",
 	"import.sourceStudioDesc": "Callout Studio からエクスポートされた .json ファイル。",
@@ -999,8 +961,7 @@ export const ja: Record<string, string> = {
 	"import.cmVaultChecking": "Callout Manager プラグインを探しています…",
 	"import.cmVaultFound": "カスタム callout が {{count}} 件見つかりました。",
 	"import.cmFromPaste": "コピーしたスタイル",
-	"import.cmFromPasteDesc":
-		"Callout Manager の Copy ボタンでコピーされるもの、または data.json。",
+	"import.cmFromPasteDesc": "Callout Manager の Copy ボタンでコピーされるもの、または data.json。",
 	"import.cmInstructions":
 		"カスタマイズした各calloutのアイコンと色を取り込みます。テーマ別のスタイルとカスタムCSSにはこちらで対応する設定がないため、取り込まれません。",
 	"import.cmPlaceholder": "コピーしたスタイル、またはdata.jsonの内容をここに貼り付け…",
@@ -1010,8 +971,7 @@ export const ja: Record<string, string> = {
 		"ファイルまたは貼り付けたテキストに Callout Manager のスタイルが見つかりませんでした。",
 	"import.err.cmNotRecognized":
 		"ファイルを認識できませんでした。Callout Manager の Copy ボタンで作成されたスタイル、または Callout Manager の data.json が必要です。",
-	"import.err.cmNoEntries":
-		"インポートするカスタム callout が見つかりませんでした。",
+	"import.err.cmNoEntries": "インポートするカスタム callout が見つかりませんでした。",
 	"import.err.cmNoColorForNew":
 		'新しい callout "{{value}}" に使用できる色が見つからなかったため、スキップされました。',
 	"import.err.cmIdConflict":
@@ -1020,9 +980,12 @@ export const ja: Record<string, string> = {
 		"Callout Manager で色が設定されていなかったため、デフォルトのグレーが使用されました。",
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "テーマ依存のスタイルは保持できません。無条件の値が優先され、条件付きの代替値がある場合はすべてのテーマに適用されます。",
-	"import.warn.cmCustomStylesSkipped": "Callout ManagerのカスタムCSSはインポートされません。対応しているアイコンと色の設定のみ引き継げます。",
-	"import.warn.cmSchemeIcon": "Callout Studioは両方の配色で同じアイコンを使用します。インポートしたアイコンは両方で使われます。",
+	"import.warn.cmThemeConditionPartial":
+		"テーマ依存のスタイルは保持できません。無条件の値が優先され、条件付きの代替値がある場合はすべてのテーマに適用されます。",
+	"import.warn.cmCustomStylesSkipped":
+		"Callout ManagerのカスタムCSSはインポートされません。対応しているアイコンと色の設定のみ引き継げます。",
+	"import.warn.cmSchemeIcon":
+		"Callout Studioは両方の配色で同じアイコンを使用します。インポートしたアイコンは両方で使われます。",
 	"import.err.cmDuplicateId": "ID {{value}} はこのインポート内の {{other}} と重複するため、スキップされました。",
 	"import.admTitle": "Admonition からインポート",
 	"import.admInstructions":
@@ -1030,18 +993,15 @@ export const ja: Record<string, string> = {
 		"Studio に対応する設定がないもの（コマンド、コピーボタン、タイトル非表示）は引き継がれません。",
 	"import.admFromVault": "この保管庫",
 	"import.admVaultChecking": "Admonition プラグインを探しています…",
-	"import.admVaultFound":
-		"カスタム admonition が {{count}} 件見つかりました。",
+	"import.admVaultFound": "カスタム admonition が {{count}} 件見つかりました。",
 	"import.admFromFile": "ファイル",
 	"import.admFromFileDesc": "admonitions.json ファイル、または共有パック。",
 	"import.admBtnCancel": "キャンセル",
 	"import.admBtnImport": "インポート",
 	"import.err.admNotRecognized":
 		"認識できないファイルです：admonition のリスト、または Admonition の data.json が必要です。",
-	"import.err.admNoEntries":
-		"インポートできる admonition が見つかりませんでした。",
-	"import.err.admTypeMissing":
-		'この admonition には "type" がないため、スキップしました。',
+	"import.err.admNoEntries": "インポートできる admonition が見つかりませんでした。",
+	"import.err.admTypeMissing": 'この admonition には "type" がないため、スキップしました。',
 	"import.warn.admIconUnknown":
 		'"{{value}}" という名前のアイコンはどのアイコンライブラリにもないため、既定のアイコンを使用しました。',
 	"import.warn.admIconUnknownExisting":
@@ -1051,10 +1011,8 @@ export const ja: Record<string, string> = {
 	"import.warn.admIconWithCss":
 		"この admonition は Admonition 側の CSS " +
 		"スニペットでスタイル設定されています。そのスタイルはインポートに含まれないため、名前・アイコン・色のみを引き継ぎました。",
-	"import.warn.admNoColor":
-		"色が設定されていないため、既定の青を使用しました。",
-	"import.warn.admTitleTruncated":
-		"タイトルは {{length}} 文字です。{{max}} 文字に短縮しました。",
+	"import.warn.admNoColor": "色が設定されていないため、既定の青を使用しました。",
+	"import.warn.admTitleTruncated": "タイトルは {{length}} 文字です。{{max}} 文字に短縮しました。",
 
 	"footer.openIssue": "issue を開く",
 	"footer.sourceCode": "ソースコード",
@@ -1066,8 +1024,7 @@ export const ja: Record<string, string> = {
 		"{{count}} 件の callout が使用しています。色は保持され、後で各エディターの色の行から再接続できます。",
 	"notice.palettesMerged":
 		"同一の色を持つ保存済み色 {{count}} 件を統合しました: {{names}}。それらを使用している callout は色を保持し、残った色にリンクされました。",
-	"editor.colorsDescDeleted":
-		"この callout の保存済み色は削除されました。{{link}}",
+	"editor.colorsDescDeleted": "この callout の保存済み色は削除されました。{{link}}",
 	"editor.colorsDescDeletedLink": "復元",
 	"palette.colorExists":
 		"これらの色は「{{name}}」と同じです。保存済みの色を 2 つ同じにすることはできません — 区別するために色を変更してください。",
@@ -1084,8 +1041,7 @@ export const ja: Record<string, string> = {
 	"notice.exportedCssUpdated": "CSSスニペットを{{path}}で更新しました",
 	"notice.exportedCssUnchanged": "CSSスニペットはすでに最新です。",
 	"notice.exportCssEmpty": "エクスポートするカスタムcalloutがありません。",
-	"notice.exportCssFailed":
-		"CSSスニペットを保存できませんでした。詳細は開発者コンソールを確認してください。",
+	"notice.exportCssFailed": "CSSスニペットを保存できませんでした。詳細は開発者コンソールを確認してください。",
 	"notice.exportCssEnabled":
 		"このスニペットはこのvaultで有効です。Callout Studioはすでにこれらのcalloutをスタイル設定しており、スニペットにはエクスポート時の状態が保存されています。",
 	"confirm.titleOverwriteSnippet": "CSSスニペットを上書き",
@@ -1106,47 +1062,65 @@ export const ja: Record<string, string> = {
 	"quickInsert.readingView": "calloutを挿入するには、ソースモードまたはライブプレビューに切り替えてください。",
 	"quickInsert.noCursorHint": "このノートにはカーソルがないため、挿入する場所がありません。",
 	"quickInsert.noCursor": "calloutを挿入したい場所にノート内でカーソルを置いてから、もう一度お試しください。",
-	"notice.legacyDiscoveryArchiveFailed": "アップグレード用の復旧コピーを完了できませんでした。以前のローカル検出キャッシュと起動時の CSS は変更されていません。書き込み権限、ストレージへのアクセス、空き容量を確認してから、Obsidian を再起動してもう一度お試しください。",
+	"notice.legacyDiscoveryArchiveFailed":
+		"アップグレード用の復旧コピーを完了できませんでした。以前のローカル検出キャッシュと起動時の CSS は変更されていません。書き込み権限、ストレージへのアクセス、空き容量を確認してから、Obsidian を再起動してもう一度お試しください。",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "見つからないcalloutを作り直すか、別のcalloutを選ぶまで一時停止します。",
 	"confirm.titleRestoreSettings": "これらの設定を復元",
 	"confirm.titleCreateSettingsFile": "設定ファイルを作成",
 	"confirm.saveDisplayedSettings":
 		"現在表示されている設定を設定ファイルとして保存し、保存を再開します。このデバイスが保管している予備コピーは、先にバックアップされます。\n別のデバイスに残しておきたい新しい変更がある可能性がある場合は、続行する前に同期が終わるのを待ってください。同期アプリがこのファイルを他のデバイスに送ることがあります。\nCallout Studioは保存する前に、もう一度だけ設定ファイルを探します。戻っていた場合は、そちらを保持します。",
-	"notice.settingsBackupFailed": "安全のためのバックアップを保存できなかったため、設定の復旧を続行できませんでした。利用可能なストレージと書き込み権限を確認してから、再試行してください。",
-	"notice.settingsNewerVersion": "Callout Studio の設定はプラグインの新しいバージョンによって保存されたため、更新するまでこのデバイスには何も書き込まれません。設定は安全です — ここから Callout Studio を更新し、Obsidian を再読み込みしてください。",
-	"saveStatus.changed": "編集中に設定ファイルが変更されました。下書きはそのまま残っています。「再試行」を選んで届いた設定を読み込み、下書きを確認してからもう一度保存してください。",
-	"saveStatus.missing": "設定ファイルが見つからないため、保存は一時停止しています。これは再インストール後や、同期がまだ実行中のときに発生することがあります。同期を完了させてから再試行してください。見つからないファイルを意図的に置き換えるには、Callout Studio の設定にある新しい設定ファイルを作成を使用してください。",
+	"notice.settingsBackupFailed":
+		"安全のためのバックアップを保存できなかったため、設定の復旧を続行できませんでした。利用可能なストレージと書き込み権限を確認してから、再試行してください。",
+	"notice.settingsNewerVersion":
+		"Callout Studio の設定はプラグインの新しいバージョンによって保存されたため、更新するまでこのデバイスには何も書き込まれません。設定は安全です — ここから Callout Studio を更新し、Obsidian を再読み込みしてください。",
+	"saveStatus.changed":
+		"編集中に設定ファイルが変更されました。下書きはそのまま残っています。「再試行」を選んで届いた設定を読み込み、下書きを確認してからもう一度保存してください。",
+	"saveStatus.missing":
+		"設定ファイルが見つからないため、保存は一時停止しています。これは再インストール後や、同期がまだ実行中のときに発生することがあります。同期を完了させてから再試行してください。見つからないファイルを意図的に置き換えるには、Callout Studio の設定にある新しい設定ファイルを作成を使用してください。",
 	"saveStatus.restoreSettings": "これらの設定を復元",
 	"saveStatus.createSettingsFile": "設定ファイルを作成",
 	"saveStatus.checkAgain": "もう一度確認",
-	"saveStatus.recoverInSettings": "このデバイスで見つからないファイルを復元するには、Callout Studio 設定を開いてください。このエディターを閉じる前に、残したい未保存の編集内容をコピーしてください。それらは保存されていません。",
+	"saveStatus.recoverInSettings":
+		"このデバイスで見つからないファイルを復元するには、Callout Studio 設定を開いてください。このエディターを閉じる前に、残したい未保存の編集内容をコピーしてください。それらは保存されていません。",
 	"saveStatus.openSettings": "Callout Studio の設定を開く",
-	"notice.openSettingsFailed": "Callout Studio の設定を開けませんでした。設定 → Callout Studio を開いて、どうするか選んでください。",
-	"saveStatus.notesFailed": "callout の定義は保存されましたが、一部のノートの更新を完了できませんでした。このエディタを開いたままにして、保存を選択し未完了の更新を再試行してください。",
-	"saveStatus.recoveryRead": "ローカルの復旧コピーを読み取れないため、保存は一時停止しています。設定ファイルはまだ無事な可能性があります。利用可能なストレージを確認してから、復旧を再試行してください。既存の復旧データは上書きされません。",
-	"saveStatus.recoveryWrite": "ローカルの復旧コピーを保存できませんでした。利用可能なストレージを確認してから、再試行してください。保存が成功するまで下書きを開いたままにしてください。",
-	"saveStatus.retryFailed": "保存は依然としてブロックされています。原因については Callout Studio の設定で保存状況を確認してから、再試行してください。",
-	"saveStatus.reviewDraft": "受信した設定と復旧チェックが完了しました。下書きは変更されていません。確認してから再度保存してください。",
+	"notice.openSettingsFailed":
+		"Callout Studio の設定を開けませんでした。設定 → Callout Studio を開いて、どうするか選んでください。",
+	"saveStatus.notesFailed":
+		"callout の定義は保存されましたが、一部のノートの更新を完了できませんでした。このエディタを開いたままにして、保存を選択し未完了の更新を再試行してください。",
+	"saveStatus.recoveryRead":
+		"ローカルの復旧コピーを読み取れないため、保存は一時停止しています。設定ファイルはまだ無事な可能性があります。利用可能なストレージを確認してから、復旧を再試行してください。既存の復旧データは上書きされません。",
+	"saveStatus.recoveryWrite":
+		"ローカルの復旧コピーを保存できませんでした。利用可能なストレージを確認してから、再試行してください。保存が成功するまで下書きを開いたままにしてください。",
+	"saveStatus.retryFailed":
+		"保存は依然としてブロックされています。原因については Callout Studio の設定で保存状況を確認してから、再試行してください。",
+	"saveStatus.reviewDraft":
+		"受信した設定と復旧チェックが完了しました。下書きは変更されていません。確認してから再度保存してください。",
 	"saveStatus.settingsArrived": "既存の設定が届き、読み込まれました。代替ファイルは作成されませんでした。",
-	"saveStatus.syncConflict": "受信した設定が、未完了のノート更新に必要な callout と競合しています。下書きと保留中の更新は保持されました。再試行する前に設定の競合を解決してください。",
+	"saveStatus.syncConflict":
+		"受信した設定が、未完了のノート更新に必要な callout と競合しています。下書きと保留中の更新は保持されました。再試行する前に設定の競合を解決してください。",
 	"saveStatus.titlePaused": "保存は一時停止しています",
 	"saveStatus.titleFailed": "設定は保存されませんでした",
 	"saveStatus.tryAgain": "再試行",
 	"saveStatus.working": "処理しています…",
-	"saveStatus.unreadable": "設定ファイルを安全に読み取れないため、保存は一時停止しています。同期を完了させるか、有効なコピーを復元してから、再試行してください。既存のファイルは保持されました。",
-	"saveStatus.write": "設定ファイルを保存できませんでした。利用可能なストレージ、フォルダの権限、同期を確認してから、Obsidian を閉じる前に再試行してください。",
-	"saveStatus.writePermission": "ストレージが書き込みアクセスを拒否したため、設定ファイルを保存できませんでした。ボールトとプラグインフォルダが書き込み可能か確認してから、再試行してください。",
-	"saveStatus.writeSpace": "ストレージが満杯であるか、容量制限を超えたため、設定ファイルを保存できませんでした。空き容量を確保してから、再試行してください。",
-	"settings.readOnly": "Obsidian の起動時に Callout Studio が設定ファイルを使用できなかったため、このページの内容はこのデバイスに保存されていません。変更は Obsidian を閉じるまで保持されます。ファイルが戻り次第 Obsidian を再読み込みしてください — このボールトを同期している場合は、先に同期を完了させてください。",
+	"saveStatus.unreadable":
+		"設定ファイルを安全に読み取れないため、保存は一時停止しています。同期を完了させるか、有効なコピーを復元してから、再試行してください。既存のファイルは保持されました。",
+	"saveStatus.write":
+		"設定ファイルを保存できませんでした。利用可能なストレージ、フォルダの権限、同期を確認してから、Obsidian を閉じる前に再試行してください。",
+	"saveStatus.writePermission":
+		"ストレージが書き込みアクセスを拒否したため、設定ファイルを保存できませんでした。ボールトとプラグインフォルダが書き込み可能か確認してから、再試行してください。",
+	"saveStatus.writeSpace":
+		"ストレージが満杯であるか、容量制限を超えたため、設定ファイルを保存できませんでした。空き容量を確保してから、再試行してください。",
+	"settings.readOnly":
+		"Obsidian の起動時に Callout Studio が設定ファイルを使用できなかったため、このページの内容はこのデバイスに保存されていません。変更は Obsidian を閉じるまで保持されます。ファイルが戻り次第 Obsidian を再読み込みしてください — このボールトを同期している場合は、先に同期を完了させてください。",
 	"portable.reviewTitle": "変換内容を確認",
-	"portable.helpIntro": "適用する置換を選択します。鉛筆アイコンまたは置換テキストをクリックして編集し、Enter キーを押すかフィールドの外をクリックして保存します。リセットアイコンを使うと、下書きを破棄するか既定の置換に戻せます。「選択項目を変換」を選んで確認するまで、ノートは変更されません。見出しリンクは選択した見出しと一緒に更新されます。",
+	"portable.helpIntro":
+		"適用する置換を選択します。鉛筆アイコンまたは置換テキストをクリックして編集し、Enter キーを押すかフィールドの外をクリックして保存します。リセットアイコンを使うと、下書きを破棄するか既定の置換に戻せます。「選択項目を変換」を選んで確認するまで、ノートは変更されません。見出しリンクは選択した見出しと一緒に更新されます。",
 	"portable.help": "変換について",
 	"portable.roleLink": "見出しリンク",
 	"portable.convertSelected": "選択項目を変換",
 	"portable.selectionSummary": "{{total}} 件中 {{selected}} 件の置換を選択 · 見出しリンク {{links}} 件を更新",
-	"portable.selectionSummaryNoLinks":
-		"{{total}} 件中 {{selected}} 件の置換を選択",
+	"portable.selectionSummaryNoLinks": "{{total}} 件中 {{selected}} 件の置換を選択",
 	"portable.selectionConflict": "この選択では見出しリンクの参照先が曖昧になります。前の選択を維持しました。",
 	"portable.selectAll": "すべて選択",
 	"portable.selectNone": "すべて選択解除",
@@ -1158,14 +1132,19 @@ export const ja: Record<string, string> = {
 	"portable.retry": "再試行",
 	"portable.blockedAmbiguous": "リンク先が曖昧なため、この見出しは変換しません。",
 	"portable.blockedTarget": "リンク先を安全に維持できないため、この見出しは変換しません。",
-	"portable.recovery": "未完了の変更があります。プラグインを再起動または無効化する前に、この変換と見出しリンクの更新を完了してください。保留中の計画はメモリにのみ保存されています。",
-	"portable.recoveryChanged": "変換停止後にノートが変更されました。保留中のリンク更新は保持されています。書き込み前に各ノートを再確認します。",
+	"portable.recovery":
+		"未完了の変更があります。プラグインを再起動または無効化する前に、この変換と見出しリンクの更新を完了してください。保留中の計画はメモリにのみ保存されています。",
+	"portable.recoveryChanged":
+		"変換停止後にノートが変更されました。保留中のリンク更新は保持されています。書き込み前に各ノートを再確認します。",
 	"portable.finishConversion": "変換を完了",
-	"portable.recoveryUnavailable": "保留中のリンク更新の一部を安全に復元できませんでした。新しい変換を始める前に、該当するノートを確認してください。",
+	"portable.recoveryUnavailable":
+		"保留中のリンク更新の一部を安全に復元できませんでした。新しい変換を始める前に、該当するノートを確認してください。",
 	"portable.title": "標準 Markdown に変換",
-	"portable.settingDesc": "保管庫全体の見出しコールアウトとインラインコールアウトを、Callout Studio なしで使える通常のテキストに置き換えます。",
+	"portable.settingDesc":
+		"保管庫全体の見出しコールアウトとインラインコールアウトを、Callout Studio なしで使える通常のテキストに置き換えます。",
 	"portable.review": "変換内容を確認",
-	"portable.intro": "Callout Studio の使用をやめる場合や、対応していないアプリに保管庫を移す場合に、見出しコールアウトとインラインコールアウトを標準 Markdown に変換できます。",
+	"portable.intro":
+		"Callout Studio の使用をやめる場合や、対応していないアプリに保管庫を移す場合に、見出しコールアウトとインラインコールアウトを標準 Markdown に変換できます。",
 	"portable.before": "変換前",
 	"portable.after": "変換後",
 	"portable.replacement": "置換",
@@ -1173,21 +1152,25 @@ export const ja: Record<string, string> = {
 	"portable.type": "種類",
 	"portable.text": "テキスト",
 	"portable.headingText": "タイトル",
-	"portable.backup": "変換前に保管庫のバックアップを取ることをおすすめします。元のノートが変更され、Callout Studio では元に戻せません。",
+	"portable.backup":
+		"変換前に保管庫のバックアップを取ることをおすすめします。元のノートが変更され、Callout Studio では元に戻せません。",
 	"portable.scanning": "Markdown ノートを読み込み中…",
 	"portable.progress": "ノートを読み込み中: {{total}} 件中 {{done}} 件",
 	"portable.empty": "変換できる見出しコールアウトやインラインコールアウトはありません。何も変更されません。",
 	"portable.confirmTitle": "この保管庫を恒久的に変換しますか？",
 	"portable.confirmSubtitle": "自動バックアップは作成されません",
-	"portable.confirmBody": "{{files}} 件のノートで {{count}} 件を変換し、{{links}} 件の見出しリンクを更新しますか？\n元のファイルが変更され、Callout Studio では元に戻せません。自動バックアップは作成されません。先に保管庫をバックアップし、開いているノートを保存して、変換が終わるまで編集と同期を一時停止してください。\nファイルが変更されたり書き込みに失敗したりすると、変換は停止します。変換済みのノートは変更されたままになります。",
+	"portable.confirmBody":
+		"{{files}} 件のノートで {{count}} 件を変換し、{{links}} 件の見出しリンクを更新しますか？\n元のファイルが変更され、Callout Studio では元に戻せません。自動バックアップは作成されません。先に保管庫をバックアップし、開いているノートを保存して、変換が終わるまで編集と同期を一時停止してください。\nファイルが変更されたり書き込みに失敗したりすると、変換は停止します。変換済みのノートは変更されたままになります。",
 	"portable.confirmAction": "恒久的に変換",
 	"portable.converting": "選択した変更を変換中… このペインを閉じても変換は停止しません。",
 	"portable.complete": "{{files}} 件のノートで {{count}} 件を変換し、{{links}} 件の見出しリンクを更新しました。",
-	"portable.stopped": "変換が停止しました。{{files}} 件のノートで {{count}} 件と {{links}} 件の見出しリンクはすでに変更されており、その変更は残ります。",
+	"portable.stopped":
+		"変換が停止しました。{{files}} 件のノートで {{count}} 件と {{links}} 件の見出しリンクはすでに変更されており、その変更は残ります。",
 	"portable.errorEditor": "開いているノートを保存すると、確認内容が自動更新されます。",
 	"portable.errorChanged": "ノートが変更されました。変換する前に、更新された変更内容を確認してください。",
 	"portable.errorBusy": "別の変換が実行中です。完了するまでお待ちください。",
-	"portable.error": "保管庫を安全に読み込み、または更新できませんでした。ファイルへのアクセス権を確認して、もう一度お試しください。",
+	"portable.error":
+		"保管庫を安全に読み込み、または更新できませんでした。ファイルへのアクセス権を確認して、もう一度お試しください。",
 	"portable.blockedConverting": "変換はすでに実行中です。完了するまでお待ちください。",
 	"portable.blockedUpdating": "レビューはまだ更新中です。完了してから変換してください。",
 	"portable.blockedEditing": "先に置換内容の編集を終えてください。Enterで保存、Escで破棄します。",
@@ -1195,65 +1178,97 @@ export const ja: Record<string, string> = {
 	"settings.maintenance": "危険な操作",
 
 	// Sync safety hardening
-	"saveStatus.diagnosis.unavailable": "この端末では今ファイルを開けません。まだダウンロード中か、保管庫がオフラインで利用できないか、ストレージが応答していない可能性があります。Callout Studioは自動的に再確認します。",
-	"saveStatus.diagnosis.empty": "ファイルが空です。これは通常、同期が中断されたことを意味します。他の端末にまだ設定が残っている場合は、その端末を同期させてください。そうでない場合は、ファイルを置き換えてください。",
-	"saveStatus.diagnosis.mergeMarkers": "ファイルに未解決のマージ競合マーカーが含まれています（例: Git由来）。Gitツールで競合を解決するか、ファイルを置き換えてください。",
+	"saveStatus.diagnosis.unavailable":
+		"この端末では今ファイルを開けません。まだダウンロード中か、保管庫がオフラインで利用できないか、ストレージが応答していない可能性があります。Callout Studioは自動的に再確認します。",
+	"saveStatus.diagnosis.empty":
+		"ファイルが空です。これは通常、同期が中断されたことを意味します。他の端末にまだ設定が残っている場合は、その端末を同期させてください。そうでない場合は、ファイルを置き換えてください。",
+	"saveStatus.diagnosis.mergeMarkers":
+		"ファイルに未解決のマージ競合マーカーが含まれています（例: Git由来）。Gitツールで競合を解決するか、ファイルを置き換えてください。",
 	"saveStatus.diagnosis.damaged": "ファイルが不完全または破損しているため、設定として読み込めません。",
-	"saveStatus.diagnosis.combined": "同期サービスがファイルの2つのバージョンを結合したため、内部チェックが一致しなくなりました。中の設定自体は無事であり、ファイルを置き換えればそれらは保持されます。",
-	"saveStatus.diagnosis.invalidEntries": "ファイルにCallout Studioが使用できない項目が含まれています（例: 同じcalloutタイプが2回記載されている）。",
+	"saveStatus.diagnosis.combined":
+		"同期サービスがファイルの2つのバージョンを結合したため、内部チェックが一致しなくなりました。中の設定自体は無事であり、ファイルを置き換えればそれらは保持されます。",
+	"saveStatus.diagnosis.invalidEntries":
+		"ファイルにCallout Studioが使用できない項目が含まれています（例: 同じcalloutタイプが2回記載されている）。",
 	"saveStatus.replaceUnreadable": "設定ファイルを置き換える",
 	"saveStatus.discardRecoveryCopy": "復元用コピーを破棄",
 	"saveStatus.calm.opening": "まず、深呼吸してください。すべて大丈夫です。",
 	"saveStatus.calm.kept": "ノートは安全です。calloutもこのデバイスにそのまま残っています。",
 	"saveStatus.calm.safe": "ノートは安全です。",
-	"saveStatus.calm.pausedPage": "Callout Studioは、あなたの設定を守るために保存を一時停止しただけです。そのため、このページは今のところ読み取り専用です。",
+	"saveStatus.calm.pausedPage":
+		"Callout Studioは、あなたの設定を守るために保存を一時停止しただけです。そのため、このページは今のところ読み取り専用です。",
 	"saveStatus.calm.paused": "Callout Studioは、あなたの設定を守るために保存を一時停止しただけです。",
-	"saveStatus.explain.missing": "Callout Studioが自分の設定ファイルを見つけられません。同期アプリがまだダウンロード中のときや、別のデバイスでCallout Studioが削除された後によく起こります。",
+	"saveStatus.explain.missing":
+		"Callout Studioが自分の設定ファイルを見つけられません。同期アプリがまだダウンロード中のときや、別のデバイスでCallout Studioが削除された後によく起こります。",
 	"saveStatus.explain.stillMissing":
 		"設定ファイルはまだ戻っていません。確認は探すだけで、新しいファイルを作ることはありません。VaultがiCloud、OneDrive、Google Drive、Dropboxにある場合は、このデバイスにダウンロードしたままになる設定になっているか確認してください。",
-	"saveStatus.explain.unreadable": "Callout Studioは現在、設定ファイルを読み取れないため、ファイルをそのままにしてあります。",
-	"saveStatus.explain.recoveryRead": "Callout Studioはこのデバイスに設定の予備コピーを保管していますが、そのコピーを現在読み取れません。設定ファイル自体は問題ない可能性があります。",
-	"saveStatus.explain.newerVersion": "設定はより新しいバージョンのCallout Studioで保存されたため、この古いバージョンでは変更しません。",
-	"saveStatus.explain.changed": "Callout Studioが作業している間に設定ファイルが変更されたため、何も置き換えずに停止しました。",
-	"saveStatus.guide.rechecks": "Obsidianが開いている間、Callout Studioは1分ごとに再確認するので、自然に解決することがよくあります。",
-	"saveStatus.guide.rechecksCheckNow": "Obsidianが開いている間、Callout Studioは1分ごとに再確認するので、自然に解決することがよくあります。今すぐ確認するには「もう一度確認」を選んでください。",
-	"saveStatus.guide.restore": "設定が戻らない場合は、「これらの設定を復元」を選ぶと、ここに表示されているcalloutを保持できます。",
+	"saveStatus.explain.unreadable":
+		"Callout Studioは現在、設定ファイルを読み取れないため、ファイルをそのままにしてあります。",
+	"saveStatus.explain.recoveryRead":
+		"Callout Studioはこのデバイスに設定の予備コピーを保管していますが、そのコピーを現在読み取れません。設定ファイル自体は問題ない可能性があります。",
+	"saveStatus.explain.newerVersion":
+		"設定はより新しいバージョンのCallout Studioで保存されたため、この古いバージョンでは変更しません。",
+	"saveStatus.explain.changed":
+		"Callout Studioが作業している間に設定ファイルが変更されたため、何も置き換えずに停止しました。",
+	"saveStatus.guide.rechecks":
+		"Obsidianが開いている間、Callout Studioは1分ごとに再確認するので、自然に解決することがよくあります。",
+	"saveStatus.guide.rechecksCheckNow":
+		"Obsidianが開いている間、Callout Studioは1分ごとに再確認するので、自然に解決することがよくあります。今すぐ確認するには「もう一度確認」を選んでください。",
+	"saveStatus.guide.restore":
+		"設定が戻らない場合は、「これらの設定を復元」を選ぶと、ここに表示されているcalloutを保持できます。",
 	"saveStatus.guide.create": "設定が戻らない場合は、「設定ファイルを作成」を選ぶと、保存を再開できます。",
 	"saveStatus.guide.recoveryRetry": "このデバイスに空き容量があることを確認してから、「再試行」を選んでください。",
-	"saveStatus.guide.recoveryDiscard": "それでも解決しない場合は、「復元用コピーを破棄」を選んでください。先に正確なコピーが保存され、設定ファイルには触れません。",
-	"saveStatus.guide.newerVersion": "「設定 → コミュニティプラグイン」でCallout Studioを更新し、Obsidianを再読み込みしてください。",
-	"saveStatus.missingNotice": "ノートは安全です。Callout Studioは現在、設定ファイルを見つけられないため、保存を一時停止しました。",
+	"saveStatus.guide.recoveryDiscard":
+		"それでも解決しない場合は、「復元用コピーを破棄」を選んでください。先に正確なコピーが保存され、設定ファイルには触れません。",
+	"saveStatus.guide.newerVersion":
+		"「設定 → コミュニティプラグイン」でCallout Studioを更新し、Obsidianを再読み込みしてください。",
+	"saveStatus.missingNotice":
+		"ノートは安全です。Callout Studioは現在、設定ファイルを見つけられないため、保存を一時停止しました。",
 	"statusBar.paused": "保存が一時停止中",
 	"statusBar.pausedTooltip": "Callout Studioは設定の変更を保存していません。クリックすると理由が確認できます。",
 	"statusBar.pausedNotice": "Callout Studioは現在、設定の変更を保存していません。",
 	"saveStatus.resumed": "保存が再開されました。Callout Studioは設定の変更を再び保存しています。",
-	"notice.replaceUnreadableUnavailable": "設定ファイルは現在置き換えられません。ファイルが変更中であるか、この端末で読み込めない状態です。しばらくしてから再試行してください。",
-	"notice.recoveryStorageUnavailable": "この端末の復元用ストレージが応答していないため、コピーを破棄できません。Obsidianを再起動してから再試行してください。",
+	"notice.replaceUnreadableUnavailable":
+		"設定ファイルは現在置き換えられません。ファイルが変更中であるか、この端末で読み込めない状態です。しばらくしてから再試行してください。",
+	"notice.recoveryStorageUnavailable":
+		"この端末の復元用ストレージが応答していないため、コピーを破棄できません。Obsidianを再起動してから再試行してください。",
 	"recovery.unreadable": "設定として読み込めません",
 	"recovery.same": "現在の設定一式と同じです",
 	"recovery.restore": "復元",
-	"recovery.stale": "何も復元されませんでした。設定が変更されたか、確認できませんでした。このウィンドウを再度開いて一覧を確認してください。",
-	"notice.recoveryCopyStale": "設定は保存されましたが、この端末の復元用コピーを更新できませんでした。この端末で利用可能なストレージを確認してください。Callout Studioは次回の変更時に再試行します。",
-	"notice.blockedWhilePaused": "保存が一時停止しているため、この変更は今は保持できません。まずCallout Studioの設定に表示されている保存の問題を解決してください。",
-	"welcome.syncNote": "他の端末ですでにCallout Studioを使っていますか？まず同期サービスを完了させてください。calloutと設定は到着次第ここに表示されます。",
-	"settings.resetBackupFailed": "何もリセットされませんでした。現在の設定一式のバックアップを先に保存できませんでした。利用可能なストレージを確認してから再試行してください。",
-	"settings.resetNotSaved": "リセットは表示されていますが、まだ保存できていないため、設定ファイルには依然として以前の設定一式が保持されています。Callout Studioの設定で保存状況を確認してください。",
+	"recovery.stale":
+		"何も復元されませんでした。設定が変更されたか、確認できませんでした。このウィンドウを再度開いて一覧を確認してください。",
+	"notice.recoveryCopyStale":
+		"設定は保存されましたが、この端末の復元用コピーを更新できませんでした。この端末で利用可能なストレージを確認してください。Callout Studioは次回の変更時に再試行します。",
+	"notice.blockedWhilePaused":
+		"保存が一時停止しているため、この変更は今は保持できません。まずCallout Studioの設定に表示されている保存の問題を解決してください。",
+	"welcome.syncNote":
+		"他の端末ですでにCallout Studioを使っていますか？まず同期サービスを完了させてください。calloutと設定は到着次第ここに表示されます。",
+	"settings.resetBackupFailed":
+		"何もリセットされませんでした。現在の設定一式のバックアップを先に保存できませんでした。利用可能なストレージを確認してから再試行してください。",
+	"settings.resetNotSaved":
+		"リセットは表示されていますが、まだ保存できていないため、設定ファイルには依然として以前の設定一式が保持されています。Callout Studioの設定で保存状況を確認してください。",
 	"confirm.titleResetEverything": "すべてリセット",
 	"confirm.titleReplaceUnreadable": "設定ファイルを置き換える",
 	"confirm.subtitleReplaceUnreadable": "先に完全なコピーを保存します",
-	"confirm.replaceUnreadable": "現在のファイルの正確なコピーが、先にプラグインのバックアップフォルダに保存されます。その後、ファイルはここに表示されている設定一式に置き換えられ、同期サービスが他の端末に送信します。",
-	"confirm.replaceUnreadableSalvage": "現在のファイルの正確なコピーが、先にプラグインのバックアップフォルダに保存されます。その中の設定は、ここに表示されている設定一式と統合され、すべての端末が再び読み込めるようファイルが書き直されます。",
+	"confirm.replaceUnreadable":
+		"現在のファイルの正確なコピーが、先にプラグインのバックアップフォルダに保存されます。その後、ファイルはここに表示されている設定一式に置き換えられ、同期サービスが他の端末に送信します。",
+	"confirm.replaceUnreadableSalvage":
+		"現在のファイルの正確なコピーが、先にプラグインのバックアップフォルダに保存されます。その中の設定は、ここに表示されている設定一式と統合され、すべての端末が再び読み込めるようファイルが書き直されます。",
 	"confirm.titleDiscardRecoveryCopy": "復元用コピーを破棄",
 	"confirm.subtitleDiscardRecoveryCopy": "このデバイスでは保存が一時停止中です",
-	"confirm.discardRecoveryCopy": "この端末の復元用コピーが読み込めないため、この端末では保存が一時停止しています。先にその正確なコピーがプラグインのバックアップフォルダに保存されます。その後、ここに表示されている設定一式に置き換えられます。設定ファイルは変更されません。",
+	"confirm.discardRecoveryCopy":
+		"この端末の復元用コピーが読み込めないため、この端末では保存が一時停止しています。先にその正確なコピーがプラグインのバックアップフォルダに保存されます。その後、ここに表示されている設定一式に置き換えられます。設定ファイルは変更されません。",
 	"vault.undoRewrite": "元に戻す",
 	"vault.undoRestored": "{{count}}件のノートを復元しました。",
-	"vault.undoPartial": "{{count}}件のノートを復元しました。{{skipped}}件のノートは書き換え後に変更されたため、そのままにされました。",
+	"vault.undoPartial":
+		"{{count}}件のノートを復元しました。{{skipped}}件のノートは書き換え後に変更されたため、そのままにされました。",
 	"import.confirmTitle": "Callout Studioのバックアップをインポート",
-	"import.confirmSummary": "これにより{{added}}件のcalloutタイプが追加され、{{replaced}}件の既存タイプがファイルのバージョンに置き換えられ、ファイルから{{settings}}件の設定グループが復元されます。現在の設定一式のバックアップが先に保存されます。",
+	"import.confirmSummary":
+		"これにより{{added}}件のcalloutタイプが追加され、{{replaced}}件の既存タイプがファイルのバージョンに置き換えられ、ファイルから{{settings}}件の設定グループが復元されます。現在の設定一式のバックアップが先に保存されます。",
 	"import.confirmAction": "インポート",
-	"import.backupFailed": "何もインポートされませんでした。現在の設定一式のバックアップを先に保存できませんでした。利用可能なストレージを確認してから再試行してください。",
-	"import.notSaved": "インポートは表示されていますが、まだ保存できていません。Callout Studioの設定で保存状況を確認してください。",
+	"import.backupFailed":
+		"何もインポートされませんでした。現在の設定一式のバックアップを先に保存できませんでした。利用可能なストレージを確認してから再試行してください。",
+	"import.notSaved":
+		"インポートは表示されていますが、まだ保存できていません。Callout Studioの設定で保存状況を確認してください。",
 
 	"recovery.summaryCallouts": "保存済みのcalloutタイプ {{callouts}} 件",
 	"recovery.summaryChanges": "現在との差分 {{count}} 件",
@@ -1273,7 +1288,8 @@ export const ja: Record<string, string> = {
 	"recovery.details.unknownTime": "保存時刻は記録されていません",
 	"recovery.details.current": "現在のセットアップ",
 	"recovery.details.restored": "このバージョンを復元した後",
-	"recovery.details.unreadable": "このバージョンのCallout Studioでは、このコピーを復元可能なセットアップとして解釈できません。破損している、利用できない、またはより新しい形式である可能性があります。比較と復元される設定のレポートは利用できません。読み取れた元の内容はすべて以下に含まれています。",
+	"recovery.details.unreadable":
+		"このバージョンのCallout Studioでは、このコピーを復元可能なセットアップとして解釈できません。破損している、利用できない、またはより新しい形式である可能性があります。比較と復元される設定のレポートは利用できません。読み取れた元の内容はすべて以下に含まれています。",
 	"recovery.details.null": "値なし (null)",
 	"recovery.details.yes": "はい",
 	"recovery.details.no": "いいえ",
@@ -1441,10 +1457,12 @@ export const ja: Record<string, string> = {
 	"recovery.delete": "削除",
 
 	// Version history
-	"saveStatus.guide.versions": "保存が再び機能するようになったら、「以前のバージョンを復元」から保存済みのバージョンに戻すこともできます。",
+	"saveStatus.guide.versions":
+		"保存が再び機能するようになったら、「以前のバージョンを復元」から保存済みのバージョンに戻すこともできます。",
 	"saveStatus.goToVersions": "バージョン履歴へ移動",
 	"versions.title": "バージョン履歴",
-	"versions.intro": "Callout Studio は構成のバージョンを自動で保存します。\n古いバージョンは徐々に削除されます。\nバージョンを復元すると、同期しているすべてのデバイスの現在の構成が置き換わります。",
+	"versions.intro":
+		"Callout Studio は構成のバージョンを自動で保存します。\n古いバージョンは徐々に削除されます。\nバージョンを復元すると、同期しているすべてのデバイスの現在の構成が置き換わります。",
 	"versions.pausedHint": "保存が一時停止中のため、復元はできません。バージョンの比較と削除は引き続き可能です。",
 	"versions.loading": "バージョンを検索中…",
 	"versions.empty": "バージョンが見つかりませんでした。",
@@ -1462,22 +1480,27 @@ export const ja: Record<string, string> = {
 	"versions.reason.beforeRepair": "設定ファイルの修復前",
 	"versions.restoreTitle": "このバージョンを復元",
 	"versions.subtitle": "「{{name}}」 · {{when}}",
-	"versions.restoreBody": "現在の設定は置き換えられます（差分 {{count}} 件）。\n先にバージョンとして保存されるので、あとで戻せます。\nその後、同期サービスが復元した設定を他のデバイスに送ります。",
+	"versions.restoreBody":
+		"現在の設定は置き換えられます（差分 {{count}} 件）。\n先にバージョンとして保存されるので、あとで戻せます。\nその後、同期サービスが復元した設定を他のデバイスに送ります。",
 	"versions.restoreSame": "このバージョンは現在の構成と同じなので、復元するものはありません。",
 	"versions.restored": "{{when}} の「{{name}}」を復元しました。",
-	"versions.backupFailed": "何も復元されませんでした。現在の構成を先にバージョンとして保存できませんでした。空き容量を確認して再試行してください。",
+	"versions.backupFailed":
+		"何も復元されませんでした。現在の構成を先にバージョンとして保存できませんでした。空き容量を確認して再試行してください。",
 	"versions.restoreFailed": "バージョンを復元できませんでした。何も変更されていません。",
 	"versions.deleteTitle": "このバージョンを削除",
 	"versions.deleteAvailableBody": "このバージョンと利用可能なすべてのコピーが完全に削除されます。",
-	"versions.deleteSyncedFiles": "これらのファイルの削除は、他のデバイスにも同期される場合があります。それらのデバイスにあるローカルコピーは残る場合があります。",
+	"versions.deleteSyncedFiles":
+		"これらのファイルの削除は、他のデバイスにも同期される場合があります。それらのデバイスにあるローカルコピーは残る場合があります。",
 	"versions.deleteFinal": "この操作は取り消せません。現在の構成には影響しません。",
 	"versions.deleted": "{{when}} の「{{name}}」を削除しました。",
-	"versions.deleteFailed": "このバージョンの一部のコピーを削除できませんでした。リストには残っているコピーが表示されています。",
+	"versions.deleteFailed":
+		"このバージョンの一部のコピーを削除できませんでした。リストには残っているコピーが表示されています。",
 	"versions.details.title": "バージョンの詳細",
 	"versions.details.difference": "現在の設定との差分 {{count}} 件",
 	"versions.details.differences": "現在の設定との差分 {{count}} 件",
 	"versions.details.comparisonUnavailable": "比較は利用できません",
-	"notice.unsavedChangesKept": "このデバイスの一部の変更はまだ保存されておらず、別のデバイスの新しい設定に置き換えられました。お使いのバージョンは先に保存されています。取り戻すには、Callout Studio の設定で「以前のバージョンを復元」を開いてください。",
+	"notice.unsavedChangesKept":
+		"このデバイスの一部の変更はまだ保存されておらず、別のデバイスの新しい設定に置き換えられました。お使いのバージョンは先に保存されています。取り戻すには、Callout Studio の設定で「以前のバージョンを復元」を開いてください。",
 	"settings.versionHistory": "以前のバージョンを復元",
 	"settings.versions": "以前のバージョン",
 	"settings.versionsDesc": "現在の設定を、保存済みの以前のバージョンに置き換えます。",
@@ -1488,13 +1511,15 @@ export const ja: Record<string, string> = {
 	"noteChanges.notesOne": "1件のノート",
 	"noteChanges.askCallout": "そのCalloutをどうしますか？",
 	"noteChanges.askCallouts": "それらのCalloutをどうしますか？",
-	"noteChanges.changeRenamed": "表示名を「{{old}}」から「{{new}}」に変更したため、メインIDが「{{oldId}}」から「{{newId}}」に変わります。",
+	"noteChanges.changeRenamed":
+		"表示名を「{{old}}」から「{{new}}」に変更したため、メインIDが「{{oldId}}」から「{{newId}}」に変わります。",
 	"noteChanges.changeMainId": "メインIDが「{{oldId}}」から「{{newId}}」に変わります。",
 	"noteChanges.changeName": "表示名を「{{old}}」から「{{new}}」に変更しました。",
 	"noteChanges.changeRemoved": "ID「{{id}}」を削除しました。",
 	"noteChanges.changeRemovedMany": "次のIDを削除しました：{{ids}}。",
 	"noteChanges.changeResetRemoved": "「デフォルトにリセット」を実行すると、追加したID「{{id}}」が削除されます。",
-	"noteChanges.changeResetRemovedMany": "「デフォルトにリセット」を実行すると、追加した次のIDが削除されます：{{ids}}。",
+	"noteChanges.changeResetRemovedMany":
+		"「デフォルトにリセット」を実行すると、追加した次のIDが削除されます：{{ids}}。",
 	"noteChanges.changeFold": "このCalloutの折りたたみ方を変更しました。",
 	"noteChanges.affects": "{{notes}}の{{callouts}}が対象です。",
 	"noteChanges.affectsUnknown": "一部のノートが影響を受ける可能性があります。",
@@ -1502,7 +1527,8 @@ export const ja: Record<string, string> = {
 	"noteChanges.rewriteManyDesc": "ノート内の古いIDはすべて[!{{to}}]になります。",
 	"noteChanges.changeToIdLabel": "変更先のID",
 	"noteChanges.rewriteDesc": "ノート内の[!{{id}}]がすべて[!{{to}}]に変わります。",
-	"noteChanges.renameFollowDesc": "ノート内の[!{{oldId}}]がすべて[!{{newId}}]に変わり、「{{old}}」というタイトルは「{{new}}」になります。",
+	"noteChanges.renameFollowDesc":
+		"ノート内の[!{{oldId}}]がすべて[!{{newId}}]に変わり、「{{old}}」というタイトルは「{{new}}」になります。",
 	"noteChanges.titlesChangeDesc": "「{{old}}」というタイトルは「{{new}}」になります。",
 	"noteChanges.foldChangeDesc": "それらの+または-の記号が合わせて変わります。",
 };

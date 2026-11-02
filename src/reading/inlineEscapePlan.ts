@@ -9,7 +9,11 @@ export interface InlineEscapePlan {
 	split(node: Text, at: number): Text;
 }
 
-interface Candidate { node: Text; from: number; key: string; }
+interface Candidate {
+	node: Text;
+	from: number;
+	key: string;
+}
 const keyOf = (id: string, metadata: string): string => JSON.stringify([id, metadata]);
 
 /** Build once before either inline pass mutates the DOM. No-source exports keep their existing rendering. */
@@ -23,8 +27,8 @@ export function createInlineEscapePlan(
 
 	const candidates: Candidate[] = [];
 	const walker = el.ownerDocument.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
-		acceptNode: node => node.parentElement?.closest(excludeSelector)
-			? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
+		acceptNode: (node) =>
+			node.parentElement?.closest(excludeSelector) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
 	});
 	for (let node = walker.nextNode(); node; node = walker.nextNode()) {
 		for (const token of scanLineForCalloutTokens(node.textContent ?? "", { inlineContent: false })) {
@@ -40,25 +44,33 @@ export function createInlineEscapePlan(
 		const line = blankInlineMath(stripWikilinks(visible));
 		const entries: Array<{ from: number; key: string; escaped: boolean }> = [];
 		for (const token of scanLineForCalloutTokens(line, { inlineContent: false })) {
-			if (token.role === "inline") entries.push({ from: token.from, key: keyOf(token.rawId, token.metadata), escaped: false });
+			if (token.role === "inline")
+				entries.push({ from: token.from, key: keyOf(token.rawId, token.metadata), escaped: false });
 		}
 		for (const match of line.matchAll(/\\\[!([^\][\n\r]+)\]/g)) {
 			const parts = splitCalloutMetadata(match[1] ?? "");
-			if (parts.id.trim()) entries.push({ from: match.index + 1, key: keyOf(parts.id, parts.metadata), escaped: true });
+			if (parts.id.trim())
+				entries.push({ from: match.index + 1, key: keyOf(parts.id, parts.metadata), escaped: true });
 		}
 		entries.sort((a, b) => a.from - b.from);
 		sequence.push(...entries);
 	}
 	// A changed/nested renderer can remove or reorder candidates. Do not turn
 	// uncertain text into pills merely because its escape slash was consumed.
-	if (sequence.length !== candidates.length || candidates.some((candidate, i) => candidate.key !== sequence[i]?.key)) {
+	if (
+		sequence.length !== candidates.length ||
+		candidates.some((candidate, i) => candidate.key !== sequence[i]?.key)
+	) {
 		return { ...pass, allows: () => false };
 	}
 
 	const flags = new WeakMap<Text, Map<number, boolean>>();
 	candidates.forEach((candidate, index) => {
 		let nodeFlags = flags.get(candidate.node);
-		if (!nodeFlags) { nodeFlags = new Map(); flags.set(candidate.node, nodeFlags); }
+		if (!nodeFlags) {
+			nodeFlags = new Map();
+			flags.set(candidate.node, nodeFlags);
+		}
 		nodeFlags.set(candidate.from, sequence[index]?.escaped !== false);
 	});
 	return {

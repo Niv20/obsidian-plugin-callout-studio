@@ -43,7 +43,10 @@ describe("the drop placeholder", () => {
 
 	it("is Obsidian's own drop slot: the accent at 30%, with 5px corners", () => {
 		assert.equal(valueOf(box, "border-radius"), "5px");
-		assert.equal(valueOf(box, "background-color"), "color-mix(in oklch, var(--interactive-accent) 30%, transparent)");
+		assert.equal(
+			valueOf(box, "background-color"),
+			"color-mix(in oklch, var(--interactive-accent) 30%, transparent)",
+		);
 	});
 
 	it("never takes the pointer", () => {

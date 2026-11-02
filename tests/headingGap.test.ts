@@ -61,10 +61,7 @@ function setLivePreview(on: boolean): void {
 	(globalThis as { __CS_LIVE_PREVIEW__?: boolean }).__CS_LIVE_PREVIEW__ = on;
 }
 
-function harness(
-	doc: string,
-	options: { extensions?: Extension[] } = {},
-): Harness {
+function harness(doc: string, options: { extensions?: Extension[] } = {}): Harness {
 	const registry = new CalloutRegistry();
 	registry.load(null);
 	// A clean install hands an unconfigured built-in to the theme, and this
@@ -93,10 +90,7 @@ function harness(
 	return { registry, field, state, gaps };
 }
 
-function addCallout(
-	registry: Registry,
-	over: Partial<Parameters<Registry["add"]>[0]> = {},
-): void {
+function addCallout(registry: Registry, over: Partial<Parameters<Registry["add"]>[0]> = {}): void {
 	registry.add({
 		id: "quiet",
 		displayName: "Quiet",
@@ -112,9 +106,7 @@ function addCallout(
 }
 
 /** The `HeadingGapWidget` behind the first gap in a set. */
-function gapWidget(
-	gaps: Array<[number, Decoration]>,
-): InstanceType<typeof HeadingGapWidget> {
+function gapWidget(gaps: Array<[number, Decoration]>): InstanceType<typeof HeadingGapWidget> {
 	const widget = widgetOf(gaps[0]?.[1] as Decoration);
 	assert.ok(widget instanceof HeadingGapWidget);
 	return widget;
@@ -128,11 +120,7 @@ describe("HeadingGapWidget", () => {
 	it("paints pure empty space — no class, no background, just a height", () => {
 		const el = new HeadingGapWidget(0.5).toDOM();
 
-		assert.strictEqual(
-			(el as unknown as { classList: { toArray(): string[] } }).classList.toArray()
-				.length,
-			0,
-		);
+		assert.strictEqual((el as unknown as { classList: { toArray(): string[] } }).classList.toArray().length, 0);
 		assert.strictEqual(el.style.height, "0.5em");
 	});
 
@@ -372,10 +360,7 @@ describe("createHeadingGapField — when it rebuilds", () => {
 		const refreshed = h.state.update({
 			effects: calloutStudioRefresh.of(null),
 		}).state;
-		assert.strictEqual(
-			gapWidget(h.gaps(refreshed)).eq(new HeadingGapWidget(1.25)),
-			true,
-		);
+		assert.strictEqual(gapWidget(h.gaps(refreshed)).eq(new HeadingGapWidget(1.25)), true);
 	});
 });
 
@@ -384,6 +369,9 @@ describe("document exclusions in language-free heading gaps", () => {
 		setLivePreview(true);
 		const source = "%%\n## [!note] Comment\n%%\n```\n## [!note] Code\n```\n## [!note] Real";
 		const h = harness(source);
-		assert.deepStrictEqual(h.gaps().map(([from]) => from), [source.indexOf("## [!note] Real")]);
+		assert.deepStrictEqual(
+			h.gaps().map(([from]) => from),
+			[source.indexOf("## [!note] Real")],
+		);
 	});
 });

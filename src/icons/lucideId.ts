@@ -29,9 +29,7 @@ const LUCIDE_PREFIX = "lucide-";
 
 /** The name without Obsidian's core-Lucide prefix, if it carried one. */
 export function bareLucideName(name: string): string {
-	return name.startsWith(LUCIDE_PREFIX)
-		? name.slice(LUCIDE_PREFIX.length)
-		: name;
+	return name.startsWith(LUCIDE_PREFIX) ? name.slice(LUCIDE_PREFIX.length) : name;
 }
 
 /**
@@ -44,9 +42,7 @@ export function bareLucideName(name: string): string {
 let coreLucideIds: ReadonlySet<string> | null = null;
 
 function isCoreLucideId(id: string): boolean {
-	coreLucideIds ??= new Set(
-		getIconIds().filter((name) => name.startsWith(LUCIDE_PREFIX)),
-	);
+	coreLucideIds ??= new Set(getIconIds().filter((name) => name.startsWith(LUCIDE_PREFIX)));
 	return coreLucideIds.has(id);
 }
 
@@ -86,10 +82,7 @@ export function canonicalIconValue(icon: CalloutIcon): string {
  */
 function comparableRest(icon: CalloutIcon): string {
 	const rest = Object.entries(icon)
-		.filter(
-			([key, value]) =>
-				key !== "type" && key !== "value" && value !== undefined,
-		)
+		.filter(([key, value]) => key !== "type" && key !== "value" && value !== undefined)
 		.sort(([a], [b]) => (a < b ? -1 : 1));
 	return JSON.stringify(rest);
 }

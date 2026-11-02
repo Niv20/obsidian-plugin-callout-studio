@@ -31,13 +31,19 @@ function mountChooser(ModalClass: typeof ImportSourceModal | typeof ExportFormat
 		modalEl,
 		titleEl: title,
 		contentEl: content,
-		setTitle: (text: string) => { title.setText(text); return modal; },
+		setTitle: (text: string) => {
+			title.setText(text);
+			return modal;
+		},
 		close: () => {},
 	});
 	modal.onOpen();
 	return {
 		content,
-		destroy: () => { modal.onClose(); container.remove(); },
+		destroy: () => {
+			modal.onClose();
+			container.remove();
+		},
 	};
 }
 
@@ -89,7 +95,10 @@ describe("Import and Export choose with a button per row", () => {
 		}
 	});
 
-	for (const [name, ModalClass] of [["Import", ImportSourceModal], ["Export", ExportFormatModal]] as const) {
+	for (const [name, ModalClass] of [
+		["Import", ImportSourceModal],
+		["Export", ExportFormatModal],
+	] as const) {
 		it(`${name}: each row starts with its icon, and only its button is a control`, () => {
 			const h = mountChooser(ModalClass);
 			try {
@@ -117,7 +126,11 @@ describe("Import and Export choose with a button per row", () => {
 			const button = h.content.querySelector(".cs-choice-row")?.querySelector(".clickable-icon");
 			assert.ok(input && button);
 			let pickerOpens = 0;
-			Object.assign(input, { click: () => { pickerOpens++; } });
+			Object.assign(input, {
+				click: () => {
+					pickerOpens++;
+				},
+			});
 			button.fire("click", { type: "click", detail: 1 });
 			button.fire("click", { type: "click", detail: 2 });
 			assert.equal(pickerOpens, 1);

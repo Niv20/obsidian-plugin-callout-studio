@@ -77,13 +77,9 @@ export const textComparator = (locale?: string): ((a: string, b: string) => numb
 	return compare;
 };
 
-export const compareText = (a: string, b: string, locale?: string): number =>
-	textComparator(locale)(a, b);
+export const compareText = (a: string, b: string, locale?: string): number => textComparator(locale)(a, b);
 
-export const sortCalloutsByDisplayName = (
-	callouts: CalloutDefinition[],
-	locale?: string,
-): CalloutDefinition[] => {
+export const sortCalloutsByDisplayName = (callouts: CalloutDefinition[], locale?: string): CalloutDefinition[] => {
 	return [...callouts].sort((a, b) => {
 		const byName = compareText(a.displayName, b.displayName, locale);
 		if (byName !== 0) return byName;
@@ -91,10 +87,7 @@ export const sortCalloutsByDisplayName = (
 	});
 };
 
-export const sortCalloutsById = (
-	callouts: CalloutDefinition[],
-	locale?: string,
-): CalloutDefinition[] => {
+export const sortCalloutsById = (callouts: CalloutDefinition[], locale?: string): CalloutDefinition[] => {
 	return [...callouts].sort((a, b) => {
 		const byId = compareText(a.id, b.id, locale);
 		if (byId !== 0) return byId;
@@ -102,10 +95,7 @@ export const sortCalloutsById = (
 	});
 };
 
-export const sortIds = (ids: string[], locale?: string): string[] =>
-	[...ids].sort((a, b) => compareText(a, b, locale));
+export const sortIds = (ids: string[], locale?: string): string[] => [...ids].sort((a, b) => compareText(a, b, locale));
 
-export const getSortedCalloutIds = (
-	def: CalloutDefinition,
-	locale?: string,
-): string[] => sortIds([def.id, ...(def.aliases ?? [])], locale);
+export const getSortedCalloutIds = (def: CalloutDefinition, locale?: string): string[] =>
+	sortIds([def.id, ...(def.aliases ?? [])], locale);

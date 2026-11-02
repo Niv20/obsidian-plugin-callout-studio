@@ -13,7 +13,12 @@ import { FIXED_COMMAND_IDS, FIXED_COMMAND_NAME_KEYS } from "../editor/commands";
 import { keyedRows, type SetupChange } from "../manager/setupDetails";
 import { canonical } from "../manager/syncTree";
 import type {
-	CalloutDefinition, CalloutRenderRole, CustomCommand, IconLibrarySettings, IconSourceId, UserImageIcon,
+	CalloutDefinition,
+	CalloutRenderRole,
+	CustomCommand,
+	IconLibrarySettings,
+	IconSourceId,
+	UserImageIcon,
 } from "../types";
 import { describeCommand, resolveAction, resolveFold, resolveHeadingLevel } from "../utils/customCommands";
 import { mergeIconLibraries } from "../utils/iconSourcesMerge";
@@ -21,14 +26,36 @@ import { ICON_SOURCES, ICON_SOURCE_IDS } from "../icons/registry";
 import { isDownloadable, libraryOrder } from "../icons/iconLibraries";
 import { ITEM_LABEL_KEY } from "./menuItems";
 import {
-	ROLE_LABELS, ROLE_ORDER, absentText, recordFields, type FieldSpec, type RecoveryField, type RecoveryItem,
-	type RecoverySideName, type RecoverySides,
+	ROLE_LABELS,
+	ROLE_ORDER,
+	absentText,
+	recordFields,
+	type FieldSpec,
+	type RecoveryField,
+	type RecoveryItem,
+	type RecoverySideName,
+	type RecoverySides,
 } from "./recoveryModel";
 import { renderRecoveryImage } from "./recoveryPreview";
 import {
-	isRecord, renderArtwork, renderCalloutRef, renderChoice, renderColor, renderDate, renderGeneric, renderGradient,
-	renderHeadingLevel, renderOnOff, renderOrder, renderPaletteCard, renderPercent, renderPx, renderShown, renderText,
-	renderYesNo, type RecoverySide,
+	isRecord,
+	renderArtwork,
+	renderCalloutRef,
+	renderChoice,
+	renderColor,
+	renderDate,
+	renderGeneric,
+	renderGradient,
+	renderHeadingLevel,
+	renderOnOff,
+	renderOrder,
+	renderPaletteCard,
+	renderPercent,
+	renderPx,
+	renderShown,
+	renderText,
+	renderYesNo,
+	type RecoverySide,
 } from "./recoveryValues";
 
 type Entry = Record<string, unknown>;
@@ -52,37 +79,60 @@ function valueOf(change: SetupChange, side: RecoverySideName): unknown {
 
 /** A value that is not the list this build expects: shown whole, as one item. */
 function wholeItem(change: SetupChange, key: string, title: string, sides: RecoverySides): RecoveryItem {
-	return { key, kind: change.kind, title, fields: [],
-		summary: (parent, side) => renderGeneric(parent, valueOf(change, side), sides[side]) };
+	return {
+		key,
+		kind: change.kind,
+		title,
+		fields: [],
+		summary: (parent, side) => renderGeneric(parent, valueOf(change, side), sides[side]),
+	};
 }
 
 /** One item per entry that differs, matched by id, plus one for a changed order. */
 function collectionItems(change: SetupChange | undefined, sides: RecoverySides, spec: CollectionSpec): RecoveryItem[] {
 	if (!change) return [];
-	const before = Array.isArray(change.before) ? keyedRows(change.before) : change.before === undefined ? new Map<string, Entry>() : null;
-	const after = Array.isArray(change.after) ? keyedRows(change.after) : change.after === undefined ? new Map<string, Entry>() : null;
+	const before = Array.isArray(change.before)
+		? keyedRows(change.before)
+		: change.before === undefined
+			? new Map<string, Entry>()
+			: null;
+	const after = Array.isArray(change.after)
+		? keyedRows(change.after)
+		: change.after === undefined
+			? new Map<string, Entry>()
+			: null;
 	if (!before || !after) return [wholeItem(change, `${spec.prefix}:*`, spec.orderTitle, sides)];
 	const items: RecoveryItem[] = [];
 	for (const id of new Set([...before.keys(), ...after.keys()])) {
-		const current = before.get(id), restored = after.get(id);
+		const current = before.get(id),
+			restored = after.get(id);
 		if (canonical(current) === canonical(restored)) continue;
-		const shown = current ?? restored!, owner = current ? sides.before : sides.after;
+		const shown = current ?? restored!,
+			owner = current ? sides.before : sides.after;
 		items.push({
 			key: `${spec.prefix}:${id}`,
 			kind: !current ? "added" : !restored ? "removed" : "changed",
 			title: spec.title(shown, owner),
 			note: spec.note,
-			summary: spec.summary && ((parent, side) => spec.summary!(parent, (side === "before" ? current : restored)!, sides[side])),
+			summary:
+				spec.summary &&
+				((parent, side) => spec.summary!(parent, (side === "before" ? current : restored)!, sides[side])),
 			fields: current && restored ? recordFields(current, restored, spec.fields) : [],
 		});
 	}
-	const shared = (rows: Map<string, Entry>, other: Map<string, Entry>) => [...rows.keys()].filter(id => other.has(id));
+	const shared = (rows: Map<string, Entry>, other: Map<string, Entry>) =>
+		[...rows.keys()].filter((id) => other.has(id));
 	if (canonical(shared(before, after)) !== canonical(shared(after, before))) {
-		items.push({ key: `${spec.prefix}:$order`, kind: "changed", title: spec.orderTitle, fields: [],
+		items.push({
+			key: `${spec.prefix}:$order`,
+			kind: "changed",
+			title: spec.orderTitle,
+			fields: [],
 			summary: (parent, side) => {
 				const rows = side === "before" ? before : after;
-				renderOrder(id => spec.title(rows.get(id)!, sides[side]))(parent, [...rows.keys()], sides[side]);
-			} });
+				renderOrder((id) => spec.title(rows.get(id)!, sides[side]))(parent, [...rows.keys()], sides[side]);
+			},
+		});
 	}
 	return items;
 }
@@ -92,8 +142,10 @@ function nameOf(entry: Entry): string {
 }
 
 const IMAGE_FORMATS: Readonly<Record<string, string>> = {
-	svg: "recovery.details.value.formatSvg", png: "recovery.details.value.formatPng",
-	jpeg: "recovery.details.value.formatJpeg", webp: "recovery.details.value.formatWebp",
+	svg: "recovery.details.value.formatSvg",
+	png: "recovery.details.value.formatPng",
+	jpeg: "recovery.details.value.formatJpeg",
+	webp: "recovery.details.value.formatWebp",
 };
 
 export function imageItems(change: SetupChange | undefined, sides: RecoverySides): RecoveryItem[] {
@@ -102,8 +154,14 @@ export function imageItems(change: SetupChange | undefined, sides: RecoverySides
 		title: nameOf,
 		summary: (parent, entry) => renderRecoveryImage(parent, entry as unknown as UserImageIcon),
 		fields: [
-			["name", renderText], ["format", renderChoice(IMAGE_FORMATS)], ["width", renderPx], ["height", renderPx],
-			["monochrome", renderYesNo], ["svg", renderArtwork], ["rev", renderGeneric], ["addedAt", renderDate],
+			["name", renderText],
+			["format", renderChoice(IMAGE_FORMATS)],
+			["width", renderPx],
+			["height", renderPx],
+			["monochrome", renderYesNo],
+			["svg", renderArtwork],
+			["rev", renderGeneric],
+			["addedAt", renderDate],
 		],
 		orderTitle: t("recovery.details.item.imageOrder"),
 	});
@@ -116,15 +174,24 @@ export function paletteItems(change: SetupChange | undefined, sides: RecoverySid
 		summary: (parent, entry, side) => renderPaletteCard(parent, entry, side),
 		fields: [
 			["name", renderText],
-			["colorLight", renderColor], ["colorDark", renderColor],
-			["bgColorLight", renderColor], ["bgColorDark", renderColor],
-			["textColorLight", renderColor], ["textColorDark", renderColor],
+			["colorLight", renderColor],
+			["colorDark", renderColor],
+			["bgColorLight", renderColor],
+			["bgColorDark", renderColor],
+			["textColorLight", renderColor],
+			["textColorDark", renderColor],
 			["bgGradient", renderGradient, absentText.none],
 			["transparentBg", renderYesNo, absentText.no],
 			["bgIntensity", renderPercent, absentText.default],
 			["baseColor", renderColor, absentText.none],
-			["colorMode", renderChoice({ simple: "recovery.details.value.colorModeSimple",
-				advanced: "recovery.details.value.colorModeAdvanced" }), () => t("recovery.details.value.colorModeSimple")],
+			[
+				"colorMode",
+				renderChoice({
+					simple: "recovery.details.value.colorModeSimple",
+					advanced: "recovery.details.value.colorModeAdvanced",
+				}),
+				() => t("recovery.details.value.colorModeSimple"),
+			],
 		],
 		orderTitle: t("recovery.details.item.paletteOrder"),
 	});
@@ -134,15 +201,21 @@ export function paletteItems(change: SetupChange | undefined, sides: RecoverySid
 function commandName(entry: Entry, side: RecoverySide): string {
 	const calloutId = typeof entry.calloutId === "string" ? entry.calloutId : "";
 	const def = side.callouts.get(calloutId) ?? ({ displayName: calloutId } as CalloutDefinition);
-	try { return describeCommand(entry as unknown as CustomCommand, def); }
-	catch { return t("recovery.details.value.customCommand"); }
+	try {
+		return describeCommand(entry as unknown as CustomCommand, def);
+	} catch {
+		return t("recovery.details.value.customCommand");
+	}
 }
 
 const COMMAND_ACTIONS: Readonly<Record<string, string>> = {
-	wrap: "commandBuilder.actionWrap", insert: "commandBuilder.actionInsert",
+	wrap: "commandBuilder.actionWrap",
+	insert: "commandBuilder.actionInsert",
 };
 const COMMAND_FOLDS: Readonly<Record<string, string>> = {
-	none: "commandBuilder.foldNone", expanded: "commandBuilder.foldExpanded", collapsed: "commandBuilder.foldCollapsed",
+	none: "commandBuilder.foldNone",
+	expanded: "commandBuilder.foldExpanded",
+	collapsed: "commandBuilder.foldCollapsed",
 };
 
 /**
@@ -155,7 +228,8 @@ function renderCommand(parent: HTMLElement, entry: Entry, side: RecoverySide): v
 	const role = typeof entry.role === "string" ? entry.role : "";
 	const parts = [Object.hasOwn(ROLE_LABELS, role) ? t(ROLE_LABELS[role as CalloutRenderRole]) : role];
 	const command = entry as Partial<CustomCommand>;
-	if (role === "heading") parts.push(t("recovery.details.value.headingLevel", { value: resolveHeadingLevel(command) }));
+	if (role === "heading")
+		parts.push(t("recovery.details.value.headingLevel", { value: resolveHeadingLevel(command) }));
 	if (Object.hasOwn(ROLE_LABELS, role)) parts.push(t(COMMAND_ACTIONS[resolveAction(command)]!));
 	if (role === "regular") parts.push(t(COMMAND_FOLDS[resolveFold(command)]!));
 	parent.createDiv({ cls: "cs-recovery-muted", text: parts.filter(Boolean).join(" · ") });
@@ -181,18 +255,22 @@ export function customCommandItems(change: SetupChange | undefined, sides: Recov
 /** Turning a built-in command off or on: one item per command whose state differs. */
 export function builtInCommandItems(change: SetupChange | undefined, sides: RecoverySides): RecoveryItem[] {
 	if (!change) return [];
-	const disabled = (value: unknown) => Array.isArray(value) ? new Set(value.filter(id => typeof id === "string")) : new Set<string>();
-	const before = disabled(change.before), after = disabled(change.after);
+	const disabled = (value: unknown) =>
+		Array.isArray(value) ? new Set(value.filter((id) => typeof id === "string")) : new Set<string>();
+	const before = disabled(change.before),
+		after = disabled(change.after);
 	const names: Readonly<Record<string, string>> = FIXED_COMMAND_NAME_KEYS;
 	const ids = [...new Set<string>([...FIXED_COMMAND_IDS, ...before, ...after])];
-	return ids.filter(id => before.has(id) !== after.has(id)).map((id): RecoveryItem => ({
-		key: `fixed:${id}`,
-		kind: "changed",
-		title: Object.hasOwn(names, id) ? t(names[id]!) : id,
-		note: t("recovery.details.value.builtInCommand"),
-		fields: [],
-		summary: (parent, side) => renderOnOff(parent, !(side === "before" ? before : after).has(id), sides[side]),
-	}));
+	return ids
+		.filter((id) => before.has(id) !== after.has(id))
+		.map((id): RecoveryItem => ({
+			key: `fixed:${id}`,
+			kind: "changed",
+			title: Object.hasOwn(names, id) ? t(names[id]!) : id,
+			note: t("recovery.details.value.builtInCommand"),
+			fields: [],
+			summary: (parent, side) => renderOnOff(parent, !(side === "before" ? before : after).has(id), sides[side]),
+		}));
 }
 
 /** A menu entry's name, as the menu editor labels it. */
@@ -203,37 +281,58 @@ function menuEntryLabel(id: string): string {
 
 /** One role's menu: each entry shown or hidden, and the order they come in. */
 function menuFields(before: unknown, after: unknown): RecoveryField[] {
-	const left = Array.isArray(before) ? keyedRows(before) : null, right = Array.isArray(after) ? keyedRows(after) : null;
+	const left = Array.isArray(before) ? keyedRows(before) : null,
+		right = Array.isArray(after) ? keyedRows(after) : null;
 	if (!left || !right) return [{ label: t("recovery.details.field.items"), before, after, render: renderGeneric }];
 	const fields: RecoveryField[] = [];
 	for (const id of new Set([...left.keys(), ...right.keys()])) {
-		const a = left.get(id), b = right.get(id);
+		const a = left.get(id),
+			b = right.get(id);
 		if (canonical(a) === canonical(b)) continue;
-		fields.push({ label: menuEntryLabel(id), before: a?.enabled, after: b?.enabled, render: renderShown,
-			absent: t("recovery.details.value.notInMenu") });
+		fields.push({
+			label: menuEntryLabel(id),
+			before: a?.enabled,
+			after: b?.enabled,
+			render: renderShown,
+			absent: t("recovery.details.value.notInMenu"),
+		});
 	}
-	const shared = (rows: Map<string, Entry>, other: Map<string, Entry>) => [...rows.keys()].filter(id => other.has(id));
+	const shared = (rows: Map<string, Entry>, other: Map<string, Entry>) =>
+		[...rows.keys()].filter((id) => other.has(id));
 	if (canonical(shared(left, right)) !== canonical(shared(right, left))) {
-		fields.push({ label: t("recovery.details.order"), before: [...left.keys()], after: [...right.keys()],
-			render: renderOrder(menuEntryLabel) });
+		fields.push({
+			label: t("recovery.details.order"),
+			before: [...left.keys()],
+			after: [...right.keys()],
+			render: renderOrder(menuEntryLabel),
+		});
 	}
 	return fields;
 }
 
 export function contextMenuItems(change: SetupChange | undefined): RecoveryItem[] {
 	if (!change) return [];
-	const before = isRecord(change.before) ? change.before : {}, after = isRecord(change.after) ? change.after : {};
+	const before = isRecord(change.before) ? change.before : {},
+		after = isRecord(change.after) ? change.after : {};
 	const items: RecoveryItem[] = [];
 	const general = recordFields(before, after, [["enabled", renderOnOff]], { skip: ["items"] });
-	if (general.length) items.push({ key: "menu:general", kind: "changed", title: t("settings.contextMenu"), fields: general });
-	const roles = (value: unknown) => isRecord(value) ? value : {};
+	if (general.length)
+		items.push({ key: "menu:general", kind: "changed", title: t("settings.contextMenu"), fields: general });
+	const roles = (value: unknown) => (isRecord(value) ? value : {});
 	const known = new Set<string>(ROLE_ORDER);
-	const extra = Object.keys({ ...roles(before.items), ...roles(after.items) }).filter(role => !known.has(role)).sort();
+	const extra = Object.keys({ ...roles(before.items), ...roles(after.items) })
+		.filter((role) => !known.has(role))
+		.sort();
 	for (const role of [...ROLE_ORDER, ...extra]) {
 		const fields = menuFields(roles(before.items)[role], roles(after.items)[role]);
 		if (canonical(roles(before.items)[role]) === canonical(roles(after.items)[role]) || !fields.length) continue;
 		const name = known.has(role) ? t(ROLE_LABELS[role as CalloutRenderRole]) : role;
-		items.push({ key: `menu:${role}`, kind: "changed", title: t("recovery.details.item.menu", { role: name }), fields });
+		items.push({
+			key: `menu:${role}`,
+			kind: "changed",
+			title: t("recovery.details.item.menu", { role: name }),
+			fields,
+		});
 	}
 	return items;
 }
@@ -252,23 +351,27 @@ function libraryLabel(id: string): string {
  */
 export function iconLibraryItems(change: SetupChange | undefined): RecoveryItem[] {
 	if (!change) return [];
-	const read = (value: unknown): IconLibrarySettings =>
-		mergeIconLibraries(isRecord(value) ? value : undefined);
-	const before = read(change.before), after = read(change.after);
+	const read = (value: unknown): IconLibrarySettings => mergeIconLibraries(isRecord(value) ? value : undefined);
+	const before = read(change.before),
+		after = read(change.after);
 	const fields: RecoveryField[] = [];
 	for (const id of ICON_SOURCE_IDS) {
 		if (isDownloadable(id)) continue;
-		const shownBefore = !before.hidden.includes(id), shownAfter = !after.hidden.includes(id);
+		const shownBefore = !before.hidden.includes(id),
+			shownAfter = !after.hidden.includes(id);
 		if (shownBefore !== shownAfter) {
 			fields.push({ label: libraryLabel(id), before: shownBefore, after: shownAfter, render: renderShown });
 		}
 	}
-	const orderBefore = libraryOrder(before), orderAfter = libraryOrder(after);
+	const orderBefore = libraryOrder(before),
+		orderAfter = libraryOrder(after);
 	if (canonical(orderBefore) !== canonical(orderAfter)) {
-		fields.push({ label: t("recovery.details.order"), before: orderBefore, after: orderAfter,
-			render: renderOrder(libraryLabel) });
+		fields.push({
+			label: t("recovery.details.order"),
+			before: orderBefore,
+			after: orderAfter,
+			render: renderOrder(libraryLabel),
+		});
 	}
-	return fields.length
-		? [{ key: "iconLibraries", kind: "changed", title: t("iconLibraries.title"), fields }]
-		: [];
+	return fields.length ? [{ key: "iconLibraries", kind: "changed", title: t("iconLibraries.title"), fields }] : [];
 }

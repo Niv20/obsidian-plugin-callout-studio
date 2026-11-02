@@ -21,15 +21,23 @@
 import { tokenEnd, type LineCalloutToken } from "../editor/calloutTokens";
 import type { MarkdownPrefix } from "../editor/markdownContainers";
 
-export interface Edit { from: number; to: number; text: string }
+export interface Edit {
+	from: number;
+	to: number;
+	text: string;
+}
 
 /** The label used to be literal text, so it must not acquire Markdown formatting. */
 export function plainTextLabel(rawId: string): string {
-	return rawId.trim().replace(/&/g, "&amp;").replace(/[\\`*_[\]<>|]/g, "\\$&");
+	return rawId
+		.trim()
+		.replace(/&/g, "&amp;")
+		.replace(/[\\`*_[\]<>|]/g, "\\$&");
 }
 
 export function applyLineEdits(line: string, edits: Edit[]): string {
-	let result = "", from = 0;
+	let result = "",
+		from = 0;
 	for (const edit of edits.sort((a, b) => a.from - b.from)) {
 		result += line.slice(from, edit.from) + edit.text;
 		from = edit.to;
@@ -39,7 +47,8 @@ export function applyLineEdits(line: string, edits: Edit[]): string {
 
 /** Removing a pill must not turn prose into a heading, list, quote, code or table. */
 export function preserveBlockMeaning(original: string, changed: string, from: number, heading: boolean): string {
-	const before = original.slice(from), after = changed.slice(from);
+	const before = original.slice(from),
+		after = changed.slice(from);
 	if (heading) {
 		const closing = /[ \t](#+)[ \t\r]*$/;
 		const match = closing.exec(after);
@@ -52,7 +61,8 @@ export function preserveBlockMeaning(original: string, changed: string, from: nu
 	if (/^(?: {4}|\t)/.test(after) && !/^(?: {4}|\t)/.test(before)) {
 		return changed.slice(0, from) + (after[0] === "\t" ? "&#9;" : "&#32;") + after.slice(1);
 	}
-	const marker = /^[ \t]*(?:#{1,6}(?=[ \t\r]|$)|>|[-+*](?=[ \t])|\d{1,9}[.)](?=[ \t])|`{3,}|~{3,}|(?:[-*_][ \t]*){3,}(?=\r?$)|[=-]+[ \t]*(?=\r?$)|\||\[(?:\\.|[^\]\\\r\n])+\]:)/;
+	const marker =
+		/^[ \t]*(?:#{1,6}(?=[ \t\r]|$)|>|[-+*](?=[ \t])|\d{1,9}[.)](?=[ \t])|`{3,}|~{3,}|(?:[-*_][ \t]*){3,}(?=\r?$)|[=-]+[ \t]*(?=\r?$)|\||\[(?:\\.|[^\]\\\r\n])+\]:)/;
 	const match = marker.exec(after);
 	if (!match || marker.test(before)) return changed;
 	const number = /^[ \t]*\d{1,9}([.)])/.exec(after);
@@ -73,12 +83,15 @@ function unsupportedTokens(tokens: readonly LineCalloutToken[], visible: string)
 		const token = tokens[index]!;
 		const end = token.contentOpen ? visible.length : tokenEnd(token);
 		if (token.from < until || token.contentOpen || (token.content && (tokens[index + 1]?.from ?? Infinity) < end)) {
-			unsupported.add(token); until = Math.max(until, end);
+			unsupported.add(token);
+			until = Math.max(until, end);
 		}
 	}
 	// The shared scanner can recover a valid-looking inner token from a broken
 	// outer bracket. A destructive conversion must leave the whole example alone.
-	let from = 0, close = -1, index = 0;
+	let from = 0,
+		close = -1,
+		index = 0;
 	while ((from = visible.indexOf("[!", from)) >= 0) {
 		if (close < from) close = visible.indexOf("]", from + 2);
 		if (close < 0) break;
@@ -125,13 +138,19 @@ export interface CalloutLineConversion {
  */
 export function convertCalloutLine(input: CalloutLineInput): CalloutLineConversion {
 	const { line, tokens, visible, prefix, take = () => true } = input;
-	const unchanged = (skipped: number): CalloutLineConversion =>
-		({ after: line, edits: [], count: 0, headings: 0, inline: 0, skipped });
+	const unchanged = (skipped: number): CalloutLineConversion => ({
+		after: line,
+		edits: [],
+		count: 0,
+		headings: 0,
+		inline: 0,
+		skipped,
+	});
 	if (!tokens.length || tokens[0]?.role === "regular") return unchanged(0);
 	const unsupported = unsupportedTokens(tokens, visible);
 	for (const token of input.unsupported ?? []) unsupported.add(token);
 	const taken = tokens.filter(take);
-	const active = taken.filter(token => !unsupported.has(token));
+	const active = taken.filter((token) => !unsupported.has(token));
 	const skipped = taken.length - active.length;
 	if (!active.length) return unchanged(skipped);
 	const headingPrefix = prefix.quoteDepth === 0 ? /^#{1,6}[ \t]+/.exec(line.slice(prefix.from)) : null;
@@ -140,23 +159,35 @@ export function convertCalloutLine(input: CalloutLineInput): CalloutLineConversi
 	const titleTo = closing ? titleFrom + closing.index : line.length - (line.endsWith("\r") ? 1 : 0);
 	// Only tokens with their own source title can be removed as decoration.
 	// Code/math are still visible title content even though their tokens are masked.
-	const titleWithoutTokens = headingPrefix ? applyLineEdits(line, active.map(token => ({ from: token.from, to: tokenEnd(token), text: token.content?.text ?? "" }))).slice(titleFrom) : "";
-	const hasTitle = Boolean(titleWithoutTokens.replace(/<!--.*?(?:-->|$)|%%.*?(?:%%|$)/g, "").replace(/[ \t]+#+[ \t\r]*$/, "").trim());
+	const titleWithoutTokens = headingPrefix
+		? applyLineEdits(
+				line,
+				active.map((token) => ({ from: token.from, to: tokenEnd(token), text: token.content?.text ?? "" })),
+			).slice(titleFrom)
+		: "";
+	const hasTitle = Boolean(
+		titleWithoutTokens
+			.replace(/<!--.*?(?:-->|$)|%%.*?(?:%%|$)/g, "")
+			.replace(/[ \t]+#+[ \t\r]*$/, "")
+			.trim(),
+	);
 	const edits: Edit[] = [];
 	const counts = { count: 0, headings: 0, inline: 0 };
 	for (const token of active) {
 		const decoration = Boolean(headingPrefix && hasTitle && !token.content);
-		let from = token.from, to = tokenEnd(token);
+		let from = token.from,
+			to = tokenEnd(token);
 		if (decoration) {
 			if (from === titleFrom || /[ \t]/.test(line[from - 1] ?? "")) {
 				while (to < titleTo && /[ \t]/.test(line[to]!)) to++;
-				if (to === titleTo && from > titleFrom) while (from > titleFrom && /[ \t]/.test(line[from - 1]!)) from--;
+				if (to === titleTo && from > titleFrom)
+					while (from > titleFrom && /[ \t]/.test(line[from - 1]!)) from--;
 			}
 		}
 		// Adjacent decoration whitespace may overlap; merge only removed bytes.
 		const previous = edits[edits.length - 1];
 		if (decoration && previous?.text === "" && from <= previous.to) previous.to = Math.max(previous.to, to);
-		else edits.push({ from, to, text: decoration ? "" : token.content?.text ?? plainTextLabel(token.rawId) });
+		else edits.push({ from, to, text: decoration ? "" : (token.content?.text ?? plainTextLabel(token.rawId)) });
 		counts.count++;
 		if (token.role === "heading" || decoration) counts.headings++;
 		else counts.inline++;

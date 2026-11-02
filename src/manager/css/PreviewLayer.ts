@@ -62,9 +62,7 @@ export class PreviewLayer {
 		this.text = null;
 		if (this.sheet && this.sheetDoc) {
 			const own = this.sheet;
-			this.sheetDoc.adoptedStyleSheets = this.sheetDoc.adoptedStyleSheets.filter(
-				(sheet) => sheet !== own,
-			);
+			this.sheetDoc.adoptedStyleSheets = this.sheetDoc.adoptedStyleSheets.filter((sheet) => sheet !== own);
 		}
 		this.sheet = null;
 		this.sheetDoc = null;

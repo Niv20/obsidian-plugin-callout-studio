@@ -11,13 +11,16 @@ export class OccurrencePreviewCollector {
 	readonly found: CalloutOccurrence[] = [];
 	private pending: { at: number; quoteDepth: number; listIndent: number; header: string } | null = null;
 
-	constructor(private readonly path: string, private readonly fingerprint: string) {}
+	constructor(
+		private readonly path: string,
+		private readonly fingerprint: string,
+	) {}
 
 	add(line: DocumentCalloutLine): void {
 		if (this.pending) {
 			const pending = this.pending;
-			if (line.prefix.quoteDepth < pending.quoteDepth ||
-				line.tokens.some((token) => token.role === "regular")) this.pending = null;
+			if (line.prefix.quoteDepth < pending.quoteDepth || line.tokens.some((token) => token.role === "regular"))
+				this.pending = null;
 			else if (line.prefix.quoteDepth === pending.quoteDepth && line.prefix.listIndent >= pending.listIndent) {
 				// Use the exclusion mask only to choose an actual content line. Display its
 				// original Markdown, including quote/list prefixes and inline formatting.
@@ -25,8 +28,10 @@ export class OccurrencePreviewCollector {
 				if (visibleBody) {
 					const entry = this.found[pending.at]!;
 					const body = line.lineText.replace(/\r$/, "");
-					this.found[pending.at] = Object.freeze({ ...entry,
-						excerpt: `${shorten(pending.header, 90)}\n${shorten(body, 180)}` });
+					this.found[pending.at] = Object.freeze({
+						...entry,
+						excerpt: `${shorten(pending.header, 90)}\n${shorten(body, 180)}`,
+					});
 					this.pending = null;
 				}
 			}
@@ -37,17 +42,31 @@ export class OccurrencePreviewCollector {
 			// Editors normalize CRLF to LF; UTF-16 token coordinates stay identical.
 			const lineText = line.lineText.replace(/\r$/, "");
 			const start = Math.max(0, token.from - 60);
-			const excerpt = token.role === "regular" ? shorten(lineText, 180)
-				: `${start ? "…" : ""}${shorten(lineText.slice(start), 180)}`;
-			this.found.push(Object.freeze({
-				path: this.path, rawId: token.rawId, identity, role: token.role,
-				line: line.lineIndex, from: token.from, to: token.to, lineText,
-				contentFingerprint: this.fingerprint, excerpt,
-			}));
-			if (token.role === "regular") this.pending = {
-				at: this.found.length - 1, quoteDepth: line.prefix.quoteDepth,
-				listIndent: line.prefix.listIndent, header: lineText,
-			};
+			const excerpt =
+				token.role === "regular"
+					? shorten(lineText, 180)
+					: `${start ? "…" : ""}${shorten(lineText.slice(start), 180)}`;
+			this.found.push(
+				Object.freeze({
+					path: this.path,
+					rawId: token.rawId,
+					identity,
+					role: token.role,
+					line: line.lineIndex,
+					from: token.from,
+					to: token.to,
+					lineText,
+					contentFingerprint: this.fingerprint,
+					excerpt,
+				}),
+			);
+			if (token.role === "regular")
+				this.pending = {
+					at: this.found.length - 1,
+					quoteDepth: line.prefix.quoteDepth,
+					listIndent: line.prefix.listIndent,
+					header: lineText,
+				};
 		}
 	}
 }

@@ -1,16 +1,13 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import {
-	createSourceMenuTitle,
-	formatIconCount,
-} from "../src/settings/iconpicker/sourceMenuPresentation";
+import { createSourceMenuTitle, formatIconCount } from "../src/settings/iconpicker/sourceMenuPresentation";
 import { readRepoFile } from "./support/sourceScan";
 import { installFakeDom } from "./support/fakeDom";
 
 installFakeDom();
 
 describe("icon source menu counts", () => {
-	it("shows a pooled library's count as a faint count, not a translated \"(N)\"", () => {
+	it('shows a pooled library\'s count as a faint count, not a translated "(N)"', () => {
 		// The heading is the library's name and a `cs-faint-count` (ui/faintCount.ts),
 		// so no language's word order or brackets are involved any more.
 		const panel = readRepoFile("src/settings/iconpicker/PackPanel.ts");
@@ -53,7 +50,10 @@ describe("icon source menu rows", () => {
 	it("has no check of its own left, in the markup or the stylesheet", () => {
 		// It used to draw a private `.cs-source-check`, a smaller check in the
 		// row's own colour. Every list now marks its choice with one shared ✓.
-		assert.doesNotMatch(readRepoFile("src/settings/iconpicker/sourceMenuPresentation.ts"), /cs-source-check|setIcon/);
+		assert.doesNotMatch(
+			readRepoFile("src/settings/iconpicker/sourceMenuPresentation.ts"),
+			/cs-source-check|setIcon/,
+		);
 		assert.doesNotMatch(readRepoFile("styles.css"), /cs-source-check/);
 	});
 

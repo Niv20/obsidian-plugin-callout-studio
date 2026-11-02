@@ -34,7 +34,10 @@ function fakePlugin(paused: boolean) {
 		plugin: {
 			settingsWriter: { isFrozen: paused, isDestroyed: false, status, hasRecoveryState: true },
 			// A retry that waits until the test lets it finish.
-			retrySettingsRecovery: () => new Promise<boolean>((resolve) => { finishRetry = resolve; }),
+			retrySettingsRecovery: () =>
+				new Promise<boolean>((resolve) => {
+					finishRetry = resolve;
+				}),
 			startFreshSettings: () => Promise.resolve(true),
 			recovery: {},
 			// What the import offer reads and writes when dismissed.
@@ -56,11 +59,17 @@ function drawBanners(plugin: object, app: object = { setting: { openPagePath() {
 	const ctx: TreeContext = {
 		app: app as never,
 		plugin: plugin as never,
-		redraw: () => { redraws++; tab.update(); },
+		redraw: () => {
+			redraws++;
+			tab.update();
+		},
 		registerDisposer: () => {},
 		rows: new RowRegistry(),
 		parts: new PersistentParts(() => {}),
-		jumpTo: (rowId, _fromKeyboard, pagePath) => { jumps.push(rowId); jumpPaths.push(pagePath); },
+		jumpTo: (rowId, _fromKeyboard, pagePath) => {
+			jumps.push(rowId);
+			jumpPaths.push(pagePath);
+		},
 	};
 	const tab = new PluginSettingTab({}, {});
 	tab.getSettingDefinitions = () => toObsidianItems([bannersGroup(ctx), { name: "Something else" }]);
@@ -91,7 +100,10 @@ describe("the saving notice", () => {
 		const paused = drawBanners(fakePlugin(true).plugin).harness;
 		const row = paused.rows().find((r) => r.def.id === "saving-notice")!;
 		assert.ok(row.settingEl.isShown());
-		assert.equal(row.settingEl.querySelector(".cs-readonly-banner-title")?.textContent, t("saveStatus.titlePaused"));
+		assert.equal(
+			row.settingEl.querySelector(".cs-readonly-banner-title")?.textContent,
+			t("saveStatus.titlePaused"),
+		);
 		const quiet = drawBanners(fakePlugin(false).plugin).harness;
 		assert.equal(quiet.rendered[0]!.groupEl.isShown(), false);
 	});
@@ -157,7 +169,13 @@ describe("the import offer", () => {
 		const offer = harness.rows().find((r) => r.def.id === "import-offer")!.settingEl;
 		(offer.querySelector(".cs-competitor-import-banner-dismiss") as HTMLElement).click();
 		assert.equal(redraws(), 1);
-		assert.equal(harness.rows().find((r) => r.def.id === "import-offer")!.settingEl.isShown(), false);
+		assert.equal(
+			harness
+				.rows()
+				.find((r) => r.def.id === "import-offer")!
+				.settingEl.isShown(),
+			false,
+		);
 	});
 });
 
@@ -169,7 +187,15 @@ describe("paused guards", () => {
 			const writer = { isFrozen: true };
 			const calls: number[] = [];
 			let putBack = 0;
-			const onDelete = refuseWhilePaused(writer, (index: number) => { calls.push(index); }, () => { putBack++; });
+			const onDelete = refuseWhilePaused(
+				writer,
+				(index: number) => {
+					calls.push(index);
+				},
+				() => {
+					putBack++;
+				},
+			);
 			onDelete(2);
 			assert.deepEqual(calls, []);
 			assert.equal(putBack, 1);

@@ -1,16 +1,19 @@
 export const vi: Record<string, string> = {
 	"portable.reviewTitle": "Xem xét chuyển đổi",
-	"portable.helpIntro": "Chọn các nội dung thay thế cần áp dụng. Nhấp vào biểu tượng bút chì hoặc văn bản thay thế để chỉnh sửa, sau đó nhấn Enter hoặc nhấp ra ngoài trường để lưu. Dùng biểu tượng đặt lại để bỏ bản nháp hoặc khôi phục nội dung thay thế mặc định. Ghi chú chỉ thay đổi sau khi bạn chọn Chuyển đổi mục đã chọn và xác nhận. Liên kết tiêu đề được cập nhật cùng với các tiêu đề đã chọn.",
+	"portable.helpIntro":
+		"Chọn các nội dung thay thế cần áp dụng. Nhấp vào biểu tượng bút chì hoặc văn bản thay thế để chỉnh sửa, sau đó nhấn Enter hoặc nhấp ra ngoài trường để lưu. Dùng biểu tượng đặt lại để bỏ bản nháp hoặc khôi phục nội dung thay thế mặc định. Ghi chú chỉ thay đổi sau khi bạn chọn Chuyển đổi mục đã chọn và xác nhận. Liên kết tiêu đề được cập nhật cùng với các tiêu đề đã chọn.",
 	"portable.help": "Giới thiệu về chuyển đổi",
 	"portable.roleLink": "Liên kết đến tiêu đề",
 	"portable.convertSelected": "Chuyển đổi mục đã chọn",
-	"portable.selectionSummary": "Đã chọn {{selected}} trong {{total}} mục thay thế · {{links}} liên kết tiêu đề cần cập nhật",
-	"portable.selectionSummaryNoLinks":
-		"Đã chọn {{selected}} trong {{total}} mục thay thế",
-	"portable.selectionConflict": "Lựa chọn này sẽ khiến liên kết tiêu đề không rõ đích đến. Lựa chọn trước đó được giữ nguyên.",
+	"portable.selectionSummary":
+		"Đã chọn {{selected}} trong {{total}} mục thay thế · {{links}} liên kết tiêu đề cần cập nhật",
+	"portable.selectionSummaryNoLinks": "Đã chọn {{selected}} trong {{total}} mục thay thế",
+	"portable.selectionConflict":
+		"Lựa chọn này sẽ khiến liên kết tiêu đề không rõ đích đến. Lựa chọn trước đó được giữ nguyên.",
 	"portable.selectAll": "Chọn tất cả",
 	"portable.selectNone": "Bỏ chọn tất cả",
-	"portable.relatedLinksHint": "Liên kết và nội dung nhúng đi theo các tiêu đề đã chọn và được chuyển đổi cùng với chúng.",
+	"portable.relatedLinksHint":
+		"Liên kết và nội dung nhúng đi theo các tiêu đề đã chọn và được chuyển đổi cùng với chúng.",
 	"portable.selectChange": "Chuyển đổi {{path}}, dòng {{line}}",
 	"portable.showMore": "Hiển thị thêm {{count}}",
 	"portable.openFailed": "Không thể mở thanh bên chuyển đổi.",
@@ -18,14 +21,19 @@ export const vi: Record<string, string> = {
 	"portable.retry": "Thử lại",
 	"portable.blockedAmbiguous": "Bỏ qua tiêu đề này vì đích của liên kết không rõ ràng.",
 	"portable.blockedTarget": "Bỏ qua tiêu đề này vì không thể giữ nguyên đích của liên kết một cách an toàn.",
-	"portable.recovery": "Vẫn còn thay đổi chưa áp dụng. Hãy hoàn tất việc chuyển đổi và cập nhật liên kết tiêu đề trước khi khởi động lại hoặc tắt plugin; kế hoạch còn lại chỉ được lưu trong bộ nhớ.",
-	"portable.recoveryChanged": "Ghi chú đã thay đổi sau khi quá trình chuyển đổi dừng lại. Các cập nhật liên kết đang chờ vẫn được giữ; từng ghi chú sẽ được kiểm tra lại trước khi ghi.",
+	"portable.recovery":
+		"Vẫn còn thay đổi chưa áp dụng. Hãy hoàn tất việc chuyển đổi và cập nhật liên kết tiêu đề trước khi khởi động lại hoặc tắt plugin; kế hoạch còn lại chỉ được lưu trong bộ nhớ.",
+	"portable.recoveryChanged":
+		"Ghi chú đã thay đổi sau khi quá trình chuyển đổi dừng lại. Các cập nhật liên kết đang chờ vẫn được giữ; từng ghi chú sẽ được kiểm tra lại trước khi ghi.",
 	"portable.finishConversion": "Hoàn tất chuyển đổi",
-	"portable.recoveryUnavailable": "Không thể khôi phục an toàn một số cập nhật liên kết đang chờ. Hãy kiểm tra các ghi chú liên quan trước khi bắt đầu chuyển đổi mới.",
+	"portable.recoveryUnavailable":
+		"Không thể khôi phục an toàn một số cập nhật liên kết đang chờ. Hãy kiểm tra các ghi chú liên quan trước khi bắt đầu chuyển đổi mới.",
 	"portable.title": "Chuyển sang Markdown tiêu chuẩn",
-	"portable.settingDesc": "Thay các callout ở tiêu đề và nội dòng trong toàn bộ kho ghi chú bằng văn bản thông thường, sẵn sàng sử dụng mà không cần Callout Studio.",
+	"portable.settingDesc":
+		"Thay các callout ở tiêu đề và nội dòng trong toàn bộ kho ghi chú bằng văn bản thông thường, sẵn sàng sử dụng mà không cần Callout Studio.",
 	"portable.review": "Xem xét chuyển đổi",
-	"portable.intro": "Nếu bạn định ngừng dùng Callout Studio hoặc chuyển kho ghi chú sang ứng dụng không hỗ trợ nó, hãy chuyển các callout ở tiêu đề và nội dòng sang Markdown tiêu chuẩn.",
+	"portable.intro":
+		"Nếu bạn định ngừng dùng Callout Studio hoặc chuyển kho ghi chú sang ứng dụng không hỗ trợ nó, hãy chuyển các callout ở tiêu đề và nội dòng sang Markdown tiêu chuẩn.",
 	"portable.before": "Trước",
 	"portable.after": "Sau",
 	"portable.replacement": "Nội dung thay thế",
@@ -33,21 +41,26 @@ export const vi: Record<string, string> = {
 	"portable.type": "loại",
 	"portable.text": "Văn bản",
 	"portable.headingText": "Tiêu đề",
-	"portable.backup": "Bạn nên sao lưu kho ghi chú trước khi chuyển đổi. Thao tác này sửa các ghi chú gốc và không thể hoàn tác trong Callout Studio.",
+	"portable.backup":
+		"Bạn nên sao lưu kho ghi chú trước khi chuyển đổi. Thao tác này sửa các ghi chú gốc và không thể hoàn tác trong Callout Studio.",
 	"portable.scanning": "Đang đọc ghi chú Markdown…",
 	"portable.progress": "Đang đọc ghi chú: {{done}} trên {{total}}",
 	"portable.empty": "Không tìm thấy callout ở tiêu đề hoặc nội dòng có thể chuyển đổi. Sẽ không có gì thay đổi.",
 	"portable.confirmTitle": "Chuyển đổi vĩnh viễn kho ghi chú này?",
 	"portable.confirmSubtitle": "Không tạo bản sao lưu tự động",
-	"portable.confirmBody": "Chuyển đổi {{count}} lần xuất hiện và cập nhật {{links}} liên kết tiêu đề trong {{files}} ghi chú?\nThao tác này thay đổi các tệp gốc và không thể hoàn tác trong Callout Studio. Không có bản sao lưu tự động. Hãy sao lưu kho ghi chú trước, lưu các ghi chú đang mở và tạm dừng chỉnh sửa cùng đồng bộ cho đến khi chuyển đổi xong.\nNếu một tệp thay đổi hoặc việc ghi thất bại, quá trình chuyển đổi sẽ dừng. Các ghi chú đã chuyển đổi vẫn giữ những thay đổi đó.",
+	"portable.confirmBody":
+		"Chuyển đổi {{count}} lần xuất hiện và cập nhật {{links}} liên kết tiêu đề trong {{files}} ghi chú?\nThao tác này thay đổi các tệp gốc và không thể hoàn tác trong Callout Studio. Không có bản sao lưu tự động. Hãy sao lưu kho ghi chú trước, lưu các ghi chú đang mở và tạm dừng chỉnh sửa cùng đồng bộ cho đến khi chuyển đổi xong.\nNếu một tệp thay đổi hoặc việc ghi thất bại, quá trình chuyển đổi sẽ dừng. Các ghi chú đã chuyển đổi vẫn giữ những thay đổi đó.",
 	"portable.confirmAction": "Chuyển đổi vĩnh viễn",
 	"portable.converting": "Đang chuyển đổi các thay đổi đã chọn… Đóng bảng này sẽ không dừng quá trình chuyển đổi.",
-	"portable.complete": "Đã chuyển đổi {{count}} lần xuất hiện và cập nhật {{links}} liên kết tiêu đề trong {{files}} ghi chú.",
-	"portable.stopped": "Quá trình chuyển đổi đã dừng. {{count}} lần xuất hiện và {{links}} liên kết tiêu đề trong {{files}} ghi chú đã được thay đổi; những thay đổi đó vẫn được giữ.",
+	"portable.complete":
+		"Đã chuyển đổi {{count}} lần xuất hiện và cập nhật {{links}} liên kết tiêu đề trong {{files}} ghi chú.",
+	"portable.stopped":
+		"Quá trình chuyển đổi đã dừng. {{count}} lần xuất hiện và {{links}} liên kết tiêu đề trong {{files}} ghi chú đã được thay đổi; những thay đổi đó vẫn được giữ.",
 	"portable.errorEditor": "Lưu các ghi chú đang mở để tự động cập nhật bản xem trước.",
 	"portable.errorChanged": "Ghi chú đã thay đổi. Hãy xem xét các thay đổi mới trước khi chuyển đổi.",
 	"portable.errorBusy": "Một quá trình chuyển đổi khác đang chạy. Hãy chờ quá trình đó hoàn tất.",
-	"portable.error": "Không thể đọc hoặc cập nhật kho ghi chú một cách an toàn. Kiểm tra quyền truy cập tệp rồi thử lại.",
+	"portable.error":
+		"Không thể đọc hoặc cập nhật kho ghi chú một cách an toàn. Kiểm tra quyền truy cập tệp rồi thử lại.",
 	"portable.blockedConverting": "Một quá trình chuyển đổi đang chạy. Hãy chờ quá trình đó hoàn tất.",
 	"portable.blockedUpdating": "Bản xem lại vẫn đang cập nhật. Hãy chờ hoàn tất trước khi chuyển đổi.",
 	"portable.blockedEditing": "Hãy hoàn tất chỉnh sửa phần thay thế trước: nhấn Enter để lưu hoặc Esc để bỏ.",
@@ -94,17 +107,15 @@ export const vi: Record<string, string> = {
 	"settings.fallbackTagAuto": "Tự động",
 	"settings.rescanVaultDesc": "Thêm các loại callout mà ghi chú của bạn đang dùng nhưng chưa có trong danh sách này.",
 	"settings.rescanVaultHintAction": "Quét tìm callout",
-	"manualDiscovery.failed": "Không thể lưu kết quả quét. Hãy kiểm tra quyền ghi cài đặt và đợi đồng bộ hoàn tất, rồi thử lại qua Cài đặt → Các loại callout của tôi → Quét tìm callout. Các callout hiện có không bị thay thế.",
+	"manualDiscovery.failed":
+		"Không thể lưu kết quả quét. Hãy kiểm tra quyền ghi cài đặt và đợi đồng bộ hoàn tất, rồi thử lại qua Cài đặt → Các loại callout của tôi → Quét tìm callout. Các callout hiện có không bị thay thế.",
 	"manualDiscovery.scanning": "Đang quét…",
-	"settings.rescanComplete":
-		"Quét hoàn tất: đã thêm {{count}} loại callout mới.",
+	"settings.rescanComplete": "Quét hoàn tất: đã thêm {{count}} loại callout mới.",
 	"replaceModal.titleReplace": "Thay thế trong vault",
 
 	"welcome.title": "Chào mừng đến với Callout Studio!",
-	"welcome.tagline":
-		"Giải pháp toàn diện của bạn để tạo, tạo kiểu và quản lý callout trong Obsidian.",
-	"importBanner.message":
-		"Chúng tôi nhận thấy bạn đang dùng {{plugins}}. Bạn có muốn nhập callout của mình không?",
+	"welcome.tagline": "Giải pháp toàn diện của bạn để tạo, tạo kiểu và quản lý callout trong Obsidian.",
+	"importBanner.message": "Chúng tôi nhận thấy bạn đang dùng {{plugins}}. Bạn có muốn nhập callout của mình không?",
 	"importBanner.action": "Nhập",
 	"importBanner.dismiss": "Bỏ qua",
 	"welcome.demoName": "Callout Studio",
@@ -119,8 +130,7 @@ export const vi: Record<string, string> = {
 		"Callout Studio còn có nhiều thứ hơn thế để mang lại! [Tìm hiểu thêm]({{repoUrl}}).\n",
 	"deleteModal.title": "Xóa callout",
 
-	"deleteModal.bodyInUse":
-		"Callout này xuất hiện {{count}} lần trong {{files}} tệp.",
+	"deleteModal.bodyInUse": "Callout này xuất hiện {{count}} lần trong {{files}} tệp.",
 	"deleteModal.notesUntouched":
 		"Thao tác này chỉ xóa định nghĩa callout. Ghi chú của bạn không bị động đến, nên các callout hiện có sẽ chỉ quay về kiểu mặc định.",
 	"deleteModal.fallbackTarget":
@@ -150,12 +160,10 @@ export const vi: Record<string, string> = {
 	"settings.export": "Xuất…",
 	"settings.importTitle": "Nhập callout",
 	"settings.exportTitle": "Xuất callout",
-	"settings.importDesc":
-		"Nhập dữ liệu Callout Studio từ vault khác hoặc chuyển callout của bạn từ plugin khác sang.",
+	"settings.importDesc": "Nhập dữ liệu Callout Studio từ vault khác hoặc chuyển callout của bạn từ plugin khác sang.",
 	"settings.exportDesc":
 		"Lưu các callout của bạn dưới dạng bản sao lưu Callout Studio hoặc đoạn mã CSS để dùng ở nơi khác.",
-	"settings.importConflictNotice":
-		"Đã nhập {{count}} loại callout; {{overwritten}} mục hiện có đã bị ghi đè.",
+	"settings.importConflictNotice": "Đã nhập {{count}} loại callout; {{overwritten}} mục hiện có đã bị ghi đè.",
 
 	"settings.addNewCallout": "thêm callout",
 
@@ -175,7 +183,7 @@ export const vi: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Không thể nhân bản callout. Hãy kiểm tra trạng thái lưu rồi thử lại.",
 	"settings.resetAction": "Đặt lại về mặc định",
 	"settings.makeFallbackAction": "Sử dụng kiểu dự phòng mặc định",
-	"notice.fallbackStyleApplied": "\"{{name}}\" hiện dùng kiểu dự phòng mặc định.",
+	"notice.fallbackStyleApplied": '"{{name}}" hiện dùng kiểu dự phòng mặc định.',
 
 	"settings.colorSwatchAria": "Điểm nhấn: {{accent}} · Nền: {{bg}}",
 
@@ -183,14 +191,12 @@ export const vi: Record<string, string> = {
 	"settings.themeCalloutsHeading": "Callout từ giao diện của bạn",
 	"settings.themeCalloutsDefaultTheme": "Giao diện của bạn",
 	"settings.themeCalloutsEmpty": "Hiện {{theme}} không định kiểu callout nào.",
-	"settings.themePreviewAria":
-		'Xem trước "{{name}}" — xem giao diện của bạn vẽ nó như thế nào',
+	"settings.themePreviewAria": 'Xem trước "{{name}}" — xem giao diện của bạn vẽ nó như thế nào',
 	"settings.builtInAllThemeStyled":
 		"{{theme}} định kiểu cho mọi callout tích hợp, vì vậy Callout Studio giữ nguyên tất cả. Để thiết kế callout của riêng bạn, hãy thêm một callout với ID khác.",
 
 	"settings.fallbackCallout": "Callout dự phòng mặc định",
-	"settings.fallbackCalloutDesc":
-		"Các loại callout không xác định kế thừa kiểu này.",
+	"settings.fallbackCalloutDesc": "Các loại callout không xác định kế thừa kiểu này.",
 
 	"settings.border": "Viền",
 	"settings.borderTop": "Trên",
@@ -222,8 +228,7 @@ export const vi: Record<string, string> = {
 	"settings.paletteCountOne": "1 bảng màu",
 	"settings.editPaletteAria": "Chỉnh sửa bảng màu {{name}}",
 	"settings.deletePaletteTitle": "Xóa bảng màu",
-	"settings.deletePaletteBody":
-		'Các callout dùng màu này sẽ không bị ảnh hưởng.',
+	"settings.deletePaletteBody": "Các callout dùng màu này sẽ không bị ảnh hưởng.",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Các callout nêu tên này trong siêu dữ liệu ("{{key}}") sẽ dùng màu tích hợp có tên đó. Ghi chú của bạn không thay đổi.',
 
@@ -255,8 +260,7 @@ export const vi: Record<string, string> = {
 	"commandBuilder.headingLevel": "Cấp độ tiêu đề",
 	"commandBuilder.headingLevelDesc": "Cấp độ tiêu đề sẽ được viết.",
 	"commandBuilder.action": "Hành động",
-	"commandBuilder.actionDesc":
-		"Bọc sẽ biến phần chọn thành callout; chèn sẽ thêm một callout trống.",
+	"commandBuilder.actionDesc": "Bọc sẽ biến phần chọn thành callout; chèn sẽ thêm một callout trống.",
 	"commandBuilder.actionDescHeading":
 		"Bọc sẽ biến dòng có con trỏ thành callout tiêu đề.\nChèn sẽ thêm một callout trống ở dòng mới.",
 	"commandBuilder.actionDescInline":
@@ -264,8 +268,7 @@ export const vi: Record<string, string> = {
 	"commandBuilder.actionWrap": "Bọc phần chọn",
 	"commandBuilder.actionInsert": "Chèn mới",
 	"commandBuilder.foldState": "Trạng thái thu gọn",
-	"commandBuilder.foldStateDesc":
-		"Callout có thể gập được hay không, và trạng thái ban đầu của nó.",
+	"commandBuilder.foldStateDesc": "Callout có thể gập được hay không, và trạng thái ban đầu của nó.",
 	"commandBuilder.foldNone": "Không thể gập",
 	"commandBuilder.foldExpanded": "Có thể gập, mở (+)",
 	"commandBuilder.foldCollapsed": "Có thể gập, đóng (-)",
@@ -275,15 +278,14 @@ export const vi: Record<string, string> = {
 	"commandBuilder.noCalloutChosen": "Hãy chọn một callout cho lệnh này trước.",
 	"commandBuilder.save": "Lưu",
 
-	"commandBuilder.roleThemeOwned":
-		"Giao diện của bạn cung cấp callout này, nên nó chỉ có định dạng Khối.",
-	"commandBuilder.commandSuspended": "Tạm dừng khi giao diện của bạn cung cấp callout này, lúc đó nó chỉ có định dạng khối.",
+	"commandBuilder.roleThemeOwned": "Giao diện của bạn cung cấp callout này, nên nó chỉ có định dạng Khối.",
+	"commandBuilder.commandSuspended":
+		"Tạm dừng khi giao diện của bạn cung cấp callout này, lúc đó nó chỉ có định dạng khối.",
 	"commandBuilder.pausedTag": "Tạm dừng do giao diện",
 	"commandBuilder.missingTag": "Thiếu callout",
 
 	"settings.resetAll": "Đặt lại",
-	"settings.resetAllDesc":
-		"Khôi phục tất cả cài đặt và tùy chỉnh về mặc định.",
+	"settings.resetAllDesc": "Khôi phục tất cả cài đặt và tùy chỉnh về mặc định.",
 	"settings.resetAllButton": "Đặt lại tất cả",
 	"notice.resetAllDone": "Đã đặt lại tất cả về mặc định.",
 	"settings.resetIntro": "Hãy dành một chút thời gian để trân trọng mọi thứ bạn đã xây dựng với Callout Studio.",
@@ -304,59 +306,51 @@ export const vi: Record<string, string> = {
 	"settings.resetItemAutocomplete": "Cài đặt tự động hoàn thành và siêu dữ liệu",
 	"settings.resetItemFallback": "Kiểu dự phòng",
 	"settings.resetItemIconLibraries": "Thứ tự thư viện biểu tượng và thư viện đã ẩn",
-	"settings.resetAllConfirmAfter": "Đừng lo: trước khi đặt lại, chúng tôi lưu một bản sao lưu cài đặt hiện tại của bạn. Bạn có thể lấy lại nó bất cứ lúc nào bằng Khôi phục phiên bản trước trong cài đặt.\nNếu bạn dùng dịch vụ đồng bộ, việc đặt lại có thể lan sang các thiết bị khác của bạn.",
+	"settings.resetAllConfirmAfter":
+		"Đừng lo: trước khi đặt lại, chúng tôi lưu một bản sao lưu cài đặt hiện tại của bạn. Bạn có thể lấy lại nó bất cứ lúc nào bằng Khôi phục phiên bản trước trong cài đặt.\nNếu bạn dùng dịch vụ đồng bộ, việc đặt lại có thể lan sang các thiết bị khác của bạn.",
 	"settings.resetNothing": "Không có gì để đặt lại: mọi thứ đã ở mặc định.",
 
-	"notice.customCommandMissingCallout":
-		"Loại callout của lệnh đó không còn tồn tại.",
+	"notice.customCommandMissingCallout": "Loại callout của lệnh đó không còn tồn tại.",
 	"notice.importedJSON": "Đã nhập {{count}} loại callout từ JSON.",
 	"notice.importedSettings": "Đã nhập cài đặt plugin.",
-	"notice.importedCalloutManager":
-		"Đã nhập từ Callout Manager: {{created}} đã tạo, {{updated}} đã cập nhật.",
-	"notice.importedAdmonition":
-		"Đã nhập từ Admonition: tạo mới {{created}}, cập nhật " +
-		"{{updated}}.",
-	"notice.noNewJSON":
-		"Không có loại callout mới nào được nhập (ID có thể đã tồn tại).",
+	"notice.importedCalloutManager": "Đã nhập từ Callout Manager: {{created}} đã tạo, {{updated}} đã cập nhật.",
+	"notice.importedAdmonition": "Đã nhập từ Admonition: tạo mới {{created}}, cập nhật " + "{{updated}}.",
+	"notice.noNewJSON": "Không có loại callout mới nào được nhập (ID có thể đã tồn tại).",
 	"notice.iconDownloadFailed":
 		'Không thể tải biểu tượng Material "{{name}}". Nó có thể không có sẵn cho kiểu/độ dày này, hoặc kết nối của bạn đang ngoại tuyến.',
 
-	"notice.vaultScanFailed": "Không thể đếm số lần sử dụng callout vì không thể đọc được {{count}} ghi chú. Hãy kiểm tra bộ nhớ lưu trữ và đồng bộ hóa, sau đó thử lại.",
+	"notice.vaultScanFailed":
+		"Không thể đếm số lần sử dụng callout vì không thể đọc được {{count}} ghi chú. Hãy kiểm tra bộ nhớ lưu trữ và đồng bộ hóa, sau đó thử lại.",
 
 	"notice.externalCssRetired":
 		"Tùy chọn tạo kiểu CSS cá nhân đã bị gỡ bỏ. Các callout này hiện dùng thiết kế Callout Studio đã lưu, trừ khi giao diện của bạn tạo kiểu cho chúng. Ghi chú và đoạn CSS cá nhân của bạn không bị thay đổi.",
 	"notice.vaultRewritePartial":
 		"{{count}} ghi chú không thể cập nhật và được giữ nguyên. Xem bảng điều khiển nhà phát triển để biết chi tiết.",
-	"notice.calloutDeleteIncomplete": "Không thể chuyển đổi một số ghi chú. Loại callout đã được giữ lại. Các chuyển đổi đã hoàn tất được lưu; hãy khắc phục sự cố tệp, sau đó chạy lại hành động để hoàn tất.",
+	"notice.calloutDeleteIncomplete":
+		"Không thể chuyển đổi một số ghi chú. Loại callout đã được giữ lại. Các chuyển đổi đã hoàn tất được lưu; hãy khắc phục sự cố tệp, sau đó chạy lại hành động để hoàn tất.",
 
 	"notice.nothingToWrap": "Không có gì để bọc.",
 	"notice.cursorNotInsideCallout": "Con trỏ không nằm trong callout.",
 	"notice.headingAlreadyCallout": "Tiêu đề này đã là một callout.",
-	"notice.unwrapLeftAsIs":
-		"Không thể bỏ callout này một cách an toàn nên đã giữ nguyên.",
-	"notice.autocompleteTargetMoved":
-		"Không có gì được chèn — dòng đã thay đổi khi trình chỉnh sửa đang mở.",
+	"notice.unwrapLeftAsIs": "Không thể bỏ callout này một cách an toàn nên đã giữ nguyên.",
+	"notice.autocompleteTargetMoved": "Không có gì được chèn — dòng đã thay đổi khi trình chỉnh sửa đang mở.",
 	"notice.autocompleteAlwaysEnabled": "Tự động hoàn thành hiện là tính năng cốt lõi và luôn được bật.",
 	"notice.openHotkeysFailed": "Không thể mở cài đặt phím tắt Obsidian.",
-	"notice.filterHotkeysFailed":
-		"Đã mở phím tắt Obsidian, nhưng không thể áp dụng bộ lọc Callout Studio.",
+	"notice.filterHotkeysFailed": "Đã mở phím tắt Obsidian, nhưng không thể áp dụng bộ lọc Callout Studio.",
 
 	"editor.editCallout": "Chỉnh sửa callout",
 	"editor.newCallout": "Callout mới",
 	"editor.displayName": "Tên hiển thị",
 	"editor.displayNameDesc": "Nhãn dễ đọc được hiển thị trong giao diện",
-	"editor.displayNameBuiltIn":
-		"Không thể thay đổi tên hiển thị của callouts tích hợp",
+	"editor.displayNameBuiltIn": "Không thể thay đổi tên hiển thị của callouts tích hợp",
 	"editor.displayNamePlaceholder": "Callout của tôi",
 	"editor.calloutIds": "ID callout",
-	"editor.calloutIdsDesc":
-		"Tất cả các định danh cho callout này. Cho phép dấu cách.\nNhấn Enter hoặc nút + để thêm.",
+	"editor.calloutIdsDesc": "Tất cả các định danh cho callout này. Cho phép dấu cách.\nNhấn Enter hoặc nút + để thêm.",
 	"editor.calloutIdsPlaceholder": "Thêm ID",
 	"editor.addId": "Thêm ID",
 	"editor.maxIds": "Tối đa {{max}} ID. Hãy xóa một ID để thêm ID khác.",
 	"editor.idLinkedToName": "Liên kết với tên hiển thị",
-	"editor.idCannotDelete":
-		"ID này được liên kết với tên hiển thị và không thể xóa — chỉnh sửa tên để thay đổi nó",
+	"editor.idCannotDelete": "ID này được liên kết với tên hiển thị và không thể xóa — chỉnh sửa tên để thay đổi nó",
 	"editor.icon": "Biểu tượng",
 	"editor.pickIcon": "Thay đổi biểu tượng",
 	"editor.replaceIcon": "Thay thế biểu tượng",
@@ -372,8 +366,7 @@ export const vi: Record<string, string> = {
 	"editor.horizontalOffset": "Độ lệch ngang",
 	"editor.verticalOffset": "Độ lệch dọc",
 	"editor.colors": "Màu sắc",
-	"editor.colorsDesc":
-		"Đặt màu viền, nền và chữ cho callout này.",
+	"editor.colorsDesc": "Đặt màu viền, nền và chữ cho callout này.",
 	"editor.resetColors": "Đặt lại màu sắc về mặc định",
 	"editor.paletteDeleted": "Màu đã xóa",
 	"editor.paletteGroupObsidian": "Callouts Obsidian",
@@ -381,14 +374,14 @@ export const vi: Record<string, string> = {
 	"editor.paletteGroupCustom": "Tùy chỉnh",
 	"editor.contrastWarning": "Độ tương phản thấp so với nền — có thể khó đọc",
 	"editor.foldable": "Có thể gập",
-	"editor.foldableDesc":
-		"Chọn liệu callout có thể gập và trạng thái mặc định nào áp dụng trên toàn vault.",
+	"editor.foldableDesc": "Chọn liệu callout có thể gập và trạng thái mặc định nào áp dụng trên toàn vault.",
 	"editor.foldOff": "Tắt",
 	"editor.foldOpen": "Mặc định mở",
 	"editor.foldClosed": "Mặc định đóng",
 	"editor.cancel": "Hủy",
 	"editor.saveChanges": "Lưu thay đổi",
-	"editor.saveFailed": "Không thể hoàn tất việc lưu. Nếu cửa sổ chỉnh sửa này vẫn đang mở, hãy giữ nguyên và thử lại sau khi kiểm tra bộ nhớ cùng trạng thái đồng bộ. Một số cài đặt hoặc thay đổi trong ghi chú có thể đã được lưu.",
+	"editor.saveFailed":
+		"Không thể hoàn tất việc lưu. Nếu cửa sổ chỉnh sửa này vẫn đang mở, hãy giữ nguyên và thử lại sau khi kiểm tra bộ nhớ cùng trạng thái đồng bộ. Một số cài đặt hoặc thay đổi trong ghi chú có thể đã được lưu.",
 	"editor.createCallout": "Tạo callout",
 	"editor.nameRequired": "Cần có tên hiển thị trước khi tạo callout.",
 	"editor.noChangesToSave": "Không có thay đổi nào được thực hiện.",
@@ -397,21 +390,17 @@ export const vi: Record<string, string> = {
 	"editor.idTooLong": "ID tối đa {{max}} ký tự",
 	"editor.idExists": "Đã tồn tại callout với ID này",
 	"editor.idConflict": "ID này xung đột với callout hiện có",
-	"editor.idDashConflict":
-		'Obsidian ghi khoảng trắng thành dấu gạch ngang, vì vậy ID này xung đột với "{{other}}"',
+	"editor.idDashConflict": 'Obsidian ghi khoảng trắng thành dấu gạch ngang, vì vậy ID này xung đột với "{{other}}"',
 	"editor.idOwnedBy": '"{{id}}" là một ID của {{name}}. Bạn có thể {{link}}.',
 	"editor.idMoveHere": "chuyển nó sang đây",
-	"editor.idOwnedByMain":
-		'"{{id}}" là ID chính của {{name}}. Để dùng ở đây, hãy xóa {{name}} trước.',
-	"editor.idBuiltInStock":
-		'"{{id}}" là một trong các ID riêng của Obsidian cho {{name}}.',
+	"editor.idOwnedByMain": '"{{id}}" là ID chính của {{name}}. Để dùng ở đây, hãy xóa {{name}} trước.',
+	"editor.idBuiltInStock": '"{{id}}" là một trong các ID riêng của Obsidian cho {{name}}.',
 	"editor.idMoving": 'Khi lưu, "{{id}}" sẽ chuyển sang đây từ {{name}}.',
 	"editor.idMovingNotes": "Các ghi chú của bạn không đổi. Chúng lấy kiểu của callout này.",
 
 	"editor.idFromTheme":
 		"{{theme}} đã cung cấp một callout với ID này, vì vậy Callout Studio không thể tạo kiểu cho nó. Hãy chọn một ID khác.",
-	"editor.namesFromTheme":
-		"{{theme}} tự vẽ các callout khối {{names}}. Các ID khác của bạn vẫn giữ thiết kế này.",
+	"editor.namesFromTheme": "{{theme}} tự vẽ các callout khối {{names}}. Các ID khác của bạn vẫn giữ thiết kế này.",
 	"editor.namesFromThemeAndObsidian":
 		"{{theme}} tự vẽ các callout khối {{names}}, còn Obsidian vẽ {{stock}}. Các ID khác của bạn vẫn giữ thiết kế này.",
 	"editor.idThemePattern":
@@ -420,10 +409,8 @@ export const vi: Record<string, string> = {
 	"editor.untitledCallout": "Callout chưa đặt tên",
 	"editor.loremIpsum":
 		"Làn gió nhẹ lướt qua những tán cây. Ánh nắng ấm áp phủ lên lối mòn yên tĩnh, làm khung cảnh thêm sống động.",
-	"editor.loremIpsumShort":
-		"Làn gió nhẹ lướt qua những tán cây.",
-	"editor.sampleInlineText":
-		"Đây là một viên [!{id}]{{title}} nội tuyến bên trong một đoạn văn.",
+	"editor.loremIpsumShort": "Làn gió nhẹ lướt qua những tán cây.",
+	"editor.sampleInlineText": "Đây là một viên [!{id}]{{title}} nội tuyến bên trong một đoạn văn.",
 	"editor.previewReadOnly": "Không thể chỉnh sửa bản xem trước trực tiếp",
 	"noteChanges.title": "Cập nhật các ghi chú của bạn?",
 	"noteChanges.leave": "Để nguyên",
@@ -433,18 +420,15 @@ export const vi: Record<string, string> = {
 	"noteChanges.titlesChange": 'Đổi thành "{{new}}"',
 	"noteChanges.titlesLeaveDesc": 'Chúng vẫn ghi "{{old}}".',
 	"noteChanges.foldChange": 'Đặt thành "{{state}}"',
-	"noteChanges.foldLeaveDesc":
-		"Chỉ các callout bạn chèn từ giờ trở đi mới dùng cài đặt mới.",
+	"noteChanges.foldLeaveDesc": "Chỉ các callout bạn chèn từ giờ trở đi mới dùng cài đặt mới.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": '{{name}} — do giao diện của bạn cung cấp',
+	"themePreview.title": "{{name}} — do giao diện của bạn cung cấp",
 	"themePreview.summary":
 		"Do {{theme}} cung cấp (chỉ đọc). Không thể thay đổi màu sắc, biểu tượng và ID tại đây; các định dạng Tiêu đề/Nội dòng không khả dụng. Để tùy chỉnh, hãy tạo một callout mới.",
 	"themePreview.previewTitle": "Cách nó hiển thị hiện tại",
-	"themePreview.blockSample":
-		"> [!{{id}}] {{name}}\n" +
-		"> Đây là hình thức nội dung của callout.\n",
+	"themePreview.blockSample": "> [!{{id}}] {{name}}\n" + "> Đây là hình thức nội dung của callout.\n",
 
 	"editor.themePreviewClose": "Đã hiểu",
 
@@ -461,8 +445,8 @@ export const vi: Record<string, string> = {
 	"palette.metadataNameShared":
 		"Trong siêu dữ liệu của callout: {{key}}. Một bảng màu đã lưu khác cũng có từ này, nên chỉ một trong hai đáp ứng nó.",
 	"palette.renameNotesChange":
-		"Bạn đã đổi tên bảng màu từ \"{{old}}\" thành \"{{new}}\", nên từ của nó trong siêu dữ liệu callout đổi từ \"{{oldWord}}\" thành \"{{newWord}}\".",
-	"palette.renameNotesLeaveDesc": "Chúng giữ \"{{word}}\" và trở về màu riêng.",
+		'Bạn đã đổi tên bảng màu từ "{{old}}" thành "{{new}}", nên từ của nó trong siêu dữ liệu callout đổi từ "{{oldWord}}" thành "{{newWord}}".',
+	"palette.renameNotesLeaveDesc": 'Chúng giữ "{{word}}" và trở về màu riêng.',
 	"palette.renameNotesChangeDesc": "Mỗi |{{old}} trong ghi chú của bạn sẽ thành |{{new}}.",
 	"palette.renameNotesFailed":
 		"Không thể cập nhật một số ghi chú. Những ghi chú đã cập nhật được lưu lại; phần còn lại vẫn dùng tên cũ.",
@@ -472,8 +456,10 @@ export const vi: Record<string, string> = {
 	"palette.advancedColors": "Màu sắc",
 	"palette.lightModeColors": "Màu của chế độ sáng",
 	"palette.darkModeColors": "Màu của chế độ tối",
-	"palette.modeColorsHintLight": "Những thay đổi này chỉ áp dụng cho chế độ sáng. Chế độ tối giữ màu riêng của nó.\nĐể chỉnh sửa, hãy nhấn nút mặt trăng ở trên.",
-	"palette.modeColorsHintDark": "Những thay đổi này chỉ áp dụng cho chế độ tối. Chế độ sáng giữ màu riêng của nó.\nĐể chỉnh sửa, hãy nhấn nút mặt trời ở trên.",
+	"palette.modeColorsHintLight":
+		"Những thay đổi này chỉ áp dụng cho chế độ sáng. Chế độ tối giữ màu riêng của nó.\nĐể chỉnh sửa, hãy nhấn nút mặt trăng ở trên.",
+	"palette.modeColorsHintDark":
+		"Những thay đổi này chỉ áp dụng cho chế độ tối. Chế độ sáng giữ màu riêng của nó.\nĐể chỉnh sửa, hãy nhấn nút mặt trời ở trên.",
 	"palette.showLightMode": "Hiện chế độ sáng",
 	"palette.showDarkMode": "Hiện chế độ tối",
 	"palette.accentColor": "Màu nhấn",
@@ -550,8 +536,7 @@ export const vi: Record<string, string> = {
 	"iconPicker.allCategories": "Tất cả danh mục",
 	"iconPicker.noIconSelected": "Chưa chọn biểu tượng",
 	"iconPicker.chooseFirst": "Hãy chọn một biểu tượng trước.",
-	"iconPicker.noResults":
-		"Không có biểu tượng nào khớp với tìm kiếm của bạn.",
+	"iconPicker.noResults": "Không có biểu tượng nào khớp với tìm kiếm của bạn.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Tìm kiếm Octicons",
 	"iconPicker.fa": "Font Awesome",
@@ -569,10 +554,8 @@ export const vi: Record<string, string> = {
 	"iconPicker.customTooLarge": "{{name}} quá lớn. Biểu tượng tùy chỉnh có kích thước tối đa 5 MB.",
 	"iconPicker.customUnsupported":
 		"{{name}} không phải là tệp biểu tượng tùy chỉnh được hỗ trợ. Dùng SVG, PNG, JPEG hoặc WebP.",
-	"iconPicker.customInvalidSvg":
-		"{{name}} không thể đọc được như một SVG an toàn và đã không được thêm vào.",
-	"iconPicker.customDecodeFailed":
-		"Không thể đọc {{name}} dưới dạng biểu tượng tùy chỉnh.",
+	"iconPicker.customInvalidSvg": "{{name}} không thể đọc được như một SVG an toàn và đã không được thêm vào.",
+	"iconPicker.customDecodeFailed": "Không thể đọc {{name}} dưới dạng biểu tượng tùy chỉnh.",
 	"iconPicker.customDuplicate":
 		"{{name}} đã có trong biểu tượng tùy chỉnh của bạn. Đổi tên tệp hoặc xóa biểu tượng hiện có.",
 	"iconPicker.uploadCustom": "Tải tệp hình ảnh lên",
@@ -601,8 +584,7 @@ export const vi: Record<string, string> = {
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "tìm kiếm mọi thư viện cùng lúc",
 	"iconPicker.descLucide": "bộ riêng của Obsidian, luôn ngoại tuyến",
-	"iconPicker.descTabler":
-		"biểu tượng UI sạch và nhất quán, đường nét và đặc",
+	"iconPicker.descTabler": "biểu tượng UI sạch và nhất quán, đường nét và đặc",
 	"iconPicker.descMaterial": "bộ của Google, bốn kiểu và bảy độ đậm",
 	"iconPicker.descEmoji": "ký tự màu, mọi tông da",
 	"iconPicker.descOcticons": "biểu tượng giao diện GitHub",
@@ -727,19 +709,16 @@ export const vi: Record<string, string> = {
 
 	// Downloadable icon packs
 	"iconPack.downloadTitle": "{{name}} chưa được tải xuống",
-	"iconPack.downloadDetail":
-		"{{count}} biểu tượng · {{size}} · tải xuống một lần",
+	"iconPack.downloadDetail": "{{count}} biểu tượng · {{size}} · tải xuống một lần",
 	"iconPack.download": "Tải xuống",
 	"iconPack.downloading": "Đang tải xuống {{name}}…",
-	"iconPack.downloadFailed":
-		"Không thể tải xuống {{name}}. Kiểm tra kết nối và thử lại.",
+	"iconPack.downloadFailed": "Không thể tải xuống {{name}}. Kiểm tra kết nối và thử lại.",
 	"iconPack.retry": "Thử lại",
 	"iconPack.faBrandsNotice":
 		"Biểu tượng thương hiệu là nhãn hiệu của chủ sở hữu tương ứng. Việc đưa vào không có nghĩa là xác nhận. Chỉ sử dụng để đại diện cho công ty, sản phẩm hoặc dịch vụ mà chúng đề cập.",
 	"iconPack.simpleIconsNotice":
 		"Logo là nhãn hiệu của chủ sở hữu; việc đưa vào đây không có nghĩa là được chứng thực. Chỉ dùng logo để đại diện cho chính thương hiệu của nó và tuân theo hướng dẫn của thương hiệu đó. Một số logo còn có giấy phép riêng; xem phần ghi công biểu tượng.",
-	"iconPack.artworkRestored":
-		"Đã tải xuống hình ảnh biểu tượng cho {{names}}.",
+	"iconPack.artworkRestored": "Đã tải xuống hình ảnh biểu tượng cho {{names}}.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio không thể lưu gói biểu tượng vào đĩa, vì vậy cần tải xuống lại lần sau. Các biểu tượng bạn chọn vẫn được lưu cùng cài đặt.",
 	"settings.colorsAndIcons": "Màu sắc và biểu tượng",
@@ -794,7 +773,8 @@ export const vi: Record<string, string> = {
 	"contextMenu.setFoldNone": "Làm cho callout không thể gập",
 	"contextMenu.cutSection": "Cắt phần tiêu đề",
 	"notice.clipboardWriteFailed": "Không thể sao chép vào bảng nhớ tạm. Ghi chú không thay đổi.",
-	"notice.sectionChangedAfterCopy": "Đã sao chép phần này, nhưng ghi chú đã thay đổi trước khi có thể cắt. Không có gì bị xóa.",
+	"notice.sectionChangedAfterCopy":
+		"Đã sao chép phần này, nhưng ghi chú đã thay đổi trước khi có thể cắt. Không có gì bị xóa.",
 	"contextMenu.copySection": "Sao chép phần tiêu đề",
 	"contextMenu.deleteSection": "Xóa phần tiêu đề",
 
@@ -825,15 +805,14 @@ export const vi: Record<string, string> = {
 	"settings.metadataWordAlreadyHere": "Từ này đã có trong danh sách",
 	"settings.metadataWordTooLong": "Một từ chỉ được tối đa {{max}} ký tự",
 	"settings.maxMetadataWords": "Tối đa {{max}} từ. Hãy xóa một từ để thêm từ khác.",
-	"settings.buildFailed": "Callout Studio không thể hiển thị phần cài đặt của mình; hãy khởi động lại Obsidian và báo lỗi nếu nó tái diễn.",
-	"settings.globalSettingsRegularDesc":
-		"Viền, độ bo góc, tỷ lệ phông và căn chỉnh.",
-	"settings.globalSettingsHeadingDesc":
-		"Viền, hình dạng và khoảng cách dọc.",
-	"settings.globalSettingsInlineDesc":
-		"Viền và hình dạng.",
+	"settings.buildFailed":
+		"Callout Studio không thể hiển thị phần cài đặt của mình; hãy khởi động lại Obsidian và báo lỗi nếu nó tái diễn.",
+	"settings.globalSettingsRegularDesc": "Viền, độ bo góc, tỷ lệ phông và căn chỉnh.",
+	"settings.globalSettingsHeadingDesc": "Viền, hình dạng và khoảng cách dọc.",
+	"settings.globalSettingsInlineDesc": "Viền và hình dạng.",
 	"settings.themeCalloutStyles": "Dùng kiểu callout từ giao diện của bạn",
-	"settings.themeCalloutStylesDesc": "Khi bật, các callout mà giao diện của bạn định kiểu sẽ giữ diện mạo của giao diện và chỉ xuất hiện dưới dạng callout dạng khối. Khi tắt, Callout Studio vẽ mọi callout.",
+	"settings.themeCalloutStylesDesc":
+		"Khi bật, các callout mà giao diện của bạn định kiểu sẽ giữ diện mạo của giao diện và chỉ xuất hiện dưới dạng callout dạng khối. Khi tắt, Callout Studio vẽ mọi callout.",
 
 	"settings.calloutTypeRegular": "Kiểu callout dạng khối",
 	"settings.calloutTypeHeading": "Kiểu callout tiêu đề",
@@ -867,22 +846,15 @@ export const vi: Record<string, string> = {
 	"confirm.titleDeleteLibrary": "Xóa thư viện biểu tượng",
 	"confirm.titleResetLibraries": "Đặt lại thư viện biểu tượng",
 
-	"vault.filesUpdated":
-		"Đã cập nhật {{count}} tham chiếu callout trong các tệp vault.",
-	"vault.idsUpdated":
-		"Đã cập nhật {{count}} ID callout trong các tệp vault: {{oldIds}} → {{newId}}",
-	"vault.titlesUpdated":
-		"Đã cập nhật {{count}} tiêu đề callout trong các tệp vault: {{oldTitle}} → {{newTitle}}",
-	"vault.foldUpdated":
-		"Đã cập nhật dấu thu gọn của {{count}} callout trong các tệp vault.",
+	"vault.filesUpdated": "Đã cập nhật {{count}} tham chiếu callout trong các tệp vault.",
+	"vault.idsUpdated": "Đã cập nhật {{count}} ID callout trong các tệp vault: {{oldIds}} → {{newId}}",
+	"vault.titlesUpdated": "Đã cập nhật {{count}} tiêu đề callout trong các tệp vault: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated": "Đã cập nhật dấu thu gọn của {{count}} callout trong các tệp vault.",
 	"vault.confirmReplace": "Thay thế",
-	"vault.replacePromptInUse":
-		'"{{name}}" được sử dụng {{count}} lần trong {{files}} tệp. Chọn callout để thay thế:',
+	"vault.replacePromptInUse": '"{{name}}" được sử dụng {{count}} lần trong {{files}} tệp. Chọn callout để thay thế:',
 	"vault.replacePromptUnused": 'Chọn callout để thay thế "{{name}}":',
-	"vault.noReplacementAvailable":
-		"Không có callout nào khác để thay thế callout này.",
-	"vault.convertedToPlainText":
-		"Đã chuyển {{blocks}} khối callout trong {{files}} tệp thành văn bản thường.",
+	"vault.noReplacementAvailable": "Không có callout nào khác để thay thế callout này.",
+	"vault.convertedToPlainText": "Đã chuyển {{blocks}} khối callout trong {{files}} tệp thành văn bản thường.",
 	"vault.resetNotesFailed":
 		"Không thể cập nhật một số ghi chú, nên callout chưa được đặt lại. Hãy chọn lại Đặt lại về mặc định để hoàn tất.",
 
@@ -899,7 +871,8 @@ export const vi: Record<string, string> = {
 	"quickInsert.noResults": "Không tìm thấy callout nào",
 	"quickInsert.noBuiltInCallouts": "Hiện không có callout tích hợp nào khả dụng.",
 	"quickInsert.noThemeCallouts": "Hiện không có callout dành riêng cho giao diện nào khả dụng.",
-	"quickInsert.targetMoved": "Ghi chú mà bạn đã mở Chèn nhanh từ đó đã thay đổi hoặc đã đóng. Hãy mở lại Chèn nhanh trong ghi chú bạn muốn chỉnh sửa.",
+	"quickInsert.targetMoved":
+		"Ghi chú mà bạn đã mở Chèn nhanh từ đó đã thay đổi hoặc đã đóng. Hãy mở lại Chèn nhanh trong ghi chú bạn muốn chỉnh sửa.",
 	"quickInsert.targetMovedHint": "Ghi chú gốc không còn khả dụng cho lần chèn này.",
 	"quickInsert.noUserCallouts":
 		"Bạn chưa tạo callout tùy chỉnh nào. Chạy “Callout Studio: Tạo loại callout mới” từ bảng lệnh.",
@@ -917,9 +890,11 @@ export const vi: Record<string, string> = {
 	"portable.restoreDefault": "Khôi phục nội dung thay thế mặc định",
 	"portable.cancelEdit": "Bỏ thay đổi",
 	"portable.customInvalid": "Giữ nội dung thay thế trên một dòng mà không thay đổi cấu trúc Markdown xung quanh.",
-	"portable.customUnsafe": "Nội dung thay thế này sẽ khiến tiêu đề hoặc các liên kết đến tiêu đề trở nên không rõ ràng. Hãy chọn tiêu đề khác.",
+	"portable.customUnsafe":
+		"Nội dung thay thế này sẽ khiến tiêu đề hoặc các liên kết đến tiêu đề trở nên không rõ ràng. Hãy chọn tiêu đề khác.",
 	"portable.customStale": "Bản xem xét đã thay đổi. Hãy mở lại trình chỉnh sửa nội dung thay thế.",
-	"portable.customDiscarded": "Đã xóa {{count}} nội dung thay thế tùy chỉnh vì văn bản nguồn đã thay đổi hoặc không thể xác định vị trí một cách an toàn.",
+	"portable.customDiscarded":
+		"Đã xóa {{count}} nội dung thay thế tùy chỉnh vì văn bản nguồn đã thay đổi hoặc không thể xác định vị trí một cách an toàn.",
 	"portable.customBadge": "Tùy chỉnh",
 
 	"usage.title": "Tìm callout",
@@ -941,88 +916,72 @@ export const vi: Record<string, string> = {
 	"usage.more": "Hiển thị thêm {{count}}",
 	"usage.location": "Dòng {{line}} · {{role}}",
 	"usage.missing": "Ghi chú này không còn tồn tại. Đang cập nhật kết quả…",
-	"usage.changed": "Vị trí này đã thay đổi hoặc đã di chuyển nhưng không xác định được vị trí mới. Đang cập nhật kết quả…",
+	"usage.changed":
+		"Vị trí này đã thay đổi hoặc đã di chuyển nhưng không xác định được vị trí mới. Đang cập nhật kết quả…",
 	"usage.openFailed": "Không thể mở vị trí xuất hiện của callout này.",
 	"usage.menuIncomplete": "Tìm callout — chưa quét xong",
 	"usage.menu": "Tìm callout",
 	"usage.closeSettings": "Đóng Cài đặt để xem kết quả callout trong thanh bên.",
 
 	"import.title": "Vấn đề nhập",
-	"import.reportLeadIn":
-		"Hãy xem lại các vấn đề nhập dữ liệu này trước khi tiếp tục:",
-	"import.reportLeadInFatal":
-		"Không thể nhập dữ liệu này:",
+	"import.reportLeadIn": "Hãy xem lại các vấn đề nhập dữ liệu này trước khi tiếp tục:",
+	"import.reportLeadInFatal": "Không thể nhập dữ liệu này:",
 	"import.entryHeading": "Mục {{index}} — {{label}}",
-	"import.summary":
-		"{{valid}} trong {{total}} mục hợp lệ · tìm thấy {{issues}} vấn đề.",
+	"import.summary": "{{valid}} trong {{total}} mục hợp lệ · tìm thấy {{issues}} vấn đề.",
 	"import.btnCancel": "Hủy",
 	"import.btnImportValid": "Chỉ nhập hợp lệ ({{count}})",
-	"import.nothingValid": "Không có mục nào hợp lệ nên không có gì để nhập. Hãy hủy, sửa các vấn đề được liệt kê ở đây rồi nhập lại.",
+	"import.nothingValid":
+		"Không có mục nào hợp lệ nên không có gì để nhập. Hãy hủy, sửa các vấn đề được liệt kê ở đây rồi nhập lại.",
 	"import.err.notRecognized":
 		"Tệp không được nhận dạng: cần một mảng định nghĩa callout hoặc một tệp xuất Callout Studio.",
-	"import.warn.settingsIgnored":
-		"Khối cài đặt không phải là một đối tượng hợp lệ và đã bị bỏ qua.",
-	"import.warn.invalidGradient":
-		"Chuyển sắc nền không hợp lệ và đã bị bỏ qua.",
-	"import.err.parseFailed":
-		"Tệp không phải JSON hợp lệ và không thể phân tích.",
-	"import.err.tooLarge": "Lần nhập này vượt quá giới hạn kích thước 16 MiB. Hãy chia thành các tệp nhỏ hơn rồi thử lại.",
-	"import.err.tooComplex": "Lần nhập này quá phức tạp: tối đa 1.000 mục cho mỗi danh sách hoặc đối tượng, tổng cộng 50.000 giá trị và tối đa 32 cấp lồng nhau.",
-	"import.err.imageBudget": "Toàn bộ bộ sưu tập ảnh vượt quá giới hạn về kích thước hoặc độ phức tạp. Hãy xóa hoặc đơn giản hóa ảnh lớn trước khi nhập.",
+	"import.warn.settingsIgnored": "Khối cài đặt không phải là một đối tượng hợp lệ và đã bị bỏ qua.",
+	"import.warn.invalidGradient": "Chuyển sắc nền không hợp lệ và đã bị bỏ qua.",
+	"import.err.parseFailed": "Tệp không phải JSON hợp lệ và không thể phân tích.",
+	"import.err.tooLarge":
+		"Lần nhập này vượt quá giới hạn kích thước 16 MiB. Hãy chia thành các tệp nhỏ hơn rồi thử lại.",
+	"import.err.tooComplex":
+		"Lần nhập này quá phức tạp: tối đa 1.000 mục cho mỗi danh sách hoặc đối tượng, tổng cộng 50.000 giá trị và tối đa 32 cấp lồng nhau.",
+	"import.err.imageBudget":
+		"Toàn bộ bộ sưu tập ảnh vượt quá giới hạn về kích thước hoặc độ phức tạp. Hãy xóa hoặc đơn giản hóa ảnh lớn trước khi nhập.",
 	"import.err.processingFailed": "Không thể hoàn tất việc nhập. Hãy kiểm tra dữ liệu rồi thử lại.",
-	"import.reportTruncated": "Đang hiển thị {{shown}} vấn đề đầu tiên trong tổng số {{total}}. Các giá trị dài được rút gọn trong báo cáo này.",
+	"import.reportTruncated":
+		"Đang hiển thị {{shown}} vấn đề đầu tiên trong tổng số {{total}}. Các giá trị dài được rút gọn trong báo cáo này.",
 	"import.err.entryNotObject": "Mục phải là một đối tượng.",
-	"import.err.requiredMissing":
-		'Trường bắt buộc "{{field}}" thiếu hoặc có kiểu sai.',
+	"import.err.requiredMissing": 'Trường bắt buộc "{{field}}" thiếu hoặc có kiểu sai.',
 	"import.err.idEmpty": "ID không được để trống.",
-	"import.err.idTooLong":
-		'ID "{{value}}" có {{length}} ký tự; tối đa là {{max}}.',
-	"import.err.idBadChar":
-		'ID "{{value}}" chứa ký tự không hợp lệ ("|", "[", "]", tab và ngắt dòng không được phép).',
+	"import.err.idTooLong": 'ID "{{value}}" có {{length}} ký tự; tối đa là {{max}}.',
+	"import.err.idBadChar": 'ID "{{value}}" chứa ký tự không hợp lệ ("|", "[", "]", tab và ngắt dòng không được phép).',
 	"import.err.idMetadata":
 		'ID "{{value}}" chứa "|". Trong Obsidian, mọi thứ sau "|" đầu tiên là siêu dữ liệu callout, không phải một phần của loại, vì vậy mục này mô tả callout "{{id}}". Đã bỏ qua để "{{id}}" hiện có của bạn không bị thay đổi.',
 	"import.err.idReserved":
 		'ID "{{value}}" được Callout Studio dành riêng cho các bản xem trước của chính nó và không thể nhập.',
 	"import.err.displayNameEmpty": "Tên hiển thị không được để trống.",
-	"import.err.displayNameTooLong":
-		"Tên hiển thị có {{length}} ký tự; tối đa là {{max}}.",
-	"import.err.boolField":
-		'"{{field}}" phải là giá trị boolean (true hoặc false).',
+	"import.err.displayNameTooLong": "Tên hiển thị có {{length}} ký tự; tối đa là {{max}}.",
+	"import.err.boolField": '"{{field}}" phải là giá trị boolean (true hoặc false).',
 	"import.err.iconNotObject": "Biểu tượng phải là một đối tượng.",
-	"import.err.iconTypeInvalid":
-		'Loại biểu tượng "{{value}}" không phải một trong: {{types}}.',
+	"import.err.iconTypeInvalid": 'Loại biểu tượng "{{value}}" không phải một trong: {{types}}.',
 	"import.warn.iconFieldIgnored":
 		'"{{field}}" chỉ áp dụng cho biểu tượng Material và bị bỏ qua cho loại biểu tượng {{type}}.',
 	"import.err.iconValueEmpty": "Giá trị biểu tượng phải là chuỗi không rỗng.",
-	"import.err.iconValueTooLong":
-		"Giá trị biểu tượng vượt quá giới hạn 200 ký tự ({{length}} ký tự).",
+	"import.err.iconValueTooLong": "Giá trị biểu tượng vượt quá giới hạn 200 ký tự ({{length}} ký tự).",
 	"import.err.materialStyle":
 		'Kiểu biểu tượng Material "{{value}}" không phải một trong: outlined, filled, rounded, sharp.',
-	"import.err.materialWeight":
-		'Độ dày biểu tượng Material "{{value}}" phải là số nguyên từ 100 đến 700, bước 100.',
+	"import.err.materialWeight": 'Độ dày biểu tượng Material "{{value}}" phải là số nguyên từ 100 đến 700, bước 100.',
 	"import.warn.iconRecolorIgnored":
 		'"recolor" chỉ áp dụng cho hình ảnh của riêng bạn và bị bỏ qua cho loại biểu tượng {{type}}.',
-	"import.err.iconRecolorInvalid":
-		'"recolor" phải là true hoặc false (nhận: "{{value}}").',
-	"import.err.colorInvalid":
-		'"{{field}}" phải là màu hex như "#448aff" (nhận được "{{value}}").',
-	"import.err.numberRange":
-		'"{{field}}" phải là số từ {{min}} đến {{max}} (nhận được "{{value}}").',
-	"import.err.iconSizeRange":
-		'"{{field}}" phải là số từ {{min}} đến {{max}} (nhận được "{{value}}").',
+	"import.err.iconRecolorInvalid": '"recolor" phải là true hoặc false (nhận: "{{value}}").',
+	"import.err.colorInvalid": '"{{field}}" phải là màu hex như "#448aff" (nhận được "{{value}}").',
+	"import.err.numberRange": '"{{field}}" phải là số từ {{min}} đến {{max}} (nhận được "{{value}}").',
+	"import.err.iconSizeRange": '"{{field}}" phải là số từ {{min}} đến {{max}} (nhận được "{{value}}").',
 	"import.err.iconAdjustShape":
-		"\"iconAdjust\" phải là đối tượng ánh xạ loại callout (\"regular\", \"heading\", \"inline\") tới kích thước và độ lệch của biểu tượng.",
+		'"iconAdjust" phải là đối tượng ánh xạ loại callout ("regular", "heading", "inline") tới kích thước và độ lệch của biểu tượng.',
 	"import.err.aliasesNotArray": '"aliases" phải là mảng chuỗi.',
 	"import.err.aliasNotString": "Bí danh phải là chuỗi.",
 	"import.err.aliasDup": 'Bí danh "{{value}}" bị trùng trong mục này.',
-	"import.err.tooManyIds":
-		"Quá nhiều ID ({{count}}); mỗi callout có thể có tối đa {{max}} ID (chính + bí danh).",
-	"import.err.metadataShape":
-		'"metadata" phải là đối tượng có tất cả giá trị là chuỗi.',
-	"import.warn.unknownFields":
-		"Các trường không rõ đã bị bỏ qua: {{fields}}.",
-	"import.err.duplicateInFile":
-		'ID/bí danh "{{value}}" đã được sử dụng bởi mục #{{first}} trong tệp này.',
+	"import.err.tooManyIds": "Quá nhiều ID ({{count}}); mỗi callout có thể có tối đa {{max}} ID (chính + bí danh).",
+	"import.err.metadataShape": '"metadata" phải là đối tượng có tất cả giá trị là chuỗi.',
+	"import.warn.unknownFields": "Các trường không rõ đã bị bỏ qua: {{fields}}.",
+	"import.err.duplicateInFile": 'ID/bí danh "{{value}}" đã được sử dụng bởi mục #{{first}} trong tệp này.',
 	"import.err.aliasConflict":
 		'Bí danh "{{value}}" đã được sử dụng bởi callout khác ("{{other}}") trong vault của bạn.',
 	"import.warn.defaultFoldedAutofix":
@@ -1030,8 +989,7 @@ export const vi: Record<string, string> = {
 	"import.warn.imageMissing":
 		"Callout này sử dụng hình ảnh không có trong tệp và không có trong vault này, vì vậy sẽ hiển thị biểu tượng giữ chỗ cho đến khi bạn cung cấp hình ảnh mới.",
 
-	"import.err.paletteIdInvalid":
-		'"paletteId" phải là một ID văn bản không rỗng (nhận được "{{value}}").',
+	"import.err.paletteIdInvalid": '"paletteId" phải là một ID văn bản không rỗng (nhận được "{{value}}").',
 	"import.warn.iconNameUnknown":
 		'Không có biểu tượng "{{value}}" trong {{type}}, vì vậy biểu tượng mặc định đã được sử dụng.',
 	"import.warn.cmIconUnknownNew":
@@ -1065,29 +1023,27 @@ export const vi: Record<string, string> = {
 	"import.cmVaultChecking": "Đang tìm plugin Callout Manager…",
 	"import.cmVaultFound": "Đã tìm thấy {{count}} callout đã tùy chỉnh.",
 	"import.cmFromPaste": "Các kiểu đã sao chép",
-	"import.cmFromPasteDesc":
-		"Những gì nút Copy của Callout Manager sao chép, hoặc một tệp data.json.",
-	"import.cmPlaceholder":
-		"Dán các kiểu đã sao chép, hoặc một tệp data.json, vào đây…",
+	"import.cmFromPasteDesc": "Những gì nút Copy của Callout Manager sao chép, hoặc một tệp data.json.",
+	"import.cmPlaceholder": "Dán các kiểu đã sao chép, hoặc một tệp data.json, vào đây…",
 	"import.cmBtnCancel": "Hủy",
 	"import.cmBtnImport": "Nhập",
-	"import.err.cmNoBlocksFound":
-		"Không tìm thấy kiểu Callout Manager nào trong tệp hoặc văn bản đã dán.",
+	"import.err.cmNoBlocksFound": "Không tìm thấy kiểu Callout Manager nào trong tệp hoặc văn bản đã dán.",
 	"import.err.cmNotRecognized":
 		"Tệp không nhận dạng được: cần các kiểu do nút Copy của Callout Manager tạo ra, hoặc một tệp data.json của Callout Manager.",
-	"import.err.cmNoEntries":
-		"Không tìm thấy callout đã tùy chỉnh nào để nhập.",
-	"import.err.cmNoColorForNew":
-		'Không tìm thấy màu sắc có thể sử dụng cho callout mới "{{value}}"; đã bỏ qua.',
+	"import.err.cmNoEntries": "Không tìm thấy callout đã tùy chỉnh nào để nhập.",
+	"import.err.cmNoColorForNew": 'Không tìm thấy màu sắc có thể sử dụng cho callout mới "{{value}}"; đã bỏ qua.',
 	"import.err.cmIdConflict":
 		'ID "{{value}}" đã được sử dụng làm bí danh bởi một callout khác ("{{other}}") và đã bị bỏ qua.',
 	"import.warn.cmNoColorDefault":
 		"Không có màu nào được đặt trong Callout Manager, nên màu xám mặc định đã được sử dụng.",
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "Không thể giữ lại kiểu dáng phụ thuộc vào giao diện. Ưu tiên các giá trị không có điều kiện; mọi giá trị dự phòng có điều kiện sẽ áp dụng cho tất cả giao diện.",
-	"import.warn.cmCustomStylesSkipped": "CSS tùy chỉnh từ Callout Manager không được nhập. Chỉ có thể chuyển các cài đặt biểu tượng và màu được hỗ trợ.",
-	"import.warn.cmSchemeIcon": "Callout Studio dùng cùng một biểu tượng cho cả hai bảng màu; biểu tượng đã nhập sẽ được dùng ở cả hai.",
+	"import.warn.cmThemeConditionPartial":
+		"Không thể giữ lại kiểu dáng phụ thuộc vào giao diện. Ưu tiên các giá trị không có điều kiện; mọi giá trị dự phòng có điều kiện sẽ áp dụng cho tất cả giao diện.",
+	"import.warn.cmCustomStylesSkipped":
+		"CSS tùy chỉnh từ Callout Manager không được nhập. Chỉ có thể chuyển các cài đặt biểu tượng và màu được hỗ trợ.",
+	"import.warn.cmSchemeIcon":
+		"Callout Studio dùng cùng một biểu tượng cho cả hai bảng màu; biểu tượng đã nhập sẽ được dùng ở cả hai.",
 	"import.err.cmDuplicateId": "ID {{value}} trùng với {{other}} trong lần nhập này nên đã bị bỏ qua.",
 	"import.admTitle": "Nhập từ Admonition",
 	"import.admInstructions":
@@ -1098,16 +1054,13 @@ export const vi: Record<string, string> = {
 	"import.admVaultChecking": "Đang tìm plugin Admonition…",
 	"import.admVaultFound": "Đã tìm thấy {{count}} admonition tùy chỉnh.",
 	"import.admFromFile": "Một tệp",
-	"import.admFromFileDesc":
-		"Một tệp admonitions.json, hoặc một gói được chia sẻ.",
+	"import.admFromFileDesc": "Một tệp admonitions.json, hoặc một gói được chia sẻ.",
 	"import.admBtnCancel": "Hủy",
 	"import.admBtnImport": "Nhập",
 	"import.err.admNotRecognized":
-		"Tệp không nhận dạng được: cần một danh sách admonition hoặc tệp " +
-		"data.json của Admonition.",
+		"Tệp không nhận dạng được: cần một danh sách admonition hoặc tệp " + "data.json của Admonition.",
 	"import.err.admNoEntries": "Không tìm thấy admonition nào để nhập.",
-	"import.err.admTypeMissing":
-		'Admonition này không có "type" nên đã bị bỏ qua.',
+	"import.err.admTypeMissing": 'Admonition này không có "type" nên đã bị bỏ qua.',
 	"import.warn.admIconUnknown":
 		'Không tìm thấy biểu tượng nào tên "{{value}}" trong bất kỳ thư ' +
 		"viện nào, nên biểu tượng mặc định đã được dùng.",
@@ -1120,23 +1073,20 @@ export const vi: Record<string, string> = {
 		"Admonition này được tạo kiểu bằng một đoạn CSS trong Admonition. " +
 		"Kiểu đó không thuộc phần nhập, nên chỉ tên, biểu tượng và màu " +
 		"được mang sang.",
-	"import.warn.admNoColor":
-		"Chưa đặt màu nào, nên màu xanh mặc định đã được dùng.",
-	"import.warn.admTitleTruncated":
-		"Tiêu đề dài {{length}} ký tự; đã được rút ngắn còn {{max}}.",
+	"import.warn.admNoColor": "Chưa đặt màu nào, nên màu xanh mặc định đã được dùng.",
+	"import.warn.admTitleTruncated": "Tiêu đề dài {{length}} ký tự; đã được rút ngắn còn {{max}}.",
 
 	"footer.openIssue": "Mở issue",
 	"footer.sourceCode": "Mã nguồn",
 	"settings.about": "Giới thiệu",
 	"settings.version": "Phiên bản",
 	"settings.deletePaletteBodyLinkedOne":
-		'Có 1 callout đang dùng nó. Callout đó giữ nguyên màu, và bạn có thể liên kết lại sau từ hàng Màu trong trình chỉnh sửa của nó.',
+		"Có 1 callout đang dùng nó. Callout đó giữ nguyên màu, và bạn có thể liên kết lại sau từ hàng Màu trong trình chỉnh sửa của nó.",
 	"settings.deletePaletteBodyLinked":
-		'Có {{count}} callout đang dùng nó. Chúng giữ nguyên màu, và bạn có thể liên kết lại sau từ hàng Màu trong bất kỳ trình chỉnh sửa nào của chúng.',
+		"Có {{count}} callout đang dùng nó. Chúng giữ nguyên màu, và bạn có thể liên kết lại sau từ hàng Màu trong bất kỳ trình chỉnh sửa nào của chúng.",
 	"notice.palettesMerged":
 		"Đã gộp {{count}} màu đã lưu có màu giống hệt nhau: {{names}}. Các callout dùng chúng vẫn giữ màu và giờ được liên kết với màu còn lại.",
-	"editor.colorsDescDeleted":
-		"Màu đã lưu của callout này đã bị xóa. {{link}}",
+	"editor.colorsDescDeleted": "Màu đã lưu của callout này đã bị xóa. {{link}}",
 	"editor.colorsDescDeletedLink": "Khôi phục",
 	"palette.colorExists":
 		'Những màu này giống hệt "{{name}}". Hai màu đã lưu không thể giống nhau — hãy đổi một màu để phân biệt.',
@@ -1147,8 +1097,7 @@ export const vi: Record<string, string> = {
 	"locale.downloaded": "Đã tải xuống bản dịch.",
 	"locale.notDownloaded": "{{name}} chưa được tải xuống",
 	"locale.retry": "Thử lại",
-	"locale.diskWriteFailed":
-		"Callout Studio không thể lưu bản dịch vào đĩa, nên lần sau sẽ phải tải xuống lại.",
+	"locale.diskWriteFailed": "Callout Studio không thể lưu bản dịch vào đĩa, nên lần sau sẽ phải tải xuống lại.",
 	"notice.exportedCssCreated": "Đã lưu đoạn CSS vào {{path}}",
 	"notice.exportedCssUpdated": "Đã cập nhật đoạn CSS tại {{path}}",
 	"notice.exportedCssUnchanged": "Đoạn CSS đã được cập nhật.",
@@ -1175,69 +1124,92 @@ export const vi: Record<string, string> = {
 	"quickInsert.readingView": "Chuyển sang chế độ nguồn hoặc Xem trước trực tiếp để chèn callout.",
 	"quickInsert.noCursorHint": "Không có con trỏ nào trong ghi chú này, nên không có chỗ để chèn.",
 	"quickInsert.noCursor": "Đặt con trỏ trong ghi chú ở vị trí bạn muốn chèn callout, sau đó thử lại.",
-	"notice.legacyDiscoveryArchiveFailed": "Không thể hoàn tất bản sao khôi phục cho quá trình nâng cấp. Bộ nhớ đệm phát hiện cục bộ trước đó và CSS khởi động đã được giữ nguyên. Kiểm tra quyền ghi vào bộ nhớ và dung lượng trống, sau đó khởi động lại Obsidian để thử lại.",
+	"notice.legacyDiscoveryArchiveFailed":
+		"Không thể hoàn tất bản sao khôi phục cho quá trình nâng cấp. Bộ nhớ đệm phát hiện cục bộ trước đó và CSS khởi động đã được giữ nguyên. Kiểm tra quyền ghi vào bộ nhớ và dung lượng trống, sau đó khởi động lại Obsidian để thử lại.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Tạm dừng cho đến khi bạn tạo lại callout bị thiếu hoặc chọn callout khác.",
 	"confirm.titleRestoreSettings": "Khôi phục các cài đặt này",
 	"confirm.titleCreateSettingsFile": "Tạo tệp cài đặt",
 	"confirm.saveDisplayedSettings":
 		"Thao tác này lưu thiết lập bạn đang thấy làm tệp cài đặt của bạn và bật lại việc lưu. Bản sao dự phòng mà thiết bị này giữ sẽ được sao lưu trước.\nNếu một thiết bị khác có thể có thay đổi mới hơn mà bạn muốn giữ, hãy để nó đồng bộ xong trước khi tiếp tục. Ứng dụng đồng bộ của bạn có thể gửi tệp này tới các thiết bị khác của bạn.\nTrước khi lưu, Callout Studio tìm tệp cài đặt thêm một lần nữa. Nếu tệp đã quay lại, Callout Studio sẽ giữ tệp đó thay vào.",
-	"notice.settingsBackupFailed": "Không thể tiếp tục khôi phục cài đặt vì không thể lưu bản sao lưu an toàn. Kiểm tra bộ nhớ khả dụng và quyền ghi, sau đó thử lại.",
-	"notice.settingsNewerVersion": "Cài đặt của Callout Studio đã được lưu bởi một phiên bản plugin mới hơn, vì vậy sẽ không có gì được ghi vào thiết bị này cho đến khi bạn cập nhật. Cài đặt của bạn vẫn an toàn — cập nhật Callout Studio tại đây và tải lại Obsidian.",
+	"notice.settingsBackupFailed":
+		"Không thể tiếp tục khôi phục cài đặt vì không thể lưu bản sao lưu an toàn. Kiểm tra bộ nhớ khả dụng và quyền ghi, sau đó thử lại.",
+	"notice.settingsNewerVersion":
+		"Cài đặt của Callout Studio đã được lưu bởi một phiên bản plugin mới hơn, vì vậy sẽ không có gì được ghi vào thiết bị này cho đến khi bạn cập nhật. Cài đặt của bạn vẫn an toàn — cập nhật Callout Studio tại đây và tải lại Obsidian.",
 	"saveStatus.changed":
 		"Tệp cài đặt đã thay đổi trong lúc bạn chỉnh sửa. Bản nháp của bạn vẫn còn. Hãy chọn Thử lại để tải các cài đặt mới đến, rồi xem lại bản nháp và lưu lại.",
-	"saveStatus.missing": "Việc lưu đang tạm dừng vì tệp cài đặt bị thiếu. Điều này có thể xảy ra sau khi cài đặt lại hoặc trong khi đồng bộ hóa vẫn đang chạy. Hoàn tất đồng bộ hóa và thử lại. Để cố ý thay thế tệp bị thiếu, hãy dùng Tạo tệp cài đặt mới trong cài đặt của Callout Studio.",
+	"saveStatus.missing":
+		"Việc lưu đang tạm dừng vì tệp cài đặt bị thiếu. Điều này có thể xảy ra sau khi cài đặt lại hoặc trong khi đồng bộ hóa vẫn đang chạy. Hoàn tất đồng bộ hóa và thử lại. Để cố ý thay thế tệp bị thiếu, hãy dùng Tạo tệp cài đặt mới trong cài đặt của Callout Studio.",
 	"saveStatus.restoreSettings": "Khôi phục các cài đặt này",
 	"saveStatus.createSettingsFile": "Tạo tệp cài đặt",
 	"saveStatus.checkAgain": "Kiểm tra lại",
-	"saveStatus.recoverInSettings": "Để khôi phục tệp bị thiếu trên thiết bị này, hãy mở cài đặt Callout Studio. Trước khi đóng trình chỉnh sửa này, hãy sao chép mọi chỉnh sửa chưa lưu mà bạn muốn giữ; chúng chưa được lưu.",
+	"saveStatus.recoverInSettings":
+		"Để khôi phục tệp bị thiếu trên thiết bị này, hãy mở cài đặt Callout Studio. Trước khi đóng trình chỉnh sửa này, hãy sao chép mọi chỉnh sửa chưa lưu mà bạn muốn giữ; chúng chưa được lưu.",
 	"saveStatus.openSettings": "Mở cài đặt Callout Studio",
-	"notice.openSettingsFailed": "Không thể mở cài đặt Callout Studio. Mở Cài đặt → Callout Studio để chọn việc cần làm.",
-	"saveStatus.notesFailed": "Định nghĩa callout đã được lưu, nhưng một số cập nhật ghi chú không thể hoàn tất. Giữ trình chỉnh sửa này mở và chọn Lưu để thử lại các cập nhật chưa hoàn tất.",
-	"saveStatus.recoveryRead": "Việc lưu đang tạm dừng vì không thể đọc bản sao khôi phục cục bộ. Tệp cài đặt của bạn có thể vẫn còn nguyên vẹn. Kiểm tra bộ nhớ khả dụng, sau đó thử lại khôi phục. Dữ liệu khôi phục hiện có sẽ không bị ghi đè.",
-	"saveStatus.recoveryWrite": "Không thể lưu bản sao khôi phục cục bộ. Kiểm tra bộ nhớ khả dụng, sau đó thử lại. Giữ bản nháp của bạn mở cho đến khi việc lưu thành công.",
-	"saveStatus.retryFailed": "Việc lưu vẫn đang bị chặn. Kiểm tra trạng thái lưu trong cài đặt của Callout Studio để biết nguyên nhân, sau đó thử lại.",
-	"saveStatus.reviewDraft": "Cài đặt đến và các kiểm tra khôi phục đã hoàn tất. Bản nháp của bạn không thay đổi. Xem lại và lưu lại.",
+	"notice.openSettingsFailed":
+		"Không thể mở cài đặt Callout Studio. Mở Cài đặt → Callout Studio để chọn việc cần làm.",
+	"saveStatus.notesFailed":
+		"Định nghĩa callout đã được lưu, nhưng một số cập nhật ghi chú không thể hoàn tất. Giữ trình chỉnh sửa này mở và chọn Lưu để thử lại các cập nhật chưa hoàn tất.",
+	"saveStatus.recoveryRead":
+		"Việc lưu đang tạm dừng vì không thể đọc bản sao khôi phục cục bộ. Tệp cài đặt của bạn có thể vẫn còn nguyên vẹn. Kiểm tra bộ nhớ khả dụng, sau đó thử lại khôi phục. Dữ liệu khôi phục hiện có sẽ không bị ghi đè.",
+	"saveStatus.recoveryWrite":
+		"Không thể lưu bản sao khôi phục cục bộ. Kiểm tra bộ nhớ khả dụng, sau đó thử lại. Giữ bản nháp của bạn mở cho đến khi việc lưu thành công.",
+	"saveStatus.retryFailed":
+		"Việc lưu vẫn đang bị chặn. Kiểm tra trạng thái lưu trong cài đặt của Callout Studio để biết nguyên nhân, sau đó thử lại.",
+	"saveStatus.reviewDraft":
+		"Cài đặt đến và các kiểm tra khôi phục đã hoàn tất. Bản nháp của bạn không thay đổi. Xem lại và lưu lại.",
 	"saveStatus.settingsArrived": "Cài đặt hiện có đã đến và được tải. Không có tệp thay thế nào được tạo.",
-	"saveStatus.syncConflict": "Cài đặt đến xung đột với một callout cần thiết cho các cập nhật ghi chú chưa hoàn tất. Bản nháp của bạn và các cập nhật đang chờ đã được giữ lại. Giải quyết xung đột cài đặt trước khi thử lại.",
+	"saveStatus.syncConflict":
+		"Cài đặt đến xung đột với một callout cần thiết cho các cập nhật ghi chú chưa hoàn tất. Bản nháp của bạn và các cập nhật đang chờ đã được giữ lại. Giải quyết xung đột cài đặt trước khi thử lại.",
 	"saveStatus.titlePaused": "Việc lưu đang tạm dừng",
 	"saveStatus.titleFailed": "Cài đặt chưa được lưu",
 	"saveStatus.tryAgain": "Thử lại",
 	"saveStatus.working": "Đang xử lý…",
-	"saveStatus.unreadable": "Việc lưu đang tạm dừng vì không thể đọc tệp cài đặt một cách an toàn. Hoàn tất đồng bộ hóa hoặc khôi phục một bản sao hợp lệ, sau đó thử lại. Tệp hiện có đã được giữ lại.",
-	"saveStatus.write": "Không thể lưu tệp cài đặt. Kiểm tra bộ nhớ khả dụng, quyền thư mục và đồng bộ hóa, sau đó thử lại trước khi đóng Obsidian.",
-	"saveStatus.writePermission": "Không thể lưu tệp cài đặt vì bộ nhớ từ chối quyền truy cập ghi. Kiểm tra xem kho lưu trữ và thư mục plugin có thể ghi được không, sau đó thử lại.",
-	"saveStatus.writeSpace": "Không thể lưu tệp cài đặt vì bộ nhớ đã đầy hoặc đã vượt quá hạn ngạch. Giải phóng một ít dung lượng, sau đó thử lại.",
-	"settings.readOnly": "Callout Studio không thể sử dụng tệp cài đặt của nó khi Obsidian khởi động, vì vậy không có gì trên trang này được lưu vào thiết bị này. Các thay đổi của bạn sẽ tồn tại cho đến khi bạn đóng Obsidian. Tải lại Obsidian ngay khi tệp quay lại — nếu bạn đồng bộ hóa kho lưu trữ này, hãy để đồng bộ hóa hoàn tất trước.",
+	"saveStatus.unreadable":
+		"Việc lưu đang tạm dừng vì không thể đọc tệp cài đặt một cách an toàn. Hoàn tất đồng bộ hóa hoặc khôi phục một bản sao hợp lệ, sau đó thử lại. Tệp hiện có đã được giữ lại.",
+	"saveStatus.write":
+		"Không thể lưu tệp cài đặt. Kiểm tra bộ nhớ khả dụng, quyền thư mục và đồng bộ hóa, sau đó thử lại trước khi đóng Obsidian.",
+	"saveStatus.writePermission":
+		"Không thể lưu tệp cài đặt vì bộ nhớ từ chối quyền truy cập ghi. Kiểm tra xem kho lưu trữ và thư mục plugin có thể ghi được không, sau đó thử lại.",
+	"saveStatus.writeSpace":
+		"Không thể lưu tệp cài đặt vì bộ nhớ đã đầy hoặc đã vượt quá hạn ngạch. Giải phóng một ít dung lượng, sau đó thử lại.",
+	"settings.readOnly":
+		"Callout Studio không thể sử dụng tệp cài đặt của nó khi Obsidian khởi động, vì vậy không có gì trên trang này được lưu vào thiết bị này. Các thay đổi của bạn sẽ tồn tại cho đến khi bạn đóng Obsidian. Tải lại Obsidian ngay khi tệp quay lại — nếu bạn đồng bộ hóa kho lưu trữ này, hãy để đồng bộ hóa hoàn tất trước.",
 
 	// Sync safety hardening
 	"saveStatus.diagnosis.unavailable":
 		"Thiết bị này hiện không thể mở tệp. Tệp có thể vẫn đang tải xuống, kho lưu trữ có thể không khả dụng ngoại tuyến, hoặc bộ nhớ không phản hồi. Callout Studio sẽ tự động kiểm tra lại.",
-	"saveStatus.diagnosis.empty": "Tệp trống, thường có nghĩa là một lần đồng bộ hóa đã bị gián đoạn. Nếu thiết bị khác vẫn còn cài đặt của bạn, hãy để nó đồng bộ. Nếu không, hãy thay thế tệp.",
-	"saveStatus.diagnosis.mergeMarkers": "Tệp chứa các dấu hiệu xung đột hợp nhất chưa được giải quyết, ví dụ từ Git. Giải quyết xung đột trong công cụ Git của bạn, hoặc thay thế tệp.",
+	"saveStatus.diagnosis.empty":
+		"Tệp trống, thường có nghĩa là một lần đồng bộ hóa đã bị gián đoạn. Nếu thiết bị khác vẫn còn cài đặt của bạn, hãy để nó đồng bộ. Nếu không, hãy thay thế tệp.",
+	"saveStatus.diagnosis.mergeMarkers":
+		"Tệp chứa các dấu hiệu xung đột hợp nhất chưa được giải quyết, ví dụ từ Git. Giải quyết xung đột trong công cụ Git của bạn, hoặc thay thế tệp.",
 	"saveStatus.diagnosis.damaged": "Tệp không đầy đủ hoặc bị hỏng, nên không thể đọc được như một tệp cài đặt.",
 	"saveStatus.diagnosis.combined":
 		"Dịch vụ đồng bộ hóa của bạn đã kết hợp hai phiên bản của tệp, nên việc kiểm tra nội bộ của nó không còn khớp nữa. Các cài đặt bên trong vẫn nguyên vẹn, và việc thay thế tệp sẽ giữ lại chúng.",
-	"saveStatus.diagnosis.invalidEntries": "Tệp chứa các mục mà Callout Studio không thể sử dụng, ví dụ cùng một loại callout được liệt kê hai lần.",
+	"saveStatus.diagnosis.invalidEntries":
+		"Tệp chứa các mục mà Callout Studio không thể sử dụng, ví dụ cùng một loại callout được liệt kê hai lần.",
 	"saveStatus.replaceUnreadable": "Thay thế tệp cài đặt",
 	"saveStatus.discardRecoveryCopy": "Bỏ bản sao khôi phục",
 	"saveStatus.calm.opening": "Trước hết, hãy hít một hơi thật sâu — mọi thứ sẽ ổn thôi.",
 	"saveStatus.calm.kept": "Ghi chú của bạn vẫn an toàn, và các callout của bạn vẫn còn ở đây trên thiết bị này.",
 	"saveStatus.calm.safe": "Ghi chú của bạn vẫn an toàn.",
-	"saveStatus.calm.pausedPage": "Callout Studio chỉ tạm dừng việc lưu để bảo vệ thiết lập của bạn, nên trang này tạm thời chỉ để đọc.",
+	"saveStatus.calm.pausedPage":
+		"Callout Studio chỉ tạm dừng việc lưu để bảo vệ thiết lập của bạn, nên trang này tạm thời chỉ để đọc.",
 	"saveStatus.calm.paused": "Callout Studio chỉ tạm dừng việc lưu để bảo vệ thiết lập của bạn.",
 	"saveStatus.explain.missing":
 		"Callout Studio không tìm thấy tệp cài đặt của mình. Điều này thường xảy ra khi ứng dụng đồng bộ của bạn vẫn đang tải tệp xuống, hoặc sau khi Callout Studio bị gỡ trên một thiết bị khác.",
 	"saveStatus.explain.stillMissing":
 		"Tệp cài đặt vẫn chưa quay lại. Việc kiểm tra chỉ tìm tệp chứ không bao giờ tạo tệp mới. Nếu vault của bạn nằm trong iCloud, OneDrive, Google Drive hoặc Dropbox, hãy đảm bảo nó được đặt để luôn tải sẵn trên thiết bị này.",
-	"saveStatus.explain.unreadable": "Hiện Callout Studio không đọc được tệp cài đặt của mình, nên đã để nguyên tệp như hiện có.",
+	"saveStatus.explain.unreadable":
+		"Hiện Callout Studio không đọc được tệp cài đặt của mình, nên đã để nguyên tệp như hiện có.",
 	"saveStatus.explain.recoveryRead":
 		"Callout Studio giữ một bản sao dự phòng của cài đặt trên thiết bị này, và hiện không đọc được bản sao đó. Bản thân tệp cài đặt có thể vẫn ổn.",
 	"saveStatus.explain.newerVersion":
 		"Cài đặt của bạn đã được một phiên bản Callout Studio mới hơn lưu lại, nên phiên bản cũ này sẽ không thay đổi chúng.",
 	"saveStatus.explain.changed":
 		"Tệp cài đặt đã thay đổi trong lúc Callout Studio đang làm việc với nó, nên Callout Studio đã dừng lại mà không thay thế gì cả.",
-	"saveStatus.guide.rechecks": "Callout Studio kiểm tra lại mỗi phút khi Obsidian còn đang mở, nên vấn đề này thường tự khắc phục.",
+	"saveStatus.guide.rechecks":
+		"Callout Studio kiểm tra lại mỗi phút khi Obsidian còn đang mở, nên vấn đề này thường tự khắc phục.",
 	"saveStatus.guide.rechecksCheckNow":
 		"Callout Studio kiểm tra lại mỗi phút khi Obsidian còn đang mở, nên vấn đề này thường tự khắc phục — hoặc chọn Kiểm tra lại để xem ngay bây giờ.",
 	"saveStatus.guide.restore":
@@ -1246,41 +1218,56 @@ export const vi: Record<string, string> = {
 	"saveStatus.guide.recoveryRetry": "Hãy đảm bảo thiết bị này còn chút dung lượng trống, rồi chọn Thử lại.",
 	"saveStatus.guide.recoveryDiscard":
 		"Nếu vậy vẫn chưa được, hãy chọn Bỏ bản sao khôi phục. Một bản sao y hệt sẽ được lưu trước, và tệp cài đặt của bạn không bị đụng đến.",
-	"saveStatus.guide.newerVersion": "Hãy cập nhật Callout Studio trong Cài đặt → Plugin cộng đồng, rồi tải lại Obsidian.",
+	"saveStatus.guide.newerVersion":
+		"Hãy cập nhật Callout Studio trong Cài đặt → Plugin cộng đồng, rồi tải lại Obsidian.",
 	"saveStatus.missingNotice":
 		"Ghi chú của bạn vẫn an toàn. Callout Studio đã tạm dừng việc lưu vì hiện không tìm thấy tệp cài đặt của mình.",
 	"statusBar.paused": "Đã tạm dừng lưu",
 	"statusBar.pausedTooltip": "Callout Studio không lưu các thay đổi cài đặt. Nhấp để xem lý do.",
 	"statusBar.pausedNotice": "Callout Studio hiện không lưu các thay đổi cài đặt.",
 	"saveStatus.resumed": "Việc lưu đã bật lại. Callout Studio đang lưu lại các thay đổi cài đặt.",
-	"notice.replaceUnreadableUnavailable": "Không thể thay thế tệp cài đặt ngay bây giờ: tệp đang thay đổi, hoặc thiết bị này không thể đọc được. Thử lại sau một lát.",
-	"notice.recoveryStorageUnavailable": "Bộ nhớ khôi phục của thiết bị này không phản hồi, nên không thể bỏ bản sao. Khởi động lại Obsidian, sau đó thử lại.",
+	"notice.replaceUnreadableUnavailable":
+		"Không thể thay thế tệp cài đặt ngay bây giờ: tệp đang thay đổi, hoặc thiết bị này không thể đọc được. Thử lại sau một lát.",
+	"notice.recoveryStorageUnavailable":
+		"Bộ nhớ khôi phục của thiết bị này không phản hồi, nên không thể bỏ bản sao. Khởi động lại Obsidian, sau đó thử lại.",
 	"recovery.unreadable": "Không thể đọc được như một tệp cài đặt",
 	"recovery.same": "Giống với thiết lập hiện tại của bạn",
 	"recovery.restore": "Khôi phục",
-	"recovery.stale": "Không có gì được khôi phục: cài đặt của bạn đã thay đổi hoặc không thể kiểm tra được. Mở lại cửa sổ này và xem lại danh sách.",
-	"notice.recoveryCopyStale": "Cài đặt của bạn đã được lưu, nhưng bản sao khôi phục của thiết bị này không thể được cập nhật. Kiểm tra bộ nhớ khả dụng trên thiết bị này. Callout Studio sẽ thử lại vào lần thay đổi tiếp theo của bạn.",
-	"notice.blockedWhilePaused": "Việc lưu đang tạm dừng, nên thay đổi này không thể được giữ lại ngay bây giờ. Trước tiên hãy giải quyết vấn đề lưu được hiển thị trong cài đặt Callout Studio.",
-	"welcome.syncNote": "Đã sử dụng Callout Studio trên thiết bị khác? Hãy để dịch vụ đồng bộ hóa của bạn hoàn tất trước. Các callout và cài đặt của bạn sẽ xuất hiện ở đây khi chúng đến.",
-	"settings.resetBackupFailed": "Không có gì được đặt lại: không thể lưu bản sao lưu của thiết lập hiện tại của bạn trước. Kiểm tra bộ nhớ khả dụng, sau đó thử lại.",
-	"settings.resetNotSaved": "Việc đặt lại được hiển thị nhưng chưa thể lưu được, vì vậy tệp cài đặt của bạn vẫn giữ thiết lập trước đó. Kiểm tra trạng thái lưu trong cài đặt Callout Studio.",
+	"recovery.stale":
+		"Không có gì được khôi phục: cài đặt của bạn đã thay đổi hoặc không thể kiểm tra được. Mở lại cửa sổ này và xem lại danh sách.",
+	"notice.recoveryCopyStale":
+		"Cài đặt của bạn đã được lưu, nhưng bản sao khôi phục của thiết bị này không thể được cập nhật. Kiểm tra bộ nhớ khả dụng trên thiết bị này. Callout Studio sẽ thử lại vào lần thay đổi tiếp theo của bạn.",
+	"notice.blockedWhilePaused":
+		"Việc lưu đang tạm dừng, nên thay đổi này không thể được giữ lại ngay bây giờ. Trước tiên hãy giải quyết vấn đề lưu được hiển thị trong cài đặt Callout Studio.",
+	"welcome.syncNote":
+		"Đã sử dụng Callout Studio trên thiết bị khác? Hãy để dịch vụ đồng bộ hóa của bạn hoàn tất trước. Các callout và cài đặt của bạn sẽ xuất hiện ở đây khi chúng đến.",
+	"settings.resetBackupFailed":
+		"Không có gì được đặt lại: không thể lưu bản sao lưu của thiết lập hiện tại của bạn trước. Kiểm tra bộ nhớ khả dụng, sau đó thử lại.",
+	"settings.resetNotSaved":
+		"Việc đặt lại được hiển thị nhưng chưa thể lưu được, vì vậy tệp cài đặt của bạn vẫn giữ thiết lập trước đó. Kiểm tra trạng thái lưu trong cài đặt Callout Studio.",
 	"confirm.titleResetEverything": "Đặt lại tất cả",
 	"confirm.titleReplaceUnreadable": "Thay thế tệp cài đặt",
 	"confirm.subtitleReplaceUnreadable": "Một bản sao chính xác được lưu trước",
-	"confirm.replaceUnreadable": "Một bản sao chính xác của tệp hiện tại được lưu vào thư mục sao lưu của plugin trước. Sau đó tệp được thay thế bằng thiết lập được hiển thị ở đây, và dịch vụ đồng bộ hóa của bạn gửi nó đến các thiết bị khác của bạn.",
-	"confirm.replaceUnreadableSalvage": "Một bản sao chính xác của tệp hiện tại được lưu vào thư mục sao lưu của plugin trước. Cài đặt bên trong nó được kết hợp với thiết lập được hiển thị ở đây, và tệp được viết lại để mọi thiết bị có thể đọc lại được.",
+	"confirm.replaceUnreadable":
+		"Một bản sao chính xác của tệp hiện tại được lưu vào thư mục sao lưu của plugin trước. Sau đó tệp được thay thế bằng thiết lập được hiển thị ở đây, và dịch vụ đồng bộ hóa của bạn gửi nó đến các thiết bị khác của bạn.",
+	"confirm.replaceUnreadableSalvage":
+		"Một bản sao chính xác của tệp hiện tại được lưu vào thư mục sao lưu của plugin trước. Cài đặt bên trong nó được kết hợp với thiết lập được hiển thị ở đây, và tệp được viết lại để mọi thiết bị có thể đọc lại được.",
 	"confirm.titleDiscardRecoveryCopy": "Bỏ bản sao khôi phục",
 	"confirm.subtitleDiscardRecoveryCopy": "Việc lưu đang tạm dừng trên thiết bị này",
 	"confirm.discardRecoveryCopy":
 		"Bản sao khôi phục của thiết bị này không thể đọc được, nên việc lưu bị tạm dừng trên thiết bị này. Một bản sao chính xác của nó được lưu vào thư mục sao lưu của plugin trước. Sau đó nó được thay thế bằng thiết lập được hiển thị ở đây. Tệp cài đặt của bạn không thay đổi.",
 	"vault.undoRewrite": "Hoàn tác",
 	"vault.undoRestored": "Đã khôi phục {{count}} ghi chú.",
-	"vault.undoPartial": "Đã khôi phục {{count}} ghi chú. {{skipped}} ghi chú đã thay đổi sau khi viết lại, nên chúng được giữ nguyên như hiện tại.",
+	"vault.undoPartial":
+		"Đã khôi phục {{count}} ghi chú. {{skipped}} ghi chú đã thay đổi sau khi viết lại, nên chúng được giữ nguyên như hiện tại.",
 	"import.confirmTitle": "Nhập bản sao lưu Callout Studio",
-	"import.confirmSummary": "Thao tác này thêm {{added}} loại callout, thay thế {{replaced}} loại hiện có bằng phiên bản trong tệp, và khôi phục {{settings}} nhóm cài đặt từ tệp. Một bản sao lưu của thiết lập hiện tại của bạn được lưu trước.",
+	"import.confirmSummary":
+		"Thao tác này thêm {{added}} loại callout, thay thế {{replaced}} loại hiện có bằng phiên bản trong tệp, và khôi phục {{settings}} nhóm cài đặt từ tệp. Một bản sao lưu của thiết lập hiện tại của bạn được lưu trước.",
 	"import.confirmAction": "Nhập",
-	"import.backupFailed": "Không có gì được nhập: không thể lưu bản sao lưu của thiết lập hiện tại của bạn trước. Kiểm tra bộ nhớ khả dụng, sau đó thử lại.",
-	"import.notSaved": "Việc nhập được hiển thị nhưng chưa thể lưu được. Kiểm tra trạng thái lưu trong cài đặt Callout Studio.",
+	"import.backupFailed":
+		"Không có gì được nhập: không thể lưu bản sao lưu của thiết lập hiện tại của bạn trước. Kiểm tra bộ nhớ khả dụng, sau đó thử lại.",
+	"import.notSaved":
+		"Việc nhập được hiển thị nhưng chưa thể lưu được. Kiểm tra trạng thái lưu trong cài đặt Callout Studio.",
 
 	"recovery.summaryCallouts": "{{callouts}} loại callout đã lưu",
 	"recovery.summaryChanges": "{{count}} điểm khác so với hiện tại",
@@ -1300,7 +1287,8 @@ export const vi: Record<string, string> = {
 	"recovery.details.unknownTime": "Không ghi lại thời điểm lưu",
 	"recovery.details.current": "Thiết lập hiện tại",
 	"recovery.details.restored": "Sau khi khôi phục phiên bản này",
-	"recovery.details.unreadable": "Phiên bản Callout Studio này không thể diễn giải bản sao này thành một thiết lập có thể khôi phục. Bản sao có thể bị hỏng, không khả dụng hoặc dùng định dạng mới hơn. Không có bản so sánh và báo cáo về các thiết lập được khôi phục. Mọi nội dung gốc đọc được đều được đưa vào bên dưới.",
+	"recovery.details.unreadable":
+		"Phiên bản Callout Studio này không thể diễn giải bản sao này thành một thiết lập có thể khôi phục. Bản sao có thể bị hỏng, không khả dụng hoặc dùng định dạng mới hơn. Không có bản so sánh và báo cáo về các thiết lập được khôi phục. Mọi nội dung gốc đọc được đều được đưa vào bên dưới.",
 	"recovery.details.null": "Không có giá trị (null)",
 	"recovery.details.yes": "Có",
 	"recovery.details.no": "Không",
@@ -1468,10 +1456,12 @@ export const vi: Record<string, string> = {
 	"recovery.delete": "Xóa",
 
 	// Version history
-	"saveStatus.guide.versions": "Khi việc lưu hoạt động trở lại, bạn cũng có thể quay về một phiên bản đã lưu bằng Khôi phục phiên bản trước.",
+	"saveStatus.guide.versions":
+		"Khi việc lưu hoạt động trở lại, bạn cũng có thể quay về một phiên bản đã lưu bằng Khôi phục phiên bản trước.",
 	"saveStatus.goToVersions": "Đi đến lịch sử phiên bản",
 	"versions.title": "Lịch sử phiên bản",
-	"versions.intro": "Callout Studio tự động lưu các phiên bản cấu hình của bạn.\nCác phiên bản cũ được dọn dẹp dần.\nKhôi phục một phiên bản sẽ thay thế cấu hình hiện tại trên mọi thiết bị được đồng bộ.",
+	"versions.intro":
+		"Callout Studio tự động lưu các phiên bản cấu hình của bạn.\nCác phiên bản cũ được dọn dẹp dần.\nKhôi phục một phiên bản sẽ thay thế cấu hình hiện tại trên mọi thiết bị được đồng bộ.",
 	"versions.pausedHint": "Việc lưu đang tạm dừng nên không thể khôi phục. Bạn vẫn có thể so sánh và xóa phiên bản.",
 	"versions.loading": "Đang tìm phiên bản…",
 	"versions.empty": "Không tìm thấy phiên bản nào.",
@@ -1489,22 +1479,27 @@ export const vi: Record<string, string> = {
 	"versions.reason.beforeRepair": "Trước khi sửa tệp cài đặt",
 	"versions.restoreTitle": "Khôi phục phiên bản này",
 	"versions.subtitle": "“{{name}}” · {{when}}",
-	"versions.restoreBody": "Thiết lập hiện tại của bạn sẽ bị thay thế ({{count}} điểm khác biệt).\nNó được lưu thành một phiên bản trước, nên bạn có thể quay lại.\nSau đó dịch vụ đồng bộ của bạn gửi thiết lập đã khôi phục tới các thiết bị khác.",
+	"versions.restoreBody":
+		"Thiết lập hiện tại của bạn sẽ bị thay thế ({{count}} điểm khác biệt).\nNó được lưu thành một phiên bản trước, nên bạn có thể quay lại.\nSau đó dịch vụ đồng bộ của bạn gửi thiết lập đã khôi phục tới các thiết bị khác.",
 	"versions.restoreSame": "Phiên bản này giống cấu hình hiện tại nên không có gì để khôi phục.",
 	"versions.restored": "Đã khôi phục “{{name}}” từ {{when}}.",
-	"versions.backupFailed": "Không có gì được khôi phục: không thể lưu cấu hình hiện tại thành một phiên bản trước. Kiểm tra dung lượng trống rồi thử lại.",
+	"versions.backupFailed":
+		"Không có gì được khôi phục: không thể lưu cấu hình hiện tại thành một phiên bản trước. Kiểm tra dung lượng trống rồi thử lại.",
 	"versions.restoreFailed": "Không thể khôi phục phiên bản. Không có gì thay đổi.",
 	"versions.deleteTitle": "Xóa phiên bản này",
 	"versions.deleteAvailableBody": "Phiên bản này và mọi bản sao có sẵn của nó sẽ bị xóa vĩnh viễn.",
-	"versions.deleteSyncedFiles": "Việc xóa các tệp này có thể được đồng bộ sang các thiết bị khác của bạn. Các bản sao cục bộ trên những thiết bị đó có thể vẫn còn.",
+	"versions.deleteSyncedFiles":
+		"Việc xóa các tệp này có thể được đồng bộ sang các thiết bị khác của bạn. Các bản sao cục bộ trên những thiết bị đó có thể vẫn còn.",
 	"versions.deleteFinal": "Không thể hoàn tác thao tác này. Cấu hình hiện tại không bị ảnh hưởng.",
 	"versions.deleted": "Đã xóa “{{name}}” từ {{when}}.",
-	"versions.deleteFailed": "Không thể xóa một số bản sao của phiên bản này. Danh sách hiện hiển thị những bản còn lại.",
+	"versions.deleteFailed":
+		"Không thể xóa một số bản sao của phiên bản này. Danh sách hiện hiển thị những bản còn lại.",
 	"versions.details.title": "Chi tiết phiên bản",
 	"versions.details.difference": "{{count}} điểm khác biệt so với thiết lập hiện tại của bạn",
 	"versions.details.differences": "{{count}} điểm khác biệt so với thiết lập hiện tại của bạn",
 	"versions.details.comparisonUnavailable": "Không thể so sánh",
-	"notice.unsavedChangesKept": "Một số thay đổi trên thiết bị này chưa được lưu và đã bị thay thế bởi cài đặt mới hơn từ thiết bị khác. Phiên bản của bạn đã được lưu trước: mở Khôi phục phiên bản trước trong cài đặt Callout Studio để lấy lại.",
+	"notice.unsavedChangesKept":
+		"Một số thay đổi trên thiết bị này chưa được lưu và đã bị thay thế bởi cài đặt mới hơn từ thiết bị khác. Phiên bản của bạn đã được lưu trước: mở Khôi phục phiên bản trước trong cài đặt Callout Studio để lấy lại.",
 	"settings.versionHistory": "Khôi phục phiên bản trước",
 	"settings.versions": "Các phiên bản trước",
 	"settings.versionsDesc": "Thay thế thiết lập hiện tại của bạn bằng một phiên bản đã lưu trước đó.",
@@ -1515,12 +1510,13 @@ export const vi: Record<string, string> = {
 	"noteChanges.notesOne": "1 ghi chú",
 	"noteChanges.askCallout": "Nên làm gì với callout đó?",
 	"noteChanges.askCallouts": "Nên làm gì với những callout đó?",
-	"noteChanges.changeRenamed": "Bạn đã đổi tên hiển thị từ \"{{old}}\" thành \"{{new}}\", nên ID chính đổi từ \"{{oldId}}\" thành \"{{newId}}\".",
-	"noteChanges.changeMainId": "ID chính đổi từ \"{{oldId}}\" thành \"{{newId}}\".",
-	"noteChanges.changeName": "Bạn đã đổi tên hiển thị từ \"{{old}}\" thành \"{{new}}\".",
-	"noteChanges.changeRemoved": "Bạn đã xóa ID \"{{id}}\".",
+	"noteChanges.changeRenamed":
+		'Bạn đã đổi tên hiển thị từ "{{old}}" thành "{{new}}", nên ID chính đổi từ "{{oldId}}" thành "{{newId}}".',
+	"noteChanges.changeMainId": 'ID chính đổi từ "{{oldId}}" thành "{{newId}}".',
+	"noteChanges.changeName": 'Bạn đã đổi tên hiển thị từ "{{old}}" thành "{{new}}".',
+	"noteChanges.changeRemoved": 'Bạn đã xóa ID "{{id}}".',
 	"noteChanges.changeRemovedMany": "Bạn đã xóa các ID này: {{ids}}.",
-	"noteChanges.changeResetRemoved": "Đặt lại về mặc định sẽ xóa ID \"{{id}}\" mà bạn đã thêm.",
+	"noteChanges.changeResetRemoved": 'Đặt lại về mặc định sẽ xóa ID "{{id}}" mà bạn đã thêm.',
 	"noteChanges.changeResetRemovedMany": "Đặt lại về mặc định sẽ xóa các ID mà bạn đã thêm: {{ids}}.",
 	"noteChanges.changeFold": "Bạn đã đổi cách callout này gập lại.",
 	"noteChanges.affects": "Điều này ảnh hưởng đến {{callouts}} trong {{notes}}.",
@@ -1529,7 +1525,8 @@ export const vi: Record<string, string> = {
 	"noteChanges.rewriteManyDesc": "Mỗi ID cũ trong ghi chú của bạn sẽ thành [!{{to}}].",
 	"noteChanges.changeToIdLabel": "ID để đổi chúng thành",
 	"noteChanges.rewriteDesc": "Mỗi [!{{id}}] trong ghi chú của bạn sẽ thành [!{{to}}].",
-	"noteChanges.renameFollowDesc": "Mỗi [!{{oldId}}] trong ghi chú của bạn sẽ thành [!{{newId}}], và các tiêu đề ghi \"{{old}}\" sẽ thành \"{{new}}\".",
-	"noteChanges.titlesChangeDesc": "Các tiêu đề ghi \"{{old}}\" sẽ thành \"{{new}}\".",
+	"noteChanges.renameFollowDesc":
+		'Mỗi [!{{oldId}}] trong ghi chú của bạn sẽ thành [!{{newId}}], và các tiêu đề ghi "{{old}}" sẽ thành "{{new}}".',
+	"noteChanges.titlesChangeDesc": 'Các tiêu đề ghi "{{old}}" sẽ thành "{{new}}".',
 	"noteChanges.foldChangeDesc": "Dấu + hoặc - của chúng sẽ đổi cho khớp.",
 };

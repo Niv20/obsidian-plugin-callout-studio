@@ -27,12 +27,7 @@
  * lets brackets and strings be skipped properly, which is the one thing the
  * CSSOM was really buying — see `selectorText.ts`, which owns that half.
  */
-import {
-	matchParen,
-	skipBrackets,
-	skipString,
-	splitSelectorList,
-} from "./selectorText";
+import { matchParen, skipBrackets, skipString, splitSelectorList } from "./selectorText";
 
 /** `[a, b, c]` — ids, then classes/attributes/pseudo-classes, then elements. */
 export type Specificity = [number, number, number];
@@ -42,32 +37,17 @@ export type Specificity = [number, number, number];
  * rather than one of their own. `:where()` is in the list but is special-cased
  * to zero — it is the only one that contributes nothing at all.
  */
-const FUNCTIONAL = new Set([
-	"where",
-	"is",
-	"not",
-	"has",
-	"matches",
-	"any",
-	"-moz-any",
-	"-webkit-any",
-]);
+const FUNCTIONAL = new Set(["where", "is", "not", "has", "matches", "any", "-moz-any", "-webkit-any"]);
 
 /**
  * The four pseudo-*elements* CSS2 allowed with a single colon. They count as
  * elements (`c`), not pseudo-classes (`b`), and themes really do still write
  * `:before`.
  */
-const LEGACY_ELEMENTS = new Set([
-	"before",
-	"after",
-	"first-line",
-	"first-letter",
-]);
+const LEGACY_ELEMENTS = new Set(["before", "after", "first-line", "first-letter"]);
 
 /** An identifier, allowing CSS escapes and non-ASCII. */
 const IDENT = /^(?:[\w-]|\\.|[^\0-\x7F])+/;
-
 
 /** The most specific of a functional pseudo-class's arguments. */
 function maxOfArguments(args: string): Specificity {

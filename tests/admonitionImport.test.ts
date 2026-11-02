@@ -45,24 +45,22 @@ function def(over: Partial<CalloutDefinition> = {}): CalloutDefinition {
 }
 
 /** The two lookups the planner performs, and nothing else. */
-function registry(opts: {
-	byAttrId?: Record<string, CalloutDefinition>;
-	byAlias?: Record<string, CalloutDefinition>;
-} = {}): CalloutRegistry {
+function registry(
+	opts: {
+		byAttrId?: Record<string, CalloutDefinition>;
+		byAlias?: Record<string, CalloutDefinition>;
+	} = {},
+): CalloutRegistry {
 	return {
 		findByAttrId: (id: string) => opts.byAttrId?.[id],
 		findByAlias: (id: string) => opts.byAlias?.[id],
 	} as unknown as CalloutRegistry;
 }
 
-const plan = (
-	entries: AdmonitionRaw[],
-	reg: CalloutRegistry = registry(),
-): ReturnType<typeof planAdmonitionImport> =>
+const plan = (entries: AdmonitionRaw[], reg: CalloutRegistry = registry()): ReturnType<typeof planAdmonitionImport> =>
 	planAdmonitionImport(entries, reg, []);
 
-const keys = (issues: { messageKey: string }[]): string[] =>
-	issues.map((i) => i.messageKey);
+const keys = (issues: { messageKey: string }[]): string[] => issues.map((i) => i.messageKey);
 
 /** A name no library answers to, so the "no such icon" path is reachable. */
 const NO_SUCH_ICON = "zzz-definitely-not-an-icon-name";
@@ -194,10 +192,7 @@ describe("planAdmonitionImport — updating a callout the vault already has", ()
 describe("planAdmonitionImport — entries that are refused", () => {
 	it("refuses a blank type", async () => {
 		const r = await plan([{ type: "" }, { type: "   " }]);
-		assert.deepStrictEqual(keys(r.issues), [
-			"import.err.admTypeMissing",
-			"import.err.admTypeMissing",
-		]);
+		assert.deepStrictEqual(keys(r.issues), ["import.err.admTypeMissing", "import.err.admTypeMissing"]);
 		assert.deepStrictEqual(r.toApply, []);
 		// Labelled by position, since there is no name to label it by.
 		assert.equal(r.issues[0]?.entryLabel, "#1");
@@ -212,19 +207,14 @@ describe("planAdmonitionImport — entries that are refused", () => {
 
 	it("refuses a type carrying a bracket or a tab", async () => {
 		const r = await plan([{ type: "[note]" }, { type: "a\tb" }]);
-		assert.deepStrictEqual(keys(r.issues), [
-			"import.err.idBadChar",
-			"import.err.idBadChar",
-		]);
+		assert.deepStrictEqual(keys(r.issues), ["import.err.idBadChar", "import.err.idBadChar"]);
 		assert.deepStrictEqual(r.toApply, []);
 	});
 
 	it("refuses the second of two entries that normalize to one id", async () => {
 		const r = await plan([{ type: "My Type" }, { type: "my   type" }]);
 		assert.equal(r.toApply.length, 1);
-		const duplicate = r.issues.find(
-			(i) => i.messageKey === "import.err.duplicateInFile",
-		);
+		const duplicate = r.issues.find((i) => i.messageKey === "import.err.duplicateInFile");
 		assert.ok(duplicate, JSON.stringify(r.issues));
 		// Points back at the entry it collided with, by 1-based position.
 		assert.deepStrictEqual(duplicate.params, { value: "my type", first: 1 });
@@ -280,9 +270,7 @@ describe("planAdmonitionImport — titles", () => {
 		const r = await plan([{ type: "x", title: long, color: "#ff0000" }]);
 		assert.equal(r.toApply.length, 1);
 		assert.equal(r.toApply[0]?.entry.displayName?.length, MAX_DISPLAY_NAME);
-		const issue = r.issues.find(
-			(i) => i.messageKey === "import.warn.admTitleTruncated",
-		);
+		const issue = r.issues.find((i) => i.messageKey === "import.warn.admTitleTruncated");
 		assert.ok(issue, JSON.stringify(r.issues));
 		assert.equal(issue.level, "warning");
 		assert.deepStrictEqual(issue.params, {
@@ -292,9 +280,7 @@ describe("planAdmonitionImport — titles", () => {
 	});
 
 	it("keeps a title of exactly the limit, with no warning", async () => {
-		const r = await plan([
-			{ type: "x", title: "n".repeat(MAX_DISPLAY_NAME), color: "#ff0000" },
-		]);
+		const r = await plan([{ type: "x", title: "n".repeat(MAX_DISPLAY_NAME), color: "#ff0000" }]);
 		assert.equal(r.toApply[0]?.entry.displayName?.length, MAX_DISPLAY_NAME);
 		assert.deepStrictEqual(keys(r.issues), []);
 	});
@@ -313,28 +299,34 @@ describe("planAdmonitionImport — icons", () => {
 				{ type: "mountain", icon: { type, name: "montains" }, color: "1,2,3" },
 				{ type: "dice", icon: { type, name: "perspective-dice-six-two" }, color: "1,2,3" },
 			]);
-			assert.deepStrictEqual(result.toApply.map((item) => item.entry.icon), [
-				{ type: "rpg-awesome", value: "mountains" },
-				{ type: "rpg-awesome", value: "perspective-dice-two" },
-			]);
+			assert.deepStrictEqual(
+				result.toApply.map((item) => item.entry.icon),
+				[
+					{ type: "rpg-awesome", value: "mountains" },
+					{ type: "rpg-awesome", value: "perspective-dice-two" },
+				],
+			);
 			assert.deepStrictEqual(result.issues, []);
 		}
 	});
 
 	it("never persists inherited lookup members supplied as JSON pack names", async () => {
 		for (const type of ["__proto__", "constructor", "toString", "valueOf", "hasOwnProperty"]) {
-			const payload = JSON.parse(JSON.stringify([{ type: "safe-callout", icon: { type, name: "star" } }])) as AdmonitionRaw[];
+			const payload = JSON.parse(
+				JSON.stringify([{ type: "safe-callout", icon: { type, name: "star" } }]),
+			) as AdmonitionRaw[];
 			const result = await plan(payload);
 			assert.equal(result.toApply.length, 1, type);
 			assert.deepStrictEqual(result.toApply[0]?.entry.icon, { type: "fa-solid", value: "star" }, type);
-			assert.deepStrictEqual(JSON.parse(JSON.stringify(result.toApply[0]?.entry.icon)), { type: "fa-solid", value: "star" });
+			assert.deepStrictEqual(JSON.parse(JSON.stringify(result.toApply[0]?.entry.icon)), {
+				type: "fa-solid",
+				value: "star",
+			});
 		}
 	});
 
 	it("resolves a named icon into one of ours", async () => {
-		const r = await plan([
-			{ type: "x", color: "#ff0000", icon: { type: "rpg", name: "acid" } },
-		]);
+		const r = await plan([{ type: "x", color: "#ff0000", icon: { type: "rpg", name: "acid" } }]);
 		assert.deepStrictEqual(r.toApply[0]?.entry.icon, {
 			type: "rpg-awesome",
 			value: "acid",
@@ -349,14 +341,10 @@ describe("planAdmonitionImport — icons", () => {
 	});
 
 	it("warns, but still creates, when no library has that name", async () => {
-		const r = await plan([
-			{ type: "x", color: "#ff0000", icon: { type: "rpg", name: NO_SUCH_ICON } },
-		]);
+		const r = await plan([{ type: "x", color: "#ff0000", icon: { type: "rpg", name: NO_SUCH_ICON } }]);
 		assert.equal(r.toApply.length, 1);
 		assert.equal(r.toApply[0]?.entry.icon, undefined);
-		const issue = r.issues.find(
-			(i) => i.messageKey === "import.warn.admIconUnknown",
-		);
+		const issue = r.issues.find((i) => i.messageKey === "import.warn.admIconUnknown");
 		assert.ok(issue, JSON.stringify(r.issues));
 		assert.deepStrictEqual(issue.params, { value: NO_SUCH_ICON, id: "x" });
 	});
@@ -365,21 +353,14 @@ describe("planAdmonitionImport — icons", () => {
 		// The outcomes really do differ: an existing callout keeps the icon it
 		// has, a new one has nothing to keep.
 		const reg = registry({ byAttrId: { existing: def({ id: "existing" }) } });
-		const r = await plan(
-			[{ type: "existing", icon: { type: "rpg", name: NO_SUCH_ICON } }],
-			reg,
-		);
-		const issue = r.issues.find(
-			(i) => i.messageKey === "import.warn.admIconUnknownExisting",
-		);
+		const r = await plan([{ type: "existing", icon: { type: "rpg", name: NO_SUCH_ICON } }], reg);
+		const issue = r.issues.find((i) => i.messageKey === "import.warn.admIconUnknownExisting");
 		assert.ok(issue, JSON.stringify(r.issues));
 		assert.deepStrictEqual(issue.params, { value: NO_SUCH_ICON, id: "existing" });
 	});
 
 	it("warns when a picture cannot be decoded, and adds no artwork", async () => {
-		const r = await plan([
-			{ type: "x", color: "#ff0000", icon: { type: "image", name: "not-a-data-uri" } },
-		]);
+		const r = await plan([{ type: "x", color: "#ff0000", icon: { type: "image", name: "not-a-data-uri" } }]);
 		assert.equal(r.toApply.length, 1);
 		assert.equal(r.toApply[0]?.entry.icon, undefined);
 		assert.deepStrictEqual(r.newImages, []);
@@ -406,22 +387,40 @@ describe("planAdmonitionImport — iconWithCss", () => {
 
 describe("planAdmonitionImport — unsupported behavior", () => {
 	it("reports enabled behavior that the imported callout cannot reproduce", async () => {
-		const result = await plan([{
-			type: "x", color: "1,2,3", command: true, copy: true, noTitle: true, injectColor: false,
-		}]);
+		const result = await plan([
+			{
+				type: "x",
+				color: "1,2,3",
+				command: true,
+				copy: true,
+				noTitle: true,
+				injectColor: false,
+			},
+		]);
 		assert.equal(result.toApply.length, 1);
-		assert.deepStrictEqual(result.issues, [{
-			index: 0, entryLabel: "x", level: "warning",
-			messageKey: "import.warn.admUnsupportedOptions",
-			params: { fields: "command, copy, noTitle, injectColor" },
-		}]);
+		assert.deepStrictEqual(result.issues, [
+			{
+				index: 0,
+				entryLabel: "x",
+				level: "warning",
+				messageKey: "import.warn.admUnsupportedOptions",
+				params: { fields: "command, copy, noTitle, injectColor" },
+			},
+		]);
 	});
 
 	it("does not warn for missing, disabled, or nonboolean behavior flags", async () => {
 		for (const value of [undefined, false, "true", 1, {}]) {
-			const result = await plan([{
-				type: "x", color: "1,2,3", command: value, copy: value, noTitle: value, injectColor: true,
-			}]);
+			const result = await plan([
+				{
+					type: "x",
+					color: "1,2,3",
+					command: value,
+					copy: value,
+					noTitle: value,
+					injectColor: true,
+				},
+			]);
 			assert.deepStrictEqual(result.issues, []);
 		}
 	});
@@ -429,9 +428,12 @@ describe("planAdmonitionImport — unsupported behavior", () => {
 
 describe("planAdmonitionImport — bounded strings", () => {
 	it("bounds oversized id labels and rejects the entry before icon conversion", async () => {
-		const result = await plan([{
-			type: "x".repeat(100_000), icon: { type: "image", name: "data:image/png;base64,AAAA" },
-		}]);
+		const result = await plan([
+			{
+				type: "x".repeat(100_000),
+				icon: { type: "image", name: "data:image/png;base64,AAAA" },
+			},
+		]);
 		assert.deepStrictEqual(result.toApply, []);
 		assert.deepStrictEqual(result.newImages, []);
 		assert.equal(result.issues[0]?.entryLabel.length, 200);
@@ -440,10 +442,13 @@ describe("planAdmonitionImport — bounded strings", () => {
 	});
 
 	it("rejects oversized color input before parsing and bounds icon warning text", async () => {
-		const result = await plan([{
-			type: "x", color: `rgb(1,2,3${" ".repeat(100_000)})`,
-			icon: { type: "fas", name: "x".repeat(100_000) },
-		}]);
+		const result = await plan([
+			{
+				type: "x",
+				color: `rgb(1,2,3${" ".repeat(100_000)})`,
+				icon: { type: "fas", name: "x".repeat(100_000) },
+			},
+		]);
 		assert.equal(result.toApply[0]?.entry.color, DEFAULT_IMPORT_COLOR);
 		assert.equal(result.toApply[0]?.entry.icon, undefined);
 		const warning = result.issues.find((issue) => issue.messageKey === "import.warn.admIconUnknown");
@@ -460,10 +465,7 @@ describe("planAdmonitionImport — a refused entry leaves nothing behind", () =>
 		// would leave artwork in the user's own pictures for a callout that was
 		// never created.
 		const reg = registry({ byAlias: { taken: def({ id: "owner" }) } });
-		const r = await plan(
-			[{ type: "taken", icon: { type: "image", name: "not-a-data-uri" } }],
-			reg,
-		);
+		const r = await plan([{ type: "taken", icon: { type: "image", name: "not-a-data-uri" } }], reg);
 		assert.deepStrictEqual(keys(r.issues), ["import.err.cmIdConflict"]);
 		assert.deepStrictEqual(r.newImages, []);
 		assert.deepStrictEqual(r.toApply, []);
@@ -481,9 +483,7 @@ describe("planAdmonitionImport — a refused entry leaves nothing behind", () =>
 
 describe("planAdmonitionImport — the plan as a whole", () => {
 	it("mutates neither the registry nor the entries it was given", async () => {
-		const entries: AdmonitionRaw[] = [
-			{ type: "x", title: "X", color: "#ff0000", icon: "star" },
-		];
+		const entries: AdmonitionRaw[] = [{ type: "x", title: "X", color: "#ff0000", icon: "star" }];
 		const snapshot = JSON.parse(JSON.stringify(entries)) as unknown;
 		await plan(entries);
 		assert.deepStrictEqual(JSON.parse(JSON.stringify(entries)), snapshot);
@@ -503,10 +503,7 @@ describe("planAdmonitionImport — the plan as a whole", () => {
 
 	it("plans creates and updates side by side in one pass", async () => {
 		const reg = registry({ byAttrId: { existing: def({ id: "existing" }) } });
-		const r = await plan(
-			[{ type: "existing" }, { type: "brand-new", color: "#ff0000" }],
-			reg,
-		);
+		const r = await plan([{ type: "existing" }, { type: "brand-new", color: "#ff0000" }], reg);
 		assert.deepStrictEqual(
 			r.toApply.map((i) => i.action),
 			["update", "create"],

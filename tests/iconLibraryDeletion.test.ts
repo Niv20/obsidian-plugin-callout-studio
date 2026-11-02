@@ -25,8 +25,7 @@ import { IconService } from "../src/icons/IconService";
 import { isPackLoaded } from "../src/icons/packData";
 import type { CalloutDefinition, IconPackId } from "../src/types";
 
-const realPackText = (id: IconPackId): string =>
-	readFileSync(join(process.cwd(), "packs", `${id}.json`), "utf8");
+const realPackText = (id: IconPackId): string => readFileSync(join(process.cwd(), "packs", `${id}.json`), "utf8");
 
 function callout(id: string, over: Partial<CalloutDefinition> = {}): CalloutDefinition {
 	return {
@@ -87,7 +86,11 @@ function harness(): Harness {
 		app: { vault: { adapter, configDir: ".obsidian" } } as unknown as App,
 		manifest: { id: "callout-studio", dir: "plugins/cs" } as PluginManifest,
 		registry,
-		cssInjector: { inject: () => { h.injects++; } } as unknown as CSSInjector,
+		cssInjector: {
+			inject: () => {
+				h.injects++;
+			},
+		} as unknown as CSSInjector,
 		saveSettings: () => {
 			h.saves++;
 			return Promise.resolve();
@@ -150,8 +153,10 @@ describe("IconService.deleteLibrary — the callouts keep their icons", () => {
 
 		assert.equal(await h.service.deleteLibrary("fa"), true);
 		assert.ok(h.registry.findIconSvg("fa-brands", "github", ""));
-		assert.deepEqual(h.removed, ["fa-solid", "fa-regular", "fa-brands"].map(
-			(id) => h.service.packs.packPath(id as IconPackId)));
+		assert.deepEqual(
+			h.removed,
+			["fa-solid", "fa-regular", "fa-brands"].map((id) => h.service.packs.packPath(id as IconPackId)),
+		);
 		for (const id of ["fa-solid", "fa-regular", "fa-brands"] as const) {
 			assert.equal(isPackLoaded(id), false, id);
 		}
@@ -164,7 +169,10 @@ describe("IconService.deleteLibrary — the callouts keep their icons", () => {
 		const h = harness();
 		await downloaded(h, "octicons");
 		h.registry.setPreviewDefinition(callout("draft", { icon: { type: "octicons", value: "rocket" } }));
-		assert.deepEqual(h.registry.getCommitted().filter((def) => def.id === "draft"), []);
+		assert.deepEqual(
+			h.registry.getCommitted().filter((def) => def.id === "draft"),
+			[],
+		);
 
 		assert.equal(await h.service.deleteLibrary("octicons"), true);
 		assert.equal(h.registry.findIconSvg("octicons", "rocket", "16"), undefined);

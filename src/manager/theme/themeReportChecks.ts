@@ -46,9 +46,7 @@ export function buildChecks(report: ThemeReport): string[] {
 			`Switch to another theme that does not declare these ids and confirm the ${String(report.addedIds.length)} row(s) disappear, your notes are untouched, and re-opening a note that still says \`> [!${first}]\` does not bring the row back. Re-scan vault should.`,
 		);
 	} else if (report.involvement === "per-id") {
-		checks.push(
-			"Theme names callout ids but adds none of its own — Callouts from your theme should stay hidden.",
-		);
+		checks.push("Theme names callout ids but adds none of its own — Callouts from your theme should stay hidden.");
 	} else {
 		checks.push(
 			"Theme styles .callout generically — the built-ins follow it, and Callouts from your theme should stay hidden.",

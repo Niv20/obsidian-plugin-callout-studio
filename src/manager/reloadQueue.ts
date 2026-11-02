@@ -116,5 +116,4 @@ export class ReloadQueue {
 		this.pending = false;
 		this.clearRetry();
 	}
-
 }

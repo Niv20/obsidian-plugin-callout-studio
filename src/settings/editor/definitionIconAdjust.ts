@@ -4,11 +4,7 @@
  * the two must agree or the callout changes appearance when Save is pressed.
  */
 import type { CalloutDefinition } from "../../types";
-import {
-	cloneIconAdjustFields,
-	iconAdjustSourcesEqual,
-	type IconAdjustSource,
-} from "../../utils/iconAdjust";
+import { cloneIconAdjustFields, iconAdjustSourcesEqual, type IconAdjustSource } from "../../utils/iconAdjust";
 import { hasAuthoredIconAdjust } from "./authoredStyle";
 
 type ConcreteIconAdjustSource = IconAdjustSource & {

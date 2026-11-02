@@ -28,7 +28,12 @@
 import { Platform, setIcon, setTooltip } from "obsidian";
 import { t } from "../../i18n";
 import { emptyListState } from "../../ui/mascot/mascotPlaces";
-import { FIXED_COMMAND_IDS, FIXED_COMMAND_NAME_KEYS, isFixedCommandEnabled, type FixedCommandId } from "../../editor/commands";
+import {
+	FIXED_COMMAND_IDS,
+	FIXED_COMMAND_NAME_KEYS,
+	isFixedCommandEnabled,
+	type FixedCommandId,
+} from "../../editor/commands";
 import { renderNoIcon } from "../../icons/renderIcon";
 import { paintCalloutListIcon } from "../../manager/theme/calloutListIcon";
 import type { CustomCommand } from "../../types";
@@ -62,10 +67,7 @@ export function commandsPage(ctx: TreeContext): CsPage {
 		id: COMMANDS_PAGE.page,
 		name: t("commandBuilder.title"),
 		desc: t("settings.customCommandsDesc"),
-		items: [
-			yourCommandsList(ctx),
-			builtInCommandsBox(ctx),
-		],
+		items: [yourCommandsList(ctx), builtInCommandsBox(ctx)],
 	};
 }
 
@@ -77,7 +79,9 @@ function yourCommandsList(ctx: TreeContext): CsList {
 	const writer = plugin.settingsWriter;
 	const commands = plugin.customCommands.list();
 	/** Draw the page again once a flow has changed something. */
-	const redrawIf = (changed: boolean): void => { if (changed) ctx.redraw(); };
+	const redrawIf = (changed: boolean): void => {
+		if (changed) ctx.redraw();
+	};
 	return {
 		type: "list",
 		id: COMMANDS_PAGE.mine,
@@ -85,7 +89,9 @@ function yourCommandsList(ctx: TreeContext): CsList {
 		emptyState: emptyListState(t("commandBuilder.empty"), t("commandBuilder.newCommand")),
 		addItem: {
 			name: t("commandBuilder.newCommand"),
-			action: refuseWhilePaused(writer, () => { void createCommand(ctx.app, plugin).then(redrawIf); }),
+			action: refuseWhilePaused(writer, () => {
+				void createCommand(ctx.app, plugin).then(redrawIf);
+			}),
 		},
 		// The rows are in the order of `commands`, so an index is a place in it.
 		onDelete: refuseWhilePaused(writer, (index: number) => {
@@ -131,7 +137,9 @@ function customCommandRow(ctx: TreeContext, command: CustomCommand, redrawIf: (c
 				icon: "pencil",
 				label: t("commandBuilder.editAria", { name }),
 				blockedReason: () => pausedReason(plugin.settingsWriter),
-				onClick: () => { void editCommand(ctx.app, plugin, command).then(redrawIf); },
+				onClick: () => {
+					void editCommand(ctx.app, plugin, command).then(redrawIf);
+				},
 			});
 			// The icon sits outside the controls, which a redraw empties, so the
 			// row's cleanup takes it away before the next draw.
@@ -178,9 +186,11 @@ function builtInCommandsBox(ctx: TreeContext): CsGroup {
 		type: "group",
 		id: COMMANDS_PAGE.builtIn,
 		heading,
-		extraButtons: [boxResetButton(ctx.plugin.settingsWriter, heading, () => {
-			void enableAllFixedCommands(ctx.plugin).then(() => ctx.redraw());
-		})],
+		extraButtons: [
+			boxResetButton(ctx.plugin.settingsWriter, heading, () => {
+				void enableAllFixedCommands(ctx.plugin).then(() => ctx.redraw());
+			}),
+		],
 		items: FIXED_COMMAND_IDS.map((id) => fixedCommandRow(ctx, id)),
 	};
 }

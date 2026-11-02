@@ -11,18 +11,12 @@
 import { around, dedupe } from "monkey-around";
 import { MarkdownView, Menu, type MenuPositionDef } from "obsidian";
 import type CalloutStudioPlugin from "../../main";
-import {
-	findMarkdownViewForTarget,
-	resolveContext,
-	type PointerContext,
-} from "./resolve";
+import { findMarkdownViewForTarget, resolveContext, type PointerContext } from "./resolve";
 import { addItems } from "./items";
 import { isReadOnlyPreviewTarget, stripEditingItems } from "./readOnlyPreview";
 
-const MENU_MOUSE_PATCH_KEY =
-	"callout-studio-context-menu.show-at-mouse-event@obsidian-plugin-callout-studio";
-const MENU_POSITION_PATCH_KEY =
-	"callout-studio-context-menu.show-at-position@obsidian-plugin-callout-studio";
+const MENU_MOUSE_PATCH_KEY = "callout-studio-context-menu.show-at-mouse-event@obsidian-plugin-callout-studio";
+const MENU_POSITION_PATCH_KEY = "callout-studio-context-menu.show-at-position@obsidian-plugin-callout-studio";
 const MENU_TRIGGER_MAX_AGE_MS = 750;
 const MENU_TRIGGER_POSITION_TOLERANCE_PX = 12;
 
@@ -48,10 +42,7 @@ export function registerContextMenu(plugin: CalloutStudioPlugin): void {
 				info instanceof MarkdownView
 					? info
 					: lastTrigger
-						? findMarkdownViewForTarget(
-								plugin,
-								lastTrigger.targetEl,
-							)
+						? findMarkdownViewForTarget(plugin, lastTrigger.targetEl)
 						: null;
 			if (!view) return;
 			const trigger = getRecentTriggerForView(lastTrigger, view);
@@ -67,33 +58,21 @@ export function registerContextMenu(plugin: CalloutStudioPlugin): void {
 	// matched against lastTrigger by position tolerance + timestamp.
 	const uninstallPatch = around(Menu.prototype, {
 		showAtMouseEvent(old) {
-			return dedupe(
-				MENU_MOUSE_PATCH_KEY,
-				old,
-				function (this: Menu, event: MouseEvent) {
-					const trigger = capturePointerContext(event);
-					if (trigger) {
-						lastTrigger = trigger;
-						maybeAddItems(plugin, this, trigger, injectedMenus);
-					}
-					return old?.apply(this, [event]) ?? this;
-				},
-			);
+			return dedupe(MENU_MOUSE_PATCH_KEY, old, function (this: Menu, event: MouseEvent) {
+				const trigger = capturePointerContext(event);
+				if (trigger) {
+					lastTrigger = trigger;
+					maybeAddItems(plugin, this, trigger, injectedMenus);
+				}
+				return old?.apply(this, [event]) ?? this;
+			});
 		},
 		showAtPosition(old) {
 			return dedupe(
 				MENU_POSITION_PATCH_KEY,
 				old,
-				function (
-					this: Menu,
-					position: MenuPositionDef,
-					doc?: Document,
-				) {
-					const trigger = getMatchingRecentTrigger(
-						lastTrigger,
-						position,
-						doc,
-					);
+				function (this: Menu, position: MenuPositionDef, doc?: Document) {
+					const trigger = getMatchingRecentTrigger(lastTrigger, position, doc);
 					if (trigger) {
 						maybeAddItems(plugin, this, trigger, injectedMenus);
 					}
@@ -145,12 +124,7 @@ function maybeAddItems(
 
 function capturePointerContext(event: MouseEvent): PointerContext | null {
 	const { target } = event;
-	const targetEl =
-		target instanceof Element
-			? target
-			: target instanceof Node
-				? target.parentElement
-				: null;
+	const targetEl = target instanceof Element ? target : target instanceof Node ? target.parentElement : null;
 	if (!targetEl) return null;
 
 	return {
@@ -162,10 +136,7 @@ function capturePointerContext(event: MouseEvent): PointerContext | null {
 	};
 }
 
-function getRecentTriggerForView(
-	trigger: PointerContext | null,
-	view: MarkdownView,
-): PointerContext | null {
+function getRecentTriggerForView(trigger: PointerContext | null, view: MarkdownView): PointerContext | null {
 	if (!trigger) return null;
 	if (Date.now() - trigger.timestamp > MENU_TRIGGER_MAX_AGE_MS) return null;
 	if (!view.containerEl.contains(trigger.targetEl)) return null;
@@ -181,10 +152,8 @@ function getMatchingRecentTrigger(
 	if (Date.now() - trigger.timestamp > MENU_TRIGGER_MAX_AGE_MS) return null;
 	if (doc && trigger.ownerDocument !== doc) return null;
 	if (
-		Math.abs(trigger.clientX - position.x) >
-			MENU_TRIGGER_POSITION_TOLERANCE_PX ||
-		Math.abs(trigger.clientY - position.y) >
-			MENU_TRIGGER_POSITION_TOLERANCE_PX
+		Math.abs(trigger.clientX - position.x) > MENU_TRIGGER_POSITION_TOLERANCE_PX ||
+		Math.abs(trigger.clientY - position.y) > MENU_TRIGGER_POSITION_TOLERANCE_PX
 	) {
 		return null;
 	}

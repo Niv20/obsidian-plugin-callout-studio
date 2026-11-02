@@ -32,20 +32,11 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	at,
-	lineOf,
-	literals,
-	pluginSourceFiles,
-	readRepoFile,
-	report,
-} from "./support/sourceScan";
+import { at, lineOf, literals, pluginSourceFiles, readRepoFile, report } from "./support/sourceScan";
 
 const files = pluginSourceFiles();
 /** `styles.css` with its comments blanked — several discuss class names. */
-const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, (m) =>
-	m.replace(/[^\n]/g, " "),
-);
+const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, " "));
 const cssRaw = readRepoFile("styles.css");
 
 /**
@@ -152,15 +143,9 @@ describe("--cs-* custom properties", () => {
 		// The other direction. A property nothing reads is either a rule that
 		// was deleted around it, or a name that was changed on one side.
 		const unread = [...written]
-			.filter(
-				(n) => !readBare.has(n) && !readWithFallback.has(n) && !COMPAT_EXPORTS.has(n),
-			)
+			.filter((n) => !readBare.has(n) && !readWithFallback.has(n) && !COMPAT_EXPORTS.has(n))
 			.sort();
-		assert.deepStrictEqual(
-			unread,
-			[],
-			report("Written but never read — dead custom properties:", unread),
-		);
+		assert.deepStrictEqual(unread, [], report("Written but never read — dead custom properties:", unread));
 	});
 
 	it("the compatibility exports are still written", () => {
@@ -179,11 +164,7 @@ describe("--cs-* custom properties", () => {
 		// plugin never writes them, and the fallback is the default. Losing the
 		// fallback turns "unset" into "broken", which is why they are pinned by
 		// name rather than merely allowed to be unwritten.
-		const HATCHES = [
-			"--cs-heading-fold-offset",
-			"--cs-heading-icon-offset",
-			"--cs-regular-icon-gap",
-		];
+		const HATCHES = ["--cs-heading-fold-offset", "--cs-heading-icon-offset", "--cs-regular-icon-gap"];
 		for (const name of HATCHES) {
 			assert.ok(
 				readWithFallback.has(name),
@@ -206,9 +187,7 @@ describe("class names in styles.css and src/ agree", () => {
 	 * Names built by concatenation, so the full class never appears anywhere as
 	 * a literal. Any CSS rule starting with one of these is considered emitted.
 	 */
-	const PREFIXES = [
-		"cs-import-issue-",
-	];
+	const PREFIXES = ["cs-import-issue-"];
 
 	/**
 	 * Names in `src/` that use the plugin's prefix but are not classes.
@@ -316,7 +295,10 @@ describe("class names in styles.css and src/ agree", () => {
 	 * citing the wrong reason.
 	 */
 	const STYLED_BY_GENERATED_CSS = new Set([
-		"cs-export-icon", "cs-unknown", "cs-fallback-icon", "cs-fallback-icon-hidden",
+		"cs-export-icon",
+		"cs-unknown",
+		"cs-fallback-icon",
+		"cs-fallback-icon-hidden",
 	]);
 
 	/**
@@ -340,9 +322,7 @@ describe("class names in styles.css and src/ agree", () => {
 
 	/** Class selectors in `styles.css`. */
 	const styled = new Set<string>();
-	for (const m of css.matchAll(
-		new RegExp(`\\.(${OWNED.source})`, "g"),
-	)) {
+	for (const m of css.matchAll(new RegExp(`\\.(${OWNED.source})`, "g"))) {
 		styled.add(m[1] as string);
 	}
 
@@ -363,10 +343,7 @@ describe("class names in styles.css and src/ agree", () => {
 				const name = m[0];
 				const index = m.index ?? 0;
 				// `cs-import-issue-${severity}` — a prefix, handled above.
-				if (
-					name.endsWith("-") ||
-					lit.value.slice(index + name.length, index + name.length + 2) === "${"
-				) {
+				if (name.endsWith("-") || lit.value.slice(index + name.length, index + name.length + 2) === "${") {
 					continue;
 				}
 				if (NOT_A_CLASS.has(name)) continue;
@@ -383,10 +360,7 @@ describe("class names in styles.css and src/ agree", () => {
 	it("every class the code applies has a rule", () => {
 		const bad = [...emitted.entries()]
 			.filter(
-				([name]) =>
-					!styled.has(name) &&
-					!EMITTED_WITHOUT_RULES.has(name) &&
-					!STYLED_BY_GENERATED_CSS.has(name),
+				([name]) => !styled.has(name) && !EMITTED_WITHOUT_RULES.has(name) && !STYLED_BY_GENERATED_CSS.has(name),
 			)
 			.map(([name, where]) => `${name}  (${where})`)
 			.sort();
@@ -412,10 +386,7 @@ describe("class names in styles.css and src/ agree", () => {
 		assert.deepStrictEqual(
 			bad,
 			[],
-			report(
-				"These rules style a class nothing applies — usually a rename that only landed on one side:",
-				bad,
-			),
+			report("These rules style a class nothing applies — usually a rename that only landed on one side:", bad),
 		);
 	});
 
@@ -442,13 +413,9 @@ describe("class names in styles.css and src/ agree", () => {
 			// picked up a static rule no longer belongs here — and one nothing
 			// applies any more is an exception outliving its class.
 			if (styled.has(name)) {
-				stale.push(
-					`STYLED_BY_GENERATED_CSS: ${name} has a styles.css rule now — remove it`,
-				);
+				stale.push(`STYLED_BY_GENERATED_CSS: ${name} has a styles.css rule now — remove it`);
 			} else if (!emitted.has(name)) {
-				stale.push(
-					`STYLED_BY_GENERATED_CSS: ${name} is no longer emitted — remove it`,
-				);
+				stale.push(`STYLED_BY_GENERATED_CSS: ${name} is no longer emitted — remove it`);
 			}
 		}
 		assert.deepStrictEqual(stale, [], report("Stale exceptions:", stale));
@@ -480,9 +447,7 @@ describe("modal surfaces use the --cs-surface pair", () => {
 			for (const decl of body.matchAll(
 				/(background|background-color)\s*:\s*var\(\s*(--background-primary|--background-secondary)\s*\)/g,
 			)) {
-				bad.push(
-					`styles.css:${lineOf(cssRaw, m.index ?? 0)}  ${selector.slice(0, 70)} → ${decl[2]}`,
-				);
+				bad.push(`styles.css:${lineOf(cssRaw, m.index ?? 0)}  ${selector.slice(0, 70)} → ${decl[2]}`);
 			}
 		}
 		assert.deepStrictEqual(
@@ -509,11 +474,7 @@ describe("styles.css selects nothing with :has()", () => {
 	// reason. Comments are blanked, so explaining the rule is still allowed.
 	it("has no :has() in any selector", () => {
 		const hits = [...css.matchAll(/:has\(/g)].map((m) => `styles.css:${lineOf(cssRaw, m.index ?? 0)}`);
-		assert.deepStrictEqual(
-			hits,
-			[],
-			report("Replace these :has() selectors with a class the code sets:", hits),
-		);
+		assert.deepStrictEqual(hits, [], report("Replace these :has() selectors with a class the code sets:", hits));
 	});
 });
 

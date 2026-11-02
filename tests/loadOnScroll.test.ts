@@ -18,13 +18,22 @@ class FakeObserver {
 	static all: FakeObserver[] = [];
 	readonly targets: unknown[] = [];
 	disconnected = false;
-	constructor(readonly callback: (entries: Array<{ isIntersecting: boolean }>) => void, readonly options: { root?: unknown; rootMargin?: string }) {
+	constructor(
+		readonly callback: (entries: Array<{ isIntersecting: boolean }>) => void,
+		readonly options: { root?: unknown; rootMargin?: string },
+	) {
 		FakeObserver.all.push(this);
 	}
-	observe(target: unknown): void { this.targets.push(target); }
-	disconnect(): void { this.disconnected = true; }
+	observe(target: unknown): void {
+		this.targets.push(target);
+	}
+	disconnect(): void {
+		this.disconnected = true;
+	}
 	/** The marker came within reach (or not). */
-	fire(isIntersecting: boolean): void { this.callback([{ isIntersecting }]); }
+	fire(isIntersecting: boolean): void {
+		this.callback([{ isIntersecting }]);
+	}
 }
 
 /** Run `body` with the fake window able to watch, then take that away again. */
@@ -32,7 +41,11 @@ function withObserver(body: () => void): void {
 	const view = dom.document.defaultView as unknown as Record<string, unknown>;
 	view.IntersectionObserver = FakeObserver;
 	FakeObserver.all = [];
-	try { body(); } finally { delete view.IntersectionObserver; }
+	try {
+		body();
+	} finally {
+		delete view.IntersectionObserver;
+	}
 }
 
 describe("loading results as the list scrolls", () => {
@@ -40,7 +53,14 @@ describe("loading results as the list scrolls", () => {
 		const content = dom.document.createElement("div") as unknown as HTMLElement;
 		assert.equal(canLoadOnScroll(content.ownerDocument), false);
 		const cards = new OccurrenceResults(100);
-		cards.render(content, scanCalloutOccurrences("a.md", "[!note]\n".repeat(150)), 100, true, () => {}, () => {});
+		cards.render(
+			content,
+			scanCalloutOccurrences("a.md", "[!note]\n".repeat(150)),
+			100,
+			true,
+			() => {},
+			() => {},
+		);
 		assert.ok(content.querySelector('button[data-action="more"]'));
 		assert.equal(cards.sentinel, null);
 	});
@@ -50,12 +70,26 @@ describe("loading results as the list scrolls", () => {
 			const content = dom.document.createElement("div") as unknown as HTMLElement;
 			const cards = new OccurrenceResults(100);
 			const results = scanCalloutOccurrences("a.md", "[!note]\n".repeat(150));
-			cards.render(content, results, 100, true, () => {}, () => {});
+			cards.render(
+				content,
+				results,
+				100,
+				true,
+				() => {},
+				() => {},
+			);
 			assert.equal(content.querySelector('button[data-action="more"]'), null, "no button to press");
 			assert.ok(cards.sentinel?.classList.contains(LOAD_MORE_SENTINEL));
 			assert.equal(cards.sentinel?.getAttribute("aria-hidden"), "true");
 			assert.equal(content.lastElementChild, cards.sentinel, "at the very end of the list");
-			cards.render(content, results, 200, true, () => {}, () => {});
+			cards.render(
+				content,
+				results,
+				200,
+				true,
+				() => {},
+				() => {},
+			);
 			assert.equal(cards.sentinel, null, "all 150 drawn: nothing left to load");
 		});
 	});
@@ -65,7 +99,12 @@ describe("loading results as the list scrolls", () => {
 			const scroller = dom.document.createElement("div") as unknown as HTMLElement;
 			Object.defineProperty(scroller, "clientHeight", { value: 400 });
 			let loads = 0;
-			const loader = new LoadOnScroll(() => scroller, () => { loads++; });
+			const loader = new LoadOnScroll(
+				() => scroller,
+				() => {
+					loads++;
+				},
+			);
 			const sentinel = dom.document.createElement("div") as unknown as HTMLElement;
 			loader.watch(sentinel);
 			const observer = FakeObserver.all[0]!;
@@ -85,7 +124,12 @@ describe("loading results as the list scrolls", () => {
 			const scroller = dom.document.createElement("div") as unknown as HTMLElement;
 			Object.defineProperty(scroller, "clientHeight", { value: 0 });
 			let loads = 0;
-			const loader = new LoadOnScroll(() => scroller, () => { loads++; });
+			const loader = new LoadOnScroll(
+				() => scroller,
+				() => {
+					loads++;
+				},
+			);
 			loader.watch(dom.document.createElement("div") as unknown as HTMLElement);
 			FakeObserver.all[0]!.fire(true);
 			assert.equal(loads, 0, "a hidden tab lays out at zero height: nothing is being scrolled");

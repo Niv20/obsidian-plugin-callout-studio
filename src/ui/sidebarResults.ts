@@ -67,12 +67,15 @@ export interface SidebarFileGroup {
  *   extra class for the group (`cls`), and the sidebar's memory of which
  *   notes are folded (`fold`), which the fold button also writes to.
  */
-export function createSidebarFileGroup(host: HTMLElement, options: {
-	path: string;
-	count: number;
-	cls?: string;
-	fold: SidebarFold;
-}): SidebarFileGroup {
+export function createSidebarFileGroup(
+	host: HTMLElement,
+	options: {
+		path: string;
+		count: number;
+		cls?: string;
+		fold: SidebarFold;
+	},
+): SidebarFileGroup {
 	const folded = options.fold.isFolded(options.path);
 	const section = host.createEl("section", { cls: "cs-sidebar-file tree-item search-result" });
 	if (options.cls) section.addClass(options.cls);
@@ -80,7 +83,9 @@ export function createSidebarFileGroup(host: HTMLElement, options: {
 	section.dataset.path = options.path;
 
 	// Obsidian's tree row: its hover, its active fill, its spacing.
-	const head = section.createDiv({ cls: "cs-sidebar-file-head tree-item-self search-result-file-title is-clickable" });
+	const head = section.createDiv({
+		cls: "cs-sidebar-file-head tree-item-self search-result-file-title is-clickable",
+	});
 
 	// The fold control is named by the note it folds, which the screen reader
 	// then reads with "expanded" or "collapsed". (Not an `aria-label`: that
@@ -104,14 +109,19 @@ export function createSidebarFileGroup(host: HTMLElement, options: {
 		attr: { type: "button", "data-action": "file", "data-path": options.path },
 	});
 	// The path without its `.md`, as a note is named everywhere else.
-	link.createDiv({ cls: "tree-item-inner" })
-		.createSpan({ cls: "cs-sidebar-file-name", text: options.path.replace(/\.md$/i, ""), attr: { id: nameId } });
+	link.createDiv({ cls: "tree-item-inner" }).createSpan({
+		cls: "cs-sidebar-file-name",
+		text: options.path.replace(/\.md$/i, ""),
+		attr: { id: nameId },
+	});
 	// A space between the name and the count, so the button reads "a 105"
 	// rather than "a105". (A space alone between two flex items is not drawn.)
 	link.appendText(" ");
 	// The faint count at the row's end, as the Search pane counts a file's matches.
-	link.createDiv({ cls: "tree-item-flair-outer" })
-		.createSpan({ cls: "tree-item-flair", text: String(options.count) });
+	link.createDiv({ cls: "tree-item-flair-outer" }).createSpan({
+		cls: "tree-item-flair",
+		text: String(options.count),
+	});
 
 	const matches = section.createDiv({ cls: "search-result-file-matches cs-sidebar-matches" });
 
@@ -134,12 +144,15 @@ export function createSidebarFileGroup(host: HTMLElement, options: {
 }
 
 /** The file name belongs to its group; each row shows just its kind and line. */
-export function renderSidebarLocation(host: HTMLElement, options: {
-	role: string;
-	/** One-based Markdown source line. */
-	line: number;
-	cls?: string;
-}): HTMLElement {
+export function renderSidebarLocation(
+	host: HTMLElement,
+	options: {
+		role: string;
+		/** One-based Markdown source line. */
+		line: number;
+		cls?: string;
+	},
+): HTMLElement {
 	const location = host.createSpan({ cls: "cs-sidebar-location", text: t("usage.location", options) });
 	if (options.cls) location.addClass(options.cls);
 	return location;

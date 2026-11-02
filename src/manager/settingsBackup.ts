@@ -111,9 +111,7 @@ interface BackupFile {
 
 /** The plugin's own folder. @see manager/settingsFile.ts for the same fallback. */
 function backupDir(host: SettingsBackupHost): string {
-	const base =
-		host.manifest.dir ??
-		`${host.app.vault.configDir}/plugins/${host.manifest.id}`;
+	const base = host.manifest.dir ?? `${host.app.vault.configDir}/plugins/${host.manifest.id}`;
 	return normalizePath(`${base}/${FOLDER}`);
 }
 
@@ -145,14 +143,19 @@ function parse(path: string): BackupFile | null {
 /** The copies in the folder this module can name, newest first. */
 async function listBackups(adapter: DataAdapter, dir: string): Promise<BackupFile[]> {
 	const listing = await adapter.list(dir);
-	return listing.files.map(parse).filter((file): file is BackupFile => file !== null)
+	return listing.files
+		.map(parse)
+		.filter((file): file is BackupFile => file !== null)
 		.sort((a, b) => (a.path < b.path ? 1 : a.path > b.path ? -1 : 0));
 }
 
 /** Whether the file at `path` holds exactly `body`. */
 async function holds(adapter: DataAdapter, path: string, body: string): Promise<boolean> {
-	try { return canonical(content(JSON.parse(await adapter.read(path)))) === body; }
-	catch { return false; }
+	try {
+		return canonical(content(JSON.parse(await adapter.read(path)))) === body;
+	} catch {
+		return false;
+	}
 }
 
 /**
@@ -188,11 +191,18 @@ export async function writeSettingsBackup(
 		const { adapter } = host.app.vault;
 		if (!(await adapter.exists(dir))) await adapter.mkdir(dir);
 		let existing: BackupFile[] = [];
-		try { existing = await listBackups(adapter, dir); }
-		catch (err) { console.debug("[callout-studio] could not list settings backups", err); }
+		try {
+			existing = await listBackups(adapter, dir);
+		} catch (err) {
+			console.debug("[callout-studio] could not list settings backups", err);
+		}
 		for (const file of existing) {
-			if (file.hash === hash && !pendingRemovals.get(adapter)?.has(file.path) && await holds(adapter, file.path, expected) &&
-				!pendingRemovals.get(adapter)?.has(file.path)) {
+			if (
+				file.hash === hash &&
+				!pendingRemovals.get(adapter)?.has(file.path) &&
+				(await holds(adapter, file.path, expected)) &&
+				!pendingRemovals.get(adapter)?.has(file.path)
+			) {
 				options.batch?.add(file.path);
 				await pruneSettingsBackups(host, options.batch ?? new Set([file.path]), undefined, now);
 				return file.path;
@@ -205,7 +215,7 @@ export async function writeSettingsBackup(
 			path = normalizePath(`${dir}/${name}`);
 		}
 		await adapter.write(path, json);
-		if (!await holds(adapter, path, expected)) throw new Error("The backup does not read back as written");
+		if (!(await holds(adapter, path, expected))) throw new Error("The backup does not read back as written");
 	} catch (err) {
 		console.error("[callout-studio] could not write a settings backup", err);
 		return null;
@@ -233,7 +243,9 @@ export async function writeSettingsBackup(
  * or saving. The cancellation callback stops further removals after unload.
  */
 export async function pruneSettingsBackups(
-	host: SettingsBackupHost, protectedPaths: ReadonlySet<string> = new Set(), isCancelled = () => false,
+	host: SettingsBackupHost,
+	protectedPaths: ReadonlySet<string> = new Set(),
+	isCancelled = () => false,
 	now = Date.now(),
 ): Promise<void> {
 	const { adapter } = host.app.vault;
@@ -245,33 +257,48 @@ export async function pruneSettingsBackups(
 		const device = deviceOf(host);
 		const keep = new Set(protectedPaths);
 		for (const owner of [device, null]) {
-			const group = files.filter(file => file.device === owner);
-			let count = group.filter(file => keep.has(file.path)).length;
+			const group = files.filter((file) => file.device === owner);
+			let count = group.filter((file) => keep.has(file.path)).length;
 			for (const file of group) {
 				if (count >= KEEP_RECENT) break;
 				// Newest first, so every copy after an expired one has expired too.
 				if (owner === null && now - file.time > LEGACY_EXPIRY_MS) break;
-				if (!keep.has(file.path)) { keep.add(file.path); count++; }
+				if (!keep.has(file.path)) {
+					keep.add(file.path);
+					count++;
+				}
 			}
 		}
-		const newestMine = files.find(file => file.device === device)?.time;
+		const newestMine = files.find((file) => file.device === device)?.time;
 		const newestOf = new Map<string, number>();
 		for (const file of files) {
-			if (file.device !== null && file.device !== device && !newestOf.has(file.device)) { newestOf.set(file.device, file.time); keep.add(file.path); }
+			if (file.device !== null && file.device !== device && !newestOf.has(file.device)) {
+				newestOf.set(file.device, file.time);
+				keep.add(file.path);
+			}
 		}
 		const removed: string[] = [];
 		for (const file of files) {
 			if (isCancelled()) break;
 			if (keep.has(file.path)) continue;
-			const idle = newestMine !== undefined && file.device !== null && file.device !== device &&
+			const idle =
+				newestMine !== undefined &&
+				file.device !== null &&
+				file.device !== device &&
 				newestMine - (newestOf.get(file.device) ?? newestMine) > IDLE_DEVICE_MS;
 			if (file.device !== null && file.device !== device && !idle) continue;
 			let pending = pendingRemovals.get(adapter);
-			if (!pending) { pending = new Set(); pendingRemovals.set(adapter, pending); }
+			if (!pending) {
+				pending = new Set();
+				pendingRemovals.set(adapter, pending);
+			}
 			if (pending.has(file.path)) continue;
 			pending.add(file.path);
-			try { await adapter.remove(file.path); }
-			finally { pending.delete(file.path); }
+			try {
+				await adapter.remove(file.path);
+			} finally {
+				pending.delete(file.path);
+			}
 			if (file.device === device) removed.push(file.path);
 		}
 		// Only this device's own reasons: another device's file is its own to tidy.
@@ -297,7 +324,10 @@ export async function listSettingsBackups(host: SettingsBackupHost): Promise<Set
 	for (const path of (await adapter.list(dir)).files) {
 		if (path.slice(0, path.lastIndexOf("/")) !== dir) continue;
 		const named = parse(path);
-		if (named) { entries.push({ path, time: named.time, device: named.device }); continue; }
+		if (named) {
+			entries.push({ path, time: named.time, device: named.device });
+			continue;
+		}
 		const m = LEGACY_NAME.exec(path.slice(path.lastIndexOf("/") + 1));
 		const time = m ? Date.parse(`${m[1]}T${m[2]}:${m[3]}:${m[4]}.${m[5]}Z`) : NaN;
 		if (Number.isFinite(time)) entries.push({ path, time, device: null });
@@ -330,12 +360,19 @@ export async function writeRawSettingsCopy(
 		try {
 			for (const file of (await adapter.list(dir)).files) {
 				const name = file.slice(file.lastIndexOf("/") + 1);
-				if (name.startsWith(`${label}-`) && name.endsWith(`-${hash}.txt`) && await adapter.read(file) === text) return file;
+				if (
+					name.startsWith(`${label}-`) &&
+					name.endsWith(`-${hash}.txt`) &&
+					(await adapter.read(file)) === text
+				)
+					return file;
 			}
-		} catch (err) { console.debug("[callout-studio] could not list settings backups", err); }
+		} catch (err) {
+			console.debug("[callout-studio] could not list settings backups", err);
+		}
 		const path = normalizePath(`${dir}/${label}-${stamp(now)}-${hash}.txt`);
 		await adapter.write(path, text);
-		if (await adapter.read(path) !== text) throw new Error("The copy does not read back as written");
+		if ((await adapter.read(path)) !== text) throw new Error("The copy does not read back as written");
 		return path;
 	} catch (err) {
 		console.error("[callout-studio] could not save an exact copy of the settings", err);

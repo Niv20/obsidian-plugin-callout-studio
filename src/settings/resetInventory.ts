@@ -53,11 +53,17 @@ export function resetInventory(registry: CalloutRegistry): ResetInventory {
 				["settings.resetItemContextMenu", settings.contextMenu, DEFAULT_SETTINGS.contextMenu],
 				["settings.resetItemHeading", settings.headingCallouts, DEFAULT_SETTINGS.headingCallouts],
 				["settings.resetItemInline", settings.inlineCallouts, DEFAULT_SETTINGS.inlineCallouts],
-				["settings.resetItemThemeCalloutStyles", settings.themeCalloutStyles, DEFAULT_SETTINGS.themeCalloutStyles],
+				[
+					"settings.resetItemThemeCalloutStyles",
+					settings.themeCalloutStyles,
+					DEFAULT_SETTINGS.themeCalloutStyles,
+				],
 				// One row for both dropdowns and the metadata colours.
-				["settings.resetItemAutocomplete",
+				[
+					"settings.resetItemAutocomplete",
 					{ suggestions: settings.suggestions, metadataColors: settings.metadataColors },
-					{ suggestions: DEFAULT_SETTINGS.suggestions, metadataColors: DEFAULT_SETTINGS.metadataColors }],
+					{ suggestions: DEFAULT_SETTINGS.suggestions, metadataColors: DEFAULT_SETTINGS.metadataColors },
+				],
 				["settings.resetItemFallback", settings.fallbackCalloutId, DEFAULT_SETTINGS.fallbackCalloutId],
 				["settings.resetItemIconLibraries", settings.iconLibraries, DEFAULT_SETTINGS.iconLibraries],
 			]),
@@ -78,8 +84,12 @@ function sameValue(a: unknown, b: unknown): boolean {
 	if (a === b) return true;
 	if (a === null || b === null || typeof a !== "object" || typeof b !== "object") return false;
 	if (Array.isArray(a) || Array.isArray(b)) {
-		return Array.isArray(a) && Array.isArray(b) && a.length === b.length
-			&& a.every((item, index) => sameValue(item, b[index]));
+		return (
+			Array.isArray(a) &&
+			Array.isArray(b) &&
+			a.length === b.length &&
+			a.every((item, index) => sameValue(item, b[index]))
+		);
 	}
 	const left = a as Record<string, unknown>;
 	const right = b as Record<string, unknown>;

@@ -11,10 +11,7 @@
  */
 import { iconRenderKey, renderIconInto } from "../icons/renderIcon";
 import { createIconResolver } from "../icons/resolver";
-import {
-	renderThemeIconInto,
-	themeIconKey,
-} from "../manager/theme/renderThemeIcon";
+import { renderThemeIconInto, themeIconKey } from "../manager/theme/renderThemeIcon";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { CalloutDefinition, CalloutRenderRole } from "../types";
 

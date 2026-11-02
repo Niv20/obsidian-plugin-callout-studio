@@ -20,18 +20,10 @@
  * those come down to "try these packs in this order and take the first that has
  * a drawing by this name", which is what `iconCandidates` expresses.
  */
-import type {
-	CalloutIcon,
-	FontAwesomeStyle,
-	IconPackId,
-	UserImageIcon,
-} from "../types";
+import type { CalloutIcon, FontAwesomeStyle, IconPackId, UserImageIcon } from "../types";
 import { faTypeForName } from "../icons/packs/fontAwesome";
 import { importImageFile } from "../icons/userImageImport";
-import {
-	claimUserImageName,
-	userImageNameFromFilename,
-} from "./userImages";
+import { claimUserImageName, userImageNameFromFilename } from "./userImages";
 
 /** Admonition's icon field, once we have established it is one of its shapes. */
 export interface AdmonitionIconRaw {
@@ -49,22 +41,17 @@ export interface AdmonitionIconRaw {
  * styles at once before upstream split them into separate downloads, so it
  * resolves by probing rather than by lookup (see `iconCandidates`).
  */
-const PACK_OF_ADMONITION_TYPE: Readonly<Record<string, IconPackId>> =
-	Object.freeze({
-		obsidian: "lucide",
-		fas: "fa-solid",
-		far: "fa-regular",
-		fab: "fa-brands",
-		octicons: "octicons",
-		rpg: "rpg-awesome",
-	});
+const PACK_OF_ADMONITION_TYPE: Readonly<Record<string, IconPackId>> = Object.freeze({
+	obsidian: "lucide",
+	fas: "fa-solid",
+	far: "fa-regular",
+	fab: "fa-brands",
+	octicons: "octicons",
+	rpg: "rpg-awesome",
+});
 
 /** The three files upstream's single `"font-awesome"` pack became, in its own lookup order. */
-const FONT_AWESOME_PACKS: readonly IconPackId[] = Object.freeze([
-	"fa-solid",
-	"fa-regular",
-	"fa-brands",
-]);
+const FONT_AWESOME_PACKS: readonly IconPackId[] = Object.freeze(["fa-solid", "fa-regular", "fa-brands"]);
 
 /**
  * Where to look when the file does not say which pack a name came from.
@@ -145,9 +132,7 @@ function packsToTry(type: string | undefined): readonly IconPackId[] {
 }
 
 /** Admonition's three Font Awesome packs, as the style control names them here. */
-const FA_STYLE_OF_ADMONITION_TYPE: Readonly<
-	Record<string, FontAwesomeStyle | undefined>
-> = Object.freeze({
+const FA_STYLE_OF_ADMONITION_TYPE: Readonly<Record<string, FontAwesomeStyle | undefined>> = Object.freeze({
 	fas: "solid",
 	far: "regular",
 	fab: "brands",
@@ -238,11 +223,7 @@ export async function convertAdmonitionImage(
 	// Claimed after the fact rather than baked into the filename above, because
 	// only now is there an id to fall back on when every numbered variant of the
 	// name is somehow taken.
-	result.image.name = claimUserImageName(
-		result.image.name,
-		takenNames,
-		result.image.id,
-	);
+	result.image.name = claimUserImageName(result.image.name, takenNames, result.image.id);
 	return result.image;
 }
 
@@ -256,17 +237,13 @@ function dataUriToFile(dataUri: string, label: string): File | null {
 	if (dataUri.length > MAX_DATA_URI_CHARS) return null;
 	const uri = dataUri.trim();
 
-	const match = /^data:(image\/[a-z0-9.+-]+)\s*(;base64)?\s*,([\s\S]*)$/i.exec(
-		uri,
-	);
+	const match = /^data:(image\/[a-z0-9.+-]+)\s*(;base64)?\s*,([\s\S]*)$/i.exec(uri);
 	if (!match) return null;
 	const [, mime = "", base64, payload = ""] = match;
 	if (!payload) return null;
 
 	try {
-		const bytes = base64
-			? decodeBase64(payload)
-			: new TextEncoder().encode(decodeURIComponent(payload));
+		const bytes = base64 ? decodeBase64(payload) : new TextEncoder().encode(decodeURIComponent(payload));
 		if (bytes.length === 0) return null;
 		const extension = EXTENSION_OF_MIME[mime.toLowerCase()] ?? ".png";
 		const name = userImageNameFromFilename(`${label}${extension}`);

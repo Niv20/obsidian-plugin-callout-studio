@@ -15,13 +15,7 @@
  * can carry — so the check can never weigh an id the scan did not hand it.
  */
 import { obsidianCalloutAttrId } from "../../utils/calloutId";
-import {
-	blankNegations,
-	matchParen,
-	skipBrackets,
-	skipString,
-	splitSelectorList,
-} from "../../utils/selectorText";
+import { blankNegations, matchParen, skipBrackets, skipString, splitSelectorList } from "../../utils/selectorText";
 import { namesRenderedId } from "./themeCalloutScan";
 
 /** One exact `[data-callout=…]` / `[data-callout~=…]`, the whole bracket. */
@@ -158,10 +152,7 @@ function pageRootOf(compound: string): PageRoot | null {
  * condition never takes a callout away from a theme. A class on `<body>`
  * moves without one too, but the theme sync watches those.
  */
-export function pageRootFails(
-	selector: string,
-	matches: (compound: string, root: PageRoot) => boolean,
-): boolean {
+export function pageRootFails(selector: string, matches: (compound: string, root: PageRoot) => boolean): boolean {
 	const list = splitSelectorList(selector).filter((part) => part.trim().length > 0);
 	if (list.length === 0) return false;
 	return list.every((complex) =>
@@ -328,7 +319,8 @@ export function styleSettingsClasses(css: string): Set<string> {
 			const from = item.findIndex((line) => /^\s*(?:-\s+)?options\s*:/.test(line));
 			if (from < 0) continue;
 			for (const line of item.slice(from + 1)) {
-				const value = settingValue(line, "value") ?? /^\s*-\s+["']?([A-Za-z_][\w-]*)["']?\s*$/.exec(line)?.[1] ?? null;
+				const value =
+					settingValue(line, "value") ?? /^\s*-\s+["']?([A-Za-z_][\w-]*)["']?\s*$/.exec(line)?.[1] ?? null;
 				if (value && /^[A-Za-z_][\w-]*$/.test(value)) out.add(value);
 			}
 		}

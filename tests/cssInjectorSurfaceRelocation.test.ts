@@ -11,14 +11,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	definition,
-	must,
-	parseRules,
-	themedHarness,
-	valueOf,
-	type CssRule,
-} from "./support/cssInjectorHarness";
+import { definition, must, parseRules, themedHarness, valueOf, type CssRule } from "./support/cssInjectorHarness";
 import { compareSpecificity, specificityOf } from "../src/utils/cssSpecificity";
 import { splitSelectorList } from "../src/utils/selectorText";
 
@@ -50,9 +43,7 @@ const onBox = (css: string, guard: string, suffix: string): CssRule[] =>
 	parseRules(css).filter(
 		(r) =>
 			r.at.length === 0 &&
-			splitSelectorList(r.selector).some(
-				(part) => part.trim().startsWith(guard) && part.trim().endsWith(suffix),
-			),
+			splitSelectorList(r.selector).some((part) => part.trim().startsWith(guard) && part.trim().endsWith(suffix)),
 	);
 
 describe("AnuPpuccin Sleek — the gradient moves to the title stripe", () => {
@@ -60,25 +51,26 @@ describe("AnuPpuccin Sleek — the gradient moves to the title stripe", () => {
 	const stripe = onBox(css, ".anp-callout-sleek", " > .callout-title");
 
 	it("paints the authored gradient on the title, under the theme's own conditions", () => {
-		const light = must(stripe.find((r) => !r.selector.includes(".theme-dark")), "light stripe");
+		const light = must(
+			stripe.find((r) => !r.selector.includes(".theme-dark")),
+			"light stripe",
+		);
 		assert.match(valueOf(light, "background-image") ?? "", /^linear-gradient\(123deg, .*!important$/);
 		assert.match(valueOf(light, "background-color") ?? "", /!important$/);
 		assert.ok(light.selector.includes("[data-callout-metadata*=anp-block]"), light.selector);
 		assert.ok(light.selector.includes('[data-callout="apple"]'));
 		// The metadata branch moves it too, with no body class at all.
 		assert.ok(
-			onBox(css, ".callout", " > .callout-title").some((r) =>
-				r.selector.includes("[data-callout-metadata*=anp-sleek]") &&
-				valueOf(r, "background-image")?.includes("linear-gradient"),
+			onBox(css, ".callout", " > .callout-title").some(
+				(r) =>
+					r.selector.includes("[data-callout-metadata*=anp-sleek]") &&
+					valueOf(r, "background-image")?.includes("linear-gradient"),
 			),
 		);
 	});
 
 	it("keeps the root on the theme's neutral mantle", () => {
-		const root = must(
-			onBox(css, ".anp-callout-sleek", ":not([data-callout-metadata*=revert])")[0],
-			"root restore",
-		);
+		const root = must(onBox(css, ".anp-callout-sleek", ":not([data-callout-metadata*=revert])")[0], "root restore");
 		assert.strictEqual(valueOf(root, "background-color"), "rgba(var(--ctp-mantle), 0.4) !important");
 		assert.strictEqual(valueOf(root, "background-image"), "none !important");
 	});
@@ -86,9 +78,15 @@ describe("AnuPpuccin Sleek — the gradient moves to the title stripe", () => {
 	it("writes dark mode as a condition on the callout, so it matches with the guard on <body>", () => {
 		// `.theme-dark .anp-callout-sleek` can never match: both classes sit on
 		// <body>. The dark stripe carries the mode on the callout compound instead.
-		const dark = must(stripe.find((r) => r.selector.includes(":is(.theme-dark *)")), "dark stripe");
+		const dark = must(
+			stripe.find((r) => r.selector.includes(":is(.theme-dark *)")),
+			"dark stripe",
+		);
 		assert.ok(!/\.theme-dark\s+\.anp-callout-sleek/.test(dark.selector), dark.selector);
-		const light = must(stripe.find((r) => !r.selector.includes(".theme-dark")), "light stripe");
+		const light = must(
+			stripe.find((r) => !r.selector.includes(".theme-dark")),
+			"light stripe",
+		);
 		assert.notStrictEqual(valueOf(dark, "background-image"), valueOf(light, "background-image"));
 		const darkSel = must(splitSelectorList(dark.selector)[0]);
 		const lightSel = must(splitSelectorList(light.selector)[0]);
@@ -96,7 +94,8 @@ describe("AnuPpuccin Sleek — the gradient moves to the title stripe", () => {
 	});
 
 	it("outranks the theme's own stripe, important or not", () => {
-		const theirs = ".anp-callout-sleek .callout:not([data-callout-metadata*=anp-block]):not([data-callout-metadata*=revert]) > .callout-title";
+		const theirs =
+			".anp-callout-sleek .callout:not([data-callout-metadata*=anp-block]):not([data-callout-metadata*=revert]) > .callout-title";
 		const light = must(stripe[0], "stripe");
 		const ours = must(splitSelectorList(light.selector)[0]);
 		assert.ok(compareSpecificity(specificityOf(ours), specificityOf(theirs)) > 0);
@@ -106,7 +105,10 @@ describe("AnuPpuccin Sleek — the gradient moves to the title stripe", () => {
 		const print = parseRules(css).filter(
 			(r) => r.at.includes("@media print") && r.selector.includes("> .callout-title::before"),
 		);
-		const before = must(print.find((r) => !r.selector.includes(".theme-dark")), "print ::before");
+		const before = must(
+			print.find((r) => !r.selector.includes(".theme-dark")),
+			"print ::before",
+		);
 		assert.match(valueOf(before, "background-image") ?? "", /linear-gradient\(123deg/);
 		assert.strictEqual(valueOf(before, "filter"), "opacity(0.999) !important");
 	});
@@ -126,9 +128,7 @@ describe("AnuPpuccin Sleek — the gradient moves to the title stripe", () => {
 
 describe("Transparent is transparent all the way down", () => {
 	it("clears the title and content in every theme, aliases included", () => {
-		const css = themedHarness("").css.generateCalloutCSS(
-			definition({ transparentBg: true, aliases: ["hush"] }),
-		);
+		const css = themedHarness("").css.generateCalloutCSS(definition({ transparentBg: true, aliases: ["hush"] }));
 		const clear = must(
 			parseRules(css).find((r) => r.selector.includes("> .callout-content")),
 			"child clear",
@@ -145,12 +145,14 @@ describe("Transparent is transparent all the way down", () => {
 	it("never moves a background for it, and leaves the stripe's ink to the theme", () => {
 		// Sleek's stripe is a 10% tint under the theme's ordinary title ink,
 		// which reads just as well on the page once the tint is gone.
-		const css = themedHarness(SLEEK).css.generateCalloutCSS(gradient({
-			transparentBg: true,
-			bgColorLight: undefined,
-			bgColorDark: undefined,
-			bgGradient: undefined,
-		}));
+		const css = themedHarness(SLEEK).css.generateCalloutCSS(
+			gradient({
+				transparentBg: true,
+				bgColorLight: undefined,
+				bgColorDark: undefined,
+				bgGradient: undefined,
+			}),
+		);
 		assert.deepStrictEqual(onBox(css, ".anp-callout-sleek", " > .callout-title"), []);
 		assert.ok(!parseRules(css).some((r) => valueOf(r, "color") === "var(--cs-accent) !important"), css);
 	});
@@ -162,12 +164,20 @@ describe("Transparent is transparent all the way down", () => {
 			body.flexcyon-plain-callouts .callout .callout-title { color: var(--background-primary); background-color: var(--color-blue); }
 		`).css.generateCalloutCSS(definition({ transparentBg: true }));
 		const ink = must(
-			parseRules(css).find((r) => r.selector.startsWith("body.flexcyon-plain-callouts") && r.props.includes("color")),
+			parseRules(css).find(
+				(r) => r.selector.startsWith("body.flexcyon-plain-callouts") && r.props.includes("color"),
+			),
 			"title ink",
 		);
 		const parts = splitSelectorList(ink.selector).map((p) => p.trim());
-		assert.ok(parts.some((p) => p.endsWith("> .callout-title .callout-title-inner")), ink.selector);
-		assert.ok(parts.some((p) => p.endsWith("> .callout-title .callout-icon")), ink.selector);
+		assert.ok(
+			parts.some((p) => p.endsWith("> .callout-title .callout-title-inner")),
+			ink.selector,
+		);
+		assert.ok(
+			parts.some((p) => p.endsWith("> .callout-title .callout-icon")),
+			ink.selector,
+		);
 	});
 
 	it("clears a surface laid over the callout, but not a decoration on it", () => {
@@ -192,10 +202,16 @@ describe("Transparent is transparent all the way down", () => {
 
 	it("outweighs a generic !important background — GitHubDHC", () => {
 		const theirs = "body.callout-on .callout";
-		const css = themedHarness(`${theirs} { background-color: var(--background-primary) !important; }`)
-			.css.generateCalloutCSS(definition({ transparentBg: true }));
+		const css = themedHarness(
+			`${theirs} { background-color: var(--background-primary) !important; }`,
+		).css.generateCalloutCSS(definition({ transparentBg: true }));
 		const root = must(
-			parseRules(css).find((r) => r.at.length === 0 && valueOf(r, "background-color") === "transparent !important" && !r.selector.includes(">")),
+			parseRules(css).find(
+				(r) =>
+					r.at.length === 0 &&
+					valueOf(r, "background-color") === "transparent !important" &&
+					!r.selector.includes(">"),
+			),
 			"root clear",
 		);
 		const ours = must(splitSelectorList(root.selector)[0]);
@@ -218,16 +234,28 @@ describe("themes that move the colour somewhere else", () => {
 			(r) => r.at.length === 0 && valueOf(r, "background-image")?.includes("linear-gradient(123deg"),
 		);
 		const boxes = painted.flatMap((r) => splitSelectorList(r.selector).map((p) => p.trim()));
-		assert.ok(boxes.some((p) => p.endsWith(":not(.is-collapsible) > .callout-title")), boxes.join("\n"));
-		assert.ok(boxes.some((p) => p.endsWith(".is-collapsible > .callout-title")), boxes.join("\n"));
-		assert.ok(boxes.some((p) => p.endsWith('[data-callout="apple"] > .callout-content')), boxes.join("\n"));
+		assert.ok(
+			boxes.some((p) => p.endsWith(":not(.is-collapsible) > .callout-title")),
+			boxes.join("\n"),
+		);
+		assert.ok(
+			boxes.some((p) => p.endsWith(".is-collapsible > .callout-title")),
+			boxes.join("\n"),
+		);
+		assert.ok(
+			boxes.some((p) => p.endsWith('[data-callout="apple"] > .callout-content')),
+			boxes.join("\n"),
+		);
 	});
 
 	it("a theme that only overlays the title keeps the gradient on the root alone", () => {
-		const css = themedHarness(`.callout-title { background-color: rgba(var(--callout-color), 0.15); }`)
-			.css.generateCalloutCSS(gradient());
+		const css = themedHarness(
+			`.callout-title { background-color: rgba(var(--callout-color), 0.15); }`,
+		).css.generateCalloutCSS(gradient());
 		assert.ok(
-			!parseRules(css).some((r) => r.selector.includes("> .callout-title") && valueOf(r, "background-image") !== undefined),
+			!parseRules(css).some(
+				(r) => r.selector.includes("> .callout-title") && valueOf(r, "background-image") !== undefined,
+			),
 			css,
 		);
 	});

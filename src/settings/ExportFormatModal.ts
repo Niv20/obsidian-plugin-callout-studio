@@ -18,11 +18,7 @@
 import { Modal, SettingGroup } from "obsidian";
 import { t } from "../i18n";
 import { ConfirmModal } from "../utils/ConfirmModal";
-import {
-	exportCssSnippet,
-	isSnippetEnabled,
-	type SnippetExportOutcome,
-} from "../manager/cssSnippetExport";
+import { exportCssSnippet, isSnippetEnabled, type SnippetExportOutcome } from "../manager/cssSnippetExport";
 import { applyModalChrome } from "./modalChrome";
 import { addChoiceRow, type ChoiceRowSpec } from "./choiceRow";
 import type { SettingsContext } from "./sections/types";
@@ -105,7 +101,9 @@ async function exportCalloutsCSS(ctx: SettingsContext): Promise<void> {
 			t("confirm.titleOverwriteSnippet"),
 			t("confirm.overwriteSnippet"),
 			t("confirm.overwriteSnippetOk"),
-		).withMascot(t("confirm.subtitleOverwriteSnippet")).confirm(),
+		)
+			.withMascot(t("confirm.subtitleOverwriteSnippet"))
+			.confirm(),
 	);
 	announce(ctx, outcome);
 }
@@ -115,10 +113,7 @@ async function exportCalloutsCSS(ctx: SettingsContext): Promise<void> {
  * switched on in this vault — Callout Studio already styles these callouts
  * here, so the enabled copy can only ever hold an older version of them.
  */
-function announce(
-	ctx: SettingsContext,
-	outcome: SnippetExportOutcome,
-): void {
+function announce(ctx: SettingsContext, outcome: SnippetExportOutcome): void {
 	switch (outcome.status) {
 		case "created":
 			showNotice("success", t("notice.exportedCssCreated", { path: outcome.path }));

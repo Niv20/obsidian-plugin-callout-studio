@@ -40,7 +40,9 @@ describe("License", () => {
 		const { modal, titleEl } = open();
 		try {
 			assert.equal(titleEl.textContent, "License");
-		} finally { modal.onClose(); }
+		} finally {
+			modal.onClose();
+		}
 	});
 
 	it("promises the plugin stays open source, and links the license on GitHub", () => {
@@ -53,9 +55,14 @@ describe("License", () => {
 			);
 			const link = promise.querySelector("a")!;
 			assert.equal(link.textContent, "here");
-			assert.equal(link.getAttribute("href"), "https://github.com/Niv20/obsidian-plugin-callout-studio/blob/master/LICENSE");
+			assert.equal(
+				link.getAttribute("href"),
+				"https://github.com/Niv20/obsidian-plugin-callout-studio/blob/master/LICENSE",
+			);
 			assert.equal(link.getAttribute("target"), "_blank");
-		} finally { modal.onClose(); }
+		} finally {
+			modal.onClose();
+		}
 	});
 
 	it("has no mascot, and no row of its own for the plugin's license", () => {
@@ -63,7 +70,9 @@ describe("License", () => {
 		try {
 			assert.equal(content.querySelectorAll(".cs-mascot-box").length, 0);
 			assert.equal(content.querySelectorAll(".setting-group").length, 1, "only the icons' box");
-		} finally { modal.onClose(); }
+		} finally {
+			modal.onClose();
+		}
 	});
 
 	it("lists every library with artwork to attribute, one row each, in one Obsidian box", () => {
@@ -75,24 +84,37 @@ describe("License", () => {
 			assert.equal(rows.length, credited.length);
 			assert.equal(group.querySelector(".setting-items")!.getAttribute("role"), "list");
 			for (const row of rows) assert.equal(row.getAttribute("role"), "listitem");
-		} finally { modal.onClose(); }
+		} finally {
+			modal.onClose();
+		}
 	});
 
 	it("names each library with a link and its version, and its licences under it", () => {
 		const { modal, content } = open();
 		try {
 			const pack = getSource("lucide");
-			const row = content.querySelectorAll(".setting-item")
-				.find((r: FakeElement) => r.querySelector(".setting-item-name a")?.textContent === pack.attribution.title);
+			const row = content
+				.querySelectorAll(".setting-item")
+				.find(
+					(r: FakeElement) => r.querySelector(".setting-item-name a")?.textContent === pack.attribution.title,
+				);
 			assert.ok(row, "a row for Lucide");
 			const version = row.querySelector(".setting-item-name .u-muted");
 			assert.equal(version?.textContent, pack.attribution.version);
-			assert.ok(version?.hasClass("u-small"), "Obsidian's small muted type, as Installed plugins prints a version");
+			assert.ok(
+				version?.hasClass("u-small"),
+				"Obsidian's small muted type, as Installed plugins prints a version",
+			);
 			const desc = row.querySelector(".setting-item-description")!;
 			for (const license of pack.attribution.licenses) {
 				assert.ok(desc.textContent.includes(license.holder), license.holder);
-				assert.ok(desc.querySelectorAll("a").some((a) => a.textContent === license.name), license.name);
+				assert.ok(
+					desc.querySelectorAll("a").some((a) => a.textContent === license.name),
+					license.name,
+				);
 			}
-		} finally { modal.onClose(); }
+		} finally {
+			modal.onClose();
+		}
 	});
 });

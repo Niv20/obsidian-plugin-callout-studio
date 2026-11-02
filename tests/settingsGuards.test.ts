@@ -26,10 +26,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	clampGlobalStyle,
-	localePreference,
-} from "../src/utils/settingsGuards";
+import { clampGlobalStyle, localePreference } from "../src/utils/settingsGuards";
 import { DEFAULT_SETTINGS } from "../src/constants";
 import type { GlobalStyleSettings } from "../src/types";
 
@@ -111,11 +108,7 @@ describe("clampGlobalStyle — the settings a slider can produce", () => {
 		// is `mergeSavedSettings`' job, and doing it twice in two places is how
 		// the two drift apart.
 		const future = { ...structuredClone(DEFAULTS), somethingNew: 7 };
-		assert.equal(
-			(clampGlobalStyle(future) as unknown as { somethingNew: number })
-				.somethingNew,
-			7,
-		);
+		assert.equal((clampGlobalStyle(future) as unknown as { somethingNew: number }).somethingNew, 7);
 	});
 });
 
@@ -137,10 +130,7 @@ describe("clampGlobalStyle — what a hand-edited or hostile file says", () => {
 	it("replaces a CSS payload with the default rather than clamping it", () => {
 		// The injected rule is `border-radius: ${gs.borderRadius}px;`. Kept as a
 		// string, this closes it and opens a rule of its own.
-		const hostile = withValue(
-			["borderRadius"],
-			"0px; } .callout { display: none } .x {",
-		);
+		const hostile = withValue(["borderRadius"], "0px; } .callout { display: none } .x {");
 		assert.equal(clampGlobalStyle(hostile).borderRadius, DEFAULTS.borderRadius);
 	});
 
@@ -155,15 +145,9 @@ describe("clampGlobalStyle — what a hand-edited or hostile file says", () => {
 	});
 
 	it("guards the nested role styles too, not just the block callout", () => {
-		const clamped = clampGlobalStyle(
-			withValue(["heading", "marginTop"], 1e9),
-		);
+		const clamped = clampGlobalStyle(withValue(["heading", "marginTop"], 1e9));
 		assert.equal(clamped.heading.marginTop, 10);
-		assert.equal(
-			clampGlobalStyle(withValue(["inline", "borderRadius"], -1)).inline
-				.borderRadius,
-			0,
-		);
+		assert.equal(clampGlobalStyle(withValue(["inline", "borderRadius"], -1)).inline.borderRadius, 0);
 	});
 });
 

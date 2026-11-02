@@ -6,18 +6,33 @@ import { calloutIdentity, mergeDashSpaceVariants, normalizeCalloutId } from "../
 import { committedDefinitions } from "../utils/usableCallouts";
 import type { CalloutOccurrenceIndex } from "./CalloutOccurrenceIndex";
 
-interface OccurrenceTypeSelection { id: string; ids: string[]; }
-interface OccurrenceTypeChoice { definition: CalloutDefinition; ids: string[]; registered: boolean; }
+interface OccurrenceTypeSelection {
+	id: string;
+	ids: string[];
+}
+interface OccurrenceTypeChoice {
+	definition: CalloutDefinition;
+	ids: string[];
+	registered: boolean;
+}
 
 export const ALL_TYPES_ID = "";
 
 /** The aggregate scope exists only in this sidebar picker, never in the registry. */
-export function occurrencePickerChoices(types: OccurrenceTypeChoices, selectedId: string): readonly CalloutDefinition[] {
+export function occurrencePickerChoices(
+	types: OccurrenceTypeChoices,
+	selectedId: string,
+): readonly CalloutDefinition[] {
 	const all: CalloutDefinition = {
-		id: ALL_TYPES_ID, displayName: t("usage.allTypes"),
+		id: ALL_TYPES_ID,
+		displayName: t("usage.allTypes"),
 		icon: { type: "lucide", value: "list" },
-		colorLight: "var(--text-normal)", colorDark: "var(--text-normal)",
-		foldable: false, defaultFolded: false, builtIn: false, source: "fallback",
+		colorLight: "var(--text-normal)",
+		colorDark: "var(--text-normal)",
+		foldable: false,
+		defaultFolded: false,
+		builtIn: false,
+		source: "fallback",
 	};
 	return [all, ...types.definitions(selectedId)];
 }
@@ -45,9 +60,14 @@ export class OccurrenceTypeChoices {
 	private retained: { id: string; choices: readonly CalloutDefinition[] } | null = null;
 	private fallback: CalloutDefinition | null = null;
 
-	constructor(private readonly registry: CalloutRegistry, private readonly index: CalloutOccurrenceIndex) {}
+	constructor(
+		private readonly registry: CalloutRegistry,
+		private readonly index: CalloutOccurrenceIndex,
+	) {}
 
-	invalidate(): void { this.revision = -1; }
+	invalidate(): void {
+		this.revision = -1;
+	}
 
 	/** Membership comes from committed choices, never the display row's fallback artwork. */
 	isRegistered(definition: CalloutDefinition): boolean {
@@ -61,7 +81,8 @@ export class OccurrenceTypeChoices {
 		if (!id || this.byIdentity.has(calloutIdentity(id))) return this.choices;
 		// A vanished/restored selection remains visible with zero results until
 		// another type is chosen; source changes must not silently change filters.
-		if (this.retained?.id !== id) this.retained = { id, choices: [...this.choices, sourceChoice(id, this.fallback!).definition] };
+		if (this.retained?.id !== id)
+			this.retained = { id, choices: [...this.choices, sourceChoice(id, this.fallback!).definition] };
 		return this.retained.choices;
 	}
 
@@ -79,7 +100,10 @@ export class OccurrenceTypeChoices {
 	}
 
 	private refresh(): void {
-		const fallback = fallbackSourceFor({ get: (id) => this.registry.getReal(id) }, this.registry.settings.fallbackCalloutId);
+		const fallback = fallbackSourceFor(
+			{ get: (id) => this.registry.getReal(id) },
+			this.registry.settings.fallbackCalloutId,
+		);
 		if (this.revision === this.index.dataRevision && this.fallback === fallback) return;
 		this.revision = this.index.dataRevision;
 		this.fallback = fallback;
@@ -92,8 +116,9 @@ export class OccurrenceTypeChoices {
 			definitions.push(definition);
 			for (const id of choice.ids) this.byIdentity.set(calloutIdentity(id), choice);
 		}
-		const observed = mergeDashSpaceVariants(this.index.query().occurrences
-			.map((occurrence) => normalizeCalloutId(occurrence.rawId)));
+		const observed = mergeDashSpaceVariants(
+			this.index.query().occurrences.map((occurrence) => normalizeCalloutId(occurrence.rawId)),
+		);
 		for (const id of observed) {
 			const identity = calloutIdentity(id);
 			if (this.byIdentity.has(identity)) continue;

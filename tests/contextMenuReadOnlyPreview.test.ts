@@ -88,18 +88,7 @@ const MUST_GO = [
  * move the selection. The rest is lookup and link handling — which is what
  * makes the splash screen's "Learn more" link work.
  */
-const MUST_STAY = [
-	"title",
-	"open",
-	"selection",
-	"clipboard",
-	"info",
-	"info.copy",
-	"action",
-	"view",
-	"",
-	"danger",
-];
+const MUST_STAY = ["title", "open", "selection", "clipboard", "info", "info.copy", "action", "view", "", "danger"];
 
 /** A `Menu` stand-in: core builds `items` as a flat array, and so does this. */
 function fakeMenu(sections: readonly string[]): Menu & {
@@ -112,8 +101,7 @@ function fakeMenu(sections: readonly string[]): Menu & {
 	};
 }
 
-const sectionsOf = (menu: { items: Array<{ section?: string }> }): string[] =>
-	menu.items.map((i) => i.section ?? "");
+const sectionsOf = (menu: { items: Array<{ section?: string }> }): string[] => menu.items.map((i) => i.section ?? "");
 
 /* -------------------------------------------------------------------------- */
 /* Which sections count as editing                                            */
@@ -204,10 +192,7 @@ describe("stripEditingItems", () => {
 
 		const wrongShape = { items: "nope" } as unknown as Menu;
 		assert.doesNotThrow(() => stripEditingItems(wrongShape));
-		assert.strictEqual(
-			(wrongShape as unknown as { items: string }).items,
-			"nope",
-		);
+		assert.strictEqual((wrongShape as unknown as { items: string }).items, "nope");
 	});
 
 	it("is idempotent", () => {

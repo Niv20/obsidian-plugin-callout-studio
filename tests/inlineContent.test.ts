@@ -6,12 +6,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	blankInlineMath,
-	matchContentParts,
-	matchInlineContent,
-	type ContentPart,
-} from "../src/editor/inlineContent";
+import { blankInlineMath, matchContentParts, matchInlineContent, type ContentPart } from "../src/editor/inlineContent";
 
 /** Convenience: match at the first `{` and return the payload text, or null. */
 function payload(line: string): string | null {
@@ -123,11 +118,7 @@ describe("blankInlineMath", () => {
  */
 describe("matchContentParts", () => {
 	/** `{a ` , <strong>b</strong> , ` c}` — the canonical bold case. */
-	const boldRun: ContentPart[] = [
-		{ text: "{a " },
-		{ text: "b", nested: true },
-		{ text: " c}" },
-	];
+	const boldRun: ContentPart[] = [{ text: "{a " }, { text: "b", nested: true }, { text: " c}" }];
 
 	it("closes in a later sibling", () => {
 		assert.deepStrictEqual(matchContentParts(boldRun, 0, 0), {
@@ -144,10 +135,7 @@ describe("matchContentParts", () => {
 	});
 
 	it("honours the start offset", () => {
-		assert.deepStrictEqual(
-			matchContentParts([{ text: "x [!a]{b}" }], 0, 6),
-			{ part: 0, offset: 8 },
-		);
+		assert.deepStrictEqual(matchContentParts([{ text: "x [!a]{b}" }], 0, 6), { part: 0, offset: 8 });
 	});
 
 	it("returns null when the payload never closes", () => {
@@ -156,11 +144,7 @@ describe("matchContentParts", () => {
 
 	it("ignores braces in an opaque segment", () => {
 		// `{use `}` here}` — the code span must not close the payload.
-		const parts: ContentPart[] = [
-			{ text: "{use " },
-			{ text: "}", opaque: true },
-			{ text: " here}" },
-		];
+		const parts: ContentPart[] = [{ text: "{use " }, { text: "}", opaque: true }, { text: " here}" }];
 		assert.deepStrictEqual(matchContentParts(parts, 0, 0), {
 			part: 2,
 			offset: 5,
@@ -169,21 +153,14 @@ describe("matchContentParts", () => {
 
 	it("counts braces in a nested segment but refuses to close there", () => {
 		// `**[!a]{bold** text}` — interleaved markup stays literal text.
-		const parts: ContentPart[] = [
-			{ text: "{bold" },
-			{ text: "} text", nested: true },
-		];
+		const parts: ContentPart[] = [{ text: "{bold" }, { text: "} text", nested: true }];
 		assert.strictEqual(matchContentParts(parts, 0, 0), null);
 	});
 
 	it("still counts an opening brace inside a nested segment", () => {
 		// `{a <strong>{</strong> b}}` — the nested `{` raises the depth, so the
 		// first `}` no longer closes.
-		const parts: ContentPart[] = [
-			{ text: "{a " },
-			{ text: "{", nested: true },
-			{ text: " b}}" },
-		];
+		const parts: ContentPart[] = [{ text: "{a " }, { text: "{", nested: true }, { text: " b}}" }];
 		assert.deepStrictEqual(matchContentParts(parts, 0, 0), {
 			part: 2,
 			offset: 3,
@@ -192,20 +169,12 @@ describe("matchContentParts", () => {
 
 	it("aborts at a stop segment", () => {
 		// A `<br>` between: Live Preview scans one line, so this can never match.
-		const parts: ContentPart[] = [
-			{ text: "{a" },
-			{ text: "", stop: true },
-			{ text: "b}" },
-		];
+		const parts: ContentPart[] = [{ text: "{a" }, { text: "", stop: true }, { text: "b}" }];
 		assert.strictEqual(matchContentParts(parts, 0, 0), null);
 	});
 
 	it("nests across segments", () => {
-		const parts: ContentPart[] = [
-			{ text: "{a {b" },
-			{ text: "x", nested: true },
-			{ text: "c} d}" },
-		];
+		const parts: ContentPart[] = [{ text: "{a {b" }, { text: "x", nested: true }, { text: "c} d}" }];
 		assert.deepStrictEqual(matchContentParts(parts, 0, 0), {
 			part: 2,
 			offset: 4,

@@ -25,7 +25,14 @@ installFakeDom();
 /** Delayed checks the test runs when it says so. */
 function manualLater() {
 	const waiting: Array<() => void> = [];
-	return { later: (run: () => void) => { waiting.push(run); }, run: () => { for (const check of waiting.splice(0)) check(); } };
+	return {
+		later: (run: () => void) => {
+			waiting.push(run);
+		},
+		run: () => {
+			for (const check of waiting.splice(0)) check();
+		},
+	};
 }
 
 /** A part that counts how many times it was built and disposed; it starts on the page. */
@@ -34,7 +41,12 @@ function countingPart(counts: { built: number; disposed: number }): () => Persis
 		counts.built++;
 		const el = createDiv({ cls: "the-part" });
 		setConnected(el, true);
-		return { el, dispose: () => { counts.disposed++; } };
+		return {
+			el,
+			dispose: () => {
+				counts.disposed++;
+			},
+		};
 	};
 }
 

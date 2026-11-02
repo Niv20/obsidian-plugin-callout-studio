@@ -74,10 +74,7 @@ describe("a settings field only the newer build knows", () => {
 		// render it, or hand it to a merge that would then treat it as ours.
 		const registry = loadedFrom(fromNewerBuild());
 
-		assert.strictEqual(
-			(registry.settings as unknown as Record<string, unknown>).calloutShadows,
-			undefined,
-		);
+		assert.strictEqual((registry.settings as unknown as Record<string, unknown>).calloutShadows, undefined);
 	});
 
 	it("provokes no write at all — the whole point", () => {
@@ -96,10 +93,7 @@ describe("a settings field only the newer build knows", () => {
 		const registry = loadedFrom(fromNewerBuild());
 		registry.update("note", { colorLight: "#ff0000" });
 
-		const settings = registry.toSaveData().settings as unknown as Record<
-			string,
-			unknown
-		>;
+		const settings = registry.toSaveData().settings as unknown as Record<string, unknown>;
 		assert.deepStrictEqual(settings.calloutShadows, {
 			enabled: true,
 			blur: 6,
@@ -110,10 +104,7 @@ describe("a settings field only the newer build knows", () => {
 		const registry = loadedFrom(fromNewerBuild());
 		registry.resetAll();
 
-		const settings = registry.toSaveData().settings as unknown as Record<
-			string,
-			unknown
-		>;
+		const settings = registry.toSaveData().settings as unknown as Record<string, unknown>;
 		assert.strictEqual(settings.calloutShadows, undefined);
 	});
 
@@ -125,28 +116,21 @@ describe("a settings field only the newer build knows", () => {
 			settings: {},
 		} as unknown as Partial<PluginData>);
 
-		const settings = registry.toSaveData().settings as unknown as Record<
-			string,
-			unknown
-		>;
+		const settings = registry.toSaveData().settings as unknown as Record<string, unknown>;
 		assert.strictEqual(settings.calloutShadows, undefined);
 	});
 });
 
 describe("a top-level key only the newer build knows", () => {
 	it("survives too, since a future release can add one of those as easily", () => {
-		const saved = loadedFrom(
-			fromNewerBuild({ themeProfiles: [{ name: "night" }] }),
-		) as unknown as CalloutRegistry;
+		const saved = loadedFrom(fromNewerBuild({ themeProfiles: [{ name: "night" }] })) as unknown as CalloutRegistry;
 		const out = saved.toSaveData() as unknown as Record<string, unknown>;
 
 		assert.deepStrictEqual(out.themeProfiles, [{ name: "night" }]);
 	});
 
 	it("cannot shadow a key this build owns", () => {
-		const registry = loadedFrom(
-			fromNewerBuild({ version: 99, callouts: [] }),
-		);
+		const registry = loadedFrom(fromNewerBuild({ version: 99, callouts: [] }));
 		const out = registry.toSaveData();
 
 		assert.strictEqual(out.version, CURRENT_DATA_VERSION);
@@ -169,10 +153,7 @@ describe("fields this plugin retired on purpose", () => {
 			},
 		} as unknown as Partial<PluginData>);
 
-		const settings = registry.toSaveData().settings as unknown as Record<
-			string,
-			unknown
-		>;
+		const settings = registry.toSaveData().settings as unknown as Record<string, unknown>;
 		assert.strictEqual(settings.firstRunCompleted, undefined);
 		assert.strictEqual(settings.retiredThemeIds, undefined);
 		assert.strictEqual(settings.popup, undefined);
@@ -186,11 +167,7 @@ describe("fields this plugin retired on purpose", () => {
 			materialSvgCache: [],
 		} as unknown as Partial<PluginData>);
 
-		assert.strictEqual(
-			(registry.toSaveData() as unknown as Record<string, unknown>)
-				.materialSvgCache,
-			undefined,
-		);
+		assert.strictEqual((registry.toSaveData() as unknown as Record<string, unknown>).materialSvgCache, undefined);
 	});
 });
 
@@ -218,17 +195,11 @@ describe("a file from a build that changed what a field means", () => {
 	 * nothing.
 	 */
 	it("is recognised by its version alone", () => {
-		assert.strictEqual(
-			isFromNewerBuild({ version: CURRENT_DATA_VERSION + 1 } as Partial<PluginData>),
-			true,
-		);
+		assert.strictEqual(isFromNewerBuild({ version: CURRENT_DATA_VERSION + 1 } as Partial<PluginData>), true);
 	});
 
 	it("does not mistake this build's own file, or an older one", () => {
-		assert.strictEqual(
-			isFromNewerBuild({ version: CURRENT_DATA_VERSION } as Partial<PluginData>),
-			false,
-		);
+		assert.strictEqual(isFromNewerBuild({ version: CURRENT_DATA_VERSION } as Partial<PluginData>), false);
 		assert.strictEqual(isFromNewerBuild({ version: 1 } as Partial<PluginData>), false);
 	});
 
@@ -237,9 +208,6 @@ describe("a file from a build that changed what a field means", () => {
 		// is far likelier to be old — or hand-edited — than to be ahead of us.
 		assert.strictEqual(isFromNewerBuild(null), false);
 		assert.strictEqual(isFromNewerBuild({} as Partial<PluginData>), false);
-		assert.strictEqual(
-			isFromNewerBuild({ version: "9" } as unknown as Partial<PluginData>),
-			false,
-		);
+		assert.strictEqual(isFromNewerBuild({ version: "9" } as unknown as Partial<PluginData>), false);
 	});
 });

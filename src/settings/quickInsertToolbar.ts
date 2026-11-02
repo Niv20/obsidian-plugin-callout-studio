@@ -15,10 +15,7 @@ import { t } from "../i18n";
 import { SelectDropdown } from "../ui/selectDropdown";
 import { setFieldAccessibleName } from "../ui/fieldAccessibleName";
 import { createSearchField } from "../ui/searchField";
-import {
-	isCalloutSourceFilter,
-	type CalloutSourceFilter,
-} from "../utils/calloutSearch";
+import { isCalloutSourceFilter, type CalloutSourceFilter } from "../utils/calloutSearch";
 
 export interface QuickInsertToolbarHandlers {
 	/** The filter to show as selected: All initially, then the remembered choice. */
@@ -44,21 +41,20 @@ export function syncQuickInsertThemeOption(
 	filter: CalloutSourceFilter,
 ): CalloutSourceFilter {
 	const effective = !showTheme && filter === "theme" ? "all" : filter;
-	select?.setOptions([
-		{ value: "all", label: t("quickInsert.sourceAll") },
-		{ value: "builtin", label: t("quickInsert.sourceBuiltIn") },
-		...(showTheme ? [{ value: "theme", label }] : []),
-		{ value: "user", label: t("quickInsert.sourceUser") },
-	]).setValue(effective);
+	select
+		?.setOptions([
+			{ value: "all", label: t("quickInsert.sourceAll") },
+			{ value: "builtin", label: t("quickInsert.sourceBuiltIn") },
+			...(showTheme ? [{ value: "theme", label }] : []),
+			{ value: "user", label: t("quickInsert.sourceUser") },
+		])
+		.setValue(effective);
 	if (select) lightFilter(select, effective);
 	return effective;
 }
 
 /** Build the toolbar, its focus target, and the dropdown cleanup. */
-export function buildQuickInsertToolbar(
-	parent: HTMLElement,
-	handlers: QuickInsertToolbarHandlers,
-) {
+export function buildQuickInsertToolbar(parent: HTMLElement, handlers: QuickInsertToolbarHandlers) {
 	const toolbar = parent.createDiv({ cls: "cs-quick-insert-toolbar" });
 
 	// The query is scoped to one insertion; the source choice is remembered.

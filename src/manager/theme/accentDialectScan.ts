@@ -114,7 +114,13 @@ function declarationsWithValues(body: string): Array<[string, string]> {
 		if (colon < 0) continue;
 		const name = piece.slice(0, colon).trim().toLowerCase();
 		if (name.length === 0 || /[{}]/.test(name)) continue;
-		out.push([name, piece.slice(colon + 1).replace(/!\s*important/i, "").trim()]);
+		out.push([
+			name,
+			piece
+				.slice(colon + 1)
+				.replace(/!\s*important/i, "")
+				.trim(),
+		]);
 	}
 	return out;
 }
@@ -195,22 +201,13 @@ export function scanAccentDialect(css: string): AccentEvidence {
 	eachBlock(stripComments(css), (prelude, body) => {
 		// `.callout` in the prelude is the pre-filter that keeps
 		// `splitSelectorList` + the bare test off every rule of an 850 KB sheet.
-		const bare =
-			prelude.includes(".callout") &&
-			splitSelectorList(prelude).some(isBareCallout);
+		const bare = prelude.includes(".callout") && splitSelectorList(prelude).some(isBareCallout);
 		if (!bare && !body.includes("--")) return;
 		const scope = guardedMode(prelude);
-		const into =
-			scope === "light"
-				? ev.lightProps
-				: scope === "dark"
-					? ev.darkProps
-					: ev.customProps;
+		const into = scope === "light" ? ev.lightProps : scope === "dark" ? ev.darkProps : ev.customProps;
 		// Computed only for a block that declares or reads one of these, which
 		// keeps `splitSelectorList` off the other 20 000 rules of an 850 KB sheet.
-		const open =
-			!body.includes("--callout-") ||
-			splitSelectorList(prelude).some(reachable);
+		const open = !body.includes("--callout-") || splitSelectorList(prelude).some(reachable);
 
 		for (const [name, value] of declarationsWithValues(body)) {
 			const custom = name.startsWith("--");

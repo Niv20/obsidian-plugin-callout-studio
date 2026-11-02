@@ -42,14 +42,7 @@
  */
 import assert from "node:assert";
 import { execFileSync } from "node:child_process";
-import {
-	cpSync,
-	mkdirSync,
-	readFileSync,
-	readdirSync,
-	rmSync,
-	symlinkSync,
-} from "node:fs";
+import { cpSync, mkdirSync, readFileSync, readdirSync, rmSync, symlinkSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
 import { PACK_MANIFEST } from "../src/icons/data/packManifest";
@@ -93,21 +86,14 @@ function buildSandbox(): void {
 		);
 		// The icon generator round-trips every index through the *real* decoder
 		// before writing it, so the sandbox needs the codec too.
-		cpSync(
-			join(REPO_ROOT, "src", "icons", "data", "codec.ts"),
-			join(SANDBOX, "src", "icons", "data", "codec.ts"),
-		);
+		cpSync(join(REPO_ROOT, "src", "icons", "data", "codec.ts"), join(SANDBOX, "src", "icons", "data", "codec.ts"));
 		// Inputs for the locale generator: the whole directory, because it
 		// discovers locales by reading it (and skips the four modules that are
 		// machinery rather than a table).
 		cpSync(join(REPO_ROOT, "src", "i18n"), join(SANDBOX, "src", "i18n"), {
 			recursive: true,
 		});
-		symlinkSync(
-			join(REPO_ROOT, "node_modules"),
-			join(SANDBOX, "node_modules"),
-			"dir",
-		);
+		symlinkSync(join(REPO_ROOT, "node_modules"), join(SANDBOX, "node_modules"), "dir");
 	} catch (error) {
 		sandboxError = String(error);
 	}
@@ -143,11 +129,7 @@ function assertSameFile(relPath: string): void {
 
 function requireSandbox(): void {
 	buildSandbox();
-	assert.strictEqual(
-		sandboxError,
-		null,
-		`could not build the generator sandbox: ${sandboxError}`,
-	);
+	assert.strictEqual(sandboxError, null, `could not build the generator sandbox: ${sandboxError}`);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -273,19 +255,10 @@ describe("icons:generate output is committed", () => {
 		// (a real hazard with eight near-identical generated files) shows up
 		// here rather than as the wrong icons in the picker.
 		for (const id of FILE_BACKED) {
-			const source = readFileSync(
-				join(REPO_ROOT, "src", "icons", "data", `${id}.index.ts`),
-				"utf8",
-			);
+			const source = readFileSync(join(REPO_ROOT, "src", "icons", "data", `${id}.index.ts`), "utf8");
 			const constant = `${id.replace(/-/g, "_").toUpperCase()}_INDEX`;
-			assert.ok(
-				source.includes(`export const ${constant}`),
-				`${id}.index.ts does not export ${constant}`,
-			);
-			assert.ok(
-				source.includes(`--pack=${id}`),
-				`${id}.index.ts's header points at a different pack`,
-			);
+			assert.ok(source.includes(`export const ${constant}`), `${id}.index.ts does not export ${constant}`);
+			assert.ok(source.includes(`--pack=${id}`), `${id}.index.ts's header points at a different pack`);
 		}
 	});
 });

@@ -83,11 +83,7 @@ function harness(id: string, enabled = true) {
 	return { ...recorded, plugin, registry };
 }
 
-function addCustom(
-	registry: CalloutRegistry,
-	id: string,
-	aliases: string[] = [],
-): CalloutDefinition {
+function addCustom(registry: CalloutRegistry, id: string, aliases: string[] = []): CalloutDefinition {
 	const note = registry.get("note")!;
 	const def: CalloutDefinition = {
 		...note,
@@ -103,10 +99,7 @@ function addCustom(
 }
 
 function withRecordedEditors(run: (opened: CalloutEditor[]) => void): void {
-	const original = Object.getOwnPropertyDescriptor(
-		CalloutEditor.prototype,
-		"openAndWait",
-	)!;
+	const original = Object.getOwnPropertyDescriptor(CalloutEditor.prototype, "openAndWait")!;
 	const opened: CalloutEditor[] = [];
 	CalloutEditor.prototype.openAndWait = function () {
 		opened.push(this);
@@ -134,11 +127,7 @@ describe("adaptive create/edit context-menu action", () => {
 			withRecordedEditors((opened) => {
 				h.items[0]!.click!();
 				assert.equal(opened.length, 1);
-				assert.equal(
-					(opened[0] as unknown as { existingId: string | null })
-						.existingId,
-					def.id,
-				);
+				assert.equal((opened[0] as unknown as { existingId: string | null }).existingId, def.id);
 			});
 		}
 	});
@@ -185,7 +174,12 @@ describe("adaptive create/edit context-menu action", () => {
  */
 describe("the right-click menu speaks Obsidian's menu conventions", () => {
 	/** One menu row as the builders configured it. */
-	interface Row { title: string; checked: boolean; warning: boolean; click: (() => void) | null }
+	interface Row {
+		title: string;
+		checked: boolean;
+		warning: boolean;
+		click: (() => void) | null;
+	}
 
 	/** A menu that records rows, including `setChecked` and `setWarning`. */
 	function conventionsMenu(): { menu: Menu; rows: Row[] } {
@@ -194,12 +188,28 @@ describe("the right-click menu speaks Obsidian's menu conventions", () => {
 			addItem(configure: (item: unknown) => void) {
 				const row: Row = { title: "", checked: false, warning: false, click: null };
 				const item = {
-					setTitle(value: string) { row.title = value; return this; },
-					setIcon() { return this; },
-					setSection() { return this; },
-					setChecked(value: boolean) { row.checked = value; return this; },
-					setWarning(value: boolean) { row.warning = value; return this; },
-					onClick(value: () => void) { row.click = value; return this; },
+					setTitle(value: string) {
+						row.title = value;
+						return this;
+					},
+					setIcon() {
+						return this;
+					},
+					setSection() {
+						return this;
+					},
+					setChecked(value: boolean) {
+						row.checked = value;
+						return this;
+					},
+					setWarning(value: boolean) {
+						row.warning = value;
+						return this;
+					},
+					onClick(value: () => void) {
+						row.click = value;
+						return this;
+					},
 				};
 				configure(item);
 				rows.push(row);
@@ -221,18 +231,30 @@ describe("the right-click menu speaks Obsidian's menu conventions", () => {
 		const writes: string[] = [];
 		const editor = {
 			getLine: () => "> [!note]- Title",
-			replaceRange: (text: string) => { writes.push(text); },
+			replaceRange: (text: string) => {
+				writes.push(text);
+			},
 		} as unknown as Editor;
 		const { menu, rows } = conventionsMenu();
 		addItems(pluginWith("regular", "foldDefaults"), menu, {
-			role: "regular", id: "note", editor, view: null, surface: "source",
+			role: "regular",
+			id: "note",
+			editor,
+			view: null,
+			surface: "source",
 			targetEl: {} as Element,
 			callout: { id: "note", headerLine: 0, prefix: "> ", quoteDepth: 1 },
 		});
-		assert.deepEqual(rows.map((row) => row.title), [
-			t("contextMenu.setFoldOpen"), t("contextMenu.setFoldNone"),
-		], "the callout is folded closed now, so closed is not offered");
-		assert.deepEqual(rows.map((row) => row.checked), [false, false], "no row carries a ✓");
+		assert.deepEqual(
+			rows.map((row) => row.title),
+			[t("contextMenu.setFoldOpen"), t("contextMenu.setFoldNone")],
+			"the callout is folded closed now, so closed is not offered",
+		);
+		assert.deepEqual(
+			rows.map((row) => row.checked),
+			[false, false],
+			"no row carries a ✓",
+		);
 		rows[0]!.click?.();
 		assert.deepEqual(writes, ["> [!note]+ Title"]);
 		rows[1]!.click?.();
@@ -244,22 +266,41 @@ describe("the right-click menu speaks Obsidian's menu conventions", () => {
 			const editor = { getLine: () => header, replaceRange: () => undefined } as unknown as Editor;
 			const { menu, rows } = conventionsMenu();
 			addItems(pluginWith("regular", "foldDefaults"), menu, {
-				role: "regular", id: "note", editor, view: null, surface: "source",
+				role: "regular",
+				id: "note",
+				editor,
+				view: null,
+				surface: "source",
 				targetEl: {} as Element,
 				callout: { id: "note", headerLine: 0, prefix: "> ", quoteDepth: 1 },
 			});
 			return rows.map((row) => row.title);
 		};
-		assert.deepEqual(offeredWhen("> [!note]+ Title"), [t("contextMenu.setFoldClosed"), t("contextMenu.setFoldNone")]);
-		assert.deepEqual(offeredWhen("> [!note] Title"), [t("contextMenu.setFoldClosed"), t("contextMenu.setFoldOpen")]);
+		assert.deepEqual(offeredWhen("> [!note]+ Title"), [
+			t("contextMenu.setFoldClosed"),
+			t("contextMenu.setFoldNone"),
+		]);
+		assert.deepEqual(offeredWhen("> [!note] Title"), [
+			t("contextMenu.setFoldClosed"),
+			t("contextMenu.setFoldOpen"),
+		]);
 	});
 
 	it("paints Delete section red, and nothing else", () => {
 		const { menu, rows } = conventionsMenu();
 		addItems(pluginWith("heading", "deleteSection"), menu, {
-			role: "heading", id: "note", editor: {} as Editor, view: null, surface: "source",
-			targetEl: {} as Element, headingLine: 0, headingLevel: 2,
+			role: "heading",
+			id: "note",
+			editor: {} as Editor,
+			view: null,
+			surface: "source",
+			targetEl: {} as Element,
+			headingLine: 0,
+			headingLevel: 2,
 		});
-		assert.deepEqual(rows.map((row) => [row.title, row.warning]), [[t("contextMenu.deleteSection"), true]]);
+		assert.deepEqual(
+			rows.map((row) => [row.title, row.warning]),
+			[[t("contextMenu.deleteSection"), true]],
+		);
 	});
 });

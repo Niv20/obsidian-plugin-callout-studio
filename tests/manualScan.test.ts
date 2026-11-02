@@ -16,13 +16,18 @@ import type { SettingsTabPlugin } from "../src/settings/sections/types";
 
 const notices: string[] = [];
 (globalThis as unknown as { __CS_NOTICES__: string[] }).__CS_NOTICES__ = notices;
-afterEach(() => { notices.length = 0; });
+afterEach(() => {
+	notices.length = 0;
+});
 
 /** A promise the test settles by hand. */
 function pending() {
 	let resolve!: (count: number) => void;
 	let reject!: (reason: Error) => void;
-	const promise = new Promise<number>((yes, no) => { resolve = yes; reject = no; });
+	const promise = new Promise<number>((yes, no) => {
+		resolve = yes;
+		reject = no;
+	});
 	return { promise, resolve, reject };
 }
 
@@ -34,7 +39,10 @@ function fakePlugin(scan: (beforeSave?: BeforeSave) => Promise<number>) {
 	let calls = 0;
 	const plugin = {
 		settingsWriter: { isFrozen: false },
-		runVaultScan: (beforeSave?: BeforeSave) => { calls++; return scan(beforeSave); },
+		runVaultScan: (beforeSave?: BeforeSave) => {
+			calls++;
+			return scan(beforeSave);
+		},
 	};
 	return { plugin, asPlugin: plugin as unknown as SettingsTabPlugin, calls: () => calls };
 }
@@ -55,7 +63,7 @@ describe("Scan for callouts", () => {
 		assert.deepEqual(notices, [t("settings.rescanComplete", { count: "3" })]);
 	});
 
-	it("hands the scan the wait that takes \"Scanning…\" away before anything is saved", async () => {
+	it('hands the scan the wait that takes "Scanning…" away before anything is saved', async () => {
 		let waited = 0;
 		const { asPlugin } = fakePlugin(async (beforeSave) => {
 			assert.ok(beforeSave, "the scan is given its wait");

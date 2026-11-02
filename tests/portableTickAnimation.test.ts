@@ -17,24 +17,52 @@ import type { PortableCalloutConversionPlan } from "../src/utils/portableCallout
 /** A plan of three changes in one note, with `selected` ticked. */
 function plan(selected: string[]): PortableCalloutConversionPlan {
 	const changes = ["x1", "x2", "x3"].map((id, index) => ({
-		id, path: "a.md", line: index + 1, before: "[!note]", after: "note", sourceLine: "[!note]", from: 0, to: 7,
-		headingLine: false, contentFingerprint: id, replacement: "note", defaultReplacement: "note", custom: false,
-		edits: [], count: 1, headings: 0, inline: 1,
+		id,
+		path: "a.md",
+		line: index + 1,
+		before: "[!note]",
+		after: "note",
+		sourceLine: "[!note]",
+		from: 0,
+		to: 7,
+		headingLine: false,
+		contentFingerprint: id,
+		replacement: "note",
+		defaultReplacement: "note",
+		custom: false,
+		edits: [],
+		count: 1,
+		headings: 0,
+		inline: 1,
 	}));
-	return { recovery: false, changes, selectedIds: selected, linkChanges: [], blockedChanges: [], skipped: 0, count: selected.length } as unknown as PortableCalloutConversionPlan;
+	return {
+		recovery: false,
+		changes,
+		selectedIds: selected,
+		linkChanges: [],
+		blockedChanges: [],
+		skipped: 0,
+		count: selected.length,
+	} as unknown as PortableCalloutConversionPlan;
 }
 
 /** A list the renderer draws into, recording what the boxes look like each time it reads a measurement. */
 function list() {
 	const root = el();
 	const snapshots: boolean[][] = [];
-	const boxes = (): (FakeElement & { checked: boolean })[] => root.querySelectorAll("input") as (FakeElement & { checked: boolean })[];
-	Object.defineProperty(root, "offsetWidth", { get: () => { snapshots.push(boxes().map(box => box.checked)); return 0; } });
+	const boxes = (): (FakeElement & { checked: boolean })[] =>
+		root.querySelectorAll("input") as (FakeElement & { checked: boolean })[];
+	Object.defineProperty(root, "offsetWidth", {
+		get: () => {
+			snapshots.push(boxes().map((box) => box.checked));
+			return 0;
+		},
+	});
 	const draw = (selected: string[]): void => {
 		const p = plan(selected);
 		renderPortableConversionRows(asEl(root), p, portableConversionRows(p), 100, false, undefined, () => {});
 	};
-	return { draw, snapshots, boxes, ticks: () => boxes().map(box => box.checked) };
+	return { draw, snapshots, boxes, ticks: () => boxes().map((box) => box.checked) };
 }
 
 describe("tick boxes that change", () => {
@@ -49,7 +77,11 @@ describe("tick boxes that change", () => {
 		const { draw, snapshots, ticks } = list();
 		draw(["x1", "x2"]);
 		draw(["x2", "x3"]);
-		assert.deepEqual(snapshots, [[true, true, false]], "one measurement, with the changed boxes still as they were");
+		assert.deepEqual(
+			snapshots,
+			[[true, true, false]],
+			"one measurement, with the changed boxes still as they were",
+		);
 		assert.deepEqual(ticks(), [false, true, true], "and then as they are now");
 	});
 

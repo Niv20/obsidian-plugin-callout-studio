@@ -43,9 +43,7 @@ function selectors(list: string): string[] {
 	return parts;
 }
 
-const rowHoverRules = rules.filter((rule) =>
-	selectors(rule.selector).some((s) => ROW.test(s) && s.includes(":hover")),
-);
+const rowHoverRules = rules.filter((rule) => selectors(rule.selector).some((s) => ROW.test(s) && s.includes(":hover")));
 
 describe("list rows on hover", () => {
 	it("has row hover rules to check", () => {
@@ -63,7 +61,9 @@ describe("list rows on hover", () => {
 
 	it("never fills the row itself", () => {
 		for (const rule of rowHoverRules) {
-			const onRow = selectors(rule.selector).some((s) => /\.(?:callout-studio-row|cs-callout-row|cs-recovery-row)[^\s>+~]*:hover$/.test(s));
+			const onRow = selectors(rule.selector).some((s) =>
+				/\.(?:callout-studio-row|cs-callout-row|cs-recovery-row)[^\s>+~]*:hover$/.test(s),
+			);
 			if (!onRow) continue;
 			assert.equal(valueOf(rule, "background"), undefined, `${rule.selector} fills the row`);
 			assert.equal(valueOf(rule, "background-color"), undefined, `${rule.selector} fills the row`);
@@ -87,7 +87,14 @@ describe("list rows on hover", () => {
 
 	it("has no transition left on the row surface", () => {
 		for (const rule of rules) {
-			if (!selectors(rule.selector).some((s) => /^(?:\.modal \.cs-recovery-rows > )?\.(?:callout-studio-row|cs-recovery-row)(?:\.setting-item:not\(\.setting-item-heading\))?$/.test(s))) continue;
+			if (
+				!selectors(rule.selector).some((s) =>
+					/^(?:\.modal \.cs-recovery-rows > )?\.(?:callout-studio-row|cs-recovery-row)(?:\.setting-item:not\(\.setting-item-heading\))?$/.test(
+						s,
+					),
+				)
+			)
+				continue;
 			assert.equal(valueOf(rule, "transition"), undefined, `${rule.selector} still animates a fill`);
 		}
 	});

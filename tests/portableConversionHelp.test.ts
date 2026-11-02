@@ -17,15 +17,25 @@ function harness() {
 	const calls: string[] = [];
 	const leaf = { loadIfDeferred: async () => {}, setViewState: async () => {} };
 	const app = {
-		keymap: new TestKeymap(), scope: new TestScope(),
+		keymap: new TestKeymap(),
+		scope: new TestScope(),
 		setting: { close: () => calls.push("close-settings") },
 		workspace: {
-			ensureSideLeaf: async (type: string, side: string) => { calls.push(`${type}:${side}`); return leaf; },
-			revealLeaf: async () => { calls.push("reveal"); },
+			ensureSideLeaf: async (type: string, side: string) => {
+				calls.push(`${type}:${side}`);
+				return leaf;
+			},
+			revealLeaf: async () => {
+				calls.push("reveal");
+			},
 		},
 		vault: {
-			getMarkdownFiles: () => { throw new Error("Help must not read notes"); },
-			process: () => { throw new Error("Help must not write notes"); },
+			getMarkdownFiles: () => {
+				throw new Error("Help must not read notes");
+			},
+			process: () => {
+				throw new Error("Help must not write notes");
+			},
 		},
 	} as unknown as App;
 	const modal = new PortableConversionHelpModal(app);
@@ -33,10 +43,29 @@ function harness() {
 	const modalEl = containerEl.createDiv({ cls: "modal" });
 	const titleEl = modalEl.createDiv({ cls: "modal-title" });
 	const contentEl = modalEl.createDiv({ cls: "modal-content" });
-	Object.assign(modal, { containerEl, modalEl, titleEl, contentEl, app, scope: app.scope,
-		setTitle: (title: string) => { titleEl.setText(title); return modal; }, close: () => modal.onClose() });
-	return { app, modal, modalEl, contentEl, calls,
-		destroy: () => { modal.onClose(); containerEl.remove(); },
+	Object.assign(modal, {
+		containerEl,
+		modalEl,
+		titleEl,
+		contentEl,
+		app,
+		scope: app.scope,
+		setTitle: (title: string) => {
+			titleEl.setText(title);
+			return modal;
+		},
+		close: () => modal.onClose(),
+	});
+	return {
+		app,
+		modal,
+		modalEl,
+		contentEl,
+		calls,
+		destroy: () => {
+			modal.onClose();
+			containerEl.remove();
+		},
 	};
 }
 
@@ -58,7 +87,9 @@ describe("portable conversion entry and help", () => {
 			assert.equal(h.contentEl.querySelectorAll("svg").length, 0);
 			assert.deepEqual(h.calls, []);
 			assert.equal(h.modalEl.querySelector(".modal-button-container"), null);
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("opens the right sidebar directly from Review conversion in settings", async () => {
@@ -71,42 +102,67 @@ describe("portable conversion entry and help", () => {
 				let label = "";
 				const button = {
 					buttonEl: root.createEl("button"),
-					setButtonText(text: string) { label = text; return this; },
-					setDestructive() { return this; },
-					setCta() { return this; },
-					onClick(action: () => unknown) { if (label === t("portable.review")) review = action; return this; },
+					setButtonText(text: string) {
+						label = text;
+						return this;
+					},
+					setDestructive() {
+						return this;
+					},
+					setCta() {
+						return this;
+					},
+					onClick(action: () => unknown) {
+						if (label === t("portable.review")) review = action;
+						return this;
+					},
 				} as unknown as ButtonComponent;
 				callback(button);
 				return this;
 			};
 			// The settings page's Convert to standard Markdown row, drawn as Obsidian draws it.
 			const ctx = { app: h.app, plugin: { settingsWriter: { isFrozen: false } } } as unknown as TreeContext;
-			const conversionRow = dangerZoneGroup(ctx).items?.find((row) => row.id === "convert-to-markdown") as CsRender;
+			const conversionRow = dangerZoneGroup(ctx).items?.find(
+				(row) => row.id === "convert-to-markdown",
+			) as CsRender;
 			conversionRow.render(new Setting(root as unknown as HTMLElement), undefined as never);
 			assert.ok(review);
 			review();
 			await setImmediate();
-			assert.equal(h.calls.filter(call => call.endsWith(":right")).length, 1);
+			assert.equal(h.calls.filter((call) => call.endsWith(":right")).length, 1);
 			assert.ok(h.calls.includes("close-settings"));
 			assert.ok(h.calls.includes("reveal"));
 			assert.equal(h.contentEl.children.length, 0);
-		} finally { Object.defineProperty(Setting.prototype, "addButton", original); root.remove(); h.destroy(); }
+		} finally {
+			Object.defineProperty(Setting.prototype, "addButton", original);
+			root.remove();
+			h.destroy();
+		}
 	});
 
 	it("combines actual heading and inline conversion rules in one localized comparison table", () => {
-		const root = fakeDom.document.body.createDiv(), locale = getLocale();
+		const root = fakeDom.document.body.createDiv(),
+			locale = getLocale();
 		try {
 			registerLocale("he", he);
 			for (const language of ["en", "he"]) {
-				setLocale(language); root.empty();
+				setLocale(language);
+				root.empty();
 				renderPortableRules(root as unknown as HTMLElement);
 				const sections = root.querySelectorAll(".cs-portable-rules");
 				assert.equal(sections.length, 1);
 				assert.equal(root.querySelectorAll("table").length, 1);
-				assert.deepEqual(root.querySelectorAll("th").map(cell => cell.textContent), [t("portable.before"), t("portable.after")]);
+				assert.deepEqual(
+					root.querySelectorAll("th").map((cell) => cell.textContent),
+					[t("portable.before"), t("portable.after")],
+				);
 				assert.equal(root.querySelectorAll("tbody tr").length, 4);
-				assert.deepEqual(root.querySelectorAll("tbody tr").map(row => row.querySelector("code")!.textContent.startsWith("# ")),
-					[true, true, false, false]);
+				assert.deepEqual(
+					root
+						.querySelectorAll("tbody tr")
+						.map((row) => row.querySelector("code")!.textContent.startsWith("# ")),
+					[true, true, false, false],
+				);
 				for (const row of root.querySelectorAll("tbody tr")) {
 					const [before, after] = row.querySelectorAll("code");
 					assert.equal(convertPortableCallouts(before!.textContent).content, after!.textContent);
@@ -115,6 +171,9 @@ describe("portable conversion entry and help", () => {
 					assert.equal(row.querySelectorAll("td").length, 2);
 				}
 			}
-		} finally { setLocale(locale); root.remove(); }
+		} finally {
+			setLocale(locale);
+			root.remove();
+		}
 	});
 });

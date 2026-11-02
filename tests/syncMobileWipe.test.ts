@@ -80,10 +80,16 @@ function phone(name: string, disk: Disk) {
 			configDir: ".obsidian",
 			adapter: {
 				mkdir: () => Promise.resolve(),
-				write: (path: string, text: string) => { files.set(path, text); return Promise.resolve(); },
+				write: (path: string, text: string) => {
+					files.set(path, text);
+					return Promise.resolve();
+				},
 				read: (path: string) => Promise.resolve(files.get(path) ?? ""),
 				list: () => Promise.resolve({ files: [...files.keys()], folders: [] }),
-				remove: (path: string) => { files.delete(path); return Promise.resolve(); },
+				remove: (path: string) => {
+					files.delete(path);
+					return Promise.resolve();
+				},
 				exists: () => Promise.resolve(disk.content !== null),
 			},
 			getMarkdownFiles: () => [],
@@ -245,10 +251,7 @@ describe("a phone whose data.json has not arrived", () => {
 		p.registry.add(authored("first-one"));
 		await p.save();
 		assert.ok(disk.writes > 0, "a fresh install could not save");
-		assert.ok(
-			(disk.content ?? "").includes("first-one"),
-			"the callout did not reach the file",
-		);
+		assert.ok((disk.content ?? "").includes("first-one"), "the callout did not reach the file");
 	});
 
 	it("writes nothing before the launch has confirmed it is fresh", async () => {
@@ -300,11 +303,7 @@ describe("a data.json that turns up after startup", () => {
 		const arrived = vaultWithUserCallouts();
 		disk.content = arrived.content;
 
-		assert.strictEqual(
-			await p.layoutReady(),
-			false,
-			"still believed it was a fresh install",
-		);
+		assert.strictEqual(await p.layoutReady(), false, "still believed it was a fresh install");
 		assert.ok(p.registry.get("insight"), "the arriving file was not adopted");
 		assert.strictEqual(disk.writes, 0, "wrote over the file that arrived");
 	});
@@ -321,11 +320,7 @@ describe("a data.json that turns up after startup", () => {
 		p.registry.add(authored("made-after-the-failure"));
 		await p.save();
 		assert.strictEqual(disk.writes, 0, "replaced a file it could not read");
-		assert.strictEqual(
-			disk.content,
-			'{"version":4,"callouts":[{"id":"tru',
-			"the file changed",
-		);
+		assert.strictEqual(disk.content, '{"version":4,"callouts":[{"id":"tru', "the file changed");
 	});
 
 	it("stops the welcome flow from creating one over it", async () => {
@@ -342,9 +337,7 @@ describe("a data.json that turns up after startup", () => {
 		disk.content = arrived.content;
 		const fileBefore = disk.content;
 
-		const freshInstall = boot.isFreshInstall
-			? await p.layoutReady()
-			: false;
+		const freshInstall = boot.isFreshInstall ? await p.layoutReady() : false;
 		assert.strictEqual(freshInstall, false, "greeted an existing vault");
 
 		// `main.ts` exposes `settings` off the registry, and the routing reads
@@ -358,9 +351,7 @@ describe("a data.json that turns up after startup", () => {
 			},
 		};
 		await maybeShowWelcomeOnLaunch(
-			welcomeHost as unknown as Parameters<
-				typeof maybeShowWelcomeOnLaunch
-			>[0],
+			welcomeHost as unknown as Parameters<typeof maybeShowWelcomeOnLaunch>[0],
 			freshInstall,
 		);
 
@@ -390,10 +381,7 @@ describe("a data.json that turns up after startup", () => {
 		// still being thrown away.
 		p.registry.add(authored("made-after-recovery"));
 		await p.save();
-		assert.ok(
-			(disk.content ?? "").includes("made-after-recovery"),
-			"stayed read-only for the whole session",
-		);
+		assert.ok((disk.content ?? "").includes("made-after-recovery"), "stayed read-only for the whole session");
 	});
 
 	it("goes on watching after seeing a file it wrote itself", async () => {
@@ -416,10 +404,7 @@ describe("a data.json that turns up after startup", () => {
 		// The vault's real settings finally reach the phone.
 		disk.content = vaultWithUserCallouts().content;
 		await p.returnToApp();
-		assert.ok(
-			p.registry.get("insight"),
-			"stopped watching after seeing its own file",
-		);
+		assert.ok(p.registry.get("insight"), "stopped watching after seeing its own file");
 	});
 
 	it("goes on writing when nothing turned up after all", async () => {

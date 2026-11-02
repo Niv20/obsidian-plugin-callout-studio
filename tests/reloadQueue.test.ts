@@ -32,7 +32,9 @@ function queue(h: ReloadQueueHost): ReloadQueue {
 	return new ReloadQueue(h, (callback, delay) => {
 		const id = nextTimer++;
 		timers.set(id, { callback, delay });
-		return () => { timers.delete(id); };
+		return () => {
+			timers.delete(id);
+		};
 	});
 }
 function fireRetry(): void {
@@ -71,10 +73,16 @@ function host(disk: { content: string | null }) {
 				exists: () => Promise.resolve(disk.content !== null),
 				mkdir: () => Promise.resolve(),
 				// Backups only; a copy is read back before it counts.
-				write: (path: string, text: string) => { backupFiles.set(path, text); return Promise.resolve(); },
+				write: (path: string, text: string) => {
+					backupFiles.set(path, text);
+					return Promise.resolve();
+				},
 				read: (path: string) => Promise.resolve(backupFiles.get(path) ?? ""),
 				list: () => Promise.resolve({ files: [...backupFiles.keys()], folders: [] }),
-				remove: (path: string) => { backupFiles.delete(path); return Promise.resolve(); },
+				remove: (path: string) => {
+					backupFiles.delete(path);
+					return Promise.resolve();
+				},
 			},
 		},
 	} as unknown as App;
@@ -123,8 +131,7 @@ function host(disk: { content: string | null }) {
 
 	// The preview flag is the registry's own answer, so it is overridden here
 	// rather than faked alongside it.
-	(registry as unknown as { hasPreviewDefinition: () => boolean })
-		.hasPreviewDefinition = () => state.hasPreview;
+	(registry as unknown as { hasPreviewDefinition: () => boolean }).hasPreviewDefinition = () => state.hasPreview;
 
 	return { host: h, state, registry };
 }
@@ -282,7 +289,9 @@ describe("a release with nothing waiting", () => {
 describe("reload recovery and unload", () => {
 	it("contains adoption failures and retains a retry", async () => {
 		const { host: h } = host({ content: JSON.stringify({ callouts: [] }) });
-		h.refreshThemeAppearance = () => { throw new Error("theme changed during refresh"); };
+		h.refreshThemeAppearance = () => {
+			throw new Error("theme changed during refresh");
+		};
 		const q = queue(h);
 		await assert.doesNotReject(() => q.run());
 		assert.strictEqual(q.isPending, true);
@@ -291,9 +300,12 @@ describe("reload recovery and unload", () => {
 		const { host: h, state } = host({ content: JSON.stringify({ settings: { welcomeSeen: true } }) });
 		state.gate = () => undefined;
 		const q = queue(h);
-		const pending = q.run(); await settle();
-		q.destroy(); h.settingsWriter.destroy();
-		state.gate?.(); state.gate = null;
+		const pending = q.run();
+		await settle();
+		q.destroy();
+		h.settingsWriter.destroy();
+		state.gate?.();
+		state.gate = null;
 		await pending;
 		assert.strictEqual(h.registry.settings.welcomeSeen, false);
 		assert.strictEqual(q.isPending, false);
@@ -397,7 +409,9 @@ describe("transient settings transfers recover without another file event", () =
 		const q = queue(h);
 		h.onExternalSettingsChange = () => q.run();
 		let foreground = () => {};
-		h.registerDomEvent = (_doc, _type, callback) => { foreground = callback; };
+		h.registerDomEvent = (_doc, _type, callback) => {
+			foreground = callback;
+		};
 		watchForLateSettings(h);
 		foreground();
 		await settle();
@@ -423,12 +437,16 @@ describe("transient settings transfers recover without another file event", () =
 		h.loadData = () => {
 			const snapshot = original();
 			h.loadData = original;
-			return new Promise<void>(resolve => { finishRead = resolve; }).then(() => snapshot);
+			return new Promise<void>((resolve) => {
+				finishRead = resolve;
+			}).then(() => snapshot);
 		};
 		const q = queue(h);
 		h.onExternalSettingsChange = () => q.run();
 		let foreground = () => {};
-		h.registerDomEvent = (_doc, _type, callback) => { foreground = callback; };
+		h.registerDomEvent = (_doc, _type, callback) => {
+			foreground = callback;
+		};
 		watchForLateSettings(h);
 		foreground();
 		const incoming = registry.toSaveData();
@@ -452,7 +470,10 @@ describe("reload releases arriving during adoption", () => {
 		const write = h.app.vault.adapter.write.bind(h.app.vault.adapter);
 		h.app.vault.adapter.write = async (path, json) => {
 			backups.push(json);
-			if (backups.length === 1) await new Promise<void>(resolve => { finishBackup = resolve; });
+			if (backups.length === 1)
+				await new Promise<void>((resolve) => {
+					finishBackup = resolve;
+				});
 			await write(path, json);
 		};
 		const q = queue(h);
@@ -468,14 +489,19 @@ describe("reload releases arriving during adoption", () => {
 		await first;
 		assert.strictEqual(q.isPending, false, "the release must trigger a second adoption");
 		assert.ok(registry.get("remote"));
-		assert.ok(backups.some(json => json.includes("edited-during-backup")), "the newest local edit was preserved before adoption");
+		assert.ok(
+			backups.some((json) => json.includes("edited-during-backup")),
+			"the newest local edit was preserved before adoption",
+		);
 	});
 
 	it("coalesces a burst of own-write echoes without rebuilding or scheduling retries", async () => {
 		const { host: h, state, registry } = host({ content: JSON.stringify({ callouts: [] }) });
 		h.settingsWriter.adopt(JSON.stringify({ callouts: [] }));
 		let rebuilds = 0;
-		registry.load = () => { rebuilds++; };
+		registry.load = () => {
+			rebuilds++;
+		};
 		const q = queue(h);
 		await Promise.all(Array.from({ length: 50 }, () => q.run()));
 		assert.ok(state.reads <= 2);

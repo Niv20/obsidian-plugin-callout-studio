@@ -233,14 +233,7 @@ describe("calloutIdentity", () => {
 	});
 
 	it("makes every spelling of one callout the same string", () => {
-		const forms = [
-			"banner icon",
-			"banner   icon",
-			"Banner Icon",
-			"BANNER-ICON",
-			"  banner-icon  ",
-			"banner\ticon",
-		];
+		const forms = ["banner icon", "banner   icon", "Banner Icon", "BANNER-ICON", "  banner-icon  ", "banner\ticon"];
 		for (const form of forms) {
 			assert.equal(calloutIdentity(form), "banner-icon", form);
 		}
@@ -281,11 +274,7 @@ describe("calloutIdentity", () => {
 		// for an ordinary vault.
 		for (const raw of ["my note", "note", "tip 1 best", "שלום עולם"]) {
 			const stored = sanitizeCalloutIdInput(raw);
-			assert.equal(
-				calloutIdentity(stored),
-				obsidianCalloutAttrId(stored),
-				stored,
-			);
+			assert.equal(calloutIdentity(stored), obsidianCalloutAttrId(stored), stored);
 		}
 	});
 });
@@ -335,18 +324,11 @@ describe("mergeDashSpaceVariants", () => {
 	it("keeps the original array order, even when a later spelling wins", () => {
 		// Re-setting a Map key does not move it, which is what makes preferring
 		// the spaced spelling free of reordering.
-		assert.deepStrictEqual(
-			mergeDashSpaceVariants(["zebra", "a-b", "yak", "a b"]),
-			["zebra", "a b", "yak"],
-		);
+		assert.deepStrictEqual(mergeDashSpaceVariants(["zebra", "a-b", "yak", "a b"]), ["zebra", "a b", "yak"]);
 	});
 
 	it("leaves unrelated ids alone", () => {
-		assert.deepStrictEqual(mergeDashSpaceVariants(["one", "two", "three"]), [
-			"one",
-			"two",
-			"three",
-		]);
+		assert.deepStrictEqual(mergeDashSpaceVariants(["one", "two", "three"]), ["one", "two", "three"]);
 	});
 
 	it("drops ids that dasherize to nothing", () => {

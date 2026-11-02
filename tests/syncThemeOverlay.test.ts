@@ -42,13 +42,11 @@ type Device = Parameters<Parameters<typeof pair>[0]>[0];
  * themes.
  */
 const icon = { type: "lucide", value: "pencil" } as const;
-const userRow = (id: string, over: Record<string, unknown> = {}) =>
-	definition({ id, icon: { ...icon }, ...over });
+const userRow = (id: string, over: Record<string, unknown> = {}) => definition({ id, icon: { ...icon }, ...over });
 const scannedRow = (id: string) => discovered(id, { icon: { ...icon } });
 
 /** The settings body, envelope aside — what two devices must agree on. */
-const body = async (dev: Device): Promise<string> =>
-	canonical(content(await dev.read()));
+const body = async (dev: Device): Promise<string> => canonical(content(await dev.read()));
 
 /**
  * Put a theme on this device and let it try to save, which is the interesting
@@ -138,11 +136,7 @@ describe("a theme on one device never moves the synced file", () => {
 			await a.host.saveSettings();
 			await b.deliver(await a.read());
 
-			assert.equal(
-				a.registry.get("recite")?.source,
-				"theme",
-				"Reset did not take the theme's callouts",
-			);
+			assert.equal(a.registry.get("recite")?.source, "theme", "Reset did not take the theme's callouts");
 			assert.equal(b.registry.get("recite"), undefined);
 			assert.equal(await body(a), await body(b));
 		});
@@ -200,15 +194,11 @@ describe("the sanctioned routes from a theme id to saved configuration", () => {
 				dev.registry.restyleUncustomizedFallbackRows();
 			}
 
-			assert.deepEqual(
-				a.registry.toSaveData().callouts,
-				b.registry.toSaveData().callouts,
-			);
+			assert.deepEqual(a.registry.toSaveData().callouts, b.registry.toSaveData().callouts);
 			assert.equal(a.registry.get("recite")?.colorLight, "#ff0000");
 		});
 	});
 });
-
 
 describe("saved theme ids edited and reset across devices", () => {
 	it("syncs a color and icon edit from the unthemed device without overriding the theme", async () => {
@@ -219,8 +209,10 @@ describe("saved theme ids edited and reset across devices", () => {
 			await b.host.saveSettings();
 			await a.deliver(await b.read());
 			b.registry.update("recite", {
-				source: "user", customized: true,
-				colorLight: "#a12345", colorDark: "#efabcd",
+				source: "user",
+				customized: true,
+				colorLight: "#a12345",
+				colorDark: "#efabcd",
 				icon: { type: "emoji", value: "⭐" },
 			});
 			await b.host.saveSettings();
@@ -274,7 +266,8 @@ describe("saved theme ids edited and reset across devices", () => {
 			b.registry.update("shared", { colorLight: "#a12345", icon: { type: "emoji", value: "⭐" } });
 			await a.host.saveSettings();
 			await b.host.saveSettings();
-			const fromA = await a.read(), fromB = await b.read();
+			const fromA = await a.read(),
+				fromB = await b.read();
 			await a.deliver(fromB);
 			await b.deliver(fromA);
 			await b.deliver(await a.read());
@@ -291,7 +284,6 @@ describe("saved theme ids edited and reset across devices", () => {
 		});
 	});
 });
-
 
 describe("theme changes while sync is awaiting storage", () => {
 	for (const next of [[], ["new-only", "recite"], ["old-only", "recite"]]) {
@@ -311,7 +303,13 @@ describe("theme changes while sync is awaiting storage", () => {
 				await a.deliver(await b.read());
 				assert.ok(switched, "the theme really changed during adoption");
 				assert.ok(a.registry.get("mine"));
-				assert.deepEqual(a.registry.getThemeProvided().map(row => row.id).sort(), [...next].sort());
+				assert.deepEqual(
+					a.registry
+						.getThemeProvided()
+						.map((row) => row.id)
+						.sort(),
+					[...next].sort(),
+				);
 				assert.equal(a.registry.get("other-device"), undefined);
 				assert.equal(a.writes, writes, "no theme-driven sync reply");
 				assert.equal(await body(a), await body(b));
@@ -320,17 +318,28 @@ describe("theme changes while sync is awaiting storage", () => {
 	}
 });
 
-
 describe("two different themes declaring the same id", () => {
 	it("keeps separate local appearances and one saved definition", async () => {
 		await pair(async (a, b) => {
 			await theme(a, "recite", "only-a");
 			await theme(b, "recite", "only-b");
 			const before = await body(a);
-			for (const [dev, accent] of [[a, "red"], [b, "blue"]] as const) {
-				dev.registry.setThemeAppearances(new Map([["recite", {
-					accent, background: null, icon: { kind: "unknown" },
-				}]]));
+			for (const [dev, accent] of [
+				[a, "red"],
+				[b, "blue"],
+			] as const) {
+				dev.registry.setThemeAppearances(
+					new Map([
+						[
+							"recite",
+							{
+								accent,
+								background: null,
+								icon: { kind: "unknown" },
+							},
+						],
+					]),
+				);
 				await dev.host.saveSettings();
 				assert.equal(dev.registry.themeAppearanceOf(dev.registry.get("recite")!).accent, accent);
 				assert.equal(await body(dev), before);
@@ -339,10 +348,16 @@ describe("two different themes declaring the same id", () => {
 			await a.host.saveSettings();
 			await b.deliver(await a.read());
 			assert.equal(await body(a), await body(b));
-			for (const [dev, accent] of [[a, "red"], [b, "blue"]] as const) {
+			for (const [dev, accent] of [
+				[a, "red"],
+				[b, "blue"],
+			] as const) {
 				assert.equal(dev.registry.get("recite")?.colorLight, "#123456");
 				assert.equal(dev.registry.themeAppearanceOf(dev.registry.get("recite")!).accent, accent);
-				assert.equal(new CSSInjector(dev.host.app, dev.registry).generateCalloutCSS(dev.registry.get("recite")!), "");
+				assert.equal(
+					new CSSInjector(dev.host.app, dev.registry).generateCalloutCSS(dev.registry.get("recite")!),
+					"",
+				);
 			}
 		});
 	});

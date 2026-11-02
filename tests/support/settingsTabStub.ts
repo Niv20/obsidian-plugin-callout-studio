@@ -80,8 +80,12 @@ export class PluginSettingTab {
 		return plugin.saveData?.(plugin.settings);
 	}
 
-	display(): void { /* drawn by the test renderer, not here */ }
-	hide(): void { /* nothing to undo */ }
+	display(): void {
+		/* drawn by the test renderer, not here */
+	}
+	hide(): void {
+		/* nothing to undo */
+	}
 }
 
 /**
@@ -104,10 +108,20 @@ export class SettingPage {
 		return this.elements;
 	}
 
-	get rootEl(): HTMLElement { return this.parts.rootEl; }
-	get titlebarEl(): HTMLElement { return this.parts.titlebarEl; }
-	get containerEl(): HTMLElement { return this.parts.containerEl; }
+	get rootEl(): HTMLElement {
+		return this.parts.rootEl;
+	}
+	get titlebarEl(): HTMLElement {
+		return this.parts.titlebarEl;
+	}
+	get containerEl(): HTMLElement {
+		return this.parts.containerEl;
+	}
 
-	display(): void { /* each page draws itself */ }
-	hide(): void { /* nothing to undo */ }
+	display(): void {
+		/* each page draws itself */
+	}
+	hide(): void {
+		/* nothing to undo */
+	}
 }

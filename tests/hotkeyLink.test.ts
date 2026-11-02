@@ -47,8 +47,7 @@ function fakeApp(tables: {
 					if (tables.throws) throw new Error("boom");
 					return tables.custom?.[id];
 				},
-				getDefaultHotkeys: (id: string): StoredHotkey[] | undefined =>
-					tables.defaults?.[id],
+				getDefaultHotkeys: (id: string): StoredHotkey[] | undefined => tables.defaults?.[id],
 			};
 	return { hotkeyManager: manager } as unknown as App;
 }
@@ -90,11 +89,7 @@ describe("hotkeysForCommand — which table wins", () => {
 				],
 			},
 		});
-		assert.deepStrictEqual(hotkeysForCommand(app, "cs:wrap"), [
-			"Ctrl + K",
-			"Ctrl + Shift + K",
-			"F6",
-		]);
+		assert.deepStrictEqual(hotkeysForCommand(app, "cs:wrap"), ["Ctrl + K", "Ctrl + Shift + K", "F6"]);
 	});
 
 	it("reads as unassigned rather than throwing when the tables misbehave", () => {
@@ -115,10 +110,7 @@ describe("hotkeysForCommand — formatting", () => {
 	};
 
 	it("emits modifiers in Obsidian's order, not the stored order", () => {
-		assert.strictEqual(
-			one({ modifiers: ["Shift", "Alt", "Mod"], key: "K" }),
-			"Ctrl + Alt + Shift + K",
-		);
+		assert.strictEqual(one({ modifiers: ["Shift", "Alt", "Mod"], key: "K" }), "Ctrl + Alt + Shift + K");
 	});
 
 	it("prefers the physical code and strips its Key prefix", () => {
@@ -140,10 +132,7 @@ describe("hotkeysForCommand — formatting", () => {
 	});
 
 	it("drops a binding with no key at all", () => {
-		assert.deepStrictEqual(
-			hotkeysForCommand(fakeApp({ custom: { id: [{ modifiers: ["Mod"] }] } }), "id"),
-			[],
-		);
+		assert.deepStrictEqual(hotkeysForCommand(fakeApp({ custom: { id: [{ modifiers: ["Mod"] }] } }), "id"), []);
 	});
 });
 
@@ -165,18 +154,12 @@ describe("hotkeysForCommand — the modifiers, off a Mac", () => {
 	});
 
 	it("spells the chord out with ` + ` rather than stacking glyphs", () => {
-		assert.strictEqual(
-			one({ modifiers: ["Mod", "Alt", "Shift"], key: "K" }),
-			"Ctrl + Alt + Shift + K",
-		);
+		assert.strictEqual(one({ modifiers: ["Mod", "Alt", "Shift"], key: "K" }), "Ctrl + Alt + Shift + K");
 	});
 
 	it("keeps every modifier, including the pair that print the same", () => {
 		// Order is the table's, and `Mod` precedes `Ctrl` in it.
-		assert.strictEqual(
-			one({ modifiers: ["Ctrl", "Mod"], key: "K" }),
-			"Ctrl + Ctrl + K",
-		);
+		assert.strictEqual(one({ modifiers: ["Ctrl", "Mod"], key: "K" }), "Ctrl + Ctrl + K");
 	});
 
 	it("prints a bare key with no separator to leave dangling", () => {
@@ -231,10 +214,7 @@ describe("fullCommandId", () => {
 	// hangs off — which is why command ids are stable API and must never be
 	// renamed after release.
 	it("joins the plugin id and the short id with a colon", () => {
-		assert.strictEqual(
-			fullCommandId("callout-studio", "wrap-selection"),
-			"callout-studio:wrap-selection",
-		);
+		assert.strictEqual(fullCommandId("callout-studio", "wrap-selection"), "callout-studio:wrap-selection");
 	});
 
 	it("does not sanitize, trim or lowercase either half", () => {
@@ -288,8 +268,7 @@ function fakePane(options: {
 
 /** Every `new Notice(...)` raised since the last reset. */
 const notices: string[] = [];
-(globalThis as unknown as { __CS_NOTICES__?: string[] }).__CS_NOTICES__ =
-	notices;
+(globalThis as unknown as { __CS_NOTICES__?: string[] }).__CS_NOTICES__ = notices;
 
 /**
  * Fresh screen, fresh notice log, no timer left over.
@@ -321,9 +300,7 @@ function mountSettingsModal(options: { flat?: boolean } = {}): {
 	input: FakeElement;
 } {
 	const modal = buildModal();
-	const root = options.flat
-		? modal
-		: modal.createDiv({ cls: "vertical-tab-content-container" });
+	const root = options.flat ? modal : modal.createDiv({ cls: "vertical-tab-content-container" });
 	return { modal, input: root.createEl("input", { type: "search" }) };
 }
 
@@ -341,11 +318,7 @@ describe("openHotkeySettings — the exact path", () => {
 		reset();
 		const { app, log } = fakePane({});
 		openHotkeySettings(app, "callout-studio:");
-		assert.deepStrictEqual(log, [
-			"open",
-			"openTabById:hotkeys",
-			"setQuery:callout-studio:",
-		]);
+		assert.deepStrictEqual(log, ["open", "openTabById:hotkeys", "setQuery:callout-studio:"]);
 		assert.deepStrictEqual(notices, []);
 	});
 
@@ -424,7 +397,9 @@ describe("openHotkeySettings — the DOM fallback", () => {
 			assert.strictEqual(input.focusCount, 0);
 			assert.strictEqual(input.selectCount, 0);
 			assert.strictEqual(fakeDom.document.activeElement, null);
-		} finally { Platform.isMobile = wasMobile; }
+		} finally {
+			Platform.isMobile = wasMobile;
+		}
 	});
 
 	it("announces the change the way a real keystroke would", () => {
@@ -497,9 +472,7 @@ describe("openHotkeySettings — choosing among several inputs", () => {
 		reset();
 		const modal = buildModal();
 		const root = modal.createDiv({ cls: "vertical-tab-content-container" });
-		const wrapped = root
-			.createDiv({ cls: "search-input-container" })
-			.createEl("input", {});
+		const wrapped = root.createDiv({ cls: "search-input-container" }).createEl("input", {});
 
 		openHotkeySettings(fakePane({ noTab: true }).app, "q");
 		assert.strictEqual(wrapped.value, "q");

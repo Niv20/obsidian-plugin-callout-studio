@@ -26,12 +26,16 @@ const pack = {
 	hasCategories: true,
 	variants: [
 		{
-			kind: "select", key: "style", labelKey: "iconPicker.materialStyle",
+			kind: "select",
+			key: "style",
+			labelKey: "iconPicker.materialStyle",
 			options: ["outlined", "filled"],
 			optionLabelKeys: ["iconPicker.materialStyleOutlined", "iconPicker.materialStyleFilled"],
 		},
 		{
-			kind: "select", key: "weight", labelKey: "iconPicker.materialWeight",
+			kind: "select",
+			key: "weight",
+			labelKey: "iconPicker.materialWeight",
 			options: [100, 400],
 			optionLabelKeys: ["iconPicker.materialWeight100", "iconPicker.materialWeight400"],
 		},
@@ -46,8 +50,10 @@ function mount(category = "Animals") {
 	const variantChanges: Array<{ variants: IconVariantState; kind: string }> = [];
 	const beforeListeners = fakeDom.document.listeners.get("click")?.length ?? 0;
 	const filters = new PackToolbarFilters(
-		asEl(host), pack,
-		{ style: "outlined", weight: 400, emojiSkinTone: 2 }, category,
+		asEl(host),
+		pack,
+		{ style: "outlined", weight: 400, emojiSkinTone: 2 },
+		category,
 		{
 			onCategory: (value) => categoryChanges.push(value),
 			onVariant: (variants, kind) => variantChanges.push({ variants, kind }),
@@ -59,8 +65,13 @@ function mount(category = "Animals") {
 		openDropdownMenu(asEl(picker(className))).clickItemAt(index);
 	};
 	return {
-		host, filters, categoryChanges, variantChanges, beforeListeners,
-		picker, choose,
+		host,
+		filters,
+		categoryChanges,
+		variantChanges,
+		beforeListeners,
+		picker,
+		choose,
 		destroy: () => filters.destroy(),
 	};
 }
@@ -71,21 +82,28 @@ describe("icon pack toolbar filters", () => {
 		const toolbar = el();
 		for (const sourceId of ICON_SOURCE_IDS) {
 			const filters = new PackToolbarFilters(asEl(toolbar), getSource(sourceId), {}, "", {
-				onCategory: () => {}, onVariant: () => {},
+				onCategory: () => {},
+				onVariant: () => {},
 			});
 			try {
 				for (const key of ["tablerStyle", "weight"]) {
-					assert.equal(toolbar.hasClass(`has-${key}-filter`),
+					assert.equal(
+						toolbar.hasClass(`has-${key}-filter`),
 						toolbar.querySelector(`.icon-picker-${key}-select`) !== null,
-						`${sourceId}: layout follows the filter that is actually rendered`);
+						`${sourceId}: layout follows the filter that is actually rendered`,
+					);
 				}
 				filters.setEnabled(false);
 				for (const key of ["tablerStyle", "weight"]) {
-					assert.equal(toolbar.hasClass(`has-${key}-filter`),
+					assert.equal(
+						toolbar.hasClass(`has-${key}-filter`),
 						toolbar.querySelector(`.icon-picker-${key}-select`) !== null,
-						"locked filters keep the same layout while awaiting download");
+						"locked filters keep the same layout while awaiting download",
+					);
 				}
-			} finally { filters.destroy(); }
+			} finally {
+				filters.destroy();
+			}
 			assert.equal(toolbar.hasClass("has-tablerStyle-filter"), false);
 			assert.equal(toolbar.hasClass("has-weight-filter"), false);
 			toolbar.empty();
@@ -106,7 +124,9 @@ describe("icon pack toolbar filters", () => {
 			assert.equal(tone.querySelector(".cs-dropdown-field")?.getAttribute("role"), "combobox");
 			assert.equal(h.filters.setCategories(["Animals", "Food"]), "Animals");
 			assert.equal(dropdownValue(asEl(h.picker("icon-picker-category-picker"))), t("iconPicker.cat.Animals"));
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("commits categories and numeric weights while keeping variant state", () => {
@@ -125,7 +145,9 @@ describe("icon pack toolbar filters", () => {
 				variants: { style: "filled", weight: 100, emojiSkinTone: 2 },
 				kind: "select",
 			});
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("shows emoji samples and commits the chosen tone", () => {
@@ -133,17 +155,25 @@ describe("icon pack toolbar filters", () => {
 		try {
 			const tone = h.picker("icon-picker-skin-tone-picker");
 			assert.equal(tone.querySelector(".cs-dropdown-field-icon")?.textContent, "✋🏼");
-			tone.querySelector(".cs-dropdown-field")!.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
+			tone.querySelector(".cs-dropdown-field")!.fire("keydown", {
+				key: "ArrowDown",
+				preventDefault: () => {},
+				stopPropagation: () => {},
+			});
 			const rows = tone.querySelectorAll(".cs-combobox-option");
 			assert.equal(rows.length, 6);
 			assert.equal(rows[4]?.querySelector(".icon-picker-skin-tone-sample")?.textContent, "✋🏾");
 			rows[4].fire("click");
 			assert.equal(tone.querySelector(".cs-dropdown-field-icon")?.textContent, "✋🏾");
-			assert.deepEqual(h.variantChanges, [{
-				variants: { style: "outlined", weight: 400, emojiSkinTone: 4 },
-				kind: "skin-tone",
-			}]);
-		} finally { h.destroy(); }
+			assert.deepEqual(h.variantChanges, [
+				{
+					variants: { style: "outlined", weight: 400, emojiSkinTone: 4 },
+					kind: "skin-tone",
+				},
+			]);
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("falls back from a removed category and locks and releases every picker", () => {
@@ -153,7 +183,9 @@ describe("icon pack toolbar filters", () => {
 			assert.equal(dropdownValue(asEl(h.picker("icon-picker-category-picker"))), t("iconPicker.allCategories"));
 			h.filters.setEnabled(false);
 			for (const root of h.host.querySelectorAll(".icon-picker-filter")) assertLocked(root);
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 		assert.equal(fakeDom.document.listeners.get("click")?.length ?? 0, h.beforeListeners);
 	});
 });
@@ -163,12 +195,19 @@ it("keeps every toolbar picker locked while a pack awaits download", async () =>
 	const container = el();
 	const beforeListeners = fakeDom.document.listeners.get("click")?.length ?? 0;
 	const remotePack = {
-		id: "tabler", kind: "bundledRemote", dataPacks: ["tabler-outline"],
-		hasCategories: true, searchPlaceholderKey: "iconPicker.searchTabler",
-		variants: [{
-			kind: "select", key: "tablerStyle", labelKey: "iconPicker.tablerStyle",
-			options: ["outline", "filled"],
-		}],
+		id: "tabler",
+		kind: "bundledRemote",
+		dataPacks: ["tabler-outline"],
+		hasCategories: true,
+		searchPlaceholderKey: "iconPicker.searchTabler",
+		variants: [
+			{
+				kind: "select",
+				key: "tablerStyle",
+				labelKey: "iconPicker.tablerStyle",
+				options: ["outline", "filled"],
+			},
+		],
 		attribution: { title: "Tabler", licenses: [] },
 		loadIndex: async () => ({ entries: [], categories: ["Animals"] }),
 	} as unknown as IconPack;
@@ -190,6 +229,8 @@ it("keeps every toolbar picker locked while a pack awaits download", async () =>
 		assert.equal(pickers.length, 2);
 		for (const picker of pickers) assertLocked(picker);
 		assert.deepEqual(saved, []);
-	} finally { panel.dispose(); }
+	} finally {
+		panel.dispose();
+	}
 	assert.equal(fakeDom.document.listeners.get("click")?.length ?? 0, beforeListeners);
 });

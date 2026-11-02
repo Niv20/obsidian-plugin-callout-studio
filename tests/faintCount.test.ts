@@ -41,10 +41,10 @@ describe("how styles.css draws a faint count", () => {
 
 	// A rule of its own for one surface is how the counts came apart before.
 	it("is one rule for every surface, plus a menu row's", () => {
-		assert.deepEqual(naming.map((rule) => rule.selector), [
-			".cs-faint-count",
-			".menu-item-title > .cs-faint-count",
-		]);
+		assert.deepEqual(
+			naming.map((rule) => rule.selector),
+			[".cs-faint-count", ".menu-item-title > .cs-faint-count"],
+		);
 	});
 
 	it("is Obsidian's `.tree-item-flair`: faint, a step smaller, at the end of its row", () => {
@@ -62,7 +62,7 @@ describe("how styles.css draws a faint count", () => {
 		assert.equal(valueOf(naming[1]!, "float"), "inline-end");
 	});
 
-	it("is the only count style left: no muted \"(N)\"", () => {
+	it('is the only count style left: no muted "(N)"', () => {
 		assert.ok(!rules.some((rule) => rule.selector.includes("cs-heading-count")));
 	});
 

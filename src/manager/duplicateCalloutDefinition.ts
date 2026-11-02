@@ -22,7 +22,10 @@ function copyName(base: string, counter: number, maxLength: number): string {
 
 /** Display names may contain pipes, unlike callout IDs read from markdown. */
 export function displayNameIdentity(name: string): string {
-	return name.toLowerCase().replace(/[\s-]+/g, " ").trim();
+	return name
+		.toLowerCase()
+		.replace(/[\s-]+/g, " ")
+		.trim();
 }
 
 function validBase(raw: string): string {
@@ -49,8 +52,7 @@ export function createDuplicateCalloutDefinition(
 		typeof source.displayName !== "string" ||
 		!source.displayName.trim() ||
 		(source.aliases !== undefined &&
-			(!Array.isArray(source.aliases) ||
-				source.aliases.some((alias) => typeof alias !== "string")))
+			(!Array.isArray(source.aliases) || source.aliases.some((alias) => typeof alias !== "string")))
 	) {
 		throw new Error("Only a valid custom callout can be duplicated.");
 	}

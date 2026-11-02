@@ -90,9 +90,7 @@ export function isReadOnlyPreviewTarget(el: Element): boolean {
 /** True for a section whose items exist only to change the document. */
 export function isEditingSection(section: string): boolean {
 	if (EDITING_SECTIONS.has(section)) return true;
-	return EDITING_SECTION_PREFIXES.some(
-		(prefix) => section === prefix || section.startsWith(`${prefix}.`),
-	);
+	return EDITING_SECTION_PREFIXES.some((prefix) => section === prefix || section.startsWith(`${prefix}.`));
 }
 
 /**

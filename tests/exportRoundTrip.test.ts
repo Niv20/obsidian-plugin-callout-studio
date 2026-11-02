@@ -388,17 +388,13 @@ function fileOf(json: string): File {
 }
 
 /** Import `json` into `registry` through the real settings-tab entry point. */
-async function importInto(
-	registry: CalloutRegistry,
-	json: string,
-): Promise<ImportRun> {
+async function importInto(registry: CalloutRegistry, json: string): Promise<ImportRun> {
 	const run = importRun(registry);
 	await processImportedJSON(run.ctx, fileOf(json));
 	return run;
 }
 
-const parse = (json: string): Record<string, unknown> =>
-	JSON.parse(json) as Record<string, unknown>;
+const parse = (json: string): Record<string, unknown> => JSON.parse(json) as Record<string, unknown>;
 
 const idsOf = (defs: CalloutDefinition[]): string[] => defs.map((d) => d.id);
 
@@ -424,12 +420,7 @@ describe("exportToJSONv2 — the envelope", () => {
 
 	it("carries every modified callout — user rows and edited built-ins alike", () => {
 		const source = sourceVault();
-		assert.deepStrictEqual(idsOf(source.getExportableDefinitions()), [
-			"alpha",
-			"beta",
-			"gamma",
-			"note",
-		]);
+		assert.deepStrictEqual(idsOf(source.getExportableDefinitions()), ["alpha", "beta", "gamma", "note"]);
 	});
 
 	it("leaves the twelve untouched built-ins out", () => {
@@ -447,8 +438,7 @@ describe("exportToJSONv2 — the envelope", () => {
 		// All three live in settings rather than on `PluginData` precisely so
 		// that `exportToJSONv2` carries them. A key missing here is a list the
 		// user cannot back up at all.
-		const settings = parse(sourceVault().exportToJSONv2())
-			.settings as PluginSettings;
+		const settings = parse(sourceVault().exportToJSONv2()).settings as PluginSettings;
 
 		assert.deepStrictEqual(
 			settings.customPalettes.map((p) => p.id),
@@ -489,7 +479,9 @@ describe("export → import — a fresh vault becomes the exporting one", () => 
 	it("notifies once for a whole definition import instead of repainting once per entry", async () => {
 		const target = emptyVault();
 		let changes = 0;
-		target.onChange(() => { changes++; });
+		target.onChange(() => {
+			changes++;
+		});
 		const source = sourceVault();
 		assert.ok(source.getUserDefined().length > 1);
 		await importInto(target, source.exportToJSON());
@@ -506,12 +498,7 @@ describe("export → import — a fresh vault becomes the exporting one", () => 
 
 		assert.deepStrictEqual(result.issues, []);
 		assert.strictEqual(result.fatal, false);
-		assert.deepStrictEqual(idsOf(result.validDefs), [
-			"alpha",
-			"beta",
-			"gamma",
-			"note",
-		]);
+		assert.deepStrictEqual(idsOf(result.validDefs), ["alpha", "beta", "gamma", "note"]);
 	});
 
 	it("re-exports a byte-identical file", async () => {
@@ -547,11 +534,7 @@ describe("export → import — a fresh vault becomes the exporting one", () => 
 		assert.strictEqual(note.builtIn, true);
 		assert.strictEqual(note.source, "builtin");
 		assert.strictEqual(target.getBuiltIn().length, 13);
-		assert.deepStrictEqual(idsOf(target.getUserDefined()), [
-			"alpha",
-			"beta",
-			"gamma",
-		]);
+		assert.deepStrictEqual(idsOf(target.getUserDefined()), ["alpha", "beta", "gamma"]);
 	});
 
 	it("keeps every optional field of a fully-loaded definition", async () => {
@@ -588,9 +571,7 @@ describe("export → import — a fresh vault becomes the exporting one", () => 
 		assert.strictEqual(target.settings.autocomplete.enabled, true);
 		assert.strictEqual(target.settings.language, "he");
 		assert.strictEqual(target.settings.fallbackCalloutId, "alpha");
-		assert.deepStrictEqual(target.settings.disabledFixedCommands, [
-			"callout-unwrap",
-		]);
+		assert.deepStrictEqual(target.settings.disabledFixedCommands, ["callout-unwrap"]);
 	});
 
 	it("restores all three lists", async () => {
@@ -644,13 +625,9 @@ describe("export → import — a fresh vault becomes the exporting one", () => 
 /** A vault with one of each list entry, all under ids the source vault lacks. */
 function vaultWithOwnLists(): CalloutRegistry {
 	const registry = emptyVault();
-	registry.settings.customPalettes = [
-		palette({ id: "cp-local", name: "Local", colorLight: "#123456" }),
-	];
+	registry.settings.customPalettes = [palette({ id: "cp-local", name: "Local", colorLight: "#123456" })];
 	registry.setUserImages([image({ id: "img-local001", name: "local.svg" })]);
-	registry.settings.customCommands = [
-		command({ id: "cmd-local", calloutId: "note", role: "regular" }),
-	];
+	registry.settings.customCommands = [command({ id: "cmd-local", calloutId: "note", role: "regular" })];
 	return registry;
 }
 
@@ -663,14 +640,8 @@ describe("export → import — the lists the user builds up", () => {
 		const target = vaultWithOwnLists();
 		await importInto(target, sourceVault().exportToJSONv2());
 
-		assert.deepStrictEqual(
-			target.settings.customPalettes.map((p) => p.id).sort(),
-			["cp-local", "cp-source"],
-		);
-		assert.deepStrictEqual(
-			target.settings.customCommands.map((c) => c.id).sort(),
-			["cmd-local", "cmd-source"],
-		);
+		assert.deepStrictEqual(target.settings.customPalettes.map((p) => p.id).sort(), ["cp-local", "cp-source"]);
+		assert.deepStrictEqual(target.settings.customCommands.map((c) => c.id).sort(), ["cmd-local", "cmd-source"]);
 		assert.deepStrictEqual(
 			target.getUserImages().map((i) => i.id),
 			["img-local001"],
@@ -684,18 +655,13 @@ describe("export → import — the lists the user builds up", () => {
 		// machine, not of a vault, so the list lives in `DeviceLocalStore` —
 		// which makes the old carve-out unnecessary and the guarantee stronger:
 		// there is nothing to drop, on either side.
-		const settings = parse(emptyVault().exportToJSONv2()).settings as Record<
-			string,
-			unknown
-		>;
+		const settings = parse(emptyVault().exportToJSONv2()).settings as Record<string, unknown>;
 		assert.ok(!("retiredThemeIds" in settings));
 	});
 
 	it("lets the file win on a shared id, as a restore should", async () => {
 		const target = emptyVault();
-		target.settings.customPalettes = [
-			palette({ id: "cp-source", name: "Stale name", colorLight: "#000000" }),
-		];
+		target.settings.customPalettes = [palette({ id: "cp-source", name: "Stale name", colorLight: "#000000" })];
 		await importInto(target, sourceVault().exportToJSONv2());
 
 		assert.strictEqual(target.settings.customPalettes.length, 1);
@@ -755,7 +721,10 @@ describe("export → import — the lists the user builds up", () => {
 
 		assert.deepStrictEqual(
 			target.settings.userImages.map((i) => i.id).sort(),
-			target.getUserImages().map((i) => i.id).sort(),
+			target
+				.getUserImages()
+				.map((i) => i.id)
+				.sort(),
 		);
 	});
 
@@ -768,11 +737,7 @@ describe("export → import — the lists the user builds up", () => {
 		target.settings.customPalettes = [palette({ id: "cp-local", name: "Local" })];
 		await importInto(target, sourceVault().exportToJSONv2());
 
-		assert.strictEqual(
-			target.settings.customPalettes.length,
-			1,
-			JSON.stringify(target.settings.customPalettes),
-		);
+		assert.strictEqual(target.settings.customPalettes.length, 1, JSON.stringify(target.settings.customPalettes));
 	});
 });
 

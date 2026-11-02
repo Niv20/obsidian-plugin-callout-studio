@@ -21,7 +21,9 @@ const ENVELOPE_V3 = { version: 5, callouts: [], calloutStudioSync: { version: 3,
 const DAMAGED = { version: 5, callouts: "not a list" };
 
 function host(data: unknown) {
-	const app = { vault: { configDir: ".obsidian", adapter: { exists: () => Promise.resolve(true) } } } as unknown as App;
+	const app = {
+		vault: { configDir: ".obsidian", adapter: { exists: () => Promise.resolve(true) } },
+	} as unknown as App;
 	return { app, manifest: { id: "callout-studio" } as PluginManifest, loadData: () => Promise.resolve(data) };
 }
 
@@ -63,7 +65,10 @@ describe("reading a later build's settings file", () => {
 		h.host.settingsWriter.destroy();
 	});
 
-	for (const [name, checkpoint] of [["data format", LATER], ["sync envelope", ENVELOPE_V3]] as const) {
+	for (const [name, checkpoint] of [
+		["data format", LATER],
+		["sync envelope", ENVELOPE_V3],
+	] as const) {
 		it(`protects a newer recovery ${name} when the primary is damaged`, async () => {
 			const h = recoveryActionHarness();
 			h.state.disk = "{ broken";
@@ -75,7 +80,9 @@ describe("reading a later build's settings file", () => {
 				assert.deepEqual(h.state.checkpoint, checkpoint);
 				assert.equal(h.state.disk, "{ broken");
 				assert.equal(h.state.writes, 0);
-			} finally { h.host.settingsWriter.destroy(); }
+			} finally {
+				h.host.settingsWriter.destroy();
+			}
 		});
 	}
 });
@@ -84,39 +91,69 @@ describe("the recovery copy store", () => {
 	function store(saved: unknown) {
 		const previous = Object.getOwnPropertyDescriptor(globalThis, "indexedDB");
 		const previousWindow = Object.getOwnPropertyDescriptor(globalThis, "window");
-		const db = { close: () => {}, transaction: () => {
-			const transaction = {} as IDBTransaction;
-			const request = {} as IDBRequest;
-			Object.defineProperty(request, "result", { value: saved });
-			return Object.assign(transaction, { objectStore: () => ({ get: () => {
-				queueMicrotask(() => {
-					request.onsuccess?.call(request, new Event("success"));
-					transaction.oncomplete?.call(transaction, new Event("complete"));
+		const db = {
+			close: () => {},
+			transaction: () => {
+				const transaction = {} as IDBTransaction;
+				const request = {} as IDBRequest;
+				Object.defineProperty(request, "result", { value: saved });
+				return Object.assign(transaction, {
+					objectStore: () => ({
+						get: () => {
+							queueMicrotask(() => {
+								request.onsuccess?.call(request, new Event("success"));
+								transaction.oncomplete?.call(transaction, new Event("complete"));
+							});
+							return request;
+						},
+					}),
 				});
-				return request;
-			} }) });
-		} } as unknown as IDBDatabase;
+			},
+		} as unknown as IDBDatabase;
 		const open = {} as IDBOpenDBRequest;
 		Object.defineProperty(open, "result", { value: db });
-		Object.defineProperty(globalThis, "indexedDB", { configurable: true, value: { open: (): IDBOpenDBRequest => {
-			queueMicrotask(() => { open.onsuccess?.call(open, new Event("success")); });
-			return open;
-		} } });
-		Object.defineProperty(globalThis, "window", { configurable: true, value: { setTimeout: () => 0, clearTimeout: () => {} } });
+		Object.defineProperty(globalThis, "indexedDB", {
+			configurable: true,
+			value: {
+				open: (): IDBOpenDBRequest => {
+					queueMicrotask(() => {
+						open.onsuccess?.call(open, new Event("success"));
+					});
+					return open;
+				},
+			},
+		});
+		Object.defineProperty(globalThis, "window", {
+			configurable: true,
+			value: { setTimeout: () => 0, clearTimeout: () => {} },
+		});
 		const app = { appId: "newer", vault: { configDir: ".obsidian", getName: () => "newer" } } as unknown as App;
-		return { checkpoint: new SettingsCheckpoint(app, { id: "callout-studio" } as PluginManifest), restore: () => {
-			if (previous) Object.defineProperty(globalThis, "indexedDB", previous); else Reflect.deleteProperty(globalThis, "indexedDB");
-			if (previousWindow) Object.defineProperty(globalThis, "window", previousWindow); else Reflect.deleteProperty(globalThis, "window");
-		} };
+		return {
+			checkpoint: new SettingsCheckpoint(app, { id: "callout-studio" } as PluginManifest),
+			restore: () => {
+				if (previous) Object.defineProperty(globalThis, "indexedDB", previous);
+				else Reflect.deleteProperty(globalThis, "indexedDB");
+				if (previousWindow) Object.defineProperty(globalThis, "window", previousWindow);
+				else Reflect.deleteProperty(globalThis, "window");
+			},
+		};
 	}
 
 	it("returns a later build's copy for its callers to protect, instead of calling it invalid", async () => {
 		const s = store(LATER);
-		try { assert.deepEqual(await s.checkpoint.read(), LATER); } finally { s.restore(); }
+		try {
+			assert.deepEqual(await s.checkpoint.read(), LATER);
+		} finally {
+			s.restore();
+		}
 	});
 
 	it("still rejects a damaged copy of this build's own format", async () => {
 		const s = store(DAMAGED);
-		try { await assert.rejects(s.checkpoint.read(), /invalid/); } finally { s.restore(); }
+		try {
+			await assert.rejects(s.checkpoint.read(), /invalid/);
+		} finally {
+			s.restore();
+		}
 	});
 });

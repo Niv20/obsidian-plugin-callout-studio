@@ -15,7 +15,10 @@ afterEach(() => Object.assign(Platform, originalPlatform));
 
 function harness(test: TestContext): Harness {
 	const h = rowMenuHarness();
-	test.after(() => { h.cleanup(); h.assertClean(); });
+	test.after(() => {
+		h.cleanup();
+		h.assertClean();
+	});
 	return h;
 }
 
@@ -31,21 +34,30 @@ function duringShow(menu: Menu, effect: () => void): void {
 
 const geometryChanges: Array<[string, (h: Harness) => void]> = [
 	["window resize", (h) => h.view.fire("resize")],
-	["visual viewport resize", (h) => {
-		h.view.visualViewport.height += 250;
-		h.view.fire("visualViewport:resize");
-	}],
-	["visual viewport pan", (h) => {
-		Object.assign(h.view.visualViewport, { offsetTop: 40 });
-		h.view.fire("visualViewport:scroll");
-	}],
+	[
+		"visual viewport resize",
+		(h) => {
+			h.view.visualViewport.height += 250;
+			h.view.fire("visualViewport:resize");
+		},
+	],
+	[
+		"visual viewport pan",
+		(h) => {
+			Object.assign(h.view.visualViewport, { offsetTop: 40 });
+			h.view.fire("visualViewport:scroll");
+		},
+	],
 	["ancestor scroll", (h) => h.scroll(h.scroller)],
-	["anchor movement during a DOM update", (h) => {
-		const previous = h.anchor.getBoundingClientRect();
-		h.anchor.getBoundingClientRect = () => ({ ...previous, top: previous.top + 40 });
-		h.scroller.createDiv();
-		h.document.flushMutations();
-	}],
+	[
+		"anchor movement during a DOM update",
+		(h) => {
+			const previous = h.anchor.getBoundingClientRect();
+			h.anchor.getBoundingClientRect = () => ({ ...previous, top: previous.top + 40 });
+			h.scroller.createDiv();
+			h.document.flushMutations();
+		},
+	],
 ];
 
 /** On iOS, hiding the keyboard for a sheet takes focus from the web view. */
@@ -121,15 +133,21 @@ describe("phone callout row sheets", () => {
 	}
 
 	const dismissals: Array<[string, (h: Harness) => void]> = [
-		["button removal", (h) => {
-			h.anchor.isConnected = false;
-			h.anchor.remove();
-			h.document.flushMutations();
-		}],
-		["button reparenting", (h) => {
-			h.outer.appendChild(h.anchor);
-			h.document.flushMutations();
-		}],
+		[
+			"button removal",
+			(h) => {
+				h.anchor.isConnected = false;
+				h.anchor.remove();
+				h.document.flushMutations();
+			},
+		],
+		[
+			"button reparenting",
+			(h) => {
+				h.outer.appendChild(h.anchor);
+				h.document.flushMutations();
+			},
+		],
 		["settings disposal", (h) => h.dispose()],
 		["orientation change", (h) => h.view.fire("orientationchange")],
 		["page hide", (h) => h.view.fire("pagehide")],

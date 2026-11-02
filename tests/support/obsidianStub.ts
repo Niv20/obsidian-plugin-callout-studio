@@ -89,8 +89,12 @@ export const Platform = {
 
 export const Keymap = { isModEvent: () => false };
 
-export function addIcon(): void { /* Custom UI registration has no DOM effect here. */ }
-export function removeIcon(): void { /* No global icon registry in this stand-in. */ }
+export function addIcon(): void {
+	/* Custom UI registration has no DOM effect here. */
+}
+export function removeIcon(): void {
+	/* No global icon registry in this stand-in. */
+}
 
 export function setIcon(_parent?: unknown, _icon?: string): void {
 	/* no-op: nothing here draws */
@@ -154,12 +158,21 @@ export class Component {
 	/** Minimal cleanup support for components that own temporary DOM editors. */
 	private disposers: Array<() => void> = [];
 	load(): void {}
-	register(dispose: () => void): void { this.disposers.push(dispose); }
-	registerDomEvent(el: EventTarget, name: string, listener: EventListener, options?: boolean | AddEventListenerOptions): void {
+	register(dispose: () => void): void {
+		this.disposers.push(dispose);
+	}
+	registerDomEvent(
+		el: EventTarget,
+		name: string,
+		listener: EventListener,
+		options?: boolean | AddEventListenerOptions,
+	): void {
 		el.addEventListener(name, listener, options);
 		this.register(() => el.removeEventListener(name, listener, options));
 	}
-	unload(): void { this.disposers.splice(0).forEach(dispose => dispose()); }
+	unload(): void {
+		this.disposers.splice(0).forEach((dispose) => dispose());
+	}
 }
 export class Modal {}
 
@@ -173,7 +186,10 @@ export class ConfirmationButton {
 	isInitialFocus = false;
 	private handler: (() => unknown) | null = null;
 
-	constructor(containerEl: HTMLElement, private readonly handleClose: () => void) {
+	constructor(
+		containerEl: HTMLElement,
+		private readonly handleClose: () => void,
+	) {
 		this.buttonEl = containerEl.createEl("button");
 		this.buttonEl.addEventListener("click", () => {
 			void (async () => {
@@ -183,13 +199,34 @@ export class ConfirmationButton {
 		});
 	}
 
-	setButtonText(text: string): this { this.buttonEl.textContent = text; return this; }
-	setCta(): this { this.buttonEl.addClass("mod-cta"); return this; }
-	setDestructive(): this { this.buttonEl.addClass("mod-destructive"); return this; }
-	setCancel(): this { this.buttonEl.addClass("mod-cancel"); return this; }
-	setSecondary(): this { this.buttonEl.addClass("mod-secondary"); return this; }
-	setInitialFocus(): this { this.isInitialFocus = true; return this; }
-	onClick(handler: () => unknown): this { this.handler = handler; return this; }
+	setButtonText(text: string): this {
+		this.buttonEl.textContent = text;
+		return this;
+	}
+	setCta(): this {
+		this.buttonEl.addClass("mod-cta");
+		return this;
+	}
+	setDestructive(): this {
+		this.buttonEl.addClass("mod-destructive");
+		return this;
+	}
+	setCancel(): this {
+		this.buttonEl.addClass("mod-cancel");
+		return this;
+	}
+	setSecondary(): this {
+		this.buttonEl.addClass("mod-secondary");
+		return this;
+	}
+	setInitialFocus(): this {
+		this.isInitialFocus = true;
+		return this;
+	}
+	onClick(handler: () => unknown): this {
+		this.handler = handler;
+		return this;
+	}
 }
 
 /**
@@ -239,14 +276,30 @@ export class ConfirmationModal extends Modal {
 		return this.dom;
 	}
 
-	get containerEl(): HTMLElement { return this.parts.containerEl; }
-	get modalEl(): HTMLElement { return this.parts.modalEl; }
-	get titleEl(): HTMLElement { return this.parts.titleEl; }
-	get contentEl(): HTMLElement { return this.parts.contentEl; }
-	get buttonContainerEl(): HTMLElement { return this.parts.buttonContainerEl; }
+	get containerEl(): HTMLElement {
+		return this.parts.containerEl;
+	}
+	get modalEl(): HTMLElement {
+		return this.parts.modalEl;
+	}
+	get titleEl(): HTMLElement {
+		return this.parts.titleEl;
+	}
+	get contentEl(): HTMLElement {
+		return this.parts.contentEl;
+	}
+	get buttonContainerEl(): HTMLElement {
+		return this.parts.buttonContainerEl;
+	}
 
-	setTitle(title: string): this { this.titleEl.setText(title); return this; }
-	addClass(cls: string): this { this.modalEl.addClass(cls); return this; }
+	setTitle(title: string): this {
+		this.titleEl.setText(title);
+		return this;
+	}
+	addClass(cls: string): this {
+		this.modalEl.addClass(cls);
+		return this;
+	}
 
 	addCheckbox(label: string, cb: (value: boolean) => unknown): this {
 		const labelEl = this.buttonContainerEl.createEl("label", { cls: "mod-checkbox" });
@@ -319,35 +372,74 @@ export class Menu extends Component {
 	/** Set by `setParentElement`: the element the menu belongs to. */
 	parentEl?: HTMLElement;
 	private hidden?: () => void;
-	constructor() { super(); createdMenus.push(this); }
-	setUseNativeMenu(_native: boolean): this { return this; }
-	setNoIcon(): this { this.noIcon = true; return this; }
-	setParentElement(el: HTMLElement): this { this.parentEl = el; return this; }
-	addItem(callback: (item: {
-		setTitle(title: string | DocumentFragment): unknown;
-		setIcon(icon: string): unknown;
-		setSection(section: string): unknown;
-		setWarning(warning: boolean): unknown;
-		setDisabled(disabled: boolean): unknown;
-		setChecked(checked: boolean): unknown;
-		onClick(callback: () => unknown): unknown;
-	}) => void): this {
+	constructor() {
+		super();
+		createdMenus.push(this);
+	}
+	setUseNativeMenu(_native: boolean): this {
+		return this;
+	}
+	setNoIcon(): this {
+		this.noIcon = true;
+		return this;
+	}
+	setParentElement(el: HTMLElement): this {
+		this.parentEl = el;
+		return this;
+	}
+	addItem(
+		callback: (item: {
+			setTitle(title: string | DocumentFragment): unknown;
+			setIcon(icon: string): unknown;
+			setSection(section: string): unknown;
+			setWarning(warning: boolean): unknown;
+			setDisabled(disabled: boolean): unknown;
+			setChecked(checked: boolean): unknown;
+			onClick(callback: () => unknown): unknown;
+		}) => void,
+	): this {
 		const record: MenuItemRecord = { title: "", titles: [], warning: false, disabled: false, checked: false };
 		const item = {
-			setTitle(title: string | DocumentFragment) { record.title = title; record.titles.push(title); return this; },
-			setIcon(icon: string) { record.icon = icon; return this; },
-			setSection(section: string) { record.section = section; return this; },
-			setWarning(warning: boolean) { record.warning = warning; return this; },
-			setDisabled(disabled: boolean) { record.disabled = disabled; return this; },
-			setChecked(checked: boolean) { record.checked = checked; return this; },
-			onClick(callback: () => unknown) { record.click = callback; return this; },
+			setTitle(title: string | DocumentFragment) {
+				record.title = title;
+				record.titles.push(title);
+				return this;
+			},
+			setIcon(icon: string) {
+				record.icon = icon;
+				return this;
+			},
+			setSection(section: string) {
+				record.section = section;
+				return this;
+			},
+			setWarning(warning: boolean) {
+				record.warning = warning;
+				return this;
+			},
+			setDisabled(disabled: boolean) {
+				record.disabled = disabled;
+				return this;
+			},
+			setChecked(checked: boolean) {
+				record.checked = checked;
+				return this;
+			},
+			onClick(callback: () => unknown) {
+				record.click = callback;
+				return this;
+			},
 		};
 		callback(item);
 		this.items.push(record);
 		return this;
 	}
-	addSeparator(): this { return this; }
-	onHide(callback: () => void): void { this.hidden = callback; }
+	addSeparator(): this {
+		return this;
+	}
+	onHide(callback: () => void): void {
+		this.hidden = callback;
+	}
 	showAtMouseEvent(event: MouseEvent): this {
 		this.unload();
 		this.shown = true;
@@ -386,9 +478,15 @@ export class Menu extends Component {
 		return this;
 	}
 	/** Phone close animation delivers this later than the component teardown. */
-	finishHide(): void { this.hidden?.(); }
+	finishHide(): void {
+		this.hidden?.();
+	}
 	/** A menu hidden before its deferred load only delivers onHide. */
-	earlyHide(): void { this.shown = false; this.hideCalls++; this.finishHide(); }
+	earlyHide(): void {
+		this.shown = false;
+		this.hideCalls++;
+		this.finishHide();
+	}
 }
 export class WorkspaceLeaf {}
 
@@ -404,14 +502,22 @@ export class ItemView {
 		this.containerEl = createDiv({ cls: "workspace-leaf-content" });
 		this.contentEl = this.containerEl.createDiv({ cls: "view-content" });
 	}
-	register(dispose: () => void): void { this.disposers.push(dispose); }
-	registerEvent(_ref: unknown): void { /* The view explicitly removes its event refs on close. */ }
+	register(dispose: () => void): void {
+		this.disposers.push(dispose);
+	}
+	registerEvent(_ref: unknown): void {
+		/* The view explicitly removes its event refs on close. */
+	}
 	registerDomEvent(el: EventTarget, name: string, listener: EventListener): void {
 		el.addEventListener(name, listener);
 		this.register(() => el.removeEventListener(name, listener));
 	}
-	setState(_state: unknown, _result: unknown): Promise<void> { return Promise.resolve(); }
-	unload(): void { this.disposers.splice(0).forEach((dispose) => dispose()); }
+	setState(_state: unknown, _result: unknown): Promise<void> {
+		return Promise.resolve();
+	}
+	unload(): void {
+		this.disposers.splice(0).forEach((dispose) => dispose());
+	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -504,7 +610,9 @@ export class SearchComponent {
 		return this;
 	}
 
-	getValue(): string { return this.inputEl.value; }
+	getValue(): string {
+		return this.inputEl.value;
+	}
 
 	setDisabled(disabled: boolean): this {
 		this.inputEl.disabled = disabled;
@@ -537,7 +645,9 @@ export class ToggleComponent {
 		return this;
 	}
 
-	getValue(): boolean { return this.value; }
+	getValue(): boolean {
+		return this.value;
+	}
 
 	/** Obsidian's toggle marks itself `is-disabled`; `Setting.setDisabled` reaches it. */
 	disabled = false;
@@ -588,9 +698,7 @@ export class SliderComponent {
 
 	setValue(value: number): this {
 		this.calls.push("setValue");
-		this.sliderEl.value = String(
-			Math.min(this.max, Math.max(this.min, value)),
-		);
+		this.sliderEl.value = String(Math.min(this.max, Math.max(this.min, value)));
 		return this;
 	}
 
@@ -645,7 +753,9 @@ export class ButtonLike {
 	constructor(containerEl: ElementLike) {
 		this.buttonEl = containerEl.createDiv({ cls: "clickable-icon" });
 		this.extraSettingsEl = this.buttonEl;
-		this.buttonEl.addEventListener?.("click", () => { if (!this.disabled) this.click?.(); });
+		this.buttonEl.addEventListener?.("click", () => {
+			if (!this.disabled) this.click?.();
+		});
 	}
 
 	setButtonText(text: string): this {
@@ -829,7 +939,10 @@ export class Setting {
 	 */
 	setIcon(icon: string | null): this {
 		if (!this.iconEl) {
-			const row = this.settingEl as ElementLike & { insertBefore(node: unknown, ref: unknown): unknown; firstChild: unknown };
+			const row = this.settingEl as ElementLike & {
+				insertBefore(node: unknown, ref: unknown): unknown;
+				firstChild: unknown;
+			};
 			this.iconEl = this.settingEl.createDiv({ cls: "setting-item-icon" });
 			row.insertBefore(this.iconEl, row.firstChild);
 		}
@@ -879,7 +992,12 @@ export class Setting {
 	 */
 	addDisplayValue(cb: (value: { setValue(text: string): unknown }) => unknown): this {
 		const valueEl = this.controlEl.createDiv({ cls: "setting-item-value" });
-		cb({ setValue(text: string) { valueEl.textContent = text ?? ""; return this; } });
+		cb({
+			setValue(text: string) {
+				valueEl.textContent = text ?? "";
+				return this;
+			},
+		});
 		return this;
 	}
 
@@ -946,7 +1064,10 @@ export class SettingGroup {
 			this.headerControlEl = headerEl.createDiv({ cls: "setting-item-control" });
 			// `insertBefore` is the fake DOM's (and the browser's); the narrow
 			// `ElementLike` type above does not list it.
-			const group = this.groupEl as ElementLike & { insertBefore(node: unknown, ref: unknown): unknown; firstChild: unknown };
+			const group = this.groupEl as ElementLike & {
+				insertBefore(node: unknown, ref: unknown): unknown;
+				firstChild: unknown;
+			};
 			group.insertBefore(headerEl, group.firstChild);
 			this.headerEl = headerEl;
 		}
@@ -1045,7 +1166,9 @@ export class Notice {
 	readonly duration: number | undefined;
 	hidden = false;
 	private container: HTMLElement | null = null;
-	hide(): void { this.hidden = true; }
+	hide(): void {
+		this.hidden = true;
+	}
 	constructor(message?: string, duration?: number) {
 		this.message = message;
 		this.duration = duration;
@@ -1062,7 +1185,10 @@ export class Notice {
 		this.container ??= createDiv({ cls: "notice" });
 		return this.container;
 	}
-	setMessage(message: string): this { this.message = message; return this; }
+	setMessage(message: string): this {
+		this.message = message;
+		return this;
+	}
 }
 
 export class MarkdownRenderer {
@@ -1107,7 +1233,7 @@ export class EditorSuggest<T> {
 	}
 
 	/** Present so `EditorSuggest<T>` is not an unused type parameter. */
-	protected declare readonly __suggestion?: T;
+	declare protected readonly __suggestion?: T;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -1137,9 +1263,15 @@ export const livePreviewState = {};
 
 /** Native Obsidian 1.13.7 heading normalization, verified against its bundled app. */
 export function stripHeading(heading: string): string {
-	return heading.replace(/[!"#$%&()*+,.:;<=>?@^`{|}~/[\]\\\r\n]/g, " ").replace(/\s+/g, " ").trim();
+	return heading
+		.replace(/[!"#$%&()*+,.:;<=>?@^`{|}~/[\]\\\r\n]/g, " ")
+		.replace(/\s+/g, " ")
+		.trim();
 }
 
 export function stripHeadingForLink(heading: string): string {
-	return heading.replace(/([:#|^\\\r\n]|%%|\[\[|\]\])/g, " ").replace(/\s+/g, " ").trim();
+	return heading
+		.replace(/([:#|^\\\r\n]|%%|\[\[|\]\])/g, " ")
+		.replace(/\s+/g, " ")
+		.trim();
 }

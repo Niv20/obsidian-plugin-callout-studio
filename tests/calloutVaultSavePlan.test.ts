@@ -10,23 +10,36 @@ function vault(notes: Record<string, string>) {
 	const reads: string[] = [];
 	const writes: string[] = [];
 	let passes = 0;
-	const app = { vault: {
-		getMarkdownFiles: () => { passes++; return files; },
-		getAbstractFileByPath: (path: string) => files.find((file) => file.path === path),
-		cachedRead: (file: TFile) => { reads.push(file.path); return Promise.resolve(contents.get(file.path)!); },
-		process: (file: TFile, transform: (text: string) => string) => {
-			writes.push(file.path);
-			contents.set(file.path, transform(contents.get(file.path)!));
-			return Promise.resolve(contents.get(file.path)!);
+	const app = {
+		vault: {
+			getMarkdownFiles: () => {
+				passes++;
+				return files;
+			},
+			getAbstractFileByPath: (path: string) => files.find((file) => file.path === path),
+			cachedRead: (file: TFile) => {
+				reads.push(file.path);
+				return Promise.resolve(contents.get(file.path)!);
+			},
+			process: (file: TFile, transform: (text: string) => string) => {
+				writes.push(file.path);
+				contents.set(file.path, transform(contents.get(file.path)!));
+				return Promise.resolve(contents.get(file.path)!);
+			},
 		},
-	} } as unknown as App;
+	} as unknown as App;
 	return { app, contents, reads, writes, passes: () => passes };
 }
 
 /** What the plan announced, and the journal it offered Undo for. */
 function announcements() {
 	const said: Array<{ message: string; journal: NoteRewriteJournal }> = [];
-	return { said, announce: (message: string, journal: NoteRewriteJournal) => { said.push({ message, journal }); } };
+	return {
+		said,
+		announce: (message: string, journal: NoteRewriteJournal) => {
+			said.push({ message, journal });
+		},
+	};
 }
 
 function renameInput(app: App, announce = announcements().announce) {
@@ -79,7 +92,10 @@ describe("editor vault save traversal budget", () => {
 	it("does not scan when no note changes are requested", () => {
 		const h = vault({ "used.md": "> [!old] Old" });
 		assert.equal(createCalloutVaultSavePlan({ ...renameInput(h.app), rewrites: [] }), null);
-		assert.equal(createCalloutVaultSavePlan({ ...renameInput(h.app), rewrites: [{ forms: [], toId: "new" }] }), null);
+		assert.equal(
+			createCalloutVaultSavePlan({ ...renameInput(h.app), rewrites: [{ forms: [], toId: "new" }] }),
+			null,
+		);
 		assert.equal(h.passes(), 0);
 	});
 
@@ -128,7 +144,9 @@ describe("one Undo for everything a save wrote", () => {
 		const process = h.app.vault.process.bind(h.app.vault);
 		let failB = true;
 		h.app.vault.process = ((file: TFile, transform: (text: string) => string) =>
-			failB && file.path === "b.md" ? Promise.reject(new Error("locked")) : process(file, transform)) as typeof h.app.vault.process;
+			failB && file.path === "b.md"
+				? Promise.reject(new Error("locked"))
+				: process(file, transform)) as typeof h.app.vault.process;
 		const told = announcements();
 		const plan = createCalloutVaultSavePlan(renameInput(h.app, told.announce));
 		assert.ok(plan);

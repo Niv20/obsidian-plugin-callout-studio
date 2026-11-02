@@ -162,13 +162,9 @@ describe("no hardcoded UI copy", () => {
 					if (!span) continue;
 					const raw = f.text.slice(span.start, span.end);
 					if (TRANSLATED.test(raw)) continue;
-					const prose = literals(raw).filter((l) =>
-						LOOKS_LIKE_PROSE.test(l.value),
-					);
+					const prose = literals(raw).filter((l) => LOOKS_LIKE_PROSE.test(l.value));
 					if (prose.length === 0) continue;
-					out.push(
-						`${at(f, index)}  .${setter}(${JSON.stringify(prose[0]?.value ?? "")}…)`,
-					);
+					out.push(`${at(f, index)}  .${setter}(${JSON.stringify(prose[0]?.value ?? "")}…)`);
 				}
 			}
 		}
@@ -219,7 +215,11 @@ describe("no hardcoded UI copy", () => {
 			if (OWN.has(f.path)) continue;
 			for (const m of f.code.matchAll(/new\s+Notice\s*\(/g)) bad.push(at(f, m.index ?? 0));
 		}
-		assert.deepStrictEqual(bad, [], report("Use showNotice (ui/mascot/mascotNotices.ts) instead of new Notice:", bad));
+		assert.deepStrictEqual(
+			bad,
+			[],
+			report("Use showNotice (ui/mascot/mascotNotices.ts) instead of new Notice:", bad),
+		);
 	});
 
 	it("aria-labels go through t() too", () => {
@@ -238,13 +238,9 @@ describe("no hardcoded UI copy", () => {
 		const NAMES = ["aria-label", "placeholder"];
 		const bad: string[] = [];
 		for (const f of files) {
-			for (const m of f.code.matchAll(
-				/setAttribute\s*\(\s*(["'])(\s*)\1\s*,/g,
-			)) {
+			for (const m of f.code.matchAll(/setAttribute\s*\(\s*(["'])(\s*)\1\s*,/g)) {
 				const index = m.index ?? 0;
-				const name = f.text
-					.slice(index, index + m[0].length)
-					.match(/["']([^"']*)["']/)?.[1];
+				const name = f.text.slice(index, index + m[0].length).match(/["']([^"']*)["']/)?.[1];
 				if (name === undefined || !NAMES.includes(name)) continue;
 				const span = argSpan(f.code, f.code.indexOf("(", index));
 				if (!span) continue;
@@ -252,9 +248,7 @@ describe("no hardcoded UI copy", () => {
 				if (TRANSLATED.test(raw)) continue;
 				// Drop the attribute name itself before looking for prose.
 				const value = raw.slice(raw.indexOf(",") + 1);
-				const prose = literals(value).filter((l) =>
-					LOOKS_LIKE_PROSE.test(l.value),
-				);
+				const prose = literals(value).filter((l) => LOOKS_LIKE_PROSE.test(l.value));
 				if (prose.length > 0) {
 					bad.push(`${at(f, index)}  ${name}="${prose[0]?.value ?? ""}"`);
 				}
@@ -303,8 +297,8 @@ describe("nothing sets a native tooltip", () => {
 			// out of `f.text`, because `f.code` has blanked the string body.
 			label: 'setAttribute("title", …)',
 			find: (f) =>
-				indices(f.code, /\bsetAttr(?:ibute)?\s*\(\s*(["'])(\s*)\1/g).filter(
-					(i) => /["']title["']/.test(f.text.slice(i, i + 40)),
+				indices(f.code, /\bsetAttr(?:ibute)?\s*\(\s*(["'])(\s*)\1/g).filter((i) =>
+					/["']title["']/.test(f.text.slice(i, i + 40)),
 				),
 		},
 		{
@@ -318,9 +312,7 @@ describe("nothing sets a native tooltip", () => {
 					const open = f.code.indexOf("{", i);
 					const close = f.code.indexOf("}", open);
 					if (close === -1) return false;
-					return /[{,]\s*(["']?)title\1\s*:/.test(
-						f.text.slice(open, close + 1),
-					);
+					return /[{,]\s*(["']?)title\1\s*:/.test(f.text.slice(open, close + 1));
 				}),
 		},
 		{
@@ -360,8 +352,7 @@ describe("nothing sets a native tooltip", () => {
 			text,
 			code: blankLiterals(text),
 		});
-		const caught = (text: string): boolean =>
-			FORMS.some((form) => form.find(fake(text)).length > 0);
+		const caught = (text: string): boolean => FORMS.some((form) => form.find(fake(text)).length > 0);
 
 		for (const sample of [
 			'el.setAttribute("title", label);',
@@ -378,7 +369,7 @@ describe("nothing sets a native tooltip", () => {
 			'new ConfirmModal(app, { title: t("x") });',
 			'row.createDiv({ attr: { "aria-label": name } });',
 			"this.title = t('x');",
-			'const { title } = parseHeader(line);',
+			"const { title } = parseHeader(line);",
 		]) {
 			assert.ok(!caught(sample), `false positive: ${sample}`);
 		}
@@ -394,8 +385,7 @@ describe("every listener is released", () => {
 	 * Obsidian's own emitters. Each `.on()` hands back an `EventRef` that stays
 	 * live until something gives it back.
 	 */
-	const EMITTER_ON =
-		/\b(workspace|vault|metadataCache)\s*\.\s*on\s*\(/g;
+	const EMITTER_ON = /\b(workspace|vault|metadataCache)\s*\.\s*on\s*\(/g;
 
 	it("every workspace/vault/metadataCache listener is registered or offref'd", () => {
 		const bad: string[] = [];
@@ -420,15 +410,12 @@ describe("every listener is released", () => {
 				// `this.cssChangeRef = this.app.workspace.on(…)` puts
 				// `this.app.` there, and without it every real site looks
 				// unassigned.
-				const assign =
-					/(?:const|let|var)\s+([\w$]+)\s*(?::[^=]*)?=\s*[\w$.]*$|([\w$.]+)\s*=\s*[\w$.]*$/.exec(
-						before,
-					);
+				const assign = /(?:const|let|var)\s+([\w$]+)\s*(?::[^=]*)?=\s*[\w$.]*$|([\w$.]+)\s*=\s*[\w$.]*$/.exec(
+					before,
+				);
 				const name = (assign?.[1] ?? assign?.[2] ?? "").replace(/^this\./, "");
 				if (name && released.has(name)) continue;
-				bad.push(
-					`${at(f, index)}  ${m[1]}.on(…)${name ? ` → ${name}` : ""}`,
-				);
+				bad.push(`${at(f, index)}  ${m[1]}.on(…)${name ? ` → ${name}` : ""}`);
 			}
 		}
 		assert.deepStrictEqual(
@@ -458,9 +445,7 @@ describe("every listener is released", () => {
 				const span = argSpan(f.code, (m.index ?? 0) + m[0].length - 1);
 				if (span) removedText.push(f.code.slice(span.start, span.end));
 			}
-			for (const m of f.code.matchAll(
-				/\b([\w$]+(?:\.[\w$]+)*)\.addEventListener\s*\(/g,
-			)) {
+			for (const m of f.code.matchAll(/\b([\w$]+(?:\.[\w$]+)*)\.addEventListener\s*\(/g)) {
 				const index = m.index ?? 0;
 				const host = (m[1] as string).split(".").pop() ?? "";
 				if (!GLOBAL_HOST.test(host)) continue;
@@ -497,11 +482,7 @@ describe("every listener is released", () => {
 				bad.push(at(f, index));
 			}
 		}
-		assert.deepStrictEqual(
-			bad,
-			[],
-			report("Wrap these in this.registerInterval(window.setInterval(…)):", bad),
-		);
+		assert.deepStrictEqual(bad, [], report("Wrap these in this.registerInterval(window.setInterval(…)):", bad));
 	});
 });
 
@@ -560,7 +541,10 @@ describe("no `any` without an explicit exemption", () => {
 
 describe("the plugin lifecycle entry point", () => {
 	it("exists", () => {
-		assert.ok(files.some((f) => f.path === "src/main.ts"), "src/main.ts not found");
+		assert.ok(
+			files.some((f) => f.path === "src/main.ts"),
+			"src/main.ts not found",
+		);
 	});
 });
 
@@ -579,14 +563,10 @@ describe("the network surface is exactly what the README discloses", () => {
 	 * the cache, and the pack owns the request.
 	 */
 	const ALLOWED_REQUEST_URL: Record<string, string> = {
-		"src/icons/PackDataStore.ts":
-			"whole icon packs, SHA-256 verified against packManifest.ts",
-		"src/icons/packs/material.ts":
-			"one Material Symbols drawing, on demand from the picker",
-		"src/icons/packs/materialFont.ts":
-			"the Material Symbols webfont, for the picker grid",
-		"src/i18n/LocaleStore.ts":
-			"the user's UI language — the one background fetch, argued for in AGENTS.md",
+		"src/icons/PackDataStore.ts": "whole icon packs, SHA-256 verified against packManifest.ts",
+		"src/icons/packs/material.ts": "one Material Symbols drawing, on demand from the picker",
+		"src/icons/packs/materialFont.ts": "the Material Symbols webfont, for the picker grid",
+		"src/i18n/LocaleStore.ts": "the user's UI language — the one background fetch, argued for in AGENTS.md",
 	};
 
 	it("only the disclosed files call requestUrl", () => {
@@ -625,11 +605,7 @@ describe("the network surface is exactly what the README discloses", () => {
 				}
 			}
 		}
-		assert.deepStrictEqual(
-			bad,
-			[],
-			report("Use Obsidian's requestUrl instead:", bad),
-		);
+		assert.deepStrictEqual(bad, [], report("Use Obsidian's requestUrl instead:", bad));
 	});
 
 	it("nothing evaluates remote code", () => {
@@ -638,9 +614,7 @@ describe("the network surface is exactly what the README discloses", () => {
 		// execute; a remote script or an eval could.
 		const bad: string[] = [];
 		for (const f of allSourceFiles()) {
-			for (const m of f.code.matchAll(
-				/\beval\s*\(|new\s+Function\s*\(|createEl\s*\(\s*["']script["']/g,
-			)) {
+			for (const m of f.code.matchAll(/\beval\s*\(|new\s+Function\s*\(|createEl\s*\(\s*["']script["']/g)) {
 				bad.push(`${at(f, m.index ?? 0)}  ${m[0]}`);
 			}
 		}
@@ -749,9 +723,7 @@ describe("source files stay within the 500-line limit unless explicitly exempt",
 		const text = "run();\n".repeat(500);
 		assert.deepStrictEqual(oversized([{ path, text }], []), []);
 		assert.deepStrictEqual(oversized([{ path, text: text + "\n// Comment\n".repeat(500) }], []), []);
-		assert.deepStrictEqual(oversized([{ path, text: `${text}run();\n` }], []), [
-			`${path}  (501 code lines)`,
-		]);
+		assert.deepStrictEqual(oversized([{ path, text: `${text}run();\n` }], []), [`${path}  (501 code lines)`]);
 	});
 
 	it("exempts only the exact path, regardless of growth or shrinkage", () => {
@@ -761,9 +733,7 @@ describe("source files stay within the 500-line limit unless explicitly exempt",
 		}
 		const other = { path: "src/other/example.ts", text: "run();\n".repeat(501) };
 		assert.deepStrictEqual(oversized([other], [path]), [`${other.path}  (501 code lines)`]);
-		assert.deepStrictEqual(oversized([other], ["example.ts", "src/**/*.ts"]), [
-			`${other.path}  (501 code lines)`,
-		]);
+		assert.deepStrictEqual(oversized([other], ["example.ts", "src/**/*.ts"]), [`${other.path}  (501 code lines)`]);
 	});
 });
 
@@ -788,10 +758,7 @@ describe("AGENTS.md describes the checks that exist", () => {
 	it("lists `npm test` among the commands", () => {
 		const commands = doc.split("```")[1] ?? "";
 
-		assert.ok(
-			/^npm test\b/m.test(commands),
-			"AGENTS.md's Commands block does not mention `npm test`",
-		);
+		assert.ok(/^npm test\b/m.test(commands), "AGENTS.md's Commands block does not mention `npm test`");
 	});
 
 	it("still says what the suite cannot see", () => {
@@ -799,9 +766,6 @@ describe("AGENTS.md describes the checks that exist", () => {
 		// `obsidian` is a stub, so nothing here can tell whether a callout
 		// *looks* right. Dropping that sentence would trade one wrong
 		// instruction for another.
-		assert.ok(
-			doc.includes("reload Obsidian"),
-			"AGENTS.md no longer tells anyone to check the result in Obsidian",
-		);
+		assert.ok(doc.includes("reload Obsidian"), "AGENTS.md no longer tells anyone to check the result in Obsidian");
 	});
 });

@@ -81,13 +81,8 @@ export function decodeIndex(enc: EncodedIndex): IconIndex {
 		const catLine = categoryLines[i] ?? "";
 		const entry: IconEntry = {
 			name,
-			categories:
-				enc.cw && catLine
-					? unpackRefs(catLine, enc.cw).map((r) => categories[r] ?? "")
-					: [],
-			keywords: kwLine
-				? unpackRefs(kwLine, enc.kw).map((r) => keywords[r] ?? "")
-				: [],
+			categories: enc.cw && catLine ? unpackRefs(catLine, enc.cw).map((r) => categories[r] ?? "") : [],
+			keywords: kwLine ? unpackRefs(kwLine, enc.kw).map((r) => keywords[r] ?? "") : [],
 		};
 		const label = labels?.[i];
 		if (label) entry.label = label;
@@ -101,9 +96,7 @@ export function decodeIndex(enc: EncodedIndex): IconIndex {
  * Decode once and hand back the same object thereafter. Packs call this from
  * `loadIndex()`, so opening a source twice never re-parses it.
  */
-export function memoizeIndex(
-	build: () => IconIndex,
-): () => Promise<IconIndex> {
+export function memoizeIndex(build: () => IconIndex): () => Promise<IconIndex> {
 	let cached: IconIndex | null = null;
 	return () => {
 		if (!cached) cached = build();

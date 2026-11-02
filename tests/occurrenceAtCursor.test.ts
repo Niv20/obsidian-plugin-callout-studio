@@ -7,12 +7,23 @@ import type { CalloutOccurrence } from "../src/usage/occurrenceTypes";
 
 function byLine(occurrences: readonly CalloutOccurrence[]): Map<number, CalloutOccurrence[]> {
 	const lines = new Map<number, CalloutOccurrence[]>();
-	for (const occurrence of occurrences) lines.set(occurrence.line, [...lines.get(occurrence.line) ?? [], occurrence]);
+	for (const occurrence of occurrences)
+		lines.set(occurrence.line, [...(lines.get(occurrence.line) ?? []), occurrence]);
 	return lines;
 }
 
-function at(content: string, line: number, ch: number, keep: (o: CalloutOccurrence) => boolean = () => true, live = content) {
-	const found = occurrenceAtCursor(linesOf(live), { line, ch }, byLine(scanCalloutOccurrences("a.md", content).filter(keep)));
+function at(
+	content: string,
+	line: number,
+	ch: number,
+	keep: (o: CalloutOccurrence) => boolean = () => true,
+	live = content,
+) {
+	const found = occurrenceAtCursor(
+		linesOf(live),
+		{ line, ch },
+		byLine(scanCalloutOccurrences("a.md", content).filter(keep)),
+	);
 	return found && `${found.role}:${found.rawId}@${found.line}`;
 }
 
@@ -28,9 +39,18 @@ describe("occurrence at the caret", () => {
 		assert.equal(at(NESTED, 6, 1), null);
 	});
 	it("falls through to the containing callout when the inner one is filtered out", () => {
-		assert.equal(at(NESTED, 3, 6, (o) => o.rawId !== "tip"), "regular:note@0");
-		assert.equal(at(NESTED, 3, 6, (o) => o.rawId !== "note"), "regular:tip@2");
-		assert.equal(at(NESTED, 1, 0, (o) => o.rawId !== "note"), null);
+		assert.equal(
+			at(NESTED, 3, 6, (o) => o.rawId !== "tip"),
+			"regular:note@0",
+		);
+		assert.equal(
+			at(NESTED, 3, 6, (o) => o.rawId !== "note"),
+			"regular:tip@2",
+		);
+		assert.equal(
+			at(NESTED, 1, 0, (o) => o.rawId !== "note"),
+			null,
+		);
 	});
 	it("prefers a pill the caret touches, payload included, then the heading on the line", () => {
 		const content = "## [!note] Title with [!tip]{word}\n> [!info] Head\n> see [!warning] here";
@@ -48,7 +68,13 @@ describe("occurrence at the caret", () => {
 		assert.equal(at("- > [!note] Listed\n  > body", 1, 5), "regular:note@0");
 	});
 	it("never matches a card whose line the index has not caught up with", () => {
-		assert.equal(at(NESTED, 1, 0, () => true, NESTED.replace("Outer", "Outer!")), null);
-		assert.equal(at("[!note]", 0, 2, () => true, "x[!note]"), null);
+		assert.equal(
+			at(NESTED, 1, 0, () => true, NESTED.replace("Outer", "Outer!")),
+			null,
+		);
+		assert.equal(
+			at("[!note]", 0, 2, () => true, "x[!note]"),
+			null,
+		);
 	});
 });

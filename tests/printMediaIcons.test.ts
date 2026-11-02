@@ -34,26 +34,16 @@ import { describe, it } from "node:test";
 // Listed first: importing it installs the DOM globals before anything under
 // test loads (see tests/support/fakeDom.ts).
 import { asEl, el } from "./support/fakeDom";
-import {
-	definition,
-	harness,
-	parseRules,
-	type CssRule,
-} from "./support/cssInjectorHarness";
+import { definition, harness, parseRules, type CssRule } from "./support/cssInjectorHarness";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CSSInjector } from "../src/manager/CSSInjector";
 import { FALLBACK_ICON_SENTINEL } from "../src/manager/css/calloutIconProp";
-import {
-	CSS_FALLBACK_ICON,
-	CSS_FALLBACK_ICON_HIDDEN,
-	fallbackIconRootStyle,
-} from "../src/manager/css/fallbackIcon";
+import { CSS_FALLBACK_ICON, CSS_FALLBACK_ICON_HIDDEN, fallbackIconRootStyle } from "../src/manager/css/fallbackIcon";
 import type { App } from "obsidian";
 import type { CalloutDefinition } from "../src/types";
 
 /** Rules that are in no at-rule at all, so they apply in every medium. */
-const allMedia = (css: string): CssRule[] =>
-	parseRules(css).filter((r) => r.at.length === 0);
+const allMedia = (css: string): CssRule[] => parseRules(css).filter((r) => r.at.length === 0);
 
 /** Rules nested inside `@media screen`, so PDF export never sees them. */
 const screenOnly = (css: string): CssRule[] =>
@@ -61,11 +51,7 @@ const screenOnly = (css: string): CssRule[] =>
 
 /** Every rule that takes `.callout-icon` out of the layout. */
 const hideRules = (rules: CssRule[]): CssRule[] =>
-	rules.filter(
-		(r) =>
-			r.selector.includes(".callout-icon") &&
-			r.decls.some((d) => /^display:\s*none/.test(d)),
-	);
+	rules.filter((r) => r.selector.includes(".callout-icon") && r.decls.some((d) => /^display:\s*none/.test(d)));
 
 const EMOJI = { type: "emoji" as const, value: "🌵" };
 
@@ -75,9 +61,7 @@ const EMOJI = { type: "emoji" as const, value: "🌵" };
 
 describe("a callout the user set to draw no icon", () => {
 	const hidden = (over: Partial<CalloutDefinition> = {}): string =>
-		harness().css.generateCalloutCSS(
-			definition({ hideIcon: true, ...over }),
-		);
+		harness().css.generateCalloutCSS(definition({ hideIcon: true, ...over }));
 
 	it("hides it in every medium, so the PDF has none either", () => {
 		const rules = hideRules(allMedia(hidden()));
@@ -114,9 +98,7 @@ describe("a callout the user set to draw no icon", () => {
 		registry.settings.globalStyle.alignContentWithTitle = true;
 		const out = css.generateCalloutCSS(definition({ hideIcon: true }));
 
-		const reset = allMedia(out).filter((r) =>
-			r.decls.some((d) => /^padding-inline-start:\s*0/.test(d)),
-		);
+		const reset = allMedia(out).filter((r) => r.decls.some((d) => /^padding-inline-start:\s*0/.test(d)));
 		assert.strictEqual(reset.length, 1);
 		assert.deepStrictEqual(
 			screenOnly(out).filter((r) => r.props.includes("padding-inline-start")),
@@ -156,9 +138,7 @@ describe("a callout that keeps its icon, for contrast", () => {
 
 	it("still sets --callout-icon, which the hidden one does not", () => {
 		const shown = harness().css.generateCalloutCSS(definition());
-		const hidden = harness().css.generateCalloutCSS(
-			definition({ hideIcon: true }),
-		);
+		const hidden = harness().css.generateCalloutCSS(definition({ hideIcon: true }));
 
 		assert.match(shown, /--callout-icon:/);
 		assert.doesNotMatch(hidden, /--callout-icon:/);
@@ -173,18 +153,13 @@ describe("the fallback template drawn with no icon", () => {
 	const fallbackCss = (over: Partial<CalloutDefinition> = {}): string => {
 		const { registry, css } = harness();
 		registry.settings.fallbackCalloutId = "note";
-		return css.generateFallbackCSS([
-			definition({ id: "note", hideIcon: true, ...over }),
-		]);
+		return css.generateFallbackCSS([definition({ id: "note", hideIcon: true, ...over })]);
 	};
 
 	it("marks the fallback winner without a high-specificity hide rule", () => {
 		const out = fallbackCss();
 		assert.deepStrictEqual(hideRules(allMedia(out)), []);
-		assert.match(
-			out,
-			/--callout-icon: __callout-studio-fallback-icon__;/,
-		);
+		assert.match(out, /--callout-icon: __callout-studio-fallback-icon__;/);
 	});
 
 	it("adds no screen-only icon block for it", () => {
@@ -198,15 +173,9 @@ describe("the fallback template drawn with no icon", () => {
 		const { registry, css } = harness();
 		registry.settings.fallbackCalloutId = "note";
 		registry.settings.globalStyle.alignContentWithTitle = true;
-		const out = css.generateFallbackCSS([
-			definition({ id: "note", hideIcon: true }),
-		]);
+		const out = css.generateFallbackCSS([definition({ id: "note", hideIcon: true })]);
 
-		assert.ok(
-			!allMedia(out).some((r) =>
-				r.props.includes("padding-inline-start"),
-			),
-		);
+		assert.ok(!allMedia(out).some((r) => r.props.includes("padding-inline-start")));
 	});
 });
 
@@ -219,8 +188,7 @@ describe("paintIcon, the print-side half", () => {
 		paintIcon(iconEl: HTMLElement, def: CalloutDefinition): void;
 	};
 
-	const painter = (): Painter =>
-		harness().injector as unknown as Painter;
+	const painter = (): Painter => harness().injector as unknown as Painter;
 
 	it("bakes nothing for a callout with the icon off", () => {
 		// The copy exists to take over in print. With `iconHiddenCSS` removing
@@ -250,15 +218,11 @@ describe("paintIcons — a name the theme claims", () => {
 		// all), so `[!вид]` gets its icon while `[!description]` keeps the
 		// theme's, exactly as the stylesheet splits them.
 		const h = harness();
-		h.registry.add(
-			definition({ id: "вид", aliases: ["description"], icon: EMOJI }),
-		);
+		h.registry.add(definition({ id: "вид", aliases: ["description"], icon: EMOJI }));
 		h.registry.setThemeOwnedIds(new Set(["description"]));
 		const blockFor = (id: string) => {
 			const callout = el({ cls: "callout", attrs: { "data-callout": id } });
-			const icon = callout
-				.createDiv({ cls: "callout-title" })
-				.createDiv({ cls: "callout-icon" });
+			const icon = callout.createDiv({ cls: "callout-title" }).createDiv({ cls: "callout-icon" });
 			h.injector.paintIcons(asEl(callout));
 			return icon;
 		};
@@ -276,9 +240,7 @@ describe("paintIcons — a name the theme claims", () => {
 		h.registry.setThemeOwnedIds(new Set(["quote"]));
 		const blockFor = (id: string) => {
 			const callout = el({ cls: "callout", attrs: { "data-callout": id } });
-			const icon = callout
-				.createDiv({ cls: "callout-title" })
-				.createDiv({ cls: "callout-icon" });
+			const icon = callout.createDiv({ cls: "callout-title" }).createDiv({ cls: "callout-icon" });
 			h.injector.paintIcons(asEl(callout));
 			return icon;
 		};
@@ -301,9 +263,7 @@ describe("paintIcons — weak unknown-callout fallback", () => {
 
 	const emojiFallback = (hideIcon = false) => {
 		const h = harness();
-		h.registry.add(
-			definition({ id: "fallback", icon: EMOJI, hideIcon }),
-		);
+		h.registry.add(definition({ id: "fallback", icon: EMOJI, hideIcon }));
 		h.registry.settings.fallbackCalloutId = "fallback";
 		return h;
 	};
@@ -458,8 +418,7 @@ function injected(build: (registry: CalloutRegistry) => void): string {
 				attached = true;
 			},
 		},
-		getElementById: (id: string) =>
-			attached && id === styleEl.id ? styleEl : null,
+		getElementById: (id: string) => (attached && id === styleEl.id ? styleEl : null),
 		querySelectorAll: () => [],
 		body: { classList: { contains: () => false } },
 	};
@@ -525,19 +484,13 @@ describe("the sheet as a whole", () => {
 	});
 
 	it("keeps its hide rule in the all-media half", () => {
-		assert.ok(
-			hideRules(allMedia(sheet())).some((r) =>
-				r.selector.includes('data-callout="quiet"'),
-			),
-		);
+		assert.ok(hideRules(allMedia(sheet())).some((r) => r.selector.includes('data-callout="quiet"')));
 	});
 
 	it("still puts the neighbouring callout's glyph on screen only", () => {
 		// Same sheet, same emitter: the split is per callout, not global. If
 		// this stops being true the previous assertion has become vacuous.
-		assert.ok(
-			screenOnly(sheet()).some((r) => r.selector.includes('data-callout="loud"')),
-		);
+		assert.ok(screenOnly(sheet()).some((r) => r.selector.includes('data-callout="loud"')));
 	});
 
 	it("hides the baked export copies on screen, and only on screen", () => {
@@ -551,9 +504,7 @@ describe("the sheet as a whole", () => {
 		assert.deepStrictEqual(
 			allMedia(css)
 				.filter(
-					(r) =>
-						r.selector.includes(".cs-export-icon") &&
-						r.decls.some((d) => /^display:\s*none/.test(d)),
+					(r) => r.selector.includes(".cs-export-icon") && r.decls.some((d) => /^display:\s*none/.test(d)),
 				)
 				.map((r) => r.selector),
 			[],

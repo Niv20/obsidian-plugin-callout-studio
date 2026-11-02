@@ -48,8 +48,7 @@ export interface ThemeSyncOptions {
  */
 export function watchPageClasses(doc: Document, onChange: () => void): () => void {
 	const Observer =
-		doc.defaultView?.MutationObserver ??
-		(typeof MutationObserver === "undefined" ? undefined : MutationObserver);
+		doc.defaultView?.MutationObserver ?? (typeof MutationObserver === "undefined" ? undefined : MutationObserver);
 	if (!Observer) return () => {};
 	const observer = new Observer(() => onChange());
 	for (const el of [doc.documentElement, doc.body]) {
@@ -59,7 +58,6 @@ export function watchPageClasses(doc: Document, onChange: () => void): () => voi
 }
 
 export interface ThemeSyncHost {
-
 	app: App;
 	registry: {
 		settings: { fallbackCalloutId: string };
@@ -72,9 +70,7 @@ export interface ThemeSyncHost {
 		add(def: CalloutDefinition): boolean;
 		remove(id: string): boolean;
 		vaultIdFormsFor(def: CalloutDefinition): string[];
-		setThemeAppearances(
-			map: ReadonlyMap<string, ThemeAppearance>,
-		): boolean;
+		setThemeAppearances(map: ReadonlyMap<string, ThemeAppearance>): boolean;
 		themeOwns(def: CalloutDefinition): boolean;
 	};
 	cssInjector: {
@@ -125,11 +121,7 @@ export interface ThemeSyncHost {
  * `css-change` at all, and an ownership change emits exactly one, whose
  * handler finds the theme text unchanged and the set already published.
  */
-export function registerThemeAppearance(
-	host: ThemeSyncHost,
-	options: ThemeSyncOptions = {},
-): () => void {
-
+export function registerThemeAppearance(host: ThemeSyncHost, options: ThemeSyncOptions = {}): () => void {
 	const appearance = options.appearance ?? new ThemeAppearanceProbe(host.app);
 	const claims =
 		options.claims ??
@@ -147,8 +139,7 @@ export function registerThemeAppearance(
 	// published ownership was built on, so a page change can tell whether it
 	// moved anything.
 	let offKey = "";
-	const pageOff = (): Set<string> =>
-		claims.pageRootOff(host.cssInjector.themeCallouts().themeDefinedIds());
+	const pageOff = (): Set<string> => claims.pageRootOff(host.cssInjector.themeCallouts().themeDefinedIds());
 	const keyOf = (off: ReadonlySet<string>): string => [...off].sort().join("\n");
 	const declared = (): ReadonlySet<string> => {
 		const named = host.cssInjector.themeCallouts().themeDefinedIds();
@@ -181,11 +172,7 @@ export function registerThemeAppearance(
 		const own = ownForms();
 		lastClaimIds = [...named].filter((id) => own.has(id));
 		pageState = claims.pageStateKey(lastClaimIds);
-		return syncThemeOverlayRows(
-			host.registry,
-			named,
-			claims.unstyled(lastClaimIds),
-		);
+		return syncThemeOverlayRows(host.registry, named, claims.unstyled(lastClaimIds));
 	};
 	/**
 	 * Whether the theme or the enabled snippets are other than the last time
@@ -208,9 +195,7 @@ export function registerThemeAppearance(
 	};
 
 	const probe = (): void => {
-		const owned = host.registry.getAll().filter((def) =>
-			host.registry.themeOwns(def),
-		);
+		const owned = host.registry.getAll().filter((def) => host.registry.themeOwns(def));
 		void appearance.ensure(
 			owned.flatMap((def) => host.registry.vaultIdFormsFor(def)),
 			() => {
@@ -288,9 +273,10 @@ export function registerThemeAppearance(
 		claimsOwed = true;
 		rereadGate.request();
 	};
-	const stopWatching = (options.watchPage ??
-		((onChange: () => void) =>
-			watchPageClasses(host.app.workspace.containerEl.ownerDocument, onChange)))(pageMoved);
+	const stopWatching = (
+		options.watchPage ??
+		((onChange: () => void) => watchPageClasses(host.app.workspace.containerEl.ownerDocument, onChange))
+	)(pageMoved);
 	host.register(stopWatching);
 
 	// Closing an unsaved draft can release a newly theme-owned id without

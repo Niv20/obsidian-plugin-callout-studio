@@ -27,18 +27,10 @@ import { describe, it } from "node:test";
 import type { Command } from "obsidian";
 import { CustomCommandManager } from "../src/editor/CustomCommandManager";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import {
-	describeCommand,
-	obsidianCommandId,
-} from "../src/utils/customCommands";
+import { describeCommand, obsidianCommandId } from "../src/utils/customCommands";
 import type { CalloutDefinition, CustomCommand } from "../src/types";
 import { asEditor, editor } from "./support/fakeEditor";
-import {
-	blankLiterals,
-	pluginSourceFiles,
-	readRepoFile,
-	report,
-} from "./support/sourceScan";
+import { blankLiterals, pluginSourceFiles, readRepoFile, report } from "./support/sourceScan";
 
 /* -------------------------------------------------------------------------- */
 /* Harness                                                                    */
@@ -106,10 +98,7 @@ function harness(): Harness {
 	};
 }
 
-function addCallout(
-	registry: CalloutRegistry,
-	over: Partial<CalloutDefinition> = {},
-): void {
+function addCallout(registry: CalloutRegistry, over: Partial<CalloutDefinition> = {}): void {
 	registry.add({
 		id: "quiet",
 		displayName: "Quiet",
@@ -357,7 +346,10 @@ describe("syncAll — dropping commands", () => {
 		h.manager.syncAll();
 
 		assert.deepStrictEqual(h.removed, [obsidianCommandId("cc-1")]);
-		assert.deepStrictEqual(h.registry.settings.customCommands.map(c => c.id), ["cc-1"]);
+		assert.deepStrictEqual(
+			h.registry.settings.customCommands.map((c) => c.id),
+			["cc-1"],
+		);
 		assert.strictEqual(notices.length, 0);
 	});
 
@@ -369,7 +361,10 @@ describe("syncAll — dropping commands", () => {
 		h.manager.syncAll();
 
 		assert.deepStrictEqual(h.added, []);
-		assert.deepStrictEqual(h.registry.settings.customCommands.map(c => c.id), ["cc-1"]);
+		assert.deepStrictEqual(
+			h.registry.settings.customCommands.map((c) => c.id),
+			["cc-1"],
+		);
 		assert.deepStrictEqual(notices, []);
 	});
 
@@ -386,10 +381,7 @@ describe("syncAll — dropping commands", () => {
 
 		h.manager.syncAll();
 
-		assert.deepStrictEqual(idsOf(h.added), [
-			obsidianCommandId("cc-1"),
-			obsidianCommandId("cc-2"),
-		]);
+		assert.deepStrictEqual(idsOf(h.added), [obsidianCommandId("cc-1"), obsidianCommandId("cc-2")]);
 		assert.deepStrictEqual(
 			h.registry.settings.customCommands.map((c) => c.id),
 			["cc-1", "cc-2"],
@@ -506,33 +498,26 @@ describe("add / update / remove", () => {
 		const h = harness();
 		addCallout(h.registry);
 
-		return h.manager
-			.add({ calloutId: "quiet", role: "inline" })
-			.then(async (command) => {
-				h.clear();
-				const ok = await h.manager.update(command.id, {
-					calloutId: "quiet",
-					role: "heading",
-					headingLevel: 3,
-				});
-
-				assert.strictEqual(ok, true);
-				assert.strictEqual(h.manager.list()[0]?.id, command.id);
-				// The rendered name changed (H3 heading vs. inline), so exactly
-				// one remove + one add, both at the same id.
-				assert.deepStrictEqual(h.removed, [obsidianCommandId(command.id)]);
-				assert.deepStrictEqual(idsOf(h.added), [
-					obsidianCommandId(command.id),
-				]);
+		return h.manager.add({ calloutId: "quiet", role: "inline" }).then(async (command) => {
+			h.clear();
+			const ok = await h.manager.update(command.id, {
+				calloutId: "quiet",
+				role: "heading",
+				headingLevel: 3,
 			});
+
+			assert.strictEqual(ok, true);
+			assert.strictEqual(h.manager.list()[0]?.id, command.id);
+			// The rendered name changed (H3 heading vs. inline), so exactly
+			// one remove + one add, both at the same id.
+			assert.deepStrictEqual(h.removed, [obsidianCommandId(command.id)]);
+			assert.deepStrictEqual(idsOf(h.added), [obsidianCommandId(command.id)]);
+		});
 	});
 
 	it("reports a miss rather than inventing a command", async () => {
 		const h = harness();
-		assert.strictEqual(
-			await h.manager.update("nope", { calloutId: "quiet", role: "inline" }),
-			false,
-		);
+		assert.strictEqual(await h.manager.update("nope", { calloutId: "quiet", role: "inline" }), false);
 		assert.strictEqual(await h.manager.remove("nope"), false);
 	});
 
@@ -652,10 +637,7 @@ describe("upgrading commands saved before block callouts named their format", ()
 			h.added.map((command) => command.name),
 			["Wrap in Quiet block callout", "Insert Loud block callout"],
 		);
-		assert.deepStrictEqual(idsOf(h.added), [
-			obsidianCommandId("cc-1"),
-			obsidianCommandId("cc-2"),
-		]);
+		assert.deepStrictEqual(idsOf(h.added), [obsidianCommandId("cc-1"), obsidianCommandId("cc-2")]);
 	});
 
 	it("names a stored heading or inline command for its explicit action", () => {
@@ -952,9 +934,7 @@ describe("the registered editorCallback", () => {
 		notices.length = 0;
 
 		// Removed straight out of the map, with no sweep in between.
-		(h.registry as unknown as { callouts: Map<string, unknown> }).callouts.delete(
-			"quiet",
-		);
+		(h.registry as unknown as { callouts: Map<string, unknown> }).callouts.delete("quiet");
 		run(h, "", registered);
 
 		// The missing-callout notice explains why the hotkey cannot run.
@@ -1016,10 +996,7 @@ describe("the existence of a callout implies no command", () => {
 		seed(h, { id: "cc-1", calloutId: "quiet" });
 		seed(h, { id: "cc-2", calloutId: "louder", role: "inline" });
 		h.manager.syncAll();
-		assert.deepEqual(idsOf(h.added), [
-			obsidianCommandId("cc-1"),
-			obsidianCommandId("cc-2"),
-		]);
+		assert.deepEqual(idsOf(h.added), [obsidianCommandId("cc-1"), obsidianCommandId("cc-2")]);
 	});
 
 	it("never registers the role × callout product", () => {
@@ -1034,9 +1011,7 @@ describe("the existence of a callout implies no command", () => {
 
 describe("command registration stays centralized", () => {
 	/** Built-ins and user-built commands each have one registration owner. */
-	const CALLERS = [
-		"src/editor/commands.ts", "src/editor/CustomCommandManager.ts",
-	];
+	const CALLERS = ["src/editor/commands.ts", "src/editor/CustomCommandManager.ts"];
 
 	it("keeps addCommand to the built-in and user-command owners", () => {
 		const offenders = pluginSourceFiles()
@@ -1046,7 +1021,7 @@ describe("command registration stays centralized", () => {
 		assert.deepEqual(
 			offenders,
 			[],
-				report(
+			report(
 				"addCommand belongs to commands.ts (all built-ins) and CustomCommandManager.ts (the user's list). Unexpected registration callers:",
 				offenders,
 			),
@@ -1076,10 +1051,7 @@ describe("command registration stays centralized", () => {
 		assert.deepEqual(
 			offenders,
 			[],
-			report(
-				"A registration sweep must iterate settings.customCommands, never the registry:",
-				offenders,
-			),
+			report("A registration sweep must iterate settings.customCommands, never the registry:", offenders),
 		);
 	});
 });
@@ -1155,10 +1127,13 @@ describe("a command the theme has temporarily taken over", () => {
 	});
 });
 
- it("restores the same command after a missing callout becomes available", () => {
-  const h = harness(); seed(h); h.manager.syncAll();
-  assert.deepStrictEqual(h.added, []);
-  assert.strictEqual(h.registry.settings.customCommands[0]?.id, "cc-1");
-  addCallout(h.registry); h.manager.syncAll();
-  assert.deepStrictEqual(idsOf(h.added), [obsidianCommandId("cc-1")]);
- });
+it("restores the same command after a missing callout becomes available", () => {
+	const h = harness();
+	seed(h);
+	h.manager.syncAll();
+	assert.deepStrictEqual(h.added, []);
+	assert.strictEqual(h.registry.settings.customCommands[0]?.id, "cc-1");
+	addCallout(h.registry);
+	h.manager.syncAll();
+	assert.deepStrictEqual(idsOf(h.added), [obsidianCommandId("cc-1")]);
+});

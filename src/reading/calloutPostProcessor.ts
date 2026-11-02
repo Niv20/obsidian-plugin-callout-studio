@@ -32,10 +32,7 @@ import {
 	tokenEnd,
 } from "../editor/calloutTokens";
 import { calloutTokenLabel, splitCalloutMetadata } from "../utils/calloutId";
-import {
-	matchContentParts,
-	type ContentPart,
-} from "../editor/inlineContent";
+import { matchContentParts, type ContentPart } from "../editor/inlineContent";
 import {
 	CSS_ANIM_IN,
 	CSS_HEADING_LINE,
@@ -130,26 +127,19 @@ export function createCalloutReadingPostProcessor(
 		const getSectionLines = (): string[] | null => {
 			if (sectionLines !== undefined) return sectionLines;
 			const info = ctx.getSectionInfo(el);
-			sectionLines = info
-				? info.text
-						.split("\n")
-						.slice(info.lineStart, info.lineEnd + 1)
-				: null;
+			sectionLines = info ? info.text.split("\n").slice(info.lineStart, info.lineEnd + 1) : null;
 			return sectionLines;
 		};
 
 		// Both heading passes answer to the one setting, so one branch carries
 		// them — a second `if (headingEnabled)` reads as a second condition.
 		if (headingEnabled) {
-			const headings = hasToken
-				? el.querySelectorAll<HTMLElement>("h1,h2,h3,h4,h5,h6")
-				: [];
+			const headings = hasToken ? el.querySelectorAll<HTMLElement>("h1,h2,h3,h4,h5,h6") : [];
 			// Source lines are only authoritative when el is a single
 			// reading-view block (one heading). A multi-heading el is the
 			// print/PDF-export path, where getSectionInfo is null anyway —
 			// trust the rendered text there.
-			const linesGetter =
-				headings.length === 1 ? getSectionLines : () => null;
+			const linesGetter = headings.length === 1 ? getSectionLines : () => null;
 			for (const h of Array.from(headings)) {
 				transformHeading(h, host, linesGetter);
 			}
@@ -159,7 +149,12 @@ export function createCalloutReadingPostProcessor(
 			// Content pills first: they absorb whole runs of already-rendered
 			// nodes, and PILL_EXCLUDE_SELECTOR then keeps the plain-pill pass
 			// out of everything they swallowed.
-			const escapes = createInlineEscapePlan(el, getSectionLines, PILL_EXCLUDE_SELECTOR, isHeadingLeadingTextNode);
+			const escapes = createInlineEscapePlan(
+				el,
+				getSectionLines,
+				PILL_EXCLUDE_SELECTOR,
+				isHeadingLeadingTextNode,
+			);
 			if (host.settings.inlineCallouts.allowContent) transformContentPills(el, host, escapes);
 			transformInlinePills(el, host, escapes);
 		}
@@ -170,17 +165,14 @@ export function createCalloutReadingPostProcessor(
 function findLeadingTextNode(h: HTMLElement): Text | null {
 	for (const child of Array.from(h.childNodes)) {
 		if (child.nodeType === Node.TEXT_NODE) {
-			if ((child.textContent ?? "").trim().length > 0)
-				return child as Text;
+			if ((child.textContent ?? "").trim().length > 0) return child as Text;
 			continue;
 		}
 		// Skip Obsidian's heading collapse indicator (and similar chrome)
 		// that precedes the heading text when "Fold heading" is enabled.
 		if (
 			child.nodeType === Node.ELEMENT_NODE &&
-			(child as Element).classList.contains(
-				"heading-collapse-indicator",
-			)
+			(child as Element).classList.contains("heading-collapse-indicator")
 		) {
 			continue;
 		}
@@ -197,16 +189,10 @@ function findLeadingTextNode(h: HTMLElement): Text | null {
  * heading-like lines inside callouts (`> # [!id]` — those are inline callouts),
  * and link syntax (`# [!id](url)`).
  */
-function transformHeading(
-	h: HTMLElement,
-	host: ReadingRenderHost,
-	getSectionLines: () => string[] | null,
-): void {
+function transformHeading(h: HTMLElement, host: ReadingRenderHost, getSectionLines: () => string[] | null): void {
 	const textNode = findLeadingTextNode(h);
 	if (!textNode) return;
-	const renderedMatch = RENDERED_HEADING_TOKEN_RE.exec(
-		textNode.textContent ?? "",
-	);
+	const renderedMatch = RENDERED_HEADING_TOKEN_RE.exec(textNode.textContent ?? "");
 	if (!renderedMatch) return;
 
 	let rawId: string;
@@ -214,9 +200,7 @@ function transformHeading(
 	let hasTitle: boolean;
 	const lines = getSectionLines();
 	if (lines) {
-		const headToken = scanLineForCalloutTokens(lines[0] ?? "").find(
-			(t) => t.role === "heading",
-		);
+		const headToken = scanLineForCalloutTokens(lines[0] ?? "").find((t) => t.role === "heading");
 		if (!headToken) return; // escaped / link / not a heading-callout block
 		rawId = headToken.rawId;
 		metadata = headToken.metadata;
@@ -226,9 +210,7 @@ function transformHeading(
 		const parts = splitCalloutMetadata(renderedMatch[1] ?? "");
 		rawId = parts.id;
 		metadata = parts.metadata;
-		hasTitle =
-			(textNode.textContent ?? "").length > renderedMatch[0].length ||
-			textNode.nextSibling !== null;
+		hasTitle = (textNode.textContent ?? "").length > renderedMatch[0].length || textNode.nextSibling !== null;
 		if (!rawId.trim()) return;
 	}
 
@@ -251,9 +233,7 @@ function transformHeading(
 
 	// Strip the `[!id] ` prefix from the rendered text and put the token
 	// DOM (icon + optional name) in its place.
-	textNode.textContent = (textNode.textContent ?? "").slice(
-		renderedMatch[0].length,
-	);
+	textNode.textContent = (textNode.textContent ?? "").slice(renderedMatch[0].length);
 	const tokenEl = buildCalloutTokenDom({
 		rawId,
 		metadata,
@@ -303,11 +283,7 @@ function transformHeading(
  * the screen shows through CSS, for the export colours that cannot come from
  * CSS. See `utils/calloutMetadata.definitionWithMetadataColor`.
  */
-function paintedDefinition(
-	def: CalloutDefinition,
-	metadata: string,
-	host: ReadingRenderHost,
-): CalloutDefinition {
+function paintedDefinition(def: CalloutDefinition, metadata: string, host: ReadingRenderHost): CalloutDefinition {
 	if (!metadata) return def;
 	return definitionWithMetadataColor(
 		def,
@@ -340,18 +316,12 @@ function paintedDefinition(
  * inside a native callout's title are skipped for parity with Live Preview,
  * which leaves whole `> [!id]` lines to Obsidian.
  */
-function transformHeadingRefLinks(
-	el: HTMLElement,
-	host: ReadingRenderHost,
-): void {
+function transformHeadingRefLinks(el: HTMLElement, host: ReadingRenderHost): void {
 	const anchors = el.querySelectorAll<HTMLAnchorElement>("a.internal-link");
 	if (anchors.length === 0) return;
 	const doc = el.ownerDocument;
 	for (const anchor of Array.from(anchors)) {
-		const href =
-			anchor.getAttribute("data-href") ??
-			anchor.getAttribute("href") ??
-			"";
+		const href = anchor.getAttribute("data-href") ?? anchor.getAttribute("href") ?? "";
 		if (!href.includes("#")) continue;
 		if (anchor.closest(".callout-title")) continue;
 		const textNode = anchor.firstChild;
@@ -390,9 +360,7 @@ function transformHeadingRefLinks(
 		if (!shouldRenderToken(refResolved)) continue;
 		const { def, unknown } = refResolved;
 		const title =
-			token.title.trim() !== ""
-				? token.title
-				: calloutTokenLabel(unknown ? undefined : def, token.rawId);
+			token.title.trim() !== "" ? token.title : calloutTokenLabel(unknown ? undefined : def, token.rawId);
 
 		// A bare same-file `#` prefix is dropped (matching Live Preview);
 		// `Note#`/`Note > ` prefixes stay. Then icon, then the cleaned
@@ -416,11 +384,7 @@ function transformHeadingRefLinks(
 		// anchor — swallow that one bracket now that the display is cleaned.
 		if (token.truncated) {
 			const stray = anchor.nextSibling;
-			if (
-				stray &&
-				stray.nodeType === Node.TEXT_NODE &&
-				(stray.nodeValue ?? "").startsWith("]")
-			) {
+			if (stray && stray.nodeType === Node.TEXT_NODE && (stray.nodeValue ?? "").startsWith("]")) {
 				const rest = (stray.nodeValue ?? "").slice(1);
 				if (rest === "") stray.remove();
 				else stray.nodeValue = rest;
@@ -437,16 +401,10 @@ function transformHeadingRefLinks(
  * Idempotent: once the icon leads the anchor, the caller no longer finds a
  * leading text node and never comes back here.
  */
-function decorateAliasedHeadingRef(
-	anchor: HTMLAnchorElement,
-	href: string,
-	host: ReadingRenderHost,
-): void {
+function decorateAliasedHeadingRef(anchor: HTMLAnchorElement, href: string, host: ReadingRenderHost): void {
 	const { refCleanTitles, refShowIcon } = host.settings.headingCallouts;
 	if (!refCleanTitles || !refShowIcon) return;
-	const target = parseHeadingRefDisplayText(
-		href.slice(href.lastIndexOf("#") + 1),
-	);
+	const target = parseHeadingRefDisplayText(href.slice(href.lastIndexOf("#") + 1));
 	if (!target || target.prefix !== "" || target.truncated) return;
 	const resolved = resolveCalloutDef(host.registry, target.rawId);
 	if (!shouldRenderToken(resolved) || !resolved.def) return;
@@ -541,10 +499,7 @@ function findContentEnd(startNode: Text, startOffset: number): ContentEnd | null
 		// count, but closing inside it refuses the match.
 		const inner = el.ownerDocument.createTreeWalker(el, NodeFilter.SHOW_TEXT);
 		for (let n = inner.nextNode(); n !== null; n = inner.nextNode()) {
-			const opaque =
-				(n.parentElement as Element | null)?.closest(
-					CONTENT_OPAQUE_SELECTOR,
-				) !== null;
+			const opaque = (n.parentElement as Element | null)?.closest(CONTENT_OPAQUE_SELECTOR) !== null;
 			parts.push({ text: (n as Text).data, nested: true, opaque });
 			nodes.push(null);
 		}
@@ -597,7 +552,7 @@ function spliceContentPill(
 	// Move [firstContent … lastContent] into the payload element — never onto
 	// the pill root, which is a flex container and would give each run of text
 	// its own anonymous item (see CSS_CALLOUT_PAYLOAD).
-	for (let cur: Node | null = firstContent; cur; ) {
+	for (let cur: Node | null = firstContent; cur;) {
 		const next: Node | null = cur === lastContent ? null : cur.nextSibling;
 		payload.appendChild(cur);
 		cur = next;
@@ -628,11 +583,9 @@ function transformContentPills(el: HTMLElement, host: ReadingRenderHost, escapes
 	for (let guard = 0; guard < 256; guard++) {
 		const walker = doc.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
 			acceptNode: (node) => {
-				if ((node.textContent ?? "").indexOf("[!") === -1)
-					return NodeFilter.FILTER_REJECT;
+				if ((node.textContent ?? "").indexOf("[!") === -1) return NodeFilter.FILTER_REJECT;
 				const parent = node.parentElement;
-				if (!parent || parent.closest(PILL_EXCLUDE_SELECTOR))
-					return NodeFilter.FILTER_REJECT;
+				if (!parent || parent.closest(PILL_EXCLUDE_SELECTOR)) return NodeFilter.FILTER_REJECT;
 				return NodeFilter.FILTER_ACCEPT;
 			},
 		});
@@ -663,16 +616,7 @@ function transformContentPills(el: HTMLElement, host: ReadingRenderHost, escapes
 				}
 				const end = findContentEnd(text, braceOffset);
 				if (!end) continue;
-				spliceContentPill(
-					host,
-					text,
-					token.from,
-					braceOffset,
-					end,
-					token.rawId,
-					token.metadata,
-					escapes,
-				);
+				spliceContentPill(host, text, token.from, braceOffset, end, token.rawId, token.metadata, escapes);
 				built++;
 				spliced = true;
 				break;
@@ -698,19 +642,13 @@ interface PillCandidate {
  * Runs after the heading transform, so a heading's own token is already
  * consumed and only genuine inline occurrences remain.
  */
-function transformInlinePills(
-	el: HTMLElement,
-	host: ReadingRenderHost,
-	escapes: InlineEscapePlan,
-): void {
+function transformInlinePills(el: HTMLElement, host: ReadingRenderHost, escapes: InlineEscapePlan): void {
 	const doc = el.ownerDocument;
 	const walker = doc.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
 		acceptNode: (node) => {
-			if ((node.textContent ?? "").indexOf("[!") === -1)
-				return NodeFilter.FILTER_REJECT;
+			if ((node.textContent ?? "").indexOf("[!") === -1) return NodeFilter.FILTER_REJECT;
 			const parent = node.parentElement;
-			if (!parent || parent.closest(PILL_EXCLUDE_SELECTOR))
-				return NodeFilter.FILTER_REJECT;
+			if (!parent || parent.closest(PILL_EXCLUDE_SELECTOR)) return NodeFilter.FILTER_REJECT;
 			return NodeFilter.FILTER_ACCEPT;
 		},
 	});
@@ -718,11 +656,7 @@ function transformInlinePills(
 	// Snapshot candidates before mutating (other plugins' post-processors and
 	// our own splitting must not confuse the walk).
 	const candidates: PillCandidate[] = [];
-	for (
-		let node = walker.nextNode();
-		node !== null;
-		node = walker.nextNode()
-	) {
+	for (let node = walker.nextNode(); node !== null; node = walker.nextNode()) {
 		const text = node.textContent ?? "";
 		// Rendered text is never a blockquote/heading source line, so every
 		// token the shared classifier finds here is an inline candidate.

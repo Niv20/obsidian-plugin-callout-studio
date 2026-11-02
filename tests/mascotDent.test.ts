@@ -18,7 +18,14 @@ function run(dent: Dent, ms: number): void {
 
 /** Where `matrix(a b c d e f)` takes a point: the browser's own arithmetic. */
 function move(matrix: string, [x, y]: Vec): Vec {
-	const [a, b, c, d, e, f] = (/matrix\(([^)]*)\)/.exec(matrix)?.[1] ?? "").split(" ").map(Number) as [number, number, number, number, number, number];
+	const [a, b, c, d, e, f] = (/matrix\(([^)]*)\)/.exec(matrix)?.[1] ?? "").split(" ").map(Number) as [
+		number,
+		number,
+		number,
+		number,
+		number,
+		number,
+	];
 	return [a * x + c * y + e, b * x + d * y + f];
 }
 

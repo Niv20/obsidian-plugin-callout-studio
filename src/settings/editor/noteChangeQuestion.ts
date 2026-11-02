@@ -98,7 +98,9 @@ function tallyEndingHere(
 	const sending = new Set([...toSelf].map(calloutIdentity));
 	const forms = [
 		...pending.keptForms,
-		...pending.leaving.filter((leaving) => sending.has(calloutIdentity(leaving.id))).flatMap((leaving) => leaving.forms),
+		...pending.leaving
+			.filter((leaving) => sending.has(calloutIdentity(leaving.id)))
+			.flatMap((leaving) => leaving.forms),
 	];
 	return sumTallies(statsFor(stats, forms).map(pick));
 }

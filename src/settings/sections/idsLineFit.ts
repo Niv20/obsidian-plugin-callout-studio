@@ -291,17 +291,24 @@ export function fitIdsLine(descEl: HTMLElement): () => void {
 	const ids = Array.from(descEl.querySelectorAll<HTMLElement>(".callout-studio-row-syntax"));
 	// The chip is there from the start, out of the flow and invisible, so that
 	// the observer can tell how wide it is without it being shown first.
-	const chip = ids.length > 1
-		? descEl.createEl("code", {
-			cls: ["callout-studio-row-syntax", "callout-studio-row-more", "cs-id-cut"],
-			text: `+${ids.length - 1}`,
-		})
-		: null;
+	const chip =
+		ids.length > 1
+			? descEl.createEl("code", {
+					cls: ["callout-studio-row-syntax", "callout-studio-row-more", "cs-id-cut"],
+					text: `+${ids.length - 1}`,
+				})
+			: null;
 	// A lone id is shortened by the page, with "…", when the row is too narrow.
-	const lone = ids.length === 1 ? ids[0] ?? null : null;
+	const lone = ids.length === 1 ? (ids[0] ?? null) : null;
 	lone?.addClass("cs-id-lone");
 	const line: IdsLine = {
-		descEl, ids, chip, lone, room: 0, widths: ids.map(() => 0), chipWidth: 0,
+		descEl,
+		ids,
+		chip,
+		lone,
+		room: 0,
+		widths: ids.map(() => 0),
+		chipWidth: 0,
 		// As drawn: every id on show, and a lone id whole.
 		showing: lone ? 0 : ids.length,
 	};

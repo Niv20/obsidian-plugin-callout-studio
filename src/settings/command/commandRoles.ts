@@ -21,18 +21,10 @@
 import { Setting } from "obsidian";
 import { t } from "../../i18n";
 import { SelectDropdown } from "../../ui/selectDropdown";
-import type {
-	CalloutDefinition,
-	CalloutRenderRole,
-	PluginSettings,
-} from "../../types";
+import type { CalloutDefinition, CalloutRenderRole, PluginSettings } from "../../types";
 
 /** Format options in the order the user is shown them. */
-const ROLE_ORDER: readonly CalloutRenderRole[] = [
-	"heading",
-	"inline",
-	"regular",
-];
+const ROLE_ORDER: readonly CalloutRenderRole[] = ["heading", "inline", "regular"];
 
 const ROLE_LABEL_KEY: Record<CalloutRenderRole, string> = {
 	heading: "commandBuilder.formatHeading",
@@ -53,14 +45,9 @@ export interface RoleOwnershipLookup {
  * chosen, and narrowing on "we could not find it" would hide two options for a
  * reason the user cannot see.
  */
-export function offerableRoles(
-	registry: RoleOwnershipLookup,
-	calloutId: string,
-): readonly CalloutRenderRole[] {
+export function offerableRoles(registry: RoleOwnershipLookup, calloutId: string): readonly CalloutRenderRole[] {
 	const def = registry.get(calloutId);
-	return def !== undefined && registry.themeOwns(def)
-		? (["regular"] as const)
-		: ROLE_ORDER;
+	return def !== undefined && registry.themeOwns(def) ? (["regular"] as const) : ROLE_ORDER;
 }
 
 /** The live *Callout format* row, kept in step by {@link FormatRow.sync}. */
@@ -80,16 +67,14 @@ export interface FormatRow {
 	): CalloutRenderRole;
 }
 
-export function buildFormatRow(
-	parent: HTMLElement,
-	onPick: (role: CalloutRenderRole) => void,
-): FormatRow {
+export function buildFormatRow(parent: HTMLElement, onPick: (role: CalloutRenderRole) => void): FormatRow {
 	const setting = new Setting(parent)
 		.setName(t("commandBuilder.format"))
 		.setClass("cs-command-field")
 		.setDesc(t("commandBuilder.formatDesc"));
-	const dd = new SelectDropdown(setting.controlEl, t("commandBuilder.format"))
-		.onChange((raw) => onPick(raw as CalloutRenderRole));
+	const dd = new SelectDropdown(setting.controlEl, t("commandBuilder.format")).onChange((raw) =>
+		onPick(raw as CalloutRenderRole),
+	);
 	// Under the description, in Obsidian's warning colour (`p.mod-warning`): an
 	// off format is worth flagging but does not stop the command being saved.
 	// It simply appears and goes, with no animation.
@@ -115,11 +100,7 @@ export function buildFormatRow(
 			const off =
 				(next === "heading" && !settings.headingCallouts.enabled) ||
 				(next === "inline" && !settings.inlineCallouts.enabled);
-			const notice = narrowed
-				? t("commandBuilder.roleThemeOwned")
-				: off
-					? t("commandBuilder.roleDisabled")
-					: "";
+			const notice = narrowed ? t("commandBuilder.roleThemeOwned") : off ? t("commandBuilder.roleDisabled") : "";
 			noticeEl.setText(notice);
 			noticeEl.toggleClass("cs-hidden", notice.length === 0);
 			return next;

@@ -1,6 +1,7 @@
 export const zhTW: Record<string, string> = {
 	"portable.reviewTitle": "檢查轉換內容",
-	"portable.helpIntro": "選擇要套用的取代內容。點選鉛筆圖示或取代文字進行編輯，接著按 Enter 鍵或點選欄位外部以儲存。使用重設圖示可捨棄草稿或還原預設取代內容。只有在選擇「轉換所選項目」並確認後，筆記才會變更。標題連結會隨所選標題一併更新。",
+	"portable.helpIntro":
+		"選擇要套用的取代內容。點選鉛筆圖示或取代文字進行編輯，接著按 Enter 鍵或點選欄位外部以儲存。使用重設圖示可捨棄草稿或還原預設取代內容。只有在選擇「轉換所選項目」並確認後，筆記才會變更。標題連結會隨所選標題一併更新。",
 	"portable.help": "關於轉換",
 	"portable.roleLink": "標題連結",
 	"portable.convertSelected": "轉換所選內容",
@@ -17,14 +18,17 @@ export const zhTW: Record<string, string> = {
 	"portable.retry": "重試",
 	"portable.blockedAmbiguous": "此標題的連結目標不明確，因此已略過。",
 	"portable.blockedTarget": "無法安全保留此標題的連結目標，因此已略過。",
-	"portable.recovery": "仍有變更待處理。請在重新啟動或停用外掛前完成這次轉換及標題連結更新；待處理計畫僅保存在記憶體中。",
+	"portable.recovery":
+		"仍有變更待處理。請在重新啟動或停用外掛前完成這次轉換及標題連結更新；待處理計畫僅保存在記憶體中。",
 	"portable.recoveryChanged": "轉換停止後，筆記發生了變更。待更新的連結已保留；寫入前會重新檢查每篇筆記。",
 	"portable.finishConversion": "完成轉換",
 	"portable.recoveryUnavailable": "無法安全復原部分待處理的連結更新。請先檢查受影響的筆記，再開始新的轉換。",
 	"portable.title": "轉換為標準 Markdown",
-	"portable.settingDesc": "將整個儲存庫中的標題與行內 callout 替換為一般文字，方便在沒有 Callout Studio 的環境中使用。",
+	"portable.settingDesc":
+		"將整個儲存庫中的標題與行內 callout 替換為一般文字，方便在沒有 Callout Studio 的環境中使用。",
 	"portable.review": "檢查轉換內容",
-	"portable.intro": "如果您打算停止使用 Callout Studio，或將儲存庫移至不支援它的應用程式，可以將標題與行內 callout 轉換為標準 Markdown。",
+	"portable.intro":
+		"如果您打算停止使用 Callout Studio，或將儲存庫移至不支援它的應用程式，可以將標題與行內 callout 轉換為標準 Markdown。",
 	"portable.before": "轉換前",
 	"portable.after": "轉換後",
 	"portable.replacement": "取代內容",
@@ -38,11 +42,13 @@ export const zhTW: Record<string, string> = {
 	"portable.empty": "找不到可轉換的標題或行內 callout。不會進行任何變更。",
 	"portable.confirmTitle": "永久轉換此儲存庫？",
 	"portable.confirmSubtitle": "不會建立自動備份",
-	"portable.confirmBody": "轉換 {{files}} 篇筆記中的 {{count}} 處內容，並更新 {{links}} 個標題連結？\n此操作會修改原始檔案，且無法在 Callout Studio 中復原。系統不會自動建立備份。請先備份儲存庫、儲存已開啟的筆記，並暫停編輯與同步，直到轉換完成。\n如果檔案發生變更或寫入失敗，轉換將停止。已轉換的筆記會保留變更。",
+	"portable.confirmBody":
+		"轉換 {{files}} 篇筆記中的 {{count}} 處內容，並更新 {{links}} 個標題連結？\n此操作會修改原始檔案，且無法在 Callout Studio 中復原。系統不會自動建立備份。請先備份儲存庫、儲存已開啟的筆記，並暫停編輯與同步，直到轉換完成。\n如果檔案發生變更或寫入失敗，轉換將停止。已轉換的筆記會保留變更。",
 	"portable.confirmAction": "永久轉換",
 	"portable.converting": "正在轉換所選內容… 關閉此面板不會停止轉換。",
 	"portable.complete": "已轉換 {{files}} 篇筆記中的 {{count}} 處內容，並更新 {{links}} 個標題連結。",
-	"portable.stopped": "轉換已停止。{{files}} 篇筆記中的 {{count}} 處內容與 {{links}} 個標題連結已變更；這些變更會保留。",
+	"portable.stopped":
+		"轉換已停止。{{files}} 篇筆記中的 {{count}} 處內容與 {{links}} 個標題連結已變更；這些變更會保留。",
 	"portable.errorEditor": "儲存已開啟的筆記，即可自動更新預覽。",
 	"portable.errorChanged": "筆記已變更。請在轉換前檢查更新後的內容。",
 	"portable.errorBusy": "另一項轉換正在進行。請等待它完成。",
@@ -90,15 +96,15 @@ export const zhTW: Record<string, string> = {
 	"settings.fallbackTagAuto": "自動",
 	"settings.rescanVaultDesc": "新增筆記中用到、但尚未出現在此清單中的 callout 類型。",
 	"settings.rescanVaultHintAction": "掃描 callout",
-	"manualDiscovery.failed": "掃描結果未儲存。請確認設定檔可寫入且同步已完成，再前往「設定 → 我的 callout 類型 → 掃描 callout」重試。現有 callout 未被取代。",
+	"manualDiscovery.failed":
+		"掃描結果未儲存。請確認設定檔可寫入且同步已完成，再前往「設定 → 我的 callout 類型 → 掃描 callout」重試。現有 callout 未被取代。",
 	"manualDiscovery.scanning": "掃描中…",
 	"settings.rescanComplete": "掃描完成：已新增 {{count}} 個新的 callout 類型。",
 	"replaceModal.titleReplace": "在 vault 中替換",
 
 	"welcome.title": "歡迎使用 Callout Studio！",
 	"welcome.tagline": "建立、設計和管理 Obsidian callout 的完整解決方案。",
-	"importBanner.message":
-		"我們注意到您正在使用 {{plugins}}。是否要匯入您的 callout？",
+	"importBanner.message": "我們注意到您正在使用 {{plugins}}。是否要匯入您的 callout？",
 	"importBanner.action": "匯入",
 	"importBanner.dismiss": "忽略",
 	"welcome.demoName": "Callout Studio",
@@ -113,9 +119,9 @@ export const zhTW: Record<string, string> = {
 		"Callout Studio 還有更多功能等您發掘！[深入了解]({{repoUrl}})。\n",
 	"deleteModal.title": "刪除 callout",
 
-	"deleteModal.bodyInUse":
-		"此 callout 在 {{files}} 個檔案中出現了 {{count}} 次。",
-	"deleteModal.notesUntouched": "此操作只會刪除 callout 的定義。您的筆記不會被更動，現有的 callout 只會回退到預設樣式。",
+	"deleteModal.bodyInUse": "此 callout 在 {{files}} 個檔案中出現了 {{count}} 次。",
+	"deleteModal.notesUntouched":
+		"此操作只會刪除 callout 的定義。您的筆記不會被更動，現有的 callout 只會回退到預設樣式。",
 	"deleteModal.fallbackTarget": "它也是您的預設備用 callout，因此沒有自己樣式的 callout 將改用 {{fallback}}。",
 	"deleteModal.subtitleFallback": "「{{name}}」 · 你的預設後備樣式",
 	"convertModal.title": "轉換為純文字",
@@ -141,11 +147,9 @@ export const zhTW: Record<string, string> = {
 	"settings.export": "匯出…",
 	"settings.importTitle": "匯入 callout",
 	"settings.exportTitle": "匯出 callout",
-	"settings.importDesc":
-		"從其他儲存庫匯入 Callout Studio 資料，或從其他外掛程式移入您的 callout。",
+	"settings.importDesc": "從其他儲存庫匯入 Callout Studio 資料，或從其他外掛程式移入您的 callout。",
 	"settings.exportDesc": "將您的 callout 儲存為 Callout Studio 備份，或匯出為可在其他地方使用的 CSS 程式碼片段。",
-	"settings.importConflictNotice":
-		"已匯入 {{count}} 個 callout 類型；{{overwritten}} 個現有項目已被覆寫。",
+	"settings.importConflictNotice": "已匯入 {{count}} 個 callout 類型；{{overwritten}} 個現有項目已被覆寫。",
 	"settings.addNewCallout": "新增 callout",
 	"settings.noCalloutsNow": "目前沒有自訂 callout。",
 	"settings.calloutCount": "{{count}} 個 callout",
@@ -169,14 +173,12 @@ export const zhTW: Record<string, string> = {
 	"settings.themeCalloutsHeading": "來自您佈景主題的 callout",
 	"settings.themeCalloutsDefaultTheme": "您的佈景主題",
 	"settings.themeCalloutsEmpty": "{{theme}} 目前沒有為任何 callout 設定樣式。",
-	"settings.themePreviewAria":
-		"預覽「{{name}}」— 查看您的佈景主題如何繪製它",
+	"settings.themePreviewAria": "預覽「{{name}}」— 查看您的佈景主題如何繪製它",
 	"settings.builtInAllThemeStyled":
 		"{{theme}} 為每個內建 callout 設定了樣式，因此 Callout Studio 會保持它們全部原樣。若要設計您自己的樣式，請新增一個使用不同 ID 的 callout。",
 
 	"settings.fallbackCallout": "預設備用 callout",
-	"settings.fallbackCalloutDesc":
-		"未知的 callout 類型將繼承此樣式。",
+	"settings.fallbackCalloutDesc": "未知的 callout 類型將繼承此樣式。",
 	"settings.border": "邊框",
 	"settings.borderTop": "頂部",
 	"settings.borderRight": "右側",
@@ -195,8 +197,7 @@ export const zhTW: Record<string, string> = {
 	"settings.headingFoldArrow": "顯示折疊箭頭",
 	"settings.styleDemoName": "範例",
 	"settings.styleDemoInlineName": "範例",
-	"settings.styleDemoInlineText":
-		"微風吹過樹梢。{{callout}}溫暖的陽光灑在寧靜的小徑上，讓景色更添生氣。",
+	"settings.styleDemoInlineText": "微風吹過樹梢。{{callout}}溫暖的陽光灑在寧靜的小徑上，讓景色更添生氣。",
 	"settings.previewTitle": "預覽",
 	// Settings — Saved color palettes
 	"settings.customPalettes": "已儲存的調色盤",
@@ -206,8 +207,7 @@ export const zhTW: Record<string, string> = {
 	"settings.paletteCountOne": "1 個調色盤",
 	"settings.editPaletteAria": "編輯調色盤 {{name}}",
 	"settings.deletePaletteTitle": "刪除調色盤",
-	"settings.deletePaletteBody":
-		"使用其顏色的 callout 不受影響。",
+	"settings.deletePaletteBody": "使用其顏色的 callout 不受影響。",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'在中繼資料中寫了這個名稱（"{{key}}"）的 callout 會改用同名的內建顏色。你的筆記不會改變。',
 	"settings.customCommands": "指令與快速鍵",
@@ -230,15 +230,13 @@ export const zhTW: Record<string, string> = {
 	"commandBuilder.formatHeading": "標題",
 	"commandBuilder.formatInline": "行內",
 	"commandBuilder.formatBlock": "區塊",
-	"commandBuilder.roleDisabled":
-		"此格式目前關閉，因此在您重新開啟之前，指令將插入純文字。",
+	"commandBuilder.roleDisabled": "此格式目前關閉，因此在您重新開啟之前，指令將插入純文字。",
 	"commandBuilder.callout": "Callout 類型",
 	"commandBuilder.calloutDesc": "此指令插入的 callout。",
 	"commandBuilder.headingLevel": "標題層級",
 	"commandBuilder.headingLevelDesc": "要寫入的標題層級。",
 	"commandBuilder.action": "動作",
-	"commandBuilder.actionDesc":
-		"「包覆」會將所選內容轉換為 callout；「插入」會新增一個空白的。",
+	"commandBuilder.actionDesc": "「包覆」會將所選內容轉換為 callout；「插入」會新增一個空白的。",
 	"commandBuilder.actionDescHeading":
 		"「包覆」會將游標所在的行轉換為標題 callout。\n「插入」會在新的一行新增一個空白的。",
 	"commandBuilder.actionDescInline":
@@ -246,8 +244,7 @@ export const zhTW: Record<string, string> = {
 	"commandBuilder.actionWrap": "包覆所選內容",
 	"commandBuilder.actionInsert": "插入新項目",
 	"commandBuilder.foldState": "折疊狀態",
-	"commandBuilder.foldStateDesc":
-		"callout 是否可折疊，以及其初始狀態。",
+	"commandBuilder.foldStateDesc": "callout 是否可折疊，以及其初始狀態。",
 	"commandBuilder.foldNone": "不可折疊",
 	"commandBuilder.foldExpanded": "可折疊，展開 (+)",
 	"commandBuilder.foldCollapsed": "可折疊，折疊 (-)",
@@ -257,15 +254,13 @@ export const zhTW: Record<string, string> = {
 	"commandBuilder.noCalloutChosen": "請先為此指令選擇一個 callout。",
 	"commandBuilder.save": "儲存",
 
-	"commandBuilder.roleThemeOwned":
-		"您的佈景主題提供了此 callout，因此它只有 Block 格式。",
+	"commandBuilder.roleThemeOwned": "您的佈景主題提供了此 callout，因此它只有 Block 格式。",
 	"commandBuilder.commandSuspended": "主題提供此 callout 期間已暫停，此時它只有區塊格式。",
 	"commandBuilder.pausedTag": "被主題暫停",
 	"commandBuilder.missingTag": "缺少 callout",
 
 	"settings.resetAll": "重置",
-	"settings.resetAllDesc":
-		"將所有設定和自訂項目還原為預設值。",
+	"settings.resetAllDesc": "將所有設定和自訂項目還原為預設值。",
 	"settings.resetAllButton": "重置所有內容",
 	"notice.resetAllDone": "所有內容已重置為預設值。",
 	"settings.resetIntro": "花點時間，回顧一下你用 Callout Studio 打造的一切。",
@@ -286,15 +281,14 @@ export const zhTW: Record<string, string> = {
 	"settings.resetItemAutocomplete": "自動完成與元資料設定",
 	"settings.resetItemFallback": "後備樣式",
 	"settings.resetItemIconLibraries": "圖示庫順序與已隱藏的圖示庫",
-	"settings.resetAllConfirmAfter": "別擔心：重設之前，我們會儲存目前設定的備份。你可以隨時在設定的「還原較早的版本」中還原。\n如果你使用同步服務，重設也可能傳到你的其他裝置。",
+	"settings.resetAllConfirmAfter":
+		"別擔心：重設之前，我們會儲存目前設定的備份。你可以隨時在設定的「還原較早的版本」中還原。\n如果你使用同步服務，重設也可能傳到你的其他裝置。",
 	"settings.resetNothing": "沒有需要重置的內容：一切都已是預設值。",
 	"notice.customCommandMissingCallout": "該指令的 callout 類型已不存在。",
 	"notice.importedJSON": "已從 JSON 匯入 {{count}} 個 callout 類型。",
 	"notice.importedSettings": "已匯入外掛設定。",
-	"notice.importedCalloutManager":
-		"已從 Callout Manager 匯入：建立了 {{created}} 個，更新了 {{updated}} 個。",
-	"notice.importedAdmonition":
-		"已從 Admonition 匯入：新建 {{created}} 個，更新 {{updated}} 個。",
+	"notice.importedCalloutManager": "已從 Callout Manager 匯入：建立了 {{created}} 個，更新了 {{updated}} 個。",
+	"notice.importedAdmonition": "已從 Admonition 匯入：新建 {{created}} 個，更新 {{updated}} 個。",
 	"notice.noNewJSON": "未匯入新的 callout 類型（ID 可能已存在）。",
 	"notice.iconDownloadFailed":
 		"無法下載 Material 圖示「{{name}}」。該圖示可能不支援此樣式/字重，或您的網路連線已中斷。",
@@ -303,20 +297,18 @@ export const zhTW: Record<string, string> = {
 
 	"notice.externalCssRetired":
 		"個人 CSS 樣式選項已移除。除非您的佈景主題為這些 callout 設定樣式，否則它們現在會使用已儲存的 Callout Studio 設計。您的筆記和個人 CSS 片段未被變更。",
-	"notice.vaultRewritePartial":
-		"有 {{count}} 則筆記無法更新，已保持不變。詳情請查看開發者主控台。",
-	"notice.calloutDeleteIncomplete": "部分筆記無法轉換。callout 類型已保留。已完成的轉換已儲存；請解決檔案問題，然後再次執行該動作以完成。",
+	"notice.vaultRewritePartial": "有 {{count}} 則筆記無法更新，已保持不變。詳情請查看開發者主控台。",
+	"notice.calloutDeleteIncomplete":
+		"部分筆記無法轉換。callout 類型已保留。已完成的轉換已儲存；請解決檔案問題，然後再次執行該動作以完成。",
 
 	"notice.nothingToWrap": "沒有可包覆的內容。",
 	"notice.cursorNotInsideCallout": "游標不在 callout 內部。",
 	"notice.headingAlreadyCallout": "此標題已經是 callout。",
 	"notice.unwrapLeftAsIs": "無法安全地移除此 callout，因此維持原樣。",
-	"notice.autocompleteTargetMoved":
-		"未插入任何內容 — 編輯器開啟期間該行已變更。",
+	"notice.autocompleteTargetMoved": "未插入任何內容 — 編輯器開啟期間該行已變更。",
 	"notice.autocompleteAlwaysEnabled": "自動補全現在是核心功能，且一律啟用。",
 	"notice.openHotkeysFailed": "無法開啟 Obsidian 快速鍵設定。",
-	"notice.filterHotkeysFailed":
-		"已開啟 Obsidian 快速鍵，但無法套用 Callout Studio 篩選器。",
+	"notice.filterHotkeysFailed": "已開啟 Obsidian 快速鍵，但無法套用 Callout Studio 篩選器。",
 	"editor.editCallout": "編輯 callout",
 	"editor.newCallout": "新建 callout",
 	"editor.displayName": "顯示名稱",
@@ -324,14 +316,12 @@ export const zhTW: Record<string, string> = {
 	"editor.displayNameBuiltIn": "內建 callout 的顯示名稱無法更改",
 	"editor.displayNamePlaceholder": "我的 callout",
 	"editor.calloutIds": "Callout ID",
-	"editor.calloutIdsDesc":
-		"此 callout 的所有識別符。允許使用空格。\n按 Enter 或 + 按鈕新增。",
+	"editor.calloutIdsDesc": "此 callout 的所有識別符。允許使用空格。\n按 Enter 或 + 按鈕新增。",
 	"editor.calloutIdsPlaceholder": "新增 ID",
 	"editor.addId": "新增 ID",
 	"editor.maxIds": "最多 {{max}} 個 ID。刪除一個後才能再新增。",
 	"editor.idLinkedToName": "已連結到顯示名稱",
-	"editor.idCannotDelete":
-		"此 ID 已連結到顯示名稱，無法刪除——請編輯名稱以變更",
+	"editor.idCannotDelete": "此 ID 已連結到顯示名稱，無法刪除——請編輯名稱以變更",
 	"editor.icon": "圖示",
 	"editor.pickIcon": "更改圖示",
 	"editor.replaceIcon": "替換圖示",
@@ -347,8 +337,7 @@ export const zhTW: Record<string, string> = {
 	"editor.horizontalOffset": "水平偏移",
 	"editor.verticalOffset": "垂直偏移",
 	"editor.colors": "顏色",
-	"editor.colorsDesc":
-		"設定此 callout 的邊框、背景與文字顏色。",
+	"editor.colorsDesc": "設定此 callout 的邊框、背景與文字顏色。",
 	"editor.resetColors": "重設顏色為預設",
 	"editor.paletteDeleted": "已刪除的顏色",
 	"editor.paletteGroupObsidian": "Obsidian callout",
@@ -356,14 +345,14 @@ export const zhTW: Record<string, string> = {
 	"editor.paletteGroupCustom": "自訂",
 	"editor.contrastWarning": "與背景對比度過低——可能難以閱讀",
 	"editor.foldable": "可折疊",
-	"editor.foldableDesc":
-		"選擇 callout 是否可折疊以及在整個 vault 中套用的預設狀態。",
+	"editor.foldableDesc": "選擇 callout 是否可折疊以及在整個 vault 中套用的預設狀態。",
 	"editor.foldOff": "關閉",
 	"editor.foldOpen": "預設展開",
 	"editor.foldClosed": "預設折疊",
 	"editor.cancel": "取消",
 	"editor.saveChanges": "儲存變更",
-	"editor.saveFailed": "無法完成儲存。如果此編輯器仍開啟，請保持開啟，檢查儲存空間與同步狀態後再試。部分設定或筆記變更可能已經儲存。",
+	"editor.saveFailed":
+		"無法完成儲存。如果此編輯器仍開啟，請保持開啟，檢查儲存空間與同步狀態後再試。部分設定或筆記變更可能已經儲存。",
 	"editor.createCallout": "建立 callout",
 	"editor.nameRequired": "建立 callout 前需要提供顯示名稱。",
 	"editor.noChangesToSave": "沒有做任何更改。",
@@ -372,8 +361,7 @@ export const zhTW: Record<string, string> = {
 	"editor.idTooLong": "ID 不能超過 {{max}} 個字元",
 	"editor.idExists": "已存在具有此 ID 的 callout",
 	"editor.idConflict": "此 ID 與現有 callout 衝突",
-	"editor.idDashConflict":
-		"Obsidian 會將空格寫為連字符，因此此 ID 與「{{other}}」衝突",
+	"editor.idDashConflict": "Obsidian 會將空格寫為連字符，因此此 ID 與「{{other}}」衝突",
 	"editor.idOwnedBy": "「{{id}}」是{{name}}的其中一個 ID。你可以{{link}}。",
 	"editor.idMoveHere": "把它移到這裡",
 	"editor.idOwnedByMain": "「{{id}}」是{{name}}的主 ID。要在這裡使用它，請先刪除{{name}}。",
@@ -383,18 +371,15 @@ export const zhTW: Record<string, string> = {
 
 	"editor.idFromTheme":
 		"{{theme}} 已經提供了具有此 ID 的 callout，因此 Callout Studio 無法為其設定樣式。請選擇其他 ID。",
-	"editor.namesFromTheme":
-		"{{theme}} 會自行繪製 {{names}} 區塊 callout。您的其他 ID 保持此設計。",
+	"editor.namesFromTheme": "{{theme}} 會自行繪製 {{names}} 區塊 callout。您的其他 ID 保持此設計。",
 	"editor.namesFromThemeAndObsidian":
 		"{{theme}} 會自行繪製 {{names}} 區塊 callout，{{stock}} 則由 Obsidian 繪製。您的其他 ID 保持此設計。",
 	"editor.idThemePattern":
 		"提醒：您的佈景主題會為每個符合 {{pattern}} 的 callout 設定樣式，因此它可能會覆蓋此 callout 的外觀。",
 
 	"editor.untitledCallout": "未命名 Callout",
-	"editor.loremIpsum":
-		"微風吹過樹梢。溫暖的陽光灑在寧靜的小徑上，讓景色更添生氣。",
-	"editor.loremIpsumShort":
-		"微風吹過樹梢。",
+	"editor.loremIpsum": "微風吹過樹梢。溫暖的陽光灑在寧靜的小徑上，讓景色更添生氣。",
+	"editor.loremIpsumShort": "微風吹過樹梢。",
 	"editor.sampleInlineText": "這是一個嵌入在段落中的行內 [!{id}]{{title}} 徽標。",
 	"editor.previewReadOnly": "即時預覽無法編輯",
 	"noteChanges.title": "更新你的筆記？",
@@ -413,9 +398,7 @@ export const zhTW: Record<string, string> = {
 	"themePreview.summary":
 		"由 {{theme}} 提供（唯讀）。無法在此修改顏色、圖示與 ID，也無法使用標題／行內格式。若要自訂，請建立新的 callout。",
 	"themePreview.previewTitle": "目前的顯示方式",
-	"themePreview.blockSample":
-		"> [!{{id}}] {{name}}\n" +
-		"> 這是該 callout 內容的顯示效果。\n",
+	"themePreview.blockSample": "> [!{{id}}] {{name}}\n" + "> 這是該 callout 內容的顯示效果。\n",
 
 	"editor.themePreviewClose": "知道了",
 	// Palette editor modal
@@ -427,7 +410,8 @@ export const zhTW: Record<string, string> = {
 	"palette.nameExists": "已存在同名的調色盤",
 	"palette.saveBlockedName": "已存在同名的調色盤。請換一個名稱再儲存。",
 	"palette.metadataNameExists": '另一個調色盤在 callout 中繼資料中已寫作 "{{key}}"。請換一個名稱。',
-	"palette.metadataNameShared": "在 callout 中繼資料中：{{key}}。另一個已儲存的調色盤也有這個詞，因此只有其中一個會回應它。",
+	"palette.metadataNameShared":
+		"在 callout 中繼資料中：{{key}}。另一個已儲存的調色盤也有這個詞，因此只有其中一個會回應它。",
 	"palette.renameNotesChange":
 		"你將調色盤從「{{old}}」重新命名為「{{new}}」，因此它在 callout 中繼資料中的詞會從「{{oldWord}}」變為「{{newWord}}」。",
 	"palette.renameNotesLeaveDesc": "它們保留「{{word}}」，並恢復為自己的顏色。",
@@ -507,8 +491,7 @@ export const zhTW: Record<string, string> = {
 	"iconPicker.materialWeight500": "中等 (Medium)",
 	"iconPicker.materialWeight600": "半粗 (Semi Bold)",
 	"iconPicker.materialWeight700": "粗體 (Bold)",
-	"iconPicker.materialFontFailed":
-		"無法載入 Material 圖示預覽。現在會改顯示圖示名稱——搜尋與選取仍可正常運作。",
+	"iconPicker.materialFontFailed": "無法載入 Material 圖示預覽。現在會改顯示圖示名稱——搜尋與選取仍可正常運作。",
 	"iconPicker.materialFontRetry": "再試一次",
 	"iconPicker.searchMaterial": "搜尋 Material 圖示",
 	"iconPicker.searchEmoji": "搜尋表情符號",
@@ -533,16 +516,12 @@ export const zhTW: Record<string, string> = {
 	"iconPicker.custom": "自訂圖示",
 	"iconPicker.searchCustom": "搜尋自訂圖示",
 	"iconPicker.customTooLarge": "{{name}} 太大。自訂圖示的大小不得超過 5 MB。",
-	"iconPicker.customUnsupported":
-		"{{name}} 不是支援的自訂圖示檔案。請使用 SVG、PNG、JPEG 或 WebP。",
-	"iconPicker.customInvalidSvg":
-		"{{name}} 無法作為安全的 SVG 讀取，因此未新增。",
+	"iconPicker.customUnsupported": "{{name}} 不是支援的自訂圖示檔案。請使用 SVG、PNG、JPEG 或 WebP。",
+	"iconPicker.customInvalidSvg": "{{name}} 無法作為安全的 SVG 讀取，因此未新增。",
 	"iconPicker.customDecodeFailed": "無法將 {{name}} 讀取為自訂圖示。",
-	"iconPicker.customDuplicate":
-		"{{name}} 已在你的自訂圖示中。請重新命名檔案，或刪除現有圖示。",
+	"iconPicker.customDuplicate": "{{name}} 已在你的自訂圖示中。請重新命名檔案，或刪除現有圖示。",
 	"iconPicker.uploadCustom": "上傳圖片檔案",
-	"iconPicker.customEmpty":
-		"還沒有自訂圖示。請從電腦新增 SVG、PNG、JPEG 或 WebP 檔案，或將檔案拖到這裡。",
+	"iconPicker.customEmpty": "還沒有自訂圖示。請從電腦新增 SVG、PNG、JPEG 或 WebP 檔案，或將檔案拖到這裡。",
 	"iconPicker.customEmptyTitle": "尚無自訂圖示",
 	"iconPicker.customEmptyHint": "點擊上方的圖片按鈕，或將檔案拖曳到這裡",
 	"iconPicker.customEmptyFormats": "支援的格式：SVG、PNG、JPEG 和 WebP",
@@ -709,7 +688,8 @@ export const zhTW: Record<string, string> = {
 		"請先完成 callout 編輯器中的操作。其中未儲存的圖示可能來自你在此處刪除的圖示庫。",
 	"iconLibraries.manage": "管理圖示庫",
 	"iconLibraries.title": "圖示庫",
-	"iconLibraries.desc": "拖曳即可變更「選擇圖示」中圖示庫的順序。\n部分圖示庫可以下載與刪除。\nLucide、Emoji 和 Material 隨外掛一併提供，因此只能隱藏。",
+	"iconLibraries.desc":
+		"拖曳即可變更「選擇圖示」中圖示庫的順序。\n部分圖示庫可以下載與刪除。\nLucide、Emoji 和 Material 隨外掛一併提供，因此只能隱藏。",
 	"iconLibraries.librariesHidden": "已隱藏的圖示庫",
 	"iconLibraries.reset": "重置為外掛內建的圖示庫",
 	"iconLibraries.download": "下載 {{name}}",
@@ -727,9 +707,11 @@ export const zhTW: Record<string, string> = {
 	"iconLibraries.inUseOne": "有 1 個 callout 使用了 {{name}} 的圖示：",
 	"iconLibraries.inUse": "有 {{count}} 個 callout 使用了 {{name}} 的圖示：",
 	"iconLibraries.inUseMore": "以及另外 {{count}} 個",
-	"iconLibraries.inUseKeeps": "它們會保留自己的圖示——每個圖示的副本都已隨你的設定儲存。之後若想從 {{name}} 選擇新圖示，請重新下載。",
+	"iconLibraries.inUseKeeps":
+		"它們會保留自己的圖示——每個圖示的副本都已隨你的設定儲存。之後若想從 {{name}} 選擇新圖示，請重新下載。",
 	"iconLibraries.resetSubtitle": "恢復為外掛原始圖示庫",
-	"iconLibraries.resetConfirm": "這會把圖示庫還原為外掛剛安裝時的樣子：預設順序、沒有隱藏項目，也沒有任何已下載的圖示庫。以下圖示庫將被刪除：",
+	"iconLibraries.resetConfirm":
+		"這會把圖示庫還原為外掛剛安裝時的樣子：預設順序、沒有隱藏項目，也沒有任何已下載的圖示庫。以下圖示庫將被刪除：",
 	"iconLibraries.resetKeeps": "已經在使用圖示的 callout 會保留它們。之後若想從這些圖示庫選擇新圖示，請重新下載。",
 	"iconLibraries.resetButton": "重置",
 
@@ -738,8 +720,7 @@ export const zhTW: Record<string, string> = {
 	"license.openSourceBeforeLink": "Callout Studio 是開源的，而且會一直如此。授權條款在",
 	"license.openSourceLink": "這裡",
 	"credits.title": "圖示授權與致謝",
-	"credits.introBeforeNotices":
-		"Callout Studio 使用開源圖示庫；請在下方查看每個庫的授權、署名與修改內容，或閱讀",
+	"credits.introBeforeNotices": "Callout Studio 使用開源圖示庫；請在下方查看每個庫的授權、署名與修改內容，或閱讀",
 	"credits.fullNoticesInline": "完整的第三方聲明",
 	"contextMenu.editCallout": "編輯 callout 設定",
 	"contextMenu.createCallout": "建立新的 callout",
@@ -780,14 +761,12 @@ export const zhTW: Record<string, string> = {
 	"settings.metadataWordTooLong": "每個詞最多 {{max}} 個字元",
 	"settings.maxMetadataWords": "最多 {{max}} 個詞。刪除一個才能新增另一個。",
 	"settings.buildFailed": "Callout Studio 無法繪製其設定頁面；請重新啟動 Obsidian，如果再次發生，請回報。",
-	"settings.globalSettingsRegularDesc":
-		"邊框、圓角、字型縮放和對齊方式。",
-	"settings.globalSettingsHeadingDesc":
-		"邊框、形狀和垂直間距。",
-	"settings.globalSettingsInlineDesc":
-		"邊框和形狀。",
+	"settings.globalSettingsRegularDesc": "邊框、圓角、字型縮放和對齊方式。",
+	"settings.globalSettingsHeadingDesc": "邊框、形狀和垂直間距。",
+	"settings.globalSettingsInlineDesc": "邊框和形狀。",
 	"settings.themeCalloutStyles": "使用您佈景主題的 callout 樣式",
-	"settings.themeCalloutStylesDesc": "開啟時，主題設定樣式的 callout 保持主題的外觀，並且僅顯示為區塊 callout；關閉時，由 Callout Studio 繪製所有 callout。",
+	"settings.themeCalloutStylesDesc":
+		"開啟時，主題設定樣式的 callout 保持主題的外觀，並且僅顯示為區塊 callout；關閉時，由 Callout Studio 繪製所有 callout。",
 	"settings.calloutTypeRegular": "區塊 callout 樣式",
 	"settings.calloutTypeHeading": "標題 callout 樣式",
 	"settings.calloutTypeInline": "行內 callout 樣式",
@@ -818,18 +797,14 @@ export const zhTW: Record<string, string> = {
 	"confirm.titleDeleteLibrary": "刪除圖示庫",
 	"confirm.titleResetLibraries": "重置圖示庫",
 	"vault.filesUpdated": "已更新 vault 檔案中的 {{count}} 個 callout 參照。",
-	"vault.idsUpdated":
-		"已更新 vault 檔案中的 {{count}} 個 callout ID：{{oldIds}} → {{newId}}",
-	"vault.titlesUpdated":
-		"已更新 vault 檔案中的 {{count}} 個 callout 標題：{{oldTitle}} → {{newTitle}}",
+	"vault.idsUpdated": "已更新 vault 檔案中的 {{count}} 個 callout ID：{{oldIds}} → {{newId}}",
+	"vault.titlesUpdated": "已更新 vault 檔案中的 {{count}} 個 callout 標題：{{oldTitle}} → {{newTitle}}",
 	"vault.foldUpdated": "已更新 vault 檔案中 {{count}} 個 callout 的摺疊標記。",
 	"vault.confirmReplace": "替換",
-	"vault.replacePromptInUse":
-		"「{{name}}」在 {{files}} 個檔案中被使用了 {{count}} 次。選擇替換它的 callout：",
+	"vault.replacePromptInUse": "「{{name}}」在 {{files}} 個檔案中被使用了 {{count}} 次。選擇替換它的 callout：",
 	"vault.replacePromptUnused": "選擇替換「{{name}}」的 callout：",
 	"vault.noReplacementAvailable": "沒有其他可用的 callout 來替換此項。",
-	"vault.convertedToPlainText":
-		"已將 {{files}} 個檔案中的 {{blocks}} 個 callout 區塊轉換為純文字。",
+	"vault.convertedToPlainText": "已將 {{files}} 個檔案中的 {{blocks}} 個 callout 區塊轉換為純文字。",
 	"vault.resetNotesFailed": "有些筆記無法更新，因此 callout 沒有被重置。請再次選擇「重置為預設值」以完成。",
 	"quickInsert.title": "快速插入區塊 callout",
 	"quickInsert.desc": "選擇要插入游標位置的 callout。僅限區塊 callout。",
@@ -847,7 +822,8 @@ export const zhTW: Record<string, string> = {
 	"quickInsert.targetMoved": "開啟快速插入時所在的筆記已變更或關閉。請在你要編輯的筆記中重新開啟快速插入。",
 	"quickInsert.targetMovedHint": "原始筆記已無法用於這次插入。",
 	"quickInsert.noUserCallouts": "您尚未建立自訂 callout。請從指令面板執行「Callout Studio: 建立新的 callout 類型」。",
-	"quickInsert.noAvailableUserCallouts": "您的自訂 callout 目前列在佈景主題篩選器下，因為作用中的佈景主題正在控制它們。",
+	"quickInsert.noAvailableUserCallouts":
+		"您的自訂 callout 目前列在佈景主題篩選器下，因為作用中的佈景主題正在控制它們。",
 	"quickInsert.noEditorHint": "沒有筆記以編輯模式開啟，因此無法插入任何內容。",
 	"quickInsert.noEditor": "以編輯模式開啟一篇筆記以插入 callout。",
 
@@ -891,85 +867,63 @@ export const zhTW: Record<string, string> = {
 	"usage.closeSettings": "關閉「設定」，即可在側邊欄查看 Callout 結果。",
 	"import.title": "匯入問題",
 	"import.reportLeadIn": "繼續之前，請檢查以下匯入問題：",
-	"import.reportLeadInFatal":
-		"無法匯入這些資料：",
+	"import.reportLeadInFatal": "無法匯入這些資料：",
 	"import.entryHeading": "條目 {{index}} — {{label}}",
-	"import.summary":
-		"{{total}} 個條目中 {{valid}} 個有效 · 發現 {{issues}} 個問題。",
+	"import.summary": "{{total}} 個條目中 {{valid}} 個有效 · 發現 {{issues}} 個問題。",
 	"import.btnCancel": "取消",
 	"import.btnImportValid": "僅匯入有效項（{{count}} 個）",
 	"import.nothingValid": "沒有任何有效的項目，因此無需匯入。請取消，修正此處列出的問題，然後重新匯入。",
-	"import.err.notRecognized":
-		"無法辨識的檔案：應為 callout 定義陣列或 Callout Studio 匯出檔案。",
+	"import.err.notRecognized": "無法辨識的檔案：應為 callout 定義陣列或 Callout Studio 匯出檔案。",
 	"import.warn.settingsIgnored": "設定區塊不是有效的物件，已被忽略。",
 	"import.warn.invalidGradient": "背景漸層無效，已被忽略。",
 	"import.err.parseFailed": "檔案不是有效的 JSON，無法解析。",
 	"import.err.tooLarge": "此匯入超過了 16 MiB 的大小限制。請將其拆分成較小的檔案，然後再試一次。",
-	"import.err.tooComplex": "此匯入過於複雜：每個清單或物件最多 1,000 個項目，總計最多 50,000 個值，巢狀層級最多 32 層。",
+	"import.err.tooComplex":
+		"此匯入過於複雜：每個清單或物件最多 1,000 個項目，總計最多 50,000 個值，巢狀層級最多 32 層。",
 	"import.err.imageBudget": "圖片集合總量超出大小或複雜度限制。匯入前請移除或簡化較大的圖片。",
 	"import.err.processingFailed": "無法完成匯入。請檢查資料後再試一次。",
 	"import.reportTruncated": "顯示 {{total}} 個問題中的前 {{shown}} 個。此報告中的長值已縮短。",
 	"import.err.entryNotObject": "條目必須是物件。",
 	"import.err.requiredMissing": "必填欄位「{{field}}」缺失或類型錯誤。",
 	"import.err.idEmpty": "ID 不能為空。",
-	"import.err.idTooLong":
-		"ID「{{value}}」長度為 {{length}} 個字元；最大值為 {{max}}。",
-	"import.err.idBadChar":
-		"ID「{{value}}」包含無效字元（不允許使用「|」、「[」、「]」、定位字元和換行字元）。",
+	"import.err.idTooLong": "ID「{{value}}」長度為 {{length}} 個字元；最大值為 {{max}}。",
+	"import.err.idBadChar": "ID「{{value}}」包含無效字元（不允許使用「|」、「[」、「]」、定位字元和換行字元）。",
 	"import.err.idMetadata":
 		"ID「{{value}}」包含「|」。在 Obsidian 中，第一個「|」後面的所有內容都是 callout 的中繼資料，而非類型的一部分，因此此條目描述的是「{{id}}」callout。已略過，您現有的「{{id}}」保持不變。",
-	"import.err.idReserved":
-		"ID「{{value}}」已被 Callout Studio 保留用於其自身的預覽，無法匯入。",
+	"import.err.idReserved": "ID「{{value}}」已被 Callout Studio 保留用於其自身的預覽，無法匯入。",
 	"import.err.displayNameEmpty": "顯示名稱不能為空。",
-	"import.err.displayNameTooLong":
-		"顯示名稱長度為 {{length}} 個字元；最大值為 {{max}}。",
+	"import.err.displayNameTooLong": "顯示名稱長度為 {{length}} 個字元；最大值為 {{max}}。",
 	"import.err.boolField": "「{{field}}」必須是布林值（true 或 false）。",
 	"import.err.iconNotObject": "圖示必須是物件。",
-	"import.err.iconTypeInvalid":
-		"圖示類型「{{value}}」不是以下之一：{{types}}。",
-	"import.warn.iconFieldIgnored":
-		'"{{field}}" 僅適用於 Material 圖示，對於圖示類型 {{type}} 將被忽略。',
+	"import.err.iconTypeInvalid": "圖示類型「{{value}}」不是以下之一：{{types}}。",
+	"import.warn.iconFieldIgnored": '"{{field}}" 僅適用於 Material 圖示，對於圖示類型 {{type}} 將被忽略。',
 	"import.err.iconValueEmpty": "圖示值必須是非空字串。",
 	"import.err.iconValueTooLong": "圖示值超過 200 個字元的上限（{{length}} 個字元）。",
-	"import.err.materialStyle":
-		"Material 圖示樣式「{{value}}」不是以下之一：outlined、filled、rounded、sharp。",
-	"import.err.materialWeight":
-		"Material 圖示粗細「{{value}}」必須是 100 到 700 之間的整數，步長為 100。",
-	"import.warn.iconRecolorIgnored":
-		'"recolor" 僅適用於您自己的圖片，對於圖示類型 {{type}} 將被忽略。',
-	"import.err.iconRecolorInvalid":
-		'"recolor" 必須為 true 或 false（收到：「{{value}}」)。',
-	"import.err.colorInvalid":
-		"「{{field}}」必須是如「#448aff」的十六進位顏色（收到「{{value}}」）。",
-	"import.err.numberRange":
-		"「{{field}}」必須是 {{min}} 到 {{max}} 之間的數字（收到「{{value}}」）。",
-	"import.err.iconSizeRange":
-		"「{{field}}」必須是 {{min}} 到 {{max}} 之間的數字（收到「{{value}}」）。",
+	"import.err.materialStyle": "Material 圖示樣式「{{value}}」不是以下之一：outlined、filled、rounded、sharp。",
+	"import.err.materialWeight": "Material 圖示粗細「{{value}}」必須是 100 到 700 之間的整數，步長為 100。",
+	"import.warn.iconRecolorIgnored": '"recolor" 僅適用於您自己的圖片，對於圖示類型 {{type}} 將被忽略。',
+	"import.err.iconRecolorInvalid": '"recolor" 必須為 true 或 false（收到：「{{value}}」)。',
+	"import.err.colorInvalid": "「{{field}}」必須是如「#448aff」的十六進位顏色（收到「{{value}}」）。",
+	"import.err.numberRange": "「{{field}}」必須是 {{min}} 到 {{max}} 之間的數字（收到「{{value}}」）。",
+	"import.err.iconSizeRange": "「{{field}}」必須是 {{min}} 到 {{max}} 之間的數字（收到「{{value}}」）。",
 	"import.err.iconAdjustShape":
-		"\"iconAdjust\" 必須是物件，將 callout 類型（\"regular\"、\"heading\"、\"inline\"）對應至圖示大小與位移量。",
+		'"iconAdjust" 必須是物件，將 callout 類型（"regular"、"heading"、"inline"）對應至圖示大小與位移量。',
 	"import.err.aliasesNotArray": "「aliases」必須是字串陣列。",
 	"import.err.aliasNotString": "別名必須是字串。",
 	"import.err.aliasDup": "「{{value}}」別名在此條目中重複。",
-	"import.err.tooManyIds":
-		"ID 過多（{{count}} 個）；每個 callout 最多可以有 {{max}} 個 ID（主 ID + 別名）。",
+	"import.err.tooManyIds": "ID 過多（{{count}} 個）；每個 callout 最多可以有 {{max}} 個 ID（主 ID + 別名）。",
 	"import.err.metadataShape": "「metadata」必須是一個值全為字串的物件。",
 	"import.warn.unknownFields": "忽略了未知欄位：{{fields}}。",
-	"import.err.duplicateInFile":
-		"ID/別名「{{value}}」已被此檔案中的條目 #{{first}} 使用。",
-	"import.err.aliasConflict":
-		"別名「{{value}}」已被 vault 中的另一個 callout（「{{other}}」）使用。",
+	"import.err.duplicateInFile": "ID/別名「{{value}}」已被此檔案中的條目 #{{first}} 使用。",
+	"import.err.aliasConflict": "別名「{{value}}」已被 vault 中的另一個 callout（「{{other}}」）使用。",
 	"import.warn.defaultFoldedAutofix":
 		"「defaultFolded」為 true 而「foldable」為 false；defaultFolded 已重置為 false。",
 	"import.warn.imageMissing":
 		"此 Callout 使用的圖片不在檔案中也不在此 vault 中，因此將顯示佔位圖示，直到您提供新圖片。",
-	"import.err.paletteIdInvalid":
-		'"paletteId" 必須是非空文字 ID（收到了 "{{value}}")。',
-	"import.warn.iconNameUnknown":
-		'"{{value}}" 圖示在 {{type}} 中不存在，因此使用了預設圖示。',
-	"import.warn.cmIconUnknownNew":
-		"「{{value}}」圖示無法在此儲存庫使用，因此改用預設圖示。",
-	"import.warn.cmIconUnknownExisting":
-		"「{{value}}」圖示無法在此儲存庫使用，因此「{{id}}」保留原有圖示。",
+	"import.err.paletteIdInvalid": '"paletteId" 必須是非空文字 ID（收到了 "{{value}}")。',
+	"import.warn.iconNameUnknown": '"{{value}}" 圖示在 {{type}} 中不存在，因此使用了預設圖示。',
+	"import.warn.cmIconUnknownNew": "「{{value}}」圖示無法在此儲存庫使用，因此改用預設圖示。",
+	"import.warn.cmIconUnknownExisting": "「{{value}}」圖示無法在此儲存庫使用，因此「{{id}}」保留原有圖示。",
 	"import.chooseSource": "從以下位置匯入",
 	"import.sourceStudio": "Callout Studio",
 	"import.sourceStudioDesc": "從 Callout Studio 匯出的 .json 檔案。",
@@ -995,8 +949,7 @@ export const zhTW: Record<string, string> = {
 	"import.cmVaultChecking": "正在尋找 Callout Manager 外掛…",
 	"import.cmVaultFound": "找到 {{count}} 個自訂 callout。",
 	"import.cmFromPaste": "複製的樣式",
-	"import.cmFromPasteDesc":
-		"Callout Manager 的 Copy 按鈕所複製的內容，或一個 data.json 檔案。",
+	"import.cmFromPasteDesc": "Callout Manager 的 Copy 按鈕所複製的內容，或一個 data.json 檔案。",
 	"import.cmInstructions":
 		"每個自訂 callout 都會連同圖示與顏色一起匯入。依主題設定的樣式和自訂 CSS 在此沒有對應功能，因此不會匯入。",
 	"import.cmPlaceholder": "在此貼上複製的樣式或 data.json 檔案…",
@@ -1006,15 +959,13 @@ export const zhTW: Record<string, string> = {
 		"無法辨識的檔案：應為 Callout Manager Copy 按鈕產生的樣式，或 Callout Manager 的 data.json。",
 	"import.err.cmNoEntries": "找不到可匯入的自訂 callout。",
 	"import.err.cmNoBlocksFound": "在檔案或貼上的文字中未找到 Callout Manager 樣式。",
-	"import.err.cmNoColorForNew":
-		'未找到適用於新 callout "{{value}}" 的可用顏色；已跳過。',
-	"import.warn.cmNoColorDefault":
-		"Callout Manager 未設定顏色，因此使用預設灰色。",
-	"import.err.cmIdConflict":
-		'ID "{{value}}" 已被另一個 callout ("{{other}}") 用作別名，已跳過。',
+	"import.err.cmNoColorForNew": '未找到適用於新 callout "{{value}}" 的可用顏色；已跳過。',
+	"import.warn.cmNoColorDefault": "Callout Manager 未設定顏色，因此使用預設灰色。",
+	"import.err.cmIdConflict": 'ID "{{value}}" 已被另一個 callout ("{{other}}") 用作別名，已跳過。',
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "無法保留依賴佈景主題的樣式。優先採用無條件值；任何條件式備用值都會套用至所有佈景主題。",
+	"import.warn.cmThemeConditionPartial":
+		"無法保留依賴佈景主題的樣式。優先採用無條件值；任何條件式備用值都會套用至所有佈景主題。",
 	"import.warn.cmCustomStylesSkipped": "不會匯入 Callout Manager 的自訂 CSS。只能移轉受支援的圖示與色彩設定。",
 	"import.warn.cmSchemeIcon": "Callout Studio 在兩種色彩配置中使用相同圖示；匯入的圖示會用於兩種配置。",
 	"import.err.cmDuplicateId": "ID {{value}} 與此匯入中的 {{other}} 重複，因此已略過。",
@@ -1029,22 +980,18 @@ export const zhTW: Record<string, string> = {
 	"import.admFromFileDesc": "admonitions.json 檔案，或共享的圖示包。",
 	"import.admBtnCancel": "取消",
 	"import.admBtnImport": "匯入",
-	"import.err.admNotRecognized":
-		"無法辨識的檔案：應為 admonition 清單或 Admonition 的 data.json。",
+	"import.err.admNotRecognized": "無法辨識的檔案：應為 admonition 清單或 Admonition 的 data.json。",
 	"import.err.admNoEntries": "找不到可匯入的 admonition。",
 	"import.err.admTypeMissing": '此 admonition 沒有 "type"，已略過。',
-	"import.warn.admIconUnknown":
-		'在所有圖示庫中都找不到名為 "{{value}}" 的圖示，已改用預設圖示。',
+	"import.warn.admIconUnknown": '在所有圖示庫中都找不到名為 "{{value}}" 的圖示，已改用預設圖示。',
 	"import.warn.admIconUnknownExisting":
 		'在所有圖示庫中都找不到名為 "{{value}}" 的圖示，因此 "{{id}}" 保留了原有圖示。',
 	"import.warn.admUnsupportedOptions": "不會匯入以下 Admonition 選項：{{fields}}。",
 	"import.warn.admImageSkipped": "無法讀取上傳的圖片，因此未匯入。",
 	"import.warn.admIconWithCss":
-		"此 admonition 在 Admonition 中由 CSS " +
-		"片段設定樣式。該樣式不屬於匯入內容，因此僅匯入了名稱、圖示與顏色。",
+		"此 admonition 在 Admonition 中由 CSS " + "片段設定樣式。該樣式不屬於匯入內容，因此僅匯入了名稱、圖示與顏色。",
 	"import.warn.admNoColor": "未設定顏色，已使用預設的藍色。",
-	"import.warn.admTitleTruncated":
-		"標題長度為 {{length}} 個字元；已縮短至 {{max}}。",
+	"import.warn.admTitleTruncated": "標題長度為 {{length}} 個字元；已縮短至 {{max}}。",
 
 	"footer.openIssue": "開啟 issue",
 	"footer.sourceCode": "原始碼",
@@ -1056,32 +1003,26 @@ export const zhTW: Record<string, string> = {
 		"{{count}} 個 callout 正在使用它。它們會保留原有色彩，你之後可以在任一編輯器的顏色列重新連結。",
 	"notice.palettesMerged":
 		"已合併 {{count}} 個色彩完全相同的已儲存色彩：{{names}}。使用它們的 callout 會保留原有色彩，並已連結到保留的色彩。",
-	"editor.colorsDescDeleted":
-		"此 callout 的已儲存色彩已被刪除。{{link}}",
+	"editor.colorsDescDeleted": "此 callout 的已儲存色彩已被刪除。{{link}}",
 	"editor.colorsDescDeletedLink": "還原",
-	"palette.colorExists":
-		"這些色彩與「{{name}}」完全相同。兩個已儲存色彩不能相同——請修改一個色彩以區分它們。",
-	"palette.colorExistsUse":
-		"這些色彩與「{{name}}」完全相同。兩個已儲存色彩不能相同——請修改一個色彩，或{{link}}。",
+	"palette.colorExists": "這些色彩與「{{name}}」完全相同。兩個已儲存色彩不能相同——請修改一個色彩以區分它們。",
+	"palette.colorExistsUse": "這些色彩與「{{name}}」完全相同。兩個已儲存色彩不能相同——請修改一個色彩，或{{link}}。",
 	"palette.colorExistsUseLink": "使用現有色彩",
 	"locale.downloading": "正在下載翻譯…",
 	"locale.downloaded": "翻譯已下載。",
 	"locale.notDownloaded": "{{name}} 尚未下載",
 	"locale.retry": "重試",
-	"locale.diskWriteFailed":
-		"Callout Studio 無法將翻譯儲存到磁碟，因此下次需要重新下載。",
+	"locale.diskWriteFailed": "Callout Studio 無法將翻譯儲存到磁碟，因此下次需要重新下載。",
 	"notice.exportedCssCreated": "CSS 片段已儲存到 {{path}}",
 	"notice.exportedCssUpdated": "CSS 片段已在 {{path}} 更新",
 	"notice.exportedCssUnchanged": "CSS 片段已是最新版本。",
 	"notice.exportCssEmpty": "沒有可匯出的自訂 callout。",
-	"notice.exportCssFailed":
-		"無法儲存 CSS 片段。請查看開發者主控台以瞭解詳情。",
+	"notice.exportCssFailed": "無法儲存 CSS 片段。請查看開發者主控台以瞭解詳情。",
 	"notice.exportCssEnabled":
 		"此片段已在此儲存庫中啟用。Callout Studio 已經為這些 callout 設定樣式，而片段保留匯出時的樣式。",
 	"confirm.titleOverwriteSnippet": "覆寫 CSS 片段",
 	"confirm.subtitleOverwriteSnippet": "自 Callout Studio 寫入後已被編輯",
-	"confirm.overwriteSnippet":
-		"snippets 資料夾中的 CSS 片段自 Callout Studio 寫入後已變更。再次匯出會取代整個檔案。",
+	"confirm.overwriteSnippet": "snippets 資料夾中的 CSS 片段自 Callout Studio 寫入後已變更。再次匯出會取代整個檔案。",
 	"confirm.overwriteSnippetOk": "覆寫",
 	"settings.recommended": "建議",
 	"export.chooseFormat": "匯出為",
@@ -1089,14 +1030,14 @@ export const zhTW: Record<string, string> = {
 	"export.formatJsonDesc":
 		".json 檔案是完整還原 Callout Studio 資料，或將其移轉到已安裝此外掛程式的新儲存庫的唯一受支援方式。",
 	"export.formatCss": "獨立 CSS 快照",
-	"export.formatCssDesc":
-		"適用於未執行 Callout Studio 的網站或儲存庫。僅包含區塊 callout，變更後必須重新匯出。",
+	"export.formatCssDesc": "適用於未執行 Callout Studio 的網站或儲存庫。僅包含區塊 callout，變更後必須重新匯出。",
 	"export.formatCssAction": "匯出",
 	"quickInsert.readingViewHint": "此筆記以閱讀模式開啟，因此無法插入任何內容。",
 	"quickInsert.readingView": "切換到原始碼模式或即時預覽以插入 callout。",
 	"quickInsert.noCursorHint": "此筆記中沒有游標，因此沒有可插入的位置。",
 	"quickInsert.noCursor": "在筆記中將游標放在要插入 callout 的位置，然後重試。",
-	"notice.legacyDiscoveryArchiveFailed": "升級復原副本未能完成。先前的本機探索快取與啟動 CSS 已原樣保留。請檢查儲存空間的寫入權限與可用空間，然後重新啟動 Obsidian 以重試。",
+	"notice.legacyDiscoveryArchiveFailed":
+		"升級復原副本未能完成。先前的本機探索快取與啟動 CSS 已原樣保留。請檢查儲存空間的寫入權限與可用空間，然後重新啟動 Obsidian 以重試。",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "在你重新建立缺少的 callout 或另選一個之前已暫停。",
 	"confirm.titleRestoreSettings": "復原這些設定",
@@ -1104,39 +1045,55 @@ export const zhTW: Record<string, string> = {
 	"confirm.saveDisplayedSettings":
 		"這會把你現在看到的設定儲存為你的設定檔，並重新開啟儲存。這台裝置保留的備用副本會先被備份。\n如果另一台裝置上可能有你想保留的較新變更，請先讓它完成同步再繼續。你的同步應用程式可能會把這個檔案傳送到你的其他裝置。\n儲存之前，Callout Studio 會再尋找一次設定檔。如果它已經回來，Callout Studio 會改為保留它。",
 	"notice.settingsBackupFailed": "設定復原無法繼續，因為無法儲存安全備份。請檢查可用儲存空間與寫入權限，然後重試。",
-	"notice.settingsNewerVersion": "Callout Studio 的設定已被較新版本的外掛儲存，因此在你更新之前，這部裝置上不會寫入任何內容。你的設定是安全的——請在此處更新 Callout Studio 並重新載入 Obsidian。",
-	"saveStatus.changed": "你編輯時，設定檔發生了變化。你的草稿仍然保留。請選擇「重試」載入傳入的設定，然後檢查草稿並再次儲存。",
-	"saveStatus.missing": "儲存已暫停，因為設定檔遺失。這可能發生在重新安裝之後，或同步仍在進行時。請完成同步後重試。若要刻意取代遺失的檔案，請在 Callout Studio 設定中使用建立新的設定檔。",
+	"notice.settingsNewerVersion":
+		"Callout Studio 的設定已被較新版本的外掛儲存，因此在你更新之前，這部裝置上不會寫入任何內容。你的設定是安全的——請在此處更新 Callout Studio 並重新載入 Obsidian。",
+	"saveStatus.changed":
+		"你編輯時，設定檔發生了變化。你的草稿仍然保留。請選擇「重試」載入傳入的設定，然後檢查草稿並再次儲存。",
+	"saveStatus.missing":
+		"儲存已暫停，因為設定檔遺失。這可能發生在重新安裝之後，或同步仍在進行時。請完成同步後重試。若要刻意取代遺失的檔案，請在 Callout Studio 設定中使用建立新的設定檔。",
 	"saveStatus.restoreSettings": "復原這些設定",
 	"saveStatus.createSettingsFile": "建立設定檔",
 	"saveStatus.checkAgain": "再次檢查",
-	"saveStatus.recoverInSettings": "若要在此裝置上復原遺失的檔案，請開啟 Callout Studio 設定。關閉此編輯器前，請複製你想保留的所有未儲存編輯；它們尚未儲存。",
+	"saveStatus.recoverInSettings":
+		"若要在此裝置上復原遺失的檔案，請開啟 Callout Studio 設定。關閉此編輯器前，請複製你想保留的所有未儲存編輯；它們尚未儲存。",
 	"saveStatus.openSettings": "開啟 Callout Studio 設定",
 	"notice.openSettingsFailed": "無法開啟 Callout Studio 設定。請開啟設定 → Callout Studio 選擇如何處理。",
-	"saveStatus.notesFailed": "callout 定義已儲存，但部分筆記更新未能完成。請讓此編輯器保持開啟，並選擇儲存以重試未完成的更新。",
-	"saveStatus.recoveryRead": "儲存已暫停，因為無法讀取本機復原副本。你的設定檔可能仍然完好。請檢查可用儲存空間，然後重試復原。現有的復原資料不會被覆寫。",
-	"saveStatus.recoveryWrite": "本機復原副本未能儲存。請檢查可用儲存空間，然後重試。在儲存成功之前，請讓你的草稿保持開啟。",
+	"saveStatus.notesFailed":
+		"callout 定義已儲存，但部分筆記更新未能完成。請讓此編輯器保持開啟，並選擇儲存以重試未完成的更新。",
+	"saveStatus.recoveryRead":
+		"儲存已暫停，因為無法讀取本機復原副本。你的設定檔可能仍然完好。請檢查可用儲存空間，然後重試復原。現有的復原資料不會被覆寫。",
+	"saveStatus.recoveryWrite":
+		"本機復原副本未能儲存。請檢查可用儲存空間，然後重試。在儲存成功之前，請讓你的草稿保持開啟。",
 	"saveStatus.retryFailed": "儲存仍處於阻擋狀態。請在 Callout Studio 設定中檢查儲存狀態以了解原因，然後重試。",
 	"saveStatus.reviewDraft": "傳入的設定和復原檢查已完成。你的草稿未發生變更。請檢查後再次儲存。",
 	"saveStatus.settingsArrived": "現有設定已抵達並已載入。未建立替代檔案。",
-	"saveStatus.syncConflict": "傳入的設定與未完成筆記更新所需的某個 callout 衝突。你的草稿和待處理的更新已被保留。請在重試之前解決設定衝突。",
+	"saveStatus.syncConflict":
+		"傳入的設定與未完成筆記更新所需的某個 callout 衝突。你的草稿和待處理的更新已被保留。請在重試之前解決設定衝突。",
 	"saveStatus.titlePaused": "儲存已暫停",
 	"saveStatus.titleFailed": "設定未儲存",
 	"saveStatus.tryAgain": "重試",
 	"saveStatus.working": "處理中…",
-	"saveStatus.unreadable": "儲存已暫停，因為無法安全讀取設定檔。請完成同步或復原一個有效副本，然後重試。現有檔案已被保留。",
+	"saveStatus.unreadable":
+		"儲存已暫停，因為無法安全讀取設定檔。請完成同步或復原一個有效副本，然後重試。現有檔案已被保留。",
 	"saveStatus.write": "設定檔未能儲存。請檢查可用儲存空間、資料夾權限和同步狀態，然後在關閉 Obsidian 之前重試。",
-	"saveStatus.writePermission": "設定檔未能儲存，因為儲存空間拒絕了寫入存取。請檢查保存庫和外掛資料夾是否可寫入，然後重試。",
+	"saveStatus.writePermission":
+		"設定檔未能儲存，因為儲存空間拒絕了寫入存取。請檢查保存庫和外掛資料夾是否可寫入，然後重試。",
 	"saveStatus.writeSpace": "設定檔未能儲存，因為儲存空間已滿或已超出配額。請釋放一些空間，然後重試。",
-	"settings.readOnly": "Obsidian 啟動時 Callout Studio 無法使用其設定檔，因此此頁面上的任何內容都不會儲存到這部裝置。你的變更將保留，直到你關閉 Obsidian。檔案恢復後請重新載入 Obsidian——如果你正在同步此保存庫，請先讓同步完成。",
+	"settings.readOnly":
+		"Obsidian 啟動時 Callout Studio 無法使用其設定檔，因此此頁面上的任何內容都不會儲存到這部裝置。你的變更將保留，直到你關閉 Obsidian。檔案恢復後請重新載入 Obsidian——如果你正在同步此保存庫，請先讓同步完成。",
 
 	// Sync safety hardening
-	"saveStatus.diagnosis.unavailable": "這部裝置目前無法開啟該檔案。它可能仍在下載中，保存庫可能無法離線使用，或儲存空間沒有回應。Callout Studio 會自動再次檢查。",
-	"saveStatus.diagnosis.empty": "檔案是空的，這通常表示某次同步被中斷了。如果另一部裝置上仍有你的設定，請讓它完成同步。否則請取代該檔案。",
-	"saveStatus.diagnosis.mergeMarkers": "檔案中含有未解決的合併衝突標記，例如來自 Git 的標記。請在你的 Git 工具中解決衝突，或取代該檔案。",
+	"saveStatus.diagnosis.unavailable":
+		"這部裝置目前無法開啟該檔案。它可能仍在下載中，保存庫可能無法離線使用，或儲存空間沒有回應。Callout Studio 會自動再次檢查。",
+	"saveStatus.diagnosis.empty":
+		"檔案是空的，這通常表示某次同步被中斷了。如果另一部裝置上仍有你的設定，請讓它完成同步。否則請取代該檔案。",
+	"saveStatus.diagnosis.mergeMarkers":
+		"檔案中含有未解決的合併衝突標記，例如來自 Git 的標記。請在你的 Git 工具中解決衝突，或取代該檔案。",
 	"saveStatus.diagnosis.damaged": "檔案不完整或已損毀，因此無法作為設定讀取。",
-	"saveStatus.diagnosis.combined": "你的同步服務合併了該檔案的兩個版本，因此其內部檢查已不再相符。檔案內的設定本身是完整的，取代該檔案即可保留它們。",
-	"saveStatus.diagnosis.invalidEntries": "檔案中含有 Callout Studio 無法使用的項目，例如同一個 callout 類型被列出兩次。",
+	"saveStatus.diagnosis.combined":
+		"你的同步服務合併了該檔案的兩個版本，因此其內部檢查已不再相符。檔案內的設定本身是完整的，取代該檔案即可保留它們。",
+	"saveStatus.diagnosis.invalidEntries":
+		"檔案中含有 Callout Studio 無法使用的項目，例如同一個 callout 類型被列出兩次。",
 	"saveStatus.replaceUnreadable": "取代設定檔",
 	"saveStatus.discardRecoveryCopy": "捨棄復原副本",
 	"saveStatus.calm.opening": "首先，請深呼吸——一切都會沒事的。",
@@ -1144,18 +1101,24 @@ export const zhTW: Record<string, string> = {
 	"saveStatus.calm.safe": "你的筆記是安全的。",
 	"saveStatus.calm.pausedPage": "Callout Studio 只是暫停了儲存，以保護你的設定，所以這個頁面目前是唯讀的。",
 	"saveStatus.calm.paused": "Callout Studio 只是暫停了儲存，以保護你的設定。",
-	"saveStatus.explain.missing": "Callout Studio 找不到自己的設定檔。這通常發生在同步應用程式仍在下載該檔案時，或是在另一台裝置上移除了 Callout Studio 之後。",
-	"saveStatus.explain.stillMissing": "設定檔仍未恢復。檢查只會尋找它，絕不會建立新檔案。如果你的儲存庫位於 iCloud、OneDrive、Google Drive 或 Dropbox，請確認它已設定為在這台裝置上保持下載狀態。",
+	"saveStatus.explain.missing":
+		"Callout Studio 找不到自己的設定檔。這通常發生在同步應用程式仍在下載該檔案時，或是在另一台裝置上移除了 Callout Studio 之後。",
+	"saveStatus.explain.stillMissing":
+		"設定檔仍未恢復。檢查只會尋找它，絕不會建立新檔案。如果你的儲存庫位於 iCloud、OneDrive、Google Drive 或 Dropbox，請確認它已設定為在這台裝置上保持下載狀態。",
 	"saveStatus.explain.unreadable": "Callout Studio 目前無法讀取自己的設定檔，因此保持了檔案原樣。",
-	"saveStatus.explain.recoveryRead": "Callout Studio 在這台裝置上保存了一份設定的備用副本，而目前無法讀取該副本。設定檔本身可能沒有問題。",
+	"saveStatus.explain.recoveryRead":
+		"Callout Studio 在這台裝置上保存了一份設定的備用副本，而目前無法讀取該副本。設定檔本身可能沒有問題。",
 	"saveStatus.explain.newerVersion": "你的設定由較新版本的 Callout Studio 儲存，因此這個較舊的版本不會變更它們。",
 	"saveStatus.explain.changed": "Callout Studio 處理設定檔時，該檔案發生了變化，因此它停止了操作，沒有取代任何內容。",
-	"saveStatus.guide.rechecks": "只要 Obsidian 保持開啟，Callout Studio 每分鐘都會重新檢查，所以這種情況通常會自行解決。",
-	"saveStatus.guide.rechecksCheckNow": "只要 Obsidian 保持開啟，Callout Studio 每分鐘都會重新檢查，所以這種情況通常會自行解決——或者選擇「再次檢查」立即查看。",
+	"saveStatus.guide.rechecks":
+		"只要 Obsidian 保持開啟，Callout Studio 每分鐘都會重新檢查，所以這種情況通常會自行解決。",
+	"saveStatus.guide.rechecksCheckNow":
+		"只要 Obsidian 保持開啟，Callout Studio 每分鐘都會重新檢查，所以這種情況通常會自行解決——或者選擇「再次檢查」立即查看。",
 	"saveStatus.guide.restore": "如果你的設定沒有恢復，請選擇「復原這些設定」，以保留你在這裡看到的 callout。",
 	"saveStatus.guide.create": "如果你的設定沒有恢復，請選擇「建立設定檔」，重新開始儲存。",
 	"saveStatus.guide.recoveryRetry": "請確認這台裝置還有一些可用儲存空間，然後選擇「重試」。",
-	"saveStatus.guide.recoveryDiscard": "如果這樣沒有幫助，請選擇「捨棄復原副本」。系統會先儲存一份完全相同的副本，你的設定檔不會被更動。",
+	"saveStatus.guide.recoveryDiscard":
+		"如果這樣沒有幫助，請選擇「捨棄復原副本」。系統會先儲存一份完全相同的副本，你的設定檔不會被更動。",
 	"saveStatus.guide.newerVersion": "請在「設定 → 社群外掛」中更新 Callout Studio，然後重新載入 Obsidian。",
 	"saveStatus.missingNotice": "你的筆記是安全的。Callout Studio 暫停了儲存，因為它目前找不到自己的設定檔。",
 	"statusBar.paused": "儲存已暫停",
@@ -1163,29 +1126,37 @@ export const zhTW: Record<string, string> = {
 	"statusBar.pausedNotice": "Callout Studio 目前未在儲存設定變更。",
 	"saveStatus.resumed": "儲存已重新開啟。Callout Studio 正在再次儲存設定變更。",
 	"notice.replaceUnreadableUnavailable": "設定檔目前無法取代：它正在變更中，或這部裝置無法讀取它。請稍後再試。",
-	"notice.recoveryStorageUnavailable": "這部裝置的復原儲存空間沒有回應，因此無法捨棄該副本。請重新啟動 Obsidian 後再試。",
+	"notice.recoveryStorageUnavailable":
+		"這部裝置的復原儲存空間沒有回應，因此無法捨棄該副本。請重新啟動 Obsidian 後再試。",
 	"recovery.unreadable": "無法作為設定讀取",
 	"recovery.same": "與你目前的設定相同",
 	"recovery.restore": "復原",
 	"recovery.stale": "未復原任何內容：你的設定已變更，或無法進行檢查。請重新開啟此視窗並查看清單。",
-	"notice.recoveryCopyStale": "你的設定已儲存，但這部裝置的復原副本未能更新。請檢查這部裝置上的可用儲存空間。Callout Studio 會在你下次變更時重試。",
+	"notice.recoveryCopyStale":
+		"你的設定已儲存，但這部裝置的復原副本未能更新。請檢查這部裝置上的可用儲存空間。Callout Studio 會在你下次變更時重試。",
 	"notice.blockedWhilePaused": "儲存已暫停，因此此變更目前無法保留。請先解決 Callout Studio 設定中顯示的儲存問題。",
-	"welcome.syncNote": "已經在另一部裝置上使用 Callout Studio？請先讓你的同步服務完成同步。你的 callout 和設定到達後會顯示在這裡。",
+	"welcome.syncNote":
+		"已經在另一部裝置上使用 Callout Studio？請先讓你的同步服務完成同步。你的 callout 和設定到達後會顯示在這裡。",
 	"settings.resetBackupFailed": "未重設任何內容：無法先儲存你目前設定的備份。請檢查可用儲存空間，然後重試。",
-	"settings.resetNotSaved": "重設已顯示，但尚未能儲存，因此你的設定檔仍保留先前的設定。請查看 Callout Studio 設定中的儲存狀態。",
+	"settings.resetNotSaved":
+		"重設已顯示，但尚未能儲存，因此你的設定檔仍保留先前的設定。請查看 Callout Studio 設定中的儲存狀態。",
 	"confirm.titleResetEverything": "重設所有內容",
 	"confirm.titleReplaceUnreadable": "取代設定檔",
 	"confirm.subtitleReplaceUnreadable": "會先儲存一份完全相同的副本",
-	"confirm.replaceUnreadable": "系統會先將目前檔案的一份精確副本儲存到外掛的備份資料夾中。隨後該檔案會被取代為此處顯示的設定，你的同步服務會將其傳送到你的其他裝置。",
-	"confirm.replaceUnreadableSalvage": "系統會先將目前檔案的一份精確副本儲存到外掛的備份資料夾中。檔案內的設定會與此處顯示的設定合併，隨後檔案會被重寫，以便每部裝置都能重新讀取它。",
+	"confirm.replaceUnreadable":
+		"系統會先將目前檔案的一份精確副本儲存到外掛的備份資料夾中。隨後該檔案會被取代為此處顯示的設定，你的同步服務會將其傳送到你的其他裝置。",
+	"confirm.replaceUnreadableSalvage":
+		"系統會先將目前檔案的一份精確副本儲存到外掛的備份資料夾中。檔案內的設定會與此處顯示的設定合併，隨後檔案會被重寫，以便每部裝置都能重新讀取它。",
 	"confirm.titleDiscardRecoveryCopy": "捨棄復原副本",
 	"confirm.subtitleDiscardRecoveryCopy": "此裝置上已暫停儲存",
-	"confirm.discardRecoveryCopy": "這部裝置的復原副本無法讀取，因此這部裝置上的儲存已暫停。系統會先將其一份精確副本儲存到外掛的備份資料夾中，隨後將其取代為此處顯示的設定。你的設定檔不會發生變化。",
+	"confirm.discardRecoveryCopy":
+		"這部裝置的復原副本無法讀取，因此這部裝置上的儲存已暫停。系統會先將其一份精確副本儲存到外掛的備份資料夾中，隨後將其取代為此處顯示的設定。你的設定檔不會發生變化。",
 	"vault.undoRewrite": "復原",
 	"vault.undoRestored": "已復原 {{count}} 篇筆記。",
 	"vault.undoPartial": "已復原 {{count}} 篇筆記。{{skipped}} 篇筆記在重寫後發生了變更，因此保持原樣未做處理。",
 	"import.confirmTitle": "匯入 Callout Studio 備份",
-	"import.confirmSummary": "此操作會新增 {{added}} 個 callout 類型，將 {{replaced}} 個既有類型取代為檔案中的版本，並從檔案中復原 {{settings}} 組設定。系統會先儲存你目前設定的一份備份。",
+	"import.confirmSummary":
+		"此操作會新增 {{added}} 個 callout 類型，將 {{replaced}} 個既有類型取代為檔案中的版本，並從檔案中復原 {{settings}} 組設定。系統會先儲存你目前設定的一份備份。",
 	"import.confirmAction": "匯入",
 	"import.backupFailed": "未匯入任何內容：無法先儲存你目前設定的備份。請檢查可用儲存空間，然後重試。",
 	"import.notSaved": "匯入已顯示，但尚未能儲存。請查看 Callout Studio 設定中的儲存狀態。",
@@ -1208,7 +1179,8 @@ export const zhTW: Record<string, string> = {
 	"recovery.details.unknownTime": "未記錄儲存時間",
 	"recovery.details.current": "目前設定",
 	"recovery.details.restored": "還原此版本之後",
-	"recovery.details.unreadable": "此版本的 Callout Studio 無法將這份副本解讀為可還原的設定。它可能已損毀、無法使用，或採用較新的格式。因此無法提供比較與還原設定報告。所有能夠讀取的原始內容都包含在下方。",
+	"recovery.details.unreadable":
+		"此版本的 Callout Studio 無法將這份副本解讀為可還原的設定。它可能已損毀、無法使用，或採用較新的格式。因此無法提供比較與還原設定報告。所有能夠讀取的原始內容都包含在下方。",
 	"recovery.details.null": "無值（null）",
 	"recovery.details.yes": "是",
 	"recovery.details.no": "否",
@@ -1379,7 +1351,8 @@ export const zhTW: Record<string, string> = {
 	"saveStatus.guide.versions": "恢復儲存後，你也可以透過「還原較早的版本」回到已儲存的版本。",
 	"saveStatus.goToVersions": "前往版本歷史",
 	"versions.title": "版本歷史",
-	"versions.intro": "Callout Studio 會自動儲存設定的版本。\n舊版本會逐漸清理。\n還原版本會取代所有已同步裝置上的目前設定。",
+	"versions.intro":
+		"Callout Studio 會自動儲存設定的版本。\n舊版本會逐漸清理。\n還原版本會取代所有已同步裝置上的目前設定。",
 	"versions.pausedHint": "儲存已暫停，因此無法還原。你仍可以比較和刪除版本。",
 	"versions.loading": "正在尋找版本…",
 	"versions.empty": "找不到版本。",
@@ -1397,7 +1370,8 @@ export const zhTW: Record<string, string> = {
 	"versions.reason.beforeRepair": "修復設定檔之前",
 	"versions.restoreTitle": "還原此版本",
 	"versions.subtitle": "「{{name}}」 · {{when}}",
-	"versions.restoreBody": "你目前的設定將被取代（{{count}} 處差異）。\n會先將其儲存為一個版本，以便你隨時返回。\n之後你的同步服務會把還原的設定傳送到你的其他裝置。",
+	"versions.restoreBody":
+		"你目前的設定將被取代（{{count}} 處差異）。\n會先將其儲存為一個版本，以便你隨時返回。\n之後你的同步服務會把還原的設定傳送到你的其他裝置。",
 	"versions.restoreSame": "此版本與目前設定相同，無需還原。",
 	"versions.restored": "已還原 {{when}} 的「{{name}}」。",
 	"versions.backupFailed": "未還原任何內容：無法先將目前設定儲存為一個版本。請檢查可用儲存空間後重試。",
@@ -1412,7 +1386,8 @@ export const zhTW: Record<string, string> = {
 	"versions.details.difference": "與目前設定相比有 {{count}} 項差異",
 	"versions.details.differences": "與目前設定相比有 {{count}} 項差異",
 	"versions.details.comparisonUnavailable": "無法進行比較",
-	"notice.unsavedChangesKept": "此裝置上的一些變更尚未儲存，被其他裝置的較新設定取代。你的版本已事先儲存：請在 Callout Studio 設定中開啟「還原較早的版本」以還原它。",
+	"notice.unsavedChangesKept":
+		"此裝置上的一些變更尚未儲存，被其他裝置的較新設定取代。你的版本已事先儲存：請在 Callout Studio 設定中開啟「還原較早的版本」以還原它。",
 	"settings.versionHistory": "還原較早的版本",
 	"settings.versions": "較早版本",
 	"settings.versionsDesc": "用已儲存的較早版本取代你目前的設定。",
@@ -1423,7 +1398,8 @@ export const zhTW: Record<string, string> = {
 	"noteChanges.notesOne": "1 篇筆記",
 	"noteChanges.askCallout": "要如何處理那個 callout？",
 	"noteChanges.askCallouts": "要如何處理那些 callout？",
-	"noteChanges.changeRenamed": "你將顯示名稱從「{{old}}」改為「{{new}}」，因此主 ID 會從「{{oldId}}」變為「{{newId}}」。",
+	"noteChanges.changeRenamed":
+		"你將顯示名稱從「{{old}}」改為「{{new}}」，因此主 ID 會從「{{oldId}}」變為「{{newId}}」。",
 	"noteChanges.changeMainId": "主 ID 會從「{{oldId}}」變為「{{newId}}」。",
 	"noteChanges.changeName": "你將顯示名稱從「{{old}}」改為「{{new}}」。",
 	"noteChanges.changeRemoved": "你移除了 ID「{{id}}」。",
@@ -1437,7 +1413,8 @@ export const zhTW: Record<string, string> = {
 	"noteChanges.rewriteManyDesc": "筆記中的每個舊 ID 都會變成 [!{{to}}]。",
 	"noteChanges.changeToIdLabel": "要改為的 ID",
 	"noteChanges.rewriteDesc": "筆記中的每個 [!{{id}}] 都會變成 [!{{to}}]。",
-	"noteChanges.renameFollowDesc": "筆記中的每個 [!{{oldId}}] 都會變成 [!{{newId}}]，寫著「{{old}}」的標題會變成「{{new}}」。",
+	"noteChanges.renameFollowDesc":
+		"筆記中的每個 [!{{oldId}}] 都會變成 [!{{newId}}]，寫著「{{old}}」的標題會變成「{{new}}」。",
 	"noteChanges.titlesChangeDesc": "寫著「{{old}}」的標題會變成「{{new}}」。",
 	"noteChanges.foldChangeDesc": "它們的 + 或 - 標記會隨之變更。",
 };

@@ -12,8 +12,13 @@ export async function openOccurrencesFromSettings(app: App, ids: readonly string
 	const settings = app.setting as (App["setting"] & { close?: () => void }) | undefined;
 	let closed = false;
 	try {
-		if (typeof settings?.close === "function") { settings.close(); closed = true; }
-	} catch { /* Host version may not support this optional method. */ }
+		if (typeof settings?.close === "function") {
+			settings.close();
+			closed = true;
+		}
+	} catch {
+		/* Host version may not support this optional method. */
+	}
 	await openCalloutOccurrences(app, ids);
 	if (!closed) showNotice("info", t("usage.closeSettings"));
 }

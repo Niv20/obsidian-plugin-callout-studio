@@ -136,8 +136,12 @@ function dragEvent(
 	return {
 		dataTransfer: { files, types },
 		relatedTarget,
-		preventDefault: () => { prevented = true; },
-		get defaultPrevented() { return prevented; },
+		preventDefault: () => {
+			prevented = true;
+		},
+		get defaultPrevented() {
+			return prevented;
+		},
 	};
 }
 
@@ -334,7 +338,11 @@ describe("the plugin import window: one screen", () => {
 					assert.deepEqual(options(h), [name], `${what}: the vault card is gone, not greyed out`);
 					assert.equal(h.contentEl.querySelector(".is-disabled"), null, what);
 					for (const reason of REASONS) {
-						assert.equal(h.modalEl.textContent.includes(reason), false, `${what}: does not say "${reason}"`);
+						assert.equal(
+							h.modalEl.textContent.includes(reason),
+							false,
+							`${what}: does not say "${reason}"`,
+						);
 					}
 					assert.equal(h.modalEl.textContent.includes(t(base.copy.vaultChecking)), false, what);
 					assert.equal(announcer(h).textContent, "", `${what}: and announces nothing either`);
@@ -455,7 +463,11 @@ describe("the plugin import window: one screen", () => {
 
 					importButton(h).fire("click");
 					await settle();
-					assert.deepEqual(h.rec.applied, ["text:early"], `${name}: ${data}: what the user filled, not the vault`);
+					assert.deepEqual(
+						h.rec.applied,
+						["text:early"],
+						`${name}: ${data}: what the user filled, not the vault`,
+					);
 				} finally {
 					h.destroy();
 				}
@@ -500,7 +512,10 @@ describe("the plugin import window: choosing between the two", () => {
 				}
 				await settle();
 
-				for (const [filled, state] of [[false, "empty"], [true, "filled"]] as const) {
+				for (const [filled, state] of [
+					[false, "empty"],
+					[true, "filled"],
+				] as const) {
 					if (filled) fill(h, "held");
 					for (const which of options(h)) {
 						const what = `${name}: ${state}: ${which}`;
@@ -839,7 +854,10 @@ describe("the plugin import window: pasting", () => {
 			assert.equal(box.value, "");
 			assert.equal(optionTitle(h, "paste"), t(PASTE_COPY.manual));
 			assert.equal(status(h, "paste").textContent, t(PASTE_COPY.manualDesc));
-			assert.equal(box.getAttribute("aria-labelledby"), option(h, "paste").querySelector(".cs-option-box-head")?.id);
+			assert.equal(
+				box.getAttribute("aria-labelledby"),
+				option(h, "paste").querySelector(".cs-option-box-head")?.id,
+			);
 			assert.equal(box.getAttribute("aria-describedby"), status(h, "paste").id);
 			assert.equal(box.hasAttribute("aria-label"), false, "no tooltip over the box");
 
@@ -888,7 +906,11 @@ describe("the plugin import window: pasting", () => {
 				assert.equal(active(h), "paste");
 				assert.equal(fakeDom.document.activeElement, importButton(h), "focus lands on the next step");
 				assert.equal(importButton(h).lastFocusOptions?.preventScroll, true);
-				assert.equal(actionButton(h).textContent, t("import.pasteButton"), "still Paste: it can be pressed again");
+				assert.equal(
+					actionButton(h).textContent,
+					t("import.pasteButton"),
+					"still Paste: it can be pressed again",
+				);
 				assert.deepEqual(seen, [], "the text in the box is the confirmation");
 
 				importButton(h).fire("click");
@@ -937,7 +959,11 @@ describe("the plugin import window: pasting", () => {
 						assert.equal(pasteBox(h).value, held, `${key}: the box keeps what it held`);
 						assert.equal(active(h), was, `${key}: the choice does not move`);
 						assert.equal(fakeDom.document.activeElement, pasteBox(h), `${key}: nor does focus`);
-						assert.equal(status(h, "paste").textContent, t(PASTE_COPY.manualDesc), `${key}: no warning on the card`);
+						assert.equal(
+							status(h, "paste").textContent,
+							t(PASTE_COPY.manualDesc),
+							`${key}: no warning on the card`,
+						);
 
 						// A second press tries again.
 						await pressPaste(h, "second try");
@@ -1012,10 +1038,15 @@ describe("the plugin import window: pasting", () => {
 			h.modal.onOpen();
 			await settle();
 			let reads = 0;
-			const drop = dragEvent([{ name: "styles.css", text: () => {
-				reads++;
-				return Promise.resolve("dropped");
-			} }]);
+			const drop = dragEvent([
+				{
+					name: "styles.css",
+					text: () => {
+						reads++;
+						return Promise.resolve("dropped");
+					},
+				},
+			]);
 			for (const el of [pasteBox(h), option(h, "paste"), option(h, "vault")]) {
 				const over = dragEvent();
 				el.fire("dragover", over);
@@ -1080,9 +1111,17 @@ describe("the plugin import window: uploading a file", () => {
 				assert.equal(name.textContent, "admonitions.json");
 				assert.equal(name.getAttribute("dir"), "auto");
 				assert.equal(status(h, "file").textContent, t("import.fileReady"));
-				assert.equal(box.hasClass("is-filled"), false, "no green success state: the notice is the confirmation");
+				assert.equal(
+					box.hasClass("is-filled"),
+					false,
+					"no green success state: the notice is the confirmation",
+				);
 				assert.ok(importButton(h).getAttribute("aria-describedby")!.split(" ").includes(status(h, "file").id));
-				assert.equal(fakeDom.document.activeElement, importButton(h), "focus lands on the next step, not the page");
+				assert.equal(
+					fakeDom.document.activeElement,
+					importButton(h),
+					"focus lands on the next step, not the page",
+				);
 
 				importButton(h).fire("click");
 				await settle();
@@ -1146,10 +1185,15 @@ describe("the plugin import window: uploading a file", () => {
 				await settle();
 				assert.equal(active(h), "vault");
 				let reads = 0;
-				const event = dragEvent([{ name, text: () => {
-					reads++;
-					return Promise.resolve(contents);
-				} }]);
+				const event = dragEvent([
+					{
+						name,
+						text: () => {
+							reads++;
+							return Promise.resolve(contents);
+						},
+					},
+				]);
 				const title = option(h, "file").querySelector(".cs-option-box-title");
 				assert.ok(title);
 				title.dispatchEvent(Object.assign(event, { type: "drop", bubbles: true }));
@@ -1232,10 +1276,13 @@ describe("the plugin import window: uploading a file", () => {
 			let secondReads = 0;
 			const filesDrop = dragEvent([
 				{ name: "first.json", text: () => Promise.resolve("first") },
-				{ name: "second.json", text: () => {
-					secondReads++;
-					return Promise.resolve("second");
-				} },
+				{
+					name: "second.json",
+					text: () => {
+						secondReads++;
+						return Promise.resolve("second");
+					},
+				},
 			]);
 			box.fire("drop", filesDrop);
 			assert.equal(filesDrop.defaultPrevented, true);

@@ -35,15 +35,9 @@ import { forgetPackData } from "../src/icons/packData";
 import { PackDataStore } from "../src/icons/PackDataStore";
 import { ICON_SOURCE_IDS } from "../src/icons/registry";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import type {
-	CalloutDefinition,
-	IconPackId,
-	PluginData,
-	PluginSettings,
-} from "../src/types";
+import type { CalloutDefinition, IconPackId, PluginData, PluginSettings } from "../src/types";
 
-const real = (id: IconPackId): string =>
-	readFileSync(join(process.cwd(), "packs", `${id}.json`), "utf8");
+const real = (id: IconPackId): string => readFileSync(join(process.cwd(), "packs", `${id}.json`), "utf8");
 
 /** The plugin folder 2.15.0 used: the id is `callout-studio`, packs live in `icon-packs`. */
 const MANIFEST = { id: "callout-studio", dir: ".obsidian/plugins/callout-studio" } as PluginManifest;
@@ -58,12 +52,17 @@ function pluginFolder(downloaded: readonly IconPackId[]) {
 	const removes: string[] = [];
 	const adapter = {
 		exists: (path: string) => Promise.resolve(files.has(path)),
-		read: (path: string) => files.has(path)
-			? Promise.resolve(files.get(path)!)
-			: Promise.reject(new Error("ENOENT")),
-		write: (path: string) => { writes.push(path); return Promise.resolve(); },
+		read: (path: string) =>
+			files.has(path) ? Promise.resolve(files.get(path)!) : Promise.reject(new Error("ENOENT")),
+		write: (path: string) => {
+			writes.push(path);
+			return Promise.resolve();
+		},
 		mkdir: () => Promise.resolve(),
-		remove: (path: string) => { removes.push(path); return Promise.resolve(); },
+		remove: (path: string) => {
+			removes.push(path);
+			return Promise.resolve();
+		},
 	};
 	const app = { vault: { adapter, configDir: ".obsidian" } } as unknown as App;
 	const store = new PackDataStore(app, MANIFEST);
@@ -73,12 +72,21 @@ function pluginFolder(downloaded: readonly IconPackId[]) {
 
 /** Packs are held in module-level memory; leave none behind for the next test. */
 const ALL_PACKS = Object.keys(PACK_MANIFEST) as IconPackId[];
-afterEach(() => { for (const id of ALL_PACKS) forgetPackData(id); });
+afterEach(() => {
+	for (const id of ALL_PACKS) forgetPackData(id);
+});
 
 function userCallout(id: string, icon: CalloutDefinition["icon"]): CalloutDefinition {
 	return {
-		id, displayName: id, icon, colorLight: "#3b82f6", colorDark: "#3b82f6",
-		foldable: true, defaultFolded: false, builtIn: false, source: "user",
+		id,
+		displayName: id,
+		icon,
+		colorLight: "#3b82f6",
+		colorDark: "#3b82f6",
+		foldable: true,
+		defaultFolded: false,
+		builtIn: false,
+		source: "user",
 	};
 }
 
@@ -207,8 +215,14 @@ describe("upgrading from 2.15.0 — the libraries on the device", () => {
 		const menu = menuLibraries(registry.settings.iconLibraries, store);
 		assert.ok(menu.toDownload.includes("octicons"));
 		assert.equal(menuLibraries(registry.settings.iconLibraries, store, "octicons").current, "octicons");
-		assert.deepEqual(calloutsUsingLibrary(registry.getCommitted(), "octicons").map((def) => def.id), ["alerts"]);
-		assert.deepEqual(calloutsUsingLibrary(registry.getCommitted(), "fa").map((def) => def.id), ["repo"]);
+		assert.deepEqual(
+			calloutsUsingLibrary(registry.getCommitted(), "octicons").map((def) => def.id),
+			["alerts"],
+		);
+		assert.deepEqual(
+			calloutsUsingLibrary(registry.getCommitted(), "fa").map((def) => def.id),
+			["repo"],
+		);
 	});
 });
 
@@ -221,7 +235,10 @@ describe("upgrading from 2.15.0 — the files 2.15.0 could have downloaded", () 
 	// only if a callout needed it. Refreshing the artwork on purpose is fine —
 	// but it is an upgrade decision, and this is where it is made, not discovered.
 	const RELEASED_2150: Record<string, { bytes: number; sha256: string }> = {
-		"tabler-outline": { bytes: 1193174, sha256: "aa8aca305403a64c2b7d2f6160461cf6c40a1311c2d7c5148de35b46b0ac908a" },
+		"tabler-outline": {
+			bytes: 1193174,
+			sha256: "aa8aca305403a64c2b7d2f6160461cf6c40a1311c2d7c5148de35b46b0ac908a",
+		},
 		"tabler-filled": { bytes: 515352, sha256: "9fd4edf7ef4eeb5f4734735bdcdd5325b73cc6ec9cecb7fc82c07335e484bca7" },
 		octicons: { bytes: 384490, sha256: "8d34725983eee3d840da65e802fd29e583fc2845058923b88e8151fa418b852f" },
 		"fa-solid": { bytes: 813460, sha256: "2c2f11e29443c4904baf60eb299dadb1804f5e52ae9b54ae24d4eaf881681f92" },
@@ -246,6 +263,9 @@ describe("upgrading from 2.15.0 — the files 2.15.0 could have downloaded", () 
 
 	it("leave Simple Icons as the one library 2.15.0 could not have downloaded", () => {
 		// The manifest lists exactly the downloadable packs.
-		assert.deepEqual(ALL_PACKS.filter((id) => !(id in RELEASED_2150)), ["simple-icons"]);
+		assert.deepEqual(
+			ALL_PACKS.filter((id) => !(id in RELEASED_2150)),
+			["simple-icons"],
+		);
 	});
 });

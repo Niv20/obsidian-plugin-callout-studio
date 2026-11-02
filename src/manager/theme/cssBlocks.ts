@@ -46,12 +46,7 @@
  *
  * Both halves are the same claim: read it as if it were written flat.
  */
-import {
-	matchParen,
-	skipBrackets,
-	skipString,
-	splitSelectorList,
-} from "../../utils/selectorText";
+import { matchParen, skipBrackets, skipString, splitSelectorList } from "../../utils/selectorText";
 
 /** What {@link eachBlock} is handed for each style rule it finds. */
 export type BlockVisitor = (prelude: string, body: string) => void;
@@ -63,8 +58,14 @@ export function stripComments(css: string): string {
 	let out = "";
 	let start = 0;
 	for (let i = 0; i < css.length;) {
-		if (css[i] === '"' || css[i] === "'") { i = skipString(css, i); continue; }
-		if (css[i] === "\\") { i += 2; continue; }
+		if (css[i] === '"' || css[i] === "'") {
+			i = skipString(css, i);
+			continue;
+		}
+		if (css[i] === "\\") {
+			i += 2;
+			continue;
+		}
 		if (css.startsWith("/*", i)) {
 			out += css.slice(start, i);
 			const end = css.indexOf("*/", i + 2);
@@ -103,11 +104,7 @@ export function eachBlock(text: string, visit: BlockVisitor): void {
  * to do with that: a style rule announces it, the sheet's top level throws it
  * away, and a conditional at-rule hands it further up (see {@link visitRule}).
  */
-function walkBody(
-	text: string,
-	parent: string | null,
-	visit: BlockVisitor,
-): string {
+function walkBody(text: string, parent: string | null, visit: BlockVisitor): string {
 	let cursor = 0;
 	let own = "";
 	while (cursor < text.length) {
@@ -122,12 +119,7 @@ function walkBody(
 		const between = text.slice(cursor, open);
 		const cut = declarationsEnd(between);
 		own += between.slice(0, cut);
-		own += visitRule(
-			between.slice(cut),
-			text.slice(open + 1, close),
-			parent,
-			visit,
-		);
+		own += visitRule(between.slice(cut), text.slice(open + 1, close), parent, visit);
 		cursor = close + 1;
 	}
 	return own + text.slice(cursor);
@@ -144,12 +136,7 @@ function walkBody(
  * return value is discarded, which is what keeps `@font-face`'s declarations
  * from being mistaken for anybody's.
  */
-function visitRule(
-	prelude: string,
-	body: string,
-	parent: string | null,
-	visit: BlockVisitor,
-): string {
+function visitRule(prelude: string, body: string, parent: string | null, visit: BlockVisitor): string {
 	if (prelude.trim().startsWith("@")) return walkBody(body, parent, visit);
 	const selector = parent === null ? prelude : resolveNested(parent, prelude);
 	visit(selector, walkBody(body, selector, visit));
@@ -160,10 +147,22 @@ function visitRule(
 function nextBrace(text: string, start: number, wanted?: string): number {
 	for (let i = start; i < text.length;) {
 		const ch = text[i];
-		if (ch === '"' || ch === "'") { i = skipString(text, i); continue; }
-		if (ch === "\\") { i += 2; continue; }
-		if (ch === "[") { i = skipBrackets(text, i); continue; }
-		if (ch === "(") { i = matchParen(text, i) + 1; continue; }
+		if (ch === '"' || ch === "'") {
+			i = skipString(text, i);
+			continue;
+		}
+		if (ch === "\\") {
+			i += 2;
+			continue;
+		}
+		if (ch === "[") {
+			i = skipBrackets(text, i);
+			continue;
+		}
+		if (ch === "(") {
+			i = matchParen(text, i) + 1;
+			continue;
+		}
 		if ((ch === "{" || ch === "}") && (!wanted || ch === wanted)) return i;
 		i++;
 	}

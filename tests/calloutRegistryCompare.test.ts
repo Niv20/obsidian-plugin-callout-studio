@@ -21,10 +21,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import {
-	COLOUR_NEUTRAL_FIELDS,
-	COMPARED_FIELDS,
-} from "../src/manager/calloutCompare";
+import { COLOUR_NEUTRAL_FIELDS, COMPARED_FIELDS } from "../src/manager/calloutCompare";
 import type { CalloutDefinition } from "../src/types";
 
 /**
@@ -102,10 +99,7 @@ describe("the field tables themselves", () => {
 
 	it("declares exactly hideIcon as colour-neutral", () => {
 		// An edit the user can see that says nothing about the callout's colour.
-		assert.deepStrictEqual(
-			[...TABLES.COLOUR_NEUTRAL_FIELDS].sort(),
-			["hideIcon"],
-		);
+		assert.deepStrictEqual([...TABLES.COLOUR_NEUTRAL_FIELDS].sort(), ["hideIcon"]);
 	});
 
 	it("keeps every colour-neutral field inside the compared set", () => {
@@ -186,18 +180,12 @@ describe("isUnmodifiedBuiltIn — the theme-deference gate", () => {
 
 	it("is false for anything that is not a built-in", () => {
 		const registry = loaded();
-		assert.strictEqual(
-			registry.isUnmodifiedBuiltIn({ ...note(registry), builtIn: false }),
-			false,
-		);
+		assert.strictEqual(registry.isUnmodifiedBuiltIn({ ...note(registry), builtIn: false }), false);
 	});
 
 	it("is false for a built-in id the registry never shipped", () => {
 		const registry = loaded();
-		assert.strictEqual(
-			registry.isUnmodifiedBuiltIn({ ...note(registry), id: "invented" }),
-			false,
-		);
+		assert.strictEqual(registry.isUnmodifiedBuiltIn({ ...note(registry), id: "invented" }), false);
 	});
 
 	for (const [field, partial] of Object.entries(CHANGED)) {
@@ -230,11 +218,7 @@ describe("isUnmodifiedBuiltIn — the theme-deference gate", () => {
 		const draft: CalloutDefinition = { ...note(registry), colorLight: "#ff0000" };
 
 		assert.strictEqual(registry.isUnmodifiedBuiltIn(draft), false);
-		assert.strictEqual(
-			registry.isUnmodifiedBuiltIn(note(registry)),
-			true,
-			"the stored row is still pristine",
-		);
+		assert.strictEqual(registry.isUnmodifiedBuiltIn(note(registry)), true, "the stored row is still pristine");
 	});
 
 	it("is strictly the narrower of the two questions", () => {
@@ -247,11 +231,7 @@ describe("isUnmodifiedBuiltIn — the theme-deference gate", () => {
 			const modified = registry.isBuiltInModified("note");
 			const unmodified = registry.isUnmodifiedBuiltIn(note(registry));
 			assert.strictEqual(modified, true, field);
-			assert.strictEqual(
-				unmodified,
-				TABLES.COLOUR_NEUTRAL_FIELDS.has(field),
-				field,
-			);
+			assert.strictEqual(unmodified, TABLES.COLOUR_NEUTRAL_FIELDS.has(field), field);
 		}
 	});
 });

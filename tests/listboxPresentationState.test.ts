@@ -4,7 +4,10 @@ import { ListboxPopup } from "../src/ui/listboxPopup";
 import type { ListboxPopupOptions } from "../src/ui/listboxPopupTypes";
 import { asEl, el, fakeDom } from "./support/fakeDom";
 
-interface Choice { name: string; group: string; }
+interface Choice {
+	name: string;
+	group: string;
+}
 const CHOICES: Choice[] = [
 	{ name: "All types", group: "browse" },
 	{ name: "Alpha", group: "custom" },
@@ -17,7 +20,9 @@ function mount(options: Partial<ListboxPopupOptions<Choice>> = {}) {
 	const host = el();
 	let choices = CHOICES;
 	const popup = new ListboxPopup<Choice>(asEl(host), {
-		ariaLabel: "Choices", placeholder: "", emptyText: () => "No matches",
+		ariaLabel: "Choices",
+		placeholder: "",
+		emptyText: () => "No matches",
 		itemsFor: (query) => choices.filter((choice) => choice.name.toLowerCase().includes(query.toLowerCase())),
 		keyOf: (choice) => choice.name,
 		labelOf: (choice) => choice.name,
@@ -29,17 +34,35 @@ function mount(options: Partial<ListboxPopupOptions<Choice>> = {}) {
 	const field = host.querySelector(".cs-dropdown-field")!;
 	const input = host.querySelector(".cs-combobox-input");
 	const menu = host.querySelector(".cs-combobox-menu")!;
-	const type = (query: string) => { input!.value = query; input!.fire("input"); };
+	const type = (query: string) => {
+		input!.value = query;
+		input!.fire("input");
+	};
 	/** A click on the field, which opens the list, or closes it when it is open. */
 	const open = () => field.fire("click");
 	const expectGroups = (...labels: string[]) => {
-		assert.deepEqual(menu.querySelectorAll(".cs-combobox-group-label").map((heading) => heading.textContent), labels);
-		assert.equal(menu.hasClass("cs-combobox-menu-grouped"), labels.length > 0,
-			"menu padding must follow the groups actually present after every rebuild");
+		assert.deepEqual(
+			menu.querySelectorAll(".cs-combobox-group-label").map((heading) => heading.textContent),
+			labels,
+		);
+		assert.equal(
+			menu.hasClass("cs-combobox-menu-grouped"),
+			labels.length > 0,
+			"menu padding must follow the groups actually present after every rebuild",
+		);
 	};
 	return {
-		popup, field, input, menu, type, open, expectGroups,
-		setChoices: (next: Choice[]) => { choices = next; popup.setItems(); },
+		popup,
+		field,
+		input,
+		menu,
+		type,
+		open,
+		expectGroups,
+		setChoices: (next: Choice[]) => {
+			choices = next;
+			popup.setItems();
+		},
 	};
 }
 
@@ -58,7 +81,9 @@ describe("ListboxPopup — rendered group presentation", () => {
 			h.popup.close();
 			h.open();
 			h.expectGroups("browse", "custom", "preset");
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("distinguishes hidden single-group headings from an explicitly retained scope heading", () => {
@@ -73,7 +98,9 @@ describe("ListboxPopup — rendered group presentation", () => {
 			h.expectGroups("browse");
 			h.type("");
 			h.expectGroups("browse", "custom", "preset");
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("removes stale groups when choices change in an open select-only menu", () => {
@@ -87,7 +114,9 @@ describe("ListboxPopup — rendered group presentation", () => {
 			h.expectGroups();
 			h.setChoices(CHOICES);
 			h.expectGroups("browse", "custom", "preset");
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("leaves a create-only result ungrouped after filtering out every real option", () => {
@@ -100,7 +129,9 @@ describe("ListboxPopup — rendered group presentation", () => {
 			assert.ok(h.menu.querySelector(".callout-studio-suggestion-create-new"));
 			h.type("");
 			h.expectGroups("browse", "custom", "preset");
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("keeps a picker without group headings flat through search and rebuilding", () => {
@@ -113,7 +144,9 @@ describe("ListboxPopup — rendered group presentation", () => {
 			h.setChoices(CHOICES);
 			h.expectGroups();
 			assert.equal(h.menu.querySelector(".cs-combobox-option")?.textContent, "Amber");
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 });
 
@@ -125,7 +158,8 @@ describe("ListboxPopup — the ✓ on the committed row", () => {
 	 * `.cs-combobox-check`, and `map` turns each into the name it shows.
 	 */
 	const checkedNames = (menu: ReturnType<typeof mount>["menu"]): string[] =>
-		menu.querySelectorAll(".cs-combobox-option")
+		menu
+			.querySelectorAll(".cs-combobox-option")
 			.filter((row) => row.querySelector(".cs-combobox-check") !== null)
 			.map((row) => row.textContent);
 
@@ -135,8 +169,7 @@ describe("ListboxPopup — the ✓ on the committed row", () => {
 			h.popup.setSelected("Amber");
 			h.open();
 			assert.deepEqual(checkedNames(h.menu), ["Amber"]);
-			const amber = h.menu.querySelectorAll(".cs-combobox-option")
-				.find((row) => row.textContent === "Amber")!;
+			const amber = h.menu.querySelectorAll(".cs-combobox-option").find((row) => row.textContent === "Amber")!;
 			// Last child: it sits after whatever the caller drew in the row.
 			const check = amber.lastElementChild!;
 			assert.ok(check.hasClass("cs-combobox-check"));
@@ -145,7 +178,9 @@ describe("ListboxPopup — the ✓ on the committed row", () => {
 			// so the icon itself is hidden from it.
 			assert.equal(check.getAttribute("aria-hidden"), "true");
 			assert.equal(amber.getAttribute("aria-selected"), "true");
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("moves the check when another row is committed", () => {
@@ -153,12 +188,13 @@ describe("ListboxPopup — the ✓ on the committed row", () => {
 		try {
 			h.popup.setSelected("Amber");
 			h.open();
-			const beta = h.menu.querySelectorAll(".cs-combobox-option")
-				.find((row) => row.textContent === "Beta")!;
+			const beta = h.menu.querySelectorAll(".cs-combobox-option").find((row) => row.textContent === "Beta")!;
 			beta.fire("click");
 			h.open();
 			assert.deepEqual(checkedNames(h.menu), ["Beta"]);
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("draws no check while nothing is committed, and none on the arrow-key highlight", () => {
@@ -168,6 +204,8 @@ describe("ListboxPopup — the ✓ on the committed row", () => {
 			assert.deepEqual(checkedNames(h.menu), []);
 			// The first row is highlighted (`is-active`), which is not a choice.
 			assert.ok(h.menu.querySelector(".cs-combobox-option.is-active"));
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 });

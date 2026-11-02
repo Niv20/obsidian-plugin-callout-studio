@@ -17,11 +17,22 @@ import type { PluginData } from "../src/types";
 const MINUTE = 60_000;
 const T = Date.UTC(2026, 9, 3, 12);
 
-function source(kind: RecoverySource["kind"], time: number | null, data: object | null, extra: Partial<RecoverySource> = {}): RecoverySource {
+function source(
+	kind: RecoverySource["kind"],
+	time: number | null,
+	data: object | null,
+	extra: Partial<RecoverySource> = {},
+): RecoverySource {
 	const id = `${kind}-${time ?? "none"}-${Math.random()}`;
 	return {
-		kind, time, data: data as Partial<PluginData> | null, origin: kind === "copy" ? null : "this-device",
-		path: kind === "history" ? null : `.obsidian/plugins/callout-studio/${kind === "backup" ? "backups/data-" : "data "}${id}.json`,
+		kind,
+		time,
+		data: data as Partial<PluginData> | null,
+		origin: kind === "copy" ? null : "this-device",
+		path:
+			kind === "history"
+				? null
+				: `.obsidian/plugins/callout-studio/${kind === "backup" ? "backups/data-" : "data "}${id}.json`,
 		historyHash: kind === "history" ? id : null,
 		...extra,
 	};
@@ -54,7 +65,11 @@ describe("one timeline of versions", () => {
 				assert.equal(extra, undefined);
 				assert.equal(versionCategory(version!), category);
 				assert.equal(version!.copies.length, copies.length);
-				assert.equal(version!.time, T + (copies.length - 1) * MINUTE, "classification does not change the newest time");
+				assert.equal(
+					version!.time,
+					T + (copies.length - 1) * MINUTE,
+					"classification does not change the newest time",
+				);
 			}
 		});
 	}
@@ -66,15 +81,20 @@ describe("one timeline of versions", () => {
 		const restored = source("history", T + 3, { callouts: [{ id: "restored" }] }, { reason: "restore" });
 		const versions = mergeVersions([replaced, restored]);
 		assert.equal(versions.length, 2);
-		assert.deepEqual(versions.map(version => version.reason.reason), ["restore", "before-restore"]);
+		assert.deepEqual(
+			versions.map((version) => version.reason.reason),
+			["restore", "before-restore"],
+		);
 	});
 
 	it("never merges a copy that cannot be read, not even with another one", () => {
-		const a = source("copy", T, null), b = source("copy", T, null), c = source("history", T, null);
+		const a = source("copy", T, null),
+			b = source("copy", T, null),
+			c = source("history", T, null);
 		const versions = mergeVersions([a, b, c]);
 		assert.equal(versions.length, 3);
-		assert.ok(versions.every(version => version.copies.length === 1 && version.data === null));
-		assert.equal(new Set(versions.map(version => version.key)).size, 3);
+		assert.ok(versions.every((version) => version.copies.length === 1 && version.data === null));
+		assert.equal(new Set(versions.map((version) => version.key)).size, 3);
 	});
 
 	it("puts the newest first and a version that has no time last, in an order every listing repeats", () => {
@@ -83,9 +103,15 @@ describe("one timeline of versions", () => {
 		const fresh = source("backup", T, { n: 2 });
 		const tie = source("history", T, { n: 3 });
 		const versions = mergeVersions([undated, old, fresh, tie]);
-		assert.deepEqual(versions.map(version => (version.data as { n: number }).n), [3, 2, 1, 0],
-			"at the same moment, this device's history before a backup");
-		assert.deepEqual(mergeVersions([tie, fresh, old, undated]).map(version => version.key), versions.map(version => version.key));
+		assert.deepEqual(
+			versions.map((version) => (version.data as { n: number }).n),
+			[3, 2, 1, 0],
+			"at the same moment, this device's history before a backup",
+		);
+		assert.deepEqual(
+			mergeVersions([tie, fresh, old, undated]).map((version) => version.key),
+			versions.map((version) => version.key),
+		);
 	});
 
 	it("takes the newest copy's time, and its reason from the newest copy that recorded one", () => {
@@ -96,7 +122,11 @@ describe("one timeline of versions", () => {
 		assert.equal(version!.time, T + MINUTE);
 		assert.deepEqual(version!.reason, { kind: "backup", reason: "before-import" });
 		const [unexplained] = mergeVersions([source("history", T, { n: 2 })]);
-		assert.deepEqual(unexplained!.reason, { kind: "history", reason: null }, "the underlying source stays available without a recorded reason");
+		assert.deepEqual(
+			unexplained!.reason,
+			{ kind: "history", reason: null },
+			"the underlying source stays available without a recorded reason",
+		);
 	});
 
 	it("reads its settings from a copy that has them", () => {

@@ -46,13 +46,14 @@ export class PackToolbarFilters {
 	private buildVariant(spec: VariantSelectSpec): void {
 		const choices = spec.options.map((value, index) => ({
 			value,
-			label: spec.optionLabelKeys?.[index]
-				? t(spec.optionLabelKeys[index]) : String(value),
+			label: spec.optionLabelKeys?.[index] ? t(spec.optionLabelKeys[index]) : String(value),
 		}));
-		const picker = new SelectDropdown(this.toolbarEl, t(spec.labelKey))
-			.setOptions(choices.map((choice) => ({
-				value: String(choice.value), label: choice.label,
-			})));
+		const picker = new SelectDropdown(this.toolbarEl, t(spec.labelKey)).setOptions(
+			choices.map((choice) => ({
+				value: String(choice.value),
+				label: choice.label,
+			})),
+		);
 		picker.onChange((raw) => {
 			const choice = choices.find((option) => String(option.value) === raw);
 			if (!choice) return;
@@ -70,8 +71,10 @@ export class PackToolbarFilters {
 	}
 
 	private buildCategory(): void {
-		const picker = new SelectDropdown(this.toolbarEl, t("iconPicker.allCategories"))
-			.addOption("", t("iconPicker.allCategories"));
+		const picker = new SelectDropdown(this.toolbarEl, t("iconPicker.allCategories")).addOption(
+			"",
+			t("iconPicker.allCategories"),
+		);
 		picker.onChange((value) => {
 			this.category = value;
 			this.callbacks.onCategory(value);
@@ -84,8 +87,7 @@ export class PackToolbarFilters {
 	private buildSkinTone(): void {
 		const choices = SKIN_TONE_SAMPLES.map((sample, tone) => ({
 			value: tone,
-			label: tone === 0 ? t("iconPicker.skinToneDefault")
-				: `${t("iconPicker.skinTone")} ${tone}`,
+			label: tone === 0 ? t("iconPicker.skinToneDefault") : `${t("iconPicker.skinTone")} ${tone}`,
 			sample,
 		}));
 		const picker = new ListboxPopup(this.toolbarEl, {
@@ -121,10 +123,12 @@ export class PackToolbarFilters {
 	/** Refresh after the bundled search index reveals this pack's categories. */
 	setCategories(categories: readonly string[]): string {
 		if (this.category && !categories.includes(this.category)) this.category = "";
-		this.categoryPicker?.setOptions([
-			{ value: "", label: t("iconPicker.allCategories") },
-			...categories.map((value) => ({ value, label: t(`iconPicker.cat.${value}`) })),
-		]).setValue(this.category);
+		this.categoryPicker
+			?.setOptions([
+				{ value: "", label: t("iconPicker.allCategories") },
+				...categories.map((value) => ({ value, label: t(`iconPicker.cat.${value}`) })),
+			])
+			.setValue(this.category);
 		return this.category;
 	}
 

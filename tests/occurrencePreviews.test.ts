@@ -18,16 +18,20 @@ describe("occurrence previews", () => {
 
 	it("does not take text from outside the callout or a neighboring callout", () => {
 		const source = "> [!one] Title\nOutside\n> [!two]\n> [!three] Third\n> Body";
-		assert.deepEqual(scanCalloutOccurrences("a.md", source).map((entry) => entry.excerpt), [
-			"> [!one] Title", "> [!two]", "> [!three] Third\n> Body",
-		]);
+		assert.deepEqual(
+			scanCalloutOccurrences("a.md", source).map((entry) => entry.excerpt),
+			["> [!one] Title", "> [!two]", "> [!three] Third\n> Body"],
+		);
 	});
 
 	it("does not attach a nested block body to its parent and keeps previews short", () => {
 		const source = `> [!outer] Outer\n>> [!inner] ${"T".repeat(300)}\n>> ${"B".repeat(400)}`;
 		const [outer, inner] = scanCalloutOccurrences("a.md", source);
 		assert.equal(outer?.excerpt, "> [!outer] Outer");
-		assert.deepEqual(inner?.excerpt.split("\n").map((line) => line.length), [90, 180]);
+		assert.deepEqual(
+			inner?.excerpt.split("\n").map((line) => line.length),
+			[90, 180],
+		);
 	});
 
 	it("preserves multiple inline results and makes CRLF excerpts match editor text", () => {
@@ -39,8 +43,10 @@ describe("occurrence previews", () => {
 		assert.deepEqual(entries, scanCalloutOccurrences("a.md", source.replace(/\r/g, "")));
 	});
 	it("includes a list item used as the first visible inner content", () => {
-		assert.equal(scanCalloutOccurrences("a.md", "> [!note] Title\n> - First item\n> - Second item")[0]?.excerpt,
-			"> [!note] Title\n> - First item");
+		assert.equal(
+			scanCalloutOccurrences("a.md", "> [!note] Title\n> - First item\n> - Second item")[0]?.excerpt,
+			"> [!note] Title\n> - First item",
+		);
 	});
 
 	it("preserves raw metadata, spacing, formatting and list syntax on selected content lines", () => {
@@ -52,13 +58,17 @@ describe("occurrence previews", () => {
 	it("keeps heading and inline markers visible without rendering their Markdown", () => {
 		const source = "## [!note] **Heading**\nText [!tip] `code` [!warning]";
 		const entries = scanCalloutOccurrences("a.md", source);
-		assert.deepEqual(entries.map((entry) => entry.excerpt), [
-			"## [!note] **Heading**", "Text [!tip] `code` [!warning]", "Text [!tip] `code` [!warning]",
-		]);
+		assert.deepEqual(
+			entries.map((entry) => entry.excerpt),
+			["## [!note] **Heading**", "Text [!tip] `code` [!warning]", "Text [!tip] `code` [!warning]"],
+		);
 	});
 
 	it("keeps one raw header line for blocks whose entire bodies are excluded", () => {
 		const source = "> [!note] Title\n> %% comments with > [!fake] %%\n> ```\n> [!fake]\n> ```";
-		assert.deepEqual(scanCalloutOccurrences("a.md", source).map((entry) => entry.excerpt), ["> [!note] Title"]);
+		assert.deepEqual(
+			scanCalloutOccurrences("a.md", source).map((entry) => entry.excerpt),
+			["> [!note] Title"],
+		);
 	});
 });

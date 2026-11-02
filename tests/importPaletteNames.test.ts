@@ -29,12 +29,20 @@ import { memoryVault, PLUGIN_MANIFEST, savingWriter, stubConfirm } from "./suppo
 (globalThis as { __CS_ICON_IDS__?: string[] }).__CS_ICON_IDS__ = ["lucide-pencil", "pencil"];
 
 const PLAIN = {
-	colorLight: "#4183f2", colorDark: "#448aff", bgColorLight: "#ecf3ff", bgColorDark: "#202733",
-	textColorLight: "#1a1a1a", textColorDark: "#e0e0e0",
+	colorLight: "#4183f2",
+	colorDark: "#448aff",
+	bgColorLight: "#ecf3ff",
+	bgColorDark: "#202733",
+	textColorLight: "#1a1a1a",
+	textColorDark: "#e0e0e0",
 };
 const DEEPER = {
-	colorLight: "#3d7ce6", colorDark: "#448aff", bgColorLight: "#dae8ff", bgColorDark: "#243249",
-	textColorLight: "#1a1a1a", textColorDark: "#e0e0e0",
+	colorLight: "#3d7ce6",
+	colorDark: "#448aff",
+	bgColorLight: "#dae8ff",
+	bgColorDark: "#243249",
+	textColorLight: "#1a1a1a",
+	textColorDark: "#e0e0e0",
 };
 
 const palette = (id: string, name: string, colors: typeof PLAIN = PLAIN): CustomPalette => ({ id, name, ...colors });
@@ -59,22 +67,34 @@ async function importInto(target: CalloutRegistry, source: CalloutRegistry): Pro
 	const ctx = {
 		app: {} as App,
 		plugin: {
-			registry: target, app: memoryVault().app, manifest: PLUGIN_MANIFEST, settingsWriter: savingWriter(),
+			registry: target,
+			app: memoryVault().app,
+			manifest: PLUGIN_MANIFEST,
+			settingsWriter: savingWriter(),
 			customCommands: { syncAll: () => {} },
 			saveSettings: () => Promise.resolve(),
-			refreshRenderModes: () => {}, ensureIconArtworkFor: () => Promise.resolve(),
+			refreshRenderModes: () => {},
+			ensureIconArtworkFor: () => Promise.resolve(),
 		},
 		redraw: () => {},
 	} as unknown as SettingsContext;
 	try {
-		await processImportedJSON(ctx, new File([source.exportToJSONv2()], "backup.json", { type: "application/json" }));
-	} finally { confirm.restore(); }
+		await processImportedJSON(
+			ctx,
+			new File([source.exportToJSONv2()], "backup.json", { type: "application/json" }),
+		);
+	} finally {
+		confirm.restore();
+	}
 	return notices;
 }
 
 const names = (registry: CalloutRegistry): string[] => registry.settings.customPalettes.map((p) => p.name);
-const colorsOf = (def: CalloutDefinition | undefined) =>
-	({ colorLight: def?.colorLight, bgColorLight: def?.bgColorLight, bgColorDark: def?.bgColorDark });
+const colorsOf = (def: CalloutDefinition | undefined) => ({
+	colorLight: def?.colorLight,
+	bgColorLight: def?.bgColorLight,
+	bgColorDark: def?.bgColorDark,
+});
 
 describe("importing a palette whose name the vault already has", () => {
 	it("updates the vault's palette instead of adding a second one", async () => {
@@ -96,7 +116,11 @@ describe("importing a palette whose name the vault already has", () => {
 		await importInto(target, vault([theirs], [using("theirs", theirs)]));
 
 		assert.equal(target.get("mine")?.paletteId, "cp-local");
-		assert.equal(target.get("theirs")?.paletteId, "cp-local", "the imported callout points at a palette that is gone");
+		assert.equal(
+			target.get("theirs")?.paletteId,
+			"cp-local",
+			"the imported callout points at a palette that is gone",
+		);
 	});
 
 	it("restyles the callouts that use it, as editing the palette would", async () => {
@@ -158,9 +182,16 @@ describe("importing a palette whose name the vault already has", () => {
 		assert.deepEqual(names(target), ["Blue 2"], "the vault still holds two palettes called Blue 2");
 		const kept = target.settings.customPalettes[0]!;
 		assert.equal(target.get("x")?.paletteId, kept.id);
-		assert.equal(target.get("y")?.paletteId, kept.id, "a callout was left pointing at the palette that was folded away");
+		assert.equal(
+			target.get("y")?.paletteId,
+			kept.id,
+			"a callout was left pointing at the palette that was folded away",
+		);
 		assert.equal(target.get("x")?.bgColorLight, DEEPER.bgColorLight);
-		assert.ok(notices.some((n) => n.startsWith("Merged 1 saved color")), "the fold was not announced");
+		assert.ok(
+			notices.some((n) => n.startsWith("Merged 1 saved color")),
+			"the fold was not announced",
+		);
 	});
 
 	it("does not fold two palettes of the same name that the file itself carries", async () => {
@@ -168,6 +199,9 @@ describe("importing a palette whose name the vault already has", () => {
 		// to overwrite, so both arrive as they were rather than one eating the other.
 		const target = vault([]);
 		await importInto(target, vault([palette("cp-a", "Blue 2", PLAIN), palette("cp-b", "Blue 2", DEEPER)]));
-		assert.deepEqual(target.settings.customPalettes.map((p) => p.id), ["cp-a", "cp-b"]);
+		assert.deepEqual(
+			target.settings.customPalettes.map((p) => p.id),
+			["cp-a", "cp-b"],
+		);
 	});
 });

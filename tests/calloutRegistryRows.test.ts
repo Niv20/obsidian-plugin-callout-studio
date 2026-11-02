@@ -38,10 +38,7 @@ function def(over: Partial<CalloutDefinition> = {}): CalloutDefinition {
 	};
 }
 
-function saved(
-	callouts: CalloutDefinition[],
-	settings?: Record<string, unknown>,
-): Partial<PluginData> {
+function saved(callouts: CalloutDefinition[], settings?: Record<string, unknown>): Partial<PluginData> {
 	return { callouts, ...(settings ? { settings } : {}) } as Partial<PluginData>;
 }
 
@@ -81,9 +78,7 @@ describe("restyleUncustomizedFallbackRows — who is mirrored", () => {
 	});
 
 	it("skips a discovery row the user has customized", () => {
-		const { registry } = withFallback({}, [
-			def({ id: "mine", source: "fallback", customized: true }),
-		]);
+		const { registry } = withFallback({}, [def({ id: "mine", source: "fallback", customized: true })]);
 		registry.restyleUncustomizedFallbackRows();
 		assert.strictEqual(registry.get("mine")?.colorLight, "#336699");
 	});
@@ -106,10 +101,7 @@ describe("restyleUncustomizedFallbackRows — who is mirrored", () => {
 		withTheme.restyleUncustomizedFallbackRows();
 		withoutTheme.restyleUncustomizedFallbackRows();
 
-		assert.deepStrictEqual(
-			withTheme.toSaveData().callouts,
-			withoutTheme.toSaveData().callouts,
-		);
+		assert.deepStrictEqual(withTheme.toSaveData().callouts, withoutTheme.toSaveData().callouts);
 		assert.strictEqual(withTheme.get("f1")?.colorLight, "#ff0000");
 	});
 
@@ -140,9 +132,7 @@ describe("restyleUncustomizedFallbackRows — who is mirrored", () => {
 	});
 
 	it("falls back to the default id when the setting is empty", () => {
-		const { registry } = loaded(
-			saved([def({ id: "f1", source: "fallback" })], { fallbackCalloutId: "" }),
-		);
+		const { registry } = loaded(saved([def({ id: "f1", source: "fallback" })], { fallbackCalloutId: "" }));
 		assert.strictEqual(registry.restyleUncustomizedFallbackRows(), 1);
 		assert.strictEqual(
 			registry.get("f1")?.colorLight,
@@ -185,9 +175,7 @@ describe("restyleUncustomizedFallbackRows — who is mirrored", () => {
 	});
 
 	it("reports only the rows that differ, not every row it walks", () => {
-		const { registry } = withFallback({}, [
-			def({ id: "drifted", source: "fallback", colorLight: "#0000ff" }),
-		]);
+		const { registry } = withFallback({}, [def({ id: "drifted", source: "fallback", colorLight: "#0000ff" })]);
 		assert.strictEqual(registry.restyleUncustomizedFallbackRows(), 2);
 		assert.strictEqual(registry.restyleUncustomizedFallbackRows(), 0);
 	});
@@ -323,14 +311,8 @@ describe("restyleUncustomizedFallbackRows — the callers that trigger it", () =
 		const { registry } = withFallback();
 		registry.remove("base");
 
-		assert.strictEqual(
-			registry.settings.fallbackCalloutId,
-			DEFAULT_SETTINGS.fallbackCalloutId,
-		);
-		assert.strictEqual(
-			registry.get("f1")?.colorLight,
-			registry.get("note")?.colorLight,
-		);
+		assert.strictEqual(registry.settings.fallbackCalloutId, DEFAULT_SETTINGS.fallbackCalloutId);
+		assert.strictEqual(registry.get("f1")?.colorLight, registry.get("note")?.colorLight);
 	});
 
 	it("costs ONE change round on those paths, not two", () => {
@@ -365,9 +347,7 @@ describe("restyleUncustomizedFallbackRows — the callers that trigger it", () =
 
 describe("convertToFallback", () => {
 	it("re-homes a user callout into the mirror and re-styles it at once", () => {
-		const { registry } = withFallback({}, [
-			def({ id: "mine", source: "user", customized: true }),
-		]);
+		const { registry } = withFallback({}, [def({ id: "mine", source: "user", customized: true })]);
 
 		assert.strictEqual(registry.convertToFallback("mine"), true);
 		assert.strictEqual(registry.get("mine")?.source, "fallback");
@@ -375,18 +355,14 @@ describe("convertToFallback", () => {
 	});
 
 	it("clears the sticky customized flag, or the mirror would skip it forever", () => {
-		const { registry } = withFallback({}, [
-			def({ id: "mine", source: "user", customized: true }),
-		]);
+		const { registry } = withFallback({}, [def({ id: "mine", source: "user", customized: true })]);
 		registry.convertToFallback("mine");
 
 		assert.ok(!("customized" in (registry.get("mine") as object)), "deleted, not false");
 	});
 
 	it("announces the conversion and the re-style as one round", () => {
-		const { registry, events } = withFallback({}, [
-			def({ id: "mine", source: "user", customized: true }),
-		]);
+		const { registry, events } = withFallback({}, [def({ id: "mine", source: "user", customized: true })]);
 		assert.strictEqual(registry.convertToFallback("mine"), true);
 		assert.strictEqual(events(), 1);
 	});
@@ -439,9 +415,7 @@ describe("isBuiltInModified", () => {
 		// `builtIn`, which used to mean it answered "yes, modified" about a row
 		// whose `builtIn` was false. `load()` reclaims such a row as the
 		// built-in it names, so the two now agree.
-		const { registry } = loaded(
-			saved([def({ id: "note", displayName: "Mine", builtIn: false, source: "user" })]),
-		);
+		const { registry } = loaded(saved([def({ id: "note", displayName: "Mine", builtIn: false, source: "user" })]));
 		assert.strictEqual(registry.get("note")?.builtIn, true);
 		assert.strictEqual(registry.isBuiltInModified("note"), true);
 	});
@@ -478,10 +452,7 @@ describe("resetBuiltIn", () => {
 		registry.resetBuiltIn("abstract");
 		registry.update("abstract", { aliases: ["mine"] });
 
-		assert.deepStrictEqual(registry.getBuiltInDefault("abstract")?.aliases, [
-			"summary",
-			"tldr",
-		]);
+		assert.deepStrictEqual(registry.getBuiltInDefault("abstract")?.aliases, ["summary", "tldr"]);
 	});
 
 	it("announces the change", () => {
@@ -500,9 +471,7 @@ describe("resetBuiltIn", () => {
 	it("clears the edit a saved row had carried onto a built-in id", () => {
 		// `load()` reclaims such a row as the built-in it names, keeping its
 		// edit; this is the user throwing that edit away.
-		const { registry } = loaded(
-			saved([def({ id: "note", displayName: "Mine", builtIn: false, source: "user" })]),
-		);
+		const { registry } = loaded(saved([def({ id: "note", displayName: "Mine", builtIn: false, source: "user" })]));
 		assert.strictEqual(registry.resetBuiltIn("note"), true);
 		assert.strictEqual(registry.get("note")?.displayName, "Note");
 		assert.strictEqual(registry.get("note")?.builtIn, true);

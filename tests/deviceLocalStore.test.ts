@@ -68,127 +68,146 @@ function fresh(seed?: unknown): DeviceLocalStore {
 }
 
 describe("device UI state without a discovery cache", () => {
- it("does not write or discover anything on a new installation", () => {
-  const store = fresh(); const before = storage.writes();
-  assert.strictEqual(store.hasInitialized, false);
-  assert.strictEqual(store.hasSeenWelcome, false);
-  assert.strictEqual(store.hasOfferedOccurrencesTab, false);
-  assert.strictEqual(storage.writes(), before);
- });
- it("preserves legacy evidence until the verified archive", () => {
-  const store = fresh({ v: 1, discovered: ["old"], firstRunCompleted: true,
-   retiredThemeIds: ["retired"], listsExpanded: { user: false } });
-  assert.strictEqual(store.hasInitialized, true);
-  const saved = JSON.parse(storage.map.get(KEY)!) as Record<string, unknown>;
-  assert.deepStrictEqual(saved.discovered, ["old"]);
-  assert.strictEqual(saved.v, 1);
-  store.markInitialized(); store.setQuickInsertSource("theme");
-  assert.strictEqual((JSON.parse(storage.map.get(KEY)!) as { v: number }).v, 1);
- });
- it("persists only the installation marker and UI preferences", () => {
-  const store = fresh(); store.markInitialized(); store.setQuickInsertSource("theme");
-  const restored = new DeviceLocalStore(app);
-  assert.strictEqual(restored.hasInitialized, true);
-  assert.strictEqual(restored.quickInsertSource, "theme");
- });
- // The old settings page remembered which of its sections were folded; the
- // page is gone, and so is the memory, from the stored blob too.
- it("drops the old settings page's folded sections when it loads", () => {
-  fresh({ v: 3, initialized: true, welcomeSeen: true, listsExpanded: { user: false } });
-  const saved = JSON.parse(storage.map.get(KEY)!) as Record<string, unknown>;
-  assert.strictEqual("listsExpanded" in saved, false);
-  assert.strictEqual(saved.initialized, true);
- });
- it("remembers the welcome separately without marking the installation initialized", () => {
-  const store = fresh(); store.markWelcomeSeen();
-  assert.strictEqual(store.hasSeenWelcome, true);
-  assert.strictEqual(store.hasInitialized, false);
-  const restored = new DeviceLocalStore(app);
-  assert.strictEqual(restored.hasSeenWelcome, true);
-  assert.strictEqual(restored.hasInitialized, false);
- });
- it("does not mistake older local-state blobs for a completed welcome", () => {
-  const store = fresh({ v: 2, initialized: true, listsExpanded: { user: false } });
-  assert.strictEqual(store.hasSeenWelcome, false);
-  assert.strictEqual(store.hasInitialized, true);
- });
- it("tolerates corrupt and unavailable storage", () => {
-  assert.doesNotThrow(() => fresh("broken"));
-  storage.failReads(true); assert.doesNotThrow(() => new DeviceLocalStore(app));
-  storage.failReads(false);
- });
- it("retries refused writes", () => {
-  const store = fresh(); storage.failWrites(true); store.markInitialized();
-  assert.strictEqual(storage.map.has(KEY), false);
-  storage.failWrites(false); store.markInitialized();
-  assert.ok(storage.map.has(KEY));
- });
- it("does not rewrite identical state", () => {
-  const store = fresh(); store.markInitialized(); const before = storage.writes();
-  store.markInitialized();
-  assert.strictEqual(storage.writes(), before);
- });
+	it("does not write or discover anything on a new installation", () => {
+		const store = fresh();
+		const before = storage.writes();
+		assert.strictEqual(store.hasInitialized, false);
+		assert.strictEqual(store.hasSeenWelcome, false);
+		assert.strictEqual(store.hasOfferedOccurrencesTab, false);
+		assert.strictEqual(storage.writes(), before);
+	});
+	it("preserves legacy evidence until the verified archive", () => {
+		const store = fresh({
+			v: 1,
+			discovered: ["old"],
+			firstRunCompleted: true,
+			retiredThemeIds: ["retired"],
+			listsExpanded: { user: false },
+		});
+		assert.strictEqual(store.hasInitialized, true);
+		const saved = JSON.parse(storage.map.get(KEY)!) as Record<string, unknown>;
+		assert.deepStrictEqual(saved.discovered, ["old"]);
+		assert.strictEqual(saved.v, 1);
+		store.markInitialized();
+		store.setQuickInsertSource("theme");
+		assert.strictEqual((JSON.parse(storage.map.get(KEY)!) as { v: number }).v, 1);
+	});
+	it("persists only the installation marker and UI preferences", () => {
+		const store = fresh();
+		store.markInitialized();
+		store.setQuickInsertSource("theme");
+		const restored = new DeviceLocalStore(app);
+		assert.strictEqual(restored.hasInitialized, true);
+		assert.strictEqual(restored.quickInsertSource, "theme");
+	});
+	// The old settings page remembered which of its sections were folded; the
+	// page is gone, and so is the memory, from the stored blob too.
+	it("drops the old settings page's folded sections when it loads", () => {
+		fresh({ v: 3, initialized: true, welcomeSeen: true, listsExpanded: { user: false } });
+		const saved = JSON.parse(storage.map.get(KEY)!) as Record<string, unknown>;
+		assert.strictEqual("listsExpanded" in saved, false);
+		assert.strictEqual(saved.initialized, true);
+	});
+	it("remembers the welcome separately without marking the installation initialized", () => {
+		const store = fresh();
+		store.markWelcomeSeen();
+		assert.strictEqual(store.hasSeenWelcome, true);
+		assert.strictEqual(store.hasInitialized, false);
+		const restored = new DeviceLocalStore(app);
+		assert.strictEqual(restored.hasSeenWelcome, true);
+		assert.strictEqual(restored.hasInitialized, false);
+	});
+	it("does not mistake older local-state blobs for a completed welcome", () => {
+		const store = fresh({ v: 2, initialized: true, listsExpanded: { user: false } });
+		assert.strictEqual(store.hasSeenWelcome, false);
+		assert.strictEqual(store.hasInitialized, true);
+	});
+	it("tolerates corrupt and unavailable storage", () => {
+		assert.doesNotThrow(() => fresh("broken"));
+		storage.failReads(true);
+		assert.doesNotThrow(() => new DeviceLocalStore(app));
+		storage.failReads(false);
+	});
+	it("retries refused writes", () => {
+		const store = fresh();
+		storage.failWrites(true);
+		store.markInitialized();
+		assert.strictEqual(storage.map.has(KEY), false);
+		storage.failWrites(false);
+		store.markInitialized();
+		assert.ok(storage.map.has(KEY));
+	});
+	it("does not rewrite identical state", () => {
+		const store = fresh();
+		store.markInitialized();
+		const before = storage.writes();
+		store.markInitialized();
+		assert.strictEqual(storage.writes(), before);
+	});
 });
 
 describe("Find callouts onboarding marker", () => {
- it("survives a new store without marking settings initialized or the welcome seen", () => {
-  const store = fresh();
-  assert.strictEqual(store.markOccurrencesTabOffered(), true);
-  assert.strictEqual(store.hasOfferedOccurrencesTab, true);
-  const restored = new DeviceLocalStore(app);
-  assert.strictEqual(restored.hasOfferedOccurrencesTab, true);
-  assert.strictEqual(restored.hasInitialized, false);
-  assert.strictEqual(restored.hasSeenWelcome, false);
- });
- it("accepts only a literal true marker from storage", () => {
-  for (const value of [undefined, false, 1, "true", {}, []]) {
-   const store = fresh({ v: 3, occurrencesTabOffered: value });
-   assert.strictEqual(store.hasOfferedOccurrencesTab, false);
-   assert.strictEqual((JSON.parse(storage.map.get(KEY)!) as Record<string, unknown>).occurrencesTabOffered, undefined);
-  }
-  assert.strictEqual(fresh({ v: 3, occurrencesTabOffered: true }).hasOfferedOccurrencesTab, true);
- });
- it("keeps the marker within the app id's device-local vault storage", () => {
-  fresh();
-  const firstApp = { appId: "first-vault-id", vault: { getName: () => "same-name" } } as unknown as App;
-  const secondApp = { appId: "second-vault-id", vault: { getName: () => "same-name" } } as unknown as App;
-  assert.strictEqual(new DeviceLocalStore(firstApp).markOccurrencesTabOffered(), true);
-  assert.strictEqual(new DeviceLocalStore(firstApp).hasOfferedOccurrencesTab, true);
-  assert.strictEqual(new DeviceLocalStore(secondApp).hasOfferedOccurrencesTab, false);
-  assert.strictEqual(new DeviceLocalStore(app).hasOfferedOccurrencesTab, false);
-  assert.strictEqual(storage.map.has("first-vault-id-callout-studio-local"), true);
-  // Another device has its own local storage even for the same app id.
-  storage.map.clear();
-  assert.strictEqual(new DeviceLocalStore(firstApp).hasOfferedOccurrencesTab, false);
- });
- it("reports refused writes and can retry the same in-memory marker", () => {
-  const store = fresh();
-  storage.failWrites(true);
-  assert.strictEqual(store.markOccurrencesTabOffered(), false);
-  assert.strictEqual(store.hasOfferedOccurrencesTab, true);
-  assert.strictEqual(new DeviceLocalStore(app).hasOfferedOccurrencesTab, false);
-  storage.failWrites(false);
-  assert.strictEqual(store.markOccurrencesTabOffered(), true);
-  assert.strictEqual(new DeviceLocalStore(app).hasOfferedOccurrencesTab, true);
-  const before = storage.writes();
-  storage.failWrites(true);
-  assert.strictEqual(store.markOccurrencesTabOffered(), true);
-  assert.strictEqual(storage.writes(), before);
-  storage.failWrites(false);
- });
- it("does not report a durable marker when local storage must be preserved", () => {
-  for (const seed of ["broken", { v: 99 }, { v: 1, discovered: ["old"] }]) {
-   const store = fresh(seed);
-   const original = storage.map.get(KEY);
-   assert.strictEqual(store.markOccurrencesTabOffered(), false);
-   assert.strictEqual(store.hasOfferedOccurrencesTab, true);
-   assert.strictEqual(storage.map.get(KEY), original);
-  }
-  fresh();
-  storage.failReads(true);
-  const unreadable = new DeviceLocalStore(app);
-  assert.strictEqual(unreadable.markOccurrencesTabOffered(), false);
-  storage.failReads(false);
-  assert.strictEqual(storage.map.has(KEY), false);
- });
+	it("survives a new store without marking settings initialized or the welcome seen", () => {
+		const store = fresh();
+		assert.strictEqual(store.markOccurrencesTabOffered(), true);
+		assert.strictEqual(store.hasOfferedOccurrencesTab, true);
+		const restored = new DeviceLocalStore(app);
+		assert.strictEqual(restored.hasOfferedOccurrencesTab, true);
+		assert.strictEqual(restored.hasInitialized, false);
+		assert.strictEqual(restored.hasSeenWelcome, false);
+	});
+	it("accepts only a literal true marker from storage", () => {
+		for (const value of [undefined, false, 1, "true", {}, []]) {
+			const store = fresh({ v: 3, occurrencesTabOffered: value });
+			assert.strictEqual(store.hasOfferedOccurrencesTab, false);
+			assert.strictEqual(
+				(JSON.parse(storage.map.get(KEY)!) as Record<string, unknown>).occurrencesTabOffered,
+				undefined,
+			);
+		}
+		assert.strictEqual(fresh({ v: 3, occurrencesTabOffered: true }).hasOfferedOccurrencesTab, true);
+	});
+	it("keeps the marker within the app id's device-local vault storage", () => {
+		fresh();
+		const firstApp = { appId: "first-vault-id", vault: { getName: () => "same-name" } } as unknown as App;
+		const secondApp = { appId: "second-vault-id", vault: { getName: () => "same-name" } } as unknown as App;
+		assert.strictEqual(new DeviceLocalStore(firstApp).markOccurrencesTabOffered(), true);
+		assert.strictEqual(new DeviceLocalStore(firstApp).hasOfferedOccurrencesTab, true);
+		assert.strictEqual(new DeviceLocalStore(secondApp).hasOfferedOccurrencesTab, false);
+		assert.strictEqual(new DeviceLocalStore(app).hasOfferedOccurrencesTab, false);
+		assert.strictEqual(storage.map.has("first-vault-id-callout-studio-local"), true);
+		// Another device has its own local storage even for the same app id.
+		storage.map.clear();
+		assert.strictEqual(new DeviceLocalStore(firstApp).hasOfferedOccurrencesTab, false);
+	});
+	it("reports refused writes and can retry the same in-memory marker", () => {
+		const store = fresh();
+		storage.failWrites(true);
+		assert.strictEqual(store.markOccurrencesTabOffered(), false);
+		assert.strictEqual(store.hasOfferedOccurrencesTab, true);
+		assert.strictEqual(new DeviceLocalStore(app).hasOfferedOccurrencesTab, false);
+		storage.failWrites(false);
+		assert.strictEqual(store.markOccurrencesTabOffered(), true);
+		assert.strictEqual(new DeviceLocalStore(app).hasOfferedOccurrencesTab, true);
+		const before = storage.writes();
+		storage.failWrites(true);
+		assert.strictEqual(store.markOccurrencesTabOffered(), true);
+		assert.strictEqual(storage.writes(), before);
+		storage.failWrites(false);
+	});
+	it("does not report a durable marker when local storage must be preserved", () => {
+		for (const seed of ["broken", { v: 99 }, { v: 1, discovered: ["old"] }]) {
+			const store = fresh(seed);
+			const original = storage.map.get(KEY);
+			assert.strictEqual(store.markOccurrencesTabOffered(), false);
+			assert.strictEqual(store.hasOfferedOccurrencesTab, true);
+			assert.strictEqual(storage.map.get(KEY), original);
+		}
+		fresh();
+		storage.failReads(true);
+		const unreadable = new DeviceLocalStore(app);
+		assert.strictEqual(unreadable.markOccurrencesTabOffered(), false);
+		storage.failReads(false);
+		assert.strictEqual(storage.map.has(KEY), false);
+	});
 });

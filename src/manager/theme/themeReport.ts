@@ -45,9 +45,7 @@ import { buildChecks } from "./themeReportChecks";
 
 /** Every id Obsidian answers to out of the box, primary names and aliases. */
 export const BUILT_IN_ATTR_IDS: ReadonlySet<string> = new Set(
-	DEFAULT_CALLOUTS.flatMap((def) => [def.id, ...(def.aliases ?? [])]).map(
-		(id) => obsidianCalloutAttrId(id),
-	),
+	DEFAULT_CALLOUTS.flatMap((def) => [def.id, ...(def.aliases ?? [])]).map((id) => obsidianCalloutAttrId(id)),
 );
 
 /** How far into callouts a theme goes. Lets a tester skip half the corpus. */
@@ -209,30 +207,16 @@ export function analyzeTheme(input: ThemeInput): ThemeReport {
 
 	const named = [...scan.byId.keys()];
 	const addedIds = named.filter((id) => !BUILT_IN_ATTR_IDS.has(id)).sort();
-	const builtInsRestyled = named.filter((id) =>
-		BUILT_IN_ATTR_IDS.has(id),
-	).length;
-	const fuzzy = [
-		...new Set(scan.patterns.map(({ op, value }) => `${op}=${value}`)),
-	].sort();
+	const builtInsRestyled = named.filter((id) => BUILT_IN_ATTR_IDS.has(id)).length;
+	const fuzzy = [...new Set(scan.patterns.map(({ op, value }) => `${op}=${value}`))].sort();
 
 	const involvement: CalloutInvolvement =
-		named.length > 0 || scan.patterns.length > 0
-			? "per-id"
-			: raw.hasCalloutRule
-				? "generic"
-				: "none";
+		named.length > 0 || scan.patterns.length > 0 ? "per-id" : raw.hasCalloutRule ? "generic" : "none";
 
 	// Order matters: a mask paints over whatever `--callout-icon` produced, and
 	// `display: none` beats both. The strongest wins, because that is the one
 	// a tester will actually be looking at.
-	const icons: IconMechanism = raw.iconHidden
-		? "hidden"
-		: raw.iconMask
-			? "mask"
-			: raw.iconVar
-				? "var"
-				: "none";
+	const icons: IconMechanism = raw.iconHidden ? "hidden" : raw.iconMask ? "mask" : raw.iconVar ? "var" : "none";
 
 	const report: ThemeReport = {
 		name: input.name,
@@ -269,8 +253,6 @@ export function sortThemeReports<T extends { name: string }>(rows: T[]): T[] {
 		numeric: true,
 	});
 	return [...rows].sort(
-		(a, b) =>
-			collator.compare(a.name, b.name) ||
-			(a.name < b.name ? -1 : a.name > b.name ? 1 : 0),
+		(a, b) => collator.compare(a.name, b.name) || (a.name < b.name ? -1 : a.name > b.name ? 1 : 0),
 	);
 }

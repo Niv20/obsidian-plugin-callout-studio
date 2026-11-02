@@ -81,9 +81,7 @@ import type { AccentDialect, AccentSpelling } from "../theme/accentDialect";
  */
 function accentRef(spelling: AccentSpelling, ownsVariable: boolean): string {
 	if (!ownsVariable) return "var(--cs-accent)";
-	return spelling === "triplet"
-		? "rgb(var(--callout-color))"
-		: "var(--callout-color)";
+	return spelling === "triplet" ? "rgb(var(--callout-color))" : "var(--callout-color)";
 }
 
 /** Core's own declarations, in core's own order, as functions of that read. */
@@ -92,10 +90,7 @@ function calloutProps(accent: string): ReadonlyArray<[string, string]> {
 	const table = `color-mix(in oklch, ${accent} 25%, var(--background-primary) 50%)`;
 	return [
 		["background-color", bg],
-		[
-			"border-color",
-			`color-mix(in oklch, ${accent} calc(var(--callout-border-opacity) * 100%), transparent)`,
-		],
+		["border-color", `color-mix(in oklch, ${accent} calc(var(--callout-border-opacity) * 100%), transparent)`],
 		["--bases-table-header-background-hover", bg],
 		["--bases-embed-border-color", table],
 		["--bases-table-border-color", table],

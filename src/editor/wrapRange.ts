@@ -148,8 +148,7 @@ export const planWrap = (
 				// The header of the callout being written into sits right
 				// above its own body, where a nested callout may start.
 				!(shape(above).header && shape(above).depth === level),
-			separateBelow:
-				within(below) && !shape(below).blank && shape(below).depth >= level,
+			separateBelow: within(below) && !shape(below).blank && shape(below).depth >= level,
 		};
 	};
 
@@ -165,20 +164,14 @@ export const planWrap = (
 		level = Math.min(level, header ? depth - 1 : depth);
 	}
 
-	const textOf = (line: number): string =>
-		splitQuoteMarkers(editor.getLine(line), level).text;
+	const textOf = (line: number): string => splitQuoteMarkers(editor.getLine(line), level).text;
 	/** Inside a quote nested in the container: it moves whole. */
-	const nested = (line: number): boolean =>
-		within(line) && shape(line).depth > level;
+	const nested = (line: number): boolean => within(line) && shape(line).depth > level;
 	/** Text of the container itself. Its own header belongs to the level above. */
 	const inText = (line: number): boolean =>
-		within(line) &&
-		!shape(line).blank &&
-		shape(line).depth === level &&
-		!shape(line).header;
+		within(line) && !shape(line).blank && shape(line).depth === level && !shape(line).header;
 	/** A heading is a block of its own, never part of a paragraph under it. */
-	const isHeading = (line: number): boolean =>
-		!shape(line).fence && HEADING_REGEX.test(textOf(line));
+	const isHeading = (line: number): boolean => !shape(line).fence && HEADING_REGEX.test(textOf(line));
 	const paragraphEdge = (line: number, step: 1 | -1): number => {
 		while (inText(line + step) && !isHeading(line) && !isHeading(line + step)) {
 			line += step;

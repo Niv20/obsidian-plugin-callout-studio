@@ -1,13 +1,15 @@
 export const pt: Record<string, string> = {
 	"portable.reviewTitle": "Revisar conversão",
-	"portable.helpIntro": "Selecione as substituições a aplicar. Clique no lápis ou no texto da substituição para o editar e, em seguida, prima Enter ou clique fora do campo para guardar. Use o ícone de reposição para descartar um rascunho ou restaurar a substituição predefinida. As notas só são alteradas depois de escolher Converter selecionados e confirmar. As ligações aos títulos são atualizadas juntamente com os títulos selecionados.",
+	"portable.helpIntro":
+		"Selecione as substituições a aplicar. Clique no lápis ou no texto da substituição para o editar e, em seguida, prima Enter ou clique fora do campo para guardar. Use o ícone de reposição para descartar um rascunho ou restaurar a substituição predefinida. As notas só são alteradas depois de escolher Converter selecionados e confirmar. As ligações aos títulos são atualizadas juntamente com os títulos selecionados.",
 	"portable.help": "Sobre a conversão",
 	"portable.roleLink": "Link para título",
 	"portable.convertSelected": "Converter selecionados",
-	"portable.selectionSummary": "{{selected}} de {{total}} substituições selecionadas · {{links}} links para títulos a atualizar",
-	"portable.selectionSummaryNoLinks":
-		"{{selected}} de {{total}} substituições selecionadas",
-	"portable.selectionConflict": "Essa escolha tornaria os links para títulos ambíguos. A seleção anterior foi mantida.",
+	"portable.selectionSummary":
+		"{{selected}} de {{total}} substituições selecionadas · {{links}} links para títulos a atualizar",
+	"portable.selectionSummaryNoLinks": "{{selected}} de {{total}} substituições selecionadas",
+	"portable.selectionConflict":
+		"Essa escolha tornaria os links para títulos ambíguos. A seleção anterior foi mantida.",
 	"portable.selectAll": "Selecionar tudo",
 	"portable.selectNone": "Desmarcar tudo",
 	"portable.relatedLinksHint": "Links e incorporações acompanham os títulos selecionados e são convertidos com eles.",
@@ -17,15 +19,21 @@ export const pt: Record<string, string> = {
 	"portable.closeSettings": "Feche as configurações para revisar a conversão na barra lateral.",
 	"portable.retry": "Tentar novamente",
 	"portable.blockedAmbiguous": "Este título foi ignorado porque o destino do link é ambíguo.",
-	"portable.blockedTarget": "Este título foi ignorado porque não é possível preservar o destino do link com segurança.",
-	"portable.recovery": "Ainda há alterações pendentes. Conclua esta conversão e a atualização dos links para títulos antes de reiniciar ou desativar o plugin; o plano pendente é mantido apenas na memória.",
-	"portable.recoveryChanged": "As notas mudaram após a interrupção da conversão. As atualizações de links pendentes foram preservadas; cada nota será verificada novamente antes da gravação.",
+	"portable.blockedTarget":
+		"Este título foi ignorado porque não é possível preservar o destino do link com segurança.",
+	"portable.recovery":
+		"Ainda há alterações pendentes. Conclua esta conversão e a atualização dos links para títulos antes de reiniciar ou desativar o plugin; o plano pendente é mantido apenas na memória.",
+	"portable.recoveryChanged":
+		"As notas mudaram após a interrupção da conversão. As atualizações de links pendentes foram preservadas; cada nota será verificada novamente antes da gravação.",
 	"portable.finishConversion": "Concluir conversão",
-	"portable.recoveryUnavailable": "Não foi possível recuperar com segurança algumas atualizações de links pendentes. Verifique as notas afetadas antes de iniciar outra conversão.",
+	"portable.recoveryUnavailable":
+		"Não foi possível recuperar com segurança algumas atualizações de links pendentes. Verifique as notas afetadas antes de iniciar outra conversão.",
 	"portable.title": "Converter para Markdown padrão",
-	"portable.settingDesc": "Substitua os callouts de título e em linha em todo o cofre por texto comum, pronto para usar sem o Callout Studio.",
+	"portable.settingDesc":
+		"Substitua os callouts de título e em linha em todo o cofre por texto comum, pronto para usar sem o Callout Studio.",
 	"portable.review": "Revisar conversão",
-	"portable.intro": "Se pretende parar de usar o Callout Studio ou transferir seu cofre para um aplicativo sem ele, converta os callouts de título e em linha para Markdown padrão.",
+	"portable.intro":
+		"Se pretende parar de usar o Callout Studio ou transferir seu cofre para um aplicativo sem ele, converta os callouts de título e em linha para Markdown padrão.",
 	"portable.before": "Antes",
 	"portable.after": "Depois",
 	"portable.replacement": "Substituição",
@@ -33,24 +41,30 @@ export const pt: Record<string, string> = {
 	"portable.type": "tipo",
 	"portable.text": "Texto",
 	"portable.headingText": "Título",
-	"portable.backup": "Recomendamos fazer um backup do cofre antes da conversão. A operação altera as notas originais e não pode ser desfeita no Callout Studio.",
+	"portable.backup":
+		"Recomendamos fazer um backup do cofre antes da conversão. A operação altera as notas originais e não pode ser desfeita no Callout Studio.",
 	"portable.scanning": "Lendo notas Markdown…",
 	"portable.progress": "Lendo notas: {{done}} de {{total}}",
 	"portable.empty": "Nenhum callout de título ou em linha elegível foi encontrado. Nada será alterado.",
 	"portable.confirmTitle": "Converter este cofre permanentemente?",
 	"portable.confirmSubtitle": "Nenhum backup automático é criado",
-	"portable.confirmBody": "Converter {{count}} ocorrências e atualizar {{links}} links para títulos em {{files}} notas?\nIsso altera os arquivos originais e não pode ser desfeito no Callout Studio. Nenhum backup automático será criado. Faça um backup do cofre primeiro, salve as notas abertas e pause a edição e a sincronização até a conversão terminar.\nSe um arquivo mudar ou uma gravação falhar, a conversão será interrompida. As notas já convertidas permanecerão alteradas.",
+	"portable.confirmBody":
+		"Converter {{count}} ocorrências e atualizar {{links}} links para títulos em {{files}} notas?\nIsso altera os arquivos originais e não pode ser desfeito no Callout Studio. Nenhum backup automático será criado. Faça um backup do cofre primeiro, salve as notas abertas e pause a edição e a sincronização até a conversão terminar.\nSe um arquivo mudar ou uma gravação falhar, a conversão será interrompida. As notas já convertidas permanecerão alteradas.",
 	"portable.confirmAction": "Converter permanentemente",
 	"portable.converting": "Convertendo as alterações selecionadas… Fechar este painel não interrompe a conversão.",
-	"portable.complete": "{{count}} ocorrências convertidas e {{links}} links para títulos atualizados em {{files}} notas.",
-	"portable.stopped": "A conversão foi interrompida. {{count}} ocorrências e {{links}} links para títulos em {{files}} notas já foram alterados; essas alterações permanecem.",
+	"portable.complete":
+		"{{count}} ocorrências convertidas e {{links}} links para títulos atualizados em {{files}} notas.",
+	"portable.stopped":
+		"A conversão foi interrompida. {{count}} ocorrências e {{links}} links para títulos em {{files}} notas já foram alterados; essas alterações permanecem.",
 	"portable.errorEditor": "Salve as notas abertas para atualizar a revisão automaticamente.",
 	"portable.errorChanged": "As notas mudaram. Revise as alterações atualizadas antes de converter.",
 	"portable.errorBusy": "Outra conversão está em andamento. Aguarde a conclusão.",
-	"portable.error": "Não foi possível ler ou atualizar o cofre com segurança. Verifique o acesso aos arquivos e tente novamente.",
+	"portable.error":
+		"Não foi possível ler ou atualizar o cofre com segurança. Verifique o acesso aos arquivos e tente novamente.",
 	"portable.blockedConverting": "Uma conversão já está em andamento. Aguarde a conclusão.",
 	"portable.blockedUpdating": "A revisão ainda está sendo atualizada. Aguarde a conclusão antes de converter.",
-	"portable.blockedEditing": "Termine primeiro de editar a substituição: pressione Enter para salvá-la ou Esc para descartá-la.",
+	"portable.blockedEditing":
+		"Termine primeiro de editar a substituição: pressione Enter para salvá-la ou Esc para descartá-la.",
 	"portable.blockedNothingSelected": "Selecione pelo menos uma substituição para converter.",
 	"settings.maintenance": "Zona de perigo",
 	"cmd.openSettings": "Abrir configurações",
@@ -92,19 +106,18 @@ export const pt: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "Escolha primeiro o callout que vai substituí-lo.",
 	"settings.fallbackTag": "Padrão",
 	"settings.fallbackTagAuto": "Auto",
-	"settings.rescanVaultDesc": "Adiciona os tipos de callout que as suas notas usam e que ainda não estão nesta lista.",
+	"settings.rescanVaultDesc":
+		"Adiciona os tipos de callout que as suas notas usam e que ainda não estão nesta lista.",
 	"settings.rescanVaultHintAction": "Procurar callouts",
-	"manualDiscovery.failed": "Os resultados da procura não foram guardados. Confirme que é possível escrever nas definições e que a sincronização terminou. Depois, tente novamente em Definições → Meus tipos de callout → Procurar callouts. Os callouts existentes não foram substituídos.",
+	"manualDiscovery.failed":
+		"Os resultados da procura não foram guardados. Confirme que é possível escrever nas definições e que a sincronização terminou. Depois, tente novamente em Definições → Meus tipos de callout → Procurar callouts. Os callouts existentes não foram substituídos.",
 	"manualDiscovery.scanning": "Analisando…",
-	"settings.rescanComplete":
-		"Análise concluída: {{count}} novo(s) tipo(s) de callout adicionado(s).",
+	"settings.rescanComplete": "Análise concluída: {{count}} novo(s) tipo(s) de callout adicionado(s).",
 	"replaceModal.titleReplace": "Substituir no vault",
 
 	"welcome.title": "Bem-vindo ao Callout Studio!",
-	"welcome.tagline":
-		"Sua solução completa para criar, estilizar e gerenciar callouts do Obsidian.",
-	"importBanner.message":
-		"Percebemos que você está usando {{plugins}}. Gostaria de importar seus callouts?",
+	"welcome.tagline": "Sua solução completa para criar, estilizar e gerenciar callouts do Obsidian.",
+	"importBanner.message": "Percebemos que você está usando {{plugins}}. Gostaria de importar seus callouts?",
 	"importBanner.action": "Importar",
 	"importBanner.dismiss": "Dispensar",
 	"welcome.demoName": "Callout Studio",
@@ -119,8 +132,7 @@ export const pt: Record<string, string> = {
 		"O Callout Studio tem muito mais a oferecer! [Saiba mais]({{repoUrl}}).\n",
 	"deleteModal.title": "Excluir callout",
 
-	"deleteModal.bodyInUse":
-		"Este callout aparece {{count}} vez(es) em {{files}} arquivo(s).",
+	"deleteModal.bodyInUse": "Este callout aparece {{count}} vez(es) em {{files}} arquivo(s).",
 	"deleteModal.notesUntouched":
 		"Isto exclui apenas a definição do callout. Suas notas não são alteradas, então os callouts existentes simplesmente voltarão ao estilo padrão.",
 	"deleteModal.fallbackTarget":
@@ -171,23 +183,22 @@ export const pt: Record<string, string> = {
 	"notice.calloutDeleted": "“{{name}}” excluído.",
 	"settings.duplicateAction": "Duplicar",
 	"notice.calloutDuplicated": "Callout duplicado como “{{name}}”.",
-	"notice.calloutDuplicateFailed": "Não foi possível duplicar o callout. Verifique o estado da gravação e tente novamente.",
+	"notice.calloutDuplicateFailed":
+		"Não foi possível duplicar o callout. Verifique o estado da gravação e tente novamente.",
 	"settings.resetAction": "Redefinir para padrão",
 	"settings.makeFallbackAction": "Usar estilo de fallback padrão",
-	"notice.fallbackStyleApplied": "\"{{name}}\" agora usa o estilo de fallback padrão.",
+	"notice.fallbackStyleApplied": '"{{name}}" agora usa o estilo de fallback padrão.',
 	"settings.colorSwatchAria": "Destaque: {{accent}} · Fundo: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts do seu tema",
 	"settings.themeCalloutsDefaultTheme": "Seu tema",
 	"settings.themeCalloutsEmpty": "{{theme}} não estiliza nenhum callout no momento.",
-	"settings.themePreviewAria":
-		'Pré-visualizar "{{name}}" — veja como o seu tema o desenha',
+	"settings.themePreviewAria": 'Pré-visualizar "{{name}}" — veja como o seu tema o desenha',
 	"settings.builtInAllThemeStyled":
 		"{{theme}} estiliza todos os callouts integrados, então o Callout Studio os deixa todos como estão. Para projetar um seu, adicione um callout com um ID diferente.",
 
 	"settings.fallbackCallout": "Callout de fallback padrão",
-	"settings.fallbackCalloutDesc":
-		"Tipos de callout desconhecidos herdam este estilo.",
+	"settings.fallbackCalloutDesc": "Tipos de callout desconhecidos herdam este estilo.",
 
 	"settings.border": "Bordas",
 	"settings.borderTop": "Superior",
@@ -219,8 +230,7 @@ export const pt: Record<string, string> = {
 	"settings.paletteCountOne": "1 paleta",
 	"settings.editPaletteAria": "Editar paleta {{name}}",
 	"settings.deletePaletteTitle": "Excluir paleta",
-	"settings.deletePaletteBody":
-		'Os callouts que usam essas cores não são afetados.',
+	"settings.deletePaletteBody": "Os callouts que usam essas cores não são afetados.",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Os callouts que a nomeiam nos metadados ("{{key}}") passam a usar a cor integrada com esse nome. Suas notas não mudam.',
 
@@ -247,9 +257,9 @@ export const pt: Record<string, string> = {
 	"commandBuilder.formatBlock": "Bloco",
 	"commandBuilder.roleDisabled":
 		"Este formato está desativado, então o comando inserirá texto simples até que você o reative.",
-	"commandBuilder.roleThemeOwned":
-		"O seu tema fornece este callout, então ele só tem um formato de bloco.",
-	"commandBuilder.commandSuspended": "Em pausa enquanto o seu tema fornecer este callout, que então só tem o formato em bloco.",
+	"commandBuilder.roleThemeOwned": "O seu tema fornece este callout, então ele só tem um formato de bloco.",
+	"commandBuilder.commandSuspended":
+		"Em pausa enquanto o seu tema fornecer este callout, que então só tem o formato em bloco.",
 	"commandBuilder.pausedTag": "Em pausa pelo tema",
 	"commandBuilder.missingTag": "Callout em falta",
 	"commandBuilder.callout": "Tipo de callout",
@@ -257,8 +267,7 @@ export const pt: Record<string, string> = {
 	"commandBuilder.headingLevel": "Nível do título",
 	"commandBuilder.headingLevelDesc": "Qual nível de título escrever.",
 	"commandBuilder.action": "Ação",
-	"commandBuilder.actionDesc":
-		"Envolver transforma a seleção em um callout; inserir adiciona um vazio.",
+	"commandBuilder.actionDesc": "Envolver transforma a seleção em um callout; inserir adiciona um vazio.",
 	"commandBuilder.actionDescHeading":
 		"Envolver transforma a linha com o cursor em um callout de título.\nInserir adiciona um vazio em uma nova linha.",
 	"commandBuilder.actionDescInline":
@@ -266,22 +275,18 @@ export const pt: Record<string, string> = {
 	"commandBuilder.actionWrap": "Envolver seleção",
 	"commandBuilder.actionInsert": "Inserir novo",
 	"commandBuilder.foldState": "Estado de dobra",
-	"commandBuilder.foldStateDesc":
-		"Se o callout pode ser dobrado, e em que estado ele começa.",
+	"commandBuilder.foldStateDesc": "Se o callout pode ser dobrado, e em que estado ele começa.",
 	"commandBuilder.foldNone": "Não dobrável",
 	"commandBuilder.foldExpanded": "Dobrável, aberto (+)",
 	"commandBuilder.foldCollapsed": "Dobrável, fechado (-)",
 	"commandBuilder.preview": "Nome do comando",
-	"commandBuilder.duplicate":
-		"Você já tem um comando que faz exatamente isso.",
-	"commandBuilder.noCallouts":
-		"Ainda não há tipos de callout para construir um comando.",
+	"commandBuilder.duplicate": "Você já tem um comando que faz exatamente isso.",
+	"commandBuilder.noCallouts": "Ainda não há tipos de callout para construir um comando.",
 	"commandBuilder.noCalloutChosen": "Escolha primeiro um callout para este comando.",
 	"commandBuilder.save": "Salvar",
 
 	"settings.resetAll": "Redefinir",
-	"settings.resetAllDesc":
-		"Restaura todas as configurações e personalizações para os padrões.",
+	"settings.resetAllDesc": "Restaura todas as configurações e personalizações para os padrões.",
 	"settings.resetAllButton": "Redefinir tudo",
 	"notice.resetAllDone": "Tudo foi redefinido para os padrões.",
 	"settings.resetIntro": "Reserve um momento para valorizar tudo o que você construiu com o Callout Studio.",
@@ -302,40 +307,36 @@ export const pt: Record<string, string> = {
 	"settings.resetItemAutocomplete": "Definições de preenchimento automático e metadados",
 	"settings.resetItemFallback": "Estilo de reserva",
 	"settings.resetItemIconLibraries": "Ordem das bibliotecas de ícones e bibliotecas ocultas",
-	"settings.resetAllConfirmAfter": "Fique descansado: antes de repor, guardamos uma cópia de segurança da sua configuração atual. Pode recuperá-la a qualquer momento com Restaurar uma versão anterior nas configurações.\nSe usar um serviço de sincronização, a reposição pode chegar também aos seus outros dispositivos.",
+	"settings.resetAllConfirmAfter":
+		"Fique descansado: antes de repor, guardamos uma cópia de segurança da sua configuração atual. Pode recuperá-la a qualquer momento com Restaurar uma versão anterior nas configurações.\nSe usar um serviço de sincronização, a reposição pode chegar também aos seus outros dispositivos.",
 	"settings.resetNothing": "Nada para redefinir: tudo já está nos padrões.",
 
-	"notice.customCommandMissingCallout":
-		"O tipo de callout deste comando não existe mais.",
+	"notice.customCommandMissingCallout": "O tipo de callout deste comando não existe mais.",
 
 	"notice.importedJSON": "{{count}} tipo(s) de callout importado(s) de JSON.",
 	"notice.importedSettings": "Configurações do plugin importadas.",
-	"notice.importedCalloutManager":
-		"Importado do Callout Manager: {{created}} criados, {{updated}} atualizados.",
-	"notice.importedAdmonition":
-		"Importado do Admonition: {{created}} criados, {{updated}} " +
-		"atualizados.",
-	"notice.noNewJSON":
-		"Nenhum novo tipo de callout foi importado (os IDs podem já existir).",
+	"notice.importedCalloutManager": "Importado do Callout Manager: {{created}} criados, {{updated}} atualizados.",
+	"notice.importedAdmonition": "Importado do Admonition: {{created}} criados, {{updated}} " + "atualizados.",
+	"notice.noNewJSON": "Nenhum novo tipo de callout foi importado (os IDs podem já existir).",
 	"notice.iconDownloadFailed":
 		'Não foi possível baixar o ícone Material "{{name}}". Pode estar indisponível para este estilo/peso, ou sua conexão pode estar offline.',
-	"notice.vaultScanFailed": "Não foi possível contar o uso do callout porque {{count}} nota(s) não puderam ser lidas. Verifique o armazenamento e a sincronização e tente novamente.",
+	"notice.vaultScanFailed":
+		"Não foi possível contar o uso do callout porque {{count}} nota(s) não puderam ser lidas. Verifique o armazenamento e a sincronização e tente novamente.",
 
 	"notice.externalCssRetired":
 		"A opção de estilo CSS pessoal foi removida. Estes callouts agora usam o design salvo do Callout Studio, a menos que o seu tema os estilize. Suas notas e snippets CSS pessoais não foram alterados.",
 	"notice.vaultRewritePartial":
 		"{{count}} nota(s) não puderam ser atualizadas e permaneceram inalteradas. Consulte o console do desenvolvedor para mais detalhes.",
-	"notice.calloutDeleteIncomplete": "Algumas notas não puderam ser convertidas. O tipo de callout foi mantido. As conversões concluídas foram salvas; resolva o problema do arquivo e execute a ação novamente para concluir.",
+	"notice.calloutDeleteIncomplete":
+		"Algumas notas não puderam ser convertidas. O tipo de callout foi mantido. As conversões concluídas foram salvas; resolva o problema do arquivo e execute a ação novamente para concluir.",
 	"notice.nothingToWrap": "Nada para envolver.",
 	"notice.cursorNotInsideCallout": "O cursor não está dentro de um callout.",
 	"notice.headingAlreadyCallout": "Este título já é um callout.",
-	"notice.unwrapLeftAsIs":
-		"Não foi possível remover este callout com segurança, então ele foi deixado como está.",
-	"notice.autocompleteTargetMoved":
-		"Nada foi inserido: a linha mudou enquanto o editor estava aberto.",
-	"notice.autocompleteAlwaysEnabled": "O preenchimento automático agora é um recurso principal e está sempre ativado.",
-	"notice.openHotkeysFailed":
-		"Não foi possível abrir as configurações de atalhos do Obsidian.",
+	"notice.unwrapLeftAsIs": "Não foi possível remover este callout com segurança, então ele foi deixado como está.",
+	"notice.autocompleteTargetMoved": "Nada foi inserido: a linha mudou enquanto o editor estava aberto.",
+	"notice.autocompleteAlwaysEnabled":
+		"O preenchimento automático agora é um recurso principal e está sempre ativado.",
+	"notice.openHotkeysFailed": "Não foi possível abrir as configurações de atalhos do Obsidian.",
 	"notice.filterHotkeysFailed":
 		"Atalhos do Obsidian abertos, mas não foi possível aplicar o filtro do Callout Studio.",
 
@@ -343,8 +344,7 @@ export const pt: Record<string, string> = {
 	"editor.newCallout": "Novo callout",
 	"editor.displayName": "Nome de exibição",
 	"editor.displayNameDesc": "O rótulo legível exibido na interface",
-	"editor.displayNameBuiltIn":
-		"O nome de exibição não pode ser alterado para callouts integrados",
+	"editor.displayNameBuiltIn": "O nome de exibição não pode ser alterado para callouts integrados",
 	"editor.displayNamePlaceholder": "Meu callout",
 	"editor.calloutIds": "IDs de callout",
 	"editor.calloutIdsDesc":
@@ -370,27 +370,24 @@ export const pt: Record<string, string> = {
 	"editor.horizontalOffset": "Deslocamento horizontal",
 	"editor.verticalOffset": "Deslocamento vertical",
 	"editor.colors": "Cores",
-	"editor.colorsDesc":
-		"Define as cores da borda, do fundo e do texto deste callout.",
+	"editor.colorsDesc": "Define as cores da borda, do fundo e do texto deste callout.",
 	"editor.resetColors": "Redefinir cores para o padrão",
 	"editor.paletteDeleted": "Cor excluída",
 	"editor.paletteGroupObsidian": "Callouts do Obsidian",
 	"editor.paletteGroupPresets": "Predefinições de cor",
 	"editor.paletteGroupCustom": "Personalizado",
-	"editor.contrastWarning":
-		"Baixo contraste com o fundo — pode ser difícil de ler",
+	"editor.contrastWarning": "Baixo contraste com o fundo — pode ser difícil de ler",
 	"editor.foldable": "Dobrável",
-	"editor.foldableDesc":
-		"Escolha se o callout pode ser dobrado e qual estado padrão aplicar em todo o vault.",
+	"editor.foldableDesc": "Escolha se o callout pode ser dobrado e qual estado padrão aplicar em todo o vault.",
 	"editor.foldOff": "Desligado",
 	"editor.foldOpen": "Aberto por padrão",
 	"editor.foldClosed": "Fechado por padrão",
 	"editor.cancel": "Cancelar",
 	"editor.saveChanges": "Salvar alterações",
-	"editor.saveFailed": "Não foi possível concluir a gravação. Se este editor ainda estiver aberto, mantenha-o aberto e tente novamente depois de verificar o armazenamento e a sincronização. Algumas definições ou alterações nas notas poderão já ter sido guardadas.",
+	"editor.saveFailed":
+		"Não foi possível concluir a gravação. Se este editor ainda estiver aberto, mantenha-o aberto e tente novamente depois de verificar o armazenamento e a sincronização. Algumas definições ou alterações nas notas poderão já ter sido guardadas.",
 	"editor.createCallout": "Criar callout",
-	"editor.nameRequired":
-		"Um nome de exibição é necessário antes de criar um callout.",
+	"editor.nameRequired": "Um nome de exibição é necessário antes de criar um callout.",
 	"editor.noChangesToSave": "Nenhuma alteração foi feita.",
 	"editor.idEmpty": "Pelo menos um ID é necessário",
 	"editor.idAlreadyHere": "Este ID já existe",
@@ -405,23 +402,18 @@ export const pt: Record<string, string> = {
 		"{{theme}} desenha por conta própria os callouts de bloco {{names}}, e o Obsidian desenha {{stock}}. Os seus outros IDs mantêm este design.",
 	"editor.idThemePattern":
 		"Atenção: o seu tema estiliza todo callout que corresponda a {{pattern}}, então ele pode sobrepor a aparência deste.",
-	"editor.idDashConflict":
-		'O Obsidian grava espaços como hífens, por isso este ID entra em conflito com "{{other}}"',
+	"editor.idDashConflict": 'O Obsidian grava espaços como hífens, por isso este ID entra em conflito com "{{other}}"',
 	"editor.idOwnedBy": '"{{id}}" é um ID de {{name}}. Você pode {{link}}.',
 	"editor.idMoveHere": "movê-lo para cá",
-	"editor.idOwnedByMain":
-		'"{{id}}" é o ID principal de {{name}}. Para usá-lo aqui, exclua {{name}} primeiro.',
-	"editor.idBuiltInStock":
-		'"{{id}}" é um dos IDs próprios do Obsidian para {{name}}.',
+	"editor.idOwnedByMain": '"{{id}}" é o ID principal de {{name}}. Para usá-lo aqui, exclua {{name}} primeiro.',
+	"editor.idBuiltInStock": '"{{id}}" é um dos IDs próprios do Obsidian para {{name}}.',
 	"editor.idMoving": 'Ao salvar, "{{id}}" passa de {{name}} para cá.',
 	"editor.idMovingNotes": "Suas notas não mudam. Elas assumem o estilo deste callout.",
 	"editor.untitledCallout": "Callout sem título",
 	"editor.loremIpsum":
 		"Uma brisa suave passa entre as árvores. A luz quente do sol ilumina um caminho tranquilo e dá vida à paisagem.",
-	"editor.loremIpsumShort":
-		"Uma brisa suave passa entre as árvores.",
-	"editor.sampleInlineText":
-		"Aqui está uma pílula [!{id}]{{title}} embutida dentro de um parágrafo.",
+	"editor.loremIpsumShort": "Uma brisa suave passa entre as árvores.",
+	"editor.sampleInlineText": "Aqui está uma pílula [!{id}]{{title}} embutida dentro de um parágrafo.",
 	"editor.previewReadOnly": "A pré-visualização ao vivo não pode ser editada",
 	"noteChanges.title": "Atualizar suas notas?",
 	"noteChanges.leave": "Deixá-las como estão",
@@ -431,18 +423,15 @@ export const pt: Record<string, string> = {
 	"noteChanges.titlesChange": 'Alterá-los para "{{new}}"',
 	"noteChanges.titlesLeaveDesc": 'Continuam dizendo "{{old}}".',
 	"noteChanges.foldChange": 'Defini-los como "{{state}}"',
-	"noteChanges.foldLeaveDesc":
-		"Somente os callouts que você inserir daqui em diante usam a nova configuração.",
+	"noteChanges.foldLeaveDesc": "Somente os callouts que você inserir daqui em diante usam a nova configuração.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": '{{name}} — fornecido pelo seu tema',
+	"themePreview.title": "{{name}} — fornecido pelo seu tema",
 	"themePreview.summary":
 		"Fornecido por {{theme}} (somente leitura). A cor, o ícone e o ID não podem ser alterados aqui, e os formatos Título/Inline não estão disponíveis. Para personalizar, crie um novo callout.",
 	"themePreview.previewTitle": "Como ele é renderizado agora",
-	"themePreview.blockSample":
-		"> [!{{id}}] {{name}}\n" +
-		"> É assim que o conteúdo deste callout se parece.\n",
+	"themePreview.blockSample": "> [!{{id}}] {{name}}\n" + "> É assim que o conteúdo deste callout se parece.\n",
 	"editor.themePreviewClose": "Entendi",
 
 	// Palette editor modal
@@ -458,8 +447,8 @@ export const pt: Record<string, string> = {
 	"palette.metadataNameShared":
 		"Nos metadados do callout: {{key}}. Outra paleta salva também tem esta palavra, então só uma delas responde a ela.",
 	"palette.renameNotesChange":
-		"Você renomeou a paleta de \"{{old}}\" para \"{{new}}\", então a palavra dela nos metadados do callout muda de \"{{oldWord}}\" para \"{{newWord}}\".",
-	"palette.renameNotesLeaveDesc": "Eles mantêm \"{{word}}\" e voltam à própria cor.",
+		'Você renomeou a paleta de "{{old}}" para "{{new}}", então a palavra dela nos metadados do callout muda de "{{oldWord}}" para "{{newWord}}".',
+	"palette.renameNotesLeaveDesc": 'Eles mantêm "{{word}}" e voltam à própria cor.',
 	"palette.renameNotesChangeDesc": "Cada |{{old}} nas suas notas passa a ser |{{new}}.",
 	"palette.renameNotesFailed":
 		"Algumas notas não puderam ser atualizadas. As que foram atualizadas estão salvas; as demais ainda usam o nome antigo.",
@@ -469,8 +458,10 @@ export const pt: Record<string, string> = {
 	"palette.advancedColors": "Cores",
 	"palette.lightModeColors": "Cores do modo claro",
 	"palette.darkModeColors": "Cores do modo escuro",
-	"palette.modeColorsHintLight": "Essas alterações valem apenas para o modo claro. O modo escuro mantém suas próprias cores.\nPara editá-las, pressione o botão da lua acima.",
-	"palette.modeColorsHintDark": "Essas alterações valem apenas para o modo escuro. O modo claro mantém suas próprias cores.\nPara editá-las, pressione o botão do sol acima.",
+	"palette.modeColorsHintLight":
+		"Essas alterações valem apenas para o modo claro. O modo escuro mantém suas próprias cores.\nPara editá-las, pressione o botão da lua acima.",
+	"palette.modeColorsHintDark":
+		"Essas alterações valem apenas para o modo escuro. O modo claro mantém suas próprias cores.\nPara editá-las, pressione o botão do sol acima.",
 	"palette.showLightMode": "Mostrar modo claro",
 	"palette.showDarkMode": "Mostrar modo escuro",
 	"palette.accentColor": "Cor de destaque",
@@ -562,14 +553,11 @@ export const pt: Record<string, string> = {
 	"iconPicker.searchSimpleIcons": "Pesquisar em Simple Icons",
 	"iconPicker.custom": "Ícones personalizados",
 	"iconPicker.searchCustom": "Pesquisar ícones personalizados",
-	"iconPicker.customTooLarge":
-		"{{name}} é demasiado grande. Os ícones personalizados podem ter até 5 MB.",
+	"iconPicker.customTooLarge": "{{name}} é demasiado grande. Os ícones personalizados podem ter até 5 MB.",
 	"iconPicker.customUnsupported":
 		"{{name}} não é um ficheiro de ícone personalizado suportado. Use SVG, PNG, JPEG ou WebP.",
-	"iconPicker.customInvalidSvg":
-		"{{name}} não foi possível ler como SVG seguro e não foi adicionado.",
-	"iconPicker.customDecodeFailed":
-		"{{name}} não pôde ser lido como ícone personalizado.",
+	"iconPicker.customInvalidSvg": "{{name}} não foi possível ler como SVG seguro e não foi adicionado.",
+	"iconPicker.customDecodeFailed": "{{name}} não pôde ser lido como ícone personalizado.",
 	"iconPicker.customDuplicate":
 		"{{name}} já está nos seus ícones personalizados. Renomeie o ficheiro ou elimine o ícone existente.",
 	"iconPicker.uploadCustom": "Carregar ficheiros de imagem",
@@ -598,10 +586,8 @@ export const pt: Record<string, string> = {
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "pesquisar em todas as bibliotecas de uma vez",
 	"iconPicker.descLucide": "o conjunto do Obsidian, sempre offline",
-	"iconPicker.descTabler":
-		"ícones de interface limpos e consistentes, contorno e preenchido",
-	"iconPicker.descMaterial":
-		"o conjunto do Google, quatro estilos e sete espessuras",
+	"iconPicker.descTabler": "ícones de interface limpos e consistentes, contorno e preenchido",
+	"iconPicker.descMaterial": "o conjunto do Google, quatro estilos e sete espessuras",
 	"iconPicker.descEmoji": "glifos coloridos, cada tom de pele",
 	"iconPicker.descOcticons": "ícones de interface do GitHub",
 	"iconPicker.descFa": "sólido, regular e marcas",
@@ -725,19 +711,16 @@ export const pt: Record<string, string> = {
 
 	// Downloadable icon packs
 	"iconPack.downloadTitle": "{{name}} ainda não foi descarregado",
-	"iconPack.downloadDetail":
-		"{{count}} ícones · {{size}} · descarregamento único",
+	"iconPack.downloadDetail": "{{count}} ícones · {{size}} · descarregamento único",
 	"iconPack.download": "Descarregar",
 	"iconPack.downloading": "A descarregar {{name}}…",
-	"iconPack.downloadFailed":
-		"Não foi possível descarregar {{name}}. Verifique a ligação e tente novamente.",
+	"iconPack.downloadFailed": "Não foi possível descarregar {{name}}. Verifique a ligação e tente novamente.",
 	"iconPack.retry": "Tentar novamente",
 	"iconPack.faBrandsNotice":
 		"Os ícones de marcas são marcas registadas dos respetivos proprietários. A sua inclusão não indica aprovação. Por favor, utilize-os apenas para representar a empresa, produto ou serviço a que se referem.",
 	"iconPack.simpleIconsNotice":
 		"Os logotipos são marcas registadas dos seus proprietários; a sua inclusão aqui não implica aprovação. Use um logotipo apenas para representar a sua própria marca e siga as diretrizes dessa marca. Alguns logotipos têm também a sua própria licença; consulte os créditos dos ícones.",
-	"iconPack.artworkRestored":
-		"O artwork dos ícones para {{names}} foi descarregado.",
+	"iconPack.artworkRestored": "O artwork dos ícones para {{names}} foi descarregado.",
 	"iconPack.diskWriteFailed":
 		"O Callout Studio não conseguiu guardar o pacote de ícones no disco, pelo que precisará de ser descarregado novamente na próxima vez. Os ícones que escolher continuam guardados nas suas definições.",
 	"settings.colorsAndIcons": "Cores e ícones",
@@ -791,8 +774,10 @@ export const pt: Record<string, string> = {
 	"contextMenu.setFoldOpen": "Definir o callout como aberto (+)",
 	"contextMenu.setFoldNone": "Tornar o callout não dobrável",
 	"contextMenu.cutSection": "Recortar seção do cabeçalho",
-	"notice.clipboardWriteFailed": "Não foi possível copiar para a área de transferência. A nota permaneceu inalterada.",
-	"notice.sectionChangedAfterCopy": "A seção foi copiada, mas a nota mudou antes de poder ser recortada. Nada foi removido.",
+	"notice.clipboardWriteFailed":
+		"Não foi possível copiar para a área de transferência. A nota permaneceu inalterada.",
+	"notice.sectionChangedAfterCopy":
+		"A seção foi copiada, mas a nota mudou antes de poder ser recortada. Nada foi removido.",
 	"contextMenu.copySection": "Copiar seção do cabeçalho",
 	"contextMenu.deleteSection": "Excluir seção do cabeçalho",
 	"heading.toggleFold": "Alternar dobra",
@@ -821,15 +806,14 @@ export const pt: Record<string, string> = {
 	"settings.metadataWordAlreadyHere": "Esta palavra já está na lista",
 	"settings.metadataWordTooLong": "Uma palavra deve ter no máximo {{max}} caracteres",
 	"settings.maxMetadataWords": "No máximo {{max}} palavras. Elimine uma para adicionar outra.",
-	"settings.buildFailed": "O Callout Studio não conseguiu exibir as suas configurações; reinicie o Obsidian e avise se acontecer de novo.",
-	"settings.globalSettingsRegularDesc":
-		"Borda, arredondamento, escala de fonte e alinhamento.",
-	"settings.globalSettingsHeadingDesc":
-		"Borda, forma e espaçamento vertical.",
-	"settings.globalSettingsInlineDesc":
-		"Borda e forma.",
+	"settings.buildFailed":
+		"O Callout Studio não conseguiu exibir as suas configurações; reinicie o Obsidian e avise se acontecer de novo.",
+	"settings.globalSettingsRegularDesc": "Borda, arredondamento, escala de fonte e alinhamento.",
+	"settings.globalSettingsHeadingDesc": "Borda, forma e espaçamento vertical.",
+	"settings.globalSettingsInlineDesc": "Borda e forma.",
 	"settings.themeCalloutStyles": "Usar os estilos de callout do seu tema",
-	"settings.themeCalloutStylesDesc": "Quando ativado, os callouts que o seu tema estiliza mantêm o aspeto dele e aparecem apenas como callouts em bloco. Quando desativado, o Callout Studio desenha todos os callouts.",
+	"settings.themeCalloutStylesDesc":
+		"Quando ativado, os callouts que o seu tema estiliza mantêm o aspeto dele e aparecem apenas como callouts em bloco. Quando desativado, o Callout Studio desenha todos os callouts.",
 	"settings.calloutTypeRegular": "Estilo do callout em bloco",
 	"settings.calloutTypeHeading": "Estilo do callout de cabeçalho",
 	"settings.calloutTypeInline": "Estilo do callout em linha",
@@ -861,21 +845,16 @@ export const pt: Record<string, string> = {
 	"confirm.titleDeleteLibrary": "Eliminar biblioteca de ícones",
 	"confirm.titleResetLibraries": "Redefinir bibliotecas de ícones",
 
-	"vault.filesUpdated":
-		"{{count}} referência(s) de callout atualizadas nos arquivos do vault.",
-	"vault.idsUpdated":
-		"{{count}} ID(s) de callout atualizados nos arquivos do vault: {{oldIds}} → {{newId}}",
+	"vault.filesUpdated": "{{count}} referência(s) de callout atualizadas nos arquivos do vault.",
+	"vault.idsUpdated": "{{count}} ID(s) de callout atualizados nos arquivos do vault: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"{{count}} título(s) de callout atualizados nos arquivos do vault: {{oldTitle}} → {{newTitle}}",
-	"vault.foldUpdated":
-		"A marca de recolhimento de {{count}} callout(s) foi atualizada nos arquivos do vault.",
+	"vault.foldUpdated": "A marca de recolhimento de {{count}} callout(s) foi atualizada nos arquivos do vault.",
 	"vault.confirmReplace": "Substituir",
 	"vault.replacePromptInUse":
 		'"{{name}}" é usado {{count}} vez(es) em {{files}} arquivo(s). Escolha um callout para substituí-lo:',
-	"vault.replacePromptUnused":
-		'Escolha um callout para substituir "{{name}}":',
-	"vault.noReplacementAvailable":
-		"Nenhum outro callout disponível para substituir este.",
+	"vault.replacePromptUnused": 'Escolha um callout para substituir "{{name}}":',
+	"vault.noReplacementAvailable": "Nenhum outro callout disponível para substituir este.",
 	"vault.convertedToPlainText":
 		"{{blocks}} bloco(s) de callout em {{files}} arquivo(s) convertidos para texto simples.",
 	"vault.resetNotesFailed":
@@ -894,7 +873,8 @@ export const pt: Record<string, string> = {
 	"quickInsert.noResults": "Nenhum callout encontrado",
 	"quickInsert.noBuiltInCallouts": "Nenhum callout integrado está disponível no momento.",
 	"quickInsert.noThemeCallouts": "Nenhum callout específico do tema está disponível no momento.",
-	"quickInsert.targetMoved": "A nota de onde você abriu a Inserção rápida foi alterada ou fechada. Reabra a Inserção rápida na nota que você quer editar.",
+	"quickInsert.targetMoved":
+		"A nota de onde você abriu a Inserção rápida foi alterada ou fechada. Reabra a Inserção rápida na nota que você quer editar.",
 	"quickInsert.targetMovedHint": "A nota original não está mais disponível para esta inserção.",
 	"quickInsert.noUserCallouts":
 		"Ainda não criou callouts personalizados. Execute “Callout Studio: Criar novo tipo de callout” na paleta de comandos.",
@@ -914,7 +894,8 @@ export const pt: Record<string, string> = {
 	"portable.customInvalid": "Mantenha a substituição em uma única linha sem alterar a estrutura Markdown ao redor.",
 	"portable.customUnsafe": "Esta substituição tornaria um título ou seus links ambíguos. Escolha outro título.",
 	"portable.customStale": "A revisão foi alterada. Volte a abrir o editor de substituições.",
-	"portable.customDiscarded": "{{count}} substituições personalizadas foram removidas porque o texto de origem mudou ou não pôde ser localizado com segurança.",
+	"portable.customDiscarded":
+		"{{count}} substituições personalizadas foram removidas porque o texto de origem mudou ou não pôde ser localizado com segurança.",
 	"portable.customBadge": "Personalizada",
 
 	"usage.title": "Encontrar callouts",
@@ -943,35 +924,32 @@ export const pt: Record<string, string> = {
 	"usage.closeSettings": "Feche as Configurações para ver os resultados dos callouts na barra lateral.",
 
 	"import.title": "Problemas de importação",
-	"import.reportLeadIn":
-		"Reveja estes problemas de importação antes de continuar:",
-	"import.reportLeadInFatal":
-		"Não foi possível importar estes dados:",
+	"import.reportLeadIn": "Reveja estes problemas de importação antes de continuar:",
+	"import.reportLeadInFatal": "Não foi possível importar estes dados:",
 	"import.entryHeading": "Entrada {{index}} — {{label}}",
-	"import.summary":
-		"{{valid}} de {{total}} entradas são válidas · {{issues}} problema(s) encontrado(s).",
+	"import.summary": "{{valid}} de {{total}} entradas são válidas · {{issues}} problema(s) encontrado(s).",
 	"import.btnCancel": "Cancelar",
 	"import.btnImportValid": "Importar apenas as válidas ({{count}})",
-	"import.nothingValid": "Nenhuma das entradas é válida, então não há nada para importar. Cancele, corrija os problemas listados aqui e importe novamente.",
+	"import.nothingValid":
+		"Nenhuma das entradas é válida, então não há nada para importar. Cancele, corrija os problemas listados aqui e importe novamente.",
 	"import.err.notRecognized":
 		"Arquivo não reconhecido: esperava-se um array de definições de callout ou uma exportação do Callout Studio.",
-	"import.warn.settingsIgnored":
-		"O bloco de configurações não era um objeto válido e foi ignorado.",
-	"import.warn.invalidGradient":
-		"O gradiente de fundo era inválido e foi ignorado.",
-	"import.err.parseFailed":
-		"O arquivo não é JSON válido e não pôde ser analisado.",
-	"import.err.tooLarge": "Esta importação excede o limite de tamanho de 16 MiB. Divida-a em ficheiros menores e tente novamente.",
-	"import.err.tooComplex": "Esta importação é demasiado complexa: no máximo 1.000 itens por lista ou objeto, 50.000 valores no total e 32 níveis de aninhamento.",
-	"import.err.imageBudget": "A coleção total de imagens excede os limites de tamanho ou complexidade. Remova ou simplifique imagens grandes antes de importar.",
+	"import.warn.settingsIgnored": "O bloco de configurações não era um objeto válido e foi ignorado.",
+	"import.warn.invalidGradient": "O gradiente de fundo era inválido e foi ignorado.",
+	"import.err.parseFailed": "O arquivo não é JSON válido e não pôde ser analisado.",
+	"import.err.tooLarge":
+		"Esta importação excede o limite de tamanho de 16 MiB. Divida-a em ficheiros menores e tente novamente.",
+	"import.err.tooComplex":
+		"Esta importação é demasiado complexa: no máximo 1.000 itens por lista ou objeto, 50.000 valores no total e 32 níveis de aninhamento.",
+	"import.err.imageBudget":
+		"A coleção total de imagens excede os limites de tamanho ou complexidade. Remova ou simplifique imagens grandes antes de importar.",
 	"import.err.processingFailed": "Não foi possível concluir a importação. Reveja os dados e tente novamente.",
-	"import.reportTruncated": "A mostrar os primeiros {{shown}} problemas de {{total}}. Os valores longos são abreviados neste relatório.",
+	"import.reportTruncated":
+		"A mostrar os primeiros {{shown}} problemas de {{total}}. Os valores longos são abreviados neste relatório.",
 	"import.err.entryNotObject": "A entrada deve ser um objeto.",
-	"import.err.requiredMissing":
-		'O campo obrigatório "{{field}}" está ausente ou tem o tipo errado.',
+	"import.err.requiredMissing": 'O campo obrigatório "{{field}}" está ausente ou tem o tipo errado.',
 	"import.err.idEmpty": "O ID não deve estar vazio.",
-	"import.err.idTooLong":
-		'O ID "{{value}}" tem {{length}} caracteres; o máximo é {{max}}.',
+	"import.err.idTooLong": 'O ID "{{value}}" tem {{length}} caracteres; o máximo é {{max}}.',
 	"import.err.idBadChar":
 		'O ID "{{value}}" contém caracteres inválidos ("|", "[", "]", tabulações e quebras de linha não são permitidos).',
 	"import.err.idMetadata":
@@ -979,56 +957,41 @@ export const pt: Record<string, string> = {
 	"import.err.idReserved":
 		'O ID "{{value}}" está reservado pelo Callout Studio para as próprias pré-visualizações e não pode ser importado.',
 	"import.err.displayNameEmpty": "O nome de exibição não deve estar vazio.",
-	"import.err.displayNameTooLong":
-		"O nome de exibição tem {{length}} caracteres; o máximo é {{max}}.",
+	"import.err.displayNameTooLong": "O nome de exibição tem {{length}} caracteres; o máximo é {{max}}.",
 	"import.err.boolField": '"{{field}}" deve ser um booleano (true ou false).',
 	"import.err.iconNotObject": "O ícone deve ser um objeto.",
-	"import.err.iconTypeInvalid":
-		'O tipo de ícone "{{value}}" não é um de: {{types}}.',
+	"import.err.iconTypeInvalid": 'O tipo de ícone "{{value}}" não é um de: {{types}}.',
 	"import.warn.iconFieldIgnored":
 		'"{{field}}" aplica-se apenas a ícones Material e é ignorado para o tipo de ícone {{type}}.',
-	"import.err.iconValueEmpty":
-		"O valor do ícone deve ser uma string não vazia.",
-	"import.err.iconValueTooLong":
-		"O valor do ícone excede o limite de 200 caracteres ({{length}} caracteres).",
-	"import.err.materialStyle":
-		'O estilo de ícone Material "{{value}}" não é um de: outlined, filled, rounded, sharp.',
+	"import.err.iconValueEmpty": "O valor do ícone deve ser uma string não vazia.",
+	"import.err.iconValueTooLong": "O valor do ícone excede o limite de 200 caracteres ({{length}} caracteres).",
+	"import.err.materialStyle": 'O estilo de ícone Material "{{value}}" não é um de: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
 		'O peso do ícone Material "{{value}}" deve ser um inteiro entre 100 e 700, em passos de 100.',
 	"import.warn.iconRecolorIgnored":
 		'"recolor" aplica-se apenas às suas próprias imagens e é ignorado para o tipo de ícone {{type}}.',
-	"import.err.iconRecolorInvalid":
-		'"recolor" deve ser true ou false (recebido: "{{value}}").',
-	"import.err.colorInvalid":
-		'"{{field}}" deve ser uma cor hexadecimal como "#448aff" (recebido "{{value}}").',
-	"import.err.numberRange":
-		'"{{field}}" deve ser um número entre {{min}} e {{max}} (recebido "{{value}}").',
-	"import.err.iconSizeRange":
-		'"{{field}}" deve ser um número entre {{min}} e {{max}} (recebido "{{value}}").',
+	"import.err.iconRecolorInvalid": '"recolor" deve ser true ou false (recebido: "{{value}}").',
+	"import.err.colorInvalid": '"{{field}}" deve ser uma cor hexadecimal como "#448aff" (recebido "{{value}}").',
+	"import.err.numberRange": '"{{field}}" deve ser um número entre {{min}} e {{max}} (recebido "{{value}}").',
+	"import.err.iconSizeRange": '"{{field}}" deve ser um número entre {{min}} e {{max}} (recebido "{{value}}").',
 	"import.err.iconAdjustShape":
-		"\"iconAdjust\" tem de ser um objeto que associe um tipo de callout (\"regular\", \"heading\", \"inline\") ao tamanho e aos deslocamentos do ícone.",
+		'"iconAdjust" tem de ser um objeto que associe um tipo de callout ("regular", "heading", "inline") ao tamanho e aos deslocamentos do ícone.',
 	"import.err.aliasesNotArray": '"aliases" deve ser um array de strings.',
 	"import.err.aliasNotString": "O alias deve ser uma string.",
-	"import.err.aliasDup":
-		'O alias "{{value}}" está duplicado dentro desta entrada.',
+	"import.err.aliasDup": 'O alias "{{value}}" está duplicado dentro desta entrada.',
 	"import.err.tooManyIds":
 		"Muitos IDs ({{count}}); cada callout pode ter no máximo {{max}} IDs (principal + aliases).",
-	"import.err.metadataShape":
-		'"metadata" deve ser um objeto cujos valores sejam todos strings.',
+	"import.err.metadataShape": '"metadata" deve ser um objeto cujos valores sejam todos strings.',
 	"import.warn.unknownFields": "Campos desconhecidos ignorados: {{fields}}.",
-	"import.err.duplicateInFile":
-		'O ID/alias "{{value}}" já está em uso pela entrada #{{first}} neste arquivo.',
-	"import.err.aliasConflict":
-		'O alias "{{value}}" já está em uso por outro callout ("{{other}}") no seu vault.',
+	"import.err.duplicateInFile": 'O ID/alias "{{value}}" já está em uso pela entrada #{{first}} neste arquivo.',
+	"import.err.aliasConflict": 'O alias "{{value}}" já está em uso por outro callout ("{{other}}") no seu vault.',
 	"import.warn.defaultFoldedAutofix":
 		'"defaultFolded" era true enquanto "foldable" era false; defaultFolded foi redefinido para false.',
 	"import.warn.imageMissing":
 		"Este Callout usa uma imagem que não está no ficheiro nem neste vault, pelo que mostrará um ícone de marcador de posição até que forneça um novo.",
 
-	"import.err.paletteIdInvalid":
-		'"paletteId" deve ser um ID de texto não vazio (recebido "{{value}}").',
-	"import.warn.iconNameUnknown":
-		'Não existe o ícone "{{value}}" em {{type}}, por isso foi usado o ícone padrão.',
+	"import.err.paletteIdInvalid": '"paletteId" deve ser um ID de texto não vazio (recebido "{{value}}").',
+	"import.warn.iconNameUnknown": 'Não existe o ícone "{{value}}" em {{type}}, por isso foi usado o ícone padrão.',
 	"import.warn.cmIconUnknownNew":
 		'O ícone "{{value}}" não está disponível neste cofre, por isso foi usado o ícone padrão.',
 	"import.warn.cmIconUnknownExisting":
@@ -1062,29 +1025,28 @@ export const pt: Record<string, string> = {
 	"import.cmVaultChecking": "A procurar o plugin Callout Manager…",
 	"import.cmVaultFound": "Encontrados {{count}} callout(s) personalizados.",
 	"import.cmFromPaste": "Estilos copiados",
-	"import.cmFromPasteDesc":
-		"O que o botão Copy do Callout Manager copia, ou um data.json.",
+	"import.cmFromPasteDesc": "O que o botão Copy do Callout Manager copia, ou um data.json.",
 	"import.cmPlaceholder": "Cole os estilos copiados, ou um data.json, aqui…",
 	"import.cmBtnCancel": "Cancelar",
 	"import.cmBtnImport": "Importar",
-	"import.err.cmNoBlocksFound":
-		"Nenhum estilo do Callout Manager foi encontrado no ficheiro nem no texto colado.",
+	"import.err.cmNoBlocksFound": "Nenhum estilo do Callout Manager foi encontrado no ficheiro nem no texto colado.",
 	"import.err.cmNotRecognized":
 		"Ficheiro não reconhecido: era esperado o estilo produzido pelo " +
 		"botão Copy do Callout Manager, ou um data.json do Callout Manager.",
-	"import.err.cmNoEntries":
-		"Não foram encontrados callouts personalizados para importar.",
+	"import.err.cmNoEntries": "Não foram encontrados callouts personalizados para importar.",
 	"import.err.cmNoColorForNew":
 		'Nenhuma cor utilizável foi encontrada para o novo callout "{{value}}"; foi ignorado.',
 	"import.err.cmIdConflict":
 		'O ID "{{value}}" já está sendo usado como alias por outro callout ("{{other}}") e foi ignorado.',
-	"import.warn.cmNoColorDefault":
-		"Nenhuma cor foi definida no Callout Manager, por isso foi usado o cinza padrão.",
+	"import.warn.cmNoColorDefault": "Nenhuma cor foi definida no Callout Manager, por isso foi usado o cinza padrão.",
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "Não é possível preservar estilos dependentes do tema. Os valores incondicionais têm prioridade; qualquer valor alternativo condicional é aplicado a todos os temas.",
-	"import.warn.cmCustomStylesSkipped": "O CSS personalizado do Callout Manager não é importado. Só podem ser transferidas as definições compatíveis de ícones e cores.",
-	"import.warn.cmSchemeIcon": "O Callout Studio usa um único ícone para ambos os esquemas de cores; o ícone importado será usado nos dois.",
+	"import.warn.cmThemeConditionPartial":
+		"Não é possível preservar estilos dependentes do tema. Os valores incondicionais têm prioridade; qualquer valor alternativo condicional é aplicado a todos os temas.",
+	"import.warn.cmCustomStylesSkipped":
+		"O CSS personalizado do Callout Manager não é importado. Só podem ser transferidas as definições compatíveis de ícones e cores.",
+	"import.warn.cmSchemeIcon":
+		"O Callout Studio usa um único ícone para ambos os esquemas de cores; o ícone importado será usado nos dois.",
 	"import.err.cmDuplicateId": "O ID {{value}} duplica {{other}} nesta importação e foi ignorado.",
 	"import.admTitle": "Importar do Admonition",
 	"import.admInstructions":
@@ -1093,20 +1055,15 @@ export const pt: Record<string, string> = {
 		"botão de copiar, título oculto) ficam para trás.",
 	"import.admFromVault": "Este cofre",
 	"import.admVaultChecking": "A procurar o plugin Admonition…",
-	"import.admVaultFound":
-		"Encontradas {{count}} admonition(s) personalizadas.",
+	"import.admVaultFound": "Encontradas {{count}} admonition(s) personalizadas.",
 	"import.admFromFile": "Um ficheiro",
-	"import.admFromFileDesc":
-		"Um ficheiro admonitions.json, ou um pacote partilhado.",
+	"import.admFromFileDesc": "Um ficheiro admonitions.json, ou um pacote partilhado.",
 	"import.admBtnCancel": "Cancelar",
 	"import.admBtnImport": "Importar",
 	"import.err.admNotRecognized":
-		"Ficheiro não reconhecido: era esperada uma lista de admonitions " +
-		"ou um data.json do Admonition.",
-	"import.err.admNoEntries":
-		"Não foram encontradas admonitions para importar.",
-	"import.err.admTypeMissing":
-		'Esta admonition não tem "type" e foi ignorada.',
+		"Ficheiro não reconhecido: era esperada uma lista de admonitions " + "ou um data.json do Admonition.",
+	"import.err.admNoEntries": "Não foram encontradas admonitions para importar.",
+	"import.err.admTypeMissing": 'Esta admonition não tem "type" e foi ignorada.',
 	"import.warn.admIconUnknown":
 		'Não foi encontrado nenhum ícone chamado "{{value}}" em nenhuma ' +
 		"biblioteca, por isso foi usado o ícone predefinido.",
@@ -1119,24 +1076,20 @@ export const pt: Record<string, string> = {
 		"Esta admonition é estilizada por um fragmento CSS no Admonition. " +
 		"Esse estilo não faz parte da importação, por isso vieram apenas " +
 		"o nome, o ícone e a cor.",
-	"import.warn.admNoColor":
-		"Não foi definida nenhuma cor, por isso foi usado o azul " +
-		"predefinido.",
-	"import.warn.admTitleTruncated":
-		"O título tem {{length}} caracteres; foi encurtado para {{max}}.",
+	"import.warn.admNoColor": "Não foi definida nenhuma cor, por isso foi usado o azul " + "predefinido.",
+	"import.warn.admTitleTruncated": "O título tem {{length}} caracteres; foi encurtado para {{max}}.",
 
 	"footer.openIssue": "Abrir uma issue",
 	"footer.sourceCode": "Código-fonte",
 	"settings.about": "Sobre",
 	"settings.version": "Versão",
 	"settings.deletePaletteBodyLinkedOne":
-		'1 callout a utiliza. Ele mantém suas cores, e você pode reconectá-la depois na linha Cor do editor.',
+		"1 callout a utiliza. Ele mantém suas cores, e você pode reconectá-la depois na linha Cor do editor.",
 	"settings.deletePaletteBodyLinked":
-		'{{count}} callouts a utilizam. Eles mantêm suas cores, e você pode reconectá-los depois na linha Cor de qualquer um dos editores.',
+		"{{count}} callouts a utilizam. Eles mantêm suas cores, e você pode reconectá-los depois na linha Cor de qualquer um dos editores.",
 	"notice.palettesMerged":
 		"Mesclou {{count}} cor(es) salva(s) com cores idênticas: {{names}}. Os callouts que as usam mantêm suas cores e agora estão vinculados à cor que permaneceu.",
-	"editor.colorsDescDeleted":
-		"A cor salva deste callout foi excluída. {{link}}",
+	"editor.colorsDescDeleted": "A cor salva deste callout foi excluída. {{link}}",
 	"editor.colorsDescDeletedLink": "Restaurar",
 	"palette.colorExists":
 		'Estas cores são idênticas a "{{name}}". Duas cores salvas não podem ser iguais — altere uma cor para diferenciá-las.',
@@ -1152,8 +1105,7 @@ export const pt: Record<string, string> = {
 	"notice.exportedCssCreated": "Snippet CSS guardado em {{path}}",
 	"notice.exportedCssUpdated": "Snippet CSS atualizado em {{path}}",
 	"notice.exportedCssUnchanged": "O snippet CSS já está atualizado.",
-	"notice.exportCssEmpty":
-		"Não existem callouts personalizados para exportar.",
+	"notice.exportCssEmpty": "Não existem callouts personalizados para exportar.",
 	"notice.exportCssFailed":
 		"Não foi possível guardar o snippet CSS. Consulte a consola de programador para obter detalhes.",
 	"notice.exportCssEnabled":
@@ -1176,40 +1128,58 @@ export const pt: Record<string, string> = {
 	"quickInsert.readingView": "Mude para o modo de fonte ou para a Pré-visualização ao vivo para inserir um callout.",
 	"quickInsert.noCursorHint": "Não há cursor nesta nota, então não há onde inserir.",
 	"quickInsert.noCursor": "Coloque o cursor na nota no local onde deseja inserir o callout e tente novamente.",
-	"notice.legacyDiscoveryArchiveFailed": "Não foi possível concluir a cópia de recuperação da atualização. O cache local de descoberta anterior e o CSS de inicialização foram mantidos sem alterações. Verifique o acesso de gravação ao armazenamento e o espaço livre, depois reinicie o Obsidian para tentar novamente.",
+	"notice.legacyDiscoveryArchiveFailed":
+		"Não foi possível concluir a cópia de recuperação da atualização. O cache local de descoberta anterior e o CSS de inicialização foram mantidos sem alterações. Verifique o acesso de gravação ao armazenamento e o espaço livre, depois reinicie o Obsidian para tentar novamente.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Em pausa até recriar o callout em falta ou escolher outro.",
 	"confirm.titleRestoreSettings": "Restaurar estas configurações",
 	"confirm.titleCreateSettingsFile": "Criar arquivo de configurações",
 	"confirm.saveDisplayedSettings":
 		"Isso salva a configuração que você vê agora como seu arquivo de configurações e reativa o salvamento. A cópia reserva que este dispositivo mantém é copiada primeiro em backup.\nSe outro dispositivo puder ter alterações mais recentes que você quer manter, deixe-o terminar de sincronizar antes de continuar. Seu app de sincronização pode enviar este arquivo para os seus outros dispositivos.\nO Callout Studio procura o arquivo de configurações mais uma vez antes de salvar. Se ele voltou, o Callout Studio o mantém no lugar.",
-	"notice.settingsBackupFailed": "A recuperação das configurações não pôde continuar porque não foi possível salvar um backup de segurança. Verifique o armazenamento disponível e as permissões de gravação, depois tente novamente.",
-	"notice.settingsNewerVersion": "As configurações do Callout Studio foram salvas por uma versão mais recente do plugin, então nada será gravado neste dispositivo até que você o atualize. Suas configurações estão seguras — atualize o Callout Studio aqui e recarregue o Obsidian.",
+	"notice.settingsBackupFailed":
+		"A recuperação das configurações não pôde continuar porque não foi possível salvar um backup de segurança. Verifique o armazenamento disponível e as permissões de gravação, depois tente novamente.",
+	"notice.settingsNewerVersion":
+		"As configurações do Callout Studio foram salvas por uma versão mais recente do plugin, então nada será gravado neste dispositivo até que você o atualize. Suas configurações estão seguras — atualize o Callout Studio aqui e recarregue o Obsidian.",
 	"saveStatus.changed":
 		"O arquivo de configurações mudou enquanto você editava. Seu rascunho continua disponível. Escolha Tentar novamente para carregar as configurações recebidas, depois revise o rascunho e salve novamente.",
-	"saveStatus.missing": "O salvamento está pausado porque o arquivo de configurações está faltando. Isso pode acontecer após uma reinstalação ou enquanto a sincronização ainda está em execução. Termine a sincronização e tente novamente. Para substituir intencionalmente o arquivo ausente, use Criar um novo arquivo de configurações nas configurações do Callout Studio.",
+	"saveStatus.missing":
+		"O salvamento está pausado porque o arquivo de configurações está faltando. Isso pode acontecer após uma reinstalação ou enquanto a sincronização ainda está em execução. Termine a sincronização e tente novamente. Para substituir intencionalmente o arquivo ausente, use Criar um novo arquivo de configurações nas configurações do Callout Studio.",
 	"saveStatus.restoreSettings": "Restaurar estas configurações",
 	"saveStatus.createSettingsFile": "Criar arquivo de configurações",
 	"saveStatus.checkAgain": "Verificar novamente",
-	"saveStatus.recoverInSettings": "Para restaurar o arquivo ausente neste dispositivo, abra as configurações do Callout Studio. Antes de fechar este editor, copie quaisquer edições não salvas que deseja manter; elas não foram salvas.",
+	"saveStatus.recoverInSettings":
+		"Para restaurar o arquivo ausente neste dispositivo, abra as configurações do Callout Studio. Antes de fechar este editor, copie quaisquer edições não salvas que deseja manter; elas não foram salvas.",
 	"saveStatus.openSettings": "Abrir configurações do Callout Studio",
-	"notice.openSettingsFailed": "Não foi possível abrir as configurações do Callout Studio. Abra Configurações → Callout Studio para escolher o que fazer.",
-	"saveStatus.notesFailed": "A definição do callout foi salva, mas algumas atualizações de notas não puderam ser concluídas. Deixe este editor aberto e escolha Salvar para tentar novamente as atualizações incompletas.",
-	"saveStatus.recoveryRead": "O salvamento está pausado porque a cópia de recuperação local não pode ser lida. Seu arquivo de configurações ainda pode estar intacto. Verifique o armazenamento disponível, depois tente a recuperação novamente. Os dados de recuperação existentes não serão substituídos.",
-	"saveStatus.recoveryWrite": "A cópia de recuperação local não pôde ser salva. Verifique o armazenamento disponível, depois tente novamente. Deixe seu rascunho aberto até que o salvamento seja bem-sucedido.",
-	"saveStatus.retryFailed": "O salvamento ainda está bloqueado. Verifique o status de salvamento nas configurações do Callout Studio para a causa, depois tente novamente.",
-	"saveStatus.reviewDraft": "As configurações recebidas e as verificações de recuperação foram concluídas. Seu rascunho está inalterado. Revise-o e salve novamente.",
-	"saveStatus.settingsArrived": "As configurações existentes chegaram e foram carregadas. Nenhum arquivo substituto foi criado.",
-	"saveStatus.syncConflict": "As configurações recebidas entram em conflito com um callout necessário para atualizações de notas incompletas. Seu rascunho e as atualizações pendentes foram mantidos. Resolva o conflito de configurações antes de tentar novamente.",
+	"notice.openSettingsFailed":
+		"Não foi possível abrir as configurações do Callout Studio. Abra Configurações → Callout Studio para escolher o que fazer.",
+	"saveStatus.notesFailed":
+		"A definição do callout foi salva, mas algumas atualizações de notas não puderam ser concluídas. Deixe este editor aberto e escolha Salvar para tentar novamente as atualizações incompletas.",
+	"saveStatus.recoveryRead":
+		"O salvamento está pausado porque a cópia de recuperação local não pode ser lida. Seu arquivo de configurações ainda pode estar intacto. Verifique o armazenamento disponível, depois tente a recuperação novamente. Os dados de recuperação existentes não serão substituídos.",
+	"saveStatus.recoveryWrite":
+		"A cópia de recuperação local não pôde ser salva. Verifique o armazenamento disponível, depois tente novamente. Deixe seu rascunho aberto até que o salvamento seja bem-sucedido.",
+	"saveStatus.retryFailed":
+		"O salvamento ainda está bloqueado. Verifique o status de salvamento nas configurações do Callout Studio para a causa, depois tente novamente.",
+	"saveStatus.reviewDraft":
+		"As configurações recebidas e as verificações de recuperação foram concluídas. Seu rascunho está inalterado. Revise-o e salve novamente.",
+	"saveStatus.settingsArrived":
+		"As configurações existentes chegaram e foram carregadas. Nenhum arquivo substituto foi criado.",
+	"saveStatus.syncConflict":
+		"As configurações recebidas entram em conflito com um callout necessário para atualizações de notas incompletas. Seu rascunho e as atualizações pendentes foram mantidos. Resolva o conflito de configurações antes de tentar novamente.",
 	"saveStatus.titlePaused": "O salvamento está pausado",
 	"saveStatus.titleFailed": "As configurações não foram salvas",
 	"saveStatus.tryAgain": "Tentar novamente",
 	"saveStatus.working": "Processando…",
-	"saveStatus.unreadable": "O salvamento está pausado porque o arquivo de configurações não pode ser lido com segurança. Termine a sincronização ou restaure uma cópia válida, depois tente novamente. O arquivo existente foi mantido.",
-	"saveStatus.write": "O arquivo de configurações não pôde ser salvo. Verifique o armazenamento disponível, as permissões da pasta e a sincronização, depois tente novamente antes de fechar o Obsidian.",
-	"saveStatus.writePermission": "O arquivo de configurações não pôde ser salvo porque o armazenamento negou acesso de gravação. Verifique se o cofre e a pasta do plugin têm permissão de gravação, depois tente novamente.",
-	"saveStatus.writeSpace": "O arquivo de configurações não pôde ser salvo porque o armazenamento está cheio ou sua cota foi excedida. Libere algum espaço, depois tente novamente.",
-	"settings.readOnly": "O Callout Studio não conseguiu usar seu arquivo de configurações quando o Obsidian foi iniciado, então nada nesta página está sendo salvo neste dispositivo. Suas alterações durarão até você fechar o Obsidian. Recarregue o Obsidian assim que o arquivo voltar — se você sincroniza este cofre, deixe a sincronização terminar primeiro.",
+	"saveStatus.unreadable":
+		"O salvamento está pausado porque o arquivo de configurações não pode ser lido com segurança. Termine a sincronização ou restaure uma cópia válida, depois tente novamente. O arquivo existente foi mantido.",
+	"saveStatus.write":
+		"O arquivo de configurações não pôde ser salvo. Verifique o armazenamento disponível, as permissões da pasta e a sincronização, depois tente novamente antes de fechar o Obsidian.",
+	"saveStatus.writePermission":
+		"O arquivo de configurações não pôde ser salvo porque o armazenamento negou acesso de gravação. Verifique se o cofre e a pasta do plugin têm permissão de gravação, depois tente novamente.",
+	"saveStatus.writeSpace":
+		"O arquivo de configurações não pôde ser salvo porque o armazenamento está cheio ou sua cota foi excedida. Libere algum espaço, depois tente novamente.",
+	"settings.readOnly":
+		"O Callout Studio não conseguiu usar seu arquivo de configurações quando o Obsidian foi iniciado, então nada nesta página está sendo salvo neste dispositivo. Suas alterações durarão até você fechar o Obsidian. Recarregue o Obsidian assim que o arquivo voltar — se você sincroniza este cofre, deixe a sincronização terminar primeiro.",
 	// Sync safety hardening
 	"saveStatus.diagnosis.unavailable":
 		"Este dispositivo não consegue abrir o arquivo agora. Ele pode ainda estar sendo baixado, o cofre pode não estar disponível offline, ou o armazenamento não está respondendo. O Callout Studio verifica novamente de forma automática.",
@@ -1217,7 +1187,8 @@ export const pt: Record<string, string> = {
 		"O arquivo está vazio, o que geralmente significa que uma sincronização foi interrompida. Se outro dispositivo ainda tiver suas configurações, deixe-o sincronizar. Caso contrário, substitua o arquivo.",
 	"saveStatus.diagnosis.mergeMarkers":
 		"O arquivo contém marcadores de conflito de mesclagem não resolvidos, por exemplo do Git. Resolva o conflito na sua ferramenta Git, ou substitua o arquivo.",
-	"saveStatus.diagnosis.damaged": "O arquivo está incompleto ou danificado, então não pode ser lido como configurações.",
+	"saveStatus.diagnosis.damaged":
+		"O arquivo está incompleto ou danificado, então não pode ser lido como configurações.",
 	"saveStatus.diagnosis.combined":
 		"Seu serviço de sincronização combinou duas versões do arquivo, então sua verificação interna não corresponde mais. As configurações dentro dele estão intactas, e substituir o arquivo as mantém.",
 	"saveStatus.diagnosis.invalidEntries":
@@ -1248,18 +1219,22 @@ export const pt: Record<string, string> = {
 		"O Callout Studio verifica de novo a cada minuto enquanto o Obsidian estiver aberto, então isso muitas vezes se resolve sozinho — ou escolha Verificar novamente para olhar agora mesmo.",
 	"saveStatus.guide.restore":
 		"Se suas configurações não voltarem, escolha Restaurar estas configurações para manter os callouts que você vê aqui.",
-	"saveStatus.guide.create": "Se suas configurações não voltarem, escolha Criar arquivo de configurações para voltar a salvar.",
+	"saveStatus.guide.create":
+		"Se suas configurações não voltarem, escolha Criar arquivo de configurações para voltar a salvar.",
 	"saveStatus.guide.recoveryRetry":
 		"Confirme que este dispositivo tem algum espaço livre de armazenamento e depois escolha Tentar novamente.",
 	"saveStatus.guide.recoveryDiscard":
 		"Se isso não ajudar, escolha Descartar cópia de recuperação. Uma cópia exata é salva primeiro, e seu arquivo de configurações não é tocado.",
-	"saveStatus.guide.newerVersion": "Atualize o Callout Studio em Configurações → Plugins da comunidade e depois recarregue o Obsidian.",
+	"saveStatus.guide.newerVersion":
+		"Atualize o Callout Studio em Configurações → Plugins da comunidade e depois recarregue o Obsidian.",
 	"saveStatus.missingNotice":
 		"Suas notas estão seguras. O Callout Studio pausou o salvamento porque não encontra o arquivo de configurações agora.",
 	"statusBar.paused": "Salvamento pausado",
-	"statusBar.pausedTooltip": "O Callout Studio não está salvando mudanças de configurações. Clique para ver o motivo.",
+	"statusBar.pausedTooltip":
+		"O Callout Studio não está salvando mudanças de configurações. Clique para ver o motivo.",
 	"statusBar.pausedNotice": "O Callout Studio não está salvando mudanças de configurações agora.",
-	"saveStatus.resumed": "O salvamento voltou. O Callout Studio está salvando as alterações de configurações novamente.",
+	"saveStatus.resumed":
+		"O salvamento voltou. O Callout Studio está salvando as alterações de configurações novamente.",
 	"notice.replaceUnreadableUnavailable":
 		"O arquivo de configurações não pode ser substituído agora: ele está sendo alterado, ou este dispositivo não consegue lê-lo. Tente novamente daqui a pouco.",
 	"notice.recoveryStorageUnavailable":
@@ -1321,7 +1296,8 @@ export const pt: Record<string, string> = {
 	"recovery.details.unknownTime": "Horário de salvamento não registrado",
 	"recovery.details.current": "Configuração atual",
 	"recovery.details.restored": "Após restaurar esta versão",
-	"recovery.details.unreadable": "Esta versão do Callout Studio não consegue interpretar esta cópia como uma configuração restaurável. Ela pode estar danificada, indisponível ou usar um formato mais recente. A comparação e o relatório das configurações restauradas não estão disponíveis. Todo o conteúdo original que pôde ser lido está incluído abaixo.",
+	"recovery.details.unreadable":
+		"Esta versão do Callout Studio não consegue interpretar esta cópia como uma configuração restaurável. Ela pode estar danificada, indisponível ou usar um formato mais recente. A comparação e o relatório das configurações restauradas não estão disponíveis. Todo o conteúdo original que pôde ser lido está incluído abaixo.",
 	"recovery.details.null": "Sem valor (null)",
 	"recovery.details.yes": "Sim",
 	"recovery.details.no": "Não",
@@ -1489,11 +1465,14 @@ export const pt: Record<string, string> = {
 	"recovery.delete": "Excluir",
 
 	// Version history
-	"saveStatus.guide.versions": "Quando o salvamento voltar a funcionar, você também poderá voltar a uma versão salva com Restaurar uma versão anterior.",
+	"saveStatus.guide.versions":
+		"Quando o salvamento voltar a funcionar, você também poderá voltar a uma versão salva com Restaurar uma versão anterior.",
 	"saveStatus.goToVersions": "Ir para o histórico de versões",
 	"versions.title": "Histórico de versões",
-	"versions.intro": "O Callout Studio salva versões da sua configuração automaticamente.\nAs antigas são removidas com o tempo.\nRestaurar uma versão substitui sua configuração atual em todos os dispositivos sincronizados.",
-	"versions.pausedHint": "O salvamento está pausado, então a restauração não está disponível. Você ainda pode comparar e excluir versões.",
+	"versions.intro":
+		"O Callout Studio salva versões da sua configuração automaticamente.\nAs antigas são removidas com o tempo.\nRestaurar uma versão substitui sua configuração atual em todos os dispositivos sincronizados.",
+	"versions.pausedHint":
+		"O salvamento está pausado, então a restauração não está disponível. Você ainda pode comparar e excluir versões.",
 	"versions.loading": "Buscando versões…",
 	"versions.empty": "Nenhuma versão encontrada.",
 	"versions.dayWithDate": "{{date}} ({{relative}})",
@@ -1510,22 +1489,27 @@ export const pt: Record<string, string> = {
 	"versions.reason.beforeRepair": "Antes do reparo do arquivo de configurações",
 	"versions.restoreTitle": "Restaurar esta versão",
 	"versions.subtitle": "“{{name}}” · {{when}}",
-	"versions.restoreBody": "A sua configuração atual será substituída ({{count}} diferença(s)).\nPrimeiro ela é salva como uma versão, para que você possa voltar a ela.\nDepois, o seu serviço de sincronização envia a configuração restaurada para os seus outros dispositivos.",
+	"versions.restoreBody":
+		"A sua configuração atual será substituída ({{count}} diferença(s)).\nPrimeiro ela é salva como uma versão, para que você possa voltar a ela.\nDepois, o seu serviço de sincronização envia a configuração restaurada para os seus outros dispositivos.",
 	"versions.restoreSame": "Esta versão é igual à sua configuração atual, então não há nada para restaurar.",
 	"versions.restored": "“{{name}}” de {{when}} restaurada.",
-	"versions.backupFailed": "Nada foi restaurado: não foi possível salvar primeiro sua configuração atual como uma versão. Verifique o espaço disponível e tente novamente.",
+	"versions.backupFailed":
+		"Nada foi restaurado: não foi possível salvar primeiro sua configuração atual como uma versão. Verifique o espaço disponível e tente novamente.",
 	"versions.restoreFailed": "Não foi possível restaurar a versão. Nada foi alterado.",
 	"versions.deleteTitle": "Excluir esta versão",
 	"versions.deleteAvailableBody": "Ela e todas as suas cópias disponíveis serão excluídas permanentemente.",
-	"versions.deleteSyncedFiles": "A exclusão desses arquivos pode ser sincronizada com seus outros dispositivos. As cópias locais nesses dispositivos podem permanecer.",
+	"versions.deleteSyncedFiles":
+		"A exclusão desses arquivos pode ser sincronizada com seus outros dispositivos. As cópias locais nesses dispositivos podem permanecer.",
 	"versions.deleteFinal": "Esta ação não pode ser desfeita. Sua configuração atual não será afetada.",
 	"versions.deleted": "“{{name}}” de {{when}} excluída.",
-	"versions.deleteFailed": "Algumas cópias desta versão não puderam ser excluídas. A lista agora mostra as que restaram.",
+	"versions.deleteFailed":
+		"Algumas cópias desta versão não puderam ser excluídas. A lista agora mostra as que restaram.",
 	"versions.details.title": "Detalhes da versão",
 	"versions.details.difference": "{{count}} diferença em relação à sua configuração atual",
 	"versions.details.differences": "{{count}} diferenças em relação à sua configuração atual",
 	"versions.details.comparisonUnavailable": "Comparação indisponível",
-	"notice.unsavedChangesKept": "Algumas alterações neste dispositivo ainda não haviam sido salvas e foram substituídas por configurações mais recentes de outro dispositivo. Sua versão foi salva primeiro: abra Restaurar uma versão anterior nas configurações do Callout Studio para recuperá-la.",
+	"notice.unsavedChangesKept":
+		"Algumas alterações neste dispositivo ainda não haviam sido salvas e foram substituídas por configurações mais recentes de outro dispositivo. Sua versão foi salva primeiro: abra Restaurar uma versão anterior nas configurações do Callout Studio para recuperá-la.",
 	"settings.versionHistory": "Restaurar uma versão anterior",
 	"settings.versions": "Versões anteriores",
 	"settings.versionsDesc": "Substitua a sua configuração atual por uma versão anterior guardada.",
@@ -1536,12 +1520,13 @@ export const pt: Record<string, string> = {
 	"noteChanges.notesOne": "1 nota",
 	"noteChanges.askCallout": "O que deve acontecer com esse callout?",
 	"noteChanges.askCallouts": "O que deve acontecer com esses callouts?",
-	"noteChanges.changeRenamed": "Você alterou o nome de exibição de \"{{old}}\" para \"{{new}}\", então o ID principal muda de \"{{oldId}}\" para \"{{newId}}\".",
-	"noteChanges.changeMainId": "O ID principal muda de \"{{oldId}}\" para \"{{newId}}\".",
-	"noteChanges.changeName": "Você alterou o nome de exibição de \"{{old}}\" para \"{{new}}\".",
-	"noteChanges.changeRemoved": "Você removeu o ID \"{{id}}\".",
+	"noteChanges.changeRenamed":
+		'Você alterou o nome de exibição de "{{old}}" para "{{new}}", então o ID principal muda de "{{oldId}}" para "{{newId}}".',
+	"noteChanges.changeMainId": 'O ID principal muda de "{{oldId}}" para "{{newId}}".',
+	"noteChanges.changeName": 'Você alterou o nome de exibição de "{{old}}" para "{{new}}".',
+	"noteChanges.changeRemoved": 'Você removeu o ID "{{id}}".',
 	"noteChanges.changeRemovedMany": "Você removeu estes IDs: {{ids}}.",
-	"noteChanges.changeResetRemoved": "Redefinir para padrão remove o ID \"{{id}}\" que você adicionou.",
+	"noteChanges.changeResetRemoved": 'Redefinir para padrão remove o ID "{{id}}" que você adicionou.',
 	"noteChanges.changeResetRemovedMany": "Redefinir para padrão remove os IDs que você adicionou: {{ids}}.",
 	"noteChanges.changeFold": "Você mudou como este callout é recolhido.",
 	"noteChanges.affects": "Isso afeta {{callouts}} em {{notes}}.",
@@ -1550,7 +1535,8 @@ export const pt: Record<string, string> = {
 	"noteChanges.rewriteManyDesc": "Cada ID antigo nas suas notas passa a ser [!{{to}}].",
 	"noteChanges.changeToIdLabel": "ID para o qual alterá-las",
 	"noteChanges.rewriteDesc": "Cada [!{{id}}] nas suas notas passa a ser [!{{to}}].",
-	"noteChanges.renameFollowDesc": "Cada [!{{oldId}}] nas suas notas passa a ser [!{{newId}}], e os títulos que dizem \"{{old}}\" passam a dizer \"{{new}}\".",
-	"noteChanges.titlesChangeDesc": "Os títulos que dizem \"{{old}}\" passam a dizer \"{{new}}\".",
+	"noteChanges.renameFollowDesc":
+		'Cada [!{{oldId}}] nas suas notas passa a ser [!{{newId}}], e os títulos que dizem "{{old}}" passam a dizer "{{new}}".',
+	"noteChanges.titlesChangeDesc": 'Os títulos que dizem "{{old}}" passam a dizer "{{new}}".',
 	"noteChanges.foldChangeDesc": "A marca + ou - deles muda para corresponder.",
 };

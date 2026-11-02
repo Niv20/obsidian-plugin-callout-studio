@@ -16,12 +16,17 @@ import { recoveryReport } from "./recoverySections";
 
 export function recoverySourceTime(source: RecoverySource): string {
 	if (source.time === null) return t("recovery.details.unknownTime");
-	try { return new Date(source.time).toLocaleString(getLocale()); }
-	catch { return new Date(source.time).toLocaleString(); }
+	try {
+		return new Date(source.time).toLocaleString(getLocale());
+	} catch {
+		return new Date(source.time).toLocaleString();
+	}
 }
 
 export async function renderRecoveryDetails(
-	parent: HTMLElement, details: SetupDetails, component: Component,
+	parent: HTMLElement,
+	details: SetupDetails,
+	component: Component,
 	isCurrent: () => boolean = () => true,
 ): Promise<void> {
 	const report = parent.createDiv({ cls: "cs-recovery-detail-report" });
@@ -34,16 +39,23 @@ export async function renderRecoveryDetails(
 		return;
 	}
 	const comparison = recoveryReport(details);
-	const items = comparison.sections.flatMap(section => section.items);
+	const items = comparison.sections.flatMap((section) => section.items);
 	if (items.length === 0) {
 		renderChangeDivider(outcome, t("recovery.same"));
 		return;
 	}
-	renderChangeDivider(outcome, t(items.length === 1 ? "versions.details.difference" : "versions.details.differences", { count: items.length }));
+	renderChangeDivider(
+		outcome,
+		t(items.length === 1 ? "versions.details.difference" : "versions.details.differences", { count: items.length }),
+	);
 	const counts = outcome.createDiv({ cls: "cs-recovery-change-counts" });
 	for (const kind of ["removed", "changed", "added"] as const) {
-		const count = items.filter(item => item.kind === kind).length;
-		if (count) counts.createSpan({ text: t(`recovery.details.count.${kind}`, { count }), cls: `cs-recovery-state is-${kind}` });
+		const count = items.filter((item) => item.kind === kind).length;
+		if (count)
+			counts.createSpan({
+				text: t(`recovery.details.count.${kind}`, { count }),
+				cls: `cs-recovery-state is-${kind}`,
+			});
 	}
 	await renderRecoveryComparison(report, comparison, component, isCurrent);
 }

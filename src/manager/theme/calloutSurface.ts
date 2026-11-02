@@ -112,9 +112,7 @@ function collapse(guards: ReadonlySet<string>): string[] {
 }
 
 /** Fold every sheet's evidence into one answer. */
-export function resolveCalloutSurface(
-	evidence: readonly SurfaceEvidence[],
-): CalloutSurface {
+export function resolveCalloutSurface(evidence: readonly SurfaceEvidence[]): CalloutSurface {
 	const neutral = new Map<string, SurfaceBackground>();
 	const colorless = new Set<string>();
 	let painted = false;
@@ -137,11 +135,7 @@ export function resolveCalloutSurface(
 		for (const fill of ev.fills) {
 			if (fill.pseudo !== "") surfaceLayers.add(fill);
 			if (fill.box === "title" && fill.pseudo === "" && fill.inked) inkedTitles.add(fill);
-			if (
-				fill.accent &&
-				!fill.ownOpacity &&
-				backgrounds.some((root) => neutralWhenFilled(root, fill))
-			) {
+			if (fill.accent && !fill.ownOpacity && backgrounds.some((root) => neutralWhenFilled(root, fill))) {
 				relocations.add(fill);
 			}
 		}
@@ -149,9 +143,7 @@ export function resolveCalloutSurface(
 	return {
 		neutralBackground: backgrounds
 			.filter((bg) => bg === unconditional || bg.color !== unconditional?.color)
-			.sort((a, b) =>
-				`${a.guard}\u0000${a.rootQualifier}`.localeCompare(`${b.guard}\u0000${b.rootQualifier}`),
-			),
+			.sort((a, b) => `${a.guard}\u0000${a.rootQualifier}`.localeCompare(`${b.guard}\u0000${b.rootQualifier}`)),
 		relocations: relocations.sorted(),
 		inkedTitles: inkedTitles.sorted(),
 		surfaceLayers: surfaceLayers.sorted(),
@@ -172,9 +164,7 @@ class FillSet {
 	}
 
 	sorted(): SurfaceFill[] {
-		return [...this.byKey.entries()]
-			.sort(([a], [b]) => a.localeCompare(b))
-			.map(([, fill]) => fill);
+		return [...this.byKey.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([, fill]) => fill);
 	}
 }
 

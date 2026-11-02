@@ -23,23 +23,13 @@
  * or an end (pointer vs. keyboard), and a caller swapping in a bespoke preview
  * for the duration must see exactly one start and one end per drag.
  */
-import {
-	asEl,
-	fakeDom,
-	FakeDocument,
-	FakeWindow,
-	type FakeElement,
-} from "./support/fakeDom";
+import { asEl, fakeDom, FakeDocument, FakeWindow, type FakeElement } from "./support/fakeDom";
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { createdSliders } from "./support/obsidianStub";
 import type { SliderComponent } from "obsidian";
 import { Setting } from "obsidian";
-import {
-	setSliderDisplay,
-	wireStyleSlider,
-	type StyleSliderSpec,
-} from "../src/settings/styleControls";
+import { setSliderDisplay, wireStyleSlider, type StyleSliderSpec } from "../src/settings/styleControls";
 import type { SettingsTabPlugin } from "../src/settings/sections/types";
 
 /* -------------------------------------------------------------------------- */
@@ -96,8 +86,7 @@ function harness(): Harness {
 		assert.ok(built, "no slider was built");
 		return built as unknown as SliderComponent;
 	};
-	const sliderEl = (): FakeElement =>
-		(slider() as unknown as { sliderEl: FakeElement }).sliderEl;
+	const sliderEl = (): FakeElement => (slider() as unknown as { sliderEl: FakeElement }).sliderEl;
 
 	return {
 		parent,
@@ -161,9 +150,7 @@ describe("setSliderDisplay", () => {
 	it("installs the formatter on a build that has the readout", () => {
 		const h = harness();
 		addWiredSlider(h.plugin, h.parent, spec());
-		const format = (
-			h.slider() as unknown as { displayFormat: (v: number) => string }
-		).displayFormat;
+		const format = (h.slider() as unknown as { displayFormat: (v: number) => string }).displayFormat;
 		assert.strictEqual(typeof format, "function");
 	});
 
@@ -223,8 +210,7 @@ describe("wireStyleSlider — the readout", () => {
 	const readout = (over: Partial<StyleSliderSpec> = {}): ((v: number) => string) => {
 		const h = harness();
 		addWiredSlider(h.plugin, h.parent, spec(over));
-		return (h.slider() as unknown as { displayFormat: (v: number) => string })
-			.displayFormat;
+		return (h.slider() as unknown as { displayFormat: (v: number) => string }).displayFormat;
 	};
 
 	it("appends the unit", () => {
@@ -232,10 +218,7 @@ describe("wireStyleSlider — the readout", () => {
 	});
 
 	it("prepends a marker when one is given", () => {
-		assert.strictEqual(
-			readout({ prefix: "×", suffix: undefined, decimals: 2 })(1.5),
-			"×1.50",
-		);
+		assert.strictEqual(readout({ prefix: "×", suffix: undefined, decimals: 2 })(1.5), "×1.50");
 	});
 
 	it("keeps the digit count fixed, whatever the value", () => {
@@ -253,10 +236,7 @@ describe("wireStyleSlider — the readout", () => {
 	});
 
 	it("draws a bare number when there is no unit or marker", () => {
-		assert.strictEqual(
-			readout({ suffix: undefined, decimals: 0 })(12),
-			"12",
-		);
+		assert.strictEqual(readout({ suffix: undefined, decimals: 0 })(12), "12");
 	});
 });
 
@@ -389,9 +369,7 @@ describe("wireStyleSlider — releasing the thumb", () => {
 		const h = harness();
 		const s = spec();
 		addWiredSlider(h.plugin, h.parent, s);
-		await (h.slider() as unknown as { commit(v: number): Promise<void> }).commit(
-			3,
-		);
+		await (h.slider() as unknown as { commit(v: number): Promise<void> }).commit(3);
 		assert.deepStrictEqual(s.written, [3]);
 		assert.strictEqual(h.saves, 1);
 		// No argument this time: the commit DOES want the css-change re-render.
@@ -404,8 +382,7 @@ describe("wireStyleSlider — releasing the thumb", () => {
 		// change waited on the disk — or never showed until something else
 		// injected.
 		const h = harness();
-		(h.plugin as unknown as { saveSettings(): Promise<void> }).saveSettings = () =>
-			new Promise<void>(() => {});
+		(h.plugin as unknown as { saveSettings(): Promise<void> }).saveSettings = () => new Promise<void>(() => {});
 		addWiredSlider(h.plugin, h.parent, spec());
 		void (h.slider() as unknown as { commit(v: number): Promise<void> }).commit(3);
 		assert.deepStrictEqual(h.injects, [undefined]);
@@ -415,9 +392,7 @@ describe("wireStyleSlider — releasing the thumb", () => {
 		const h = harness();
 		const s = spec({ decimals: 1 });
 		addWiredSlider(h.plugin, h.parent, s);
-		await (h.slider() as unknown as { commit(v: number): Promise<void> }).commit(
-			2.449,
-		);
+		await (h.slider() as unknown as { commit(v: number): Promise<void> }).commit(2.449);
 		assert.deepStrictEqual(s.written, [2.4]);
 	});
 });
@@ -529,8 +504,12 @@ describe("wireStyleSlider — showing a value again", () => {
 		let changed: ((v: number) => unknown) | null = null;
 		const slider = {
 			sliderEl: createDiv(),
-			setLimits() { return slider; },
-			setDisplayFormat() { return slider; },
+			setLimits() {
+				return slider;
+			},
+			setDisplayFormat() {
+				return slider;
+			},
 			getValue: () => value,
 			setValue(next: number) {
 				if (next !== value) {
@@ -539,7 +518,10 @@ describe("wireStyleSlider — showing a value again", () => {
 				}
 				return slider;
 			},
-			onChange(callback: (v: number) => unknown) { changed = callback; return slider; },
+			onChange(callback: (v: number) => unknown) {
+				changed = callback;
+				return slider;
+			},
 		};
 		let stored = 5;
 		let commits = 0;
@@ -547,8 +529,20 @@ describe("wireStyleSlider — showing a value again", () => {
 			{ cssInjector: { inject: () => {} } } as unknown as SettingsTabPlugin,
 			slider as unknown as SliderComponent,
 			createDiv(),
-			{ label: "Size", min: 0, max: 10, step: 1, decimals: 0, get: () => stored, set: (v) => { stored = v; } },
-			() => { commits++; },
+			{
+				label: "Size",
+				min: 0,
+				max: 10,
+				step: 1,
+				decimals: 0,
+				get: () => stored,
+				set: (v) => {
+					stored = v;
+				},
+			},
+			() => {
+				commits++;
+			},
 		);
 		assert.strictEqual(value, 5, "drawn with the saved value, before the callback exists");
 		stored = 7;

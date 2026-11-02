@@ -83,7 +83,7 @@ export const absentText = {
 
 /** A path of saved keys, labelled; `$order` is the order of an id-keyed list. */
 export function pathLabel(path: readonly string[]): string {
-	return path.map(key => key === "$order" ? t("recovery.details.order") : recoveryFieldLabel(key)).join(" › ");
+	return path.map((key) => (key === "$order" ? t("recovery.details.order") : recoveryFieldLabel(key))).join(" › ");
 }
 
 export interface RecordFieldOptions {
@@ -99,19 +99,30 @@ export interface RecordFieldOptions {
  * pass comparable values.
  */
 export function recordFields(
-	before: unknown, after: unknown, specs: readonly FieldSpec[], options: RecordFieldOptions = {},
+	before: unknown,
+	after: unknown,
+	specs: readonly FieldSpec[],
+	options: RecordFieldOptions = {},
 ): RecoveryField[] {
-	const a = isRecord(before) ? before : {}, b = isRecord(after) ? after : {};
+	const a = isRecord(before) ? before : {},
+		b = isRecord(after) ? after : {};
 	const owners = [before, after] as const;
 	const skip = new Set(options.skip ?? []);
 	const fields: RecoveryField[] = [];
 	for (const [key, render, absent] of specs) {
 		if (skip.has(key) || canonical(a[key]) === canonical(b[key])) continue;
-		fields.push({ label: recoveryFieldLabel(key), before: a[key], after: b[key], render, absent: absent?.(), owners });
+		fields.push({
+			label: recoveryFieldLabel(key),
+			before: a[key],
+			after: b[key],
+			render,
+			absent: absent?.(),
+			owners,
+		});
 	}
 	if (options.unknown === false) return fields;
 	const known = new Set([...specs.map(([key]) => key), ...skip, "id"]);
-	const unknown = [...new Set([...Object.keys(a), ...Object.keys(b)])].filter(key => !known.has(key)).sort();
+	const unknown = [...new Set([...Object.keys(a), ...Object.keys(b)])].filter((key) => !known.has(key)).sort();
 	for (const key of unknown) {
 		if (canonical(a[key]) === canonical(b[key])) continue;
 		fields.push({ label: recoveryFieldLabel(key), before: a[key], after: b[key], render: renderGeneric, owners });

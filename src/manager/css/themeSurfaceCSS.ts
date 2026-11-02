@@ -172,10 +172,7 @@ export function themeSurfaceCSS(input: ThemeSurfaceInput): string {
 	const parts: string[] = [];
 
 	for (const background of input.surface.neutralBackground) {
-		const sels = input.selectorsFor(
-			guardPrefix(background.guard),
-			background.rootQualifier,
-		);
+		const sels = input.selectorsFor(guardPrefix(background.guard), background.rootQualifier);
 		if (input.paintsBackground) {
 			parts.push(
 				`${sels} {\n` +
@@ -189,16 +186,10 @@ export function themeSurfaceCSS(input: ThemeSurfaceInput): string {
 			// `background-image` is cancelled, never its `content`: killing the
 			// pseudo-element outright would take a theme's own `::before` with
 			// it, and an empty absolutely-positioned box paints nothing anyway.
-			parts.push(
-				`@media print {\n${before(sels)} {\n` +
-					`  background-image: none !important;\n` +
-					`}\n}`,
-			);
+			parts.push(`@media print {\n${before(sels)} {\n` + `  background-image: none !important;\n` + `}\n}`);
 		}
 		if (input.cancelsContentColor) {
-			parts.push(
-				`${each(sels, " > .callout-content")} {\n  color: inherit !important;\n}`,
-			);
+			parts.push(`${each(sels, " > .callout-content")} {\n  color: inherit !important;\n}`);
 		}
 	}
 
@@ -249,10 +240,7 @@ export function themeSurfaceCSS(input: ThemeSurfaceInput): string {
 	if (!input.transparentBg) {
 		for (const guard of input.surface.colorlessFrame) {
 			const sels = input.selectorsFor(guardPrefix(guard), "");
-			const boxes = [
-				each(sels, " > .callout-title"),
-				each(sels, " > .callout-content"),
-			].join(",\n");
+			const boxes = [each(sels, " > .callout-title"), each(sels, " > .callout-content")].join(",\n");
 			parts.push(`${boxes} {\n  border-color: var(--cs-accent) !important;\n}`);
 		}
 	}

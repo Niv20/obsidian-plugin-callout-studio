@@ -1,9 +1,4 @@
-import {
-	CALLOUT_RENDER_ROLES,
-	type CalloutDefinition,
-	type CalloutRenderRole,
-	type IconAdjust,
-} from "../types";
+import { CALLOUT_RENDER_ROLES, type CalloutDefinition, type CalloutRenderRole, type IconAdjust } from "../types";
 
 /**
  * Icon size and offsets, per render role.
@@ -40,21 +35,13 @@ export const ICON_ADJUST_LIMITS = {
 } as const;
 
 /** The subset of a definition this module reads. */
-export type IconAdjustSource = Pick<
-	CalloutDefinition,
-	"iconAdjust" | "iconOffsetX" | "iconOffsetY" | "iconSize"
->;
+export type IconAdjustSource = Pick<CalloutDefinition, "iconAdjust" | "iconOffsetX" | "iconOffsetY" | "iconSize">;
 
 /**
  * Clamp into range, falling back for anything absent or non-finite. `data.json`
  * syncs and can be hand-edited, so a stored value is never assumed sane.
  */
-function clamp(
-	value: number | undefined,
-	min: number,
-	max: number,
-	fallback: number,
-): number {
+function clamp(value: number | undefined, min: number, max: number, fallback: number): number {
 	if (typeof value !== "number" || !Number.isFinite(value)) return fallback;
 	return Math.max(min, Math.min(value, max));
 }
@@ -78,24 +65,9 @@ export function resolveIconAdjust(
 	const perRole = def.iconAdjust?.[role];
 	const { offset, size } = ICON_ADJUST_LIMITS;
 	return {
-		offsetX: clamp(
-			perRole?.offsetX ?? def.iconOffsetX,
-			offset.min,
-			offset.max,
-			DEFAULT_ICON_ADJUST.offsetX,
-		),
-		offsetY: clamp(
-			perRole?.offsetY ?? def.iconOffsetY,
-			offset.min,
-			offset.max,
-			DEFAULT_ICON_ADJUST.offsetY,
-		),
-		size: clamp(
-			perRole?.size ?? def.iconSize,
-			size.min,
-			size.max,
-			DEFAULT_ICON_ADJUST.size,
-		),
+		offsetX: clamp(perRole?.offsetX ?? def.iconOffsetX, offset.min, offset.max, DEFAULT_ICON_ADJUST.offsetX),
+		offsetY: clamp(perRole?.offsetY ?? def.iconOffsetY, offset.min, offset.max, DEFAULT_ICON_ADJUST.offsetY),
+		size: clamp(perRole?.size ?? def.iconSize, size.min, size.max, DEFAULT_ICON_ADJUST.size),
 	};
 }
 
@@ -105,13 +77,8 @@ export function isDefaultIconAdjust(a: ResolvedIconAdjust): boolean {
 }
 
 /** Field-wise equality of two resolved adjustments. */
-export function equalIconAdjust(
-	a: ResolvedIconAdjust,
-	b: ResolvedIconAdjust,
-): boolean {
-	return (
-		a.offsetX === b.offsetX && a.offsetY === b.offsetY && a.size === b.size
-	);
+export function equalIconAdjust(a: ResolvedIconAdjust, b: ResolvedIconAdjust): boolean {
+	return a.offsetX === b.offsetX && a.offsetY === b.offsetY && a.size === b.size;
 }
 
 /**
@@ -124,23 +91,16 @@ export function equalIconAdjust(
  * those as the shipped result so it can restore the shipped raw fields exactly
  * instead of persisting explicit 0 / 0 / 1 values as a customization.
  */
-export function iconAdjustSourcesEqual(
-	a: IconAdjustSource,
-	b: IconAdjustSource,
-): boolean {
+export function iconAdjustSourcesEqual(a: IconAdjustSource, b: IconAdjustSource): boolean {
 	return CALLOUT_RENDER_ROLES.every((role) =>
 		equalIconAdjust(resolveIconAdjust(a, role), resolveIconAdjust(b, role)),
 	);
 }
 
 /** Clone the four raw fields without materializing defaults for absent values. */
-export function cloneIconAdjustFields(
-	source: IconAdjustSource,
-): IconAdjustSource {
+export function cloneIconAdjustFields(source: IconAdjustSource): IconAdjustSource {
 	return {
-		iconAdjust: source.iconAdjust
-			? structuredClone(source.iconAdjust)
-			: undefined,
+		iconAdjust: source.iconAdjust ? structuredClone(source.iconAdjust) : undefined,
 		iconOffsetX: source.iconOffsetX,
 		iconOffsetY: source.iconOffsetY,
 		iconSize: source.iconSize,

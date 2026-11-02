@@ -39,7 +39,10 @@ describe("plugin action icon artwork", () => {
 	});
 
 	it("keeps transparent clearance between the conversion brush and both split arrowheads", () => {
-		const paths = Array.from(UI_ICON_CONTENT[PORTABLE_CONVERSION_ICON_ID]!.matchAll(/<path d="([^"]+)"/g), (match) => match[1]!);
+		const paths = Array.from(
+			UI_ICON_CONTENT[PORTABLE_CONVERSION_ICON_ID]!.matchAll(/<path d="([^"]+)"/g),
+			(match) => match[1]!,
+		);
 		assert.equal(paths.length, 7);
 		const start = /^M([\d.]+) ([\d.]+)/.exec(paths[1]!);
 		const end = /L([\d.]+) ([\d.]+)$/.exec(paths[1]!);
@@ -59,7 +62,11 @@ describe("plugin action icon artwork", () => {
 
 	it("registers a cleanup for every action icon, including conversion", () => {
 		const cleanups: Array<() => void> = [];
-		registerUiIcons({ register: (cleanup: () => void) => { cleanups.push(cleanup); } } as unknown as Plugin);
+		registerUiIcons({
+			register: (cleanup: () => void) => {
+				cleanups.push(cleanup);
+			},
+		} as unknown as Plugin);
 		assert.equal(cleanups.length, exports.length);
 		for (const cleanup of cleanups) assert.doesNotThrow(cleanup);
 	});

@@ -23,13 +23,33 @@ function open(validCount: number, fatal = false) {
 	const modalEl = containerEl.createDiv({ cls: "modal" });
 	const titleEl = modalEl.createDiv({ cls: "modal-header" }).createDiv({ cls: "modal-title" });
 	const contentEl = modalEl.createDiv({ cls: "modal-content" });
-	Object.assign(modal, { containerEl, modalEl, titleEl, contentEl, app, scope: app.scope,
-		setTitle: (title: string) => { titleEl.setText(title); return modal; },
-		open: () => modal.onOpen(), close: () => modal.onClose() });
+	Object.assign(modal, {
+		containerEl,
+		modalEl,
+		titleEl,
+		contentEl,
+		app,
+		scope: app.scope,
+		setTitle: (title: string) => {
+			titleEl.setText(title);
+			return modal;
+		},
+		open: () => modal.onOpen(),
+		close: () => modal.onClose(),
+	});
 	let answer: ImportReportChoice | undefined;
-	void modal.prompt().then((choice) => { answer = choice; });
+	void modal.prompt().then((choice) => {
+		answer = choice;
+	});
 	const importButton = modalEl.querySelector(".modal-button-container button.mod-cta");
-	return { importButton, answer: () => answer, destroy: () => { modal.onClose(); containerEl.remove(); } };
+	return {
+		importButton,
+		answer: () => answer,
+		destroy: () => {
+			modal.onClose();
+			containerEl.remove();
+		},
+	};
 }
 
 describe("the import report's Import valid only", () => {
@@ -41,7 +61,9 @@ describe("the import report's Import valid only", () => {
 			h.importButton.fire("click");
 			await setImmediate();
 			assert.equal(h.answer(), "importValid");
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 	it("is dimmed, not disabled, when nothing is valid, and says there is nothing to import", async () => {
 		const h = open(0);
@@ -49,15 +71,25 @@ describe("the import report's Import valid only", () => {
 			assert.ok(h.importButton);
 			assert.equal(h.importButton.getAttribute("aria-disabled"), "true");
 			assert.equal(h.importButton.hasClass("cs-btn-disabled"), true);
-			assert.notEqual((h.importButton as unknown as { disabled?: boolean }).disabled, true, "a disabled button would swallow the press");
+			assert.notEqual(
+				(h.importButton as unknown as { disabled?: boolean }).disabled,
+				true,
+				"a disabled button would swallow the press",
+			);
 			h.importButton.fire("click");
 			await setImmediate();
 			assert.equal(String(Notice.last?.message), t("import.nothingValid"));
 			assert.equal(h.answer(), undefined, "the report stays open");
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 	it("offers no import button at all for a fatal report", () => {
 		const h = open(0, true);
-		try { assert.equal(h.importButton, null); } finally { h.destroy(); }
+		try {
+			assert.equal(h.importButton, null);
+		} finally {
+			h.destroy();
+		}
 	});
 });

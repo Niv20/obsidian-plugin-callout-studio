@@ -53,11 +53,7 @@ import {
 import type CalloutStudioPlugin from "../main";
 import { getLocale, t } from "../i18n";
 import { readCalloutTrigger, triggerInCode } from "./calloutTriggerContext";
-import {
-	landAfterInlineToken,
-	parkCursor,
-	placeCursorAfterPick,
-} from "./autoCompleteCursor";
+import { landAfterInlineToken, parkCursor, placeCursorAfterPick } from "./autoCompleteCursor";
 import { acceptOnKey, pickKeyOf } from "./suggestKeys";
 import {
 	applyMetadataPick,
@@ -117,11 +113,7 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 		acceptOnKey(this, [], "Tab");
 	}
 
-	onTrigger(
-		cursor: EditorPosition,
-		editor: Editor,
-		_file: TFile | null,
-	): EditorSuggestTriggerInfo | null {
+	onTrigger(cursor: EditorPosition, editor: Editor, _file: TFile | null): EditorSuggestTriggerInfo | null {
 		// Settings → Editor → Metadata → Metadata autocomplete.
 		if (!this.plugin.settings.suggestions.metadata) return null;
 		const text = editor.getLine(cursor.line);
@@ -167,9 +159,7 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 		const styling = injector.metadataCatalog.sourcesNow();
 		// The theme's words only while the user wants them; a snippet is the
 		// user's own CSS and always speaks. The user's own list comes first.
-		const offered = suggestions.themeMetadata
-			? styling
-			: styling.filter((source) => source.origin !== "theme");
+		const offered = suggestions.themeMetadata ? styling : styling.filter((source) => source.origin !== "theme");
 		const own = ownWordsSource(suggestions.metadataWords);
 		const rows = buildMetadataSuggestions({
 			slot,
@@ -330,11 +320,7 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 	 */
 	private finishHeader(editor: Editor, slot: OpenSlot): void {
 		const lineNo = slot.line;
-		const trigger = readCalloutTrigger(
-			editor.getLine(lineNo),
-			slot.triggerCh + 2,
-			this.plugin.settings,
-		);
+		const trigger = readCalloutTrigger(editor.getLine(lineNo), slot.triggerCh + 2, this.plugin.settings);
 		if (!trigger || trigger.triggerCh !== slot.triggerCh) return;
 		if (trigger.closeCh === -1) {
 			editor.replaceRange("]", { line: lineNo, ch: trigger.bodyEndCh });
@@ -380,8 +366,7 @@ export class CalloutMetadataSuggest extends EditorSuggest<MetadataSuggestion> {
 				existingTitle,
 				// The mark the user wrote stays; none written → the definition's.
 				foldMark: foldMark === "" ? undefined : foldMark,
-				isKnownDisplayName: (text) =>
-					isGeneratedTitle(this.plugin.registry.getAll(), text),
+				isKnownDisplayName: (text) => isGeneratedTitle(this.plugin.registry.getAll(), text),
 			}),
 			start,
 			lineEnd,
@@ -429,10 +414,15 @@ function hintOf(row: MetadataSuggestion, withHeadings: boolean, withThemeWords: 
 /** The one-line warning a styling word carries about where it may stand. */
 function placementHint(placement: string): string | null {
 	switch (placement) {
-		case "spaced": return t("metadataSuggest.needsSpace");
-		case "first": return t("metadataSuggest.mustBeFirst");
-		case "last": return t("metadataSuggest.mustBeLast");
-		case "alone": return t("metadataSuggest.alone");
-		default: return null;
+		case "spaced":
+			return t("metadataSuggest.needsSpace");
+		case "first":
+			return t("metadataSuggest.mustBeFirst");
+		case "last":
+			return t("metadataSuggest.mustBeLast");
+		case "alone":
+			return t("metadataSuggest.alone");
+		default:
+			return null;
 	}
 }

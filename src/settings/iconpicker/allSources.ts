@@ -15,12 +15,7 @@
  * and one the user hid would turn up in the results anyway.
  */
 import type { CalloutIcon, IconSourceId } from "../../types";
-import type {
-	IconEntry,
-	IconIndex,
-	IconPack,
-	IconVariantState,
-} from "../../icons/types";
+import type { IconEntry, IconIndex, IconPack, IconVariantState } from "../../icons/types";
 import { getSource, packFor } from "../../icons/registry";
 
 /** Marks the pooled option in the source menu; not a real source id. */
@@ -103,9 +98,7 @@ export function createAllSourcesPack(members: readonly IconPack[]): AllSourcesPa
 			const owner = entry.pack ? getSource(entry.pack) : undefined;
 			// An entry always carries its source here; the fallback keeps a
 			// malformed one from throwing mid-render.
-			return owner
-				? owner.makeIcon(entry, variants)
-				: { type: "lucide", value: entry.name };
+			return owner ? owner.makeIcon(entry, variants) : { type: "lucide", value: entry.name };
 		},
 
 		cacheVariant(icon, role): string {

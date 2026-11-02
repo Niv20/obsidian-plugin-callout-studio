@@ -27,12 +27,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { encodeFrontCoded, encodeIndex } from "../scripts/lib/encodeIndex.mjs";
-import {
-	decodeFrontCoded,
-	decodeIndex,
-	memoizeIndex,
-	type EncodedIndex,
-} from "../src/icons/data/codec";
+import { decodeFrontCoded, decodeIndex, memoizeIndex, type EncodedIndex } from "../src/icons/data/codec";
 import type { IconIndex } from "../src/icons/types";
 import type { IconPackId } from "../src/types";
 import { PACK_MANIFEST } from "../src/icons/data/packManifest";
@@ -99,10 +94,7 @@ describe("decodeFrontCoded", () => {
 	});
 
 	it("shortens as well as lengthens", () => {
-		assert.deepStrictEqual(decodeFrontCoded("0arrow\n1lert"), [
-			"arrow",
-			"alert",
-		]);
+		assert.deepStrictEqual(decodeFrontCoded("0arrow\n1lert"), ["arrow", "alert"]);
 	});
 
 	it("reads a shared prefix longer than nine characters as base36", () => {
@@ -129,11 +121,7 @@ describe("decodeFrontCoded", () => {
 			["ünicode", "ünicode-ish"],
 		];
 		for (const sorted of cases) {
-			assert.deepStrictEqual(
-				decodeFrontCoded(encodeFrontCoded(sorted)),
-				sorted,
-				JSON.stringify(sorted),
-			);
+			assert.deepStrictEqual(decodeFrontCoded(encodeFrontCoded(sorted)), sorted, JSON.stringify(sorted));
 		}
 	});
 });
@@ -143,8 +131,7 @@ describe("decodeFrontCoded", () => {
  * ------------------------------------------------------------------ */
 
 describe("decodeIndex — the shape it produces", () => {
-	const build = (entries: Parameters<typeof encodeIndex>[0]): IconIndex =>
-		decodeIndex(encodeIndex(entries));
+	const build = (entries: Parameters<typeof encodeIndex>[0]): IconIndex => decodeIndex(encodeIndex(entries));
 
 	it("reads an empty index as no entries", () => {
 		const index = build([]);
@@ -242,10 +229,7 @@ describe("decodeIndex — the shape it produces", () => {
 			{ name: "a", categories: ["Nav", "Alerts"], keywords: [] },
 			{ name: "b", categories: [], keywords: [] },
 		]);
-		assert.deepStrictEqual([...index.entries[0]!.categories].sort(), [
-			"Alerts",
-			"Nav",
-		]);
+		assert.deepStrictEqual([...index.entries[0]!.categories].sort(), ["Alerts", "Nav"]);
 		assert.deepStrictEqual(index.entries[1]?.categories, []);
 		assert.deepStrictEqual([...index.categories].sort(), ["Alerts", "Nav"]);
 	});
@@ -255,9 +239,7 @@ describe("decodeIndex — the shape it produces", () => {
 		// that kept reading one character would resolve every code past the 36th
 		// to the wrong keyword and never fail loudly.
 		const keywords = Array.from({ length: 40 }, (_, i) => `kw${i}`);
-		const index = build(
-			keywords.map((kw, i) => ({ name: `i${i}`, categories: [], keywords: [kw] })),
-		);
+		const index = build(keywords.map((kw, i) => ({ name: `i${i}`, categories: [], keywords: [kw] })));
 		assert.deepStrictEqual(
 			index.entries.map((e) => e.keywords[0]),
 			keywords,
@@ -336,10 +318,7 @@ describe("the bundled indexes decode to the libraries they claim", () => {
 		it(`${id} names every icon at all`, () => {
 			for (const e of index.entries) {
 				assert.ok(e.name.length > 0, "an empty name is unrenderable");
-				assert.ok(
-					!e.name.includes("\n"),
-					`a newline in "${e.name}" would corrupt the line framing`,
-				);
+				assert.ok(!e.name.includes("\n"), `a newline in "${e.name}" would corrupt the line framing`);
 			}
 		});
 
@@ -350,10 +329,7 @@ describe("the bundled indexes decode to the libraries they claim", () => {
 			// search drops empty words out of a query before it ever looks. The
 			// generator cleans them, and this is what says it still does.
 			for (const keyword of decodeFrontCoded(encoded.k)) {
-				assert.ok(
-					keyword.length > 0,
-					"the keyword dictionary has a blank slot",
-				);
+				assert.ok(keyword.length > 0, "the keyword dictionary has a blank slot");
 			}
 		});
 
@@ -363,11 +339,7 @@ describe("the bundled indexes decode to the libraries they claim", () => {
 			// another reference in the index and another string the search walks
 			// per keystroke, and it cannot match anything the first one did not.
 			for (const e of index.entries) {
-				assert.equal(
-					new Set(e.keywords).size,
-					e.keywords.length,
-					`"${e.name}" carries the same keyword twice`,
-				);
+				assert.equal(new Set(e.keywords).size, e.keywords.length, `"${e.name}" carries the same keyword twice`);
 			}
 		});
 
@@ -378,10 +350,7 @@ describe("the bundled indexes decode to the libraries they claim", () => {
 			// and never fail loudly.
 			const dictSize = decodeFrontCoded(encoded.k).length;
 			for (const ref of allRefs(encoded.kr, encoded.kw)) {
-				assert.ok(
-					ref < dictSize,
-					`a keyword code addresses slot ${ref} of a ${dictSize}-entry dictionary`,
-				);
+				assert.ok(ref < dictSize, `a keyword code addresses slot ${ref} of a ${dictSize}-entry dictionary`);
 			}
 		});
 
@@ -389,10 +358,7 @@ describe("the bundled indexes decode to the libraries they claim", () => {
 			if (!encoded.c || !encoded.cw || !encoded.cr) return;
 			const listSize = encoded.c.split("\n").length;
 			for (const ref of allRefs(encoded.cr, encoded.cw)) {
-				assert.ok(
-					ref < listSize,
-					`a category code addresses slot ${ref} of a ${listSize}-entry list`,
-				);
+				assert.ok(ref < listSize, `a category code addresses slot ${ref} of a ${listSize}-entry list`);
 			}
 		});
 
@@ -403,11 +369,7 @@ describe("the bundled indexes decode to the libraries they claim", () => {
 			const lines = encoded.kr.length === 0 ? [] : encoded.kr.split("\n");
 			assert.equal(lines.length, index.entries.length);
 			for (const line of lines) {
-				assert.equal(
-					line.length % encoded.kw,
-					0,
-					"a partial code would decode to NaN",
-				);
+				assert.equal(line.length % encoded.kw, 0, "a partial code would decode to NaN");
 			}
 		});
 
@@ -415,10 +377,7 @@ describe("the bundled indexes decode to the libraries they claim", () => {
 			const known = new Set(index.categories);
 			for (const e of index.entries) {
 				for (const category of e.categories) {
-					assert.ok(
-						known.has(category),
-						`"${e.name}" is in "${category}", which the index does not list`,
-					);
+					assert.ok(known.has(category), `"${e.name}" is in "${category}", which the index does not list`);
 				}
 			}
 		});
@@ -429,10 +388,7 @@ describe("the bundled indexes decode to the libraries they claim", () => {
 				index.categories.length,
 				"a repeated category would show twice in the picker's dropdown",
 			);
-			assert.deepStrictEqual(
-				[...index.categories],
-				[...index.categories].sort(),
-			);
+			assert.deepStrictEqual([...index.categories], [...index.categories].sort());
 		});
 
 		it(`${id} leaves no category orphaned`, () => {

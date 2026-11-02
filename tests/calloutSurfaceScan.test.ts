@@ -12,20 +12,11 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { scanCalloutSurface } from "../src/manager/theme/calloutSurfaceScan";
-import {
-	resolveCalloutSurface,
-	guardPrefix,
-} from "../src/manager/theme/calloutSurface";
+import { resolveCalloutSurface, guardPrefix } from "../src/manager/theme/calloutSurface";
 
-const guards = (css: string): string[] => [
-	...scanCalloutSurface(css).neutralBackground.map((bg) => bg.guard),
-];
-const frames = (css: string): string[] => [
-	...scanCalloutSurface(css).colorlessFrame,
-];
-const painted = (css: string): string[] => [
-	...scanCalloutSurface(css).framePainted,
-];
+const guards = (css: string): string[] => [...scanCalloutSurface(css).neutralBackground.map((bg) => bg.guard)];
+const frames = (css: string): string[] => [...scanCalloutSurface(css).colorlessFrame];
+const painted = (css: string): string[] => [...scanCalloutSurface(css).framePainted];
 
 describe("the surface scan — blanked backgrounds", () => {
 	it("reads GitHub Theme's Style Settings class toggle", () => {
@@ -97,17 +88,13 @@ describe("the surface scan — blanked backgrounds", () => {
 	});
 
 	it("reads Cybertron, which is the same rule without the extra :not()", () => {
-		assert.deepStrictEqual(
-			guards(`body:not(.pt-disable-callout-styling) .callout { background-color: unset; }`),
-			["body:not(.pt-disable-callout-styling)"],
-		);
+		assert.deepStrictEqual(guards(`body:not(.pt-disable-callout-styling) .callout { background-color: unset; }`), [
+			"body:not(.pt-disable-callout-styling)",
+		]);
 	});
 
 	it("reads an unguarded rule as the empty guard — Cyber Glow, Notation 2, Polka", () => {
-		assert.deepStrictEqual(
-			guards(`.callout { background-color: transparent; }`),
-			[""],
-		);
+		assert.deepStrictEqual(guards(`.callout { background-color: transparent; }`), [""]);
 		assert.strictEqual(guardPrefix(""), "");
 	});
 
@@ -122,10 +109,9 @@ describe("the surface scan — blanked backgrounds", () => {
 				value,
 			);
 		}
-		assert.deepStrictEqual(
-			guards(`.ulu-line-callouts .callout { background: transparent !important; }`),
-			[".ulu-line-callouts"],
-		);
+		assert.deepStrictEqual(guards(`.ulu-line-callouts .callout { background: transparent !important; }`), [
+			".ulu-line-callouts",
+		]);
 		// `background: none` blanks it; `background-color: none` is invalid and the
 		// parser drops it, so believing it would be believing a dead declaration.
 		assert.deepStrictEqual(guards(`.callout { background: none; }`), [""]);
@@ -150,23 +136,15 @@ describe("the surface scan — blanked backgrounds", () => {
 			guards(`.callout { background-color: color-mix(in oklch, var(--callout-color) 10%, transparent); }`),
 			[],
 		);
-		assert.deepStrictEqual(
-			guards(`.callout { background-color: rgba(var(--callout-color), 0.2); }`),
-			[],
-		);
+		assert.deepStrictEqual(guards(`.callout { background-color: rgba(var(--callout-color), 0.2); }`), []);
 	});
 
 	it("rejects a named id but retains a negative id condition", () => {
 		// A per-id rule cannot reach a callout the user invented, so it is not
 		// evidence about what happens to one. This is the asymmetry the whole
 		// module rests on.
-		assert.deepStrictEqual(
-			guards(`.callout[data-callout="note"] { background-color: transparent; }`),
-			[],
-		);
-		const excluded = scanCalloutSurface(
-			`.callout:not([data-callout="note"]) { background-color: transparent; }`,
-		);
+		assert.deepStrictEqual(guards(`.callout[data-callout="note"] { background-color: transparent; }`), []);
+		const excluded = scanCalloutSurface(`.callout:not([data-callout="note"]) { background-color: transparent; }`);
 		assert.deepStrictEqual(excluded.neutralBackground, [
 			{ guard: "", rootQualifier: ':not([data-callout="note"])', color: "transparent" },
 		]);
@@ -183,11 +161,7 @@ describe("the surface scan — blanked backgrounds", () => {
 			"* .callout",
 			"body::after .callout",
 		]) {
-			assert.deepStrictEqual(
-				guards(`${sel} { background-color: transparent; }`),
-				[],
-				sel,
-			);
+			assert.deepStrictEqual(guards(`${sel} { background-color: transparent; }`), [], sel);
 		}
 	});
 });
@@ -223,17 +197,11 @@ describe("the surface scan — colourless frames", () => {
 		assert.deepStrictEqual(frames(css), [".shib-callout-toggle.shib-callout-style-1"]);
 		assert.deepStrictEqual(painted(css), [".shib-callout-toggle.shib-callout-style-1"]);
 		// …and the veto is what the fold makes of that pair.
-		assert.deepStrictEqual(
-			resolveCalloutSurface([scanCalloutSurface(css)]).colorlessFrame,
-			[],
-		);
+		assert.deepStrictEqual(resolveCalloutSurface([scanCalloutSurface(css)]).colorlessFrame, []);
 	});
 
 	it("ignores a border that states its colour inline, and one that does not draw", () => {
-		assert.deepStrictEqual(
-			frames(`.callout-title { border-left: 0.25em solid var(--color-base-30); }`),
-			[],
-		);
+		assert.deepStrictEqual(frames(`.callout-title { border-left: 0.25em solid var(--color-base-30); }`), []);
 		assert.deepStrictEqual(frames(`.callout-title { border-bottom: 1px none; }`), []);
 		// A longhand pair is a frame the theme has coloured, somewhere.
 		assert.deepStrictEqual(frames(`.callout-title { border-style: solid; }`), []);
@@ -243,10 +211,15 @@ describe("the surface scan — colourless frames", () => {
 describe("folding several sheets", () => {
 	it("lets a snippet blank the surface exactly as a theme can", () => {
 		const surface = resolveCalloutSurface([
-			scanCalloutSurface(`.callout { background-color: color-mix(in oklch, var(--callout-color) 10%, transparent); }`),
+			scanCalloutSurface(
+				`.callout { background-color: color-mix(in oklch, var(--callout-color) 10%, transparent); }`,
+			),
 			scanCalloutSurface(`body.flat .callout { background-color: transparent; }`),
 		]);
-		assert.deepStrictEqual(surface.neutralBackground.map((bg) => bg.guard), ["body.flat"]);
+		assert.deepStrictEqual(
+			surface.neutralBackground.map((bg) => bg.guard),
+			["body.flat"],
+		);
 	});
 
 	it("lets an unguarded rule swallow every guarded one", () => {
@@ -258,7 +231,10 @@ describe("folding several sheets", () => {
 				.callout { background-color: unset; }
 				.b .callout { background: none; }`),
 		]);
-		assert.deepStrictEqual(surface.neutralBackground.map((bg) => bg.guard), [""]);
+		assert.deepStrictEqual(
+			surface.neutralBackground.map((bg) => bg.guard),
+			[""],
+		);
 	});
 
 	it("sorts the guards, because the stylesheet is compared byte-for-byte", () => {
@@ -420,15 +396,27 @@ describe("the surface scan — whose ink a title fill carries", () => {
 	});
 
 	it("leaves a translucent stripe under the theme's own ink alone", () => {
-		assert.strictEqual(inked("background-color: rgba(var(--callout-color), var(--callout-title-opacity, 0.1));"), false);
+		assert.strictEqual(
+			inked("background-color: rgba(var(--callout-color), var(--callout-title-opacity, 0.1));"),
+			false,
+		);
 		assert.strictEqual(inked("background-color: rgba(var(--callout-color), 0.27);"), false);
 		assert.strictEqual(inked("background: color-mix(in srgb, var(--callout-color), transparent 80%);"), false);
-		assert.strictEqual(inked("background-color: color-mix(in srgb, var(--callout-color) 10%, transparent);"), false);
-		assert.strictEqual(inked("background: linear-gradient(to right, rgba(var(--callout-color), 0.1), transparent);"), false);
+		assert.strictEqual(
+			inked("background-color: color-mix(in srgb, var(--callout-color) 10%, transparent);"),
+			false,
+		);
+		assert.strictEqual(
+			inked("background: linear-gradient(to right, rgba(var(--callout-color), 0.1), transparent);"),
+			false,
+		);
 	});
 
 	it("trusts a rule that picks the ink beside its fill, even a translucent one", () => {
-		assert.strictEqual(inked("color: var(--background-primary); background-color: rgba(var(--callout-color), 0.2);"), true);
+		assert.strictEqual(
+			inked("color: var(--background-primary); background-color: rgba(var(--callout-color), 0.2);"),
+			true,
+		);
 	});
 });
 
@@ -475,10 +463,7 @@ describe("folding — where an authored background goes instead", () => {
 	it("leaves it on the root where the theme only overlays the title", () => {
 		// Shimmering Focus and Blue Topaz tint the title over a root they leave
 		// painted. Moving the background there would show it twice in the title.
-		assert.deepStrictEqual(
-			where(`.callout-title { background-color: rgba(var(--callout-color), 0.15); }`),
-			[],
-		);
+		assert.deepStrictEqual(where(`.callout-title { background-color: rgba(var(--callout-color), 0.15); }`), []);
 		// A root that is neutral only under a narrower condition proves nothing.
 		assert.deepStrictEqual(
 			where(`

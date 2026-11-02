@@ -31,13 +31,14 @@ import {
 	readAdmonitionIcon,
 	resolveIcon,
 } from "./admonitionIcons";
-import {
-	calloutIdentity,
-	normalizeCalloutId,
-	obsidianDefaultTitle,
-} from "./calloutId";
+import { calloutIdentity, normalizeCalloutId, obsidianDefaultTitle } from "./calloutId";
 import { parseCssColorToHex } from "./colorUtils";
-import { takenUserImageNames, userImageRasterPixels, userImageElementCount, MAX_USER_IMAGE_ELEMENTS } from "./userImages";
+import {
+	takenUserImageNames,
+	userImageRasterPixels,
+	userImageElementCount,
+	MAX_USER_IMAGE_ELEMENTS,
+} from "./userImages";
 import { MAX_RASTER_PIXELS } from "../icons/rasterSafety";
 
 /**
@@ -127,9 +128,7 @@ export async function planAdmonitionImport(
 	// just the icons themselves — an icon whose pack was left open is looked for
 	// in six libraries, and the check only covers what it was told about.
 	const icons = entries.map((entry) => readAdmonitionIcon(entry.icon));
-	const iconExists = await createIconNameCheck(
-		icons.flatMap((icon) => (icon ? iconCandidates(icon) : [])),
-	);
+	const iconExists = await createIconNameCheck(icons.flatMap((icon) => (icon ? iconCandidates(icon) : [])));
 
 	const takenNames = takenUserImageNames(existingImages);
 	// Admonition stores an uploaded picture inline on every admonition that uses
@@ -147,9 +146,7 @@ export async function planAdmonitionImport(
 		const icon = icons[index];
 		const rawType = raw.type.trim();
 		const label = rawType.slice(0, MAX_TAG_LENGTH) || `#${index + 1}`;
-		const push = (
-			issue: Omit<ValidationIssue, "index" | "entryLabel">,
-		): void => {
+		const push = (issue: Omit<ValidationIssue, "index" | "entryLabel">): void => {
 			issues.push({ ...issue, index, entryLabel: label });
 		};
 
@@ -210,8 +207,7 @@ export async function planAdmonitionImport(
 		if (raw.iconWithCss === true) {
 			push({ level: "warning", messageKey: "import.warn.admIconWithCss" });
 		}
-		const unsupported: string[] = (["command", "copy", "noTitle"] as const)
-			.filter((field) => raw[field] === true);
+		const unsupported: string[] = (["command", "copy", "noTitle"] as const).filter((field) => raw[field] === true);
 		if (raw.injectColor === false) unsupported.push("injectColor");
 		if (unsupported.length) {
 			push({
@@ -245,16 +241,18 @@ export async function planAdmonitionImport(
 			const cached = imagesByUri.get(icon.name);
 			let image =
 				cached ??
-				(rejectedImages.has(icon.name) ? null : await convertAdmonitionImage(
-					icon.name,
-					`admonition-${id}`,
-					takenNames,
-				));
+				(rejectedImages.has(icon.name)
+					? null
+					: await convertAdmonitionImage(icon.name, `admonition-${id}`, takenNames));
 			if (image && !cached) {
 				const pixels = userImageRasterPixels(image);
 				const elements = userImageElementCount(image);
-				if (imagePixels + pixels > MAX_RASTER_PIXELS || imageElements + elements > MAX_USER_IMAGE_ELEMENTS) image = null;
-				else { imagePixels += pixels; imageElements += elements; }
+				if (imagePixels + pixels > MAX_RASTER_PIXELS || imageElements + elements > MAX_USER_IMAGE_ELEMENTS)
+					image = null;
+				else {
+					imagePixels += pixels;
+					imageElements += elements;
+				}
 			}
 			if (!image) rejectedImages.add(icon.name);
 			if (image) {
@@ -286,9 +284,7 @@ export async function planAdmonitionImport(
 				push({
 					field: "icon",
 					level: "warning",
-					messageKey: existing
-						? "import.warn.admIconUnknownExisting"
-						: "import.warn.admIconUnknown",
+					messageKey: existing ? "import.warn.admIconUnknownExisting" : "import.warn.admIconUnknown",
 					params: { value: icon.name.slice(0, MAX_TAG_LENGTH), id: existing?.id ?? id },
 				});
 			}

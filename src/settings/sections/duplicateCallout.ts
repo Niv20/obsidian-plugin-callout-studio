@@ -19,24 +19,19 @@ import { ROW_MENU_SECTION } from "./rowMenuSections";
 import { showNotice } from "../../ui/mascot/mascotNotices";
 
 /** Add Duplicate to a row's menu; built-in callouts have none. */
-export function addDuplicateItem(
-	menu: Menu,
-	ctx: SettingsContext,
-	def: CalloutDefinition,
-): void {
+export function addDuplicateItem(menu: Menu, ctx: SettingsContext, def: CalloutDefinition): void {
 	if (def.builtIn || def.source === "builtin" || def.source === "theme") return;
-	menu.addItem((item) => item
-		.setTitle(t("settings.duplicateAction"))
-		.setIcon("copy")
-		.setSection(ROW_MENU_SECTION.callout)
-		.onClick(() => handleCalloutDuplicate(ctx, def.id)));
+	menu.addItem((item) =>
+		item
+			.setTitle(t("settings.duplicateAction"))
+			.setIcon("copy")
+			.setSection(ROW_MENU_SECTION.callout)
+			.onClick(() => handleCalloutDuplicate(ctx, def.id)),
+	);
 }
 
 /** Keep the candidate out of the live registry until its settings write succeeds. */
-export async function handleCalloutDuplicate(
-	ctx: SettingsContext,
-	id: string,
-): Promise<void> {
+export async function handleCalloutDuplicate(ctx: SettingsContext, id: string): Promise<void> {
 	const { plugin } = ctx;
 	const { registry, settingsWriter } = plugin;
 	let published = false;
@@ -53,11 +48,14 @@ export async function handleCalloutDuplicate(
 		data.callouts.push(candidate);
 		const canPublish = (): boolean =>
 			!registry.findAttrIdConflict(candidate.id, null) &&
-			!(candidate.aliases ?? []).some(alias => registry.findAttrIdConflict(alias, null)) &&
-			!registry.getAll().some(def =>
-				displayNameIdentity(def.displayName) === displayNameIdentity(candidate.displayName));
-		const current = (): boolean => !plugin.settingsEditOpen &&
-			JSON.stringify(stableKeyOrder(registry.toSaveData())) === before && canPublish();
+			!(candidate.aliases ?? []).some((alias) => registry.findAttrIdConflict(alias, null)) &&
+			!registry
+				.getAll()
+				.some((def) => displayNameIdentity(def.displayName) === displayNameIdentity(candidate.displayName));
+		const current = (): boolean =>
+			!plugin.settingsEditOpen &&
+			JSON.stringify(stableKeyOrder(registry.toSaveData())) === before &&
+			canPublish();
 		const saved = await settingsWriter.commit(data, current, () => {
 			// A local edit can arrive while the adapter write is in flight. Add
 			// only this row, never replace the registry or overwrite that edit.
@@ -76,8 +74,11 @@ export async function handleCalloutDuplicate(
 		// registry. Keep that durable row and refresh it. On an in-flight ID
 		// conflict, reconcile disk with the newer local edit.
 		if (publicationConflict) {
-			try { await plugin.saveSettings(); }
-			catch { /* The writer already exposes the saving failure. */ }
+			try {
+				await plugin.saveSettings();
+			} catch {
+				/* The writer already exposes the saving failure. */
+			}
 		}
 		if (published) {
 			plugin.refreshCallouts();

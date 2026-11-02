@@ -39,17 +39,15 @@ export const ms: Record<string, string> = {
 	"settings.fallbackTagAuto": "Auto",
 	"settings.rescanVaultDesc": "Menambah jenis callout yang digunakan oleh nota anda dan belum ada dalam senarai ini.",
 	"settings.rescanVaultHintAction": "Imbas callout",
-	"manualDiscovery.failed": "Hasil imbasan tidak disimpan. Pastikan tetapan boleh ditulis dan penyegerakan telah selesai, kemudian cuba lagi melalui Tetapan → Jenis callout saya → Imbas callout. Callout sedia ada tidak digantikan.",
+	"manualDiscovery.failed":
+		"Hasil imbasan tidak disimpan. Pastikan tetapan boleh ditulis dan penyegerakan telah selesai, kemudian cuba lagi melalui Tetapan → Jenis callout saya → Imbas callout. Callout sedia ada tidak digantikan.",
 	"manualDiscovery.scanning": "Mengimbas…",
-	"settings.rescanComplete":
-		"Pengimbasan selesai: {{count}} jenis callout baharu ditambah.",
+	"settings.rescanComplete": "Pengimbasan selesai: {{count}} jenis callout baharu ditambah.",
 	"replaceModal.titleReplace": "Ganti dalam vault",
 
 	"welcome.title": "Selamat datang ke Callout Studio!",
-	"welcome.tagline":
-		"Penyelesaian lengkap anda untuk mencipta, menggayakan dan menguruskan callout Obsidian.",
-	"importBanner.message":
-		"Kami perasan anda menggunakan {{plugins}}. Adakah anda ingin mengimport callout anda?",
+	"welcome.tagline": "Penyelesaian lengkap anda untuk mencipta, menggayakan dan menguruskan callout Obsidian.",
+	"importBanner.message": "Kami perasan anda menggunakan {{plugins}}. Adakah anda ingin mengimport callout anda?",
 	"importBanner.action": "Import",
 	"importBanner.dismiss": "Abaikan",
 	"welcome.demoName": "Callout Studio",
@@ -64,8 +62,7 @@ export const ms: Record<string, string> = {
 		"Callout Studio ada lebih banyak lagi untuk ditawarkan! [Ketahui lebih lanjut]({{repoUrl}}).\n",
 	"deleteModal.title": "Padam callout",
 
-	"deleteModal.bodyInUse":
-		"Callout ini muncul {{count}} kali dalam {{files}} fail.",
+	"deleteModal.bodyInUse": "Callout ini muncul {{count}} kali dalam {{files}} fail.",
 	"deleteModal.notesUntouched":
 		"Ini hanya memadam takrifan callout. Nota anda tidak disentuh, jadi callout sedia ada hanya akan kembali kepada gaya lalai.",
 	"deleteModal.fallbackTarget":
@@ -99,8 +96,7 @@ export const ms: Record<string, string> = {
 		"Import data Callout Studio anda dari vault lain, atau bawa masuk callout daripada pemalam lain.",
 	"settings.exportDesc":
 		"Simpan callout anda sebagai sandaran Callout Studio atau cebisan CSS yang boleh digunakan di tempat lain.",
-	"settings.importConflictNotice":
-		"{{count}} jenis callout diimport; {{overwritten}} entri sedia ada ditimpa.",
+	"settings.importConflictNotice": "{{count}} jenis callout diimport; {{overwritten}} entri sedia ada ditimpa.",
 	"settings.addNewCallout": "tambah callout",
 	"settings.noCalloutsNow": "Tiada callout tersuai buat masa ini.",
 	"settings.calloutCount": "{{count}} callout",
@@ -117,21 +113,19 @@ export const ms: Record<string, string> = {
 	"notice.calloutDuplicateFailed": "Callout tidak dapat diduplikasi. Semak status penyimpanan dan cuba lagi.",
 	"settings.resetAction": "Set semula ke lalai",
 	"settings.makeFallbackAction": "Gunakan gaya sandaran lalai",
-	"notice.fallbackStyleApplied": "\"{{name}}\" kini menggunakan gaya sandaran lalai.",
+	"notice.fallbackStyleApplied": '"{{name}}" kini menggunakan gaya sandaran lalai.',
 	"settings.colorSwatchAria": "Aksen: {{accent}} · Latar belakang: {{bg}}",
 
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts daripada tema anda",
 	"settings.themeCalloutsDefaultTheme": "Tema anda",
 	"settings.themeCalloutsEmpty": "{{theme}} tidak menggayakan sebarang callout buat masa ini.",
-	"settings.themePreviewAria":
-		'Pratonton "{{name}}" — lihat cara tema anda melukisnya',
+	"settings.themePreviewAria": 'Pratonton "{{name}}" — lihat cara tema anda melukisnya',
 	"settings.builtInAllThemeStyled":
 		"{{theme}} menggayakan setiap callout terbina dalam, jadi Callout Studio membiarkan semuanya seperti sedia ada. Untuk mereka bentuk callout anda sendiri, tambah callout dengan ID yang berbeza.",
 
 	"settings.fallbackCallout": "Callout sandaran lalai",
-	"settings.fallbackCalloutDesc":
-		"Jenis callout yang tidak dikenali mewarisi gaya ini.",
+	"settings.fallbackCalloutDesc": "Jenis callout yang tidak dikenali mewarisi gaya ini.",
 	"settings.border": "Sempadan",
 	"settings.borderTop": "Atas",
 	"settings.borderRight": "Kanan",
@@ -161,8 +155,7 @@ export const ms: Record<string, string> = {
 	"settings.paletteCountOne": "1 palet",
 	"settings.editPaletteAria": "Edit palet {{name}}",
 	"settings.deletePaletteTitle": "Padam palet",
-	"settings.deletePaletteBody":
-		'Callout yang menggunakan warna ini tidak terjejas.',
+	"settings.deletePaletteBody": "Callout yang menggunakan warna ini tidak terjejas.",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callout yang menamakannya dalam metadata ("{{key}}") sebaliknya mengambil warna terbina dalam dengan nama itu. Nota anda tidak berubah.',
 
@@ -189,9 +182,9 @@ export const ms: Record<string, string> = {
 	"commandBuilder.formatBlock": "Blok",
 	"commandBuilder.roleDisabled":
 		"Format ini dimatikan, jadi arahan akan memasukkan teks biasa sehingga anda menghidupkannya semula.",
-	"commandBuilder.roleThemeOwned":
-		"Tema anda membekalkan callout ini, jadi ia hanya mempunyai format Block.",
-	"commandBuilder.commandSuspended": "Dijeda selagi tema anda menyediakan callout ini, yang kemudian hanya mempunyai format blok.",
+	"commandBuilder.roleThemeOwned": "Tema anda membekalkan callout ini, jadi ia hanya mempunyai format Block.",
+	"commandBuilder.commandSuspended":
+		"Dijeda selagi tema anda menyediakan callout ini, yang kemudian hanya mempunyai format blok.",
 	"commandBuilder.pausedTag": "Dijeda oleh tema",
 	"commandBuilder.missingTag": "Callout hilang",
 	"commandBuilder.callout": "Jenis callout",
@@ -199,8 +192,7 @@ export const ms: Record<string, string> = {
 	"commandBuilder.headingLevel": "Tahap tajuk",
 	"commandBuilder.headingLevelDesc": "Tahap tajuk yang akan ditulis.",
 	"commandBuilder.action": "Tindakan",
-	"commandBuilder.actionDesc":
-		"Balut menukar pilihan menjadi callout; masukkan menambah satu yang kosong.",
+	"commandBuilder.actionDesc": "Balut menukar pilihan menjadi callout; masukkan menambah satu yang kosong.",
 	"commandBuilder.actionDescHeading":
 		"Balut menukar baris tempat kursor berada menjadi callout tajuk.\nMasukkan menambah satu yang kosong pada baris baharu.",
 	"commandBuilder.actionDescInline":
@@ -208,22 +200,18 @@ export const ms: Record<string, string> = {
 	"commandBuilder.actionWrap": "Balut pilihan",
 	"commandBuilder.actionInsert": "Masukkan baharu",
 	"commandBuilder.foldState": "Status lipatan",
-	"commandBuilder.foldStateDesc":
-		"Sama ada callout boleh dilipat, dan keadaan permulaannya.",
+	"commandBuilder.foldStateDesc": "Sama ada callout boleh dilipat, dan keadaan permulaannya.",
 	"commandBuilder.foldNone": "Tidak boleh dilipat",
 	"commandBuilder.foldExpanded": "Boleh dilipat, terbuka (+)",
 	"commandBuilder.foldCollapsed": "Boleh dilipat, tertutup (-)",
 	"commandBuilder.preview": "Nama arahan",
-	"commandBuilder.duplicate":
-		"Anda sudah mempunyai arahan yang melakukan perkara yang sama.",
-	"commandBuilder.noCallouts":
-		"Belum ada jenis callout untuk membina arahan.",
+	"commandBuilder.duplicate": "Anda sudah mempunyai arahan yang melakukan perkara yang sama.",
+	"commandBuilder.noCallouts": "Belum ada jenis callout untuk membina arahan.",
 	"commandBuilder.noCalloutChosen": "Pilih callout untuk arahan ini dahulu.",
 	"commandBuilder.save": "Simpan",
 
 	"settings.resetAll": "Set semula",
-	"settings.resetAllDesc":
-		"Memulihkan semua tetapan dan penyesuaian kepada lalai.",
+	"settings.resetAllDesc": "Memulihkan semua tetapan dan penyesuaian kepada lalai.",
 	"settings.resetAllButton": "Set semula semua",
 	"notice.resetAllDone": "Semua telah ditetapkan semula ke lalai.",
 	"settings.resetIntro": "Luangkan sedikit masa untuk menghargai semua yang telah anda bina dengan Callout Studio.",
@@ -244,49 +232,41 @@ export const ms: Record<string, string> = {
 	"settings.resetItemAutocomplete": "Tetapan autolengkap dan metadata",
 	"settings.resetItemFallback": "Gaya sandaran",
 	"settings.resetItemIconLibraries": "Susunan pustaka ikon dan pustaka tersembunyi",
-	"settings.resetAllConfirmAfter": "Jangan risau: sebelum menetapkan semula, kami menyimpan sandaran persediaan semasa anda. Anda boleh memulihkannya pada bila-bila masa dengan Pulihkan versi terdahulu dalam tetapan.\nJika anda menggunakan perkhidmatan penyegerakan, penetapan semula mungkin turut sampai ke peranti anda yang lain.",
+	"settings.resetAllConfirmAfter":
+		"Jangan risau: sebelum menetapkan semula, kami menyimpan sandaran persediaan semasa anda. Anda boleh memulihkannya pada bila-bila masa dengan Pulihkan versi terdahulu dalam tetapan.\nJika anda menggunakan perkhidmatan penyegerakan, penetapan semula mungkin turut sampai ke peranti anda yang lain.",
 	"settings.resetNothing": "Tiada apa untuk ditetapkan semula: semuanya sudah pada tetapan lalai.",
 
-	"notice.customCommandMissingCallout":
-		"Jenis callout untuk arahan itu tidak lagi wujud.",
+	"notice.customCommandMissingCallout": "Jenis callout untuk arahan itu tidak lagi wujud.",
 
 	"notice.importedJSON": "{{count}} jenis callout diimport dari JSON.",
 	"notice.importedSettings": "Tetapan plugin diimport.",
-	"notice.importedCalloutManager":
-		"Diimport dari Callout Manager: {{created}} dicipta, {{updated}} dikemas kini.",
-	"notice.importedAdmonition":
-		"Diimport daripada Admonition: {{created}} dicipta, {{updated}} " +
-		"dikemas kini.",
-	"notice.noNewJSON":
-		"Tiada jenis callout baharu diimport (ID mungkin sudah wujud).",
+	"notice.importedCalloutManager": "Diimport dari Callout Manager: {{created}} dicipta, {{updated}} dikemas kini.",
+	"notice.importedAdmonition": "Diimport daripada Admonition: {{created}} dicipta, {{updated}} " + "dikemas kini.",
+	"notice.noNewJSON": "Tiada jenis callout baharu diimport (ID mungkin sudah wujud).",
 	"notice.iconDownloadFailed":
 		'Gagal memuat turun ikon Material "{{name}}". Ikon ini mungkin tidak tersedia untuk gaya/ketebalan ini, atau sambungan anda tidak tersambung.',
-	"notice.vaultScanFailed": "Penggunaan callout tidak dapat dikira kerana {{count}} nota tidak dapat dibaca. Semak storan dan penyegerakan, kemudian cuba lagi.",
+	"notice.vaultScanFailed":
+		"Penggunaan callout tidak dapat dikira kerana {{count}} nota tidak dapat dibaca. Semak storan dan penyegerakan, kemudian cuba lagi.",
 
 	"notice.externalCssRetired":
 		"Pilihan penggayaan CSS peribadi telah dialih keluar. Callout ini kini menggunakan reka bentuk Callout Studio yang disimpan, melainkan tema anda menggayakannya. Nota dan coretan CSS peribadi anda tidak diubah.",
 	"notice.vaultRewritePartial":
 		"{{count}} nota tidak dapat dikemas kini dan dibiarkan tanpa perubahan. Lihat konsol pembangun untuk butiran.",
-	"notice.calloutDeleteIncomplete": "Sesetengah nota tidak dapat ditukar. Jenis callout dikekalkan. Penukaran yang selesai telah disimpan; selesaikan masalah fail, kemudian jalankan tindakan itu semula untuk menyelesaikannya.",
+	"notice.calloutDeleteIncomplete":
+		"Sesetengah nota tidak dapat ditukar. Jenis callout dikekalkan. Penukaran yang selesai telah disimpan; selesaikan masalah fail, kemudian jalankan tindakan itu semula untuk menyelesaikannya.",
 	"notice.nothingToWrap": "Tiada apa untuk dibalut.",
 	"notice.cursorNotInsideCallout": "Kursor tidak berada dalam callout.",
 	"notice.headingAlreadyCallout": "Tajuk ini sudah menjadi callout.",
-	"notice.unwrapLeftAsIs":
-		"Callout ini tidak dapat dibuang dengan selamat, jadi ia dibiarkan seperti sedia ada.",
-	"notice.autocompleteTargetMoved":
-		"Tiada apa-apa disisipkan — baris berubah semasa penyunting dibuka.",
+	"notice.unwrapLeftAsIs": "Callout ini tidak dapat dibuang dengan selamat, jadi ia dibiarkan seperti sedia ada.",
+	"notice.autocompleteTargetMoved": "Tiada apa-apa disisipkan — baris berubah semasa penyunting dibuka.",
 	"notice.autocompleteAlwaysEnabled": "Autolengkap kini merupakan ciri teras dan sentiasa didayakan.",
-	"notice.openHotkeysFailed":
-		"Tidak dapat membuka tetapan pintasan Obsidian.",
-	"notice.filterHotkeysFailed":
-		"Pintasan Obsidian dibuka, tetapi penapis Callout Studio tidak dapat digunakan.",
+	"notice.openHotkeysFailed": "Tidak dapat membuka tetapan pintasan Obsidian.",
+	"notice.filterHotkeysFailed": "Pintasan Obsidian dibuka, tetapi penapis Callout Studio tidak dapat digunakan.",
 	"editor.editCallout": "Sunting callout",
 	"editor.newCallout": "Callout baharu",
 	"editor.displayName": "Nama paparan",
-	"editor.displayNameDesc":
-		"Label yang boleh dibaca yang dipaparkan dalam UI",
-	"editor.displayNameBuiltIn":
-		"Nama paparan tidak boleh diubah untuk callouts terbina dalam",
+	"editor.displayNameDesc": "Label yang boleh dibaca yang dipaparkan dalam UI",
+	"editor.displayNameBuiltIn": "Nama paparan tidak boleh diubah untuk callouts terbina dalam",
 	"editor.displayNamePlaceholder": "Callout saya",
 	"editor.calloutIds": "ID callout",
 	"editor.calloutIdsDesc":
@@ -295,8 +275,7 @@ export const ms: Record<string, string> = {
 	"editor.addId": "Tambah ID",
 	"editor.maxIds": "Maksimum {{max}} ID. Padam satu untuk menambah yang lain.",
 	"editor.idLinkedToName": "Dipautkan ke nama paparan",
-	"editor.idCannotDelete":
-		"ID ini dipautkan ke nama paparan dan tidak boleh dipadam — edit nama untuk menukarnya",
+	"editor.idCannotDelete": "ID ini dipautkan ke nama paparan dan tidak boleh dipadam — edit nama untuk menukarnya",
 	"editor.icon": "Ikon",
 	"editor.pickIcon": "Tukar ikon",
 	"editor.replaceIcon": "Gantikan ikon",
@@ -312,24 +291,22 @@ export const ms: Record<string, string> = {
 	"editor.horizontalOffset": "Ofset mendatar",
 	"editor.verticalOffset": "Ofset menegak",
 	"editor.colors": "Warna",
-	"editor.colorsDesc":
-		"Menetapkan warna sempadan, latar belakang dan teks callout ini.",
+	"editor.colorsDesc": "Menetapkan warna sempadan, latar belakang dan teks callout ini.",
 	"editor.resetColors": "Tetapkan semula warna ke lalai",
 	"editor.paletteDeleted": "Warna dipadam",
 	"editor.paletteGroupObsidian": "Callouts Obsidian",
 	"editor.paletteGroupPresets": "Pratetap warna",
 	"editor.paletteGroupCustom": "Tersuai",
-	"editor.contrastWarning":
-		"Kontras rendah dengan latar belakang — mungkin sukar dibaca",
+	"editor.contrastWarning": "Kontras rendah dengan latar belakang — mungkin sukar dibaca",
 	"editor.foldable": "Boleh dilipat",
-	"editor.foldableDesc":
-		"Pilih sama ada callout boleh dilipat dan keadaan lalai yang digunakan di seluruh vault.",
+	"editor.foldableDesc": "Pilih sama ada callout boleh dilipat dan keadaan lalai yang digunakan di seluruh vault.",
 	"editor.foldOff": "Mati",
 	"editor.foldOpen": "Terbuka secara lalai",
 	"editor.foldClosed": "Tertutup secara lalai",
 	"editor.cancel": "Batal",
 	"editor.saveChanges": "Simpan perubahan",
-	"editor.saveFailed": "Penyimpanan tidak dapat diselesaikan. Jika editor ini masih terbuka, biarkan ia terbuka dan cuba lagi selepas menyemak storan dan penyegerakan. Sesetengah tetapan atau kemas kini nota mungkin sudah disimpan.",
+	"editor.saveFailed":
+		"Penyimpanan tidak dapat diselesaikan. Jika editor ini masih terbuka, biarkan ia terbuka dan cuba lagi selepas menyemak storan dan penyegerakan. Sesetengah tetapan atau kemas kini nota mungkin sudah disimpan.",
 	"editor.createCallout": "Cipta callout",
 	"editor.nameRequired": "Nama paparan diperlukan sebelum mencipta callout.",
 	"editor.noChangesToSave": "Tiada perubahan dibuat.",
@@ -346,46 +323,36 @@ export const ms: Record<string, string> = {
 		"{{theme}} melukis sendiri callout blok {{names}}, dan Obsidian melukis {{stock}}. ID anda yang lain mengekalkan reka bentuk ini.",
 	"editor.idThemePattern":
 		"Ambil perhatian: tema anda menggayakan setiap callout yang sepadan dengan {{pattern}}, jadi ia mungkin mengatasi rupa yang satu ini.",
-	"editor.idDashConflict":
-		'Obsidian menulis ruang sebagai sengkang, jadi ID ini bercanggah dengan "{{other}}"',
+	"editor.idDashConflict": 'Obsidian menulis ruang sebagai sengkang, jadi ID ini bercanggah dengan "{{other}}"',
 	"editor.idOwnedBy": '"{{id}}" ialah ID bagi {{name}}. Anda boleh {{link}}.',
 	"editor.idMoveHere": "mengalihkannya ke sini",
-	"editor.idOwnedByMain":
-		'"{{id}}" ialah ID utama {{name}}. Untuk menggunakannya di sini, padam {{name}} dahulu.',
-	"editor.idBuiltInStock":
-		'"{{id}}" ialah salah satu ID asli Obsidian untuk {{name}}.',
-	"editor.idMoving":
-		'Semasa disimpan, "{{id}}" berpindah ke sini daripada {{name}}.',
+	"editor.idOwnedByMain": '"{{id}}" ialah ID utama {{name}}. Untuk menggunakannya di sini, padam {{name}} dahulu.',
+	"editor.idBuiltInStock": '"{{id}}" ialah salah satu ID asli Obsidian untuk {{name}}.',
+	"editor.idMoving": 'Semasa disimpan, "{{id}}" berpindah ke sini daripada {{name}}.',
 	"editor.idMovingNotes": "Nota anda tidak berubah. Nota itu mengambil gaya callout ini.",
 	"editor.untitledCallout": "Callout Tanpa Tajuk",
 	"editor.loremIpsum":
 		"Bayu lembut bertiup di celah pepohonan. Cahaya matahari yang hangat menyinari laluan yang sunyi dan menghidupkan suasana.",
-	"editor.loremIpsumShort":
-		"Bayu lembut bertiup di celah pepohonan.",
-	"editor.sampleInlineText":
-		"Berikut ialah pil [!{id}]{{title}} sebaris di dalam perenggan.",
+	"editor.loremIpsumShort": "Bayu lembut bertiup di celah pepohonan.",
+	"editor.sampleInlineText": "Berikut ialah pil [!{id}]{{title}} sebaris di dalam perenggan.",
 	"editor.previewReadOnly": "Pratonton langsung tidak boleh diedit",
 	"noteChanges.title": "Kemas kini nota anda?",
 	"noteChanges.leave": "Biarkan sahaja",
-	"noteChanges.leaveDesc":
-		"Nota kekal dengan [!{{id}}] dan kembali kepada gaya lalai.",
+	"noteChanges.leaveDesc": "Nota kekal dengan [!{{id}}] dan kembali kepada gaya lalai.",
 	"noteChanges.changeTo": "Tukar kepada",
 	"noteChanges.renameChange": 'Tukar kepada "{{id}}"',
 	"noteChanges.titlesChange": 'Tukar kepada "{{new}}"',
 	"noteChanges.titlesLeaveDesc": 'Terus berbunyi "{{old}}".',
 	"noteChanges.foldChange": 'Tetapkan kepada "{{state}}"',
-	"noteChanges.foldLeaveDesc":
-		"Hanya callout yang anda sisipkan mulai sekarang menggunakan tetapan baharu.",
+	"noteChanges.foldLeaveDesc": "Hanya callout yang anda sisipkan mulai sekarang menggunakan tetapan baharu.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": '{{name}} — dibekalkan oleh tema anda',
+	"themePreview.title": "{{name}} — dibekalkan oleh tema anda",
 	"themePreview.summary":
 		"Dibekalkan oleh {{theme}} (baca sahaja). Warna, ikon dan ID tidak boleh diubah di sini, dan format Tajuk/Sebaris tidak tersedia. Untuk menyesuaikannya, cipta callout baharu.",
 	"themePreview.previewTitle": "Cara ia dipaparkan sekarang",
-	"themePreview.blockSample":
-		"> [!{{id}}] {{name}}\n" +
-		"> Beginilah rupa kandungan callout ini.\n",
+	"themePreview.blockSample": "> [!{{id}}] {{name}}\n" + "> Beginilah rupa kandungan callout ini.\n",
 
 	// Theme callout preview window
 	"editor.themePreviewClose": "Faham",
@@ -402,8 +369,8 @@ export const ms: Record<string, string> = {
 	"palette.metadataNameShared":
 		"Dalam metadata callout: {{key}}. Palet tersimpan lain juga mempunyai perkataan ini, jadi hanya satu daripadanya yang menyahut.",
 	"palette.renameNotesChange":
-		"Anda menamakan semula palet daripada \"{{old}}\" kepada \"{{new}}\", jadi perkataannya dalam metadata callout bertukar daripada \"{{oldWord}}\" kepada \"{{newWord}}\".",
-	"palette.renameNotesLeaveDesc": "Kekal dengan \"{{word}}\" dan kembali kepada warnanya sendiri.",
+		'Anda menamakan semula palet daripada "{{old}}" kepada "{{new}}", jadi perkataannya dalam metadata callout bertukar daripada "{{oldWord}}" kepada "{{newWord}}".',
+	"palette.renameNotesLeaveDesc": 'Kekal dengan "{{word}}" dan kembali kepada warnanya sendiri.',
 	"palette.renameNotesChangeDesc": "Setiap |{{old}} dalam nota anda menjadi |{{new}}.",
 	"palette.renameNotesFailed":
 		"Sesetengah nota tidak dapat dikemas kini. Yang berjaya dikemas kini telah disimpan; selebihnya masih menggunakan nama lama.",
@@ -413,8 +380,10 @@ export const ms: Record<string, string> = {
 	"palette.advancedColors": "Warna",
 	"palette.lightModeColors": "Warna mod cerah",
 	"palette.darkModeColors": "Warna mod gelap",
-	"palette.modeColorsHintLight": "Perubahan ini hanya digunakan untuk mod cerah. Mod gelap mengekalkan warnanya sendiri.\nUntuk menyuntingnya, tekan butang bulan di atas.",
-	"palette.modeColorsHintDark": "Perubahan ini hanya digunakan untuk mod gelap. Mod cerah mengekalkan warnanya sendiri.\nUntuk menyuntingnya, tekan butang matahari di atas.",
+	"palette.modeColorsHintLight":
+		"Perubahan ini hanya digunakan untuk mod cerah. Mod gelap mengekalkan warnanya sendiri.\nUntuk menyuntingnya, tekan butang bulan di atas.",
+	"palette.modeColorsHintDark":
+		"Perubahan ini hanya digunakan untuk mod gelap. Mod cerah mengekalkan warnanya sendiri.\nUntuk menyuntingnya, tekan butang matahari di atas.",
 	"palette.showLightMode": "Tunjukkan mod cerah",
 	"palette.showDarkMode": "Tunjukkan mod gelap",
 	"palette.accentColor": "Warna aksen",
@@ -506,14 +475,10 @@ export const ms: Record<string, string> = {
 	"iconPicker.searchSimpleIcons": "Cari dalam Simple Icons",
 	"iconPicker.custom": "Ikon tersuai",
 	"iconPicker.searchCustom": "Cari ikon tersuai",
-	"iconPicker.customTooLarge":
-		"{{name}} terlalu besar. Ikon tersuai boleh bersaiz sehingga 5 MB.",
-	"iconPicker.customUnsupported":
-		"{{name}} bukan fail ikon tersuai yang disokong. Gunakan SVG, PNG, JPEG atau WebP.",
-	"iconPicker.customInvalidSvg":
-		"{{name}} tidak dapat dibaca sebagai SVG selamat dan tidak ditambahkan.",
-	"iconPicker.customDecodeFailed":
-		"{{name}} tidak dapat dibaca sebagai ikon tersuai.",
+	"iconPicker.customTooLarge": "{{name}} terlalu besar. Ikon tersuai boleh bersaiz sehingga 5 MB.",
+	"iconPicker.customUnsupported": "{{name}} bukan fail ikon tersuai yang disokong. Gunakan SVG, PNG, JPEG atau WebP.",
+	"iconPicker.customInvalidSvg": "{{name}} tidak dapat dibaca sebagai SVG selamat dan tidak ditambahkan.",
+	"iconPicker.customDecodeFailed": "{{name}} tidak dapat dibaca sebagai ikon tersuai.",
 	"iconPicker.customDuplicate":
 		"{{name}} sudah ada dalam ikon tersuai anda. Namakan semula fail atau padam ikon sedia ada.",
 	"iconPicker.uploadCustom": "Muat naik fail imej",
@@ -542,8 +507,7 @@ export const ms: Record<string, string> = {
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "cari semua pustaka serentak",
 	"iconPicker.descLucide": "set milik Obsidian, sentiasa luar talian",
-	"iconPicker.descTabler":
-		"ikon UI yang bersih dan konsisten, garis tepi dan penuh",
+	"iconPicker.descTabler": "ikon UI yang bersih dan konsisten, garis tepi dan penuh",
 	"iconPicker.descMaterial": "set Google, empat gaya dan tujuh ketebalan",
 	"iconPicker.descEmoji": "glyph berwarna, setiap ton kulit",
 	"iconPicker.descOcticons": "ikon antara muka GitHub",
@@ -671,8 +635,7 @@ export const ms: Record<string, string> = {
 	"iconPack.downloadDetail": "{{count}} ikon · {{size}} · muat turun sekali",
 	"iconPack.download": "Muat turun",
 	"iconPack.downloading": "Memuat turun {{name}}…",
-	"iconPack.downloadFailed":
-		"Tidak dapat memuat turun {{name}}. Semak sambungan anda dan cuba lagi.",
+	"iconPack.downloadFailed": "Tidak dapat memuat turun {{name}}. Semak sambungan anda dan cuba lagi.",
 	"iconPack.retry": "Cuba lagi",
 	"iconPack.faBrandsNotice":
 		"Ikon jenama adalah tanda dagangan pemilik masing-masing. Penyertaannya tidak menunjukkan sokongan. Sila gunakannya hanya untuk mewakili syarikat, produk atau perkhidmatan yang dirujuk.",
@@ -717,7 +680,8 @@ export const ms: Record<string, string> = {
 
 	// Icon licences & credits
 	"license.title": "Lesen",
-	"license.openSourceBeforeLink": "Callout Studio ialah sumber terbuka, dan akan kekal begitu. Lesennya boleh didapati ",
+	"license.openSourceBeforeLink":
+		"Callout Studio ialah sumber terbuka, dan akan kekal begitu. Lesennya boleh didapati ",
 	"license.openSourceLink": "di sini",
 	"credits.title": "Lesen ikon dan kredit",
 	"credits.introBeforeNotices":
@@ -732,7 +696,8 @@ export const ms: Record<string, string> = {
 	"contextMenu.setFoldNone": "Jadikan callout tidak boleh dilipat",
 	"contextMenu.cutSection": "Potong bahagian tajuk",
 	"notice.clipboardWriteFailed": "Tidak dapat menyalin ke papan keratan. Nota dibiarkan tidak berubah.",
-	"notice.sectionChangedAfterCopy": "Bahagian itu telah disalin, tetapi nota berubah sebelum ia dapat dipotong. Tiada apa-apa yang dialih keluar.",
+	"notice.sectionChangedAfterCopy":
+		"Bahagian itu telah disalin, tetapi nota berubah sebelum ia dapat dipotong. Tiada apa-apa yang dialih keluar.",
 	"contextMenu.copySection": "Salin bahagian tajuk",
 	"contextMenu.deleteSection": "Padam bahagian tajuk",
 	"heading.toggleFold": "Togol lipatan",
@@ -761,15 +726,14 @@ export const ms: Record<string, string> = {
 	"settings.metadataWordAlreadyHere": "Perkataan ini sudah ada dalam senarai",
 	"settings.metadataWordTooLong": "Satu perkataan mestilah tidak melebihi {{max}} aksara",
 	"settings.maxMetadataWords": "Maksimum {{max}} perkataan. Padam satu untuk menambah yang lain.",
-	"settings.buildFailed": "Callout Studio tidak dapat memaparkan tetapannya; mulakan semula Obsidian, dan laporkan jika ia berulang.",
-	"settings.globalSettingsRegularDesc":
-		"Sempadan, jejari, skala fon dan penjajaran.",
-	"settings.globalSettingsHeadingDesc":
-		"Sempadan, bentuk dan jarak menegak.",
-	"settings.globalSettingsInlineDesc":
-		"Sempadan dan bentuk.",
+	"settings.buildFailed":
+		"Callout Studio tidak dapat memaparkan tetapannya; mulakan semula Obsidian, dan laporkan jika ia berulang.",
+	"settings.globalSettingsRegularDesc": "Sempadan, jejari, skala fon dan penjajaran.",
+	"settings.globalSettingsHeadingDesc": "Sempadan, bentuk dan jarak menegak.",
+	"settings.globalSettingsInlineDesc": "Sempadan dan bentuk.",
 	"settings.themeCalloutStyles": "Gunakan gaya callout tema anda",
-	"settings.themeCalloutStylesDesc": "Apabila dihidupkan, callout yang digayakan oleh tema anda mengekalkan rupa tema dan hanya muncul sebagai callout blok. Apabila dimatikan, Callout Studio melukis semua callout.",
+	"settings.themeCalloutStylesDesc":
+		"Apabila dihidupkan, callout yang digayakan oleh tema anda mengekalkan rupa tema dan hanya muncul sebagai callout blok. Apabila dimatikan, Callout Studio melukis semua callout.",
 	"settings.calloutTypeRegular": "Gaya callout blok",
 	"settings.calloutTypeHeading": "Gaya callout tajuk",
 	"settings.calloutTypeInline": "Gaya callout sebaris",
@@ -799,22 +763,16 @@ export const ms: Record<string, string> = {
 	"confirm.titleDeleteImage": "Padam gambar",
 	"confirm.titleDeleteLibrary": "Padam pustaka ikon",
 	"confirm.titleResetLibraries": "Set semula pustaka ikon",
-	"vault.filesUpdated":
-		"{{count}} rujukan callout dikemas kini dalam fail vault.",
-	"vault.idsUpdated":
-		"{{count}} ID callout dikemas kini dalam fail vault: {{oldIds}} → {{newId}}",
-	"vault.titlesUpdated":
-		"{{count}} tajuk callout dikemas kini dalam fail vault: {{oldTitle}} → {{newTitle}}",
-	"vault.foldUpdated":
-		"Tanda lipat {{count}} callout dikemas kini dalam fail vault.",
+	"vault.filesUpdated": "{{count}} rujukan callout dikemas kini dalam fail vault.",
+	"vault.idsUpdated": "{{count}} ID callout dikemas kini dalam fail vault: {{oldIds}} → {{newId}}",
+	"vault.titlesUpdated": "{{count}} tajuk callout dikemas kini dalam fail vault: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated": "Tanda lipat {{count}} callout dikemas kini dalam fail vault.",
 	"vault.confirmReplace": "Ganti",
 	"vault.replacePromptInUse":
 		'"{{name}}" digunakan {{count}} kali dalam {{files}} fail. Pilih callout untuk menggantikannya:',
 	"vault.replacePromptUnused": 'Pilih callout untuk menggantikan "{{name}}":',
-	"vault.noReplacementAvailable":
-		"Tiada callout lain tersedia untuk menggantikan ini.",
-	"vault.convertedToPlainText":
-		"{{blocks}} blok callout dalam {{files}} fail ditukar kepada teks biasa.",
+	"vault.noReplacementAvailable": "Tiada callout lain tersedia untuk menggantikan ini.",
+	"vault.convertedToPlainText": "{{blocks}} blok callout dalam {{files}} fail ditukar kepada teks biasa.",
 	"vault.resetNotesFailed":
 		"Sesetengah nota tidak dapat dikemas kini, jadi callout tidak disetkan semula. Pilih Set semula ke lalai sekali lagi untuk selesai.",
 	"quickInsert.title": "Sisipan pantas callout blok",
@@ -830,7 +788,8 @@ export const ms: Record<string, string> = {
 	"quickInsert.noResults": "Tiada callout ditemui",
 	"quickInsert.noBuiltInCallouts": "Tiada callout terbina dalam tersedia pada masa ini.",
 	"quickInsert.noThemeCallouts": "Tiada callout khusus tema tersedia pada masa ini.",
-	"quickInsert.targetMoved": "Nota tempat anda membuka Sisipan pantas telah berubah atau ditutup. Buka semula Sisipan pantas dalam nota yang anda mahu edit.",
+	"quickInsert.targetMoved":
+		"Nota tempat anda membuka Sisipan pantas telah berubah atau ditutup. Buka semula Sisipan pantas dalam nota yang anda mahu edit.",
 	"quickInsert.targetMovedHint": "Nota asal tidak lagi tersedia untuk sisipan ini.",
 	"quickInsert.noUserCallouts":
 		"Anda belum mencipta sebarang callout tersuai. Jalankan “Callout Studio: Cipta jenis callout baharu” daripada palet arahan.",
@@ -850,7 +809,8 @@ export const ms: Record<string, string> = {
 	"portable.customInvalid": "Kekalkan penggantian pada satu baris tanpa mengubah struktur Markdown di sekelilingnya.",
 	"portable.customUnsafe": "Penggantian ini akan menjadikan tajuk atau pautannya tidak jelas. Pilih tajuk lain.",
 	"portable.customStale": "Semakan telah berubah. Buka semula editor penggantian.",
-	"portable.customDiscarded": "{{count}} penggantian tersuai telah dibuang kerana teks sumbernya berubah atau tidak dapat dikenal pasti dengan selamat.",
+	"portable.customDiscarded":
+		"{{count}} penggantian tersuai telah dibuang kerana teks sumbernya berubah atau tidak dapat dikenal pasti dengan selamat.",
 	"portable.customBadge": "Tersuai",
 
 	"usage.title": "Cari callout",
@@ -878,34 +838,31 @@ export const ms: Record<string, string> = {
 	"usage.menu": "Cari callout",
 	"usage.closeSettings": "Tutup Tetapan untuk melihat hasil callout dalam bar sisi.",
 	"import.title": "Masalah import",
-	"import.reportLeadIn":
-		"Semak masalah import berikut sebelum meneruskan:",
-	"import.reportLeadInFatal":
-		"Data ini tidak dapat diimport:",
+	"import.reportLeadIn": "Semak masalah import berikut sebelum meneruskan:",
+	"import.reportLeadInFatal": "Data ini tidak dapat diimport:",
 	"import.entryHeading": "Entri {{index}} — {{label}}",
-	"import.summary":
-		"{{valid}} daripada {{total}} entri adalah sah · {{issues}} masalah dijumpai.",
+	"import.summary": "{{valid}} daripada {{total}} entri adalah sah · {{issues}} masalah dijumpai.",
 	"import.btnCancel": "Batal",
 	"import.btnImportValid": "Import yang sah sahaja ({{count}})",
-	"import.nothingValid": "Tiada satu pun entri yang sah, jadi tiada apa untuk diimport. Batalkan, betulkan masalah yang disenaraikan di sini, dan import semula.",
-	"import.err.notRecognized":
-		"Fail tidak dikenali: dijangka array definisi callout atau eksport Callout Studio.",
-	"import.warn.settingsIgnored":
-		"Blok tetapan bukan objek yang sah dan telah diabaikan.",
-	"import.warn.invalidGradient":
-		"Kecerunan latar belakang tidak sah dan telah diabaikan.",
+	"import.nothingValid":
+		"Tiada satu pun entri yang sah, jadi tiada apa untuk diimport. Batalkan, betulkan masalah yang disenaraikan di sini, dan import semula.",
+	"import.err.notRecognized": "Fail tidak dikenali: dijangka array definisi callout atau eksport Callout Studio.",
+	"import.warn.settingsIgnored": "Blok tetapan bukan objek yang sah dan telah diabaikan.",
+	"import.warn.invalidGradient": "Kecerunan latar belakang tidak sah dan telah diabaikan.",
 	"import.err.parseFailed": "Fail bukan JSON sah dan tidak dapat dihurai.",
-	"import.err.tooLarge": "Import ini melebihi had saiz 16 MiB. Bahagikannya kepada fail yang lebih kecil dan cuba lagi.",
-	"import.err.tooComplex": "Import ini terlalu kompleks: maksimum 1,000 item bagi setiap senarai atau objek, 50,000 nilai keseluruhan dan kedalaman maksimum 32 tahap.",
-	"import.err.imageBudget": "Koleksi gambar keseluruhan melebihi had saiz atau kerumitan. Alih keluar atau ringkaskan gambar besar sebelum mengimport.",
+	"import.err.tooLarge":
+		"Import ini melebihi had saiz 16 MiB. Bahagikannya kepada fail yang lebih kecil dan cuba lagi.",
+	"import.err.tooComplex":
+		"Import ini terlalu kompleks: maksimum 1,000 item bagi setiap senarai atau objek, 50,000 nilai keseluruhan dan kedalaman maksimum 32 tahap.",
+	"import.err.imageBudget":
+		"Koleksi gambar keseluruhan melebihi had saiz atau kerumitan. Alih keluar atau ringkaskan gambar besar sebelum mengimport.",
 	"import.err.processingFailed": "Import tidak dapat diselesaikan. Semak data dan cuba lagi.",
-	"import.reportTruncated": "Menunjukkan {{shown}} isu pertama daripada {{total}}. Nilai yang panjang dipendekkan dalam laporan ini.",
+	"import.reportTruncated":
+		"Menunjukkan {{shown}} isu pertama daripada {{total}}. Nilai yang panjang dipendekkan dalam laporan ini.",
 	"import.err.entryNotObject": "Entri mestilah objek.",
-	"import.err.requiredMissing":
-		'Medan yang diperlukan "{{field}}" hilang atau mempunyai jenis yang salah.',
+	"import.err.requiredMissing": 'Medan yang diperlukan "{{field}}" hilang atau mempunyai jenis yang salah.',
 	"import.err.idEmpty": "ID tidak boleh kosong.",
-	"import.err.idTooLong":
-		'ID "{{value}}" mempunyai {{length}} aksara; maksimum ialah {{max}}.',
+	"import.err.idTooLong": 'ID "{{value}}" mempunyai {{length}} aksara; maksimum ialah {{max}}.',
 	"import.err.idBadChar":
 		'ID "{{value}}" mengandungi aksara tidak sah ("|", "[", "]", tab dan pemisah baris tidak dibenarkan).',
 	"import.err.idMetadata":
@@ -913,31 +870,24 @@ export const ms: Record<string, string> = {
 	"import.err.idReserved":
 		'ID "{{value}}" dikhaskan oleh Callout Studio untuk pratonton tersendiri dan tidak boleh diimport.',
 	"import.err.displayNameEmpty": "Nama paparan tidak boleh kosong.",
-	"import.err.displayNameTooLong":
-		"Nama paparan mempunyai {{length}} aksara; maksimum ialah {{max}}.",
+	"import.err.displayNameTooLong": "Nama paparan mempunyai {{length}} aksara; maksimum ialah {{max}}.",
 	"import.err.boolField": '"{{field}}" mestilah boolean (true atau false).',
 	"import.err.iconNotObject": "Ikon mestilah objek.",
-	"import.err.iconTypeInvalid":
-		'Jenis ikon "{{value}}" bukan salah satu daripada: {{types}}.',
+	"import.err.iconTypeInvalid": 'Jenis ikon "{{value}}" bukan salah satu daripada: {{types}}.',
 	"import.warn.iconFieldIgnored":
 		'"{{field}}" hanya terpakai untuk ikon Material dan diabaikan untuk jenis ikon {{type}}.',
 	"import.err.iconValueEmpty": "Nilai ikon mestilah rentetan tidak kosong.",
-	"import.err.iconValueTooLong":
-		"Nilai ikon melebihi had 200 aksara ({{length}} aksara).",
+	"import.err.iconValueTooLong": "Nilai ikon melebihi had 200 aksara ({{length}} aksara).",
 	"import.err.materialStyle":
 		'Gaya ikon Material "{{value}}" bukan salah satu daripada: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
 		'Ketebalan ikon Material "{{value}}" mestilah integer antara 100 dan 700, dalam langkah 100.',
 	"import.warn.iconRecolorIgnored":
 		'"recolor" hanya terpakai untuk gambar anda sendiri dan diabaikan untuk jenis ikon {{type}}.',
-	"import.err.iconRecolorInvalid":
-		'"recolor" mestilah true atau false (diterima "{{value}}").',
-	"import.err.colorInvalid":
-		'"{{field}}" mestilah warna hex seperti "#448aff" (diterima "{{value}}").',
-	"import.err.numberRange":
-		'"{{field}}" mestilah nombor antara {{min}} dan {{max}} (diterima "{{value}}").',
-	"import.err.iconSizeRange":
-		'"{{field}}" mestilah nombor antara {{min}} dan {{max}} (diterima "{{value}}").',
+	"import.err.iconRecolorInvalid": '"recolor" mestilah true atau false (diterima "{{value}}").',
+	"import.err.colorInvalid": '"{{field}}" mestilah warna hex seperti "#448aff" (diterima "{{value}}").',
+	"import.err.numberRange": '"{{field}}" mestilah nombor antara {{min}} dan {{max}} (diterima "{{value}}").',
+	"import.err.iconSizeRange": '"{{field}}" mestilah nombor antara {{min}} dan {{max}} (diterima "{{value}}").',
 	"import.err.iconAdjustShape":
 		'"iconAdjust" mestilah objek yang memetakan jenis callout ("regular", "heading", "inline") kepada saiz ikon dan anjakannya.',
 	"import.err.aliasesNotArray": '"aliases" mestilah array rentetan.',
@@ -945,21 +895,16 @@ export const ms: Record<string, string> = {
 	"import.err.aliasDup": 'Alias "{{value}}" diduplikasi dalam entri ini.',
 	"import.err.tooManyIds":
 		"Terlalu banyak ID ({{count}}); setiap callout boleh mempunyai maksimum {{max}} ID (utama + alias).",
-	"import.err.metadataShape":
-		'"metadata" mestilah objek yang semua nilainya adalah rentetan.',
+	"import.err.metadataShape": '"metadata" mestilah objek yang semua nilainya adalah rentetan.',
 	"import.warn.unknownFields": "Medan tidak diketahui diabaikan: {{fields}}.",
-	"import.err.duplicateInFile":
-		'ID/alias "{{value}}" sudah digunakan oleh entri #{{first}} dalam fail ini.',
-	"import.err.aliasConflict":
-		'Alias "{{value}}" sudah digunakan oleh callout lain ("{{other}}") dalam vault anda.',
+	"import.err.duplicateInFile": 'ID/alias "{{value}}" sudah digunakan oleh entri #{{first}} dalam fail ini.',
+	"import.err.aliasConflict": 'Alias "{{value}}" sudah digunakan oleh callout lain ("{{other}}") dalam vault anda.',
 	"import.warn.defaultFoldedAutofix":
 		'"defaultFolded" adalah true manakala "foldable" adalah false; defaultFolded telah ditetapkan semula kepada false.',
 	"import.warn.imageMissing":
 		"Callout ini menggunakan gambar yang tidak ada dalam fail dan tidak dalam vault ini, jadi ia akan menunjukkan ikon pemegang tempat sehingga anda memberikan yang baru.",
-	"import.err.paletteIdInvalid":
-		'"paletteId" mestilah ID teks yang tidak kosong (menerima "{{value}}").',
-	"import.warn.iconNameUnknown":
-		'Tiada ikon "{{value}}" dalam {{type}}, jadi ikon lalai digunakan sebagai gantinya.',
+	"import.err.paletteIdInvalid": '"paletteId" mestilah ID teks yang tidak kosong (menerima "{{value}}").',
+	"import.warn.iconNameUnknown": 'Tiada ikon "{{value}}" dalam {{type}}, jadi ikon lalai digunakan sebagai gantinya.',
 	"import.warn.cmIconUnknownNew":
 		'Ikon "{{value}}" tidak tersedia dalam vault ini, jadi ikon lalai digunakan sebagai gantinya.',
 	"import.warn.cmIconUnknownExisting":
@@ -992,14 +937,11 @@ export const ms: Record<string, string> = {
 	"import.cmVaultChecking": "Mencari pemalam Callout Manager…",
 	"import.cmVaultFound": "{{count}} callout tersuai ditemukan.",
 	"import.cmFromPaste": "Gaya yang disalin",
-	"import.cmFromPasteDesc":
-		"Apa yang disalin oleh butang Copy Callout Manager, atau fail data.json.",
-	"import.cmPlaceholder":
-		"Tampal gaya yang disalin atau kandungan data.json di sini…",
+	"import.cmFromPasteDesc": "Apa yang disalin oleh butang Copy Callout Manager, atau fail data.json.",
+	"import.cmPlaceholder": "Tampal gaya yang disalin atau kandungan data.json di sini…",
 	"import.cmBtnCancel": "Batal",
 	"import.cmBtnImport": "Import",
-	"import.err.cmNoBlocksFound":
-		"Tiada gaya Callout Manager ditemukan dalam fail atau teks yang ditampal.",
+	"import.err.cmNoBlocksFound": "Tiada gaya Callout Manager ditemukan dalam fail atau teks yang ditampal.",
 	"import.err.cmNotRecognized":
 		"Fail tidak dikenali: dijangka gaya yang dihasilkan oleh butang Copy " +
 		"Callout Manager, atau fail data.json Callout Manager.",
@@ -1008,13 +950,15 @@ export const ms: Record<string, string> = {
 		'Tiada warna yang boleh digunakan ditemukan untuk callout baru "{{value}}"; ia dilangkau.',
 	"import.err.cmIdConflict":
 		'ID "{{value}}" sudah digunakan sebagai alias oleh callout lain ("{{other}}") dan dilangkau.',
-	"import.warn.cmNoColorDefault":
-		"Tiada warna ditetapkan dalam Callout Manager, jadi kelabu lalainya digunakan.",
+	"import.warn.cmNoColorDefault": "Tiada warna ditetapkan dalam Callout Manager, jadi kelabu lalainya digunakan.",
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "Gaya yang bergantung pada tema tidak dapat dikekalkan. Nilai tanpa syarat diutamakan; sebarang nilai sandaran bersyarat digunakan pada semua tema.",
-	"import.warn.cmCustomStylesSkipped": "CSS tersuai daripada Callout Manager tidak diimport. Hanya tetapan ikon dan warna yang disokong boleh dibawa.",
-	"import.warn.cmSchemeIcon": "Callout Studio menggunakan satu ikon untuk kedua-dua skema warna; ikon yang diimport akan digunakan pada kedua-duanya.",
+	"import.warn.cmThemeConditionPartial":
+		"Gaya yang bergantung pada tema tidak dapat dikekalkan. Nilai tanpa syarat diutamakan; sebarang nilai sandaran bersyarat digunakan pada semua tema.",
+	"import.warn.cmCustomStylesSkipped":
+		"CSS tersuai daripada Callout Manager tidak diimport. Hanya tetapan ikon dan warna yang disokong boleh dibawa.",
+	"import.warn.cmSchemeIcon":
+		"Callout Studio menggunakan satu ikon untuk kedua-dua skema warna; ikon yang diimport akan digunakan pada kedua-duanya.",
 	"import.err.cmDuplicateId": "ID {{value}} pendua dengan {{other}} dalam import ini dan telah dilangkau.",
 	"import.admTitle": "Import daripada Admonition",
 	"import.admInstructions":
@@ -1028,41 +972,33 @@ export const ms: Record<string, string> = {
 	"import.admFromFileDesc": "Fail admonitions.json, atau pek yang dikongsi.",
 	"import.admBtnCancel": "Batal",
 	"import.admBtnImport": "Import",
-	"import.err.admNotRecognized":
-		"Fail tidak dikenali: senarai admonition atau data.json " +
-		"Admonition dijangka.",
+	"import.err.admNotRecognized": "Fail tidak dikenali: senarai admonition atau data.json " + "Admonition dijangka.",
 	"import.err.admNoEntries": "Tiada admonition ditemui untuk diimport.",
-	"import.err.admTypeMissing":
-		'Admonition ini tiada "type" dan telah dilangkau.',
+	"import.err.admTypeMissing": 'Admonition ini tiada "type" dan telah dilangkau.',
 	"import.warn.admIconUnknown":
-		'Tiada ikon bernama "{{value}}" dalam mana-mana pustaka ikon, ' +
-		"jadi ikon lalai digunakan.",
+		'Tiada ikon bernama "{{value}}" dalam mana-mana pustaka ikon, ' + "jadi ikon lalai digunakan.",
 	"import.warn.admIconUnknownExisting":
-		'Tiada ikon bernama "{{value}}" dalam mana-mana pustaka ikon, ' +
-		'jadi "{{id}}" mengekalkan ikon sedia ada.',
+		'Tiada ikon bernama "{{value}}" dalam mana-mana pustaka ikon, ' + 'jadi "{{id}}" mengekalkan ikon sedia ada.',
 	"import.warn.admUnsupportedOptions": "Pilihan Admonition ini tidak diimport: {{fields}}.",
 	"import.warn.admImageSkipped": "Gambar yang dimuat naik tidak dapat dibaca dan tidak diimport.",
 	"import.warn.admIconWithCss":
 		"Admonition ini digayakan oleh petikan CSS dalam Admonition. Gaya " +
 		"itu bukan sebahagian daripada import, jadi hanya nama, ikon dan " +
 		"warnanya yang dibawa.",
-	"import.warn.admNoColor":
-		"Tiada warna ditetapkan, jadi biru lalai digunakan.",
-	"import.warn.admTitleTruncated":
-		"Tajuk ialah {{length}} aksara; ia dipendekkan kepada {{max}}.",
+	"import.warn.admNoColor": "Tiada warna ditetapkan, jadi biru lalai digunakan.",
+	"import.warn.admTitleTruncated": "Tajuk ialah {{length}} aksara; ia dipendekkan kepada {{max}}.",
 
 	"footer.openIssue": "Buka isu",
 	"footer.sourceCode": "Kod sumber",
 	"settings.about": "Perihal",
 	"settings.version": "Versi",
 	"settings.deletePaletteBodyLinkedOne":
-		'1 callout menggunakannya. Ia mengekalkan warnanya, dan anda boleh sambungkan semula kemudian dari baris Warna dalam editornya.',
+		"1 callout menggunakannya. Ia mengekalkan warnanya, dan anda boleh sambungkan semula kemudian dari baris Warna dalam editornya.",
 	"settings.deletePaletteBodyLinked":
-		'{{count}} callout menggunakannya. Mereka mengekalkan warna masing-masing, dan anda boleh sambungkan semula kemudian dari baris Warna dalam mana-mana editor mereka.',
+		"{{count}} callout menggunakannya. Mereka mengekalkan warna masing-masing, dan anda boleh sambungkan semula kemudian dari baris Warna dalam mana-mana editor mereka.",
 	"notice.palettesMerged":
 		"Menggabungkan {{count}} warna tersimpan yang mempunyai warna serupa: {{names}}. Callout yang menggunakannya mengekalkan warna masing-masing dan kini dipautkan kepada warna yang tinggal.",
-	"editor.colorsDescDeleted":
-		"Warna tersimpan untuk callout ini telah dipadam. {{link}}",
+	"editor.colorsDescDeleted": "Warna tersimpan untuk callout ini telah dipadam. {{link}}",
 	"editor.colorsDescDeletedLink": "Pulihkan",
 	"palette.colorExists":
 		'Warna-warna ini sama dengan "{{name}}". Dua warna tersimpan tidak boleh sama — ubah satu warna untuk membezakannya.',
@@ -1079,8 +1015,7 @@ export const ms: Record<string, string> = {
 	"notice.exportedCssUpdated": "Coretan CSS dikemas kini di {{path}}",
 	"notice.exportedCssUnchanged": "Coretan CSS sudah terkini.",
 	"notice.exportCssEmpty": "Tiada callout tersuai untuk dieksport.",
-	"notice.exportCssFailed":
-		"Coretan CSS tidak dapat disimpan. Semak konsol pembangun untuk mendapatkan butiran.",
+	"notice.exportCssFailed": "Coretan CSS tidak dapat disimpan. Semak konsol pembangun untuk mendapatkan butiran.",
 	"notice.exportCssEnabled":
 		"Coretan ini dihidupkan dalam vault ini. Callout Studio sudah menggayakan callout ini, dan coretan mengekalkan gaya semasa dieksport.",
 	"confirm.titleOverwriteSnippet": "Tulis ganti coretan CSS",
@@ -1101,49 +1036,68 @@ export const ms: Record<string, string> = {
 	"quickInsert.readingView": "Tukar ke mod sumber atau Pratonton Langsung untuk menyisipkan callout.",
 	"quickInsert.noCursorHint": "Tiada kursor dalam nota ini, jadi tiada tempat untuk menyisipkan.",
 	"quickInsert.noCursor": "Letakkan kursor dalam nota di tempat anda mahu menyisipkan callout, kemudian cuba lagi.",
-	"notice.legacyDiscoveryArchiveFailed": "Salinan pemulihan naik taraf tidak dapat disiapkan. Cache penemuan setempat dan CSS permulaan yang terdahulu dikekalkan tanpa perubahan. Semak akses tulis storan dan ruang kosong, kemudian mulakan semula Obsidian untuk mencuba lagi.",
+	"notice.legacyDiscoveryArchiveFailed":
+		"Salinan pemulihan naik taraf tidak dapat disiapkan. Cache penemuan setempat dan CSS permulaan yang terdahulu dikekalkan tanpa perubahan. Semak akses tulis storan dan ruang kosong, kemudian mulakan semula Obsidian untuk mencuba lagi.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Dijeda sehingga anda mencipta semula callout yang hilang atau memilih yang lain.",
 	"confirm.titleRestoreSettings": "Pulihkan tetapan ini",
 	"confirm.titleCreateSettingsFile": "Cipta fail tetapan",
 	"confirm.saveDisplayedSettings":
 		"Ini menyimpan persediaan yang anda lihat sekarang sebagai fail tetapan anda dan menghidupkan semula penyimpanan. Salinan simpanan yang disimpan oleh peranti ini disandarkan dahulu.\nJika peranti lain mungkin mempunyai perubahan lebih baharu yang anda mahu kekalkan, biarkan ia selesai menyegerak sebelum meneruskan. Aplikasi penyegerakan anda mungkin menghantar fail ini ke peranti anda yang lain.\nCallout Studio mencari fail tetapan sekali lagi sebelum menyimpan. Jika ia telah kembali, Callout Studio mengekalkannya.",
-	"notice.settingsBackupFailed": "Pemulihan tetapan tidak dapat diteruskan kerana sandaran keselamatan tidak dapat disimpan. Semak storan yang tersedia dan kebenaran tulis, kemudian cuba lagi.",
-	"notice.settingsNewerVersion": "Tetapan Callout Studio disimpan oleh versi pemalam yang lebih baharu, jadi tiada apa akan ditulis pada peranti ini sehingga anda mengemas kininya. Tetapan anda selamat — kemas kini Callout Studio di sini dan muat semula Obsidian.",
+	"notice.settingsBackupFailed":
+		"Pemulihan tetapan tidak dapat diteruskan kerana sandaran keselamatan tidak dapat disimpan. Semak storan yang tersedia dan kebenaran tulis, kemudian cuba lagi.",
+	"notice.settingsNewerVersion":
+		"Tetapan Callout Studio disimpan oleh versi pemalam yang lebih baharu, jadi tiada apa akan ditulis pada peranti ini sehingga anda mengemas kininya. Tetapan anda selamat — kemas kini Callout Studio di sini dan muat semula Obsidian.",
 	"saveStatus.changed":
 		"Fail tetapan berubah semasa anda menyunting. Draf anda masih ada. Pilih Cuba lagi untuk memuatkan tetapan yang masuk, kemudian semak draf anda dan simpan sekali lagi.",
-	"saveStatus.missing": "Penyimpanan dijeda kerana fail tetapan hilang. Ini boleh berlaku selepas pemasangan semula atau semasa penyegerakan masih berjalan. Selesaikan penyegerakan dan cuba lagi. Untuk menggantikan fail yang hilang dengan sengaja, gunakan Cipta fail tetapan baharu dalam tetapan Callout Studio.",
+	"saveStatus.missing":
+		"Penyimpanan dijeda kerana fail tetapan hilang. Ini boleh berlaku selepas pemasangan semula atau semasa penyegerakan masih berjalan. Selesaikan penyegerakan dan cuba lagi. Untuk menggantikan fail yang hilang dengan sengaja, gunakan Cipta fail tetapan baharu dalam tetapan Callout Studio.",
 	"saveStatus.restoreSettings": "Pulihkan tetapan ini",
 	"saveStatus.createSettingsFile": "Cipta fail tetapan",
 	"saveStatus.checkAgain": "Semak sekali lagi",
-	"saveStatus.recoverInSettings": "Untuk memulihkan fail yang hilang pada peranti ini, buka tetapan Callout Studio. Sebelum menutup editor ini, salin sebarang suntingan yang belum disimpan yang mahu anda kekalkan; suntingan itu belum disimpan.",
+	"saveStatus.recoverInSettings":
+		"Untuk memulihkan fail yang hilang pada peranti ini, buka tetapan Callout Studio. Sebelum menutup editor ini, salin sebarang suntingan yang belum disimpan yang mahu anda kekalkan; suntingan itu belum disimpan.",
 	"saveStatus.openSettings": "Buka tetapan Callout Studio",
-	"notice.openSettingsFailed": "Tetapan Callout Studio tidak dapat dibuka. Buka Tetapan → Callout Studio untuk memilih tindakan.",
-	"saveStatus.notesFailed": "Definisi callout disimpan, tetapi beberapa kemas kini nota tidak dapat diselesaikan. Biarkan editor ini terbuka dan pilih Simpan untuk mencuba semula kemas kini yang belum selesai.",
-	"saveStatus.recoveryRead": "Penyimpanan dijeda kerana salinan pemulihan tempatan tidak dapat dibaca. Fail tetapan anda mungkin masih utuh. Semak storan yang tersedia, kemudian cuba semula pemulihan. Data pemulihan sedia ada tidak akan ditulis ganti.",
-	"saveStatus.recoveryWrite": "Salinan pemulihan tempatan tidak dapat disimpan. Semak storan yang tersedia, kemudian cuba lagi. Biarkan draf anda terbuka sehingga penyimpanan berjaya.",
-	"saveStatus.retryFailed": "Penyimpanan masih disekat. Semak status penyimpanan dalam tetapan Callout Studio untuk mengetahui puncanya, kemudian cuba lagi.",
-	"saveStatus.reviewDraft": "Tetapan yang masuk dan pemeriksaan pemulihan telah selesai. Draf anda tidak berubah. Semak dan simpan semula.",
+	"notice.openSettingsFailed":
+		"Tetapan Callout Studio tidak dapat dibuka. Buka Tetapan → Callout Studio untuk memilih tindakan.",
+	"saveStatus.notesFailed":
+		"Definisi callout disimpan, tetapi beberapa kemas kini nota tidak dapat diselesaikan. Biarkan editor ini terbuka dan pilih Simpan untuk mencuba semula kemas kini yang belum selesai.",
+	"saveStatus.recoveryRead":
+		"Penyimpanan dijeda kerana salinan pemulihan tempatan tidak dapat dibaca. Fail tetapan anda mungkin masih utuh. Semak storan yang tersedia, kemudian cuba semula pemulihan. Data pemulihan sedia ada tidak akan ditulis ganti.",
+	"saveStatus.recoveryWrite":
+		"Salinan pemulihan tempatan tidak dapat disimpan. Semak storan yang tersedia, kemudian cuba lagi. Biarkan draf anda terbuka sehingga penyimpanan berjaya.",
+	"saveStatus.retryFailed":
+		"Penyimpanan masih disekat. Semak status penyimpanan dalam tetapan Callout Studio untuk mengetahui puncanya, kemudian cuba lagi.",
+	"saveStatus.reviewDraft":
+		"Tetapan yang masuk dan pemeriksaan pemulihan telah selesai. Draf anda tidak berubah. Semak dan simpan semula.",
 	"saveStatus.settingsArrived": "Tetapan sedia ada telah tiba dan dimuatkan. Fail gantian tidak dicipta.",
-	"saveStatus.syncConflict": "Tetapan yang masuk bercanggah dengan callout yang diperlukan untuk kemas kini nota yang belum selesai. Draf anda dan kemas kini yang tertangguh telah disimpan. Selesaikan percanggahan tetapan sebelum mencuba lagi.",
+	"saveStatus.syncConflict":
+		"Tetapan yang masuk bercanggah dengan callout yang diperlukan untuk kemas kini nota yang belum selesai. Draf anda dan kemas kini yang tertangguh telah disimpan. Selesaikan percanggahan tetapan sebelum mencuba lagi.",
 	"saveStatus.titlePaused": "Penyimpanan dijeda",
 	"saveStatus.titleFailed": "Tetapan tidak disimpan",
 	"saveStatus.tryAgain": "Cuba lagi",
 	"saveStatus.working": "Sedang diproses…",
-	"saveStatus.unreadable": "Penyimpanan dijeda kerana fail tetapan tidak dapat dibaca dengan selamat. Selesaikan penyegerakan atau pulihkan salinan yang sah, kemudian cuba lagi. Fail sedia ada telah disimpan.",
-	"saveStatus.write": "Fail tetapan tidak dapat disimpan. Semak storan yang tersedia, kebenaran folder dan penyegerakan, kemudian cuba lagi sebelum menutup Obsidian.",
-	"saveStatus.writePermission": "Fail tetapan tidak dapat disimpan kerana storan menolak akses tulis. Semak sama ada vault dan folder pemalam boleh ditulis, kemudian cuba lagi.",
-	"saveStatus.writeSpace": "Fail tetapan tidak dapat disimpan kerana storan penuh atau kuotanya telah melebihi. Bebaskan sedikit ruang, kemudian cuba lagi.",
-	"settings.readOnly": "Callout Studio tidak dapat menggunakan fail tetapannya semasa Obsidian dimulakan, jadi tiada apa pada halaman ini disimpan pada peranti ini. Perubahan anda akan kekal sehingga anda menutup Obsidian. Muat semula Obsidian sebaik sahaja fail itu kembali — jika anda menyegerakkan vault ini, biarkan penyegerakan selesai dahulu.",
+	"saveStatus.unreadable":
+		"Penyimpanan dijeda kerana fail tetapan tidak dapat dibaca dengan selamat. Selesaikan penyegerakan atau pulihkan salinan yang sah, kemudian cuba lagi. Fail sedia ada telah disimpan.",
+	"saveStatus.write":
+		"Fail tetapan tidak dapat disimpan. Semak storan yang tersedia, kebenaran folder dan penyegerakan, kemudian cuba lagi sebelum menutup Obsidian.",
+	"saveStatus.writePermission":
+		"Fail tetapan tidak dapat disimpan kerana storan menolak akses tulis. Semak sama ada vault dan folder pemalam boleh ditulis, kemudian cuba lagi.",
+	"saveStatus.writeSpace":
+		"Fail tetapan tidak dapat disimpan kerana storan penuh atau kuotanya telah melebihi. Bebaskan sedikit ruang, kemudian cuba lagi.",
+	"settings.readOnly":
+		"Callout Studio tidak dapat menggunakan fail tetapannya semasa Obsidian dimulakan, jadi tiada apa pada halaman ini disimpan pada peranti ini. Perubahan anda akan kekal sehingga anda menutup Obsidian. Muat semula Obsidian sebaik sahaja fail itu kembali — jika anda menyegerakkan vault ini, biarkan penyegerakan selesai dahulu.",
 	"portable.reviewTitle": "Semak penukaran",
-	"portable.helpIntro": "Pilih penggantian yang hendak digunakan. Klik ikon pensel atau teks penggantian untuk mengeditnya, kemudian tekan Enter atau klik di luar medan untuk menyimpan. Gunakan ikon tetapkan semula untuk membuang draf atau memulihkan penggantian lalai. Nota hanya berubah selepas anda memilih Tukar yang dipilih dan mengesahkannya. Pautan tajuk dikemas kini bersama tajuk yang dipilih.",
+	"portable.helpIntro":
+		"Pilih penggantian yang hendak digunakan. Klik ikon pensel atau teks penggantian untuk mengeditnya, kemudian tekan Enter atau klik di luar medan untuk menyimpan. Gunakan ikon tetapkan semula untuk membuang draf atau memulihkan penggantian lalai. Nota hanya berubah selepas anda memilih Tukar yang dipilih dan mengesahkannya. Pautan tajuk dikemas kini bersama tajuk yang dipilih.",
 	"portable.help": "Perihal penukaran",
 	"portable.roleLink": "Pautan tajuk",
 	"portable.convertSelected": "Tukar yang dipilih",
-	"portable.selectionSummary": "{{selected}} daripada {{total}} penggantian dipilih · {{links}} pautan tajuk untuk dikemas kini",
-	"portable.selectionSummaryNoLinks":
-		"{{selected}} daripada {{total}} penggantian dipilih",
-	"portable.selectionConflict": "Pilihan itu akan menjadikan pautan tajuk tidak jelas. Pilihan sebelumnya dikekalkan.",
+	"portable.selectionSummary":
+		"{{selected}} daripada {{total}} penggantian dipilih · {{links}} pautan tajuk untuk dikemas kini",
+	"portable.selectionSummaryNoLinks": "{{selected}} daripada {{total}} penggantian dipilih",
+	"portable.selectionConflict":
+		"Pilihan itu akan menjadikan pautan tajuk tidak jelas. Pilihan sebelumnya dikekalkan.",
 	"portable.selectAll": "Pilih semua",
 	"portable.selectNone": "Nyahpilih semua",
 	"portable.relatedLinksHint": "Pautan dan benaman mengikuti tajuk yang dipilih dan ditukar bersama-samanya.",
@@ -1154,14 +1108,19 @@ export const ms: Record<string, string> = {
 	"portable.retry": "Cuba lagi",
 	"portable.blockedAmbiguous": "Tajuk ini dilangkau kerana sasaran pautannya tidak jelas.",
 	"portable.blockedTarget": "Tajuk ini dilangkau kerana sasaran pautannya tidak dapat dikekalkan dengan selamat.",
-	"portable.recovery": "Masih ada perubahan yang belum selesai. Selesaikan penukaran ini dan kemas kini pautan tajuk sebelum memulakan semula atau menyahdayakan pemalam; pelan tertunda hanya disimpan dalam memori.",
-	"portable.recoveryChanged": "Nota berubah selepas penukaran terhenti. Kemas kini pautan yang tertunda dikekalkan; setiap nota diperiksa semula sebelum ditulis.",
+	"portable.recovery":
+		"Masih ada perubahan yang belum selesai. Selesaikan penukaran ini dan kemas kini pautan tajuk sebelum memulakan semula atau menyahdayakan pemalam; pelan tertunda hanya disimpan dalam memori.",
+	"portable.recoveryChanged":
+		"Nota berubah selepas penukaran terhenti. Kemas kini pautan yang tertunda dikekalkan; setiap nota diperiksa semula sebelum ditulis.",
 	"portable.finishConversion": "Selesaikan penukaran",
-	"portable.recoveryUnavailable": "Sesetengah kemas kini pautan tertunda tidak dapat dipulihkan dengan selamat. Periksa nota yang terjejas sebelum memulakan penukaran baharu.",
+	"portable.recoveryUnavailable":
+		"Sesetengah kemas kini pautan tertunda tidak dapat dipulihkan dengan selamat. Periksa nota yang terjejas sebelum memulakan penukaran baharu.",
 	"portable.title": "Tukar kepada Markdown standard",
-	"portable.settingDesc": "Gantikan callout tajuk dan sebaris di seluruh vault dengan teks biasa yang boleh digunakan tanpa Callout Studio.",
+	"portable.settingDesc":
+		"Gantikan callout tajuk dan sebaris di seluruh vault dengan teks biasa yang boleh digunakan tanpa Callout Studio.",
 	"portable.review": "Semak penukaran",
-	"portable.intro": "Jika anda ingin berhenti menggunakan Callout Studio atau memindahkan vault ke aplikasi yang tidak menyokongnya, tukarkan callout tajuk dan sebaris kepada Markdown standard.",
+	"portable.intro":
+		"Jika anda ingin berhenti menggunakan Callout Studio atau memindahkan vault ke aplikasi yang tidak menyokongnya, tukarkan callout tajuk dan sebaris kepada Markdown standard.",
 	"portable.before": "Sebelum",
 	"portable.after": "Selepas",
 	"portable.replacement": "Penggantian",
@@ -1169,24 +1128,30 @@ export const ms: Record<string, string> = {
 	"portable.type": "jenis",
 	"portable.text": "Teks",
 	"portable.headingText": "Tajuk",
-	"portable.backup": "Kami mengesyorkan anda menyandarkan vault sebelum penukaran. Tindakan ini mengubah nota asal dan tidak boleh dibuat asal dalam Callout Studio.",
+	"portable.backup":
+		"Kami mengesyorkan anda menyandarkan vault sebelum penukaran. Tindakan ini mengubah nota asal dan tidak boleh dibuat asal dalam Callout Studio.",
 	"portable.scanning": "Membaca nota Markdown…",
 	"portable.progress": "Membaca nota: {{done}} daripada {{total}}",
 	"portable.empty": "Tiada callout tajuk atau sebaris yang boleh ditukar ditemui. Tiada apa-apa akan diubah.",
 	"portable.confirmTitle": "Tukar vault ini secara kekal?",
 	"portable.confirmSubtitle": "Tiada sandaran automatik dibuat",
-	"portable.confirmBody": "Tukar {{count}} kemunculan dan kemas kini {{links}} pautan tajuk dalam {{files}} nota?\nTindakan ini mengubah fail asal dan tidak boleh dibuat asal dalam Callout Studio. Tiada sandaran automatik dicipta. Sandarkan vault dahulu, simpan nota yang terbuka dan jeda penyuntingan serta penyegerakan sehingga penukaran selesai.\nJika fail berubah atau penulisan gagal, penukaran akan berhenti. Nota yang sudah ditukar kekal berubah.",
+	"portable.confirmBody":
+		"Tukar {{count}} kemunculan dan kemas kini {{links}} pautan tajuk dalam {{files}} nota?\nTindakan ini mengubah fail asal dan tidak boleh dibuat asal dalam Callout Studio. Tiada sandaran automatik dicipta. Sandarkan vault dahulu, simpan nota yang terbuka dan jeda penyuntingan serta penyegerakan sehingga penukaran selesai.\nJika fail berubah atau penulisan gagal, penukaran akan berhenti. Nota yang sudah ditukar kekal berubah.",
 	"portable.confirmAction": "Tukar secara kekal",
-	"portable.converting": "Menukar perubahan yang dipilih… Menutup anak tetingkap ini tidak akan menghentikan penukaran.",
+	"portable.converting":
+		"Menukar perubahan yang dipilih… Menutup anak tetingkap ini tidak akan menghentikan penukaran.",
 	"portable.complete": "{{count}} kemunculan ditukar dan {{links}} pautan tajuk dikemas kini dalam {{files}} nota.",
-	"portable.stopped": "Penukaran terhenti. {{count}} kemunculan dan {{links}} pautan tajuk dalam {{files}} nota sudah diubah; perubahan tersebut dikekalkan.",
+	"portable.stopped":
+		"Penukaran terhenti. {{count}} kemunculan dan {{links}} pautan tajuk dalam {{files}} nota sudah diubah; perubahan tersebut dikekalkan.",
 	"portable.errorEditor": "Simpan nota yang terbuka untuk mengemas kini semakan secara automatik.",
 	"portable.errorChanged": "Nota telah berubah. Semak perubahan terkini sebelum menukar.",
 	"portable.errorBusy": "Penukaran lain sedang berjalan. Tunggu sehingga selesai.",
-	"portable.error": "Vault tidak dapat dibaca atau dikemas kini dengan selamat. Periksa akses fail, kemudian cuba lagi.",
+	"portable.error":
+		"Vault tidak dapat dibaca atau dikemas kini dengan selamat. Periksa akses fail, kemudian cuba lagi.",
 	"portable.blockedConverting": "Penukaran sedang berjalan. Tunggu sehingga selesai.",
 	"portable.blockedUpdating": "Semakan masih dikemas kini. Tunggu sehingga selesai sebelum menukar.",
-	"portable.blockedEditing": "Selesaikan dahulu pengeditan pengganti: tekan Enter untuk menyimpannya atau Esc untuk membuangnya.",
+	"portable.blockedEditing":
+		"Selesaikan dahulu pengeditan pengganti: tekan Enter untuk menyimpannya atau Esc untuk membuangnya.",
 	"portable.blockedNothingSelected": "Pilih sekurang-kurangnya satu pengganti untuk ditukar.",
 	"settings.maintenance": "Zon bahaya",
 	// Sync safety hardening
@@ -1228,10 +1193,12 @@ export const ms: Record<string, string> = {
 	"saveStatus.guide.restore":
 		"Jika tetapan anda tidak kembali, pilih Pulihkan tetapan ini untuk mengekalkan callout yang anda lihat di sini.",
 	"saveStatus.guide.create": "Jika tetapan anda tidak kembali, pilih Cipta fail tetapan untuk mula menyimpan semula.",
-	"saveStatus.guide.recoveryRetry": "Pastikan peranti ini mempunyai sedikit ruang storan kosong, kemudian pilih Cuba lagi.",
+	"saveStatus.guide.recoveryRetry":
+		"Pastikan peranti ini mempunyai sedikit ruang storan kosong, kemudian pilih Cuba lagi.",
 	"saveStatus.guide.recoveryDiscard":
 		"Jika itu tidak membantu, pilih Buang salinan pemulihan. Salinan tepat disimpan dahulu, dan fail tetapan anda tidak disentuh.",
-	"saveStatus.guide.newerVersion": "Kemas kini Callout Studio dalam Tetapan → Pemalam komuniti, kemudian muat semula Obsidian.",
+	"saveStatus.guide.newerVersion":
+		"Kemas kini Callout Studio dalam Tetapan → Pemalam komuniti, kemudian muat semula Obsidian.",
 	"saveStatus.missingNotice":
 		"Nota anda selamat. Callout Studio telah menjeda penyimpanan kerana ia tidak dapat menemui fail tetapannya sekarang.",
 	"statusBar.paused": "Penyimpanan dijeda",
@@ -1299,7 +1266,8 @@ export const ms: Record<string, string> = {
 	"recovery.details.unknownTime": "Masa penyimpanan tidak direkodkan",
 	"recovery.details.current": "Tetapan semasa",
 	"recovery.details.restored": "Selepas versi ini dipulihkan",
-	"recovery.details.unreadable": "Versi Callout Studio ini tidak dapat mentafsir salinan ini sebagai tetapan yang boleh dipulihkan. Salinan ini mungkin rosak, tidak tersedia atau menggunakan format yang lebih baharu. Perbandingan dan laporan tetapan yang dipulihkan tidak tersedia. Sebarang kandungan asal yang dapat dibaca disertakan di bawah.",
+	"recovery.details.unreadable":
+		"Versi Callout Studio ini tidak dapat mentafsir salinan ini sebagai tetapan yang boleh dipulihkan. Salinan ini mungkin rosak, tidak tersedia atau menggunakan format yang lebih baharu. Perbandingan dan laporan tetapan yang dipulihkan tidak tersedia. Sebarang kandungan asal yang dapat dibaca disertakan di bawah.",
 	"recovery.details.null": "Tiada nilai (null)",
 	"recovery.details.yes": "Ya",
 	"recovery.details.no": "Tidak",
@@ -1467,11 +1435,14 @@ export const ms: Record<string, string> = {
 	"recovery.delete": "Padam",
 
 	// Version history
-	"saveStatus.guide.versions": "Apabila penyimpanan berfungsi semula, anda juga boleh kembali ke versi tersimpan dengan Pulihkan versi terdahulu.",
+	"saveStatus.guide.versions":
+		"Apabila penyimpanan berfungsi semula, anda juga boleh kembali ke versi tersimpan dengan Pulihkan versi terdahulu.",
 	"saveStatus.goToVersions": "Pergi ke sejarah versi",
 	"versions.title": "Sejarah versi",
-	"versions.intro": "Callout Studio menyimpan versi konfigurasi anda secara automatik.\nVersi lama dibersihkan secara beransur-ansur.\nMemulihkan versi menggantikan konfigurasi semasa pada semua peranti yang disegerakkan.",
-	"versions.pausedHint": "Penyimpanan dijeda, jadi pemulihan tidak tersedia. Anda masih boleh membandingkan dan memadam versi.",
+	"versions.intro":
+		"Callout Studio menyimpan versi konfigurasi anda secara automatik.\nVersi lama dibersihkan secara beransur-ansur.\nMemulihkan versi menggantikan konfigurasi semasa pada semua peranti yang disegerakkan.",
+	"versions.pausedHint":
+		"Penyimpanan dijeda, jadi pemulihan tidak tersedia. Anda masih boleh membandingkan dan memadam versi.",
 	"versions.loading": "Mencari versi…",
 	"versions.empty": "Tiada versi ditemui.",
 	"versions.dayWithDate": "{{date}} ({{relative}})",
@@ -1488,22 +1459,27 @@ export const ms: Record<string, string> = {
 	"versions.reason.beforeRepair": "Sebelum fail tetapan dibaiki",
 	"versions.restoreTitle": "Pulihkan versi ini",
 	"versions.subtitle": "“{{name}}” · {{when}}",
-	"versions.restoreBody": "Persediaan semasa anda akan diganti ({{count}} perbezaan).\nIa disimpan dahulu sebagai versi, supaya anda boleh kembali kepadanya.\nPerkhidmatan segerak anda kemudian menghantar persediaan yang dipulihkan ke peranti anda yang lain.",
+	"versions.restoreBody":
+		"Persediaan semasa anda akan diganti ({{count}} perbezaan).\nIa disimpan dahulu sebagai versi, supaya anda boleh kembali kepadanya.\nPerkhidmatan segerak anda kemudian menghantar persediaan yang dipulihkan ke peranti anda yang lain.",
 	"versions.restoreSame": "Versi ini sama dengan konfigurasi semasa anda, jadi tiada apa-apa untuk dipulihkan.",
 	"versions.restored": "“{{name}}” dari {{when}} dipulihkan.",
-	"versions.backupFailed": "Tiada apa-apa dipulihkan: konfigurasi semasa tidak dapat disimpan sebagai versi terlebih dahulu. Semak ruang storan yang tersedia, kemudian cuba lagi.",
+	"versions.backupFailed":
+		"Tiada apa-apa dipulihkan: konfigurasi semasa tidak dapat disimpan sebagai versi terlebih dahulu. Semak ruang storan yang tersedia, kemudian cuba lagi.",
 	"versions.restoreFailed": "Versi tidak dapat dipulihkan. Tiada apa-apa diubah.",
 	"versions.deleteTitle": "Padam versi ini",
 	"versions.deleteAvailableBody": "Ia dan semua salinannya yang tersedia akan dipadam secara kekal.",
-	"versions.deleteSyncedFiles": "Pemadaman fail-fail ini mungkin disegerakkan ke peranti anda yang lain. Salinan setempat pada peranti tersebut mungkin kekal.",
+	"versions.deleteSyncedFiles":
+		"Pemadaman fail-fail ini mungkin disegerakkan ke peranti anda yang lain. Salinan setempat pada peranti tersebut mungkin kekal.",
 	"versions.deleteFinal": "Tindakan ini tidak boleh dibuat asal. Konfigurasi semasa anda tidak terjejas.",
 	"versions.deleted": "“{{name}}” dari {{when}} dipadam.",
-	"versions.deleteFailed": "Sesetengah salinan versi ini tidak dapat dipadam. Senarai kini menunjukkan yang masih tinggal.",
+	"versions.deleteFailed":
+		"Sesetengah salinan versi ini tidak dapat dipadam. Senarai kini menunjukkan yang masih tinggal.",
 	"versions.details.title": "Butiran versi",
 	"versions.details.difference": "{{count}} perbezaan daripada tetapan semasa anda",
 	"versions.details.differences": "{{count}} perbezaan daripada tetapan semasa anda",
 	"versions.details.comparisonUnavailable": "Perbandingan tidak tersedia",
-	"notice.unsavedChangesKept": "Sesetengah perubahan pada peranti ini belum disimpan dan digantikan oleh tetapan lebih baharu daripada peranti lain. Versi anda disimpan terlebih dahulu: buka Pulihkan versi terdahulu dalam tetapan Callout Studio untuk mendapatkannya semula.",
+	"notice.unsavedChangesKept":
+		"Sesetengah perubahan pada peranti ini belum disimpan dan digantikan oleh tetapan lebih baharu daripada peranti lain. Versi anda disimpan terlebih dahulu: buka Pulihkan versi terdahulu dalam tetapan Callout Studio untuk mendapatkannya semula.",
 	"settings.versionHistory": "Pulihkan versi terdahulu",
 	"settings.versions": "Versi terdahulu",
 	"settings.versionsDesc": "Gantikan persediaan semasa anda dengan versi terdahulu yang disimpan.",
@@ -1514,12 +1490,13 @@ export const ms: Record<string, string> = {
 	"noteChanges.notesOne": "1 nota",
 	"noteChanges.askCallout": "Apa yang patut berlaku pada callout itu?",
 	"noteChanges.askCallouts": "Apa yang patut berlaku pada callout itu?",
-	"noteChanges.changeRenamed": "Anda menukar nama paparan daripada \"{{old}}\" kepada \"{{new}}\", jadi ID utama berubah daripada \"{{oldId}}\" kepada \"{{newId}}\".",
-	"noteChanges.changeMainId": "ID utama berubah daripada \"{{oldId}}\" kepada \"{{newId}}\".",
-	"noteChanges.changeName": "Anda menukar nama paparan daripada \"{{old}}\" kepada \"{{new}}\".",
-	"noteChanges.changeRemoved": "Anda mengalih keluar ID \"{{id}}\".",
+	"noteChanges.changeRenamed":
+		'Anda menukar nama paparan daripada "{{old}}" kepada "{{new}}", jadi ID utama berubah daripada "{{oldId}}" kepada "{{newId}}".',
+	"noteChanges.changeMainId": 'ID utama berubah daripada "{{oldId}}" kepada "{{newId}}".',
+	"noteChanges.changeName": 'Anda menukar nama paparan daripada "{{old}}" kepada "{{new}}".',
+	"noteChanges.changeRemoved": 'Anda mengalih keluar ID "{{id}}".',
 	"noteChanges.changeRemovedMany": "Anda mengalih keluar ID ini: {{ids}}.",
-	"noteChanges.changeResetRemoved": "Set semula ke lalai mengalih keluar ID \"{{id}}\" yang anda tambah.",
+	"noteChanges.changeResetRemoved": 'Set semula ke lalai mengalih keluar ID "{{id}}" yang anda tambah.',
 	"noteChanges.changeResetRemovedMany": "Set semula ke lalai mengalih keluar ID yang anda tambah: {{ids}}.",
 	"noteChanges.changeFold": "Anda mengubah cara callout ini dilipat.",
 	"noteChanges.affects": "Ini menjejaskan {{callouts}} dalam {{notes}}.",
@@ -1528,7 +1505,8 @@ export const ms: Record<string, string> = {
 	"noteChanges.rewriteManyDesc": "Setiap ID lama dalam nota anda menjadi [!{{to}}].",
 	"noteChanges.changeToIdLabel": "ID untuk menukarnya kepada",
 	"noteChanges.rewriteDesc": "Setiap [!{{id}}] dalam nota anda menjadi [!{{to}}].",
-	"noteChanges.renameFollowDesc": "Setiap [!{{oldId}}] dalam nota anda menjadi [!{{newId}}], dan tajuk yang tertera \"{{old}}\" menjadi \"{{new}}\".",
-	"noteChanges.titlesChangeDesc": "Tajuk yang tertera \"{{old}}\" menjadi \"{{new}}\".",
+	"noteChanges.renameFollowDesc":
+		'Setiap [!{{oldId}}] dalam nota anda menjadi [!{{newId}}], dan tajuk yang tertera "{{old}}" menjadi "{{new}}".',
+	"noteChanges.titlesChangeDesc": 'Tajuk yang tertera "{{old}}" menjadi "{{new}}".',
 	"noteChanges.foldChangeDesc": "Tanda + atau - pada callout itu berubah supaya sepadan.",
 };

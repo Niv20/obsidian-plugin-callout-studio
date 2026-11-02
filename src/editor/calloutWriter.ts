@@ -59,10 +59,7 @@ export interface TokenBuildOptions {
  * a title written from `[!attention]` is recognised as generated when the type
  * is switched later, and replaced rather than kept as if the user chose it.
  */
-export function isGeneratedTitle(
-	defs: Iterable<CalloutLabelSource>,
-	title: string,
-): boolean {
+export function isGeneratedTitle(defs: Iterable<CalloutLabelSource>, title: string): boolean {
 	const wanted = title.toLowerCase();
 	for (const def of defs) {
 		if (def.displayName.toLowerCase() === wanted) return true;
@@ -128,10 +125,7 @@ export function splitFoldMark(
  * only echoes a generated title is replaced by this token's own label — the
  * NAME for the callout's id, the default title for an alias it was typed as.
  */
-function resolveTitle(
-	def: CalloutDefinition,
-	options: TokenBuildOptions,
-): string {
+function resolveTitle(def: CalloutDefinition, options: TokenBuildOptions): string {
 	const label = calloutTokenLabel(def, options.matchedId ?? def.id);
 	const existing = (options.existingTitle ?? "").trim();
 	if (existing === "") return label;
@@ -146,10 +140,7 @@ const tokenId = (def: CalloutDefinition, options: TokenBuildOptions): string =>
  * Block callout header, without its `>` prefix: `[!warning]- Warning`.
  * Always titled — the block header renders the text it is given.
  */
-export function buildBlockHeaderToken(
-	def: CalloutDefinition,
-	options: TokenBuildOptions = {},
-): string {
+export function buildBlockHeaderToken(def: CalloutDefinition, options: TokenBuildOptions = {}): string {
 	const foldMark = options.foldMark ?? foldMarkFor(def);
 	return `${tokenId(def, options)}${foldMark} ${resolveTitle(def, options)}`;
 }
@@ -161,10 +152,7 @@ export function buildBlockHeaderToken(
  * already shows the display name, and this role has no fold syntax of its own.
  * A title the user already wrote on the line is kept.
  */
-export function buildHeadingToken(
-	def: CalloutDefinition,
-	options: TokenBuildOptions = {},
-): string {
+export function buildHeadingToken(def: CalloutDefinition, options: TokenBuildOptions = {}): string {
 	const existing = (options.existingTitle ?? "").trim();
 	const token = tokenId(def, options);
 	if (existing === "") return token;
@@ -173,10 +161,7 @@ export function buildHeadingToken(
 }
 
 /** Inline pill token: `[!important]`. Never titled — the pill draws itself. */
-export function buildInlineToken(
-	def: CalloutDefinition,
-	options: TokenBuildOptions = {},
-): string {
+export function buildInlineToken(def: CalloutDefinition, options: TokenBuildOptions = {}): string {
 	return tokenId(def, options);
 }
 

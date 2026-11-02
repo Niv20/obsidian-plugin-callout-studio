@@ -23,14 +23,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	ICON_PACK_IDS,
-	ICON_SOURCES,
-	ICON_SOURCE_IDS,
-	getSource,
-	iconCacheKey,
-	packFor,
-} from "../src/icons/registry";
+import { ICON_PACK_IDS, ICON_SOURCES, ICON_SOURCE_IDS, getSource, iconCacheKey, packFor } from "../src/icons/registry";
 import type { CalloutIcon, IconPackId, IconSourceId } from "../src/types";
 import { CALLOUT_RENDER_ROLES } from "../src/types";
 import type { IconEntry } from "../src/icons/types";
@@ -42,11 +35,7 @@ import { FA_BRANDS_INDEX } from "../src/icons/data/fa-brands.index";
 import { TABLER_OUTLINE_INDEX } from "../src/icons/data/tabler-outline.index";
 import { TABLER_FILLED_INDEX } from "../src/icons/data/tabler-filled.index";
 import { faPack, FA_DATA_PACKS, faStyleOf } from "../src/icons/packs/fontAwesome";
-import {
-	tablerPack,
-	TABLER_DATA_PACKS,
-	tablerStyleOf,
-} from "../src/icons/packs/tabler";
+import { tablerPack, TABLER_DATA_PACKS, tablerStyleOf } from "../src/icons/packs/tabler";
 import { describeIcon } from "../src/icons/describeIcon";
 import { en } from "../src/i18n/en";
 import type { UserImageIcon } from "../src/types";
@@ -90,19 +79,12 @@ describe("ICON_SOURCES and SOURCE_OF_TYPE are total over their unions", () => {
 
 	it("maps every pack id onto the source stated here", () => {
 		for (const [type, source] of Object.entries(EXPECTED_SOURCE_OF_TYPE)) {
-			assert.equal(
-				packFor(icon(type as IconPackId))?.id,
-				source,
-				`${type} should belong to ${source}`,
-			);
+			assert.equal(packFor(icon(type as IconPackId))?.id, source, `${type} should belong to ${source}`);
 		}
 	});
 
 	it("declares exactly the pack ids listed here, no more and no fewer", () => {
-		assert.deepStrictEqual(
-			[...ICON_PACK_IDS].sort(),
-			Object.keys(EXPECTED_SOURCE_OF_TYPE).sort(),
-		);
+		assert.deepStrictEqual([...ICON_PACK_IDS].sort(), Object.keys(EXPECTED_SOURCE_OF_TYPE).sort());
 	});
 
 	it("leaves no source without artwork to draw", () => {
@@ -143,25 +125,17 @@ describe("dataPacks line up with the pack manifest", () => {
 	it("gives every downloadable pack a manifest entry, and nothing else one", () => {
 		const downloadable = new Set(
 			ICON_SOURCE_IDS.flatMap((id) =>
-				ICON_SOURCES[id].kind === "bundledRemote"
-					? [...(ICON_SOURCES[id].dataPacks ?? [])]
-					: [],
+				ICON_SOURCES[id].kind === "bundledRemote" ? [...(ICON_SOURCES[id].dataPacks ?? [])] : [],
 			),
 		);
-		assert.deepStrictEqual(
-			[...downloadable].sort(),
-			(Object.keys(PACK_MANIFEST) as IconPackId[]).sort(),
-		);
+		assert.deepStrictEqual([...downloadable].sort(), (Object.keys(PACK_MANIFEST) as IconPackId[]).sort());
 	});
 
 	it("gives a pack that is not downloaded whole no dataPacks at all", () => {
 		for (const id of ICON_SOURCE_IDS) {
 			const pack = ICON_SOURCES[id];
 			if (pack.kind === "bundledRemote") {
-				assert.ok(
-					(pack.dataPacks?.length ?? 0) > 0,
-					`${id} is downloadable but names no file`,
-				);
+				assert.ok((pack.dataPacks?.length ?? 0) > 0, `${id} is downloadable but names no file`);
 			} else {
 				assert.equal(pack.dataPacks, undefined, `${id} names a file it never fetches`);
 			}
@@ -169,15 +143,8 @@ describe("dataPacks line up with the pack manifest", () => {
 	});
 
 	it("splits Font Awesome into three files and Tabler into two", () => {
-		assert.deepStrictEqual([...FA_DATA_PACKS], [
-			"fa-solid",
-			"fa-regular",
-			"fa-brands",
-		]);
-		assert.deepStrictEqual([...TABLER_DATA_PACKS], [
-			"tabler-outline",
-			"tabler-filled",
-		]);
+		assert.deepStrictEqual([...FA_DATA_PACKS], ["fa-solid", "fa-regular", "fa-brands"]);
+		assert.deepStrictEqual([...TABLER_DATA_PACKS], ["tabler-outline", "tabler-filled"]);
 	});
 });
 
@@ -218,10 +185,7 @@ describe("iconCacheKey — keyed by artwork, never by source", () => {
 	});
 
 	it("is stable — the same three parts always give the same key", () => {
-		assert.equal(
-			iconCacheKey("octicons", "alert", "16"),
-			iconCacheKey("octicons", "alert", "16"),
-		);
+		assert.equal(iconCacheKey("octicons", "alert", "16"), iconCacheKey("octicons", "alert", "16"));
 	});
 
 	it("separates on a separator no id, name or variant contains", () => {
@@ -256,15 +220,9 @@ describe("cacheVariant — what varies the artwork, per pack", () => {
 
 	it("carries Material's style and weight, which its type does not", () => {
 		const material = ICON_SOURCES.material;
+		assert.equal(material.cacheVariant({ type: "material", value: "home" }, "regular"), "outlined|400");
 		assert.equal(
-			material.cacheVariant({ type: "material", value: "home" }, "regular"),
-			"outlined|400",
-		);
-		assert.equal(
-			material.cacheVariant(
-				{ type: "material", value: "home", style: "filled", weight: 700 },
-				"regular",
-			),
+			material.cacheVariant({ type: "material", value: "home", style: "filled", weight: 700 }, "regular"),
 			"filled|700",
 		);
 	});
@@ -352,10 +310,7 @@ describe("entryMatches — which icons a style actually draws", () => {
 	it("merges the three Font Awesome files into 1,992 names", async () => {
 		const index = await faPack.loadIndex();
 		assert.equal(index.entries.length, 1992);
-		assert.equal(
-			new Set([...faNames.solid, ...faNames.regular, ...faNames.brands]).size,
-			1992,
-		);
+		assert.equal(new Set([...faNames.solid, ...faNames.regular, ...faNames.brands]).size, 1992);
 	});
 
 	it("gives every other source no filter at all", () => {
@@ -363,10 +318,7 @@ describe("entryMatches — which icons a style actually draws", () => {
 		// the same answer written more expensively on every keystroke.
 		for (const id of ICON_SOURCE_IDS) {
 			if (id === "fa" || id === "tabler") continue;
-			assert.ok(
-				!("entryMatches" in ICON_SOURCES[id]),
-				`${id} filters its grid for no reason`,
-			);
+			assert.ok(!("entryMatches" in ICON_SOURCES[id]), `${id} filters its grid for no reason`);
 		}
 	});
 });
@@ -377,8 +329,7 @@ describe("makeIcon lands on a style that actually draws the name", () => {
 		// control, so a Brands-only name can be picked while Solid is selected.
 		const index = await faPack.loadIndex();
 		const brandsOnly = index.entries.find(
-			(e) => faPack.entryMatches?.(e, { faStyle: "brands" }) &&
-				!faPack.entryMatches?.(e, { faStyle: "solid" }),
+			(e) => faPack.entryMatches?.(e, { faStyle: "brands" }) && !faPack.entryMatches?.(e, { faStyle: "solid" }),
 		);
 		assert.ok(brandsOnly, "expected at least one Brands-only name");
 		assert.equal(faPack.makeIcon(brandsOnly, { faStyle: "solid" }).type, "fa-brands");
@@ -386,23 +337,16 @@ describe("makeIcon lands on a style that actually draws the name", () => {
 
 	it("keeps the chosen style when it does draw the name", async () => {
 		const index = await faPack.loadIndex();
-		const regular = index.entries.find((e) =>
-			faPack.entryMatches?.(e, { faStyle: "regular" }),
-		);
+		const regular = index.entries.find((e) => faPack.entryMatches?.(e, { faStyle: "regular" }));
 		assert.ok(regular);
 		assert.equal(faPack.makeIcon(regular, { faStyle: "regular" }).type, "fa-regular");
 	});
 
 	it("falls Tabler back to Outline, which draws everything", async () => {
 		const index = await tablerPack.loadIndex();
-		const outlineOnly = index.entries.find(
-			(e) => !tablerPack.entryMatches?.(e, { tablerStyle: "filled" }),
-		);
+		const outlineOnly = index.entries.find((e) => !tablerPack.entryMatches?.(e, { tablerStyle: "filled" }));
 		assert.ok(outlineOnly);
-		assert.equal(
-			tablerPack.makeIcon(outlineOnly, { tablerStyle: "filled" }).type,
-			"tabler-outline",
-		);
+		assert.equal(tablerPack.makeIcon(outlineOnly, { tablerStyle: "filled" }).type, "tabler-outline");
 	});
 
 	it("reads the style back off a stored icon, for reopening the picker", () => {
@@ -475,22 +419,13 @@ describe("describeIcon", () => {
 	it("names the library and the icon", () => {
 		assert.equal(describeIcon(icon("octicons", "alert"), []), "Octicons: alert");
 		assert.equal(describeIcon(icon("lucide", "pencil"), []), "Lucide: pencil");
-		assert.equal(
-			describeIcon(icon("rpg-awesome", "acid"), []),
-			"RPG Awesome: acid",
-		);
-		assert.equal(
-			describeIcon(icon("simple-icons", "nodedotjs"), []),
-			"Simple Icons: nodedotjs",
-		);
+		assert.equal(describeIcon(icon("rpg-awesome", "acid"), []), "RPG Awesome: acid");
+		assert.equal(describeIcon(icon("simple-icons", "nodedotjs"), []), "Simple Icons: nodedotjs");
 	});
 
 	it("spells out Material's style and weight, which the name does not carry", () => {
 		assert.equal(
-			describeIcon(
-				{ type: "material", value: "home", style: "filled", weight: 700 },
-				[],
-			),
+			describeIcon({ type: "material", value: "home", style: "filled", weight: 700 }, []),
 			"Material: home (filled, 700)",
 		);
 	});
@@ -498,28 +433,16 @@ describe("describeIcon", () => {
 	it("fills Material's defaults in when the icon omits them", () => {
 		// Pre-2.0 data and imports both arrive without these, and the summary has
 		// to say what will actually be fetched rather than leave a blank.
-		assert.equal(
-			describeIcon({ type: "material", value: "home" }, []),
-			"Material: home (outlined, 400)",
-		);
+		assert.equal(describeIcon({ type: "material", value: "home" }, []), "Material: home (outlined, 400)");
 	});
 
 	it("says which of Font Awesome's three styles is about to be saved", () => {
-		assert.equal(
-			describeIcon(icon("fa-brands", "github"), []),
-			"Font Awesome: github (brands)",
-		);
-		assert.equal(
-			describeIcon(icon("fa-solid", "star"), []),
-			"Font Awesome: star (solid)",
-		);
+		assert.equal(describeIcon(icon("fa-brands", "github"), []), "Font Awesome: github (brands)");
+		assert.equal(describeIcon(icon("fa-solid", "star"), []), "Font Awesome: star (solid)");
 	});
 
 	it("resolves a user's picture to the name they gave it", () => {
-		assert.equal(
-			describeIcon(icon("image", "img-1"), [image()]),
-			"Custom Icons: logo.svg",
-		);
+		assert.equal(describeIcon(icon("image", "img-1"), [image()]), "Custom Icons: logo.svg");
 	});
 
 	it("falls back to the id when the picture has been deleted", () => {
@@ -533,29 +456,19 @@ describe("describeIcon", () => {
 	});
 
 	it("falls back to the glyph for an emoji it has no name for", () => {
-		assert.equal(describeIcon(icon("emoji", "\u{1F9FF}\u{1F9FF}"), []),
-			"Emoji: \u{1F9FF}\u{1F9FF}");
+		assert.equal(describeIcon(icon("emoji", "\u{1F9FF}\u{1F9FF}"), []), "Emoji: \u{1F9FF}\u{1F9FF}");
 	});
 
 	it("uses the raw type when the library is one this build does not know", () => {
-		assert.equal(
-			describeIcon({ type: "future-pack" as IconPackId, value: "x" }, []),
-			"future-pack: x",
-		);
+		assert.equal(describeIcon({ type: "future-pack" as IconPackId, value: "x" }, []), "future-pack: x");
 	});
 
 	it("says which of Tabler's two styles is about to be saved", () => {
 		// The same reason Font Awesome gets a suffix: one source, one name, two
 		// different drawings the picker can both produce. A summary that reads
 		// the same for either is a summary that answers nothing.
-		assert.equal(
-			describeIcon(icon("tabler-outline", "home"), []),
-			"Tabler Icons: home (outline)",
-		);
-		assert.equal(
-			describeIcon(icon("tabler-filled", "home"), []),
-			"Tabler Icons: home (filled)",
-		);
+		assert.equal(describeIcon(icon("tabler-outline", "home"), []), "Tabler Icons: home (outline)");
+		assert.equal(describeIcon(icon("tabler-filled", "home"), []), "Tabler Icons: home (filled)");
 	});
 
 	it("names a style for every source that has more than one", () => {

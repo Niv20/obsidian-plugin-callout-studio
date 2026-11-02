@@ -103,8 +103,7 @@ export function recordingPlan(label: string, size: number, rec: Recorder): Plugi
 export function recordingSource(rec: Recorder, base: PluginImportSource = ADMONITION_IMPORT): PluginImportSource {
 	return {
 		...base,
-		fromDataJson: (raw) =>
-			Array.isArray(raw) ? recordingBatch("vault", raw.length, rec) : null,
+		fromDataJson: (raw) => (Array.isArray(raw) ? recordingBatch("vault", raw.length, rec) : null),
 		fromText: (text) => {
 			rec.fromText.push(text);
 			if (text === "bad") return { errorKey: "import.err.parseFailed" };
@@ -162,11 +161,12 @@ export function harness(options: HarnessOptions = {}): Harness {
 			configDir: ".obsidian",
 			adapter: {
 				stat: () => Promise.resolve(null),
-				exists: (path: string) => Promise.resolve(
-					path.endsWith("/data.json")
-						? dataJson !== undefined
-						: (options.folderExists ?? dataJson !== undefined),
-				),
+				exists: (path: string) =>
+					Promise.resolve(
+						path.endsWith("/data.json")
+							? dataJson !== undefined
+							: (options.folderExists ?? dataJson !== undefined),
+					),
 				read: () => Promise.resolve(dataJson ?? ""),
 			},
 		},

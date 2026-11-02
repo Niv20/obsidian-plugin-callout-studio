@@ -157,10 +157,7 @@ const SEARCH_SURFACES: string[] = [
 ];
 
 /** Every plugin window that places the cursor in a text field on open. */
-const AUTOFOCUSED: string[] = [
-	...CREATE_ONLY.map((w) => w.file),
-	...SEARCH_SURFACES,
-];
+const AUTOFOCUSED: string[] = [...CREATE_ONLY.map((w) => w.file), ...SEARCH_SURFACES];
 
 /** How many times `code` calls `name(`, ignoring the import that names it. */
 function callCount(code: string, name: string): number {
@@ -173,16 +170,11 @@ describe("plugin windows only autofocus text on desktop", () => {
 			const text = readRepoFile(file);
 			const code = blankLiterals(text);
 			const calls = [...code.matchAll(/\bautofocusOnDesktop\s*\(/g)];
-			assert.strictEqual(
-				calls.length,
-				1,
-				`expected exactly one autofocusOnDesktop call in ${file}`,
-			);
+			assert.strictEqual(calls.length, 1, `expected exactly one autofocusOnDesktop call in ${file}`);
 			const before = code.slice(0, calls[0]?.index ?? 0);
 			assert.ok(
 				before.includes(guard),
-				`${file} calls autofocusOnDesktop outside \`${guard}\` — an edit ` +
-					`window would take the cursor too`,
+				`${file} calls autofocusOnDesktop outside \`${guard}\` — an edit ` + `window would take the cursor too`,
 			);
 			// …and the call is still INSIDE that block. Any `}` in between would
 			// have closed it (a nested block would have to close too), which is
@@ -203,9 +195,7 @@ describe("plugin windows only autofocus text on desktop", () => {
 	}
 
 	it("no window calls the removed unconditional helper", () => {
-		const bad = AUTOFOCUSED.filter(
-			(file) => callCount(blankLiterals(readRepoFile(file)), "autofocusOnOpen") > 0,
-		);
+		const bad = AUTOFOCUSED.filter((file) => callCount(blankLiterals(readRepoFile(file)), "autofocusOnOpen") > 0);
 		assert.deepStrictEqual(
 			bad,
 			[],
@@ -245,9 +235,7 @@ describe("plugin windows only autofocus text on desktop", () => {
 		const bad: string[] = [];
 		for (const file of AUTOFOCUSED) {
 			const code = blankLiterals(readRepoFile(file));
-			const fields = [
-				...code.matchAll(/\b(\w+)\s*:\s*HTMLInputElement\b/g),
-			].map((m) => m[1] ?? "");
+			const fields = [...code.matchAll(/\b(\w+)\s*:\s*HTMLInputElement\b/g)].map((m) => m[1] ?? "");
 			const receivers = [...new Set([...fields, "inputEl"])];
 			for (const name of receivers) {
 				const direct = new RegExp(`\\.?\\b${name}\\s*\\??\\.focus\\s*\\(`, "g");
@@ -273,9 +261,7 @@ describe("plugin windows only autofocus text on desktop", () => {
 		// removed because it read as a delayed lurch rather than as no jump at
 		// all. Anything timer-shaped here is that idea coming back.
 		const code = blankLiterals(readRepoFile("src/settings/modalAutofocus.ts"));
-		const relapses = ["setTimeout", "addEventListener", "scrollTop"].filter(
-			(token) => code.includes(token),
-		);
+		const relapses = ["setTimeout", "addEventListener", "scrollTop"].filter((token) => code.includes(token));
 		assert.deepStrictEqual(
 			relapses,
 			[],

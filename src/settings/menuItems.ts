@@ -85,7 +85,8 @@ export function defaultMenuItems(role: CalloutRenderRole): ContextMenuItemConfig
 /** Whether `items` are `role`'s items as shipped: the same ones, in order, on or off alike. */
 export function isMenuRoleDefault(items: readonly ContextMenuItemConfig[], role: CalloutRenderRole): boolean {
 	const defaults = DEFAULT_CONTEXT_MENU_ITEMS[role];
-	return items.length === defaults.length && items.every((item, index) =>
-		item.id === defaults[index]?.id && item.enabled === defaults[index]?.enabled,
+	return (
+		items.length === defaults.length &&
+		items.every((item, index) => item.id === defaults[index]?.id && item.enabled === defaults[index]?.enabled)
 	);
 }

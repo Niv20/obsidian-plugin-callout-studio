@@ -51,29 +51,19 @@ export interface BgLayer {
  * alpha hides nothing, so a callout nested inside a transparent one still
  * tints normally.
  */
-export function bgProps(
-	def: CalloutDefinition,
-	mode: "light" | "dark",
-	important = false,
-): string[] {
+export function bgProps(def: CalloutDefinition, mode: "light" | "dark", important = false): string[] {
 	if (def.transparentBg) {
 		const impT = important ? " !important" : "";
 		// `background-image: none` is load-bearing, not belt-and-braces: a
 		// theme can paint one, and it also stops a gradient left behind by
 		// hand-edited data from showing through the cleared colour.
-		return [
-			`  background-color: transparent${impT};`,
-			`  background-image: none${impT};`,
-		];
+		return [`  background-color: transparent${impT};`, `  background-image: none${impT};`];
 	}
 	const bg = mode === "dark" ? def.bgColorDark : def.bgColorLight;
 	if (!bg) return [];
 	const imp = important ? " !important" : "";
 	const alpha = resolveBgAlpha(def, mode);
-	const color =
-		alpha === null
-			? bg
-			: tintCss(tintColorAt(bg, mode === "dark", alpha), alpha);
+	const color = alpha === null ? bg : tintCss(tintColorAt(bg, mode === "dark", alpha), alpha);
 	const props = [`  background-color: ${color}${imp};`];
 	// In dark mode core draws a callout with `mix-blend-mode: lighten`, which
 	// keeps, channel by channel, whichever is lighter: the callout or the page
@@ -119,10 +109,7 @@ function darkerThanPage(hex: string): boolean {
  * painted over a translucent `background-color` would put the opaque layer
  * back on top and re-hide the backdrop the tint just exposed.
  */
-export function bgImageFor(
-	def: CalloutDefinition,
-	mode: "light" | "dark",
-): BgLayer | null {
+export function bgImageFor(def: CalloutDefinition, mode: "light" | "dark"): BgLayer | null {
 	// A sweep is a background, so transparency wins over it. `bgProps`
 	// already returns before reaching here; this guards the hand-edited case
 	// where a gradient survived alongside the flag.
@@ -131,9 +118,7 @@ export function bgImageFor(
 	if (!bg) return null;
 	if (!def.bgGradient) return null;
 	const isDark = mode === "dark";
-	const to = isDark
-		? def.bgGradient.toColorDark
-		: def.bgGradient.toColorLight;
+	const to = isDark ? def.bgGradient.toColorDark : def.bgGradient.toColorLight;
 	const alpha = resolveBgAlpha(def, mode);
 	if (alpha === null) {
 		return { image: bgGradientCss(bg, to, def.bgGradient) };

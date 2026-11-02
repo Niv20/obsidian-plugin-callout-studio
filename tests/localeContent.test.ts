@@ -45,12 +45,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import { en } from "../src/i18n/en";
 import { LOCALE_MANIFEST } from "../src/i18n/localeManifest";
-import {
-	LOCALE_TABLES,
-	RTL_LOCALES,
-	localeEntries,
-	type LocaleTable,
-} from "./support/localeTables";
+import { LOCALE_TABLES, RTL_LOCALES, localeEntries, type LocaleTable } from "./support/localeTables";
 
 const entries = localeEntries();
 
@@ -63,8 +58,7 @@ const LOOSE_PLACEHOLDER = /\{\{[^}]*\}\}/g;
 /** The shape `t()` will actually substitute, anchored. */
 const WELL_FORMED = /^\{\{[a-zA-Z0-9_]+\}\}$/;
 
-const tokensOf = (value: string): string[] =>
-	(value.match(PLACEHOLDER) ?? []).sort();
+const tokensOf = (value: string): string[] => (value.match(PLACEHOLDER) ?? []).sort();
 
 function malformedTokens(table: LocaleTable): string[] {
 	const found: string[] = [];
@@ -116,11 +110,9 @@ const EMBEDDING = [0x202a, 0x202b, 0x202c, 0x202d, 0x202e].map(u).join("");
 
 const ANY_BIDI = new RegExp(`[${BIDI_MARKS}${ISOLATE_OPEN}${PDI}${EMBEDDING}]`);
 
-const isBidi = (ch: string | undefined): boolean =>
-	ch !== undefined && ANY_BIDI.test(ch);
+const isBidi = (ch: string | undefined): boolean => ch !== undefined && ANY_BIDI.test(ch);
 
-const codePoint = (ch: string): string =>
-	`U+${(ch.codePointAt(0) ?? 0).toString(16).toUpperCase().padStart(4, "0")}`;
+const codePoint = (ch: string): string => `U+${(ch.codePointAt(0) ?? 0).toString(16).toUpperCase().padStart(4, "0")}`;
 
 /** `null` when the isolates balance, else a description of how they do not. */
 function isolateFault(value: string): string | null {
@@ -145,10 +137,7 @@ describe("every locale source is covered by these tests", () => {
 	it("lists exactly the locales the manifest ships", () => {
 		// Without this, adding a 32nd language and forgetting `localeTables.ts`
 		// would leave it untested while the suite still reported all green.
-		assert.deepStrictEqual(
-			Object.keys(LOCALE_TABLES).sort(),
-			Object.keys(LOCALE_MANIFEST).sort(),
-		);
+		assert.deepStrictEqual(Object.keys(LOCALE_TABLES).sort(), Object.keys(LOCALE_MANIFEST).sort());
 	});
 
 	it("does not treat English as a downloadable locale", () => {
@@ -197,9 +186,7 @@ describe("no locale carries a key English lacks", () => {
 		t.diagnostic(
 			trailing.length === 0
 				? `all ${entries.length} locales are level with en.ts`
-				: trailing
-						.map((row) => `${row.fileId} is missing ${row.missing}`)
-						.join(", "),
+				: trailing.map((row) => `${row.fileId} is missing ${row.missing}`).join(", "),
 		);
 	});
 });
@@ -222,27 +209,14 @@ describe("the retired autocomplete toggle copy stays removed", () => {
 });
 
 describe("export format guidance is translated everywhere", () => {
-	const keys = [
-		"export.formatJson",
-		"export.formatJsonDesc",
-		"export.formatCss",
-		"export.formatCssDesc",
-	] as const;
+	const keys = ["export.formatJson", "export.formatJsonDesc", "export.formatCss", "export.formatCssDesc"] as const;
 
 	for (const [fileId, table] of entries) {
 		it(`${fileId}.ts has its own export guidance`, () => {
 			for (const key of keys) {
 				const localized = table[key];
-				assert.strictEqual(
-					typeof localized,
-					"string",
-					`${fileId}.ts is missing ${key}`,
-				);
-				assert.notStrictEqual(
-					localized,
-					en[key],
-					`${fileId}.ts still shows the English ${key}`,
-				);
+				assert.strictEqual(typeof localized, "string", `${fileId}.ts is missing ${key}`);
+				assert.notStrictEqual(localized, en[key], `${fileId}.ts still shows the English ${key}`);
 			}
 		});
 	}
@@ -263,19 +237,10 @@ describe("the plugin import window is translated everywhere", () => {
 	for (const [fileId, table] of entries) {
 		it(`${fileId}.ts has its own copy for the import window`, () => {
 			for (const key of keys) {
-				assert.strictEqual(
-					typeof table[key],
-					"string",
-					`${fileId}.ts is missing ${key}`,
-				);
-				assert.notStrictEqual(
-					table[key],
-					en[key],
-					`${fileId}.ts still shows the English ${key}`,
-				);
+				assert.strictEqual(typeof table[key], "string", `${fileId}.ts is missing ${key}`);
+				assert.notStrictEqual(table[key], en[key], `${fileId}.ts still shows the English ${key}`);
 			}
 		});
-
 	}
 });
 
@@ -286,16 +251,8 @@ describe("the create-or-edit menu action is translated everywhere", () => {
 	for (const [fileId, table] of entries) {
 		it(`${fileId}.ts`, () => {
 			const localized = table[key];
-			assert.strictEqual(
-				typeof localized,
-				"string",
-				`${fileId}.ts is missing ${key}`,
-			);
-			assert.notStrictEqual(
-				localized,
-				english,
-				`${fileId}.ts still shows the English create-or-edit action`,
-			);
+			assert.strictEqual(typeof localized, "string", `${fileId}.ts is missing ${key}`);
+			assert.notStrictEqual(localized, english, `${fileId}.ts still shows the English create-or-edit action`);
 		});
 	}
 });
@@ -307,41 +264,21 @@ describe("the concise theme preview summary is translated everywhere", () => {
 	for (const [fileId, table] of entries) {
 		it(`${fileId}.ts`, () => {
 			const localized = table[key];
-			assert.strictEqual(
-				typeof localized,
-				"string",
-				`${fileId}.ts is missing ${key}`,
-			);
-			assert.notStrictEqual(
-				localized,
-				english,
-				`${fileId}.ts still shows the English theme preview summary`,
-			);
+			assert.strictEqual(typeof localized, "string", `${fileId}.ts is missing ${key}`);
+			assert.notStrictEqual(localized, english, `${fileId}.ts still shows the English theme preview summary`);
 		});
 	}
 });
 
 describe("deleted color recovery is translated everywhere", () => {
-	const keys = [
-		"editor.paletteDeleted",
-		"editor.colorsDescDeleted",
-		"editor.colorsDescDeletedLink",
-	] as const;
+	const keys = ["editor.paletteDeleted", "editor.colorsDescDeleted", "editor.colorsDescDeletedLink"] as const;
 
 	for (const [fileId, table] of entries) {
 		it(`${fileId}.ts has its own deleted-color text`, () => {
 			for (const key of keys) {
 				const localized = table[key];
-				assert.strictEqual(
-					typeof localized,
-					"string",
-					`${fileId}.ts is missing ${key}`,
-				);
-				assert.notStrictEqual(
-					localized,
-					en[key],
-					`${fileId}.ts still shows the English ${key}`,
-				);
+				assert.strictEqual(typeof localized, "string", `${fileId}.ts is missing ${key}`);
+				assert.notStrictEqual(localized, en[key], `${fileId}.ts still shows the English ${key}`);
 			}
 		});
 	}
@@ -358,16 +295,8 @@ describe("upgrade recovery failure is localized in every shipped language", () =
 	for (const [fileId, table] of entries) {
 		it(`${fileId}.ts has its own recovery failure notice`, () => {
 			const localized = table[key];
-			assert.strictEqual(
-				typeof localized,
-				"string",
-				`${fileId}.ts is missing ${key}`,
-			);
-			assert.notStrictEqual(
-				localized,
-				english,
-				`${fileId}.ts still shows the English recovery failure notice`,
-			);
+			assert.strictEqual(typeof localized, "string", `${fileId}.ts is missing ${key}`);
+			assert.notStrictEqual(localized, english, `${fileId}.ts still shows the English recovery failure notice`);
 		});
 	}
 });
@@ -386,10 +315,7 @@ describe("placeholders match English", () => {
 				const expected = tokensOf(source);
 				const actual = tokensOf(value);
 				if (expected.join(" ") !== actual.join(" ")) {
-					drift.push(
-						`${key}: en has [${expected.join(", ")}], ` +
-							`${fileId} has [${actual.join(", ")}]`,
-					);
+					drift.push(`${key}: en has [${expected.join(", ")}], ` + `${fileId} has [${actual.join(", ")}]`);
 				}
 			}
 			assert.deepStrictEqual(drift, []);
@@ -411,9 +337,7 @@ describe("placeholders match English", () => {
 	it("covers strings that really do interpolate", () => {
 		// Guards the guard: a regex that stopped matching would turn every
 		// assertion above into a comparison of two empty arrays.
-		const withTokens = Object.values(en).filter(
-			(value) => tokensOf(value).length > 0,
-		);
+		const withTokens = Object.values(en).filter((value) => tokensOf(value).length > 0);
 		assert.ok(withTokens.length > 50, `only ${withTokens.length} en strings`);
 	});
 });
@@ -512,10 +436,7 @@ describe("no stray bidirectional controls", () => {
 		// The detector, tested against text this repo does not contain — so a
 		// green run above means "checked and clean", not "the regex broke".
 		assert.strictEqual(isolateFault(`a${RLI}b`), "leaves 1 isolate(s) open");
-		assert.strictEqual(
-			isolateFault(`a${PDI}b`),
-			"closes an isolate it never opened",
-		);
+		assert.strictEqual(isolateFault(`a${PDI}b`), "closes an isolate it never opened");
 		assert.strictEqual(isolateFault(`${FSI}x${PDI}`), null);
 		assert.strictEqual(isolateFault(`${LRI}a${PDI}${RLI}b${PDI}`), null);
 		assert.ok(isBidi(RLM) && isBidi(ALM) && isBidi(LRM));
@@ -537,12 +458,9 @@ describe("navigation arrows survive translation", () => {
 	const HAS_ARROW = /[→←]/;
 	const ARROWS = /[→←]/g;
 
-	const arrowCount = (value: string): number =>
-		(value.match(ARROWS) ?? []).length;
+	const arrowCount = (value: string): number => (value.match(ARROWS) ?? []).length;
 
-	const arrowKeys = Object.keys(en).filter((key) =>
-		HAS_ARROW.test(en[key] ?? ""),
-	);
+	const arrowKeys = Object.keys(en).filter((key) => HAS_ARROW.test(en[key] ?? ""));
 
 	it("has arrows in English to compare against", () => {
 		assert.ok(arrowKeys.length > 0, "no en string uses an arrow any more");
@@ -603,10 +521,7 @@ describe("navigation arrows survive translation", () => {
 			for (const key of ["vault.idsUpdated", "vault.titlesUpdated"]) {
 				const value = LOCALE_TABLES[fileId][key];
 				if (value === undefined) continue;
-				assert.ok(
-					value.includes("→"),
-					`${fileId}.${key} lost the forward arrow between two LTR runs`,
-				);
+				assert.ok(value.includes("→"), `${fileId}.${key} lost the forward arrow between two LTR runs`);
 				assert.ok(
 					!value.includes("←"),
 					`${fileId}.${key} mirrors an arrow between two LTR runs, so it ` +

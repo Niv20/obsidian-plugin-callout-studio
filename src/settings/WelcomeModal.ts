@@ -31,7 +31,8 @@ import type { BrushMascot } from "../ui/mascot/brushMascot";
 /** How long the mascot waits for the window to finish opening before it smiles and winks. */
 const GREETING_DELAY_MS = 350;
 
-const USER_GUIDE_URL = "https://github.com/Niv20/obsidian-plugin-callout-studio/tree/fa1c8e29aa1f9a40b7a90226d12197c6fe96f1f4/docs/user-guide";
+const USER_GUIDE_URL =
+	"https://github.com/Niv20/obsidian-plugin-callout-studio/tree/fa1c8e29aa1f9a40b7a90226d12197c6fe96f1f4/docs/user-guide";
 
 export class WelcomeModal extends Modal {
 	private resolved = false;
@@ -45,7 +46,10 @@ export class WelcomeModal extends Modal {
 	 * @param freshLaunch the launch found no settings file. That is also what a
 	 *   new device looks like before its synced settings arrive, so say so.
 	 */
-	constructor(private readonly plugin: SettingsTabPlugin, private readonly freshLaunch = false) {
+	constructor(
+		private readonly plugin: SettingsTabPlugin,
+		private readonly freshLaunch = false,
+	) {
 		super(plugin.app);
 	}
 

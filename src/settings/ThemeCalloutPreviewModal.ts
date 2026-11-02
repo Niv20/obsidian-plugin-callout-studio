@@ -45,8 +45,7 @@ export class ThemeCalloutPreviewModal extends Modal {
 	}
 
 	onOpen(): void {
-		const themeName =
-			activeThemeName(this.app) ?? t("settings.themeCalloutsDefaultTheme");
+		const themeName = activeThemeName(this.app) ?? t("settings.themeCalloutsDefaultTheme");
 		this.setTitle(t("themePreview.title", { name: this.def.displayName }));
 		const footer = applyModalChrome(this, { footer: true });
 		const { contentEl } = this;

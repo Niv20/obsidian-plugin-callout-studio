@@ -32,7 +32,10 @@ import type { SettingsBootResult } from "../src/manager/settingsBoot";
 import type CalloutStudioPlugin from "../src/main";
 import { installFakeDom } from "./support/fakeDom";
 import { WelcomeModal } from "../src/settings/WelcomeModal";
-import { markCompetitorImportBannerHandled, shouldShowCompetitorImportBanner } from "../src/settings/competitorImportState";
+import {
+	markCompetitorImportBannerHandled,
+	shouldShowCompetitorImportBanner,
+} from "../src/settings/competitorImportState";
 
 installFakeDom();
 
@@ -43,17 +46,19 @@ installFakeDom();
  * and the one that tells them apart is the flag they were booted with, never
  * anything on disk.
  */
-function launch(options: {
-	frozen?: boolean;
-	firstRunCompleted?: boolean;
-	welcomeSeen?: boolean;
-	localWelcomeSeen?: boolean;
-	competitorImportBannerHandled?: boolean;
-	/** Dismissed on this device while it had no settings file to record it in. */
-	localBannerHandled?: boolean;
-	sidebarRejects?: boolean;
-	saveRejects?: boolean;
-} = {}) {
+function launch(
+	options: {
+		frozen?: boolean;
+		firstRunCompleted?: boolean;
+		welcomeSeen?: boolean;
+		localWelcomeSeen?: boolean;
+		competitorImportBannerHandled?: boolean;
+		/** Dismissed on this device while it had no settings file to record it in. */
+		localBannerHandled?: boolean;
+		sidebarRejects?: boolean;
+		saveRejects?: boolean;
+	} = {},
+) {
 	const registry = new CalloutRegistry();
 	registry.load(null);
 
@@ -79,7 +84,9 @@ function launch(options: {
 			getMarkdownFiles: () => [],
 		},
 		workspace: {
-			detachLeavesOfType: () => { seen.conversionCleanups++; },
+			detachLeavesOfType: () => {
+				seen.conversionCleanups++;
+			},
 			getLeavesOfType: () => [],
 			ensureSideLeaf: () => {
 				assert.strictEqual(settingsWriter.isFrozen, false, "confirm first installation before offering a tab");
@@ -97,8 +104,7 @@ function launch(options: {
 	if (options.frozen ?? true) settingsWriter.freeze();
 
 	registry.settings.welcomeSeen = options.welcomeSeen ?? false;
-	registry.settings.competitorImportBannerHandled =
-		options.competitorImportBannerHandled ?? false;
+	registry.settings.competitorImportBannerHandled = options.competitorImportBannerHandled ?? false;
 
 	const plugin = {
 		app,
@@ -115,22 +121,34 @@ function launch(options: {
 		waitForSettingsSettle: () => Promise.resolve(),
 		saveSettings: (): Promise<void> => {
 			seen.saves += 1;
-			return options.saveRejects
-				? Promise.reject(new Error("the disk said no"))
-				: Promise.resolve();
+			return options.saveRejects ? Promise.reject(new Error("the disk said no")) : Promise.resolve();
 		},
 		localState: {
-			get hasOfferedOccurrencesTab(): boolean { return tabOffered; },
-			markOccurrencesTabOffered: (): boolean => { tabOffered = true; seen.sidebarMarks++; return true; },
+			get hasOfferedOccurrencesTab(): boolean {
+				return tabOffered;
+			},
+			markOccurrencesTabOffered: (): boolean => {
+				tabOffered = true;
+				seen.sidebarMarks++;
+				return true;
+			},
 			firstRunCompleted: options.firstRunCompleted ?? true,
-			markInitialized: (): void => { seen.initialized++; },
-			get hasSeenWelcome(): boolean { return localWelcomeSeen; },
+			markInitialized: (): void => {
+				seen.initialized++;
+			},
+			get hasSeenWelcome(): boolean {
+				return localWelcomeSeen;
+			},
 			markWelcomeSeen: (): void => {
 				localWelcomeSeen = true;
 				seen.welcomeMarks++;
 			},
-			get hasHandledImportBanner(): boolean { return localBannerHandled; },
-			markImportBannerHandled: (): void => { localBannerHandled = true; },
+			get hasHandledImportBanner(): boolean {
+				return localBannerHandled;
+			},
+			markImportBannerHandled: (): void => {
+				localBannerHandled = true;
+			},
 		},
 		runVaultScan: (): Promise<number> => {
 			seen.scans += 1;
@@ -146,8 +164,7 @@ function launch(options: {
 		},
 	} as unknown as CalloutStudioPlugin;
 
-	const run = (isFreshInstall: boolean) =>
-		runLaunchSequence(plugin, { isFreshInstall } as SettingsBootResult);
+	const run = (isFreshInstall: boolean) => runLaunchSequence(plugin, { isFreshInstall } as SettingsBootResult);
 
 	return { plugin, settingsWriter, seen, run };
 }
@@ -188,11 +205,7 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 
 		await l.run(false);
 
-		assert.strictEqual(
-			l.seen.saves,
-			0,
-			"the welcome flag is the first write a fresh install makes",
-		);
+		assert.strictEqual(l.seen.saves, 0, "the welcome flag is the first write a fresh install makes");
 		assert.strictEqual(l.plugin.settings.welcomeSeen, false);
 		assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), false);
 		assert.strictEqual(l.seen.sidebarOffers, 0);
@@ -211,12 +224,17 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 			assert.strictEqual(l.seen.welcomeMarks, 1);
 			assert.strictEqual(l.seen.sidebarOffers, 1);
 			assert.strictEqual(l.seen.sidebarMarks, 1);
-		} finally { Object.defineProperty(WelcomeModal.prototype, "prompt", prompt); }
+		} finally {
+			Object.defineProperty(WelcomeModal.prototype, "prompt", prompt);
+		}
 	});
 	it("re-arms an unhandled import banner after reload without reopening the welcome", async () => {
 		const prompt = Object.getOwnPropertyDescriptor(WelcomeModal.prototype, "prompt")!;
 		let prompts = 0;
-		WelcomeModal.prototype.prompt = () => { prompts++; return Promise.resolve(); };
+		WelcomeModal.prototype.prompt = () => {
+			prompts++;
+			return Promise.resolve();
+		};
 		try {
 			const l = launch({ localWelcomeSeen: true, welcomeSeen: false });
 			await l.run(true);
@@ -224,7 +242,9 @@ describe("the fresh-install freeze is settled at onLayoutReady", () => {
 			assert.strictEqual(l.seen.welcomeMarks, 0);
 			assert.strictEqual(l.seen.sidebarOffers, 0);
 			assert.strictEqual(shouldShowCompetitorImportBanner(l.plugin), true);
-		} finally { Object.defineProperty(WelcomeModal.prototype, "prompt", prompt); }
+		} finally {
+			Object.defineProperty(WelcomeModal.prototype, "prompt", prompt);
+		}
 	});
 	it("does not re-arm the import banner after dismissal or a successful import", async () => {
 		const l = launch({

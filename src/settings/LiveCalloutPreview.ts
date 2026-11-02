@@ -172,10 +172,7 @@ export class LiveCalloutPreview {
 		const body = container.createDiv({
 			cls: "cs-live-preview-body",
 		});
-		if (
-			this.opts.collapseTrailingBlankLine &&
-			this.text.endsWith("\n")
-		) {
+		if (this.opts.collapseTrailingBlankLine && this.text.endsWith("\n")) {
 			body.addClass("cs-live-preview-collapse-trailing-line");
 		}
 
@@ -192,11 +189,7 @@ export class LiveCalloutPreview {
 			});
 			body.addClass("cs-live-preview-editable");
 		} catch (e) {
-			console.warn(
-				"[CalloutStudio] embedded live preview unavailable; " +
-					"falling back to static render",
-				e,
-			);
+			console.warn("[CalloutStudio] embedded live preview unavailable; " + "falling back to static render", e);
 			this.editor = null;
 			// The failed constructor may have mounted (and torn down) real
 			// editor DOM in here. Clear it, or the static render below lands
@@ -236,13 +229,7 @@ export class LiveCalloutPreview {
 		// preview never flashes empty between keystrokes.
 		const scratch = createDiv({ cls: target.className });
 		try {
-			await MarkdownRenderer.render(
-				this.app,
-				this.text,
-				scratch,
-				"",
-				this.component,
-			);
+			await MarkdownRenderer.render(this.app, this.text, scratch, "", this.component);
 		} catch {
 			return;
 		}

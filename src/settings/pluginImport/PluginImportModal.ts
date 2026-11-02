@@ -40,14 +40,7 @@ import { addCancelButton, applyModalChrome, removeModalChrome } from "../modalCh
 import { blockedWhilePaused } from "../pausedGuard";
 import { writeSettingsBackup } from "../../manager/settingsBackup";
 import type { SettingsContext } from "../sections/types";
-import {
-	activeOption,
-	canImport,
-	initialFlow,
-	isFilled,
-	vaultOffered,
-	type ImportOption,
-} from "./pluginImportFlow";
+import { activeOption, canImport, initialFlow, isFilled, vaultOffered, type ImportOption } from "./pluginImportFlow";
 import {
 	probeVault,
 	type PluginImportBatch,
@@ -209,9 +202,7 @@ export class PluginImportModal extends Modal {
 		});
 
 		const ready = canImport(this.flow);
-		this.importBtn.setText(
-			t(this.flow.busy ? "import.importing" : this.source.copy.importButton),
-		);
+		this.importBtn.setText(t(this.flow.busy ? "import.importing" : this.source.copy.importButton));
 		this.importBtn.setAttribute("aria-disabled", ready ? "false" : "true");
 		this.importBtn.toggleClass("cs-btn-disabled", !ready);
 		const active = activeOption(this.flow);
@@ -308,7 +299,10 @@ export class PluginImportModal extends Modal {
 		try {
 			assertImportTextSize(text);
 		} catch (error) {
-			showNotice("problem", t(error instanceof ImportLimitError ? error.messageKey : "import.err.processingFailed"));
+			showNotice(
+				"problem",
+				t(error instanceof ImportLimitError ? error.messageKey : "import.err.processingFailed"),
+			);
 			return;
 		}
 		input.value = text;
@@ -357,7 +351,9 @@ export class PluginImportModal extends Modal {
 			await this.apply(parsed.batch, generation);
 		} catch (error) {
 			if (generation === this.generation) {
-				await this.reportFatal(error instanceof ImportLimitError ? error.messageKey : "import.err.processingFailed");
+				await this.reportFatal(
+					error instanceof ImportLimitError ? error.messageKey : "import.err.processingFailed",
+				);
 			}
 		} finally {
 			if (generation === this.generation) this.setBusy(false);
@@ -366,15 +362,15 @@ export class PluginImportModal extends Modal {
 
 	private async read(target: ImportOption): Promise<PluginImportParse> {
 		if (target === "vault") {
-			return this.vaultBatch
-				? { batch: this.vaultBatch }
-				: { errorKey: "import.err.parseFailed" };
+			return this.vaultBatch ? { batch: this.vaultBatch } : { errorKey: "import.err.parseFailed" };
 		}
 		if (this.source.manual.kind === "paste") {
 			try {
 				assertImportTextSize(this.pasteText);
 			} catch (error) {
-				return { errorKey: error instanceof ImportLimitError ? error.messageKey : "import.err.processingFailed" };
+				return {
+					errorKey: error instanceof ImportLimitError ? error.messageKey : "import.err.processingFailed",
+				};
 			}
 			return this.source.fromText(this.pasteText);
 		}
@@ -395,10 +391,7 @@ export class PluginImportModal extends Modal {
 	}
 
 	/** Where every route converges, once its entries are in hand. */
-	private async apply(
-		batch: PluginImportBatch,
-		generation: number,
-	): Promise<void> {
+	private async apply(batch: PluginImportBatch, generation: number): Promise<void> {
 		const plan = await batch.plan(this.ctx);
 		if (generation !== this.generation) return;
 
@@ -419,7 +412,11 @@ export class PluginImportModal extends Modal {
 		// The banner can open this window straight away; saving may be paused.
 		if (blockedWhilePaused(this.ctx.plugin.settingsWriter)) return;
 		// An import updates existing callouts in place: keep a way back.
-		if (!await writeSettingsBackup(this.ctx.plugin, this.ctx.plugin.registry.toSaveData(), { reason: "before-import" })) {
+		if (
+			!(await writeSettingsBackup(this.ctx.plugin, this.ctx.plugin.registry.toSaveData(), {
+				reason: "before-import",
+			}))
+		) {
 			showNotice("problem", t("import.backupFailed"));
 			return;
 		}

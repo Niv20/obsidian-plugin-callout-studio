@@ -12,7 +12,7 @@ import type { PortableCalloutConversionChange } from "../utils/portableCalloutPl
 import type { PortableConversionRow } from "./portableConversionRows";
 
 const sourceOf = (row: PortableConversionRow): PortableCalloutConversionChange | undefined =>
-	row.linkOnly ? undefined : row.change as PortableCalloutConversionChange;
+	row.linkOnly ? undefined : (row.change as PortableCalloutConversionChange);
 
 /**
  * Innermost first: an inline callout the caret touches (its `{…}` payload
@@ -27,10 +27,16 @@ export function portableRowAtCursor(
 ): PortableConversionRow | null {
 	if (cursor.line < 0 || cursor.line >= lines.lineCount()) return null;
 	const text = lines.getLine(cursor.line);
-	const here = rows.filter(row => row.change.line - 1 === cursor.line
-		&& (sourceOf(row)?.sourceLine ?? row.change.before) === text);
-	return here.find(row => {
-		const source = sourceOf(row);
-		return source && !source.headingLine && source.from <= cursor.ch && cursor.ch <= source.to;
-	}) ?? here.find(row => sourceOf(row)?.headingLine) ?? here.find(row => row.linkOnly) ?? null;
+	const here = rows.filter(
+		(row) => row.change.line - 1 === cursor.line && (sourceOf(row)?.sourceLine ?? row.change.before) === text,
+	);
+	return (
+		here.find((row) => {
+			const source = sourceOf(row);
+			return source && !source.headingLine && source.from <= cursor.ch && cursor.ch <= source.to;
+		}) ??
+		here.find((row) => sourceOf(row)?.headingLine) ??
+		here.find((row) => row.linkOnly) ??
+		null
+	);
 }

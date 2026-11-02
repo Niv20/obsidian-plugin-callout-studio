@@ -83,16 +83,10 @@ export interface CalloutManagerEntry {
  * row number the report shows, so it has to keep lining up with this array.
  * Everything droppable was already dropped by the format layer.
  */
-export function toCalloutManagerEntries(
-	raws: readonly CalloutManagerRaw[],
-): CalloutManagerEntry[] {
+export function toCalloutManagerEntries(raws: readonly CalloutManagerRaw[]): CalloutManagerEntry[] {
 	return raws.map((raw) => {
-		const light = raw.colorLight
-			? (parseCssColorToHex(raw.colorLight) ?? undefined)
-			: undefined;
-		const dark = raw.colorDark
-			? (parseCssColorToHex(raw.colorDark) ?? undefined)
-			: undefined;
+		const light = raw.colorLight ? (parseCssColorToHex(raw.colorLight) ?? undefined) : undefined;
+		const dark = raw.colorDark ? (parseCssColorToHex(raw.colorDark) ?? undefined) : undefined;
 		// Only a real disagreement is worth carrying as two colours. One accent
 		// covers both modes perfectly well, because `derivePaletteFromColor`
 		// contrast-corrects it per mode anyway — so a source that stated the same
@@ -180,9 +174,7 @@ export function planCalloutManagerImport(
 				// The two outcomes really do differ: an existing callout keeps
 				// the icon it already has, while a new one has nothing to keep
 				// and takes the default.
-				messageKey: existing
-					? "import.warn.cmIconUnknownExisting"
-					: "import.warn.cmIconUnknownNew",
+				messageKey: existing ? "import.warn.cmIconUnknownExisting" : "import.warn.cmIconUnknownNew",
 				params: {
 					value: rawEntry.icon?.value ?? "",
 					id: existing?.id ?? entry.id,

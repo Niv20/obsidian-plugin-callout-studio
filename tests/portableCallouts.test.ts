@@ -12,13 +12,21 @@ const conversions: Array<[string, string, string]> = [
 	["unknown type", "[!not-registered]", "not-registered"],
 	["adjacent bare pills", "[!one][!two]", "onetwo"],
 	["adjacent payload pills", "[!one]{a}[!two]{b}", "ab"],
-	["payload formatting", "Text [!note]{ **bold** and *italics* [link](https://example.com) } done", "Text  **bold** and *italics* [link](https://example.com)  done"],
+	[
+		"payload formatting",
+		"Text [!note]{ **bold** and *italics* [link](https://example.com) } done",
+		"Text  **bold** and *italics* [link](https://example.com)  done",
+	],
 	["empty payload", "A[!note]{}B", "AB"],
 	["whitespace payload", "a [!note]{  } b", "a    b"],
 	["nested literal braces", "[!note]{a {b} c}", "a {b} c"],
 	["payload code braces", "[!note]{a `}` b}", "a `}` b"],
 	["payload math braces", "[!note]{a $x_{1}$ b}", "a $x_{1}$ b"],
-	["payload hidden tokens stay literal", "[!note]{`[!code]` $[!math]$ [[ref [!link]]]}", "`[!code]` $[!math]$ [[ref [!link]]]"],
+	[
+		"payload hidden tokens stay literal",
+		"[!note]{`[!code]` $[!math]$ [[ref [!link]]]}",
+		"`[!code]` $[!math]$ [[ref [!link]]]",
+	],
 	["payload spaces are not trimmed", "a [!note]{  inside  } z", "a   inside   z"],
 	["spaced braces remain prose", "[!note] {text}", "note {text}"],
 	["standalone heading", "# [!type]", "# type"],
@@ -45,7 +53,11 @@ const conversions: Array<[string, string, string]> = [
 	["seven hashes remain prose", "####### [!type]", "####### type"],
 	["quoted heading uses inline role", "> # [!type] Title", "> # type Title"],
 	["list heading", "- ## [!type] Title", "- ## Title"],
-	["regular block body", "> [!note]+ Native [!title]\n> Text [!inline]{body}", "> [!note]+ Native [!title]\n> Text body"],
+	[
+		"regular block body",
+		"> [!note]+ Native [!title]\n> Text [!inline]{body}",
+		"> [!note]+ Native [!title]\n> Text body",
+	],
 	["all native nesting depths", "> > [!note] Title\n> > body [!inline]", "> > [!note] Title\n> > body inline"],
 	["hard breaks preserved", "Text [!note]  \nnext", "Text note  \nnext"],
 	["BOM remains", "\uFEFF[!note]\ntext", "\uFEFFnote\ntext"],
@@ -63,19 +75,24 @@ const conversions: Array<[string, string, string]> = [
 	["payload cannot create tab indent", "[!note]{\tcode}", "&#9;code"],
 	["payload cannot create table row", "[!note]{| a | b |}", "\\| a | b |"],
 	["empty payload cannot expose source marker", "[!note]{}# title", "\\# title"],
-	["empty payload cannot create a reference definition", "[!note]{}[ref]: https://example.com\n[ref]", "\\[ref]: https://example.com\n[ref]"],
+	[
+		"empty payload cannot create a reference definition",
+		"[!note]{}[ref]: https://example.com\n[ref]",
+		"\\[ref]: https://example.com\n[ref]",
+	],
 	["list payload cannot create nested heading", "- [!note]{# Title}", "- \\# Title"],
 	["heading payload cannot create closing hashes", "# Title [!note]{###}", "# Title \\###"],
 ];
 
 describe("portable callouts: source-preserving conversion", () => {
 	it("preserves every recognized output through selectable unit planning and CRLF application", async () => {
-		for (const [name, source, expected] of conversions) for (const newline of ["\n", "\r\n"]) {
-			const h = portableVault({ "a.md": source.replaceAll("\n", newline) });
-			const plan = await preparePortableCalloutConversion(h.app);
-			assert.equal((await applyPortableCalloutConversion(h.app, plan)).status, "complete", name);
-			assert.equal(h.contents.get("a.md"), expected.replaceAll("\n", newline), name);
-		}
+		for (const [name, source, expected] of conversions)
+			for (const newline of ["\n", "\r\n"]) {
+				const h = portableVault({ "a.md": source.replaceAll("\n", newline) });
+				const plan = await preparePortableCalloutConversion(h.app);
+				assert.equal((await applyPortableCalloutConversion(h.app, plan)).status, "complete", name);
+				assert.equal(h.contents.get("a.md"), expected.replaceAll("\n", newline), name);
+			}
 	});
 	for (const [name, source, expected] of conversions) {
 		it(name, () => assert.equal(convertPortableCallouts(source).content, expected));
@@ -88,14 +105,19 @@ describe("portable callouts: source-preserving conversion", () => {
 	}
 	it("reports converted roles", () => {
 		assert.deepEqual(convertPortableCallouts("# [!a]\n# Title [!b]\nText [!c]{body}"), {
-			content: "# a\n# Title\nText body", count: 3, headings: 2, inline: 1, skipped: 0,
+			content: "# a\n# Title\nText body",
+			count: 3,
+			headings: 2,
+			inline: 1,
+			skipped: 0,
 		});
 	});
 	it("covers every heading level and legal indent", () => {
-		for (let level = 1; level <= 6; level++) for (let indent = 0; indent <= 3; indent++) {
-			const prefix = " ".repeat(indent) + "#".repeat(level) + " \t ";
-			assert.equal(convertPortableCallouts(prefix + "[!type] Title").content, prefix + "Title");
-		}
+		for (let level = 1; level <= 6; level++)
+			for (let indent = 0; indent <= 3; indent++) {
+				const prefix = " ".repeat(indent) + "#".repeat(level) + " \t ";
+				assert.equal(convertPortableCallouts(prefix + "[!type] Title").content, prefix + "Title");
+			}
 	});
 });
 
@@ -161,11 +183,16 @@ describe("portable callouts: protected contexts", () => {
 		});
 	}
 	it("conversion resumes after math, HTML and links", () => {
-		assert.equal(convertPortableCallouts("$[!math]$ [!a] <span>[!html]</span> [!b] [x]([!link]) [!c]").content,
-			"$[!math]$ a <span>[!html]</span> b [x]([!link]) c");
+		assert.equal(
+			convertPortableCallouts("$[!math]$ [!a] <span>[!html]</span> [!b] [x]([!link]) [!c]").content,
+			"$[!math]$ a <span>[!html]</span> b [x]([!link]) c",
+		);
 	});
 	it("code and comments cannot begin math or HTML masks", () => {
-		assert.equal(convertPortableCallouts('`$$ <div>` %% $$ <div> %% [!note]').content, '`$$ <div>` %% $$ <div> %% note');
+		assert.equal(
+			convertPortableCallouts("`$$ <div>` %% $$ <div> %% [!note]").content,
+			"`$$ <div>` %% $$ <div> %% note",
+		);
 	});
 	it("unclosed raw HTML scanning remains bounded", () => {
 		const source = "<span>".repeat(16000) + " [!note]";
@@ -187,7 +214,14 @@ describe("portable callouts: protected contexts", () => {
 });
 
 describe("portable callouts: ambiguous syntax is never partially rewritten", () => {
-	for (const source of ["[!outer]{unfinished", "[!outer]{text [!inner]", "[!outer]{text [!inner]{payload}}", "[!outer]{[!inner]}", "[!outer]{before <span>}</span> after}", "[!broken[!inner]]"]) {
+	for (const source of [
+		"[!outer]{unfinished",
+		"[!outer]{text [!inner]",
+		"[!outer]{text [!inner]{payload}}",
+		"[!outer]{[!inner]}",
+		"[!outer]{before <span>}</span> after}",
+		"[!broken[!inner]]",
+	]) {
 		it(source, () => {
 			const result = convertPortableCallouts(source);
 			assert.equal(result.content, source);

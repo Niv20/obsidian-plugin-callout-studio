@@ -92,9 +92,7 @@ export function parseAdmonitionExport(raw: unknown): AdmonitionRaw[] | null {
 		// Entries that are not objects are dropped here rather than reported:
 		// a stray null in an array says nothing about a callout, and the count
 		// shown in the report already comes from what survived.
-		return raw
-			.map((value) => readEntry(value))
-			.filter((entry): entry is AdmonitionRaw => entry !== null);
+		return raw.map((value) => readEntry(value)).filter((entry): entry is AdmonitionRaw => entry !== null);
 	}
 
 	if (!isRecord(raw)) return null;

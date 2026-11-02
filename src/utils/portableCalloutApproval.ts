@@ -1,7 +1,11 @@
 import type { App } from "obsidian";
 import type { PortableHeadingLinkCache } from "./portableHeadingLinks";
 import type { PortableReplacements } from "./portableCalloutCustom";
-import type { PortableCalloutConversionPlan, PortableCalloutSnapshot, PortableCalloutOutput } from "./portableCalloutPlan";
+import type {
+	PortableCalloutConversionPlan,
+	PortableCalloutSnapshot,
+	PortableCalloutOutput,
+} from "./portableCalloutPlan";
 
 interface PortableCalloutApproval {
 	app: App;

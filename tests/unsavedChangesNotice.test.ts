@@ -24,7 +24,7 @@ function remoteEdit(disk: string, names: string[]): string {
 	sync.adopt(data);
 	for (const name of names) {
 		const next = structuredClone(data) as PluginData;
-		next.callouts = next.callouts.map(row => row.id === "shared" ? { ...row, displayName: name } : row);
+		next.callouts = next.callouts.map((row) => (row.id === "shared" ? { ...row, displayName: name } : row));
 		data = sync.prepare(next);
 		sync.adopt(data);
 	}
@@ -35,8 +35,10 @@ describe("unsaved changes replaced by another device", () => {
 	it("are announced, and kept in a backup", async () => {
 		const notices: string[] = [];
 		(globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__ = notices;
-		const h = recoveryActionHarness(); await h.boot();
-		const error = console.error; console.error = () => {};
+		const h = recoveryActionHarness();
+		await h.boot();
+		const error = console.error;
+		console.error = () => {};
 		try {
 			h.host.registry.add(definition({ id: "shared", displayName: "Start", icon: star }));
 			await h.host.saveSettings();
@@ -48,7 +50,7 @@ describe("unsaved changes replaced by another device", () => {
 			assert.equal(await tryAdoptExternalSettings(h.host), "applied");
 			assert.equal(h.host.registry.get("shared")?.displayName, "Theirs again");
 			assert.ok(notices.includes(en["notice.unsavedChangesKept"]!));
-			const backups = [...h.files.values()].filter(text => text.includes("Mine, unsaved"));
+			const backups = [...h.files.values()].filter((text) => text.includes("Mine, unsaved"));
 			assert.equal(backups.length, 1, "this device's version was not kept");
 		} finally {
 			console.error = error;
@@ -60,7 +62,8 @@ describe("unsaved changes replaced by another device", () => {
 	it("say nothing when the adoption replaced only what was already saved", async () => {
 		const notices: string[] = [];
 		(globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__ = notices;
-		const h = recoveryActionHarness(); await h.boot();
+		const h = recoveryActionHarness();
+		await h.boot();
 		try {
 			h.host.registry.add(definition({ id: "shared", displayName: "Start", icon: star }));
 			await h.host.saveSettings();
@@ -77,7 +80,11 @@ describe("unsaved changes replaced by another device", () => {
 		const row = (name: string) => definition({ id: "a", displayName: name });
 		const saved: Partial<PluginData> = { callouts: [row("saved")] };
 		assert.equal(unsavedChangesReplaced(saved, { callouts: [row("local")] }, { callouts: [row("remote")] }), 1);
-		assert.equal(unsavedChangesReplaced(saved, { callouts: [row("local")] }, { callouts: [row("local")] }), 0, "the local change won");
+		assert.equal(
+			unsavedChangesReplaced(saved, { callouts: [row("local")] }, { callouts: [row("local")] }),
+			0,
+			"the local change won",
+		);
 		assert.equal(unsavedChangesReplaced(saved, saved, { callouts: [row("remote")] }), 0, "nothing was unsaved");
 	});
 });

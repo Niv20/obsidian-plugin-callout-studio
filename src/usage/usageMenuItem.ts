@@ -7,16 +7,20 @@ import { onMenuHide } from "../ui/menuOnHide";
 import { appendFaintCount } from "../ui/faintCount";
 import { ROW_MENU_SECTION } from "../settings/sections/rowMenuSections";
 
-export interface UsageCount { fileCount: number; totalCount: number }
+export interface UsageCount {
+	fileCount: number;
+	totalCount: number;
+}
 
 /** Items in an open menu that only make sense while the callout is in use. */
-interface UsageWatch { unused: () => boolean; items: MenuItem[] }
+interface UsageWatch {
+	unused: () => boolean;
+	items: MenuItem[];
+}
 const watches = new WeakMap<Menu, UsageWatch>();
 
 /** Observe the pass requested by prepareUsageMenu. Counts are never guesses. */
-export function addUsageMenuItem(
-	menu: Menu, app: App, ids: readonly string[],
-): UsageCount | undefined {
+export function addUsageMenuItem(menu: Menu, app: App, ids: readonly string[]): UsageCount | undefined {
 	const index = getCalloutOccurrenceIndex(app);
 	const usage = index.status === "ready" ? index.query(ids) : undefined;
 	// Only a finished scan proves a callout unused; a partial one never does.
@@ -27,7 +31,11 @@ export function addUsageMenuItem(
 	menu.setUseNativeMenu(false);
 	let active = true;
 	let unsubscribe = (): void => {};
-	onMenuHide(menu, () => { active = false; unsubscribe(); watches.delete(menu); });
+	onMenuHide(menu, () => {
+		active = false;
+		unsubscribe();
+		watches.delete(menu);
+	});
 	menu.addItem((item) => {
 		/** What the title last showed: "waiting", "incomplete" or the count. */
 		let previous: string | undefined;
@@ -39,8 +47,7 @@ export function addUsageMenuItem(
 			item.setDisabled(none);
 			for (const dependent of watch.items) dependent.setDisabled(none);
 			const count = index.status === "ready" ? index.query(ids).totalCount : undefined;
-			const shown = count !== undefined ? String(count)
-				: index.status === "partial" ? "incomplete" : "waiting";
+			const shown = count !== undefined ? String(count) : index.status === "partial" ? "incomplete" : "waiting";
 			if (shown === previous) return;
 			if (count === undefined) {
 				item.setTitle(t(index.status === "partial" ? "usage.menuIncomplete" : "usage.menu"));

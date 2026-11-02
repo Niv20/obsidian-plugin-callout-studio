@@ -48,14 +48,17 @@ export class LoadOnScroll {
 		const root = this.scroller();
 		const view = root?.ownerDocument.defaultView;
 		if (!sentinel || !root || !view || typeof view.IntersectionObserver !== "function") return;
-		this.observer = new view.IntersectionObserver((entries) => {
-			if (!entries.some((entry) => entry.isIntersecting)) return;
-			// A hidden sidebar tab lays out at zero height, where everything
-			// "intersects"; nothing is being scrolled there.
-			if (root.clientHeight === 0) return;
-			this.stop();
-			this.loadMore();
-		}, { root, rootMargin: "0px 0px 100% 0px" });
+		this.observer = new view.IntersectionObserver(
+			(entries) => {
+				if (!entries.some((entry) => entry.isIntersecting)) return;
+				// A hidden sidebar tab lays out at zero height, where everything
+				// "intersects"; nothing is being scrolled there.
+				if (root.clientHeight === 0) return;
+				this.stop();
+				this.loadMore();
+			},
+			{ root, rootMargin: "0px 0px 100% 0px" },
+		);
 		this.observer.observe(sentinel);
 	}
 

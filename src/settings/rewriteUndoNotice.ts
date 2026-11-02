@@ -20,14 +20,20 @@ export function noticeWithUndoAction(message: string, undo: () => void): void {
 
 /** Show `message`; when the rewrite can be undone whole, with an Undo button. */
 export function noticeWithUndo(app: App, message: string, journal: NoteRewriteJournal): void {
-	if (!keepForUndo(journal)) { showNotice("success", message); return; }
+	if (!keepForUndo(journal)) {
+		showNotice("success", message);
+		return;
+	}
 	noticeWithUndoAction(message, () => {
 		if (!canUndo(journal)) return;
-		void undoNoteRewrite(app, journal).then(({ restored, skipped }) => {
-			if (skipped > 0) showNotice("warning", t("vault.undoPartial", { count: restored, skipped }));
-			else showNotice("restored", t("vault.undoRestored", { count: restored }));
-		}, (error: unknown) => {
-			console.error("[callout-studio] could not undo the note rewrite", error);
-		});
+		void undoNoteRewrite(app, journal).then(
+			({ restored, skipped }) => {
+				if (skipped > 0) showNotice("warning", t("vault.undoPartial", { count: restored, skipped }));
+				else showNotice("restored", t("vault.undoRestored", { count: restored }));
+			},
+			(error: unknown) => {
+				console.error("[callout-studio] could not undo the note rewrite", error);
+			},
+		);
 	});
 }

@@ -52,10 +52,7 @@ function parse(raw: string | null): Stored {
 				typeof entry[0] === "string" &&
 				Array.isArray(entry[1]) &&
 				entry[1].every(
-					(pair) =>
-						Array.isArray(pair) &&
-						typeof pair[0] === "string" &&
-						typeof pair[1] === "boolean",
+					(pair) => Array.isArray(pair) && typeof pair[0] === "string" && typeof pair[1] === "boolean",
 				),
 		);
 		return { v: 1, themes };
@@ -99,9 +96,7 @@ export function localClaimVerdicts(app: App): ClaimVerdictStore {
 			const base = hash < 0 ? theme : theme.slice(0, hash);
 			const mode = hash < 0 ? "" : theme.slice(hash);
 			const found = base.endsWith("@")
-				? [...themes]
-						.reverse()
-						.find(([name]) => name.startsWith(base) && (mode === "" || name.endsWith(mode)))
+				? [...themes].reverse().find(([name]) => name.startsWith(base) && (mode === "" || name.endsWith(mode)))
 				: themes.find(([name]) => name === theme);
 			return found ? new Map(found[1]) : null;
 		},

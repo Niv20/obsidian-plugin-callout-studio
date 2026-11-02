@@ -70,7 +70,12 @@ function fakeCtx(registry: CalloutRegistry) {
  * Draw one row of `kind` for `rowDef` into a fresh host, and return the host.
  * `asFallback` makes the callout the vault's default fallback first.
  */
-function drawRow(rowDef: CalloutDefinition, kind: "user" | "builtin" | "theme" = "user", edits: string[] = [], asFallback = false) {
+function drawRow(
+	rowDef: CalloutDefinition,
+	kind: "user" | "builtin" | "theme" = "user",
+	edits: string[] = [],
+	asFallback = false,
+) {
 	const registry = new CalloutRegistry();
 	registry.load(null);
 	registry.add(rowDef);

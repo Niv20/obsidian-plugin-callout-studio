@@ -38,17 +38,17 @@ export const hu: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "Először válassza ki a calloutot, amelyre cserélni szeretné.",
 	"settings.fallbackTag": "Alapértelmezett",
 	"settings.fallbackTagAuto": "Auto",
-	"settings.rescanVaultDesc": "Hozzáadja a jegyzeteid által használt callouttípusokat, amelyek még nincsenek ezen a listán.",
+	"settings.rescanVaultDesc":
+		"Hozzáadja a jegyzeteid által használt callouttípusokat, amelyek még nincsenek ezen a listán.",
 	"settings.rescanVaultHintAction": "Calloutok keresése",
-	"manualDiscovery.failed": "A keresés eredményét nem sikerült menteni. Ellenőrizze, hogy a beállítások írhatók-e, és befejeződött-e a szinkronizálás, majd próbálja újra: Beállítások → Callout-típusaim → Calloutok keresése. A meglévő calloutok nem lettek lecserélve.",
+	"manualDiscovery.failed":
+		"A keresés eredményét nem sikerült menteni. Ellenőrizze, hogy a beállítások írhatók-e, és befejeződött-e a szinkronizálás, majd próbálja újra: Beállítások → Callout-típusaim → Calloutok keresése. A meglévő calloutok nem lettek lecserélve.",
 	"manualDiscovery.scanning": "Keresés…",
-	"settings.rescanComplete":
-		"Keresés kész: {{count}} új callout-típus hozzáadva.",
+	"settings.rescanComplete": "Keresés kész: {{count}} új callout-típus hozzáadva.",
 	"replaceModal.titleReplace": "Csere a tárban",
 
 	"welcome.title": "Üdvözöljük a Callout Studióban!",
-	"welcome.tagline":
-		"Az Ön teljes körű megoldása az Obsidian callout-ok létrehozására, stílusozására és kezelésére.",
+	"welcome.tagline": "Az Ön teljes körű megoldása az Obsidian callout-ok létrehozására, stílusozására és kezelésére.",
 	"importBanner.message":
 		"Észrevettük, hogy Ön a következőt használja: {{plugins}}. Szeretné importálni a callout-jait?",
 	"importBanner.action": "Importálás",
@@ -65,8 +65,7 @@ export const hu: Record<string, string> = {
 		"A Callout Studio ennél sokkal többet is kínál! [Tudjon meg többet]({{repoUrl}}).\n",
 	"deleteModal.title": "Callout törlése",
 
-	"deleteModal.bodyInUse":
-		"Ez a callout {{count}} alkalommal szerepel {{files}} fájlban.",
+	"deleteModal.bodyInUse": "Ez a callout {{count}} alkalommal szerepel {{files}} fájlban.",
 	"deleteModal.notesUntouched":
 		"Ez csak a callout definícióját törli. A jegyzetei érintetlenek maradnak, így a meglévő calloutok egyszerűen az alapértelmezett stílusra váltanak.",
 	"deleteModal.fallbackTarget":
@@ -99,8 +98,7 @@ export const hu: Record<string, string> = {
 		"Importálja a Callout Studio adatait egy másik tárból, vagy hozza át a calloutokat egy másik bővítményből.",
 	"settings.exportDesc":
 		"Mentse el a calloutokat Callout Studio-biztonsági mentésként vagy máshol használható CSS-kódrészletként.",
-	"settings.importConflictNotice":
-		"{{count}} callout-típus importálva; {{overwritten}} meglévő bejegyzés felülírva.",
+	"settings.importConflictNotice": "{{count}} callout-típus importálva; {{overwritten}} meglévő bejegyzés felülírva.",
 
 	"settings.addNewCallout": "callout hozzáadása",
 
@@ -117,7 +115,8 @@ export const hu: Record<string, string> = {
 	"notice.calloutDeleted": "„{{name}}” törölve.",
 	"settings.duplicateAction": "Másolat készítése",
 	"notice.calloutDuplicated": "A callout másolata „{{name}}” néven készült.",
-	"notice.calloutDuplicateFailed": "A callout másolása nem sikerült. Ellenőrizd a mentés állapotát, majd próbáld újra.",
+	"notice.calloutDuplicateFailed":
+		"A callout másolása nem sikerült. Ellenőrizd a mentés állapotát, majd próbáld újra.",
 	"settings.resetAction": "Visszaállítás alapértelmezettre",
 	"settings.makeFallbackAction": "Alapértelmezett tartalékstílus használata",
 	"notice.fallbackStyleApplied": "„{{name}}” mostantól az alapértelmezett tartalékstílust használja.",
@@ -127,13 +126,11 @@ export const hu: Record<string, string> = {
 	"settings.themeCalloutsHeading": "A témájából származó callout-ok",
 	"settings.themeCalloutsDefaultTheme": "A témája",
 	"settings.themeCalloutsEmpty": "A(z) {{theme}} jelenleg egyetlen calloutot sem formáz.",
-	"settings.themePreviewAria":
-		'Előnézet: "{{name}}" — nézze meg, hogyan rajzolja meg a témája',
+	"settings.themePreviewAria": 'Előnézet: "{{name}}" — nézze meg, hogyan rajzolja meg a témája',
 	"settings.builtInAllThemeStyled":
 		"A(z) {{theme}} minden beépített calloutot stilizál, ezért a Callout Studio mindet érintetlenül hagyja. Ha saját tervezésűt szeretne, adjon hozzá egy calloutot másik azonosítóval.",
 	"settings.fallbackCallout": "Alapértelmezett tartalék callout",
-	"settings.fallbackCalloutDesc":
-		"Az ismeretlen callout-típusok öröklik ezt a stílust.",
+	"settings.fallbackCalloutDesc": "Az ismeretlen callout-típusok öröklik ezt a stílust.",
 
 	"settings.border": "Szegélyek",
 	"settings.borderTop": "Felül",
@@ -165,8 +162,7 @@ export const hu: Record<string, string> = {
 	"settings.paletteCountOne": "1 paletta",
 	"settings.editPaletteAria": "{{name}} paletta szerkesztése",
 	"settings.deletePaletteTitle": "Paletta törlése",
-	"settings.deletePaletteBody":
-		'Az ezt a színt használó callout-ok nem változnak.',
+	"settings.deletePaletteBody": "Az ezt a színt használó callout-ok nem változnak.",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Azok a calloutok, amelyek a metaadataikban megnevezik ("{{key}}"), helyette az ilyen nevű beépített színt kapják. A jegyzeteid nem változnak.',
 
@@ -193,9 +189,9 @@ export const hu: Record<string, string> = {
 	"commandBuilder.formatBlock": "Blokk",
 	"commandBuilder.roleDisabled":
 		"Ez a formátum ki van kapcsolva, ezért a parancs egyszerű szöveget szúr be, amíg vissza nem kapcsolja.",
-	"commandBuilder.roleThemeOwned":
-		"A témája biztosítja ezt a callout-ot, ezért csak Block formátuma van.",
-	"commandBuilder.commandSuspended": "Szüneteltetve, amíg a témád biztosítja ezt a calloutot; ilyenkor csak blokkformátuma van.",
+	"commandBuilder.roleThemeOwned": "A témája biztosítja ezt a callout-ot, ezért csak Block formátuma van.",
+	"commandBuilder.commandSuspended":
+		"Szüneteltetve, amíg a témád biztosítja ezt a calloutot; ilyenkor csak blokkformátuma van.",
 	"commandBuilder.pausedTag": "Szüneteltetve a téma miatt",
 	"commandBuilder.missingTag": "Hiányzó callout",
 	"commandBuilder.callout": "Callout típus",
@@ -203,8 +199,7 @@ export const hu: Record<string, string> = {
 	"commandBuilder.headingLevel": "Címsorszint",
 	"commandBuilder.headingLevelDesc": "Melyik címsorszintet írja be.",
 	"commandBuilder.action": "Művelet",
-	"commandBuilder.actionDesc":
-		"A becsomagolás callout-tá alakítja a kijelölést; a beszúrás egy üreset ad hozzá.",
+	"commandBuilder.actionDesc": "A becsomagolás callout-tá alakítja a kijelölést; a beszúrás egy üreset ad hozzá.",
 	"commandBuilder.actionDescHeading":
 		"A becsomagolás a kurzort tartalmazó sort címsor callout-tá alakítja.\nA beszúrás egy üreset ad hozzá új sorban.",
 	"commandBuilder.actionDescInline":
@@ -212,22 +207,18 @@ export const hu: Record<string, string> = {
 	"commandBuilder.actionWrap": "Kijelölés becsomagolása",
 	"commandBuilder.actionInsert": "Új beszúrása",
 	"commandBuilder.foldState": "Összecsukási állapot",
-	"commandBuilder.foldStateDesc":
-		"Hogy a callout összecsukható-e, és milyen állapotban indul.",
+	"commandBuilder.foldStateDesc": "Hogy a callout összecsukható-e, és milyen állapotban indul.",
 	"commandBuilder.foldNone": "Nem összecsukható",
 	"commandBuilder.foldExpanded": "Összecsukható, nyitott (+)",
 	"commandBuilder.foldCollapsed": "Összecsukható, zárt (-)",
 	"commandBuilder.preview": "Parancs neve",
-	"commandBuilder.duplicate":
-		"Már van egy parancsa, amely pontosan ezt teszi.",
-	"commandBuilder.noCallouts":
-		"Még nincs callout-típus, amiből parancsot lehetne készíteni.",
+	"commandBuilder.duplicate": "Már van egy parancsa, amely pontosan ezt teszi.",
+	"commandBuilder.noCallouts": "Még nincs callout-típus, amiből parancsot lehetne készíteni.",
 	"commandBuilder.noCalloutChosen": "Először válasszon egy calloutot ehhez a parancshoz.",
 	"commandBuilder.save": "Mentés",
 
 	"settings.resetAll": "Visszaállítás",
-	"settings.resetAllDesc":
-		"Visszaállítja az összes beállítást és testreszabást az alapértelmezettre.",
+	"settings.resetAllDesc": "Visszaállítja az összes beállítást és testreszabást az alapértelmezettre.",
 	"settings.resetAllButton": "Mindent visszaállít",
 	"notice.resetAllDone": "Minden visszaállt az alapértelmezettekre.",
 	"settings.resetIntro": "Szánjon egy pillanatot arra, hogy értékelje mindazt, amit a Callout Studióval felépített.",
@@ -248,50 +239,43 @@ export const hu: Record<string, string> = {
 	"settings.resetItemAutocomplete": "Automatikus kiegészítés és metaadatok beállításai",
 	"settings.resetItemFallback": "Tartalék stílus",
 	"settings.resetItemIconLibraries": "Az ikonkönyvtárak sorrendje és a rejtett könyvtárak",
-	"settings.resetAllConfirmAfter": "Semmi gond: visszaállítás előtt biztonsági másolatot mentünk a jelenlegi beállításaidról. Bármikor visszahozhatod a beállítások Korábbi verzió visszaállítása lehetőségével.\nHa szinkronizálási szolgáltatást használsz, a visszaállítás eljuthat a többi eszközödre is.",
+	"settings.resetAllConfirmAfter":
+		"Semmi gond: visszaállítás előtt biztonsági másolatot mentünk a jelenlegi beállításaidról. Bármikor visszahozhatod a beállítások Korábbi verzió visszaállítása lehetőségével.\nHa szinkronizálási szolgáltatást használsz, a visszaállítás eljuthat a többi eszközödre is.",
 	"settings.resetNothing": "Nincs mit visszaállítani: minden már az alapértelmezett állapotban van.",
 
-	"notice.customCommandMissingCallout":
-		"Ennek a parancsnak a callout-típusa már nem létezik.",
+	"notice.customCommandMissingCallout": "Ennek a parancsnak a callout-típusa már nem létezik.",
 
 	"notice.importedJSON": "{{count}} callout-típus importálva JSON-ból.",
 	"notice.importedSettings": "A bővítmény beállításai importálva.",
-	"notice.importedCalloutManager":
-		"Importálva a Callout Managerből: {{created}} létrehozva, {{updated}} frissítve.",
-	"notice.importedAdmonition":
-		"Importálva az Admonitionből: {{created}} létrehozva, {{updated}} " +
-		"frissítve.",
-	"notice.noNewJSON":
-		"Nem importáltunk új callout-típust (az azonosítók már létezhetnek).",
+	"notice.importedCalloutManager": "Importálva a Callout Managerből: {{created}} létrehozva, {{updated}} frissítve.",
+	"notice.importedAdmonition": "Importálva az Admonitionből: {{created}} létrehozva, {{updated}} " + "frissítve.",
+	"notice.noNewJSON": "Nem importáltunk új callout-típust (az azonosítók már létezhetnek).",
 	"notice.iconDownloadFailed":
 		'A "{{name}}" Material ikon letöltése nem sikerült. Lehet, hogy ez a stílus/vastagság nem érhető el, vagy nincs internetkapcsolata.',
-	"notice.vaultScanFailed": "A callout használatot nem sikerült megszámolni, mert {{count}} jegyzet nem volt olvasható. Ellenőrizze a tárolót és a szinkronizálást, majd próbálja újra.",
+	"notice.vaultScanFailed":
+		"A callout használatot nem sikerült megszámolni, mert {{count}} jegyzet nem volt olvasható. Ellenőrizze a tárolót és a szinkronizálást, majd próbálja újra.",
 
 	"notice.externalCssRetired":
 		"A személyes CSS-stílusozási lehetőség el lett távolítva. Ezek a callout-ok most a mentett Callout Studio-dizájnjukat használják, hacsak a témád nem formázza őket. A jegyzeteid és a személyes CSS-részleteid nem változtak.",
 	"notice.vaultRewritePartial":
 		"{{count}} jegyzetet nem sikerült frissíteni, ezek változatlanok maradtak. A részletekért lásd a fejlesztői konzolt.",
-	"notice.calloutDeleteIncomplete": "Néhány jegyzetet nem sikerült átalakítani. A callout típusa megmaradt. A befejezett átalakítások mentve vannak; oldja meg a fájlproblémát, majd futtassa újra a műveletet a befejezéshez.",
+	"notice.calloutDeleteIncomplete":
+		"Néhány jegyzetet nem sikerült átalakítani. A callout típusa megmaradt. A befejezett átalakítások mentve vannak; oldja meg a fájlproblémát, majd futtassa újra a műveletet a befejezéshez.",
 	"notice.nothingToWrap": "Nincs mit becsomagolni.",
 	"notice.cursorNotInsideCallout": "A kurzor nem callout-on belül van.",
 	"notice.headingAlreadyCallout": "Ez a címsor már callout.",
-	"notice.unwrapLeftAsIs":
-		"Ezt a callout-ot nem sikerült biztonságosan eltávolítani, ezért változatlanul maradt.",
-	"notice.autocompleteTargetMoved":
-		"Semmi nem lett beszúrva — a sor megváltozott, amíg a szerkesztő nyitva volt.",
+	"notice.unwrapLeftAsIs": "Ezt a callout-ot nem sikerült biztonságosan eltávolítani, ezért változatlanul maradt.",
+	"notice.autocompleteTargetMoved": "Semmi nem lett beszúrva — a sor megváltozott, amíg a szerkesztő nyitva volt.",
 	"notice.autocompleteAlwaysEnabled": "Az automatikus kiegészítés mostantól alapfunkció, és mindig be van kapcsolva.",
-	"notice.openHotkeysFailed":
-		"Az Obsidian billentyűparancs-beállításai nem nyithatók meg.",
+	"notice.openHotkeysFailed": "Az Obsidian billentyűparancs-beállításai nem nyithatók meg.",
 	"notice.filterHotkeysFailed":
 		"Az Obsidian billentyűparancsai megnyíltak, de a Callout Studio szűrő nem alkalmazható.",
 
 	"editor.editCallout": "Callout szerkesztése",
 	"editor.newCallout": "Új callout",
 	"editor.displayName": "Megjelenítési név",
-	"editor.displayNameDesc":
-		"A felhasználói felületen megjelenő olvasható felirat",
-	"editor.displayNameBuiltIn":
-		"A beépített callout-ok megjelenítési neve nem módosítható",
+	"editor.displayNameDesc": "A felhasználói felületen megjelenő olvasható felirat",
+	"editor.displayNameBuiltIn": "A beépített callout-ok megjelenítési neve nem módosítható",
 	"editor.displayNamePlaceholder": "Saját callout",
 	"editor.calloutIds": "Callout-azonosítók",
 	"editor.calloutIdsDesc":
@@ -317,15 +301,13 @@ export const hu: Record<string, string> = {
 	"editor.horizontalOffset": "Vízszintes eltolás",
 	"editor.verticalOffset": "Függőleges eltolás",
 	"editor.colors": "Színek",
-	"editor.colorsDesc":
-		"Beállítja a callout szegélyének, hátterének és szövegének színét.",
+	"editor.colorsDesc": "Beállítja a callout szegélyének, hátterének és szövegének színét.",
 	"editor.resetColors": "Színek visszaállítása alapértelmezettre",
 	"editor.paletteDeleted": "Törölt szín",
 	"editor.paletteGroupObsidian": "Obsidian callout-ok",
 	"editor.paletteGroupPresets": "Szín-előbeállítások",
 	"editor.paletteGroupCustom": "Egyéni",
-	"editor.contrastWarning":
-		"Alacsony kontraszt a háttérrel szemben — nehezen olvasható lehet",
+	"editor.contrastWarning": "Alacsony kontraszt a háttérrel szemben — nehezen olvasható lehet",
 	"editor.foldable": "Összecsukható",
 	"editor.foldableDesc":
 		"Válassza meg, hogy a callout összecsukható-e, és milyen alapértelmezett állapot vonatkozzon az egész tárra.",
@@ -334,10 +316,10 @@ export const hu: Record<string, string> = {
 	"editor.foldClosed": "Alapértelmezetten zárva",
 	"editor.cancel": "Mégse",
 	"editor.saveChanges": "Változtatások mentése",
-	"editor.saveFailed": "A mentést nem sikerült befejezni. Ha ez a szerkesztő még nyitva van, hagyja nyitva, és a tárhely és a szinkronizálás ellenőrzése után próbálja újra. Egyes beállítások vagy jegyzetmódosítások már mentésre kerülhettek.",
+	"editor.saveFailed":
+		"A mentést nem sikerült befejezni. Ha ez a szerkesztő még nyitva van, hagyja nyitva, és a tárhely és a szinkronizálás ellenőrzése után próbálja újra. Egyes beállítások vagy jegyzetmódosítások már mentésre kerülhettek.",
 	"editor.createCallout": "Callout létrehozása",
-	"editor.nameRequired":
-		"Callout létrehozása előtt megjelenítési név szükséges.",
+	"editor.nameRequired": "Callout létrehozása előtt megjelenítési név szükséges.",
 	"editor.noChangesToSave": "Nem történt változtatás.",
 	"editor.idEmpty": "Legalább egy azonosító szükséges",
 	"editor.idAlreadyHere": "Ez az azonosító már létezik",
@@ -354,45 +336,36 @@ export const hu: Record<string, string> = {
 		"Figyelem: a témája minden, a(z) {{pattern}}-nak megfelelő callout-ot stílusoz, ezért felülírhatja ennek a kinézetét.",
 	"editor.idDashConflict":
 		"Az Obsidian a szóközöket kötőjelként írja, ezért ez az azonosító ütközik ezzel: „{{other}}”",
-	"editor.idOwnedBy":
-		"A(z) „{{id}}” a(z) {{name}} egyik azonosítója. {{link}}.",
+	"editor.idOwnedBy": "A(z) „{{id}}” a(z) {{name}} egyik azonosítója. {{link}}.",
 	"editor.idMoveHere": "Áthelyezheted ide",
 	"editor.idOwnedByMain":
 		"A(z) „{{id}}” a(z) {{name}} fő azonosítója. Ha itt szeretnéd használni, előbb töröld a(z) {{name}} elemet.",
-	"editor.idBuiltInStock":
-		"A(z) „{{id}}” az Obsidian saját azonosítóinak egyike a(z) {{name}} számára.",
-	"editor.idMoving":
-		"Mentéskor a(z) „{{id}}” ide kerül át a(z) {{name}} elemből.",
+	"editor.idBuiltInStock": "A(z) „{{id}}” az Obsidian saját azonosítóinak egyike a(z) {{name}} számára.",
+	"editor.idMoving": "Mentéskor a(z) „{{id}}” ide kerül át a(z) {{name}} elemből.",
 	"editor.idMovingNotes": "A jegyzeteid nem változnak. Ennek a calloutnak a stílusát kapják.",
 	"editor.untitledCallout": "Névtelen callout",
 	"editor.loremIpsum":
 		"Enyhe szellő suhan át a fák között. A meleg napfény beragyog egy csendes ösvényt, és élettel tölti meg a tájat.",
-	"editor.loremIpsumShort":
-		"Enyhe szellő suhan át a fák között.",
-	"editor.sampleInlineText":
-		"Íme egy soron belüli [!{id}]{{title}} pirula egy bekezdésen belül.",
+	"editor.loremIpsumShort": "Enyhe szellő suhan át a fák között.",
+	"editor.sampleInlineText": "Íme egy soron belüli [!{id}]{{title}} pirula egy bekezdésen belül.",
 	"editor.previewReadOnly": "Az élő előnézet nem szerkeszthető",
 	"noteChanges.title": "Frissíted a jegyzeteidet?",
 	"noteChanges.leave": "Hagyd őket úgy, ahogy vannak",
-	"noteChanges.leaveDesc":
-		"Megtartják a(z) [!{{id}}] azonosítót, és az alapértelmezett stílusra állnak vissza.",
+	"noteChanges.leaveDesc": "Megtartják a(z) [!{{id}}] azonosítót, és az alapértelmezett stílusra állnak vissza.",
 	"noteChanges.changeTo": "Módosítás erre:",
 	"noteChanges.renameChange": "Módosítás erre: „{{id}}”",
 	"noteChanges.titlesChange": "Módosítás erre: „{{new}}”",
 	"noteChanges.titlesLeaveDesc": "Továbbra is „{{old}}” marad bennük.",
 	"noteChanges.foldChange": "Beállítás erre: „{{state}}”",
-	"noteChanges.foldLeaveDesc":
-		"Csak a mostantól beszúrt calloutok használják az új beállítást.",
+	"noteChanges.foldLeaveDesc": "Csak a mostantól beszúrt calloutok használják az új beállítást.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": 'A(z) {{name}} — a témája biztosítja',
+	"themePreview.title": "A(z) {{name}} — a témája biztosítja",
 	"themePreview.summary":
 		"A(z) {{theme}} biztosítja (csak olvasható). A szín, az ikon és az azonosító itt nem módosítható, a Címsor/Beágyazott formátumok pedig nem érhetők el. A testreszabáshoz hozzon létre egy új callout-ot.",
 	"themePreview.previewTitle": "Hogyan jelenik meg most",
-	"themePreview.blockSample":
-		"> [!{{id}}] {{name}}\n" +
-		"> Így néz ki a callout tartalma.\n",
+	"themePreview.blockSample": "> [!{{id}}] {{name}}\n" + "> Így néz ki a callout tartalma.\n",
 
 	// Theme callout preview window
 	"editor.themePreviewClose": "Értem",
@@ -421,8 +394,10 @@ export const hu: Record<string, string> = {
 	"palette.advancedColors": "Színek",
 	"palette.lightModeColors": "Világos mód színei",
 	"palette.darkModeColors": "Sötét mód színei",
-	"palette.modeColorsHintLight": "Ezek a módosítások csak a világos módra vonatkoznak. A sötét mód megtartja a saját színeit.\nA szerkesztésükhöz nyomd meg fent a hold gombot.",
-	"palette.modeColorsHintDark": "Ezek a módosítások csak a sötét módra vonatkoznak. A világos mód megtartja a saját színeit.\nA szerkesztésükhöz nyomd meg fent a nap gombot.",
+	"palette.modeColorsHintLight":
+		"Ezek a módosítások csak a világos módra vonatkoznak. A sötét mód megtartja a saját színeit.\nA szerkesztésükhöz nyomd meg fent a hold gombot.",
+	"palette.modeColorsHintDark":
+		"Ezek a módosítások csak a sötét módra vonatkoznak. A világos mód megtartja a saját színeit.\nA szerkesztésükhöz nyomd meg fent a nap gombot.",
 	"palette.showLightMode": "Világos mód megjelenítése",
 	"palette.showDarkMode": "Sötét mód megjelenítése",
 	"palette.accentColor": "Kiemelőszín",
@@ -514,12 +489,10 @@ export const hu: Record<string, string> = {
 	"iconPicker.searchSimpleIcons": "Keresés a Simple Icons között",
 	"iconPicker.custom": "Egyéni ikonok",
 	"iconPicker.searchCustom": "Keresés az egyéni ikonok között",
-	"iconPicker.customTooLarge":
-		"{{name}} túl nagy. Az egyéni ikonok mérete legfeljebb 5 MB lehet.",
+	"iconPicker.customTooLarge": "{{name}} túl nagy. Az egyéni ikonok mérete legfeljebb 5 MB lehet.",
 	"iconPicker.customUnsupported":
 		"{{name}} nem támogatott egyéni ikonfájl. Használjon SVG, PNG, JPEG vagy WebP fájlt.",
-	"iconPicker.customInvalidSvg":
-		"{{name}} nem olvasható biztonságos SVG-ként, ezért nem lett hozzáadva.",
+	"iconPicker.customInvalidSvg": "{{name}} nem olvasható biztonságos SVG-ként, ezért nem lett hozzáadva.",
 	"iconPicker.customDecodeFailed": "{{name}} nem olvasható egyéni ikonként.",
 	"iconPicker.customDuplicate":
 		"{{name}} már szerepel az egyéni ikonok között. Nevezze át a fájlt, vagy törölje a meglévő ikont.",
@@ -549,10 +522,8 @@ export const hu: Record<string, string> = {
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "egyszerre keresés az összes könyvtárban",
 	"iconPicker.descLucide": "Az Obsidian saját készlete, mindig offline",
-	"iconPicker.descTabler":
-		"tiszta és következetes UI ikonok, kontúr és kitöltött",
-	"iconPicker.descMaterial":
-		"A Google készlete, négy stílus és hét vastagság",
+	"iconPicker.descTabler": "tiszta és következetes UI ikonok, kontúr és kitöltött",
+	"iconPicker.descMaterial": "A Google készlete, négy stílus és hét vastagság",
 	"iconPicker.descEmoji": "színes glífák, minden bőrtónus",
 	"iconPicker.descOcticons": "GitHub felületi ikonjai",
 	"iconPicker.descFa": "tömör, normál és márkák",
@@ -679,15 +650,13 @@ export const hu: Record<string, string> = {
 	"iconPack.downloadDetail": "{{count}} ikon · {{size}} · egyszeri letöltés",
 	"iconPack.download": "Letöltés",
 	"iconPack.downloading": "{{name}} letöltése…",
-	"iconPack.downloadFailed":
-		"{{name}} nem tölthető le. Ellenőrizze a kapcsolatot, majd próbálja újra.",
+	"iconPack.downloadFailed": "{{name}} nem tölthető le. Ellenőrizze a kapcsolatot, majd próbálja újra.",
 	"iconPack.retry": "Újrapróbálkozás",
 	"iconPack.faBrandsNotice":
 		"A márka ikonok a megfelelő tulajdonosok védjegyei. Szerepeltetésük nem jelent jóváhagyást. Kérjük, csak az általuk képviselt vállalat, termék vagy szolgáltatás megjelenítésére használja őket.",
 	"iconPack.simpleIconsNotice":
 		"A logók tulajdonosaik védjegyei; az itt szereplésük nem jelent támogatást. Egy logót csak a saját márkájának jelölésére használjon, és tartsa be az adott márka irányelveit. Egyes logókhoz saját licenc is tartozik; lásd az ikonok forrásmegjelöléseit.",
-	"iconPack.artworkRestored":
-		"Az ikonok grafikája letöltve a(z) {{names}} számára.",
+	"iconPack.artworkRestored": "Az ikonok grafikája letöltve a(z) {{names}} számára.",
 	"iconPack.diskWriteFailed":
 		"A Callout Studio nem tudta menteni az ikoncsomagot a lemezre, ezért legközelebb újra le kell tölteni. A választott ikonok továbbra is mentve vannak a beállításaiban.",
 	"settings.colorsAndIcons": "Színek és ikonok",
@@ -742,7 +711,8 @@ export const hu: Record<string, string> = {
 	"contextMenu.setFoldNone": "Callout összecsukhatatlanná tétele",
 	"contextMenu.cutSection": "Címsor szakasz kivágása",
 	"notice.clipboardWriteFailed": "Nem sikerült a vágólapra másolni. A jegyzet változatlan maradt.",
-	"notice.sectionChangedAfterCopy": "A szakasz átmásolva, de a jegyzet módosult, mielőtt ki lehetett volna vágni. Semmi sem lett eltávolítva.",
+	"notice.sectionChangedAfterCopy":
+		"A szakasz átmásolva, de a jegyzet módosult, mielőtt ki lehetett volna vágni. Semmi sem lett eltávolítva.",
 	"contextMenu.copySection": "Címsor szakasz másolása",
 	"contextMenu.deleteSection": "Címsor szakasz törlése",
 	"heading.toggleFold": "Összecsukás váltása",
@@ -761,7 +731,8 @@ export const hu: Record<string, string> = {
 	"settings.metadataColors": "Metaadat-színek",
 	"settings.metadataColorsDesc": "A | utáni szín csak azt az egy calloutot színezi, például: [!note|red].",
 	"settings.metadataAutocomplete": "Metaadatok automatikus kiegészítése",
-	"settings.metadataAutocompleteDesc": "Színek és szavak listájának megjelenítése, amikor | karaktert írsz egy calloutban.",
+	"settings.metadataAutocompleteDesc":
+		"Színek és szavak listájának megjelenítése, amikor | karaktert írsz egy calloutban.",
 	"settings.suggestThemeMetadata": "A téma szavainak felvétele",
 	"settings.suggestThemeMetadataDesc": "Felsorolja azokat a szavakat, amelyekre a témád reagál.",
 	"settings.metadataWords": "Saját szavaid",
@@ -771,15 +742,14 @@ export const hu: Record<string, string> = {
 	"settings.metadataWordAlreadyHere": "Ez a szó már szerepel a listában",
 	"settings.metadataWordTooLong": "Egy szó legfeljebb {{max}} karakter lehet",
 	"settings.maxMetadataWords": "Legfeljebb {{max}} szó. Törölj egyet, ha másikat szeretnél hozzáadni.",
-	"settings.buildFailed": "A Callout Studio nem tudta megrajzolni a beállításait; indítsd újra az Obsidiant, és jelezd, ha ismét előfordul.",
-	"settings.globalSettingsRegularDesc":
-		"Szegély, sugár, betűméret-arány és igazítás.",
-	"settings.globalSettingsHeadingDesc":
-		"Szegély, alak és függőleges térköz.",
-	"settings.globalSettingsInlineDesc":
-		"Szegély és alak.",
+	"settings.buildFailed":
+		"A Callout Studio nem tudta megrajzolni a beállításait; indítsd újra az Obsidiant, és jelezd, ha ismét előfordul.",
+	"settings.globalSettingsRegularDesc": "Szegély, sugár, betűméret-arány és igazítás.",
+	"settings.globalSettingsHeadingDesc": "Szegély, alak és függőleges térköz.",
+	"settings.globalSettingsInlineDesc": "Szegély és alak.",
 	"settings.themeCalloutStyles": "A téma callout-stílusainak használata",
-	"settings.themeCalloutStylesDesc": "Bekapcsolva a témád által formázott calloutok megtartják a téma megjelenését, és csak blokk-calloutként jelennek meg. Kikapcsolva a Callout Studio rajzol meg minden calloutot.",
+	"settings.themeCalloutStylesDesc":
+		"Bekapcsolva a témád által formázott calloutok megtartják a téma megjelenését, és csak blokk-calloutként jelennek meg. Kikapcsolva a Callout Studio rajzol meg minden calloutot.",
 	"settings.calloutTypeRegular": "Blokk callout stílusa",
 	"settings.calloutTypeHeading": "Címsor callout stílusa",
 	"settings.calloutTypeInline": "Beágyazott callout stílusa",
@@ -795,8 +765,7 @@ export const hu: Record<string, string> = {
 	"menuItem.createOrEdit": "Callout létrehozása vagy szerkesztése",
 	"menuItem.openSettings": "Beállítások megnyitása",
 	"menuItem.copyMarkdown": "Markdown másolása",
-	"menuItem.foldDefaults":
-		"Alapértelmezett összecsukási állapot (nyitott / zárt / nincs)",
+	"menuItem.foldDefaults": "Alapértelmezett összecsukási állapot (nyitott / zárt / nincs)",
 	"menuItem.cutSection": "Szakasz kivágása",
 	"menuItem.copySection": "Szakasz másolása",
 	"menuItem.deleteSection": "Szakasz törlése",
@@ -812,23 +781,16 @@ export const hu: Record<string, string> = {
 	"confirm.titleDeleteLibrary": "Ikonkönyvtár törlése",
 	"confirm.titleResetLibraries": "Ikonkönyvtárak visszaállítása",
 
-	"vault.filesUpdated":
-		"{{count}} callout-hivatkozás frissítve a tárfájlokban.",
-	"vault.idsUpdated":
-		"{{count}} callout-azonosító frissítve a tárfájlokban: {{oldIds}} → {{newId}}",
-	"vault.titlesUpdated":
-		"{{count}} callout-cím frissítve a tárfájlokban: {{oldTitle}} → {{newTitle}}",
-	"vault.foldUpdated":
-		"{{count}} callout összecsukási jelölése frissítve a tárfájlokban.",
+	"vault.filesUpdated": "{{count}} callout-hivatkozás frissítve a tárfájlokban.",
+	"vault.idsUpdated": "{{count}} callout-azonosító frissítve a tárfájlokban: {{oldIds}} → {{newId}}",
+	"vault.titlesUpdated": "{{count}} callout-cím frissítve a tárfájlokban: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated": "{{count}} callout összecsukási jelölése frissítve a tárfájlokban.",
 	"vault.confirmReplace": "Csere",
 	"vault.replacePromptInUse":
 		'"{{name}}" {{count}} alkalommal szerepel {{files}} fájlban. Válasszon callout-ot a helyettesítéshez:',
-	"vault.replacePromptUnused":
-		'Válasszon callout-ot a következő helyettesítéséhez: "{{name}}":',
-	"vault.noReplacementAvailable":
-		"Nincs más elérhető callout a helyettesítéshez.",
-	"vault.convertedToPlainText":
-		"{{blocks}} callout-blokk {{files}} fájlban egyszerű szöveggé alakítva.",
+	"vault.replacePromptUnused": 'Válasszon callout-ot a következő helyettesítéséhez: "{{name}}":',
+	"vault.noReplacementAvailable": "Nincs más elérhető callout a helyettesítéshez.",
+	"vault.convertedToPlainText": "{{blocks}} callout-blokk {{files}} fájlban egyszerű szöveggé alakítva.",
 	"vault.resetNotesFailed":
 		"Néhány jegyzetet nem sikerült frissíteni, ezért a callout visszaállítása nem történt meg. A befejezéshez válaszd újra a Visszaállítás alapértelmezettre lehetőséget.",
 
@@ -845,7 +807,8 @@ export const hu: Record<string, string> = {
 	"quickInsert.noResults": "Nem található callout",
 	"quickInsert.noBuiltInCallouts": "Jelenleg nem érhetők el beépített callout-ok.",
 	"quickInsert.noThemeCallouts": "Jelenleg nem érhetők el témaspecifikus callout-ok.",
-	"quickInsert.targetMoved": "A jegyzet, amelyből a Gyors beszúrást megnyitotta, megváltozott vagy bezárult. Nyissa meg újra a Gyors beszúrást abban a jegyzetben, amelyet szerkeszteni szeretne.",
+	"quickInsert.targetMoved":
+		"A jegyzet, amelyből a Gyors beszúrást megnyitotta, megváltozott vagy bezárult. Nyissa meg újra a Gyors beszúrást abban a jegyzetben, amelyet szerkeszteni szeretne.",
 	"quickInsert.targetMovedHint": "Az eredeti jegyzet már nem érhető el ehhez a beszúráshoz.",
 	"quickInsert.noUserCallouts":
 		"Még nem hoztál létre egyéni callout-ot. Futtasd a „Callout Studio: Új callout-típus létrehozása” parancsot a parancspalettáról.",
@@ -863,9 +826,11 @@ export const hu: Record<string, string> = {
 	"portable.restoreDefault": "Alapértelmezett csere visszaállítása",
 	"portable.cancelEdit": "Módosítások elvetése",
 	"portable.customInvalid": "A csere maradjon egyetlen sorban, a környező Markdown-szerkezet módosítása nélkül.",
-	"portable.customUnsafe": "Ez a csere kétértelművé tenne egy címsort vagy annak hivatkozásait. Válasszon másik címsort.",
+	"portable.customUnsafe":
+		"Ez a csere kétértelművé tenne egy címsort vagy annak hivatkozásait. Válasszon másik címsort.",
 	"portable.customStale": "A felülvizsgálat megváltozott. Nyisd meg újra a csere szerkesztőjét.",
-	"portable.customDiscarded": "{{count}} egyéni csere törölve lett, mert a forrásszövegük megváltozott, vagy nem lehetett azt biztonsággal megtalálni.",
+	"portable.customDiscarded":
+		"{{count}} egyéni csere törölve lett, mert a forrásszövegük megváltozott, vagy nem lehetett azt biztonsággal megtalálni.",
 	"portable.customBadge": "Egyéni",
 
 	"usage.title": "Calloutok keresése",
@@ -887,41 +852,41 @@ export const hu: Record<string, string> = {
 	"usage.more": "További {{count}} megjelenítése",
 	"usage.location": "{{line}}. sor · {{role}}",
 	"usage.missing": "Ez a jegyzet már nem létezik. Az eredmények frissítése…",
-	"usage.changed": "Ez az előfordulás megváltozott, vagy nem egyértelműen más helyre került. Az eredmények frissítése…",
+	"usage.changed":
+		"Ez az előfordulás megváltozott, vagy nem egyértelműen más helyre került. Az eredmények frissítése…",
 	"usage.openFailed": "Nem sikerült megnyitni ezt a callout-előfordulást.",
 	"usage.menuIncomplete": "Calloutok keresése — a vizsgálat nem teljes",
 	"usage.menu": "Calloutok keresése",
 	"usage.closeSettings": "Zárd be a Beállításokat, hogy a callout-eredményeket az oldalsávban lásd.",
 
 	"import.title": "Importálási problémák",
-	"import.reportLeadIn":
-		"A folytatás előtt tekintse át az importálás során talált problémákat:",
-	"import.reportLeadInFatal":
-		"Ezeket az adatokat nem sikerült importálni:",
+	"import.reportLeadIn": "A folytatás előtt tekintse át az importálás során talált problémákat:",
+	"import.reportLeadInFatal": "Ezeket az adatokat nem sikerült importálni:",
 	"import.entryHeading": "Bejegyzés {{index}} — {{label}}",
-	"import.summary":
-		"{{valid}} / {{total}} bejegyzés érvényes · {{issues}} probléma találva.",
+	"import.summary": "{{valid}} / {{total}} bejegyzés érvényes · {{issues}} probléma találva.",
 	"import.btnCancel": "Mégse",
 	"import.btnImportValid": "Csak érvényesek importálása ({{count}})",
-	"import.nothingValid": "Egyik bejegyzés sem érvényes, ezért nincs mit importálni. Szakítsa meg, javítsa az itt felsorolt hibákat, majd importáljon újra.",
+	"import.nothingValid":
+		"Egyik bejegyzés sem érvényes, ezért nincs mit importálni. Szakítsa meg, javítsa az itt felsorolt hibákat, majd importáljon újra.",
 	"import.err.notRecognized":
 		"Ismeretlen fájl: callout-definíciók tömbje vagy Callout Studio exportálás volt várható.",
-	"import.warn.settingsIgnored":
-		"A beállítási blokk nem volt érvényes objektum, ezért figyelmen kívül lett hagyva.",
-	"import.warn.invalidGradient":
-		"A háttér színátmenete nem volt érvényes, ezért figyelmen kívül lett hagyva.",
+	"import.warn.settingsIgnored": "A beállítási blokk nem volt érvényes objektum, ezért figyelmen kívül lett hagyva.",
+	"import.warn.invalidGradient": "A háttér színátmenete nem volt érvényes, ezért figyelmen kívül lett hagyva.",
 	"import.err.parseFailed": "A fájl nem érvényes JSON, és nem elemezhető.",
-	"import.err.tooLarge": "Ez az importálás túllépi a 16 MiB-os méretkorlátot. Bontsa kisebb fájlokra, majd próbálja újra.",
-	"import.err.tooComplex": "Ez az importálás túl összetett: listánként vagy objektumonként legfeljebb 1 000 elem, összesen 50 000 érték és legfeljebb 32 beágyazási szint használható.",
-	"import.err.imageBudget": "A teljes képgyűjtemény túllépi a méret- vagy összetettségi korlátot. Importálás előtt távolítsa el vagy egyszerűsítse a nagy képeket.",
-	"import.err.processingFailed": "Az importálást nem sikerült befejezni. Ellenőrizze az adatokat, majd próbálja újra.",
-	"import.reportTruncated": "A {{total}} problémából az első {{shown}} jelenik meg. A hosszú értékek rövidítve szerepelnek ebben a jelentésben.",
+	"import.err.tooLarge":
+		"Ez az importálás túllépi a 16 MiB-os méretkorlátot. Bontsa kisebb fájlokra, majd próbálja újra.",
+	"import.err.tooComplex":
+		"Ez az importálás túl összetett: listánként vagy objektumonként legfeljebb 1 000 elem, összesen 50 000 érték és legfeljebb 32 beágyazási szint használható.",
+	"import.err.imageBudget":
+		"A teljes képgyűjtemény túllépi a méret- vagy összetettségi korlátot. Importálás előtt távolítsa el vagy egyszerűsítse a nagy képeket.",
+	"import.err.processingFailed":
+		"Az importálást nem sikerült befejezni. Ellenőrizze az adatokat, majd próbálja újra.",
+	"import.reportTruncated":
+		"A {{total}} problémából az első {{shown}} jelenik meg. A hosszú értékek rövidítve szerepelnek ebben a jelentésben.",
 	"import.err.entryNotObject": "A bejegyzésnek objektumnak kell lennie.",
-	"import.err.requiredMissing":
-		'A kötelező "{{field}}" mező hiányzik vagy rossz típusú.',
+	"import.err.requiredMissing": 'A kötelező "{{field}}" mező hiányzik vagy rossz típusú.',
 	"import.err.idEmpty": "Az azonosító nem lehet üres.",
-	"import.err.idTooLong":
-		'A "{{value}}" azonosító {{length}} karakter; a maximum {{max}}.',
+	"import.err.idTooLong": 'A "{{value}}" azonosító {{length}} karakter; a maximum {{max}}.',
 	"import.err.idBadChar":
 		'A "{{value}}" azonosító érvénytelen karaktereket tartalmaz ("|", "[", "]", tabulátorok és sortörések nem megengedettek).',
 	"import.err.idMetadata":
@@ -929,50 +894,36 @@ export const hu: Record<string, string> = {
 	"import.err.idReserved":
 		'A "{{value}}" azonosítót a Callout Studio a saját előnézeteihez tartja fenn, ezért nem importálható.',
 	"import.err.displayNameEmpty": "A megjelenítési név nem lehet üres.",
-	"import.err.displayNameTooLong":
-		"A megjelenítési név {{length}} karakter; a maximum {{max}}.",
-	"import.err.boolField":
-		'"{{field}}" boolean értéknek kell lennie (true vagy false).',
+	"import.err.displayNameTooLong": "A megjelenítési név {{length}} karakter; a maximum {{max}}.",
+	"import.err.boolField": '"{{field}}" boolean értéknek kell lennie (true vagy false).',
 	"import.err.iconNotObject": "Az ikonnak objektumnak kell lennie.",
-	"import.err.iconTypeInvalid":
-		'Az "{{value}}" ikontípus nem egyike a következőknek: {{types}}.',
+	"import.err.iconTypeInvalid": 'Az "{{value}}" ikontípus nem egyike a következőknek: {{types}}.',
 	"import.warn.iconFieldIgnored":
 		'"{{field}}" csak a Material ikonokra vonatkozik, és a rendszer figyelmen kívül hagyja a(z) {{type}} ikontípus esetén.',
-	"import.err.iconValueEmpty":
-		"Az ikonértéknek nem üres karakterláncnak kell lennie.",
-	"import.err.iconValueTooLong":
-		"Az ikon értéke meghaladja a 200 karakteres korlátot ({{length}} karakter).",
+	"import.err.iconValueEmpty": "Az ikonértéknek nem üres karakterláncnak kell lennie.",
+	"import.err.iconValueTooLong": "Az ikon értéke meghaladja a 200 karakteres korlátot ({{length}} karakter).",
 	"import.err.materialStyle":
 		'A "{{value}}" Material ikonstílus nem egyike a következőknek: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
 		'A "{{value}}" Material ikonvastagság 100–700 közötti, 100-asával növekvő egész szám kell legyen.',
 	"import.warn.iconRecolorIgnored":
 		'"recolor" csak a saját képeire vonatkozik, és a rendszer figyelmen kívül hagyja a(z) {{type}} ikontípus esetén.',
-	"import.err.iconRecolorInvalid":
-		'"recolor" igaz vagy hamis kell legyen (kapott: "{{value}}").',
-	"import.err.colorInvalid":
-		'"{{field}}" hexadecimális szín kell legyen, pl. "#448aff" (kapott: "{{value}}").',
-	"import.err.numberRange":
-		'"{{field}}" {{min}} és {{max}} közötti szám kell legyen (kapott: "{{value}}").',
-	"import.err.iconSizeRange":
-		'"{{field}}" {{min}} és {{max}} közötti szám kell legyen (kapott: "{{value}}").',
+	"import.err.iconRecolorInvalid": '"recolor" igaz vagy hamis kell legyen (kapott: "{{value}}").',
+	"import.err.colorInvalid": '"{{field}}" hexadecimális szín kell legyen, pl. "#448aff" (kapott: "{{value}}").',
+	"import.err.numberRange": '"{{field}}" {{min}} és {{max}} közötti szám kell legyen (kapott: "{{value}}").',
+	"import.err.iconSizeRange": '"{{field}}" {{min}} és {{max}} közötti szám kell legyen (kapott: "{{value}}").',
 	"import.err.iconAdjustShape":
 		'Az "iconAdjust" objektumnak a callout-típusokat ("regular", "heading", "inline") az ikonméretükhöz és eltolásaikhoz kell rendelnie.',
-	"import.err.aliasesNotArray":
-		'"aliases" karakterláncok tömbje kell legyen.',
+	"import.err.aliasesNotArray": '"aliases" karakterláncok tömbje kell legyen.',
 	"import.err.aliasNotString": "Az aliasnak karakterláncnak kell lennie.",
-	"import.err.aliasDup":
-		'A "{{value}}" alias ismétlődik ezen a bejegyzésen belül.',
+	"import.err.aliasDup": 'A "{{value}}" alias ismétlődik ezen a bejegyzésen belül.',
 	"import.err.tooManyIds":
 		"Túl sok azonosító ({{count}}); minden callout-nak legfeljebb {{max}} azonosítója lehet (elsődleges + aliasok).",
-	"import.err.metadataShape":
-		'"metadata" olyan objektum kell legyen, amelynek minden értéke karakterlánc.',
-	"import.warn.unknownFields":
-		"Ismeretlen mezők figyelmen kívül hagyva: {{fields}}.",
+	"import.err.metadataShape": '"metadata" olyan objektum kell legyen, amelynek minden értéke karakterlánc.',
+	"import.warn.unknownFields": "Ismeretlen mezők figyelmen kívül hagyva: {{fields}}.",
 	"import.err.duplicateInFile":
 		'A "{{value}}" azonosítót/aliast a #{{first}} bejegyzés már használja ebben a fájlban.',
-	"import.err.aliasConflict":
-		'A "{{value}}" aliast egy másik callout ("{{other}}") már használja a tárban.',
+	"import.err.aliasConflict": 'A "{{value}}" aliast egy másik callout ("{{other}}") már használja a tárban.',
 	"import.warn.defaultFoldedAutofix":
 		'"defaultFolded" true volt, míg "foldable" false volt; a defaultFolded visszaállt false-ra.',
 	"import.warn.imageMissing":
@@ -1013,30 +964,29 @@ export const hu: Record<string, string> = {
 	"import.cmVaultChecking": "Callout Manager bővítmény keresése…",
 	"import.cmVaultFound": "{{count}} testreszabott callout található.",
 	"import.cmFromPaste": "Másolt stílusok",
-	"import.cmFromPasteDesc":
-		"Amit a Callout Manager Copy gombja másol, vagy egy data.json.",
-	"import.cmPlaceholder":
-		"Illeszd be ide a másolt stílusokat vagy a data.json tartalmát…",
+	"import.cmFromPasteDesc": "Amit a Callout Manager Copy gombja másol, vagy egy data.json.",
+	"import.cmPlaceholder": "Illeszd be ide a másolt stílusokat vagy a data.json tartalmát…",
 	"import.cmBtnCancel": "Mégse",
 	"import.cmBtnImport": "Importálás",
-	"import.err.cmNoBlocksFound":
-		"Nem találhatók Callout Manager stílusok a fájlban vagy a beillesztett szövegben.",
+	"import.err.cmNoBlocksFound": "Nem találhatók Callout Manager stílusok a fájlban vagy a beillesztett szövegben.",
 	"import.err.cmNotRecognized":
 		"Ismeretlen fájl: a Callout Manager Copy gombja által előállított stílusokat, vagy egy Callout Manager data.json fájlt vártunk.",
-	"import.err.cmNoEntries":
-		"Nem található importálható, testreszabott callout.",
-	"import.err.cmNoColorForNew":
-		'Nem található használható szín az új "{{value}}" callouthoz; kihagyva.',
+	"import.err.cmNoEntries": "Nem található importálható, testreszabott callout.",
+	"import.err.cmNoColorForNew": 'Nem található használható szín az új "{{value}}" callouthoz; kihagyva.',
 	"import.err.cmIdConflict":
 		'A "{{value}}" azonosítót már egy másik callout ("{{other}}") alias-ként használja, ezért kihagyva.',
 	"import.warn.cmNoColorDefault":
 		"A Callout Managerben nem volt beállítva szín, ezért az alapértelmezett szürkét használtuk.",
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "A témától függő stílus nem őrizhető meg. A feltétel nélküli értékek élveznek elsőbbséget; a feltételes tartalékérték minden témára érvényes.",
-	"import.warn.cmCustomStylesSkipped": "A Callout Manager egyéni CSS-e nem importálható. Csak a támogatott ikon- és színbeállítások vihetők át.",
-	"import.warn.cmSchemeIcon": "A Callout Studio mindkét színsémához ugyanazt az ikont használja; az importált ikon mindkettőben megjelenik.",
-	"import.err.cmDuplicateId": "A(z) {{value}} azonosító megkettőzi a(z) {{other}} azonosítót ebben az importálásban, ezért kimaradt.",
+	"import.warn.cmThemeConditionPartial":
+		"A témától függő stílus nem őrizhető meg. A feltétel nélküli értékek élveznek elsőbbséget; a feltételes tartalékérték minden témára érvényes.",
+	"import.warn.cmCustomStylesSkipped":
+		"A Callout Manager egyéni CSS-e nem importálható. Csak a támogatott ikon- és színbeállítások vihetők át.",
+	"import.warn.cmSchemeIcon":
+		"A Callout Studio mindkét színsémához ugyanazt az ikont használja; az importált ikon mindkettőben megjelenik.",
+	"import.err.cmDuplicateId":
+		"A(z) {{value}} azonosító megkettőzi a(z) {{other}} azonosítót ebben az importálásban, ezért kimaradt.",
 	"import.admTitle": "Importálás az Admonitionből",
 	"import.admInstructions":
 		"Minden admonition callout lesz, a nevével, ikonjával és színével " +
@@ -1047,46 +997,37 @@ export const hu: Record<string, string> = {
 	"import.admVaultChecking": "Az Admonition bővítmény keresése…",
 	"import.admVaultFound": "{{count}} saját admonition található.",
 	"import.admFromFile": "Egy fájl",
-	"import.admFromFileDesc":
-		"Egy admonitions.json fájl vagy egy megosztott csomag.",
+	"import.admFromFileDesc": "Egy admonitions.json fájl vagy egy megosztott csomag.",
 	"import.admBtnCancel": "Mégse",
 	"import.admBtnImport": "Importálás",
 	"import.err.admNotRecognized":
-		"Ismeretlen fájl: admonition-lista vagy az Admonition data.json " +
-		"fájlja volt várható.",
+		"Ismeretlen fájl: admonition-lista vagy az Admonition data.json " + "fájlja volt várható.",
 	"import.err.admNoEntries": "Nem található importálható admonition.",
-	"import.err.admTypeMissing":
-		'Ennek az admonitionnek nincs "type" mezője, ezért kimaradt.',
+	"import.err.admTypeMissing": 'Ennek az admonitionnek nincs "type" mezője, ezért kimaradt.',
 	"import.warn.admIconUnknown":
-		'Egyik ikonkönyvtárban sincs "{{value}}" nevű ikon, ezért az ' +
-		"alapértelmezett ikon került a helyére.",
+		'Egyik ikonkönyvtárban sincs "{{value}}" nevű ikon, ezért az ' + "alapértelmezett ikon került a helyére.",
 	"import.warn.admIconUnknownExisting":
-		'Egyik ikonkönyvtárban sincs "{{value}}" nevű ikon, ezért a(z) ' +
-		'"{{id}}" megtartotta a korábbi ikonját.',
+		'Egyik ikonkönyvtárban sincs "{{value}}" nevű ikon, ezért a(z) ' + '"{{id}}" megtartotta a korábbi ikonját.',
 	"import.warn.admUnsupportedOptions": "Ezek az Admonition-beállítások nem importálhatók: {{fields}}.",
 	"import.warn.admImageSkipped": "A feltöltött kép nem volt olvasható, ezért nem lett importálva.",
 	"import.warn.admIconWithCss":
 		"Ezt az admonitiont egy CSS-részlet formázza az Admonitionben. Ez " +
 		"a formázás nem része az importnak, így csak a neve, ikonja és " +
 		"színe jött át.",
-	"import.warn.admNoColor":
-		"Nem volt szín beállítva, ezért az alapértelmezett kék került a " +
-		"helyére.",
-	"import.warn.admTitleTruncated":
-		"A cím {{length}} karakter; {{max}} karakterre rövidült.",
+	"import.warn.admNoColor": "Nem volt szín beállítva, ezért az alapértelmezett kék került a " + "helyére.",
+	"import.warn.admTitleTruncated": "A cím {{length}} karakter; {{max}} karakterre rövidült.",
 
 	"footer.openIssue": "Issue megnyitása",
 	"footer.sourceCode": "Forráskód",
 	"settings.about": "Névjegy",
 	"settings.version": "Verzió",
 	"settings.deletePaletteBodyLinkedOne":
-		'1 callout használja. Megtartja a színeit, és később újra összekapcsolhatod a szerkesztőjében a Szín sorból.',
+		"1 callout használja. Megtartja a színeit, és később újra összekapcsolhatod a szerkesztőjében a Szín sorból.",
 	"settings.deletePaletteBodyLinked":
-		'{{count}} callout használja. Megtartják a színeiket, és később újra összekapcsolhatod őket bármelyik szerkesztőjük Szín sorából.',
+		"{{count}} callout használja. Megtartják a színeiket, és később újra összekapcsolhatod őket bármelyik szerkesztőjük Szín sorából.",
 	"notice.palettesMerged":
 		"{{count}} azonos színű mentett szín összevonva: {{names}}. Az ezeket használó calloutok megtartják a színeiket, és most a megmaradt színhez kapcsolódnak.",
-	"editor.colorsDescDeleted":
-		"Ennek a calloutnak a mentett színe törölve lett. {{link}}",
+	"editor.colorsDescDeleted": "Ennek a calloutnak a mentett színe törölve lett. {{link}}",
 	"editor.colorsDescDeletedLink": "Visszaállítás",
 	"palette.colorExists":
 		'Ezek a színek megegyeznek ezzel: "{{name}}". Két mentett szín nem lehet ugyanaz — módosíts egy színt, hogy megkülönböztesd őket.',
@@ -1103,8 +1044,7 @@ export const hu: Record<string, string> = {
 	"notice.exportedCssUpdated": "A CSS-részlet frissítve itt: {{path}}",
 	"notice.exportedCssUnchanged": "A CSS-részlet már naprakész.",
 	"notice.exportCssEmpty": "Nincs exportálható egyéni callout.",
-	"notice.exportCssFailed":
-		"A CSS-részlet mentése nem sikerült. Részletekért nézd meg a fejlesztői konzolt.",
+	"notice.exportCssFailed": "A CSS-részlet mentése nem sikerült. Részletekért nézd meg a fejlesztői konzolt.",
 	"notice.exportCssEnabled":
 		"Ez a részlet engedélyezve van ebben a vaultban. A Callout Studio már formázza ezeket a calloutokat, a részlet pedig az exportáláskori stílust őrzi.",
 	"confirm.titleOverwriteSnippet": "CSS-részlet felülírása",
@@ -1124,53 +1064,74 @@ export const hu: Record<string, string> = {
 	"quickInsert.readingViewHint": "Ez a jegyzet olvasó módban van megnyitva, ezért semmit sem lehet beszúrni.",
 	"quickInsert.readingView": "Váltson forrás módra vagy élő előnézetre a callout beszúrásához.",
 	"quickInsert.noCursorHint": "Ebben a jegyzetben nincs kurzor, ezért nincs hova beszúrni.",
-	"quickInsert.noCursor": "Helyezze a kurzort a jegyzetben oda, ahová be szeretné szúrni a callout-ot, majd próbálja újra.",
-	"notice.legacyDiscoveryArchiveFailed": "A frissítéshez tartozó helyreállítási másolatot nem sikerült elkészíteni. A korábbi helyi felderítési gyorsítótár és az indítási CSS változatlan maradt. Ellenőrizze az írási jogosultságot, a tárhelyhez való hozzáférést és a szabad helyet, majd az újbóli próbálkozáshoz indítsa újra az Obsidian alkalmazást.",
+	"quickInsert.noCursor":
+		"Helyezze a kurzort a jegyzetben oda, ahová be szeretné szúrni a callout-ot, majd próbálja újra.",
+	"notice.legacyDiscoveryArchiveFailed":
+		"A frissítéshez tartozó helyreállítási másolatot nem sikerült elkészíteni. A korábbi helyi felderítési gyorsítótár és az indítási CSS változatlan maradt. Ellenőrizze az írási jogosultságot, a tárhelyhez való hozzáférést és a szabad helyet, majd az újbóli próbálkozáshoz indítsa újra az Obsidian alkalmazást.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "Szüneteltetve, amíg újra nem létrehozod a hiányzó calloutot, vagy másikat nem választasz.",
+	"commandBuilder.missingCallout":
+		"Szüneteltetve, amíg újra nem létrehozod a hiányzó calloutot, vagy másikat nem választasz.",
 	"confirm.titleRestoreSettings": "Ezeknek a beállításoknak a visszaállítása",
 	"confirm.titleCreateSettingsFile": "Beállításfájl létrehozása",
 	"confirm.saveDisplayedSettings":
 		"Ez a most látható beállításokat menti el beállításfájlként, és újra bekapcsolja a mentést. Az ezen az eszközön őrzött tartalék másolatról előbb biztonsági mentés készül.\nHa egy másik eszközön lehetnek újabb módosítások, amelyeket meg szeretnél tartani, a folytatás előtt hagyd, hogy befejezze a szinkronizálást. A szinkronizáló alkalmazásod elküldheti ezt a fájlt a többi eszközödre.\nA Callout Studio mentés előtt még egyszer megkeresi a beállításfájlt. Ha visszatért, a Callout Studio azt tartja meg.",
-	"notice.settingsBackupFailed": "A beállítások helyreállítása nem folytatódhatott, mert egy biztonsági mentést nem sikerült elmenteni. Ellenőrizd az elérhető tárhelyet és az írási jogosultságokat, majd próbáld újra.",
-	"notice.settingsNewerVersion": "A Callout Studio beállításait a bővítmény egy újabb verziója mentette el, ezért ezen az eszközön semmi nem íródik, amíg nem frissíted. A beállításaid biztonságban vannak — frissítsd itt a Callout Studiót, és töltsd újra az Obsidiant.",
+	"notice.settingsBackupFailed":
+		"A beállítások helyreállítása nem folytatódhatott, mert egy biztonsági mentést nem sikerült elmenteni. Ellenőrizd az elérhető tárhelyet és az írási jogosultságokat, majd próbáld újra.",
+	"notice.settingsNewerVersion":
+		"A Callout Studio beállításait a bővítmény egy újabb verziója mentette el, ezért ezen az eszközön semmi nem íródik, amíg nem frissíted. A beállításaid biztonságban vannak — frissítsd itt a Callout Studiót, és töltsd újra az Obsidiant.",
 	"saveStatus.changed":
 		"A beállításfájl megváltozott, miközben szerkesztetted. A vázlatod továbbra is elérhető. Válaszd az Újrapróbálkozás lehetőséget a beérkezett beállítások betöltéséhez, majd nézd át a vázlatot, és mentsd újra.",
-	"saveStatus.missing": "A mentés szüneteltetve van, mert a beállításfájl hiányzik. Ez előfordulhat újratelepítés után, vagy amíg a szinkronizálás még fut. Fejezd be a szinkronizálást, és próbáld újra. A hiányzó fájl szándékos cseréjéhez használd az Új beállításfájl létrehozása lehetőséget a Callout Studio beállításaiban.",
+	"saveStatus.missing":
+		"A mentés szüneteltetve van, mert a beállításfájl hiányzik. Ez előfordulhat újratelepítés után, vagy amíg a szinkronizálás még fut. Fejezd be a szinkronizálást, és próbáld újra. A hiányzó fájl szándékos cseréjéhez használd az Új beállításfájl létrehozása lehetőséget a Callout Studio beállításaiban.",
 	"saveStatus.restoreSettings": "Ezeknek a beállításoknak a visszaállítása",
 	"saveStatus.createSettingsFile": "Beállításfájl létrehozása",
 	"saveStatus.checkAgain": "Újraellenőrzés",
-	"saveStatus.recoverInSettings": "A hiányzó fájl ezen az eszközön való visszaállításához nyisd meg a Callout Studio beállításait. Mielőtt bezárod ezt a szerkesztőt, másold ki azokat a nem mentett módosításokat, amelyeket meg szeretnél tartani; ezek nem lettek mentve.",
+	"saveStatus.recoverInSettings":
+		"A hiányzó fájl ezen az eszközön való visszaállításához nyisd meg a Callout Studio beállításait. Mielőtt bezárod ezt a szerkesztőt, másold ki azokat a nem mentett módosításokat, amelyeket meg szeretnél tartani; ezek nem lettek mentve.",
 	"saveStatus.openSettings": "Callout Studio beállításainak megnyitása",
-	"notice.openSettingsFailed": "A Callout Studio beállításait nem sikerült megnyitni. Nyisd meg a Beállítások → Callout Studio menüt, és válaszd ki, mi legyen.",
-	"saveStatus.notesFailed": "A callout definíciója elmentődött, de néhány jegyzetfrissítés nem tudott befejeződni. Hagyd nyitva ezt a szerkesztőt, és válaszd a Mentés lehetőséget a befejezetlen frissítések újrapróbálásához.",
-	"saveStatus.recoveryRead": "A mentés szüneteltetve van, mert a helyi helyreállítási másolat nem olvasható. A beállításfájlod még sértetlen lehet. Ellenőrizd az elérhető tárhelyet, majd próbáld újra a helyreállítást. A meglévő helyreállítási adatok nem íródnak felül.",
-	"saveStatus.recoveryWrite": "A helyi helyreállítási másolatot nem sikerült elmenteni. Ellenőrizd az elérhető tárhelyet, majd próbáld újra. Hagyd nyitva a vázlatod, amíg a mentés sikeres nem lesz.",
-	"saveStatus.retryFailed": "A mentés továbbra is blokkolva van. Ellenőrizd a mentés állapotát a Callout Studio beállításaiban az ok kiderítéséhez, majd próbáld újra.",
-	"saveStatus.reviewDraft": "A bejövő beállítások és a helyreállítási ellenőrzések befejeződtek. A vázlatod változatlan. Ellenőrizd, és mentsd el újra.",
+	"notice.openSettingsFailed":
+		"A Callout Studio beállításait nem sikerült megnyitni. Nyisd meg a Beállítások → Callout Studio menüt, és válaszd ki, mi legyen.",
+	"saveStatus.notesFailed":
+		"A callout definíciója elmentődött, de néhány jegyzetfrissítés nem tudott befejeződni. Hagyd nyitva ezt a szerkesztőt, és válaszd a Mentés lehetőséget a befejezetlen frissítések újrapróbálásához.",
+	"saveStatus.recoveryRead":
+		"A mentés szüneteltetve van, mert a helyi helyreállítási másolat nem olvasható. A beállításfájlod még sértetlen lehet. Ellenőrizd az elérhető tárhelyet, majd próbáld újra a helyreállítást. A meglévő helyreállítási adatok nem íródnak felül.",
+	"saveStatus.recoveryWrite":
+		"A helyi helyreállítási másolatot nem sikerült elmenteni. Ellenőrizd az elérhető tárhelyet, majd próbáld újra. Hagyd nyitva a vázlatod, amíg a mentés sikeres nem lesz.",
+	"saveStatus.retryFailed":
+		"A mentés továbbra is blokkolva van. Ellenőrizd a mentés állapotát a Callout Studio beállításaiban az ok kiderítéséhez, majd próbáld újra.",
+	"saveStatus.reviewDraft":
+		"A bejövő beállítások és a helyreállítási ellenőrzések befejeződtek. A vázlatod változatlan. Ellenőrizd, és mentsd el újra.",
 	"saveStatus.settingsArrived": "A meglévő beállítások megérkeztek és betöltődtek. Nem jött létre pótfájl.",
-	"saveStatus.syncConflict": "A bejövő beállítások ütköznek egy befejezetlen jegyzetfrissítéshez szükséges callout-tal. A vázlatod és a függőben lévő frissítések megmaradtak. Oldd fel a beállítások ütközését, mielőtt újra próbálkoznál.",
+	"saveStatus.syncConflict":
+		"A bejövő beállítások ütköznek egy befejezetlen jegyzetfrissítéshez szükséges callout-tal. A vázlatod és a függőben lévő frissítések megmaradtak. Oldd fel a beállítások ütközését, mielőtt újra próbálkoznál.",
 	"saveStatus.titlePaused": "A mentés szüneteltetve van",
 	"saveStatus.titleFailed": "A beállítások nem lettek elmentve",
 	"saveStatus.tryAgain": "Újrapróbálkozás",
 	"saveStatus.working": "Folyamatban…",
-	"saveStatus.unreadable": "A mentés szüneteltetve van, mert a beállításfájl nem olvasható be biztonságosan. Fejezd be a szinkronizálást, vagy állíts vissza egy érvényes másolatot, majd próbáld újra. A meglévő fájl megmaradt.",
-	"saveStatus.write": "A beállításfájlt nem sikerült elmenteni. Ellenőrizd az elérhető tárhelyet, a mappa jogosultságait és a szinkronizálást, majd próbáld újra, mielőtt bezárnád az Obsidiant.",
-	"saveStatus.writePermission": "A beállításfájlt nem sikerült elmenteni, mert a tárhely megtagadta az írási hozzáférést. Ellenőrizd, hogy a boltív és a bővítmény mappája írható-e, majd próbáld újra.",
-	"saveStatus.writeSpace": "A beállításfájlt nem sikerült elmenteni, mert a tárhely megtelt, vagy túllépte a kvótáját. Szabadíts fel egy kis helyet, majd próbáld újra.",
-	"settings.readOnly": "A Callout Studio nem tudta használni a beállításfájlját az Obsidian indulásakor, ezért ezen az oldalon semmi nem mentődik ezen az eszközön. A módosításaid megmaradnak, amíg be nem zárod az Obsidiant. Töltsd újra az Obsidiant, amint a fájl visszatér — ha szinkronizálod ezt a boltívet, előbb hagyd befejeződni a szinkronizálást.",
+	"saveStatus.unreadable":
+		"A mentés szüneteltetve van, mert a beállításfájl nem olvasható be biztonságosan. Fejezd be a szinkronizálást, vagy állíts vissza egy érvényes másolatot, majd próbáld újra. A meglévő fájl megmaradt.",
+	"saveStatus.write":
+		"A beállításfájlt nem sikerült elmenteni. Ellenőrizd az elérhető tárhelyet, a mappa jogosultságait és a szinkronizálást, majd próbáld újra, mielőtt bezárnád az Obsidiant.",
+	"saveStatus.writePermission":
+		"A beállításfájlt nem sikerült elmenteni, mert a tárhely megtagadta az írási hozzáférést. Ellenőrizd, hogy a boltív és a bővítmény mappája írható-e, majd próbáld újra.",
+	"saveStatus.writeSpace":
+		"A beállításfájlt nem sikerült elmenteni, mert a tárhely megtelt, vagy túllépte a kvótáját. Szabadíts fel egy kis helyet, majd próbáld újra.",
+	"settings.readOnly":
+		"A Callout Studio nem tudta használni a beállításfájlját az Obsidian indulásakor, ezért ezen az oldalon semmi nem mentődik ezen az eszközön. A módosításaid megmaradnak, amíg be nem zárod az Obsidiant. Töltsd újra az Obsidiant, amint a fájl visszatér — ha szinkronizálod ezt a boltívet, előbb hagyd befejeződni a szinkronizálást.",
 	"portable.reviewTitle": "Átalakítás áttekintése",
-	"portable.helpIntro": "Válaszd ki az alkalmazandó cseréket. Szerkesztéshez kattints a ceruzára vagy a csere szövegére, majd mentéshez nyomd meg az Entert, vagy kattints a mezőn kívülre. A visszaállítás ikonnal elvetheted a piszkozatot, vagy visszaállíthatod az alapértelmezett cserét. A jegyzetek csak a Kijelöltek konvertálása lehetőség kiválasztása és megerősítése után változnak. A címsorhivatkozások a kijelölt címsorokkal együtt frissülnek.",
+	"portable.helpIntro":
+		"Válaszd ki az alkalmazandó cseréket. Szerkesztéshez kattints a ceruzára vagy a csere szövegére, majd mentéshez nyomd meg az Entert, vagy kattints a mezőn kívülre. A visszaállítás ikonnal elvetheted a piszkozatot, vagy visszaállíthatod az alapértelmezett cserét. A jegyzetek csak a Kijelöltek konvertálása lehetőség kiválasztása és megerősítése után változnak. A címsorhivatkozások a kijelölt címsorokkal együtt frissülnek.",
 	"portable.help": "A konvertálásról",
 	"portable.roleLink": "Címsorhivatkozás",
 	"portable.convertSelected": "Kijelöltek átalakítása",
 	"portable.selectionSummary": "{{selected}} / {{total}} csere kijelölve · {{links}} címsorhivatkozás frissítendő",
-	"portable.selectionSummaryNoLinks":
-		"{{selected}} / {{total}} csere kijelölve",
-	"portable.selectionConflict": "Ez a választás kétértelművé tenné a címsorhivatkozásokat. Az előző kijelölés megmaradt.",
+	"portable.selectionSummaryNoLinks": "{{selected}} / {{total}} csere kijelölve",
+	"portable.selectionConflict":
+		"Ez a választás kétértelművé tenné a címsorhivatkozásokat. Az előző kijelölés megmaradt.",
 	"portable.selectAll": "Összes kijelölése",
 	"portable.selectNone": "Kijelölés törlése",
-	"portable.relatedLinksHint": "A hivatkozások és beágyazások követik a kijelölt címsorokat, és velük együtt alakulnak át.",
+	"portable.relatedLinksHint":
+		"A hivatkozások és beágyazások követik a kijelölt címsorokat, és velük együtt alakulnak át.",
 	"portable.selectChange": "{{path}}, {{line}}. sor átalakítása",
 	"portable.showMore": "További {{count}} megjelenítése",
 	"portable.openFailed": "Nem sikerült megnyitni az átalakítás oldalsávját.",
@@ -1178,14 +1139,19 @@ export const hu: Record<string, string> = {
 	"portable.retry": "Újrapróbálkozás",
 	"portable.blockedAmbiguous": "Ez a címsor kimarad, mert a hivatkozás célja kétértelmű.",
 	"portable.blockedTarget": "Ez a címsor kimarad, mert a hivatkozás célja nem őrizhető meg biztonságosan.",
-	"portable.recovery": "Néhány módosítás még hátravan. A bővítmény újraindítása vagy letiltása előtt fejezze be az átalakítást és a címsorhivatkozások frissítését; a függőben lévő terv csak a memóriában tárolódik.",
-	"portable.recoveryChanged": "Az átalakítás leállása után a jegyzetek megváltoztak. A függőben lévő hivatkozásfrissítések megmaradnak; írás előtt minden jegyzetet újra ellenőrzünk.",
+	"portable.recovery":
+		"Néhány módosítás még hátravan. A bővítmény újraindítása vagy letiltása előtt fejezze be az átalakítást és a címsorhivatkozások frissítését; a függőben lévő terv csak a memóriában tárolódik.",
+	"portable.recoveryChanged":
+		"Az átalakítás leállása után a jegyzetek megváltoztak. A függőben lévő hivatkozásfrissítések megmaradnak; írás előtt minden jegyzetet újra ellenőrzünk.",
 	"portable.finishConversion": "Átalakítás befejezése",
-	"portable.recoveryUnavailable": "Néhány függőben lévő hivatkozásfrissítést nem lehetett biztonságosan helyreállítani. Új átalakítás előtt ellenőrizze az érintett jegyzeteket.",
+	"portable.recoveryUnavailable":
+		"Néhány függőben lévő hivatkozásfrissítést nem lehetett biztonságosan helyreállítani. Új átalakítás előtt ellenőrizze az érintett jegyzeteket.",
 	"portable.title": "Átalakítás szabványos Markdownra",
-	"portable.settingDesc": "A tár összes címsori és sorközi kiemelését egyszerű szövegre cseréli, amely Callout Studio nélkül is használható.",
+	"portable.settingDesc":
+		"A tár összes címsori és sorközi kiemelését egyszerű szövegre cseréli, amely Callout Studio nélkül is használható.",
 	"portable.review": "Átalakítás áttekintése",
-	"portable.intro": "Ha abbahagyná a Callout Studio használatát, vagy olyan alkalmazásba vinné át a tárat, amely nem támogatja, alakítsa át a címsori és sorközi kiemeléseket szabványos Markdownra.",
+	"portable.intro":
+		"Ha abbahagyná a Callout Studio használatát, vagy olyan alkalmazásba vinné át a tárat, amely nem támogatja, alakítsa át a címsori és sorközi kiemeléseket szabványos Markdownra.",
 	"portable.before": "Előtte",
 	"portable.after": "Utána",
 	"portable.replacement": "Csere",
@@ -1193,21 +1159,26 @@ export const hu: Record<string, string> = {
 	"portable.type": "típus",
 	"portable.text": "Szöveg",
 	"portable.headingText": "Cím",
-	"portable.backup": "Javasoljuk, hogy átalakítás előtt készítsen biztonsági másolatot a tárról. A művelet az eredeti jegyzeteket módosítja, és a Callout Studio alkalmazásban nem vonható vissza.",
+	"portable.backup":
+		"Javasoljuk, hogy átalakítás előtt készítsen biztonsági másolatot a tárról. A művelet az eredeti jegyzeteket módosítja, és a Callout Studio alkalmazásban nem vonható vissza.",
 	"portable.scanning": "Markdown-jegyzetek olvasása…",
 	"portable.progress": "Jegyzetek olvasása: {{done}} / {{total}}",
 	"portable.empty": "Nem található átalakítható címsori vagy sorközi kiemelés. Semmi sem változik.",
 	"portable.confirmTitle": "Véglegesen átalakítja ezt a tárat?",
 	"portable.confirmSubtitle": "Nem készül automatikus biztonsági mentés",
-	"portable.confirmBody": "Átalakít {{count}} előfordulást és frissít {{links}} címsorhivatkozást {{files}} jegyzetben?\nEz az eredeti fájlokat módosítja, és a Callout Studio alkalmazásban nem vonható vissza. Automatikus biztonsági másolat nem készül. Előbb készítsen másolatot a tárról, mentse a nyitott jegyzeteket, és az átalakítás végéig szüneteltesse a szerkesztést és a szinkronizálást.\nHa egy fájl megváltozik vagy az írás sikertelen, az átalakítás leáll. A már átalakított jegyzetek módosításai megmaradnak.",
+	"portable.confirmBody":
+		"Átalakít {{count}} előfordulást és frissít {{links}} címsorhivatkozást {{files}} jegyzetben?\nEz az eredeti fájlokat módosítja, és a Callout Studio alkalmazásban nem vonható vissza. Automatikus biztonsági másolat nem készül. Előbb készítsen másolatot a tárról, mentse a nyitott jegyzeteket, és az átalakítás végéig szüneteltesse a szerkesztést és a szinkronizálást.\nHa egy fájl megváltozik vagy az írás sikertelen, az átalakítás leáll. A már átalakított jegyzetek módosításai megmaradnak.",
 	"portable.confirmAction": "Végleges átalakítás",
 	"portable.converting": "A kijelölt módosítások átalakítása… A panel bezárása nem állítja le az átalakítást.",
-	"portable.complete": "{{count}} előfordulás átalakítva és {{links}} címsorhivatkozás frissítve {{files}} jegyzetben.",
-	"portable.stopped": "Az átalakítás leállt. {{count}} előfordulás és {{links}} címsorhivatkozás {{files}} jegyzetben már megváltozott; ezek a módosítások megmaradnak.",
+	"portable.complete":
+		"{{count}} előfordulás átalakítva és {{links}} címsorhivatkozás frissítve {{files}} jegyzetben.",
+	"portable.stopped":
+		"Az átalakítás leállt. {{count}} előfordulás és {{links}} címsorhivatkozás {{files}} jegyzetben már megváltozott; ezek a módosítások megmaradnak.",
 	"portable.errorEditor": "Az áttekintés automatikus frissítéséhez mentse a nyitott jegyzeteket.",
 	"portable.errorChanged": "A jegyzetek megváltoztak. Átalakítás előtt tekintse át a frissített módosításokat.",
 	"portable.errorBusy": "Egy másik átalakítás folyamatban van. Várja meg a befejezését.",
-	"portable.error": "A tár nem olvasható vagy frissíthető biztonságosan. Ellenőrizze a fájlok hozzáférési jogosultságait, majd próbálja újra.",
+	"portable.error":
+		"A tár nem olvasható vagy frissíthető biztonságosan. Ellenőrizze a fájlok hozzáférési jogosultságait, majd próbálja újra.",
 	"portable.blockedConverting": "Már folyamatban van egy átalakítás. Várja meg a befejezését.",
 	"portable.blockedUpdating": "Az áttekintés még frissül. Az átalakítás előtt várja meg a befejezését.",
 	"portable.blockedEditing": "Először fejezze be a csere szerkesztését: az Enter mentés, az Esc elvetés.",
@@ -1215,16 +1186,22 @@ export const hu: Record<string, string> = {
 	"settings.maintenance": "Veszélyzóna",
 
 	// Sync safety hardening
-	"saveStatus.diagnosis.unavailable": "Ez az eszköz jelenleg nem tudja megnyitni a fájlt. Lehet, hogy még letöltés alatt van, a tár nem érhető el offline, vagy a tárhely nem válaszol. A Callout Studio automatikusan újra ellenőriz.",
-	"saveStatus.diagnosis.empty": "A fájl üres, ami általában azt jelenti, hogy egy szinkronizálás megszakadt. Ha egy másik eszközön még megvannak a beállításai, hagyja, hogy szinkronizáljon. Ellenkező esetben cserélje le a fájlt.",
-	"saveStatus.diagnosis.mergeMarkers": "A fájl megoldatlan összevonási ütközésjelzőket tartalmaz, például Gitből. Oldja fel az ütközést a Git-eszközében, vagy cserélje le a fájlt.",
+	"saveStatus.diagnosis.unavailable":
+		"Ez az eszköz jelenleg nem tudja megnyitni a fájlt. Lehet, hogy még letöltés alatt van, a tár nem érhető el offline, vagy a tárhely nem válaszol. A Callout Studio automatikusan újra ellenőriz.",
+	"saveStatus.diagnosis.empty":
+		"A fájl üres, ami általában azt jelenti, hogy egy szinkronizálás megszakadt. Ha egy másik eszközön még megvannak a beállításai, hagyja, hogy szinkronizáljon. Ellenkező esetben cserélje le a fájlt.",
+	"saveStatus.diagnosis.mergeMarkers":
+		"A fájl megoldatlan összevonási ütközésjelzőket tartalmaz, például Gitből. Oldja fel az ütközést a Git-eszközében, vagy cserélje le a fájlt.",
 	"saveStatus.diagnosis.damaged": "A fájl hiányos vagy sérült, ezért nem olvasható be beállításként.",
-	"saveStatus.diagnosis.combined": "A szinkronizálási szolgáltatása egyesítette a fájl két verzióját, ezért a belső ellenőrzése már nem egyezik. A benne lévő beállítások épek, és a fájl lecserélése megőrzi őket.",
-	"saveStatus.diagnosis.invalidEntries": "A fájl olyan bejegyzéseket tartalmaz, amelyeket a Callout Studio nem tud használni, például ugyanaz a callout-típus kétszer szerepel.",
+	"saveStatus.diagnosis.combined":
+		"A szinkronizálási szolgáltatása egyesítette a fájl két verzióját, ezért a belső ellenőrzése már nem egyezik. A benne lévő beállítások épek, és a fájl lecserélése megőrzi őket.",
+	"saveStatus.diagnosis.invalidEntries":
+		"A fájl olyan bejegyzéseket tartalmaz, amelyeket a Callout Studio nem tud használni, például ugyanaz a callout-típus kétszer szerepel.",
 	"saveStatus.replaceUnreadable": "Beállítási fájl cseréje",
 	"saveStatus.discardRecoveryCopy": "Helyreállítási másolat elvetése",
 	"saveStatus.calm.opening": "Először is végy egy mély levegőt — minden rendben lesz.",
-	"saveStatus.calm.kept": "A jegyzeteid biztonságban vannak, és a calloutjaid továbbra is itt vannak ezen az eszközön.",
+	"saveStatus.calm.kept":
+		"A jegyzeteid biztonságban vannak, és a calloutjaid továbbra is itt vannak ezen az eszközön.",
 	"saveStatus.calm.safe": "A jegyzeteid biztonságban vannak.",
 	"saveStatus.calm.pausedPage":
 		"A Callout Studio csak szüneteltette a mentést, hogy megvédje a beállításaidat, ezért ez az oldal egyelőre csak olvasható.",
@@ -1233,7 +1210,8 @@ export const hu: Record<string, string> = {
 		"A Callout Studio nem találja a beállításfájlját. Ez általában akkor történik, amikor a szinkronizáló alkalmazásod még tölti le, vagy miután a Callout Studiót eltávolították egy másik eszközön.",
 	"saveStatus.explain.stillMissing":
 		"A beállításfájl még mindig nem tért vissza. Az ellenőrzés csak keresi, és sosem hoz létre újat. Ha a tárolód iCloudban, OneDrive-on, Google Drive-on vagy Dropboxban van, ügyelj rá, hogy ezen az eszközön letöltve maradjon.",
-	"saveStatus.explain.unreadable": "A Callout Studio most nem tudja beolvasni a beállításfájlját, ezért pontosan úgy hagyta, ahogy van.",
+	"saveStatus.explain.unreadable":
+		"A Callout Studio most nem tudja beolvasni a beállításfájlját, ezért pontosan úgy hagyta, ahogy van.",
 	"saveStatus.explain.recoveryRead":
 		"A Callout Studio ezen az eszközön tartalék másolatot őriz a beállításaidról, és ezt a másolatot most nem lehet beolvasni. Maga a beállításfájl lehet, hogy rendben van.",
 	"saveStatus.explain.newerVersion":
@@ -1257,36 +1235,52 @@ export const hu: Record<string, string> = {
 	"saveStatus.missingNotice":
 		"A jegyzeteid biztonságban vannak. A Callout Studio szüneteltette a mentést, mert most nem találja a beállításfájlját.",
 	"statusBar.paused": "Mentés szüneteltetve",
-	"statusBar.pausedTooltip": "A Callout Studio nem menti a beállítások módosításait. Kattintson, hogy megtudja, miért.",
+	"statusBar.pausedTooltip":
+		"A Callout Studio nem menti a beállítások módosításait. Kattintson, hogy megtudja, miért.",
 	"statusBar.pausedNotice": "A Callout Studio jelenleg nem menti a beállítások módosításait.",
 	"saveStatus.resumed": "A mentés újra be van kapcsolva. A Callout Studio ismét menti a beállítások módosításait.",
-	"notice.replaceUnreadableUnavailable": "A beállítási fájl jelenleg nem cserélhető le: változás alatt áll, vagy ez az eszköz nem tudja beolvasni. Próbálja újra egy pillanat múlva.",
-	"notice.recoveryStorageUnavailable": "Ennek az eszköznek a helyreállítási tárhelye nem válaszol, ezért a másolat nem vethető el. Indítsa újra az Obsidiant, majd próbálja újra.",
+	"notice.replaceUnreadableUnavailable":
+		"A beállítási fájl jelenleg nem cserélhető le: változás alatt áll, vagy ez az eszköz nem tudja beolvasni. Próbálja újra egy pillanat múlva.",
+	"notice.recoveryStorageUnavailable":
+		"Ennek az eszköznek a helyreállítási tárhelye nem válaszol, ezért a másolat nem vethető el. Indítsa újra az Obsidiant, majd próbálja újra.",
 	"recovery.unreadable": "Nem olvasható be beállításként",
 	"recovery.same": "Megegyezik a jelenlegi konfigurációjával",
 	"recovery.restore": "Visszaállítás",
-	"recovery.stale": "Semmi nem lett visszaállítva: a beállításai megváltoztak, vagy nem voltak ellenőrizhetők. Nyissa meg újra ezt az ablakot, és nézze át a listát.",
-	"notice.recoveryCopyStale": "A beállításai mentésre kerültek, de ennek az eszköznek a helyreállítási másolatát nem sikerült frissíteni. Ellenőrizze a rendelkezésre álló tárhelyet ezen az eszközön. A Callout Studio a következő módosításnál újra megpróbálja.",
-	"notice.blockedWhilePaused": "A mentés szüneteltetve van, ezért ez a módosítás jelenleg nem tartható meg. Először oldja meg a Callout Studio beállításaiban megjelenő mentési problémát.",
-	"welcome.syncNote": "Már használja a Callout Studiót egy másik eszközön? Hagyja, hogy a szinkronizálási szolgáltatása előbb befejeződjön. A callout-jai és beállításai megjelennek itt, amint megérkeznek.",
-	"settings.resetBackupFailed": "Semmi nem lett visszaállítva: a jelenlegi konfigurációjáról nem sikerült előbb mentést készíteni. Ellenőrizze a rendelkezésre álló tárhelyet, majd próbálja újra.",
-	"settings.resetNotSaved": "A visszaállítás megjelenik, de még nem sikerült elmenteni, ezért a beállítási fájlja még mindig az előző konfigurációt tartalmazza. Ellenőrizze a mentés állapotát a Callout Studio beállításaiban.",
+	"recovery.stale":
+		"Semmi nem lett visszaállítva: a beállításai megváltoztak, vagy nem voltak ellenőrizhetők. Nyissa meg újra ezt az ablakot, és nézze át a listát.",
+	"notice.recoveryCopyStale":
+		"A beállításai mentésre kerültek, de ennek az eszköznek a helyreállítási másolatát nem sikerült frissíteni. Ellenőrizze a rendelkezésre álló tárhelyet ezen az eszközön. A Callout Studio a következő módosításnál újra megpróbálja.",
+	"notice.blockedWhilePaused":
+		"A mentés szüneteltetve van, ezért ez a módosítás jelenleg nem tartható meg. Először oldja meg a Callout Studio beállításaiban megjelenő mentési problémát.",
+	"welcome.syncNote":
+		"Már használja a Callout Studiót egy másik eszközön? Hagyja, hogy a szinkronizálási szolgáltatása előbb befejeződjön. A callout-jai és beállításai megjelennek itt, amint megérkeznek.",
+	"settings.resetBackupFailed":
+		"Semmi nem lett visszaállítva: a jelenlegi konfigurációjáról nem sikerült előbb mentést készíteni. Ellenőrizze a rendelkezésre álló tárhelyet, majd próbálja újra.",
+	"settings.resetNotSaved":
+		"A visszaállítás megjelenik, de még nem sikerült elmenteni, ezért a beállítási fájlja még mindig az előző konfigurációt tartalmazza. Ellenőrizze a mentés állapotát a Callout Studio beállításaiban.",
 	"confirm.titleResetEverything": "Minden visszaállítása",
 	"confirm.titleReplaceUnreadable": "Beállítási fájl cseréje",
 	"confirm.subtitleReplaceUnreadable": "Először pontos másolat készül",
-	"confirm.replaceUnreadable": "A jelenlegi fájl pontos másolata előbb mentésre kerül a bővítmény biztonsági mentés mappájába. Ezután a fájl lecserélődik az itt látható konfigurációra, és a szinkronizálási szolgáltatása elküldi a többi eszközére.",
-	"confirm.replaceUnreadableSalvage": "A jelenlegi fájl pontos másolata előbb mentésre kerül a bővítmény biztonsági mentés mappájába. A benne lévő beállítások egyesülnek az itt látható konfigurációval, és a fájl újraírásra kerül, hogy minden eszköz újra olvasni tudja.",
+	"confirm.replaceUnreadable":
+		"A jelenlegi fájl pontos másolata előbb mentésre kerül a bővítmény biztonsági mentés mappájába. Ezután a fájl lecserélődik az itt látható konfigurációra, és a szinkronizálási szolgáltatása elküldi a többi eszközére.",
+	"confirm.replaceUnreadableSalvage":
+		"A jelenlegi fájl pontos másolata előbb mentésre kerül a bővítmény biztonsági mentés mappájába. A benne lévő beállítások egyesülnek az itt látható konfigurációval, és a fájl újraírásra kerül, hogy minden eszköz újra olvasni tudja.",
 	"confirm.titleDiscardRecoveryCopy": "Helyreállítási másolat elvetése",
 	"confirm.subtitleDiscardRecoveryCopy": "A mentés szünetel ezen az eszközön",
-	"confirm.discardRecoveryCopy": "Ennek az eszköznek a helyreállítási másolata nem olvasható, ezért a mentés szüneteltetve van ezen az eszközön. Előbb pontos másolat készül róla a bővítmény biztonsági mentés mappájába. Ezután lecserélődik az itt látható konfigurációra. A beállítási fájlja nem változik.",
+	"confirm.discardRecoveryCopy":
+		"Ennek az eszköznek a helyreállítási másolata nem olvasható, ezért a mentés szüneteltetve van ezen az eszközön. Előbb pontos másolat készül róla a bővítmény biztonsági mentés mappájába. Ezután lecserélődik az itt látható konfigurációra. A beállítási fájlja nem változik.",
 	"vault.undoRewrite": "Visszavonás",
 	"vault.undoRestored": "{{count}} jegyzet visszaállítva.",
-	"vault.undoPartial": "{{count}} jegyzet visszaállítva. {{skipped}} jegyzet megváltozott az újraírás után, ezért azok érintetlenül maradtak.",
+	"vault.undoPartial":
+		"{{count}} jegyzet visszaállítva. {{skipped}} jegyzet megváltozott az újraírás után, ezért azok érintetlenül maradtak.",
 	"import.confirmTitle": "Callout Studio biztonsági mentés importálása",
-	"import.confirmSummary": "Ez {{added}} callout-típust ad hozzá, {{replaced}} meglévőt lecserél a fájl verziójára, és {{settings}} beállításcsoportot állít vissza a fájlból. A jelenlegi konfigurációjáról előbb mentés készül.",
+	"import.confirmSummary":
+		"Ez {{added}} callout-típust ad hozzá, {{replaced}} meglévőt lecserél a fájl verziójára, és {{settings}} beállításcsoportot állít vissza a fájlból. A jelenlegi konfigurációjáról előbb mentés készül.",
 	"import.confirmAction": "Importálás",
-	"import.backupFailed": "Semmi nem lett importálva: a jelenlegi konfigurációjáról nem sikerült előbb mentést készíteni. Ellenőrizze a rendelkezésre álló tárhelyet, majd próbálja újra.",
-	"import.notSaved": "Az importálás megjelenik, de még nem sikerült elmenteni. Ellenőrizze a mentés állapotát a Callout Studio beállításaiban.",
+	"import.backupFailed":
+		"Semmi nem lett importálva: a jelenlegi konfigurációjáról nem sikerült előbb mentést készíteni. Ellenőrizze a rendelkezésre álló tárhelyet, majd próbálja újra.",
+	"import.notSaved":
+		"Az importálás megjelenik, de még nem sikerült elmenteni. Ellenőrizze a mentés állapotát a Callout Studio beállításaiban.",
 
 	"recovery.summaryCallouts": "{{callouts}} mentett callout-típus",
 	"recovery.summaryChanges": "{{count}} eltérés a jelenlegi állapothoz képest",
@@ -1306,7 +1300,8 @@ export const hu: Record<string, string> = {
 	"recovery.details.unknownTime": "A mentés ideje nincs rögzítve",
 	"recovery.details.current": "Jelenlegi beállítások",
 	"recovery.details.restored": "A verzió visszaállítása után",
-	"recovery.details.unreadable": "A Callout Studio ezen verziója nem tudja visszaállítható beállításként értelmezni ezt a másolatot. Lehet, hogy sérült, elérhetetlen vagy újabb formátumot használ. Az összehasonlítás és a visszaállított beállításokról szóló jelentés nem érhető el. Az alábbiakban szerepel minden eredeti tartalom, amelyet sikerült beolvasni.",
+	"recovery.details.unreadable":
+		"A Callout Studio ezen verziója nem tudja visszaállítható beállításként értelmezni ezt a másolatot. Lehet, hogy sérült, elérhetetlen vagy újabb formátumot használ. Az összehasonlítás és a visszaállított beállításokról szóló jelentés nem érhető el. Az alábbiakban szerepel minden eredeti tartalom, amelyet sikerült beolvasni.",
 	"recovery.details.null": "Nincs érték (null)",
 	"recovery.details.yes": "Igen",
 	"recovery.details.no": "Nem",
@@ -1474,11 +1469,14 @@ export const hu: Record<string, string> = {
 	"recovery.delete": "Törlés",
 
 	// Version history
-	"saveStatus.guide.versions": "Amint a mentés újra működik, a Korábbi verzió visszaállítása lehetőséggel egy mentett verzióhoz is visszatérhetsz.",
+	"saveStatus.guide.versions":
+		"Amint a mentés újra működik, a Korábbi verzió visszaállítása lehetőséggel egy mentett verzióhoz is visszatérhetsz.",
 	"saveStatus.goToVersions": "Ugrás a verzióelőzményekhez",
 	"versions.title": "Verzióelőzmények",
-	"versions.intro": "A Callout Studio automatikusan menti a konfigurációd verzióit.\nA régebbiek idővel törlődnek.\nEgy verzió visszaállítása minden szinkronizált eszközön lecseréli a jelenlegi konfigurációdat.",
-	"versions.pausedHint": "A mentés szünetel, ezért a visszaállítás nem érhető el. A verziókat továbbra is összehasonlíthatod és törölheted.",
+	"versions.intro":
+		"A Callout Studio automatikusan menti a konfigurációd verzióit.\nA régebbiek idővel törlődnek.\nEgy verzió visszaállítása minden szinkronizált eszközön lecseréli a jelenlegi konfigurációdat.",
+	"versions.pausedHint":
+		"A mentés szünetel, ezért a visszaállítás nem érhető el. A verziókat továbbra is összehasonlíthatod és törölheted.",
 	"versions.loading": "Verziók keresése…",
 	"versions.empty": "Nem található verzió.",
 	"versions.dayWithDate": "{{date}} ({{relative}})",
@@ -1495,22 +1493,27 @@ export const hu: Record<string, string> = {
 	"versions.reason.beforeRepair": "A beállításfájl javítása előtt",
 	"versions.restoreTitle": "Verzió visszaállítása",
 	"versions.subtitle": "„{{name}}” · {{when}}",
-	"versions.restoreBody": "A jelenlegi beállításod le lesz cserélve ({{count}} eltérés).\nElőbb verzióként mentjük, így visszatérhetsz hozzá.\nA szinkronizálási szolgáltatásod ezután elküldi a visszaállított beállítást a többi eszközödre.",
+	"versions.restoreBody":
+		"A jelenlegi beállításod le lesz cserélve ({{count}} eltérés).\nElőbb verzióként mentjük, így visszatérhetsz hozzá.\nA szinkronizálási szolgáltatásod ezután elküldi a visszaállított beállítást a többi eszközödre.",
 	"versions.restoreSame": "Ez a verzió megegyezik a jelenlegi konfigurációddal, így nincs mit visszaállítani.",
 	"versions.restored": "A(z) „{{name}}”, {{when}} időpontú verzió visszaállítva.",
-	"versions.backupFailed": "Semmi sem lett visszaállítva: nem sikerült először verzióként menteni a jelenlegi konfigurációdat. Ellenőrizd a szabad tárhelyet, majd próbáld újra.",
+	"versions.backupFailed":
+		"Semmi sem lett visszaállítva: nem sikerült először verzióként menteni a jelenlegi konfigurációdat. Ellenőrizd a szabad tárhelyet, majd próbáld újra.",
 	"versions.restoreFailed": "A verziót nem sikerült visszaállítani. Semmi sem változott.",
 	"versions.deleteTitle": "Verzió törlése",
 	"versions.deleteAvailableBody": "Ez és az összes elérhető másolata véglegesen törlődik.",
-	"versions.deleteSyncedFiles": "Ezeknek a fájloknak a törlése szinkronizálódhat a többi eszközére. Az ezeken az eszközökön lévő helyi másolatok megmaradhatnak.",
+	"versions.deleteSyncedFiles":
+		"Ezeknek a fájloknak a törlése szinkronizálódhat a többi eszközére. Az ezeken az eszközökön lévő helyi másolatok megmaradhatnak.",
 	"versions.deleteFinal": "Ez nem vonható vissza. A jelenlegi konfigurációdat nem érinti.",
 	"versions.deleted": "A(z) „{{name}}”, {{when}} időpontú verzió törölve.",
-	"versions.deleteFailed": "A verzió néhány másolatát nem sikerült törölni. A lista most a megmaradt másolatokat mutatja.",
+	"versions.deleteFailed":
+		"A verzió néhány másolatát nem sikerült törölni. A lista most a megmaradt másolatokat mutatja.",
 	"versions.details.title": "Verzió részletei",
 	"versions.details.difference": "{{count}} eltérés a jelenlegi beállításaidhoz képest",
 	"versions.details.differences": "{{count}} eltérés a jelenlegi beállításaidhoz képest",
 	"versions.details.comparisonUnavailable": "Az összehasonlítás nem érhető el",
-	"notice.unsavedChangesKept": "Az ezen az eszközön végzett módosítások egy része még nem volt mentve, és egy másik eszköz újabb beállításai felülírták őket. A verziód előbb mentésre került: a visszaállításhoz nyisd meg a Korábbi verzió visszaállítása lehetőséget a Callout Studio beállításaiban.",
+	"notice.unsavedChangesKept":
+		"Az ezen az eszközön végzett módosítások egy része még nem volt mentve, és egy másik eszköz újabb beállításai felülírták őket. A verziód előbb mentésre került: a visszaállításhoz nyisd meg a Korábbi verzió visszaállítása lehetőséget a Callout Studio beállításaiban.",
 	"settings.versionHistory": "Korábbi verzió visszaállítása",
 	"settings.versions": "Korábbi verziók",
 	"settings.versionsDesc": "Cserélje le a jelenlegi beállítását egy korábban mentett verzióra.",
@@ -1521,7 +1524,8 @@ export const hu: Record<string, string> = {
 	"noteChanges.notesOne": "1",
 	"noteChanges.askCallout": "Mi történjen azzal a callouttal?",
 	"noteChanges.askCallouts": "Mi történjen azokkal a calloutokkal?",
-	"noteChanges.changeRenamed": "Megváltoztattad a megjelenítési nevet: „{{old}}” helyett „{{new}}” lett, ezért a fő azonosító „{{oldId}}” helyett „{{newId}}” lesz.",
+	"noteChanges.changeRenamed":
+		"Megváltoztattad a megjelenítési nevet: „{{old}}” helyett „{{new}}” lett, ezért a fő azonosító „{{oldId}}” helyett „{{newId}}” lesz.",
 	"noteChanges.changeMainId": "A fő azonosító „{{oldId}}” helyett „{{newId}}” lesz.",
 	"noteChanges.changeName": "Megváltoztattad a megjelenítési nevet: „{{old}}” helyett „{{new}}” lett.",
 	"noteChanges.changeRemoved": "Eltávolítottad a(z) „{{id}}” azonosítót.",
@@ -1537,7 +1541,8 @@ export const hu: Record<string, string> = {
 	"noteChanges.rewriteManyDesc": "A jegyzeteidben minden régi azonosító [!{{to}}] lesz.",
 	"noteChanges.changeToIdLabel": "Azonosító, amelyre módosulnak",
 	"noteChanges.rewriteDesc": "A jegyzeteidben minden [!{{id}}] [!{{to}}] lesz.",
-	"noteChanges.renameFollowDesc": "A jegyzeteidben minden [!{{oldId}}] [!{{newId}}] lesz, a „{{old}}” címek pedig „{{new}}” címek lesznek.",
+	"noteChanges.renameFollowDesc":
+		"A jegyzeteidben minden [!{{oldId}}] [!{{newId}}] lesz, a „{{old}}” címek pedig „{{new}}” címek lesznek.",
 	"noteChanges.titlesChangeDesc": "A „{{old}}” címek „{{new}}” címek lesznek.",
 	"noteChanges.foldChangeDesc": "A + vagy - jelölésük ennek megfelelően változik.",
 };

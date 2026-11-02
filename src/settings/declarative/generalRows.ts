@@ -23,11 +23,7 @@
  */
 import { t } from "../../i18n";
 import type { CalloutCombobox } from "../calloutCombobox";
-import {
-	addFallbackReset,
-	createFallbackPicker,
-	setFallbackCallout,
-} from "../sections/fallbackPicker";
+import { addFallbackReset, createFallbackPicker, setFallbackCallout } from "../sections/fallbackPicker";
 import { applyLanguagePreference } from "../sections/languagePicker";
 import { disabledWhilePaused, refuseWhilePaused } from "./pausedGuards";
 import type { PersistentPart } from "./persistentParts";
@@ -59,7 +55,9 @@ export function fallbackRow(ctx: TreeContext): CsRender {
 		disabled: disabledWhilePaused(ctx.plugin.settingsWriter),
 		render: guardRender("fallback callout", (setting) => {
 			setting.setClass("cs-reset-setting");
-			const { picker } = ctx.parts.mount(FALLBACK_PICKER, setting.controlEl, (parent) => buildFallbackPicker(ctx, parent));
+			const { picker } = ctx.parts.mount(FALLBACK_PICKER, setting.controlEl, (parent) =>
+				buildFallbackPicker(ctx, parent),
+			);
 			// Another device's settings may have changed it since the last draw.
 			picker.setValue(ctx.plugin.settings.fallbackCalloutId);
 			addControlComponent(setting, picker);
@@ -94,7 +92,9 @@ export function languageChooser(ctx: TreeContext): (pref: string) => void {
 	const plugin = ctx.plugin;
 	return refuseWhilePaused(
 		plugin.settingsWriter,
-		(pref: string) => { void applyLanguagePreference(plugin, pref, () => ctx.redraw()); },
+		(pref: string) => {
+			void applyLanguagePreference(plugin, pref, () => ctx.redraw());
+		},
 		() => ctx.redraw(),
 	);
 }

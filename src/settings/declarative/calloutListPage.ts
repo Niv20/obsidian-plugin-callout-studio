@@ -77,9 +77,10 @@ export function themeCalloutsPage(ctx: TreeContext): CsPage {
 		id: CALLOUT_LIST_PAGES.theme,
 		name: t("settings.themeCalloutsHeading"),
 		// The same word the version comparison uses for a setting that is off.
-		displayValue: () => (themeStylesSwitchedOff(ctx)
-			? t("recovery.details.value.off")
-			: calloutCount(calloutsOf(ctx, "theme").length)),
+		displayValue: () =>
+			themeStylesSwitchedOff(ctx)
+				? t("recovery.details.value.off")
+				: calloutCount(calloutsOf(ctx, "theme").length),
 		visible: () => calloutsOf(ctx, "theme").length > 0 || themeStylesSwitchedOff(ctx),
 		page: () => new CalloutListPage(ctx, "theme"),
 	};
@@ -147,7 +148,8 @@ export class CalloutListPage extends SettingPage {
 		this.list = new SettingGroup(this.containerEl).addClass("mod-list");
 		this.list.addSearch((search) => {
 			// The field and the box around it, which are hidden together.
-			this.searchEl = search.inputEl.closest<HTMLElement>(".setting-group-search") ?? search.inputEl.parentElement;
+			this.searchEl =
+				search.inputEl.closest<HTMLElement>(".setting-group-search") ?? search.inputEl.parentElement;
 			search.setPlaceholder(t("settings.searchCallouts")).onChange((query) => {
 				this.query = query;
 				this.applySearch();
@@ -157,7 +159,9 @@ export class CalloutListPage extends SettingPage {
 		});
 		this.drawRows();
 		this.updater.markDrawn();
-		this.stopListening = subscribeSettingsTab(this.ctx.app, this.ctx.plugin, (force) => this.updater.request(force));
+		this.stopListening = subscribeSettingsTab(this.ctx.app, this.ctx.plugin, (force) =>
+			this.updater.request(force),
+		);
 	}
 
 	/** Obsidian left the page: stop listening, and undo the rows. */

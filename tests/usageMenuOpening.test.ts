@@ -18,8 +18,12 @@ class MenuWindow extends FakeWindow {
 		this.scheduled.set(id, { at: this.time + delay, callback });
 		return id;
 	}
-	clearTimeout(id: number): void { this.scheduled.delete(id); }
-	pendingTimers(): number { return this.scheduled.size; }
+	clearTimeout(id: number): void {
+		this.scheduled.delete(id);
+	}
+	pendingTimers(): number {
+		return this.scheduled.size;
+	}
 	advance(milliseconds: number): void {
 		this.time += milliseconds;
 		for (const [id, timer] of [...this.scheduled]) {
@@ -32,7 +36,10 @@ class MenuWindow extends FakeWindow {
 		this.events.set(type, [...(this.events.get(type) ?? []), listener]);
 	}
 	removeEventListener(type: string, listener: (event: unknown) => void): void {
-		this.events.set(type, (this.events.get(type) ?? []).filter((item) => item !== listener));
+		this.events.set(
+			type,
+			(this.events.get(type) ?? []).filter((item) => item !== listener),
+		);
 	}
 	fire(type: string): void {
 		for (const listener of [...(this.events.get(type) ?? [])]) listener({ type });
@@ -49,18 +56,36 @@ function harness() {
 	let enumerations = 0;
 	let release!: (content: string) => void;
 	let reject!: (error: Error) => void;
-	const content = new Promise<string>((resolve, fail) => { release = resolve; reject = fail; });
+	const content = new Promise<string>((resolve, fail) => {
+		release = resolve;
+		reject = fail;
+	});
 	const file = { path: "note.md", stat: { mtime: 1, size: 7 } };
-	const app = { vault: {
-		getMarkdownFiles: () => { enumerations++; return [file]; },
-		getAbstractFileByPath: () => file,
-		cachedRead: () => { reads++; return content; },
-	} } as unknown as App;
+	const app = {
+		vault: {
+			getMarkdownFiles: () => {
+				enumerations++;
+				return [file];
+			},
+			getAbstractFileByPath: () => file,
+			cachedRead: () => {
+				reads++;
+				return content;
+			},
+		},
+	} as unknown as App;
 	const index = getCalloutOccurrenceIndex(app);
 	return {
-		app, index, view, document, anchor, disposers,
-		reads: () => reads, enumerations: () => enumerations,
-		release: () => release("[!note]"), reject,
+		app,
+		index,
+		view,
+		document,
+		anchor,
+		disposers,
+		reads: () => reads,
+		enumerations: () => enumerations,
+		release: () => release("[!note]"),
+		reject,
 		prepare: () => prepareUsageMenu(app, anchor as unknown as HTMLElement, (dispose) => disposers.push(dispose)),
 		assertClean: () => {
 			assert.equal(view.pendingTimers(), 0, "settlement clears the opening deadline");
@@ -72,15 +97,35 @@ function harness() {
 
 function fakeMenu() {
 	const item = {
-		setTitle() { return this; }, setIcon() { return this; }, onClick() { return this; },
-		setSection() { return this; }, setDisabled() { return this; },
+		setTitle() {
+			return this;
+		},
+		setIcon() {
+			return this;
+		},
+		onClick() {
+			return this;
+		},
+		setSection() {
+			return this;
+		},
+		setDisabled() {
+			return this;
+		},
 	};
 	let hide = (): void => {};
 	return {
 		menu: {
-			setUseNativeMenu() { return this; },
-			onHide(callback: () => void) { hide = callback; },
-			addItem(callback: (value: MenuItem) => void) { callback(item as unknown as MenuItem); return this; },
+			setUseNativeMenu() {
+				return this;
+			},
+			onHide(callback: () => void) {
+				hide = callback;
+			},
+			addItem(callback: (value: MenuItem) => void) {
+				callback(item as unknown as MenuItem);
+				return this;
+			},
 		} as unknown as Menu,
 		hide: () => hide(),
 	};
@@ -129,7 +174,9 @@ describe("bounded opening of callout usage menus", () => {
 		assert.ok(opening instanceof Promise);
 		const running = h.index.ensureFresh();
 		let finished = false;
-		void opening.then(() => { finished = true; });
+		void opening.then(() => {
+			finished = true;
+		});
 		await settle();
 		assert.equal(fakeDom.window.pendingTimers(), 0, "the main window does not own a pop-out deadline");
 		h.view.advance(199);

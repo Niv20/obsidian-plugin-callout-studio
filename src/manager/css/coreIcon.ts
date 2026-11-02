@@ -26,10 +26,7 @@ import { stripUnsafeSvg } from "../../icons/svgSafety";
  */
 export function coreIconValue(calloutEl: HTMLElement): string {
 	const attr = calloutEl.getAttribute("data-callout-icon")?.trim() ?? "";
-	const raw =
-		attr.length > 0
-			? attr
-			: calloutEl.getCssPropertyValue("--callout-icon").trim();
+	const raw = attr.length > 0 ? attr : calloutEl.getCssPropertyValue("--callout-icon").trim();
 	if (raw.startsWith("'") && raw.endsWith("'")) {
 		return raw.slice(1, -1).replace(/\\'/g, "'");
 	}
@@ -105,16 +102,10 @@ export function paintImportedIcon(root: SvgRootLike): void {
  * references from colliding with the page; it early-returns for the plain
  * `viewBox`-and-paths glyph that nearly every theme actually supplies.
  */
-export function importCoreIconSvg(
-	markup: string,
-	doc: Document,
-): Element | null {
+export function importCoreIconSvg(markup: string, doc: Document): Element | null {
 	const parsed = new DOMParser().parseFromString(markup, "image/svg+xml");
 	const root = parsed.documentElement;
-	if (
-		parsed.querySelector("parsererror") ||
-		root.nodeName.toLowerCase() !== "svg"
-	) {
+	if (parsed.querySelector("parsererror") || root.nodeName.toLowerCase() !== "svg") {
 		return null;
 	}
 	const copy = doc.importNode(root, true);

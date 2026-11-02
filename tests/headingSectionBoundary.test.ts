@@ -48,7 +48,10 @@ describe("heading section Markdown boundaries", () => {
 	it("uses the current native fold service for richer Markdown structure", () => {
 		const text = "## [!note] First\n<div>\n## not a heading\n</div>\n\n## Next";
 		const e = editor(text);
-		const state = EditorState.create({ doc: text, extensions: [foldService.of((_state, _from, to) => ({ from: to, to: text.indexOf("\n## Next") }))] });
+		const state = EditorState.create({
+			doc: text,
+			extensions: [foldService.of((_state, _from, to) => ({ from: to, to: text.indexOf("\n## Next") }))],
+		});
 		Object.assign(e, { cm: { state } });
 		deleteHeadingSection(asEditor(e), getHeadingSectionRange(asEditor(e), 0, 2));
 		assert.strictEqual(e.getValue(), "## Next");

@@ -58,10 +58,7 @@ export function menuPage(ctx: TreeContext): CsPage {
 		id: MENU_PAGE.page,
 		name: t("menuCustomize.title"),
 		desc: t("settings.customizeMenuDesc"),
-		items: [
-			introBox(ctx),
-			...ROLES.flatMap((role) => [shownList(ctx, role), hiddenList(ctx, role)]),
-		],
+		items: [introBox(ctx), ...ROLES.flatMap((role) => [shownList(ctx, role), hiddenList(ctx, role)])],
 	};
 }
 
@@ -147,11 +144,18 @@ function shownList(ctx: TreeContext, role: CalloutRenderRole): CsList {
 		type: "list",
 		id: `menu-${role}`,
 		heading,
-		extraButtons: [boxResetButton(writer, heading, () => {
-			if (isMenuRoleDefault(itemsOf(ctx, role), role)) return;
-			ctx.plugin.settings.contextMenu.items[role] = defaultMenuItems(role);
-			saveMenu(ctx);
-		}, (resetEl) => keepRoleReset(ctx, role, resetEl))],
+		extraButtons: [
+			boxResetButton(
+				writer,
+				heading,
+				() => {
+					if (isMenuRoleDefault(itemsOf(ctx, role), role)) return;
+					ctx.plugin.settings.contextMenu.items[role] = defaultMenuItems(role);
+					saveMenu(ctx);
+				},
+				(resetEl) => keepRoleReset(ctx, role, resetEl),
+			),
+		],
 		// ✕ hides the item: it moves to the role's hidden list. The rows are
 		// the items that are on, in order, so the index is a place among them
 		// (looked up in the live settings, which another device may have

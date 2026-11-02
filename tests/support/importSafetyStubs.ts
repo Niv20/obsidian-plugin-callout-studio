@@ -33,7 +33,13 @@ export function stubConfirm(answer: boolean | (() => boolean) = true): {
 		configurable: true,
 		writable: true,
 		value(this: ConfirmModal) {
-			const dialog = this as unknown as { title: string; subtitle: string | null; message: string | DocumentFragment; confirmLabel?: string; acknowledgement?: string };
+			const dialog = this as unknown as {
+				title: string;
+				subtitle: string | null;
+				message: string | DocumentFragment;
+				confirmLabel?: string;
+				acknowledgement?: string;
+			};
 			asked.push(dialog.title);
 			subtitles.push(dialog.subtitle);
 			labels.push(dialog.confirmLabel);
@@ -42,21 +48,39 @@ export function stubConfirm(answer: boolean | (() => boolean) = true): {
 			return Promise.resolve(typeof answer === "function" ? answer() : answer);
 		},
 	});
-	return { asked, subtitles, labels, acknowledgements, messages, restore: () => Object.defineProperty(ConfirmModal.prototype, "confirm", saved) };
+	return {
+		asked,
+		subtitles,
+		labels,
+		acknowledgements,
+		messages,
+		restore: () => Object.defineProperty(ConfirmModal.prototype, "confirm", saved),
+	};
 }
 
 /** A vault whose adapter keeps files, backups included, in memory. */
 export function memoryVault(): { files: Map<string, string>; app: App } {
 	const files = new Map<string, string>();
 	const under = (path: string) => [...files.keys()].filter((file) => file.startsWith(`${path}/`));
-	const app = { vault: { configDir: ".obsidian", adapter: {
-		exists: (path: string) => Promise.resolve(files.has(path) || under(path).length > 0),
-		mkdir: () => Promise.resolve(),
-		write: (path: string, data: string) => { files.set(path, data); return Promise.resolve(); },
-		read: (path: string) => Promise.resolve(files.get(path) ?? ""),
-		list: (path: string) => Promise.resolve({ files: under(path), folders: [] }),
-		remove: (path: string) => { files.delete(path); return Promise.resolve(); },
-	} } } as unknown as App;
+	const app = {
+		vault: {
+			configDir: ".obsidian",
+			adapter: {
+				exists: (path: string) => Promise.resolve(files.has(path) || under(path).length > 0),
+				mkdir: () => Promise.resolve(),
+				write: (path: string, data: string) => {
+					files.set(path, data);
+					return Promise.resolve();
+				},
+				read: (path: string) => Promise.resolve(files.get(path) ?? ""),
+				list: (path: string) => Promise.resolve({ files: under(path), folders: [] }),
+				remove: (path: string) => {
+					files.delete(path);
+					return Promise.resolve();
+				},
+			},
+		},
+	} as unknown as App;
 	return { files, app };
 }
 

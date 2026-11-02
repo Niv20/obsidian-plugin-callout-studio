@@ -56,9 +56,13 @@ export class OccurrenceResults {
 		this.sentinel = null;
 	}
 
-	getOccurrence(button: HTMLElement): CalloutOccurrence | undefined { return this.occurrences.get(button); }
+	getOccurrence(button: HTMLElement): CalloutOccurrence | undefined {
+		return this.occurrences.get(button);
+	}
 
-	linesOf(path: string): OccurrencesByLine { return this.byPath.get(path) ?? NO_LINES; }
+	linesOf(path: string): OccurrencesByLine {
+		return this.byPath.get(path) ?? NO_LINES;
+	}
 
 	/** Marks one card current. Only the card losing the mark and the one gaining it are written. */
 	select(occurrence: CalloutOccurrence | null): void {
@@ -83,9 +87,10 @@ export class OccurrenceResults {
 	/** Follow the caret of `view`: mark the drawn card it sits in, or none. */
 	followCaret(view: MarkdownView | null, scroller: HTMLElement | null): void {
 		const path = view?.file?.path;
-		this.follow(view && path
-			? occurrenceAtCursor(view.editor, view.editor.getCursor("head"), this.linesOf(path))
-			: null, scroller);
+		this.follow(
+			view && path ? occurrenceAtCursor(view.editor, view.editor.getCursor("head"), this.linesOf(path)) : null,
+			scroller,
+		);
 	}
 
 	setActiveFile(path: string | null): void {
@@ -93,10 +98,17 @@ export class OccurrenceResults {
 	}
 
 	/** Draws the list; returns whether it was drawn again (it is not when nothing changed). */
-	render(content: HTMLElement, results: readonly CalloutOccurrence[], limit: number, complete: boolean,
-		onSection: (path: string, section: HTMLElement) => void, clearSections: () => void): boolean {
+	render(
+		content: HTMLElement,
+		results: readonly CalloutOccurrence[],
+		limit: number,
+		complete: boolean,
+		onSection: (path: string, section: HTMLElement) => void,
+		clearSections: () => void,
+	): boolean {
 		const empty = complete && results.length === 0;
-		if (this.previous?.results === results && this.previous.limit === limit && this.previous.empty === empty) return false;
+		if (this.previous?.results === results && this.previous.limit === limit && this.previous.empty === empty)
+			return false;
 		const wasEmpty = this.previous?.empty === true;
 		const focused = content.ownerDocument.activeElement as HTMLElement | null;
 		const focusedOccurrence = focused && this.occurrences.get(focused);
@@ -129,19 +141,27 @@ export class OccurrenceResults {
 			this.occurrences.set(row, occurrence);
 			const lines = this.byPath.get(occurrence.path) ?? new Map<number, CalloutOccurrence[]>();
 			this.byPath.set(occurrence.path, lines);
-			lines.set(occurrence.line, [...lines.get(occurrence.line) ?? [], occurrence]);
+			lines.set(occurrence.line, [...(lines.get(occurrence.line) ?? []), occurrence]);
 		});
 		// More to draw: an empty marker the view loads the next page at as it
 		// scrolls into reach (finding S10-07), or, where the window cannot watch
 		// it, the old button.
 		const remaining = results.length - limit;
 		const watchable = canLoadOnScroll(content.ownerDocument);
-		this.sentinel = remaining > 0 && watchable
-			? content.createDiv({ cls: LOAD_MORE_SENTINEL, attr: { "aria-hidden": "true" } }) : null;
-		const more = remaining > 0 && !watchable
-			? occurrenceButton(content, "more", t("usage.more", { count: Math.min(this.pageSize, remaining) })) : null;
+		this.sentinel =
+			remaining > 0 && watchable
+				? content.createDiv({ cls: LOAD_MORE_SENTINEL, attr: { "aria-hidden": "true" } })
+				: null;
+		const more =
+			remaining > 0 && !watchable
+				? occurrenceButton(content, "more", t("usage.more", { count: Math.min(this.pageSize, remaining) }))
+				: null;
 		this.select(this.selected);
-		const restoreFocus = focusedOccurrence ? this.rows.get(occurrenceKey(focusedOccurrence)) : focusMore ? more : null;
+		const restoreFocus = focusedOccurrence
+			? this.rows.get(occurrenceKey(focusedOccurrence))
+			: focusMore
+				? more
+				: null;
 		restoreFocus?.focus({ preventScroll: true });
 		return true;
 	}
@@ -177,7 +197,12 @@ function renderOccurrenceResults(
 	for (const [offset, occurrence] of results.slice(0, limit).entries()) {
 		if (occurrence.path !== path || !group) {
 			path = occurrence.path;
-			const file = createSidebarFileGroup(content, { path, count: fileCounts.get(path) ?? 0, cls: "cs-occurrences-file", fold });
+			const file = createSidebarFileGroup(content, {
+				path,
+				count: fileCounts.get(path) ?? 0,
+				cls: "cs-occurrences-file",
+				fold,
+			});
 			group = file.matches;
 			onSection(path, file.section);
 		}
@@ -187,11 +212,16 @@ function renderOccurrenceResults(
 		row.addClass("search-result-file-match", "cs-occurrences-result", "cs-sidebar-result");
 		row.dataset.result = String(offset);
 		onRow(occurrence, row);
-		renderSidebarLocation(row, { line: occurrence.line + 1, role: occurrenceRoleLabel(occurrence.role), cls: "cs-occurrences-location" });
+		renderSidebarLocation(row, {
+			line: occurrence.line + 1,
+			role: occurrenceRoleLabel(occurrence.role),
+			cls: "cs-occurrences-location",
+		});
 		const excerpt = row.createSpan({ cls: "cs-occurrences-excerpt" });
 		if (occurrence.role === "regular" && occurrence.excerpt.includes("\n")) {
 			excerpt.addClass("cs-occurrences-excerpt-split");
-			for (const line of occurrence.excerpt.split("\n", 2)) excerpt.createSpan({ cls: "cs-occurrences-excerpt-line", text: line });
+			for (const line of occurrence.excerpt.split("\n", 2))
+				excerpt.createSpan({ cls: "cs-occurrences-excerpt-line", text: line });
 		} else excerpt.setText(occurrence.excerpt);
 	}
 }

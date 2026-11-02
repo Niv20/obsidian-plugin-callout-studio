@@ -19,18 +19,20 @@ beforeEach(() => {
 });
 
 function fileEntries(id: string, dark?: string): CalloutManagerEntry[] {
-	const data: unknown = JSON.parse(JSON.stringify({
-		calloutDetection: { obsidian: true, theme: true, snippet: true },
-		callouts: {
-			custom: [id],
-			settings: {
-				[id]: [
-					{ changes: { color: "168, 130, 255", icon: "lucide-star" } },
-					...(dark ? [{ condition: { colorScheme: "dark" }, changes: { color: dark } }] : []),
-				],
+	const data: unknown = JSON.parse(
+		JSON.stringify({
+			calloutDetection: { obsidian: true, theme: true, snippet: true },
+			callouts: {
+				custom: [id],
+				settings: {
+					[id]: [
+						{ changes: { color: "168, 130, 255", icon: "lucide-star" } },
+						...(dark ? [{ condition: { colorScheme: "dark" }, changes: { color: dark } }] : []),
+					],
+				},
 			},
-		},
-	}));
+		}),
+	);
 	const raw = parseCalloutManagerData(data);
 	assert.ok(raw);
 	return toCalloutManagerEntries(raw);
@@ -69,9 +71,12 @@ describe("Callout Manager imports keep the native nested-callout background", ()
 		it(`keeps accents and text, without a fill override, immediately and after reload: ${source}`, () => {
 			const h = harness();
 			const dark = source === "per-scheme data.json" ? "#ff8a65" : PURPLE;
-			const entries = source === "pasted CSS"
-				? parseCalloutManagerExport('.callout[data-callout="purple"] { --callout-color: 168, 130, 255; --callout-icon: lucide-star; }')
-				: fileEntries("purple", dark === PURPLE ? undefined : dark);
+			const entries =
+				source === "pasted CSS"
+					? parseCalloutManagerExport(
+							'.callout[data-callout="purple"] { --callout-color: 168, 130, 255; --callout-icon: lucide-star; }',
+						)
+					: fileEntries("purple", dark === PURPLE ? undefined : dark);
 			assert.deepEqual(apply(h, entries), { created: 1, updated: 0 });
 			const expected = derivePaletteFromColors(PURPLE, dark);
 			// This correction is why the existing derived-background migration
@@ -97,7 +102,8 @@ describe("Callout Manager imports keep the native nested-callout background", ()
 		let changes = 0;
 		h.registry.onChange(() => changes++);
 		assert.deepEqual(apply(h, [...fileEntries("note"), ...fileEntries("purple"), ...fileEntries("other")]), {
-			created: 2, updated: 1,
+			created: 2,
+			updated: 1,
 		});
 		assert.equal(changes, 1);
 		assert.equal(h.registry.settings.customPalettes.length, 1);
@@ -114,16 +120,28 @@ describe("Callout Manager imports keep the native nested-callout background", ()
 			const derived = derivePaletteFromColor(PURPLE);
 			const palette: CustomPalette = { id: "cp-existing", name: "My purple", ...derived };
 			h.registry.settings.customPalettes.push(palette);
-			h.registry.add(definition({
-				id: "legacy purple", displayName: "My original title", ...derived,
-				bgColorDark: blendHex(PURPLE, base, 0.82), paletteId: palette.id,
-				aliases: ["prior-purple"], metadata: { owner: "kept" },
-				foldable: false, defaultFolded: true, iconSize: 1.2,
-			}));
+			h.registry.add(
+				definition({
+					id: "legacy purple",
+					displayName: "My original title",
+					...derived,
+					bgColorDark: blendHex(PURPLE, base, 0.82),
+					paletteId: palette.id,
+					aliases: ["prior-purple"],
+					metadata: { owner: "kept" },
+					foldable: false,
+					defaultFolded: true,
+					iconSize: 1.2,
+				}),
+			);
 			h.registry.add(definition({ id: "authored", ...derived, paletteId: palette.id }));
 			const loaded = reload(h);
 			const before = structuredClone(must(loaded.registry.getReal("legacy purple")));
-			assert.equal(before.bgColorLight, derived.bgColorLight, "the legacy fill survives the existing load migration");
+			assert.equal(
+				before.bgColorLight,
+				derived.bgColorLight,
+				"the legacy fill survives the existing load migration",
+			);
 			assert.equal(before.bgColorDark, blendHex(PURPLE, base, 0.82));
 			const unrelated = structuredClone(loaded.registry.getReal("authored"));
 			const palettes = structuredClone(loaded.registry.settings.customPalettes);
@@ -131,7 +149,16 @@ describe("Callout Manager imports keep the native nested-callout background", ()
 			for (let attempt = 0; attempt < 2; attempt++) {
 				assert.deepEqual(apply(loaded, fileEntries("legacy-purple")), { created: 0, updated: 1 });
 				const repaired = nativeBackground(loaded, "legacy purple");
-				for (const key of ["id", "displayName", "aliases", "metadata", "foldable", "defaultFolded", "iconSize", "paletteId"] as const) {
+				for (const key of [
+					"id",
+					"displayName",
+					"aliases",
+					"metadata",
+					"foldable",
+					"defaultFolded",
+					"iconSize",
+					"paletteId",
+				] as const) {
 					assert.deepEqual(repaired[key], before[key], key);
 				}
 				assert.equal(loaded.registry.findByIdentity("prior-purple")?.id, "legacy purple");
@@ -149,16 +176,22 @@ describe("Callout Manager imports keep the native nested-callout background", ()
 	it("leaves authored colors and backgrounds intact when the import only changes icons", () => {
 		const h = harness();
 		const rows = [
-			definition({ id: "authored", ...derivePaletteFromColor(PURPLE), bgGradient: {
-				angleDeg: 90, toColorLight: "#ffeedd", toColorDark: "#332211",
-			} }),
+			definition({
+				id: "authored",
+				...derivePaletteFromColor(PURPLE),
+				bgGradient: {
+					angleDeg: 90,
+					toColorLight: "#ffeedd",
+					toColorDark: "#332211",
+				},
+			}),
 			definition({ id: "clear", transparentBg: true }),
 		];
 		for (const row of rows) h.registry.add(row);
-		const before = rows.map(row => structuredClone(must(h.registry.getReal(row.id))));
-		const entries = parseCalloutManagerExport(rows.map(row =>
-			`.callout[data-callout="${row.id}"] { --callout-icon: lucide-star; }`,
-		).join("\n"));
+		const before = rows.map((row) => structuredClone(must(h.registry.getReal(row.id))));
+		const entries = parseCalloutManagerExport(
+			rows.map((row) => `.callout[data-callout="${row.id}"] { --callout-icon: lucide-star; }`).join("\n"),
+		);
 		assert.deepEqual(apply(h, entries), { created: 0, updated: 2 });
 		for (const row of before) {
 			assert.deepEqual(h.registry.getReal(row.id), { ...row, icon: { type: "lucide", value: "star" } });
@@ -169,13 +202,17 @@ describe("Callout Manager imports keep the native nested-callout background", ()
 	for (const state of ["gradient", "transparent"] as const) {
 		it(`clears an earlier ${state} when the source explicitly replaces its color`, () => {
 			const h = harness();
-			h.registry.add(definition({
-				id: "purple",
-				...(state === "transparent" ? { transparentBg: true as const } : {
-					...derivePaletteFromColor(PURPLE),
-					bgGradient: { angleDeg: 90, toColorLight: "#ffeedd", toColorDark: "#332211" },
+			h.registry.add(
+				definition({
+					id: "purple",
+					...(state === "transparent"
+						? { transparentBg: true as const }
+						: {
+								...derivePaletteFromColor(PURPLE),
+								bgGradient: { angleDeg: 90, toColorLight: "#ffeedd", toColorDark: "#332211" },
+							}),
 				}),
-			}));
+			);
 			assert.deepEqual(apply(h, fileEntries("purple")), { created: 0, updated: 1 });
 			nativeBackground(h, "purple");
 			nativeBackground(reload(h), "purple");

@@ -29,7 +29,10 @@ describe("command editor field layout", () => {
 		];
 		const positions = builders.map((builder) => onOpen.indexOf(builder));
 		assert.ok(positions.every((position) => position >= 0));
-		assert.deepEqual(positions, [...positions].sort((a, b) => a - b));
+		assert.deepEqual(
+			positions,
+			[...positions].sort((a, b) => a - b),
+		);
 	});
 
 	it("marks every control row with the shared width class", () => {
@@ -40,9 +43,7 @@ describe("command editor field layout", () => {
 			["src/settings/command/foldStateRow.ts", 1],
 		];
 		for (const [path, expected] of rows) {
-			const matches = readRepoFile(path).match(
-				/\.setClass\("cs-command-field"\)/g,
-			);
+			const matches = readRepoFile(path).match(/\.setClass\("cs-command-field"\)/g);
 			assert.equal(
 				matches?.length ?? 0,
 				expected,
@@ -53,8 +54,16 @@ describe("command editor field layout", () => {
 
 	it("fits each field to its current choice instead of one shared 180px column (S8-16)", () => {
 		assert.doesNotMatch(css, /--cs-command-control-width/, "no shared column width any more");
-		assert.doesNotMatch(css, /\.cs-command-field\s+\.setting-item-control\s*\{/, "the control column sizes to its content");
-		assert.doesNotMatch(css, /\.cs-command-field[^{]*\.cs-combobox\s*\{/, "the callout picker has no width of its own here");
+		assert.doesNotMatch(
+			css,
+			/\.cs-command-field\s+\.setting-item-control\s*\{/,
+			"the control column sizes to its content",
+		);
+		assert.doesNotMatch(
+			css,
+			/\.cs-command-field[^{]*\.cs-combobox\s*\{/,
+			"the callout picker has no width of its own here",
+		);
 		// Obsidian's own caps, in every setting row: 400px for a <select>, 250px
 		// for its combobox. Below them, a field is as wide as its words.
 		assert.match(css, /\.setting-item-control \.cs-dropdown-field\s*\{[^}]*max-width:\s*400px;/);
@@ -67,7 +76,13 @@ describe("command editor field layout", () => {
 			modalSource.indexOf("\tonClose(): void"),
 		);
 		assert.match(onOpen, /const form = new SettingGroup\(contentEl\);/);
-		for (const builder of ["buildCalloutRow", "buildFormatRow", "buildHeadingLevelRow", "buildActionRow", "buildFoldStateRow"]) {
+		for (const builder of [
+			"buildCalloutRow",
+			"buildFormatRow",
+			"buildHeadingLevelRow",
+			"buildActionRow",
+			"buildFoldStateRow",
+		]) {
 			assert.match(
 				onOpen,
 				new RegExp(`${builder}\\(\\s*form\\.listEl,`),
@@ -90,7 +105,9 @@ describe("command editor field layout", () => {
 	it("lets a row's description wrap before its choice does", () => {
 		// Not a width: the choice keeps the width of its words and the row's
 		// description gives way, in the group's box as in a bare window.
-		const rule = css.match(/body:not\(\.is-phone\)\s+\.cs-command-field\s*>\s*\.setting-item-control\s*\{([^}]*)\}/)?.[1] ?? "";
+		const rule =
+			css.match(/body:not\(\.is-phone\)\s+\.cs-command-field\s*>\s*\.setting-item-control\s*\{([^}]*)\}/)?.[1] ??
+			"";
 		assert.match(rule, /flex-shrink:\s*0;/);
 		assert.doesNotMatch(rule, /\bwidth\s*:/);
 	});
@@ -101,7 +118,9 @@ describe("command editor field layout", () => {
 		const row = css.match(/\.setting-item\.cs-command-name\.cs-command-name\s*\{([^}]*)\}/)?.[1] ?? "";
 		assert.match(row, /flex-direction:\s*column;/);
 		assert.match(row, /align-items:\s*stretch;/);
-		const control = css.match(/\.setting-item\.cs-command-name\.cs-command-name\s+\.setting-item-control\s*\{([^}]*)\}/)?.[1] ?? "";
+		const control =
+			css.match(/\.setting-item\.cs-command-name\.cs-command-name\s+\.setting-item-control\s*\{([^}]*)\}/)?.[1] ??
+			"";
 		assert.match(control, /max-width:\s*none;/);
 		assert.match(control, /justify-content:\s*flex-start;/);
 		assert.match(css, /\.cs-command-name\s+\.setting-item-error\s*\{[^}]*text-align:\s*start;/);
@@ -116,7 +135,11 @@ describe("command editor field layout", () => {
 		assert.match(rule, /overflow-wrap:\s*anywhere;/);
 		assert.match(rule, /text-overflow:\s*clip;/);
 		assert.match(rule, /color:\s*var\(--text-normal\);/);
-		assert.match(rule, /font-size:\s*var\(--font-ui-medium\);/, "the size of a row's label, not Obsidian's small note");
+		assert.match(
+			rule,
+			/font-size:\s*var\(--font-ui-medium\);/,
+			"the size of a row's label, not Obsidian's small note",
+		);
 		assert.match(rule, /text-align:\s*start;/);
 	});
 });
@@ -180,8 +203,7 @@ describe("command editor choices", () => {
 			},
 		} as ConstructorParameters<typeof CommandEditorModal>[1];
 		const app = {} as ConstructorParameters<typeof CommandEditorModal>[0];
-		const selected = (modal: CommandEditorModal) =>
-			(modal as unknown as { calloutId: string }).calloutId;
+		const selected = (modal: CommandEditorModal) => (modal as unknown as { calloutId: string }).calloutId;
 
 		const available = (modal: CommandEditorModal) =>
 			(modal as unknown as { getChoices(): CalloutDefinition[] }).getChoices().map((def) => def.id);
@@ -209,10 +231,17 @@ describe("command editor choices", () => {
 			const controls = host.querySelectorAll(".cs-select-dropdown").map((control) => asEl(control));
 			assert.equal(controls.length, 3);
 			assert.equal(host.querySelectorAll("select").length, 0);
-			assert.equal(host.querySelectorAll("input").length, 0, "plain choices are Obsidian's dropdown, not text fields");
+			assert.equal(
+				host.querySelectorAll("input").length,
+				0,
+				"plain choices are Obsidian's dropdown, not text fields",
+			);
 
 			assert.equal(dropdownValue(controls[0]!), "H3");
-			assert.deepEqual(dropdownOptions(controls[0]!).map((option) => option.title), ["H1", "H2", "H3", "H4", "H5", "H6"]);
+			assert.deepEqual(
+				dropdownOptions(controls[0]!).map((option) => option.title),
+				["H1", "H2", "H3", "H4", "H5", "H6"],
+			);
 			pickDropdown(controls[0]!, "H2");
 			assert.deepEqual(headingValues, [2]);
 
@@ -255,7 +284,12 @@ describe("command editor choices", () => {
 
 	it("starts a new command on Wrap, and an old one on what it always did", () => {
 		const host = {
-			registry: { getBuiltIn: () => [], getUserDefined: () => [], getThemeProvided: () => [], get: () => undefined },
+			registry: {
+				getBuiltIn: () => [],
+				getUserDefined: () => [],
+				getThemeProvided: () => [],
+				get: () => undefined,
+			},
 		} as unknown as ConstructorParameters<typeof CommandEditorModal>[1];
 		const app = {} as ConstructorParameters<typeof CommandEditorModal>[0];
 		const actionOf = (existing?: CustomCommand) =>
@@ -272,7 +306,7 @@ describe("command editor choices", () => {
 		const before = fakeDom.document.listeners.get("click")?.length ?? 0;
 		let themeOwned = false;
 		const registry = {
-			get: () => ({ id: "note" } as CalloutDefinition),
+			get: () => ({ id: "note" }) as CalloutDefinition,
 			themeOwns: () => themeOwned,
 		};
 		const picked: string[] = [];
@@ -286,7 +320,10 @@ describe("command editor choices", () => {
 			assert.equal(row.sync(registry, DEFAULT_SETTINGS, "note", "heading"), "regular");
 			// The narrowed options close the open menu; a fresh one offers only Block.
 			const options = dropdownOptions(asEl(host));
-			assert.deepEqual(options.map((option) => option.title), [t("commandBuilder.formatBlock")]);
+			assert.deepEqual(
+				options.map((option) => option.title),
+				[t("commandBuilder.formatBlock")],
+			);
 			assert.ok(options[0]?.checked);
 			pickDropdown(asEl(host), t("commandBuilder.formatBlock"));
 			assert.deepEqual(picked, [], "a programmatic fallback and same-value click do not synthesize changes");

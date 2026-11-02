@@ -11,7 +11,10 @@ export class SettingsRecoveryDetailsModal extends Modal {
 	private component: Component | null = null;
 	private generation = 0;
 
-	constructor(app: App, private readonly details: SetupDetails) {
+	constructor(
+		app: App,
+		private readonly details: SetupDetails,
+	) {
 		super(app);
 	}
 
@@ -23,11 +26,17 @@ export class SettingsRecoveryDetailsModal extends Modal {
 		this.modalEl.addClass("cs-recovery-details-modal");
 		this.setTitle(t("versions.details.title"));
 		this.titleEl.createSpan({
-			text: ` (${recoverySourceTime(this.details.source)})`, cls: "cs-version-detail-date", attr: { dir: "auto" },
+			text: ` (${recoverySourceTime(this.details.source)})`,
+			cls: "cs-version-detail-date",
+			attr: { dir: "auto" },
 		});
 		this.contentEl.empty();
 		const generation = ++this.generation;
-		const loading = this.contentEl.createEl("p", { text: t("recovery.details.loading"), cls: "cs-recovery-detail-loading", attr: { role: "status" } });
+		const loading = this.contentEl.createEl("p", {
+			text: t("recovery.details.loading"),
+			cls: "cs-recovery-detail-loading",
+			attr: { role: "status" },
+		});
 		loading.hidden = true;
 		const report = this.contentEl.createDiv();
 		report.hidden = true;
@@ -41,25 +50,27 @@ export class SettingsRecoveryDetailsModal extends Modal {
 			loading.hidden = false;
 		}, 250);
 		component.register(() => window.clearTimeout(loadingTimer));
-		void yieldRecoveryRender(component).then(async () => {
-			if (!isCurrent()) return;
-			await renderRecoveryDetails(report, this.details, component, isCurrent);
-			if (!isCurrent()) return;
-			window.clearTimeout(loadingTimer);
-			if (shownAt !== null) await yieldRecoveryRender(component, Math.max(0, 250 - (Date.now() - shownAt)));
-			if (!isCurrent()) return;
-			loading.remove();
-			report.hidden = false;
-			this.contentEl.setAttribute("aria-busy", "false");
-		}).catch((error: unknown) => {
-			if (!isCurrent()) return;
-			window.clearTimeout(loadingTimer);
-			console.error("[callout-studio] could not render setup comparison", error);
-			report.remove();
-			loading.setText(t("recovery.details.renderFailed"));
-			loading.hidden = false;
-			this.contentEl.setAttribute("aria-busy", "false");
-		});
+		void yieldRecoveryRender(component)
+			.then(async () => {
+				if (!isCurrent()) return;
+				await renderRecoveryDetails(report, this.details, component, isCurrent);
+				if (!isCurrent()) return;
+				window.clearTimeout(loadingTimer);
+				if (shownAt !== null) await yieldRecoveryRender(component, Math.max(0, 250 - (Date.now() - shownAt)));
+				if (!isCurrent()) return;
+				loading.remove();
+				report.hidden = false;
+				this.contentEl.setAttribute("aria-busy", "false");
+			})
+			.catch((error: unknown) => {
+				if (!isCurrent()) return;
+				window.clearTimeout(loadingTimer);
+				console.error("[callout-studio] could not render setup comparison", error);
+				report.remove();
+				loading.setText(t("recovery.details.renderFailed"));
+				loading.hidden = false;
+				this.contentEl.setAttribute("aria-busy", "false");
+			});
 	}
 
 	onClose(): void {

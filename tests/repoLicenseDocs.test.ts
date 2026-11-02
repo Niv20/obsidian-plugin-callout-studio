@@ -29,8 +29,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
 
-const read = (name: string): string =>
-	readFileSync(join(process.cwd(), name), "utf8");
+const read = (name: string): string => readFileSync(join(process.cwd(), name), "utf8");
 
 const LICENSE = read("LICENSE");
 
@@ -71,9 +70,7 @@ describe("LICENSE grants without conditions", () => {
 		// If this ever fails on purpose — the author really did add a term —
 		// then it is the *docs* that have to be brought into line, and this
 		// suite becomes the check that they were.
-		const grant = LICENSE.split(/\n\s*\n/).find((p) =>
-			p.includes("hereby granted"),
-		);
+		const grant = LICENSE.split(/\n\s*\n/).find((p) => p.includes("hereby granted"));
 		assert.ok(grant, "no grant paragraph in LICENSE");
 		assert.doesNotMatch(grant, CONDITION_WORDS);
 	});
@@ -82,9 +79,7 @@ describe("LICENSE grants without conditions", () => {
 describe("no document invents a term LICENSE does not have", () => {
 	for (const doc of DOCS) {
 		it(`${doc} describes the licence it links to`, () => {
-			const offenders = licenceSentences(read(doc)).filter((s) =>
-				CONDITION_WORDS.test(s),
-			);
+			const offenders = licenceSentences(read(doc)).filter((s) => CONDITION_WORDS.test(s));
 			assert.deepStrictEqual(
 				offenders,
 				[],
@@ -113,11 +108,7 @@ describe("the no-repackaging ask is an ask", () => {
 		for (const doc of ["README.md", "docs/CONTRIBUTING.md"]) {
 			const text = read(doc);
 			assert.match(text, /repackage/i, `${doc} no longer carries the ask`);
-			assert.match(
-				text,
-				/not a licen[cs]e term/i,
-				`${doc} states the ask without saying it is not binding`,
-			);
+			assert.match(text, /not a licen[cs]e term/i, `${doc} states the ask without saying it is not binding`);
 		}
 	});
 });

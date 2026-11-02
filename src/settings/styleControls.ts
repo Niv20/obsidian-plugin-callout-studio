@@ -36,10 +36,7 @@ import { cancelFrame, requestFrameFor, type FrameHandle } from "../utils/element
  * it leaves, so a readout that grows by a character shrinks the slider under
  * the cursor. styles.css reserves a width for the same reason.
  */
-export function setSliderDisplay(
-	slider: SliderComponent,
-	format: (value: number) => string,
-): void {
+export function setSliderDisplay(slider: SliderComponent, format: (value: number) => string): void {
 	slider.setDisplayFormat(format);
 }
 
@@ -159,10 +156,7 @@ export function wireStyleSlider(
 
 	// The number beside the track is Obsidian's own — SliderComponent keeps it
 	// in sync, so this only says how to spell it.
-	setSliderDisplay(
-		slider,
-		(v) => `${spec.prefix ?? ""}${v.toFixed(spec.decimals)}${spec.suffix ?? ""}`,
-	);
+	setSliderDisplay(slider, (v) => `${spec.prefix ?? ""}${v.toFixed(spec.decimals)}${spec.suffix ?? ""}`);
 	slider.setLimits(spec.min, spec.max, spec.step).setValue(spec.get());
 	slider.sliderEl.addEventListener("input", () => {
 		// Covers keyboard nudges, which fire `input` without a pointerdown.

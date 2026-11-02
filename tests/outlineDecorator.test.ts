@@ -36,21 +36,10 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 // Listed first: importing it installs the DOM globals before anything under
 // test loads (see tests/support/fakeDom.ts).
-import {
-	NODE_TEXT,
-	asEl,
-	el,
-	fakeDom,
-	type FakeElement,
-	type FakeText,
-} from "./support/fakeDom";
+import { NODE_TEXT, asEl, el, fakeDom, type FakeElement, type FakeText } from "./support/fakeDom";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { OutlineDecorator } from "../src/outline/OutlineDecorator";
-import {
-	CSS_REF_TOKEN,
-	CSS_TOKEN_EMPTY,
-	CSS_TOKEN_ICON,
-} from "../src/editor/renderShared";
+import { CSS_REF_TOKEN, CSS_TOKEN_EMPTY, CSS_TOKEN_ICON } from "../src/editor/renderShared";
 import type { App } from "obsidian";
 import type { CalloutDefinition, PluginSettings } from "../src/types";
 
@@ -132,9 +121,7 @@ function outlineHarness(): OutlineHarness {
 			items(...texts) {
 				container.empty();
 				return texts.map((text) =>
-					container
-						.createDiv({ cls: "tree-item" })
-						.createDiv({ cls: "tree-item-inner", text }),
+					container.createDiv({ cls: "tree-item" }).createDiv({ cls: "tree-item-inner", text }),
 				);
 			},
 			rows: () => container.querySelectorAll(".tree-item-inner"),
@@ -160,10 +147,7 @@ function outlineHarness(): OutlineHarness {
 }
 
 /** One neutral user callout to vary from — Lucide, so no artwork is involved. */
-function addCallout(
-	registry: Registry,
-	over: Partial<CalloutDefinition> = {},
-): void {
+function addCallout(registry: Registry, over: Partial<CalloutDefinition> = {}): void {
 	registry.add({
 		id: "quiet",
 		displayName: "Quiet",
@@ -203,8 +187,7 @@ function decorated(
 }
 
 /** The ref token of a decorated row, if it has one. */
-const tokenOf = (row: FakeElement): FakeElement | null =>
-	row.querySelector(`.${CSS_REF_TOKEN}`);
+const tokenOf = (row: FakeElement): FakeElement | null => row.querySelector(`.${CSS_REF_TOKEN}`);
 
 /**
  * The row's own text node — what the pane rewrites when its virtual tree
@@ -403,10 +386,7 @@ describe("`!id` in the pane — is it really a callout?", () => {
 	});
 
 	it("by exact text, when the file contains BOTH forms of one id", () => {
-		const [bracketed, literal] = scenario(
-			["[!quiet] A", "!quiet B"],
-			["!quiet A", "!quiet B"],
-		);
+		const [bracketed, literal] = scenario(["[!quiet] A", "!quiet B"], ["!quiet A", "!quiet B"]);
 
 		assert.strictEqual(bracketed?.textContent, "A");
 		assert.strictEqual(literal?.textContent, "!quiet B");
@@ -659,11 +639,7 @@ describe("the observer", () => {
 		assert.strictEqual(pane.rows()[0]?.textContent, "A");
 
 		fakeDom.document.flushMutations();
-		assert.strictEqual(
-			fakeDom.window.pendingFrames(),
-			0,
-			"the rewrite scheduled another rewrite",
-		);
+		assert.strictEqual(fakeDom.window.pendingFrames(), 0, "the rewrite scheduled another rewrite");
 	});
 });
 

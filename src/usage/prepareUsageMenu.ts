@@ -37,15 +37,22 @@ export function prepareUsageMenu(
 		pendingMenus.set(app, cancel);
 		registerDisposer(cancel);
 		lifetime.registerDomEvent(ownerDoc, "pointerdown", cancel, true);
-		lifetime.registerDomEvent(ownerDoc, "keydown", (keyEvent) => {
-			if (keyEvent.key === "Escape" || keyEvent.key === "Tab") cancel();
-		}, true);
+		lifetime.registerDomEvent(
+			ownerDoc,
+			"keydown",
+			(keyEvent) => {
+				if (keyEvent.key === "Escape" || keyEvent.key === "Tab") cancel();
+			},
+			true,
+		);
 		lifetime.registerDomEvent(ownerWin, "blur", cancel);
 		lifetime.registerDomEvent(ownerWin, "pagehide", cancel);
-		lifetime.register(index.subscribe(() => {
-			if (index.status === "disposed") cancel();
-			else if (index.status === "ready" || index.status === "partial") finish(true);
-		}));
+		lifetime.register(
+			index.subscribe(() => {
+				if (index.status === "disposed") cancel();
+				else if (index.status === "ready" || index.status === "partial") finish(true);
+			}),
+		);
 		const timer = ownerWin.setTimeout(() => finish(true), MENU_WAIT_MS);
 		lifetime.register(() => ownerWin.clearTimeout(timer));
 		// The item only observes this shared pass; even a partial pass is not retried here.

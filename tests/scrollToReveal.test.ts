@@ -22,11 +22,7 @@
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import {
-	REVEAL_MARGIN_PX,
-	scrollDeltaToReveal,
-	scrollToReveal,
-} from "../src/ui/scrollToReveal";
+import { REVEAL_MARGIN_PX, scrollDeltaToReveal, scrollToReveal } from "../src/ui/scrollToReveal";
 
 const VIEW = { top: 0, bottom: 300 };
 

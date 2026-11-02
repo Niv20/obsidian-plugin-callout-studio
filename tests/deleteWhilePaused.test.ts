@@ -23,19 +23,28 @@ function setup() {
 	registry.add(def);
 	const contents = new Map([["note.md", "> [!owned] Kept"]]);
 	const handles = [...contents.keys()].map((path) => ({ path }));
-	const app = { vault: {
-		getMarkdownFiles: () => handles,
-		getAbstractFileByPath: (path: string) => handles.find((file) => file.path === path),
-		cachedRead: (file: { path: string }) => Promise.resolve(contents.get(file.path)!),
-		process: (file: { path: string }, transform: (text: string) => string) => {
-			contents.set(file.path, transform(contents.get(file.path)!));
-			return Promise.resolve();
+	const app = {
+		vault: {
+			getMarkdownFiles: () => handles,
+			getAbstractFileByPath: (path: string) => handles.find((file) => file.path === path),
+			cachedRead: (file: { path: string }) => Promise.resolve(contents.get(file.path)!),
+			process: (file: { path: string }, transform: (text: string) => string) => {
+				contents.set(file.path, transform(contents.get(file.path)!));
+				return Promise.resolve();
+			},
 		},
-	} } as unknown as App;
+	} as unknown as App;
 	const writer = savingWriter();
-	const ctx = { app, redraw: () => {}, plugin: {
-		registry, settingsWriter: writer, saveSettings: () => Promise.resolve(), refreshCallouts: () => {},
-	} } as unknown as SettingsContext;
+	const ctx = {
+		app,
+		redraw: () => {},
+		plugin: {
+			registry,
+			settingsWriter: writer,
+			saveSettings: () => Promise.resolve(),
+			refreshCallouts: () => {},
+		},
+	} as unknown as SettingsContext;
 	return { ctx, def, registry, contents, writer, notices };
 }
 
@@ -50,17 +59,24 @@ describe("deleting a callout while saving is paused", () => {
 			assert.equal(h.contents.get("note.md"), "> [!owned] Kept");
 			assert.equal(h.registry.has("owned"), true);
 			assert.ok(h.notices.includes(en["notice.blockedWhilePaused"]!));
-		} finally { confirm.restore(); }
+		} finally {
+			confirm.restore();
+		}
 	});
 
 	it("removes nothing when saving paused while the dialog was open", async () => {
 		const h = setup();
-		const confirm = stubConfirm(() => { h.writer.isFrozen = true; return true; });
+		const confirm = stubConfirm(() => {
+			h.writer.isFrozen = true;
+			return true;
+		});
 		try {
 			await handleCalloutDelete(h.ctx, h.def);
 			assert.equal(confirm.asked.length, 1);
 			assert.equal(h.contents.get("note.md"), "> [!owned] Kept");
 			assert.equal(h.registry.has("owned"), true);
-		} finally { confirm.restore(); }
+		} finally {
+			confirm.restore();
+		}
 	});
 });

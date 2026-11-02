@@ -35,14 +35,22 @@ const previousStyle = Object.getOwnPropertyDescriptor(globalThis, "getComputedSt
 const previousObserver = Object.getOwnPropertyDescriptor(globalThis, "ResizeObserver");
 before(() => {
 	Object.defineProperty(globalThis, "getComputedStyle", {
-		configurable: true, value: () => ({ flexDirection: "row" }),
+		configurable: true,
+		value: () => ({ flexDirection: "row" }),
 	});
 	Object.defineProperty(globalThis, "ResizeObserver", {
-		configurable: true, value: class { observe(): void {} disconnect(): void {} },
+		configurable: true,
+		value: class {
+			observe(): void {}
+			disconnect(): void {}
+		},
 	});
 });
 after(() => {
-	for (const [key, descriptor] of [["getComputedStyle", previousStyle], ["ResizeObserver", previousObserver]] as const) {
+	for (const [key, descriptor] of [
+		["getComputedStyle", previousStyle],
+		["ResizeObserver", previousObserver],
+	] as const) {
 		if (descriptor) Object.defineProperty(globalThis, key, descriptor);
 		else Reflect.deleteProperty(globalThis, key);
 	}
@@ -65,17 +73,29 @@ function fakePlugin(state: Partial<PluginState> = {}) {
 	const calls: string[] = [];
 	const plugin = {
 		registry,
-		get settings() { return registry.settings; },
-		settingsWriter: { get isFrozen() { return now.paused; } },
+		get settings() {
+			return registry.settings;
+		},
+		settingsWriter: {
+			get isFrozen() {
+				return now.paused;
+			},
+		},
 		restyleUncustomizedFallbackRows: () => calls.push("restyle"),
 		refreshCallouts: () => calls.push("refresh"),
-		saveSettings: () => { calls.push("save"); return Promise.resolve(); },
+		saveSettings: () => {
+			calls.push("save");
+			return Promise.resolve();
+		},
 		locales: {
 			isReady: (pref: string) => pref === "en" || now.ready,
 			state: () => "absent",
 			prepare: () => Promise.resolve("missing"),
 		},
-		ensureLocale: () => { calls.push("ensureLocale"); return Promise.resolve(false); },
+		ensureLocale: () => {
+			calls.push("ensureLocale");
+			return Promise.resolve(false);
+		},
 		applyLocaleChange: () => calls.push("applyLocaleChange"),
 	};
 	return { plugin, registry, calls, now };
@@ -87,16 +107,17 @@ function drawGeneral(plugin: object, app: object = {}) {
 	const ctx: TreeContext = {
 		app: app as App,
 		plugin: plugin as SettingsTabPlugin,
-		redraw: () => { redraws++; tab.update(); },
+		redraw: () => {
+			redraws++;
+			tab.update();
+		},
 		registerDisposer: () => {},
 		rows: new RowRegistry(),
 		parts: new PersistentParts(() => {}),
 		jumpTo: () => {},
 	};
 	const tab = new CalloutStudioSettingsTab(app as App, plugin as SettingsTabPlugin);
-	tab.getSettingDefinitions = () => toObsidianItems([
-		{ type: "group", id: "general", items: [fallbackRow(ctx)] },
-	]);
+	tab.getSettingDefinitions = () => toObsidianItems([{ type: "group", id: "general", items: [fallbackRow(ctx)] }]);
 	const harness = new DeclarativeHarness(tab as never);
 	tab.update();
 	/** The drawn row with this id. */
@@ -135,7 +156,10 @@ describe("Default fallback callout", () => {
 		tab.update();
 		assert.equal(pickerOf(), first, "the same picker");
 		assert.equal(row(GENERAL_ROWS.fallback).settingEl.querySelectorAll(".cs-combobox").length, 1);
-		assert.equal(row(GENERAL_ROWS.fallback).settingEl.querySelector(".cs-dropdown-field-label")?.textContent, "Note");
+		assert.equal(
+			row(GENERAL_ROWS.fallback).settingEl.querySelector(".cs-dropdown-field-label")?.textContent,
+			"Note",
+		);
 	});
 
 	it("repaints and saves a pick, and draws again for the reset arrow", () => {
@@ -156,7 +180,10 @@ describe("Default fallback callout", () => {
 		const reset = row(GENERAL_ROWS.fallback).setting.extraButtons[0] as ButtonLike;
 		reset.press();
 		assert.equal(registry.settings.fallbackCalloutId, DEFAULT_SETTINGS.fallbackCalloutId);
-		assert.equal(row(GENERAL_ROWS.fallback).settingEl.querySelector(".cs-dropdown-field-label")?.textContent, "Note");
+		assert.equal(
+			row(GENERAL_ROWS.fallback).settingEl.querySelector(".cs-dropdown-field-label")?.textContent,
+			"Note",
+		);
 		assert.equal(resetHidden(reset), true);
 		await Promise.resolve();
 		// Painted before the save, which it must never wait on.
@@ -176,7 +203,10 @@ describe("Default fallback callout", () => {
 		const { row } = drawGeneral(plugin);
 		const fallback = row(GENERAL_ROWS.fallback);
 		assert.equal(fallback.setting.disabled, true);
-		assert.ok(fallback.settingEl.querySelector(".cs-dropdown-field")?.hasClass("mod-disabled"), "Obsidian's disabled dropdown");
+		assert.ok(
+			fallback.settingEl.querySelector(".cs-dropdown-field")?.hasClass("mod-disabled"),
+			"Obsidian's disabled dropdown",
+		);
 		const reset = (fallback.setting.extraButtons[0] as ButtonLike).buttonEl as unknown as HTMLElement;
 		assert.equal(reset.getAttribute("aria-disabled"), "true");
 	});
@@ -185,7 +215,10 @@ describe("Default fallback callout", () => {
 describe("Language", () => {
 	it("is not a row at all: the footer's globe is the only place it is chosen", () => {
 		const { harness } = drawGeneral(fakePlugin({ ready: false }).plugin);
-		assert.deepEqual(harness.rows().map((r) => r.def.id), [GENERAL_ROWS.fallback]);
+		assert.deepEqual(
+			harness.rows().map((r) => r.def.id),
+			[GENERAL_ROWS.fallback],
+		);
 	});
 
 	it("tells a language that cannot be downloaded in a notice, and adds nothing to the page", async () => {
@@ -197,7 +230,10 @@ describe("Language", () => {
 		for (let i = 0; i < 5; i++) await new Promise((resolve) => setImmediate(resolve));
 		assert.deepEqual(calls, ["save", "ensureLocale"]);
 		assert.equal(Notice.last?.message, t("locale.notDownloaded", { name: "עברית" }));
-		assert.deepEqual(harness.rows().map((r) => r.def.id), rowsBefore);
+		assert.deepEqual(
+			harness.rows().map((r) => r.def.id),
+			rowsBefore,
+		);
 	});
 
 	it("saves what the globe picks, brings the page to it, and draws it again", async () => {

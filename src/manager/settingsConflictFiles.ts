@@ -6,8 +6,10 @@ import { hasSafeSettingsFileShape } from "./settingsFileShape";
 import { canonical, SYNC_KEY } from "./syncTree";
 
 export function isSettingsConflictFile(name: string): boolean {
-	return /^data\.sync-conflict-\d{8}-\d{6}-[a-z0-9-]+\.json$/i.test(name) ||
-		/^data \(Conflicted copy .+ \d{12}\)\.json$/i.test(name);
+	return (
+		/^data\.sync-conflict-\d{8}-\d{6}-[a-z0-9-]+\.json$/i.test(name) ||
+		/^data \(Conflicted copy .+ \d{12}\)\.json$/i.test(name)
+	);
 }
 
 export async function readSettingsConflictFiles(host: SettingsFileHost): Promise<Partial<PluginData>[]> {
@@ -24,14 +26,21 @@ export async function readSettingsConflictFiles(host: SettingsFileHost): Promise
 		const name = path.slice(dir.length + 1);
 		if (name.includes("/") || !isSettingsConflictFile(name)) continue;
 		try {
-			const first = await adapter.read(path), second = await adapter.read(path);
+			const first = await adapter.read(path),
+				second = await adapter.read(path);
 			if (first !== second) continue;
 			const data = JSON.parse(first) as Record<string, unknown>;
 			// Unstamped backup-like copies cannot establish edit causality.
 			// Leave those untouched for explicit recovery; never guess a winner.
-			if (!data || typeof data !== "object" || Array.isArray(data) || !data[SYNC_KEY] ||
-				!hasSafeSettingsFileShape(data)) continue;
-			if (!result.some(previous => canonical(previous) === canonical(data))) result.push(data);
+			if (
+				!data ||
+				typeof data !== "object" ||
+				Array.isArray(data) ||
+				!data[SYNC_KEY] ||
+				!hasSafeSettingsFileShape(data)
+			)
+				continue;
+			if (!result.some((previous) => canonical(previous) === canonical(data))) result.push(data);
 		} catch (error) {
 			console.warn("[callout-studio] leaving an unavailable settings conflict copy untouched", path, error);
 		}

@@ -23,18 +23,8 @@
  * files carry. Brands adds a trademark question the icon licence does not
  * cover, so selecting that style also raises a standing notice in the picker.
  */
-import type {
-	CalloutIcon,
-	FontAwesomeStyle,
-	IconPackId,
-} from "../../types";
-import type {
-	IconAttribution,
-	IconEntry,
-	IconIndex,
-	IconPack,
-	IconVariantState,
-} from "../types";
+import type { CalloutIcon, FontAwesomeStyle, IconPackId } from "../../types";
+import type { IconAttribution, IconEntry, IconIndex, IconPack, IconVariantState } from "../types";
 import type { LocaleKey } from "../../i18n";
 import { buildPackSvg } from "../packData";
 import { decodeIndex, memoizeIndex } from "../data/codec";
@@ -56,11 +46,7 @@ const FA_SIZES = ["512"] as const;
  * Solid first: it is by far the largest style, and it is the fallback for an
  * icon the selected style has no drawing of.
  */
-export const FA_STYLES: readonly FontAwesomeStyle[] = [
-	"solid",
-	"regular",
-	"brands",
-];
+export const FA_STYLES: readonly FontAwesomeStyle[] = ["solid", "regular", "brands"];
 
 export const FA_DEFAULT_STYLE: FontAwesomeStyle = "solid";
 
@@ -84,9 +70,7 @@ const FA_STYLE_LABEL_KEYS: readonly LocaleKey[] = [
 ];
 
 /** The three pack files this source draws from, in style order. */
-export const FA_DATA_PACKS: readonly IconPackId[] = FA_STYLES.map(
-	(style) => FA_TYPE_OF[style],
-);
+export const FA_DATA_PACKS: readonly IconPackId[] = FA_STYLES.map((style) => FA_TYPE_OF[style]);
 
 const FA_TYPES = new Set<string>(FA_DATA_PACKS);
 
@@ -233,10 +217,7 @@ export const faPack: IconPack = {
 	makeIcon(entry: IconEntry, variants: IconVariantState): CalloutIcon {
 		// The fallback is for the pooled "All sources" grid, which shows every
 		// name at once with no style control to keep them in step.
-		const style = resolveStyle(
-			entry.name,
-			variants.faStyle ?? FA_DEFAULT_STYLE,
-		);
+		const style = resolveStyle(entry.name, variants.faStyle ?? FA_DEFAULT_STYLE);
 		return { type: FA_TYPE_OF[style], value: entry.name };
 	},
 
@@ -247,9 +228,7 @@ export const faPack: IconPack = {
 	},
 
 	pickerNotice(variants: IconVariantState): LocaleKey | undefined {
-		return (variants.faStyle ?? FA_DEFAULT_STYLE) === "brands"
-			? "iconPack.faBrandsNotice"
-			: undefined;
+		return (variants.faStyle ?? FA_DEFAULT_STYLE) === "brands" ? "iconPack.faBrandsNotice" : undefined;
 	},
 
 	buildSvg(icon: CalloutIcon): string | null {

@@ -14,11 +14,7 @@ import { describe, it } from "node:test";
 import { Component, MarkdownRenderer } from "obsidian";
 import type { App } from "obsidian";
 import { FakeElement, installFakeDom } from "./support/fakeDom";
-import {
-	everyComputedProperty,
-	ThemeClaimCheck,
-	type ClaimCheckRequest,
-} from "../src/manager/theme/ThemeClaimCheck";
+import { everyComputedProperty, ThemeClaimCheck, type ClaimCheckRequest } from "../src/manager/theme/ThemeClaimCheck";
 import { namesInSelector } from "../src/manager/theme/themeClaimSelectors";
 import type { ComputedStyleReader } from "../src/manager/theme/readCalloutStyle";
 import { isOwnCssChange, OWN_CSS_CHANGE } from "../src/manager/ownCssChange";
@@ -244,7 +240,10 @@ describe("where the callouts are drawn", () => {
 					if (callout && parent && widget?.classList.contains("cm-callout")) {
 						chains.add(
 							[widget, parent, callout]
-								.map((node) => `${node.tagName.toLowerCase()}.${node.className.trim().split(/\s+/).join(".")}`)
+								.map(
+									(node) =>
+										`${node.tagName.toLowerCase()}.${node.className.trim().split(/\s+/).join(".")}`,
+								)
 								.join(" > "),
 						);
 					}
@@ -254,9 +253,10 @@ describe("where the callouts are drawn", () => {
 				nextTask: () => Promise.resolve(),
 			});
 			await claims.check(request(h, ["note"]));
-			assert.deepStrictEqual([...chains], [
-				"div.cm-embed-block.cm-callout > div.markdown-rendered > div.callout",
-			]);
+			assert.deepStrictEqual(
+				[...chains],
+				["div.cm-embed-block.cm-callout > div.markdown-rendered > div.callout"],
+			);
 		}));
 });
 
@@ -403,7 +403,15 @@ describe("a theme's transitions", () => {
 		let finished = 0;
 		proto.getAnimations = () => {
 			asked++;
-			return [{ animationName: "pulse", finish: () => { finished++; throw new Error("InvalidStateError"); } }];
+			return [
+				{
+					animationName: "pulse",
+					finish: () => {
+						finished++;
+						throw new Error("InvalidStateError");
+					},
+				},
+			];
 		};
 		try {
 			await withCallouts(async () => {
@@ -428,7 +436,10 @@ describe("what the check leaves behind", () => {
 			const before = rules.map((r) => r.selectorText);
 			const h = harness(rules);
 			await check(h).check(request(h, ["note", "tip"]));
-			assert.deepStrictEqual(rules.map((r) => r.selectorText), before);
+			assert.deepStrictEqual(
+				rules.map((r) => r.selectorText),
+				before,
+			);
 		}));
 
 	it("measures with this plugin's CSS off, and turns it back on", () =>
@@ -459,7 +470,10 @@ describe("what the check leaves behind", () => {
 			});
 			let changes = 0;
 			await claims.check(request(h, ["note"], () => changes++));
-			assert.deepStrictEqual(rules.map((r) => r.selectorText), before);
+			assert.deepStrictEqual(
+				rules.map((r) => r.selectorText),
+				before,
+			);
 			assert.strictEqual(h.studio.on, true);
 			assert.strictEqual(h.studio.suspended, h.studio.restored);
 			assert.strictEqual(changes, 0, "a failed pass publishes nothing");
@@ -571,9 +585,13 @@ describe("every doubt goes to the theme", () => {
 		withCallouts(async () => {
 			const h = harness([rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"])]);
 			let release = (): void => {};
-			const claims = check(h, () => new Promise<void>((resolve) => {
-				release = resolve;
-			}));
+			const claims = check(
+				h,
+				() =>
+					new Promise<void>((resolve) => {
+						release = resolve;
+					}),
+			);
 			const pass = claims.check(request(h, ["note"]));
 			claims.invalidate();
 			release();
@@ -628,7 +646,12 @@ describe("a rule the measurement cannot see in force", () => {
 
 	it("keeps a callout with a rule in a @media the window does not meet", () =>
 		withCallouts(async () => {
-			const media = { selectorText: undefined, media: { mediaText: "(max-width: 400px)" }, parentRule: null, cssRules: [] as FakeRule[] };
+			const media = {
+				selectorText: undefined,
+				media: { mediaText: "(max-width: 400px)" },
+				parentRule: null,
+				cssRules: [] as FakeRule[],
+			};
 			const inner: FakeRule = {
 				selectorText: '.callout[data-callout="note"]',
 				parentRule: media as unknown as FakeRule,
@@ -676,7 +699,11 @@ settings:
 				[
 					rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"]),
 					// `under`: the fake cascade applies it only inside that class.
-					rule('.aura-callouts .callout[data-callout="note"]', ["callout-title", "color", "red"], "aura-callouts"),
+					rule(
+						'.aura-callouts .callout[data-callout="note"]',
+						["callout-title", "color", "red"],
+						"aura-callouts",
+					),
 				],
 				SETTINGS,
 			);
@@ -695,7 +722,14 @@ settings:
 				sets: ["callout-title", "cursor", "x"],
 				cssRules: [],
 			};
-			parent.cssRules = [{ selectorText: "&:hover", parentRule: parent, sets: ["callout-title", "color", "red"], under: "hovered" }];
+			parent.cssRules = [
+				{
+					selectorText: "&:hover",
+					parentRule: parent,
+					sets: ["callout-title", "color", "red"],
+					under: "hovered",
+				},
+			];
 			const h = harness([parent]);
 			const claims = check(h);
 			await claims.check(request(h, ["note"]));
@@ -710,7 +744,14 @@ settings:
 				sets: ["callout-title", "cursor", "x"],
 				cssRules: [],
 			};
-			parent.cssRules = [{ selectorText: "body.opt-off &", parentRule: parent, sets: ["callout-title", "color", "red"], under: "opt-off" }];
+			parent.cssRules = [
+				{
+					selectorText: "body.opt-off &",
+					parentRule: parent,
+					sets: ["callout-title", "color", "red"],
+					under: "opt-off",
+				},
+			];
 			const h = harness([parent]);
 			const claims = check(h);
 			await claims.check(request(h, ["note"]));
@@ -762,7 +803,11 @@ settings:
 			const h = harness(
 				[
 					rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"]),
-					rule('.my-cssclass .callout[data-callout="note"]', ["callout-title", "color", "red"], "my-cssclass"),
+					rule(
+						'.my-cssclass .callout[data-callout="note"]',
+						["callout-title", "color", "red"],
+						"my-cssclass",
+					),
 				],
 				settings,
 			);
@@ -776,7 +821,11 @@ settings:
 			const h = harness(
 				[
 					rule('.callout[data-callout="note"]', ["callout-title", "cursor", "x"]),
-					rule('.not-an-option .callout[data-callout="note"]', ["callout-title", "color", "red"], "not-an-option"),
+					rule(
+						'.not-an-option .callout[data-callout="note"]',
+						["callout-title", "color", "red"],
+						"not-an-option",
+					),
 				],
 				SETTINGS,
 			);

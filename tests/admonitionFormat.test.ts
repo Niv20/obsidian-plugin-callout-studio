@@ -33,7 +33,10 @@ const one = {
 describe("parseAdmonitionExport — the documented array", () => {
 	it("reads every entry", () => {
 		const entries = parseAdmonitionExport([one, { type: "second" }]);
-		assert.deepStrictEqual(entries?.map((e) => e.type), ["my-type", "second"]);
+		assert.deepStrictEqual(
+			entries?.map((e) => e.type),
+			["my-type", "second"],
+		);
 	});
 
 	it("carries the fields the planner will need", () => {
@@ -49,9 +52,16 @@ describe("parseAdmonitionExport — the documented array", () => {
 	});
 
 	it("preserves unsupported behavior flags for the import report", () => {
-		const [entry] = parseAdmonitionExport([{
-			type: "x", command: true, copy: true, noTitle: true, injectColor: false,
-		}]) ?? [];
+		const [entry] =
+			parseAdmonitionExport([
+				{
+					type: "x",
+					command: true,
+					copy: true,
+					noTitle: true,
+					injectColor: false,
+				},
+			]) ?? [];
 		assert.equal(entry?.command, true);
 		assert.equal(entry?.copy, true);
 		assert.equal(entry?.noTitle, true);
@@ -62,14 +72,20 @@ describe("parseAdmonitionExport — the documented array", () => {
 		// A stray null in an array says nothing about a callout, and the count
 		// in the report already comes from what survived.
 		const entries = parseAdmonitionExport([null, 42, "x", one, [], undefined]);
-		assert.deepStrictEqual(entries?.map((e) => e.type), ["my-type"]);
+		assert.deepStrictEqual(
+			entries?.map((e) => e.type),
+			["my-type"],
+		);
 	});
 
 	it("keeps a typeless entry, with an empty type for the planner to reject", () => {
 		// Reading is not validating: the planner is what says
 		// `import.err.admTypeMissing`, so that it lands in the same report.
 		const entries = parseAdmonitionExport([{ title: "No type" }]);
-		assert.deepStrictEqual(entries?.map((e) => e.type), [""]);
+		assert.deepStrictEqual(
+			entries?.map((e) => e.type),
+			[""],
+		);
 	});
 
 	it("trims the type", () => {
@@ -95,7 +111,10 @@ describe("parseAdmonitionExport — a whole data.json", () => {
 			userAdmonitions: { alpha: { title: "Alpha" }, beta: { title: "Beta" } },
 			someOtherSetting: true,
 		});
-		assert.deepStrictEqual(entries?.map((e) => e.type), ["alpha", "beta"]);
+		assert.deepStrictEqual(
+			entries?.map((e) => e.type),
+			["alpha", "beta"],
+		);
 	});
 
 	it("uses the record key as the type when the entry does not repeat it", () => {
@@ -135,21 +154,30 @@ describe("parseAdmonitionExport — a whole data.json", () => {
 			type: "decoy",
 			userAdmonitions: { real: {} },
 		});
-		assert.deepStrictEqual(entries?.map((e) => e.type), ["real"]);
+		assert.deepStrictEqual(
+			entries?.map((e) => e.type),
+			["real"],
+		);
 	});
 
 	it("skips non-object members of the record", () => {
 		const entries = parseAdmonitionExport({
 			userAdmonitions: { good: {}, bad: null, worse: "x" },
 		});
-		assert.deepStrictEqual(entries?.map((e) => e.type), ["good"]);
+		assert.deepStrictEqual(
+			entries?.map((e) => e.type),
+			["good"],
+		);
 	});
 });
 
 describe("parseAdmonitionExport — a single admonition on its own", () => {
 	it("wraps it in a list", () => {
 		const entries = parseAdmonitionExport(one);
-		assert.deepStrictEqual(entries?.map((e) => e.type), ["my-type"]);
+		assert.deepStrictEqual(
+			entries?.map((e) => e.type),
+			["my-type"],
+		);
 	});
 
 	it("needs a non-blank type to take that branch", () => {
@@ -165,7 +193,10 @@ describe("parseAdmonitionExport — a bare Record<type, Admonition>", () => {
 			alpha: { title: "Alpha" },
 			beta: { icon: "star" },
 		});
-		assert.deepStrictEqual(entries?.map((e) => e.type), ["alpha", "beta"]);
+		assert.deepStrictEqual(
+			entries?.map((e) => e.type),
+			["alpha", "beta"],
+		);
 	});
 
 	it("rejects an object whose values are not all records", () => {
@@ -183,15 +214,19 @@ describe("parseAdmonitionExport — a bare Record<type, Admonition>", () => {
 
 	it("accepts a record of empty objects, keying every type off the key", () => {
 		const entries = parseAdmonitionExport({ a: {}, b: {} });
-		assert.deepStrictEqual(entries?.map((e) => e.type), ["a", "b"]);
+		assert.deepStrictEqual(
+			entries?.map((e) => e.type),
+			["a", "b"],
+		);
 	});
 });
 
 describe("parseAdmonitionExport — not Admonition data at all", () => {
 	it("applies resource limits even when called with already-parsed JSON", () => {
-		assert.throws(() => parseAdmonitionExport(
-			Array.from({ length: MAX_IMPORT_COLLECTION + 1 }, () => ({ type: "x" })),
-		), ImportLimitError);
+		assert.throws(
+			() => parseAdmonitionExport(Array.from({ length: MAX_IMPORT_COLLECTION + 1 }, () => ({ type: "x" }))),
+			ImportLimitError,
+		);
 		let nested: unknown = { type: "x" };
 		for (let i = 0; i < MAX_IMPORT_DEPTH; i++) nested = { nested };
 		assert.throws(() => parseAdmonitionExport(nested), ImportLimitError);

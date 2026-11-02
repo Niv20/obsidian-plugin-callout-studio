@@ -30,14 +30,30 @@ function setup(writer = savingWriter()) {
 	const ctx = {
 		app: { vault: { getMarkdownFiles: () => [] } } as unknown as App,
 		plugin: {
-			registry, app: own.app, manifest: PLUGIN_MANIFEST, settingsWriter: writer,
+			registry,
+			app: own.app,
+			manifest: PLUGIN_MANIFEST,
+			settingsWriter: writer,
 			cssInjector: { inject: () => {} },
-			saveSettings: () => { saves++; return Promise.resolve(); },
+			saveSettings: () => {
+				saves++;
+				return Promise.resolve();
+			},
 		},
 		redraw: () => {},
 	} as unknown as SettingsContext;
 	const backups = () => [...own.files.entries()].filter(([path]) => /\/backups\/data-/.test(path));
-	return { ctx, registry, notices, writer, own, backups, get saves() { return saves; } };
+	return {
+		ctx,
+		registry,
+		notices,
+		writer,
+		own,
+		backups,
+		get saves() {
+			return saves;
+		},
+	};
 }
 
 /** The Reset everything button's click handler, as the settings page's Danger zone wires it. */
@@ -50,17 +66,32 @@ function resetButton(ctx: SettingsContext): () => Promise<void> {
 			let label = "";
 			const button = {
 				buttonEl: root.createEl("button"),
-				setButtonText(text: string) { label = text; return this; },
-				setDestructive() { return this; },
-				setCta() { return this; },
-				onClick(action: () => Promise<void>) { if (label === t("settings.resetAllButton")) reset = action; return this; },
+				setButtonText(text: string) {
+					label = text;
+					return this;
+				},
+				setDestructive() {
+					return this;
+				},
+				setCta() {
+					return this;
+				},
+				onClick(action: () => Promise<void>) {
+					if (label === t("settings.resetAllButton")) reset = action;
+					return this;
+				},
 			} as unknown as ButtonComponent;
 			callback(button);
 			return this;
 		};
-		const resetRow = dangerZoneGroup(ctx as TreeContext).items?.find((row) => row.id === "reset-everything") as CsRender;
+		const resetRow = dangerZoneGroup(ctx as TreeContext).items?.find(
+			(row) => row.id === "reset-everything",
+		) as CsRender;
 		resetRow.render(new Setting(root as unknown as HTMLElement), undefined as never);
-	} finally { Object.defineProperty(Setting.prototype, "addButton", original); root.remove(); }
+	} finally {
+		Object.defineProperty(Setting.prototype, "addButton", original);
+		root.remove();
+	}
 	assert.ok(reset, "the row draws a Reset everything button");
 	return reset;
 }
@@ -87,13 +118,19 @@ describe("Reset everything", () => {
 			await resetButton(h.ctx)();
 			assert.deepEqual(confirm.asked, [en["confirm.titleResetEverything"]]);
 			assert.deepEqual(confirm.labels, [en["settings.resetAllButton"]], "the button still says Delete");
-			assert.deepEqual(confirm.acknowledgements, [en["confirm.acknowledge"]], "the reset is not gated behind a tick");
+			assert.deepEqual(
+				confirm.acknowledgements,
+				[en["confirm.acknowledge"]],
+				"the reset is not gated behind a tick",
+			);
 			const copies = h.backups();
 			assert.equal(copies.length, 1, "no backup was written before the reset");
 			assert.deepEqual(content(JSON.parse(copies[0]![1])), before);
 			assert.equal(h.registry.has("mine"), false);
 			assert.ok(h.notices.includes(en["notice.resetAllDone"]!));
-		} finally { confirm.restore(); }
+		} finally {
+			confirm.restore();
+		}
 	});
 
 	it("says there is nothing to reset the second time, and asks nothing", async () => {
@@ -107,7 +144,9 @@ describe("Reset everything", () => {
 			assert.equal(h.backups().length, 1, "a reset of nothing backed up an empty setup");
 			assert.equal(h.saves, 1);
 			assert.ok(h.notices.includes(en["settings.resetNothing"]!));
-		} finally { confirm.restore(); }
+		} finally {
+			confirm.restore();
+		}
 	});
 
 	it("lists what it deletes as plain bullets, the notes that use a custom type last", async () => {
@@ -115,18 +154,22 @@ describe("Reset everything", () => {
 		try {
 			const h = setup();
 			const note = Object.assign(new TFile(), { path: "a.md", extension: "md", stat: { mtime: 1, size: 1 } });
-			Object.assign(h.ctx.app, { vault: {
-				getMarkdownFiles: () => [note],
-				getAbstractFileByPath: () => note,
-				cachedRead: () => Promise.resolve("> [!mine] One\n> text\n\n> [!mine] Two\n> text\n"),
-			} });
+			Object.assign(h.ctx.app, {
+				vault: {
+					getMarkdownFiles: () => [note],
+					getAbstractFileByPath: () => note,
+					cachedRead: () => Promise.resolve("> [!mine] One\n> text\n\n> [!mine] Two\n> text\n"),
+				},
+			});
 			await resetButton(h.ctx)();
 			assert.deepEqual(bullets(confirm.messages[0]), [
 				t("settings.resetItemCallouts", { count: 1 }),
 				t("settings.resetItemReferences", { count: 2 }),
 			]);
 			assert.equal(h.registry.has("mine"), true, "declining still reset it");
-		} finally { confirm.restore(); }
+		} finally {
+			confirm.restore();
+		}
 	});
 
 	it("puts the reminder in the heading, and opens the message with the lead-in before the list of what goes", async () => {
@@ -138,7 +181,9 @@ describe("Reset everything", () => {
 			const paragraphs = textsOf(confirm.messages[0], "P");
 			assert.equal(paragraphs[0], en["settings.resetDeletes"], "the list's lead-in opens the message");
 			assert.ok(!paragraphs.includes(en["settings.resetIntro"]!), "the reminder is not said twice");
-		} finally { confirm.restore(); }
+		} finally {
+			confirm.restore();
+		}
 	});
 
 	it("draws no reminder when nothing is deleted, only settings going back to defaults", async () => {
@@ -148,11 +193,17 @@ describe("Reset everything", () => {
 			h.registry.remove("mine");
 			h.registry.settings.fallbackCalloutId = "tip";
 			await resetButton(h.ctx)();
-			assert.equal(confirm.subtitles[0], en["settings.resetSubtitleDefaults"], "the heading says what happens instead");
+			assert.equal(
+				confirm.subtitles[0],
+				en["settings.resetSubtitleDefaults"],
+				"the heading says what happens instead",
+			);
 			const paragraphs = textsOf(confirm.messages[0], "P");
 			assert.ok(!paragraphs.includes(en["settings.resetIntro"]!), "a reminder about what is deleted, with none");
 			assert.ok(paragraphs.includes(en["settings.resetRestores"]!));
-		} finally { confirm.restore(); }
+		} finally {
+			confirm.restore();
+		}
 	});
 
 	it("leaves the notes line out when no note uses a custom type", async () => {
@@ -161,7 +212,9 @@ describe("Reset everything", () => {
 			const h = setup();
 			await resetButton(h.ctx)();
 			assert.deepEqual(bullets(confirm.messages[0]), [t("settings.resetItemCallouts", { count: 1 })]);
-		} finally { confirm.restore(); }
+		} finally {
+			confirm.restore();
+		}
 	});
 
 	it("refuses while saving is paused, before asking anything", async () => {
@@ -173,18 +226,25 @@ describe("Reset everything", () => {
 			assert.equal(h.registry.has("mine"), true);
 			assert.equal(h.backups().length, 0);
 			assert.ok(h.notices.includes(en["notice.blockedWhilePaused"]!));
-		} finally { confirm.restore(); }
+		} finally {
+			confirm.restore();
+		}
 	});
 
 	it("resets nothing when saving paused while the dialog was open", async () => {
 		const h = setup();
-		const confirm = stubConfirm(() => { h.writer.isFrozen = true; return true; });
+		const confirm = stubConfirm(() => {
+			h.writer.isFrozen = true;
+			return true;
+		});
 		try {
 			await resetButton(h.ctx)();
 			assert.equal(h.registry.has("mine"), true);
 			assert.equal(h.saves, 0);
 			assert.ok(h.notices.includes(en["notice.blockedWhilePaused"]!));
-		} finally { confirm.restore(); }
+		} finally {
+			confirm.restore();
+		}
 	});
 
 	it("resets nothing when the backup cannot be saved", async () => {
@@ -198,7 +258,10 @@ describe("Reset everything", () => {
 			assert.equal(h.registry.has("mine"), true);
 			assert.equal(h.saves, 0);
 			assert.ok(h.notices.includes(en["settings.resetBackupFailed"]!));
-		} finally { confirm.restore(); console.error = error; }
+		} finally {
+			confirm.restore();
+			console.error = error;
+		}
 	});
 
 	it("does not claim success when the settings file does not hold the reset", async () => {
@@ -208,6 +271,8 @@ describe("Reset everything", () => {
 			await resetButton(h.ctx)();
 			assert.ok(h.notices.includes(en["settings.resetNotSaved"]!));
 			assert.ok(!h.notices.includes(en["notice.resetAllDone"]!), "a reset that was not saved was reported done");
-		} finally { confirm.restore(); }
+		} finally {
+			confirm.restore();
+		}
 	});
 });

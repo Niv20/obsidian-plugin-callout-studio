@@ -118,10 +118,7 @@ export interface AccentEvidence {
  * Later sheets win for `declared`, matching the cascade: snippets load after
  * the theme.
  */
-export function resolveAccentDialect(
-	evidence: readonly AccentEvidence[],
-	core: AccentSpelling,
-): AccentDialect {
+export function resolveAccentDialect(evidence: readonly AccentEvidence[], core: AccentSpelling): AccentDialect {
 	let triplet = 0;
 	let color = 0;
 	const props = new Map<string, string>();
@@ -171,19 +168,11 @@ export function resolveAccentDialect(
 	const lightView = new Map([...props, ...lightOnly]);
 	const darkView = new Map([...props, ...darkOnly]);
 	const declared = new Map<string, ModeSpelling>();
-	for (const name of new Set([
-		...props.keys(),
-		...lightOnly.keys(),
-		...darkOnly.keys(),
-	])) {
+	for (const name of new Set([...props.keys(), ...lightOnly.keys(), ...darkOnly.keys()])) {
 		if (!ACCENT_VARS.has(name)) continue;
 		declared.set(name, {
-			light: lightView.has(name)
-				? (resolveDeclaredSpelling(name, lightView) ?? read)
-				: undefined,
-			dark: darkView.has(name)
-				? (resolveDeclaredSpelling(name, darkView) ?? read)
-				: undefined,
+			light: lightView.has(name) ? (resolveDeclaredSpelling(name, lightView) ?? read) : undefined,
+			dark: darkView.has(name) ? (resolveDeclaredSpelling(name, darkView) ?? read) : undefined,
 		});
 	}
 

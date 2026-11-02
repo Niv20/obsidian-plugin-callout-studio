@@ -21,12 +21,7 @@ import { definition } from "./support/discoveryHarness";
  * published as the theme's (the registry's owned set). They differ when a rule
  * sits behind an option that is off, or changes nothing on screen.
  */
-function editorFor(
-	themeIds: string[],
-	aliases: string[],
-	drawn: string[] = themeIds,
-	newId?: string,
-) {
+function editorFor(themeIds: string[], aliases: string[], drawn: string[] = themeIds, newId?: string) {
 	const registry = new CalloutRegistry();
 	registry.load({
 		callouts: [definition({ id: "описание", displayName: "Описание", aliases })],
@@ -45,9 +40,7 @@ function editorFor(
 		},
 	} as unknown as CalloutEditorPlugin;
 	const editor =
-		newId === undefined
-			? new CalloutEditor(plugin, registry.get("описание"))
-			: new CalloutEditor(plugin);
+		newId === undefined ? new CalloutEditor(plugin, registry.get("описание")) : new CalloutEditor(plugin);
 	if (newId !== undefined) {
 		Object.assign(editor, { calloutId: newId, aliases: [] });
 	}
@@ -67,9 +60,7 @@ describe("the callout editor on a name the theme draws", () => {
 	it("names the claimed names and the theme", () => {
 		const { shown } = editorFor(["description"], ["вид", "description"]);
 		// A sentence that names the theme: a wide message, drawn under the label.
-		assert.deepEqual(shown, [
-			wide(t("editor.namesFromTheme", { theme: "Fixture", names: "[!description]" })),
-		]);
+		assert.deepEqual(shown, [wide(t("editor.namesFromTheme", { theme: "Fixture", names: "[!description]" }))]);
 	});
 
 	it("says nothing when the theme names none of them", () => {
@@ -94,9 +85,7 @@ describe("the callout editor on a name the theme draws", () => {
 		const own = editorFor(["note"], [], [], "note");
 		assert.deepEqual(own.shown, [wide(t("editor.idBuiltInStock", { id: "note", name: "Note" }))]);
 		const theirs = editorFor(["note"], [], ["note"], "note");
-		assert.deepEqual(theirs.shown, [
-			wide(t("editor.idFromTheme", { theme: "Fixture" })),
-		]);
+		assert.deepEqual(theirs.shown, [wide(t("editor.idFromTheme", { theme: "Fixture" }))]);
 	});
 
 	it("says Obsidian draws a built-in's stock alias while the theme claims its id", () => {

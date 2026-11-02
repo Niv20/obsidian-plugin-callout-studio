@@ -70,10 +70,7 @@ function harness(): Registry {
 	return registry;
 }
 
-function addCallout(
-	registry: Registry,
-	over: Partial<Parameters<Registry["add"]>[0]> = {},
-): void {
+function addCallout(registry: Registry, over: Partial<Parameters<Registry["add"]>[0]> = {}): void {
 	registry.add({
 		id: "quiet",
 		displayName: "Quiet",
@@ -92,17 +89,12 @@ function addCallout(
 const classes = (element: AnyElement): string[] =>
 	(element as unknown as { classList: { toArray(): string[] } }).classList.toArray();
 
-const hasClass = (element: AnyElement, cls: string): boolean =>
-	classes(element).includes(cls);
+const hasClass = (element: AnyElement, cls: string): boolean => classes(element).includes(cls);
 
 /** Direct element children, in order. */
-const kids = (element: AnyElement): AnyElement[] =>
-	(element as unknown as { children: AnyElement[] }).children;
+const kids = (element: AnyElement): AnyElement[] => (element as unknown as { children: AnyElement[] }).children;
 
-const token = (
-	registry: Registry,
-	options: Partial<Parameters<typeof buildCalloutTokenDom>[0]> = {},
-): AnyElement =>
+const token = (registry: Registry, options: Partial<Parameters<typeof buildCalloutTokenDom>[0]> = {}): AnyElement =>
 	buildCalloutTokenDom({
 		rawId: "quiet",
 		registry,
@@ -151,20 +143,14 @@ describe("buildCalloutTokenDom — hideIcon", () => {
 			const registry = harness();
 			addCallout(registry, over);
 
-			const inToken = kids(token(registry)).filter((child) =>
-				hasClass(child, CSS_TOKEN_ICON),
-			);
+			const inToken = kids(token(registry)).filter((child) => hasClass(child, CSS_TOKEN_ICON));
 			assert.strictEqual(inToken.length, icons, `token — ${label}`);
 
 			const lead = buildCalloutLeadDom("quiet", registry);
 			assert.strictEqual(kids(lead).length, icons, `lead — ${label}`);
 
 			const { root } = buildContentPillDom({ rawId: "quiet", registry });
-			assert.strictEqual(
-				kids(kids(root)[0]!).length,
-				icons,
-				`pill lead — ${label}`,
-			);
+			assert.strictEqual(kids(kids(root)[0]!).length, icons, `pill lead — ${label}`);
 		}
 	});
 
@@ -226,9 +212,7 @@ describe("buildCalloutTokenDom — variant classes", () => {
 		addCallout(registry);
 
 		assert.ok(hasClass(token(registry, { variant: "inline" }), CSS_INLINE_TOKEN));
-		assert.ok(
-			hasClass(token(registry, { variant: "heading" }), CSS_HEADING_TOKEN),
-		);
+		assert.ok(hasClass(token(registry, { variant: "heading" }), CSS_HEADING_TOKEN));
 		assert.ok(hasClass(token(registry, { variant: "ref" }), CSS_REF_TOKEN));
 	});
 
@@ -238,9 +222,7 @@ describe("buildCalloutTokenDom — variant classes", () => {
 		const roots = [CSS_INLINE_TOKEN, CSS_HEADING_TOKEN, CSS_REF_TOKEN];
 
 		for (const variant of ["inline", "heading", "ref"] as const) {
-			const on = classes(token(registry, { variant })).filter((cls) =>
-				roots.includes(cls),
-			);
+			const on = classes(token(registry, { variant })).filter((cls) => roots.includes(cls));
 			assert.strictEqual(on.length, 1, `${variant} carried ${on.join()}`);
 		}
 	});
@@ -283,22 +265,14 @@ describe("buildCalloutTokenDom — data-callout", () => {
 
 		const el = token(registry, { rawId: "a-b" });
 		assert.strictEqual(el.getAttribute("data-callout"), "a b");
-		assert.strictEqual(
-			calloutDomId("a-b", resolveCalloutDef(registry, "a-b")),
-			"a b",
-		);
+		assert.strictEqual(calloutDomId("a-b", resolveCalloutDef(registry, "a-b")), "a b");
 	});
 
 	it("normalizes case and whitespace", () => {
 		const registry = harness();
 		addCallout(registry, { id: "two words", displayName: "Two Words" });
 
-		assert.strictEqual(
-			token(registry, { rawId: "  Two   Words " }).getAttribute(
-				"data-callout",
-			),
-			"two words",
-		);
+		assert.strictEqual(token(registry, { rawId: "  Two   Words " }).getAttribute("data-callout"), "two words");
 	});
 
 	it("keeps an unknown id exactly as normalized, spelling included", () => {
@@ -373,16 +347,10 @@ describe("buildCalloutTokenDom — an alias draws its own title", () => {
 
 describe("the icon sweep repaints a token's label by the same rule", () => {
 	type Sweep = {
-		paintTokenEl(
-			el: AnyElement,
-			painted: (def: CalloutDefinition) => CalloutDefinition,
-		): void;
+		paintTokenEl(el: AnyElement, painted: (def: CalloutDefinition) => CalloutDefinition): void;
 	};
 	const sweep = (registry: Registry, el: AnyElement): void =>
-		(new CSSInjector({} as App, registry) as unknown as Sweep).paintTokenEl(
-			el,
-			(def) => def,
-		);
+		(new CSSInjector({} as App, registry) as unknown as Sweep).paintTokenEl(el, (def) => def);
 
 	it("follows a NAME change on the id and leaves an alias's title alone", () => {
 		const registry = harness();
@@ -409,12 +377,7 @@ describe("buildCalloutTokenDom — metadata", () => {
 		const registry = harness();
 		addCallout(registry);
 
-		assert.strictEqual(
-			token(registry, { metadata: "purple" }).getAttribute(
-				"data-callout-metadata",
-			),
-			"purple",
-		);
+		assert.strictEqual(token(registry, { metadata: "purple" }).getAttribute("data-callout-metadata"), "purple");
 	});
 
 	it("leaves the attribute off entirely when there is none", () => {
@@ -423,12 +386,7 @@ describe("buildCalloutTokenDom — metadata", () => {
 		addCallout(registry);
 
 		for (const metadata of [undefined, ""]) {
-			assert.strictEqual(
-				token(registry, { metadata }).hasAttribute(
-					"data-callout-metadata",
-				),
-				false,
-			);
+			assert.strictEqual(token(registry, { metadata }).hasAttribute("data-callout-metadata"), false);
 		}
 	});
 });
@@ -506,10 +464,7 @@ describe("buildContentPillDom", () => {
 		});
 		assert.ok(hasClass(root, CSS_UNKNOWN));
 		assert.strictEqual(root.getAttribute("data-callout"), "nope");
-		assert.strictEqual(
-			root.getAttribute("data-callout-metadata"),
-			"purple",
-		);
+		assert.strictEqual(root.getAttribute("data-callout-metadata"), "purple");
 	});
 });
 
@@ -569,10 +524,7 @@ describe("theme-styled callouts and the two Callout Studio-only syntaxes", () =>
 		const registry = harness();
 		addCallout(registry, { id: "mine", displayName: "Mine" });
 		registry.setThemeOwnedIds(new Set(["mine"]));
-		assert.strictEqual(
-			shouldRenderToken(resolveCalloutDef(registry, "mine")),
-			false,
-		);
+		assert.strictEqual(shouldRenderToken(resolveCalloutDef(registry, "mine")), false);
 
 		registry.setThemeOwnedIds(new Set());
 		const back = resolveCalloutDef(registry, "mine");

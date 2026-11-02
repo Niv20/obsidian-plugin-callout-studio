@@ -153,17 +153,22 @@ export function pageIntroBox(id: string, text?: string): CsGroup {
 		type: "group",
 		id,
 		cls: PAGE_INTRO_CLASS,
-		items: text === undefined ? [] : [{
-			id,
-			name: "",
-			searchable: false,
-			render: (setting) => {
-				const intro = setting.settingEl.createEl("p", { cls: "setting-page-desc", text });
-				// Obsidian keeps the row when it draws the page again, so the
-				// paragraph goes before the next one is made.
-				return () => intro.remove();
-			},
-		}],
+		items:
+			text === undefined
+				? []
+				: [
+						{
+							id,
+							name: "",
+							searchable: false,
+							render: (setting) => {
+								const intro = setting.settingEl.createEl("p", { cls: "setting-page-desc", text });
+								// Obsidian keeps the row when it draws the page again, so the
+								// paragraph goes before the next one is made.
+								return () => intro.remove();
+							},
+						},
+					],
 	};
 }
 

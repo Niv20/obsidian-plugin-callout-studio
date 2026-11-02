@@ -48,10 +48,7 @@ import {
 	type MetadataColorEntry,
 	type MetadataWord,
 } from "../utils/calloutMetadata";
-import {
-	wordAppliesTo,
-	type ThemeMetadataWord,
-} from "../manager/theme/themeMetadataScan";
+import { wordAppliesTo, type ThemeMetadataWord } from "../manager/theme/themeMetadataScan";
 import type { MetadataWordSource } from "../manager/theme/ThemeMetadataCatalog";
 import { textComparator } from "../utils/sorting";
 
@@ -150,13 +147,8 @@ function rankOf(candidates: readonly string[], query: string): number | null {
 }
 
 /** Whether the styling would also react to `word` written as a whole word. */
-function stylingReactsTo(
-	word: string,
-	words: readonly ThemeMetadataWord[],
-): boolean {
-	return words.some((w) =>
-		w.placement === "anywhere" ? word.includes(w.word) : word === w.word,
-	);
+function stylingReactsTo(word: string, words: readonly ThemeMetadataWord[]): boolean {
+	return words.some((w) => (w.placement === "anywhere" ? word.includes(w.word) : word === w.word));
 }
 
 /** The most words a name typed with spaces for its dashes may run across. */
@@ -180,8 +172,7 @@ interface Reading {
 
 function readingsOf(slot: MetadataSlot): Reading[] {
 	const words = metadataWords(slot.metadata);
-	const outside = (from: number) =>
-		words.filter((w) => w.to <= from || w.from >= slot.wordTo);
+	const outside = (from: number) => words.filter((w) => w.to <= from || w.from >= slot.wordTo);
 	const readings: Reading[] = [
 		{ from: slot.wordFrom, query: slot.query, others: outside(slot.wordFrom), joined: false },
 	];
@@ -297,16 +288,12 @@ export function buildMetadataSuggestions(input: SuggestionInput): MetadataSugges
 			});
 		}
 	}
-	const colorWords = new Set(
-		colorRows.flatMap((r) => (r.row.kind === "color" ? [r.row.entry.key] : [])),
-	);
+	const colorWords = new Set(colorRows.flatMap((r) => (r.row.kind === "color" ? [r.row.entry.key] : [])));
 
 	const themeRows: Array<Ranked<MetadataSuggestion>> = [];
 	const sourceOrder = input.sources.map((s) => s.label);
 	const usableByReading = readings.map((r) => usableIn(r, input.sources));
-	const candidates = [
-		...new Map(usableByReading.flat().map((u) => [u.word, u] as const)).values(),
-	];
+	const candidates = [...new Map(usableByReading.flat().map((u) => [u.word, u] as const)).values()];
 	for (const { word, source } of candidates) {
 		// The colour row for the same word already says the theme reacts too.
 		if (colorWords.has(word.word)) continue;
@@ -339,13 +326,7 @@ export function buildMetadataSuggestions(input: SuggestionInput): MetadataSugges
 	const byRank = <T>(rows: Array<Ranked<T>>): T[] =>
 		rows
 			.map((r, i) => ({ ...r, i }))
-			.sort(
-				(a, b) =>
-					a.group - b.group ||
-					a.rank - b.rank ||
-					compare(a.word, b.word) ||
-					a.i - b.i,
-			)
+			.sort((a, b) => a.group - b.group || a.rank - b.rank || compare(a.word, b.word) || a.i - b.i)
 			.map((r) => r.row);
 	const groups = namedColor(plain, colors)
 		? [...byRank(themeRows), ...byRank(colorRows)]
@@ -375,9 +356,7 @@ export type MetadataRowHeading = { kind: "colors" } | { kind: "source"; label: s
  * only when the rows come from two groups or more: a lone heading names
  * nothing the rows don't already say. **Done** and **Use "…"** belong to none.
  */
-export function metadataRowHeadings(
-	rows: readonly MetadataSuggestion[],
-): Array<MetadataRowHeading | null> {
+export function metadataRowHeadings(rows: readonly MetadataSuggestion[]): Array<MetadataRowHeading | null> {
 	const keyOf = (row: MetadataSuggestion): string | null =>
 		row.kind === "color" ? "colors" : row.kind === "theme" ? `source:${row.source}` : null;
 	const keys = rows.map(keyOf);
@@ -398,8 +377,7 @@ export interface MetadataEdit {
 	cursor: number;
 }
 
-const isSep = (ch: string | undefined): boolean =>
-	ch !== undefined && isMetadataSeparator(ch);
+const isSep = (ch: string | undefined): boolean => ch !== undefined && isMetadataSeparator(ch);
 
 /**
  * What picking `row` does to the slot's metadata.
@@ -416,16 +394,11 @@ const isSep = (ch: string | undefined): boolean =>
  *   already names a colour — takes that colour's place instead, and the word
  *   under the cursor goes, with the separator before it.
  */
-export function applyMetadataPick(
-	slot: MetadataSlot,
-	row: MetadataSuggestion,
-): MetadataEdit {
+export function applyMetadataPick(slot: MetadataSlot, row: MetadataSuggestion): MetadataEdit {
 	const m = slot.metadata;
 	const to = slot.wordTo;
 	const from =
-		(row.kind === "color" || row.kind === "theme") && row.joinedFrom !== undefined
-			? row.joinedFrom
-			: slot.wordFrom;
+		(row.kind === "color" || row.kind === "theme") && row.joinedFrom !== undefined ? row.joinedFrom : slot.wordFrom;
 
 	if (row.kind === "finish") {
 		// A word still follows the cursor: the metadata is finished as it stands.

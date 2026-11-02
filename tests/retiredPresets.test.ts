@@ -119,7 +119,9 @@ describe("a load changes nobody's colours", () => {
 
 	it("a 2.0.0-era Crimson in its own darker red keeps it", () => {
 		// 2.0.0's Crimson was #b71c1c / #e57373 under the same id.
-		const registry = loaded([def({ id: "old", paletteId: "crimson", colorLight: "#b71c1c", colorDark: "#e57373" })]);
+		const registry = loaded([
+			def({ id: "old", paletteId: "crimson", colorLight: "#b71c1c", colorDark: "#e57373" }),
+		]);
 		assert.equal(registry.get("old")?.colorLight, "#b71c1c");
 	});
 
@@ -161,8 +163,7 @@ describe("the editor still names a retired preset", () => {
 		group: palette.group,
 		palette,
 	}));
-	const wears = (light: string, dark: string) => (p: ColorPalette) =>
-		p.colorLight === light && p.colorDark === dark;
+	const wears = (light: string, dark: string) => (p: ColorPalette) => p.colorLight === light && p.colorDark === dark;
 
 	it("by id, keeping the id", () => {
 		const resolved = resolvePaletteEntry(entries, "amber", () => false);

@@ -77,10 +77,7 @@ export async function buildSnippetFile(body: string): Promise<string> {
 }
 
 /** What is at the target path right now. */
-export type Existing =
-	| { kind: "missing" }
-	| { kind: "ours"; text: string }
-	| { kind: "foreign" };
+export type Existing = { kind: "missing" } | { kind: "ours"; text: string } | { kind: "foreign" };
 
 /**
  * "Ours" means we wrote it and nobody has touched it since. Anything else — a
@@ -96,7 +93,5 @@ export async function classifyExisting(text: string): Promise<Existing> {
 	const stamp = FINGERPRINT_RE.exec(text.slice(0, split));
 	if (!stamp) return { kind: "foreign" };
 	const body = text.slice(split + HEADER_END.length);
-	return (await sha256(body)) === stamp[1]
-		? { kind: "ours", text }
-		: { kind: "foreign" };
+	return (await sha256(body)) === stamp[1] ? { kind: "ours", text } : { kind: "foreign" };
 }

@@ -156,9 +156,7 @@ export class QuickInsertPreviews {
 		this.release(wanted, epoch);
 		if (this.destroyed) return;
 
-		const rendered = Array.from(
-			target.querySelectorAll<HTMLElement>(".callout"),
-		);
+		const rendered = Array.from(target.querySelectorAll<HTMLElement>(".callout"));
 		wanted.forEach(({ key, markdown }, index) => {
 			const el = rendered[index];
 			if (!el) return;

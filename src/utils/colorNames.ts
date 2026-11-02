@@ -78,10 +78,7 @@ export function suggestColorName(hex: string): string {
 		const a = hexToHsl(anchor.hex);
 		const rawHue = Math.abs(a.h - h) % 360;
 		const dHue = (rawHue > 180 ? 360 - rawHue : rawHue) / 180;
-		const dist =
-			dHue ** 2 +
-			0.3 * ((a.s - s) / 100) ** 2 +
-			0.6 * ((a.l - l) / 100) ** 2;
+		const dist = dHue ** 2 + 0.3 * ((a.s - s) / 100) ** 2 + 0.6 * ((a.l - l) / 100) ** 2;
 		if (dist < bestDist) {
 			bestDist = dist;
 			bestKey = anchor.key;

@@ -36,21 +36,25 @@ export async function runSvgSecurityTests(): Promise<number> {
 	for (const css of [
 		'@\\69mport "https://example.invalid/audit.css";',
 		'@IMPORT "https://example.invalid/audit.css";',
-		'@page { size:1px 1px }',
-		'@font-face { font-family:attack; src:url(https://example.invalid/font) }',
-		'@media all { body { display:none } }',
+		"@page { size:1px 1px }",
+		"@font-face { font-family:attack; src:url(https://example.invalid/font) }",
+		"@media all { body { display:none } }",
 	]) {
-		const svg = clean(`<style onload="document.body.dataset.attacked='yes'">${css}</style><rect width="24" height="24"/>`);
+		const svg = clean(
+			`<style onload="document.body.dataset.attacked='yes'">${css}</style><rect width="24" height="24"/>`,
+		);
 		check(!svg.querySelector("style"), `Global rule survived: ${css}`);
 		checks++;
 	}
 	for (const css of [
 		'fill:u\\72l("https://example.invalid/paint")',
 		'fill:URL("https://example.invalid/paint")',
-		'fill:var(--remote)',
-		'position:fixed; inset:0; background:url(https://example.invalid/image)',
+		"fill:var(--remote)",
+		"position:fixed; inset:0; background:url(https://example.invalid/image)",
 	]) {
-		const svg = clean(`<style>.st0{${css}}</style><rect class="st0" style="${css.replace(/"/g, "&quot;")}" width="24" height="24"/>`);
+		const svg = clean(
+			`<style>.st0{${css}}</style><rect class="st0" style="${css.replace(/"/g, "&quot;")}" width="24" height="24"/>`,
+		);
 		check(!svg.querySelector("style"), `Unsafe stylesheet survived: ${css}`);
 		check(!svg.querySelector("rect")?.hasAttribute("style"), `Unsafe style survived: ${css}`);
 		checks++;
@@ -58,49 +62,86 @@ export async function runSvgSecurityTests(): Promise<number> {
 	const outside = document.createElement("div");
 	outside.className = "st0";
 	document.body.appendChild(outside);
-	const safe = clean('<defs><linearGradient id="grad"><stop stop-color="#ff0000"/></linearGradient></defs><style onload="document.body.dataset.attacked=\'yes\'">.st0{fill:#ff0000;stroke:rgb(0, 0, 255)}.gradient{fill:url(#grad)}</style><rect class="st0" width="10" height="10"/><rect class="gradient" width="10" height="10"/>');
+	const safe = clean(
+		'<defs><linearGradient id="grad"><stop stop-color="#ff0000"/></linearGradient></defs><style onload="document.body.dataset.attacked=\'yes\'">.st0{fill:#ff0000;stroke:rgb(0, 0, 255)}.gradient{fill:url(#grad)}</style><rect class="st0" width="10" height="10"/><rect class="gradient" width="10" height="10"/>',
+	);
 	check(!safe.querySelector("style")?.hasAttribute("onload"), "Style event handler survived");
 	check(getComputedStyle(safe.querySelector(".st0")!).fill === "rgb(255, 0, 0)", "Safe class color was lost");
 	check(getComputedStyle(outside).fill !== "rgb(255, 0, 0)", "SVG selector escaped its copy");
 	const gradientId = safe.querySelector("linearGradient")?.id;
-	check(gradientId && safe.querySelector("style")?.textContent?.includes(`#${gradientId}`), "Gradient reference was not isolated");
-	const foreign = clean('<style xmlns="http://www.w3.org/1999/xhtml">body{display:none}</style><rect width="24" height="24"/>');
+	check(
+		gradientId && safe.querySelector("style")?.textContent?.includes(`#${gradientId}`),
+		"Gradient reference was not isolated",
+	);
+	const foreign = clean(
+		'<style xmlns="http://www.w3.org/1999/xhtml">body{display:none}</style><rect width="24" height="24"/>',
+	);
 	check(!foreign.querySelector("style"), "Foreign namespace style survived");
 	check(document.body.dataset.attacked === undefined, "Event handler executed");
-	return checks + 6 + await svgResourceChecks() + cachedSvgChecks() + await iconCssChecks() + await lateMaterialChecks();
+	return (
+		checks +
+		6 +
+		(await svgResourceChecks()) +
+		cachedSvgChecks() +
+		(await iconCssChecks()) +
+		(await lateMaterialChecks())
+	);
 }
 
 async function lateMaterialChecks(): Promise<number> {
 	const seams = globalThis as unknown as Record<string, unknown>;
 	const previous = seams.__CS_REQUEST_URL__;
 	let respond!: (value: { text: string }) => void;
-	const response = new Promise<{ text: string }>(resolve => { respond = resolve; });
+	const response = new Promise<{ text: string }>((resolve) => {
+		respond = resolve;
+	});
 	seams.__CS_REQUEST_URL__ = () => response;
-	const registry = new CalloutRegistry(); registry.load(null);
-	let injects = 0; let saves = 0; let notifications = 0;
+	const registry = new CalloutRegistry();
+	registry.load(null);
+	let injects = 0;
+	let saves = 0;
+	let notifications = 0;
 	const host = {
 		registry,
-		cssInjector: { inject: () => { injects++; } } as unknown as CSSInjector,
-		saveSettings: async () => { saves++; },
+		cssInjector: {
+			inject: () => {
+				injects++;
+			},
+		} as unknown as CSSInjector,
+		saveSettings: async () => {
+			saves++;
+		},
 	};
 	const text = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0L24 24"/></svg>';
 	try {
 		const fetch = new IconFetchManager(host);
-		fetch.onChange(() => { notifications++; });
+		fetch.onChange(() => {
+			notifications++;
+		});
 		const pending = fetch.cacheOne({ type: "material", value: "home" });
-		fetch.destroy(); await pending;
+		fetch.destroy();
+		await pending;
 		respond({ text });
 		for (let i = 0; i < 8; i++) await Promise.resolve();
-		check(registry.iconSvgCache.length === 0 && injects === 0 && saves === 0 && notifications === 0,
-			"A successful late Material response published after destroy");
+		check(
+			registry.iconSvgCache.length === 0 && injects === 0 && saves === 0 && notifications === 0,
+			"A successful late Material response published after destroy",
+		);
 		const live = new IconFetchManager(host);
-		live.onChange(() => { notifications++; });
+		live.onChange(() => {
+			notifications++;
+		});
 		await live.cacheOne({ type: "material", value: "home" });
 		check(registry.iconSvgCache.length > 0, "Live Material artwork was not stored");
-		check(Number(injects) === 1 && Number(saves) === 1 && Number(notifications) === 1, "Live Material publication regressed");
+		check(
+			Number(injects) === 1 && Number(saves) === 1 && Number(notifications) === 1,
+			"Live Material publication regressed",
+		);
 		live.destroy();
 		return 3;
-	} finally { seams.__CS_REQUEST_URL__ = previous; }
+	} finally {
+		seams.__CS_REQUEST_URL__ = previous;
+	}
 }
 
 async function iconCssChecks(): Promise<number> {
@@ -108,17 +149,32 @@ async function iconCssChecks(): Promise<number> {
 	registry.load(null);
 	for (const control of ["\n", "\r", "\f"]) {
 		const payload = `🙂${control}; } body { display:none; background:url(https://example.invalid/icon) } /*`;
-		const result = await validateImportPayload([{
-			id: "audit", displayName: "Audit", icon: { type: "emoji", value: payload },
-			colorLight: "#ff0000", colorDark: "#ff0000", foldable: true, defaultFolded: false,
-		}], registry);
+		const result = await validateImportPayload(
+			[
+				{
+					id: "audit",
+					displayName: "Audit",
+					icon: { type: "emoji", value: payload },
+					colorLight: "#ff0000",
+					colorDark: "#ff0000",
+					foldable: true,
+					defaultFolded: false,
+				},
+			],
+			registry,
+		);
 		const imported = result.validDefs[0];
 		check(imported?.icon.value === payload, "Test payload did not survive actual import validation");
 		const sheet = new CSSStyleSheet();
 		sheet.replaceSync(emojiOverrideCSS(".callout", imported.icon.value));
 		const group = sheet.cssRules[0];
 		check(group instanceof CSSMediaRule && group.cssRules.length === 2, "Emoji escaped its CSS declaration");
-		check(Array.from(group.cssRules).every(rule => rule instanceof CSSStyleRule && rule.selectorText.startsWith(".callout")), "Injected CSS selector survived");
+		check(
+			Array.from(group.cssRules).every(
+				(rule) => rule instanceof CSSStyleRule && rule.selectorText.startsWith(".callout"),
+			),
+			"Injected CSS selector survived",
+		);
 		imported.icon = { type: "lucide", value: "pencil; } body { display:none } /*" };
 		check(calloutIconProp(imported) === "lucide-pencil", "Saved Lucide value escaped its CSS token");
 	}
@@ -128,10 +184,16 @@ async function iconCssChecks(): Promise<number> {
 /** Exercise saved data -> registry -> resolver -> the actual live DOM painter. */
 function cachedSvgChecks(): number {
 	const registry = new CalloutRegistry();
-	registry.load({ iconSvgCache: [{
-		pack: "material", name: "home", variant: "outlined|400",
-		svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" onload="document.documentElement.dataset.csAudit=\'executed\'"><script>document.body.dataset.attacked="yes"</script><foreignObject><div xmlns="http://www.w3.org/1999/xhtml">outside</div></foreignObject><style>@\\69mport "https://example.invalid/cache.css";</style><path onclick="document.body.dataset.attacked=\'yes\'" d="M0 0L24 24"/></svg>',
-	}] });
+	registry.load({
+		iconSvgCache: [
+			{
+				pack: "material",
+				name: "home",
+				variant: "outlined|400",
+				svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" onload="document.documentElement.dataset.csAudit=\'executed\'"><script>document.body.dataset.attacked="yes"</script><foreignObject><div xmlns="http://www.w3.org/1999/xhtml">outside</div></foreignObject><style>@\\69mport "https://example.invalid/cache.css";</style><path onclick="document.body.dataset.attacked=\'yes\'" d="M0 0L24 24"/></svg>',
+			},
+		],
+	});
 	const icon = { type: "material" as const, value: "home", style: "outlined" as const, weight: 400 };
 	// Obsidian's convenience DOM method; parsing and painting remain native.
 	const target = document.createElement("div");
@@ -140,85 +202,180 @@ function cachedSvgChecks(): number {
 	const resolver = createIconResolver(registry);
 	check(resolver.resolveSvg(icon, "regular")?.includes("onload"), "Cache test did not reach the untrusted entry");
 	const result = renderIconInto(target, icon, resolver, {
-		role: "regular", fill: "currentColor", missing: { kind: "leave" },
+		role: "regular",
+		fill: "currentColor",
+		missing: { kind: "leave" },
 	});
 	check(result === "painted", "Safe cache geometry did not render");
 	check(target.querySelector("path"), "Cache drawing was lost");
-	check(!target.querySelector("[onload], [onclick], script, foreignObject, style"), "Active cached markup reached live DOM");
+	check(
+		!target.querySelector("[onload], [onclick], script, foreignObject, style"),
+		"Active cached markup reached live DOM",
+	);
 	registry.iconSvgCache[0]!.svg = "<svg><broken";
-	check(renderIconInto(target, icon, resolver, {
-		role: "regular", fill: "currentColor", missing: { kind: "leave" },
-	}) === "skipped", "Malformed cache did not use the missing-artwork path");
+	check(
+		renderIconInto(target, icon, resolver, {
+			role: "regular",
+			fill: "currentColor",
+			missing: { kind: "leave" },
+		}) === "skipped",
+		"Malformed cache did not use the missing-artwork path",
+	);
 	return 5;
 }
 
 /** Parser/resource bounds exercise real DOMParser and XMLSerializer behavior. */
 async function svgResourceChecks(): Promise<number> {
-	check(sanitizeUserSvg('<!DOCTYPE svg [<!ENTITY a "expanded">]><svg xmlns="http://www.w3.org/2000/svg"><text>&a;</text></svg>') === null,
-		"SVG entity document survived");
-	check(sanitizeUserSvg(`<svg xmlns="http://www.w3.org/2000/svg">${"<g>".repeat(80)}<path d="M0 0L1 1"/>${"</g>".repeat(80)}</svg>`) === null,
-		"Deeply nested SVG survived");
-	const canvas = document.createElement("canvas"); canvas.width = 1; canvas.height = 1;
+	check(
+		sanitizeUserSvg(
+			'<!DOCTYPE svg [<!ENTITY a "expanded">]><svg xmlns="http://www.w3.org/2000/svg"><text>&a;</text></svg>',
+		) === null,
+		"SVG entity document survived",
+	);
+	check(
+		sanitizeUserSvg(
+			`<svg xmlns="http://www.w3.org/2000/svg">${"<g>".repeat(80)}<path d="M0 0L1 1"/>${"</g>".repeat(80)}</svg>`,
+		) === null,
+		"Deeply nested SVG survived",
+	);
+	const canvas = document.createElement("canvas");
+	canvas.width = 1;
+	canvas.height = 1;
 	const valid = canvas.toDataURL("image/png");
-	check(clean(`<image href="${valid}" width="1" height="1"/>`).querySelector("image")?.hasAttribute("href"),
-		"Safe embedded raster was lost");
-	const bytes = Uint8Array.from(atob(valid.split(",")[1]!), char => char.charCodeAt(0));
+	check(
+		clean(`<image href="${valid}" width="1" height="1"/>`).querySelector("image")?.hasAttribute("href"),
+		"Safe embedded raster was lost",
+	);
+	const bytes = Uint8Array.from(atob(valid.split(",")[1]!), (char) => char.charCodeAt(0));
 	new DataView(bytes.buffer).setUint32(16, 100000);
 	new DataView(bytes.buffer).setUint32(20, 100000);
 	const bomb = `data:image/png;base64,${btoa(String.fromCharCode(...bytes))}`;
-	check(!clean(`<image href="${bomb}" width="1" height="1"/>`).querySelector("image")?.hasAttribute("href"),
-		"Huge compressed raster survived SVG import");
+	check(
+		!clean(`<image href="${bomb}" width="1" height="1"/>`).querySelector("image")?.hasAttribute("href"),
+		"Huge compressed raster survived SVG import",
+	);
 	new DataView(bytes.buffer).setUint32(16, 4096);
 	new DataView(bytes.buffer).setUint32(20, 4096);
 	const fullBudget = `data:image/png;base64,${btoa(String.fromCharCode(...bytes))}`;
-	const list = sanitizeUserImages([1, 2].map(id => ({ id: `img-budget-${id}`, name: `Budget ${id}.svg`, format: "svg",
-		svg: `<svg xmlns="http://www.w3.org/2000/svg"><image href="${fullBudget}" width="1" height="1"/></svg>` })));
+	const list = sanitizeUserImages(
+		[1, 2].map((id) => ({
+			id: `img-budget-${id}`,
+			name: `Budget ${id}.svg`,
+			format: "svg",
+			svg: `<svg xmlns="http://www.w3.org/2000/svg"><image href="${fullBudget}" width="1" height="1"/></svg>`,
+		})),
+	);
 	check(list.length === 1, "Picture list exceeded its aggregate raster budget");
-	const registry = new CalloutRegistry(); registry.load(null); registry.setUserImages(list);
-	const result = await validateImportPayload({ format: "callout-studio", callouts: [],
-		settings: { userImages: [{ ...list[0]!, id: "img-additional" }] } }, registry);
-	check(result.fatal && result.issues.some(issue => issue.messageKey === "import.err.imageBudget"),
-		"Combined native image budget was not rejected before mutation");
-	check(registry.getUserImages().length === 1 && registry.getUserImages()[0]?.id === list[0]!.id,
-		"A failed combined image import mutated existing pictures");
-	const replacement = await validateImportPayload({ format: "callout-studio", callouts: [],
-		settings: { userImages: list } }, registry);
-	check(!replacement.fatal && replacement.settings?.userImages.length === 1,
-		"Replacing the same image was charged twice");
+	const registry = new CalloutRegistry();
+	registry.load(null);
+	registry.setUserImages(list);
+	const result = await validateImportPayload(
+		{ format: "callout-studio", callouts: [], settings: { userImages: [{ ...list[0]!, id: "img-additional" }] } },
+		registry,
+	);
+	check(
+		result.fatal && result.issues.some((issue) => issue.messageKey === "import.err.imageBudget"),
+		"Combined native image budget was not rejected before mutation",
+	);
+	check(
+		registry.getUserImages().length === 1 && registry.getUserImages()[0]?.id === list[0]!.id,
+		"A failed combined image import mutated existing pictures",
+	);
+	const replacement = await validateImportPayload(
+		{ format: "callout-studio", callouts: [], settings: { userImages: list } },
+		registry,
+	);
+	check(
+		!replacement.fatal && replacement.settings?.userImages.length === 1,
+		"Replacing the same image was charged twice",
+	);
 	const vector = `<svg xmlns="http://www.w3.org/2000/svg">${'<path d="M0 0L1 1"/>'.repeat(4999)}</svg>`;
-	const vectors = sanitizeUserImages(Array.from({ length: 11 }, (_, id) => ({ id: `vector-${id}`, name: `Vector ${id}.svg`, format: "svg", svg: vector })));
+	const vectors = sanitizeUserImages(
+		Array.from({ length: 11 }, (_, id) => ({
+			id: `vector-${id}`,
+			name: `Vector ${id}.svg`,
+			format: "svg",
+			svg: vector,
+		})),
+	);
 	check(vectors.length === 10, "Picture collection exceeded 50,000 SVG elements");
 	const tinySvg = '<svg xmlns="http://www.w3.org/2000/svg"><path d="M0 0L1 1"/></svg>';
-	const admonition = await planAdmonitionImport([{ type: "budget-test", icon: { type: "image", name: `data:image/svg+xml,${encodeURIComponent(tinySvg)}` } }], registry, vectors);
-	check(admonition.newImages.length === 0 && admonition.issues.some(issue => issue.messageKey === "import.warn.admImageSkipped"),
-		"Admonition promised a picture its combined collection could not hold");
-	return 10 + await importBudgetRaceChecks(list[0]!, valid);
+	const admonition = await planAdmonitionImport(
+		[{ type: "budget-test", icon: { type: "image", name: `data:image/svg+xml,${encodeURIComponent(tinySvg)}` } }],
+		registry,
+		vectors,
+	);
+	check(
+		admonition.newImages.length === 0 &&
+			admonition.issues.some((issue) => issue.messageKey === "import.warn.admImageSkipped"),
+		"Admonition promised a picture its combined collection could not hold",
+	);
+	return 10 + (await importBudgetRaceChecks(list[0]!, valid));
 }
 
 /** Both apply routes must recheck a destination changed after planning. */
 async function importBudgetRaceChecks(fullBudget: UserImageIcon, rasterUri: string): Promise<number> {
-	const incoming = sanitizeUserImages([{ id: "race-picture", name: "Race.svg", format: "svg",
-		svg: `<svg xmlns="http://www.w3.org/2000/svg"><image href="${rasterUri}" width="1" height="1"/></svg>` }])[0];
+	const incoming = sanitizeUserImages([
+		{
+			id: "race-picture",
+			name: "Race.svg",
+			format: "svg",
+			svg: `<svg xmlns="http://www.w3.org/2000/svg"><image href="${rasterUri}" width="1" height="1"/></svg>`,
+		},
+	])[0];
 	check(incoming, "Race test did not create a real sanitized image");
-	const registry = new CalloutRegistry(); registry.load(null);
+	const registry = new CalloutRegistry();
+	registry.load(null);
 	let mutations = 0;
-	const ctx = { app: {}, plugin: { registry,
-		saveSettings: async () => { mutations++; }, customCommands: { syncAll: () => { mutations++; } },
-		refreshRenderModes: () => { mutations++; }, ensureIconArtworkFor: async () => { mutations++; },
-	}, redraw: () => { mutations++; } } as unknown as SettingsContext;
-	const payload = { format: "callout-studio", callouts: [{
-		id: "race-native", displayName: "Race native", icon: { type: "image", value: incoming.id },
-		colorLight: "#448aff", colorDark: "#448aff", foldable: true, defaultFolded: false,
-		futureField: "Triggers a warning report before apply",
-	}], settings: { userImages: [incoming] } };
+	const ctx = {
+		app: {},
+		plugin: {
+			registry,
+			saveSettings: async () => {
+				mutations++;
+			},
+			customCommands: {
+				syncAll: () => {
+					mutations++;
+				},
+			},
+			refreshRenderModes: () => {
+				mutations++;
+			},
+			ensureIconArtworkFor: async () => {
+				mutations++;
+			},
+		},
+		redraw: () => {
+			mutations++;
+		},
+	} as unknown as SettingsContext;
+	const payload = {
+		format: "callout-studio",
+		callouts: [
+			{
+				id: "race-native",
+				displayName: "Race native",
+				icon: { type: "image", value: incoming.id },
+				colorLight: "#448aff",
+				colorDark: "#448aff",
+				foldable: true,
+				defaultFolded: false,
+				futureField: "Triggers a warning report before apply",
+			},
+		],
+		settings: { userImages: [incoming] },
+	};
 	const validation = await validateImportPayload(payload, registry);
-	check(!validation.fatal && validation.validDefs.length === 1 && validation.issues.length > 0,
-		"Race test must begin with a valid import and a warning report");
+	check(
+		!validation.fatal && validation.validDefs.length === 1 && validation.issues.length > 0,
+		"Race test must begin with a valid import and a warning report",
+	);
 	const originalPrompt = Object.getOwnPropertyDescriptor(ImportReportModal.prototype, "prompt")!;
 	const reports: Array<{ fatal: boolean; keys: string[] }> = [];
 	ImportReportModal.prototype.prompt = function () {
 		const report = this as unknown as { fatal: boolean; issues: Array<{ messageKey: string }> };
-		reports.push({ fatal: report.fatal, keys: report.issues.map(issue => issue.messageKey) });
+		reports.push({ fatal: report.fatal, keys: report.issues.map((issue) => issue.messageKey) });
 		if (reports.length === 1) {
 			registry.setUserImages([fullBudget]); // Sync arrives while the report is open.
 			return Promise.resolve("importValid");
@@ -227,28 +384,55 @@ async function importBudgetRaceChecks(fullBudget: UserImageIcon, rasterUri: stri
 	};
 	try {
 		await processImportedJSON(ctx, new File([JSON.stringify(payload)], "race.json"));
-	} finally { Object.defineProperty(ImportReportModal.prototype, "prompt", originalPrompt); }
-	check(reports.length === 2 && !reports[0]!.fatal && reports[1]!.fatal && reports[1]!.keys.includes("import.err.imageBudget"),
-		"Native apply did not report its changed image budget");
-	check(!registry.has("race-native") && registry.getUserImages().length === 1 &&
-		registry.getUserImages()[0]?.id === fullBudget.id && mutations === 0,
-		"Native budget race changed definitions, pictures or saved settings");
+	} finally {
+		Object.defineProperty(ImportReportModal.prototype, "prompt", originalPrompt);
+	}
+	check(
+		reports.length === 2 &&
+			!reports[0]!.fatal &&
+			reports[1]!.fatal &&
+			reports[1]!.keys.includes("import.err.imageBudget"),
+		"Native apply did not report its changed image budget",
+	);
+	check(
+		!registry.has("race-native") &&
+			registry.getUserImages().length === 1 &&
+			registry.getUserImages()[0]?.id === fullBudget.id &&
+			mutations === 0,
+		"Native budget race changed definitions, pictures or saved settings",
+	);
 
 	registry.setUserImages([]);
-	const read = ADMONITION_IMPORT.fromText(JSON.stringify([{ type: "race-admonition", icon: {
-		type: "image", name: `data:image/svg+xml,${encodeURIComponent(incoming.svg)}`,
-	} }]));
+	const read = ADMONITION_IMPORT.fromText(
+		JSON.stringify([
+			{
+				type: "race-admonition",
+				icon: {
+					type: "image",
+					name: `data:image/svg+xml,${encodeURIComponent(incoming.svg)}`,
+				},
+			},
+		]),
+	);
 	check("batch" in read, "Admonition source did not recognize the race fixture");
 	const plan = await read.batch.plan(ctx);
-	check(plan.applyCount === 1 && !plan.issues.some(issue => issue.messageKey === "import.warn.admImageSkipped"),
-		"Admonition race plan did not contain a converted image");
+	check(
+		plan.applyCount === 1 && !plan.issues.some((issue) => issue.messageKey === "import.warn.admImageSkipped"),
+		"Admonition race plan did not contain a converted image",
+	);
 	registry.setUserImages([fullBudget]);
 	let blocked = false;
-	try { plan.apply(); } catch (error) {
+	try {
+		plan.apply();
+	} catch (error) {
 		blocked = error instanceof ImportLimitError && error.messageKey === "import.err.imageBudget";
 	}
-	check(blocked && !registry.has("race-admonition") && registry.getUserImages().length === 1 &&
-		registry.getUserImages()[0]?.id === fullBudget.id,
-		"Admonition applied an image after its destination exhausted the budget");
+	check(
+		blocked &&
+			!registry.has("race-admonition") &&
+			registry.getUserImages().length === 1 &&
+			registry.getUserImages()[0]?.id === fullBudget.id,
+		"Admonition applied an image after its destination exhausted the budget",
+	);
 	return 5;
 }

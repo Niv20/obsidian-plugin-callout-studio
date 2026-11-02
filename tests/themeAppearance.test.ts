@@ -134,16 +134,12 @@ describe("the icon ladder", () => {
 		// The ordering that matters: a theme can hide the slot and leave core's
 		// SVG sitting inside it, and reproducing that icon would put artwork on
 		// the row that appears nowhere in the note.
-		const icon = readThemeIcon(
-			readout({ iconDisplay: "none", iconMarkup: "<svg></svg>" }),
-		);
+		const icon = readThemeIcon(readout({ iconDisplay: "none", iconMarkup: "<svg></svg>" }));
 		assert.strictEqual(icon.kind, "hidden");
 	});
 
 	it("reproduces a mask when there is no SVG", () => {
-		const icon = readThemeIcon(
-			readout({ iconMarkup: null, iconMask: 'url("data:image/svg+xml,x")' }),
-		);
+		const icon = readThemeIcon(readout({ iconMarkup: null, iconMask: 'url("data:image/svg+xml,x")' }));
 		assert.strictEqual(icon.kind, "mask");
 		assert.ok(icon.kind === "mask" && icon.image.startsWith("url("));
 	});
@@ -181,9 +177,7 @@ describe("the icon ladder", () => {
 		// `drawnByPseudo` must stay false for a mask on the slot: that node wears
 		// the colour core gave the title, so reading its paint as the accent
 		// would dress up an inherited value as the theme having spoken.
-		const out = readThemeAppearance(
-			sanctumReadout({ iconPseudoBackground: "rgb(1, 2, 3)" }),
-		);
+		const out = readThemeAppearance(sanctumReadout({ iconPseudoBackground: "rgb(1, 2, 3)" }));
 		assert.strictEqual(out.accent, "rgb(104, 145, 181)");
 	});
 
@@ -195,8 +189,7 @@ describe("the icon ladder", () => {
 		const icon = readThemeIcon(luminesReadout());
 		assert.notStrictEqual(icon.kind, "svg");
 		assert.ok(
-			!(icon.kind === "svg") ||
-				!icon.markup.includes("lucide-pencil"),
+			!(icon.kind === "svg") || !icon.markup.includes("lucide-pencil"),
 			"core's default pencil must not survive being hidden",
 		);
 	});
@@ -211,18 +204,14 @@ describe("the icon ladder", () => {
 		// Both spellings can be present; the node that carries the drawing is
 		// the one whose paint the accent ladder then reads, so the two rungs
 		// have to agree on which won.
-		const icon = readThemeIcon(
-			luminesReadout({ iconMask: "url(own)", iconPseudoMask: "url(pseudo)" }),
-		);
+		const icon = readThemeIcon(luminesReadout({ iconMask: "url(own)", iconPseudoMask: "url(pseudo)" }));
 		assert.strictEqual(icon.kind === "mask" && icon.image, "url(own)");
 	});
 
 	it("keeps a displayed child even when a mask sits behind it", () => {
 		// The `svg`-over-`mask` ordering is unchanged: the guard only fires on
 		// positive evidence that the child is switched off.
-		const icon = readThemeIcon(
-			readout({ iconPseudoMask: THEME_MASK, iconChildDisplay: "block" }),
-		);
+		const icon = readThemeIcon(readout({ iconPseudoMask: THEME_MASK, iconChildDisplay: "block" }));
 		assert.strictEqual(icon.kind, "svg");
 	});
 
@@ -257,17 +246,13 @@ describe("the icon ladder", () => {
 	});
 
 	it("unwraps a plain quoted glyph too", () => {
-		const icon = readThemeIcon(
-			readout({ iconMarkup: null, iconPseudoContent: '"★"' }),
-		);
+		const icon = readThemeIcon(readout({ iconMarkup: null, iconPseudoContent: '"★"' }));
 		assert.strictEqual(icon.kind === "glyph" && icon.text, "★");
 	});
 
 	it("treats content: normal and empty strings as no glyph", () => {
 		for (const content of ["normal", "none", '""', "''", ""]) {
-			const icon = readThemeIcon(
-				readout({ iconMarkup: null, iconPseudoContent: content }),
-			);
+			const icon = readThemeIcon(readout({ iconMarkup: null, iconPseudoContent: content }));
 			assert.strictEqual(icon.kind, "unknown", `content: ${content}`);
 		}
 	});
@@ -316,9 +301,7 @@ describe("colour", () => {
 			"rgb(0, 128, 0)",
 			"rgb(184 131 0)",
 		]) {
-			const out = readThemeAppearance(
-				readout({ titleColor: color, titleTextColor: color, background: color }),
-			);
+			const out = readThemeAppearance(readout({ titleColor: color, titleTextColor: color, background: color }));
 			assert.strictEqual(out.accent, color, `accent for ${color}`);
 			assert.strictEqual(out.background, color, `background for ${color}`);
 		}
@@ -380,9 +363,7 @@ describe("colour", () => {
 		// A theme that uses core's documented title hook without ever setting
 		// `--callout-color`. There is no `::before` to read, so the title text
 		// itself is the most deliberate evidence there is.
-		const out = readThemeAppearance(
-			readout({ titleTextColor: "rgb(180, 142, 173)" }),
-		);
+		const out = readThemeAppearance(readout({ titleTextColor: "rgb(180, 142, 173)" }));
 		assert.strictEqual(out.accent, "rgb(180, 142, 173)");
 	});
 
@@ -397,9 +378,7 @@ describe("colour", () => {
 		// A pseudo-element can be painted decoratively while core's SVG is what
 		// the reader sees. Only the node that actually won the icon rung may
 		// speak for the accent.
-		const out = readThemeAppearance(
-			readout({ iconPseudoBackground: "rgb(1, 2, 3)" }),
-		);
+		const out = readThemeAppearance(readout({ iconPseudoBackground: "rgb(1, 2, 3)" }));
 		assert.strictEqual(out.accent, "rgb(8, 109, 221)");
 	});
 
@@ -418,9 +397,7 @@ describe("colour", () => {
 	it("falls past an unpainted ::before rather than reporting nothing", () => {
 		// A mask with no paint of its own is drawn in `currentColor`. Stopping at
 		// the transparent reading would lose a swatch the ladder can still fill.
-		const out = readThemeAppearance(
-			luminesReadout({ iconPseudoBackground: "rgba(0, 0, 0, 0)" }),
-		);
+		const out = readThemeAppearance(luminesReadout({ iconPseudoBackground: "rgba(0, 0, 0, 0)" }));
 		assert.strictEqual(out.accent, "rgb(224, 108, 117)", "the title text");
 	});
 
@@ -447,16 +424,9 @@ describe("colour", () => {
 	});
 
 	it("recognises every spelling of fully transparent", () => {
-		for (const value of [
-			"transparent",
-			"rgba(0, 0, 0, 0)",
-			"rgba(255, 255, 255, 0)",
-			"rgba(1, 2, 3, 0.0)",
-			"",
-		]) {
+		for (const value of ["transparent", "rgba(0, 0, 0, 0)", "rgba(255, 255, 255, 0)", "rgba(1, 2, 3, 0.0)", ""]) {
 			assert.strictEqual(
-				readThemeAppearance(readout({ background: value, backgroundImage: "none" }))
-					.background,
+				readThemeAppearance(readout({ background: value, backgroundImage: "none" })).background,
 				null,
 				value,
 			);
@@ -467,8 +437,7 @@ describe("colour", () => {
 		// Core paints callout backgrounds as a tint. Treating "has alpha" as
 		// "transparent" would throw away almost every real background there is.
 		assert.strictEqual(
-			readThemeAppearance(readout({ background: "rgba(8, 109, 221, 0.1)" }))
-				.background,
+			readThemeAppearance(readout({ background: "rgba(8, 109, 221, 0.1)" })).background,
 			"rgba(8, 109, 221, 0.1)",
 		);
 	});

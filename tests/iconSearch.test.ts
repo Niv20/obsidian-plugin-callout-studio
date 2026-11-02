@@ -41,8 +41,7 @@ const INDEX: IconIndex = {
 	categories: ["nav", "places"],
 };
 
-const names = (result: readonly IconEntry[]): string[] =>
-	result.map((e) => e.name);
+const names = (result: readonly IconEntry[]): string[] => result.map((e) => e.name);
 
 describe("filterIcons — the no-op query", () => {
 	it("hands back the index's own array, not a copy", () => {
@@ -65,10 +64,7 @@ describe("filterIcons — the no-op query", () => {
 
 describe("filterIcons — one word", () => {
 	it("matches the name verbatim", () => {
-		assert.deepStrictEqual(names(filterIcons(INDEX, "arrow")), [
-			"arrow_right",
-			"arrow-left",
-		]);
+		assert.deepStrictEqual(names(filterIcons(INDEX, "arrow")), ["arrow_right", "arrow-left"]);
 	});
 
 	it("matches anywhere in the name, not only at the front", () => {
@@ -100,26 +96,18 @@ describe("filterIcons — one word", () => {
 
 describe("filterIcons — separators are spaces", () => {
 	it("matches an underscore name typed with a space", () => {
-		assert.deepStrictEqual(names(filterIcons(INDEX, "arrow right")), [
-			"arrow_right",
-		]);
+		assert.deepStrictEqual(names(filterIcons(INDEX, "arrow right")), ["arrow_right"]);
 	});
 
 	it("matches a hyphen name typed with a space", () => {
-		assert.deepStrictEqual(names(filterIcons(INDEX, "arrow left")), [
-			"arrow-left",
-		]);
+		assert.deepStrictEqual(names(filterIcons(INDEX, "arrow left")), ["arrow-left"]);
 	});
 
 	it("still matches the separator spelled out", () => {
 		// Both spellings are in the haystack, so neither library's own idiom is
 		// the one you have to know.
-		assert.deepStrictEqual(names(filterIcons(INDEX, "arrow_right")), [
-			"arrow_right",
-		]);
-		assert.deepStrictEqual(names(filterIcons(INDEX, "arrow-left")), [
-			"arrow-left",
-		]);
+		assert.deepStrictEqual(names(filterIcons(INDEX, "arrow_right")), ["arrow_right"]);
+		assert.deepStrictEqual(names(filterIcons(INDEX, "arrow-left")), ["arrow-left"]);
 	});
 });
 
@@ -136,10 +124,7 @@ describe("filterIcons — several words are ANDed", () => {
 	});
 
 	it("takes the words in any order", () => {
-		assert.deepStrictEqual(
-			names(filterIcons(INDEX, "roof home")),
-			names(filterIcons(INDEX, "home roof")),
-		);
+		assert.deepStrictEqual(names(filterIcons(INDEX, "roof home")), names(filterIcons(INDEX, "home roof")));
 	});
 
 	it("drops the entry as soon as one word misses", () => {
@@ -147,25 +132,17 @@ describe("filterIcons — several words are ANDed", () => {
 	});
 
 	it("collapses runs of whitespace rather than searching for an empty word", () => {
-		assert.deepStrictEqual(names(filterIcons(INDEX, "  home   work  ")), [
-			"home_work",
-		]);
+		assert.deepStrictEqual(names(filterIcons(INDEX, "  home   work  ")), ["home_work"]);
 	});
 });
 
 describe("filterIcons — the category filter", () => {
 	it("keeps only entries carrying that category", () => {
-		assert.deepStrictEqual(names(filterIcons(INDEX, "", "places")), [
-			"home",
-			"home_work",
-		]);
+		assert.deepStrictEqual(names(filterIcons(INDEX, "", "places")), ["home", "home_work"]);
 	});
 
 	it("ANDs with the query", () => {
-		assert.deepStrictEqual(names(filterIcons(INDEX, "home", "places")), [
-			"home",
-			"home_work",
-		]);
+		assert.deepStrictEqual(names(filterIcons(INDEX, "home", "places")), ["home", "home_work"]);
 		assert.deepStrictEqual(names(filterIcons(INDEX, "home", "nav")), []);
 	});
 
@@ -201,45 +178,28 @@ describe("filterIcons — order and ranking", () => {
 	});
 
 	it("orders exact, then prefix, then substring, then keyword-only", () => {
-		assert.deepStrictEqual(names(filterIcons(TIERS, "home")), [
-			"home",
-			"home-storage",
-			"smart-home",
-			"roofing",
-		]);
+		assert.deepStrictEqual(names(filterIcons(TIERS, "home")), ["home", "home-storage", "smart-home", "roofing"]);
 	});
 
 	it("ranks a multi-word query as the phrase it spells", () => {
 		// "arrow right" is the whole of `arrow_right` once separators are
 		// spaces, so it outranks a name that merely contains both words.
 		const index: IconIndex = {
-			entries: [
-				entry({ name: "arrow_right_alt" }),
-				entry({ name: "arrow_right" }),
-			],
+			entries: [entry({ name: "arrow_right_alt" }), entry({ name: "arrow_right" })],
 			categories: [],
 		};
-		assert.deepStrictEqual(names(filterIcons(index, "arrow right")), [
-			"arrow_right",
-			"arrow_right_alt",
-		]);
+		assert.deepStrictEqual(names(filterIcons(index, "arrow right")), ["arrow_right", "arrow_right_alt"]);
 	});
 
 	it("keeps equally good matches in the index's own order", () => {
 		// Ranking reorders only what it has a reason to; two prefix matches are
 		// left exactly as the library listed them.
-		assert.deepStrictEqual(names(filterIcons(INDEX, "arrow")), [
-			"arrow_right",
-			"arrow-left",
-		]);
+		assert.deepStrictEqual(names(filterIcons(INDEX, "arrow")), ["arrow_right", "arrow-left"]);
 	});
 
 	it("ranks a name above an entry that only matched its label", () => {
 		const index: IconIndex = {
-			entries: [
-				entry({ name: "zzz", label: "Home" }),
-				entry({ name: "home" }),
-			],
+			entries: [entry({ name: "zzz", label: "Home" }), entry({ name: "home" })],
 			categories: [],
 		};
 		assert.deepStrictEqual(names(filterIcons(index, "home")), ["home", "zzz"]);
@@ -247,10 +207,7 @@ describe("filterIcons — order and ranking", () => {
 
 	it("leaves a category-only query in the index's own order", () => {
 		// Nothing was typed, so there is nothing to be more or less relevant to.
-		assert.deepStrictEqual(names(filterIcons(INDEX, "", "places")), [
-			"home",
-			"home_work",
-		]);
+		assert.deepStrictEqual(names(filterIcons(INDEX, "", "places")), ["home", "home_work"]);
 	});
 
 	it("ranks inside each source, never across them", () => {
@@ -314,10 +271,7 @@ describe("filterIcons — against a real bundled index", () => {
 	});
 
 	it("finds a hyphenated Octicons name typed with a space", () => {
-		assert.ok(
-			names(filterIcons(octicons, "arrow up")).includes("arrow-up"),
-			"arrow-up must answer to `arrow up`",
-		);
+		assert.ok(names(filterIcons(octicons, "arrow up")).includes("arrow-up"), "arrow-up must answer to `arrow up`");
 	});
 
 	it("puts the icon actually named `alert` first among the alerts", () => {

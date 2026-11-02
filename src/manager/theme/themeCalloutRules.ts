@@ -27,13 +27,7 @@
  *   `:is(blockquote) p`: everything outside a callout must look exactly as it
  *   did.
  */
-import {
-	blankNegations,
-	matchParen,
-	skipBrackets,
-	skipString,
-	splitSelectorList,
-} from "../../utils/selectorText";
+import { blankNegations, matchParen, skipBrackets, skipString, splitSelectorList } from "../../utils/selectorText";
 import { CLASS_TOKEN, unescapeCss } from "./themeClaimSelectors";
 
 /**

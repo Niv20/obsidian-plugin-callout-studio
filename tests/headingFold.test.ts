@@ -30,25 +30,12 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import { EditorState, StateEffect } from "@codemirror/state";
 import type { Extension, TransactionSpec } from "@codemirror/state";
-import {
-	codeFolding,
-	foldEffect,
-	foldService,
-	foldedRanges,
-	unfoldEffect,
-} from "@codemirror/language";
+import { codeFolding, foldEffect, foldService, foldedRanges, unfoldEffect } from "@codemirror/language";
 import type { EditorView } from "@codemirror/view";
 import { MarkdownView } from "obsidian";
 import type { App, WorkspaceLeaf } from "obsidian";
-import {
-	foldsChanged,
-	getFoldedLines,
-	toggleHeadingFold,
-} from "../src/editor/livepreview/fold";
-import {
-	isHeadingFoldEnabled,
-	resolveMarkdownView,
-} from "../src/editor/headingFold";
+import { foldsChanged, getFoldedLines, toggleHeadingFold } from "../src/editor/livepreview/fold";
+import { isHeadingFoldEnabled, resolveMarkdownView } from "../src/editor/headingFold";
 
 /* -------------------------------------------------------------------------- */
 /* Harness                                                                    */
@@ -201,8 +188,7 @@ describe("getFoldedLines", () => {
 		const s = state(DOC, [codeFolding()]);
 		const heading = s.doc.line(1);
 		const view = new FakeView(
-			s.update({ effects: foldEffect.of({ from: heading.to, to: s.doc.line(4).to }) })
-				.state,
+			s.update({ effects: foldEffect.of({ from: heading.to, to: s.doc.line(4).to }) }).state,
 		);
 
 		assert.deepStrictEqual([...getFoldedLines(view.asView)], [0]);
@@ -228,17 +214,14 @@ describe("getFoldedLines", () => {
 /* -------------------------------------------------------------------------- */
 
 describe("toggleHeadingFold — with Obsidian's fold service", () => {
-	const withService = () =>
-		new FakeView(state(DOC, [codeFolding(), headingFoldService()]));
+	const withService = () => new FakeView(state(DOC, [codeFolding(), headingFoldService()]));
 
 	it("folds exactly the range the service names", () => {
 		const view = withService();
 		toggleHeadingFold(view.asView, 0);
 
 		const doc = view.state.doc;
-		assert.deepStrictEqual(ranges(view.state), [
-			[doc.line(1).to, doc.line(4).to],
-		]);
+		assert.deepStrictEqual(ranges(view.state), [[doc.line(1).to, doc.line(4).to]]);
 		assert.deepStrictEqual([...getFoldedLines(view.asView)], [0]);
 	});
 
@@ -262,9 +245,7 @@ describe("toggleHeadingFold — with Obsidian's fold service", () => {
 		toggleHeadingFold(view.asView, 4);
 
 		const doc = view.state.doc;
-		assert.deepStrictEqual(ranges(view.state), [
-			[doc.line(5).to, doc.length],
-		]);
+		assert.deepStrictEqual(ranges(view.state), [[doc.line(5).to, doc.length]]);
 	});
 
 	it("lets the parser catch up with the viewport the fold just moved", () => {
@@ -287,30 +268,22 @@ describe("toggleHeadingFold — no fold service (the settings preview)", () => {
 		toggleHeadingFold(view.asView, 0);
 
 		const doc = view.state.doc;
-		assert.deepStrictEqual(ranges(view.state), [
-			[doc.line(1).to, doc.line(4).to],
-		]);
+		assert.deepStrictEqual(ranges(view.state), [[doc.line(1).to, doc.line(4).to]]);
 	});
 
 	it("stops the scan at the next heading of the same or a higher level", () => {
-		const view = noService(
-			["### [!tip] Sub", "body", "# Top", "after"].join("\n"),
-		);
+		const view = noService(["### [!tip] Sub", "body", "# Top", "after"].join("\n"));
 		toggleHeadingFold(view.asView, 0);
 
 		const doc = view.state.doc;
-		assert.deepStrictEqual(ranges(view.state), [
-			[doc.line(1).to, doc.line(2).to],
-		]);
+		assert.deepStrictEqual(ranges(view.state), [[doc.line(1).to, doc.line(2).to]]);
 	});
 
 	it("runs to the last line when nothing closes the section", () => {
 		const view = noService(["## [!tip] Only", "a", "b"].join("\n"));
 		toggleHeadingFold(view.asView, 0);
 
-		assert.deepStrictEqual(ranges(view.state), [
-			[view.state.doc.line(1).to, view.state.doc.length],
-		]);
+		assert.deepStrictEqual(ranges(view.state), [[view.state.doc.line(1).to, view.state.doc.length]]);
 	});
 
 	it("folds nothing for a heading with an empty section", () => {
@@ -339,9 +312,7 @@ describe("toggleHeadingFold — no fold StateField at all", () => {
 
 		toggleHeadingFold(view.asView, 0);
 
-		assert.deepStrictEqual(ranges(view.state), [
-			[view.state.doc.line(1).to, view.state.doc.line(4).to],
-		]);
+		assert.deepStrictEqual(ranges(view.state), [[view.state.doc.line(1).to, view.state.doc.line(4).to]]);
 		assert.deepStrictEqual([...getFoldedLines(view.asView)], [0]);
 	});
 
@@ -411,8 +382,7 @@ describe("resolveMarkdownView", () => {
 	const app = (...views: unknown[]): App =>
 		({
 			workspace: {
-				getLeavesOfType: (type: string) =>
-					type === "markdown" ? views.map((view) => ({ view })) : [],
+				getLeavesOfType: (type: string) => (type === "markdown" ? views.map((view) => ({ view })) : []),
 			},
 		}) as unknown as App;
 
@@ -432,10 +402,7 @@ describe("resolveMarkdownView", () => {
 	it("returns null for a CodeMirror instance no leaf owns", () => {
 		// A settings preview, a canvas card, an editable transclusion: all real
 		// editors, none of them a workspace leaf.
-		assert.strictEqual(
-			resolveMarkdownView(app(viewFor({})), {} as EditorView),
-			null,
-		);
+		assert.strictEqual(resolveMarkdownView(app(viewFor({})), {} as EditorView), null);
 	});
 
 	it("ignores a leaf that is not a MarkdownView", () => {

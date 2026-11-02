@@ -37,7 +37,11 @@ const exclusions: Array<[string, string, string[]]> = [
 	["multiline double code span", "text ``code\n[!fake] ` x\ncode`` [!real]", ["real"]],
 	["blank lines stop code spans", "text `[!first]\n\n[!second]`", ["first", "second"]],
 	["headings stop code spans", "text `[!first]\n# [!second]`", ["first", "second"]],
-	["quote starts a new block after an unmatched code delimiter", "text `[!first]\n> [!second]\n`", ["first", "second"]],
+	[
+		"quote starts a new block after an unmatched code delimiter",
+		"text `[!first]\n> [!second]\n`",
+		["first", "second"],
+	],
 	["code spans do not leave their quote", "> text `[!first]\n[!second]`", ["first", "second"]],
 	["multiline code spans within one quote", "> text `code\n> [!fake]\n> end` [!real]", ["real"]],
 	["heading code cannot continue into another paragraph", "# text `[!first]\n[!second]`", ["first", "second"]],
@@ -63,7 +67,11 @@ const exclusions: Array<[string, string, string[]]> = [
 	["escaped code delimiter", "\\`[!real]", ["real"]],
 	["wikilinks and links", "[[note#[!fake]]] [!fake](url) [!real]", ["real"]],
 	["open wikilink", "[!real] [[note [!fake]", ["real"]],
-	["unknown and registered spelling have identical syntax", "[!note][!new-unregistered-type]", ["note", "new-unregistered-type"]],
+	[
+		"unknown and registered spelling have identical syntax",
+		"[!note][!new-unregistered-type]",
+		["note", "new-unregistered-type"],
+	],
 ];
 
 describe("document callouts: context exclusions", () => {
@@ -75,7 +83,7 @@ describe("document callouts: context exclusions", () => {
 	it("every existing whole-document callback uses the same exclusions", () => {
 		for (const [, source, expected] of exclusions) {
 			const found: string[] = [];
-			forEachCalloutToken(source, rawId => found.push(rawId));
+			forEachCalloutToken(source, (rawId) => found.push(rawId));
 			assert.deepEqual(found, expected, source);
 		}
 	});
@@ -105,14 +113,22 @@ describe("document callouts: source roles, syntax and positions", () => {
 	});
 
 	it("accepts irregular quote spacing at each nesting level and inside lists", () => {
-		for (const source of [">[!note]", ">   [!note]", "  >  >   [!note]", "- >   [!note]", "- item\n    > [!note]"]) {
+		for (const source of [
+			">[!note]",
+			">   [!note]",
+			"  >  >   [!note]",
+			"- >   [!note]",
+			"- item\n    > [!note]",
+		]) {
 			assert.deepEqual(roles(source), [["note", "regular"]], source);
 		}
 	});
 
 	it("keeps heading title pills, but native block titles stay native", () => {
 		assert.deepEqual(roles("## [!heading] title [!inline]\n> [!block] title [!native]"), [
-			["heading", "heading"], ["inline", "inline"], ["block", "regular"],
+			["heading", "heading"],
+			["inline", "inline"],
+			["block", "regular"],
 		]);
 	});
 
@@ -124,24 +140,39 @@ describe("document callouts: source roles, syntax and positions", () => {
 		assert.equal(entries[0]?.token.metadata, "one|two");
 		assert.equal(entries[0]?.token.from, 3);
 		assert.equal(entries[1]?.token.hasMetadata, true);
-		for (const { token } of entries) assert.equal(source.slice(token.from, token.to), `[!${token.rawId}|${token.metadata}]`);
+		for (const { token } of entries)
+			assert.equal(source.slice(token.from, token.to), `[!${token.rawId}|${token.metadata}]`);
 	});
 
 	it("returns absolute UTF-16 offsets through blank lines, CRLF and emoji", () => {
 		const source = "😀\r\n\r\n  ## [!heading]\r\n[!one][!two]";
 		const entries = Array.from(iterateDocumentCallouts(source));
-		assert.deepEqual(entries.map(entry => [entry.lineIndex, entry.lineOffset]), [[2, 6], [3, 23], [3, 23]]);
-		for (const { token, lineOffset } of entries) assert.equal(source.slice(lineOffset + token.from, lineOffset + token.to), `[!${token.rawId}]`);
+		assert.deepEqual(
+			entries.map((entry) => [entry.lineIndex, entry.lineOffset]),
+			[
+				[2, 6],
+				[3, 23],
+				[3, 23],
+			],
+		);
+		for (const { token, lineOffset } of entries)
+			assert.equal(source.slice(lineOffset + token.from, lineOffset + token.to), `[!${token.rawId}]`);
 		assert.equal(entries[0]?.token.role, "heading");
 	});
 
 	it("preserves open and nested payload usage semantics and literal payload bytes", () => {
 		const source = "[!outer]{outer `}` %% } %% [!inner]{text}} [!open]{unfinished";
 		const entries = Array.from(iterateDocumentCallouts(source));
-		assert.deepEqual(entries.map(({ token }) => token.rawId), ["outer", "inner", "open"]);
+		assert.deepEqual(
+			entries.map(({ token }) => token.rawId),
+			["outer", "inner", "open"],
+		);
 		assert.equal(entries[0]?.token.content?.text, "outer `}` %% } %% [!inner]{text}");
 		assert.equal(entries[2]?.token.contentOpen, true);
-		assert.equal(Array.from(iterateDocumentCallouts(source, { inlineContent: false }))[0]?.token.content, undefined);
+		assert.equal(
+			Array.from(iterateDocumentCallouts(source, { inlineContent: false }))[0]?.token.content,
+			undefined,
+		);
 	});
 
 	it("rejects empty ids, multiline tokens, and malformed nested brackets", () => {
@@ -153,12 +184,19 @@ describe("document callouts: source roles, syntax and positions", () => {
 	});
 
 	it("comments cannot turn a middle-of-line token into a heading or block", () => {
-		assert.deepEqual(roles("# %%hidden%% [!note]\n> %%hidden%% [!note]"), [["note", "inline"], ["note", "inline"]]);
+		assert.deepEqual(roles("# %%hidden%% [!note]\n> %%hidden%% [!note]"), [
+			["note", "inline"],
+			["note", "inline"],
+		]);
 	});
 
 	it("line parser uses the same inline exclusions", () => {
 		for (const [, source, expected] of exclusions.filter(([, source]) => !source.includes("\n"))) {
-			assert.deepEqual(scanLineForCalloutTokens(source).map(token => token.rawId), expected, source);
+			assert.deepEqual(
+				scanLineForCalloutTokens(source).map((token) => token.rawId),
+				expected,
+				source,
+			);
 		}
 	});
 
@@ -173,18 +211,29 @@ describe("document callouts: source roles, syntax and positions", () => {
 		if (initial.done) throw new Error("Missing first line");
 		assert.equal(initial.value.lineIndex, 0);
 		assert.deepEqual(ids("[!separate]"), ["separate"]);
-		assert.deepEqual(Array.from(first).map(line => line.tokens.map(token => token.rawId)), [[], [], ["real"]]);
+		assert.deepEqual(
+			Array.from(first).map((line) => line.tokens.map((token) => token.rawId)),
+			[[], [], ["real"]],
+		);
 		assert.equal(Array.from(iterateDocumentCalloutLines("\n".repeat(10000))).length, 10001);
 	});
 });
 
 describe("autocomplete context uses document exclusions even for unfinished tokens", () => {
 	const hidden = (source: string, lineIndex: number) => {
-		const lines = source.split("\n"), line = lines[lineIndex]!;
-		return isCalloutTokenInCode({ line, tokenIndex: line.indexOf("[!"), lineIndex, lineAt: index => lines[index]!, lineCount: lines.length });
+		const lines = source.split("\n"),
+			line = lines[lineIndex]!;
+		return isCalloutTokenInCode({
+			line,
+			tokenIndex: line.indexOf("[!"),
+			lineIndex,
+			lineAt: (index) => lines[index]!,
+			lineCount: lines.length,
+		});
 	};
 	it("rejects a trigger inside a multiline comment", () => assert.equal(hidden("%%\n[!unclosed\n%%", 1), true));
-	it("rejects a trigger inside a multiline code span closed below the cursor", () => assert.equal(hidden("text ``\n[!unclosed\n``", 1), true));
+	it("rejects a trigger inside a multiline code span closed below the cursor", () =>
+		assert.equal(hidden("text ``\n[!unclosed\n``", 1), true));
 	it("rejects top-level indented code", () => assert.equal(hidden("    [!unclosed", 0), true));
 	it("accepts list continuation indentation", () => assert.equal(hidden("- item\n    [!unclosed", 1), false));
 });

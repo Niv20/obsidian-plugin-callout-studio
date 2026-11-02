@@ -59,12 +59,7 @@
  * `transparent`) drain the colour out of a swatch that is currently right.
  */
 
-import {
-	drawnByPseudo,
-	iconKey,
-	readThemeIcon,
-	type ThemeIcon,
-} from "./themeIcon";
+import { drawnByPseudo, iconKey, readThemeIcon, type ThemeIcon } from "./themeIcon";
 
 // The icon vocabulary is re-exported so a caller that wants one reading of a
 // rendered callout still has one import to make.
@@ -137,8 +132,7 @@ export const UNKNOWN_APPEARANCE: ThemeAppearance = {
  * a row whose accent is `null` is drawn with no swatch and no colour at all,
  * which reads as the probe having failed rather than as a bug in one regex.
  */
-const ZERO_ALPHA_RE =
-	/^rgba?\([^,/)]+[,\s]+[^,/)]+[,\s]+[^,/)]+\s*[,/]\s*(?:0|0?\.0+|0%)\s*\)$/;
+const ZERO_ALPHA_RE = /^rgba?\([^,/)]+[,\s]+[^,/)]+[,\s]+[^,/)]+\s*[,/]\s*(?:0|0?\.0+|0%)\s*\)$/;
 
 /** Values a computed colour takes when nothing is painted. */
 function isBlankColor(value: string): boolean {
@@ -161,9 +155,7 @@ function colorOrNull(value: string): string | null {
  * swatch is for.
  */
 export function firstGradientColor(image: string): string | null {
-	const match = /(#[0-9a-f]{3,8}\b|\brgba?\([^)]*\)|\bhsla?\([^)]*\))/i.exec(
-		image,
-	);
+	const match = /(#[0-9a-f]{3,8}\b|\brgba?\([^)]*\)|\bhsla?\([^)]*\))/i.exec(image);
 	if (!match?.[1]) return null;
 	return isBlankColor(match[1]) ? null : match[1];
 }
@@ -175,9 +167,7 @@ export function firstGradientColor(image: string): string | null {
  */
 function pseudoIconPaint(readout: ProbeReadout, icon: ThemeIcon): string | null {
 	if (!drawnByPseudo(readout, icon)) return null;
-	return icon.kind === "glyph"
-		? colorOrNull(readout.iconPseudoColor)
-		: colorOrNull(readout.iconPseudoBackground);
+	return icon.kind === "glyph" ? colorOrNull(readout.iconPseudoColor) : colorOrNull(readout.iconPseudoBackground);
 }
 
 /**
@@ -192,26 +182,15 @@ export function readThemeAppearance(readout: ProbeReadout): ThemeAppearance {
 	const icon = readThemeIcon(readout);
 	return {
 		accent:
-			pseudoIconPaint(readout, icon) ??
-			colorOrNull(readout.titleTextColor) ??
-			colorOrNull(readout.titleColor),
-		background:
-			colorOrNull(readout.background) ??
-			firstGradientColor(readout.backgroundImage),
+			pseudoIconPaint(readout, icon) ?? colorOrNull(readout.titleTextColor) ?? colorOrNull(readout.titleColor),
+		background: colorOrNull(readout.background) ?? firstGradientColor(readout.backgroundImage),
 		icon,
 	};
 }
 
 /** Do two readings describe the same rendered callout? */
-export function sameThemeAppearance(
-	a: ThemeAppearance,
-	b: ThemeAppearance,
-): boolean {
-	return (
-		a.accent === b.accent &&
-		a.background === b.background &&
-		iconKey(a.icon) === iconKey(b.icon)
-	);
+export function sameThemeAppearance(a: ThemeAppearance, b: ThemeAppearance): boolean {
+	return a.accent === b.accent && a.background === b.background && iconKey(a.icon) === iconKey(b.icon);
 }
 
 /**

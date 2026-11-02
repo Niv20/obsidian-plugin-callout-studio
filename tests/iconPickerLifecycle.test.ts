@@ -14,7 +14,9 @@ import { Notice } from "./support/obsidianStub";
 
 function deferred<T>() {
 	let resolve!: (value: T) => void;
-	const promise = new Promise<T>((done) => { resolve = done; });
+	const promise = new Promise<T>((done) => {
+		resolve = done;
+	});
 	return { promise, resolve };
 }
 
@@ -32,12 +34,17 @@ function harness(
 		return { pack, descriptor };
 	});
 	const plugin = {
-		app: { keymap: new TestKeymap(), scope: new TestScope() }, settings: structuredClone(DEFAULT_SETTINGS),
+		app: { keymap: new TestKeymap(), scope: new TestScope() },
+		settings: structuredClone(DEFAULT_SETTINGS),
 		registry: { getUserImages: () => [], getAll: () => [] },
-		icons: { packs: {
-			loadAllFromDisk: loadDisk, onChange: () => () => {}, state: () => "missing",
-			info: (id: IconPackId) => PACK_MANIFEST[id],
-		} },
+		icons: {
+			packs: {
+				loadAllFromDisk: loadDisk,
+				onChange: () => () => {},
+				state: () => "missing",
+				info: (id: IconPackId) => PACK_MANIFEST[id],
+			},
+		},
 	} as unknown as IconPickerPlugin;
 	const modal = new IconPicker(plugin, { type: "lucide", value: "star" });
 	const containerEl = fakeDom.document.body.createDiv({ cls: "modal-container" });
@@ -61,7 +68,11 @@ function harness(
 	const listenerCount = () => fakeDom.document.listeners.get("click")?.length ?? 0;
 	const beforeListeners = listenerCount();
 	return {
-		modal, contentEl, tasks, listenerCount, beforeListeners,
+		modal,
+		contentEl,
+		tasks,
+		listenerCount,
+		beforeListeners,
 		destroy: () => {
 			modal.onClose();
 			containerEl.remove();
@@ -85,9 +96,13 @@ describe("icon picker asynchronous lifecycle", () => {
 					assert.ok(search);
 					assert.equal(search.focusCount, isMobile ? 0 : 1);
 					assert.equal(fakeDom.document.activeElement, isMobile ? null : search);
-				} finally { h.destroy(); }
+				} finally {
+					h.destroy();
+				}
 			}
-		} finally { Platform.isMobile = wasMobile; }
+		} finally {
+			Platform.isMobile = wasMobile;
+		}
 	});
 
 	it("dims Confirm once switching source clears the choice, and says why when it is pressed", async () => {
@@ -95,7 +110,9 @@ describe("icon picker asynchronous lifecycle", () => {
 		try {
 			h.modal.onOpen();
 			await Promise.all(h.tasks);
-			const confirm = (h.modal.modalEl as unknown as FakeElement).querySelector(".modal-button-container button.mod-cta");
+			const confirm = (h.modal.modalEl as unknown as FakeElement).querySelector(
+				".modal-button-container button.mod-cta",
+			);
 			assert.ok(confirm);
 			assert.equal(confirm.getAttribute("aria-disabled"), "false", "the icon being edited is selected");
 			// An icon only means something within its own source, so switching drops it.
@@ -104,7 +121,9 @@ describe("icon picker asynchronous lifecycle", () => {
 			assert.equal(confirm.hasClass("cs-btn-disabled"), true);
 			confirm.fire("click");
 			assert.equal(String(Notice.last?.message), t("iconPicker.chooseFirst"));
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("does not create toolbar listeners after closing during disk loading", async () => {
@@ -118,13 +137,15 @@ describe("icon picker asynchronous lifecycle", () => {
 			await Promise.all(h.tasks);
 			assert.equal(h.contentEl.children.length, 0);
 			assert.equal(h.listenerCount(), h.beforeListeners);
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 	});
 
 	it("keeps the reopened panel when an older disk load finishes", async () => {
 		const disk = deferred<void>();
 		let loads = 0;
-		const h = harness(() => ++loads === 1 ? disk.promise : Promise.resolve());
+		const h = harness(() => (++loads === 1 ? disk.promise : Promise.resolve()));
 		try {
 			h.modal.onOpen();
 			h.modal.onClose();
@@ -138,7 +159,9 @@ describe("icon picker asynchronous lifecycle", () => {
 			await Promise.all(h.tasks);
 			assert.equal(h.contentEl.querySelector(".icon-picker-search-input"), search);
 			assert.equal(h.listenerCount(), listeners);
-		} finally { h.destroy(); }
+		} finally {
+			h.destroy();
+		}
 		assert.equal(h.listenerCount(), h.beforeListeners);
 	});
 
@@ -146,14 +169,19 @@ describe("icon picker asynchronous lifecycle", () => {
 		const index = deferred<IconIndex>();
 		let lucideLoads = 0;
 		const currentIndex: IconIndex = {
-			entries: Array.from({ length: 42 }, (_, i) => ({ name: `icon-${i}`, categories: [], keywords: [] })), categories: [],
+			entries: Array.from({ length: 42 }, (_, i) => ({ name: `icon-${i}`, categories: [], keywords: [] })),
+			categories: [],
 		};
-		const h = harness(async () => {}, (id) => {
-			if (id !== "lucide") return Promise.resolve(emptyIndex);
-			lucideLoads++;
-			return lucideLoads === 1 ? index.promise
-				: Promise.resolve(lucideLoads === 2 ? currentIndex : emptyIndex);
-		});
+		const h = harness(
+			async () => {},
+			(id) => {
+				if (id !== "lucide") return Promise.resolve(emptyIndex);
+				lucideLoads++;
+				return lucideLoads === 1
+					? index.promise
+					: Promise.resolve(lucideLoads === 2 ? currentIndex : emptyIndex);
+			},
+		);
 		try {
 			h.modal.onOpen();
 			h.modal.onClose();
@@ -166,8 +194,13 @@ describe("icon picker asynchronous lifecycle", () => {
 			assert.match(row?.textContent ?? "", /42/);
 			index.resolve(emptyIndex);
 			await Promise.all(h.tasks);
-			assert.equal(h.contentEl.querySelectorAll(".icon-picker-source-menu-item")[1], row,
-				"an old count task must not repaint the current source menu");
-		} finally { h.destroy(); }
+			assert.equal(
+				h.contentEl.querySelectorAll(".icon-picker-source-menu-item")[1],
+				row,
+				"an old count task must not repaint the current source menu",
+			);
+		} finally {
+			h.destroy();
+		}
 	});
 });

@@ -43,15 +43,7 @@ export type IconPackId =
  * several pack files, chosen between by a style control.
  */
 export type IconSourceId =
-	| "lucide"
-	| "tabler"
-	| "material"
-	| "emoji"
-	| "octicons"
-	| "fa"
-	| "rpg-awesome"
-	| "simple-icons"
-	| "image";
+	"lucide" | "tabler" | "material" | "emoji" | "octicons" | "fa" | "rpg-awesome" | "simple-icons" | "image";
 
 export interface CalloutIcon {
 	type: IconPackId;
@@ -478,11 +470,7 @@ export type CalloutRenderRole = "regular" | "heading" | "inline";
  * importantly the icon cache sweep, which must keep the artwork each role draws
  * from rather than only the block callout's.
  */
-export const CALLOUT_RENDER_ROLES: readonly CalloutRenderRole[] = [
-	"regular",
-	"heading",
-	"inline",
-];
+export const CALLOUT_RENDER_ROLES: readonly CalloutRenderRole[] = ["regular", "heading", "inline"];
 
 /** Enable/disable switch for an optional render role (heading / inline). */
 export interface RoleToggleSettings {
@@ -594,13 +582,7 @@ export interface CustomCommand {
  * before the next same-or-higher-level heading.
  */
 export type ContextMenuItemId =
-	| "edit"
-	| "openSettings"
-	| "copyMarkdown"
-	| "foldDefaults"
-	| "cutSection"
-	| "copySection"
-	| "deleteSection";
+	"edit" | "openSettings" | "copyMarkdown" | "foldDefaults" | "cutSection" | "copySection" | "deleteSection";
 
 /** One row in a per-role context-menu configuration. Array order = menu order. */
 export interface ContextMenuItemConfig {

@@ -88,10 +88,7 @@ describe("readSettingsFile", () => {
 		const raw = { version: 4, callouts: [], settings: { language: "auto" } };
 		const read = await readSettingsFile(host({ raw }));
 		assert.strictEqual(read.kind, "loaded");
-		assert.strictEqual(
-			read.kind === "loaded" ? read.json : null,
-			JSON.stringify(raw),
-		);
+		assert.strictEqual(read.kind === "loaded" ? read.json : null, JSON.stringify(raw));
 	});
 
 	it("reads an empty object as loaded — a file somebody wrote", async () => {
@@ -115,9 +112,7 @@ describe("readSettingsFile", () => {
 	it("asks about the plugin's own data.json", async () => {
 		const h = host({ raw: null, dir: ".obsidian/plugins/callout-studio" });
 		await readSettingsFile(h);
-		assert.deepStrictEqual(h.asked, [
-			".obsidian/plugins/callout-studio/data.json",
-		]);
+		assert.deepStrictEqual(h.asked, [".obsidian/plugins/callout-studio/data.json"]);
 	});
 
 	it("reconstructs the path when the manifest carries no dir", async () => {
@@ -125,9 +120,7 @@ describe("readSettingsFile", () => {
 		// LocaleStore make.
 		const h = host({ raw: null, dir: undefined });
 		await readSettingsFile(h);
-		assert.deepStrictEqual(h.asked, [
-			".obsidian/plugins/callout-studio/data.json",
-		]);
+		assert.deepStrictEqual(h.asked, [".obsidian/plugins/callout-studio/data.json"]);
 	});
 
 	for (const [name, patch] of [
@@ -143,7 +136,10 @@ describe("readSettingsFile", () => {
 		["malformed metadata", { metadata: [] }],
 		["an empty gradient", { bgGradient: {} }],
 		["a non-string gradient end color", { bgGradient: { angleDeg: 45, toColorLight: 2, toColorDark: "#ffffff" } }],
-		["a non-string text-gradient end color", { bgGradient: { angleDeg: 45, toColorLight: "#000000", toColorDark: "#ffffff", textToColorDark: {} } }],
+		[
+			"a non-string text-gradient end color",
+			{ bgGradient: { angleDeg: 45, toColorLight: "#000000", toColorDark: "#ffffff", textToColorDark: {} } },
+		],
 	] as const) {
 		it(`rejects ${name} before a partial registry rebuild`, async () => {
 			const raw = { callouts: [{ ...definition({ id: "authored" }), ...patch }] };
@@ -168,9 +164,20 @@ describe("readSettingsFile", () => {
 		assert.strictEqual((await readSettingsFile(host({ raw }))).kind, "loaded");
 	});
 	it("accepts supported gradient shapes with legacy or future metadata intact", async () => {
-		const raw = { callouts: [{ ...definition({ id: "gradient" }), bgGradient: {
-			angleDeg: 45, toColorLight: "#ffffff", toColorDark: "#000000", type: "radial", futureGradientHint: true,
-		} }] };
+		const raw = {
+			callouts: [
+				{
+					...definition({ id: "gradient" }),
+					bgGradient: {
+						angleDeg: 45,
+						toColorLight: "#ffffff",
+						toColorDark: "#000000",
+						type: "radial",
+						futureGradientHint: true,
+					},
+				},
+			],
+		};
 		const read = await readSettingsFile(host({ raw }));
 		assert.strictEqual(read.kind, "loaded");
 		assert.deepStrictEqual(read.kind === "loaded" && read.data, raw);

@@ -70,7 +70,10 @@ import {
 	registerOccurrencesView,
 	refreshOccurrencesViewLocale,
 } from "./usage/registerOccurrencesView";
-import { registerPortableConversionView, refreshPortableConversionViewLocale } from "./portable/registerPortableConversionView";
+import {
+	registerPortableConversionView,
+	refreshPortableConversionViewLocale,
+} from "./portable/registerPortableConversionView";
 import { showNotice } from "./ui/mascot/mascotNotices";
 
 /**
@@ -231,9 +234,7 @@ export default class CalloutStudioPlugin extends Plugin {
 		});
 
 		// Reading-view rendering for heading callouts and inline callouts.
-		this.registerMarkdownPostProcessor(
-			createCalloutReadingPostProcessor(this),
-		);
+		this.registerMarkdownPostProcessor(createCalloutReadingPostProcessor(this));
 
 		// Live Preview rendering for heading callouts and inline callouts.
 		this.registerEditorExtension(createCalloutViewPlugin(this));
@@ -288,17 +289,15 @@ export default class CalloutStudioPlugin extends Plugin {
 		// Clean heading-callout titles in the Outline pane.
 		this.outlineDecorator = new OutlineDecorator(this);
 		onActiveLayoutReady(this, () => this.outlineDecorator.attachAll());
-		this.registerEvent(
-			this.app.workspace.on("layout-change", () =>
-				this.outlineDecorator.attachAll(),
-			),
-		);
+		this.registerEvent(this.app.workspace.on("layout-change", () => this.outlineDecorator.attachAll()));
 		this.register(() => this.outlineDecorator.destroy());
 
 		// Register saved commands before the save listener. Missing targets stay
 		// stored and paused until a manual discovery or settings load restores them.
 		this.customCommands = new CustomCommandManager(this);
-		this.registry.onChange(() => { if (!this.settingsWriter.isDestroyed) this.customCommands.syncAll(); });
+		this.registry.onChange(() => {
+			if (!this.settingsWriter.isDestroyed) this.customCommands.syncAll();
+		});
 		this.customCommands.syncAll();
 
 		// Re-inject CSS when registry changes. One call does both jobs:
@@ -320,7 +319,9 @@ export default class CalloutStudioPlugin extends Plugin {
 		// callouts, which tokens have an icon) only a re-render can change.
 		const readingStructure = new ReadingStructureWatch(this.app, this.registry);
 		this.readingStructure = readingStructure;
-		this.registry.onChange(() => { if (!this.settingsWriter.isDestroyed) readingStructure.check(); });
+		this.registry.onChange(() => {
+			if (!this.settingsWriter.isDestroyed) readingStructure.check();
+		});
 
 		// A paused session stays visible and keeps checking for its file.
 		registerPausedIndicator(this);
@@ -349,9 +350,7 @@ export default class CalloutStudioPlugin extends Plugin {
 
 		// Clean heading-callout titles in the [[# link suggestion popup.
 		this.linkSuggestDecorator = new LinkSuggestDecorator(this);
-		onActiveLayoutReady(this, () =>
-			this.linkSuggestDecorator.install([this.autoComplete, metadataSuggest]),
-		);
+		onActiveLayoutReady(this, () => this.linkSuggestDecorator.install([this.autoComplete, metadataSuggest]));
 		this.register(() => this.linkSuggestDecorator.uninstall());
 
 		// Right-click context menu for callout blocks
@@ -423,7 +422,9 @@ export default class CalloutStudioPlugin extends Plugin {
 		return {
 			openEditor: () => new CalloutEditor(this),
 			openQuickInsert: () => this.openQuickInsert(),
-			openOccurrences: () => { void openCalloutOccurrences(this.app); },
+			openOccurrences: () => {
+				void openCalloutOccurrences(this.app);
+			},
 		};
 	}
 
@@ -454,8 +455,12 @@ export default class CalloutStudioPlugin extends Plugin {
 		clearContentPillCache();
 	}
 
-	retrySettingsRecovery(options?: SettingsAdoptionOptions): Promise<boolean> { return retrySettingsRecovery(this, options); }
-	startFreshSettings(): Promise<boolean> { return startFreshSettings(this); }
+	retrySettingsRecovery(options?: SettingsAdoptionOptions): Promise<boolean> {
+		return retrySettingsRecovery(this, options);
+	}
+	startFreshSettings(): Promise<boolean> {
+		return startFreshSettings(this);
+	}
 
 	saveSettings(): Promise<void> {
 		return saveSettingsWithFeedback(this, () => this.reloads?.release());
@@ -482,10 +487,7 @@ export default class CalloutStudioPlugin extends Plugin {
 	 * builder. {@link registerCalloutCommands} only runs at startup, so this
 	 * is what (un)registers the command with Obsidian immediately.
 	 */
-	async setFixedCommandEnabled(
-		id: FixedCommandId,
-		enabled: boolean,
-	): Promise<void> {
+	async setFixedCommandEnabled(id: FixedCommandId, enabled: boolean): Promise<void> {
 		applyFixedCommandToggle(this, this.commandDeps(), id, enabled);
 		await this.saveSettings();
 	}

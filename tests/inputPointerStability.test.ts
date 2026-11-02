@@ -25,10 +25,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 /** styles.css with its comments removed, so a word in a comment is never read as CSS. */
-const css = readFileSync(join(process.cwd(), "styles.css"), "utf8").replace(
-	/\/\*[\s\S]*?\*\//g,
-	"",
-);
+const css = readFileSync(join(process.cwd(), "styles.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
 
 /** One CSS rule: the selectors before its `{`, and the text between the braces. */
 interface Rule {
@@ -45,7 +42,10 @@ const pattern = /([^{}]+)\{([^{}]*)\}/g;
 let match: RegExpExecArray | null;
 while ((match = pattern.exec(css)) !== null) {
 	rules.push({
-		selectors: (match[1] ?? "").trim().split(/,\s*\n/).map((s) => s.trim().replace(/\s+/g, " ")),
+		selectors: (match[1] ?? "")
+			.trim()
+			.split(/,\s*\n/)
+			.map((s) => s.trim().replace(/\s+/g, " ")),
 		body: match[2] ?? "",
 	});
 }
@@ -56,7 +56,10 @@ while ((match = pattern.exec(css)) !== null) {
  * (which sits after the colon) from being read as a `background` declaration.
  */
 function propertiesOf(rule: Rule): string[] {
-	return rule.body.split(";").map((d) => (d.split(":")[0] ?? "").trim()).filter((p) => p !== "");
+	return rule.body
+		.split(";")
+		.map((d) => (d.split(":")[0] ?? "").trim())
+		.filter((p) => p !== "");
 }
 
 /** The single rule that lists `selector`; fails if there are none or several. */
@@ -113,11 +116,17 @@ describe("the Callout IDs field and its + cap", () => {
 	it("paint one colour, Obsidian's field colour, and swap it together under the pointer", () => {
 		// The cap is a separate element laid over the field's end, so it can only
 		// match the field if both read one variable.
-		assert.ok(ruleFor(".cs-tag-input-row").body.includes("--cs-tag-field-bg: var(--background-modifier-form-field)"));
+		assert.ok(
+			ruleFor(".cs-tag-input-row").body.includes("--cs-tag-field-bg: var(--background-modifier-form-field)"),
+		);
 		assert.ok(ruleFor(".cs-tag-add-slot").body.includes("background: var(--cs-tag-field-bg)"));
 		// Obsidian's hovered field takes the form-field hover colour; the row
 		// moves the variable there, so the cap follows.
-		assert.ok(ruleFor(".cs-tag-input-row:hover").body.includes("--cs-tag-field-bg: var(--background-modifier-form-field-hover)"));
+		assert.ok(
+			ruleFor(".cs-tag-input-row:hover").body.includes(
+				"--cs-tag-field-bg: var(--background-modifier-form-field-hover)",
+			),
+		);
 	});
 
 	it("keep the hover edge while the pointer is over the + button, but never over focus", () => {
@@ -136,7 +145,9 @@ describe("the Callout IDs field and its + cap", () => {
 		assert.ok(slot.body.includes("inset-inline-end: var(--input-border-width, 1px)"));
 		for (const corner of ["start-end", "end-end"]) {
 			assert.ok(
-				slot.body.includes(`border-${corner}-radius: calc(var(--input-radius, var(--radius-s)) - var(--input-border-width, 1px))`),
+				slot.body.includes(
+					`border-${corner}-radius: calc(var(--input-radius, var(--radius-s)) - var(--input-border-width, 1px))`,
+				),
 				`${corner} must track the field's radius minus its border`,
 			);
 		}
@@ -157,7 +168,8 @@ describe("the import window's paste box", () => {
 		// Obsidian's `textarea` rule reads `--textarea-radius` before the input
 		// radius, which keeps a tall box from becoming a pill on mobile.
 		const own = rules.filter(
-			(rule) => rule.selectors.some((s) => s.startsWith(".cs-import-paste-input")) && /border-radius/.test(rule.body),
+			(rule) =>
+				rule.selectors.some((s) => s.startsWith(".cs-import-paste-input")) && /border-radius/.test(rule.body),
 		);
 		assert.deepStrictEqual(own, []);
 	});

@@ -38,11 +38,7 @@ import { ThemeCalloutStore } from "../src/manager/theme/ThemeCalloutStore";
 import { validateImportPayload } from "../src/utils/importValidator";
 import { buildKnownCalloutIds } from "../src/manager/knownCalloutIds";
 import { scanStringForUnknownCallouts } from "../src/utils/vaultCalloutScanner";
-import {
-	definition,
-	discovered,
-	discoveryHarness,
-} from "./support/discoveryHarness";
+import { definition, discovered, discoveryHarness } from "./support/discoveryHarness";
 import type { App } from "obsidian";
 import type { CalloutDefinition, CustomCommand, PluginData } from "../src/types";
 
@@ -165,19 +161,13 @@ describe("discovery — a collision found while scanning files, one at a time", 
 		registry.load(null);
 		registry.add(definition({ id: "banner icon" }));
 		const known = buildKnownCalloutIds(registry);
-		assert.deepStrictEqual(
-			scanStringForUnknownCallouts("> [!banner-icon]", known),
-			[],
-		);
+		assert.deepStrictEqual(scanStringForUnknownCallouts("> [!banner-icon]", known), []);
 
 		const other = new CalloutRegistry();
 		other.load(null);
 		other.add(definition({ id: "banner-icon" }));
 		assert.deepStrictEqual(
-			scanStringForUnknownCallouts(
-				"> [!banner icon]\n> [!banner   ICON]",
-				buildKnownCalloutIds(other),
-			),
+			scanStringForUnknownCallouts("> [!banner icon]\n> [!banner   ICON]", buildKnownCalloutIds(other)),
 			[],
 		);
 	});
@@ -203,28 +193,17 @@ describe("CalloutRegistry.add — the guard is at the seam", () => {
 		return registry;
 	};
 
-	for (const spelling of [
-		"banner-icon",
-		"banner   icon",
-		"Banner Icon",
-		"BANNER-ICON",
-	]) {
+	for (const spelling of ["banner-icon", "banner   icon", "Banner Icon", "BANNER-ICON"]) {
 		it(`refuses "${spelling}" beside "banner icon"`, () => {
 			const registry = seeded();
-			assert.strictEqual(
-				registry.add(definition({ id: spelling })),
-				false,
-			);
+			assert.strictEqual(registry.add(definition({ id: spelling })), false);
 			assert.deepStrictEqual(userIds(registry), ["banner icon"]);
 		});
 	}
 
 	it("refuses a new row whose ALIAS collides with an existing id", () => {
 		const registry = seeded();
-		assert.strictEqual(
-			registry.add(definition({ id: "other", aliases: ["banner-icon"] })),
-			false,
-		);
+		assert.strictEqual(registry.add(definition({ id: "other", aliases: ["banner-icon"] })), false);
 		assert.deepStrictEqual(userIds(registry), ["banner icon"]);
 	});
 
@@ -232,10 +211,7 @@ describe("CalloutRegistry.add — the guard is at the seam", () => {
 		const registry = new CalloutRegistry();
 		registry.load(null);
 		registry.add(definition({ id: "flag", aliases: ["banner icon"] }));
-		assert.strictEqual(
-			registry.add(definition({ id: "banner-icon" })),
-			false,
-		);
+		assert.strictEqual(registry.add(definition({ id: "banner-icon" })), false);
 		assert.deepStrictEqual(userIds(registry), ["flag"]);
 	});
 
@@ -252,10 +228,7 @@ describe("CalloutRegistry.update — a rename cannot create the pair either", ()
 		registry.load(null);
 		registry.add(definition({ id: "banner icon" }));
 		registry.add(definition({ id: "spare" }));
-		assert.strictEqual(
-			registry.update("spare", { id: "banner-icon" }),
-			false,
-		);
+		assert.strictEqual(registry.update("spare", { id: "banner-icon" }), false);
 		assert.deepStrictEqual(userIds(registry), ["banner icon", "spare"]);
 	});
 
@@ -265,10 +238,7 @@ describe("CalloutRegistry.update — a rename cannot create the pair either", ()
 		const registry = new CalloutRegistry();
 		registry.load(null);
 		registry.add(definition({ id: "banner icon", aliases: ["flag"] }));
-		assert.strictEqual(
-			registry.update("banner icon", { id: "flag" }),
-			true,
-		);
+		assert.strictEqual(registry.update("banner icon", { id: "flag" }), true);
 		assert.deepStrictEqual(userIds(registry), ["flag"]);
 	});
 });
@@ -302,10 +272,7 @@ describe("import — an entry is the callout it already is", () => {
 
 	it("and the other way round, keeping the row's own spelling", async () => {
 		const registry = withRow(definition({ id: "banner-icon" }));
-		const result = await validateImportPayload(
-			[importEntry({ id: "Banner   Icon" })],
-			registry,
-		);
+		const result = await validateImportPayload([importEntry({ id: "Banner   Icon" })], registry);
 		assert.deepStrictEqual(
 			result.validDefs.map((d) => d.id),
 			["banner-icon"],
@@ -316,19 +283,14 @@ describe("import — an entry is the callout it already is", () => {
 		const registry = new CalloutRegistry();
 		registry.load(null);
 		const result = await validateImportPayload(
-			[
-				importEntry({ id: "banner icon" }),
-				importEntry({ id: "banner-icon" }),
-			],
+			[importEntry({ id: "banner icon" }), importEntry({ id: "banner-icon" })],
 			registry,
 		);
 		assert.deepStrictEqual(
 			result.validDefs.map((d) => d.id),
 			["banner icon"],
 		);
-		assert.deepStrictEqual(errorKeys(result.issues), [
-			"import.err.duplicateInFile",
-		]);
+		assert.deepStrictEqual(errorKeys(result.issues), ["import.err.duplicateInFile"]);
 	});
 
 	it("counts repeated whitespace and case as the same entry too", async () => {
@@ -339,9 +301,7 @@ describe("import — an entry is the callout it already is", () => {
 			registry,
 		);
 		assert.strictEqual(result.validDefs.length, 1);
-		assert.deepStrictEqual(errorKeys(result.issues), [
-			"import.err.duplicateInFile",
-		]);
+		assert.deepStrictEqual(errorKeys(result.issues), ["import.err.duplicateInFile"]);
 	});
 
 	it("flags one entry listing both spellings as one alias twice", async () => {
@@ -351,20 +311,13 @@ describe("import — an entry is the callout it already is", () => {
 			[importEntry({ id: "flag", aliases: ["banner icon", "banner-icon"] })],
 			registry,
 		);
-		assert.deepStrictEqual(errorKeys(result.issues), [
-			"import.err.aliasDup",
-		]);
+		assert.deepStrictEqual(errorKeys(result.issues), ["import.err.aliasDup"]);
 	});
 
 	it("flags an imported alias that collides with an existing row's id", async () => {
 		const registry = withRow(definition({ id: "banner icon" }));
-		const result = await validateImportPayload(
-			[importEntry({ id: "flag", aliases: ["banner-icon"] })],
-			registry,
-		);
-		assert.deepStrictEqual(errorKeys(result.issues), [
-			"import.err.aliasConflict",
-		]);
+		const result = await validateImportPayload([importEntry({ id: "flag", aliases: ["banner-icon"] })], registry);
+		assert.deepStrictEqual(errorKeys(result.issues), ["import.err.aliasConflict"]);
 	});
 
 	it("flags an alias that is the entry's OWN id in another spelling", () => {
@@ -372,14 +325,11 @@ describe("import — an entry is the callout it already is", () => {
 		// pass, leaving a row carrying a self-alias that resolved back to it.
 		const registry = new CalloutRegistry();
 		registry.load(null);
-		return validateImportPayload(
-			[importEntry({ id: "banner icon", aliases: ["banner-icon"] })],
-			registry,
-		).then((result) => {
-			assert.deepStrictEqual(errorKeys(result.issues), [
-				"import.err.aliasDup",
-			]);
-		});
+		return validateImportPayload([importEntry({ id: "banner icon", aliases: ["banner-icon"] })], registry).then(
+			(result) => {
+				assert.deepStrictEqual(errorKeys(result.issues), ["import.err.aliasDup"]);
+			},
+		);
 	});
 });
 
@@ -391,10 +341,7 @@ function command(over: Partial<CustomCommand> = {}): CustomCommand {
 	return { id: "cmd-1", calloutId: "banner-icon", role: "regular", ...over };
 }
 
-function savedPair(
-	callouts: CalloutDefinition[],
-	settings?: Record<string, unknown>,
-): Partial<PluginData> {
+function savedPair(callouts: CalloutDefinition[], settings?: Record<string, unknown>): Partial<PluginData> {
 	return {
 		callouts,
 		...(settings ? { settings } : {}),
@@ -410,9 +357,7 @@ describe("startup — persisted data holding both forms", () => {
 			const registry = new CalloutRegistry();
 			registry.load(savedPair(order));
 			assert.deepStrictEqual(userIds(registry), ["banner icon"]);
-			assert.deepStrictEqual(registry.get("banner icon")?.aliases, [
-				"banner-icon",
-			]);
+			assert.deepStrictEqual(registry.get("banner icon")?.aliases, ["banner-icon"]);
 		}
 	});
 
@@ -480,10 +425,7 @@ describe("startup — persisted data holding both forms", () => {
 		// the vault stopped mentioning it.
 		const registry = new CalloutRegistry();
 		registry.load(
-			savedPair([
-				definition({ id: "banner icon" }),
-				definition({ id: "banner-icon", customized: true }),
-			]),
+			savedPair([definition({ id: "banner icon" }), definition({ id: "banner-icon", customized: true })]),
 		);
 		assert.strictEqual(registry.get("banner icon")?.customized, true);
 	});
@@ -493,12 +435,7 @@ describe("startup — persisted data holding both forms", () => {
 		// rows that are real. Auto-junk loses even when it is spelled the way
 		// the editor's own ID field would have spelled it.
 		const registry = new CalloutRegistry();
-		registry.load(
-			savedPair([
-				discovered("banner icon"),
-				definition({ id: "banner-icon", customized: true }),
-			]),
-		);
+		registry.load(savedPair([discovered("banner icon"), definition({ id: "banner-icon", customized: true })]));
 		assert.deepStrictEqual(userIds(registry), ["banner-icon"]);
 		// And the auto-created row is dropped outright rather than aliased:
 		// discovery owns that id again the moment a note mentions it.
@@ -510,13 +447,9 @@ describe("startup — persisted data holding both forms", () => {
 		// registry cannot find, taking the user's hotkey with it.
 		const registry = new CalloutRegistry();
 		registry.load(
-			savedPair(
-				[
-					definition({ id: "banner icon" }),
-					definition({ id: "banner-icon", customized: true }),
-				],
-				{ customCommands: [command({ calloutId: "banner-icon" })] },
-			),
+			savedPair([definition({ id: "banner icon" }), definition({ id: "banner-icon", customized: true })], {
+				customCommands: [command({ calloutId: "banner-icon" })],
+			}),
 		);
 		assert.deepStrictEqual(
 			registry.settings.customCommands.map((c) => c.calloutId),
@@ -530,28 +463,18 @@ describe("startup — persisted data holding both forms", () => {
 		// bails and every unrecognized callout loses its colour and icon.
 		const registry = new CalloutRegistry();
 		registry.load(
-			savedPair(
-				[
-					definition({ id: "banner icon" }),
-					definition({ id: "banner-icon", customized: true }),
-				],
-				{ fallbackCalloutId: "banner-icon" },
-			),
+			savedPair([definition({ id: "banner icon" }), definition({ id: "banner-icon", customized: true })], {
+				fallbackCalloutId: "banner-icon",
+			}),
 		);
-		assert.strictEqual(
-			registry.settings.fallbackCalloutId,
-			"banner icon",
-		);
+		assert.strictEqual(registry.settings.fallbackCalloutId, "banner icon");
 		assert.ok(registry.get(registry.settings.fallbackCalloutId));
 	});
 
 	it("folds a row whose ALIAS is another row's id", () => {
 		const registry = new CalloutRegistry();
 		registry.load(
-			savedPair([
-				definition({ id: "flag", aliases: ["banner-icon"] }),
-				definition({ id: "banner icon" }),
-			]),
+			savedPair([definition({ id: "flag", aliases: ["banner-icon"] }), definition({ id: "banner icon" })]),
 		);
 		assert.strictEqual(userIds(registry).length, 1);
 	});
@@ -561,10 +484,7 @@ describe("startup — persisted data holding both forms", () => {
 		// every launch: the user sees one row and the file holds two.
 		const registry = new CalloutRegistry();
 		registry.load(
-			savedPair([
-				definition({ id: "banner icon" }),
-				definition({ id: "banner-icon", customized: true }),
-			]),
+			savedPair([definition({ id: "banner icon" }), definition({ id: "banner-icon", customized: true })]),
 		);
 		assert.strictEqual(registry.needsSaveAfterLoad(), true);
 
@@ -572,10 +492,7 @@ describe("startup — persisted data holding both forms", () => {
 		again.load(registry.toSaveData());
 		assert.deepStrictEqual(userIds(again), ["banner icon"]);
 		assert.strictEqual(again.needsSaveAfterLoad(), false);
-		assert.deepStrictEqual(
-			again.get("banner icon")?.aliases,
-			registry.get("banner icon")?.aliases,
-		);
+		assert.deepStrictEqual(again.get("banner icon")?.aliases, registry.get("banner icon")?.aliases);
 	});
 });
 
@@ -603,9 +520,7 @@ describe("a theme's callout is the user's row when they are one callout", () => 
 		const registry = new CalloutRegistry();
 		registry.load(null);
 		registry.add(definition({ id: "banner icon" }));
-		const store = new ThemeCalloutStore(
-			themeApp('.callout[data-callout="banner-icon"] { color: red; }'),
-		);
+		const store = new ThemeCalloutStore(themeApp('.callout[data-callout="banner-icon"] { color: red; }'));
 		registry.setThemeOwnedIds(store.themeDefinedIds());
 		assert.deepStrictEqual(userIds(registry), ["banner icon"]);
 		assert.strictEqual(registry.getThemeProvided().length, 0);
@@ -616,9 +531,7 @@ describe("a theme's callout is the user's row when they are one callout", () => 
 		registry.load(null);
 		const row = definition({ id: "banner icon" });
 		registry.add(row);
-		const store = new ThemeCalloutStore(
-			themeApp('.callout[data-callout="banner-icon"] { color: red; }'),
-		);
+		const store = new ThemeCalloutStore(themeApp('.callout[data-callout="banner-icon"] { color: red; }'));
 		registry.setThemeOwnedIds(store.themeDefinedIds());
 		assert.strictEqual(registry.themeOwns(registry.get("banner icon")!), true);
 	});

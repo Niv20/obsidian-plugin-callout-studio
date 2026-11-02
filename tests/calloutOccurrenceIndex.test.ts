@@ -6,7 +6,9 @@ import { fingerprintCalloutContent, iterateContentFingerprint } from "../src/usa
 import { deferred, occurrenceVault } from "./occurrenceIndexHarness";
 
 const previousWindow = Object.getOwnPropertyDescriptor(globalThis, "window");
-before(() => { Object.defineProperty(globalThis, "window", { configurable: true, value: globalThis }); });
+before(() => {
+	Object.defineProperty(globalThis, "window", { configurable: true, value: globalThis });
+});
 after(() => {
 	if (previousWindow) Object.defineProperty(globalThis, "window", previousWindow);
 	else Reflect.deleteProperty(globalThis, "window");
@@ -46,9 +48,16 @@ describe("saved-note occurrence index", () => {
 		assert.equal(result.totalCount, 5);
 		assert.equal(result.fileCount, 2);
 		assert.deepEqual(result.roles, { regular: 1, heading: 1, inline: 3 });
-		assert.deepEqual(result.occurrences.map((entry) => [entry.path, entry.line, entry.from, entry.to]), [
-			["a.md", 0, 2, 16], ["a.md", 1, 3, 13], ["a.md", 2, 6, 14], ["a.md", 2, 19, 29], ["b.md", 0, 0, 8],
-		]);
+		assert.deepEqual(
+			result.occurrences.map((entry) => [entry.path, entry.line, entry.from, entry.to]),
+			[
+				["a.md", 0, 2, 16],
+				["a.md", 1, 3, 13],
+				["a.md", 2, 6, 14],
+				["a.md", 2, 19, 29],
+				["b.md", 0, 0, 8],
+			],
+		);
 		assert.equal(result.occurrences[0]?.lineText, "> [!My note|red] A");
 		assert.equal(index.query(["my-note", "alias"], "inline").totalCount, 3);
 		assert.equal(index.query([]).totalCount, 0);
@@ -149,9 +158,13 @@ describe("saved-note occurrence index", () => {
 		context.mock.method(console, "warn", () => undefined);
 		const h = occurrenceVault({ "a.md": "[!a]" });
 		const index = getCalloutOccurrenceIndex(h.app);
-		index.subscribe(() => { throw new Error("View already closed"); });
+		index.subscribe(() => {
+			throw new Error("View already closed");
+		});
 		const list = h.app.vault.getMarkdownFiles.bind(h.app.vault);
-		h.app.vault.getMarkdownFiles = () => { throw new Error("Vault unavailable"); };
+		h.app.vault.getMarkdownFiles = () => {
+			throw new Error("Vault unavailable");
+		};
 		await index.ensureFresh();
 		assert.equal(index.status, "partial");
 		assert.deepEqual(index.failures, [{ path: "", message: "Vault unavailable" }]);
@@ -174,7 +187,10 @@ describe("saved-note occurrence index", () => {
 		index.invalidate("folder/moved.md");
 		await index.ensureFresh();
 		assert.equal(index.status, "ready");
-		assert.deepEqual(index.query().occurrences.map((entry) => entry.path), ["folder/moved.md"]);
+		assert.deepEqual(
+			index.query().occurrences.map((entry) => entry.path),
+			["folder/moved.md"],
+		);
 		assert.equal(index.markdownFileCount, 1);
 	});
 
@@ -206,7 +222,9 @@ describe("saved-note occurrence index", () => {
 		h.held.set("a.md", gate.promise);
 		const index = getCalloutOccurrenceIndex(h.app);
 		let notifications = 0;
-		const unsubscribe = index.subscribe(() => { notifications++; });
+		const unsubscribe = index.subscribe(() => {
+			notifications++;
+		});
 		index.invalidate("a.md");
 		unsubscribe();
 		const running = index.ensureFresh();
@@ -225,20 +243,39 @@ describe("saved-note occurrence index", () => {
 
 describe("occurrence parser integration", () => {
 	it("shares exclusions and metadata identities without requiring registered settings", () => {
-		const found = scanCalloutOccurrences("a.md", [
-			"---", "value: '[!frontmatter]'", "---", "```", "> [!code]", "```",
-			"%% [!comment]", "## [!still-comment] %%", "`[!inline-code]`",
-			"> [!Unknown type|metadata] Title", "## [!heading] Title", "Text [!inline]{payload}",
-		].join("\n"));
-		assert.deepEqual(found.map((entry) => [entry.identity, entry.role, entry.line]), [
-			["unknown-type", "regular", 9], ["heading", "heading", 10], ["inline", "inline", 11],
-		]);
+		const found = scanCalloutOccurrences(
+			"a.md",
+			[
+				"---",
+				"value: '[!frontmatter]'",
+				"---",
+				"```",
+				"> [!code]",
+				"```",
+				"%% [!comment]",
+				"## [!still-comment] %%",
+				"`[!inline-code]`",
+				"> [!Unknown type|metadata] Title",
+				"## [!heading] Title",
+				"Text [!inline]{payload}",
+			].join("\n"),
+		);
+		assert.deepEqual(
+			found.map((entry) => [entry.identity, entry.role, entry.line]),
+			[
+				["unknown-type", "regular", 9],
+				["heading", "heading", 10],
+				["inline", "inline", 11],
+			],
+		);
 	});
 
 	it("yields on long documents with no tokens and honors cancellation", async () => {
 		let current = true;
 		const scan = scanCalloutOccurrencesAsync("long.md", "ordinary prose\n".repeat(2000), () => current);
-		window.setTimeout(() => { current = false; }, 0);
+		window.setTimeout(() => {
+			current = false;
+		}, 0);
 		assert.equal(await scan, null);
 	});
 });
@@ -272,7 +309,9 @@ describe("occurrence source snapshot fingerprints", () => {
 		assert.equal(iterateContentFingerprint(source).next().done, false);
 		let current = true;
 		const scan = scanCalloutOccurrencesAsync("large.md", source, () => current);
-		window.setTimeout(() => { current = false; }, 0);
+		window.setTimeout(() => {
+			current = false;
+		}, 0);
 		assert.equal(await scan, null);
 	});
 });

@@ -17,12 +17,7 @@
  * `needsSaveAfterLoad` exists to prevent, and returning "did anything change"
  * from one function is what makes it hard to forget again.
  */
-import type {
-	CalloutDefinition,
-	IconSvgCacheEntry,
-	MaterialSvgCacheEntry,
-	UserImageIcon,
-} from "../types";
+import type { CalloutDefinition, IconSvgCacheEntry, MaterialSvgCacheEntry, UserImageIcon } from "../types";
 import { resolveLucideId } from "../icons/lucideId";
 import { materialPack } from "../icons/packs/material";
 
@@ -112,9 +107,7 @@ export function migrateSavedIcons(
 		if (def.icon.type !== "image" || def.icon.recolor !== undefined) {
 			continue;
 		}
-		const picture = target.userImages.find(
-			(image) => image.id === def.icon.value,
-		);
+		const picture = target.userImages.find((image) => image.id === def.icon.value);
 		def.icon = { ...def.icon, recolor: picture?.monochrome === true };
 		changed = true;
 	}

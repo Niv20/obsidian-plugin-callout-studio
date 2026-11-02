@@ -36,13 +36,18 @@ const lines: Array<[string, string]> = [
 describe("Convert uses to plain text matches Review conversion", () => {
 	for (const [name, source] of lines) {
 		it(name, () => {
-			const ids = new Set(Array.from(iterateDocumentCallouts(source), ({ token }) => calloutIdentity(token.rawId)));
+			const ids = new Set(
+				Array.from(iterateDocumentCallouts(source), ({ token }) => calloutIdentity(token.rawId)),
+			);
 			const vault = calloutsToPlainText(source, ids)?.content ?? source;
 			assert.equal(vault, convertPortableCallouts(source).content);
 		});
 	}
 
 	it("a pill with text leaves only its text", () => {
-		assert.equal(calloutsToPlainText("See [!warning]{be careful} here.", new Set(["warning"]))?.content, "See be careful here.");
+		assert.equal(
+			calloutsToPlainText("See [!warning]{be careful} here.", new Set(["warning"]))?.content,
+			"See be careful here.",
+		);
 	});
 });

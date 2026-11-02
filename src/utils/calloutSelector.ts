@@ -65,8 +65,7 @@ export const cssAttrValue = (raw: string): string =>
  * (see renderShared.buildCalloutTokenDom) — those go through
  * {@link tokenAttrSel}, which escapes the same way.
  */
-export const calloutSel = (id: string, themePrefix = ""): string =>
-	calloutSelAt(id, 1, themePrefix);
+export const calloutSel = (id: string, themePrefix = ""): string => calloutSelAt(id, 1, themePrefix);
 
 /**
  * {@link calloutSel} at a chosen specificity, by repeating `.callout`.
@@ -80,11 +79,7 @@ export const calloutSel = (id: string, themePrefix = ""): string =>
  * See `manager/styleMode.ts` for the weight force uses and why repetition beat
  * `:is()` and `:not()`.
  */
-export const calloutSelAt = (
-	id: string,
-	weight: number,
-	themePrefix = "",
-): string =>
+export const calloutSelAt = (id: string, weight: number, themePrefix = ""): string =>
 	`${themePrefix}${".callout".repeat(Math.max(1, weight))}` +
 	`[data-callout="${cssAttrValue(obsidianCalloutAttrId(id))}"]`;
 
@@ -114,5 +109,4 @@ export const calloutSelDeferring = (id: string): string =>
  * through `obsidianCalloutAttrId`. It must still be escaped: see
  * {@link cssAttrValue}.
  */
-export const tokenAttrSel = (id: string): string =>
-	`[data-callout="${cssAttrValue(id)}"]`;
+export const tokenAttrSel = (id: string): string => `[data-callout="${cssAttrValue(id)}"]`;

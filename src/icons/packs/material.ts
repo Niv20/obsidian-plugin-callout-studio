@@ -13,12 +13,7 @@
  */
 import { requestUrl } from "obsidian";
 import type { CalloutIcon, MaterialIconStyle } from "../../types";
-import type {
-	IconEntry,
-	IconIndex,
-	IconPack,
-	IconVariantState,
-} from "../types";
+import type { IconEntry, IconIndex, IconPack, IconVariantState } from "../types";
 import { decodeIndex, memoizeIndex } from "../data/codec";
 import { MATERIAL_INDEX } from "../data/material.index";
 import { sanitizeSVG } from "../svg";
@@ -31,17 +26,10 @@ const DOWNLOAD_TIMEOUT_MS = 30_000;
 export const MATERIAL_DEFAULT_STYLE: MaterialIconStyle = "outlined";
 export const MATERIAL_DEFAULT_WEIGHT = 400;
 
-export const MATERIAL_STYLES: readonly MaterialIconStyle[] = [
-	"outlined",
-	"filled",
-	"rounded",
-	"sharp",
-];
+export const MATERIAL_STYLES: readonly MaterialIconStyle[] = ["outlined", "filled", "rounded", "sharp"];
 
 /** The variable font's weight axis, in the steps Google exposes. */
-export const MATERIAL_WEIGHTS: readonly number[] = [
-	100, 200, 300, 400, 500, 600, 700,
-];
+export const MATERIAL_WEIGHTS: readonly number[] = [100, 200, 300, 400, 500, 600, 700];
 
 /** The style/weight pair an icon actually renders at. */
 export function materialVariantOf(icon: CalloutIcon): {
@@ -132,11 +120,7 @@ export const materialPack: IconPack = {
  * segment ("wght300fill1", never the reverse); weight 400 is the default and is
  * omitted, and a URL with no segments uses the literal variant "default".
  */
-function materialSvgUrl(
-	name: string,
-	style: MaterialIconStyle,
-	weight: number,
-): string {
+function materialSvgUrl(name: string, style: MaterialIconStyle, weight: number): string {
 	const family = style === "filled" ? "outlined" : style;
 	const parts: string[] = [];
 	if (weight !== MATERIAL_DEFAULT_WEIGHT) parts.push(`wght${weight}`);
@@ -160,9 +144,7 @@ export async function downloadMaterialSvg(
 		timer = window.setTimeout(() => reject(new Error("Material icon download timed out")), DOWNLOAD_TIMEOUT_MS);
 	});
 	try {
-		const pending = Promise.race([
-			requestUrl({ url: materialSvgUrl(name, style, weight) }), timeout,
-		]);
+		const pending = Promise.race([requestUrl({ url: materialSvgUrl(name, style, weight) }), timeout]);
 		const response = await (scope ? scope.wait(pending) : pending);
 		const sanitized = sanitizeSVG(response.text);
 		if (!sanitized) throw new Error(`Invalid SVG received for Material icon "${name}"`);

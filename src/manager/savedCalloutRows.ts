@@ -57,16 +57,14 @@ function normalizeRowColors(
 
 	for (const field of ["colorLight", "colorDark"] as const) {
 		const current = saved[field];
-		const parsed =
-			typeof current === "string" ? parseCssColorToHex(current) : null;
+		const parsed = typeof current === "string" ? parseCssColorToHex(current) : null;
 		const fixed = parsed ?? seeded?.[field] ?? UNREADABLE_COLOR_FALLBACK;
 		if (fixed !== current) patch[field] = fixed;
 	}
 	for (const field of ["textColorLight", "textColorDark"] as const) {
 		const current = saved[field];
 		if (current === undefined) continue;
-		const parsed =
-			typeof current === "string" ? parseCssColorToHex(current) : null;
+		const parsed = typeof current === "string" ? parseCssColorToHex(current) : null;
 		if (parsed === current) continue;
 		if (parsed === null) drop.push(field);
 		else patch[field] = parsed;
@@ -104,10 +102,7 @@ export interface RowVerdict {
  * "already there", and stamping that one as a built-in is precisely the
  * confusion being repaired.
  */
-export function reconcileSavedRow(
-	saved: CalloutDefinition,
-	seeded: CalloutDefinition | undefined,
-): RowVerdict {
+export function reconcileSavedRow(saved: CalloutDefinition, seeded: CalloutDefinition | undefined): RowVerdict {
 	const { def: row, changed } = normalizeRowColors(saved, seeded);
 	if (seeded) {
 		// A row on one of the 13 ids. An older build, a hand-edited file or a

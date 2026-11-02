@@ -102,7 +102,17 @@ describe("no suite relies on top-level await", () => {
 	 * one outright — so the rule here is the target's, not this suite's, and it
 	 * lifts by itself the day the target moves.
 	 */
-	const TOP_LEVEL_AWAIT_TARGETS = ["es2017", "es2018", "es2019", "es2020", "es2021", "es2022", "es2023", "es2024", "esnext"];
+	const TOP_LEVEL_AWAIT_TARGETS = [
+		"es2017",
+		"es2018",
+		"es2019",
+		"es2020",
+		"es2021",
+		"es2022",
+		"es2023",
+		"es2024",
+		"esnext",
+	];
 
 	const target = (tsconfig.compilerOptions?.target ?? "").toLowerCase();
 	const allowed = TOP_LEVEL_AWAIT_TARGETS.includes(target);
@@ -152,8 +162,7 @@ describe("the node typings describe the node the suites run on", () => {
 	 * The major is checked against the two places that decide which Node this
 	 * repository really uses, rather than being restated as a third number.
 	 */
-	const majorOf = (range: string): number =>
-		Number(/(\d+)/.exec(range)?.[1] ?? NaN);
+	const majorOf = (range: string): number => Number(/(\d+)/.exec(range)?.[1] ?? NaN);
 
 	const declared = majorOf(pkg.devDependencies?.["@types/node"] ?? "");
 
@@ -203,11 +212,6 @@ describe("the runner's lifecycle hooks are usable", () => {
 	});
 
 	it("teardown, then setup again, for the next test", () => {
-		assert.deepStrictEqual(log, [
-			"before",
-			"beforeEach",
-			"afterEach",
-			"beforeEach",
-		]);
+		assert.deepStrictEqual(log, ["before", "beforeEach", "afterEach", "beforeEach"]);
 	});
 });

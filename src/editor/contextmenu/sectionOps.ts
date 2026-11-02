@@ -24,11 +24,7 @@ export interface HeadingSectionRange {
  * The range starts at the heading line and ends just before the next
  * heading whose level ≤ `level` (or at end-of-document).
  */
-export function getHeadingSectionRange(
-	editor: Editor,
-	headingLine: number,
-	level: number,
-): HeadingSectionRange {
+export function getHeadingSectionRange(editor: Editor, headingLine: number, level: number): HeadingSectionRange {
 	const lastLine = editor.lineCount() - 1;
 	const endLine = Math.min(lastLine, sectionEndLine(editor, headingLine, level) - 1);
 
@@ -37,9 +33,7 @@ export function getHeadingSectionRange(
 	// leaves behind) is removed cleanly — except at end-of-document, where
 	// there is no newline to consume.
 	const to: EditorPosition =
-		endLine < lastLine
-			? { line: endLine + 1, ch: 0 }
-			: { line: endLine, ch: editor.getLine(endLine).length };
+		endLine < lastLine ? { line: endLine + 1, ch: 0 } : { line: endLine, ch: editor.getLine(endLine).length };
 
 	return { from, to, text: editor.getRange(from, to) };
 }
@@ -60,9 +54,17 @@ export function captureSectionTarget(app: App, view: MarkdownView | null, editor
 	const file = view?.file;
 	return () => {
 		try {
-			return !!view && !!file && view.file === file && view.editor === editor &&
-				view.leaf?.view === view && app.workspace.getLeavesOfType("markdown").includes(view.leaf);
-		} catch { return false; }
+			return (
+				!!view &&
+				!!file &&
+				view.file === file &&
+				view.editor === editor &&
+				view.leaf?.view === view &&
+				app.workspace.getLeavesOfType("markdown").includes(view.leaf)
+			);
+		} catch {
+			return false;
+		}
 	};
 }
 
@@ -74,7 +76,7 @@ export async function cutHeadingSection(
 ): Promise<boolean> {
 	if (!canDelete()) return false;
 	const before = editor.getValue();
-	if (!await copyHeadingSection(range)) return false;
+	if (!(await copyHeadingSection(range))) return false;
 	if (!canDelete() || editor.getValue() !== before) {
 		showNotice("warning", t("notice.sectionChangedAfterCopy"));
 		return false;
@@ -84,9 +86,6 @@ export async function cutHeadingSection(
 }
 
 /** Delete the whole section (undoable via the editor's history). */
-export function deleteHeadingSection(
-	editor: Editor,
-	range: HeadingSectionRange,
-): void {
+export function deleteHeadingSection(editor: Editor, range: HeadingSectionRange): void {
 	editor.replaceRange("", range.from, range.to);
 }

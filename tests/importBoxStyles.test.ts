@@ -29,10 +29,14 @@ import { parseRules, valueOf, type CssRule } from "./support/cssInjectorHarness"
 
 const rules = parseRules(readFileSync(join(process.cwd(), "styles.css"), "utf8"));
 
-
 /** Every rule whose selector list names `selector` as one of its entries. */
 function rulesNaming(selector: string): CssRule[] {
-	return rules.filter((r) => r.selector.split(",").map((s) => s.trim()).includes(selector));
+	return rules.filter((r) =>
+		r.selector
+			.split(",")
+			.map((s) => s.trim())
+			.includes(selector),
+	);
 }
 
 function only(selector: string): CssRule {
@@ -70,9 +74,15 @@ describe("the shared import/export boxes at rest", () => {
 		const green = rules
 			.filter((r) => /\.cs-(?:option|import)-/.test(r.selector))
 			.filter((r) => r.decls.some((d) => /--(?:text-success|color-green|background-modifier-success)\b/.test(d)));
-		assert.deepEqual(green.map((r) => r.selector), [], "success is a notice, not a colour");
 		assert.deepEqual(
-			rules.filter((r) => r.selector.includes(".is-filled") && r.selector.includes(".cs-option-")).map((r) => r.selector),
+			green.map((r) => r.selector),
+			[],
+			"success is a notice, not a colour",
+		);
+		assert.deepEqual(
+			rules
+				.filter((r) => r.selector.includes(".is-filled") && r.selector.includes(".cs-option-"))
+				.map((r) => r.selector),
 			[],
 		);
 	});
@@ -100,14 +110,21 @@ describe("the shared import/export boxes at rest", () => {
 describe("the shared cards under the pointer", () => {
 	it("do not answer it: only a card's own controls do, as Obsidian's", () => {
 		const hovering = rules.filter((r) => /\.cs-option-/.test(r.selector) && r.selector.includes(":hover"));
-		assert.deepEqual(hovering.map((r) => r.selector), []);
+		assert.deepEqual(
+			hovering.map((r) => r.selector),
+			[],
+		);
 	});
 });
 
 describe("the plugin import window's cards", () => {
 	it("gives the paste box one fixed height that scrolls and cannot be dragged larger", () => {
 		const box = only(".cs-import-paste-input.cs-text-control");
-		assert.match(valueOf(box, "height") ?? "", /^\d+px$/, "a fixed height, not auto and not a share of the content");
+		assert.match(
+			valueOf(box, "height") ?? "",
+			/^\d+px$/,
+			"a fixed height, not auto and not a share of the content",
+		);
 		assert.equal(valueOf(box, "resize"), "none");
 		assert.equal(valueOf(box, "overflow"), "auto");
 		for (const grows of ["field-sizing", "min-height", "max-height"]) {
@@ -118,7 +135,9 @@ describe("the plugin import window's cards", () => {
 		// Nothing else of the plugin's sets a text field's height any more (the
 		// face is Obsidian's), so two classes clear Obsidian's `textarea` (0,0,1).
 		assert.deepStrictEqual(
-			rules.filter((r) => r.selector.includes(".cs-text-control") && r.props.includes("height")).map((r) => r.selector),
+			rules
+				.filter((r) => r.selector.includes(".cs-text-control") && r.props.includes("height"))
+				.map((r) => r.selector),
 			[".cs-import-paste-input.cs-text-control"],
 		);
 		assert.equal(valueOf(only(".cs-import-manual"), "flex-wrap"), "wrap", "the card lets it take that line");
@@ -141,7 +160,10 @@ describe("the plugin import window's cards", () => {
 		const button = only(".cs-option-box .cs-import-action");
 		assert.deepEqual(button.props, ["flex-shrink"]);
 		assert.equal(valueOf(button, "flex-shrink"), "0");
-		assert.deepEqual(rules.filter((r) => r.selector.includes(".cs-import-action") && r !== button).map((r) => r.selector), []);
+		assert.deepEqual(
+			rules.filter((r) => r.selector.includes(".cs-import-action") && r !== button).map((r) => r.selector),
+			[],
+		);
 	});
 });
 

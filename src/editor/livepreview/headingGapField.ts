@@ -80,9 +80,7 @@ function buildGaps(state: EditorState, host: LivePreviewHost): DecorationSet {
 		// heading whose callout was handed to the theme renders as plain text
 		// and would otherwise sit under a blank band with nothing above it.
 		const drawsBar = tokens.some(
-			(tk) =>
-				tk.role === "heading" &&
-				shouldRenderToken(resolveCalloutDef(host.registry, tk.rawId)),
+			(tk) => tk.role === "heading" && shouldRenderToken(resolveCalloutDef(host.registry, tk.rawId)),
 		);
 		if (drawsBar) {
 			builder.add(line.from, line.from, gap);
@@ -101,9 +99,7 @@ export function createHeadingGapField(host: LivePreviewHost): Extension {
 	return StateField.define<DecorationSet>({
 		create: (state) => buildGaps(state, host),
 		update(value, tr) {
-			const refreshed = tr.effects.some((e) =>
-				e.is(calloutStudioRefresh),
-			);
+			const refreshed = tr.effects.some((e) => e.is(calloutStudioRefresh));
 			// buildGaps stops at the syntax tree's parse frontier, so the set it
 			// produced on a large note covers only the parsed head. CodeMirror's
 			// parse worker dispatches a transaction every time it advances that
@@ -111,8 +107,7 @@ export function createHeadingGapField(host: LivePreviewHost): Extension {
 			// the tree object is replaced wholesale on each advance and shared
 			// by reference on every other transaction (a selection change costs
 			// one field read and nothing more).
-			const treeAdvanced =
-				syntaxTree(tr.startState) !== syntaxTree(tr.state);
+			const treeAdvanced = syntaxTree(tr.startState) !== syntaxTree(tr.state);
 			if (tr.docChanged || refreshed || treeAdvanced) {
 				return buildGaps(tr.state, host);
 			}

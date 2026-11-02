@@ -29,53 +29,46 @@ import { rpgAwesomePack } from "./packs/rpgAwesome";
 import { simpleIconsPack } from "./packs/simpleIcons";
 import { userImagesPack } from "./packs/userImages";
 
-export const ICON_SOURCES: Readonly<Record<IconSourceId, IconPack>> =
-	Object.freeze({
-		lucide: lucidePack,
-		// Second, next to Lucide: it is the same outline idiom drawn on the same
-		// 24-unit grid, so the two read as neighbours rather than as alternatives.
-		tabler: tablerPack,
-		material: materialPack,
-		emoji: emojiPack,
-		octicons: octiconsPack,
-		fa: faPack,
-		"rpg-awesome": rpgAwesomePack,
-		"simple-icons": simpleIconsPack,
-		// Last, and deliberately so: the libraries are what most people want, and
-		// the user's own pictures read as the escape hatch at the end of the list.
-		image: userImagesPack,
-	});
+export const ICON_SOURCES: Readonly<Record<IconSourceId, IconPack>> = Object.freeze({
+	lucide: lucidePack,
+	// Second, next to Lucide: it is the same outline idiom drawn on the same
+	// 24-unit grid, so the two read as neighbours rather than as alternatives.
+	tabler: tablerPack,
+	material: materialPack,
+	emoji: emojiPack,
+	octicons: octiconsPack,
+	fa: faPack,
+	"rpg-awesome": rpgAwesomePack,
+	"simple-icons": simpleIconsPack,
+	// Last, and deliberately so: the libraries are what most people want, and
+	// the user's own pictures read as the escape hatch at the end of the list.
+	image: userImagesPack,
+});
 
 /** Every source, in the order the picker offers them. */
-export const ICON_SOURCE_IDS: readonly IconSourceId[] = Object.freeze(
-	Object.keys(ICON_SOURCES) as IconSourceId[],
-);
+export const ICON_SOURCE_IDS: readonly IconSourceId[] = Object.freeze(Object.keys(ICON_SOURCES) as IconSourceId[]);
 
 /** Which source owns each body of artwork. */
-const SOURCE_OF_TYPE: Readonly<Record<IconPackId, IconSourceId>> = Object.freeze(
-	{
-		lucide: "lucide",
-		"tabler-outline": "tabler",
-		"tabler-filled": "tabler",
-		material: "material",
-		emoji: "emoji",
-		octicons: "octicons",
-		"fa-solid": "fa",
-		"fa-regular": "fa",
-		"fa-brands": "fa",
-		"rpg-awesome": "rpg-awesome",
-		"simple-icons": "simple-icons",
-		image: "image",
-	},
-);
+const SOURCE_OF_TYPE: Readonly<Record<IconPackId, IconSourceId>> = Object.freeze({
+	lucide: "lucide",
+	"tabler-outline": "tabler",
+	"tabler-filled": "tabler",
+	material: "material",
+	emoji: "emoji",
+	octicons: "octicons",
+	"fa-solid": "fa",
+	"fa-regular": "fa",
+	"fa-brands": "fa",
+	"rpg-awesome": "rpg-awesome",
+	"simple-icons": "simple-icons",
+	image: "image",
+});
 
 /**
  * Every icon type that may appear as `CalloutIcon.type`. Not the same list as
  * the sources — this is what an import is validated against.
  */
-export const ICON_PACK_IDS: readonly IconPackId[] = Object.freeze(
-	Object.keys(SOURCE_OF_TYPE) as IconPackId[],
-);
+export const ICON_PACK_IDS: readonly IconPackId[] = Object.freeze(Object.keys(SOURCE_OF_TYPE) as IconPackId[]);
 
 export function getSource(id: IconSourceId): IconPack {
 	return ICON_SOURCES[id];
@@ -99,10 +92,6 @@ export function packFor(icon: CalloutIcon): IconPack | undefined {
  * each other, so the separator just has to be something no id, icon name or
  * variant contains.
  */
-export function iconCacheKey(
-	pack: IconPackId,
-	name: string,
-	variant: string,
-): string {
+export function iconCacheKey(pack: IconPackId, name: string, variant: string): string {
 	return `${pack} ${name} ${variant}`;
 }

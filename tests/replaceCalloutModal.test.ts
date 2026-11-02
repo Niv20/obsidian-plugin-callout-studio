@@ -21,7 +21,8 @@ function open() {
 	registry.load(null);
 	const app = { keymap: new TestKeymap(), scope: new TestScope() } as unknown as App;
 	const modal = new ReplaceCalloutModal(app, {
-		message: "", registry,
+		message: "",
+		registry,
 		availableCallouts: registry.getAll().filter((def) => def.id !== "note"),
 	});
 	const containerEl = fakeDom.document.body.createDiv({ cls: "modal-container" });
@@ -29,23 +30,38 @@ function open() {
 	const titleEl = modalEl.createDiv({ cls: "modal-header" }).createDiv({ cls: "modal-title" });
 	const contentEl = modalEl.createDiv({ cls: "modal-content" });
 	Object.assign(modal, {
-		containerEl, modalEl, titleEl, contentEl, app, scope: app.scope,
-		setTitle: (title: string) => { titleEl.setText(title); return modal; },
+		containerEl,
+		modalEl,
+		titleEl,
+		contentEl,
+		app,
+		scope: app.scope,
+		setTitle: (title: string) => {
+			titleEl.setText(title);
+			return modal;
+		},
 		open: () => modal.onOpen(),
 		close: () => modal.onClose(),
 	});
 	let answer: ReplaceChoice | undefined;
-	void modal.prompt().then((result) => { answer = result; });
+	void modal.prompt().then((result) => {
+		answer = result;
+	});
 	const confirm = (): FakeElement => {
 		const buttons = modalEl.querySelectorAll(".modal-button-container button");
 		assert.equal(buttons.length, 1);
 		return buttons[0]!;
 	};
 	return {
-		modalEl, contentEl, confirm,
+		modalEl,
+		contentEl,
+		confirm,
 		answer: () => answer,
 		search: () => contentEl.querySelector(".callout-studio-replace-search")!,
-		close: () => { modal.onClose(); containerEl.remove(); },
+		close: () => {
+			modal.onClose();
+			containerEl.remove();
+		},
 	};
 }
 
@@ -63,7 +79,9 @@ describe("the replacement picker", () => {
 			h.confirm().fire("click");
 			await setImmediate();
 			assert.deepEqual(h.answer(), { action: "replace", replaceWith: id });
-		} finally { h.close(); }
+		} finally {
+			h.close();
+		}
 	});
 
 	it("dims its button until a row is chosen, and says what to choose when it is pressed", async () => {
@@ -78,7 +96,9 @@ describe("the replacement picker", () => {
 			h.search().fire("keydown", { type: "keydown", key: "Enter", preventDefault: () => {} });
 			assert.equal(h.confirm().getAttribute("aria-disabled"), "false");
 			assert.equal(h.confirm().hasClass("cs-btn-disabled"), false);
-		} finally { h.close(); }
+		} finally {
+			h.close();
+		}
 	});
 
 	it("marks its button as destructive", () => {
@@ -87,7 +107,9 @@ describe("the replacement picker", () => {
 			// Obsidian's quiet red (Log out's look) on every device, never the solid one.
 			assert.ok(h.confirm().hasClass("mod-destructive"));
 			assert.ok(!h.confirm().hasClass("mod-cta"));
-		} finally { h.close(); }
+		} finally {
+			h.close();
+		}
 	});
 
 	it("lists only callouts: nothing to delete here", () => {
@@ -96,15 +118,21 @@ describe("the replacement picker", () => {
 			const rows = h.contentEl.querySelectorAll(".callout-studio-replace-item");
 			assert.ok(rows.length > 0);
 			for (const row of rows) assert.ok(row.getAttribute("data-callout-id"), "a row that is not a callout");
-		} finally { h.close(); }
+		} finally {
+			h.close();
+		}
 	});
 
 	it("walks the list with the arrows from nothing chosen", () => {
 		const h = open();
 		try {
-			const key = (name: string) => h.search().fire("keydown", { type: "keydown", key: name, preventDefault: () => {} });
-			const chosenId = () => h.contentEl.querySelector(".callout-studio-replace-item.is-selected")?.getAttribute("data-callout-id");
-			const ids = h.contentEl.querySelectorAll(".callout-studio-replace-item").map((el) => el.getAttribute("data-callout-id"));
+			const key = (name: string) =>
+				h.search().fire("keydown", { type: "keydown", key: name, preventDefault: () => {} });
+			const chosenId = () =>
+				h.contentEl.querySelector(".callout-studio-replace-item.is-selected")?.getAttribute("data-callout-id");
+			const ids = h.contentEl
+				.querySelectorAll(".callout-studio-replace-item")
+				.map((el) => el.getAttribute("data-callout-id"));
 			key("ArrowDown");
 			assert.equal(chosenId(), ids[0]);
 			key("ArrowDown");
@@ -112,7 +140,9 @@ describe("the replacement picker", () => {
 			key("ArrowUp");
 			key("ArrowUp");
 			assert.equal(chosenId(), ids[0], "stops at the top");
-		} finally { h.close(); }
+		} finally {
+			h.close();
+		}
 	});
 
 	it("draws each callout as a row of the Built-in callouts list", () => {
@@ -126,8 +156,13 @@ describe("the replacement picker", () => {
 			assert.ok(row.querySelector(".setting-item-description .callout-studio-row-syntax"), "no [!id] line");
 			assert.ok(row.querySelector(".callout-studio-row-colors"), "no colour circles");
 			assert.ok(row.querySelector(".callout-studio-replace-item-check"));
-			assert.ok(h.contentEl.querySelector(".setting-group.mod-list .setting-items"), "not in Obsidian's list box");
-		} finally { h.close(); }
+			assert.ok(
+				h.contentEl.querySelector(".setting-group.mod-list .setting-items"),
+				"not in Obsidian's list box",
+			);
+		} finally {
+			h.close();
+		}
 	});
 
 	it("keeps its choice when the filter hides the chosen row", () => {
@@ -139,7 +174,9 @@ describe("the replacement picker", () => {
 			input.fire("input");
 			assert.equal(h.contentEl.querySelectorAll(".callout-studio-replace-item").length, 0);
 			assert.equal(h.confirm().getAttribute("aria-disabled"), "false");
-		} finally { h.close(); }
+		} finally {
+			h.close();
+		}
 	});
 
 	it("says nothing matches, in words, where the mascot cannot be drawn", () => {
@@ -153,7 +190,9 @@ describe("the replacement picker", () => {
 			assert.ok(empty, "no empty state");
 			assert.equal(empty.textContent, t("calloutPicker.noMatches", { query }));
 			assert.equal(h.contentEl.querySelectorAll(".cs-mascot-box").length, 0);
-		} finally { h.close(); }
+		} finally {
+			h.close();
+		}
 	});
 
 	it("puts the sad brush over the words of a search that found nothing, and takes it away", () => {
@@ -165,7 +204,10 @@ describe("the replacement picker", () => {
 		const h = open();
 		try {
 			const input = h.search() as unknown as FakeElement & { value: string };
-			const type = (text: string): void => { input.value = text; input.fire("input"); };
+			const type = (text: string): void => {
+				input.value = text;
+				input.fire("input");
+			};
 			assert.equal(h.contentEl.querySelectorAll(".cs-mascot-box").length, 0, "a mascot with nothing searched");
 
 			type("zzzz-no-such-callout");

@@ -63,11 +63,7 @@
 import type { Setting } from "obsidian";
 import { getLocale, t } from "../../i18n";
 import { getSortedCalloutIds } from "../../utils/sorting";
-import {
-	renderColorCircles,
-	resolveCurrentModeColors,
-	type SwatchColors,
-} from "../../ui/ColorCircles";
+import { renderColorCircles, resolveCurrentModeColors, type SwatchColors } from "../../ui/ColorCircles";
 import type { CalloutDefinition } from "../../types";
 import { renderIconInto, renderNoIcon } from "../../icons/renderIcon";
 import { createStatusIconResolver } from "../../icons/resolver";
@@ -256,12 +252,7 @@ export function renderIdLine(descEl: HTMLElement, def: CalloutDefinition): void 
  * is drawn again and a colour from the last draw must not outlive its callout's
  * change. A callout with no background paints no tile, so it has no `--cs-row-bg`.
  */
-function renderColors(
-	ctx: SettingsContext,
-	setting: Setting,
-	def: CalloutDefinition,
-	fromTheme: boolean,
-): void {
+function renderColors(ctx: SettingsContext, setting: Setting, def: CalloutDefinition, fromTheme: boolean): void {
 	const colors = rowColors(ctx, def, fromTheme);
 	setRowVariable(setting.settingEl, "--cs-row-accent", colors?.accent);
 	setRowVariable(setting.settingEl, "--cs-row-bg", colors && !colors.transparent ? colors.bg : undefined);
@@ -287,11 +278,7 @@ function setRowVariable(rowEl: HTMLElement, name: string, value: string | undefi
 	else rowEl.style.removeProperty(name);
 }
 
-function renderRowIcon(
-	ctx: SettingsContext,
-	container: HTMLElement,
-	def: CalloutDefinition,
-): void {
+function renderRowIcon(ctx: SettingsContext, container: HTMLElement, def: CalloutDefinition): void {
 	if (def.hideIcon === true) {
 		renderNoIcon(container);
 		return;

@@ -38,19 +38,18 @@ export const nl: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "Kies eerst de callout waarmee je deze wilt vervangen.",
 	"settings.fallbackTag": "Standaard",
 	"settings.fallbackTagAuto": "Auto",
-	"settings.rescanVaultDesc": "Voegt de callout-typen toe die je notities gebruiken en die nog niet in deze lijst staan.",
+	"settings.rescanVaultDesc":
+		"Voegt de callout-typen toe die je notities gebruiken en die nog niet in deze lijst staan.",
 	"settings.rescanVaultHintAction": "Scannen op callouts",
-	"manualDiscovery.failed": "De scan is niet opgeslagen. Controleer of de instellingen kunnen worden weggeschreven en of de synchronisatie is voltooid. Probeer het daarna opnieuw via Instellingen → Mijn callout-types → Scannen op callouts. Bestaande callouts zijn niet vervangen.",
+	"manualDiscovery.failed":
+		"De scan is niet opgeslagen. Controleer of de instellingen kunnen worden weggeschreven en of de synchronisatie is voltooid. Probeer het daarna opnieuw via Instellingen → Mijn callout-types → Scannen op callouts. Bestaande callouts zijn niet vervangen.",
 	"manualDiscovery.scanning": "Scannen…",
-	"settings.rescanComplete":
-		"Scan voltooid: {{count}} nieuw(e) callout-type(n) toegevoegd.",
+	"settings.rescanComplete": "Scan voltooid: {{count}} nieuw(e) callout-type(n) toegevoegd.",
 	"replaceModal.titleReplace": "In vault vervangen",
 
 	"welcome.title": "Welkom bij Callout Studio!",
-	"welcome.tagline":
-		"Uw complete oplossing voor het maken, stylen en beheren van Obsidian-callouts.",
-	"importBanner.message":
-		"We hebben gemerkt dat u {{plugins}} gebruikt. Wilt u uw callouts importeren?",
+	"welcome.tagline": "Uw complete oplossing voor het maken, stylen en beheren van Obsidian-callouts.",
+	"importBanner.message": "We hebben gemerkt dat u {{plugins}} gebruikt. Wilt u uw callouts importeren?",
 	"importBanner.action": "Importeren",
 	"importBanner.dismiss": "Negeren",
 	"welcome.demoName": "Callout Studio",
@@ -65,8 +64,7 @@ export const nl: Record<string, string> = {
 		"Callout Studio heeft nog veel meer te bieden! [Meer informatie]({{repoUrl}}).\n",
 	"deleteModal.title": "Callout verwijderen",
 
-	"deleteModal.bodyInUse":
-		"Deze callout verschijnt {{count}} keer in {{files}} bestand(en).",
+	"deleteModal.bodyInUse": "Deze callout verschijnt {{count}} keer in {{files}} bestand(en).",
 	"deleteModal.notesUntouched":
 		"Hiermee wordt alleen de callout-definitie verwijderd. Uw notities blijven ongemoeid, dus bestaande callouts vallen gewoon terug op de standaardstijl.",
 	"deleteModal.fallbackTarget":
@@ -118,24 +116,23 @@ export const nl: Record<string, string> = {
 	"notice.calloutDeleted": "‘{{name}}’ verwijderd.",
 	"settings.duplicateAction": "Dupliceren",
 	"notice.calloutDuplicated": "Callout gedupliceerd als ‘{{name}}’.",
-	"notice.calloutDuplicateFailed": "De callout kon niet worden gedupliceerd. Controleer de opslagstatus en probeer het opnieuw.",
+	"notice.calloutDuplicateFailed":
+		"De callout kon niet worden gedupliceerd. Controleer de opslagstatus en probeer het opnieuw.",
 	"settings.resetAction": "Terugzetten naar standaard",
 	"settings.makeFallbackAction": "Standaard fallback-stijl gebruiken",
-	"notice.fallbackStyleApplied": "\"{{name}}\" gebruikt nu de standaard fallback-stijl.",
+	"notice.fallbackStyleApplied": '"{{name}}" gebruikt nu de standaard fallback-stijl.',
 	"settings.colorSwatchAria": "Accent: {{accent}} · Achtergrond: {{bg}}",
 
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts van uw thema",
 	"settings.themeCalloutsDefaultTheme": "Uw thema",
 	"settings.themeCalloutsEmpty": "{{theme}} geeft momenteel geen enkele callout een stijl.",
-	"settings.themePreviewAria":
-		'Voorbeeld van "{{name}}" — bekijk hoe uw thema het tekent',
+	"settings.themePreviewAria": 'Voorbeeld van "{{name}}" — bekijk hoe uw thema het tekent',
 	"settings.builtInAllThemeStyled":
 		"{{theme}} geeft elke ingebouwde callout een stijl, dus Callout Studio laat ze allemaal zoals ze zijn. Voeg een callout met een andere ID toe om er zelf een te ontwerpen.",
 
 	"settings.fallbackCallout": "Standaard fallback-callout",
-	"settings.fallbackCalloutDesc":
-		"Onbekende callout-types nemen deze stijl over.",
+	"settings.fallbackCalloutDesc": "Onbekende callout-types nemen deze stijl over.",
 
 	"settings.border": "Randen",
 	"settings.borderTop": "Boven",
@@ -167,8 +164,7 @@ export const nl: Record<string, string> = {
 	"settings.paletteCountOne": "1 palet",
 	"settings.editPaletteAria": "Palet {{name}} bewerken",
 	"settings.deletePaletteTitle": "Palet verwijderen",
-	"settings.deletePaletteBody":
-		'Callouts die de kleuren ervan gebruiken, worden niet beïnvloed.',
+	"settings.deletePaletteBody": "Callouts die de kleuren ervan gebruiken, worden niet beïnvloed.",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callouts die het in hun metadata noemen ("{{key}}"), krijgen in plaats daarvan de ingebouwde kleur met die naam. Je notities veranderen niet.',
 
@@ -200,8 +196,7 @@ export const nl: Record<string, string> = {
 	"commandBuilder.headingLevel": "Kopniveau",
 	"commandBuilder.headingLevelDesc": "Welk kopniveau wordt geschreven.",
 	"commandBuilder.action": "Actie",
-	"commandBuilder.actionDesc":
-		"Inpakken maakt van de selectie een callout; invoegen voegt een lege toe.",
+	"commandBuilder.actionDesc": "Inpakken maakt van de selectie een callout; invoegen voegt een lege toe.",
 	"commandBuilder.actionDescHeading":
 		"Inpakken maakt van de regel met de cursor een kopcallout.\nInvoegen voegt een lege toe op een nieuwe regel.",
 	"commandBuilder.actionDescInline":
@@ -209,28 +204,24 @@ export const nl: Record<string, string> = {
 	"commandBuilder.actionWrap": "Selectie inpakken",
 	"commandBuilder.actionInsert": "Nieuwe invoegen",
 	"commandBuilder.foldState": "Inklapstatus",
-	"commandBuilder.foldStateDesc":
-		"Of de callout kan worden ingeklapt, en in welke status hij begint.",
+	"commandBuilder.foldStateDesc": "Of de callout kan worden ingeklapt, en in welke status hij begint.",
 	"commandBuilder.foldNone": "Niet-opvouwbaar",
 	"commandBuilder.foldExpanded": "Opvouwbaar, open (+)",
 	"commandBuilder.foldCollapsed": "Opvouwbaar, gesloten (-)",
 	"commandBuilder.preview": "Opdrachtnaam",
-	"commandBuilder.duplicate":
-		"U hebt al een opdracht die precies hetzelfde doet.",
-	"commandBuilder.noCallouts":
-		"Er zijn nog geen callout-types om een opdracht van te maken.",
+	"commandBuilder.duplicate": "U hebt al een opdracht die precies hetzelfde doet.",
+	"commandBuilder.noCallouts": "Er zijn nog geen callout-types om een opdracht van te maken.",
 	"commandBuilder.noCalloutChosen": "Kies eerst een callout voor deze opdracht.",
 	"commandBuilder.save": "Opslaan",
 
-	"commandBuilder.roleThemeOwned":
-		"Uw thema levert deze callout, dus heeft deze alleen een Blok-indeling.",
-	"commandBuilder.commandSuspended": "Gepauzeerd zolang je thema deze callout levert; die heeft dan alleen het blokformaat.",
+	"commandBuilder.roleThemeOwned": "Uw thema levert deze callout, dus heeft deze alleen een Blok-indeling.",
+	"commandBuilder.commandSuspended":
+		"Gepauzeerd zolang je thema deze callout levert; die heeft dan alleen het blokformaat.",
 	"commandBuilder.pausedTag": "Gepauzeerd door het thema",
 	"commandBuilder.missingTag": "Callout ontbreekt",
 
 	"settings.resetAll": "Terugzetten",
-	"settings.resetAllDesc":
-		"Zet alle instellingen en aanpassingen terug naar de standaardwaarden.",
+	"settings.resetAllDesc": "Zet alle instellingen en aanpassingen terug naar de standaardwaarden.",
 	"settings.resetAllButton": "Alles terugzetten",
 	"notice.resetAllDone": "Alles is teruggezet naar de standaardinstellingen.",
 	"settings.resetIntro": "Neem even de tijd om te waarderen wat je allemaal met Callout Studio hebt opgebouwd.",
@@ -251,52 +242,45 @@ export const nl: Record<string, string> = {
 	"settings.resetItemAutocomplete": "Instellingen voor automatisch aanvullen en metadata",
 	"settings.resetItemFallback": "Terugvalstijl",
 	"settings.resetItemIconLibraries": "Volgorde van pictogrambibliotheken en verborgen bibliotheken",
-	"settings.resetAllConfirmAfter": "Geen zorgen: voor het resetten bewaren we een back-up van je huidige instellingen. Je kunt die op elk moment terughalen met Een eerdere versie herstellen in de instellingen.\nAls je een synchronisatieservice gebruikt, kan de reset ook naar je andere apparaten doorwerken.",
+	"settings.resetAllConfirmAfter":
+		"Geen zorgen: voor het resetten bewaren we een back-up van je huidige instellingen. Je kunt die op elk moment terughalen met Een eerdere versie herstellen in de instellingen.\nAls je een synchronisatieservice gebruikt, kan de reset ook naar je andere apparaten doorwerken.",
 	"settings.resetNothing": "Niets om terug te zetten: alles staat al op de standaardinstellingen.",
 
-	"notice.customCommandMissingCallout":
-		"Het callout-type van deze opdracht bestaat niet meer.",
+	"notice.customCommandMissingCallout": "Het callout-type van deze opdracht bestaat niet meer.",
 	"notice.importedJSON": "{{count}} callout-type(s) geïmporteerd uit JSON.",
 	"notice.importedSettings": "Plugin-instellingen geïmporteerd.",
 	"notice.importedCalloutManager":
 		"Geïmporteerd uit Callout Manager: {{created}} aangemaakt, {{updated}} bijgewerkt.",
-	"notice.importedAdmonition":
-		"Geïmporteerd uit Admonition: {{created}} aangemaakt, {{updated}} " +
-		"bijgewerkt.",
-	"notice.noNewJSON":
-		"Geen nieuwe callout-types geïmporteerd (ID's bestaan mogelijk al).",
+	"notice.importedAdmonition": "Geïmporteerd uit Admonition: {{created}} aangemaakt, {{updated}} " + "bijgewerkt.",
+	"notice.noNewJSON": "Geen nieuwe callout-types geïmporteerd (ID's bestaan mogelijk al).",
 	"notice.iconDownloadFailed":
 		'Kan Material-pictogram "{{name}}" niet downloaden. Het is mogelijk niet beschikbaar voor deze stijl/dikte, of uw verbinding is offline.',
 
-	"notice.vaultScanFailed": "Het gebruik van callouts kon niet worden geteld omdat {{count}} notitie(s) niet konden worden gelezen. Controleer opslag en synchronisatie en probeer het opnieuw.",
+	"notice.vaultScanFailed":
+		"Het gebruik van callouts kon niet worden geteld omdat {{count}} notitie(s) niet konden worden gelezen. Controleer opslag en synchronisatie en probeer het opnieuw.",
 
 	"notice.externalCssRetired":
 		"De optie voor persoonlijke CSS-styling is verwijderd. Deze callouts gebruiken nu hun opgeslagen Callout Studio-ontwerp, tenzij uw thema ze stijlt. Uw notities en persoonlijke CSS-snippets zijn niet gewijzigd.",
 	"notice.vaultRewritePartial":
 		"{{count}} notitie(s) konden niet worden bijgewerkt en zijn ongewijzigd gebleven. Zie de ontwikkelaarsconsole voor details.",
-	"notice.calloutDeleteIncomplete": "Sommige notities konden niet worden geconverteerd. Het callout-type is behouden. Voltooide conversies zijn opgeslagen; los het bestandsprobleem op en voer de actie opnieuw uit om te voltooien.",
+	"notice.calloutDeleteIncomplete":
+		"Sommige notities konden niet worden geconverteerd. Het callout-type is behouden. Voltooide conversies zijn opgeslagen; los het bestandsprobleem op en voer de actie opnieuw uit om te voltooien.",
 
 	"notice.nothingToWrap": "Niets om in te pakken.",
-	"notice.cursorNotInsideCallout":
-		"De cursor bevindt zich niet in een callout.",
+	"notice.cursorNotInsideCallout": "De cursor bevindt zich niet in een callout.",
 	"notice.headingAlreadyCallout": "Deze kop is al een callout.",
-	"notice.unwrapLeftAsIs":
-		"Deze callout kon niet veilig worden verwijderd en is daarom ongewijzigd gelaten.",
-	"notice.autocompleteTargetMoved":
-		"Er is niets ingevoegd — de regel is gewijzigd terwijl de editor open was.",
+	"notice.unwrapLeftAsIs": "Deze callout kon niet veilig worden verwijderd en is daarom ongewijzigd gelaten.",
+	"notice.autocompleteTargetMoved": "Er is niets ingevoegd — de regel is gewijzigd terwijl de editor open was.",
 	"notice.autocompleteAlwaysEnabled": "Automatisch aanvullen is nu een kernfunctie en staat altijd aan.",
-	"notice.openHotkeysFailed":
-		"Kan de sneltoetseninstellingen van Obsidian niet openen.",
+	"notice.openHotkeysFailed": "Kan de sneltoetseninstellingen van Obsidian niet openen.",
 	"notice.filterHotkeysFailed":
 		"Obsidian-sneltoetsen geopend, maar het Callout Studio-filter kon niet worden toegepast.",
 
 	"editor.editCallout": "Callout bewerken",
 	"editor.newCallout": "Nieuwe callout",
 	"editor.displayName": "Weergavenaam",
-	"editor.displayNameDesc":
-		"Het leesbare label dat in de interface wordt getoond",
-	"editor.displayNameBuiltIn":
-		"De weergavenaam kan niet worden gewijzigd voor ingebouwde callouts",
+	"editor.displayNameDesc": "Het leesbare label dat in de interface wordt getoond",
+	"editor.displayNameBuiltIn": "De weergavenaam kan niet worden gewijzigd voor ingebouwde callouts",
 	"editor.displayNamePlaceholder": "Mijn callout",
 	"editor.calloutIds": "Callout-ID's",
 	"editor.calloutIdsDesc":
@@ -322,49 +306,42 @@ export const nl: Record<string, string> = {
 	"editor.horizontalOffset": "Horizontale offset",
 	"editor.verticalOffset": "Verticale offset",
 	"editor.colors": "Kleuren",
-	"editor.colorsDesc":
-		"Stelt de rand-, achtergrond- en tekstkleuren van deze callout in.",
+	"editor.colorsDesc": "Stelt de rand-, achtergrond- en tekstkleuren van deze callout in.",
 	"editor.resetColors": "Kleuren terugzetten naar standaard",
 	"editor.paletteDeleted": "Verwijderde kleur",
 	"editor.paletteGroupObsidian": "Obsidian-callouts",
 	"editor.paletteGroupPresets": "Kleurvoorinstellingen",
 	"editor.paletteGroupCustom": "Aangepast",
-	"editor.contrastWarning":
-		"Laag contrast met de achtergrond — kan moeilijk leesbaar zijn",
+	"editor.contrastWarning": "Laag contrast met de achtergrond — kan moeilijk leesbaar zijn",
 	"editor.foldable": "Opvouwbaar",
-	"editor.foldableDesc":
-		"Kies of de callout kan worden ingeklapt en welke standaardstatus in de hele vault geldt.",
+	"editor.foldableDesc": "Kies of de callout kan worden ingeklapt en welke standaardstatus in de hele vault geldt.",
 	"editor.foldOff": "Uit",
 	"editor.foldOpen": "Standaard open",
 	"editor.foldClosed": "Standaard gesloten",
 	"editor.cancel": "Annuleren",
 	"editor.saveChanges": "Wijzigingen opslaan",
-	"editor.saveFailed": "Opslaan is niet voltooid. Als deze editor nog open is, laat hem dan open en probeer het opnieuw nadat je de opslagruimte en synchronisatie hebt gecontroleerd. Sommige instellingen of wijzigingen in notities zijn mogelijk al opgeslagen.",
+	"editor.saveFailed":
+		"Opslaan is niet voltooid. Als deze editor nog open is, laat hem dan open en probeer het opnieuw nadat je de opslagruimte en synchronisatie hebt gecontroleerd. Sommige instellingen of wijzigingen in notities zijn mogelijk al opgeslagen.",
 	"editor.createCallout": "Callout aanmaken",
-	"editor.nameRequired":
-		"Een weergavenaam is vereist voordat u een callout aanmaakt.",
+	"editor.nameRequired": "Een weergavenaam is vereist voordat u een callout aanmaakt.",
 	"editor.noChangesToSave": "Er zijn geen wijzigingen aangebracht.",
 	"editor.idEmpty": "Ten minste één ID is vereist",
 	"editor.idAlreadyHere": "Deze id bestaat al",
 	"editor.idTooLong": "De id mag maximaal {{max}} tekens hebben",
 	"editor.idExists": "Er bestaat al een callout met deze ID",
 	"editor.idConflict": "Deze ID is in conflict met een bestaande callout",
-	"editor.idDashConflict":
-		'Obsidian schrijft spaties als streepjes, dus deze ID komt in conflict met "{{other}}"',
-	"editor.idOwnedBy":
-		'"{{id}}" is een ID van {{name}}. Je kunt het {{link}}.',
+	"editor.idDashConflict": 'Obsidian schrijft spaties als streepjes, dus deze ID komt in conflict met "{{other}}"',
+	"editor.idOwnedBy": '"{{id}}" is een ID van {{name}}. Je kunt het {{link}}.',
 	"editor.idMoveHere": "hierheen verplaatsen",
 	"editor.idOwnedByMain":
 		'"{{id}}" is de hoofd-ID van {{name}}. Om het hier te gebruiken, verwijder je eerst {{name}}.',
-	"editor.idBuiltInStock":
-		"\"{{id}}\" is een van Obsidians eigen ID's voor {{name}}.",
+	"editor.idBuiltInStock": '"{{id}}" is een van Obsidians eigen ID\'s voor {{name}}.',
 	"editor.idMoving": 'Bij opslaan verhuist "{{id}}" van {{name}} naar hier.',
 	"editor.idMovingNotes": "Je notities veranderen niet. Ze nemen de stijl van deze callout over.",
 
 	"editor.idFromTheme":
 		"{{theme}} levert al een callout met deze ID, dus Callout Studio kan deze niet stijlen. Kies een andere ID.",
-	"editor.namesFromTheme":
-		"{{theme}} tekent de blokcallouts {{names}} zelf. Uw andere ID's behouden dit ontwerp.",
+	"editor.namesFromTheme": "{{theme}} tekent de blokcallouts {{names}} zelf. Uw andere ID's behouden dit ontwerp.",
 	"editor.namesFromThemeAndObsidian":
 		"{{theme}} tekent de blokcallouts {{names}} zelf en Obsidian tekent {{stock}}. Uw andere ID's behouden dit ontwerp.",
 	"editor.idThemePattern":
@@ -373,32 +350,26 @@ export const nl: Record<string, string> = {
 	"editor.untitledCallout": "Naamloze callout",
 	"editor.loremIpsum":
 		"Een zacht briesje waait door de bomen. Warm zonlicht valt op een rustig pad en brengt het landschap tot leven.",
-	"editor.loremIpsumShort":
-		"Een zacht briesje waait door de bomen.",
-	"editor.sampleInlineText":
-		"Hier is een Inline Callout [!{id}]{{title}} binnen een alinea.",
+	"editor.loremIpsumShort": "Een zacht briesje waait door de bomen.",
+	"editor.sampleInlineText": "Hier is een Inline Callout [!{id}]{{title}} binnen een alinea.",
 	"editor.previewReadOnly": "De live-voorvertoning kan niet worden bewerkt",
 	"noteChanges.title": "Je notities bijwerken?",
 	"noteChanges.leave": "Laten staan",
-	"noteChanges.leaveDesc":
-		"Ze houden [!{{id}}] en vallen terug op de standaardstijl.",
+	"noteChanges.leaveDesc": "Ze houden [!{{id}}] en vallen terug op de standaardstijl.",
 	"noteChanges.changeTo": "Wijzigen in",
 	"noteChanges.renameChange": 'Wijzigen in "{{id}}"',
 	"noteChanges.titlesChange": 'Wijzigen in "{{new}}"',
 	"noteChanges.titlesLeaveDesc": 'Ze blijven "{{old}}" luiden.',
 	"noteChanges.foldChange": 'Instellen op "{{state}}"',
-	"noteChanges.foldLeaveDesc":
-		"Alleen callouts die je vanaf nu invoegt gebruiken de nieuwe instelling.",
+	"noteChanges.foldLeaveDesc": "Alleen callouts die je vanaf nu invoegt gebruiken de nieuwe instelling.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": '{{name}} — geleverd door uw thema',
+	"themePreview.title": "{{name}} — geleverd door uw thema",
 	"themePreview.summary":
 		"Geleverd door {{theme}} (alleen-lezen). Kleur, pictogram en ID kunnen hier niet worden gewijzigd en de indelingen Kop/Inline zijn niet beschikbaar. Maak een nieuwe callout om deze aan te passen.",
 	"themePreview.previewTitle": "Hoe het er nu uitziet",
-	"themePreview.blockSample":
-		"> [!{{id}}] {{name}}\n" +
-		"> Zo ziet de inhoud van de callout eruit.\n",
+	"themePreview.blockSample": "> [!{{id}}] {{name}}\n" + "> Zo ziet de inhoud van de callout eruit.\n",
 
 	"editor.themePreviewClose": "Begrepen",
 
@@ -415,8 +386,8 @@ export const nl: Record<string, string> = {
 	"palette.metadataNameShared":
 		"In callout-metadata: {{key}}. Een ander opgeslagen palet heeft dit woord ook, dus slechts één van beide reageert erop.",
 	"palette.renameNotesChange":
-		"Je hebt het palet hernoemd van \"{{old}}\" naar \"{{new}}\", dus het woord ervan in de callout-metadata verandert van \"{{oldWord}}\" in \"{{newWord}}\".",
-	"palette.renameNotesLeaveDesc": "Ze houden \"{{word}}\" en gaan terug naar hun eigen kleur.",
+		'Je hebt het palet hernoemd van "{{old}}" naar "{{new}}", dus het woord ervan in de callout-metadata verandert van "{{oldWord}}" in "{{newWord}}".',
+	"palette.renameNotesLeaveDesc": 'Ze houden "{{word}}" en gaan terug naar hun eigen kleur.',
 	"palette.renameNotesChangeDesc": "Elke |{{old}} in je notities wordt |{{new}}.",
 	"palette.renameNotesFailed":
 		"Sommige notities konden niet worden bijgewerkt. De bijgewerkte zijn opgeslagen; de rest gebruikt nog de oude naam.",
@@ -426,8 +397,10 @@ export const nl: Record<string, string> = {
 	"palette.advancedColors": "Kleuren",
 	"palette.lightModeColors": "Kleuren van de lichte modus",
 	"palette.darkModeColors": "Kleuren van de donkere modus",
-	"palette.modeColorsHintLight": "Deze wijzigingen gelden alleen voor de lichte modus. De donkere modus behoudt zijn eigen kleuren.\nDruk op de maanknop hierboven om ze te bewerken.",
-	"palette.modeColorsHintDark": "Deze wijzigingen gelden alleen voor de donkere modus. De lichte modus behoudt zijn eigen kleuren.\nDruk op de zonknop hierboven om ze te bewerken.",
+	"palette.modeColorsHintLight":
+		"Deze wijzigingen gelden alleen voor de lichte modus. De donkere modus behoudt zijn eigen kleuren.\nDruk op de maanknop hierboven om ze te bewerken.",
+	"palette.modeColorsHintDark":
+		"Deze wijzigingen gelden alleen voor de donkere modus. De lichte modus behoudt zijn eigen kleuren.\nDruk op de zonknop hierboven om ze te bewerken.",
 	"palette.showLightMode": "Lichte modus tonen",
 	"palette.showDarkMode": "Donkere modus tonen",
 	"palette.accentColor": "Accentkleur",
@@ -504,8 +477,7 @@ export const nl: Record<string, string> = {
 	"iconPicker.allCategories": "Alle categorieën",
 	"iconPicker.noIconSelected": "Geen pictogram geselecteerd",
 	"iconPicker.chooseFirst": "Selecteer eerst een pictogram.",
-	"iconPicker.noResults":
-		"Geen pictogrammen komen overeen met uw zoekopdracht.",
+	"iconPicker.noResults": "Geen pictogrammen komen overeen met uw zoekopdracht.",
 	"iconPicker.octicons": "Octicons",
 	"iconPicker.searchOcticons": "Zoek in Octicons",
 	"iconPicker.fa": "Font Awesome",
@@ -520,14 +492,11 @@ export const nl: Record<string, string> = {
 	"iconPicker.searchSimpleIcons": "Zoeken in Simple Icons",
 	"iconPicker.custom": "Aangepaste pictogrammen",
 	"iconPicker.searchCustom": "Aangepaste pictogrammen zoeken",
-	"iconPicker.customTooLarge":
-		"{{name}} is te groot. Aangepaste pictogrammen mogen maximaal 5 MB groot zijn.",
+	"iconPicker.customTooLarge": "{{name}} is te groot. Aangepaste pictogrammen mogen maximaal 5 MB groot zijn.",
 	"iconPicker.customUnsupported":
 		"{{name}} is geen ondersteund bestand voor een aangepast pictogram. Gebruik SVG, PNG, JPEG of WebP.",
-	"iconPicker.customInvalidSvg":
-		"{{name}} kon niet worden gelezen als veilige SVG en is niet toegevoegd.",
-	"iconPicker.customDecodeFailed":
-		"{{name}} kon niet als aangepast pictogram worden gelezen.",
+	"iconPicker.customInvalidSvg": "{{name}} kon niet worden gelezen als veilige SVG en is niet toegevoegd.",
+	"iconPicker.customDecodeFailed": "{{name}} kon niet als aangepast pictogram worden gelezen.",
 	"iconPicker.customDuplicate":
 		"{{name}} staat al bij uw aangepaste pictogrammen. Hernoem het bestand of verwijder het bestaande pictogram.",
 	"iconPicker.uploadCustom": "Afbeeldingsbestanden uploaden",
@@ -556,8 +525,7 @@ export const nl: Record<string, string> = {
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "zoek in alle bibliotheken tegelijk",
 	"iconPicker.descLucide": "Obsidian's eigen set, altijd offline",
-	"iconPicker.descTabler":
-		"schone en consistente UI-pictogrammen, omtrek en gevuld",
+	"iconPicker.descTabler": "schone en consistente UI-pictogrammen, omtrek en gevuld",
 	"iconPicker.descMaterial": "Google's set, vier stijlen en zeven dikten",
 	"iconPicker.descEmoji": "kleurige glyfen, elke huidtint",
 	"iconPicker.descOcticons": "GitHubs interface-iconen",
@@ -682,12 +650,10 @@ export const nl: Record<string, string> = {
 
 	// Downloadable icon packs
 	"iconPack.downloadTitle": "{{name}} is nog niet gedownload",
-	"iconPack.downloadDetail":
-		"{{count}} iconen · {{size}} · eenmalig downloaden",
+	"iconPack.downloadDetail": "{{count}} iconen · {{size}} · eenmalig downloaden",
 	"iconPack.download": "Downloaden",
 	"iconPack.downloading": "{{name}} downloaden…",
-	"iconPack.downloadFailed":
-		"{{name}} kon niet worden gedownload. Controleer uw verbinding en probeer het opnieuw.",
+	"iconPack.downloadFailed": "{{name}} kon niet worden gedownload. Controleer uw verbinding en probeer het opnieuw.",
 	"iconPack.retry": "Opnieuw proberen",
 	"iconPack.faBrandsNotice":
 		"Merkiconen zijn handelsmerken van de respectievelijke eigenaren. Opname ervan impliceert geen goedkeuring. Gebruik ze alleen om het bedrijf, product of de dienst waarnaar ze verwijzen te vertegenwoordigen.",
@@ -748,7 +714,8 @@ export const nl: Record<string, string> = {
 	"contextMenu.setFoldNone": "Callout niet-opvouwbaar maken",
 	"contextMenu.cutSection": "Kopsectie knippen",
 	"notice.clipboardWriteFailed": "Kopiëren naar het klembord is mislukt. De notitie is niet gewijzigd.",
-	"notice.sectionChangedAfterCopy": "De sectie is gekopieerd, maar de notitie is gewijzigd voordat deze kon worden geknipt. Er is niets verwijderd.",
+	"notice.sectionChangedAfterCopy":
+		"De sectie is gekopieerd, maar de notitie is gewijzigd voordat deze kon worden geknipt. Er is niets verwijderd.",
 	"contextMenu.copySection": "Kopsectie kopiëren",
 	"contextMenu.deleteSection": "Kopsectie verwijderen",
 	"heading.toggleFold": "Vouwen omschakelen",
@@ -777,15 +744,14 @@ export const nl: Record<string, string> = {
 	"settings.metadataWordAlreadyHere": "Dit woord staat al in de lijst",
 	"settings.metadataWordTooLong": "Een woord mag maximaal {{max}} tekens bevatten",
 	"settings.maxMetadataWords": "Maximaal {{max}} woorden. Verwijder er een om een ander toe te voegen.",
-	"settings.buildFailed": "Callout Studio kon zijn instellingen niet tekenen; start Obsidian opnieuw en meld het als het weer gebeurt.",
-	"settings.globalSettingsRegularDesc":
-		"Rand, hoekafronding, lettertypeschaal en uitlijning.",
-	"settings.globalSettingsHeadingDesc":
-		"Rand, vorm en verticale afstand.",
-	"settings.globalSettingsInlineDesc":
-		"Rand en vorm.",
+	"settings.buildFailed":
+		"Callout Studio kon zijn instellingen niet tekenen; start Obsidian opnieuw en meld het als het weer gebeurt.",
+	"settings.globalSettingsRegularDesc": "Rand, hoekafronding, lettertypeschaal en uitlijning.",
+	"settings.globalSettingsHeadingDesc": "Rand, vorm en verticale afstand.",
+	"settings.globalSettingsInlineDesc": "Rand en vorm.",
 	"settings.themeCalloutStyles": "Callout-stijlen van uw thema gebruiken",
-	"settings.themeCalloutStylesDesc": "Als dit aan staat, behouden de callouts die je thema een stijl geeft het uiterlijk van het thema en verschijnen ze alleen als blok-callouts. Als het uit staat, tekent Callout Studio alle callouts.",
+	"settings.themeCalloutStylesDesc":
+		"Als dit aan staat, behouden de callouts die je thema een stijl geeft het uiterlijk van het thema en verschijnen ze alleen als blok-callouts. Als het uit staat, tekent Callout Studio alle callouts.",
 	"settings.calloutTypeRegular": "Stijl van blok-callout",
 	"settings.calloutTypeHeading": "Stijl van kop-callout",
 	"settings.calloutTypeInline": "Stijl van inline callout",
@@ -817,21 +783,15 @@ export const nl: Record<string, string> = {
 	"confirm.titleDeleteLibrary": "Pictogrambibliotheek verwijderen",
 	"confirm.titleResetLibraries": "Pictogrambibliotheken terugzetten",
 
-	"vault.filesUpdated":
-		"{{count}} callout-referentie(s) bijgewerkt in vault-bestanden.",
-	"vault.idsUpdated":
-		"{{count}} callout-ID('s) bijgewerkt in vault-bestanden: {{oldIds}} → {{newId}}",
-	"vault.titlesUpdated":
-		"{{count}} callout-titel(s) bijgewerkt in vault-bestanden: {{oldTitle}} → {{newTitle}}",
-	"vault.foldUpdated":
-		"Het inklapteken van {{count}} callout(s) in vault-bestanden is bijgewerkt.",
+	"vault.filesUpdated": "{{count}} callout-referentie(s) bijgewerkt in vault-bestanden.",
+	"vault.idsUpdated": "{{count}} callout-ID('s) bijgewerkt in vault-bestanden: {{oldIds}} → {{newId}}",
+	"vault.titlesUpdated": "{{count}} callout-titel(s) bijgewerkt in vault-bestanden: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated": "Het inklapteken van {{count}} callout(s) in vault-bestanden is bijgewerkt.",
 	"vault.confirmReplace": "Vervangen",
 	"vault.replacePromptInUse":
 		'"{{name}}" wordt {{count}} keer gebruikt in {{files}} bestand(en). Kies een callout om het mee te vervangen:',
-	"vault.replacePromptUnused":
-		'Kies een callout om "{{name}}" mee te vervangen:',
-	"vault.noReplacementAvailable":
-		"Geen andere callouts beschikbaar om deze te vervangen.",
+	"vault.replacePromptUnused": 'Kies een callout om "{{name}}" mee te vervangen:',
+	"vault.noReplacementAvailable": "Geen andere callouts beschikbaar om deze te vervangen.",
 	"vault.convertedToPlainText":
 		"{{blocks}} callout-blok(ken) in {{files}} bestand(en) geconverteerd naar platte tekst.",
 	"vault.resetNotesFailed":
@@ -850,7 +810,8 @@ export const nl: Record<string, string> = {
 	"quickInsert.noResults": "Geen callouts gevonden",
 	"quickInsert.noBuiltInCallouts": "Er zijn momenteel geen ingebouwde callouts beschikbaar.",
 	"quickInsert.noThemeCallouts": "Er zijn momenteel geen themaspecifieke callouts beschikbaar.",
-	"quickInsert.targetMoved": "De notitie van waaruit je Snel invoegen hebt geopend, is gewijzigd of gesloten. Open Snel invoegen opnieuw in de notitie die je wilt bewerken.",
+	"quickInsert.targetMoved":
+		"De notitie van waaruit je Snel invoegen hebt geopend, is gewijzigd of gesloten. Open Snel invoegen opnieuw in de notitie die je wilt bewerken.",
 	"quickInsert.targetMovedHint": "De oorspronkelijke notitie is niet meer beschikbaar voor deze invoeging.",
 	"quickInsert.noUserCallouts":
 		"Je hebt nog geen aangepaste callouts gemaakt. Voer “Callout Studio: Nieuw callout-type aanmaken” uit via het opdrachtenpalet.",
@@ -868,9 +829,11 @@ export const nl: Record<string, string> = {
 	"portable.restoreDefault": "Standaardvervanging herstellen",
 	"portable.cancelEdit": "Wijzigingen verwerpen",
 	"portable.customInvalid": "Houd de vervanging op één regel zonder de omringende Markdown-structuur te wijzigen.",
-	"portable.customUnsafe": "Deze vervanging zou een kop of de bijbehorende links dubbelzinnig maken. Kies een andere kop.",
+	"portable.customUnsafe":
+		"Deze vervanging zou een kop of de bijbehorende links dubbelzinnig maken. Kies een andere kop.",
 	"portable.customStale": "De beoordeling is gewijzigd. Open de vervangingseditor opnieuw.",
-	"portable.customDiscarded": "{{count}} aangepaste vervangingen zijn verwijderd omdat hun brontekst is gewijzigd of niet met zekerheid kon worden gevonden.",
+	"portable.customDiscarded":
+		"{{count}} aangepaste vervangingen zijn verwijderd omdat hun brontekst is gewijzigd of niet met zekerheid kon worden gevonden.",
 	"portable.customBadge": "Aangepast",
 
 	"usage.title": "Callouts vinden",
@@ -892,42 +855,40 @@ export const nl: Record<string, string> = {
 	"usage.more": "Nog {{count}} tonen",
 	"usage.location": "Regel {{line}} · {{role}}",
 	"usage.missing": "Deze notitie bestaat niet meer. Resultaten worden bijgewerkt…",
-	"usage.changed": "Deze vindplaats is gewijzigd of verplaatst naar een onduidelijke plek. Resultaten worden bijgewerkt…",
+	"usage.changed":
+		"Deze vindplaats is gewijzigd of verplaatst naar een onduidelijke plek. Resultaten worden bijgewerkt…",
 	"usage.openFailed": "Kan deze vindplaats van de callout niet openen.",
 	"usage.menuIncomplete": "Callouts vinden — scan onvolledig",
 	"usage.menu": "Callouts vinden",
 	"usage.closeSettings": "Sluit Instellingen om de callout-resultaten in de zijbalk te bekijken.",
 
 	"import.title": "Importeerproblemen",
-	"import.reportLeadIn":
-		"Bekijk deze importproblemen voordat je verdergaat:",
-	"import.reportLeadInFatal":
-		"Deze gegevens konden niet worden geïmporteerd:",
+	"import.reportLeadIn": "Bekijk deze importproblemen voordat je verdergaat:",
+	"import.reportLeadInFatal": "Deze gegevens konden niet worden geïmporteerd:",
 	"import.entryHeading": "Vermelding {{index}} — {{label}}",
-	"import.summary":
-		"{{valid}} van {{total}} vermeldingen zijn geldig · {{issues}} probleem/problemen gevonden.",
+	"import.summary": "{{valid}} van {{total}} vermeldingen zijn geldig · {{issues}} probleem/problemen gevonden.",
 	"import.btnCancel": "Annuleren",
 	"import.btnImportValid": "Alleen geldige importeren ({{count}})",
-	"import.nothingValid": "Geen van de items is geldig, dus er is niets om te importeren. Annuleer, los de hier genoemde problemen op en importeer opnieuw.",
+	"import.nothingValid":
+		"Geen van de items is geldig, dus er is niets om te importeren. Annuleer, los de hier genoemde problemen op en importeer opnieuw.",
 	"import.err.notRecognized":
 		"Onbekend bestand: er werd een array van callout-definities of een Callout Studio-export verwacht.",
-	"import.warn.settingsIgnored":
-		"Het instellingenblok was geen geldig object en is genegeerd.",
-	"import.warn.invalidGradient":
-		"Het achtergrondverloop was ongeldig en is genegeerd.",
-	"import.err.parseFailed":
-		"Het bestand is geen geldig JSON en kon niet worden geparsed.",
-	"import.err.tooLarge": "Deze import overschrijdt de limiet van 16 MiB. Verdeel de gegevens over kleinere bestanden en probeer het opnieuw.",
-	"import.err.tooComplex": "Deze import is te complex: maximaal 1.000 items per lijst of object, in totaal 50.000 waarden en maximaal 32 niveaus diep.",
-	"import.err.imageBudget": "De volledige verzameling afbeeldingen overschrijdt de limieten voor grootte of complexiteit. Verwijder grote afbeeldingen of vereenvoudig ze vóór het importeren.",
+	"import.warn.settingsIgnored": "Het instellingenblok was geen geldig object en is genegeerd.",
+	"import.warn.invalidGradient": "Het achtergrondverloop was ongeldig en is genegeerd.",
+	"import.err.parseFailed": "Het bestand is geen geldig JSON en kon niet worden geparsed.",
+	"import.err.tooLarge":
+		"Deze import overschrijdt de limiet van 16 MiB. Verdeel de gegevens over kleinere bestanden en probeer het opnieuw.",
+	"import.err.tooComplex":
+		"Deze import is te complex: maximaal 1.000 items per lijst of object, in totaal 50.000 waarden en maximaal 32 niveaus diep.",
+	"import.err.imageBudget":
+		"De volledige verzameling afbeeldingen overschrijdt de limieten voor grootte of complexiteit. Verwijder grote afbeeldingen of vereenvoudig ze vóór het importeren.",
 	"import.err.processingFailed": "De import kon niet worden voltooid. Controleer de gegevens en probeer het opnieuw.",
-	"import.reportTruncated": "De eerste {{shown}} van {{total}} problemen worden getoond. Lange waarden zijn in dit rapport ingekort.",
+	"import.reportTruncated":
+		"De eerste {{shown}} van {{total}} problemen worden getoond. Lange waarden zijn in dit rapport ingekort.",
 	"import.err.entryNotObject": "De vermelding moet een object zijn.",
-	"import.err.requiredMissing":
-		'Verplicht veld "{{field}}" ontbreekt of heeft het verkeerde type.',
+	"import.err.requiredMissing": 'Verplicht veld "{{field}}" ontbreekt of heeft het verkeerde type.',
 	"import.err.idEmpty": "De ID mag niet leeg zijn.",
-	"import.err.idTooLong":
-		'De ID "{{value}}" is {{length}} tekens; het maximum is {{max}}.',
+	"import.err.idTooLong": 'De ID "{{value}}" is {{length}} tekens; het maximum is {{max}}.',
 	"import.err.idBadChar":
 		'De ID "{{value}}" bevat ongeldige tekens ("|", "[", "]", tabs en regeleinden zijn niet toegestaan).',
 	"import.err.idMetadata":
@@ -935,44 +896,31 @@ export const nl: Record<string, string> = {
 	"import.err.idReserved":
 		'De ID "{{value}}" is door Callout Studio gereserveerd voor de eigen voorbeelden en kan niet worden geïmporteerd.',
 	"import.err.displayNameEmpty": "De weergavenaam mag niet leeg zijn.",
-	"import.err.displayNameTooLong":
-		"De weergavenaam is {{length}} tekens; het maximum is {{max}}.",
-	"import.err.boolField":
-		'"{{field}}" moet een booleaanse waarde zijn (true of false).',
+	"import.err.displayNameTooLong": "De weergavenaam is {{length}} tekens; het maximum is {{max}}.",
+	"import.err.boolField": '"{{field}}" moet een booleaanse waarde zijn (true of false).',
 	"import.err.iconNotObject": "Het pictogram moet een object zijn.",
-	"import.err.iconTypeInvalid":
-		'Het pictogramtype "{{value}}" is geen van: {{types}}.',
+	"import.err.iconTypeInvalid": 'Het pictogramtype "{{value}}" is geen van: {{types}}.',
 	"import.warn.iconFieldIgnored":
 		'"{{field}}" is alleen van toepassing op Material-iconen en wordt genegeerd voor icontype {{type}}.',
-	"import.err.iconValueEmpty":
-		"De pictogramwaarde moet een niet-lege tekenreeks zijn.",
-	"import.err.iconValueTooLong":
-		"De pictogramwaarde overschrijdt de limiet van 200 tekens ({{length}} tekens).",
-	"import.err.materialStyle":
-		'De Material-pictogramstijl "{{value}}" is geen van: outlined, filled, rounded, sharp.',
+	"import.err.iconValueEmpty": "De pictogramwaarde moet een niet-lege tekenreeks zijn.",
+	"import.err.iconValueTooLong": "De pictogramwaarde overschrijdt de limiet van 200 tekens ({{length}} tekens).",
+	"import.err.materialStyle": 'De Material-pictogramstijl "{{value}}" is geen van: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
 		'Het Material-pictogramgewicht "{{value}}" moet een geheel getal zijn tussen 100 en 700, in stappen van 100.',
 	"import.warn.iconRecolorIgnored":
 		'"recolor" is alleen van toepassing op uw eigen afbeeldingen en wordt genegeerd voor icontype {{type}}.',
-	"import.err.iconRecolorInvalid":
-		'"recolor" moet true of false zijn (ontvangen: "{{value}}").',
-	"import.err.colorInvalid":
-		'"{{field}}" moet een hexadecimale kleur zijn zoals "#448aff" ("{{value}}" ontvangen).',
-	"import.err.numberRange":
-		'"{{field}}" moet een getal zijn tussen {{min}} en {{max}} ("{{value}}" ontvangen).',
-	"import.err.iconSizeRange":
-		'"{{field}}" moet een getal zijn tussen {{min}} en {{max}} ("{{value}}" ontvangen).',
+	"import.err.iconRecolorInvalid": '"recolor" moet true of false zijn (ontvangen: "{{value}}").',
+	"import.err.colorInvalid": '"{{field}}" moet een hexadecimale kleur zijn zoals "#448aff" ("{{value}}" ontvangen).',
+	"import.err.numberRange": '"{{field}}" moet een getal zijn tussen {{min}} en {{max}} ("{{value}}" ontvangen).',
+	"import.err.iconSizeRange": '"{{field}}" moet een getal zijn tussen {{min}} en {{max}} ("{{value}}" ontvangen).',
 	"import.err.iconAdjustShape":
 		'"iconAdjust" moet een object zijn dat een callout-type ("regular", "heading", "inline") koppelt aan de pictogramgrootte en verschuivingen.',
-	"import.err.aliasesNotArray":
-		'"aliases" moet een array van tekenreeksen zijn.',
+	"import.err.aliasesNotArray": '"aliases" moet een array van tekenreeksen zijn.',
 	"import.err.aliasNotString": "De alias moet een tekenreeks zijn.",
-	"import.err.aliasDup":
-		'De alias "{{value}}" is gedupliceerd binnen deze vermelding.',
+	"import.err.aliasDup": 'De alias "{{value}}" is gedupliceerd binnen deze vermelding.',
 	"import.err.tooManyIds":
 		"Te veel ID's ({{count}}); elke callout kan maximaal {{max}} ID's hebben (primair + aliassen).",
-	"import.err.metadataShape":
-		'"metadata" moet een object zijn waarvan alle waarden tekenreeksen zijn.',
+	"import.err.metadataShape": '"metadata" moet een object zijn waarvan alle waarden tekenreeksen zijn.',
 	"import.warn.unknownFields": "Onbekende veld(en) genegeerd: {{fields}}.",
 	"import.err.duplicateInFile":
 		'De ID/alias "{{value}}" wordt al gebruikt door vermelding #{{first}} in dit bestand.',
@@ -983,14 +931,12 @@ export const nl: Record<string, string> = {
 	"import.warn.imageMissing":
 		"Deze Callout gebruikt een afbeelding die niet in het bestand en niet in deze vault staat, dus zal een plaatshouder-icoon tonen totdat u een nieuw geeft.",
 
-	"import.err.paletteIdInvalid":
-		'"paletteId" moet een niet-leeg tekst-ID zijn (ontvangen: "{{value}}").',
-	"import.warn.iconNameUnknown":
-		'Er is geen "{{value}}" icoon in {{type}}, dus het standaardicoon is gebruikt.',
+	"import.err.paletteIdInvalid": '"paletteId" moet een niet-leeg tekst-ID zijn (ontvangen: "{{value}}").',
+	"import.warn.iconNameUnknown": 'Er is geen "{{value}}" icoon in {{type}}, dus het standaardicoon is gebruikt.',
 	"import.warn.cmIconUnknownNew":
-		'Het pictogram ‘{{value}}’ is niet beschikbaar in deze vault; daarom is het standaardpictogram gebruikt.',
+		"Het pictogram ‘{{value}}’ is niet beschikbaar in deze vault; daarom is het standaardpictogram gebruikt.",
 	"import.warn.cmIconUnknownExisting":
-		'Het pictogram ‘{{value}}’ is niet beschikbaar in deze vault; daarom heeft ‘{{id}}’ het bestaande pictogram behouden.',
+		"Het pictogram ‘{{value}}’ is niet beschikbaar in deze vault; daarom heeft ‘{{id}}’ het bestaande pictogram behouden.",
 	"import.chooseSource": "Importeren uit",
 	"import.sourceStudio": "Callout Studio",
 	"import.sourceStudioDesc": "Een .json-bestand dat is geëxporteerd uit Callout Studio.",
@@ -1008,7 +954,8 @@ export const nl: Record<string, string> = {
 	"import.pasteFirst": "Plak eerst de gekopieerde stijlen.",
 	"import.uploadFirst": "Upload eerst een bestand.",
 	"import.clipboardEmpty": "Het klembord is leeg. Kopieer eerst de gegevens.",
-	"import.clipboardBlocked": "Het klembord kon niet worden gelezen. Plak de inhoud in plaats daarvan zelf in het vak.",
+	"import.clipboardBlocked":
+		"Het klembord kon niet worden gelezen. Plak de inhoud in plaats daarvan zelf in het vak.",
 	"import.importing": "Importeren…",
 	"import.err.fileUnreadable": "Het bestand kon niet worden gelezen.",
 	"import.cmTitle": "Importeren uit Callout Manager",
@@ -1016,8 +963,7 @@ export const nl: Record<string, string> = {
 	"import.cmVaultChecking": "De Callout Manager-plug-in wordt gezocht…",
 	"import.cmVaultFound": "{{count}} aangepaste callouts gevonden.",
 	"import.cmFromPaste": "Gekopieerde stijlen",
-	"import.cmFromPasteDesc":
-		"Wat de Copy-knop van Callout Manager kopieert, of een data.json.",
+	"import.cmFromPasteDesc": "Wat de Copy-knop van Callout Manager kopieert, of een data.json.",
 	"import.cmInstructions":
 		"Elke aangepaste callout wordt met pictogram en kleur overgenomen. Stijlen per thema en aangepaste CSS hebben hier geen equivalent en worden niet overgenomen.",
 	"import.cmPlaceholder": "Plak hier de gekopieerde stijlen of de inhoud van data.json…",
@@ -1025,10 +971,8 @@ export const nl: Record<string, string> = {
 	"import.cmBtnImport": "Importeren",
 	"import.err.cmNotRecognized":
 		"Bestand niet herkend: stijlen van de Copy-knop van Callout Manager of een data.json van Callout Manager verwacht.",
-	"import.err.cmNoEntries":
-		"Geen aangepaste callouts gevonden om te importeren.",
-	"import.err.cmNoBlocksFound":
-		"Er zijn geen Callout Manager-stijlen gevonden in het bestand of de geplakte tekst.",
+	"import.err.cmNoEntries": "Geen aangepaste callouts gevonden om te importeren.",
+	"import.err.cmNoBlocksFound": "Er zijn geen Callout Manager-stijlen gevonden in het bestand of de geplakte tekst.",
 	"import.err.cmNoColorForNew":
 		'Er is geen bruikbare kleur gevonden voor de nieuwe callout "{{value}}"; deze is overgeslagen.',
 	"import.warn.cmNoColorDefault":
@@ -1037,9 +981,12 @@ export const nl: Record<string, string> = {
 		'ID "{{value}}" wordt al gebruikt als alias door een andere callout ("{{other}}") en is overgeslagen.',
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "Thema-afhankelijke opmaak kan niet behouden blijven. Waarden zonder voorwaarden krijgen de voorkeur; eventuele voorwaardelijke terugvalwaarden gelden voor alle thema’s.",
-	"import.warn.cmCustomStylesSkipped": "Aangepaste CSS van Callout Manager wordt niet geïmporteerd. Alleen ondersteunde pictogram- en kleurinstellingen kunnen worden overgezet.",
-	"import.warn.cmSchemeIcon": "Callout Studio gebruikt één pictogram voor beide kleurenschema’s; het geïmporteerde pictogram wordt in beide gebruikt.",
+	"import.warn.cmThemeConditionPartial":
+		"Thema-afhankelijke opmaak kan niet behouden blijven. Waarden zonder voorwaarden krijgen de voorkeur; eventuele voorwaardelijke terugvalwaarden gelden voor alle thema’s.",
+	"import.warn.cmCustomStylesSkipped":
+		"Aangepaste CSS van Callout Manager wordt niet geïmporteerd. Alleen ondersteunde pictogram- en kleurinstellingen kunnen worden overgezet.",
+	"import.warn.cmSchemeIcon":
+		"Callout Studio gebruikt één pictogram voor beide kleurenschema’s; het geïmporteerde pictogram wordt in beide gebruikt.",
 	"import.err.cmDuplicateId": "ID {{value}} is een duplicaat van {{other}} in deze import en is overgeslagen.",
 	"import.admTitle": "Importeren uit Admonition",
 	"import.admInstructions":
@@ -1050,16 +997,13 @@ export const nl: Record<string, string> = {
 	"import.admVaultChecking": "Zoeken naar de Admonition-plug-in…",
 	"import.admVaultFound": "{{count}} eigen admonition(s) gevonden.",
 	"import.admFromFile": "Een bestand",
-	"import.admFromFileDesc":
-		"Een admonitions.json-bestand of een gedeeld pakket.",
+	"import.admFromFileDesc": "Een admonitions.json-bestand of een gedeeld pakket.",
 	"import.admBtnCancel": "Annuleren",
 	"import.admBtnImport": "Importeren",
 	"import.err.admNotRecognized":
-		"Bestand niet herkend: er werd een lijst met admonitions of een " +
-		"data.json van Admonition verwacht.",
+		"Bestand niet herkend: er werd een lijst met admonitions of een " + "data.json van Admonition verwacht.",
 	"import.err.admNoEntries": "Geen admonitions gevonden om te importeren.",
-	"import.err.admTypeMissing":
-		'Deze admonition heeft geen "type" en is overgeslagen.',
+	"import.err.admTypeMissing": 'Deze admonition heeft geen "type" en is overgeslagen.',
 	"import.warn.admIconUnknown":
 		"Er is in geen enkele pictogrambibliotheek een pictogram met de " +
 		'naam "{{value}}" gevonden, dus is het standaardpictogram ' +
@@ -1074,23 +1018,20 @@ export const nl: Record<string, string> = {
 		"Deze admonition wordt in Admonition opgemaakt door een " +
 		"CSS-snippet. Die opmaak hoort niet bij de import, dus alleen " +
 		"naam, pictogram en kleur zijn overgekomen.",
-	"import.warn.admNoColor":
-		"Er was geen kleur ingesteld, dus is het standaardblauw gebruikt.",
-	"import.warn.admTitleTruncated":
-		"De titel is {{length}} tekens; hij is ingekort tot {{max}}.",
+	"import.warn.admNoColor": "Er was geen kleur ingesteld, dus is het standaardblauw gebruikt.",
+	"import.warn.admTitleTruncated": "De titel is {{length}} tekens; hij is ingekort tot {{max}}.",
 
 	"footer.openIssue": "Een issue openen",
 	"footer.sourceCode": "Broncode",
 	"settings.about": "Over",
 	"settings.version": "Versie",
 	"settings.deletePaletteBodyLinkedOne":
-		'1 callout gebruikt het. Het behoudt zijn kleuren en je kunt het later opnieuw koppelen via de rij Kleur in de editor.',
+		"1 callout gebruikt het. Het behoudt zijn kleuren en je kunt het later opnieuw koppelen via de rij Kleur in de editor.",
 	"settings.deletePaletteBodyLinked":
-		'{{count}} callouts gebruiken het. Ze behouden hun kleuren en je kunt ze later opnieuw koppelen via de rij Kleur in een van hun editors.',
+		"{{count}} callouts gebruiken het. Ze behouden hun kleuren en je kunt ze later opnieuw koppelen via de rij Kleur in een van hun editors.",
 	"notice.palettesMerged":
 		"{{count}} opgeslagen kleur(en) met identieke kleuren samengevoegd: {{names}}. De callouts die ze gebruiken behouden hun kleuren en zijn nu gekoppeld aan de kleur die is overgebleven.",
-	"editor.colorsDescDeleted":
-		"De opgeslagen kleur van deze callout is verwijderd. {{link}}",
+	"editor.colorsDescDeleted": "De opgeslagen kleur van deze callout is verwijderd. {{link}}",
 	"editor.colorsDescDeletedLink": "Herstellen",
 	"palette.colorExists":
 		'Deze kleuren zijn identiek aan "{{name}}". Twee opgeslagen kleuren mogen niet hetzelfde zijn — wijzig een kleur om ze te onderscheiden.',
@@ -1106,8 +1047,7 @@ export const nl: Record<string, string> = {
 	"notice.exportedCssCreated": "CSS-fragment opgeslagen in {{path}}",
 	"notice.exportedCssUpdated": "CSS-fragment bijgewerkt in {{path}}",
 	"notice.exportedCssUnchanged": "Het CSS-fragment is al bijgewerkt.",
-	"notice.exportCssEmpty":
-		"Er zijn geen aangepaste callouts om te exporteren.",
+	"notice.exportCssEmpty": "Er zijn geen aangepaste callouts om te exporteren.",
 	"notice.exportCssFailed":
 		"Het CSS-fragment kon niet worden opgeslagen. Bekijk de ontwikkelaarsconsole voor details.",
 	"notice.exportCssEnabled":
@@ -1129,53 +1069,74 @@ export const nl: Record<string, string> = {
 	"quickInsert.readingViewHint": "Deze notitie is geopend in leesmodus, dus er kan niets worden ingevoegd.",
 	"quickInsert.readingView": "Schakel over naar bronmodus of Live Preview om een callout in te voegen.",
 	"quickInsert.noCursorHint": "Er is geen cursor in deze notitie, dus er is nergens om in te voegen.",
-	"quickInsert.noCursor": "Plaats de cursor in de notitie op de plek waar je de callout wilt invoegen en probeer het opnieuw.",
-	"notice.legacyDiscoveryArchiveFailed": "De herstelkopie voor de upgrade kon niet worden voltooid. De vorige lokale detectiecache en opstart-CSS zijn ongewijzigd behouden. Controleer de schrijftoegang tot de opslag en de vrije ruimte en start Obsidian vervolgens opnieuw om het nogmaals te proberen.",
+	"quickInsert.noCursor":
+		"Plaats de cursor in de notitie op de plek waar je de callout wilt invoegen en probeer het opnieuw.",
+	"notice.legacyDiscoveryArchiveFailed":
+		"De herstelkopie voor de upgrade kon niet worden voltooid. De vorige lokale detectiecache en opstart-CSS zijn ongewijzigd behouden. Controleer de schrijftoegang tot de opslag en de vrije ruimte en start Obsidian vervolgens opnieuw om het nogmaals te proberen.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Gepauzeerd tot je de ontbrekende callout opnieuw maakt of een andere kiest.",
 	"confirm.titleRestoreSettings": "Deze instellingen herstellen",
 	"confirm.titleCreateSettingsFile": "Instellingenbestand maken",
 	"confirm.saveDisplayedSettings":
 		"Hiermee sla je de opzet die je nu ziet op als je instellingenbestand en zet je het opslaan weer aan. De reservekopie die dit apparaat bewaart, wordt eerst geback-upt.\nKan een ander apparaat nieuwere wijzigingen hebben die je wilt behouden, laat het dan eerst klaar zijn met synchroniseren voordat je doorgaat. Je synchronisatie-app kan dit bestand naar je andere apparaten sturen.\nCallout Studio zoekt nog één keer naar het instellingenbestand voordat het opslaat. Is het teruggekomen, dan behoudt Callout Studio dat bestand.",
-	"notice.settingsBackupFailed": "Het herstellen van instellingen kon niet doorgaan omdat een veiligheidsback-up niet kon worden opgeslagen. Controleer de beschikbare opslagruimte en schrijfrechten, en probeer het opnieuw.",
-	"notice.settingsNewerVersion": "De instellingen van Callout Studio zijn opgeslagen door een nieuwere versie van de plugin, dus er wordt niets op dit apparaat geschreven totdat je die bijwerkt. Je instellingen zijn veilig — werk Callout Studio hier bij en herlaad Obsidian.",
+	"notice.settingsBackupFailed":
+		"Het herstellen van instellingen kon niet doorgaan omdat een veiligheidsback-up niet kon worden opgeslagen. Controleer de beschikbare opslagruimte en schrijfrechten, en probeer het opnieuw.",
+	"notice.settingsNewerVersion":
+		"De instellingen van Callout Studio zijn opgeslagen door een nieuwere versie van de plugin, dus er wordt niets op dit apparaat geschreven totdat je die bijwerkt. Je instellingen zijn veilig — werk Callout Studio hier bij en herlaad Obsidian.",
 	"saveStatus.changed":
 		"Het instellingenbestand is gewijzigd terwijl je aan het bewerken was. Je concept is nog beschikbaar. Kies Opnieuw proberen om de binnengekomen instellingen te laden, controleer daarna je concept en sla opnieuw op.",
-	"saveStatus.missing": "Opslaan is gepauzeerd omdat het instellingenbestand ontbreekt. Dit kan gebeuren na een herinstallatie of terwijl er nog wordt gesynchroniseerd. Rond de synchronisatie af en probeer het opnieuw. Gebruik Nieuw instellingenbestand maken in de instellingen van Callout Studio om het ontbrekende bestand bewust te vervangen.",
+	"saveStatus.missing":
+		"Opslaan is gepauzeerd omdat het instellingenbestand ontbreekt. Dit kan gebeuren na een herinstallatie of terwijl er nog wordt gesynchroniseerd. Rond de synchronisatie af en probeer het opnieuw. Gebruik Nieuw instellingenbestand maken in de instellingen van Callout Studio om het ontbrekende bestand bewust te vervangen.",
 	"saveStatus.restoreSettings": "Deze instellingen herstellen",
 	"saveStatus.createSettingsFile": "Instellingenbestand maken",
 	"saveStatus.checkAgain": "Opnieuw controleren",
-	"saveStatus.recoverInSettings": "Open de Callout Studio-instellingen om het ontbrekende bestand op dit apparaat te herstellen. Kopieer voordat je deze editor sluit alle niet-opgeslagen bewerkingen die je wilt bewaren; ze zijn niet opgeslagen.",
+	"saveStatus.recoverInSettings":
+		"Open de Callout Studio-instellingen om het ontbrekende bestand op dit apparaat te herstellen. Kopieer voordat je deze editor sluit alle niet-opgeslagen bewerkingen die je wilt bewaren; ze zijn niet opgeslagen.",
 	"saveStatus.openSettings": "Callout Studio-instellingen openen",
-	"notice.openSettingsFailed": "De Callout Studio-instellingen konden niet worden geopend. Open Instellingen → Callout Studio om te kiezen wat je doet.",
-	"saveStatus.notesFailed": "De callout-definitie is opgeslagen, maar sommige notitie-updates konden niet worden voltooid. Laat deze editor open staan en kies Opslaan om de onvoltooide updates opnieuw te proberen.",
-	"saveStatus.recoveryRead": "Opslaan is gepauzeerd omdat de lokale herstelkopie niet kan worden gelezen. Je instellingenbestand is mogelijk nog intact. Controleer de beschikbare opslagruimte en probeer het herstel daarna opnieuw. Bestaande herstelgegevens worden niet overschreven.",
-	"saveStatus.recoveryWrite": "De lokale herstelkopie kon niet worden opgeslagen. Controleer de beschikbare opslagruimte en probeer het opnieuw. Laat je concept open staan totdat het opslaan lukt.",
-	"saveStatus.retryFailed": "Opslaan is nog steeds geblokkeerd. Controleer de opslagstatus in de instellingen van Callout Studio voor de oorzaak, en probeer het opnieuw.",
-	"saveStatus.reviewDraft": "De binnenkomende instellingen en herstelcontroles zijn voltooid. Je concept is ongewijzigd. Controleer het en sla opnieuw op.",
-	"saveStatus.settingsArrived": "Bestaande instellingen zijn binnengekomen en geladen. Er is geen vervangend bestand gemaakt.",
-	"saveStatus.syncConflict": "De binnenkomende instellingen conflicteren met een callout die nodig is voor onvoltooide notitie-updates. Je concept en openstaande updates zijn bewaard. Los het instellingenconflict op voordat je het opnieuw probeert.",
+	"notice.openSettingsFailed":
+		"De Callout Studio-instellingen konden niet worden geopend. Open Instellingen → Callout Studio om te kiezen wat je doet.",
+	"saveStatus.notesFailed":
+		"De callout-definitie is opgeslagen, maar sommige notitie-updates konden niet worden voltooid. Laat deze editor open staan en kies Opslaan om de onvoltooide updates opnieuw te proberen.",
+	"saveStatus.recoveryRead":
+		"Opslaan is gepauzeerd omdat de lokale herstelkopie niet kan worden gelezen. Je instellingenbestand is mogelijk nog intact. Controleer de beschikbare opslagruimte en probeer het herstel daarna opnieuw. Bestaande herstelgegevens worden niet overschreven.",
+	"saveStatus.recoveryWrite":
+		"De lokale herstelkopie kon niet worden opgeslagen. Controleer de beschikbare opslagruimte en probeer het opnieuw. Laat je concept open staan totdat het opslaan lukt.",
+	"saveStatus.retryFailed":
+		"Opslaan is nog steeds geblokkeerd. Controleer de opslagstatus in de instellingen van Callout Studio voor de oorzaak, en probeer het opnieuw.",
+	"saveStatus.reviewDraft":
+		"De binnenkomende instellingen en herstelcontroles zijn voltooid. Je concept is ongewijzigd. Controleer het en sla opnieuw op.",
+	"saveStatus.settingsArrived":
+		"Bestaande instellingen zijn binnengekomen en geladen. Er is geen vervangend bestand gemaakt.",
+	"saveStatus.syncConflict":
+		"De binnenkomende instellingen conflicteren met een callout die nodig is voor onvoltooide notitie-updates. Je concept en openstaande updates zijn bewaard. Los het instellingenconflict op voordat je het opnieuw probeert.",
 	"saveStatus.titlePaused": "Opslaan is gepauzeerd",
 	"saveStatus.titleFailed": "Instellingen zijn niet opgeslagen",
 	"saveStatus.tryAgain": "Opnieuw proberen",
 	"saveStatus.working": "Bezig…",
-	"saveStatus.unreadable": "Opslaan is gepauzeerd omdat het instellingenbestand niet veilig kan worden gelezen. Rond de synchronisatie af of herstel een geldige kopie, en probeer het opnieuw. Het bestaande bestand is bewaard.",
-	"saveStatus.write": "Het instellingenbestand kon niet worden opgeslagen. Controleer de beschikbare opslagruimte, maprechten en synchronisatie, en probeer het opnieuw voordat je Obsidian sluit.",
-	"saveStatus.writePermission": "Het instellingenbestand kon niet worden opgeslagen omdat de opslag schrijftoegang weigerde. Controleer of de kluis en de pluginmap beschrijfbaar zijn, en probeer het opnieuw.",
-	"saveStatus.writeSpace": "Het instellingenbestand kon niet worden opgeslagen omdat de opslag vol is of het quotum is overschreden. Maak wat ruimte vrij, en probeer het opnieuw.",
-	"settings.readOnly": "Callout Studio kon zijn instellingenbestand niet gebruiken toen Obsidian opstartte, dus wordt er niets op deze pagina op dit apparaat opgeslagen. Je wijzigingen blijven bestaan totdat je Obsidian sluit. Herlaad Obsidian zodra het bestand terug is — als je deze kluis synchroniseert, laat de synchronisatie dan eerst voltooien.",
+	"saveStatus.unreadable":
+		"Opslaan is gepauzeerd omdat het instellingenbestand niet veilig kan worden gelezen. Rond de synchronisatie af of herstel een geldige kopie, en probeer het opnieuw. Het bestaande bestand is bewaard.",
+	"saveStatus.write":
+		"Het instellingenbestand kon niet worden opgeslagen. Controleer de beschikbare opslagruimte, maprechten en synchronisatie, en probeer het opnieuw voordat je Obsidian sluit.",
+	"saveStatus.writePermission":
+		"Het instellingenbestand kon niet worden opgeslagen omdat de opslag schrijftoegang weigerde. Controleer of de kluis en de pluginmap beschrijfbaar zijn, en probeer het opnieuw.",
+	"saveStatus.writeSpace":
+		"Het instellingenbestand kon niet worden opgeslagen omdat de opslag vol is of het quotum is overschreden. Maak wat ruimte vrij, en probeer het opnieuw.",
+	"settings.readOnly":
+		"Callout Studio kon zijn instellingenbestand niet gebruiken toen Obsidian opstartte, dus wordt er niets op deze pagina op dit apparaat opgeslagen. Je wijzigingen blijven bestaan totdat je Obsidian sluit. Herlaad Obsidian zodra het bestand terug is — als je deze kluis synchroniseert, laat de synchronisatie dan eerst voltooien.",
 	"portable.reviewTitle": "Conversie bekijken",
-	"portable.helpIntro": "Selecteer de vervangingen die je wilt toepassen. Klik op het potlood of de vervangingstekst om deze te bewerken en druk daarna op Enter of klik buiten het veld om op te slaan. Gebruik het resetpictogram om een concept te verwerpen of de standaardvervanging te herstellen. Notities veranderen pas nadat je Geselecteerde converteren kiest en bevestigt. Kopkoppelingen worden samen met de geselecteerde koppen bijgewerkt.",
+	"portable.helpIntro":
+		"Selecteer de vervangingen die je wilt toepassen. Klik op het potlood of de vervangingstekst om deze te bewerken en druk daarna op Enter of klik buiten het veld om op te slaan. Gebruik het resetpictogram om een concept te verwerpen of de standaardvervanging te herstellen. Notities veranderen pas nadat je Geselecteerde converteren kiest en bevestigt. Kopkoppelingen worden samen met de geselecteerde koppen bijgewerkt.",
 	"portable.help": "Over de conversie",
 	"portable.roleLink": "Koplink",
 	"portable.convertSelected": "Selectie omzetten",
-	"portable.selectionSummary": "{{selected}} van {{total}} vervangingen geselecteerd · {{links}} koplinks bij te werken",
-	"portable.selectionSummaryNoLinks":
-		"{{selected}} van {{total}} vervangingen geselecteerd",
+	"portable.selectionSummary":
+		"{{selected}} van {{total}} vervangingen geselecteerd · {{links}} koplinks bij te werken",
+	"portable.selectionSummaryNoLinks": "{{selected}} van {{total}} vervangingen geselecteerd",
 	"portable.selectionConflict": "Die keuze zou koplinks dubbelzinnig maken. Je vorige selectie is behouden.",
 	"portable.selectAll": "Alles selecteren",
 	"portable.selectNone": "Alles deselecteren",
-	"portable.relatedLinksHint": "Links en insluitingen volgen de geselecteerde koppen en worden samen daarmee omgezet.",
+	"portable.relatedLinksHint":
+		"Links en insluitingen volgen de geselecteerde koppen en worden samen daarmee omgezet.",
 	"portable.selectChange": "{{path}}, regel {{line}} omzetten",
 	"portable.showMore": "Nog {{count}} tonen",
 	"portable.openFailed": "De conversiezijbalk kon niet worden geopend.",
@@ -1183,14 +1144,19 @@ export const nl: Record<string, string> = {
 	"portable.retry": "Opnieuw proberen",
 	"portable.blockedAmbiguous": "Deze kop wordt overgeslagen omdat het linkdoel dubbelzinnig is.",
 	"portable.blockedTarget": "Deze kop wordt overgeslagen omdat het linkdoel niet veilig kan worden behouden.",
-	"portable.recovery": "Er zijn nog wijzigingen over. Voltooi deze conversie en de updates van koplinks voordat je de plug-in herstart of uitschakelt; het resterende plan wordt alleen in het geheugen bewaard.",
-	"portable.recoveryChanged": "Notities zijn gewijzigd nadat de conversie stopte. Resterende linkupdates blijven bewaard; elke notitie wordt vóór het schrijven opnieuw gecontroleerd.",
+	"portable.recovery":
+		"Er zijn nog wijzigingen over. Voltooi deze conversie en de updates van koplinks voordat je de plug-in herstart of uitschakelt; het resterende plan wordt alleen in het geheugen bewaard.",
+	"portable.recoveryChanged":
+		"Notities zijn gewijzigd nadat de conversie stopte. Resterende linkupdates blijven bewaard; elke notitie wordt vóór het schrijven opnieuw gecontroleerd.",
 	"portable.finishConversion": "Conversie voltooien",
-	"portable.recoveryUnavailable": "Sommige resterende linkupdates konden niet veilig worden hersteld. Controleer de betreffende notities voordat je een nieuwe conversie start.",
+	"portable.recoveryUnavailable":
+		"Sommige resterende linkupdates konden niet veilig worden hersteld. Controleer de betreffende notities voordat je een nieuwe conversie start.",
 	"portable.title": "Omzetten naar standaard Markdown",
-	"portable.settingDesc": "Vervang kop- en inline-callouts in de hele kluis door gewone tekst die zonder Callout Studio kan worden gebruikt.",
+	"portable.settingDesc":
+		"Vervang kop- en inline-callouts in de hele kluis door gewone tekst die zonder Callout Studio kan worden gebruikt.",
 	"portable.review": "Conversie bekijken",
-	"portable.intro": "Als je wilt stoppen met Callout Studio of je kluis wilt verplaatsen naar een app die het niet ondersteunt, zet je kop- en inline-callouts dan om naar standaard Markdown.",
+	"portable.intro":
+		"Als je wilt stoppen met Callout Studio of je kluis wilt verplaatsen naar een app die het niet ondersteunt, zet je kop- en inline-callouts dan om naar standaard Markdown.",
 	"portable.before": "Voor",
 	"portable.after": "Na",
 	"portable.replacement": "Vervanging",
@@ -1198,24 +1164,30 @@ export const nl: Record<string, string> = {
 	"portable.type": "type",
 	"portable.text": "Tekst",
 	"portable.headingText": "Titel",
-	"portable.backup": "We raden aan om vóór de conversie een back-up van je kluis te maken. Dit wijzigt de oorspronkelijke notities en kan niet ongedaan worden gemaakt in Callout Studio.",
+	"portable.backup":
+		"We raden aan om vóór de conversie een back-up van je kluis te maken. Dit wijzigt de oorspronkelijke notities en kan niet ongedaan worden gemaakt in Callout Studio.",
 	"portable.scanning": "Markdown-notities lezen…",
 	"portable.progress": "Notities lezen: {{done}} van {{total}}",
 	"portable.empty": "Geen geschikte kop- of inline-callouts gevonden. Er wordt niets gewijzigd.",
 	"portable.confirmTitle": "Deze kluis definitief omzetten?",
 	"portable.confirmSubtitle": "Er wordt geen automatische back-up gemaakt",
-	"portable.confirmBody": "{{count}} voorkomens omzetten en {{links}} koplinks in {{files}} notities bijwerken?\nDit wijzigt de oorspronkelijke bestanden en kan niet ongedaan worden gemaakt in Callout Studio. Er wordt geen automatische back-up gemaakt. Maak eerst een back-up van je kluis, sla open notities op en pauzeer bewerken en synchroniseren totdat de conversie klaar is.\nAls een bestand verandert of schrijven mislukt, stopt de conversie. Reeds omgezette notities blijven gewijzigd.",
+	"portable.confirmBody":
+		"{{count}} voorkomens omzetten en {{links}} koplinks in {{files}} notities bijwerken?\nDit wijzigt de oorspronkelijke bestanden en kan niet ongedaan worden gemaakt in Callout Studio. Er wordt geen automatische back-up gemaakt. Maak eerst een back-up van je kluis, sla open notities op en pauzeer bewerken en synchroniseren totdat de conversie klaar is.\nAls een bestand verandert of schrijven mislukt, stopt de conversie. Reeds omgezette notities blijven gewijzigd.",
 	"portable.confirmAction": "Definitief omzetten",
-	"portable.converting": "De geselecteerde wijzigingen worden omgezet… Het sluiten van dit paneel stopt de conversie niet.",
+	"portable.converting":
+		"De geselecteerde wijzigingen worden omgezet… Het sluiten van dit paneel stopt de conversie niet.",
 	"portable.complete": "{{count}} voorkomens omgezet en {{links}} koplinks bijgewerkt in {{files}} notities.",
-	"portable.stopped": "Conversie gestopt. {{count}} voorkomens en {{links}} koplinks in {{files}} notities zijn al gewijzigd; deze wijzigingen blijven behouden.",
+	"portable.stopped":
+		"Conversie gestopt. {{count}} voorkomens en {{links}} koplinks in {{files}} notities zijn al gewijzigd; deze wijzigingen blijven behouden.",
 	"portable.errorEditor": "Sla open notities op om het overzicht automatisch bij te werken.",
 	"portable.errorChanged": "De notities zijn gewijzigd. Bekijk de bijgewerkte wijzigingen voordat je ze omzet.",
 	"portable.errorBusy": "Er wordt al een andere conversie uitgevoerd. Wacht tot deze klaar is.",
-	"portable.error": "De kluis kon niet veilig worden gelezen of bijgewerkt. Controleer de bestandstoegang en probeer het opnieuw.",
+	"portable.error":
+		"De kluis kon niet veilig worden gelezen of bijgewerkt. Controleer de bestandstoegang en probeer het opnieuw.",
 	"portable.blockedConverting": "Er wordt al een conversie uitgevoerd. Wacht tot deze klaar is.",
 	"portable.blockedUpdating": "De controle wordt nog bijgewerkt. Wacht tot deze klaar is voordat je converteert.",
-	"portable.blockedEditing": "Rond eerst het bewerken van de vervanging af: druk op Enter om op te slaan of op Esc om te verwerpen.",
+	"portable.blockedEditing":
+		"Rond eerst het bewerken van de vervanging af: druk op Enter om op te slaan of op Esc om te verwerpen.",
 	"portable.blockedNothingSelected": "Selecteer minstens één vervanging om te converteren.",
 	"settings.maintenance": "Gevarenzone",
 	// Sync safety hardening
@@ -1225,7 +1197,8 @@ export const nl: Record<string, string> = {
 		"Het bestand is leeg, wat meestal betekent dat een synchronisatie is onderbroken. Als een ander apparaat je instellingen nog heeft, laat het dan synchroniseren. Vervang anders het bestand.",
 	"saveStatus.diagnosis.mergeMarkers":
 		"Het bestand bevat onopgeloste samenvoegconflict-markeringen, bijvoorbeeld van Git. Los het conflict op in je Git-tool, of vervang het bestand.",
-	"saveStatus.diagnosis.damaged": "Het bestand is onvolledig of beschadigd, waardoor het niet als instellingen kan worden gelezen.",
+	"saveStatus.diagnosis.damaged":
+		"Het bestand is onvolledig of beschadigd, waardoor het niet als instellingen kan worden gelezen.",
 	"saveStatus.diagnosis.combined":
 		"Je synchronisatiedienst heeft twee versies van het bestand samengevoegd, waardoor de interne controle niet meer klopt. De instellingen erin zijn intact, en het bestand vervangen behoudt ze.",
 	"saveStatus.diagnosis.invalidEntries":
@@ -1250,16 +1223,20 @@ export const nl: Record<string, string> = {
 		"Je instellingen zijn opgeslagen door een nieuwere versie van Callout Studio, dus deze oudere versie wijzigt ze niet.",
 	"saveStatus.explain.changed":
 		"Het instellingenbestand is gewijzigd terwijl Callout Studio ermee bezig was, dus is gestopt zonder iets te vervangen.",
-	"saveStatus.guide.rechecks": "Callout Studio controleert elke minuut opnieuw zolang Obsidian openstaat, dus vaak lost dit zichzelf op.",
+	"saveStatus.guide.rechecks":
+		"Callout Studio controleert elke minuut opnieuw zolang Obsidian openstaat, dus vaak lost dit zichzelf op.",
 	"saveStatus.guide.rechecksCheckNow":
 		"Callout Studio controleert elke minuut opnieuw zolang Obsidian openstaat, dus vaak lost dit zichzelf op — of kies Opnieuw controleren om nu te kijken.",
 	"saveStatus.guide.restore":
 		"Komen je instellingen niet terug, kies dan Deze instellingen herstellen om de callouts te behouden die je hier ziet.",
-	"saveStatus.guide.create": "Komen je instellingen niet terug, kies dan Instellingenbestand maken om weer te beginnen met opslaan.",
-	"saveStatus.guide.recoveryRetry": "Zorg dat dit apparaat wat vrije opslagruimte heeft en kies dan Opnieuw proberen.",
+	"saveStatus.guide.create":
+		"Komen je instellingen niet terug, kies dan Instellingenbestand maken om weer te beginnen met opslaan.",
+	"saveStatus.guide.recoveryRetry":
+		"Zorg dat dit apparaat wat vrije opslagruimte heeft en kies dan Opnieuw proberen.",
 	"saveStatus.guide.recoveryDiscard":
 		"Helpt dat niet, kies dan Herstelkopie verwijderen. Eerst wordt een exacte kopie opgeslagen en je instellingenbestand blijft onaangeroerd.",
-	"saveStatus.guide.newerVersion": "Werk Callout Studio bij via Instellingen → Community-plugins en laad Obsidian daarna opnieuw.",
+	"saveStatus.guide.newerVersion":
+		"Werk Callout Studio bij via Instellingen → Community-plugins en laad Obsidian daarna opnieuw.",
 	"saveStatus.missingNotice":
 		"Je notities zijn veilig. Callout Studio heeft het opslaan gepauzeerd omdat het zijn instellingenbestand nu niet kan vinden.",
 	"statusBar.paused": "Opslaan gepauzeerd",
@@ -1327,7 +1304,8 @@ export const nl: Record<string, string> = {
 	"recovery.details.unknownTime": "Opslagtijd niet vastgelegd",
 	"recovery.details.current": "Huidige configuratie",
 	"recovery.details.restored": "Na het herstellen van deze versie",
-	"recovery.details.unreadable": "Deze versie van Callout Studio kan deze kopie niet interpreteren als een herstelbare configuratie. Mogelijk is de kopie beschadigd, niet beschikbaar of in een nieuwer formaat opgeslagen. Een vergelijking en een rapport over de herstelde instellingen zijn niet beschikbaar. Alle originele inhoud die kon worden gelezen, staat hieronder.",
+	"recovery.details.unreadable":
+		"Deze versie van Callout Studio kan deze kopie niet interpreteren als een herstelbare configuratie. Mogelijk is de kopie beschadigd, niet beschikbaar of in een nieuwer formaat opgeslagen. Een vergelijking en een rapport over de herstelde instellingen zijn niet beschikbaar. Alle originele inhoud die kon worden gelezen, staat hieronder.",
 	"recovery.details.null": "Geen waarde (null)",
 	"recovery.details.yes": "Ja",
 	"recovery.details.no": "Nee",
@@ -1495,11 +1473,14 @@ export const nl: Record<string, string> = {
 	"recovery.delete": "Verwijderen",
 
 	// Version history
-	"saveStatus.guide.versions": "Zodra opslaan weer werkt, kun je ook teruggaan naar een opgeslagen versie met Een eerdere versie herstellen.",
+	"saveStatus.guide.versions":
+		"Zodra opslaan weer werkt, kun je ook teruggaan naar een opgeslagen versie met Een eerdere versie herstellen.",
 	"saveStatus.goToVersions": "Naar versiegeschiedenis",
 	"versions.title": "Versiegeschiedenis",
-	"versions.intro": "Callout Studio slaat automatisch versies van je configuratie op.\nOudere worden na verloop van tijd verwijderd.\nEen versie terugzetten vervangt je huidige configuratie op elk gesynchroniseerd apparaat.",
-	"versions.pausedHint": "Opslaan is gepauzeerd, dus terugzetten is niet beschikbaar. Je kunt versies nog steeds vergelijken en verwijderen.",
+	"versions.intro":
+		"Callout Studio slaat automatisch versies van je configuratie op.\nOudere worden na verloop van tijd verwijderd.\nEen versie terugzetten vervangt je huidige configuratie op elk gesynchroniseerd apparaat.",
+	"versions.pausedHint":
+		"Opslaan is gepauzeerd, dus terugzetten is niet beschikbaar. Je kunt versies nog steeds vergelijken en verwijderen.",
 	"versions.loading": "Versies zoeken…",
 	"versions.empty": "Geen versies gevonden.",
 	"versions.dayWithDate": "{{date}} ({{relative}})",
@@ -1516,22 +1497,27 @@ export const nl: Record<string, string> = {
 	"versions.reason.beforeRepair": "Vóór het herstellen van het instellingenbestand",
 	"versions.restoreTitle": "Deze versie terugzetten",
 	"versions.subtitle": "‘{{name}}’ · {{when}}",
-	"versions.restoreBody": "Je huidige configuratie wordt vervangen ({{count}} verschil(len)).\nEerst wordt die als versie opgeslagen, zodat je ernaar kunt terugkeren.\nJe synchronisatiedienst stuurt de teruggezette configuratie daarna naar je andere apparaten.",
+	"versions.restoreBody":
+		"Je huidige configuratie wordt vervangen ({{count}} verschil(len)).\nEerst wordt die als versie opgeslagen, zodat je ernaar kunt terugkeren.\nJe synchronisatiedienst stuurt de teruggezette configuratie daarna naar je andere apparaten.",
 	"versions.restoreSame": "Deze versie is gelijk aan je huidige configuratie, dus er is niets om terug te zetten.",
 	"versions.restored": "‘{{name}}’ van {{when}} teruggezet.",
-	"versions.backupFailed": "Niets is teruggezet: je huidige configuratie kon niet eerst als versie worden opgeslagen. Controleer de beschikbare opslagruimte en probeer het opnieuw.",
+	"versions.backupFailed":
+		"Niets is teruggezet: je huidige configuratie kon niet eerst als versie worden opgeslagen. Controleer de beschikbare opslagruimte en probeer het opnieuw.",
 	"versions.restoreFailed": "De versie kon niet worden teruggezet. Er is niets gewijzigd.",
 	"versions.deleteTitle": "Deze versie verwijderen",
 	"versions.deleteAvailableBody": "Deze en al zijn beschikbare kopieën worden definitief verwijderd.",
-	"versions.deleteSyncedFiles": "Het verwijderen van deze bestanden kan met je andere apparaten worden gesynchroniseerd. Lokale kopieën op die apparaten kunnen blijven bestaan.",
+	"versions.deleteSyncedFiles":
+		"Het verwijderen van deze bestanden kan met je andere apparaten worden gesynchroniseerd. Lokale kopieën op die apparaten kunnen blijven bestaan.",
 	"versions.deleteFinal": "Dit kan niet ongedaan worden gemaakt. Je huidige configuratie wordt niet beïnvloed.",
 	"versions.deleted": "‘{{name}}’ van {{when}} verwijderd.",
-	"versions.deleteFailed": "Sommige kopieën van deze versie konden niet worden verwijderd. De lijst toont nu wat er overblijft.",
+	"versions.deleteFailed":
+		"Sommige kopieën van deze versie konden niet worden verwijderd. De lijst toont nu wat er overblijft.",
 	"versions.details.title": "Versiedetails",
 	"versions.details.difference": "{{count}} verschil met je huidige configuratie",
 	"versions.details.differences": "{{count}} verschillen met je huidige configuratie",
 	"versions.details.comparisonUnavailable": "Vergelijking niet beschikbaar",
-	"notice.unsavedChangesKept": "Sommige wijzigingen op dit apparaat waren nog niet opgeslagen en werden vervangen door nieuwere instellingen van een ander apparaat. Je versie is eerst opgeslagen: open Een eerdere versie herstellen in de instellingen van Callout Studio om deze terug te halen.",
+	"notice.unsavedChangesKept":
+		"Sommige wijzigingen op dit apparaat waren nog niet opgeslagen en werden vervangen door nieuwere instellingen van een ander apparaat. Je versie is eerst opgeslagen: open Een eerdere versie herstellen in de instellingen van Callout Studio om deze terug te halen.",
 	"settings.versionHistory": "Een eerdere versie herstellen",
 	"settings.versions": "Eerdere versies",
 	"settings.versionsDesc": "Vervang je huidige instellingen door een eerder opgeslagen versie.",
@@ -1542,13 +1528,13 @@ export const nl: Record<string, string> = {
 	"noteChanges.notesOne": "1 notitie",
 	"noteChanges.askCallout": "Wat moet er met die callout gebeuren?",
 	"noteChanges.askCallouts": "Wat moet er met die callouts gebeuren?",
-	"noteChanges.changeRenamed": "Je hebt de weergavenaam gewijzigd van \"{{old}}\" naar \"{{new}}\", dus de hoofd-ID verandert van \"{{oldId}}\" naar \"{{newId}}\".",
-	"noteChanges.changeMainId": "De hoofd-ID verandert van \"{{oldId}}\" naar \"{{newId}}\".",
-	"noteChanges.changeName": "Je hebt de weergavenaam gewijzigd van \"{{old}}\" naar \"{{new}}\".",
-	"noteChanges.changeRemoved": "Je hebt de ID \"{{id}}\" verwijderd.",
+	"noteChanges.changeRenamed":
+		'Je hebt de weergavenaam gewijzigd van "{{old}}" naar "{{new}}", dus de hoofd-ID verandert van "{{oldId}}" naar "{{newId}}".',
+	"noteChanges.changeMainId": 'De hoofd-ID verandert van "{{oldId}}" naar "{{newId}}".',
+	"noteChanges.changeName": 'Je hebt de weergavenaam gewijzigd van "{{old}}" naar "{{new}}".',
+	"noteChanges.changeRemoved": 'Je hebt de ID "{{id}}" verwijderd.',
 	"noteChanges.changeRemovedMany": "Je hebt deze ID's verwijderd: {{ids}}.",
-	"noteChanges.changeResetRemoved":
-		"Terugzetten naar standaard verwijdert de ID \"{{id}}\" die je hebt toegevoegd.",
+	"noteChanges.changeResetRemoved": 'Terugzetten naar standaard verwijdert de ID "{{id}}" die je hebt toegevoegd.',
 	"noteChanges.changeResetRemovedMany":
 		"Terugzetten naar standaard verwijdert de ID's die je hebt toegevoegd: {{ids}}.",
 	"noteChanges.changeFold": "Je hebt gewijzigd hoe deze callout inklapt.",
@@ -1558,7 +1544,8 @@ export const nl: Record<string, string> = {
 	"noteChanges.rewriteManyDesc": "Elke oude ID in je notities wordt [!{{to}}].",
 	"noteChanges.changeToIdLabel": "ID waarin ze worden gewijzigd",
 	"noteChanges.rewriteDesc": "Elke [!{{id}}] in je notities wordt [!{{to}}].",
-	"noteChanges.renameFollowDesc": "Elke [!{{oldId}}] in je notities wordt [!{{newId}}], en titels met \"{{old}}\" worden \"{{new}}\".",
-	"noteChanges.titlesChangeDesc": "Titels met \"{{old}}\" worden \"{{new}}\".",
+	"noteChanges.renameFollowDesc":
+		'Elke [!{{oldId}}] in je notities wordt [!{{newId}}], en titels met "{{old}}" worden "{{new}}".',
+	"noteChanges.titlesChangeDesc": 'Titels met "{{old}}" worden "{{new}}".',
 	"noteChanges.foldChangeDesc": "Hun + of - wordt daarop aangepast.",
 };

@@ -146,9 +146,7 @@ export function nextFrameOrSoon(el: () => Element): Scheduler {
  * The plugin's picker lists, each with the class it wears while closed. (An
  * Obsidian menu has no closed state: it is taken off the page when it closes.)
  */
-const PICKER_LISTS = [
-	{ list: "cs-combobox-popup", closed: "cs-combobox-popup-hidden" },
-];
+const PICKER_LISTS = [{ list: "cs-combobox-popup", closed: "cs-combobox-popup-hidden" }];
 
 /**
  * Whether the user is in the middle of something in `doc` that a redraw would
@@ -161,7 +159,8 @@ export function interactionInProgress(doc: Document): boolean {
 	if (doc.querySelector(".menu")) return true;
 	if (settingsFieldFocused(doc)) return true;
 	return PICKER_LISTS.some(({ list, closed }) =>
-		Array.from(doc.querySelectorAll(`.${list}`)).some((el) => !el.hasClass(closed)));
+		Array.from(doc.querySelectorAll(`.${list}`)).some((el) => !el.hasClass(closed)),
+	);
 }
 
 /** The tags of the fields a person types into, or slides. */

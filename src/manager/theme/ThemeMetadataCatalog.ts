@@ -18,13 +18,7 @@
  * colours.
  */
 import type { App } from "obsidian";
-import {
-	activeThemeName,
-	enabledSnippetCss,
-	enabledSnippetNames,
-	stylingSignature,
-	themeCss,
-} from "./customCssApi";
+import { activeThemeName, enabledSnippetCss, enabledSnippetNames, stylingSignature, themeCss } from "./customCssApi";
 import { scanMetadataWords, type ThemeMetadataWord } from "./themeMetadataScan";
 import { SNIPPET_BASENAME } from "../cssSnippetExport";
 import { foldMetadataCase } from "../../utils/calloutMetadata";

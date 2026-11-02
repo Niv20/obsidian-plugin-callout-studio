@@ -29,22 +29,13 @@ import type { CalloutRegistry } from "../src/manager/CalloutRegistry";
 type PartialIssue = Omit<ValidationIssue, "index" | "entryLabel">;
 
 /** Run validateIdString and collect what it pushed. */
-function check(
-	id: string,
-	raw?: string,
-): { ok: boolean; issues: PartialIssue[] } {
+function check(id: string, raw?: string): { ok: boolean; issues: PartialIssue[] } {
 	const issues: PartialIssue[] = [];
-	const ok = validateIdString(
-		id,
-		(issue) => issues.push(issue),
-		"id",
-		raw ?? id,
-	);
+	const ok = validateIdString(id, (issue) => issues.push(issue), "id", raw ?? id);
 	return { ok, issues };
 }
 
-const keys = (issues: PartialIssue[]): string[] =>
-	issues.map((issue) => issue.messageKey);
+const keys = (issues: PartialIssue[]): string[] => issues.map((issue) => issue.messageKey);
 
 describe("validateIdString — what passes", () => {
 	it("accepts an ordinary id with no issues at all", () => {
@@ -113,9 +104,7 @@ describe("validateIdString — the pipe", () => {
 	});
 
 	it("rejects a trailing pipe too", () => {
-		assert.deepStrictEqual(keys(check("note", "note|").issues), [
-			"import.err.idMetadata",
-		]);
+		assert.deepStrictEqual(keys(check("note", "note|").issues), ["import.err.idMetadata"]);
 	});
 
 	it("rejects a pipe wherever it sits", () => {
@@ -134,10 +123,7 @@ describe("validateIdString — the pipe", () => {
 		const id = "a".repeat(MAX_TAG_LENGTH + 1);
 		const { ok, issues } = check(id, `${id}|purple`);
 		assert.equal(ok, false);
-		assert.deepStrictEqual(keys(issues), [
-			"import.err.idTooLong",
-			"import.err.idMetadata",
-		]);
+		assert.deepStrictEqual(keys(issues), ["import.err.idTooLong", "import.err.idMetadata"]);
 	});
 });
 
@@ -213,11 +199,7 @@ describe("MAX_DISPLAY_NAME", () => {
 			fakeRegistry(),
 		);
 		assert.equal(result.validDefs.length, 1);
-		assert.equal(
-			result.issues.filter((i) => i.level === "error").length,
-			0,
-			JSON.stringify(result.issues),
-		);
+		assert.equal(result.issues.filter((i) => i.level === "error").length, 0, JSON.stringify(result.issues));
 	});
 
 	it("REJECTS a longer name — this format is our own, so it should not occur", async () => {
@@ -226,9 +208,7 @@ describe("MAX_DISPLAY_NAME", () => {
 			fakeRegistry(),
 		);
 		assert.equal(result.validDefs.length, 0);
-		const issue = result.issues.find(
-			(i) => i.messageKey === "import.err.displayNameTooLong",
-		);
+		const issue = result.issues.find((i) => i.messageKey === "import.err.displayNameTooLong");
 		assert.ok(issue, JSON.stringify(result.issues));
 		assert.equal(issue.level, "error");
 		assert.deepStrictEqual(issue.params, {
@@ -239,25 +219,15 @@ describe("MAX_DISPLAY_NAME", () => {
 
 	it("measures the TRIMMED name, so padding alone cannot fail an entry", async () => {
 		const padded = ` ${"n".repeat(MAX_DISPLAY_NAME)} `;
-		const result = await validateImportPayload(
-			[entry({ displayName: padded })],
-			fakeRegistry(),
-		);
+		const result = await validateImportPayload([entry({ displayName: padded })], fakeRegistry());
 		assert.equal(result.validDefs.length, 1);
 		assert.equal(result.validDefs[0]?.displayName.length, MAX_DISPLAY_NAME);
 	});
 
 	it("rejects a name that is only whitespace", async () => {
-		const result = await validateImportPayload(
-			[entry({ displayName: "   " })],
-			fakeRegistry(),
-		);
+		const result = await validateImportPayload([entry({ displayName: "   " })], fakeRegistry());
 		assert.equal(result.validDefs.length, 0);
-		assert.ok(
-			result.issues.some(
-				(i) => i.messageKey === "import.err.displayNameEmpty",
-			),
-		);
+		assert.ok(result.issues.some((i) => i.messageKey === "import.err.displayNameEmpty"));
 	});
 });
 
@@ -281,18 +251,12 @@ describe("validateImportPayload — a piped id is refused at the door", () => {
 	it("never lets the piped entry through as its base id", async () => {
 		// The failure this guards: importing `note|purple` as `note` and
 		// repainting the reader's real Note callout.
-		const result = await validateImportPayload(
-			[entry({ id: "note|purple" })],
-			fakeRegistry(),
-		);
+		const result = await validateImportPayload([entry({ id: "note|purple" })], fakeRegistry());
 		assert.deepStrictEqual(result.validDefs, []);
 	});
 
 	it("refuses a piped alias too", async () => {
-		const result = await validateImportPayload(
-			[entry({ aliases: ["ok", "bad|meta"] })],
-			fakeRegistry(),
-		);
+		const result = await validateImportPayload([entry({ aliases: ["ok", "bad|meta"] })], fakeRegistry());
 		assert.ok(
 			result.issues.some((i) => i.messageKey === "import.err.idMetadata"),
 			JSON.stringify(result.issues),

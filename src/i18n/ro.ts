@@ -1,16 +1,19 @@
 export const ro: Record<string, string> = {
 	"portable.reviewTitle": "Verifică conversia",
-	"portable.helpIntro": "Selectează înlocuirile pe care vrei să le aplici. Dă clic pe creion sau pe textul înlocuirii pentru a o edita, apoi apasă Enter sau dă clic în afara câmpului pentru a salva. Folosește pictograma de resetare pentru a renunța la o schiță sau pentru a restabili înlocuirea implicită. Notele se modifică doar după ce alegi Convertește elementele selectate și confirmi. Linkurile titlurilor se actualizează împreună cu titlurile selectate.",
+	"portable.helpIntro":
+		"Selectează înlocuirile pe care vrei să le aplici. Dă clic pe creion sau pe textul înlocuirii pentru a o edita, apoi apasă Enter sau dă clic în afara câmpului pentru a salva. Folosește pictograma de resetare pentru a renunța la o schiță sau pentru a restabili înlocuirea implicită. Notele se modifică doar după ce alegi Convertește elementele selectate și confirmi. Linkurile titlurilor se actualizează împreună cu titlurile selectate.",
 	"portable.help": "Despre conversie",
 	"portable.roleLink": "Link către titlu",
 	"portable.convertSelected": "Convertește selecția",
-	"portable.selectionSummary": "{{selected}} din {{total}} înlocuiri selectate · {{links}} linkuri către titluri de actualizat",
-	"portable.selectionSummaryNoLinks":
-		"{{selected}} din {{total}} înlocuiri selectate",
-	"portable.selectionConflict": "Această alegere ar face ambigue linkurile către titluri. Selecția anterioară a fost păstrată.",
+	"portable.selectionSummary":
+		"{{selected}} din {{total}} înlocuiri selectate · {{links}} linkuri către titluri de actualizat",
+	"portable.selectionSummaryNoLinks": "{{selected}} din {{total}} înlocuiri selectate",
+	"portable.selectionConflict":
+		"Această alegere ar face ambigue linkurile către titluri. Selecția anterioară a fost păstrată.",
 	"portable.selectAll": "Selectează tot",
 	"portable.selectNone": "Deselectează tot",
-	"portable.relatedLinksHint": "Linkurile și încorporările urmează titlurile selectate și sunt convertite împreună cu ele.",
+	"portable.relatedLinksHint":
+		"Linkurile și încorporările urmează titlurile selectate și sunt convertite împreună cu ele.",
 	"portable.selectChange": "Convertește {{path}}, rândul {{line}}",
 	"portable.showMore": "Afișează încă {{count}}",
 	"portable.openFailed": "Bara laterală de conversie nu a putut fi deschisă.",
@@ -18,14 +21,19 @@ export const ro: Record<string, string> = {
 	"portable.retry": "Încearcă din nou",
 	"portable.blockedAmbiguous": "Acest titlu este omis deoarece destinația linkului este ambiguă.",
 	"portable.blockedTarget": "Acest titlu este omis deoarece destinația linkului nu poate fi păstrată în siguranță.",
-	"portable.recovery": "Mai sunt modificări de aplicat. Finalizează conversia și actualizarea linkurilor către titluri înainte de a reporni sau dezactiva pluginul; planul în așteptare este păstrat doar în memorie.",
-	"portable.recoveryChanged": "Notele s-au schimbat după oprirea conversiei. Actualizările de linkuri în așteptare sunt păstrate; fiecare notă este verificată din nou înainte de scriere.",
+	"portable.recovery":
+		"Mai sunt modificări de aplicat. Finalizează conversia și actualizarea linkurilor către titluri înainte de a reporni sau dezactiva pluginul; planul în așteptare este păstrat doar în memorie.",
+	"portable.recoveryChanged":
+		"Notele s-au schimbat după oprirea conversiei. Actualizările de linkuri în așteptare sunt păstrate; fiecare notă este verificată din nou înainte de scriere.",
 	"portable.finishConversion": "Finalizează conversia",
-	"portable.recoveryUnavailable": "Unele actualizări de linkuri în așteptare nu au putut fi recuperate în siguranță. Verifică notele afectate înainte de a începe o nouă conversie.",
+	"portable.recoveryUnavailable":
+		"Unele actualizări de linkuri în așteptare nu au putut fi recuperate în siguranță. Verifică notele afectate înainte de a începe o nouă conversie.",
 	"portable.title": "Convertește în Markdown standard",
-	"portable.settingDesc": "Înlocuiește callout-urile din titluri și din text în întregul seif cu text obișnuit, gata de utilizat fără Callout Studio.",
+	"portable.settingDesc":
+		"Înlocuiește callout-urile din titluri și din text în întregul seif cu text obișnuit, gata de utilizat fără Callout Studio.",
 	"portable.review": "Verifică conversia",
-	"portable.intro": "Dacă vrei să renunți la Callout Studio sau să muți seiful într-o aplicație care nu îl acceptă, convertește callout-urile din titluri și din text în Markdown standard.",
+	"portable.intro":
+		"Dacă vrei să renunți la Callout Studio sau să muți seiful într-o aplicație care nu îl acceptă, convertește callout-urile din titluri și din text în Markdown standard.",
 	"portable.before": "Înainte",
 	"portable.after": "După",
 	"portable.replacement": "Înlocuire",
@@ -33,24 +41,30 @@ export const ro: Record<string, string> = {
 	"portable.type": "tip",
 	"portable.text": "Text",
 	"portable.headingText": "Titlu",
-	"portable.backup": "Recomandăm să faci o copie de siguranță a seifului înainte de conversie. Operația modifică notele originale și nu poate fi anulată în Callout Studio.",
+	"portable.backup":
+		"Recomandăm să faci o copie de siguranță a seifului înainte de conversie. Operația modifică notele originale și nu poate fi anulată în Callout Studio.",
 	"portable.scanning": "Se citesc notele Markdown…",
 	"portable.progress": "Se citesc notele: {{done}} din {{total}}",
 	"portable.empty": "Nu s-au găsit callout-uri eligibile în titluri sau în text. Nu se va modifica nimic.",
 	"portable.confirmTitle": "Convertești definitiv acest seif?",
 	"portable.confirmSubtitle": "Nu se creează nicio copie de rezervă automată",
-	"portable.confirmBody": "Convertești {{count}} apariții și actualizezi {{links}} linkuri către titluri în {{files}} note?\nAceastă operație modifică fișierele originale și nu poate fi anulată în Callout Studio. Nu se creează automat o copie de siguranță. Fă mai întâi o copie de siguranță a seifului, salvează notele deschise și întrerupe editarea și sincronizarea până la încheierea conversiei.\nDacă un fișier se schimbă sau scrierea eșuează, conversia se oprește. Notele deja convertite rămân modificate.",
+	"portable.confirmBody":
+		"Convertești {{count}} apariții și actualizezi {{links}} linkuri către titluri în {{files}} note?\nAceastă operație modifică fișierele originale și nu poate fi anulată în Callout Studio. Nu se creează automat o copie de siguranță. Fă mai întâi o copie de siguranță a seifului, salvează notele deschise și întrerupe editarea și sincronizarea până la încheierea conversiei.\nDacă un fișier se schimbă sau scrierea eșuează, conversia se oprește. Notele deja convertite rămân modificate.",
 	"portable.confirmAction": "Convertește definitiv",
 	"portable.converting": "Se convertesc modificările selectate… Închiderea acestui panou nu oprește conversia.",
-	"portable.complete": "S-au convertit {{count}} apariții și s-au actualizat {{links}} linkuri către titluri în {{files}} note.",
-	"portable.stopped": "Conversia s-a oprit. {{count}} apariții și {{links}} linkuri către titluri din {{files}} note au fost deja modificate; modificările se păstrează.",
+	"portable.complete":
+		"S-au convertit {{count}} apariții și s-au actualizat {{links}} linkuri către titluri în {{files}} note.",
+	"portable.stopped":
+		"Conversia s-a oprit. {{count}} apariții și {{links}} linkuri către titluri din {{files}} note au fost deja modificate; modificările se păstrează.",
 	"portable.errorEditor": "Salvează notele deschise pentru a actualiza automat previzualizarea.",
 	"portable.errorChanged": "Notele s-au schimbat. Verifică modificările actualizate înainte de conversie.",
 	"portable.errorBusy": "O altă conversie este în desfășurare. Așteaptă să se termine.",
-	"portable.error": "Seiful nu a putut fi citit sau actualizat în siguranță. Verifică accesul la fișiere, apoi încearcă din nou.",
+	"portable.error":
+		"Seiful nu a putut fi citit sau actualizat în siguranță. Verifică accesul la fișiere, apoi încearcă din nou.",
 	"portable.blockedConverting": "O conversie este deja în desfășurare. Așteaptă să se termine.",
 	"portable.blockedUpdating": "Revizuirea încă se actualizează. Așteaptă să se termine înainte de a converti.",
-	"portable.blockedEditing": "Termină mai întâi editarea înlocuirii: apasă Enter pentru a o salva sau Esc pentru a o anula.",
+	"portable.blockedEditing":
+		"Termină mai întâi editarea înlocuirii: apasă Enter pentru a o salva sau Esc pentru a o anula.",
 	"portable.blockedNothingSelected": "Selectează cel puțin o înlocuire de convertit.",
 	"settings.maintenance": "Zonă de pericol",
 	"cmd.openSettings": "Deschide setări",
@@ -92,19 +106,18 @@ export const ro: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "Alege mai întâi callout-ul cu care va fi înlocuit.",
 	"settings.fallbackTag": "Implicit",
 	"settings.fallbackTagAuto": "Auto",
-	"settings.rescanVaultDesc": "Adaugă tipurile de callout folosite de notițele tale care nu sunt încă în această listă.",
+	"settings.rescanVaultDesc":
+		"Adaugă tipurile de callout folosite de notițele tale care nu sunt încă în această listă.",
 	"settings.rescanVaultHintAction": "Scanează după callout-uri",
-	"manualDiscovery.failed": "Rezultatele scanării nu au fost salvate. Verificați dacă setările pot fi scrise și sincronizarea s-a încheiat, apoi reîncercați din Setări → Tipurile mele de callout → Scanează după callout-uri. Callout-urile existente nu au fost înlocuite.",
+	"manualDiscovery.failed":
+		"Rezultatele scanării nu au fost salvate. Verificați dacă setările pot fi scrise și sincronizarea s-a încheiat, apoi reîncercați din Setări → Tipurile mele de callout → Scanează după callout-uri. Callout-urile existente nu au fost înlocuite.",
 	"manualDiscovery.scanning": "Se scanează…",
-	"settings.rescanComplete":
-		"Scanare completă: {{count}} tip(uri) de callout noi adăugate.",
+	"settings.rescanComplete": "Scanare completă: {{count}} tip(uri) de callout noi adăugate.",
 	"replaceModal.titleReplace": "Înlocuiți în vault",
 
 	"welcome.title": "Bine ați venit în Callout Studio!",
-	"welcome.tagline":
-		"Soluția dvs. completă pentru crearea, stilizarea și gestionarea callout-urilor din Obsidian.",
-	"importBanner.message":
-		"Am observat că folosiți {{plugins}}. Doriți să importați callout-urile dvs.?",
+	"welcome.tagline": "Soluția dvs. completă pentru crearea, stilizarea și gestionarea callout-urilor din Obsidian.",
+	"importBanner.message": "Am observat că folosiți {{plugins}}. Doriți să importați callout-urile dvs.?",
 	"importBanner.action": "Importă",
 	"importBanner.dismiss": "Respinge",
 	"welcome.demoName": "Callout Studio",
@@ -119,8 +132,7 @@ export const ro: Record<string, string> = {
 		"Callout Studio are mult mai multe de oferit! [Aflați mai multe]({{repoUrl}}).\n",
 	"deleteModal.title": "Șterge callout",
 
-	"deleteModal.bodyInUse":
-		"Acest callout apare de {{count}} ori în {{files}} fișier(e).",
+	"deleteModal.bodyInUse": "Acest callout apare de {{count}} ori în {{files}} fișier(e).",
 	"deleteModal.notesUntouched":
 		"Aceasta șterge doar definiția callout-ului. Notele dvs. nu sunt atinse, așa că callout-urile existente vor reveni pur și simplu la stilul implicit.",
 	"deleteModal.fallbackTarget":
@@ -181,13 +193,11 @@ export const ro: Record<string, string> = {
 	"settings.themeCalloutsHeading": "Callouts din tema dvs.",
 	"settings.themeCalloutsDefaultTheme": "Tema dvs.",
 	"settings.themeCalloutsEmpty": "{{theme}} nu stilizează niciun callout în acest moment.",
-	"settings.themePreviewAria":
-		'Previzualizare "{{name}}" — vedeți cum îl desenează tema dvs.',
+	"settings.themePreviewAria": 'Previzualizare "{{name}}" — vedeți cum îl desenează tema dvs.',
 	"settings.builtInAllThemeStyled":
 		"{{theme}} stilizează fiecare callout integrat, așa că Callout Studio le lasă pe toate neschimbate. Pentru a proiecta unul propriu, adăugați un callout cu un ID diferit.",
 	"settings.fallbackCallout": "Callout de rezervă implicit",
-	"settings.fallbackCalloutDesc":
-		"Tipurile de callout necunoscute moștenesc acest stil.",
+	"settings.fallbackCalloutDesc": "Tipurile de callout necunoscute moștenesc acest stil.",
 
 	"settings.border": "Borduri",
 	"settings.borderTop": "Sus",
@@ -219,8 +229,7 @@ export const ro: Record<string, string> = {
 	"settings.paletteCountOne": "1 paletă",
 	"settings.editPaletteAria": "Editați paleta {{name}}",
 	"settings.deletePaletteTitle": "Șterge paleta",
-	"settings.deletePaletteBody":
-		'Callout-urile care îi folosesc culorile nu sunt afectate.',
+	"settings.deletePaletteBody": "Callout-urile care îi folosesc culorile nu sunt afectate.",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callout-urile care o menționează în metadate ("{{key}}") preiau în schimb culoarea încorporată cu acel nume. Notițele tale nu se schimbă.',
 
@@ -247,19 +256,17 @@ export const ro: Record<string, string> = {
 	"commandBuilder.formatBlock": "Bloc",
 	"commandBuilder.roleDisabled":
 		"Acest format este dezactivat, așa că această comandă va insera text simplu până când îl reactivați.",
-	"commandBuilder.roleThemeOwned":
-		"Tema dvs. furnizează acest callout, așa că are doar un format bloc.",
-	"commandBuilder.commandSuspended": "În pauză cât timp tema ta oferă acest callout, care are atunci doar formatul bloc.",
+	"commandBuilder.roleThemeOwned": "Tema dvs. furnizează acest callout, așa că are doar un format bloc.",
+	"commandBuilder.commandSuspended":
+		"În pauză cât timp tema ta oferă acest callout, care are atunci doar formatul bloc.",
 	"commandBuilder.pausedTag": "În pauză din cauza temei",
 	"commandBuilder.missingTag": "Callout lipsă",
 	"commandBuilder.callout": "Tip de callout",
-	"commandBuilder.calloutDesc":
-		"Callout-ul pe care îl inserează această comandă.",
+	"commandBuilder.calloutDesc": "Callout-ul pe care îl inserează această comandă.",
 	"commandBuilder.headingLevel": "Nivel de titlu",
 	"commandBuilder.headingLevelDesc": "Ce nivel de titlu se scrie.",
 	"commandBuilder.action": "Acțiune",
-	"commandBuilder.actionDesc":
-		"Înfășoară transformă selecția într-un callout; inserează adaugă unul gol.",
+	"commandBuilder.actionDesc": "Înfășoară transformă selecția într-un callout; inserează adaugă unul gol.",
 	"commandBuilder.actionDescHeading":
 		"Înfășoară transformă rândul cu cursorul într-un callout de titlu.\nInserează adaugă unul gol pe un rând nou.",
 	"commandBuilder.actionDescInline":
@@ -267,22 +274,18 @@ export const ro: Record<string, string> = {
 	"commandBuilder.actionWrap": "Înfășoară selecția",
 	"commandBuilder.actionInsert": "Inserează nou",
 	"commandBuilder.foldState": "Stare de pliere",
-	"commandBuilder.foldStateDesc":
-		"Dacă callout-ul poate fi pliat și în ce stare începe.",
+	"commandBuilder.foldStateDesc": "Dacă callout-ul poate fi pliat și în ce stare începe.",
 	"commandBuilder.foldNone": "Nepliabil",
 	"commandBuilder.foldExpanded": "Pliabil, deschis (+)",
 	"commandBuilder.foldCollapsed": "Pliabil, închis (-)",
 	"commandBuilder.preview": "Numele comenzii",
-	"commandBuilder.duplicate":
-		"Aveți deja o comandă care face exact acest lucru.",
-	"commandBuilder.noCallouts":
-		"Nu există încă tipuri de callout din care să construiți o comandă.",
+	"commandBuilder.duplicate": "Aveți deja o comandă care face exact acest lucru.",
+	"commandBuilder.noCallouts": "Nu există încă tipuri de callout din care să construiți o comandă.",
 	"commandBuilder.noCalloutChosen": "Alege mai întâi un callout pentru această comandă.",
 	"commandBuilder.save": "Salvați",
 
 	"settings.resetAll": "Resetați",
-	"settings.resetAllDesc":
-		"Restaurează toate setările și personalizările la valorile implicite.",
+	"settings.resetAllDesc": "Restaurează toate setările și personalizările la valorile implicite.",
 	"settings.resetAllButton": "Resetați tot",
 	"notice.resetAllDone": "Totul a fost resetat la valorile implicite.",
 	"settings.resetIntro": "Acordați-vă un moment ca să apreciați tot ce ați construit cu Callout Studio.",
@@ -299,47 +302,40 @@ export const ro: Record<string, string> = {
 	"settings.resetItemContextMenu": "Meniul clic dreapta",
 	"settings.resetItemHeading": "Setările callout-urilor de titlu",
 	"settings.resetItemInline": "Setările callout-urilor inline",
-	"settings.resetItemThemeCalloutStyles":
-		"Stilurile de callout ale temei dvs.",
+	"settings.resetItemThemeCalloutStyles": "Stilurile de callout ale temei dvs.",
 	"settings.resetItemAutocomplete": "Setări pentru completare automată și metadate",
 	"settings.resetItemFallback": "Stil de rezervă",
 	"settings.resetItemIconLibraries": "Ordinea bibliotecilor de pictograme și bibliotecile ascunse",
-	"settings.resetAllConfirmAfter": "Nicio grijă: înainte de resetare salvăm o copie de rezervă a configurației tale actuale. O poți aduce înapoi oricând cu Restaurează o versiune anterioară din setări.\nDacă folosești un serviciu de sincronizare, resetarea poate ajunge și pe celelalte dispozitive ale tale.",
+	"settings.resetAllConfirmAfter":
+		"Nicio grijă: înainte de resetare salvăm o copie de rezervă a configurației tale actuale. O poți aduce înapoi oricând cu Restaurează o versiune anterioară din setări.\nDacă folosești un serviciu de sincronizare, resetarea poate ajunge și pe celelalte dispozitive ale tale.",
 	"settings.resetNothing": "Nimic de resetat: totul este deja la valorile implicite.",
 
-	"notice.customCommandMissingCallout":
-		"Tipul de callout al acestei comenzi nu mai există.",
+	"notice.customCommandMissingCallout": "Tipul de callout al acestei comenzi nu mai există.",
 
-	"notice.importedJSON":
-		"Au fost importate {{count}} tip(uri) de callout din JSON.",
+	"notice.importedJSON": "Au fost importate {{count}} tip(uri) de callout din JSON.",
 	"notice.importedSettings": "Au fost importate setările pluginului.",
-	"notice.importedCalloutManager":
-		"Importat din Callout Manager: {{created}} create, {{updated}} actualizate.",
-	"notice.importedAdmonition":
-		"Importat din Admonition: {{created}} create, {{updated}} " +
-		"actualizate.",
-	"notice.noNewJSON":
-		"Nu au fost importate tipuri noi de callout (ID-urile pot exista deja).",
+	"notice.importedCalloutManager": "Importat din Callout Manager: {{created}} create, {{updated}} actualizate.",
+	"notice.importedAdmonition": "Importat din Admonition: {{created}} create, {{updated}} " + "actualizate.",
+	"notice.noNewJSON": "Nu au fost importate tipuri noi de callout (ID-urile pot exista deja).",
 	"notice.iconDownloadFailed":
 		'Nu s-a putut descărca pictograma Material "{{name}}". Poate fi indisponibilă pentru acest stil/grosime sau conexiunea este offline.',
-	"notice.vaultScanFailed": "Nu s-a putut număra utilizarea callout pentru că {{count}} notițe nu au putut fi citite. Verificați stocarea și sincronizarea, apoi încercați din nou.",
+	"notice.vaultScanFailed":
+		"Nu s-a putut număra utilizarea callout pentru că {{count}} notițe nu au putut fi citite. Verificați stocarea și sincronizarea, apoi încercați din nou.",
 
 	"notice.externalCssRetired":
 		"Opțiunea de stilizare CSS personală a fost eliminată. Aceste callout-uri folosesc acum designul Callout Studio salvat, cu excepția cazului în care tema le stilizează. Notele și fragmentele CSS personale nu au fost modificate.",
 	"notice.vaultRewritePartial":
 		"{{count}} notă/note nu au putut fi actualizate și au rămas neschimbate. Vezi consola pentru dezvoltatori pentru detalii.",
-	"notice.calloutDeleteIncomplete": "Unele notițe nu au putut fi convertite. Tipul de callout a fost păstrat. Conversiile finalizate sunt salvate; rezolvați problema fișierului, apoi rulați din nou acțiunea pentru a finaliza.",
+	"notice.calloutDeleteIncomplete":
+		"Unele notițe nu au putut fi convertite. Tipul de callout a fost păstrat. Conversiile finalizate sunt salvate; rezolvați problema fișierului, apoi rulați din nou acțiunea pentru a finaliza.",
 	"notice.nothingToWrap": "Nimic de înfășurat.",
-	"notice.cursorNotInsideCallout":
-		"Cursorul nu este în interiorul unui callout.",
+	"notice.cursorNotInsideCallout": "Cursorul nu este în interiorul unui callout.",
 	"notice.headingAlreadyCallout": "Acest titlu este deja un callout.",
-	"notice.unwrapLeftAsIs":
-		"Acest callout nu a putut fi eliminat în siguranță, așa că a fost lăsat neschimbat.",
-	"notice.autocompleteTargetMoved":
-		"Nu s-a inserat nimic — linia s-a schimbat cât timp editorul a fost deschis.",
-	"notice.autocompleteAlwaysEnabled": "Completarea automată este acum o funcție de bază și este întotdeauna activată.",
-	"notice.openHotkeysFailed":
-		"Nu s-au putut deschide setările de scurtături Obsidian.",
+	"notice.unwrapLeftAsIs": "Acest callout nu a putut fi eliminat în siguranță, așa că a fost lăsat neschimbat.",
+	"notice.autocompleteTargetMoved": "Nu s-a inserat nimic — linia s-a schimbat cât timp editorul a fost deschis.",
+	"notice.autocompleteAlwaysEnabled":
+		"Completarea automată este acum o funcție de bază și este întotdeauna activată.",
+	"notice.openHotkeysFailed": "Nu s-au putut deschide setările de scurtături Obsidian.",
 	"notice.filterHotkeysFailed":
 		"Scurtăturile Obsidian au fost deschise, dar filtrul Callout Studio nu a putut fi aplicat.",
 
@@ -347,8 +343,7 @@ export const ro: Record<string, string> = {
 	"editor.newCallout": "Callout nou",
 	"editor.displayName": "Nume afișat",
 	"editor.displayNameDesc": "Eticheta lizibilă afișată în interfață",
-	"editor.displayNameBuiltIn":
-		"Numele afișat nu poate fi modificat pentru callouts integrate",
+	"editor.displayNameBuiltIn": "Numele afișat nu poate fi modificat pentru callouts integrate",
 	"editor.displayNamePlaceholder": "Callout-ul meu",
 	"editor.calloutIds": "ID-uri callout",
 	"editor.calloutIdsDesc":
@@ -374,27 +369,24 @@ export const ro: Record<string, string> = {
 	"editor.horizontalOffset": "Decalaj orizontal",
 	"editor.verticalOffset": "Decalaj vertical",
 	"editor.colors": "Culori",
-	"editor.colorsDesc":
-		"Setează culorile chenarului, fundalului și textului acestui callout.",
+	"editor.colorsDesc": "Setează culorile chenarului, fundalului și textului acestui callout.",
 	"editor.resetColors": "Resetați culorile la implicit",
 	"editor.paletteDeleted": "Culoare ștearsă",
 	"editor.paletteGroupObsidian": "Callouts Obsidian",
 	"editor.paletteGroupPresets": "Presetări culori",
 	"editor.paletteGroupCustom": "Personalizat",
-	"editor.contrastWarning":
-		"Contrast scăzut cu fundalul — poate fi greu de citit",
+	"editor.contrastWarning": "Contrast scăzut cu fundalul — poate fi greu de citit",
 	"editor.foldable": "Pliabil",
-	"editor.foldableDesc":
-		"Alegeți dacă callout-ul poate fi pliat și ce stare implicită să aplice în tot vault-ul.",
+	"editor.foldableDesc": "Alegeți dacă callout-ul poate fi pliat și ce stare implicită să aplice în tot vault-ul.",
 	"editor.foldOff": "Dezactivat",
 	"editor.foldOpen": "Deschis implicit",
 	"editor.foldClosed": "Închis implicit",
 	"editor.cancel": "Anulare",
 	"editor.saveChanges": "Salvați modificările",
-	"editor.saveFailed": "Salvarea nu a putut fi finalizată. Dacă acest editor este încă deschis, păstrați-l deschis și reîncercați după ce verificați spațiul de stocare și sincronizarea. Este posibil ca unele setări sau modificări ale notelor să fi fost deja salvate.",
+	"editor.saveFailed":
+		"Salvarea nu a putut fi finalizată. Dacă acest editor este încă deschis, păstrați-l deschis și reîncercați după ce verificați spațiul de stocare și sincronizarea. Este posibil ca unele setări sau modificări ale notelor să fi fost deja salvate.",
 	"editor.createCallout": "Creați callout",
-	"editor.nameRequired":
-		"Este necesar un nume afișat înainte de a crea un callout.",
+	"editor.nameRequired": "Este necesar un nume afișat înainte de a crea un callout.",
 	"editor.noChangesToSave": "Nu s-au efectuat modificări.",
 	"editor.idEmpty": "Este necesar cel puțin un ID",
 	"editor.idAlreadyHere": "Acest ID există deja",
@@ -409,23 +401,19 @@ export const ro: Record<string, string> = {
 		"{{theme}} desenează singură callout-urile bloc {{names}}, iar Obsidian desenează {{stock}}. Celelalte ID-uri ale dvs. păstrează acest design.",
 	"editor.idThemePattern":
 		"Atenție: tema dvs. stilizează fiecare callout care se potrivește cu {{pattern}}, așa că poate suprascrie aspectul acestuia.",
-	"editor.idDashConflict":
-		"Obsidian scrie spațiile ca liniuțe, așa că acest ID intră în conflict cu „{{other}}”",
+	"editor.idDashConflict": "Obsidian scrie spațiile ca liniuțe, așa că acest ID intră în conflict cu „{{other}}”",
 	"editor.idOwnedBy": "„{{id}}” este un ID al {{name}}. Îl poți {{link}}.",
 	"editor.idMoveHere": "muta aici",
 	"editor.idOwnedByMain":
 		"„{{id}}” este ID-ul principal al {{name}}. Ca să-l folosești aici, șterge mai întâi {{name}}.",
-	"editor.idBuiltInStock":
-		"„{{id}}” este unul dintre ID-urile proprii ale Obsidian pentru {{name}}.",
+	"editor.idBuiltInStock": "„{{id}}” este unul dintre ID-urile proprii ale Obsidian pentru {{name}}.",
 	"editor.idMoving": "La salvare, „{{id}}” se mută aici de la {{name}}.",
 	"editor.idMovingNotes": "Notele tale nu se schimbă. Preiau stilul acestui callout.",
 	"editor.untitledCallout": "Callout fără titlu",
 	"editor.loremIpsum":
 		"O adiere ușoară trece printre copaci. Lumina caldă a soarelui scaldă o cărare liniștită și însuflețește peisajul.",
-	"editor.loremIpsumShort":
-		"O adiere ușoară trece printre copaci.",
-	"editor.sampleInlineText":
-		"Iată o pastilă [!{id}]{{title}} inline în interiorul unui paragraf.",
+	"editor.loremIpsumShort": "O adiere ușoară trece printre copaci.",
+	"editor.sampleInlineText": "Iată o pastilă [!{id}]{{title}} inline în interiorul unui paragraf.",
 	"editor.previewReadOnly": "Previzualizarea live nu poate fi editată",
 	"noteChanges.title": "Actualizezi notele tale?",
 	"noteChanges.leave": "Lasă-le cum sunt",
@@ -435,18 +423,15 @@ export const ro: Record<string, string> = {
 	"noteChanges.titlesChange": "Schimbă-le în „{{new}}”",
 	"noteChanges.titlesLeaveDesc": "Continuă să scrie „{{old}}”.",
 	"noteChanges.foldChange": "Setează-le la „{{state}}”",
-	"noteChanges.foldLeaveDesc":
-		"Doar callout-urile pe care le inserezi de acum încolo folosesc noua setare.",
+	"noteChanges.foldLeaveDesc": "Doar callout-urile pe care le inserezi de acum încolo folosesc noua setare.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": '{{name}} — furnizat de tema dvs.',
+	"themePreview.title": "{{name}} — furnizat de tema dvs.",
 	"themePreview.summary":
 		"Furnizat de {{theme}} (doar în citire). Culoarea, pictograma și ID-ul nu pot fi modificate aici, iar formatele Titlu/Inline nu sunt disponibile. Pentru personalizare, creați un callout nou.",
 	"themePreview.previewTitle": "Cum este redat acum",
-	"themePreview.blockSample":
-		"> [!{{id}}] {{name}}\n" +
-		"> Așa arată conținutul acestui callout.\n",
+	"themePreview.blockSample": "> [!{{id}}] {{name}}\n" + "> Așa arată conținutul acestui callout.\n",
 	"editor.themePreviewClose": "Am înțeles",
 
 	// Palette editor modal
@@ -473,8 +458,10 @@ export const ro: Record<string, string> = {
 	"palette.advancedColors": "Culori",
 	"palette.lightModeColors": "Culorile modului luminos",
 	"palette.darkModeColors": "Culorile modului întunecat",
-	"palette.modeColorsHintLight": "Aceste modificări se aplică doar modului luminos. Modul întunecat își păstrează propriile culori.\nPentru a le edita, apasă butonul cu luna de mai sus.",
-	"palette.modeColorsHintDark": "Aceste modificări se aplică doar modului întunecat. Modul luminos își păstrează propriile culori.\nPentru a le edita, apasă butonul cu soarele de mai sus.",
+	"palette.modeColorsHintLight":
+		"Aceste modificări se aplică doar modului luminos. Modul întunecat își păstrează propriile culori.\nPentru a le edita, apasă butonul cu luna de mai sus.",
+	"palette.modeColorsHintDark":
+		"Aceste modificări se aplică doar modului întunecat. Modul luminos își păstrează propriile culori.\nPentru a le edita, apasă butonul cu soarele de mai sus.",
 	"palette.showLightMode": "Afișează modul luminos",
 	"palette.showDarkMode": "Afișează modul întunecat",
 	"palette.accentColor": "Culoare de accent",
@@ -566,12 +553,10 @@ export const ro: Record<string, string> = {
 	"iconPicker.searchSimpleIcons": "Caută în Simple Icons",
 	"iconPicker.custom": "Pictograme personalizate",
 	"iconPicker.searchCustom": "Caută în pictogramele personalizate",
-	"iconPicker.customTooLarge":
-		"{{name}} este prea mare. Pictogramele personalizate pot avea cel mult 5 MB.",
+	"iconPicker.customTooLarge": "{{name}} este prea mare. Pictogramele personalizate pot avea cel mult 5 MB.",
 	"iconPicker.customUnsupported":
 		"{{name}} nu este un fișier de pictogramă personalizată acceptat. Folosiți SVG, PNG, JPEG sau WebP.",
-	"iconPicker.customInvalidSvg":
-		"{{name}} nu a putut fi citit ca SVG sigur și nu a fost adăugat.",
+	"iconPicker.customInvalidSvg": "{{name}} nu a putut fi citit ca SVG sigur și nu a fost adăugat.",
 	"iconPicker.customDecodeFailed": "{{name}} nu a putut fi citit ca pictogramă personalizată.",
 	"iconPicker.customDuplicate":
 		"{{name}} există deja în pictogramele personalizate. Redenumiți fișierul sau ștergeți pictograma existentă.",
@@ -601,8 +586,7 @@ export const ro: Record<string, string> = {
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "caută în toate bibliotecile deodată",
 	"iconPicker.descLucide": "setul propriu al Obsidian, mereu offline",
-	"iconPicker.descTabler":
-		"pictograme UI curate și consistente, contur și umplut",
+	"iconPicker.descTabler": "pictograme UI curate și consistente, contur și umplut",
 	"iconPicker.descMaterial": "setul Google, patru stiluri și șapte grosimi",
 	"iconPicker.descEmoji": "glife colorate, fiecare ton de piele",
 	"iconPicker.descOcticons": "pictogramele de interfață GitHub",
@@ -727,19 +711,16 @@ export const ro: Record<string, string> = {
 
 	// Downloadable icon packs
 	"iconPack.downloadTitle": "{{name}} nu a fost încă descărcat",
-	"iconPack.downloadDetail":
-		"{{count}} pictograme · {{size}} · descărcare unică",
+	"iconPack.downloadDetail": "{{count}} pictograme · {{size}} · descărcare unică",
 	"iconPack.download": "Descarcă",
 	"iconPack.downloading": "Se descarcă {{name}}…",
-	"iconPack.downloadFailed":
-		"Nu s-a putut descărca {{name}}. Verificați conexiunea și încercați din nou.",
+	"iconPack.downloadFailed": "Nu s-a putut descărca {{name}}. Verificați conexiunea și încercați din nou.",
 	"iconPack.retry": "Încearcă din nou",
 	"iconPack.faBrandsNotice":
 		"Pictogramele de mărci sunt mărci înregistrate ale proprietarilor respectivi. Includerea lor nu indică o aprobare. Vă rugăm să le folosiți doar pentru a reprezenta compania, produsul sau serviciul la care se referă.",
 	"iconPack.simpleIconsNotice":
 		"Logo-urile sunt mărci comerciale ale proprietarilor lor; includerea lor aici nu înseamnă o recomandare. Folosiți un logo doar pentru a reprezenta propria marcă și respectați ghidurile acelei mărci. Unele logo-uri au și o licență proprie; consultați creditele pictogramelor.",
-	"iconPack.artworkRestored":
-		"Arta pictogramelor pentru {{names}} a fost descărcată.",
+	"iconPack.artworkRestored": "Arta pictogramelor pentru {{names}} a fost descărcată.",
 	"iconPack.diskWriteFailed":
 		"Callout Studio nu a putut salva pachetul de pictograme pe disc, deci va trebui descărcat din nou data viitoare. Pictogramele alese sunt încă salvate în setările dvs.",
 	"settings.colorsAndIcons": "Culori și pictograme",
@@ -794,7 +775,8 @@ export const ro: Record<string, string> = {
 	"contextMenu.setFoldNone": "Setați callout ca nepliabil",
 	"contextMenu.cutSection": "Decupați secțiunea de titlu",
 	"notice.clipboardWriteFailed": "Nu s-a putut copia în clipboard. Notița a rămas neschimbată.",
-	"notice.sectionChangedAfterCopy": "Secțiunea a fost copiată, dar notița s-a modificat înainte de a putea fi decupată. Nu a fost eliminat nimic.",
+	"notice.sectionChangedAfterCopy":
+		"Secțiunea a fost copiată, dar notița s-a modificat înainte de a putea fi decupată. Nu a fost eliminat nimic.",
 	"contextMenu.copySection": "Copiați secțiunea de titlu",
 	"contextMenu.deleteSection": "Ștergeți secțiunea de titlu",
 	"heading.toggleFold": "Comutare pliere",
@@ -823,16 +805,14 @@ export const ro: Record<string, string> = {
 	"settings.metadataWordAlreadyHere": "Acest cuvânt este deja în listă",
 	"settings.metadataWordTooLong": "Un cuvânt poate avea cel mult {{max}} caractere",
 	"settings.maxMetadataWords": "Maximum {{max}} cuvinte. Șterge unul pentru a adăuga altul.",
-	"settings.buildFailed": "Callout Studio nu a putut afișa setările; repornește Obsidian și raportează problema dacă se repetă.",
-	"settings.globalSettingsRegularDesc":
-		"Bordură, rotunjire, scara fontului și aliniere.",
-	"settings.globalSettingsHeadingDesc":
-		"Bordură, formă și spațiere verticală.",
-	"settings.globalSettingsInlineDesc":
-		"Bordură și formă.",
-	"settings.themeCalloutStyles":
-		"Folosiți stilurile de callout ale temei dvs.",
-	"settings.themeCalloutStylesDesc": "Când e activat, callout-urile pe care le stilizează tema ta își păstrează aspectul ei și apar doar ca callout-uri de tip bloc. Când e dezactivat, Callout Studio desenează toate callout-urile.",
+	"settings.buildFailed":
+		"Callout Studio nu a putut afișa setările; repornește Obsidian și raportează problema dacă se repetă.",
+	"settings.globalSettingsRegularDesc": "Bordură, rotunjire, scara fontului și aliniere.",
+	"settings.globalSettingsHeadingDesc": "Bordură, formă și spațiere verticală.",
+	"settings.globalSettingsInlineDesc": "Bordură și formă.",
+	"settings.themeCalloutStyles": "Folosiți stilurile de callout ale temei dvs.",
+	"settings.themeCalloutStylesDesc":
+		"Când e activat, callout-urile pe care le stilizează tema ta își păstrează aspectul ei și apar doar ca callout-uri de tip bloc. Când e dezactivat, Callout Studio desenează toate callout-urile.",
 	"settings.calloutTypeRegular": "Stilul callout-ului de tip bloc",
 	"settings.calloutTypeHeading": "Stilul callout-ului tip titlu",
 	"settings.calloutTypeInline": "Stilul callout-ului inline",
@@ -848,8 +828,7 @@ export const ro: Record<string, string> = {
 	"menuItem.createOrEdit": "Creați sau editați un callout",
 	"menuItem.openSettings": "Deschideți setările",
 	"menuItem.copyMarkdown": "Copiați Markdown",
-	"menuItem.foldDefaults":
-		"Stare implicită de pliere (deschis / închis / niciuna)",
+	"menuItem.foldDefaults": "Stare implicită de pliere (deschis / închis / niciuna)",
 	"menuItem.cutSection": "Decupați secțiunea",
 	"menuItem.copySection": "Copiați secțiunea",
 	"menuItem.deleteSection": "Ștergeți secțiunea",
@@ -865,23 +844,17 @@ export const ro: Record<string, string> = {
 	"confirm.titleDeleteLibrary": "Ștergeți biblioteca de pictograme",
 	"confirm.titleResetLibraries": "Resetați bibliotecile de pictograme",
 
-	"vault.filesUpdated":
-		"Au fost actualizate {{count}} referință(e) callout în fișierele vault.",
-	"vault.idsUpdated":
-		"Au fost actualizate {{count}} ID(uri) callout în fișierele vault: {{oldIds}} → {{newId}}",
+	"vault.filesUpdated": "Au fost actualizate {{count}} referință(e) callout în fișierele vault.",
+	"vault.idsUpdated": "Au fost actualizate {{count}} ID(uri) callout în fișierele vault: {{oldIds}} → {{newId}}",
 	"vault.titlesUpdated":
 		"Au fost actualizate {{count}} titlu(uri) callout în fișierele vault: {{oldTitle}} → {{newTitle}}",
-	"vault.foldUpdated":
-		"S-a actualizat marcajul de pliere pentru {{count}} callout(uri) în fișierele vault.",
+	"vault.foldUpdated": "S-a actualizat marcajul de pliere pentru {{count}} callout(uri) în fișierele vault.",
 	"vault.confirmReplace": "Înlocuiți",
 	"vault.replacePromptInUse":
 		'"{{name}}" este utilizat de {{count}} ori în {{files}} fișier(e). Alegeți un callout cu care să îl înlocuiți:',
-	"vault.replacePromptUnused":
-		'Alegeți un callout cu care să înlocuiți "{{name}}":',
-	"vault.noReplacementAvailable":
-		"Nu există alte callouts disponibile pentru a înlocui acesta.",
-	"vault.convertedToPlainText":
-		"{{blocks}} bloc(uri) callout din {{files}} fișier(e) convertit(e) în text simplu.",
+	"vault.replacePromptUnused": 'Alegeți un callout cu care să înlocuiți "{{name}}":',
+	"vault.noReplacementAvailable": "Nu există alte callouts disponibile pentru a înlocui acesta.",
+	"vault.convertedToPlainText": "{{blocks}} bloc(uri) callout din {{files}} fișier(e) convertit(e) în text simplu.",
 	"vault.resetNotesFailed":
 		"Unele notițe nu au putut fi actualizate, așa că callout-ul nu a fost resetat. Alege din nou Resetează la implicit pentru a termina.",
 
@@ -898,7 +871,8 @@ export const ro: Record<string, string> = {
 	"quickInsert.noResults": "Nu s-au găsit callout-uri",
 	"quickInsert.noBuiltInCallouts": "Momentan nu este disponibil niciun callout integrat.",
 	"quickInsert.noThemeCallouts": "Momentan nu este disponibil niciun callout specific temei.",
-	"quickInsert.targetMoved": "Notița din care ați deschis Inserarea rapidă s-a modificat sau a fost închisă. Redeschideți Inserarea rapidă în notița pe care doriți să o editați.",
+	"quickInsert.targetMoved":
+		"Notița din care ați deschis Inserarea rapidă s-a modificat sau a fost închisă. Redeschideți Inserarea rapidă în notița pe care doriți să o editați.",
 	"quickInsert.targetMovedHint": "Notița originală nu mai este disponibilă pentru această inserare.",
 	"quickInsert.noUserCallouts":
 		"Nu ați creat încă niciun callout personalizat. Rulați „Callout Studio: Creează tip callout nou” din paleta de comenzi.",
@@ -916,9 +890,11 @@ export const ro: Record<string, string> = {
 	"portable.restoreDefault": "Restabiliți înlocuirea implicită",
 	"portable.cancelEdit": "Renunță la modificări",
 	"portable.customInvalid": "Păstrați înlocuirea pe o singură linie, fără a modifica structura Markdown din jur.",
-	"portable.customUnsafe": "Această înlocuire ar face ca un titlu sau linkurile sale să fie ambigue. Alegeți alt titlu.",
+	"portable.customUnsafe":
+		"Această înlocuire ar face ca un titlu sau linkurile sale să fie ambigue. Alegeți alt titlu.",
 	"portable.customStale": "Revizuirea s-a schimbat. Redeschide editorul de înlocuiri.",
-	"portable.customDiscarded": "Au fost eliminate {{count}} înlocuiri personalizate deoarece textul sursă s-a schimbat sau nu a putut fi localizat în siguranță.",
+	"portable.customDiscarded":
+		"Au fost eliminate {{count}} înlocuiri personalizate deoarece textul sursă s-a schimbat sau nu a putut fi localizat în siguranță.",
 	"portable.customBadge": "Personalizat",
 
 	"usage.title": "Găsește callout-uri",
@@ -940,42 +916,40 @@ export const ro: Record<string, string> = {
 	"usage.more": "Afișează încă {{count}}",
 	"usage.location": "Linia {{line}} · {{role}}",
 	"usage.missing": "Această notă nu mai există. Se actualizează rezultatele…",
-	"usage.changed": "Această apariție s-a modificat sau a fost mutată într-un loc incert. Se actualizează rezultatele…",
+	"usage.changed":
+		"Această apariție s-a modificat sau a fost mutată într-un loc incert. Se actualizează rezultatele…",
 	"usage.openFailed": "Nu s-a putut deschide această apariție de callout.",
 	"usage.menuIncomplete": "Găsește callout-uri — scanare incompletă",
 	"usage.menu": "Găsește callout-uri",
 	"usage.closeSettings": "Închide Setări pentru a vedea rezultatele pentru callout-uri în bara laterală.",
 
 	"import.title": "Probleme de import",
-	"import.reportLeadIn":
-		"Verificați aceste probleme de import înainte de a continua:",
-	"import.reportLeadInFatal":
-		"Aceste date nu au putut fi importate:",
+	"import.reportLeadIn": "Verificați aceste probleme de import înainte de a continua:",
+	"import.reportLeadInFatal": "Aceste date nu au putut fi importate:",
 	"import.entryHeading": "Intrare {{index}} — {{label}}",
-	"import.summary":
-		"{{valid}} din {{total}} intrări sunt valide · {{issues}} problemă(e) găsită(e).",
+	"import.summary": "{{valid}} din {{total}} intrări sunt valide · {{issues}} problemă(e) găsită(e).",
 	"import.btnCancel": "Anulare",
 	"import.btnImportValid": "Importați doar cele valide ({{count}})",
-	"import.nothingValid": "Niciuna dintre intrări nu este validă, deci nu există nimic de importat. Anulează, rezolvă problemele enumerate aici și importă din nou.",
+	"import.nothingValid":
+		"Niciuna dintre intrări nu este validă, deci nu există nimic de importat. Anulează, rezolvă problemele enumerate aici și importă din nou.",
 	"import.err.notRecognized":
 		"Fișier nerecunoscut: se aștepta un array de definiții callout sau un export Callout Studio.",
-	"import.warn.settingsIgnored":
-		"Blocul de setări nu a fost un obiect valid și a fost ignorat.",
-	"import.warn.invalidGradient":
-		"Gradientul de fundal a fost invalid și a fost ignorat.",
-	"import.err.parseFailed":
-		"Fișierul nu este JSON valid și nu a putut fi analizat.",
-	"import.err.tooLarge": "Acest import depășește limita de dimensiune de 16 MiB. Împarte-l în fișiere mai mici și încearcă din nou.",
-	"import.err.tooComplex": "Acest import este prea complex: cel mult 1.000 de elemente pentru fiecare listă sau obiect, 50.000 de valori în total și maximum 32 de niveluri de imbricare.",
-	"import.err.imageBudget": "Colecția totală de imagini depășește limitele de dimensiune sau complexitate. Elimină ori simplifică imaginile mari înainte de import.",
+	"import.warn.settingsIgnored": "Blocul de setări nu a fost un obiect valid și a fost ignorat.",
+	"import.warn.invalidGradient": "Gradientul de fundal a fost invalid și a fost ignorat.",
+	"import.err.parseFailed": "Fișierul nu este JSON valid și nu a putut fi analizat.",
+	"import.err.tooLarge":
+		"Acest import depășește limita de dimensiune de 16 MiB. Împarte-l în fișiere mai mici și încearcă din nou.",
+	"import.err.tooComplex":
+		"Acest import este prea complex: cel mult 1.000 de elemente pentru fiecare listă sau obiect, 50.000 de valori în total și maximum 32 de niveluri de imbricare.",
+	"import.err.imageBudget":
+		"Colecția totală de imagini depășește limitele de dimensiune sau complexitate. Elimină ori simplifică imaginile mari înainte de import.",
 	"import.err.processingFailed": "Importul nu a putut fi finalizat. Verifică datele și încearcă din nou.",
-	"import.reportTruncated": "Se afișează primele {{shown}} probleme din {{total}}. Valorile lungi sunt scurtate în acest raport.",
+	"import.reportTruncated":
+		"Se afișează primele {{shown}} probleme din {{total}}. Valorile lungi sunt scurtate în acest raport.",
 	"import.err.entryNotObject": "Intrarea trebuie să fie un obiect.",
-	"import.err.requiredMissing":
-		'Câmpul obligatoriu "{{field}}" lipsește sau are tipul greșit.',
+	"import.err.requiredMissing": 'Câmpul obligatoriu "{{field}}" lipsește sau are tipul greșit.',
 	"import.err.idEmpty": "ID-ul nu trebuie să fie gol.",
-	"import.err.idTooLong":
-		'ID-ul "{{value}}" are {{length}} caractere; maximul este {{max}}.',
+	"import.err.idTooLong": 'ID-ul "{{value}}" are {{length}} caractere; maximul este {{max}}.',
 	"import.err.idBadChar":
 		'ID-ul "{{value}}" conține caractere invalide ("|", "[", "]", tabulatorii și sfârșiturile de linie nu sunt permise).',
 	"import.err.idMetadata":
@@ -983,56 +957,41 @@ export const ro: Record<string, string> = {
 	"import.err.idReserved":
 		'ID-ul "{{value}}" este rezervat de Callout Studio pentru propriile previzualizări și nu poate fi importat.',
 	"import.err.displayNameEmpty": "Numele afișat nu trebuie să fie gol.",
-	"import.err.displayNameTooLong":
-		"Numele afișat are {{length}} caractere; maximul este {{max}}.",
-	"import.err.boolField":
-		'"{{field}}" trebuie să fie o valoare booleană (true sau false).',
+	"import.err.displayNameTooLong": "Numele afișat are {{length}} caractere; maximul este {{max}}.",
+	"import.err.boolField": '"{{field}}" trebuie să fie o valoare booleană (true sau false).',
 	"import.err.iconNotObject": "Pictograma trebuie să fie un obiect.",
-	"import.err.iconTypeInvalid":
-		'Tipul pictogramei "{{value}}" nu este unul dintre: {{types}}.',
+	"import.err.iconTypeInvalid": 'Tipul pictogramei "{{value}}" nu este unul dintre: {{types}}.',
 	"import.warn.iconFieldIgnored":
 		'"{{field}}" se aplică doar pictogramelor Material și este ignorat pentru tipul de pictogramă {{type}}.',
-	"import.err.iconValueEmpty":
-		"Valoarea pictogramei trebuie să fie un șir nevid.",
-	"import.err.iconValueTooLong":
-		"Valoarea pictogramei depășește limita de 200 de caractere ({{length}} caractere).",
+	"import.err.iconValueEmpty": "Valoarea pictogramei trebuie să fie un șir nevid.",
+	"import.err.iconValueTooLong": "Valoarea pictogramei depășește limita de 200 de caractere ({{length}} caractere).",
 	"import.err.materialStyle":
 		'Stilul pictogramei Material "{{value}}" nu este unul dintre: outlined, filled, rounded, sharp.',
 	"import.err.materialWeight":
 		'Grosimea pictogramei Material "{{value}}" trebuie să fie un număr întreg între 100 și 700, în pași de 100.',
 	"import.warn.iconRecolorIgnored":
 		'"recolor" se aplică doar imaginilor proprii și este ignorat pentru tipul de pictogramă {{type}}.',
-	"import.err.iconRecolorInvalid":
-		'"recolor" trebuie să fie true sau false (primit: "{{value}}").',
-	"import.err.colorInvalid":
-		'"{{field}}" trebuie să fie o culoare hexadecimală ca "#448aff" (primit "{{value}}").',
-	"import.err.numberRange":
-		'"{{field}}" trebuie să fie un număr între {{min}} și {{max}} (primit "{{value}}").',
-	"import.err.iconSizeRange":
-		'"{{field}}" trebuie să fie un număr între {{min}} și {{max}} (primit "{{value}}").',
+	"import.err.iconRecolorInvalid": '"recolor" trebuie să fie true sau false (primit: "{{value}}").',
+	"import.err.colorInvalid": '"{{field}}" trebuie să fie o culoare hexadecimală ca "#448aff" (primit "{{value}}").',
+	"import.err.numberRange": '"{{field}}" trebuie să fie un număr între {{min}} și {{max}} (primit "{{value}}").',
+	"import.err.iconSizeRange": '"{{field}}" trebuie să fie un număr între {{min}} și {{max}} (primit "{{value}}").',
 	"import.err.iconAdjustShape":
-		"\"iconAdjust\" trebuie să fie un obiect care asociază un tip de callout (\"regular\", \"heading\", \"inline\") cu dimensiunea și decalajele pictogramei.",
-	"import.err.aliasesNotArray":
-		'"aliases" trebuie să fie un array de șiruri.',
+		'"iconAdjust" trebuie să fie un obiect care asociază un tip de callout ("regular", "heading", "inline") cu dimensiunea și decalajele pictogramei.',
+	"import.err.aliasesNotArray": '"aliases" trebuie să fie un array de șiruri.',
 	"import.err.aliasNotString": "Aliasul trebuie să fie un șir.",
-	"import.err.aliasDup":
-		'Aliasul "{{value}}" este duplicat în această intrare.',
+	"import.err.aliasDup": 'Aliasul "{{value}}" este duplicat în această intrare.',
 	"import.err.tooManyIds":
 		"Prea multe ID-uri ({{count}}); fiecare callout poate avea cel mult {{max}} ID-uri (primar + aliasuri).",
-	"import.err.metadataShape":
-		'"metadata" trebuie să fie un obiect ale cărui valori sunt toate șiruri.',
+	"import.err.metadataShape": '"metadata" trebuie să fie un obiect ale cărui valori sunt toate șiruri.',
 	"import.warn.unknownFields": "Câmpuri necunoscute ignorate: {{fields}}.",
-	"import.err.duplicateInFile":
-		'ID/aliasul "{{value}}" este deja folosit de intrarea #{{first}} din acest fișier.',
-	"import.err.aliasConflict":
-		'Aliasul "{{value}}" este deja folosit de alt callout ("{{other}}") din vault-ul dvs.',
+	"import.err.duplicateInFile": 'ID/aliasul "{{value}}" este deja folosit de intrarea #{{first}} din acest fișier.',
+	"import.err.aliasConflict": 'Aliasul "{{value}}" este deja folosit de alt callout ("{{other}}") din vault-ul dvs.',
 	"import.warn.defaultFoldedAutofix":
 		'"defaultFolded" era true în timp ce "foldable" era false; defaultFolded a fost resetat la false.',
 	"import.warn.imageMissing":
 		"Acest Callout folosește o imagine care nu se află în fișier și nu se află în acest vault, deci va afișa o pictogramă substituent până când furnizați una nouă.",
 
-	"import.err.paletteIdInvalid":
-		'"paletteId" trebuie să fie un ID text nevid (primit "{{value}}").',
+	"import.err.paletteIdInvalid": '"paletteId" trebuie să fie un ID text nevid (primit "{{value}}").',
 	"import.warn.iconNameUnknown":
 		'Nu există nicio pictogramă "{{value}}" în {{type}}, deci a fost utilizată pictograma implicită.',
 	"import.warn.cmIconUnknownNew":
@@ -1064,8 +1023,7 @@ export const ro: Record<string, string> = {
 	"import.cmVaultChecking": "Se caută pluginul Callout Manager…",
 	"import.cmVaultFound": "S-au găsit {{count}} callout-uri personalizate.",
 	"import.cmFromPaste": "Stiluri copiate",
-	"import.cmFromPasteDesc":
-		"Ceea ce copiază butonul Copy din Callout Manager, sau un data.json.",
+	"import.cmFromPasteDesc": "Ceea ce copiază butonul Copy din Callout Manager, sau un data.json.",
 	"import.cmInstructions":
 		"Fiecare callout personalizat este importat împreună cu pictograma și culoarea sa. Stilurile specifice temei și CSS-ul personalizat nu au echivalent aici și nu sunt importate.",
 	"import.cmPlaceholder": "Lipiți aici stilurile copiate sau un fișier data.json…",
@@ -1073,10 +1031,8 @@ export const ro: Record<string, string> = {
 	"import.cmBtnImport": "Importați",
 	"import.err.cmNotRecognized":
 		"Fișier nerecunoscut: se așteptau stilurile produse de butonul Copy din Callout Manager sau un data.json al pluginului Callout Manager.",
-	"import.err.cmNoEntries":
-		"Nu s-au găsit callout-uri personalizate de importat.",
-	"import.err.cmNoBlocksFound":
-		"Nu au fost găsite stiluri Callout Manager în fișier sau în textul lipit.",
+	"import.err.cmNoEntries": "Nu s-au găsit callout-uri personalizate de importat.",
+	"import.err.cmNoBlocksFound": "Nu au fost găsite stiluri Callout Manager în fișier sau în textul lipit.",
 	"import.err.cmNoColorForNew":
 		'Nu a fost găsită nicio culoare utilizabilă pentru noul callout "{{value}}"; a fost omis.',
 	"import.warn.cmNoColorDefault":
@@ -1085,9 +1041,12 @@ export const ro: Record<string, string> = {
 		'ID-ul "{{value}}" este deja utilizat ca alias de un alt callout ("{{other}}") și a fost omis.',
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "Stilurile dependente de temă nu pot fi păstrate. Sunt preferate valorile necondiționate; orice valoare de rezervă condiționată se aplică tuturor temelor.",
-	"import.warn.cmCustomStylesSkipped": "CSS-ul personalizat din Callout Manager nu este importat. Pot fi transferate doar setările acceptate pentru pictograme și culori.",
-	"import.warn.cmSchemeIcon": "Callout Studio folosește aceeași pictogramă pentru ambele scheme de culori; pictograma importată va fi folosită în ambele.",
+	"import.warn.cmThemeConditionPartial":
+		"Stilurile dependente de temă nu pot fi păstrate. Sunt preferate valorile necondiționate; orice valoare de rezervă condiționată se aplică tuturor temelor.",
+	"import.warn.cmCustomStylesSkipped":
+		"CSS-ul personalizat din Callout Manager nu este importat. Pot fi transferate doar setările acceptate pentru pictograme și culori.",
+	"import.warn.cmSchemeIcon":
+		"Callout Studio folosește aceeași pictogramă pentru ambele scheme de culori; pictograma importată va fi folosită în ambele.",
 	"import.err.cmDuplicateId": "ID-ul {{value}} îl dublează pe {{other}} în acest import și a fost omis.",
 	"import.admTitle": "Importă din Admonition",
 	"import.admInstructions":
@@ -1098,16 +1057,13 @@ export const ro: Record<string, string> = {
 	"import.admVaultChecking": "Se caută pluginul Admonition…",
 	"import.admVaultFound": "S-au găsit {{count}} admonition personalizate.",
 	"import.admFromFile": "Un fișier",
-	"import.admFromFileDesc":
-		"Un fișier admonitions.json sau un pachet partajat.",
+	"import.admFromFileDesc": "Un fișier admonitions.json sau un pachet partajat.",
 	"import.admBtnCancel": "Anulare",
 	"import.admBtnImport": "Importați",
 	"import.err.admNotRecognized":
-		"Fișier nerecunoscut: se aștepta o listă de admonition sau un " +
-		"data.json de la Admonition.",
+		"Fișier nerecunoscut: se aștepta o listă de admonition sau un " + "data.json de la Admonition.",
 	"import.err.admNoEntries": "Nu s-a găsit niciun admonition de importat.",
-	"import.err.admTypeMissing":
-		'Acest admonition nu are "type" și a fost omis.',
+	"import.err.admTypeMissing": 'Acest admonition nu are "type" și a fost omis.',
 	"import.warn.admIconUnknown":
 		'Nu s-a găsit nicio pictogramă numită "{{value}}" în nicio ' +
 		"bibliotecă, așa că s-a folosit pictograma implicită.",
@@ -1120,24 +1076,20 @@ export const ro: Record<string, string> = {
 		"Acest admonition este stilizat de un fragment CSS în Admonition. " +
 		"Acel stil nu face parte din import, așa că au venit doar numele, " +
 		"pictograma și culoarea.",
-	"import.warn.admNoColor":
-		"Nu era setată nicio culoare, așa că s-a folosit albastrul " +
-		"implicit.",
-	"import.warn.admTitleTruncated":
-		"Titlul are {{length}} caractere; a fost scurtat la {{max}}.",
+	"import.warn.admNoColor": "Nu era setată nicio culoare, așa că s-a folosit albastrul " + "implicit.",
+	"import.warn.admTitleTruncated": "Titlul are {{length}} caractere; a fost scurtat la {{max}}.",
 
 	"footer.openIssue": "Deschide un issue",
 	"footer.sourceCode": "Cod sursă",
 	"settings.about": "Despre",
 	"settings.version": "Versiune",
 	"settings.deletePaletteBodyLinkedOne":
-		'1 callout o folosește. Își păstrează culorile, iar mai târziu îl puteți reconecta din rândul Culoare din editorul lui.',
+		"1 callout o folosește. Își păstrează culorile, iar mai târziu îl puteți reconecta din rândul Culoare din editorul lui.",
 	"settings.deletePaletteBodyLinked":
-		'{{count}} callout-uri o folosesc. Își păstrează culorile, iar mai târziu le puteți reconecta din rândul Culoare din oricare dintre editoarele lor.',
+		"{{count}} callout-uri o folosesc. Își păstrează culorile, iar mai târziu le puteți reconecta din rândul Culoare din oricare dintre editoarele lor.",
 	"notice.palettesMerged":
 		"A fuzionat {{count}} culoare/culori salvată/salvate cu culori identice: {{names}}. Callout-urile care le folosesc își păstrează culorile și acum sunt legate de culoarea rămasă.",
-	"editor.colorsDescDeleted":
-		"Culoarea salvată a acestui callout a fost ștearsă. {{link}}",
+	"editor.colorsDescDeleted": "Culoarea salvată a acestui callout a fost ștearsă. {{link}}",
 	"editor.colorsDescDeletedLink": "Restaurați",
 	"palette.colorExists":
 		'Aceste culori sunt identice cu "{{name}}". Două culori salvate nu pot fi la fel — schimbați o culoare ca să le diferențiați.',
@@ -1154,8 +1106,7 @@ export const ro: Record<string, string> = {
 	"notice.exportedCssUpdated": "Fragmentul CSS a fost actualizat în {{path}}",
 	"notice.exportedCssUnchanged": "Fragmentul CSS este deja actualizat.",
 	"notice.exportCssEmpty": "Nu există callouturi personalizate de exportat.",
-	"notice.exportCssFailed":
-		"Fragmentul CSS nu a putut fi salvat. Verifică consola dezvoltatorului pentru detalii.",
+	"notice.exportCssFailed": "Fragmentul CSS nu a putut fi salvat. Verifică consola dezvoltatorului pentru detalii.",
 	"notice.exportCssEnabled":
 		"Acest fragment este activat în acest vault. Callout Studio stilizează deja aceste callouturi, iar fragmentul păstrează stilul din momentul exportului.",
 	"confirm.titleOverwriteSnippet": "Suprascrie fragmentul CSS",
@@ -1175,41 +1126,60 @@ export const ro: Record<string, string> = {
 	"quickInsert.readingViewHint": "Această notă este deschisă în modul de citire, așa că nimic nu poate fi inserat.",
 	"quickInsert.readingView": "Comută la modul sursă sau la Live Preview pentru a insera un callout.",
 	"quickInsert.noCursorHint": "Nu există niciun cursor în această notă, așa că nu există unde să inserezi.",
-	"quickInsert.noCursor": "Plasează cursorul în notă în locul în care dorești să inserezi callout-ul, apoi încearcă din nou.",
-	"notice.legacyDiscoveryArchiveFailed": "Copia de recuperare pentru actualizare nu a putut fi finalizată. Cache-ul local anterior pentru detectare și CSS-ul de pornire au fost păstrate neschimbate. Verifică accesul de scriere la spațiul de stocare și spațiul liber, apoi repornește Obsidian pentru a încerca din nou.",
+	"quickInsert.noCursor":
+		"Plasează cursorul în notă în locul în care dorești să inserezi callout-ul, apoi încearcă din nou.",
+	"notice.legacyDiscoveryArchiveFailed":
+		"Copia de recuperare pentru actualizare nu a putut fi finalizată. Cache-ul local anterior pentru detectare și CSS-ul de pornire au fost păstrate neschimbate. Verifică accesul de scriere la spațiul de stocare și spațiul liber, apoi repornește Obsidian pentru a încerca din nou.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "În pauză până recreezi callout-ul lipsă sau alegi altul.",
 	"confirm.titleRestoreSettings": "Restaurează aceste setări",
 	"confirm.titleCreateSettingsFile": "Creează fișierul de setări",
 	"confirm.saveDisplayedSettings":
 		"Aceasta salvează configurația pe care o vezi acum ca fișier de setări și repornește salvarea. Copia de rezervă păstrată de acest dispozitiv este salvată mai întâi într-un backup.\nDacă un alt dispozitiv ar putea avea modificări mai noi pe care vrei să le păstrezi, lasă-l să termine sincronizarea înainte de a continua. Aplicația ta de sincronizare ar putea trimite acest fișier către celelalte dispozitive ale tale.\nÎnainte de salvare, Callout Studio caută încă o dată fișierul de setări. Dacă a revenit, Callout Studio îl păstrează pe acela.",
-	"notice.settingsBackupFailed": "Recuperarea setărilor nu a putut continua deoarece o copie de siguranță nu a putut fi salvată. Verifică spațiul de stocare disponibil și permisiunile de scriere, apoi încearcă din nou.",
-	"notice.settingsNewerVersion": "Setările Callout Studio au fost salvate de o versiune mai nouă a pluginului, așa că nimic nu va fi scris pe acest dispozitiv până nu îl actualizezi. Setările tale sunt în siguranță — actualizează Callout Studio aici și reîncarcă Obsidian.",
+	"notice.settingsBackupFailed":
+		"Recuperarea setărilor nu a putut continua deoarece o copie de siguranță nu a putut fi salvată. Verifică spațiul de stocare disponibil și permisiunile de scriere, apoi încearcă din nou.",
+	"notice.settingsNewerVersion":
+		"Setările Callout Studio au fost salvate de o versiune mai nouă a pluginului, așa că nimic nu va fi scris pe acest dispozitiv până nu îl actualizezi. Setările tale sunt în siguranță — actualizează Callout Studio aici și reîncarcă Obsidian.",
 	"saveStatus.changed":
 		"Fișierul de setări s-a schimbat cât timp l-ai editat. Ciorna ta este încă disponibilă. Alege Încearcă din nou pentru a încărca setările sosite, apoi verifică ciorna și salvează din nou.",
-	"saveStatus.missing": "Salvarea este în pauză deoarece fișierul de setări lipsește. Acest lucru se poate întâmpla după o reinstalare sau în timp ce sincronizarea încă rulează. Termină sincronizarea și încearcă din nou. Pentru a înlocui intenționat fișierul lipsă, folosește Creează un fișier de setări nou din setările Callout Studio.",
+	"saveStatus.missing":
+		"Salvarea este în pauză deoarece fișierul de setări lipsește. Acest lucru se poate întâmpla după o reinstalare sau în timp ce sincronizarea încă rulează. Termină sincronizarea și încearcă din nou. Pentru a înlocui intenționat fișierul lipsă, folosește Creează un fișier de setări nou din setările Callout Studio.",
 	"saveStatus.restoreSettings": "Restaurează aceste setări",
 	"saveStatus.createSettingsFile": "Creează fișierul de setări",
 	"saveStatus.checkAgain": "Verifică din nou",
-	"saveStatus.recoverInSettings": "Pentru a restaura fișierul lipsă pe acest dispozitiv, deschide setările Callout Studio. Înainte de a închide acest editor, copiază orice modificări nesalvate pe care vrei să le păstrezi; acestea nu au fost salvate.",
+	"saveStatus.recoverInSettings":
+		"Pentru a restaura fișierul lipsă pe acest dispozitiv, deschide setările Callout Studio. Înainte de a închide acest editor, copiază orice modificări nesalvate pe care vrei să le păstrezi; acestea nu au fost salvate.",
 	"saveStatus.openSettings": "Deschide setările Callout Studio",
-	"notice.openSettingsFailed": "Setările Callout Studio nu au putut fi deschise. Deschide Setări → Callout Studio pentru a alege ce faci.",
-	"saveStatus.notesFailed": "Definiția callout-ului a fost salvată, dar unele actualizări de notițe nu au putut fi finalizate. Lasă acest editor deschis și alege Salvează pentru a reîncerca actualizările neterminate.",
-	"saveStatus.recoveryRead": "Salvarea este în pauză deoarece copia de recuperare locală nu poate fi citită. Fișierul tău de setări poate fi încă intact. Verifică spațiul de stocare disponibil, apoi reîncearcă recuperarea. Datele de recuperare existente nu vor fi suprascrise.",
-	"saveStatus.recoveryWrite": "Copia de recuperare locală nu a putut fi salvată. Verifică spațiul de stocare disponibil, apoi încearcă din nou. Lasă ciorna deschisă până când salvarea reușește.",
-	"saveStatus.retryFailed": "Salvarea este încă blocată. Verifică starea salvării în setările Callout Studio pentru a afla cauza, apoi încearcă din nou.",
-	"saveStatus.reviewDraft": "Setările primite și verificările de recuperare sunt complete. Ciorna ta este neschimbată. Verific-o și salvează din nou.",
-	"saveStatus.settingsArrived": "Setările existente au sosit și au fost încărcate. Niciun fișier de înlocuire nu a fost creat.",
-	"saveStatus.syncConflict": "Setările primite intră în conflict cu un callout necesar pentru actualizări de notițe neterminate. Ciorna ta și actualizările în așteptare au fost păstrate. Rezolvă conflictul de setări înainte de a reîncerca.",
+	"notice.openSettingsFailed":
+		"Setările Callout Studio nu au putut fi deschise. Deschide Setări → Callout Studio pentru a alege ce faci.",
+	"saveStatus.notesFailed":
+		"Definiția callout-ului a fost salvată, dar unele actualizări de notițe nu au putut fi finalizate. Lasă acest editor deschis și alege Salvează pentru a reîncerca actualizările neterminate.",
+	"saveStatus.recoveryRead":
+		"Salvarea este în pauză deoarece copia de recuperare locală nu poate fi citită. Fișierul tău de setări poate fi încă intact. Verifică spațiul de stocare disponibil, apoi reîncearcă recuperarea. Datele de recuperare existente nu vor fi suprascrise.",
+	"saveStatus.recoveryWrite":
+		"Copia de recuperare locală nu a putut fi salvată. Verifică spațiul de stocare disponibil, apoi încearcă din nou. Lasă ciorna deschisă până când salvarea reușește.",
+	"saveStatus.retryFailed":
+		"Salvarea este încă blocată. Verifică starea salvării în setările Callout Studio pentru a afla cauza, apoi încearcă din nou.",
+	"saveStatus.reviewDraft":
+		"Setările primite și verificările de recuperare sunt complete. Ciorna ta este neschimbată. Verific-o și salvează din nou.",
+	"saveStatus.settingsArrived":
+		"Setările existente au sosit și au fost încărcate. Niciun fișier de înlocuire nu a fost creat.",
+	"saveStatus.syncConflict":
+		"Setările primite intră în conflict cu un callout necesar pentru actualizări de notițe neterminate. Ciorna ta și actualizările în așteptare au fost păstrate. Rezolvă conflictul de setări înainte de a reîncerca.",
 	"saveStatus.titlePaused": "Salvarea este în pauză",
 	"saveStatus.titleFailed": "Setările nu au fost salvate",
 	"saveStatus.tryAgain": "Încearcă din nou",
 	"saveStatus.working": "Se lucrează la asta…",
-	"saveStatus.unreadable": "Salvarea este în pauză deoarece fișierul de setări nu poate fi citit în siguranță. Termină sincronizarea sau restaurează o copie validă, apoi încearcă din nou. Fișierul existent a fost păstrat.",
-	"saveStatus.write": "Fișierul de setări nu a putut fi salvat. Verifică spațiul de stocare disponibil, permisiunile folderului și sincronizarea, apoi încearcă din nou înainte de a închide Obsidian.",
-	"saveStatus.writePermission": "Fișierul de setări nu a putut fi salvat deoarece stocarea a refuzat accesul de scriere. Verifică dacă vault-ul și folderul pluginului pot fi scrise, apoi încearcă din nou.",
-	"saveStatus.writeSpace": "Fișierul de setări nu a putut fi salvat deoarece stocarea este plină sau cota sa a fost depășită. Eliberează ceva spațiu, apoi încearcă din nou.",
-	"settings.readOnly": "Callout Studio nu a putut folosi fișierul său de setări când Obsidian a pornit, așa că nimic pe această pagină nu se salvează pe acest dispozitiv. Modificările tale vor rămâne până închizi Obsidian. Reîncarcă Obsidian imediat ce fișierul revine — dacă sincronizezi acest vault, lasă mai întâi sincronizarea să se termine.",
+	"saveStatus.unreadable":
+		"Salvarea este în pauză deoarece fișierul de setări nu poate fi citit în siguranță. Termină sincronizarea sau restaurează o copie validă, apoi încearcă din nou. Fișierul existent a fost păstrat.",
+	"saveStatus.write":
+		"Fișierul de setări nu a putut fi salvat. Verifică spațiul de stocare disponibil, permisiunile folderului și sincronizarea, apoi încearcă din nou înainte de a închide Obsidian.",
+	"saveStatus.writePermission":
+		"Fișierul de setări nu a putut fi salvat deoarece stocarea a refuzat accesul de scriere. Verifică dacă vault-ul și folderul pluginului pot fi scrise, apoi încearcă din nou.",
+	"saveStatus.writeSpace":
+		"Fișierul de setări nu a putut fi salvat deoarece stocarea este plină sau cota sa a fost depășită. Eliberează ceva spațiu, apoi încearcă din nou.",
+	"settings.readOnly":
+		"Callout Studio nu a putut folosi fișierul său de setări când Obsidian a pornit, așa că nimic pe această pagină nu se salvează pe acest dispozitiv. Modificările tale vor rămâne până închizi Obsidian. Reîncarcă Obsidian imediat ce fișierul revine — dacă sincronizezi acest vault, lasă mai întâi sincronizarea să se termine.",
 	// Sync safety hardening
 	"saveStatus.diagnosis.unavailable":
 		"Acest dispozitiv nu poate deschide fișierul acum. Poate fi încă descărcat, vault-ul poate să nu fie disponibil offline, sau stocarea nu răspunde. Callout Studio verifică din nou automat.",
@@ -1225,7 +1195,8 @@ export const ro: Record<string, string> = {
 	"saveStatus.replaceUnreadable": "Înlocuiește fișierul de setări",
 	"saveStatus.discardRecoveryCopy": "Renunță la copia de recuperare",
 	"saveStatus.calm.opening": "Înainte de orice, respiră adânc — totul va fi bine.",
-	"saveStatus.calm.kept": "Notele tale sunt în siguranță, iar callout-urile tale sunt încă aici, pe acest dispozitiv.",
+	"saveStatus.calm.kept":
+		"Notele tale sunt în siguranță, iar callout-urile tale sunt încă aici, pe acest dispozitiv.",
 	"saveStatus.calm.safe": "Notele tale sunt în siguranță.",
 	"saveStatus.calm.pausedPage":
 		"Callout Studio a oprit doar temporar salvarea, ca să-ți protejeze configurația, de aceea pagina aceasta este momentan doar pentru citire.",
@@ -1234,7 +1205,8 @@ export const ro: Record<string, string> = {
 		"Callout Studio nu își găsește fișierul de setări. Asta se întâmplă de obicei cât timp aplicația ta de sincronizare încă îl descarcă sau după ce Callout Studio a fost eliminat de pe alt dispozitiv.",
 	"saveStatus.explain.stillMissing":
 		"Fișierul de setări încă nu a revenit. Verificarea doar îl caută și nu creează niciodată unul nou. Dacă seiful tău este în iCloud, OneDrive, Google Drive sau Dropbox, asigură-te că este setat să rămână descărcat pe acest dispozitiv.",
-	"saveStatus.explain.unreadable": "Callout Studio nu poate citi acum fișierul său de setări, așa că l-a lăsat exact așa cum este.",
+	"saveStatus.explain.unreadable":
+		"Callout Studio nu poate citi acum fișierul său de setări, așa că l-a lăsat exact așa cum este.",
 	"saveStatus.explain.recoveryRead":
 		"Callout Studio păstrează pe acest dispozitiv o copie de rezervă a setărilor tale, iar acea copie nu poate fi citită acum. Este posibil ca fișierul de setări în sine să fie în regulă.",
 	"saveStatus.explain.newerVersion":
@@ -1247,11 +1219,14 @@ export const ro: Record<string, string> = {
 		"Callout Studio verifică din nou în fiecare minut cât timp Obsidian este deschis, așa că adesea problema se rezolvă singură — sau alege Verifică din nou ca să verifici chiar acum.",
 	"saveStatus.guide.restore":
 		"Dacă setările tale nu revin, alege Restaurează aceste setări pentru a păstra callout-urile pe care le vezi aici.",
-	"saveStatus.guide.create": "Dacă setările tale nu revin, alege Creează fișierul de setări pentru a începe din nou să salvezi.",
-	"saveStatus.guide.recoveryRetry": "Asigură-te că acest dispozitiv are puțin spațiu de stocare liber, apoi alege Încearcă din nou.",
+	"saveStatus.guide.create":
+		"Dacă setările tale nu revin, alege Creează fișierul de setări pentru a începe din nou să salvezi.",
+	"saveStatus.guide.recoveryRetry":
+		"Asigură-te că acest dispozitiv are puțin spațiu de stocare liber, apoi alege Încearcă din nou.",
 	"saveStatus.guide.recoveryDiscard":
 		"Dacă asta nu ajută, alege Renunță la copia de recuperare. Mai întâi se salvează o copie exactă, iar fișierul tău de setări nu este atins.",
-	"saveStatus.guide.newerVersion": "Actualizează Callout Studio din Setări → Pluginuri comunitare, apoi reîncarcă Obsidian.",
+	"saveStatus.guide.newerVersion":
+		"Actualizează Callout Studio din Setări → Pluginuri comunitare, apoi reîncarcă Obsidian.",
 	"saveStatus.missingNotice":
 		"Notele tale sunt în siguranță. Callout Studio a oprit temporar salvarea pentru că nu își găsește acum fișierul de setări.",
 	"statusBar.paused": "Salvare întreruptă",
@@ -1319,7 +1294,8 @@ export const ro: Record<string, string> = {
 	"recovery.details.unknownTime": "Ora salvării nu a fost înregistrată",
 	"recovery.details.current": "Configurația curentă",
 	"recovery.details.restored": "După restaurarea acestei versiuni",
-	"recovery.details.unreadable": "Această versiune de Callout Studio nu poate interpreta această copie ca pe o configurație restaurabilă. Poate fi deteriorată, indisponibilă sau într-un format mai nou. Comparația și raportul despre setările restaurate nu sunt disponibile. Tot conținutul original care a putut fi citit este inclus mai jos.",
+	"recovery.details.unreadable":
+		"Această versiune de Callout Studio nu poate interpreta această copie ca pe o configurație restaurabilă. Poate fi deteriorată, indisponibilă sau într-un format mai nou. Comparația și raportul despre setările restaurate nu sunt disponibile. Tot conținutul original care a putut fi citit este inclus mai jos.",
 	"recovery.details.null": "Fără valoare (null)",
 	"recovery.details.yes": "Da",
 	"recovery.details.no": "Nu",
@@ -1377,7 +1353,8 @@ export const ro: Record<string, string> = {
 	"recovery.details.field.disabledFixedCommands": "Comenzi încorporate dezactivate",
 	"recovery.details.field.quickInsertSource": "Sursa memorată pentru inserarea rapidă",
 	"recovery.details.field.welcomeSeen": "Ecranul de bun venit a fost văzut",
-	"recovery.details.field.competitorImportBannerHandled": "Solicitarea de import de la prima instalare a fost tratată",
+	"recovery.details.field.competitorImportBannerHandled":
+		"Solicitarea de import de la prima instalare a fost tratată",
 	"recovery.details.field.iconSvgCache": "Desene de pictograme salvate",
 	"recovery.details.field.enabled": "Activat",
 	"recovery.details.field.items": "Elemente",
@@ -1487,11 +1464,14 @@ export const ro: Record<string, string> = {
 	"recovery.delete": "Șterge",
 
 	// Version history
-	"saveStatus.guide.versions": "După ce salvarea funcționează din nou, poți reveni și la o versiune salvată cu Restaurează o versiune anterioară.",
+	"saveStatus.guide.versions":
+		"După ce salvarea funcționează din nou, poți reveni și la o versiune salvată cu Restaurează o versiune anterioară.",
 	"saveStatus.goToVersions": "Mergi la istoricul versiunilor",
 	"versions.title": "Istoricul versiunilor",
-	"versions.intro": "Callout Studio salvează automat versiuni ale configurației tale.\nCele vechi sunt șterse treptat.\nRestaurarea unei versiuni înlocuiește configurația actuală pe toate dispozitivele sincronizate.",
-	"versions.pausedHint": "Salvarea este suspendată, deci restaurarea nu este disponibilă. Poți în continuare să compari și să ștergi versiuni.",
+	"versions.intro":
+		"Callout Studio salvează automat versiuni ale configurației tale.\nCele vechi sunt șterse treptat.\nRestaurarea unei versiuni înlocuiește configurația actuală pe toate dispozitivele sincronizate.",
+	"versions.pausedHint":
+		"Salvarea este suspendată, deci restaurarea nu este disponibilă. Poți în continuare să compari și să ștergi versiuni.",
 	"versions.loading": "Se caută versiuni…",
 	"versions.empty": "Nu s-au găsit versiuni.",
 	"versions.dayWithDate": "{{date}} ({{relative}})",
@@ -1508,14 +1488,17 @@ export const ro: Record<string, string> = {
 	"versions.reason.beforeRepair": "Înainte de repararea fișierului de setări",
 	"versions.restoreTitle": "Restaurează această versiune",
 	"versions.subtitle": "„{{name}}” · {{when}}",
-	"versions.restoreBody": "Configurația ta actuală va fi înlocuită ({{count}} diferență/diferențe).\nMai întâi este salvată ca versiune, ca să te poți întoarce la ea.\nApoi serviciul tău de sincronizare trimite configurația restaurată către celelalte dispozitive.",
+	"versions.restoreBody":
+		"Configurația ta actuală va fi înlocuită ({{count}} diferență/diferențe).\nMai întâi este salvată ca versiune, ca să te poți întoarce la ea.\nApoi serviciul tău de sincronizare trimite configurația restaurată către celelalte dispozitive.",
 	"versions.restoreSame": "Această versiune este identică cu configurația actuală, deci nu este nimic de restaurat.",
 	"versions.restored": "S-a restaurat „{{name}}” din {{when}}.",
-	"versions.backupFailed": "Nu s-a restaurat nimic: configurația actuală nu a putut fi salvată mai întâi ca versiune. Verifică spațiul disponibil, apoi încearcă din nou.",
+	"versions.backupFailed":
+		"Nu s-a restaurat nimic: configurația actuală nu a putut fi salvată mai întâi ca versiune. Verifică spațiul disponibil, apoi încearcă din nou.",
 	"versions.restoreFailed": "Versiunea nu a putut fi restaurată. Nu s-a modificat nimic.",
 	"versions.deleteTitle": "Șterge această versiune",
 	"versions.deleteAvailableBody": "Ea și toate copiile ei disponibile vor fi șterse definitiv.",
-	"versions.deleteSyncedFiles": "Ștergerea acestor fișiere se poate sincroniza cu celelalte dispozitive. Copiile locale de pe acele dispozitive pot rămâne.",
+	"versions.deleteSyncedFiles":
+		"Ștergerea acestor fișiere se poate sincroniza cu celelalte dispozitive. Copiile locale de pe acele dispozitive pot rămâne.",
 	"versions.deleteFinal": "Această acțiune nu poate fi anulată. Configurația actuală nu este afectată.",
 	"versions.deleted": "S-a șters „{{name}}” din {{when}}.",
 	"versions.deleteFailed": "Unele copii ale acestei versiuni nu au putut fi șterse. Lista afișează acum ce a rămas.",
@@ -1523,7 +1506,8 @@ export const ro: Record<string, string> = {
 	"versions.details.difference": "Diferență față de configurația actuală: {{count}}",
 	"versions.details.differences": "Diferențe față de configurația actuală: {{count}}",
 	"versions.details.comparisonUnavailable": "Comparația nu este disponibilă",
-	"notice.unsavedChangesKept": "Unele modificări de pe acest dispozitiv nu fuseseră încă salvate și au fost înlocuite de setări mai noi de pe alt dispozitiv. Versiunea ta a fost salvată mai întâi: deschide Restaurează o versiune anterioară din setările Callout Studio pentru a o recupera.",
+	"notice.unsavedChangesKept":
+		"Unele modificări de pe acest dispozitiv nu fuseseră încă salvate și au fost înlocuite de setări mai noi de pe alt dispozitiv. Versiunea ta a fost salvată mai întâi: deschide Restaurează o versiune anterioară din setările Callout Studio pentru a o recupera.",
 	"settings.versionHistory": "Restaurează o versiune anterioară",
 	"settings.versions": "Versiuni anterioare",
 	"settings.versionsDesc": "Înlocuiește configurarea curentă cu o versiune anterioară salvată.",
@@ -1534,14 +1518,14 @@ export const ro: Record<string, string> = {
 	"noteChanges.notesOne": "1 notă",
 	"noteChanges.askCallout": "Ce să se întâmple cu acel callout?",
 	"noteChanges.askCallouts": "Ce să se întâmple cu acele callout-uri?",
-	"noteChanges.changeRenamed": "Ai schimbat numele afișat din „{{old}}” în „{{new}}”, așa că ID-ul principal se schimbă din „{{oldId}}” în „{{newId}}”.",
+	"noteChanges.changeRenamed":
+		"Ai schimbat numele afișat din „{{old}}” în „{{new}}”, așa că ID-ul principal se schimbă din „{{oldId}}” în „{{newId}}”.",
 	"noteChanges.changeMainId": "ID-ul principal se schimbă din „{{oldId}}” în „{{newId}}”.",
 	"noteChanges.changeName": "Ai schimbat numele afișat din „{{old}}” în „{{new}}”.",
 	"noteChanges.changeRemoved": "Ai eliminat ID-ul „{{id}}”.",
 	"noteChanges.changeRemovedMany": "Ai eliminat aceste ID-uri: {{ids}}.",
 	"noteChanges.changeResetRemoved": "Resetează la implicit elimină ID-ul „{{id}}” pe care l-ai adăugat.",
-	"noteChanges.changeResetRemovedMany":
-		"Resetează la implicit elimină ID-urile pe care le-ai adăugat: {{ids}}.",
+	"noteChanges.changeResetRemovedMany": "Resetează la implicit elimină ID-urile pe care le-ai adăugat: {{ids}}.",
 	"noteChanges.changeFold": "Ai schimbat modul în care se pliază acest callout.",
 	"noteChanges.affects": "Aceasta afectează {{callouts}} din {{notes}}.",
 	"noteChanges.affectsUnknown": "Este posibil ca unele dintre notițele tale să fie afectate.",
@@ -1549,7 +1533,8 @@ export const ro: Record<string, string> = {
 	"noteChanges.rewriteManyDesc": "Fiecare ID vechi din notițele tale devine [!{{to}}].",
 	"noteChanges.changeToIdLabel": "ID-ul în care să fie schimbate",
 	"noteChanges.rewriteDesc": "Fiecare [!{{id}}] din notele tale devine [!{{to}}].",
-	"noteChanges.renameFollowDesc": "Fiecare [!{{oldId}}] din notele tale devine [!{{newId}}], iar titlurile care spun „{{old}}” devin „{{new}}”.",
+	"noteChanges.renameFollowDesc":
+		"Fiecare [!{{oldId}}] din notele tale devine [!{{newId}}], iar titlurile care spun „{{old}}” devin „{{new}}”.",
 	"noteChanges.titlesChangeDesc": "Titlurile care spun „{{old}}” devin „{{new}}”.",
 	"noteChanges.foldChangeDesc": "Semnul lor + sau - se schimbă în consecință.",
 };

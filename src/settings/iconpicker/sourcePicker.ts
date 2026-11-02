@@ -44,9 +44,7 @@ function groupOf(id: PickerSourceId, listed: MenuLibraries): { key: string; labe
 /** "3 more libraries available for download", or nothing when there are none. */
 function moreToDownload(count: number): string {
 	if (count === 0) return "";
-	return count === 1
-		? t("iconPicker.moreToDownloadOne")
-		: t("iconPicker.moreToDownload", { count });
+	return count === 1 ? t("iconPicker.moreToDownloadOne") : t("iconPicker.moreToDownload", { count });
 }
 
 /** Align the fixed source row with the toolbar inside the scrollable grid. */
@@ -56,8 +54,7 @@ export function alignIconPickerRows(container: HTMLElement, scrollHost: HTMLElem
 		container.style.setProperty("--cs-icon-grid-scrollbar", `${scrollbar}px`);
 	};
 	const view = scrollHost.ownerDocument.defaultView;
-	const observer = view && typeof view.ResizeObserver === "function"
-		? new view.ResizeObserver(sync) : undefined;
+	const observer = view && typeof view.ResizeObserver === "function" ? new view.ResizeObserver(sync) : undefined;
 	observer?.observe(scrollHost);
 	sync();
 	return () => {
@@ -66,10 +63,7 @@ export function alignIconPickerRows(container: HTMLElement, scrollHost: HTMLElem
 	};
 }
 
-export function mountIconSourcePicker(
-	parent: HTMLElement,
-	options: SourcePickerOptions,
-): ListboxPopup<PickerSourceId> {
+export function mountIconSourcePicker(parent: HTMLElement, options: SourcePickerOptions): ListboxPopup<PickerSourceId> {
 	const row = parent.createDiv("icon-picker-source-row");
 	const label = row.createEl("label", {
 		text: t("iconPicker.chooseSource"),
@@ -86,11 +80,7 @@ export function mountIconSourcePicker(
 		// and under its own heading; see `menuLibraries`.
 		itemsFor: () => {
 			listed = options.sources();
-			return [
-				...(listed.current === null ? [] : [listed.current]),
-				ALL_SOURCES,
-				...listed.libraries,
-			];
+			return [...(listed.current === null ? [] : [listed.current]), ALL_SOURCES, ...listed.libraries];
 		},
 		groupOf: (id) => groupOf(id, listed),
 		keyOf: (id) => id,
@@ -101,13 +91,15 @@ export function mountIconSourcePicker(
 			item.addClass("icon-picker-source-menu-item");
 			const emblem = item.createSpan({ cls: "icon-picker-source-menu-item-emblem" });
 			setIcon(emblem, meta.emblemIcon);
-			item.appendChild(createSourceMenuTitle({
-				label: t(meta.labelKey),
-				description: t(meta.descriptionKey),
-				count: options.countFor(id),
-				locale: getLocale(),
-				exactCount: id === "image",
-			}));
+			item.appendChild(
+				createSourceMenuTitle({
+					label: t(meta.labelKey),
+					description: t(meta.descriptionKey),
+					count: options.countFor(id),
+					locale: getLocale(),
+					exactCount: id === "image",
+				}),
+			);
 		},
 		// What is left to download is said, not offered: the libraries are got
 		// in Manage icon libraries, beside the menu.

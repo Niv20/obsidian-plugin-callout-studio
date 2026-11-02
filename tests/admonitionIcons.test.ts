@@ -16,12 +16,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	iconCandidates,
-	isAdmonitionImage,
-	readAdmonitionIcon,
-	resolveIcon,
-} from "../src/utils/admonitionIcons";
+import { iconCandidates, isAdmonitionImage, readAdmonitionIcon, resolveIcon } from "../src/utils/admonitionIcons";
 
 const types = (raw: unknown): string[] => {
 	const icon = readAdmonitionIcon(raw);
@@ -113,17 +108,13 @@ describe("iconCandidates — a named pack is a straight rename", () => {
 		assert.deepStrictEqual(types({ type: "fas", name: "star" }), ["fa-solid"]);
 		assert.deepStrictEqual(types({ type: "far", name: "star" }), ["fa-regular"]);
 		assert.deepStrictEqual(types({ type: "fab", name: "github" }), ["fa-brands"]);
-		assert.deepStrictEqual(types({ type: "octicons", name: "accessibility" }), [
-			"octicons",
-		]);
+		assert.deepStrictEqual(types({ type: "octicons", name: "accessibility" }), ["octicons"]);
 		assert.deepStrictEqual(types({ type: "rpg", name: "acid" }), ["rpg-awesome"]);
 	});
 
 	it("carries the name through untouched — the ids differ, the names do not", () => {
 		const icon = readAdmonitionIcon({ type: "rpg", name: "acid" })!;
-		assert.deepStrictEqual(iconCandidates(icon), [
-			{ type: "rpg-awesome", value: "acid" },
-		]);
+		assert.deepStrictEqual(iconCandidates(icon), [{ type: "rpg-awesome", value: "acid" }]);
 	});
 
 	it("offers exactly one candidate when the pack is known", () => {
@@ -144,14 +135,7 @@ describe("iconCandidates — a named pack is a straight rename", () => {
 });
 
 describe("iconCandidates — the guessing", () => {
-	const INFERENCE_ORDER = [
-		"lucide",
-		"fa-solid",
-		"fa-regular",
-		"fa-brands",
-		"octicons",
-		"rpg-awesome",
-	];
+	const INFERENCE_ORDER = ["lucide", "fa-solid", "fa-regular", "fa-brands", "octicons", "rpg-awesome"];
 
 	it("probes every library, Obsidian's own first, when no pack is named", () => {
 		// Lucide wins in both plugins; otherwise use our stable fallback order.
@@ -162,11 +146,7 @@ describe("iconCandidates — the guessing", () => {
 	it("expands the legacy `font-awesome` pack into its three files, in order", () => {
 		// One pack upstream, three downloads here. Without this, an icon stored
 		// under the old id would resolve nowhere.
-		assert.deepStrictEqual(types({ type: "font-awesome", name: "star" }), [
-			"fa-solid",
-			"fa-regular",
-			"fa-brands",
-		]);
+		assert.deepStrictEqual(types({ type: "font-awesome", name: "star" }), ["fa-solid", "fa-regular", "fa-brands"]);
 	});
 
 	it("guesses rather than refuses for a pack this build never heard of", () => {
@@ -201,10 +181,7 @@ describe("iconCandidates — the guessing", () => {
 	});
 
 	it("offers nothing for a picture — it travels its own way", () => {
-		assert.deepStrictEqual(
-			iconCandidates({ type: "image", name: "data:image/png;base64,AAAA" }),
-			[],
-		);
+		assert.deepStrictEqual(iconCandidates({ type: "image", name: "data:image/png;base64,AAAA" }), []);
 	});
 
 	it("gives every candidate the same name", () => {

@@ -69,9 +69,7 @@ export interface SettingsFileHost {
  * reconstruction fallback — the same one `PackDataStore` and `LocaleStore` use.
  */
 export function settingsDataPath(host: Pick<SettingsFileHost, "app" | "manifest">): string {
-	const base =
-		host.manifest.dir ??
-		`${host.app.vault.configDir}/plugins/${host.manifest.id}`;
+	const base = host.manifest.dir ?? `${host.app.vault.configDir}/plugins/${host.manifest.id}`;
 	return normalizePath(`${base}/data.json`);
 }
 
@@ -83,19 +81,21 @@ export function settingsDataPath(host: Pick<SettingsFileHost, "app" | "manifest"
  * Existence is asked only when the content came back unusable, and it is what
  * separates "nothing to read" from "something we could not read".
  */
-export async function readSettingsFile(
-	host: SettingsFileHost,
-): Promise<SettingsRead> {
+export async function readSettingsFile(host: SettingsFileHost): Promise<SettingsRead> {
 	let raw: unknown;
 	// A hung read is unavailable storage, not an empty file: see withTimeout.
-	try { raw = await withTimeout(host.loadData(), PRIMARY_IO_TIMEOUT_MS, () => new Error("Settings read timed out")); }
-	catch { return { kind: "unreadable" }; }
+	try {
+		raw = await withTimeout(host.loadData(), PRIMARY_IO_TIMEOUT_MS, () => new Error("Settings read timed out"));
+	} catch {
+		return { kind: "unreadable" };
+	}
 	// Arrays and primitives parse fine and are not settings. A subsequent
 	// disappearance during sync must not turn that observed corruption into
 	// permission to initialize a new file.
 	if (typeof raw === "object" && raw !== null && !Array.isArray(raw)) {
 		const data = raw as Record<string, unknown>;
-		if (!hasSafeSettingsFileShape(data)) return isNewerSettingsFormat(data) ? { kind: "unreadable", newer: true } : { kind: "unreadable" };
+		if (!hasSafeSettingsFileShape(data))
+			return isNewerSettingsFormat(data) ? { kind: "unreadable", newer: true } : { kind: "unreadable" };
 		return {
 			kind: "loaded",
 			data: raw,

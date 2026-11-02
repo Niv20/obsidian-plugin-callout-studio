@@ -97,9 +97,7 @@ export const LOCALE_TABLES: Record<LocaleFileId, LocaleTable> = {
 
 /** `[fileId, table]` for every downloadable locale, in id order. */
 export const localeEntries = (): [LocaleFileId, LocaleTable][] =>
-	(Object.keys(LOCALE_TABLES) as LocaleFileId[])
-		.sort()
-		.map((fileId) => [fileId, LOCALE_TABLES[fileId]]);
+	(Object.keys(LOCALE_TABLES) as LocaleFileId[]).sort().map((fileId) => [fileId, LOCALE_TABLES[fileId]]);
 
 /**
  * The three right-to-left languages the plugin ships.

@@ -68,10 +68,7 @@ export interface DeletedCallout {
 	wasFallback: boolean;
 }
 
-export async function handleCalloutDelete(
-	ctx: SettingsContext,
-	def: CalloutDefinition,
-): Promise<void> {
+export async function handleCalloutDelete(ctx: SettingsContext, def: CalloutDefinition): Promise<void> {
 	// While saving is paused the removal would be lost on restart: the type
 	// would come back on the next launch as if Delete had never been pressed.
 	if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
@@ -94,19 +91,19 @@ export async function handleCalloutDelete(
 		// Every callout without a type of its own changes with it, used or not.
 		if (isFallback) {
 			const fallback = registry.get(DEFAULT_SETTINGS.fallbackCalloutId);
-			lines.push(t("deleteModal.fallbackTarget", {
-				fallback: fallback?.displayName ?? DEFAULT_SETTINGS.fallbackCalloutId,
-			}));
+			lines.push(
+				t("deleteModal.fallbackTarget", {
+					fallback: fallback?.displayName ?? DEFAULT_SETTINGS.fallbackCalloutId,
+				}),
+			);
 		}
 		// Which one, in quotes; and when it is the default fallback, that too.
 		const subtitle = isFallback
 			? t("deleteModal.subtitleFallback", { name: def.displayName })
 			: t("confirm.subtitleName", { name: def.displayName });
-		const confirmed = await new ConfirmModal(
-			ctx.app,
-			t("deleteModal.title"),
-			lines.join("\n"),
-		).withMascot(subtitle).confirm();
+		const confirmed = await new ConfirmModal(ctx.app, t("deleteModal.title"), lines.join("\n"))
+			.withMascot(subtitle)
+			.confirm();
 		if (!confirmed) return;
 		// Saving can pause while the dialog is open.
 		if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
@@ -120,8 +117,9 @@ export async function handleCalloutDelete(
 		def: structuredClone(current),
 		// Cleanup drops artwork used only by this type. Keep its cached variants
 		// with Undo so restoring it also works offline or without the source pack.
-		artwork: registry.iconSvgCache.filter(entry =>
-			entry.pack === current.icon.type && entry.name === current.icon.value),
+		artwork: registry.iconSvgCache.filter(
+			(entry) => entry.pack === current.icon.type && entry.name === current.icon.value,
+		),
 		wasFallback: registry.settings.fallbackCalloutId === current.id,
 	};
 	if (!registry.remove(current.id)) return;
@@ -140,10 +138,7 @@ export async function handleCalloutDelete(
 }
 
 /** Undo for Delete: the type, its artwork, and its place as the fallback. */
-export async function restoreDeletedCallout(
-	ctx: SettingsContext,
-	deleted: DeletedCallout,
-): Promise<void> {
+export async function restoreDeletedCallout(ctx: SettingsContext, deleted: DeletedCallout): Promise<void> {
 	if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
 	const { registry } = ctx.plugin;
 	// Made again since, or found again by a scan: that row is the user's now.
@@ -161,10 +156,7 @@ export async function restoreDeletedCallout(
 		}
 		// `remove` moved the fallback to Note and restyled the rows that mirror
 		// it. Put both back, unless another fallback has been picked since.
-		if (
-			deleted.wasFallback &&
-			registry.settings.fallbackCalloutId === DEFAULT_SETTINGS.fallbackCalloutId
-		) {
+		if (deleted.wasFallback && registry.settings.fallbackCalloutId === DEFAULT_SETTINGS.fallbackCalloutId) {
 			registry.settings.fallbackCalloutId = deleted.def.id;
 			registry.restyleUncustomizedFallbackRows();
 		}
@@ -188,10 +180,7 @@ function typeStaysLine(ctx: SettingsContext, def: CalloutDefinition): string {
 	return t("convertModal.typeStays");
 }
 
-export async function handleClearCalloutUsages(
-	ctx: SettingsContext,
-	def: CalloutDefinition,
-): Promise<void> {
+export async function handleClearCalloutUsages(ctx: SettingsContext, def: CalloutDefinition): Promise<void> {
 	const usage = await countUsagesNow(ctx, def);
 	if (!usage || usage.fileCount === 0) return;
 
@@ -207,34 +196,36 @@ export async function handleClearCalloutUsages(
 			typeStaysLine(ctx, def),
 		].join("\n"),
 		t("convertModal.confirm"),
-	).withMascot(t("convertModal.subtitle", { name: def.displayName })).confirm();
+	)
+		.withMascot(t("convertModal.subtitle", { name: def.displayName }))
+		.confirm();
 	if (!confirmed) return;
 
 	const allIds = ctx.plugin.registry.vaultIdFormsFor(def);
 	let result: { files: number; blocks: number };
 	const journal = new NoteRewriteJournal();
-	try { result = await convertCalloutsToPlainTextInVault(ctx.app, allIds, true, journal); }
-	catch (error) {
+	try {
+		result = await convertCalloutsToPlainTextInVault(ctx.app, allIds, true, journal);
+	} catch (error) {
 		console.warn("[callout-studio] converting callout usages was incomplete", error);
 		showNotice("warning", t("notice.calloutDeleteIncomplete"));
 		return;
 	}
-	noticeWithUndo(ctx.app, t("vault.convertedToPlainText", {
-		blocks: String(result.blocks),
-		files: String(result.files),
-	}), journal);
+	noticeWithUndo(
+		ctx.app,
+		t("vault.convertedToPlainText", {
+			blocks: String(result.blocks),
+			files: String(result.files),
+		}),
+		journal,
+	);
 	ctx.redraw();
 }
 
-export async function handleCalloutReplace(
-	ctx: SettingsContext,
-	def: CalloutDefinition,
-): Promise<void> {
+export async function handleCalloutReplace(ctx: SettingsContext, def: CalloutDefinition): Promise<void> {
 	const allIds = ctx.plugin.registry.vaultIdFormsFor(def);
 	const { fileCount, totalCount } = await countCalloutUsages(ctx.app, allIds);
-	const otherCallouts = ctx.plugin.registry
-		.getAll()
-		.filter((c) => c.id !== def.id);
+	const otherCallouts = ctx.plugin.registry.getAll().filter((c) => c.id !== def.id);
 	if (otherCallouts.length === 0) {
 		showNotice("notFound", t("vault.noReplacementAvailable"));
 		return;

@@ -98,8 +98,7 @@ export class StylePreview {
 		// Live *inside* the preview card (its frame + "Preview" header stay put),
 		// swapping only the editor body — so the demo reads as the same Preview
 		// box, not a bare panel. Fall back to the column if the card isn't there.
-		const host =
-			this.el.querySelector<HTMLElement>(".cs-live-preview-container") ?? this.el;
+		const host = this.el.querySelector<HTMLElement>(".cs-live-preview-container") ?? this.el;
 		// `.markdown-preview-view` + `.markdown-rendered` make Obsidian's own
 		// reading-view CSS and the injected per-callout rules resolve as in a
 		// note — same combo LiveCalloutPreview's fallback uses.
@@ -146,19 +145,17 @@ export class StylePreview {
 	 */
 	syncDemoChevrons(): void {
 		const show = this.plugin.settings.headingCallouts.showFoldArrow;
-		this.gapDemoRender
-			?.querySelectorAll<HTMLElement>(`.${CSS_HEADING_LINE}`)
-			.forEach((h) => {
-				const existing = h.querySelector<HTMLElement>(`:scope > .${CSS_FOLD_ARROW}`);
-				if (!show) {
-					existing?.remove();
-					return;
-				}
-				if (existing) return;
-				const arrow = createSpan({ cls: CSS_FOLD_ARROW });
-				setIcon(arrow, "chevron-right");
-				h.append(arrow);
-			});
+		this.gapDemoRender?.querySelectorAll<HTMLElement>(`.${CSS_HEADING_LINE}`).forEach((h) => {
+			const existing = h.querySelector<HTMLElement>(`:scope > .${CSS_FOLD_ARROW}`);
+			if (!show) {
+				existing?.remove();
+				return;
+			}
+			if (existing) return;
+			const arrow = createSpan({ cls: CSS_FOLD_ARROW });
+			setIcon(arrow, "chevron-right");
+			h.append(arrow);
+		});
 	}
 
 	/**
@@ -178,11 +175,9 @@ export class StylePreview {
 	 * `i === 0 ? "0em" : ...` below — that is the whole fix.
 	 */
 	setGapDemoValue(em: number): void {
-		this.gapDemoRender
-			?.querySelectorAll<HTMLElement>(".cs-heading-callout")
-			.forEach((bar) => {
-				bar.style.setProperty("--cs-heading-gap-top", `${em}em`);
-			});
+		this.gapDemoRender?.querySelectorAll<HTMLElement>(".cs-heading-callout").forEach((bar) => {
+			bar.style.setProperty("--cs-heading-gap-top", `${em}em`);
+		});
 	}
 
 	/**
@@ -221,19 +216,11 @@ export function sampleText(role: CalloutRenderRole): string {
 		case "regular":
 			// The trailing blank line gives the preview's parked caret a
 			// home outside the callout (see EmbeddableMarkdownEditor.parkCursor).
-			return [
-				`> [!${STYLE_DEMO_ID}] ${name}`,
-				`> ${t("editor.loremIpsumShort")}`,
-				"",
-			].join("\n");
+			return [`> [!${STYLE_DEMO_ID}] ${name}`, `> ${t("editor.loremIpsumShort")}`, ""].join("\n");
 		case "heading":
 			// One short body paragraph: enough for the fold arrow to visibly
 			// hide something, and the preview stays short.
-			return [
-				`## [!${STYLE_DEMO_ID}] ${name}`,
-				"",
-				t("editor.loremIpsumShort"),
-			].join("\n");
+			return [`## [!${STYLE_DEMO_ID}] ${name}`, "", t("editor.loremIpsumShort")].join("\n");
 		case "inline":
 			// Use the localized label in the syntax revealed by the preview.
 			return t("settings.styleDemoInlineText", {

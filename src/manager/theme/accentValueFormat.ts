@@ -10,8 +10,7 @@
 import type { AccentSpelling } from "./accentDialect";
 
 /** `1, 2, 3` or `1 2 3` — a bare channel list, meaningless outside `rgb()`. */
-const BARE_TRIPLET =
-	/^\d{1,3}(?:\.\d+)?(?:\s*,\s*|\s+)\d{1,3}(?:\.\d+)?(?:\s*,\s*|\s+)\d{1,3}(?:\.\d+)?%?$/;
+const BARE_TRIPLET = /^\d{1,3}(?:\.\d+)?(?:\s*,\s*|\s+)\d{1,3}(?:\.\d+)?(?:\s*,\s*|\s+)\d{1,3}(?:\.\d+)?%?$/;
 
 /** `var(--x` at the head of a value; the fallback, if any, follows. */
 const SOLE_VAR = /^var\(\s*(--[\w-]+)\s*(,)?/;
@@ -44,10 +43,7 @@ export function classifyLiteral(value: string): AccentSpelling | null {
  * the `seen` set are both about a theme that references itself, which is legal
  * CSS and merely resolves to nothing.
  */
-export function resolveDeclaredSpelling(
-	name: string,
-	props: ReadonlyMap<string, string>,
-): AccentSpelling | undefined {
+export function resolveDeclaredSpelling(name: string, props: ReadonlyMap<string, string>): AccentSpelling | undefined {
 	const seen = new Set<string>();
 	let current = props.get(name);
 	for (let hop = 0; current !== undefined && hop < MAX_VAR_HOPS; hop++) {
@@ -58,9 +54,7 @@ export function resolveDeclaredSpelling(
 		if (ref === undefined || seen.has(ref)) return undefined;
 		seen.add(ref);
 		const hopped = props.get(ref);
-		current =
-			hopped ??
-			(next?.[2] === undefined ? undefined : fallbackOf(current.trim()));
+		current = hopped ?? (next?.[2] === undefined ? undefined : fallbackOf(current.trim()));
 	}
 	return undefined;
 }

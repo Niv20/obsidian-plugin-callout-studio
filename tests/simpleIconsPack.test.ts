@@ -25,11 +25,7 @@ import assert from "node:assert";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
-import {
-	PACKS_TAG,
-	PACK_FORMAT,
-	PACK_MANIFEST,
-} from "../src/icons/data/packManifest";
+import { PACKS_TAG, PACK_FORMAT, PACK_MANIFEST } from "../src/icons/data/packManifest";
 import { parsePackFile, setPackData } from "../src/icons/packData";
 import { simpleIconsPack } from "../src/icons/packs/simpleIcons";
 import { ICON_SOURCE_IDS, getSource, packFor } from "../src/icons/registry";
@@ -52,9 +48,7 @@ interface UpstreamBrand {
 
 const UPSTREAM_DIR = join(REPO_ROOT, "node_modules", "simple-icons");
 
-const UPSTREAM = JSON.parse(
-	readFileSync(join(UPSTREAM_DIR, "data", "simple-icons.json"), "utf8"),
-) as UpstreamBrand[];
+const UPSTREAM = JSON.parse(readFileSync(join(UPSTREAM_DIR, "data", "simple-icons.json"), "utf8")) as UpstreamBrand[];
 
 const UPSTREAM_VERSION = (
 	JSON.parse(readFileSync(join(UPSTREAM_DIR, "package.json"), "utf8")) as {
@@ -64,11 +58,7 @@ const UPSTREAM_VERSION = (
 
 const BY_SLUG = new Map(UPSTREAM.map((brand) => [brand.slug, brand]));
 
-const parsed = parsePackFile(
-	JSON.parse(readRepoFile("packs/simple-icons.json")),
-	"simple-icons",
-	PACK_FORMAT,
-);
+const parsed = parsePackFile(JSON.parse(readRepoFile("packs/simple-icons.json")), "simple-icons", PACK_FORMAT);
 assert.ok(parsed.ok, parsed.ok ? "" : parsed.reason);
 const PACK = parsed.file;
 setPackData("simple-icons", PACK);
@@ -132,8 +122,7 @@ function tableRows(heading: string): Map<string, string[]> {
 }
 
 /** A title as the notices print it, with the Markdown escaping taken back off. */
-const unescaped = (cell: string | undefined): string =>
-	(cell ?? "").replace(/\\(.)/g, "$1");
+const unescaped = (cell: string | undefined): string => (cell ?? "").replace(/\\(.)/g, "$1");
 
 const CREDITED = tableRows("Logos shipped under their own licence");
 const LEFT_OUT = tableRows("Logos left out");
@@ -155,8 +144,7 @@ describe("the Simple Icons pack holds only logos whose licence it can honour", (
 
 	it("holds no non-commercial, no-derivatives, GPL-family or brand-specific logo", () => {
 		const offenders = UPSTREAM.filter(
-			(brand) =>
-				brand.license && isWithheld(brand.license.type) && SHIPPED.has(brand.slug),
+			(brand) => brand.license && isWithheld(brand.license.type) && SHIPPED.has(brand.slug),
 		).map((brand) => `${brand.slug} (${brand.license?.type})`);
 		assert.deepStrictEqual(offenders, []);
 	});
@@ -166,8 +154,7 @@ describe("the Simple Icons pack holds only logos whose licence it can honour", (
 		// protects the *next* regeneration, and this protects the file as
 		// committed — including from a rule widened to get past the throw.
 		const unread = UPSTREAM.filter(
-			(brand) =>
-				brand.license && SHIPPED.has(brand.slug) && !HONOURED.has(brand.license.type),
+			(brand) => brand.license && SHIPPED.has(brand.slug) && !HONOURED.has(brand.license.type),
 		).map((brand) => `${brand.slug} (${brand.license?.type})`);
 		assert.deepStrictEqual(unread, []);
 	});
@@ -175,9 +162,7 @@ describe("the Simple Icons pack holds only logos whose licence it can honour", (
 	it("puts every licence upstream uses on exactly one side of the line", () => {
 		// A licence both honoured and withheld would be shipped or not depending
 		// on the order two checks happen to run in.
-		const types = new Set(
-			UPSTREAM.flatMap((brand) => (brand.license ? [brand.license.type] : [])),
-		);
+		const types = new Set(UPSTREAM.flatMap((brand) => (brand.license ? [brand.license.type] : [])));
 		for (const type of types) {
 			assert.notEqual(
 				HONOURED.has(type),
@@ -243,34 +228,23 @@ describe("no logo's outline is altered", () => {
  * ------------------------------------------------------------------ */
 
 describe("every logo with a licence of its own is credited by name", () => {
-	const licensed = UPSTREAM.filter(
-		(brand) => brand.license && SHIPPED.has(brand.slug),
-	);
+	const licensed = UPSTREAM.filter((brand) => brand.license && SHIPPED.has(brand.slug));
 
 	it("credits exactly the licensed logos the pack holds", () => {
 		assert.ok(licensed.length > 100, `only ${licensed.length} licensed logos`);
-		assert.deepStrictEqual(
-			[...CREDITED.keys()].sort(),
-			licensed.map((brand) => brand.slug).sort(),
-		);
+		assert.deepStrictEqual([...CREDITED.keys()].sort(), licensed.map((brand) => brand.slug).sort());
 	});
 
 	it("names each one's owner, licence and source as upstream records them", () => {
 		for (const brand of licensed) {
 			const cells = CREDITED.get(brand.slug) ?? [];
 			const where = `the row for ${brand.slug}`;
-			assert.ok(
-				unescaped(cells[0]).includes(brand.title),
-				`${where} does not name ${brand.title}`,
-			);
+			assert.ok(unescaped(cells[0]).includes(brand.title), `${where} does not name ${brand.title}`);
 			assert.ok(
 				cells[2]?.startsWith(`[${brand.license?.type}](`),
 				`${where} names the wrong licence: ${cells[2]}`,
 			);
-			assert.ok(
-				cells[3]?.includes(`(<${brand.source}>)`),
-				`${where} does not link ${brand.source}`,
-			);
+			assert.ok(cells[3]?.includes(`(<${brand.source}>)`), `${where} does not link ${brand.source}`);
 		}
 	});
 
@@ -325,10 +299,7 @@ describe("the source as the picker and the credits present it", () => {
 		// whatever a later refresh adds or drops.
 		const perLogo = attribution.licenses[1];
 		assert.ok(perLogo, "the credits no longer link the per-logo licences");
-		assert.ok(
-			perLogo.url.endsWith(`/blob/${PACKS_TAG}/docs/SIMPLE-ICONS-LICENSES.md`),
-			perLogo.url,
-		);
+		assert.ok(perLogo.url.endsWith(`/blob/${PACKS_TAG}/docs/SIMPLE-ICONS-LICENSES.md`), perLogo.url);
 	});
 
 	it("keeps the trademark notice up for the whole source, always", () => {
@@ -347,10 +318,7 @@ describe("the source as the picker and the credits present it", () => {
 	});
 
 	it("stores a logo under upstream's slug and one cache entry", () => {
-		const icon = simpleIconsPack.makeIcon(
-			{ name: "nodedotjs", categories: [], keywords: [] },
-			{},
-		);
+		const icon = simpleIconsPack.makeIcon({ name: "nodedotjs", categories: [], keywords: [] }, {});
 		assert.deepStrictEqual(icon, { type: "simple-icons", value: "nodedotjs" });
 		for (const role of CALLOUT_RENDER_ROLES) {
 			assert.equal(simpleIconsPack.cacheVariant(icon, role), "");
@@ -358,10 +326,7 @@ describe("the source as the picker and the credits present it", () => {
 	});
 
 	it("draws a logo with no paint of its own, so it takes the callout's colour", () => {
-		const svg = simpleIconsPack.buildSvg?.(
-			{ type: "simple-icons", value: "github" },
-			"regular",
-		);
+		const svg = simpleIconsPack.buildSvg?.({ type: "simple-icons", value: "github" }, "regular");
 		assert.ok(svg?.startsWith(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">`));
 		assert.ok(!svg?.includes("fill="), svg?.slice(0, 120));
 		assert.ok(!svg?.includes("stroke="), svg?.slice(0, 120));
@@ -370,10 +335,7 @@ describe("the source as the picker and the credits present it", () => {
 	it("draws nothing for a logo that was left out", () => {
 		const leftOut = [...LEFT_OUT.keys()][0];
 		assert.ok(leftOut, "nothing is left out — the policy is not being applied");
-		assert.equal(
-			simpleIconsPack.buildSvg?.({ type: "simple-icons", value: leftOut }, "regular"),
-			null,
-		);
+		assert.equal(simpleIconsPack.buildSvg?.({ type: "simple-icons", value: leftOut }, "regular"), null);
 	});
 });
 
@@ -440,14 +402,8 @@ describe("the picker panel, before the pack is on the device", () => {
 			assert.equal(notice?.hasClass("is-hidden"), false);
 
 			const credit = h.container.querySelector(".icon-picker-pack-credit");
-			assert.ok(
-				credit?.textContent.includes("Simple Icons — CC0-1.0, various"),
-				credit?.textContent,
-			);
-			assert.equal(
-				credit?.querySelector("a")?.getAttribute("href"),
-				"https://simpleicons.org",
-			);
+			assert.ok(credit?.textContent.includes("Simple Icons — CC0-1.0, various"), credit?.textContent);
+			assert.equal(credit?.querySelector("a")?.getAttribute("href"), "https://simpleicons.org");
 		} finally {
 			h.dispose();
 		}
@@ -487,10 +443,7 @@ describe("a brand is found by the names people actually type", () => {
 
 	it("indexes exactly the logos the pack file can draw", async () => {
 		const index = await simpleIconsPack.loadIndex();
-		assert.deepStrictEqual(
-			index.entries.map((entry) => entry.name).sort(),
-			[...SHIPPED].sort(),
-		);
+		assert.deepStrictEqual(index.entries.map((entry) => entry.name).sort(), [...SHIPPED].sort());
 	});
 
 	it("offers no logo that was left out", async () => {
@@ -519,8 +472,7 @@ describe("a brand is found by the names people actually type", () => {
 
 	it("keeps a title only where it says something the slug does not", async () => {
 		const index = await simpleIconsPack.loadIndex();
-		const labelOf = (name: string) =>
-			index.entries.find((entry) => entry.name === name)?.label;
+		const labelOf = (name: string) => index.entries.find((entry) => entry.name === name)?.label;
 		assert.equal(labelOf("nodedotjs"), "Node.js");
 		assert.equal(labelOf("atandt"), "AT&T");
 		// "GitHub" is `github` in capitals, which the search ignores anyway.

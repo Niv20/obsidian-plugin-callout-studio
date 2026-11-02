@@ -79,11 +79,12 @@ function mount() {
 			input.value = text;
 			input.fire("input");
 		},
-		key: (key: string) => input.fire("keydown", {
-			key,
-			preventDefault: () => {},
-			stopPropagation: () => {},
-		}),
+		key: (key: string) =>
+			input.fire("keydown", {
+				key,
+				preventDefault: () => {},
+				stopPropagation: () => {},
+			}),
 	};
 }
 
@@ -93,14 +94,8 @@ function assertDeleted(h: Harness): void {
 	assert.strictEqual(h.label(), DELETED_LABEL);
 	// An empty picker shows no circles; a deleted colour still does.
 	assert.ok(!h.root.classList.contains("is-empty"));
-	assert.strictEqual(
-		required(h.lead, ".cs-color-circle-l").style.backgroundColor,
-		FORM_COLORS.accent,
-	);
-	assert.strictEqual(
-		required(h.lead, ".cs-color-circle-r").style.backgroundColor,
-		FORM_COLORS.bg,
-	);
+	assert.strictEqual(required(h.lead, ".cs-color-circle-l").style.backgroundColor, FORM_COLORS.accent);
+	assert.strictEqual(required(h.lead, ".cs-color-circle-r").style.backgroundColor, FORM_COLORS.bg);
 	assert.deepStrictEqual(h.committed, []);
 	assert.deepStrictEqual(h.created, []);
 }
@@ -114,10 +109,7 @@ describe("PaletteCombobox — deleted saved color", () => {
 		const h = mount();
 		h.open();
 
-		assert.strictEqual(
-			required(h.menu, ".cs-palette-menu-item-label").textContent,
-			SAVED.name,
-		);
+		assert.strictEqual(required(h.menu, ".cs-palette-menu-item-label").textContent, SAVED.name);
 		assertDeleted(h);
 	});
 
@@ -138,10 +130,7 @@ describe("PaletteCombobox — deleted saved color", () => {
 		h.key("ArrowDown");
 
 		assert.ok(h.rows()[0]?.classList.contains("is-active"));
-		assert.strictEqual(
-			h.input.getAttribute("aria-activedescendant"),
-			h.rows()[0]?.id,
-		);
+		assert.strictEqual(h.input.getAttribute("aria-activedescendant"), h.rows()[0]?.id);
 		assert.deepStrictEqual(h.previews, [SAVED.palette.id]);
 		assertDeleted(h);
 	});
@@ -184,10 +173,7 @@ describe("PaletteCombobox — deleted saved color", () => {
 
 		assert.ok(h.rows()[0]?.classList.contains("is-active"));
 		assert.ok(h.rows()[0]?.classList.contains("is-selected"));
-		assert.strictEqual(
-			h.input.getAttribute("aria-activedescendant"),
-			h.rows()[0]?.id,
-		);
+		assert.strictEqual(h.input.getAttribute("aria-activedescendant"), h.rows()[0]?.id);
 		assert.deepStrictEqual(h.previews, []);
 	});
 
@@ -218,10 +204,7 @@ describe("PaletteCombobox — deleted saved color", () => {
 
 		assertDeleted(h);
 		h.open();
-		assert.strictEqual(
-			required(h.menu, ".cs-palette-menu-item-label").textContent,
-			SAVED.name,
-		);
+		assert.strictEqual(required(h.menu, ".cs-palette-menu-item-label").textContent, SAVED.name);
 	});
 
 	it("replaces the deleted state after an explicit saved-color selection", () => {
@@ -232,10 +215,7 @@ describe("PaletteCombobox — deleted saved color", () => {
 
 		assert.deepStrictEqual(h.committed, [SAVED.id]);
 		assert.strictEqual(h.label(), SAVED.name);
-		assert.strictEqual(
-			required(h.lead, ".cs-color-circle-l").style.backgroundColor,
-			SAVED.palette.colorLight,
-		);
+		assert.strictEqual(required(h.lead, ".cs-color-circle-l").style.backgroundColor, SAVED.palette.colorLight);
 		assert.ok(!h.root.classList.contains("is-empty"));
 		assert.ok(!h.isOpen());
 		h.open();
@@ -259,7 +239,9 @@ describe("ListboxPopup — an unknown selection without a fallback label", () =>
 			itemsFor: () => ["Known"],
 			keyOf: (item) => item,
 			labelOf: (item) => item,
-			renderRow: (row, item) => { row.textContent = item; },
+			renderRow: (row, item) => {
+				row.textContent = item;
+			},
 			onCommit: (item) => committed.push(item),
 		});
 		mounted.push(popup);

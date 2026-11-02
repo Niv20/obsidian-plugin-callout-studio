@@ -64,20 +64,14 @@ describe("themeAccentVar — who owns the accent", () => {
 		const { registry, css } = harness();
 		const note = registry.get("note");
 		assert.ok(note);
-		assert.strictEqual(
-			css.themeAccentVar({ ...note, colorLight: "#ff0000" }),
-			undefined,
-		);
+		assert.strictEqual(css.themeAccentVar({ ...note, colorLight: "#ff0000" }), undefined);
 	});
 
 	it("never defers for a user-created callout, even one named like a built-in", () => {
 		const { css } = harness();
 		// `builtIn: false` is the whole test: the id happens to be in the map,
 		// but the row is the user's, so there is nothing to defer to.
-		assert.strictEqual(
-			css.themeAccentVar(definition({ id: "note", builtIn: false })),
-			undefined,
-		);
+		assert.strictEqual(css.themeAccentVar(definition({ id: "note", builtIn: false })), undefined);
 	});
 });
 
@@ -97,14 +91,8 @@ describe("accentProps — the three colour variables", () => {
 		// goes through the `<color>`-typed hand-off rather than naming that
 		// variable directly, so a theme still writing ≤1.12 bare triplets
 		// degrades to grey instead of poisoning every color-mix() downstream.
-		assert.ok(
-			props.some((p) =>
-				p.includes("--cs-accent-theme: var(--callout-default)"),
-			),
-		);
-		assert.ok(
-			props.some((p) => p.includes("--cs-accent: var(--cs-accent-theme)")),
-		);
+		assert.ok(props.some((p) => p.includes("--cs-accent-theme: var(--callout-default)")));
+		assert.ok(props.some((p) => p.includes("--cs-accent: var(--cs-accent-theme)")));
 	});
 
 	it("emits a hex --callout-color for a modified built-in", () => {
@@ -112,10 +100,7 @@ describe("accentProps — the three colour variables", () => {
 		const note = registry.get("note");
 		assert.ok(note);
 
-		const props = css.accentProps(
-			{ ...note, colorLight: "#ff0000" },
-			"light",
-		);
+		const props = css.accentProps({ ...note, colorLight: "#ff0000" }, "light");
 		assert.ok(props.some((p) => p.includes("--callout-color: #ff0000")));
 		assert.ok(props.some((p) => p.includes("--cs-accent: #ff0000")));
 	});
@@ -148,16 +133,11 @@ describe("accentProps — the three colour variables", () => {
 		// cannot forward core a value core is unable to parse.
 		const props = css.accentProps(note, "light", true, true);
 		assert.ok(
-			props.some(
-				(p) => p === "  --callout-color: var(--cs-accent-theme) !important;",
-			),
+			props.some((p) => p === "  --callout-color: var(--cs-accent-theme) !important;"),
 			`imposed accent missing, got:\n${props.join("\n")}`,
 		);
 		assert.ok(
-			props.some(
-				(p) =>
-					p === "  --cs-accent-theme: var(--callout-default) !important;",
-			),
+			props.some((p) => p === "  --cs-accent-theme: var(--callout-default) !important;"),
 			`the hand-off must be declared in the same rule, got:\n${props.join("\n")}`,
 		);
 		assert.ok(props.every((p) => p.endsWith(" !important;")));
@@ -181,14 +161,10 @@ describe("accentProps — the three colour variables", () => {
 	});
 
 	it("leaves it bare when the theme declared it as a colour", () => {
-		const { registry, css } = themedHarness(
-			`body { --callout-default: #446688; }`,
-		);
+		const { registry, css } = themedHarness(`body { --callout-default: #446688; }`);
 		const note = must(registry.get("note"), "built-in note");
 		assert.ok(
-			css
-				.accentProps(note, "light", true)
-				.includes("  --cs-accent-theme: var(--callout-default) !important;"),
+			css.accentProps(note, "light", true).includes("  --cs-accent-theme: var(--callout-default) !important;"),
 		);
 	});
 
@@ -227,10 +203,7 @@ describe("accentProps — the three colour variables", () => {
 	it("imposed changes nothing for a def that already carries its own colour", () => {
 		const { css } = harness();
 		const def = definition();
-		assert.deepStrictEqual(
-			css.accentProps(def, "light", true, true),
-			css.accentProps(def, "light", true, false),
-		);
+		assert.deepStrictEqual(css.accentProps(def, "light", true, true), css.accentProps(def, "light", true, false));
 	});
 
 	it("keeps --cs-color-rgb a literal triplet even while deferring", () => {
@@ -251,34 +224,23 @@ describe("ownAccentProps — the two variables this plugin owns", () => {
 		const { css } = harness();
 		const def = definition();
 		const own = css.ownAccentProps(def, "light");
-		assert.deepStrictEqual(own, [
-			"  --cs-accent: #336699;",
-			"  --cs-color-rgb: 51, 102, 153;",
-		]);
+		assert.deepStrictEqual(own, ["  --cs-accent: #336699;", "  --cs-color-rgb: 51, 102, 153;"]);
 		assert.deepStrictEqual(css.accentProps(def, "light").slice(1), own);
 	});
 
 	it("carries !important through both", () => {
 		const { css } = harness();
-		assert.deepStrictEqual(
-			css.ownAccentProps(definition(), "dark", true),
-			[
-				"  --cs-accent: #88bbee !important;",
-				"  --cs-color-rgb: 136, 187, 238 !important;",
-			],
-		);
+		assert.deepStrictEqual(css.ownAccentProps(definition(), "dark", true), [
+			"  --cs-accent: #88bbee !important;",
+			"  --cs-color-rgb: 136, 187, 238 !important;",
+		]);
 	});
 });
 
 describe("needsDarkBlock — when a .theme-dark override is worth emitting", () => {
 	it("is false when every mode-dependent colour matches", () => {
 		const { css } = harness();
-		assert.strictEqual(
-			css.needsDarkBlock(
-				definition({ colorLight: "#336699", colorDark: "#336699" }),
-			),
-			false,
-		);
+		assert.strictEqual(css.needsDarkBlock(definition({ colorLight: "#336699", colorDark: "#336699" })), false);
 	});
 
 	it("is true when the accent differs", () => {
@@ -365,12 +327,10 @@ describe("needsDarkBlock — when a .theme-dark override is worth emitting", () 
 		const { css } = harness();
 		const same = definition({ colorLight: "#336699", colorDark: "#336699" });
 		const out = css.generateCalloutCSS(same);
-		assert.ok(!out.includes(".theme-dark .callout[data-callout=\"quiet\"] {"));
+		assert.ok(!out.includes('.theme-dark .callout[data-callout="quiet"] {'));
 
 		const differ = css.generateCalloutCSS(definition());
-		assert.ok(
-			differ.includes('.theme-dark .callout[data-callout="quiet"] {'),
-		);
+		assert.ok(differ.includes('.theme-dark .callout[data-callout="quiet"] {'));
 	});
 
 	it("gates the alias dark copies on the same answer", () => {
@@ -408,15 +368,11 @@ describe("generateTokenColorCSS — the accent on this plugin's own DOM", () => 
 		// carries the normalized space-preserving id. Only `.callout[…]` — which
 		// Obsidian writes — takes the dashed form. The two conventions are
 		// deliberate; unifying them silently breaks one surface or the other.
-		const out = css.generateTokenColorCSS(
-			definition({ id: "multi word callout" }),
-		);
+		const out = css.generateTokenColorCSS(definition({ id: "multi word callout" }));
 		assert.ok(out.includes('.cs-inline-callout[data-callout="multi word callout"]'));
 		assert.ok(!out.includes("multi-word-callout"));
 
-		const block = css.generateCalloutCSS(
-			definition({ id: "multi word callout" }),
-		);
+		const block = css.generateCalloutCSS(definition({ id: "multi word callout" }));
 		assert.ok(block.includes('.callout[data-callout="multi-word-callout"]'));
 	});
 
@@ -430,9 +386,7 @@ describe("generateTokenColorCSS — the accent on this plugin's own DOM", () => 
 
 	it("skips the dark rule when the two accents match", () => {
 		const { css } = harness();
-		const out = css.generateTokenColorCSS(
-			definition({ colorLight: "#336699", colorDark: "#336699" }),
-		);
+		const out = css.generateTokenColorCSS(definition({ colorLight: "#336699", colorDark: "#336699" }));
 		assert.ok(!out.includes(".theme-dark"));
 	});
 
@@ -440,26 +394,17 @@ describe("generateTokenColorCSS — the accent on this plugin's own DOM", () => 
 		const { css } = harness();
 		// A ref token is a bare icon: no surface to paint. It still takes the
 		// accent (above), just not the background.
-		const out = css.generateTokenColorCSS(
-			definition({ bgColorLight: "#eef4fa", bgColorDark: "#16202b" }),
-		);
-		const bgRules = parseRules(out).filter((r) =>
-			r.props.includes("background-color"),
-		);
+		const out = css.generateTokenColorCSS(definition({ bgColorLight: "#eef4fa", bgColorDark: "#16202b" }));
+		const bgRules = parseRules(out).filter((r) => r.props.includes("background-color"));
 		assert.ok(bgRules.length > 0);
 		for (const rule of bgRules) {
-			assert.ok(
-				!rule.selector.includes("cs-ref-token"),
-				`ref tokens have no surface to paint: ${rule.selector}`,
-			);
+			assert.ok(!rule.selector.includes("cs-ref-token"), `ref tokens have no surface to paint: ${rule.selector}`);
 		}
 	});
 
 	it("gives every alias the same accent, in one rule", () => {
 		const { css } = harness();
-		const out = css.generateTokenColorCSS(
-			definition({ aliases: ["hush", "still"] }),
-		);
+		const out = css.generateTokenColorCSS(definition({ aliases: ["hush", "still"] }));
 		const first = firstRule(out);
 		for (const id of ["quiet", "hush", "still"]) {
 			assert.ok(
@@ -474,10 +419,7 @@ describe("generateTokenColorCSS — the accent on this plugin's own DOM", () => 
 		const info = registry.get("info");
 		assert.ok(info);
 		const rule = firstRule(css.generateTokenColorCSS(info));
-		assert.strictEqual(
-			valueOf(rule, "--cs-accent-theme"),
-			"var(--callout-info)",
-		);
+		assert.strictEqual(valueOf(rule, "--cs-accent-theme"), "var(--callout-info)");
 		assert.strictEqual(valueOf(rule, "--cs-accent"), "var(--cs-accent-theme)");
 	});
 });
@@ -487,18 +429,10 @@ describe("generateFallbackCSS — the accent for ids nobody defined", () => {
 		const { registry, css } = harness();
 		registry.settings.fallbackCalloutId = "note";
 		const out = css.generateFallbackCSS(registry.getAll());
-		const rule = parseRules(out).find(
-			(r) => r.selector.startsWith(".callout:not(:where(") && !r.at.length,
-		);
+		const rule = parseRules(out).find((r) => r.selector.startsWith(".callout:not(:where(") && !r.at.length);
 		assert.ok(rule);
-		assert.strictEqual(
-			valueOf(rule, "--callout-color"),
-			"var(--cs-accent-theme)",
-		);
-		assert.strictEqual(
-			valueOf(rule, "--cs-accent-theme"),
-			"var(--callout-default)",
-		);
+		assert.strictEqual(valueOf(rule, "--callout-color"), "var(--cs-accent-theme)");
+		assert.strictEqual(valueOf(rule, "--cs-accent-theme"), "var(--callout-default)");
 		assert.strictEqual(valueOf(rule, "--cs-accent"), "var(--callout-color)");
 		assert.ok(rule.decls.every((decl) => !decl.includes("!important")));
 	});
@@ -537,9 +471,7 @@ describe("generateFallbackCSS — the accent for ids nobody defined", () => {
 		registry.setThemeOwnedIds(new Set(["themed"]));
 		// Recognized remains recognized even while its own generated block is
 		// absent; the unknown-id fallback must not leak onto it.
-		assert.ok(css.generateFallbackCSS(registry.getAll()).includes(
-			'[data-callout="themed"]',
-		));
+		assert.ok(css.generateFallbackCSS(registry.getAll()).includes('[data-callout="themed"]'));
 		assert.strictEqual(css.generateCalloutCSS(registry.get("themed")!), "");
 	});
 
@@ -553,20 +485,14 @@ describe("generateFallbackCSS — the accent for ids nobody defined", () => {
 			out,
 			".cs-inline-callout.cs-unknown, .cs-heading-callout.cs-unknown, .cs-ref-token.cs-unknown",
 		);
-		assert.deepStrictEqual(rule.props, [
-			"--cs-accent-theme",
-			"--cs-accent",
-			"--cs-color-rgb",
-		]);
+		assert.deepStrictEqual(rule.props, ["--cs-accent-theme", "--cs-accent", "--cs-color-rgb"]);
 	});
 });
 
 describe("global block geometry — registered Studio ids only", () => {
 	it("names registered ids and aliases explicitly", () => {
 		const { registry, css } = harness();
-		registry.add(
-			definition({ id: "mine", aliases: ["mine alt"] }),
-		);
+		registry.add(definition({ id: "mine", aliases: ["mine alt"] }));
 		const out = css.generateGlobalStyleCSS();
 		assert.ok(out.includes('.callout[data-callout="mine"]'));
 		assert.ok(out.includes('.callout[data-callout="mine-alt"]'));

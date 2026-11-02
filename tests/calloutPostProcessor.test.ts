@@ -38,11 +38,7 @@ import { describe, it } from "node:test";
 // Listed first: importing it installs the DOM globals before anything under
 // test loads (see tests/support/fakeDom.ts).
 import { fakeDom, type FakeElement } from "./support/fakeDom";
-import {
-	addCallout,
-	readingHarness,
-	type ReadingHarness,
-} from "./support/readingHarness";
+import { addCallout, readingHarness, type ReadingHarness } from "./support/readingHarness";
 import { pluginSourceFiles } from "./support/sourceScan";
 import { CSS_GRAD_CHAR } from "../src/reading/gradientTitleText";
 import {
@@ -68,12 +64,10 @@ import type { BgGradient } from "../src/types";
 
 const classes = (element: FakeElement): string[] => element.classList.toArray();
 
-const hasClass = (element: FakeElement, cls: string): boolean =>
-	element.classList.contains(cls);
+const hasClass = (element: FakeElement, cls: string): boolean => element.classList.contains(cls);
 
 /** Every inline pill in the block, in document order. */
-const pills = (root: FakeElement): FakeElement[] =>
-	root.querySelectorAll(`.${CSS_INLINE_TOKEN}`);
+const pills = (root: FakeElement): FakeElement[] => root.querySelectorAll(`.${CSS_INLINE_TOKEN}`);
 
 /** The one element matching `selector`, asserted to exist. */
 function one(root: FakeElement, selector: string): FakeElement {
@@ -83,9 +77,7 @@ function one(root: FakeElement, selector: string): FakeElement {
 }
 
 /** A harness with the `quiet` callout already defined. */
-function withQuiet(
-	over: Parameters<typeof addCallout>[1] = {},
-): ReadingHarness {
+function withQuiet(over: Parameters<typeof addCallout>[1] = {}): ReadingHarness {
 	const h = readingHarness();
 	addCallout(h.registry, over);
 	return h;
@@ -134,10 +126,7 @@ describe("the cheap bail-outs", () => {
 
 	it("asks for it at most once, however many passes want it", () => {
 		const h = withQuiet();
-		h.render(
-			"<div><h2>[!quiet] Title with [!quiet] inside</h2></div>",
-			"## [!quiet] Title with [!quiet] inside",
-		);
+		h.render("<div><h2>[!quiet] Title with [!quiet] inside</h2></div>", "## [!quiet] Title with [!quiet] inside");
 
 		assert.strictEqual(h.sectionReads(), 1);
 	});
@@ -149,11 +138,7 @@ describe("the cheap bail-outs", () => {
 
 describe("heading callouts — the transform", () => {
 	/** Render `## [!quiet] My title` and hand back the (in-place) heading. */
-	function heading(
-		h: ReadingHarness,
-		rendered = "[!quiet] My title",
-		source = "## [!quiet] My title",
-	): FakeElement {
+	function heading(h: ReadingHarness, rendered = "[!quiet] My title", source = "## [!quiet] My title"): FakeElement {
 		const root = h.render(`<div><h2>${rendered}</h2></div>`, source);
 		return one(root, "h2");
 	}
@@ -196,9 +181,7 @@ describe("heading callouts — the transform", () => {
 
 	it("gives back the separating space it consumed, as a margin class", () => {
 		const h = withQuiet();
-		assert.ok(
-			hasClass(one(heading(h), `.${CSS_HEADING_TITLE}`), CSS_HEADING_TITLE_GAP),
-		);
+		assert.ok(hasClass(one(heading(h), `.${CSS_HEADING_TITLE}`), CSS_HEADING_TITLE_GAP));
 	});
 
 	it("but not when the title started right at the bracket", () => {
@@ -207,10 +190,7 @@ describe("heading callouts — the transform", () => {
 		const h = withQuiet();
 		const el = heading(h, "[!quiet]-glued", "## [!quiet]-glued");
 
-		assert.strictEqual(
-			hasClass(one(el, `.${CSS_HEADING_TITLE}`), CSS_HEADING_TITLE_GAP),
-			false,
-		);
+		assert.strictEqual(hasClass(one(el, `.${CSS_HEADING_TITLE}`), CSS_HEADING_TITLE_GAP), false);
 	});
 
 	it("shows the display name when the heading has no title of its own", () => {
@@ -254,11 +234,7 @@ describe("heading callouts — the transform", () => {
 
 		assert.deepStrictEqual(
 			el.children.map((child) => classes(child)),
-			[
-				["heading-collapse-indicator"],
-				[CSS_HEADING_TOKEN],
-				[CSS_HEADING_TITLE, CSS_HEADING_TITLE_GAP],
-			],
+			[["heading-collapse-indicator"], [CSS_HEADING_TOKEN], [CSS_HEADING_TITLE, CSS_HEADING_TITLE_GAP]],
 		);
 	});
 
@@ -266,9 +242,7 @@ describe("heading callouts — the transform", () => {
 		const h = withQuiet();
 		assert.strictEqual(hasClass(heading(h), CSS_ANIM_IN), false);
 
-		const close = beginStartupEntranceWindow(
-			fakeDom.document as unknown as Document,
-		);
+		const close = beginStartupEntranceWindow(fakeDom.document as unknown as Document);
 		try {
 			assert.ok(hasClass(heading(h), CSS_ANIM_IN));
 		} finally {
@@ -290,10 +264,7 @@ describe("heading callouts — what the source vetoes", () => {
 	it("refuses an escaped token, which renders identically to a real one", () => {
 		// Markdown eats the `\`, so the DOM alone cannot tell these apart.
 		const h = withQuiet();
-		const root = h.render(
-			"<div><h2>[!quiet] My title</h2></div>",
-			"## \\[!quiet] My title",
-		);
+		const root = h.render("<div><h2>[!quiet] My title</h2></div>", "## \\[!quiet] My title");
 
 		untouched(root, "[!quiet] My title");
 	});
@@ -302,20 +273,14 @@ describe("heading callouts — what the source vetoes", () => {
 		// `> # [!quiet]` is an inline callout on a quoted line, not a heading
 		// callout — the scanner classifies it that way and the DOM must follow.
 		const h = withQuiet();
-		const root = h.render(
-			"<blockquote><h2>[!quiet] My title</h2></blockquote>",
-			"> # [!quiet] My title",
-		);
+		const root = h.render("<blockquote><h2>[!quiet] My title</h2></blockquote>", "> # [!quiet] My title");
 
 		untouched(root, "[!quiet] My title");
 	});
 
 	it("refuses when the source line carries no heading token at all", () => {
 		const h = withQuiet();
-		const root = h.render(
-			"<div><h2>[!quiet] My title</h2></div>",
-			"just some prose",
-		);
+		const root = h.render("<div><h2>[!quiet] My title</h2></div>", "just some prose");
 
 		untouched(root, "[!quiet] My title");
 	});
@@ -340,20 +305,14 @@ describe("heading callouts — what the source vetoes", () => {
 		// our classes land.
 		const h = withQuiet();
 		h.registry.setThemeOwnedIds(new Set(["quiet"]));
-		const root = h.render(
-			"<div><h2>[!quiet] My title</h2></div>",
-			"## [!quiet] My title",
-		);
+		const root = h.render("<div><h2>[!quiet] My title</h2></div>", "## [!quiet] My title");
 
 		untouched(root, "[!quiet] My title");
 	});
 
 	it("leaves a heading that does not start with plain text", () => {
 		const h = withQuiet();
-		const root = h.render(
-			"<div><h2><em>x</em>[!quiet] My title</h2></div>",
-			"## *x*[!quiet] My title",
-		);
+		const root = h.render("<div><h2><em>x</em>[!quiet] My title</h2></div>", "## *x*[!quiet] My title");
 		const el = one(root, "h2");
 
 		assert.strictEqual(el.querySelector(`.${CSS_HEADING_TOKEN}`), null);
@@ -408,14 +367,9 @@ describe("heading callouts — the gradient bake", () => {
 
 	it("bakes the title's per-grapheme print colours", () => {
 		const h = withQuiet({ bgGradient: textSweep });
-		const root = h.render(
-			"<div><h2>[!quiet] ab</h2></div>",
-			"## [!quiet] ab",
-		);
+		const root = h.render("<div><h2>[!quiet] ab</h2></div>", "## [!quiet] ab");
 
-		const chars = one(root, `.${CSS_HEADING_TITLE}`).querySelectorAll(
-			`.${CSS_GRAD_CHAR}`,
-		);
+		const chars = one(root, `.${CSS_HEADING_TITLE}`).querySelectorAll(`.${CSS_GRAD_CHAR}`);
 		assert.deepStrictEqual(
 			chars.map((c) => c.style.getPropertyValue("--cs-gch")),
 			["#336699", "#aabbcc"],
@@ -432,10 +386,7 @@ describe("heading callouts — the gradient bake", () => {
 
 	it("bakes nothing for a callout with no text sweep", () => {
 		const h = withQuiet();
-		const root = h.render(
-			"<div><h2>[!quiet] ab</h2></div>",
-			"## [!quiet] ab",
-		);
+		const root = h.render("<div><h2>[!quiet] ab</h2></div>", "## [!quiet] ab");
 
 		assert.strictEqual(root.querySelectorAll(`.${CSS_GRAD_CHAR}`).length, 0);
 	});
@@ -445,10 +396,7 @@ describe("heading callouts — the gradient bake", () => {
 		// `[data-callout="mystery"]` never draws it.
 		const h = readingHarness();
 		h.registry.update("note", { bgGradient: textSweep });
-		const root = h.render(
-			"<div><h2>[!mystery] ab</h2></div>",
-			"## [!mystery] ab",
-		);
+		const root = h.render("<div><h2>[!mystery] ab</h2></div>", "## [!mystery] ab");
 
 		assert.strictEqual(root.querySelectorAll(`.${CSS_GRAD_CHAR}`).length, 0);
 	});
@@ -459,9 +407,7 @@ describe("heading callouts — the gradient bake", () => {
 /* -------------------------------------------------------------------------- */
 
 /** `[[#[!quiet]]]` as Obsidian renders it: a truncated anchor + a stray `]`. */
-const TRUNCATED_LINK =
-	`<p><a class="internal-link" data-href="#[!quiet" href="#[!quiet">` +
-	`#[!quiet</a>]</p>`;
+const TRUNCATED_LINK = `<p><a class="internal-link" data-href="#[!quiet" href="#[!quiet">` + `#[!quiet</a>]</p>`;
 
 /** `[[#[!quiet] My Title]]` — parsed cleanly, so nothing to repair. */
 const WHOLE_LINK =
@@ -534,9 +480,7 @@ describe("heading references — display cleaning", () => {
 	it("shows what the user wrote when the id is unknown", () => {
 		const h = readingHarness();
 		const anchor = one(
-			h.render(
-				`<p><a class="internal-link" data-href="#[!mystery" href="#[!mystery">#[!mystery</a>]</p>`,
-			),
+			h.render(`<p><a class="internal-link" data-href="#[!mystery" href="#[!mystery">#[!mystery</a>]</p>`),
 			"a",
 		);
 
@@ -573,17 +517,12 @@ describe("heading references — display cleaning", () => {
 		const h = withQuiet();
 		h.settings.headingCallouts.refCleanTitles = false;
 
-		assert.strictEqual(
-			one(h.render(WHOLE_LINK), "a").textContent,
-			"#[!quiet] My Title",
-		);
+		assert.strictEqual(one(h.render(WHOLE_LINK), "a").textContent, "#[!quiet] My Title");
 	});
 });
 
 /** `[[#[!quiet]|Quiet]]` — what a pick of a title-less heading inserts. */
-const ALIASED_LINK =
-	`<p><a class="internal-link" data-href="#[!quiet]" href="#[!quiet]">` +
-	`Quiet</a></p>`;
+const ALIASED_LINK = `<p><a class="internal-link" data-href="#[!quiet]" href="#[!quiet]">` + `Quiet</a></p>`;
 
 describe("heading references — aliased links", () => {
 	it("puts the icon in front of the alias, which stays as written", () => {
@@ -600,9 +539,7 @@ describe("heading references — aliased links", () => {
 	it("does so for any alias over a callout heading", () => {
 		const h = withQuiet();
 		const anchor = one(
-			h.render(
-				`<p><a class="internal-link" data-href="Note#[!quiet] My Title">Read this</a></p>`,
-			),
+			h.render(`<p><a class="internal-link" data-href="Note#[!quiet] My Title">Read this</a></p>`),
 			"a",
 		);
 
@@ -652,24 +589,14 @@ describe("heading references — what it leaves alone", () => {
 
 	it("an aliased link to a heading that is not a callout", () => {
 		const h = withQuiet();
-		const anchor = one(
-			h.render(
-				`<p><a class="internal-link" data-href="#[!quiet] A#Sub">Read this</a></p>`,
-			),
-			"a",
-		);
+		const anchor = one(h.render(`<p><a class="internal-link" data-href="#[!quiet] A#Sub">Read this</a></p>`), "a");
 
 		assert.strictEqual(anchor.querySelector(`.${CSS_REF_TOKEN}`), null);
 	});
 
 	it("a link with no heading anchor at all", () => {
 		const h = withQuiet();
-		const anchor = one(
-			h.render(
-				`<p><a class="internal-link" data-href="Note">[!quiet] My Title</a></p>`,
-			),
-			"a",
-		);
+		const anchor = one(h.render(`<p><a class="internal-link" data-href="Note">[!quiet] My Title</a></p>`), "a");
 
 		assert.strictEqual(anchor.textContent, "[!quiet] My Title");
 	});
@@ -710,10 +637,7 @@ describe("inline pills", () => {
 		// Replacement runs in reverse so an earlier token's offsets stay valid
 		// after a later one split the node.
 		const h = withQuiet();
-		const root = h.render(
-			"<p>a [!quiet] b [!quiet] c</p>",
-			"a [!quiet] b [!quiet] c",
-		);
+		const root = h.render("<p>a [!quiet] b [!quiet] c</p>", "a [!quiet] b [!quiet] c");
 
 		assert.strictEqual(root.textContent, "a Quiet b Quiet c");
 		assert.strictEqual(pills(root).length, 2);
@@ -721,10 +645,7 @@ describe("inline pills", () => {
 
 	it("carries the metadata and resolves without it", () => {
 		const h = withQuiet();
-		const root = h.render(
-			"<p>see [!quiet|purple] here</p>",
-			"see [!quiet|purple] here",
-		);
+		const root = h.render("<p>see [!quiet|purple] here</p>", "see [!quiet|purple] here");
 		const pill = pills(root)[0];
 
 		assert.strictEqual(pill?.getAttribute("data-callout"), "quiet");
@@ -775,10 +696,7 @@ describe("inline pills", () => {
 		// definition — an inline pill there would be a different callout syntax
 		// than the user wrote.
 		const h = withQuiet();
-		const root = h.render(
-			"<blockquote><h2>[!quiet] My title</h2></blockquote>",
-			"> # [!quiet] My title",
-		);
+		const root = h.render("<blockquote><h2>[!quiet] My title</h2></blockquote>", "> # [!quiet] My title");
 
 		assert.strictEqual(pills(root).length, 0);
 		assert.strictEqual(one(root, "h2").textContent, "[!quiet] My title");
@@ -806,10 +724,7 @@ describe("inline pills", () => {
 		// note reads two different ways on the two surfaces.
 		const h = withQuiet();
 		h.settings.headingCallouts.enabled = false;
-		const root = h.render(
-			"<div><h2>[!quiet] My title</h2></div>",
-			"## [!quiet] My title",
-		);
+		const root = h.render("<div><h2>[!quiet] My title</h2></div>", "## [!quiet] My title");
 
 		assert.strictEqual(pills(root).length, 0);
 		assert.strictEqual(one(root, "h2").textContent, "[!quiet] My title");
@@ -830,10 +745,7 @@ describe("inline pills", () => {
 describe("inline pills — escaped tokens", () => {
 	it("renders the real token and leaves the escaped one as text", () => {
 		const h = withQuiet();
-		const root = h.render(
-			"<p>a [!quiet] b [!quiet] c</p>",
-			"a \\[!quiet] b [!quiet] c",
-		);
+		const root = h.render("<p>a [!quiet] b [!quiet] c</p>", "a \\[!quiet] b [!quiet] c");
 
 		assert.strictEqual(root.textContent, "a [!quiet] b Quiet c");
 		assert.strictEqual(pills(root).length, 1);
@@ -841,10 +753,7 @@ describe("inline pills — escaped tokens", () => {
 
 	it("pairs by ordinal position, so the escape can come second", () => {
 		const h = withQuiet();
-		const root = h.render(
-			"<p>a [!quiet] b [!quiet] c</p>",
-			"a [!quiet] b \\[!quiet] c",
-		);
+		const root = h.render("<p>a [!quiet] b [!quiet] c</p>", "a [!quiet] b \\[!quiet] c");
 
 		assert.strictEqual(root.textContent, "a Quiet b [!quiet] c");
 	});
@@ -892,10 +801,7 @@ describe("inline pills — escaped tokens", () => {
 		// `stripInlineCode` blanks it on the source side; the DOM side never sees
 		// it either, because `code` is excluded from the pill walk.
 		const h = withQuiet();
-		const root = h.render(
-			"<p>a <code>\\[!quiet]</code> b [!quiet] c</p>",
-			"a `\\[!quiet]` b [!quiet] c",
-		);
+		const root = h.render("<p>a <code>\\[!quiet]</code> b [!quiet] c</p>", "a `\\[!quiet]` b [!quiet] c");
 
 		assert.strictEqual(pills(root).length, 1);
 		assert.strictEqual(root.textContent, "a \\[!quiet] b Quiet c");
@@ -914,10 +820,7 @@ describe("content pills", () => {
 
 	it("wraps `[!id]{text}` into one pill whose label is the payload", () => {
 		const h = withQuiet();
-		const root = h.render(
-			"<p>x [!quiet]{be careful} y</p>",
-			"x [!quiet]{be careful} y",
-		);
+		const root = h.render("<p>x [!quiet]{be careful} y</p>", "x [!quiet]{be careful} y");
 
 		assert.strictEqual(root.textContent, "x be careful y");
 		assert.ok(hasClass(pills(root)[0] as FakeElement, CSS_INLINE_HAS_CONTENT));
@@ -935,10 +838,7 @@ describe("content pills", () => {
 		// This is the whole reason the payload keeps working links, code spans and
 		// bold: Obsidian already rendered them, and those nodes are relocated.
 		const h = withQuiet();
-		const root = h.render(
-			"<p>[!quiet]{a <strong>b</strong> c} d</p>",
-			"[!quiet]{a **b** c} d",
-		);
+		const root = h.render("<p>[!quiet]{a <strong>b</strong> c} d</p>", "[!quiet]{a **b** c} d");
 
 		assert.strictEqual(payload(root).textContent, "a b c");
 		assert.strictEqual(one(payload(root), "strong").textContent, "b");
@@ -956,10 +856,7 @@ describe("content pills", () => {
 		// Parity contract with Live Preview, which blanks inline code before
 		// counting: a `}` in a code span closes nothing on either surface.
 		const h = withQuiet();
-		const root = h.render(
-			"<p>[!quiet]{a <code>}</code> b} c</p>",
-			"[!quiet]{a `}` b} c",
-		);
+		const root = h.render("<p>[!quiet]{a <code>}</code> b} c</p>", "[!quiet]{a `}` b} c");
 
 		assert.strictEqual(payload(root).textContent, "a } b");
 		assert.strictEqual(root.textContent, "a } b c");
@@ -967,10 +864,7 @@ describe("content pills", () => {
 
 	it("builds several pills in one block", () => {
 		const h = withQuiet();
-		const root = h.render(
-			"<p>[!quiet]{one} and [!quiet]{two}</p>",
-			"[!quiet]{one} and [!quiet]{two}",
-		);
+		const root = h.render("<p>[!quiet]{one} and [!quiet]{two}</p>", "[!quiet]{one} and [!quiet]{two}");
 
 		assert.strictEqual(pills(root).length, 2);
 		assert.deepStrictEqual(
@@ -981,10 +875,7 @@ describe("content pills", () => {
 
 	it("preserves escape pairing after it has built content pills", () => {
 		const h = withQuiet();
-		const root = h.render(
-			"<p>[!quiet] text [!quiet]{payload}</p>",
-			"\\[!quiet] text [!quiet]{payload}",
-		);
+		const root = h.render("<p>[!quiet] text [!quiet]{payload}</p>", "\\[!quiet] text [!quiet]{payload}");
 		assert.strictEqual(pills(root).length, 1);
 		assert.strictEqual(root.textContent, "[!quiet] text payload");
 		assert.strictEqual(h.sectionReads(), 1);
@@ -1027,7 +918,6 @@ describe("content pills", () => {
 		assert.strictEqual(pills(root).length, 2);
 		assert.strictEqual(root.textContent, "one [!quiet] [!quiet] Quiet");
 	});
-
 });
 
 describe("content pills — the shapes it refuses", () => {
@@ -1037,10 +927,7 @@ describe("content pills — the shapes it refuses", () => {
 		const root = h.render("<p>x [!quiet]{} y</p>", "x [!quiet]{} y");
 
 		assert.strictEqual(root.textContent, "x Quiet y");
-		assert.strictEqual(
-			hasClass(pills(root)[0] as FakeElement, CSS_INLINE_HAS_CONTENT),
-			false,
-		);
+		assert.strictEqual(hasClass(pills(root)[0] as FakeElement, CSS_INLINE_HAS_CONTENT), false);
 	});
 
 	it("a payload still being typed — no pill at all, not even a plain one", () => {
@@ -1055,10 +942,7 @@ describe("content pills — the shapes it refuses", () => {
 		// `[!quiet]{a **b}**` — wrapping it would have to tear the `<strong>` in
 		// half, so the raw text stays instead.
 		const h = withQuiet();
-		const root = h.render(
-			"<p>[!quiet]{a <strong>b}</strong> c</p>",
-			"[!quiet]{a **b}** c",
-		);
+		const root = h.render("<p>[!quiet]{a <strong>b}</strong> c</p>", "[!quiet]{a **b}** c");
 
 		assert.strictEqual(pills(root).length, 0);
 		assert.ok(root.textContent.startsWith("[!quiet]{a b}"));
@@ -1080,20 +964,14 @@ describe("content pills — the shapes it refuses", () => {
 		const root = h.render("<p>[!quiet] {x}</p>", "[!quiet] {x}");
 
 		assert.strictEqual(root.textContent, "Quiet {x}");
-		assert.strictEqual(
-			hasClass(pills(root)[0] as FakeElement, CSS_INLINE_HAS_CONTENT),
-			false,
-		);
+		assert.strictEqual(hasClass(pills(root)[0] as FakeElement, CSS_INLINE_HAS_CONTENT), false);
 	});
 
 	it("every payload while allowContent is off", () => {
 		// The pre-2.9 reading of the line, exactly: a plain pill and literal text.
 		const h = withQuiet();
 		h.settings.inlineCallouts.allowContent = false;
-		const root = h.render(
-			"<p>x [!quiet]{be careful} y</p>",
-			"x [!quiet]{be careful} y",
-		);
+		const root = h.render("<p>x [!quiet]{be careful} y</p>", "x [!quiet]{be careful} y");
 
 		assert.strictEqual(root.textContent, "x Quiet{be careful} y");
 		assert.strictEqual(root.querySelector(`.${CSS_CALLOUT_PAYLOAD}`), null);
@@ -1102,10 +980,7 @@ describe("content pills — the shapes it refuses", () => {
 	it("a payload on a theme-owned callout", () => {
 		const h = withQuiet();
 		h.registry.setThemeOwnedIds(new Set(["quiet"]));
-		const root = h.render(
-			"<p>x [!quiet]{be careful} y</p>",
-			"x [!quiet]{be careful} y",
-		);
+		const root = h.render("<p>x [!quiet]{be careful} y</p>", "x [!quiet]{be careful} y");
 
 		assert.strictEqual(root.textContent, "x [!quiet]{be careful} y");
 	});
@@ -1113,10 +988,7 @@ describe("content pills — the shapes it refuses", () => {
 	it("everything while the inline role is off", () => {
 		const h = withQuiet();
 		h.settings.inlineCallouts.enabled = false;
-		const root = h.render(
-			"<p>x [!quiet]{be careful} y</p>",
-			"x [!quiet]{be careful} y",
-		);
+		const root = h.render("<p>x [!quiet]{be careful} y</p>", "x [!quiet]{be careful} y");
 
 		assert.strictEqual(root.textContent, "x [!quiet]{be careful} y");
 	});
@@ -1128,17 +1000,11 @@ describe("content pills — the shapes it refuses", () => {
 		// draw. The inline role is still on here — that is the whole point.
 		const h = withQuiet();
 		h.settings.headingCallouts.enabled = false;
-		const root = h.render(
-			"<div><h2>[!quiet]{shhh} My title</h2></div>",
-			"## [!quiet]{shhh} My title",
-		);
+		const root = h.render("<div><h2>[!quiet]{shhh} My title</h2></div>", "## [!quiet]{shhh} My title");
 
 		assert.strictEqual(pills(root).length, 0);
 		assert.strictEqual(root.querySelector(`.${CSS_CALLOUT_PAYLOAD}`), null);
-		assert.strictEqual(
-			one(root, "h2").textContent,
-			"[!quiet]{shhh} My title",
-		);
+		assert.strictEqual(one(root, "h2").textContent, "[!quiet]{shhh} My title");
 	});
 });
 
@@ -1161,10 +1027,7 @@ describe("content pills — what survives pass A", () => {
 		// an unmatched `{` is where the two disagree — the scan closes the
 		// payload at the final `}`, pass A's walk never gets back to depth zero.
 		const h = withQuiet();
-		const root = h.render(
-			"<p>[!quiet]{a `x{` b} tail</p>",
-			"[!quiet]{a \\`x{\\` b} tail",
-		);
+		const root = h.render("<p>[!quiet]{a `x{` b} tail</p>", "[!quiet]{a \\`x{\\` b} tail");
 
 		assert.strictEqual(pills(root).length, 0);
 		assert.strictEqual(root.textContent, "[!quiet]{a `x{` b} tail");
@@ -1177,10 +1040,7 @@ describe("content pills — what survives pass A", () => {
 		const h = withQuiet();
 		const root = h.render(`<p>${"[!quiet]{x} ".repeat(257)}</p>`);
 
-		assert.strictEqual(
-			root.querySelectorAll(`.${CSS_CALLOUT_PAYLOAD}`).length,
-			256,
-		);
+		assert.strictEqual(root.querySelectorAll(`.${CSS_CALLOUT_PAYLOAD}`).length, 256);
 		assert.strictEqual(pills(root).length, 256);
 		assert.ok(root.textContent.endsWith("[!quiet]{x} "));
 	});
@@ -1197,9 +1057,7 @@ describe("the heading passes share one branch", () => {
 	// as a second condition. The cost is paid later — the next pass gets added
 	// under whichever branch is nearest, and the two are then one edit away from
 	// disagreeing about when the role is on.
-	const file = pluginSourceFiles().find(
-		(f) => f.path === "src/reading/calloutPostProcessor.ts",
-	);
+	const file = pluginSourceFiles().find((f) => f.path === "src/reading/calloutPostProcessor.ts");
 
 	it("is still the file this suite is about", () => {
 		assert.ok(file, "src/reading/calloutPostProcessor.ts moved or is gone");

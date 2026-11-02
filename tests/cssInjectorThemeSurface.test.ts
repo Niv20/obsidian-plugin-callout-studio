@@ -21,10 +21,7 @@ import {
 	must,
 	type CssRule,
 } from "./support/cssInjectorHarness";
-import {
-	DEFAULT_TEXT_COLOR_DARK,
-	DEFAULT_TEXT_COLOR_LIGHT,
-} from "../src/utils/colorUtils";
+import { DEFAULT_TEXT_COLOR_DARK, DEFAULT_TEXT_COLOR_LIGHT } from "../src/utils/colorUtils";
 import { compareSpecificity, specificityOf } from "../src/utils/cssSpecificity";
 
 /** `body.callout-on`, the class Style Settings adds for `GitHub callout style`. */
@@ -80,8 +77,7 @@ const palette = (over: Record<string, unknown> = {}) =>
 	});
 
 /** Every rule whose selector begins with `guard`. */
-const under = (css: string, guard: string): CssRule[] =>
-	parseRules(css).filter((r) => r.selector.startsWith(guard));
+const under = (css: string, guard: string): CssRule[] => parseRules(css).filter((r) => r.selector.startsWith(guard));
 
 /** The one rule under `guard` that declares `prop`. */
 const ruleDeclaring = (css: string, guard: string, prop: string): CssRule =>
@@ -141,11 +137,7 @@ describe("GitHub Theme — `GitHub callout style`", () => {
 		// still reaches the icon and title through `--callout-color`, which the
 		// unguarded rule sets.
 		const out = themedHarness(GITHUB).css.generateCalloutCSS(palette());
-		assert.strictEqual(
-			under(out, "body.callout-on").filter((r) => r.props.includes("border-color"))
-				.length,
-			0,
-		);
+		assert.strictEqual(under(out, "body.callout-on").filter((r) => r.props.includes("border-color")).length, 0);
 		assert.ok(out.includes("--callout-color:"));
 	});
 });
@@ -219,17 +211,12 @@ describe("Prism — the frame is the callout's accent, and nothing spills", () =
 		const out = themedHarness(PRISM).css.generateCalloutCSS(
 			palette({ textColorLight: "#ff0000", textColorDark: "#ff0000" }),
 		);
-		assert.strictEqual(
-			under(out, PRISM_GUARD).filter((r) => r.props.includes("color")).length,
-			0,
-		);
+		assert.strictEqual(under(out, PRISM_GUARD).filter((r) => r.props.includes("color")).length, 0);
 	});
 
 	it("works for any accent, because it never names one", () => {
 		for (const hex of ["#3d7ce6", "#ff8800", "#00ffaa"]) {
-			const out = themedHarness(PRISM).css.generateCalloutCSS(
-				palette({ colorLight: hex, colorDark: hex }),
-			);
+			const out = themedHarness(PRISM).css.generateCalloutCSS(palette({ colorLight: hex, colorDark: hex }));
 			assert.strictEqual(
 				valueOf(ruleDeclaring(out, PRISM_GUARD, "border-color"), "border-color"),
 				"var(--cs-accent) !important",
@@ -238,9 +225,7 @@ describe("Prism — the frame is the callout's accent, and nothing spills", () =
 	});
 
 	it("covers every alias the same way", () => {
-		const out = themedHarness(PRISM).css.generateCalloutCSS(
-			palette({ aliases: ["pomme"] }),
-		);
+		const out = themedHarness(PRISM).css.generateCalloutCSS(palette({ aliases: ["pomme"] }));
 		const rule = ruleDeclaring(out, PRISM_GUARD, "background-color");
 		assert.ok(rule.selector.includes('[data-callout="apple"]'));
 		assert.ok(rule.selector.includes('[data-callout="pomme"]'));
@@ -249,24 +234,13 @@ describe("Prism — the frame is the callout's accent, and nothing spills", () =
 	it("stands down for a callout the user asked to be transparent", () => {
 		// `transparentBorderProps` already emits `border-color: transparent` for
 		// that definition, and the user's own ask outranks the theme's frame.
-		const out = themedHarness(PRISM).css.generateCalloutCSS(
-			palette({ transparentBg: true }),
-		);
-		assert.strictEqual(
-			under(out, PRISM_GUARD).filter((r) => r.props.includes("border-color")).length,
-			0,
-		);
+		const out = themedHarness(PRISM).css.generateCalloutCSS(palette({ transparentBg: true }));
+		assert.strictEqual(under(out, PRISM_GUARD).filter((r) => r.props.includes("border-color")).length, 0);
 	});
 
 	it("emits nothing at all for a definition with no background to cancel", () => {
-		const out = themedHarness(PRISM).css.generateCalloutCSS(
-			definition({ id: "apple" }),
-		);
-		assert.strictEqual(
-			under(out, PRISM_GUARD).filter((r) => r.props.includes("background-color"))
-				.length,
-			0,
-		);
+		const out = themedHarness(PRISM).css.generateCalloutCSS(definition({ id: "apple" }));
+		assert.strictEqual(under(out, PRISM_GUARD).filter((r) => r.props.includes("background-color")).length, 0);
 	});
 });
 
@@ -285,10 +259,7 @@ describe("Cybertron — background-free, and the theme's own cyan back on the te
 			valueOf(ruleDeclaring(out, PRISM_GUARD, "background-color"), "background-color"),
 			"transparent !important",
 		);
-		assert.strictEqual(
-			valueOf(ruleDeclaring(out, PRISM_GUARD, "color"), "color"),
-			"inherit !important",
-		);
+		assert.strictEqual(valueOf(ruleDeclaring(out, PRISM_GUARD, "color"), "color"), "inherit !important");
 		assert.strictEqual(
 			valueOf(ruleDeclaring(out, PRISM_GUARD, "border-color"), "border-color"),
 			"var(--cs-accent) !important",
@@ -310,24 +281,17 @@ describe("the cancel has to outrank what it cancels", () => {
 		// An unguarded cancel at weight + 1 would only TIE the dark rule and win on
 		// source order. weight + 2 wins outright, in every guard including the
 		// empty one, with no dependence on where in the file this lands.
-		const out = themedHarness(
-			`.callout { background-color: transparent; }`,
-		).css.generateCalloutCSS(palette());
+		const out = themedHarness(`.callout { background-color: transparent; }`).css.generateCalloutCSS(palette());
 		const dark = must(
 			parseRules(out).find((r) => r.selector.startsWith(".theme-dark ")),
 			"dark rule",
 		);
 		const cancel = must(
-			parseRules(out).find(
-				(r) => valueOf(r, "background-color") === "transparent !important",
-			),
+			parseRules(out).find((r) => valueOf(r, "background-color") === "transparent !important"),
 			"cancel rule",
 		);
 		assert.ok(
-			compareSpecificity(
-				specificityOf(cancel.selector),
-				specificityOf(dark.selector),
-			) > 0,
+			compareSpecificity(specificityOf(cancel.selector), specificityOf(dark.selector)) > 0,
 			`${cancel.selector} must outweigh ${dark.selector}`,
 		);
 	});
@@ -340,10 +304,7 @@ describe("a standalone CSS-snippet export carries none of this", () => {
 		// carrying it would blank callout backgrounds under every theme, for good.
 		const themed = themedHarness(PRISM);
 		const def = palette();
-		assert.strictEqual(
-			themed.injector.generateCalloutCSS(def, true).includes(PRISM_GUARD),
-			false,
-		);
+		assert.strictEqual(themed.injector.generateCalloutCSS(def, true).includes(PRISM_GUARD), false);
 		// …while the live pass, on the same injector, still emits it.
 		assert.ok(themed.injector.generateCalloutCSS(def).includes(PRISM_GUARD));
 	});
@@ -384,9 +345,7 @@ describe("a theme with no opinion is untouched", () => {
 		themed.registry.settings.fallbackCalloutId = def.id;
 		const out = themed.css.generateFallbackCSS(themed.registry.getAll());
 		assert.ok(!out.includes(PRISM_GUARD));
-		const root = parseRules(out).find((r) =>
-			r.selector.startsWith(".callout:not(:where("),
-		);
+		const root = parseRules(out).find((r) => r.selector.startsWith(".callout:not(:where("));
 		assert.ok(root);
 		assert.ok(root.props.includes("background-color"));
 		assert.ok(root.decls.every((decl) => !decl.includes("!important")));

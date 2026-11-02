@@ -33,11 +33,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	scanLineForCalloutTokens,
-	tokenEnd,
-	type LineCalloutToken,
-} from "../src/editor/calloutTokens";
+import { scanLineForCalloutTokens, tokenEnd, type LineCalloutToken } from "../src/editor/calloutTokens";
 import { metadataSuffixOf } from "../src/editor/calloutWriter";
 import { normalizeCalloutId } from "../src/utils/calloutId";
 import { resolveCalloutDef } from "../src/editor/renderShared";
@@ -51,8 +47,7 @@ function only(line: string): LineCalloutToken {
 }
 
 /** The bracket the offsets actually select. */
-const bracket = (line: string, token: LineCalloutToken): string =>
-	line.slice(token.from, token.to);
+const bracket = (line: string, token: LineCalloutToken): string => line.slice(token.from, token.to);
 
 /* -------------------------------------------------------------------------- */
 /* The block header, the form metadata is written in                          */
@@ -272,9 +267,7 @@ describe("a token carries enough to put its bracket back", () => {
 	for (const line of CASES) {
 		it(`${line}`, () => {
 			const token = only(line);
-			const rebuilt = `[!${token.rawId}${
-				token.hasMetadata ? `|${token.metadata}` : ""
-			}]`;
+			const rebuilt = `[!${token.rawId}${token.hasMetadata ? `|${token.metadata}` : ""}]`;
 
 			assert.strictEqual(bracket(line, token), rebuilt);
 			assert.strictEqual(

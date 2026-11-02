@@ -21,17 +21,11 @@ import { describe, it } from "node:test";
 import { Decoration } from "@codemirror/view";
 import { RangeSetBuilder } from "@codemirror/state";
 import { rendersAsOneParagraph } from "../src/editor/livepreview/contentPillRender";
-import {
-	contentPayloadStart,
-	scanLineForCalloutTokens,
-	tokenEnd,
-} from "../src/editor/calloutTokens";
+import { contentPayloadStart, scanLineForCalloutTokens, tokenEnd } from "../src/editor/calloutTokens";
 
 /** The comparator calloutViewPlugin sorts `midLine` with, verbatim. */
-const bySortKey = (
-	a: { from: number; deco: Decoration },
-	b: { from: number; deco: Decoration },
-): number => a.from - b.from || a.deco.startSide - b.deco.startSide;
+const bySortKey = (a: { from: number; deco: Decoration }, b: { from: number; deco: Decoration }): number =>
+	a.from - b.from || a.deco.startSide - b.deco.startSide;
 
 /** What decorateLine pushes for `[!warning]{text}` at `offset`. */
 function contentPill(offset: number, sourceLen: number) {
@@ -101,15 +95,9 @@ describe("payload start", () => {
 	 * what the scanner actually produces.
 	 */
 	const payloadStartOf = (line: string, tokenIndex = 0): number => {
-		const token = scanLineForCalloutTokens(line, { inlineContent: true })[
-			tokenIndex
-		];
+		const token = scanLineForCalloutTokens(line, { inlineContent: true })[tokenIndex];
 		assert.ok(token?.content, `no content token at ${tokenIndex} in ${line}`);
-		return contentPayloadStart(
-			token.from,
-			tokenEnd(token) - token.from,
-			token.content.text.length,
-		);
+		return contentPayloadStart(token.from, tokenEnd(token) - token.from, token.content.text.length);
 	};
 
 	it("lands on the payload's first character", () => {
@@ -148,10 +136,7 @@ describe("payload unwrap guard", () => {
 	});
 
 	it("ignores the renderer's surrounding whitespace", () => {
-		assert.strictEqual(
-			rendersAsOneParagraph([text("\n"), el("P"), text("\n")]),
-			true,
-		);
+		assert.strictEqual(rendersAsOneParagraph([text("\n"), el("P"), text("\n")]), true);
 	});
 
 	it("refuses block markdown", () => {

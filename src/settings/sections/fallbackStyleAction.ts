@@ -14,10 +14,7 @@ import { blockedWhilePaused } from "../pausedGuard";
 import { noticeWithUndoAction } from "../rewriteUndoNotice";
 import type { SettingsContext } from "./types";
 
-export async function applyDefaultFallbackStyle(
-	ctx: SettingsContext,
-	def: CalloutDefinition,
-): Promise<void> {
+export async function applyDefaultFallbackStyle(ctx: SettingsContext, def: CalloutDefinition): Promise<void> {
 	const { registry } = ctx.plugin;
 	// The registry's row rather than the menu's copy: Undo has to put back the
 	// look the callout has now, not the one the list was drawn with.
@@ -34,10 +31,7 @@ export async function applyDefaultFallbackStyle(
 }
 
 /** Undo: the callout's own look back, unless the row has moved on since. */
-export async function restoreOwnStyle(
-	ctx: SettingsContext,
-	previous: CalloutDefinition,
-): Promise<void> {
+export async function restoreOwnStyle(ctx: SettingsContext, previous: CalloutDefinition): Promise<void> {
 	if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
 	const { registry } = ctx.plugin;
 	const current = registry.get(previous.id);
@@ -48,7 +42,8 @@ export async function restoreOwnStyle(
 		current.source !== "fallback" ||
 		current.customized === true ||
 		registry.settings.fallbackCalloutId === previous.id
-	) return;
+	)
+		return;
 	const restored: Partial<CalloutDefinition> = structuredClone(previous);
 	// `update` merges, so a field the fallback brought and the callout never
 	// had, such as a gradient or a text colour, has to be cleared by name.

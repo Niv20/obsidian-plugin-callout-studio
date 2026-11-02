@@ -35,11 +35,7 @@ import {
 	toCalloutManagerEntries,
 	type CalloutManagerEntry,
 } from "../../utils/calloutManagerImport";
-import type {
-	PluginImportBatch,
-	PluginImportParse,
-	PluginImportSource,
-} from "./pluginImportSource";
+import type { PluginImportBatch, PluginImportParse, PluginImportSource } from "./pluginImportSource";
 
 function batchOf(entries: readonly CalloutManagerEntry[]): PluginImportBatch {
 	return {

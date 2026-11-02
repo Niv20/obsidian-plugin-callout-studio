@@ -81,9 +81,7 @@ export function migrateStyleModes(
 	data: Partial<PluginData>,
 ): boolean {
 	let changed = false;
-	const existingInstall =
-		(Array.isArray(data.callouts) && data.callouts.length > 0) ||
-		data.settings !== undefined;
+	const existingInstall = (Array.isArray(data.callouts) && data.callouts.length > 0) || data.settings !== undefined;
 	const firstTime = existingInstall && (data.version ?? 0) < DATA_VERSION_NO_MODES;
 
 	// The retired setting is already gone from the live object —

@@ -15,31 +15,17 @@
  * fetch from fonts.gstatic.com on every startup for artwork it does not draw.
  */
 import type { App } from "obsidian";
-import type {
-	CalloutDefinition,
-	CalloutRenderRole,
-} from "../types";
+import type { CalloutDefinition, CalloutRenderRole } from "../types";
 import { CALLOUT_RENDER_ROLES } from "../types";
 import { isDefaultIconAdjust, resolveIconAdjust } from "../utils/iconAdjust";
 import { renderIconInto } from "../icons/renderIcon";
 import { createIconResolver } from "../icons/resolver";
 import type { IconResolver } from "../icons/types";
-import {
-	bgGradientCss,
-	DEFAULT_TEXT_COLOR_DARK,
-	DEFAULT_TEXT_COLOR_LIGHT,
-} from "../utils/colorUtils";
-import {
-	accentDeclarations,
-	ownAccentDeclarations,
-	needsDarkBlock,
-} from "./accentDeclarations";
+import { bgGradientCss, DEFAULT_TEXT_COLOR_DARK, DEFAULT_TEXT_COLOR_LIGHT } from "../utils/colorUtils";
+import { accentDeclarations, ownAccentDeclarations, needsDarkBlock } from "./accentDeclarations";
 import { resolveBgAlpha } from "../utils/bgTintAlpha";
 import { OBSIDIAN_CALLOUT_VAR } from "../constants";
-import {
-	applyTitleGradient,
-	clearGradientChars,
-} from "../reading/gradientTitleText";
+import { applyTitleGradient, clearGradientChars } from "../reading/gradientTitleText";
 import {
 	CSS_CM_WIDGET,
 	CSS_FOLD_ARROW,
@@ -68,17 +54,9 @@ import {
 	definitionWithMetadataColor,
 	type MetadataColorEntry,
 } from "../utils/calloutMetadata";
-import {
-	bgImageFor,
-	bgProps,
-	transparentChildrenCSS,
-	type BgLayer,
-} from "./css/backgroundProps";
+import { bgImageFor, bgProps, transparentChildrenCSS, type BgLayer } from "./css/backgroundProps";
 import { themeSurfaceCSS } from "./css/themeSurfaceCSS";
-import {
-	calloutIconProp,
-	fallbackCalloutIconProp,
-} from "./css/calloutIconProp";
+import { calloutIconProp, fallbackCalloutIconProp } from "./css/calloutIconProp";
 import { emojiOverrideCSS, iconOverrideCSS } from "./css/iconOverrides";
 import { iconBoxWidth } from "./css/iconBox";
 import { blockAlignmentCSS } from "./css/alignmentCSS";
@@ -90,11 +68,7 @@ import {
 	paintUnknownFallbackIcon,
 	restoreCoreIcon,
 } from "./css/fallbackIcon";
-import {
-	calloutSelAt,
-	calloutSelDeferring,
-	tokenAttrSel,
-} from "../utils/calloutSelector";
+import { calloutSelAt, calloutSelDeferring, tokenAttrSel } from "../utils/calloutSelector";
 import { coreAccentShimCSS } from "./css/coreAccentShim";
 import { CORE_ACCENT_SPELLING } from "../utils/calloutColorFormat";
 import type { CalloutRegistry } from "./CalloutRegistry";
@@ -189,21 +163,12 @@ export class CSSInjector {
 	 * of them, minus any it leaves to the theme or to Obsidian (see
 	 * `CalloutRegistry.leavesBlockName`) - all of them, always, in the export.
 	 */
-	private blockNames(
-		def: CalloutDefinition,
-		standalone = this.emitStandalone,
-	): string[] {
-		return [def.id, ...(def.aliases ?? [])].filter((name) =>
-			this.paintsBlockName(def, name, standalone),
-		);
+	private blockNames(def: CalloutDefinition, standalone = this.emitStandalone): string[] {
+		return [def.id, ...(def.aliases ?? [])].filter((name) => this.paintsBlockName(def, name, standalone));
 	}
 
 	/** One name's answer to {@link blockNames}. */
-	private paintsBlockName(
-		def: CalloutDefinition,
-		name: string,
-		standalone = this.emitStandalone,
-	): boolean {
+	private paintsBlockName(def: CalloutDefinition, name: string, standalone = this.emitStandalone): boolean {
 		return standalone || !this.registry.leavesBlockName(def, name);
 	}
 	private injecting = false;
@@ -291,10 +256,7 @@ export class CSSInjector {
 	 * the `|` dropdown — reads it from here, so they cannot disagree.
 	 */
 	metadataColorEntries(): MetadataColorEntry[] {
-		return activeMetadataColorEntries(
-			this.registry.settings,
-			this.metadataCatalog.snippetWords(),
-		);
+		return activeMetadataColorEntries(this.registry.settings, this.metadataCatalog.snippetWords());
 	}
 
 	/**
@@ -664,12 +626,7 @@ export class CSSInjector {
 	 * a callout's colors — see `manager/accentDeclarations.ts` for which
 	 * variables those are and why.
 	 */
-	private accentProps(
-		def: CalloutDefinition,
-		mode: "light" | "dark",
-		important = false,
-		imposed = false,
-	): string[] {
+	private accentProps(def: CalloutDefinition, mode: "light" | "dark", important = false, imposed = false): string[] {
 		return accentDeclarations(
 			mode === "dark" ? def.colorDark : def.colorLight,
 			this.themeAccentVar(def),
@@ -692,18 +649,11 @@ export class CSSInjector {
 	 * wrapper follows the active dialect because old themes store a bare RGB
 	 * triplet in that variable while current core stores a full colour.
 	 */
-	private fallbackAccentProps(
-		def: CalloutDefinition,
-		mode: "light" | "dark",
-	): string[] {
+	private fallbackAccentProps(def: CalloutDefinition, mode: "light" | "dark"): string[] {
 		const accentRef =
-			this.studioWeights.dialect().read === "triplet"
-				? "rgb(var(--callout-color))"
-				: "var(--callout-color)";
+			this.studioWeights.dialect().read === "triplet" ? "rgb(var(--callout-color))" : "var(--callout-color)";
 		return this.accentProps(def, mode, false, true).map((prop) =>
-			prop.startsWith("  --cs-accent:")
-				? `  --cs-accent: ${accentRef};`
-				: prop,
+			prop.startsWith("  --cs-accent:") ? `  --cs-accent: ${accentRef};` : prop,
 		);
 	}
 
@@ -728,9 +678,7 @@ export class CSSInjector {
 		const ids = this.blockNames(def);
 		const claimed = new Set<string>(this.studioWeights.dialect().unguarded);
 		for (const id of ids) {
-			for (const prop of this.studioWeights
-				.themeCallouts()
-				.claimedProps(obsidianCalloutAttrId(id))) {
+			for (const prop of this.studioWeights.themeCallouts().claimedProps(obsidianCalloutAttrId(id))) {
 				claimed.add(prop);
 			}
 		}
@@ -755,11 +703,7 @@ export class CSSInjector {
 	 * the heading-bar / inline-pill / ref token DOM, which is ours and where
 	 * core's variable would go unread.
 	 */
-	ownAccentProps(
-		def: CalloutDefinition,
-		mode: "light" | "dark",
-		important = false,
-	): string[] {
+	ownAccentProps(def: CalloutDefinition, mode: "light" | "dark", important = false): string[] {
 		return ownAccentDeclarations(
 			mode === "dark" ? def.colorDark : def.colorLight,
 			this.themeAccentVar(def),
@@ -776,10 +720,7 @@ export class CSSInjector {
 	 * accent. Its own module per `tests/repoSourceRules.test.ts`, this file being
 	 * one of the oversized ones that ratchet asks to shrink rather than grow.
 	 */
-	private bgAlphaFor(
-		def: CalloutDefinition,
-		mode: "light" | "dark",
-	): number | null {
+	private bgAlphaFor(def: CalloutDefinition, mode: "light" | "dark"): number | null {
 		return resolveBgAlpha(def, mode);
 	}
 
@@ -790,18 +731,11 @@ export class CSSInjector {
 	 * one-line delegations because `FallbackCssContext` and the CSS suites reach
 	 * them through the injector.
 	 */
-	private bgProps(
-		def: CalloutDefinition,
-		mode: "light" | "dark",
-		important = false,
-	): string[] {
+	private bgProps(def: CalloutDefinition, mode: "light" | "dark", important = false): string[] {
 		return bgProps(def, mode, important);
 	}
 
-	private bgImageFor(
-		def: CalloutDefinition,
-		mode: "light" | "dark",
-	): BgLayer | null {
+	private bgImageFor(def: CalloutDefinition, mode: "light" | "dark"): BgLayer | null {
 		return bgImageFor(def, mode);
 	}
 
@@ -813,10 +747,7 @@ export class CSSInjector {
 	 * the background's own stops, which are pale tints designed to sit behind
 	 * text and would be all but invisible painted through the glyphs.
 	 */
-	private textGradientCss(
-		def: CalloutDefinition,
-		mode: "light" | "dark",
-	): string | null {
+	private textGradientCss(def: CalloutDefinition, mode: "light" | "dark"): string | null {
 		const g = def.bgGradient;
 		if (!g?.textGradient) return null;
 		const to = mode === "dark" ? g.textToColorDark : g.textToColorLight;
@@ -841,11 +772,7 @@ export class CSSInjector {
 	 * `-webkit-text-fill-color` is what hides the flat text under the sweep;
 	 * `color` is left alone so icons keep tracking it through `currentColor`.
 	 */
-	private textSweepProps(
-		image: string,
-		under: string | null,
-		imp = "",
-	): string[] {
+	private textSweepProps(image: string, under: string | null, imp = ""): string[] {
 		return [
 			`  background-image: ${image}, ${under ?? "none"}${imp};`,
 			`  -webkit-background-clip: text, border-box${imp};`,
@@ -884,9 +811,7 @@ export class CSSInjector {
 		if (dark) {
 			const darkProps = this.textSweepProps(dark, under("dark"), imp);
 			if (darkProps.join("") !== lightProps.join("")) {
-				rules.push(
-					`${selectorsFor(".theme-dark ")} {\n${darkProps.join("\n")}\n}`,
-				);
+				rules.push(`${selectorsFor(".theme-dark ")} {\n${darkProps.join("\n")}\n}`);
 			}
 		}
 		// PDF export: Chromium's print engine does not support
@@ -975,21 +900,14 @@ export class CSSInjector {
 		// column and the content indent on that same width (also for aliases).
 		const picture = hidesIcon ? undefined : userImageFor(def.icon);
 		if (this.registry.settings.globalStyle.alignContentWithTitle && picture) {
-			lightProps.push(
-				`  --cs-align-icon-inline-size: ${iconBoxWidth(picture)}${imp};`,
-			);
+			lightProps.push(`  --cs-align-icon-inline-size: ${iconBoxWidth(picture)}${imp};`);
 		}
 		lightProps.push(...this.bgProps(def, "light", true));
 		// Only in the light rule, which is unscoped and so matches both themes:
 		// the frame's colour is the same in either one, and the dark block below
 		// exists purely for the values that differ.
 		if (def.transparentBg) {
-			lightProps.push(
-				...transparentBorderProps(
-					this.registry.settings.globalStyle.borderSides,
-					true,
-				),
-			);
+			lightProps.push(...transparentBorderProps(this.registry.settings.globalStyle.borderSides, true));
 		}
 		if (paintsId) {
 			parts.push(`${this.sel(def.id)} {\n${lightProps.join("\n")}\n}`);
@@ -1017,24 +935,14 @@ export class CSSInjector {
 		if (paintsId && this.needsDarkBlock(def)) {
 			const darkProps: string[] = [...this.accentProps(def, "dark", true)];
 			darkProps.push(...this.bgProps(def, "dark", true));
-			parts.push(
-				`${this.sel(def.id, ".theme-dark ")} {\n${darkProps.join("\n")}\n}`,
-			);
+			parts.push(`${this.sel(def.id, ".theme-dark ")} {\n${darkProps.join("\n")}\n}`);
 		}
 
 		// Content text color overrides
 		if (paintsId && def.textColorLight) {
-			parts.push(
-				`${this.sel(def.id)} > .callout-content {\n` +
-					`  color: ${def.textColorLight}${imp};\n` +
-					`}`,
-			);
+			parts.push(`${this.sel(def.id)} > .callout-content {\n` + `  color: ${def.textColorLight}${imp};\n` + `}`);
 		}
-		if (
-			paintsId &&
-			def.textColorDark &&
-			def.textColorDark !== def.textColorLight
-		) {
+		if (paintsId && def.textColorDark && def.textColorDark !== def.textColorLight) {
 			parts.push(
 				`${this.sel(def.id, ".theme-dark ")} > .callout-content {\n` +
 					`  color: ${def.textColorDark}${imp};\n` +
@@ -1051,9 +959,7 @@ export class CSSInjector {
 		// in the stylesheet (an uploaded picture can be 256 KB), so it is
 		// written once per callout rather than once per name.
 		const nameSels = names.map((name) => this.sel(name));
-		const iconSvg = hidesIcon
-			? null
-			: this.icons.resolveSvg(def.icon, "regular");
+		const iconSvg = hidesIcon ? null : this.icons.resolveSvg(def.icon, "regular");
 		if (iconSvg) {
 			parts.push(iconOverrideCSS(nameSels, def.icon, iconSvg, imp));
 		}
@@ -1082,11 +988,7 @@ export class CSSInjector {
 				def,
 				(themePrefix) =>
 					names
-						.map(
-							(id) =>
-								`${this.sel(id, themePrefix)} > ` +
-								`.callout-title > .callout-title-inner`,
-						)
+						.map((id) => `${this.sel(id, themePrefix)} > ` + `.callout-title > .callout-title-inner`)
 						.join(",\n"),
 				false,
 				imp,
@@ -1109,10 +1011,7 @@ export class CSSInjector {
 		// so print rasterizes the sweep on a ::before — see printGradientCSS.
 		const calloutPrint = this.printGradientCSS(
 			def,
-			(themePrefix, suffix) =>
-				names
-					.map((id) => `${this.sel(id, themePrefix)}${suffix}`)
-					.join(",\n"),
+			(themePrefix, suffix) => names.map((id) => `${this.sel(id, themePrefix)}${suffix}`).join(",\n"),
 			false,
 			imp,
 		);
@@ -1121,36 +1020,24 @@ export class CSSInjector {
 		// Generate alias selectors that reference the same styles
 		if (def.aliases && def.aliases.length > 0) {
 			for (const alias of def.aliases) {
-				const aliasTransform = hidesIcon
-					? ""
-					: this.getIconTransformCSS(def, alias);
+				const aliasTransform = hidesIcon ? "" : this.getIconTransformCSS(def, alias);
 				if (!names.includes(alias)) {
 					// The theme's block callout; only the token transforms remain.
 					if (aliasTransform) parts.push(aliasTransform);
 					continue;
 				}
-				parts.push(
-					`/* alias: ${alias} → ${def.id} */\n` +
-						`${this.sel(alias)} {\n${lightProps.join("\n")}\n}`,
-				);
+				parts.push(`/* alias: ${alias} → ${def.id} */\n` + `${this.sel(alias)} {\n${lightProps.join("\n")}\n}`);
 				if (this.needsDarkBlock(def)) {
 					const aliasDarkProps: string[] = [
 						...this.accentProps(def, "dark", true),
 						...this.bgProps(def, "dark", true),
 					];
-					parts.push(
-						`${this.sel(alias, ".theme-dark ")} {\n${aliasDarkProps.join("\n")}\n}`,
-					);
+					parts.push(`${this.sel(alias, ".theme-dark ")} {\n${aliasDarkProps.join("\n")}\n}`);
 				}
 				if (def.textColorLight) {
-					parts.push(
-						`${this.sel(alias)} > .callout-content {\n  color: ${def.textColorLight}${imp};\n}`,
-					);
+					parts.push(`${this.sel(alias)} > .callout-content {\n  color: ${def.textColorLight}${imp};\n}`);
 				}
-				if (
-					def.textColorDark &&
-					def.textColorDark !== def.textColorLight
-				) {
+				if (def.textColorDark && def.textColorDark !== def.textColorLight) {
 					parts.push(
 						`${this.sel(alias, ".theme-dark ")} > .callout-content {\n  color: ${def.textColorDark}${imp};\n}`,
 					);
@@ -1173,9 +1060,7 @@ export class CSSInjector {
 		const surface = standalone
 			? ""
 			: this.themeSurface(def, (guard, weight, rootQualifier) =>
-				names
-					.map((id) => `${calloutSelAt(id, weight, guard)}${rootQualifier}`)
-					.join(",\n"),
+					names.map((id) => `${calloutSelAt(id, weight, guard)}${rootQualifier}`).join(",\n"),
 				);
 		if (surface) parts.push(surface);
 
@@ -1207,16 +1092,14 @@ export class CSSInjector {
 		if (
 			surface.neutralBackground.length === 0 &&
 			surface.colorlessFrame.length === 0 &&
-			(def.transparentBg !== true ||
-				(surface.inkedTitles.length === 0 && surface.surfaceLayers.length === 0))
+			(def.transparentBg !== true || (surface.inkedTitles.length === 0 && surface.surfaceLayers.length === 0))
 		) {
 			return "";
 		}
 		const weight = this.emitWeight + 2;
 		const paintsBackground =
 			def.transparentBg !== true &&
-			(this.bgProps(def, "light").length > 0 ||
-				this.bgProps(def, "dark").length > 0);
+			(this.bgProps(def, "light").length > 0 || this.bgProps(def, "dark").length > 0);
 		const light = this.childBgProps(def, "light");
 		const dark = this.needsDarkBlock(def) ? this.childBgProps(def, "dark") : [];
 		return themeSurfaceCSS({
@@ -1227,13 +1110,11 @@ export class CSSInjector {
 				? {
 						light,
 						dark: dark.length > 0 && dark.join("") !== light.join("") ? dark : null,
-						print: (selFor) =>
-							this.printGradientCSS(def, selFor, false, " !important"),
+						print: (selFor) => this.printGradientCSS(def, selFor, false, " !important"),
 					}
 				: null,
 			cancelsContentColor:
-				def.textColorLight === DEFAULT_TEXT_COLOR_LIGHT ||
-				def.textColorDark === DEFAULT_TEXT_COLOR_DARK,
+				def.textColorLight === DEFAULT_TEXT_COLOR_LIGHT || def.textColorDark === DEFAULT_TEXT_COLOR_DARK,
 			transparentBg: def.transparentBg === true,
 		});
 	}
@@ -1295,8 +1176,7 @@ export class CSSInjector {
 						// Our heading-bar DOM → space-form attr (the two below).
 						// The two conventions are deliberate — do not unify them.
 						(blockIds.includes(id)
-							? `${this.sel(id, themePrefix)} > ` +
-								`.callout-title > .callout-fold, `
+							? `${this.sel(id, themePrefix)} > ` + `.callout-title > .callout-fold, `
 							: "") +
 						`${themePrefix}.${CSS_HEADING_LINE}${tokenAttrSel(id)} ` +
 						`.${CSS_FOLD_ARROW}, ` +
@@ -1312,9 +1192,7 @@ export class CSSInjector {
 		const imp = this.emitImportant;
 		const parts = [`${selectorsFor("")} {\n  color: ${light}${imp};\n}`];
 		if (dark !== light) {
-			parts.push(
-				`${selectorsFor(".theme-dark ")} {\n  color: ${dark}${imp};\n}`,
-			);
+			parts.push(`${selectorsFor(".theme-dark ")} {\n  color: ${dark}${imp};\n}`);
 		}
 		return parts.join("\n\n");
 	}
@@ -1340,9 +1218,7 @@ export class CSSInjector {
 
 		const lightOwn = this.ownAccentProps(def, "light");
 		const darkOwn = this.ownAccentProps(def, "dark");
-		const parts: string[] = [
-			`${selectorsFor("")} {\n${lightOwn.join("\n")}\n}`,
-		];
+		const parts: string[] = [`${selectorsFor("")} {\n${lightOwn.join("\n")}\n}`];
 		// Compared rather than keyed off `colorLight !== colorDark`: an unmodified
 		// built-in has one colour for both modes and still needs this rule when the
 		// theme variable it defers to is SPELLED differently in the two — see
@@ -1375,9 +1251,7 @@ export class CSSInjector {
 		// the light rule (unscoped, so it matches both themes) keeps applying in
 		// dark mode; identical dark values → skip the no-op.
 		if (darkBg.length > 0 && darkBg.join("") !== lightBg.join("")) {
-			parts.push(
-				`${bgSelectorsFor(".theme-dark ")} {\n${darkBg.join("\n")}\n}`,
-			);
+			parts.push(`${bgSelectorsFor(".theme-dark ")} {\n${darkBg.join("\n")}\n}`);
 		}
 		// Only gradient backgrounds need the PDF-export ::before repaint; the
 		// method returns "" for solid backgrounds. The pill also hides its own
@@ -1386,24 +1260,14 @@ export class CSSInjector {
 		const pillPrint = this.printGradientCSS(
 			def,
 			(themePrefix, suffix) =>
-				ids
-					.map(
-						(id) =>
-							`${themePrefix}.${CSS_INLINE_TOKEN}${tokenAttrSel(id)}${suffix}`,
-					)
-					.join(",\n"),
+				ids.map((id) => `${themePrefix}.${CSS_INLINE_TOKEN}${tokenAttrSel(id)}${suffix}`).join(",\n"),
 			true,
 		);
 		if (pillPrint) parts.push(pillPrint);
 		const headingPrint = this.printGradientCSS(
 			def,
 			(themePrefix, suffix) =>
-				ids
-					.map(
-						(id) =>
-							`${themePrefix}.${CSS_HEADING_LINE}${tokenAttrSel(id)}${suffix}`,
-					)
-					.join(",\n"),
+				ids.map((id) => `${themePrefix}.${CSS_HEADING_LINE}${tokenAttrSel(id)}${suffix}`).join(",\n"),
 			false,
 		);
 		if (headingPrint) parts.push(headingPrint);
@@ -1418,10 +1282,7 @@ export class CSSInjector {
 				def,
 				(themePrefix) =>
 					ids
-						.map(
-							(id) =>
-								`${themePrefix}.${CSS_INLINE_TOKEN}.${CSS_INLINE_TOKEN}${tokenAttrSel(id)}`,
-						)
+						.map((id) => `${themePrefix}.${CSS_INLINE_TOKEN}.${CSS_INLINE_TOKEN}${tokenAttrSel(id)}`)
 						.join(",\n"),
 				true,
 			),
@@ -1516,9 +1377,7 @@ export class CSSInjector {
 		];
 		const dark = this.bgImageFor(def, "dark");
 		if (dark && dark.image !== light.image) {
-			rules.push(
-				`${selFor(".theme-dark ", "::before")} {\n${beforeProps(dark.image)}\n}`,
-			);
+			rules.push(`${selFor(".theme-dark ", "::before")} {\n${beforeProps(dark.image)}\n}`);
 		}
 		return `@media print {\n${rules.join("\n\n")}\n}`;
 	}
@@ -1584,15 +1443,10 @@ export class CSSInjector {
 			// The heading keeps its static nudge from styles.css when untouched.
 			if (isDefaultIconAdjust(adjust)) continue;
 
-			const extraY =
-				role === "heading"
-					? "var(--cs-heading-icon-offset, 0.1em)"
-					: "";
+			const extraY = role === "heading" ? "var(--cs-heading-icon-offset, 0.1em)" : "";
 			const transforms: string[] = [];
 			if (adjust.offsetX !== 0 || adjust.offsetY !== 0 || extraY) {
-				const y = extraY
-					? `calc(${adjust.offsetY}px + ${extraY})`
-					: `${adjust.offsetY}px`;
+				const y = extraY ? `calc(${adjust.offsetY}px + ${extraY})` : `${adjust.offsetY}px`;
 				transforms.push(`translate(${adjust.offsetX}px, ${y})`);
 			}
 			if (adjust.size !== 1) transforms.push(`scale(${adjust.size})`);
@@ -1629,33 +1483,22 @@ export class CSSInjector {
 	 * indent follows the icon width and gaps, but the hidden icon is no longer a
 	 * flex item for the title to align past. Left standing the indent would
 	 * indent the body under empty space. One class-unit more specific than the
-		 * global registered-id rule, so it beats that rule on weight alone. A
-		 * theme-owned callout never reaches this emitter; Studio-owned callouts take
-		 * the same `!important` here as every other declaration on native DOM.
+	 * global registered-id rule, so it beats that rule on weight alone. A
+	 * theme-owned callout never reaches this emitter; Studio-owned callouts take
+	 * the same `!important` here as every other declaration on native DOM.
 	 */
 	private iconHiddenCSS(def: CalloutDefinition): string {
-		const aligned =
-			this.registry.settings.globalStyle.alignContentWithTitle;
+		const aligned = this.registry.settings.globalStyle.alignContentWithTitle;
 		const imp = this.emitImportant;
 		const parts: string[] = [];
 		for (const id of this.blockNames(def)) {
-			parts.push(
-				`${this.sel(id)} > .callout-title > .callout-icon {\n` +
-					`  display: none${imp};\n` +
-					`}`,
-			);
+			parts.push(`${this.sel(id)} > .callout-title > .callout-icon {\n` + `  display: none${imp};\n` + `}`);
 			if (aligned) {
-				parts.push(
-					`${this.sel(id)} > .callout-content {\n` +
-						`  padding-inline-start: 0${imp};\n` +
-						`}`,
-				);
+				parts.push(`${this.sel(id)} > .callout-content {\n` + `  padding-inline-start: 0${imp};\n` + `}`);
 			}
 		}
 		return parts.join("\n\n");
 	}
-
-
 
 	/**
 	 * Walk rendered callouts and (re)apply DOM-level icon work.
@@ -1679,17 +1522,10 @@ export class CSSInjector {
 		}
 		const calloutEls: HTMLElement[] = [];
 		// A post-processor can hand us the callout element itself.
-		if (
-			(root as Element).nodeType === 1 &&
-			(root as Element).matches(".callout[data-callout]")
-		) {
+		if ((root as Element).nodeType === 1 && (root as Element).matches(".callout[data-callout]")) {
 			calloutEls.push(root as HTMLElement);
 		}
-		calloutEls.push(
-			...Array.from(
-				root.querySelectorAll<HTMLElement>(".callout[data-callout]"),
-			),
-		);
+		calloutEls.push(...Array.from(root.querySelectorAll<HTMLElement>(".callout[data-callout]")));
 
 		// The colour a callout's own `|metadata` names, baked over its
 		// definition for the two export painters below — see
@@ -1712,14 +1548,10 @@ export class CSSInjector {
 			// AnuPpuccin cost the probes hundreds of milliseconds.
 			if (calloutEl.closest(".cs-theme-probe")) continue;
 			const def = this.registry.findByAttrId(id);
-			const iconEl = calloutEl.querySelector<HTMLElement>(
-				".callout-title .callout-icon",
-			);
+			const iconEl = calloutEl.querySelector<HTMLElement>(".callout-title .callout-icon");
 			// Per-grapheme print colors for a gradient title (PDF export
 			// support — see gradientTitleText.ts).
-			const titleInner = calloutEl.querySelector<HTMLElement>(
-				".callout-title .callout-title-inner",
-			);
+			const titleInner = calloutEl.querySelector<HTMLElement>(".callout-title .callout-title-inner");
 			if (!def) {
 				// An unknown id is the one icon path where CSS decides whether the
 				// fallback or an exact snippet owns the slot. The fallback painter
@@ -1749,9 +1581,7 @@ export class CSSInjector {
 		// own .cm-line DOM — its text nodes must never be rewrapped (CM owns
 		// them, and Live Preview never reaches PDF export anyway). Unknown
 		// ids get no sweep CSS, so they must not get print colors either.
-		const headingEls = root.querySelectorAll<HTMLElement>(
-			`.${CSS_HEADING_LINE}[data-callout]`,
-		);
+		const headingEls = root.querySelectorAll<HTMLElement>(`.${CSS_HEADING_LINE}[data-callout]`);
 		for (const headingEl of Array.from(headingEls)) {
 			if (headingEl.classList.contains("cm-line")) continue;
 			const id = headingEl.getAttribute("data-callout");
@@ -1760,9 +1590,7 @@ export class CSSInjector {
 			if (!shouldRenderToken(resolved)) continue;
 			const { def, unknown } = resolved;
 			if (!def || unknown) continue;
-			const titleEl = headingEl.querySelector<HTMLElement>(
-				`.${CSS_HEADING_TITLE}`,
-			);
+			const titleEl = headingEl.querySelector<HTMLElement>(`.${CSS_HEADING_TITLE}`);
 			if (titleEl) this.syncTitleGradient(titleEl, painted(def, headingEl));
 		}
 
@@ -1836,9 +1664,7 @@ export class CSSInjector {
 		if (iconEl) {
 			// Heading tokens draw at heading size, inline callouts at callout size;
 			// packs with per-size artwork pick their drawing from that.
-			const role = tokenEl.classList.contains(CSS_HEADING_TOKEN)
-				? "heading"
-				: "inline";
+			const role = tokenEl.classList.contains(CSS_HEADING_TOKEN) ? "heading" : "inline";
 			paintRoleIcon(iconEl, def, this.registry, role);
 		}
 		const nameEl = tokenEl.querySelector<HTMLElement>(`.${CSS_TOKEN_NAME}`);
@@ -1961,8 +1787,7 @@ export class CSSInjector {
 		const allSides = top && right && bottom && left;
 		const anySide = top || right || bottom || left;
 		const bStyle =
-			`${gs.borderWidth}px solid ` +
-			`color-mix(in oklch, var(--cs-accent, currentColor) 45%, transparent)`;
+			`${gs.borderWidth}px solid ` + `color-mix(in oklch, var(--cs-accent, currentColor) 45%, transparent)`;
 
 		if (allSides) {
 			props.push(`  border: ${bStyle}${imp};`);
@@ -1994,9 +1819,7 @@ export class CSSInjector {
 		// Content scale
 		if (gs.contentScale !== 1 && calloutSelectors.length > 0) {
 			parts.push(
-				`${selectorsFor(" > .callout-content")} {\n` +
-					`  font-size: ${gs.contentScale}em${imp};\n` +
-					`}`,
+				`${selectorsFor(" > .callout-content")} {\n` + `  font-size: ${gs.contentScale}em${imp};\n` + `}`,
 			);
 		}
 
@@ -2008,19 +1831,13 @@ export class CSSInjector {
 		// defaults, so nothing is emitted while a value is untouched).
 		const headingProps = this.roleBorderProps(gs.heading);
 		if (gs.heading.borderRadius !== 4) {
-			headingProps.push(
-				`  --cs-heading-radius: ${gs.heading.borderRadius}px;`,
-			);
+			headingProps.push(`  --cs-heading-radius: ${gs.heading.borderRadius}px;`);
 		}
 		if (gs.heading.paddingTop !== 0.25) {
-			headingProps.push(
-				`  --cs-heading-pad-top: ${gs.heading.paddingTop}em;`,
-			);
+			headingProps.push(`  --cs-heading-pad-top: ${gs.heading.paddingTop}em;`);
 		}
 		if (gs.heading.paddingBottom !== 0.25) {
-			headingProps.push(
-				`  --cs-heading-pad-bottom: ${gs.heading.paddingBottom}em;`,
-			);
+			headingProps.push(`  --cs-heading-pad-bottom: ${gs.heading.paddingBottom}em;`);
 		}
 		// Gap above the bar (the outer margin, reading view only — see the
 		// static .cs-heading-callout:not(.cm-line) rule in styles.css; Live
@@ -2030,9 +1847,7 @@ export class CSSInjector {
 		// above so the default (0) is an explicit, enforced value rather than
 		// "whatever the theme's own heading margin happens to be".
 		if (gs.heading.marginTop !== 0) {
-			headingProps.push(
-				`  --cs-heading-gap-top: ${gs.heading.marginTop}em;`,
-			);
+			headingProps.push(`  --cs-heading-gap-top: ${gs.heading.marginTop}em;`);
 		}
 		if (headingProps.length > 0 && !standalone) {
 			parts.push(`.${CSS_HEADING_LINE} {\n${headingProps.join("\n")}\n}`);
@@ -2040,8 +1855,7 @@ export class CSSInjector {
 
 		// The static 1em radius covers the default 16px inline-pill setting.
 		const inlineProps = this.roleBorderProps(gs.inline);
-		if (gs.inline.borderRadius !== 16)
-			inlineProps.push(`  --cs-inline-radius: ${gs.inline.borderRadius}px;`);
+		if (gs.inline.borderRadius !== 16) inlineProps.push(`  --cs-inline-radius: ${gs.inline.borderRadius}px;`);
 		if (gs.inline.fontScale !== 1) {
 			inlineProps.push(
 				`  --cs-inline-scale: ${gs.inline.fontScale};`,
@@ -2074,8 +1888,7 @@ export class CSSInjector {
 		const anySide = top || right || bottom || left;
 		if (!anySide) return [];
 		const bStyle =
-			`${frame.borderWidth}px solid ` +
-			`color-mix(in oklch, var(--cs-accent, currentColor) 45%, transparent)`;
+			`${frame.borderWidth}px solid ` + `color-mix(in oklch, var(--cs-accent, currentColor) 45%, transparent)`;
 		if (top && right && bottom && left) {
 			return [`  border: ${bStyle};`];
 		}
@@ -2096,19 +1909,13 @@ export class CSSInjector {
 			settings: this.registry.settings,
 			themeOwns: (def) => this.registry.themeOwns(def),
 			getIconCSS: (def) => fallbackCalloutIconProp(def),
-			fallbackAccentProps: (def, mode) =>
-				this.fallbackAccentProps(def, mode),
+			fallbackAccentProps: (def, mode) => this.fallbackAccentProps(def, mode),
 			ownAccentProps: (def, mode) => this.ownAccentProps(def, mode),
-			bgProps: (def, mode, important) =>
-				this.bgProps(def, mode, important),
+			bgProps: (def, mode, important) => this.bgProps(def, mode, important),
 			transparentBorderProps: (important) =>
-				transparentBorderProps(
-					this.registry.settings.globalStyle.borderSides,
-					important,
-				),
+				transparentBorderProps(this.registry.settings.globalStyle.borderSides, important),
 			needsDarkBlock: (def) => this.needsDarkBlock(def),
-			printGradientCSS: (def, selector, isPill) =>
-				this.printGradientCSS(def, selector, isPill),
+			printGradientCSS: (def, selector, isPill) => this.printGradientCSS(def, selector, isPill),
 		});
 	}
 
@@ -2140,19 +1947,16 @@ export class CSSInjector {
 						sweep: defs.some((d) => Boolean(d.bgGradient?.textGradient && d.bgGradient.textToColorLight)),
 					},
 					themeOwnedAttrIds: this.themeOwnedAttrIds(standalone),
-					transparentBorderProps: () =>
-						transparentBorderProps(settings.globalStyle.borderSides, true),
+					transparentBorderProps: () => transparentBorderProps(settings.globalStyle.borderSides, true),
 					accentProps: (def, mode) => this.accentProps(def, mode, true),
 					ownAccentProps: (def, mode) => this.ownAccentProps(def, mode),
-					bgProps: (def, mode, important) =>
-						this.bgProps(def, mode, important),
+					bgProps: (def, mode, important) => this.bgProps(def, mode, important),
 					needsDarkBlock: (def) => this.needsDarkBlock(def),
 					textSweepRules: (def, selectorsFor, ownsBackground, imp) =>
 						this.textSweepRules(def, selectorsFor, ownsBackground, imp),
 					printGradientCSS: (def, selFor, hideElementGradient, imp) =>
 						this.printGradientCSS(def, selFor, hideElementGradient, imp),
-					themeSurface: (def, selectorsAt) =>
-						this.themeSurface(def, selectorsAt),
+					themeSurface: (def, selectorsAt) => this.themeSurface(def, selectorsAt),
 				},
 				standalone,
 			);
@@ -2187,9 +1991,7 @@ export class CSSInjector {
 		const ownedSheet = this.styleSheet;
 		const doc = this.styleDoc ?? activeDocument;
 		if (this.styleSheet && "adoptedStyleSheets" in doc) {
-			doc.adoptedStyleSheets = doc.adoptedStyleSheets.filter(
-				(sheet) => sheet !== this.styleSheet,
-			);
+			doc.adoptedStyleSheets = doc.adoptedStyleSheets.filter((sheet) => sheet !== this.styleSheet);
 			this.styleSheet = null;
 			this.styleDoc = null;
 		}

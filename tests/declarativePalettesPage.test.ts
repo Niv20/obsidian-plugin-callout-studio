@@ -45,9 +45,14 @@ function fakePlugin(names: string[], paused = false) {
 	const saves: number[] = [];
 	const plugin = {
 		registry,
-		get settings() { return registry.settings; },
+		get settings() {
+			return registry.settings;
+		},
 		settingsWriter: { isFrozen: paused },
-		saveSettings: () => { saves.push(1); return Promise.resolve(); },
+		saveSettings: () => {
+			saves.push(1);
+			return Promise.resolve();
+		},
 		// What the delete question reads to name a palette's metadata word.
 		cssInjector: { metadataCatalog: { snippetWords: () => new Set<string>(), sourcesNow: () => [] } },
 	};
@@ -60,7 +65,10 @@ function drawPalettes(plugin: object) {
 	const ctx: TreeContext = {
 		app: {} as never,
 		plugin: plugin as never,
-		redraw: () => { redraws++; tab.update(); },
+		redraw: () => {
+			redraws++;
+			tab.update();
+		},
 		registerDisposer: () => {},
 		rows: new RowRegistry(),
 		parts: new PersistentParts(() => {}),
@@ -105,13 +113,22 @@ describe("the page", () => {
 		const { harness } = drawPalettes(fakePlugin(["Sand", "Ocean", "Forest"]).plugin);
 		harness.openPage([PALETTES_PAGE.page]);
 		const rows = list(harness).children;
-		assert.deepEqual(rows.map((row) => row.def.name), ["Forest", "Ocean", "Sand"]);
+		assert.deepEqual(
+			rows.map((row) => row.def.name),
+			["Forest", "Ocean", "Sand"],
+		);
 		for (const row of rows) {
 			assert.ok(row.settingEl.firstElementChild?.hasClass("cs-color-circles"), "colours first");
 			const [edit, remove] = row.setting.extraButtons;
 			// The stub keeps a tooltip in `data-cs-tooltip`; Obsidian's is also the button's name.
-			assert.equal((edit!.extraSettingsEl as unknown as HTMLElement).dataset.csTooltip, t("settings.editPaletteAria", { name: row.def.name ?? "" }));
-			assert.ok((remove!.extraSettingsEl as unknown as HTMLElement).hasClass("cs-test-delete"), "Obsidian's ✕ last");
+			assert.equal(
+				(edit!.extraSettingsEl as unknown as HTMLElement).dataset.csTooltip,
+				t("settings.editPaletteAria", { name: row.def.name ?? "" }),
+			);
+			assert.ok(
+				(remove!.extraSettingsEl as unknown as HTMLElement).hasClass("cs-test-delete"),
+				"Obsidian's ✕ last",
+			);
 		}
 	});
 
@@ -150,15 +167,22 @@ describe("the page", () => {
 			assert.deepEqual(confirm.subtitles, [t("confirm.subtitleName", { name: "Ocean" })]);
 			assert.deepEqual(confirm.messages, [t("settings.deletePaletteBody")]);
 			assert.equal(registry.settings.customPalettes.length, 2, "a no keeps it");
-		} finally { confirm.restore(); }
+		} finally {
+			confirm.restore();
+		}
 		const yes = stubConfirm(true);
 		try {
 			list(harness).settingGroup.pressDelete(1);
 			await settle();
-			assert.deepEqual(registry.settings.customPalettes.map((p) => p.name), ["Forest"]);
+			assert.deepEqual(
+				registry.settings.customPalettes.map((p) => p.name),
+				["Forest"],
+			);
 			assert.equal(saves.length, 1);
 			assert.equal(redraws(), 1);
-		} finally { yes.restore(); }
+		} finally {
+			yes.restore();
+		}
 	});
 });
 

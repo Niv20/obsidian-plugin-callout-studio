@@ -78,11 +78,7 @@ export async function setFallbackCallout(plugin: SettingsTabPlugin, id: string):
  * while another fallback is chosen. Returns the function that shows or hides
  * it again, for after a pick.
  */
-export function addFallbackReset(
-	setting: Setting,
-	plugin: SettingsTabPlugin,
-	picker: CalloutCombobox,
-): () => void {
+export function addFallbackReset(setting: Setting, plugin: SettingsTabPlugin, picker: CalloutCombobox): () => void {
 	const fallbackDefault = DEFAULT_SETTINGS.fallbackCalloutId;
 	return addFieldResetButton(
 		setting,

@@ -16,18 +16,11 @@ import { packFor } from "./registry";
 
 /** The slice of CalloutRegistry's SVG cache that resolving actually needs. */
 export interface IconSvgLookup {
-	findIconSvg(
-		pack: IconPackId,
-		name: string,
-		variant: string,
-	): { svg: string } | undefined;
+	findIconSvg(pack: IconPackId, name: string, variant: string): { svg: string } | undefined;
 }
 
 /** Reports icons whose fetch has permanently failed (see MaterialSvgManager). */
-export type IconFailureLookup = (
-	icon: CalloutIcon,
-	role: CalloutRenderRole,
-) => boolean;
+export type IconFailureLookup = (icon: CalloutIcon, role: CalloutRenderRole) => boolean;
 
 /**
  * Memo for the plain (no failure-state) resolver, which is the one requested
@@ -42,10 +35,7 @@ const plainResolvers = new WeakMap<IconSvgLookup, IconResolver>();
  * show — they paint a placeholder either way. Only the settings list and the
  * editor preview distinguish "still downloading" from "gave up".
  */
-export function createIconResolver(
-	lookup: IconSvgLookup,
-	hasFailed?: IconFailureLookup,
-): IconResolver {
+export function createIconResolver(lookup: IconSvgLookup, hasFailed?: IconFailureLookup): IconResolver {
 	if (!hasFailed) {
 		const memoized = plainResolvers.get(lookup);
 		if (memoized) return memoized;
@@ -82,7 +72,5 @@ export interface IconStatusHost {
  * other surface paints a placeholder either way and uses the plain resolver.
  */
 export function createStatusIconResolver(host: IconStatusHost): IconResolver {
-	return createIconResolver(host.registry, (icon, role) =>
-		host.hasIconFetchFailed(icon, role),
-	);
+	return createIconResolver(host.registry, (icon, role) => host.hasIconFetchFailed(icon, role));
 }

@@ -45,8 +45,7 @@ const SIMPLE_ICONS_VERSION = "16.33.0";
  * other exactly — whatever a later refresh adds or drops.
  */
 const PER_LOGO_NOTICES_URL =
-	`https://github.com/Niv20/obsidian-plugin-callout-studio/blob/${PACKS_TAG}` +
-	"/docs/SIMPLE-ICONS-LICENSES.md";
+	`https://github.com/Niv20/obsidian-plugin-callout-studio/blob/${PACKS_TAG}` + "/docs/SIMPLE-ICONS-LICENSES.md";
 
 /** Every logo is drawn on the same 24-unit square, so there is one size. */
 const SIMPLE_ICONS_SIZES = ["24"] as const;

@@ -42,18 +42,31 @@ export interface SettingsFileInspection {
 	salvage: Record<string, unknown> | null;
 }
 
-export async function inspectSettingsFile(host: Pick<SettingsFileHost, "app" | "manifest">): Promise<SettingsFileInspection> {
+export async function inspectSettingsFile(
+	host: Pick<SettingsFileHost, "app" | "manifest">,
+): Promise<SettingsFileInspection> {
 	let raw: string;
 	try {
-		raw = await withTimeout(host.app.vault.adapter.read(settingsDataPath(host)), PRIMARY_IO_TIMEOUT_MS,
-			() => new Error("Settings read timed out"));
-	} catch { return { diagnosis: "unavailable", raw: null, salvage: null }; }
-	const found = (diagnosis: SettingsDiagnosis, salvage: Record<string, unknown> | null = null): SettingsFileInspection =>
-		({ diagnosis, raw, salvage });
+		raw = await withTimeout(
+			host.app.vault.adapter.read(settingsDataPath(host)),
+			PRIMARY_IO_TIMEOUT_MS,
+			() => new Error("Settings read timed out"),
+		);
+	} catch {
+		return { diagnosis: "unavailable", raw: null, salvage: null };
+	}
+	const found = (
+		diagnosis: SettingsDiagnosis,
+		salvage: Record<string, unknown> | null = null,
+	): SettingsFileInspection => ({ diagnosis, raw, salvage });
 	if (!raw.trim()) return found("empty");
 	if (/^(?:<{7}|={7}|>{7})(?:\s|$)/m.test(raw)) return found("merge-markers");
 	let data: unknown;
-	try { data = JSON.parse(raw.replace(/^\uFEFF/, "")); } catch { return found("damaged"); }
+	try {
+		data = JSON.parse(raw.replace(/^\uFEFF/, ""));
+	} catch {
+		return found("damaged");
+	}
 	if (!data || typeof data !== "object" || Array.isArray(data)) return found("damaged");
 	const file = data as Record<string, unknown>;
 	if (isNewerSettingsFormat(file)) return found("newer");

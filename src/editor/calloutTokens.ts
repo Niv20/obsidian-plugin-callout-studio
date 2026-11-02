@@ -41,8 +41,7 @@ import { iterateDocumentCallouts } from "./documentCallouts";
  * title, further whitespace included. That mirrors an Obsidian heading, which
  * shows the spaces you write instead of swallowing them.
  */
-export const HEADING_CALLOUT_RE =
-	/^(#{1,6})[ \t]+\[!([^\]\n\r]+)\][ \t]?(.*)$/;
+export const HEADING_CALLOUT_RE = /^(#{1,6})[ \t]+\[!([^\]\n\r]+)\][ \t]?(.*)$/;
 
 /**
  * Native block callout header prefix (any nesting depth). Lines matching
@@ -55,8 +54,7 @@ export const BLOCKQUOTE_CALLOUT_PREFIX_RE = /^([ \t]*(?:>[ \t]*)+)\[!/;
  * Full block callout header including the id.
  * Captures: 1=quote prefix, 2=raw id.
  */
-export const BLOCKQUOTE_CALLOUT_HEADER_RE =
-	/^([ \t]*(?:>[ \t]*)+)\[!([^\]\n\r]+)\]/;
+export const BLOCKQUOTE_CALLOUT_HEADER_RE = /^([ \t]*(?:>[ \t]*)+)\[!([^\]\n\r]+)\]/;
 
 /**
  * Matches the token at the start of a reading-view heading's rendered text
@@ -107,11 +105,7 @@ export interface OutlineHeadingToken {
 	bracketed: boolean;
 }
 
-function makeOutlineToken(
-	parts: CalloutIdParts,
-	rest: string,
-	bracketed: boolean,
-): OutlineHeadingToken {
+function makeOutlineToken(parts: CalloutIdParts, rest: string, bracketed: boolean): OutlineHeadingToken {
 	return {
 		rawId: parts.id,
 		metadata: parts.metadata,
@@ -132,10 +126,7 @@ function makeOutlineToken(
  * exactly those, so such a candidate would match a *shorter* id and swallow
  * characters that really belong to the title.
  */
-function resolveBareOutlineId(
-	body: string,
-	isKnownId: (rawId: string) => boolean,
-): string | null {
+function resolveBareOutlineId(body: string, isKnownId: (rawId: string) => boolean): string | null {
 	let limit = body.length;
 	let words = 1;
 	for (let i = 0; i < body.length; i++) {
@@ -345,9 +336,7 @@ export function contentPayloadStart(
  * So the render surfaces filter with this instead, and the inner `[!b]{inner}`
  * stays part of the outer pill's text.
  */
-export function nestedInlineTokens(
-	tokens: readonly LineCalloutToken[],
-): Set<LineCalloutToken> {
+export function nestedInlineTokens(tokens: readonly LineCalloutToken[]): Set<LineCalloutToken> {
 	const nested = new Set<LineCalloutToken>();
 	for (const outer of tokens) {
 		if (!outer.content) continue;
@@ -421,12 +410,13 @@ export interface ScanLineOptions {
  * line contains no `[!`. Code and comments contained in this input are ignored. Whole-document
  * consumers use documentCallouts to preserve context across lines.
  */
-export function scanLineForCalloutTokens(
-	rawLine: string,
-	options: ScanLineOptions = {},
-): LineCalloutToken[] {
+export function scanLineForCalloutTokens(rawLine: string, options: ScanLineOptions = {}): LineCalloutToken[] {
 	if (rawLine.indexOf("[!") === -1) return [];
-	const visible = options.visibleLine ?? Array.from(iterateMarkdownSourceLines(rawLine)).map(part => part.visible).join("\n");
+	const visible =
+		options.visibleLine ??
+		Array.from(iterateMarkdownSourceLines(rawLine))
+			.map((part) => part.visible)
+			.join("\n");
 	const line = stripWikilinks(visible);
 	const prefix = markdownPrefix(rawLine);
 	const contentFrom = options.contentFrom ?? prefix.from;
@@ -455,7 +445,8 @@ export function scanLineForCalloutTokens(
 		const parts = splitCalloutMetadata(body);
 		// A blank type (`[!|purple]`) names no callout; Obsidian renders it with
 		// an empty `data-callout`, and there is nothing here for us to resolve.
-		if (!parts.id.trim() || body.includes("[") || !intact(contentFrom, contentFrom + quoteHeader[0].length)) return [];
+		if (!parts.id.trim() || body.includes("[") || !intact(contentFrom, contentFrom + quoteHeader[0].length))
+			return [];
 		return [
 			{
 				role: "regular",
@@ -500,7 +491,8 @@ export function scanLineForCalloutTokens(
 
 	// Inline tokens: manual indexOf scan (no regex) so adjacent tokens,
 	// escapes, and link syntax are handled exactly and cheaply.
-	let searchFrom = inlineScanFrom, nextClose = -1;
+	let searchFrom = inlineScanFrom,
+		nextClose = -1;
 	for (;;) {
 		const idx = line.indexOf("[!", searchFrom);
 		if (idx === -1) break;
@@ -512,13 +504,15 @@ export function scanLineForCalloutTokens(
 		const close = nextClose;
 		if (close === -1) break; // unclosed — nothing further can close either
 		const nestedOpening = line.indexOf("[", idx + 2);
-		if (nestedOpening >= 0 && nestedOpening < close) { searchFrom = nestedOpening; continue; }
+		if (nestedOpening >= 0 && nestedOpening < close) {
+			searchFrom = nestedOpening;
+			continue;
+		}
 		const body = line.slice(idx + 2, close);
 		const parts = splitCalloutMetadata(body);
 		// The \n guard matters when scanning rendered multi-line text nodes
 		// (reading view); raw markdown lines never contain newlines.
-		if (!parts.id.trim() || body.includes("[") || /[\n\r\0]/.test(body) || !intact(idx, close + 1))
-			continue;
+		if (!parts.id.trim() || body.includes("[") || /[\n\r\0]/.test(body) || !intact(idx, close + 1)) continue;
 		if (line[close + 1] === "(") {
 			// Markdown link whose text starts with `!`: [!name](url)
 			searchFrom = close + 1;
@@ -582,10 +576,7 @@ const FENCE_OPEN_RE = /^(?:\s*>\s*)*\s*(`{3,}|~{3,})/;
  * own (e.g. a blockquote body) must still feed them through and discard the
  * answer.
  */
-export function createDocumentLineFilter(): (
-	line: string,
-	index: number,
-) => boolean {
+export function createDocumentLineFilter(): (line: string, index: number) => boolean {
 	// null once the frontmatter block (if any) has been passed.
 	let inFrontmatter: boolean | null = null;
 	// Marker char + minimum length required to close the open fence.
@@ -610,7 +601,8 @@ export function createDocumentLineFilter(): (
 				fence &&
 				fence[1] &&
 				fence[1][0] === fenceMarker[0] &&
-				fence[1].length >= fenceMarker.length && line.slice(fence[0].length).trim() === ""
+				fence[1].length >= fenceMarker.length &&
+				line.slice(fence[0].length).trim() === ""
 			) {
 				fenceMarker = null;
 			}
@@ -789,9 +781,7 @@ const TRUNCATED_HEADING_TOKEN_RE = /^\[!([^\]\n\r]+)$/;
  * Returns null when the text carries no such token — callers must then leave
  * the link untouched.
  */
-export function parseHeadingRefDisplayText(
-	text: string,
-): HeadingRefDisplayToken | null {
+export function parseHeadingRefDisplayText(text: string): HeadingRefDisplayToken | null {
 	// First `[!` that opens a heading segment: at the start, after `#`, or
 	// after the ` > ` separator.
 	let idx = -1;
@@ -800,11 +790,7 @@ export function parseHeadingRefDisplayText(
 		const cand = text.indexOf("[!", search);
 		if (cand === -1) return null;
 		search = cand + 2;
-		if (
-			cand === 0 ||
-			text[cand - 1] === "#" ||
-			(cand >= 3 && text.slice(cand - 3, cand) === " > ")
-		) {
+		if (cand === 0 || text[cand - 1] === "#" || (cand >= 3 && text.slice(cand - 3, cand) === " > ")) {
 			idx = cand;
 			break;
 		}

@@ -1,4 +1,9 @@
-import { SettingsSaveStatus, SettingsPersistenceError, settingsWriteReason, type SettingsSaveReason } from "./settingsSaveStatus";
+import {
+	SettingsSaveStatus,
+	SettingsPersistenceError,
+	settingsWriteReason,
+	type SettingsSaveReason,
+} from "./settingsSaveStatus";
 import type { SettingsCheckpointStore } from "./settingsCheckpoint";
 import type { HistoryReason, SettingsHistoryEntry, SettingsHistoryStore } from "./settingsHistory";
 import { canonical, content } from "./syncTree";
@@ -7,7 +12,6 @@ import { SaveGuard } from "../utils/saveGuard";
 import { StaleWriteGuard, type StaleWriteHost } from "./staleWriteGuard";
 
 export interface SettingsWriterHost extends StaleWriteHost {
-
 	mergeConcurrent?: boolean;
 	checkpoint?: SettingsCheckpointStore;
 	/** Where every accepted state is recorded on this device; best effort. */
@@ -68,11 +72,14 @@ export class SettingsWriter {
 	private lastVisitEdit = 0;
 
 	constructor(private readonly host: SettingsWriterHost) {
-		this.stale = new StaleWriteGuard({ ...host, onBlocked: reason => {
-			if (reason === "missing") this.protectMissingFile();
-			else this.status.fail(reason);
-			host.onBlocked?.(reason);
-		} });
+		this.stale = new StaleWriteGuard({
+			...host,
+			onBlocked: (reason) => {
+				if (reason === "missing") this.protectMissingFile();
+				else this.status.fail(reason);
+				host.onBlocked?.(reason);
+			},
+		});
 		this.sync = host.mergeConcurrent ? new SettingsSync(undefined, host.genesis) : null;
 	}
 
@@ -161,7 +168,9 @@ export class SettingsWriter {
 	}
 
 	matchesLastWrite(json: string, contentOnly = false): boolean {
-		return contentOnly && this.sync ? this.persistedContent === canonical(content(JSON.parse(json))) : this.guard.matches(json);
+		return contentOnly && this.sync
+			? this.persistedContent === canonical(content(JSON.parse(json)))
+			: this.guard.matches(json);
 	}
 
 	/**
@@ -171,7 +180,7 @@ export class SettingsWriter {
 	 */
 	/** What the settings file held when this device last wrote or adopted it; null before then. */
 	get lastSaved(): unknown {
-		return this.persistedContent === null ? null : JSON.parse(this.persistedContent) as unknown;
+		return this.persistedContent === null ? null : (JSON.parse(this.persistedContent) as unknown);
 	}
 
 	persists(data: unknown): boolean {
@@ -180,14 +189,25 @@ export class SettingsWriter {
 
 	/** An unchanged file returning after a transient read failure is healthy again. */
 	confirmUnchangedRead(json: string): void {
-		if (this.frozen || !this.matchesLastWrite(json) ||
-			!["missing", "unreadable", "changed"].includes(this.status.failure ?? "")) return;
-		this.stale.clear(); this.status.clear();
+		if (
+			this.frozen ||
+			!this.matchesLastWrite(json) ||
+			!["missing", "unreadable", "changed"].includes(this.status.failure ?? "")
+		)
+			return;
+		this.stale.clear();
+		this.status.clear();
 	}
 
-	get hasCheckpoint(): boolean { return this.host.checkpoint !== undefined; }
-	get mergesConcurrent(): boolean { return this.sync !== null; }
-	get hasRecoveryState(): boolean { return this.guard.hasBaseline || this.recoveredState; }
+	get hasCheckpoint(): boolean {
+		return this.host.checkpoint !== undefined;
+	}
+	get mergesConcurrent(): boolean {
+		return this.sync !== null;
+	}
+	get hasRecoveryState(): boolean {
+		return this.guard.hasBaseline || this.recoveredState;
+	}
 
 	/** A local recovery copy carries sync clocks, but is not a file baseline. */
 	seedRecovery(data: unknown): void {
@@ -200,13 +220,18 @@ export class SettingsWriter {
 		// A missing primary must not authorize replacing unreadable recovery
 		// storage or a snapshot from a newer build.
 		if (this.status.frozenReason === "newer-version") return;
-		if (!this.frozen || (this.status.frozenReason !== "missing" && this.status.frozenReason !== "recovery-read")) this.freeze("missing");
+		if (!this.frozen || (this.status.frozenReason !== "missing" && this.status.frozenReason !== "recovery-read"))
+			this.freeze("missing");
 		else this.status.fail("missing");
 	}
 
 	async recoveryCopy(): Promise<unknown> {
-		try { return await this.host.checkpoint?.read() ?? null; }
-		catch (error) { this.status.fail("recovery-read"); throw new SettingsPersistenceError("recovery-read", error); }
+		try {
+			return (await this.host.checkpoint?.read()) ?? null;
+		} catch (error) {
+			this.status.fail("recovery-read");
+			throw new SettingsPersistenceError("recovery-read", error);
+		}
 	}
 
 	/** The recovery copy as stored, valid or not; `undefined` when the store cannot say. */
@@ -221,8 +246,11 @@ export class SettingsWriter {
 
 	/** Apply the current history cap even when startup cannot adopt a settings file. */
 	async pruneHistory(): Promise<void> {
-		try { await this.host.history?.prune?.(); }
-		catch (error) { console.debug("[callout-studio] could not prune settings history", error); }
+		try {
+			await this.host.history?.prune?.();
+		} catch (error) {
+			console.debug("[callout-studio] could not prune settings history", error);
+		}
 	}
 
 	/** Forget one state from this device's history; a no-op past a store that lacks one. */
@@ -231,8 +259,12 @@ export class SettingsWriter {
 	}
 
 	async remember(data: unknown): Promise<void> {
-		try { await this.host.checkpoint?.write(data); }
-		catch (error) { this.status.fail("recovery-write"); throw new SettingsPersistenceError("recovery-write", error); }
+		try {
+			await this.host.checkpoint?.write(data);
+		} catch (error) {
+			this.status.fail("recovery-write");
+			throw new SettingsPersistenceError("recovery-write", error);
+		}
 	}
 
 	/**
@@ -246,8 +278,9 @@ export class SettingsWriter {
 	 */
 	async rememberIfPossible(data: unknown): Promise<boolean> {
 		if (!this.host.checkpoint) return true;
-		try { await this.host.checkpoint.write(data); }
-		catch (error) {
+		try {
+			await this.host.checkpoint.write(data);
+		} catch (error) {
 			console.warn("[callout-studio] the device recovery copy could not be updated", error);
 			if (!this.checkpointStale) {
 				this.checkpointStale = true;
@@ -260,16 +293,20 @@ export class SettingsWriter {
 	}
 
 	private async write(data: unknown): Promise<void> {
-		try { await this.host.write(data); }
-		catch (error) {
+		try {
+			await this.host.write(data);
+		} catch (error) {
 			// An adapter can finish the replacement and then reject. Confirm the
 			// exact payload before retrying, rather than treating our own file as sync.
 			try {
 				const current = await this.host.readCurrent?.();
 				if (current != null && canonical(JSON.parse(current)) === canonical(data)) return;
-			} catch { /* The original failure remains the useful diagnostic. */ }
+			} catch {
+				/* The original failure remains the useful diagnostic. */
+			}
 			const reason = error instanceof SettingsPersistenceError ? error.reason : settingsWriteReason(error);
-			this.status.fail(reason); throw new SettingsPersistenceError(reason, error);
+			this.status.fail(reason);
+			throw new SettingsPersistenceError(reason, error);
 		}
 	}
 
@@ -356,7 +393,9 @@ export class SettingsWriter {
 		return this.frozen && !this.quietFreeze;
 	}
 
-	get isDestroyed(): boolean { return this.destroyed || this.closing; }
+	get isDestroyed(): boolean {
+		return this.destroyed || this.closing;
+	}
 
 	/**
 	 * Explicit restoration only. Keep the ordinary disk baseline and freeze
@@ -366,7 +405,7 @@ export class SettingsWriter {
 	 */
 	restoreMissing(isCurrent: () => boolean, preserve: () => Promise<boolean>): Promise<boolean> {
 		const absent = new SaveGuard();
-		return this.replace("missing", isCurrent, preserve, async () => !await this.stale.blocks(absent));
+		return this.replace("missing", isCurrent, preserve, async () => !(await this.stale.blocks(absent)));
 	}
 
 	/**
@@ -375,37 +414,50 @@ export class SettingsWriter {
 	 * bytes the user decided about: a file that changed since, even to one that
 	 * reads, goes back to ordinary adoption instead.
 	 */
-	replaceUnreadable(isCurrent: () => boolean, preserve: () => Promise<boolean>, unchanged: () => Promise<boolean>): Promise<boolean> {
+	replaceUnreadable(
+		isCurrent: () => boolean,
+		preserve: () => Promise<boolean>,
+		unchanged: () => Promise<boolean>,
+	): Promise<boolean> {
 		return this.replace("unreadable", isCurrent, preserve, unchanged);
 	}
 
 	private replace(
-		reason: "missing" | "unreadable", isCurrent: () => boolean,
-		preserve: () => Promise<boolean>, unchanged: () => Promise<boolean>,
+		reason: "missing" | "unreadable",
+		isCurrent: () => boolean,
+		preserve: () => Promise<boolean>,
+		unchanged: () => Promise<boolean>,
 	): Promise<boolean> {
-		if (this.busy || this.holdDepth > 0 || this.destroyed || this.status.frozenReason !== reason) return Promise.resolve(false);
+		if (this.busy || this.holdDepth > 0 || this.destroyed || this.status.frozenReason !== reason)
+			return Promise.resolve(false);
 		const task = this.replacePass(reason, isCurrent, preserve, unchanged);
-		this.inFlight = task.then(() => undefined).finally(() => { this.inFlight = null; });
+		this.inFlight = task
+			.then(() => undefined)
+			.finally(() => {
+				this.inFlight = null;
+			});
 		void this.inFlight.catch(() => undefined);
 		return this.inFlight.then(() => task);
 	}
 
 	private async replacePass(
-		reason: "missing" | "unreadable", isCurrent: () => boolean,
-		preserve: () => Promise<boolean>, unchanged: () => Promise<boolean>,
+		reason: "missing" | "unreadable",
+		isCurrent: () => boolean,
+		preserve: () => Promise<boolean>,
+		unchanged: () => Promise<boolean>,
 	): Promise<boolean> {
 		const revision = this.revision;
-		const current = () => !this.destroyed && this.status.frozenReason === reason &&
-			revision === this.revision && isCurrent();
+		const current = () =>
+			!this.destroyed && this.status.frozenReason === reason && revision === this.revision && isCurrent();
 		if (!current() || !this.stale.enabled) return false;
 		let data = structuredClone(this.host.build());
 		data = this.sync?.prepare(data) ?? data;
 		// No baseline: always a payload, even one equal to the old file.
 		const payload = new SaveGuard().prepare(data)!;
-		if (!await unchanged() || !current()) return false;
-		if (!await preserve() || !current()) return false;
+		if (!(await unchanged()) || !current()) return false;
+		if (!(await preserve()) || !current()) return false;
 		if (this.host.checkpoint) await this.rememberIfPossible(data);
-		if (!current() || !await unchanged() || !current()) return false;
+		if (!current() || !(await unchanged()) || !current()) return false;
 		await this.write(data);
 		if (this.destroyed) return false;
 		this.guard.commit(payload);
@@ -430,9 +482,16 @@ export class SettingsWriter {
 		this.closing = true;
 		const inFlight = this.inFlight;
 		void (async () => {
-			try { await inFlight; } catch { /* Its own caller reported it. */ }
-			try { if (!this.frozen && this.holdDepth === 0) await this.runPass(); }
-			catch (error) { console.warn("[callout-studio] the last settings change before closing was not saved", error); }
+			try {
+				await inFlight;
+			} catch {
+				/* Its own caller reported it. */
+			}
+			try {
+				if (!this.frozen && this.holdDepth === 0) await this.runPass();
+			} catch (error) {
+				console.warn("[callout-studio] the last settings change before closing was not saved", error);
+			}
 			this.destroy();
 		})();
 	}
@@ -449,20 +508,34 @@ export class SettingsWriter {
 	 * Save an isolated manual change and publish it only after persistence
 	 * succeeds. `reason` is what device history records it as.
 	 */
-	commit(data: unknown, isCurrent: () => boolean, publish: () => void, reason: HistoryReason = "edit"): Promise<boolean> {
+	commit(
+		data: unknown,
+		isCurrent: () => boolean,
+		publish: () => void,
+		reason: HistoryReason = "edit",
+	): Promise<boolean> {
 		if (this.busy || this.holdDepth > 0 || this.frozen || this.destroyed) return Promise.resolve(false);
 		const task = this.commitPass(data, isCurrent, publish, reason);
-		this.inFlight = task.then(() => undefined).finally(() => { this.inFlight = null; });
+		this.inFlight = task
+			.then(() => undefined)
+			.finally(() => {
+				this.inFlight = null;
+			});
 		// The caller owns failures. Keep the internal serialization promise handled too.
 		void this.inFlight.catch(() => undefined);
 		return task;
 	}
 
-	private async commitPass(data: unknown, isCurrent: () => boolean, publish: () => void, reason: HistoryReason): Promise<boolean> {
+	private async commitPass(
+		data: unknown,
+		isCurrent: () => boolean,
+		publish: () => void,
+		reason: HistoryReason,
+	): Promise<boolean> {
 		const revision = this.revision;
 		data = this.sync?.prepare(data) ?? data;
 		const payload = this.guard.prepare(data);
-		if (this.stale.enabled && await this.stale.blocks(this.guard)) return false;
+		if (this.stale.enabled && (await this.stale.blocks(this.guard))) return false;
 		if (this.frozen || this.destroyed || revision !== this.revision || !isCurrent()) return false;
 		if (payload !== null) {
 			if (this.host.checkpoint) {
@@ -472,7 +545,7 @@ export class SettingsWriter {
 				await this.rememberIfPossible(this.sync?.prepare(accepted) ?? accepted);
 			}
 			if (this.frozen || this.destroyed || revision !== this.revision || !isCurrent()) return false;
-			if (this.host.checkpoint && this.stale.enabled && await this.stale.blocks(this.guard)) return false;
+			if (this.host.checkpoint && this.stale.enabled && (await this.stale.blocks(this.guard))) return false;
 			if (this.frozen || this.destroyed || revision !== this.revision || !isCurrent()) return false;
 			await this.write(data);
 			this.guard.commit(payload);
@@ -519,7 +592,7 @@ export class SettingsWriter {
 		if (this.frozen || this.destroyed || revision !== this.revision) return;
 		if (this.host.checkpoint) await this.rememberIfPossible(data);
 		if (this.frozen || this.destroyed || revision !== this.revision) return;
-		if (this.host.checkpoint && this.stale.enabled && await this.stale.blocks(this.guard)) return;
+		if (this.host.checkpoint && this.stale.enabled && (await this.stale.blocks(this.guard))) return;
 		if (this.frozen || this.destroyed || revision !== this.revision) return;
 		await this.write(data);
 		// Only now — a throw above leaves the baseline where it was, so the

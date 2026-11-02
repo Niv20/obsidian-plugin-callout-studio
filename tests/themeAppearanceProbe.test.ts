@@ -199,8 +199,7 @@ function emitCallouts(order: readonly string[]): () => void {
 
 /** Answers `color` with whatever the element was labelled with. */
 const labelReader: ComputedStyleReader = (el) => ({
-	getPropertyValue: (prop: string) =>
-		prop === "color" ? (el.getAttribute("data-probe") ?? "") : "",
+	getPropertyValue: (prop: string) => (prop === "color" ? (el.getAttribute("data-probe") ?? "") : ""),
 });
 
 describe("mapping rendered callouts back to ids", () => {
@@ -226,10 +225,7 @@ describe("mapping rendered callouts back to ids", () => {
 		const restore = emitCallouts(["abstract", "question", "warning"]);
 		try {
 			const probe = new ThemeAppearanceProbe(fakeApp(), labelReader);
-			await probe.ensure(
-				["abstract", "note", "question", "warning"],
-				() => {},
-			);
+			await probe.ensure(["abstract", "note", "question", "warning"], () => {});
 			assert.strictEqual(probe.get("note").accent, null, "unmeasured");
 			assert.strictEqual(probe.get("question").accent, "color-question");
 			assert.strictEqual(probe.get("warning").accent, "color-warning");
@@ -458,8 +454,7 @@ function emitSanctumCallouts(ids: readonly string[]): () => void {
 
 /** Answers each property from the node it was declared on, pseudo included. */
 const attrReader: ComputedStyleReader = (el, pseudo) => ({
-	getPropertyValue: (prop: string) =>
-		el.getAttribute(`data-${pseudo ? "before" : "self"}-${prop}`) ?? "",
+	getPropertyValue: (prop: string) => el.getAttribute(`data-${pseudo ? "before" : "self"}-${prop}`) ?? "",
 });
 
 describe("reading the nodes a theme actually paints", () => {
@@ -473,10 +468,7 @@ describe("reading the nodes a theme actually paints", () => {
 			await probe.ensure(["annotation"], () => {});
 			const icon = probe.get("annotation").icon;
 			assert.strictEqual(icon.kind, "mask", "the stencil, not core's svg");
-			assert.strictEqual(
-				icon.kind === "mask" && icon.image,
-				"stencil-annotation",
-			);
+			assert.strictEqual(icon.kind === "mask" && icon.image, "stencil-annotation");
 		} finally {
 			restore();
 		}
@@ -615,12 +607,10 @@ describe("a theme switch that lands mid-pass", () => {
 				cls: "callout",
 				attr: { "data-callout": "bitcoin" },
 			});
-			callout
-				.createDiv({ cls: "callout-title" })
-				.createDiv({
-					cls: "callout-title-inner",
-					attr: { "data-self-color": `${hue}-hue` },
-				});
+			callout.createDiv({ cls: "callout-title" }).createDiv({
+				cls: "callout-title-inner",
+				attr: { "data-self-color": `${hue}-hue` },
+			});
 		};
 		try {
 			const probe = new ThemeAppearanceProbe(app, attrReader);
@@ -705,7 +695,6 @@ describe("teardown", () => {
 	});
 });
 
-
 describe("invalidated asynchronous theme measurements", () => {
 	for (const change of ["same theme CSS reload", "rapid A to B to A", "destroy"] as const) {
 		it(`does not publish an obsolete measurement after ${change}`, async () => {
@@ -715,7 +704,9 @@ describe("invalidated asynchronous theme measurements", () => {
 			};
 			const original = renderer.render;
 			let release!: () => void;
-			const gate = new Promise<void>(resolve => { release = resolve; });
+			const gate = new Promise<void>((resolve) => {
+				release = resolve;
+			});
 			let passes = 0;
 			const notifications: string[] = [];
 			renderer.render = async (_app, _md, el) => {
@@ -730,7 +721,11 @@ describe("invalidated asynchronous theme measurements", () => {
 				const first = probe.ensure(["recite"], () => notifications.push("old"));
 				if (change === "destroy") probe.destroy();
 				else {
-					if (change === "rapid A to B to A") { setTheme("Lumines"); probe.invalidate(); setTheme("ITS Theme"); }
+					if (change === "rapid A to B to A") {
+						setTheme("Lumines");
+						probe.invalidate();
+						setTheme("ITS Theme");
+					}
 					probe.invalidate();
 					await probe.ensure(["recite"], () => notifications.push("new"));
 				}
@@ -738,11 +733,15 @@ describe("invalidated asynchronous theme measurements", () => {
 				await first;
 				// Let the one queued measurement finish without waiting on a callback
 				// that a broken cache could suppress forever.
-				await new Promise<void>(resolve => setImmediate(resolve));
+				await new Promise<void>((resolve) => setImmediate(resolve));
 				assert.deepStrictEqual(notifications, change === "destroy" ? [] : ["new"]);
 				assert.strictEqual(probe.get("recite").accent, change === "destroy" ? null : "new");
 				assert.strictEqual(passes, change === "destroy" ? 1 : 2);
-			} finally { release(); probe.destroy(); renderer.render = original; }
+			} finally {
+				release();
+				probe.destroy();
+				renderer.render = original;
+			}
 		});
 	}
 });

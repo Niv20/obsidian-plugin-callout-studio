@@ -120,12 +120,7 @@ function mount(
 		menu,
 		label: () => field.querySelector(".cs-dropdown-field-label")?.textContent ?? "",
 		rows,
-		names: () =>
-			rows().map(
-				(row) =>
-					row.querySelector(".callout-studio-suggestion-name")?.textContent ??
-					"",
-			),
+		names: () => rows().map((row) => row.querySelector(".callout-studio-suggestion-name")?.textContent ?? ""),
 		open: () => field.fire("click"),
 		type: (text: string) => {
 			input.value = text;
@@ -149,8 +144,7 @@ function clickRow(h: Harness, index: number): void {
 	row.fire("click");
 }
 
-const isOpen = (h: Harness): boolean =>
-	!h.popup.classList.contains("cs-combobox-popup-hidden");
+const isOpen = (h: Harness): boolean => !h.popup.classList.contains("cs-combobox-popup-hidden");
 
 /* -------------------------------------------------------------------------- */
 
@@ -173,7 +167,10 @@ describe("CalloutCombobox — the closed field", () => {
 				assert.strictEqual(h.field.querySelector("[aria-label]"), null);
 				assert.strictEqual(h.field.querySelector("[title]"), null);
 			}
-		} finally { first.box.destroy(); second.box.destroy(); }
+		} finally {
+			first.box.destroy();
+			second.box.destroy();
+		}
 	});
 	it("can show an ID in the sidebar without changing names in its popup rows", () => {
 		const h = mount(CHOICES, { labelOf: (entry) => entry.id });
@@ -211,10 +208,7 @@ describe("CalloutCombobox — the closed field", () => {
 			onChange: () => {},
 		});
 
-		assert.strictEqual(
-			host.querySelector(".cs-dropdown-field-icon")?.style.color,
-			"#88bbee",
-		);
+		assert.strictEqual(host.querySelector(".cs-dropdown-field-icon")?.style.color, "#88bbee");
 		fakeDom.light();
 	});
 
@@ -274,9 +268,7 @@ describe("CalloutCombobox — opening and filtering", () => {
 		h.open();
 
 		const idLine = h.rows()[0]?.querySelector(".callout-studio-suggestion-id") as
-			| { children: { textContent: string; className: string }[]; textContent: string }
-			| null
-			| undefined;
+			{ children: { textContent: string; className: string }[]; textContent: string } | null | undefined;
 		assert.deepStrictEqual(
 			idLine?.children.map((item) => item.textContent),
 			["abstract, ", "summary, ", "tldr"],
@@ -293,10 +285,7 @@ describe("CalloutCombobox — opening and filtering", () => {
 		h.type("abs");
 
 		assert.deepStrictEqual(h.names(), ["Abstract"]);
-		assert.strictEqual(
-			h.rows()[0]?.querySelector(".callout-studio-suggestion-id")?.textContent,
-			"abstract",
-		);
+		assert.strictEqual(h.rows()[0]?.querySelector(".callout-studio-suggestion-id")?.textContent, "abstract");
 	});
 
 	it("matches a substring anywhere, not a fuzzy scatter", () => {
@@ -343,10 +332,7 @@ describe("CalloutCombobox — choosing", () => {
 
 		h.key("ArrowDown");
 		assert.ok(h.rows()[2]?.classList.contains("is-active"));
-		assert.strictEqual(
-			h.input.getAttribute("aria-activedescendant"),
-			h.rows()[2]?.id,
-		);
+		assert.strictEqual(h.input.getAttribute("aria-activedescendant"), h.rows()[2]?.id);
 
 		h.key("Enter");
 		assert.deepStrictEqual(h.committed, ["warning"]);
@@ -437,16 +423,10 @@ describe("CalloutCombobox — lifecycle", () => {
 		const before = fakeDom.document.listeners.get("click")?.length ?? 0;
 
 		const h = mount();
-		assert.strictEqual(
-			fakeDom.document.listeners.get("click")?.length ?? 0,
-			before + 1,
-		);
+		assert.strictEqual(fakeDom.document.listeners.get("click")?.length ?? 0, before + 1);
 
 		h.box.destroy();
-		assert.strictEqual(
-			fakeDom.document.listeners.get("click")?.length ?? 0,
-			before,
-		);
+		assert.strictEqual(fakeDom.document.listeners.get("click")?.length ?? 0, before);
 	});
 
 	it("an empty choice list disables the field and refuses to open", () => {
@@ -549,10 +529,7 @@ describe("CalloutCombobox — creating the callout you searched for", () => {
 		assert.strictEqual(h.menu.querySelector(".callout-studio-empty-state"), null);
 		const createRow = h.menu.querySelector(".callout-studio-suggestion-create-new");
 		assert.ok(createRow, "expected a create row");
-		assert.ok(
-			createRow.querySelector(".callout-studio-suggestion-name")?.textContent
-				?.includes("Recipe"),
-		);
+		assert.ok(createRow.querySelector(".callout-studio-suggestion-name")?.textContent?.includes("Recipe"));
 	});
 
 	it("adopts what was created, and reports it as the new value", async () => {
@@ -593,10 +570,7 @@ describe("CalloutCombobox — creating the callout you searched for", () => {
 
 		h.field.fire("click");
 
-		assert.strictEqual(
-			h.menu.querySelector(".callout-studio-suggestion-create-new"),
-			null,
-		);
+		assert.strictEqual(h.menu.querySelector(".callout-studio-suggestion-create-new"), null);
 	});
 });
 
@@ -616,8 +590,7 @@ describe("renderComboboxRows — group headings", () => {
 			ariaLabel: "Color",
 			placeholder: "Search colors…",
 			emptyText: () => "none",
-			itemsFor: (q) =>
-				items.filter((i) => i.name.toLowerCase().includes(q.toLowerCase())),
+			itemsFor: (q) => items.filter((i) => i.name.toLowerCase().includes(q.toLowerCase())),
 			renderRow: (rowEl, item) => rowEl.createSpan({ text: item.name }),
 			groupOf: (item) => ({ key: item.group, label: item.group }),
 			labelOf: (item) => item.name,
@@ -635,9 +608,7 @@ describe("renderComboboxRows — group headings", () => {
 	}
 
 	const labels = (host: FakeElement): string[] =>
-		host
-			.querySelectorAll(".cs-combobox-group-label")
-			.map((e) => e.textContent ?? "");
+		host.querySelectorAll(".cs-combobox-group-label").map((e) => e.textContent ?? "");
 
 	it("opens one heading per run, not one per row", () => {
 		assert.deepStrictEqual(labels(grouped("")), ["custom", "preset"]);
@@ -653,9 +624,10 @@ describe("renderComboboxRows — group headings", () => {
 		const host = grouped("");
 		const groups = host.querySelectorAll(".cs-combobox-group");
 		assert.strictEqual(groups.length, 2);
-		assert.deepStrictEqual(groups.map((group) =>
-			group.querySelectorAll(".cs-combobox-option").map((row) => row.textContent)),
-		[["Aqua", "Amber"], ["Crimson"]]);
+		assert.deepStrictEqual(
+			groups.map((group) => group.querySelectorAll(".cs-combobox-option").map((row) => row.textContent)),
+			[["Aqua", "Amber"], ["Crimson"]],
+		);
 		for (const group of groups) {
 			const heading = group.querySelector(".cs-combobox-group-label");
 			assert.ok(heading);
@@ -669,11 +641,12 @@ describe("renderComboboxRows — group headings", () => {
 		const host = grouped("", (id) => committed.push(id));
 		const input = host.querySelector(".cs-combobox-input");
 		assert.ok(input);
-		const key = (value: string) => input.fire("keydown", {
-			key: value,
-			preventDefault: () => {},
-			stopPropagation: () => {},
-		});
+		const key = (value: string) =>
+			input.fire("keydown", {
+				key: value,
+				preventDefault: () => {},
+				stopPropagation: () => {},
+			});
 		key("ArrowDown");
 		key("ArrowDown");
 		const active = host.querySelector(".cs-combobox-option.is-active");
@@ -704,10 +677,9 @@ describe("New command — Callout type list", () => {
 		try {
 			const input = host.querySelector(".cs-combobox-input");
 			assert.ok(input);
-			const labels = () => host.querySelectorAll(".cs-combobox-group-label")
-				.map((label) => label.textContent);
-			const names = () => host.querySelectorAll(".callout-studio-suggestion-name")
-				.map((name) => name.textContent);
+			const labels = () => host.querySelectorAll(".cs-combobox-group-label").map((label) => label.textContent);
+			const names = () =>
+				host.querySelectorAll(".callout-studio-suggestion-name").map((name) => name.textContent);
 
 			host.querySelector(".cs-dropdown-field")?.fire("click");
 			assert.deepStrictEqual(labels(), []);
@@ -765,9 +737,7 @@ describe("the Default fallback callout's picker end to end", () => {
 		host.querySelector(".cs-dropdown-field")?.fire("click");
 		// The registry seeds the built-ins alongside these, so the assertion is
 		// about who is present, not about the whole list.
-		const names = host
-			.querySelectorAll(".callout-studio-suggestion-name")
-			.map((e) => e.textContent);
+		const names = host.querySelectorAll(".callout-studio-suggestion-name").map((e) => e.textContent);
 		for (const offered of ["Abstract", "Note", "Warning"]) {
 			assert.ok(names.includes(offered), `${offered} missing`);
 		}
@@ -812,9 +782,6 @@ describe("the Default fallback callout's picker end to end", () => {
 
 		createFallbackPicker(harness.plugin, asEl(el()), () => {}).destroy();
 
-		assert.strictEqual(
-			fakeDom.document.listeners.get("click")?.length ?? 0,
-			before,
-		);
+		assert.strictEqual(fakeDom.document.listeners.get("click")?.length ?? 0, before);
 	});
 });

@@ -124,10 +124,7 @@ describe("mergePalettes — a name is how the user tells palettes apart", () => 
 	});
 
 	it("replaces the palette of the same name, keeping the vault's id and place", () => {
-		const merge = mergePalettes(
-			[pal("a", "Blue 2"), pal("z", "Zed")],
-			[pal("file-id", "Blue 2", "#ff0000")],
-		);
+		const merge = mergePalettes([pal("a", "Blue 2"), pal("z", "Zed")], [pal("file-id", "Blue 2", "#ff0000")]);
 		assert.deepStrictEqual(palIds(merge), ["a", "z"]);
 		assert.strictEqual(merge.palettes[0]?.colorLight, "#ff0000");
 		assert.strictEqual(merge.remap.get("file-id"), "a");

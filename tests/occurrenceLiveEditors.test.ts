@@ -6,7 +6,9 @@ import { registerOccurrenceIndex } from "../src/usage/registerOccurrenceIndex";
 import { deferred, occurrenceVault } from "./occurrenceIndexHarness";
 
 const previousWindow = Object.getOwnPropertyDescriptor(globalThis, "window");
-before(() => { Object.defineProperty(globalThis, "window", { configurable: true, value: globalThis }); });
+before(() => {
+	Object.defineProperty(globalThis, "window", { configurable: true, value: globalThis });
+});
 after(() => {
 	if (previousWindow) Object.defineProperty(globalThis, "window", previousWindow);
 	else Reflect.deleteProperty(globalThis, "window");
@@ -23,25 +25,57 @@ function editorHarness(initial: Record<string, string>) {
 	h.app.workspace = {
 		getLeavesOfType: () => views.map((view) => ({ view })),
 		getActiveViewOfType: () => active,
-		on: (name: string, cb: (...args: unknown[]) => void) => { events.set(name, cb); return {}; },
+		on: (name: string, cb: (...args: unknown[]) => void) => {
+			events.set(name, cb);
+			return {};
+		},
 	} as unknown as App["workspace"];
 	h.app.vault.on = ((name: string, cb: (...args: unknown[]) => void) => {
-		events.set(name, cb); return {};
+		events.set(name, cb);
+		return {};
 	}) as typeof h.app.vault.on;
 	function open(file: TFile, initialText: string) {
 		let text = initialText;
-		const view = Object.assign(new MarkdownView({} as WorkspaceLeaf), { file, editor: {
-			getValue: () => { bufferReads++; return text; },
-		} });
+		const view = Object.assign(new MarkdownView({} as WorkspaceLeaf), {
+			file,
+			editor: {
+				getValue: () => {
+					bufferReads++;
+					return text;
+				},
+			},
+		});
 		views.push(view);
 		active = view;
-		return { view, edit: (next: string) => { text = next; }, close: () => {
-			views.splice(views.indexOf(view), 1); if (active === view) active = null;
-		} };
+		return {
+			view,
+			edit: (next: string) => {
+				text = next;
+			},
+			close: () => {
+				views.splice(views.indexOf(view), 1);
+				if (active === view) active = null;
+			},
+		};
 	}
-	const plugin = { app: h.app, registerEvent() {}, register: (cb: () => void) => disposers.push(cb) } as unknown as Plugin;
-	return { ...h, open, plugin, events, get bufferReads() { return bufferReads; },
-		blur: () => { active = null; }, dispose: () => disposers.forEach((cb) => cb()) };
+	const plugin = {
+		app: h.app,
+		registerEvent() {},
+		register: (cb: () => void) => disposers.push(cb),
+	} as unknown as Plugin;
+	return {
+		...h,
+		open,
+		plugin,
+		events,
+		get bufferReads() {
+			return bufferReads;
+		},
+		blur: () => {
+			active = null;
+		},
+		dispose: () => disposers.forEach((cb) => cb()),
+	};
 }
 
 async function settle(): Promise<void> {
@@ -144,11 +178,15 @@ describe("live editor occurrence source", () => {
 		h.open(h.files.get("a.md")!, "[!buffer]");
 		const index = getCalloutOccurrenceIndex(h.app);
 		await index.ensureFresh();
-		const revision = index.revision, dataRevision = index.dataRevision, reads = h.bufferReads;
-		index.editorsChanged(); index.editorsChanged();
+		const revision = index.revision,
+			dataRevision = index.dataRevision,
+			reads = h.bufferReads;
+		index.editorsChanged();
+		index.editorsChanged();
 		assert.equal(index.revision, revision);
 		assert.equal(h.bufferReads, reads);
-		index.invalidateEditor("a.md"); index.invalidateEditor("a.md");
+		index.invalidateEditor("a.md");
+		index.invalidateEditor("a.md");
 		assert.equal(index.dataRevision, dataRevision, "typing reuses query data until the next scan publishes");
 		index.dispose();
 	});
@@ -158,29 +196,38 @@ describe("live editor occurrence source", () => {
 		const editor = h.open(h.files.get("a.md")!, "[!original]");
 		const index = getCalloutOccurrenceIndex(h.app);
 		await index.ensureFresh();
-		const gate = deferred<string>(); h.held.set("b.md", gate.promise);
+		const gate = deferred<string>();
+		h.held.set("b.md", gate.promise);
 		index.invalidate("b.md");
-		editor.edit("[!middle]"); index.invalidateEditor("a.md");
+		editor.edit("[!middle]");
+		index.invalidateEditor("a.md");
 		const pass = index.ensureFresh();
 		while (h.reads.filter((path) => path === "b.md").length < 2) await Promise.resolve();
-		editor.edit("[!latest] [!latest]"); index.invalidateEditor("a.md");
-		gate.resolve("[!b]"); await pass;
+		editor.edit("[!latest] [!latest]");
+		index.invalidateEditor("a.md");
+		gate.resolve("[!b]");
+		await pass;
 		assert.equal(index.status, "stale");
 		assert.equal(index.query(["original"]).totalCount, 1, "canceled replacement retains previous visible rows");
-		h.held.clear(); await index.ensureFresh();
+		h.held.clear();
+		await index.ensureFresh();
 		assert.equal(index.query(["latest"]).totalCount, 2);
 		assert.equal(index.query(["original"]).totalCount, 0);
 		index.dispose();
 	});
-
 });
 
 describe("automatic occurrence refresh lifecycle", () => {
 	it("debounces buffer reads, automatically refreshes explicit invalidation, and cancels timers on unload", async (context) => {
 		const callbacks = new Map<number, () => void>();
 		let nextTimer = 0;
-		context.mock.method(window, "setTimeout", (cb: () => void) => { callbacks.set(++nextTimer, cb); return nextTimer; });
-		context.mock.method(window, "clearTimeout", (id: number) => { callbacks.delete(id); });
+		context.mock.method(window, "setTimeout", (cb: () => void) => {
+			callbacks.set(++nextTimer, cb);
+			return nextTimer;
+		});
+		context.mock.method(window, "clearTimeout", (id: number) => {
+			callbacks.delete(id);
+		});
 		const h = editorHarness({ "a.md": "[!disk]" });
 		const editor = h.open(h.files.get("a.md")!, "[!initial]");
 		registerOccurrenceIndex(h.plugin);
@@ -195,13 +242,17 @@ describe("automatic occurrence refresh lifecycle", () => {
 		assert.equal(h.bufferReads, reads, "keystrokes never read the entire buffer");
 		assert.equal(callbacks.size, 1);
 		let callback = [...callbacks.values()][0]!;
-		callbacks.clear(); callback(); await settle();
+		callbacks.clear();
+		callback();
+		await settle();
 		assert.equal(index.query(["update-4"]).totalCount, 1);
 		editor.edit("[!navigation-refresh]");
 		index.invalidate("a.md");
 		assert.equal(callbacks.size, 1, "navigation invalidation schedules its own refresh");
 		callback = [...callbacks.values()][0]!;
-		callbacks.clear(); callback(); await settle();
+		callbacks.clear();
+		callback();
+		await settle();
 		assert.equal(index.query(["navigation-refresh"]).totalCount, 1);
 		h.events.get("editor-change")!(editor.view.editor, editor.view);
 		h.dispose();
@@ -212,8 +263,13 @@ describe("automatic occurrence refresh lifecycle", () => {
 	it("does not keep retrying unreadable files without another source change", async (context) => {
 		const callbacks = new Map<number, () => void>();
 		let nextTimer = 0;
-		context.mock.method(window, "setTimeout", (cb: () => void) => { callbacks.set(++nextTimer, cb); return nextTimer; });
-		context.mock.method(window, "clearTimeout", (id: number) => { callbacks.delete(id); });
+		context.mock.method(window, "setTimeout", (cb: () => void) => {
+			callbacks.set(++nextTimer, cb);
+			return nextTimer;
+		});
+		context.mock.method(window, "clearTimeout", (id: number) => {
+			callbacks.delete(id);
+		});
 		const h = editorHarness({ "a.md": "[!a]" });
 		registerOccurrenceIndex(h.plugin);
 		const index = getCalloutOccurrenceIndex(h.app);
@@ -221,7 +277,9 @@ describe("automatic occurrence refresh lifecycle", () => {
 		h.failures.add("a.md");
 		index.invalidate("a.md");
 		const callback = [...callbacks.values()][0]!;
-		callbacks.clear(); callback(); await settle();
+		callbacks.clear();
+		callback();
+		await settle();
 		assert.equal(index.status, "partial");
 		assert.equal(callbacks.size, 0);
 		h.dispose();
@@ -229,8 +287,13 @@ describe("automatic occurrence refresh lifecycle", () => {
 	it("follows another change arriving during its retry without losing the newest source", async (context) => {
 		const callbacks = new Map<number, () => void>();
 		let nextTimer = 0;
-		context.mock.method(window, "setTimeout", (cb: () => void) => { callbacks.set(++nextTimer, cb); return nextTimer; });
-		context.mock.method(window, "clearTimeout", (id: number) => { callbacks.delete(id); });
+		context.mock.method(window, "setTimeout", (cb: () => void) => {
+			callbacks.set(++nextTimer, cb);
+			return nextTimer;
+		});
+		context.mock.method(window, "clearTimeout", (id: number) => {
+			callbacks.delete(id);
+		});
 		const h = editorHarness({ "a.md": "[!initial]" });
 		registerOccurrenceIndex(h.plugin);
 		const index = getCalloutOccurrenceIndex(h.app);
@@ -240,17 +303,25 @@ describe("automatic occurrence refresh lifecycle", () => {
 		index.invalidate("a.md");
 		const runTimer = async (): Promise<void> => {
 			const callback = [...callbacks.values()][0]!;
-			callbacks.clear(); callback(); await settle();
+			callbacks.clear();
+			callback();
+			await settle();
 		};
 		await runTimer();
-		h.put("a.md", "[!second]"); index.invalidate("a.md");
+		h.put("a.md", "[!second]");
+		index.invalidate("a.md");
 		await runTimer(); // The event joins the pending initial pass.
-		gate.resolve("[!initial]"); await settle();
-		const secondGate = deferred<string>(); h.held.set("a.md", secondGate.promise);
+		gate.resolve("[!initial]");
+		await settle();
+		const secondGate = deferred<string>();
+		h.held.set("a.md", secondGate.promise);
 		await runTimer();
-		h.put("a.md", "[!third]"); index.invalidate("a.md");
+		h.put("a.md", "[!third]");
+		index.invalidate("a.md");
 		await runTimer(); // Another event joins the retry while it is still reading.
-		secondGate.resolve("[!second]"); await settle(); h.held.clear();
+		secondGate.resolve("[!second]");
+		await settle();
+		h.held.clear();
 		await runTimer();
 		assert.equal(index.status, "ready");
 		assert.equal(index.query(["third"]).totalCount, 1);
@@ -264,7 +335,8 @@ describe("automatic occurrence refresh lifecycle", () => {
 		registerOccurrenceIndex(h.plugin);
 		const index = getCalloutOccurrenceIndex(h.app);
 		h.events.get("editor-change")!(editor.view.editor, editor.view);
-		editor.close(); h.events.get("layout-change")!();
+		editor.close();
+		h.events.get("layout-change")!();
 		assert.equal(index.status, "idle");
 		assert.equal(h.bufferReads, 0);
 		assert.equal(h.reads.length, 0);
@@ -275,5 +347,4 @@ describe("automatic occurrence refresh lifecycle", () => {
 		assert.equal(index.status, "stale");
 		h.dispose();
 	});
-
 });

@@ -6,28 +6,19 @@ interface DefinitionLookup {
 	get(id: string): CalloutDefinition | undefined;
 }
 
-export function fallbackSourceFor(
-	registry: DefinitionLookup,
-	fallbackCalloutId: string,
-): CalloutDefinition {
-	const noteDefault =
-		DEFAULT_CALLOUTS.find((c) => c.id === "note") ?? DEFAULT_CALLOUTS[0]!;
+export function fallbackSourceFor(registry: DefinitionLookup, fallbackCalloutId: string): CalloutDefinition {
+	const noteDefault = DEFAULT_CALLOUTS.find((c) => c.id === "note") ?? DEFAULT_CALLOUTS[0]!;
 	return registry.get(fallbackCalloutId || "note") ?? noteDefault;
 }
 
-export function buildDiscoveredRow(
-	id: string,
-	fallback: CalloutDefinition,
-): CalloutDefinition {
+export function buildDiscoveredRow(id: string, fallback: CalloutDefinition): CalloutDefinition {
 	return {
 		...fallback,
 
 		icon: { ...fallback.icon },
 
 		bgGradient: fallback.bgGradient ? { ...fallback.bgGradient } : undefined,
-		iconAdjust: fallback.iconAdjust
-			? structuredClone(fallback.iconAdjust)
-			: undefined,
+		iconAdjust: fallback.iconAdjust ? structuredClone(fallback.iconAdjust) : undefined,
 		id,
 
 		displayName: obsidianDefaultTitle(id),
@@ -40,10 +31,7 @@ export function buildDiscoveredRow(
 	};
 }
 
-export function mirroredFallbackRow(
-	def: CalloutDefinition,
-	fallback: CalloutDefinition,
-): CalloutDefinition | null {
+export function mirroredFallbackRow(def: CalloutDefinition, fallback: CalloutDefinition): CalloutDefinition | null {
 	const next: CalloutDefinition = {
 		...def,
 		icon: { ...fallback.icon },
@@ -58,9 +46,7 @@ export function mirroredFallbackRow(
 		textColorLight: fallback.textColorLight,
 		textColorDark: fallback.textColorDark,
 
-		iconAdjust: fallback.iconAdjust
-			? structuredClone(fallback.iconAdjust)
-			: undefined,
+		iconAdjust: fallback.iconAdjust ? structuredClone(fallback.iconAdjust) : undefined,
 		iconOffsetX: fallback.iconOffsetX,
 		iconOffsetY: fallback.iconOffsetY,
 		iconSize: fallback.iconSize,

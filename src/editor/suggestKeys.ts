@@ -29,17 +29,12 @@ interface SuggestionList {
  * A character typed with Cmd, or with Ctrl but no Alt, is a hotkey rather than
  * typing, though, and passes through untouched.
  */
-export function acceptOnKey<T>(
-	suggest: EditorSuggest<T>,
-	modifiers: Modifier[] | null,
-	key: string,
-): void {
+export function acceptOnKey<T>(suggest: EditorSuggest<T>, modifiers: Modifier[] | null, key: string): void {
 	suggest.scope.register(modifiers, key, (evt: KeyboardEvent) => {
 		// Mid-composition the key belongs to the input method, not to us.
 		if (evt.isComposing) return true;
 		if (key.length === 1 && (evt.metaKey || (evt.ctrlKey && !evt.altKey))) return true;
-		const list = (suggest as unknown as { suggestions?: SuggestionList })
-			.suggestions;
+		const list = (suggest as unknown as { suggestions?: SuggestionList }).suggestions;
 		// `false` consumes the key; anything else lets it do what it would have.
 		return list?.useSelectedItem(evt) ? false : true;
 	});

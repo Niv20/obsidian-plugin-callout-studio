@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { App, Modal } from "obsidian";
-import { captureMenuEscape, installModalMenuScope, registerMenuScopeHost, removeModalMenuScope } from "../src/ui/menuEscape";
+import {
+	captureMenuEscape,
+	installModalMenuScope,
+	registerMenuScopeHost,
+	removeModalMenuScope,
+} from "../src/ui/menuEscape";
 import { asEl, FakeDocument } from "./support/fakeDom";
 import { TestKeymap, TestScope } from "./support/fakeKeymap";
 
@@ -12,7 +17,10 @@ function mount(keymap = new TestKeymap()) {
 	const input = root.createEl("input");
 	const scope = new TestScope();
 	let modalCloses = 0;
-	scope.register([], "Escape", () => { modalCloses++; return false; });
+	scope.register([], "Escape", () => {
+		modalCloses++;
+		return false;
+	});
 	keymap.pushScope(scope);
 	const modal = { modalEl, app: { keymap }, scope } as unknown as Modal;
 	installModalMenuScope(modal);
@@ -21,28 +29,49 @@ function mount(keymap = new TestKeymap()) {
 	let unregister = (): void => {};
 	const reopen = (): void => {
 		open = true;
-		unregister = captureMenuEscape(asEl(root), () => open, () => {
-			open = false;
-			menuCloses++;
-			unregister();
-		});
+		unregister = captureMenuEscape(
+			asEl(root),
+			() => open,
+			() => {
+				open = false;
+				menuCloses++;
+				unregister();
+			},
+		);
 	};
 	reopen();
 	return {
-		modal, input, modalEl, keymap, doc, scope, reopen, unregister: () => unregister(),
+		modal,
+		input,
+		modalEl,
+		keymap,
+		doc,
+		scope,
+		reopen,
+		unregister: () => unregister(),
 		menuCloses: () => menuCloses,
 		modalCloses: () => modalCloses,
 		press: (target: unknown = input, additions: Partial<KeyboardEvent> = {}) => {
 			let prevented = false;
 			let stopped = false;
 			keymap.handle({
-				key: "Escape", target, ...additions,
-				preventDefault: () => { prevented = true; },
-				stopPropagation: () => { stopped = true; },
+				key: "Escape",
+				target,
+				...additions,
+				preventDefault: () => {
+					prevented = true;
+				},
+				stopPropagation: () => {
+					stopped = true;
+				},
 			} as KeyboardEvent);
 			return { prevented, stopped };
 		},
-		dispose: () => { unregister(); removeModalMenuScope(modal); keymap.popScope(scope); },
+		dispose: () => {
+			unregister();
+			removeModalMenuScope(modal);
+			keymap.popScope(scope);
+		},
 	};
 }
 
@@ -56,16 +85,26 @@ describe("popup Escape within Obsidian's keymap", () => {
 			h.press();
 			assert.equal(h.menuCloses(), 1);
 			assert.equal(h.modalCloses(), 1);
-		} finally { h.dispose(); }
+		} finally {
+			h.dispose();
+		}
 	});
 
 	it("does not consume other keys, shortcuts, or IME input", () => {
 		const h = mount();
 		try {
-			for (const additions of [{ key: "Enter" }, { ctrlKey: true }, { metaKey: true }, { altKey: true }, { isComposing: true }])
+			for (const additions of [
+				{ key: "Enter" },
+				{ ctrlKey: true },
+				{ metaKey: true },
+				{ altKey: true },
+				{ isComposing: true },
+			])
 				assert.deepEqual(h.press(h.input, additions), { prevented: false, stopped: false });
 			assert.equal(h.menuCloses(), 0);
-		} finally { h.dispose(); }
+		} finally {
+			h.dispose();
+		}
 	});
 
 	it("reinstalls without duplicate scopes and removes the child scope on close", () => {
@@ -88,7 +127,9 @@ describe("popup Escape within Obsidian's keymap", () => {
 			h.press();
 			assert.equal(h.menuCloses(), 0);
 			assert.equal(h.modalCloses(), 1);
-		} finally { h.dispose(); }
+		} finally {
+			h.dispose();
+		}
 	});
 
 	it("keeps stacked modal scopes isolated and restores the underlying modal on dismissal", () => {
@@ -102,7 +143,10 @@ describe("popup Escape within Obsidian's keymap", () => {
 			lower.press();
 			assert.equal(lower.menuCloses(), 1);
 			assert.equal(lower.modalCloses(), 0);
-		} finally { upper.dispose(); lower.dispose(); }
+		} finally {
+			upper.dispose();
+			lower.dispose();
+		}
 	});
 
 	it("restores the actual Settings scope even when the popup inherits the public app scope", () => {
@@ -113,13 +157,28 @@ describe("popup Escape within Obsidian's keymap", () => {
 		const settingsScope = new TestScope(appScope);
 		const keymap = new TestKeymap();
 		let settingsCloses = 0;
-		settingsScope.register([], "Escape", () => { settingsCloses++; return false; });
+		settingsScope.register([], "Escape", () => {
+			settingsCloses++;
+			return false;
+		});
 		keymap.pushScope(settingsScope);
 		const app = { scope: appScope, keymap } as unknown as App;
 		const unregisterHost = registerMenuScopeHost(asEl(root), app);
 		let open = true;
-		const releaseMenu = captureMenuEscape(asEl(root), () => open, () => { open = false; releaseMenu(); });
-		const event = { key: "Escape", target: input, preventDefault() {}, stopPropagation() {} } as unknown as KeyboardEvent;
+		const releaseMenu = captureMenuEscape(
+			asEl(root),
+			() => open,
+			() => {
+				open = false;
+				releaseMenu();
+			},
+		);
+		const event = {
+			key: "Escape",
+			target: input,
+			preventDefault() {},
+			stopPropagation() {},
+		} as unknown as KeyboardEvent;
 		keymap.handle(event);
 		assert.equal(open, false);
 		assert.equal(settingsCloses, 0);

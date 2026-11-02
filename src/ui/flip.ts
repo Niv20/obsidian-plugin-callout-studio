@@ -51,11 +51,7 @@ export function cancelReorderAnimation(row: HTMLElement): void {
  * Run `mutate` (which reorders `container`'s direct children) and animate every
  * row that changed position with a FLIP slide.
  */
-export function animateReorder(
-	container: HTMLElement,
-	mutate: () => void,
-	opts: AnimateReorderOptions = {},
-): void {
+export function animateReorder(container: HTMLElement, mutate: () => void, opts: AnimateReorderOptions = {}): void {
 	const { keyOf = (el) => el, skip, duration = REORDER_DURATION_MS } = opts;
 
 	if (prefersReducedMotion()) {
@@ -64,9 +60,7 @@ export function animateReorder(
 	}
 
 	const kids = (): HTMLElement[] =>
-		Array.from(container.children).filter((c): c is HTMLElement =>
-			c.instanceOf(HTMLElement),
-		);
+		Array.from(container.children).filter((c): c is HTMLElement => c.instanceOf(HTMLElement));
 
 	// First: record where each row currently renders (including any in-flight
 	// slide transform — that is its visual position right now).
@@ -91,10 +85,10 @@ export function animateReorder(
 		const dy = oldTop - el.getBoundingClientRect().top;
 		if (Math.abs(dy) < 0.5) continue;
 
-		const anim = el.animate(
-			[{ transform: `translateY(${dy}px)` }, { transform: "translateY(0px)" }],
-			{ duration, easing: REORDER_EASING },
-		);
+		const anim = el.animate([{ transform: `translateY(${dy}px)` }, { transform: "translateY(0px)" }], {
+			duration,
+			easing: REORDER_EASING,
+		});
 		slideAnims.set(el, anim);
 		anim.addEventListener("finish", () => {
 			if (slideAnims.get(el) === anim) slideAnims.delete(el);

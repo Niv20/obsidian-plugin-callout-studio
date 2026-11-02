@@ -32,10 +32,7 @@ import { showNotice } from "../../ui/mascot/mascotNotices";
  * fresh per click, since a detached input built inside the click handler was
  * unreliable for actually showing Chromium's file chooser.
  */
-export async function processImportedJSON(
-	ctx: SettingsContext,
-	file: File,
-): Promise<void> {
+export async function processImportedJSON(ctx: SettingsContext, file: File): Promise<void> {
 	let parsed: unknown;
 	try {
 		assertImportSize(file.size);
@@ -76,9 +73,17 @@ export async function processImportedJSON(
 	const defs = result.validDefs;
 	// A report can stay open while sync changes the destination collection.
 	const incomingImages = result.settings?.userImages;
-	if (incomingImages?.length && !userImagesFitResourceBudget(mergeById(ctx.plugin.registry.getUserImages(), incomingImages))) {
-		await new ImportReportModal(ctx.app, [{ index: -1, entryLabel: "", level: "error",
-			messageKey: "import.err.imageBudget" }], 0, 0, true).prompt();
+	if (
+		incomingImages?.length &&
+		!userImagesFitResourceBudget(mergeById(ctx.plugin.registry.getUserImages(), incomingImages))
+	) {
+		await new ImportReportModal(
+			ctx.app,
+			[{ index: -1, entryLabel: "", level: "error", messageKey: "import.err.imageBudget" }],
+			0,
+			0,
+			true,
+		).prompt();
 		return;
 	}
 
@@ -86,7 +91,8 @@ export async function processImportedJSON(
 	// groups, and filling them with defaults would silently reset them here.
 	const present = presentSettingGroups(parsed);
 	const restored = result.settings
-		? Object.keys(result.settings).filter((key) => present.has(key) && !LIST_GROUPS.has(key)) : [];
+		? Object.keys(result.settings).filter((key) => present.has(key) && !LIST_GROUPS.has(key))
+		: [];
 	// A clean file used to apply without a word. Say what it will replace; the
 	// report above already asked when there were issues.
 	if (result.issues.length === 0) {
@@ -103,7 +109,7 @@ export async function processImportedJSON(
 	}
 	if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
 	// Same-id callouts and whole setting groups are replaced: keep a way back.
-	if (!await writeSettingsBackup(ctx.plugin, ctx.plugin.registry.toSaveData(), { reason: "before-import" })) {
+	if (!(await writeSettingsBackup(ctx.plugin, ctx.plugin.registry.toSaveData(), { reason: "before-import" }))) {
 		showNotice("problem", t("import.backupFailed"));
 		return;
 	}
@@ -183,9 +189,7 @@ export async function processImportedJSON(
 			if (importedImages) {
 				// Through the registry rather than by assignment: it is what
 				// hands the new pictures to the pack that draws them.
-				ctx.plugin.registry.setUserImages(
-					mergeById(ctx.plugin.registry.getUserImages(), importedImages),
-				);
+				ctx.plugin.registry.setUserImages(mergeById(ctx.plugin.registry.getUserImages(), importedImages));
 			}
 			if (importedCommands) {
 				ctx.plugin.registry.settings.customCommands = mergeById(
@@ -227,9 +231,7 @@ export async function processImportedJSON(
 		// is missing rather than leaving those callouts undrawable. One that
 		// draws no icon is skipped: nothing renders its stored drawing, so it
 		// would be a download nobody could see.
-		void ctx.plugin.ensureIconArtworkFor(
-			defs.filter((d) => d.hideIcon !== true).map((d) => d.icon),
-		);
+		void ctx.plugin.ensureIconArtworkFor(defs.filter((d) => d.hideIcon !== true).map((d) => d.icon));
 	} else if (settingsImported) {
 		showNotice("celebrate", t("notice.importedSettings"));
 		ctx.redraw();
@@ -243,9 +245,13 @@ const LIST_GROUPS: ReadonlySet<string> = new Set(["customPalettes", "userImages"
 
 /** The top-level settings groups an import file actually carries. */
 function presentSettingGroups(parsed: unknown): Set<string> {
-	const settings = parsed !== null && typeof parsed === "object" && !Array.isArray(parsed)
-		? (parsed as { settings?: unknown }).settings : undefined;
-	const groups = new Set(settings !== null && typeof settings === "object" && !Array.isArray(settings) ? Object.keys(settings) : []);
+	const settings =
+		parsed !== null && typeof parsed === "object" && !Array.isArray(parsed)
+			? (parsed as { settings?: unknown }).settings
+			: undefined;
+	const groups = new Set(
+		settings !== null && typeof settings === "object" && !Array.isArray(settings) ? Object.keys(settings) : [],
+	);
 	// 1.x kept the menu switch under `popup`; the merge reads it into contextMenu.
 	if (groups.has("popup")) groups.add("contextMenu");
 	return groups;
@@ -254,11 +260,7 @@ function presentSettingGroups(parsed: unknown): Set<string> {
 /** Number of callout entries in either import shape (for the report modal). */
 function countImportedCallouts(parsed: unknown): number {
 	if (Array.isArray(parsed)) return parsed.length;
-	if (
-		parsed &&
-		typeof parsed === "object" &&
-		Array.isArray((parsed as { callouts?: unknown }).callouts)
-	) {
+	if (parsed && typeof parsed === "object" && Array.isArray((parsed as { callouts?: unknown }).callouts)) {
 		return (parsed as { callouts: unknown[] }).callouts.length;
 	}
 	return 0;

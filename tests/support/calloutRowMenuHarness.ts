@@ -18,7 +18,10 @@ class MenuWindow extends FakeWindow {
 		this.events.set(type, [...(this.events.get(type) ?? []), listener]);
 	}
 	removeEventListener(type: string, listener: (event: unknown) => void): void {
-		this.events.set(type, (this.events.get(type) ?? []).filter((item) => item !== listener));
+		this.events.set(
+			type,
+			(this.events.get(type) ?? []).filter((item) => item !== listener),
+		);
 	}
 	fire(type: string, event: unknown = { type }): void {
 		for (const listener of [...(this.events.get(type) ?? [])]) listener(event);
@@ -27,8 +30,14 @@ class MenuWindow extends FakeWindow {
 
 class MenuDocument extends FakeDocument {
 	readonly observed = new Set<FakeMutationObserver>();
-	addObserver(observer: FakeMutationObserver): void { super.addObserver(observer); this.observed.add(observer); }
-	removeObserver(observer: FakeMutationObserver): void { super.removeObserver(observer); this.observed.delete(observer); }
+	addObserver(observer: FakeMutationObserver): void {
+		super.addObserver(observer);
+		this.observed.add(observer);
+	}
+	removeObserver(observer: FakeMutationObserver): void {
+		super.removeObserver(observer);
+		this.observed.delete(observer);
+	}
 }
 
 export async function settleMenu(): Promise<void> {
@@ -48,13 +57,28 @@ export function rowMenuHarness() {
 	const otherAnchor = otherRow.createEl("button");
 	const elementListeners: Array<Set<(event: unknown) => void>> = [];
 	for (const element of [anchor, otherAnchor, row]) element.isConnected = true;
-	for (const element of [document.documentElement, document.body, outer, scroller, row, anchor, otherRow, otherAnchor]) {
+	for (const element of [
+		document.documentElement,
+		document.body,
+		outer,
+		scroller,
+		row,
+		anchor,
+		otherRow,
+		otherAnchor,
+	]) {
 		Object.assign(element, { scrollLeft: 0 });
 		const listeners = new Set<(event: unknown) => void>();
 		const add = element.addEventListener.bind(element);
 		const remove = element.removeEventListener.bind(element);
-		element.addEventListener = (type, callback) => { listeners.add(callback); add(type, callback); };
-		element.removeEventListener = (type, callback) => { listeners.delete(callback); remove(type, callback); };
+		element.addEventListener = (type, callback) => {
+			listeners.add(callback);
+			add(type, callback);
+		};
+		element.removeEventListener = (type, callback) => {
+			listeners.delete(callback);
+			remove(type, callback);
+		};
 		elementListeners.push(listeners);
 	}
 	Object.assign(document, { scrollingElement: document.documentElement });
@@ -64,12 +88,20 @@ export function rowMenuHarness() {
 	const disposers: Array<() => void> = [];
 	let reads = 0;
 	let release!: (text: string) => void;
-	const content = new Promise<string>((resolve) => { release = resolve; });
+	const content = new Promise<string>((resolve) => {
+		release = resolve;
+	});
 	const file = { path: "note.md", stat: { mtime: 1, size: 7 } };
-	const app = { vault: {
-		getMarkdownFiles: () => [file], getAbstractFileByPath: () => file,
-		cachedRead: () => { reads++; return content; },
-	} } as unknown as App;
+	const app = {
+		vault: {
+			getMarkdownFiles: () => [file],
+			getAbstractFileByPath: () => file,
+			cachedRead: () => {
+				reads++;
+				return content;
+			},
+		},
+	} as unknown as App;
 	const index = getCalloutOccurrenceIndex(app);
 	let subscriptions = 0;
 	const subscribe = index.subscribe.bind(index);
@@ -77,24 +109,63 @@ export function rowMenuHarness() {
 		subscriptions++;
 		const unsubscribe = subscribe(callback);
 		let active = true;
-		return () => { if (active) { active = false; subscriptions--; unsubscribe(); } };
+		return () => {
+			if (active) {
+				active = false;
+				subscriptions--;
+				unsubscribe();
+			}
+		};
 	};
-	const ctx = { app, registerDisposer: (dispose: () => void): void => { disposers.push(dispose); } };
+	const ctx = {
+		app,
+		registerDisposer: (dispose: () => void): void => {
+			disposers.push(dispose);
+		},
+	};
 	const initialMenus = createdMenus.length;
 	let builds = 0;
 	const open = (
-		build: (menu: Menu) => void = (menu) => { addUsageMenuItem(menu, app, ["note"]); },
+		build: (menu: Menu) => void = (menu) => {
+			addUsageMenuItem(menu, app, ["note"]);
+		},
 		how: RowMenuTrigger = trigger,
 	): Promise<void> =>
-		openCalloutRowMenu(ctx, how, (menu) => { builds++; build(menu); });
-	const dispose = (): void => { disposers.forEach((callback) => callback()); };
+		openCalloutRowMenu(ctx, how, (menu) => {
+			builds++;
+			build(menu);
+		});
+	const dispose = (): void => {
+		disposers.forEach((callback) => callback());
+	};
 	return {
-		app, index, view, document, outer, scroller, row, anchor, trigger, otherTrigger, ctx, open, dispose,
-		reads: () => reads, builds: () => builds, subscriptions: () => subscriptions,
+		app,
+		index,
+		view,
+		document,
+		outer,
+		scroller,
+		row,
+		anchor,
+		trigger,
+		otherTrigger,
+		ctx,
+		open,
+		dispose,
+		reads: () => reads,
+		builds: () => builds,
+		subscriptions: () => subscriptions,
 		menus: () => createdMenus.slice(initialMenus),
-		menu: () => { const menu = createdMenus.at(-1); assert.ok(menu); return menu; },
+		menu: () => {
+			const menu = createdMenus.at(-1);
+			assert.ok(menu);
+			return menu;
+		},
 		release: () => release("[!note]"),
-		ready: async () => { release("[!note]"); await index.ensureFresh(); },
+		ready: async () => {
+			release("[!note]");
+			await index.ensureFresh();
+		},
 		/** Fire the original target plus document/window capture, matching non-bubbling scroll. */
 		scroll: (element: FakeElement, y = element.scrollTop + 10, x = 0): void => {
 			element.scrollTop = y;
@@ -114,6 +185,10 @@ export function rowMenuHarness() {
 			assert.equal(document.observed.size, 0, "anchor observers are disconnected");
 			assert.equal(fakeDom.window.pendingTimers(), 0, "the main window never owns the deadline");
 		},
-		cleanup: () => { dispose(); index.dispose(); release("[!note]"); },
+		cleanup: () => {
+			dispose();
+			index.dispose();
+			release("[!note]");
+		},
 	};
 }

@@ -8,9 +8,16 @@ import { editorLineCalloutTokens, excludedEditorRange } from "../src/editor/live
 const comments = StreamLanguage.define({
 	startState: () => ({ comment: false }),
 	token(stream, state) {
-		if (stream.match("%%")) { state.comment = !state.comment; return "comment"; }
-		if (state.comment) { stream.next(); return "comment"; }
-		stream.next(); return null;
+		if (stream.match("%%")) {
+			state.comment = !state.comment;
+			return "comment";
+		}
+		if (state.comment) {
+			stream.next();
+			return "comment";
+		}
+		stream.next();
+		return null;
 	},
 });
 
@@ -18,14 +25,17 @@ function found(state: EditorState): string[] {
 	const ids: string[] = [];
 	for (let n = 1; n <= state.doc.lines; n++) {
 		const line = state.doc.line(n);
-		ids.push(...editorLineCalloutTokens(state, line.from, line.text).map(token => token.rawId));
+		ids.push(...editorLineCalloutTokens(state, line.from, line.text).map((token) => token.rawId));
 	}
 	return ids;
 }
 
 describe("render surfaces share complete source exclusions", () => {
 	it("uses CodeMirror comment nodes, including a heading at a later comment line", () => {
-		const state = EditorState.create({ doc: "%%\n## [!fake]\ntext [!also-fake]\n%%\n## [!real]", extensions: [comments] });
+		const state = EditorState.create({
+			doc: "%%\n## [!fake]\ntext [!also-fake]\n%%\n## [!real]",
+			extensions: [comments],
+		});
 		assert.match(syntaxTree(state).resolveInner(state.doc.toString().indexOf("[!fake]") + 2, 1).name, /Comment/i);
 		assert.deepEqual(found(state), ["real"]);
 	});
@@ -41,7 +51,9 @@ describe("render surfaces share complete source exclusions", () => {
 	});
 
 	it("uses the source lexer for embedded previews without a Markdown language", () => {
-		const state = EditorState.create({ doc: "%%\n## [!fake]\n%%\n```\n[!fake]\n```\n\n    [!fake]\n\ntext ``\n[!fake]\n`` [!real]" });
+		const state = EditorState.create({
+			doc: "%%\n## [!fake]\n%%\n```\n[!fake]\n```\n\n    [!fake]\n\ntext ``\n[!fake]\n`` [!real]",
+		});
 		assert.deepEqual(found(state), ["real"]);
 		assert.deepEqual(found(state), ["real"], "cached reads agree");
 	});

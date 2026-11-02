@@ -96,10 +96,7 @@ const baseSnapshot: SnapshotInput = {
 
 /** Did the form change, as the modal asks it: snapshot on open vs. snapshot now. */
 const dirty = (change: Partial<SnapshotInput>): boolean =>
-	hasStateChanges(
-		buildStateSnapshot(baseSnapshot),
-		buildStateSnapshot({ ...baseSnapshot, ...change }),
-	);
+	hasStateChanges(buildStateSnapshot(baseSnapshot), buildStateSnapshot({ ...baseSnapshot, ...change }));
 
 describe("buildStateSnapshot / hasStateChanges — the baseline", () => {
 	it("reports no change for a form nobody touched", () => {
@@ -109,10 +106,7 @@ describe("buildStateSnapshot / hasStateChanges — the baseline", () => {
 	it("reports no change for a re-built identical snapshot", () => {
 		// The modal builds the "before" once at construction and the "after" on
 		// every keystroke; two builds of the same state must not drift.
-		assert.strictEqual(
-			buildStateSnapshot(baseSnapshot),
-			buildStateSnapshot({ ...baseSnapshot }),
-		);
+		assert.strictEqual(buildStateSnapshot(baseSnapshot), buildStateSnapshot({ ...baseSnapshot }));
 	});
 
 	it("is a plain string comparison, with no notion of what changed", () => {
@@ -193,10 +187,7 @@ describe("buildStateSnapshot — how the JSON shape behaves", () => {
 		// `JSON.stringify` drops both, which is what keeps the two spellings of
 		// "no gradient" from reading as an edit when nothing happened.
 		const { bgGradient: _dropped, ...withoutKey } = baseSnapshot;
-		assert.strictEqual(
-			buildStateSnapshot(withoutKey as SnapshotInput),
-			buildStateSnapshot(baseSnapshot),
-		);
+		assert.strictEqual(buildStateSnapshot(withoutKey as SnapshotInput), buildStateSnapshot(baseSnapshot));
 	});
 
 	it("compares nested values structurally, not by identity", () => {
@@ -262,10 +253,7 @@ const world = [
 ];
 
 /** `canUseCalloutId`, with the fixed world above and sensible defaults. */
-const canUse = (
-	id: string,
-	over: Partial<Parameters<typeof canUseCalloutId>[0]> = {},
-): boolean =>
+const canUse = (id: string, over: Partial<Parameters<typeof canUseCalloutId>[0]> = {}): boolean =>
 	canUseCalloutId({
 		...lookup(world),
 		createFromToken: false,
@@ -294,10 +282,7 @@ describe("canUseCalloutId — taken", () => {
 	});
 
 	it("lets a callout keep its own alias while being edited", () => {
-		assert.strictEqual(
-			canUse("ours", { existingId: "mine", role: "alias" }),
-			true,
-		);
+		assert.strictEqual(canUse("ours", { existingId: "mine", role: "alias" }), true);
 	});
 
 	it("still refuses someone ELSE's ID while editing", () => {
@@ -332,10 +317,7 @@ describe("canUseCalloutId — the one allowance, and its shape", () => {
 	it("does NOT extend the allowance to an alias", () => {
 		// Only the primary ID is the row being replaced. An alias landing on it
 		// would leave two callouts claiming one id.
-		assert.strictEqual(
-			canUse("auto", { ...overwriting, role: "alias" }),
-			false,
-		);
+		assert.strictEqual(canUse("auto", { ...overwriting, role: "alias" }), false);
 	});
 
 	it("does NOT extend it to a fallback row the user adopted", () => {
@@ -378,9 +360,7 @@ describe("canUseCalloutId — there is no reserved-ID list", () => {
 		assert.strictEqual(PREVIEW_PLACEHOLDER_ID, "new-callout-preview");
 		assert.strictEqual(canUse(PREVIEW_PLACEHOLDER_ID), true);
 		// It is safe because nothing ships it, not because anything guards it.
-		assert.ok(
-			!DEFAULT_CALLOUTS.some((d) => d.id === PREVIEW_PLACEHOLDER_ID),
-		);
+		assert.ok(!DEFAULT_CALLOUTS.some((d) => d.id === PREVIEW_PLACEHOLDER_ID));
 	});
 });
 
@@ -390,11 +370,7 @@ describe("canUseCalloutId — there is no reserved-ID list", () => {
 
 describe("findAttrIdCollision — `my note` against `my-note`", () => {
 	/** A registry holding one user callout, asked the way the modal asks it. */
-	function collisionIn(
-		existing: CalloutDefinition,
-		typed: string,
-		editing: string | null = null,
-	): string | null {
+	function collisionIn(existing: CalloutDefinition, typed: string, editing: string | null = null): string | null {
 		const registry = new CalloutRegistry();
 		registry.load({ callouts: [existing] });
 		return findAttrIdCollision({
@@ -405,33 +381,21 @@ describe("findAttrIdCollision — `my note` against `my-note`", () => {
 	}
 
 	it("reports the space form when the dash form is typed", () => {
-		assert.strictEqual(
-			collisionIn(def({ id: "my note" }), "my-note"),
-			"my note",
-		);
+		assert.strictEqual(collisionIn(def({ id: "my note" }), "my-note"), "my note");
 	});
 
 	it("reports the dash form when the space form is typed", () => {
 		// Symmetric on purpose — a precedence-ordered search would let the
 		// literal ID win and hide the conflict in one of the two directions.
-		assert.strictEqual(
-			collisionIn(def({ id: "my-note" }), "my note"),
-			"my-note",
-		);
+		assert.strictEqual(collisionIn(def({ id: "my-note" }), "my note"), "my-note");
 	});
 
 	it("reports an alias that dasherizes onto the typed ID", () => {
-		assert.strictEqual(
-			collisionIn(def({ id: "other", aliases: ["my note"] }), "my-note"),
-			"other",
-		);
+		assert.strictEqual(collisionIn(def({ id: "other", aliases: ["my note"] }), "my-note"), "other");
 	});
 
 	it("says nothing when the callout in the way is the one being edited", () => {
-		assert.strictEqual(
-			collisionIn(def({ id: "my note" }), "my-note", "my note"),
-			null,
-		);
+		assert.strictEqual(collisionIn(def({ id: "my note" }), "my-note", "my note"), null);
 	});
 
 	it("says nothing about IDs that do not collapse together", () => {
@@ -488,11 +452,7 @@ describe("findAttrIdCollision — the cases it deliberately stays silent on", ()
 /* -------------------------------------------------------------------------- */
 
 describe("shouldSaveNewTokenCalloutAsFallback", () => {
-	const ask = (
-		over: Partial<
-			Parameters<typeof shouldSaveNewTokenCalloutAsFallback>[0]
-		> = {},
-	): boolean =>
+	const ask = (over: Partial<Parameters<typeof shouldSaveNewTokenCalloutAsFallback>[0]> = {}): boolean =>
 		shouldSaveNewTokenCalloutAsFallback({
 			...lookup(world),
 			createFromToken: true,
@@ -521,10 +481,7 @@ describe("shouldSaveNewTokenCalloutAsFallback", () => {
 });
 
 describe("isOverwritingAutoFallbackRow", () => {
-	const ask = (
-		id: string,
-		over: Partial<Parameters<typeof isOverwritingAutoFallbackRow>[0]> = {},
-	): boolean =>
+	const ask = (id: string, over: Partial<Parameters<typeof isOverwritingAutoFallbackRow>[0]> = {}): boolean =>
 		isOverwritingAutoFallbackRow({
 			...lookup(world),
 			createFromToken: true,
@@ -621,8 +578,7 @@ describe("isStateValid", () => {
 		assert.strictEqual(
 			valid({
 				aliases: ["some alias"],
-				findAttrIdConflict: (id) =>
-					id === "some alias" ? def({ id: "some-alias" }) : undefined,
+				findAttrIdConflict: (id) => (id === "some alias" ? def({ id: "some-alias" }) : undefined),
 			}),
 			false,
 		);
@@ -631,8 +587,7 @@ describe("isStateValid", () => {
 	it("rejects a primary ID colliding the same way", () => {
 		assert.strictEqual(
 			valid({
-				findAttrIdConflict: (id) =>
-					id === "brand-new" ? def({ id: "brand new" }) : undefined,
+				findAttrIdConflict: (id) => (id === "brand-new" ? def({ id: "brand new" }) : undefined),
 			}),
 			false,
 		);
@@ -668,16 +623,10 @@ describe("isStateValid — when a display name is required", () => {
 	});
 
 	it("re-imposes it once that callout is opened again for editing", () => {
-		assert.strictEqual(
-			valid({ createFromToken: true, existingId: "brand-new" }),
-			false,
-		);
+		assert.strictEqual(valid({ createFromToken: true, existingId: "brand-new" }), false);
 	});
 
 	it("waives it for a built-in, whose name the theme may own", () => {
-		assert.strictEqual(
-			valid({ isBuiltIn: true, calloutId: "note", existingId: "note" }),
-			true,
-		);
+		assert.strictEqual(valid({ isBuiltIn: true, calloutId: "note", existingId: "note" }), true);
 	});
 });

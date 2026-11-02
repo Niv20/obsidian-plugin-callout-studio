@@ -31,7 +31,11 @@ describe("DropdownField — Obsidian's dropdown, worn by a div", () => {
 	it("wears Obsidian's class, takes focus, and is named without a tooltip", () => {
 		const { host, field, el: fieldEl } = mount();
 		field.setText("Block");
-		assert.equal(fieldEl.tagName.toLowerCase(), "div", "a <button> would take Obsidian's button rules over .dropdown");
+		assert.equal(
+			fieldEl.tagName.toLowerCase(),
+			"div",
+			"a <button> would take Obsidian's button rules over .dropdown",
+		);
 		assert.ok(fieldEl.hasClass("dropdown"));
 		assert.equal(fieldEl.getAttribute("tabindex"), "0");
 		assert.equal(fieldEl.getAttribute("role"), "button");
@@ -86,7 +90,10 @@ describe("styles.css lays the field out and paints none of it", () => {
 	/** Every innermost rule: its selectors and the property names it declares. */
 	const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((match) => ({
 		selectors: (match[1] ?? "").split(",").map((s) => s.trim().replace(/\s+/g, " ")),
-		properties: (match[2] ?? "").split(";").map((d) => (d.split(":")[0] ?? "").trim()).filter(Boolean),
+		properties: (match[2] ?? "")
+			.split(";")
+			.map((d) => (d.split(":")[0] ?? "").trim())
+			.filter(Boolean),
 	}));
 	/** Whether a selector's own element (its last compound) is the field. */
 	const targetsField = (selector: string): boolean => {
@@ -100,10 +107,14 @@ describe("styles.css lays the field out and paints none of it", () => {
 	});
 
 	it("never sets a face, an edge, a ring, padding, corners or a height on it", () => {
-		const PAINT = /^(background(-[a-z-]+)?|box-shadow|border(-[a-z-]+)?|outline(-[a-z-]+)?|padding(-[a-z-]+)?|corner-shape|height|min-height|block-size|color|opacity|text-align)$/;
+		const PAINT =
+			/^(background(-[a-z-]+)?|box-shadow|border(-[a-z-]+)?|outline(-[a-z-]+)?|padding(-[a-z-]+)?|corner-shape|height|min-height|block-size|color|opacity|text-align)$/;
 		for (const rule of fieldRules) {
 			for (const property of rule.properties) {
-				assert.ok(!PAINT.test(property), `${rule.selectors.join(", ")} sets ${property}: that is app.css's to draw`);
+				assert.ok(
+					!PAINT.test(property),
+					`${rule.selectors.join(", ")} sets ${property}: that is app.css's to draw`,
+				);
 			}
 		}
 	});
@@ -111,8 +122,14 @@ describe("styles.css lays the field out and paints none of it", () => {
 	it("changes Obsidian's look only through Obsidian's own tokens", () => {
 		// The macOS settings look in the plugin's windows: the same three tokens
 		// app.css sets for its own settings window, and nothing else.
-		const tokens = rules.find((rule) => rule.selectors.includes(".mod-macos:not(.is-mobile) .cs-modal .setting-item-control"));
+		const tokens = rules.find((rule) =>
+			rule.selectors.includes(".mod-macos:not(.is-mobile) .cs-modal .setting-item-control"),
+		);
 		assert.ok(tokens);
-		assert.deepEqual(tokens.properties, ["--dropdown-background", "--dropdown-background-hover", "--dropdown-icon-background"]);
+		assert.deepEqual(tokens.properties, [
+			"--dropdown-background",
+			"--dropdown-background-hover",
+			"--dropdown-icon-background",
+		]);
 	});
 });

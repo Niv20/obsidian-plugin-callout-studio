@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
-	applyPortableCalloutConversion as apply, preparePortableCalloutConversion as prepare,
-	reviewPortableCalloutSelection as select, PortableCalloutPreviewCache,
+	applyPortableCalloutConversion as apply,
+	preparePortableCalloutConversion as prepare,
+	reviewPortableCalloutSelection as select,
+	PortableCalloutPreviewCache,
 } from "../src/utils/portableCalloutVault";
 import { portableVault } from "./support/portableVaultHarness";
 
@@ -89,13 +91,13 @@ describe("portable heading links in selected vault conversion", () => {
 	it("shows token output separately from dependent same-line link repairs", async () => {
 		const h = portableVault({ ...notes, "b.md": "[!note] [[a#tip Heading]]" });
 		const all = await prepare(h.app);
-		const inline = all.changes.find(change => change.path === "b.md")!;
+		const inline = all.changes.find((change) => change.path === "b.md")!;
 		assert.equal(inline.after, "note");
 		assert.equal(all.linkChanges[0]!.before, "[!note] [[a#tip Heading]]");
 		assert.equal(all.linkChanges[0]!.after, "note [[a#Heading]]");
 		const justInline = select(h.app, all, new Set([inline.id]));
-		assert.equal(justInline.changes.find(change => change.path === "b.md")!.id, inline.id);
-		assert.equal(justInline.changes.find(change => change.path === "b.md")!.after, "note");
+		assert.equal(justInline.changes.find((change) => change.path === "b.md")!.id, inline.id);
+		assert.equal(justInline.changes.find((change) => change.path === "b.md")!.after, "note");
 		await apply(h.app, all);
 		assert.equal(h.contents.get("b.md"), "note [[a#Heading]]");
 	});

@@ -29,8 +29,7 @@ export type ComputedStyleReader = (
 	pseudo?: string | null,
 ) => Pick<CSSStyleDeclaration, "getPropertyValue">;
 
-export const domReader: ComputedStyleReader = (el, pseudo) =>
-	getComputedStyle(el, pseudo ?? null);
+export const domReader: ComputedStyleReader = (el, pseudo) => getComputedStyle(el, pseudo ?? null);
 
 /** One node's computed style, or nothing when there is no such node. */
 type Style = Pick<CSSStyleDeclaration, "getPropertyValue"> | null;
@@ -40,25 +39,16 @@ type Style = Pick<CSSStyleDeclaration, "getPropertyValue"> | null;
  * one onto the other, so both have to be asked of whichever node is being read.
  */
 function maskOf(style: Style): string {
-	return (
-		style?.getPropertyValue("mask-image") ||
-		style?.getPropertyValue("-webkit-mask-image") ||
-		""
-	);
+	return style?.getPropertyValue("mask-image") || style?.getPropertyValue("-webkit-mask-image") || "";
 }
 
 /** Everything one rendered callout can be asked, as a flat readout. */
-export function readCalloutStyle(
-	calloutEl: HTMLElement,
-	read: ComputedStyleReader,
-): ProbeReadout {
-	const titleEl =
-		calloutEl.querySelector<HTMLElement>(".callout-title") ?? calloutEl;
+export function readCalloutStyle(calloutEl: HTMLElement, read: ComputedStyleReader): ProbeReadout {
+	const titleEl = calloutEl.querySelector<HTMLElement>(".callout-title") ?? calloutEl;
 	// The element that actually holds the title text, and the only one core's
 	// `--callout-title-color` hook paints. Falling back to the title band keeps
 	// the reading honest if a renderer ever stops building it.
-	const titleTextEl =
-		calloutEl.querySelector<HTMLElement>(".callout-title-inner") ?? titleEl;
+	const titleTextEl = calloutEl.querySelector<HTMLElement>(".callout-title-inner") ?? titleEl;
 	const iconEl = calloutEl.querySelector<HTMLElement>(".callout-icon");
 	// The drawing inside the slot. A theme can switch this off on its own
 	// (`.callout-icon > svg { display: none }`) while leaving the slot laid out,
@@ -79,7 +69,7 @@ export function readCalloutStyle(
 		// No icon element at all is the same evidence as a hidden one: core
 		// builds the slot for every callout, so its absence means the theme
 		// removed it.
-		iconDisplay: iconEl ? icon?.getPropertyValue("display") ?? "" : "none",
+		iconDisplay: iconEl ? (icon?.getPropertyValue("display") ?? "") : "none",
 		iconMarkup: iconChildEl?.outerHTML ?? null,
 		iconChildDisplay: iconChild?.getPropertyValue("display") ?? "",
 		iconMask: maskOf(icon),

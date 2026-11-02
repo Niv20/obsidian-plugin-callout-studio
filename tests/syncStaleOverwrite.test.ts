@@ -106,11 +106,7 @@ describe("a settings file another device replaced", () => {
 		d.state.n = 2;
 		await d.writer.save();
 
-		assert.deepStrictEqual(
-			d.stale,
-			[],
-			"reporting inside the pass is what deadlocks — see staleWriteGuard",
-		);
+		assert.deepStrictEqual(d.stale, [], "reporting inside the pass is what deadlocks — see staleWriteGuard");
 		d.settle();
 		assert.deepStrictEqual(d.stale, [0], "exactly one report");
 	});
@@ -187,11 +183,7 @@ describe("a save the freshness check must not stop", () => {
 		d.state.n = 2;
 		await d.writer.save();
 
-		assert.deepStrictEqual(
-			d.writes,
-			[],
-			"unreadable settings must never be overwritten",
-		);
+		assert.deepStrictEqual(d.writes, [], "unreadable settings must never be overwritten");
 	});
 
 	it("still skips a save whose payload changes nothing", async () => {

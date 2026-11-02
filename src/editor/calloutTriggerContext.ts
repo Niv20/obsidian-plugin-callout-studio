@@ -108,11 +108,7 @@ export function tokenBodyAt(line: string, triggerCh: number): TokenBody {
  * it is the only check that looks past the line, so a suggest asks it last,
  * once the cursor is known to sit where that suggest cares.
  */
-export function triggerInCode(
-	editor: Editor,
-	cursor: EditorPosition,
-	trigger: CalloutTrigger,
-): boolean {
+export function triggerInCode(editor: Editor, cursor: EditorPosition, trigger: CalloutTrigger): boolean {
 	return isCalloutTokenInCode({
 		line: trigger.line,
 		tokenIndex: trigger.triggerCh,

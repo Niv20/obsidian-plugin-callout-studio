@@ -30,14 +30,20 @@ afterEach(() => {
 function setup(options: { interactive?: boolean } = {}) {
 	const zone = el();
 	const mascot = new BrushMascot(asEl(zone), { manual: true, ...options });
-	(mascot.svg as unknown as { getBoundingClientRect: () => object }).getBoundingClientRect =
-		() => ({ left: 0, top: 0, width: 48, height: 48 });
+	(mascot.svg as unknown as { getBoundingClientRect: () => object }).getBoundingClientRect = () => ({
+		left: 0,
+		top: 0,
+		width: 48,
+		height: 48,
+	});
 	const svg = mascot.svg as unknown as FakeElement;
 	const body = svg.children[1]!;
 	/** A pointer event at (x, y) on the page, 2px to the pixel on the 24-unit icon. */
 	const fire = (type: string, extra: object = {}): void =>
 		zone.fire(type, { type, pointerType: "mouse", button: 0, clientX: 24, clientY: 24, ...extra });
-	const run = (ms: number): void => { for (let t = 0; t < ms; t += 16) mascot.advance(16); };
+	const run = (ms: number): void => {
+		for (let t = 0; t < ms; t += 16) mascot.advance(16);
+	};
 	return { zone, mascot, svg, body, fire, run };
 }
 
@@ -168,7 +174,8 @@ describe("a mascot the pointer can play with", () => {
 
 	it("loses its temper over a mood too, and then goes back to the mood without the glare", () => {
 		const { mascot, svg, fire, run } = setup();
-		const cheeks = (): (string | null)[] => [5, 6].map((i) => svg.children[1]!.children[i]!.getAttribute("opacity"));
+		const cheeks = (): (string | null)[] =>
+			[5, 6].map((i) => svg.children[1]!.children[i]!.getAttribute("opacity"));
 		const mood = mascot.hold("sad");
 		run(1500);
 		for (let press = 1; press <= 4; press++) {
@@ -225,7 +232,11 @@ describe("a mascot the pointer can play with", () => {
 			run(1500);
 			fire("pointerdown");
 			run(200);
-			assert.equal(svg.children[1]!.children[2]!.getAttribute("fill"), "currentColor", "the squint's mouth is open");
+			assert.equal(
+				svg.children[1]!.children[2]!.getAttribute("fill"),
+				"currentColor",
+				"the squint's mouth is open",
+			);
 			fire("pointerup");
 			run(1500);
 			assert.equal(mascot.current, name);

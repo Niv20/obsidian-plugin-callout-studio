@@ -39,12 +39,8 @@ type WelcomeHost = SettingsTabPlugin &
  * `manager/launchSequence.ts` rechecks the settings file immediately before
  * reaching this point. Showing or dismissing the preview is never a save.
  */
-export async function maybeShowWelcomeOnLaunch(
-	plugin: WelcomeHost,
-	isFreshInstall: boolean,
-): Promise<void> {
-	const welcomeSeen =
-		plugin.settings.welcomeSeen === true || plugin.localState.hasSeenWelcome;
+export async function maybeShowWelcomeOnLaunch(plugin: WelcomeHost, isFreshInstall: boolean): Promise<void> {
+	const welcomeSeen = plugin.settings.welcomeSeen === true || plugin.localState.hasSeenWelcome;
 
 	// Re-arm the separate import prompt on every launch after first-install
 	// onboarding. Manually opening WelcomeModal never sets either marker, so it

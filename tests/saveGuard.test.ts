@@ -69,10 +69,7 @@ describe("SaveGuard", () => {
 		const guard = new SaveGuard();
 		guard.commit(guard.prepare({ callouts: [{ id: "a", icon: "x" }] })!);
 
-		assert.strictEqual(
-			guard.prepare({ callouts: [{ icon: "x", id: "a" }] }),
-			null,
-		);
+		assert.strictEqual(guard.prepare({ callouts: [{ icon: "x", id: "a" }] }), null);
 	});
 
 	it("still hears a change that array order carries", () => {
@@ -90,10 +87,7 @@ describe("SaveGuard", () => {
 		const guard = new SaveGuard();
 		guard.adopt(JSON.stringify({ settings: { b: 2, a: 1 }, version: 4 }));
 
-		assert.strictEqual(
-			guard.matches(JSON.stringify({ version: 4, settings: { a: 1, b: 2 } })),
-			true,
-		);
+		assert.strictEqual(guard.matches(JSON.stringify({ version: 4, settings: { a: 1, b: 2 } })), true);
 		assert.strictEqual(guard.prepare({ version: 4, settings: { a: 1, b: 2 } }), null);
 	});
 

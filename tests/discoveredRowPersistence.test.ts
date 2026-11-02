@@ -14,9 +14,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	selectPersistedRows,
-} from "../src/manager/discoveredRowPersistence";
+import { selectPersistedRows } from "../src/manager/discoveredRowPersistence";
 import type { CalloutDefinition, CustomCommand } from "../src/types";
 
 const row = (over: Partial<CalloutDefinition> = {}): CalloutDefinition => ({
@@ -41,14 +39,10 @@ describe("selectPersistedRows", () => {
 		...over,
 	});
 	const ids = (defs: CalloutDefinition[]) => defs.map((d) => d.id);
-	const map = (defs: CalloutDefinition[]) =>
-		new Map(defs.map((d) => [d.id, d]));
+	const map = (defs: CalloutDefinition[]) => new Map(defs.map((d) => [d.id, d]));
 
 	it("keeps both authored and manually discovered rows", () => {
-		const rows = map([
-			row({ id: "mine", source: "user" }),
-			row({ id: "seen" }),
-		]);
+		const rows = map([row({ id: "mine", source: "user" }), row({ id: "seen" })]);
 		assert.deepStrictEqual(ids(selectPersistedRows(rows, ctx())), ["mine", "seen"]);
 	});
 
@@ -62,35 +56,23 @@ describe("selectPersistedRows", () => {
 		// leak the draft.
 		const real = row({ id: "editing", source: "user", colorLight: "#000000" });
 		const draft = row({ id: "editing", source: "user", colorLight: "#ffffff" });
-		const out = selectPersistedRows(
-			map([draft]),
-			ctx({ previewActiveId: "editing", previewShadowedDef: real }),
-		);
+		const out = selectPersistedRows(map([draft]), ctx({ previewActiveId: "editing", previewShadowedDef: real }));
 		assert.deepStrictEqual(out, [real]);
 	});
 
 	it("drops a preview that shadows nothing at all", () => {
 		const rows = map([row({ id: "draft", source: "user" })]);
-		const out = selectPersistedRows(
-			rows,
-			ctx({ previewActiveId: "draft", previewShadowedDef: null }),
-		);
+		const out = selectPersistedRows(rows, ctx({ previewActiveId: "draft", previewShadowedDef: null }));
 		assert.deepStrictEqual(out, []);
 	});
 
 	it("writes a built-in only once it differs from its shipped default", () => {
 		const shipped = row({ id: "note", builtIn: true, source: "builtin" });
 		const edited = { ...shipped, colorLight: "#abcdef" };
-		const unchanged = selectPersistedRows(
-			map([{ ...shipped }]),
-			ctx({ builtInDefault: () => shipped }),
-		);
+		const unchanged = selectPersistedRows(map([{ ...shipped }]), ctx({ builtInDefault: () => shipped }));
 		assert.deepStrictEqual(unchanged, []);
 
-		const changed = selectPersistedRows(
-			map([edited]),
-			ctx({ builtInDefault: () => shipped }),
-		);
+		const changed = selectPersistedRows(map([edited]), ctx({ builtInDefault: () => shipped }));
 		assert.deepStrictEqual(ids(changed), ["note"]);
 	});
 });

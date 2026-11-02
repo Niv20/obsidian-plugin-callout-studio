@@ -80,11 +80,9 @@ export async function editCommand(app: App, host: CommandBuilderHost, command: C
 export async function deleteCommand(app: App, host: CommandBuilderHost, command: CustomCommand): Promise<boolean> {
 	const def = host.registry.get(command.calloutId);
 	const name = def ? describeCommand(command, def) : t("commandBuilder.unknownCommand");
-	const ok = await new ConfirmModal(
-		app,
-		t("confirm.titleDeleteCommand"),
-		t("commandBuilder.deleteConfirm"),
-	).withMascot(t("confirm.subtitleName", { name })).confirm();
+	const ok = await new ConfirmModal(app, t("confirm.titleDeleteCommand"), t("commandBuilder.deleteConfirm"))
+		.withMascot(t("confirm.subtitleName", { name }))
+		.confirm();
 	if (!ok) return false;
 	await host.customCommands.remove(command.id);
 	return true;
@@ -102,7 +100,9 @@ export function allFixedCommandsEnabled(host: CommandBuilderHost): boolean {
  * them.
  */
 export async function enableAllFixedCommands(host: CommandBuilderHost): Promise<void> {
-	await Promise.all(FIXED_COMMAND_IDS
-		.filter((id) => !isFixedCommandEnabled(host.settings, id))
-		.map((id) => host.setFixedCommandEnabled(id, true)));
+	await Promise.all(
+		FIXED_COMMAND_IDS.filter((id) => !isFixedCommandEnabled(host.settings, id)).map((id) =>
+			host.setFixedCommandEnabled(id, true),
+		),
+	);
 }

@@ -119,10 +119,7 @@ describe("userImageNameFromFilename", () => {
 describe("normalizeUserImageName", () => {
 	it("folds case, because macOS and Windows do", () => {
 		assert.equal(normalizeUserImageName("Logo.PNG"), "logo.png");
-		assert.equal(
-			normalizeUserImageName("LOGO.png"),
-			normalizeUserImageName("logo.PNG"),
-		);
+		assert.equal(normalizeUserImageName("LOGO.png"), normalizeUserImageName("logo.PNG"));
 	});
 
 	it("trims", () => {
@@ -142,20 +139,14 @@ describe("normalizeUserImageName", () => {
 
 describe("takenUserImageNames", () => {
 	it("collects the normalized names of a collection", () => {
-		const taken = takenUserImageNames([
-			image({ id: "a", name: "Logo.PNG" }),
-			image({ id: "b", name: "icon.svg" }),
-		]);
+		const taken = takenUserImageNames([image({ id: "a", name: "Logo.PNG" }), image({ id: "b", name: "icon.svg" })]);
 		assert.ok(taken.has("logo.png"));
 		assert.ok(taken.has("icon.svg"));
 		assert.ok(!taken.has("Logo.PNG"));
 	});
 
 	it("collapses names that differ only by case", () => {
-		const taken = takenUserImageNames([
-			image({ id: "a", name: "logo.png" }),
-			image({ id: "b", name: "LOGO.PNG" }),
-		]);
+		const taken = takenUserImageNames([image({ id: "a", name: "logo.png" }), image({ id: "b", name: "LOGO.PNG" })]);
 		assert.equal(taken.size, 1);
 	});
 
@@ -248,10 +239,7 @@ describe("claimUserImageName", () => {
 		const before = new Set(taken);
 
 		const claimed = claimUserImageName(capped, taken, "img-abcd1234");
-		assert.ok(
-			claimed.includes("(img-abcd1234)"),
-			`the id was truncated out of the fallback name: ${claimed}`,
-		);
+		assert.ok(claimed.includes("(img-abcd1234)"), `the id was truncated out of the fallback name: ${claimed}`);
 		assert.ok(
 			!before.has(normalizeUserImageName(claimed)),
 			`handed back a name that was already taken: ${claimed}`,
@@ -361,12 +349,7 @@ describe("sanitizeUserImages — what is refused before the artwork is even read
 	});
 
 	it("checks every required field, so one bad entry cannot pass on another's", () => {
-		const result = sanitizeUserImages([
-			{ id: "a" },
-			{ name: "b.svg" },
-			{ svg: "<svg/>" },
-			{ format: "svg" },
-		]);
+		const result = sanitizeUserImages([{ id: "a" }, { name: "b.svg" }, { svg: "<svg/>" }, { format: "svg" }]);
 		assert.deepStrictEqual(result, []);
 	});
 
@@ -400,9 +383,7 @@ describe("sanitizeUserImages — when the artwork filter cannot run at all", () 
 		// "The artwork could not be checked" and "the artwork did not pass" have
 		// to have the same answer, or the repair would be worse than the crash.
 		assert.deepStrictEqual(
-			sanitizeUserImages([
-				image({ svg: `<svg xmlns="http://www.w3.org/2000/svg"><script/></svg>` }),
-			]),
+			sanitizeUserImages([image({ svg: `<svg xmlns="http://www.w3.org/2000/svg"><script/></svg>` })]),
 			[],
 		);
 	});

@@ -45,7 +45,11 @@ function baseName(path: string): string {
 function parseLabels(text: string): VersionLabels {
 	const labels = emptyLabels();
 	let raw: unknown;
-	try { raw = JSON.parse(text); } catch { return labels; }
+	try {
+		raw = JSON.parse(text);
+	} catch {
+		return labels;
+	}
 	if (!isRecord(raw)) return labels;
 	if (isRecord(raw.reasons)) {
 		for (const [file, reason] of Object.entries(raw.reasons)) {
@@ -57,7 +61,8 @@ function parseLabels(text: string): VersionLabels {
 
 /** Sorted keys, so an unchanged file is written byte for byte the same. */
 function serialize(labels: VersionLabels): string {
-	const sorted = <T>(map: Map<string, T>) => Object.fromEntries([...map].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));
+	const sorted = <T>(map: Map<string, T>) =>
+		Object.fromEntries([...map].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));
 	return JSON.stringify({ reasons: sorted(labels.reasons) }, undefined, 2);
 }
 
@@ -66,7 +71,7 @@ export async function readVersionLabels(adapter: DataAdapter, dir: string): Prom
 	const merged = emptyLabels();
 	let paths: string[];
 	try {
-		if (!await adapter.exists(dir)) return merged;
+		if (!(await adapter.exists(dir))) return merged;
 		paths = (await adapter.list(dir)).files;
 	} catch (error) {
 		console.debug("[callout-studio] could not list version labels", error);
@@ -75,7 +80,11 @@ export async function readVersionLabels(adapter: DataAdapter, dir: string): Prom
 	for (const path of paths) {
 		if (!path.startsWith(`${dir}/`) || !LABELS_NAME.test(baseName(path))) continue;
 		let labels: VersionLabels;
-		try { labels = parseLabels(await adapter.read(path)); } catch { continue; }
+		try {
+			labels = parseLabels(await adapter.read(path));
+		} catch {
+			continue;
+		}
 		for (const [file, reason] of labels.reasons) merged.reasons.set(file, reason);
 	}
 	return merged;
@@ -90,19 +99,25 @@ const queues = new Map<string, Promise<unknown>>();
  * is on disk; never rejects.
  */
 function updateOwnLabels(
-	adapter: DataAdapter, dir: string, device: string, change: (own: VersionLabels) => boolean,
+	adapter: DataAdapter,
+	dir: string,
+	device: string,
+	change: (own: VersionLabels) => boolean,
 ): Promise<boolean> {
 	const path = normalizePath(`${dir}/labels-${device}.json`);
 	const task = (queues.get(path) ?? Promise.resolve()).then(async () => {
-		if (!await adapter.exists(dir)) await adapter.mkdir(dir);
+		if (!(await adapter.exists(dir))) await adapter.mkdir(dir);
 		// A read that fails throws and writes nothing, so a file that is only
 		// unavailable is never replaced by a near-empty one. A damaged file is:
 		// what it held is lost either way.
-		const own = await adapter.exists(path) ? parseLabels(await adapter.read(path)) : emptyLabels();
+		const own = (await adapter.exists(path)) ? parseLabels(await adapter.read(path)) : emptyLabels();
 		if (change(own)) await adapter.write(path, serialize(own));
 		return true;
 	});
-	queues.set(path, task.catch(() => undefined));
+	queues.set(
+		path,
+		task.catch(() => undefined),
+	);
 	return task.catch((error: unknown) => {
 		console.error("[callout-studio] could not save version labels", error);
 		return false;
@@ -111,10 +126,14 @@ function updateOwnLabels(
 
 /** Remember why this device saved the backup at `path`. */
 export function recordBackupReason(
-	adapter: DataAdapter, dir: string, device: string, path: string, reason: string,
+	adapter: DataAdapter,
+	dir: string,
+	device: string,
+	path: string,
+	reason: string,
 ): Promise<boolean> {
 	const file = baseName(path);
-	return updateOwnLabels(adapter, dir, device, own => {
+	return updateOwnLabels(adapter, dir, device, (own) => {
 		if (!BACKUP_FILE.test(file) || own.reasons.get(file) === reason) return false;
 		own.reasons.set(file, reason);
 		return true;
@@ -123,9 +142,12 @@ export function recordBackupReason(
 
 /** Drop the reasons this device recorded for backups that are gone. */
 export function forgetBackupReasons(
-	adapter: DataAdapter, dir: string, device: string, paths: readonly string[],
+	adapter: DataAdapter,
+	dir: string,
+	device: string,
+	paths: readonly string[],
 ): Promise<boolean> {
-	return updateOwnLabels(adapter, dir, device, own => {
+	return updateOwnLabels(adapter, dir, device, (own) => {
 		let changed = false;
 		for (const path of paths) changed = own.reasons.delete(baseName(path)) || changed;
 		return changed;

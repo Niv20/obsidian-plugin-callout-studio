@@ -37,10 +37,7 @@ export type Listener<A extends unknown[] = []> = (...args: A) => void;
  * The arguments describe the round (what kind of change it was), so every
  * listener of one round is told the same thing.
  */
-export function notifyListeners<A extends unknown[]>(
-	live: readonly Listener<A>[],
-	...args: A
-): void {
+export function notifyListeners<A extends unknown[]>(live: readonly Listener<A>[], ...args: A): void {
 	for (const cb of [...live]) {
 		if (!live.includes(cb)) continue;
 		cb(...args);

@@ -43,9 +43,7 @@ describe("sanitizeCustomCommands", () => {
 
 	it("keeps a well-formed entry", () => {
 		assert.deepStrictEqual(
-			sanitizeCustomCommands([
-				{ id: "cc-1", calloutId: "warning", role: "regular", action: "wrap" },
-			]),
+			sanitizeCustomCommands([{ id: "cc-1", calloutId: "warning", role: "regular", action: "wrap" }]),
 			[{ id: "cc-1", calloutId: "warning", role: "regular", action: "wrap" }],
 		);
 	});
@@ -121,7 +119,11 @@ describe("sanitizeCustomCommands", () => {
 			{ id: "d", calloutId: "note", role: "inline", action: "sideways" },
 		]);
 		assert.deepStrictEqual(headingInsert, {
-			id: "a", calloutId: "note", role: "heading", headingLevel: 2, action: "insert",
+			id: "a",
+			calloutId: "note",
+			role: "heading",
+			headingLevel: 2,
+			action: "insert",
 		});
 		assert.deepStrictEqual(inlineInsert, { id: "b", calloutId: "note", role: "inline", action: "insert" });
 		assert.deepStrictEqual(inlineWrap, { id: "c", calloutId: "note", role: "inline" });
@@ -133,13 +135,12 @@ describe("sanitizeCustomCommands", () => {
 		// command in every existing data.json — a synced file — to record
 		// nothing. `tests/upgradeFromAutoDiscovery.test.ts` is what holds this
 		// to a released version's saved commands byte for byte.
-		const [plain, explicit, folded, headingWithFold] =
-			sanitizeCustomCommands([
-				{ id: "a", calloutId: "note", role: "regular" },
-				{ id: "b", calloutId: "note", role: "regular", fold: "none" },
-				{ id: "c", calloutId: "note", role: "regular", fold: "collapsed" },
-				{ id: "d", calloutId: "note", role: "heading", fold: "collapsed" },
-			]);
+		const [plain, explicit, folded, headingWithFold] = sanitizeCustomCommands([
+			{ id: "a", calloutId: "note", role: "regular" },
+			{ id: "b", calloutId: "note", role: "regular", fold: "none" },
+			{ id: "c", calloutId: "note", role: "regular", fold: "collapsed" },
+			{ id: "d", calloutId: "note", role: "heading", fold: "collapsed" },
+		]);
 		assert.strictEqual(plain?.fold, undefined);
 		assert.strictEqual(explicit?.fold, undefined);
 		assert.strictEqual(folded?.fold, "collapsed");
@@ -149,12 +150,8 @@ describe("sanitizeCustomCommands", () => {
 	});
 
 	it("degrades an unusable fold state instead of dropping the command", () => {
-		const result = sanitizeCustomCommands([
-			{ id: "a", calloutId: "note", role: "regular", fold: "sideways" },
-		]);
-		assert.deepStrictEqual(result, [
-			{ id: "a", calloutId: "note", role: "regular", action: "insert" },
-		]);
+		const result = sanitizeCustomCommands([{ id: "a", calloutId: "note", role: "regular", fold: "sideways" }]);
+		assert.deepStrictEqual(result, [{ id: "a", calloutId: "note", role: "regular", action: "insert" }]);
 	});
 });
 
@@ -196,10 +193,7 @@ describe("resolve helpers", () => {
 		assert.strictEqual(resolveFold({ fold: "expanded" }), "expanded");
 		assert.strictEqual(resolveFold({ fold: "collapsed" }), "collapsed");
 		// Degrades rather than throwing, like every other resolver here.
-		assert.strictEqual(
-			resolveFold({ fold: "banana" as CustomCommand["fold"] }),
-			"none",
-		);
+		assert.strictEqual(resolveFold({ fold: "banana" as CustomCommand["fold"] }), "none");
 	});
 });
 
@@ -259,21 +253,17 @@ describe("commandSignature", () => {
 		// Without this the builder would refuse the second of them as a
 		// duplicate, even though they are two entries in the palette writing
 		// two different headers.
-		const signatures = (["none", "expanded", "collapsed"] as const).map(
-			(fold) =>
-				commandSignature({
-					role: "regular",
-					calloutId: "note",
-					action: "wrap",
-					fold,
-				}),
+		const signatures = (["none", "expanded", "collapsed"] as const).map((fold) =>
+			commandSignature({
+				role: "regular",
+				calloutId: "note",
+				action: "wrap",
+				fold,
+			}),
 		);
 		assert.strictEqual(new Set(signatures).size, 3);
 		// An absent fold is the same command as an explicit "none".
-		assert.strictEqual(
-			commandSignature({ role: "regular", calloutId: "note", action: "wrap" }),
-			signatures[0],
-		);
+		assert.strictEqual(commandSignature({ role: "regular", calloutId: "note", action: "wrap" }), signatures[0]);
 	});
 
 	it("ignores a fold state on the roles that have no fold syntax", () => {
@@ -325,10 +315,7 @@ describe("describeCommand", () => {
 			"Wrap in Warning block callout",
 		);
 		assert.strictEqual(
-			describeCommand(
-				{ calloutId: "warning", role: "regular", action: "insert" },
-				def(),
-			),
+			describeCommand({ calloutId: "warning", role: "regular", action: "insert" }, def()),
 			"Insert Warning block callout",
 		);
 		assert.strictEqual(
@@ -340,17 +327,11 @@ describe("describeCommand", () => {
 			"Insert Warning inline callout",
 		);
 		assert.strictEqual(
-			describeCommand(
-				{ calloutId: "warning", role: "heading", headingLevel: 3 },
-				def(),
-			),
+			describeCommand({ calloutId: "warning", role: "heading", headingLevel: 3 }, def()),
 			"Wrap in H3 Warning heading callout",
 		);
 		assert.strictEqual(
-			describeCommand(
-				{ calloutId: "warning", role: "heading", headingLevel: 3, action: "insert" },
-				def(),
-			),
+			describeCommand({ calloutId: "warning", role: "heading", headingLevel: 3, action: "insert" }, def()),
 			"Insert H3 Warning heading callout",
 		);
 	});
@@ -360,10 +341,7 @@ describe("describeCommand", () => {
 		// re-registers a command when its rendered name changes, and every
 		// command stored before this field existed resolves to "none".
 		assert.strictEqual(
-			describeCommand(
-				{ calloutId: "warning", role: "regular", action: "wrap", fold: "none" },
-				def(),
-			),
+			describeCommand({ calloutId: "warning", role: "regular", action: "wrap", fold: "none" }, def()),
 			"Wrap in Warning block callout",
 		);
 		assert.strictEqual(
@@ -420,10 +398,7 @@ describe("describeCommand", () => {
 			"Wrap in H3 Warning heading callout",
 		);
 		assert.strictEqual(
-			describeCommand(
-				{ calloutId: "warning", role: "inline", fold: "collapsed" },
-				def(),
-			),
+			describeCommand({ calloutId: "warning", role: "inline", fold: "collapsed" }, def()),
 			"Wrap in Warning inline callout",
 		);
 	});
@@ -439,9 +414,7 @@ describe("describeCommand", () => {
 			// A block command may add one parenthesised fold word after the
 			// format; nothing else may follow it.
 			assert.ok(
-				/ (block|heading|inline) callout( \((expanded|collapsed)\))?$/.test(
-					name,
-				),
+				/ (block|heading|inline) callout( \((expanded|collapsed)\))?$/.test(name),
 				`${name} does not name its format`,
 			);
 		}
@@ -456,18 +429,13 @@ describe("describeCommand", () => {
 			calloutId: "warning",
 			role: "inline",
 		};
-		assert.strictEqual(
-			describeCommand(command, def({ displayName: "Careful" })),
-			"Wrap in Careful inline callout",
-		);
+		assert.strictEqual(describeCommand(command, def({ displayName: "Careful" })), "Wrap in Careful inline callout");
 	});
 });
 
 describe("command identity", () => {
 	it("mints distinct ids", () => {
-		const ids = new Set(
-			Array.from({ length: 200 }, () => generateCommandId()),
-		);
+		const ids = new Set(Array.from({ length: 200 }, () => generateCommandId()));
 		assert.strictEqual(ids.size, 200);
 	});
 

@@ -10,14 +10,18 @@ import { scanIdNoteStats, sumTallies } from "../src/utils/idNoteStats";
 function vault(notes: Record<string, string>, unreadable: string[] = []) {
 	const handles = Object.keys(notes).map((path) => ({ path }));
 	let reads = 0;
-	const app = { vault: {
-		getMarkdownFiles: () => handles,
-		getAbstractFileByPath: (path: string) => handles.find((file) => file.path === path) ?? null,
-		cachedRead: (file: { path: string }) => {
-			reads++;
-			return unreadable.includes(file.path) ? Promise.reject(new Error("locked")) : Promise.resolve(notes[file.path]!);
+	const app = {
+		vault: {
+			getMarkdownFiles: () => handles,
+			getAbstractFileByPath: (path: string) => handles.find((file) => file.path === path) ?? null,
+			cachedRead: (file: { path: string }) => {
+				reads++;
+				return unreadable.includes(file.path)
+					? Promise.reject(new Error("locked"))
+					: Promise.resolve(notes[file.path]!);
+			},
 		},
-	} } as unknown as App;
+	} as unknown as App;
 	return { app, reads: () => reads };
 }
 

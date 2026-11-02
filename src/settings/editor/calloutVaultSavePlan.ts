@@ -6,7 +6,8 @@ import { calloutIdentity } from "../../utils/calloutId";
 import { NoteRewriteJournal } from "../../utils/noteRewriteUndo";
 import {
 	normalizeFoldMarkersInVault,
-	replaceCalloutIdsInVault, replaceCalloutTitlesInVault,
+	replaceCalloutIdsInVault,
+	replaceCalloutTitlesInVault,
 } from "../../utils/vaultCalloutScanner";
 import { noticeWithUndo } from "../rewriteUndoNotice";
 import type { FoldMark, NoteRewrite } from "./noteChanges";
@@ -20,7 +21,10 @@ export type CalloutVaultSavePlan = () => Promise<void>;
  * its notes goes at once, and staging it here would keep it on the callout for
  * good, since nothing would ever finish to release it.
  */
-export function stageRenameAliases(def: CalloutDefinition, removedIds: string[]): {
+export function stageRenameAliases(
+	def: CalloutDefinition,
+	removedIds: string[],
+): {
 	definition: CalloutDefinition;
 	release(registry: CalloutRegistry): void;
 } {
@@ -28,7 +32,8 @@ export function stageRenameAliases(def: CalloutDefinition, removedIds: string[])
 	const retained = removedIds.filter((id) => {
 		const key = calloutIdentity(id);
 		if (!key || owned.has(key)) return false;
-		owned.add(key); return true;
+		owned.add(key);
+		return true;
 	});
 	const protectedIds = new Set(retained.map(calloutIdentity));
 	return {
@@ -45,8 +50,11 @@ export function stageRenameAliases(def: CalloutDefinition, removedIds: string[])
 			const demo = registry.isPreviewDemo();
 			registry.batch(() => {
 				if (shadowed) registry.setPreviewDefinition(null, demo, false);
-				try { registry.update(def.id, { aliases: aliases?.length ? aliases : undefined }); }
-				finally { if (shadowed) registry.setPreviewDefinition(preview, demo, false); }
+				try {
+					registry.update(def.id, { aliases: aliases?.length ? aliases : undefined });
+				} finally {
+					if (shadowed) registry.setPreviewDefinition(preview, demo, false);
+				}
 			});
 		},
 	};
@@ -89,8 +97,8 @@ export function createCalloutVaultSavePlan(input: VaultSavePlanInput): CalloutVa
 	const { app, titles, fold } = input;
 	const rewrites = input.rewrites.filter((rewrite) => rewrite.forms.length > 0);
 	if (rewrites.length === 0 && !titles && !fold) return null;
-	const announce = input.announce ?? ((message: string, journal: NoteRewriteJournal) =>
-		noticeWithUndo(app, message, journal));
+	const announce =
+		input.announce ?? ((message: string, journal: NoteRewriteJournal) => noticeWithUndo(app, message, journal));
 	const journal = new NoteRewriteJournal();
 	let nextRewrite = 0;
 	let titlesDone = titles === null;
@@ -99,10 +107,22 @@ export function createCalloutVaultSavePlan(input: VaultSavePlanInput): CalloutVa
 	const updates: string[] = [];
 	return async () => {
 		if (!titlesDone && titles) {
-			const replaced = await replaceCalloutTitlesInVault(app, titles.forms, titles.from, titles.to, true, journal);
-			if (replaced > 0) updates.push(t("vault.titlesUpdated", {
-				count: String(replaced), oldTitle: titles.from, newTitle: titles.to,
-			}));
+			const replaced = await replaceCalloutTitlesInVault(
+				app,
+				titles.forms,
+				titles.from,
+				titles.to,
+				true,
+				journal,
+			);
+			if (replaced > 0)
+				updates.push(
+					t("vault.titlesUpdated", {
+						count: String(replaced),
+						oldTitle: titles.from,
+						newTitle: titles.to,
+					}),
+				);
 			titlesDone = true;
 		}
 		if (!foldDone && fold) {
@@ -112,10 +132,22 @@ export function createCalloutVaultSavePlan(input: VaultSavePlanInput): CalloutVa
 		}
 		for (; nextRewrite < rewrites.length; nextRewrite++) {
 			const rewrite = rewrites[nextRewrite]!;
-			const replaced = await replaceCalloutIdsInVault(app, rewrite.forms, rewrite.toId, rewrite.titleSwap, true, journal);
-			if (replaced > 0) updates.push(t("vault.idsUpdated", {
-				count: String(replaced), oldIds: rewrite.forms.join(", "), newId: rewrite.toId,
-			}));
+			const replaced = await replaceCalloutIdsInVault(
+				app,
+				rewrite.forms,
+				rewrite.toId,
+				rewrite.titleSwap,
+				true,
+				journal,
+			);
+			if (replaced > 0)
+				updates.push(
+					t("vault.idsUpdated", {
+						count: String(replaced),
+						oldIds: rewrite.forms.join(", "),
+						newId: rewrite.toId,
+					}),
+				);
 		}
 		if (announced) return;
 		announced = true;

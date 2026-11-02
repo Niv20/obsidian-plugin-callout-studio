@@ -21,12 +21,16 @@ export function recoveryIconResolver(data: Partial<PluginData>): IconResolver {
 			const pack = packFor(icon);
 			if (!pack) return null;
 			const variant = pack.cacheVariant(icon, role);
-			const cached = data.iconSvgCache?.find(entry => entry.pack === icon.type &&
-				entry.name === icon.value && entry.variant === variant);
+			const cached = data.iconSvgCache?.find(
+				(entry) => entry.pack === icon.type && entry.name === icon.value && entry.variant === variant,
+			);
 			if (cached) return cached.svg;
 			if (icon.type !== "material") return null;
-			return data.materialSvgCache?.find(entry => entry.name === icon.value &&
-				`${entry.style}|${entry.weight}` === variant)?.svg ?? null;
+			return (
+				data.materialSvgCache?.find(
+					(entry) => entry.name === icon.value && `${entry.style}|${entry.weight}` === variant,
+				)?.svg ?? null
+			);
 		},
 		hasFailed: () => false,
 	};
@@ -34,7 +38,7 @@ export function recoveryIconResolver(data: Partial<PluginData>): IconResolver {
 
 /** Revalidate visual values even when showing an older, only partially readable setup. */
 export function previewDefinition(definition: CalloutDefinition): CalloutDefinition {
-	const color = (value: unknown): string | undefined => isValidHexColor(value) ? value : undefined;
+	const color = (value: unknown): string | undefined => (isValidHexColor(value) ? value : undefined);
 	return {
 		...definition,
 		colorLight: color(definition.colorLight) ?? "#7d7d7d",
@@ -49,7 +53,11 @@ export function previewDefinition(definition: CalloutDefinition): CalloutDefinit
 }
 
 function safeArtwork(svg: string): ReturnType<typeof sanitizeUserSvg> {
-	try { return sanitizeUserSvg(svg); } catch { return null; }
+	try {
+		return sanitizeUserSvg(svg);
+	} catch {
+		return null;
+	}
 }
 
 function unavailable(parent: HTMLElement): void {
@@ -59,7 +67,10 @@ function unavailable(parent: HTMLElement): void {
 /** An image document isolates saved SVG styles/ids from both the modal and its other side. */
 export function renderRecoveryImage(parent: HTMLElement, image: UserImageIcon): void {
 	const artwork = safeArtwork(image.svg);
-	if (!artwork) { unavailable(parent); return; }
+	if (!artwork) {
+		unavailable(parent);
+		return;
+	}
 	parent.createEl("img", {
 		cls: "cs-recovery-image",
 		attr: {
@@ -79,14 +90,16 @@ export function renderRecoveryIcon(parent: HTMLElement, data: Partial<PluginData
 	const icon = parent.createSpan({ cls: "cs-recovery-preview-icon", attr: { "aria-hidden": "true" } });
 	if (value.type !== "image") {
 		const result = renderIconInto(icon, value, recoveryIconResolver(data), {
-			role: "regular", fill: "currentColor", missing: { kind: "placeholder", lucideId: "image-off" },
+			role: "regular",
+			fill: "currentColor",
+			missing: { kind: "placeholder", lucideId: "image-off" },
 		});
 		if (result !== "painted") icon.setAttribute("aria-label", t("recovery.details.previewUnavailable"));
 		return icon;
 	}
 	// The shared painter reads the live image pack. A recovery side must instead
 	// resolve and recolor its own saved image without replacing that global pack.
-	const picture = data.settings?.userImages?.find(image => image.id === value.value);
+	const picture = data.settings?.userImages?.find((image) => image.id === value.value);
 	const artwork = picture ? safeArtwork(picture.svg) : null;
 	if (!picture || !artwork) {
 		setIcon(icon, "image-off");
@@ -131,9 +144,12 @@ export function renderRecoveryPreview(
 	preview.setCssProps({
 		"--cs-recovery-accent": accent,
 		"--cs-recovery-radius": `${style.borderRadius}px`,
-		"--cs-recovery-border-color": def.transparentBg ? "transparent" : `color-mix(in srgb, ${accent} 25%, transparent)`,
-		"--cs-recovery-border-width": ["top", "right", "bottom", "left"].map(side =>
-			`${style.borderSides[side as keyof typeof style.borderSides] ? style.borderWidth : 0}px`).join(" "),
+		"--cs-recovery-border-color": def.transparentBg
+			? "transparent"
+			: `color-mix(in srgb, ${accent} 25%, transparent)`,
+		"--cs-recovery-border-width": ["top", "right", "bottom", "left"]
+			.map((side) => `${style.borderSides[side as keyof typeof style.borderSides] ? style.borderWidth : 0}px`)
+			.join(" "),
 	});
 	const title = preview.createDiv("cs-recovery-preview-title");
 	title.setCssProps({ color: accent });
@@ -148,24 +164,38 @@ export function renderRecoveryPreview(
 	}
 	const content = preview.createDiv({ cls: "cs-recovery-preview-content", text: t("recovery.details.previewBody") });
 	content.setCssProps({
-		"--cs-recovery-content-color": (mode === "dark" ? def.textColorDark : def.textColorLight) ?? "var(--text-normal)",
+		"--cs-recovery-content-color":
+			(mode === "dark" ? def.textColorDark : def.textColorLight) ?? "var(--text-normal)",
 		"--cs-recovery-content-size": `${style.contentScale}em`,
 	});
 	if (style.alignContentWithTitle && def.hideIcon !== true) {
-		const picture = data.settings?.userImages?.find(image => def.icon.type === "image" && image.id === def.icon.value);
+		const picture = data.settings?.userImages?.find(
+			(image) => def.icon.type === "image" && image.id === def.icon.value,
+		);
 		const artwork = picture ? safeArtwork(picture.svg) : null;
-		const width = iconBoxWidth(picture && artwork ? { ...picture, width: artwork.width, height: artwork.height } : undefined);
-		content.setCssProps({ "--cs-recovery-content-indent": `calc(${width} + var(--cs-regular-icon-gap, 0.15em) + var(--size-4-1, 4px))` });
+		const width = iconBoxWidth(
+			picture && artwork ? { ...picture, width: artwork.width, height: artwork.height } : undefined,
+		);
+		content.setCssProps({
+			"--cs-recovery-content-indent": `calc(${width} + var(--cs-regular-icon-gap, 0.15em) + var(--size-4-1, 4px))`,
+		});
 	}
 	if (def.foldable !== true) return;
-	const fold = title.createEl("button", { cls: "cs-recovery-preview-fold clickable-icon", attr: { type: "button", "aria-label": def.displayName || def.id } });
+	const fold = title.createEl("button", {
+		cls: "cs-recovery-preview-fold clickable-icon",
+		attr: { type: "button", "aria-label": def.displayName || def.id },
+	});
 	setIcon(fold, "chevron-down");
 	let collapsed = def.defaultFolded === true;
 	const applyFold = (): void => {
 		fold.setAttribute("aria-expanded", String(!collapsed));
 		fold.setCssProps({ transform: collapsed ? "rotate(-90deg)" : "none" });
-		if (collapsed) content.hide(); else content.show();
+		if (collapsed) content.hide();
+		else content.show();
 	};
 	applyFold();
-	component.registerDomEvent(fold, "click", () => { collapsed = !collapsed; applyFold(); });
+	component.registerDomEvent(fold, "click", () => {
+		collapsed = !collapsed;
+		applyFold();
+	});
 }

@@ -22,9 +22,7 @@ import {
 import { t } from "../src/i18n";
 import { asEditor, selectionEditor } from "./support/selectionEditor";
 
-const settings = (
-	over: { heading?: boolean; inline?: boolean; content?: boolean } = {},
-): FormSettings => ({
+const settings = (over: { heading?: boolean; inline?: boolean; content?: boolean } = {}): FormSettings => ({
 	headingCallouts: { ...DEFAULT_SETTINGS.headingCallouts, enabled: over.heading ?? true },
 	inlineCallouts: { enabled: over.inline ?? true, allowContent: over.content ?? true },
 });
@@ -78,7 +76,12 @@ describe("Wrap in callout: a heading becomes a heading callout", () => {
 	});
 
 	it("says so, and changes nothing, when the heading is a callout already", () => {
-		for (const source of ["## [!tip] My ⎸title", "## [!tip] «My title»", "«## [!tip] My title»", "## [!t«ip] My» title"]) {
+		for (const source of [
+			"## [!tip] My ⎸title",
+			"## [!tip] «My title»",
+			"«## [!tip] My title»",
+			"## [!t«ip] My» title",
+		]) {
 			const result = wrap(source);
 			assert.strictEqual(result.opens, false, source);
 			assert.strictEqual(result.text.replace("⎸", ""), source.replace(/[«»⎸]/g, ""), source);

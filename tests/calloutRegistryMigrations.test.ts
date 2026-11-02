@@ -38,11 +38,7 @@ import { describe, it } from "node:test";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { DEFAULT_SETTINGS } from "../src/constants";
 import { bgTintFor, derivedBgAmount } from "../src/utils/colorUtils";
-import type {
-	CalloutDefinition,
-	CustomPalette,
-	PluginData,
-} from "../src/types";
+import type { CalloutDefinition, CustomPalette, PluginData } from "../src/types";
 
 const ACCENT_LIGHT = "#336699";
 const ACCENT_DARK = "#88bbee";
@@ -62,10 +58,7 @@ function def(over: Partial<CalloutDefinition> = {}): CalloutDefinition {
 	};
 }
 
-function saved(
-	callouts: CalloutDefinition[],
-	settings?: Record<string, unknown>,
-): Partial<PluginData> {
+function saved(callouts: CalloutDefinition[], settings?: Record<string, unknown>): Partial<PluginData> {
 	return { callouts, ...(settings ? { settings } : {}) } as Partial<PluginData>;
 }
 
@@ -132,9 +125,7 @@ describe("dropDerivedBackgrounds", () => {
 	});
 
 	it("keeps a background the user actually chose", () => {
-		const registry = load(
-			saved([def({ id: "picked", bgColorLight: "#123456", bgColorDark: "#654321" })]),
-		);
+		const registry = load(saved([def({ id: "picked", bgColorLight: "#123456", bgColorDark: "#654321" })]));
 		assert.strictEqual(registry.get("picked")?.bgColorLight, "#123456");
 		assert.strictEqual(registry.get("picked")?.bgColorDark, "#654321");
 	});
@@ -152,10 +143,7 @@ describe("dropDerivedBackgrounds", () => {
 				}),
 			]),
 		);
-		assert.strictEqual(
-			registry.get("half")?.bgColorLight,
-			bgTintFor(ACCENT_LIGHT, false),
-		);
+		assert.strictEqual(registry.get("half")?.bgColorLight, bgTintFor(ACCENT_LIGHT, false));
 		assert.strictEqual(registry.get("half")?.bgColorDark, "#654321");
 	});
 
@@ -174,20 +162,12 @@ describe("dropDerivedBackgrounds", () => {
 				}),
 			]),
 		);
-		assert.strictEqual(
-			registry.get("grad")?.bgColorLight,
-			bgTintFor(ACCENT_LIGHT, false),
-		);
+		assert.strictEqual(registry.get("grad")?.bgColorLight, bgTintFor(ACCENT_LIGHT, false));
 	});
 
 	it("leaves a row that has only one of the two background hexes alone", () => {
-		const registry = load(
-			saved([def({ id: "lonely", bgColorLight: bgTintFor(ACCENT_LIGHT, false) })]),
-		);
-		assert.strictEqual(
-			registry.get("lonely")?.bgColorLight,
-			bgTintFor(ACCENT_LIGHT, false),
-		);
+		const registry = load(saved([def({ id: "lonely", bgColorLight: bgTintFor(ACCENT_LIGHT, false) })]));
+		assert.strictEqual(registry.get("lonely")?.bgColorLight, bgTintFor(ACCENT_LIGHT, false));
 	});
 
 	it("is a fixed point: a dropped background cannot be re-derived into existence", () => {
@@ -210,10 +190,7 @@ describe("dropDerivedBackgrounds", () => {
 	it("agrees with derivedBgAmount about what 'derived' means", () => {
 		// The migration is a thin wrapper on that solver; this pins the two
 		// together so a change to the solver's tolerances shows up here.
-		assert.notStrictEqual(
-			derivedBgAmount(ACCENT_LIGHT, bgTintFor(ACCENT_LIGHT, false), false),
-			null,
-		);
+		assert.notStrictEqual(derivedBgAmount(ACCENT_LIGHT, bgTintFor(ACCENT_LIGHT, false), false), null);
 		assert.strictEqual(derivedBgAmount(ACCENT_LIGHT, "#123456", false), null);
 	});
 });
@@ -224,9 +201,7 @@ describe("dropStaleTransparencyFlags", () => {
 		// intent: `transparentBg` used to be spread in conditionally, so it was
 		// a one-way door — the hexes beside it went on updating while the flag
 		// itself could never be switched back off.
-		const registry = load(
-			saved([def({ id: "both", transparentBg: true, bgColorLight: "#123456" })]),
-		);
+		const registry = load(saved([def({ id: "both", transparentBg: true, bgColorLight: "#123456" })]));
 		const row = registry.get("both");
 
 		assert.strictEqual(row?.transparentBg, undefined);
@@ -278,9 +253,7 @@ describe("dropStaleTransparencyFlags", () => {
 	});
 
 	it("is a fixed point", () => {
-		const first = load(
-			saved([def({ id: "both", transparentBg: true, bgColorLight: "#123456" })]),
-		);
+		const first = load(saved([def({ id: "both", transparentBg: true, bgColorLight: "#123456" })]));
 		assert.strictEqual(first.needsSaveAfterLoad(), true);
 
 		const second = load(first.toSaveData());
@@ -293,11 +266,7 @@ describe("dropSolidBackgroundFlags", () => {
 		// Nothing reads it any more — every background is a translucent tint.
 		// It is deleted only so a key no code understands stops riding along in
 		// `toSaveData()` and in every new export file.
-		const registry = load(
-			saved([
-				{ ...def({ id: "legacy" }), solidBackground: true } as CalloutDefinition,
-			]),
-		);
+		const registry = load(saved([{ ...def({ id: "legacy" }), solidBackground: true } as CalloutDefinition]));
 		const row = registry.get("legacy") as CalloutDefinition & {
 			solidBackground?: boolean;
 		};
@@ -306,11 +275,7 @@ describe("dropSolidBackgroundFlags", () => {
 	});
 
 	it("removes an explicit `false` as well — it is the key that is retired", () => {
-		const registry = load(
-			saved([
-				{ ...def({ id: "legacy" }), solidBackground: false } as CalloutDefinition,
-			]),
-		);
+		const registry = load(saved([{ ...def({ id: "legacy" }), solidBackground: false } as CalloutDefinition]));
 		assert.ok(!("solidBackground" in (registry.get("legacy") as object)));
 	});
 
@@ -327,11 +292,7 @@ describe("dropSolidBackgroundFlags", () => {
 	});
 
 	it("is a fixed point", () => {
-		const first = load(
-			saved([
-				{ ...def({ id: "legacy" }), solidBackground: true } as CalloutDefinition,
-			]),
-		);
+		const first = load(saved([{ ...def({ id: "legacy" }), solidBackground: true } as CalloutDefinition]));
 		assert.strictEqual(first.needsSaveAfterLoad(), true);
 
 		const second = load(first.toSaveData());
@@ -345,19 +306,13 @@ describe("stripMetadataFromIds", () => {
 		// `.callout[data-callout="note|green"]` and Obsidian writes `note`.
 		// Merging it into the survivor would silently restyle a callout the
 		// user never asked to change, so it goes.
-		const registry = load(
-			saved([def({ id: "note|green", displayName: "Note|green", source: "fallback" })]),
-		);
+		const registry = load(saved([def({ id: "note|green", displayName: "Note|green", source: "fallback" })]));
 		assert.strictEqual(registry.has("note|green"), false);
 		assert.strictEqual(registry.get("note")?.displayName, "Note", "untouched");
 	});
 
 	it("renames a piped row to its base when the base is free", () => {
-		const registry = load(
-			saved([
-				def({ id: "custom|meta", displayName: "Custom|meta", source: "fallback" }),
-			]),
-		);
+		const registry = load(saved([def({ id: "custom|meta", displayName: "Custom|meta", source: "fallback" })]));
 		assert.strictEqual(registry.has("custom|meta"), false);
 		assert.ok(registry.has("custom"));
 		assert.strictEqual(registry.get("custom")?.source, "fallback", "row is carried over");
@@ -366,16 +321,12 @@ describe("stripMetadataFromIds", () => {
 	it("re-derives the display name a discovery row took from the piped id", () => {
 		// Left alone it would read "Custom|meta" in the settings list AND on
 		// screen — the heading and inline roles are painted from displayName.
-		const registry = load(
-			saved([def({ id: "custom|meta", displayName: "Custom|meta" })]),
-		);
+		const registry = load(saved([def({ id: "custom|meta", displayName: "Custom|meta" })]));
 		assert.strictEqual(registry.get("custom")?.displayName, "Custom");
 	});
 
 	it("keeps a display name the user chose, pipe-free, through the rename", () => {
-		const registry = load(
-			saved([def({ id: "custom|meta", displayName: "My Callout" })]),
-		);
+		const registry = load(saved([def({ id: "custom|meta", displayName: "My Callout" })]));
 		assert.strictEqual(registry.get("custom")?.displayName, "My Callout");
 	});
 
@@ -403,9 +354,7 @@ describe("stripMetadataFromIds", () => {
 	});
 
 	it("never renames a built-in, even if one somehow carried a pipe", () => {
-		const registry = load(
-			saved([{ id: "note", displayName: "N|x", builtIn: true } as CalloutDefinition]),
-		);
+		const registry = load(saved([{ id: "note", displayName: "N|x", builtIn: true } as CalloutDefinition]));
 		assert.ok(registry.has("note"));
 		assert.strictEqual(registry.getBuiltIn().length, 13);
 	});
@@ -426,9 +375,7 @@ describe("stripMetadataFromIds", () => {
 		// A side effect of the guard, not a separate rule: the alias rewrite is
 		// gated on *any* alias containing a pipe, and then re-filters them all.
 		// `note` was already a broken alias; the pass is simply what notices.
-		const registry = load(
-			saved([def({ id: "clean", aliases: ["a|b", "note", "plain"] })]),
-		);
+		const registry = load(saved([def({ id: "clean", aliases: ["a|b", "note", "plain"] })]));
 		assert.deepStrictEqual(registry.get("clean")?.aliases, ["a", "plain"]);
 	});
 
@@ -438,9 +385,7 @@ describe("stripMetadataFromIds", () => {
 	});
 
 	it("de-duplicates and drops self-references while rewriting", () => {
-		const registry = load(
-			saved([def({ id: "clean", aliases: ["a|b", "a|c", "clean|x"] })]),
-		);
+		const registry = load(saved([def({ id: "clean", aliases: ["a|b", "a|c", "clean|x"] })]));
 		assert.deepStrictEqual(registry.get("clean")?.aliases, ["a"]);
 	});
 
@@ -448,20 +393,13 @@ describe("stripMetadataFromIds", () => {
 		// A dangling `fallbackCalloutId` is not inert: generateFallbackCSS bails
 		// when it resolves to nothing, and every unrecognized callout in the
 		// vault silently loses its colour, icon and background.
-		const registry = load(
-			saved([def({ id: "custom|meta" })], { fallbackCalloutId: "custom|meta" }),
-		);
+		const registry = load(saved([def({ id: "custom|meta" })], { fallbackCalloutId: "custom|meta" }));
 		assert.strictEqual(registry.settings.fallbackCalloutId, "custom");
 	});
 
 	it("resets the fallback target to the default when the row is gone for good", () => {
-		const registry = load(
-			saved([def({ id: "note|green" })], { fallbackCalloutId: "note|green" }),
-		);
-		assert.strictEqual(
-			registry.settings.fallbackCalloutId,
-			DEFAULT_SETTINGS.fallbackCalloutId,
-		);
+		const registry = load(saved([def({ id: "note|green" })], { fallbackCalloutId: "note|green" }));
+		assert.strictEqual(registry.settings.fallbackCalloutId, DEFAULT_SETTINGS.fallbackCalloutId);
 	});
 
 	it("leaves an unrelated fallback target alone", () => {
@@ -474,9 +412,7 @@ describe("stripMetadataFromIds", () => {
 	});
 
 	it("is a fixed point", () => {
-		const first = load(
-			saved([def({ id: "custom|meta" }), def({ id: "note|green" })]),
-		);
+		const first = load(saved([def({ id: "custom|meta" }), def({ id: "note|green" })]));
 		assert.strictEqual(first.needsSaveAfterLoad(), true);
 
 		const second = load(first.toSaveData());
@@ -487,12 +423,20 @@ describe("stripMetadataFromIds", () => {
 
 describe("reconcileIdCollisions", () => {
 	it("resolves transitive alias bridges in one load and preserves references", () => {
-		const first = load(saved([
-			def({ id: "alpha", aliases: ["x"] }),
-			def({ id: "beta", aliases: ["x", "y"] }),
-			def({ id: "gamma", aliases: ["y", "z"] }),
-			def({ id: "delta", aliases: ["z"] }),
-		], { fallbackCalloutId: "delta", customCommands: [{ id: "cc-existing", calloutId: "delta", role: "regular" }] }));
+		const first = load(
+			saved(
+				[
+					def({ id: "alpha", aliases: ["x"] }),
+					def({ id: "beta", aliases: ["x", "y"] }),
+					def({ id: "gamma", aliases: ["y", "z"] }),
+					def({ id: "delta", aliases: ["z"] }),
+				],
+				{
+					fallbackCalloutId: "delta",
+					customCommands: [{ id: "cc-existing", calloutId: "delta", role: "regular" }],
+				},
+			),
+		);
 		assert.deepStrictEqual(userIds(first), ["alpha"]);
 		for (const alias of ["x", "y", "z", "beta", "gamma", "delta"]) {
 			assert.strictEqual(first.findByIdentity(alias)?.id, "alpha", alias);
@@ -508,12 +452,7 @@ describe("reconcileIdCollisions", () => {
 	it("folds a dash/space pair down to one row", () => {
 		// Obsidian dasherizes `data-callout`, so `a b` and `a-b` are one
 		// selector. Two surviving rows would forever fight over it.
-		const registry = load(
-			saved([
-				def({ id: "a b", source: "user" }),
-				def({ id: "a-b", source: "user" }),
-			]),
-		);
+		const registry = load(saved([def({ id: "a b", source: "user" }), def({ id: "a-b", source: "user" })]));
 		assert.strictEqual(userIds(registry).length, 1);
 	});
 
@@ -528,12 +467,7 @@ describe("reconcileIdCollisions", () => {
 	});
 
 	it("folds the loser's id in as an alias, so no usage is orphaned", () => {
-		const registry = load(
-			saved([
-				def({ id: "c-d", source: "user" }),
-				def({ id: "c d", source: "user" }),
-			]),
-		);
+		const registry = load(saved([def({ id: "c-d", source: "user" }), def({ id: "c d", source: "user" })]));
 		assert.deepStrictEqual(registry.get("c d")?.aliases, ["c-d"]);
 	});
 
@@ -544,37 +478,24 @@ describe("reconcileIdCollisions", () => {
 				def({ id: "c d", source: "user", aliases: ["dee"] }),
 			]),
 		);
-		assert.deepStrictEqual(
-			registry.get("c d")?.aliases?.sort(),
-			["c-d", "cee", "dee"],
-		);
+		assert.deepStrictEqual(registry.get("c d")?.aliases?.sort(), ["c-d", "cee", "dee"]);
 	});
 
 	it("drops an uncustomized discovery row without aliasing it — it is auto-junk", () => {
-		const registry = load(
-			saved([
-				def({ id: "a b", source: "user" }),
-				def({ id: "a-b", source: "fallback" }),
-			]),
-		);
+		const registry = load(saved([def({ id: "a b", source: "user" }), def({ id: "a-b", source: "fallback" })]));
 		assert.deepStrictEqual(userIds(registry), ["a b"]);
 		assert.strictEqual(registry.get("a b")?.aliases, undefined);
 	});
 
 	it("keeps a CUSTOMIZED discovery row's id as an alias", () => {
 		const registry = load(
-			saved([
-				def({ id: "a b", source: "user" }),
-				def({ id: "a-b", source: "fallback", customized: true }),
-			]),
+			saved([def({ id: "a b", source: "user" }), def({ id: "a-b", source: "fallback", customized: true })]),
 		);
 		assert.deepStrictEqual(registry.get("a b")?.aliases, ["a-b"]);
 	});
 
 	it("always lets the built-in survive", () => {
-		const registry = load(
-			saved([def({ id: "no-te", source: "user" }), def({ id: "no te", source: "user" })]),
-		);
+		const registry = load(saved([def({ id: "no-te", source: "user" }), def({ id: "no te", source: "user" })]));
 		// A contrived pair, but the rule is the point: never risk dropping one.
 		assert.strictEqual(registry.getBuiltIn().length, 13);
 	});
@@ -602,12 +523,7 @@ describe("reconcileIdCollisions", () => {
 	});
 
 	it("is a fixed point", () => {
-		const first = load(
-			saved([
-				def({ id: "c-d", source: "user" }),
-				def({ id: "c d", source: "user" }),
-			]),
-		);
+		const first = load(saved([def({ id: "c-d", source: "user" }), def({ id: "c d", source: "user" })]));
 		const second = load(first.toSaveData());
 		assert.deepStrictEqual(userIds(second), ["c d"]);
 		assert.deepStrictEqual(second.get("c d")?.aliases, ["c-d"]);
@@ -616,12 +532,7 @@ describe("reconcileIdCollisions", () => {
 	it("runs AFTER stripMetadataFromIds, so a row renamed back to its base is reconciled too", () => {
 		// `x|meta` becomes `x`, which then has to go through the dash/space
 		// reconcile like any other row.
-		const registry = load(
-			saved([
-				def({ id: "x y|meta", source: "fallback" }),
-				def({ id: "x-y", source: "user" }),
-			]),
-		);
+		const registry = load(saved([def({ id: "x y|meta", source: "fallback" }), def({ id: "x-y", source: "user" })]));
 		assert.deepStrictEqual(userIds(registry), ["x-y"]);
 	});
 });
@@ -629,10 +540,7 @@ describe("reconcileIdCollisions", () => {
 describe("needsSaveAfterLoad()", () => {
 	it("is false for a load that repaired nothing", () => {
 		assert.strictEqual(load(null).needsSaveAfterLoad(), false);
-		assert.strictEqual(
-			load(current([def({ id: "clean" })])).needsSaveAfterLoad(),
-			false,
-		);
+		assert.strictEqual(load(current([def({ id: "clean" })])).needsSaveAfterLoad(), false);
 	});
 
 	it("is consumed by the read, so an incidental later save cannot re-trigger it", () => {
@@ -659,14 +567,8 @@ describe("needsSaveAfterLoad()", () => {
 				}),
 			]),
 		],
-		[
-			"dropStaleTransparencyFlags",
-			saved([def({ id: "t", transparentBg: true, bgColorLight: "#123456" })]),
-		],
-		[
-			"dropSolidBackgroundFlags",
-			saved([{ ...def({ id: "s" }), solidBackground: true } as CalloutDefinition]),
-		],
+		["dropStaleTransparencyFlags", saved([def({ id: "t", transparentBg: true, bgColorLight: "#123456" })])],
+		["dropSolidBackgroundFlags", saved([{ ...def({ id: "s" }), solidBackground: true } as CalloutDefinition])],
 		["stripMetadataFromIds — a removed row", saved([def({ id: "note|green" })])],
 		["stripMetadataFromIds — a renamed row", saved([def({ id: "custom|meta" })])],
 		[
@@ -678,10 +580,7 @@ describe("needsSaveAfterLoad()", () => {
 		[
 			"consolidateDuplicatePalettes",
 			saved([], {
-				customPalettes: [
-					palette({ id: "cp-1", name: "First" }),
-					palette({ id: "cp-2", name: "Second" }),
-				],
+				customPalettes: [palette({ id: "cp-1", name: "First" }), palette({ id: "cp-2", name: "Second" })],
 			}),
 		],
 	] as Array<[string, Partial<PluginData>]>) {
@@ -733,12 +632,7 @@ describe("needsSaveAfterLoad()", () => {
 		// it has to be written back like any other rewrite. Un-flushed,
 		// `data.json` kept both rows and the merge was simply redone on every
 		// launch — the user saw one row, the file held two.
-		const registry = load(
-			saved([
-				def({ id: "c-d", source: "user" }),
-				def({ id: "c d", source: "user" }),
-			]),
-		);
+		const registry = load(saved([def({ id: "c-d", source: "user" }), def({ id: "c d", source: "user" })]));
 		assert.strictEqual(registry.getAll().length, 14, "one row really did go");
 		assert.strictEqual(registry.needsSaveAfterLoad(), true);
 	});
@@ -747,12 +641,7 @@ describe("needsSaveAfterLoad()", () => {
 		// The flag must not re-arm forever: the loser survives only as an alias
 		// of the survivor, so the group it forms next load names one definition
 		// and there is nothing left to merge.
-		const first = load(
-			saved([
-				def({ id: "c-d", source: "user" }),
-				def({ id: "c d", source: "user" }),
-			]),
-		);
+		const first = load(saved([def({ id: "c-d", source: "user" }), def({ id: "c d", source: "user" })]));
 		assert.strictEqual(first.needsSaveAfterLoad(), true);
 
 		const second = load(first.toSaveData());
@@ -771,9 +660,7 @@ describe("stored colours are normalized to hex on the way in", () => {
 	});
 
 	it("normalizes the other spellings without changing the colour", () => {
-		const registry = load(
-			saved([def({ colorLight: "rgb(255, 0, 0)", colorDark: "#0f0" })]),
-		);
+		const registry = load(saved([def({ colorLight: "rgb(255, 0, 0)", colorDark: "#0f0" })]));
 		assert.strictEqual(registry.get("x")?.colorLight, "#ff0000");
 		assert.strictEqual(registry.get("x")?.colorDark, "#00ff00");
 	});
@@ -781,11 +668,7 @@ describe("stored colours are normalized to hex on the way in", () => {
 	it("falls back to the shipped default when nothing can read the value", () => {
 		const shipped = load(null).get("info");
 		assert.ok(shipped);
-		const registry = load(
-			saved([
-				{ ...shipped, colorLight: "var(--some-theme-thing)" },
-			] as CalloutDefinition[]),
-		);
+		const registry = load(saved([{ ...shipped, colorLight: "var(--some-theme-thing)" }] as CalloutDefinition[]));
 		assert.strictEqual(registry.get("info")?.colorLight, shipped.colorLight);
 	});
 

@@ -77,7 +77,8 @@ export async function runManualScan(plugin: SettingsTabPlugin): Promise<void> {
 		// drawn (see the header). `done()` called again below changes nothing.
 		const added = await plugin.runVaultScan(() => work.done());
 		// New callouts are worth a celebration; finding none is still a job done.
-		tellResult = () => showNotice(added > 0 ? "celebrate" : "upToDate", t("settings.rescanComplete", { count: String(added) }));
+		tellResult = () =>
+			showNotice(added > 0 ? "celebrate" : "upToDate", t("settings.rescanComplete", { count: String(added) }));
 	} catch (error) {
 		console.error("[callout-studio] manual discovery failed", error);
 		tellResult = () => showNotice("problem", t("manualDiscovery.failed"));

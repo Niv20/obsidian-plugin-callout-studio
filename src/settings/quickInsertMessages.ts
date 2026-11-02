@@ -53,20 +53,12 @@ export function quickInsertNotice(problem: TargetEditorProblem): string {
  * What an empty list means. A non-blank query always wins: an empty category is
  * useful guidance, while a search inside any category is simply a failed match.
  */
-export function quickInsertEmptyMessage(
-	filter: CalloutSourceFilter,
-	query: string,
-	hasUserCallouts = false,
-): string {
+export function quickInsertEmptyMessage(filter: CalloutSourceFilter, query: string, hasUserCallouts = false): string {
 	if (query.trim() !== "") return t("quickInsert.noResults");
 	if (filter === "builtin") return t("quickInsert.noBuiltInCallouts");
 	if (filter === "theme") return t("quickInsert.noThemeCallouts");
 	if (filter === "user") {
-		return t(
-			hasUserCallouts
-				? "quickInsert.noAvailableUserCallouts"
-				: "quickInsert.noUserCallouts",
-		);
+		return t(hasUserCallouts ? "quickInsert.noAvailableUserCallouts" : "quickInsert.noUserCallouts");
 	}
 	return t("quickInsert.noResults");
 }

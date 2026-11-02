@@ -16,10 +16,15 @@ import { linesFragment } from "../../ui/textLines";
 import { HEADING_LEVELS } from "../../utils/customCommands";
 import type { CalloutRenderRole, CustomCommandAction } from "../../types";
 
-export interface ChoiceRow { el: HTMLElement; dropdown: SelectDropdown; }
+export interface ChoiceRow {
+	el: HTMLElement;
+	dropdown: SelectDropdown;
+}
 
 /** The Action row, whose description says what Wrap and Insert mean for a format. */
-export interface ActionRow extends ChoiceRow { describe(role: CalloutRenderRole): void; }
+export interface ActionRow extends ChoiceRow {
+	describe(role: CalloutRenderRole): void;
+}
 
 /** What Wrap and Insert do differs by format, so each explains its own. */
 const ACTION_DESC_KEYS: Record<CalloutRenderRole, string> = {
@@ -28,11 +33,7 @@ const ACTION_DESC_KEYS: Record<CalloutRenderRole, string> = {
 	inline: "commandBuilder.actionDescInline",
 };
 
-export function buildHeadingLevelRow(
-	parent: HTMLElement,
-	value: number,
-	onChange: (level: number) => void,
-): ChoiceRow {
+export function buildHeadingLevelRow(parent: HTMLElement, value: number, onChange: (level: number) => void): ChoiceRow {
 	const setting = new Setting(parent)
 		.setName(t("commandBuilder.headingLevel"))
 		.setClass("cs-command-field")
@@ -50,13 +51,12 @@ export function buildActionRow(
 	value: CustomCommandAction,
 	onChange: (action: CustomCommandAction) => void,
 ): ActionRow {
-	const setting = new Setting(parent)
-		.setName(t("commandBuilder.action"))
-		.setClass("cs-command-field");
+	const setting = new Setting(parent).setName(t("commandBuilder.action")).setClass("cs-command-field");
 	const dropdown = new SelectDropdown(setting.controlEl, t("commandBuilder.action"))
 		.addOption("wrap", t("commandBuilder.actionWrap"))
 		.addOption("insert", t("commandBuilder.actionInsert"))
-		.setValue(value).onChange((v) => onChange(v as CustomCommandAction));
+		.setValue(value)
+		.onChange((v) => onChange(v as CustomCommandAction));
 	// One short sentence per line.
 	const describe = (role: CalloutRenderRole): void => {
 		setting.setDesc(linesFragment(t(ACTION_DESC_KEYS[role])));

@@ -93,11 +93,7 @@ export class IconFetchManager {
 	private needsFetch(icon: CalloutIcon): boolean {
 		const pack = packFor(icon);
 		if (!pack || pack.kind !== "perIconRemote") return false;
-		return !this.host.registry.findIconSvg(
-			icon.type,
-			icon.value,
-			pack.cacheVariant(icon, "regular"),
-		);
+		return !this.host.registry.findIconSvg(icon.type, icon.value, pack.cacheVariant(icon, "regular"));
 	}
 
 	/** Store a freshly fetched drawing. */
@@ -160,18 +156,18 @@ export class IconFetchManager {
 				if (this.work.destroyed) return;
 				lastErr = err;
 				if (attempt < MAX_ATTEMPTS) {
-					try { await this.work.pause(RETRY_DELAY_MS); }
-					catch { return; }
+					try {
+						await this.work.pause(RETRY_DELAY_MS);
+					} catch {
+						return;
+					}
 				}
 			}
 		}
 		this.failed.add(key);
 		showNotice("problem", t("notice.iconDownloadFailed", { name: icon.value }));
 		this.notify();
-		console.warn(
-			"[CalloutStudio] failed to fetch icon after retries",
-			lastErr,
-		);
+		console.warn("[CalloutStudio] failed to fetch icon after retries", lastErr);
 	}
 
 	/**
@@ -191,12 +187,7 @@ export class IconFetchManager {
 			const key = this.keyFor(def.icon, "regular");
 			const { style, weight } = materialVariantOf(def.icon);
 			try {
-				const svg = await downloadMaterialSvg(
-					def.icon.value,
-					style,
-					weight,
-					this.work,
-				);
+				const svg = await downloadMaterialSvg(def.icon.value, style, weight, this.work);
 				if (this.work.destroyed) return;
 				this.store(def.icon, svg);
 				if (key !== null) this.failed.delete(key);

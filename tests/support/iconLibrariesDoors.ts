@@ -17,15 +17,15 @@ import type { IconSourceId } from "../../src/types";
  *
  * @returns Puts the real one back; call it in a `finally`.
  */
-export function standInForLibrariesWindow(
-	onOpen: (host: IconLibrariesHost) => boolean | Promise<boolean>,
-): () => void {
+export function standInForLibrariesWindow(onOpen: (host: IconLibrariesHost) => boolean | Promise<boolean>): () => void {
 	const original = Object.getOwnPropertyDescriptor(IconLibrariesModal.prototype, "openAndWait")!;
 	IconLibrariesModal.prototype.openAndWait = function (this: IconLibrariesModal) {
 		const host = (this as unknown as { host: IconLibrariesHost }).host;
 		return Promise.resolve(onOpen(host));
 	};
-	return () => { Object.defineProperty(IconLibrariesModal.prototype, "openAndWait", original); };
+	return () => {
+		Object.defineProperty(IconLibrariesModal.prototype, "openAndWait", original);
+	};
 }
 
 /**

@@ -5,7 +5,10 @@ import { asEl, el, type FakeElement } from "./fakeDom";
 export class DragAnimation extends EventTarget {
 	running = true;
 	cancelled = false;
-	constructor(readonly row: FakeElement, readonly transform: string) {
+	constructor(
+		readonly row: FakeElement,
+		readonly transform: string,
+	) {
 		super();
 	}
 	cancel(): void {
@@ -35,11 +38,13 @@ export interface PlaceholderBox {
 /** Class of DragSortList's drop placeholder. */
 const PLACEHOLDER = "cs-drag-placeholder";
 
-export function dragSortHarness(options: {
-	reducedMotion?: boolean;
-	/** The element the list scrolls in, for the edge auto-scroll. */
-	scroller?: FakeElement;
-} = {}) {
+export function dragSortHarness(
+	options: {
+		reducedMotion?: boolean;
+		/** The element the list scrolls in, for the edge auto-scroll. */
+		scroller?: FakeElement;
+	} = {},
+) {
 	Object.assign(window, {
 		matchMedia: () => ({ matches: options.reducedMotion ?? false }),
 	});
@@ -49,7 +54,9 @@ export function dragSortHarness(options: {
 	const moves: Array<[number, number]> = [];
 	let captured: number | undefined;
 	const listEl = asEl(list);
-	listEl.setPointerCapture = (id) => { captured = id; };
+	listEl.setPointerCapture = (id) => {
+		captured = id;
+	};
 	listEl.hasPointerCapture = (id) => captured === id;
 	listEl.releasePointerCapture = (id) => {
 		if (captured !== id) return;
@@ -75,8 +82,15 @@ export function dragSortHarness(options: {
 		};
 	};
 	const rect = (top: number, left: number, width: number, height: number): DOMRect => ({
-		x: left, y: top, top, bottom: top + height, left, right: left + width,
-		width, height, toJSON: () => ({}),
+		x: left,
+		y: top,
+		top,
+		bottom: top + height,
+		left,
+		right: left + width,
+		width,
+		height,
+		toJSON: () => ({}),
 	});
 	const rows = model.map((id) => {
 		const row = list.createDiv({ cls: "test-drag-row" });
@@ -85,15 +99,16 @@ export function dragSortHarness(options: {
 		Object.defineProperty(row, "nextElementSibling", {
 			get: () => list.children[list.children.indexOf(row) + 1] ?? null,
 		});
-		row.style.removeProperty = (name: string) => { delete row.style[name]; };
+		row.style.removeProperty = (name: string) => {
+			delete row.style[name];
+		};
 		animatable(row);
 		row.getBoundingClientRect = () => rect(flow().indexOf(row) * 40 + shift(row), 0, 240, 36);
 		return row;
 	});
 	/** The placeholder's own box, as DragSortList placed it. */
 	const slot = (box: FakeElement): PlaceholderBox => {
-		const px = (name: string): number =>
-			parseFloat(box.style.getPropertyValue(`--cs-drag-placeholder-${name}`));
+		const px = (name: string): number => parseFloat(box.style.getPropertyValue(`--cs-drag-placeholder-${name}`));
 		return { top: px("top"), left: px("left"), width: px("width"), height: px("height") };
 	};
 	/**
@@ -122,7 +137,11 @@ export function dragSortHarness(options: {
 		},
 	});
 	const event = (pointerId: number, clientY: number, target: FakeElement = list) => ({
-		pointerId, clientY, target, button: 0, preventDefault: () => {},
+		pointerId,
+		clientY,
+		target,
+		button: 0,
+		preventDefault: () => {},
 	});
 	const down = (row: FakeElement, pointerId = 1) => {
 		const y = row.getBoundingClientRect().top + 18;
@@ -130,7 +149,14 @@ export function dragSortHarness(options: {
 		patchPlaceholder();
 	};
 	return {
-		list, rows, model, moves, animations, down, cleanup, slot,
+		list,
+		rows,
+		model,
+		moves,
+		animations,
+		down,
+		cleanup,
+		slot,
 		move: (y: number, id = 1) => list.fire("pointermove", event(id, y)),
 		up: (id = 1) => list.fire("pointerup", event(id, 0)),
 		cancel: (id = 1) => list.fire("pointercancel", event(id, 0)),

@@ -48,11 +48,7 @@ function treeContext(options: { paused?: boolean; recovery?: boolean; downloadin
 /** Draw the boxes at the foot of the page. */
 function drawMainPage(ctx: TreeContext) {
 	const tab = new PluginSettingTab({}, {});
-	tab.getSettingDefinitions = () => toObsidianItems([
-		importExportGroup(ctx),
-		dangerZoneGroup(ctx),
-		footerGroup(ctx),
-	]);
+	tab.getSettingDefinitions = () => toObsidianItems([importExportGroup(ctx), dangerZoneGroup(ctx), footerGroup(ctx)]);
 	const harness = new DeclarativeHarness(tab);
 	tab.update();
 	return { tab, harness };
@@ -66,16 +62,16 @@ function buttonOf(harness: DeclarativeHarness, rowName: string): ButtonLike {
 describe("the boxes at the foot of the main page", () => {
 	it("draws each box under its heading, in order", () => {
 		const { harness } = drawMainPage(treeContext());
-		const boxes = harness.rendered.filter((box) => box.def.heading).map((box) => [
-			box.def.heading,
-			box.children.map((row) => row.def.name),
-		]);
+		const boxes = harness.rendered
+			.filter((box) => box.def.heading)
+			.map((box) => [box.def.heading, box.children.map((row) => row.def.name)]);
 		assert.deepEqual(boxes, [
 			["Import and export", ["Import callouts", "Export callouts"]],
 			["Danger zone", ["Restore an earlier version", "Convert to standard Markdown", "Reset everything"]],
 		]);
 		// One box without a heading: the footer's, a single nameless row of tiles.
-		const unheaded = harness.rendered.filter((box) => !box.def.heading)
+		const unheaded = harness.rendered
+			.filter((box) => !box.def.heading)
 			.map((box) => [box.def.id, box.children.map((row) => row.def.name)]);
 		assert.deepEqual(unheaded, [["footer", [""]]]);
 		assert.deepEqual(harness.duplicateKeys, []);
@@ -115,7 +111,8 @@ describe("Reset everything", () => {
 describe("while saving is paused", () => {
 	it("dims the buttons that would change the setup, and only those", () => {
 		const { harness } = drawMainPage(treeContext({ paused: true }));
-		const dimmed = (name: string): string | null => (buttonOf(harness, name).buttonEl as unknown as HTMLElement).getAttribute("aria-disabled");
+		const dimmed = (name: string): string | null =>
+			(buttonOf(harness, name).buttonEl as unknown as HTMLElement).getAttribute("aria-disabled");
 		assert.equal(dimmed("Import callouts"), "true");
 		assert.equal(dimmed("Reset everything"), "true");
 		assert.equal(dimmed("Export callouts"), "false");
@@ -175,8 +172,14 @@ describe("the footer", () => {
 	it("has no email and no Contribute tile", () => {
 		const { harness } = drawMainPage(treeContext());
 		const hrefs = tilesOf(harness).map((tile) => tile.getAttribute("href") ?? "");
-		assert.equal(hrefs.some((href) => href.startsWith("mailto:")), false);
-		assert.equal(tilesOf(harness).some((tile) => nameOf(tile) === "Contribute"), false);
+		assert.equal(
+			hrefs.some((href) => href.startsWith("mailto:")),
+			false,
+		);
+		assert.equal(
+			tilesOf(harness).some((tile) => nameOf(tile) === "Contribute"),
+			false,
+		);
 	});
 
 	it("makes every tile but the version an icon with its name beside it, and none a tooltip", () => {
@@ -192,12 +195,17 @@ describe("the footer", () => {
 
 	it("has no About Callout Studio tile", () => {
 		const { harness } = drawMainPage(treeContext());
-		assert.equal(tilesOf(harness).some((tile) => nameOf(tile) === "About Callout Studio"), false);
+		assert.equal(
+			tilesOf(harness).some((tile) => nameOf(tile) === "About Callout Studio"),
+			false,
+		);
 	});
 
 	it("links the project tiles to their pages", () => {
 		const { harness } = drawMainPage(treeContext());
-		const links = tilesOf(harness).filter((tile) => tile.tagName === "A").map((a) => [nameOf(a), a.getAttribute("href")]);
+		const links = tilesOf(harness)
+			.filter((tile) => tile.tagName === "A")
+			.map((a) => [nameOf(a), a.getAttribute("href")]);
 		assert.deepEqual(links, [
 			["Open an issue", "https://github.com/Niv20/obsidian-plugin-callout-studio/issues/new/choose"],
 			["Source code", "https://github.com/Niv20/obsidian-plugin-callout-studio"],
@@ -211,7 +219,9 @@ describe("the footer", () => {
 
 	it("makes the License tile a button, not a link", () => {
 		const { harness } = drawMainPage(treeContext());
-		const buttons = tilesOf(harness).filter((tile) => tile.tagName === "BUTTON").map(nameOf);
+		const buttons = tilesOf(harness)
+			.filter((tile) => tile.tagName === "BUTTON")
+			.map(nameOf);
 		// The globe is a button too: it opens the language menu.
 		assert.deepEqual(buttons, ["English", "License"]);
 	});
@@ -220,8 +230,14 @@ describe("the footer", () => {
 		const { harness } = drawMainPage(treeContext());
 		const globe = tilesOf(harness).find((tile) => nameOf(tile) === "English")!;
 		const items = openDropdownMenu(globe.parentElement!.parentElement ?? globe.parentElement!).items;
-		assert.deepEqual(items.map((item) => item.title), getSelectableLocales().map((locale) => locale.name));
-		assert.deepEqual(items.filter((item) => item.checked).map((item) => item.title), ["English"]);
+		assert.deepEqual(
+			items.map((item) => item.title),
+			getSelectableLocales().map((locale) => locale.name),
+		);
+		assert.deepEqual(
+			items.filter((item) => item.checked).map((item) => item.title),
+			["English"],
+		);
 	});
 
 	it("dims the globe while saving is paused or a language downloads, and no other tile", () => {
@@ -231,7 +247,12 @@ describe("the footer", () => {
 		assert.equal(globeOf(drawMainPage(treeContext()).harness).disabled, false);
 		const paused = drawMainPage(treeContext({ paused: true })).harness;
 		assert.equal(globeOf(paused).disabled, true);
-		assert.deepEqual(tilesOf(paused).filter((tile) => (tile as HTMLButtonElement).disabled).map(nameOf), ["English"]);
+		assert.deepEqual(
+			tilesOf(paused)
+				.filter((tile) => (tile as HTMLButtonElement).disabled)
+				.map(nameOf),
+			["English"],
+		);
 		const downloading = drawMainPage(treeContext({ downloading: true })).harness;
 		assert.equal(globeOf(downloading).disabled, true);
 	});
@@ -240,7 +261,10 @@ describe("the footer", () => {
 		const { tab, harness } = drawMainPage(treeContext());
 		tab.update();
 		assert.equal(tilesOf(harness).length, 5);
-		assert.equal((rowOf(harness).settingEl as unknown as HTMLElement).querySelectorAll(".cs-footer-tiles").length, 1);
+		assert.equal(
+			(rowOf(harness).settingEl as unknown as HTMLElement).querySelectorAll(".cs-footer-tiles").length,
+			1,
+		);
 	});
 });
 

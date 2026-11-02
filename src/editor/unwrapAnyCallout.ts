@@ -32,9 +32,8 @@ const pickToken = (
 	const atCursor = pills.filter((token) => token.from <= from.ch && from.ch <= tokenEnd(token));
 	if (atCursor.length > 0) return atCursor[atCursor.length - 1]!;
 	// A selection on one line may start just before the pill it means.
-	const selected = from.line === to.line
-		? pills.find((token) => token.from < to.ch && from.ch < tokenEnd(token))
-		: undefined;
+	const selected =
+		from.line === to.line ? pills.find((token) => token.from < to.ch && from.ch < tokenEnd(token)) : undefined;
 	return selected ?? tokens.find((token) => token.role === "heading") ?? null;
 };
 

@@ -8,13 +8,7 @@
  */
 import { Modal } from "obsidian";
 import type { App } from "obsidian";
-import type {
-	CalloutDefinition,
-	CalloutIcon,
-	IconSourceId,
-	PluginSettings,
-	UserImageIcon,
-} from "../../types";
+import type { CalloutDefinition, CalloutIcon, IconSourceId, PluginSettings, UserImageIcon } from "../../types";
 import type { IconVariantState } from "../../icons/types";
 import { getSource, packFor } from "../../icons/registry";
 import type { IconService } from "../../icons/IconService";
@@ -28,27 +22,16 @@ import {
 } from "../../icons/iconLibraries";
 import type { DeviceLocalStore } from "../../manager/DeviceLocalStore";
 import type { SettingsWriter } from "../../manager/SettingsWriter";
-import {
-	MATERIAL_DEFAULT_STYLE,
-	MATERIAL_DEFAULT_WEIGHT,
-} from "../../icons/packs/material";
+import { MATERIAL_DEFAULT_STYLE, MATERIAL_DEFAULT_WEIGHT } from "../../icons/packs/material";
 import { FA_DEFAULT_STYLE, faStyleOf } from "../../icons/packs/fontAwesome";
 import { TABLER_DEFAULT_STYLE, tablerStyleOf } from "../../icons/packs/tabler";
 import { describeIcon } from "../../icons/describeIcon";
-import {
-	ALL_SOURCES,
-	createAllSourcesPack,
-	type PickerSourceId,
-} from "./allSources";
+import { ALL_SOURCES, createAllSourcesPack, type PickerSourceId } from "./allSources";
 import { PackPanel } from "./PackPanel";
 import { ImagePanel } from "./ImagePanel";
 import { openIconLibraries } from "./openIconLibraries";
 import { loadSourceCounts } from "./sourceCounts";
-import {
-	alignIconPickerRows,
-	mountIconSourcePicker,
-	showIconSource,
-} from "./sourcePicker";
+import { alignIconPickerRows, mountIconSourcePicker, showIconSource } from "./sourcePicker";
 import { explainIfBlocked, paintBlocked } from "../../ui/blockedButton";
 import { setButtonBusy } from "../../ui/busyButton";
 import type { ListboxPopup } from "../../ui/listboxPopup";
@@ -69,13 +52,7 @@ interface PickerPanel {
  * off the glyph is exact and needs no dataset lookup, so re-opening the picker
  * highlights the toned glyph the callout actually uses.
  */
-const SKIN_TONE_MODIFIERS = [
-	"\u{1F3FB}",
-	"\u{1F3FC}",
-	"\u{1F3FD}",
-	"\u{1F3FE}",
-	"\u{1F3FF}",
-];
+const SKIN_TONE_MODIFIERS = ["\u{1F3FB}", "\u{1F3FC}", "\u{1F3FD}", "\u{1F3FE}", "\u{1F3FF}"];
 
 function emojiToneOf(glyph: string): number {
 	const index = SKIN_TONE_MODIFIERS.findIndex((m) => glyph.includes(m));
@@ -250,19 +227,13 @@ export class IconPicker extends Modal {
 	 */
 	private menuLibraries(): MenuLibraries {
 		const current = this.currentIcon ? packFor(this.currentIcon)?.id : undefined;
-		const menu = menuLibraries(
-			this.plugin.settings.iconLibraries,
-			this.plugin.icons.packs,
-			current,
-		);
+		const menu = menuLibraries(this.plugin.settings.iconLibraries, this.plugin.icons.packs, current);
 		return this.packStatesLoaded ? menu : { ...menu, toDownload: [] };
 	}
 
 	/** The callout being edited, with the icon the picker opened on; absent outside the editor. */
 	private editedCallout(): EditedCallout | undefined {
-		return this.editing && this.currentIcon
-			? { ...this.editing, icon: this.currentIcon }
-			: undefined;
+		return this.editing && this.currentIcon ? { ...this.editing, icon: this.currentIcon } : undefined;
 	}
 
 	/** What the pooled list holds: the offered libraries, in the user's order. */
@@ -276,10 +247,7 @@ export class IconPicker extends Modal {
 		if (this.sourceCounts.size === 0) return undefined;
 		// Only what the pool actually contains, which changes as libraries are
 		// downloaded, deleted or hidden.
-		return this.pooledSources().reduce(
-			(total, source) => total + (this.sourceCount(source) ?? 0),
-			0,
-		);
+		return this.pooledSources().reduce((total, source) => total + (this.sourceCount(source) ?? 0), 0);
 	}
 
 	/** Fixed catalog counts are cached; user-owned Custom Icons are counted live. */
@@ -328,8 +296,7 @@ export class IconPicker extends Modal {
 
 		const offered = new Set(this.pooledSources());
 		const current = this.currentIcon && packFor(this.currentIcon)?.id;
-		const gone = (id: IconSourceId): boolean =>
-			offeredBefore.has(id) && !offered.has(id) && id !== current;
+		const gone = (id: IconSourceId): boolean => offeredBefore.has(id) && !offered.has(id) && id !== current;
 		const selectedSource = this.selectedIcon && packFor(this.selectedIcon)?.id;
 		if (selectedSource && gone(selectedSource)) {
 			this.selectedIcon = null;
@@ -376,25 +343,29 @@ export class IconPicker extends Modal {
 
 		// The one source the user writes to needs its own panel; see ImagePanel.
 		if (this.activeSource === "image") {
-			this.panel = new ImagePanel(host, {
-				app: this.plugin.app,
-				allCallouts: () => this.plugin.registry.getAll(),
-				images: () => this.plugin.registry.getUserImages(),
-				saveImages: (images) => {
-					this.plugin.registry.setUserImages(images);
-					void this.plugin.saveSettings();
+			this.panel = new ImagePanel(
+				host,
+				{
+					app: this.plugin.app,
+					allCallouts: () => this.plugin.registry.getAll(),
+					images: () => this.plugin.registry.getUserImages(),
+					saveImages: (images) => {
+						this.plugin.registry.setUserImages(images);
+						void this.plugin.saveSettings();
+					},
+					selectedIcon: () => this.selectedIcon,
+					onSelect: (icon) => {
+						this.selectedIcon = icon;
+						this.updatePreview();
+					},
+					onDelete: (id) => {
+						if (this.selectedIcon?.type !== "image" || this.selectedIcon.value !== id) return;
+						this.selectedIcon = null;
+						this.updatePreview();
+					},
 				},
-				selectedIcon: () => this.selectedIcon,
-				onSelect: (icon) => {
-					this.selectedIcon = icon;
-					this.updatePreview();
-				},
-				onDelete: (id) => {
-					if (this.selectedIcon?.type !== "image" || this.selectedIcon.value !== id) return;
-					this.selectedIcon = null;
-					this.updatePreview();
-				},
-			}, query);
+				query,
+			);
 			await this.panel.render();
 			return;
 		}
@@ -457,17 +428,10 @@ export class IconPicker extends Modal {
 			};
 		}
 		if (id === "material") {
-			const current =
-				this.currentIcon?.type === "material" ? this.currentIcon : null;
+			const current = this.currentIcon?.type === "material" ? this.currentIcon : null;
 			return {
-				style:
-					current?.style ??
-					sources.materialStyleDefault ??
-					MATERIAL_DEFAULT_STYLE,
-				weight:
-					current?.weight ??
-					sources.materialWeightDefault ??
-					MATERIAL_DEFAULT_WEIGHT,
+				style: current?.style ?? sources.materialStyleDefault ?? MATERIAL_DEFAULT_STYLE,
+				weight: current?.weight ?? sources.materialWeightDefault ?? MATERIAL_DEFAULT_WEIGHT,
 			};
 		}
 		if (id === "emoji") {

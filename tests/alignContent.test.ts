@@ -9,20 +9,9 @@ import { describe, it } from "node:test";
 import { buildSnippetCss } from "../src/manager/cssSnippetExport";
 import type { UserImageIcon } from "../src/types";
 import { splitSelectorList } from "../src/utils/selectorText";
-import {
-	definition,
-	harness,
-	parseRules,
-	ruleFor,
-	valueOf,
-	type CssRule,
-} from "./support/cssInjectorHarness";
+import { definition, harness, parseRules, ruleFor, valueOf, type CssRule } from "./support/cssInjectorHarness";
 
-const ALIGN_LENGTHS = [
-	"--cs-align-icon-inline-size",
-	"--cs-align-icon-gap",
-	"--cs-align-title-gap",
-] as const;
+const ALIGN_LENGTHS = ["--cs-align-icon-inline-size", "--cs-align-icon-gap", "--cs-align-title-gap"] as const;
 
 function onlyRuleWith(css: string, property: string): CssRule {
 	const rules = parseRules(css).filter((rule) => rule.props.includes(property));
@@ -61,12 +50,15 @@ describe("Align content with title", () => {
 		const { css } = harness();
 		const out = css.generateGlobalStyleCSS();
 		assert.doesNotMatch(out, /@property --cs-align-/);
-		assert.ok(!parseRules(out).some((rule) =>
-			rule.props.some((property) => property.startsWith("--cs-align-")) ||
-			rule.props.includes("padding-inline-start") ||
-			rule.props.includes("column-gap") ||
-			rule.props.includes("inline-size"),
-		));
+		assert.ok(
+			!parseRules(out).some(
+				(rule) =>
+					rule.props.some((property) => property.startsWith("--cs-align-")) ||
+					rule.props.includes("padding-inline-start") ||
+					rule.props.includes("column-gap") ||
+					rule.props.includes("inline-size"),
+			),
+		);
 		assert.strictEqual(
 			valueOf(onlyRuleWith(out, "margin-inline-end"), "margin-inline-end"),
 			"var(--cs-regular-icon-gap, 0.15em) !important",
@@ -89,10 +81,7 @@ describe("Align content with title", () => {
 		assert.strictEqual(valueOf(root, ALIGN_LENGTHS[1]), "var(--cs-regular-icon-gap, 0.15em) !important");
 		assert.strictEqual(valueOf(root, ALIGN_LENGTHS[2]), "var(--size-4-1, 4px) !important");
 		assert.strictEqual(valueOf(content, "font-size"), undefined);
-		assert.strictEqual(
-			valueOf(onlyRuleWith(out, "font-size"), "font-size"),
-			"0.75em !important",
-		);
+		assert.strictEqual(valueOf(onlyRuleWith(out, "font-size"), "font-size"), "0.75em !important");
 
 		// These are logical properties. The browser maps inline-start to left
 		// for LTR and right for RTL; both directions use these same three lengths.
@@ -127,18 +116,16 @@ describe("Align content with title", () => {
 		const expectedWidth = "calc(var(--icon-size, 1.2em) * 3.000)";
 		for (const id of ["banner", "wide-alias"]) {
 			const base = `.callout[data-callout="${id}"]`;
-			assert.strictEqual(
-				valueOf(ruleFor(out, base), ALIGN_LENGTHS[0]),
-				`${expectedWidth} !important`,
-			);
+			assert.strictEqual(valueOf(ruleFor(out, base), ALIGN_LENGTHS[0]), `${expectedWidth} !important`);
 			// The ID and its alias share one painted rule (one copy of the
 			// artwork); each still has to be in its selector list.
-			const paintedRules = parseRules(out).filter((rule) =>
-				splitSelectorList(rule.selector)
-					.map((part) => part.trim())
-					.includes(`${base} > .callout-title > .callout-icon::after`) &&
-				rule.at.includes("@media screen") &&
-				rule.props.includes("width"),
+			const paintedRules = parseRules(out).filter(
+				(rule) =>
+					splitSelectorList(rule.selector)
+						.map((part) => part.trim())
+						.includes(`${base} > .callout-title > .callout-icon::after`) &&
+					rule.at.includes("@media screen") &&
+					rule.props.includes("width"),
 			);
 			assert.strictEqual(paintedRules.length, 1);
 			const painted = paintedRules[0];
@@ -174,9 +161,12 @@ describe("Align content with title", () => {
 		registry.add(definition({ id: "exported" }));
 		const out = buildSnippetCss({ registry, cssInjector: injector });
 		assertRegisteredLengths(out);
-		assert.ok(parseRules(out).some((rule) =>
-			rule.selector.includes('[data-callout="exported"] > .callout-content') &&
-			rule.props.includes("padding-inline-start"),
-		));
+		assert.ok(
+			parseRules(out).some(
+				(rule) =>
+					rule.selector.includes('[data-callout="exported"] > .callout-content') &&
+					rule.props.includes("padding-inline-start"),
+			),
+		);
 	});
 });

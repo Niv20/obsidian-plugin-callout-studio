@@ -83,6 +83,4 @@ const KNOWN_ICON_FIELD_MAP: Record<keyof CalloutIcon, true> = {
 	recolor: true,
 };
 
-export const KNOWN_ICON_FIELDS = new Set<string>(
-	Object.keys(KNOWN_ICON_FIELD_MAP),
-);
+export const KNOWN_ICON_FIELDS = new Set<string>(Object.keys(KNOWN_ICON_FIELD_MAP));

@@ -1,9 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import {
-	clearListboxMenuHeightCap,
-	syncListboxMenuHeightCap,
-} from "../src/ui/listboxPopupLayout";
+import { clearListboxMenuHeightCap, syncListboxMenuHeightCap } from "../src/ui/listboxPopupLayout";
 import { asEl, FakeDocument, FakeElement, FakeWindow, fakeDom } from "./support/fakeDom";
 
 class LayoutWindow extends FakeWindow {
@@ -12,14 +9,21 @@ class LayoutWindow extends FakeWindow {
 	readonly styles = new Map<Element, Partial<CSSStyleDeclaration>>();
 	ResizeObserver?: typeof LayoutObserver;
 	getComputedStyle(element: Element): CSSStyleDeclaration {
-		return { overflowX: "visible", overflowY: "visible", direction: "ltr",
-			...this.styles.get(element) } as CSSStyleDeclaration;
+		return {
+			overflowX: "visible",
+			overflowY: "visible",
+			direction: "ltr",
+			...this.styles.get(element),
+		} as CSSStyleDeclaration;
 	}
 	addEventListener(type: string, listener: (ev: unknown) => void): void {
 		this.events.set(type, [...(this.events.get(type) ?? []), listener]);
 	}
 	removeEventListener(type: string, listener: (ev: unknown) => void): void {
-		this.events.set(type, (this.events.get(type) ?? []).filter((fn) => fn !== listener));
+		this.events.set(
+			type,
+			(this.events.get(type) ?? []).filter((fn) => fn !== listener),
+		);
 	}
 	fire(type: string): void {
 		for (const listener of this.events.get(type) ?? []) listener({});
@@ -33,24 +37,30 @@ class LayoutObserver {
 	constructor(readonly callback: () => void) {
 		LayoutObserver.instances.push(this);
 	}
-	observe(element: Element): void { this.observed.push(element); }
-	disconnect(): void { this.disconnected = true; }
+	observe(element: Element): void {
+		this.observed.push(element);
+	}
+	disconnect(): void {
+		this.disconnected = true;
+	}
 }
 
 function rect(top: number, bottom: number, left = 100, right = 340): DOMRect {
 	return { top, bottom, left, right, width: right - left, height: bottom - top } as DOMRect;
 }
 
-function mount(options: {
-	height?: number;
-	offsetTop?: number;
-	clipTop?: number;
-	clipBottom?: number;
-	autoClip?: "modal-content" | "vertical-tab-content" | "icon-picker-content";
-	observe?: boolean;
-	menuHeight?: number;
-	controlBottom?: number;
-} = {}) {
+function mount(
+	options: {
+		height?: number;
+		offsetTop?: number;
+		clipTop?: number;
+		clipBottom?: number;
+		autoClip?: "modal-content" | "vertical-tab-content" | "icon-picker-content";
+		observe?: boolean;
+		menuHeight?: number;
+		controlBottom?: number;
+	} = {},
+) {
 	const view = new LayoutWindow();
 	view.visualViewport.height = options.height ?? 720;
 	Object.assign(view.visualViewport, { offsetTop: options.offsetTop ?? 0, width: 800, offsetLeft: 0 });
@@ -78,17 +88,29 @@ function mount(options: {
 	const refresh = (): void => {
 		updates++;
 		teardown = syncListboxMenuHeightCap(
-			asEl(control), asEl(menu), teardown, refresh,
+			asEl(control),
+			asEl(menu),
+			teardown,
+			refresh,
 			options.autoClip ? undefined : clip && asEl(clip),
 		);
 	};
 	refresh();
 	return {
-		view, doc, control, menu, clip, refresh,
-		get updates() { return updates; },
+		view,
+		doc,
+		control,
+		menu,
+		clip,
+		refresh,
+		get updates() {
+			return updates;
+		},
 		cap: () => menu.style.getPropertyValue("--cs-combobox-menu-max-height"),
 		above: () => menu.hasClass("cs-dropdown-menu-above"),
-		setControlBottom: (bottom: number) => { controlBottom = bottom; },
+		setControlBottom: (bottom: number) => {
+			controlBottom = bottom;
+		},
 		dispose: () => teardown?.(),
 	};
 }
@@ -104,7 +126,9 @@ describe("listbox popup placement — visible space", () => {
 			assert.equal(h.above(), false);
 			assert.equal(h.menu.style.getPropertyValue("--cs-dropdown-menu-max-width"), "");
 			assert.equal(h.menu.style.getPropertyValue("--cs-dropdown-menu-offset-x"), "");
-		} finally { h.dispose(); }
+		} finally {
+			h.dispose();
+		}
 	});
 
 	it("keeps a short menu below when it fits, even with more space above", () => {
@@ -112,7 +136,9 @@ describe("listbox popup placement — visible space", () => {
 		try {
 			assert.equal(h.above(), false);
 			assert.equal(h.cap(), "108px");
-		} finally { h.dispose(); }
+		} finally {
+			h.dispose();
+		}
 	});
 
 	it("opens above near the bottom without oscillating after a height cap", () => {
@@ -126,7 +152,9 @@ describe("listbox popup placement — visible space", () => {
 			Object.assign(h.menu, { scrollHeight: 80 });
 			h.refresh();
 			assert.equal(h.above(), false, "filtering to a smaller list can fit below again");
-		} finally { h.dispose(); }
+		} finally {
+			h.dispose();
+		}
 	});
 
 	it("uses the popout's visual viewport, including its top offset", () => {
@@ -141,7 +169,9 @@ describe("listbox popup placement — visible space", () => {
 			h.setControlBottom(400);
 			h.refresh();
 			assert.equal(h.cap(), "0px", "a fully off-screen trigger has no visible menu");
-		} finally { h.dispose(); }
+		} finally {
+			h.dispose();
+		}
 	});
 
 	it("chooses the larger side inside an explicit clipping box", () => {
@@ -153,7 +183,9 @@ describe("listbox popup placement — visible space", () => {
 			h.refresh();
 			assert.equal(h.cap(), "127px");
 			assert.ok(h.above());
-		} finally { h.dispose(); }
+		} finally {
+			h.dispose();
+		}
 	});
 
 	for (const clipClass of ["modal-content", "vertical-tab-content", "icon-picker-content"] as const) {
@@ -164,7 +196,9 @@ describe("listbox popup placement — visible space", () => {
 				h.setControlBottom(275);
 				h.refresh();
 				assert.equal(h.cap(), "127px");
-			} finally { h.dispose(); }
+			} finally {
+				h.dispose();
+			}
 		});
 	}
 
@@ -179,7 +213,9 @@ describe("listbox popup placement — visible space", () => {
 			h.view.styles.set(asEl(outer), { overflowY: "hidden" });
 			h.refresh();
 			assert.equal(h.cap(), "98px");
-		} finally { h.dispose(); }
+		} finally {
+			h.dispose();
+		}
 	});
 
 	// The popover hangs from the field's END edge (styles.css, `inset-inline-end`):
@@ -193,7 +229,9 @@ describe("listbox popup placement — visible space", () => {
 				h.refresh();
 				assert.equal(h.menu.style.getPropertyValue("--cs-dropdown-menu-offset-x"), "0px");
 			}
-		} finally { h.dispose(); }
+		} finally {
+			h.dispose();
+		}
 	});
 
 	it("bounds width and shifts from the trigger consistently, including RTL", () => {
@@ -207,10 +245,15 @@ describe("listbox popup placement — visible space", () => {
 					assert.equal(h.menu.style.getPropertyValue("--cs-dropdown-menu-max-width"), "184px");
 					// 184px wide in 58–242px: from the end edge, 156px in English
 					// and 100px in Hebrew, both moved to 58px.
-					assert.equal(h.menu.style.getPropertyValue("--cs-dropdown-menu-offset-x"), direction === "ltr" ? "-98px" : "-42px");
+					assert.equal(
+						h.menu.style.getPropertyValue("--cs-dropdown-menu-offset-x"),
+						direction === "ltr" ? "-98px" : "-42px",
+					);
 				}
 			}
-		} finally { h.dispose(); }
+		} finally {
+			h.dispose();
+		}
 	});
 
 	it("recalculates on viewport changes without duplicating listeners", () => {
@@ -227,7 +270,9 @@ describe("listbox popup placement — visible space", () => {
 			assert.equal(h.cap(), "68px");
 			for (const listeners of h.view.events.values()) assert.equal(listeners.length, 1);
 			assert.equal(h.doc.listeners.get("scroll")?.length, 1);
-		} finally { h.dispose(); }
+		} finally {
+			h.dispose();
+		}
 	});
 
 	it("repositions on surrounding scroll while leaving menu scrolling alone", () => {
@@ -241,7 +286,9 @@ describe("listbox popup placement — visible space", () => {
 			h.doc.fire("scroll", { target: h.doc.body });
 			assert.equal(h.cap(), "138px");
 			assert.equal(h.updates, before + 1);
-		} finally { h.dispose(); }
+		} finally {
+			h.dispose();
+		}
 	});
 
 	it("observes control and clipping boxes and cleans listeners, observers and positioning", () => {
@@ -254,7 +301,9 @@ describe("listbox popup placement — visible space", () => {
 			observer.callback();
 			assert.equal(h.cap(), "138px");
 			assert.equal(LayoutObserver.instances.length, 1);
-		} finally { h.dispose(); }
+		} finally {
+			h.dispose();
+		}
 		assert.ok(observer.disconnected);
 		assert.equal(h.cap(), "");
 		assert.equal(h.above(), false);

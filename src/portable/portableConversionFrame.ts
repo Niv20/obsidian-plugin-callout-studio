@@ -53,14 +53,20 @@ export function createPortableConversionFrame(root: HTMLElement, onHelp: () => v
 	// Convert selected, across the pane in a row of its own, with help at its end.
 	const actions = toolbar.createDiv({ cls: "cs-portable-convert-row" });
 	const convert = actions.createEl("button", {
-		text: t("portable.convertSelected"), cls: DESTRUCTIVE_BUTTON_CLASSES, attr: { "data-action": "convert" },
+		text: t("portable.convertSelected"),
+		cls: DESTRUCTIVE_BUTTON_CLASSES,
+		attr: { "data-action": "convert" },
 	});
 	const help = addSidebarIconButton(actions, { icon: HELP_ICON_ID, label: t("portable.help"), onPress: onHelp });
 	help.setAttribute("aria-haspopup", "dialog");
 	const summaryRow = createSidebarSummary(toolbar, "cs-portable-review-summary");
-	const all = summaryRow.createEl("input", { type: "checkbox", attr: {
-		"data-action": "toggle-all", "aria-label": t("portable.selectAll"),
-	} });
+	const all = summaryRow.createEl("input", {
+		type: "checkbox",
+		attr: {
+			"data-action": "toggle-all",
+			"aria-label": t("portable.selectAll"),
+		},
+	});
 	// The selection's two lines, one under the other, beside the select-all box.
 	const lines = summaryRow.createDiv({ cls: "cs-portable-summary-text" });
 	const summary = lines.createDiv({ cls: "cs-portable-summary-line" });
@@ -68,12 +74,20 @@ export function createPortableConversionFrame(root: HTMLElement, onHelp: () => v
 	const shell = root.createDiv({ cls: "cs-portable-results-shell" });
 	const scroll = shell.createDiv({ cls: "cs-portable-results-scroll" });
 	const hint = scroll.createEl("p", { cls: "cs-portable-hint" });
-	const status = scroll.createDiv({ cls: "cs-portable-review-status", attr: { role: "status", "aria-live": "polite" } });
+	const status = scroll.createDiv({
+		cls: "cs-portable-review-status",
+		attr: { role: "status", "aria-live": "polite" },
+	});
 	const retry = scroll.createEl("button", {
-		text: t("portable.retry"), cls: "cs-portable-retry", attr: { "data-action": "retry" },
+		text: t("portable.retry"),
+		cls: "cs-portable-retry",
+		attr: { "data-action": "retry" },
 	});
 	const results = scroll.createDiv({ cls: "cs-portable-change-list" });
-	const overlay = shell.createDiv({ cls: "cs-portable-refresh-overlay", attr: { role: "status", "aria-live": "polite" } });
+	const overlay = shell.createDiv({
+		cls: "cs-portable-refresh-overlay",
+		attr: { role: "status", "aria-live": "polite" },
+	});
 	overlay.hidden = true;
 	return { convert, help, summary, links, status, all, retry, hint, shell, scroll, overlay, results };
 }
@@ -101,16 +115,27 @@ export function splitSelectionSummary(text: string): [first: string, second: str
  * the review being open, scanning, failed or mid-edit, so the view decides it
  * and dims the button itself (`PortableConversionView.convertBlockedReason`).
  */
-export function updatePortableSelection(frame: PortableConversionFrame, plan: PortableCalloutConversionPlan | undefined, ready: boolean): void {
+export function updatePortableSelection(
+	frame: PortableConversionFrame,
+	plan: PortableCalloutConversionPlan | undefined,
+	ready: boolean,
+): void {
 	// No heading link to update is no news: the summary drops that half rather than say "0".
-	const [selection, links] = splitSelectionSummary(plan ? t(plan.linkCount ? "portable.selectionSummary" : "portable.selectionSummaryNoLinks", {
-		selected: plan.selectedIds.length, total: plan.changes.length, links: plan.linkCount,
-	}) : "");
+	const [selection, links] = splitSelectionSummary(
+		plan
+			? t(plan.linkCount ? "portable.selectionSummary" : "portable.selectionSummaryNoLinks", {
+					selected: plan.selectedIds.length,
+					total: plan.changes.length,
+					links: plan.linkCount,
+				})
+			: "",
+	);
 	frame.summary.setText(selection);
 	frame.links.setText(links);
 	frame.links.hidden = links === "";
 	frame.convert.setText(t(plan?.recovery ? "portable.finishConversion" : "portable.convertSelected"));
-	const selected = plan?.selectedIds.length ?? 0, total = plan?.changes.length ?? 0;
+	const selected = plan?.selectedIds.length ?? 0,
+		total = plan?.changes.length ?? 0;
 	frame.all.checked = total > 0 && selected === total;
 	frame.all.indeterminate = selected > 0 && selected < total;
 	frame.all.disabled = !ready || !plan?.changes.length || Boolean(plan.recovery);
@@ -130,11 +155,12 @@ export class PortableConversionBusy {
 		frame.shell.toggleClass("is-stale", stale);
 		frame.results.setAttribute("aria-busy", String(busy));
 		if (!busy) this.stop();
-		else if (!this.visible && this.timer === undefined) this.timer = window.setTimeout(() => {
-			this.timer = undefined;
-			this.visible = true;
-			this.paint();
-		}, this.delay);
+		else if (!this.visible && this.timer === undefined)
+			this.timer = window.setTimeout(() => {
+				this.timer = undefined;
+				this.visible = true;
+				this.paint();
+			}, this.delay);
 		this.paint();
 	}
 	setMessage(key: string, vars: Record<string, string | number> = {}): void {

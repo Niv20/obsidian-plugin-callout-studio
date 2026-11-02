@@ -1,17 +1,58 @@
 /** A deliberately small drawing-only CSS profile for untrusted inline SVG. */
 export const SVG_CSS_PROPERTIES = new Set([
-	"fill", "fill-opacity", "fill-rule", "stroke", "stroke-width",
-	"stroke-opacity", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit",
-	"stroke-dasharray", "stroke-dashoffset", "opacity", "color", "stop-color",
-	"stop-opacity", "paint-order", "vector-effect", "display", "visibility",
-	"clip-path", "clip-rule", "mask", "text-anchor", "font-size", "font-family",
-	"font-weight", "transform", "transform-origin",
+	"fill",
+	"fill-opacity",
+	"fill-rule",
+	"stroke",
+	"stroke-width",
+	"stroke-opacity",
+	"stroke-linecap",
+	"stroke-linejoin",
+	"stroke-miterlimit",
+	"stroke-dasharray",
+	"stroke-dashoffset",
+	"opacity",
+	"color",
+	"stop-color",
+	"stop-opacity",
+	"paint-order",
+	"vector-effect",
+	"display",
+	"visibility",
+	"clip-path",
+	"clip-rule",
+	"mask",
+	"text-anchor",
+	"font-size",
+	"font-family",
+	"font-weight",
+	"transform",
+	"transform-origin",
 ]);
 
 const FUNCTIONS = new Set([
-	"rgb", "rgba", "hsl", "hsla", "hwb", "lab", "lch", "oklab", "oklch",
-	"color", "color-mix", "matrix", "translate", "translatex", "translatey",
-	"scale", "scalex", "scaley", "rotate", "skew", "skewx", "skewy",
+	"rgb",
+	"rgba",
+	"hsl",
+	"hsla",
+	"hwb",
+	"lab",
+	"lch",
+	"oklab",
+	"oklch",
+	"color",
+	"color-mix",
+	"matrix",
+	"translate",
+	"translatex",
+	"translatey",
+	"scale",
+	"scalex",
+	"scaley",
+	"rotate",
+	"skew",
+	"skewx",
+	"skewy",
 ]);
 const IDENTIFIER = /^[a-zA-Z_-][a-zA-Z0-9_-]*/;
 const NUMBER = /^[+-]?(?:\d*\.\d+|\d+\.?\d*)(?:e[+-]?\d+)?(?:%|[a-z]+)?/i;
@@ -28,14 +69,20 @@ export function safeSvgCssValue(value: string): boolean {
 	while (i < value.length) {
 		const tail = value.slice(i);
 		const ch = value.charAt(i);
-		if (/\s/.test(ch)) { i++; continue; }
-		if (ch === "," || ch === "/") { i++; continue; }
+		if (/\s/.test(ch)) {
+			i++;
+			continue;
+		}
+		if (ch === "," || ch === "/") {
+			i++;
+			continue;
+		}
 		if (ch === ")") {
 			if (depth-- === 0) return false;
 			i++;
 			continue;
 		}
-		if (ch === "\"" || ch === "'") {
+		if (ch === '"' || ch === "'") {
 			const end = value.indexOf(ch, i + 1);
 			if (end < 0 || /[\\\n\r\f]/.test(value.slice(i + 1, end))) return false;
 			i = end + 1;
@@ -91,12 +138,14 @@ export function sanitizeSvgStylesheet(css: string): string {
 	try {
 		const sheet = new CSSStyleSheet();
 		sheet.replaceSync(css);
-		return Array.from(sheet.cssRules).flatMap((rule) => {
-			if (!(rule instanceof CSSStyleRule)) return [];
-			const styleRule = rule;
-			const declarations = drawingDeclarations(styleRule.style);
-			return declarations ? [`${styleRule.selectorText}{${declarations}}`] : [];
-		}).join("");
+		return Array.from(sheet.cssRules)
+			.flatMap((rule) => {
+				if (!(rule instanceof CSSStyleRule)) return [];
+				const styleRule = rule;
+				const declarations = drawingDeclarations(styleRule.style);
+				return declarations ? [`${styleRule.selectorText}{${declarations}}`] : [];
+			})
+			.join("");
 	} catch {
 		// Older render realms without constructable stylesheets fail closed;
 		// their SVG presentation attributes still work.

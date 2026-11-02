@@ -7,7 +7,11 @@ interface TestHandler {
 export class TestScope {
 	private handlers: TestHandler[] = [];
 	constructor(readonly parent?: TestScope) {}
-	register(modifiers: readonly string[] | null, key: string | null, callback: (ev: KeyboardEvent) => unknown): TestHandler {
+	register(
+		modifiers: readonly string[] | null,
+		key: string | null,
+		callback: (ev: KeyboardEvent) => unknown,
+	): TestHandler {
 		const handler = { modifiers, key, callback };
 		this.handlers.push(handler);
 		return handler;
@@ -16,11 +20,20 @@ export class TestScope {
 		this.handlers = this.handlers.filter((entry) => entry !== handler);
 	}
 	handle(event: KeyboardEvent): boolean | undefined {
-		const modifiers = [event.ctrlKey && "Ctrl", event.metaKey && "Meta", event.altKey && "Alt", event.shiftKey && "Shift"].filter(Boolean);
+		const modifiers = [
+			event.ctrlKey && "Ctrl",
+			event.metaKey && "Meta",
+			event.altKey && "Alt",
+			event.shiftKey && "Shift",
+		].filter(Boolean);
 		for (const handler of this.handlers) {
 			if (handler.key !== null && handler.key !== event.key) continue;
-			if (handler.modifiers !== null && (handler.modifiers.length !== modifiers.length ||
-				!handler.modifiers.every((modifier) => modifiers.includes(modifier)))) continue;
+			if (
+				handler.modifiers !== null &&
+				(handler.modifiers.length !== modifiers.length ||
+					!handler.modifiers.every((modifier) => modifiers.includes(modifier)))
+			)
+				continue;
 			// A matching binding consumes lookup even when its callback returns
 			// undefined. Only a scope with no matching binding inherits a parent.
 			return handler.callback(event) === false ? false : true;
@@ -31,7 +44,9 @@ export class TestScope {
 
 export class TestKeymap {
 	readonly scopes: TestScope[] = [];
-	pushScope(scope: TestScope): void { this.scopes.push(scope); }
+	pushScope(scope: TestScope): void {
+		this.scopes.push(scope);
+	}
 	popScope(scope: TestScope): void {
 		const at = this.scopes.indexOf(scope);
 		if (at >= 0) this.scopes.splice(at, 1);

@@ -22,11 +22,7 @@ import { normalizePath, requestUrl } from "obsidian";
 import type { App, PluginManifest } from "obsidian";
 import type { IconPackId } from "../types";
 import { t } from "../i18n";
-import {
-	PACK_MANIFEST,
-	packUrls,
-	type PackManifestEntry,
-} from "./data/packManifest";
+import { PACK_MANIFEST, packUrls, type PackManifestEntry } from "./data/packManifest";
 import { forgetPackData, isPackLoaded, setPackData } from "./packData";
 import { parseVerifiedPack, verifyPackText } from "./packValidation";
 import { IconTaskScope } from "./IconTaskScope";
@@ -38,11 +34,7 @@ import { showNotice } from "../ui/mascot/mascotNotices";
  */
 const DOWNLOAD_TIMEOUT_MS = 30_000;
 
-export type PackLoadState =
-	| "unavailable"
-	| "loading"
-	| "ready"
-	| "failed";
+export type PackLoadState = "unavailable" | "loading" | "ready" | "failed";
 
 /**
  * How a read from disk went. `"corrupt"` covers every way a file can be there
@@ -108,9 +100,7 @@ export class PackDataStore {
 	 * `manifest.dir` is typed optional, hence the reconstruction fallback.
 	 */
 	private packDir(): string {
-		const base =
-			this.manifest.dir ??
-			`${this.app.vault.configDir}/plugins/${this.manifest.id}`;
+		const base = this.manifest.dir ?? `${this.app.vault.configDir}/plugins/${this.manifest.id}`;
 		return normalizePath(`${base}/icon-packs`);
 	}
 
@@ -166,9 +156,7 @@ export class PackDataStore {
 	 * packs nothing references stay unread, so an unused 400 KB file is never
 	 * parsed.
 	 */
-	async loadUsed(
-		usedPacks: Iterable<IconPackId>,
-	): Promise<Map<IconPackId, PackDiskResult>> {
+	async loadUsed(usedPacks: Iterable<IconPackId>): Promise<Map<IconPackId, PackDiskResult>> {
 		const results = new Map<IconPackId, PackDiskResult>();
 		for (const id of new Set(usedPacks)) {
 			if (this.work.destroyed) break;
@@ -325,5 +313,4 @@ export class PackDataStore {
 		this.states.set(id, "ready");
 		return true;
 	}
-
 }

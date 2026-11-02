@@ -10,11 +10,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	isCalloutVariable,
-	reachesCallout,
-	withoutCalloutBranches,
-} from "../src/manager/theme/themeCalloutRules";
+import { isCalloutVariable, reachesCallout, withoutCalloutBranches } from "../src/manager/theme/themeCalloutRules";
 import { specificityOf } from "../src/utils/cssSpecificity";
 import { splitSelectorList } from "../src/utils/selectorText";
 
@@ -88,7 +84,9 @@ describe("what is left of a rule's selectors", () => {
 	it("keeps the selectors of a list that do not reach one", () => {
 		// Bolt, Brainhack, Border.
 		assert.strictEqual(
-			withoutCalloutBranches(".callout .callout, .callout blockquote, blockquote blockquote, blockquote .callout"),
+			withoutCalloutBranches(
+				".callout .callout, .callout blockquote, blockquote blockquote, blockquote .callout",
+			),
 			"blockquote blockquote",
 		);
 		assert.strictEqual(withoutCalloutBranches(".callout-content, .blockquote"), ".blockquote");
@@ -120,7 +118,10 @@ describe("what is left of a rule's selectors", () => {
 			withoutCalloutBranches(".wrap > .content:has(:is(.callout, img))"),
 			".wrap > .content:has(:is(:not(*, .callout), img))",
 		);
-		assert.strictEqual(withoutCalloutBranches("div:has(> .callout, > table)"), "div:has(:not(*, .callout), > table)");
+		assert.strictEqual(
+			withoutCalloutBranches("div:has(> .callout, > table)"),
+			"div:has(:not(*, .callout), > table)",
+		);
 	});
 
 	it("never changes the weight of what keeps matching outside a callout", () => {

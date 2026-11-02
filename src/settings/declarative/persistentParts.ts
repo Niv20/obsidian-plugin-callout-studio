@@ -38,7 +38,11 @@ export class PersistentParts {
 	private readonly parts = new Map<string, PersistentPart>();
 
 	/** @param later How to wait before checking a released part. */
-	constructor(private readonly later: Later = (run) => { window.setTimeout(run, RELEASE_DELAY_MS); }) {}
+	constructor(
+		private readonly later: Later = (run) => {
+			window.setTimeout(run, RELEASE_DELAY_MS);
+		},
+	) {}
 
 	/**
 	 * Put the part named `id` into `parent` and return it. The first call

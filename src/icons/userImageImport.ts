@@ -15,10 +15,7 @@
  */
 import { sanitizeUserSvg } from "./svg";
 import { rasterDimensions, safeRasterSize } from "./rasterSafety";
-import {
-	newUserImageId,
-	userImageNameFromFilename,
-} from "../utils/userImages";
+import { newUserImageId, userImageNameFromFilename } from "../utils/userImages";
 import type { LocaleKey } from "../i18n";
 import type { UserImageIcon } from "../types";
 
@@ -43,9 +40,7 @@ const MAX_SOURCE_BYTES = 5 * 1024 * 1024;
 const PNG_SIZE_THRESHOLD = 48 * 1024;
 const JPEG_QUALITY = 0.85;
 
-export type UserImageImportResult =
-	| { ok: true; image: UserImageIcon }
-	| { ok: false; reason: LocaleKey };
+export type UserImageImportResult = { ok: true; image: UserImageIcon } | { ok: false; reason: LocaleKey };
 
 /** Extensions offered in the file picker, and accepted from a drop. */
 export const USER_IMAGE_ACCEPT = ".svg,.png,.jpg,.jpeg,.webp";
@@ -56,9 +51,7 @@ export const USER_IMAGE_ACCEPT = ".svg,.png,.jpg,.jpeg,.webp";
  * Never throws: a bad file is an outcome the picker reports, not an error that
  * should abandon the rest of a multi-file drop.
  */
-export async function importImageFile(
-	file: File,
-): Promise<UserImageImportResult> {
+export async function importImageFile(file: File): Promise<UserImageImportResult> {
 	if (file.size > MAX_SOURCE_BYTES) {
 		return { ok: false, reason: "iconPicker.customTooLarge" };
 	}
@@ -67,17 +60,11 @@ export async function importImageFile(
 		const format = await detectFormat(file);
 		if (!format) return { ok: false, reason: "iconPicker.customUnsupported" };
 
-		const artwork =
-			format === "svg"
-				? await readSvg(file)
-				: await readRaster(file, format);
+		const artwork = format === "svg" ? await readSvg(file) : await readRaster(file, format);
 		if (!artwork) {
 			return {
 				ok: false,
-				reason:
-					format === "svg"
-						? "iconPicker.customInvalidSvg"
-						: "iconPicker.customDecodeFailed",
+				reason: format === "svg" ? "iconPicker.customInvalidSvg" : "iconPicker.customDecodeFailed",
 			};
 		}
 
@@ -117,22 +104,20 @@ export async function importImageFile(
  * itself, and the two disagree often enough (a `.png` that is really a JPEG is
  * routine) that trusting the name would reject perfectly good pictures.
  */
-async function detectFormat(
-	file: File,
-): Promise<UserImageIcon["format"] | undefined> {
+async function detectFormat(file: File): Promise<UserImageIcon["format"] | undefined> {
 	const head = new Uint8Array(await file.slice(0, 16).arrayBuffer());
 	if (startsWith(head, [0x89, 0x50, 0x4e, 0x47])) return "png";
 	if (startsWith(head, [0xff, 0xd8, 0xff])) return "jpeg";
 	// "RIFF" .... "WEBP"
-	if (
-		startsWith(head, [0x52, 0x49, 0x46, 0x46]) &&
-		startsWith(head.subarray(8), [0x57, 0x45, 0x42, 0x50])
-	) {
+	if (startsWith(head, [0x52, 0x49, 0x46, 0x46]) && startsWith(head.subarray(8), [0x57, 0x45, 0x42, 0x50])) {
 		return "webp";
 	}
 	// SVG is text, and may open with a BOM, a declaration, a doctype or a
 	// comment before the root element ever appears.
-	const text = new TextDecoder().decode(head).replace(/^\uFEFF/, "").trimStart();
+	const text = new TextDecoder()
+		.decode(head)
+		.replace(/^\uFEFF/, "")
+		.trimStart();
 	if (text.startsWith("<?xml") || text.startsWith("<svg") || text.startsWith("<!--")) {
 		return "svg";
 	}
@@ -147,9 +132,7 @@ function startsWith(bytes: Uint8Array, signature: readonly number[]): boolean {
  * SVG
  * ------------------------------------------------------------------ */
 
-async function readSvg(
-	file: File,
-): Promise<{ svg: string; width: number; height: number } | null> {
+async function readSvg(file: File): Promise<{ svg: string; width: number; height: number } | null> {
 	return sanitizeUserSvg(await file.text());
 }
 
@@ -190,8 +173,7 @@ function isMonochrome(svg: string): boolean {
  * `fill-opacity` and `stroke-width` do not match, because the keyword has to be
  * followed by the separator and they are followed by a hyphen.
  */
-const PAINT_RE =
-	/(?:fill|stroke|stop-color|color)\s*[:=]\s*["']?\s*(#[0-9a-f]{3,8}|[a-z-]+\([^)]*\)|[a-z]+)/gi;
+const PAINT_RE = /(?:fill|stroke|stop-color|color)\s*[:=]\s*["']?\s*(#[0-9a-f]{3,8}|[a-z-]+\([^)]*\)|[a-z]+)/gi;
 
 /* ------------------------------------------------------------------ *
  * Raster
@@ -204,14 +186,11 @@ async function readRaster(
 	// Compressed byte size does not bound decoded pixel allocation. Inspect the
 	// dimensions before assigning an object URL to an Image.
 	const dimensions = rasterDimensions(new Uint8Array(await file.arrayBuffer()));
-	if (!dimensions || dimensions.format !== format || !safeRasterSize(dimensions.width, dimensions.height)) return null;
+	if (!dimensions || dimensions.format !== format || !safeRasterSize(dimensions.width, dimensions.height))
+		return null;
 	const source = await decodeImage(file);
 	if (!safeRasterSize(source.naturalWidth, source.naturalHeight)) return null;
-	const { width, height } = fitWithin(
-		source.naturalWidth,
-		source.naturalHeight,
-		MAX_RENDITION_PX,
-	);
+	const { width, height } = fitWithin(source.naturalWidth, source.naturalHeight, MAX_RENDITION_PX);
 
 	const canvas = createEl("canvas");
 	canvas.width = width;
@@ -252,11 +231,7 @@ function encodeCanvas(
 	return canvas.toDataURL("image/jpeg", JPEG_QUALITY);
 }
 
-function hasTransparency(
-	context: CanvasRenderingContext2D,
-	width: number,
-	height: number,
-): boolean {
+function hasTransparency(context: CanvasRenderingContext2D, width: number, height: number): boolean {
 	// At most 128×128, so a full scan is trivial — and sampling could easily
 	// miss the one transparent corner that made the picture worth keeping.
 	const { data } = context.getImageData(0, 0, width, height);
@@ -284,11 +259,7 @@ function decodeImage(file: File): Promise<HTMLImageElement> {
 }
 
 /** Scale a size down to fit a square of `max`, keeping its proportions. */
-function fitWithin(
-	width: number,
-	height: number,
-	max: number,
-): { width: number; height: number } {
+function fitWithin(width: number, height: number, max: number): { width: number; height: number } {
 	const longest = Math.max(width, height);
 	if (longest <= 0) return { width: max, height: max };
 	if (longest <= max) return { width, height };

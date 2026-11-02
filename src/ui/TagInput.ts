@@ -198,10 +198,7 @@ export class TagInput {
 		this.pinnedTag = opts.initialPinnedTag ?? null;
 		if (this.pinnedTag) {
 			// Keep the pinned tag present and first regardless of input order.
-			this.tags = [
-				this.pinnedTag,
-				...this.tags.filter((t) => t !== this.pinnedTag),
-			];
+			this.tags = [this.pinnedTag, ...this.tags.filter((t) => t !== this.pinnedTag)];
 		}
 		this.onChange = opts.onChange;
 		this.onTagAdded = opts.onTagAdded;
@@ -227,10 +224,7 @@ export class TagInput {
 			type: "text",
 			cls: "cs-tag-input-field cs-text-control",
 			placeholder: this.placeholder,
-			attr:
-				this.maxLength !== undefined
-					? { maxlength: String(this.maxLength) }
-					: {},
+			attr: this.maxLength !== undefined ? { maxlength: String(this.maxLength) } : {},
 		});
 
 		// Add button. It does not sit beside the field taking a slice of the
@@ -266,8 +260,7 @@ export class TagInput {
 		this.noteEl.addClass("cs-tag-note");
 		this.noteTextEl = this.noteEl.createDiv();
 		this.wideMessageEl = this.noteEl.createDiv({ cls: "cs-tag-message" });
-		this.showFieldError =
-			opts.showFieldError ?? this.ownFieldErrorLine(this.wrapperEl);
+		this.showFieldError = opts.showFieldError ?? this.ownFieldErrorLine(this.wrapperEl);
 
 		// Render existing tags
 		for (const tag of this.tags) {
@@ -283,11 +276,7 @@ export class TagInput {
 			if (e.key === "Enter" || e.key === "," || this.isSeparatorKey(e.key)) {
 				e.preventDefault();
 				this.commitInput();
-			} else if (
-				e.key === "Backspace" &&
-				this.inputEl.value === "" &&
-				this.tags.length > 0
-			) {
+			} else if (e.key === "Backspace" && this.inputEl.value === "" && this.tags.length > 0) {
 				// Backspace in an empty field steps onto the last pill, as in
 				// Obsidian's multi-select; a second Backspace removes it.
 				e.preventDefault();
@@ -342,8 +331,7 @@ export class TagInput {
 	 * still paint its opaque end-cap over the field for no reason.
 	 */
 	private syncAddButton(): void {
-		const canAdd =
-			this.inputEl.value.trim() !== "" && !this.addBtnEl.disabled;
+		const canAdd = this.inputEl.value.trim() !== "" && !this.addBtnEl.disabled;
 		this.addSlotEl.toggleClass("is-visible", canAdd);
 	}
 
@@ -466,9 +454,7 @@ export class TagInput {
 		if (!raw) return;
 		// A list with separators takes several at once ("wide no-title"): a
 		// phone keyboard may not report the space as a key of its own.
-		const parts = this.separators
-			? raw.split(this.separators).filter((part) => part !== "")
-			: [raw];
+		const parts = this.separators ? raw.split(this.separators).filter((part) => part !== "") : [raw];
 		for (let i = 0; i < parts.length; i++) {
 			// A refused tag stays where it was typed, so it can be corrected —
 			// or moved here — rather than typed again from memory. So do the
@@ -549,9 +535,7 @@ export class TagInput {
 		const idx = this.tags.indexOf(tag);
 		if (idx === -1) return false;
 		this.tags.splice(idx, 1);
-		const tagEl = this.tagsRowEl.querySelector(
-			`[data-tag="${CSS.escape(tag)}"]`,
-		);
+		const tagEl = this.tagsRowEl.querySelector(`[data-tag="${CSS.escape(tag)}"]`);
 		tagEl?.remove();
 		// Update input state first (clears max-tags error), then notify parent
 		// so parent's external errors (e.g. "at least one ID") survive.
@@ -586,16 +570,11 @@ export class TagInput {
 		// shown on hover. As an aria-label, never a `title` — that draws the OS
 		// tooltip, which stacks with Obsidian's and is inherited by the x inside.
 		// The pinned pill says instead why it has a lock.
-		pillEl.setAttribute(
-			"aria-label",
-			isPinned ? t("editor.idLinkedToName") : tag,
-		);
+		pillEl.setAttribute("aria-label", isPinned ? t("editor.idLinkedToName") : tag);
 		if (isPinned) pillEl.addClass("is-pinned");
 		if (isReadonly) pillEl.addClass("is-readonly");
 
-		pillEl
-			.createDiv({ cls: "multi-select-pill-content" })
-			.createSpan({ cls: "cs-tag-chip-text", text: tag });
+		pillEl.createDiv({ cls: "multi-select-pill-content" }).createSpan({ cls: "cs-tag-chip-text", text: tag });
 
 		if (isPinned) {
 			// The name-linked primary: the x is replaced by a lock in the same
@@ -663,8 +642,7 @@ export class TagInput {
 				// `getComputedStyle` is optional-chained because the test DOM may
 				// not have it; a missing answer means left-to-right.
 				const view = this.tagsRowEl.ownerDocument.defaultView;
-				const rightToLeft =
-					view?.getComputedStyle?.(this.tagsRowEl).direction === "rtl";
+				const rightToLeft = view?.getComputedStyle?.(this.tagsRowEl).direction === "rtl";
 				const forward = (event.key === "ArrowRight") !== rightToLeft;
 				this.focusPill(forward ? index + 1 : index - 1);
 				return;
@@ -727,10 +705,7 @@ export class TagInput {
 			// Preserve the pinned-first invariant; a pinned tag absent from the
 			// new list is no longer pinned.
 			if (this.tags.includes(this.pinnedTag)) {
-				this.tags = [
-					this.pinnedTag,
-					...this.tags.filter((t) => t !== this.pinnedTag),
-				];
+				this.tags = [this.pinnedTag, ...this.tags.filter((t) => t !== this.pinnedTag)];
 			} else {
 				this.pinnedTag = null;
 			}
@@ -740,9 +715,7 @@ export class TagInput {
 	}
 
 	private rerenderTags(): void {
-		this.tagsRowEl
-			.querySelectorAll(".cs-tag-chip")
-			.forEach((el) => el.remove());
+		this.tagsRowEl.querySelectorAll(".cs-tag-chip").forEach((el) => el.remove());
 		for (const tag of this.tags) {
 			this.renderTag(tag);
 		}

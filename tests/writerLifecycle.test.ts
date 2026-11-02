@@ -15,11 +15,13 @@ import { SettingsWriter } from "../src/manager/SettingsWriter";
 
 function gate() {
 	let release!: () => void;
-	const promise = new Promise<void>(resolve => { release = resolve; });
+	const promise = new Promise<void>((resolve) => {
+		release = resolve;
+	});
 	return { promise, release };
 }
 
-const settle = () => new Promise(resolve => setImmediate(resolve));
+const settle = () => new Promise((resolve) => setImmediate(resolve));
 
 describe("closing the writer on unload", () => {
 	it("finishes the write under way, writes the change made after it, then stops", async () => {
@@ -28,7 +30,7 @@ describe("closing the writer on unload", () => {
 		const first = gate();
 		const writer = new SettingsWriter({
 			build: () => state,
-			write: async data => {
+			write: async (data) => {
 				if (writes.length === 0) await first.promise;
 				writes.push((data as { n: number }).n);
 			},
@@ -48,7 +50,12 @@ describe("closing the writer on unload", () => {
 
 	it("writes nothing when nothing changed", async () => {
 		let writes = 0;
-		const writer = new SettingsWriter({ build: () => ({ n: 1 }), write: async () => { writes++; } });
+		const writer = new SettingsWriter({
+			build: () => ({ n: 1 }),
+			write: async () => {
+				writes++;
+			},
+		});
 		writer.adopt(JSON.stringify({ n: 1 }));
 		writer.close();
 		for (let i = 0; i < 3; i++) await settle();
@@ -58,7 +65,12 @@ describe("closing the writer on unload", () => {
 
 	it("writes nothing while saving is paused", async () => {
 		let writes = 0;
-		const writer = new SettingsWriter({ build: () => ({ n: 2 }), write: async () => { writes++; } });
+		const writer = new SettingsWriter({
+			build: () => ({ n: 2 }),
+			write: async () => {
+				writes++;
+			},
+		});
 		writer.adopt(JSON.stringify({ n: 1 }));
 		writer.freeze("missing");
 		writer.close();
@@ -71,8 +83,18 @@ describe("settings events during launch", () => {
 	it("wait for launch to finish loading before any adoption starts", async () => {
 		const launch = gate();
 		let runs = 0;
-		const self = { booted: launch.promise, reloads: { run: () => { runs++; return Promise.resolve(); } } };
-		const event = CalloutStudioPlugin.prototype.onExternalSettingsChange.call(self as unknown as CalloutStudioPlugin);
+		const self = {
+			booted: launch.promise,
+			reloads: {
+				run: () => {
+					runs++;
+					return Promise.resolve();
+				},
+			},
+		};
+		const event = CalloutStudioPlugin.prototype.onExternalSettingsChange.call(
+			self as unknown as CalloutStudioPlugin,
+		);
 		await settle();
 		assert.equal(runs, 0, "an adoption started while launch was still loading");
 		launch.release();

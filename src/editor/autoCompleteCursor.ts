@@ -25,21 +25,15 @@ import { scanLineForCalloutTokens } from "./calloutTokens";
 
 const CALLOUT_QUOTE_PREFIX_REGEX = /^((?:\s*> ?|\t)+)/;
 
-const quotePrefixOf = (line: string): string =>
-	CALLOUT_QUOTE_PREFIX_REGEX.exec(line)?.[1] ?? "";
+const quotePrefixOf = (line: string): string => CALLOUT_QUOTE_PREFIX_REGEX.exec(line)?.[1] ?? "";
 
-const countQuoteTokens = (prefix: string): number =>
-	(prefix.match(/>/g) ?? []).length;
+const countQuoteTokens = (prefix: string): number => (prefix.match(/>/g) ?? []).length;
 
 /**
  * Put the cursor on the line a finished callout's content starts on, opening
  * that line when there is not one already.
  */
-function moveToCalloutContent(
-	editor: Editor,
-	line: number,
-	role: "regular" | "heading",
-): void {
+function moveToCalloutContent(editor: Editor, line: number, role: "regular" | "heading"): void {
 	const header = editor.getLine(line);
 	// A header with no `>` of its own is the legacy bare `[!` block reading
 	// (inline callouts off), which has always been given a `> ` body.
@@ -93,11 +87,7 @@ export function placeCursorAfterPick(
  * reason: the next keystroke lands right there and is expected to. `then`
  * runs after the re-assert, for work that needs the settled cursor.
  */
-export function parkCursor(
-	editor: Editor,
-	pos: EditorPosition,
-	then?: () => void,
-): void {
+export function parkCursor(editor: Editor, pos: EditorPosition, then?: () => void): void {
 	editor.setCursor(pos);
 	const expected = editor.getLine(pos.line);
 	window.requestAnimationFrame(() => {
@@ -120,11 +110,7 @@ export function parkCursor(
  * turn it into literal prose (see inlineContent.ts), so the cursor goes past
  * the payload instead and nothing is added.
  */
-export function landAfterInlineToken(
-	editor: Editor,
-	line: number,
-	afterCh: number,
-): void {
+export function landAfterInlineToken(editor: Editor, line: number, afterCh: number): void {
 	const text = editor.getLine(line);
 	if (text[afterCh] === "{") {
 		const token = scanLineForCalloutTokens(text).find((t) => t.to === afterCh);

@@ -13,13 +13,7 @@
  * unless the user hid it. Being offered is therefore partly per device (what
  * was downloaded where) and partly synced (the order, and what was hidden).
  */
-import type {
-	CalloutDefinition,
-	CalloutIcon,
-	IconLibrarySettings,
-	IconPackId,
-	IconSourceId,
-} from "../types";
+import type { CalloutDefinition, CalloutIcon, IconLibrarySettings, IconPackId, IconSourceId } from "../types";
 import type { PackDataStore } from "./PackDataStore";
 import { ICON_SOURCE_IDS, getSource } from "./registry";
 
@@ -77,11 +71,7 @@ export function isInstalled(id: IconSourceId, packs: PackStates): boolean {
 }
 
 /** Whether Pick an icon offers this library on this device. */
-export function isInPicker(
-	id: IconSourceId,
-	prefs: IconLibrarySettings,
-	packs: PackStates,
-): boolean {
+export function isInPicker(id: IconSourceId, prefs: IconLibrarySettings, packs: PackStates): boolean {
 	return isDownloadable(id) ? isDownloaded(id, packs) : !prefs.hidden.includes(id);
 }
 
@@ -112,10 +102,7 @@ export function libraryOrder(prefs: IconLibrarySettings): IconSourceId[] {
 }
 
 /** The libraries Pick an icon offers here, in the user's order. Never empty. */
-export function pickerSources(
-	prefs: IconLibrarySettings,
-	packs: PackStates,
-): IconSourceId[] {
+export function pickerSources(prefs: IconLibrarySettings, packs: PackStates): IconSourceId[] {
 	const offered = libraryOrder(prefs).filter((id) => isInPicker(id, prefs, packs));
 	return offered.length > 0 ? offered : [FALLBACK_LIBRARY];
 }
@@ -155,19 +142,13 @@ export interface MenuLibraries {
  * person looks elsewhere, as the way back. Choosing it shows the download
  * prompt, or, for a hidden built-in library, its icons.
  */
-export function menuLibraries(
-	prefs: IconLibrarySettings,
-	packs: PackStates,
-	current?: IconSourceId,
-): MenuLibraries {
+export function menuLibraries(prefs: IconLibrarySettings, packs: PackStates, current?: IconSourceId): MenuLibraries {
 	const libraries = pickerSources(prefs, packs);
 	const edited = current !== undefined && !libraries.includes(current) ? current : null;
 	return {
 		current: edited,
 		libraries,
-		toDownload: ICON_SOURCE_IDS.filter(
-			(id) => isDownloadable(id) && !isDownloaded(id, packs),
-		),
+		toDownload: ICON_SOURCE_IDS.filter((id) => isDownloadable(id) && !isDownloaded(id, packs)),
 	};
 }
 
@@ -180,10 +161,7 @@ export function menuLibraries(
  * disturbing where the others sit: a library downloaded only on another device
  * keeps the place it was given there.
  */
-export function reorderShown(
-	order: readonly IconSourceId[],
-	shown: readonly IconSourceId[],
-): IconSourceId[] {
+export function reorderShown(order: readonly IconSourceId[], shown: readonly IconSourceId[]): IconSourceId[] {
 	const moving = shown.filter((id) => order.includes(id));
 	const slots = new Set(moving);
 	let next = 0;
@@ -200,13 +178,10 @@ export function reorderShown(
  * what an empty list means — so the reset arrow and Reset everything see an
  * untouched order as untouched.
  */
-export function savedLibraryOrder(
-	previous: readonly string[],
-	arranged: readonly IconSourceId[],
-): string[] {
+export function savedLibraryOrder(previous: readonly string[], arranged: readonly IconSourceId[]): string[] {
 	const unknown = previous.filter((id) => !isKnownLibrary(id));
-	const isCatalogOrder = arranged.length === ICON_SOURCE_IDS.length &&
-		arranged.every((id, index) => id === ICON_SOURCE_IDS[index]);
+	const isCatalogOrder =
+		arranged.length === ICON_SOURCE_IDS.length && arranged.every((id, index) => id === ICON_SOURCE_IDS[index]);
 	return isCatalogOrder && unknown.length === 0 ? [] : [...arranged, ...unknown];
 }
 
@@ -214,11 +189,7 @@ export function savedLibraryOrder(
  * The bytes a library's files take — all of them, or with `missingOnly` just
  * the ones this device still lacks, which is what a download would fetch.
  */
-export function libraryBytes(
-	id: IconSourceId,
-	packs: PackStates,
-	missingOnly = false,
-): number {
+export function libraryBytes(id: IconSourceId, packs: PackStates, missingOnly = false): number {
 	return libraryFiles(id)
 		.filter((file) => !missingOnly || packs.state(file) !== "ready")
 		.reduce((total, file) => total + (packs.info(file)?.bytes ?? 0), 0);
@@ -238,10 +209,7 @@ export function formatBytes(bytes: number): string {
  * Theme rows are left out. They are rebuilt from the theme's CSS on every load
  * and never saved, so there is nothing of theirs to keep.
  */
-export function calloutsUsingLibrary(
-	defs: readonly CalloutDefinition[],
-	id: IconSourceId,
-): CalloutDefinition[] {
+export function calloutsUsingLibrary(defs: readonly CalloutDefinition[], id: IconSourceId): CalloutDefinition[] {
 	const files = new Set<string>(libraryFiles(id));
 	return defs.filter((def) => def.source !== "theme" && files.has(def.icon.type));
 }
@@ -266,10 +234,7 @@ export interface EditedCallout {
 }
 
 /** The edit, when its icon comes from this library; otherwise null. */
-export function editedUsingLibrary(
-	edited: EditedCallout | null | undefined,
-	id: IconSourceId,
-): EditedCallout | null {
+export function editedUsingLibrary(edited: EditedCallout | null | undefined, id: IconSourceId): EditedCallout | null {
 	return edited && libraryFiles(id).includes(edited.icon.type) ? edited : null;
 }
 

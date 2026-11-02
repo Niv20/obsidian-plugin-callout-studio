@@ -38,9 +38,7 @@ export interface PluginImportBatch {
 }
 
 /** A file or pasted text, read: entries, or the report message saying why not. */
-export type PluginImportParse =
-	| { batch: PluginImportBatch }
-	| { errorKey: string };
+export type PluginImportParse = { batch: PluginImportBatch } | { errorKey: string };
 
 /** i18n keys, resolved at render time. */
 export interface PluginImportCopy {
@@ -94,10 +92,7 @@ export interface PluginImportSource {
 }
 
 export type VaultProbe =
-	| { kind: "found"; batch: PluginImportBatch }
-	| { kind: "empty" }
-	| { kind: "notInstalled" }
-	| { kind: "unreadable" };
+	{ kind: "found"; batch: PluginImportBatch } | { kind: "empty" } | { kind: "notInstalled" } | { kind: "unreadable" };
 
 /**
  * Look for the plugin's own settings file in this vault.
@@ -115,10 +110,7 @@ export type VaultProbe =
  * `unreadable`, so the window can say that instead of claiming there was
  * nothing to find.
  */
-export async function probeVault(
-	app: App,
-	source: PluginImportSource,
-): Promise<VaultProbe> {
+export async function probeVault(app: App, source: PluginImportSource): Promise<VaultProbe> {
 	const { adapter, configDir } = app.vault;
 	const folder = normalizePath(`${configDir}/plugins/${source.pluginId}`);
 	const path = normalizePath(`${folder}/data.json`);
@@ -140,10 +132,5 @@ export async function probeVault(
 }
 
 function isEmptyObject(raw: unknown): boolean {
-	return (
-		typeof raw === "object" &&
-		raw !== null &&
-		!Array.isArray(raw) &&
-		Object.keys(raw).length === 0
-	);
+	return typeof raw === "object" && raw !== null && !Array.isArray(raw) && Object.keys(raw).length === 0;
 }

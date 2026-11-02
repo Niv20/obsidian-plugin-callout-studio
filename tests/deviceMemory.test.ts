@@ -21,10 +21,14 @@ import { TestKeymap, TestScope } from "./support/fakeKeymap";
 
 const dom = installFakeDom();
 const local = new Map<string, string>();
-Object.defineProperty(dom.window, "localStorage", { value: {
-	getItem: (key: string) => local.get(key) ?? null,
-	setItem: (key: string, value: string) => { local.set(key, value); },
-} });
+Object.defineProperty(dom.window, "localStorage", {
+	value: {
+		getItem: (key: string) => local.get(key) ?? null,
+		setItem: (key: string, value: string) => {
+			local.set(key, value);
+		},
+	},
+});
 
 let sequence = 0;
 function device(appId = `device-memory-${sequence++}`) {
@@ -63,10 +67,19 @@ describe("picker and Quick Insert memory", () => {
 
 	it("ignores stored values it cannot use", () => {
 		const d = device();
-		local.set(`${d.appId}-callout-studio-local`, JSON.stringify({
-			v: 3, initialized: true, welcomeSeen: true, listsExpanded: {},
-			deviceId: "../../etc", iconCategories: { material: 42 }, emojiSkinTone: 9, quickInsertSource: { all: true },
-		}));
+		local.set(
+			`${d.appId}-callout-studio-local`,
+			JSON.stringify({
+				v: 3,
+				initialized: true,
+				welcomeSeen: true,
+				listsExpanded: {},
+				deviceId: "../../etc",
+				iconCategories: { material: 42 },
+				emojiSkinTone: 9,
+				quickInsertSource: { all: true },
+			}),
+		);
 		const store = d.store();
 		assert.equal(store.iconCategory("material"), undefined);
 		assert.equal(store.emojiSkinTone, undefined);
@@ -82,8 +95,13 @@ describe("the icon picker remembers on the device", () => {
 		settings.iconSources.lastCategory = { material: "Synced" };
 		settings.iconSources.lastEmojiSkinTone = 2;
 		const plugin = {
-			app: { keymap: new TestKeymap(), scope: new TestScope() }, settings, localState,
-			saveSettings: () => { saves++; return Promise.resolve(); },
+			app: { keymap: new TestKeymap(), scope: new TestScope() },
+			settings,
+			localState,
+			saveSettings: () => {
+				saves++;
+				return Promise.resolve();
+			},
 			registry: { getUserImages: () => [], getAll: () => [] },
 		} as unknown as IconPickerPlugin;
 		const modal = new IconPicker(plugin) as unknown as {
@@ -92,7 +110,13 @@ describe("the icon picker remembers on the device", () => {
 			saveVariants(id: string, variants: IconVariantState): void;
 			variantsFor(id: string): IconVariantState;
 		};
-		return { modal, settings, get saves() { return saves; } };
+		return {
+			modal,
+			settings,
+			get saves() {
+				return saves;
+			},
+		};
 	}
 
 	it("starts from the synced memory on a device that has none of its own", () => {

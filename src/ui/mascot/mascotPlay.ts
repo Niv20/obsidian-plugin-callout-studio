@@ -47,7 +47,9 @@ const ICON_SIZE = 24;
 export function playWith(mascot: BrushMascot, zone: HTMLElement): () => void {
 	zone.addClass("is-playful");
 	const undo: (() => void)[] = [() => zone.removeClass("is-playful")];
-	const on = <K extends "pointerenter" | "pointerleave" | "pointermove" | "pointerdown" | "pointerup" | "pointercancel">(
+	const on = <
+		K extends "pointerenter" | "pointerleave" | "pointermove" | "pointerdown" | "pointerup" | "pointercancel",
+	>(
 		type: K,
 		listener: (event: HTMLElementEventMap[K]) => void,
 	): void => {
@@ -117,7 +119,12 @@ export function playWith(mascot: BrushMascot, zone: HTMLElement): () => void {
  * the pointer comes onto `target`. Here beside the pointer's other play, so
  * the engine itself stays about frames and poses.
  */
-export function hoverMood(mascot: BrushMascot, target: HTMLElement, name: MascotAnimationName, how: "hold" | "once"): () => void {
+export function hoverMood(
+	mascot: BrushMascot,
+	target: HTMLElement,
+	name: MascotAnimationName,
+	how: "hold" | "once",
+): () => void {
 	if (how === "once") {
 		const arrive = (e: PointerEvent): void => {
 			if (e.pointerType !== "touch") void mascot.play(name);

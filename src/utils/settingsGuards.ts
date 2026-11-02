@@ -81,9 +81,7 @@ function inRange(value: unknown, fallback: number, range: Range): number {
  * Idempotent, which it has to be: it runs on every load, over settings it
  * itself wrote on the last one.
  */
-export function clampGlobalStyle(
-	style: GlobalStyleSettings,
-): GlobalStyleSettings {
+export function clampGlobalStyle(style: GlobalStyleSettings): GlobalStyleSettings {
 	const fallback = DEFAULT_SETTINGS.globalStyle;
 	return {
 		...style,
@@ -93,49 +91,17 @@ export function clampGlobalStyle(
 		contentScale: inRange(style.contentScale, fallback.contentScale, SCALE),
 		heading: {
 			...style.heading,
-			borderWidth: inRange(
-				style.heading.borderWidth,
-				fallback.heading.borderWidth,
-				WIDTH,
-			),
-			borderRadius: inRange(
-				style.heading.borderRadius,
-				fallback.heading.borderRadius,
-				RADIUS,
-			),
-			paddingTop: inRange(
-				style.heading.paddingTop,
-				fallback.heading.paddingTop,
-				SPACING,
-			),
-			paddingBottom: inRange(
-				style.heading.paddingBottom,
-				fallback.heading.paddingBottom,
-				SPACING,
-			),
-			marginTop: inRange(
-				style.heading.marginTop,
-				fallback.heading.marginTop,
-				SPACING,
-			),
+			borderWidth: inRange(style.heading.borderWidth, fallback.heading.borderWidth, WIDTH),
+			borderRadius: inRange(style.heading.borderRadius, fallback.heading.borderRadius, RADIUS),
+			paddingTop: inRange(style.heading.paddingTop, fallback.heading.paddingTop, SPACING),
+			paddingBottom: inRange(style.heading.paddingBottom, fallback.heading.paddingBottom, SPACING),
+			marginTop: inRange(style.heading.marginTop, fallback.heading.marginTop, SPACING),
 		},
 		inline: {
 			...style.inline,
-			borderWidth: inRange(
-				style.inline.borderWidth,
-				fallback.inline.borderWidth,
-				WIDTH,
-			),
-			borderRadius: inRange(
-				style.inline.borderRadius,
-				fallback.inline.borderRadius,
-				RADIUS,
-			),
-			fontScale: inRange(
-				style.inline.fontScale,
-				fallback.inline.fontScale,
-				SCALE,
-			),
+			borderWidth: inRange(style.inline.borderWidth, fallback.inline.borderWidth, WIDTH),
+			borderRadius: inRange(style.inline.borderRadius, fallback.inline.borderRadius, RADIUS),
+			fontScale: inRange(style.inline.fontScale, fallback.inline.fontScale, SCALE),
 		},
 	};
 }

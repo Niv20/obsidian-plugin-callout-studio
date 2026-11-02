@@ -141,7 +141,10 @@ function modeKeys(internals: Internals) {
 describe("the Text color row", () => {
 	// The note naming the mode is a Setting too, but it has no name of its own.
 	const names = (box: FakeElement): string[] =>
-		box.querySelectorAll(".setting-item-name").map((n) => n.textContent).filter((name) => name !== "");
+		box
+			.querySelectorAll(".setting-item-name")
+			.map((n) => n.textContent)
+			.filter((name) => name !== "");
 
 	it("is the third color of the separate colors, after Accent and Background", async () => {
 		const { internals, box } = await openWithButton();
@@ -247,7 +250,11 @@ describe("the low-contrast warning", () => {
 		const body = rule?.[1] ?? "";
 		assert.ok(rule, "the line has a rule");
 		assert.match(body, /color:\s*var\(--text-warning\)/);
-		assert.match(body, /padding:\s*var\(--size-4-3\) var\(--setting-items-padding-x\)/, "padded on top as well as below, and inset like a row");
+		assert.match(
+			body,
+			/padding:\s*var\(--size-4-3\) var\(--setting-items-padding-x\)/,
+			"padded on top as well as below, and inset like a row",
+		);
 		const divider = css.match(/\.cs-palette-contrast-line::before\s*\{([^}]*)\}/);
 		assert.ok(divider, "the hairline Obsidian draws above a row");
 		assert.match(divider?.[1] ?? "", /border-top:\s*1px solid var\(--background-modifier-border\)/);
@@ -255,9 +262,12 @@ describe("the low-contrast warning", () => {
 	});
 
 	describe("the triangle", () => {
-		const badgeOf = (row: FakeElement | null): FakeElement | null => row?.querySelector(".cs-contrast-badge") ?? null;
+		const badgeOf = (row: FakeElement | null): FakeElement | null =>
+			row?.querySelector(".cs-contrast-badge") ?? null;
 		const rowNamed = (box: FakeElement, name: string): FakeElement | null =>
-			box.querySelectorAll(".setting-item").find((r) => r.querySelector(".setting-item-name")?.textContent === name) ?? null;
+			box
+				.querySelectorAll(".setting-item")
+				.find((r) => r.querySelector(".setting-item-name")?.textContent === name) ?? null;
 		const shown = (el: FakeElement | null): boolean => el !== null && !el.hasClass("cs-hidden");
 
 		it("is on the color that falls short, and only on that one", async () => {
@@ -323,12 +333,13 @@ describe("the low-contrast warning", () => {
 });
 
 describe("the metadata word under the Name field", () => {
-	const saved = (name: string): CustomPalette => ({
-		id: `cp-${name}`,
-		name,
-		colorLight: "#448aff",
-		colorDark: "#448aff",
-	} as CustomPalette);
+	const saved = (name: string): CustomPalette =>
+		({
+			id: `cp-${name}`,
+			name,
+			colorLight: "#448aff",
+			colorDark: "#448aff",
+		}) as CustomPalette;
 
 	it("is not written out for an ordinary name", () => {
 		const { internals } = open({ seedName: "Blue 2" });
@@ -347,7 +358,9 @@ describe("the metadata word under the Name field", () => {
 
 /** A row of the Colors box, by its name. */
 function rowNamed(box: FakeElement, name: string): FakeElement {
-	const row = box.querySelectorAll(".setting-item").find((r) => r.querySelector(".setting-item-name")?.textContent === name);
+	const row = box
+		.querySelectorAll(".setting-item")
+		.find((r) => r.querySelector(".setting-item-name")?.textContent === name);
 	assert.ok(row, `a "${name}" row`);
 	return row;
 }
@@ -359,7 +372,9 @@ describe("light and dark mode each keep their own separate colors", () => {
 			internals.shownDark = dark;
 			internals.switchColorView();
 			const before = { ...internals.colors };
-			const swatch = rowNamed(box, t("palette.backgroundColorChannel")).querySelector("input") as FakeElement & { value: string };
+			const swatch = rowNamed(box, t("palette.backgroundColorChannel")).querySelector("input") as FakeElement & {
+				value: string;
+			};
 			// White used to come back as black in the other mode: its lightness
 			// was mirrored, and the mirror overwrote whatever that mode had.
 			swatch.value = "#ffffff";
@@ -373,7 +388,8 @@ describe("light and dark mode each keep their own separate colors", () => {
 	it("says which mode the rows are for, and names the button that switches it", async () => {
 		const { internals, box } = await openWithButton();
 		internals.switchColorView();
-		const note = (): string => box.querySelector(".cs-palette-mode-note .setting-item-description")?.textContent ?? "";
+		const note = (): string =>
+			box.querySelector(".cs-palette-mode-note .setting-item-description")?.textContent ?? "";
 		// Light on screen: only the moon is there, and it brings dark.
 		assert.ok(note().includes("light mode only"), note());
 		assert.ok(note().includes("moon") && !note().includes("sun"), note());
@@ -386,7 +402,9 @@ describe("light and dark mode each keep their own separate colors", () => {
 	it("titles the card with the mode while the separate colors show, and with Colors otherwise", async () => {
 		const { internals, group, button } = await openWithButton();
 		const title = (): string =>
-			(group as unknown as { groupEl: FakeElement }).groupEl.querySelector(".setting-item-heading .setting-item-name")?.textContent ?? "";
+			(group as unknown as { groupEl: FakeElement }).groupEl.querySelector(
+				".setting-item-heading .setting-item-name",
+			)?.textContent ?? "";
 		assert.equal(title(), t("palette.advancedColors"));
 
 		button.press();
@@ -401,7 +419,11 @@ describe("light and dark mode each keep their own separate colors", () => {
 		assert.equal(title(), t("palette.lightModeColors"));
 
 		button.press();
-		assert.equal(title(), t("palette.advancedColors"), "back on the single Base color, the mode is not the card's business");
+		assert.equal(
+			title(),
+			t("palette.advancedColors"),
+			"back on the single Base color, the mode is not the card's business",
+		);
 	});
 });
 
@@ -431,7 +453,12 @@ describe("the sun/moon button at the end of the Colors heading", () => {
 	}
 
 	const bodyMode = (): string =>
-		[activeDocument.body.hasClass("theme-dark") ? "dark" : "", activeDocument.body.hasClass("theme-light") ? "light" : ""].join(" ").trim();
+		[
+			activeDocument.body.hasClass("theme-dark") ? "dark" : "",
+			activeDocument.body.hasClass("theme-light") ? "light" : "",
+		]
+			.join(" ")
+			.trim();
 
 	it("shows all of Obsidian in the other mode, and puts it back when the editor closes", async () => {
 		try {

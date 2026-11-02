@@ -40,31 +40,24 @@ import { codeFolding, foldEffect } from "@codemirror/language";
 // Listed first: importing it installs the DOM globals before anything under
 // test loads (see tests/support/fakeDom.ts).
 import { el, FakeDocument, type FakeElement } from "./support/fakeDom";
-import {
-	lineAttrs,
-	markClass,
-	widgetOf,
-	widgetPlacement,
-} from "./support/decorations";
+import { lineAttrs, markClass, widgetOf, widgetPlacement } from "./support/decorations";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { createCalloutViewPlugin } from "../src/editor/livepreview/calloutViewPlugin";
-import {
-	calloutStudioCaretDrop,
-	calloutStudioRefresh,
-} from "../src/editor/livepreview/refresh";
+import { calloutStudioCaretDrop, calloutStudioRefresh } from "../src/editor/livepreview/refresh";
 import {
 	CalloutContentPillWidget,
 	CalloutTokenWidget,
 	HeadingFoldArrowWidget,
 	HeadingRefLinkWidget,
 } from "../src/editor/livepreview/widgets";
+import { CSS_HEADING_HIDE_MARKS, CSS_HEADING_LINE, CSS_HEADING_TITLE, CSS_UNKNOWN } from "../src/editor/renderShared";
 import {
-	CSS_HEADING_HIDE_MARKS,
-	CSS_HEADING_LINE,
-	CSS_HEADING_TITLE,
-	CSS_UNKNOWN,
-} from "../src/editor/renderShared";
-import { editorInfoField, editorLivePreviewField, livePreviewState, type Editor, type MarkdownFileInfo } from "obsidian";
+	editorInfoField,
+	editorLivePreviewField,
+	livePreviewState,
+	type Editor,
+	type MarkdownFileInfo,
+} from "obsidian";
 import { SidebarSourceSelection } from "../src/ui/sidebarSelection";
 
 type Registry = InstanceType<typeof CalloutRegistry>;
@@ -92,8 +85,7 @@ class FakeView {
 		const listeners = this.listeners;
 		this.dom.isConnected = true;
 		this.dom.ownerDocument = Object.assign(new FakeDocument(), {
-			addEventListener: (_type: string, fn: () => void) =>
-				void listeners.push(fn),
+			addEventListener: (_type: string, fn: () => void) => void listeners.push(fn),
 			removeEventListener: (_type: string, fn: () => void) => {
 				const at = listeners.indexOf(fn);
 				if (at >= 0) listeners.splice(at, 1);
@@ -205,12 +197,9 @@ function harness(
 		decorations,
 		lineClasses: (from) => {
 			const line = decorations().find(
-				([f, t, deco]) =>
-					f === from && t === from && lineAttrs(deco).class !== undefined,
+				([f, t, deco]) => f === from && t === from && lineAttrs(deco).class !== undefined,
 			);
-			return (line ? lineAttrs(line[2]).class ?? "" : "")
-				.split(" ")
-				.filter(Boolean);
+			return (line ? (lineAttrs(line[2]).class ?? "") : "").split(" ").filter(Boolean);
 		},
 	};
 }
@@ -247,7 +236,8 @@ function update(
 }
 
 const widgets = (h: Harness): unknown[] =>
-	h.decorations()
+	h
+		.decorations()
 		.map(([, , deco]) => widgetOf(deco))
 		.filter(Boolean);
 
@@ -256,11 +246,7 @@ const widgets = (h: Harness): unknown[] =>
  * own bracket hides (`Decoration.replace({})` over each of `coreHides`) in a set
  * ahead of the plugin's — where Obsidian's live preview puts them.
  */
-function pointsDrawn(
-	h: Harness,
-	doc: string,
-	coreHides: Array<[number, number]>,
-): Array<[number, number, unknown]> {
+function pointsDrawn(h: Harness, doc: string, coreHides: Array<[number, number]>): Array<[number, number, unknown]> {
 	const hides = Decoration.set(coreHides.map(([from, to]) => Decoration.replace({}).range(from, to)));
 	const state = EditorState.create({
 		doc,
@@ -285,14 +271,20 @@ function pointsDrawn(
 describe("sidebar selection updates from CodeMirror", () => {
 	it("clears a sidebar highlight when source mode moves the caret, without a document edit", () => {
 		let h: Harness;
-		const editor = { listSelections: () => h.view.state.selection.ranges.map(range => ({
-			anchor: { line: 0, ch: range.anchor }, head: { line: 0, ch: range.head },
-		})) } as Editor;
-		h = harness("[!note] after", { extensions: [editorInfoField.init(() => ({ editor } as MarkdownFileInfo))] });
+		const editor = {
+			listSelections: () =>
+				h.view.state.selection.ranges.map((range) => ({
+					anchor: { line: 0, ch: range.anchor },
+					head: { line: 0, ch: range.head },
+				})),
+		} as Editor;
+		h = harness("[!note] after", { extensions: [editorInfoField.init(() => ({ editor }) as MarkdownFileInfo)] });
 		update(h, { transaction: { selection: { anchor: 0, head: 7 } } });
 		const selected = new SidebarSourceSelection();
 		let cleared = false;
-		selected.watch(editor, () => { cleared = true; });
+		selected.watch(editor, () => {
+			cleared = true;
+		});
 		update(h, { transaction: { selection: { anchor: 10 } } });
 		assert.equal(cleared, true);
 		h.instance.destroy();
@@ -311,10 +303,7 @@ describe("heading callouts", () => {
 	it("puts the bar on the line, with the callout id on it", () => {
 		const h = harness(DOC, { selection: AWAY });
 
-		assert.deepStrictEqual(h.lineClasses(0), [
-			CSS_HEADING_LINE,
-			CSS_HEADING_HIDE_MARKS,
-		]);
+		assert.deepStrictEqual(h.lineClasses(0), [CSS_HEADING_LINE, CSS_HEADING_HIDE_MARKS]);
 		const line = h.decorations()[0]?.[2];
 		assert.ok(line);
 		assert.strictEqual(lineAttrs(line)["data-callout"], "note");
@@ -322,9 +311,7 @@ describe("heading callouts", () => {
 
 	it("collapses the `[!id]` token behind a widget while the caret is elsewhere", () => {
 		const h = harness(DOC, { selection: AWAY });
-		const token = h
-			.decorations()
-			.find(([from, to]) => from === 3 && to === 10);
+		const token = h.decorations().find(([from, to]) => from === 3 && to === 10);
 
 		assert.ok(token);
 		assert.ok(widgetOf(token[2]) instanceof CalloutTokenWidget);
@@ -335,10 +322,20 @@ describe("heading callouts", () => {
 		// does (see "inline pills").
 		const doc = "## [!note] [!tip]\nbody";
 		const h = harness(doc, { selection: doc.length });
-		const tokens = pointsDrawn(h, doc, [[3, 4], [9, 10], [11, 12], [16, 17]])
-			.filter((point) => point[2] instanceof CalloutTokenWidget);
+		const tokens = pointsDrawn(h, doc, [
+			[3, 4],
+			[9, 10],
+			[11, 12],
+			[16, 17],
+		]).filter((point) => point[2] instanceof CalloutTokenWidget);
 
-		assert.deepStrictEqual(tokens.map((point) => point.slice(0, 2)), [[3, 10], [11, 17]]);
+		assert.deepStrictEqual(
+			tokens.map((point) => point.slice(0, 2)),
+			[
+				[3, 10],
+				[11, 17],
+			],
+		);
 	});
 
 	it("keeps the bar but reveals the raw token while the caret is on the line", () => {
@@ -357,17 +354,12 @@ describe("heading callouts", () => {
 		h.view.hasFocus = false;
 		update(h, { focusChanged: true });
 
-		assert.deepStrictEqual(h.lineClasses(0), [
-			CSS_HEADING_LINE,
-			CSS_HEADING_HIDE_MARKS,
-		]);
+		assert.deepStrictEqual(h.lineClasses(0), [CSS_HEADING_LINE, CSS_HEADING_HIDE_MARKS]);
 	});
 
 	it("marks the title text so a gradient sweep can end on the last letter", () => {
 		const h = harness(DOC, { selection: AWAY });
-		const mark = h
-			.decorations()
-			.find(([, , deco]) => markClass(deco) === CSS_HEADING_TITLE);
+		const mark = h.decorations().find(([, , deco]) => markClass(deco) === CSS_HEADING_TITLE);
 
 		assert.deepStrictEqual(mark?.slice(0, 2), [11, 16]);
 	});
@@ -375,26 +367,20 @@ describe("heading callouts", () => {
 	it("keeps the title mark while the caret is on the line", () => {
 		// The sweep should not blink off when the line is being edited.
 		const h = harness(DOC, { selection: 5 });
-		assert.ok(
-			h.decorations().some(([, , deco]) => markClass(deco) === CSS_HEADING_TITLE),
-		);
+		assert.ok(h.decorations().some(([, , deco]) => markClass(deco) === CSS_HEADING_TITLE));
 	});
 
 	it("leaves surrounding whitespace out of the title mark", () => {
 		const doc = "##   [!note]    Title   \nbody";
 		const h = harness(doc, { selection: doc.length });
-		const mark = h
-			.decorations()
-			.find(([, , deco]) => markClass(deco) === CSS_HEADING_TITLE);
+		const mark = h.decorations().find(([, , deco]) => markClass(deco) === CSS_HEADING_TITLE);
 
 		assert.deepStrictEqual(mark?.slice(0, 2), [16, 21]);
 	});
 
 	it("marks no title on a title-less heading", () => {
 		const h = harness("## [!note]\nbody", { selection: 12 });
-		assert.ok(
-			!h.decorations().some(([, , deco]) => markClass(deco) === CSS_HEADING_TITLE),
-		);
+		assert.ok(!h.decorations().some(([, , deco]) => markClass(deco) === CSS_HEADING_TITLE));
 	});
 
 	it("marks an unknown id on the bar", () => {
@@ -426,9 +412,7 @@ describe("the fold chevron", () => {
 
 	it("trails the whole heading, at end of line", () => {
 		const h = harness(DOC, { selection: DOC.length });
-		const arrow = h
-			.decorations()
-			.find(([, , deco]) => widgetOf(deco) instanceof HeadingFoldArrowWidget);
+		const arrow = h.decorations().find(([, , deco]) => widgetOf(deco) instanceof HeadingFoldArrowWidget);
 
 		assert.ok(arrow);
 		assert.deepStrictEqual(arrow.slice(0, 2), [16, 16]);
@@ -453,9 +437,9 @@ describe("the fold chevron", () => {
 
 	it("reflects whether the section is folded", () => {
 		const h = harness(DOC, { selection: DOC.length });
-		const before = widgets(h).find(
-			(w) => w instanceof HeadingFoldArrowWidget,
-		) as InstanceType<typeof HeadingFoldArrowWidget>;
+		const before = widgets(h).find((w) => w instanceof HeadingFoldArrowWidget) as InstanceType<
+			typeof HeadingFoldArrowWidget
+		>;
 
 		update(h, {
 			transaction: {
@@ -463,9 +447,9 @@ describe("the fold chevron", () => {
 			},
 		});
 
-		const after = widgets(h).find(
-			(w) => w instanceof HeadingFoldArrowWidget,
-		) as InstanceType<typeof HeadingFoldArrowWidget>;
+		const after = widgets(h).find((w) => w instanceof HeadingFoldArrowWidget) as InstanceType<
+			typeof HeadingFoldArrowWidget
+		>;
 		assert.strictEqual(before.eq(after), false, "the chevron must rotate");
 	});
 });
@@ -535,9 +519,21 @@ describe("inline pills", () => {
 		// it, kept its pill.
 		const doc = "[!a] [!b] [!c] end";
 		const h = harness(doc, { selection: doc.length });
-		const points = pointsDrawn(h, doc, [[0, 1], [3, 4], [5, 6], [8, 9]]);
+		const points = pointsDrawn(h, doc, [
+			[0, 1],
+			[3, 4],
+			[5, 6],
+			[8, 9],
+		]);
 
-		assert.deepStrictEqual(points.map((point) => point.slice(0, 2)), [[0, 4], [5, 9], [10, 14]]);
+		assert.deepStrictEqual(
+			points.map((point) => point.slice(0, 2)),
+			[
+				[0, 4],
+				[5, 9],
+				[10, 14],
+			],
+		);
 		assert.ok(points.every((point) => point[2] instanceof CalloutTokenWidget));
 	});
 
@@ -546,10 +542,7 @@ describe("inline pills", () => {
 		const replaced = h.decorations().filter(([, , deco]) => widgetOf(deco));
 
 		assert.strictEqual(replaced.length, 1);
-		assert.ok(
-			widgetOf(replaced[0]?.[2] as Decoration) instanceof
-				CalloutContentPillWidget,
-		);
+		assert.ok(widgetOf(replaced[0]?.[2] as Decoration) instanceof CalloutContentPillWidget);
 	});
 });
 
@@ -735,10 +728,7 @@ describe("what it leaves alone", () => {
 		];
 
 		assert.doesNotThrow(() => update(h, { viewportChanged: true }));
-		assert.strictEqual(
-			h.decorations().filter(([, , deco]) => widgetOf(deco)).length,
-			2,
-		);
+		assert.strictEqual(h.decorations().filter(([, , deco]) => widgetOf(deco)).length, 2);
 	});
 });
 
@@ -952,7 +942,8 @@ describe("lifecycle", () => {
 
 describe("document exclusions in language-free Live Preview", () => {
 	it("never decorates fake heading/inline callouts across multiline exclusions", () => {
-		const source = "%%\n## [!note] Comment\n[!note]\n%%\n```\n## [!note] Code\n```\n\n    [!note]\n\ntext ``\n[!note]\n``\n\n## [!note] Real\nend";
+		const source =
+			"%%\n## [!note] Comment\n[!note]\n%%\n```\n## [!note] Code\n```\n\n    [!note]\n\ntext ``\n[!note]\n``\n\n## [!note] Real\nend";
 		const h = harness(source, { selection: source.length });
 		const real = source.indexOf("## [!note] Real");
 		assert.ok(h.lineClasses(real).includes(CSS_HEADING_LINE));

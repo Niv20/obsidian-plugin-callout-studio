@@ -11,7 +11,9 @@ function mount(searchable = false, choices = ["Alpha", "Beta", "Bravo", "Gamma"]
 	const previews: Array<string | null> = [];
 	const queries: string[] = [];
 	const popup = new ListboxPopup(asEl(host), {
-		ariaLabel: "Choices", placeholder: "Search", searchable,
+		ariaLabel: "Choices",
+		placeholder: "Search",
+		searchable,
 		itemsFor: (query) => {
 			queries.push(query);
 			return choices.filter((item) => item.toLowerCase().includes(query.toLowerCase()));
@@ -31,7 +33,14 @@ function mount(searchable = false, choices = ["Alpha", "Beta", "Bravo", "Gamma"]
 	const menu = host.querySelector(".cs-combobox-menu")!;
 	const rows = () => menu.querySelectorAll(".cs-combobox-option");
 	return {
-		popup, field, input, menu, rows, commits, previews, queries,
+		popup,
+		field,
+		input,
+		menu,
+		rows,
+		commits,
+		previews,
+		queries,
 		open: () => field.getAttribute("aria-expanded") === "true",
 		label: () => field.querySelector(".cs-dropdown-field-label")?.textContent ?? "",
 		active: () => rows().findIndex((row) => row.classList.contains("is-active")),
@@ -39,9 +48,14 @@ function mount(searchable = false, choices = ["Alpha", "Beta", "Bravo", "Gamma"]
 			let prevented = false;
 			let stopped = false;
 			target.fire("keydown", {
-				key, ...modifiers,
-				preventDefault: () => { prevented = true; },
-				stopPropagation: () => { stopped = true; },
+				key,
+				...modifiers,
+				preventDefault: () => {
+					prevented = true;
+				},
+				stopPropagation: () => {
+					stopped = true;
+				},
 			});
 			return { prevented, stopped };
 		},
@@ -62,7 +76,9 @@ describe("select-only popup keyboard", () => {
 			assert.equal(h.open(), false);
 			assert.equal(h.label(), "Beta");
 			assert.deepEqual(h.commits, []);
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	for (const opener of ["Enter", " ", "ArrowDown", "ArrowUp"]) {
@@ -78,12 +94,17 @@ describe("select-only popup keyboard", () => {
 				h.key(" ");
 				assert.equal(h.open(), false);
 				assert.deepEqual(h.commits, ["Bravo"]);
-			} finally { h.popup.destroy(); }
+			} finally {
+				h.popup.destroy();
+			}
 		});
 	}
 
 	it("jumps by pages and to list endpoints without wrapping", () => {
-		const h = mount(false, Array.from({ length: 25 }, (_, index) => `Choice ${index}`));
+		const h = mount(
+			false,
+			Array.from({ length: 25 }, (_, index) => `Choice ${index}`),
+		);
 		try {
 			h.key("End");
 			assert.equal(h.active(), 24);
@@ -97,7 +118,9 @@ describe("select-only popup keyboard", () => {
 			assert.equal(h.active(), 0);
 			h.key("PageDown");
 			assert.equal(h.active(), 10);
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("cycles repeated letters, refines prefixes, and expires the typeahead buffer", (t) => {
@@ -119,7 +142,9 @@ describe("select-only popup keyboard", () => {
 			assert.deepEqual(h.commits, []);
 			h.key("Enter");
 			assert.deepEqual(h.commits, ["Alpha"]);
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("leaves modified shortcuts and IME input alone", () => {
@@ -129,7 +154,9 @@ describe("select-only popup keyboard", () => {
 				assert.deepEqual(h.key("b", { [modifier]: true }), { prevented: false, stopped: false });
 				assert.equal(h.open(), false);
 			}
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("dismisses Escape once, lets the next reach the modal, and leaves Tab's default intact", () => {
@@ -145,7 +172,9 @@ describe("select-only popup keyboard", () => {
 			assert.equal(h.open(), false);
 			assert.equal(h.label(), "Beta");
 			assert.deepEqual(h.commits, []);
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("refreshes every option rather than filtering by the closed label", () => {
@@ -158,7 +187,9 @@ describe("select-only popup keyboard", () => {
 			h.popup.setSelected("Gamma");
 			assert.equal(h.active(), 3);
 			assert.equal(h.rows()[3]?.getAttribute("aria-selected"), "true");
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("ignores disabled gestures and stale row clicks", () => {
@@ -174,7 +205,9 @@ describe("select-only popup keyboard", () => {
 			staleRow.fire("click");
 			assert.equal(h.open(), false);
 			assert.deepEqual(h.commits, []);
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("destroy clears previews and permanently refuses stale gestures or re-enabling", () => {
@@ -227,7 +260,9 @@ describe("searchable popup keyboard", () => {
 			h.input!.fire("input");
 			assert.equal(h.rows().length, 1);
 			assert.equal(h.label(), "Beta", "the field goes on showing what is committed");
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	for (const opener of ["Enter", " ", "ArrowDown", "ArrowUp"]) {
@@ -238,7 +273,9 @@ describe("searchable popup keyboard", () => {
 				assert.equal(h.open(), true);
 				assert.equal(h.input!.value, "");
 				assert.equal(h.active(), 1, "on the committed row");
-			} finally { h.popup.destroy(); }
+			} finally {
+				h.popup.destroy();
+			}
 		});
 	}
 
@@ -261,12 +298,17 @@ describe("searchable popup keyboard", () => {
 			assert.deepEqual(h.key("g"), { prevented: true, stopped: true });
 			assert.equal(h.open(), true);
 			assert.equal(h.input!.value, "g");
-			assert.deepEqual(h.rows().map((row) => row.textContent), ["Gamma"]);
+			assert.deepEqual(
+				h.rows().map((row) => row.textContent),
+				["Gamma"],
+			);
 			// A shortcut is not a letter.
 			h.popup.close();
 			assert.deepEqual(h.key("g", { metaKey: true }), { prevented: false, stopped: false });
 			assert.equal(h.open(), false);
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("moves with the arrows and takes the row with Enter, then gives the focus back to the field", () => {
@@ -280,7 +322,9 @@ describe("searchable popup keyboard", () => {
 			assert.equal(h.open(), false);
 			assert.equal(h.label(), "Bravo");
 			assert.equal(fakeDom.document.activeElement, h.field);
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("closes on Escape and on Tab without choosing, and the focus goes back to the field", () => {
@@ -297,7 +341,9 @@ describe("searchable popup keyboard", () => {
 			assert.equal(h.open(), false);
 			assert.equal(fakeDom.document.activeElement, h.field);
 			assert.deepEqual(h.commits, []);
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("never commits on blur, and a blur that stays inside the picker leaves it open", () => {
@@ -312,6 +358,8 @@ describe("searchable popup keyboard", () => {
 			assert.equal(h.open(), false);
 			assert.equal(h.label(), "Beta");
 			assert.deepEqual(h.commits, []);
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 });

@@ -33,18 +33,10 @@ import { describe, it } from "node:test";
 import { apiHarness } from "./support/apiHarness";
 
 const API_DOC = readFileSync(join(process.cwd(), "docs/API.md"), "utf8");
-const MANIFEST = JSON.parse(
-	readFileSync(join(process.cwd(), "manifest.json"), "utf8"),
-) as { id: string };
+const MANIFEST = JSON.parse(readFileSync(join(process.cwd(), "manifest.json"), "utf8")) as { id: string };
 
 /** The five members API.md declares, and the only five it may declare. */
-const DOCUMENTED = [
-	"getCallout",
-	"getCallouts",
-	"getCalloutsDetailed",
-	"onChange",
-	"version",
-];
+const DOCUMENTED = ["getCallout", "getCallouts", "getCalloutsDetailed", "onChange", "version"];
 
 /** Every property name a consumer can read off the api object. */
 function reachableSurface(api: object): string[] {
@@ -157,12 +149,7 @@ describe("the API surface", () => {
 		const { api } = apiHarness();
 		const proto = Object.getOwnPropertyNames(Object.getPrototypeOf(api));
 		const own = Object.getOwnPropertyNames(api);
-		for (const name of [
-			"getCallouts",
-			"getCalloutsDetailed",
-			"getCallout",
-			"onChange",
-		]) {
+		for (const name of ["getCallouts", "getCalloutsDetailed", "getCallout", "onChange"]) {
 			assert.ok(proto.includes(name), `${name} is not on the prototype`);
 			assert.ok(!own.includes(name), `${name} was copied onto the instance`);
 		}
@@ -221,13 +208,9 @@ describe("API.md describes the object that actually ships", () => {
 		// The interface in API.md is what consumers copy into their own project
 		// — there is no published .d.ts — so a member that exists in one place
 		// and not the other is a compile error in somebody else's plugin.
-		const block = /export interface CalloutStudioApi \{([\s\S]*?)\n\}/.exec(
-			API_DOC,
-		);
+		const block = /export interface CalloutStudioApi \{([\s\S]*?)\n\}/.exec(API_DOC);
 		assert.ok(block, "API.md no longer declares CalloutStudioApi");
-		const declared = [...(block[1] ?? "").matchAll(/^\t(?:readonly\s+)?(\w+)/gm)]
-			.map((m) => m[1] as string)
-			.sort();
+		const declared = [...(block[1] ?? "").matchAll(/^\t(?:readonly\s+)?(\w+)/gm)].map((m) => m[1] as string).sort();
 		assert.deepStrictEqual(declared, [...DOCUMENTED].sort());
 	});
 

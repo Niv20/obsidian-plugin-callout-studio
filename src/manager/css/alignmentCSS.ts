@@ -21,8 +21,7 @@ export function blockAlignmentCSS(
 	if (calloutSelectors.length === 0) return { iconRules, contentRules };
 
 	const imp = " !important";
-	const selectorsFor = (tail: string): string =>
-		calloutSelectors.map((selector) => `${selector}${tail}`).join(",\n");
+	const selectorsFor = (tail: string): string => calloutSelectors.map((selector) => `${selector}${tail}`).join(",\n");
 
 	// Obsidian's title row has a 4px gap. Its regular icon is larger than the
 	// plugin's heading and inline icons, so a trailing margin tops up that gap
@@ -32,11 +31,7 @@ export function blockAlignmentCSS(
 		// Registered inherited lengths resolve em values on the callout root,
 		// before a separately scaled .callout-content receives them. Emit these
 		// with the rules so standalone snippet exports have the registrations too.
-		for (const name of [
-			"--cs-align-icon-inline-size",
-			"--cs-align-icon-gap",
-			"--cs-align-title-gap",
-		]) {
+		for (const name of ["--cs-align-icon-inline-size", "--cs-align-icon-gap", "--cs-align-title-gap"]) {
 			iconRules.push(
 				`@property ${name} {\n` +
 					`  syntax: "<length>";\n` +
@@ -57,9 +52,7 @@ export function blockAlignmentCSS(
 	iconRules.push(
 		`${selectorsFor(" > .callout-title > .callout-icon")} {\n` +
 			`  margin-inline-end: ${alignContentWithTitle ? "var(--cs-align-icon-gap)" : "var(--cs-regular-icon-gap, 0.15em)"}${imp};\n` +
-			(alignContentWithTitle
-				? `  inline-size: var(--cs-align-icon-inline-size)${imp};\n`
-				: "") +
+			(alignContentWithTitle ? `  inline-size: var(--cs-align-icon-inline-size)${imp};\n` : "") +
 			`}`,
 	);
 
@@ -69,9 +62,7 @@ export function blockAlignmentCSS(
 		// padding. Explicit column-gap keeps a theme's direct gap override from
 		// moving the title without moving the content; logical sides cover RTL.
 		contentRules.push(
-			`${selectorsFor(" > .callout-title")} {\n` +
-				`  column-gap: var(--cs-align-title-gap)${imp};\n` +
-				`}`,
+			`${selectorsFor(" > .callout-title")} {\n` + `  column-gap: var(--cs-align-title-gap)${imp};\n` + `}`,
 			`${selectorsFor(" > .callout-content")} {\n` +
 				`  padding-inline-start: calc(var(--cs-align-icon-inline-size) + var(--cs-align-icon-gap) + var(--cs-align-title-gap))${imp};\n` +
 				`}`,

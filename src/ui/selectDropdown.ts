@@ -164,7 +164,7 @@ export class SelectDropdown {
 		// afterwards cannot change this dropdown behind its back.
 		this.options = options.map((option) => ({ ...option }));
 		const keep = this.options.some((option) => option.value === this.value);
-		return this.setValue(keep ? this.value : this.options[0]?.value ?? "");
+		return this.setValue(keep ? this.value : (this.options[0]?.value ?? ""));
 	}
 
 	/** Show `value` as chosen, without calling `onChange`. */
@@ -299,7 +299,11 @@ export class SelectDropdown {
 		// A long list (the languages) scrolls with the wheel rather than by where
 		// the mouse is, and opens on the current choice (ui/menuScroll.ts).
 		const menuEl = findOpenMenu(control.ownerDocument);
-		if (menuEl) scrollMenuWithWheel(menuEl, this.options.findIndex((option) => option.value === this.value));
+		if (menuEl)
+			scrollMenuWithWheel(
+				menuEl,
+				this.options.findIndex((option) => option.value === this.value),
+			);
 
 		// The menu is placed once, so it must not outlive a scroll of the page
 		// behind it (ui/menuAnchorScroll.ts). Read after the menu is shown, so a

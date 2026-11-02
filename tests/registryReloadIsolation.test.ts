@@ -9,11 +9,29 @@ function populatedRegistry(): CalloutRegistry {
 	const registry = new CalloutRegistry();
 	registry.load({ callouts: [definition({ id: "local" })], futureLocalField: true } as Partial<PluginData>);
 	registry.settings.fallbackCalloutId = "local";
-	registry.settings.customPalettes.push({ id: "local-palette", name: "Local palette",
-		colorLight: "#123456", colorDark: "#654321", bgColorLight: "#abcdef", bgColorDark: "#fedcba",
-		textColorLight: "#000000", textColorDark: "#ffffff" });
-	registry.setUserImages([{ id: "img-local", name: "Local.svg", format: "svg", svg: "<svg/>",
-		width: 24, height: 24, monochrome: false, rev: 1, addedAt: 1 }]);
+	registry.settings.customPalettes.push({
+		id: "local-palette",
+		name: "Local palette",
+		colorLight: "#123456",
+		colorDark: "#654321",
+		bgColorLight: "#abcdef",
+		bgColorDark: "#fedcba",
+		textColorLight: "#000000",
+		textColorDark: "#ffffff",
+	});
+	registry.setUserImages([
+		{
+			id: "img-local",
+			name: "Local.svg",
+			format: "svg",
+			svg: "<svg/>",
+			width: 24,
+			height: 24,
+			monochrome: false,
+			rev: 1,
+			addedAt: 1,
+		},
+	]);
 	registry.iconSvgCache.push({ pack: "material", name: "local", variant: "", svg: "<svg/>" });
 	return registry;
 }
@@ -29,7 +47,8 @@ describe("loading settings replaces the whole previous device state", () => {
 	];
 	for (const [label, data] of incoming) {
 		it(`${label} produces the same data on a fresh and previously used device`, () => {
-			const fresh = new CalloutRegistry(); fresh.load(structuredClone(data));
+			const fresh = new CalloutRegistry();
+			fresh.load(structuredClone(data));
 			const expected = fresh.toSaveData();
 			const used = populatedRegistry();
 			assert.equal(listUserImages().length, 1);
@@ -44,10 +63,18 @@ describe("loading settings replaces the whole previous device state", () => {
 		});
 	}
 	it("does not leak mutations into shipped defaults or the next reset", () => {
-		const registry = populatedRegistry(); registry.load(null);
-		registry.settings.customPalettes.push({ id: "new", name: "New",
-			colorLight: "#123456", colorDark: "#654321", bgColorLight: "#abcdef", bgColorDark: "#fedcba",
-			textColorLight: "#000000", textColorDark: "#ffffff" });
+		const registry = populatedRegistry();
+		registry.load(null);
+		registry.settings.customPalettes.push({
+			id: "new",
+			name: "New",
+			colorLight: "#123456",
+			colorDark: "#654321",
+			bgColorLight: "#abcdef",
+			bgColorDark: "#fedcba",
+			textColorLight: "#000000",
+			textColorDark: "#ffffff",
+		});
 		registry.load(null);
 		assert.deepEqual(registry.settings.customPalettes, []);
 		assert.equal(registry.settings.fallbackCalloutId, "note");
@@ -83,7 +110,8 @@ describe("a reload retires the previous preview and its shadow", () => {
 	it("a null load also drops the old preview shadow permanently", () => {
 		const registry = populatedRegistry();
 		registry.setPreviewDefinition(definition({ id: "local" }));
-		registry.load(null); registry.setPreviewDefinition(null);
+		registry.load(null);
+		registry.setPreviewDefinition(null);
 		assert.equal(registry.get("local"), undefined);
 		assert.equal(registry.hasPreviewDefinition(), false);
 	});

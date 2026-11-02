@@ -36,7 +36,9 @@ describe("settings dictionaries preserve literal property names", () => {
 	it("preserves future fields through load, edit, save and another load", () => {
 		const registry = new CalloutRegistry();
 		registry.load(null);
-		const extra = JSON.parse('{"__proto__":{"injected":true},"constructor":{"name":"future"},"prototype":[1,2]}') as Record<string, unknown>;
+		const extra = JSON.parse(
+			'{"__proto__":{"injected":true},"constructor":{"name":"future"},"prototype":[1,2]}',
+		) as Record<string, unknown>;
 		const base = registry.toSaveData();
 		const raw = { ...base, ...extra, settings: { ...base.settings, ...extra } };
 		const foreign = collectForeignFields(raw);
@@ -59,9 +61,10 @@ describe("settings dictionaries preserve literal property names", () => {
 	});
 
 	it("imports all string metadata names without dropping __proto__", async () => {
-		const metadata = JSON.parse(
-			'{"__proto__":"literal","constructor":"author","prototype":"draft"}',
-		) as Record<string, unknown>;
+		const metadata = JSON.parse('{"__proto__":"literal","constructor":"author","prototype":"draft"}') as Record<
+			string,
+			unknown
+		>;
 		const registry = new CalloutRegistry();
 		registry.load(null);
 		const result = await validateImportPayload([{ ...definition(), metadata }], registry);
@@ -76,17 +79,36 @@ describe("settings dictionaries preserve literal property names", () => {
 describe("settings payloads cannot silently discard rows or crash gradient rendering", () => {
 	for (const angleDeg of [undefined, null, "90", {}, { toString: null, valueOf: null }, Number.NaN, Infinity]) {
 		it(`rejects an invalid gradient angle: ${String(JSON.stringify(angleDeg))}`, () => {
-			const raw = { callouts: [{ ...definition(), bgGradient: {
-				angleDeg, toColorLight: "#ffffff", toColorDark: "#000000",
-			} }] };
+			const raw = {
+				callouts: [
+					{
+						...definition(),
+						bgGradient: {
+							angleDeg,
+							toColorLight: "#ffffff",
+							toColorDark: "#000000",
+						},
+					},
+				],
+			};
 			assert.equal(hasSafeSettingsFileShape(raw), false);
 		});
 	}
 
 	it("retains finite legacy angles and future gradient metadata", () => {
-		const raw = { callouts: [{ ...definition(), bgGradient: {
-			angleDeg: -450, toColorLight: "#ffffff", toColorDark: "#000000", type: "radial",
-		} }] };
+		const raw = {
+			callouts: [
+				{
+					...definition(),
+					bgGradient: {
+						angleDeg: -450,
+						toColorLight: "#ffffff",
+						toColorDark: "#000000",
+						type: "radial",
+					},
+				},
+			],
+		};
 		assert.equal(hasSafeSettingsFileShape(raw), true);
 	});
 
@@ -97,17 +119,22 @@ describe("settings payloads cannot silently discard rows or crash gradient rende
 	});
 
 	it("continues allowing distinct legacy spellings for the existing migration", () => {
-		assert.equal(hasSafeSettingsFileShape({ callouts: [
-			definition({ id: "two words" }), definition({ id: "two-words" }),
-		] }), true);
+		assert.equal(
+			hasSafeSettingsFileShape({ callouts: [definition({ id: "two words" }), definition({ id: "two-words" })] }),
+			true,
+		);
 	});
 });
 
 describe("settings versions are safe before migrations run", () => {
 	for (const [label, version] of [
-		["null", null], ["string", "4"], ["boolean", true], ["object", {}],
+		["null", null],
+		["string", "4"],
+		["boolean", true],
+		["object", {}],
 		["uncoercible object", { toString: null, valueOf: null }],
-		["NaN", Number.NaN], ["infinity", Infinity],
+		["NaN", Number.NaN],
+		["infinity", Infinity],
 	] as const) {
 		it(`rejects a ${label} version before registry rebuilding`, () => {
 			assert.equal(hasSafeSettingsFileShape({ settings: {}, version }), false);

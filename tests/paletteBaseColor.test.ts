@@ -19,17 +19,10 @@ import {
 	MIN_BG_COLOR_AMOUNT,
 	hexToRgb,
 } from "../src/utils/colorUtils";
-import {
-	seedBaseColor,
-	unclaimedBaseColor,
-} from "../src/settings/paletteBaseColorRow";
+import { seedBaseColor, unclaimedBaseColor } from "../src/settings/paletteBaseColorRow";
 import { sanitizeCustomPalettes } from "../src/utils/paletteSanitize";
 import { mergeSavedSettings } from "../src/utils/settingsMerge";
-import {
-	palettesVisuallyEqual,
-	customPaletteToColorPalette,
-	type ColorPalette,
-} from "../src/utils/colorPalettes";
+import { palettesVisuallyEqual, customPaletteToColorPalette, type ColorPalette } from "../src/utils/colorPalettes";
 import type { CustomPalette } from "../src/types";
 
 /** Pure yellow: the loudest case, and the one this was reported against. */
@@ -40,11 +33,7 @@ const YELLOW_FIXED = "#8c8c00";
 const maxDelta = (a: string, b: string): number => {
 	const x = hexToRgb(a);
 	const y = hexToRgb(b);
-	return Math.max(
-		Math.abs(x.r - y.r),
-		Math.abs(x.g - y.g),
-		Math.abs(x.b - y.b),
-	);
+	return Math.max(Math.abs(x.r - y.r), Math.abs(x.g - y.g), Math.abs(x.b - y.b));
 };
 
 /* -------------------------------------------------------------------------- */
@@ -142,22 +131,13 @@ describe("seedBaseColor", () => {
 		// The fix, in one assertion. Reopening the yellow palette must put the
 		// user's #ffff00 back in the swatch, not the #8c8c00 that was derived
 		// from it — otherwise the next re-derivation runs from the wrong base.
-		assert.equal(
-			seedBaseColor(
-				{ baseColor: YELLOW, colorLight: YELLOW_FIXED },
-				FALLBACK,
-			),
-			YELLOW,
-		);
+		assert.equal(seedBaseColor({ baseColor: YELLOW, colorLight: YELLOW_FIXED }, FALLBACK), YELLOW);
 	});
 
 	it("falls back to colorLight for a palette saved before the field", () => {
 		// The old behaviour, kept deliberately: the correction is not
 		// invertible, so colorLight is the best guess such a palette can offer.
-		assert.equal(
-			seedBaseColor({ colorLight: YELLOW_FIXED }, FALLBACK),
-			YELLOW_FIXED,
-		);
+		assert.equal(seedBaseColor({ colorLight: YELLOW_FIXED }, FALLBACK), YELLOW_FIXED);
 	});
 
 	it("falls back for a seed built from a baked callout", () => {
@@ -173,13 +153,7 @@ describe("seedBaseColor", () => {
 	it("ignores a junk stored pick rather than seeding the swatch with it", () => {
 		// A native <input type="color"> silently shows black for a value it
 		// cannot parse, which would look like the palette lost its color.
-		assert.equal(
-			seedBaseColor(
-				{ baseColor: "transparent", colorLight: YELLOW_FIXED },
-				FALLBACK,
-			),
-			YELLOW_FIXED,
-		);
+		assert.equal(seedBaseColor({ baseColor: "transparent", colorLight: YELLOW_FIXED }, FALLBACK), YELLOW_FIXED);
 	});
 });
 
@@ -216,11 +190,7 @@ describe("sanitizeCustomPalettes and baseColor", () => {
 		// palette, and the editor falls back to seeding from colorLight.
 		for (const junk of ["nope", "#fff", 42, null, {}]) {
 			const p = only(palette({ baseColor: junk as never }));
-			assert.equal(
-				p.baseColor,
-				undefined,
-				`kept baseColor ${JSON.stringify(junk)}`,
-			);
+			assert.equal(p.baseColor, undefined, `kept baseColor ${JSON.stringify(junk)}`);
 		}
 	});
 
@@ -235,9 +205,7 @@ describe("sanitizeCustomPalettes and baseColor", () => {
 		// what settingsValidator runs on an imported file, so one assertion here
 		// covers save→load and export→import both.
 		const merged = mergeSavedSettings({
-			customPalettes: [
-				palette({ baseColor: YELLOW }) as unknown as CustomPalette,
-			],
+			customPalettes: [palette({ baseColor: YELLOW }) as unknown as CustomPalette],
 		});
 		assert.equal(merged.customPalettes[0]?.baseColor, YELLOW);
 	});
@@ -248,13 +216,7 @@ describe("sanitizeCustomPalettes and baseColor", () => {
 		// reached, or the editor's duplicate-color block springs a leak.
 		const a = only(palette({ baseColor: YELLOW }));
 		const b = only(palette({ id: "cp-2", baseColor: "#f5f500" }));
-		assert.equal(
-			palettesVisuallyEqual(
-				customPaletteToColorPalette(a),
-				customPaletteToColorPalette(b),
-			),
-			true,
-		);
+		assert.equal(palettesVisuallyEqual(customPaletteToColorPalette(a), customPaletteToColorPalette(b)), true);
 	});
 });
 
@@ -278,10 +240,7 @@ const clashes = (hex: string, taken: ColorPalette[]): boolean => {
 describe("unclaimedBaseColor", () => {
 	it("leaves the default alone when nothing owns it", () => {
 		assert.equal(unclaimedBaseColor(FALLBACK, DEFAULT_BG_COLOR_AMOUNT, []), FALLBACK);
-		assert.equal(
-			unclaimedBaseColor(FALLBACK, DEFAULT_BG_COLOR_AMOUNT, [wearing("#e93147")]),
-			FALLBACK,
-		);
+		assert.equal(unclaimedBaseColor(FALLBACK, DEFAULT_BG_COLOR_AMOUNT, [wearing("#e93147")]), FALLBACK);
 	});
 
 	it("moves one channel by one step when the default is owned", () => {

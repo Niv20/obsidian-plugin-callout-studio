@@ -23,11 +23,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { getAllColorPalettes } from "../src/utils/colorPalettes";
-import type {
-	CalloutDefinition,
-	CustomPalette,
-	PluginData,
-} from "../src/types";
+import type { CalloutDefinition, CustomPalette, PluginData } from "../src/types";
 
 const ACCENT_LIGHT = "#336699";
 const ACCENT_DARK = "#88bbee";
@@ -61,10 +57,7 @@ function palette(over: Partial<CustomPalette> = {}): CustomPalette {
 	return { id: "cp-1", name: "Mine", ...BAKED, ...over };
 }
 
-function saved(
-	callouts: CalloutDefinition[],
-	settings?: Record<string, unknown>,
-): Partial<PluginData> {
+function saved(callouts: CalloutDefinition[], settings?: Record<string, unknown>): Partial<PluginData> {
 	return { callouts, ...(settings ? { settings } : {}) } as Partial<PluginData>;
 }
 
@@ -112,9 +105,7 @@ describe("countPaletteLinks", () => {
 	});
 
 	it("can exclude one callout — the 'how many OTHERS' question the UI asks", () => {
-		const { registry } = loaded(
-			saved([def({ id: "a", paletteId: "cp-1" }), def({ id: "b", paletteId: "cp-1" })]),
-		);
+		const { registry } = loaded(saved([def({ id: "a", paletteId: "cp-1" }), def({ id: "b", paletteId: "cp-1" })]));
 		assert.strictEqual(registry.countPaletteLinks("cp-1", "b"), 1);
 		assert.strictEqual(registry.countPaletteLinks("cp-1", "missing"), 2);
 	});
@@ -128,9 +119,7 @@ describe("countPaletteLinks", () => {
 	it("counts exactly the rows relinkPalette would touch", () => {
 		// It deliberately walks the same raw map, so a count taken from a list
 		// view could promise a number the relink then fails to deliver.
-		const { registry } = loaded(
-			saved([def({ id: "a", paletteId: "cp-1" }), def({ id: "b", paletteId: "cp-1" })]),
-		);
+		const { registry } = loaded(saved([def({ id: "a", paletteId: "cp-1" }), def({ id: "b", paletteId: "cp-1" })]));
 		const promised = registry.countPaletteLinks("cp-1");
 		assert.strictEqual(registry.relinkPalette("cp-1", "cp-2"), promised);
 	});
@@ -162,9 +151,7 @@ describe("countPaletteLinks", () => {
 	});
 
 	it("still excludes by id while a preview is up", () => {
-		const { registry } = loaded(
-			saved([def({ id: "a", paletteId: "cp-1" }), def({ id: "b", paletteId: "cp-1" })]),
-		);
+		const { registry } = loaded(saved([def({ id: "a", paletteId: "cp-1" }), def({ id: "b", paletteId: "cp-1" })]));
 		registry.setPreviewDefinition(def({ id: "a", paletteId: "cp-1" }));
 		assert.strictEqual(registry.countPaletteLinks("cp-1", "a"), 1);
 	});
@@ -190,9 +177,7 @@ describe("relinkPalette", () => {
 		// Baking colours in here would silently overwrite a group member whose
 		// hexes the user had since edited by hand.
 		const { registry } = loaded(
-			saved([
-				def({ id: "a", paletteId: "cp-dead", colorLight: "#ff0000", colorDark: "#00ff00" }),
-			]),
+			saved([def({ id: "a", paletteId: "cp-dead", colorLight: "#ff0000", colorDark: "#00ff00" })]),
 		);
 		registry.relinkPalette("cp-dead", "cp-new");
 
@@ -281,13 +266,9 @@ describe("applyPaletteColors", () => {
 
 	it("re-mirrors the fallback rows when the active fallback is in the group", () => {
 		const { registry } = loaded(
-			saved(
-				[
-					def({ id: "base", source: "user", paletteId: "cp-1" }),
-					def({ id: "f1", source: "fallback" }),
-				],
-				{ fallbackCalloutId: "base" },
-			),
+			saved([def({ id: "base", source: "user", paletteId: "cp-1" }), def({ id: "f1", source: "fallback" })], {
+				fallbackCalloutId: "base",
+			}),
 		);
 		registry.applyPaletteColors("cp-1", colors());
 
@@ -304,13 +285,9 @@ describe("applyPaletteColors", () => {
 		// logical operation regenerated the stylesheet and wrote data.json
 		// twice. The class has `batch()` for exactly this.
 		const { registry, events } = loaded(
-			saved(
-				[
-					def({ id: "base", source: "user", paletteId: "cp-1" }),
-					def({ id: "f1", source: "fallback" }),
-				],
-				{ fallbackCalloutId: "base" },
-			),
+			saved([def({ id: "base", source: "user", paletteId: "cp-1" }), def({ id: "f1", source: "fallback" })], {
+				fallbackCalloutId: "base",
+			}),
 		);
 		registry.applyPaletteColors("cp-1", colors());
 		assert.strictEqual(events(), 1);
@@ -329,9 +306,7 @@ describe("isLivePaletteId — through listOrphanPaletteGroups", () => {
 	});
 
 	it("does not count an id a saved custom palette still owns", () => {
-		const { registry } = loaded(
-			saved([def({ id: "a", paletteId: "cp-1" })], { customPalettes: [palette()] }),
-		);
+		const { registry } = loaded(saved([def({ id: "a", paletteId: "cp-1" })], { customPalettes: [palette()] }));
 		assert.deepStrictEqual(registry.listOrphanPaletteGroups(), []);
 	});
 
@@ -348,9 +323,7 @@ describe("isLivePaletteId — through listOrphanPaletteGroups", () => {
 		const legacy = getAllColorPalettes().find((p) => p.legacyIds?.length);
 		assert.ok(legacy?.legacyIds?.[0], "expected at least one preset with legacyIds");
 
-		const { registry } = loaded(
-			saved([def({ id: "a", paletteId: legacy.legacyIds[0] })]),
-		);
+		const { registry } = loaded(saved([def({ id: "a", paletteId: legacy.legacyIds[0] })]));
 		assert.deepStrictEqual(registry.listOrphanPaletteGroups(), []);
 	});
 
@@ -361,10 +334,7 @@ describe("isLivePaletteId — through listOrphanPaletteGroups", () => {
 		// a saved palette that happens to carry the same hexes.
 		const { registry } = loaded(
 			saved(
-				[
-					def({ id: "a", paletteId: "violet", ...BAKED }),
-					def({ id: "b", paletteId: "bubblegum", ...BAKED }),
-				],
+				[def({ id: "a", paletteId: "violet", ...BAKED }), def({ id: "b", paletteId: "bubblegum", ...BAKED })],
 				{ customPalettes: [palette()] },
 			),
 		);
@@ -399,9 +369,7 @@ describe("isLivePaletteId — through listOrphanPaletteGroups", () => {
 
 describe("adoptOrphansMatchingPalettes", () => {
 	it("links a callout saved before paletteId existed but whose colours match", () => {
-		const { registry } = loaded(
-			saved([def({ id: "orphan", ...BAKED })], { customPalettes: [palette()] }),
-		);
+		const { registry } = loaded(saved([def({ id: "orphan", ...BAKED })], { customPalettes: [palette()] }));
 		assert.strictEqual(registry.get("orphan")?.paletteId, "cp-1");
 	});
 
@@ -502,11 +470,7 @@ describe("adoptOrphansMatchingPalettes", () => {
 
 		assert.strictEqual(registry.adoptOrphansMatchingPalettes(), 1);
 		assert.strictEqual(registry.get("orphan")?.paletteId, "cp-1");
-		assert.strictEqual(
-			registry.adoptOrphansMatchingPalettes(),
-			0,
-			"idempotent — the row now resolves",
-		);
+		assert.strictEqual(registry.adoptOrphansMatchingPalettes(), 0, "idempotent — the row now resolves");
 	});
 });
 
@@ -535,10 +499,7 @@ describe("consolidateDuplicatePalettes", () => {
 		// silent data loss.
 		const { registry } = loaded(
 			saved([def({ id: "a", paletteId: "cp-2" })], {
-				customPalettes: [
-					palette({ id: "cp-1", name: "First" }),
-					palette({ id: "cp-2", name: "Second" }),
-				],
+				customPalettes: [palette({ id: "cp-1", name: "First" }), palette({ id: "cp-2", name: "Second" })],
 			}),
 		);
 		assert.strictEqual(registry.get("a")?.paletteId, "cp-1");
@@ -547,10 +508,7 @@ describe("consolidateDuplicatePalettes", () => {
 	it("changes no colour — what is lost is the duplicate's name", () => {
 		const { registry } = loaded(
 			saved([def({ id: "a", paletteId: "cp-2", colorLight: "#ff0000" })], {
-				customPalettes: [
-					palette({ id: "cp-1", name: "First" }),
-					palette({ id: "cp-2", name: "Second" }),
-				],
+				customPalettes: [palette({ id: "cp-1", name: "First" }), palette({ id: "cp-2", name: "Second" })],
 			}),
 		);
 		assert.strictEqual(registry.get("a")?.colorLight, "#ff0000");
@@ -560,10 +518,7 @@ describe("consolidateDuplicatePalettes", () => {
 		// Arriving already re-pointed is what stops it looking like an orphan.
 		const { registry } = loaded(
 			saved([def({ id: "a", paletteId: "cp-2", ...BAKED })], {
-				customPalettes: [
-					palette({ id: "cp-1", name: "First" }),
-					palette({ id: "cp-2", name: "Second" }),
-				],
+				customPalettes: [palette({ id: "cp-1", name: "First" }), palette({ id: "cp-2", name: "Second" })],
 			}),
 		);
 		assert.strictEqual(registry.get("a")?.paletteId, "cp-1");
@@ -573,10 +528,7 @@ describe("consolidateDuplicatePalettes", () => {
 	it("returns an empty list, and touches nothing, when there is no duplicate", () => {
 		const { registry } = loaded(
 			saved([], {
-				customPalettes: [
-					palette({ id: "cp-1" }),
-					palette({ id: "cp-2", colorLight: "#ff0000" }),
-				],
+				customPalettes: [palette({ id: "cp-1" }), palette({ id: "cp-2", colorLight: "#ff0000" })],
 			}),
 		);
 		assert.deepStrictEqual(registry.consolidateDuplicatePalettes(), []);
@@ -584,9 +536,7 @@ describe("consolidateDuplicatePalettes", () => {
 	});
 
 	it("neither saves nor notifies — load and the importer each do that once", () => {
-		const { registry, events } = loaded(
-			saved([], { customPalettes: [palette({ id: "cp-1" })] }),
-		);
+		const { registry, events } = loaded(saved([], { customPalettes: [palette({ id: "cp-1" })] }));
 		registry.settings.customPalettes.push(palette({ id: "cp-2", name: "Dup" }));
 
 		assert.strictEqual(registry.consolidateDuplicatePalettes().length, 1);
@@ -598,24 +548,16 @@ describe("takePaletteMerges", () => {
 	it("reports what merged into what, by NAME — that is what the user lost", () => {
 		const { registry } = loaded(
 			saved([], {
-				customPalettes: [
-					palette({ id: "cp-1", name: "First" }),
-					palette({ id: "cp-2", name: "Second" }),
-				],
+				customPalettes: [palette({ id: "cp-1", name: "First" }), palette({ id: "cp-2", name: "Second" })],
 			}),
 		);
-		assert.deepStrictEqual(registry.takePaletteMerges(), [
-			{ from: "Second", to: "First" },
-		]);
+		assert.deepStrictEqual(registry.takePaletteMerges(), [{ from: "Second", to: "First" }]);
 	});
 
 	it("hands them over exactly once, so a later settings render cannot repeat the notice", () => {
 		const { registry } = loaded(
 			saved([], {
-				customPalettes: [
-					palette({ id: "cp-1", name: "First" }),
-					palette({ id: "cp-2", name: "Second" }),
-				],
+				customPalettes: [palette({ id: "cp-1", name: "First" }), palette({ id: "cp-2", name: "Second" })],
 			}),
 		);
 		assert.strictEqual(registry.takePaletteMerges().length, 1);
@@ -631,10 +573,7 @@ describe("takePaletteMerges", () => {
 		const registry = new CalloutRegistry();
 		registry.load(
 			saved([], {
-				customPalettes: [
-					palette({ id: "cp-1", name: "First" }),
-					palette({ id: "cp-2", name: "Second" }),
-				],
+				customPalettes: [palette({ id: "cp-1", name: "First" }), palette({ id: "cp-2", name: "Second" })],
 			}),
 		);
 		registry.load(null);
@@ -657,7 +596,10 @@ describe("the palette writers — one round, every time", () => {
 		const { registry, events } = loaded(null);
 		registry.addPalette(palette());
 		assert.strictEqual(events(), 1);
-		assert.deepStrictEqual(registry.settings.customPalettes.map((p) => p.id), ["cp-1"]);
+		assert.deepStrictEqual(
+			registry.settings.customPalettes.map((p) => p.id),
+			["cp-1"],
+		);
 	});
 
 	it("addPalette links the orphans its colours match, in that same round", () => {

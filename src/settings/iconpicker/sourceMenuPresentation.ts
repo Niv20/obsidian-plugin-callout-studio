@@ -7,11 +7,7 @@
  */
 const APPROXIMATE_COUNT_STEP = 100;
 
-export function formatIconCount(
-	count: number,
-	locale: string,
-	exact: boolean,
-): string {
+export function formatIconCount(count: number, locale: string, exact: boolean): string {
 	const format = (value: number, compact: boolean): string =>
 		new Intl.NumberFormat(locale, {
 			notation: compact ? "compact" : "standard",
@@ -19,8 +15,7 @@ export function formatIconCount(
 		}).format(value);
 
 	if (exact || count < APPROXIMATE_COUNT_STEP) return format(count, false);
-	const lowerBound =
-		Math.floor(count / APPROXIMATE_COUNT_STEP) * APPROXIMATE_COUNT_STEP;
+	const lowerBound = Math.floor(count / APPROXIMATE_COUNT_STEP) * APPROXIMATE_COUNT_STEP;
 	return `${format(lowerBound, lowerBound >= 1_000)}+`;
 }
 
@@ -44,9 +39,7 @@ export interface SourceMenuTitleOptions {
  * that to whichever row is committed (`appendComboboxCheck` in
  * `ui/listboxPopupDom.ts`), as it does in every other list in the plugin.
  */
-export function createSourceMenuTitle(
-	options: SourceMenuTitleOptions,
-): HTMLElement {
+export function createSourceMenuTitle(options: SourceMenuTitleOptions): HTMLElement {
 	const wrap = createDiv("cs-source-item");
 	const text = wrap.createDiv("cs-source-text");
 	text.createSpan({ cls: "cs-source-name", text: options.label });
@@ -54,11 +47,7 @@ export function createSourceMenuTitle(
 	const count =
 		options.count === undefined
 			? ""
-			: ` (\u2068${formatIconCount(
-					options.count,
-					options.locale,
-					options.exactCount,
-			)}\u2069)`;
+			: ` (\u2068${formatIconCount(options.count, options.locale, options.exactCount)}\u2069)`;
 	text.createSpan({
 		cls: "cs-source-desc",
 		text: `${options.description}${count}`,

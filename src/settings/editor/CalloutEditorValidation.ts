@@ -74,26 +74,17 @@ export function buildStateSnapshot(input: SnapshotInput): string {
 	return JSON.stringify(input);
 }
 
-export function hasStateChanges(
-	initialSnapshot: string,
-	currentSnapshot: string,
-): boolean {
+export function hasStateChanges(initialSnapshot: string, currentSnapshot: string): boolean {
 	return currentSnapshot !== initialSnapshot;
 }
 
 export function shouldSaveNewTokenCalloutAsFallback(
 	input: ValidationBaseInput & { hasStyleChanges: boolean },
 ): boolean {
-	return (
-		input.createFromToken &&
-		input.existingId === null &&
-		!input.hasStyleChanges
-	);
+	return input.createFromToken && input.existingId === null && !input.hasStyleChanges;
 }
 
-export function isOverwritingAutoFallbackRow(
-	input: ValidationBaseInput & { id: string },
-): boolean {
+export function isOverwritingAutoFallbackRow(input: ValidationBaseInput & { id: string }): boolean {
 	if (!input.createFromToken) return false;
 	if (input.existingId !== null) return false;
 	if (!input.id) return false;
@@ -102,13 +93,10 @@ export function isOverwritingAutoFallbackRow(
 	return existing.source === "fallback" && existing.customized !== true;
 }
 
-export function canUseCalloutId(
-	input: ValidationBaseInput & { id: string; role: "primary" | "alias" },
-): boolean {
+export function canUseCalloutId(input: ValidationBaseInput & { id: string; role: "primary" | "alias" }): boolean {
 	if (!input.id) return false;
 	const existing = input.getById(input.id);
-	const allowedPlaceholder =
-		input.role === "primary" && isOverwritingAutoFallbackRow(input);
+	const allowedPlaceholder = input.role === "primary" && isOverwritingAutoFallbackRow(input);
 	if (existing && existing.id !== input.existingId && !allowedPlaceholder) {
 		return false;
 	}
@@ -162,8 +150,7 @@ export function findAttrIdCollision(input: AttrIdCollisionInput): string | null 
 
 export function isStateValid(input: ValidationStateInput): boolean {
 	if (!input.calloutId) return false;
-	const requireDisplayName =
-		!input.createFromToken || input.existingId !== null;
+	const requireDisplayName = !input.createFromToken || input.existingId !== null;
 	if (!input.isBuiltIn && requireDisplayName && !input.displayName.trim()) {
 		return false;
 	}

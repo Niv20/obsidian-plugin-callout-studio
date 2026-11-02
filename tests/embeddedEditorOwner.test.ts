@@ -122,9 +122,7 @@ function fakeApp(): { app: App; workspace: { activeEditor: unknown } } {
 						// `Object.create`, not `new`: the resolver only walks
 						// the prototype chain, and `new` would run the base
 						// constructor with no arguments.
-						this.editMode = Object.create(
-							FakeMarkdownEditView.prototype,
-						) as object;
+						this.editMode = Object.create(FakeMarkdownEditView.prototype) as object;
 					},
 					unload() {},
 				}),
@@ -215,10 +213,7 @@ describe("the owner installed as workspace.activeEditor", () => {
 		//                search in the user's note.
 		const { owner } = mount();
 		for (const absent of ["editMode", "file", "showSearch"] as const) {
-			assert.ok(
-				!(absent in owner),
-				`${absent} must stay absent — see embeddedEditorOwner.ts`,
-			);
+			assert.ok(!(absent in owner), `${absent} must stay absent — see embeddedEditorOwner.ts`);
 		}
 	});
 

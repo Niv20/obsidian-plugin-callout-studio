@@ -76,19 +76,21 @@ export function drawLanguageMenu(
 	plugin: SettingsTabPlugin,
 	choose: (pref: string) => void,
 ): SelectDropdown {
-	return new SelectDropdown(parent, t("settings.language"), { icon: "globe", showValue: true })
-		.setOptions(getSelectableLocales().map(({ code, name }) => ({ value: code, label: name })))
-		.setValue(shownLanguage(plugin.settings.language))
-		// `onPick` rather than `onChange`: picking the language already shown
-		// must still reach this, because for a language whose download is
-		// still missing, picking it again is how the user retries.
-		.onPick((code) => {
-			const current = plugin.settings.language;
-			const next = preferenceFor(current, code);
-			// Nothing changed and nothing is missing: no save, no redraw.
-			if (next === current && plugin.locales.isReady(next)) return;
-			choose(next);
-		});
+	return (
+		new SelectDropdown(parent, t("settings.language"), { icon: "globe", showValue: true })
+			.setOptions(getSelectableLocales().map(({ code, name }) => ({ value: code, label: name })))
+			.setValue(shownLanguage(plugin.settings.language))
+			// `onPick` rather than `onChange`: picking the language already shown
+			// must still reach this, because for a language whose download is
+			// still missing, picking it again is how the user retries.
+			.onPick((code) => {
+				const current = plugin.settings.language;
+				const next = preferenceFor(current, code);
+				// Nothing changed and nothing is missing: no save, no redraw.
+				if (next === current && plugin.locales.isReady(next)) return;
+				choose(next);
+			})
+	);
 }
 
 /**
@@ -211,12 +213,18 @@ async function downloadLanguage(plugin: SettingsTabPlugin, redraw: () => void): 
  * this device. `kind` is what the news is: a `problem` right after a fetch
  * failed, a `warning` when the settings open and find it still missing.
  */
-function tellNotDownloaded(kind: "problem" | "warning", plugin: SettingsTabPlugin, name: string, redraw: () => void): void {
-	showActionNotice(
-		kind,
-		t("locale.notDownloaded", { name }),
-		{ label: t("locale.retry"), run: () => { void downloadLanguage(plugin, redraw); } },
-	);
+function tellNotDownloaded(
+	kind: "problem" | "warning",
+	plugin: SettingsTabPlugin,
+	name: string,
+	redraw: () => void,
+): void {
+	showActionNotice(kind, t("locale.notDownloaded", { name }), {
+		label: t("locale.retry"),
+		run: () => {
+			void downloadLanguage(plugin, redraw);
+		},
+	});
 }
 
 /**

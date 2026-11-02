@@ -69,6 +69,9 @@ function order(value: unknown): unknown {
 	const source = value as Record<string, unknown>;
 	// Define own data properties: assigning `out["__proto__"]` on `{}` invokes
 	// its inherited setter and silently removes that field from comparison.
-	return Object.fromEntries(Object.keys(source).sort(compareKeys)
-		.map((key) => [key, order(source[key])]));
+	return Object.fromEntries(
+		Object.keys(source)
+			.sort(compareKeys)
+			.map((key) => [key, order(source[key])]),
+	);
 }

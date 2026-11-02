@@ -17,30 +17,52 @@ import type { CalloutDefinition, PluginData } from "../src/types";
 import { DEFAULT_TEXT_COLOR_DARK, DEFAULT_TEXT_COLOR_LIGHT } from "../src/utils/colorUtils";
 
 (globalThis as { __CS_ICON_IDS__?: string[] }).__CS_ICON_IDS__ = [
-	"lucide-pencil", "lucide-star", "lucide-heart", "lucide-info",
+	"lucide-pencil",
+	"lucide-star",
+	"lucide-heart",
+	"lucide-info",
 ];
 
 function deferred() {
 	let resolve!: () => void;
-	const promise = new Promise<void>((done) => { resolve = done; });
+	const promise = new Promise<void>((done) => {
+		resolve = done;
+	});
 	return { promise, resolve };
 }
 
 const form = (over: Partial<CalloutEditorSaveState> = {}): CalloutEditorSaveState => ({
-	displayName: "Personal plan", calloutId: "personal-plan",
-	icon: { type: "lucide", value: "lucide-heart" }, hideIcon: false,
-	colorLight: "#aa2255", colorDark: "#ffbbcc", bgColorLight: "", bgColorDark: "",
-	transparentBg: false, textColorLight: DEFAULT_TEXT_COLOR_LIGHT,
-	textColorDark: DEFAULT_TEXT_COLOR_DARK, foldable: true, defaultFolded: false,
-	iconOffsetX: 0, iconOffsetY: 0, iconSize: 1, aliases: ["my-plan"], ...over,
+	displayName: "Personal plan",
+	calloutId: "personal-plan",
+	icon: { type: "lucide", value: "lucide-heart" },
+	hideIcon: false,
+	colorLight: "#aa2255",
+	colorDark: "#ffbbcc",
+	bgColorLight: "",
+	bgColorDark: "",
+	transparentBg: false,
+	textColorLight: DEFAULT_TEXT_COLOR_LIGHT,
+	textColorDark: DEFAULT_TEXT_COLOR_DARK,
+	foldable: true,
+	defaultFolded: false,
+	iconOffsetX: 0,
+	iconOffsetY: 0,
+	iconSize: 1,
+	aliases: ["my-plan"],
+	...over,
 });
 
-async function harness(run: (h: {
-	registry: CalloutRegistry; writer: SettingsWriter; session: EditorSaveSession;
-	state: { fail: boolean; writes: number; applied: number; beforeWrite: (() => Promise<void>) | null };
-	save: (over?: Partial<CalloutEditorSaveState>) => Promise<CalloutDefinition | null>;
-	disk: () => Promise<string>; replaceDisk: (json: string) => Promise<void>;
-}) => Promise<void>) {
+async function harness(
+	run: (h: {
+		registry: CalloutRegistry;
+		writer: SettingsWriter;
+		session: EditorSaveSession;
+		state: { fail: boolean; writes: number; applied: number; beforeWrite: (() => Promise<void>) | null };
+		save: (over?: Partial<CalloutEditorSaveState>) => Promise<CalloutDefinition | null>;
+		disk: () => Promise<string>;
+		replaceDisk: (json: string) => Promise<void>;
+	}) => Promise<void>,
+) {
 	const dir = await mkdtemp(join(tmpdir(), "callout-editor-save-"));
 	const path = join(dir, "data.json");
 	const registry = new CalloutRegistry();
@@ -48,7 +70,8 @@ async function harness(run: (h: {
 	await writeFile(path, JSON.stringify(registry.toSaveData()));
 	const state = { fail: false, writes: 0, applied: 0, beforeWrite: null as (() => Promise<void>) | null };
 	const writer = new SettingsWriter({
-		build: () => registry.toSaveData(), readCurrent: () => readFile(path, "utf8"),
+		build: () => registry.toSaveData(),
+		readCurrent: () => readFile(path, "utf8"),
 		write: async (data) => {
 			await state.beforeWrite?.();
 			if (state.fail) throw new Error("Disk full");
@@ -59,30 +82,54 @@ async function harness(run: (h: {
 	writer.adopt(await readFile(path, "utf8"));
 	const owner = { settingsWriter: writer };
 	const plugin = {
-		registry, settingsWriter: writer,
+		registry,
+		settingsWriter: writer,
 		saveSettings: () => saveSettingsWithFeedback(owner, () => undefined),
 		ensureIconArtwork: () => Promise.resolve(),
 		refreshCallouts: () => undefined,
 		customCommands: { migrateCalloutId: () => undefined },
 	} as unknown as CalloutEditorPlugin;
 	const app = { vault: { getMarkdownFiles: () => [] } } as unknown as App;
-	registry.onChange(() => { void plugin.saveSettings(); });
+	registry.onChange(() => {
+		void plugin.saveSettings();
+	});
 	const session = new EditorSaveSession();
 	let existingId: string | null = null;
-	const save = (over: Partial<CalloutEditorSaveState> = {}) => session.run(plugin, () => {
-		state.applied++;
-		return performCalloutEditorSave({
-			app, plugin, existingId, isBuiltIn: false,
-			state: form(over), baselineDef: existingId ? registry.get(existingId) : undefined,
-			hasStyleChanges: true, saveAsFallback: false, overwriteAutoFallback: false,
-			canUseCalloutId: () => true, getFallbackBase: () => registry.get("note"),
-			noteChoices: LEAVE_NOTES,
-			onDefinitionApplied: (def) => { existingId = def.id; },
-		});
-	}, () => undefined);
+	const save = (over: Partial<CalloutEditorSaveState> = {}) =>
+		session.run(
+			plugin,
+			() => {
+				state.applied++;
+				return performCalloutEditorSave({
+					app,
+					plugin,
+					existingId,
+					isBuiltIn: false,
+					state: form(over),
+					baselineDef: existingId ? registry.get(existingId) : undefined,
+					hasStyleChanges: true,
+					saveAsFallback: false,
+					overwriteAutoFallback: false,
+					canUseCalloutId: () => true,
+					getFallbackBase: () => registry.get("note"),
+					noteChoices: LEAVE_NOTES,
+					onDefinitionApplied: (def) => {
+						existingId = def.id;
+					},
+				});
+			},
+			() => undefined,
+		);
 	try {
-		await run({ registry, writer, session, state, save,
-			disk: () => readFile(path, "utf8"), replaceDisk: (json) => writeFile(path, json) });
+		await run({
+			registry,
+			writer,
+			session,
+			state,
+			save,
+			disk: () => readFile(path, "utf8"),
+			replaceDisk: (json) => writeFile(path, json),
+		});
 	} finally {
 		writer.destroy();
 		await rm(dir, { recursive: true, force: true });
@@ -106,10 +153,17 @@ describe("editor durable Save — issue #60", () => {
 	});
 	it("waits for the file write before reporting success", async () => {
 		await harness(async (h) => {
-			const started = deferred(); const finish = deferred();
-			h.state.beforeWrite = async () => { started.resolve(); await finish.promise; };
+			const started = deferred();
+			const finish = deferred();
+			h.state.beforeWrite = async () => {
+				started.resolve();
+				await finish.promise;
+			};
 			let resolved = false;
-			const saving = h.save().then((result) => { resolved = true; return result; });
+			const saving = h.save().then((result) => {
+				resolved = true;
+				return result;
+			});
 			await started.promise;
 			assert.equal(resolved, false);
 			assert.equal(h.session.busy, true);
@@ -163,8 +217,12 @@ describe("editor durable Save — issue #60", () => {
 	});
 	it("rapid repeated Save does not perform a second mutation or vault rewrite", async () => {
 		await harness(async (h) => {
-			const started = deferred(); const finish = deferred();
-			h.state.beforeWrite = async () => { started.resolve(); await finish.promise; };
+			const started = deferred();
+			const finish = deferred();
+			h.state.beforeWrite = async () => {
+				started.resolve();
+				await finish.promise;
+			};
 			const first = h.save();
 			await started.promise;
 			assert.equal(await h.save(), null);

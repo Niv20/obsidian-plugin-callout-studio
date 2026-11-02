@@ -28,13 +28,27 @@ import { dropdownOptions, pickDropdown } from "./support/selectDropdown";
 
 function def(over: Partial<CalloutDefinition> & { id: string }): CalloutDefinition {
 	return {
-		displayName: over.id, icon: { type: "lucide", value: "star" }, colorLight: "#448aff", colorDark: "#448aff",
-		foldable: false, defaultFolded: false, builtIn: false, source: "user", ...over,
+		displayName: over.id,
+		icon: { type: "lucide", value: "star" },
+		colorLight: "#448aff",
+		colorDark: "#448aff",
+		foldable: false,
+		defaultFolded: false,
+		builtIn: false,
+		source: "user",
+		...over,
 	};
 }
 
 function form(over: Partial<NoteChangeFormState> = {}): NoteChangeFormState {
-	return { calloutId: "abstract2", aliases: [], displayName: "Abstract2", foldable: false, defaultFolded: false, ...over };
+	return {
+		calloutId: "abstract2",
+		aliases: [],
+		displayName: "Abstract2",
+		foldable: false,
+		defaultFolded: false,
+		...over,
+	};
 }
 
 const pendingOf = (existing: CalloutDefinition, state: NoteChangeFormState): PendingNoteChanges =>
@@ -45,9 +59,16 @@ function tally(count: number, ...files: string[]): NoteTally {
 }
 
 function stats(entries: Record<string, Partial<IdNoteStats>>): Map<string, IdNoteStats> {
-	return new Map(Object.entries(entries).map(([key, one]) => [key, {
-		uses: one.uses ?? tally(0), foldDiffers: one.foldDiffers ?? tally(0), titled: one.titled ?? tally(0),
-	}]));
+	return new Map(
+		Object.entries(entries).map(([key, one]) => [
+			key,
+			{
+				uses: one.uses ?? tally(0),
+				foldDiffers: one.foldDiffers ?? tally(0),
+				titled: one.titled ?? tally(0),
+			},
+		]),
+	);
 }
 
 describe("what the question asks", () => {
@@ -62,7 +83,10 @@ describe("what the question asks", () => {
 		const pending = pendingOf(callout, form());
 		const question = noteChangeQuestion(pending, stats({ test: { uses: tally(12, "a.md", "b.md") } }));
 		assert.ok(question);
-		assert.deepEqual(question.ids.map(({ leaving }) => leaving.id), ["test"]);
+		assert.deepEqual(
+			question.ids.map(({ leaving }) => leaving.id),
+			["test"],
+		);
 		assert.equal(question.affected?.count, 12);
 		const left = choicesFor(question, null);
 		assert.equal(left.rewrite.size, 0, "nothing is rewritten unless the user says so");
@@ -73,11 +97,20 @@ describe("what the question asks", () => {
 	it("changes every listed id to the one picked, and lets titles and fold marks follow", () => {
 		const idea = def({ id: "idea", displayName: "Idea", aliases: ["test", "thought"] });
 		const pending = pendingOf(idea, form({ calloutId: "insight", displayName: "Insight", aliases: ["thought"] }));
-		const question = noteChangeQuestion(pending, stats({ idea: { uses: tally(3, "a.md") }, test: { uses: tally(2, "b.md") } }));
+		const question = noteChangeQuestion(
+			pending,
+			stats({ idea: { uses: tally(3, "a.md") }, test: { uses: tally(2, "b.md") } }),
+		);
 		assert.ok(question);
 		assert.equal(question.affected?.count, 5);
 		const changed = choicesFor(question, "thought");
-		assert.deepEqual([...changed.rewrite], [["idea", "thought"], ["test", "thought"]]);
+		assert.deepEqual(
+			[...changed.rewrite],
+			[
+				["idea", "thought"],
+				["test", "thought"],
+			],
+		);
 		assert.equal(changed.titles, true);
 		assert.equal(changed.fold, true);
 	});
@@ -85,7 +118,10 @@ describe("what the question asks", () => {
 	it("lists a new name alone when only the name changed, counting its titles", () => {
 		const named = def({ id: "tip2", displayName: "Old Name" });
 		const pending = pendingOf(named, form({ calloutId: "tip2", displayName: "New Name" }));
-		const question = noteChangeQuestion(pending, stats({ tip2: { uses: tally(2, "a.md"), titled: tally(2, "a.md") } }));
+		const question = noteChangeQuestion(
+			pending,
+			stats({ tip2: { uses: tally(2, "a.md"), titled: tally(2, "a.md") } }),
+		);
 		assert.ok(question?.name);
 		assert.equal(question.name.from, "Old Name");
 		assert.equal(question.affected?.count, 2);
@@ -95,7 +131,10 @@ describe("what the question asks", () => {
 	it("does not list the name again when the main id's rename already says it", () => {
 		const renamed = def({ id: "idea", displayName: "Idea" });
 		const pending = pendingOf(renamed, form({ calloutId: "insight", displayName: "Insight" }));
-		const question = noteChangeQuestion(pending, stats({ idea: { uses: tally(3, "a.md"), titled: tally(3, "a.md") } }));
+		const question = noteChangeQuestion(
+			pending,
+			stats({ idea: { uses: tally(3, "a.md"), titled: tally(3, "a.md") } }),
+		);
 		assert.ok(question);
 		assert.equal(question.name, null);
 		assert.equal(question.affected?.count, 3, "the old id's titled callouts are its uses, counted once");
@@ -103,8 +142,14 @@ describe("what the question asks", () => {
 
 	it("lists fold marks only when one would change", () => {
 		const folding = def({ id: "f", aliases: ["g"] });
-		const pending = pendingOf(folding, form({ calloutId: "f", displayName: "f", foldable: true, defaultFolded: true }));
-		const counts = stats({ f: { foldDiffers: tally(1, "a.md") }, g: { uses: tally(2, "b.md"), foldDiffers: tally(2, "b.md") } });
+		const pending = pendingOf(
+			folding,
+			form({ calloutId: "f", displayName: "f", foldable: true, defaultFolded: true }),
+		);
+		const counts = stats({
+			f: { foldDiffers: tally(1, "a.md") },
+			g: { uses: tally(2, "b.md"), foldDiffers: tally(2, "b.md") },
+		});
 		assert.equal(foldTally(pending, counts, [])?.count, 1);
 		assert.equal(foldTally(pending, counts, ["g"])?.count, 3);
 		assert.equal(noteChangeQuestion(pending, counts)?.fold, "-");
@@ -117,7 +162,13 @@ describe("what the question asks", () => {
 		const pending = pendingOf(both, form({ calloutId: "insight", displayName: "Insight", foldable: true }));
 		const question = noteChangeQuestion(pending, null);
 		assert.ok(question);
-		assert.deepEqual(question.ids.map(({ leaving, uses }) => [leaving.id, uses]), [["idea", null], ["test", null]]);
+		assert.deepEqual(
+			question.ids.map(({ leaving, uses }) => [leaving.id, uses]),
+			[
+				["idea", null],
+				["test", null],
+			],
+		);
 		assert.equal(question.fold, "+");
 		assert.equal(question.affected, null);
 	});
@@ -138,33 +189,54 @@ function open(input: NoteChangesModalInput) {
 	const titleEl = modalEl.createDiv({ cls: "modal-header" }).createDiv({ cls: "modal-title" });
 	const contentEl = modalEl.createDiv({ cls: "modal-content" });
 	Object.assign(modal, {
-		containerEl, modalEl, titleEl, contentEl, app, scope: app.scope,
-		setTitle: (title: string) => { titleEl.setText(title); return modal; },
+		containerEl,
+		modalEl,
+		titleEl,
+		contentEl,
+		app,
+		scope: app.scope,
+		setTitle: (title: string) => {
+			titleEl.setText(title);
+			return modal;
+		},
 		open: () => modal.onOpen(),
 		close: () => modal.onClose(),
 	});
 	let answer: NoteChoices | null | undefined;
-	void modal.ask().then((result) => { answer = result; });
+	void modal.ask().then((result) => {
+		answer = result;
+	});
 	const button = (label: string): FakeElement =>
 		modalEl.querySelectorAll(".modal-button-container button").find((el) => el.textContent === label)!;
 	const cards = () => contentEl.querySelectorAll(".cs-option-box");
 	return {
-		titleEl, contentEl,
+		titleEl,
+		contentEl,
 		buttons: () => modalEl.querySelectorAll(".modal-button-container button").map((el) => el.textContent),
-		answer: async () => { await setImmediate(); return answer; },
+		answer: async () => {
+			await setImmediate();
+			return answer;
+		},
 		changes: () => contentEl.querySelectorAll(".cs-note-change-list li").map((li) => li.textContent),
 		lines: () => contentEl.querySelectorAll(".cs-note-change-line").map(lineText),
 		cards,
 		titles: () => cards().map((card) => card.querySelector(".cs-option-box-title")!.textContent),
 		desc: (card: FakeElement) => card.querySelector(".cs-option-box-desc")?.textContent,
-		chosen: () => contentEl.querySelectorAll(".cs-option-box.is-selected").map((el) => el.querySelector(".cs-option-box-title")!.textContent),
+		chosen: () =>
+			contentEl
+				.querySelectorAll(".cs-option-box.is-selected")
+				.map((el) => el.querySelector(".cs-option-box-title")!.textContent),
 		save: () => button(t("editor.saveChanges")).fire("click"),
 		cancel: () => button(t("editor.cancel")).fire("click"),
 		escape: () => modal.onClose(),
 	};
 }
 
-function modalInput(callout: CalloutDefinition, state: NoteChangeFormState, counts: Map<string, IdNoteStats> | null): NoteChangesModalInput {
+function modalInput(
+	callout: CalloutDefinition,
+	state: NoteChangeFormState,
+	counts: Map<string, IdNoteStats> | null,
+): NoteChangesModalInput {
 	const pending = pendingOf(callout, state);
 	const question = noteChangeQuestion(pending, counts);
 	assert.ok(question);
@@ -206,8 +278,13 @@ describe("the window", () => {
 
 	it("lists several changes, and changes every old id to the one picked from this callout's own", async () => {
 		const idea = def({ id: "idea", displayName: "Idea", aliases: ["test", "thought"] });
-		const h = open(modalInput(idea, form({ calloutId: "insight", displayName: "Insight", aliases: ["thought"] }),
-			stats({ idea: { uses: tally(3, "a.md") }, test: { uses: tally(2, "b.md") } })));
+		const h = open(
+			modalInput(
+				idea,
+				form({ calloutId: "insight", displayName: "Insight", aliases: ["thought"] }),
+				stats({ idea: { uses: tally(3, "a.md") }, test: { uses: tally(2, "b.md") } }),
+			),
+		);
 		assert.deepEqual(h.changes(), [
 			'You changed the display name from "Idea" to "Insight", so the main ID changes from "idea" to "insight".',
 			'You removed the ID "test".',
@@ -219,40 +296,73 @@ describe("the window", () => {
 		assert.equal(h.desc(change), "Every old ID in your notes becomes [!insight].");
 		// Only this callout's own ids, its main id first: never another callout.
 		const dropdown = change.querySelector(".cs-select-dropdown") as unknown as HTMLElement;
-		assert.deepEqual(dropdownOptions(dropdown).map((item) => item.title), ["insight", "thought"]);
+		assert.deepEqual(
+			dropdownOptions(dropdown).map((item) => item.title),
+			["insight", "thought"],
+		);
 		pickDropdown(dropdown, "thought");
 		assert.equal(h.desc(change), "Every old ID in your notes becomes [!thought].");
 		assert.deepEqual(h.chosen(), [t("noteChanges.changeTo")]);
 		h.save();
 		const answer = await h.answer();
-		assert.deepEqual([...answer!.rewrite], [["idea", "thought"], ["test", "thought"]]);
+		assert.deepEqual(
+			[...answer!.rewrite],
+			[
+				["idea", "thought"],
+				["test", "thought"],
+			],
+		);
 		assert.equal(answer?.titles, true);
 	});
 
 	it("says several removed ids in one sentence, listed after a colon", () => {
 		const many = def({ id: "abstract2", displayName: "Abstract2", aliases: ["test", "dfgdf", "sss"] });
-		const h = open(modalInput(many, form(), stats({ test: { uses: tally(1, "a.md") }, dfgdf: { uses: tally(1, "b.md") }, sss: { uses: tally(1, "c.md") } })));
+		const h = open(
+			modalInput(
+				many,
+				form(),
+				stats({
+					test: { uses: tally(1, "a.md") },
+					dfgdf: { uses: tally(1, "b.md") },
+					sss: { uses: tally(1, "c.md") },
+				}),
+			),
+		);
 		assert.deepEqual(h.changes(), [], "one line, not a list of the same sentence");
 		assert.equal(h.lines()[0], "You removed these IDs: test, dfgdf, sss.");
 	});
 
 	it("starts the card with its radio and puts the dropdown at its trailing edge", () => {
 		const idea = def({ id: "idea", displayName: "Idea", aliases: ["test", "thought"] });
-		const h = open(modalInput(idea, form({ calloutId: "idea", displayName: "Idea", aliases: ["thought"] }),
-			stats({ test: { uses: tally(1, "a.md") } })));
+		const h = open(
+			modalInput(
+				idea,
+				form({ calloutId: "idea", displayName: "Idea", aliases: ["thought"] }),
+				stats({ test: { uses: tally(1, "a.md") } }),
+			),
+		);
 		const parts = h.cards()[1]!.children.map((child) => child.className.split(" ")[0]);
 		assert.deepEqual(parts, ["cs-option-radio", "cs-option-box-text", "cs-note-change-target"]);
 	});
 
 	it("follows a rename back to the main id, titles and all", async () => {
 		const renamed = def({ id: "idea", displayName: "Idea" });
-		const h = open(modalInput(renamed, form({ calloutId: "insight", displayName: "Insight" }), stats({ idea: { uses: tally(2, "a.md") } })));
+		const h = open(
+			modalInput(
+				renamed,
+				form({ calloutId: "insight", displayName: "Insight" }),
+				stats({ idea: { uses: tally(2, "a.md") } }),
+			),
+		);
 		assert.deepEqual(h.lines(), [
 			'You changed the display name from "Idea" to "Insight", so the main ID changes from "idea" to "insight".',
 			"This affects 2 callouts in 1 note.\nWhat should happen to those callouts?",
 		]);
 		const change = h.cards()[1]!;
-		assert.equal(h.desc(change), 'Every [!idea] in your notes becomes [!insight], and titles that read "Idea" become "Insight".');
+		assert.equal(
+			h.desc(change),
+			'Every [!idea] in your notes becomes [!insight], and titles that read "Idea" become "Insight".',
+		);
 		change.fire("click");
 		h.save();
 		const answer = await h.answer();
@@ -262,8 +372,13 @@ describe("the window", () => {
 
 	it("asks about titles alone when only the name changed", async () => {
 		const named = def({ id: "tip2", displayName: "Old Name" });
-		const h = open(modalInput(named, form({ calloutId: "tip2", displayName: "New Name" }),
-			stats({ tip2: { uses: tally(2, "a.md"), titled: tally(2, "a.md") } })));
+		const h = open(
+			modalInput(
+				named,
+				form({ calloutId: "tip2", displayName: "New Name" }),
+				stats({ tip2: { uses: tally(2, "a.md"), titled: tally(2, "a.md") } }),
+			),
+		);
 		assert.equal(h.lines()[0], 'You changed the display name from "Old Name" to "New Name".');
 		assert.deepEqual(h.titles(), [t("noteChanges.leave"), 'Change them to "New Name"']);
 		assert.equal(h.desc(h.cards()[0]!), 'They keep reading "Old Name".');
@@ -280,7 +395,10 @@ describe("the window", () => {
 	});
 
 	it("speaks for another action when it stands before one — a built-in's Reset to default", async () => {
-		const reset = { removed: (ids: readonly string[]) => `Reset removes "${ids.join(" and ")}".`, confirm: t("settings.resetAction") };
+		const reset = {
+			removed: (ids: readonly string[]) => `Reset removes "${ids.join(" and ")}".`,
+			confirm: t("settings.resetAction"),
+		};
 		const h = open({ ...modalInput(callout, form(), stats({ test: { uses: tally(2, "a.md") } })), action: reset });
 		assert.equal(h.titleEl.textContent, t("noteChanges.title"));
 		assert.equal(h.lines()[0], 'Reset removes "test".');
@@ -303,10 +421,22 @@ describe("askNoteChanges", () => {
 		const registry = new CalloutRegistry();
 		registry.load({ callouts: [def({ id: "plain" })] });
 		let reads = 0;
-		const app = { vault: { getMarkdownFiles: () => { reads++; return []; } } } as unknown as App;
+		const app = {
+			vault: {
+				getMarkdownFiles: () => {
+					reads++;
+					return [];
+				},
+			},
+		} as unknown as App;
 		const answer = await askNoteChanges({
-			app, registry, existingId: "plain", state: form({ calloutId: "plain", displayName: "plain" }), moves: [],
-			stillWanted: () => true, open: () => assert.fail("nothing to ask"),
+			app,
+			registry,
+			existingId: "plain",
+			state: form({ calloutId: "plain", displayName: "plain" }),
+			moves: [],
+			stillWanted: () => true,
+			open: () => assert.fail("nothing to ask"),
 		});
 		assert.equal(answer?.rewrite.size, 0);
 		assert.equal(reads, 0);
@@ -317,32 +447,51 @@ describe("askNoteChanges", () => {
 		registry.load({ callouts: [def({ id: "x", aliases: ["used", "unused"] })] });
 		const notes = new Map([["a.md", "> [!used] Used"]]);
 		const handles = [...notes.keys()].map((path) => ({ path }));
-		const app = { vault: {
-			getMarkdownFiles: () => handles,
-			getAbstractFileByPath: (path: string) => handles.find((file) => file.path === path) ?? null,
-			cachedRead: (file: { path: string }) => Promise.resolve(notes.get(file.path)!),
-		} } as unknown as App;
+		const app = {
+			vault: {
+				getMarkdownFiles: () => handles,
+				getAbstractFileByPath: (path: string) => handles.find((file) => file.path === path) ?? null,
+				cachedRead: (file: { path: string }) => Promise.resolve(notes.get(file.path)!),
+			},
+		} as unknown as App;
 		let asked: NoteChangesModalInput | undefined;
 		await askNoteChanges({
-			app, registry, existingId: "x", state: form({ calloutId: "x", displayName: "x" }), moves: [],
+			app,
+			registry,
+			existingId: "x",
+			state: form({ calloutId: "x", displayName: "x" }),
+			moves: [],
 			stillWanted: () => true,
-			open: (input) => { asked = input; return Promise.resolve(null); },
+			open: (input) => {
+				asked = input;
+				return Promise.resolve(null);
+			},
 		});
-		assert.deepEqual(asked?.question.ids.map(({ leaving }) => leaving.id), ["used"]);
+		assert.deepEqual(
+			asked?.question.ids.map(({ leaving }) => leaving.id),
+			["used"],
+		);
 	});
 
 	it("does not ask about a save the editor has moved on from", async () => {
 		const registry = new CalloutRegistry();
 		registry.load({ callouts: [def({ id: "x", aliases: ["used"] })] });
 		const note = { path: "a.md" };
-		const app = { vault: {
-			getMarkdownFiles: () => [note],
-			getAbstractFileByPath: () => note,
-			cachedRead: () => Promise.resolve("> [!used] Used"),
-		} } as unknown as App;
+		const app = {
+			vault: {
+				getMarkdownFiles: () => [note],
+				getAbstractFileByPath: () => note,
+				cachedRead: () => Promise.resolve("> [!used] Used"),
+			},
+		} as unknown as App;
 		const answer = await askNoteChanges({
-			app, registry, existingId: "x", state: form({ calloutId: "x", displayName: "x" }), moves: [],
-			stillWanted: () => false, open: () => assert.fail("the editor moved on"),
+			app,
+			registry,
+			existingId: "x",
+			state: form({ calloutId: "x", displayName: "x" }),
+			moves: [],
+			stillWanted: () => false,
+			open: () => assert.fail("the editor moved on"),
 		});
 		assert.equal(answer, null);
 	});

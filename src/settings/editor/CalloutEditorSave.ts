@@ -15,11 +15,7 @@ import type { CalloutDefinition } from "../../types";
 import { packFor } from "../../icons/registry";
 import { calloutIdentity } from "../../utils/calloutId";
 import type { NoteRewriteJournal } from "../../utils/noteRewriteUndo";
-import {
-	authoredCustomizedFlag,
-	hasAuthoredBackground,
-	hasAuthoredTextColors,
-} from "./authoredStyle";
+import { authoredCustomizedFlag, hasAuthoredBackground, hasAuthoredTextColors } from "./authoredStyle";
 import { definitionIconAdjustFields } from "./definitionIconAdjust";
 import type { CalloutEditorPlugin } from "./types";
 import { createCalloutVaultSavePlan, stageRenameAliases, type CalloutVaultSavePlan } from "./calloutVaultSavePlan";
@@ -97,9 +93,7 @@ export type CalloutEditorSaveInput = {
 	onVaultChangesReady?: (plan: CalloutVaultSavePlan, definition: CalloutDefinition) => Promise<void>;
 };
 
-export async function performCalloutEditorSave(
-	input: CalloutEditorSaveInput,
-): Promise<CalloutDefinition | null> {
+export async function performCalloutEditorSave(input: CalloutEditorSaveInput): Promise<CalloutDefinition | null> {
 	const {
 		app,
 		plugin,
@@ -120,10 +114,7 @@ export async function performCalloutEditorSave(
 	const isIdChanged = existingId !== null && state.calloutId !== existingId;
 	const isNew = existingId === null;
 
-	if (
-		(isNew || isIdChanged) &&
-		!canUseCalloutId(state.calloutId, "primary")
-	) {
+	if ((isNew || isIdChanged) && !canUseCalloutId(state.calloutId, "primary")) {
 		return null;
 	}
 	for (const alias of state.aliases) {
@@ -133,9 +124,7 @@ export async function performCalloutEditorSave(
 	const moves = input.moves ?? [];
 	const newDisplayName = state.displayName || state.calloutId;
 	// The committed row, never the live preview standing in for it.
-	const existingDef = existingId
-		? plugin.registry.getReal(existingId)
-		: undefined;
+	const existingDef = existingId ? plugin.registry.getReal(existingId) : undefined;
 	// What this Save would change in the notes — the same question the editor
 	// asked the user, asked of the same state. Both spellings of an id belong
 	// to this one callout, so a rewrite carries `[!a-b]` along with `[!a b]`
@@ -154,11 +143,7 @@ export async function performCalloutEditorSave(
 	if (isBuiltIn) {
 		nextSource = "builtin";
 	} else if (existingDef) {
-		if (
-			existingDef.source === "fallback" &&
-			existingDef.customized !== true &&
-			!hasStyleChanges
-		) {
+		if (existingDef.source === "fallback" && existingDef.customized !== true && !hasStyleChanges) {
 			nextSource = "fallback";
 		} else {
 			nextSource = "user";
@@ -199,28 +184,14 @@ export async function performCalloutEditorSave(
 	// outright rather than left beside it as a second, contradicting source of
 	// truth. It also means an older build reading this export degrades to "no
 	// background" — Obsidian's own tint — instead of to a stale opaque colour.
-	const transparent = fallbackBase
-		? fallbackBase.transparentBg === true
-		: state.transparentBg;
+	const transparent = fallbackBase ? fallbackBase.transparentBg === true : state.transparentBg;
 	const authoredBg = hasAuthoredBackground({
 		...state,
 		transparentBg: transparent,
 	});
-	const authoredText = hasAuthoredTextColors(
-		baselineDef,
-		state.textColorLight,
-		state.textColorDark,
-	);
-	const builtInDefault =
-		isBuiltIn && existingId
-			? plugin.registry.getBuiltInDefault(existingId)
-			: undefined;
-	const storedAdjust = definitionIconAdjustFields(
-		state,
-		baselineDef,
-		fallbackBase,
-		builtInDefault,
-	);
+	const authoredText = hasAuthoredTextColors(baselineDef, state.textColorLight, state.textColorDark);
+	const builtInDefault = isBuiltIn && existingId ? plugin.registry.getBuiltInDefault(existingId) : undefined;
+	const storedAdjust = definitionIconAdjustFields(state, baselineDef, fallbackBase, builtInDefault);
 
 	const def: CalloutDefinition = {
 		id: state.calloutId,
@@ -229,31 +200,17 @@ export async function performCalloutEditorSave(
 		// `true` or absent, never `false` — an explicit `false` would leave a
 		// built-in nobody edited reading as customized forever (isModified
 		// compares `value ?? null`).
-		hideIcon:
-			(fallbackBase ? fallbackBase.hideIcon === true : state.hideIcon) ||
-			undefined,
+		hideIcon: (fallbackBase ? fallbackBase.hideIcon === true : state.hideIcon) || undefined,
 		colorLight: fallbackBase?.colorLight ?? state.colorLight,
 		colorDark: fallbackBase?.colorDark ?? state.colorDark,
-		bgColorLight: fallbackBase
-			? fallbackBase.bgColorLight
-			: authoredBg
-				? state.bgColorLight
-				: undefined,
-		bgColorDark: fallbackBase
-			? fallbackBase.bgColorDark
-			: authoredBg
-				? state.bgColorDark
-				: undefined,
+		bgColorLight: fallbackBase ? fallbackBase.bgColorLight : authoredBg ? state.bgColorLight : undefined,
+		bgColorDark: fallbackBase ? fallbackBase.bgColorDark : authoredBg ? state.bgColorDark : undefined,
 		// Like paletteId below: when mirroring the fallback style, its (possibly
 		// absent) gradient wins outright rather than falling through to state.
 		// A sweep is a background, so transparency clears it either way; the
 		// editor already does, and this covers a gradient reaching us from data
 		// the editor never wrote.
-		bgGradient: transparent
-			? undefined
-			: fallbackBase
-				? fallbackBase.bgGradient
-				: state.bgGradient,
+		bgGradient: transparent ? undefined : fallbackBase ? fallbackBase.bgGradient : state.bgGradient,
 		// Spelled out rather than omitted, for the same reason `bakePaletteColors`
 		// spells it out: `registry.update()` merges this over the existing
 		// definition, and a key that isn't there clears nothing. Omitting it made
@@ -263,16 +220,8 @@ export async function performCalloutEditorSave(
 		// updating. `CSSInjector` checks the flag first, so such a row rendered
 		// with no background while the settings swatch drew the stale hexes.
 		transparentBg: transparent ? true : undefined,
-		textColorLight: fallbackBase
-			? fallbackBase.textColorLight
-			: authoredText
-				? state.textColorLight
-				: undefined,
-		textColorDark: fallbackBase
-			? fallbackBase.textColorDark
-			: authoredText
-				? state.textColorDark
-				: undefined,
+		textColorLight: fallbackBase ? fallbackBase.textColorLight : authoredText ? state.textColorLight : undefined,
+		textColorDark: fallbackBase ? fallbackBase.textColorDark : authoredText ? state.textColorDark : undefined,
 		foldable: fallbackBase?.foldable ?? state.foldable,
 		defaultFolded: fallbackBase?.defaultFolded ?? state.defaultFolded,
 		builtIn: isBuiltIn,
@@ -380,18 +329,25 @@ export async function performCalloutEditorSave(
 	const plan = createCalloutVaultSavePlan({
 		app,
 		rewrites: existingDef
-			? noteRewritesFor(pending, noteChoices, { id: def.id, displayName: newDisplayName }, existingDef.displayName)
+			? noteRewritesFor(
+					pending,
+					noteChoices,
+					{ id: def.id, displayName: newDisplayName },
+					existingDef.displayName,
+				)
 			: [],
-		titles: noteChoices.titles && pending.name
-			? { forms: noteForms, from: pending.name.from, to: pending.name.to }
-			: null,
-		fold: noteChoices.fold && pending.fold !== null
-			? { forms: noteForms, to: pending.fold }
-			: null,
+		titles:
+			noteChoices.titles && pending.name
+				? { forms: noteForms, from: pending.name.from, to: pending.name.to }
+				: null,
+		fold: noteChoices.fold && pending.fold !== null ? { forms: noteForms, to: pending.fold } : null,
 		announce: input.announceNoteRewrite,
 	});
 	if (plan) {
-		const complete = async () => { await plan(); protectedRename.release(plugin.registry); };
+		const complete = async () => {
+			await plan();
+			protectedRename.release(plugin.registry);
+		};
 		await (input.onVaultChangesReady ? input.onVaultChangesReady(complete, mutationDef) : complete());
 	}
 

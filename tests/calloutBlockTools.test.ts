@@ -45,10 +45,7 @@ class FakeEditor {
 		const selStart = source.indexOf("«");
 		const selEnd = source.indexOf("»");
 		if (selStart !== -1 && selEnd !== -1) {
-			const stripped =
-				source.slice(0, selStart) +
-				source.slice(selStart + 1, selEnd) +
-				source.slice(selEnd + 1);
+			const stripped = source.slice(0, selStart) + source.slice(selStart + 1, selEnd) + source.slice(selEnd + 1);
 			this.text = stripped;
 			this.anchor = this.posOf(selStart);
 			this.head = this.posOf(selEnd - 1);
@@ -110,15 +107,10 @@ class FakeEditor {
 		return this.text.slice(Math.min(a, h), Math.max(a, h));
 	}
 
-	replaceRange(
-		replacement: string,
-		from: EditorPosition,
-		to?: EditorPosition,
-	): void {
+	replaceRange(replacement: string, from: EditorPosition, to?: EditorPosition): void {
 		const start = this.offsetOf(from);
 		const end = to ? this.offsetOf(to) : start;
-		this.text =
-			this.text.slice(0, start) + replacement + this.text.slice(end);
+		this.text = this.text.slice(0, start) + replacement + this.text.slice(end);
 	}
 
 	setCursor(pos: EditorPosition): void {
@@ -141,10 +133,7 @@ describe("wrapSelectionInCallout", () => {
 	it("writes the finished header when a type is given", () => {
 		const e = editor("hello| world");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.valueWithCursor(),
-			"> [!warning] Warning|\n> hello world",
-		);
+		assert.strictEqual(e.valueWithCursor(), "> [!warning] Warning|\n> hello world");
 	});
 
 	it("carries the fold mark into the header", () => {
@@ -176,10 +165,7 @@ describe("wrapSelectionInCallout", () => {
 	it("wraps a multi-line selection, quoting every line", () => {
 		const e = editor("«one\ntwo\nthree»");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"> [!warning] Warning\n> one\n> two\n> three",
-		);
+		assert.strictEqual(e.value(), "> [!warning] Warning\n> one\n> two\n> three");
 	});
 
 	it("keeps every wrapped callout a block callout of its own", () => {
@@ -188,9 +174,7 @@ describe("wrapSelectionInCallout", () => {
 		// inner callouts' depth fuses them into one blockquote, and every
 		// header after the first becomes body text that renders as an inline
 		// pill.
-		const e = editor(
-			"«> [!note] A\n> body A\n\n> [!tip] B\n> body B\n\n> [!info] C\n> body C»",
-		);
+		const e = editor("«> [!note] A\n> body A\n\n> [!tip] B\n> body B\n\n> [!info] C\n> body C»");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
 		assert.strictEqual(
 			e.value(),
@@ -208,9 +192,7 @@ describe("wrapSelectionInCallout", () => {
 		wrapSelectionInCallout(asEditor(e), { def: def() });
 		assert.strictEqual(
 			e.value(),
-			"> [!warning] Warning\n" +
-				"> > [!note] A\n> > one\n> >\n> > two\n>\n" +
-				"> > [!tip] B\n> > three",
+			"> [!warning] Warning\n" + "> > [!note] A\n> > one\n> >\n> > two\n>\n" + "> > [!tip] B\n> > three",
 		);
 	});
 
@@ -219,9 +201,7 @@ describe("wrapSelectionInCallout", () => {
 		wrapSelectionInCallout(asEditor(e), { def: def() });
 		assert.strictEqual(
 			e.value(),
-			"> [!warning] Warning\n" +
-				"> > [!note] A\n> > one\n>\n> between\n>\n" +
-				"> > [!tip] B\n> > two",
+			"> [!warning] Warning\n" + "> > [!note] A\n> > one\n>\n> between\n>\n" + "> > [!tip] B\n> > two",
 		);
 	});
 
@@ -230,9 +210,7 @@ describe("wrapSelectionInCallout", () => {
 		wrapSelectionInCallout(asEditor(e), { def: def() });
 		assert.strictEqual(
 			e.value(),
-			"> > [!warning] Warning\n" +
-				"> > > [!note] A\n> > > one\n> >\n" +
-				"> > > [!tip] B\n> > > two",
+			"> > [!warning] Warning\n" + "> > > [!note] A\n> > > one\n> >\n" + "> > > [!tip] B\n> > > two",
 		);
 	});
 
@@ -258,19 +236,13 @@ describe("wrapSelectionInCallout", () => {
 		// one level deeper and its body line is quoted to match.
 		const e = editor("> [!note] Note\n>\n> |");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.valueWithCursor(),
-			"> [!note] Note\n>\n> > [!warning] Warning\n> > |",
-		);
+		assert.strictEqual(e.valueWithCursor(), "> [!note] Note\n>\n> > [!warning] Warning\n> > |");
 	});
 
 	it("does not wrap into the frontmatter block", () => {
 		const e = editor("---\ntitle: x\n---\nbody|");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"---\ntitle: x\n---\n> [!warning] Warning\n> body",
-		);
+		assert.strictEqual(e.value(), "---\ntitle: x\n---\n> [!warning] Warning\n> body");
 	});
 });
 
@@ -286,19 +258,13 @@ describe("wrapSelectionInCallout: where the callout goes", () => {
 	it("nests inside a callout when the cursor is in its text", () => {
 		const e = editor("> [!note] Note\n> inner| text");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"> [!note] Note\n> > [!warning] Warning\n> > inner text",
-		);
+		assert.strictEqual(e.value(), "> [!note] Note\n> > [!warning] Warning\n> > inner text");
 	});
 
 	it("wraps a whole callout from the outside when the cursor is on its header", () => {
 		const e = editor("> [!note] Note|\n> one\n>\n> two");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"> [!warning] Warning\n> > [!note] Note\n> > one\n> >\n> > two",
-		);
+		assert.strictEqual(e.value(), "> [!warning] Warning\n> > [!note] Note\n> > one\n> >\n> > two");
 	});
 
 	it("takes the whole callout once a selection reaches its header", () => {
@@ -306,10 +272,7 @@ describe("wrapSelectionInCallout: where the callout goes", () => {
 		// halves: the rest of it comes along rather than being left behind.
 		const e = editor("«> [!note] Note\n> one»\n>\n> two");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"> [!warning] Warning\n> > [!note] Note\n> > one\n> >\n> > two",
-		);
+		assert.strictEqual(e.value(), "> [!warning] Warning\n> > [!note] Note\n> > one\n> >\n> > two");
 	});
 
 	it("wraps only the selected line of a callout, inside it", () => {
@@ -317,30 +280,21 @@ describe("wrapSelectionInCallout: where the callout goes", () => {
 		// between them is what stops it sliding into the new callout.
 		const glued = editor("> [!bug] Bug\n> «a»\n> b");
 		wrapSelectionInCallout(asEditor(glued), { def: def() });
-		assert.strictEqual(
-			glued.value(),
-			"> [!bug] Bug\n> > [!warning] Warning\n> > a\n>\n> b",
-		);
+		assert.strictEqual(glued.value(), "> [!bug] Bug\n> > [!warning] Warning\n> > a\n>\n> b");
 
 		// With a paragraph break already there, `b` must stay in the bug
 		// callout. It used to be moved out of it, into the new one.
 		const apart = editor("> [!bug] Bug\n> «a»\n>\n> b");
 		wrapSelectionInCallout(asEditor(apart), { def: def() });
-		assert.strictEqual(
-			apart.value(),
-			"> [!bug] Bug\n> > [!warning] Warning\n> > a\n>\n> b",
-		);
+		assert.strictEqual(apart.value(), "> [!bug] Bug\n> > [!warning] Warning\n> > a\n>\n> b");
 	});
 
 	it("nests in the innermost callout, not the outermost", () => {
-		const e = editor(
-			"> [!note] Outer\n> text\n> > [!tip] Inner\n> > inner| text",
-		);
+		const e = editor("> [!note] Outer\n> text\n> > [!tip] Inner\n> > inner| text");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
 		assert.strictEqual(
 			e.value(),
-			"> [!note] Outer\n> text\n> > [!tip] Inner\n" +
-				"> > > [!warning] Warning\n> > > inner text",
+			"> [!note] Outer\n> text\n> > [!tip] Inner\n" + "> > > [!warning] Warning\n> > > inner text",
 		);
 	});
 
@@ -349,19 +303,13 @@ describe("wrapSelectionInCallout: where the callout goes", () => {
 		// the note callout; it is not a callout of its own to wrap whole.
 		const e = editor("> [!note] Note\n> text\n>\n> [!tip] pill| here");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"> [!note] Note\n> text\n>\n> > [!warning] Warning\n> > [!tip] pill here",
-		);
+		assert.strictEqual(e.value(), "> [!note] Note\n> text\n>\n> > [!warning] Warning\n> > [!tip] pill here");
 	});
 
 	it("takes every callout a selection reaches into, whole", () => {
 		const e = editor("> [!note] A\n> «x\n\n> [!tip] B\n> y»\n> z");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"> [!warning] Warning\n> > [!note] A\n> > x\n>\n> > [!tip] B\n> > y\n> > z",
-		);
+		assert.strictEqual(e.value(), "> [!warning] Warning\n> > [!note] A\n> > x\n>\n> > [!tip] B\n> > y\n> > z");
 	});
 
 	it("stays inside a plain blockquote", () => {
@@ -369,10 +317,7 @@ describe("wrapSelectionInCallout: where the callout goes", () => {
 		// counts as its text.
 		const e = editor("> quote| one\n> quote two");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"> > [!warning] Warning\n> > quote one\n> > quote two",
-		);
+		assert.strictEqual(e.value(), "> > [!warning] Warning\n> > quote one\n> > quote two");
 	});
 });
 
@@ -380,19 +325,13 @@ describe("wrapSelectionInCallout: what it takes", () => {
 	it("takes the paragraph under a bare cursor", () => {
 		const e = editor("one\ntw|o\nthree\n\nfour");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"> [!warning] Warning\n> one\n> two\n> three\n\nfour",
-		);
+		assert.strictEqual(e.value(), "> [!warning] Warning\n> one\n> two\n> three\n\nfour");
 	});
 
 	it("leaves a heading out of the paragraph under it", () => {
 		const e = editor("## Title\ntext|\nmore");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"## Title\n\n> [!warning] Warning\n> text\n> more",
-		);
+		assert.strictEqual(e.value(), "## Title\n\n> [!warning] Warning\n> text\n> more");
 	});
 
 	it("takes only the selected lines of a paragraph", () => {
@@ -400,30 +339,21 @@ describe("wrapSelectionInCallout: what it takes", () => {
 		// blank line on each side keeps the three parts apart.
 		const e = editor("one\n«two\nthree»\nfour");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"one\n\n> [!warning] Warning\n> two\n> three\n\nfour",
-		);
+		assert.strictEqual(e.value(), "one\n\n> [!warning] Warning\n> two\n> three\n\nfour");
 	});
 
 	it("leaves out a line the selection only reaches the start of", () => {
 		// What dragging over whole lines, or Shift+Down, leaves behind.
 		const e = editor("«one\n»two\nthree");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"> [!warning] Warning\n> one\n\ntwo\nthree",
-		);
+		assert.strictEqual(e.value(), "> [!warning] Warning\n> one\n\ntwo\nthree");
 	});
 
 	it("writes an empty callout on a blank line and leaves its neighbours alone", () => {
 		// It used to wrap both paragraphs around the blank line instead.
 		const e = editor("para one\n|\npara two");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.valueWithCursor(),
-			"para one\n\n> [!warning] Warning\n> |\n\npara two",
-		);
+		assert.strictEqual(e.valueWithCursor(), "para one\n\n> [!warning] Warning\n> |\n\npara two");
 	});
 
 	it("keeps a blank line between the callout and a callout right below it", () => {
@@ -442,10 +372,7 @@ describe("wrapSelectionInCallout: blocks it never cuts", () => {
 	it("takes a whole code block, and reads callout syntax in it as code", () => {
 		const e = editor("```md\n> [!note]\n> te|xt\n```");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"> [!warning] Warning\n> ```md\n> > [!note]\n> > text\n> ```",
-		);
+		assert.strictEqual(e.value(), "> [!warning] Warning\n> ```md\n> > [!note]\n> > text\n> ```");
 	});
 
 	it("ends a code block where its callout ends", () => {
@@ -453,10 +380,7 @@ describe("wrapSelectionInCallout: blocks it never cuts", () => {
 		// note, dragging everything after it into the callout.
 		const e = editor("> [!note] Note\n> ```\n> code\n\nafter|");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"> [!note] Note\n> ```\n> code\n\n> [!warning] Warning\n> after",
-		);
+		assert.strictEqual(e.value(), "> [!note] Note\n> ```\n> code\n\n> [!warning] Warning\n> after");
 	});
 
 	it("takes a whole table from its header row", () => {
@@ -471,19 +395,13 @@ describe("wrapSelectionInCallout: blocks it never cuts", () => {
 	it("takes a list item together with its indented sub-items", () => {
 		const e = editor("- one\n- «two»\n  - two a\n  - two b\n- three");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"- one\n\n> [!warning] Warning\n> - two\n>   - two a\n>   - two b\n\n- three",
-		);
+		assert.strictEqual(e.value(), "- one\n\n> [!warning] Warning\n> - two\n>   - two a\n>   - two b\n\n- three");
 	});
 
 	it("does not read a tab-indented line as quoted", () => {
 		const e = editor("- «one\n\t- one a»\n- two");
 		wrapSelectionInCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"> [!warning] Warning\n> - one\n> \t- one a\n\n- two",
-		);
+		assert.strictEqual(e.value(), "> [!warning] Warning\n> - one\n> \t- one a\n\n- two");
 	});
 
 	it("takes an HTML block whole", () => {
@@ -530,10 +448,7 @@ describe("insertEmptyCallout", () => {
 	it("adds the callout below a line that has content", () => {
 		const e = editor("some text|");
 		insertEmptyCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.valueWithCursor(),
-			"some text\n\n> [!warning] Warning\n> |",
-		);
+		assert.strictEqual(e.valueWithCursor(), "some text\n\n> [!warning] Warning\n> |");
 	});
 
 	it("keeps the following line out of the new callout", () => {
@@ -541,19 +456,13 @@ describe("insertEmptyCallout", () => {
 		// without the separator the paragraph below would be swallowed into it.
 		const e = editor("some text|\nnext paragraph");
 		insertEmptyCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.value(),
-			"some text\n\n> [!warning] Warning\n> \n\nnext paragraph",
-		);
+		assert.strictEqual(e.value(), "some text\n\n> [!warning] Warning\n> \n\nnext paragraph");
 	});
 
 	it("keeps the quote depth when inserting inside a callout", () => {
 		const e = editor("> [!note] Note\n> body|");
 		insertEmptyCallout(asEditor(e), { def: def() });
-		assert.strictEqual(
-			e.valueWithCursor(),
-			"> [!note] Note\n> body\n>\n> > [!warning] Warning\n> > |",
-		);
+		assert.strictEqual(e.valueWithCursor(), "> [!note] Note\n> body\n>\n> > [!warning] Warning\n> > |");
 	});
 
 	it("keeps the paragraphs around a blank line out of the callout", () => {
@@ -571,9 +480,7 @@ describe("insertEmptyCallout", () => {
 		insertEmptyCallout(asEditor(e), { def: def() });
 		assert.strictEqual(
 			e.value(),
-			"> [!note] Outer\n> > [!tip] A\n> > x\n>\n" +
-				"> > [!warning] Warning\n> > \n>\n" +
-				"> > [!info] B\n> > y",
+			"> [!note] Outer\n> > [!tip] A\n> > x\n>\n" + "> > [!warning] Warning\n> > \n>\n" + "> > [!info] B\n> > y",
 		);
 	});
 
@@ -586,10 +493,7 @@ describe("insertEmptyCallout", () => {
 	it("does not double a blank line that is already there", () => {
 		const e = editor("> [!note] Note\n> text|\n>\n> more");
 		insertEmptyCallout(asEditor(e));
-		assert.strictEqual(
-			e.value(),
-			"> [!note] Note\n> text\n>\n> > [!\n>\n> more",
-		);
+		assert.strictEqual(e.value(), "> [!note] Note\n> text\n>\n> > [!\n>\n> more");
 	});
 
 	it("never writes into the properties", () => {
@@ -605,10 +509,7 @@ describe("insertEmptyCallout", () => {
 
 		const only = editor("---\ntitle: x|\n---");
 		insertEmptyCallout(asEditor(only), { def: def() });
-		assert.strictEqual(
-			only.valueWithCursor(),
-			"---\ntitle: x\n---\n> [!warning] Warning\n> |",
-		);
+		assert.strictEqual(only.valueWithCursor(), "---\ntitle: x\n---\n> [!warning] Warning\n> |");
 	});
 
 	it("does not read a tab-indented line as quoted", () => {
@@ -763,19 +664,13 @@ describe("insertHeadingCallout", () => {
 		// in place would break the blockquote and render as nothing.
 		const e = editor("> [!note] Note\n> body|");
 		insertHeadingCallout(asEditor(e), def(), 2);
-		assert.strictEqual(
-			e.value(),
-			"> [!note] Note\n> body\n\n## [!warning]",
-		);
+		assert.strictEqual(e.value(), "> [!note] Note\n> body\n\n## [!warning]");
 	});
 
 	it("moves out of the frontmatter block rather than writing into it", () => {
 		const e = editor("---\n|title: x\n---\nbody");
 		insertHeadingCallout(asEditor(e), def(), 2);
-		assert.strictEqual(
-			e.value(),
-			"---\ntitle: x\n---\n## [!warning] body",
-		);
+		assert.strictEqual(e.value(), "---\ntitle: x\n---\n## [!warning] body");
 	});
 	for (const closing of ["---", "..."]) {
 		it(`preserves metadata-only frontmatter ending in ${closing} at EOF`, () => {

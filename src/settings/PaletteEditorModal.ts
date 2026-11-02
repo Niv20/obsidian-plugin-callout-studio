@@ -34,9 +34,7 @@ import {
 	rotateHue,
 	type DerivedPalette,
 } from "../utils/colorUtils";
-import {
-	createColorSwatchInput,
-} from "../ui/ColorSwatchInput";
+import { createColorSwatchInput } from "../ui/ColorSwatchInput";
 import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import { renderInlineLinkHint } from "../ui/inlineLinkHint";
 import { addColorViewButton, type ColorView } from "./paletteColorViewButton";
@@ -45,18 +43,10 @@ import { contrastBadgeIn, contrastLineAfter } from "./paletteContrastLine";
 import { linesFragment } from "../ui/textLines";
 import type { SelectDropdown } from "../ui/selectDropdown";
 import { buildPaletteBgStyleRow, type BgStyle } from "./paletteBgStyleRow";
-import {
-	renderBaseColorRow,
-	seedBaseColor,
-	unclaimedBaseColor,
-} from "./paletteBaseColorRow";
+import { renderBaseColorRow, seedBaseColor, unclaimedBaseColor } from "./paletteBaseColorRow";
 import { renderDirectionPicker } from "./paletteDirectionPicker";
 import { LiveCalloutPreview } from "./LiveCalloutPreview";
-import {
-	dedupeColorName,
-	normalizeName,
-	suggestColorName,
-} from "../utils/colorNames";
+import { dedupeColorName, normalizeName, suggestColorName } from "../utils/colorNames";
 import { paletteMetadataKey } from "../utils/calloutMetadata";
 import {
 	customPaletteToColorPalette,
@@ -206,8 +196,7 @@ export class PaletteEditorModal extends Modal {
 	// Accent-strength counterparts of toColor*, for the text sweep.
 	private textToColorLight = "";
 	private textToColorDark = "";
-	private resolve: ((result: PaletteEditorResult | null) => void) | null =
-		null;
+	private resolve: ((result: PaletteEditorResult | null) => void) | null = null;
 
 	private previewEl: HTMLElement | null = null;
 	private preview: LiveCalloutPreview | null = null;
@@ -274,8 +263,7 @@ export class PaletteEditorModal extends Modal {
 		// (line below) and the title in onOpen — so a seed fills the colours
 		// without the modal claiming to be editing a palette that no longer
 		// exists.
-		const base: Omit<CustomPalette, "id" | "name"> | null =
-			options.existing ?? options.seed ?? null;
+		const base: Omit<CustomPalette, "id" | "name"> | null = options.existing ?? options.seed ?? null;
 		// A preset only blocks what the user changes a palette TO. A saved
 		// palette may already wear a preset's name or colours — it was saved
 		// before that preset existed under them (Purple, Pink and Yellow came
@@ -291,14 +279,10 @@ export class PaletteEditorModal extends Modal {
 		this.takenNames = new Set(
 			[
 				...(options.takenNames ?? []),
-				...presets
-					.map((p) => p.name)
-					.filter((name) => !own || normalizeName(name) !== normalizeName(own.name)),
+				...presets.map((p) => p.name).filter((name) => !own || normalizeName(name) !== normalizeName(own.name)),
 			].map(normalizeName),
 		);
-		this.takenMetadataKeys = new Set(
-			(options.takenNames ?? []).map(paletteMetadataKey).filter((k) => k !== ""),
-		);
+		this.takenMetadataKeys = new Set((options.takenNames ?? []).map(paletteMetadataKey).filter((k) => k !== ""));
 		// Same shape as takenNames, one axis over: the presets are pooled in so a
 		// custom palette can't be an unnamed copy of "Blue" either.
 		this.takenColors = [
@@ -314,10 +298,7 @@ export class PaletteEditorModal extends Modal {
 		// beside the flag (nothing clears it when the style switches, so a
 		// switch back to Gradient finds it intact), and the flag is what
 		// actually gets painted.
-		this.bgStyle =
-			base?.transparentBg ? "none"
-			: g ? "gradient"
-			: "solid";
+		this.bgStyle = base?.transparentBg ? "none" : g ? "gradient" : "solid";
 		// Set before any derivation below: deriveGradientEnd() and the new-palette
 		// branch both read this to decide how strong the background reads. A
 		// fresh palette seeds from the per-style default (gradients default
@@ -331,22 +312,15 @@ export class PaletteEditorModal extends Modal {
 		// preserve. The cost is that a seeded palette switched to Gradient keeps
 		// the solid default intensity instead of the higher gradient one, which
 		// the slider is right there to change.
-		this.bgIntensityTouched =
-			base?.bgIntensity !== undefined || options.seed !== undefined;
+		this.bgIntensityTouched = base?.bgIntensity !== undefined || options.seed !== undefined;
 		this.bgIntensity =
 			base?.bgIntensity ??
-			(this.bgStyle === "gradient"
-				? DEFAULT_BG_INTENSITY_GRADIENT
-				: DEFAULT_BG_INTENSITY_SOLID);
+			(this.bgStyle === "gradient" ? DEFAULT_BG_INTENSITY_GRADIENT : DEFAULT_BG_INTENSITY_SOLID);
 		// A brand-new palette must not open already clashing with one the user
 		// has: see unclaimedBaseColor. A seed or an existing palette keeps its
 		// own colors — they are authoritative, not a default to move off.
 		if (!base) {
-			this.baseColor = unclaimedBaseColor(
-				this.baseColor,
-				this.bgIntensity,
-				this.takenColors,
-			);
+			this.baseColor = unclaimedBaseColor(this.baseColor, this.bgIntensity, this.takenColors);
 		}
 		this.colors = base
 			? {
@@ -364,8 +338,7 @@ export class PaletteEditorModal extends Modal {
 		// invertible); a fresh gradient starts from a hue-shifted base color
 		// so toggling it on is immediately visible.
 		this.gradientToTouched = !!g;
-		this.gradientToBase =
-			g?.toColorLight ?? rotateHue(this.baseColor, GRADIENT_HUE_SHIFT);
+		this.gradientToBase = g?.toColorLight ?? rotateHue(this.baseColor, GRADIENT_HUE_SHIFT);
 		this.textGradient = g?.textGradient ?? false;
 		// Derive first, then let a saved gradient's own colors win: derivation
 		// is not invertible, so the stored values are authoritative wherever
@@ -391,9 +364,7 @@ export class PaletteEditorModal extends Modal {
 	}
 
 	onOpen(): void {
-		this.setTitle(
-			this.existing ? t("palette.editTitle") : t("palette.newTitle"),
-		);
+		this.setTitle(this.existing ? t("palette.editTitle") : t("palette.newTitle"));
 		const { contentEl } = this;
 		contentEl.empty();
 		contentEl.addClass("callout-studio-palette-editor");
@@ -435,7 +406,8 @@ export class PaletteEditorModal extends Modal {
 				this.nameInputEl = text.inputEl;
 				text.inputEl.maxLength = MAX_NAME_LENGTH;
 				text.inputEl.addClass("cs-text-control");
-				text.setPlaceholder(t("palette.namePlaceholder")).setValue(this.name)
+				text.setPlaceholder(t("palette.namePlaceholder"))
+					.setValue(this.name)
 					.onChange((v) => {
 						this.name = v;
 						this.updateValidity();
@@ -497,10 +469,7 @@ export class PaletteEditorModal extends Modal {
 			beforeRender: () => {
 				// A demo placeholder: the palette editor previews a derived
 				// palette on a stand-in callout, it never edits a real one.
-				this.plugin.registry.setPreviewDefinition(
-					this.buildPreviewDefinition(),
-					true,
-				);
+				this.plugin.registry.setPreviewDefinition(this.buildPreviewDefinition(), true);
 				// Not a full `inject`: this runs on every step of a colour drag,
 				// and a step only changes the stand-in's own rules. The injector
 				// keeps those in a small sheet of their own and rewrites just
@@ -513,10 +482,7 @@ export class PaletteEditorModal extends Modal {
 				this.updateValidity();
 			},
 			onDestroy: () => {
-				this.plugin.registry.setPreviewDefinition(
-					this.outerPreview,
-					this.outerPreviewIsDemo,
-				);
+				this.plugin.registry.setPreviewDefinition(this.outerPreview, this.outerPreviewIsDemo);
 				this.plugin.cssInjector.inject(false);
 			},
 		});
@@ -583,9 +549,7 @@ export class PaletteEditorModal extends Modal {
 	/** The saved palette or preset these colors already duplicate, if any. */
 	private findColorClash(): ColorPalette | null {
 		const current = this.currentColorPalette();
-		return (
-			this.takenColors.find((p) => palettesVisuallyEqual(p, current)) ?? null
-		);
+		return this.takenColors.find((p) => palettesVisuallyEqual(p, current)) ?? null;
 	}
 
 	/**
@@ -605,16 +569,12 @@ export class PaletteEditorModal extends Modal {
 		// Under the field, where Obsidian shows a rejected value: its warning
 		// colour, end-aligned, and nothing drawn on the field itself.
 		this.nameSetting?.setErrorMessage(
-			nameTaken ? t("palette.nameExists")
-			: keyTaken ? t("palette.metadataNameExists", { key: keyTaken })
-			: null,
+			nameTaken ? t("palette.nameExists") : keyTaken ? t("palette.metadataNameExists", { key: keyTaken }) : null,
 		);
 		if (this.metadataKeyEl) {
 			const key = paletteMetadataKey(this.name);
 			const sharedFromBefore = !nameTaken && keyTaken === null && this.sharedMetadataKey() !== null;
-			this.metadataKeyEl.setText(
-				key && sharedFromBefore ? t("palette.metadataNameShared", { key }) : "",
-			);
+			this.metadataKeyEl.setText(key && sharedFromBefore ? t("palette.metadataNameShared", { key }) : "");
 		}
 		this.colorClash = this.findColorClash();
 		this.renderColorError();
@@ -685,10 +645,7 @@ export class PaletteEditorModal extends Modal {
 		// own second color; its tints are then re-derived either way (same
 		// "re-derive overwrites manual tweaks" contract as the six colors).
 		if (!this.gradientToTouched) {
-			this.gradientToBase = rotateHue(
-				this.baseColor,
-				GRADIENT_HUE_SHIFT,
-			);
+			this.gradientToBase = rotateHue(this.baseColor, GRADIENT_HUE_SHIFT);
 		}
 		this.deriveGradientEnd();
 		this.syncGradientInputs();
@@ -749,10 +706,7 @@ export class PaletteEditorModal extends Modal {
 			// Solid is meant to restore.
 			const reseed = !this.bgIntensityTouched && v !== "none";
 			if (reseed) {
-				this.bgIntensity =
-					v === "gradient"
-						? DEFAULT_BG_INTENSITY_GRADIENT
-						: DEFAULT_BG_INTENSITY_SOLID;
+				this.bgIntensity = v === "gradient" ? DEFAULT_BG_INTENSITY_GRADIENT : DEFAULT_BG_INTENSITY_SOLID;
 			}
 			// Rebuild BEFORE re-deriving. Which rows the card holds is
 			// a function of the style (the advanced grid and Intensity
@@ -791,11 +745,7 @@ export class PaletteEditorModal extends Modal {
 			.addSlider((slider) => {
 				setSliderDisplay(slider, (v) => `${v}%`);
 				slider
-					.setLimits(
-						Math.round(MIN_BG_COLOR_AMOUNT * 100),
-						Math.round(MAX_BG_COLOR_AMOUNT * 100),
-						1,
-					)
+					.setLimits(Math.round(MIN_BG_COLOR_AMOUNT * 100), Math.round(MAX_BG_COLOR_AMOUNT * 100), 1)
 					.setValue(Math.round(this.bgIntensity * 100))
 					.setInstant(true)
 					.onChange((v) => {
@@ -863,9 +813,7 @@ export class PaletteEditorModal extends Modal {
 
 		// Only Solid has separate colors to switch to; Gradient and Transparent
 		// have no per-channel view, so the heading's button is not offered there.
-		this.paintColorViewButton?.(
-			this.bgStyle !== "solid" ? "none" : this.advancedColors ? "advanced" : "simple",
-		);
+		this.paintColorViewButton?.(this.bgStyle !== "solid" ? "none" : this.advancedColors ? "advanced" : "simple");
 		// Offered under every style: with the separate colors it picks which
 		// mode the rows edit, and everywhere else it is how to check the other
 		// mode.
@@ -957,27 +905,17 @@ export class PaletteEditorModal extends Modal {
 		// "Colors", and a row repeating it would be a heading under a heading.
 		const note = new Setting(parent).setClass("cs-palette-mode-note");
 		this.colorCardRows.push(note.settingEl);
-		note.setDesc(
-			linesFragment(t(isDark ? "palette.modeColorsHintDark" : "palette.modeColorsHintLight")),
-		);
+		note.setDesc(linesFragment(t(isDark ? "palette.modeColorsHintDark" : "palette.modeColorsHintLight")));
 
-		const accentKey: "colorLight" | "colorDark" = isDark
-			? "colorDark"
-			: "colorLight";
-		const bgKey: "bgColorLight" | "bgColorDark" = isDark
-			? "bgColorDark"
-			: "bgColorLight";
-		const textKey: "textColorLight" | "textColorDark" = isDark
-			? "textColorDark"
-			: "textColorLight";
+		const accentKey: "colorLight" | "colorDark" = isDark ? "colorDark" : "colorLight";
+		const bgKey: "bgColorLight" | "bgColorDark" = isDark ? "bgColorDark" : "bgColorLight";
+		const textKey: "textColorLight" | "textColorDark" = isDark ? "textColorDark" : "textColorLight";
 
 		// One helper for the channel rows so each is registered for teardown
 		// exactly once — the swatch call used to build its Setting inline, and
 		// an inline Setting has no handle to push onto colorCardRows.
 		const channelRow = (label: string): Setting => {
-			const setting = new Setting(parent)
-				.setName(label)
-				.setClass("cs-row-inline");
+			const setting = new Setting(parent).setName(label).setClass("cs-row-inline");
 			this.colorCardRows.push(setting.settingEl);
 			return setting;
 		};
@@ -1039,10 +977,8 @@ export class PaletteEditorModal extends Modal {
 		// that came and went mid-drag would move the whole window under the
 		// cursor.
 		const warnContrast = contrastLineAfter(textRow, this.colorCardRows);
-		const failsAccent = (): boolean =>
-			contrastRatio(this.colors[accentKey], this.colors[bgKey]) < 3;
-		const failsText = (): boolean =>
-			contrastRatio(this.colors[textKey], this.colors[bgKey]) < 4.5;
+		const failsAccent = (): boolean => contrastRatio(this.colors[accentKey], this.colors[bgKey]) < 3;
+		const failsText = (): boolean => contrastRatio(this.colors[textKey], this.colors[bgKey]) < 4.5;
 		const refreshBadges = (): void => {
 			accentBadge(failsAccent());
 			textBadge(failsText());
@@ -1058,21 +994,15 @@ export class PaletteEditorModal extends Modal {
 	 * (see the order renderColorSection builds them in).
 	 */
 	private buildGradientToRow(parent: HTMLElement): void {
-		const toSetting = new Setting(parent)
-			.setName(t("palette.gradientTo"))
-			.setClass("cs-row-inline");
+		const toSetting = new Setting(parent).setName(t("palette.gradientTo")).setClass("cs-row-inline");
 		this.colorCardRows.push(toSetting.settingEl);
-		this.gradToInput = createColorSwatchInput(
-			toSetting.controlEl,
-			this.gradientToBase,
-			(hex) => {
-				this.gradientToBase = hex;
-				this.gradientToTouched = true;
-				this.deriveGradientEnd();
-				this.syncGradientInputs();
-				this.preview?.refresh();
-			},
-		).input;
+		this.gradToInput = createColorSwatchInput(toSetting.controlEl, this.gradientToBase, (hex) => {
+			this.gradientToBase = hex;
+			this.gradientToTouched = true;
+			this.deriveGradientEnd();
+			this.syncGradientInputs();
+			this.preview?.refresh();
+		}).input;
 	}
 
 	/**
@@ -1082,23 +1012,19 @@ export class PaletteEditorModal extends Modal {
 	private buildGradientDirectionAndTextRows(parent: HTMLElement): void {
 		// Three icon buttons — well under the width of a row, so
 		// `cs-row-inline` keeps them beside the label on a phone too.
-		const dirSetting = new Setting(parent)
-			.setName(t("palette.gradientDirection"))
-			.setClass("cs-row-inline");
+		const dirSetting = new Setting(parent).setName(t("palette.gradientDirection")).setClass("cs-row-inline");
 		this.colorCardRows.push(dirSetting.settingEl);
 		renderDirectionPicker(dirSetting.controlEl, this.angleDeg, (deg) => {
 			this.angleDeg = deg;
 			this.preview?.refresh();
 		});
 
-		const textSetting = new Setting(parent)
-			.setName(t("palette.gradientText"))
-			.addToggle((toggle) => {
-				toggle.setValue(this.textGradient).onChange((on) => {
-					this.textGradient = on;
-					this.preview?.refresh();
-				});
+		const textSetting = new Setting(parent).setName(t("palette.gradientText")).addToggle((toggle) => {
+			toggle.setValue(this.textGradient).onChange((on) => {
+				this.textGradient = on;
+				this.preview?.refresh();
 			});
+		});
 		this.colorCardRows.push(textSetting.settingEl);
 	}
 
@@ -1108,9 +1034,7 @@ export class PaletteEditorModal extends Modal {
 	 * `gradToInput` null (see renderColorSection).
 	 */
 	private syncGradientInputs(): void {
-		const entries: [HTMLInputElement | null | undefined, string][] = [
-			[this.gradToInput, this.gradientToBase],
-		];
+		const entries: [HTMLInputElement | null | undefined, string][] = [[this.gradToInput, this.gradientToBase]];
 		for (const [input, value] of entries) {
 			// The input is the dot (app.css paints it from its value), so
 			// setting the value is all there is to do.
@@ -1134,9 +1058,7 @@ export class PaletteEditorModal extends Modal {
 		return [
 			`## [!${id}] ${name}`,
 			"",
-			t("editor.sampleInlineText")
-				.replace("{id}", id)
-				.replace("{title}", name),
+			t("editor.sampleInlineText").replace("{id}", id).replace("{title}", name),
 			"",
 			`> [!${id}] ${name}`,
 			`> ${t("editor.loremIpsumShort")}`,
@@ -1207,12 +1129,7 @@ export class PaletteEditorModal extends Modal {
 	/** The form as a palette to save. */
 	private buildResult(): PaletteEditorResult {
 		const typed = this.name.trim();
-		const name =
-			typed ||
-			dedupeColorName(
-				suggestColorName(this.colors.colorLight),
-				this.takenNames,
-			);
+		const name = typed || dedupeColorName(suggestColorName(this.colors.colorLight), this.takenNames);
 		const gradient = this.currentGradient();
 		return {
 			name,
@@ -1228,9 +1145,7 @@ export class PaletteEditorModal extends Modal {
 			// backgrounds among them are what a later switch back to Solid
 			// restores, and `bakePaletteColors` is what keeps them from
 			// reaching a callout meanwhile.
-			...(this.bgStyle === "none"
-				? { transparentBg: true as const }
-				: {}),
+			...(this.bgStyle === "none" ? { transparentBg: true as const } : {}),
 			// Saved regardless of the current bgStyle so a palette left in
 			// advanced mode while Gradient was selected still reopens
 			// advanced if the user switches back to Solid later.

@@ -103,4 +103,3 @@ export const USER_SVG_ATTRS = new Set([
 	"maskunits",
 	"clippathunits",
 ]);
-

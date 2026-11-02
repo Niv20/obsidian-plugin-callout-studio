@@ -26,13 +26,7 @@
  * Active in Live Preview only (source mode shows raw markdown, matching how
  * Obsidian treats its own callouts).
  */
-import {
-	Decoration,
-	EditorView,
-	ViewPlugin,
-	type DecorationSet,
-	type ViewUpdate,
-} from "@codemirror/view";
+import { Decoration, EditorView, ViewPlugin, type DecorationSet, type ViewUpdate } from "@codemirror/view";
 import { Prec, RangeSetBuilder, type EditorSelection } from "@codemirror/state";
 import { syntaxTree } from "@codemirror/language";
 import { editorInfoField, editorLivePreviewField, livePreviewState } from "obsidian";
@@ -40,11 +34,7 @@ import { notifySidebarEditorSelection } from "../../ui/sidebarSelection";
 import type { App } from "obsidian";
 import type { PluginSettings } from "../../types";
 import type { CalloutRegistry } from "../../manager/CalloutRegistry";
-import {
-	findWikilinkCalloutRefs,
-	nestedInlineTokens,
-	tokenEnd,
-} from "../calloutTokens";
+import { findWikilinkCalloutRefs, nestedInlineTokens, tokenEnd } from "../calloutTokens";
 import {
 	CSS_HEADING_HIDE_MARKS,
 	CSS_HEADING_LINE,
@@ -56,12 +46,7 @@ import {
 } from "../renderShared";
 import { editorLineCalloutTokens, excludedEditorRange } from "./sourceTokens";
 import { isHeadingFoldEnabled, resolveMarkdownView } from "../headingFold";
-import {
-	CalloutContentPillWidget,
-	CalloutTokenWidget,
-	HeadingFoldArrowWidget,
-	HeadingRefLinkWidget,
-} from "./widgets";
+import { CalloutContentPillWidget, CalloutTokenWidget, HeadingFoldArrowWidget, HeadingRefLinkWidget } from "./widgets";
 import { getFoldedLines, foldsChanged } from "./fold";
 import { registerCalloutContextClickGuard } from "./contextClick";
 import {
@@ -185,11 +170,7 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 						this.mouseUpTimer = null;
 						const armed = this.wasMousedown;
 						this.wasMousedown = false;
-						if (
-							this.destroyed ||
-							!armed ||
-							!this.view.dom.isConnected
-						) {
+						if (this.destroyed || !armed || !this.view.dom.isConnected) {
 							return;
 						}
 						try {
@@ -210,11 +191,8 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 					const editor = update.state.field(editorInfoField, false)?.editor;
 					if (editor) notifySidebarEditorSelection(editor, update.docChanged);
 				}
-				const mousedown =
-					update.view.plugin(livePreviewState)?.mousedown ?? false;
-				const refreshed = update.transactions.some((tr) =>
-					tr.effects.some((e) => e.is(calloutStudioRefresh)),
-				);
+				const mousedown = update.view.plugin(livePreviewState)?.mousedown ?? false;
+				const refreshed = update.transactions.some((tr) => tr.effects.some((e) => e.is(calloutStudioRefresh)));
 				// A caret this plugin dropped itself: a click on an inline pill,
 				// whose only editing affordance is the raw source it reveals.
 				// The freeze below must not touch it — see calloutStudioCaretDrop
@@ -232,8 +210,7 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 				// chevron stale). Cheap identity check; only meaningful when
 				// heading callouts draw the chevron at all.
 				const foldChanged =
-					host.settings.headingCallouts.enabled &&
-					foldsChanged(update.startState, update.state);
+					host.settings.headingCallouts.enabled && foldsChanged(update.startState, update.state);
 				// Not covered here: a change to CodeMirror's line gaps, which it
 				// flags separately from `viewportChanged`. That would shrink or
 				// grow `visibleRanges` without a rebuild. Unreachable in practice
@@ -254,13 +231,13 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 				}
 				if (
 					update.docChanged ||
-					update.viewportChanged || syntaxTree(update.startState) !== syntaxTree(update.state) ||
+					update.viewportChanged ||
+					syntaxTree(update.startState) !== syntaxTree(update.state) ||
 					refreshed ||
 					caretDrop ||
 					mouseReleased ||
 					foldChanged ||
-					((update.selectionSet || update.focusChanged) &&
-						!mousedown)
+					((update.selectionSet || update.focusChanged) && !mousedown)
 				) {
 					this.rebuild(update.view);
 				}
@@ -268,12 +245,7 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 			}
 
 			private rebuild(view: EditorView): void {
-				const built = buildDecorations(
-					view,
-					host,
-					this.selection,
-					this.focused,
-				);
+				const built = buildDecorations(view, host, this.selection, this.focused);
 				this.decorations = built.decorations;
 				this.raised = built.raised;
 			}
@@ -286,20 +258,13 @@ export function createCalloutViewPlugin(host: LivePreviewHost) {
 					window.clearTimeout(this.mouseUpTimer);
 					this.mouseUpTimer = null;
 				}
-				this.ownerDoc.removeEventListener(
-					"mouseup",
-					this.onDocMouseUp,
-				);
+				this.ownerDoc.removeEventListener("mouseup", this.onDocMouseUp);
 			}
 		},
 		{
 			decorations: (v) => v.decorations,
 			provide: (p) =>
-				Prec.highest(
-					EditorView.decorations.of(
-						(view) => view.plugin(p)?.raised ?? Decoration.none,
-					),
-				),
+				Prec.highest(EditorView.decorations.of((view) => view.plugin(p)?.raised ?? Decoration.none)),
 		},
 	);
 	return plugin;
@@ -340,13 +305,8 @@ function buildDecorations(
 	// wants our trailing chevron, AND the core "Fold heading" setting is on
 	// (native folding is otherwise absent, so we draw no chevron). Resolved
 	// once per rebuild.
-	const foldEnabled =
-		headingEnabled &&
-		host.settings.headingCallouts.showFoldArrow &&
-		isHeadingFoldEnabled(host.app);
-	const foldedLines: ReadonlySet<number> = foldEnabled
-		? getFoldedLines(view)
-		: NO_FOLDS;
+	const foldEnabled = headingEnabled && host.settings.headingCallouts.showFoldArrow && isHeadingFoldEnabled(host.app);
+	const foldedLines: ReadonlySet<number> = foldEnabled ? getFoldedLines(view) : NO_FOLDS;
 	// `visibleRanges` is NOT the viewport: CodeMirror subtracts every state-level
 	// point decoration of 20 chars or more from it, so one line can be split
 	// across two spans (a fold ending at end-of-line, or a line gap inside a very
@@ -426,10 +386,7 @@ function decorateLine(
 	// callouts, but their token is hidden (optionally behind the callout's
 	// icon) so the displayed link reads `#Title`.
 	const refSettings = host.settings.headingCallouts;
-	const refs =
-		headingEnabled && refSettings.refCleanTitles
-			? findWikilinkCalloutRefs(lineText)
-			: [];
+	const refs = headingEnabled && refSettings.refCleanTitles ? findWikilinkCalloutRefs(lineText) : [];
 	if (tokens.length === 0 && refs.length === 0) return;
 
 	// Native block callouts belong to Obsidian's own rendering.
@@ -497,9 +454,7 @@ function decorateLine(
 						// Mirrors what Obsidian stamps on a block callout,
 						// so a theme can hook this role the same way. Omitted
 						// when absent — an empty attribute is a selector match.
-						...(token.metadata
-							? { "data-callout-metadata": token.metadata }
-							: {}),
+						...(token.metadata ? { "data-callout-metadata": token.metadata } : {}),
 					},
 				}),
 			);
@@ -550,10 +505,7 @@ function decorateLine(
 				// of the token. Only drawn when native "Fold heading" is on;
 				// added after the loop to keep builder insertion sorted.
 				if (foldEnabled) {
-					pendingFoldArrow = new HeadingFoldArrowWidget(
-						token.rawId,
-						foldedLines.has(headingLine),
-					);
+					pendingFoldArrow = new HeadingFoldArrowWidget(token.rawId, foldedLines.has(headingLine));
 				}
 			}
 			continue;
@@ -641,9 +593,7 @@ function decorateLine(
 		}
 		// The whole link reveals raw while the selection touches it (matching
 		// Obsidian revealing the `[[`/`]]` brackets), so no token decoration.
-		if (
-			selectionTouches(lineFrom + ref.linkFrom, lineFrom + ref.linkTo)
-		) {
+		if (selectionTouches(lineFrom + ref.linkFrom, lineFrom + ref.linkTo)) {
 			continue;
 		}
 		// Aliased link: Obsidian displays only the alias, hiding the target and
@@ -660,24 +610,14 @@ function decorateLine(
 				aliasFrom < ref.linkTo - 2 &&
 				!lineText.slice(ref.to, aliasFrom).includes("#") &&
 				!refs.some((r) => r.linkFrom === ref.linkFrom && r.inAlias) &&
-				!excludedEditorRange(
-					view.state,
-					lineFrom + ref.from,
-					lineFrom + ref.to,
-				)
+				!excludedEditorRange(view.state, lineFrom + ref.from, lineFrom + ref.to)
 			) {
 				midLine.push({
 					from: lineFrom + aliasFrom,
 					to: lineFrom + aliasFrom,
 					deco: Decoration.widget({
 						side: 1,
-						widget: new CalloutTokenWidget(
-							host.app,
-							ref.rawId,
-							host.registry,
-							"ref",
-							false,
-						),
+						widget: new CalloutTokenWidget(host.app, ref.rawId, host.registry, "ref", false),
 					}),
 				});
 			}
@@ -700,9 +640,7 @@ function decorateLine(
 			// Same-file `#` prefix is dropped from the display (`Note#` stays),
 			// matching the titled-ref hash hiding below. An alias token shows
 			// nothing before itself.
-			const rawPrefix = ref.inAlias
-				? ""
-				: lineText.slice(ref.linkFrom + 2, ref.from);
+			const rawPrefix = ref.inAlias ? "" : lineText.slice(ref.linkFrom + 2, ref.from);
 			// Navigation target is the inner up to the alias pipe — untruncated
 			// even for `]]]` runs and nested `#[!a]#[!b]` paths.
 			const inner = lineText.slice(ref.linkFrom + 2, ref.linkTo - 2);
@@ -735,13 +673,7 @@ function decorateLine(
 			to,
 			deco: refSettings.refShowIcon
 				? Decoration.replace({
-						widget: new CalloutTokenWidget(
-							host.app,
-							ref.rawId,
-							host.registry,
-							"ref",
-							!ref.hasTitle,
-						),
+						widget: new CalloutTokenWidget(host.app, ref.rawId, host.registry, "ref", !ref.hasTitle),
 					})
 				: Decoration.replace({}),
 		});
@@ -759,10 +691,6 @@ function decorateLine(
 	// End-of-line fold chevron, added last so it never precedes an inline token
 	// that also sits on this heading line.
 	if (pendingFoldArrow) {
-		builder.add(
-			lineTo,
-			lineTo,
-			Decoration.widget({ side: 1, widget: pendingFoldArrow }),
-		);
+		builder.add(lineTo, lineTo, Decoration.widget({ side: 1, widget: pendingFoldArrow }));
 	}
 }

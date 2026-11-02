@@ -12,9 +12,7 @@ import type { CalloutDefinition } from "../src/types";
 
 installFakeDom();
 
-function definition(
-	over: Partial<CalloutDefinition> = {},
-): CalloutDefinition {
+function definition(over: Partial<CalloutDefinition> = {}): CalloutDefinition {
 	return {
 		id: "quiet",
 		displayName: "Quiet",
@@ -35,10 +33,7 @@ describe("paintCalloutListIcon", () => {
 		registry.load(null);
 		const def = definition();
 		const iconEl = createDiv();
-		assert.equal(
-			paintCalloutListIcon(iconEl, def, registry, false),
-			"#336699",
-		);
+		assert.equal(paintCalloutListIcon(iconEl, def, registry, false), "#336699");
 		assert.equal(iconEl.textContent, "📌");
 	});
 
@@ -59,10 +54,7 @@ describe("paintCalloutListIcon", () => {
 				],
 			]),
 		);
-		assert.equal(
-			paintCalloutListIcon(createDiv(), def, registry, false),
-			"rgb(1, 2, 3)",
-		);
+		assert.equal(paintCalloutListIcon(createDiv(), def, registry, false), "rgb(1, 2, 3)");
 	});
 
 	it("contains no retired personal-CSS branch", () => {

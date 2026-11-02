@@ -12,8 +12,7 @@ export async function verifyPackText(
 	const bytes = new TextEncoder().encode(text);
 	if (bytes.byteLength !== expected.bytes) {
 		console.warn(
-			`[CalloutStudio] pack size mismatch from ${source}: ` +
-				`${bytes.byteLength} != ${expected.bytes}`,
+			`[CalloutStudio] pack size mismatch from ${source}: ` + `${bytes.byteLength} != ${expected.bytes}`,
 		);
 		return false;
 	}
@@ -29,7 +28,6 @@ export async function verifyPackText(
 	return true;
 }
 
-
 /** Parse validated text without publishing to the shared artwork store. */
 export function parseVerifiedPack(id: IconPackId, text: string, source: string): PackFile | null {
 	let raw: unknown;
@@ -41,9 +39,7 @@ export function parseVerifiedPack(id: IconPackId, text: string, source: string):
 	}
 	const result = parsePackFile(raw, id, PACK_FORMAT);
 	if (!result.ok) {
-		console.warn(
-			`[CalloutStudio] pack "${id}" from ${source} rejected: ${result.reason}`,
-		);
+		console.warn(`[CalloutStudio] pack "${id}" from ${source} rejected: ${result.reason}`);
 		return null;
 	}
 	return result.file;

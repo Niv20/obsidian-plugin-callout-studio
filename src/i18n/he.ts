@@ -27,7 +27,7 @@ export const he: Record<string, string> = {
 	"cmd.openQuickInsert": "הוספה מהירה של תיבת־הבלטה מסוג בלוק",
 
 	// Autocomplete
-	"autocomplete.createNew": 'יצירת „{{name}}”',
+	"autocomplete.createNew": "יצירת „{{name}}”",
 	"metadataSuggest.finish": "סיום",
 	"metadataSuggest.colors": "צבעים",
 	"metadataSuggest.yourWords": "המילים שלכם",
@@ -51,8 +51,10 @@ export const he: Record<string, string> = {
 	"settings.fallbackTagAuto": "אוטומטי",
 	"settings.rescanVaultDesc": "מוסיף את סוגי תיבות־ההבלטה שבשימוש בפתקים שלכם ועדיין אינם ברשימה הזו.",
 	"settings.rescanVaultHintAction": "סריקת תיבות־הבלטה",
-	"manualDiscovery.failed": "תוצאות הסריקה לא נשמרו. יש לוודא שאפשר לכתוב לקובץ ההגדרות ושהסנכרון הסתיים, ואז לנסות שוב דרך הגדרות ← סוגי תיבות־ההבלטה שלי ← סריקת תיבות־הבלטה. תיבות־ההבלטה הקיימות לא הוחלפו.",
-	"notice.settingsBackupFailed": "שחזור ההגדרות לא יכול להמשיך מפני שלא ניתן היה לשמור גיבוי בטיחותי. יש לבדוק את מקום האחסון הפנוי ואת הרשאות הכתיבה, ולנסות שוב.",
+	"manualDiscovery.failed":
+		"תוצאות הסריקה לא נשמרו. יש לוודא שאפשר לכתוב לקובץ ההגדרות ושהסנכרון הסתיים, ואז לנסות שוב דרך הגדרות ← סוגי תיבות־ההבלטה שלי ← סריקת תיבות־הבלטה. תיבות־ההבלטה הקיימות לא הוחלפו.",
+	"notice.settingsBackupFailed":
+		"שחזור ההגדרות לא יכול להמשיך מפני שלא ניתן היה לשמור גיבוי בטיחותי. יש לבדוק את מקום האחסון הפנוי ואת הרשאות הכתיבה, ולנסות שוב.",
 	"commandBuilder.missingCallout": "מושהית עד שתיצרו מחדש את תיבת־ההבלטה החסרה או תבחרו אחרת.",
 	"manualDiscovery.scanning": "סורק…",
 	"settings.rescanComplete": "הסריקה הסתיימה: נוספו {{count}} סוגי תיבות־הבלטה חדשים.",
@@ -62,10 +64,8 @@ export const he: Record<string, string> = {
 
 	// Welcome / splash screen (shown once on first load; reopen via header icon)
 	"welcome.title": "ברוכים הבאים ל־Callout Studio!",
-	"welcome.tagline":
-		"הפתרון המלא שלכם ליצירה, לעיצוב ולניהול של תיבות־הבלטה ב־Obsidian.",
-	"importBanner.message":
-		"שמנו לב שאתם משתמשים ב־{{plugins}}. האם תרצו לייבא את תיבות־ההבלטה שלכם?",
+	"welcome.tagline": "הפתרון המלא שלכם ליצירה, לעיצוב ולניהול של תיבות־הבלטה ב־Obsidian.",
+	"importBanner.message": "שמנו לב שאתם משתמשים ב־{{plugins}}. האם תרצו לייבא את תיבות־ההבלטה שלכם?",
 	"importBanner.action": "ייבוא",
 	"importBanner.dismiss": "ביטול",
 	"welcome.demoName": "Callout Studio",
@@ -82,8 +82,7 @@ export const he: Record<string, string> = {
 
 	// Delete-callout confirmation. Delete only ever removes the definition;
 	// turning the notes into plain text is the separate convert action below.
-	"deleteModal.bodyInUse":
-		"תיבת־הבלטה זו מופיעה {{count}} פעמים ב־{{files}} קבצים.",
+	"deleteModal.bodyInUse": "תיבת־הבלטה זו מופיעה {{count}} פעמים ב־{{files}} קבצים.",
 	"deleteModal.notesUntouched":
 		"פעולה זו מוחקת רק את ההגדרה של תיבת־ההבלטה. הפתקים שלכם לא משתנים, כך שתיבות־ההבלטה הקיימות פשוט יחזרו לעיצוב ברירת־המחדל.",
 	"deleteModal.fallbackTarget":
@@ -92,8 +91,7 @@ export const he: Record<string, string> = {
 	"convertModal.title": "המרה לטקסט רגיל",
 	"convertModal.subtitle": "כל מופע של ״{{name}}״ בכספת שלכם",
 	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
-	"convertModal.explain":
-		"כל אחת מהן תהפוך לטקסט רגיל: הכותרת והתוכן נשארים, ורק העיצוב של תיבת־ההבלטה יורד.",
+	"convertModal.explain": "כל אחת מהן תהפוך לטקסט רגיל: הכותרת והתוכן נשארים, ורק העיצוב של תיבת־ההבלטה יורד.",
 	"convertModal.typeStays": "סוג תיבת־ההבלטה עצמו נשאר ברשימה שלכם.",
 	"convertModal.confirm": "המרה",
 	// The variant for a callout whose definition Callout Studio cannot remove:
@@ -115,10 +113,8 @@ export const he: Record<string, string> = {
 	"settings.exportTitle": "ייצוא תיבות־הבלטה",
 	"settings.importDesc":
 		"ייבאו את ההגדרות שלכם ב־Callout Studio מכספת אחרת, או העבירו את תיבות־ההבלטה שלכם מתוסף אחר.",
-	"settings.exportDesc":
-		"ייצאו את תיבות־ההבלטה כגיבוי של Callout Studio, או כקטע CSS לשימוש במקומות אחרים.",
-	"settings.importConflictNotice":
-		"יובאו {{count}} תיבות־הבלטה; {{overwritten}} רשומות קיימות עודכנו.",
+	"settings.exportDesc": "ייצאו את תיבות־ההבלטה כגיבוי של Callout Studio, או כקטע CSS לשימוש במקומות אחרים.",
+	"settings.importConflictNotice": "יובאו {{count}} תיבות־הבלטה; {{overwritten}} רשומות קיימות עודכנו.",
 
 	// Settings — Toolbar
 	"settings.addNewCallout": "הוספת תיבת־הבלטה חדשה",
@@ -149,13 +145,11 @@ export const he: Record<string, string> = {
 	"settings.themeCalloutsHeading": "תיבות־הבלטה של ערכת הנושא שלכם",
 	"settings.themeCalloutsDefaultTheme": "ערכת הנושא שלכם",
 	"settings.themeCalloutsEmpty": "{{theme}} לא מעצבת כרגע אף תיבת־הבלטה.",
-	"settings.themePreviewAria":
-		'תצוגה מקדימה של "{{name}}" — לראות איך ערכת הנושא שלכם מציירת אותה',
+	"settings.themePreviewAria": 'תצוגה מקדימה של "{{name}}" — לראות איך ערכת הנושא שלכם מציירת אותה',
 	"settings.builtInAllThemeStyled":
 		"{{theme}} מעצבת את כל תיבות־ההבלטה המובנות, ולכן Callout Studio משאיר את כולן כפי שהן. כדי לעצב תיבת־הבלטה משלכם, הוסיפו תיבת־הבלטה עם מזהה אחר.",
 	"settings.fallbackCallout": "ברירת־מחדל לתיבות־הבלטה",
-	"settings.fallbackCalloutDesc":
-		"סוגי תיבות־הבלטה לא מוכרים יורשים עיצוב זה.",
+	"settings.fallbackCalloutDesc": "סוגי תיבות־הבלטה לא מוכרים יורשים עיצוב זה.",
 
 	// Settings — Global style
 	"settings.border": "מסגרות",
@@ -176,8 +170,7 @@ export const he: Record<string, string> = {
 	"settings.headingFoldArrow": "הצגת חץ הקיפול",
 	"settings.styleDemoName": "דוגמה",
 	"settings.styleDemoInlineName": "דוגמה",
-	"settings.styleDemoInlineText":
-		"רוח קלה נושבת בין העצים. {{callout}} אור שמש חמים מאיר שביל שקט ומפיח חיים בנוף.",
+	"settings.styleDemoInlineText": "רוח קלה נושבת בין העצים. {{callout}} אור שמש חמים מאיר שביל שקט ומפיח חיים בנוף.",
 	"settings.previewTitle": "תצוגה מקדימה",
 
 	// Settings — Saved color palettes
@@ -188,8 +181,7 @@ export const he: Record<string, string> = {
 	"settings.paletteCountOne": "פלטה אחת",
 	"settings.editPaletteAria": "עריכת פלטה {{name}}",
 	"settings.deletePaletteTitle": "מחיקת פלטה",
-	"settings.deletePaletteBody":
-		'תיבות־הבלטה שמשתמשות בצבעים שלה לא יושפעו.',
+	"settings.deletePaletteBody": "תיבות־הבלטה שמשתמשות בצבעים שלה לא יושפעו.",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		"תיבות־הבלטה שמציינות אותה במטא־נתונים שלהן („{{key}}”) מקבלות במקומה את הצבע המובנה בשם הזה. הפתקים שלך לא משתנים.",
 
@@ -216,10 +208,8 @@ export const he: Record<string, string> = {
 	"commandBuilder.formatHeading": "כותרת",
 	"commandBuilder.formatInline": "מוטבעת",
 	"commandBuilder.formatBlock": "בלוק",
-	"commandBuilder.roleDisabled":
-		"הפורמט הזה כבוי, כך שהפקודה תוסיף טקסט רגיל עד שתפעילו אותו מחדש.",
-	"commandBuilder.roleThemeOwned":
-		"ערכת הנושא שלכם מספקת את תיבת־ההבלטה הזו, ולכן יש לה רק פורמט בלוק.",
+	"commandBuilder.roleDisabled": "הפורמט הזה כבוי, כך שהפקודה תוסיף טקסט רגיל עד שתפעילו אותו מחדש.",
+	"commandBuilder.roleThemeOwned": "ערכת הנושא שלכם מספקת את תיבת־ההבלטה הזו, ולכן יש לה רק פורמט בלוק.",
 	"commandBuilder.commandSuspended": "מושהית כל עוד ערכת העיצוב מספקת את תיבת־ההבלטה הזו, שיש לה אז רק פורמט בלוק.",
 	"commandBuilder.pausedTag": "מושהית בגלל ערכת העיצוב",
 	"commandBuilder.missingTag": "תיבת־ההבלטה חסרה",
@@ -228,8 +218,7 @@ export const he: Record<string, string> = {
 	"commandBuilder.headingLevel": "רמת כותרת",
 	"commandBuilder.headingLevelDesc": "איזו רמת כותרת לכתוב.",
 	"commandBuilder.action": "פעולה",
-	"commandBuilder.actionDesc":
-		"עטיפה הופכת את הבחירה לתיבת־הבלטה; הוספה מוסיפה תיבה ריקה.",
+	"commandBuilder.actionDesc": "עטיפה הופכת את הבחירה לתיבת־הבלטה; הוספה מוסיפה תיבה ריקה.",
 	"commandBuilder.actionDescHeading":
 		"עטיפה הופכת את השורה שבה נמצא הסמן לתיבת־הבלטה בצורת כותרת.\nהוספה מוסיפה תיבה ריקה בשורה חדשה.",
 	"commandBuilder.actionDescInline":
@@ -237,21 +226,20 @@ export const he: Record<string, string> = {
 	"commandBuilder.actionWrap": "עטיפת הבחירה",
 	"commandBuilder.actionInsert": "הוספת חדשה",
 	"commandBuilder.foldState": "מצב קיפול",
-	"commandBuilder.foldStateDesc":
-		"האם תיבת־ההבלטה ניתנת לקיפול, ובאיזה מצב היא מתחילה.",
+	"commandBuilder.foldStateDesc": "האם תיבת־ההבלטה ניתנת לקיפול, ובאיזה מצב היא מתחילה.",
 	"commandBuilder.foldNone": "בלתי ניתן לקיפול",
 	"commandBuilder.foldExpanded": "ניתן לקיפול, פתוח (+)",
 	"commandBuilder.foldCollapsed": "ניתן לקיפול, סגור (-)",
 	"commandBuilder.preview": "שם הפקודה",
 	"commandBuilder.duplicate": "כבר יש לכם פקודה שעושה בדיוק את זה.",
-	"commandBuilder.noCallouts":
-		"אין עדיין סוגי תיבות־הבלטה שניתן לבנות מהם פקודה.",
+	"commandBuilder.noCallouts": "אין עדיין סוגי תיבות־הבלטה שניתן לבנות מהם פקודה.",
 	"commandBuilder.noCalloutChosen": "יש לבחור קודם תיבת־הבלטה לפקודה הזו.",
 	"commandBuilder.save": "שמירה",
 
 	// Settings — Reset
 	"portable.reviewTitle": "סקירת ההמרה",
-	"portable.helpIntro": "בחרו את ההחלפות להחלה. לחצו על העיפרון או על טקסט ההחלפה כדי לערוך אותו, ואז הקישו Enter או לחצו מחוץ לשדה כדי לשמור. השתמשו בסמל האיפוס כדי לבטל טיוטה או לשחזר את ההחלפה כברירת מחדל. הפתקים ישתנו רק אחרי בחירה ב״המרת הפריטים שנבחרו״ ואישור. קישורים לכותרות מתעדכנים יחד עם הכותרות שנבחרו.",
+	"portable.helpIntro":
+		"בחרו את ההחלפות להחלה. לחצו על העיפרון או על טקסט ההחלפה כדי לערוך אותו, ואז הקישו Enter או לחצו מחוץ לשדה כדי לשמור. השתמשו בסמל האיפוס כדי לבטל טיוטה או לשחזר את ההחלפה כברירת מחדל. הפתקים ישתנו רק אחרי בחירה ב״המרת הפריטים שנבחרו״ ואישור. קישורים לכותרות מתעדכנים יחד עם הכותרות שנבחרו.",
 	"portable.help": "על ההמרה",
 	"portable.customize": "החלפה מותאמת אישית…",
 	"portable.editCustom": "עריכת ההחלפה המותאמת…",
@@ -260,13 +248,13 @@ export const he: Record<string, string> = {
 	"portable.customInvalid": "יש להשאיר את ההחלפה בשורה אחת בלי לשנות את מבנה ה־Markdown שסביבה.",
 	"portable.customUnsafe": "ההחלפה הזו תהפוך כותרת או את הקישורים אליה לעמומים. יש לבחור כותרת אחרת.",
 	"portable.customStale": "הסקירה השתנתה. יש לפתוח מחדש את עורך ההחלפה.",
-	"portable.customDiscarded": "{{count}} החלפות מותאמות אישית הוסרו כי טקסט המקור שלהן השתנה או שלא ניתן היה לאתר אותו בוודאות.",
+	"portable.customDiscarded":
+		"{{count}} החלפות מותאמות אישית הוסרו כי טקסט המקור שלהן השתנה או שלא ניתן היה לאתר אותו בוודאות.",
 	"portable.customBadge": "מותאם אישית",
 	"portable.roleLink": "קישור לכותרת",
 	"portable.convertSelected": "המרת הנבחרים",
 	"portable.selectionSummary": "{{selected}} מתוך {{total}} החלפות נבחרו · {{links}} קישורי כותרות יעודכנו",
-	"portable.selectionSummaryNoLinks":
-		"{{selected}} מתוך {{total}} החלפות נבחרו",
+	"portable.selectionSummaryNoLinks": "{{selected}} מתוך {{total}} החלפות נבחרו",
 	"portable.selectionConflict": "הבחירה הזו תיצור עמימות בקישורים לכותרות. הבחירה הקודמת שלך נשמרה.",
 	"portable.selectAll": "בחירת הכול",
 	"portable.selectNone": "ביטול הבחירה",
@@ -278,14 +266,18 @@ export const he: Record<string, string> = {
 	"portable.retry": "ניסיון נוסף",
 	"portable.blockedAmbiguous": "מדלגים על כותרת זו משום שלא ניתן לקבוע בוודאות את יעד הקישור שלה.",
 	"portable.blockedTarget": "מדלגים על כותרת זו משום שלא ניתן לשמר בבטחה את יעד הקישור שלה.",
-	"portable.recovery": "נותרו שינויים לביצוע. יש להשלים את ההמרה ואת עדכוני הקישורים לפני הפעלה מחדש או כיבוי התוסף; התוכנית שנותרה נשמרת בזיכרון בלבד.",
-	"portable.recoveryChanged": "פתקים השתנו מאז שההמרה נעצרה. עדכוני הקישורים שטרם בוצעו נשמרים; כל פתק נבדק שוב לפני הכתיבה.",
+	"portable.recovery":
+		"נותרו שינויים לביצוע. יש להשלים את ההמרה ואת עדכוני הקישורים לפני הפעלה מחדש או כיבוי התוסף; התוכנית שנותרה נשמרת בזיכרון בלבד.",
+	"portable.recoveryChanged":
+		"פתקים השתנו מאז שההמרה נעצרה. עדכוני הקישורים שטרם בוצעו נשמרים; כל פתק נבדק שוב לפני הכתיבה.",
 	"portable.finishConversion": "השלמת ההמרה",
-	"portable.recoveryUnavailable": "לא ניתן היה לשחזר בבטחה חלק מעדכוני הקישורים שטרם בוצעו. יש לבדוק את הפתקים שהושפעו לפני התחלת המרה חדשה.",
+	"portable.recoveryUnavailable":
+		"לא ניתן היה לשחזר בבטחה חלק מעדכוני הקישורים שטרם בוצעו. יש לבדוק את הפתקים שהושפעו לפני התחלת המרה חדשה.",
 	"portable.title": "המרה ל־Markdown רגיל",
 	"portable.settingDesc": "החלפת כותרות מיוחדות ותיבות inline בכל הכספת בטקסט רגיל, לשימוש ללא Callout Studio.",
 	"portable.review": "סקירת ההמרה",
-	"portable.intro": "אם ברצונך להפסיק להשתמש ב־Callout Studio או להעביר את הכספת ליישום שאינו תומך בו, אפשר להמיר את הכותרות והאינליין של התוסף ל־Markdown רגיל.",
+	"portable.intro":
+		"אם ברצונך להפסיק להשתמש ב־Callout Studio או להעביר את הכספת ליישום שאינו תומך בו, אפשר להמיר את הכותרות והאינליין של התוסף ל־Markdown רגיל.",
 	"portable.before": "לפני",
 	"portable.after": "אחרי",
 	"portable.replacement": "החלפה",
@@ -293,17 +285,20 @@ export const he: Record<string, string> = {
 	"portable.type": "סוג",
 	"portable.text": "טקסט",
 	"portable.headingText": "כותרת",
-	"portable.backup": "מומלץ לגבות את הכספת לפני ההמרה. הפעולה משנה את הפתקים המקוריים ואין אפשרות לבטל אותה דרך Callout Studio.",
+	"portable.backup":
+		"מומלץ לגבות את הכספת לפני ההמרה. הפעולה משנה את הפתקים המקוריים ואין אפשרות לבטל אותה דרך Callout Studio.",
 	"portable.scanning": "קריאת פתקי Markdown…",
 	"portable.progress": "קריאת פתקים: {{done}} מתוך {{total}}",
 	"portable.empty": "לא נמצאו כותרות מיוחדות או תגיות inline שניתן להמיר. לא יתבצעו שינויים.",
 	"portable.confirmTitle": "להמיר את הכספת לצמיתות?",
 	"portable.confirmSubtitle": "לא נוצר גיבוי אוטומטי",
-	"portable.confirmBody": "להמיר {{count}} מופעים ולעדכן {{links}} קישורי כותרות ב־{{files}} פתקים?\nהפעולה משנה את הקבצים המקוריים ולא ניתן לבטל אותה דרך Callout Studio. לא נוצר גיבוי אוטומטי. יש לגבות את הכספת, לשמור פתקים פתוחים ולהשהות עריכה וסנכרון עד לסיום ההמרה.\nאם קובץ משתנה או כתיבה נכשלת, ההמרה נעצרת. פתקים שכבר הומרו נשארים לאחר השינוי.",
+	"portable.confirmBody":
+		"להמיר {{count}} מופעים ולעדכן {{links}} קישורי כותרות ב־{{files}} פתקים?\nהפעולה משנה את הקבצים המקוריים ולא ניתן לבטל אותה דרך Callout Studio. לא נוצר גיבוי אוטומטי. יש לגבות את הכספת, לשמור פתקים פתוחים ולהשהות עריכה וסנכרון עד לסיום ההמרה.\nאם קובץ משתנה או כתיבה נכשלת, ההמרה נעצרת. פתקים שכבר הומרו נשארים לאחר השינוי.",
 	"portable.confirmAction": "המרה לצמיתות",
 	"portable.converting": "המרת השינויים שנבחרו… סגירת הסרגל לא תעצור את ההמרה.",
 	"portable.complete": "הומרו {{count}} מופעים ועודכנו {{links}} קישורי כותרות ב־{{files}} פתקים.",
-	"portable.stopped": "ההמרה נעצרה. {{count}} מופעים ו־{{links}} קישורי כותרות ב־{{files}} פתקים כבר שונו; השינויים האלה נשארים.",
+	"portable.stopped":
+		"ההמרה נעצרה. {{count}} מופעים ו־{{links}} קישורי כותרות ב־{{files}} פתקים כבר שונו; השינויים האלה נשארים.",
 	"portable.errorEditor": "יש לשמור פתקים פתוחים כדי שהסקירה תתעדכן אוטומטית.",
 	"portable.errorChanged": "הפתקים השתנו. יש לבדוק את השינויים המעודכנים לפני ההמרה.",
 	"portable.errorBusy": "המרה אחרת מתבצעת כעת. יש להמתין לסיומה.",
@@ -315,8 +310,7 @@ export const he: Record<string, string> = {
 
 	"settings.maintenance": "אזור מסוכן",
 	"settings.resetAll": "איפוס הכול",
-	"settings.resetAllDesc":
-		"שחזור כל ההגדרות וההתאמות לברירות המחדל.",
+	"settings.resetAllDesc": "שחזור כל ההגדרות וההתאמות לברירות המחדל.",
 	"settings.resetAllButton": "איפוס הכול",
 	"notice.resetAllDone": "הכול אופס לברירות־המחדל.",
 	"settings.resetIntro": "כדאי לעצור רגע ולהעריך כל מה שבניתם עם Callout Studio.",
@@ -333,55 +327,46 @@ export const he: Record<string, string> = {
 	"settings.resetItemContextMenu": "תפריט הקליק הימני",
 	"settings.resetItemHeading": "הגדרות תיבות־הבלטה בכותרות",
 	"settings.resetItemInline": "הגדרות תיבות־הבלטה בתוך השורה",
-	"settings.resetItemThemeCalloutStyles":
-		"סגנונות תיבות־ההבלטה של ערכת הנושא שלכם",
+	"settings.resetItemThemeCalloutStyles": "סגנונות תיבות־ההבלטה של ערכת הנושא שלכם",
 	"settings.resetItemAutocomplete": "הגדרות השלמה אוטומטית ומטא־נתונים",
 	"settings.resetItemFallback": "סגנון ברירת־מחדל",
 	"settings.resetItemIconLibraries": "סדר ספריות האייקונים וספריות מוסתרות",
-	"settings.resetAllConfirmAfter": "אל דאגה: לפני האיפוס נשמור גיבוי של התצורה הנוכחית שלכם. אפשר להחזיר אותו בכל עת דרך שחזור גרסה קודמת בהגדרות.\nאם אתם משתמשים בשירות סנכרון, האיפוס עשוי להגיע גם למכשירים האחרים שלכם.",
+	"settings.resetAllConfirmAfter":
+		"אל דאגה: לפני האיפוס נשמור גיבוי של התצורה הנוכחית שלכם. אפשר להחזיר אותו בכל עת דרך שחזור גרסה קודמת בהגדרות.\nאם אתם משתמשים בשירות סנכרון, האיפוס עשוי להגיע גם למכשירים האחרים שלכם.",
 	"settings.resetNothing": "אין מה לאפס: הכול כבר בברירות־המחדל.",
 
-	"notice.customCommandMissingCallout":
-		"סוג תיבת־ההבלטה של הפקודה הזו כבר לא קיים.",
+	"notice.customCommandMissingCallout": "סוג תיבת־ההבלטה של הפקודה הזו כבר לא קיים.",
 
 	// Notices
 	"notice.importedJSON": "יובאו {{count}} סוגי תיבות־הבלטה מתוך JSON.",
 	"notice.importedSettings": "הגדרות התוסף יובאו.",
-	"notice.importedCalloutManager":
-		"יובא מתוך Callout Manager: {{created}} נוצרו, {{updated}} עודכנו.",
-	"notice.importedAdmonition":
-		"יובא מתוך Admonition: {{created}} נוצרו, {{updated}} עודכנו.",
-	"notice.noNewJSON":
-		"לא יובאו תיבות־הבלטה חדשות (ייתכן שהמזהים כבר קיימים).",
+	"notice.importedCalloutManager": "יובא מתוך Callout Manager: {{created}} נוצרו, {{updated}} עודכנו.",
+	"notice.importedAdmonition": "יובא מתוך Admonition: {{created}} נוצרו, {{updated}} עודכנו.",
+	"notice.noNewJSON": "לא יובאו תיבות־הבלטה חדשות (ייתכן שהמזהים כבר קיימים).",
 	"notice.iconDownloadFailed":
 		'לא ניתן להוריד את אייקון Material "{{name}}". ייתכן שאינו זמין בסגנון/משקל הזה, או שאין חיבור לאינטרנט.',
 	"notice.externalCssRetired":
 		"האפשרות לעיצוב באמצעות CSS משלכם הוסרה. תיבות־ההבלטה האלה משתמשות כעת בעיצוב השמור שלהן ב־Callout Studio, אלא אם ערכת הנושא שלכם מעצבת אותן. הפתקים וקטעי ה־CSS האישיים שלכם לא השתנו.",
 	"notice.vaultScanFailed":
 		"לא ניתן לספור את השימושים בתיבות־הבלטה משום שלא ניתן לקרוא {{count}} פתקים. בדקו את האחסון והסנכרון ונסו שוב.",
-	"notice.vaultRewritePartial":
-		"לא ניתן לעדכן {{count}} פתקים, והם נשארו ללא שינוי. פרטים נוספים בקונסולת המפתחים.",
-	"notice.calloutDeleteIncomplete": "חלק מהפתקים לא ניתנים להמרה. סוג תיבת־ההבלטה נשמר. ההמרות שהושלמו נשמרו; טפלו בבעיית הקובץ והפעילו שוב את הפעולה כדי לסיים.",
+	"notice.vaultRewritePartial": "לא ניתן לעדכן {{count}} פתקים, והם נשארו ללא שינוי. פרטים נוספים בקונסולת המפתחים.",
+	"notice.calloutDeleteIncomplete":
+		"חלק מהפתקים לא ניתנים להמרה. סוג תיבת־ההבלטה נשמר. ההמרות שהושלמו נשמרו; טפלו בבעיית הקובץ והפעילו שוב את הפעולה כדי לסיים.",
 	"notice.nothingToWrap": "אין תוכן לעטוף.",
 	"notice.cursorNotInsideCallout": "הסמן אינו נמצא בתוך תיבת־הבלטה.",
 	"notice.headingAlreadyCallout": "הכותרת הזו כבר תיבת־הבלטה.",
-	"notice.unwrapLeftAsIs":
-		"אי אפשר היה לחלץ את תיבת־ההבלטה הזו בבטחה, ולכן היא נשארה כמו שהיא.",
-	"notice.autocompleteTargetMoved":
-		"לא נוסף דבר — השורה השתנתה בזמן שהעורך היה פתוח.",
+	"notice.unwrapLeftAsIs": "אי אפשר היה לחלץ את תיבת־ההבלטה הזו בבטחה, ולכן היא נשארה כמו שהיא.",
+	"notice.autocompleteTargetMoved": "לא נוסף דבר — השורה השתנתה בזמן שהעורך היה פתוח.",
 	"notice.autocompleteAlwaysEnabled": "ההשלמה האוטומטית היא כעת תכונת ליבה והיא מופעלת תמיד.",
-	"notice.openHotkeysFailed":
-		"לא ניתן לפתוח את מסך קיצורי המקלדת של Obsidian.",
-	"notice.filterHotkeysFailed":
-		"מסך קיצורי המקלדת נפתח, אך לא ניתן היה לסנן עבור Callout Studio.",
+	"notice.openHotkeysFailed": "לא ניתן לפתוח את מסך קיצורי המקלדת של Obsidian.",
+	"notice.filterHotkeysFailed": "מסך קיצורי המקלדת נפתח, אך לא ניתן היה לסנן עבור Callout Studio.",
 
 	// Callout Editor
 	"editor.editCallout": "עריכת תיבת־הבלטה",
 	"editor.newCallout": "תיבת־הבלטה חדשה",
 	"editor.displayName": "שם לתצוגה",
 	"editor.displayNameDesc": "התווית שתוצג ברחבי הממשק",
-	"editor.displayNameBuiltIn":
-		"לא ניתן לשנות את שם התצוגה של תיבות־הבלטה מובנות",
+	"editor.displayNameBuiltIn": "לא ניתן לשנות את שם התצוגה של תיבות־הבלטה מובנות",
 	"editor.displayNamePlaceholder": "תיבת־ההבלטה שלי",
 	"editor.calloutIds": "מזהי תיבת־הבלטה (IDs)",
 	"editor.calloutIdsDesc":
@@ -390,8 +375,7 @@ export const he: Record<string, string> = {
 	"editor.addId": "הוספת מזהה",
 	"editor.maxIds": "עד {{max}} מזהים. מחקו מזהה כדי להוסיף אחר.",
 	"editor.idLinkedToName": "מקושר לשם התצוגה",
-	"editor.idCannotDelete":
-		"לא ניתן למחוק מזהה זה — הוא מקושר לשם התצוגה. כדי לשנותו, ערכו את השם",
+	"editor.idCannotDelete": "לא ניתן למחוק מזהה זה — הוא מקושר לשם התצוגה. כדי לשנותו, ערכו את השם",
 	"editor.icon": "אייקון",
 	"editor.pickIcon": "שינוי אייקון",
 	"editor.replaceIcon": "החלפת אייקון",
@@ -413,17 +397,16 @@ export const he: Record<string, string> = {
 	"editor.paletteGroupObsidian": "תיבות־הבלטה של Obsidian",
 	"editor.paletteGroupPresets": "תבניות צבע",
 	"editor.paletteGroupCustom": "מותאם אישית",
-	"editor.contrastWarning":
-		"ניגודיות נמוכה מול הרקע — הטקסט עלול להיות קשה לקריאה",
+	"editor.contrastWarning": "ניגודיות נמוכה מול הרקע — הטקסט עלול להיות קשה לקריאה",
 	"editor.foldable": "ניתן לקיפול",
-	"editor.foldableDesc":
-		"האם תיבת־ההבלטה ניתנת לקיפול ומה יהיה מצב ברירת־המחדל שלה ברחבי הכספת.",
+	"editor.foldableDesc": "האם תיבת־ההבלטה ניתנת לקיפול ומה יהיה מצב ברירת־המחדל שלה ברחבי הכספת.",
 	"editor.foldOff": "ללא קיפול",
 	"editor.foldOpen": "פתוח כברירת־מחדל",
 	"editor.foldClosed": "סגור כברירת־מחדל",
 	"editor.cancel": "ביטול",
 	"editor.saveChanges": "שמירת שינויים",
-	"editor.saveFailed": "השמירה לא הושלמה. אם העורך עדיין פתוח, השאירו אותו פתוח ונסו שוב אחרי בדיקת המקום הפנוי והסנכרון. ייתכן שחלק מההגדרות או מעדכוני הפתקים כבר נשמרו.",
+	"editor.saveFailed":
+		"השמירה לא הושלמה. אם העורך עדיין פתוח, השאירו אותו פתוח ונסו שוב אחרי בדיקת המקום הפנוי והסנכרון. ייתכן שחלק מההגדרות או מעדכוני הפתקים כבר נשמרו.",
 	"editor.createCallout": "יצירת תיבת־הבלטה",
 	"editor.nameRequired": "יש להזין שם לתצוגה לפני יצירת תיבת־הבלטה.",
 	"editor.noChangesToSave": "לא בוצעו שינויים.",
@@ -440,21 +423,16 @@ export const he: Record<string, string> = {
 		"{{theme}} מציירת בעצמה את תיבות־ההבלטה הבלוקיות {{names}}, ו־Obsidian מצייר את {{stock}}. שאר המזהים שלכם שומרים על העיצוב הזה.",
 	"editor.idThemePattern":
 		"לתשומת ליבכם: ערכת הנושא שלכם מעצבת כל תיבת־הבלטה שתואמת ל-{{pattern}}, כך שהיא עשויה לשנות את המראה של זו.",
-	"editor.idDashConflict":
-		'אובסידיאן ממיר רווחים למקפים, ולכן מזהה זה מתנגש עם "{{other}}"',
+	"editor.idDashConflict": 'אובסידיאן ממיר רווחים למקפים, ולכן מזהה זה מתנגש עם "{{other}}"',
 	"editor.idOwnedBy": '"{{id}}" הוא מזהה של {{name}}. אפשר {{link}}.',
 	"editor.idMoveHere": "להעביר אותו לכאן",
-	"editor.idOwnedByMain":
-		'"{{id}}" הוא המזהה הראשי של {{name}}. כדי להשתמש בו כאן, מחקו קודם את {{name}}.',
-	"editor.idBuiltInStock":
-		'"{{id}}" הוא אחד המזהים של אובסידיאן עצמה עבור {{name}}.',
+	"editor.idOwnedByMain": '"{{id}}" הוא המזהה הראשי של {{name}}. כדי להשתמש בו כאן, מחקו קודם את {{name}}.',
+	"editor.idBuiltInStock": '"{{id}}" הוא אחד המזהים של אובסידיאן עצמה עבור {{name}}.',
 	"editor.idMoving": 'בעת השמירה, "{{id}}" יעבור לכאן מ{{name}}.',
 	"editor.idMovingNotes": "הפתקים שלכם לא משתנים. הם יקבלו את הסגנון של תיבת־ההבלטה הזו.",
 	"editor.untitledCallout": "תיבת־הבלטה ללא שם",
-	"editor.loremIpsum":
-		"רוח קלה נושבת בין העצים. אור שמש חמים מאיר שביל שקט ומפיח חיים בנוף.",
-	"editor.loremIpsumShort":
-		"רוח קלה נושבת בין העצים.",
+	"editor.loremIpsum": "רוח קלה נושבת בין העצים. אור שמש חמים מאיר שביל שקט ומפיח חיים בנוף.",
+	"editor.loremIpsumShort": "רוח קלה נושבת בין העצים.",
 	"editor.sampleInlineText": "כאן יש תיבת־הבלטה מוטבעת מסוג [!{id}]{{title}} בתוך פסקה.",
 	"editor.previewReadOnly": "לא ניתן לערוך את התצוגה המקדימה",
 	"noteChanges.title": "לעדכן את הפתקים שלכם?",
@@ -465,18 +443,15 @@ export const he: Record<string, string> = {
 	"noteChanges.titlesChange": 'לשנות אותם ל־"{{new}}"',
 	"noteChanges.titlesLeaveDesc": 'הן ימשיכו להציג "{{old}}".',
 	"noteChanges.foldChange": 'להגדיר אותן כ־"{{state}}"',
-	"noteChanges.foldLeaveDesc":
-		"רק תיבות־הבלטה שתוסיפו מעכשיו ישתמשו בהגדרה החדשה.",
+	"noteChanges.foldLeaveDesc": "רק תיבות־הבלטה שתוסיפו מעכשיו ישתמשו בהגדרה החדשה.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": '{{name}} — מסופקת על־ידי ערכת הנושא שלכם',
+	"themePreview.title": "{{name}} — מסופקת על־ידי ערכת הנושא שלכם",
 	"themePreview.summary":
 		"מסופקת על־ידי {{theme}} (לקריאה בלבד). אי אפשר לשנות כאן את הצבע, האייקון או המזהה, והפורמטים כותרת/מוטבעת אינם זמינים. להתאמה אישית, צרו תיבת־הבלטה חדשה.",
 	"themePreview.previewTitle": "איך היא נראית כרגע",
-	"themePreview.blockSample":
-		"> [!{{id}}] {{name}}\n" +
-		"> כך נראה התוכן של תיבת־ההבלטה.\n",
+	"themePreview.blockSample": "> [!{{id}}] {{name}}\n" + "> כך נראה התוכן של תיבת־ההבלטה.\n",
 
 	// Theme callout preview window
 	"editor.themePreviewClose": "הבנתי",
@@ -490,24 +465,24 @@ export const he: Record<string, string> = {
 	"palette.namePlaceholder": "הפלטה שלי",
 	"palette.nameExists": "כבר קיימת פלטה בשם הזה",
 	"palette.saveBlockedName": "כבר קיימת פלטה בשם הזה. יש לבחור שם אחר כדי לשמור.",
-	"palette.metadataNameExists":
-		"פלטה אחרת כבר כתובה כ„{{key}}” במטא־נתונים של תיבת־ההבלטה. יש לבחור שם אחר.",
+	"palette.metadataNameExists": "פלטה אחרת כבר כתובה כ„{{key}}” במטא־נתונים של תיבת־ההבלטה. יש לבחור שם אחר.",
 	"palette.metadataNameShared":
 		"במטא־נתונים של תיבת־ההבלטה: {{key}}. גם לפלטה שמורה אחרת יש את המילה הזאת, ולכן רק אחת מהן עונה לה.",
 	"palette.renameNotesChange":
-		"שיניתם את שם הפלטה מ־\"{{old}}\" ל־\"{{new}}\", ולכן המילה שלה במטא-נתונים של תיבת־ההבלטה משתנה מ־\"{{oldWord}}\" ל־\"{{newWord}}\".",
-	"palette.renameNotesLeaveDesc": "הן ישמרו את \"{{word}}\" ויחזרו לצבע של עצמן.",
+		'שיניתם את שם הפלטה מ־"{{old}}" ל־"{{new}}", ולכן המילה שלה במטא-נתונים של תיבת־ההבלטה משתנה מ־"{{oldWord}}" ל־"{{newWord}}".',
+	"palette.renameNotesLeaveDesc": 'הן ישמרו את "{{word}}" ויחזרו לצבע של עצמן.',
 	"palette.renameNotesChangeDesc": "כל |{{old}} בפתקים שלכם יהפוך ל־|{{new}}.",
-	"palette.renameNotesFailed":
-		"לא ניתן היה לעדכן חלק מהפתקים. אלה שעודכנו נשמרו; השאר עדיין משתמשים בשם הישן.",
+	"palette.renameNotesFailed": "לא ניתן היה לעדכן חלק מהפתקים. אלה שעודכנו נשמרו; השאר עדיין משתמשים בשם הישן.",
 	"palette.baseColor": "צבע בסיס",
 	"palette.colorViewAdvanced": "הגדרת כל צבע בנפרד",
 	"palette.colorViewSimple": "חזרה לצבע בסיס יחיד",
 	"palette.advancedColors": "צבעים",
 	"palette.lightModeColors": "צבעי המצב הבהיר",
 	"palette.darkModeColors": "צבעי המצב הכהה",
-	"palette.modeColorsHintLight": "השינויים האלה חלים על המצב הבהיר בלבד. במצב הכהה נשארים הצבעים שלו.\nכדי לערוך אותם, לחצו על כפתור הירח למעלה.",
-	"palette.modeColorsHintDark": "השינויים האלה חלים על המצב הכהה בלבד. במצב הבהיר נשארים הצבעים שלו.\nכדי לערוך אותם, לחצו על כפתור השמש למעלה.",
+	"palette.modeColorsHintLight":
+		"השינויים האלה חלים על המצב הבהיר בלבד. במצב הכהה נשארים הצבעים שלו.\nכדי לערוך אותם, לחצו על כפתור הירח למעלה.",
+	"palette.modeColorsHintDark":
+		"השינויים האלה חלים על המצב הכהה בלבד. במצב הבהיר נשארים הצבעים שלו.\nכדי לערוך אותם, לחצו על כפתור השמש למעלה.",
 	"palette.showLightMode": "הצגת המצב הבהיר",
 	"palette.showDarkMode": "הצגת המצב הכהה",
 	"palette.accentColor": "צבע הדגשה",
@@ -599,12 +574,9 @@ export const he: Record<string, string> = {
 	"iconPicker.searchSimpleIcons": "חיפוש ב־Simple Icons",
 	"iconPicker.custom": "אייקונים מותאמים אישית",
 	"iconPicker.searchCustom": "חיפוש באייקונים מותאמים אישית",
-	"iconPicker.customTooLarge":
-		"{{name}} גדול מדי. אייקונים מותאמים אישית יכולים להיות בגודל של עד 5 MB.",
-	"iconPicker.customUnsupported":
-		"{{name}} אינו קובץ אייקון מותאם אישית נתמך. יש להשתמש ב־SVG, PNG, JPEG או WebP.",
-	"iconPicker.customInvalidSvg":
-		"לא ניתן לקרוא את {{name}} כקובץ SVG בטוח, ולכן הוא לא נוסף.",
+	"iconPicker.customTooLarge": "{{name}} גדול מדי. אייקונים מותאמים אישית יכולים להיות בגודל של עד 5 MB.",
+	"iconPicker.customUnsupported": "{{name}} אינו קובץ אייקון מותאם אישית נתמך. יש להשתמש ב־SVG, PNG, JPEG או WebP.",
+	"iconPicker.customInvalidSvg": "לא ניתן לקרוא את {{name}} כקובץ SVG בטוח, ולכן הוא לא נוסף.",
 	"iconPicker.customDecodeFailed": "לא ניתן לקרוא את {{name}} כאייקון מותאם אישית.",
 	"iconPicker.customDuplicate":
 		"{{name}} כבר נמצא באייקונים המותאמים אישית שלכם. אפשר לשנות את שם הקובץ או למחוק את האייקון הקיים.",
@@ -762,8 +734,7 @@ export const he: Record<string, string> = {
 	"iconPack.downloadDetail": "{{count}} אייקונים · {{size}} · הורדה חד־פעמית",
 	"iconPack.download": "הורדה",
 	"iconPack.downloading": "מוריד את {{name}}…",
-	"iconPack.downloadFailed":
-		"לא ניתן היה להוריד את {{name}}. בדקו את החיבור לאינטרנט ונסו שוב.",
+	"iconPack.downloadFailed": "לא ניתן היה להוריד את {{name}}. בדקו את החיבור לאינטרנט ונסו שוב.",
 	"iconPack.retry": "נסו שוב",
 	"iconPack.faBrandsNotice":
 		"אייקוני המותגים הם סימני מסחר של בעליהם. הכללתם כאן אינה מהווה חסות או אישור מצדם. אנא השתמשו בהם רק כדי לייצג את החברה, המוצר או השירות שאליהם הם מתייחסים.",
@@ -858,16 +829,14 @@ export const he: Record<string, string> = {
 	"settings.metadataWordAlreadyHere": "המילה הזאת כבר ברשימה",
 	"settings.metadataWordTooLong": "מילה יכולה להכיל עד {{max}} תווים",
 	"settings.maxMetadataWords": "עד {{max}} מילים. מחקו אחת כדי להוסיף אחרת.",
-	"settings.buildFailed": "Callout Studio לא הצליח לצייר את ההגדרות שלו. הפעילו מחדש את Obsidian, ואם זה קורה שוב, דווחו על כך.",
-	"settings.globalSettingsRegularDesc":
-		"מסגרת, עיגול פינות, קנה־מידה של הגופן ויישור.",
-	"settings.globalSettingsHeadingDesc":
-		"מסגרת, צורה וריווח אנכי.",
-	"settings.globalSettingsInlineDesc":
-		"מסגרת וצורה.",
-	"settings.themeCalloutStyles":
-		"שימוש בסגנונות תיבות־ההבלטה של ערכת הנושא שלכם",
-	"settings.themeCalloutStylesDesc": "כשהאפשרות פעילה, תיבות־ההבלטה שהערכה שלכם מעצבת שומרות על המראה שלה ומופיעות רק כתיבות־הבלטה מסוג בלוק. כשהיא כבויה, Callout Studio מצייר את כולן.",
+	"settings.buildFailed":
+		"Callout Studio לא הצליח לצייר את ההגדרות שלו. הפעילו מחדש את Obsidian, ואם זה קורה שוב, דווחו על כך.",
+	"settings.globalSettingsRegularDesc": "מסגרת, עיגול פינות, קנה־מידה של הגופן ויישור.",
+	"settings.globalSettingsHeadingDesc": "מסגרת, צורה וריווח אנכי.",
+	"settings.globalSettingsInlineDesc": "מסגרת וצורה.",
+	"settings.themeCalloutStyles": "שימוש בסגנונות תיבות־ההבלטה של ערכת הנושא שלכם",
+	"settings.themeCalloutStylesDesc":
+		"כשהאפשרות פעילה, תיבות־ההבלטה שהערכה שלכם מעצבת שומרות על המראה שלה ומופיעות רק כתיבות־הבלטה מסוג בלוק. כשהיא כבויה, Callout Studio מצייר את כולן.",
 
 	// Callout types section
 	"settings.calloutTypeRegular": "עיצוב תיבת־הבלטה מסוג בלוק",
@@ -910,19 +879,14 @@ export const he: Record<string, string> = {
 	// callout ids, which are normally Latin, so the bidi algorithm resolves that
 	// fragment left-to-right and a mirrored "←" would point from the new id back
 	// to the old one. Prose paths such as `firstRun.laterHint` do mirror.
-	"vault.idsUpdated":
-		"עודכנו {{count}} מזהים של תיבות־הבלטה בקובצי הכספת: {{oldIds}} → {{newId}}",
-	"vault.titlesUpdated":
-		"עודכנו {{count}} כותרות של תיבות־הבלטה בקובצי הכספת: {{oldTitle}} → {{newTitle}}",
-	"vault.foldUpdated":
-		"סימן הקיפול של {{count}} תיבות־הבלטה בקובצי הכספת עודכן.",
+	"vault.idsUpdated": "עודכנו {{count}} מזהים של תיבות־הבלטה בקובצי הכספת: {{oldIds}} → {{newId}}",
+	"vault.titlesUpdated": "עודכנו {{count}} כותרות של תיבות־הבלטה בקובצי הכספת: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated": "סימן הקיפול של {{count}} תיבות־הבלטה בקובצי הכספת עודכן.",
 	"vault.confirmReplace": "החלפה",
-	"vault.replacePromptInUse":
-		'"{{name}}" מופיעה {{count}} פעמים ב־{{files}} קבצים. בחרו תיבת־הבלטה חלופית:',
+	"vault.replacePromptInUse": '"{{name}}" מופיעה {{count}} פעמים ב־{{files}} קבצים. בחרו תיבת־הבלטה חלופית:',
 	"vault.replacePromptUnused": 'בחרו תיבת־הבלטה להחלפת "{{name}}":',
 	"vault.noReplacementAvailable": "אין תיבות־הבלטה אחרות הזמינות להחלפה.",
-	"vault.convertedToPlainText":
-		"הומרו {{blocks}} בלוקים של תיבות־הבלטה ב־{{files}} קבצים לטקסט רגיל.",
+	"vault.convertedToPlainText": "הומרו {{blocks}} בלוקים של תיבות־הבלטה ב־{{files}} קבצים לטקסט רגיל.",
 	"vault.resetNotesFailed":
 		"לא ניתן היה לעדכן חלק מהפתקים, ולכן תיבת־ההבלטה לא אופסה. בחרו שוב באיפוס לברירת־מחדל כדי לסיים.",
 
@@ -940,7 +904,8 @@ export const he: Record<string, string> = {
 	"quickInsert.noResults": "לא נמצאו תיבות־הבלטה",
 	"quickInsert.noBuiltInCallouts": "אין כרגע תיבות־הבלטה מובנות זמינות.",
 	"quickInsert.noThemeCallouts": "אין כרגע תיבות־הבלטה ייעודיות לערכת הנושא זמינות.",
-	"quickInsert.targetMoved": "הפתק שממנו פתחתם את ההוספה המהירה השתנה או נסגר. פתחו מחדש את ההוספה המהירה בפתק שברצונכם לערוך.",
+	"quickInsert.targetMoved":
+		"הפתק שממנו פתחתם את ההוספה המהירה השתנה או נסגר. פתחו מחדש את ההוספה המהירה בפתק שברצונכם לערוך.",
 	"quickInsert.targetMovedHint": "הפתק המקורי כבר אינו זמין להוספה זו.",
 	"quickInsert.noUserCallouts":
 		"עדיין לא יצרתם תיבות־הבלטה מותאמות־אישית. הפעילו את הפקודה „Callout Studio: יצירת סוג תיבת־הבלטה חדש” מלוח הפקודות.",
@@ -981,83 +946,62 @@ export const he: Record<string, string> = {
 
 	// Import validation
 	"import.title": "בעיות בייבוא",
-	"import.reportLeadIn":
-		"בדקו את בעיות הייבוא האלה לפני שתמשיכו:",
-	"import.reportLeadInFatal":
-		"לא ניתן לייבא את הנתונים האלה:",
+	"import.reportLeadIn": "בדקו את בעיות הייבוא האלה לפני שתמשיכו:",
+	"import.reportLeadInFatal": "לא ניתן לייבא את הנתונים האלה:",
 	"import.entryHeading": "רשומה {{index}} — {{label}}",
-	"import.summary":
-		"{{valid}} מתוך {{total}} רשומות נמצאו תקינות · התגלו {{issues}} בעיות.",
+	"import.summary": "{{valid}} מתוך {{total}} רשומות נמצאו תקינות · התגלו {{issues}} בעיות.",
 	"import.btnCancel": "ביטול",
 	"import.btnImportValid": "ייבוא הרשומות התקינות בלבד ({{count}})",
-	"import.nothingValid": "אף אחת מהרשומות אינה תקינה, ולכן אין מה לייבא. יש לבטל, לתקן את הבעיות שמופיעות כאן ולייבא שוב.",
-	"import.err.notRecognized":
-		"קובץ לא מזוהה: נדרש מערך של הגדרות תיבת־הבלטה או קובץ ייצוא של Callout Studio.",
-	"import.warn.settingsIgnored":
-		"מקטע ההגדרות לא היה אובייקט תקין ולכן לא יובא.",
-	"import.warn.invalidGradient":
-		"גרדיאנט הרקע לא היה תקין ולכן לא נלקח בחשבון.",
+	"import.nothingValid":
+		"אף אחת מהרשומות אינה תקינה, ולכן אין מה לייבא. יש לבטל, לתקן את הבעיות שמופיעות כאן ולייבא שוב.",
+	"import.err.notRecognized": "קובץ לא מזוהה: נדרש מערך של הגדרות תיבת־הבלטה או קובץ ייצוא של Callout Studio.",
+	"import.warn.settingsIgnored": "מקטע ההגדרות לא היה אובייקט תקין ולכן לא יובא.",
+	"import.warn.invalidGradient": "גרדיאנט הרקע לא היה תקין ולכן לא נלקח בחשבון.",
 	"import.err.parseFailed": "הקובץ אינו JSON תקין ולכן לא ניתן לפענח אותו.",
 	"import.err.tooLarge": "הייבוא הזה חורג ממגבלת הגודל של 16 MiB. יש לפצל אותו לקבצים קטנים יותר ולנסות שוב.",
-	"import.err.tooComplex": "הייבוא הזה מורכב מדי: עד 1,000 פריטים בכל רשימה או אובייקט, 50,000 ערכים בסך הכול ו־32 רמות קינון לכל היותר.",
-	"import.err.imageBudget": "אוסף התמונות חורג ממגבלות הגודל או המורכבות. יש להסיר תמונות גדולות או לפשט אותן לפני הייבוא.",
+	"import.err.tooComplex":
+		"הייבוא הזה מורכב מדי: עד 1,000 פריטים בכל רשימה או אובייקט, 50,000 ערכים בסך הכול ו־32 רמות קינון לכל היותר.",
+	"import.err.imageBudget":
+		"אוסף התמונות חורג ממגבלות הגודל או המורכבות. יש להסיר תמונות גדולות או לפשט אותן לפני הייבוא.",
 	"import.err.processingFailed": "לא ניתן להשלים את הייבוא. יש לבדוק את הנתונים ולנסות שוב.",
 	"import.reportTruncated": "מוצגות {{shown}} הבעיות הראשונות מתוך {{total}}. ערכים ארוכים קוצרו בדוח הזה.",
 	"import.err.entryNotObject": "כל רשומה חייבת להיות אובייקט (Object).",
 	"import.err.requiredMissing": 'שדה החובה "{{field}}" חסר או שסוגו שגוי.',
 	"import.err.idEmpty": "ה־ID לא יכול להיות ריק.",
-	"import.err.idTooLong":
-		'ה־ID "{{value}}" ארוך מדי ({{length}} תווים); המקסימום המותר הוא {{max}}.',
-	"import.err.idBadChar":
-		'ה־ID "{{value}}" מכיל תווים לא חוקיים ("|", "[", "]", טאבים ומעברי שורה אינם מורשים).',
+	"import.err.idTooLong": 'ה־ID "{{value}}" ארוך מדי ({{length}} תווים); המקסימום המותר הוא {{max}}.',
+	"import.err.idBadChar": 'ה־ID "{{value}}" מכיל תווים לא חוקיים ("|", "[", "]", טאבים ומעברי שורה אינם מורשים).',
 	"import.err.idMetadata":
 		'ה־ID "{{value}}" מכיל "|". ב־Obsidian כל מה שאחרי ה־"|" הראשון הוא מטא־דאטה של תיבת־ההבלטה, ולא חלק מהסוג שלה. לכן הרשומה הזו מתארת את תיבת־ההבלטה "{{id}}". הרשומה דולגה, כך שהסוג "{{id}}" שכבר קיים אצלכם לא השתנה.',
 	"import.err.idReserved":
 		'ה־ID "{{value}}" שמור עבור Callout Studio לצורך התצוגות המקדימות שלו ולא ניתן לייבא אותו.',
 	"import.err.displayNameEmpty": "שם התצוגה לא יכול להיות ריק.",
-	"import.err.displayNameTooLong":
-		"שם התצוגה ארוך מדי ({{length}} תווים); המקסימום המותר הוא {{max}}.",
-	"import.err.boolField":
-		'"{{field}}" חייב להיות ערך בוליאני (true או false).',
+	"import.err.displayNameTooLong": "שם התצוגה ארוך מדי ({{length}} תווים); המקסימום המותר הוא {{max}}.",
+	"import.err.boolField": '"{{field}}" חייב להיות ערך בוליאני (true או false).',
 	"import.err.iconNotObject": '"icon" חייב להיות אובייקט (Object).',
-	"import.err.iconTypeInvalid":
-		'סוג האייקון "{{value}}" אינו חוקי (חייב להיות אחד מ־{{types}}).',
+	"import.err.iconTypeInvalid": 'סוג האייקון "{{value}}" אינו חוקי (חייב להיות אחד מ־{{types}}).',
 	"import.warn.iconFieldIgnored":
 		'השדה "{{field}}" רלוונטי רק לאייקוני Material, ולכן מתעלמים ממנו עבור סוג אייקון {{type}}.',
-	"import.err.iconValueEmpty":
-		"ערך האייקון חייב להיות מחרוזת (String) שאינה ריקה.",
-	"import.err.iconValueTooLong":
-		"ערך האייקון חורג מהמגבלה של 200 תווים ({{length}} תווים).",
+	"import.err.iconValueEmpty": "ערך האייקון חייב להיות מחרוזת (String) שאינה ריקה.",
+	"import.err.iconValueTooLong": "ערך האייקון חורג מהמגבלה של 200 תווים ({{length}} תווים).",
 	"import.err.materialStyle":
 		'סגנון אייקון Material "{{value}}" אינו חוקי (חייב להיות אחד מ־outlined, filled, rounded או sharp).',
-	"import.err.materialWeight":
-		'משקל אייקון Material "{{value}}" חייב להיות מספר שלם בין 100 ל־700 (בקפיצות של 100).',
+	"import.err.materialWeight": 'משקל אייקון Material "{{value}}" חייב להיות מספר שלם בין 100 ל־700 (בקפיצות של 100).',
 	"import.warn.iconRecolorIgnored":
 		'השדה "recolor" רלוונטי רק לתמונות שלכם, ולכן מתעלמים ממנו עבור סוג אייקון {{type}}.',
-	"import.err.iconRecolorInvalid":
-		'השדה "recolor" חייב להיות true או false (התקבל "{{value}}").',
-	"import.err.colorInvalid":
-		'"{{field}}" חייב להיות בצבע hex בפורמט "#448aff" (התקבל "{{value}}").',
-	"import.err.numberRange":
-		'"{{field}}" חייב להיות מספר בין {{min}} ל־{{max}} (התקבל "{{value}}").',
-	"import.err.iconSizeRange":
-		'"{{field}}" חייב להיות מספר בין {{min}} ל־{{max}} (התקבל "{{value}}").',
+	"import.err.iconRecolorInvalid": 'השדה "recolor" חייב להיות true או false (התקבל "{{value}}").',
+	"import.err.colorInvalid": '"{{field}}" חייב להיות בצבע hex בפורמט "#448aff" (התקבל "{{value}}").',
+	"import.err.numberRange": '"{{field}}" חייב להיות מספר בין {{min}} ל־{{max}} (התקבל "{{value}}").',
+	"import.err.iconSizeRange": '"{{field}}" חייב להיות מספר בין {{min}} ל־{{max}} (התקבל "{{value}}").',
 	"import.err.iconAdjustShape":
 		'"iconAdjust" חייב להיות אובייקט הממפה סוג תיבת־הבלטה ("regular", "heading", "inline") לגודל האייקון ולהיסטים שלו.',
-	"import.err.aliasesNotArray":
-		'"aliases" חייב להיות מערך (Array) של מחרוזות (Strings).',
+	"import.err.aliasesNotArray": '"aliases" חייב להיות מערך (Array) של מחרוזות (Strings).',
 	"import.err.aliasNotString": "כינוי (Alias) חייב להיות מחרוזת (String).",
-	"import.err.aliasDup":
-		'הכינוי "{{value}}" מופיע יותר מפעם אחת באותה רשומה.',
-	"import.err.tooManyIds":
-		"יותר מדי ID־ים ({{count}}); לכל תיבת־הבלטה מותרים עד {{max}} ID־ים (ראשי + כינויים).",
-	"import.err.metadataShape":
-		'"metadata" חייב להיות אובייקט (Object) שכל ערכיו הם מחרוזות.',
+	"import.err.aliasDup": 'הכינוי "{{value}}" מופיע יותר מפעם אחת באותה רשומה.',
+	"import.err.tooManyIds": "יותר מדי ID־ים ({{count}}); לכל תיבת־הבלטה מותרים עד {{max}} ID־ים (ראשי + כינויים).",
+	"import.err.metadataShape": '"metadata" חייב להיות אובייקט (Object) שכל ערכיו הם מחרוזות.',
 	"import.warn.unknownFields": "התעלמנו משדות לא מוכרים: {{fields}}.",
-	"import.err.duplicateInFile":
-		'ה־ID או הכינוי "{{value}}" כבר נמצא בשימוש ברשומה #{{first}} בקובץ זה.',
-	"import.err.aliasConflict":
-		'הכינוי "{{value}}" כבר נמצא בשימוש בתיבת־הבלטה אחרת ("{{other}}") בכספת שלכם.',
+	"import.err.duplicateInFile": 'ה־ID או הכינוי "{{value}}" כבר נמצא בשימוש ברשומה #{{first}} בקובץ זה.',
+	"import.err.aliasConflict": 'הכינוי "{{value}}" כבר נמצא בשימוש בתיבת־הבלטה אחרת ("{{other}}") בכספת שלכם.',
 	// Footer
 	"footer.openIssue": "דיווח על בעיה",
 	"footer.sourceCode": "קוד מקור",
@@ -1069,12 +1013,9 @@ export const he: Record<string, string> = {
 	"import.warn.imageMissing":
 		"תיבת־ההבלטה הזו משתמשת בתמונה שאינה בקובץ ואינה בכספת הזו, ולכן יוצג " +
 		"אייקון זמני עד שתבחרו לה אייקון חדש.",
-	"import.err.paletteIdInvalid":
-		'"paletteId" חייב להיות מזהה טקסט שאינו ריק (התקבל "{{value}}").',
-	"import.warn.iconNameUnknown":
-		'אין אייקון בשם "{{value}}" ב־{{type}}, ולכן נעשה שימוש באייקון ברירת המחדל.',
-	"import.warn.cmIconUnknownNew":
-		'אייקון בשם "{{value}}" אינו זמין בכספת הזו, ולכן נעשה שימוש באייקון ברירת המחדל.',
+	"import.err.paletteIdInvalid": '"paletteId" חייב להיות מזהה טקסט שאינו ריק (התקבל "{{value}}").',
+	"import.warn.iconNameUnknown": 'אין אייקון בשם "{{value}}" ב־{{type}}, ולכן נעשה שימוש באייקון ברירת המחדל.',
+	"import.warn.cmIconUnknownNew": 'אייקון בשם "{{value}}" אינו זמין בכספת הזו, ולכן נעשה שימוש באייקון ברירת המחדל.',
 	"import.warn.cmIconUnknownExisting":
 		'אייקון בשם "{{value}}" אינו זמין בכספת הזו, ולכן "{{id}}" נשאר עם האייקון הקיים שלו.',
 
@@ -1106,28 +1047,26 @@ export const he: Record<string, string> = {
 	"import.cmVaultChecking": "מחפש את התוסף Callout Manager…",
 	"import.cmVaultFound": "נמצאו {{count}} תיבות־הבלטה מותאמות־אישית.",
 	"import.cmFromPaste": "סגנונות שהועתקו",
-	"import.cmFromPasteDesc":
-		"מה שכפתור ה־Copy של Callout Manager מעתיק, או קובץ data.json.",
+	"import.cmFromPasteDesc": "מה שכפתור ה־Copy של Callout Manager מעתיק, או קובץ data.json.",
 	"import.cmInstructions":
 		"כל תיבת־הבלטה מותאמת מיובאת עם האייקון והצבע שלה. עיצוב ייחודי לערכת נושא ו־CSS מותאם אישית אינם נתמכים כאן ולא ייובאו.",
 	"import.cmPlaceholder": "הדביקו כאן סגנונות שהועתקו, או תוכן של קובץ data.json…",
 	"import.cmBtnCancel": "ביטול",
 	"import.cmBtnImport": "ייבוא",
-	"import.err.cmNoBlocksFound":
-		"לא נמצאו סגנונות של Callout Manager בקובץ או בטקסט שהודבק.",
+	"import.err.cmNoBlocksFound": "לא נמצאו סגנונות של Callout Manager בקובץ או בטקסט שהודבק.",
 	"import.err.cmNotRecognized":
 		"קובץ לא מזוהה: נדרשו הסגנונות שנוצרים באמצעות כפתור ה־Copy של Callout Manager, או קובץ data.json של Callout Manager.",
 	"import.err.cmNoEntries": "לא נמצאו תיבות־הבלטה מותאמות־אישית לייבוא.",
-	"import.err.cmNoColorForNew":
-		'לא נמצא צבע תקין עבור תיבת־ההבלטה החדשה "{{value}}"; היא דולגה.',
+	"import.err.cmNoColorForNew": 'לא נמצא צבע תקין עבור תיבת־ההבלטה החדשה "{{value}}"; היא דולגה.',
 	"import.err.cmIdConflict":
 		'המזהה "{{value}}" כבר משמש ככינוי (alias) עבור תיבת־הבלטה אחרת ("{{other}}"), ולכן דולג.',
-	"import.warn.cmNoColorDefault":
-		"לא הוגדר צבע ב־Callout Manager, ולכן נעשה שימוש באפור ברירת־המחדל.",
+	"import.warn.cmNoColorDefault": "לא הוגדר צבע ב־Callout Manager, ולכן נעשה שימוש באפור ברירת־המחדל.",
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "אי אפשר לשמר עיצוב שתלוי בערכת העיצוב. יש עדיפות לערכים שאינם מותנים; כל ערך חלופי מותנה מוחל בכל ערכות העיצוב.",
-	"import.warn.cmCustomStylesSkipped": "CSS מותאם אישית מ־Callout Manager לא מיובא. אפשר להעביר רק הגדרות נתמכות של סמלים וצבעים.",
+	"import.warn.cmThemeConditionPartial":
+		"אי אפשר לשמר עיצוב שתלוי בערכת העיצוב. יש עדיפות לערכים שאינם מותנים; כל ערך חלופי מותנה מוחל בכל ערכות העיצוב.",
+	"import.warn.cmCustomStylesSkipped":
+		"CSS מותאם אישית מ־Callout Manager לא מיובא. אפשר להעביר רק הגדרות נתמכות של סמלים וצבעים.",
 	"import.warn.cmSchemeIcon": "Callout Studio משתמש באותו סמל בשתי ערכות הצבעים; הסמל שיובא ישמש בשתיהן.",
 	"import.err.cmDuplicateId": "המזהה {{value}} כפול למזהה {{other}} בייבוא הזה ולכן דולג.",
 	"import.admTitle": "ייבוא מתוך Admonition",
@@ -1142,33 +1081,27 @@ export const he: Record<string, string> = {
 	"import.admFromFileDesc": "קובץ admonitions.json, או חבילה משותפת.",
 	"import.admBtnCancel": "ביטול",
 	"import.admBtnImport": "ייבוא",
-	"import.err.admNotRecognized":
-		"קובץ לא מזוהה: נדרשת רשימת תיבות, או קובץ data.json של Admonition.",
+	"import.err.admNotRecognized": "קובץ לא מזוהה: נדרשת רשימת תיבות, או קובץ data.json של Admonition.",
 	"import.err.admNoEntries": "לא נמצאו תיבות של Admonition לייבוא.",
 	"import.err.admTypeMissing": 'לתיבה הזו חסר השדה "type", ולכן היא דולגה.',
 	"import.warn.admIconUnknown":
-		'לא נמצא אייקון בשם "{{value}}" באף ספריית אייקונים, ולכן נעשה ' +
-		"שימוש באייקון ברירת המחדל.",
+		'לא נמצא אייקון בשם "{{value}}" באף ספריית אייקונים, ולכן נעשה ' + "שימוש באייקון ברירת המחדל.",
 	"import.warn.admIconUnknownExisting":
-		'לא נמצא אייקון בשם "{{value}}" באף ספריית אייקונים, ולכן ' +
-		'"{{id}}" נשאר עם האייקון הקיים שלו.',
+		'לא נמצא אייקון בשם "{{value}}" באף ספריית אייקונים, ולכן ' + '"{{id}}" נשאר עם האייקון הקיים שלו.',
 	"import.warn.admUnsupportedOptions": "אפשרויות Admonition האלה לא מיובאות: {{fields}}.",
 	"import.warn.admImageSkipped": "לא ניתן לקרוא את התמונה שהועלתה והיא לא יובאה.",
 	"import.warn.admIconWithCss":
 		"התיבה הזו מעוצבת על־ידי קטע CSS ב־Admonition. העיצוב הזה אינו " +
 		"חלק מהייבוא, ולכן עברו רק השם, האייקון והצבע.",
-	"import.warn.admNoColor":
-		"לא הוגדר צבע, ולכן נעשה שימוש בכחול ברירת המחדל.",
-	"import.warn.admTitleTruncated":
-		"הכותרת באורך {{length}} תווים; היא קוצרה ל־{{max}}.",
+	"import.warn.admNoColor": "לא הוגדר צבע, ולכן נעשה שימוש בכחול ברירת המחדל.",
+	"import.warn.admTitleTruncated": "הכותרת באורך {{length}} תווים; היא קוצרה ל־{{max}}.",
 	"settings.deletePaletteBodyLinkedOne":
-		'תיבת־הבלטה אחת משתמשת בה. הצבעים שלה נשמרים, ואפשר לחבר אותה שוב אחר כך משורת הצבע בעורך שלה.',
+		"תיבת־הבלטה אחת משתמשת בה. הצבעים שלה נשמרים, ואפשר לחבר אותה שוב אחר כך משורת הצבע בעורך שלה.",
 	"settings.deletePaletteBodyLinked":
-		'{{count}} תיבות־הבלטה משתמשות בה. הצבעים שלהן נשמרים, ואפשר לחבר אותן שוב אחר כך משורת הצבע בכל אחד מהעורכים שלהן.',
+		"{{count}} תיבות־הבלטה משתמשות בה. הצבעים שלהן נשמרים, ואפשר לחבר אותן שוב אחר כך משורת הצבע בכל אחד מהעורכים שלהן.",
 	"notice.palettesMerged":
 		"מוזגו {{count}} צבעים שמורים שהיו עם צבעים זהים: {{names}}. תיבות־ההבלטה שמשתמשות בהם שומרות על הצבעים שלהן וכעת מקושרות לצבע שנשאר.",
-	"editor.colorsDescDeleted":
-		"הצבע השמור של תיבת־הבלטה זו נמחק. {{link}}",
+	"editor.colorsDescDeleted": "הצבע השמור של תיבת־הבלטה זו נמחק. {{link}}",
 	"editor.colorsDescDeletedLink": "שחזור",
 	"palette.colorExists":
 		'הצבעים האלה זהים ל־"{{name}}". שני צבעים שמורים לא יכולים להיות זהים — שנו צבע כדי להבדיל ביניהם.',
@@ -1185,8 +1118,7 @@ export const he: Record<string, string> = {
 	"notice.exportedCssUpdated": "קטע ה־CSS עודכן ב־{{path}}",
 	"notice.exportedCssUnchanged": "קטע ה־CSS כבר מעודכן.",
 	"notice.exportCssEmpty": "אין תיבות־הבלטה מותאמות־אישית לייצוא.",
-	"notice.exportCssFailed":
-		"לא ניתן לשמור את קטע ה־CSS. בדקו את קונסולת המפתחים לפרטים.",
+	"notice.exportCssFailed": "לא ניתן לשמור את קטע ה־CSS. בדקו את קונסולת המפתחים לפרטים.",
 	"notice.exportCssEnabled":
 		"קטע זה מופעל בכספת הזו. Callout Studio כבר מעצב כאן את תיבות־ההבלטה, והקטע שומר את העיצוב שהיה בעת הייצוא.",
 	"confirm.titleOverwriteSnippet": "שכתוב קטע CSS",
@@ -1207,101 +1139,142 @@ export const he: Record<string, string> = {
 	"quickInsert.readingView": "עברו למצב מקור או לתצוגה מקדימה בזמן אמת כדי להוסיף תיבת־הבלטה.",
 	"quickInsert.noCursorHint": "אין סמן בפתק הזה, ולכן אין היכן להוסיף.",
 	"quickInsert.noCursor": "מקמו את הסמן בפתק במקום שבו תרצו להוסיף את תיבת־ההבלטה, ולאחר מכן נסו שוב.",
-	"notice.legacyDiscoveryArchiveFailed": "יצירת עותק השחזור בזמן השדרוג לא הושלמה. מטמון הגילוי המקומי הקודם ועיצוב האתחול נשמרו ללא שינוי. יש לבדוק הרשאות כתיבה ומקום פנוי, ואז לפתוח מחדש את Obsidian כדי לנסות שוב.",
+	"notice.legacyDiscoveryArchiveFailed":
+		"יצירת עותק השחזור בזמן השדרוג לא הושלמה. מטמון הגילוי המקומי הקודם ועיצוב האתחול נשמרו ללא שינוי. יש לבדוק הרשאות כתיבה ומקום פנוי, ואז לפתוח מחדש את Obsidian כדי לנסות שוב.",
 	// Settings sync & recovery
 	"confirm.titleRestoreSettings": "שחזור ההגדרות האלה",
 	"confirm.titleCreateSettingsFile": "יצירת קובץ הגדרות",
 	"confirm.saveDisplayedSettings":
 		"הפעולה שומרת את המצב שאתם רואים עכשיו כקובץ ההגדרות ומחזירה את השמירה לפעולה. העותק הרזרבי ששמור במכשיר הזה מגובה קודם.\nאם ייתכן שבמכשיר אחר יש שינויים חדשים יותר שאתם רוצים לשמור, כדאי לתת לו לסיים להסתנכרן לפני שממשיכים. אפליקציית הסנכרון עשויה לשלוח את הקובץ הזה למכשירים האחרים שלכם.\nCallout Studio מחפש את קובץ ההגדרות עוד פעם אחת לפני השמירה. אם הוא חזר, Callout Studio משאיר אותו במקום.",
-	"notice.settingsNewerVersion": "הגדרות Callout Studio נשמרו על ידי גרסה חדשה יותר של התוסף, ולכן שום דבר לא יישמר במכשיר הזה עד שתעדכנו אותו. ההגדרות שלכם בטוחות — יש לעדכן את Callout Studio כאן ולטעון מחדש את Obsidian.",
+	"notice.settingsNewerVersion":
+		"הגדרות Callout Studio נשמרו על ידי גרסה חדשה יותר של התוסף, ולכן שום דבר לא יישמר במכשיר הזה עד שתעדכנו אותו. ההגדרות שלכם בטוחות — יש לעדכן את Callout Studio כאן ולטעון מחדש את Obsidian.",
 	"saveStatus.changed":
 		"קובץ ההגדרות השתנה בזמן שערכתם. הטיוטה שלכם עדיין זמינה. יש לבחור בניסיון נוסף כדי לטעון את ההגדרות שהגיעו, ואז לבדוק את הטיוטה ולשמור שוב.",
-	"saveStatus.missing": "השמירה מושהית מפני שקובץ ההגדרות חסר. זה יכול לקרות אחרי התקנה מחדש או בזמן שהסנכרון עדיין רץ. יש לסיים את הסנכרון ולנסות שוב. כדי להחליף את הקובץ החסר במכוון, יש להשתמש ביצירת קובץ הגדרות חדש בהגדרות Callout Studio.",
+	"saveStatus.missing":
+		"השמירה מושהית מפני שקובץ ההגדרות חסר. זה יכול לקרות אחרי התקנה מחדש או בזמן שהסנכרון עדיין רץ. יש לסיים את הסנכרון ולנסות שוב. כדי להחליף את הקובץ החסר במכוון, יש להשתמש ביצירת קובץ הגדרות חדש בהגדרות Callout Studio.",
 	"saveStatus.restoreSettings": "שחזור ההגדרות האלה",
 	"saveStatus.createSettingsFile": "יצירת קובץ הגדרות",
 	"saveStatus.checkAgain": "בדיקה שוב",
-	"saveStatus.recoverInSettings": "כדי לשחזר את הקובץ החסר במכשיר הזה, פתחו את הגדרות Callout Studio. לפני סגירת העורך הזה, העתיקו כל עריכה שלא נשמרה ושאתם רוצים לשמור; היא לא נשמרה.",
+	"saveStatus.recoverInSettings":
+		"כדי לשחזר את הקובץ החסר במכשיר הזה, פתחו את הגדרות Callout Studio. לפני סגירת העורך הזה, העתיקו כל עריכה שלא נשמרה ושאתם רוצים לשמור; היא לא נשמרה.",
 	"saveStatus.openSettings": "פתיחת הגדרות Callout Studio",
-	"notice.openSettingsFailed": "לא ניתן היה לפתוח את הגדרות Callout Studio. יש לפתוח הגדרות ← Callout Studio ולבחור מה לעשות.",
-	"saveStatus.notesFailed": "הגדרת תיבת־ההבלטה נשמרה, אך כמה עדכוני פתקים לא הושלמו. יש להשאיר את העורך הזה פתוח ולבחור שמירה כדי לנסות שוב את העדכונים שלא הושלמו.",
-	"saveStatus.recoveryRead": "השמירה מושהית מפני שלא ניתן לקרוא את עותק השחזור המקומי. ייתכן שקובץ ההגדרות שלכם עדיין שלם. יש לבדוק את מקום האחסון הפנוי, ואז לנסות את השחזור שוב. נתוני השחזור הקיימים לא יוחלפו.",
-	"saveStatus.recoveryWrite": "לא ניתן היה לשמור את עותק השחזור המקומי. יש לבדוק את מקום האחסון הפנוי, ואז לנסות שוב. יש להשאיר את הטיוטה פתוחה עד שהשמירה תצליח.",
-	"saveStatus.retryFailed": "השמירה עדיין חסומה. יש לבדוק את מצב השמירה בהגדרות Callout Studio כדי לברר את הסיבה, ואז לנסות שוב.",
+	"notice.openSettingsFailed":
+		"לא ניתן היה לפתוח את הגדרות Callout Studio. יש לפתוח הגדרות ← Callout Studio ולבחור מה לעשות.",
+	"saveStatus.notesFailed":
+		"הגדרת תיבת־ההבלטה נשמרה, אך כמה עדכוני פתקים לא הושלמו. יש להשאיר את העורך הזה פתוח ולבחור שמירה כדי לנסות שוב את העדכונים שלא הושלמו.",
+	"saveStatus.recoveryRead":
+		"השמירה מושהית מפני שלא ניתן לקרוא את עותק השחזור המקומי. ייתכן שקובץ ההגדרות שלכם עדיין שלם. יש לבדוק את מקום האחסון הפנוי, ואז לנסות את השחזור שוב. נתוני השחזור הקיימים לא יוחלפו.",
+	"saveStatus.recoveryWrite":
+		"לא ניתן היה לשמור את עותק השחזור המקומי. יש לבדוק את מקום האחסון הפנוי, ואז לנסות שוב. יש להשאיר את הטיוטה פתוחה עד שהשמירה תצליח.",
+	"saveStatus.retryFailed":
+		"השמירה עדיין חסומה. יש לבדוק את מצב השמירה בהגדרות Callout Studio כדי לברר את הסיבה, ואז לנסות שוב.",
 	"saveStatus.reviewDraft": "ההגדרות שהגיעו ובדיקות השחזור הושלמו. הטיוטה שלכם ללא שינוי. יש לבדוק אותה ולשמור שוב.",
 	"saveStatus.settingsArrived": "ההגדרות הקיימות הגיעו ונטענו. לא נוצר קובץ חלופי.",
-	"saveStatus.syncConflict": "ההגדרות שהגיעו מתנגשות עם תיבת־הבלטה הנדרשת לעדכוני פתקים שלא הושלמו. הטיוטה שלכם והעדכונים הממתינים נשמרו. יש לפתור את התנגשות ההגדרות לפני ניסיון חוזר.",
+	"saveStatus.syncConflict":
+		"ההגדרות שהגיעו מתנגשות עם תיבת־הבלטה הנדרשת לעדכוני פתקים שלא הושלמו. הטיוטה שלכם והעדכונים הממתינים נשמרו. יש לפתור את התנגשות ההגדרות לפני ניסיון חוזר.",
 	"saveStatus.titlePaused": "השמירה מושהית",
 	"saveStatus.titleFailed": "ההגדרות לא נשמרו",
 	"saveStatus.tryAgain": "ניסיון נוסף",
 	"saveStatus.working": "עובד על זה…",
-	"saveStatus.unreadable": "השמירה מושהית מפני שלא ניתן לקרוא את קובץ ההגדרות בבטחה. יש לסיים את הסנכרון או לשחזר עותק תקין, ואז לנסות שוב. הקובץ הקיים נשמר.",
-	"saveStatus.write": "לא ניתן היה לשמור את קובץ ההגדרות. יש לבדוק את מקום האחסון הפנוי, את הרשאות התיקייה ואת הסנכרון, ואז לנסות שוב לפני סגירת Obsidian.",
-	"saveStatus.writePermission": "לא ניתן היה לשמור את קובץ ההגדרות מפני שהאחסון סירב לגישת כתיבה. יש לבדוק שהכספת ותיקיית התוסף ניתנות לכתיבה, ואז לנסות שוב.",
-	"saveStatus.writeSpace": "לא ניתן היה לשמור את קובץ ההגדרות מפני שהאחסון מלא או שהמכסה שלו חרגה. יש לפנות קצת מקום, ואז לנסות שוב.",
-	"settings.readOnly": "Callout Studio לא הצליח להשתמש בקובץ ההגדרות שלו כשה-Obsidian הופעל, ולכן שום דבר בעמוד הזה לא נשמר במכשיר הזה. השינויים שלכם יישמרו עד שתסגרו את Obsidian. יש לטעון מחדש את Obsidian ברגע שהקובץ יחזור — אם אתם מסנכרנים את הכספת הזו, יש לתת לסנכרון להסתיים קודם.",
+	"saveStatus.unreadable":
+		"השמירה מושהית מפני שלא ניתן לקרוא את קובץ ההגדרות בבטחה. יש לסיים את הסנכרון או לשחזר עותק תקין, ואז לנסות שוב. הקובץ הקיים נשמר.",
+	"saveStatus.write":
+		"לא ניתן היה לשמור את קובץ ההגדרות. יש לבדוק את מקום האחסון הפנוי, את הרשאות התיקייה ואת הסנכרון, ואז לנסות שוב לפני סגירת Obsidian.",
+	"saveStatus.writePermission":
+		"לא ניתן היה לשמור את קובץ ההגדרות מפני שהאחסון סירב לגישת כתיבה. יש לבדוק שהכספת ותיקיית התוסף ניתנות לכתיבה, ואז לנסות שוב.",
+	"saveStatus.writeSpace":
+		"לא ניתן היה לשמור את קובץ ההגדרות מפני שהאחסון מלא או שהמכסה שלו חרגה. יש לפנות קצת מקום, ואז לנסות שוב.",
+	"settings.readOnly":
+		"Callout Studio לא הצליח להשתמש בקובץ ההגדרות שלו כשה-Obsidian הופעל, ולכן שום דבר בעמוד הזה לא נשמר במכשיר הזה. השינויים שלכם יישמרו עד שתסגרו את Obsidian. יש לטעון מחדש את Obsidian ברגע שהקובץ יחזור — אם אתם מסנכרנים את הכספת הזו, יש לתת לסנכרון להסתיים קודם.",
 
 	// Sync safety hardening
-	"saveStatus.diagnosis.unavailable": "המכשיר הזה לא יכול לפתוח את הקובץ כרגע. ייתכן שהוא עדיין בהורדה, שהכספת אינה זמינה במצב לא מקוון, או שהאחסון לא מגיב. Callout Studio בודק שוב אוטומטית.",
-	"saveStatus.diagnosis.empty": "הקובץ ריק, מה שבדרך כלל מעיד על סנכרון שהופרע. אם למכשיר אחר עדיין יש את ההגדרות שלכם, יש לתת לו להסתנכרן. אחרת, יש להחליף את הקובץ.",
-	"saveStatus.diagnosis.mergeMarkers": "הקובץ מכיל סימוני התנגשות מיזוג שלא נפתרו, למשל מ-Git. יש לפתור את ההתנגשות בכלי ה-Git שלכם, או להחליף את הקובץ.",
+	"saveStatus.diagnosis.unavailable":
+		"המכשיר הזה לא יכול לפתוח את הקובץ כרגע. ייתכן שהוא עדיין בהורדה, שהכספת אינה זמינה במצב לא מקוון, או שהאחסון לא מגיב. Callout Studio בודק שוב אוטומטית.",
+	"saveStatus.diagnosis.empty":
+		"הקובץ ריק, מה שבדרך כלל מעיד על סנכרון שהופרע. אם למכשיר אחר עדיין יש את ההגדרות שלכם, יש לתת לו להסתנכרן. אחרת, יש להחליף את הקובץ.",
+	"saveStatus.diagnosis.mergeMarkers":
+		"הקובץ מכיל סימוני התנגשות מיזוג שלא נפתרו, למשל מ-Git. יש לפתור את ההתנגשות בכלי ה-Git שלכם, או להחליף את הקובץ.",
 	"saveStatus.diagnosis.damaged": "הקובץ חלקי או פגום, ולכן לא ניתן לקרוא אותו כהגדרות.",
-	"saveStatus.diagnosis.combined": "שירות הסנכרון שלכם מיזג שתי גרסאות של הקובץ, ולכן הבדיקה הפנימית שלו כבר לא תואמת. ההגדרות שבתוכו שלמות, והחלפת הקובץ שומרת אותן.",
-	"saveStatus.diagnosis.invalidEntries": "הקובץ מכיל רשומות ש-Callout Studio לא יכול להשתמש בהן, למשל אותו סוג תיבת־הבלטה שמופיע פעמיים.",
+	"saveStatus.diagnosis.combined":
+		"שירות הסנכרון שלכם מיזג שתי גרסאות של הקובץ, ולכן הבדיקה הפנימית שלו כבר לא תואמת. ההגדרות שבתוכו שלמות, והחלפת הקובץ שומרת אותן.",
+	"saveStatus.diagnosis.invalidEntries":
+		"הקובץ מכיל רשומות ש-Callout Studio לא יכול להשתמש בהן, למשל אותו סוג תיבת־הבלטה שמופיע פעמיים.",
 	"saveStatus.replaceUnreadable": "החלפת קובץ ההגדרות",
 	"saveStatus.discardRecoveryCopy": "מחיקת עותק השחזור",
 	"saveStatus.calm.opening": "קודם כול, קחו נשימה עמוקה — הכול יהיה בסדר.",
 	"saveStatus.calm.kept": "ההערות שלכם בטוחות, ותיבות־ההבלטה שלכם עדיין כאן, במכשיר הזה.",
 	"saveStatus.calm.safe": "ההערות שלכם בטוחות.",
-	"saveStatus.calm.pausedPage": "Callout Studio רק השהה את השמירה כדי להגן על ההגדרות שלכם, ולכן הדף הזה במצב קריאה בלבד לעת עתה.",
+	"saveStatus.calm.pausedPage":
+		"Callout Studio רק השהה את השמירה כדי להגן על ההגדרות שלכם, ולכן הדף הזה במצב קריאה בלבד לעת עתה.",
 	"saveStatus.calm.paused": "Callout Studio רק השהה את השמירה כדי להגן על ההגדרות שלכם.",
 	"saveStatus.explain.missing":
 		"Callout Studio לא מוצא את קובץ ההגדרות שלו. זה קורה בדרך כלל כשאפליקציית הסנכרון עדיין מורידה אותו, או אחרי ש-Callout Studio הוסר במכשיר אחר.",
 	"saveStatus.explain.stillMissing":
 		"קובץ ההגדרות עדיין לא חזר. הבדיקה רק מחפשת אותו ואף פעם לא יוצרת קובץ חדש. אם הכספת שלכם ב-iCloud, OneDrive, Google Drive או Dropbox, כדאי לוודא שהיא מוגדרת להישאר מורדת במכשיר הזה.",
-	"saveStatus.explain.unreadable": "Callout Studio לא מצליח לקרוא כרגע את קובץ ההגדרות שלו, ולכן השאיר את הקובץ בדיוק כפי שהוא.",
+	"saveStatus.explain.unreadable":
+		"Callout Studio לא מצליח לקרוא כרגע את קובץ ההגדרות שלו, ולכן השאיר את הקובץ בדיוק כפי שהוא.",
 	"saveStatus.explain.recoveryRead":
 		"Callout Studio שומר במכשיר הזה עותק רזרבי של ההגדרות שלכם, וכרגע אי אפשר לקרוא את העותק הזה. ייתכן שקובץ ההגדרות עצמו תקין.",
-	"saveStatus.explain.newerVersion": "ההגדרות שלכם נשמרו בגרסה חדשה יותר של Callout Studio, ולכן הגרסה הישנה הזו לא תשנה אותן.",
+	"saveStatus.explain.newerVersion":
+		"ההגדרות שלכם נשמרו בגרסה חדשה יותר של Callout Studio, ולכן הגרסה הישנה הזו לא תשנה אותן.",
 	"saveStatus.explain.changed": "קובץ ההגדרות השתנה בזמן ש-Callout Studio עבד איתו, ולכן הוא עצר בלי להחליף דבר.",
-	"saveStatus.guide.rechecks": "Callout Studio בודק שוב בכל דקה כל עוד Obsidian פתוח, ולכן לעיתים קרובות זה מסתדר מעצמו.",
+	"saveStatus.guide.rechecks":
+		"Callout Studio בודק שוב בכל דקה כל עוד Obsidian פתוח, ולכן לעיתים קרובות זה מסתדר מעצמו.",
 	"saveStatus.guide.rechecksCheckNow":
 		"Callout Studio בודק שוב בכל דקה כל עוד Obsidian פתוח, ולכן לעיתים קרובות זה מסתדר מעצמו — או שאפשר לבחור בבדיקה שוב כדי לבדוק עכשיו.",
-	"saveStatus.guide.restore": "אם ההגדרות לא חוזרות, יש לבחור בשחזור ההגדרות האלה כדי לשמור את תיבות־ההבלטה שאתם רואים כאן.",
+	"saveStatus.guide.restore":
+		"אם ההגדרות לא חוזרות, יש לבחור בשחזור ההגדרות האלה כדי לשמור את תיבות־ההבלטה שאתם רואים כאן.",
 	"saveStatus.guide.create": "אם ההגדרות לא חוזרות, יש לבחור ביצירת קובץ הגדרות כדי להתחיל לשמור שוב.",
 	"saveStatus.guide.recoveryRetry": "יש לוודא שיש במכשיר הזה קצת מקום פנוי באחסון, ואז לבחור בניסיון נוסף.",
-	"saveStatus.guide.recoveryDiscard": "אם זה לא עוזר, יש לבחור במחיקת עותק השחזור. קודם נשמר עותק מדויק, ולקובץ ההגדרות לא נוגעים.",
-	"saveStatus.guide.newerVersion": "יש לעדכן את Callout Studio ב״הגדרות ← תוספים קהילתיים״ ואז לטעון מחדש את Obsidian.",
-	"saveStatus.missingNotice": "ההערות שלכם בטוחות. Callout Studio השהה את השמירה כי הוא לא מוצא כרגע את קובץ ההגדרות שלו.",
+	"saveStatus.guide.recoveryDiscard":
+		"אם זה לא עוזר, יש לבחור במחיקת עותק השחזור. קודם נשמר עותק מדויק, ולקובץ ההגדרות לא נוגעים.",
+	"saveStatus.guide.newerVersion":
+		"יש לעדכן את Callout Studio ב״הגדרות ← תוספים קהילתיים״ ואז לטעון מחדש את Obsidian.",
+	"saveStatus.missingNotice":
+		"ההערות שלכם בטוחות. Callout Studio השהה את השמירה כי הוא לא מוצא כרגע את קובץ ההגדרות שלו.",
 	"statusBar.paused": "השמירה מושהית",
 	"statusBar.pausedTooltip": "Callout Studio לא שומר שינויי הגדרות. יש ללחוץ כדי לראות מדוע.",
 	"statusBar.pausedNotice": "Callout Studio לא שומר שינויי הגדרות כרגע.",
 	"saveStatus.resumed": "השמירה חזרה לפעול. Callout Studio שומר שוב שינויים בהגדרות.",
-	"notice.replaceUnreadableUnavailable": "לא ניתן להחליף את קובץ ההגדרות כרגע: הוא משתנה, או שהמכשיר הזה לא יכול לקרוא אותו. יש לנסות שוב בעוד רגע.",
-	"notice.recoveryStorageUnavailable": "אחסון השחזור של המכשיר הזה לא מגיב, ולכן לא ניתן למחוק את העותק. יש להפעיל מחדש את Obsidian ולנסות שוב.",
+	"notice.replaceUnreadableUnavailable":
+		"לא ניתן להחליף את קובץ ההגדרות כרגע: הוא משתנה, או שהמכשיר הזה לא יכול לקרוא אותו. יש לנסות שוב בעוד רגע.",
+	"notice.recoveryStorageUnavailable":
+		"אחסון השחזור של המכשיר הזה לא מגיב, ולכן לא ניתן למחוק את העותק. יש להפעיל מחדש את Obsidian ולנסות שוב.",
 	"recovery.unreadable": "לא ניתן לקרוא כהגדרות",
 	"recovery.same": "זהה לתצורה הנוכחית שלכם",
 	"recovery.restore": "שחזור",
-	"recovery.stale": "שום דבר לא שוחזר: ההגדרות שלכם השתנו או שלא ניתן היה לבדוק אותן. יש לפתוח את החלון הזה שוב ולבדוק את הרשימה.",
-	"notice.recoveryCopyStale": "ההגדרות שלכם נשמרו, אך לא ניתן היה לעדכן את עותק השחזור של המכשיר הזה. יש לבדוק את מקום האחסון הפנוי במכשיר הזה. Callout Studio ינסה שוב בשינוי הבא שלכם.",
-	"notice.blockedWhilePaused": "השמירה מושהית, ולכן לא ניתן לשמור את השינוי הזה כרגע. יש לפתור קודם את בעיית השמירה המוצגת בהגדרות Callout Studio.",
-	"welcome.syncNote": "כבר משתמשים ב-Callout Studio במכשיר אחר? יש לתת לשירות הסנכרון שלכם להסתיים קודם. תיבות־ההבלטה וההגדרות שלכם יופיעו כאן ברגע שיגיעו.",
-	"settings.resetBackupFailed": "שום דבר לא אופס: לא ניתן היה לשמור גיבוי של התצורה הנוכחית שלכם קודם. יש לבדוק את מקום האחסון הפנוי ולנסות שוב.",
-	"settings.resetNotSaved": "האיפוס מוצג אך טרם ניתן היה לשמור אותו, כך שקובץ ההגדרות שלכם עדיין מכיל את התצורה הקודמת. יש לבדוק את מצב השמירה בהגדרות Callout Studio.",
+	"recovery.stale":
+		"שום דבר לא שוחזר: ההגדרות שלכם השתנו או שלא ניתן היה לבדוק אותן. יש לפתוח את החלון הזה שוב ולבדוק את הרשימה.",
+	"notice.recoveryCopyStale":
+		"ההגדרות שלכם נשמרו, אך לא ניתן היה לעדכן את עותק השחזור של המכשיר הזה. יש לבדוק את מקום האחסון הפנוי במכשיר הזה. Callout Studio ינסה שוב בשינוי הבא שלכם.",
+	"notice.blockedWhilePaused":
+		"השמירה מושהית, ולכן לא ניתן לשמור את השינוי הזה כרגע. יש לפתור קודם את בעיית השמירה המוצגת בהגדרות Callout Studio.",
+	"welcome.syncNote":
+		"כבר משתמשים ב-Callout Studio במכשיר אחר? יש לתת לשירות הסנכרון שלכם להסתיים קודם. תיבות־ההבלטה וההגדרות שלכם יופיעו כאן ברגע שיגיעו.",
+	"settings.resetBackupFailed":
+		"שום דבר לא אופס: לא ניתן היה לשמור גיבוי של התצורה הנוכחית שלכם קודם. יש לבדוק את מקום האחסון הפנוי ולנסות שוב.",
+	"settings.resetNotSaved":
+		"האיפוס מוצג אך טרם ניתן היה לשמור אותו, כך שקובץ ההגדרות שלכם עדיין מכיל את התצורה הקודמת. יש לבדוק את מצב השמירה בהגדרות Callout Studio.",
 	"confirm.titleResetEverything": "איפוס הכול",
 	"confirm.titleReplaceUnreadable": "החלפת קובץ ההגדרות",
 	"confirm.subtitleReplaceUnreadable": "עותק מדויק נשמר קודם",
-	"confirm.replaceUnreadable": "עותק מדויק של הקובץ הנוכחי נשמר קודם בתיקיית הגיבויים של התוסף. לאחר מכן הקובץ מוחלף בתצורה המוצגת כאן, ושירות הסנכרון שלכם שולח אותה למכשירים האחרים שלכם.",
-	"confirm.replaceUnreadableSalvage": "עותק מדויק של הקובץ הנוכחי נשמר קודם בתיקיית הגיבויים של התוסף. ההגדרות שבתוכו משולבות עם התצורה המוצגת כאן, והקובץ נכתב מחדש כך שכל מכשיר יוכל לקרוא אותו שוב.",
+	"confirm.replaceUnreadable":
+		"עותק מדויק של הקובץ הנוכחי נשמר קודם בתיקיית הגיבויים של התוסף. לאחר מכן הקובץ מוחלף בתצורה המוצגת כאן, ושירות הסנכרון שלכם שולח אותה למכשירים האחרים שלכם.",
+	"confirm.replaceUnreadableSalvage":
+		"עותק מדויק של הקובץ הנוכחי נשמר קודם בתיקיית הגיבויים של התוסף. ההגדרות שבתוכו משולבות עם התצורה המוצגת כאן, והקובץ נכתב מחדש כך שכל מכשיר יוכל לקרוא אותו שוב.",
 	"confirm.titleDiscardRecoveryCopy": "מחיקת עותק השחזור",
 	"confirm.subtitleDiscardRecoveryCopy": "השמירה מושהית במכשיר זה",
-	"confirm.discardRecoveryCopy": "לא ניתן לקרוא את עותק השחזור של המכשיר הזה, ולכן השמירה מושהית במכשיר הזה. עותק מדויק שלו נשמר קודם בתיקיית הגיבויים של התוסף. לאחר מכן הוא מוחלף בתצורה המוצגת כאן. קובץ ההגדרות שלכם לא משתנה.",
+	"confirm.discardRecoveryCopy":
+		"לא ניתן לקרוא את עותק השחזור של המכשיר הזה, ולכן השמירה מושהית במכשיר הזה. עותק מדויק שלו נשמר קודם בתיקיית הגיבויים של התוסף. לאחר מכן הוא מוחלף בתצורה המוצגת כאן. קובץ ההגדרות שלכם לא משתנה.",
 	"vault.undoRewrite": "ביטול",
 	"vault.undoRestored": "{{count}} פתקים שוחזרו.",
 	"vault.undoPartial": "{{count}} פתקים שוחזרו. {{skipped}} פתקים השתנו אחרי שכתוב הקובץ, ולכן הם נותרו כפי שהיו.",
 	"import.confirmTitle": "ייבוא גיבוי של Callout Studio",
-	"import.confirmSummary": "פעולה זו מוסיפה {{added}} סוגי תיבות־הבלטה, מחליפה {{replaced}} סוגים קיימים בגרסה מהקובץ, ומשחזרת {{settings}} קבוצות הגדרות מהקובץ. גיבוי של התצורה הנוכחית שלכם נשמר קודם.",
+	"import.confirmSummary":
+		"פעולה זו מוסיפה {{added}} סוגי תיבות־הבלטה, מחליפה {{replaced}} סוגים קיימים בגרסה מהקובץ, ומשחזרת {{settings}} קבוצות הגדרות מהקובץ. גיבוי של התצורה הנוכחית שלכם נשמר קודם.",
 	"import.confirmAction": "ייבוא",
-	"import.backupFailed": "שום דבר לא יובא: לא ניתן היה לשמור גיבוי של התצורה הנוכחית שלכם קודם. יש לבדוק את מקום האחסון הפנוי ולנסות שוב.",
+	"import.backupFailed":
+		"שום דבר לא יובא: לא ניתן היה לשמור גיבוי של התצורה הנוכחית שלכם קודם. יש לבדוק את מקום האחסון הפנוי ולנסות שוב.",
 	"import.notSaved": "הייבוא מוצג אך טרם ניתן היה לשמור אותו. יש לבדוק את מצב השמירה בהגדרות Callout Studio.",
 
 	"recovery.summaryCallouts": "{{callouts}} סוגי תיבות־הבלטה שמורים",
@@ -1322,7 +1295,8 @@ export const he: Record<string, string> = {
 	"recovery.details.unknownTime": "זמן השמירה לא נרשם",
 	"recovery.details.current": "ההגדרות הנוכחיות",
 	"recovery.details.restored": "לאחר שחזור הגרסה הזו",
-	"recovery.details.unreadable": "הגרסה הזו של Callout Studio לא יכולה לפרש את העותק הזה כהגדרות שאפשר לשחזר. ייתכן שהוא פגום, לא זמין או בפורמט חדש יותר. השוואה ודוח הגדרות משוחזרות אינם זמינים. כל תוכן מקורי שהצלחנו לקרוא מופיע להלן.",
+	"recovery.details.unreadable":
+		"הגרסה הזו של Callout Studio לא יכולה לפרש את העותק הזה כהגדרות שאפשר לשחזר. ייתכן שהוא פגום, לא זמין או בפורמט חדש יותר. השוואה ודוח הגדרות משוחזרות אינם זמינים. כל תוכן מקורי שהצלחנו לקרוא מופיע להלן.",
 	"recovery.details.null": "אין ערך (null)",
 	"recovery.details.yes": "כן",
 	"recovery.details.no": "לא",
@@ -1493,7 +1467,8 @@ export const he: Record<string, string> = {
 	"saveStatus.guide.versions": "כשהשמירה תחזור לפעול, תוכלו גם לחזור לגרסה שמורה דרך שחזור גרסה קודמת.",
 	"saveStatus.goToVersions": "מעבר להיסטוריית הגרסאות",
 	"versions.title": "היסטוריית גרסאות",
-	"versions.intro": "Callout Studio שומר גרסאות של התצורה שלכם אוטומטית.\nגרסאות ישנות נמחקות בהדרגה.\nשחזור גרסה מחליף את התצורה הנוכחית בכל מכשיר מסונכרן.",
+	"versions.intro":
+		"Callout Studio שומר גרסאות של התצורה שלכם אוטומטית.\nגרסאות ישנות נמחקות בהדרגה.\nשחזור גרסה מחליף את התצורה הנוכחית בכל מכשיר מסונכרן.",
 	"versions.pausedHint": "השמירה מושהית, ולכן השחזור אינו זמין. עדיין אפשר להשוות גרסאות ולמחוק אותן.",
 	"versions.loading": "מחפש גרסאות…",
 	"versions.empty": "לא נמצאו גרסאות.",
@@ -1511,14 +1486,17 @@ export const he: Record<string, string> = {
 	"versions.reason.beforeRepair": "לפני תיקון קובץ ההגדרות",
 	"versions.restoreTitle": "שחזור הגרסה הזו",
 	"versions.subtitle": "״{{name}}״ · {{when}}",
-	"versions.restoreBody": "התצורה הנוכחית שלכם תוחלף ({{count}} הבדלים).\nהיא תישמר קודם כגרסה, כדי שתוכלו לחזור אליה.\nשירות הסנכרון ישלח לאחר מכן את התצורה המשוחזרת למכשירים האחרים שלכם.",
+	"versions.restoreBody":
+		"התצורה הנוכחית שלכם תוחלף ({{count}} הבדלים).\nהיא תישמר קודם כגרסה, כדי שתוכלו לחזור אליה.\nשירות הסנכרון ישלח לאחר מכן את התצורה המשוחזרת למכשירים האחרים שלכם.",
 	"versions.restoreSame": "הגרסה הזו זהה לתצורה הנוכחית שלכם, ולכן אין מה לשחזר.",
 	"versions.restored": "״{{name}}״ מתאריך {{when}} שוחזרה.",
-	"versions.backupFailed": "שום דבר לא שוחזר: לא ניתן היה לשמור קודם את התצורה הנוכחית שלכם כגרסה. בדקו מקום אחסון פנוי ונסו שוב.",
+	"versions.backupFailed":
+		"שום דבר לא שוחזר: לא ניתן היה לשמור קודם את התצורה הנוכחית שלכם כגרסה. בדקו מקום אחסון פנוי ונסו שוב.",
 	"versions.restoreFailed": "לא ניתן היה לשחזר את הגרסה. שום דבר לא השתנה.",
 	"versions.deleteTitle": "מחיקת הגרסה הזו",
 	"versions.deleteAvailableBody": "היא וכל העותקים הזמינים שלה יימחקו לצמיתות.",
-	"versions.deleteSyncedFiles": "מחיקת הקבצים האלה עשויה להסתנכרן למכשירים האחרים שלכם. עותקים מקומיים במכשירים האלה עשויים להישאר.",
+	"versions.deleteSyncedFiles":
+		"מחיקת הקבצים האלה עשויה להסתנכרן למכשירים האחרים שלכם. עותקים מקומיים במכשירים האלה עשויים להישאר.",
 	"versions.deleteFinal": "לא ניתן לבטל פעולה זו. התצורה הנוכחית שלכם לא תושפע.",
 	"versions.deleted": "״{{name}}״ מתאריך {{when}} נמחקה.",
 	"versions.deleteFailed": "לא ניתן היה למחוק חלק מהעותקים של הגרסה הזו. הרשימה מציגה כעת את מה שנותר.",
@@ -1526,7 +1504,8 @@ export const he: Record<string, string> = {
 	"versions.details.difference": "הבדל {{count}} לעומת התצורה הנוכחית שלכם",
 	"versions.details.differences": "{{count}} הבדלים לעומת התצורה הנוכחית שלכם",
 	"versions.details.comparisonUnavailable": "ההשוואה אינה זמינה",
-	"notice.unsavedChangesKept": "חלק מהשינויים שנעשו במכשיר הזה טרם נשמרו, והגדרות חדשות יותר ממכשיר אחר החליפו אותם. הגרסה שלכם נשמרה קודם: פתחו את שחזור גרסה קודמת בהגדרות Callout Studio כדי להחזיר אותה.",
+	"notice.unsavedChangesKept":
+		"חלק מהשינויים שנעשו במכשיר הזה טרם נשמרו, והגדרות חדשות יותר ממכשיר אחר החליפו אותם. הגרסה שלכם נשמרה קודם: פתחו את שחזור גרסה קודמת בהגדרות Callout Studio כדי להחזיר אותה.",
 	"settings.versionHistory": "שחזור גרסה קודמת",
 	"settings.versions": "גרסאות קודמות",
 	"settings.versionsDesc": "החליפו את התצורה הנוכחית שלכם בגרסה קודמת שנשמרה.",
@@ -1537,12 +1516,13 @@ export const he: Record<string, string> = {
 	"noteChanges.notesOne": "פתק אחד",
 	"noteChanges.askCallout": "מה לעשות עם תיבת־ההבלטה הזו?",
 	"noteChanges.askCallouts": "מה לעשות עם תיבות־ההבלטה האלה?",
-	"noteChanges.changeRenamed": "שיניתם את השם לתצוגה מ־\"{{old}}\" ל־\"{{new}}\", ולכן המזהה הראשי משתנה מ־\"{{oldId}}\" ל־\"{{newId}}\".",
-	"noteChanges.changeMainId": "המזהה הראשי משתנה מ־\"{{oldId}}\" ל־\"{{newId}}\".",
-	"noteChanges.changeName": "שיניתם את השם לתצוגה מ־\"{{old}}\" ל־\"{{new}}\".",
-	"noteChanges.changeRemoved": "הסרתם את המזהה \"{{id}}\".",
+	"noteChanges.changeRenamed":
+		'שיניתם את השם לתצוגה מ־"{{old}}" ל־"{{new}}", ולכן המזהה הראשי משתנה מ־"{{oldId}}" ל־"{{newId}}".',
+	"noteChanges.changeMainId": 'המזהה הראשי משתנה מ־"{{oldId}}" ל־"{{newId}}".',
+	"noteChanges.changeName": 'שיניתם את השם לתצוגה מ־"{{old}}" ל־"{{new}}".',
+	"noteChanges.changeRemoved": 'הסרתם את המזהה "{{id}}".',
 	"noteChanges.changeRemovedMany": "הסרתם את המזהים האלה: {{ids}}.",
-	"noteChanges.changeResetRemoved": "איפוס לברירת־מחדל מסיר את המזהה \"{{id}}\" שהוספתם.",
+	"noteChanges.changeResetRemoved": 'איפוס לברירת־מחדל מסיר את המזהה "{{id}}" שהוספתם.',
 	"noteChanges.changeResetRemovedMany": "איפוס לברירת־מחדל מסיר את המזהים שהוספתם: {{ids}}.",
 	"noteChanges.changeFold": "שיניתם את אופן הקיפול של תיבת־ההבלטה הזו.",
 	"noteChanges.affects": "זה משפיע על {{callouts}}, ב־{{notes}}.",
@@ -1551,7 +1531,8 @@ export const he: Record<string, string> = {
 	"noteChanges.rewriteManyDesc": "כל מזהה ישן בפתקים שלכם יהפוך ל־[!{{to}}].",
 	"noteChanges.changeToIdLabel": "המזהה שאליו ישונו",
 	"noteChanges.rewriteDesc": "כל [!{{id}}] בפתקים שלכם יהפוך ל־[!{{to}}].",
-	"noteChanges.renameFollowDesc": "כל [!{{oldId}}] בפתקים שלכם יהפוך ל־[!{{newId}}], וכותרות שכתוב בהן \"{{old}}\" יהפכו ל־\"{{new}}\".",
-	"noteChanges.titlesChangeDesc": "כותרות שכתוב בהן \"{{old}}\" יהפכו ל־\"{{new}}\".",
+	"noteChanges.renameFollowDesc":
+		'כל [!{{oldId}}] בפתקים שלכם יהפוך ל־[!{{newId}}], וכותרות שכתוב בהן "{{old}}" יהפכו ל־"{{new}}".',
+	"noteChanges.titlesChangeDesc": 'כותרות שכתוב בהן "{{old}}" יהפכו ל־"{{new}}".',
 	"noteChanges.foldChangeDesc": "סימן ה־+ או ה־- שלהן ישתנה בהתאם.",
 };

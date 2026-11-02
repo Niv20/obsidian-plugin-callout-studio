@@ -15,7 +15,9 @@ import { buildTreeSafely, guardRender } from "../src/settings/declarative/safeTr
 function withConsoleErrors(body: (errors: unknown[][]) => void): void {
 	const errors: unknown[][] = [];
 	const original = console.error;
-	console.error = (...args: unknown[]) => { errors.push(args); };
+	console.error = (...args: unknown[]) => {
+		errors.push(args);
+	};
 	try {
 		body(errors);
 	} finally {
@@ -26,13 +28,21 @@ function withConsoleErrors(body: (errors: unknown[][]) => void): void {
 describe("buildTreeSafely", () => {
 	it("returns the tree when building works", () => {
 		const tree = [{ name: "Row" }];
-		assert.equal(buildTreeSafely(() => tree, []), tree);
+		assert.equal(
+			buildTreeSafely(() => tree, []),
+			tree,
+		);
 	});
 
 	it("returns the fallback, and says why in the console, when building throws", () => {
 		withConsoleErrors((errors) => {
 			const fallback = [{ name: "Fallback" }];
-			assert.equal(buildTreeSafely(() => { throw new Error("broken"); }, fallback), fallback);
+			assert.equal(
+				buildTreeSafely(() => {
+					throw new Error("broken");
+				}, fallback),
+				fallback,
+			);
 			assert.equal(errors.length, 1);
 		});
 	});
@@ -49,7 +59,12 @@ describe("guardRender", () => {
 
 	it("keeps a throwing row from stopping the page, naming it in the console", () => {
 		withConsoleErrors((errors) => {
-			assert.equal(guardRender("Broken row", () => { throw new Error("oops"); })(setting, group), undefined);
+			assert.equal(
+				guardRender("Broken row", () => {
+					throw new Error("oops");
+				})(setting, group),
+				undefined,
+			);
 			assert.match(String(errors[0]?.[0]), /Broken row/);
 		});
 	});

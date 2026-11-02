@@ -53,10 +53,7 @@ import {
 	tintCss,
 	translucentTintFor,
 } from "../src/utils/colorUtils";
-import {
-	calloutAccentVarRef,
-	calloutColorValue,
-} from "../src/utils/calloutColorFormat";
+import { calloutAccentVarRef, calloutColorValue } from "../src/utils/calloutColorFormat";
 import type { AccentDialect } from "../src/manager/theme/accentDialect";
 import type { BgGradient } from "../src/types";
 
@@ -413,10 +410,7 @@ describe("tintColorAt", () => {
 
 describe("tintCss", () => {
 	it("emits the same color-mix construct core uses", () => {
-		assert.equal(
-			tintCss("#abc123", 0.18),
-			"color-mix(in oklch, #abc123 18%, transparent)",
-		);
+		assert.equal(tintCss("#abc123", 0.18), "color-mix(in oklch, #abc123 18%, transparent)");
 	});
 
 	it("strips trailing zeros but keeps a real fraction", () => {
@@ -427,10 +421,7 @@ describe("tintCss", () => {
 	});
 
 	it("accepts a var() reference as well as a hex", () => {
-		assert.equal(
-			tintCss("var(--cs-accent)", 0.2),
-			"color-mix(in oklch, var(--cs-accent) 20%, transparent)",
-		);
+		assert.equal(tintCss("var(--cs-accent)", 0.2), "color-mix(in oklch, var(--cs-accent) 20%, transparent)");
 	});
 });
 
@@ -450,10 +441,7 @@ describe("bgTintFor", () => {
 	});
 
 	it("defaults to DEFAULT_BG_COLOR_AMOUNT", () => {
-		assert.equal(
-			bgTintFor("#448aff", false),
-			bgTintFor("#448aff", false, DEFAULT_BG_COLOR_AMOUNT),
-		);
+		assert.equal(bgTintFor("#448aff", false), bgTintFor("#448aff", false, DEFAULT_BG_COLOR_AMOUNT));
 	});
 
 	it("gives light mode a lighter tint than dark mode, for every accent", () => {
@@ -468,8 +456,7 @@ describe("bgTintFor", () => {
 		const accent = "#ff0000";
 		let previous = -1;
 		for (const amount of [0, 0.1, 0.18, 0.3, 0.6, 1]) {
-			const distance =
-				255 - hexToRgb(bgTintFor(accent, false, amount)).g;
+			const distance = 255 - hexToRgb(bgTintFor(accent, false, amount)).g;
 			assert.ok(distance > previous, `amount ${amount}`);
 			previous = distance;
 		}
@@ -498,10 +485,7 @@ describe("derivedBgAmount", () => {
 				const accent = "#448aff";
 				const bg = bgTintFor(accent, isDark, amount);
 				const solved = derivedBgAmount(accent, bg, isDark);
-				assert.ok(
-					solved !== null,
-					`${accent}@${amount} (${isDark ? "dark" : "light"}) read as hand-picked`,
-				);
+				assert.ok(solved !== null, `${accent}@${amount} (${isDark ? "dark" : "light"}) read as hand-picked`);
 				// The solve recovers the strength the stored hex was produced
 				// from, which need not be the exact float that produced it —
 				// what must hold is that it reproduces the same colour.
@@ -557,16 +541,7 @@ describe("clampBgIntensity", () => {
 	});
 
 	it("rejects anything that is not a finite number", () => {
-		for (const junk of [
-			"0.2",
-			null,
-			NaN,
-			Infinity,
-			-Infinity,
-			{},
-			[],
-			true,
-		]) {
+		for (const junk of ["0.2", null, NaN, Infinity, -Infinity, {}, [], true]) {
 			assert.equal(clampBgIntensity(junk), undefined, JSON.stringify(junk));
 		}
 	});
@@ -603,10 +578,7 @@ describe("contrastRatio", () => {
 	});
 
 	it("is symmetric", () => {
-		assert.equal(
-			contrastRatio("#448aff", "#ffffff"),
-			contrastRatio("#ffffff", "#448aff"),
-		);
+		assert.equal(contrastRatio("#448aff", "#ffffff"), contrastRatio("#ffffff", "#448aff"));
 	});
 
 	it("matches published values", () => {
@@ -656,15 +628,9 @@ describe("ensureContrast", () => {
 	it("clears the requested ratio for every sample against both pages", () => {
 		for (const hex of SAMPLE_HEXES) {
 			const onLight = ensureContrast(hex, BG_PRIMARY_LIGHT, "#000000", 3);
-			assert.ok(
-				contrastRatio(onLight, BG_PRIMARY_LIGHT) >= 3 - 1e-9,
-				`${hex} on light → ${onLight}`,
-			);
+			assert.ok(contrastRatio(onLight, BG_PRIMARY_LIGHT) >= 3 - 1e-9, `${hex} on light → ${onLight}`);
 			const onDark = ensureContrast(hex, BG_PRIMARY_DARK, "#ffffff", 3);
-			assert.ok(
-				contrastRatio(onDark, BG_PRIMARY_DARK) >= 3 - 1e-9,
-				`${hex} on dark → ${onDark}`,
-			);
+			assert.ok(contrastRatio(onDark, BG_PRIMARY_DARK) >= 3 - 1e-9, `${hex} on dark → ${onDark}`);
 		}
 	});
 });
@@ -837,9 +803,7 @@ describe("sanitizeBgGradient", () => {
 
 		// The colours survive the toggle being off: they are the user's own
 		// second colour, and re-deriving them from the pale tints is impossible.
-		const toggleOff = sanitizeBgGradient(
-			gradient({ textToColorLight: "#aa0000", textToColorDark: "#ffaaaa" }),
-		);
+		const toggleOff = sanitizeBgGradient(gradient({ textToColorLight: "#aa0000", textToColorDark: "#ffaaaa" }));
 		assert.equal(toggleOff?.textToColorLight, "#aa0000");
 		assert.equal(toggleOff?.textGradient, undefined);
 	});
@@ -901,52 +865,28 @@ describe("bgGradientsEqual", () => {
 
 	it("ignores hex case", () => {
 		assert.equal(
-			bgGradientsEqual(
-				gradient({ toColorLight: "#FFEEAA" }),
-				gradient({ toColorLight: "#ffeeaa" }),
-			),
+			bgGradientsEqual(gradient({ toColorLight: "#FFEEAA" }), gradient({ toColorLight: "#ffeeaa" })),
 			true,
 		);
 	});
 
 	it("compares the angle after normalization", () => {
-		assert.equal(
-			bgGradientsEqual(gradient({ angleDeg: 90 }), gradient({ angleDeg: 450 })),
-			true,
-		);
-		assert.equal(
-			bgGradientsEqual(gradient({ angleDeg: 90 }), gradient({ angleDeg: 91 })),
-			false,
-		);
+		assert.equal(bgGradientsEqual(gradient({ angleDeg: 90 }), gradient({ angleDeg: 450 })), true);
+		assert.equal(bgGradientsEqual(gradient({ angleDeg: 90 }), gradient({ angleDeg: 91 })), false);
 	});
 
 	it("treats an absent textGradient as false", () => {
-		assert.equal(
-			bgGradientsEqual(gradient(), gradient({ textGradient: false })),
-			true,
-		);
-		assert.equal(
-			bgGradientsEqual(gradient(), gradient({ textGradient: true })),
-			false,
-		);
+		assert.equal(bgGradientsEqual(gradient(), gradient({ textGradient: false })), true);
+		assert.equal(bgGradientsEqual(gradient(), gradient({ textGradient: true })), false);
 	});
 
 	it("treats an absent text colour as the empty string", () => {
-		assert.equal(
-			bgGradientsEqual(gradient(), gradient({ textToColorLight: undefined })),
-			true,
-		);
-		assert.equal(
-			bgGradientsEqual(gradient(), gradient({ textToColorLight: "#aa0000" })),
-			false,
-		);
+		assert.equal(bgGradientsEqual(gradient(), gradient({ textToColorLight: undefined })), true);
+		assert.equal(bgGradientsEqual(gradient(), gradient({ textToColorLight: "#aa0000" })), false);
 	});
 
 	it("notices a changed end colour in either mode", () => {
-		assert.equal(
-			bgGradientsEqual(gradient(), gradient({ toColorDark: "#000000" })),
-			false,
-		);
+		assert.equal(bgGradientsEqual(gradient(), gradient({ toColorDark: "#000000" })), false);
 	});
 });
 
@@ -974,9 +914,7 @@ describe("calloutColorValue / calloutAccentVarRef", () => {
 		declared: new Map(
 			Object.entries(declared).map(([k, v]) => [
 				k,
-				typeof v === "string"
-					? { light: v, dark: v }
-					: { light: v.light, dark: v.dark },
+				typeof v === "string" ? { light: v, dark: v } : { light: v.light, dark: v.dark },
 			]),
 		),
 		unguarded: new Set(),

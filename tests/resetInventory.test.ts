@@ -39,10 +39,7 @@ describe("Reset inventory", () => {
 		registry.settings.fallbackCalloutId = "tip";
 		assert.deepEqual(resetInventory(registry), {
 			deleted: [],
-			restored: [
-				{ labelKey: "settings.resetItemGlobalStyle" },
-				{ labelKey: "settings.resetItemFallback" },
-			],
+			restored: [{ labelKey: "settings.resetItemGlobalStyle" }, { labelKey: "settings.resetItemFallback" }],
 		});
 	});
 
@@ -59,7 +56,11 @@ describe("Reset inventory", () => {
 		const registry = fresh();
 		registry.add(definition({ id: "mine", displayName: "Mine" }));
 		Object.assign(registry.settings, {
-			globalStyle: {}, contextMenu: {}, headingCallouts: {}, inlineCallouts: {}, fallbackCalloutId: "",
+			globalStyle: {},
+			contextMenu: {},
+			headingCallouts: {},
+			inlineCallouts: {},
+			fallbackCalloutId: "",
 			iconLibraries: { order: [], hidden: ["emoji"] },
 		});
 		const { deleted, restored } = resetInventory(registry);

@@ -3,17 +3,28 @@ import { afterEach, beforeEach, describe, it, mock } from "node:test";
 import type { App, PluginManifest } from "obsidian";
 import { installFakeDom, FakeDocument } from "./support/fakeDom";
 import { clearMaterialFontStore, materialFontStore, setMaterialFontStore } from "../src/icons/materialFontStore";
-import { ensureMaterialFontLoaded, isMaterialFontReady, resetMaterialFontLoader, startMaterialFontLoader, stopMaterialFontLoader } from "../src/icons/packs/materialFont";
+import {
+	ensureMaterialFontLoaded,
+	isMaterialFontReady,
+	resetMaterialFontLoader,
+	startMaterialFontLoader,
+	stopMaterialFontLoader,
+} from "../src/icons/packs/materialFont";
 
 function deferred<T>() {
 	let resolve!: (value: T) => void;
-	const promise = new Promise<T>(done => { resolve = done; });
+	const promise = new Promise<T>((done) => {
+		resolve = done;
+	});
 	return { promise, resolve };
 }
-const tick = () => new Promise<void>(resolve => setImmediate(resolve));
+const tick = () => new Promise<void>((resolve) => setImmediate(resolve));
 const bytes = new Uint8Array([0x77, 0x4f, 0x46, 0x32]).buffer;
 const family = "Material Symbols Outlined";
-const globals = globalThis as { FontFace?: unknown; __CS_REQUEST_URL__?: (url: string) => Promise<{ text: string; arrayBuffer: ArrayBuffer }> };
+const globals = globalThis as {
+	FontFace?: unknown;
+	__CS_REQUEST_URL__?: (url: string) => Promise<{ text: string; arrayBuffer: ArrayBuffer }>;
+};
 const originalFontFace = globals.FontFace;
 let dom: ReturnType<typeof installFakeDom>;
 let loadFace: () => Promise<void>;
@@ -24,16 +35,26 @@ let writes: ArrayBuffer[];
 
 class TestFontFace {
 	status = "unloaded";
-	constructor(readonly family: string) { constructed.push(this); }
-	async load(): Promise<this> { await loadFace(); this.status = "loaded"; return this; }
+	constructor(readonly family: string) {
+		constructed.push(this);
+	}
+	async load(): Promise<this> {
+		await loadFace();
+		this.status = "loaded";
+		return this;
+	}
 }
 function setFonts(doc: FakeDocument) {
 	const set = Object.assign(new Set<TestFontFace>(), { load: mock.fn(async (): Promise<TestFontFace[]> => []) });
 	Object.defineProperty(doc, "fonts", { value: set, configurable: true });
 	return set;
 }
-function links(): HTMLLinkElement[] { return dom.document.head.querySelectorAll("link") as unknown as HTMLLinkElement[]; }
-function loadLink(link: HTMLLinkElement): void { link.onload?.call(link, new Event("load")); }
+function links(): HTMLLinkElement[] {
+	return dom.document.head.querySelectorAll("link") as unknown as HTMLLinkElement[];
+}
+function loadLink(link: HTMLLinkElement): void {
+	link.onload?.call(link, new Event("load"));
+}
 async function loadFromNetwork() {
 	const pending = ensureMaterialFontLoaded("outlined");
 	await tick();
@@ -56,11 +77,16 @@ beforeEach(() => {
 	globals.FontFace = TestFontFace;
 	delete globals.__CS_REQUEST_URL__;
 	fonts = setFonts(dom.document);
-	setMaterialFontStore({ vault: { adapter: {}, configDir: ".obsidian" } } as unknown as App, { id: "callout-studio" } as PluginManifest);
+	setMaterialFontStore(
+		{ vault: { adapter: {}, configDir: ".obsidian" } } as unknown as App,
+		{ id: "callout-studio" } as PluginManifest,
+	);
 	store = materialFontStore()!;
 	mock.method(store, "read", async () => null);
 	mock.method(store, "has", async () => false);
-	mock.method(store, "write", async (_family: string, data: ArrayBuffer) => { writes.push(data); });
+	mock.method(store, "write", async (_family: string, data: ArrayBuffer) => {
+		writes.push(data);
+	});
 	startMaterialFontLoader();
 });
 afterEach(() => {
@@ -150,11 +176,14 @@ describe("Material font loader lifetime", () => {
 
 	it("removes a loaded stylesheet and cancels the CORS cache reader", async () => {
 		await loadFromNetwork();
-		const reader = links().find(link => link.media === "not all")!;
+		const reader = links().find((link) => link.media === "not all")!;
 		assert.ok(reader);
 		const delayed = reader.onload!;
 		let requests = 0;
-		globals.__CS_REQUEST_URL__ = async () => { requests++; return { text: "", arrayBuffer: bytes }; };
+		globals.__CS_REQUEST_URL__ = async () => {
+			requests++;
+			return { text: "", arrayBuffer: bytes };
+		};
 		stopMaterialFontLoader();
 		delayed.call(reader, new Event("load"));
 		await tick();
@@ -166,10 +195,15 @@ describe("Material font loader lifetime", () => {
 	it("does not persist a cache request that resolves after disable", async () => {
 		const response = deferred<{ text: string; arrayBuffer: ArrayBuffer }>();
 		const requested: string[] = [];
-		globals.__CS_REQUEST_URL__ = url => { requested.push(url); return response.promise; };
+		globals.__CS_REQUEST_URL__ = (url) => {
+			requested.push(url);
+			return response.promise;
+		};
 		await loadFromNetwork();
-		const reader = links().find(link => link.media === "not all")!;
-		Object.defineProperty(reader, "sheet", { value: { cssRules: [{ cssText: "src:url(https://fonts.gstatic.com/font.woff2)" }] } });
+		const reader = links().find((link) => link.media === "not all")!;
+		Object.defineProperty(reader, "sheet", {
+			value: { cssRules: [{ cssText: "src:url(https://fonts.gstatic.com/font.woff2)" }] },
+		});
 		loadLink(reader);
 		await tick();
 		assert.deepEqual(requested, ["https://fonts.gstatic.com/font.woff2"]);

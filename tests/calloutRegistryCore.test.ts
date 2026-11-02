@@ -56,10 +56,7 @@ function def(over: Partial<CalloutDefinition> = {}): CalloutDefinition {
 }
 
 /** A `data.json` shaped payload. Settings are merged, so a partial is fine. */
-function saved(
-	callouts: CalloutDefinition[],
-	settings?: Record<string, unknown>,
-): Partial<PluginData> {
+function saved(callouts: CalloutDefinition[], settings?: Record<string, unknown>): Partial<PluginData> {
 	return { callouts, ...(settings ? { settings } : {}) } as Partial<PluginData>;
 }
 
@@ -94,10 +91,7 @@ describe("load() — seeding the built-ins", () => {
 		// built-ins the user changed, so a typical data.json holds zero. If
 		// seeding depended on the file, a fresh vault would have no callouts.
 		const { registry } = loaded(saved([def({ id: "mine" })]));
-		assert.deepStrictEqual(
-			ids(registry.getAll()).sort(),
-			[...BUILT_IN_IDS, "mine"].sort(),
-		);
+		assert.deepStrictEqual(ids(registry.getAll()).sort(), [...BUILT_IN_IDS, "mine"].sort());
 	});
 
 	it("orders them by display name, which is the order the map preserves", () => {
@@ -127,10 +121,7 @@ describe("load() — seeding the built-ins", () => {
 		assert.strictEqual(shipped?.displayName, "Note");
 		assert.strictEqual(shipped?.colorLight, "#086ddd");
 		// And the module-level constant the defaults were cloned FROM.
-		assert.strictEqual(
-			DEFAULT_CALLOUTS.find((d) => d.id === "note")?.displayName,
-			"Note",
-		);
+		assert.strictEqual(DEFAULT_CALLOUTS.find((d) => d.id === "note")?.displayName, "Note");
 	});
 
 	it("clears everything from the previous load rather than merging onto it", () => {
@@ -146,9 +137,7 @@ describe("load() — seeding the built-ins", () => {
 	it("merges a saved built-in override onto the shipped default", () => {
 		// data.json stores only the fields the user changed for a built-in, so
 		// everything else has to come from the default underneath it.
-		const { registry } = loaded(
-			saved([{ id: "note", colorLight: "#ff0000", builtIn: true } as CalloutDefinition]),
-		);
+		const { registry } = loaded(saved([{ id: "note", colorLight: "#ff0000", builtIn: true } as CalloutDefinition]));
 		const note = registry.get("note");
 
 		assert.strictEqual(note?.colorLight, "#ff0000");
@@ -165,9 +154,7 @@ describe("load() — seeding the built-ins", () => {
 		// theme deference and be compared against a shipped row that is not
 		// there. Kept as the user row it really is, rather than dropped: the
 		// alternative silently deletes a callout the vault's notes still use.
-		const { registry } = loaded(
-			saved([def({ id: "ghost", builtIn: true, source: "builtin" })]),
-		);
+		const { registry } = loaded(saved([def({ id: "ghost", builtIn: true, source: "builtin" })]));
 		const ghost = registry.get("ghost");
 
 		assert.strictEqual(ghost?.builtIn, false);
@@ -182,9 +169,7 @@ describe("load() — seeding the built-ins", () => {
 		// public API all read. There is only one callout per id, so the row is
 		// the built-in's customization with its flag lost: merge it onto the
 		// default, keeping the edit and restoring the seed.
-		const { registry } = loaded(
-			saved([def({ id: "note", displayName: "Mine", builtIn: false, source: "user" })]),
-		);
+		const { registry } = loaded(saved([def({ id: "note", displayName: "Mine", builtIn: false, source: "user" })]));
 		assert.strictEqual(registry.get("note")?.displayName, "Mine", "the edit is kept");
 		assert.strictEqual(registry.get("note")?.builtIn, true);
 		assert.strictEqual(registry.get("note")?.source, "builtin");
@@ -193,9 +178,7 @@ describe("load() — seeding the built-ins", () => {
 	});
 
 	it("keeps the rest of the built-in's fields underneath that row", () => {
-		const { registry } = loaded(
-			saved([def({ id: "note", displayName: "Mine", builtIn: false, source: "user" })]),
-		);
+		const { registry } = loaded(saved([def({ id: "note", displayName: "Mine", builtIn: false, source: "user" })]));
 		// `def()` states colours of its own, so the ones it does NOT state have
 		// to come from the shipped default, exactly as for a `builtIn: true` row.
 		assert.strictEqual(registry.get("note")?.foldable, true);
@@ -204,9 +187,7 @@ describe("load() — seeding the built-ins", () => {
 
 	it("flushes that repair so the file stops carrying the broken shape", () => {
 		const registry = new CalloutRegistry();
-		registry.load(
-			saved([def({ id: "note", displayName: "Mine", builtIn: false, source: "user" })]),
-		);
+		registry.load(saved([def({ id: "note", displayName: "Mine", builtIn: false, source: "user" })]));
 		assert.strictEqual(registry.needsSaveAfterLoad(), true);
 
 		const rewritten = registry.toSaveData();
@@ -235,11 +216,7 @@ describe("load() — seeding the built-ins", () => {
 	});
 
 	it("restores the icon of a callout still on the removed `svg` type", () => {
-		const { registry } = loaded(
-			saved([
-				def({ id: "legacy", icon: { type: "svg", value: "<svg/>" } as never }),
-			]),
-		);
+		const { registry } = loaded(saved([def({ id: "legacy", icon: { type: "svg", value: "<svg/>" } as never })]));
 		assert.deepStrictEqual(registry.get("legacy")?.icon, {
 			type: "lucide",
 			value: "lucide-pencil",
@@ -252,11 +229,7 @@ describe("load() — seeding the built-ins", () => {
 		// the file only when some unrelated mutation happened to trigger a
 		// save. Second load has nothing left to repair, so the flag stays down
 		// and the flush cannot loop.
-		const { registry } = loaded(
-			saved([
-				def({ id: "legacy", icon: { type: "svg", value: "<svg/>" } as never }),
-			]),
-		);
+		const { registry } = loaded(saved([def({ id: "legacy", icon: { type: "svg", value: "<svg/>" } as never })]));
 		assert.strictEqual(registry.needsSaveAfterLoad(), true);
 
 		const second = new CalloutRegistry();
@@ -270,9 +243,7 @@ describe("load() — seeding the built-ins", () => {
 		const registry = new CalloutRegistry();
 		registry.load({
 			callouts: [],
-			materialSvgCache: [
-				{ name: "home", style: "outlined", weight: 400, svg: "<svg/>" },
-			],
+			materialSvgCache: [{ name: "home", style: "outlined", weight: 400, svg: "<svg/>" }],
 		} as unknown as Parameters<CalloutRegistry["load"]>[0]);
 		assert.strictEqual(registry.needsSaveAfterLoad(), true);
 	});
@@ -296,26 +267,18 @@ describe("load() — seeding the built-ins", () => {
 			]),
 		);
 
-		assert.strictEqual(
-			registry.get("borrowed")?.icon.value,
-			"remix-QuestionnaireFill",
-		);
+		assert.strictEqual(registry.get("borrowed")?.icon.value, "remix-QuestionnaireFill");
 		assert.strictEqual(registry.get("internal")?.icon.value, "dice");
 	});
 
 	it("leaves a real core Lucide id prefixed, because that spelling draws", () => {
-		const { registry } = loaded(
-			saved([def({ id: "real", icon: { type: "lucide", value: "lucide-star" } })]),
-		);
+		const { registry } = loaded(saved([def({ id: "real", icon: { type: "lucide", value: "lucide-star" } })]));
 		assert.strictEqual(registry.get("real")?.icon.value, "lucide-star");
 	});
 
 	it("keeps the settings defaults when the payload carries none", () => {
 		const { registry } = loaded(saved([]));
-		assert.strictEqual(
-			registry.settings.fallbackCalloutId,
-			DEFAULT_SETTINGS.fallbackCalloutId,
-		);
+		assert.strictEqual(registry.settings.fallbackCalloutId, DEFAULT_SETTINGS.fallbackCalloutId);
 	});
 });
 
@@ -375,7 +338,10 @@ describe("toSaveData() — what reaches data.json", () => {
 		registry.add(def({ id: "seen", source: "fallback" }));
 
 		assert.ok(registry.get("seen"), "still in the registry");
-		assert.deepStrictEqual(registry.toSaveData().callouts.map(row => row.id), ["seen"]);
+		assert.deepStrictEqual(
+			registry.toSaveData().callouts.map((row) => row.id),
+			["seen"],
+		);
 	});
 
 	it("persists a discovered row the moment somebody claims it", () => {
@@ -384,14 +350,9 @@ describe("toSaveData() — what reaches data.json", () => {
 		registry.add(def({ id: "commanded", source: "fallback" }));
 
 		registry.update("adopted", { customized: true });
-		registry.settings.customCommands = [
-			{ id: "c1", calloutId: "commanded" } as never,
-		];
+		registry.settings.customCommands = [{ id: "c1", calloutId: "commanded" } as never];
 
-		assert.deepStrictEqual(
-			ids(registry.toSaveData().callouts).sort(),
-			["adopted", "commanded"],
-		);
+		assert.deepStrictEqual(ids(registry.toSaveData().callouts).sort(), ["adopted", "commanded"]);
 	});
 
 	it("claims a discovered row through any spelling of the command's id", () => {
@@ -399,9 +360,7 @@ describe("toSaveData() — what reaches data.json", () => {
 		// to agree, or the row is dropped and the hotkey orphaned.
 		const { registry } = loaded(null);
 		registry.add(def({ id: "two words", source: "fallback" }));
-		registry.settings.customCommands = [
-			{ id: "c1", calloutId: "two-words" } as never,
-		];
+		registry.settings.customCommands = [{ id: "c1", calloutId: "two-words" } as never];
 
 		assert.deepStrictEqual(ids(registry.toSaveData().callouts), ["two words"]);
 	});
@@ -417,9 +376,7 @@ describe("toSaveData() — what reaches data.json", () => {
 	it("never writes back the pre-2.4 materialSvgCache it migrated from", () => {
 		const registry = new CalloutRegistry();
 		registry.load({
-			materialSvgCache: [
-				{ name: "home", style: "outlined", weight: 400, svg: "<svg/>" },
-			],
+			materialSvgCache: [{ name: "home", style: "outlined", weight: 400, svg: "<svg/>" }],
 		} as Partial<PluginData>);
 
 		const out = registry.toSaveData() as PluginData & {

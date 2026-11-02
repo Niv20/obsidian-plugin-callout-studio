@@ -44,8 +44,9 @@ export function autocompleteRows(ctx: TreeContext): CsSetting[] {
 			desc: "settings.suggestThemeCalloutsDesc",
 			key: "suggestions.themeCallouts",
 			writer,
-			visible: () => suggestions().callouts
-				&& (ctx.plugin.registry.getThemeProvided().length > 0 || !suggestions().themeCallouts),
+			visible: () =>
+				suggestions().callouts &&
+				(ctx.plugin.registry.getThemeProvided().length > 0 || !suggestions().themeCallouts),
 		}),
 	];
 }

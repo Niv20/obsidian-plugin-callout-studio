@@ -21,7 +21,16 @@
  * leave an empty type for the user to choose, and this list is how the
  * command asks. The row under it can leave the theme's own callouts out.
  */
-import { Editor, EditorPosition, EditorSuggest, EditorSuggestContext, EditorSuggestTriggerInfo, MarkdownView, TFile, setIcon } from "obsidian";
+import {
+	Editor,
+	EditorPosition,
+	EditorSuggest,
+	EditorSuggestContext,
+	EditorSuggestTriggerInfo,
+	MarkdownView,
+	TFile,
+	setIcon,
+} from "obsidian";
 import type CalloutStudioPlugin from "../main";
 import type { CalloutDefinition, CalloutRenderRole } from "../types";
 import { CalloutEditor } from "../settings/CalloutEditor";
@@ -29,11 +38,7 @@ import { getLocale, t } from "../i18n";
 import { suggestableCallouts } from "../utils/usableCallouts";
 import { calloutMatchesQuery, matchedCalloutId } from "../utils/calloutSearch";
 import { readCalloutTrigger, tokenBodyAt, triggerInCode } from "./calloutTriggerContext";
-import {
-	landAfterInlineToken,
-	parkCursor,
-	placeCursorAfterPick,
-} from "./autoCompleteCursor";
+import { landAfterInlineToken, parkCursor, placeCursorAfterPick } from "./autoCompleteCursor";
 import { acceptOnKey, pickKeyOf, type PickKey } from "./suggestKeys";
 import {
 	buildBlockHeaderToken,
@@ -107,11 +112,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 			const manager = (
 				this.app.workspace as unknown as {
 					editorSuggest?: {
-						trigger?: (
-							editor: Editor,
-							file: TFile,
-							manual: boolean,
-						) => void;
+						trigger?: (editor: Editor, file: TFile, manual: boolean) => void;
 					};
 				}
 			).editorSuggest;
@@ -126,18 +127,10 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		return trigger ? { line: cursor.line, ch: trigger.triggerCh } : null;
 	}
 
-	onTrigger(
-		cursor: EditorPosition,
-		editor: Editor,
-		_file: TFile | null,
-	): EditorSuggestTriggerInfo | null {
+	onTrigger(cursor: EditorPosition, editor: Editor, _file: TFile | null): EditorSuggestTriggerInfo | null {
 		// The token around the cursor and the role it is typed in — read by the
 		// one reader the metadata suggest shares, so the two never disagree.
-		const trigger = readCalloutTrigger(
-			editor.getLine(cursor.line),
-			cursor.ch,
-			this.plugin.settings,
-		);
+		const trigger = readCalloutTrigger(editor.getLine(cursor.line), cursor.ch, this.plugin.settings);
 		if (!trigger) return null;
 
 		// Switched off: open only on the `[!` a command asked about.
@@ -186,9 +179,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		// The theme's own callouts, when the user left them out (Settings →
 		// Editor). Only from the rows: their names still count as taken
 		// below, so typing one in full never offers to create it again.
-		const offered = this.plugin.settings.suggestions.themeCallouts
-			? all
-			: all.filter((d) => d.source !== "theme");
+		const offered = this.plugin.settings.suggestions.themeCallouts ? all : all.filter((d) => d.source !== "theme");
 
 		// Filter — the same predicate the quick-insert window matches with, so
 		// the two lists can never disagree about what a typed word finds.
@@ -201,9 +192,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		const trimmed = context.query.trim();
 		if (trimmed.length > 0) {
 			const exact = all.some(
-				(d) =>
-					d.id.toLowerCase() === query ||
-					(d.aliases ?? []).some((a) => a.toLowerCase() === query),
+				(d) => d.id.toLowerCase() === query || (d.aliases ?? []).some((a) => a.toLowerCase() === query),
 			);
 			if (!exact) {
 				result.push({ __createNew: true, query: trimmed });
@@ -253,13 +242,9 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 	}
 
 	/** Whether a title is one we would have generated, not the user's own. */
-	private isKnownDisplayName = (title: string): boolean =>
-		isGeneratedTitle(this.plugin.registry.getAll(), title);
+	private isKnownDisplayName = (title: string): boolean => isGeneratedTitle(this.plugin.registry.getAll(), title);
 
-	selectSuggestion(
-		item: CalloutSuggestion,
-		evt: MouseEvent | KeyboardEvent,
-	): void {
+	selectSuggestion(item: CalloutSuggestion, evt: MouseEvent | KeyboardEvent): void {
 		const ctx = this.context;
 		if (!ctx) return;
 		if (evt instanceof KeyboardEvent) {
@@ -320,8 +305,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		// title detection.
 		const afterTrigger = line.slice(start.ch + 2);
 		const closeIdx = afterTrigger.indexOf("]");
-		const afterHeader =
-			closeIdx === -1 ? "" : afterTrigger.slice(closeIdx + 1);
+		const afterHeader = closeIdx === -1 ? "" : afterTrigger.slice(closeIdx + 1);
 		const metaSuffix = this.tokenMetadataSuffix(line, start.ch);
 
 		// Replace from trigger start to end of line
@@ -348,10 +332,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 
 		// Regular callout header: an optional fold mark after the `]`, then the
 		// title. The role is the splitter's argument, not the caller's position.
-		const existingTitle = splitFoldMark(
-			afterHeader,
-			this.triggerRole,
-		).title.trim();
+		const existingTitle = splitFoldMark(afterHeader, this.triggerRole).title.trim();
 
 		const replacement = buildBlockHeaderToken(def, {
 			matchedId,
@@ -382,9 +363,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		const afterTrigger = line.slice(start.ch + 2);
 		const closeIdx = afterTrigger.indexOf("]");
 		const tokenEnd: EditorPosition =
-			closeIdx === -1
-				? contextEnd
-				: { line: start.line, ch: start.ch + 2 + closeIdx + 1 };
+			closeIdx === -1 ? contextEnd : { line: start.line, ch: start.ch + 2 + closeIdx + 1 };
 		const token = buildInlineToken(def, {
 			matchedId: insertId,
 			metaSuffix: this.tokenMetadataSuffix(line, start.ch),
@@ -404,17 +383,11 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 	 * `]]`. For the same reason an unclosed token is left unclosed. In one, the
 	 * type ends at the cursor: the rest of the line is not the user's to lose.
 	 */
-	private replaceTypeText(
-		editor: Editor,
-		start: EditorPosition,
-		cursor: EditorPosition,
-		insertId: string,
-	): number {
+	private replaceTypeText(editor: Editor, start: EditorPosition, cursor: EditorPosition, insertId: string): number {
 		const line = editor.getLine(start.line);
 		const body = tokenBodyAt(line, start.ch);
 		const from = start.ch + 2;
-		const to =
-			body.closeCh === -1 ? Math.min(body.idEndCh, Math.max(cursor.ch, from)) : body.idEndCh;
+		const to = body.closeCh === -1 ? Math.min(body.idEndCh, Math.max(cursor.ch, from)) : body.idEndCh;
 		if (line.slice(from, to) !== insertId) {
 			editor.replaceRange(insertId, { line: start.line, ch: from }, { line: start.line, ch: to });
 		}
@@ -428,16 +401,10 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 	 * link suggest leaves it before `]]`. Without a `]` it parks after the type
 	 * and its metadata.
 	 */
-	private writeTypeOnly(
-		editor: Editor,
-		start: EditorPosition,
-		cursor: EditorPosition,
-		insertId: string,
-	): void {
+	private writeTypeOnly(editor: Editor, start: EditorPosition, cursor: EditorPosition, insertId: string): void {
 		const idEnd = this.replaceTypeText(editor, start, cursor, insertId);
 		const body = tokenBodyAt(editor.getLine(start.line), start.ch);
-		const park =
-			body.closeCh !== -1 ? body.closeCh : body.pipeCh !== -1 ? body.bodyEndCh : idEnd;
+		const park = body.closeCh !== -1 ? body.closeCh : body.pipeCh !== -1 ? body.bodyEndCh : idEnd;
 		parkCursor(editor, { line: start.line, ch: park });
 	}
 
@@ -464,20 +431,14 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 	): void {
 		const body = tokenBodyAt(editor.getLine(start.line), start.ch);
 		const id = matchedId.toLowerCase();
-		const completes =
-			typed !== "" &&
-			cursor.ch === body.idEndCh &&
-			id.startsWith(typed) &&
-			id !== typed;
+		const completes = typed !== "" && cursor.ch === body.idEndCh && id.startsWith(typed) && id !== typed;
 		if (!completes) {
 			this.typePipe(editor, cursor, file);
 			return;
 		}
 		const idEnd = this.replaceTypeText(editor, start, cursor, matchedId);
 		if (editor.getLine(start.line)[idEnd] === "|") {
-			parkCursor(editor, { line: start.line, ch: idEnd + 1 }, () =>
-				this.triggerNow(editor, file),
-			);
+			parkCursor(editor, { line: start.line, ch: idEnd + 1 }, () => this.triggerNow(editor, file));
 			return;
 		}
 		this.typePipe(editor, { line: start.line, ch: idEnd }, file);
@@ -488,15 +449,9 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 	 * there — a write of ours is not a keystroke, so Obsidian's manager would
 	 * not re-check the line on its own (see {@link triggerNow}).
 	 */
-	private typePipe(
-		editor: Editor,
-		at: EditorPosition,
-		file: TFile | null,
-	): void {
+	private typePipe(editor: Editor, at: EditorPosition, file: TFile | null): void {
 		editor.replaceRange("|", at);
-		parkCursor(editor, { line: at.line, ch: at.ch + 1 }, () =>
-			this.triggerNow(editor, file),
-		);
+		parkCursor(editor, { line: at.line, ch: at.ch + 1 }, () => this.triggerNow(editor, file));
 	}
 
 	/**
@@ -511,11 +466,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 	 * different note. Same principle the context-menu handlers already follow —
 	 * recompute from the live document and compare against what was expected.
 	 */
-	private liveTriggerLine(
-		editor: Editor,
-		file: TFile,
-		start: EditorPosition,
-	): string | null {
+	private liveTriggerLine(editor: Editor, file: TFile, start: EditorPosition): string | null {
 		// Did this editor's leaf move to another note while the modal was open?
 		// Compared against the editor's OWN view rather than the active one, so
 		// a write into an unfocused-but-unchanged pane is not refused.
@@ -533,11 +484,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		return line.startsWith("[!", start.ch) ? line : null;
 	}
 
-	private async openCreateForQuery(
-		query: string,
-		ctx: EditorSuggestContext,
-		key: PickKey = "enter",
-	): Promise<void> {
+	private async openCreateForQuery(query: string, ctx: EditorSuggestContext, key: PickKey = "enter"): Promise<void> {
 		// Snapshot the role now: close() and the modal round-trip may let
 		// another onTrigger run and overwrite triggerRole.
 		const role = this.triggerRole;
@@ -579,14 +526,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 
 		if (role === "inline") {
 			editor.focus();
-			this.insertInlineToken(
-				editor,
-				start,
-				tokenEnd,
-				line,
-				result,
-				result.id,
-			);
+			this.insertInlineToken(editor, start, tokenEnd, line, result, result.id);
 			return;
 		}
 

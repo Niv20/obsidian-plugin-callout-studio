@@ -32,11 +32,21 @@ function mount() {
 	const menu = host.querySelector(".cs-combobox-menu")!;
 	field.fire("click");
 	return {
-		popup, field, input, popover, menu, previews, committed, created,
+		popup,
+		field,
+		input,
+		popover,
+		menu,
+		previews,
+		committed,
+		created,
 		rows: () => menu.querySelectorAll(".cs-combobox-option"),
-		key: (key: string) => input.fire("keydown", {
-			key, preventDefault: () => {}, stopPropagation: () => {},
-		}),
+		key: (key: string) =>
+			input.fire("keydown", {
+				key,
+				preventDefault: () => {},
+				stopPropagation: () => {},
+			}),
 	};
 }
 
@@ -49,7 +59,9 @@ describe("ListboxPopup — pointer and keyboard highlights", () => {
 			assert.equal(fakeDom.document.activeElement, h.field, "the focus is back on the field");
 			// Obsidian's mouse-focus: app.css draws no ring until the next Tab.
 			assert.ok(h.field.hasClass("mouse-focus"));
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("keeps the keyboard ring after a pick made with Enter", () => {
@@ -59,7 +71,9 @@ describe("ListboxPopup — pointer and keyboard highlights", () => {
 			h.key("Enter");
 			assert.equal(fakeDom.document.activeElement, h.field);
 			assert.equal(h.field.hasClass("mouse-focus"), false);
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	it("names its field and its search box without a hover tooltip", () => {
@@ -72,7 +86,9 @@ describe("ListboxPopup — pointer and keyboard highlights", () => {
 				assert.ok(labelId);
 				assert.equal(named.parentElement?.querySelector(`#${labelId}`)?.textContent, "Choices");
 			}
-		} finally { h.popup.destroy(); }
+		} finally {
+			h.popup.destroy();
+		}
 	});
 
 	for (const exit of ["row", "menu"] as const) {
@@ -147,7 +163,10 @@ describe("ListboxPopup — pointer and keyboard highlights", () => {
 		const h = mount();
 		try {
 			let scrolls = 0;
-			for (const row of h.rows()) row.scrollIntoView = () => { scrolls++; };
+			for (const row of h.rows())
+				row.scrollIntoView = () => {
+					scrolls++;
+				};
 			h.rows()[0]!.fire("mouseenter");
 			assert.equal(scrolls, 0);
 			h.key("ArrowDown");
@@ -178,10 +197,7 @@ describe("ListboxPopup — pointer and keyboard highlights", () => {
 
 it("dropdown option styling has no independent mouse hover highlight", () => {
 	const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, "");
-	assert.doesNotMatch(
-		css,
-		/\.(?:cs-combobox-option|icon-picker-source-menu-item):hover\b/,
-	);
+	assert.doesNotMatch(css, /\.(?:cs-combobox-option|icon-picker-source-menu-item):hover\b/);
 });
 
 it("selected options still show a visible pointer state", () => {

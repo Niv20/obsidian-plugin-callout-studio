@@ -77,9 +77,7 @@ export class CustomCommandManager {
 
 	/** Whether any command depends on this callout. */
 	hasCommandFor(calloutId: string): boolean {
-		return this.plugin.settings.customCommands.some(
-			(command) => command.calloutId === calloutId,
-		);
+		return this.plugin.settings.customCommands.some((command) => command.calloutId === calloutId);
 	}
 
 	async add(draft: CustomCommandDraft): Promise<CustomCommand> {
@@ -198,12 +196,10 @@ export class CustomCommandManager {
 			void this.plugin.saveSettings();
 			console.debug("[CalloutStudio] dropped malformed custom commands", invalidCount);
 		}
-
 	}
 
 	/** Whether a title is one we would have generated, not the user's. */
-	private isKnownDisplayName = (title: string): boolean =>
-		isGeneratedTitle(this.plugin.registry.getAll(), title);
+	private isKnownDisplayName = (title: string): boolean => isGeneratedTitle(this.plugin.registry.getAll(), title);
 
 	/**
 	 * Run a command's editor action.
@@ -213,9 +209,7 @@ export class CustomCommandManager {
 	 * itself was left in place.
 	 */
 	private run(commandId: string, editor: Editor): void {
-		const command = this.plugin.settings.customCommands.find(
-			(entry) => entry.id === commandId,
-		);
+		const command = this.plugin.settings.customCommands.find((entry) => entry.id === commandId);
 		if (!command) return;
 
 		const def = this.plugin.registry.get(command.calloutId);

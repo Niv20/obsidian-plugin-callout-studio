@@ -12,11 +12,7 @@
  */
 import type { App, Setting } from "obsidian";
 import { t } from "../../i18n";
-import {
-	fullCommandId,
-	hotkeysForCommand,
-	openHotkeySettings,
-} from "../hotkeyLink";
+import { fullCommandId, hotkeysForCommand, openHotkeySettings } from "../hotkeyLink";
 
 /**
  * What a command is bound to, drawn as Obsidian's Hotkeys page draws it: one

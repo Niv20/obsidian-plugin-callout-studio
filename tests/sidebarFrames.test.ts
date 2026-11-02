@@ -14,7 +14,11 @@ import { describe, it } from "node:test";
 import { t } from "../src/i18n";
 import { en } from "../src/i18n/en";
 import { createOccurrencesFrame } from "../src/usage/occurrencesViewFrame";
-import { createPortableConversionFrame, splitSelectionSummary, updatePortableSelection } from "../src/portable/portableConversionFrame";
+import {
+	createPortableConversionFrame,
+	splitSelectionSummary,
+	updatePortableSelection,
+} from "../src/portable/portableConversionFrame";
 import { addSidebarIconButton } from "../src/ui/sidebarFrame";
 import { SidebarFold } from "../src/ui/sidebarFold";
 import { createSidebarFileGroup, revealSidebarCard } from "../src/ui/sidebarResults";
@@ -49,7 +53,11 @@ describe("shared sidebar headers", () => {
 			assert.equal(usage.filter.getAttribute("aria-label"), t("usage.filterFormat"));
 			assert.equal(usage.scroll.contains(usage.results), true);
 			assert.equal(usage.scroll.contains(usage.pickerHost), false);
-			assert.equal(occurrences.querySelector(".cs-select-dropdown"), null, "the format is an icon button, not a field");
+			assert.equal(
+				occurrences.querySelector(".cs-select-dropdown"),
+				null,
+				"the format is an icon button, not a field",
+			);
 			// Review conversion: Convert with the help button at its end, in a row of its own.
 			const convertRow = portable.convert.parentElement!;
 			assert.ok(convertRow.hasClass("cs-portable-convert-row"));
@@ -65,7 +73,8 @@ describe("shared sidebar headers", () => {
 			assert.equal(conversion.querySelector('button[data-action="help"]'), null);
 			assert.equal(occurrences.querySelector(".cs-occurrences-metrics"), null);
 		} finally {
-			occurrences.remove(); conversion.remove();
+			occurrences.remove();
+			conversion.remove();
 		}
 	});
 
@@ -74,15 +83,30 @@ describe("shared sidebar headers", () => {
 		const row = fakeDom.document.body.createDiv();
 		try {
 			let presses = 0;
-			const button = addSidebarIconButton(row as unknown as HTMLElement, { icon: "filter", label: t("usage.filterFormat"), onPress: () => { presses++; } });
+			const button = addSidebarIconButton(row as unknown as HTMLElement, {
+				icon: "filter",
+				label: t("usage.filterFormat"),
+				onPress: () => {
+					presses++;
+				},
+			});
 			const button_ = button as unknown as typeof row;
 			assert.ok(button_.hasClass("clickable-icon") && button_.hasClass("cs-sidebar-icon-button"));
-			assert.equal(button_.getAttribute("aria-label"), t("usage.filterFormat"), "read out, and Obsidian's tooltip");
+			assert.equal(
+				button_.getAttribute("aria-label"),
+				t("usage.filterFormat"),
+				"read out, and Obsidian's tooltip",
+			);
 			assert.equal(button_.getAttribute("role"), "button");
 			assert.equal(button_.getAttribute("tabindex"), "0");
 			button_.fire("click");
 			let prevented = false;
-			button_.fire("keydown", { key: "Enter", preventDefault: () => { prevented = true; } });
+			button_.fire("keydown", {
+				key: "Enter",
+				preventDefault: () => {
+					prevented = true;
+				},
+			});
 			assert.equal(presses, 2);
 			assert.equal(prevented, true);
 		} finally {
@@ -120,20 +144,37 @@ describe("the selection line of Review conversion", () => {
 	});
 
 	it("cuts a sentence at the separator every language uses, and keeps a sentence without one whole", () => {
-		assert.deepEqual(splitSelectionSummary("74 of 74 replacements selected · 3 heading links to update"), ["74 of 74 replacements selected", "3 heading links to update"]);
-		assert.deepEqual(splitSelectionSummary("74 of 74 replacements selected"), ["74 of 74 replacements selected", ""]);
+		assert.deepEqual(splitSelectionSummary("74 of 74 replacements selected · 3 heading links to update"), [
+			"74 of 74 replacements selected",
+			"3 heading links to update",
+		]);
+		assert.deepEqual(splitSelectionSummary("74 of 74 replacements selected"), [
+			"74 of 74 replacements selected",
+			"",
+		]);
 	});
 
 	it("finds two lines in the sentence of every translation, so no language shows it as one", () => {
-		const all: [string, string | undefined][] = [["en", en["portable.selectionSummary"]], ...localeEntries()
-			.map(([id, table]): [string, string | undefined] => [id, table["portable.selectionSummary"]])];
+		const all: [string, string | undefined][] = [
+			["en", en["portable.selectionSummary"]],
+			...localeEntries().map(([id, table]): [string, string | undefined] => [
+				id,
+				table["portable.selectionSummary"],
+			]),
+		];
 		// A language that has not translated the sentence yet falls back to English, which is checked too.
 		const sentences = all.filter((entry): entry is [string, string] => typeof entry[1] === "string");
 		assert.ok(sentences.length > 30, "English and every language");
 		for (const [id, sentence] of sentences) {
 			const [replacements, links] = splitSelectionSummary(sentence);
-			assert.ok(replacements.length > 0 && links.length > 0, `${id}: "${sentence}" has no " · " between its two halves`);
-			assert.ok(replacements.includes("{{selected}}") && links.includes("{{links}}"), `${id}: the halves hold the right numbers`);
+			assert.ok(
+				replacements.length > 0 && links.length > 0,
+				`${id}: "${sentence}" has no " · " between its two halves`,
+			);
+			assert.ok(
+				replacements.includes("{{selected}}") && links.includes("{{links}}"),
+				`${id}: the halves hold the right numbers`,
+			);
 		}
 	});
 });
@@ -153,7 +194,10 @@ describe("a note's group in the sidebars", () => {
 		const { host, group, section, foldButton } = drawGroup(new SidebarFold());
 		try {
 			assert.ok(section.hasClass("tree-item") && section.hasClass("search-result"));
-			assert.ok(foldButton.hasClass("tree-item-icon") && foldButton.hasClass("collapse-icon"), "Obsidian's own triangle, which it turns by the window's direction");
+			assert.ok(
+				foldButton.hasClass("tree-item-icon") && foldButton.hasClass("collapse-icon"),
+				"Obsidian's own triangle, which it turns by the window's direction",
+			);
 			assert.equal(foldButton.hasClass("is-collapsed"), false);
 			assert.equal(foldButton.getAttribute("aria-expanded"), "true");
 			assert.equal(foldButton.getAttribute("role"), "button");
@@ -184,7 +228,12 @@ describe("a note's group in the sidebars", () => {
 			assert.equal(foldButton.getAttribute("aria-expanded"), "false");
 			assert.equal(fold.isFolded("Projects/Launch plan.md"), true);
 			let prevented = false;
-			foldButton.fire("keydown", { key: " ", preventDefault: () => { prevented = true; } });
+			foldButton.fire("keydown", {
+				key: " ",
+				preventDefault: () => {
+					prevented = true;
+				},
+			});
 			assert.equal(prevented, true, "Space does not also scroll the pane");
 			assert.equal(section.hasClass("is-collapsed"), false);
 			assert.equal(foldButton.getAttribute("aria-expanded"), "true");
@@ -230,7 +279,12 @@ describe("a note's group in the sidebars", () => {
 			// Laid out as a scroller 100px tall at the top of the page, with the group's title row at 300px
 			// and its (hidden, so zero-sized) result at the top-left corner.
 			const scroller = fakeDom.document.body.createDiv() as unknown as HTMLElement;
-			Object.assign(scroller, { clientHeight: 100, clientTop: 0, scrollTop: 0, getBoundingClientRect: () => ({ top: 0, bottom: 100 }) });
+			Object.assign(scroller, {
+				clientHeight: 100,
+				clientTop: 0,
+				scrollTop: 0,
+				getBoundingClientRect: () => ({ top: 0, bottom: 100 }),
+			});
 			Object.assign(group.head, { getBoundingClientRect: () => ({ top: 300, bottom: 320 }) });
 			Object.assign(row, { getBoundingClientRect: () => ({ top: 0, bottom: 0 }) });
 			foldButton.fire("click");

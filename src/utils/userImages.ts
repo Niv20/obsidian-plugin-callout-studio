@@ -19,12 +19,7 @@ import { MAX_RASTER_PIXELS } from "../icons/rasterSafety";
 /** Prefix for a picture's stable id, stored as `CalloutIcon.value`. */
 const ID_PREFIX = "img-";
 
-const FORMATS = new Set<UserImageIcon["format"]>([
-	"svg",
-	"png",
-	"jpeg",
-	"webp",
-]);
+const FORMATS = new Set<UserImageIcon["format"]>(["svg", "png", "jpeg", "webp"]);
 
 /** Long enough for any sane filename; a guard, not a style rule. */
 const MAX_NAME_LENGTH = 60;
@@ -97,9 +92,7 @@ export function normalizeUserImageName(name: string): string {
  * dropping a picture on read because its name collides would delete artwork
  * that callouts are pointing at.
  */
-export function takenUserImageNames(
-	images: readonly UserImageIcon[],
-): Set<string> {
+export function takenUserImageNames(images: readonly UserImageIcon[]): Set<string> {
 	return new Set(images.map((image) => normalizeUserImageName(image.name)));
 }
 
@@ -119,11 +112,7 @@ export function takenUserImageNames(
  * away again whenever the stem is already at the cap — which handed back the
  * very name being avoided, id fallback included.
  */
-export function claimUserImageName(
-	name: string,
-	taken: Set<string>,
-	unique: string,
-): string {
+export function claimUserImageName(name: string, taken: Set<string>, unique: string): string {
 	const dot = name.lastIndexOf(".");
 	const stem = dot > 0 ? name.slice(0, dot) : name;
 	const extension = dot > 0 ? name.slice(dot) : "";
@@ -184,8 +173,12 @@ export function sanitizeUserImages(raw: unknown): UserImageIcon[] {
 		// Re-filter rather than trust: this markup may have been written by an
 		// older build, edited by hand, or handed over in an import file.
 		const artwork = filterArtwork(image.svg);
-		if (!artwork || rasterPixels + artwork.rasterPixels > MAX_RASTER_PIXELS ||
-			elements + artwork.elementCount > MAX_USER_IMAGE_ELEMENTS) continue;
+		if (
+			!artwork ||
+			rasterPixels + artwork.rasterPixels > MAX_RASTER_PIXELS ||
+			elements + artwork.elementCount > MAX_USER_IMAGE_ELEMENTS
+		)
+			continue;
 		rasterPixels += artwork.rasterPixels;
 		elements += artwork.elementCount;
 
@@ -209,10 +202,7 @@ export function sanitizeUserImages(raw: unknown): UserImageIcon[] {
 			// photo would flatten it to a silhouette. `recolor` is the field's
 			// name in a vault written before the flag moved onto the callout;
 			// droppable once this branch has shipped.
-			monochrome:
-				(image.monochrome ??
-					(image as { recolor?: unknown }).recolor) === true &&
-				format === "svg",
+			monochrome: (image.monochrome ?? (image as { recolor?: unknown }).recolor) === true && format === "svg",
 			rev: Number.isFinite(image.rev) ? Number(image.rev) : 1,
 			addedAt: Number.isFinite(image.addedAt) ? Number(image.addedAt) : 0,
 		});

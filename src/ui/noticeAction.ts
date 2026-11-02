@@ -49,17 +49,20 @@ export interface ActionNotice {
  *   until it is clicked or hidden. Left out, a notice with a button stays
  *   {@link ACTION_NOTICE_MS}, long enough to read it and reach for the button.
  */
-export function showActionNotice(kind: NoticeKind, message: string, action: NoticeAction, duration: number = ACTION_NOTICE_MS): ActionNotice {
+export function showActionNotice(
+	kind: NoticeKind,
+	message: string,
+	action: NoticeAction,
+	duration: number = ACTION_NOTICE_MS,
+): ActionNotice {
 	const notice = showNotice(kind, message, duration);
-	const buttonEl = notice.containerEl
-		.createDiv({ cls: "notice-button-container" })
-		.createDiv({
-			cls: "notice-cta cs-notice-action",
-			text: action.label,
-			// Obsidian's own notice button is a bare div; a role and a Tab stop
-			// let a keyboard reach this one too.
-			attr: { role: "button", tabindex: "0" },
-		});
+	const buttonEl = notice.containerEl.createDiv({ cls: "notice-button-container" }).createDiv({
+		cls: "notice-cta cs-notice-action",
+		text: action.label,
+		// Obsidian's own notice button is a bare div; a role and a Tab stop
+		// let a keyboard reach this one too.
+		attr: { role: "button", tabindex: "0" },
+	});
 	const press = (): void => {
 		notice.hide();
 		action.run();

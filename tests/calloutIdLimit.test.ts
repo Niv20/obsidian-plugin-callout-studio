@@ -27,27 +27,17 @@ import { t } from "../src/i18n";
 import { TagInput } from "../src/ui/TagInput";
 import { validateImportPayload } from "../src/utils/importValidator";
 import type { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import {
-	emojiOverrideCSS,
-	iconMaskOverrideCSS,
-	imageOverrideCSS,
-} from "../src/manager/css/iconOverrides";
+import { emojiOverrideCSS, iconMaskOverrideCSS, imageOverrideCSS } from "../src/manager/css/iconOverrides";
 import { calloutSel } from "../src/utils/calloutSelector";
 import { splitSelectorList } from "../src/utils/selectorText";
 import type { UserImageIcon } from "../src/types";
-import {
-	definition,
-	harness,
-	parseRules,
-	type CssRule,
-} from "./support/cssInjectorHarness";
+import { definition, harness, parseRules, type CssRule } from "./support/cssInjectorHarness";
 
 /**
  * `count` distinct IDs: `id1`, `id2`, … No dash, since the field turns a typed
  * dash into a space and the tests compare what they typed.
  */
-const ids = (count: number, prefix = "id"): string[] =>
-	Array.from({ length: count }, (_, i) => `${prefix}${i + 1}`);
+const ids = (count: number, prefix = "id"): string[] => Array.from({ length: count }, (_, i) => `${prefix}${i + 1}`);
 
 const maxMessage = (): string => t("editor.maxIds", { max: MAX_TAGS_COUNT });
 
@@ -59,10 +49,7 @@ describe("MAX_TAGS_COUNT", () => {
 	it("leaves every built-in room for an alias of the user's own", () => {
 		for (const def of DEFAULT_CALLOUTS) {
 			const shipped = 1 + (def.aliases?.length ?? 0);
-			assert.ok(
-				shipped < MAX_TAGS_COUNT,
-				`${def.id} ships ${shipped} IDs; the cap is ${MAX_TAGS_COUNT}`,
-			);
+			assert.ok(shipped < MAX_TAGS_COUNT, `${def.id} ships ${shipped} IDs; the cap is ${MAX_TAGS_COUNT}`);
 		}
 	});
 });
@@ -71,9 +58,7 @@ describe("MAX_TAGS_COUNT", () => {
  * The editor's IDs field
  * ------------------------------------------------------------------ */
 
-function field(
-	opts: Partial<ConstructorParameters<typeof TagInput>[1]> = {},
-) {
+function field(opts: Partial<ConstructorParameters<typeof TagInput>[1]> = {}) {
 	fakeDom.document.body.empty();
 	(globalThis as unknown as { CSS: { escape(value: string): string } }).CSS = {
 		escape: (value) => value,
@@ -107,9 +92,7 @@ function field(
 		x.fire("click", { stopPropagation: () => undefined });
 	};
 	const chips = (): string[] =>
-		root
-			.querySelectorAll(".cs-tag-chip")
-			.map((chip: FakeElement) => chip.getAttribute("data-tag") ?? "");
+		root.querySelectorAll(".cs-tag-chip").map((chip: FakeElement) => chip.getAttribute("data-tag") ?? "");
 	return { tags, input, button, error, changes, type, paste, remove, chips };
 }
 
@@ -140,10 +123,7 @@ describe("TagInput — the IDs field stops at MAX_TAGS_COUNT", () => {
 	it("fills a paste up to the cap and drops the rest", () => {
 		const f = field({ initialTags: ["first"] });
 		f.paste(ids(MAX_TAGS_COUNT + 3, "pasted").join(", "));
-		assert.deepStrictEqual(f.tags.getTags(), [
-			"first",
-			...ids(MAX_TAGS_COUNT - 1, "pasted"),
-		]);
+		assert.deepStrictEqual(f.tags.getTags(), ["first", ...ids(MAX_TAGS_COUNT - 1, "pasted")]);
 		assert.ok(f.input.disabled);
 		assert.strictEqual(f.error.textContent, maxMessage());
 	});
@@ -183,10 +163,7 @@ describe("TagInput — the IDs field stops at MAX_TAGS_COUNT", () => {
 		});
 		assert.ok(f.input.disabled);
 		f.tags.setPinnedTag("renamed");
-		assert.deepStrictEqual(f.tags.getTags(), [
-			"renamed",
-			...ids(MAX_TAGS_COUNT - 1),
-		]);
+		assert.deepStrictEqual(f.tags.getTags(), ["renamed", ...ids(MAX_TAGS_COUNT - 1)]);
 		assert.ok(f.input.disabled);
 	});
 
@@ -246,10 +223,11 @@ describe("validateImportPayload — the same cap, primary ID included", () => {
 			fakeRegistry(),
 		);
 		// Only the oversized entry is dropped; the rest of the file imports.
-		assert.deepStrictEqual(result.validDefs.map((def) => def.id), ["other"]);
-		const issue = result.issues.find(
-			(i) => i.messageKey === "import.err.tooManyIds",
+		assert.deepStrictEqual(
+			result.validDefs.map((def) => def.id),
+			["other"],
 		);
+		const issue = result.issues.find((i) => i.messageKey === "import.err.tooManyIds");
 		assert.ok(issue, JSON.stringify(result.issues));
 		assert.strictEqual(issue.level, "error");
 		assert.deepStrictEqual(issue.params, {
@@ -260,10 +238,7 @@ describe("validateImportPayload — the same cap, primary ID included", () => {
 
 	it("counts what is left after duplicates are refused", async () => {
 		// A duplicate is its own error, not a second strike against the count.
-		const result = await validateImportPayload(
-			[entry([...ids(MAX_TAGS_COUNT - 1), "id1"])],
-			fakeRegistry(),
-		);
+		const result = await validateImportPayload([entry([...ids(MAX_TAGS_COUNT - 1), "id1"])], fakeRegistry());
 		const keys = result.issues.map((issue) => issue.messageKey);
 		assert.ok(keys.includes("import.err.aliasDup"), keys.join());
 		assert.ok(!keys.includes("import.err.tooManyIds"), keys.join());
@@ -274,8 +249,7 @@ describe("validateImportPayload — the same cap, primary ID included", () => {
  * The stylesheet
  * ------------------------------------------------------------------ */
 
-const SVG =
-	'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z"/></svg>';
+const SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z"/></svg>';
 
 function picture(over: Partial<UserImageIcon> = {}): UserImageIcon {
 	return {
@@ -305,8 +279,7 @@ function rulesNaming(css: string, selector: string): CssRule[] {
 }
 
 /** How often `needle` occurs in `text`. */
-const occurrences = (text: string, needle: string): number =>
-	text.split(needle).length - 1;
+const occurrences = (text: string, needle: string): number => text.split(needle).length - 1;
 
 describe("generateCalloutCSS — the artwork is written once per callout", () => {
 	const names = ["primary", ...ids(MAX_TAGS_COUNT - 1)];
@@ -345,11 +318,7 @@ describe("generateCalloutCSS — the artwork is written once per callout", () =>
 		const out = css.generateCalloutCSS(def);
 		assert.strictEqual(occurrences(out, "--cs-icon-mask: url("), 1);
 		for (const name of names) {
-			assert.strictEqual(
-				rulesNaming(out, `${calloutSel(name)}${AFTER}`).length,
-				1,
-				name,
-			);
+			assert.strictEqual(rulesNaming(out, `${calloutSel(name)}${AFTER}`).length, 1, name);
 		}
 	});
 
@@ -364,11 +333,7 @@ describe("generateCalloutCSS — the artwork is written once per callout", () =>
 		);
 		assert.strictEqual(occurrences(out, 'content: "🌟"'), 1);
 		for (const name of names) {
-			assert.strictEqual(
-				rulesNaming(out, `${calloutSel(name)}${AFTER}`).length,
-				1,
-				name,
-			);
+			assert.strictEqual(rulesNaming(out, `${calloutSel(name)}${AFTER}`).length, 1, name);
 		}
 	});
 
@@ -409,10 +374,7 @@ describe("icon override builders — one selector or many", () => {
 
 	it("write the same text for a selector and a list of just that selector", () => {
 		assert.strictEqual(iconMaskOverrideCSS([one], SVG), iconMaskOverrideCSS(one, SVG));
-		assert.strictEqual(
-			imageOverrideCSS([one], SVG, picture()),
-			imageOverrideCSS(one, SVG, picture()),
-		);
+		assert.strictEqual(imageOverrideCSS([one], SVG, picture()), imageOverrideCSS(one, SVG, picture()));
 		assert.strictEqual(emojiOverrideCSS([one], "🌟"), emojiOverrideCSS(one, "🌟"));
 	});
 

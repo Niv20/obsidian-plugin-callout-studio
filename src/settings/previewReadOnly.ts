@@ -72,9 +72,7 @@ export interface ReadOnlyPreviewOptions {
  * Returned together because they are one mechanism: the filter is meaningless
  * without a way through it, and a gate no filter consults does nothing.
  */
-export function readOnlyPreviewExtensions(
-	options: ReadOnlyPreviewOptions = {},
-): {
+export function readOnlyPreviewExtensions(options: ReadOnlyPreviewOptions = {}): {
 	extensions: Extension[];
 	gate: PreviewWriteGate;
 } {

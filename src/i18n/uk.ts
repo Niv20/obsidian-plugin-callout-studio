@@ -1,16 +1,19 @@
 export const uk: Record<string, string> = {
 	"portable.reviewTitle": "Перевірити перетворення",
-	"portable.helpIntro": "Виберіть заміни, які потрібно застосувати. Натисніть олівець або текст заміни, щоб відредагувати її, а потім натисніть Enter або клацніть за межами поля, щоб зберегти. Використовуйте значок скидання, щоб відхилити чернетку або відновити типову заміну. Нотатки зміняться лише після вибору команди Перетворити вибране та підтвердження. Посилання на заголовки оновлюються разом із вибраними заголовками.",
+	"portable.helpIntro":
+		"Виберіть заміни, які потрібно застосувати. Натисніть олівець або текст заміни, щоб відредагувати її, а потім натисніть Enter або клацніть за межами поля, щоб зберегти. Використовуйте значок скидання, щоб відхилити чернетку або відновити типову заміну. Нотатки зміняться лише після вибору команди Перетворити вибране та підтвердження. Посилання на заголовки оновлюються разом із вибраними заголовками.",
 	"portable.help": "Про перетворення",
 	"portable.roleLink": "Посилання на заголовок",
 	"portable.convertSelected": "Перетворити вибране",
-	"portable.selectionSummary": "Вибрано {{selected}} із {{total}} замін · Посилань на заголовки для оновлення: {{links}}",
-	"portable.selectionSummaryNoLinks":
-		"Вибрано {{selected}} із {{total}} замін",
-	"portable.selectionConflict": "Цей вибір зробив би посилання на заголовки неоднозначними. Попередній вибір збережено.",
+	"portable.selectionSummary":
+		"Вибрано {{selected}} із {{total}} замін · Посилань на заголовки для оновлення: {{links}}",
+	"portable.selectionSummaryNoLinks": "Вибрано {{selected}} із {{total}} замін",
+	"portable.selectionConflict":
+		"Цей вибір зробив би посилання на заголовки неоднозначними. Попередній вибір збережено.",
 	"portable.selectAll": "Вибрати все",
 	"portable.selectNone": "Зняти весь вибір",
-	"portable.relatedLinksHint": "Посилання та вбудовані фрагменти слідують за вибраними заголовками й перетворюються разом із ними.",
+	"portable.relatedLinksHint":
+		"Посилання та вбудовані фрагменти слідують за вибраними заголовками й перетворюються разом із ними.",
 	"portable.selectChange": "Перетворити {{path}}, рядок {{line}}",
 	"portable.showMore": "Показати ще {{count}}",
 	"portable.openFailed": "Не вдалося відкрити бічну панель перетворення.",
@@ -18,14 +21,19 @@ export const uk: Record<string, string> = {
 	"portable.retry": "Спробувати ще раз",
 	"portable.blockedAmbiguous": "Цей заголовок пропущено, оскільки ціль посилання неоднозначна.",
 	"portable.blockedTarget": "Цей заголовок пропущено, оскільки ціль посилання неможливо безпечно зберегти.",
-	"portable.recovery": "Залишилися незастосовані зміни. Завершіть перетворення та оновлення посилань на заголовки перед перезапуском або вимкненням плагіна: план решти змін зберігається лише в пам’яті.",
-	"portable.recoveryChanged": "Нотатки змінилися після зупинки перетворення. Очікувані оновлення посилань збережено; перед записом кожну нотатку буде перевірено знову.",
+	"portable.recovery":
+		"Залишилися незастосовані зміни. Завершіть перетворення та оновлення посилань на заголовки перед перезапуском або вимкненням плагіна: план решти змін зберігається лише в пам’яті.",
+	"portable.recoveryChanged":
+		"Нотатки змінилися після зупинки перетворення. Очікувані оновлення посилань збережено; перед записом кожну нотатку буде перевірено знову.",
 	"portable.finishConversion": "Завершити перетворення",
-	"portable.recoveryUnavailable": "Деякі очікувані оновлення посилань не вдалося безпечно відновити. Перевірте відповідні нотатки перед новим перетворенням.",
+	"portable.recoveryUnavailable":
+		"Деякі очікувані оновлення посилань не вдалося безпечно відновити. Перевірте відповідні нотатки перед новим перетворенням.",
 	"portable.title": "Перетворити на стандартний Markdown",
-	"portable.settingDesc": "Замініть callout у заголовках і тексті в усьому сховищі звичайним текстом, придатним для використання без Callout Studio.",
+	"portable.settingDesc":
+		"Замініть callout у заголовках і тексті в усьому сховищі звичайним текстом, придатним для використання без Callout Studio.",
 	"portable.review": "Перевірити перетворення",
-	"portable.intro": "Якщо ви плануєте відмовитися від Callout Studio або перенести сховище до застосунку без його підтримки, перетворіть callout у заголовках і тексті на стандартний Markdown.",
+	"portable.intro":
+		"Якщо ви плануєте відмовитися від Callout Studio або перенести сховище до застосунку без його підтримки, перетворіть callout у заголовках і тексті на стандартний Markdown.",
 	"portable.before": "До",
 	"portable.after": "Після",
 	"portable.replacement": "Заміна",
@@ -33,24 +41,30 @@ export const uk: Record<string, string> = {
 	"portable.type": "тип",
 	"portable.text": "Текст",
 	"portable.headingText": "Заголовок",
-	"portable.backup": "Рекомендуємо створити резервну копію сховища перед перетворенням. Воно змінює оригінальні нотатки, і скасувати його в Callout Studio неможливо.",
+	"portable.backup":
+		"Рекомендуємо створити резервну копію сховища перед перетворенням. Воно змінює оригінальні нотатки, і скасувати його в Callout Studio неможливо.",
 	"portable.scanning": "Читання нотаток Markdown…",
 	"portable.progress": "Читання нотаток: {{done}} із {{total}}",
 	"portable.empty": "Придатних для перетворення callout у заголовках або тексті не знайдено. Нічого не зміниться.",
 	"portable.confirmTitle": "Перетворити це сховище без можливості скасування?",
 	"portable.confirmSubtitle": "Автоматична резервна копія не створюється",
-	"portable.confirmBody": "Перетворити {{count}} входжень і оновити {{links}} посилань на заголовки у {{files}} нотатках?\nОригінальні файли зміняться, і скасувати це в Callout Studio неможливо. Автоматична резервна копія не створюється. Спочатку створіть резервну копію сховища, збережіть відкриті нотатки та призупиніть редагування й синхронізацію до завершення перетворення.\nЯкщо файл зміниться або запис завершиться помилкою, перетворення зупиниться. Уже перетворені нотатки залишаться зміненими.",
+	"portable.confirmBody":
+		"Перетворити {{count}} входжень і оновити {{links}} посилань на заголовки у {{files}} нотатках?\nОригінальні файли зміняться, і скасувати це в Callout Studio неможливо. Автоматична резервна копія не створюється. Спочатку створіть резервну копію сховища, збережіть відкриті нотатки та призупиніть редагування й синхронізацію до завершення перетворення.\nЯкщо файл зміниться або запис завершиться помилкою, перетворення зупиниться. Уже перетворені нотатки залишаться зміненими.",
 	"portable.confirmAction": "Перетворити без можливості скасування",
 	"portable.converting": "Перетворення вибраних змін… Закриття цієї панелі не зупинить перетворення.",
-	"portable.complete": "Перетворено входжень: {{count}}; оновлено посилань на заголовки: {{links}} у {{files}} нотатках.",
-	"portable.stopped": "Перетворення зупинено. Уже змінено входжень: {{count}} і посилань на заголовки: {{links}} у {{files}} нотатках; ці зміни збережено.",
+	"portable.complete":
+		"Перетворено входжень: {{count}}; оновлено посилань на заголовки: {{links}} у {{files}} нотатках.",
+	"portable.stopped":
+		"Перетворення зупинено. Уже змінено входжень: {{count}} і посилань на заголовки: {{links}} у {{files}} нотатках; ці зміни збережено.",
 	"portable.errorEditor": "Збережіть відкриті нотатки, щоб попередній перегляд оновився автоматично.",
 	"portable.errorChanged": "Нотатки змінилися. Перевірте оновлені зміни перед перетворенням.",
 	"portable.errorBusy": "Уже триває інше перетворення. Дочекайтеся його завершення.",
-	"portable.error": "Не вдалося безпечно прочитати або оновити сховище. Перевірте доступ до файлів і спробуйте ще раз.",
+	"portable.error":
+		"Не вдалося безпечно прочитати або оновити сховище. Перевірте доступ до файлів і спробуйте ще раз.",
 	"portable.blockedConverting": "Перетворення вже виконується. Дочекайтеся його завершення.",
 	"portable.blockedUpdating": "Перевірка ще оновлюється. Дочекайтеся її завершення перед перетворенням.",
-	"portable.blockedEditing": "Спершу завершіть редагування заміни: натисніть Enter, щоб зберегти її, або Esc, щоб скасувати.",
+	"portable.blockedEditing":
+		"Спершу завершіть редагування заміни: натисніть Enter, щоб зберегти її, або Esc, щоб скасувати.",
 	"portable.blockedNothingSelected": "Виберіть принаймні одну заміну для перетворення.",
 	"settings.maintenance": "Небезпечна зона",
 	"cmd.openSettings": "Відкрити налаштування",
@@ -94,17 +108,15 @@ export const uk: Record<string, string> = {
 	"settings.fallbackTagAuto": "Авто",
 	"settings.rescanVaultDesc": "Додає типи callout, які використовують ваші нотатки й яких ще немає в цьому списку.",
 	"settings.rescanVaultHintAction": "Пошук callout",
-	"manualDiscovery.failed": "Результати пошуку не збережено. Переконайтеся, що файл налаштувань доступний для запису й синхронізацію завершено, а потім повторіть спробу через Налаштування → Мої типи callout → Пошук callout. Наявні callout не замінено.",
+	"manualDiscovery.failed":
+		"Результати пошуку не збережено. Переконайтеся, що файл налаштувань доступний для запису й синхронізацію завершено, а потім повторіть спробу через Налаштування → Мої типи callout → Пошук callout. Наявні callout не замінено.",
 	"manualDiscovery.scanning": "Сканування…",
-	"settings.rescanComplete":
-		"Сканування завершено: додано {{count}} нових типів callout.",
+	"settings.rescanComplete": "Сканування завершено: додано {{count}} нових типів callout.",
 	"replaceModal.titleReplace": "Замінити у сховищі",
 
 	"welcome.title": "Ласкаво просимо до Callout Studio!",
-	"welcome.tagline":
-		"Ваше повне рішення для створення, стилізації та керування callout в Obsidian.",
-	"importBanner.message":
-		"Ми помітили, що ви використовуєте {{plugins}}. Хочете імпортувати свої callout?",
+	"welcome.tagline": "Ваше повне рішення для створення, стилізації та керування callout в Obsidian.",
+	"importBanner.message": "Ми помітили, що ви використовуєте {{plugins}}. Хочете імпортувати свої callout?",
 	"importBanner.action": "Імпортувати",
 	"importBanner.dismiss": "Відхилити",
 	"welcome.demoName": "Callout Studio",
@@ -119,8 +131,7 @@ export const uk: Record<string, string> = {
 		"Callout Studio має набагато більше можливостей! [Дізнатися більше]({{repoUrl}}).\n",
 	"deleteModal.title": "Видалити callout",
 
-	"deleteModal.bodyInUse":
-		"Цей callout зустрічається {{count}} раз(ів) у {{files}} файлі(ах).",
+	"deleteModal.bodyInUse": "Цей callout зустрічається {{count}} раз(ів) у {{files}} файлі(ах).",
 	"deleteModal.notesUntouched":
 		"Видаляється лише визначення callout. Ваші нотатки не змінюються, тож наявні callout просто повернуться до стилю за замовчуванням.",
 	"deleteModal.fallbackTarget":
@@ -150,8 +161,7 @@ export const uk: Record<string, string> = {
 	"settings.export": "Експорт…",
 	"settings.importTitle": "Імпорт callout",
 	"settings.exportTitle": "Експорт callout",
-	"settings.importDesc":
-		"Імпортуйте дані Callout Studio з іншого сховища або перенесіть callout з іншого плагіна.",
+	"settings.importDesc": "Імпортуйте дані Callout Studio з іншого сховища або перенесіть callout з іншого плагіна.",
 	"settings.exportDesc":
 		"Збережіть свої callout як резервну копію Callout Studio або як фрагмент CSS для використання в іншому місці.",
 	"settings.importConflictNotice":
@@ -174,8 +184,7 @@ export const uk: Record<string, string> = {
 	"notice.calloutDuplicated": "Callout дубльовано під назвою «{{name}}».",
 	"notice.calloutDuplicateFailed": "Не вдалося дублювати callout. Перевірте стан збереження й повторіть спробу.",
 	"settings.resetAction": "Скинути до типового",
-	"settings.makeFallbackAction":
-		"Використовувати резервний стиль за замовчуванням",
+	"settings.makeFallbackAction": "Використовувати резервний стиль за замовчуванням",
 	"notice.fallbackStyleApplied": "«{{name}}» тепер використовує резервний стиль за замовчуванням.",
 
 	"settings.colorSwatchAria": "Акцент: {{accent}} · Фон: {{bg}}",
@@ -184,14 +193,12 @@ export const uk: Record<string, string> = {
 	"settings.themeCalloutsHeading": "Callout з вашої теми",
 	"settings.themeCalloutsDefaultTheme": "Ваша тема",
 	"settings.themeCalloutsEmpty": "{{theme}} зараз не оформлює жодного callout.",
-	"settings.themePreviewAria":
-		'Попередній перегляд "{{name}}" — подивитись, як його малює ваша тема',
+	"settings.themePreviewAria": 'Попередній перегляд "{{name}}" — подивитись, як його малює ваша тема',
 	"settings.builtInAllThemeStyled":
 		"{{theme}} оформлює кожен вбудований callout, тому Callout Studio залишає їх усі як є. Щоб створити власний дизайн, додайте callout з іншим ID.",
 
 	"settings.fallbackCallout": "Резервний callout за замовчуванням",
-	"settings.fallbackCalloutDesc":
-		"Невідомі типи callout успадковують цей стиль.",
+	"settings.fallbackCalloutDesc": "Невідомі типи callout успадковують цей стиль.",
 
 	"settings.border": "Рамки",
 	"settings.borderTop": "Зверху",
@@ -223,8 +230,7 @@ export const uk: Record<string, string> = {
 	"settings.paletteCountOne": "1 палітра",
 	"settings.editPaletteAria": "Редагувати палітру {{name}}",
 	"settings.deletePaletteTitle": "Видалити палітру",
-	"settings.deletePaletteBody":
-		'Блоки callout, які використовують її кольори, не зміняться.',
+	"settings.deletePaletteBody": "Блоки callout, які використовують її кольори, не зміняться.",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callout, які вказують її в метаданих ("{{key}}"), натомість отримують вбудований колір із такою назвою. Ваші нотатки не змінюються.',
 
@@ -256,8 +262,7 @@ export const uk: Record<string, string> = {
 	"commandBuilder.headingLevel": "Рівень заголовка",
 	"commandBuilder.headingLevelDesc": "Який рівень заголовка записувати.",
 	"commandBuilder.action": "Дія",
-	"commandBuilder.actionDesc":
-		"«Обгорнути» перетворює виділення на callout; «Вставити» додає порожній.",
+	"commandBuilder.actionDesc": "«Обгорнути» перетворює виділення на callout; «Вставити» додає порожній.",
 	"commandBuilder.actionDescHeading":
 		"«Обгорнути» перетворює рядок із курсором на callout-заголовок.\n«Вставити» додає порожній на новому рядку.",
 	"commandBuilder.actionDescInline":
@@ -265,28 +270,24 @@ export const uk: Record<string, string> = {
 	"commandBuilder.actionWrap": "Обгорнути виділення",
 	"commandBuilder.actionInsert": "Вставити новий",
 	"commandBuilder.foldState": "Стан згортання",
-	"commandBuilder.foldStateDesc":
-		"Чи можна складати callout, і в якому стані він починається.",
+	"commandBuilder.foldStateDesc": "Чи можна складати callout, і в якому стані він починається.",
 	"commandBuilder.foldNone": "Нескладаний",
 	"commandBuilder.foldExpanded": "Складаний, відкритий (+)",
 	"commandBuilder.foldCollapsed": "Складаний, закритий (-)",
 	"commandBuilder.preview": "Назва команди",
-	"commandBuilder.duplicate":
-		"У вас уже є команда, яка робить точно те саме.",
-	"commandBuilder.noCallouts":
-		"Поки немає типів callout, з яких можна створити команду.",
+	"commandBuilder.duplicate": "У вас уже є команда, яка робить точно те саме.",
+	"commandBuilder.noCallouts": "Поки немає типів callout, з яких можна створити команду.",
 	"commandBuilder.noCalloutChosen": "Спершу виберіть callout для цієї команди.",
 	"commandBuilder.save": "Зберегти",
 
-	"commandBuilder.roleThemeOwned":
-		"Ваша тема надає цей callout, тому він має лише блоковий формат.",
-	"commandBuilder.commandSuspended": "Призупинено, поки цей callout надає ваша тема; тоді в нього є лише блоковий формат.",
+	"commandBuilder.roleThemeOwned": "Ваша тема надає цей callout, тому він має лише блоковий формат.",
+	"commandBuilder.commandSuspended":
+		"Призупинено, поки цей callout надає ваша тема; тоді в нього є лише блоковий формат.",
 	"commandBuilder.pausedTag": "Призупинено темою",
 	"commandBuilder.missingTag": "Callout відсутній",
 
 	"settings.resetAll": "Скинути",
-	"settings.resetAllDesc":
-		"Повертає всі налаштування та персоналізацію до значень за замовчуванням.",
+	"settings.resetAllDesc": "Повертає всі налаштування та персоналізацію до значень за замовчуванням.",
 	"settings.resetAllButton": "Скинути все",
 	"notice.resetAllDone": "Все скинуто до типових значень.",
 	"settings.resetIntro": "Знайдіть хвилинку, щоб оцінити все, що ви створили в Callout Studio.",
@@ -307,51 +308,44 @@ export const uk: Record<string, string> = {
 	"settings.resetItemAutocomplete": "Налаштування автодоповнення та метаданих",
 	"settings.resetItemFallback": "Резервний стиль",
 	"settings.resetItemIconLibraries": "Порядок бібліотек іконок і приховані бібліотеки",
-	"settings.resetAllConfirmAfter": "Не хвилюйтеся: перед скиданням ми зберігаємо резервну копію ваших поточних налаштувань. Ви можете повернути її будь-коли через Відновити попередню версію в налаштуваннях.\nЯкщо ви користуєтеся службою синхронізації, скидання може дійти й до ваших інших пристроїв.",
+	"settings.resetAllConfirmAfter":
+		"Не хвилюйтеся: перед скиданням ми зберігаємо резервну копію ваших поточних налаштувань. Ви можете повернути її будь-коли через Відновити попередню версію в налаштуваннях.\nЯкщо ви користуєтеся службою синхронізації, скидання може дійти й до ваших інших пристроїв.",
 	"settings.resetNothing": "Скидати нічого: усе вже має типові значення.",
 
-	"notice.customCommandMissingCallout":
-		"Тип callout цієї команди більше не існує.",
+	"notice.customCommandMissingCallout": "Тип callout цієї команди більше не існує.",
 	"notice.importedJSON": "Імпортовано {{count}} тип(ів) callout з JSON.",
 	"notice.importedSettings": "Імпортовано налаштування плагіна.",
-	"notice.importedCalloutManager":
-		"Імпортовано з Callout Manager: {{created}} створено, {{updated}} оновлено.",
-	"notice.importedAdmonition":
-		"Імпортовано з Admonition: створено {{created}}, оновлено " +
-		"{{updated}}.",
-	"notice.noNewJSON":
-		"Нові типи callout не імпортовано (ID можуть вже існувати).",
+	"notice.importedCalloutManager": "Імпортовано з Callout Manager: {{created}} створено, {{updated}} оновлено.",
+	"notice.importedAdmonition": "Імпортовано з Admonition: створено {{created}}, оновлено " + "{{updated}}.",
+	"notice.noNewJSON": "Нові типи callout не імпортовано (ID можуть вже існувати).",
 	"notice.iconDownloadFailed":
 		"Не вдалося завантажити іконку Material «{{name}}». Вона може бути недоступна для цього стилю/товщини або відсутнє підключення до мережі.",
 
-	"notice.vaultScanFailed": "Не вдалося порахувати використання callout, оскільки не вдалося прочитати {{count}} нотаток. Перевірте сховище й синхронізацію, потім спробуйте ще раз.",
+	"notice.vaultScanFailed":
+		"Не вдалося порахувати використання callout, оскільки не вдалося прочитати {{count}} нотаток. Перевірте сховище й синхронізацію, потім спробуйте ще раз.",
 
 	"notice.externalCssRetired":
 		"Опцію персонального CSS-оформлення вилучено. Ці callout тепер використовують збережений дизайн Callout Studio, якщо ваша тема не стилізує їх. Ваші нотатки та персональні CSS-фрагменти не змінено.",
 	"notice.vaultRewritePartial":
 		"{{count}} нотатку(и) не вдалося оновити, вони залишилися без змін. Подробиці в консолі розробника.",
-	"notice.calloutDeleteIncomplete": "Деякі нотатки не вдалося перетворити. Тип callout збережено. Завершені перетворення збережено; усуньте проблему з файлом, а потім запустіть дію знову, щоб завершити.",
+	"notice.calloutDeleteIncomplete":
+		"Деякі нотатки не вдалося перетворити. Тип callout збережено. Завершені перетворення збережено; усуньте проблему з файлом, а потім запустіть дію знову, щоб завершити.",
 
 	"notice.nothingToWrap": "Нічого для обгортання.",
 	"notice.cursorNotInsideCallout": "Курсор не знаходиться всередині callout.",
 	"notice.headingAlreadyCallout": "Цей заголовок уже є callout.",
-	"notice.unwrapLeftAsIs":
-		"Не вдалося безпечно видалити цей callout, тому його залишено без змін.",
-	"notice.autocompleteTargetMoved":
-		"Нічого не вставлено — рядок змінився, поки редактор був відкритий.",
+	"notice.unwrapLeftAsIs": "Не вдалося безпечно видалити цей callout, тому його залишено без змін.",
+	"notice.autocompleteTargetMoved": "Нічого не вставлено — рядок змінився, поки редактор був відкритий.",
 	"notice.autocompleteAlwaysEnabled": "Автодоповнення тепер є основною функцією і завжди ввімкнене.",
-	"notice.openHotkeysFailed":
-		"Не вдалося відкрити налаштування гарячих клавіш Obsidian.",
+	"notice.openHotkeysFailed": "Не вдалося відкрити налаштування гарячих клавіш Obsidian.",
 	"notice.filterHotkeysFailed":
 		"Налаштування гарячих клавіш відкрито, але фільтр Callout Studio застосувати не вдалося.",
 
 	"editor.editCallout": "Редагувати callout",
 	"editor.newCallout": "Новий callout",
 	"editor.displayName": "Відображувана назва",
-	"editor.displayNameDesc":
-		"Читабельна мітка, що відображається в інтерфейсі",
-	"editor.displayNameBuiltIn":
-		"Відображувану назву вбудованих callout змінити не можна",
+	"editor.displayNameDesc": "Читабельна мітка, що відображається в інтерфейсі",
+	"editor.displayNameBuiltIn": "Відображувану назву вбудованих callout змінити не можна",
 	"editor.displayNamePlaceholder": "Мій callout",
 	"editor.calloutIds": "ID callout",
 	"editor.calloutIdsDesc":
@@ -377,50 +371,42 @@ export const uk: Record<string, string> = {
 	"editor.horizontalOffset": "Горизонтальне зміщення",
 	"editor.verticalOffset": "Вертикальне зміщення",
 	"editor.colors": "Кольори",
-	"editor.colorsDesc":
-		"Задає кольори рамки, тла й тексту цього callout.",
+	"editor.colorsDesc": "Задає кольори рамки, тла й тексту цього callout.",
 	"editor.resetColors": "Скинути кольори до типового",
 	"editor.paletteDeleted": "Видалений колір",
 	"editor.paletteGroupObsidian": "Callout Obsidian",
 	"editor.paletteGroupPresets": "Колірні пресети",
 	"editor.paletteGroupCustom": "Власні",
-	"editor.contrastWarning":
-		"Низький контраст із фоном — може бути важко читати",
+	"editor.contrastWarning": "Низький контраст із фоном — може бути важко читати",
 	"editor.foldable": "Складаний",
-	"editor.foldableDesc":
-		"Виберіть, чи можна складати callout, та стан за замовчуванням для всього сховища.",
+	"editor.foldableDesc": "Виберіть, чи можна складати callout, та стан за замовчуванням для всього сховища.",
 	"editor.foldOff": "Вимк.",
 	"editor.foldOpen": "Відкритий за замовчуванням",
 	"editor.foldClosed": "Закритий за замовчуванням",
 	"editor.cancel": "Скасувати",
 	"editor.saveChanges": "Зберегти зміни",
-	"editor.saveFailed": "Не вдалося завершити збереження. Якщо це вікно редагування ще відкрите, залиште його відкритим і повторіть спробу після перевірки сховища та синхронізації. Деякі налаштування або зміни нотаток уже могли зберегтися.",
+	"editor.saveFailed":
+		"Не вдалося завершити збереження. Якщо це вікно редагування ще відкрите, залиште його відкритим і повторіть спробу після перевірки сховища та синхронізації. Деякі налаштування або зміни нотаток уже могли зберегтися.",
 	"editor.createCallout": "Створити callout",
-	"editor.nameRequired":
-		"Перед створенням callout необхідно вказати відображувану назву.",
+	"editor.nameRequired": "Перед створенням callout необхідно вказати відображувану назву.",
 	"editor.noChangesToSave": "Змін не було.",
 	"editor.idEmpty": "Потрібен принаймні один ID",
 	"editor.idAlreadyHere": "Такий ідентифікатор уже існує",
 	"editor.idTooLong": "Ідентифікатор має містити не більше {{max}} символів",
 	"editor.idExists": "Callout з таким ID вже існує",
 	"editor.idConflict": "Цей ID конфліктує з існуючим callout",
-	"editor.idDashConflict":
-		"Obsidian записує пробіли як дефіси, тому цей ID конфліктує з «{{other}}»",
-	"editor.idOwnedBy":
-		"«{{id}}» — це ID callout «{{name}}». Ви можете {{link}}.",
+	"editor.idDashConflict": "Obsidian записує пробіли як дефіси, тому цей ID конфліктує з «{{other}}»",
+	"editor.idOwnedBy": "«{{id}}» — це ID callout «{{name}}». Ви можете {{link}}.",
 	"editor.idMoveHere": "перенести його сюди",
 	"editor.idOwnedByMain":
 		"«{{id}}» — основний ID callout «{{name}}». Щоб використати його тут, спершу видаліть «{{name}}».",
-	"editor.idBuiltInStock":
-		"«{{id}}» — один із власних ID Obsidian для «{{name}}».",
-	"editor.idMoving":
-		"Під час збереження «{{id}}» перейде сюди від «{{name}}».",
+	"editor.idBuiltInStock": "«{{id}}» — один із власних ID Obsidian для «{{name}}».",
+	"editor.idMoving": "Під час збереження «{{id}}» перейде сюди від «{{name}}».",
 	"editor.idMovingNotes": "Ваші нотатки не зміняться. Вони отримають стиль цього callout.",
 
 	"editor.idFromTheme":
 		"{{theme}} вже надає callout з цим ID, тому Callout Studio не може його стилізувати. Виберіть інший ID.",
-	"editor.namesFromTheme":
-		"{{theme}} сама малює блокові callout {{names}}. Інші ваші ID зберігають цей дизайн.",
+	"editor.namesFromTheme": "{{theme}} сама малює блокові callout {{names}}. Інші ваші ID зберігають цей дизайн.",
 	"editor.namesFromThemeAndObsidian":
 		"{{theme}} сама малює блокові callout {{names}}, а {{stock}} малює Obsidian. Інші ваші ID зберігають цей дизайн.",
 	"editor.idThemePattern":
@@ -429,32 +415,26 @@ export const uk: Record<string, string> = {
 	"editor.untitledCallout": "Callout без назви",
 	"editor.loremIpsum":
 		"Легкий вітерець колише дерева. Тепле сонячне проміння освітлює тиху стежку й оживляє краєвид.",
-	"editor.loremIpsumShort":
-		"Легкий вітерець колише дерева.",
-	"editor.sampleInlineText":
-		"Ось вбудована капсула [!{id}]{{title}} всередині абзацу.",
+	"editor.loremIpsumShort": "Легкий вітерець колише дерева.",
+	"editor.sampleInlineText": "Ось вбудована капсула [!{id}]{{title}} всередині абзацу.",
 	"editor.previewReadOnly": "Живий перегляд не можна редагувати",
 	"noteChanges.title": "Оновити ваші нотатки?",
 	"noteChanges.leave": "Залишити як є",
-	"noteChanges.leaveDesc":
-		"Вони збережуть [!{{id}}] і повернуться до стилю за замовчуванням.",
+	"noteChanges.leaveDesc": "Вони збережуть [!{{id}}] і повернуться до стилю за замовчуванням.",
 	"noteChanges.changeTo": "Змінити на",
 	"noteChanges.renameChange": "Змінити на «{{id}}»",
 	"noteChanges.titlesChange": "Змінити на «{{new}}»",
 	"noteChanges.titlesLeaveDesc": "Вони й надалі матимуть вигляд «{{old}}».",
 	"noteChanges.foldChange": "Встановити «{{state}}»",
-	"noteChanges.foldLeaveDesc":
-		"Нове налаштування використовують лише callout, які ви вставите відтепер.",
+	"noteChanges.foldLeaveDesc": "Нове налаштування використовують лише callout, які ви вставите відтепер.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": '{{name}} — надається вашою темою',
+	"themePreview.title": "{{name}} — надається вашою темою",
 	"themePreview.summary":
 		"Надається темою {{theme}} (лише для читання). Колір, іконку та ID тут змінити не можна, а формати «Заголовок» і «Вбудований» недоступні. Для налаштування створіть новий callout.",
 	"themePreview.previewTitle": "Як це виглядає зараз",
-	"themePreview.blockSample":
-		"> [!{{id}}] {{name}}\n" +
-		"> Так виглядає вміст цього callout.\n",
+	"themePreview.blockSample": "> [!{{id}}] {{name}}\n" + "> Так виглядає вміст цього callout.\n",
 
 	"editor.themePreviewClose": "Зрозуміло",
 
@@ -466,8 +446,7 @@ export const uk: Record<string, string> = {
 	"palette.namePlaceholder": "Моя палітра",
 	"palette.nameExists": "Палітра з такою назвою вже існує",
 	"palette.saveBlockedName": "Палітра з такою назвою вже існує. Виберіть іншу назву, щоб зберегти її.",
-	"palette.metadataNameExists":
-		'Іншу палітру вже записано як "{{key}}" у метаданих callout. Виберіть іншу назву.',
+	"palette.metadataNameExists": 'Іншу палітру вже записано як "{{key}}" у метаданих callout. Виберіть іншу назву.',
 	"palette.metadataNameShared":
 		"У метаданих callout: {{key}}. Це слово є й в іншої збереженої палітри, тому відгукується на нього лише одна з них.",
 	"palette.renameNotesChange":
@@ -482,8 +461,10 @@ export const uk: Record<string, string> = {
 	"palette.advancedColors": "Кольори",
 	"palette.lightModeColors": "Кольори світлого режиму",
 	"palette.darkModeColors": "Кольори темного режиму",
-	"palette.modeColorsHintLight": "Ці зміни стосуються лише світлого режиму. Темний режим зберігає власні кольори.\nЩоб їх змінити, натисніть кнопку з місяцем угорі.",
-	"palette.modeColorsHintDark": "Ці зміни стосуються лише темного режиму. Світлий режим зберігає власні кольори.\nЩоб їх змінити, натисніть кнопку із сонцем угорі.",
+	"palette.modeColorsHintLight":
+		"Ці зміни стосуються лише світлого режиму. Темний режим зберігає власні кольори.\nЩоб їх змінити, натисніть кнопку з місяцем угорі.",
+	"palette.modeColorsHintDark":
+		"Ці зміни стосуються лише темного режиму. Світлий режим зберігає власні кольори.\nЩоб їх змінити, натисніть кнопку із сонцем угорі.",
 	"palette.showLightMode": "Показати світлий режим",
 	"palette.showDarkMode": "Показати темний режим",
 	"palette.accentColor": "Акцентний колір",
@@ -575,14 +556,11 @@ export const uk: Record<string, string> = {
 	"iconPicker.searchSimpleIcons": "Пошук у Simple Icons",
 	"iconPicker.custom": "Користувацькі піктограми",
 	"iconPicker.searchCustom": "Пошук користувацьких піктограм",
-	"iconPicker.customTooLarge":
-		"{{name}} завеликий. Розмір користувацьких значків не має перевищувати 5 МБ.",
+	"iconPicker.customTooLarge": "{{name}} завеликий. Розмір користувацьких значків не має перевищувати 5 МБ.",
 	"iconPicker.customUnsupported":
 		"{{name}} не є підтримуваним файлом користувацької піктограми. Використовуйте SVG, PNG, JPEG або WebP.",
-	"iconPicker.customInvalidSvg":
-		"{{name}} не вдалося прочитати як безпечний SVG, тому він не був доданий.",
-	"iconPicker.customDecodeFailed":
-		"{{name}} не вдалося прочитати як користувацьку піктограму.",
+	"iconPicker.customInvalidSvg": "{{name}} не вдалося прочитати як безпечний SVG, тому він не був доданий.",
+	"iconPicker.customDecodeFailed": "{{name}} не вдалося прочитати як користувацьку піктограму.",
 	"iconPicker.customDuplicate":
 		"{{name}} уже є серед ваших користувацьких піктограм. Перейменуйте файл або видаліть наявну піктограму.",
 	"iconPicker.uploadCustom": "Завантажити файли зображень",
@@ -611,8 +589,7 @@ export const uk: Record<string, string> = {
 	// Source menu — what each library holds, in a few words
 	"iconPicker.descAllSources": "пошук в усіх бібліотеках одночасно",
 	"iconPicker.descLucide": "власний набір Obsidian, завжди офлайн",
-	"iconPicker.descTabler":
-		"чисті та послідовні іконки інтерфейсу, контур та заповнені",
+	"iconPicker.descTabler": "чисті та послідовні іконки інтерфейсу, контур та заповнені",
 	"iconPicker.descMaterial": "набір Google, чотири стилі та сім товщин",
 	"iconPicker.descEmoji": "кольорові глифи, всі відтінки шкіри",
 	"iconPicker.descOcticons": "іконки інтерфейсу GitHub",
@@ -737,12 +714,10 @@ export const uk: Record<string, string> = {
 
 	// Downloadable icon packs
 	"iconPack.downloadTitle": "{{name}} ще не завантажено",
-	"iconPack.downloadDetail":
-		"{{count}} іконок · {{size}} · одноразове завантаження",
+	"iconPack.downloadDetail": "{{count}} іконок · {{size}} · одноразове завантаження",
 	"iconPack.download": "Завантажити",
 	"iconPack.downloading": "Завантаження {{name}}…",
-	"iconPack.downloadFailed":
-		"Не вдалося завантажити {{name}}. Перевірте з'єднання і повторіть спробу.",
+	"iconPack.downloadFailed": "Не вдалося завантажити {{name}}. Перевірте з'єднання і повторіть спробу.",
 	"iconPack.retry": "Повторити",
 	"iconPack.faBrandsNotice":
 		"Іконки брендів є торговими марками відповідних власників. Їх включення не означає схвалення. Використовуйте їх лише для представлення компанії, продукту або послуги, на які вони посилаються.",
@@ -803,7 +778,8 @@ export const uk: Record<string, string> = {
 	"contextMenu.setFoldNone": "Зробити callout нескладаним",
 	"contextMenu.cutSection": "Вирізати розділ заголовка",
 	"notice.clipboardWriteFailed": "Не вдалося скопіювати до буфера обміну. Нотатку залишено без змін.",
-	"notice.sectionChangedAfterCopy": "Розділ скопійовано, але нотатка змінилася, перш ніж її можна було вирізати. Нічого не видалено.",
+	"notice.sectionChangedAfterCopy":
+		"Розділ скопійовано, але нотатка змінилася, перш ніж її можна було вирізати. Нічого не видалено.",
 	"contextMenu.copySection": "Копіювати розділ заголовка",
 	"contextMenu.deleteSection": "Видалити розділ заголовка",
 
@@ -834,15 +810,14 @@ export const uk: Record<string, string> = {
 	"settings.metadataWordAlreadyHere": "Це слово вже є в списку",
 	"settings.metadataWordTooLong": "Слово має містити не більше {{max}} символів",
 	"settings.maxMetadataWords": "Не більше {{max}} слів. Видаліть одне, щоб додати інше.",
-	"settings.buildFailed": "Callout Studio не вдалося показати свої налаштування; перезапустіть Obsidian і повідомте про проблему, якщо вона повториться.",
-	"settings.globalSettingsRegularDesc":
-		"Рамка, заокруглення кутів, масштаб шрифту та вирівнювання.",
-	"settings.globalSettingsHeadingDesc":
-		"Рамка, форма та вертикальний інтервал.",
-	"settings.globalSettingsInlineDesc":
-		"Рамка та форма.",
+	"settings.buildFailed":
+		"Callout Studio не вдалося показати свої налаштування; перезапустіть Obsidian і повідомте про проблему, якщо вона повториться.",
+	"settings.globalSettingsRegularDesc": "Рамка, заокруглення кутів, масштаб шрифту та вирівнювання.",
+	"settings.globalSettingsHeadingDesc": "Рамка, форма та вертикальний інтервал.",
+	"settings.globalSettingsInlineDesc": "Рамка та форма.",
 	"settings.themeCalloutStyles": "Використовувати стилі callout вашої теми",
-	"settings.themeCalloutStylesDesc": "Якщо ввімкнено, callout, які оформлює ваша тема, зберігають її вигляд і відображаються лише як блокові callout. Якщо вимкнено, Callout Studio малює всі callout.",
+	"settings.themeCalloutStylesDesc":
+		"Якщо ввімкнено, callout, які оформлює ваша тема, зберігають її вигляд і відображаються лише як блокові callout. Якщо вимкнено, Callout Studio малює всі callout.",
 
 	"settings.calloutTypeRegular": "Стиль блокового callout",
 	"settings.calloutTypeHeading": "Стиль callout-заголовка",
@@ -860,8 +835,7 @@ export const uk: Record<string, string> = {
 	"menuItem.createOrEdit": "Створити або відредагувати callout",
 	"menuItem.openSettings": "Відкрити налаштування",
 	"menuItem.copyMarkdown": "Копіювати Markdown",
-	"menuItem.foldDefaults":
-		"Складання за замовчуванням (відкрито / закрито / немає)",
+	"menuItem.foldDefaults": "Складання за замовчуванням (відкрито / закрито / немає)",
 	"menuItem.cutSection": "Вирізати розділ",
 	"menuItem.copySection": "Копіювати розділ",
 	"menuItem.deleteSection": "Видалити розділ",
@@ -877,21 +851,16 @@ export const uk: Record<string, string> = {
 	"confirm.titleDeleteLibrary": "Видалити бібліотеку іконок",
 	"confirm.titleResetLibraries": "Скинути бібліотеки іконок",
 
-	"vault.filesUpdated":
-		"Оновлено {{count}} посилань на callout у файлах сховища.",
-	"vault.idsUpdated":
-		"Оновлено {{count}} ID callout у файлах сховища: {{oldIds}} → {{newId}}",
-	"vault.titlesUpdated":
-		"Оновлено {{count}} заголовків callout у файлах сховища: {{oldTitle}} → {{newTitle}}",
-	"vault.foldUpdated":
-		"Оновлено позначку згортання у callout: {{count}} у файлах сховища.",
+	"vault.filesUpdated": "Оновлено {{count}} посилань на callout у файлах сховища.",
+	"vault.idsUpdated": "Оновлено {{count}} ID callout у файлах сховища: {{oldIds}} → {{newId}}",
+	"vault.titlesUpdated": "Оновлено {{count}} заголовків callout у файлах сховища: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated": "Оновлено позначку згортання у callout: {{count}} у файлах сховища.",
 	"vault.confirmReplace": "Замінити",
 	"vault.replacePromptInUse":
 		"«{{name}}» використовується {{count}} раз(ів) у {{files}} файлі(ах). Виберіть callout для заміни:",
 	"vault.replacePromptUnused": "Виберіть callout для заміни «{{name}}»:",
 	"vault.noReplacementAvailable": "Немає інших доступних callout для заміни.",
-	"vault.convertedToPlainText":
-		"{{blocks}} блоків callout у {{files}} файлі(ах) перетворено на звичайний текст.",
+	"vault.convertedToPlainText": "{{blocks}} блоків callout у {{files}} файлі(ах) перетворено на звичайний текст.",
 	"vault.resetNotesFailed":
 		"Не вдалося оновити деякі нотатки, тому callout не було скинуто. Щоб завершити, знову виберіть Скинути до типового.",
 
@@ -908,7 +877,8 @@ export const uk: Record<string, string> = {
 	"quickInsert.noResults": "Callout не знайдено",
 	"quickInsert.noBuiltInCallouts": "Наразі немає доступних вбудованих callout.",
 	"quickInsert.noThemeCallouts": "Наразі немає доступних callout, специфічних для теми.",
-	"quickInsert.targetMoved": "Нотатка, з якої ви відкрили швидку вставку, змінилася або закрита. Відкрийте швидку вставку знову в нотатці, яку хочете редагувати.",
+	"quickInsert.targetMoved":
+		"Нотатка, з якої ви відкрили швидку вставку, змінилася або закрита. Відкрийте швидку вставку знову в нотатці, яку хочете редагувати.",
 	"quickInsert.targetMovedHint": "Початкова нотатка більше недоступна для цієї вставки.",
 	"quickInsert.noUserCallouts":
 		"Ви ще не створили жодного користувацького callout. Запустіть «Callout Studio: Створити новий тип callout» з палітри команд.",
@@ -926,9 +896,11 @@ export const uk: Record<string, string> = {
 	"portable.restoreDefault": "Відновити стандартну заміну",
 	"portable.cancelEdit": "Відхилити зміни",
 	"portable.customInvalid": "Залиште заміну в одному рядку, не змінюючи навколишню структуру Markdown.",
-	"portable.customUnsafe": "Ця заміна зробить заголовок або посилання на нього неоднозначними. Виберіть інший заголовок.",
+	"portable.customUnsafe":
+		"Ця заміна зробить заголовок або посилання на нього неоднозначними. Виберіть інший заголовок.",
 	"portable.customStale": "Перегляд змінився. Відкрийте редактор замін знову.",
-	"portable.customDiscarded": "Вилучено {{count}} власних замін, оскільки їхній вихідний текст змінився або його не вдалося надійно знайти.",
+	"portable.customDiscarded":
+		"Вилучено {{count}} власних замін, оскільки їхній вихідний текст змінився або його не вдалося надійно знайти.",
 	"portable.customBadge": "Власна",
 
 	"usage.title": "Знайти callout",
@@ -950,89 +922,73 @@ export const uk: Record<string, string> = {
 	"usage.more": "Показати ще {{count}}",
 	"usage.location": "Рядок {{line}} · {{role}}",
 	"usage.missing": "Цієї нотатки більше немає. Оновлення результатів…",
-	"usage.changed": "Це входження змінилося або перемістилося, і його нове розташування невідоме. Оновлення результатів…",
+	"usage.changed":
+		"Це входження змінилося або перемістилося, і його нове розташування невідоме. Оновлення результатів…",
 	"usage.openFailed": "Не вдалося відкрити це входження callout.",
 	"usage.menuIncomplete": "Знайти callout — сканування не завершено",
 	"usage.menu": "Знайти callout",
 	"usage.closeSettings": "Закрийте налаштування, щоб побачити результати для callout на бічній панелі.",
 
 	"import.title": "Проблеми імпорту",
-	"import.reportLeadIn":
-		"Перевірте ці проблеми імпорту, перш ніж продовжити:",
-	"import.reportLeadInFatal":
-		"Не вдалося імпортувати ці дані:",
+	"import.reportLeadIn": "Перевірте ці проблеми імпорту, перш ніж продовжити:",
+	"import.reportLeadInFatal": "Не вдалося імпортувати ці дані:",
 	"import.entryHeading": "Запис {{index}} — {{label}}",
-	"import.summary":
-		"{{valid}} з {{total}} записів дійсні · знайдено {{issues}} проблем.",
+	"import.summary": "{{valid}} з {{total}} записів дійсні · знайдено {{issues}} проблем.",
 	"import.btnCancel": "Скасувати",
 	"import.btnImportValid": "Імпортувати лише дійсні ({{count}})",
-	"import.nothingValid": "Жоден із записів не є дійсним, тож імпортувати нічого. Скасуйте імпорт, виправте перелічені тут проблеми й імпортуйте знову.",
-	"import.err.notRecognized":
-		"Нерозпізнаний файл: очікувався масив визначень callout або експорт Callout Studio.",
-	"import.warn.settingsIgnored":
-		"Блок налаштувань не був дійсним об'єктом і був проігнорований.",
-	"import.warn.invalidGradient":
-		"Фоновий градієнт був недійсним і був проігнорований.",
-	"import.err.parseFailed":
-		"Файл не є дійсним JSON і не може бути розібраний.",
-	"import.err.tooLarge": "Цей імпорт перевищує обмеження розміру 16 MiB. Розділіть його на менші файли й повторіть спробу.",
-	"import.err.tooComplex": "Цей імпорт надто складний: не більше 1 000 елементів у кожному списку чи об’єкті, 50 000 значень загалом і не більше 32 рівнів вкладеності.",
-	"import.err.imageBudget": "Уся колекція зображень перевищує обмеження за розміром або складністю. Перед імпортом видаліть великі зображення або спростіть їх.",
+	"import.nothingValid":
+		"Жоден із записів не є дійсним, тож імпортувати нічого. Скасуйте імпорт, виправте перелічені тут проблеми й імпортуйте знову.",
+	"import.err.notRecognized": "Нерозпізнаний файл: очікувався масив визначень callout або експорт Callout Studio.",
+	"import.warn.settingsIgnored": "Блок налаштувань не був дійсним об'єктом і був проігнорований.",
+	"import.warn.invalidGradient": "Фоновий градієнт був недійсним і був проігнорований.",
+	"import.err.parseFailed": "Файл не є дійсним JSON і не може бути розібраний.",
+	"import.err.tooLarge":
+		"Цей імпорт перевищує обмеження розміру 16 MiB. Розділіть його на менші файли й повторіть спробу.",
+	"import.err.tooComplex":
+		"Цей імпорт надто складний: не більше 1 000 елементів у кожному списку чи об’єкті, 50 000 значень загалом і не більше 32 рівнів вкладеності.",
+	"import.err.imageBudget":
+		"Уся колекція зображень перевищує обмеження за розміром або складністю. Перед імпортом видаліть великі зображення або спростіть їх.",
 	"import.err.processingFailed": "Не вдалося завершити імпорт. Перевірте дані й повторіть спробу.",
 	"import.reportTruncated": "Показано перші {{shown}} із {{total}} проблем. Довгі значення в цьому звіті скорочено.",
 	"import.err.entryNotObject": "Запис повинен бути об'єктом.",
-	"import.err.requiredMissing":
-		"Обов'язкове поле «{{field}}» відсутнє або має неправильний тип.",
+	"import.err.requiredMissing": "Обов'язкове поле «{{field}}» відсутнє або має неправильний тип.",
 	"import.err.idEmpty": "ID не повинен бути порожнім.",
-	"import.err.idTooLong":
-		"ID «{{value}}» має {{length}} символів; максимум — {{max}}.",
+	"import.err.idTooLong": "ID «{{value}}» має {{length}} символів; максимум — {{max}}.",
 	"import.err.idBadChar":
 		"ID «{{value}}» містить недійсні символи («|», «[», «]», табуляції та переноси рядків не дозволені).",
 	"import.err.idMetadata":
 		"ID «{{value}}» містить «|». В Obsidian усе після першого «|» є метаданими callout, а не частиною типу, тому цей запис описує callout «{{id}}». Пропущено, щоб ваш наявний «{{id}}» залишився без змін.",
 	"import.err.idReserved":
 		"ID «{{value}}» зарезервовано Callout Studio для власних попередніх переглядів, тому його не можна імпортувати.",
-	"import.err.displayNameEmpty":
-		"Відображувана назва не повинна бути порожньою.",
-	"import.err.displayNameTooLong":
-		"Відображувана назва має {{length}} символів; максимум — {{max}}.",
-	"import.err.boolField":
-		"«{{field}}» повинно бути булевим значенням (true або false).",
+	"import.err.displayNameEmpty": "Відображувана назва не повинна бути порожньою.",
+	"import.err.displayNameTooLong": "Відображувана назва має {{length}} символів; максимум — {{max}}.",
+	"import.err.boolField": "«{{field}}» повинно бути булевим значенням (true або false).",
 	"import.err.iconNotObject": "Іконка повинна бути об'єктом.",
-	"import.err.iconTypeInvalid":
-		"Тип іконки «{{value}}» не є одним із: {{types}}.",
+	"import.err.iconTypeInvalid": "Тип іконки «{{value}}» не є одним із: {{types}}.",
 	"import.warn.iconFieldIgnored":
 		'"{{field}}" застосовується лише до іконок Material і ігнорується для типу іконки {{type}}.',
-	"import.err.iconValueEmpty":
-		"Значення іконки повинно бути непорожнім рядком.",
-	"import.err.iconValueTooLong":
-		"Значення значка перевищує обмеження у 200 символів ({{length}} символів).",
-	"import.err.materialStyle":
-		"Стиль іконки Material «{{value}}» не є одним із: outlined, filled, rounded, sharp.",
+	"import.err.iconValueEmpty": "Значення іконки повинно бути непорожнім рядком.",
+	"import.err.iconValueTooLong": "Значення значка перевищує обмеження у 200 символів ({{length}} символів).",
+	"import.err.materialStyle": "Стиль іконки Material «{{value}}» не є одним із: outlined, filled, rounded, sharp.",
 	"import.err.materialWeight":
 		"Товщина іконки Material «{{value}}» повинна бути цілим числом від 100 до 700 з кроком 100.",
 	"import.warn.iconRecolorIgnored":
 		'"recolor" застосовується лише до ваших власних зображень і ігнорується для типу іконки {{type}}.',
-	"import.err.iconRecolorInvalid":
-		'"recolor" має бути true або false (отримано: «{{value}}»).',
+	"import.err.iconRecolorInvalid": '"recolor" має бути true або false (отримано: «{{value}}»).',
 	"import.err.colorInvalid":
 		"«{{field}}» повинно бути кольором у форматі hex, наприклад «#448aff» (отримано «{{value}}»).",
-	"import.err.numberRange":
-		"«{{field}}» повинно бути числом від {{min}} до {{max}} (отримано «{{value}}»).",
-	"import.err.iconSizeRange":
-		"«{{field}}» повинно бути числом від {{min}} до {{max}} (отримано «{{value}}»).",
+	"import.err.numberRange": "«{{field}}» повинно бути числом від {{min}} до {{max}} (отримано «{{value}}»).",
+	"import.err.iconSizeRange": "«{{field}}» повинно бути числом від {{min}} до {{max}} (отримано «{{value}}»).",
 	"import.err.iconAdjustShape":
-		"\"iconAdjust\" має бути об’єктом, який пов’язує тип callout (\"regular\", \"heading\", \"inline\") з розміром і зміщеннями значка.",
+		'"iconAdjust" має бути об’єктом, який пов’язує тип callout ("regular", "heading", "inline") з розміром і зміщеннями значка.',
 	"import.err.aliasesNotArray": "«aliases» повинен бути масивом рядків.",
 	"import.err.aliasNotString": "Псевдонім повинен бути рядком.",
 	"import.err.aliasDup": "Псевдонім «{{value}}» дублюється в цьому записі.",
 	"import.err.tooManyIds":
 		"Забагато ID ({{count}}); кожен callout може мати не більше {{max}} ID (основний + псевдоніми).",
-	"import.err.metadataShape":
-		"«metadata» повинен бути об'єктом, всі значення якого є рядками.",
+	"import.err.metadataShape": "«metadata» повинен бути об'єктом, всі значення якого є рядками.",
 	"import.warn.unknownFields": "Невідомі поля проігноровані: {{fields}}.",
-	"import.err.duplicateInFile":
-		"ID/псевдонім «{{value}}» вже використовується записом #{{first}} у цьому файлі.",
+	"import.err.duplicateInFile": "ID/псевдонім «{{value}}» вже використовується записом #{{first}} у цьому файлі.",
 	"import.err.aliasConflict":
 		"Псевдонім «{{value}}» вже використовується іншим callout («{{other}}») у вашому сховищі.",
 	"import.warn.defaultFoldedAutofix":
@@ -1040,12 +996,9 @@ export const uk: Record<string, string> = {
 	"import.warn.imageMissing":
 		"Цей Callout використовує зображення, якого немає ні в файлі, ні в цьому vault, тому буде показано іконку-замінник, доки ви не вкажете нову.",
 
-	"import.err.paletteIdInvalid":
-		'"paletteId" має бути непорожнім текстовим ідентифікатором (отримано "{{value}}").',
-	"import.warn.iconNameUnknown":
-		'Іконки "{{value}}" немає в {{type}}, тому було використано стандартну іконку.',
-	"import.warn.cmIconUnknownNew":
-		"Значок «{{value}}» недоступний у цьому сховищі, тому використано типовий значок.",
+	"import.err.paletteIdInvalid": '"paletteId" має бути непорожнім текстовим ідентифікатором (отримано "{{value}}").',
+	"import.warn.iconNameUnknown": 'Іконки "{{value}}" немає в {{type}}, тому було використано стандартну іконку.',
+	"import.warn.cmIconUnknownNew": "Значок «{{value}}» недоступний у цьому сховищі, тому використано типовий значок.",
 	"import.warn.cmIconUnknownExisting":
 		"Значок «{{value}}» недоступний у цьому сховищі, тому «{{id}}» зберіг попередній значок.",
 	"import.chooseSource": "Імпорт з",
@@ -1073,8 +1026,7 @@ export const uk: Record<string, string> = {
 	"import.cmVaultChecking": "Пошук плагіна Callout Manager…",
 	"import.cmVaultFound": "Знайдено власних callout: {{count}}.",
 	"import.cmFromPaste": "Скопійовані стилі",
-	"import.cmFromPasteDesc":
-		"Те, що копіює кнопка Copy в Callout Manager, або файл data.json.",
+	"import.cmFromPasteDesc": "Те, що копіює кнопка Copy в Callout Manager, або файл data.json.",
 	"import.cmInstructions":
 		"Кожен налаштований callout імпортується разом зі значком і кольором. Стилі для окремих тем і власний CSS тут не підтримуються й не імпортуються.",
 	"import.cmPlaceholder": "Вставте сюди скопійовані стилі або файл data.json…",
@@ -1083,19 +1035,19 @@ export const uk: Record<string, string> = {
 	"import.err.cmNotRecognized":
 		"Файл не розпізнано: очікувалися стилі, створені кнопкою Copy у Callout Manager, або data.json із Callout Manager.",
 	"import.err.cmNoEntries": "Не знайдено власних callout для імпорту.",
-	"import.err.cmNoBlocksFound":
-		"У файлі або вставленому тексті не знайдено стилів Callout Manager.",
-	"import.err.cmNoColorForNew":
-		'Не знайдено придатного кольору для нового callout "{{value}}"; його було пропущено.',
-	"import.warn.cmNoColorDefault":
-		"У Callout Manager колір не задано, тому використано стандартний сірий.",
+	"import.err.cmNoBlocksFound": "У файлі або вставленому тексті не знайдено стилів Callout Manager.",
+	"import.err.cmNoColorForNew": 'Не знайдено придатного кольору для нового callout "{{value}}"; його було пропущено.',
+	"import.warn.cmNoColorDefault": "У Callout Manager колір не задано, тому використано стандартний сірий.",
 	"import.err.cmIdConflict":
 		'ID "{{value}}" вже використовується як псевдонім іншим callout ("{{other}}") і було пропущено.',
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "Стилі, залежні від теми, зберегти неможливо. Перевага надається безумовним значенням; будь-яке умовне резервне значення застосовується до всіх тем.",
-	"import.warn.cmCustomStylesSkipped": "Власний CSS із Callout Manager не імпортується. Можна перенести лише підтримувані налаштування значків і кольорів.",
-	"import.warn.cmSchemeIcon": "Callout Studio використовує один значок для обох колірних схем; імпортований значок застосовуватиметься в обох.",
+	"import.warn.cmThemeConditionPartial":
+		"Стилі, залежні від теми, зберегти неможливо. Перевага надається безумовним значенням; будь-яке умовне резервне значення застосовується до всіх тем.",
+	"import.warn.cmCustomStylesSkipped":
+		"Власний CSS із Callout Manager не імпортується. Можна перенести лише підтримувані налаштування значків і кольорів.",
+	"import.warn.cmSchemeIcon":
+		"Callout Studio використовує один значок для обох колірних схем; імпортований значок застосовуватиметься в обох.",
 	"import.err.cmDuplicateId": "Ідентифікатор {{value}} дублює {{other}} у цьому імпорті, тому його пропущено.",
 	"import.admTitle": "Імпорт з Admonition",
 	"import.admInstructions":
@@ -1111,14 +1063,11 @@ export const uk: Record<string, string> = {
 	"import.admBtnCancel": "Скасувати",
 	"import.admBtnImport": "Імпорт",
 	"import.err.admNotRecognized":
-		"Файл не розпізнано: очікувався список admonition або data.json " +
-		"плагіна Admonition.",
+		"Файл не розпізнано: очікувався список admonition або data.json " + "плагіна Admonition.",
 	"import.err.admNoEntries": "Не знайдено жодного admonition для імпорту.",
-	"import.err.admTypeMissing":
-		'У цього admonition немає "type", його пропущено.',
+	"import.err.admTypeMissing": 'У цього admonition немає "type", його пропущено.',
 	"import.warn.admIconUnknown":
-		'Піктограму з назвою "{{value}}" не знайдено в жодній бібліотеці, ' +
-		"тому використано типову піктограму.",
+		'Піктограму з назвою "{{value}}" не знайдено в жодній бібліотеці, ' + "тому використано типову піктограму.",
 	"import.warn.admIconUnknownExisting":
 		'Піктограму з назвою "{{value}}" не знайдено в жодній бібліотеці, ' +
 		'тому "{{id}}" залишив свою попередню піктограму.',
@@ -1128,23 +1077,20 @@ export const uk: Record<string, string> = {
 		"Цей admonition оформлено CSS-фрагментом у плагіні Admonition. Це " +
 		"оформлення не входить до імпорту, тому перенесено лише назву, " +
 		"піктограму та колір.",
-	"import.warn.admNoColor":
-		"Колір не задано, тому використано типовий синій.",
-	"import.warn.admTitleTruncated":
-		"Заголовок має {{length}} символів; скорочено до {{max}}.",
+	"import.warn.admNoColor": "Колір не задано, тому використано типовий синій.",
+	"import.warn.admTitleTruncated": "Заголовок має {{length}} символів; скорочено до {{max}}.",
 
 	"footer.openIssue": "Відкрити issue",
 	"footer.sourceCode": "Вихідний код",
 	"settings.about": "Про плагін",
 	"settings.version": "Версія",
 	"settings.deletePaletteBodyLinkedOne":
-		'Її використовує 1 callout. Він збереже свої кольори, і ви зможете знову прив’язати його пізніше з рядка «Колір» у редакторі.',
+		"Її використовує 1 callout. Він збереже свої кольори, і ви зможете знову прив’язати його пізніше з рядка «Колір» у редакторі.",
 	"settings.deletePaletteBodyLinked":
-		'Її використовують {{count}} callout-ів. Вони збережуть свої кольори, і ви зможете знову прив’язати їх пізніше з рядка «Колір» у будь-якому з їхніх редакторів.',
+		"Її використовують {{count}} callout-ів. Вони збережуть свої кольори, і ви зможете знову прив’язати їх пізніше з рядка «Колір» у будь-якому з їхніх редакторів.",
 	"notice.palettesMerged":
 		"Об’єднано {{count}} збережених кольорів із однаковими кольорами: {{names}}. Callout-и, що їх використовують, зберігають свої кольори й тепер прив’язані до кольору, який залишився.",
-	"editor.colorsDescDeleted":
-		"Збережений колір цього callout-а було видалено. {{link}}",
+	"editor.colorsDescDeleted": "Збережений колір цього callout-а було видалено. {{link}}",
 	"editor.colorsDescDeletedLink": "Відновити",
 	"palette.colorExists":
 		'Ці кольори збігаються з "{{name}}". Два збережені кольори не можуть бути однаковими — змініть один колір, щоб розрізняти їх.',
@@ -1161,8 +1107,7 @@ export const uk: Record<string, string> = {
 	"notice.exportedCssUpdated": "Фрагмент CSS оновлено в {{path}}",
 	"notice.exportedCssUnchanged": "Фрагмент CSS уже актуальний.",
 	"notice.exportCssEmpty": "Немає користувацьких callout для експорту.",
-	"notice.exportCssFailed":
-		"Не вдалося зберегти фрагмент CSS. Докладніше дивіться в консолі розробника.",
+	"notice.exportCssFailed": "Не вдалося зберегти фрагмент CSS. Докладніше дивіться в консолі розробника.",
 	"notice.exportCssEnabled":
 		"Цей фрагмент увімкнено в цьому vault. Callout Studio уже стилізує ці callout, а фрагмент зберігає стиль на момент експорту.",
 	"confirm.titleOverwriteSnippet": "Перезаписати фрагмент CSS",
@@ -1183,50 +1128,70 @@ export const uk: Record<string, string> = {
 	"quickInsert.readingView": "Перемкніться в режим джерела або живий попередній перегляд, щоб вставити callout.",
 	"quickInsert.noCursorHint": "У цій нотатці немає курсора, тому нема куди вставити.",
 	"quickInsert.noCursor": "Розмістіть курсор у нотатці там, де хочете вставити callout, а потім спробуйте ще раз.",
-	"notice.legacyDiscoveryArchiveFailed": "Не вдалося створити копію відновлення для оновлення. Попередній локальний кеш виявлення та початковий CSS залишено без змін. Перевірте права на запис і вільне місце на диску, потім перезапустіть Obsidian, щоб повторити спробу.",
+	"notice.legacyDiscoveryArchiveFailed":
+		"Не вдалося створити копію відновлення для оновлення. Попередній локальний кеш виявлення та початковий CSS залишено без змін. Перевірте права на запис і вільне місце на диску, потім перезапустіть Obsidian, щоб повторити спробу.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "Призупинено, поки ви не створите відсутній callout знову або не оберете інший.",
 	"confirm.titleRestoreSettings": "Відновити ці налаштування",
 	"confirm.titleCreateSettingsFile": "Створити файл налаштувань",
 	"confirm.saveDisplayedSettings":
 		"Це збереже конфігурацію, яку ви бачите зараз, як ваш файл налаштувань і знову ввімкне збереження. Резервна копія, яку зберігає цей пристрій, спершу архівується.\nЯкщо на іншому пристрої можуть бути новіші зміни, які ви хочете зберегти, дайте йому завершити синхронізацію, перш ніж продовжувати. Ваш застосунок синхронізації може надіслати цей файл на інші ваші пристрої.\nПеред збереженням Callout Studio ще раз шукає файл налаштувань. Якщо він повернувся, Callout Studio залишає його.",
-	"notice.settingsBackupFailed": "Відновлення налаштувань не змогло продовжитися, оскільки не вдалося зберегти резервну копію безпеки. Перевірте вільне місце на диску та права на запис, потім повторіть спробу.",
-	"notice.settingsNewerVersion": "Налаштування Callout Studio було збережено новішою версією плагіна, тому на цьому пристрої нічого не записуватиметься, доки ви його не оновите. Ваші налаштування в безпеці — оновіть Callout Studio тут і перезавантажте Obsidian.",
+	"notice.settingsBackupFailed":
+		"Відновлення налаштувань не змогло продовжитися, оскільки не вдалося зберегти резервну копію безпеки. Перевірте вільне місце на диску та права на запис, потім повторіть спробу.",
+	"notice.settingsNewerVersion":
+		"Налаштування Callout Studio було збережено новішою версією плагіна, тому на цьому пристрої нічого не записуватиметься, доки ви його не оновите. Ваші налаштування в безпеці — оновіть Callout Studio тут і перезавантажте Obsidian.",
 	"saveStatus.changed":
 		"Файл налаштувань змінився, поки ви редагували. Ваша чернетка все ще доступна. Виберіть «Спробувати ще раз», щоб завантажити отримані налаштування, потім перегляньте чернетку й збережіть знову.",
-	"saveStatus.missing": "Збереження призупинено, оскільки файл налаштувань відсутній. Це може статися після перевстановлення або поки синхронізація ще виконується. Завершіть синхронізацію і повторіть спробу. Щоб навмисно замінити відсутній файл, скористайтеся опцією Створити новий файл налаштувань у налаштуваннях Callout Studio.",
+	"saveStatus.missing":
+		"Збереження призупинено, оскільки файл налаштувань відсутній. Це може статися після перевстановлення або поки синхронізація ще виконується. Завершіть синхронізацію і повторіть спробу. Щоб навмисно замінити відсутній файл, скористайтеся опцією Створити новий файл налаштувань у налаштуваннях Callout Studio.",
 	"saveStatus.restoreSettings": "Відновити ці налаштування",
 	"saveStatus.createSettingsFile": "Створити файл налаштувань",
 	"saveStatus.checkAgain": "Перевірити ще раз",
-	"saveStatus.recoverInSettings": "Щоб відновити відсутній файл на цьому пристрої, відкрийте налаштування Callout Studio. Перед закриттям цього редактора скопіюйте всі незбережені зміни, які хочете зберегти; їх не було збережено.",
+	"saveStatus.recoverInSettings":
+		"Щоб відновити відсутній файл на цьому пристрої, відкрийте налаштування Callout Studio. Перед закриттям цього редактора скопіюйте всі незбережені зміни, які хочете зберегти; їх не було збережено.",
 	"saveStatus.openSettings": "Відкрити налаштування Callout Studio",
-	"notice.openSettingsFailed": "Не вдалося відкрити налаштування Callout Studio. Відкрийте Налаштування → Callout Studio, щоб вибрати, що робити.",
-	"saveStatus.notesFailed": "Визначення callout збережено, але деякі оновлення нотаток не вдалося завершити. Залиште цей редактор відкритим і виберіть Зберегти, щоб повторити незавершені оновлення.",
-	"saveStatus.recoveryRead": "Збереження призупинено, оскільки не вдається прочитати локальну копію відновлення. Ваш файл налаштувань, можливо, усе ще цілий. Перевірте вільне місце на диску, потім повторіть відновлення. Наявні дані відновлення не буде перезаписано.",
-	"saveStatus.recoveryWrite": "Не вдалося зберегти локальну копію відновлення. Перевірте вільне місце на диску, потім повторіть спробу. Залиште чернетку відкритою, доки збереження не вдасться.",
-	"saveStatus.retryFailed": "Збереження досі заблоковано. Перевірте статус збереження в налаштуваннях Callout Studio, щоб дізнатися причину, потім повторіть спробу.",
-	"saveStatus.reviewDraft": "Вхідні налаштування та перевірки відновлення завершено. Ваша чернетка не змінена. Перегляньте її та збережіть знову.",
+	"notice.openSettingsFailed":
+		"Не вдалося відкрити налаштування Callout Studio. Відкрийте Налаштування → Callout Studio, щоб вибрати, що робити.",
+	"saveStatus.notesFailed":
+		"Визначення callout збережено, але деякі оновлення нотаток не вдалося завершити. Залиште цей редактор відкритим і виберіть Зберегти, щоб повторити незавершені оновлення.",
+	"saveStatus.recoveryRead":
+		"Збереження призупинено, оскільки не вдається прочитати локальну копію відновлення. Ваш файл налаштувань, можливо, усе ще цілий. Перевірте вільне місце на диску, потім повторіть відновлення. Наявні дані відновлення не буде перезаписано.",
+	"saveStatus.recoveryWrite":
+		"Не вдалося зберегти локальну копію відновлення. Перевірте вільне місце на диску, потім повторіть спробу. Залиште чернетку відкритою, доки збереження не вдасться.",
+	"saveStatus.retryFailed":
+		"Збереження досі заблоковано. Перевірте статус збереження в налаштуваннях Callout Studio, щоб дізнатися причину, потім повторіть спробу.",
+	"saveStatus.reviewDraft":
+		"Вхідні налаштування та перевірки відновлення завершено. Ваша чернетка не змінена. Перегляньте її та збережіть знову.",
 	"saveStatus.settingsArrived": "Наявні налаштування прибули та були завантажені. Файл заміни не створено.",
-	"saveStatus.syncConflict": "Вхідні налаштування конфліктують із callout, потрібним для незавершених оновлень нотаток. Вашу чернетку та незавершені оновлення збережено. Розв'яжіть конфлікт налаштувань, перш ніж повторити спробу.",
+	"saveStatus.syncConflict":
+		"Вхідні налаштування конфліктують із callout, потрібним для незавершених оновлень нотаток. Вашу чернетку та незавершені оновлення збережено. Розв'яжіть конфлікт налаштувань, перш ніж повторити спробу.",
 	"saveStatus.titlePaused": "Збереження призупинено",
 	"saveStatus.titleFailed": "Налаштування не збережено",
 	"saveStatus.tryAgain": "Спробувати ще раз",
 	"saveStatus.working": "Працюю над цим…",
-	"saveStatus.unreadable": "Збереження призупинено, оскільки файл налаштувань неможливо безпечно прочитати. Завершіть синхронізацію або відновіть дійсну копію, потім повторіть спробу. Наявний файл збережено.",
-	"saveStatus.write": "Не вдалося зберегти файл налаштувань. Перевірте вільне місце на диску, права папки та синхронізацію, потім повторіть спробу перед закриттям Obsidian.",
-	"saveStatus.writePermission": "Не вдалося зберегти файл налаштувань, оскільки в доступі на запис було відмовлено. Перевірте, що сховище та папка плагіна доступні для запису, потім повторіть спробу.",
-	"saveStatus.writeSpace": "Не вдалося зберегти файл налаштувань, оскільки місця на диску немає або квоту перевищено. Звільніть трохи місця, потім повторіть спробу.",
-	"settings.readOnly": "Callout Studio не зміг використати свій файл налаштувань під час запуску Obsidian, тому на цій сторінці нічого не зберігається на цьому пристрої. Ваші зміни залишатимуться, доки ви не закриєте Obsidian. Перезавантажте Obsidian, щойно файл повернеться — якщо ви синхронізуєте це сховище, спочатку дайте синхронізації завершитися.",
+	"saveStatus.unreadable":
+		"Збереження призупинено, оскільки файл налаштувань неможливо безпечно прочитати. Завершіть синхронізацію або відновіть дійсну копію, потім повторіть спробу. Наявний файл збережено.",
+	"saveStatus.write":
+		"Не вдалося зберегти файл налаштувань. Перевірте вільне місце на диску, права папки та синхронізацію, потім повторіть спробу перед закриттям Obsidian.",
+	"saveStatus.writePermission":
+		"Не вдалося зберегти файл налаштувань, оскільки в доступі на запис було відмовлено. Перевірте, що сховище та папка плагіна доступні для запису, потім повторіть спробу.",
+	"saveStatus.writeSpace":
+		"Не вдалося зберегти файл налаштувань, оскільки місця на диску немає або квоту перевищено. Звільніть трохи місця, потім повторіть спробу.",
+	"settings.readOnly":
+		"Callout Studio не зміг використати свій файл налаштувань під час запуску Obsidian, тому на цій сторінці нічого не зберігається на цьому пристрої. Ваші зміни залишатимуться, доки ви не закриєте Obsidian. Перезавантажте Obsidian, щойно файл повернеться — якщо ви синхронізуєте це сховище, спочатку дайте синхронізації завершитися.",
 
 	// Sync safety hardening
 	"saveStatus.diagnosis.unavailable":
 		"Цей пристрій зараз не може відкрити файл. Можливо, він ще завантажується, сховище недоступне офлайн, або сховище даних не відповідає. Callout Studio перевіряє автоматично ще раз.",
-	"saveStatus.diagnosis.empty": "Файл порожній, що зазвичай означає, що синхронізацію було перервано. Якщо на іншому пристрої ще є ваші налаштування, дайте йому синхронізуватися. Інакше замініть файл.",
-	"saveStatus.diagnosis.mergeMarkers": "Файл містить нерозв'язані маркери конфлікту злиття, наприклад, з Git. Розв'яжіть конфлікт у вашому Git-інструменті або замініть файл.",
+	"saveStatus.diagnosis.empty":
+		"Файл порожній, що зазвичай означає, що синхронізацію було перервано. Якщо на іншому пристрої ще є ваші налаштування, дайте йому синхронізуватися. Інакше замініть файл.",
+	"saveStatus.diagnosis.mergeMarkers":
+		"Файл містить нерозв'язані маркери конфлікту злиття, наприклад, з Git. Розв'яжіть конфлікт у вашому Git-інструменті або замініть файл.",
 	"saveStatus.diagnosis.damaged": "Файл неповний або пошкоджений, тому його не можна прочитати як налаштування.",
 	"saveStatus.diagnosis.combined":
 		"Ваш сервіс синхронізації об'єднав дві версії файлу, тому його внутрішня перевірка більше не збігається. Налаштування всередині залишаються цілими, і заміна файлу зберігає їх.",
-	"saveStatus.diagnosis.invalidEntries": "Файл містить записи, які Callout Studio не може використати, наприклад один і той самий тип callout, вказаний двічі.",
+	"saveStatus.diagnosis.invalidEntries":
+		"Файл містить записи, які Callout Studio не може використати, наприклад один і той самий тип callout, вказаний двічі.",
 	"saveStatus.replaceUnreadable": "Замінити файл налаштувань",
 	"saveStatus.discardRecoveryCopy": "Відхилити копію відновлення",
 	"saveStatus.calm.opening": "Перш за все, глибоко вдихніть — усе буде добре.",
@@ -1243,51 +1208,72 @@ export const uk: Record<string, string> = {
 		"Callout Studio зараз не може прочитати свій файл налаштувань, тому залишив його точно таким, який він є.",
 	"saveStatus.explain.recoveryRead":
 		"Callout Studio зберігає на цьому пристрої резервну копію ваших налаштувань, і зараз цю копію не вдається прочитати. Сам файл налаштувань може бути в порядку.",
-	"saveStatus.explain.newerVersion": "Ваші налаштування зберегла новіша версія Callout Studio, тому ця старіша версія не змінюватиме їх.",
-	"saveStatus.explain.changed": "Файл налаштувань змінився, поки з ним працював Callout Studio, тому він зупинився, нічого не замінивши.",
-	"saveStatus.guide.rechecks": "Поки Obsidian відкритий, Callout Studio перевіряє знову щохвилини, тож часто це виправляється саме.",
+	"saveStatus.explain.newerVersion":
+		"Ваші налаштування зберегла новіша версія Callout Studio, тому ця старіша версія не змінюватиме їх.",
+	"saveStatus.explain.changed":
+		"Файл налаштувань змінився, поки з ним працював Callout Studio, тому він зупинився, нічого не замінивши.",
+	"saveStatus.guide.rechecks":
+		"Поки Obsidian відкритий, Callout Studio перевіряє знову щохвилини, тож часто це виправляється саме.",
 	"saveStatus.guide.rechecksCheckNow":
 		"Поки Obsidian відкритий, Callout Studio перевіряє знову щохвилини, тож часто це виправляється саме — або виберіть «Перевірити ще раз», щоб перевірити просто зараз.",
 	"saveStatus.guide.restore":
 		"Якщо налаштування не повернуться, виберіть «Відновити ці налаштування», щоб зберегти callout, які ви бачите тут.",
-	"saveStatus.guide.create": "Якщо налаштування не повернуться, виберіть «Створити файл налаштувань», щоб знову почати збереження.",
-	"saveStatus.guide.recoveryRetry": "Переконайтеся, що на цьому пристрої є вільне місце, потім виберіть «Спробувати ще раз».",
+	"saveStatus.guide.create":
+		"Якщо налаштування не повернуться, виберіть «Створити файл налаштувань», щоб знову почати збереження.",
+	"saveStatus.guide.recoveryRetry":
+		"Переконайтеся, що на цьому пристрої є вільне місце, потім виберіть «Спробувати ще раз».",
 	"saveStatus.guide.recoveryDiscard":
 		"Якщо це не допоможе, виберіть «Відхилити копію відновлення». Спершу зберігається точна копія, а ваш файл налаштувань не чіпається.",
-	"saveStatus.guide.newerVersion": "Оновіть Callout Studio в розділі «Налаштування → Плагіни спільноти», потім перезавантажте Obsidian.",
-	"saveStatus.missingNotice": "Ваші нотатки в безпеці. Callout Studio призупинив збереження, бо зараз не може знайти свій файл налаштувань.",
+	"saveStatus.guide.newerVersion":
+		"Оновіть Callout Studio в розділі «Налаштування → Плагіни спільноти», потім перезавантажте Obsidian.",
+	"saveStatus.missingNotice":
+		"Ваші нотатки в безпеці. Callout Studio призупинив збереження, бо зараз не може знайти свій файл налаштувань.",
 	"statusBar.paused": "Збереження призупинено",
 	"statusBar.pausedTooltip": "Callout Studio не зберігає зміни налаштувань. Натисніть, щоб дізнатися причину.",
 	"statusBar.pausedNotice": "Наразі Callout Studio не зберігає зміни налаштувань.",
 	"saveStatus.resumed": "Збереження знову ввімкнено. Callout Studio знову зберігає зміни налаштувань.",
-	"notice.replaceUnreadableUnavailable": "Файл налаштувань наразі неможливо замінити: він змінюється, або цей пристрій не може його прочитати. Спробуйте ще раз за мить.",
-	"notice.recoveryStorageUnavailable": "Сховище відновлення цього пристрою не відповідає, тому копію неможливо відхилити. Перезапустіть Obsidian, потім спробуйте ще раз.",
+	"notice.replaceUnreadableUnavailable":
+		"Файл налаштувань наразі неможливо замінити: він змінюється, або цей пристрій не може його прочитати. Спробуйте ще раз за мить.",
+	"notice.recoveryStorageUnavailable":
+		"Сховище відновлення цього пристрою не відповідає, тому копію неможливо відхилити. Перезапустіть Obsidian, потім спробуйте ще раз.",
 	"recovery.unreadable": "Неможливо прочитати як налаштування",
 	"recovery.same": "Те саме, що й ваша поточна конфігурація",
 	"recovery.restore": "Відновити",
-	"recovery.stale": "Нічого не відновлено: ваші налаштування змінилися або їх не вдалося перевірити. Відкрийте це вікно знову й перегляньте список.",
-	"notice.recoveryCopyStale": "Ваші налаштування збережено, але копію відновлення цього пристрою не вдалося оновити. Перевірте доступне місце для зберігання на цьому пристрої. Callout Studio спробує ще раз під час вашої наступної зміни.",
-	"notice.blockedWhilePaused": "Збереження призупинено, тому цю зміну наразі не можна зберегти. Спочатку вирішіть проблему зі збереженням, показану в налаштуваннях Callout Studio.",
-	"welcome.syncNote": "Уже користуєтеся Callout Studio на іншому пристрої? Спочатку дайте вашому сервісу синхронізації завершити роботу. Ваші callout і налаштування з'являться тут, щойно надійдуть.",
-	"settings.resetBackupFailed": "Нічого не скинуто: резервну копію вашої поточної конфігурації не вдалося зберегти заздалегідь. Перевірте доступне місце для зберігання, потім спробуйте ще раз.",
-	"settings.resetNotSaved": "Скидання показано, але його ще не вдалося зберегти, тому ваш файл налаштувань усе ще містить попередню конфігурацію. Перевірте стан збереження в налаштуваннях Callout Studio.",
+	"recovery.stale":
+		"Нічого не відновлено: ваші налаштування змінилися або їх не вдалося перевірити. Відкрийте це вікно знову й перегляньте список.",
+	"notice.recoveryCopyStale":
+		"Ваші налаштування збережено, але копію відновлення цього пристрою не вдалося оновити. Перевірте доступне місце для зберігання на цьому пристрої. Callout Studio спробує ще раз під час вашої наступної зміни.",
+	"notice.blockedWhilePaused":
+		"Збереження призупинено, тому цю зміну наразі не можна зберегти. Спочатку вирішіть проблему зі збереженням, показану в налаштуваннях Callout Studio.",
+	"welcome.syncNote":
+		"Уже користуєтеся Callout Studio на іншому пристрої? Спочатку дайте вашому сервісу синхронізації завершити роботу. Ваші callout і налаштування з'являться тут, щойно надійдуть.",
+	"settings.resetBackupFailed":
+		"Нічого не скинуто: резервну копію вашої поточної конфігурації не вдалося зберегти заздалегідь. Перевірте доступне місце для зберігання, потім спробуйте ще раз.",
+	"settings.resetNotSaved":
+		"Скидання показано, але його ще не вдалося зберегти, тому ваш файл налаштувань усе ще містить попередню конфігурацію. Перевірте стан збереження в налаштуваннях Callout Studio.",
 	"confirm.titleResetEverything": "Скинути все",
 	"confirm.titleReplaceUnreadable": "Замінити файл налаштувань",
 	"confirm.subtitleReplaceUnreadable": "Спочатку зберігається точна копія",
-	"confirm.replaceUnreadable": "Точна копія поточного файлу спочатку зберігається в папці резервних копій плагіна. Потім файл замінюється конфігурацією, показаною тут, а ваш сервіс синхронізації надсилає її на інші ваші пристрої.",
-	"confirm.replaceUnreadableSalvage": "Точна копія поточного файлу спочатку зберігається в папці резервних копій плагіна. Налаштування в ньому об'єднуються з конфігурацією, показаною тут, і файл переписується, щоб кожен пристрій міг знову його прочитати.",
+	"confirm.replaceUnreadable":
+		"Точна копія поточного файлу спочатку зберігається в папці резервних копій плагіна. Потім файл замінюється конфігурацією, показаною тут, а ваш сервіс синхронізації надсилає її на інші ваші пристрої.",
+	"confirm.replaceUnreadableSalvage":
+		"Точна копія поточного файлу спочатку зберігається в папці резервних копій плагіна. Налаштування в ньому об'єднуються з конфігурацією, показаною тут, і файл переписується, щоб кожен пристрій міг знову його прочитати.",
 	"confirm.titleDiscardRecoveryCopy": "Відхилити копію відновлення",
 	"confirm.subtitleDiscardRecoveryCopy": "Збереження призупинено на цьому пристрої",
 	"confirm.discardRecoveryCopy":
 		"Копію відновлення цього пристрою неможливо прочитати, тому збереження на цьому пристрої призупинено. Точна копія її спочатку зберігається в папці резервних копій плагіна. Потім її замінюють конфігурацією, показаною тут. Ваш файл налаштувань не змінюється.",
 	"vault.undoRewrite": "Скасувати",
 	"vault.undoRestored": "Відновлено {{count}} нотатк(у/и/ок).",
-	"vault.undoPartial": "Відновлено {{count}} нотатк(у/и/ок). {{skipped}} нотатк(а/и) змінилися після перезапису, тому їх залишили як є.",
+	"vault.undoPartial":
+		"Відновлено {{count}} нотатк(у/и/ок). {{skipped}} нотатк(а/и) змінилися після перезапису, тому їх залишили як є.",
 	"import.confirmTitle": "Імпортувати резервну копію Callout Studio",
-	"import.confirmSummary": "Це додає {{added}} тип(и/ів) callout, замінює {{replaced}} наявн(ий/і) на версію з файлу та відновлює {{settings}} груп(у/и) налаштувань із файлу. Резервна копія вашої поточної конфігурації спочатку зберігається.",
+	"import.confirmSummary":
+		"Це додає {{added}} тип(и/ів) callout, замінює {{replaced}} наявн(ий/і) на версію з файлу та відновлює {{settings}} груп(у/и) налаштувань із файлу. Резервна копія вашої поточної конфігурації спочатку зберігається.",
 	"import.confirmAction": "Імпортувати",
-	"import.backupFailed": "Нічого не імпортовано: резервну копію вашої поточної конфігурації не вдалося зберегти заздалегідь. Перевірте доступне місце для зберігання, потім спробуйте ще раз.",
-	"import.notSaved": "Імпорт показано, але його ще не вдалося зберегти. Перевірте стан збереження в налаштуваннях Callout Studio.",
+	"import.backupFailed":
+		"Нічого не імпортовано: резервну копію вашої поточної конфігурації не вдалося зберегти заздалегідь. Перевірте доступне місце для зберігання, потім спробуйте ще раз.",
+	"import.notSaved":
+		"Імпорт показано, але його ще не вдалося зберегти. Перевірте стан збереження в налаштуваннях Callout Studio.",
 
 	"recovery.summaryCallouts": "Збережено типів callout: {{callouts}}",
 	"recovery.summaryChanges": "Відмінностей від поточного стану: {{count}}",
@@ -1307,7 +1293,8 @@ export const uk: Record<string, string> = {
 	"recovery.details.unknownTime": "Час збереження не записано",
 	"recovery.details.current": "Поточна конфігурація",
 	"recovery.details.restored": "Після відновлення цієї версії",
-	"recovery.details.unreadable": "Ця версія Callout Studio не може інтерпретувати цю копію як конфігурацію, яку можна відновити. Можливо, вона пошкоджена, недоступна або має новіший формат. Порівняння та звіт про відновлені налаштування недоступні. Увесь оригінальний вміст, який вдалося прочитати, наведено нижче.",
+	"recovery.details.unreadable":
+		"Ця версія Callout Studio не може інтерпретувати цю копію як конфігурацію, яку можна відновити. Можливо, вона пошкоджена, недоступна або має новіший формат. Порівняння та звіт про відновлені налаштування недоступні. Увесь оригінальний вміст, який вдалося прочитати, наведено нижче.",
 	"recovery.details.null": "Немає значення (null)",
 	"recovery.details.yes": "Так",
 	"recovery.details.no": "Ні",
@@ -1475,11 +1462,14 @@ export const uk: Record<string, string> = {
 	"recovery.delete": "Видалити",
 
 	// Version history
-	"saveStatus.guide.versions": "Коли збереження знову запрацює, ви також зможете повернутися до збереженої версії через Відновити попередню версію.",
+	"saveStatus.guide.versions":
+		"Коли збереження знову запрацює, ви також зможете повернутися до збереженої версії через Відновити попередню версію.",
 	"saveStatus.goToVersions": "Перейти до історії версій",
 	"versions.title": "Історія версій",
-	"versions.intro": "Callout Studio автоматично зберігає версії вашої конфігурації.\nСтарі версії з часом видаляються.\nВідновлення версії замінює поточну конфігурацію на всіх синхронізованих пристроях.",
-	"versions.pausedHint": "Збереження призупинено, тому відновлення недоступне. Ви й далі можете порівнювати та видаляти версії.",
+	"versions.intro":
+		"Callout Studio автоматично зберігає версії вашої конфігурації.\nСтарі версії з часом видаляються.\nВідновлення версії замінює поточну конфігурацію на всіх синхронізованих пристроях.",
+	"versions.pausedHint":
+		"Збереження призупинено, тому відновлення недоступне. Ви й далі можете порівнювати та видаляти версії.",
 	"versions.loading": "Пошук версій…",
 	"versions.empty": "Версій не знайдено.",
 	"versions.dayWithDate": "{{date}} ({{relative}})",
@@ -1496,14 +1486,17 @@ export const uk: Record<string, string> = {
 	"versions.reason.beforeRepair": "До виправлення файлу налаштувань",
 	"versions.restoreTitle": "Відновити цю версію",
 	"versions.subtitle": "«{{name}}» · {{when}}",
-	"versions.restoreBody": "Вашу поточну конфігурацію буде замінено (відмінностей: {{count}}).\nСпочатку її збережено як версію, тож до неї можна повернутися.\nПотім служба синхронізації надішле відновлену конфігурацію на інші ваші пристрої.",
+	"versions.restoreBody":
+		"Вашу поточну конфігурацію буде замінено (відмінностей: {{count}}).\nСпочатку її збережено як версію, тож до неї можна повернутися.\nПотім служба синхронізації надішле відновлену конфігурацію на інші ваші пристрої.",
 	"versions.restoreSame": "Ця версія збігається з поточною конфігурацією, тому відновлювати нічого.",
 	"versions.restored": "Відновлено версію «{{name}}» від {{when}}.",
-	"versions.backupFailed": "Нічого не відновлено: не вдалося спочатку зберегти поточну конфігурацію як версію. Перевірте вільне місце та спробуйте ще раз.",
+	"versions.backupFailed":
+		"Нічого не відновлено: не вдалося спочатку зберегти поточну конфігурацію як версію. Перевірте вільне місце та спробуйте ще раз.",
 	"versions.restoreFailed": "Не вдалося відновити версію. Нічого не змінено.",
 	"versions.deleteTitle": "Видалити цю версію",
 	"versions.deleteAvailableBody": "Цю версію та всі її доступні копії буде видалено назавжди.",
-	"versions.deleteSyncedFiles": "Видалення цих файлів може синхронізуватися з іншими вашими пристроями. Локальні копії на цих пристроях можуть залишитися.",
+	"versions.deleteSyncedFiles":
+		"Видалення цих файлів може синхронізуватися з іншими вашими пристроями. Локальні копії на цих пристроях можуть залишитися.",
 	"versions.deleteFinal": "Цю дію неможливо скасувати. Поточна конфігурація не зміниться.",
 	"versions.deleted": "Видалено версію «{{name}}» від {{when}}.",
 	"versions.deleteFailed": "Не вдалося видалити деякі копії цієї версії. Список тепер показує ті, що залишилися.",
@@ -1511,7 +1504,8 @@ export const uk: Record<string, string> = {
 	"versions.details.difference": "Відмінність від вашої поточної конфігурації: {{count}}",
 	"versions.details.differences": "Відмінності від вашої поточної конфігурації: {{count}}",
 	"versions.details.comparisonUnavailable": "Порівняння недоступне",
-	"notice.unsavedChangesKept": "Деякі зміни на цьому пристрої ще не було збережено, і їх замінили новіші налаштування з іншого пристрою. Вашу версію спочатку було збережено: відкрийте Відновити попередню версію в налаштуваннях Callout Studio, щоб повернути її.",
+	"notice.unsavedChangesKept":
+		"Деякі зміни на цьому пристрої ще не було збережено, і їх замінили новіші налаштування з іншого пристрою. Вашу версію спочатку було збережено: відкрийте Відновити попередню версію в налаштуваннях Callout Studio, щоб повернути її.",
 	"settings.versionHistory": "Відновити попередню версію",
 	"settings.versions": "Попередні версії",
 	"settings.versionsDesc": "Замініть поточні налаштування раніше збереженою версією.",
@@ -1522,7 +1516,8 @@ export const uk: Record<string, string> = {
 	"noteChanges.notesOne": "1",
 	"noteChanges.askCallout": "Що робити з цим callout?",
 	"noteChanges.askCallouts": "Що робити з цими callout?",
-	"noteChanges.changeRenamed": "Ви змінили відображувану назву з «{{old}}» на «{{new}}», тому основний ID зміниться з «{{oldId}}» на «{{newId}}».",
+	"noteChanges.changeRenamed":
+		"Ви змінили відображувану назву з «{{old}}» на «{{new}}», тому основний ID зміниться з «{{oldId}}» на «{{newId}}».",
 	"noteChanges.changeMainId": "Основний ID зміниться з «{{oldId}}» на «{{newId}}».",
 	"noteChanges.changeName": "Ви змінили відображувану назву з «{{old}}» на «{{new}}».",
 	"noteChanges.changeRemoved": "Ви прибрали ID «{{id}}».",
@@ -1536,7 +1531,8 @@ export const uk: Record<string, string> = {
 	"noteChanges.rewriteManyDesc": "Кожен старий ID у ваших нотатках стане [!{{to}}].",
 	"noteChanges.changeToIdLabel": "ID, на який їх замінити",
 	"noteChanges.rewriteDesc": "Кожен [!{{id}}] у ваших нотатках стане [!{{to}}].",
-	"noteChanges.renameFollowDesc": "Кожен [!{{oldId}}] у ваших нотатках стане [!{{newId}}], а заголовки «{{old}}» стануть «{{new}}».",
+	"noteChanges.renameFollowDesc":
+		"Кожен [!{{oldId}}] у ваших нотатках стане [!{{newId}}], а заголовки «{{old}}» стануть «{{new}}».",
 	"noteChanges.titlesChangeDesc": "Заголовки «{{old}}» стануть «{{new}}».",
 	"noteChanges.foldChangeDesc": "Їхня позначка + або - зміниться відповідно.",
 };

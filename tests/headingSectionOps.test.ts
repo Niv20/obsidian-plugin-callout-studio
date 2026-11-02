@@ -15,7 +15,7 @@
  * - a section that does not reach end-of-document consumes the newline that
  *   follows it, and one that does cannot (there is none) — the difference
  *   between deleting a block and leaving a blank line behind;
-	 * - Markdown heading boundaries are not just a `#` count: no space after the
+ * - Markdown heading boundaries are not just a `#` count: no space after the
  *   hashes is not a heading, and seven hashes is not a heading either.
  *
  * The clipboard is checked as a side effect rather than mocked away, because
@@ -83,10 +83,7 @@ describe("getHeadingSectionRange — where the section ends", () => {
 
 		assert.deepStrictEqual(range.from, { line: 0, ch: 0 });
 		assert.deepStrictEqual(range.to, { line: 5, ch: 0 });
-		assert.strictEqual(
-			range.text,
-			"## [!tip] First\nbody of first\n\n### deeper\nstill inside first\n",
-		);
+		assert.strictEqual(range.text, "## [!tip] First\nbody of first\n\n### deeper\nstill inside first\n");
 	});
 
 	it("swallows deeper headings — an H3 does not end an H2 section", () => {
@@ -97,9 +94,7 @@ describe("getHeadingSectionRange — where the section ends", () => {
 	});
 
 	it("stops at a higher-level heading too, not only an equal one", () => {
-		const e = editor(
-			["### [!tip] Sub", "body", "# Top level", "after"].join("\n"),
-		);
+		const e = editor(["### [!tip] Sub", "body", "# Top level", "after"].join("\n"));
 		const range = getHeadingSectionRange(asEditor(e), 0, 3);
 
 		assert.deepStrictEqual(range.to, { line: 2, ch: 0 });
@@ -199,9 +194,7 @@ describe("copy / cut / delete", () => {
 
 	it("copy trims exactly one newline, never a blank line the user wrote", async () => {
 		const log = clipboard();
-		const e = editor(
-			["## [!tip] A", "body", "", "## [!note] B"].join("\n"),
-		);
+		const e = editor(["## [!tip] A", "body", "", "## [!note] B"].join("\n"));
 		await copyHeadingSection(getHeadingSectionRange(asEditor(e), 0, 2));
 
 		assert.deepStrictEqual(log, ["## [!tip] A\nbody\n"]);
@@ -219,10 +212,7 @@ describe("copy / cut / delete", () => {
 	it("delete removes the range and writes nothing to the clipboard", () => {
 		const log = clipboard();
 		const e = editor(source);
-		deleteHeadingSection(
-			asEditor(e),
-			getHeadingSectionRange(asEditor(e), 0, 2),
-		);
+		deleteHeadingSection(asEditor(e), getHeadingSectionRange(asEditor(e), 0, 2));
 
 		assert.deepStrictEqual(log, []);
 		assert.strictEqual(e.getValue(), "## [!note] B\ntail");
@@ -230,10 +220,7 @@ describe("copy / cut / delete", () => {
 
 	it("deletes a trailing section without leaving an empty line behind", () => {
 		const e = editor(source);
-		deleteHeadingSection(
-			asEditor(e),
-			getHeadingSectionRange(asEditor(e), 2, 2),
-		);
+		deleteHeadingSection(asEditor(e), getHeadingSectionRange(asEditor(e), 2, 2));
 
 		// The last section has no newline to consume, so the line before it
 		// keeps its own — and no blank line is left at the end.
@@ -242,15 +229,9 @@ describe("copy / cut / delete", () => {
 
 	it("both writers go through a single replaceRange, so undo restores it whole", async () => {
 		const cut = editor(source);
-		await cutHeadingSection(
-			asEditor(cut),
-			getHeadingSectionRange(asEditor(cut), 0, 2),
-		);
+		await cutHeadingSection(asEditor(cut), getHeadingSectionRange(asEditor(cut), 0, 2));
 		const del = editor(source);
-		deleteHeadingSection(
-			asEditor(del),
-			getHeadingSectionRange(asEditor(del), 0, 2),
-		);
+		deleteHeadingSection(asEditor(del), getHeadingSectionRange(asEditor(del), 0, 2));
 
 		assert.strictEqual(cut.edits.length, 1);
 		assert.strictEqual(del.edits.length, 1);
@@ -260,14 +241,23 @@ describe("copy / cut / delete", () => {
 describe("cut clipboard failures and stale targets", () => {
 	const source = "## [!note] First\nbody\n## Second\ntail";
 	it("preserves all text when copying rejects", async (test) => {
-		test.mock.method(navigator.clipboard, "writeText", async () => { throw new Error("denied"); });
+		test.mock.method(navigator.clipboard, "writeText", async () => {
+			throw new Error("denied");
+		});
 		const e = editor(source);
 		assert.strictEqual(await cutHeadingSection(asEditor(e), getHeadingSectionRange(asEditor(e), 0, 2)), false);
 		assert.strictEqual(e.getValue(), source);
 	});
 	it("waits for success and refuses a document changed during the copy", async (test) => {
 		let complete!: () => void;
-		test.mock.method(navigator.clipboard, "writeText", () => new Promise<void>((resolve) => { complete = resolve; }));
+		test.mock.method(
+			navigator.clipboard,
+			"writeText",
+			() =>
+				new Promise<void>((resolve) => {
+					complete = resolve;
+				}),
+		);
 		const e = editor(source);
 		const cut = cutHeadingSection(asEditor(e), getHeadingSectionRange(asEditor(e), 0, 2));
 		assert.strictEqual(e.getValue(), source);
@@ -278,7 +268,14 @@ describe("cut clipboard failures and stale targets", () => {
 	});
 	it("refuses a different file even when its text is identical", async (test) => {
 		let complete!: () => void;
-		test.mock.method(navigator.clipboard, "writeText", () => new Promise<void>((resolve) => { complete = resolve; }));
+		test.mock.method(
+			navigator.clipboard,
+			"writeText",
+			() =>
+				new Promise<void>((resolve) => {
+					complete = resolve;
+				}),
+		);
 		const e = editor(source);
 		const view = { file: { path: "a.md" }, editor: asEditor(e), leaf: {} };
 		const leaf = { view };

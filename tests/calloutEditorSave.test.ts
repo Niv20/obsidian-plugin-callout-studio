@@ -34,26 +34,12 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { performCalloutEditorSave } from "../src/settings/editor/CalloutEditorSave";
-import type {
-	CalloutEditorSaveInput,
-	CalloutEditorSaveState,
-} from "../src/settings/editor/CalloutEditorSave";
-import {
-	LEAVE_NOTES,
-	pendingNoteChanges,
-	type NoteChoices,
-} from "../src/settings/editor/noteChanges";
+import type { CalloutEditorSaveInput, CalloutEditorSaveState } from "../src/settings/editor/CalloutEditorSave";
+import { LEAVE_NOTES, pendingNoteChanges, type NoteChoices } from "../src/settings/editor/noteChanges";
 import type { CalloutEditorPlugin } from "../src/settings/editor/types";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
-import {
-	DEFAULT_TEXT_COLOR_DARK,
-	DEFAULT_TEXT_COLOR_LIGHT,
-	bgTintFor,
-} from "../src/utils/colorUtils";
-import {
-	DEFAULT_ICON_ADJUST,
-	resolveIconAdjust,
-} from "../src/utils/iconAdjust";
+import { DEFAULT_TEXT_COLOR_DARK, DEFAULT_TEXT_COLOR_LIGHT, bgTintFor } from "../src/utils/colorUtils";
+import { DEFAULT_ICON_ADJUST, resolveIconAdjust } from "../src/utils/iconAdjust";
 import type { App } from "obsidian";
 import type { CalloutDefinition, PluginData } from "../src/types";
 import { calloutIdentity } from "../src/utils/calloutId";
@@ -80,9 +66,7 @@ function def(over: Partial<CalloutDefinition> = {}): CalloutDefinition {
  * test that means to author something overrides exactly that field, so an
  * assertion about an absent key is never an accident of the fixture.
  */
-function formState(
-	over: Partial<CalloutEditorSaveState> = {},
-): CalloutEditorSaveState {
+function formState(over: Partial<CalloutEditorSaveState> = {}): CalloutEditorSaveState {
 	return {
 		displayName: "X",
 		calloutId: "x",
@@ -106,10 +90,7 @@ function formState(
 }
 
 /** The concrete values CalloutEditor shows for an existing definition. */
-function stateFor(
-	def: CalloutDefinition,
-	over: Partial<CalloutEditorSaveState> = {},
-): CalloutEditorSaveState {
+function stateFor(def: CalloutDefinition, over: Partial<CalloutEditorSaveState> = {}): CalloutEditorSaveState {
 	const regular = resolveIconAdjust(def, "regular");
 	return formState({
 		displayName: def.displayName,
@@ -159,15 +140,10 @@ type Harness = {
 	/** How many times the save asked open notes to repaint. */
 	refreshes: () => number;
 	file: (path: string) => string;
-	save: (
-		over: Partial<CalloutEditorSaveInput>,
-	) => Promise<CalloutDefinition | null>;
+	save: (over: Partial<CalloutEditorSaveInput>) => Promise<CalloutDefinition | null>;
 };
 
-function harness(
-	stored: CalloutDefinition[] = [],
-	files: Record<string, string> = {},
-): Harness {
+function harness(stored: CalloutDefinition[] = [], files: Record<string, string> = {}): Harness {
 	const registry = new CalloutRegistry();
 	registry.load({ callouts: stored } as Partial<PluginData>);
 
@@ -183,15 +159,13 @@ function harness(
 
 	const store = new Map(Object.entries(files));
 	const handles = Array.from(store.keys()).map((path) => ({ path }));
-	const read = (f: { path: string }): Promise<string> =>
-		Promise.resolve(store.get(f.path) ?? "");
+	const read = (f: { path: string }): Promise<string> => Promise.resolve(store.get(f.path) ?? "");
 	const app = {
 		vault: {
 			getMarkdownFiles: () => handles,
 			read,
 			cachedRead: read,
-			getAbstractFileByPath: (path: string) =>
-				handles.find((h) => h.path === path) ?? null,
+			getAbstractFileByPath: (path: string) => handles.find((h) => h.path === path) ?? null,
 			// The vault rewriters go through `process`, which owns the pair.
 			process: (f: { path: string }, fn: (data: string) => string) => {
 				const next = fn(store.get(f.path) ?? "");
@@ -213,7 +187,9 @@ function harness(
 		settingsEditOpen: false,
 		saveSettings: () => Promise.resolve(),
 		schedulePruneUnusedFallbacks: () => {},
-		refreshCallouts: () => { refreshes++; },
+		refreshCallouts: () => {
+			refreshes++;
+		},
 		ensureIconArtwork: (icon: CalloutDefinition["icon"]) => {
 			fetched.push(icon);
 			return Promise.resolve();
@@ -228,8 +204,7 @@ function harness(
 
 	// `new Notice(...)` records into this array; see tests/support/obsidianStub.ts.
 	const notices: string[] = [];
-	(globalThis as unknown as { __CS_NOTICES__?: string[] }).__CS_NOTICES__ =
-		notices;
+	(globalThis as unknown as { __CS_NOTICES__?: string[] }).__CS_NOTICES__ = notices;
 
 	return {
 		registry,
@@ -254,7 +229,9 @@ function harness(
 				getFallbackBase: () => undefined,
 				noteChoices: LEAVE_NOTES,
 				// The Undo link needs a DOM; the message is what is checked here.
-				announceNoteRewrite: (message) => { notices.push(message); },
+				announceNoteRewrite: (message) => {
+					notices.push(message);
+				},
 				...over,
 			}),
 	};
@@ -481,8 +458,10 @@ describe("performCalloutEditorSave — removing an id", () => {
 	});
 
 	it("sends a renamed callout's old id to one of its aliases, its generated title with it", async () => {
-		const h = harness([def({ id: "idea", displayName: "Idea", aliases: ["thought"] })],
-			{ "a.md": "> [!idea] Idea\n> body", "b.md": "> [!idea] My own words" });
+		const h = harness([def({ id: "idea", displayName: "Idea", aliases: ["thought"] })], {
+			"a.md": "> [!idea] Idea\n> body",
+			"b.md": "> [!idea] My own words",
+		});
 		await h.save({
 			existingId: "idea",
 			state: formState({ calloutId: "insight", displayName: "Insight", aliases: ["thought"] }),
@@ -563,9 +542,7 @@ describe("performCalloutEditorSave — the other vault rewrites", () => {
 	});
 
 	it("normalizes fold marks when foldability changes", async () => {
-		const h = harness([
-			def({ id: "tip", displayName: "X", foldable: false }),
-		], { "note.md": "> [!tip] X" });
+		const h = harness([def({ id: "tip", displayName: "X", foldable: false })], { "note.md": "> [!tip] X" });
 		await h.save({
 			existingId: "tip",
 			state: formState({
@@ -798,10 +775,7 @@ describe("performCalloutEditorSave — resetting built-in icon adjustment", () =
 		});
 
 		assert.ok(saved);
-		assert.deepStrictEqual(
-			resolveIconAdjust(saved, "regular"),
-			DEFAULT_ICON_ADJUST,
-		);
+		assert.deepStrictEqual(resolveIconAdjust(saved, "regular"), DEFAULT_ICON_ADJUST);
 		assert.deepStrictEqual(resolveIconAdjust(saved, "heading"), heading);
 		assert.strictEqual(saved.iconOffsetX, 0);
 		assert.strictEqual(h.registry.isBuiltInModified("note"), true);

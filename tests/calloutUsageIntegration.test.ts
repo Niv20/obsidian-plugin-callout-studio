@@ -12,7 +12,9 @@ import "./support/fakeDom";
 
 // Async index scheduling needs real timers rather than the fake DOM's queue.
 const originalWindow = Object.getOwnPropertyDescriptor(globalThis, "window");
-before(() => { Object.defineProperty(globalThis, "window", { configurable: true, value: globalThis }); });
+before(() => {
+	Object.defineProperty(globalThis, "window", { configurable: true, value: globalThis });
+});
 after(() => {
 	if (originalWindow) Object.defineProperty(globalThis, "window", originalWindow);
 	else Reflect.deleteProperty(globalThis, "window");
@@ -21,11 +23,16 @@ after(() => {
 function harness(contents: Record<string, string>) {
 	const files = Object.keys(contents).map((path) => ({ path, stat: { mtime: 1, size: contents[path]!.length } }));
 	let reads = 0;
-	const app = { vault: {
-		getMarkdownFiles: () => files,
-		getAbstractFileByPath: (path: string) => files.find((file) => file.path === path),
-		cachedRead: (file: TFile) => { reads++; return Promise.resolve(contents[file.path]!); },
-	} } as unknown as App;
+	const app = {
+		vault: {
+			getMarkdownFiles: () => files,
+			getAbstractFileByPath: (path: string) => files.find((file) => file.path === path),
+			cachedRead: (file: TFile) => {
+				reads++;
+				return Promise.resolve(contents[file.path]!);
+			},
+		},
+	} as unknown as App;
 	return { app, reads: () => reads };
 }
 
@@ -34,24 +41,49 @@ function fakeMenu() {
 	let click: (() => unknown) | undefined;
 	let hide = (): void => {};
 	const item = {
-		setTitle(value: string | DocumentFragment) { title = value; return this; },
-		setIcon() { return this; },
-		setSection() { return this; },
-		setDisabled() { return this; },
-		onClick(callback: () => unknown) { click = callback; return this; },
+		setTitle(value: string | DocumentFragment) {
+			title = value;
+			return this;
+		},
+		setIcon() {
+			return this;
+		},
+		setSection() {
+			return this;
+		},
+		setDisabled() {
+			return this;
+		},
+		onClick(callback: () => unknown) {
+			click = callback;
+			return this;
+		},
 	};
 	const menu = {
-		setUseNativeMenu() { return this; },
-		onHide(callback: () => void) { hide = callback; },
-		addItem(callback: (value: MenuItem) => void) { callback(item as unknown as MenuItem); return this; },
+		setUseNativeMenu() {
+			return this;
+		},
+		onHide(callback: () => void) {
+			hide = callback;
+		},
+		addItem(callback: (value: MenuItem) => void) {
+			callback(item as unknown as MenuItem);
+			return this;
+		},
 	} as unknown as Menu;
 	return {
 		menu,
-		title: () => typeof title === "string" ? title : title.textContent,
-		countNode: () => typeof title === "string" ? undefined : Array.from(title.childNodes)
-			.find((node) => node.nodeType === Node.ELEMENT_NODE &&
-				(node as HTMLElement).classList.contains("cs-usage-menu-count")),
-		hide: () => hide(), click: () => click?.(),
+		title: () => (typeof title === "string" ? title : title.textContent),
+		countNode: () =>
+			typeof title === "string"
+				? undefined
+				: Array.from(title.childNodes).find(
+						(node) =>
+							node.nodeType === Node.ELEMENT_NODE &&
+							(node as HTMLElement).classList.contains("cs-usage-menu-count"),
+					),
+		hide: () => hide(),
+		click: () => click?.(),
 	};
 }
 
@@ -68,7 +100,12 @@ describe("shared callout usage surfaces", () => {
 		const index = getCalloutOccurrenceIndex(app);
 		assert.equal(stats.totalCount, 6);
 		assert.equal(stats.totalCount, index.query().occurrences.length);
-		assert.deepEqual(getOccurrenceMetrics(index), { totalCount: 6, typeCount: 2, fileCount: 2, scannedFileCount: 2 });
+		assert.deepEqual(getOccurrenceMetrics(index), {
+			totalCount: 6,
+			typeCount: 2,
+			fileCount: 2,
+			scannedFileCount: 2,
+		});
 		const metrics = getOccurrenceMetrics(index);
 		index.query(["note"], "regular");
 		assert.equal(getOccurrenceMetrics(index), metrics, "filtering reuses global metrics without rereading notes");
@@ -88,7 +125,11 @@ describe("shared callout usage surfaces", () => {
 		assert.equal(registry.has("never-saved"), false);
 		assert.equal(JSON.stringify(registry.toSaveData()), before);
 		index.invalidateEditor("one.md");
-		assert.equal(getOccurrenceMetrics(index), metrics, "typing schedules parsing without recomputing vault metrics");
+		assert.equal(
+			getOccurrenceMetrics(index),
+			metrics,
+			"typing schedules parsing without recomputing vault metrics",
+		);
 		menu.hide();
 		index.dispose();
 	});
@@ -108,7 +149,10 @@ describe("shared callout usage surfaces", () => {
 	it("opens a cold menu quietly, fades in only its count, and detaches on hide", async () => {
 		const { app } = harness({ "a.md": "[!note]" });
 		let release!: (content: string) => void;
-		app.vault.cachedRead = () => new Promise<string>((resolve) => { release = resolve; });
+		app.vault.cachedRead = () =>
+			new Promise<string>((resolve) => {
+				release = resolve;
+			});
 		const menu = fakeMenu();
 		assert.equal(addUsageMenuItem(menu.menu, app, ["note"]), undefined);
 		assert.equal(menu.title(), t("usage.menu"));
@@ -134,7 +178,10 @@ describe("shared callout usage surfaces", () => {
 	it("does not reveal a count after its menu was dismissed during the scan", async () => {
 		const { app } = harness({ "a.md": "[!note]" });
 		let release!: (content: string) => void;
-		app.vault.cachedRead = () => new Promise<string>((resolve) => { release = resolve; });
+		app.vault.cachedRead = () =>
+			new Promise<string>((resolve) => {
+				release = resolve;
+			});
 		const menu = fakeMenu();
 		addUsageMenuItem(menu.menu, app, ["note"]);
 		const index = getCalloutOccurrenceIndex(app);
@@ -168,9 +215,21 @@ describe("shared callout usage surfaces", () => {
 		const events: string[] = [];
 		const workspaceEvents: string[] = [];
 		const disposers: Array<() => void> = [];
-		app.vault.on = ((event: string) => { events.push(event); return {}; }) as typeof app.vault.on;
-		app.workspace = { on: (event: string) => { workspaceEvents.push(event); return {}; } } as unknown as App["workspace"];
-		registerOccurrenceIndex({ app, registerEvent() {}, register: (cb: () => void) => disposers.push(cb) } as unknown as Plugin);
+		app.vault.on = ((event: string) => {
+			events.push(event);
+			return {};
+		}) as typeof app.vault.on;
+		app.workspace = {
+			on: (event: string) => {
+				workspaceEvents.push(event);
+				return {};
+			},
+		} as unknown as App["workspace"];
+		registerOccurrenceIndex({
+			app,
+			registerEvent() {},
+			register: (cb: () => void) => disposers.push(cb),
+		} as unknown as Plugin);
 		const index = getCalloutOccurrenceIndex(app);
 		assert.equal(index.status, "idle");
 		assert.equal(reads(), 0);

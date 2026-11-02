@@ -29,7 +29,10 @@ class FakeTransaction {
 	private pending = 0;
 	private done = false;
 
-	constructor(private readonly db: FakeDatabase, readonly mode: IDBTransactionMode) {
+	constructor(
+		private readonly db: FakeDatabase,
+		readonly mode: IDBTransactionMode,
+	) {
 		// A transaction nobody uses still completes.
 		setImmediate(() => this.settle());
 	}
@@ -54,8 +57,11 @@ class FakeTransaction {
 		this.pending++;
 		setImmediate(() => {
 			if (this.done) return;
-			try { request.result = work(); }
-			catch (error) { request.error = error as Error; }
+			try {
+				request.result = work();
+			} catch (error) {
+				request.error = error as Error;
+			}
 			this.pending--;
 			if (request.error) request.onerror?.call(request, new Event("error"));
 			else request.onsuccess?.call(request, new Event("success"));
@@ -74,20 +80,34 @@ class FakeTransaction {
 }
 
 class FakeStore {
-	constructor(private readonly transaction: FakeTransaction, private readonly rows: Map<string, unknown>) {}
+	constructor(
+		private readonly transaction: FakeTransaction,
+		private readonly rows: Map<string, unknown>,
+	) {}
 
 	getAll(range: FakeKeyRange): FakeRequest {
-		return this.transaction.request(() => [...this.rows.keys()].sort()
-			.filter(key => range.includes(key)).map(key => structuredClone(this.rows.get(key))), false);
+		return this.transaction.request(
+			() =>
+				[...this.rows.keys()]
+					.sort()
+					.filter((key) => range.includes(key))
+					.map((key) => structuredClone(this.rows.get(key))),
+			false,
+		);
 	}
 
 	put(value: unknown, key: string): FakeRequest {
 		const copy = structuredClone(value);
-		return this.transaction.request(() => { this.rows.set(key, copy); return key; }, true);
+		return this.transaction.request(() => {
+			this.rows.set(key, copy);
+			return key;
+		}, true);
 	}
 
 	delete(key: string): FakeRequest {
-		return this.transaction.request(() => { this.rows.delete(key); }, true);
+		return this.transaction.request(() => {
+			this.rows.delete(key);
+		}, true);
 	}
 }
 
@@ -106,11 +126,18 @@ class FakeDatabase {
 		return new FakeTransaction(this, mode);
 	}
 
-	close(): void { this.closed++; }
+	close(): void {
+		this.closed++;
+	}
 }
 
 class FakeKeyRange {
-	constructor(readonly lower: string, readonly upper: string, readonly lowerOpen: boolean, readonly upperOpen: boolean) {}
+	constructor(
+		readonly lower: string,
+		readonly upper: string,
+		readonly lowerOpen: boolean,
+		readonly upperOpen: boolean,
+	) {}
 	static bound(lower: string, upper: string, lowerOpen = false, upperOpen = false): FakeKeyRange {
 		return new FakeKeyRange(lower, upper, lowerOpen, upperOpen);
 	}
@@ -125,7 +152,11 @@ class FakeKeyRange {
  * Install a fresh fake as `indexedDB` and `IDBKeyRange`. `fail` makes every
  * open report an error, as storage that is gone or refused does.
  */
-export function installFakeIndexedDb(): { databases: Map<string, FakeDatabase>; fail: { open: boolean }; restore(): void } {
+export function installFakeIndexedDb(): {
+	databases: Map<string, FakeDatabase>;
+	fail: { open: boolean };
+	restore(): void;
+} {
 	const g = globalThis as Record<string, unknown>;
 	const saved = { indexedDB: g.indexedDB, IDBKeyRange: g.IDBKeyRange };
 	const databases = new Map<string, FakeDatabase>();
@@ -134,7 +165,8 @@ export function installFakeIndexedDb(): { databases: Map<string, FakeDatabase>; 
 	g.indexedDB = {
 		open(name: string, version = 1) {
 			const request = Object.assign(new FakeRequest(), {
-				onupgradeneeded: null as Callback, onblocked: null as Callback,
+				onupgradeneeded: null as Callback,
+				onblocked: null as Callback,
 			});
 			setImmediate(() => {
 				if (fail.open) {
@@ -143,7 +175,10 @@ export function installFakeIndexedDb(): { databases: Map<string, FakeDatabase>; 
 					return;
 				}
 				let db = databases.get(name);
-				if (!db) { db = new FakeDatabase(); databases.set(name, db); }
+				if (!db) {
+					db = new FakeDatabase();
+					databases.set(name, db);
+				}
 				request.result = db;
 				if (db.version < version) {
 					db.version = version;
@@ -155,10 +190,13 @@ export function installFakeIndexedDb(): { databases: Map<string, FakeDatabase>; 
 		},
 	};
 	return {
-		databases, fail,
+		databases,
+		fail,
 		restore: () => {
-			if (saved.indexedDB === undefined) delete g.indexedDB; else g.indexedDB = saved.indexedDB;
-			if (saved.IDBKeyRange === undefined) delete g.IDBKeyRange; else g.IDBKeyRange = saved.IDBKeyRange;
+			if (saved.indexedDB === undefined) delete g.indexedDB;
+			else g.indexedDB = saved.indexedDB;
+			if (saved.IDBKeyRange === undefined) delete g.IDBKeyRange;
+			else g.IDBKeyRange = saved.IDBKeyRange;
 		},
 	};
 }

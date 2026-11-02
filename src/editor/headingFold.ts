@@ -35,10 +35,7 @@ export function isHeadingFoldEnabled(app: App): boolean {
  * by widget click handlers to reach view-level APIs (link navigation) from the
  * CM `view` they are handed. `editor.cm` is undocumented but stable.
  */
-export function resolveMarkdownView(
-	app: App,
-	cm: EditorView,
-): MarkdownView | null {
+export function resolveMarkdownView(app: App, cm: EditorView): MarkdownView | null {
 	for (const leaf of app.workspace.getLeavesOfType("markdown")) {
 		const view = leaf.view;
 		if (view instanceof MarkdownView) {

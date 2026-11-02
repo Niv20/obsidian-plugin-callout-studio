@@ -31,7 +31,10 @@ type Internals = {
 };
 
 function editor(options: Options = {}) {
-	const modal = new PaletteEditorModal({ app: {} as App } as ConstructorParameters<typeof PaletteEditorModal>[0], options);
+	const modal = new PaletteEditorModal(
+		{ app: {} as App } as ConstructorParameters<typeof PaletteEditorModal>[0],
+		options,
+	);
 	const internals = modal as unknown as Internals;
 	const save = el();
 	internals.saveBtnEl = save;
@@ -57,7 +60,11 @@ describe("the palette editor's Save", () => {
 		internals.updateValidity();
 		assert.equal(save.getAttribute("aria-disabled"), "true");
 		assert.equal(save.hasClass("cs-btn-disabled"), true);
-		assert.notEqual((save as unknown as { disabled?: boolean }).disabled, true, "a disabled button would swallow the press");
+		assert.notEqual(
+			(save as unknown as { disabled?: boolean }).disabled,
+			true,
+			"a disabled button would swallow the press",
+		);
 		assert.equal(internals.saveBlockedReason(), t("palette.saveBlockedName"));
 	});
 
@@ -149,7 +156,11 @@ describe("two saved palettes that already share a metadata word", () => {
 	// they only kebab-case alike. Blocking them would lock the user out of
 	// editing either palette, even its colours.
 	const saved = (name: string): CustomPalette => ({ ...twinOf(name), id: `cp-${name}`, name });
-	for (const [mine, theirs] of [["Note dark", "Note (dark)"], ["🔥 Fire", "Fire 🔥"], ["Blue 2", "blue_2"]] as const) {
+	for (const [mine, theirs] of [
+		["Note dark", "Note (dark)"],
+		["🔥 Fire", "Fire 🔥"],
+		["Blue 2", "blue_2"],
+	] as const) {
 		it(`"${mine}" still saves beside "${theirs}", with a warning instead`, () => {
 			const { internals, save } = editor({ existing: saved(mine), takenNames: [theirs] });
 			internals.updateValidity();
@@ -219,7 +230,10 @@ describe("where the palette editor says what is wrong", () => {
 describe("the palette editor's groups (S7-05)", () => {
 	it("builds Palette and Colors as Obsidian setting groups with the editors' row inset", () => {
 		const source = readRepoFile("src/settings/PaletteEditorModal.ts");
-		assert.match(source, /new SettingGroup\(adjustCol\)\s*\.setHeading\(t\("palette\.groupPalette"\)\)\s*\.addClass\("cs-editor-group"\)/);
+		assert.match(
+			source,
+			/new SettingGroup\(adjustCol\)\s*\.setHeading\(t\("palette\.groupPalette"\)\)\s*\.addClass\("cs-editor-group"\)/,
+		);
 		assert.match(source, /\.setHeading\(t\("palette\.advancedColors"\)\)\s*\.addClass\("cs-editor-group"\)/);
 		assert.doesNotMatch(source, /createControlGroup|createSliderRow/, "no plugin-drawn card left");
 		assert.match(source, /\.setName\(t\("palette\.bgIntensity"\)\)\s*\.setClass\("cs-stacked-slider"\)/);
@@ -238,6 +252,10 @@ describe("the palette editor's groups (S7-05)", () => {
 		internals.baseColor = "#123456";
 		internals.applyDerived();
 		internals.updateValidity();
-		assert.equal(box.children.includes(internals.colorErrorEl as unknown as FakeElement), false, "out of the box, not hidden in it");
+		assert.equal(
+			box.children.includes(internals.colorErrorEl as unknown as FakeElement),
+			false,
+			"out of the box, not hidden in it",
+		);
 	});
 });

@@ -31,7 +31,10 @@ describe("a built-in callout's name", () => {
 	const source = readRepoFile("src/settings/CalloutEditor.ts");
 
 	it("is a disabled text field box, not bare text at the row's end", () => {
-		assert.match(source, /if \(this\.isBuiltIn\) \{[\s\S]{0,600}?nameSetting\.addText\(\(text\) => \{[\s\S]{0,200}?text\.setValue\(this\.displayName\)\.setDisabled\(true\)/);
+		assert.match(
+			source,
+			/if \(this\.isBuiltIn\) \{[\s\S]{0,600}?nameSetting\.addText\(\(text\) => \{[\s\S]{0,200}?text\.setValue\(this\.displayName\)\.setDisabled\(true\)/,
+		);
 		assert.doesNotMatch(source, /nameSetting\.addDisplayValue/);
 	});
 });
@@ -41,9 +44,16 @@ describe("the form box (S5-15)", () => {
 	const styles = readRepoFile("styles.css");
 
 	it("builds the four form rows into one SettingGroup without a heading", () => {
-		assert.match(source, /const general = new SettingGroup\(contentEl\);\s*general\.addClass\("cs-editor-group"\);/);
+		assert.match(
+			source,
+			/const general = new SettingGroup\(contentEl\);\s*general\.addClass\("cs-editor-group"\);/,
+		);
 		for (const name of ["nameSetting", "idsSetting", "colorSetting", "iconSetting"]) {
-			assert.match(source, new RegExp(`const ${name} = new Setting\\(general\\.listEl\\)`), `${name} lives in the box`);
+			assert.match(
+				source,
+				new RegExp(`const ${name} = new Setting\\(general\\.listEl\\)`),
+				`${name} lives in the box`,
+			);
 		}
 		assert.doesNotMatch(source, /general\.setHeading\(/, "the form box has no heading");
 	});
@@ -66,7 +76,10 @@ describe("the panel beside the form (S5-07)", () => {
 
 	it("builds the Picture group as an Obsidian group, like the adjustments", () => {
 		const source = readRepoFile("src/settings/CalloutEditor.ts");
-		assert.match(source, /new SettingGroup\(adjustCol\)\s*\.setHeading\(t\("editor\.picture"\)\)\s*\.addClass\("cs-editor-group"\)/);
+		assert.match(
+			source,
+			/new SettingGroup\(adjustCol\)\s*\.setHeading\(t\("editor\.picture"\)\)\s*\.addClass\("cs-editor-group"\)/,
+		);
 		assert.doesNotMatch(source, /createControlGroup\(/, "no plugin-drawn box left in the editor");
 	});
 });
@@ -77,7 +90,9 @@ describe("Save while a save runs", () => {
 		const registry = new CalloutRegistry();
 		registry.load(null);
 		const plugin = {
-			app: {} as App, registry, settings: registry.settings,
+			app: {} as App,
+			registry,
+			settings: registry.settings,
 		} as unknown as CalloutEditorPlugin;
 		const editor = new CalloutEditor(plugin, registry.get("note"));
 		const saveBtn = createEl("button");
@@ -98,7 +113,7 @@ describe("Save while a save runs", () => {
 		assert.ok(saveBtn.hasClass("mod-loading"));
 		assert.equal(saveBtn.getAttribute("aria-busy"), "true");
 		assert.equal(saveBtn.disabled, true, "a second press cannot start a second save");
-		assert.equal(saveBtn.textContent, t("editor.saveChanges"), "not \"Saving…\"");
+		assert.equal(saveBtn.textContent, t("editor.saveChanges"), 'not "Saving…"');
 	});
 
 	it("drops the spinner once the save is done", () => {

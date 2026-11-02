@@ -7,57 +7,116 @@ import { definition } from "./support/discoveryHarness";
 import { writeSettingsBackup } from "../src/manager/settingsBackup";
 
 function fixture() {
-	const registry = new CalloutRegistry(); registry.load(null);
+	const registry = new CalloutRegistry();
+	registry.load(null);
 	registry.add(definition({ id: "local" }));
 	const current = registry.toSaveData();
 	const files = new Map<string, string>();
 	let fail = false;
-	const host = { manifest: { id: "callout-studio", dir: ".obsidian/plugins/callout-studio" } as PluginManifest,
-		app: { vault: { adapter: {
-			exists: () => Promise.resolve(true),
-			write: (path: string, text: string) => { if (fail) return Promise.reject(new Error("disk full")); files.set(path, text); return Promise.resolve(); },
-			read: (path: string) => Promise.resolve(files.get(path) ?? ""),
-			list: () => Promise.resolve({ files: [...files.keys()], folders: [] }),
-			remove: (path: string) => { files.delete(path); return Promise.resolve(); },
-		} } } as unknown as App };
+	const host = {
+		manifest: { id: "callout-studio", dir: ".obsidian/plugins/callout-studio" } as PluginManifest,
+		app: {
+			vault: {
+				adapter: {
+					exists: () => Promise.resolve(true),
+					write: (path: string, text: string) => {
+						if (fail) return Promise.reject(new Error("disk full"));
+						files.set(path, text);
+						return Promise.resolve();
+					},
+					read: (path: string) => Promise.resolve(files.get(path) ?? ""),
+					list: () => Promise.resolve({ files: [...files.keys()], folders: [] }),
+					remove: (path: string) => {
+						files.delete(path);
+						return Promise.resolve();
+					},
+				},
+			},
+		} as unknown as App,
+	};
 	// The folder also holds the labels file that says why each backup was taken.
 	const backups = () => [...files].filter(([path]) => /\/data-[^/]*\.json$/.test(path)).map(([, text]) => text);
-	const labels = () => JSON.parse(files.get(".obsidian/plugins/callout-studio/backups/labels-device00.json") ?? "{}") as { reasons?: Record<string, string> };
-	return { current, files, backups, labels, host, fail: () => { fail = true; } };
+	const labels = () =>
+		JSON.parse(files.get(".obsidian/plugins/callout-studio/backups/labels-device00.json") ?? "{}") as {
+			reasons?: Record<string, string>;
+		};
+	return {
+		current,
+		files,
+		backups,
+		labels,
+		host,
+		fail: () => {
+			fail = true;
+		},
+	};
 }
 
 describe("conflicting device settings retain a recovery copy", () => {
 	it("detects different ids with the same row count", async () => {
-		const h = fixture(); const remote = { ...h.current, callouts: [definition({ id: "remote" })] };
+		const h = fixture();
+		const remote = { ...h.current, callouts: [definition({ id: "remote" })] };
 		assert.equal(settingsWouldDiscardRows(h.current, remote), true);
 		assert.equal(await backUpBeforeAdoption(h.host, h.current, remote), true);
 		assert.equal(h.backups().length, 1);
 		assert.deepEqual(JSON.parse(h.backups()[0]!), JSON.parse(JSON.stringify(h.current)));
-		assert.deepEqual(Object.values(h.labels().reasons ?? {}), ["before-sync"], "Version history names it by why it was kept");
+		assert.deepEqual(
+			Object.values(h.labels().reasons ?? {}),
+			["before-sync"],
+			"Version history names it by why it was kept",
+		);
 	});
 	it("detects an edit to the same id, even when the other device adds more rows", () => {
 		const h = fixture();
-		assert.equal(settingsWouldDiscardRows(h.current, { callouts: [definition({ id: "local", displayName: "remote edit" }), definition({ id: "new" })] }), true);
+		assert.equal(
+			settingsWouldDiscardRows(h.current, {
+				callouts: [definition({ id: "local", displayName: "remote edit" }), definition({ id: "new" })],
+			}),
+			true,
+		);
 	});
 	it("does not back up a strictly additive update with identical existing rows", async () => {
-		const h = fixture(); const incoming = { callouts: [...h.current.callouts, definition({ id: "new" })] };
+		const h = fixture();
+		const incoming = { callouts: [...h.current.callouts, definition({ id: "new" })] };
 		assert.equal(await backUpBeforeAdoption(h.host, h.current, incoming), true);
 		assert.equal(h.files.size, 0);
 	});
 	it("blocks adoption when a required recovery copy cannot be written", async () => {
-		const h = fixture(); h.fail();
+		const h = fixture();
+		h.fail();
 		assert.equal(await backUpBeforeAdoption(h.host, h.current, { callouts: [] }), false);
 	});
 	it("two devices backing up at the same instant cannot overwrite one another", async () => {
-		const h = fixture(); const time = new Date("2026-09-06T10:00:00Z");
-		const a = await writeSettingsBackup({ ...h.host, localState: { deviceId: "aaaaaaaa" } }, { same: true }, { now: time });
-		const b = await writeSettingsBackup({ ...h.host, localState: { deviceId: "bbbbbbbb" } }, { same: false }, { now: time });
-		assert.notEqual(a, b); assert.equal(h.backups().length, 2);
+		const h = fixture();
+		const time = new Date("2026-09-06T10:00:00Z");
+		const a = await writeSettingsBackup(
+			{ ...h.host, localState: { deviceId: "aaaaaaaa" } },
+			{ same: true },
+			{ now: time },
+		);
+		const b = await writeSettingsBackup(
+			{ ...h.host, localState: { deviceId: "bbbbbbbb" } },
+			{ same: false },
+			{ now: time },
+		);
+		assert.notEqual(a, b);
+		assert.equal(h.backups().length, 2);
 	});
 	it("does not back up for picker memory or onboarding flags alone", async () => {
 		const h = fixture();
-		const incoming = { ...h.current, settings: { ...h.current.settings, welcomeSeen: true, quickInsertSource: "theme",
-			iconSources: { ...h.current.settings.iconSources, lastCategory: { material: "Social" }, lastEmojiSkinTone: 3 } } };
+		const incoming = {
+			...h.current,
+			settings: {
+				...h.current.settings,
+				welcomeSeen: true,
+				quickInsertSource: "theme",
+				iconSources: {
+					...h.current.settings.iconSources,
+					lastCategory: { material: "Social" },
+					lastEmojiSkinTone: 3,
+				},
+			},
+		};
 		assert.equal(await backUpBeforeAdoption(h.host, h.current, incoming), true);
 		assert.equal(h.files.size, 0);
 	});

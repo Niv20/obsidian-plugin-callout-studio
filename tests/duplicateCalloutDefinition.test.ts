@@ -6,10 +6,7 @@ import type { CalloutDefinition } from "../src/types";
 import { calloutIdentity, sanitizeCalloutIdInput } from "../src/utils/calloutId";
 import { MAX_DISPLAY_NAME } from "../src/utils/importValidator";
 
-function definition(
-	id = "my style",
-	changes: Partial<CalloutDefinition> = {},
-): CalloutDefinition {
+function definition(id = "my style", changes: Partial<CalloutDefinition> = {}): CalloutDefinition {
 	return {
 		id,
 		displayName: "My style",
@@ -29,14 +26,14 @@ describe("createDuplicateCalloutDefinition", () => {
 		const original = {
 			...definition("my style", {
 				icon: { type: "image", value: "img-missing", recolor: false },
-					iconAdjust: { regular: { offsetX: 3 }, heading: { size: 0.75 } },
+				iconAdjust: { regular: { offsetX: 3 }, heading: { size: 0.75 } },
 				iconOffsetY: -2,
 				iconSize: 1.3,
 				hideIcon: true,
 				bgColorLight: "#234567",
 				bgColorDark: "#765432",
 				bgGradient: {
-						angleDeg: 30,
+					angleDeg: 30,
 					toColorLight: "#abcdef",
 					toColorDark: "#fedcba",
 					textGradient: true,
@@ -66,10 +63,10 @@ describe("createDuplicateCalloutDefinition", () => {
 		assert.ok(Object.hasOwn(copy, "explicitlyUnset"));
 		copy.icon.value = "changed";
 		copy.iconAdjust!.heading!.size = 1;
-			copy.bgGradient!.angleDeg = 90;
+		copy.bgGradient!.angleDeg = 90;
 		copy.metadata!.origin = "changed";
 		copy.futureState.colors.push("#000000");
-			copy.aliases.push("changed");
+		copy.aliases.push("changed");
 		assert.deepEqual(original, before);
 	});
 
@@ -128,10 +125,7 @@ describe("createDuplicateCalloutDefinition", () => {
 		assert.equal(first.id, "a".repeat(195) + " copy");
 		assert.equal(first.displayName, "N".repeat(75) + " copy");
 		assert.equal(second.id, "a".repeat(193) + " copy 4");
-		assert.deepEqual(first.aliases, [
-			"a".repeat(193) + " copy 2",
-			"a".repeat(193) + " copy 3",
-		]);
+		assert.deepEqual(first.aliases, ["a".repeat(193) + " copy 2", "a".repeat(193) + " copy 3"]);
 		for (const copy of [first, second]) {
 			const identifiers = [copy.id, ...copy.aliases!];
 			assert.equal(new Set(identifiers.map(calloutIdentity)).size, identifiers.length);

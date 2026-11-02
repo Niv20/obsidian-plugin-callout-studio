@@ -32,8 +32,7 @@ function tags(root: FakeElement): string[] {
 	return out;
 }
 
-const svgWith = (...children: FakeElement[]): FakeElement =>
-	el({ tag: "svg", children });
+const svgWith = (...children: FakeElement[]): FakeElement => el({ tag: "svg", children });
 
 describe("stripUnsafeSvg — elements", () => {
 	it("drops a script anywhere in the tree", () => {

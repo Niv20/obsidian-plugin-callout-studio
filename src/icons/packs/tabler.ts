@@ -20,12 +20,7 @@
  * altogether. buildPackSvg emits it and renderIcon recognises it.
  */
 import type { CalloutIcon, IconPackId, TablerIconStyle } from "../../types";
-import type {
-	IconEntry,
-	IconIndex,
-	IconPack,
-	IconVariantState,
-} from "../types";
+import type { IconEntry, IconIndex, IconPack, IconVariantState } from "../types";
 import type { LocaleKey } from "../../i18n";
 import { buildPackSvg } from "../packData";
 import type { PackStroke } from "../packData";
@@ -70,15 +65,10 @@ const TABLER_INDEX_OF: Readonly<Record<TablerIconStyle, EncodedIndex>> = {
 	filled: TABLER_FILLED_INDEX,
 };
 
-const TABLER_STYLE_LABEL_KEYS: readonly LocaleKey[] = [
-	"iconPicker.tablerStyleOutline",
-	"iconPicker.tablerStyleFilled",
-];
+const TABLER_STYLE_LABEL_KEYS: readonly LocaleKey[] = ["iconPicker.tablerStyleOutline", "iconPicker.tablerStyleFilled"];
 
 /** The two pack files this source draws from, in style order. */
-export const TABLER_DATA_PACKS: readonly IconPackId[] = TABLER_STYLES.map(
-	(style) => TABLER_TYPE_OF[style],
-);
+export const TABLER_DATA_PACKS: readonly IconPackId[] = TABLER_STYLES.map((style) => TABLER_TYPE_OF[style]);
 
 const TABLER_TYPES = new Set<string>(TABLER_DATA_PACKS);
 
@@ -198,10 +188,7 @@ export const tablerPack: IconPack = {
 	makeIcon(entry: IconEntry, variants: IconVariantState): CalloutIcon {
 		// The fallback is for the pooled "All sources" grid, which shows every
 		// name at once with no style control to keep them in step.
-		const style = resolveStyle(
-			entry.name,
-			variants.tablerStyle ?? TABLER_DEFAULT_STYLE,
-		);
+		const style = resolveStyle(entry.name, variants.tablerStyle ?? TABLER_DEFAULT_STYLE);
 		return { type: TABLER_TYPE_OF[style], value: entry.name };
 	},
 

@@ -121,10 +121,7 @@ export const STYLE_DEMO_ID = "global-style-demo";
  * so the editor cannot mint one either — that is what keeps the preview slot's
  * `previewShadowedDef` null and its list filter honest.
  */
-export const RESERVED_DEMO_IDS: ReadonlySet<string> = new Set([
-	PREVIEW_PLACEHOLDER_ID,
-	STYLE_DEMO_ID,
-]);
+export const RESERVED_DEMO_IDS: ReadonlySet<string> = new Set([PREVIEW_PLACEHOLDER_ID, STYLE_DEMO_ID]);
 
 /**
  * The id the welcome splash's three examples are written with.
@@ -184,22 +181,21 @@ export const FALLBACK_ICON: CalloutIcon = Object.freeze({
  * type. Aliases are deliberately absent: they resolve to their parent's
  * definition long before this map is read.
  */
-export const OBSIDIAN_CALLOUT_VAR: Readonly<Record<string, string>> =
-	Object.freeze({
-		note: "--callout-default",
-		abstract: "--callout-summary",
-		info: "--callout-info",
-		todo: "--callout-todo",
-		tip: "--callout-tip",
-		success: "--callout-success",
-		question: "--callout-question",
-		warning: "--callout-warning",
-		failure: "--callout-fail",
-		danger: "--callout-error",
-		bug: "--callout-bug",
-		example: "--callout-example",
-		quote: "--callout-quote",
-	});
+export const OBSIDIAN_CALLOUT_VAR: Readonly<Record<string, string>> = Object.freeze({
+	note: "--callout-default",
+	abstract: "--callout-summary",
+	info: "--callout-info",
+	todo: "--callout-todo",
+	tip: "--callout-tip",
+	success: "--callout-success",
+	question: "--callout-question",
+	warning: "--callout-warning",
+	failure: "--callout-fail",
+	danger: "--callout-error",
+	bug: "--callout-bug",
+	example: "--callout-example",
+	quote: "--callout-quote",
+});
 
 /**
  * The shape number `data.json` carries.
@@ -221,10 +217,7 @@ export const CURRENT_DATA_VERSION = 5;
  * The settings loader merges saved lists against these (unknown ids dropped,
  * newly introduced ids appended), so extending a list here is upgrade-safe.
  */
-export const DEFAULT_CONTEXT_MENU_ITEMS: Record<
-	CalloutRenderRole,
-	ContextMenuItemConfig[]
-> = {
+export const DEFAULT_CONTEXT_MENU_ITEMS: Record<CalloutRenderRole, ContextMenuItemConfig[]> = {
 	regular: [
 		{ id: "copyMarkdown", enabled: true },
 		{ id: "foldDefaults", enabled: true },

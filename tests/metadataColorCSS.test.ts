@@ -61,11 +61,16 @@ function attrMatches(form: string, value: string): boolean {
 	const v = fold((m[2] ?? "").replace(/\\(.)/g, "$1"));
 	const attr = fold(value);
 	switch (m[1]) {
-		case "~": return attr.split(/[ \t\n\r\f]+/).includes(v);
-		case "^": return attr.startsWith(v);
-		case "$": return attr.endsWith(v);
-		case "*": return attr.includes(v);
-		default: return attr === v;
+		case "~":
+			return attr.split(/[ \t\n\r\f]+/).includes(v);
+		case "^":
+			return attr.startsWith(v);
+		case "$":
+			return attr.endsWith(v);
+		case "*":
+			return attr.includes(v);
+		default:
+			return attr === v;
 	}
 }
 
@@ -79,10 +84,21 @@ describe("metadataWordSelector — the word in either separator", () => {
 	const sel = metadataWordSelector(["pink"]);
 
 	const yes = [
-		"pink", "pink right", "right pink", "a pink b", " pink ",
-		"pink|right", "right|pink", "a|pink|b", "|pink", "pink|",
-		"a|pink b", "a pink|b", "a| pink |b",
-		"PINK", "Pink|x",
+		"pink",
+		"pink right",
+		"right pink",
+		"a pink b",
+		" pink ",
+		"pink|right",
+		"right|pink",
+		"a|pink|b",
+		"|pink",
+		"pink|",
+		"a|pink b",
+		"a pink|b",
+		"a| pink |b",
+		"PINK",
+		"Pink|x",
 	];
 	for (const value of yes) {
 		it(`matches "${value}"`, () => assert.ok(selectorMatches(sel, value)));
@@ -184,7 +200,8 @@ describe("generateMetadataColorCSS — the rules", () => {
 				.map(specificityOf);
 			assert.ok(own.length > 0, ownNeedle);
 			for (const sel of splitSelectorList(rule.selector)) {
-				for (const o of own) assert.ok(compareSpecificity(specificityOf(sel), o) > 0, `${sel} vs ${o.join(",")}`);
+				for (const o of own)
+					assert.ok(compareSpecificity(specificityOf(sel), o) > 0, `${sel} vs ${o.join(",")}`);
 			}
 		}
 	});
@@ -203,10 +220,16 @@ describe("generateMetadataColorCSS — the rules", () => {
 			[],
 		);
 		// One class heavier than the colour block, which is what lets it beat the theme's rule.
-		const colour = rulesMatching(red, ".callout[data-callout]:is([data-callout-metadata")
-			.find((r) => r.props.includes("--cs-accent"));
+		const colour = rulesMatching(red, ".callout[data-callout]:is([data-callout-metadata").find((r) =>
+			r.props.includes("--cs-accent"),
+		);
 		assert.ok(colour);
-		assert.ok(compareSpecificity(specificityOf(splitSelectorList(drawn.selector)[0]!), specificityOf(splitSelectorList(colour.selector)[0]!)) > 0);
+		assert.ok(
+			compareSpecificity(
+				specificityOf(splitSelectorList(drawn.selector)[0]!),
+				specificityOf(splitSelectorList(colour.selector)[0]!),
+			) > 0,
+		);
 	});
 
 	it("repaints only the names the theme draws, not the rest of a callout it partly names", () => {
@@ -258,8 +281,21 @@ describe("metadataNamesWord — the stylesheet's own answer, in code", () => {
 	// prints in a colour the screen never showed.
 	const sel = metadataWordSelector(["pink"]);
 	for (const value of [
-		"pink", "a pink", "a|pink", "pink|b", "a|pink b", "a pink|b", " PINK ", "x|Pink|y",
-		"a\u00a0pink", "pink\u00a0b", "a\tpink", "a|pink\tb", "pinkish", "a|pinky", "",
+		"pink",
+		"a pink",
+		"a|pink",
+		"pink|b",
+		"a|pink b",
+		"a pink|b",
+		" PINK ",
+		"x|Pink|y",
+		"a\u00a0pink",
+		"pink\u00a0b",
+		"a\tpink",
+		"a|pink\tb",
+		"pinkish",
+		"a|pinky",
+		"",
 	]) {
 		it(JSON.stringify(value), () => {
 			assert.strictEqual(metadataNamesWord(value, "pink"), selectorMatches(sel, value));
@@ -302,8 +338,11 @@ describe("generateMetadataColorCSS — replacing, not layering", () => {
 		);
 		assert.ok(block?.decls.includes("background-image: none !important"), "the gradient");
 		assert.ok(
-			rules.some((r) => r.selector.endsWith("> .callout-title > .callout-title-inner") &&
-				r.decls.includes("-webkit-text-fill-color: currentColor !important")),
+			rules.some(
+				(r) =>
+					r.selector.endsWith("> .callout-title > .callout-title-inner") &&
+					r.decls.includes("-webkit-text-fill-color: currentColor !important"),
+			),
 			"the title sweep",
 		);
 		assert.ok(
@@ -311,13 +350,32 @@ describe("generateMetadataColorCSS — replacing, not layering", () => {
 			"the chevron",
 		);
 		assert.ok(
-			rules.some((r) => r.at.includes("@media print") && r.selector.endsWith("::before") &&
-				r.decls.includes("background-image: none !important")),
+			rules.some(
+				(r) =>
+					r.at.includes("@media print") &&
+					r.selector.endsWith("::before") &&
+					r.decls.includes("background-image: none !important"),
+			),
 			"the print repaint",
 		);
-		assert.ok(rules.some((r) => r.selector.endsWith(" .cs-heading-title") && r.decls.includes("background-clip: border-box")), "the heading bar's title");
-		assert.ok(rules.some((r) => r.selector.endsWith(".cs-inline-callout") && r.decls.includes("background-clip: border-box")), "the pill's own sweep");
-		assert.ok(rules.some((r) => r.selector.endsWith("> .cs-callout-name") && r.decls.includes("background-clip: border-box")), "the heading token's name");
+		assert.ok(
+			rules.some(
+				(r) => r.selector.endsWith(" .cs-heading-title") && r.decls.includes("background-clip: border-box"),
+			),
+			"the heading bar's title",
+		);
+		assert.ok(
+			rules.some(
+				(r) => r.selector.endsWith(".cs-inline-callout") && r.decls.includes("background-clip: border-box"),
+			),
+			"the pill's own sweep",
+		);
+		assert.ok(
+			rules.some(
+				(r) => r.selector.endsWith("> .cs-callout-name") && r.decls.includes("background-clip: border-box"),
+			),
+			"the heading token's name",
+		);
 	});
 
 	it("each reset outweighs the definition rule it undoes, surface by surface", () => {
@@ -336,14 +394,34 @@ describe("generateMetadataColorCSS — replacing, not layering", () => {
 				(sel) => /^(\.theme-dark )?\.callout\[data-callout="[^"]*"\]$/.test(sel),
 				(sel) => sel.startsWith(":root .callout") && !sel.includes(" > "),
 			],
-			["the block title's sweep", (sel) => sel.endsWith(".callout-title-inner"), (sel) => sel.endsWith(".callout-title-inner")],
-			["the pill's sweep", (sel) => sel.includes(".cs-inline-callout.cs-inline-callout"), (sel) => sel.endsWith(".cs-inline-callout")],
-			["the bar title's sweep", (sel) => sel.endsWith(".cs-heading-title"), (sel) => sel.endsWith(".cs-heading-title")],
-			["the token name's sweep", (sel) => sel.endsWith(".cs-callout-name"), (sel) => sel.endsWith(".cs-callout-name")],
+			[
+				"the block title's sweep",
+				(sel) => sel.endsWith(".callout-title-inner"),
+				(sel) => sel.endsWith(".callout-title-inner"),
+			],
+			[
+				"the pill's sweep",
+				(sel) => sel.includes(".cs-inline-callout.cs-inline-callout"),
+				(sel) => sel.endsWith(".cs-inline-callout"),
+			],
+			[
+				"the bar title's sweep",
+				(sel) => sel.endsWith(".cs-heading-title"),
+				(sel) => sel.endsWith(".cs-heading-title"),
+			],
+			[
+				"the token name's sweep",
+				(sel) => sel.endsWith(".cs-callout-name"),
+				(sel) => sel.endsWith(".cs-callout-name"),
+			],
 		];
 		for (const [what, ownSel, resetSel] of pairs) {
 			const theirs = own.filter((r) => ownSel(r.selector.trim()) && r.props.includes("background-image"));
-			const ours = resets.filter((r) => resetSel(r.selector.trim()) && r.decls.some((d) => d.startsWith("background-") || d.startsWith("-webkit-background-clip")));
+			const ours = resets.filter(
+				(r) =>
+					resetSel(r.selector.trim()) &&
+					r.decls.some((d) => d.startsWith("background-") || d.startsWith("-webkit-background-clip")),
+			);
 			assert.ok(theirs.length > 0 && ours.length > 0, what);
 			for (const reset of ours) {
 				for (const rule of theirs) {
@@ -363,7 +441,9 @@ describe("generateMetadataColorCSS — replacing, not layering", () => {
 			palette("Plain", { textColorLight: undefined, textColorDark: undefined }),
 		];
 		const content = (key: string) =>
-			rulesOf(h, key).filter((r) => r.selector.endsWith("> .callout-content")).map((r) => valueOf(r, "color"));
+			rulesOf(h, key)
+				.filter((r) => r.selector.endsWith("> .callout-content"))
+				.map((r) => valueOf(r, "color"));
 		assert.deepStrictEqual(content("pink"), ["inherit !important"], "a preset never picks a text colour");
 		assert.deepStrictEqual(content("plain"), ["inherit !important"]);
 		assert.deepStrictEqual(content("comic-red"), ["#111111 !important", "#eeeeee !important"]);
@@ -393,10 +473,16 @@ describe("generateMetadataColorCSS — a word the user's own snippet styles is t
 			},
 		}) as unknown as App;
 	const groups = (h: Harness) =>
-		[...internals(h).generateMetadataColorCSS().matchAll(/\/\* metadata colour: (\S+) \*\//g)].map((m) => m[1]);
+		[
+			...internals(h)
+				.generateMetadataColorCSS()
+				.matchAll(/\/\* metadata colour: (\S+) \*\//g),
+		].map((m) => m[1]);
 
 	it("stands down on it, and on nothing else", () => {
-		const h = harness(snippetApp(["my-colours"], ['.callout[data-callout-metadata~="Red"] { --callout-color: 255, 0, 0; }']));
+		const h = harness(
+			snippetApp(["my-colours"], ['.callout[data-callout-metadata~="Red"] { --callout-color: 255, 0, 0; }']),
+		);
 		assert.ok(!groups(h).includes("red"), "the snippet keeps red");
 		assert.ok(groups(h).includes("pink"));
 		assert.ok(!h.injector.metadataColorEntries().some((e) => e.key === "red"), "nor is red offered after the pipe");

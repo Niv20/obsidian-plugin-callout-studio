@@ -53,9 +53,7 @@ describe("theme overlay rows — what the sweep mints", () => {
 		const registry = vault();
 		sweep(registry, "recite");
 		assert.ok(!registry.getUserDefined().some((d) => d.id === "recite"));
-		assert.ok(
-			!registry.getExportableDefinitions().some((d) => d.id === "recite"),
-		);
+		assert.ok(!registry.getExportableDefinitions().some((d) => d.id === "recite"));
 		assert.ok(registry.getThemeProvided().some((d) => d.id === "recite"));
 	});
 
@@ -71,10 +69,7 @@ describe("theme overlay rows — what the sweep mints", () => {
 		// `ThemeClaimCheck` measured the theme's rules for `note` to change
 		// nothing: ownership leaves it out, and the overlay still mints `recite`.
 		const registry = vault();
-		assert.strictEqual(
-			syncThemeOverlayRows(registry, new Set(["note", "recite"]), new Set(["note"])),
-			1,
-		);
+		assert.strictEqual(syncThemeOverlayRows(registry, new Set(["note", "recite"]), new Set(["note"])), 1);
 		assert.strictEqual(registry.themeOwns(registry.get("note")!), false);
 		assert.strictEqual(registry.get("recite")?.source, "theme");
 		assert.strictEqual(registry.themeOwns(registry.get("recite")!), true);
@@ -113,10 +108,7 @@ describe("theme overlay rows — what the sweep mints", () => {
 
 	it("never mints a reserved preview id", () => {
 		const registry = vault();
-		assert.strictEqual(
-			sweep(registry, PREVIEW_PLACEHOLDER_ID, STYLE_DEMO_ID),
-			0,
-		);
+		assert.strictEqual(sweep(registry, PREVIEW_PLACEHOLDER_ID, STYLE_DEMO_ID), 0);
 		assert.strictEqual(registry.get(PREVIEW_PLACEHOLDER_ID), undefined);
 		assert.strictEqual(registry.get(STYLE_DEMO_ID), undefined);
 	});
@@ -218,11 +210,7 @@ describe("theme overlay rows — the guards that keep them off disk", () => {
 			.filter((f) => f.path !== "src/manager/theme/themeOverlayRows.ts")
 			.filter((f) => /source:\s*"theme"/.test(code(f.text)))
 			.map((f) => f.path);
-		assert.deepStrictEqual(
-			offenders,
-			[],
-			report("Files minting a theme row", offenders),
-		);
+		assert.deepStrictEqual(offenders, [], report("Files minting a theme row", offenders));
 	});
 
 	it("keeps the persistence skip unconditional", () => {

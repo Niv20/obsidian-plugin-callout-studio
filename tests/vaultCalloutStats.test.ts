@@ -7,7 +7,9 @@ import type { App } from "obsidian";
 
 // Async index scheduling needs real timers even when no browser DOM is installed.
 const originalWindow = Object.getOwnPropertyDescriptor(globalThis, "window");
-before(() => { Object.defineProperty(globalThis, "window", { configurable: true, value: globalThis }); });
+before(() => {
+	Object.defineProperty(globalThis, "window", { configurable: true, value: globalThis });
+});
 after(() => {
 	if (originalWindow) Object.defineProperty(globalThis, "window", originalWindow);
 	else Reflect.deleteProperty(globalThis, "window");
@@ -20,8 +22,7 @@ function fakeApp(files: Record<string, string>): App {
 	return {
 		vault: {
 			getMarkdownFiles: () => handles,
-			cachedRead: (file: { path: string }) =>
-				Promise.resolve(store.get(file.path) ?? ""),
+			cachedRead: (file: { path: string }) => Promise.resolve(store.get(file.path) ?? ""),
 		},
 	} as unknown as App;
 }
@@ -30,15 +31,9 @@ const scan = (files: Record<string, string>): Promise<VaultCalloutStatistics> =>
 	scanVaultCalloutStatistics(fakeApp(files));
 
 /** The entry for one id, or a failure naming what the report did find. */
-function typeOf(
-	stats: VaultCalloutStatistics,
-	id: string,
-): VaultCalloutStatistics["types"][number] {
+function typeOf(stats: VaultCalloutStatistics, id: string): VaultCalloutStatistics["types"][number] {
 	const entry = stats.types.find((t) => t.id === id);
-	assert.ok(
-		entry,
-		`no entry for "${id}" — found ${stats.types.map((t) => t.id).join(", ")}`,
-	);
+	assert.ok(entry, `no entry for "${id}" — found ${stats.types.map((t) => t.id).join(", ")}`);
 	return entry;
 }
 

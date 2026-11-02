@@ -18,12 +18,7 @@ import type {
 } from "../types";
 import { CALLOUT_RENDER_ROLES } from "../types";
 import { persistedIconSvgCache } from "./iconSvgCacheOrder";
-import {
-	collectForeignFields,
-	NO_FOREIGN_FIELDS,
-	withForeignSettings,
-	type ForeignFields,
-} from "./foreignFields";
+import { collectForeignFields, NO_FOREIGN_FIELDS, withForeignSettings, type ForeignFields } from "./foreignFields";
 import {
 	CURRENT_DATA_VERSION,
 	DEFAULT_CALLOUTS,
@@ -38,26 +33,15 @@ import { COLOUR_NEUTRAL_FIELDS, isCalloutModified } from "./calloutCompare";
 import { migrateStyleModes } from "./styleModeMigration";
 import { withoutExternalStyle, retiredExternalCssState } from "./externalCssRetirement";
 import { reconcileIdCollisions } from "./idCollisionMigration";
-import {
-	findAttrIdConflict,
-	vaultIdFormsFor,
-} from "./calloutIdForms";
+import { findAttrIdConflict, vaultIdFormsFor } from "./calloutIdForms";
 import { syncThemeOverlayRows } from "./theme/themeOverlayRows";
 import { addImportedCallout } from "../utils/importedCallout";
 import { ThemeFacts } from "./theme/ThemeFacts";
 import type { ThemeAppearance } from "./theme/themeAppearance";
 import { mirroredFallbackRow } from "./discoveredRow";
-import type {
-	CalloutManagerEntry,
-	CalloutManagerPlanItem,
-} from "../utils/calloutManagerImport";
+import type { CalloutManagerEntry, CalloutManagerPlanItem } from "../utils/calloutManagerImport";
 import type { AdmonitionPlan } from "../utils/admonitionImport";
-import {
-	normalizeCalloutId,
-	calloutIdentity,
-	obsidianCalloutAttrId,
-	obsidianDefaultTitle,
-} from "../utils/calloutId";
+import { normalizeCalloutId, calloutIdentity, obsidianCalloutAttrId, obsidianDefaultTitle } from "../utils/calloutId";
 import {
 	bakePaletteColors,
 	consolidatePalettesByColor,
@@ -129,10 +113,7 @@ export type RegistryChangeCallback = (change: RegistryChange) => void;
  * gradient, fold and offset settings — still comes from the preview, so the
  * row and the rendered callout keep tracking the edit live.
  */
-function withIdentityOf(
-	real: CalloutDefinition,
-	preview: CalloutDefinition,
-): CalloutDefinition {
+function withIdentityOf(real: CalloutDefinition, preview: CalloutDefinition): CalloutDefinition {
 	return {
 		...preview,
 		builtIn: real.builtIn,
@@ -267,9 +248,7 @@ export class CalloutRegistry {
 				// Whether this id HAS a built-in is asked of the shipped
 				// defaults, not of `this.callouts` — the map would also answer
 				// yes for a user row added by an earlier turn of this loop.
-				const seeded = this.builtInDefaults.has(saved.id)
-					? this.callouts.get(saved.id)
-					: undefined;
+				const seeded = this.builtInDefaults.has(saved.id) ? this.callouts.get(saved.id) : undefined;
 				const { def, repaired } = reconcileSavedRow(saved, seeded);
 				this.setCallout(saved.id, def);
 				// A repaired row is written back like the other load migrations:
@@ -418,11 +397,7 @@ export class CalloutRegistry {
 		let changed = 0;
 		for (const def of this.callouts.values()) {
 			if (def.transparentBg !== true) continue;
-			if (
-				def.bgColorLight === undefined &&
-				def.bgColorDark === undefined &&
-				def.bgGradient === undefined
-			) {
+			if (def.bgColorLight === undefined && def.bgColorDark === undefined && def.bgGradient === undefined) {
 				continue;
 			}
 			delete def.transparentBg;
@@ -480,10 +455,7 @@ export class CalloutRegistry {
 				// any other, so it has to flush too. Missing this left an
 				// alias-only cleanup redone on every load and never written back
 				// — the exact failure needsSaveAfterLoad exists to prevent.
-				if (
-					def.aliases.length !== before.length ||
-					def.aliases.some((a, i) => a !== before[i])
-				) {
+				if (def.aliases.length !== before.length || def.aliases.some((a, i) => a !== before[i])) {
 					aliasesChanged = true;
 				}
 			}
@@ -511,9 +483,7 @@ export class CalloutRegistry {
 				// still read that way in the settings list AND on screen, since
 				// the heading callout and inline callout are painted from displayName.
 				// Re-derive it the way discovery would have for the base id.
-				displayName: def.displayName.includes("|")
-					? obsidianDefaultTitle(base)
-					: def.displayName,
+				displayName: def.displayName.includes("|") ? obsidianDefaultTitle(base) : def.displayName,
 			});
 			this.releaseFallbackTarget(def.id, base);
 		}
@@ -541,13 +511,9 @@ export class CalloutRegistry {
 	 * nothing, and every unrecognized callout in the vault silently loses its
 	 * colour, icon and background.
 	 */
-	private releaseFallbackTarget(
-		retiredId: string,
-		replacement: string | null,
-	): void {
+	private releaseFallbackTarget(retiredId: string, replacement: string | null): void {
 		if (this.settings.fallbackCalloutId !== retiredId) return;
-		this.settings.fallbackCalloutId =
-			replacement ?? DEFAULT_SETTINGS.fallbackCalloutId;
+		this.settings.fallbackCalloutId = replacement ?? DEFAULT_SETTINGS.fallbackCalloutId;
 	}
 
 	/**
@@ -575,11 +541,7 @@ export class CalloutRegistry {
 	 * `manager/idCollisionMigration.ts` owns the merge rule and the reasoning.
 	 */
 	private reconcileIdCollisions(): void {
-		const { merged } = reconcileIdCollisions(
-			this.callouts,
-			this.settings,
-			DEFAULT_SETTINGS.fallbackCalloutId,
-		);
+		const { merged } = reconcileIdCollisions(this.callouts, this.settings, DEFAULT_SETTINGS.fallbackCalloutId);
 		if (merged.length === 0) return;
 		this.pendingLoadMigrationSave = true;
 		console.debug("[CalloutStudio] callout id collision migration:", {
@@ -598,7 +560,7 @@ export class CalloutRegistry {
 			callouts: selectPersistedRows(this.callouts, {
 				previewActiveId: this.previewActiveId,
 				previewShadowedDef: this.previewShadowedDef,
-					builtInDefault: (id) => this.builtInDefaults.get(id),
+				builtInDefault: (id) => this.builtInDefaults.get(id),
 			}),
 			settings: withForeignSettings(this.settings, this.foreign),
 			// `materialSvgCache` is deliberately not written back: the legacy
@@ -709,8 +671,7 @@ export class CalloutRegistry {
 			// If the removed callout was the active fallback, reset to "note"
 			// and re-mirror uncustomized fallback rows onto the new fallback.
 			if (this.settings.fallbackCalloutId === id) {
-				this.settings.fallbackCalloutId =
-					DEFAULT_SETTINGS.fallbackCalloutId;
+				this.settings.fallbackCalloutId = DEFAULT_SETTINGS.fallbackCalloutId;
 				this.restyleUncustomizedFallbackRows();
 			}
 			this.notifyChange();
@@ -729,9 +690,7 @@ export class CalloutRegistry {
 	 * Returns the number of rows that actually changed, and notifies only then.
 	 */
 	restyleUncustomizedFallbackRows(): number {
-		const fallbackId =
-			this.settings.fallbackCalloutId ||
-			DEFAULT_SETTINGS.fallbackCalloutId;
+		const fallbackId = this.settings.fallbackCalloutId || DEFAULT_SETTINGS.fallbackCalloutId;
 		const fallback = this.callouts.get(fallbackId);
 		if (!fallback) return 0;
 		let updated = 0;
@@ -824,10 +783,7 @@ export class CalloutRegistry {
 	 * written there. That makes this the *committed* count, which is the one the
 	 * user is being told.
 	 */
-	countPaletteLinks(
-		paletteId: string,
-		exceptCalloutId?: string | null,
-	): number {
+	countPaletteLinks(paletteId: string, exceptCalloutId?: string | null): number {
 		let count = 0;
 		for (const def of this.realDefinitions()) {
 			if (def.paletteId !== paletteId) continue;
@@ -852,11 +808,7 @@ export class CalloutRegistry {
 	 *
 	 * Returns how many callouts were re-pointed.
 	 */
-	relinkPalette(
-		fromPaletteId: string,
-		toPaletteId: string,
-		exceptCalloutId?: string | null,
-	): number {
+	relinkPalette(fromPaletteId: string, toPaletteId: string, exceptCalloutId?: string | null): number {
 		if (fromPaletteId === toPaletteId) return 0;
 		let updated = 0;
 		for (const def of this.callouts.values()) {
@@ -878,10 +830,7 @@ export class CalloutRegistry {
 	 * hexes happen to match.
 	 */
 	private isLivePaletteId(id: string): boolean {
-		return (
-			this.settings.customPalettes.some((p) => p.id === id) ||
-			findPresetByPaletteId(id) !== null
-		);
+		return this.settings.customPalettes.some((p) => p.id === id) || findPresetByPaletteId(id) !== null;
 	}
 
 	/**
@@ -917,20 +866,14 @@ export class CalloutRegistry {
 					// callout matches all three variants of the same colour
 					// and can be adopted by the wrong one. Same test the
 					// editor's dropdown uses (`matchesPalette`).
-					(p.transparentBg === true) ===
-						(def.transparentBg === true) &&
+					(p.transparentBg === true) === (def.transparentBg === true) &&
 					bgGradientsEqual(p.bgGradient, def.bgGradient) &&
-					p.colorLight.toLowerCase() ===
-						def.colorLight.toLowerCase() &&
+					p.colorLight.toLowerCase() === def.colorLight.toLowerCase() &&
 					p.colorDark.toLowerCase() === def.colorDark.toLowerCase() &&
-					p.bgColorLight.toLowerCase() ===
-						(def.bgColorLight ?? "").toLowerCase() &&
-					p.bgColorDark.toLowerCase() ===
-						(def.bgColorDark ?? "").toLowerCase() &&
-					p.textColorLight.toLowerCase() ===
-						(def.textColorLight ?? "").toLowerCase() &&
-					p.textColorDark.toLowerCase() ===
-						(def.textColorDark ?? "").toLowerCase(),
+					p.bgColorLight.toLowerCase() === (def.bgColorLight ?? "").toLowerCase() &&
+					p.bgColorDark.toLowerCase() === (def.bgColorDark ?? "").toLowerCase() &&
+					p.textColorLight.toLowerCase() === (def.textColorLight ?? "").toLowerCase() &&
+					p.textColorDark.toLowerCase() === (def.textColorDark ?? "").toLowerCase(),
 			);
 			if (!match) continue;
 			this.setCallout(def.id, { ...def, paletteId: match.id });
@@ -989,10 +932,7 @@ export class CalloutRegistry {
 			// palette means as callout colors" is decided in exactly one place — and
 			// every field comes back set (undefined included), which is what lets the
 			// cascade clear a background the previous style had left behind.
-			this.applyPaletteColors(
-				id,
-				bakePaletteColors(customPaletteToColorPalette(palette)),
-			);
+			this.applyPaletteColors(id, bakePaletteColors(customPaletteToColorPalette(palette)));
 			this.notifyChange();
 		});
 		return true;
@@ -1035,9 +975,7 @@ export class CalloutRegistry {
 	 * operation.
 	 */
 	consolidateDuplicatePalettes(): Array<{ from: string; to: string }> {
-		const { palettes, remap, merged } = consolidatePalettesByColor(
-			this.settings.customPalettes,
-		);
+		const { palettes, remap, merged } = consolidatePalettesByColor(this.settings.customPalettes);
 		if (merged.length === 0) return [];
 		this.settings.customPalettes = palettes;
 		for (const [loserId, survivorId] of remap) {
@@ -1071,10 +1009,7 @@ export class CalloutRegistry {
 		count: number;
 		sample: CalloutDefinition;
 	}> {
-		const groups = new Map<
-			string,
-			{ paletteId: string; count: number; sample: CalloutDefinition }
-		>();
+		const groups = new Map<string, { paletteId: string; count: number; sample: CalloutDefinition }>();
 		for (const def of this.callouts.values()) {
 			const id = def.paletteId;
 			if (!id || this.isLivePaletteId(id)) continue;
@@ -1151,9 +1086,7 @@ export class CalloutRegistry {
 	 * user added — has to be named too, or it would be left unstyled.
 	 */
 	themeOwns(def: CalloutDefinition): boolean {
-		const stock = def.builtIn
-			? (this.builtInDefaults.get(def.id)?.aliases ?? [])
-			: [];
+		const stock = def.builtIn ? (this.builtInDefaults.get(def.id)?.aliases ?? []) : [];
 		return this.themeFacts.owns(
 			def,
 			this.vaultIdFormsFor(def).filter((form) => !stock.includes(form)),
@@ -1189,10 +1122,7 @@ export class CalloutRegistry {
 		// the stock alias they spell.
 		const form = obsidianCalloutAttrId(name);
 		const stock = this.builtInDefaults.get(def.id)?.aliases ?? [];
-		return (
-			stock.some((alias) => obsidianCalloutAttrId(alias) === form) &&
-			this.themeFacts.claims(def.id)
-		);
+		return stock.some((alias) => obsidianCalloutAttrId(alias) === form) && this.themeFacts.claims(def.id);
 	}
 
 	/** How the theme paints `def`. See {@link ThemeFacts.appearanceOf}. */
@@ -1271,18 +1201,13 @@ export class CalloutRegistry {
 	 */
 	getUserDefined(): CalloutDefinition[] {
 		return this.definitionsForLists().filter(
-			(d) =>
-				!d.builtIn &&
-				d.source !== "theme" &&
-				!this.isUnshadowedPreview(d.id),
+			(d) => !d.builtIn && d.source !== "theme" && !this.isUnshadowedPreview(d.id),
 		);
 	}
 
 	/** Rows minted from the active theme's stylesheet — see `getUserDefined`. */
 	getThemeProvided(): CalloutDefinition[] {
-		return this.definitionsForLists().filter(
-			(d) => d.source === "theme" && !this.isUnshadowedPreview(d.id),
-		);
+		return this.definitionsForLists().filter((d) => d.source === "theme" && !this.isUnshadowedPreview(d.id));
 	}
 
 	/**
@@ -1299,10 +1224,7 @@ export class CalloutRegistry {
 	 */
 	getExportableDefinitions(): CalloutDefinition[] {
 		const modifiedBuiltIns = this.definitionsForLists().filter(
-			(d) =>
-				d.builtIn &&
-				!this.isUnshadowedPreview(d.id) &&
-				this.isBuiltInModified(d.id),
+			(d) => d.builtIn && !this.isUnshadowedPreview(d.id) && this.isBuiltInModified(d.id),
 		);
 		// The same answer `isUnshadowedPreview` gives, minus its "for as long as
 		// a modal is open": an export must not depend on which windows happen
@@ -1312,9 +1234,7 @@ export class CalloutRegistry {
 		// the two JSON builders instead: this view also feeds the CSS snippet
 		// export, which has to paint every callout the plugin paints — a
 		// discovered one included. See `authoredDefinitions`.
-		return [...this.getUserDefined(), ...modifiedBuiltIns].filter(
-			(d) => !RESERVED_DEMO_IDS.has(d.id),
-		);
+		return [...this.getUserDefined(), ...modifiedBuiltIns].filter((d) => !RESERVED_DEMO_IDS.has(d.id));
 	}
 
 	/**
@@ -1424,10 +1344,7 @@ export class CalloutRegistry {
 	}
 
 	/** See `manager/calloutIdForms.ts`, which owns this arithmetic. */
-	findAttrIdConflict(
-		rawId: string,
-		excludeId: string | null,
-	): CalloutDefinition | undefined {
+	findAttrIdConflict(rawId: string, excludeId: string | null): CalloutDefinition | undefined {
 		return findAttrIdConflict(this.definitionSource, rawId, excludeId);
 	}
 
@@ -1456,8 +1373,7 @@ export class CalloutRegistry {
 	}
 
 	/** Bound once so the two above are not re-closing over `this` per call. */
-	private readonly definitionSource = (): Iterable<CalloutDefinition> =>
-		this.realDefinitions();
+	private readonly definitionSource = (): Iterable<CalloutDefinition> => this.realDefinitions();
 
 	/**
 	 * The committed definitions, with the transient live-preview entry replaced
@@ -1518,17 +1434,12 @@ export class CalloutRegistry {
 	 * unrelated source would surface them; that resolves itself on the next
 	 * committed change or when the menu closes and re-notifies.
 	 */
-	setPreviewDefinition(
-		def: CalloutDefinition | null,
-		isDemo = false,
-		notifyLists = true,
-	): void {
+	setPreviewDefinition(def: CalloutDefinition | null, isDemo = false, notifyLists = true): void {
 		// A demo preview is hidden from the settings lists entirely (see
 		// definitionsForLists), so only a NON-demo preview — the in-progress
 		// edit of a real callout — can change what those lists render. Capture
 		// the outgoing state before the bookkeeping below clears it.
-		const wasListVisible =
-			this.previewActiveId !== null && !this.previewIsDemo;
+		const wasListVisible = this.previewActiveId !== null && !this.previewIsDemo;
 
 		// Undo the previous transient registration first, restoring any real
 		// callout it shadowed.
@@ -1553,10 +1464,7 @@ export class CalloutRegistry {
 			// from the lists, but it keeps the map entry a faithful stand-in for
 			// the CSS pipeline — a demo standing on a real id (the reserved ones
 			// name none, but a discovered row can) keeps its aliases styled.
-			this.setCallout(
-				def.id,
-				existing ? withIdentityOf(existing, def) : def,
-			);
+			this.setCallout(def.id, existing ? withIdentityOf(existing, def) : def);
 		}
 
 		// Notify when either end of the transition was list-visible: taking a
@@ -1583,9 +1491,7 @@ export class CalloutRegistry {
 	 * clearing the single preview slot to null.
 	 */
 	getPreviewDefinition(): CalloutDefinition | null {
-		return this.previewActiveId !== null
-			? (this.callouts.get(this.previewActiveId) ?? null)
-			: null;
+		return this.previewActiveId !== null ? (this.callouts.get(this.previewActiveId) ?? null) : null;
 	}
 
 	/**
@@ -1627,24 +1533,13 @@ export class CalloutRegistry {
 
 	// ── Icon SVG cache ───────────────────────────────────────
 
-	findIconSvg(
-		pack: IconPackId,
-		name: string,
-		variant: string,
-	): IconSvgCacheEntry | undefined {
-		return this.iconSvgCache.find(
-			(e) => e.pack === pack && e.name === name && e.variant === variant,
-		);
+	findIconSvg(pack: IconPackId, name: string, variant: string): IconSvgCacheEntry | undefined {
+		return this.iconSvgCache.find((e) => e.pack === pack && e.name === name && e.variant === variant);
 	}
 
 	addIconSvg(entry: IconSvgCacheEntry): void {
 		this.iconSvgCache = this.iconSvgCache.filter(
-			(e) =>
-				!(
-					e.pack === entry.pack &&
-					e.name === entry.name &&
-					e.variant === entry.variant
-				),
+			(e) => !(e.pack === entry.pack && e.name === entry.name && e.variant === entry.variant),
 		);
 		this.iconSvgCache.push(entry);
 	}
@@ -1663,13 +1558,7 @@ export class CalloutRegistry {
 			const pack = def.source === "theme" ? null : packFor(def.icon);
 			if (!pack) continue;
 			for (const role of CALLOUT_RENDER_ROLES) {
-				usedKeys.add(
-					iconCacheKey(
-						def.icon.type,
-						def.icon.value,
-						pack.cacheVariant(def.icon, role),
-					),
-				);
+				usedKeys.add(iconCacheKey(def.icon.type, def.icon.value, pack.cacheVariant(def.icon, role)));
 			}
 		}
 		this.iconSvgCache = this.iconSvgCache.filter((entry) =>
@@ -1682,10 +1571,7 @@ export class CalloutRegistry {
 	}
 
 	getIconSvgCacheSize(): number {
-		return this.iconSvgCache.reduce(
-			(acc, e) => acc + new Blob([e.svg]).size,
-			0,
-		);
+		return this.iconSvgCache.reduce((acc, e) => acc + new Blob([e.svg]).size, 0);
 	}
 
 	resetAll(): void {
@@ -1697,36 +1583,20 @@ export class CalloutRegistry {
 			this.setCallout(def.id, structuredClone(def));
 		}
 		// Reset global style to defaults
-		this.settings.globalStyle = structuredClone(
-			DEFAULT_SETTINGS.globalStyle,
-		);
-		this.settings.contextMenu = structuredClone(
-			DEFAULT_SETTINGS.contextMenu,
-		);
-		this.settings.headingCallouts = structuredClone(
-			DEFAULT_SETTINGS.headingCallouts,
-		);
-		this.settings.inlineCallouts = structuredClone(
-			DEFAULT_SETTINGS.inlineCallouts,
-		);
+		this.settings.globalStyle = structuredClone(DEFAULT_SETTINGS.globalStyle);
+		this.settings.contextMenu = structuredClone(DEFAULT_SETTINGS.contextMenu);
+		this.settings.headingCallouts = structuredClone(DEFAULT_SETTINGS.headingCallouts);
+		this.settings.inlineCallouts = structuredClone(DEFAULT_SETTINGS.inlineCallouts);
 		// Both dropdowns on, the user's metadata words gone, metadata
 		// colours on.
-		this.settings.suggestions = structuredClone(
-			DEFAULT_SETTINGS.suggestions,
-		);
-		this.settings.metadataColors = structuredClone(
-			DEFAULT_SETTINGS.metadataColors,
-		);
+		this.settings.suggestions = structuredClone(DEFAULT_SETTINGS.suggestions);
+		this.settings.metadataColors = structuredClone(DEFAULT_SETTINGS.metadataColors);
 		// Back on: the theme draws the callouts it styles again.
-		this.settings.themeCalloutStyles = structuredClone(
-			DEFAULT_SETTINGS.themeCalloutStyles,
-		);
+		this.settings.themeCalloutStyles = structuredClone(DEFAULT_SETTINGS.themeCalloutStyles);
 		// The library order and the hidden libraries go back to the catalog's.
 		// Downloaded library files stay: they are this device's cache, not a
 		// setting, and deleting them would only cost a download later.
-		this.settings.iconLibraries = structuredClone(
-			DEFAULT_SETTINGS.iconLibraries,
-		);
+		this.settings.iconLibraries = structuredClone(DEFAULT_SETTINGS.iconLibraries);
 		// Reset fallback callout – the previously-selected callout may no
 		// longer exist after the reset, which would leave the dropdown blank.
 		this.settings.fallbackCalloutId = DEFAULT_SETTINGS.fallbackCalloutId;
@@ -1765,23 +1635,14 @@ export class CalloutRegistry {
 		// Save palettes immediately so later entries sharing a color reuse them.
 		let paletteCreated = false;
 
-		const resolveColor = (
-			entry: CalloutManagerEntry,
-		): ReturnType<typeof resolveCalloutManagerColor> => {
+		const resolveColor = (entry: CalloutManagerEntry): ReturnType<typeof resolveCalloutManagerColor> => {
 			const light = entry.color as string;
 			// Two hexes only when the source really stated two. Anything else
 			// goes through the single-color path, so it keeps matching the same
 			// existing palettes it always did.
 			const resolved = entry.colorDark
-				? resolveCalloutManagerColors(
-						light,
-						entry.colorDark,
-						this.settings.customPalettes,
-					)
-				: resolveCalloutManagerColor(
-						light,
-						this.settings.customPalettes,
-					);
+				? resolveCalloutManagerColors(light, entry.colorDark, this.settings.customPalettes)
+				: resolveCalloutManagerColor(light, this.settings.customPalettes);
 			if (resolved.createdPalette) {
 				this.settings.customPalettes.push(resolved.createdPalette);
 				paletteCreated = true;
@@ -1872,13 +1733,8 @@ export class CalloutRegistry {
 		// applyCalloutManagerImport, which resolves colours the same way.
 		let paletteCreated = false;
 
-		const resolveColor = (
-			hex: string,
-		): ReturnType<typeof resolveCalloutManagerColor> => {
-			const resolved = resolveCalloutManagerColor(
-				hex,
-				this.settings.customPalettes,
-			);
+		const resolveColor = (hex: string): ReturnType<typeof resolveCalloutManagerColor> => {
+			const resolved = resolveCalloutManagerColor(hex, this.settings.customPalettes);
 			if (resolved.createdPalette) {
 				this.settings.customPalettes.push(resolved.createdPalette);
 				paletteCreated = true;
@@ -1889,9 +1745,7 @@ export class CalloutRegistry {
 		// One onChange for the whole import, as in applyCalloutManagerImport.
 		this.batch(() => {
 			if (plan.newImages.length > 0) {
-				const byId = new Map(
-					this.settings.userImages.map((image) => [image.id, image]),
-				);
+				const byId = new Map(this.settings.userImages.map((image) => [image.id, image]));
 				for (const image of plan.newImages) byId.set(image.id, image);
 				this.setUserImages([...byId.values()]);
 			}
@@ -1903,8 +1757,7 @@ export class CalloutRegistry {
 					// Only what the admonition actually stated. An entry with no
 					// title must not rename the callout, and one whose icon named
 					// nothing must not blank the icon it already has.
-					if (entry.displayName)
-						partial.displayName = entry.displayName;
+					if (entry.displayName) partial.displayName = entry.displayName;
 					if (entry.icon) partial.icon = entry.icon;
 					if (entry.color) {
 						const resolved = resolveColor(entry.color);
@@ -1926,8 +1779,7 @@ export class CalloutRegistry {
 				const resolved = resolveColor(entry.color);
 				const def: CalloutDefinition = {
 					id: entry.id,
-					displayName:
-						entry.displayName ?? obsidianDefaultTitle(entry.id),
+					displayName: entry.displayName ?? obsidianDefaultTitle(entry.id),
 					// No icon in the file, or one naming a drawing that exists in
 					// no library — either way there is nothing to keep, so take
 					// the shared import fallback.

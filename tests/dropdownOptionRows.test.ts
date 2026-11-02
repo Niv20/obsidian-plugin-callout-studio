@@ -38,9 +38,21 @@ while ((match = pattern.exec(css)) !== null) {
 	for (const declaration of (match[2] ?? "").split(";")) {
 		const colon = declaration.indexOf(":");
 		if (colon < 0) continue;
-		decls.set(declaration.slice(0, colon).trim(), declaration.slice(colon + 1).replace(/\s+/g, " ").trim());
+		decls.set(
+			declaration.slice(0, colon).trim(),
+			declaration
+				.slice(colon + 1)
+				.replace(/\s+/g, " ")
+				.trim(),
+		);
 	}
-	rules.push({ selectors: (match[1] ?? "").trim().split(/,\s*\n/).map((s) => s.replace(/\s+/g, " ").trim()), decls });
+	rules.push({
+		selectors: (match[1] ?? "")
+			.trim()
+			.split(/,\s*\n/)
+			.map((s) => s.replace(/\s+/g, " ").trim()),
+		decls,
+	});
 }
 
 function ruleFor(selector: string): Rule {
@@ -68,8 +80,9 @@ describe("a select's option rows are padded once", () => {
 		// through some other class — a toolbar, a field, a picker — would push
 		// the words in and make that list's rows taller than every other list's.
 		const rowPadders = rules.filter(
-			(rule) => rule.selectors.some((s) => /\.cs-combobox-option\b/.test(s) && s !== ".cs-combobox-option")
-				&& pads(rule),
+			(rule) =>
+				rule.selectors.some((s) => /\.cs-combobox-option\b/.test(s) && s !== ".cs-combobox-option") &&
+				pads(rule),
 		);
 		assert.deepStrictEqual(
 			rowPadders.map((rule) => rule.selectors),

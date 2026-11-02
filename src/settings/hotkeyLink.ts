@@ -63,10 +63,9 @@ const MODIFIER_ORDER = ["Mod", "Ctrl", "Meta", "Alt", "Shift"] as const;
  * Keyed by the union rather than by `string`, so declaring a modifier in the
  * order above without a glyph for it is a compile error.
  */
-const MODIFIER_GLYPHS: Record<(typeof MODIFIER_ORDER)[number], string> =
-	Platform.isMacOS
-		? { Mod: "⌘", Ctrl: "⌃", Meta: "⌘", Alt: "⌥", Shift: "⇧" }
-		: { Mod: "Ctrl", Ctrl: "Ctrl", Meta: "Win", Alt: "Alt", Shift: "Shift" };
+const MODIFIER_GLYPHS: Record<(typeof MODIFIER_ORDER)[number], string> = Platform.isMacOS
+	? { Mod: "⌘", Ctrl: "⌃", Meta: "⌘", Alt: "⌥", Shift: "⇧" }
+	: { Mod: "Ctrl", Ctrl: "Ctrl", Meta: "Win", Alt: "Alt", Shift: "Shift" };
 
 /** Keys whose name is not what should be drawn. */
 const SPECIAL_KEY_LABELS: Record<string, string> = {
@@ -188,13 +187,8 @@ function filterHotkeys(query: string, attempt: number): void {
 }
 
 function applyHotkeySearchFilter(query: string): boolean {
-	const settingsModal = activeDocument.querySelector<HTMLElement>(
-		".modal.mod-settings",
-	);
-	const searchRoot =
-		settingsModal?.querySelector<HTMLElement>(
-			".vertical-tab-content-container",
-		) ?? settingsModal;
+	const settingsModal = activeDocument.querySelector<HTMLElement>(".modal.mod-settings");
+	const searchRoot = settingsModal?.querySelector<HTMLElement>(".vertical-tab-content-container") ?? settingsModal;
 
 	if (!searchRoot) return false;
 
@@ -215,19 +209,11 @@ function applyHotkeySearchFilter(query: string): boolean {
 	return true;
 }
 
-function findVisibleInput(
-	root: HTMLElement,
-	selectors: string[],
-): HTMLInputElement | null {
+function findVisibleInput(root: HTMLElement, selectors: string[]): HTMLInputElement | null {
 	for (const selector of selectors) {
-		const inputs = Array.from(
-			root.querySelectorAll<HTMLInputElement>(selector),
-		);
+		const inputs = Array.from(root.querySelectorAll<HTMLInputElement>(selector));
 		const visibleInput = inputs.find(
-			(input) =>
-				!input.disabled &&
-				!input.readOnly &&
-				input.getClientRects().length > 0,
+			(input) => !input.disabled && !input.readOnly && input.getClientRects().length > 0,
 		);
 
 		if (visibleInput) return visibleInput;

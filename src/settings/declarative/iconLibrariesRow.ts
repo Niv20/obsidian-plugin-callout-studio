@@ -38,7 +38,14 @@ export const ICON_LIBRARIES_ROW = "icon-libraries";
 
 /** Names, not words to translate: the libraries the row manages. */
 const LIBRARY_NAMES = [
-	"Lucide", "Tabler", "Material", "Emoji", "Octicons", "Font Awesome", "RPG Awesome", "Simple Icons",
+	"Lucide",
+	"Tabler",
+	"Material",
+	"Emoji",
+	"Octicons",
+	"Font Awesome",
+	"RPG Awesome",
+	"Simple Icons",
 ];
 
 /** Icon libraries: a name, a sentence, and the button that opens the window. */

@@ -27,17 +27,9 @@ export function fallbackIconRootStyle(icon: CalloutIcon): string {
 }
 
 /** Paint fallback artwork, hide its box, or restore the winning native icon. */
-export function paintUnknownFallbackIcon(
-	calloutEl: HTMLElement,
-	iconEl: HTMLElement,
-	registry: CalloutRegistry,
-): void {
+export function paintUnknownFallbackIcon(calloutEl: HTMLElement, iconEl: HTMLElement, registry: CalloutRegistry): void {
 	const fallback = registry.get(registry.settings.fallbackCalloutId);
-	if (
-		!fallback ||
-		registry.themeOwns(fallback) ||
-		coreIconValue(calloutEl) !== FALLBACK_ICON_SENTINEL
-	) {
+	if (!fallback || registry.themeOwns(fallback) || coreIconValue(calloutEl) !== FALLBACK_ICON_SENTINEL) {
 		restoreCoreIcon(calloutEl, iconEl);
 		return;
 	}
@@ -73,10 +65,7 @@ interface SlotLike {
  * an id at all) is never "already shown": the caller falls through to the full
  * restore, which is the answer it has always given.
  */
-export function slotAlreadyShows(
-	slot: SlotLike,
-	wanted: { outerHTML: string } | null,
-): boolean {
+export function slotAlreadyShows(slot: SlotLike, wanted: { outerHTML: string } | null): boolean {
 	if (!wanted || slot.childNodes.length !== 1) return false;
 	const current = slot.firstElementChild;
 	return current !== null && current.outerHTML === wanted.outerHTML;
@@ -97,10 +86,7 @@ export function slotAlreadyShows(
  * alone, makes the steady state free and leaves the DOM exactly as the full
  * restore would.
  */
-export function restoreCoreIcon(
-	calloutEl: HTMLElement,
-	iconEl: HTMLElement,
-): void {
+export function restoreCoreIcon(calloutEl: HTMLElement, iconEl: HTMLElement): void {
 	const value = coreIconValue(calloutEl);
 	const markup = value.startsWith("<svg");
 	iconEl.removeClass(CSS_FALLBACK_ICON_HIDDEN);

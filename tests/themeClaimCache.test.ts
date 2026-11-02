@@ -9,10 +9,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import type { App } from "obsidian";
-import {
-	THEME_CLAIMS_STORAGE_KEY,
-	localClaimVerdicts,
-} from "../src/manager/theme/themeClaimCache";
+import { THEME_CLAIMS_STORAGE_KEY, localClaimVerdicts } from "../src/manager/theme/themeClaimCache";
 
 interface FakeStorage {
 	held: Map<string, string>;
@@ -58,10 +55,19 @@ describe("verdicts kept on this device", () => {
 		const store = storage();
 		withStorage(store, () => {
 			const cache = localClaimVerdicts(app());
-			cache.save("Catppuccin@1.0", new Map([["note", false], ["tip", true]]));
+			cache.save(
+				"Catppuccin@1.0",
+				new Map([
+					["note", false],
+					["tip", true],
+				]),
+			);
 			assert.deepStrictEqual(
 				[...(cache.load("Catppuccin@1.0") ?? [])],
-				[["note", false], ["tip", true]],
+				[
+					["note", false],
+					["tip", true],
+				],
 			);
 			assert.strictEqual(cache.load("Catppuccin@1.1"), null, "a new version measures again");
 			assert.strictEqual(cache.load("Minimal@7.0"), null);

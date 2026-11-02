@@ -62,13 +62,24 @@ describe("the gradient direction picker", () => {
 });
 
 describe("the gradient direction arrows' CSS", () => {
-	const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, " ");
-	const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({ selector: (m[1] ?? "").trim(), body: m[2] ?? "" }));
+	const css = readRepoFile("styles.css")
+		.replace(/\/\*[\s\S]*?\*\//g, "")
+		.replace(/\s+/g, " ");
+	const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => ({
+		selector: (m[1] ?? "").trim(),
+		body: m[2] ?? "",
+	}));
 
 	it("paints no face, edge or size of its own on the arrows", () => {
-		const painting = rules.filter((r) => r.selector.includes(".cs-gradient-dir-btn")
-			&& /(^|;)\s*(background|border|width|height|padding)\s*:/.test(r.body));
-		assert.deepEqual(painting.map((r) => r.selector), []);
+		const painting = rules.filter(
+			(r) =>
+				r.selector.includes(".cs-gradient-dir-btn") &&
+				/(^|;)\s*(background|border|width|height|padding)\s*:/.test(r.body),
+		);
+		assert.deepEqual(
+			painting.map((r) => r.selector),
+			[],
+		);
 	});
 
 	it("keeps the arrows pointing the way the gradient runs in a right-to-left Obsidian", () => {

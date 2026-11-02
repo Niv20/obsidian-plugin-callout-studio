@@ -37,17 +37,15 @@ export const da: Record<string, string> = {
 	"settings.fallbackTagAuto": "Auto",
 	"settings.rescanVaultDesc": "Tilføj de callout-typer, dine noter bruger, og som endnu ikke er på listen.",
 	"settings.rescanVaultHintAction": "Scan efter callouts",
-	"manualDiscovery.failed": "De fundne callouts blev ikke gemt. Kontrollér, at indstillingerne kan skrives, og at synkroniseringen er færdig. Prøv derefter igen via Indstillinger → Mine callout-typer → Scan efter callouts. Eksisterende callouts er ikke blevet erstattet.",
+	"manualDiscovery.failed":
+		"De fundne callouts blev ikke gemt. Kontrollér, at indstillingerne kan skrives, og at synkroniseringen er færdig. Prøv derefter igen via Indstillinger → Mine callout-typer → Scan efter callouts. Eksisterende callouts er ikke blevet erstattet.",
 	"manualDiscovery.scanning": "Scanner…",
-	"settings.rescanComplete":
-		"Scanning færdig: {{count}} ny(e) callout-type(r) tilføjet.",
+	"settings.rescanComplete": "Scanning færdig: {{count}} ny(e) callout-type(r) tilføjet.",
 	"replaceModal.titleReplace": "Erstat i vault",
 
 	"welcome.title": "Velkommen til Callout Studio!",
-	"welcome.tagline":
-		"Din komplette løsning til at oprette, style og administrere Obsidian-callouts.",
-	"importBanner.message":
-		"Vi har bemærket, at du bruger {{plugins}}. Vil du importere dine callouts?",
+	"welcome.tagline": "Din komplette løsning til at oprette, style og administrere Obsidian-callouts.",
+	"importBanner.message": "Vi har bemærket, at du bruger {{plugins}}. Vil du importere dine callouts?",
 	"importBanner.action": "Importer",
 	"importBanner.dismiss": "Afvis",
 	"welcome.demoName": "Callout Studio",
@@ -62,8 +60,7 @@ export const da: Record<string, string> = {
 		"Callout Studio har meget mere at byde på! [Læs mere]({{repoUrl}}).\n",
 	"deleteModal.title": "Slet callout",
 
-	"deleteModal.bodyInUse":
-		"Denne callout optræder {{count}} gang(e) i {{files}} fil(er).",
+	"deleteModal.bodyInUse": "Denne callout optræder {{count}} gang(e) i {{files}} fil(er).",
 	"deleteModal.notesUntouched":
 		"Dette sletter kun callout-definitionen. Dine noter røres ikke, så eksisterende callouts falder blot tilbage til standardstilen.",
 	"deleteModal.fallbackTarget":
@@ -109,7 +106,7 @@ export const da: Record<string, string> = {
 	"settings.convertUsesAction": "Konverter forekomster til almindelig tekst",
 	"notice.calloutDeleted": 'Slettede "{{name}}".',
 	"settings.duplicateAction": "Dupliker",
-	"notice.calloutDuplicated": "Callout blev duplikeret som \"{{name}}\".",
+	"notice.calloutDuplicated": 'Callout blev duplikeret som "{{name}}".',
 	"notice.calloutDuplicateFailed": "Callout kunne ikke duplikeres. Tjek lagringsstatus, og prøv igen.",
 	"settings.resetAction": "Nulstil til standard",
 	"settings.makeFallbackAction": "Brug standard reservestil",
@@ -119,13 +116,11 @@ export const da: Record<string, string> = {
 	"settings.themeCalloutsHeading": "Callouts fra dit tema",
 	"settings.themeCalloutsDefaultTheme": "Dit tema",
 	"settings.themeCalloutsEmpty": "{{theme}} styler ingen callouts lige nu.",
-	"settings.themePreviewAria":
-		'Forhåndsvis "{{name}}" — se hvordan dit tema tegner den',
+	"settings.themePreviewAria": 'Forhåndsvis "{{name}}" — se hvordan dit tema tegner den',
 	"settings.builtInAllThemeStyled":
 		"{{theme}} styler alle indbyggede callouts, så Callout Studio lader dem alle være, som de er. Vil du designe din egen, så tilføj en callout med et andet ID.",
 	"settings.fallbackCallout": "Standard reserve-callout",
-	"settings.fallbackCalloutDesc":
-		"Ukendte callout-typer arver denne stil.",
+	"settings.fallbackCalloutDesc": "Ukendte callout-typer arver denne stil.",
 	"settings.border": "Kanter",
 	"settings.borderTop": "Top",
 	"settings.borderRight": "Højre",
@@ -155,8 +150,7 @@ export const da: Record<string, string> = {
 	"settings.paletteCountOne": "1 palette",
 	"settings.editPaletteAria": "Rediger palet {{name}}",
 	"settings.deletePaletteTitle": "Slet palet",
-	"settings.deletePaletteBody":
-		'Callouts, der bruger dens farver, påvirkes ikke.',
+	"settings.deletePaletteBody": "Callouts, der bruger dens farver, påvirkes ikke.",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callouts, der nævner den i deres metadata ("{{key}}"), får i stedet den indbyggede farve med det navn. Dine noter ændres ikke.',
 	"settings.customCommands": "Kommandoer og genvejstaster",
@@ -184,11 +178,9 @@ export const da: Record<string, string> = {
 	"commandBuilder.callout": "Callout-type",
 	"commandBuilder.calloutDesc": "Den callout, kommandoen indsætter.",
 	"commandBuilder.headingLevel": "Overskriftsniveau",
-	"commandBuilder.headingLevelDesc":
-		"Hvilket overskriftsniveau der skal skrives.",
+	"commandBuilder.headingLevelDesc": "Hvilket overskriftsniveau der skal skrives.",
 	"commandBuilder.action": "Handling",
-	"commandBuilder.actionDesc":
-		"Indpak gør markeringen til en callout; indsæt tilføjer en tom.",
+	"commandBuilder.actionDesc": "Indpak gør markeringen til en callout; indsæt tilføjer en tom.",
 	"commandBuilder.actionDescHeading":
 		"Indpak gør linjen med markøren til en overskriftscallout.\nIndsæt tilføjer en tom på en ny linje.",
 	"commandBuilder.actionDescInline":
@@ -196,26 +188,21 @@ export const da: Record<string, string> = {
 	"commandBuilder.actionWrap": "Indpak markering",
 	"commandBuilder.actionInsert": "Indsæt ny",
 	"commandBuilder.foldState": "Foldtilstand",
-	"commandBuilder.foldStateDesc":
-		"Om callout'en kan foldes, og hvilken tilstand den starter i.",
+	"commandBuilder.foldStateDesc": "Om callout'en kan foldes, og hvilken tilstand den starter i.",
 	"commandBuilder.foldNone": "Ikke-foldbar",
 	"commandBuilder.foldExpanded": "Foldbar, åben (+)",
 	"commandBuilder.foldCollapsed": "Foldbar, lukket (-)",
 	"commandBuilder.preview": "Kommandonavn",
-	"commandBuilder.duplicate":
-		"Du har allerede en kommando, der gør præcis det samme.",
-	"commandBuilder.noCallouts":
-		"Der er endnu ingen callout-typer at bygge en kommando ud fra.",
+	"commandBuilder.duplicate": "Du har allerede en kommando, der gør præcis det samme.",
+	"commandBuilder.noCallouts": "Der er endnu ingen callout-typer at bygge en kommando ud fra.",
 	"commandBuilder.noCalloutChosen": "Vælg først en callout til denne kommando.",
 	"commandBuilder.save": "Gem",
-	"commandBuilder.roleThemeOwned":
-		"Dit tema leverer denne callout, så den har kun et blok-format.",
+	"commandBuilder.roleThemeOwned": "Dit tema leverer denne callout, så den har kun et blok-format.",
 	"commandBuilder.commandSuspended": "Sat på pause, mens dit tema leverer denne callout, som så kun har blokformat.",
 	"commandBuilder.pausedTag": "Sat på pause af temaet",
 	"commandBuilder.missingTag": "Callout mangler",
 	"settings.resetAll": "Nulstil",
-	"settings.resetAllDesc":
-		"Gendanner alle indstillinger og tilpasninger til standardværdierne.",
+	"settings.resetAllDesc": "Gendanner alle indstillinger og tilpasninger til standardværdierne.",
 	"settings.resetAllButton": "Nulstil alt",
 	"notice.resetAllDone": "Alt er nulstillet til standardindstillingerne.",
 	"settings.resetIntro": "Tag et øjeblik og værdsæt alt det, du har bygget med Callout Studio.",
@@ -236,46 +223,39 @@ export const da: Record<string, string> = {
 	"settings.resetItemAutocomplete": "Indstillinger for autofuldførelse og metadata",
 	"settings.resetItemFallback": "Reservestil",
 	"settings.resetItemIconLibraries": "Ikonbibliotekernes rækkefølge og skjulte biblioteker",
-	"settings.resetAllConfirmAfter": "Ingen grund til bekymring: før nulstillingen gemmer vi en sikkerhedskopi af din nuværende opsætning. Du kan hente den tilbage når som helst med Gendan en tidligere version i indstillingerne.\nHvis du bruger en synkroniseringstjeneste, kan nulstillingen også nå dine andre enheder.",
+	"settings.resetAllConfirmAfter":
+		"Ingen grund til bekymring: før nulstillingen gemmer vi en sikkerhedskopi af din nuværende opsætning. Du kan hente den tilbage når som helst med Gendan en tidligere version i indstillingerne.\nHvis du bruger en synkroniseringstjeneste, kan nulstillingen også nå dine andre enheder.",
 	"settings.resetNothing": "Intet at nulstille: alt er allerede på standardindstillingerne.",
-	"notice.customCommandMissingCallout":
-		"Den kommandos callout-type findes ikke længere.",
+	"notice.customCommandMissingCallout": "Den kommandos callout-type findes ikke længere.",
 	"notice.importedJSON": "{{count}} callout-type(r) importeret fra JSON.",
 	"notice.importedSettings": "Plugin-indstillinger importeret.",
-	"notice.importedCalloutManager":
-		"Importeret fra Callout Manager: {{created}} oprettet, {{updated}} opdateret.",
-	"notice.importedAdmonition":
-		"Importeret fra Admonition: {{created}} oprettet, {{updated}} " +
-		"opdateret.",
-	"notice.noNewJSON":
-		"Ingen nye callout-typer importeret (ID'er eksisterer muligvis allerede).",
+	"notice.importedCalloutManager": "Importeret fra Callout Manager: {{created}} oprettet, {{updated}} opdateret.",
+	"notice.importedAdmonition": "Importeret fra Admonition: {{created}} oprettet, {{updated}} " + "opdateret.",
+	"notice.noNewJSON": "Ingen nye callout-typer importeret (ID'er eksisterer muligvis allerede).",
 	"notice.iconDownloadFailed":
 		'Kunne ikke downloade Material-ikonet "{{name}}". Det er muligvis ikke tilgængeligt for denne stil/vægt, eller din forbindelse er offline.',
-	"notice.vaultScanFailed": "Kunne ikke tælle callout-brugen, fordi {{count}} note(r) ikke kunne læses. Tjek lager og synkronisering, og prøv igen.",
+	"notice.vaultScanFailed":
+		"Kunne ikke tælle callout-brugen, fordi {{count}} note(r) ikke kunne læses. Tjek lager og synkronisering, og prøv igen.",
 
 	"notice.externalCssRetired":
 		"Muligheden for personlig CSS-styling er fjernet. Disse callouts bruger nu deres gemte Callout Studio-design, medmindre dit tema styler dem. Dine noter og personlige CSS-snippets blev ikke ændret.",
 	"notice.vaultRewritePartial":
 		"{{count}} note(r) kunne ikke opdateres og blev efterladt uændret. Se udviklerkonsollen for detaljer.",
-	"notice.calloutDeleteIncomplete": "Nogle noter kunne ikke konverteres. Callout-typen blev bevaret. Gennemførte konverteringer er gemt; løs filproblemet, og kør handlingen igen for at afslutte.",
+	"notice.calloutDeleteIncomplete":
+		"Nogle noter kunne ikke konverteres. Callout-typen blev bevaret. Gennemførte konverteringer er gemt; løs filproblemet, og kør handlingen igen for at afslutte.",
 	"notice.nothingToWrap": "Intet at indpakke.",
 	"notice.cursorNotInsideCallout": "Markøren er ikke inde i en callout.",
 	"notice.headingAlreadyCallout": "Denne overskrift er allerede en callout.",
-	"notice.unwrapLeftAsIs":
-		"Denne callout kunne ikke fjernes sikkert, så den blev ladet urørt.",
-	"notice.autocompleteTargetMoved":
-		"Intet blev indsat — linjen blev ændret, mens editoren var åben.",
+	"notice.unwrapLeftAsIs": "Denne callout kunne ikke fjernes sikkert, så den blev ladet urørt.",
+	"notice.autocompleteTargetMoved": "Intet blev indsat — linjen blev ændret, mens editoren var åben.",
 	"notice.autocompleteAlwaysEnabled": "Autofuldførelse er nu en kernefunktion og er altid aktiveret.",
-	"notice.openHotkeysFailed":
-		"Kunne ikke åbne Obsidians genvejsindstillinger.",
-	"notice.filterHotkeysFailed":
-		"Obsidian-genveje åbnet, men Callout Studio-filtret kunne ikke anvendes.",
+	"notice.openHotkeysFailed": "Kunne ikke åbne Obsidians genvejsindstillinger.",
+	"notice.filterHotkeysFailed": "Obsidian-genveje åbnet, men Callout Studio-filtret kunne ikke anvendes.",
 	"editor.editCallout": "Rediger callout",
 	"editor.newCallout": "Ny callout",
 	"editor.displayName": "Visningsnavn",
 	"editor.displayNameDesc": "Den læsbare etiket vist i brugergrænsefladen",
-	"editor.displayNameBuiltIn":
-		"Visningsnavnet kan ikke ændres for indbyggede callouts",
+	"editor.displayNameBuiltIn": "Visningsnavnet kan ikke ændres for indbyggede callouts",
 	"editor.displayNamePlaceholder": "Min callout",
 	"editor.calloutIds": "Callout-ID'er",
 	"editor.calloutIdsDesc":
@@ -301,47 +281,41 @@ export const da: Record<string, string> = {
 	"editor.horizontalOffset": "Vandret forskydning",
 	"editor.verticalOffset": "Lodret forskydning",
 	"editor.colors": "Farver",
-	"editor.colorsDesc":
-		"Angiver farverne på denne callouts kant, baggrund og tekst.",
+	"editor.colorsDesc": "Angiver farverne på denne callouts kant, baggrund og tekst.",
 	"editor.resetColors": "Nulstil farver til standard",
 	"editor.paletteDeleted": "Slettet farve",
 	"editor.paletteGroupObsidian": "Obsidian-callouts",
 	"editor.paletteGroupPresets": "Farveforindstillinger",
 	"editor.paletteGroupCustom": "Brugerdefineret",
-	"editor.contrastWarning":
-		"Lav kontrast mod baggrunden — kan være svær at læse",
+	"editor.contrastWarning": "Lav kontrast mod baggrunden — kan være svær at læse",
 	"editor.foldable": "Foldbar",
-	"editor.foldableDesc":
-		"Vælg om callout'en kan foldes, og hvilken standardtilstand der skal anvendes i hele vault.",
+	"editor.foldableDesc": "Vælg om callout'en kan foldes, og hvilken standardtilstand der skal anvendes i hele vault.",
 	"editor.foldOff": "Fra",
 	"editor.foldOpen": "Åben som standard",
 	"editor.foldClosed": "Lukket som standard",
 	"editor.cancel": "Annuller",
 	"editor.saveChanges": "Gem ændringer",
-	"editor.saveFailed": "Lagringen kunne ikke fuldføres. Hvis denne editor stadig er åben, skal du lade den være åben og prøve igen, når du har kontrolleret lagerplads og synkronisering. Nogle indstillinger eller noteopdateringer kan allerede være gemt.",
+	"editor.saveFailed":
+		"Lagringen kunne ikke fuldføres. Hvis denne editor stadig er åben, skal du lade den være åben og prøve igen, når du har kontrolleret lagerplads og synkronisering. Nogle indstillinger eller noteopdateringer kan allerede være gemt.",
 	"editor.createCallout": "Opret callout",
-	"editor.nameRequired":
-		"Et visningsnavn er påkrævet, inden du opretter en callout.",
+	"editor.nameRequired": "Et visningsnavn er påkrævet, inden du opretter en callout.",
 	"editor.noChangesToSave": "Der blev ikke foretaget ændringer.",
 	"editor.idEmpty": "Mindst ét ID er påkrævet",
 	"editor.idAlreadyHere": "Dette ID findes allerede",
 	"editor.idTooLong": "ID må højst være på {{max}} tegn",
 	"editor.idExists": "Der eksisterer allerede en callout med dette ID",
 	"editor.idConflict": "Dette ID er i konflikt med en eksisterende callout",
-	"editor.idDashConflict":
-		'Obsidian skriver mellemrum som bindestreger, så dette ID er i konflikt med "{{other}}"',
+	"editor.idDashConflict": 'Obsidian skriver mellemrum som bindestreger, så dette ID er i konflikt med "{{other}}"',
 	"editor.idOwnedBy": '"{{id}}" er et ID for {{name}}. Du kan {{link}}.',
 	"editor.idMoveHere": "flytte det hertil",
 	"editor.idOwnedByMain":
-		"\"{{id}}\" er hoved-ID'et for {{name}}. For at bruge det her skal du først slette {{name}}.",
-	"editor.idBuiltInStock":
-		"\"{{id}}\" er et af Obsidians egne ID'er for {{name}}.",
+		'"{{id}}" er hoved-ID\'et for {{name}}. For at bruge det her skal du først slette {{name}}.',
+	"editor.idBuiltInStock": '"{{id}}" er et af Obsidians egne ID\'er for {{name}}.',
 	"editor.idMoving": 'Ved gem flyttes "{{id}}" hertil fra {{name}}.',
 	"editor.idMovingNotes": "Dine noter ændres ikke. De får denne callouts stil.",
 	"editor.idFromTheme":
 		"{{theme}} leverer allerede en callout med dette ID, så Callout Studio kan ikke style den. Vælg et andet ID.",
-	"editor.namesFromTheme":
-		"{{theme}} tegner selv blok-callouts {{names}}. Dine andre ID'er beholder dette design.",
+	"editor.namesFromTheme": "{{theme}} tegner selv blok-callouts {{names}}. Dine andre ID'er beholder dette design.",
 	"editor.namesFromThemeAndObsidian":
 		"{{theme}} tegner selv blok-callouts {{names}}, og Obsidian tegner {{stock}}. Dine andre ID'er beholder dette design.",
 	"editor.idThemePattern":
@@ -349,32 +323,26 @@ export const da: Record<string, string> = {
 	"editor.untitledCallout": "Navnløs Callout",
 	"editor.loremIpsum":
 		"En let brise bevæger sig gennem træerne. Varmt sollys falder over en stille sti og giver landskabet liv.",
-	"editor.loremIpsumShort":
-		"En let brise bevæger sig gennem træerne.",
-	"editor.sampleInlineText":
-		"Her er en indlejret [!{id}]{{title}} pille inde i et afsnit.",
+	"editor.loremIpsumShort": "En let brise bevæger sig gennem træerne.",
+	"editor.sampleInlineText": "Her er en indlejret [!{id}]{{title}} pille inde i et afsnit.",
 	"editor.previewReadOnly": "Livevisningen kan ikke redigeres",
 	"noteChanges.title": "Opdater dine noter?",
 	"noteChanges.leave": "Lad dem være, som de er",
-	"noteChanges.leaveDesc":
-		"De beholder [!{{id}}] og falder tilbage til standardstilen.",
+	"noteChanges.leaveDesc": "De beholder [!{{id}}] og falder tilbage til standardstilen.",
 	"noteChanges.changeTo": "Ændr dem til",
 	"noteChanges.renameChange": 'Ændr dem til "{{id}}"',
 	"noteChanges.titlesChange": 'Ændr dem til "{{new}}"',
 	"noteChanges.titlesLeaveDesc": 'De bliver ved med at lyde "{{old}}".',
 	"noteChanges.foldChange": 'Indstil dem til "{{state}}"',
-	"noteChanges.foldLeaveDesc":
-		"Kun callouts, du indsætter fra nu af, bruger den nye indstilling.",
+	"noteChanges.foldLeaveDesc": "Kun callouts, du indsætter fra nu af, bruger den nye indstilling.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": '{{name}} — leveret af dit tema',
+	"themePreview.title": "{{name}} — leveret af dit tema",
 	"themePreview.summary":
 		"Leveret af {{theme}} (skrivebeskyttet). Farve, ikon og ID kan ikke ændres her, og formaterne Overskrift/Inline er ikke tilgængelige. Hvis du vil tilpasse den, skal du oprette en ny callout.",
 	"themePreview.previewTitle": "Sådan ser den ud nu",
-	"themePreview.blockSample":
-		"> [!{{id}}] {{name}}\n" +
-		"> Sådan ser callout'ens indhold ud.\n",
+	"themePreview.blockSample": "> [!{{id}}] {{name}}\n" + "> Sådan ser callout'ens indhold ud.\n",
 	"editor.themePreviewClose": "Forstået",
 	// Palette editor modal
 	"palette.newTitle": "Ny farvepalet",
@@ -389,8 +357,8 @@ export const da: Record<string, string> = {
 	"palette.metadataNameShared":
 		"I callout-metadata: {{key}}. En anden gemt palet har også dette ord, så kun én af dem svarer på det.",
 	"palette.renameNotesChange":
-		"Du omdøbte paletten fra \"{{old}}\" til \"{{new}}\", så dens ord i callout-metadata ændres fra \"{{oldWord}}\" til \"{{newWord}}\".",
-	"palette.renameNotesLeaveDesc": "De beholder \"{{word}}\" og vender tilbage til deres egen farve.",
+		'Du omdøbte paletten fra "{{old}}" til "{{new}}", så dens ord i callout-metadata ændres fra "{{oldWord}}" til "{{newWord}}".',
+	"palette.renameNotesLeaveDesc": 'De beholder "{{word}}" og vender tilbage til deres egen farve.',
 	"palette.renameNotesChangeDesc": "Hver |{{old}} i dine noter bliver til |{{new}}.",
 	"palette.renameNotesFailed":
 		"Nogle noter kunne ikke opdateres. De, der blev opdateret, er gemt; resten bruger stadig det gamle navn.",
@@ -400,8 +368,10 @@ export const da: Record<string, string> = {
 	"palette.advancedColors": "Farver",
 	"palette.lightModeColors": "Farver i lys tilstand",
 	"palette.darkModeColors": "Farver i mørk tilstand",
-	"palette.modeColorsHintLight": "Disse ændringer gælder kun lys tilstand. Mørk tilstand beholder sine egne farver.\nTryk på måneknappen ovenfor for at redigere dem.",
-	"palette.modeColorsHintDark": "Disse ændringer gælder kun mørk tilstand. Lys tilstand beholder sine egne farver.\nTryk på solknappen ovenfor for at redigere dem.",
+	"palette.modeColorsHintLight":
+		"Disse ændringer gælder kun lys tilstand. Mørk tilstand beholder sine egne farver.\nTryk på måneknappen ovenfor for at redigere dem.",
+	"palette.modeColorsHintDark":
+		"Disse ændringer gælder kun mørk tilstand. Lys tilstand beholder sine egne farver.\nTryk på solknappen ovenfor for at redigere dem.",
 	"palette.showLightMode": "Vis lys tilstand",
 	"palette.showDarkMode": "Vis mørk tilstand",
 	"palette.accentColor": "Accentfarve",
@@ -493,12 +463,10 @@ export const da: Record<string, string> = {
 	"iconPicker.searchSimpleIcons": "Søg i Simple Icons",
 	"iconPicker.custom": "Brugerdefinerede ikoner",
 	"iconPicker.searchCustom": "Søg i brugerdefinerede ikoner",
-	"iconPicker.customTooLarge":
-		"{{name}} er for stor. Brugerdefinerede ikoner må højst fylde 5 MB.",
+	"iconPicker.customTooLarge": "{{name}} er for stor. Brugerdefinerede ikoner må højst fylde 5 MB.",
 	"iconPicker.customUnsupported":
 		"{{name}} er ikke en understøttet brugerdefineret ikonfil. Brug SVG, PNG, JPEG eller WebP.",
-	"iconPicker.customInvalidSvg":
-		"{{name}} kunne ikke læses som en sikker SVG og blev ikke tilføjet.",
+	"iconPicker.customInvalidSvg": "{{name}} kunne ikke læses som en sikker SVG og blev ikke tilføjet.",
 	"iconPicker.customDecodeFailed": "{{name}} kunne ikke læses som et brugerdefineret ikon.",
 	"iconPicker.customDuplicate":
 		"{{name}} findes allerede blandt dine brugerdefinerede ikoner. Omdøb filen, eller slet det eksisterende ikon.",
@@ -656,8 +624,7 @@ export const da: Record<string, string> = {
 	"iconPack.downloadDetail": "{{count}} ikoner · {{size}} · engangsdownload",
 	"iconPack.download": "Download",
 	"iconPack.downloading": "Downloader {{name}}…",
-	"iconPack.downloadFailed":
-		"Kunne ikke downloade {{name}}. Tjek din forbindelse og prøv igen.",
+	"iconPack.downloadFailed": "Kunne ikke downloade {{name}}. Tjek din forbindelse og prøv igen.",
 	"iconPack.retry": "Prøv igen",
 	"iconPack.faBrandsNotice":
 		"Brandikoner er varemærker tilhørende de respektive ejere. Deres medtagelse indikerer ikke godkendelse. Brug dem kun til at repræsentere den virksomhed, det produkt eller den tjeneste, de refererer til.",
@@ -702,7 +669,8 @@ export const da: Record<string, string> = {
 
 	// Icon licences & credits
 	"license.title": "Licens",
-	"license.openSourceBeforeLink": "Callout Studio er open source, og sådan bliver det ved med at være. Du kan finde licensen ",
+	"license.openSourceBeforeLink":
+		"Callout Studio er open source, og sådan bliver det ved med at være. Du kan finde licensen ",
 	"license.openSourceLink": "her",
 	"credits.title": "Ikonlicenser og kreditering",
 	"credits.introBeforeNotices":
@@ -717,7 +685,8 @@ export const da: Record<string, string> = {
 	"contextMenu.setFoldNone": "Gør callout ikke-foldbar",
 	"contextMenu.cutSection": "Klip overskriftsektion",
 	"notice.clipboardWriteFailed": "Kunne ikke kopiere til udklipsholderen. Noten blev ikke ændret.",
-	"notice.sectionChangedAfterCopy": "Sektionen blev kopieret, men noten blev ændret, før den kunne klippes. Intet blev fjernet.",
+	"notice.sectionChangedAfterCopy":
+		"Sektionen blev kopieret, men noten blev ændret, før den kunne klippes. Intet blev fjernet.",
 	"contextMenu.copySection": "Kopiér overskriftsektion",
 	"contextMenu.deleteSection": "Slet overskriftsektion",
 	"heading.toggleFold": "Skift foldning",
@@ -746,15 +715,14 @@ export const da: Record<string, string> = {
 	"settings.metadataWordAlreadyHere": "Dette ord er allerede på listen",
 	"settings.metadataWordTooLong": "Et ord må højst være på {{max}} tegn",
 	"settings.maxMetadataWords": "Højst {{max}} ord. Slet et for at tilføje et andet.",
-	"settings.buildFailed": "Callout Studio kunne ikke tegne sine indstillinger; genstart Obsidian, og meld det, hvis det sker igen.",
-	"settings.globalSettingsRegularDesc":
-		"Kant, radius, skriftstørrelse og justering.",
-	"settings.globalSettingsHeadingDesc":
-		"Kant, form og lodret afstand.",
-	"settings.globalSettingsInlineDesc":
-		"Kant og form.",
+	"settings.buildFailed":
+		"Callout Studio kunne ikke tegne sine indstillinger; genstart Obsidian, og meld det, hvis det sker igen.",
+	"settings.globalSettingsRegularDesc": "Kant, radius, skriftstørrelse og justering.",
+	"settings.globalSettingsHeadingDesc": "Kant, form og lodret afstand.",
+	"settings.globalSettingsInlineDesc": "Kant og form.",
 	"settings.themeCalloutStyles": "Brug callout-stilene fra dit tema",
-	"settings.themeCalloutStylesDesc": "Når det er slået til, beholder de callouts, dit tema styler, temaets udseende og vises kun som blok-callouts. Når det er slået fra, tegner Callout Studio alle callouts.",
+	"settings.themeCalloutStylesDesc":
+		"Når det er slået til, beholder de callouts, dit tema styler, temaets udseende og vises kun som blok-callouts. Når det er slået fra, tegner Callout Studio alle callouts.",
 	"settings.calloutTypeRegular": "Stil for blok-callout",
 	"settings.calloutTypeHeading": "Stil for overskrift-callout",
 	"settings.calloutTypeInline": "Stil for indlejret callout",
@@ -784,22 +752,16 @@ export const da: Record<string, string> = {
 	"confirm.titleDeleteImage": "Slet billede",
 	"confirm.titleDeleteLibrary": "Slet ikonbibliotek",
 	"confirm.titleResetLibraries": "Nulstil ikonbiblioteker",
-	"vault.filesUpdated":
-		"{{count}} callout-reference(r) opdateret i vault-filer.",
-	"vault.idsUpdated":
-		"{{count}} callout-ID('er) opdateret i vault-filer: {{oldIds}} → {{newId}}",
-	"vault.titlesUpdated":
-		"{{count}} callout-titel(ler) opdateret i vault-filer: {{oldTitle}} → {{newTitle}}",
-	"vault.foldUpdated":
-		"Opdaterede foldemærket på {{count}} callout(s) i vault-filer.",
+	"vault.filesUpdated": "{{count}} callout-reference(r) opdateret i vault-filer.",
+	"vault.idsUpdated": "{{count}} callout-ID('er) opdateret i vault-filer: {{oldIds}} → {{newId}}",
+	"vault.titlesUpdated": "{{count}} callout-titel(ler) opdateret i vault-filer: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated": "Opdaterede foldemærket på {{count}} callout(s) i vault-filer.",
 	"vault.confirmReplace": "Erstat",
 	"vault.replacePromptInUse":
 		'"{{name}}" bruges {{count}} gang(e) i {{files}} fil(er). Vælg en callout at erstatte den med:',
 	"vault.replacePromptUnused": 'Vælg en callout til at erstatte "{{name}}":',
-	"vault.noReplacementAvailable":
-		"Ingen andre callouts tilgængelige som erstatning.",
-	"vault.convertedToPlainText":
-		"{{blocks}} callout-blok(ke) i {{files}} fil(er) konverteret til almindelig tekst.",
+	"vault.noReplacementAvailable": "Ingen andre callouts tilgængelige som erstatning.",
+	"vault.convertedToPlainText": "{{blocks}} callout-blok(ke) i {{files}} fil(er) konverteret til almindelig tekst.",
 	"vault.resetNotesFailed":
 		"Nogle noter kunne ikke opdateres, så calloutten blev ikke nulstillet. Vælg Nulstil til standard igen for at afslutte.",
 	"quickInsert.title": "Hurtig indsættelse af blok-callout",
@@ -815,7 +777,8 @@ export const da: Record<string, string> = {
 	"quickInsert.noResults": "Ingen callouts fundet",
 	"quickInsert.noBuiltInCallouts": "Der er i øjeblikket ingen indbyggede callouts tilgængelige.",
 	"quickInsert.noThemeCallouts": "Der er i øjeblikket ingen temaspecifikke callouts tilgængelige.",
-	"quickInsert.targetMoved": "Den note, du åbnede Hurtig indsættelse fra, er ændret eller lukket. Åbn Hurtig indsættelse igen i den note, du vil redigere.",
+	"quickInsert.targetMoved":
+		"Den note, du åbnede Hurtig indsættelse fra, er ændret eller lukket. Åbn Hurtig indsættelse igen i den note, du vil redigere.",
 	"quickInsert.targetMovedHint": "Den oprindelige note er ikke længere tilgængelig for denne indsættelse.",
 	"quickInsert.noUserCallouts":
 		"Du har endnu ikke oprettet nogen brugerdefinerede callouts. Kør “Callout Studio: Opret ny callout-type” fra kommandopaletten.",
@@ -830,14 +793,16 @@ export const da: Record<string, string> = {
 	"vaultStats.roleInline": "Indlejret",
 
 	"portable.reviewTitle": "Gennemgå konvertering",
-	"portable.helpIntro": "Vælg de erstatninger, der skal bruges. Klik på blyanten eller erstatningsteksten for at redigere den, og tryk derefter på Enter eller klik uden for feltet for at gemme. Brug nulstillingsikonet til at kassere en kladde eller gendanne standarderstatningen. Noter ændres først, når du vælger Konvertér valgte og bekræfter. Overskriftslinks opdateres sammen med de valgte overskrifter.",
+	"portable.helpIntro":
+		"Vælg de erstatninger, der skal bruges. Klik på blyanten eller erstatningsteksten for at redigere den, og tryk derefter på Enter eller klik uden for feltet for at gemme. Brug nulstillingsikonet til at kassere en kladde eller gendanne standarderstatningen. Noter ændres først, når du vælger Konvertér valgte og bekræfter. Overskriftslinks opdateres sammen med de valgte overskrifter.",
 	"portable.help": "Om konvertering",
 	"portable.roleLink": "Link til overskrift",
 	"portable.convertSelected": "Konverter valgte",
-	"portable.selectionSummary": "{{selected}} af {{total}} erstatninger valgt · {{links}} links til overskrifter skal opdateres",
-	"portable.selectionSummaryNoLinks":
-		"{{selected}} af {{total}} erstatninger valgt",
-	"portable.selectionConflict": "Det valg ville gøre links til overskrifter tvetydige. Dit tidligere valg blev bevaret.",
+	"portable.selectionSummary":
+		"{{selected}} af {{total}} erstatninger valgt · {{links}} links til overskrifter skal opdateres",
+	"portable.selectionSummaryNoLinks": "{{selected}} af {{total}} erstatninger valgt",
+	"portable.selectionConflict":
+		"Det valg ville gøre links til overskrifter tvetydige. Dit tidligere valg blev bevaret.",
 	"portable.selectAll": "Vælg alle",
 	"portable.selectNone": "Fravælg alle",
 	"portable.relatedLinksHint": "Links og indlejringer følger de valgte overskrifter og konverteres sammen med dem.",
@@ -848,14 +813,19 @@ export const da: Record<string, string> = {
 	"portable.retry": "Prøv igen",
 	"portable.blockedAmbiguous": "Denne overskrift springes over, fordi dens linkmål er tvetydigt.",
 	"portable.blockedTarget": "Denne overskrift springes over, fordi dens linkmål ikke kan bevares sikkert.",
-	"portable.recovery": "Der er stadig ændringer tilbage. Afslut denne konvertering og opdateringerne af links til overskrifter, før du genstarter eller deaktiverer pluginet; den ventende plan opbevares kun i hukommelsen.",
-	"portable.recoveryChanged": "Noterne blev ændret, efter konverteringen stoppede. Ventende linkopdateringer bevares; hver note kontrolleres igen, før der skrives.",
+	"portable.recovery":
+		"Der er stadig ændringer tilbage. Afslut denne konvertering og opdateringerne af links til overskrifter, før du genstarter eller deaktiverer pluginet; den ventende plan opbevares kun i hukommelsen.",
+	"portable.recoveryChanged":
+		"Noterne blev ændret, efter konverteringen stoppede. Ventende linkopdateringer bevares; hver note kontrolleres igen, før der skrives.",
 	"portable.finishConversion": "Afslut konvertering",
-	"portable.recoveryUnavailable": "Nogle ventende linkopdateringer kunne ikke gendannes sikkert. Kontrollér de berørte noter, før du starter en ny konvertering.",
+	"portable.recoveryUnavailable":
+		"Nogle ventende linkopdateringer kunne ikke gendannes sikkert. Kontrollér de berørte noter, før du starter en ny konvertering.",
 	"portable.title": "Konverter til standard-Markdown",
-	"portable.settingDesc": "Erstat callouts i overskrifter og i teksten i hele boksen med almindelig tekst, klar til brug uden Callout Studio.",
+	"portable.settingDesc":
+		"Erstat callouts i overskrifter og i teksten i hele boksen med almindelig tekst, klar til brug uden Callout Studio.",
 	"portable.review": "Gennemgå konvertering",
-	"portable.intro": "Hvis du vil stoppe med at bruge Callout Studio eller flytte din boks til en app uden det, kan du konvertere callouts i overskrifter og i teksten til standard-Markdown.",
+	"portable.intro":
+		"Hvis du vil stoppe med at bruge Callout Studio eller flytte din boks til en app uden det, kan du konvertere callouts i overskrifter og i teksten til standard-Markdown.",
 	"portable.before": "Før",
 	"portable.after": "Efter",
 	"portable.replacement": "Erstatning",
@@ -863,24 +833,29 @@ export const da: Record<string, string> = {
 	"portable.type": "type",
 	"portable.text": "Tekst",
 	"portable.headingText": "Titel",
-	"portable.backup": "Vi anbefaler at sikkerhedskopiere din boks før konvertering. Dette ændrer de oprindelige noter og kan ikke fortrydes i Callout Studio.",
+	"portable.backup":
+		"Vi anbefaler at sikkerhedskopiere din boks før konvertering. Dette ændrer de oprindelige noter og kan ikke fortrydes i Callout Studio.",
 	"portable.scanning": "Læser Markdown-noter…",
 	"portable.progress": "Læser noter: {{done}} af {{total}}",
 	"portable.empty": "Ingen egnede callouts i overskrifter eller i teksten fundet. Intet bliver ændret.",
 	"portable.confirmTitle": "Konverter denne boks permanent?",
 	"portable.confirmSubtitle": "Der oprettes ingen automatisk sikkerhedskopi",
-	"portable.confirmBody": "Konverter {{count}} forekomster og opdater {{links}} links til overskrifter i {{files}} noter?\nDette ændrer de oprindelige filer og kan ikke fortrydes i Callout Studio. Der oprettes ingen automatisk sikkerhedskopi. Sikkerhedskopiér først din boks, gem åbne noter, og sæt redigering og synkronisering på pause, indtil konverteringen er færdig.\nHvis en fil ændres, eller en skrivning mislykkes, stopper konverteringen. Noter, der allerede er konverteret, forbliver ændrede.",
+	"portable.confirmBody":
+		"Konverter {{count}} forekomster og opdater {{links}} links til overskrifter i {{files}} noter?\nDette ændrer de oprindelige filer og kan ikke fortrydes i Callout Studio. Der oprettes ingen automatisk sikkerhedskopi. Sikkerhedskopiér først din boks, gem åbne noter, og sæt redigering og synkronisering på pause, indtil konverteringen er færdig.\nHvis en fil ændres, eller en skrivning mislykkes, stopper konverteringen. Noter, der allerede er konverteret, forbliver ændrede.",
 	"portable.confirmAction": "Konverter permanent",
 	"portable.converting": "Konverterer de valgte ændringer… Konverteringen stopper ikke, hvis du lukker dette panel.",
-	"portable.complete": "Konverterede {{count}} forekomster og opdaterede {{links}} links til overskrifter i {{files}} noter.",
-	"portable.stopped": "Konverteringen stoppede. {{count}} forekomster og {{links}} links til overskrifter i {{files}} noter var allerede ændret; ændringerne bevares.",
+	"portable.complete":
+		"Konverterede {{count}} forekomster og opdaterede {{links}} links til overskrifter i {{files}} noter.",
+	"portable.stopped":
+		"Konverteringen stoppede. {{count}} forekomster og {{links}} links til overskrifter i {{files}} noter var allerede ændret; ændringerne bevares.",
 	"portable.errorEditor": "Gem åbne noter for at opdatere gennemgangen automatisk.",
 	"portable.errorChanged": "Noterne er ændret. Gennemgå de opdaterede ændringer, før du konverterer.",
 	"portable.errorBusy": "En anden konvertering kører. Vent, til den er færdig.",
 	"portable.error": "Boksen kunne ikke læses eller opdateres sikkert. Kontrollér filadgangen, og prøv igen.",
 	"portable.blockedConverting": "En konvertering kører allerede. Vent, til den er færdig.",
 	"portable.blockedUpdating": "Gennemgangen opdateres stadig. Vent, til den er færdig, før du konverterer.",
-	"portable.blockedEditing": "Afslut først redigeringen af erstatningen: tryk på Enter for at gemme den, eller Esc for at kassere den.",
+	"portable.blockedEditing":
+		"Afslut først redigeringen af erstatningen: tryk på Enter for at gemme den, eller Esc for at kassere den.",
 	"portable.blockedNothingSelected": "Vælg mindst én erstatning at konvertere.",
 	"settings.maintenance": "Farezone",
 	"portable.customize": "Tilpasset erstatning…",
@@ -888,9 +863,11 @@ export const da: Record<string, string> = {
 	"portable.restoreDefault": "Gendan standarderstatning",
 	"portable.cancelEdit": "Kassér ændringer",
 	"portable.customInvalid": "Hold erstatningen på én linje uden at ændre den omgivende Markdown-struktur.",
-	"portable.customUnsafe": "Denne erstatning ville gøre en overskrift eller dens links tvetydige. Vælg en anden overskrift.",
+	"portable.customUnsafe":
+		"Denne erstatning ville gøre en overskrift eller dens links tvetydige. Vælg en anden overskrift.",
 	"portable.customStale": "Gennemgangen er ændret. Åbn erstatningseditoren igen.",
-	"portable.customDiscarded": "{{count}} tilpassede erstatninger blev fjernet, fordi deres kildetekst blev ændret eller ikke kunne findes med sikkerhed.",
+	"portable.customDiscarded":
+		"{{count}} tilpassede erstatninger blev fjernet, fordi deres kildetekst blev ændret eller ikke kunne findes med sikkerhed.",
 	"portable.customBadge": "Tilpasset",
 
 	"usage.title": "Find callouts",
@@ -912,40 +889,39 @@ export const da: Record<string, string> = {
 	"usage.more": "Vis {{count}} flere",
 	"usage.location": "Linje {{line}} · {{role}}",
 	"usage.missing": "Denne note findes ikke længere. Opdaterer resultaterne…",
-	"usage.changed": "Denne forekomst er ændret eller flyttet til en placering, der ikke kan bestemmes entydigt. Opdaterer resultaterne…",
+	"usage.changed":
+		"Denne forekomst er ændret eller flyttet til en placering, der ikke kan bestemmes entydigt. Opdaterer resultaterne…",
 	"usage.openFailed": "Denne callout-forekomst kunne ikke åbnes.",
 	"usage.menuIncomplete": "Find callouts — scanning ufuldstændig",
 	"usage.menu": "Find callouts",
 	"usage.closeSettings": "Luk indstillingerne for at se callout-resultaterne i sidepanelet.",
 	"import.title": "Importproblemer",
-	"import.reportLeadIn":
-		"Gennemgå disse importproblemer, før du fortsætter:",
-	"import.reportLeadInFatal":
-		"Disse data kunne ikke importeres:",
+	"import.reportLeadIn": "Gennemgå disse importproblemer, før du fortsætter:",
+	"import.reportLeadInFatal": "Disse data kunne ikke importeres:",
 	"import.entryHeading": "Post {{index}} — {{label}}",
-	"import.summary":
-		"{{valid}} af {{total}} poster er gyldige · {{issues}} problem(er) fundet.",
+	"import.summary": "{{valid}} af {{total}} poster er gyldige · {{issues}} problem(er) fundet.",
 	"import.btnCancel": "Annuller",
 	"import.btnImportValid": "Importer kun gyldige ({{count}})",
-	"import.nothingValid": "Ingen af posterne er gyldige, så der er intet at importere. Annuller, ret de problemer, der er angivet her, og importér igen.",
+	"import.nothingValid":
+		"Ingen af posterne er gyldige, så der er intet at importere. Annuller, ret de problemer, der er angivet her, og importér igen.",
 	"import.err.notRecognized":
 		"Ukendt fil: forventede et array af callout-definitioner eller en Callout Studio-eksport.",
-	"import.warn.settingsIgnored":
-		"Indstillingsblokken var ikke et gyldigt objekt og blev ignoreret.",
-	"import.warn.invalidGradient":
-		"Baggrundsgradienten var ugyldig og blev ignoreret.",
+	"import.warn.settingsIgnored": "Indstillingsblokken var ikke et gyldigt objekt og blev ignoreret.",
+	"import.warn.invalidGradient": "Baggrundsgradienten var ugyldig og blev ignoreret.",
 	"import.err.parseFailed": "Filen er ikke gyldig JSON og kunne ikke parses.",
-	"import.err.tooLarge": "Denne import overskrider størrelsesgrænsen på 16 MiB. Opdel den i mindre filer, og prøv igen.",
-	"import.err.tooComplex": "Denne import er for kompleks: Brug højst 1.000 elementer pr. liste eller objekt, 50.000 værdier i alt og 32 indlejringsniveauer.",
-	"import.err.imageBudget": "Den samlede billedsamling overskrider grænserne for størrelse eller kompleksitet. Fjern eller forenkl store billeder før import.",
+	"import.err.tooLarge":
+		"Denne import overskrider størrelsesgrænsen på 16 MiB. Opdel den i mindre filer, og prøv igen.",
+	"import.err.tooComplex":
+		"Denne import er for kompleks: Brug højst 1.000 elementer pr. liste eller objekt, 50.000 værdier i alt og 32 indlejringsniveauer.",
+	"import.err.imageBudget":
+		"Den samlede billedsamling overskrider grænserne for størrelse eller kompleksitet. Fjern eller forenkl store billeder før import.",
 	"import.err.processingFailed": "Importen kunne ikke gennemføres. Gennemgå dataene, og prøv igen.",
-	"import.reportTruncated": "Viser de første {{shown}} af {{total}} problemer. Lange værdier er forkortet i denne rapport.",
+	"import.reportTruncated":
+		"Viser de første {{shown}} af {{total}} problemer. Lange værdier er forkortet i denne rapport.",
 	"import.err.entryNotObject": "Posten skal være et objekt.",
-	"import.err.requiredMissing":
-		'Det obligatoriske felt "{{field}}" mangler eller har den forkerte type.',
+	"import.err.requiredMissing": 'Det obligatoriske felt "{{field}}" mangler eller har den forkerte type.',
 	"import.err.idEmpty": "ID'et må ikke være tomt.",
-	"import.err.idTooLong":
-		'ID\'et "{{value}}" er {{length}} tegn; maksimum er {{max}}.',
+	"import.err.idTooLong": 'ID\'et "{{value}}" er {{length}} tegn; maksimum er {{max}}.',
 	"import.err.idBadChar":
 		'ID\'et "{{value}}" indeholder ugyldige tegn ("|", "[", "]", tabulatorer og linjeskift er ikke tilladt).',
 	"import.err.idMetadata":
@@ -953,58 +929,41 @@ export const da: Record<string, string> = {
 	"import.err.idReserved":
 		'ID\'et "{{value}}" er reserveret af Callout Studio til dets egne forhåndsvisninger og kan ikke importeres.',
 	"import.err.displayNameEmpty": "Visningsnavnet må ikke være tomt.",
-	"import.err.displayNameTooLong":
-		"Visningsnavnet er {{length}} tegn; maksimum er {{max}}.",
-	"import.err.boolField":
-		'"{{field}}" skal være en boolean (true eller false).',
+	"import.err.displayNameTooLong": "Visningsnavnet er {{length}} tegn; maksimum er {{max}}.",
+	"import.err.boolField": '"{{field}}" skal være en boolean (true eller false).',
 	"import.err.iconNotObject": "Ikonet skal være et objekt.",
-	"import.err.iconTypeInvalid":
-		'Ikontypen "{{value}}" er ikke én af: {{types}}.',
-	"import.warn.iconFieldIgnored":
-		'"{{field}}" gælder kun for Material-ikoner og ignoreres for ikontype {{type}}.',
+	"import.err.iconTypeInvalid": 'Ikontypen "{{value}}" er ikke én af: {{types}}.',
+	"import.warn.iconFieldIgnored": '"{{field}}" gælder kun for Material-ikoner og ignoreres for ikontype {{type}}.',
 	"import.err.iconValueEmpty": "Ikonværdien skal være en ikke-tom streng.",
-	"import.err.iconValueTooLong":
-		"Ikonværdien overskrider grænsen på 200 tegn ({{length}} tegn).",
-	"import.err.materialStyle":
-		'Material-ikonstilen "{{value}}" er ikke én af: outlined, filled, rounded, sharp.',
-	"import.err.materialWeight":
-		'Material-ikonvægten "{{value}}" skal være et heltal mellem 100 og 700 i trin af 100.',
-	"import.warn.iconRecolorIgnored":
-		'"recolor" gælder kun for egne billeder og ignoreres for ikontype {{type}}.',
-	"import.err.iconRecolorInvalid":
-		'"recolor" skal være true eller false (fik "{{value}}").',
-	"import.err.colorInvalid":
-		'"{{field}}" skal være en hex-farve som "#448aff" (modtog "{{value}}").',
-	"import.err.numberRange":
-		'"{{field}}" skal være et tal mellem {{min}} og {{max}} (modtog "{{value}}").',
-	"import.err.iconSizeRange":
-		'"{{field}}" skal være et tal mellem {{min}} og {{max}} (modtog "{{value}}").',
+	"import.err.iconValueTooLong": "Ikonværdien overskrider grænsen på 200 tegn ({{length}} tegn).",
+	"import.err.materialStyle": 'Material-ikonstilen "{{value}}" er ikke én af: outlined, filled, rounded, sharp.',
+	"import.err.materialWeight": 'Material-ikonvægten "{{value}}" skal være et heltal mellem 100 og 700 i trin af 100.',
+	"import.warn.iconRecolorIgnored": '"recolor" gælder kun for egne billeder og ignoreres for ikontype {{type}}.',
+	"import.err.iconRecolorInvalid": '"recolor" skal være true eller false (fik "{{value}}").',
+	"import.err.colorInvalid": '"{{field}}" skal være en hex-farve som "#448aff" (modtog "{{value}}").',
+	"import.err.numberRange": '"{{field}}" skal være et tal mellem {{min}} og {{max}} (modtog "{{value}}").',
+	"import.err.iconSizeRange": '"{{field}}" skal være et tal mellem {{min}} og {{max}} (modtog "{{value}}").',
 	"import.err.iconAdjustShape":
-		"\"iconAdjust\" skal være et objekt, der knytter en callout-type (\"regular\", \"heading\", \"inline\") til ikonets størrelse og forskydninger.",
+		'"iconAdjust" skal være et objekt, der knytter en callout-type ("regular", "heading", "inline") til ikonets størrelse og forskydninger.',
 	"import.err.aliasesNotArray": '"aliases" skal være en array af strenge.',
 	"import.err.aliasNotString": "Aliaset skal være en streng.",
 	"import.err.aliasDup": 'Aliaset "{{value}}" er duplikeret i denne post.',
 	"import.err.tooManyIds":
 		"For mange ID'er ({{count}}); hver callout kan højst have {{max}} ID'er (primær + aliaser).",
-	"import.err.metadataShape":
-		'"metadata" skal være et objekt, hvis alle værdier er strenge.',
+	"import.err.metadataShape": '"metadata" skal være et objekt, hvis alle værdier er strenge.',
 	"import.warn.unknownFields": "Ukendte felter ignoreret: {{fields}}.",
-	"import.err.duplicateInFile":
-		'ID/alias "{{value}}" bruges allerede af post #{{first}} i denne fil.',
-	"import.err.aliasConflict":
-		'Alias "{{value}}" bruges allerede af en anden callout ("{{other}}") i din vault.',
+	"import.err.duplicateInFile": 'ID/alias "{{value}}" bruges allerede af post #{{first}} i denne fil.',
+	"import.err.aliasConflict": 'Alias "{{value}}" bruges allerede af en anden callout ("{{other}}") i din vault.',
 	"import.warn.defaultFoldedAutofix":
 		'"defaultFolded" var true, mens "foldable" var false; defaultFolded er nulstillet til false.',
 	"import.warn.imageMissing":
 		"Denne Callout bruger et billede, der ikke er i filen og ikke i denne vault, så den viser et pladsholderikon, indtil du giver den et nyt.",
-	"import.err.paletteIdInvalid":
-		'"paletteId" skal være et ikke-tomt tekst-ID (fik "{{value}}").',
-	"import.warn.iconNameUnknown":
-		'Der er ingen "{{value}}" ikon i {{type}}, så standardikonet blev brugt i stedet.',
+	"import.err.paletteIdInvalid": '"paletteId" skal være et ikke-tomt tekst-ID (fik "{{value}}").',
+	"import.warn.iconNameUnknown": 'Der er ingen "{{value}}" ikon i {{type}}, så standardikonet blev brugt i stedet.',
 	"import.warn.cmIconUnknownNew":
-		"Ikonet \"{{value}}\" er ikke tilgængeligt i denne vault, så standardikonet blev brugt i stedet.",
+		'Ikonet "{{value}}" er ikke tilgængeligt i denne vault, så standardikonet blev brugt i stedet.',
 	"import.warn.cmIconUnknownExisting":
-		"Ikonet \"{{value}}\" er ikke tilgængeligt i denne vault, så \"{{id}}\" beholdt sit eksisterende ikon.",
+		'Ikonet "{{value}}" er ikke tilgængeligt i denne vault, så "{{id}}" beholdt sit eksisterende ikon.',
 	"import.chooseSource": "Importer fra",
 	"import.sourceStudio": "Callout Studio",
 	"import.sourceStudioDesc": "En .json-fil eksporteret fra Callout Studio.",
@@ -1030,8 +989,7 @@ export const da: Record<string, string> = {
 	"import.cmVaultChecking": "Leder efter Callout Manager-pluginnet…",
 	"import.cmVaultFound": "Der blev fundet {{count}} tilpassede callouts.",
 	"import.cmFromPaste": "Kopierede stilarter",
-	"import.cmFromPasteDesc":
-		"Det, som Callout Managers Copy-knap kopierer, eller en data.json.",
+	"import.cmFromPasteDesc": "Det, som Callout Managers Copy-knap kopierer, eller en data.json.",
 	"import.cmInstructions":
 		"Hver tilpasset callout overføres med sit ikon og sin farve. Temaspecifik styling og brugerdefineret CSS har ingen tilsvarende indstillinger her og overføres ikke.",
 	"import.cmPlaceholder": "Indsæt de kopierede stilarter eller indholdet af en data.json-fil her…",
@@ -1041,19 +999,20 @@ export const da: Record<string, string> = {
 		"Der blev ikke fundet nogen Callout Manager-stilarter i filen eller den indsatte tekst.",
 	"import.err.cmNotRecognized":
 		"Ukendt fil: forventede de stilarter, som Callout Managers Copy-knap opretter, eller en data.json fra Callout Manager.",
-	"import.err.cmNoEntries":
-		"Der blev ikke fundet tilpassede callouts at importere.",
+	"import.err.cmNoEntries": "Der blev ikke fundet tilpassede callouts at importere.",
 	"import.err.cmNoColorForNew":
 		'Der blev ikke fundet nogen brugbar farve til den nye callout "{{value}}"; den blev sprunget over.',
 	"import.err.cmIdConflict":
 		'ID "{{value}}" bruges allerede som et alias af en anden callout ("{{other}}") og blev sprunget over.',
-	"import.warn.cmNoColorDefault":
-		"Der blev ikke angivet en farve i Callout Manager, så standardgrå blev brugt.",
+	"import.warn.cmNoColorDefault": "Der blev ikke angivet en farve i Callout Manager, så standardgrå blev brugt.",
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "Temabetinget styling kan ikke bevares. Ubetingede værdier foretrækkes; eventuelle betingede reserveværdier anvendes på tværs af temaer.",
-	"import.warn.cmCustomStylesSkipped": "Tilpasset CSS fra Callout Manager importeres ikke. Kun understøttede indstillinger for ikon og farve kan overføres.",
-	"import.warn.cmSchemeIcon": "Callout Studio bruger ét ikon til begge farveskemaer; det importerede ikon bruges i begge.",
+	"import.warn.cmThemeConditionPartial":
+		"Temabetinget styling kan ikke bevares. Ubetingede værdier foretrækkes; eventuelle betingede reserveværdier anvendes på tværs af temaer.",
+	"import.warn.cmCustomStylesSkipped":
+		"Tilpasset CSS fra Callout Manager importeres ikke. Kun understøttede indstillinger for ikon og farve kan overføres.",
+	"import.warn.cmSchemeIcon":
+		"Callout Studio bruger ét ikon til begge farveskemaer; det importerede ikon bruges i begge.",
 	"import.err.cmDuplicateId": "ID'et {{value}} er en dublet af {{other}} i denne import og blev sprunget over.",
 	"import.admTitle": "Importér fra Admonition",
 	"import.admInstructions":
@@ -1068,41 +1027,33 @@ export const da: Record<string, string> = {
 	"import.admBtnCancel": "Annuller",
 	"import.admBtnImport": "Importer",
 	"import.err.admNotRecognized":
-		"Filen blev ikke genkendt: der forventedes en liste over " +
-		"admonitions eller en data.json fra Admonition.",
-	"import.err.admNoEntries":
-		"Der blev ikke fundet nogen admonitions at importere.",
-	"import.err.admTypeMissing":
-		'Denne admonition har ingen "type" og blev sprunget over.',
+		"Filen blev ikke genkendt: der forventedes en liste over " + "admonitions eller en data.json fra Admonition.",
+	"import.err.admNoEntries": "Der blev ikke fundet nogen admonitions at importere.",
+	"import.err.admTypeMissing": 'Denne admonition har ingen "type" og blev sprunget over.',
 	"import.warn.admIconUnknown":
-		'Der findes intet ikon ved navn "{{value}}" i nogen ikonsamling, ' +
-		"så standardikonet blev brugt.",
+		'Der findes intet ikon ved navn "{{value}}" i nogen ikonsamling, ' + "så standardikonet blev brugt.",
 	"import.warn.admIconUnknownExisting":
-		'Der findes intet ikon ved navn "{{value}}" i nogen ikonsamling, ' +
-		'så "{{id}}" beholdt sit hidtidige ikon.',
+		'Der findes intet ikon ved navn "{{value}}" i nogen ikonsamling, ' + 'så "{{id}}" beholdt sit hidtidige ikon.',
 	"import.warn.admUnsupportedOptions": "Disse Admonition-indstillinger importeres ikke: {{fields}}.",
 	"import.warn.admImageSkipped": "Det uploadede billede kunne ikke læses og blev ikke importeret.",
 	"import.warn.admIconWithCss":
 		"Denne admonition får sit udseende fra et CSS-snippet i " +
 		"Admonition. Det udseende er ikke en del af importen, så kun " +
 		"navn, ikon og farve kom med.",
-	"import.warn.admNoColor":
-		"Der var ingen farve angivet, så standardblå blev brugt.",
-	"import.warn.admTitleTruncated":
-		"Titlen er på {{length}} tegn; den blev forkortet til {{max}}.",
+	"import.warn.admNoColor": "Der var ingen farve angivet, så standardblå blev brugt.",
+	"import.warn.admTitleTruncated": "Titlen er på {{length}} tegn; den blev forkortet til {{max}}.",
 
 	"footer.openIssue": "Opret en issue",
 	"footer.sourceCode": "Kildekode",
 	"settings.about": "Om",
 	"settings.version": "Version",
 	"settings.deletePaletteBodyLinkedOne":
-		'1 callout bruger den. Den beholder sine farver, og du kan forbinde den igen senere fra Farve-rækken i editoren.',
+		"1 callout bruger den. Den beholder sine farver, og du kan forbinde den igen senere fra Farve-rækken i editoren.",
 	"settings.deletePaletteBodyLinked":
-		'{{count}} callouts bruger den. De beholder deres farver, og du kan forbinde dem igen senere fra Farve-rækken i en af deres editorer.',
+		"{{count}} callouts bruger den. De beholder deres farver, og du kan forbinde dem igen senere fra Farve-rækken i en af deres editorer.",
 	"notice.palettesMerged":
 		"Flettede {{count}} gemte farve(r) med identiske farver: {{names}}. Callouts, der bruger dem, beholder deres farver og er nu knyttet til farven, der blev tilbage.",
-	"editor.colorsDescDeleted":
-		"Denne callouts gemte farve blev slettet. {{link}}",
+	"editor.colorsDescDeleted": "Denne callouts gemte farve blev slettet. {{link}}",
 	"editor.colorsDescDeletedLink": "Gendan",
 	"palette.colorExists":
 		'Disse farver er identiske med "{{name}}". To gemte farver kan ikke være ens — ændr en farve for at skelne dem.',
@@ -1118,10 +1069,8 @@ export const da: Record<string, string> = {
 	"notice.exportedCssCreated": "CSS-udsnit gemt i {{path}}",
 	"notice.exportedCssUpdated": "CSS-udsnit opdateret i {{path}}",
 	"notice.exportedCssUnchanged": "CSS-udsnittet er allerede opdateret.",
-	"notice.exportCssEmpty":
-		"Der er ingen brugerdefinerede callouts at eksportere.",
-	"notice.exportCssFailed":
-		"CSS-udsnittet kunne ikke gemmes. Se udviklerkonsollen for detaljer.",
+	"notice.exportCssEmpty": "Der er ingen brugerdefinerede callouts at eksportere.",
+	"notice.exportCssFailed": "CSS-udsnittet kunne ikke gemmes. Se udviklerkonsollen for detaljer.",
 	"notice.exportCssEnabled":
 		"Dette udsnit er slået til i denne vault. Callout Studio styler allerede disse callouts, og udsnittet bevarer stilen fra eksporttidspunktet.",
 	"confirm.titleOverwriteSnippet": "Overskriv CSS-udsnit",
@@ -1142,50 +1091,72 @@ export const da: Record<string, string> = {
 	"quickInsert.readingView": "Skift til kildetilstand eller Live Preview for at indsætte en callout.",
 	"quickInsert.noCursorHint": "Der er ingen markør i denne note, så der er intet sted at indsætte.",
 	"quickInsert.noCursor": "Placer markøren i noten der, hvor du vil indsætte callout'en, og prøv igen.",
-	"notice.legacyDiscoveryArchiveFailed": "Gendannelseskopien til opgraderingen kunne ikke fuldføres. Den tidligere lokale registreringscache og opstarts-CSS er bevaret uændret. Kontrollér skriveadgang, lageradgang og ledig plads, og genstart derefter Obsidian for at prøve igen.",
+	"notice.legacyDiscoveryArchiveFailed":
+		"Gendannelseskopien til opgraderingen kunne ikke fuldføres. Den tidligere lokale registreringscache og opstarts-CSS er bevaret uændret. Kontrollér skriveadgang, lageradgang og ledig plads, og genstart derefter Obsidian for at prøve igen.",
 	// Settings sync & recovery
-	"commandBuilder.missingCallout": "Sat på pause, indtil du opretter den manglende callout igen eller vælger en anden.",
+	"commandBuilder.missingCallout":
+		"Sat på pause, indtil du opretter den manglende callout igen eller vælger en anden.",
 	"confirm.titleRestoreSettings": "Gendan disse indstillinger",
 	"confirm.titleCreateSettingsFile": "Opret indstillingsfil",
 	"confirm.saveDisplayedSettings":
 		"Dette gemmer den opsætning, du ser nu, som din indstillingsfil og slår gemning til igen. Den reservekopi, som denne enhed opbevarer, sikkerhedskopieres først.\nHvis en anden enhed måske har nyere ændringer, du vil beholde, så lad den blive færdig med at synkronisere, før du fortsætter. Din synkroniseringsapp kan sende denne fil videre til dine andre enheder.\nCallout Studio leder efter indstillingsfilen en sidste gang, før der gemmes. Hvis den er kommet tilbage, beholder Callout Studio den i stedet.",
-	"notice.settingsBackupFailed": "Gendannelse af indstillinger kunne ikke fortsætte, fordi en sikkerhedskopi ikke kunne gemmes. Tjek ledig lagerplads og skriverettigheder, og prøv så igen.",
-	"notice.settingsNewerVersion": "Callout Studios indstillinger blev gemt af en nyere version af pluginet, så der bliver ikke skrevet noget på denne enhed, før du opdaterer det. Dine indstillinger er sikre — opdater Callout Studio her, og genindlæs Obsidian.",
+	"notice.settingsBackupFailed":
+		"Gendannelse af indstillinger kunne ikke fortsætte, fordi en sikkerhedskopi ikke kunne gemmes. Tjek ledig lagerplads og skriverettigheder, og prøv så igen.",
+	"notice.settingsNewerVersion":
+		"Callout Studios indstillinger blev gemt af en nyere version af pluginet, så der bliver ikke skrevet noget på denne enhed, før du opdaterer det. Dine indstillinger er sikre — opdater Callout Studio her, og genindlæs Obsidian.",
 	"saveStatus.changed":
 		"Indstillingsfilen ændrede sig, mens du redigerede. Dit udkast er stadig tilgængeligt. Vælg Prøv igen for at indlæse de indkomne indstillinger, og gennemgå derefter dit udkast og gem igen.",
-	"saveStatus.missing": "Gemning er sat på pause, fordi indstillingsfilen mangler. Det kan ske efter geninstallation, eller mens synkronisering stadig kører. Afslut synkroniseringen, og prøv igen. For bevidst at erstatte den manglende fil skal du bruge Opret en ny indstillingsfil i Callout Studios indstillinger.",
+	"saveStatus.missing":
+		"Gemning er sat på pause, fordi indstillingsfilen mangler. Det kan ske efter geninstallation, eller mens synkronisering stadig kører. Afslut synkroniseringen, og prøv igen. For bevidst at erstatte den manglende fil skal du bruge Opret en ny indstillingsfil i Callout Studios indstillinger.",
 	"saveStatus.restoreSettings": "Gendan disse indstillinger",
 	"saveStatus.createSettingsFile": "Opret indstillingsfil",
 	"saveStatus.checkAgain": "Kontrollér igen",
-	"saveStatus.recoverInSettings": "Åbn Callout Studio-indstillinger for at gendanne den manglende fil på denne enhed. Før du lukker denne editor, skal du kopiere eventuelle ikke-gemte ændringer, du vil beholde; de er ikke gemt.",
+	"saveStatus.recoverInSettings":
+		"Åbn Callout Studio-indstillinger for at gendanne den manglende fil på denne enhed. Før du lukker denne editor, skal du kopiere eventuelle ikke-gemte ændringer, du vil beholde; de er ikke gemt.",
 	"saveStatus.openSettings": "Åbn Callout Studio-indstillinger",
-	"notice.openSettingsFailed": "Callout Studio-indstillingerne kunne ikke åbnes. Åbn Indstillinger → Callout Studio for at vælge, hvad du vil gøre.",
-	"saveStatus.notesFailed": "Callout-definitionen blev gemt, men nogle noteopdateringer kunne ikke fuldføres. Lad denne editor være åben, og vælg Gem for at prøve de ufuldendte opdateringer igen.",
-	"saveStatus.recoveryRead": "Gemning er sat på pause, fordi den lokale gendannelseskopi ikke kan læses. Din indstillingsfil er muligvis stadig intakt. Tjek ledig lagerplads, og prøv så gendannelse igen. Eksisterende gendannelsesdata bliver ikke overskrevet.",
-	"saveStatus.recoveryWrite": "Den lokale gendannelseskopi kunne ikke gemmes. Tjek ledig lagerplads, og prøv så igen. Lad dit udkast være åbent, indtil gemningen lykkes.",
-	"saveStatus.retryFailed": "Gemning er stadig blokeret. Tjek gemmestatussen i Callout Studios indstillinger for at finde årsagen, og prøv så igen.",
-	"saveStatus.reviewDraft": "Indkommende indstillinger og gendannelseskontroller er fuldført. Dit udkast er uændret. Gennemgå det, og gem igen.",
-	"saveStatus.settingsArrived": "Eksisterende indstillinger ankom og blev indlæst. Der blev ikke oprettet en erstatningsfil.",
-	"saveStatus.syncConflict": "Indkommende indstillinger er i konflikt med en callout, der er nødvendig for ufuldendte noteopdateringer. Dit udkast og ventende opdateringer er blevet bevaret. Løs konflikten i indstillingerne, før du prøver igen.",
+	"notice.openSettingsFailed":
+		"Callout Studio-indstillingerne kunne ikke åbnes. Åbn Indstillinger → Callout Studio for at vælge, hvad du vil gøre.",
+	"saveStatus.notesFailed":
+		"Callout-definitionen blev gemt, men nogle noteopdateringer kunne ikke fuldføres. Lad denne editor være åben, og vælg Gem for at prøve de ufuldendte opdateringer igen.",
+	"saveStatus.recoveryRead":
+		"Gemning er sat på pause, fordi den lokale gendannelseskopi ikke kan læses. Din indstillingsfil er muligvis stadig intakt. Tjek ledig lagerplads, og prøv så gendannelse igen. Eksisterende gendannelsesdata bliver ikke overskrevet.",
+	"saveStatus.recoveryWrite":
+		"Den lokale gendannelseskopi kunne ikke gemmes. Tjek ledig lagerplads, og prøv så igen. Lad dit udkast være åbent, indtil gemningen lykkes.",
+	"saveStatus.retryFailed":
+		"Gemning er stadig blokeret. Tjek gemmestatussen i Callout Studios indstillinger for at finde årsagen, og prøv så igen.",
+	"saveStatus.reviewDraft":
+		"Indkommende indstillinger og gendannelseskontroller er fuldført. Dit udkast er uændret. Gennemgå det, og gem igen.",
+	"saveStatus.settingsArrived":
+		"Eksisterende indstillinger ankom og blev indlæst. Der blev ikke oprettet en erstatningsfil.",
+	"saveStatus.syncConflict":
+		"Indkommende indstillinger er i konflikt med en callout, der er nødvendig for ufuldendte noteopdateringer. Dit udkast og ventende opdateringer er blevet bevaret. Løs konflikten i indstillingerne, før du prøver igen.",
 	"saveStatus.titlePaused": "Gemning er sat på pause",
 	"saveStatus.titleFailed": "Indstillingerne blev ikke gemt",
 	"saveStatus.tryAgain": "Prøv igen",
 	"saveStatus.working": "Arbejder på det…",
-	"saveStatus.unreadable": "Gemning er sat på pause, fordi indstillingsfilen ikke kan læses sikkert. Afslut synkroniseringen, eller gendan en gyldig kopi, og prøv så igen. Den eksisterende fil er blevet bevaret.",
-	"saveStatus.write": "Indstillingsfilen kunne ikke gemmes. Tjek ledig lagerplads, mapperettigheder og synkronisering, og prøv så igen, før du lukker Obsidian.",
-	"saveStatus.writePermission": "Indstillingsfilen kunne ikke gemmes, fordi lagerpladsen nægtede skriveadgang. Tjek, at vaulten og plugin-mappen kan skrives til, og prøv så igen.",
-	"saveStatus.writeSpace": "Indstillingsfilen kunne ikke gemmes, fordi lagerpladsen er fuld, eller dens kvote er overskredet. Frigør noget plads, og prøv så igen.",
-	"settings.readOnly": "Callout Studio kunne ikke bruge sin indstillingsfil, da Obsidian startede, så intet på denne side bliver gemt på denne enhed. Dine ændringer varer, indtil du lukker Obsidian. Genindlæs Obsidian, når filen er tilbage — hvis du synkroniserer denne vault, så lad synkroniseringen blive færdig først.",
+	"saveStatus.unreadable":
+		"Gemning er sat på pause, fordi indstillingsfilen ikke kan læses sikkert. Afslut synkroniseringen, eller gendan en gyldig kopi, og prøv så igen. Den eksisterende fil er blevet bevaret.",
+	"saveStatus.write":
+		"Indstillingsfilen kunne ikke gemmes. Tjek ledig lagerplads, mapperettigheder og synkronisering, og prøv så igen, før du lukker Obsidian.",
+	"saveStatus.writePermission":
+		"Indstillingsfilen kunne ikke gemmes, fordi lagerpladsen nægtede skriveadgang. Tjek, at vaulten og plugin-mappen kan skrives til, og prøv så igen.",
+	"saveStatus.writeSpace":
+		"Indstillingsfilen kunne ikke gemmes, fordi lagerpladsen er fuld, eller dens kvote er overskredet. Frigør noget plads, og prøv så igen.",
+	"settings.readOnly":
+		"Callout Studio kunne ikke bruge sin indstillingsfil, da Obsidian startede, så intet på denne side bliver gemt på denne enhed. Dine ændringer varer, indtil du lukker Obsidian. Genindlæs Obsidian, når filen er tilbage — hvis du synkroniserer denne vault, så lad synkroniseringen blive færdig først.",
 
 	// Sync safety hardening
 	"saveStatus.diagnosis.unavailable":
 		"Denne enhed kan ikke åbne filen lige nu. Den kan stadig være ved at downloade, vaulten er måske ikke tilgængelig offline, eller lagerplads svarer ikke. Callout Studio prøver automatisk igen.",
-	"saveStatus.diagnosis.empty": "Filen er tom, hvilket normalt betyder, at en synkronisering blev afbrudt. Hvis en anden enhed stadig har dine indstillinger, så lad den synkronisere. Ellers skal filen erstattes.",
-	"saveStatus.diagnosis.mergeMarkers": "Filen indeholder uløste sammenlægningsmarkører, for eksempel fra Git. Løs konflikten i dit Git-værktøj, eller erstat filen.",
+	"saveStatus.diagnosis.empty":
+		"Filen er tom, hvilket normalt betyder, at en synkronisering blev afbrudt. Hvis en anden enhed stadig har dine indstillinger, så lad den synkronisere. Ellers skal filen erstattes.",
+	"saveStatus.diagnosis.mergeMarkers":
+		"Filen indeholder uløste sammenlægningsmarkører, for eksempel fra Git. Løs konflikten i dit Git-værktøj, eller erstat filen.",
 	"saveStatus.diagnosis.damaged": "Filen er ufuldstændig eller beskadiget, så den kan ikke læses som indstillinger.",
 	"saveStatus.diagnosis.combined":
 		"Din synkroniseringstjeneste har kombineret to versioner af filen, så dens interne kontrol matcher ikke længere. Indstillingerne i den er intakte, og at erstatte filen bevarer dem.",
-	"saveStatus.diagnosis.invalidEntries": "Filen indeholder poster, som Callout Studio ikke kan bruge, for eksempel samme callout-type angivet to gange.",
+	"saveStatus.diagnosis.invalidEntries":
+		"Filen indeholder poster, som Callout Studio ikke kan bruge, for eksempel samme callout-type angivet to gange.",
 	"saveStatus.replaceUnreadable": "Erstat indstillingsfil",
 	"saveStatus.discardRecoveryCopy": "Kassér gendannelseskopi",
 	"saveStatus.calm.opening": "Først og fremmest: træk vejret dybt — alt bliver godt.",
@@ -1206,37 +1177,50 @@ export const da: Record<string, string> = {
 		"Dine indstillinger blev gemt af en nyere version af Callout Studio, så denne ældre version ændrer dem ikke.",
 	"saveStatus.explain.changed":
 		"Indstillingsfilen ændrede sig, mens Callout Studio arbejdede med den, så den stoppede uden at erstatte noget.",
-	"saveStatus.guide.rechecks": "Callout Studio tjekker igen hvert minut, så længe Obsidian er åben, så det løser sig ofte af sig selv.",
+	"saveStatus.guide.rechecks":
+		"Callout Studio tjekker igen hvert minut, så længe Obsidian er åben, så det løser sig ofte af sig selv.",
 	"saveStatus.guide.rechecksCheckNow":
 		"Callout Studio tjekker igen hvert minut, så længe Obsidian er åben, så det løser sig ofte af sig selv — eller vælg Kontrollér igen for at tjekke med det samme.",
 	"saveStatus.guide.restore":
 		"Hvis dine indstillinger ikke kommer tilbage, så vælg Gendan disse indstillinger for at beholde de callouts, du ser her.",
-	"saveStatus.guide.create": "Hvis dine indstillinger ikke kommer tilbage, så vælg Opret indstillingsfil for at begynde at gemme igen.",
-	"saveStatus.guide.recoveryRetry": "Sørg for, at der er noget ledig lagerplads på denne enhed, og vælg derefter Prøv igen.",
+	"saveStatus.guide.create":
+		"Hvis dine indstillinger ikke kommer tilbage, så vælg Opret indstillingsfil for at begynde at gemme igen.",
+	"saveStatus.guide.recoveryRetry":
+		"Sørg for, at der er noget ledig lagerplads på denne enhed, og vælg derefter Prøv igen.",
 	"saveStatus.guide.recoveryDiscard":
 		"Hvis det ikke hjælper, så vælg Kassér gendannelseskopi. Der gemmes først en nøjagtig kopi, og din indstillingsfil bliver ikke rørt.",
-	"saveStatus.guide.newerVersion": "Opdatér Callout Studio under Indstillinger → Fællesskabsplugins, og genindlæs derefter Obsidian.",
+	"saveStatus.guide.newerVersion":
+		"Opdatér Callout Studio under Indstillinger → Fællesskabsplugins, og genindlæs derefter Obsidian.",
 	"saveStatus.missingNotice":
 		"Dine noter er i sikkerhed. Callout Studio har sat gemning på pause, fordi den ikke kan finde sin indstillingsfil lige nu.",
 	"statusBar.paused": "Gemning sat på pause",
 	"statusBar.pausedTooltip": "Callout Studio gemmer ikke indstillingsændringer. Klik for at se hvorfor.",
 	"statusBar.pausedNotice": "Callout Studio gemmer ikke indstillingsændringer lige nu.",
 	"saveStatus.resumed": "Gemning er slået til igen. Callout Studio gemmer igen ændringer af indstillingerne.",
-	"notice.replaceUnreadableUnavailable": "Indstillingsfilen kan ikke erstattes lige nu: den ændrer sig, eller denne enhed kan ikke læse den. Prøv igen om lidt.",
-	"notice.recoveryStorageUnavailable": "Denne enheds gendannelseslager svarer ikke, så kopien kan ikke kasseres. Genstart Obsidian, og prøv så igen.",
+	"notice.replaceUnreadableUnavailable":
+		"Indstillingsfilen kan ikke erstattes lige nu: den ændrer sig, eller denne enhed kan ikke læse den. Prøv igen om lidt.",
+	"notice.recoveryStorageUnavailable":
+		"Denne enheds gendannelseslager svarer ikke, så kopien kan ikke kasseres. Genstart Obsidian, og prøv så igen.",
 	"recovery.unreadable": "Kan ikke læses som indstillinger",
 	"recovery.same": "Samme som din nuværende opsætning",
 	"recovery.restore": "Gendan",
-	"recovery.stale": "Intet blev gendannet: dine indstillinger har ændret sig, eller kunne ikke tjekkes. Åbn dette vindue igen, og gennemgå listen.",
-	"notice.recoveryCopyStale": "Dine indstillinger blev gemt, men denne enheds gendannelseskopi kunne ikke opdateres. Tjek ledig lagerplads på denne enhed. Callout Studio prøver igen ved din næste ændring.",
-	"notice.blockedWhilePaused": "Gemning er sat på pause, så denne ændring kan ikke gemmes lige nu. Løs det gemmeproblem, der vises i Callout Studios indstillinger, først.",
-	"welcome.syncNote": "Bruger du allerede Callout Studio på en anden enhed? Lad din synkroniseringstjeneste blive færdig først. Dine callouts og indstillinger vises her, når de ankommer.",
-	"settings.resetBackupFailed": "Intet blev nulstillet: en backup af din nuværende opsætning kunne ikke gemmes først. Tjek ledig lagerplads, og prøv så igen.",
-	"settings.resetNotSaved": "Nulstillingen vises, men kunne ikke gemmes endnu, så din indstillingsfil indeholder stadig den tidligere opsætning. Tjek gemmestatussen i Callout Studios indstillinger.",
+	"recovery.stale":
+		"Intet blev gendannet: dine indstillinger har ændret sig, eller kunne ikke tjekkes. Åbn dette vindue igen, og gennemgå listen.",
+	"notice.recoveryCopyStale":
+		"Dine indstillinger blev gemt, men denne enheds gendannelseskopi kunne ikke opdateres. Tjek ledig lagerplads på denne enhed. Callout Studio prøver igen ved din næste ændring.",
+	"notice.blockedWhilePaused":
+		"Gemning er sat på pause, så denne ændring kan ikke gemmes lige nu. Løs det gemmeproblem, der vises i Callout Studios indstillinger, først.",
+	"welcome.syncNote":
+		"Bruger du allerede Callout Studio på en anden enhed? Lad din synkroniseringstjeneste blive færdig først. Dine callouts og indstillinger vises her, når de ankommer.",
+	"settings.resetBackupFailed":
+		"Intet blev nulstillet: en backup af din nuværende opsætning kunne ikke gemmes først. Tjek ledig lagerplads, og prøv så igen.",
+	"settings.resetNotSaved":
+		"Nulstillingen vises, men kunne ikke gemmes endnu, så din indstillingsfil indeholder stadig den tidligere opsætning. Tjek gemmestatussen i Callout Studios indstillinger.",
 	"confirm.titleResetEverything": "Nulstil alt",
 	"confirm.titleReplaceUnreadable": "Erstat indstillingsfil",
 	"confirm.subtitleReplaceUnreadable": "En nøjagtig kopi gemmes først",
-	"confirm.replaceUnreadable": "En nøjagtig kopi af den nuværende fil gemmes først i plugin'ets backup-mappe. Filen erstattes derefter med den opsætning, der vises her, og din synkroniseringstjeneste sender den til dine andre enheder.",
+	"confirm.replaceUnreadable":
+		"En nøjagtig kopi af den nuværende fil gemmes først i plugin'ets backup-mappe. Filen erstattes derefter med den opsætning, der vises her, og din synkroniseringstjeneste sender den til dine andre enheder.",
 	"confirm.replaceUnreadableSalvage":
 		"En nøjagtig kopi af den nuværende fil gemmes først i plugin'ets backup-mappe. Indstillingerne i den kombineres med den opsætning, der vises her, og filen omskrives, så alle enheder kan læse den igen.",
 	"confirm.titleDiscardRecoveryCopy": "Kassér gendannelseskopi",
@@ -1245,12 +1229,16 @@ export const da: Record<string, string> = {
 		"Denne enheds gendannelseskopi kan ikke læses, så gemning er sat på pause på denne enhed. En nøjagtig kopi af den gemmes først i plugin'ets backup-mappe. Den erstattes derefter med den opsætning, der vises her. Din indstillingsfil ændres ikke.",
 	"vault.undoRewrite": "Fortryd",
 	"vault.undoRestored": "Gendannede {{count}} note(r).",
-	"vault.undoPartial": "Gendannede {{count}} note(r). {{skipped}} note(r) blev ændret efter omskrivningen, så de blev efterladt, som de er.",
+	"vault.undoPartial":
+		"Gendannede {{count}} note(r). {{skipped}} note(r) blev ændret efter omskrivningen, så de blev efterladt, som de er.",
 	"import.confirmTitle": "Importér Callout Studio-backup",
-	"import.confirmSummary": "Dette tilføjer {{added}} callout-type(r), erstatter {{replaced}} eksisterende med filens version, og gendanner {{settings}} indstillingsgruppe(r) fra filen. En backup af din nuværende opsætning gemmes først.",
+	"import.confirmSummary":
+		"Dette tilføjer {{added}} callout-type(r), erstatter {{replaced}} eksisterende med filens version, og gendanner {{settings}} indstillingsgruppe(r) fra filen. En backup af din nuværende opsætning gemmes først.",
 	"import.confirmAction": "Importér",
-	"import.backupFailed": "Intet blev importeret: en backup af din nuværende opsætning kunne ikke gemmes først. Tjek ledig lagerplads, og prøv så igen.",
-	"import.notSaved": "Importen vises, men kunne ikke gemmes endnu. Tjek gemmestatussen i Callout Studios indstillinger.",
+	"import.backupFailed":
+		"Intet blev importeret: en backup af din nuværende opsætning kunne ikke gemmes først. Tjek ledig lagerplads, og prøv så igen.",
+	"import.notSaved":
+		"Importen vises, men kunne ikke gemmes endnu. Tjek gemmestatussen i Callout Studios indstillinger.",
 
 	"recovery.summaryCallouts": "{{callouts}} gemt(e) callout-type(r)",
 	"recovery.summaryChanges": "{{count}} forskel/forskelle fra nu",
@@ -1270,7 +1258,8 @@ export const da: Record<string, string> = {
 	"recovery.details.unknownTime": "Tidspunkt for lagring er ikke registreret",
 	"recovery.details.current": "Nuværende opsætning",
 	"recovery.details.restored": "Efter gendannelse af denne version",
-	"recovery.details.unreadable": "Denne version af Callout Studio kan ikke tolke kopien som en opsætning, der kan gendannes. Den kan være beskadiget, utilgængelig eller bruge et nyere format. En sammenligning og en rapport over de gendannede indstillinger er ikke tilgængelige. Alt originalt indhold, der kunne læses, er medtaget nedenfor.",
+	"recovery.details.unreadable":
+		"Denne version af Callout Studio kan ikke tolke kopien som en opsætning, der kan gendannes. Den kan være beskadiget, utilgængelig eller bruge et nyere format. En sammenligning og en rapport over de gendannede indstillinger er ikke tilgængelige. Alt originalt indhold, der kunne læses, er medtaget nedenfor.",
 	"recovery.details.null": "Ingen værdi (null)",
 	"recovery.details.yes": "Ja",
 	"recovery.details.no": "Nej",
@@ -1438,11 +1427,14 @@ export const da: Record<string, string> = {
 	"recovery.delete": "Slet",
 
 	// Version history
-	"saveStatus.guide.versions": "Når det virker at gemme igen, kan du også vende tilbage til en gemt version med Gendan en tidligere version.",
+	"saveStatus.guide.versions":
+		"Når det virker at gemme igen, kan du også vende tilbage til en gemt version med Gendan en tidligere version.",
 	"saveStatus.goToVersions": "Gå til versionshistorikken",
 	"versions.title": "Versionshistorik",
-	"versions.intro": "Callout Studio gemmer automatisk versioner af din opsætning.\nÆldre versioner ryddes op med tiden.\nGendannelse af en version erstatter din nuværende opsætning på alle synkroniserede enheder.",
-	"versions.pausedHint": "Lagring er sat på pause, så gendannelse er ikke tilgængelig. Du kan stadig sammenligne og slette versioner.",
+	"versions.intro":
+		"Callout Studio gemmer automatisk versioner af din opsætning.\nÆldre versioner ryddes op med tiden.\nGendannelse af en version erstatter din nuværende opsætning på alle synkroniserede enheder.",
+	"versions.pausedHint":
+		"Lagring er sat på pause, så gendannelse er ikke tilgængelig. Du kan stadig sammenligne og slette versioner.",
 	"versions.loading": "Søger efter versioner…",
 	"versions.empty": "Ingen versioner fundet.",
 	"versions.dayWithDate": "{{date}} ({{relative}})",
@@ -1459,14 +1451,17 @@ export const da: Record<string, string> = {
 	"versions.reason.beforeRepair": "Før reparation af indstillingsfilen",
 	"versions.restoreTitle": "Gendan denne version",
 	"versions.subtitle": "”{{name}}” · {{when}}",
-	"versions.restoreBody": "Din nuværende opsætning erstattes ({{count}} forskelle).\nDen gemmes først som en version, så du kan vende tilbage til den.\nDin synkroniseringstjeneste sender derefter den gendannede opsætning til dine andre enheder.",
+	"versions.restoreBody":
+		"Din nuværende opsætning erstattes ({{count}} forskelle).\nDen gemmes først som en version, så du kan vende tilbage til den.\nDin synkroniseringstjeneste sender derefter den gendannede opsætning til dine andre enheder.",
 	"versions.restoreSame": "Denne version er den samme som din nuværende opsætning, så der er intet at gendanne.",
 	"versions.restored": "Gendannede ”{{name}}” fra {{when}}.",
-	"versions.backupFailed": "Intet blev gendannet: din nuværende opsætning kunne ikke først gemmes som en version. Kontrollér ledig lagerplads, og prøv igen.",
+	"versions.backupFailed":
+		"Intet blev gendannet: din nuværende opsætning kunne ikke først gemmes som en version. Kontrollér ledig lagerplads, og prøv igen.",
 	"versions.restoreFailed": "Versionen kunne ikke gendannes. Intet blev ændret.",
 	"versions.deleteTitle": "Slet denne version",
 	"versions.deleteAvailableBody": "Den og alle dens tilgængelige kopier slettes permanent.",
-	"versions.deleteSyncedFiles": "Sletningen af disse filer kan blive synkroniseret til dine andre enheder. Lokale kopier på disse enheder kan blive bevaret.",
+	"versions.deleteSyncedFiles":
+		"Sletningen af disse filer kan blive synkroniseret til dine andre enheder. Lokale kopier på disse enheder kan blive bevaret.",
 	"versions.deleteFinal": "Dette kan ikke fortrydes. Din nuværende opsætning påvirkes ikke.",
 	"versions.deleted": "Slettede ”{{name}}” fra {{when}}.",
 	"versions.deleteFailed": "Nogle kopier af denne version kunne ikke slettes. Listen viser nu, hvad der er tilbage.",
@@ -1474,7 +1469,8 @@ export const da: Record<string, string> = {
 	"versions.details.difference": "{{count}} forskel fra din nuværende opsætning",
 	"versions.details.differences": "{{count}} forskelle fra din nuværende opsætning",
 	"versions.details.comparisonUnavailable": "Sammenligning er ikke tilgængelig",
-	"notice.unsavedChangesKept": "Nogle ændringer på denne enhed var endnu ikke gemt og blev erstattet af nyere indstillinger fra en anden enhed. Din version blev gemt først: åbn Gendan en tidligere version i Callout Studios indstillinger for at få den tilbage.",
+	"notice.unsavedChangesKept":
+		"Nogle ændringer på denne enhed var endnu ikke gemt og blev erstattet af nyere indstillinger fra en anden enhed. Din version blev gemt først: åbn Gendan en tidligere version i Callout Studios indstillinger for at få den tilbage.",
 	"settings.versionHistory": "Gendan en tidligere version",
 	"settings.versions": "Tidligere versioner",
 	"settings.versionsDesc": "Erstat din nuværende opsætning med en tidligere gemt version.",
@@ -1485,12 +1481,13 @@ export const da: Record<string, string> = {
 	"noteChanges.notesOne": "1 note",
 	"noteChanges.askCallout": "Hvad skal der ske med den callout?",
 	"noteChanges.askCallouts": "Hvad skal der ske med de callouts?",
-	"noteChanges.changeRenamed": "Du ændrede visningsnavnet fra \"{{old}}\" til \"{{new}}\", så hoved-ID'et ændres fra \"{{oldId}}\" til \"{{newId}}\".",
-	"noteChanges.changeMainId": "Hoved-ID'et ændres fra \"{{oldId}}\" til \"{{newId}}\".",
-	"noteChanges.changeName": "Du ændrede visningsnavnet fra \"{{old}}\" til \"{{new}}\".",
-	"noteChanges.changeRemoved": "Du fjernede ID'et \"{{id}}\".",
+	"noteChanges.changeRenamed":
+		'Du ændrede visningsnavnet fra "{{old}}" til "{{new}}", så hoved-ID\'et ændres fra "{{oldId}}" til "{{newId}}".',
+	"noteChanges.changeMainId": 'Hoved-ID\'et ændres fra "{{oldId}}" til "{{newId}}".',
+	"noteChanges.changeName": 'Du ændrede visningsnavnet fra "{{old}}" til "{{new}}".',
+	"noteChanges.changeRemoved": 'Du fjernede ID\'et "{{id}}".',
 	"noteChanges.changeRemovedMany": "Du fjernede disse ID'er: {{ids}}.",
-	"noteChanges.changeResetRemoved": "Nulstil til standard fjerner ID'et \"{{id}}\", som du tilføjede.",
+	"noteChanges.changeResetRemoved": 'Nulstil til standard fjerner ID\'et "{{id}}", som du tilføjede.',
 	"noteChanges.changeResetRemovedMany": "Nulstil til standard fjerner de ID'er, du tilføjede: {{ids}}.",
 	"noteChanges.changeFold": "Du har ændret, hvordan denne callout foldes.",
 	"noteChanges.affects": "Det berører {{callouts}} i {{notes}}.",
@@ -1499,7 +1496,8 @@ export const da: Record<string, string> = {
 	"noteChanges.rewriteManyDesc": "Hvert gammelt ID i dine noter bliver til [!{{to}}].",
 	"noteChanges.changeToIdLabel": "ID de skal ændres til",
 	"noteChanges.rewriteDesc": "Hver [!{{id}}] i dine noter bliver til [!{{to}}].",
-	"noteChanges.renameFollowDesc": "Hver [!{{oldId}}] i dine noter bliver til [!{{newId}}], og titler, der lyder \"{{old}}\", bliver til \"{{new}}\".",
-	"noteChanges.titlesChangeDesc": "Titler, der lyder \"{{old}}\", bliver til \"{{new}}\".",
+	"noteChanges.renameFollowDesc":
+		'Hver [!{{oldId}}] i dine noter bliver til [!{{newId}}], og titler, der lyder "{{old}}", bliver til "{{new}}".',
+	"noteChanges.titlesChangeDesc": 'Titler, der lyder "{{old}}", bliver til "{{new}}".',
 	"noteChanges.foldChangeDesc": "Deres + eller - ændres, så det passer.",
 };

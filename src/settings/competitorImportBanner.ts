@@ -3,10 +3,7 @@ import { setIcon, type App } from "obsidian";
 import { getLocale, t } from "../i18n";
 import { addMascot } from "../ui/mascot/mascotPlaces";
 import type { SettingsContext } from "./sections/types";
-import {
-	isCompetitorImportBannerForced,
-	shouldShowCompetitorImportBanner,
-} from "./competitorImportState";
+import { isCompetitorImportBannerForced, shouldShowCompetitorImportBanner } from "./competitorImportState";
 
 export interface DetectedCompetitor {
 	id: "callout-manager" | "admonition";
@@ -43,17 +40,16 @@ export function detectEnabledCompetitors(app: App): DetectedCompetitor[] {
 	if (!enabled) return [];
 
 	return COMPETITORS.filter((competitor) =>
-		competitor.pluginIds.some((pluginId) =>
-			enabled.has(pluginId) &&
-			(Boolean(manager.manifests?.[pluginId]) || Boolean(manager.plugins?.[pluginId])),
+		competitor.pluginIds.some(
+			(pluginId) =>
+				enabled.has(pluginId) &&
+				(Boolean(manager.manifests?.[pluginId]) || Boolean(manager.plugins?.[pluginId])),
 		),
 	).map(({ id, name }) => ({ id, name }));
 }
 
 /** One placeholder carries a locale-aware list of every detected plugin. */
-export function competitorImportMessage(
-	competitors: readonly DetectedCompetitor[],
-): string {
+export function competitorImportMessage(competitors: readonly DetectedCompetitor[]): string {
 	if (competitors.length === 0) return "";
 	const plugins = new Intl.ListFormat(getLocale(), {
 		style: "long",
@@ -115,7 +111,9 @@ export function buildCompetitorImportBanner(
 		text: t("importBanner.action"),
 	});
 	// A click from Enter or Space carries no pointer detail; it shows the ring.
-	importButton.addEventListener("click", (event) => { handlers.onImport(event.detail === 0); });
+	importButton.addEventListener("click", (event) => {
+		handlers.onImport(event.detail === 0);
+	});
 
 	const dismissButton = banner.createEl("button", {
 		cls: "clickable-icon cs-competitor-import-banner-dismiss",

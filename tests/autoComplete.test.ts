@@ -57,9 +57,11 @@ describe("Create new preserves occurrence titles", () => {
 			const { info, editor: ed, line, ch } = triggerAt(h, source!);
 			assert.ok(info);
 			const ctx = { editor: asEditor(ed), file: null, start: info.start, end: { line, ch }, query: info.query };
-			await (h.suggest as unknown as {
-				openCreateForQuery(query: string, context: EditorSuggestContext): Promise<void>;
-			}).openCreateForQuery(info.query, ctx as unknown as EditorSuggestContext);
+			await (
+				h.suggest as unknown as {
+					openCreateForQuery(query: string, context: EditorSuggestContext): Promise<void>;
+				}
+			).openCreateForQuery(info.query, ctx as unknown as EditorSuggestContext);
 			assert.strictEqual(ed.getValue(), expected);
 		});
 	}
@@ -72,8 +74,15 @@ describe("Create new preserves occurrence titles", () => {
 			ed.replaceRange("New title", { line: 0, ch: 14 }, { line: 0, ch: 23 });
 			return h.registry.get("quiet")!;
 		});
-		await (h.suggest as unknown as { openCreateForQuery(query: string, context: EditorSuggestContext): Promise<void> })
-			.openCreateForQuery(info.query, { editor: asEditor(ed), file: null, start: info.start, end: { line, ch }, query: info.query } as unknown as EditorSuggestContext);
+		await (
+			h.suggest as unknown as { openCreateForQuery(query: string, context: EditorSuggestContext): Promise<void> }
+		).openCreateForQuery(info.query, {
+			editor: asEditor(ed),
+			file: null,
+			start: info.start,
+			end: { line, ch },
+			query: info.query,
+		} as unknown as EditorSuggestContext);
 		assert.strictEqual(ed.getValue(), "> [!quiet] New title");
 	});
 	it("lands the cursor as a picked row would", async (test) => {
@@ -89,8 +98,17 @@ describe("Create new preserves occurrence titles", () => {
 		]) {
 			const { info, editor: ed, line, ch } = triggerAt(h, source!);
 			assert.ok(info);
-			await (h.suggest as unknown as { openCreateForQuery(query: string, context: EditorSuggestContext): Promise<void> })
-				.openCreateForQuery(info.query, { editor: asEditor(ed), file: null, start: info.start, end: { line, ch }, query: info.query } as unknown as EditorSuggestContext);
+			await (
+				h.suggest as unknown as {
+					openCreateForQuery(query: string, context: EditorSuggestContext): Promise<void>;
+				}
+			).openCreateForQuery(info.query, {
+				editor: asEditor(ed),
+				file: null,
+				start: info.start,
+				end: { line, ch },
+				query: info.query,
+			} as unknown as EditorSuggestContext);
 			settlePlacement();
 			assert.strictEqual(ed.valueWithCursor(), expected, source);
 		}
@@ -127,10 +145,7 @@ function harness(): Harness {
 	};
 }
 
-function addCallout(
-	registry: Registry,
-	over: Partial<Parameters<Registry["add"]>[0]> = {},
-): void {
+function addCallout(registry: Registry, over: Partial<Parameters<Registry["add"]>[0]> = {}): void {
 	registry.add({
 		id: "quiet",
 		displayName: "Quiet",
@@ -186,9 +201,7 @@ function pick(h: Harness, source: string, calloutId: string): FakeEditor {
 	};
 	// The fake `MouseEvent` takes no arguments; only `instanceof KeyboardEvent`
 	// is a live branch in selectSuggestion, and this must not satisfy it.
-	const MouseEventCtor = (
-		globalThis as unknown as { MouseEvent: new () => MouseEvent }
-	).MouseEvent;
+	const MouseEventCtor = (globalThis as unknown as { MouseEvent: new () => MouseEvent }).MouseEvent;
 	h.suggest.selectSuggestion(def, new MouseEventCtor());
 	return ed;
 }
@@ -242,10 +255,7 @@ describe("onTrigger — the three roles", () => {
 		// role that carries a title.
 		assert.strictEqual(pick(h, "> [!⎸", "note").getValue(), "> [!note] Note");
 		assert.strictEqual(pick(h, ">> [!⎸", "note").getValue(), ">> [!note] Note");
-		assert.strictEqual(
-			pick(h, "> > [!⎸", "note").getValue(),
-			"> > [!note] Note",
-		);
+		assert.strictEqual(pick(h, "> > [!⎸", "note").getValue(), "> > [!note] Note");
 	});
 
 	it("treats heading hashes as a heading callout", () => {
@@ -276,10 +286,7 @@ describe("onTrigger — the three roles", () => {
 
 	it("treats a mid-line token as an inline pill", () => {
 		const h = harness();
-		assert.strictEqual(
-			pick(h, "text before [!⎸", "note").getValue(),
-			"text before [!note] ",
-		);
+		assert.strictEqual(pick(h, "text before [!⎸", "note").getValue(), "text before [!note] ");
 	});
 
 	it("keeps the popover shut mid-line while the inline role is off", () => {
@@ -338,7 +345,6 @@ describe("onTrigger — the query", () => {
 		const h = harness();
 		assert.strictEqual(triggerAt(h, "> [!warn⎸").info?.query, "warn");
 	});
-
 });
 
 /* -------------------------------------------------------------------------- */
@@ -372,21 +378,9 @@ describe("onTrigger — code is not callout syntax", () => {
 
 	it("stays shut inside a fenced block", () => {
 		const h = harness();
-		assert.strictEqual(
-			triggerAt(h, "```markdown\n> [!no⎸\n```").info,
-			null,
-			"backtick fence",
-		);
-		assert.strictEqual(
-			triggerAt(h, "~~~\n> [!no⎸\n~~~").info,
-			null,
-			"tilde fence",
-		);
-		assert.strictEqual(
-			triggerAt(h, "> ```\n> > [!no⎸\n> ```").info,
-			null,
-			"fence nested in a blockquote",
-		);
+		assert.strictEqual(triggerAt(h, "```markdown\n> [!no⎸\n```").info, null, "backtick fence");
+		assert.strictEqual(triggerAt(h, "~~~\n> [!no⎸\n~~~").info, null, "tilde fence");
+		assert.strictEqual(triggerAt(h, "> ```\n> > [!no⎸\n> ```").info, null, "fence nested in a blockquote");
 	});
 
 	it("opens again below a fence that closed", () => {
@@ -398,10 +392,7 @@ describe("onTrigger — code is not callout syntax", () => {
 		// ``` inside a ```` block is content, not the closer — so the line after
 		// it is still code.
 		const h = harness();
-		assert.strictEqual(
-			triggerAt(h, "````\n```\n> [!no⎸").info,
-			null,
-		);
+		assert.strictEqual(triggerAt(h, "````\n```\n> [!no⎸").info, null);
 	});
 
 	it("stays shut in YAML frontmatter", () => {
@@ -424,15 +415,10 @@ describe("onTrigger — code is not callout syntax", () => {
 /* -------------------------------------------------------------------------- */
 
 describe("getSuggestions", () => {
-	const context = (query: string) =>
-		({ query }) as Parameters<Suggest["getSuggestions"]>[0];
+	const context = (query: string) => ({ query }) as Parameters<Suggest["getSuggestions"]>[0];
 
 	const ids = (h: Harness, query: string): string[] =>
-		h.suggest
-			.getSuggestions(context(query))
-			.map((item) =>
-				"__createNew" in item ? `+${item.query}` : item.id,
-			);
+		h.suggest.getSuggestions(context(query)).map((item) => ("__createNew" in item ? `+${item.query}` : item.id));
 
 	it("offers every usable callout for an empty query", () => {
 		const h = harness();
@@ -474,7 +460,10 @@ describe("getSuggestions", () => {
 			.filter((item) => !("__createNew" in item))
 			.map((item) => (item as { displayName: string }).displayName);
 
-		assert.deepStrictEqual(names, [...names].sort((a, b) => a.localeCompare(b)));
+		assert.deepStrictEqual(
+			names,
+			[...names].sort((a, b) => a.localeCompare(b)),
+		);
 	});
 
 	it("appends a Create-new row when nothing matches the typed id exactly", () => {
@@ -548,18 +537,12 @@ describe("selectSuggestion — block header", () => {
 
 	it("replaces to the end of the line, not just the token", () => {
 		const h = harness();
-		assert.strictEqual(
-			pick(h, "> [!no⎸te] Note", "warning").getValue(),
-			"> [!warning] Warning",
-		);
+		assert.strictEqual(pick(h, "> [!no⎸te] Note", "warning").getValue(), "> [!warning] Warning");
 	});
 
 	it("keeps a title the user wrote themselves", () => {
 		const h = harness();
-		assert.strictEqual(
-			pick(h, "> [!no⎸] My own words", "note").getValue(),
-			"> [!note] My own words",
-		);
+		assert.strictEqual(pick(h, "> [!no⎸] My own words", "note").getValue(), "> [!note] My own words");
 	});
 
 	it("reads a fold mark already on the line as syntax, not as title", () => {
@@ -569,31 +552,19 @@ describe("selectSuggestion — block header", () => {
 		// beginning with a dash. The heading role does the opposite; see the
 		// heading suite below.
 		const h = harness();
-		assert.strictEqual(
-			pick(h, "> [!no⎸]- My own words", "note").getValue(),
-			"> [!note] My own words",
-		);
+		assert.strictEqual(pick(h, "> [!no⎸]- My own words", "note").getValue(), "> [!note] My own words");
 		addCallout(h.registry, { foldable: true, defaultFolded: true });
-		assert.strictEqual(
-			pick(h, "> [!qu⎸]+ My own words", "quiet").getValue(),
-			"> [!quiet]- My own words",
-		);
+		assert.strictEqual(pick(h, "> [!qu⎸]+ My own words", "quiet").getValue(), "> [!quiet]- My own words");
 	});
 
 	it("replaces a title that is only some other callout's display name", () => {
 		const h = harness();
-		assert.strictEqual(
-			pick(h, "> [!no⎸] Warning", "note").getValue(),
-			"> [!note] Note",
-		);
+		assert.strictEqual(pick(h, "> [!no⎸] Warning", "note").getValue(), "> [!note] Note");
 	});
 
 	it("carries the metadata the occurrence already had", () => {
 		const h = harness();
-		assert.strictEqual(
-			pick(h, "> [!no⎸|purple]", "note").getValue(),
-			"> [!note|purple] Note",
-		);
+		assert.strictEqual(pick(h, "> [!no⎸|purple]", "note").getValue(), "> [!note|purple] Note");
 	});
 
 	it("writes the alias the user typed, titled the way Obsidian titles it", () => {
@@ -622,10 +593,7 @@ describe("selectSuggestion — block header", () => {
 		// default title for `[!library-voice]` would read "Library voice".
 		const h = harness();
 		addCallout(h.registry, { id: "library-voice", displayName: "Library Voice" });
-		assert.strictEqual(
-			pick(h, "> [!libr⎸", "library-voice").getValue(),
-			"> [!library-voice] Library Voice",
-		);
+		assert.strictEqual(pick(h, "> [!libr⎸", "library-voice").getValue(), "> [!library-voice] Library Voice");
 	});
 
 	it("replaces a title written from an alias when the type is switched", () => {
@@ -655,10 +623,7 @@ describe("selectSuggestion — heading callout", () => {
 
 	it("keeps a title the user already wrote", () => {
 		const h = harness();
-		assert.strictEqual(
-			pick(h, "## [!no⎸] My section", "note").getValue(),
-			"## [!note] My section",
-		);
+		assert.strictEqual(pick(h, "## [!no⎸] My section", "note").getValue(), "## [!note] My section");
 	});
 
 	it("finishes the empty type Wrap in callout leaves on a heading", () => {
@@ -681,10 +646,7 @@ describe("selectSuggestion — heading callout", () => {
 
 	it("carries metadata", () => {
 		const h = harness();
-		assert.strictEqual(
-			pick(h, "## [!no⎸|purple]", "note").getValue(),
-			"## [!note|purple]",
-		);
+		assert.strictEqual(pick(h, "## [!no⎸|purple]", "note").getValue(), "## [!note|purple]");
 	});
 
 	it("keeps a title that starts with a dash", () => {
@@ -694,30 +656,21 @@ describe("selectSuggestion — heading callout", () => {
 		// only in the fact that this role `return`s before the read. See
 		// `headingFoldSyntax.test.ts` for the property on its own.
 		const h = harness();
-		assert.strictEqual(
-			pick(h, "## [!no⎸]- My section", "note").getValue(),
-			"## [!note] - My section",
-		);
+		assert.strictEqual(pick(h, "## [!no⎸]- My section", "note").getValue(), "## [!note] - My section");
 	});
 });
 
 describe("selectSuggestion — inline pill", () => {
 	it("replaces only the token and leaves the rest of the line alone", () => {
 		const h = harness();
-		assert.strictEqual(
-			pick(h, "before [!no⎸] after", "note").getValue(),
-			"before [!note] after",
-		);
+		assert.strictEqual(pick(h, "before [!no⎸] after", "note").getValue(), "before [!note] after");
 	});
 
 	it("guarantees exactly one space after the pill", () => {
 		const h = harness();
 		assert.strictEqual(pick(h, "a [!no⎸]", "note").getValue(), "a [!note] ");
 		// …and does not add a second one when there already is a space.
-		assert.strictEqual(
-			pick(h, "a [!no⎸] b", "note").getValue(),
-			"a [!note] b",
-		);
+		assert.strictEqual(pick(h, "a [!no⎸] b", "note").getValue(), "a [!note] b");
 	});
 
 	it("parks the cursor after that space, so Enter keeps writing on this line", () => {
@@ -740,25 +693,16 @@ describe("selectSuggestion — inline pill", () => {
 
 	it("carries metadata", () => {
 		const h = harness();
-		assert.strictEqual(
-			pick(h, "a [!no⎸|purple] b", "note").getValue(),
-			"a [!note|purple] b",
-		);
+		assert.strictEqual(pick(h, "a [!no⎸|purple] b", "note").getValue(), "a [!note|purple] b");
 	});
 
 	it("keeps a pill's `{text}` attached, landing after it", () => {
 		// A space between `]` and `{` turns the payload into literal text, so
 		// retyping a content pill's type used to break the pill it changed.
 		const h = harness();
-		assert.strictEqual(
-			pick(h, "a [!warn⎸]{keep this} b", "note").valueWithCursor(),
-			"a [!note]{keep this}| b",
-		);
+		assert.strictEqual(pick(h, "a [!warn⎸]{keep this} b", "note").valueWithCursor(), "a [!note]{keep this}| b");
 		// The empty type "Wrap in callout" leaves for a partly selected line.
-		assert.strictEqual(
-			pick(h, "a [!⎸]{keep this}", "note").valueWithCursor(),
-			"a [!note]{keep this}|",
-		);
+		assert.strictEqual(pick(h, "a [!⎸]{keep this}", "note").valueWithCursor(), "a [!note]{keep this}|");
 	});
 });
 
@@ -792,11 +736,7 @@ describe("selectSuggestion — where Enter leaves the cursor", () => {
 		for (const source of ["> [!no⎸", "## [!no⎸", "a [!no⎸"]) {
 			const h = harness();
 			pick(h, source, "note");
-			assert.strictEqual(
-				(h.suggest as unknown as { closedCount: number }).closedCount,
-				1,
-				source,
-			);
+			assert.strictEqual((h.suggest as unknown as { closedCount: number }).closedCount, 1, source);
 		}
 	});
 
@@ -827,18 +767,12 @@ describe("selectSuggestion — where Enter leaves the cursor", () => {
 		// quoting it would leave the two touching, and the first word typed would
 		// pull the paragraph in as a lazy continuation.
 		const h = harness();
-		assert.strictEqual(
-			landing(h, "> [!no⎸\n\nNext paragraph", "note"),
-			"> [!note] Note\n> |\n\nNext paragraph",
-		);
+		assert.strictEqual(landing(h, "> [!no⎸\n\nNext paragraph", "note"), "> [!note] Note\n> |\n\nNext paragraph");
 	});
 
 	it("never quotes the line below into the callout", () => {
 		const h = harness();
-		assert.strictEqual(
-			landing(h, "> [!no⎸\n## Next section", "note"),
-			"> [!note] Note\n> |\n## Next section",
-		);
+		assert.strictEqual(landing(h, "> [!no⎸\n## Next section", "note"), "> [!note] Note\n> |\n## Next section");
 		// A nested header over its parent's body: the parent line stays the
 		// parent's.
 		assert.strictEqual(
@@ -850,27 +784,18 @@ describe("selectSuggestion — where Enter leaves the cursor", () => {
 	it("goes to a body that is already there", () => {
 		// What "Wrap in callout" leaves: the header over the quoted content.
 		const h = harness();
-		assert.strictEqual(
-			landing(h, "> [!⎸\n> wrapped text", "note"),
-			"> [!note] Note\n> |wrapped text",
-		);
+		assert.strictEqual(landing(h, "> [!⎸\n> wrapped text", "note"), "> [!note] Note\n> |wrapped text");
 	});
 
 	it("stays on a block header when only its type changed", () => {
 		const h = harness();
-		assert.strictEqual(
-			landing(h, "> [!no⎸] My own words\n> body", "note"),
-			"> [!note] My own words|\n> body",
-		);
+		assert.strictEqual(landing(h, "> [!no⎸] My own words\n> body", "note"), "> [!note] My own words|\n> body");
 	});
 
 	it("opens a plain line under a new heading callout", () => {
 		const h = harness();
 		assert.strictEqual(landing(h, "## [!no⎸", "note"), "## [!note]\n|");
-		assert.strictEqual(
-			landing(h, "## [!no⎸\nSection text", "note"),
-			"## [!note]\n|\nSection text",
-		);
+		assert.strictEqual(landing(h, "## [!no⎸\nSection text", "note"), "## [!note]\n|\nSection text");
 	});
 
 	it("stays on a heading when only its type changed", () => {
@@ -898,17 +823,13 @@ describe("renderSuggestion", () => {
 	const classes = (element: unknown): string[] =>
 		(element as { classList: { toArray(): string[] } }).classList.toArray();
 
-	const children = (element: unknown): unknown[] =>
-		(element as { children: unknown[] }).children;
+	const children = (element: unknown): unknown[] => (element as { children: unknown[] }).children;
 
 	it("marks its owning list for scoped overflow styles", () => {
 		const h = harness();
 		const list = el({ tag: "div", cls: "suggestion" });
 		const item = list.createDiv({ cls: "suggestion-item" });
-		h.suggest.renderSuggestion(
-			{ __createNew: true, query: "brand new" },
-			asEl(item),
-		);
+		h.suggest.renderSuggestion({ __createNew: true, query: "brand new" }, asEl(item));
 
 		assert.ok(classes(list).includes("callout-studio-suggestion-list"));
 	});
@@ -931,8 +852,9 @@ describe("renderSuggestion", () => {
 	/** The bold runs (`.suggestion-highlight`) inside an element. */
 	const bold = (element: unknown): string[] =>
 		Array.from(
-			(element as { querySelectorAll(sel: string): ArrayLike<{ textContent: string }> })
-				.querySelectorAll(".suggestion-highlight"),
+			(element as { querySelectorAll(sel: string): ArrayLike<{ textContent: string }> }).querySelectorAll(
+				".suggestion-highlight",
+			),
 			(span) => span.textContent,
 		);
 

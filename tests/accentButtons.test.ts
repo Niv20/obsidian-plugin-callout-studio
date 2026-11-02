@@ -29,6 +29,9 @@ describe("the accent hover is Obsidian's", () => {
 			const selected = selecting(rule.selector);
 			return /\.mod-cta\b/.test(selected) && selected.includes(":hover");
 		});
-		assert.deepStrictEqual(hovering.map((rule) => rule.selector), []);
+		assert.deepStrictEqual(
+			hovering.map((rule) => rule.selector),
+			[],
+		);
 	});
 });

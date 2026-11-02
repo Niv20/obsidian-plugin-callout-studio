@@ -1,10 +1,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import type { App } from "obsidian";
-import {
-	competitorImportMessage,
-	detectEnabledCompetitors,
-} from "../src/settings/competitorImportBanner";
+import { competitorImportMessage, detectEnabledCompetitors } from "../src/settings/competitorImportBanner";
 
 function appWithPlugins(enabled: string[], installed = enabled): App {
 	return {
@@ -18,23 +15,16 @@ function appWithPlugins(enabled: string[], installed = enabled): App {
 describe("the first-install competitor import banner", () => {
 	it("requires a competitor to be both installed and enabled", () => {
 		assert.deepStrictEqual(
-			detectEnabledCompetitors(
-				appWithPlugins(["callout-manager"], ["obsidian-admonition"]),
-			),
+			detectEnabledCompetitors(appWithPlugins(["callout-manager"], ["obsidian-admonition"])),
 			[],
 		);
 	});
 
 	it("recognizes both supported competitors in a stable display order", () => {
-		assert.deepStrictEqual(
-			detectEnabledCompetitors(
-				appWithPlugins(["obsidian-admonition", "callout-manager"]),
-			),
-			[
-				{ id: "callout-manager", name: "Callout Manager" },
-				{ id: "admonition", name: "Admonition" },
-			],
-		);
+		assert.deepStrictEqual(detectEnabledCompetitors(appWithPlugins(["obsidian-admonition", "callout-manager"])), [
+			{ id: "callout-manager", name: "Callout Manager" },
+			{ id: "admonition", name: "Admonition" },
+		]);
 	});
 
 	it("passes one locale-aware plugin list to one translation string", () => {

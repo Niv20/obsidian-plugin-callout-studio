@@ -85,12 +85,7 @@ function calloutsBox(ctx: TreeContext): CsGroup {
 		// switch for them is off); the class keeps the line between rows off the
 		// first one shown (styles.css).
 		cls: "cs-callouts-box",
-		items: [
-			themeCalloutsPage(ctx),
-			myCalloutsPage(ctx),
-			builtInCalloutsPage(ctx),
-			fallbackRow(ctx),
-		],
+		items: [themeCalloutsPage(ctx), myCalloutsPage(ctx), builtInCalloutsPage(ctx), fallbackRow(ctx)],
 	};
 }
 

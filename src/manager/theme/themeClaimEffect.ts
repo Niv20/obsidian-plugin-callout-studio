@@ -35,10 +35,7 @@ export interface CalloutStyle {
 }
 
 /** A reading taken up front, as plain data. */
-export function sampledStyle(
-	icon: string,
-	boxes: ReadonlyMap<string, ReadonlyMap<string, string>>,
-): CalloutStyle {
+export function sampledStyle(icon: string, boxes: ReadonlyMap<string, ReadonlyMap<string, string>>): CalloutStyle {
 	return {
 		icon: () => icon,
 		boxes: () => boxes.keys(),
@@ -63,11 +60,7 @@ const NEVER_DRAWN =
 const SIDE_COLOR = /^border-(top|right|bottom|left|block-start|block-end|inline-start|inline-end)-color$/;
 
 /** True when `after` differs from `before` in a way that reaches the screen. */
-export function changesVisibly(
-	props: readonly string[],
-	before: CalloutStyle,
-	after: CalloutStyle,
-): boolean {
+export function changesVisibly(props: readonly string[], before: CalloutStyle, after: CalloutStyle): boolean {
 	if (before.icon() !== after.icon()) return true;
 	for (const box of before.boxes()) {
 		const was = (prop: string): string => before.value(box, prop) ?? "";
@@ -101,8 +94,7 @@ function reachesScreen(
 	const side = SIDE_COLOR.exec(prop)?.[1];
 	if (side) {
 		const drawn = (read: (p: string) => string): boolean =>
-			!["none", "hidden"].includes(read(`border-${side}-style`)) &&
-			read(`border-${side}-width`) !== "0px";
+			!["none", "hidden"].includes(read(`border-${side}-style`)) && read(`border-${side}-width`) !== "0px";
 		return drawn(was) || drawn(now);
 	}
 	if (prop === "outline-color") return was("outline-style") !== "none" || now("outline-style") !== "none";

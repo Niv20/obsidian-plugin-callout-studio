@@ -10,23 +10,32 @@ import { deferred } from "./support/portableVaultHarness";
 import { notifySidebarEditorSelection } from "../src/ui/sidebarSelection";
 import { readRepoFile } from "./support/sourceScan";
 
-const saved = (before: string, content = before, line = 1) =>
-	({ before, line, contentFingerprint: fingerprintCalloutContent(content) });
+const saved = (before: string, content = before, line = 1) => ({
+	before,
+	line,
+	contentFingerprint: fingerprintCalloutContent(content),
+});
 
 describe("conversion source navigation", () => {
 	it("selects just the inline token and its payload, revalidating the complete source line", async () => {
 		const sourceLine = "Before [!tip]{word} after [!note]";
-		const before = "[!tip]{word}", from = sourceLine.indexOf(before), to = from + before.length;
+		const before = "[!tip]{word}",
+			from = sourceLine.indexOf(before),
+			to = from + before.length;
 		const change = { ...saved(before, sourceLine), sourceLine, from, to };
-		assert.deepEqual(await resolvePortableSourcePosition(change, `Added\n${sourceLine}`),
-			{ from: { line: 1, ch: from }, to: { line: 1, ch: to } });
+		assert.deepEqual(await resolvePortableSourcePosition(change, `Added\n${sourceLine}`), {
+			from: { line: 1, ch: from },
+			to: { line: 1, ch: to },
+		});
 		assert.equal(await resolvePortableSourcePosition({ ...change, to: to + 1 }, sourceLine), null);
 		assert.equal(await resolvePortableSourcePosition(change, sourceLine.replace("Before", "Edited")), null);
 	});
 	it("retains exact duplicate coordinates in unchanged notes, including normalized CRLF", async () => {
 		const before = "[!note]";
-		assert.deepEqual(await resolvePortableSourcePosition(saved(before, `${before}\r\n${before}`, 2), `${before}\n${before}`),
-			{ from: { line: 1, ch: 0 }, to: { line: 1, ch: before.length } });
+		assert.deepEqual(
+			await resolvePortableSourcePosition(saved(before, `${before}\r\n${before}`, 2), `${before}\n${before}`),
+			{ from: { line: 1, ch: 0 }, to: { line: 1, ch: before.length } },
+		);
 	});
 	it("only relocates uniquely unchanged lines and refuses ambiguous or edited source", async () => {
 		const before = "[!note]";
@@ -54,16 +63,26 @@ describe("conversion file groups and cards", () => {
 			assert.equal(h.root.querySelectorAll('[aria-current="true"]').length, 1);
 			// The whole row, its checkbox included, takes the current-row fill.
 			const rows = h.root.querySelectorAll(".cs-portable-row");
-			assert.deepEqual(rows.map((row) => row.hasClass("is-active")), [true, false]);
-			const opened = [...h.opened], revealed = [...h.revealed];
+			assert.deepEqual(
+				rows.map((row) => row.hasClass("is-active")),
+				[true, false],
+			);
+			const opened = [...h.opened],
+				revealed = [...h.revealed];
 			h.root.fire("click", { target: h.root.querySelectorAll(".cs-portable-after-button")[1] });
 			assert.equal(h.root.querySelector('[aria-current="true"]'), null);
-			assert.equal(h.root.querySelectorAll(".cs-portable-row.is-active").length, 0, "the edited row is the only marked one");
+			assert.equal(
+				h.root.querySelectorAll(".cs-portable-row.is-active").length,
+				0,
+				"the edited row is the only marked one",
+			);
 			assert.equal(h.root.querySelectorAll(".is-editing").length, 1);
 			assert.ok(h.root.querySelectorAll(".cs-portable-change")[1]!.hasClass("is-editing"));
 			assert.deepEqual(h.opened, opened);
 			assert.deepEqual(h.revealed, revealed);
-		} finally { await h.destroy(); }
+		} finally {
+			await h.destroy();
+		}
 	});
 	it("switches inline editors without opening or selecting a source", async () => {
 		const h = harness({ "a.md": "[!note]\n[!tip]" });
@@ -71,9 +90,13 @@ describe("conversion file groups and cards", () => {
 			await h.view.onOpen();
 			h.root.fire("click", { target: h.root.querySelectorAll(".cs-portable-after-button")[0] });
 			const first = h.root.querySelector("textarea")!;
-			first.value = "First custom"; first.fire("input");
-			h.root.fire("click", { target: h.root.querySelectorAll('.cs-portable-card-actions button[data-action="edit"]')[1] });
-			const latest = h.root.querySelector("textarea")!; assert.notEqual(latest, first);
+			first.value = "First custom";
+			first.fire("input");
+			h.root.fire("click", {
+				target: h.root.querySelectorAll('.cs-portable-card-actions button[data-action="edit"]')[1],
+			});
+			const latest = h.root.querySelector("textarea")!;
+			assert.notEqual(latest, first);
 			await h.settle();
 			assert.equal(h.root.ownerDocument.activeElement, latest);
 			assert.deepEqual([latest.selectionStart, latest.selectionEnd], [0, 3]);
@@ -82,33 +105,46 @@ describe("conversion file groups and cards", () => {
 			assert.equal(h.root.querySelectorAll(".is-editing").length, 1);
 			assert.equal(h.root.querySelectorAll(".cs-portable-after")[0]!.textContent, "First custom");
 			assert.deepEqual(h.written, []);
-		} finally { await h.destroy(); }
+		} finally {
+			await h.destroy();
+		}
 	});
 	it("does not move the note after an inline editor closes", async () => {
 		const h = harness({ "a.md": "[!note]" });
 		const outside = h.root.ownerDocument.body.createEl("button");
 		let loads = 0;
-		h.documentLeaf.loadIfDeferred = async () => { loads++; };
+		h.documentLeaf.loadIfDeferred = async () => {
+			loads++;
+		};
 		try {
 			await h.view.onOpen();
 			h.root.fire("click", { target: h.root.querySelector(".cs-portable-after-button") });
-			outside.focus(); h.root.ownerDocument.fire("click", { target: outside });
+			outside.focus();
+			h.root.ownerDocument.fire("click", { target: outside });
 			await h.settle();
 			assert.equal(h.root.querySelector("textarea"), null);
 			assert.equal(h.root.ownerDocument.activeElement, outside);
 			assert.equal(h.root.querySelector('[aria-current="true"]'), null);
 			assert.equal(loads, 0);
-			assert.deepEqual(h.opened, []); assert.deepEqual(h.revealed, []); assert.deepEqual(h.written, []);
-		} finally { outside.remove(); await h.destroy(); }
+			assert.deepEqual(h.opened, []);
+			assert.deepEqual(h.revealed, []);
+			assert.deepEqual(h.written, []);
+		} finally {
+			outside.remove();
+			await h.destroy();
+		}
 	});
 	it("opens a clicked file heading while an inline edit is active", async () => {
 		const h = harness({ "a.md": "[!note]", "b.md": "[!tip]" });
 		try {
 			await h.view.onOpen();
 			h.root.fire("click", { target: h.root.querySelector(".cs-portable-after-button") });
-			const target = h.root.querySelectorAll('button[data-action="file"]').find(button => button.dataset.path === "b.md");
+			const target = h.root
+				.querySelectorAll('button[data-action="file"]')
+				.find((button) => button.dataset.path === "b.md");
 			assert.ok(target);
-			h.root.fire("click", { target }); h.root.ownerDocument.fire("click", { target });
+			h.root.fire("click", { target });
+			h.root.ownerDocument.fire("click", { target });
 			await h.settle();
 			assert.deepEqual(h.opened, ["b.md"]);
 			assert.deepEqual(h.revealed, ["top"]);
@@ -116,22 +152,41 @@ describe("conversion file groups and cards", () => {
 			assert.equal(h.root.querySelector("textarea"), null);
 			assert.equal(h.root.querySelector('[aria-current="true"]'), null);
 			assert.deepEqual(h.written, []);
-		} finally { await h.destroy(); }
+		} finally {
+			await h.destroy();
+		}
 	});
 	it("groups source and linked changes by file, in one box per note, with localized row roles", async () => {
 		const h = harness({ "a.md": "# Report [!note]\n[!tip]", "b.md": "[[a#Report note]]" });
 		try {
 			await h.view.onOpen();
 			const groups = h.root.querySelectorAll(".cs-sidebar-file");
-			assert.deepEqual(groups.map(group => group.dataset.path), ["a.md", "b.md"]);
-			assert.deepEqual(groups.map(group => group.querySelector(".cs-sidebar-file-link")?.textContent), ["a 2", "b 1"]);
+			assert.deepEqual(
+				groups.map((group) => group.dataset.path),
+				["a.md", "b.md"],
+			);
+			assert.deepEqual(
+				groups.map((group) => group.querySelector(".cs-sidebar-file-link")?.textContent),
+				["a 2", "b 1"],
+			);
 			for (const group of groups) {
 				const link = group.querySelector(".cs-sidebar-file-link")!;
-				assert.equal(link.getAttribute("aria-label"), null, "file names rely on visible text without a hover popup");
+				assert.equal(
+					link.getAttribute("aria-label"),
+					null,
+					"file names rely on visible text without a hover popup",
+				);
 				assert.equal(link.getAttribute("title"), null);
-				assert.equal(link.querySelector(".tree-item-flair")?.getAttribute("aria-hidden"), null, "the count is read out");
+				assert.equal(
+					link.querySelector(".tree-item-flair")?.getAttribute("aria-hidden"),
+					null,
+					"the count is read out",
+				);
 			}
-			assert.deepEqual(groups.map(group => group.querySelectorAll(".cs-sidebar-result").length), [2, 1]);
+			assert.deepEqual(
+				groups.map((group) => group.querySelectorAll(".cs-sidebar-result").length),
+				[2, 1],
+			);
 			assert.equal(groups[0]!.querySelectorAll(".search-result-file-matches").length, 1);
 			// A conversion row is not a control itself, so it is not Obsidian's
 			// match row, whose hover tint would light it up.
@@ -140,52 +195,85 @@ describe("conversion file groups and cards", () => {
 			assert.ok(locations[0]!.textContent.includes(t("vaultStats.roleHeading")));
 			assert.ok(locations[1]!.textContent.includes(t("vaultStats.roleInline")));
 			assert.ok(locations[2]!.textContent.includes(t("portable.roleLink")));
-			assert.ok(locations.every(location => !location.textContent.includes(".md")));
+			assert.ok(locations.every((location) => !location.textContent.includes(".md")));
 			assert.equal(h.root.querySelectorAll(".cs-portable-diff-arrow").length, 0);
-			assert.deepEqual(h.root.querySelectorAll(".cs-portable-diff-label").slice(0, 2).map(el => el.textContent),
-				[t("portable.before"), t("portable.after")]);
-			assert.deepEqual(h.root.querySelectorAll(".cs-portable-before").map(el => el.textContent), ["# Report [!note]", "[!tip]", "[[a#Report note]]"]);
-			assert.deepEqual(h.root.querySelectorAll(".cs-portable-after").map(row => row.textContent), ["# Report", "tip", "[[a#Report]]"]);
-		} finally { await h.destroy(); }
+			assert.deepEqual(
+				h.root
+					.querySelectorAll(".cs-portable-diff-label")
+					.slice(0, 2)
+					.map((el) => el.textContent),
+				[t("portable.before"), t("portable.after")],
+			);
+			assert.deepEqual(
+				h.root.querySelectorAll(".cs-portable-before").map((el) => el.textContent),
+				["# Report [!note]", "[!tip]", "[[a#Report note]]"],
+			);
+			assert.deepEqual(
+				h.root.querySelectorAll(".cs-portable-after").map((row) => row.textContent),
+				["# Report", "tip", "[[a#Report]]"],
+			);
+		} finally {
+			await h.destroy();
+		}
 	});
 	it("card clicks reveal the exact source line without toggling its independent checkbox or jumping its group", async () => {
 		const h = harness();
 		try {
 			await h.view.onOpen();
 			let groupScrolls = 0;
-			h.root.querySelector(".cs-sidebar-file")!.scrollIntoView = () => { groupScrolls++; };
+			h.root.querySelector(".cs-sidebar-file")!.scrollIntoView = () => {
+				groupScrolls++;
+			};
 			const card = h.root.querySelectorAll('button[data-action="result"]')[1]!;
-			h.root.fire("click", { target: card }); await h.settle();
+			h.root.fire("click", { target: card });
+			await h.settle();
 			assert.deepEqual(h.opened, ["a.md"]);
-			assert.deepEqual(h.revealed, [[{ line: 1, ch: 2 }, { line: 1, ch: 14 }]]);
-			assert.ok(h.inputs().every(input => input.checked));
+			assert.deepEqual(h.revealed, [
+				[
+					{ line: 1, ch: 2 },
+					{ line: 1, ch: 14 },
+				],
+			]);
+			assert.ok(h.inputs().every((input) => input.checked));
 			assert.equal(groupScrolls, 0);
 			assert.equal(h.root.querySelectorAll('[aria-current="true"]').length, 1);
 			h.choose(1, false);
-			h.root.fire("click", { target: h.inputs()[1] }); await h.settle();
+			h.root.fire("click", { target: h.inputs()[1] });
+			await h.settle();
 			assert.equal(h.inputs()[1]!.checked, false);
 			assert.deepEqual(h.opened, ["a.md"]);
-		} finally { await h.destroy(); }
+		} finally {
+			await h.destroy();
+		}
 	});
 	it("keeps a clicked card current until the user moves the caret, then follows the caret", async () => {
 		const h = harness();
 		try {
 			await h.view.onOpen();
-			h.root.fire("click", { target: h.root.querySelectorAll('button[data-action="result"]')[1] }); await h.settle();
+			h.root.fire("click", { target: h.root.querySelectorAll('button[data-action="result"]')[1] });
+			await h.settle();
 			assert.deepEqual(h.current(), ["[!tip]{word}"]);
 			// Navigation leaves the caret on the heading's line; a restore onto it is not a move.
-			notifySidebarEditorSelection(h.documentView.editor); h.flushFrames();
+			notifySidebarEditorSelection(h.documentView.editor);
+			h.flushFrames();
 			assert.deepEqual(h.current(), ["[!tip]{word}"]);
 			h.moveCaret(1, 0);
 			assert.deepEqual(h.current(), [], "the text before the inline callout is in no card");
 			h.moveCaret(0, 4);
 			assert.deepEqual(h.current(), ["# [!note] Heading"]);
-			h.root.fire("click", { target: h.root.querySelector('button[data-action="file"]'), metaKey: true }); await h.settle();
+			h.root.fire("click", { target: h.root.querySelector('button[data-action="file"]'), metaKey: true });
+			await h.settle();
 			assert.deepEqual(h.opened, ["a.md", "a.md"]);
 			assert.deepEqual(h.revealed.at(-1), "top");
 			h.flushFrames();
-			assert.deepEqual(h.current(), ["# [!note] Heading"], "opening the note at the top leaves the caret's card marked");
-		} finally { await h.destroy(); }
+			assert.deepEqual(
+				h.current(),
+				["# [!note] Heading"],
+				"opening the note at the top leaves the caret's card marked",
+			);
+		} finally {
+			await h.destroy();
+		}
 	});
 	it("marks the card under the caret: an inline callout it touches, else the line's heading link", async () => {
 		const h = harness({ "a.md": "# Report [!note]\n[!tip]{word} and [[#Report note]]\nplain" });
@@ -203,7 +291,9 @@ describe("conversion file groups and cards", () => {
 			h.setLiveText("# Report [!note]\n[!tip]{word} edited\nplain");
 			h.moveCaret(1, 4);
 			assert.deepEqual(h.current(), [], "a line typed since the scan matches nothing until the rescan");
-		} finally { await h.destroy(); }
+		} finally {
+			await h.destroy();
+		}
 	});
 	it("leaves heading links out of the summary when there are none to update", async () => {
 		/** The selection's two lines, one under the other: the replacements, then the heading links. */
@@ -211,17 +301,29 @@ describe("conversion file groups and cards", () => {
 		const plain = harness({ "a.md": "[!note]\n[!tip]" });
 		try {
 			await plain.view.onOpen();
-			assert.equal(lines(plain)[0]!.textContent, t("portable.selectionSummaryNoLinks", { selected: 2, total: 2 }));
+			assert.equal(
+				lines(plain)[0]!.textContent,
+				t("portable.selectionSummaryNoLinks", { selected: 2, total: 2 }),
+			);
 			assert.ok(!lines(plain)[0]!.textContent.includes("0"));
 			assert.equal((lines(plain)[1] as unknown as HTMLElement).hidden, true, "no second line to say 0");
-		} finally { await plain.destroy(); }
+		} finally {
+			await plain.destroy();
+		}
 		const linked = harness({ "a.md": "# Report [!note]", "b.md": "[[a#Report note]]" });
 		try {
 			await linked.view.onOpen();
-			const [replacements, links] = splitSelectionSummary(t("portable.selectionSummary", { selected: 1, total: 1, links: 1 }));
-			assert.deepEqual(Array.from(lines(linked), (line) => line.textContent), [replacements, links]);
+			const [replacements, links] = splitSelectionSummary(
+				t("portable.selectionSummary", { selected: 1, total: 1, links: 1 }),
+			);
+			assert.deepEqual(
+				Array.from(lines(linked), (line) => line.textContent),
+				[replacements, links],
+			);
 			assert.equal((lines(linked)[1] as unknown as HTMLElement).hidden, false);
-		} finally { await linked.destroy(); }
+		} finally {
+			await linked.destroy();
+		}
 	});
 	it("marks a clicked row where it stands, without drawing the rows again, so the icons under the pointer stay put", async () => {
 		const h = harness({ "a.md": "[!note]\n[!tip]" });
@@ -233,16 +335,28 @@ describe("conversion file groups and cards", () => {
 			h.root.fire("click", { target: h.root.querySelectorAll('button[data-action="result"]')[0] });
 			await h.settle();
 			// The same elements, not new ones with the same look: a new pair of icons would vanish and fade in again.
-			assert.deepEqual(Array.from(h.root.querySelectorAll(".cs-portable-row"), (row, i) => row === rows[i]), [true, true]);
-			assert.deepEqual(Array.from(h.root.querySelectorAll(".cs-portable-card-actions"), (el, i) => el === icons[i]), [true, true]);
-			assert.deepEqual(rows.map((row) => row.hasClass("is-active")), [true, false]);
-		} finally { await h.destroy(); }
+			assert.deepEqual(
+				Array.from(h.root.querySelectorAll(".cs-portable-row"), (row, i) => row === rows[i]),
+				[true, true],
+			);
+			assert.deepEqual(
+				Array.from(h.root.querySelectorAll(".cs-portable-card-actions"), (el, i) => el === icons[i]),
+				[true, true],
+			);
+			assert.deepEqual(
+				rows.map((row) => row.hasClass("is-active")),
+				[true, false],
+			);
+		} finally {
+			await h.destroy();
+		}
 	});
 	it("keeps a folded note folded when the rows are drawn again, until it is unfolded", async () => {
 		const h = harness({ "a.md": "[!note]\n[!tip]", "b.md": "[!info]" });
 		try {
 			await h.view.onOpen();
-			const sections = (): boolean[] => Array.from(h.root.querySelectorAll(".cs-sidebar-file"), (section) => section.hasClass("is-collapsed"));
+			const sections = (): boolean[] =>
+				Array.from(h.root.querySelectorAll(".cs-sidebar-file"), (section) => section.hasClass("is-collapsed"));
 			assert.deepEqual(sections(), [false, false]);
 			h.root.querySelectorAll(".cs-sidebar-fold")[0]!.fire("click");
 			assert.deepEqual(sections(), [true, false], "folded in place");
@@ -252,7 +366,9 @@ describe("conversion file groups and cards", () => {
 			h.root.querySelectorAll(".cs-sidebar-fold")[0]!.fire("click");
 			h.choose(0, true);
 			assert.deepEqual(sections(), [false, false]);
-		} finally { await h.destroy(); }
+		} finally {
+			await h.destroy();
+		}
 	});
 	it("ignores the caret while a replacement draft holds the highlight", async () => {
 		const h = harness({ "a.md": "[!note]\n[!tip]" });
@@ -265,7 +381,9 @@ describe("conversion file groups and cards", () => {
 			h.moveCaret(1, 2);
 			assert.deepEqual(h.current(), []);
 			assert.equal(h.root.querySelectorAll(".is-editing").length, 1);
-		} finally { await h.destroy(); }
+		} finally {
+			await h.destroy();
+		}
 	});
 	it("opening another note reveals its file group and loads a later page when needed", async () => {
 		const h = harness({ "a.md": Array.from({ length: 101 }, () => "[!note]").join("\n"), "b.md": "[!tip]" });
@@ -276,16 +394,22 @@ describe("conversion file groups and cards", () => {
 			assert.equal(h.root.querySelectorAll(".cs-sidebar-file").length, 2);
 			assert.equal(h.root.querySelector(".is-active-file")?.dataset.path, "b.md");
 			assert.equal(h.inputs().length, 102);
-		} finally { await h.destroy(); }
+		} finally {
+			await h.destroy();
+		}
 	});
 	it("validates the current editor and declines an unannounced edited source", async () => {
 		const h = harness();
 		try {
-			await h.view.onOpen(); h.setLiveText("An unrelated line");
-			h.root.fire("click", { target: h.root.querySelector('button[data-action="result"]') }); await h.settle();
+			await h.view.onOpen();
+			h.setLiveText("An unrelated line");
+			h.root.fire("click", { target: h.root.querySelector('button[data-action="result"]') });
+			await h.settle();
 			assert.deepEqual(h.revealed, []);
 			assert.equal(h.blocked("convert"), true);
-		} finally { await h.destroy(); }
+		} finally {
+			await h.destroy();
+		}
 	});
 	it("shows adjacent link repairs separately from a token-only source row", async () => {
 		const h = harness({ "a.md": "# Report [!note]\n[!tip] [[#Report note]]" });
@@ -295,18 +419,26 @@ describe("conversion file groups and cards", () => {
 			assert.equal(h.root.querySelectorAll(".cs-portable-after")[1]!.textContent, "tip");
 			assert.ok(h.root.querySelectorAll(".cs-portable-after")[2]!.textContent.endsWith("[[#Report]]"));
 			h.choose(1, false);
-			assert.equal(h.root.querySelectorAll(".cs-sidebar-result").length, 3, "deselected source still shows its automatic link repair separately");
-		} finally { await h.destroy(); }
+			assert.equal(
+				h.root.querySelectorAll(".cs-sidebar-result").length,
+				3,
+				"deselected source still shows its automatic link repair separately",
+			);
+		} finally {
+			await h.destroy();
+		}
 	});
 });
 
 describe("conversion refresh presentation", () => {
 	it("shows slow work as Obsidian's loading bar, says it only to a screen reader, and never injects text under the toolbar", async () => {
-		const h = harness(undefined, 15), read = deferred();
+		const h = harness(undefined, 15),
+			read = deferred();
 		try {
 			await h.view.onOpen();
 			h.hooks.beforeRead = () => read.promise;
-			h.edit("a.md", "Changed [!note]"); h.vaultEvents.emit("modify", h.handles.get("a.md"));
+			h.edit("a.md", "Changed [!note]");
+			h.vaultEvents.emit("modify", h.handles.get("a.md"));
 			const shell = h.root.querySelector(".cs-portable-results-shell")!;
 			const overlay = h.root.querySelector(".cs-portable-refresh-overlay")! as typeof shell & { hidden: boolean };
 			assert.ok(shell.hasClass("is-stale"));
@@ -319,24 +451,36 @@ describe("conversion refresh presentation", () => {
 			assert.ok(overlay.textContent.length > 0, "read out by the live region");
 			assert.ok(shell.hasClass("is-loading"), "Obsidian's thin bar across the results");
 			assert.equal(h.status(), "");
-			read.resolve(); await h.settle();
+			read.resolve();
+			await h.settle();
 			assert.equal(overlay.hidden, true);
 			assert.equal(shell.hasClass("is-loading"), false);
 			assert.equal(shell.hasClass("is-stale"), false);
-		} finally { read.resolve(); await h.destroy(); }
+		} finally {
+			read.resolve();
+			await h.destroy();
+		}
 	});
 	it("fast refreshes and closed views never show a delayed overlay", async () => {
 		const h = harness(undefined, 15);
 		try {
 			await h.view.onOpen();
-			h.edit("a.md", "Changed [!note]"); h.vaultEvents.emit("modify", h.handles.get("a.md"));
-			await h.settle(); await wait(20);
+			h.edit("a.md", "Changed [!note]");
+			h.vaultEvents.emit("modify", h.handles.get("a.md"));
+			await h.settle();
+			await wait(20);
 			assert.equal(h.root.querySelectorAll(".is-busy").length, 0);
-			const read = deferred(); h.hooks.beforeRead = () => read.promise;
-			h.edit("a.md", "Changed again [!note]"); h.vaultEvents.emit("modify", h.handles.get("a.md"));
-			await h.view.onClose(); read.resolve(); await wait(20);
+			const read = deferred();
+			h.hooks.beforeRead = () => read.promise;
+			h.edit("a.md", "Changed again [!note]");
+			h.vaultEvents.emit("modify", h.handles.get("a.md"));
+			await h.view.onClose();
+			read.resolve();
+			await wait(20);
 			assert.equal(h.root.children.length, 0);
-		} finally { await h.destroy(); }
+		} finally {
+			await h.destroy();
+		}
 	});
 });
 
@@ -357,7 +501,10 @@ describe("the sidebars' row marks look like Obsidian's", () => {
 	});
 
 	it("tints the row being edited as Obsidian tints a selected item", () => {
-		assert.match(rule(".cs-portable-change.is-editing"), /background-color:\s*var\(--nav-item-background-selected\)/);
+		assert.match(
+			rule(".cs-portable-change.is-editing"),
+			/background-color:\s*var\(--nav-item-background-selected\)/,
+		);
 	});
 
 	it("sizes the row's icon buttons as Obsidian sizes a list row's icons", () => {
@@ -370,6 +517,9 @@ describe("the sidebars' row marks look like Obsidian's", () => {
 		const field = rule(".cs-portable-input-grow");
 		assert.match(field, /box-shadow:\s*0 0 0 2px var\(--background-modifier-border-focus\)/);
 		assert.doesNotMatch(field, /(^|[\s;{])background(-color)?\s*:/, "no fill of its own");
-		assert.match(rule(".cs-portable-input-grow:focus-within"), /box-shadow:\s*0 0 0 2px var\(--interactive-accent\)/);
+		assert.match(
+			rule(".cs-portable-input-grow:focus-within"),
+			/box-shadow:\s*0 0 0 2px var\(--interactive-accent\)/,
+		);
 	});
 });

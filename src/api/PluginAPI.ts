@@ -24,16 +24,9 @@
  */
 import type CalloutStudioPlugin from "../main";
 import type { CalloutDefinition, CalloutIcon } from "../types";
-import type {
-	Callout,
-	CalloutDetails,
-	CalloutIconInfo,
-	CalloutStudioApi,
-} from "./types";
+import type { Callout, CalloutDetails, CalloutIconInfo, CalloutStudioApi } from "./types";
 import { getLocale } from "../i18n";
-import {
-	committedDefinitions,
-} from "../utils/usableCallouts";
+import { committedDefinitions } from "../utils/usableCallouts";
 import { normalizeCalloutId } from "../utils/calloutId";
 import { sortCalloutsByDisplayName } from "../utils/sorting";
 
@@ -54,9 +47,7 @@ export class CalloutStudioAPI implements CalloutStudioApi {
 	getCalloutsDetailed(): readonly CalloutDetails[] {
 		const dark = isDarkMode();
 		return Object.freeze(
-			usableDefinitions(this.#plugin).map((def) =>
-				toDetails(def, dark, this.#plugin.registry.themeOwns(def)),
-			),
+			usableDefinitions(this.#plugin).map((def) => toDetails(def, dark, this.#plugin.registry.themeOwns(def))),
 		);
 	}
 
@@ -68,10 +59,7 @@ export class CalloutStudioAPI implements CalloutStudioApi {
 		// renderer substitutes the fallback callout for an unknown id because it
 		// still has to draw something, but an API that answered every id with a
 		// definition would be useless for asking whether one exists.
-		const resolved =
-			registry.get(wanted) ??
-			registry.findByAlias(wanted) ??
-			registry.findByAttrId(wanted);
+		const resolved = registry.get(wanted) ?? registry.findByAlias(wanted) ?? registry.findByAttrId(wanted);
 		if (!resolved) return undefined;
 		// Re-find it in the published list rather than returning `resolved`
 		// directly. That list is the one filtered view: it hides the transient
@@ -79,9 +67,7 @@ export class CalloutStudioAPI implements CalloutStudioApi {
 		// shadows a real callout it substitutes the committed one back. Matching
 		// by id rather than by identity is what makes that substitution work —
 		// `resolved` here is often the preview stand-in itself.
-		const published = usableDefinitions(this.#plugin).find(
-			(def) => def.id === resolved.id,
-		);
+		const published = usableDefinitions(this.#plugin).find((def) => def.id === resolved.id);
 		return published ? toCallout(published) : undefined;
 	}
 
@@ -128,16 +114,13 @@ export class CalloutStudioAPI implements CalloutStudioApi {
  */
 const usableDefinitions = (plugin: CalloutStudioPlugin): CalloutDefinition[] => {
 	const { registry } = plugin;
-	const committed = committedDefinitions(registry).map(
-		(def) => registry.getReal(def.id) ?? def,
-	);
+	const committed = committedDefinitions(registry).map((def) => registry.getReal(def.id) ?? def);
 	const defs = committed;
 	return sortCalloutsByDisplayName(defs, getLocale());
 };
 
 /** Whether the window is currently showing the dark theme. */
-const isDarkMode = (): boolean =>
-	activeDocument.body.classList.contains("theme-dark");
+const isDarkMode = (): boolean => activeDocument.body.classList.contains("theme-dark");
 
 const toIconInfo = (icon: CalloutIcon): CalloutIconInfo => {
 	const info: {

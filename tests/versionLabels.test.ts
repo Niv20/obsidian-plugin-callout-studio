@@ -20,19 +20,23 @@ function vault(initial: Record<string, string> = {}) {
 	const files = new Map(Object.entries(initial));
 	const fail = { write: false };
 	const adapter = {
-		exists: (path: string) => Promise.resolve(files.has(path) || [...files.keys()].some(file => file.startsWith(`${path}/`))),
+		exists: (path: string) =>
+			Promise.resolve(files.has(path) || [...files.keys()].some((file) => file.startsWith(`${path}/`))),
 		mkdir: () => Promise.resolve(),
-		list: (path: string) => Promise.resolve({ files: [...files.keys()].filter(file => file.startsWith(`${path}/`)), folders: [] }),
-		read: (path: string) => files.has(path) ? Promise.resolve(files.get(path)!) : Promise.reject(new Error("ENOENT")),
+		list: (path: string) =>
+			Promise.resolve({ files: [...files.keys()].filter((file) => file.startsWith(`${path}/`)), folders: [] }),
+		read: (path: string) =>
+			files.has(path) ? Promise.resolve(files.get(path)!) : Promise.reject(new Error("ENOENT")),
 		write: (path: string, text: string) => {
 			if (fail.write) return Promise.reject(new Error("read-only"));
 			files.set(path, text);
 			return Promise.resolve();
 		},
 	} as unknown as DataAdapter;
-	const own = (device: string) => JSON.parse(files.get(`${DIR}/labels-${device}.json`) ?? "{}") as {
-		reasons?: Record<string, string>;
-	};
+	const own = (device: string) =>
+		JSON.parse(files.get(`${DIR}/labels-${device}.json`) ?? "{}") as {
+			reasons?: Record<string, string>;
+		};
 	return { adapter, files, fail, own };
 }
 
@@ -44,25 +48,38 @@ describe("version labels", () => {
 		assert.deepEqual([...v.files.keys()].sort(), [`${DIR}/labels-mac00001.json`, `${DIR}/labels-pho00001.json`]);
 		assert.deepEqual(v.own("mac00001").reasons, { [fileName(BACKUP)]: "before-import" });
 		const labels = await readVersionLabels(v.adapter, DIR);
-		assert.deepEqual([...labels.reasons].sort(), [[fileName(BACKUP), "before-import"], [fileName(OTHER), "before-reset"]]);
+		assert.deepEqual([...labels.reasons].sort(), [
+			[fileName(BACKUP), "before-import"],
+			[fileName(OTHER), "before-reset"],
+		]);
 	});
 
 	it("preserve a meaningful automatic-backup title when the same version also has a newer sync copy", async () => {
-		const previousLocale = getLocale(); setLocale("en");
+		const previousLocale = getLocale();
+		setLocale("en");
 		try {
 			const v = vault();
 			await recordBackupReason(v.adapter, DIR, "mac00001", BACKUP, "before-import");
 			const labels = await readVersionLabels(v.adapter, DIR);
 			const data = { callouts: [] };
 			const [version] = mergeVersions([
-				{ kind: "backup", time: 1000, path: BACKUP, historyHash: null, origin: "this-device", data,
-					reason: labels.reasons.get(fileName(BACKUP)) },
+				{
+					kind: "backup",
+					time: 1000,
+					path: BACKUP,
+					historyHash: null,
+					origin: "this-device",
+					data,
+					reason: labels.reasons.get(fileName(BACKUP)),
+				},
 				{ kind: "copy", time: 2000, path: `${DIR}/../data 2.json`, historyHash: null, origin: null, data },
 			]);
 			assert.equal(versionCategory(version!), "automatic");
 			assert.equal(versionName(version!), t("versions.reason.beforeImport"));
 			assert.equal(version!.copies.length, 2, "the title does not discard either stored copy");
-		} finally { setLocale(previousLocale); }
+		} finally {
+			setLocale(previousLocale);
+		}
 	});
 
 	it("skip malformed entries and unrelated metadata instead of trusting or throwing on it", async () => {
@@ -92,10 +109,13 @@ describe("version labels", () => {
 			recordBackupReason(v.adapter, DIR, "mac00001", BACKUP, "before-import"),
 			recordBackupReason(v.adapter, DIR, "mac00001", OTHER, "before-reset"),
 		]);
-		assert.deepEqual(v.own("mac00001").reasons, { [fileName(BACKUP)]: "before-import", [fileName(OTHER)]: "before-reset" });
+		assert.deepEqual(v.own("mac00001").reasons, {
+			[fileName(BACKUP)]: "before-import",
+			[fileName(OTHER)]: "before-reset",
+		});
 	});
 
-	it("resolve to false, never throw, when the file cannot be written, and the next change still lands", async t => {
+	it("resolve to false, never throw, when the file cannot be written, and the next change still lands", async (t) => {
 		t.mock.method(console, "error", () => undefined);
 		const v = vault();
 		v.fail.write = true;
@@ -105,9 +125,11 @@ describe("version labels", () => {
 		assert.equal(v.own("mac00001").reasons?.[fileName(BACKUP)], "before-import");
 	});
 
-	it("never replace a labels file that is only unavailable", async t => {
+	it("never replace a labels file that is only unavailable", async (t) => {
 		t.mock.method(console, "error", () => undefined);
-		const v = vault({ [`${DIR}/labels-mac00001.json`]: JSON.stringify({ reasons: { [fileName(BACKUP)]: "before-import" } }) });
+		const v = vault({
+			[`${DIR}/labels-mac00001.json`]: JSON.stringify({ reasons: { [fileName(BACKUP)]: "before-import" } }),
+		});
 		const read = v.adapter.read.bind(v.adapter);
 		v.adapter.read = () => Promise.reject(new Error("still downloading"));
 		assert.equal(await recordBackupReason(v.adapter, DIR, "mac00001", OTHER, "before-reset"), false);
@@ -124,7 +146,10 @@ describe("version labels", () => {
 		const before = v.files.get(`${DIR}/labels-mac00001.json`);
 		let writes = 0;
 		const write = v.adapter.write.bind(v.adapter);
-		v.adapter.write = (path, text) => { writes++; return write(path, text); };
+		v.adapter.write = (path, text) => {
+			writes++;
+			return write(path, text);
+		};
 		await forgetBackupReasons(v.adapter, DIR, "mac00001", [BACKUP]);
 		assert.equal(writes, 0, "nothing changed, so nothing was written");
 		assert.equal(v.files.get(`${DIR}/labels-mac00001.json`), before);

@@ -1,6 +1,5 @@
 import { SettingsPersistenceError, type SettingsSaveReason } from "./settingsSaveStatus";
 export interface StaleWriteHost {
-
 	readCurrent?(): Promise<string | null>;
 
 	onStaleWrite?(): void;
@@ -13,7 +12,6 @@ export interface WriteBaseline {
 }
 
 export class StaleWriteGuard {
-
 	private reported = false;
 	private timer: number | null = null;
 	private destroyed = false;

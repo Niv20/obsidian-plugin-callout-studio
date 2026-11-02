@@ -40,10 +40,7 @@ function def(over: Partial<CalloutDefinition> = {}): Record<string, unknown> {
 }
 
 /** A `data.json` carrying the retired fields, as the branch used to write it. */
-function withModes(
-	callouts: Record<string, unknown>[],
-	settings?: Record<string, unknown>,
-): Partial<PluginData> {
+function withModes(callouts: Record<string, unknown>[], settings?: Record<string, unknown>): Partial<PluginData> {
 	return {
 		version: 3,
 		callouts,
@@ -65,13 +62,8 @@ function retired(def: CalloutDefinition | undefined): Record<string, unknown> {
 describe("the retired row field", () => {
 	it("drops styleMode, whatever it said", () => {
 		for (const value of ["studio", "standard", "blend", "force"]) {
-			const registry = load(
-				withModes([{ ...def({ id: "a" }), styleMode: value }]),
-			);
-			assert.ok(
-				!("styleMode" in retired(registry.get("a"))),
-				`styleMode: ${value}`,
-			);
+			const registry = load(withModes([{ ...def({ id: "a" }), styleMode: value }]));
+			assert.ok(!("styleMode" in retired(registry.get("a"))), `styleMode: ${value}`);
 		}
 	});
 
@@ -116,11 +108,7 @@ describe("externalStyle retirement alongside older style modes", () => {
 	});
 
 	it("removes both flags when a stale styleMode sat beside it", () => {
-		const registry = load(
-			withModes([
-				{ ...def({ id: "a" }), externalStyle: true, styleMode: "studio" },
-			]),
-		);
+		const registry = load(withModes([{ ...def({ id: "a" }), externalStyle: true, styleMode: "studio" }]));
 		const row = retired(registry.get("a"));
 		assert.strictEqual(row.externalStyle, undefined);
 		assert.ok(!("styleMode" in row));
@@ -132,23 +120,14 @@ describe("the retired setting", () => {
 		// `mergeSavedSettings` builds a fresh object from the keys this build
 		// knows, so the retired one is already gone by the time the migration
 		// runs — there is nothing to delete.
-		const registry = load(
-			withModes([def({ id: "a" })], { defaultStyleMode: "studio" }),
-		);
-		assert.ok(
-			!(
-				"defaultStyleMode" in
-				(registry.settings as unknown as Record<string, unknown>)
-			),
-		);
+		const registry = load(withModes([def({ id: "a" })], { defaultStyleMode: "studio" }));
+		assert.ok(!("defaultStyleMode" in (registry.settings as unknown as Record<string, unknown>)));
 	});
 
 	it("still forces a save, so the key stops riding along in data.json", () => {
 		// The only thing left to do about it: notice, and rewrite the file
 		// without it. Otherwise it sits there being ignored forever.
-		const registry = load(
-			withModes([def({ id: "a" })], { defaultStyleMode: "studio" }),
-		);
+		const registry = load(withModes([def({ id: "a" })], { defaultStyleMode: "studio" }));
 		assert.strictEqual(registry.needsSaveAfterLoad(), true);
 	});
 
@@ -169,10 +148,7 @@ describe("nothing is stamped in its place", () => {
 		assert.strictEqual(registry.isBuiltInModified("note"), false);
 		assert.strictEqual(registry.isUnmodifiedBuiltIn(note), true);
 		const saved = registry.toSaveData();
-		assert.ok(
-			!saved.callouts.some((c) => c.id === "note"),
-			"an unmodified built-in is not persisted",
-		);
+		assert.ok(!saved.callouts.some((c) => c.id === "note"), "an unmodified built-in is not persisted");
 	});
 
 	it("records no ownership, because ownership is derived", () => {

@@ -50,22 +50,25 @@ interface WithId {
 }
 
 /** A row drawn by the plugin's own code (`render(setting, group)`). */
-export type CsRender = SettingDefinitionRender & WithId & {
-	/** Disables the row's components; Obsidian reads it, its typings do not declare it. */
-	disabled?: Predicate;
-};
+export type CsRender = SettingDefinitionRender &
+	WithId & {
+		/** Disables the row's components; Obsidian reads it, its typings do not declare it. */
+		disabled?: Predicate;
+	};
 
 /** A row the whole of which is a button (Obsidian's `setAction`). */
-export type CsAction = SettingDefinitionAction & WithId & {
-	/** A Lucide icon at the start of the row, in a list. */
-	icon?: string;
-};
+export type CsAction = SettingDefinitionAction &
+	WithId & {
+		/** A Lucide icon at the start of the row, in a list. */
+		icon?: string;
+	};
 
 /** A row with a name and a description and nothing to change. */
-export type CsEmpty = SettingDefinitionEmpty & WithId & {
-	/** A Lucide icon at the start of the row, in a list. */
-	icon?: string;
-};
+export type CsEmpty = SettingDefinitionEmpty &
+	WithId & {
+		/** A Lucide icon at the start of the row, in a list. */
+		icon?: string;
+	};
 
 /** A row Obsidian draws a control for (toggle, slider, …), bound through the tab. */
 export type CsControl = SettingDefinitionControl & WithId;
@@ -78,21 +81,24 @@ export type CsSetting = CsRender | CsAction | CsEmpty | CsControl;
  * factory, draws the page imperatively instead (its rows are then not part of
  * the settings search).
  */
-export type CsPage = Omit<SettingDefinitionPage, "items"> & WithId & {
-	items?: CsItem[];
-};
+export type CsPage = Omit<SettingDefinitionPage, "items"> &
+	WithId & {
+		items?: CsItem[];
+	};
 
 /** A box of rows, with an optional heading (`type: "group"`). */
-export type CsGroup = Omit<SettingDefinitionGroup, "items"> & WithId & {
-	type: "group";
-	items?: (CsSetting | CsPage)[];
-};
+export type CsGroup = Omit<SettingDefinitionGroup, "items"> &
+	WithId & {
+		type: "group";
+		items?: (CsSetting | CsPage)[];
+	};
 
 /** A box of entries the user adds, deletes or reorders (`type: "list"`). */
-export type CsList = Omit<SettingDefinitionList, "items"> & WithId & {
-	type: "list";
-	items?: (CsSetting | CsPage)[];
-};
+export type CsList = Omit<SettingDefinitionList, "items"> &
+	WithId & {
+		type: "list";
+		items?: (CsSetting | CsPage)[];
+	};
 
 /** Anything that may stand in the tree: a row, a box or a page. */
 export type CsItem = CsSetting | CsGroup | CsList | CsPage;

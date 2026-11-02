@@ -83,9 +83,7 @@ function unquoteContent(value: string): string {
 		return raw
 			.slice(1, -1)
 			.replace(/\\(['"\\])/g, "$1")
-			.replace(/\\([0-9a-f]{1,6})\s?/gi, (_m, hex: string) =>
-				String.fromCodePoint(Number.parseInt(hex, 16)),
-			);
+			.replace(/\\([0-9a-f]{1,6})\s?/gi, (_m, hex: string) => String.fromCodePoint(Number.parseInt(hex, 16)));
 	}
 	return "";
 }
@@ -177,9 +175,5 @@ export function iconKey(icon: ThemeIcon): string {
  */
 export function drawnByPseudo(readout: ProbeReadout, icon: ThemeIcon): boolean {
 	if (icon.kind === "glyph") return true;
-	return (
-		icon.kind === "mask" &&
-		!hasMask(readout.iconMask) &&
-		hasMask(readout.iconPseudoMask)
-	);
+	return icon.kind === "mask" && !hasMask(readout.iconMask) && hasMask(readout.iconPseudoMask);
 }

@@ -16,25 +16,16 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	parseCalloutManagerData,
-	type CalloutManagerRaw,
-} from "../src/utils/calloutManagerFormat";
+import { parseCalloutManagerData, type CalloutManagerRaw } from "../src/utils/calloutManagerFormat";
 import { ImportLimitError } from "../src/utils/importLimits";
 
 /** The parsed entry for one id, or undefined — most assertions want just one. */
-function one(
-	raw: unknown,
-	id: string,
-): CalloutManagerRaw | undefined {
+function one(raw: unknown, id: string): CalloutManagerRaw | undefined {
 	return parseCalloutManagerData(raw)?.find((entry) => entry.id === id);
 }
 
 /** A whole data.json around one callout's settings array. */
-function dataJson(
-	settings: Record<string, unknown>,
-	custom: string[] = [],
-): unknown {
+function dataJson(settings: Record<string, unknown>, custom: string[] = []): unknown {
 	return {
 		callouts: { custom, settings },
 		calloutDetection: { obsidian: true, theme: true, snippet: true },
@@ -121,10 +112,7 @@ describe("parseCalloutManagerData — the colour-scheme cascade", () => {
 		// the first one set.
 		const entry = one(
 			dataJson({
-				note: [
-					{ changes: { color: "1, 2, 3", icon: "lucide-a" } },
-					{ changes: { icon: "lucide-b" } },
-				],
+				note: [{ changes: { color: "1, 2, 3", icon: "lucide-a" } }, { changes: { icon: "lucide-b" } }],
 			}),
 			"note",
 		);
@@ -165,10 +153,7 @@ describe("parseCalloutManagerData — conditions we cannot honour", () => {
 				{ condition: { theme: "Minimal" }, changes: { color: "4, 5, 6" } },
 				{ changes: { color: "1, 2, 3" } },
 			];
-			const entry = one(
-				dataJson({ note: reversed ? [...rules].reverse() : rules }),
-				"note",
-			);
+			const entry = one(dataJson({ note: reversed ? [...rules].reverse() : rules }), "note");
 			assert.equal(entry?.colorLight, "1, 2, 3");
 			assert.deepEqual(entry?.notes, reversed ? ["conditional"] : []);
 		}
@@ -233,9 +218,7 @@ describe("parseCalloutManagerData — conditions we cannot honour", () => {
 	it("reports custom CSS and never mines it", () => {
 		const entry = one(
 			dataJson({
-				note: [
-					{ changes: { color: "1, 2, 3", customStyles: "--callout-color: 9,9,9;" } },
-				],
+				note: [{ changes: { color: "1, 2, 3", customStyles: "--callout-color: 9,9,9;" } }],
 			}),
 			"note",
 		);
@@ -251,20 +234,27 @@ describe("parseCalloutManagerData — conditions we cannot honour", () => {
 
 	it("reports per-scheme icon loss, including an icon set in just one scheme", () => {
 		for (const light of [[], [{ condition: { colorScheme: "light" }, changes: { icon: "lucide-star" } }]]) {
-			const entry = one(dataJson({ note: [
-				...light,
-				{ condition: { colorScheme: "dark" }, changes: { icon: "lucide-moon" } },
-			] }), "note");
+			const entry = one(
+				dataJson({
+					note: [...light, { condition: { colorScheme: "dark" }, changes: { icon: "lucide-moon" } }],
+				}),
+				"note",
+			);
 			assert.deepEqual(entry?.notes, ["schemeIcon"]);
 			assert.equal(entry?.icon, light.length ? "lucide-star" : "lucide-moon");
 		}
 	});
 
 	it("does not warn when both schemes use the same icon", () => {
-		const entry = one(dataJson({ note: [
-			{ condition: { colorScheme: "light" }, changes: { icon: "lucide-star" } },
-			{ condition: { colorScheme: "dark" }, changes: { icon: "lucide-star" } },
-		] }), "note");
+		const entry = one(
+			dataJson({
+				note: [
+					{ condition: { colorScheme: "light" }, changes: { icon: "lucide-star" } },
+					{ condition: { colorScheme: "dark" }, changes: { icon: "lucide-star" } },
+				],
+			}),
+			"note",
+		);
 		assert.deepEqual(entry?.notes, []);
 	});
 });
@@ -298,9 +288,7 @@ describe("parseCalloutManagerData — which callouts survive", () => {
 	});
 
 	it("does not list a declared callout twice when it also has settings", () => {
-		const entries = parseCalloutManagerData(
-			dataJson({ mine: [{ changes: { color: "1, 2, 3" } }] }, ["mine"]),
-		);
+		const entries = parseCalloutManagerData(dataJson({ mine: [{ changes: { color: "1, 2, 3" } }] }, ["mine"]));
 		assert.equal(entries?.length, 1);
 		assert.equal(entries?.[0]?.declared, true);
 	});
@@ -314,7 +302,9 @@ describe("parseCalloutManagerData — which callouts survive", () => {
 	});
 
 	it("treats prototype-looking JSON keys as data", () => {
-		const raw: unknown = JSON.parse('{"settings":{"__proto__":[{"changes":{"color":"1, 2, 3"}}],"constructor":[{"changes":{"color":"4, 5, 6"}}]}}');
+		const raw: unknown = JSON.parse(
+			'{"settings":{"__proto__":[{"changes":{"color":"1, 2, 3"}}],"constructor":[{"changes":{"color":"4, 5, 6"}}]}}',
+		);
 		assert.equal(one(raw, "__proto__")?.colorLight, "1, 2, 3");
 		assert.equal(one(raw, "constructor")?.colorLight, "4, 5, 6");
 		assert.equal(({} as Record<string, unknown>).color, undefined);
@@ -323,12 +313,18 @@ describe("parseCalloutManagerData — which callouts survive", () => {
 	it("rejects deeply nested JSON conditions without exhausting the call stack", () => {
 		let condition: unknown = { colorScheme: "dark" };
 		for (let depth = 0; depth < 10_000; depth++) condition = { and: [condition] };
-		assert.throws(() => parseCalloutManagerData(dataJson({ note: [{ condition, changes: { color: "1, 2, 3" } }] })), ImportLimitError);
+		assert.throws(
+			() => parseCalloutManagerData(dataJson({ note: [{ condition, changes: { color: "1, 2, 3" } }] })),
+			ImportLimitError,
+		);
 	});
 
 	it("rejects cyclic conditions passed directly to the format reader", () => {
 		const condition: { and: unknown[] } = { and: [] };
 		condition.and.push(condition, condition);
-		assert.throws(() => parseCalloutManagerData(dataJson({ note: [{ condition, changes: { color: "1, 2, 3" } }] })), ImportLimitError);
+		assert.throws(
+			() => parseCalloutManagerData(dataJson({ note: [{ condition, changes: { color: "1, 2, 3" } }] })),
+			ImportLimitError,
+		);
 	});
 });

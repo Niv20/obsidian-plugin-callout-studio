@@ -61,10 +61,7 @@ export function listUserImages(): UserImageIcon[] {
  * that split on it — CSS deciding between a mask and a background image, and
  * renderIcon deciding whether to stencil the DOM copy — cannot drift apart.
  */
-export function followsCalloutColor(
-	icon: CalloutIcon,
-	image: UserImageIcon | undefined,
-): boolean {
+export function followsCalloutColor(icon: CalloutIcon, image: UserImageIcon | undefined): boolean {
 	return image !== undefined && image.format === "svg" && icon.recolor === true;
 }
 
@@ -92,15 +89,13 @@ export const userImagesPack: IconPack = {
 		// user adds or deletes a picture, and it is a handful of entries built
 		// from memory rather than a decode of a bundled blob.
 		return Promise.resolve({
-			entries: listUserImages().map(
-				(image): IconEntry => ({
-					name: image.id,
-					label: image.name,
-					categories: [],
-					// The id is meaningless to search on, so the name carries it.
-					keywords: [image.name],
-				}),
-			),
+			entries: listUserImages().map((image): IconEntry => ({
+				name: image.id,
+				label: image.name,
+				categories: [],
+				// The id is meaningless to search on, so the name carries it.
+				keywords: [image.name],
+			})),
 			categories: [],
 		});
 	},

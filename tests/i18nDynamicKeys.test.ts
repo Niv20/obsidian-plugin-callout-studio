@@ -186,6 +186,10 @@ describe("every key the plugin builds is listed here", () => {
 		}
 		assert.deepStrictEqual(unlisted, [], "add each one to FAMILIES, with the list its values come from");
 		// The other half: a family whose call site is gone is checking nothing.
-		assert.deepStrictEqual([...known].filter((prefix) => !seen.has(prefix)), [], "no call site builds these any more");
+		assert.deepStrictEqual(
+			[...known].filter((prefix) => !seen.has(prefix)),
+			[],
+			"no call site builds these any more",
+		);
 	});
 });

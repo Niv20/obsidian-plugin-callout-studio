@@ -14,10 +14,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 import type { App, EventRef, MarkdownPostProcessor } from "obsidian";
 import { FakeDocument, FakeElement, FakeWindow, installFakeDom } from "./support/fakeDom";
-import {
-	registerThemeCalloutsOff,
-	type ThemeCalloutsOffHost,
-} from "../src/manager/theme/themeCalloutsOff";
+import { registerThemeCalloutsOff, type ThemeCalloutsOffHost } from "../src/manager/theme/themeCalloutsOff";
 import { ThemeCalloutStore } from "../src/manager/theme/ThemeCalloutStore";
 import { ThemeMetadataCatalog } from "../src/manager/theme/ThemeMetadataCatalog";
 import { ThemeClaimCheck } from "../src/manager/theme/ThemeClaimCheck";
@@ -269,7 +266,11 @@ describe("switching the theme's callout styling off", () => {
 
 	it("takes the callout variables out of Style Settings' sheet too", () => {
 		const h = harness();
-		const styleSettings = styleIn(h.doc, "body.css-settings-manager | --callout-border-width: 4px; --anp-x: 1", "css-settings-manager");
+		const styleSettings = styleIn(
+			h.doc,
+			"body.css-settings-manager | --callout-border-width: 4px; --anp-x: 1",
+			"css-settings-manager",
+		);
 		registerThemeCalloutsOff(h.host).settingsReady();
 		h.setOff(true);
 		const vars = styleSettings.sheet.cssRules[0]?.style;
@@ -361,9 +362,15 @@ describe("the theme's facts while its callout styling is off", () => {
 		]);
 		let off = false;
 		const catalog = new ThemeMetadataCatalog(app, () => off);
-		assert.deepStrictEqual(catalog.sourcesNow().map((s) => s.label), ["Fixture", "snippet-0"]);
+		assert.deepStrictEqual(
+			catalog.sourcesNow().map((s) => s.label),
+			["Fixture", "snippet-0"],
+		);
 		off = true;
-		assert.deepStrictEqual(catalog.sourcesNow().map((s) => s.label), ["snippet-0"]);
+		assert.deepStrictEqual(
+			catalog.sourcesNow().map((s) => s.label),
+			["snippet-0"],
+		);
 	});
 
 	it("never measures, or remembers, a theme that has lost its callout rules", async () => {

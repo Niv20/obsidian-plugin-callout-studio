@@ -15,17 +15,10 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import {
-	mergeScans,
-	scanCalloutClaims,
-} from "../src/manager/theme/themeCalloutScan";
-import {
-	claimForId,
-	patternMatches,
-} from "../src/manager/theme/themeClaimLookup";
+import { mergeScans, scanCalloutClaims } from "../src/manager/theme/themeCalloutScan";
+import { claimForId, patternMatches } from "../src/manager/theme/themeClaimLookup";
 
-const claim = (css: string, id: string) =>
-	claimForId(scanCalloutClaims(css), id);
+const claim = (css: string, id: string) => claimForId(scanCalloutClaims(css), id);
 
 describe("enumeration — which matchers may name a callout", () => {
 	it("takes an exact match", () => {
@@ -46,9 +39,7 @@ describe("enumeration — which matchers may name a callout", () => {
 		// operator matches always has one word in it. Verbatim from ITS Theme,
 		// which declares `infobox`, `cards`, `timeline`, `aside` and `kanban`
 		// this way and no other way; excluding it hid its five most-used types.
-		const scan = scanCalloutClaims(
-			".callout.callout[data-callout~=infobox] { color: red; }",
-		);
+		const scan = scanCalloutClaims(".callout.callout[data-callout~=infobox] { color: red; }");
 		assert.deepStrictEqual([...scan.byId.keys()], ["infobox"]);
 		assert.strictEqual(scan.byId.get("infobox")?.certain, true);
 		assert.strictEqual(scan.patterns.length, 0);
@@ -76,9 +67,7 @@ describe("enumeration — which matchers may name a callout", () => {
 	});
 
 	it("normalizes a pattern's value too, so it can still match", () => {
-		const scan = scanCalloutClaims(
-			'.callout[data-callout^="Col"] { color: red; }',
-		);
+		const scan = scanCalloutClaims('.callout[data-callout^="Col"] { color: red; }');
 		assert.ok(claimForId(scan, "col-md"));
 	});
 
@@ -91,17 +80,13 @@ describe("enumeration — which matchers may name a callout", () => {
 		// that describes no family: Obsidian puts a single word in
 		// `data-callout`, so `~=column` matches `column` and nothing else.
 		for (const op of ["*", "$", "|", "^"]) {
-			const scan = scanCalloutClaims(
-				`.callout[data-callout${op}=column] { display: grid; }`,
-			);
+			const scan = scanCalloutClaims(`.callout[data-callout${op}=column] { display: grid; }`);
 			assert.strictEqual(scan.byId.size, 0, op);
 		}
 	});
 
 	it("does not confuse data-callout-metadata for data-callout", () => {
-		const scan = scanCalloutClaims(
-			'.callout[data-callout-metadata="wide"] { width: 100%; }',
-		);
+		const scan = scanCalloutClaims('.callout[data-callout-metadata="wide"] { width: 100%; }');
 		assert.strictEqual(scan.byId.size, 0);
 	});
 
@@ -118,15 +103,7 @@ describe("enumeration — which matchers may name a callout", () => {
 			".callout[data-callout='icon'] { color: red; }",
 		].join("\n");
 		const ids = [...scanCalloutClaims(css).byId.keys()].sort();
-		assert.deepStrictEqual(ids, [
-			"!",
-			"$",
-			"-0.5",
-			"@",
-			"icon",
-			"tl;dr",
-			"~",
-		]);
+		assert.deepStrictEqual(ids, ["!", "$", "-0.5", "@", "icon", "tl;dr", "~"]);
 	});
 });
 
@@ -135,18 +112,13 @@ describe("lookup — which matchers may claim an id you already have", () => {
 		// Notation 2 styles all 26 built-ins through `*=` exclusively. Dropping
 		// these is a measured false negative: the theme reads as having no
 		// opinion about callouts at all.
-		const c = claim(
-			".callout[data-callout*=note] { color: red; }",
-			"note",
-		);
+		const c = claim(".callout[data-callout*=note] { color: red; }", "note");
 		assert.ok(c, "a substring matcher does claim the id it matches");
 		assert.strictEqual(c.certain, false);
 	});
 
 	it("still does not invent the id the pattern was written for", () => {
-		const scan = scanCalloutClaims(
-			".callout[data-callout*=column] { display: grid; }",
-		);
+		const scan = scanCalloutClaims(".callout[data-callout*=column] { display: grid; }");
 		assert.strictEqual(scan.byId.size, 0);
 		// ...and asking about a callout the user does have still works.
 		assert.ok(claimForId(scan, "two-column"));
@@ -155,9 +127,7 @@ describe("lookup — which matchers may claim an id you already have", () => {
 
 	it("treats ^= as a prefix, not an id", () => {
 		// Verbatim: Kakano's `col-md`, the only `^=` in the whole vault.
-		const scan = scanCalloutClaims(
-			'.callout[data-callout^="col-md"] { color: red; }',
-		);
+		const scan = scanCalloutClaims('.callout[data-callout^="col-md"] { color: red; }');
 		assert.strictEqual(scan.byId.size, 0);
 		assert.ok(claimForId(scan, "col-md-6"));
 		assert.strictEqual(claimForId(scan, "tip"), undefined);
@@ -213,55 +183,39 @@ describe("a negated claim is not a claim", () => {
 	it("still reads a claim inside :is() or :where()", () => {
 		// Those select the callout; they do not exclude it.
 		assert.ok(claim('.callout:is([data-callout="x"]) { color: red; }', "x"));
-		assert.ok(
-			claim('.callout:where([data-callout="x"]) { color: red; }', "x"),
-		);
+		assert.ok(claim('.callout:where([data-callout="x"]) { color: red; }', "x"));
 	});
 });
 
 describe("what the scanner reads out of a rule", () => {
 	it("collects declared property names, lower-cased", () => {
-		const c = claim(
-			'.callout[data-callout="x"] { --Callout-Color: red; BACKGROUND: blue; }',
-			"x",
-		);
-		assert.deepStrictEqual([...(c?.props ?? [])].sort(), [
-			"--callout-color",
-			"background",
-		]);
+		const c = claim('.callout[data-callout="x"] { --Callout-Color: red; BACKGROUND: blue; }', "x");
+		assert.deepStrictEqual([...(c?.props ?? [])].sort(), ["--callout-color", "background"]);
 	});
 
 	it("flags the properties a theme marked !important", () => {
 		// The one case force genuinely cannot beat, so the report has to be able
 		// to say so rather than let the user discover it by trying.
-		const c = claim(
-			'.callout[data-callout="x"] { color: red !important; background: blue; }',
-			"x",
-		);
+		const c = claim('.callout[data-callout="x"] { color: red !important; background: blue; }', "x");
 		assert.deepStrictEqual([...(c?.important ?? [])], ["color"]);
 		assert.ok(c?.props.has("background"));
 	});
 
 	it("ignores claims that only appear inside a comment", () => {
 		const scan = scanCalloutClaims(
-			'/* .callout[data-callout="ghost"] { color: red; } */\n' +
-				'.callout[data-callout="real"] { color: blue; }',
+			'/* .callout[data-callout="ghost"] { color: red; } */\n' + '.callout[data-callout="real"] { color: blue; }',
 		);
 		assert.deepStrictEqual([...scan.byId.keys()], ["real"]);
 	});
 
 	it("still sees a claim wrapped in an at-rule", () => {
-		const c = claim(
-			'@media print { .callout[data-callout="x"] { color: red; } }',
-			"x",
-		);
+		const c = claim('@media print { .callout[data-callout="x"] { color: red; } }', "x");
 		assert.ok(c, "a claim inside @media is still a claim");
 	});
 
 	it("scores each part of a selector list on its own", () => {
 		const scan = scanCalloutClaims(
-			'.callout[data-callout="a"],\n' +
-				'body .callout.callout.callout[data-callout="b"] { color: red; }',
+			'.callout[data-callout="a"],\n' + 'body .callout.callout.callout[data-callout="b"] { color: red; }',
 		);
 		assert.deepStrictEqual(scan.byId.get("a")?.weight, [0, 2, 0]);
 		assert.deepStrictEqual(scan.byId.get("b")?.weight, [0, 4, 1]);
@@ -312,11 +266,7 @@ describe("native CSS nesting is read as its flat equivalent", () => {
 		}`);
 		const c = scan.byId.get("todo");
 		assert.ok(c, "the parent rule's own claim is what used to be lost");
-		assert.deepStrictEqual([...c.props].sort(), [
-			"background",
-			"color",
-			"padding",
-		]);
+		assert.deepStrictEqual([...c.props].sort(), ["background", "color", "padding"]);
 		assert.deepStrictEqual([...c.important].sort(), ["background", "color"]);
 		// `body.theme-light .callout[data-callout="todo"] .callout-content`:
 		// three classes plus the attribute, and `body` for the element column.
@@ -326,35 +276,25 @@ describe("native CSS nesting is read as its flat equivalent", () => {
 	});
 
 	it("resolves & against the parent, including in a compound", () => {
-		const scan = scanCalloutClaims(
-			'.callout[data-callout="recite"] { & .callout-title { color: red; } }',
-		);
+		const scan = scanCalloutClaims('.callout[data-callout="recite"] { & .callout-title { color: red; } }');
 		assert.deepStrictEqual(scan.byId.get("recite")?.weight, [0, 3, 0]);
-		const compound = scanCalloutClaims(
-			'.callout[data-callout="recite"] { &.is-collapsed { color: red; } }',
-		);
+		const compound = scanCalloutClaims('.callout[data-callout="recite"] { &.is-collapsed { color: red; } }');
 		assert.deepStrictEqual(compound.byId.get("recite")?.weight, [0, 3, 0]);
 	});
 
 	it("treats a nested selector with no & as a descendant", () => {
 		// Verbatim from Underwater's `[!box]`, which nests `& > .callout-title`;
 		// the bare form is what Minimal Dracula writes.
-		const scan = scanCalloutClaims(
-			'.callout[data-callout="box"] { & > .callout-title { display: none; } }',
-		);
+		const scan = scanCalloutClaims('.callout[data-callout="box"] { & > .callout-title { display: none; } }');
 		assert.deepStrictEqual(scan.byId.get("box")?.weight, [0, 3, 0]);
-		const bare = scanCalloutClaims(
-			'.callout[data-callout="box"] { a { color: red; } }',
-		);
+		const bare = scanCalloutClaims('.callout[data-callout="box"] { a { color: red; } }');
 		assert.deepStrictEqual(bare.byId.get("box")?.weight, [0, 2, 1]);
 	});
 
 	it("wraps a parent selector LIST in :is(), as the spec does", () => {
 		// Substituting `.a, .b` into `& .t` raw would produce `.a, .b .t` —
 		// two selectors where the theme wrote one, one of them nobody's.
-		const scan = scanCalloutClaims(
-			'[data-callout="a"], [data-callout="b"] { & .t { color: red; } }',
-		);
+		const scan = scanCalloutClaims('[data-callout="a"], [data-callout="b"] { & .t { color: red; } }');
 		assert.deepStrictEqual([...scan.byId.keys()].sort(), ["a", "b"]);
 		// :is() takes its most specific argument, so this is one attribute
 		// plus `.t` — not two attributes plus `.t`.
@@ -364,31 +304,20 @@ describe("native CSS nesting is read as its flat equivalent", () => {
 	it("keeps declarations that follow a nested rule", () => {
 		// CSS allows declarations on either side of a nested rule, so the split
 		// cannot simply stop at the first `{`.
-		const c = claim(
-			'[data-callout="x"] { a { color: red; } margin: 0; }',
-			"x",
-		);
+		const c = claim('[data-callout="x"] { a { color: red; } margin: 0; }', "x");
 		assert.ok(c?.props.has("margin"));
 	});
 
 	it("goes several levels deep", () => {
-		const scan = scanCalloutClaims(
-			'.a { .b { [data-callout="deep"] { color: red; .c { background: blue; } } } }',
-		);
+		const scan = scanCalloutClaims('.a { .b { [data-callout="deep"] { color: red; .c { background: blue; } } } }');
 		const c = scan.byId.get("deep");
-		assert.deepStrictEqual([...(c?.props ?? [])].sort(), [
-			"background",
-			"color",
-		]);
+		assert.deepStrictEqual([...(c?.props ?? [])].sort(), ["background", "color"]);
 		assert.deepStrictEqual(c?.weight, [0, 4, 0]);
 	});
 
 	it("hands a nested at-rule's declarations to the rule around it", () => {
 		// `[!x] { @media print { … } }` means `@media print { [!x] { … } }`.
-		const c = claim(
-			'[data-callout="x"] { @media print { color: red !important; } }',
-			"x",
-		);
+		const c = claim('[data-callout="x"] { @media print { color: red !important; } }', "x");
 		assert.deepStrictEqual([...(c?.important ?? [])], ["color"]);
 		assert.deepStrictEqual(c?.weight, [0, 1, 0]);
 	});
@@ -410,16 +339,14 @@ describe("native CSS nesting is read as its flat equivalent", () => {
 	});
 
 	it("keeps :not() an anti-claim through the nesting", () => {
-		const scan = scanCalloutClaims(
-			'.callout:not([data-callout="note"]) { & .t { color: red; } }',
-		);
+		const scan = scanCalloutClaims('.callout:not([data-callout="note"]) { & .t { color: red; } }');
 		assert.strictEqual(scan.byId.size, 0);
 	});
 
 	it("does not mistake a semicolon inside a value or an id for a boundary", () => {
 		// `tl;dr` is verbatim from Primary. The `;` is inside brackets, so it
 		// must not be read as the end of a declaration run.
-		assert.ok(claim('[data-callout=tl;dr] { color: red; a { color: blue; } }', "tl;dr"));
+		assert.ok(claim("[data-callout=tl;dr] { color: red; a { color: blue; } }", "tl;dr"));
 		const c = claim('[data-callout="x"] { content: ";"; a { color: red; } }', "x");
 		assert.ok(c?.props.has("content"));
 	});
@@ -428,25 +355,18 @@ describe("native CSS nesting is read as its flat equivalent", () => {
 describe("mergeScans — theme plus enabled snippets", () => {
 	it("keeps the strongest weight and the union of the properties", () => {
 		const a = scanCalloutClaims('.callout[data-callout="x"] { color: red; }');
-		const b = scanCalloutClaims(
-			'.callout.callout.callout[data-callout="x"] { background: blue !important; }',
-		);
+		const b = scanCalloutClaims('.callout.callout.callout[data-callout="x"] { background: blue !important; }');
 		const merged = mergeScans([a, b]);
 		const c = merged.byId.get("x");
 		assert.deepStrictEqual(c?.weight, [0, 4, 0]);
-		assert.deepStrictEqual([...(c?.props ?? [])].sort(), [
-			"background",
-			"color",
-		]);
+		assert.deepStrictEqual([...(c?.props ?? [])].sort(), ["background", "color"]);
 		assert.deepStrictEqual([...(c?.important ?? [])], ["background"]);
 	});
 
 	it("merges pattern claims by operator and value", () => {
 		const merged = mergeScans([
 			scanCalloutClaims('.callout[data-callout*="ote"] { color: red; }'),
-			scanCalloutClaims(
-				'.a.b .callout[data-callout*="ote"] { background: blue; }',
-			),
+			scanCalloutClaims('.a.b .callout[data-callout*="ote"] { background: blue; }'),
 		]);
 		assert.strictEqual(merged.patterns.length, 1);
 		assert.deepStrictEqual(merged.patterns[0]?.claim.weight, [0, 4, 0]);
@@ -465,12 +385,16 @@ describe("the generic !important a studio callout has to outweigh", () => {
 	it("measures a generic rule forcing a background onto the callout", () => {
 		// Verbatim from GitHubDHC: one element heavier than `.callout[data-callout]`.
 		assert.deepStrictEqual(
-			generic(`body.callout-on .callout { border-left: 4px solid var(--callout-color); background-color: var(--background-primary) !important; }`),
+			generic(
+				`body.callout-on .callout { border-left: 4px solid var(--callout-color); background-color: var(--background-primary) !important; }`,
+			),
 			[0, 2, 1],
 		);
 		// TerraFlow's focus mode reaches the callout through :is().
 		assert.deepStrictEqual(
-			generic(`body.focus-mode :is(.callout, .cm-callout) { background-color: var(--background-secondary) !important; }`),
+			generic(
+				`body.focus-mode :is(.callout, .cm-callout) { background-color: var(--background-secondary) !important; }`,
+			),
 			[0, 2, 1],
 		);
 	});
@@ -482,12 +406,16 @@ describe("the generic !important a studio callout has to outweigh", () => {
 			[0, 3, 0],
 		);
 		assert.deepStrictEqual(
-			generic(`body[class*="-glow-general"] .markdown-preview-view.homepage .callout-title { color: #ffffff !important; }`),
+			generic(
+				`body[class*="-glow-general"] .markdown-preview-view.homepage .callout-title { color: #ffffff !important; }`,
+			),
 			[0, 0, 0],
 		);
 		// Ukiyo forces the title's fill, which transparent and the stripe both set.
 		assert.deepStrictEqual(
-			generic(`.theme-dark .callout .callout-title { background-color: rgba(var(--callout-color), .1) !important; }`),
+			generic(
+				`.theme-dark .callout .callout-title { background-color: rgba(var(--callout-color), .1) !important; }`,
+			),
 			[0, 3, 0],
 		);
 	});

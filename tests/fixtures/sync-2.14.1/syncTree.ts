@@ -20,8 +20,11 @@ function itemKey(path: string[], value: unknown): string | undefined {
 		return canonical([row.pack, row.name, row.variant, row.style, row.weight]);
 	}
 	const name = path.join("/");
-	if (name === "callouts" || ["customPalettes", "userImages", "customCommands"].some(key => name === `settings/${key}`) ||
-		/^settings\/contextMenu\/items\/(regular|heading|inline)$/.test(name)) {
+	if (
+		name === "callouts" ||
+		["customPalettes", "userImages", "customCommands"].some((key) => name === `settings/${key}`) ||
+		/^settings\/contextMenu\/items\/(regular|heading|inline)$/.test(name)
+	) {
 		return typeof row.id === "string" ? row.id : undefined;
 	}
 	return undefined;
@@ -32,7 +35,7 @@ function keyedList(path: string[], values: unknown[]): string[] | null {
 	if (values.length === 0) {
 		return itemKey(path, { id: "", pack: "", name: "" }) !== undefined ? [] : null;
 	}
-	const keys = values.map(value => itemKey(path, value));
+	const keys = values.map((value) => itemKey(path, value));
 	return keys.every((key): key is string => key !== undefined) && new Set(keys).size === keys.length ? keys : null;
 }
 
@@ -43,7 +46,8 @@ export function flatten(data: unknown): Tree {
 		// Pack, name and variant form one icon identity; mixing their fields
 		// across devices can create an icon that exists in neither pack.
 		if (path.length === 3 && path[0] === "callouts" && path[2] === "icon") {
-			tree.set(key, ["value", value]); return;
+			tree.set(key, ["value", value]);
+			return;
 		}
 		if (Array.isArray(value)) {
 			const ids = keyedList(path, value);
@@ -68,19 +72,24 @@ export function inflate(tree: Tree): Record<string, unknown> {
 		const name = path.pop()!;
 		const parent = JSON.stringify(path);
 		const names = children.get(parent) ?? [];
-		names.push(name); children.set(parent, names);
+		names.push(name);
+		children.set(parent, names);
 	}
 	function visit(path: string[]): unknown {
-		const key = JSON.stringify(path), atom = tree.get(key);
+		const key = JSON.stringify(path),
+			atom = tree.get(key);
 		if (!atom) return undefined;
 		if (atom[0] === "value") return atom[1];
 		const names = children.get(key) ?? [];
 		if (atom[0] === "object") {
-			return Object.fromEntries(names.sort().map(name => [name, visit([...path, name])]));
+			return Object.fromEntries(names.sort().map((name) => [name, visit([...path, name])]));
 		}
 		const order = atom[1];
-		const sorted = [...order.filter(name => names.includes(name)), ...names.filter(name => !order.includes(name)).sort()];
-		return sorted.map(name => visit([...path, name]));
+		const sorted = [
+			...order.filter((name) => names.includes(name)),
+			...names.filter((name) => !order.includes(name)).sort(),
+		];
+		return sorted.map((name) => visit([...path, name]));
 	}
 	return visit([]) as Record<string, unknown>;
 }

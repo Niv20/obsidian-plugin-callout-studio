@@ -131,10 +131,7 @@ function renameIds(ided: readonly Element[], token: string): Map<string, string>
  * scanning them all is both shorter and more complete than a list that would
  * have to be kept in step with the sanitizer's allow-list.
  */
-function retargetReferences(
-	root: Element,
-	renames: ReadonlyMap<string, string>,
-): void {
+function retargetReferences(root: Element, renames: ReadonlyMap<string, string>): void {
 	for (const el of [root, ...Array.from(root.querySelectorAll("*"))]) {
 		// A static array, and only values are written below, so mutating as we go
 		// cannot disturb the walk.
@@ -144,10 +141,7 @@ function retargetReferences(
 			if (value === null || value === "") continue;
 			// `<use href="#shape">`, which is the one reference not written as a
 			// url(). The `:href` tail catches the `xlink:` spelling.
-			if (
-				value.charAt(0) === "#" &&
-				(name === "href" || name.endsWith(":href"))
-			) {
+			if (value.charAt(0) === "#" && (name === "href" || name.endsWith(":href"))) {
 				const renamed = renames.get(value.slice(1));
 				if (renamed !== undefined) el.setAttribute(name, `#${renamed}`);
 				continue;
@@ -165,18 +159,12 @@ function retargetReferences(
  * outside the artwork is not ours to redirect, and leaving it alone is the same
  * answer the sanitizer's same-document guard already gives it.
  */
-function rewriteUrlRefs(
-	value: string,
-	renames: ReadonlyMap<string, string>,
-): string {
+function rewriteUrlRefs(value: string, renames: ReadonlyMap<string, string>): string {
 	if (renames.size === 0 || !value.includes("url(")) return value;
-	return value.replace(
-		URL_REF_RE,
-		(whole: string, quote: string, id: string) => {
-			const renamed = renames.get(id);
-			return renamed === undefined ? whole : `url(${quote}#${renamed}${quote})`;
-		},
-	);
+	return value.replace(URL_REF_RE, (whole: string, quote: string, id: string) => {
+		const renamed = renames.get(id);
+		return renamed === undefined ? whole : `url(${quote}#${renamed}${quote})`;
+	});
 }
 
 /* ------------------------------------------------------------------ *
@@ -217,11 +205,7 @@ function rewriteUrlRefs(
  * engine does not recognise, and `enable-background` is sitting in the very file
  * that prompted this.
  */
-function scopeRules(
-	css: string,
-	prefix: string,
-	renames: ReadonlyMap<string, string>,
-): string {
+function scopeRules(css: string, prefix: string, renames: ReadonlyMap<string, string>): string {
 	const out: string[] = [];
 	let i = 0;
 	while (i < css.length) {
@@ -390,10 +374,7 @@ function atomicLength(css: string, i: number): number {
  * An id needing CSS escaping (`#\32 a`) is not matched, so a rule addressing one
  * stops applying to the copy. No drawing tool emits those.
  */
-function rewriteIdSelectors(
-	prelude: string,
-	renames: ReadonlyMap<string, string>,
-): string {
+function rewriteIdSelectors(prelude: string, renames: ReadonlyMap<string, string>): string {
 	if (renames.size === 0 || !prelude.includes("#")) return prelude;
 	return prelude.replace(ID_SELECTOR_RE, (whole: string, id: string) => {
 		const renamed = renames.get(id);

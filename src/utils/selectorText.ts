@@ -153,10 +153,7 @@ export function blankNegations(selector: string): string {
 		if (ch === ":" && /^:not\s*\(/i.test(out.slice(i))) {
 			const open = out.indexOf("(", i);
 			const close = matchParen(out, open);
-			out =
-				out.slice(0, open + 1) +
-				" ".repeat(Math.max(0, close - open - 1)) +
-				out.slice(close);
+			out = out.slice(0, open + 1) + " ".repeat(Math.max(0, close - open - 1)) + out.slice(close);
 			i = close;
 			continue;
 		}

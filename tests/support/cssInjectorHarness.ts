@@ -27,11 +27,7 @@ import { CalloutRegistry } from "../../src/manager/CalloutRegistry";
 import { CSSInjector } from "../../src/manager/CSSInjector";
 import { splitSelectorList } from "../../src/utils/selectorText";
 import type { App } from "obsidian";
-import type {
-	CalloutDefinition,
-	CalloutIcon,
-	CalloutRenderRole,
-} from "../../src/types";
+import type { CalloutDefinition, CalloutIcon, CalloutRenderRole } from "../../src/types";
 
 /**
  * The private emitters the suites drive directly. Reaching them keeps the tests
@@ -55,32 +51,13 @@ export interface InjectorInternals {
 	getIconTransformCSS(def: CalloutDefinition): string;
 	iconTransformSelector(id: string, role: CalloutRenderRole): string;
 	iconHiddenCSS(def: CalloutDefinition): string;
-	accentProps(
-		def: CalloutDefinition,
-		mode: "light" | "dark",
-		important?: boolean,
-		imposed?: boolean,
-	): string[];
-	ownAccentProps(
-		def: CalloutDefinition,
-		mode: "light" | "dark",
-		important?: boolean,
-	): string[];
+	accentProps(def: CalloutDefinition, mode: "light" | "dark", important?: boolean, imposed?: boolean): string[];
+	ownAccentProps(def: CalloutDefinition, mode: "light" | "dark", important?: boolean): string[];
 	themeAccentVar(def: CalloutDefinition): string | undefined;
-	bgProps(
-		def: CalloutDefinition,
-		mode: "light" | "dark",
-		important?: boolean,
-	): string[];
+	bgProps(def: CalloutDefinition, mode: "light" | "dark", important?: boolean): string[];
 	bgAlphaFor(def: CalloutDefinition, mode: "light" | "dark"): number | null;
-	bgImageFor(
-		def: CalloutDefinition,
-		mode: "light" | "dark",
-	): { image: string } | null;
-	textGradientCss(
-		def: CalloutDefinition,
-		mode: "light" | "dark",
-	): string | null;
+	bgImageFor(def: CalloutDefinition, mode: "light" | "dark"): { image: string } | null;
+	textGradientCss(def: CalloutDefinition, mode: "light" | "dark"): string | null;
 	textSweepProps(image: string, under: string | null): string[];
 	textSweepRules(
 		def: CalloutDefinition,
@@ -143,10 +120,7 @@ export function harness(app: App = {} as App): Harness {
  * `{} as App` (the plain {@link harness}) reports no theme at all, which is the
  * 196-of-257 case and the one every pre-existing suite is written against.
  */
-export function themedHarness(
-	themeCss: string,
-	snippetCss: readonly string[] = [],
-): Harness {
+export function themedHarness(themeCss: string, snippetCss: readonly string[] = []): Harness {
 	const app = {
 		customCss: {
 			theme: "Fixture",
@@ -163,9 +137,7 @@ export function themedHarness(
 /** One neutral user-created callout. Light and dark accents differ by default,
  * because that is the ordinary case and the equal case is the interesting one
  * (see `needsDarkBlock`). */
-export function definition(
-	over: Partial<CalloutDefinition> = {},
-): CalloutDefinition {
+export function definition(over: Partial<CalloutDefinition> = {}): CalloutDefinition {
 	return {
 		id: "quiet",
 		displayName: "Quiet",
@@ -257,8 +229,7 @@ export function parseRules(css: string): CssRule[] {
  */
 export function flattenNesting(css: string): string {
 	const out: string[] = [];
-	const wrap = (at: string[], body: string): string =>
-		at.reduceRight((inner, a) => `${a} {\n${inner}\n}`, body);
+	const wrap = (at: string[], body: string): string => at.reduceRight((inner, a) => `${a} {\n${inner}\n}`, body);
 	const resolve = (selector: string, parent: string | null): string =>
 		parent === null
 			? selector
@@ -340,10 +311,7 @@ export function must<T>(value: T | undefined, what = "value"): T {
 export function ruleFor(css: string, selector: string): CssRule {
 	const found = parseRules(css).filter((r) => r.selector === norm(selector));
 	if (found.length !== 1) {
-		throw new Error(
-			`expected exactly one rule for "${selector}", found ${found.length}` +
-				`\n--- css ---\n${css}`,
-		);
+		throw new Error(`expected exactly one rule for "${selector}", found ${found.length}` + `\n--- css ---\n${css}`);
 	}
 	return must(found[0], "rule");
 }

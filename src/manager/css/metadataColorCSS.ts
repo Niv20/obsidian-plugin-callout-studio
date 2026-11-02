@@ -81,15 +81,8 @@
  */
 import type { CalloutDefinition } from "../../types";
 import { bakePaletteColors } from "../../utils/colorPalettes";
-import {
-	DEFAULT_TEXT_COLOR_DARK,
-	DEFAULT_TEXT_COLOR_LIGHT,
-} from "../../utils/colorUtils";
-import {
-	entryWords,
-	METADATA_WORD_FORMS,
-	type MetadataColorEntry,
-} from "../../utils/calloutMetadata";
+import { DEFAULT_TEXT_COLOR_DARK, DEFAULT_TEXT_COLOR_LIGHT } from "../../utils/colorUtils";
+import { entryWords, METADATA_WORD_FORMS, type MetadataColorEntry } from "../../utils/calloutMetadata";
 import { cssAttrValue } from "../../utils/calloutSelector";
 import { transparentChildrenCSS } from "./backgroundProps";
 import {
@@ -131,12 +124,7 @@ export interface MetadataColorCssContext {
 	ownAccentProps(def: CalloutDefinition, mode: "light" | "dark"): string[];
 	bgProps(def: CalloutDefinition, mode: "light" | "dark", important?: boolean): string[];
 	needsDarkBlock(def: CalloutDefinition): boolean;
-	textSweepRules(
-		def: CalloutDefinition,
-		selectorsFor: SelectorsFor,
-		ownsBackground: boolean,
-		imp: string,
-	): string[];
+	textSweepRules(def: CalloutDefinition, selectorsFor: SelectorsFor, ownsBackground: boolean, imp: string): string[];
 	printGradientCSS(
 		def: CalloutDefinition,
 		selFor: PrintSelectorsFor,
@@ -157,9 +145,7 @@ export interface MetadataColorCssContext {
  */
 export function metadataWordSelector(words: readonly string[]): string {
 	const forms = words.flatMap((word) =>
-		METADATA_WORD_FORMS.map(
-			({ op, value }) => `[data-callout-metadata${op}="${cssAttrValue(value(word))}" i]`,
-		),
+		METADATA_WORD_FORMS.map(({ op, value }) => `[data-callout-metadata${op}="${cssAttrValue(value(word))}" i]`),
 	);
 	return `:is(${forms.join(", ")})`;
 }
@@ -187,8 +173,7 @@ function metadataDefinition(entry: MetadataColorEntry): CalloutDefinition {
 const inMode = (themePrefix: string): string => `${themePrefix || ":root "}&`;
 
 /** A rule from its selector and declaration lines. */
-const rule = (selector: string, props: readonly string[]): string =>
-	`${selector} {\n${props.join("\n")}\n}`;
+const rule = (selector: string, props: readonly string[]): string => `${selector} {\n${props.join("\n")}\n}`;
 
 /** One nested block: the colour's selector once, its rules inside. */
 const nest = (outer: string, rules: readonly string[]): string =>
@@ -216,9 +201,7 @@ const unswept = (imp: string): string[] => [
 
 /** The print `::before` a callout's own gradient paints, emptied — when one could. */
 const noPrintGradient = (selector: string, imp: string, ctx: MetadataColorCssContext): string =>
-	ctx.clears.gradient
-		? `@media print {\n${rule(`${selector}::before`, [`  background-image: none${imp};`])}\n}`
-		: "";
+	ctx.clears.gradient ? `@media print {\n${rule(`${selector}::before`, [`  background-image: none${imp};`])}\n}` : "";
 
 /** Whether the palette sweeps its title text — `CSSInjector.textGradientCss`'s own test. */
 const sweeps = (def: CalloutDefinition): boolean =>
@@ -245,11 +228,7 @@ export function generateMetadataColorCSS(
 	return out.join("\n\n");
 }
 
-function colorRules(
-	entry: MetadataColorEntry,
-	ctx: MetadataColorCssContext,
-	standalone: boolean,
-): string {
+function colorRules(entry: MetadataColorEntry, ctx: MetadataColorCssContext, standalone: boolean): string {
 	const def = metadataDefinition(entry);
 	const words = metadataWordSelector(entryWords(entry));
 	const imp = ctx.important;
@@ -259,21 +238,13 @@ function colorRules(
 
 	// Accent and background, light then dark — the same two blocks a
 	// definition gets, minus the icon, which stays the callout's own.
-	const light = clearingImage(
-		[...ctx.accentProps(def, "light"), ...ctx.bgProps(def, "light", true)],
-		imp,
-		ctx,
-	);
+	const light = clearingImage([...ctx.accentProps(def, "light"), ...ctx.bgProps(def, "light", true)], imp, ctx);
 	if (def.transparentBg) light.push(...ctx.transparentBorderProps());
 	rules.push(rule(inMode(""), light));
 	// The `:root` rule matches in both modes, so one copy clears both.
 	if (def.transparentBg) rules.push(transparentChildrenCSS([inMode("")], true));
 	if (ctx.needsDarkBlock(def)) {
-		const dark = clearingImage(
-			[...ctx.accentProps(def, "dark"), ...ctx.bgProps(def, "dark", true)],
-			imp,
-			ctx,
-		);
+		const dark = clearingImage([...ctx.accentProps(def, "dark"), ...ctx.bgProps(def, "dark", true)], imp, ctx);
 		rules.push(rule(inMode(".theme-dark "), dark));
 	}
 
@@ -297,9 +268,11 @@ function colorRules(
 		// `:is()` — same weight — because a nested selector that opens with a
 		// type selector is dropped by the first engines to ship nesting.
 		rules.push(
-			ctx.themeSurface(def, (guard, surfaceWeight, rootQualifier) =>
-				`${guard.trim() ? `:is(${guard.trim()}) ` : ""}&` +
-				`${".callout".repeat(Math.max(0, surfaceWeight - weight))}${rootQualifier}`,
+			ctx.themeSurface(
+				def,
+				(guard, surfaceWeight, rootQualifier) =>
+					`${guard.trim() ? `:is(${guard.trim()}) ` : ""}&` +
+					`${".callout".repeat(Math.max(0, surfaceWeight - weight))}${rootQualifier}`,
 			),
 		);
 	}
@@ -337,10 +310,9 @@ function themeDrawnRules(
 			`  border-color: color-mix(in oklch, var(--cs-accent) calc(var(--callout-border-opacity, 0.25) * 100%), transparent)${imp};`,
 		);
 	}
-	return nest(
-		`${".callout".repeat(Math.max(1, ctx.weight))}[data-callout]${named}${words}`,
-		[rule(inMode(""), props)],
-	);
+	return nest(`${".callout".repeat(Math.max(1, ctx.weight))}[data-callout]${named}${words}`, [
+		rule(inMode(""), props),
+	]);
 }
 
 /**
@@ -349,11 +321,7 @@ function themeDrawnRules(
  * forcing those would repaint the body text of a callout whose theme writes in
  * sepia; `inherit` still clears a text colour the callout's own definition has.
  */
-function contentColorRules(
-	entry: MetadataColorEntry,
-	def: CalloutDefinition,
-	imp: string,
-): string[] {
+function contentColorRules(entry: MetadataColorEntry, def: CalloutDefinition, imp: string): string[] {
 	const { textColorLight, textColorDark } = entry.palette;
 	const authored =
 		(textColorLight !== undefined && textColorLight !== DEFAULT_TEXT_COLOR_LIGHT) ||
@@ -386,11 +354,7 @@ function sweptChevrons(def: CalloutDefinition, selectorsFor: SelectorsFor, imp: 
  * its definition twin: `[data-callout]` beside the word's `:is()`, plus the
  * scope.
  */
-function tokenBlocks(
-	def: CalloutDefinition,
-	words: string,
-	ctx: MetadataColorCssContext,
-): string[] {
+function tokenBlocks(def: CalloutDefinition, words: string, ctx: MetadataColorCssContext): string[] {
 	const colours = (): string[] =>
 		(["light", "dark"] as const).map((mode) =>
 			rule(
@@ -416,8 +380,7 @@ function tokenBlocks(
 		...sweep((p) => `${inMode(p)}.${CSS_INLINE_TOKEN}`, true),
 	]);
 
-	const arrows = (p: string): string =>
-		`${inMode(p)} .${CSS_FOLD_ARROW},\n${inMode(p)} .heading-collapse-indicator`;
+	const arrows = (p: string): string => `${inMode(p)} .${CSS_FOLD_ARROW},\n${inMode(p)} .heading-collapse-indicator`;
 	const bar = nest(`.${CSS_HEADING_LINE}[data-callout]${words}`, [
 		...colours(),
 		print(false),
@@ -432,8 +395,6 @@ function tokenBlocks(
 	// Only a sweep reaches the heading token's own name, so without one in
 	// play there is nothing to say about it.
 	const tokenName = sweep((p) => `${inMode(p)} > .${CSS_TOKEN_NAME}`, false);
-	const token = tokenName.length > 0
-		? nest(`.${CSS_HEADING_TOKEN}[data-callout]${words}`, tokenName)
-		: "";
+	const token = tokenName.length > 0 ? nest(`.${CSS_HEADING_TOKEN}[data-callout]${words}`, tokenName) : "";
 	return [pill, bar, token].filter(Boolean);
 }

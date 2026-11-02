@@ -12,14 +12,20 @@ import { SettingsSync } from "../src/manager/settingsSync";
 import { definition } from "./support/discoveryHarness";
 
 function host(raw: string | Error) {
-	const app = { vault: { configDir: ".obsidian", adapter: {
-		read: () => raw instanceof Error ? Promise.reject(raw) : Promise.resolve(raw),
-	} } } as unknown as App;
+	const app = {
+		vault: {
+			configDir: ".obsidian",
+			adapter: {
+				read: () => (raw instanceof Error ? Promise.reject(raw) : Promise.resolve(raw)),
+			},
+		},
+	} as unknown as App;
 	return { app, manifest: { id: "callout-studio", dir: ".obsidian/plugins/callout-studio" } as PluginManifest };
 }
 
 function settings(): Record<string, unknown> {
-	const registry = new CalloutRegistry(); registry.load(null);
+	const registry = new CalloutRegistry();
+	registry.load(null);
 	registry.add(definition({ id: "kept" }));
 	return registry.toSaveData() as unknown as Record<string, unknown>;
 }
@@ -40,17 +46,23 @@ describe("diagnosing a settings file", () => {
 	it("recognizes settings a sync service wrapped in metadata that no longer matches, and offers them back", async () => {
 		const body = settings();
 		const stamped = new SettingsSync("device").prepare(body) as Record<string, unknown>;
-		const combined = { ...stamped, callouts: [...(body.callouts as unknown[]), definition({ id: "from-the-other-device" })] };
+		const combined = {
+			...stamped,
+			callouts: [...(body.callouts as unknown[]), definition({ id: "from-the-other-device" })],
+		};
 		const found = await inspectSettingsFile(host(JSON.stringify(combined)));
 		assert.equal(found.diagnosis, "combined");
-		assert.ok((found.salvage?.callouts as { id: string }[]).some(row => row.id === "from-the-other-device"));
+		assert.ok((found.salvage?.callouts as { id: string }[]).some((row) => row.id === "from-the-other-device"));
 		assert.ok(!("calloutStudioSync" in found.salvage!));
 	});
 
 	it("names entries this build cannot use, a later build's file, and a file that is fine", async () => {
 		const duplicate = { callouts: [definition({ id: "twice" }), definition({ id: "twice" })] };
 		assert.equal((await inspectSettingsFile(host(JSON.stringify(duplicate)))).diagnosis, "invalid-entries");
-		assert.equal((await inspectSettingsFile(host(JSON.stringify({ version: 99, callouts: "new shape" })))).diagnosis, "newer");
+		assert.equal(
+			(await inspectSettingsFile(host(JSON.stringify({ version: 99, callouts: "new shape" })))).diagnosis,
+			"newer",
+		);
 		assert.equal((await inspectSettingsFile(host(JSON.stringify(settings())))).diagnosis, "readable");
 	});
 

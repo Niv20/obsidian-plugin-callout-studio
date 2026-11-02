@@ -81,12 +81,7 @@ const contentRange = (lexed: DocumentCalloutLine): [number, number] => {
  * Whether a pill — `[!]{text}` over `from`–`to`, or a bare `[!]` at `from` —
  * would be a pill there, and one the autocomplete would finish as a pill.
  */
-const pillFits = (
-	lexed: DocumentCalloutLine,
-	from: number,
-	to: number,
-	settings: FormSettings,
-): boolean => {
+const pillFits = (lexed: DocumentCalloutLine, from: number, to: number, settings: FormSettings): boolean => {
 	const { lineText: line, visible, prefix, tokens } = lexed;
 	// Not in the `>`, the list marker or a task's checkbox, which it would break.
 	if (from < contentRange(lexed)[0]) return false;
@@ -148,8 +143,8 @@ export const chooseWrapForm = (editor: Editor, settings: FormSettings): CalloutF
 	const heading = settings.headingCallouts.enabled ? readHeading(lexed) : null;
 	if (heading) {
 		// Its hashes, its token, or every word of it: the heading itself.
-		const whole = start === end || start < heading.markupEnd ||
-			(start <= heading.titleStart && end >= heading.titleEnd);
+		const whole =
+			start === end || start < heading.markupEnd || (start <= heading.titleStart && end >= heading.titleEnd);
 		if (!whole && contentPills(settings) && pillFits(lexed, start, end, settings)) {
 			return { kind: "inline", line: from.line, from: start, to: end };
 		}

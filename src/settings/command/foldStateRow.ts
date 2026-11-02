@@ -22,11 +22,7 @@ import { SelectDropdown } from "../../ui/selectDropdown";
 import type { CalloutRenderRole, CustomCommandFold } from "../../types";
 
 /** Fold options in the order the user is shown them. */
-const FOLD_ORDER: readonly CustomCommandFold[] = [
-	"none",
-	"expanded",
-	"collapsed",
-];
+const FOLD_ORDER: readonly CustomCommandFold[] = ["none", "expanded", "collapsed"];
 
 const FOLD_LABEL_KEY: Record<CustomCommandFold, string> = {
 	none: "commandBuilder.foldNone",

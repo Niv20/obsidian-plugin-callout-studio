@@ -19,9 +19,14 @@ import { addSidebarIconButton, createSidebarSummary, createSidebarToolbar } from
 import type { CalloutRenderRole } from "../types";
 
 export const OCCURRENCE_ROLES: CalloutRenderRole[] = ["heading", "inline", "regular"];
-export const occurrenceRoleLabel = (role: CalloutRenderRole): string => t({
-	regular: "vaultStats.roleBlock", heading: "vaultStats.roleHeading", inline: "vaultStats.roleInline",
-}[role]);
+export const occurrenceRoleLabel = (role: CalloutRenderRole): string =>
+	t(
+		{
+			regular: "vaultStats.roleBlock",
+			heading: "vaultStats.roleHeading",
+			inline: "vaultStats.roleInline",
+		}[role],
+	);
 
 export function occurrenceButton(container: HTMLElement, action: string, label: string): HTMLButtonElement {
 	return container.createEl("button", { text: label, attr: { type: "button", "data-action": action } });
@@ -38,7 +43,11 @@ export function createOccurrencesFrame(content: HTMLElement, onFilter: (button: 
 	const searchRow = toolbar.createDiv({ cls: "search-row" });
 	const pickerHost = searchRow.createDiv({ cls: "cs-occurrences-picker" });
 	// The format filter, at the end of the type field's row.
-	const filter = addSidebarIconButton(searchRow, { icon: "filter", label: t("usage.filterFormat"), onPress: onFilter });
+	const filter = addSidebarIconButton(searchRow, {
+		icon: "filter",
+		label: t("usage.filterFormat"),
+		onPress: onFilter,
+	});
 	filter.setAttribute("aria-haspopup", "menu");
 	const summary = createSidebarSummary(toolbar, "cs-occurrences-summary");
 	const scroll = content.createDiv({ cls: "cs-occurrences-scroll" });
@@ -73,10 +82,12 @@ export function openFormatMenu(
 		...OCCURRENCE_ROLES.map((role) => ({ role, label: occurrenceRoleLabel(role) })),
 	];
 	for (const choice of choices) {
-		menu.addItem((item) => item
-			.setTitle(choice.label)
-			.setChecked(choice.role === current)
-			.onClick(() => onPick(choice.role)));
+		menu.addItem((item) =>
+			item
+				.setTitle(choice.label)
+				.setChecked(choice.role === current)
+				.onClick(() => onPick(choice.role)),
+		);
 	}
 	// Under the button, as Obsidian opens its own sort menu.
 	const rect = button.getBoundingClientRect();

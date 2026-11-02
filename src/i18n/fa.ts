@@ -38,19 +38,18 @@ export const fa: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "ابتدا calloutی را که باید جایگزین آن شود انتخاب کنید.",
 	"settings.fallbackTag": "پیش‌فرض",
 	"settings.fallbackTagAuto": "خودکار",
-	"settings.rescanVaultDesc": "انواع کال‌اوتی را که یادداشت‌هایتان استفاده می‌کنند و هنوز در این فهرست نیستند اضافه می‌کند.",
+	"settings.rescanVaultDesc":
+		"انواع کال‌اوتی را که یادداشت‌هایتان استفاده می‌کنند و هنوز در این فهرست نیستند اضافه می‌کند.",
 	"settings.rescanVaultHintAction": "جستجو برای callout",
-	"manualDiscovery.failed": "نتایج شناسایی ذخیره نشد. بررسی کنید که تنظیمات قابل‌نوشتن باشند و همگام‌سازی پایان یافته باشد؛ سپس از تنظیمات ← انواع callout من ← جستجو برای callout دوباره تلاش کنید. calloutهای موجود جایگزین نشده‌اند.",
+	"manualDiscovery.failed":
+		"نتایج شناسایی ذخیره نشد. بررسی کنید که تنظیمات قابل‌نوشتن باشند و همگام‌سازی پایان یافته باشد؛ سپس از تنظیمات ← انواع callout من ← جستجو برای callout دوباره تلاش کنید. calloutهای موجود جایگزین نشده‌اند.",
 	"manualDiscovery.scanning": "در حال اسکن…",
-	"settings.rescanComplete":
-		"اسکن کامل شد: {{count}} نوع callout جدید اضافه شد.",
+	"settings.rescanComplete": "اسکن کامل شد: {{count}} نوع callout جدید اضافه شد.",
 	"replaceModal.titleReplace": "جایگزینی در vault",
 
 	"welcome.title": "به Callout Studio خوش آمدید!",
-	"welcome.tagline":
-		"راه‌حل کامل شما برای ساخت، طراحی و مدیریت callout‌های Obsidian.",
-	"importBanner.message":
-		"متوجه شدیم که از {{plugins}} استفاده می‌کنید. آیا مایلید callout‌های خود را وارد کنید؟",
+	"welcome.tagline": "راه‌حل کامل شما برای ساخت، طراحی و مدیریت callout‌های Obsidian.",
+	"importBanner.message": "متوجه شدیم که از {{plugins}} استفاده می‌کنید. آیا مایلید callout‌های خود را وارد کنید؟",
 	"importBanner.action": "وارد کردن",
 	"importBanner.dismiss": "رد کردن",
 	"welcome.demoName": "Callout Studio",
@@ -65,8 +64,7 @@ export const fa: Record<string, string> = {
 		"Callout Studio قابلیت‌های بیشتری هم دارد! [بیشتر بدانید]({{repoUrl}}).\n",
 	"deleteModal.title": "حذف callout",
 
-	"deleteModal.bodyInUse":
-		"این callout {{count}} بار در {{files}} فایل ظاهر می‌شود.",
+	"deleteModal.bodyInUse": "این callout {{count}} بار در {{files}} فایل ظاهر می‌شود.",
 	"deleteModal.notesUntouched":
 		"این کار فقط تعریف callout را حذف می‌کند. یادداشت‌های شما دست نمی‌خورند، بنابراین callout‌های موجود به‌سادگی به سبک پیش‌فرض برمی‌گردند.",
 	"deleteModal.fallbackTarget":
@@ -99,8 +97,7 @@ export const fa: Record<string, string> = {
 		"داده‌های Callout Studio خود را از خزانه‌ای دیگر وارد کنید یا کال‌اوت‌هایتان را از افزونه‌ای دیگر منتقل کنید.",
 	"settings.exportDesc":
 		"کال‌اوت‌های خود را به‌صورت پشتیبان Callout Studio یا قطعه‌کد CSS برای استفاده در جای دیگر ذخیره کنید.",
-	"settings.importConflictNotice":
-		"{{count}} نوع callout وارد شد؛ {{overwritten}} ورودی موجود بازنویسی شد.",
+	"settings.importConflictNotice": "{{count}} نوع callout وارد شد؛ {{overwritten}} ورودی موجود بازنویسی شد.",
 
 	"settings.addNewCallout": "افزودن callout",
 
@@ -126,13 +123,11 @@ export const fa: Record<string, string> = {
 	"settings.themeCalloutsHeading": "Callout های پوسته‌ی شما",
 	"settings.themeCalloutsDefaultTheme": "پوسته‌ی شما",
 	"settings.themeCalloutsEmpty": "{{theme}} در حال حاضر هیچ کال‌اوتی را استایل نمی‌کند.",
-	"settings.themePreviewAria":
-		'پیش‌نمایش "{{name}}" — ببینید پوسته‌تان چگونه آن را ترسیم می‌کند',
+	"settings.themePreviewAria": 'پیش‌نمایش "{{name}}" — ببینید پوسته‌تان چگونه آن را ترسیم می‌کند',
 	"settings.builtInAllThemeStyled":
 		"{{theme}} همهٔ callout های داخلی را استایل می‌دهد، بنابراین Callout Studio همه را همان‌طور که هستند رها می‌کند. برای طراحی یکی از آنِ خودتان، callout ای با شناسهٔ متفاوت اضافه کنید.",
 	"settings.fallbackCallout": "callout پشتیبان پیش‌فرض",
-	"settings.fallbackCalloutDesc":
-		"انواع callout ناشناخته این سبک را به ارث می‌برند.",
+	"settings.fallbackCalloutDesc": "انواع callout ناشناخته این سبک را به ارث می‌برند.",
 
 	"settings.border": "حاشیه",
 	"settings.borderTop": "بالا",
@@ -164,8 +159,7 @@ export const fa: Record<string, string> = {
 	"settings.paletteCountOne": "۱ پالت",
 	"settings.editPaletteAria": "ویرایش پالت {{name}}",
 	"settings.deletePaletteTitle": "حذف پالت",
-	"settings.deletePaletteBody":
-		'بلوک‌های callout که از رنگ‌های آن استفاده می‌کنند تغییر نمی‌کنند.',
+	"settings.deletePaletteBody": "بلوک‌های callout که از رنگ‌های آن استفاده می‌کنند تغییر نمی‌کنند.",
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'callout‌هایی که آن را در فراداده‌شان نام برده‌اند ("{{key}}") به‌جای آن رنگ داخلی همان نام را می‌گیرند. یادداشت‌های شما تغییر نمی‌کنند.',
 
@@ -196,15 +190,14 @@ export const fa: Record<string, string> = {
 	"commandBuilder.callout": "نوع callout",
 	"commandBuilder.calloutDesc": "callout‌ای که این دستور درج می‌کند.",
 	"commandBuilder.headingLevel": "سطح سرتیتر",
-	"commandBuilder.roleThemeOwned":
-		"پوسته‌ی شما این callout را ارائه می‌دهد، بنابراین فقط قالب Block دارد.",
-	"commandBuilder.commandSuspended": "تا وقتی پوستهٔ شما این کال‌اوت را فراهم می‌کند متوقف است؛ در این حالت فقط قالب بلوکی دارد.",
+	"commandBuilder.roleThemeOwned": "پوسته‌ی شما این callout را ارائه می‌دهد، بنابراین فقط قالب Block دارد.",
+	"commandBuilder.commandSuspended":
+		"تا وقتی پوستهٔ شما این کال‌اوت را فراهم می‌کند متوقف است؛ در این حالت فقط قالب بلوکی دارد.",
 	"commandBuilder.pausedTag": "متوقف به‌دلیل پوسته",
 	"commandBuilder.missingTag": "کال‌اوت گم‌شده",
 	"commandBuilder.headingLevelDesc": "کدام سطح سرتیتر نوشته شود.",
 	"commandBuilder.action": "عملکرد",
-	"commandBuilder.actionDesc":
-		"پیچیدن، انتخاب را به یک callout تبدیل می‌کند؛ درج، یک callout خالی اضافه می‌کند.",
+	"commandBuilder.actionDesc": "پیچیدن، انتخاب را به یک callout تبدیل می‌کند؛ درج، یک callout خالی اضافه می‌کند.",
 	"commandBuilder.actionDescHeading":
 		"پیچیدن، خطی را که مکان‌نما در آن است به یک callout سرتیتری تبدیل می‌کند.\nدرج، یک callout خالی در خط تازه اضافه می‌کند.",
 	"commandBuilder.actionDescInline":
@@ -212,22 +205,18 @@ export const fa: Record<string, string> = {
 	"commandBuilder.actionWrap": "پیچیدن انتخاب",
 	"commandBuilder.actionInsert": "درج جدید",
 	"commandBuilder.foldState": "وضعیت تا کردن",
-	"commandBuilder.foldStateDesc":
-		"اینکه آیا callout قابل جمع است یا نه، و با چه وضعیتی شروع می‌شود.",
+	"commandBuilder.foldStateDesc": "اینکه آیا callout قابل جمع است یا نه، و با چه وضعیتی شروع می‌شود.",
 	"commandBuilder.foldNone": "غیرقابل جمع‌شدن",
 	"commandBuilder.foldExpanded": "قابل جمع، باز (+)",
 	"commandBuilder.foldCollapsed": "قابل جمع، بسته (-)",
 	"commandBuilder.preview": "نام دستور",
-	"commandBuilder.duplicate":
-		"شما همین حالا دستوری دارید که دقیقاً همین کار را انجام می‌دهد.",
-	"commandBuilder.noCallouts":
-		"هنوز هیچ نوع calloutای برای ساخت یک دستور از آن وجود ندارد.",
+	"commandBuilder.duplicate": "شما همین حالا دستوری دارید که دقیقاً همین کار را انجام می‌دهد.",
+	"commandBuilder.noCallouts": "هنوز هیچ نوع calloutای برای ساخت یک دستور از آن وجود ندارد.",
 	"commandBuilder.noCalloutChosen": "ابتدا یک callout برای این دستور انتخاب کنید.",
 	"commandBuilder.save": "ذخیره",
 
 	"settings.resetAll": "بازنشانی",
-	"settings.resetAllDesc":
-		"همه تنظیمات و سفارشی‌سازی‌ها را به حالت پیش‌فرض بازمی‌گرداند.",
+	"settings.resetAllDesc": "همه تنظیمات و سفارشی‌سازی‌ها را به حالت پیش‌فرض بازمی‌گرداند.",
 	"settings.resetAllButton": "بازنشانی همه چیز",
 	"notice.resetAllDone": "همه چیز به پیش‌فرض بازنشانی شد.",
 	"settings.resetIntro": "لحظه‌ای وقت بگذارید و قدر هر آنچه با Callout Studio ساخته‌اید را بدانید.",
@@ -248,49 +237,42 @@ export const fa: Record<string, string> = {
 	"settings.resetItemAutocomplete": "تنظیمات تکمیل خودکار و فراداده",
 	"settings.resetItemFallback": "سبک جایگزین",
 	"settings.resetItemIconLibraries": "ترتیب کتابخانه‌های نماد و کتابخانه‌های پنهان",
-	"settings.resetAllConfirmAfter": "نگران نباشید: پیش از بازنشانی، از چیدمان فعلی‌تان نسخهٔ پشتیبان ذخیره می‌کنیم. هر زمان بخواهید می‌توانید آن را با بازیابی نسخهٔ قبلی در تنظیمات برگردانید.\nاگر از سرویس همگام‌سازی استفاده می‌کنید، بازنشانی ممکن است به دستگاه‌های دیگرتان هم برسد.",
+	"settings.resetAllConfirmAfter":
+		"نگران نباشید: پیش از بازنشانی، از چیدمان فعلی‌تان نسخهٔ پشتیبان ذخیره می‌کنیم. هر زمان بخواهید می‌توانید آن را با بازیابی نسخهٔ قبلی در تنظیمات برگردانید.\nاگر از سرویس همگام‌سازی استفاده می‌کنید، بازنشانی ممکن است به دستگاه‌های دیگرتان هم برسد.",
 	"settings.resetNothing": "چیزی برای بازنشانی نیست: همه چیز از قبل روی پیش‌فرض است.",
 
-	"notice.customCommandMissingCallout":
-		"نوع callout آن دستور دیگر وجود ندارد.",
+	"notice.customCommandMissingCallout": "نوع callout آن دستور دیگر وجود ندارد.",
 
 	"notice.importedJSON": "{{count}} نوع callout از JSON وارد شد.",
 	"notice.importedSettings": "تنظیمات افزونه وارد شد.",
-	"notice.importedCalloutManager":
-		"از Callout Manager وارد شد: {{created}} ایجاد شد، {{updated}} به‌روز شد.",
-	"notice.importedAdmonition":
-		"از Admonition درون‌ریزی شد: {{created}} ایجاد، {{updated}} " +
-		"به‌روزرسانی.",
-	"notice.noNewJSON":
-		"هیچ نوع callout جدیدی وارد نشد (شناسه‌ها ممکن است از قبل وجود داشته باشند).",
+	"notice.importedCalloutManager": "از Callout Manager وارد شد: {{created}} ایجاد شد، {{updated}} به‌روز شد.",
+	"notice.importedAdmonition": "از Admonition درون‌ریزی شد: {{created}} ایجاد، {{updated}} " + "به‌روزرسانی.",
+	"notice.noNewJSON": "هیچ نوع callout جدیدی وارد نشد (شناسه‌ها ممکن است از قبل وجود داشته باشند).",
 	"notice.iconDownloadFailed":
 		'دانلود آیکون Material "{{name}}" ناموفق بود. ممکن است برای این سبک/وزن در دسترس نباشد، یا اتصال شما قطع باشد.',
-	"notice.vaultScanFailed": "نمی‌توان شمارش استفاده از کال‌اوت را انجام داد چون {{count}} یادداشت(ها) قابل خواندن نبودند. لطفاً ذخیره‌سازی و همگام‌سازی را بررسی کرده و دوباره تلاش کنید.",
+	"notice.vaultScanFailed":
+		"نمی‌توان شمارش استفاده از کال‌اوت را انجام داد چون {{count}} یادداشت(ها) قابل خواندن نبودند. لطفاً ذخیره‌سازی و همگام‌سازی را بررسی کرده و دوباره تلاش کنید.",
 
 	"notice.externalCssRetired":
 		"گزینهٔ استایل‌دهی CSS شخصی حذف شد. این calloutها اکنون از طراحی ذخیره‌شدهٔ خود در Callout Studio استفاده می‌کنند، مگر اینکه پوستهٔ شما به آن‌ها استایل بدهد. یادداشت‌ها و قطعه‌های CSS شخصی شما تغییر نکرده‌اند.",
 	"notice.vaultRewritePartial":
 		"{{count}} یادداشت به‌روزرسانی نشد و بدون تغییر باقی ماند. برای جزئیات به کنسول توسعه‌دهنده مراجعه کنید.",
-	"notice.calloutDeleteIncomplete": "برخی یادداشت‌ها قابل تبدیل نبودند. نوع callout حفظ شد. تبدیل‌های کامل‌شده ذخیره شده‌اند؛ مشکل فایل را برطرف کنید و سپس برای تکمیل، دوباره این کنش را اجرا کنید.",
+	"notice.calloutDeleteIncomplete":
+		"برخی یادداشت‌ها قابل تبدیل نبودند. نوع callout حفظ شد. تبدیل‌های کامل‌شده ذخیره شده‌اند؛ مشکل فایل را برطرف کنید و سپس برای تکمیل، دوباره این کنش را اجرا کنید.",
 	"notice.nothingToWrap": "چیزی برای پیچیدن وجود ندارد.",
 	"notice.cursorNotInsideCallout": "مکان‌نما داخل callout نیست.",
 	"notice.headingAlreadyCallout": "این سرتیتر از قبل یک callout است.",
-	"notice.unwrapLeftAsIs":
-		"حذف این callout به‌شکل ایمن ممکن نبود، بنابراین همان‌طور که بود باقی ماند.",
-	"notice.autocompleteTargetMoved":
-		"چیزی درج نشد — خط در حالی که ویرایشگر باز بود تغییر کرد.",
+	"notice.unwrapLeftAsIs": "حذف این callout به‌شکل ایمن ممکن نبود، بنابراین همان‌طور که بود باقی ماند.",
+	"notice.autocompleteTargetMoved": "چیزی درج نشد — خط در حالی که ویرایشگر باز بود تغییر کرد.",
 	"notice.autocompleteAlwaysEnabled": "تکمیل خودکار اکنون یک ویژگی اصلی است و همیشه فعال است.",
-	"notice.openHotkeysFailed":
-		"باز کردن تنظیمات میانبرهای Obsidian امکان‌پذیر نبود.",
-	"notice.filterHotkeysFailed":
-		"میانبرهای Obsidian باز شدند، اما اعمال فیلتر Callout Studio امکان‌پذیر نبود.",
+	"notice.openHotkeysFailed": "باز کردن تنظیمات میانبرهای Obsidian امکان‌پذیر نبود.",
+	"notice.filterHotkeysFailed": "میانبرهای Obsidian باز شدند، اما اعمال فیلتر Callout Studio امکان‌پذیر نبود.",
 
 	"editor.editCallout": "ویرایش callout",
 	"editor.newCallout": "callout جدید",
 	"editor.displayName": "نام نمایشی",
 	"editor.displayNameDesc": "برچسب خوانا نمایش داده شده در رابط کاربری",
-	"editor.displayNameBuiltIn":
-		"نام نمایشی برای callout‌های داخلی قابل تغییر نیست",
+	"editor.displayNameBuiltIn": "نام نمایشی برای callout‌های داخلی قابل تغییر نیست",
 	"editor.displayNamePlaceholder": "callout من",
 	"editor.calloutIds": "شناسه‌های callout",
 	"editor.calloutIdsDesc":
@@ -299,8 +281,7 @@ export const fa: Record<string, string> = {
 	"editor.addId": "افزودن شناسه",
 	"editor.maxIds": "حداکثر {{max}} شناسه. برای افزودن شناسهٔ دیگر، یکی را حذف کنید.",
 	"editor.idLinkedToName": "متصل به نام نمایشی",
-	"editor.idCannotDelete":
-		"این شناسه به نام نمایشی متصل است و قابل حذف نیست — برای تغییر آن، نام را ویرایش کنید",
+	"editor.idCannotDelete": "این شناسه به نام نمایشی متصل است و قابل حذف نیست — برای تغییر آن، نام را ویرایش کنید",
 	"editor.icon": "آیکون",
 	"editor.pickIcon": "تغییر نماد",
 	"editor.replaceIcon": "جایگزینی نماد",
@@ -316,24 +297,22 @@ export const fa: Record<string, string> = {
 	"editor.horizontalOffset": "جابجایی افقی",
 	"editor.verticalOffset": "جابجایی عمودی",
 	"editor.colors": "رنگ‌ها",
-	"editor.colorsDesc":
-		"رنگ‌های حاشیه، پس‌زمینه و متن این کال‌اوت را تعیین می‌کند.",
+	"editor.colorsDesc": "رنگ‌های حاشیه، پس‌زمینه و متن این کال‌اوت را تعیین می‌کند.",
 	"editor.resetColors": "بازنشانی رنگ‌ها به پیش‌فرض",
 	"editor.paletteDeleted": "رنگ حذف‌شده",
 	"editor.paletteGroupObsidian": "Callout‌های Obsidian",
 	"editor.paletteGroupPresets": "پیش‌تنظیم‌های رنگ",
 	"editor.paletteGroupCustom": "سفارشی",
-	"editor.contrastWarning":
-		"کنتراست کم با پس‌زمینه — ممکن است خواندن آن دشوار باشد",
+	"editor.contrastWarning": "کنتراست کم با پس‌زمینه — ممکن است خواندن آن دشوار باشد",
 	"editor.foldable": "قابل جمع",
-	"editor.foldableDesc":
-		"انتخاب کنید آیا callout قابل جمع است و چه حالت پیش‌فرضی در کل vault اعمال شود.",
+	"editor.foldableDesc": "انتخاب کنید آیا callout قابل جمع است و چه حالت پیش‌فرضی در کل vault اعمال شود.",
 	"editor.foldOff": "خاموش",
 	"editor.foldOpen": "به صورت پیش‌فرض باز",
 	"editor.foldClosed": "به صورت پیش‌فرض بسته",
 	"editor.cancel": "لغو",
 	"editor.saveChanges": "ذخیره تغییرات",
-	"editor.saveFailed": "ذخیره کامل نشد. اگر این ویرایشگر هنوز باز است، آن را باز نگه دارید و پس از بررسی فضای ذخیره‌سازی و همگام‌سازی دوباره تلاش کنید. ممکن است برخی تنظیمات یا تغییرات یادداشت‌ها پیش‌تر ذخیره شده باشند.",
+	"editor.saveFailed":
+		"ذخیره کامل نشد. اگر این ویرایشگر هنوز باز است، آن را باز نگه دارید و پس از بررسی فضای ذخیره‌سازی و همگام‌سازی دوباره تلاش کنید. ممکن است برخی تنظیمات یا تغییرات یادداشت‌ها پیش‌تر ذخیره شده باشند.",
 	"editor.createCallout": "ایجاد callout",
 	"editor.nameRequired": "قبل از ایجاد callout، نام نمایشی لازم است.",
 	"editor.noChangesToSave": "هیچ تغییری انجام نشد.",
@@ -344,15 +323,12 @@ export const fa: Record<string, string> = {
 	"editor.idConflict": "این شناسه با یک callout موجود تعارض دارد",
 	"editor.idDashConflict":
 		"Obsidian فاصله‌ها را به‌صورت خط تیره می‌نویسد، بنابراین این شناسه با «{{other}}» تداخل دارد",
-	"editor.idOwnedBy":
-		"«{{id}}» یکی از شناسه‌های {{name}} است. می‌توانید {{link}}.",
+	"editor.idOwnedBy": "«{{id}}» یکی از شناسه‌های {{name}} است. می‌توانید {{link}}.",
 	"editor.idMoveHere": "آن را به اینجا منتقل کنید",
 	"editor.idOwnedByMain":
 		"«{{id}}» شناسهٔ اصلی {{name}} است. برای استفاده از آن در اینجا، ابتدا {{name}} را حذف کنید.",
-	"editor.idBuiltInStock":
-		"«{{id}}» یکی از شناسه‌های خود Obsidian برای {{name}} است.",
-	"editor.idMoving":
-		"هنگام ذخیره، «{{id}}» از {{name}} به اینجا منتقل می‌شود.",
+	"editor.idBuiltInStock": "«{{id}}» یکی از شناسه‌های خود Obsidian برای {{name}} است.",
+	"editor.idMoving": "هنگام ذخیره، «{{id}}» از {{name}} به اینجا منتقل می‌شود.",
 	"editor.idMovingNotes": "یادداشت‌های شما تغییر نمی‌کنند. آن‌ها سبک این callout را می‌گیرند.",
 	"editor.idFromTheme":
 		"{{theme}} از قبل callout ای با این شناسه ارائه می‌دهد، بنابراین Callout Studio نمی‌تواند آن را استایل بدهد. شناسه‌ی دیگری انتخاب کنید.",
@@ -365,32 +341,26 @@ export const fa: Record<string, string> = {
 	"editor.untitledCallout": "Callout بدون عنوان",
 	"editor.loremIpsum":
 		"نسیمی ملایم از میان درختان می‌گذرد. نور گرم خورشید بر مسیری آرام می‌تابد و به منظره جان می‌بخشد.",
-	"editor.loremIpsumShort":
-		"نسیمی ملایم از میان درختان می‌گذرد.",
-	"editor.sampleInlineText":
-		"در اینجا یک قرص [!{id}]{{title}} درون‌خطی در داخل یک پاراگراف وجود دارد.",
+	"editor.loremIpsumShort": "نسیمی ملایم از میان درختان می‌گذرد.",
+	"editor.sampleInlineText": "در اینجا یک قرص [!{id}]{{title}} درون‌خطی در داخل یک پاراگراف وجود دارد.",
 	"editor.previewReadOnly": "پیش‌نمایش زنده قابل ویرایش نیست",
 	"noteChanges.title": "یادداشت‌های شما به‌روزرسانی شوند؟",
 	"noteChanges.leave": "همان‌طور که هستند بمانند",
-	"noteChanges.leaveDesc":
-		"[!{{id}}] را نگه می‌دارند و به سبک پیش‌فرض برمی‌گردند.",
+	"noteChanges.leaveDesc": "[!{{id}}] را نگه می‌دارند و به سبک پیش‌فرض برمی‌گردند.",
 	"noteChanges.changeTo": "تغییر به",
 	"noteChanges.renameChange": "تغییر به «{{id}}»",
 	"noteChanges.titlesChange": "تغییر به «{{new}}»",
 	"noteChanges.titlesLeaveDesc": "همچنان «{{old}}» می‌مانند.",
 	"noteChanges.foldChange": "تنظیم روی «{{state}}»",
-	"noteChanges.foldLeaveDesc":
-		"فقط callout‌هایی که از این پس درج می‌کنید از تنظیم جدید استفاده می‌کنند.",
+	"noteChanges.foldLeaveDesc": "فقط callout‌هایی که از این پس درج می‌کنید از تنظیم جدید استفاده می‌کنند.",
 
 	// Theme callout preview window — opens instead of the editor for a callout
 	// the active theme supplies or restyles.
-	"themePreview.title": '{{name}} — ارائه‌شده توسط پوسته‌ی شما',
+	"themePreview.title": "{{name}} — ارائه‌شده توسط پوسته‌ی شما",
 	"themePreview.summary":
 		"ارائه‌شده توسط {{theme}} (فقط خواندنی). رنگ، آیکون و شناسه را نمی‌توان اینجا تغییر داد و قالب‌های سرتیتر/درون‌خطی در دسترس نیستند. برای سفارشی‌سازی، یک callout جدید بسازید.",
 	"themePreview.previewTitle": "اکنون چگونه رندر می‌شود",
-	"themePreview.blockSample":
-		"> [!{{id}}] {{name}}\n" +
-		"> محتوای این callout این‌طور به نظر می‌رسد.\n",
+	"themePreview.blockSample": "> [!{{id}}] {{name}}\n" + "> محتوای این callout این‌طور به نظر می‌رسد.\n",
 	"editor.themePreviewClose": "متوجه شدم",
 
 	// Palette editor modal
@@ -417,8 +387,10 @@ export const fa: Record<string, string> = {
 	"palette.advancedColors": "رنگ‌ها",
 	"palette.lightModeColors": "رنگ‌های حالت روشن",
 	"palette.darkModeColors": "رنگ‌های حالت تیره",
-	"palette.modeColorsHintLight": "این تغییرات فقط برای حالت روشن اعمال می‌شوند. حالت تیره رنگ‌های خودش را حفظ می‌کند.\nبرای ویرایش آن‌ها، دکمه ماه را در بالا فشار دهید.",
-	"palette.modeColorsHintDark": "این تغییرات فقط برای حالت تیره اعمال می‌شوند. حالت روشن رنگ‌های خودش را حفظ می‌کند.\nبرای ویرایش آن‌ها، دکمه خورشید را در بالا فشار دهید.",
+	"palette.modeColorsHintLight":
+		"این تغییرات فقط برای حالت روشن اعمال می‌شوند. حالت تیره رنگ‌های خودش را حفظ می‌کند.\nبرای ویرایش آن‌ها، دکمه ماه را در بالا فشار دهید.",
+	"palette.modeColorsHintDark":
+		"این تغییرات فقط برای حالت تیره اعمال می‌شوند. حالت روشن رنگ‌های خودش را حفظ می‌کند.\nبرای ویرایش آن‌ها، دکمه خورشید را در بالا فشار دهید.",
 	"palette.showLightMode": "نمایش حالت روشن",
 	"palette.showDarkMode": "نمایش حالت تیره",
 	"palette.accentColor": "رنگ تأکیدی",
@@ -510,12 +482,10 @@ export const fa: Record<string, string> = {
 	"iconPicker.searchSimpleIcons": "جست‌وجو در Simple Icons",
 	"iconPicker.custom": "نمادهای سفارشی",
 	"iconPicker.searchCustom": "جستجو در نمادهای سفارشی",
-	"iconPicker.customTooLarge":
-		"{{name}} خیلی بزرگ است. نمادهای سفارشی باید حداکثر ۵ مگابایت باشند.",
+	"iconPicker.customTooLarge": "{{name}} خیلی بزرگ است. نمادهای سفارشی باید حداکثر ۵ مگابایت باشند.",
 	"iconPicker.customUnsupported":
 		"{{name}} فایل نماد سفارشی پشتیبانی‌شده‌ای نیست. از SVG، PNG، JPEG یا WebP استفاده کنید.",
-	"iconPicker.customInvalidSvg":
-		"{{name}} به عنوان SVG امن قابل خواندن نبود و اضافه نشد.",
+	"iconPicker.customInvalidSvg": "{{name}} به عنوان SVG امن قابل خواندن نبود و اضافه نشد.",
 	"iconPicker.customDecodeFailed": "{{name}} به عنوان نماد سفارشی قابل خواندن نبود.",
 	"iconPicker.customDuplicate":
 		"{{name}} از قبل در نمادهای سفارشی شما وجود دارد. نام فایل را تغییر دهید یا نماد موجود را حذف کنید.",
@@ -673,8 +643,7 @@ export const fa: Record<string, string> = {
 	"iconPack.downloadDetail": "{{count}} آیکون · {{size}} · دانلود یک‌باره",
 	"iconPack.download": "دانلود",
 	"iconPack.downloading": "در حال دانلود {{name}}…",
-	"iconPack.downloadFailed":
-		"دانلود {{name}} ناموفق بود. اتصال خود را بررسی کنید و دوباره تلاش کنید.",
+	"iconPack.downloadFailed": "دانلود {{name}} ناموفق بود. اتصال خود را بررسی کنید و دوباره تلاش کنید.",
 	"iconPack.retry": "تلاش مجدد",
 	"iconPack.faBrandsNotice":
 		"آیکون‌های برندها علائم تجاری صاحبان مربوطه هستند. گنجاندن آن‌ها به معنای تأیید نیست. لطفاً آن‌ها را فقط برای نمایندگی شرکت، محصول یا خدماتی که به آن اشاره دارند استفاده کنید.",
@@ -735,7 +704,8 @@ export const fa: Record<string, string> = {
 	"contextMenu.setFoldNone": "تنظیم callout به‌صورت غیرقابل جمع‌شدن",
 	"contextMenu.cutSection": "برش بخش عنوان",
 	"notice.clipboardWriteFailed": "کپی در کلیپ‌بورد ممکن نشد. یادداشت بدون تغییر باقی ماند.",
-	"notice.sectionChangedAfterCopy": "بخش کپی شد، اما یادداشت پیش از آنکه بتوان آن را برش داد تغییر کرد. چیزی حذف نشد.",
+	"notice.sectionChangedAfterCopy":
+		"بخش کپی شد، اما یادداشت پیش از آنکه بتوان آن را برش داد تغییر کرد. چیزی حذف نشد.",
 	"contextMenu.copySection": "کپی بخش عنوان",
 	"contextMenu.deleteSection": "حذف بخش عنوان",
 	"heading.toggleFold": "تغییر وضعیت جمع‌شدن",
@@ -764,15 +734,14 @@ export const fa: Record<string, string> = {
 	"settings.metadataWordAlreadyHere": "این واژه از قبل در فهرست است",
 	"settings.metadataWordTooLong": "هر واژه باید حداکثر {{max}} نویسه باشد",
 	"settings.maxMetadataWords": "حداکثر {{max}} واژه. برای افزودن واژهٔ دیگر، یکی را حذف کنید.",
-	"settings.buildFailed": "Callout Studio نتوانست تنظیمات خود را نمایش دهد؛ Obsidian را دوباره راه‌اندازی کنید و اگر تکرار شد گزارش دهید.",
-	"settings.globalSettingsRegularDesc":
-		"حاشیه، شعاع، مقیاس فونت و تراز.",
-	"settings.globalSettingsHeadingDesc":
-		"حاشیه، شکل و فاصله عمودی.",
-	"settings.globalSettingsInlineDesc":
-		"حاشیه و شکل.",
+	"settings.buildFailed":
+		"Callout Studio نتوانست تنظیمات خود را نمایش دهد؛ Obsidian را دوباره راه‌اندازی کنید و اگر تکرار شد گزارش دهید.",
+	"settings.globalSettingsRegularDesc": "حاشیه، شعاع، مقیاس فونت و تراز.",
+	"settings.globalSettingsHeadingDesc": "حاشیه، شکل و فاصله عمودی.",
+	"settings.globalSettingsInlineDesc": "حاشیه و شکل.",
 	"settings.themeCalloutStyles": "استفاده از سبک‌های callout پوسته‌ی شما",
-	"settings.themeCalloutStylesDesc": "وقتی روشن باشد، کال‌اوت‌هایی که پوستهٔ شما استایل می‌کند ظاهر خودش را نگه می‌دارند و فقط به‌صورت کال‌اوت بلوکی نمایش داده می‌شوند. وقتی خاموش باشد، Callout Studio همهٔ کال‌اوت‌ها را رسم می‌کند.",
+	"settings.themeCalloutStylesDesc":
+		"وقتی روشن باشد، کال‌اوت‌هایی که پوستهٔ شما استایل می‌کند ظاهر خودش را نگه می‌دارند و فقط به‌صورت کال‌اوت بلوکی نمایش داده می‌شوند. وقتی خاموش باشد، Callout Studio همهٔ کال‌اوت‌ها را رسم می‌کند.",
 	"settings.calloutTypeRegular": "سبک کال‌اوت بلوکی",
 	"settings.calloutTypeHeading": "سبک callout عنوان",
 	"settings.calloutTypeInline": "سبک callout درون‌خطی",
@@ -804,27 +773,20 @@ export const fa: Record<string, string> = {
 	"confirm.titleDeleteLibrary": "حذف کتابخانهٔ نماد",
 	"confirm.titleResetLibraries": "بازنشانی کتابخانه‌های نماد",
 
-	"vault.filesUpdated":
-		"{{count}} مرجع callout در فایل‌های vault به‌روزرسانی شد.",
+	"vault.filesUpdated": "{{count}} مرجع callout در فایل‌های vault به‌روزرسانی شد.",
 	// The arrow stays "→" although the sentence is RTL: it sits between two
 	// callout ids, which are normally Latin, so the bidi algorithm resolves that
 	// fragment left-to-right and a mirrored "←" would point from the new id back
 	// to the old one. Prose paths such as `firstRun.laterHint` do mirror.
-	"vault.idsUpdated":
-		"{{count}} شناسه callout در فایل‌های vault به‌روزرسانی شد: {{oldIds}} → {{newId}}",
-	"vault.titlesUpdated":
-		"{{count}} عنوان callout در فایل‌های vault به‌روزرسانی شد: {{oldTitle}} → {{newTitle}}",
-	"vault.foldUpdated":
-		"نشانهٔ تاشدن {{count}} callout در فایل‌های vault به‌روزرسانی شد.",
+	"vault.idsUpdated": "{{count}} شناسه callout در فایل‌های vault به‌روزرسانی شد: {{oldIds}} → {{newId}}",
+	"vault.titlesUpdated": "{{count}} عنوان callout در فایل‌های vault به‌روزرسانی شد: {{oldTitle}} → {{newTitle}}",
+	"vault.foldUpdated": "نشانهٔ تاشدن {{count}} callout در فایل‌های vault به‌روزرسانی شد.",
 	"vault.confirmReplace": "جایگزینی",
 	"vault.replacePromptInUse":
 		'"{{name}}" {{count}} بار در {{files}} فایل استفاده می‌شود. یک callout برای جایگزینی انتخاب کنید:',
-	"vault.replacePromptUnused":
-		'یک callout برای جایگزینی "{{name}}" انتخاب کنید:',
-	"vault.noReplacementAvailable":
-		"هیچ callout دیگری برای جایگزینی موجود نیست.",
-	"vault.convertedToPlainText":
-		"{{blocks}} بلوک callout در {{files}} فایل به متن ساده تبدیل شد.",
+	"vault.replacePromptUnused": 'یک callout برای جایگزینی "{{name}}" انتخاب کنید:',
+	"vault.noReplacementAvailable": "هیچ callout دیگری برای جایگزینی موجود نیست.",
+	"vault.convertedToPlainText": "{{blocks}} بلوک callout در {{files}} فایل به متن ساده تبدیل شد.",
 	"vault.resetNotesFailed":
 		"برخی یادداشت‌ها به‌روز نشدند، بنابراین callout بازنشانی نشد. برای پایان دادن دوباره بازنشانی به پیش‌فرض را انتخاب کنید.",
 
@@ -841,7 +803,8 @@ export const fa: Record<string, string> = {
 	"quickInsert.noResults": "هیچ callout‌ای یافت نشد",
 	"quickInsert.noBuiltInCallouts": "در حال حاضر هیچ callout داخلی‌ای در دسترس نیست.",
 	"quickInsert.noThemeCallouts": "در حال حاضر هیچ callout ویژهٔ پوسته‌ای در دسترس نیست.",
-	"quickInsert.targetMoved": "یادداشتی که درج سریع را از آن باز کردید تغییر کرده یا بسته شده است. درج سریع را دوباره در یادداشتی که می‌خواهید ویرایش کنید باز کنید.",
+	"quickInsert.targetMoved":
+		"یادداشتی که درج سریع را از آن باز کردید تغییر کرده یا بسته شده است. درج سریع را دوباره در یادداشتی که می‌خواهید ویرایش کنید باز کنید.",
 	"quickInsert.targetMovedHint": "یادداشت اصلی دیگر برای این درج در دسترس نیست.",
 	"quickInsert.noUserCallouts":
 		"هنوز هیچ کال‌اوت سفارشی‌ای نساخته‌اید. دستور «Callout Studio: ایجاد نوع callout جدید» را از پالت فرمان اجرا کنید.",
@@ -856,17 +819,19 @@ export const fa: Record<string, string> = {
 	"vaultStats.roleInline": "درون‌خطی",
 
 	"portable.reviewTitle": "بررسی تبدیل",
-	"portable.helpIntro": "جایگزینی‌هایی را که می‌خواهید اعمال شوند انتخاب کنید. برای ویرایش، روی مداد یا متن جایگزین کلیک کنید؛ سپس برای ذخیره Enter را بزنید یا بیرون از کادر کلیک کنید. از نماد بازنشانی برای کنار گذاشتن پیش‌نویس یا بازگرداندن جایگزینی پیش‌فرض استفاده کنید. یادداشت‌ها فقط پس از انتخاب «تبدیل موارد انتخاب‌شده» و تأیید تغییر می‌کنند. پیوندهای عنوان همراه با عنوان‌های انتخاب‌شده به‌روزرسانی می‌شوند.",
+	"portable.helpIntro":
+		"جایگزینی‌هایی را که می‌خواهید اعمال شوند انتخاب کنید. برای ویرایش، روی مداد یا متن جایگزین کلیک کنید؛ سپس برای ذخیره Enter را بزنید یا بیرون از کادر کلیک کنید. از نماد بازنشانی برای کنار گذاشتن پیش‌نویس یا بازگرداندن جایگزینی پیش‌فرض استفاده کنید. یادداشت‌ها فقط پس از انتخاب «تبدیل موارد انتخاب‌شده» و تأیید تغییر می‌کنند. پیوندهای عنوان همراه با عنوان‌های انتخاب‌شده به‌روزرسانی می‌شوند.",
 	"portable.help": "دربارهٔ تبدیل",
 	"portable.roleLink": "پیوند عنوان",
 	"portable.convertSelected": "تبدیل موارد انتخاب‌شده",
-	"portable.selectionSummary": "{{selected}} از {{total}} جایگزینی انتخاب شده · {{links}} پیوند عنوان برای به‌روزرسانی",
-	"portable.selectionSummaryNoLinks":
-		"{{selected}} از {{total}} جایگزینی انتخاب شده",
+	"portable.selectionSummary":
+		"{{selected}} از {{total}} جایگزینی انتخاب شده · {{links}} پیوند عنوان برای به‌روزرسانی",
+	"portable.selectionSummaryNoLinks": "{{selected}} از {{total}} جایگزینی انتخاب شده",
 	"portable.selectionConflict": "این انتخاب پیوندهای عنوان‌ها را مبهم می‌کند. انتخاب قبلی شما حفظ شد.",
 	"portable.selectAll": "انتخاب همه",
 	"portable.selectNone": "لغو انتخاب همه",
-	"portable.relatedLinksHint": "پیوندها و محتواهای جاسازی‌شده از عنوان‌های انتخاب‌شده پیروی می‌کنند و همراه آن‌ها تبدیل می‌شوند.",
+	"portable.relatedLinksHint":
+		"پیوندها و محتواهای جاسازی‌شده از عنوان‌های انتخاب‌شده پیروی می‌کنند و همراه آن‌ها تبدیل می‌شوند.",
 	"portable.selectChange": "تبدیل {{path}}، خط {{line}}",
 	"portable.showMore": "نمایش {{count}} مورد بیشتر",
 	"portable.openFailed": "نوار کناری تبدیل باز نشد.",
@@ -874,14 +839,19 @@ export const fa: Record<string, string> = {
 	"portable.retry": "تلاش دوباره",
 	"portable.blockedAmbiguous": "این عنوان نادیده گرفته می‌شود، زیرا مقصد پیوند آن مبهم است.",
 	"portable.blockedTarget": "این عنوان نادیده گرفته می‌شود، زیرا نمی‌توان مقصد پیوند آن را با اطمینان حفظ کرد.",
-	"portable.recovery": "برخی تغییرات باقی مانده‌اند. پیش از راه‌اندازی دوباره یا غیرفعال کردن افزونه، این تبدیل و به‌روزرسانی پیوندهای عنوان‌های آن را کامل کنید؛ برنامه در انتظار فقط در حافظه نگه‌داری می‌شود.",
-	"portable.recoveryChanged": "یادداشت‌ها پس از توقف تبدیل تغییر کردند. به‌روزرسانی‌های در انتظار پیوندها حفظ می‌شوند؛ هر یادداشت پیش از نوشتن دوباره بررسی می‌شود.",
+	"portable.recovery":
+		"برخی تغییرات باقی مانده‌اند. پیش از راه‌اندازی دوباره یا غیرفعال کردن افزونه، این تبدیل و به‌روزرسانی پیوندهای عنوان‌های آن را کامل کنید؛ برنامه در انتظار فقط در حافظه نگه‌داری می‌شود.",
+	"portable.recoveryChanged":
+		"یادداشت‌ها پس از توقف تبدیل تغییر کردند. به‌روزرسانی‌های در انتظار پیوندها حفظ می‌شوند؛ هر یادداشت پیش از نوشتن دوباره بررسی می‌شود.",
 	"portable.finishConversion": "تکمیل تبدیل",
-	"portable.recoveryUnavailable": "برخی به‌روزرسانی‌های در انتظار پیوندها به‌طور ایمن بازیابی نشدند. پیش از شروع تبدیل تازه، یادداشت‌های مربوط را بررسی کنید.",
+	"portable.recoveryUnavailable":
+		"برخی به‌روزرسانی‌های در انتظار پیوندها به‌طور ایمن بازیابی نشدند. پیش از شروع تبدیل تازه، یادداشت‌های مربوط را بررسی کنید.",
 	"portable.title": "تبدیل به Markdown استاندارد",
-	"portable.settingDesc": "calloutهای عنوان و درون‌خطی را در سراسر خزانه با متن معمولی جایگزین کنید تا بدون Callout Studio قابل استفاده باشند.",
+	"portable.settingDesc":
+		"calloutهای عنوان و درون‌خطی را در سراسر خزانه با متن معمولی جایگزین کنید تا بدون Callout Studio قابل استفاده باشند.",
 	"portable.review": "بررسی تبدیل",
-	"portable.intro": "اگر می‌خواهید استفاده از Callout Studio را متوقف کنید یا خزانه را به برنامه‌ای بدون آن منتقل کنید، calloutهای عنوان و درون‌خطی را به Markdown استاندارد تبدیل کنید.",
+	"portable.intro":
+		"اگر می‌خواهید استفاده از Callout Studio را متوقف کنید یا خزانه را به برنامه‌ای بدون آن منتقل کنید، calloutهای عنوان و درون‌خطی را به Markdown استاندارد تبدیل کنید.",
 	"portable.before": "قبل",
 	"portable.after": "بعد",
 	"portable.replacement": "جایگزینی",
@@ -889,21 +859,25 @@ export const fa: Record<string, string> = {
 	"portable.type": "نوع",
 	"portable.text": "متن",
 	"portable.headingText": "عنوان",
-	"portable.backup": "توصیه می‌کنیم پیش از تبدیل، از خزانه نسخه پشتیبان تهیه کنید. این کار یادداشت‌های اصلی را تغییر می‌دهد و در Callout Studio قابل بازگردانی نیست.",
+	"portable.backup":
+		"توصیه می‌کنیم پیش از تبدیل، از خزانه نسخه پشتیبان تهیه کنید. این کار یادداشت‌های اصلی را تغییر می‌دهد و در Callout Studio قابل بازگردانی نیست.",
 	"portable.scanning": "در حال خواندن یادداشت‌های Markdown…",
 	"portable.progress": "خواندن یادداشت‌ها: {{done}} از {{total}}",
 	"portable.empty": "هیچ callout عنوان یا درون‌خطی مناسب برای تبدیل پیدا نشد. چیزی تغییر نمی‌کند.",
 	"portable.confirmTitle": "این خزانه برای همیشه تبدیل شود؟",
 	"portable.confirmSubtitle": "هیچ نسخهٔ پشتیبان خودکاری ساخته نمی‌شود",
-	"portable.confirmBody": "{{count}} مورد تبدیل و {{links}} پیوند عنوان در {{files}} یادداشت به‌روزرسانی شود؟\nاین کار فایل‌های اصلی را تغییر می‌دهد و در Callout Studio قابل بازگردانی نیست. نسخه پشتیبان خودکار ایجاد نمی‌شود. ابتدا از خزانه نسخه پشتیبان بگیرید، یادداشت‌های باز را ذخیره کنید و ویرایش و همگام‌سازی را تا پایان تبدیل متوقف کنید.\nاگر فایلی تغییر کند یا نوشتن ناموفق باشد، تبدیل متوقف می‌شود. یادداشت‌هایی که قبلاً تبدیل شده‌اند، تغییرات خود را حفظ می‌کنند.",
+	"portable.confirmBody":
+		"{{count}} مورد تبدیل و {{links}} پیوند عنوان در {{files}} یادداشت به‌روزرسانی شود؟\nاین کار فایل‌های اصلی را تغییر می‌دهد و در Callout Studio قابل بازگردانی نیست. نسخه پشتیبان خودکار ایجاد نمی‌شود. ابتدا از خزانه نسخه پشتیبان بگیرید، یادداشت‌های باز را ذخیره کنید و ویرایش و همگام‌سازی را تا پایان تبدیل متوقف کنید.\nاگر فایلی تغییر کند یا نوشتن ناموفق باشد، تبدیل متوقف می‌شود. یادداشت‌هایی که قبلاً تبدیل شده‌اند، تغییرات خود را حفظ می‌کنند.",
 	"portable.confirmAction": "تبدیل دائمی",
 	"portable.converting": "در حال اعمال تغییرات انتخاب‌شده… بستن این پنل تبدیل را متوقف نمی‌کند.",
 	"portable.complete": "{{count}} مورد تبدیل و {{links}} پیوند عنوان در {{files}} یادداشت به‌روزرسانی شد.",
-	"portable.stopped": "تبدیل متوقف شد. {{count}} مورد و {{links}} پیوند عنوان در {{files}} یادداشت قبلاً تغییر کرده‌اند؛ این تغییرات باقی می‌مانند.",
+	"portable.stopped":
+		"تبدیل متوقف شد. {{count}} مورد و {{links}} پیوند عنوان در {{files}} یادداشت قبلاً تغییر کرده‌اند؛ این تغییرات باقی می‌مانند.",
 	"portable.errorEditor": "یادداشت‌های باز را ذخیره کنید تا پیش‌نمایش خودکار به‌روز شود.",
 	"portable.errorChanged": "یادداشت‌ها تغییر کردند. پیش از تبدیل، تغییرات به‌روز را بررسی کنید.",
 	"portable.errorBusy": "تبدیل دیگری در حال انجام است. منتظر پایان آن بمانید.",
-	"portable.error": "خواندن یا به‌روزرسانی ایمن خزانه ممکن نشد. دسترسی به فایل‌ها را بررسی کنید، سپس دوباره تلاش کنید.",
+	"portable.error":
+		"خواندن یا به‌روزرسانی ایمن خزانه ممکن نشد. دسترسی به فایل‌ها را بررسی کنید، سپس دوباره تلاش کنید.",
 	"portable.blockedConverting": "یک تبدیل از قبل در حال انجام است. منتظر پایان آن بمانید.",
 	"portable.blockedUpdating": "بازبینی هنوز در حال به‌روزرسانی است. پیش از تبدیل منتظر پایان آن بمانید.",
 	"portable.blockedEditing": "ابتدا ویرایش جایگزین را تمام کنید: برای ذخیره Enter و برای صرف‌نظر Esc را بزنید.",
@@ -916,7 +890,8 @@ export const fa: Record<string, string> = {
 	"portable.customInvalid": "جایگزین را در یک خط نگه دارید و ساختار Markdown اطراف آن را تغییر ندهید.",
 	"portable.customUnsafe": "این جایگزین یک عنوان یا پیوندهای آن را مبهم می‌کند. عنوان دیگری انتخاب کنید.",
 	"portable.customStale": "بازبینی تغییر کرده است. ویرایشگر جایگزینی را دوباره باز کنید.",
-	"portable.customDiscarded": "{{count}} جایگزین سفارشی حذف شد، زیرا متن منبع آن‌ها تغییر کرده بود یا نمی‌شد آن را با اطمینان پیدا کرد.",
+	"portable.customDiscarded":
+		"{{count}} جایگزین سفارشی حذف شد، زیرا متن منبع آن‌ها تغییر کرده بود یا نمی‌شد آن را با اطمینان پیدا کرد.",
 	"portable.customBadge": "سفارشی",
 
 	"usage.title": "یافتن calloutها",
@@ -938,86 +913,70 @@ export const fa: Record<string, string> = {
 	"usage.more": "نمایش {{count}} مورد دیگر",
 	"usage.location": "خط {{line}} · {{role}}",
 	"usage.missing": "این یادداشت دیگر وجود ندارد. در حال به‌روزرسانی نتایج…",
-	"usage.changed": "این مورد تغییر کرده یا به مکانی جابه‌جا شده که نمی‌توان آن را با قطعیت تعیین کرد. در حال به‌روزرسانی نتایج…",
+	"usage.changed":
+		"این مورد تغییر کرده یا به مکانی جابه‌جا شده که نمی‌توان آن را با قطعیت تعیین کرد. در حال به‌روزرسانی نتایج…",
 	"usage.openFailed": "باز کردن این مورد استفاده از callout ممکن نشد.",
 	"usage.menuIncomplete": "یافتن calloutها — اسکن کامل نیست",
 	"usage.menu": "یافتن calloutها",
 	"usage.closeSettings": "برای دیدن نتایج callout در نوار کناری، تنظیمات را ببندید.",
 
 	"import.title": "مشکلات وارد کردن",
-	"import.reportLeadIn":
-		"پیش از ادامه، این مشکلات وارد کردن را بررسی کنید:",
-	"import.reportLeadInFatal":
-		"امکان وارد کردن این داده‌ها نبود:",
+	"import.reportLeadIn": "پیش از ادامه، این مشکلات وارد کردن را بررسی کنید:",
+	"import.reportLeadInFatal": "امکان وارد کردن این داده‌ها نبود:",
 	"import.entryHeading": "ورودی {{index}} — {{label}}",
-	"import.summary":
-		"{{valid}} از {{total}} ورودی معتبر است · {{issues}} مشکل یافت شد.",
+	"import.summary": "{{valid}} از {{total}} ورودی معتبر است · {{issues}} مشکل یافت شد.",
 	"import.btnCancel": "لغو",
 	"import.btnImportValid": "فقط معتبرها را وارد کن ({{count}})",
-	"import.nothingValid": "هیچ‌کدام از موارد معتبر نیستند، پس چیزی برای درون‌ریزی وجود ندارد. لغو کنید، مشکلات فهرست‌شده در اینجا را رفع کنید و دوباره درون‌ریزی کنید.",
-	"import.err.notRecognized":
-		"فایل ناشناخته: انتظار می‌رفت آرایه‌ای از تعاریف callout یا خروجی Callout Studio باشد.",
-	"import.warn.settingsIgnored":
-		"بلوک تنظیمات یک شیء معتبر نبود و نادیده گرفته شد.",
-	"import.warn.invalidGradient":
-		"گرادیان پس‌زمینه معتبر نبود و نادیده گرفته شد.",
-	"import.err.parseFailed":
-		"فایل JSON معتبر نیست و نمی‌توان آن را تجزیه کرد.",
-	"import.err.tooLarge": "این درون‌ریزی از محدودیت اندازهٔ 16 MiB فراتر می‌رود. آن را به فایل‌های کوچک‌تر تقسیم کنید و دوباره تلاش کنید.",
-	"import.err.tooComplex": "این درون‌ریزی بیش از حد پیچیده است: حداکثر ۱٬۰۰۰ مورد در هر فهرست یا شیء، در مجموع ۵۰٬۰۰۰ مقدار و حداکثر ۳۲ سطح تو‌در‌تویی مجاز است.",
-	"import.err.imageBudget": "مجموعهٔ تصاویر از محدودیت اندازه یا پیچیدگی فراتر می‌رود. پیش از درون‌ریزی، تصاویر بزرگ را حذف یا ساده کنید.",
+	"import.nothingValid":
+		"هیچ‌کدام از موارد معتبر نیستند، پس چیزی برای درون‌ریزی وجود ندارد. لغو کنید، مشکلات فهرست‌شده در اینجا را رفع کنید و دوباره درون‌ریزی کنید.",
+	"import.err.notRecognized": "فایل ناشناخته: انتظار می‌رفت آرایه‌ای از تعاریف callout یا خروجی Callout Studio باشد.",
+	"import.warn.settingsIgnored": "بلوک تنظیمات یک شیء معتبر نبود و نادیده گرفته شد.",
+	"import.warn.invalidGradient": "گرادیان پس‌زمینه معتبر نبود و نادیده گرفته شد.",
+	"import.err.parseFailed": "فایل JSON معتبر نیست و نمی‌توان آن را تجزیه کرد.",
+	"import.err.tooLarge":
+		"این درون‌ریزی از محدودیت اندازهٔ 16 MiB فراتر می‌رود. آن را به فایل‌های کوچک‌تر تقسیم کنید و دوباره تلاش کنید.",
+	"import.err.tooComplex":
+		"این درون‌ریزی بیش از حد پیچیده است: حداکثر ۱٬۰۰۰ مورد در هر فهرست یا شیء، در مجموع ۵۰٬۰۰۰ مقدار و حداکثر ۳۲ سطح تو‌در‌تویی مجاز است.",
+	"import.err.imageBudget":
+		"مجموعهٔ تصاویر از محدودیت اندازه یا پیچیدگی فراتر می‌رود. پیش از درون‌ریزی، تصاویر بزرگ را حذف یا ساده کنید.",
 	"import.err.processingFailed": "درون‌ریزی کامل نشد. داده‌ها را بررسی کنید و دوباره تلاش کنید.",
-	"import.reportTruncated": "{{shown}} مورد نخست از {{total}} مورد نمایش داده می‌شود. مقادیر طولانی در این گزارش کوتاه شده‌اند.",
+	"import.reportTruncated":
+		"{{shown}} مورد نخست از {{total}} مورد نمایش داده می‌شود. مقادیر طولانی در این گزارش کوتاه شده‌اند.",
 	"import.err.entryNotObject": "ورودی باید یک شی باشد.",
-	"import.err.requiredMissing":
-		'فیلد اجباری "{{field}}" وجود ندارد یا نوع اشتباهی دارد.',
+	"import.err.requiredMissing": 'فیلد اجباری "{{field}}" وجود ندارد یا نوع اشتباهی دارد.',
 	"import.err.idEmpty": "شناسه نباید خالی باشد.",
-	"import.err.idTooLong":
-		'شناسه "{{value}}" دارای {{length}} کاراکتر است؛ حداکثر {{max}} است.',
-	"import.err.idBadChar":
-		'شناسه "{{value}}" دارای کاراکترهای نامعتبر است ("|"، "["، "]"، تب و خط جدید مجاز نیستند).',
+	"import.err.idTooLong": 'شناسه "{{value}}" دارای {{length}} کاراکتر است؛ حداکثر {{max}} است.',
+	"import.err.idBadChar": 'شناسه "{{value}}" دارای کاراکترهای نامعتبر است ("|"، "["، "]"، تب و خط جدید مجاز نیستند).',
 	"import.err.idMetadata":
 		'شناسه "{{value}}" حاوی "|" است. در Obsidian هر چیزی بعد از اولین "|" متادیتای callout است و بخشی از نوع نیست، بنابراین این ورودی callout "{{id}}" را توصیف می‌کند. رد شد تا "{{id}}" موجود شما دست‌نخورده بماند.',
 	"import.err.idReserved":
 		'شناسه "{{value}}" توسط Callout Studio برای پیش‌نمایش‌های خودش رزرو شده است و قابل وارد کردن نیست.',
 	"import.err.displayNameEmpty": "نام نمایشی نباید خالی باشد.",
-	"import.err.displayNameTooLong":
-		"نام نمایشی دارای {{length}} کاراکتر است؛ حداکثر {{max}} است.",
-	"import.err.boolField":
-		'"{{field}}" باید یک مقدار بولی (true یا false) باشد.',
+	"import.err.displayNameTooLong": "نام نمایشی دارای {{length}} کاراکتر است؛ حداکثر {{max}} است.",
+	"import.err.boolField": '"{{field}}" باید یک مقدار بولی (true یا false) باشد.',
 	"import.err.iconNotObject": "آیکون باید یک شی باشد.",
-	"import.err.iconTypeInvalid":
-		'نوع آیکون "{{value}}" باید یکی از: {{types}} باشد.',
+	"import.err.iconTypeInvalid": 'نوع آیکون "{{value}}" باید یکی از: {{types}} باشد.',
 	"import.warn.iconFieldIgnored":
 		'"{{field}}" فقط برای آیکون‌های Material اعمال می‌شود و برای نوع آیکون {{type}} نادیده گرفته می‌شود.',
 	"import.err.iconValueEmpty": "مقدار آیکون باید یک رشته غیرخالی باشد.",
-	"import.err.iconValueTooLong":
-		"مقدار آیکون از حد ۲۰۰ کاراکتر فراتر می‌رود ({{length}} کاراکتر).",
-	"import.err.materialStyle":
-		'سبک آیکون Material "{{value}}" باید یکی از: outlined، filled، rounded، sharp باشد.',
-	"import.err.materialWeight":
-		'وزن آیکون Material "{{value}}" باید عدد صحیحی بین ۱۰۰ و ۷۰۰ با گام ۱۰۰ باشد.',
+	"import.err.iconValueTooLong": "مقدار آیکون از حد ۲۰۰ کاراکتر فراتر می‌رود ({{length}} کاراکتر).",
+	"import.err.materialStyle": 'سبک آیکون Material "{{value}}" باید یکی از: outlined، filled، rounded، sharp باشد.',
+	"import.err.materialWeight": 'وزن آیکون Material "{{value}}" باید عدد صحیحی بین ۱۰۰ و ۷۰۰ با گام ۱۰۰ باشد.',
 	"import.warn.iconRecolorIgnored":
 		'"recolor" فقط برای تصاویر خودتان اعمال می‌شود و برای نوع آیکون {{type}} نادیده گرفته می‌شود.',
-	"import.err.iconRecolorInvalid":
-		'"recolor" باید true یا false باشد (دریافت شد: "{{value}}").',
-	"import.err.colorInvalid":
-		'"{{field}}" باید رنگ hex مانند "#448aff" باشد (دریافت شده "{{value}}").',
-	"import.err.numberRange":
-		'"{{field}}" باید عددی بین {{min}} و {{max}} باشد (دریافت شده "{{value}}").',
-	"import.err.iconSizeRange":
-		'"{{field}}" باید عددی بین {{min}} و {{max}} باشد (دریافت شده "{{value}}").',
+	"import.err.iconRecolorInvalid": '"recolor" باید true یا false باشد (دریافت شد: "{{value}}").',
+	"import.err.colorInvalid": '"{{field}}" باید رنگ hex مانند "#448aff" باشد (دریافت شده "{{value}}").',
+	"import.err.numberRange": '"{{field}}" باید عددی بین {{min}} و {{max}} باشد (دریافت شده "{{value}}").',
+	"import.err.iconSizeRange": '"{{field}}" باید عددی بین {{min}} و {{max}} باشد (دریافت شده "{{value}}").',
 	"import.err.iconAdjustShape":
-		"\"iconAdjust\" باید شیئی باشد که نوع کال‌اوت (\"regular\", \"heading\", \"inline\") را به اندازه و جابه‌جایی‌های آیکون آن نگاشت می‌کند.",
+		'"iconAdjust" باید شیئی باشد که نوع کال‌اوت ("regular", "heading", "inline") را به اندازه و جابه‌جایی‌های آیکون آن نگاشت می‌کند.',
 	"import.err.aliasesNotArray": '"aliases" باید آرایه‌ای از رشته‌ها باشد.',
 	"import.err.aliasNotString": "نام مستعار باید یک رشته باشد.",
 	"import.err.aliasDup": 'نام مستعار "{{value}}" در این ورودی تکراری است.',
 	"import.err.tooManyIds":
 		"شناسه‌های بیش از حد ({{count}})؛ هر callout می‌تواند حداکثر {{max}} شناسه داشته باشد (اصلی + نام‌های مستعار).",
-	"import.err.metadataShape":
-		'"metadata" باید شیئی باشد که همه مقادیرش رشته باشند.',
-	"import.warn.unknownFields":
-		"فیلدهای ناشناخته نادیده گرفته شدند: {{fields}}.",
+	"import.err.metadataShape": '"metadata" باید شیئی باشد که همه مقادیرش رشته باشند.',
+	"import.warn.unknownFields": "فیلدهای ناشناخته نادیده گرفته شدند: {{fields}}.",
 	"import.err.duplicateInFile":
 		'شناسه/نام مستعار "{{value}}" قبلاً توسط ورودی #{{first}} در این فایل استفاده شده است.',
 	"import.err.aliasConflict":
@@ -1027,12 +986,9 @@ export const fa: Record<string, string> = {
 	"import.warn.imageMissing":
 		"این کال‌اوت از تصویری استفاده می‌کند که نه در فایل و نه در این خزانه وجود دارد، بنابراین تا زمانی که تصویر جدیدی برای آن انتخاب کنید، آیکون جایگزین نشان داده می‌شود.",
 
-	"import.err.paletteIdInvalid":
-		'"paletteId" باید یک شناسه متنی غیرخالی باشد (دریافت شد "{{value}}").',
-	"import.warn.iconNameUnknown":
-		'هیچ نماد "{{value}}" در {{type}} وجود ندارد، بنابراین نماد پیش‌فرض استفاده شد.',
-	"import.warn.cmIconUnknownNew":
-		"نماد «{{value}}» در این خزانه در دسترس نیست، بنابراین نماد پیش‌فرض استفاده شد.",
+	"import.err.paletteIdInvalid": '"paletteId" باید یک شناسه متنی غیرخالی باشد (دریافت شد "{{value}}").',
+	"import.warn.iconNameUnknown": 'هیچ نماد "{{value}}" در {{type}} وجود ندارد، بنابراین نماد پیش‌فرض استفاده شد.',
+	"import.warn.cmIconUnknownNew": "نماد «{{value}}» در این خزانه در دسترس نیست، بنابراین نماد پیش‌فرض استفاده شد.",
 	"import.warn.cmIconUnknownExisting":
 		"نماد «{{value}}» در این خزانه در دسترس نیست، بنابراین «{{id}}» نماد قبلی خود را نگه داشت.",
 	"import.chooseSource": "وارد کردن از",
@@ -1060,29 +1016,28 @@ export const fa: Record<string, string> = {
 	"import.cmVaultChecking": "در حال جست‌وجوی افزونهٔ Callout Manager…",
 	"import.cmVaultFound": "{{count}} callout سفارشی پیدا شد.",
 	"import.cmFromPaste": "استایل‌های کپی‌شده",
-	"import.cmFromPasteDesc":
-		"چیزی که دکمهٔ Copy در Callout Manager کپی می‌کند، یا یک data.json.",
+	"import.cmFromPasteDesc": "چیزی که دکمهٔ Copy در Callout Manager کپی می‌کند، یا یک data.json.",
 	"import.cmInstructions":
 		"هر کال‌اوت سفارشی همراه با آیکون و رنگش منتقل می‌شود. سبک‌دهی مخصوص هر پوسته و CSS سفارشی در اینجا معادلی ندارند و منتقل نمی‌شوند.",
 	"import.cmPlaceholder": "استایل‌های کپی‌شده یا محتوای فایل data.json را اینجا بچسبانید…",
 	"import.cmBtnCancel": "لغو",
 	"import.cmBtnImport": "وارد کردن",
-	"import.err.cmNoBlocksFound":
-		"هیچ استایل Callout Manager در پرونده یا متن چسبانده‌شده یافت نشد.",
+	"import.err.cmNoBlocksFound": "هیچ استایل Callout Manager در پرونده یا متن چسبانده‌شده یافت نشد.",
 	"import.err.cmNotRecognized":
 		"فایل شناسایی نشد: استایل‌های تولیدشده با دکمهٔ Copy در Callout Manager یا data.json این افزونه مورد انتظار بود.",
 	"import.err.cmNoEntries": "هیچ callout سفارشی برای درون‌ریزی یافت نشد.",
-	"import.err.cmNoColorForNew":
-		'هیچ رنگ قابل استفاده‌ای برای callout جدید "{{value}}" یافت نشد؛ از آن صرف‌نظر شد.',
+	"import.err.cmNoColorForNew": 'هیچ رنگ قابل استفاده‌ای برای callout جدید "{{value}}" یافت نشد؛ از آن صرف‌نظر شد.',
 	"import.err.cmIdConflict":
 		'شناسه "{{value}}" قبلاً به عنوان نام مستعار توسط callout دیگری ("{{other}}") استفاده می‌شود و از آن صرف‌نظر شد.',
-	"import.warn.cmNoColorDefault":
-		"در Callout Manager رنگی تنظیم نشده بود، بنابراین خاکستری پیش‌فرض استفاده شد.",
+	"import.warn.cmNoColorDefault": "در Callout Manager رنگی تنظیم نشده بود، بنابراین خاکستری پیش‌فرض استفاده شد.",
 
 	// Import — Admonition
-	"import.warn.cmThemeConditionPartial": "حفظ سبک وابسته به پوسته ممکن نیست. مقادیر غیرشرطی در اولویت‌اند؛ هر مقدار جایگزین شرطی برای همهٔ پوسته‌ها اعمال می‌شود.",
-	"import.warn.cmCustomStylesSkipped": "CSS سفارشی Callout Manager درون‌ریزی نمی‌شود. فقط تنظیمات پشتیبانی‌شدهٔ نماد و رنگ قابل انتقال هستند.",
-	"import.warn.cmSchemeIcon": "Callout Studio برای هر دو طرح رنگی از یک نماد استفاده می‌کند؛ نماد درون‌ریزی‌شده در هر دو به کار می‌رود.",
+	"import.warn.cmThemeConditionPartial":
+		"حفظ سبک وابسته به پوسته ممکن نیست. مقادیر غیرشرطی در اولویت‌اند؛ هر مقدار جایگزین شرطی برای همهٔ پوسته‌ها اعمال می‌شود.",
+	"import.warn.cmCustomStylesSkipped":
+		"CSS سفارشی Callout Manager درون‌ریزی نمی‌شود. فقط تنظیمات پشتیبانی‌شدهٔ نماد و رنگ قابل انتقال هستند.",
+	"import.warn.cmSchemeIcon":
+		"Callout Studio برای هر دو طرح رنگی از یک نماد استفاده می‌کند؛ نماد درون‌ریزی‌شده در هر دو به کار می‌رود.",
 	"import.err.cmDuplicateId": "شناسهٔ {{value}} در این درون‌ریزی با {{other}} تکراری است و نادیده گرفته شد.",
 	"import.admTitle": "درون‌ریزی از Admonition",
 	"import.admInstructions":
@@ -1093,45 +1048,37 @@ export const fa: Record<string, string> = {
 	"import.admVaultChecking": "در حال جست‌وجوی افزونهٔ Admonition…",
 	"import.admVaultFound": "{{count}} admonition سفارشی پیدا شد.",
 	"import.admFromFile": "یک پرونده",
-	"import.admFromFileDesc":
-		"یک پروندهٔ admonitions.json، یا یک بستهٔ به‌اشتراک‌گذاشته‌شده.",
+	"import.admFromFileDesc": "یک پروندهٔ admonitions.json، یا یک بستهٔ به‌اشتراک‌گذاشته‌شده.",
 	"import.admBtnCancel": "لغو",
 	"import.admBtnImport": "وارد کردن",
 	"import.err.admNotRecognized":
-		"پرونده شناسایی نشد: فهرستی از admonition یا پروندهٔ data.json " +
-		"افزونهٔ Admonition انتظار می‌رفت.",
+		"پرونده شناسایی نشد: فهرستی از admonition یا پروندهٔ data.json " + "افزونهٔ Admonition انتظار می‌رفت.",
 	"import.err.admNoEntries": "هیچ admonition برای درون‌ریزی پیدا نشد.",
-	"import.err.admTypeMissing":
-		'این admonition فاقد "type" است و نادیده گرفته شد.',
+	"import.err.admTypeMissing": 'این admonition فاقد "type" است و نادیده گرفته شد.',
 	"import.warn.admIconUnknown":
-		'نمادی با نام "{{value}}" در هیچ کتابخانه‌ای پیدا نشد، بنابراین ' +
-		"از نماد پیش‌فرض استفاده شد.",
+		'نمادی با نام "{{value}}" در هیچ کتابخانه‌ای پیدا نشد، بنابراین ' + "از نماد پیش‌فرض استفاده شد.",
 	"import.warn.admIconUnknownExisting":
-		'نمادی با نام "{{value}}" در هیچ کتابخانه‌ای پیدا نشد، بنابراین ' +
-		'"{{id}}" نماد قبلی خود را نگه داشت.',
+		'نمادی با نام "{{value}}" در هیچ کتابخانه‌ای پیدا نشد، بنابراین ' + '"{{id}}" نماد قبلی خود را نگه داشت.',
 	"import.warn.admUnsupportedOptions": "این گزینه‌های Admonition درون‌ریزی نمی‌شوند: {{fields}}.",
 	"import.warn.admImageSkipped": "خواندن تصویر بارگذاری‌شده ممکن نبود و تصویر درون‌ریزی نشد.",
 	"import.warn.admIconWithCss":
 		"این admonition در Admonition با یک قطعه CSS ظاهرآرایی شده است. " +
 		"آن ظاهر بخشی از درون‌ریزی نیست، بنابراین تنها نام، نماد و رنگ آن " +
 		"منتقل شد.",
-	"import.warn.admNoColor":
-		"هیچ رنگی تنظیم نشده بود، بنابراین از آبی پیش‌فرض استفاده شد.",
-	"import.warn.admTitleTruncated":
-		"عنوان {{length}} نویسه است؛ به {{max}} کوتاه شد.",
+	"import.warn.admNoColor": "هیچ رنگی تنظیم نشده بود، بنابراین از آبی پیش‌فرض استفاده شد.",
+	"import.warn.admTitleTruncated": "عنوان {{length}} نویسه است؛ به {{max}} کوتاه شد.",
 
 	"footer.openIssue": "ثبت یک issue",
 	"footer.sourceCode": "کد منبع",
 	"settings.about": "درباره",
 	"settings.version": "نسخه",
 	"settings.deletePaletteBodyLinkedOne":
-		'۱ کال‌اوت از آن استفاده می‌کند. رنگ‌هایش حفظ می‌شوند و بعداً می‌توانید از ردیف رنگ در ویرایشگرش دوباره آن را متصل کنید.',
+		"۱ کال‌اوت از آن استفاده می‌کند. رنگ‌هایش حفظ می‌شوند و بعداً می‌توانید از ردیف رنگ در ویرایشگرش دوباره آن را متصل کنید.",
 	"settings.deletePaletteBodyLinked":
-		'{{count}} کال‌اوت از آن استفاده می‌کنند. رنگ‌هایشان حفظ می‌شود و بعداً می‌توانید از ردیف رنگ در هرکدام از ویرایشگرها دوباره آن‌ها را متصل کنید.',
+		"{{count}} کال‌اوت از آن استفاده می‌کنند. رنگ‌هایشان حفظ می‌شود و بعداً می‌توانید از ردیف رنگ در هرکدام از ویرایشگرها دوباره آن‌ها را متصل کنید.",
 	"notice.palettesMerged":
 		"{{count}} رنگ ذخیره‌شده با رنگ‌های یکسان ادغام شد: {{names}}. کال‌اوت‌هایی که از آن‌ها استفاده می‌کنند رنگ‌هایشان را نگه می‌دارند و اکنون به رنگ باقی‌مانده متصل شده‌اند.",
-	"editor.colorsDescDeleted":
-		"رنگ ذخیره‌شدهٔ این کال‌اوت حذف شده است. {{link}}",
+	"editor.colorsDescDeleted": "رنگ ذخیره‌شدهٔ این کال‌اوت حذف شده است. {{link}}",
 	"editor.colorsDescDeletedLink": "بازیابی",
 	"palette.colorExists":
 		'این رنگ‌ها با "{{name}}" یکسان هستند. دو رنگ ذخیره‌شده نمی‌توانند یکسان باشند — برای تمایز، یکی از رنگ‌ها را تغییر دهید.',
@@ -1148,8 +1095,7 @@ export const fa: Record<string, string> = {
 	"notice.exportedCssUpdated": "قطعه CSS در {{path}} به‌روزرسانی شد",
 	"notice.exportedCssUnchanged": "قطعه CSS از قبل به‌روز است.",
 	"notice.exportCssEmpty": "هیچ کال‌اوت سفارشی برای خروجی گرفتن وجود ندارد.",
-	"notice.exportCssFailed":
-		"ذخیره قطعه CSS ممکن نبود. برای جزئیات کنسول توسعه‌دهنده را بررسی کنید.",
+	"notice.exportCssFailed": "ذخیره قطعه CSS ممکن نبود. برای جزئیات کنسول توسعه‌دهنده را بررسی کنید.",
 	"notice.exportCssEnabled":
 		"این قطعه در این vault فعال است. Callout Studio از قبل این کال‌اوت‌ها را سبک‌دهی می‌کند و قطعه، سبک زمان خروجی گرفتن را حفظ می‌کند.",
 	"confirm.titleOverwriteSnippet": "بازنویسی قطعه CSS",
@@ -1169,51 +1115,72 @@ export const fa: Record<string, string> = {
 	"quickInsert.readingViewHint": "این یادداشت در حالت خواندن باز است، بنابراین چیزی قابل درج نیست.",
 	"quickInsert.readingView": "برای درج callout به حالت منبع یا Live Preview بروید.",
 	"quickInsert.noCursorHint": "در این یادداشت مکان‌نمایی وجود ندارد، بنابراین جایی برای درج نیست.",
-	"quickInsert.noCursor": "مکان‌نما را در یادداشت، در جایی که می‌خواهید callout را درج کنید، قرار دهید و دوباره امتحان کنید.",
-	"notice.legacyDiscoveryArchiveFailed": "نسخهٔ بازیابی ارتقا تکمیل نشد. حافظهٔ نهان محلی قدیمیِ شناسایی و CSS راه‌اندازی بدون تغییر باقی مانده‌اند. مجوز نوشتن، دسترسی به فضای ذخیره‌سازی و فضای خالی را بررسی کنید، سپس برای تلاش دوباره Obsidian را راه‌اندازی مجدد کنید.",
+	"quickInsert.noCursor":
+		"مکان‌نما را در یادداشت، در جایی که می‌خواهید callout را درج کنید، قرار دهید و دوباره امتحان کنید.",
+	"notice.legacyDiscoveryArchiveFailed":
+		"نسخهٔ بازیابی ارتقا تکمیل نشد. حافظهٔ نهان محلی قدیمیِ شناسایی و CSS راه‌اندازی بدون تغییر باقی مانده‌اند. مجوز نوشتن، دسترسی به فضای ذخیره‌سازی و فضای خالی را بررسی کنید، سپس برای تلاش دوباره Obsidian را راه‌اندازی مجدد کنید.",
 	// Settings sync & recovery
 	"commandBuilder.missingCallout": "تا وقتی کال‌اوت گم‌شده را دوباره نسازید یا کال‌اوت دیگری انتخاب نکنید متوقف است.",
 	"confirm.titleRestoreSettings": "بازیابی این تنظیمات",
 	"confirm.titleCreateSettingsFile": "ایجاد فایل تنظیمات",
 	"confirm.saveDisplayedSettings":
 		"این کار پیکربندی‌ای را که اکنون می‌بینید به‌عنوان فایل تنظیمات شما ذخیره می‌کند و ذخیره‌سازی را دوباره روشن می‌کند. نسخهٔ یدکی‌ای که این دستگاه نگه می‌دارد ابتدا پشتیبان‌گیری می‌شود.\nاگر ممکن است دستگاه دیگری تغییرات جدیدتری داشته باشد که می‌خواهید نگه دارید، پیش از ادامه بگذارید همگام‌سازی‌اش تمام شود. برنامهٔ همگام‌سازی ممکن است این فایل را به دستگاه‌های دیگر شما بفرستد.\nCallout Studio پیش از ذخیره یک بار دیگر دنبال فایل تنظیمات می‌گردد. اگر برگشته باشد، Callout Studio آن را نگه می‌دارد.",
-	"notice.settingsBackupFailed": "بازیابی تنظیمات نتوانست ادامه یابد زیرا یک نسخهٔ پشتیبان ایمنی ذخیره نشد. فضای ذخیره‌سازی موجود و مجوزهای نوشتن را بررسی کنید، سپس دوباره تلاش کنید.",
-	"notice.settingsNewerVersion": "تنظیمات Callout Studio توسط نسخهٔ جدیدتری از افزونه ذخیره شده، بنابراین تا زمانی که آن را به‌روزرسانی نکنید چیزی روی این دستگاه نوشته نخواهد شد. تنظیمات شما ایمن است — Callout Studio را از اینجا به‌روزرسانی کنید و Obsidian را دوباره بارگذاری کنید.",
+	"notice.settingsBackupFailed":
+		"بازیابی تنظیمات نتوانست ادامه یابد زیرا یک نسخهٔ پشتیبان ایمنی ذخیره نشد. فضای ذخیره‌سازی موجود و مجوزهای نوشتن را بررسی کنید، سپس دوباره تلاش کنید.",
+	"notice.settingsNewerVersion":
+		"تنظیمات Callout Studio توسط نسخهٔ جدیدتری از افزونه ذخیره شده، بنابراین تا زمانی که آن را به‌روزرسانی نکنید چیزی روی این دستگاه نوشته نخواهد شد. تنظیمات شما ایمن است — Callout Studio را از اینجا به‌روزرسانی کنید و Obsidian را دوباره بارگذاری کنید.",
 	"saveStatus.changed":
 		"فایل تنظیمات هنگام ویرایش شما تغییر کرد. پیش‌نویس شما هنوز در دسترس است. برای بارگیری تنظیمات دریافتی «تلاش دوباره» را انتخاب کنید، سپس پیش‌نویس را بررسی و دوباره ذخیره کنید.",
-	"saveStatus.missing": "ذخیره‌سازی متوقف شده زیرا فایل تنظیمات وجود ندارد. این می‌تواند پس از نصب مجدد یا در حین ادامهٔ همگام‌سازی رخ دهد. همگام‌سازی را تمام کنید و دوباره تلاش کنید. برای جایگزینی عمدی فایل گم‌شده، از ایجاد فایل تنظیمات جدید در تنظیمات Callout Studio استفاده کنید.",
+	"saveStatus.missing":
+		"ذخیره‌سازی متوقف شده زیرا فایل تنظیمات وجود ندارد. این می‌تواند پس از نصب مجدد یا در حین ادامهٔ همگام‌سازی رخ دهد. همگام‌سازی را تمام کنید و دوباره تلاش کنید. برای جایگزینی عمدی فایل گم‌شده، از ایجاد فایل تنظیمات جدید در تنظیمات Callout Studio استفاده کنید.",
 	"saveStatus.restoreSettings": "بازیابی این تنظیمات",
 	"saveStatus.createSettingsFile": "ایجاد فایل تنظیمات",
 	"saveStatus.checkAgain": "بررسی دوباره",
-	"saveStatus.recoverInSettings": "برای بازیابی فایل گمشده روی این دستگاه، تنظیمات Callout Studio را باز کنید. پیش از بستن این ویرایشگر، هر ویرایش ذخیره‌نشده‌ای را که می‌خواهید نگه دارید کپی کنید؛ آن‌ها ذخیره نشده‌اند.",
+	"saveStatus.recoverInSettings":
+		"برای بازیابی فایل گمشده روی این دستگاه، تنظیمات Callout Studio را باز کنید. پیش از بستن این ویرایشگر، هر ویرایش ذخیره‌نشده‌ای را که می‌خواهید نگه دارید کپی کنید؛ آن‌ها ذخیره نشده‌اند.",
 	"saveStatus.openSettings": "باز کردن تنظیمات Callout Studio",
-	"notice.openSettingsFailed": "تنظیمات Callout Studio باز نشد. برای انتخاب اقدام بعدی به تنظیمات ← Callout Studio بروید.",
-	"saveStatus.notesFailed": "تعریف callout ذخیره شد، اما برخی به‌روزرسانی‌های یادداشت کامل نشد. این ویرایشگر را باز نگه دارید و ذخیره را انتخاب کنید تا به‌روزرسانی‌های ناتمام دوباره امتحان شوند.",
-	"saveStatus.recoveryRead": "ذخیره‌سازی متوقف شده زیرا نسخهٔ بازیابی محلی قابل‌خواندن نیست. ممکن است فایل تنظیمات شما هنوز سالم باشد. فضای ذخیره‌سازی موجود را بررسی کنید، سپس بازیابی را دوباره امتحان کنید. داده‌های بازیابی موجود بازنویسی نخواهند شد.",
-	"saveStatus.recoveryWrite": "نسخهٔ بازیابی محلی ذخیره نشد. فضای ذخیره‌سازی موجود را بررسی کنید، سپس دوباره تلاش کنید. پیش‌نویس خود را باز نگه دارید تا ذخیره‌سازی موفق شود.",
-	"saveStatus.retryFailed": "ذخیره‌سازی همچنان مسدود است. برای یافتن علت، وضعیت ذخیره‌سازی را در تنظیمات Callout Studio بررسی کنید، سپس دوباره تلاش کنید.",
-	"saveStatus.reviewDraft": "تنظیمات ورودی و بررسی‌های بازیابی کامل شد. پیش‌نویس شما بدون تغییر است. آن را بررسی کنید و دوباره ذخیره کنید.",
+	"notice.openSettingsFailed":
+		"تنظیمات Callout Studio باز نشد. برای انتخاب اقدام بعدی به تنظیمات ← Callout Studio بروید.",
+	"saveStatus.notesFailed":
+		"تعریف callout ذخیره شد، اما برخی به‌روزرسانی‌های یادداشت کامل نشد. این ویرایشگر را باز نگه دارید و ذخیره را انتخاب کنید تا به‌روزرسانی‌های ناتمام دوباره امتحان شوند.",
+	"saveStatus.recoveryRead":
+		"ذخیره‌سازی متوقف شده زیرا نسخهٔ بازیابی محلی قابل‌خواندن نیست. ممکن است فایل تنظیمات شما هنوز سالم باشد. فضای ذخیره‌سازی موجود را بررسی کنید، سپس بازیابی را دوباره امتحان کنید. داده‌های بازیابی موجود بازنویسی نخواهند شد.",
+	"saveStatus.recoveryWrite":
+		"نسخهٔ بازیابی محلی ذخیره نشد. فضای ذخیره‌سازی موجود را بررسی کنید، سپس دوباره تلاش کنید. پیش‌نویس خود را باز نگه دارید تا ذخیره‌سازی موفق شود.",
+	"saveStatus.retryFailed":
+		"ذخیره‌سازی همچنان مسدود است. برای یافتن علت، وضعیت ذخیره‌سازی را در تنظیمات Callout Studio بررسی کنید، سپس دوباره تلاش کنید.",
+	"saveStatus.reviewDraft":
+		"تنظیمات ورودی و بررسی‌های بازیابی کامل شد. پیش‌نویس شما بدون تغییر است. آن را بررسی کنید و دوباره ذخیره کنید.",
 	"saveStatus.settingsArrived": "تنظیمات موجود رسید و بارگذاری شد. فایل جایگزینی ایجاد نشد.",
-	"saveStatus.syncConflict": "تنظیمات ورودی با یک callout مورد نیاز برای به‌روزرسانی‌های ناتمام یادداشت در تعارض است. پیش‌نویس شما و به‌روزرسانی‌های در انتظار نگه‌داشته شده‌اند. پیش از تلاش دوباره، تعارض تنظیمات را برطرف کنید.",
+	"saveStatus.syncConflict":
+		"تنظیمات ورودی با یک callout مورد نیاز برای به‌روزرسانی‌های ناتمام یادداشت در تعارض است. پیش‌نویس شما و به‌روزرسانی‌های در انتظار نگه‌داشته شده‌اند. پیش از تلاش دوباره، تعارض تنظیمات را برطرف کنید.",
 	"saveStatus.titlePaused": "ذخیره‌سازی متوقف شده است",
 	"saveStatus.titleFailed": "تنظیمات ذخیره نشد",
 	"saveStatus.tryAgain": "تلاش دوباره",
 	"saveStatus.working": "در حال انجام…",
-	"saveStatus.unreadable": "ذخیره‌سازی متوقف شده زیرا فایل تنظیمات را نمی‌توان با امنیت خواند. همگام‌سازی را تمام کنید یا یک نسخهٔ معتبر را بازیابی کنید، سپس دوباره تلاش کنید. فایل موجود نگه داشته شده است.",
-	"saveStatus.write": "فایل تنظیمات ذخیره نشد. فضای ذخیره‌سازی موجود، مجوزهای پوشه و همگام‌سازی را بررسی کنید، سپس پیش از بستن Obsidian دوباره تلاش کنید.",
-	"saveStatus.writePermission": "فایل تنظیمات ذخیره نشد زیرا فضای ذخیره‌سازی دسترسی نوشتن را رد کرد. بررسی کنید که ولت و پوشهٔ افزونه قابل‌نوشتن باشند، سپس دوباره تلاش کنید.",
-	"saveStatus.writeSpace": "فایل تنظیمات ذخیره نشد زیرا فضای ذخیره‌سازی پر است یا سهمیهٔ آن تمام شده. کمی فضا آزاد کنید، سپس دوباره تلاش کنید.",
-	"settings.readOnly": "هنگام راه‌اندازی Obsidian، Callout Studio نتوانست از فایل تنظیمات خود استفاده کند، بنابراین چیزی در این صفحه روی این دستگاه ذخیره نمی‌شود. تغییرات شما تا زمانی که Obsidian را ببندید باقی می‌مانند. به‌محض بازگشت فایل، Obsidian را دوباره بارگذاری کنید — اگر این ولت را همگام‌سازی می‌کنید، اجازه دهید همگام‌سازی ابتدا تمام شود.",
+	"saveStatus.unreadable":
+		"ذخیره‌سازی متوقف شده زیرا فایل تنظیمات را نمی‌توان با امنیت خواند. همگام‌سازی را تمام کنید یا یک نسخهٔ معتبر را بازیابی کنید، سپس دوباره تلاش کنید. فایل موجود نگه داشته شده است.",
+	"saveStatus.write":
+		"فایل تنظیمات ذخیره نشد. فضای ذخیره‌سازی موجود، مجوزهای پوشه و همگام‌سازی را بررسی کنید، سپس پیش از بستن Obsidian دوباره تلاش کنید.",
+	"saveStatus.writePermission":
+		"فایل تنظیمات ذخیره نشد زیرا فضای ذخیره‌سازی دسترسی نوشتن را رد کرد. بررسی کنید که ولت و پوشهٔ افزونه قابل‌نوشتن باشند، سپس دوباره تلاش کنید.",
+	"saveStatus.writeSpace":
+		"فایل تنظیمات ذخیره نشد زیرا فضای ذخیره‌سازی پر است یا سهمیهٔ آن تمام شده. کمی فضا آزاد کنید، سپس دوباره تلاش کنید.",
+	"settings.readOnly":
+		"هنگام راه‌اندازی Obsidian، Callout Studio نتوانست از فایل تنظیمات خود استفاده کند، بنابراین چیزی در این صفحه روی این دستگاه ذخیره نمی‌شود. تغییرات شما تا زمانی که Obsidian را ببندید باقی می‌مانند. به‌محض بازگشت فایل، Obsidian را دوباره بارگذاری کنید — اگر این ولت را همگام‌سازی می‌کنید، اجازه دهید همگام‌سازی ابتدا تمام شود.",
 
 	// Sync safety hardening
 	"saveStatus.diagnosis.unavailable":
 		"این دستگاه اکنون نمی‌تواند فایل را باز کند. ممکن است هنوز در حال دانلود باشد، ولت به‌صورت آفلاین در دسترس نباشد، یا فضای ذخیره‌سازی پاسخ ندهد. Callout Studio به‌طور خودکار دوباره بررسی می‌کند.",
-	"saveStatus.diagnosis.empty": "فایل خالی است، که معمولاً به معنای قطع‌شدن یک همگام‌سازی است. اگر دستگاه دیگری هنوز تنظیمات شما را دارد، اجازه دهید همگام‌سازی شود. در غیر این صورت، فایل را جایگزین کنید.",
-	"saveStatus.diagnosis.mergeMarkers": "فایل حاوی نشانه‌های تعارض ادغام حل‌نشده است، مثلاً از Git. تعارض را در ابزار Git خود برطرف کنید، یا فایل را جایگزین کنید.",
+	"saveStatus.diagnosis.empty":
+		"فایل خالی است، که معمولاً به معنای قطع‌شدن یک همگام‌سازی است. اگر دستگاه دیگری هنوز تنظیمات شما را دارد، اجازه دهید همگام‌سازی شود. در غیر این صورت، فایل را جایگزین کنید.",
+	"saveStatus.diagnosis.mergeMarkers":
+		"فایل حاوی نشانه‌های تعارض ادغام حل‌نشده است، مثلاً از Git. تعارض را در ابزار Git خود برطرف کنید، یا فایل را جایگزین کنید.",
 	"saveStatus.diagnosis.damaged": "فایل ناقص یا آسیب‌دیده است، بنابراین نمی‌توان آن را به‌عنوان تنظیمات خواند.",
 	"saveStatus.diagnosis.combined":
 		"سرویس همگام‌سازی شما دو نسخه از فایل را ترکیب کرده، بنابراین بررسی داخلی آن دیگر مطابقت ندارد. تنظیمات داخل آن دست‌نخورده است و جایگزینی فایل آن‌ها را حفظ می‌کند.",
-	"saveStatus.diagnosis.invalidEntries": "فایل حاوی ورودی‌هایی است که Callout Studio نمی‌تواند استفاده کند، مثلاً یک نوع callout که دو بار فهرست شده است.",
+	"saveStatus.diagnosis.invalidEntries":
+		"فایل حاوی ورودی‌هایی است که Callout Studio نمی‌تواند استفاده کند، مثلاً یک نوع callout که دو بار فهرست شده است.",
 	"saveStatus.replaceUnreadable": "جایگزینی فایل تنظیمات",
 	"saveStatus.discardRecoveryCopy": "دورانداختن نسخهٔ بازیابی",
 	"saveStatus.calm.opening": "اول از همه، یک نفس عمیق بکشید — همه‌چیز درست می‌شود.",
@@ -1234,36 +1201,49 @@ export const fa: Record<string, string> = {
 		"تنظیمات شما با نسخهٔ جدیدتری از Callout Studio ذخیره شده است، برای همین این نسخهٔ قدیمی‌تر آن‌ها را تغییر نمی‌دهد.",
 	"saveStatus.explain.changed":
 		"فایل تنظیمات هنگامی که Callout Studio با آن کار می‌کرد تغییر کرد، برای همین بدون جایگزین‌کردن چیزی متوقف شد.",
-	"saveStatus.guide.rechecks": "تا وقتی Obsidian باز است، Callout Studio هر دقیقه دوباره بررسی می‌کند، پس اغلب خودبه‌خود درست می‌شود.",
+	"saveStatus.guide.rechecks":
+		"تا وقتی Obsidian باز است، Callout Studio هر دقیقه دوباره بررسی می‌کند، پس اغلب خودبه‌خود درست می‌شود.",
 	"saveStatus.guide.rechecksCheckNow":
 		"تا وقتی Obsidian باز است، Callout Studio هر دقیقه دوباره بررسی می‌کند، پس اغلب خودبه‌خود درست می‌شود — یا برای بررسی فوری «بررسی دوباره» را انتخاب کنید.",
-	"saveStatus.guide.restore": "اگر تنظیمات شما برنگشت، «بازیابی این تنظیمات» را انتخاب کنید تا callout‌هایی که اینجا می‌بینید حفظ شوند.",
-	"saveStatus.guide.create": "اگر تنظیمات شما برنگشت، «ایجاد فایل تنظیمات» را انتخاب کنید تا دوباره ذخیره‌سازی شروع شود.",
+	"saveStatus.guide.restore":
+		"اگر تنظیمات شما برنگشت، «بازیابی این تنظیمات» را انتخاب کنید تا callout‌هایی که اینجا می‌بینید حفظ شوند.",
+	"saveStatus.guide.create":
+		"اگر تنظیمات شما برنگشت، «ایجاد فایل تنظیمات» را انتخاب کنید تا دوباره ذخیره‌سازی شروع شود.",
 	"saveStatus.guide.recoveryRetry": "مطمئن شوید این دستگاه کمی فضای خالی دارد، سپس «تلاش دوباره» را انتخاب کنید.",
 	"saveStatus.guide.recoveryDiscard":
 		"اگر این کمک نکرد، «دورانداختن نسخهٔ بازیابی» را انتخاب کنید. ابتدا یک نسخهٔ دقیق ذخیره می‌شود و به فایل تنظیمات شما دست زده نمی‌شود.",
-	"saveStatus.guide.newerVersion": "Callout Studio را از تنظیمات ← افزونه‌های جامعه به‌روزرسانی کنید، سپس Obsidian را دوباره بارگیری کنید.",
+	"saveStatus.guide.newerVersion":
+		"Callout Studio را از تنظیمات ← افزونه‌های جامعه به‌روزرسانی کنید، سپس Obsidian را دوباره بارگیری کنید.",
 	"saveStatus.missingNotice":
 		"یادداشت‌های شما در امان است. Callout Studio ذخیره‌سازی را متوقف کرده است چون فعلاً فایل تنظیمات خود را پیدا نمی‌کند.",
 	"statusBar.paused": "ذخیره‌سازی متوقف شده",
 	"statusBar.pausedTooltip": "Callout Studio تغییرات تنظیمات را ذخیره نمی‌کند. برای دیدن دلیل کلیک کنید.",
 	"statusBar.pausedNotice": "Callout Studio در حال حاضر تغییرات تنظیمات را ذخیره نمی‌کند.",
 	"saveStatus.resumed": "ذخیره‌سازی دوباره فعال شد. Callout Studio دوباره تغییرات تنظیمات را ذخیره می‌کند.",
-	"notice.replaceUnreadableUnavailable": "فایل تنظیمات اکنون نمی‌تواند جایگزین شود: در حال تغییر است، یا این دستگاه نمی‌تواند آن را بخواند. کمی بعد دوباره تلاش کنید.",
-	"notice.recoveryStorageUnavailable": "فضای ذخیره‌سازی بازیابی این دستگاه پاسخ نمی‌دهد، بنابراین نسخه را نمی‌توان دور انداخت. Obsidian را دوباره راه‌اندازی کنید، سپس دوباره تلاش کنید.",
+	"notice.replaceUnreadableUnavailable":
+		"فایل تنظیمات اکنون نمی‌تواند جایگزین شود: در حال تغییر است، یا این دستگاه نمی‌تواند آن را بخواند. کمی بعد دوباره تلاش کنید.",
+	"notice.recoveryStorageUnavailable":
+		"فضای ذخیره‌سازی بازیابی این دستگاه پاسخ نمی‌دهد، بنابراین نسخه را نمی‌توان دور انداخت. Obsidian را دوباره راه‌اندازی کنید، سپس دوباره تلاش کنید.",
 	"recovery.unreadable": "نمی‌توان آن را به‌عنوان تنظیمات خواند",
 	"recovery.same": "مشابه پیکربندی فعلی شما",
 	"recovery.restore": "بازیابی",
-	"recovery.stale": "چیزی بازیابی نشد: تنظیمات شما تغییر کرده یا قابل بررسی نبود. این پنجره را دوباره باز کنید و فهرست را بررسی کنید.",
-	"notice.recoveryCopyStale": "تنظیمات شما ذخیره شد، اما نسخهٔ بازیابی این دستگاه به‌روزرسانی نشد. فضای ذخیره‌سازی موجود روی این دستگاه را بررسی کنید. Callout Studio با تغییر بعدی شما دوباره تلاش می‌کند.",
-	"notice.blockedWhilePaused": "ذخیره‌سازی متوقف شده، بنابراین این تغییر اکنون قابل حفظ نیست. ابتدا مشکل ذخیره‌سازی نمایش‌داده‌شده در تنظیمات Callout Studio را برطرف کنید.",
-	"welcome.syncNote": "آیا از قبل از Callout Studio روی دستگاه دیگری استفاده می‌کنید؟ اجازه دهید سرویس همگام‌سازی شما ابتدا تمام شود. calloutها و تنظیمات شما به‌محض رسیدن اینجا نمایان می‌شوند.",
-	"settings.resetBackupFailed": "چیزی بازنشانی نشد: ابتدا نتوانست نسخهٔ پشتیبانی از پیکربندی فعلی شما ذخیره کند. فضای ذخیره‌سازی موجود را بررسی کنید، سپس دوباره تلاش کنید.",
-	"settings.resetNotSaved": "بازنشانی نمایش داده می‌شود، اما هنوز ذخیره نشده است، بنابراین فایل تنظیمات شما همچنان پیکربندی قبلی را نگه داشته است. وضعیت ذخیره‌سازی را در تنظیمات Callout Studio بررسی کنید.",
+	"recovery.stale":
+		"چیزی بازیابی نشد: تنظیمات شما تغییر کرده یا قابل بررسی نبود. این پنجره را دوباره باز کنید و فهرست را بررسی کنید.",
+	"notice.recoveryCopyStale":
+		"تنظیمات شما ذخیره شد، اما نسخهٔ بازیابی این دستگاه به‌روزرسانی نشد. فضای ذخیره‌سازی موجود روی این دستگاه را بررسی کنید. Callout Studio با تغییر بعدی شما دوباره تلاش می‌کند.",
+	"notice.blockedWhilePaused":
+		"ذخیره‌سازی متوقف شده، بنابراین این تغییر اکنون قابل حفظ نیست. ابتدا مشکل ذخیره‌سازی نمایش‌داده‌شده در تنظیمات Callout Studio را برطرف کنید.",
+	"welcome.syncNote":
+		"آیا از قبل از Callout Studio روی دستگاه دیگری استفاده می‌کنید؟ اجازه دهید سرویس همگام‌سازی شما ابتدا تمام شود. calloutها و تنظیمات شما به‌محض رسیدن اینجا نمایان می‌شوند.",
+	"settings.resetBackupFailed":
+		"چیزی بازنشانی نشد: ابتدا نتوانست نسخهٔ پشتیبانی از پیکربندی فعلی شما ذخیره کند. فضای ذخیره‌سازی موجود را بررسی کنید، سپس دوباره تلاش کنید.",
+	"settings.resetNotSaved":
+		"بازنشانی نمایش داده می‌شود، اما هنوز ذخیره نشده است، بنابراین فایل تنظیمات شما همچنان پیکربندی قبلی را نگه داشته است. وضعیت ذخیره‌سازی را در تنظیمات Callout Studio بررسی کنید.",
 	"confirm.titleResetEverything": "بازنشانی همه‌چیز",
 	"confirm.titleReplaceUnreadable": "جایگزینی فایل تنظیمات",
 	"confirm.subtitleReplaceUnreadable": "ابتدا یک نسخهٔ دقیق ذخیره می‌شود",
-	"confirm.replaceUnreadable": "ابتدا یک نسخهٔ دقیق از فایل فعلی در پوشهٔ پشتیبان‌های افزونه ذخیره می‌شود. سپس فایل با پیکربندی نمایش‌داده‌شده در اینجا جایگزین می‌شود، و سرویس همگام‌سازی شما آن را به دستگاه‌های دیگر شما ارسال می‌کند.",
+	"confirm.replaceUnreadable":
+		"ابتدا یک نسخهٔ دقیق از فایل فعلی در پوشهٔ پشتیبان‌های افزونه ذخیره می‌شود. سپس فایل با پیکربندی نمایش‌داده‌شده در اینجا جایگزین می‌شود، و سرویس همگام‌سازی شما آن را به دستگاه‌های دیگر شما ارسال می‌کند.",
 	"confirm.replaceUnreadableSalvage":
 		"ابتدا یک نسخهٔ دقیق از فایل فعلی در پوشهٔ پشتیبان‌های افزونه ذخیره می‌شود. تنظیمات داخل آن با پیکربندی نمایش‌داده‌شده در اینجا ترکیب می‌شود، و فایل بازنویسی می‌شود تا هر دستگاه بتواند دوباره آن را بخواند.",
 	"confirm.titleDiscardRecoveryCopy": "دورانداختن نسخهٔ بازیابی",
@@ -1272,12 +1252,16 @@ export const fa: Record<string, string> = {
 		"نسخهٔ بازیابی این دستگاه قابل خواندن نیست، بنابراین ذخیره‌سازی روی این دستگاه متوقف شده است. ابتدا یک نسخهٔ دقیق از آن در پوشهٔ پشتیبان‌های افزونه ذخیره می‌شود. سپس با پیکربندی نمایش‌داده‌شده در اینجا جایگزین می‌شود. فایل تنظیمات شما تغییر نمی‌کند.",
 	"vault.undoRewrite": "واگرد",
 	"vault.undoRestored": "{{count}} یادداشت بازیابی شد.",
-	"vault.undoPartial": "{{count}} یادداشت بازیابی شد. {{skipped}} یادداشت پس از بازنویسی تغییر کرد، بنابراین همان‌طور که بودند باقی ماندند.",
+	"vault.undoPartial":
+		"{{count}} یادداشت بازیابی شد. {{skipped}} یادداشت پس از بازنویسی تغییر کرد، بنابراین همان‌طور که بودند باقی ماندند.",
 	"import.confirmTitle": "درون‌ریزی پشتیبان Callout Studio",
-	"import.confirmSummary": "این کار {{added}} نوع callout اضافه می‌کند، {{replaced}} نوع موجود را با نسخهٔ فایل جایگزین می‌کند، و {{settings}} گروه از تنظیمات را از فایل بازیابی می‌کند. ابتدا یک نسخهٔ پشتیبان از پیکربندی فعلی شما ذخیره می‌شود.",
+	"import.confirmSummary":
+		"این کار {{added}} نوع callout اضافه می‌کند، {{replaced}} نوع موجود را با نسخهٔ فایل جایگزین می‌کند، و {{settings}} گروه از تنظیمات را از فایل بازیابی می‌کند. ابتدا یک نسخهٔ پشتیبان از پیکربندی فعلی شما ذخیره می‌شود.",
 	"import.confirmAction": "درون‌ریزی",
-	"import.backupFailed": "چیزی درون‌ریزی نشد: ابتدا نتوانست نسخهٔ پشتیبانی از پیکربندی فعلی شما ذخیره کند. فضای ذخیره‌سازی موجود را بررسی کنید، سپس دوباره تلاش کنید.",
-	"import.notSaved": "درون‌ریزی نمایش داده می‌شود، اما هنوز ذخیره نشده است. وضعیت ذخیره‌سازی را در تنظیمات Callout Studio بررسی کنید.",
+	"import.backupFailed":
+		"چیزی درون‌ریزی نشد: ابتدا نتوانست نسخهٔ پشتیبانی از پیکربندی فعلی شما ذخیره کند. فضای ذخیره‌سازی موجود را بررسی کنید، سپس دوباره تلاش کنید.",
+	"import.notSaved":
+		"درون‌ریزی نمایش داده می‌شود، اما هنوز ذخیره نشده است. وضعیت ذخیره‌سازی را در تنظیمات Callout Studio بررسی کنید.",
 
 	"recovery.summaryCallouts": "{{callouts}} نوع callout ذخیره‌شده",
 	"recovery.summaryChanges": "{{count}} تفاوت با وضعیت فعلی",
@@ -1297,7 +1281,8 @@ export const fa: Record<string, string> = {
 	"recovery.details.unknownTime": "زمان ذخیره ثبت نشده است",
 	"recovery.details.current": "تنظیمات فعلی",
 	"recovery.details.restored": "پس از بازیابی این نسخه",
-	"recovery.details.unreadable": "این نسخه از Callout Studio نمی‌تواند این کپی را به‌عنوان تنظیمات قابل بازیابی تفسیر کند. ممکن است آسیب دیده، در دسترس نباشد یا از قالبی جدیدتر استفاده کند. مقایسه و گزارش تنظیمات بازیابی‌شده در دسترس نیست. هر محتوای اصلی که قابل خواندن بود در ادامه آمده است.",
+	"recovery.details.unreadable":
+		"این نسخه از Callout Studio نمی‌تواند این کپی را به‌عنوان تنظیمات قابل بازیابی تفسیر کند. ممکن است آسیب دیده، در دسترس نباشد یا از قالبی جدیدتر استفاده کند. مقایسه و گزارش تنظیمات بازیابی‌شده در دسترس نیست. هر محتوای اصلی که قابل خواندن بود در ادامه آمده است.",
 	"recovery.details.null": "بدون مقدار (null)",
 	"recovery.details.yes": "بله",
 	"recovery.details.no": "خیر",
@@ -1465,11 +1450,14 @@ export const fa: Record<string, string> = {
 	"recovery.delete": "حذف",
 
 	// Version history
-	"saveStatus.guide.versions": "وقتی ذخیره‌سازی دوباره کار کند، با بازیابی نسخهٔ قبلی هم می‌توانید به نسخه‌ای ذخیره‌شده برگردید.",
+	"saveStatus.guide.versions":
+		"وقتی ذخیره‌سازی دوباره کار کند، با بازیابی نسخهٔ قبلی هم می‌توانید به نسخه‌ای ذخیره‌شده برگردید.",
 	"saveStatus.goToVersions": "رفتن به تاریخچهٔ نسخه‌ها",
 	"versions.title": "تاریخچهٔ نسخه‌ها",
-	"versions.intro": "Callout Studio نسخه‌های پیکربندی شما را خودکار ذخیره می‌کند.\nنسخه‌های قدیمی به‌مرور حذف می‌شوند.\nبازیابی یک نسخه، پیکربندی فعلی را در همهٔ دستگاه‌های همگام‌شده جایگزین می‌کند.",
-	"versions.pausedHint": "ذخیره‌سازی متوقف است، پس بازیابی در دسترس نیست. همچنان می‌توانید نسخه‌ها را مقایسه کنید و حذفشان کنید.",
+	"versions.intro":
+		"Callout Studio نسخه‌های پیکربندی شما را خودکار ذخیره می‌کند.\nنسخه‌های قدیمی به‌مرور حذف می‌شوند.\nبازیابی یک نسخه، پیکربندی فعلی را در همهٔ دستگاه‌های همگام‌شده جایگزین می‌کند.",
+	"versions.pausedHint":
+		"ذخیره‌سازی متوقف است، پس بازیابی در دسترس نیست. همچنان می‌توانید نسخه‌ها را مقایسه کنید و حذفشان کنید.",
 	"versions.loading": "در حال جستجوی نسخه‌ها…",
 	"versions.empty": "نسخه‌ای پیدا نشد.",
 	"versions.dayWithDate": "{{date}} ({{relative}})",
@@ -1486,14 +1474,17 @@ export const fa: Record<string, string> = {
 	"versions.reason.beforeRepair": "پیش از تعمیر فایل تنظیمات",
 	"versions.restoreTitle": "بازیابی این نسخه",
 	"versions.subtitle": "«{{name}}» · {{when}}",
-	"versions.restoreBody": "تنظیمات فعلی شما جایگزین می‌شود ({{count}} تفاوت).\nابتدا به‌صورت یک نسخه ذخیره می‌شود تا بتوانید به آن برگردید.\nسپس سرویس همگام‌سازی شما تنظیمات بازیابی‌شده را به دستگاه‌های دیگرتان می‌فرستد.",
+	"versions.restoreBody":
+		"تنظیمات فعلی شما جایگزین می‌شود ({{count}} تفاوت).\nابتدا به‌صورت یک نسخه ذخیره می‌شود تا بتوانید به آن برگردید.\nسپس سرویس همگام‌سازی شما تنظیمات بازیابی‌شده را به دستگاه‌های دیگرتان می‌فرستد.",
 	"versions.restoreSame": "این نسخه با پیکربندی فعلی شما یکسان است، پس چیزی برای بازیابی وجود ندارد.",
 	"versions.restored": "«{{name}}» از {{when}} بازیابی شد.",
-	"versions.backupFailed": "چیزی بازیابی نشد: ابتدا نتوانستیم پیکربندی فعلی را به‌صورت نسخه ذخیره کنیم. فضای ذخیره‌سازی آزاد را بررسی کنید و دوباره تلاش کنید.",
+	"versions.backupFailed":
+		"چیزی بازیابی نشد: ابتدا نتوانستیم پیکربندی فعلی را به‌صورت نسخه ذخیره کنیم. فضای ذخیره‌سازی آزاد را بررسی کنید و دوباره تلاش کنید.",
 	"versions.restoreFailed": "نسخه بازیابی نشد. چیزی تغییر نکرد.",
 	"versions.deleteTitle": "حذف این نسخه",
 	"versions.deleteAvailableBody": "این مورد و همهٔ نسخه‌های در دسترس آن برای همیشه حذف می‌شوند.",
-	"versions.deleteSyncedFiles": "حذف این فایل‌ها ممکن است با دستگاه‌های دیگر شما همگام‌سازی شود. کپی‌های محلی در آن دستگاه‌ها ممکن است باقی بمانند.",
+	"versions.deleteSyncedFiles":
+		"حذف این فایل‌ها ممکن است با دستگاه‌های دیگر شما همگام‌سازی شود. کپی‌های محلی در آن دستگاه‌ها ممکن است باقی بمانند.",
 	"versions.deleteFinal": "این کار برگشت‌پذیر نیست. پیکربندی فعلی شما تغییر نمی‌کند.",
 	"versions.deleted": "«{{name}}» از {{when}} حذف شد.",
 	"versions.deleteFailed": "برخی کپی‌های این نسخه حذف نشدند. فهرست اکنون موارد باقی‌مانده را نشان می‌دهد.",
@@ -1501,7 +1492,8 @@ export const fa: Record<string, string> = {
 	"versions.details.difference": "{{count}} تفاوت با تنظیمات فعلی شما",
 	"versions.details.differences": "{{count}} تفاوت با تنظیمات فعلی شما",
 	"versions.details.comparisonUnavailable": "مقایسه در دسترس نیست",
-	"notice.unsavedChangesKept": "برخی تغییرات این دستگاه هنوز ذخیره نشده بودند و تنظیمات جدیدتر دستگاه دیگری جای آن‌ها را گرفتند. نسخهٔ شما ابتدا ذخیره شد: برای برگرداندن آن، بازیابی نسخهٔ قبلی را در تنظیمات Callout Studio باز کنید.",
+	"notice.unsavedChangesKept":
+		"برخی تغییرات این دستگاه هنوز ذخیره نشده بودند و تنظیمات جدیدتر دستگاه دیگری جای آن‌ها را گرفتند. نسخهٔ شما ابتدا ذخیره شد: برای برگرداندن آن، بازیابی نسخهٔ قبلی را در تنظیمات Callout Studio باز کنید.",
 	"settings.versionHistory": "بازیابی نسخهٔ قبلی",
 	"settings.versions": "نسخه‌های قبلی",
 	"settings.versionsDesc": "تنظیمات فعلی‌تان را با یک نسخهٔ ذخیره‌شدهٔ قبلی جایگزین کنید.",
@@ -1512,14 +1504,14 @@ export const fa: Record<string, string> = {
 	"noteChanges.notesOne": "1 یادداشت",
 	"noteChanges.askCallout": "با آن callout چه شود؟",
 	"noteChanges.askCallouts": "با آن callout‌ها چه شود؟",
-	"noteChanges.changeRenamed": "نام نمایشی را از «{{old}}» به «{{new}}» تغییر دادید، بنابراین شناسهٔ اصلی از «{{oldId}}» به «{{newId}}» تغییر می‌کند.",
+	"noteChanges.changeRenamed":
+		"نام نمایشی را از «{{old}}» به «{{new}}» تغییر دادید، بنابراین شناسهٔ اصلی از «{{oldId}}» به «{{newId}}» تغییر می‌کند.",
 	"noteChanges.changeMainId": "شناسهٔ اصلی از «{{oldId}}» به «{{newId}}» تغییر می‌کند.",
 	"noteChanges.changeName": "نام نمایشی را از «{{old}}» به «{{new}}» تغییر دادید.",
 	"noteChanges.changeRemoved": "شناسهٔ «{{id}}» را حذف کردید.",
 	"noteChanges.changeRemovedMany": "این شناسه‌ها را حذف کردید: {{ids}}.",
 	"noteChanges.changeResetRemoved": "بازنشانی به پیش‌فرض شناسهٔ «{{id}}» را که اضافه کرده بودید حذف می‌کند.",
-	"noteChanges.changeResetRemovedMany":
-		"بازنشانی به پیش‌فرض شناسه‌هایی را که اضافه کرده بودید حذف می‌کند: {{ids}}.",
+	"noteChanges.changeResetRemovedMany": "بازنشانی به پیش‌فرض شناسه‌هایی را که اضافه کرده بودید حذف می‌کند: {{ids}}.",
 	"noteChanges.changeFold": "شیوهٔ جمع‌شدن این callout را تغییر دادید.",
 	"noteChanges.affects": "این روی {{callouts}} از {{notes}} اثر می‌گذارد.",
 	"noteChanges.affectsUnknown": "ممکن است برخی از یادداشت‌های شما تحت تأثیر قرار بگیرند.",
@@ -1527,7 +1519,8 @@ export const fa: Record<string, string> = {
 	"noteChanges.rewriteManyDesc": "هر شناسهٔ قدیمی در یادداشت‌های شما به [!{{to}}] تبدیل می‌شود.",
 	"noteChanges.changeToIdLabel": "شناسه‌ای که به آن تغییر کنند",
 	"noteChanges.rewriteDesc": "هر [!{{id}}] در یادداشت‌های شما به [!{{to}}] تبدیل می‌شود.",
-	"noteChanges.renameFollowDesc": "هر [!{{oldId}}] در یادداشت‌های شما به [!{{newId}}] تبدیل می‌شود و عنوان‌هایی که «{{old}}» نوشته‌اند به «{{new}}» تبدیل می‌شوند.",
+	"noteChanges.renameFollowDesc":
+		"هر [!{{oldId}}] در یادداشت‌های شما به [!{{newId}}] تبدیل می‌شود و عنوان‌هایی که «{{old}}» نوشته‌اند به «{{new}}» تبدیل می‌شوند.",
 	"noteChanges.titlesChangeDesc": "عنوان‌هایی که «{{old}}» نوشته‌اند به «{{new}}» تبدیل می‌شوند.",
 	"noteChanges.foldChangeDesc": "نشانهٔ + یا - آن‌ها متناسب با آن تغییر می‌کند.",
 };
