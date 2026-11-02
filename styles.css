@@ -5932,51 +5932,243 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	color: var(--text-warning);
 }
 
-/* Version history (settings/SettingsRecoveryModal.ts): one of Obsidian's
-   setting groups per day (`SettingGroup` with `mod-list`, finding S9-05).
-   app.css draws the date headings, the boxes, the thin lines between rows and
-   the 24px between groups, keeps a row on one line on a phone, and mutes the
-   "Loading…" / "No earlier versions" row (`mod-empty-state`). What follows is
-   only what is the window's own. It used to be a timeline: a rail, a dot per
-   version and a column of times. */
+/* Version history (settings/declarative/versionHistoryPage.ts): a timeline. A
+   rail runs down the page's start side with a dot per version and the time of
+   each to its side; every day's date is a heading on the rail, and every
+   version a raised card beside it. This is the look it had before the 1.13
+   rewrite, which gave way for a short while to a box per day with no rail; the
+   page brings the timeline back. The recovery-specific class names keep every
+   other page unchanged. */
 .cs-recovery-intro,
-.cs-recovery-paused {
-	margin: 0;
+.cs-recovery-paused,
+.cs-recovery-status {
+	margin: 0 0 var(--size-4-3);
 	font-size: var(--font-ui-small);
 	line-height: 1.5;
 }
 
-.cs-recovery-intro {
+.cs-recovery-intro,
+.cs-recovery-status {
 	color: var(--text-muted);
 }
 
 .cs-recovery-paused {
-	margin-top: var(--size-4-2);
 	color: var(--text-warning);
 }
 
-/* 24px between the description and the first day, as between two groups. */
-.cs-recovery-list {
-	margin-top: var(--size-4-6);
+/* The page's title bar is Obsidian's sticky `.setting-page-titlebar` (z-index 1,
+   opaque), a sibling placed just before this box, so on every other page what
+   scrolls under it goes behind it. Here the times are `position: absolute;
+   z-index: 1`, the same level, and later in the document wins a tie, so the
+   digits were painted over the bar while the cards went under it. This makes
+   the box its own stacking context: everything inside, the times included,
+   counts as one layer at level 0 and the bar's 1 is above all of it. */
+.cs-recovery-page {
+	isolation: isolate;
 }
 
-/* The time that starts a row (the date is the group's heading): muted, its
-   digits all one width, and kept whole (`isolate`) in a right-to-left
-   interface, where it would otherwise be reordered with the name after it. */
-.cs-recovery-time {
-	margin-inline-end: var(--size-4-2);
-	color: var(--text-muted);
+/* Day headings and cards share a rail on the inline-start side. Each segment
+   extends across the 2px gap, so the line stays continuous as rows wrap, with
+   its ends at the first heading and the final version's marker. */
+.cs-recovery-rows {
+	--cs-timeline-gutter: 6rem;
+	--cs-timeline-marker: 8px;
+	--cs-timeline-axis: calc(var(--cs-timeline-gutter) - 12px - var(--cs-timeline-marker) / 2);
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding-inline-start: var(--cs-timeline-gutter);
+}
+
+.cs-recovery-day,
+.cs-recovery-row {
+	position: relative;
+}
+
+.cs-recovery-day::before,
+.cs-recovery-row::before {
+	content: "";
+	position: absolute;
+	inset-inline-start: calc(var(--cs-timeline-axis) - var(--cs-timeline-gutter));
+	inset-block: -2px;
+	inline-size: 1px;
+	background: var(--background-modifier-border);
+	pointer-events: none;
+}
+
+.cs-recovery-day:first-child::before {
+	inset-block-start: var(--cs-timeline-day-center);
+}
+
+.cs-recovery-row:last-child::before {
+	inset-block-end: 50%;
+}
+
+/* Times precede the rail; markers sit between the time and the card. Logical
+   positions mirror the layout in RTL without reversing the clock's digits. */
+.cs-recovery-list .cs-recovery-time {
+	position: absolute;
+	z-index: 1;
+	inset-inline-start: calc(0px - var(--cs-timeline-gutter));
+	inset-block-start: 50%;
+	transform: translateY(-50%);
+	inline-size: calc(var(--cs-timeline-axis) - var(--cs-timeline-marker) / 2 - 8px);
+	color: var(--text-faint);
+	font-size: calc(var(--font-ui-smaller) - 1px);
 	font-variant-numeric: tabular-nums;
+	line-height: 1.4;
+	text-align: end;
 	white-space: nowrap;
 	unicode-bidi: isolate;
 }
 
-/* A phone's row is narrow beside the two icons and Restore (Obsidian keeps a
-   list row on one line there), so the time takes a line of its own above the
-   name instead of sharing the name's first line. */
-.is-phone .cs-recovery-time {
-	display: block;
-	margin-inline-end: 0;
+.cs-version-marker {
+	position: absolute;
+	inset-inline-start: calc(var(--cs-timeline-axis) - var(--cs-timeline-gutter) - var(--cs-timeline-marker) / 2);
+	inset-block-start: 50%;
+	transform: translateY(-50%);
+	inline-size: var(--cs-timeline-marker);
+	block-size: var(--cs-timeline-marker);
+	border-radius: 50%;
+	background: var(--background-modifier-border);
+	pointer-events: none;
+}
+
+.cs-recovery-rows > .cs-recovery-day {
+	--cs-timeline-day-space-below: var(--size-4-4, 16px);
+	--cs-timeline-day-space: calc(2 * var(--cs-timeline-day-space-below));
+	--cs-timeline-day-center: calc(var(--cs-timeline-day-space) + 0.75em);
+	padding: var(--cs-timeline-day-space) 0 var(--cs-timeline-day-space-below);
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	font-weight: var(--font-semibold);
+	line-height: 1.5;
+}
+
+/* The first day has no preceding versions to separate it from. */
+.cs-recovery-rows > .cs-recovery-day:first-child {
+	--cs-timeline-day-space: var(--size-4-1, 4px);
+}
+
+/* The day's own padding is all the room it needs above it. Obsidian adds more:
+   a heading after a row gets 24px of margin (`.vertical-tab-content
+   .setting-item ~ :is(h1, h2, h3, …)`, (0,3,0)), and that margin is outside the
+   heading's box, where the rail's segment does not reach, so the line broke
+   off above every date but the first. The doubled class clears that rule on
+   specificity, as elsewhere in this file. */
+.cs-recovery-page .cs-recovery-rows > .cs-recovery-day.cs-recovery-day {
+	margin: 0;
+}
+
+/* Join the rail to the centre of the heading's first text line, excluding
+   its extra top padding. Leave a small gap before the date, also in RTL. */
+.cs-recovery-day::after {
+	content: "";
+	position: absolute;
+	inset-inline-start: calc(var(--cs-timeline-axis) - var(--cs-timeline-gutter));
+	inset-block-start: var(--cs-timeline-day-center);
+	inline-size: calc(var(--cs-timeline-gutter) - var(--cs-timeline-axis) - var(--size-4-2));
+	block-size: 1px;
+	background: var(--background-modifier-border);
+	pointer-events: none;
+}
+
+/* A card. The row is Obsidian's own `.setting-item`, which already is a raised,
+   rounded box on a page of the settings, so only what the timeline needs is
+   said: no gap of its own (the rail's 2px is the gap), a little more room than
+   a plain row, and no line or tint where Obsidian's rules for a row in a list
+   or a window would add one. Matched at (0,5,0), which is also what beats those. */
+.cs-recovery-page .cs-recovery-rows > .cs-recovery-row.setting-item:not(.setting-item-heading) {
+	min-width: 0;
+	margin: 0;
+	padding: 14px 16px;
+	border: none;
+	/* The corners are Obsidian's own: `--setting-items-radius`, from its `.setting-item`. */
+	background: var(--setting-items-background);
+}
+
+/* Include the timeline gutter in the row's hover area, even over the
+   decorative marker. Keep the time above it so its text remains selectable. */
+.cs-recovery-row::after {
+	content: "";
+	position: absolute;
+	inset-inline-start: calc(0px - var(--cs-timeline-gutter));
+	inset-block: 0;
+	inline-size: var(--cs-timeline-gutter);
+}
+
+@media (hover: hover) {
+	.cs-recovery-list .cs-recovery-row:hover .cs-recovery-time {
+		color: var(--text-normal);
+	}
+
+	.cs-recovery-row:hover .cs-version-marker {
+		background: var(--text-muted);
+	}
+}
+
+/* A floor for the text column at every width: the cluster on the right keeps
+   its natural size, so without one the name and the summary could still be
+   squeezed into a sliver. 12rem is about what a version's name and summary
+   need before they break a word per line; a phone has less beside three
+   controls, so there the cluster wraps onto its own line under the text and
+   stays at the end (the control's `margin-inline-start: auto`).
+
+   The floor is the `min-width`, and the flex-basis is 0 on purpose. A basis of
+   12rem is a width in a row but a HEIGHT in a column, and Obsidian turns a
+   narrow row into a column (`@container (max-width: 400px)`, a window or pane
+   that narrow on desktop or a tablet): the text kept 12rem of height, with a
+   blank gap between it and the buttons below. With a basis of 0 the row wraps
+   at the same place (a flex item's `min-width` counts when lines are broken)
+   and a column is only as tall as its text.
+
+   The buttons are centred on the card's height, level with the time and the
+   dot on the rail. Obsidian's own row (`.setting-item`) puts them at the top. */
+.cs-recovery-row.setting-item {
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.cs-recovery-page .cs-recovery-row.cs-recovery-row .setting-item-info {
+	flex: 1 1 0;
+	min-width: min(12rem, 100%);
+	margin: 0;
+}
+
+/* `break-word`, not `anywhere`: both still break an unbroken file name that
+   cannot fit, but `anywhere` also lets every word count as breakable when the
+   column is sized, which is what let it shrink to a letter per line. */
+.cs-recovery-row .setting-item-name {
+	min-width: 0;
+	font-weight: var(--font-semibold);
+	white-space: normal;
+	overflow-wrap: break-word;
+}
+
+.cs-recovery-row .setting-item-description {
+	margin-top: 0;
+	padding-top: 2px;
+	line-height: 1.4;
+	overflow-wrap: break-word;
+}
+
+.cs-recovery-summary-counts {
+	display: flex;
+	flex-direction: column;
+}
+
+/* The full text width is available once the controls have their own line. */
+.cs-recovery-controls-wrapped .cs-recovery-summary-counts {
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: normal var(--size-4-3);
+}
+
+.cs-recovery-row .setting-item-control {
+	flex: 0 0 auto;
+	min-width: 0;
+	margin-inline-start: auto;
+	gap: 4px;
 }
 
 /* Quiet until hovered or focused: red is earned by intent to use it, not
@@ -5991,12 +6183,20 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	}
 }
 
-/* On a phone or tablet, Restore stays compact beside the two icons. Without
-   this, Obsidian's rules for a row in a window would stretch it on a phone
-   (`.is-phone .modal .setting-item-control button:not(.clickable-icon)
-   { width: 100% }`, (0,4,1), plus 10px of padding), and a tablet's
-   `.is-tablet button:not(.clickable-icon)` pads it by 20px a side; desktop's
-   mobile emulation is a tablet whenever the window is 600×600 or more. The
+.cs-version-name {
+	min-width: 0;
+	overflow-wrap: break-word;
+	font-weight: var(--font-normal);
+}
+
+/* The row keeps its desktop shape on a phone or tablet too: name and summary
+   on the left, the eye, bin and Restore vertically centred on the right,
+   rather than stacked onto a full-width line of their own (`cs-row-inline`,
+   above, clears Obsidian's stacking). That rule only reaches
+   `.setting-item-control` itself, so the Restore button inside it needs its
+   own override: Obsidian's phone rules for a button in a row would stretch it
+   to the row's width, and a tablet's would pad it by 20px a side (desktop's
+   mobile emulation is a tablet whenever the window is 600×600 or more). The
    doubled classes reach (0,5,0). The icons and the gaps tighten as well, so
    the name keeps as much of the narrow row as it can. */
 .is-mobile .cs-recovery-row.cs-recovery-row .cs-recovery-restore-btn.cs-recovery-restore-btn {
@@ -6015,6 +6215,11 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 
 .is-mobile .cs-recovery-row.cs-recovery-row.setting-item {
 	gap: 8px;
+}
+
+/* Counts remain two separate lines on desktop and mobile alike. */
+.cs-recovery-row .cs-recovery-summary-part {
+	display: block;
 }
 
 /* ── Version details ──────────────────────────────────────────────

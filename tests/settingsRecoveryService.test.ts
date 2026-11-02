@@ -178,6 +178,44 @@ describe("listing earlier setups", () => {
 		assert.equal(service.difference(other.toSaveData()).changed, 2);
 		h.host.settingsWriter.destroy();
 	});
+
+	it("compares a whole list with the setup shown when the list was drawn, reading it once", async () => {
+		const h = recoveryActionHarness(); await h.boot();
+		try {
+			const service = new SettingsRecoveryService(h.host);
+			const shown = h.host.registry.toSaveData();
+			const other = new CalloutRegistry(); other.load(null);
+			other.add(definition({ id: "extra", icon: star }));
+			let reads = 0;
+			const toSaveData = h.host.registry.toSaveData.bind(h.host.registry);
+			h.host.registry.toSaveData = () => { reads++; return toSaveData(); };
+			const compare = service.differences();
+			assert.deepEqual([shown, other.toSaveData(), shown].map(data => compare(data).changed), [0, 1, 0]);
+			assert.equal(reads, 1, "what is shown now is read once for the whole list");
+			assert.deepEqual(compare(other.toSaveData()), service.difference(other.toSaveData()));
+		} finally { h.host.settingsWriter.destroy(); }
+	});
+
+	it("normalizes a copy again only when its content changed since the last listing", async () => {
+		const h = recoveryActionHarness(); await h.boot();
+		try {
+			const service = new SettingsRecoveryService(h.host);
+			const setup = { callouts: [definition({ id: "kept", icon: star })] };
+			h.host.settingsWriter.historyEntries = async () => [{ hash: "1111111111111111", savedAt: 200, bytes: 1, data: setup }];
+			h.files.set(`${DIR}/backups/data-2026-09-01T10-00-00-000Z-phone001-0123456789abcdef.json`, JSON.stringify(setup));
+			h.files.set(`${DIR}/data 2.json`, JSON.stringify(setup));
+			const dataOf = (sources: RecoverySource[], kind: RecoverySource["kind"]) => sources.find(source => source.kind === kind)?.data;
+			const first = await service.listSources();
+			h.files.set(`${DIR}/data 2.json`, JSON.stringify({ callouts: [definition({ id: "changed", icon: star })] }));
+			const second = await service.listSources();
+			// The same object back is what shows it was not read again.
+			assert.equal(dataOf(second, "history"), dataOf(first, "history"));
+			assert.equal(dataOf(second, "backup"), dataOf(first, "backup"));
+			assert.notEqual(dataOf(second, "copy"), dataOf(first, "copy"));
+			assert.ok(ids(dataOf(second, "copy")).includes("changed"));
+			assert.deepEqual(second.map(source => source.kind), ["history", "backup", "copy"], "still history, then backups, then copies");
+		} finally { h.host.settingsWriter.destroy(); }
+	});
 });
 
 describe("versions: one row per setup, wherever its copies are", () => {

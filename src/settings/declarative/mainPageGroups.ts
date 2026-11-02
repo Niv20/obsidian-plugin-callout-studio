@@ -1,23 +1,22 @@
 /**
  * settings/declarative/mainPageGroups.ts — the boxes at the foot of the main
- * settings page (Import and export, Version history, Danger zone, About) and
- * the Manage icon libraries row.
+ * settings page (Import and export, Danger zone, About) and the Manage icon
+ * libraries row.
  *
  * Who calls it. The settings tab, when it builds its tree.
  *
  * The main idea. Each function returns one part of the tree. The rows only
  * describe themselves and point at the flows that already exist (the import
- * and export windows, version history, the conversion review, the reset), so
- * the declarative page and the old one run the very same code when a button is
- * pressed. While saving is paused, a row whose button would change the setup
- * is dimmed and says why when pressed (rowParts.ts); the ones that change
- * nothing (Export, Earlier versions, the conversion review) stay usable.
+ * and export windows, the conversion review, the reset), so the declarative
+ * page and the old one run the very same code when a button is pressed. While
+ * saving is paused, a row whose button would change the setup is dimmed and
+ * says why when pressed (rowParts.ts); the ones that change nothing (Export,
+ * Version history, the conversion review) stay usable.
  */
 import { t } from "../../i18n";
 import { ExportFormatModal } from "../ExportFormatModal";
 import { IconCreditsModal } from "../IconCreditsModal";
 import { ImportSourceModal } from "../ImportSourceModal";
-import { SettingsRecoveryModal } from "../SettingsRecoveryModal";
 import { WelcomeModal } from "../WelcomeModal";
 import { appendContactSentence, projectLinks, releaseNotesUrl } from "../aboutLinks";
 import { openIconLibrariesWindow } from "../iconpicker/openIconLibraries";
@@ -26,13 +25,14 @@ import { openPortableConversionFromSettings } from "../../portable/registerPorta
 import { buttonRow, pausedReason } from "./rowParts";
 import { guardRender } from "./safeTree";
 import type { CsAction, CsGroup, CsRender, TreeContext } from "./types";
+import { VERSION_HISTORY_PAGE, versionHistoryRow } from "./versionHistoryPage";
 
 /** The rows other parts of the settings jump to, by name. */
 export const MAIN_PAGE_ROWS = {
 	/** The import prompt's Import scrolls here. */
 	importCallouts: "import-callouts",
-	/** The paused banner's Go to version history scrolls here. */
-	earlierVersions: "earlier-versions",
+	/** The paused banner's Go to version history opens this page. */
+	earlierVersions: VERSION_HISTORY_PAGE,
 } as const;
 
 /** Import and export: two rows, each opening its window. */
@@ -66,33 +66,19 @@ export function importExportGroup(ctx: TreeContext): CsGroup {
 	};
 }
 
-/** Version history: shown only on a host that keeps versions (a minimal host has no recovery service). */
-export function versionHistoryGroup(ctx: TreeContext): CsGroup {
-	return {
-		type: "group",
-		id: "version-history",
-		heading: t("settings.versionHistory"),
-		visible: () => ctx.plugin.recovery !== undefined,
-		items: [
-			buttonRow({
-				id: MAIN_PAGE_ROWS.earlierVersions,
-				name: t("settings.versions"),
-				desc: t("settings.versionsDesc"),
-				buttonText: t("settings.versionsButton"),
-				registerIn: ctx.rows,
-				onClick: () => new SettingsRecoveryModal(ctx.app, ctx.plugin).open(),
-			}),
-		],
-	};
-}
-
-/** Danger zone: the conversion review (it changes notes, never settings) and Reset everything. */
+/**
+ * Danger zone: Restore an earlier version (the row that opens the version
+ * history page; shown only on a host that keeps versions, as a minimal host has
+ * no recovery service), the conversion review (it changes notes, never
+ * settings) and Reset everything.
+ */
 export function dangerZoneGroup(ctx: TreeContext): CsGroup {
 	return {
 		type: "group",
 		id: "danger-zone",
 		heading: t("settings.maintenance"),
 		items: [
+			versionHistoryRow(ctx),
 			buttonRow({
 				id: "convert-to-markdown",
 				name: t("portable.title"),

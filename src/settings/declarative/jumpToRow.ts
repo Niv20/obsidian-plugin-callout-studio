@@ -53,6 +53,15 @@ export function jumpToRow(host: JumpHost, rowId: string, pagePath: readonly stri
 	revealWhenDrawn(host, rowId, fromKeyboard, MAX_WAITS);
 }
 
+/**
+ * Whether this Obsidian can open a page of the settings from code
+ * (`openPagePath`, which arrived in 1.14). Where it cannot, a button that only
+ * takes the reader to a page has nothing to do, and is better not shown.
+ */
+export function canOpenSettingsPage(app: App): boolean {
+	return typeof (app.setting as App["setting"] | undefined)?.openPagePath === "function";
+}
+
 /** Open the tab on the page at `pagePath`, if this Obsidian can. */
 function openSettingsPage(app: App, tabId: string, pagePath: readonly string[]): void {
 	const setting = app.setting as App["setting"] | undefined;

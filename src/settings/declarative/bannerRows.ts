@@ -23,6 +23,7 @@
 import { recoveryActionsOf, renderSaveStatusBanner } from "../saveStatusBanner";
 import { buildCompetitorImportBanner, competitorsToOffer } from "../competitorImportBanner";
 import { markCompetitorImportBannerHandled } from "../competitorImportState";
+import { canOpenSettingsPage } from "./jumpToRow";
 import { MAIN_PAGE_ROWS } from "./mainPageGroups";
 import type { PersistentPart } from "./persistentParts";
 import { guardRender } from "./safeTree";
@@ -67,15 +68,17 @@ function savingNoticeRow(ctx: TreeContext): CsRender {
 
 /**
  * Build the notice once (renderSaveStatusBanner redraws itself whenever the
- * saving status changes), with Go to version history jumping to its row.
+ * saving status changes), with Go to version history opening its page. Where
+ * Obsidian cannot open a page from code (1.13.x) the button is left out: the
+ * page is one row away on this very page.
  */
 function buildSavingNotice(ctx: TreeContext): PersistentPart {
 	const el = createDiv();
 	const hasHistory = ctx.plugin.recovery !== undefined;
 	const dispose = renderSaveStatusBanner(ctx.plugin, el, {
 		...recoveryActionsOf(ctx.plugin),
-		showBackup: hasHistory
-			? (fromKeyboard) => ctx.jumpTo(MAIN_PAGE_ROWS.earlierVersions, fromKeyboard)
+		showBackup: hasHistory && canOpenSettingsPage(ctx.app)
+			? (fromKeyboard) => ctx.jumpTo(MAIN_PAGE_ROWS.earlierVersions, fromKeyboard, [MAIN_PAGE_ROWS.earlierVersions])
 			: undefined,
 	});
 	return { el, dispose };

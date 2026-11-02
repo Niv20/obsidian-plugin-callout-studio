@@ -121,7 +121,7 @@ export const en: Record<string, string> = {
 	"saveStatus.guide.create":
 		"If your settings don't come back, choose Create settings file to start saving again.",
 	"saveStatus.guide.versions":
-		"Once saving works again, you can also bring back an earlier version from Version history.",
+		"Once saving works again, you can also go back to a saved version with Restore an earlier version.",
 	"saveStatus.guide.recoveryRetry":
 		"Make sure this device has some free storage, then choose Try again.",
 	"saveStatus.guide.recoveryDiscard":
@@ -143,7 +143,7 @@ export const en: Record<string, string> = {
 	"recovery.same": "Same as your current setup",
 	"recovery.summaryCallouts": "{{callouts}} saved callout type(s)",
 	"recovery.summaryChanges": "{{count}} difference(s) from now",
-	// Version history: one timeline of every earlier setup. See settings/SettingsRecoveryModal.ts.
+	// Version history: one timeline of every earlier setup. See settings/declarative/versionHistoryPage.ts.
 	"versions.title": "Version history",
 	"versions.intro":
 		"Callout Studio saves versions of your setup automatically.\nOlder ones are cleaned up over time.\nRestoring a version replaces your current setup on every synced device.",
@@ -165,15 +165,17 @@ export const en: Record<string, string> = {
 	"versions.reason.beforeImport": "Before an import",
 	"versions.reason.beforeRepair": "Before the settings file was repaired",
 	"versions.restoreTitle": "Restore this version",
+	// The second line of both version questions: which version, and when it was saved.
+	"versions.subtitle": "“{{name}}” · {{when}}",
 	"versions.restoreBody":
-		"Your current setup is replaced with “{{name}}” from {{when}} ({{count}} difference(s)).\nYour current setup is saved as a version first, so you can come back to it.\nYour sync service then sends the restored setup to your other devices.",
+		"Your current setup is replaced ({{count}} difference(s)).\nIt is saved as a version first, so you can come back to it.\nYour sync service then sends the restored setup to your other devices.",
 	"versions.restoreSame": "This version is the same as your current setup, so there is nothing to restore.",
 	"versions.restored": "Restored “{{name}}” from {{when}}.",
 	"versions.backupFailed":
 		"Nothing was restored: your current setup could not be saved as a version first. Check available storage, then try again.",
 	"versions.restoreFailed": "The version could not be restored. Nothing was changed.",
 	"versions.deleteTitle": "Delete this version",
-	"versions.deleteAvailableBody": "The version “{{name}}” from {{when}} and all its available copies will be deleted permanently.",
+	"versions.deleteAvailableBody": "It and all its available copies will be deleted permanently.",
 	"versions.deleteSyncedFiles":
 		"Deleting these files may sync to your other devices. Local copies on those devices may remain.",
 	"versions.deleteFinal": "This can't be undone. Your current setup is not affected.",
@@ -369,7 +371,7 @@ export const en: Record<string, string> = {
 		"Nothing was restored: your settings changed or couldn't be checked. Open this window again and review the list.",
 		"recovery.delete": "Delete",
 	"notice.unsavedChangesKept":
-		"Some changes made on this device had not been saved yet, and newer settings from another device replaced them. Your version was saved first: open Version history in Callout Studio settings to get it back.",
+		"Some changes made on this device had not been saved yet, and newer settings from another device replaced them. Your version was saved first: open Restore an earlier version in Callout Studio settings to get it back.",
 	"notice.recoveryCopyStale":
 		"Your settings were saved, but this device's recovery copy could not be updated. Check available storage on this device. Callout Studio tries again with your next change.",
 	"notice.blockedWhilePaused":
@@ -735,7 +737,7 @@ export const en: Record<string, string> = {
 	"settings.resetItemFallback": "Fallback style",
 	"settings.resetItemIconLibraries": "Icon library order and hidden libraries",
 	"settings.resetAllConfirmAfter":
-		"Don't worry: before resetting, we save a backup of your current setup. You can bring it back at any time from Version history in the settings.\nIf you use a sync service, the reset might travel to your other devices too.",
+		"Don't worry: before resetting, we save a backup of your current setup. You can bring it back at any time with Restore an earlier version in the settings.\nIf you use a sync service, the reset might travel to your other devices too.",
 	// No longer drawn: the list above replaced it. Kept because every locale
 	// still carries it, and a locale may not hold a key English lacks.
 	"settings.resetNothing": "Nothing to reset: everything is already at its defaults.",
@@ -743,10 +745,9 @@ export const en: Record<string, string> = {
 		"Nothing was reset: a backup of your current setup could not be saved first. Check available storage, then try again.",
 	"settings.resetNotSaved":
 		"The reset is shown but could not be saved yet, so your settings file still holds the previous setup. Check the saving status in Callout Studio settings.",
-	"settings.versionHistory": "Version history",
+	"settings.versionHistory": "Restore an earlier version",
 	"settings.versions": "Earlier versions",
-	"settings.versionsDesc":
-		"Compare automatically saved versions of your setup, or go back to one.",
+	"settings.versionsDesc": "Replace your current setup with an earlier saved version.",
 	"settings.versionsButton": "View versions",
 
 	// Notices

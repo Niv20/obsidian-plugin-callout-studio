@@ -49,8 +49,9 @@ function fakePlugin(paused: boolean) {
 }
 
 /** The banners box drawn through the test renderer, with the jumps it asks for recorded. */
-function drawBanners(plugin: object, app: object = {}) {
+function drawBanners(plugin: object, app: object = { setting: { openPagePath() {} } }) {
 	const jumps: string[] = [];
+	const jumpPaths: (readonly string[] | undefined)[] = [];
 	let redraws = 0;
 	const ctx: TreeContext = {
 		app: app as never,
@@ -59,13 +60,13 @@ function drawBanners(plugin: object, app: object = {}) {
 		registerDisposer: () => {},
 		rows: new RowRegistry(),
 		parts: new PersistentParts(() => {}),
-		jumpTo: (rowId) => { jumps.push(rowId); },
+		jumpTo: (rowId, _fromKeyboard, pagePath) => { jumps.push(rowId); jumpPaths.push(pagePath); },
 	};
 	const tab = new PluginSettingTab({}, {});
 	tab.getSettingDefinitions = () => toObsidianItems([bannersGroup(ctx), { name: "Something else" }]);
 	const harness = new DeclarativeHarness(tab);
 	tab.update();
-	return { tab, harness, jumps, redraws: () => redraws };
+	return { tab, harness, jumps, jumpPaths, redraws: () => redraws };
 }
 
 /**
@@ -111,11 +112,19 @@ describe("the saving notice", () => {
 		finishRetry(false);
 	});
 
-	it("goes to the Earlier versions row with Go to version history", () => {
-		const { harness, jumps } = drawBanners(fakePlugin(true).plugin);
+	it("opens the Version history page with Go to version history", () => {
+		const { harness, jumps, jumpPaths } = drawBanners(fakePlugin(true).plugin);
 		const notice = harness.rows().find((r) => r.def.id === "saving-notice")!.settingEl;
 		buttonWithText(notice, t("saveStatus.goToVersions")).click();
 		assert.deepEqual(jumps, ["earlier-versions"]);
+		assert.deepEqual(jumpPaths, [["earlier-versions"]], "the page itself is where it goes");
+	});
+
+	it("leaves Go to version history out where Obsidian cannot open a page from code (1.13.x)", () => {
+		const { harness } = drawBanners(fakePlugin(true).plugin, { setting: {} });
+		const notice = harness.rows().find((r) => r.def.id === "saving-notice")!.settingEl;
+		const labels = Array.from(notice.querySelectorAll("button")).map((button) => button.textContent);
+		assert.ok(!labels.includes(t("saveStatus.goToVersions")), "a button that cannot go anywhere is not offered");
 	});
 });
 

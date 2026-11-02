@@ -124,7 +124,7 @@ describe("the settings tab as a tree", () => {
 		const { harness } = drawTab();
 		assert.deepEqual(harness.rendered.map((box) => box.def.id), [
 			"banners", "callouts", "callout-style", "menus-and-commands",
-			"import-export", "version-history", "danger-zone", "about",
+			"import-export", "danger-zone", "about",
 		]);
 		assert.equal(harness.rendered[0]!.groupEl.isShown(), false, "no notices, so no box");
 	});

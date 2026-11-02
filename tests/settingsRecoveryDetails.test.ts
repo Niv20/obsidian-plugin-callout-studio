@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { Component, Setting, type App } from "obsidian";
+import { Component, type App } from "obsidian";
 import { DEFAULT_CALLOUTS } from "../src/defaultCallouts";
 import { getLocale, registerLocale, setLocale, t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
@@ -8,7 +8,8 @@ import type { RecoverySource, SettingsRecoveryService } from "../src/manager/set
 import { setupDetails, type SetupDetails } from "../src/manager/setupDetails";
 import { mergeVersions, type SetupVersion } from "../src/manager/setupVersions";
 import { SettingsRecoveryDetailsModal } from "../src/settings/SettingsRecoveryDetailsModal";
-import { SettingsRecoveryModal } from "../src/settings/SettingsRecoveryModal";
+import { VersionHistoryPage } from "../src/settings/declarative/versionHistoryPage";
+import type { TreeContext } from "../src/settings/declarative/types";
 import { recoveryFieldLabel } from "../src/settings/recoveryDetailFields";
 import { recoverySourceTime, renderRecoveryDetails } from "../src/settings/recoveryDetailsView";
 import { formatNumber } from "../src/settings/recoveryValues";
@@ -468,16 +469,15 @@ describe("viewing details from Version history", () => {
 						assert.equal(of, version, "the report classifies the complete version");
 						return setupDetails(selected, savedSetup());
 					},
-					difference: () => ({ callouts: 1, changed: mode === "identical" ? 0 : 1 }),
 					restore: () => { restoreCalls++; return Promise.resolve("restored" as const); },
 					remove: () => Promise.resolve(true),
 				} as unknown as SettingsRecoveryService;
-				const modal = new SettingsRecoveryModal(app, { recovery, settingsWriter: { isFrozen: mode === "frozen" } });
-				Object.assign(modal, { app });
+				const ctx = { app, plugin: { recovery, settingsWriter: { isFrozen: mode === "frozen" } } } as unknown as TreeContext;
+				const page = new VersionHistoryPage(ctx);
 				const root = fakeDom.document.body.createDiv();
 				try {
-					const renderer = modal as unknown as { renderRow(row: Setting, version: SetupVersion): void };
-					renderer.renderRow(new Setting(root as unknown as HTMLElement), version!);
+					const renderer = page as unknown as { renderRow(list: HTMLElement, version: SetupVersion, compare: () => object): void };
+					renderer.renderRow(root as unknown as HTMLElement, version!, () => ({ callouts: 1, changed: mode === "identical" ? 0 : 1 }));
 					const view = root.querySelectorAll(".clickable-icon").find(element => element.dataset.csTooltip === t("recovery.details.view"));
 					assert.ok(view, mode);
 					assert.notEqual(view.getAttribute("aria-disabled"), "true");

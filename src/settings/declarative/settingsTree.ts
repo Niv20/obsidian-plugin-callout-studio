@@ -16,7 +16,7 @@
  *   Default fallback callout, Language     generalRows.ts
  *   Callout style                          stylePages.ts (with palettesPage.ts)
  *   Menus and commands                     menuPage.ts, commandsPage.ts
- *   Import and export, Version history,
+ *   Import and export,
  *   Danger zone, About                     mainPageGroups.ts
  */
 import { t } from "../../i18n";
@@ -25,7 +25,7 @@ import { builtInCalloutsPage, themeCalloutsPage } from "./calloutListPage";
 import { addCalloutRow, myCalloutsPage } from "./calloutPages";
 import { commandsPage } from "./commandsPage";
 import { fallbackRow, languageRows, themeStylesRow } from "./generalRows";
-import { aboutGroup, dangerZoneGroup, importExportGroup, versionHistoryGroup } from "./mainPageGroups";
+import { aboutGroup, dangerZoneGroup, importExportGroup } from "./mainPageGroups";
 import { menuPage } from "./menuPage";
 import { calloutStyleGroup } from "./stylePages";
 import type { CsGroup, CsItem, CsRender, TreeContext } from "./types";
@@ -48,7 +48,6 @@ export function settingsTree(ctx: TreeContext, visitRow: CsRender): CsItem[] {
 		calloutStyleGroup(ctx),
 		menusBox(ctx),
 		importExportGroup(ctx),
-		versionHistoryGroup(ctx),
 		dangerZoneGroup(ctx),
 		aboutGroup(ctx),
 	];

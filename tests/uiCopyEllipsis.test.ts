@@ -114,7 +114,6 @@ const STAYS_PLAIN: Readonly<Record<string, string>> = {
 	"saveStatus.discardRecoveryCopy": "only a confirmation follows",
 
 	// A window that is itself the destination.
-	"settings.versionsButton": "opens the window it names",
 	"portable.review": "opens the review it names",
 	"iconLibraries.manage": "opens a manager",
 	"iconPicker.manageLibraries": "opens a manager",

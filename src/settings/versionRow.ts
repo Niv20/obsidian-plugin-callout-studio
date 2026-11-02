@@ -1,4 +1,4 @@
-/** The automatic names and local dates in Version history. */
+/** The automatic names, local dates and timeline dots in Version history. */
 import { getLocale, t } from "../i18n";
 import type { BackupReason } from "../manager/settingsBackup";
 import type { HistoryReason } from "../manager/settingsHistory";
@@ -71,7 +71,7 @@ function dateLocale(): string {
 	return getLocale() === "zhTW" ? "zh-TW" : getLocale();
 }
 
-/** Dates belong to the day's heading; rows only need their time. */
+/** Dates belong to the day heading; rows only need their time. */
 export function versionClock(time: number | null): string {
 	return formatVersionTime(time, { timeStyle: "short" });
 }
@@ -85,4 +85,9 @@ function formatVersionTime(time: number | null, options: Intl.DateTimeFormatOpti
 /** A plain title: versions cannot be renamed. */
 export function renderVersionName(nameEl: HTMLElement, version: SetupVersion): void {
 	nameEl.createSpan({ text: versionName(version), cls: "cs-version-name" });
+}
+
+/** A decorative dot connects every version to the timeline in the same way. */
+export function renderVersionMarker(parent: HTMLElement): void {
+	parent.createSpan({ cls: "cs-version-marker", attr: { "aria-hidden": "true" } });
 }
