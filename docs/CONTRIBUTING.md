@@ -41,10 +41,10 @@ Describe the problem you're trying to solve rather than a finished spec. There's
 
 1. Fork the repo, branch off `master` (`feature/short-description` or `fix/short-description`).
 2. Make your change. [`docs/internals-docs/README.md`](internals-docs/README.md) is the architecture reference - read [03-plugin-lifecycle.md](internals-docs/03-plugin-lifecycle.md) and [06-css-generation.md](internals-docs/06-css-generation.md) for the registry → CSS injector → re-render loop before touching anything under `src/manager/`; a couple of real bugs here have come from missing one of those steps. It also has step-by-step checklists for adding a setting/command/callout field/icon source ([22-extending.md](internals-docs/22-extending.md)). [AGENTS.md](../AGENTS.md) is just the short entry point that links here.
-3. Run `npm run lint`, `npm run build` and `npm test` before pushing. CI runs the same three commands on every push and PR, so anything that fails locally will fail there too. A `todo` entry in a suite is a known bug someone wrote down, not a test that's allowed to stay red.
+3. Run `npm run format`, `npm run lint`, `npm run build` and `npm test` before pushing. CI runs the same checks on every push and PR (formatting as the read-only `npm run format:check`), so anything that fails locally will fail there too. A `todo` entry in a suite is a known bug someone wrote down, not a test that's allowed to stay red.
 4. Add or extend a test where the change is testable without Obsidian - that's the first place a change is proved. Then check it in Obsidian too (see Setup above), and say how you tested it in the PR description; for anything visual that's the only signal a reviewer has.
 
-Keep PRs to one change. A fix bundled with an unrelated refactor just makes both harder to review. The Husky pre-commit hook in `scripts/hooks/pre-commit` also lints staged files automatically, so most style issues get caught before you even push.
+Keep PRs to one change. A fix bundled with an unrelated refactor just makes both harder to review. The Husky pre-commit hook in `scripts/hooks/pre-commit` also formats (Prettier) and lints staged files automatically, so most style issues get fixed or caught before you even push.
 
 ## Code conventions
 

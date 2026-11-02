@@ -10,6 +10,8 @@
 		"build": "tsc -noEmit -skipLibCheck -p scripts/tsconfig.json && node scripts/esbuild.config.mjs production",
 		"version": "node scripts/version-bump.mjs && git add manifest.json versions.json",
 		"lint": "eslint --config scripts/eslint.config.mts .",
+		"format": "prettier --write .",
+		"format:check": "prettier --check .",
 		"test": "node scripts/run-tests.mjs",
 		"welcome": "open 'obsidian://callout-studio-welcome'",
 		"prepare": "husky scripts/hooks",
@@ -34,6 +36,7 @@
 		"jiti": "2.6.1",
 		"nano-staged": "^1.0.2",
 		"obsidian": "1.13.1",
+		"prettier": "3.9.10",
 		"rpg-awesome": "^0.2.0",
 		"simple-icons": "16.33.0",
 		"svgpath": "^2.6.0",
@@ -47,7 +50,15 @@
 		"monkey-around": "^3.0.0"
 	},
 	"nano-staged": {
-		"*.{ts,mts}": "eslint --config scripts/eslint.config.mts"
+		"*.{ts,mts}": [
+			"prettier --write --ignore-unknown",
+			"eslint --config scripts/eslint.config.mts"
+		]
+	},
+	"prettier": {
+		"useTabs": true,
+		"tabWidth": 4,
+		"printWidth": 120
 	},
 	"overrides": {
 		"eslint-plugin-n": "17.24.0",

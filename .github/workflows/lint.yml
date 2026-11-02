@@ -36,5 +36,6 @@ jobs:
                       || { echo "::error::locales/ is stale — run npm run i18n:generate and commit."; exit 1; }
 
             - run: npm run lint
+            - run: npm run format:check
             - run: npm test
 

@@ -6,6 +6,7 @@
 npm run dev       # i18n:generate, then esbuild watch mode (inline sourcemaps)
 npm run build      # i18n:generate (prebuild), typecheck with scripts/tsconfig.json, then esbuild production (minified)
 npm run lint       # eslint with scripts/eslint.config.mts (obsidianmd recommended config + project rules)
+npm run format     # prettier --write over src/ and tests/ (format:check is the read-only CI form)
 npm test           # scripts/run-tests.mjs
 npm run icons:generate    # regenerate icon pack search indexes + manifest - NEVER auto-run
 npm run i18n:generate      # regenerate locales/*.json + localeManifest.ts - runs as `prebuild`
@@ -536,7 +537,7 @@ Two workflows, `.github/workflows/`:
 ### `lint.yml` - pushes to `master` and all pull requests, Node 20.x and 22.x
 
 ```text
-npm ci → npm run build → verify locales/ has no diff → npm run lint → npm test
+npm ci → npm run build → verify locales/ has no diff → npm run lint → npm run format:check → npm test
 ```
 
 The locale-sync check runs **right after the build** (which already ran
@@ -691,11 +692,36 @@ API the plugin uses is newer still and is guarded:
 `app.setting.openPagePath` (1.14), which opens a settings sub-page for a
 jump (26 § Jumping to a row).
 
+## Code formatting
+
+Prettier owns layout - indentation, line breaks, quotes, trailing commas - for
+the TypeScript in `src/` and `tests/`; ESLint owns correctness. The options sit
+in `package.json`'s `prettier` key (tabs at width 4, 120 columns, otherwise
+Prettier's defaults), matching `.editorconfig`.
+
+`.prettierignore` is the single definition of scope, read by every way of
+running Prettier: `npm run format`, the pre-commit hook, and an editor's format
+on save. It ignores everything at the root except `src/` and `tests/`, any JSON
+inside them, and the generated files - the icon search indexes,
+`localeManifest.ts` and `emojiData.ts` - whose generators own their layout. A
+new generated file under `src/` belongs on that list.
+
+The width is 120 rather than Prettier's default 80 because narrower widths push
+several handwritten files over the [500-line limit](#source-file-size); check
+that suite before lowering it.
+
+`no-unexpected-multiline` stays on even though `eslint-config-prettier` would
+turn it off: with semicolons it only fires when Prettier breaks a chain before
+`[index]`, and the fix is to name the intermediate value rather than drop a
+rule that catches real ASI bugs.
+
 ## Husky / pre-commit
 
-A single pre-commit hook (`scripts/hooks/pre-commit: npx nano-staged`) runs ESLint
-against staged `*.ts`/`*.mts` files only - most style issues are caught
-before a push ever reaches CI.
+A single pre-commit hook (`scripts/hooks/pre-commit: npx nano-staged`) runs
+Prettier and then ESLint against staged `*.ts`/`*.mts` files only, re-staging
+whatever Prettier rewrote - most style issues are fixed or caught before a push
+ever reaches CI. Both commands share one nano-staged pattern on purpose:
+separate patterns run in parallel, and ESLint must see Prettier's output.
 
 `npm install`/`npm ci` runs `prepare` (`husky scripts/hooks`) to install the
 hooks at their configured location. Run `npm run prepare` once after switching
@@ -703,7 +729,9 @@ an existing checkout to this layout. The staged lint command, like `npm run
 lint`, selects `scripts/eslint.config.mts` explicitly. ESLint integrations in
 editors must also select that file if they rely on automatic root-config
 discovery; for the VS Code ESLint extension, set
-`eslint.options.overrideConfigFile` to `scripts/eslint.config.mts`.
+`eslint.options.overrideConfigFile` to `scripts/eslint.config.mts`. The Prettier
+extension finds its options and `.prettierignore` without help; set it as the
+`[typescript]` default formatter with `editor.formatOnSave` to format on save.
 
 ## Repository layout
 
@@ -711,8 +739,8 @@ Public API documentation, contribution guidance, and third-party notices live
 in `docs/`. README and the plugin's contribution/credits links point to those
 paths. Development configuration and hooks live in `scripts/` alongside the
 build tools. `README.md`, `LICENSE`, the package and plugin manifests,
-`versions.json`, `.editorconfig`, `.npmrc`, and `.gitignore` remain at the
-root for their conventional consumers. `styles.css` remains the maintained
+`versions.json`, `.editorconfig`, `.prettierignore`, `.npmrc`, and `.gitignore`
+remain at the root for their conventional consumers. `styles.css` remains the maintained
 root stylesheet and the release artifact.
 
 ---

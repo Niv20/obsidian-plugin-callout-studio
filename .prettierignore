@@ -1,0 +1,13 @@
+# Prettier formats the plugin's TypeScript in src/ and tests/ and nothing else,
+# whoever runs it: npm run format, the pre-commit hook, or an editor on save.
+/*
+!/src/
+!/tests/
+*.json
+
+# Generated: the scripts that write them own their layout, and a reformat would
+# show up as drift the next time they run (repoGenerated.test.ts compares the
+# icon indexes and the locale data byte-for-byte).
+/src/icons/data/*.index.ts
+/src/i18n/localeManifest.ts
+/src/data/emojiData.ts
