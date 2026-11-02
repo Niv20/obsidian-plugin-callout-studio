@@ -1,26 +1,27 @@
 /**
- * tests/declarativeGeneralRows.test.ts — Default fallback callout, Language and
- * Use your theme's callout styles, as the declarative settings draw them
- * (settings/declarative/generalRows.ts).
+ * tests/declarativeGeneralRows.test.ts — Default fallback callout, the
+ * language choice and Use your theme's callout styles, as the declarative
+ * settings draw them (settings/declarative/generalRows.ts).
  *
- * Drawn through the test renderer with the real settings tab, so the theme's
- * switch saves the way Obsidian makes it save (the tab's control binding). The
- * plugin around them is a fake with a real registry. What is checked: the
- * fallback picker is one picker for the whole visit, the rows go grey while
- * saving is paused, the language row follows its download, and the switch
- * shows when the old page showed it and saves through the registry.
+ * Drawn through the test renderer with the real settings tab. The plugin around
+ * them is a fake with a real registry. What is checked: the fallback picker is
+ * one picker for the whole visit, the row goes grey while saving is paused, a
+ * language that has to be downloaded is told in a notice and adds no row, and
+ * the footer's globe saves a pick (the globe itself is checked with the footer,
+ * declarativeMainPageGroups.test.ts), and the theme's switch shows when the old
+ * page showed it and saves through the registry.
  */
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import type { App } from "obsidian";
 import { installFakeDom } from "./support/fakeDom";
-import { DeclarativeHarness, searchSettings } from "./support/declarativeRenderer";
-import type { ButtonLike, ToggleComponent } from "./support/obsidianStub";
+import { DeclarativeHarness } from "./support/declarativeRenderer";
+import { Notice, type ButtonLike, type ToggleComponent } from "./support/obsidianStub";
 import { DEFAULT_SETTINGS } from "../src/constants";
 import { setLocale, t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CalloutStudioSettingsTab } from "../src/settings/SettingsTab";
-import { fallbackRow, GENERAL_ROWS, languageRows, themeStylesRow } from "../src/settings/declarative/generalRows";
+import { fallbackRow, GENERAL_ROWS, languageChooser, themeStylesRow } from "../src/settings/declarative/generalRows";
 import { PersistentParts } from "../src/settings/declarative/persistentParts";
 import { RowRegistry } from "../src/settings/declarative/rowRegistry";
 import { toObsidianItems, type TreeContext } from "../src/settings/declarative/types";
@@ -28,7 +29,7 @@ import type { SettingsTabPlugin } from "../src/settings/sections/types";
 
 installFakeDom();
 
-// The language row watches its own layout; the fake DOM has neither of these.
+// The pickers watch their own layout; the fake DOM has neither of these.
 const previousStyle = Object.getOwnPropertyDescriptor(globalThis, "getComputedStyle");
 const previousObserver = Object.getOwnPropertyDescriptor(globalThis, "ResizeObserver");
 before(() => {
@@ -52,13 +53,11 @@ interface PluginState {
 	paused: boolean;
 	/** The chosen language is on this device. */
 	ready: boolean;
-	/** The chosen language is downloading. */
-	downloading: boolean;
 }
 
 /** A plugin with a real registry (whose settings are the plugin's) and a log of what it was asked. */
 function fakePlugin(state: Partial<PluginState> = {}) {
-	const now: PluginState = { paused: false, ready: true, downloading: false, ...state };
+	const now: PluginState = { paused: false, ready: true, ...state };
 	const registry = new CalloutRegistry();
 	registry.load(null);
 	registry.settings.fallbackCalloutId = "warning";
@@ -72,7 +71,8 @@ function fakePlugin(state: Partial<PluginState> = {}) {
 		saveSettings: () => { calls.push("save"); return Promise.resolve(); },
 		locales: {
 			isReady: (pref: string) => pref === "en" || now.ready,
-			state: () => (now.downloading ? "loading" : "absent"),
+			state: () => "absent",
+			prepare: () => Promise.resolve("missing"),
 		},
 		ensureLocale: () => { calls.push("ensureLocale"); return Promise.resolve(false); },
 		applyLocaleChange: () => calls.push("applyLocaleChange"),
@@ -80,7 +80,7 @@ function fakePlugin(state: Partial<PluginState> = {}) {
 	return { plugin, registry, calls, now };
 }
 
-/** The three rows in one box, drawn by the real settings tab. */
+/** The rows in one box, drawn by the real settings tab. */
 function drawGeneral(plugin: object, app: object = {}) {
 	let redraws = 0;
 	const ctx: TreeContext = {
@@ -94,7 +94,7 @@ function drawGeneral(plugin: object, app: object = {}) {
 	};
 	const tab = new CalloutStudioSettingsTab(app as App, plugin as SettingsTabPlugin);
 	tab.getSettingDefinitions = () => toObsidianItems([
-		{ type: "group", id: "general", items: [fallbackRow(ctx), ...languageRows(ctx), themeStylesRow(ctx)] },
+		{ type: "group", id: "general", items: [fallbackRow(ctx), themeStylesRow(ctx)] },
 	]);
 	const harness = new DeclarativeHarness(tab as never);
 	tab.update();
@@ -104,7 +104,7 @@ function drawGeneral(plugin: object, app: object = {}) {
 		assert.ok(found, `no row "${id}"`);
 		return found;
 	};
-	return { tab, harness, row, redraws: () => redraws };
+	return { tab, harness, row, ctx, redraws: () => redraws };
 }
 
 /** Pick `name` in a callout picker: open it, search, and press Enter on the first match. */
@@ -165,11 +165,8 @@ describe("Default fallback callout", () => {
 	it("shows no ↺ at the defaults, and writes nothing for being drawn", () => {
 		const { plugin, registry, calls } = fakePlugin();
 		registry.settings.fallbackCalloutId = DEFAULT_SETTINGS.fallbackCalloutId;
-		registry.settings.language = DEFAULT_SETTINGS.language;
 		const { row } = drawGeneral(plugin);
-		for (const id of [GENERAL_ROWS.fallback, GENERAL_ROWS.language]) {
-			assert.equal(resetHidden(row(id).setting.extraButtons[0] as ButtonLike), true, id);
-		}
+		assert.equal(resetHidden(row(GENERAL_ROWS.fallback).setting.extraButtons[0] as ButtonLike), true);
 		assert.deepEqual(calls, []);
 	});
 
@@ -185,54 +182,29 @@ describe("Default fallback callout", () => {
 });
 
 describe("Language", () => {
-	it("is found by every language's own name", () => {
-		const { tab } = drawGeneral(fakePlugin().plugin);
-		const names = (query: string): string[] => searchSettings(tab.settingItems, query).map((hit) => hit.name);
-		assert.deepEqual(names("Deutsch"), [t("settings.language")]);
-		assert.deepEqual(names("עברית"), [t("settings.language")]);
+	it("is not a row at all: the footer's globe is the only place it is chosen", () => {
+		const { harness } = drawGeneral(fakePlugin({ ready: false }).plugin);
+		assert.deepEqual(harness.rows().map((r) => r.def.id), [GENERAL_ROWS.fallback, GENERAL_ROWS.themeStyles]);
 	});
 
-	it("offers Retry while the chosen language is missing, and hides it once it is here", async () => {
-		const { plugin, registry, calls, now } = fakePlugin({ ready: false });
-		registry.settings.language = "he";
-		const { tab, row, redraws } = drawGeneral(plugin);
-		const missing = row(GENERAL_ROWS.languageMissing);
-		assert.ok(missing.settingEl.isShown());
-		assert.equal(missing.setting.nameEl.textContent, t("locale.notDownloaded", { name: "עברית" }));
-		(missing.setting.components[0] as ButtonLike).press();
-		await Promise.resolve();
-		await Promise.resolve();
-		assert.deepEqual(calls, ["ensureLocale"]);
-		assert.equal(redraws(), 1);
-		now.ready = true;
-		tab.update();
-		assert.equal(row(GENERAL_ROWS.languageMissing).settingEl.isShown(), false);
+	it("tells a language that cannot be downloaded in a notice, and adds nothing to the page", async () => {
+		const { plugin, registry, calls } = fakePlugin({ ready: false });
+		const { harness, ctx } = drawGeneral(plugin);
+		const rowsBefore = harness.rows().map((r) => r.def.id);
+		languageChooser(ctx)("he");
+		assert.equal(registry.settings.language, "he", "kept, though it did not download");
+		for (let i = 0; i < 5; i++) await new Promise((resolve) => setImmediate(resolve));
+		assert.deepEqual(calls, ["save", "ensureLocale"]);
+		assert.equal(Notice.last?.message, t("locale.notDownloaded", { name: "עברית" }));
+		assert.deepEqual(harness.rows().map((r) => r.def.id), rowsBefore);
 	});
 
-	it("says Downloading… and holds still while the chosen language downloads", () => {
-		const { plugin, registry } = fakePlugin({ ready: false, downloading: true });
-		registry.settings.language = "he";
-		const { row } = drawGeneral(plugin);
-		const language = row(GENERAL_ROWS.language);
-		assert.equal(language.setting.descEl.textContent, t("locale.downloading"));
-		assert.equal(language.setting.disabled, true);
-		const retry = (row(GENERAL_ROWS.languageMissing).setting.components[0] as ButtonLike).buttonEl as unknown as HTMLButtonElement;
-		assert.equal(retry.hasClass("mod-loading"), true, "Obsidian's spinner on Retry");
-		assert.equal(retry.getAttribute("aria-busy"), "true");
-	});
-
-	it("follows Obsidian's language again with ↺", async () => {
-		// Obsidian is in English here (the stub's default), so Hebrew is a pin.
-		const { plugin, registry, calls } = fakePlugin();
-		registry.settings.language = "he";
-		const { row, redraws } = drawGeneral(plugin);
+	it("saves what the globe picks, brings the page to it, and draws it again", async () => {
 		try {
-			const reset = row(GENERAL_ROWS.language).setting.extraButtons[0] as ButtonLike;
-			assert.equal(resetHidden(reset), false);
-			reset.press();
-			assert.equal(registry.settings.language, DEFAULT_SETTINGS.language);
-			// Following Obsidian shows as Obsidian's own language.
-			assert.equal(row(GENERAL_ROWS.language).settingEl.querySelector(".cs-dropdown-field-label")?.textContent, "English");
+			const { plugin, registry, calls } = fakePlugin();
+			const { ctx, redraws } = drawGeneral(plugin);
+			languageChooser(ctx)("he");
+			assert.equal(registry.settings.language, "he", "written before the first wait");
 			await Promise.resolve();
 			await Promise.resolve();
 			assert.deepEqual(calls, ["save", "applyLocaleChange"]);
@@ -242,10 +214,14 @@ describe("Language", () => {
 		}
 	});
 
-	it("goes grey while saving is paused", () => {
-		const { row } = drawGeneral(fakePlugin({ paused: true }).plugin);
-		assert.equal(row(GENERAL_ROWS.language).setting.disabled, true);
-		assert.equal(row(GENERAL_ROWS.language).settingEl.querySelector(".cs-dropdown-field")?.hasClass("mod-disabled"), true);
+	it("only explains while saving is paused, and draws the page again to put the old language back", () => {
+		const { plugin, registry, calls } = fakePlugin({ paused: true });
+		const { ctx, redraws } = drawGeneral(plugin);
+		const before = redraws();
+		languageChooser(ctx)("he");
+		assert.equal(registry.settings.language, DEFAULT_SETTINGS.language);
+		assert.deepEqual(calls, []);
+		assert.equal(redraws(), before + 1);
 	});
 });
 

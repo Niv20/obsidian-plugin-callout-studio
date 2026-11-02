@@ -117,7 +117,7 @@ const STAYS_PLAIN: Readonly<Record<string, string>> = {
 	"portable.review": "opens the review it names",
 	"iconLibraries.manage": "opens a manager",
 	"iconPicker.manageLibraries": "opens a manager",
-	"footer.iconCredits": "opens a read-only window",
+	"license.title": "opens a read-only window",
 	"contextMenu.openSettings": "opens settings",
 	"usage.menu": "opens the Find callouts view",
 	"saveStatus.goToVersions": "navigates, asks nothing",

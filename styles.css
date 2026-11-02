@@ -2396,50 +2396,6 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	flex: 0 0 auto;
 }
 
-/* Sized from the widest option plus the reset arrow's room (LanguageSection.ts)
-   and never shrunk: in a narrow pane the description wraps instead. Shrinking
-   this column is what cut "Bahasa Indonesia" short in the menu, which is
-   exactly as wide as the picker. */
-.cs-language-setting .setting-item-control {
-	flex: 0 0 auto;
-	inline-size: var(--cs-language-control-width, max-content);
-	max-inline-size: 100%;
-}
-
-/* `justify-items: start` measures each label at its own width. Stretched to
-   the shared column, every label would report whatever width the picker
-   happened to have. */
-.cs-language-width-sizer {
-	display: grid;
-	justify-items: start;
-	block-size: 0;
-	overflow: hidden;
-	visibility: hidden;
-	font-size: var(--font-ui-small);
-}
-
-.cs-language-width-sizer > span {
-	grid-area: 1 / 1;
-	/* The field's own room around its words, from the same variables the
-	   field reads (declared on this sizer beside the field's). */
-	padding-inline: var(--cs-dropdown-pad-start)
-		calc(var(--cs-dropdown-gap) + var(--icon-xs) + var(--cs-dropdown-pad-end));
-	white-space: nowrap;
-}
-
-/* The renderer adds this class only while Obsidian has actually stacked the
-   setting row. Reading the real layout keeps this custom control aligned with
-   core and with themes without duplicating a breakpoint that can drift. */
-.cs-language-setting-stacked .setting-item-control {
-	flex-basis: auto;
-	inline-size: 100%;
-	max-inline-size: 100%;
-}
-
-.is-phone .cs-reset-setting .setting-item-control {
-	inline-size: 100%;
-}
-
 /* Text that closes the list — the source menu's "3 more libraries available
    for download". Information, not an action: no hover, no pointer, and the
    menu's own mousedown swallows a press on it. The line above it is the one
@@ -5817,15 +5773,6 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	}
 }
 
-/* A language the user has picked but that could not be downloaded yet. Styled
-   as a notice rather than an error: the plugin is fully usable in English, and
-   the next launch retries on its own, so this states a fact and offers a retry
-   instead of demanding attention. Only the name is tinted — a fully coloured
-   block would outweigh every real setting around it. */
-.callout-studio-locale-warning .setting-item-name {
-	color: var(--text-warning);
-}
-
 /* A notice's action (Undo, Open settings) is Obsidian's own notice button,
    `.notice-cta` (ui/noticeAction.ts), drawn by app.css: accent text, brighter
    under the pointer. It used to be an underlined white link of the plugin's. */
@@ -7002,6 +6949,108 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 
 .setting-group.cs-page-intro .setting-item > :not(.setting-page-desc) {
 	display: none;
+}
+
+/* The footer (declarative/footerGroup.ts): one row holding a line of tiles,
+   each an icon and its name. The row has no name and no control, so its two
+   columns are hidden and the tiles take the whole row, in the middle, wrapping
+   when a narrow pane has no room for them all in one line. */
+.setting-item.cs-footer-row > :not(.cs-footer-tiles) {
+	display: none;
+}
+
+.setting-item.cs-footer-row .cs-footer-tiles {
+	display: block;
+	flex: 1 1 auto;
+	text-align: center;
+	/* Balanced lines: five tiles that don't fit in one line split 3 + 2, not 4 + 1.
+	   Flex can't balance, so the tiles are inline and spaced by margin, not gap. */
+	text-wrap: balance;
+}
+
+/* Under the footer, the last box of the main page, the page leaves the same
+   24px that separates two boxes (`.setting-group + .setting-group`, 6 steps of
+   4px). Obsidian's own bottom padding for a tab is 64px (`.vertical-tab-content`),
+   which left the footer floating well clear of the window's edge. The page
+   keeps room for the keyboard, as Obsidian's rule does. The extra class
+   outweighs that rule. The sub-pages are other elements and are not touched. */
+.vertical-tab-content.cs-settings-tab {
+	padding-bottom: max(var(--keyboard-height), var(--size-4-6));
+}
+
+/* A tile is drawn as Obsidian draws a button, from the same tokens as the
+   plugin's dropdown fields: the height of a field, the icon and its name side
+   by side, room at the sides. Four classes are enough to outweigh Obsidian's
+   `button` rules (one type, or one class and one type) and the browser's own
+   link colours, so a link (`a`) and a window opener (`button`) look the same. */
+.cs-footer-tile.cs-footer-tile.cs-footer-tile {
+	position: relative;
+	display: inline-flex;
+	flex: 0 0 auto;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	block-size: var(--input-height);
+	min-block-size: var(--input-height);
+	/* As wide as its words. */
+	inline-size: auto;
+	gap: var(--size-4-1);
+	margin: calc(var(--size-4-2) / 2);
+	vertical-align: middle;
+	padding: 0 var(--size-4-3);
+	border: 0;
+	border-radius: var(--input-radius, var(--radius-s));
+	corner-shape: var(--input-corner-shape, round);
+	background-color: var(--interactive-normal);
+	box-shadow: var(--input-shadow);
+	color: var(--text-muted);
+	font-family: inherit;
+	font-size: var(--font-ui-small);
+	line-height: var(--line-height-tight);
+	text-decoration: none;
+	cursor: pointer;
+}
+
+/* A tile's name stays on one line: a narrow pane moves whole tiles to the next
+   line instead (the row wraps). */
+.cs-footer-tile-label {
+	white-space: nowrap;
+}
+
+.cs-footer-tile-icon,
+.cs-footer-tile .cs-select-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Hover only where there is a real pointer: on a phone a tap would leave the
+   tile lit (the same rule as the dropdown fields above). */
+@media (hover: hover) {
+	.cs-footer-tile.cs-footer-tile.cs-footer-tile:not(:disabled):hover {
+		background-color: var(--interactive-hover);
+		box-shadow: var(--input-shadow-hover);
+		color: var(--text-normal);
+	}
+}
+
+.cs-footer-tile.cs-footer-tile.cs-footer-tile:focus-visible,
+.cs-footer-tile.cs-footer-tile.cs-footer-tile.is-open {
+	box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
+	outline: none;
+	color: var(--text-normal);
+}
+
+/* Obsidian's disabled button (`button[disabled]`): 70%. */
+.cs-footer-tile.cs-footer-tile.cs-footer-tile:disabled {
+	opacity: 0.7;
+	cursor: not-allowed;
+}
+
+/* The language tile's wrapper is a plain box in the tiles' line: it takes no
+   room of its own. */
+.cs-footer-tiles > .cs-select-dropdown {
+	display: contents;
 }
 
 /* The ring of paint a press on the mascot spreads reaches past the mascot's

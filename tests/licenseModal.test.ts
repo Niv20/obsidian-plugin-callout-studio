@@ -1,14 +1,15 @@
 /**
- * tests/iconCreditsModal.test.ts — the Icon licenses window (finding S8-17).
+ * tests/licenseModal.test.ts — the License window (finding S8-17).
  *
- * The libraries are one Obsidian setting group, a row per library, the way
- * Installed plugins lists plugins: the name as a link with its version in
- * Obsidian's small muted type, and a line per licence under it.
+ * A sentence that the plugin is open source, ending in a link to the license on
+ * GitHub, and the icon libraries. The libraries are one Obsidian setting group, a row per
+ * library, the way Installed plugins lists plugins: the name as a link with its
+ * version in Obsidian's small muted type, and a line per licence under it.
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { App } from "obsidian";
-import { IconCreditsModal } from "../src/settings/IconCreditsModal";
+import { LicenseModal } from "../src/settings/LicenseModal";
 import { ICON_SOURCE_IDS, getSource } from "../src/icons/registry";
 import { asEl, el, installFakeDom, type FakeElement } from "./support/fakeDom";
 
@@ -16,7 +17,7 @@ installFakeDom();
 
 function open() {
 	const app = {} as App;
-	const modal = new IconCreditsModal(app);
+	const modal = new LicenseModal(app);
 	const container = el({ cls: "modal-container" });
 	const modalEl = container.createDiv({ cls: "modal" });
 	const content = modalEl.createDiv({ cls: "modal-content" });
@@ -31,19 +32,48 @@ function open() {
 		setTitle: (text: string) => titleEl.setText(text),
 	});
 	modal.onOpen();
-	return { modal, content };
+	return { modal, content, titleEl };
 }
 
-describe("Icon licenses", () => {
+describe("License", () => {
+	it("is titled License", () => {
+		const { modal, titleEl } = open();
+		try {
+			assert.equal(titleEl.textContent, "License");
+		} finally { modal.onClose(); }
+	});
+
+	it("promises the plugin stays open source, and links the license on GitHub", () => {
+		const { modal, content } = open();
+		try {
+			const promise = content.querySelectorAll("p")[0]!;
+			assert.equal(
+				promise.textContent,
+				"Callout Studio is open source, and it will stay that way. You can find its license here.",
+			);
+			const link = promise.querySelector("a")!;
+			assert.equal(link.textContent, "here");
+			assert.equal(link.getAttribute("href"), "https://github.com/Niv20/obsidian-plugin-callout-studio/blob/master/LICENSE");
+			assert.equal(link.getAttribute("target"), "_blank");
+		} finally { modal.onClose(); }
+	});
+
+	it("has no mascot, and no row of its own for the plugin's license", () => {
+		const { modal, content } = open();
+		try {
+			assert.equal(content.querySelectorAll(".cs-mascot-box").length, 0);
+			assert.equal(content.querySelectorAll(".setting-group").length, 1, "only the icons' box");
+		} finally { modal.onClose(); }
+	});
+
 	it("lists every library with artwork to attribute, one row each, in one Obsidian box", () => {
 		const { modal, content } = open();
 		try {
-			const groups = content.querySelectorAll(".setting-group");
-			assert.equal(groups.length, 1, "one box");
-			const rows = groups[0]!.querySelectorAll(".setting-item");
+			const group = content.querySelector(".setting-group")!;
+			const rows = group.querySelectorAll(".setting-item");
 			const credited = ICON_SOURCE_IDS.filter((id) => getSource(id).attribution.licenses.length > 0);
 			assert.equal(rows.length, credited.length);
-			assert.equal(groups[0]!.querySelector(".setting-items")!.getAttribute("role"), "list");
+			assert.equal(group.querySelector(".setting-items")!.getAttribute("role"), "list");
 			for (const row of rows) assert.equal(row.getAttribute("role"), "listitem");
 		} finally { modal.onClose(); }
 	});

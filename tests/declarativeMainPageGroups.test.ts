@@ -6,14 +6,18 @@
  * Drawn through the test renderer (tests/support/declarativeRenderer.ts), so
  * what is checked is what Obsidian would show: the boxes and their rows, what
  * the settings search finds, what is dimmed while saving is paused (and that a
- * press then explains instead of acting), and the About box's links.
+ * press then explains instead of acting), and the footer's row of icon tiles
+ * (settings/declarative/footerGroup.ts).
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { installFakeDom } from "./support/fakeDom";
+import { openDropdownMenu } from "./support/selectDropdown";
+import { getSelectableLocales } from "../src/i18n";
 import { DeclarativeHarness, searchSettings } from "./support/declarativeRenderer";
 import { PluginSettingTab, type ButtonLike } from "./support/obsidianStub";
-import { aboutGroup, dangerZoneGroup, iconLibrariesRow, importExportGroup, MAIN_PAGE_ROWS } from "../src/settings/declarative/mainPageGroups";
+import { footerGroup } from "../src/settings/declarative/footerGroup";
+import { dangerZoneGroup, importExportGroup, MAIN_PAGE_ROWS } from "../src/settings/declarative/mainPageGroups";
 import { PersistentParts } from "../src/settings/declarative/persistentParts";
 import { RowRegistry } from "../src/settings/declarative/rowRegistry";
 import { toObsidianItems, type TreeContext } from "../src/settings/declarative/types";
@@ -21,11 +25,14 @@ import { toObsidianItems, type TreeContext } from "../src/settings/declarative/t
 installFakeDom();
 
 /** A context with a plugin that has only what these rows read. */
-function treeContext(options: { paused?: boolean; recovery?: boolean } = {}): TreeContext {
+function treeContext(options: { paused?: boolean; recovery?: boolean; downloading?: boolean } = {}): TreeContext {
 	const plugin = {
 		settingsWriter: { isFrozen: options.paused === true },
 		recovery: options.recovery === false ? undefined : { listVersions: () => Promise.resolve([]) },
 		manifest: { version: "2.18.0" },
+		// What the footer's globe reads: the saved language and whether it is here.
+		settings: { language: options.downloading ? "he" : "auto" },
+		locales: { isReady: () => true, state: () => (options.downloading ? "loading" : "absent") },
 	};
 	return {
 		app: {} as never,
@@ -38,14 +45,13 @@ function treeContext(options: { paused?: boolean; recovery?: boolean } = {}): Tr
 	};
 }
 
-/** Draw the three boxes, and the icon-libraries row in a box of its own. */
+/** Draw the boxes at the foot of the page. */
 function drawMainPage(ctx: TreeContext) {
 	const tab = new PluginSettingTab({}, {});
 	tab.getSettingDefinitions = () => toObsidianItems([
-		{ type: "group", id: "style", items: [iconLibrariesRow(ctx)] },
 		importExportGroup(ctx),
 		dangerZoneGroup(ctx),
-		aboutGroup(ctx),
+		footerGroup(ctx),
 	]);
 	const harness = new DeclarativeHarness(tab);
 	tab.update();
@@ -67,8 +73,11 @@ describe("the boxes at the foot of the main page", () => {
 		assert.deepEqual(boxes, [
 			["Import and export", ["Import callouts", "Export callouts"]],
 			["Danger zone", ["Restore an earlier version", "Convert to standard Markdown", "Reset everything"]],
-			["About", ["About Callout Studio", "", "Icon licenses", "Version"]],
 		]);
+		// One box without a heading: the footer's, a single nameless row of tiles.
+		const unheaded = harness.rendered.filter((box) => !box.def.heading)
+			.map((box) => [box.def.id, box.children.map((row) => row.def.name)]);
+		assert.deepEqual(unheaded, [["footer", [""]]]);
 		assert.deepEqual(harness.duplicateKeys, []);
 	});
 
@@ -82,11 +91,15 @@ describe("the boxes at the foot of the main page", () => {
 		const { tab } = drawMainPage(treeContext());
 		const names = (query: string): string[] => searchSettings(tab.settingItems, query).map((hit) => hit.name);
 		assert.deepEqual(names("Admonition"), ["Import callouts"]);
-		assert.deepEqual(names("icon"), ["Manage icon libraries", "Icon licenses"]);
-		assert.deepEqual(names("tabler"), ["Manage icon libraries"]);
-		assert.deepEqual(names("github"), ["Version"]);
+		// The Icon libraries row is not at the foot of the page: it is in the
+		// Colors and icons box (declarativeIconLibrariesRow.test.ts).
+		assert.deepEqual(names("icon"), []);
+		assert.deepEqual(names("tabler"), []);
 		assert.deepEqual(names("reset"), ["Reset everything"]);
-		assert.ok(!names("bugs").includes(""), "the nameless contact row is not a search result");
+		assert.ok(!names("bugs").includes(""), "the nameless footer row is not a search result");
+		assert.deepEqual(names("github"), [], "the footer's links are not settings to look for");
+		assert.deepEqual(names("language"), [], "the language is a tile, not a row to search for");
+		assert.deepEqual(names("about"), [], "so is About Callout Studio");
 	});
 });
 
@@ -115,26 +128,110 @@ describe("while saving is paused", () => {
 	});
 });
 
-describe("the About box", () => {
-	it("holds the contact sentence with its two links, and the version with the project's links", () => {
+describe("the footer", () => {
+	/** The footer's row of tiles. */
+	function rowOf(harness: DeclarativeHarness) {
+		return harness.rendered.find((box) => box.def.id === "footer")!.children[0]!;
+	}
+
+	/** Every tile, in order: its tooltip (the version tile has words instead) and its address. */
+	function tilesOf(harness: DeclarativeHarness): HTMLElement[] {
+		const row = rowOf(harness).settingEl as unknown as HTMLElement;
+		return Array.from(row.querySelectorAll<HTMLElement>(".cs-footer-tile"));
+	}
+
+	const nameOf = (tile: HTMLElement): string => tile.textContent ?? "";
+
+	it("is one box with one row, holding all the tiles", () => {
 		const { harness } = drawMainPage(treeContext());
-		const contact = harness.row("")!.setting.descEl as unknown as HTMLElement;
-		assert.deepEqual(Array.from(contact.querySelectorAll("a"), (a) => a.getAttribute("href")), [
-			"https://github.com/Niv20/obsidian-plugin-callout-studio/issues/new/choose",
-			"mailto:anivbniv@gmail.com",
-		]);
-		const version = harness.row("Version")!.setting;
-		assert.deepEqual(Array.from((version.descEl as unknown as HTMLElement).querySelectorAll("a"), (a) => a.textContent), ["Source code", "Contribute", "Plugin license"]);
-		const release = (version.controlEl as unknown as HTMLElement).querySelector("a")!;
-		assert.equal(release.textContent, "v2.18.0");
-		assert.match(release.getAttribute("href") ?? "", /releases\/tag\/2\.18\.0$/);
+		const footer = harness.rendered.find((box) => box.def.id === "footer")!;
+		assert.equal(footer.children.length, 1);
+		const row = rowOf(harness).settingEl as unknown as HTMLElement;
+		assert.equal(row.hasClass("cs-footer-row"), true);
+		assert.equal(row.querySelectorAll(".cs-footer-tiles").length, 1);
 	});
 
-	it("draws the same links again after a redraw, not twice", () => {
+	it("draws the language, the project's links, License and the version, in that order", () => {
+		const { harness } = drawMainPage(treeContext());
+		assert.deepEqual(tilesOf(harness).map(nameOf), [
+			// The globe shows the language on screen, not the word "Language".
+			"English",
+			"Open an issue",
+			"Source code",
+			"License",
+			"v2.18.0",
+		]);
+	});
+
+	it("has no email and no Contribute tile", () => {
+		const { harness } = drawMainPage(treeContext());
+		const hrefs = tilesOf(harness).map((tile) => tile.getAttribute("href") ?? "");
+		assert.equal(hrefs.some((href) => href.startsWith("mailto:")), false);
+		assert.equal(tilesOf(harness).some((tile) => nameOf(tile) === "Contribute"), false);
+	});
+
+	it("makes every tile but the version an icon with its name beside it, and none a tooltip", () => {
+		const { harness } = drawMainPage(treeContext());
+		for (const tile of tilesOf(harness)) {
+			assert.equal(tile.dataset.csTooltip, undefined, `${nameOf(tile)} has no tooltip`);
+			assert.notEqual(nameOf(tile), "", "the words are shown");
+			if (nameOf(tile).startsWith("v")) continue; // the version has words only
+			assert.ok(tile.querySelector(".cs-footer-tile-icon, .cs-select-icon"), `${nameOf(tile)} has an icon`);
+			assert.equal(tile.querySelector(".cs-visually-hidden"), null, `${nameOf(tile)} hides no words`);
+		}
+	});
+
+	it("has no About Callout Studio tile", () => {
+		const { harness } = drawMainPage(treeContext());
+		assert.equal(tilesOf(harness).some((tile) => nameOf(tile) === "About Callout Studio"), false);
+	});
+
+	it("links the project tiles to their pages", () => {
+		const { harness } = drawMainPage(treeContext());
+		const links = tilesOf(harness).filter((tile) => tile.tagName === "A").map((a) => [nameOf(a), a.getAttribute("href")]);
+		assert.deepEqual(links, [
+			["Open an issue", "https://github.com/Niv20/obsidian-plugin-callout-studio/issues/new/choose"],
+			["Source code", "https://github.com/Niv20/obsidian-plugin-callout-studio"],
+			["v2.18.0", "https://github.com/Niv20/obsidian-plugin-callout-studio/releases/tag/2.18.0"],
+		]);
+		// A web page opens in the browser, never in Obsidian's window.
+		const issue = tilesOf(harness).find((tile) => tile.tagName === "A" && nameOf(tile) === "Open an issue")!;
+		assert.equal(issue.getAttribute("target"), "_blank");
+		assert.equal(issue.getAttribute("rel"), "noopener noreferrer");
+	});
+
+	it("makes the License tile a button, not a link", () => {
+		const { harness } = drawMainPage(treeContext());
+		const buttons = tilesOf(harness).filter((tile) => tile.tagName === "BUTTON").map(nameOf);
+		// The globe is a button too: it opens the language menu.
+		assert.deepEqual(buttons, ["English", "License"]);
+	});
+
+	it("opens the language menu from the globe, with every language and a ✓ on the one shown", () => {
+		const { harness } = drawMainPage(treeContext());
+		const globe = tilesOf(harness).find((tile) => nameOf(tile) === "English")!;
+		const items = openDropdownMenu(globe.parentElement!.parentElement ?? globe.parentElement!).items;
+		assert.deepEqual(items.map((item) => item.title), getSelectableLocales().map((locale) => locale.name));
+		assert.deepEqual(items.filter((item) => item.checked).map((item) => item.title), ["English"]);
+	});
+
+	it("dims the globe while saving is paused or a language downloads, and no other tile", () => {
+		const globeOf = (harness: DeclarativeHarness): HTMLButtonElement =>
+			// The language dropdown's icon is the only `.cs-select-icon`; its words are the language shown.
+			tilesOf(harness).find((tile) => tile.querySelector(".cs-select-icon")) as HTMLButtonElement;
+		assert.equal(globeOf(drawMainPage(treeContext()).harness).disabled, false);
+		const paused = drawMainPage(treeContext({ paused: true })).harness;
+		assert.equal(globeOf(paused).disabled, true);
+		assert.deepEqual(tilesOf(paused).filter((tile) => (tile as HTMLButtonElement).disabled).map(nameOf), ["English"]);
+		const downloading = drawMainPage(treeContext({ downloading: true })).harness;
+		assert.equal(globeOf(downloading).disabled, true);
+	});
+
+	it("draws the tiles again after a redraw, not twice", () => {
 		const { tab, harness } = drawMainPage(treeContext());
 		tab.update();
-		const contact = harness.row("")!.setting.descEl as unknown as HTMLElement;
-		assert.equal(contact.querySelectorAll("a").length, 2);
+		assert.equal(tilesOf(harness).length, 5);
+		assert.equal((rowOf(harness).settingEl as unknown as HTMLElement).querySelectorAll(".cs-footer-tiles").length, 1);
 	});
 });
 

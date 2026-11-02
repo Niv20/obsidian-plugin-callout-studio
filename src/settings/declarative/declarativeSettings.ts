@@ -31,7 +31,7 @@ import { watchEmptyListMascots } from "../../ui/mascot/mascotPlaces";
 import { competitorsToOffer } from "../competitorImportBanner";
 import { isRowMenuActive } from "../sections/calloutRowMenu";
 import { calloutListsSignature } from "../sections/calloutListsSignature";
-import { languageDownloading } from "../sections/languagePicker";
+import { languageDownloading, tellMissingLanguage } from "../sections/languagePicker";
 import { scanRunning } from "../sections/manualScan";
 import { activeThemeLabel, partitionCallouts } from "../sections/rowOwnership";
 import { subscribeSettingsTab } from "../sections/tabSubscriptions";
@@ -167,6 +167,8 @@ export class DeclarativeSettings {
 		// Obsidian 1.14 opens the settings in a window of their own, with its
 		// own copy of the theme: its previews must not show what the switch took away.
 		plugin.themeCalloutsOff?.ensure(containerEl.ownerDocument);
+		// A language that is still not on the device is told once per visit.
+		tellMissingLanguage(plugin, () => this.ctx.redraw());
 		// Escape closes the plugin's own pickers first, not the settings. On the
 		// content area, not the main page: sub-pages are drawn beside it.
 		const releaseEscape = registerMenuScopeHost(containerEl.parentElement ?? containerEl, app);

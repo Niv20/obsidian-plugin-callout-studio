@@ -12,8 +12,16 @@ import type { App } from "obsidian";
 import { PLUGIN_ICON_ID } from "../src/constants";
 import { CalloutStudioSettingsTab } from "../src/settings/SettingsTab";
 import type { SettingsTabPlugin } from "../src/settings/sections/types";
+import { installFakeDom } from "./support/fakeDom";
+
+installFakeDom();
 
 it("gives the settings tab the icon that stands for Callout Studio", () => {
 	const tab = new CalloutStudioSettingsTab({} as App, {} as SettingsTabPlugin);
 	assert.equal(tab.icon, PLUGIN_ICON_ID);
+});
+
+it("marks the tab's page, so styles.css can end it 24px under the footer", () => {
+	const tab = new CalloutStudioSettingsTab({} as App, {} as SettingsTabPlugin);
+	assert.ok(tab.containerEl.hasClass("cs-settings-tab"));
 });

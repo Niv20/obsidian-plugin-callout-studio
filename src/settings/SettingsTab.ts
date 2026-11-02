@@ -18,6 +18,9 @@ import { readSettingAt, writeControlValue } from "./declarative/controlBinding";
 import { DeclarativeSettings } from "./declarative/declarativeSettings";
 import type { SettingsTabPlugin } from "./sections/types";
 
+/** Marks the main page's element, which is the plugin's alone (styles.css). */
+const TAB_CLASS = "cs-settings-tab";
+
 export class CalloutStudioSettingsTab extends PluginSettingTab {
 	plugin: SettingsTabPlugin;
 	/**
@@ -32,6 +35,7 @@ export class CalloutStudioSettingsTab extends PluginSettingTab {
 	constructor(app: App, plugin: SettingsTabPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
+		this.containerEl.addClass(TAB_CLASS);
 	}
 
 	/**

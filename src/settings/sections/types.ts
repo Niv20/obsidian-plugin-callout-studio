@@ -52,7 +52,7 @@ export type SettingsTabPlugin = Plugin & {
 	/** The pack files, and deleting a whole library (the icon picker's Icon libraries window). */
 	icons: Pick<IconService, "packs" | "deleteLibrary">;
 
-	locales: Pick<LocaleStore, "isReady" | "state" | "onChange">;
+	locales: Pick<LocaleStore, "isReady" | "state" | "onChange" | "prepare">;
 
 	/** The switch that takes the theme's callout styling away; absent on minimal hosts. */
 	themeCalloutsOff?: Pick<ThemeCalloutsOff, "ensure">;

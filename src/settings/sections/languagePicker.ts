@@ -1,16 +1,17 @@
 /**
  * settings/sections/languagePicker.ts — the plugin's interface language.
  *
- * Who calls it. The settings page's Language row and the row under it that
- * offers a retry when a language is not downloaded (declarative/generalRows.ts).
+ * Who calls it. The settings page's footer, whose globe opens the language menu
+ * (declarative/footerGroup.ts), and the guarded pick it makes
+ * (declarative/generalRows.ts).
  *
- * The main idea. A picker lets the user choose the plugin's display language.
+ * The main idea. A menu lets the user choose the plugin's display language.
  * It lists languages and nothing else, each under its own native name (e.g.
- * "עברית", not "Hebrew"). There is no "Automatic" row: following Obsidian is
- * what the picker does until told otherwise, so it simply shows the language
- * Obsidian is in, and the reset arrow appears once the language shown differs
- * from it. The choice is persisted in PluginSettings and re-rendering the tab
- * refreshes every label in the new language.
+ * "עברית", not "Hebrew"), with a ✓ beside the one shown. There is no "Automatic"
+ * row: following Obsidian is what the plugin does until told otherwise, so the
+ * menu simply shows the language Obsidian is in, and picking it follows
+ * Obsidian again. The choice is persisted in PluginSettings and re-rendering the
+ * tab refreshes every label in the new language.
  *
  * The saved value kept its old shape when the row went: `"auto"` (the default)
  * follows Obsidian, a locale code pins one. An upgrade reads every saved value
@@ -24,24 +25,28 @@
  * downloaded: choosing one is what triggers the download, and the list would be
  * useless if it only showed what the user already had. When the fetch cannot
  * happen — offline, or a blocked CDN — the choice is still kept and the UI
- * stays English until it succeeds, which is the honest outcome. Silently
- * reverting the dropdown would look like the click had not registered.
+ * stays as it was until it succeeds, which is the honest outcome. Silently
+ * reverting the menu would look like the click had not registered.
  *
- * The steps (the picker with its reset arrow, applying a choice, the missing
- * language and its retry) are exported one by one, for the rows to put
- * together.
+ * The download is told in notices, never in the page: a row that appeared
+ * above the footer in the middle of the switch moved the page under the
+ * pointer. A language already on the device switches at once, with no notice.
+ * One that has to be fetched is told like a vault scan (manualScan.ts): a
+ * "Downloading…" notice with the mascot painting, up for one whole stroke at
+ * least however quick the fetch is, then a notice with the result. A failure
+ * comes with a Retry button; picking the language again, from the globe,
+ * retries as well. A language still missing when the settings open is told in
+ * the same kind of notice (the launch's own fetch is silent).
+ *
+ * The steps (the menu, applying a choice, the notice on opening) are exported
+ * one by one, for the page to put together.
  */
-import type { Setting } from "obsidian";
 import { DEFAULT_SETTINGS } from "../../constants";
 import { getSelectableLocales, resolveLocaleFile, setLocale, t } from "../../i18n";
+import { BEFORE_RESULT_MS, showNotice, workNotice, WORK_ONE_PASS_MS } from "../../ui/mascot/mascotNotices";
+import { showActionNotice } from "../../ui/noticeAction";
 import { SelectDropdown } from "../../ui/selectDropdown";
-import { addFieldResetButton } from "../editor/fieldResetButton";
 import type { SettingsTabPlugin } from "./types";
-
-type LanguageChoice = {
-	code: string;
-	name: string;
-};
 
 /** The saved preference that follows Obsidian's interface language. */
 const FOLLOW_OBSIDIAN = DEFAULT_SETTINGS.language;
@@ -49,33 +54,29 @@ const FOLLOW_OBSIDIAN = DEFAULT_SETTINGS.language;
 /** The row for everything English covers: no file, nothing to download. */
 const ENGLISH = "en";
 
-/** What {@link drawLanguageControls} drew, and how to take it down. */
-export interface LanguageControls {
-	picker: SelectDropdown;
-	/**
-	 * Stop what the controls set up: the picker's menu, the layout watch.
-	 * (A property holding a function, not a method, so it can be handed on
-	 * by itself, as a row's cleanup.)
-	 */
-	dispose: () => void;
-}
+/**
+ * The plugins whose language is being fetched for a notice now: a second
+ * request meanwhile (Retry pressed on an older notice) would put two
+ * "Downloading…" notices on top of each other. A WeakSet: it holds no plugin
+ * alive, and an unloaded plugin's entry goes with it.
+ */
+const fetching = new WeakSet<SettingsTabPlugin>();
 
 /**
- * Draw the language picker and its reset arrow into `setting`'s controls.
+ * Draw the language button — a globe and the name of the language shown — into
+ * `parent`. Pressing it opens Obsidian's menu of every language, with a ✓ beside
+ * the one shown.
  *
  * @param choose Called with the preference to save when the user picks a
- *   language or resets. It must write the preference into the settings
- *   before it returns (it may go on saving and downloading afterwards), so
- *   the reset arrow, checked right after, sees the new preference.
+ *   language. It must write the preference into the settings before it
+ *   returns (it may go on saving and downloading afterwards).
  */
-export function drawLanguageControls(
-	setting: Setting,
+export function drawLanguageMenu(
+	parent: HTMLElement,
 	plugin: SettingsTabPlugin,
 	choose: (pref: string) => void,
-): LanguageControls {
-	// A plain choice opened in Obsidian's own menu, with a ✓ beside the
-	// language shown. Every language is listed under its own native name.
-	const picker = new SelectDropdown(setting.controlEl, t("settings.language"))
+): SelectDropdown {
+	return new SelectDropdown(parent, t("settings.language"), { icon: "globe", showValue: true })
 		.setOptions(getSelectableLocales().map(({ code, name }) => ({ value: code, label: name })))
 		.setValue(shownLanguage(plugin.settings.language))
 		// `onPick` rather than `onChange`: picking the language already shown
@@ -87,108 +88,14 @@ export function drawLanguageControls(
 			// Nothing changed and nothing is missing: no save, no redraw.
 			if (next === current && plugin.locales.isReady(next)) return;
 			choose(next);
-			syncReset();
 		});
-	const syncReset = addFieldResetButton(
-		setting,
-		`${t("settings.resetAction")}: ${t("settings.language")}`,
-		() => showsObsidianLanguage(plugin.settings.language),
-		() => {
-			picker.setValue(shownLanguage(FOLLOW_OBSIDIAN));
-			choose(FOLLOW_OBSIDIAN);
-		},
-	);
-	renderLanguageWidthSizer(picker.el, setting.controlEl, getSelectableLocales());
-	const stopWatchingLayout = observeLanguageSettingLayout(setting);
-	return {
-		picker,
-		dispose: () => {
-			stopWatchingLayout();
-			picker.destroy();
-		},
-	};
-}
-
-/**
- * Follow Obsidian's actual setting-row layout instead of copying its current
- * breakpoint. Core and themes are free to change that breakpoint; the picker
- * only needs to know whether its own row has already stacked. Returns the
- * function that stops watching.
- */
-function observeLanguageSettingLayout(setting: Setting): () => void {
-	const sync = (): void => {
-		setting.settingEl.toggleClass(
-			"cs-language-setting-stacked",
-			getComputedStyle(setting.settingEl).flexDirection === "column",
-		);
-	};
-
-	sync();
-	const observer = new ResizeObserver(sync);
-	observer.observe(setting.settingEl);
-	return () => observer.disconnect();
-}
-
-/**
- * Size the control column from the widest translated option.
- *
- * The list of languages is Obsidian's menu, which opens apart from the row, so
- * it cannot widen the column. These overlapping, hidden labels can: each is
- * measured at its own width, with the field's own padding and caret around it
- * (styles.css gives them the field's padding variables), without us guessing
- * at glyph widths in proportional fonts. The column also keeps room for the
- * reset arrow whether or not it shows, so the arrow never takes that room from
- * the labels.
- */
-function renderLanguageWidthSizer(
-	containerEl: HTMLElement,
-	controlEl: HTMLElement,
-	choices: readonly LanguageChoice[],
-): void {
-	const sizerEl = containerEl.createDiv({
-		cls: "cs-language-width-sizer",
-		attr: { "aria-hidden": "true" },
-	});
-	for (const choice of choices) sizerEl.createSpan({ text: choice.name });
-
-	// Fractional widths, rounded up once at the end: `scrollWidth` rounds to
-	// the nearest pixel, which could leave a label half a pixel short.
-	const widestLabel = Math.max(
-		...Array.from(sizerEl.children, (labelEl) => labelEl.getBoundingClientRect().width),
-	);
-	if (widestLabel > 0) {
-		controlEl.style.setProperty(
-			"--cs-language-control-width",
-			`${Math.ceil(widestLabel + resetSlotWidth(controlEl))}px`,
-		);
-	}
-}
-
-/**
- * The reset arrow's width plus its gap, measured whether or not it is showing.
- *
- * It is hidden (`display: none`, so no box) while the picker shows Obsidian's
- * language, and it appears as soon as another language is committed, before
- * the tab redraws. Showing it for this one synchronous read paints nothing in
- * between.
- */
-function resetSlotWidth(controlEl: HTMLElement): number {
-	const resetEl = controlEl.querySelector<HTMLElement>(".clickable-icon");
-	if (!resetEl) return 0;
-	const hidden = resetEl.hasClass("cs-hidden");
-	resetEl.removeClass("cs-hidden");
-	const width = resetEl.getBoundingClientRect().width;
-	resetEl.toggleClass("cs-hidden", hidden);
-	if (width <= 0) return 0;
-	const gap = parseFloat(getComputedStyle(controlEl).columnGap);
-	return width + (Number.isFinite(gap) ? gap : 0);
 }
 
 /**
  * The row a saved preference shows as: the language it renders in.
  *
  * Matched by locale file, so `"auto"`, aliases such as `no` and `zh-hk`, and a
- * code no row offers all land on a real row instead of an empty picker. That
+ * code no row offers all land on a real row instead of none being ticked. That
  * last one is a value written by a newer or older version on another device,
  * or by hand. Whatever English covers shows as English, since that is what
  * the user is reading.
@@ -201,12 +108,12 @@ function shownLanguage(pref: string): string {
 
 /**
  * Does this preference show the language Obsidian is in? Then, as far as
- * this device can tell, it is the default, and there is nothing to reset.
+ * this device can tell, it is the default.
  *
  * A pinned code can pass. That is an upgrade from the Automatic row, where
- * someone pinned the very language Obsidian uses. Their arrow stays hidden
- * while the two agree and comes back if Obsidian's language moves, on this
- * device or on another one.
+ * someone pinned the very language Obsidian uses. It stays pinned while the
+ * two agree, and shows as a different language again if Obsidian's moves, on
+ * this device or on another one.
  */
 function showsObsidianLanguage(pref: string): boolean {
 	return resolveLocaleFile(pref) === resolveLocaleFile(FOLLOW_OBSIDIAN);
@@ -219,8 +126,8 @@ function showsObsidianLanguage(pref: string): boolean {
  *   not turn a pinned language into "follow Obsidian" behind the user's back:
  *   the two look the same here, but a synced device whose Obsidian speaks
  *   another language would see the difference.
- * - Obsidian's own language follows Obsidian again, exactly as the reset
- *   arrow would.
+ * - Obsidian's own language follows Obsidian again. This is the way back to
+ *   the default: the menu has no Automatic row and no reset arrow.
  * - Any other row pins that language.
  */
 function preferenceFor(current: string, code: string): string {
@@ -238,19 +145,21 @@ function languageName(code: string): string {
  * first when this device does not have it.
  *
  * @param redraw Draws the settings again once there is something new to show.
- * @param onDownload Runs just before a download starts, so the page can say so.
  */
 export async function applyLanguagePreference(
 	plugin: SettingsTabPlugin,
 	pref: string,
 	redraw: () => void,
-	onDownload?: () => void,
 ): Promise<void> {
 	plugin.settings.language = pref;
 	await plugin.saveSettings();
 
+	// A copy cached by an earlier session is on disk but not yet loaded, and
+	// reading it is not a download to tell the user about.
+	if (!plugin.locales.isReady(pref)) await plugin.locales.prepare(pref);
+
 	// Nothing to fetch for English, or for a language already on disk —
-	// the common case, and it must not flicker a spinner.
+	// the common case, and it must not flicker a notice.
 	if (plugin.locales.isReady(pref)) {
 		setLocale(pref);
 		redraw();
@@ -258,14 +167,56 @@ export async function applyLanguagePreference(
 		return;
 	}
 
-	onDownload?.();
-	// ensureLocale applies the new language itself, including the
-	// command names and the rendered notes, so there is nothing to do
-	// here but redraw: on success every label has changed language, and
-	// on failure the warning below has to replace the "Downloading…"
-	// text the row may still be showing.
-	await plugin.ensureLocale();
-	redraw();
+	await downloadLanguage(plugin, redraw);
+}
+
+/**
+ * Fetch the chosen language and tell how it went, in notices. The fetch itself
+ * is `ensureLocale`, which applies the new language itself, including the
+ * command names and the rendered notes, once it arrives.
+ *
+ * "Downloading…" stays up for the mascot to be seen painting one whole stroke
+ * even when the fetch ends at once, and a pause follows before the result, so
+ * the two notices can each be read (the same as the vault scan). A second call
+ * while one runs does nothing.
+ */
+async function downloadLanguage(plugin: SettingsTabPlugin, redraw: () => void): Promise<void> {
+	if (fetching.has(plugin)) return;
+	fetching.add(plugin);
+	// Named before the wait, from the preference that is being fetched.
+	const name = languageName(shownLanguage(plugin.settings.language));
+	const work = workNotice(t("locale.downloading"), { minMs: WORK_ONE_PASS_MS, gapMs: BEFORE_RESULT_MS });
+	let arrived = false;
+	try {
+		arrived = await plugin.ensureLocale();
+		// The globe was dimmed while the language downloaded.
+		redraw();
+	} catch (error) {
+		// Caught so the notice below cannot be left up for good.
+		console.error("[callout-studio] language download failed", error);
+	}
+	try {
+		await work.done();
+		// Unloaded in the meantime: there is no one left to tell.
+		if (plugin.settingsWriter.isDestroyed) return;
+		if (arrived) showNotice("success", t("locale.downloaded"));
+		else tellNotDownloaded("problem", plugin, name, redraw);
+	} finally {
+		fetching.delete(plugin);
+	}
+}
+
+/**
+ * Say, in a notice with a Retry button, that the language `name` is not on
+ * this device. `kind` is what the news is: a `problem` right after a fetch
+ * failed, a `warning` when the settings open and find it still missing.
+ */
+function tellNotDownloaded(kind: "problem" | "warning", plugin: SettingsTabPlugin, name: string, redraw: () => void): void {
+	showActionNotice(
+		kind,
+		t("locale.notDownloaded", { name }),
+		{ label: t("locale.retry"), run: () => { void downloadLanguage(plugin, redraw); } },
+	);
 }
 
 /**
@@ -276,20 +227,28 @@ export async function applyLanguagePreference(
  * after the row the picker shows, since codes such as `zh-hk` and `no` are
  * served by another code's file.
  */
-export function missingLanguageName(plugin: SettingsTabPlugin): string | null {
+function missingLanguageName(plugin: SettingsTabPlugin): string | null {
 	const pref = plugin.settings.language;
 	if (!resolveLocaleFile(pref) || plugin.locales.isReady(pref)) return null;
 	return languageName(shownLanguage(pref));
+}
+
+/**
+ * When the settings open: if the chosen language is still not on this device,
+ * say so in a notice with Retry. A fetch failing at launch is silent (English
+ * works), and this is where the user, who may have wondered why the interface
+ * is not in their language, is told. Nothing is said while the language is
+ * downloading, or while a fetch started from here is under way, since both
+ * tell their own result.
+ */
+export function tellMissingLanguage(plugin: SettingsTabPlugin, redraw: () => void): void {
+	const name = missingLanguageName(plugin);
+	if (name === null || languageDownloading(plugin) || fetching.has(plugin)) return;
+	tellNotDownloaded("warning", plugin, name, redraw);
 }
 
 /** Whether the chosen language is downloading right now. */
 export function languageDownloading(plugin: SettingsTabPlugin): boolean {
 	const file = resolveLocaleFile(plugin.settings.language);
 	return file !== null && plugin.locales.state(file) === "loading";
-}
-
-/** Try the download of the chosen language again, then draw the settings again. */
-export async function retryLanguageDownload(plugin: SettingsTabPlugin, redraw: () => void): Promise<void> {
-	await plugin.ensureLocale();
-	redraw();
 }

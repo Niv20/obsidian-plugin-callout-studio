@@ -1,7 +1,7 @@
 /**
  * settings/declarative/mainPageGroups.ts — the boxes at the foot of the main
- * settings page (Import and export, Danger zone, About) and the Manage icon
- * libraries row.
+ * settings page (Import and export, Danger zone) and the Manage icon libraries
+ * row.
  *
  * Who calls it. The settings tab, when it builds its tree.
  *
@@ -12,19 +12,18 @@
  * saving is paused, a row whose button would change the setup is dimmed and
  * says why when pressed (rowParts.ts); the ones that change nothing (Export,
  * Version history, the conversion review) stay usable.
+ *
+ * (The page's last box, the footer with the language, About and the project's
+ * links as icon tiles, is footerGroup.ts.)
  */
 import { t } from "../../i18n";
 import { ExportFormatModal } from "../ExportFormatModal";
-import { IconCreditsModal } from "../IconCreditsModal";
 import { ImportSourceModal } from "../ImportSourceModal";
-import { WelcomeModal } from "../WelcomeModal";
-import { appendContactSentence, projectLinks, releaseNotesUrl } from "../aboutLinks";
 import { openIconLibrariesWindow } from "../iconpicker/openIconLibraries";
 import { confirmAndResetEverything } from "../resetEverything";
 import { openPortableConversionFromSettings } from "../../portable/registerPortableConversionView";
 import { buttonRow, pausedReason } from "./rowParts";
-import { guardRender } from "./safeTree";
-import type { CsAction, CsGroup, CsRender, TreeContext } from "./types";
+import type { CsAction, CsGroup, TreeContext } from "./types";
 import { VERSION_HISTORY_PAGE, versionHistoryRow } from "./versionHistoryPage";
 
 /** The rows other parts of the settings jump to, by name. */
@@ -100,25 +99,6 @@ export function dangerZoneGroup(ctx: TreeContext): CsGroup {
 }
 
 /**
- * About: the welcome window, how to get in touch, the icon licenses, and the
- * version with the project's links. (The welcome window was the ⓘ beside the
- * page's old title, and the rest was the page's old footer.)
- */
-export function aboutGroup(ctx: TreeContext): CsGroup {
-	return {
-		type: "group",
-		id: "about",
-		heading: t("settings.about"),
-		items: [
-			{ id: "about-callout-studio", name: t("welcome.tooltip"), action: () => new WelcomeModal(ctx.plugin).open() },
-			contactRow(),
-			{ id: "icon-licenses", name: t("footer.iconCredits"), action: () => new IconCreditsModal(ctx.app).open() },
-			versionRow(ctx.plugin.manifest.version),
-		],
-	};
-}
-
-/**
  * Manage icon libraries, as a row of the settings, so that searching the
  * settings for "icon" finds the window. It opens the same window as Pick an
  * icon's Manage libraries button.
@@ -130,47 +110,5 @@ export function iconLibrariesRow(ctx: TreeContext): CsAction {
 		// The libraries' names, which are not words to translate.
 		aliases: ["Lucide", "Tabler", "Font Awesome", "Material", "Octicons", "RPG Awesome", "Simple Icons", "emoji"],
 		action: () => { void openIconLibrariesWindow(ctx.plugin); },
-	};
-}
-
-/**
- * The contact sentence, with its two links, as a row without a name. It is
- * drawn by `render` because a description given as data cannot hold links that
- * stay links after Obsidian copies it, and it is left out of the search: a
- * result would have no name to show.
- */
-function contactRow(): CsRender {
-	return {
-		id: "contact",
-		name: "",
-		searchable: false,
-		render: guardRender("contact", (setting) => {
-			// Obsidian draws links in a description itself (muted, underlined).
-			appendContactSentence(setting.descEl);
-		}),
-	};
-}
-
-/** The version, linking to its release notes, with the project's links under the name. */
-function versionRow(version: string): CsRender {
-	return {
-		id: "version",
-		name: t("settings.version"),
-		aliases: ["GitHub"],
-		render: guardRender("version", (setting) => {
-			projectLinks().forEach((link, index) => {
-				if (index > 0) setting.descEl.appendText(" · ");
-				setting.descEl.createEl("a", {
-					text: link.label,
-					href: link.href,
-					attr: { target: "_blank", rel: "noopener noreferrer" },
-				});
-			});
-			setting.controlEl.createEl("a", {
-				text: `v${version}`,
-				href: releaseNotesUrl(version),
-				attr: { target: "_blank", rel: "noopener noreferrer" },
-			});
-		}),
 	};
 }

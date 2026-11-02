@@ -13,19 +13,20 @@
  *     Use your theme's callout styles      generalRows.ts
  *   My callout types ›, Add new callout    calloutPages.ts
  *   Built-in callouts ›                    calloutListPage.ts
- *   Default fallback callout, Language     generalRows.ts
+ *   Default fallback callout               generalRows.ts
  *   Callout style                          stylePages.ts (with palettesPage.ts)
  *   Menus and commands                     menuPage.ts, commandsPage.ts
- *   Import and export,
- *   Danger zone, About                     mainPageGroups.ts
+ *   Import and export, Danger zone         mainPageGroups.ts
+ *   (the footer: language, About, links)   footerGroup.ts
  */
 import { t } from "../../i18n";
 import { bannersGroup } from "./bannerRows";
 import { builtInCalloutsPage, themeCalloutsPage } from "./calloutListPage";
 import { addCalloutRow, myCalloutsPage } from "./calloutPages";
 import { commandsPage } from "./commandsPage";
-import { fallbackRow, languageRows, themeStylesRow } from "./generalRows";
-import { aboutGroup, dangerZoneGroup, importExportGroup } from "./mainPageGroups";
+import { footerGroup } from "./footerGroup";
+import { fallbackRow, themeStylesRow } from "./generalRows";
+import { dangerZoneGroup, importExportGroup } from "./mainPageGroups";
 import { menuPage } from "./menuPage";
 import { calloutStyleGroup } from "./stylePages";
 import type { CsGroup, CsItem, CsRender, TreeContext } from "./types";
@@ -49,11 +50,11 @@ export function settingsTree(ctx: TreeContext, visitRow: CsRender): CsItem[] {
 		menusBox(ctx),
 		importExportGroup(ctx),
 		dangerZoneGroup(ctx),
-		aboutGroup(ctx),
+		footerGroup(ctx),
 	];
 }
 
-/** The first box: the three callout pages, adding a callout, the fallback and the language. */
+/** The first box: the three callout pages, adding a callout and the fallback. */
 function calloutsBox(ctx: TreeContext): CsGroup {
 	return {
 		type: "group",
@@ -68,7 +69,6 @@ function calloutsBox(ctx: TreeContext): CsGroup {
 			addCalloutRow(ctx),
 			builtInCalloutsPage(ctx),
 			fallbackRow(ctx),
-			...languageRows(ctx),
 		],
 	};
 }

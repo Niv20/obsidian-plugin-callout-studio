@@ -389,7 +389,6 @@ export const en: Record<string, string> = {
 	"replaceModal.chooseFirstReplace": "Choose the callout to replace it with first.",
 
 	// Welcome / splash screen (shown once on first load; reopen via header icon)
-	"welcome.tooltip": "About Callout Studio",
 	"welcome.title": "Welcome to Callout Studio!",
 	"welcome.tagline":
 		"Your complete solution for creating, styling and managing Obsidian callouts.",
@@ -446,15 +445,12 @@ export const en: Record<string, string> = {
 	"settings.builtInCallouts": "Built-in callouts",
 	"settings.contextMenu": "Context menu",
 	"settings.language": "Language",
-	"settings.languageDesc":
-		"Callout Studio's language, Obsidian's unless you choose another.",
 
 	// Downloadable translations. English is built in; every other language is
 	// fetched the first time it is needed and kept for later.
 	"locale.downloading": "Downloading translation…",
+	"locale.downloaded": "Translation downloaded.",
 	"locale.notDownloaded": "{{name}} is not downloaded yet",
-	"locale.notDownloadedDesc":
-		"Callout Studio shows English until the translation downloads, and tries again when Obsidian starts.",
 	"locale.retry": "Retry",
 	"locale.diskWriteFailed":
 		"Callout Studio could not save the translation to disk, so it will need downloading again next time.",
@@ -1292,7 +1288,12 @@ export const en: Record<string, string> = {
 		"Callouts that already use their icons keep them. To choose new icons from these libraries later, download them again.",
 	"iconLibraries.resetButton": "Reset",
 
-	// Icon licenses & credits
+	// License window: the footer tile's tooltip and the window's title. Under it
+	// the open-source promise (the sentence, then the link's words, then a full
+	// stop); below that come the icons' licenses.
+	"license.title": "License",
+	"license.openSourceBeforeLink": "Callout Studio is open source, and it will stay that way. You can find its license ",
+	"license.openSourceLink": "here",
 	"credits.title": "Icon licenses & credits",
 	"credits.introBeforeNotices":
 		"Callout Studio uses open-source icon libraries; view each library's license, attribution, and modifications below, or read the ",
@@ -1672,14 +1673,8 @@ export const en: Record<string, string> = {
 		"The title is {{length}} characters; it was shortened to {{max}}.",
 
 	// Footer
-	"footer.prompt":
-		"Questions, bugs, or ideas? I'd love to hear from you!{{break}} {{issue}} or {{email}}.",
-	"footer.openIssue": "Open a GitHub issue",
-	"footer.sendEmail": "send me an email",
+	"footer.openIssue": "Open an issue",
 	"footer.sourceCode": "Source code",
-	"footer.contribute": "Contribute",
-	"footer.license": "Plugin license",
-	"footer.iconCredits": "Icon licenses",
 	// The About box at the foot of the settings page: its heading, and the row
 	// with the plugin's version and project links.
 	"settings.about": "About",

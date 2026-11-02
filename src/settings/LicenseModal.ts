@@ -1,10 +1,17 @@
 /**
- * settings/IconCreditsModal.ts — Icon licenses and attribution in a modal.
+ * settings/LicenseModal.ts — the License window: a promise that the plugin is
+ * open source, with a link to its license, and the licenses and attribution of
+ * the icons it uses.
  *
- * The settings footer only needs a compact link; the full attribution remains
- * easy to reach without taking over the bottom of the settings page. The rows
- * are generated from the icon-source registry so every source still exposes
- * its creator, license, scope, modifications and any source-specific notice.
+ * Who opens it. The footer's License tile (declarative/footerGroup.ts). The
+ * footer only needs one compact tile; everything about licenses stays easy to
+ * reach without taking over the bottom of the settings page.
+ *
+ * The main idea. One sentence under the title: the plugin is open source and
+ * will stay that way, and its last word is the link to the license on GitHub.
+ * Then the box that lists the icon libraries, generated from the icon-source
+ * registry so every source still exposes its creator, license, scope,
+ * modifications and any source-specific notice.
  *
  * The libraries are one Obsidian setting group (`SettingGroup`, finding
  * S8-17): one rounded box with a row per library, the way Obsidian's Installed
@@ -17,27 +24,40 @@ import { ICON_SOURCE_IDS, getSource } from "../icons/registry";
 import type { IconPack } from "../icons/types";
 import { t } from "../i18n";
 import { applyModalChrome, removeModalChrome } from "./modalChrome";
+import { LICENSE_URL, REPOSITORY_URL } from "./aboutLinks";
 
-const REPOSITORY_URL =
-	"https://github.com/Niv20/obsidian-plugin-callout-studio/blob/master";
-const NOTICES_URL = `${REPOSITORY_URL}/docs/THIRD-PARTY-NOTICES.md`;
+const NOTICES_URL = `${REPOSITORY_URL}/blob/master/docs/THIRD-PARTY-NOTICES.md`;
 const EXTERNAL_LINK_ATTRS = {
 	target: "_blank",
 	rel: "noopener noreferrer",
 } as const;
 
-export class IconCreditsModal extends Modal {
+export class LicenseModal extends Modal {
 	constructor(app: App) {
 		super(app);
 	}
 
 	onOpen(): void {
 		this.modalEl.addClass("callout-studio-credits-modal");
-		this.setTitle(t("credits.title"));
+		this.setTitle(t("license.title"));
 		applyModalChrome(this);
 
 		const { contentEl } = this;
-		// The window's own text, at Obsidian's dialog size.
+		// The plugin's own license: the promise, ending in a link to the file on
+		// GitHub. Split like the icons' paragraph below: the words before the link,
+		// the link's own words, then the full stop.
+		const promise = contentEl.createEl("p", {
+			cls: "callout-studio-credits-intro",
+		});
+		promise.createSpan({ text: t("license.openSourceBeforeLink") });
+		promise.createEl("a", {
+			text: t("license.openSourceLink"),
+			href: LICENSE_URL,
+			attr: EXTERNAL_LINK_ATTRS,
+		});
+		promise.createSpan({ text: "." });
+
+		// The icons' licenses. The window's own text, at Obsidian's dialog size.
 		const intro = contentEl.createEl("p", {
 			cls: "callout-studio-credits-intro",
 		});

@@ -88,6 +88,8 @@ describe("disabled looks the way Obsidian's does", () => {
 
 	/** Every rule of the plugin's that dims a disabled thing, and what it is. */
 	const DIMS: Record<string, keyof typeof OBSIDIAN_DIM> = {
+		// The footer's tiles are drawn as buttons, the globe among them.
+		".cs-footer-tile.cs-footer-tile.cs-footer-tile:disabled": "button",
 		// The + inside the IDs field shares the field's face.
 		".cs-tag-add-btn:disabled": "field",
 		// A radio, a choice control like Obsidian's switch.
