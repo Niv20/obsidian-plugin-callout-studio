@@ -89,7 +89,7 @@ codebase has already been bitten by once.
 
 | File | What it covers |
 | --- | --- |
-| [20-build-test-release.md](20-build-test-release.md) | Build tooling, the test harness and what it can't see, CI, and the release process. |
+| [20-build-test-release.md](20-build-test-release.md) | Build tooling, code formatting, the test harness and what it can't see, CI, and the release process. |
 | [21-public-api.md](21-public-api.md) | How the read-only public API is actually enforced - real privacy, frozen copies, the committed-state guarantee. |
 | [22-extending.md](22-extending.md) | Step-by-step checklists for adding a setting, a command, a callout field, a menu item, an icon source, and more. |
 | [23-common-pitfalls.md](23-common-pitfalls.md) | Concentrated warnings: state sync, id normalization, helpers that must always be used, mobile quirks, backward compatibility. |

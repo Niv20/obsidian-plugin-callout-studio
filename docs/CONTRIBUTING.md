@@ -17,6 +17,8 @@ npm run dev     # watch build, esbuild with inline sourcemaps
 
 You'll need a current Node LTS.
 
+Code formatting is automatic - you never need to think about tabs, line breaks or quotes. Open the repository folder in VS Code and install the two extensions it recommends (**Prettier** and **ESLint**); from then on every save formats the file with [Prettier](https://prettier.io), using the project's settings. In another editor, or if you'd rather not install anything, the pre-commit hook formats whatever you commit, and `npm run format` formats everything at once. CI rejects unformatted code, so it can't slip through. See [Code formatting](internals-docs/20-build-test-release.md#code-formatting) for what is and isn't formatted.
+
 ```bash
 npm test        # every tests/*.test.ts, bundled by esbuild and run by node:test
 ```

@@ -706,6 +706,26 @@ inside them, and the generated files - the icon search indexes,
 `localeManifest.ts` and `emojiData.ts` - whose generators own their layout. A
 new generated file under `src/` belongs on that list.
 
+Formatting is automatic at three points, each a backstop for the one before:
+
+1. **On save, in VS Code.** The committed `.vscode/settings.json` makes the
+   Prettier extension the `[typescript]` formatter with `editor.formatOnSave`,
+   and `.vscode/extensions.json` recommends that extension (and ESLint's) when
+   the folder is first opened. Auto-save counts as a save when it is
+   `onFocusChange` or `onWindowChange`; VS Code skips formatting for
+   `afterDelay` auto-saves, so with that setting a file is formatted on an
+   explicit save or at commit. `prettier.requireConfig` keeps the extension
+   from formatting with its own defaults where no config applies.
+2. **On commit.** The pre-commit hook rewrites staged files
+   ([Husky / pre-commit](#husky--pre-commit)), so another editor, or none,
+   still commits formatted code.
+3. **In CI.** `npm run format:check` fails `lint.yml` when a commit skipped the
+   hook (`--no-verify`, a web edit).
+
+Only `settings.json` and `extensions.json` are tracked under `.vscode/`; the
+`.gitignore` keeps anything else there (launch configs, personal settings)
+local.
+
 The width is 120 rather than Prettier's default 80 because narrower widths push
 several handwritten files over the [500-line limit](#source-file-size); check
 that suite before lowering it.
@@ -733,10 +753,10 @@ hooks at their configured location. Run `npm run prepare` once after switching
 an existing checkout to this layout. The staged lint command, like `npm run
 lint`, selects `scripts/eslint.config.mts` explicitly. ESLint integrations in
 editors must also select that file if they rely on automatic root-config
-discovery; for the VS Code ESLint extension, set
-`eslint.options.overrideConfigFile` to `scripts/eslint.config.mts`. The Prettier
-extension finds its options and `.prettierignore` without help; set it as the
-`[typescript]` default formatter with `editor.formatOnSave` to format on save.
+discovery; for the VS Code ESLint extension the committed
+`.vscode/settings.json` sets `eslint.options.overrideConfigFile` to
+`scripts/eslint.config.mts`. The Prettier extension finds its options and
+`.prettierignore` without help.
 
 ## Repository layout
 
@@ -745,8 +765,9 @@ in `docs/`. README and the plugin's contribution/credits links point to those
 paths. Development configuration and hooks live in `scripts/` alongside the
 build tools. `README.md`, `LICENSE`, the package and plugin manifests,
 `versions.json`, `.editorconfig`, `.prettierignore`, `.git-blame-ignore-revs`,
-`.npmrc`, and `.gitignore` remain at the root for their conventional consumers. `styles.css` remains the maintained
-root stylesheet and the release artifact.
+`.vscode/`, `.npmrc`, and `.gitignore` remain at the root for their conventional
+consumers. `styles.css` remains the maintained root stylesheet and the release
+artifact.
 
 ---
 Next chapter: [21-public-api.md](21-public-api.md)

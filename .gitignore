@@ -1,5 +1,7 @@
-# vscode
-.vscode 
+# vscode: personal settings stay local; the shared ones format on save
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 
 # Intellij
 *.iml
