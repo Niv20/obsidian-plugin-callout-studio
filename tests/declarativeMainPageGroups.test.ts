@@ -6,8 +6,8 @@
  * Drawn through the test renderer (tests/support/declarativeRenderer.ts), so
  * what is checked is what Obsidian would show: the boxes and their rows, what
  * the settings search finds, what is dimmed while saving is paused (and that a
- * press then explains instead of acting), and the footer's row of icon tiles
- * (settings/declarative/footerGroup.ts).
+ * press then explains instead of acting), the red of Reset everything, and the
+ * footer's row of icon tiles (settings/declarative/footerGroup.ts).
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -100,6 +100,15 @@ describe("the boxes at the foot of the main page", () => {
 		assert.deepEqual(names("github"), [], "the footer's links are not settings to look for");
 		assert.deepEqual(names("language"), [], "the language is a tile, not a row to search for");
 		assert.deepEqual(names("about"), [], "so is About Callout Studio");
+	});
+});
+
+describe("Reset everything", () => {
+	it("wears Obsidian's Log out look: red words on a light red wash, the same red as a confirmation", () => {
+		const { harness } = drawMainPage(treeContext());
+		const button = buttonOf(harness, "Reset everything").buttonEl as unknown as HTMLElement;
+		assert.equal(button.hasClass("mod-destructive"), true);
+		assert.equal(button.hasClass("mod-cta"), false);
 	});
 });
 

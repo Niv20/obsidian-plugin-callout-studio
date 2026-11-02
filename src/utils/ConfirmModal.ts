@@ -122,7 +122,7 @@ export class ConfirmModal extends ConfirmationModal {
 			this.confirmEl = button.buttonEl;
 			button.setButtonText(this.confirmLabel ?? t("confirm.ok")).setInitialFocus();
 			if (this.confirmKind === "cta") button.setCta();
-			else button.setDestructive().setCta();
+			else button.setDestructive();
 			button.onClick(() => {
 				// Returning true keeps the dialog open: Obsidian closes it after a
 				// press only when the handler returns nothing (or false).

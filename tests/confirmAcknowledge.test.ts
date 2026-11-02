@@ -44,7 +44,8 @@ describe("ConfirmModal — Obsidian's confirmation dialog", () => {
 			const buttons = h.bar.querySelectorAll("button");
 			assert.deepEqual(buttons.map((b) => b.textContent), [en["confirm.cancel"], "Go"], "Cancel first, as Obsidian orders them");
 			assert.ok(h.cancel.hasClass("mod-cancel"));
-			assert.ok(h.confirm.hasClass("mod-destructive") && h.confirm.hasClass("mod-cta"), "the solid red of a destructive yes");
+			assert.ok(h.confirm.hasClass("mod-destructive"), "the red of a destructive yes");
+				assert.equal(h.confirm.hasClass("mod-cta"), false, "the quiet red of Log out, not a solid one");
 		} finally { h.modal.close(); }
 	});
 
@@ -102,6 +103,21 @@ describe("ConfirmModal acknowledgement", () => {
 		box.fire("change");
 		h.confirm.fire("click");
 		assert.equal(await h.answer, true);
+	});
+
+	it("is the same red locked and lit: only Obsidian's dim tells them apart", () => {
+		const h = open(en["confirm.acknowledge"]);
+		try {
+			const box = h.bar.querySelector(".cs-confirm-acknowledge input")!;
+			const classes = (): string => h.confirm.className;
+			const locked = classes();
+			assert.equal(h.confirm.getAttribute("aria-disabled"), "true");
+			Object.assign(box, { checked: true });
+			box.fire("change");
+			assert.equal(h.confirm.getAttribute("aria-disabled"), "false");
+			assert.equal(classes(), locked, "ticking the box changes no class, so no colour of ours");
+			assert.ok(h.confirm.hasClass("mod-destructive"));
+		} finally { h.modal.close(); }
 	});
 
 	it("flashes the tick and stays open when the locked button is pressed", async () => {

@@ -39,7 +39,12 @@ export interface ButtonRowSpec {
 	/** Classes for the row's own look. */
 	cls?: string;
 	buttonText: string;
-	/** The button deletes something: Obsidian's red (`setDestructive().setCta()`). */
+	/**
+	 * The button deletes something: red words on a light red wash, the look of
+	 * Obsidian's own Log out button (Settings → General → Account), which is
+	 * `setDestructive()`. A window's confirm button wears the same red
+	 * (ui/destructiveButton.ts).
+	 */
 	destructive?: boolean;
 	/** The row's main action: Obsidian's accent button (`setCta()`). */
 	cta?: boolean;
@@ -75,7 +80,7 @@ export function buttonRow(spec: ButtonRowSpec): CsRender {
 			if (spec.cls) setting.setClass(spec.cls);
 			setting.addButton((button) => {
 				button.setButtonText(spec.buttonText);
-				if (spec.destructive) button.setDestructive().setCta();
+				if (spec.destructive) button.setDestructive();
 				else if (spec.cta) button.setCta();
 				paintBlocked(button.buttonEl, reason());
 				if (spec.busy) setButtonBusy(button.buttonEl, spec.busy());

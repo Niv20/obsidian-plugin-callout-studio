@@ -183,7 +183,7 @@ describe("the way out of an unreadable file", () => {
 			await settle();
 			assert.ok(h.container.textContent.includes(en["saveStatus.diagnosis.mergeMarkers"]!));
 			const replace = h.buttons().find(button => button.textContent === en["saveStatus.replaceUnreadable"]);
-			assert.ok(replace?.hasClass("mod-destructive") && replace.hasClass("mod-cta"));
+			assert.ok(replace?.hasClass("mod-destructive") && !replace.hasClass("mod-cta"), "the quiet red, not the solid one");
 		} finally { h.dispose(); }
 	});
 
@@ -249,7 +249,7 @@ describe("the way out of an unreadable file", () => {
 				try {
 					await settle();
 					const replace = h.buttons().find(button => button.textContent === en["saveStatus.replaceUnreadable"])!;
-					assert.ok(replace.hasClass("mod-destructive") && replace.hasClass("mod-cta"), cause);
+					assert.ok(replace.hasClass("mod-destructive") && !replace.hasClass("mod-cta"), cause);
 					replace.fire("click"); await settle();
 				} finally { h.dispose(); }
 			}

@@ -863,13 +863,14 @@
    horizontally — but the setting row's controls are trailing-aligned, so the
    leading corner always points inward, into the modal, in both directions.
 
-   `--color-red`, not `--background-modifier-error`: that one is a translucent
-   wash meant to tint a row, and over the tile it came out muddy. `--color-red`
-   is the palette's solid red, redefined by Obsidian for dark mode and by any
-   theme that recolours the palette, so it needs no `.theme-dark` block here.
-   The glyph is a literal white rather than `--text-on-accent`: that variable
-   tracks the *accent* colour, which this surface is not, and white is right on
-   a saturated red in either mode.
+   Red the way every red button is red (ui/destructiveButton.ts): the ✕ in
+   `--text-error` on the light wash Obsidian's `button.mod-destructive` paints,
+   10% of `--background-modifier-error`. Both follow dark mode and any theme that
+   recolours the palette, so there is no `.theme-dark` block here. The wash is
+   translucent and this badge hangs over the tile's own 1px border, which would
+   show through it, so it is laid over a solid `--cs-surface` (a
+   `background-image` paints above `background-color`). There is no hover
+   colour: Obsidian's red button has none either.
 
    The ring is what stops the circle from colliding with the tile's own 1px
    border where it crosses: it punches the badge out of the modal's background,
@@ -904,13 +905,15 @@
 	padding: 0;
 	border: none;
 	border-radius: 50%;
-	background-color: var(--color-red, #e93147);
+	background-color: var(--cs-surface, var(--background-primary));
+	background-image: linear-gradient(
+		color-mix(in oklch, var(--background-modifier-error) 10%, transparent),
+		color-mix(in oklch, var(--background-modifier-error) 10%, transparent)
+	);
 	box-shadow: 0 0 0 1.5px var(--cs-surface, var(--background-primary));
-	color: #fff;
+	color: var(--text-error);
 	cursor: pointer;
-	transition:
-		opacity 120ms ease,
-		background-color 120ms ease;
+	transition: opacity 120ms ease;
 }
 
 /* Layout and visibility are deliberately NOT in the rule above, and the split
@@ -937,22 +940,10 @@
 	display: none;
 }
 
-/* Hover feedback of its own, because the (0,4,1) rule above also shut out
-   Obsidian's `button:hover` — which would have turned it grey anyway. */
-@media (hover: hover) {
-	.callout-studio-editor .setting-item .setting-item-control button.cs-icon-tile-clear:hover {
-		background-color: color-mix(
-			in oklch,
-			var(--color-red, #e93147) 85%,
-			black
-		);
-	}
-}
-
 .cs-icon-tile-clear svg {
 	width: 12px;
 	height: 12px;
-	/* Lucide strokes with currentColor; the badge's white has to beat the
+	/* Lucide strokes with currentColor; the badge's red has to beat the
 	   `.svg-icon` colour Obsidian sets on icons elsewhere in the modal. */
 	color: inherit;
 }
@@ -1295,12 +1286,13 @@
    S6-V4). */
 
 /* ── Red buttons are Obsidian's ────────────────────────────────────
-   A destructive button is `mod-destructive mod-cta` (ui/destructiveButton.ts),
-   and nothing here repaints it, at rest or under the pointer. Obsidian's hover
-   for it paints `--background-modifier-error-hover`, which is the same red as
-   at rest, so it does not change under the pointer — exactly like Obsidian's
-   own Delete buttons. The plugin used to step it darker; that is gone on
-   purpose (tests/dangerButtons.test.ts). */
+   A destructive button is `mod-destructive` alone (ui/destructiveButton.ts):
+   red words on a light red wash, as Obsidian draws its own Log out button. Its
+   locked state is Obsidian's 70% dim, like any other button, and nothing here
+   repaints it, at rest, locked or under the pointer. The plugin's two small
+   ✕ badges (the icon tile's and the image panel's) take the same red by the
+   same tokens, and that is the only red this file paints
+   (tests/dangerButtons.test.ts). */
 
 /* ── Stacked windows on mobile ────────────────────────────────────
    Opening a window on top of another one darkens everything behind the front
@@ -2942,19 +2934,19 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	padding: 0;
 	border: 0;
 	border-radius: 50%;
-	background: var(--color-red, #e93147);
+	/* The red of every red button, over a solid base so the image's edge does not
+	   show through the wash (see the icon tile's badge above). */
+	background-color: var(--cs-surface, var(--background-primary));
+	background-image: linear-gradient(
+		color-mix(in oklch, var(--background-modifier-error) 10%, transparent),
+		color-mix(in oklch, var(--background-modifier-error) 10%, transparent)
+	);
 	box-shadow: 0 0 0 1.5px var(--cs-surface, var(--background-primary));
-	color: #fff;
+	color: var(--text-error);
 	cursor: pointer;
 	opacity: 0;
 	pointer-events: none;
-	transition: opacity 120ms ease, background-color 120ms ease;
-}
-
-@media (hover: hover) {
-	.icon-picker-image-panel button.icon-picker-image-delete:hover {
-		background: color-mix(in oklch, var(--color-red, #e93147) 85%, black);
-	}
+	transition: opacity 120ms ease;
 }
 
 .icon-picker-image-panel .icon-picker-image-delete svg {

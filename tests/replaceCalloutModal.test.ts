@@ -84,9 +84,9 @@ describe("the replacement picker", () => {
 	it("marks its button as destructive", () => {
 		const h = open();
 		try {
-			// Obsidian's destructive confirmation: solid red on every device.
+			// Obsidian's quiet red (Log out's look) on every device, never the solid one.
 			assert.ok(h.confirm().hasClass("mod-destructive"));
-			assert.ok(h.confirm().hasClass("mod-cta"));
+			assert.ok(!h.confirm().hasClass("mod-cta"));
 		} finally { h.close(); }
 	});
 
