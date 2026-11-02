@@ -179,10 +179,9 @@ describe("adaptive create/edit context-menu action", () => {
 });
 
 /**
- * S10-15: the menu follows Obsidian's own conventions. A one-of-three choice
- * (the fold state) lists every state with a ✓ on the current one, as
- * Obsidian's sort menu does, and Delete is red, as every Delete in
- * Obsidian's menus is (`MenuItem.setWarning`).
+ * S10-15: the menu follows Obsidian's own conventions: Delete is red, as every
+ * Delete in Obsidian's menus is (`MenuItem.setWarning`). The fold state is not
+ * a ✓ list: the callout's current state is simply not offered.
  */
 describe("the right-click menu speaks Obsidian's menu conventions", () => {
 	/** One menu row as the builders configured it. */
@@ -218,7 +217,7 @@ describe("the right-click menu speaks Obsidian's menu conventions", () => {
 		return { app: {}, registry, settings: registry.settings } as unknown as CalloutStudioPlugin;
 	}
 
-	it("lists all three fold states with a ✓ on the callout's current one", () => {
+	it("offers only the two fold states the callout is not in, with no ✓", () => {
 		const writes: string[] = [];
 		const editor = {
 			getLine: () => "> [!note]- Title",
@@ -231,13 +230,28 @@ describe("the right-click menu speaks Obsidian's menu conventions", () => {
 			callout: { id: "note", headerLine: 0, prefix: "> ", quoteDepth: 1 },
 		});
 		assert.deepEqual(rows.map((row) => row.title), [
-			t("contextMenu.setFoldClosed"), t("contextMenu.setFoldOpen"), t("contextMenu.setFoldNone"),
-		]);
-		assert.deepEqual(rows.map((row) => row.checked), [true, false, false], "the callout is folded closed now");
+			t("contextMenu.setFoldOpen"), t("contextMenu.setFoldNone"),
+		], "the callout is folded closed now, so closed is not offered");
+		assert.deepEqual(rows.map((row) => row.checked), [false, false], "no row carries a ✓");
 		rows[0]!.click?.();
-		assert.deepEqual(writes, [], "choosing the current state again changes nothing");
-		rows[1]!.click?.();
 		assert.deepEqual(writes, ["> [!note]+ Title"]);
+		rows[1]!.click?.();
+		assert.deepEqual(writes, ["> [!note]+ Title", "> [!note] Title"]);
+	});
+
+	it("leaves out whichever fold state the callout is in, for each of the three", () => {
+		const offeredWhen = (header: string): string[] => {
+			const editor = { getLine: () => header, replaceRange: () => undefined } as unknown as Editor;
+			const { menu, rows } = conventionsMenu();
+			addItems(pluginWith("regular", "foldDefaults"), menu, {
+				role: "regular", id: "note", editor, view: null, surface: "source",
+				targetEl: {} as Element,
+				callout: { id: "note", headerLine: 0, prefix: "> ", quoteDepth: 1 },
+			});
+			return rows.map((row) => row.title);
+		};
+		assert.deepEqual(offeredWhen("> [!note]+ Title"), [t("contextMenu.setFoldClosed"), t("contextMenu.setFoldNone")]);
+		assert.deepEqual(offeredWhen("> [!note] Title"), [t("contextMenu.setFoldClosed"), t("contextMenu.setFoldOpen")]);
 	});
 
 	it("paints Delete section red, and nothing else", () => {

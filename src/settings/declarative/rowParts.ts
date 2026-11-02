@@ -143,14 +143,17 @@ const PAGE_INTRO_CLASS = "cs-page-intro";
  * A render row is always drawn; the box's `cs-page-intro` class takes the
  * box's and the row's own look away (styles.css), leaving the paragraph.
  *
+ * Without `text` the box draws nothing and holds no row of its own: it is a
+ * box that is not seen, for a page's rows that draw nothing (menuPage.ts).
+ *
  * @param id The box's key, and the row's.
  */
-export function pageIntroBox(id: string, text: string): CsGroup {
+export function pageIntroBox(id: string, text?: string): CsGroup {
 	return {
 		type: "group",
 		id,
 		cls: PAGE_INTRO_CLASS,
-		items: [{
+		items: text === undefined ? [] : [{
 			id,
 			name: "",
 			searchable: false,
@@ -173,11 +176,20 @@ const BOX_RESET_CLASS = "cs-group-reset";
  * A ↺ for a box's heading: an entry of the box's `extraButtons`. Obsidian
  * makes it once, when the box is first drawn, so `reset` must read everything
  * anew when pressed. While saving is paused, a press says why instead.
+ *
+ * The arrow shows only while something differs from the default
+ * (ui/resetArrow.ts). Who tells it when is the box's business: its rows call
+ * {@link paintBoxReset} as they are drawn, or, for a box of plain rows that
+ * cannot, `onMade` hands over the arrow's element to be painted from outside
+ * (the right-click menu page, menuPage.ts).
+ *
+ * @param onMade Called once with the arrow's element, as soon as it is made.
  */
 export function boxResetButton(
 	writer: { isFrozen: boolean },
 	label: string,
 	reset: () => void,
+	onMade?: (resetEl: HTMLElement) => void,
 ): (button: ExtraButtonComponent) => void {
 	return (button) => {
 		button.extraSettingsEl.addClass(BOX_RESET_CLASS);
@@ -188,6 +200,7 @@ export function boxResetButton(
 				if (explainIfBlocked(pausedReason(writer))) return;
 				reset();
 			});
+		onMade?.(button.extraSettingsEl);
 	};
 }
 

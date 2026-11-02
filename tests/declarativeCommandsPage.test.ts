@@ -109,9 +109,9 @@ async function settle(): Promise<void> {
 }
 
 describe("Commands and shortcuts", () => {
-	it("is the intro, the user's commands, then the built-in ones", () => {
+	it("is the user's commands, then the built-in ones", () => {
 		const { harness } = drawCommands(fakePlugin([WRAP_NOTE]));
-		assert.deepEqual(harness.rendered.map((b) => b.def.id), [COMMANDS_PAGE.intro, COMMANDS_PAGE.mine, COMMANDS_PAGE.builtIn]);
+		assert.deepEqual(harness.rendered.map((b) => b.def.id), [COMMANDS_PAGE.mine, COMMANDS_PAGE.builtIn]);
 		assert.equal(box(harness, COMMANDS_PAGE.mine).def.heading, t("commandBuilder.yourCommands"));
 		assert.equal(box(harness, COMMANDS_PAGE.builtIn).children.length, FIXED_COMMAND_IDS.length);
 	});
@@ -138,9 +138,22 @@ describe("Commands and shortcuts", () => {
 		assert.deepEqual(made.hotkeySearches, [`Callout Studio: ${t(FIXED_COMMAND_NAME_KEYS["open-settings"])}`]);
 	});
 
-	it("says under its name that a command's callout is gone", () => {
+	it("tags a command whose callout is gone, with the whole sentence in the tag's tooltip", () => {
 		const { harness } = drawCommands(fakePlugin([GONE]));
-		assert.equal(row(harness, "command-c2").setting.descEl.textContent, t("commandBuilder.missingCallout"));
+		const paused = row(harness, "command-c2");
+		const tag = paused.settingEl.querySelector<HTMLElement>(".cs-paused-tag");
+		assert.equal(tag?.textContent, t("commandBuilder.missingTag"));
+		assert.equal(tag?.dataset.csTooltip, t("commandBuilder.missingCallout"));
+		assert.ok(paused.settingEl.hasClass("is-command-paused"), "the row is dimmed");
+		assert.ok(paused.settingEl.querySelector(".callout-studio-row-icon")?.hasClass("cs-icon-none"), "the dashed ring where the icon would be");
+		assert.equal(paused.setting.descEl.textContent, "", "no sentence under the name");
+	});
+
+	it("leaves a command that can run without a tag", () => {
+		const { harness } = drawCommands(fakePlugin([WRAP_NOTE]));
+		const live = row(harness, "command-c1");
+		assert.equal(live.settingEl.querySelector(".cs-paused-tag"), null);
+		assert.equal(live.settingEl.hasClass("is-command-paused"), false);
 	});
 
 	it("keeps a switched-off built-in command's row as it is, without its shortcuts and ⊕", () => {

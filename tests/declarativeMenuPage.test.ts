@@ -5,8 +5,9 @@
  * Drawn through the test renderer. What is checked: the page's layout (two
  * lists per role, every box keyed apart, the hidden list only while something
  * is hidden), ✕ hiding an item, a move, a hidden item coming back at the end,
- * ↺ putting a role back as shipped, the settings search finding the page but
- * none of its rows, and nothing changing while saving is paused.
+ * ↺ putting a role back as shipped and showing only while a menu differs from
+ * it, the settings search finding the page but none of its rows, and nothing
+ * changing while saving is paused.
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -71,6 +72,19 @@ function names(harness: DeclarativeHarness, id: string): string[] {
 	return box(harness, id).children.map((row) => row.def.name ?? "");
 }
 
+/** A role's ↺, the extra button in its menu's heading. */
+function resetButton(harness: DeclarativeHarness, id: string): ButtonLike {
+	return box(harness, id).settingGroup.extraButtons[0] as ButtonLike;
+}
+
+/** Whether a role's ↺ is hidden, as it is while that role's menu is as shipped. */
+function resetIdle(harness: DeclarativeHarness, id: string): boolean {
+	const el = resetButton(harness, id).extraSettingsEl as unknown as HTMLElement;
+	// Invisible (`cs-reset-idle`) and said to be disabled: never one without the other.
+	assert.equal(el.hasClass("cs-reset-idle"), el.getAttribute("aria-disabled") === "true");
+	return el.hasClass("cs-reset-idle");
+}
+
 /** The name of a menu item. */
 const label = (id: keyof typeof ITEM_LABEL_KEY): string => t(ITEM_LABEL_KEY[id]);
 
@@ -129,6 +143,52 @@ describe("Customize right-click menu", () => {
 		(box(harness, "menu-regular").settingGroup.extraButtons[0] as ButtonLike).press();
 		assert.deepEqual(names(harness, "menu-regular"), shipped("regular"));
 		assert.deepEqual(names(harness, "menu-heading"), heading, "the heading menu keeps its order");
+	});
+
+	it("shows a role's ↺ only while that role's menu differs from the shipped one", () => {
+		const { harness } = drawMenu(fakePlugin().plugin);
+		for (const id of ["menu-heading", "menu-inline", "menu-regular"]) {
+			assert.equal(resetIdle(harness, id), true, `${id}: nothing to reset, so no arrow`);
+		}
+		box(harness, "menu-regular").settingGroup.pressAltArrow(0, 1);
+		assert.equal(resetIdle(harness, "menu-regular"), false, "moved an item, so its role's arrow shows");
+		assert.equal(resetIdle(harness, "menu-heading"), true, "another role's arrow stays out of sight");
+		box(harness, "menu-regular").settingGroup.pressDelete(0);
+		assert.equal(resetIdle(harness, "menu-regular"), false);
+		resetButton(harness, "menu-regular").press();
+		assert.equal(resetIdle(harness, "menu-regular"), true, "put back as shipped, the arrow goes again");
+	});
+
+	it("shows the ↺ at once on a page that opens with a changed menu", () => {
+		const { plugin, registry } = fakePlugin();
+		registry.settings.contextMenu.items.heading[0]!.enabled = false;
+		const { harness } = drawMenu(plugin);
+		assert.equal(resetIdle(harness, "menu-heading"), false);
+		assert.equal(resetIdle(harness, "menu-inline"), true);
+	});
+
+	it("repaints the ↺ when the menu changes behind the page's back, as another device's sync does", () => {
+		const { plugin, registry } = fakePlugin();
+		const { tab, harness } = drawMenu(plugin);
+		assert.equal(resetIdle(harness, "menu-inline"), true);
+		registry.settings.contextMenu.items.inline[0]!.enabled = false;
+		// What the updater does when the signature moves.
+		tab.update();
+		assert.equal(resetIdle(harness, "menu-inline"), false);
+		registry.settings.contextMenu.items.inline[0]!.enabled = true;
+		tab.update();
+		assert.equal(resetIdle(harness, "menu-inline"), true);
+	});
+
+	it("never counts the row that repaints the arrows among a menu's items", () => {
+		const { harness } = drawMenu(fakePlugin().plugin);
+		// Alt+↓ on the last item must have nowhere to go: the repainting row sits in the
+		// intro box, not in the list, so the list holds only the items.
+		const list = box(harness, "menu-heading");
+		assert.equal(list.settingGroup.settings.length, shipped("heading").length);
+		const intro = box(harness, MENU_PAGE.intro);
+		assert.equal(intro.children.some((row) => row.def.id === "menu-resets-repaint"), true);
+		assert.equal(intro.children.find((row) => row.def.id === "menu-resets-repaint")!.settingEl.isShown(), false);
 	});
 
 	it("is found by its name, but none of its rows is", () => {

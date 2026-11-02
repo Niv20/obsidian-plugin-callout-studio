@@ -16,6 +16,7 @@ import { after, before, describe, it } from "node:test";
 import type { App } from "obsidian";
 import { installFakeDom, type FakeWindow } from "./support/fakeDom";
 import { DeclarativeHarness, searchSettings, type LooseDef } from "./support/declarativeRenderer";
+import { Notice, type ButtonLike } from "./support/obsidianStub";
 import { t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { SettingsSaveStatus } from "../src/manager/settingsSaveStatus";
@@ -122,6 +123,8 @@ const win = (tab: CalloutStudioSettingsTab): FakeWindow => tab.containerEl.owner
 describe("the settings tab as a tree", () => {
 	it("lays the main page out in its boxes, in order", () => {
 		const { harness } = drawTab();
+		// The danger zone ends the settings; the footer, with the globe, About
+		// and the links, comes after it.
 		assert.deepEqual(harness.rendered.map((box) => box.def.id), [
 			"banners", "callouts", "colors-and-icons", "callout-style", "menus-and-commands",
 			"import-export", "danger-zone", "footer",
@@ -177,6 +180,37 @@ describe("the settings tab as a tree", () => {
 		assert.deepEqual(harness.duplicateKeys, []);
 	});
 
+	it("keeps every ↺ out of sight while nothing differs from the default, on every page", () => {
+		// The rule for the plugin's reset arrows (ui/resetArrow.ts): never dimmed, never
+		// clickable with nothing to reset. A page that adds a ↺ of a third kind fails here.
+		const { tab, harness } = drawTab();
+		const resetLabel = t("settings.resetAction");
+		const found: string[] = [];
+		const showing: string[] = [];
+		const inspect = (where: string, buttons: ButtonLike[]): void => {
+			for (const button of buttons) {
+				const el = button.extraSettingsEl as unknown as HTMLElement;
+				if (!(el.dataset.csTooltip ?? "").startsWith(resetLabel)) continue;
+				found.push(where);
+				// Out of sight by keeping its room (`cs-reset-idle`) or by leaving the layout (`cs-hidden`).
+				if (!el.hasClass("cs-reset-idle") && !el.hasClass("cs-hidden")) showing.push(where);
+			}
+		};
+		for (const path of [[], ...itemsPages(tab.settingItems as LooseDef[])]) {
+			if (path.length > 0) harness.openPage(path); else harness.draw();
+			const page = path.join(" › ") || "main page";
+			for (const box of harness.rendered) {
+				inspect(`${page}: box ${box.def.heading ?? box.def.id}`, box.settingGroup.extraButtons);
+				for (const row of box.children) inspect(`${page}: row ${row.def.name}`, row.setting.extraButtons);
+			}
+		}
+		assert.deepEqual(showing, [], "a ↺ shows although nothing differs from the default");
+		// Not a vacuous pass: the sliders, the three menus' headings, the commands' and the two pickers.
+		assert.ok(found.length >= 20, `found only ${found.length} arrows`);
+		assert.ok(found.some((where) => where.startsWith("right-click-menu: box")), "the right-click menu's arrows");
+		assert.ok(found.some((where) => where.startsWith("main page: row")), "the pickers' arrows");
+	});
+
 	it("starts one visit per opening of the tab, and ends it when the tab is left", () => {
 		const { tab, visits } = drawTab();
 		assert.equal(visits.opened, 1);
@@ -188,11 +222,31 @@ describe("the settings tab as a tree", () => {
 		assert.equal(visits.opened, 2, "opened again");
 	});
 
+	it("tells a language still missing once per visit, not on each redraw", () => {
+		const made = fakePlugin();
+		made.plugin.locales.isReady = () => false;
+		made.registry.settings.language = "fr";
+		const before = Notice.last;
+		const tab = new CalloutStudioSettingsTab(made.app as unknown as App, made.plugin as unknown as SettingsTabPlugin);
+		const harness = new DeclarativeHarness(tab as never);
+		tab.update();
+		assert.equal(harness.rendered.some((box) => box.def.id === "language-box"), false, "no row for it");
+		const told = Notice.last;
+		assert.notEqual(told, before, "a notice");
+		assert.equal(told?.message, t("locale.notDownloaded", { name: "Français" }));
+		tab.update();
+		assert.equal(Notice.last, told, "a redraw is the same visit");
+		tab.hide();
+		tab.update();
+		assert.notEqual(Notice.last, told, "told again on the next opening");
+	});
+
 	it("is what the settings search finds, without the built-in callouts", () => {
 		const { tab } = drawTab();
 		const names = (query: string): string[] => searchSettings(tab.settingItems, query).map((hit) => hit.name);
 		assert.ok(names("fallback").includes(t("settings.fallbackCallout")));
 		assert.ok(names("palette").includes(t("settings.customPalettes")));
+		assert.ok(names("font awesome").includes(t("iconLibraries.title")), "the libraries are found by their own names");
 		assert.deepEqual(names("recite"), ["Recite"]);
 		assert.ok(names("corner").length >= 3);
 		assert.ok(!names("warning").includes("Warning"), "a built-in callout is not a search result");

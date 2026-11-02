@@ -5,15 +5,14 @@
  * Who calls it. The settings tab, for the main page's Menus and commands box
  * ({@link commandsPage}).
  *
- * The main idea. The page opens with a sentence about ⊕ (not on a phone,
- * where ⊕ is hidden), as Obsidian's own pages open with one
- * (`pageIntroBox`, rowParts.ts), then two of Obsidian's boxes, the user's own
+ * The main idea. The page is two of Obsidian's boxes, the user's own
  * commands first:
  * - **Your commands** is one of Obsidian's lists: a + that opens the command
  *   editor, Obsidian's ✕ (and the Delete key), which asks first, and a grey
  *   row while there is none. A row is the callout's icon, the command's name,
  *   its shortcuts, ⊕, and ✎. A command the theme has suspended (or whose
- *   callout is gone) says so under its name.
+ *   callout is gone) is dimmed and wears a short tag after its name; the
+ *   whole sentence is in the tag's tooltip.
  * - **Built-in commands**: a row per built-in command with its shortcuts, ⊕
  *   and a switch; ↺ in the heading turns them all back on.
  * The shortcuts are drawn as Obsidian's Hotkeys page draws them, and ⊕ opens
@@ -25,9 +24,11 @@
  * While saving is paused nothing changes: +, ✕ and ↺ say why, ✎ is dimmed and
  * says why, and the built-in rows are greyed.
  */
-import { Platform } from "obsidian";
+import { setIcon, setTooltip } from "obsidian";
 import { t } from "../../i18n";
+import { emptyListState } from "../../ui/mascot/mascotPlaces";
 import { FIXED_COMMAND_IDS, FIXED_COMMAND_NAME_KEYS, isFixedCommandEnabled, type FixedCommandId } from "../../editor/commands";
+import { renderNoIcon } from "../../icons/renderIcon";
 import { paintCalloutListIcon } from "../../manager/theme/calloutListIcon";
 import type { CustomCommand } from "../../types";
 import { addBlockableIconButton } from "../../ui/blockedButton";
@@ -42,14 +43,13 @@ import {
 } from "../command/commandFlows";
 import { addHotkeyExtraButton, addObsidianHotkeyChips } from "../command/hotkeyRow";
 import { disabledWhilePaused, refuseWhilePaused } from "./pausedGuards";
-import { boxResetButton, pageIntroBox, paintBoxReset, pausedReason } from "./rowParts";
+import { boxResetButton, paintBoxReset, pausedReason } from "./rowParts";
 import { guardRender } from "./safeTree";
 import type { CsGroup, CsList, CsPage, CsRender, TreeContext } from "./types";
 
-/** The ids of the page, its boxes and its opening sentence. */
+/** The ids of the page and its boxes. */
 export const COMMANDS_PAGE = {
 	page: "commands",
-	intro: "commands-intro",
 	mine: "commands-mine",
 	builtIn: "commands-builtin",
 } as const;
@@ -62,9 +62,6 @@ export function commandsPage(ctx: TreeContext): CsPage {
 		name: t("commandBuilder.title"),
 		desc: t("settings.customCommandsDesc"),
 		items: [
-			// The sentence is about ⊕, which a phone hides as Obsidian hides its
-			// own hotkey buttons there, so a phone leaves the sentence out too.
-			...(Platform.isPhone ? [] : [pageIntroBox(COMMANDS_PAGE.intro, t("commandBuilder.pageDesc"))]),
 			yourCommandsList(ctx),
 			builtInCommandsBox(ctx),
 		],
@@ -84,7 +81,7 @@ function yourCommandsList(ctx: TreeContext): CsList {
 		type: "list",
 		id: COMMANDS_PAGE.mine,
 		heading: t("commandBuilder.yourCommands"),
-		emptyState: t("commandBuilder.empty"),
+		emptyState: emptyListState(t("commandBuilder.empty"), t("commandBuilder.newCommand")),
 		addItem: {
 			name: t("commandBuilder.newCommand"),
 			action: refuseWhilePaused(writer, () => { void createCommand(ctx.app, plugin).then(redrawIf); }),
@@ -103,21 +100,26 @@ function customCommandRow(ctx: TreeContext, command: CustomCommand, redrawIf: (c
 	const plugin = ctx.plugin;
 	const def = plugin.registry.get(command.calloutId);
 	const name = commandName(command, def);
-	// Said under the name: otherwise the command just stops appearing in the
+	// Said on the row: otherwise the command just stops appearing in the
 	// command palette while it still sits in this list.
 	const paused = !def || isSuspendedByTheme(plugin.registry, command);
 	return {
 		id: `command-${command.id}`,
 		name,
-		desc: paused ? t(def ? "commandBuilder.commandSuspended" : "commandBuilder.missingCallout") : undefined,
 		render: guardRender(name, (setting) => {
 			// First in the row, where a list row's icon goes; drawn at the end and
 			// moved to the front, because `createDiv` always appends.
 			const rowEl = setting.settingEl;
 			const iconEl = rowEl.createDiv({ cls: "callout-studio-row-icon" });
 			rowEl.insertBefore(iconEl, rowEl.firstChild);
-			// The icon the reader sees beside the callout, the theme's one too.
+			// A short tag after the name instead of a sentence under it; the
+			// sentence stays in the tag's tooltip.
+			const tagEl = paused ? addPausedTag(setting.nameEl, rowEl, def !== undefined) : null;
+			// The icon the reader sees beside the callout, the theme's one too. A
+			// callout that is gone gets the dashed ring the lists draw for "no
+			// icon", so the column does not break.
 			if (def) paintCalloutListIcon(iconEl, def, plugin.registry, activeDocument.body.hasClass("theme-dark"));
+			else renderNoIcon(iconEl);
 			addObsidianHotkeyChips(ctx.app, plugin.manifest.id, setting.controlEl, obsidianCommandId(command.id));
 			addHotkeyExtraButton(setting, ctx.app, plugin.manifest.name, name);
 			addBlockableIconButton(setting, {
@@ -128,9 +130,32 @@ function customCommandRow(ctx: TreeContext, command: CustomCommand, redrawIf: (c
 			});
 			// The icon sits outside the controls, which a redraw empties, so the
 			// row's cleanup takes it away before the next draw.
-			return () => iconEl.remove();
+			return () => {
+				iconEl.remove();
+				tagEl?.remove();
+				rowEl.removeClass("is-command-paused");
+			};
 		}),
 	};
+}
+
+/**
+ * Mark a command that cannot run now: a tag after its name saying why in two
+ * or three words, and the row dimmed (styles.css, `is-command-paused`). The
+ * full sentence is the tag's tooltip, which a phone has no hover for, so the
+ * tag's words have to be enough on their own.
+ *
+ * @param calloutExists False when the command's callout is gone; true when the
+ *   theme has taken it over.
+ * @returns The tag, for the row's cleanup to remove.
+ */
+function addPausedTag(nameEl: HTMLElement, rowEl: HTMLElement, calloutExists: boolean): HTMLElement {
+	rowEl.addClass("is-command-paused");
+	const tagEl = nameEl.createSpan({ cls: "cs-paused-tag" });
+	setIcon(tagEl.createSpan({ cls: "cs-paused-tag-icon" }), "pause");
+	tagEl.createSpan({ text: t(calloutExists ? "commandBuilder.pausedTag" : "commandBuilder.missingTag") });
+	setTooltip(tagEl, t(calloutExists ? "commandBuilder.commandSuspended" : "commandBuilder.missingCallout"));
+	return tagEl;
 }
 
 /* ---- Built-in commands ---- */

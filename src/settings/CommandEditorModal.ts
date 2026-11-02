@@ -2,7 +2,8 @@
  * settings/CommandEditorModal.ts — Build or edit one custom command.
  *
  * A small form: which callout to use, which format to write, and — where the format
- * gives a real choice — the heading level, the action and the fold state.
+ * gives a real choice — the heading level, the action and the fold state, in one
+ * grey setting group, with the name the command will have in a second one below it.
  * Returns the draft to its caller, which owns the list and mints the identity;
  * this modal never touches settings itself.
  *
@@ -10,7 +11,7 @@
  * same way the palette editor handles its gradient rows: one sync function
  * decides visibility so the controls can never disagree about the format.
  */
-import { Modal, Setting } from "obsidian";
+import { Modal, Setting, SettingGroup } from "obsidian";
 import type { App, DisplayValueComponent } from "obsidian";
 import { t } from "../i18n";
 import { getLocale } from "../i18n";
@@ -150,8 +151,14 @@ export class CommandEditorModal extends Modal {
 			});
 		}
 
+		// The five choices sit together in one Obsidian setting group, the grey
+		// rounded box every other window of the plugin puts its rows in. The
+		// rows are built into the group's box (`listEl`), so each keeps taking
+		// a plain parent element.
+		const form = new SettingGroup(contentEl);
+		form.addClass("cs-editor-group");
 		this.calloutRow = buildCalloutRow(
-			contentEl,
+			form.listEl,
 			this.host,
 			() => this.getChoices(),
 			this.calloutId,
@@ -160,19 +167,19 @@ export class CommandEditorModal extends Modal {
 				this.syncVisibility();
 			},
 		);
-		this.formatRow = buildFormatRow(contentEl, (role) => {
+		this.formatRow = buildFormatRow(form.listEl, (role) => {
 			this.role = role;
 			this.syncVisibility();
 		});
-		this.headingRow = buildHeadingLevelRow(contentEl, this.headingLevel, (level) => {
+		this.headingRow = buildHeadingLevelRow(form.listEl, this.headingLevel, (level) => {
 			this.headingLevel = level;
 			this.syncVisibility();
 		});
-		this.actionRow = buildActionRow(contentEl, this.action, (action) => {
+		this.actionRow = buildActionRow(form.listEl, this.action, (action) => {
 			this.action = action;
 			this.syncVisibility();
 		});
-		this.foldRow = buildFoldStateRow(contentEl, this.fold, (fold) => {
+		this.foldRow = buildFoldStateRow(form.listEl, this.fold, (fold) => {
 			this.fold = fold;
 			this.syncVisibility();
 		});
@@ -213,15 +220,23 @@ export class CommandEditorModal extends Modal {
 	}
 
 	/**
-	 * The name the command will have, as one more row of the form (finding
-	 * S8-15): **Command name**, and at the row's end the generated name, as
-	 * Obsidian shows a value you cannot change (`addDisplayValue`). A command
-	 * the user already has is said under it, through `setErrorMessage`, in
-	 * Obsidian's warning colour. It used to be a bordered card under the form.
+	 * The name the command will have (finding S8-15): **Command name**, and the
+	 * generated name under it, as Obsidian shows a value you cannot change
+	 * (`addDisplayValue`). A command the user already has is said under it,
+	 * through `setErrorMessage`, in Obsidian's warning colour.
+	 *
+	 * It is the result of the form above, so it gets a grey box of its own
+	 * rather than being one more row of the form's. It has no description line,
+	 * unlike the rows above it: the name is the line. `cs-command-name` lets the
+	 * stylesheet stack the row, so the name has the box's whole width, and draw
+	 * the value as the form's result rather than as Obsidian's muted one-line note.
 	 */
 	private buildPreview(parent: HTMLElement): void {
-		this.previewSetting = new Setting(parent)
+		const group = new SettingGroup(parent);
+		group.addClass("cs-editor-group");
+		this.previewSetting = new Setting(group.listEl)
 			.setName(t("commandBuilder.preview"))
+			.setClass("cs-command-name")
 			.addDisplayValue((value) => {
 				this.previewValue = value;
 			});

@@ -96,20 +96,15 @@ const buildRegularFoldDefaults: ItemBuilder = (_plugin, menu, context) => {
 	const headerText = editor.getLine(callout.headerLine);
 	const currentMark = (headerText.match(CALLOUT_FOLD_MARK_REGEX)?.[3] ??
 		"") as "" | "+" | "-";
-	// All three states, with a ✓ on the one the callout is in now — how
-	// Obsidian offers a one-of-several choice in its own menus (the sort menu,
-	// the tab list). Choosing the current state again changes nothing.
+	// Only the two states the callout is NOT in: "set it to what it already is"
+	// does nothing, so that row is left out instead of being shown with a ✓.
 	for (const option of foldOptions()) {
-		const isCurrent = option.mark === currentMark;
+		if (option.mark === currentMark) continue;
 		menu.addItem((item) => {
 			item.setTitle(option.title)
 				.setIcon(option.icon)
-				.setChecked(isCurrent)
 				.setSection(MENU_SECTION)
-				.onClick(() => {
-					if (isCurrent) return;
-					setRegularFoldMark(editor, callout, option.mark);
-				});
+				.onClick(() => setRegularFoldMark(editor, callout, option.mark));
 		});
 	}
 };

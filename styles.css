@@ -368,6 +368,44 @@
 	opacity: 0.85;
 }
 
+/* A command that cannot run now (the theme supplies its callout, or the
+   callout is gone): the icon fades (the dashed "no icon" ring of a gone
+   callout is faint already) and the name goes muted, and the name wears
+   a short tag saying why. The name is muted by colour, not opacity, so the tag
+   keeps its full strength: it is the one thing on the row that explains. */
+.setting-item.is-command-paused .callout-studio-row-icon:not(.cs-icon-none) {
+	opacity: 0.5;
+}
+
+.setting-item.is-command-paused .setting-item-name {
+	color: var(--text-muted);
+}
+
+.cs-paused-tag {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin-inline-start: var(--size-4-2);
+	padding: 1px 8px;
+	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
+	background: var(--background-modifier-hover);
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-normal);
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+.cs-paused-tag-icon {
+	display: inline-flex;
+}
+
+.cs-paused-tag-icon .svg-icon {
+	width: 12px;
+	height: 12px;
+}
+
 .callout-studio-row-syntax {
 	font-size: var(--font-ui-smaller);
 	color: var(--text-muted);
@@ -2637,18 +2675,59 @@ body:not(.is-phone) .modal.callout-studio-editor-modal {
 	cursor: default;
 }
 
-/* Each command picker is as wide as its choices, at the end of its row, like
-   Obsidian's dropdowns in Settings (finding S8-16) — no longer one 180px
-   column for all five, which put "H3" in a box as wide as "Foldable,
-   collapsed (-)". A plain choice (`SelectDropdown`) already sizes itself to
-   its longest label with its hidden sizer: steadier than Obsidian's own,
-   which fits the selected option and so changes width as the value changes.
-   The callout picker, which grows to fill whatever it is in, is held to
-   Obsidian's cap for a combobox (250px). On a phone Obsidian's own rules make
-   every control full width. */
-body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
-	flex: 0 1 250px;
-	max-width: 250px;
+/* Each command field is as wide as its current choice, at the end of its row,
+   as Obsidian's dropdowns are (no column width of its own: one 180px column
+   for all five put "H3" in a box as wide as "Foldable, collapsed (-)", finding
+   S8-16). The choice keeps its words whole, and it is the row's description
+   that wraps when the row is short of room. Only beside the words: a phone,
+   and a window narrow enough for Obsidian to stack its rows, give the control
+   a line of its own. */
+body:not(.is-phone) .cs-command-field > .setting-item-control {
+	flex-shrink: 0;
+}
+
+/* The "Command name" row, in a box of its own under the form. It stacks, the
+   way Obsidian stacks a row on a phone: the label, then the generated name
+   under it across the box's whole width, where the rows above have their
+   description. Beside the label the name had half a row at most, which a
+   narrow window squeezed until the label was a letter wide. The class is
+   repeated so this beats Obsidian's rules for a row that is `is-invalid` (its
+   control is held to half the row) and for a narrow container, whatever the
+   order of the stylesheets. */
+.setting-item.cs-command-name.cs-command-name {
+	flex-direction: column;
+	align-items: stretch;
+	row-gap: var(--size-2-3);
+}
+
+.setting-item.cs-command-name.cs-command-name .setting-item-control {
+	width: 100%;
+	max-width: none;
+	justify-content: flex-start;
+	text-align: start;
+}
+
+/* A duplicate is said under the name, starting where the name starts. */
+.cs-command-name .setting-item-error {
+	text-align: start;
+}
+
+/* The generated name. Obsidian draws a read-only value as a muted, one-line
+   note that is cut with "…" when it does not fit. This one is the result of
+   the whole form, and the name the user will look for in the command palette,
+   so it is read at the size of a row's label, in the normal text colour, a
+   little heavier, and wraps rather than being cut: a long name or a narrow
+   window must never hide which command this is. */
+.cs-command-name .setting-item-value {
+	color: var(--text-normal);
+	font-size: var(--font-ui-medium);
+	font-weight: var(--font-medium);
+	line-height: var(--line-height-tight);
+	text-align: start;
+	white-space: normal;
+	overflow: visible;
+	text-overflow: clip;
+	overflow-wrap: anywhere;
 }
 
 /* The shared empty state is a page-level block elsewhere; inside a popup it

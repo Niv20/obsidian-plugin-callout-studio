@@ -558,7 +558,6 @@ export const en: Record<string, string> = {
 
 	// Command builder
 	"commandBuilder.title": "Commands and shortcuts",
-	"commandBuilder.pageDesc": "Press ⊕ on a command to set its shortcut in Obsidian's hotkey settings.",
 	"commandBuilder.builtIn": "Built-in commands",
 	"commandBuilder.toggleAria": "Turn {{name}} on or off",
 	"commandBuilder.hotkeyBlank": "Blank",
@@ -582,6 +581,8 @@ export const en: Record<string, string> = {
 		"Your theme supplies this callout, so it only has a Block format.",
 	"commandBuilder.commandSuspended":
 		"Paused while your theme supplies this callout, which then has a Block format only.",
+	"commandBuilder.pausedTag": "Paused by theme",
+	"commandBuilder.missingTag": "Callout missing",
 	"commandBuilder.callout": "Callout type",
 	"commandBuilder.calloutDesc": "The callout this command inserts.",
 	"commandBuilder.headingLevel": "Heading level",
@@ -1382,7 +1383,6 @@ export const en: Record<string, string> = {
 	"settings.customizeMenuDesc":
 		"Choose and order the right-click actions for each callout type.",
 	"menuCustomize.title": "Customize right-click menu",
-	"menuCustomize.pageDesc": "Drag an action by its handle to move it, or hide it with ✕.",
 	"menuCustomize.regular": "Block callout",
 	"menuCustomize.heading": "Heading callout",
 	"menuCustomize.inline": "Inline callout",

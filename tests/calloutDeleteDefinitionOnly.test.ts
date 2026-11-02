@@ -100,7 +100,8 @@ describe("Delete removes only the definition", () => {
 		const confirm = stubConfirm(true), seen = collectNotices();
 		try {
 			await handleCalloutDelete(h.ctx, h.def);
-			assert.deepEqual(confirm.asked, [t("deleteModal.title", { name: "Owned" })]);
+			assert.deepEqual(confirm.asked, [t("deleteModal.title")]);
+			assert.deepEqual(confirm.subtitles, [t("confirm.subtitleName", { name: "Owned" })], "the name is in the heading, in quotes");
 			assert.equal(confirm.labels[0], undefined, "the default red Delete");
 			const message = confirm.messages[0] as string;
 			assert.ok(message.includes(t("deleteModal.bodyInUse", { count: "2", files: "2" })));
@@ -140,6 +141,7 @@ describe("Delete removes only the definition", () => {
 		try {
 			await handleCalloutDelete(h.ctx, h.def);
 			assert.equal(confirm.asked.length, 1, "unused, but every unknown callout changes with it");
+			assert.deepEqual(confirm.subtitles, [t("deleteModal.subtitleFallback", { name: "Owned" })], "the heading says it is the fallback");
 			const message = confirm.messages[0] as string;
 			assert.equal(message, t("deleteModal.fallbackTarget", { fallback: "Note" }),
 				"nothing uses it, so only the fallback line");
@@ -194,7 +196,8 @@ describe("Convert uses to plain text says who keeps the type", () => {
 		const confirm = stubConfirm(false);
 		try {
 			await handleClearCalloutUsages(h.ctx, h.def);
-			assert.deepEqual(confirm.asked, [t("convertModal.title", { name: "Owned" })]);
+			assert.deepEqual(confirm.asked, [t("convertModal.title")]);
+			assert.deepEqual(confirm.subtitles, [t("convertModal.subtitle", { name: "Owned" })]);
 			assert.equal(confirm.labels[0], en["convertModal.confirm"]);
 			const message = confirm.messages[0] as string;
 			assert.ok(message.includes(en["convertModal.typeStays"]!));
