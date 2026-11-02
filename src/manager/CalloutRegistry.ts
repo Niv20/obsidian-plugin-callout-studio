@@ -1599,6 +1599,19 @@ export class CalloutRegistry {
 	}
 
 	/**
+	 * The preview definition, but only when it is a demo standing on an id of
+	 * its own — the palette editor's stand-in callout. A preview that shadows a
+	 * real callout is not one: its rules replace that callout's, in the place
+	 * the callout holds in the stylesheet, so they cannot be lifted out of it.
+	 * `CSSInjector` keeps a demo's rules in a sheet of their own (see
+	 * `PreviewLayer`) and asks here for the one that qualifies.
+	 */
+	getDemoPreview(): CalloutDefinition | null {
+		if (!this.previewIsDemo || this.previewShadowedDef !== null) return null;
+		return this.getPreviewDefinition();
+	}
+
+	/**
 	 * Like `get`, but sees through the transient live-preview shadow: if `id`
 	 * is the one currently being drafted in the callout editor, returns the
 	 * real callout it is shadowing (or undefined if nothing was there) instead

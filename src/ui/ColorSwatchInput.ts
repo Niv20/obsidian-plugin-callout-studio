@@ -8,7 +8,8 @@
  * The main idea. It is the very element Obsidian's `ColorComponent` makes, a
  * bare `<input type="color">`, so Obsidian's app.css draws it: a round 22px dot
  * (40px on a phone or tablet), a soft ring under the pointer and a grey ring on
- * keyboard focus (finding S6-11). It used to be a painted rectangle with the
+ * keyboard focus (finding S6-11); styles.css adds 4px of height, because
+ * app.css leaves no room for the ring at the top and bottom. It used to be a painted rectangle with the
  * real input invisible on top, which answered neither the pointer nor the
  * keyboard.
  *

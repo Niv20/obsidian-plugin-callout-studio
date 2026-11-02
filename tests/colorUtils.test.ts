@@ -40,10 +40,8 @@ import {
 	hexToRgb,
 	hexToRgbString,
 	hslToRgb,
-	inferOppositeModeColor,
 	isValidHexColor,
 	minTintAlpha,
-	mirrorLightness,
 	normalizeAngleDeg,
 	parseCssColorToHex,
 	relativeLuminance,
@@ -753,80 +751,7 @@ describe("normalizeAngleDeg", () => {
 });
 
 /* ------------------------------------------------------------------ *
- * 14. mirrorLightness / inferOppositeModeColor
- * ------------------------------------------------------------------ */
-
-describe("mirrorLightness", () => {
-	it("swaps the ends of the lightness axis", () => {
-		assert.equal(mirrorLightness("#ffffff"), "#000000");
-		assert.equal(mirrorLightness("#000000"), "#ffffff");
-	});
-
-	it("keeps hue and saturation", () => {
-		const before = hexToHsl("#448aff");
-		const after = hexToHsl(mirrorLightness("#448aff"));
-		assert.ok(Math.abs(before.h - after.h) < 1, `${before.h} vs ${after.h}`);
-		assert.ok(Math.abs(before.s - after.s) < 1, `${before.s} vs ${after.s}`);
-	});
-
-	it("turns a pale tint into a deep shade and back", () => {
-		const pale = "#ddeaff";
-		const deep = mirrorLightness(pale);
-		assert.ok(relativeLuminance(deep) < relativeLuminance(pale));
-		const back = mirrorLightness(deep);
-		// Lossy by a level — HSL round-trips through two roundings.
-		const a = hexToRgb(back);
-		const b = hexToRgb(pale);
-		for (const ch of ["r", "g", "b"] as const) {
-			assert.ok(Math.abs(a[ch] - b[ch]) <= 2, `${ch}: ${a[ch]} vs ${b[ch]}`);
-		}
-	});
-});
-
-describe("inferOppositeModeColor", () => {
-	it("is a plain mirror when nothing has to be contrasted against", () => {
-		assert.equal(
-			inferOppositeModeColor("#448aff", true, null, null),
-			mirrorLightness("#448aff"),
-		);
-		// A null minRatio wins even when a background was supplied.
-		assert.equal(
-			inferOppositeModeColor("#448aff", true, "#ffffff", null),
-			mirrorLightness("#448aff"),
-		);
-	});
-
-	it("pulls toward black when the result is for LIGHT mode", () => {
-		// editingDark: true → the user set the DARK colour, so the inferred one
-		// is for light mode and must darken to read on a pale page.
-		const inferred = inferOppositeModeColor("#ffff00", true, "#ffffff", 3);
-		assert.ok(contrastRatio(inferred, "#ffffff") >= 3);
-		assert.ok(relativeLuminance(inferred) < relativeLuminance("#ffff00"));
-	});
-
-	it("pulls toward white when the result is for DARK mode", () => {
-		const inferred = inferOppositeModeColor("#333366", false, "#1c1c1c", 3);
-		assert.ok(contrastRatio(inferred, "#1c1c1c") >= 3);
-	});
-
-	it("clears the ratio for every sample, in both directions", () => {
-		for (const hex of SAMPLE_HEXES) {
-			const toLight = inferOppositeModeColor(hex, true, BG_PRIMARY_LIGHT, 3);
-			assert.ok(
-				contrastRatio(toLight, BG_PRIMARY_LIGHT) >= 3 - 1e-9,
-				`${hex} → light ${toLight}`,
-			);
-			const toDark = inferOppositeModeColor(hex, false, BG_PRIMARY_DARK, 3);
-			assert.ok(
-				contrastRatio(toDark, BG_PRIMARY_DARK) >= 3 - 1e-9,
-				`${hex} → dark ${toDark}`,
-			);
-		}
-	});
-});
-
-/* ------------------------------------------------------------------ *
- * 15. bgGradientCss / sanitizeBgGradient / bgGradientsEqual
+ * 14. bgGradientCss / sanitizeBgGradient / bgGradientsEqual
  * ------------------------------------------------------------------ */
 
 function gradient(over: Partial<BgGradient> = {}): BgGradient {
@@ -1026,7 +951,7 @@ describe("bgGradientsEqual", () => {
 });
 
 /* ------------------------------------------------------------------ *
- * 16. calloutColorValue / calloutAccentVarRef / hexToRgbString
+ * 15. calloutColorValue / calloutAccentVarRef / hexToRgbString
  * ------------------------------------------------------------------ */
 
 describe("hexToRgbString", () => {
@@ -1094,7 +1019,7 @@ describe("calloutColorValue / calloutAccentVarRef", () => {
 });
 
 /* ------------------------------------------------------------------ *
- * 17. isValidHexColor
+ * 16. isValidHexColor
  * ------------------------------------------------------------------ */
 
 describe("isValidHexColor", () => {

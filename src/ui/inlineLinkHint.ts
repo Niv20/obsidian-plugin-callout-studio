@@ -17,9 +17,9 @@
  * `.cs-link-btn-inline` override that keeps it on the same line), scoped to
  * this function's own wrapper div rather than `.setting-item` so the hint
  * still looks like a link when rendered outside a Setting — see
- * PaletteEditorModal.renderColorError. It is painted from Obsidian's link
- * tokens, so inside a setting description it is the muted, underlined link
- * Obsidian's own descriptions use.
+ * PaletteEditorModal.renderColorError. The link is part of a sentence, so it
+ * takes the sentence's colour and is told apart by its underline: muted in a
+ * description, the warning's colour in a warning.
  */
 import { t } from "../i18n";
 
@@ -52,14 +52,25 @@ export function renderInlineLinkHint(
 		cls: cls ? `cs-inline-hint ${cls}` : "cs-inline-hint",
 	});
 	if (before) line.createSpan({ text: before });
-	const link = line.createEl("button", {
+	appendLinkButton(line, t(linkKey), onClick);
+	if (after) line.createSpan({ text: after });
+	return line;
+}
+
+/**
+ * Appends one link-looking button to `parent`, which must be (or sit inside) an
+ * element with the `cs-inline-hint` class: that class is what the button's look
+ * in `styles.css` hangs on. A row that mixes real links with a button that opens
+ * a window (the settings footer) wraps its words in a span with the class.
+ */
+export function appendLinkButton(parent: HTMLElement, label: string, onClick: () => void): HTMLButtonElement {
+	const link = parent.createEl("button", {
 		cls: "cs-link-btn cs-link-btn-inline",
-		text: t(linkKey),
+		text: label,
 	});
 	link.addEventListener("click", (e) => {
 		e.preventDefault();
 		onClick();
 	});
-	if (after) line.createSpan({ text: after });
-	return line;
+	return link;
 }

@@ -884,7 +884,7 @@ export const en: Record<string, string> = {
 	"editor.loremIpsumShort":
 		"Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 	"editor.sampleInlineText":
-		"Here is an inline [!{id}] callout inside a paragraph.",
+		"Here is an inline [!{id}]{{title}} callout inside a paragraph.",
 	"editor.previewReadOnly": "The live preview can't be edited",
 
 	// "Update your notes?" — asked by the callout editor's Save before anything
@@ -960,7 +960,6 @@ export const en: Record<string, string> = {
 	"palette.namePlaceholder": "My palette",
 	"palette.nameExists": "A palette with this name already exists",
 	"palette.saveBlockedName": "A palette with this name already exists. Choose a different name to save it.",
-	"palette.metadataName": "In callout metadata: {{key}}",
 	"palette.metadataNameExists":
 		'Another palette is already written "{{key}}" in callout metadata. Choose a different name.',
 	"palette.metadataNameShared":
@@ -975,18 +974,30 @@ export const en: Record<string, string> = {
 	"palette.renameNotesFailed":
 		"Some notes could not be updated. The ones that were are saved; the rest still use the old name.",
 	"palette.baseColor": "Base color",
-	"palette.baseColorHint":
-		"We'll automatically match the background color to it. If you'd like, you can control it separately by {{link}}.",
-	"palette.baseColorHintLink": "clicking here",
+	// The two tooltips of the button at the end of the Colors heading: the way
+	// to the separate colors, and the way back to one base color.
+	"palette.colorViewAdvanced": "Set each color separately",
+	"palette.colorViewSimple": "Revert to a single base color",
 	// Doubles as the title of the palette editor's "Colors" card, which holds
 	// the simple Base color row as well as the advanced per-channel grid.
 	"palette.advancedColors": "Colors",
-	"palette.advancedColorsHint":
-		"Editing colors for {{mode}} mode - the other mode updates automatically. Switch Obsidian's theme to check it.",
-	"palette.revertHint": "Prefer a single base color instead? {{link}}.",
-	"palette.revertHintLink": "Revert",
-	"palette.lightMode": "Light",
-	"palette.darkMode": "Dark",
+	// The title of the Colors card while the separate colors are showing: it
+	// names the mode being edited, and follows the sun/moon button.
+	"palette.lightModeColors": "Light mode colors",
+	"palette.darkModeColors": "Dark mode colors",
+	// The note above the separate colors. Each mode keeps its own three
+	// colors; one sentence per line (the note splits on `\n`). The title above
+	// already names the mode, so the note says what it does not touch and
+	// names the button that is on screen: the moon while editing light mode,
+	// the sun while editing dark mode.
+	"palette.modeColorsHintLight":
+		"These changes apply to light mode only. Dark mode keeps its own colors.\nTo edit them, press the moon button above.",
+	"palette.modeColorsHintDark":
+		"These changes apply to dark mode only. Light mode keeps its own colors.\nTo edit them, press the sun button above.",
+	// The two tooltips of the sun/moon button at the end of the Colors heading,
+	// which shows all of Obsidian in the other mode while the editor is open.
+	"palette.showLightMode": "Show light mode",
+	"palette.showDarkMode": "Show dark mode",
 	"palette.accentColor": "Accent color",
 	"palette.backgroundColorChannel": "Background color",
 	"palette.textColorChannel": "Text color",

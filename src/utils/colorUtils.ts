@@ -524,43 +524,6 @@ export function normalizeAngleDeg(deg: number): number {
 }
 
 /**
- * Mirrors a color's lightness (l → 100−l), keeping hue and saturation. A
- * plausible starting guess for "the same color in the opposite theme mode":
- * a pale light-mode tint becomes a deep dark-mode shade and vice versa.
- */
-export function mirrorLightness(hex: string): string {
-	const { h, s, l } = hexToHsl(hex);
-	const { r, g, b } = hslToRgb(h, s, 100 - l);
-	return rgbToHex(r, g, b);
-}
-
-/**
- * Infers a color for the OPPOSITE theme mode from one the user just picked
- * for one mode (the palette editor's advanced per-color rows use this to
- * keep the hidden mode in sync automatically). Mirrors lightness for a
- * plausible guess, then — when `minRatio` is given — nudges it toward
- * black/white against `oppositeBg` until it clears that contrast ratio,
- * exactly like {@link derivePaletteFromColor}'s own contrast fix.
- *
- * @param editingDark Whether `hex` is the color the user just set for DARK
- *   mode (so the inferred result is for LIGHT mode, and vice versa).
- * @param oppositeBg The background the inferred color will render against
- *   in the opposite mode; pass `null` together with `minRatio: null` for a
- *   channel with nothing to contrast against (the background channel).
- */
-export function inferOppositeModeColor(
-	hex: string,
-	editingDark: boolean,
-	oppositeBg: string | null,
-	minRatio: number | null,
-): string {
-	const mirrored = mirrorLightness(hex);
-	if (minRatio === null || oppositeBg === null) return mirrored;
-	const towards = editingDark ? "#000000" : "#ffffff";
-	return ensureContrast(mirrored, oppositeBg, towards, minRatio);
-}
-
-/**
  * CSS background-image value for a two-stop gradient starting at `from`
  * (the solid bg color of the current mode) and ending at `to`.
  */

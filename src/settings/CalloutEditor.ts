@@ -1961,7 +1961,11 @@ export class CalloutEditor extends Modal {
 		return [
 			`## [!${id}] ${name}`,
 			"",
-			t("editor.sampleInlineText").replace("{id}", id),
+			// Functions, not strings, as the replacements: a string replacement
+			// reads `$&`, `$$` and `` $` `` in the name as patterns.
+			t("editor.sampleInlineText")
+				.replace("{id}", () => id)
+				.replace("{title}", () => name),
 			"",
 			`> [!${id}]${mark} ${name}`,
 			`> ${t("editor.loremIpsumShort")}`,

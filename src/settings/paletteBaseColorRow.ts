@@ -1,9 +1,12 @@
 /**
  * settings/paletteBaseColorRow.ts — the palette editor's "Base color" row.
  *
- * One swatch and one sentence of hint under it, whose link leads into the
- * advanced per-channel grid. Split out of `PaletteEditorModal` because that
- * file sits on the line-count ratchet and this is a self-contained row.
+ * One swatch and nothing else. The way into the advanced per-channel grid is
+ * not here: it is the button in the "Colors" heading
+ * (`paletteColorViewButton.ts`), which keeps this row to a line the narrow
+ * column does not wrap. Split out of `PaletteEditorModal`
+ * because that file sits on the line-count ratchet and this is a
+ * self-contained row.
  *
  * **The readability correction is deliberately not announced here.**
  * `derivePaletteFromColors` contrast-corrects the accent it derives against its
@@ -27,7 +30,6 @@ import {
 } from "../utils/colorUtils";
 import { palettesVisuallyEqual, type ColorPalette } from "../utils/colorPalettes";
 import { createColorSwatchInput } from "../ui/ColorSwatchInput";
-import { renderInlineLinkHint } from "../ui/inlineLinkHint";
 import type { CustomPalette } from "../types";
 import { t } from "../i18n";
 
@@ -111,13 +113,7 @@ export function renderBaseColorRow(
 	parent: HTMLElement,
 	options: {
 		base: string;
-		/**
-		 * Whether to render the hint at all. False under Gradient, which has no
-		 * advanced per-channel view for the link to lead to.
-		 */
-		showHint: boolean;
 		onPick: (hex: string) => void;
-		onAdvanced: () => void;
 	},
 ): HTMLElement {
 	// Every colour row in this card carries `cs-row-inline`: the control is
@@ -127,14 +123,6 @@ export function renderBaseColorRow(
 		.setName(t("palette.baseColor"))
 		.setClass("cs-row-inline");
 	createColorSwatchInput(setting.controlEl, options.base, options.onPick);
-
-	if (options.showHint) {
-		renderInlineLinkHint(setting.descEl, {
-			textKey: "palette.baseColorHint",
-			linkKey: "palette.baseColorHintLink",
-			onClick: options.onAdvanced,
-		});
-	}
 
 	return setting.settingEl;
 }

@@ -110,3 +110,16 @@ describe("Save while a save runs", () => {
 		assert.equal(saveBtn.textContent, t("editor.saveChanges"));
 	});
 });
+
+describe("the preview's inline sample", () => {
+	it("writes the name as it is, even with $ patterns in it", () => {
+		const registry = new CalloutRegistry();
+		registry.load(null);
+		const plugin = { app: {} as App, registry, settings: registry.settings } as unknown as CalloutEditorPlugin;
+		const editor = new CalloutEditor(plugin, registry.get("note"));
+		const name = "Price $& $$ $` $'";
+		(editor as unknown as { displayName: string }).displayName = name;
+		const sample = (editor as unknown as { buildSampleText(): string }).buildSampleText();
+		assert.ok(sample.includes(`[!note]{${name}}`), sample);
+	});
+});

@@ -1411,8 +1411,7 @@
    The class is tripled so this clears both core rules on specificity rather
    than !important — the house style throughout this file. Phone-only because
    nothing else stacks these rows in the first place: on desktop and iPad they
-   are already on one line, and the base `.cs-modal .setting-item` rule above
-   is what centres them there. */
+   are already on one line. */
 .is-phone .setting-item.cs-row-inline.cs-row-inline.cs-row-inline {
 	flex-direction: row;
 	align-items: center;
@@ -1431,19 +1430,6 @@
 	margin-top: 0;
 	width: auto;
 	flex: 0 0 auto;
-}
-
-/* A row that says something under its control (`setErrorMessage`: the palette
-   editor's low-contrast warning, S6-12) holds a sentence in that column, and a
-   shrink-wrapped column would be as wide as the sentence on one line — wider
-   than the phone, with the name crushed to nothing. Capped at half the row,
-   as Obsidian caps an invalid row's control on the desktop, the sentence wraps
-   under the swatch and the name keeps the other half. */
-.is-phone
-	.setting-item.cs-row-inline.cs-row-inline.cs-row-inline.is-invalid
-	.setting-item-control {
-	flex-shrink: 1;
-	max-width: 50%;
 }
 
 /* ── The button bar ───────────────────────────────────────────────
@@ -3696,7 +3682,14 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 
 /* A colour swatch is Obsidian's own `input[type="color"]` (ui/ColorSwatchInput.ts),
    drawn by app.css as a round dot with hover and focus rings, 40px on a phone
-   or tablet (finding S6-11). Nothing of the plugin's is painted on it. */
+   or tablet (finding S6-11). Nothing of the plugin's is painted on it, but it
+   is given 4px more height: app.css makes the input exactly as tall as the dot
+   and the width 4px wider, so the 2px hover and focus ring has room at the
+   sides and is cut off flat at the top and bottom. The selector repeats
+   app.css's `input[type="color"]` so that it wins on specificity. */
+input[type="color"].callout-studio-color-input {
+	height: calc(var(--swatch-height) + 4px);
+}
 
 /* ─── Custom commands ─────────────────────────────────────────────────── */
 
@@ -3796,15 +3789,77 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
    inside the Colors box (PaletteEditorModal.renderColorError), and otherwise
    not in the DOM at all. Padded like a row, in Obsidian's warning colour, as
    the name's message under its field (setErrorMessage). Its "use it instead"
-   link keeps the accent. No fade: it comes and goes under a colour drag,
-   where a fade is the wrong effect. */
+   link is the warning's colour too, like every link inside a sentence. No
+   fade: it comes and goes under a colour drag, where a fade is the wrong
+   effect. */
 .callout-studio-palette-editor .cs-palette-color-error {
-	--link-color: var(--text-accent);
-	--link-color-hover: var(--text-accent-hover);
 	padding: var(--setting-items-padding-y) var(--setting-items-padding-x);
 	color: var(--text-warning);
 	font-size: var(--font-ui-smaller);
 	line-height: var(--line-height-tight);
+}
+
+/* The low-contrast warning under the colour rows (paletteContrastLine.ts): a
+   full-width line of its own, in Obsidian's warning colour, with the same
+   triangle the failing swatch wears so the two read as one warning. It is
+   padded and draws a divider like a row — the same hairline Obsidian
+   draws above every row but the first, inset by the row padding. That divider
+   is what keeps it from reading as the caption of the last row above it (the
+   Text colour), which it did when it hung under that row with no line of its
+   own: the sentence says nothing about one colour in particular. The divider
+   is a pseudo-element, as Obsidian's is, so the line needs no border that
+   would add to its height. */
+.callout-studio-palette-editor .cs-palette-contrast-line {
+	position: relative;
+	display: flex;
+	align-items: flex-start;
+	gap: var(--size-4-2);
+	/* Tighter than a row's 20px above and below: the window is a scrolling
+	   column, this line sits at the very end of it, and the more it takes the
+	   less likely it is to be pushed under the footer where it cannot be read. */
+	padding: var(--size-4-3) var(--setting-items-padding-x);
+	color: var(--text-warning);
+	font-size: var(--font-ui-smaller);
+	line-height: var(--line-height-tight);
+}
+
+.callout-studio-palette-editor .cs-palette-contrast-line::before {
+	content: "";
+	position: absolute;
+	top: -1px;
+	inset-inline: var(--setting-items-padding-x);
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+.callout-studio-palette-editor .cs-palette-contrast-icon {
+	display: inline-flex;
+	flex: none;
+}
+
+.callout-studio-palette-editor .cs-palette-contrast-icon .svg-icon {
+	width: var(--icon-s);
+	height: var(--icon-s);
+}
+
+/* The triangle beside a colour swatch that falls short of its contrast limit.
+   It is the first thing in the row's control, ahead of the swatch, so it
+   appears without moving the swatch (the control is aligned to the row's
+   end). Drawn in the warning colour with no frame: a ring around it would read
+   as a second swatch. */
+.callout-studio-palette-editor .cs-contrast-badge {
+	display: inline-flex;
+	align-items: center;
+	margin-inline-end: var(--size-4-2);
+	color: var(--text-warning);
+}
+
+.callout-studio-palette-editor .cs-contrast-badge .svg-icon {
+	width: var(--icon-s);
+	height: var(--icon-s);
+}
+
+.callout-studio-palette-editor .cs-contrast-badge.cs-hidden {
+	display: none;
 }
 
 /* Generic row-hide utility (e.g. the command editor's role-specific rows). It
@@ -3827,10 +3882,11 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
    ancestor requirement never matches and the button falls through to
    Obsidian's full grey style — see renderColorError.
 
-   Painted as Obsidian paints an `a`, from its link tokens: underlined, in
-   `--link-color`. A setting description redefines those to muted and normal
-   (`.setting-item-description`), so a hint there reads like a link in
-   Obsidian's own descriptions; elsewhere they are the accent. */
+   It is part of a sentence, so it takes the sentence's colour (`inherit`) and
+   is told from the words around it by its underline, not by a colour of its
+   own: in a muted description it is muted, in a warning it is the warning's
+   colour. Hover moves that colour a little toward the normal text colour (see
+   the hover rule below). */
 .cs-inline-hint .cs-link-btn.cs-link-btn {
 	display: block;
 	appearance: none;
@@ -3842,7 +3898,7 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	border-radius: 0;
 	background: none;
 	box-shadow: none;
-	color: var(--link-color);
+	color: inherit;
 	text-decoration-line: var(--link-decoration);
 	text-decoration-thickness: var(--link-decoration-thickness);
 	font-size: var(--font-smaller);
@@ -3853,8 +3909,12 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	cursor: pointer;
 }
 @media (hover: hover) {
+	/* A quarter of the way to `--text-normal`: dark text in a light theme and
+	   light text in a dark one, so the shift darkens the sentence's colour in
+	   one and lightens it in the other, with no rule per theme. `currentColor`
+	   inside `color` is the colour inherited from the sentence. */
 	.cs-inline-hint .cs-link-btn.cs-link-btn:hover {
-		color: var(--link-color-hover);
+		color: color-mix(in srgb, currentColor 75%, var(--text-normal));
 		background: none;
 		text-decoration-line: var(--link-decoration-hover);
 	}
@@ -3882,11 +3942,10 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
    onto its own line. It must also outweigh Obsidian's phone rule that
    stretches every button in a row's control to the full width
    (`.is-phone .modal .setting-item-control button:not(.clickable-icon)`,
-   0,4,1) and pads it by 10px (`… .setting-item-control button`): the IDs
-   field's "move it here" sits in the control column, under the field, since
-   its errors moved there (S5-V1). A button keeps a width even when it is
-   `display: inline`, so the width and padding are reset as well, and the
-   class is repeated to reach 0,5,0. */
+   0,4,1) and pads it by 10px (`… .setting-item-control button`), as it would
+   if a hint were drawn in a row's control column. A button keeps a width even
+   when it is `display: inline`, so the width and padding are reset as well,
+   and the class is repeated to reach 0,5,0. */
 .cs-inline-hint .cs-link-btn.cs-link-btn.cs-link-btn.cs-link-btn-inline {
 	display: inline;
 	width: auto;

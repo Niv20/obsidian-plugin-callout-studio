@@ -10,7 +10,14 @@
  * definition is the honest shape, and it is the shape the ratchet in
  * `tests/repoSourceRules.test.ts` asks for.
  */
-import { bgGradientCss, tintColorAt, tintCss } from "../../utils/colorUtils";
+import {
+	BG_PRIMARY_DARK,
+	bgGradientCss,
+	isValidHexColor,
+	relativeLuminance,
+	tintColorAt,
+	tintCss,
+} from "../../utils/colorUtils";
 import { resolveBgAlpha } from "../../utils/bgTintAlpha";
 import type { CalloutDefinition } from "../../types";
 
@@ -68,6 +75,16 @@ export function bgProps(
 			? bg
 			: tintCss(tintColorAt(bg, mode === "dark", alpha), alpha);
 	const props = [`  background-color: ${color}${imp};`];
+	// In dark mode core draws a callout with `mix-blend-mode: lighten`, which
+	// keeps, channel by channel, whichever is lighter: the callout or the page
+	// under it. A background darker than the page therefore came out as the
+	// page itself — black showed as #1c1c1c in Reading view, while Live
+	// Preview, where nothing is under the callout to blend with, showed black.
+	// Such a background is asking to be darker than the page, so it is drawn
+	// as it is.
+	if (mode === "dark" && darkerThanPage(bg)) {
+		props.push(`  mix-blend-mode: normal${imp};`);
+	}
 	const layer = bgImageFor(def, mode);
 	if (layer) {
 		props.push(
@@ -77,6 +94,19 @@ export function bgProps(
 		);
 	}
 	return props;
+}
+
+/**
+ * True when `hex` is darker than the dark page (`BG_PRIMARY_DARK`) as the eye
+ * judges it: by luminance, not channel by channel. An ordinary dark tint of a
+ * saturated colour (`#16202b`) has one channel a few levels under the page,
+ * and core's `lighten` lifting that channel is how such callouts have always
+ * looked; only a colour darker than the page as a whole is changed.
+ * False for anything that is not a `#rrggbb` hex: hand-edited data is emitted
+ * as written and left to core's blend.
+ */
+function darkerThanPage(hex: string): boolean {
+	return isValidHexColor(hex) && relativeLuminance(hex) < relativeLuminance(BG_PRIMARY_DARK);
 }
 
 /**

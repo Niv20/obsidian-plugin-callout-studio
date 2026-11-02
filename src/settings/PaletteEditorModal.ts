@@ -14,11 +14,14 @@
  * (preset directions). For the gradient, the user picks one "second color"
  * whose light/dark tints are derived like the background's, and an
  * off-by-default toggle extends the sweep through the title text of all three
- * render roles. Resolves the palette (without id) on save, or null on
- * cancel/close.
+ * render roles. Under Solid, a button in the Colors heading swaps the base
+ * color for separate Accent/Background/Text colors, which light and dark mode
+ * each keep their own of; the sun/moon button beside it shows all of Obsidian
+ * in the other mode while the editor is open (paletteModeButton.ts). Resolves
+ * the palette (without id) on save, or null on cancel/close.
  */
 import { Modal, Setting, SettingGroup } from "obsidian";
-import type { App } from "obsidian";
+import type { App, EventRef } from "obsidian";
 import type { BgGradient, CalloutDefinition, CustomPalette } from "../types";
 import {
 	bgTintFor,
@@ -26,7 +29,6 @@ import {
 	DEFAULT_BG_INTENSITY_GRADIENT,
 	DEFAULT_BG_INTENSITY_SOLID,
 	derivePaletteFromColor,
-	inferOppositeModeColor,
 	MAX_BG_COLOR_AMOUNT,
 	MIN_BG_COLOR_AMOUNT,
 	rotateHue,
@@ -37,6 +39,10 @@ import {
 } from "../ui/ColorSwatchInput";
 import { explainIfBlocked, paintBlocked } from "../ui/blockedButton";
 import { renderInlineLinkHint } from "../ui/inlineLinkHint";
+import { addColorViewButton, type ColorView } from "./paletteColorViewButton";
+import { addModeButton, showMode } from "./paletteModeButton";
+import { contrastBadgeIn, contrastLineAfter } from "./paletteContrastLine";
+import { linesFragment } from "../ui/textLines";
 import type { SelectDropdown } from "../ui/selectDropdown";
 import { buildPaletteBgStyleRow, type BgStyle } from "./paletteBgStyleRow";
 import {
@@ -106,26 +112,6 @@ const DEFAULT_GRADIENT_ANGLE = 135;
 /** Hue offset for the auto-suggested gradient second color. */
 const GRADIENT_HUE_SHIFT = 45;
 
-/**
- * Whether the advanced per-color grid offers a hand-editable **Text color**
- * row (see buildAdvancedColorRows).
- *
- * Deliberately off: there is no need to hand-pick a callout's text color right
- * now, so the channel simply isn't offered. This gates the CONTROL only —
- * support for the channel is untouched everywhere else and is meant to stay
- * that way: a palette still carries `textColorLight`/`textColorDark`,
- * `derivePaletteFromColor` still derives them (contrast-corrected) from the
- * base color, and import/CSS still honour whatever an existing palette
- * already stores. So a palette saved with a hand-picked text color keeps
- * painting it; it just can no longer be changed from here.
- *
- * Flipping this back to `true` restores the row exactly as it was, contrast
- * warning included — that is the whole cost of bringing the feature back.
- * Annotated `boolean` rather than left as the literal `false` so both branches
- * stay type-checked while it is off.
- */
-const SHOW_TEXT_COLOR_CHANNEL: boolean = false;
-
 export class PaletteEditorModal extends Modal {
 	private existing: CustomPalette | null;
 	/**
@@ -181,12 +167,32 @@ export class PaletteEditorModal extends Modal {
 	 */
 	private colorCardEl: HTMLElement | null = null;
 	/**
+	 * The "Colors" group itself, whose heading names the mode while the
+	 * separate colors are showing (see renderColorSection()).
+	 */
+	private colorGroup: SettingGroup | null = null;
+	/**
 	 * Every row renderColorSection() has put in the box, so the next pass can
 	 * take them out again. They are direct children of the box, which is what
 	 * lets Obsidian's own divider rule draw the lines between them (a row's
 	 * `::before`, left off the box's first child).
 	 */
 	private colorCardRows: HTMLElement[] = [];
+	/** Repaints the button in the "Colors" heading for the view on show. */
+	private paintColorViewButton: ((view: ColorView) => void) | null = null;
+	/**
+	 * Whether Obsidian is showing dark mode — the mode whose colors the
+	 * separate Accent/Background/Text rows edit. The mode button at the end of
+	 * the "Colors" heading switches it (see paletteModeButton.ts); set from the
+	 * app when the editor opens.
+	 */
+	private shownDark = false;
+	/** The mode Obsidian was in before the button switched it; put back on close. */
+	private appDark = false;
+	/** Repaints the mode button for the mode on show. */
+	private paintModeButton: ((dark: boolean) => void) | null = null;
+	/** Obsidian's `css-change`, while the editor is open. */
+	private cssChangeRef: EventRef | null = null;
 	// Gradient state. The end (stop-2) colors are tints of gradientToBase,
 	// derived exactly like the six colors are derived from the base color.
 	private angleDeg: number;
@@ -435,8 +441,8 @@ export class PaletteEditorModal extends Modal {
 						this.updateValidity();
 					});
 			});
-		// The word that names this palette in a callout's metadata, kept in
-		// step with the field — the only place a user can learn it.
+		// Empty — so collapsed — unless the word this name gives the palette in
+		// a callout's metadata is one another saved palette already has.
 		this.metadataKeyEl = nameSetting.descEl.createDiv({ cls: "cs-palette-metadata-key" });
 		this.nameSetting = nameSetting;
 
@@ -454,7 +460,26 @@ export class PaletteEditorModal extends Modal {
 			.setHeading(t("palette.advancedColors"))
 			.addClass("cs-editor-group");
 		this.colorCardEl = colorGroup.listEl;
+		this.colorGroup = colorGroup;
+		// The separate colors start on the mode Obsidian is showing.
+		this.appDark = this.shownDark = this.plugin.app.isDarkMode();
+		// Both before the first renderColorSection(), which paints them. The mode
+		// button goes last, so it keeps its place at the very end while the view
+		// button beside it comes and goes with the style.
+		this.paintColorViewButton = addColorViewButton(colorGroup, () => this.switchColorView());
+		this.paintModeButton = addModeButton(colorGroup, () => this.switchMode());
 		this.renderColorSection();
+		// Obsidian can change the mode itself while the editor is open (its
+		// light/dark command, or a theme set to follow the system). The rows then
+		// follow it, and it is the mode to go back to on close. Every inject of
+		// this plugin fires css-change too; those leave the mode as it was, and
+		// the check below makes them cost nothing.
+		this.cssChangeRef = this.plugin.app.workspace.on("css-change", () => {
+			const dark = this.plugin.app.isDarkMode();
+			if (dark === this.shownDark) return;
+			this.appDark = this.shownDark = dark;
+			this.renderColorSection();
+		});
 
 		this.previewEl = previewCol.createDiv({
 			cls: "cs-palette-live-preview",
@@ -476,7 +501,11 @@ export class PaletteEditorModal extends Modal {
 					this.buildPreviewDefinition(),
 					true,
 				);
-				this.plugin.cssInjector.inject(false);
+				// Not a full `inject`: this runs on every step of a colour drag,
+				// and a step only changes the stand-in's own rules. The injector
+				// keeps those in a small sheet of their own and rewrites just
+				// that (see CSSInjector.repaintDemoPreview).
+				this.plugin.cssInjector.repaintDemoPreview();
 				// The one funnel every color change already passes through, so
 				// the duplicate-color block cannot drift out of step with the
 				// form. It also runs once before the footer exists, which is
@@ -584,9 +613,7 @@ export class PaletteEditorModal extends Modal {
 			const key = paletteMetadataKey(this.name);
 			const sharedFromBefore = !nameTaken && keyTaken === null && this.sharedMetadataKey() !== null;
 			this.metadataKeyEl.setText(
-				!key ? ""
-				: sharedFromBefore ? t("palette.metadataNameShared", { key })
-				: t("palette.metadataName", { key }),
+				key && sharedFromBefore ? t("palette.metadataNameShared", { key }) : "",
 			);
 		}
 		this.colorClash = this.findColorClash();
@@ -809,6 +836,17 @@ export class PaletteEditorModal extends Modal {
 		this.gradToInput = null;
 
 		const showAdvanced = this.advancedColors && this.bgStyle === "solid";
+		// The separate colors belong to one mode, so the title says which; the
+		// single Base color is shared by both and keeps the plain title.
+		this.colorGroup?.setHeading(
+			t(
+				!showAdvanced
+					? "palette.advancedColors"
+					: this.shownDark
+						? "palette.darkModeColors"
+						: "palette.lightModeColors",
+			),
+		);
 		if (showAdvanced) {
 			this.buildAdvancedColorRows(card);
 		} else {
@@ -822,6 +860,60 @@ export class PaletteEditorModal extends Modal {
 		if (this.bgStyle === "gradient") {
 			this.buildGradientDirectionAndTextRows(card);
 		}
+
+		// Only Solid has separate colors to switch to; Gradient and Transparent
+		// have no per-channel view, so the heading's button is not offered there.
+		this.paintColorViewButton?.(
+			this.bgStyle !== "solid" ? "none" : this.advancedColors ? "advanced" : "simple",
+		);
+		// Offered under every style: with the separate colors it picks which
+		// mode the rows edit, and everywhere else it is how to check the other
+		// mode.
+		this.paintModeButton?.(this.shownDark);
+	}
+
+	/**
+	 * The mode button's press: show all of Obsidian in the other mode, and
+	 * rebuild the rows for it. Nothing about the palette changes; the preview
+	 * follows on its own, because it is the real CSS in the real mode.
+	 */
+	private switchMode(): void {
+		this.shownDark = !this.shownDark;
+		showMode(this.plugin.app, this.shownDark);
+		this.keepScroll(() => this.renderColorSection());
+	}
+
+	/**
+	 * Runs a rebuild without losing the reader's place. Detaching the rows
+	 * shrinks the scrolling body for a moment, and the browser clamps its
+	 * scroll position (to the top, when the rows are the tallest thing in it)
+	 * and does not give it back once the new rows are in.
+	 */
+	private keepScroll(rebuild: () => void): void {
+		const scrollers = [this.contentEl, this.modalEl];
+		const saved = scrollers.map((el) => el.scrollTop);
+		rebuild();
+		scrollers.forEach((el, i) => {
+			el.scrollTop = saved[i] ?? 0;
+		});
+	}
+
+	/**
+	 * The heading button's press: from the single Base color to the separate
+	 * colors, or back.
+	 *
+	 * Going back is an undo, not just a view switch: the six colors return to
+	 * what Base color derives, discarding whatever the rows above wrote. Without
+	 * this the hand-edited channels stayed in state — the simple row showed the
+	 * untouched base color while the preview, and then the saved palette, still
+	 * painted the manual ones, so "revert" visibly did nothing. Rebuild first,
+	 * then derive: applyDerived() pushes into swatches, which have to be the
+	 * fresh ones (same order as the background-style dropdown).
+	 */
+	private switchColorView(): void {
+		this.advancedColors = !this.advancedColors;
+		this.renderColorSection();
+		if (!this.advancedColors) this.applyDerived();
 	}
 
 	/**
@@ -832,87 +924,56 @@ export class PaletteEditorModal extends Modal {
 	private buildSimpleColorRow(parent: HTMLElement): void {
 		const settingEl = renderBaseColorRow(parent, {
 			base: this.baseColor,
-			// Gradient has no advanced per-channel view for the link to reach.
-			showHint: this.bgStyle === "solid",
 			onPick: (hex) => {
 				this.baseColor = hex;
 				this.applyDerived();
-			},
-			onAdvanced: () => {
-				this.advancedColors = true;
-				this.renderColorSection();
 			},
 		});
 		this.colorCardRows.push(settingEl);
 	}
 
 	/**
-	 * Advanced per-color grid: a note saying which theme mode is being edited
-	 * (with the "Revert" link back to the single Base color, which re-derives
-	 * all six from it rather than keeping the edits below), then independent
-	 * Accent/Background swatches for ONLY that mode — plus Text, which is
-	 * gated off behind {@link SHOW_TEXT_COLOR_CHANNEL}. Editing one infers a
-	 * matching value for the hidden mode via inferOppositeModeColor (mirror
-	 * lightness, then contrast-correct for Accent/Text — see that
-	 * function's doc). Deliberately per-channel: editing Accent never
-	 * touches Background or Text. Contrast is a non-blocking warning line
-	 * under the colour, not an auto-fix, so an edit here never silently
-	 * changes a value the user didn't touch.
+	 * Advanced per-color grid: a note saying which mode is being edited (the
+	 * way back to the single Base color is the button in the group's heading,
+	 * see {@link switchColorView}), then Accent/Background/Text swatches for
+	 * ONLY the mode on screen. Each mode keeps its own three colors: an edit
+	 * here never touches the other mode, which the mode button beside the
+	 * heading switches to (see {@link switchMode}). Both start from what Base
+	 * color derived, so the mode not yet edited is still a sensible one.
+	 * Deliberately per-channel: editing Accent never touches Background or
+	 * Text. Contrast is a non-blocking warning line under the three colours,
+	 * not an auto-fix, so an edit here never silently changes a value the user
+	 * didn't touch.
+	 *
+	 * Each mode's colors used to be guessed from the other's by mirroring the
+	 * lightness, and every edit overwrote the other mode with that guess. It
+	 * turned a white background into a black one and a pale blue into near
+	 * black, and two hand-picked modes could not both be kept.
 	 */
 	private buildAdvancedColorRows(parent: HTMLElement): void {
-		const isDark = activeDocument.body.classList.contains("theme-dark");
+		const isDark = this.shownDark;
 
 		// Description only, no name: the group's own heading already reads
 		// "Colors", and a row repeating it would be a heading under a heading.
 		const note = new Setting(parent).setClass("cs-palette-mode-note");
 		this.colorCardRows.push(note.settingEl);
 		note.setDesc(
-			t("palette.advancedColorsHint", {
-				mode: isDark ? t("palette.darkMode") : t("palette.lightMode"),
-			}),
+			linesFragment(t(isDark ? "palette.modeColorsHintDark" : "palette.modeColorsHintLight")),
 		);
-		renderInlineLinkHint(note.descEl, {
-			textKey: "palette.revertHint",
-			linkKey: "palette.revertHintLink",
-			// Reverting is an undo, not just a view switch: the six colors go
-			// back to what Base color derives, discarding whatever the rows
-			// above wrote. Without this the hand-edited channels stayed in
-			// state — the simple row showed the untouched base color while the
-			// preview, and then the saved palette, still painted the manual
-			// ones, so "revert" visibly did nothing. Rebuild first, then
-			// derive: applyDerived() pushes into swatches, which have to be the
-			// fresh ones (same order as the background-style dropdown).
-			onClick: () => {
-				this.advancedColors = false;
-				this.renderColorSection();
-				this.applyDerived();
-			},
-		});
 
 		const accentKey: "colorLight" | "colorDark" = isDark
 			? "colorDark"
 			: "colorLight";
-		const accentOppositeKey: "colorLight" | "colorDark" = isDark
-			? "colorLight"
-			: "colorDark";
 		const bgKey: "bgColorLight" | "bgColorDark" = isDark
 			? "bgColorDark"
 			: "bgColorLight";
-		const bgOppositeKey: "bgColorLight" | "bgColorDark" = isDark
-			? "bgColorLight"
-			: "bgColorDark";
 		const textKey: "textColorLight" | "textColorDark" = isDark
 			? "textColorDark"
 			: "textColorLight";
-		const textOppositeKey: "textColorLight" | "textColorDark" = isDark
-			? "textColorLight"
-			: "textColorDark";
 
 		// One helper for the channel rows so each is registered for teardown
 		// exactly once — the swatch call used to build its Setting inline, and
-		// an inline Setting has no handle to push onto colorCardRows. Called
-		// only from a row that is actually built, so a gated-off channel adds
-		// nothing to the card and nothing to tear down.
+		// an inline Setting has no handle to push onto colorCardRows.
 		const channelRow = (label: string): Setting => {
 			const setting = new Setting(parent)
 				.setName(label)
@@ -922,20 +983,16 @@ export class PaletteEditorModal extends Modal {
 		};
 
 		const accentRow = channelRow(t("palette.accentColor"));
+		const accentBadge = contrastBadgeIn(accentRow);
 		createColorSwatchInput(
 			accentRow.controlEl,
 			this.colors[accentKey],
 			(hex) => {
 				this.colors[accentKey] = hex;
-				this.colors[accentOppositeKey] = inferOppositeModeColor(
-					hex,
-					isDark,
-					this.colors[bgOppositeKey],
-					3,
-				);
+				refreshBadges();
 				this.preview?.refresh();
 			},
-			() => refreshWarnings(),
+			() => refreshLine(),
 		);
 
 		createColorSwatchInput(
@@ -943,62 +1000,56 @@ export class PaletteEditorModal extends Modal {
 			this.colors[bgKey],
 			(hex) => {
 				this.colors[bgKey] = hex;
-				this.colors[bgOppositeKey] = inferOppositeModeColor(
-					hex,
-					isDark,
-					null,
-					null,
-				);
+				refreshBadges();
 				this.preview?.refresh();
 			},
-			() => refreshWarnings(),
+			() => refreshLine(),
 		);
 
-		// Kept whole, behind the flag, rather than deleted: the channel is still
-		// a real part of a palette, so this stays ready to switch back on.
-		const textRow = SHOW_TEXT_COLOR_CHANNEL
-			? channelRow(t("palette.textColorChannel"))
-			: null;
-		if (textRow) {
-			createColorSwatchInput(
-				textRow.controlEl,
-				this.colors[textKey],
-				(hex) => {
-					this.colors[textKey] = hex;
-					this.colors[textOppositeKey] = inferOppositeModeColor(
-						hex,
-						isDark,
-						this.colors[bgOppositeKey],
-						4.5,
-					);
-					this.preview?.refresh();
-				},
-				() => refreshWarnings(),
-			);
-		}
+		// The callout's body text. It is stored per mode like the other two and
+		// painted by the CSS on the callout's content; a palette saved without a
+		// hand-picked one carries the contrast-corrected color
+		// derivePaletteFromColor gave it.
+		const textRow = channelRow(t("palette.textColorChannel"));
+		const textBadge = contrastBadgeIn(textRow);
+		createColorSwatchInput(
+			textRow.controlEl,
+			this.colors[textKey],
+			(hex) => {
+				this.colors[textKey] = hex;
+				refreshBadges();
+				this.preview?.refresh();
+			},
+			() => refreshLine(),
+		);
 
-		// Re-checks the contrast-dependent rows (Accent >=3:1, Text >=4.5:1)
-		// against the current mode's bg once a pick settles — a non-blocking
-		// heads-up, never a block on Save. It is a line of text under the
-		// colour, through the row's `setErrorMessage` (finding S6-12): readable
-		// on every device, where the old corner badge said it only to a hovering
-		// mouse. On the settled pick (`change`), not on every move inside the
-		// picker: a line that came and went mid-pick would make the rows below
-		// jump while the user is still choosing (the preview follows every
-		// move). The Text check follows the flag: with the row gone the text
-		// color is whatever derivation produced, which is already
-		// contrast-corrected, so there is nothing to warn about.
-		const refreshWarnings = (): void => {
-			const bg = this.colors[bgKey];
-			const warning = t("editor.contrastWarning");
-			accentRow.setErrorMessage(
-				contrastRatio(this.colors[accentKey], bg) < 3 ? warning : null,
-			);
-			textRow?.setErrorMessage(
-				contrastRatio(this.colors[textKey], bg) < 4.5 ? warning : null,
-			);
+		// Checks the contrast-dependent colours (Accent >=3:1, Text >=4.5:1)
+		// against the current mode's background — a non-blocking heads-up,
+		// never a block on Save. It is said twice, because neither way is
+		// enough alone (finding S6-12; see paletteContrastLine.ts): a triangle
+		// beside each swatch that falls short, which says WHICH color, and one
+		// line of words under the rows, which says why and reads on a phone,
+		// where a tooltip has no hover. The sentence is the same whichever color
+		// fails, so the line appears once, when either does.
+		//
+		// The triangles follow every move inside the picker: they take no room,
+		// so nothing shifts while the user is still choosing. The line waits for
+		// the settled pick (`change`) because it does take room: the modal is as
+		// tall as its content and sits in the middle of the screen, so a line
+		// that came and went mid-drag would move the whole window under the
+		// cursor.
+		const warnContrast = contrastLineAfter(textRow, this.colorCardRows);
+		const failsAccent = (): boolean =>
+			contrastRatio(this.colors[accentKey], this.colors[bgKey]) < 3;
+		const failsText = (): boolean =>
+			contrastRatio(this.colors[textKey], this.colors[bgKey]) < 4.5;
+		const refreshBadges = (): void => {
+			accentBadge(failsAccent());
+			textBadge(failsText());
 		};
-		refreshWarnings();
+		const refreshLine = (): void => warnContrast(failsAccent() || failsText());
+		refreshBadges();
+		refreshLine();
 	}
 
 	/**
@@ -1083,7 +1134,9 @@ export class PaletteEditorModal extends Modal {
 		return [
 			`## [!${id}] ${name}`,
 			"",
-			t("editor.sampleInlineText").replace("{id}", id),
+			t("editor.sampleInlineText")
+				.replace("{id}", id)
+				.replace("{title}", name),
 			"",
 			`> [!${id}] ${name}`,
 			`> ${t("editor.loremIpsumShort")}`,
@@ -1186,6 +1239,13 @@ export class PaletteEditorModal extends Modal {
 	}
 
 	onClose(): void {
+		if (this.cssChangeRef) this.plugin.app.workspace.offref(this.cssChangeRef);
+		this.cssChangeRef = null;
+		// Put Obsidian back in the mode it was in, before the preview's
+		// teardown below re-injects CSS. Every way out of the editor ends here,
+		// closing the Settings window around it included.
+		if (this.shownDark !== this.appDark) showMode(this.plugin.app, this.appDark);
+		this.shownDark = this.appDark;
 		this.bgStyleDropdown?.destroy();
 		// Destroys the embedded editor and, via onDestroy, restores the outer
 		// preview registration (if any) and re-injects CSS.
@@ -1195,6 +1255,7 @@ export class PaletteEditorModal extends Modal {
 		// Detached with the content above, so drop the handles rather than
 		// leave the card's rows reachable from a closed window.
 		this.colorCardEl = null;
+		this.colorGroup = null;
 		this.colorCardRows = [];
 		this.gradToInput = null;
 		// The button bar is a sibling of contentEl, so emptying that misses it.

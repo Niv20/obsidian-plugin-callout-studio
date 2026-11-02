@@ -4,9 +4,10 @@
  *
  * It is the bare `<input type="color">` Obsidian's ColorComponent makes, so
  * app.css draws it as Obsidian's round dot; nothing wraps or covers it. It
- * reports every move inside the picker (`input`, for the live preview) and,
- * separately, the settled pick (`change`, for the contrast warning, which
- * must not make the rows jump while the user is still choosing).
+ * reports every move inside the picker (`input`, for the live preview and the
+ * warning triangles, which take no room) and, separately, the settled pick
+ * (`change`, for the contrast line, which does take room and so must not move
+ * the window while the user is still choosing).
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -45,12 +46,18 @@ describe("the palette editor's colour dot", () => {
 		assert.deepEqual(commits, ["#222222"]);
 	});
 
-	it("leaves the dot to Obsidian's stylesheet, and the contrast check to the settled pick", () => {
+	it("leaves the dot to Obsidian's stylesheet but for room for its ring, and the contrast line to the settled pick", () => {
 		const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, "");
-		assert.ok(!css.includes("callout-studio-color-input"), "no rule of ours on the dot");
+		// Obsidian makes the input exactly as tall as the dot, so its 2px hover
+		// and focus ring is cut flat at the top and bottom; this one rule gives
+		// it the 4px, and nothing else is painted.
+		const rules = css.match(/[^{}]*callout-studio-color-input[^{}]*\{[^}]*\}/g) ?? [];
+		assert.equal(rules.length, 1, "one rule of ours on the dot");
+		assert.match(rules[0] ?? "", /height:\s*calc\(var\(--swatch-height\) \+ 4px\)/);
 		assert.ok(!css.includes("cs-color-cell"));
 		const palette = readRepoFile("src/settings/PaletteEditorModal.ts");
-		assert.match(palette, /\(\) => refreshWarnings\(\),/, "the warning runs on commit");
-		assert.doesNotMatch(palette, /refreshWarnings\(\);\s*this\.preview\?\.refresh\(\);/, "not on every move");
+		assert.match(palette, /\(\) => refreshLine\(\),/, "the line runs on commit");
+		assert.doesNotMatch(palette, /refreshLine\(\);\s*this\.preview\?\.refresh\(\);/, "the line is not on every move");
+		assert.match(palette, /refreshBadges\(\);\s*this\.preview\?\.refresh\(\);/, "the triangles are");
 	});
 });

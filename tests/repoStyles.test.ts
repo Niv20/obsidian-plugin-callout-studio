@@ -223,6 +223,7 @@ describe("class names in styles.css and src/ agree", () => {
 		"callout-studio-local", // localStorage key for the device-local state
 		"callout-studio-theme-claims-v1", // localStorage key for the claim check's verdicts
 		"callout-studio-dynamic-css", // <style> element id
+		"callout-studio-preview-css", // <style> element id of the demo preview layer
 		"callout-studio-do-not-delete", // the legacy vault snippet's filename
 		"callout-studio-custom", // the exported vault snippet's filename
 		"callout-studio-welcome", // obsidian:// URI action
@@ -268,7 +269,6 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-group-reset", // finds a settings box's heading ↺ to dim it (declarative/rowParts.ts); Obsidian draws the button
 		"cs-tag-chip-remove", // finds an ID pill's x in tests; Obsidian's .multi-select-pill-remove-button draws it
 		"cs-tag-chip-lock", // finds the pinned ID's lock in tests; it sits in Obsidian's remove-button slot
-		"callout-studio-color-input", // finds a palette colour dot in tests and scenes; Obsidian's input[type=color] rules draw it
 		"callout-studio-replace-search", // finds Replace's search box in tests and scenes; Obsidian's .search-input-container rules draw it
 		"cs-quick-insert-search", // finds Quick insert's search box in tests; Obsidian's .search-input-container rules draw it
 		"cs-icon-libraries", // Manage icon libraries' body, a hook for tests and snippets; its groups are Obsidian's SettingGroups

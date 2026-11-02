@@ -2,7 +2,8 @@
  * The palette editor's Save is dimmed, not disabled, while the name or the
  * colors duplicate another palette — and pressing it says which. And where
  * the editor says a name is taken, or a colour is hard to read: under the
- * field, through Obsidian's `setErrorMessage` (findings S7-06 and S6-12).
+ * field, through Obsidian's `setErrorMessage` (finding S7-06), or in a line
+ * under it (S6-12).
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
@@ -203,10 +204,12 @@ describe("where the palette editor says what is wrong", () => {
 	});
 
 	it("writes a low-contrast colour as a line under it, not a badge on the swatch", () => {
+		// A full-width line of its own (paletteContrastLine.ts, tested in
+		// paletteColorView.test.ts); the row's setErrorMessage gave it half a row.
 		const source = readRepoFile("src/settings/PaletteEditorModal.ts");
-		assert.match(source, /accentRow\.setErrorMessage\(/);
-		assert.match(source, /textRow\?\.setErrorMessage\(/);
-		assert.doesNotMatch(source, /setContrastWarning|warnEl/);
+		assert.match(source, /contrastLineAfter\(textRow,/);
+		assert.doesNotMatch(source, /SHOW_TEXT_COLOR_CHANNEL/, "the Text color row is no longer behind a flag");
+		assert.doesNotMatch(source, /accentRow\.setErrorMessage|warnEl/);
 		const css = readRepoFile("styles.css");
 		assert.ok(!css.includes(".cs-contrast-warning"), "the corner badge is gone");
 		assert.ok(!css.includes("cs-input-invalid"), "no red edge of our own on a field");

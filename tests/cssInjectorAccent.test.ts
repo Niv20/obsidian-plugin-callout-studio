@@ -321,7 +321,27 @@ describe("needsDarkBlock — when a .theme-dark override is worth emitting", () 
 		);
 	});
 
-	it("is false for a gradient whose ends match in both modes", () => {
+	it("is true for a background that is the same in both modes", () => {
+		// The tint is solved against each mode's own page, so the light rule's
+		// tint, which matches in both themes, painted #8899aa as #182333 on the
+		// dark page. The palette editor lets each mode keep its own colors, and
+		// the same background in both is an ordinary choice.
+		const { css } = harness();
+		const same = definition({
+			colorLight: "#336699",
+			colorDark: "#336699",
+			bgColorLight: "#8899aa",
+			bgColorDark: "#8899aa",
+		});
+		assert.strictEqual(css.needsDarkBlock(same), true);
+		assert.notDeepStrictEqual(
+			css.bgProps(same, "dark"),
+			css.bgProps(same, "light"),
+			"the dark block carries a tint of its own",
+		);
+	});
+
+	it("is true for a gradient whose ends match in both modes", () => {
 		const { css } = harness();
 		assert.strictEqual(
 			css.needsDarkBlock(
@@ -337,7 +357,7 @@ describe("needsDarkBlock — when a .theme-dark override is worth emitting", () 
 					},
 				}),
 			),
-			false,
+			true,
 		);
 	});
 
