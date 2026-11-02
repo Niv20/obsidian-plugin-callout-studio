@@ -48,7 +48,7 @@
  * order, nothing hidden, and no downloaded library — those are deleted, after
  * one question naming them, since only a download brings them back.
  */
-import { Modal, Notice, Setting, SettingGroup, setIcon } from "obsidian";
+import { Modal, Setting, SettingGroup, setIcon } from "obsidian";
 import type { App } from "obsidian";
 import type {
 	CalloutDefinition,
@@ -85,6 +85,7 @@ import { blockedWhilePaused } from "../pausedGuard";
 import { applyModalChrome, removeModalChrome } from "../modalChrome";
 import { formatIconCount } from "./sourceMenuPresentation";
 import { askDeleteLibrary, askResetLibraries } from "./iconLibraryQuestions";
+import { showNotice } from "../../ui/mascot/mascotNotices";
 
 /** What the window needs from the plugin; the icon picker hands it over. */
 export interface IconLibrariesHost {
@@ -662,7 +663,7 @@ export class IconLibrariesModal extends Modal {
 		for (const file of libraryFiles(id)) {
 			if (packs.state(file) === "ready") continue;
 			if (!(await packs.download(file))) {
-				new Notice(t("iconPack.downloadFailed", { name: getSource(id).attribution.title }));
+				showNotice("problem", t("iconPack.downloadFailed", { name: getSource(id).attribution.title }));
 				return;
 			}
 		}
@@ -706,7 +707,7 @@ export class IconLibrariesModal extends Modal {
 			this.refresh();
 			const removed = await this.host.icons.deleteLibrary(id, this.unsavedIconsOf(id));
 			this.deleting.delete(id);
-			if (!removed) new Notice(t("iconLibraries.deleteFailed", { name: t(getSource(id).labelKey) }));
+			if (!removed) showNotice("problem", t("iconLibraries.deleteFailed", { name: t(getSource(id).labelKey) }));
 			this.refresh();
 		})());
 	}

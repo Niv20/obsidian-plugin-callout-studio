@@ -205,6 +205,12 @@ export class ConfirmationButton {
 export class ConfirmationModal extends Modal {
 	app: unknown;
 	readonly scope = {};
+	/**
+	 * Obsidian's own list of the dialog's buttons, set on every dialog as it is
+	 * made (app.js 1.14.5). Kept here so a subclass member named `buttons`
+	 * breaks in the tests as it does in Obsidian.
+	 */
+	buttons: unknown[] = [];
 	private dom: {
 		containerEl: HTMLElement;
 		modalEl: HTMLElement;
@@ -223,6 +229,8 @@ export class ConfirmationModal extends Modal {
 		if (!this.dom) {
 			const containerEl = createDiv({ cls: "modal-container mod-confirmation" });
 			const modalEl = containerEl.createDiv({ cls: "modal" });
+			// The ✕ comes first in a real window (app.js 1.14.5), under this class.
+			modalEl.createDiv({ cls: "modal-header-button mod-raised clickable-icon" });
 			const titleEl = modalEl.createDiv({ cls: "modal-header" }).createDiv({ cls: "modal-title" });
 			const contentEl = modalEl.createDiv({ cls: "modal-content" });
 			const buttonContainerEl = modalEl.createDiv({ cls: "modal-button-container" });

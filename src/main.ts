@@ -10,7 +10,7 @@ import type { SettingsAdoptionOptions } from "./manager/settingsAdopt";
  * Keep this file focused on lifecycle only — all feature logic lives in
  * the sub-modules under manager/, editor/, settings/, etc.
  */
-import { Notice, Platform, Plugin, type App, type PluginManifest } from "obsidian";
+import { Platform, Plugin, type App, type PluginManifest } from "obsidian";
 import type { CalloutIcon, CalloutRenderRole, PluginSettings } from "./types";
 import { CalloutRegistry } from "./manager/CalloutRegistry";
 import { CSSInjector } from "./manager/CSSInjector";
@@ -71,6 +71,7 @@ import {
 	refreshOccurrencesViewLocale,
 } from "./usage/registerOccurrencesView";
 import { registerPortableConversionView, refreshPortableConversionViewLocale } from "./portable/registerPortableConversionView";
+import { showNotice } from "./ui/mascot/mascotNotices";
 
 /**
  * How long the startup entrance animation window stays open. Long enough to
@@ -203,12 +204,12 @@ export default class CalloutStudioPlugin extends Plugin {
 		// appearance and link; explain the missing palette names after locale setup.
 		const paletteMerges = this.registry.takePaletteMerges();
 		if (paletteMerges.length > 0) {
-			new Notice(
+			showNotice(
+				"success",
 				t("notice.palettesMerged", {
 					count: paletteMerges.length,
 					names: paletteMerges.map((m) => m.from).join(", "),
 				}),
-				10000,
 			);
 		}
 
@@ -489,8 +490,9 @@ export default class CalloutStudioPlugin extends Plugin {
 		await this.saveSettings();
 	}
 
-	runVaultScan(): Promise<number> {
-		return this.discovery.run();
+	/** @see ManualCalloutDiscovery.run */
+	runVaultScan(beforeSave?: () => Promise<void>): Promise<number> {
+		return this.discovery.run(beforeSave);
 	}
 
 	onIconCacheChange(cb: () => void): () => void {

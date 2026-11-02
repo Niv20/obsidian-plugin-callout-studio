@@ -10,7 +10,6 @@
  * Fetched SVGs land in the registry's `iconSvgCache` (persisted to data.json),
  * and listeners are notified so the UI can repaint what was a placeholder.
  */
-import { Notice } from "obsidian";
 import type { CalloutIcon, CalloutRenderRole } from "../types";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { CSSInjector } from "../manager/CSSInjector";
@@ -18,6 +17,7 @@ import { downloadMaterialSvg, materialVariantOf } from "./packs/material";
 import { iconCacheKey, packFor } from "./registry";
 import { t } from "../i18n";
 import { IconTaskScope } from "./IconTaskScope";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 interface IconFetchHost {
 	registry: CalloutRegistry;
@@ -166,7 +166,7 @@ export class IconFetchManager {
 			}
 		}
 		this.failed.add(key);
-		new Notice(t("notice.iconDownloadFailed", { name: icon.value }));
+		showNotice("problem", t("notice.iconDownloadFailed", { name: icon.value }));
 		this.notify();
 		console.warn(
 			"[CalloutStudio] failed to fetch icon after retries",

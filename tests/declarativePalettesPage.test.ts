@@ -145,7 +145,9 @@ describe("the page", () => {
 			// Row 1 is Ocean (A→Z: Forest, Ocean).
 			list(harness).settingGroup.pressDelete(1);
 			await settle();
-			assert.deepEqual(confirm.messages, [t("settings.deletePaletteConfirm", { name: "Ocean" })]);
+			assert.deepEqual(confirm.asked, [t("settings.deletePaletteTitle")]);
+			assert.deepEqual(confirm.subtitles, [t("confirm.subtitleName", { name: "Ocean" })]);
+			assert.deepEqual(confirm.messages, [t("settings.deletePaletteBody")]);
 			assert.equal(registry.settings.customPalettes.length, 2, "a no keeps it");
 		} finally { confirm.restore(); }
 		const yes = stubConfirm(true);

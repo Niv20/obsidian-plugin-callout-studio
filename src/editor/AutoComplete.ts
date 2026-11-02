@@ -16,17 +16,7 @@
  * `]` — see `replaceTypeText`. Enter is unchanged — most people never use
  * metadata, and Enter finishing the callout is what they expect.
  */
-import {
-	Editor,
-	EditorPosition,
-	EditorSuggest,
-	EditorSuggestContext,
-	EditorSuggestTriggerInfo,
-	MarkdownView,
-	Notice,
-	TFile,
-	setIcon,
-} from "obsidian";
+import { Editor, EditorPosition, EditorSuggest, EditorSuggestContext, EditorSuggestTriggerInfo, MarkdownView, TFile, setIcon } from "obsidian";
 import type CalloutStudioPlugin from "../main";
 import type { CalloutDefinition, CalloutRenderRole } from "../types";
 import { CalloutEditor } from "../settings/CalloutEditor";
@@ -52,6 +42,7 @@ import {
 import { sortCalloutsByDisplayName } from "../utils/sorting";
 import { renderCalloutComboboxRow } from "../settings/calloutComboboxRow";
 import { createSuggestionRow } from "../ui/suggestionRow";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 interface CreateNewSuggestion {
 	__createNew: true;
@@ -533,7 +524,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 		// Nothing below may trust a position captured before that await.
 		const line = this.liveTriggerLine(editor, file, start);
 		if (line === null) {
-			new Notice(t("notice.autocompleteTargetMoved"));
+			showNotice("problem", t("notice.autocompleteTargetMoved"));
 			return;
 		}
 		// Both ends are re-derived from the line as it stands now. `end` was the

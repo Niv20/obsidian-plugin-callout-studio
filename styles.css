@@ -7052,6 +7052,16 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	background: color-mix(in oklch, var(--interactive-accent) 10%, transparent);
 }
 
+/* With the brush at its start (it waves hello once): one more, leading column,
+   and the brush in the accent colour the banner is tinted with. */
+.cs-competitor-import-banner.has-mascot {
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
+}
+
+.cs-competitor-import-banner .cs-mascot {
+	color: var(--interactive-accent);
+}
+
 /* On the declarative settings page each notice is a row of one box without a
    heading (declarative/bannerRows.ts). The notice is the box the user sees, so
    the box and the row around it draw nothing of their own: no fill, no edge,
@@ -7115,6 +7125,20 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 
 .setting-group.cs-page-intro .setting-item > :not(.setting-page-desc) {
 	display: none;
+}
+
+/* The ring of paint a press on the mascot spreads reaches past the mascot's
+   box (up to about 14px at 48px), and Obsidian clips a row's name (`overflow:
+   hidden`, for its ellipsis), which cut the ring flat at the box's top edge
+   and left only its lower half. These two names hold a mascot (a search that
+   found nothing, an empty list: `awakenSlot` marks the second), so they let
+   the paint show. The words wrap anywhere instead, so a long query that used
+   to be clipped cannot spill out of the row. `.setting-item-name` in front
+   beats Obsidian's rule whatever order the sheets load in. */
+.setting-item-name.cs-mascot-line,
+.setting-item-name.cs-paint-room {
+	overflow: visible;
+	overflow-wrap: anywhere;
 }
 
 .cs-competitor-import-banner-message {
@@ -7272,4 +7296,259 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	opacity: 0;
 	white-space: nowrap;
 	pointer-events: none;
+}
+
+/* ==========================================================================
+   Brush mascot (src/ui/mascot)
+   The plugin's paintbrush icon with a face. The engine draws it by changing
+   SVG attributes, so the stylesheet only gives it its colours, its sizes and
+   its place in each layout.
+   ========================================================================== */
+
+/* The brush is the theme's muted text colour: a grey in every theme, and
+   never as loud as the words beside it. */
+.cs-mascot {
+	display: block;
+	width: 100%;
+	height: 100%;
+	color: var(--text-muted);
+}
+
+/* Every drop of paint (tears, the splash, confetti, the blush, the stroke
+   under the brush) is the theme's accent colour, the one and only colour. */
+.cs-mascot .cs-mascot-paint {
+	color: var(--interactive-accent);
+}
+
+/* The box the mascot is drawn in. A slot is the box an empty settings list
+   carries before the mascot is put into it, already the right size so
+   nothing moves when it arrives. */
+.cs-mascot-box,
+.cs-mascot-slot {
+	display: inline-block;
+	flex: none;
+	width: var(--cs-mascot-size, 48px);
+	height: var(--cs-mascot-size, 48px);
+	vertical-align: middle;
+}
+
+.cs-mascot-box.is-notice,
+.cs-mascot-slot.is-notice {
+	--cs-mascot-size: 28px;
+}
+
+.cs-mascot-box.is-small,
+.cs-mascot-slot.is-small {
+	--cs-mascot-size: 32px;
+}
+
+.cs-mascot-box.is-medium,
+.cs-mascot-slot.is-medium {
+	--cs-mascot-size: 48px;
+}
+
+.cs-mascot-box.is-large,
+.cs-mascot-slot.is-large {
+	--cs-mascot-size: 64px;
+}
+
+/* A mascot the pointer can play with (ui/mascot/mascotPlay.ts): its box
+   reaches a little past the icon, so being near it counts as being on it. The
+   reach is an invisible ring, as thin as the room most layouts leave around
+   it (a flex gap is 8px), so it never covers a neighbour. Pressing it again
+   and again must not select the words beside it, nor zoom a phone. */
+.cs-mascot-box.is-playful,
+.cs-mascot-slot.is-playful {
+	position: relative;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+}
+
+.cs-mascot-box.is-playful::before,
+.cs-mascot-slot.is-playful::before {
+	content: "";
+	position: absolute;
+	inset: -6px;
+}
+
+/* The mascot over the words of an empty line (a search that found nothing,
+   an empty sidebar, nothing to convert): stacked and centred. */
+.cs-mascot-line {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--size-4-2);
+	text-align: center;
+}
+
+/* An empty settings list: the mascot over the grey row's words. */
+.cs-mascot-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--size-4-2);
+	width: 100%;
+	padding-block: var(--size-4-2);
+	text-align: center;
+}
+
+/* A mascot on a line of its own, above the welcome window's text, where the
+   text starts (the right edge in a right-to-left language). The icon is drawn
+   with 2 of its 24 units empty on each side, so it is pulled out by that much
+   to put the brush itself, not its box, level with the first letter. */
+.cs-mascot-box.cs-welcome-mascot {
+	display: block;
+	margin: 0 0 var(--size-4-3);
+	margin-inline-start: calc(var(--cs-mascot-size) / -12);
+}
+
+/* A confirmation's heading (utils/ConfirmModal.ts, `withMascot(subtitle)`): the
+   title, and under it one muted line that says which one it is or what it costs.
+   Obsidian centres `.modal-title` with automatic side margins (and on a phone
+   with `text-align: center` and a one-line ellipsis), which would leave the words
+   floating in the middle, so they are cleared: the title starts where the message
+   below it starts. The `.modal` in front lifts these above the phone rules of the
+   same weight. */
+.modal .modal-header.cs-confirm-heading {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
+	margin-block-end: var(--size-4-4);
+}
+
+.modal .cs-confirm-heading > .modal-title {
+	margin: 0;
+	text-align: start;
+	overflow-wrap: anywhere;
+}
+
+.modal .cs-confirm-heading > .cs-confirm-subtitle {
+	min-width: 0;
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+	line-height: var(--line-height-tight);
+	overflow-wrap: anywhere;
+}
+
+/* The heading's own gap is the room above the message: its first line adds none. */
+.modal .cs-confirm-heading ~ .modal-content > :first-child {
+	margin-block-start: 0;
+}
+
+/* On a computer the window's own X sits in the corner of this row: the words stop
+   short of it. (A phone hides the X.) */
+body:not(.is-mobile) .modal .modal-header.cs-confirm-heading {
+	padding-inline-end: var(--size-4-6);
+}
+
+/* With the mascot (not on a phone): the brush in a column of its own, spanning
+   both lines and centred on them, and the title over the subtitle in the other. */
+.modal .modal-header.cs-confirm-heading.cs-mascot-header {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	/* Row gap and column gap in one: a column-* name trips the review's multi-column warning. */
+	gap: 2px var(--size-4-3);
+	align-items: center;
+	align-content: center;
+}
+
+.modal .cs-mascot-header > .cs-mascot-box {
+	grid-column: 1;
+	grid-row: 1 / span 2;
+}
+
+.modal .cs-mascot-header > .modal-title {
+	grid-column: 2;
+	grid-row: 1;
+	align-self: end;
+}
+
+.modal .cs-mascot-header > .cs-confirm-subtitle {
+	grid-column: 2;
+	grid-row: 2;
+	align-self: start;
+}
+
+/* Beside the title the brush wears the title's own colour (the row's text
+   colour), not the page's muted grey; the paint stays the accent. */
+.modal .modal-header.cs-mascot-header .cs-mascot {
+	color: inherit;
+}
+
+/* A window that scrolls its body (Reset everything) loses Obsidian's side padding
+   on the heading row, so the brush would sit in the window's corner, off the line
+   the message starts on: the row takes the body's own 16px ... */
+.modal.mod-scrollable-content .modal-header.cs-confirm-heading {
+	padding-block-start: var(--size-4-4);
+	padding-inline-start: var(--size-4-4);
+}
+
+/* ... and Obsidian pads the title itself (16px above and at the sides), which
+   would set the words lower than the brush and a second 16px away from it. */
+.modal.mod-scrollable-content .cs-confirm-heading > .modal-title {
+	padding: 0;
+}
+
+/* A phone has no mascot: the two lines stand at the start edge, the row taking the
+   body's own 16px on both sides, and the title wraps where Obsidian cuts it to one
+   line with an ellipsis. */
+.is-phone .modal .modal-header.cs-confirm-heading {
+	margin-block-end: 0;
+	padding-block-end: var(--size-4-3);
+	padding-inline: var(--size-4-4);
+}
+
+.is-phone .modal .cs-confirm-heading > .modal-title {
+	max-width: 100%;
+	white-space: normal;
+}
+
+/* A notice with the mascot: the mascot beside the words. Obsidian lays a
+   notice out as a column (its words, then its buttons), so the row is ours.
+   A grid keeps a button (Undo, Open settings) under the words, not beside
+   them: it takes the words' column, in the row below. */
+.notice.cs-mascot-notice {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	align-items: center;
+	/* Row gap and column gap in one: a column-* name trips the review's multi-column warning. */
+	gap: var(--size-4-2) var(--size-4-3);
+}
+
+.notice.cs-mascot-notice > .notice-button-container {
+	grid-column: 2;
+}
+
+/* On a phone Obsidian already makes the notice a row, spread between its
+   words and its button: the mascot only joins it at the start, and the words
+   take the room between, so they stay beside it. */
+.is-phone .notice.cs-mascot-notice {
+	display: flex;
+	flex-direction: row;
+	gap: var(--size-4-3);
+}
+
+.is-phone .notice.cs-mascot-notice > .notice-message {
+	flex: 1;
+}
+
+/* A notice has a dark face of its own in both themes, where the page's grey
+   would all but vanish: the brush takes the notice's own text colour, in
+   full. Never see-through: the brush is drawn from overlapping strokes
+   (eyes over bristles, mouth over stripe), and where two see-through strokes
+   cross, the crossing shows darker. The paint stays the accent. */
+.notice .cs-mascot {
+	color: var(--notice-color);
+}
+
+/* The saving banner: the brush takes the warning triangle's place, in the
+   triangle's orange, centred on the first title line. */
+.cs-readonly-banner-header .cs-mascot-box {
+	margin-block: calc((var(--font-ui-medium) * 1.4 - var(--cs-mascot-size)) / 2);
+}
+
+.cs-readonly-banner .cs-mascot {
+	color: var(--text-warning);
 }

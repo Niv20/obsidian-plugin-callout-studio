@@ -1,8 +1,8 @@
-import { Notice } from "obsidian";
 import { t } from "../i18n";
 import type { CalloutRegistry } from "./CalloutRegistry";
 import type { DeviceLocalStore } from "./DeviceLocalStore";
 import type { SettingsWriter } from "./SettingsWriter";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 interface RetirementHost {
 	registry: CalloutRegistry;
@@ -35,7 +35,7 @@ export function trackExternalCssRetirement(host: RetirementHost): () => void {
 		if (!writer.matchesLastWrite(JSON.stringify(host.registry.toSaveData()), true)) return;
 		host.registry.acknowledgeExternalCssRetirement();
 		if (!ready || !host.localState.hasPendingExternalCssNotice) return;
-		new Notice(t("notice.externalCssRetired"), 12000);
+		showNotice("info", t("notice.externalCssRetired"));
 		host.localState.markExternalCssNoticeSeen();
 	};
 	const unsubscribe = host.settingsWriter.status.subscribe(check);

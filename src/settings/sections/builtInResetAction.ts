@@ -19,7 +19,6 @@
  * the callout as it was — its other notes still on the added id, for the next
  * Reset to ask about again.
  */
-import { Notice } from "obsidian";
 import { t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
 import { askNoteChanges } from "../editor/askNoteChanges";
@@ -32,6 +31,7 @@ import {
 	type NoteChoices,
 } from "../editor/noteChanges";
 import type { SettingsContext } from "./types";
+import { showNotice } from "../../ui/mascot/mascotNotices";
 
 export async function handleBuiltInReset(
 	ctx: SettingsContext,
@@ -82,7 +82,7 @@ export async function handleBuiltInReset(
 			await plan();
 		} catch (error) {
 			console.error("[callout-studio] note updates before a reset failed", error);
-			new Notice(t("vault.resetNotesFailed"), 10000);
+			showNotice("warning", t("vault.resetNotesFailed"));
 			return;
 		}
 	}

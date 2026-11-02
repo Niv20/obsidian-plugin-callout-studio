@@ -12,6 +12,11 @@
  * to the user guide on GitHub, so the preview both demonstrates and describes what
  * the plugin can do. Closing the modal (Escape, click-outside, or the preview's
  * own link) resolves the first-run `prompt()` promise the same way.
+ *
+ * Above the title, at the start edge of the text, the brush mascot
+ * (ui/mascot/mascotPlaces.ts) smiles and winks as the window opens, winks once
+ * each time the pointer comes onto it, and cries when it is pressed again and
+ * again.
  */
 import { Modal } from "obsidian";
 import { t } from "../i18n";
@@ -20,6 +25,11 @@ import { LiveCalloutPreview } from "./LiveCalloutPreview";
 import { buildWelcomeDemoDefinition } from "./welcomeDemo";
 import type { SettingsTabPlugin } from "./sections/types";
 import { beginDemoPreview, endDemoPreview } from "./previewOwnership";
+import { addMascot } from "../ui/mascot/mascotPlaces";
+import type { BrushMascot } from "../ui/mascot/brushMascot";
+
+/** How long the mascot waits for the window to finish opening before it smiles and winks. */
+const GREETING_DELAY_MS = 350;
 
 const USER_GUIDE_URL = "https://github.com/Niv20/obsidian-plugin-callout-studio/tree/fa1c8e29aa1f9a40b7a90226d12197c6fe96f1f4/docs/user-guide";
 
@@ -27,6 +37,9 @@ export class WelcomeModal extends Modal {
 	private resolved = false;
 	private resolve: () => void = () => {};
 	private preview: LiveCalloutPreview | null = null;
+	private mascot: BrushMascot | null = null;
+	/** Unbinds the mascot's wink from the pointer. */
+	private unbindMascot: () => void = () => {};
 
 	/**
 	 * @param freshLaunch the launch found no settings file. That is also what a
@@ -48,6 +61,7 @@ export class WelcomeModal extends Modal {
 		// ── Left column: hero + slogan, centered ────────────────────────
 		const left = panel.createDiv({ cls: "cs-welcome-left" });
 		const hero = left.createDiv({ cls: "cs-welcome-hero" });
+		this.showMascot(hero);
 		hero.createEl("h1", {
 			cls: "cs-welcome-title",
 			text: t("welcome.title"),
@@ -66,7 +80,6 @@ export class WelcomeModal extends Modal {
 		// ── Right column: self-describing live preview ─────────────────
 		const right = panel.createDiv({ cls: "cs-welcome-right" });
 		this.preview = new LiveCalloutPreview(this.app, right, {
-			title: t("welcome.previewTitle"),
 			initialText: t("welcome.sample", {
 				id: WELCOME_DEMO_ID,
 				repoUrl: USER_GUIDE_URL,
@@ -86,11 +99,28 @@ export class WelcomeModal extends Modal {
 	onClose(): void {
 		this.preview?.destroy();
 		this.preview = null;
+		this.unbindMascot();
+		this.mascot?.destroy();
+		this.mascot = null;
 		this.contentEl.empty();
 		if (!this.resolved) {
 			this.resolved = true;
 			this.resolve();
 		}
+	}
+
+	/**
+	 * The mascot above the title: a smile and a wink once the window is open, and
+	 * the same wink once each time the pointer comes onto it. Pressed, it answers
+	 * as every mascot does.
+	 */
+	private showMascot(hero: HTMLElement): void {
+		const mascot = addMascot(hero, "large", "start", ["cs-welcome-mascot"]);
+		if (!mascot) return;
+		this.mascot = mascot;
+		const box = mascot.svg.parentElement;
+		if (box) this.unbindMascot = mascot.hover(box, "wink", "once");
+		window.setTimeout(() => void mascot.play("wink"), GREETING_DELAY_MS);
 	}
 
 	/** Open the modal and resolve once it closes (for the first-run flow). */

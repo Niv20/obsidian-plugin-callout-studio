@@ -129,15 +129,15 @@ describe("Reset everything", () => {
 		} finally { confirm.restore(); }
 	});
 
-	it("opens with a reminder and a lead-in of their own before the list of what goes", async () => {
+	it("puts the reminder in the heading, and opens the message with the lead-in before the list of what goes", async () => {
 		const confirm = stubConfirm(false);
 		try {
 			const h = setup();
 			await resetButton(h.ctx)();
-			assert.deepEqual(textsOf(confirm.messages[0], "P").slice(0, 2), [
-				en["settings.resetIntro"],
-				en["settings.resetDeletes"],
-			], "the lead-in is not a paragraph of its own");
+			assert.equal(confirm.subtitles[0], en["settings.resetIntro"]);
+			const paragraphs = textsOf(confirm.messages[0], "P");
+			assert.equal(paragraphs[0], en["settings.resetDeletes"], "the list's lead-in opens the message");
+			assert.ok(!paragraphs.includes(en["settings.resetIntro"]!), "the reminder is not said twice");
 		} finally { confirm.restore(); }
 	});
 
@@ -148,6 +148,7 @@ describe("Reset everything", () => {
 			h.registry.remove("mine");
 			h.registry.settings.fallbackCalloutId = "tip";
 			await resetButton(h.ctx)();
+			assert.equal(confirm.subtitles[0], en["settings.resetSubtitleDefaults"], "the heading says what happens instead");
 			const paragraphs = textsOf(confirm.messages[0], "P");
 			assert.ok(!paragraphs.includes(en["settings.resetIntro"]!), "a reminder about what is deleted, with none");
 			assert.ok(paragraphs.includes(en["settings.resetRestores"]!));

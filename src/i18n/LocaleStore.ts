@@ -33,7 +33,7 @@
  * sitting beside it. Nothing here is ever inserted as markup — translations
  * reach the DOM only as text — so the shape check is the whole attack surface.
  */
-import { Notice, normalizePath, requestUrl } from "obsidian";
+import { normalizePath, requestUrl } from "obsidian";
 import type { App, PluginManifest } from "obsidian";
 import {
 	LOCALE_FORMAT,
@@ -42,6 +42,7 @@ import {
 	type LocaleManifestEntry,
 } from "./localeManifest";
 import { registerLocaleFile, resolveLocaleFile, t } from "./index";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 /**
  * `requestUrl` cannot be aborted and reports no progress, so a hung connection
@@ -299,7 +300,7 @@ export class LocaleStore {
 			console.warn(`[CalloutStudio] could not cache locale "${id}"`, e);
 			if (!this.diskWriteBroken) {
 				this.diskWriteBroken = true;
-				new Notice(t("locale.diskWriteFailed"));
+				showNotice("problem", t("locale.diskWriteFailed"));
 			}
 		}
 	}

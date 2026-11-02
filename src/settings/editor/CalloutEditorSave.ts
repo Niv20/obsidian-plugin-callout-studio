@@ -9,7 +9,6 @@
  * touch a note. See ./noteChanges for the rule. Separated from CalloutEditor.ts
  * to keep the modal class focused on UI state.
  */
-import { Notice } from "obsidian";
 import { t } from "../../i18n";
 import type { App } from "obsidian";
 import type { CalloutDefinition } from "../../types";
@@ -26,6 +25,7 @@ import type { CalloutEditorPlugin } from "./types";
 import { createCalloutVaultSavePlan, stageRenameAliases, type CalloutVaultSavePlan } from "./calloutVaultSavePlan";
 import { formsEndingHere, noteRewritesFor, pendingNoteChangesFor, type NoteChoices } from "./noteChanges";
 import { takeMovedIds, type IdMove } from "./idMoves";
+import { showNotice } from "../../ui/mascot/mascotNotices";
 
 export type CalloutEditorSaveState = {
 	displayName: string;
@@ -344,7 +344,7 @@ export async function performCalloutEditorSave(
 	});
 
 	if (!saved) {
-		new Notice(t("editor.idConflict"));
+		showNotice("blocked", t("editor.idConflict"));
 		return null;
 	}
 	input.onDefinitionApplied?.(def);

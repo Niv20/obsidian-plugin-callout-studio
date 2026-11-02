@@ -32,10 +32,11 @@
  * per-role global style popups (previewing the neutral demo callout under
  * the vault-wide geometry).
  */
-import { Component, MarkdownRenderer, Notice, Setting, type App } from "obsidian";
+import { Component, MarkdownRenderer, Setting, type App } from "obsidian";
 import { EmbeddableMarkdownEditor } from "./EmbeddableMarkdownEditor";
 import { calloutStudioRefresh } from "../editor/livepreview/refresh";
 import { t } from "../i18n";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 /** How long to wait after the last change before re-rendering the fallback. */
 const RENDER_DEBOUNCE_MS = 150;
@@ -136,7 +137,7 @@ export class LiveCalloutPreview {
 			return;
 		}
 		this.lastReadOnlyNoticeTs = now;
-		new Notice(t("editor.previewReadOnly"));
+		showNotice("blocked", t("editor.previewReadOnly"));
 	}
 
 	destroy(): void {

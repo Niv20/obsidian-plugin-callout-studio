@@ -23,6 +23,7 @@ import { t } from "../i18n";
 import { openPluginSettings } from "../manager/settingsNotices";
 import { showActionNotice } from "../ui/noticeAction";
 import type { SettingsWriter } from "../manager/SettingsWriter";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 export interface PausedIndicatorHost extends Pick<Plugin, "app" | "manifest" | "addStatusBarItem" | "register"> {
 	settingsWriter: Pick<SettingsWriter, "isVisiblyPaused" | "isDestroyed" | "status">;
@@ -56,7 +57,7 @@ export function registerPausedIndicator(host: PausedIndicatorHost, mobile: boole
 			if (writer.isDestroyed || writer.isVisiblyPaused || pausedSince === null) return;
 			const noticeable = Date.now() - pausedSince >= RESUME_NOTICE_AFTER_MS;
 			pausedSince = null;
-			if (noticeable) new Notice(t("saveStatus.resumed"));
+			if (noticeable) showNotice("restored", t("saveStatus.resumed"));
 		});
 	};
 	const update = () => {
@@ -88,7 +89,7 @@ export function registerPausedIndicator(host: PausedIndicatorHost, mobile: boole
 		if (announced) return;
 		announced = true;
 		// Stays up (0) until it is clicked, or saving resumes.
-		notice = showActionNotice(t("statusBar.pausedNotice"), {
+		notice = showActionNotice("paused", t("statusBar.pausedNotice"), {
 			label: t("saveStatus.openSettings"),
 			run: () => { openPluginSettings(host.app, host.manifest.id); },
 		}, 0).notice;

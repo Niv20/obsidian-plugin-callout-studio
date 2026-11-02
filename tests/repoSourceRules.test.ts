@@ -45,6 +45,7 @@
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
+import { NOTICE_MOODS } from "../src/ui/mascot/mascotNotices";
 import {
 	allSourceFiles,
 	argSpan,
@@ -188,16 +189,19 @@ describe("no hardcoded UI copy", () => {
 
 	it("no Notice is raised with a bare literal", () => {
 		// A Notice is the loudest untranslated surface there is — it is the only
-		// UI that appears without the user opening anything.
+		// UI that appears without the user opening anything. Every notice goes
+		// through showNotice or showActionNotice (see the next suite), whose first
+		// argument is a kind of notice, a word that is not copy.
+		const kinds = new Set<string>(Object.keys(NOTICE_MOODS));
 		const bad: string[] = [];
 		for (const f of files) {
-			for (const m of f.code.matchAll(/new\s+Notice\s*\(/g)) {
+			for (const m of f.code.matchAll(/\b(?:showNotice|showActionNotice)\s*\(/g)) {
 				const index = m.index ?? 0;
 				const span = argSpan(f.code, index + m[0].length - 1);
 				if (!span) continue;
 				const raw = f.text.slice(span.start, span.end);
 				if (TRANSLATED.test(raw)) continue;
-				const prose = literals(raw).filter((l) => LOOKS_LIKE_PROSE.test(l.value));
+				const prose = literals(raw).filter((l) => !kinds.has(l.value) && LOOKS_LIKE_PROSE.test(l.value));
 				if (prose.length > 0) bad.push(`${at(f, index)}  ${prose[0]?.value ?? ""}`);
 			}
 		}

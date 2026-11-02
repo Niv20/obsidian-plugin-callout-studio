@@ -1,6 +1,7 @@
 /** First-install migration prompt shown beneath the settings title. */
 import { setIcon, type App } from "obsidian";
 import { getLocale, t } from "../i18n";
+import { addMascot } from "../ui/mascot/mascotPlaces";
 import type { SettingsContext } from "./sections/types";
 import {
 	isCompetitorImportBannerForced,
@@ -86,8 +87,8 @@ export interface CompetitorImportHandlers {
 }
 
 /**
- * Build the prompt into `parent`: the message naming the plugins, **Import**,
- * and ✕. The settings page shows it as a row (declarative/bannerRows.ts).
+ * Build the prompt into `parent`: the brush (where it can be drawn) waving
+ * hello once, the message naming the plugins, **Import**, and ✕. The settings page shows it as a row (declarative/bannerRows.ts).
  */
 export function buildCompetitorImportBanner(
 	parent: HTMLElement,
@@ -98,6 +99,12 @@ export function buildCompetitorImportBanner(
 		cls: "cs-competitor-import-banner",
 		attr: { role: "status" },
 	});
+	// Waves once and goes back to being the icon: the offer can stay up for days.
+	const mascot = addMascot(banner, "notice", "start");
+	if (mascot) {
+		banner.addClass("has-mascot");
+		void mascot.play("hello");
+	}
 	banner.createDiv({
 		cls: "cs-competitor-import-banner-message",
 		text: competitorImportMessage(competitors),

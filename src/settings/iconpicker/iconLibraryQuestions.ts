@@ -41,7 +41,7 @@ export function askDeleteLibrary(app: App, id: IconSourceId, users: readonly str
 		});
 	}
 	message.createEl("p", { text: t("iconLibraries.inUseKeeps", { name }) });
-	return new ConfirmModal(app, t("confirm.titleDeleteLibrary"), message).confirm();
+	return new ConfirmModal(app, t("confirm.titleDeleteLibrary"), message).withMascot(t("confirm.subtitleName", { name })).confirm();
 }
 
 /**
@@ -59,5 +59,5 @@ export function askResetLibraries(app: App, doomed: readonly IconSourceId[]): Pr
 		t("confirm.titleResetLibraries"),
 		message,
 		t("iconLibraries.resetButton"),
-	).confirm();
+	).withMascot(t("iconLibraries.resetSubtitle")).confirm();
 }

@@ -9,13 +9,14 @@
  * callout on screen that is not on disk. Then the settings show the new row
  * (`revealCallout`: My callout types, flashed).
  */
-import { Notice, type Menu } from "obsidian";
+import { type Menu } from "obsidian";
 import { t } from "../../i18n";
 import { createDuplicateCalloutDefinition, displayNameIdentity } from "../../manager/duplicateCalloutDefinition";
 import { stableKeyOrder } from "../../utils/stableJson";
 import type { CalloutDefinition } from "../../types";
 import type { SettingsContext } from "./types";
 import { ROW_MENU_SECTION } from "./rowMenuSections";
+import { showNotice } from "../../ui/mascot/mascotNotices";
 
 /** Add Duplicate to a row's menu; built-in callouts have none. */
 export function addDuplicateItem(
@@ -67,10 +68,10 @@ export async function handleCalloutDuplicate(
 		plugin.refreshCallouts();
 		if (ctx.revealCallout) ctx.revealCallout(candidate);
 		else ctx.redraw();
-		new Notice(t("notice.calloutDuplicated", { name: candidate.displayName }));
+		showNotice("success", t("notice.calloutDuplicated", { name: candidate.displayName }));
 	} catch (error) {
 		console.error("[Callout Studio] callout duplication failed", error);
-		new Notice(t("notice.calloutDuplicateFailed"));
+		showNotice("problem", t("notice.calloutDuplicateFailed"));
 		// A failure after publication leaves a valid row on disk and in the
 		// registry. Keep that durable row and refresh it. On an in-flight ID
 		// conflict, reconcile disk with the newer local edit.

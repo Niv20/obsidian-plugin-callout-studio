@@ -12,10 +12,10 @@
  * become likely at once — a stale handle, an unreadable note, and a note that
  * changed underneath the read. Each has its own answer here.
  */
-import { Notice } from "obsidian";
 import type { App, TFile } from "obsidian";
 import { t } from "../i18n";
 import type { NoteRewriteJournal } from "./noteRewriteUndo";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 /**
  * Visit every markdown file in the vault, isolating each one.
@@ -76,7 +76,7 @@ export async function scanVaultFiles(
 ): Promise<void> {
 	const failed = await forEachVaultFile(app, visit);
 	if (failed.length === 0) return;
-	new Notice(t("notice.vaultScanFailed", { count: failed.length }), 10000);
+	showNotice("warning", t("notice.vaultScanFailed", { count: failed.length }));
 	throw new Error(`Vault scan incomplete: ${failed.length} files could not be read`);
 }
 
@@ -142,7 +142,7 @@ export async function rewriteVaultFiles(
 	});
 
 	if (failed.length > 0) {
-		if (!requireComplete) new Notice(t("notice.vaultRewritePartial", { count: failed.length }), 10000);
+		if (!requireComplete) showNotice("warning", t("notice.vaultRewritePartial", { count: failed.length }));
 		if (requireComplete) throw new Error(`Vault rewrite incomplete: ${failed.length} files could not be updated`);
 	}
 

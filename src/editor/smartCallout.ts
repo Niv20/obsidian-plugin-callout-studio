@@ -14,7 +14,7 @@
  * which `pillFits` checks by scanning the line it would produce: the shape
  * that parses is the shape that renders.
  */
-import { Notice, type Editor } from "obsidian";
+import { type Editor } from "obsidian";
 import { t } from "../i18n";
 import type { PluginSettings } from "../types";
 import { insertEmptyCallout, wrapSelectionInCallout } from "./CalloutBlockTools";
@@ -22,6 +22,7 @@ import { readCalloutTrigger } from "./calloutTriggerContext";
 import { scanLineForCalloutTokens, tokenEnd } from "./calloutTokens";
 import { documentCalloutLineAt, type DocumentCalloutLine } from "./documentCallouts";
 import { normalizeSelection } from "./wrapRange";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 export type FormSettings = Pick<PluginSettings, "headingCallouts" | "inlineCallouts">;
 
@@ -185,7 +186,7 @@ export const chooseInsertForm = (editor: Editor, settings: FormSettings): Callou
 const writeForm = (editor: Editor, form: CalloutForm, block: () => boolean): boolean => {
 	if (form.kind === "block") return block();
 	if (form.kind === "headingAlreadyCallout") {
-		new Notice(t("notice.headingAlreadyCallout"));
+		showNotice("upToDate", t("notice.headingAlreadyCallout"));
 		return false;
 	}
 	const text = editor.getLine(form.line);

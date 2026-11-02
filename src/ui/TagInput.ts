@@ -25,10 +25,11 @@
  * one ID is required"). Notes, which are not problems ("On save, "test"
  * moves here…"), go UNDER THE LABEL in the muted colour, as more description.
  */
-import { Notice, setIcon } from "obsidian";
+import { setIcon } from "obsidian";
 import { MAX_TAGS_COUNT } from "../constants";
 import { sanitizeCalloutIdInput } from "../utils/calloutId";
 import { t } from "../i18n";
+import { showNotice } from "./mascot/mascotNotices";
 
 /**
  * What a message line shows: plain words, or a renderer that fills the line
@@ -509,7 +510,7 @@ export class TagInput {
 
 	/** The Notice a press on the pinned pill's lock (or Backspace on it) shows. */
 	private explainPinned(): void {
-		new Notice(t("editor.idCannotDelete"));
+		showNotice("blocked", t("editor.idCannotDelete"));
 	}
 
 	/**

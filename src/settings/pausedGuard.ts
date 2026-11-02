@@ -7,12 +7,12 @@
  * setup or imports one — those would half-happen, or look done and vanish. The
  * callout editor's Save already refuses; the other destructive actions ask here.
  */
-import { Notice } from "obsidian";
 import { t } from "../i18n";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 /** True, after telling the user why, when saving is paused. */
 export function blockedWhilePaused(writer: { isFrozen: boolean }): boolean {
 	if (!writer.isFrozen) return false;
-	new Notice(t("notice.blockedWhilePaused"), 10000);
+	showNotice("paused", t("notice.blockedWhilePaused"));
 	return true;
 }

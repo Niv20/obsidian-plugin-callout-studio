@@ -9,7 +9,7 @@
  * Used by the fixed commands (through smartCallout.ts and unwrapAnyCallout.ts,
  * which pick the format), the Quick insert window and user-built commands.
  */
-import { Editor, Notice } from "obsidian";
+import { Editor } from "obsidian";
 import type { EditorPosition } from "obsidian";
 import { t } from "../i18n";
 import type { CalloutDefinition } from "../types";
@@ -35,6 +35,7 @@ import {
 } from "./quotePrefix";
 import { appendAfterFrontmatter, findFrontmatterEnd } from "./frontmatter";
 import { planWrap } from "./wrapRange";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 interface CalloutBlockInfo {
 	headerLine: number;
@@ -195,7 +196,7 @@ export const wrapSelectionInCallout = (
 	options?: { requireSelection?: boolean; def?: CalloutDefinition; foldMark?: "" | "+" | "-" },
 ): boolean => {
 	if (editor.lineCount() === 0) {
-		new Notice(t("notice.nothingToWrap"));
+		showNotice("notFound", t("notice.nothingToWrap"));
 		return false;
 	}
 
@@ -216,7 +217,7 @@ export const wrapSelectionInCallout = (
 		selectionPresent,
 	);
 	if (!plan) {
-		new Notice(t("notice.nothingToWrap"));
+		showNotice("notFound", t("notice.nothingToWrap"));
 		return false;
 	}
 
@@ -543,7 +544,7 @@ export const unwrapCalloutAtSelection = (editor: Editor): boolean => {
 	const fences = collectFenceBlocks(editor);
 	const block = findContainingCallout(editor, fences, currentLine);
 	if (!block) {
-		new Notice(t("notice.cursorNotInsideCallout"));
+		showNotice("notFound", t("notice.cursorNotInsideCallout"));
 		return false;
 	}
 

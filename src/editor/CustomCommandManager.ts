@@ -16,7 +16,7 @@
  * Rename is the one thing a sweep genuinely cannot infer, since the old id is
  * simply gone; `migrateCalloutId()` is called from the rename site itself.
  */
-import { Notice, type Editor, type Plugin } from "obsidian";
+import { type Editor, type Plugin } from "obsidian";
 import { t } from "../i18n";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import type { CustomCommand, PluginSettings } from "../types";
@@ -39,6 +39,7 @@ import {
 	wrapSelectionInCallout,
 } from "./CalloutBlockTools";
 import { isGeneratedTitle } from "./calloutWriter";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 /** Everything the manager needs from the plugin, structurally. */
 export type CustomCommandHostPlugin = Plugin & {
@@ -221,7 +222,7 @@ export class CustomCommandManager {
 		if (!def) {
 			// The callout vanished without the registry announcing it. Tell the
 			// user why nothing happened, then converge.
-			new Notice(t("notice.customCommandMissingCallout"));
+			showNotice("notFound", t("notice.customCommandMissingCallout"));
 			this.syncAll();
 			return;
 		}

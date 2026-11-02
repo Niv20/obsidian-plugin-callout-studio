@@ -59,8 +59,6 @@ export const en: Record<string, string> = {
 	"saveStatus.writeSpace": "The settings file could not be saved because storage is full or its quota was exceeded. Free some space, then retry.",
 	"saveStatus.notesFailed": "The callout definition was saved, but some note updates could not be completed. Keep this editor open and choose Save to retry the unfinished updates.",
 	"saveStatus.write": "The settings file could not be saved. Check available storage, folder permissions and synchronization, then retry before closing Obsidian.",
-	// Shown only through settingsSaveMessage(), which reads this English table
-	// directly, so rewording it here cannot leave a stale translation on screen.
 	"saveStatus.changed": "The settings file changed while you were editing. Your draft is still available. Choose Try again to load the incoming settings, then review your draft and save again.",
 	"saveStatus.syncConflict": "Incoming settings conflict with a callout needed for unfinished note updates. Your draft and pending updates have been kept. Resolve the conflicting settings before retrying.",
 	"saveStatus.titlePaused": "Saving is paused",
@@ -399,7 +397,6 @@ export const en: Record<string, string> = {
 		"We noticed you are using {{plugins}}. Would you like to import your callouts?",
 	"importBanner.action": "Import",
 	"importBanner.dismiss": "Dismiss",
-	"welcome.previewTitle": "See it in action",
 	"welcome.demoName": "Callout Studio",
 	// `{{id}}` is the demo callout the splash styles itself with, so the three
 	// examples cannot be hijacked by a theme that restyles `tip` or `warning`
@@ -419,15 +416,18 @@ export const en: Record<string, string> = {
 
 	// Delete-callout confirmation. Delete only ever removes the definition;
 	// turning the notes into plain text is the separate convert action below.
-	"deleteModal.title": 'Delete callout "{{name}}"?',
+	"deleteModal.title": "Delete callout",
 	"deleteModal.bodyInUse":
 		"This callout appears {{count}} time(s) across {{files}} file(s).",
 	"deleteModal.notesUntouched":
 		"This deletes only the callout definition. Your notes are not touched, so existing callouts will just fall back to the default style.",
 	"deleteModal.fallbackTarget":
-		"It is also your default fallback callout, so callouts without a style of their own will switch to {{fallback}}.",
+		"Callouts without a style of their own will switch to {{fallback}}.",
+	// The second line when the callout is also the default fallback.
+	"deleteModal.subtitleFallback": "“{{name}}” · your default fallback",
 	// Convert-uses confirmation (the ⋯ menu's "Convert uses to plain text")
-	"convertModal.title": 'Convert "{{name}}" to plain text?',
+	"convertModal.title": "Convert to plain text",
+	"convertModal.subtitle": "Every “{{name}}” in your vault",
 	"convertModal.explain":
 		"Each one becomes ordinary text: the title and content stay, only the callout formatting goes.",
 	"convertModal.typeStays": "The callout type itself stays in your list.",
@@ -542,8 +542,9 @@ export const en: Record<string, string> = {
 	"settings.paletteCount": "{{count}} palettes",
 	"settings.paletteCountOne": "1 palette",
 	"settings.editPaletteAria": "Edit palette {{name}}",
-	"settings.deletePaletteConfirm":
-		'Delete palette "{{name}}"?\nCallouts that use its colors are not affected.',
+	"settings.deletePaletteTitle": "Delete palette",
+	"settings.deletePaletteBody":
+		'Callouts that use its colors are not affected.',
 	"settings.deletePaletteMetadataNoteBuiltIn":
 		'Callouts that name it in their metadata ("{{key}}") take the built-in color of that name instead. Your notes are not changed.',
 
@@ -564,8 +565,7 @@ export const en: Record<string, string> = {
 	"commandBuilder.empty": "No custom commands yet.",
 	"commandBuilder.unknownCommand": "this command",
 	"commandBuilder.editAria": "Edit {{name}}",
-	"commandBuilder.deleteConfirm":
-		"Delete the command {{name}}? Any shortcut assigned to it will stop working.",
+	"commandBuilder.deleteConfirm": "Any shortcut assigned to it will stop working.",
 	"commandBuilder.newTitle": "New command",
 	"commandBuilder.editTitle": "Edit command",
 	"commandBuilder.format": "Callout format",
@@ -715,8 +715,10 @@ export const en: Record<string, string> = {
 	"notice.resetAllDone": "Everything has been reset to defaults.",
 	// The confirmation lists what this vault would lose, one bullet per kind,
 	// the number first; a bullet with nothing behind it is left out.
-	"settings.resetIntro":
-		"Take a moment to appreciate everything you've built with Callout Studio.",
+	// The question's second line: the first when something is deleted, the second
+	// when only settings go back to their defaults.
+	"settings.resetIntro": "Take a moment to appreciate what you've built",
+	"settings.resetSubtitleDefaults": "Your settings go back to their defaults",
 	"settings.resetDeletes": "All of it is about to be deleted:",
 	"settings.resetRestores": "This goes back to its defaults:",
 	"settings.resetItemCallouts": "{{count}} custom callout type(s)",
@@ -1281,8 +1283,9 @@ export const en: Record<string, string> = {
 	"iconLibraries.inUseMore": "and {{count}} more",
 	"iconLibraries.inUseKeeps":
 		"They keep their icons — a copy of each is saved with your settings. To choose new icons from {{name}} later, download it again.",
+	"iconLibraries.resetSubtitle": "Back to the plugin's original libraries",
 	"iconLibraries.resetConfirm":
-		"This puts the libraries back the way the plugin came: the default order, nothing hidden, and none of the downloaded libraries. These will be deleted:",
+		"Default order, nothing hidden, and none of the downloaded libraries. These will be deleted:",
 	"iconLibraries.resetKeeps":
 		"Callouts that already use their icons keep them. To choose new icons from these libraries later, download them again.",
 	"iconLibraries.resetButton": "Reset",
@@ -1354,25 +1357,30 @@ export const en: Record<string, string> = {
 	"confirm.ok": "Delete",
 	"confirm.cancel": "Cancel",
 	"confirm.acknowledge": "I have read and understood",
+	// The heading's second line when it is just the name of the item the question is
+	// about: in quotes, so it reads as a name and not as our words. The quotes live
+	// here, not in the code, so each language can use its own.
+	"confirm.subtitleName": "“{{name}}”",
 	// Headings for each confirmation — every window carries one, so each
 	// caller of ConfirmModal names what it is about to do.
 	"confirm.titleDeleteCommand": "Delete command",
 	"confirm.titleResetEverything": "Reset everything",
 	"confirm.titleReplaceUnreadable": "Replace settings file",
+	"confirm.subtitleReplaceUnreadable": "An exact copy is saved first",
 	"confirm.replaceUnreadable":
-		"An exact copy of the current file is saved to the plugin's backups folder first. The file is then replaced with the setup shown here, and your sync service sends it to your other devices.",
+		"The copy goes to the plugin's backups folder. The file is then replaced with the setup shown here, and your sync service sends it to your other devices.",
 	"confirm.replaceUnreadableSalvage":
 		"An exact copy of the current file is saved to the plugin's backups folder first. The settings inside it are combined with the setup shown here, and the file is rewritten so every device can read it again.",
 	"confirm.titleDiscardRecoveryCopy": "Discard recovery copy",
+	"confirm.subtitleDiscardRecoveryCopy": "Saving is paused on this device",
 	"confirm.discardRecoveryCopy":
-		"This device's recovery copy can't be read, so saving is paused on this device. An exact copy of it is saved to the plugin's backups folder first. It is then replaced with the setup shown here. Your settings file is not changed.",
-	"confirm.titleDeletePalette": "Delete palette",
+		"This device's recovery copy can't be read. An exact copy of it is saved to the plugin's backups folder first. It is then replaced with the setup shown here. Your settings file is not changed.",
 	"confirm.titleDeleteImage": "Delete image",
 	"confirm.titleDeleteLibrary": "Delete icon library",
 	"confirm.titleResetLibraries": "Reset icon libraries",
 	"confirm.titleOverwriteSnippet": "Overwrite CSS snippet",
-	"confirm.overwriteSnippet":
-		"The CSS snippet in your snippets folder has changed since Callout Studio wrote it. Exporting again replaces the whole file.",
+	"confirm.subtitleOverwriteSnippet": "Edited since Callout Studio wrote it",
+	"confirm.overwriteSnippet": "Exporting again replaces the whole file.",
 	"confirm.overwriteSnippetOk": "Overwrite",
 	"confirm.titleRestoreSettings": "Restore these settings",
 	"confirm.titleCreateSettingsFile": "Create settings file",
@@ -1674,10 +1682,10 @@ export const en: Record<string, string> = {
 	// with the plugin's version and project links.
 	"settings.about": "About",
 	"settings.version": "Version",
-	"settings.deletePaletteConfirmLinkedOne":
-		'Delete palette "{{name}}"?\n1 callout uses it. It keeps its colors, and you can reconnect it later from the Color row in its editor.',
-	"settings.deletePaletteConfirmLinked":
-		'Delete palette "{{name}}"?\n{{count}} callouts use it. They keep their colors, and you can reconnect them later from the Color row in any of their editors.',
+	"settings.deletePaletteBodyLinkedOne":
+		'1 callout uses it. It keeps its colors, and you can reconnect it later from the Color row in its editor.',
+	"settings.deletePaletteBodyLinked":
+		'{{count}} callouts use it. They keep their colors, and you can reconnect them later from the Color row in any of their editors.',
 	"notice.palettesMerged":
 		"Merged {{count}} saved color(s) that had identical colors: {{names}}. The callouts using them keep their colors and are now linked to the color that remains.",
 	"editor.colorsDescDeleted":

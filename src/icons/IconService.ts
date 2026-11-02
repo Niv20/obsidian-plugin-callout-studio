@@ -14,7 +14,6 @@
  * second device that synced the settings but never downloaded the pack, and
  * what makes it survive someone deleting the pack file.
  */
-import { Notice } from "obsidian";
 import type { App, PluginManifest } from "obsidian";
 import type { CalloutIcon, CalloutRenderRole, IconPackId, IconSourceId } from "../types";
 import { copyIconPackArtwork, isIconFullyCached } from "./iconArtworkCache";
@@ -27,6 +26,7 @@ import { PackDataStore } from "./PackDataStore";
 import { createIconResolver } from "./resolver";
 import { packFor } from "./registry";
 import type { IconResolver } from "./types";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 interface IconServiceHost {
 	app: App;
@@ -316,7 +316,8 @@ export class IconService implements IconResolver {
 		// already announced itself — a per-icon Notice from the fetch manager,
 		// or an error icon on the row via `hasFailed`.
 		if (restored.size > 0) {
-			new Notice(
+			showNotice(
+				"success",
 				t("iconPack.artworkRestored", {
 					names: [...restored].join(", "),
 				}),

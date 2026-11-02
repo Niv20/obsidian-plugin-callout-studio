@@ -1,6 +1,7 @@
 import { Notice } from "obsidian";
 import { SettingsPersistenceError, type SettingsSaveStatus } from "./settingsSaveStatus";
 import { settingsSaveMessage } from "./settingsSaveMessage";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 interface SaveFeedbackHost {
 	status?: SettingsSaveStatus;
@@ -16,7 +17,7 @@ export function reportSettingsSaveFailure(host: SaveFeedbackHost, error?: unknow
 	const previous = reports.get(host);
 	if (previous?.message === message && Date.now() - previous.at < 10000) return;
 	clearSettingsSaveFailure(host);
-	const report: Report = { notice: new Notice(message, 10000), message, at: Date.now() };
+	const report: Report = { notice: showNotice("problem", message), message, at: Date.now() };
 	reports.set(host, report);
 	report.unsubscribe = host.status?.subscribe(() => {
 		if (!host.status?.reason) clearSettingsSaveFailure(host);

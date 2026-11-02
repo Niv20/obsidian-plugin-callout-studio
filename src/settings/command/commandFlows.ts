@@ -83,8 +83,8 @@ export async function deleteCommand(app: App, host: CommandBuilderHost, command:
 	const ok = await new ConfirmModal(
 		app,
 		t("confirm.titleDeleteCommand"),
-		t("commandBuilder.deleteConfirm", { name }),
-	).confirm();
+		t("commandBuilder.deleteConfirm"),
+	).withMascot(t("confirm.subtitleName", { name })).confirm();
 	if (!ok) return false;
 	await host.customCommands.remove(command.id);
 	return true;

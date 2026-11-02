@@ -19,7 +19,9 @@
  * Obsidian hides a notice on any click on it, the button included, so the
  * action always runs with the notice already gone.
  */
-import { Notice } from "obsidian";
+import type { Notice } from "obsidian";
+import { showNotice, type NoticeKind } from "./mascot/mascotNotices";
+import { ACTION_NOTICE_MS } from "./noticeDuration";
 
 /** The one thing a notice offers to do. */
 export interface NoticeAction {
@@ -36,15 +38,19 @@ export interface ActionNotice {
 }
 
 /**
- * Show `message` with one action button under it.
+ * Show `message` with one action button under it, the mascot beside the words
+ * like in every notice of the plugin (ui/mascot/mascotNotices.ts).
  *
+ * @param kind What the notice tells the user, which decides what the mascot does
+ *   (ui/mascot/mascotNotices.ts).
  * @param message The notice's sentence.
  * @param action The button's words and what it does.
  * @param duration How long the notice stays, in milliseconds; 0 keeps it up
- *   until it is clicked or hidden. Left out, Obsidian's default.
+ *   until it is clicked or hidden. Left out, a notice with a button stays
+ *   {@link ACTION_NOTICE_MS}, long enough to read it and reach for the button.
  */
-export function showActionNotice(message: string, action: NoticeAction, duration?: number): ActionNotice {
-	const notice = new Notice(message, duration);
+export function showActionNotice(kind: NoticeKind, message: string, action: NoticeAction, duration: number = ACTION_NOTICE_MS): ActionNotice {
+	const notice = showNotice(kind, message, duration);
 	const buttonEl = notice.containerEl
 		.createDiv({ cls: "notice-button-container" })
 		.createDiv({

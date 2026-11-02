@@ -170,6 +170,8 @@ describe("My callout types", () => {
 		await noticesDuring(async () => {
 			harness.rows().find((row) => row.def.id === CALLOUT_PAGES.scanRow)!.settingEl.click();
 			assert.equal(scanName(), t("manualDiscovery.scanning"));
+			// The scan starts once "Scanning…" has been drawn, one wait later.
+			await new Promise((resolve) => setImmediate(resolve));
 			finishScan(0);
 			for (let i = 0; i < 5; i++) await Promise.resolve();
 		});

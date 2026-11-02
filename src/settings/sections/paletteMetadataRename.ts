@@ -21,7 +21,7 @@
  * Deleting a palette makes no such offer, by the rule every Delete here
  * follows: it removes a definition and never touches a note.
  */
-import { Notice, type App } from "obsidian";
+import { type App } from "obsidian";
 import { t } from "../../i18n";
 import type { CustomPalette } from "../../types";
 import { entryWords, foldMetadataCase, metadataColorEntries } from "../../utils/calloutMetadata";
@@ -33,6 +33,7 @@ import { NoteRewriteJournal } from "../../utils/noteRewriteUndo";
 import { noticeWithUndo } from "../rewriteUndoNotice";
 import { PaletteNotesModal, type PaletteNotesModalInput } from "../PaletteNotesModal";
 import type { MetadataWordSource } from "../../manager/theme/ThemeMetadataCatalog";
+import { showNotice } from "../../ui/mascot/mascotNotices";
 
 /**
  * The word a saved palette answers to in metadata right now — `""` when its
@@ -149,6 +150,6 @@ export async function applyMetadataRename(app: App, rename: MetadataRename): Pro
 		noticeWithUndo(app, t("vault.filesUpdated", { count: String(updated) }), journal);
 	} catch (error) {
 		console.warn("[callout-studio] rewriting a palette's metadata uses was incomplete", error);
-		new Notice(t("palette.renameNotesFailed"), 10000);
+		showNotice("warning", t("palette.renameNotesFailed"));
 	}
 }

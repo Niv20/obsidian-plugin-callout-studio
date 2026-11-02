@@ -20,11 +20,23 @@ File identity, modification time, size, Markdown-file membership and the theme's
 usable declared ids are checked. A failure, added/changed/deleted/renamed note or
 changed theme-id set cancels the whole pass. Settings and all scan inputs are
 checked after scanning and again after the asynchronous disk freshness check,
-immediately before the write. Theme attribute values that cannot form a Markdown
+immediately before the write (only the settings and the theme there when the
+caller waited, see below). Theme attribute values that cannot form a Markdown
 callout token (including brackets, metadata pipes and CSS escapes) are skipped.
 A successful save precedes the one registry batch that publishes the new rows.
 Failed saves leave no partial rows. Another click joins the same promise;
 unloading invalidates the scan.
+
+`run(beforeSave?)` awaits `beforeSave` once every note is read, before the new
+rows are staged, saved and published. The settings use it to take **Scanning…**
+away first, since that work holds the page for most of a second when hundreds of
+rows are new ([chapter 16](16-settings-ui-and-modals.md#scan-for-callouts)). The
+notes are checked once, before the wait: it is the notice staying up for at
+least two seconds, not reading, and a note that a sync service or another
+plugin touches meanwhile does not make what was read wrong (a scan only adds
+types). After the wait, and again before the write, only the settings and the
+theme's ids are checked, so a settings edit made during it still cancels the
+scan. A call that joins a running scan is not heard.
 
 A local edit during an already-started write keeps priority: publication skips
 ids/aliases it has since claimed, and uses the latest fallback selection and

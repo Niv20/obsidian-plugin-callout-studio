@@ -30,11 +30,22 @@
  * "Don't ask again" (finding S9-07), and keeps the confirm button locked until
  * it is ticked. Pressing the locked button shakes and reddens the label (see
  * `.cs-nudge`) and leaves the dialog open.
+ *
+ * `withMascot(subtitle)`, asked for by the deletes and the resets, gives the
+ * question a two-line heading with the worried brush mascot beside it: the
+ * title, and under it `subtitle`, which says which one it is (the name of the
+ * item, in quotes) or what it costs (a short sentence of ours). The message
+ * stands below the heading at the window's full width. The subtitle is a
+ * required argument, so a question with the mascot cannot go without one. On a
+ * phone there is no mascot (a finger has no hover, so it could only be scared,
+ * and it would take a row of a narrow sheet): the same two lines stand at the
+ * start edge (ui/mascot/mascotPlaces.ts, `addConfirmMascot`; styles.css).
  */
-import { ConfirmationModal } from "obsidian";
+import { ConfirmationModal, Platform } from "obsidian";
 import type { App } from "obsidian";
 import { t } from "../i18n";
 import { markStackedWindow, scrollBodyOnly } from "../settings/modalChrome";
+import { addConfirmMascot } from "../ui/mascot/mascotPlaces";
 
 export type ConfirmKind = "destructive" | "cta";
 
@@ -48,6 +59,12 @@ export class ConfirmModal extends ConfirmationModal {
 	private acknowledgeEl: HTMLElement | null = null;
 	/** Whether the acknowledgement is ticked (always true when none is asked). */
 	private acknowledged = true;
+	/** The heading's second line, when the question carries the brush mascot. */
+	private subtitle: string | null = null;
+	/** The subtitle's element, once the heading is built. */
+	private subtitleEl: HTMLElement | null = null;
+	/** Takes the mascot down again when the window closes. */
+	private endMascot: () => void = () => {};
 
 	constructor(
 		app: App,
@@ -59,6 +76,18 @@ export class ConfirmModal extends ConfirmationModal {
 		private acknowledgement?: string,
 	) {
 		super(app);
+	}
+
+	/**
+	 * Give the question the brush mascot and the heading's second line.
+	 * `subtitle` is already translated: the name of the item the question is
+	 * about, in quotes (`confirm.subtitleName`), or a short sentence saying what
+	 * it costs. Call it before `confirm()`; it returns the modal, so the two
+	 * chain: `new ConfirmModal(…).withMascot(t("…")).confirm()`.
+	 */
+	withMascot(subtitle: string): this {
+		this.subtitle = subtitle;
+		return this;
 	}
 
 	/** Ask, and resolve with the answer once the dialog closes. */
@@ -107,6 +136,32 @@ export class ConfirmModal extends ConfirmationModal {
 			});
 		});
 		this.lock(!this.acknowledged);
+		// The title's parent is the window's header row: the subtitle goes under
+		// the title, and the mascot (not on a phone) joins it at the start.
+		const header = this.titleEl.parentElement;
+		if (this.subtitle !== null && header) {
+			header.addClass("cs-confirm-heading");
+			this.subtitleEl = header.createDiv({ cls: "cs-confirm-subtitle", text: this.subtitle });
+			if (!Platform.isPhone) this.endMascot = addConfirmMascot(header, () => this.mascotControls());
+		}
+	}
+
+	/**
+	 * What the mascot reacts to: the bar's two buttons (Cancel is the one that
+	 * is not the confirm button) and the window's ✕, which closes it just as
+	 * Cancel does. The ✕ is `.modal-header-button`, made with the window
+	 * (app.js 1.14.5); `.modal-close-button` is an older name that Obsidian's
+	 * stylesheet still lists but its windows no longer carry. (Not named
+	 * `buttons`: Obsidian's own `ConfirmationModal` keeps a `buttons` list on
+	 * every dialog, which would hide a method of that name.)
+	 */
+	private mascotControls(): { confirm: HTMLElement | null; cancel: HTMLElement | null; close: HTMLElement | null } {
+		const all = Array.from(this.buttonContainerEl.querySelectorAll<HTMLElement>("button"));
+		return {
+			confirm: this.confirmEl,
+			cancel: all.find((button) => button !== this.confirmEl) ?? null,
+			close: this.modalEl.querySelector<HTMLElement>(".modal-header-button"),
+		};
 	}
 
 	/**
@@ -158,6 +213,9 @@ export class ConfirmModal extends ConfirmationModal {
 		// Obsidian's own clean-up for the dialog first.
 		super.onClose();
 		if (!this.resolved) this.resolve(false);
+		this.endMascot();
+		this.subtitleEl?.remove();
+		this.titleEl.parentElement?.removeClass("cs-confirm-heading");
 		this.contentEl.empty();
 	}
 }

@@ -1,8 +1,9 @@
-import { Notice, type App, type Plugin } from "obsidian";
+import { type App, type Plugin } from "obsidian";
 import { t } from "../i18n";
 import type { CalloutRenderRole } from "../types";
 import type { CalloutRegistry } from "../manager/CalloutRegistry";
 import { CALLOUT_OCCURRENCES_VIEW, CalloutOccurrencesView } from "./CalloutOccurrencesView";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 const registeredViews = new WeakSet<Plugin>();
 
@@ -55,6 +56,6 @@ export async function openCalloutOccurrences(
 		});
 		await app.workspace.revealLeaf(leaf);
 	} catch {
-		new Notice(t("usage.openFailed"));
+		showNotice("problem", t("usage.openFailed"));
 	}
 }

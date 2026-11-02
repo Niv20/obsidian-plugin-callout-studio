@@ -142,29 +142,28 @@ export async function deletePalette(
 ): Promise<void> {
 	const ok = await new ConfirmModal(
 		ctx.app,
-		t("confirm.titleDeletePalette"),
+		t("settings.deletePaletteTitle"),
 		deletePaletteQuestion(ctx.plugin, palette),
-	).confirm();
+	).withMascot(t("confirm.subtitleName", { name: palette.name })).confirm();
 	if (!ok) return;
 	ctx.plugin.registry.removePalette(palette.id);
 	await ctx.plugin.saveSettings();
 	redraw();
 }
 
-/** What the delete question says about `palette`. */
+/**
+ * What the delete window says under its title (`Delete palette "X"?`) about
+ * `palette`.
+ */
 function deletePaletteQuestion(plugin: SettingsTabPlugin, palette: CustomPalette): string {
 	// The callouts keep their colors either way — what deletion costs them
 	// is the link, so the count is the honest thing to put in front of the
 	// user before they confirm.
 	const linked = plugin.registry.countPaletteLinks(palette.id);
 	const base =
-		linked === 0 ? t("settings.deletePaletteConfirm", { name: palette.name })
-		: linked === 1 ?
-			t("settings.deletePaletteConfirmLinkedOne", { name: palette.name })
-		:	t("settings.deletePaletteConfirmLinked", {
-				name: palette.name,
-				count: linked,
-			});
+		linked === 0 ? t("settings.deletePaletteBody")
+		: linked === 1 ? t("settings.deletePaletteBodyLinkedOne")
+		: t("settings.deletePaletteBodyLinked", { count: linked });
 	// What happens to `[!type|its-word]` in notes: nothing, by design.
 	// Only the case that is not obvious is said: a palette named "Pink"
 	// was holding the word of a built-in colour, which takes over again.

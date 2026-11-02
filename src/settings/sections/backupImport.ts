@@ -10,7 +10,6 @@
  * anything changes, and the valid entries are merged into the setup, after a
  * backup of it is written.
  */
-import { Notice } from "obsidian";
 import { t } from "../../i18n";
 import { ConfirmModal } from "../../utils/ConfirmModal";
 import { ImportReportModal } from "../../utils/ImportReportModal";
@@ -23,6 +22,7 @@ import { addImportedCallout, applyImportedCallout } from "../../utils/importedCa
 import { writeSettingsBackup } from "../../manager/settingsBackup";
 import { blockedWhilePaused } from "../pausedGuard";
 import type { SettingsContext } from "./types";
+import { showNotice } from "../../ui/mascot/mascotNotices";
 
 /**
  * Parses and applies a Callout Studio JSON export. Takes an already-chosen
@@ -104,7 +104,7 @@ export async function processImportedJSON(
 	if (blockedWhilePaused(ctx.plugin.settingsWriter)) return;
 	// Same-id callouts and whole setting groups are replaced: keep a way back.
 	if (!await writeSettingsBackup(ctx.plugin, ctx.plugin.registry.toSaveData(), { reason: "before-import" })) {
-		new Notice(t("import.backupFailed"), 10000);
+		showNotice("problem", t("import.backupFailed"));
 		return;
 	}
 
@@ -171,12 +171,12 @@ export async function processImportedJSON(
 				// dropped id are re-pointed, so nothing is orphaned by the merge.
 				const merges = ctx.plugin.registry.consolidateDuplicatePalettes();
 				if (merges.length > 0) {
-					new Notice(
+					showNotice(
+						"success",
 						t("notice.palettesMerged", {
 							count: merges.length,
 							names: merges.map((m) => m.from).join(", "),
 						}),
-						10000,
 					);
 				}
 			}
@@ -204,21 +204,22 @@ export async function processImportedJSON(
 	// reports what reached the file rather than what the registry holds.
 	await ctx.plugin.saveSettings();
 	if (ctx.plugin.settingsWriter.persists?.(ctx.plugin.registry.toSaveData()) === false) {
-		new Notice(t("import.notSaved"), 10000);
+		showNotice("problem", t("import.notSaved"));
 		ctx.redraw();
 		return;
 	}
 
 	if (imported > 0) {
 		if (overwritten > 0) {
-			new Notice(
+			showNotice(
+				"celebrate",
 				t("settings.importConflictNotice", {
 					count: imported,
 					overwritten,
 				}),
 			);
 		} else {
-			new Notice(t("notice.importedJSON", { count: imported }));
+			showNotice("celebrate", t("notice.importedJSON", { count: imported }));
 		}
 		ctx.redraw();
 		// An imported callout can name an icon from a source this vault has
@@ -230,10 +231,10 @@ export async function processImportedJSON(
 			defs.filter((d) => d.hideIcon !== true).map((d) => d.icon),
 		);
 	} else if (settingsImported) {
-		new Notice(t("notice.importedSettings"));
+		showNotice("celebrate", t("notice.importedSettings"));
 		ctx.redraw();
 	} else {
-		new Notice(t("notice.noNewJSON"));
+		showNotice("upToDate", t("notice.noNewJSON"));
 	}
 }
 

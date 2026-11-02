@@ -7,7 +7,7 @@
  * real-Obsidian live preview via LiveCalloutPreview. Save logic is delegated to
  * CalloutEditorSave; validation to CalloutEditorValidation.
  */
-import { Modal, Notice, Setting, SettingGroup, setIcon } from "obsidian";
+import { Modal, Setting, SettingGroup, setIcon } from "obsidian";
 import type { TextComponent, ToggleComponent } from "obsidian";
 import type {
 	BgGradient,
@@ -93,6 +93,7 @@ import { patternMatches } from "../manager/theme/themeClaimLookup";
 import type { PatternOp } from "../manager/theme/themeCalloutScan";
 import { calloutIdentity, obsidianCalloutAttrId } from "../utils/calloutId";
 import { cancelFrame, requestFrameFor, type FrameHandle } from "../utils/elementFrame";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 // Derive a callout ID from the display name. Spaces are preserved (the ID may
 // be a human-readable, multi-word label like "multi word callout"); the shared
@@ -1755,37 +1756,37 @@ export class CalloutEditor extends Modal {
 			requireDisplayName &&
 			!this.displayName.trim()
 		) {
-			new Notice(t("editor.nameRequired"));
+			showNotice("blocked", t("editor.nameRequired"));
 			return;
 		}
 
 		if (this.existingId && !hasChanges) {
-			new Notice(t("editor.noChangesToSave"));
+			showNotice("upToDate", t("editor.noChangesToSave"));
 			return;
 		}
 
 		if (!this.calloutId) {
-			new Notice(t("editor.idEmpty"));
+			showNotice("blocked", t("editor.idEmpty"));
 			return;
 		}
 
 		if (!this.canUseCalloutId(this.calloutId, "primary")) {
-			new Notice(t("editor.idConflict"));
+			showNotice("blocked", t("editor.idConflict"));
 			return;
 		}
 		const primaryClash = this.findAttrIdCollision(this.calloutId);
 		if (primaryClash) {
-			new Notice(t("editor.idDashConflict", { other: primaryClash }));
+			showNotice("blocked", t("editor.idDashConflict", { other: primaryClash }));
 			return;
 		}
 		for (const alias of this.aliases) {
 			if (!this.canUseCalloutId(alias, "alias")) {
-				new Notice(t("editor.idConflict"));
+				showNotice("blocked", t("editor.idConflict"));
 				return;
 			}
 			const aliasClash = this.findAttrIdCollision(alias);
 			if (aliasClash) {
-				new Notice(t("editor.idDashConflict", { other: aliasClash }));
+				showNotice("blocked", t("editor.idDashConflict", { other: aliasClash }));
 				return;
 			}
 		}

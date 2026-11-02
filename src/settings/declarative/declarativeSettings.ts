@@ -21,11 +21,13 @@
  * - **the visit**: Obsidian has no "the tab opened" hook, so a row with
  *   nothing on screen, drawn on every opening of the main page, starts one
  *   (one version in the history per visit, the theme's styles switch in the
- *   settings window, Escape for the plugin's own pickers). `hide()` ends it.
+ *   settings window, Escape for the plugin's own pickers, the brush mascot of
+ *   an empty list). `hide()` ends it.
  */
 import type { App } from "obsidian";
 import { getLocale } from "../../i18n";
 import { registerMenuScopeHost } from "../../ui/menuEscape";
+import { watchEmptyListMascots } from "../../ui/mascot/mascotPlaces";
 import { competitorsToOffer } from "../competitorImportBanner";
 import { isRowMenuActive } from "../sections/calloutRowMenu";
 import { calloutListsSignature } from "../sections/calloutListsSignature";
@@ -168,9 +170,13 @@ export class DeclarativeSettings {
 		// Escape closes the plugin's own pickers first, not the settings. On the
 		// content area, not the main page: sub-pages are drawn beside it.
 		const releaseEscape = registerMenuScopeHost(containerEl.parentElement ?? containerEl, app);
+		// An empty list's row carries a place for the brush mascot; bring each
+		// one to life as it is drawn, here or on a sub-page (ui/mascot/mascotPlaces.ts).
+		const stopMascots = watchEmptyListMascots(containerEl.parentElement ?? containerEl);
 		this.endVisit = () => {
 			endHistoryVisit?.();
 			releaseEscape();
+			stopMascots();
 		};
 	}
 

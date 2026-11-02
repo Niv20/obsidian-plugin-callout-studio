@@ -29,15 +29,10 @@
  * a settings row (the ✎ of a callout or a palette).
  */
 import { Notice, type Setting } from "obsidian";
+import { showNotice } from "./mascot/mascotNotices";
 
 /** The explanation still on screen, so pressing again replaces it rather than stacking another. */
 let showing: Notice | null = null;
-
-/**
- * How long a sentence stays up: Obsidian's own five seconds, stretched at about
- * 60 ms a character once the sentence is long enough to need more to read.
- */
-const readingTime = (text: string): number => Math.min(12000, Math.max(5000, text.length * 60));
 
 /**
  * Dim `button` while `reason` is set — and only dim it: it keeps focus and keeps
@@ -56,7 +51,8 @@ export function paintBlocked(button: HTMLElement, reason: string | null): void {
 export function explainIfBlocked(reason: string | null): boolean {
 	if (reason === null) return false;
 	showing?.hide();
-	showing = new Notice(reason, readingTime(reason));
+	// The mascot shakes its head beside the reason (ui/mascot/mascotPlaces.ts).
+	showing = showNotice("blocked", reason);
 	return true;
 }
 

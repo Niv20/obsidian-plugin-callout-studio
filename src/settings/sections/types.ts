@@ -68,7 +68,7 @@ export type SettingsTabPlugin = Plugin & {
 	restyleUncustomizedFallbackRows(): number;
 	ensureIconArtwork(icon: CalloutIcon): Promise<void>;
 	ensureIconArtworkFor(icons: readonly CalloutIcon[]): Promise<void>;
-	runVaultScan(): Promise<number>;
+	runVaultScan(beforeSave?: () => Promise<void>): Promise<number>;
 };
 
 /**

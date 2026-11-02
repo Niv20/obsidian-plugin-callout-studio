@@ -15,7 +15,7 @@
  * one of Obsidian's setting groups, as Import's source chooser draws its
  * sources.
  */
-import { Modal, Notice, SettingGroup } from "obsidian";
+import { Modal, SettingGroup } from "obsidian";
 import { t } from "../i18n";
 import { ConfirmModal } from "../utils/ConfirmModal";
 import {
@@ -27,6 +27,7 @@ import { applyModalChrome } from "./modalChrome";
 import { addChoiceRow, type ChoiceRowSpec } from "./choiceRow";
 import type { SettingsContext } from "./sections/types";
 import { downloadText } from "../utils/downloadText";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 export class ExportFormatModal extends Modal {
 	constructor(private readonly ctx: SettingsContext) {
@@ -104,7 +105,7 @@ async function exportCalloutsCSS(ctx: SettingsContext): Promise<void> {
 			t("confirm.titleOverwriteSnippet"),
 			t("confirm.overwriteSnippet"),
 			t("confirm.overwriteSnippetOk"),
-		).confirm(),
+		).withMascot(t("confirm.subtitleOverwriteSnippet")).confirm(),
 	);
 	announce(ctx, outcome);
 }
@@ -120,19 +121,19 @@ function announce(
 ): void {
 	switch (outcome.status) {
 		case "created":
-			new Notice(t("notice.exportedCssCreated", { path: outcome.path }));
+			showNotice("success", t("notice.exportedCssCreated", { path: outcome.path }));
 			break;
 		case "updated":
-			new Notice(t("notice.exportedCssUpdated", { path: outcome.path }));
+			showNotice("success", t("notice.exportedCssUpdated", { path: outcome.path }));
 			break;
 		case "unchanged":
-			new Notice(t("notice.exportedCssUnchanged"));
+			showNotice("upToDate", t("notice.exportedCssUnchanged"));
 			break;
 		case "empty":
-			new Notice(t("notice.exportCssEmpty"));
+			showNotice("notFound", t("notice.exportCssEmpty"));
 			return;
 		case "failed":
-			new Notice(t("notice.exportCssFailed"));
+			showNotice("problem", t("notice.exportCssFailed"));
 			return;
 		case "cancelled":
 			// The confirmation dialog was the whole interaction; saying
@@ -140,6 +141,6 @@ function announce(
 			return;
 	}
 	if (isSnippetEnabled(ctx.app)) {
-		new Notice(t("notice.exportCssEnabled"));
+		showNotice("info", t("notice.exportCssEnabled"));
 	}
 }

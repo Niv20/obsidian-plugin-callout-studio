@@ -12,7 +12,6 @@
  * nothing at all happens while saving is paused, because a reset that cannot
  * be saved would only look done.
  */
-import { Notice } from "obsidian";
 import { t } from "../i18n";
 import { ConfirmModal } from "../utils/ConfirmModal";
 import { countCalloutUsages } from "../utils/vaultCalloutScanner";
@@ -20,6 +19,7 @@ import { writeSettingsBackup } from "../manager/settingsBackup";
 import { blockedWhilePaused } from "./pausedGuard";
 import { isResetInventoryEmpty, resetInventory, type ResetInventory, type ResetInventoryRow } from "./resetInventory";
 import type { SettingsContext } from "./sections/types";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 /** Ask, then reset everything if the user agrees. */
 export async function confirmAndResetEverything(ctx: SettingsContext): Promise<void> {
@@ -28,7 +28,7 @@ export async function confirmAndResetEverything(ctx: SettingsContext): Promise<v
 	// A second reset in a row, or one on a fresh install: say so rather than
 	// ask for a tick and back up an empty setup.
 	if (isResetInventoryEmpty(inventory)) {
-		new Notice(t("settings.resetNothing"));
+		showNotice("upToDate", t("settings.resetNothing"));
 		return;
 	}
 	await addUsesInNotes(ctx, inventory);
@@ -40,6 +40,9 @@ export async function confirmAndResetEverything(ctx: SettingsContext): Promise<v
 		undefined,
 		undefined,
 		t("confirm.acknowledge"),
+	).withMascot(
+		// Something to lose: the reminder; only settings going back: what happens to them.
+		inventory.deleted.length > 0 ? t("settings.resetIntro") : t("settings.resetSubtitleDefaults"),
 	).confirm();
 	// Saving may have paused while the question was open.
 	if (!confirmed || blockedWhilePaused(ctx.plugin.settingsWriter)) return;
@@ -64,10 +67,8 @@ async function addUsesInNotes(ctx: SettingsContext, inventory: ResetInventory): 
 function resetQuestion(inventory: ResetInventory): DocumentFragment {
 	const question = createFragment();
 	// "All of it" needs an it: with nothing to delete, only the list of
-	// settings going back to their defaults is drawn.
-	if (inventory.deleted.length > 0) {
-		question.createEl("p", { text: t("settings.resetIntro") });
-	}
+	// settings going back to their defaults is drawn. The reminder that used to
+	// open the message is the heading's second line now (see the caller).
 	appendInventoryList(question, "settings.resetDeletes", inventory.deleted);
 	appendInventoryList(question, "settings.resetRestores", inventory.restored);
 	for (const paragraph of t("settings.resetAllConfirmAfter").split(/\n+/)) {
@@ -90,7 +91,7 @@ function appendInventoryList(parent: DocumentFragment, headingKey: string, rows:
 async function resetAfterBackup(ctx: SettingsContext): Promise<void> {
 	const { plugin } = ctx;
 	if (!await writeSettingsBackup(plugin, plugin.registry.toSaveData(), { reason: "before-reset" })) {
-		new Notice(t("settings.resetBackupFailed"), 10000);
+		showNotice("problem", t("settings.resetBackupFailed"));
 		return;
 	}
 	plugin.registry.resetAll();
@@ -98,9 +99,9 @@ async function resetAfterBackup(ctx: SettingsContext): Promise<void> {
 	await plugin.saveSettings();
 	// `?.(…)`: a host without the check (`persists`) counts as saved.
 	if (plugin.settingsWriter.persists?.(plugin.registry.toSaveData()) === false) {
-		new Notice(t("settings.resetNotSaved"), 10000);
+		showNotice("problem", t("settings.resetNotSaved"));
 	} else {
-		new Notice(t("notice.resetAllDone"));
+		showNotice("celebrate", t("notice.resetAllDone"));
 	}
 	ctx.redraw();
 }

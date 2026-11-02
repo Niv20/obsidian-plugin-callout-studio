@@ -8,12 +8,13 @@
  * text through `convertCalloutLine`, the same code **Convert uses to plain
  * text** writes notes with, so the two can never leave different text behind.
  */
-import { Notice, type Editor, type EditorPosition } from "obsidian";
+import { type Editor, type EditorPosition } from "obsidian";
 import { t } from "../i18n";
 import { convertCalloutLine, type Edit } from "../utils/calloutPlainTextLine";
 import { unwrapCalloutAtSelection } from "./CalloutBlockTools";
 import { tokenEnd, type LineCalloutToken } from "./calloutTokens";
 import { documentCalloutLineAt } from "./documentCallouts";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 /**
  * The pill or heading token to take off, or null to fall through to the block
@@ -74,7 +75,7 @@ export const unwrapCalloutAtCursor = (editor: Editor): boolean => {
 	const { lineText: line, tokens, visible, prefix } = lexed;
 	const result = convertCalloutLine({ line, tokens, visible, prefix, take: (token) => token === target });
 	if (result.count === 0) {
-		new Notice(t("notice.unwrapLeftAsIs"));
+		showNotice("problem", t("notice.unwrapLeftAsIs"));
 		return false;
 	}
 

@@ -1,7 +1,8 @@
-import { MarkdownView, Notice, Platform, TFile, type App, type Editor, type EditorPosition, type WorkspaceLeaf } from "obsidian";
+import { MarkdownView, Platform, TFile, type App, type Editor, type EditorPosition, type WorkspaceLeaf } from "obsidian";
 import { t } from "../i18n";
 import { linesOf } from "../editor/calloutExtent";
 import { revealCalloutInEditor } from "../editor/calloutFlash";
+import { showNotice } from "./mascot/mascotNotices";
 
 export interface SidebarSourceRange { from: EditorPosition; to: EditorPosition; }
 export type SidebarSourceSelected = (editor: Editor, range: SidebarSourceRange) => void;
@@ -46,7 +47,7 @@ export function navigateToSidebarResult(
 		// Resolution can yield while reading large notes. Never apply coordinates
 		// to a buffer that changed while it was waiting, even if its line matches.
 		if (!range || view.editor.getValue() !== content) {
-			new Notice(t("usage.changed"));
+			showNotice("notFound", t("usage.changed"));
 			return false;
 		}
 		const drawerClosing = closeSidebarDrawer(app, options.origin);
@@ -67,7 +68,7 @@ async function openSidebarNote(
 		if (!isCurrent()) return false;
 		const file = app.vault.getAbstractFileByPath(path);
 		if (!(file instanceof TFile)) {
-			new Notice(t("usage.missing"));
+			showNotice("notFound", t("usage.missing"));
 			return false;
 		}
 		const workspace = app.workspace;
@@ -93,7 +94,7 @@ async function openSidebarNote(
 		await leaf.loadIfDeferred();
 		if (!isCurrent()) return false;
 		if (!(leaf.view instanceof MarkdownView) || leaf.view.file !== file) {
-			new Notice(t("usage.openFailed"));
+			showNotice("problem", t("usage.openFailed"));
 			return false;
 		}
 		const view = leaf.view;
@@ -105,7 +106,7 @@ async function openSidebarNote(
 		};
 		return await land(view, view.editor.getValue(), stillOpen);
 	} catch {
-		new Notice(t("usage.openFailed"));
+		showNotice("problem", t("usage.openFailed"));
 		return false;
 	}
 }

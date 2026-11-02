@@ -13,13 +13,13 @@
  */
 import { setIcon, type App } from "obsidian";
 import { t } from "../i18n";
-import { en } from "../i18n/en";
 import { reportSettingsSaveFailure } from "../manager/settingsSaveReporter";
 import { settingsSaveMessage } from "../manager/settingsSaveMessage";
 import { confirmFreshStart } from "../manager/settingsNotices";
 import type { SettingsDiagnosis } from "../manager/settingsDiagnosis";
 import type { SettingsWriter } from "../manager/SettingsWriter";
 import { DESTRUCTIVE_BUTTON_CLASSES } from "../ui/destructiveButton";
+import { KeptMascot } from "../ui/mascot/mascotPlaces";
 import { ConfirmModal } from "../utils/ConfirmModal";
 import { diagnosisKey, pausedCopy, type PausedButtons } from "./saveStatusCopy";
 import type { SettingsTabPlugin } from "./sections/types";
@@ -74,8 +74,11 @@ const REPLACEABLE: ReadonlySet<SettingsDiagnosis> = new Set(["empty", "merge-mar
  * Ask, and run `action` only on a yes. Every one of these replaces something,
  * so the yes is red unless `keeps` says the replacement loses nothing.
  */
-async function confirmed(app: App, title: string, body: string, label: string, action: () => Promise<boolean>, keeps = false): Promise<boolean> {
-	return await new ConfirmModal(app, t(title), t(body), t(label), undefined, keeps ? "cta" : "destructive").confirm() ? action() : false;
+async function confirmed(app: App, title: string, body: string, subtitle: string, label: string, action: () => Promise<boolean>, keeps = false): Promise<boolean> {
+	const question = new ConfirmModal(app, t(title), t(body), t(label), undefined, keeps ? "cta" : "destructive");
+	// A red yes is worrying, so the mascot worries with it, as in every other red question.
+	if (!keeps) question.withMascot(t(subtitle));
+	return await question.confirm() ? action() : false;
 }
 
 /** Updates just the banner, preserving the settings page's scroll and form. */
@@ -90,6 +93,12 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 	 */
 	let checkedMissing = false;
 	let diagnosis: SettingsDiagnosis | null = null, diagnosing = false, diagnosed = false;
+	/**
+	 * The brush mascot at the start of the banner's title, in the warning
+	 * triangle's place and orange, kept while the banner is drawn again: standing
+	 * still while saving is paused (calm, nothing is lost), sad when a save failed.
+	 */
+	const mascot = new KeptMascot("notice");
 	const render = () => {
 		if (!active) return;
 		slot.empty();
@@ -110,9 +119,12 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 		// at all, a write failure lost one save — so the title says which rather
 		// than picking one word for both.
 		const header = banner.createDiv({ cls: "cs-readonly-banner-header" });
-		setIcon(header.createSpan({ cls: "cs-readonly-banner-icon" }), "alert-triangle");
+		// The brush stands where the warning triangle would, in the same orange;
+		// where it cannot be drawn the triangle stays.
+		if (!mascot.attach(header, "start")) setIcon(header.createSpan({ cls: "cs-readonly-banner-icon" }), "alert-triangle");
 		const frozen = host.settingsWriter.isFrozen || !!status?.frozenReason;
 		header.createDiv({ cls: "cs-readonly-banner-title", text: t(frozen ? "saveStatus.titlePaused" : "saveStatus.titleFailed") });
+		mascot.setMood(frozen ? "hold" : "sad");
 
 		// Every button this state offers, decided once. The buttons below and the
 		// words above are drawn from the same answers, so the words cannot name a
@@ -153,7 +165,7 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 			if (busy || host.settingsWriter.isDestroyed) return;
 			busy = true; stillMissing = false; render();
 			try {
-				if (!await action() && !host.settingsWriter.status?.reason) reportSettingsSaveFailure(host.settingsWriter, undefined, en["saveStatus.retryFailed"]);
+				if (!await action() && !host.settingsWriter.status?.reason) reportSettingsSaveFailure(host.settingsWriter, undefined, t("saveStatus.retryFailed"));
 			} catch (error) {
 				console.error("[callout-studio] saving recovery action failed", error);
 				reportSettingsSaveFailure(host.settingsWriter, error);
@@ -193,14 +205,14 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 				? async () => ["combined", "readable"].includes(await actions.diagnose!()) && actions.replaceUnreadable!()
 				: actions.replaceUnreadable!;
 			replace.addEventListener("click", () => {
-				void run(() => confirmed(host.app, "confirm.titleReplaceUnreadable", body, "saveStatus.replaceUnreadable", replaceNow, keeps));
+				void run(() => confirmed(host.app, "confirm.titleReplaceUnreadable", body, "confirm.subtitleReplaceUnreadable", "saveStatus.replaceUnreadable", replaceNow, keeps));
 			});
 		}
 		if (buttons.discard) {
 			const discard = actionsEl.createEl("button", { text: t("saveStatus.discardRecoveryCopy"), cls: DESTRUCTIVE_BUTTON_CLASSES });
 			discard.disabled = busy;
 			discard.addEventListener("click", () => {
-				void run(() => confirmed(host.app, "confirm.titleDiscardRecoveryCopy", "confirm.discardRecoveryCopy",
+				void run(() => confirmed(host.app, "confirm.titleDiscardRecoveryCopy", "confirm.discardRecoveryCopy", "confirm.subtitleDiscardRecoveryCopy",
 					"saveStatus.discardRecoveryCopy", actions.discardRecoveryCopy!));
 			});
 		}
@@ -222,5 +234,5 @@ export function renderSaveStatusBanner(host: SaveStatusHost, container: HTMLElem
 	};
 	const unsubscribe = host.settingsWriter.status?.subscribe(render);
 	render();
-	return () => { active = false; unsubscribe?.(); };
+	return () => { active = false; mascot.detach(); unsubscribe?.(); };
 }

@@ -1,4 +1,3 @@
-import { Notice } from "obsidian";
 import { t } from "../i18n";
 import { SettingsPersistenceError, settingsWriteReason } from "./settingsSaveStatus";
 import { reportSettingsSaveFailure } from "./settingsSaveReporter";
@@ -9,6 +8,7 @@ import { PRIMARY_IO_TIMEOUT_MS, readSettingsFile, type SettingsFileHost } from "
 import { withTimeout } from "../utils/withTimeout";
 import { canonical } from "./syncTree";
 import { isUntouchedSettings, settingsGenesis } from "./settingsGenesis";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 export interface SettingsWriterOwner extends SettingsFileHost {
 	registry: { toSaveData(): unknown };
@@ -69,7 +69,7 @@ export function createSettingsWriter(
 		},
 		// Not a failure: the settings file holds every change. Said once, so a
 		// device whose recovery storage is full knows it is less protected.
-		onCheckpointStale: () => { new Notice(t("notice.recoveryCopyStale"), 10000); },
+		onCheckpointStale: () => { showNotice("warning", t("notice.recoveryCopyStale")); },
 	});
 	return writer;
 }
