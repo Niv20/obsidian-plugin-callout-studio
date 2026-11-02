@@ -44,6 +44,31 @@ export function calloutMatchesQuery(
 	);
 }
 
+/**
+ * The id a pick of `def` should be written with, given what was typed to find it.
+ *
+ * `calloutMatchesQuery` finds a callout by its alias, so a pick has to remember
+ * which spelling did the finding: typing `tldr` and choosing the row must write
+ * `[!tldr]`, not the `[!abstract]` the row is stored under. The order is the
+ * typed word in full, then an id or alias it starts, then the primary id — which
+ * is also the answer when only the name matched, or when nothing was typed.
+ *
+ * Shared by the `[!` popover and the quick-insert window, so the two cannot
+ * write different tokens for the same typed word. **`lowerQuery` must already be
+ * lowercased**, as for {@link calloutMatchesQuery}.
+ */
+export function matchedCalloutId(
+	def: Pick<CalloutDefinition, "id" | "aliases">,
+	lowerQuery: string,
+): string {
+	const ids = [def.id, ...(def.aliases ?? [])];
+	return (
+		ids.find((id) => id.toLowerCase() === lowerQuery) ??
+		ids.find((id) => id.toLowerCase().startsWith(lowerQuery)) ??
+		def.id
+	);
+}
+
 /** The four states of the quick-insert window's source filter. */
 export const CALLOUT_SOURCE_FILTERS = [
 	"all",

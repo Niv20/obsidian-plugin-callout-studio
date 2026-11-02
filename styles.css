@@ -4357,23 +4357,18 @@ body:not(.is-phone) .cs-choice-row {
 	min-width: 150px;
 }
 
+/* The source filter is a funnel: an icon button at the end of the search row,
+   as the format filter is beside Find callouts' type field. It keeps its own
+   size and the search field takes the rest, on a phone too, where the funnel
+   costs 30px instead of a second full-width row. */
 .cs-quick-insert-toolbar .cs-select-dropdown {
-	flex-shrink: 0;
-	max-width: 100%;
+	flex: none;
 }
 
-.cs-quick-insert-filter {
-	max-width: 100%;
-}
-
-/* Both controls take the full row on a phone, where 150px of search plus a
-   dropdown does not fit side by side. */
-@media (max-width: 600px) {
-	.cs-quick-insert-search-field,
-	.cs-quick-insert-toolbar .cs-select-dropdown {
-		flex-basis: 100%;
-		min-width: 100%;
-	}
+/* Lit, in Obsidian's active icon colour, while the list is narrowed to one
+   source (the same rule as `.cs-sidebar-icon-button.is-active`). */
+.cs-quick-insert-filter.is-active {
+	color: var(--icon-color-active);
 }
 
 /* Why nothing is inserted, said before the user presses a disabled button
@@ -4404,6 +4399,19 @@ body:not(.is-phone) .cs-choice-row {
 	/* Obsidian's suggestion rows use the UI cursor (default on desktop,
 	   pointer on mobile), not a hard-coded pointer. */
 	cursor: var(--cursor);
+	/* The window's own surface, painted under the callout, and the row is its
+	   own isolated group. Obsidian's dark callouts carry `mix-blend-mode:
+	   lighten` (so a dark accent is lifted to the surface instead of
+	   vanishing), and a blend reads whatever is BEHIND it: with that being the
+	   scrolling window, the browser cannot draw a row's tiles on their own, and
+	   a long list went blank while it scrolled, until it stopped (measured with
+	   750+ rows: 1-8% of the list drawn mid-scroll, 56-74% with this). Blending
+	   against the same colour inside the row gives the same result, because the
+	   surface is exactly what was behind it. The surface is the window's own
+	   (`--cs-surface`), not --background-primary: they differ on a phone in dark
+	   mode. */
+	isolation: isolate;
+	background-color: var(--cs-surface, var(--background-primary));
 }
 
 /* min-width: 0 is what actually keeps a long callout name from pushing the two

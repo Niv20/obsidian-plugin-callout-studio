@@ -27,7 +27,7 @@ import type { CalloutDefinition, CalloutRenderRole } from "../types";
 import { CalloutEditor } from "../settings/CalloutEditor";
 import { getLocale, t } from "../i18n";
 import { suggestableCallouts } from "../utils/usableCallouts";
-import { calloutMatchesQuery } from "../utils/calloutSearch";
+import { calloutMatchesQuery, matchedCalloutId } from "../utils/calloutSearch";
 import { readCalloutTrigger, tokenBodyAt, triggerInCode } from "./calloutTriggerContext";
 import {
 	landAfterInlineToken,
@@ -296,11 +296,7 @@ export class CalloutAutoComplete extends EditorSuggest<CalloutSuggestion> {
 
 		// If the user typed an alias, use that alias as the ID
 		const queryLower = query.toLowerCase();
-		const allIds = [def.id, ...(def.aliases ?? [])];
-		const matchedId =
-			allIds.find((id) => id.toLowerCase() === queryLower) ??
-			allIds.find((id) => id.toLowerCase().startsWith(queryLower)) ??
-			def.id;
+		const matchedId = matchedCalloutId(def, queryLower);
 
 		// Tab and `|` complete the type and nothing else, whatever the role.
 		if (key === "pipe") {

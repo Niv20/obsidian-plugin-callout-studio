@@ -156,8 +156,11 @@ const getOrderedCursorLines = (
  * autocomplete. A user-built command already knows its type, so it gets the
  * finished header and no popover.
  */
-const openingHeaderToken = (def?: CalloutDefinition, foldMark?: "" | "+" | "-"): string =>
-	def ? buildBlockHeaderToken(def, { foldMark }) : "[!";
+const openingHeaderToken = (
+	def?: CalloutDefinition,
+	foldMark?: "" | "+" | "-",
+	matchedId?: string,
+): string => (def ? buildBlockHeaderToken(def, { foldMark, matchedId }) : "[!");
 
 /**
  * The blank quoted line a finished, empty block callout opens with — `> ` at
@@ -193,7 +196,13 @@ const requoteLine = (line: string, level: number): string => {
  */
 export const wrapSelectionInCallout = (
 	editor: Editor,
-	options?: { requireSelection?: boolean; def?: CalloutDefinition; foldMark?: "" | "+" | "-" },
+	options?: {
+		requireSelection?: boolean;
+		def?: CalloutDefinition;
+		foldMark?: "" | "+" | "-";
+		/** The id or alias of `def` to write instead of its primary id (see {@link buildBlockHeaderToken}). */
+		matchedId?: string;
+	},
 ): boolean => {
 	if (editor.lineCount() === 0) {
 		showNotice("notFound", t("notice.nothingToWrap"));
@@ -222,7 +231,7 @@ export const wrapSelectionInCallout = (
 	}
 
 	const prefix = buildPrefix(plan.level);
-	const headerLine = `${prefix}> ${openingHeaderToken(options?.def, options?.foldMark)}`;
+	const headerLine = `${prefix}> ${openingHeaderToken(options?.def, options?.foldMark, options?.matchedId)}`;
 	// Nothing was found to wrap, so the callout is born empty and its body is
 	// the one line the user is about to type into rather than a requoting of
 	// what was there. Every other case keeps the cursor on the header, where

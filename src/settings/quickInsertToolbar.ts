@@ -4,6 +4,12 @@
  * The two controls above the list, split out for the same reason the row is:
  * they own no state, only the widgets that report it. What a query means and
  * which source is stored stay with the window.
+ *
+ * The source choice is a funnel icon at the end of the search row, as the format
+ * filter is beside Find callouts' type field: it opens Obsidian's menu with a ✓
+ * on the current source, and stays lit while that is anything but All. (Until
+ * 2026-10-29 it was a dropdown field naming the source, which took as much room
+ * as the search itself on a phone.)
  */
 import { t } from "../i18n";
 import { SelectDropdown } from "../ui/selectDropdown";
@@ -25,6 +31,11 @@ export interface QuickInsertToolbarHandlers {
 	onKey: (ev: KeyboardEvent) => void;
 }
 
+/** The funnel is lit while the list is narrowed to one source, as Find callouts' is. */
+function lightFilter(select: SelectDropdown, value: string): void {
+	select.controlEl.toggleClass("is-active", value !== "all");
+}
+
 /** Keep the optional theme choice in step with live ownership and theme changes. */
 export function syncQuickInsertThemeOption(
 	select: SelectDropdown | undefined,
@@ -39,6 +50,7 @@ export function syncQuickInsertThemeOption(
 		...(showTheme ? [{ value: "theme", label }] : []),
 		{ value: "user", label: t("quickInsert.sourceUser") },
 	]).setValue(effective);
+	if (select) lightFilter(select, effective);
 	return effective;
 }
 
@@ -65,10 +77,17 @@ export function buildQuickInsertToolbar(
 	// and stealing them would break the search box itself.
 	search.addEventListener("keydown", (ev) => handlers.onKey(ev));
 
-	const filter = new SelectDropdown(toolbar, t("quickInsert.sourceAria"));
-	filter.el.addClass("cs-quick-insert-filter");
+	// An icon button with no words: the name is its tooltip and its accessible
+	// name. `clickable-icon` is what makes the `<button>` Obsidian's flat icon
+	// button rather than a raised one, as the row's own two buttons are.
+	const filter = new SelectDropdown(toolbar, t("quickInsert.sourceAria"), { icon: "filter" });
+	filter.controlEl.addClass("clickable-icon");
+	filter.controlEl.addClass("cs-quick-insert-filter");
 	syncQuickInsertThemeOption(filter, handlers.themeLabel, true, handlers.filter);
-	filter.onChange((value) => handlers.onFilter(isCalloutSourceFilter(value) ? value : "all"));
+	filter.onChange((value) => {
+		lightFilter(filter, value);
+		handlers.onFilter(isCalloutSourceFilter(value) ? value : "all");
+	});
 	return { search, filter, destroy: () => filter.destroy() };
 }
 export type QuickInsertToolbar = ReturnType<typeof buildQuickInsertToolbar>;

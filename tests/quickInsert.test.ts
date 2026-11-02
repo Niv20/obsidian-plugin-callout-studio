@@ -32,7 +32,7 @@
 import assert from "node:assert";
 import { beforeEach, describe, it } from "node:test";
 import type { App, Editor, EditorPosition, WorkspaceLeaf } from "obsidian";
-import { MarkdownView } from "obsidian";
+import { MarkdownRenderer, MarkdownView } from "obsidian";
 import { wrapSelectionInCallout } from "../src/editor/CalloutBlockTools";
 import {
 	classifyTargetEditor,
@@ -49,7 +49,7 @@ import {
 	quickInsertHint,
 	quickInsertNotice,
 } from "../src/settings/quickInsertMessages";
-import { previewMarkdown } from "../src/settings/quickInsertPreview";
+import { previewMarkdown, QuickInsertPreviews } from "../src/settings/quickInsertPreview";
 import { renderQuickInsertRow } from "../src/settings/quickInsertRow";
 import {
 	buildQuickInsertToolbar,
@@ -57,6 +57,7 @@ import {
 } from "../src/settings/quickInsertToolbar";
 import { dropdownOptions, dropdownValue, pickDropdown } from "./support/selectDropdown";
 import { QuickInsertModal } from "../src/settings/QuickInsertModal";
+import { LOAD_MORE_SENTINEL, LoadOnScroll } from "../src/ui/loadOnScroll";
 import { asEl, el, fakeDom } from "./support/fakeDom";
 import { readRepoFile } from "./support/sourceScan";
 import type { CalloutDefinition } from "../src/types";
@@ -65,6 +66,7 @@ import {
 	CALLOUT_SOURCE_FILTERS,
 	filterCalloutList,
 	isCalloutSourceFilter,
+	matchedCalloutId,
 	matchesSourceFilter,
 	type CalloutSourceFilter,
 } from "../src/utils/calloutSearch";
@@ -93,6 +95,18 @@ const def = (over: Partial<CalloutDefinition> = {}): CalloutDefinition => ({
 	source: "builtin",
 	...over,
 });
+
+/**
+ * The fields a window built by `Object.create(QuickInsertModal.prototype)` would
+ * otherwise miss, because its class-body initialisers never ran. The list is
+ * not being scrolled, so the end marker's watcher is a no-op.
+ */
+const pagingFields = {
+	limit: 30,
+	visible: [],
+	sentinel: null,
+	loadOnScroll: { watch() {}, stop() {} },
+};
 
 const names = (defs: readonly CalloutDefinition[]): string[] =>
 	defs.map((d) => d.displayName);
@@ -365,6 +379,52 @@ describe("filterCalloutList", () => {
 	});
 });
 
+describe("matchedCalloutId", () => {
+	const abstract = def({
+		id: "abstract",
+		displayName: "Abstract",
+		aliases: ["summary", "tldr"],
+	});
+
+	it("is the alias that was typed in full", () => {
+		assert.strictEqual(matchedCalloutId(abstract, "tldr"), "tldr");
+		assert.strictEqual(matchedCalloutId(abstract, "summary"), "summary");
+	});
+
+	it("is the alias a typed prefix starts, when the primary id does not", () => {
+		assert.strictEqual(matchedCalloutId(abstract, "tl"), "tldr");
+		assert.strictEqual(matchedCalloutId(abstract, "sum"), "summary");
+	});
+
+	it("keeps the primary id when it answers the query too", () => {
+		assert.strictEqual(matchedCalloutId(abstract, "abs"), "abstract");
+		assert.strictEqual(matchedCalloutId(abstract, "abstract"), "abstract");
+	});
+
+	it("is the spelling the definition has, not the one typed", () => {
+		const todo = def({ id: "ToDo", displayName: "To Do", aliases: ["TASK"] });
+		assert.strictEqual(matchedCalloutId(todo, "todo"), "ToDo");
+		assert.strictEqual(matchedCalloutId(todo, "task"), "TASK");
+	});
+
+	it("falls back to the primary id when only the name matched, or nothing was typed", () => {
+		assert.strictEqual(matchedCalloutId(abstract, ""), "abstract");
+		const heads = def({ id: "warn", displayName: "Heads up", aliases: ["caution"] });
+		assert.strictEqual(matchedCalloutId(heads, "heads"), "warn");
+		assert.strictEqual(matchedCalloutId(def({ id: "note" }), "x"), "note");
+	});
+
+	it("answers every row calloutMatchesQuery finds with an id the row owns", () => {
+		for (const query of ["a", "tl", "tldr", "mar", "heads"]) {
+			for (const d of [abstract, def({ id: "warn", displayName: "Heads up", aliases: ["caution"] })]) {
+				if (!calloutMatchesQuery(d, query)) continue;
+				const chosen = matchedCalloutId(d, query);
+				assert.ok([d.id, ...(d.aliases ?? [])].includes(chosen), `${query} → ${chosen}`);
+			}
+		}
+	});
+});
+
 describe("quick-insert source controls and empty states", () => {
 	beforeEach(() => fakeDom.light());
 	it("keeps the optional live theme source in the right position", () => {
@@ -393,8 +453,12 @@ describe("quick-insert source controls and empty states", () => {
 		assert.strictEqual(select.getValue(), "all");
 		assert.deepStrictEqual(dropdownOptions(select.el).map((item) => item.title),
 			["All", "Built-in", "Nord", "My callouts"]);
+		assert.ok(select.controlEl.hasClass("clickable-icon"), "Obsidian's flat icon button, like Find callouts' funnel");
+		assert.ok(select.controlEl.querySelector(".svg-icon, .cs-select-icon"), "an icon, not a field");
+		assert.strictEqual(select.controlEl.hasClass("is-active"), false, "All: nothing narrowed, so not lit");
 		pickDropdown(select.el, "Nord");
 		assert.deepStrictEqual(chosen, ["theme"]);
+		assert.strictEqual(select.controlEl.hasClass("is-active"), true, "lit while a source narrows the list");
 		assert.strictEqual(syncQuickInsertThemeOption(select, "Minimal", true, "theme"), "theme");
 		assert.strictEqual(dropdownValue(select.el), "Minimal");
 		assert.strictEqual(syncQuickInsertThemeOption(select, "Minimal", false, "theme"), "all");
@@ -428,6 +492,7 @@ describe("quick-insert source controls and empty states", () => {
 			filter: "theme",
 			captured: { ok: true },
 			previews: null,
+			...pagingFields,
 			plugin: {
 				app: { customCss: { theme: "Lumines" } },
 				registry: {
@@ -539,6 +604,7 @@ describe("quick-insert source controls and empty states", () => {
 		assert.strictEqual(instance.filter, "user");
 
 		const host = asEl(el());
+		Object.assign(instance, { contentEl: asEl(el()) });
 		instance.buildToolbar(host);
 		const select = host.querySelector<HTMLElement>(".cs-select-dropdown")!;
 		assert.ok(select);
@@ -554,7 +620,7 @@ describe("quick-insert source controls and empty states", () => {
 		assert.match(code, /usable\.some\(\(def\)\s*=>\s*this\.plugin\.registry\.themeOwns\(def\)\)/);
 		assert.match(code, /workspace\.on\("css-change",\s*this\.onRegistryChange\)/);
 		assert.match(code, /workspace\.offref\(this\.cssChangeRef\)/);
-		assert.match(code, /await this\.previews\?\.build\(usable\)[\s\S]*?this\.renderList\(\)/);
+		assert.match(code, /this\.previews\.invalidate\(\);\s*this\.renderList\(\)/);
 	});
 });
 
@@ -796,13 +862,34 @@ describe("the Insert button writes block callouts", () => {
 		assert.strictEqual(b.value(), "> [!warning]- Warning\n> text");
 	});
 
-	it("uses the alias-free primary id, whatever the search matched", () => {
-		// Unlike the `[!` popover, nothing was typed into the document here, so
-		// there is no matched alias to honour — the row's own id is the answer.
+	it("writes the primary id when the window names no spelling", () => {
+		// The commands and an empty search: nothing was typed towards an alias.
 		const b = buffer("text|");
 		insert(b, { id: "warning", aliases: ["caution"] });
 
-		assert.match(b.value(), /^> \[!warning\]/);
+		assert.match(b.value(), /^> \[!warning\] Warning\n/);
+	});
+
+	it("writes the alias the search found it by, titled the way Obsidian titles it", () => {
+		// The `[!` popover's rule, now the window's too: typing `tldr` and picking
+		// the row is typing `[!tldr]`, not `[!abstract]` with the primary's NAME.
+		const b = buffer("text|");
+		wrapSelectionInCallout(asEditor(b), {
+			def: def({ id: "abstract", displayName: "Abstract", aliases: ["summary", "tldr"] }),
+			matchedId: "tldr",
+		});
+
+		assert.strictEqual(b.value(), "> [!tldr] Tldr\n> text");
+	});
+
+	it("keeps the fold mark with an alias", () => {
+		const b = buffer("text|");
+		wrapSelectionInCallout(asEditor(b), {
+			def: def({ id: "abstract", displayName: "Abstract", aliases: ["tldr"], foldable: true }),
+			matchedId: "tldr",
+		});
+
+		assert.strictEqual(b.value(), "> [!tldr]+ Tldr\n> text");
 	});
 
 	it("lands as ONE edit, so a single Undo puts everything back", () => {
@@ -823,7 +910,8 @@ describe("the window writes no markdown of its own", () => {
 	const modal = readRepoFile("src/settings/QuickInsertModal.ts");
 
 	it("delegates to the shared block transform", () => {
-		assert.match(modal, /wrapSelectionInCallout\(\s*target\.editor,\s*\{ def \}/);
+		// The callout, and nothing else but the spelling it was found by.
+		assert.match(modal, /wrapSelectionInCallout\(\s*target\.editor,\s*\{ def, matchedId \}/);
 	});
 
 	it("contains no callout syntax at all", () => {
@@ -1362,7 +1450,7 @@ describe("every refusal has its own message", () => {
 		const modal = readRepoFile("src/settings/QuickInsertModal.ts");
 		const code = modal.replace(/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g, "");
 
-		assert.match(code, /new Notice\(quickInsertNotice\(result\.problem\)\)/);
+		assert.match(code, /showNotice\("blocked", quickInsertNotice\(result\.problem\)\)/);
 		assert.match(code, /quickInsertHint\(this\.captured\.problem\)/);
 	});
 });
@@ -1396,6 +1484,22 @@ describe("the preview is the callout, not a drawing of one", () => {
 			const written = b.value().split("\n")[0];
 			assert.strictEqual(previewMarkdown(candidate), written);
 		}
+	});
+
+	it("shows the alias line Insert would write when the search found it by an alias", () => {
+		const abstract = def({
+			id: "abstract",
+			displayName: "Abstract",
+			aliases: ["summary", "tldr"],
+			foldable: true,
+		});
+		for (const matchedId of ["tldr", "summary", "abstract"]) {
+			const b = buffer("|");
+			wrapSelectionInCallout(asEditor(b), { def: abstract, matchedId });
+			assert.strictEqual(previewMarkdown(abstract, matchedId), b.value().split("\n")[0]);
+		}
+		assert.strictEqual(previewMarkdown(abstract, "tldr"), "> [!tldr]+ Tldr");
+		assert.strictEqual(previewMarkdown(abstract), "> [!abstract]+ Abstract");
 	});
 
 	it("folds a newline out so rows cannot shift onto the wrong callout", () => {
@@ -1457,6 +1561,37 @@ describe("the row keeps its controls outside the callout", () => {
 		return { rowEl, rendered, inserted, edited };
 	}
 
+	it("names the Insert button, and the stand-in, for what the search found", () => {
+		const list = asEl(el());
+		const abstract = def({ id: "abstract", displayName: "Abstract", aliases: ["tldr"] });
+		const labelOf = (matchedId?: string) => {
+			const rowEl = renderQuickInsertRow(list, abstract, {
+				canInsert: true,
+				matchedId,
+				preview: () => null,
+				onInsert: () => {},
+				onEdit: () => {},
+				onHover: () => {},
+			});
+			const [edit, insertBtn] = Array.from(rowEl.querySelectorAll<HTMLElement>("button"));
+			return {
+				edit: edit!.getAttribute("aria-label"),
+				insert: insertBtn!.getAttribute("aria-label"),
+				pending: rowEl.querySelector(".cs-qi-pending")?.textContent,
+			};
+		};
+
+		const primary = labelOf();
+		assert.strictEqual(primary.pending, "Abstract");
+		assert.match(primary.insert ?? "", /Abstract/);
+
+		const alias = labelOf("tldr");
+		assert.strictEqual(alias.pending, "Tldr");
+		assert.match(alias.insert ?? "", /Tldr/);
+		assert.doesNotMatch(alias.insert ?? "", /Abstract/);
+		assert.strictEqual(alias.edit, primary.edit, "Edit opens the definition, which keeps its name");
+	});
+
 	it("puts the buttons beside the preview, never inside it", () => {
 		const { rowEl, rendered } = renderRow(true);
 		const buttons = rowEl.querySelectorAll("button");
@@ -1516,6 +1651,7 @@ describe("quick-insert pointer highlights", () => {
 		const modal = Object.assign(Object.create(QuickInsertModal.prototype), {
 			listEl, contentEl: asEl(el()), rows: [], activeIndex: -1, pointerActive: false,
 			query: "", filter: "all", captured: { ok: true }, previews: null,
+			...pagingFields,
 			plugin: {
 				app: {},
 				registry: { themeOwns: () => false, getUserDefined: () => [] },
@@ -1556,5 +1692,356 @@ describe("quick-insert pointer highlights", () => {
 		assert.ok(rows[1]!.hasClass("is-active"));
 		key("Enter");
 		assert.deepStrictEqual(inserted, ["beta"]);
+	});
+});
+
+/* -------------------------------------------------------------------------- */
+/* A row is the spelling the search found                                     */
+/* -------------------------------------------------------------------------- */
+
+describe("a callout found by an alias is shown and inserted as that alias", () => {
+	const abstract = def({ id: "abstract", displayName: "Abstract", aliases: ["summary", "tldr"] });
+
+	function harness(query: string) {
+		const inserted: { id: string; matchedId: string | undefined }[] = [];
+		const asked: { id: string; matchedId: string | undefined }[] = [];
+		const listEl = asEl(el());
+		const modal = Object.assign(Object.create(QuickInsertModal.prototype), {
+			listEl, contentEl: asEl(el()), rows: [], activeIndex: -1, pointerActive: false,
+			query, filter: "all", captured: { ok: true },
+			previews: {
+				get: (id: string, matchedId?: string) => {
+					asked.push({ id, matchedId });
+					return null;
+				},
+				ensure: () => {},
+			},
+			...pagingFields,
+			plugin: {
+				app: {},
+				registry: { themeOwns: () => false, getUserDefined: () => [] },
+			},
+			insert: (item: CalloutDefinition, matchedId?: string) =>
+				inserted.push({ id: item.id, matchedId }),
+		}) as {
+			listEl: HTMLElement;
+			renderList(items: CalloutDefinition[]): void;
+			onSearchKey(event: KeyboardEvent): void;
+		};
+		modal.renderList([abstract]);
+		const row = modal.listEl.querySelector<HTMLElement>(".cs-qi-row")!;
+		return { modal, row, inserted, asked };
+	}
+
+	it("lists the callout under the alias and writes that alias on a click", () => {
+		const { row, inserted, asked } = harness("tldr");
+		assert.deepStrictEqual(asked, [{ id: "abstract", matchedId: "tldr" }], "the preview is asked for as the alias");
+		assert.strictEqual(row.querySelector(".cs-qi-pending")?.textContent, "Tldr");
+		row.dispatchEvent(clickOn(row.querySelector(".cs-qi-slot")));
+		assert.deepStrictEqual(inserted, [{ id: "abstract", matchedId: "tldr" }]);
+	});
+
+	it("writes that alias on Enter as well, and from the Insert button", () => {
+		const { modal, row, inserted } = harness("tldr");
+		modal.onSearchKey({ key: "Enter", preventDefault() {} } as KeyboardEvent);
+		const insertBtn = row.querySelectorAll("button")[1]!;
+		insertBtn.dispatchEvent(clickOn(insertBtn));
+		assert.deepStrictEqual(inserted, [
+			{ id: "abstract", matchedId: "tldr" },
+			{ id: "abstract", matchedId: "tldr" },
+		]);
+	});
+
+	it("follows a typed prefix to the alias it starts", () => {
+		assert.deepStrictEqual(harness("sum").inserted, []);
+		const { row, inserted } = harness("sum");
+		row.dispatchEvent(clickOn(row.querySelector(".cs-qi-slot")));
+		assert.deepStrictEqual(inserted, [{ id: "abstract", matchedId: "summary" }]);
+	});
+
+	it("reads the query as the list does: trimmed and case-insensitive", () => {
+		const { row, inserted } = harness("  TLDR ");
+		row.dispatchEvent(clickOn(row.querySelector(".cs-qi-slot")));
+		assert.deepStrictEqual(inserted, [{ id: "abstract", matchedId: "tldr" }]);
+	});
+
+	it("stays on the primary id with no search, or when the name is what matched", () => {
+		for (const query of ["", "   ", "abs", "Abstract"]) {
+			const { row, inserted, asked } = harness(query);
+			row.dispatchEvent(clickOn(row.querySelector(".cs-qi-slot")));
+			assert.deepStrictEqual(inserted, [{ id: "abstract", matchedId: "abstract" }], JSON.stringify(query));
+			assert.strictEqual(asked[0]?.matchedId, "abstract");
+		}
+	});
+
+	it("hands Insert's spelling to the shared writer, not a header of its own", () => {
+		const code = readRepoFile("src/settings/QuickInsertModal.ts").replace(
+			/\/\*[\s\S]*?\*\/|\/\/[^\n]*/g,
+			"",
+		);
+		assert.match(code, /matchedCalloutId\(def, /, "not the popover's rule");
+		assert.ok(!code.includes("aliases"), "re-deriving the alias rule instead of sharing it");
+	});
+});
+
+/* -------------------------------------------------------------------------- */
+/* A long list is drawn a page at a time                                      */
+/* -------------------------------------------------------------------------- */
+
+/** A stand-in IntersectionObserver that lets a test say when the list's end comes into view. */
+class FakeObserver {
+	static all: FakeObserver[] = [];
+	disconnected = false;
+	constructor(readonly callback: (entries: Array<{ isIntersecting: boolean }>) => void) {
+		FakeObserver.all.push(this);
+	}
+	observe(): void {}
+	disconnect(): void { this.disconnected = true; }
+	/** The end marker came within reach. */
+	reach(): void { this.callback([{ isIntersecting: true }]); }
+	static latest(): FakeObserver { return FakeObserver.all[FakeObserver.all.length - 1]!; }
+}
+
+/** Run `body` in a window that can watch the list's end (as Obsidian's can). */
+function withObserver(body: () => void): void {
+	const view = fakeDom.document.defaultView as unknown as Record<string, unknown>;
+	view.IntersectionObserver = FakeObserver;
+	FakeObserver.all = [];
+	try { body(); } finally { delete view.IntersectionObserver; }
+}
+
+const manyCallouts = (count: number): CalloutDefinition[] =>
+	Array.from({ length: count }, (_, i) => {
+		const n = String(i + 1).padStart(3, "0");
+		return def({ id: `c${n}`, displayName: `Callout ${n}`, builtIn: false, source: "user" });
+	});
+
+describe("a long list is drawn a page at a time", () => {
+	function harness(count: number) {
+		const all = manyCallouts(count);
+		const contentEl = asEl(el());
+		Object.defineProperty(contentEl, "clientHeight", { value: 400 });
+		const listEl = contentEl.createDiv();
+		const asked: string[][] = [];
+		const inserted: string[] = [];
+		const modal = Object.assign(Object.create(QuickInsertModal.prototype), {
+			listEl, contentEl, rows: [], activeIndex: -1, pointerActive: false,
+			query: "", filter: "all", captured: { ok: true },
+			previews: { get: () => null, ensure: (defs: CalloutDefinition[]) => void asked.push(defs.map((d) => d.id)) },
+			limit: 30, visible: [], sentinel: null,
+			plugin: { app: {}, registry: { themeOwns: () => false, getUserDefined: () => [] } },
+			usableCallouts: () => all,
+			insert: (item: CalloutDefinition) => inserted.push(item.id),
+		}) as unknown as {
+			listEl: HTMLElement;
+			contentEl: HTMLElement;
+			rows: { def: CalloutDefinition; el: HTMLElement }[];
+			activeIndex: number;
+			limit: number;
+			loadOnScroll: LoadOnScroll;
+			renderList(items: CalloutDefinition[]): void;
+			restartList(): void;
+			fillPreviews(): void;
+			onSearchKey(event: KeyboardEvent): void;
+		};
+		modal.loadOnScroll = new LoadOnScroll(() => contentEl, () => (modal as unknown as { drawMore(): void }).drawMore());
+		const rowCount = () => modal.listEl.querySelectorAll(".cs-qi-row").length;
+		const sentinels = () => modal.listEl.querySelectorAll(`.${LOAD_MORE_SENTINEL}`).length;
+		return { modal, defs: all, asked, inserted, rowCount, sentinels };
+	}
+
+	it("draws the first page and ends the list in a marker, asking only for those previews", () => {
+		withObserver(() => {
+			const { modal, defs, asked, rowCount, sentinels } = harness(75);
+			modal.renderList(defs);
+			assert.strictEqual(rowCount(), 30);
+			assert.strictEqual(sentinels(), 1);
+			assert.strictEqual(modal.listEl.lastElementChild?.classList.contains(LOAD_MORE_SENTINEL), true, "at the very end");
+			assert.deepStrictEqual(asked, [defs.slice(0, 30).map((d) => d.id)], "no render for rows nobody has reached");
+		});
+	});
+
+	it("draws the next page, and only that, when the marker comes within reach", () => {
+		withObserver(() => {
+			const { modal, defs, asked, rowCount, sentinels } = harness(75);
+			modal.renderList(defs);
+			const firstRow = modal.listEl.querySelector(".cs-qi-row");
+			FakeObserver.latest().reach();
+			assert.strictEqual(rowCount(), 60);
+			assert.strictEqual(modal.listEl.querySelector(".cs-qi-row"), firstRow, "the rows already there are kept, not redrawn");
+			assert.strictEqual(sentinels(), 1, "one marker, moved below the new rows");
+			FakeObserver.latest().reach();
+			assert.strictEqual(rowCount(), 75);
+			assert.strictEqual(sentinels(), 0, "everything is drawn: nothing left to load");
+			assert.deepStrictEqual(asked[2], defs.slice(0, 75).map((d) => d.id));
+		});
+	});
+
+	it("draws the next page when the arrow keys run past the last row, and lands on its first row", () => {
+		withObserver(() => {
+			const { modal, defs, rowCount } = harness(40);
+			modal.renderList(defs);
+			const press = () => modal.onSearchKey({ key: "ArrowDown", preventDefault() {} } as KeyboardEvent);
+			for (let i = 0; i < 30; i++) press();
+			assert.strictEqual(rowCount(), 30, "30 presses reach the 30th row, not past it");
+			press();
+			assert.strictEqual(rowCount(), 40);
+			assert.strictEqual(modal.activeIndex, 30);
+			assert.ok(modal.rows[30]!.el.hasClass("is-active"));
+		});
+	});
+
+	it("starts over from the first page, at the top, when the search or source changes", () => {
+		withObserver(() => {
+			const { modal, defs, rowCount } = harness(75);
+			modal.renderList(defs);
+			FakeObserver.latest().reach();
+			assert.strictEqual(rowCount(), 60);
+			modal.contentEl.scrollTop = 900;
+			modal.restartList();
+			assert.strictEqual(rowCount(), 30);
+			assert.strictEqual(modal.limit, 30);
+			assert.strictEqual(modal.contentEl.scrollTop, 0);
+		});
+	});
+
+	it("draws the whole list where the window cannot watch the marker, since no second page could be reached", () => {
+		const { modal, defs, rowCount, sentinels } = harness(75);
+		modal.renderList(defs);
+		assert.strictEqual(rowCount(), 75);
+		assert.strictEqual(sentinels(), 0);
+	});
+
+	it("puts a preview that lands into the row waiting for it, without redrawing the list", () => {
+		const { modal, defs } = harness(3);
+		const landed = new Map<string, HTMLElement>();
+		(modal as unknown as { previews: { get(id: string): HTMLElement | null } }).previews.get = (id) => landed.get(id) ?? null;
+		modal.renderList(defs);
+		const before = Array.from(modal.listEl.querySelectorAll(".cs-qi-row"));
+		assert.strictEqual(modal.listEl.querySelectorAll(".cs-qi-pending").length, 3);
+		const preview = asEl(el({ cls: "cs-qi-preview" }));
+		landed.set(defs[1]!.id, preview);
+		modal.fillPreviews();
+		assert.strictEqual(modal.listEl.querySelectorAll(".cs-qi-pending").length, 2, "only the callout that landed");
+		assert.ok(before[1]!.querySelector(".cs-qi-slot")?.contains(preview));
+		assert.deepStrictEqual(Array.from(modal.listEl.querySelectorAll(".cs-qi-row")), before, "same rows");
+		const next = asEl(el({ cls: "cs-qi-preview" }));
+		landed.set(defs[1]!.id, next);
+		modal.fillPreviews();
+		assert.ok(before[1]!.querySelector(".cs-qi-slot")?.contains(next), "a newer render replaces an older one");
+		assert.ok(!before[1]!.querySelector(".cs-qi-slot")?.contains(preview));
+	});
+});
+
+describe("previews are rendered for the rows asked for, once each", () => {
+	/** Renders each markdown block as an empty callout, and records every batch. */
+	function withRenderer(body: (batches: string[][]) => Promise<void>): Promise<void> {
+		const batches: string[][] = [];
+		const stub = MarkdownRenderer as unknown as { render: unknown };
+		const original = stub.render;
+		stub.render = (_app: unknown, markdown: string, target: HTMLElement): Promise<void> => {
+			const blocks = markdown.split("\n\n");
+			batches.push(blocks);
+			blocks.forEach(() => target.createDiv({ cls: "callout" }));
+			return Promise.resolve();
+		};
+		return body(batches).finally(() => { stub.render = original; });
+	}
+	const [a, b, c] = manyCallouts(3) as [CalloutDefinition, CalloutDefinition, CalloutDefinition];
+	const app = {} as never;
+
+	it("renders only what is asked for, keeps it, and says when it lands", async () => {
+		await withRenderer(async (batches) => {
+			let landed = 0;
+			const previews = new QuickInsertPreviews(app, () => { landed++; });
+			await previews.ensure([a, b]);
+			assert.deepStrictEqual(batches, [[previewMarkdown(a), previewMarkdown(b)]]);
+			assert.ok(previews.get(a.id)?.hasClass("cs-qi-preview"));
+			assert.strictEqual(previews.get(c.id), null, "never asked for");
+			assert.strictEqual(landed, 1);
+			await previews.ensure([a, b, c]);
+			assert.deepStrictEqual(batches[1], [previewMarkdown(c)], "a and b are not rendered again");
+			await previews.ensure([a, b, c]);
+			assert.strictEqual(batches.length, 2, "everything fresh: nothing to render");
+			previews.destroy();
+		});
+	});
+
+	it("renders only the rows asked for again after a change, and shows the old one until then", async () => {
+		await withRenderer(async (batches) => {
+			const previews = new QuickInsertPreviews(app);
+			await previews.ensure([a, b, c]);
+			const old = previews.get(a.id);
+			previews.invalidate();
+			assert.strictEqual(previews.get(a.id), old, "stale artwork rather than a blank row");
+			await previews.ensure([a]);
+			assert.deepStrictEqual(batches[1], [previewMarkdown(a)], "b and c were not on screen");
+			assert.notStrictEqual(previews.get(a.id), old);
+			previews.destroy();
+		});
+	});
+
+	it("renders a renamed callout again even though nothing was invalidated", async () => {
+		await withRenderer(async (batches) => {
+			const previews = new QuickInsertPreviews(app);
+			await previews.ensure([a]);
+			await previews.ensure([{ ...a, displayName: "Renamed" }]);
+			assert.strictEqual(batches.length, 2);
+			assert.match(batches[1]![0]!, /Renamed/);
+			previews.destroy();
+		});
+	});
+
+	it("renders and files a callout per spelling, so an alias search never shows the primary's title", async () => {
+		await withRenderer(async (batches) => {
+			const abstract = def({ id: "abstract", displayName: "Abstract", aliases: ["tldr"] });
+			const previews = new QuickInsertPreviews(app);
+			await previews.ensure([abstract]);
+			await previews.ensure([abstract], () => "tldr");
+			assert.deepStrictEqual(batches, [["> [!abstract] Abstract"], ["> [!tldr] Tldr"]]);
+			const primary = previews.get("abstract");
+			const alias = previews.get("abstract", "tldr");
+			assert.ok(primary && alias && primary !== alias);
+			assert.strictEqual(previews.get("abstract", "abstract"), primary, "the primary id is the unspelled one");
+			assert.strictEqual(previews.get("abstract", "summary"), null, "another spelling is its own preview");
+			await previews.ensure([abstract], () => "tldr");
+			assert.strictEqual(batches.length, 2, "both are fresh: nothing to render");
+			previews.destroy();
+		});
+	});
+
+	it("files a render under the spelling it was asked for, even if the search moves on meanwhile", async () => {
+		await withRenderer(async () => {
+			const abstract = def({ id: "abstract", displayName: "Abstract", aliases: ["tldr"] });
+			const previews = new QuickInsertPreviews(app);
+			let spelling = "tldr";
+			const pending = previews.ensure([abstract], () => spelling);
+			spelling = "abstract";
+			await pending;
+			assert.ok(previews.get("abstract", "tldr"));
+			assert.strictEqual(previews.get("abstract"), null);
+			previews.destroy();
+		});
+	});
+
+	it("does not render a callout twice for two overlapping asks", async () => {
+		await withRenderer(async (batches) => {
+			const previews = new QuickInsertPreviews(app);
+			await Promise.all([previews.ensure([a, b]), previews.ensure([b, c])]);
+			assert.deepStrictEqual(batches, [[previewMarkdown(a), previewMarkdown(b)], [previewMarkdown(c)]]);
+			previews.destroy();
+		});
+	});
+
+	it("keeps nothing from a render that finishes after the window closed", async () => {
+		await withRenderer(async () => {
+			let landed = 0;
+			const previews = new QuickInsertPreviews(app, () => { landed++; });
+			const pending = previews.ensure([a]);
+			previews.destroy();
+			await pending;
+			assert.strictEqual(previews.get(a.id), null);
+			assert.strictEqual(landed, 0);
+		});
 	});
 });

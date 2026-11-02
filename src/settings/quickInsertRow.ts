@@ -15,6 +15,7 @@
 import { setIcon } from "obsidian";
 import { t } from "../i18n";
 import type { CalloutDefinition } from "../types";
+import { calloutTokenLabel } from "../utils/calloutId";
 
 export interface QuickInsertRowHandlers {
 	/** The rendered callout for this definition, if one is ready yet. */
@@ -24,6 +25,12 @@ export interface QuickInsertRowHandlers {
 	onHover: (el: HTMLElement | null) => void;
 	/** Whether an editor is available to insert into, for the button's state. */
 	canInsert: boolean;
+	/**
+	 * The id or alias this row writes instead of the primary id, when the search
+	 * found the callout by one. It names the row where the row has to name what
+	 * Insert will write: the Insert button and the stand-in before the preview.
+	 */
+	matchedId?: string;
 }
 
 /** Draw `def` as a row inside `listEl` and return the row element. */
@@ -34,6 +41,9 @@ export function renderQuickInsertRow(
 ): HTMLElement {
 	const row = listEl.createDiv({ cls: "cs-qi-row" });
 	const name = def.displayName;
+	// What Insert writes as the title — the name, or an alias's own title. Edit
+	// keeps `name`: it opens the definition, which is called that either way.
+	const written = calloutTokenLabel(def, handlers.matchedId ?? def.id);
 	// Nothing on the row carries a `title`. It drew the OS tooltip, which is
 	// inherited by every descendant — so the `[!id]` list set here appeared
 	// beside the Insert button's own label, in a second style, on a second
@@ -47,7 +57,7 @@ export function renderQuickInsertRow(
 		// Only reachable for a callout created while the window is open, in the
 		// frame before its render lands. The name keeps the row identifiable and
 		// the height stable rather than letting the list jump when it arrives.
-		slot.createDiv({ cls: "cs-qi-pending", text: name });
+		slot.createDiv({ cls: "cs-qi-pending", text: written });
 	}
 
 	const buttonsEl = row.createDiv({ cls: "callout-studio-row-buttons" });
@@ -63,7 +73,7 @@ export function renderQuickInsertRow(
 
 	const insertBtn = buttonsEl.createEl("button", {
 		cls: "clickable-icon",
-		attr: { "aria-label": t("quickInsert.insertAria", { name }) },
+		attr: { "aria-label": t("quickInsert.insertAria", { name: written }) },
 	});
 	setIcon(insertBtn, "between-horizontal-start");
 	// Dimmed but still clickable, the same bargain the editor's Save button
