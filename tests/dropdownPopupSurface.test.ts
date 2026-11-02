@@ -1,27 +1,28 @@
 /**
- * tests/dropdownPopupSurface.test.ts — a dropdown's list is drawn like
- * Obsidian's own menus.
+ * tests/dropdownPopupSurface.test.ts — a picker's list is Obsidian's combobox
+ * popover.
  *
- * What this pins: the two lists that open from a `cs-dropdown-control` (the
- * shared `.cs-combobox-menu`, and the callout editor's Fold selector,
- * `.cs-palette-menu`) read every visible value from Obsidian's `--menu-*`
- * tokens, the way Obsidian's `.menu` does: the ground, the edge, the corners,
- * the shadow and the inner padding. Their rows are laid out like
- * `.menu-item`, and the chosen row is marked with a ✓ instead of a fill. Niv
- * decided on 2026-10-22 that every menu in the plugin should look the same as
- * Obsidian's.
+ * What this pins: the list a picker (`ListboxPopup`) opens is Obsidian's own
+ * popover, the one its combobox opens in Bases and in its Settings' file
+ * pickers: a `.suggestion-container` (with `.combobox` when it holds a search
+ * box), and the list inside it a `.suggestion`. app.css draws its frame, so
+ * styles.css paints none of it, and only names the ground once
+ * (`--cs-menu-face`) for the few things inside that must repaint it. The rows
+ * are laid out like `.menu-item`, and the chosen row is marked with a ✓
+ * instead of a fill. (A plain choice opens a real Obsidian `Menu`, which needs
+ * no rule at all.)
  *
  * Why read `styles.css` as text: the cascade itself cannot be observed in the
  * fake DOM these tests run in. So the tests check that the rules name the
- * right tokens. The numbers those tokens resolve to were checked once against
- * Obsidian 1.14.4's real `app.css` (see
- * `docs/internals-docs/16-settings-ui-and-modals.md`, "Dropdown popups look
- * like Obsidian's menus").
+ * right tokens. The values were checked against Obsidian 1.14.5's real
+ * `app.css` (see `docs/internals-docs/16-settings-ui-and-modals.md`, "A
+ * picker's popover").
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { readRepoFile } from "./support/sourceScan";
 
 /** One CSS rule: its selectors, and its declarations as property → value. */
 interface Rule {
@@ -65,62 +66,32 @@ function valueOf(selector: string, property: string): string {
 	return hits[0]!.decls.get(property)!;
 }
 
-const POPUPS = [".cs-combobox-menu", ".cs-palette-menu"];
-const ROWS = [".cs-combobox-option", ".cs-palette-menu-item"];
+const ROWS = [".cs-combobox-option"];
 const FACE = "var(--cs-menu-face)";
 
-describe("dropdown popups are drawn like Obsidian's menus", () => {
-	it("stand on Obsidian's menu ground", () => {
-		// `--menu-background` is `--background-secondary` unless a theme says
-		// otherwise. `--cs-menu-face` names it once, for the few things inside a
-		// list that have to repaint the very same colour.
-		for (const popup of POPUPS) {
-			assert.strictEqual(valueOf(popup, "--cs-menu-face"), "var(--menu-background, var(--background-secondary))", popup);
-			assert.strictEqual(valueOf(popup, "background-color"), FACE, `${popup} must paint its face`);
-		}
+describe("a picker's list is Obsidian's combobox popover", () => {
+	const dom = readRepoFile("src/ui/listboxPopupDom.ts");
+
+	it("is built from Obsidian's own popover classes", () => {
+		assert.match(dom, /cls: "suggestion-container cs-combobox-popup cs-combobox-popup-hidden"/);
+		assert.match(dom, /popup\.addClass\("combobox"\)/, "a search box makes it Obsidian's combobox popover");
+		assert.match(dom, /cls: "suggestion cs-combobox-menu"/, "and its list Obsidian's scrolling list");
 	});
 
-	it("take the menu's edge, corners, shadow and blur from Obsidian's tokens", () => {
-		for (const popup of POPUPS) {
-			assert.strictEqual(
-				valueOf(popup, "border"),
-				"var(--menu-border-width, 1px) solid var(--menu-border-color, var(--background-modifier-border-hover))",
-				popup,
-			);
-			assert.strictEqual(valueOf(popup, "border-radius"), "var(--menu-radius, var(--radius-m))", popup);
-			assert.strictEqual(valueOf(popup, "corner-shape"), "var(--menu-corner-shape, var(--corner-shape, round))", popup);
-			assert.strictEqual(valueOf(popup, "box-shadow"), "var(--menu-shadow, var(--shadow-s))", popup);
-			assert.strictEqual(valueOf(popup, "backdrop-filter"), "var(--menu-backdrop-filter)", popup);
-		}
+	it("names the popover's ground once, for what must repaint it", () => {
+		assert.strictEqual(valueOf(".cs-combobox-popup", "--cs-menu-face"), "var(--suggestion-background, var(--background-primary))");
 	});
 
-	it("keep the computer's 6px inner padding, even on a phone", () => {
-		// Not `var(--menu-padding)`: a phone redefines that token for its menus'
-		// bottom sheets, and these lists stay attached to their field.
-		for (const popup of POPUPS) {
-			assert.strictEqual(valueOf(popup, "padding"), "var(--size-2-3)", popup);
-		}
-	});
-
-	it("lose their edge and turn 90% opaque on a phone or tablet, as Obsidian's menus do", () => {
-		for (const popup of POPUPS) {
-			const mobile = `.is-mobile ${popup}`;
-			assert.strictEqual(valueOf(mobile, "border"), "none", mobile);
-			assert.strictEqual(
-				valueOf(mobile, "background-color"),
-				"color-mix(in srgb, var(--cs-menu-face) var(--blur-opacity-m, 90%), transparent)",
-				mobile,
-			);
-		}
-	});
-
-	it("no longer wear their control's face, its edge, or the old heavy shadow", () => {
-		// Until 2026-10-23 they did. The decision to drop that look is recorded
-		// in the stylesheet's comment and in internals-docs 16.
-		for (const popup of POPUPS) {
-			for (const rule of rules.filter((r) => r.selectors.includes(popup))) {
-				const values = [...rule.decls.values()].join(" ");
-				assert.doesNotMatch(values, /--cs-btn-face|--cs-field-border-hover|rgba\(/, popup);
+	it("paints none of the frame: app.css draws the ground, edge, corners, shadow and padding", () => {
+		const PAINT = /^(background(-[a-z-]+)?|box-shadow|border(-[a-z-]+)?|corner-shape|padding(-[a-z-]+)?|backdrop-filter)$/;
+		const subject = (selector: string) => selector.split(/\s*[\s>+~]\s*/).pop() ?? "";
+		for (const rule of rules) {
+			for (const selector of rule.selectors) {
+				if (!/\.cs-combobox-(popup|menu)(?![-\w])/.test(subject(selector))) continue;
+				for (const property of rule.decls.keys()) {
+					if (selector.includes("cs-combobox-menu-grouped") && property.startsWith("padding-block-start")) continue;
+					assert.ok(!PAINT.test(property), `${selector} sets ${property}: that is app.css's to draw`);
+				}
 			}
 		}
 	});
@@ -199,10 +170,6 @@ describe("groups, headings and the things that repaint the ground", () => {
 
 	it("repaints the colour circles' cut-out ring with the ground", () => {
 		assert.strictEqual(valueOf(".cs-combobox-menu .cs-color-circle", "box-shadow"), `0 0 0 1.5px ${FACE}`);
-		assert.ok(
-			rules.some((rule) => rule.selectors.includes(".cs-palette-menu .cs-color-circle") && rule.selectors.includes(".cs-combobox-menu .cs-color-circle")),
-			"the Fold menu's circles share the rule",
-		);
 	});
 
 	it("draws the transparent-swatch checkerboard from the ground it sits on", () => {
@@ -211,11 +178,6 @@ describe("groups, headings and the things that repaint the ground", () => {
 		const checker = valueOf(".cs-combobox-menu .cs-color-circle.is-transparent", "background-image");
 		assert.match(checker, /var\(--cs-menu-face\) 0% 50%\)$/);
 		assert.ok(!checker.includes("--cs-surface"), "the popup checkerboard must not name the window surface");
-		assert.ok(
-			rules.some((rule) => rule.selectors.includes(".cs-palette-menu .cs-color-circle.is-transparent")
-				&& rule.selectors.includes(".cs-combobox-menu .cs-color-circle.is-transparent")),
-			"the Fold menu shares the rule",
-		);
 	});
 
 	it("marks the typed run bold, as Obsidian does, instead of fading the rest", () => {

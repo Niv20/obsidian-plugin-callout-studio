@@ -48,8 +48,7 @@ import {
 import { t } from "../i18n";
 import { sanitizeCalloutIdInput } from "../utils/calloutId";
 import { TagInput } from "../ui/TagInput";
-import { appendDropdownCaret } from "../ui/dropdownControl";
-import { appendComboboxCheck } from "../ui/listboxPopupDom";
+import { SelectDropdown } from "../ui/selectDropdown";
 import { renderInlineLinkHint } from "../ui/inlineLinkHint";
 import { resolveCurrentModeColors } from "../ui/ColorCircles";
 import { PaletteEditorModal } from "./PaletteEditorModal";
@@ -319,7 +318,6 @@ export class CalloutEditor extends Modal {
 	private editorOpen = false;
 	private initialSnapshot: string = "";
 	private initialStyleSnapshot: string = "";
-	private removePopupOutsideClickListener: (() => void) | null = null;
 	/** The Color row's picker; holds a document listener until destroyed. */
 	private palettePicker: PaletteCombobox | null = null;
 
@@ -627,12 +625,10 @@ export class CalloutEditor extends Modal {
 		// Standard setting row (matching Display name / Callout IDs / Icon).
 		// The palette dropdown is built further down — after the live preview
 		// exists, since selecting a palette refreshes it — and lands here.
-		// The class is what lets styles.css pin this row's control column to the
-		// form's shared control width, so the revert button below shortens the
-		// dropdown instead of pushing it left off the shared right edge.
+		// The picker is as wide as its palette's name, as every dropdown is,
+		// and the revert button below follows it at the row's end.
 		const colorSetting = new Setting(general.listEl)
 			.setName(t("editor.colors"))
-			.setClass("cs-color-setting")
 			.setDesc(t("editor.colorsDesc"));
 
 		// Icon
@@ -1304,21 +1300,6 @@ export class CalloutEditor extends Modal {
 		const foldControl = foldSection.createDiv({
 			cls: "callout-studio-fold-control",
 		});
-		const foldDropdown = foldControl.createDiv({
-			cls: "cs-palette-dropdown cs-fold-dropdown",
-		});
-		const foldTrigger = foldDropdown.createEl("button", {
-			cls: "cs-palette-trigger cs-fold-trigger cs-dropdown-control",
-			attr: { type: "button", "aria-haspopup": "listbox" },
-		});
-		const foldTriggerLabel = foldTrigger.createSpan({
-			cls: "cs-palette-trigger-label",
-		});
-		appendDropdownCaret(foldTrigger);
-		const foldMenu = foldDropdown.createDiv({
-			cls: "cs-palette-menu cs-palette-menu-up cs-fold-menu cs-scrollable-dropdown-menu cs-palette-menu-hidden",
-			attr: { role: "listbox", tabindex: "-1" },
-		});
 		const foldOptions: {
 			value: "off" | "open" | "closed";
 			label: string;
@@ -1329,116 +1310,17 @@ export class CalloutEditor extends Modal {
 		];
 		const currentFoldState = (): "off" | "open" | "closed" =>
 			!this.foldable ? "off" : this.defaultFolded ? "closed" : "open";
-		const getFoldLabel = (): string =>
-			foldOptions.find((opt) => opt.value === currentFoldState())
-				?.label ?? t("editor.foldOff");
-		foldTriggerLabel.setText(getFoldLabel());
-
-		let foldMenuOpen = false;
-		const readFoldState = () => ({
-			foldable: this.foldable,
-			defaultFolded: this.defaultFolded,
-			previewFoldCollapsed: this.previewFoldCollapsed,
-		});
-		let foldStateBeforeMenu: ReturnType<typeof readFoldState> | null = null;
-		const applyFoldState = (
-			value: "off" | "open" | "closed",
-			persist: boolean,
-		): void => {
-			if (value === "off") {
-				this.foldable = false;
-				this.defaultFolded = false;
-				this.previewFoldCollapsed = false;
-			} else {
-				this.foldable = true;
+		// Obsidian's dropdown and menu, as every plain choice (ui/selectDropdown.ts).
+		new SelectDropdown(foldControl, t("editor.foldable"))
+			.setOptions(foldOptions)
+			.setValue(currentFoldState())
+			.onChange((value) => {
+				this.foldable = value !== "off";
 				this.defaultFolded = value === "closed";
 				this.previewFoldCollapsed = value === "closed";
-			}
-			this.updatePreview();
-			if (persist) foldStateBeforeMenu = null;
-		};
-		const restoreFoldPreview = (): void => {
-			if (!foldStateBeforeMenu) return;
-			this.foldable = foldStateBeforeMenu.foldable;
-			this.defaultFolded = foldStateBeforeMenu.defaultFolded;
-			this.previewFoldCollapsed =
-				foldStateBeforeMenu.previewFoldCollapsed;
-			foldStateBeforeMenu = null;
-			this.updatePreview();
-		};
-		const closeFoldMenu = (): void => {
-			if (!foldMenuOpen) return;
-			foldMenuOpen = false;
-			foldMenu.addClass("cs-palette-menu-hidden");
-			foldTrigger.removeClass("is-open");
-			restoreFoldPreview();
-		};
-		const selectFoldState = (value: "off" | "open" | "closed"): void => {
-			const opt = foldOptions.find((item) => item.value === value);
-			if (!opt) return;
-
-			applyFoldState(opt.value, true);
-			foldTriggerLabel.setText(opt.label);
-			this.updateSaveState();
-			closeFoldMenu();
-		};
-		const buildFoldMenu = (): void => {
-			foldMenu.empty();
-			for (const opt of foldOptions) {
-				const item = foldMenu.createDiv({
-					cls: `cs-palette-menu-item${
-						currentFoldState() === opt.value ? " is-selected" : ""
-					}`,
-					attr: { role: "option" },
-				});
-				item.createSpan({
-					cls: "cs-palette-menu-item-label",
-					text: opt.label,
-				});
-				// The same ✓ the shared dropdowns put on their current choice.
-				if (currentFoldState() === opt.value) appendComboboxCheck(item);
-				item.addEventListener("mouseenter", () => {
-					applyFoldState(opt.value, false);
-				});
-				item.addEventListener("click", () =>
-					selectFoldState(opt.value),
-				);
-			}
-		};
-		const openFoldMenu = (): void => {
-			if (foldMenuOpen) return;
-			palettePicker.close();
-			foldMenuOpen = true;
-			foldStateBeforeMenu = readFoldState();
-			buildFoldMenu();
-			foldMenu.removeClass("cs-palette-menu-hidden");
-			foldTrigger.addClass("is-open");
-			foldMenu.focus();
-		};
-		foldTrigger.addEventListener("click", () => {
-			if (foldMenuOpen) closeFoldMenu();
-			else openFoldMenu();
-		});
-		foldMenu.addEventListener("keydown", (ev) => {
-			if (ev.key === "Escape") {
-				ev.preventDefault();
-				closeFoldMenu();
-			}
-		});
-		// Close the fold popup when clicking outside it. The palette picker
-		// keeps its own outside-click (see ListboxPopup), so this no longer has
-		// to know where that one lives.
-		const popupOutsideClick = (ev: MouseEvent): void => {
-			const target = ev.target as Node | null;
-			if (!target) return;
-			if (foldDropdown.contains(target)) return;
-			closeFoldMenu();
-		};
-		this.removePopupOutsideClickListener?.();
-		activeDocument.addEventListener("click", popupOutsideClick);
-		this.removePopupOutsideClickListener = () => {
-			activeDocument.removeEventListener("click", popupOutsideClick);
-		};
+				this.updatePreview();
+				this.updateSaveState();
+			});
 		// Action buttons — the chrome's pinned bottom bar
 		const buttonContainer = footerEl;
 
@@ -2305,8 +2187,6 @@ export class CalloutEditor extends Modal {
 		this.updatePreviewFrame = cancelFrame(this.updatePreviewFrame);
 		this.preview?.destroy();
 		this.preview = null;
-		this.removePopupOutsideClickListener?.();
-		this.removePopupOutsideClickListener = null;
 		this.palettePicker?.destroy();
 		this.palettePicker = null;
 		if (this.resolve) {

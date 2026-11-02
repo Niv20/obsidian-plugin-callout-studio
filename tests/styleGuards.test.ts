@@ -88,9 +88,6 @@ describe("disabled looks the way Obsidian's does", () => {
 
 	/** Every rule of the plugin's that dims a disabled thing, and what it is. */
 	const DIMS: Record<string, keyof typeof OBSIDIAN_DIM> = {
-		// Drawn as Obsidian's `.combobox-button`, which is a <button>.
-		".cs-dropdown-control.cs-dropdown-control:disabled": "button",
-		".cs-combobox.is-disabled .cs-combobox-control": "button",
 		// The + inside the IDs field shares the field's face.
 		".cs-tag-add-btn:disabled": "field",
 		// A radio, a choice control like Obsidian's switch.

@@ -3,7 +3,7 @@ import type { ComboboxRowContract } from "./listboxPopupDom";
 export interface ListboxPopupOptions<T> extends ComboboxRowContract<T> {
 	/** Rows to offer for `query` — already filtered and ordered by the caller. */
 	itemsFor(query: string): readonly T[];
-	/** The text a committed `item` leaves in the closed input. */
+	/** The words the field shows for a committed `item`. */
 	labelOf(item: T): string;
 	/** A row was chosen — by click or by Enter, never by blur. */
 	onCommit(item: T): void;
@@ -25,9 +25,10 @@ export interface ListboxPopupOptions<T> extends ComboboxRowContract<T> {
 		label(query: string): string;
 		onSelect(query: string): void;
 	};
-	/** Accessible name for the input; emitted through a hidden referenced label. */
+	/** Accessible name for the field and its search box; emitted through a hidden referenced label. */
 	ariaLabel: string;
+	/** The search box's grey hint, such as "Search callouts…". Unused without one. */
 	placeholder: string;
-	/** False for select-like pickers whose label should not behave like text. */
+	/** False for a select-only picker: its list opens with no search box. */
 	searchable?: boolean;
 }

@@ -107,11 +107,11 @@ function drawGeneral(plugin: object, app: object = {}) {
 	return { tab, harness, row, redraws: () => redraws };
 }
 
-/** Pick `name` in a callout picker: open it, type, and press Enter on the first match. */
+/** Pick `name` in a callout picker: open it, search, and press Enter on the first match. */
 function pickCallout(rowEl: HTMLElement, name: string): void {
 	const input = rowEl.querySelector<HTMLInputElement>(".cs-combobox-input")!;
 	const press = { preventDefault: () => {}, stopPropagation: () => {} };
-	(input as unknown as { fire(type: string, init?: object): void }).fire("focus");
+	(rowEl.querySelector(".cs-dropdown-field") as unknown as { fire(type: string): void }).fire("click");
 	input.value = name;
 	(input as unknown as { fire(type: string, init?: object): void }).fire("input");
 	(input as unknown as { fire(type: string, init?: object): void }).fire("keydown", { key: "Enter", ...press });
@@ -134,7 +134,7 @@ describe("Default fallback callout", () => {
 		tab.update();
 		assert.equal(pickerOf(), first, "the same picker");
 		assert.equal(row(GENERAL_ROWS.fallback).settingEl.querySelectorAll(".cs-combobox").length, 1);
-		assert.equal(row(GENERAL_ROWS.fallback).settingEl.querySelector<HTMLInputElement>(".cs-combobox-input")?.value, "Note");
+		assert.equal(row(GENERAL_ROWS.fallback).settingEl.querySelector(".cs-dropdown-field-label")?.textContent, "Note");
 	});
 
 	it("repaints and saves a pick, and draws again for the reset arrow", () => {
@@ -155,7 +155,7 @@ describe("Default fallback callout", () => {
 		const reset = row(GENERAL_ROWS.fallback).setting.extraButtons[0] as ButtonLike;
 		reset.press();
 		assert.equal(registry.settings.fallbackCalloutId, DEFAULT_SETTINGS.fallbackCalloutId);
-		assert.equal(row(GENERAL_ROWS.fallback).settingEl.querySelector<HTMLInputElement>(".cs-combobox-input")?.value, "Note");
+		assert.equal(row(GENERAL_ROWS.fallback).settingEl.querySelector(".cs-dropdown-field-label")?.textContent, "Note");
 		assert.equal(resetHidden(reset), true);
 		await Promise.resolve();
 		// Painted before the save, which it must never wait on.
@@ -178,7 +178,7 @@ describe("Default fallback callout", () => {
 		const { row } = drawGeneral(plugin);
 		const fallback = row(GENERAL_ROWS.fallback);
 		assert.equal(fallback.setting.disabled, true);
-		assert.equal(fallback.settingEl.querySelector<HTMLInputElement>(".cs-combobox-input")?.disabled, true);
+		assert.ok(fallback.settingEl.querySelector(".cs-dropdown-field")?.hasClass("mod-disabled"), "Obsidian's disabled dropdown");
 		const reset = (fallback.setting.extraButtons[0] as ButtonLike).buttonEl as unknown as HTMLElement;
 		assert.equal(reset.getAttribute("aria-disabled"), "true");
 	});
@@ -232,7 +232,7 @@ describe("Language", () => {
 			reset.press();
 			assert.equal(registry.settings.language, DEFAULT_SETTINGS.language);
 			// Following Obsidian shows as Obsidian's own language.
-			assert.equal(row(GENERAL_ROWS.language).settingEl.querySelector(".cs-select-value")?.textContent, "English");
+			assert.equal(row(GENERAL_ROWS.language).settingEl.querySelector(".cs-dropdown-field-label")?.textContent, "English");
 			await Promise.resolve();
 			await Promise.resolve();
 			assert.deepEqual(calls, ["save", "applyLocaleChange"]);
@@ -245,7 +245,7 @@ describe("Language", () => {
 	it("goes grey while saving is paused", () => {
 		const { row } = drawGeneral(fakePlugin({ paused: true }).plugin);
 		assert.equal(row(GENERAL_ROWS.language).setting.disabled, true);
-		assert.equal(row(GENERAL_ROWS.language).settingEl.querySelector<HTMLButtonElement>(".cs-select-button")?.disabled, true);
+		assert.equal(row(GENERAL_ROWS.language).settingEl.querySelector(".cs-dropdown-field")?.hasClass("mod-disabled"), true);
 	});
 });
 

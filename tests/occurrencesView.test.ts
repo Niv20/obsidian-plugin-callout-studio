@@ -151,6 +151,16 @@ function pickFormat(view: CalloutOccurrencesView, label: string): void {
 	openFormatMenu(view).clickItem(label);
 }
 
+/** Open the type picker whose search box is `input`: a click on its field. */
+function openPicker(input: FakeElement): void {
+	input.closest(".cs-combobox")!.querySelector(".cs-dropdown-field")!.fire("click");
+}
+
+/** The words the type picker's field shows: the committed type. */
+function shownType(root: HTMLElement): string {
+	return (root as unknown as FakeElement).querySelector(".cs-dropdown-field-label")?.textContent ?? "";
+}
+
 function fileSection(view: CalloutOccurrencesView, path: string): FakeElement | null {
 	return (view.contentEl.querySelectorAll(".cs-occurrences-file") as unknown as FakeElement[])
 		.find((section) => section.dataset.path === path) ?? null;
@@ -336,10 +346,10 @@ describe("callout occurrence sidebar", () => {
 		await h.view.onOpen();
 		const input = h.view.contentEl.querySelector(".cs-occurrences-picker .cs-combobox-input") as unknown as FakeElement;
 		assert.deepEqual(h.view.getState(), { ids: [], role: undefined, allTypes: true });
-		assert.equal(input.value, t("usage.allTypes"));
+		assert.equal(shownType(h.view.contentEl), t("usage.allTypes"));
 		assert.equal(formatValue(h.view), t("usage.allRoles"));
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 4);
-		input.fire("focus");
+		openPicker(input);
 		const allTypes = h.view.contentEl.querySelector(".cs-combobox-iconless-option") as unknown as FakeElement;
 		assert.ok(allTypes);
 		assert.equal(allTypes.textContent, t("usage.allTypes"));
@@ -347,7 +357,7 @@ describe("callout occurrence sidebar", () => {
 		assert.equal(h.view.contentEl.querySelector(".cs-combobox-group-label")?.textContent, t("usage.browse"));
 		allTypes.fire("click");
 		assert.deepEqual(h.view.getState(), { ids: [], role: undefined, allTypes: true });
-		assert.equal(input.value, t("usage.allTypes"));
+		assert.equal(shownType(h.view.contentEl), t("usage.allTypes"));
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 4);
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-file").length, 3);
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-summary")?.textContent,
@@ -358,14 +368,14 @@ describe("callout occurrence sidebar", () => {
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 1);
 		await h.view.setState({ ids: ["warning"], role: undefined }, { history: false });
 		assert.deepEqual(h.view.getState(), { ids: h.registry.vaultIdFormsFor(h.registry.get("warning")!), role: undefined });
-		assert.equal(input.value, "warning");
+		assert.equal(shownType(h.view.contentEl), "warning");
 		assert.equal(formatValue(h.view), t("usage.allRoles"), "Find callouts clears a previous format filter");
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 1);
 		await h.view.setState({ ids: [], role: undefined, allTypes: true }, { history: false });
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 4);
-		assert.equal(input.value, t("usage.allTypes"), "restoring the scope keeps its visible selection");
+		assert.equal(shownType(h.view.contentEl), t("usage.allTypes"), "restoring the scope keeps its visible selection");
 
-		input.fire("focus");
+		openPicker(input);
 		input.value = "note";
 		input.fire("input");
 		const note = h.view.contentEl.querySelector(".cs-combobox-option") as unknown as FakeElement;
@@ -381,7 +391,7 @@ describe("callout occurrence sidebar", () => {
 		await h.view.onOpen();
 		try {
 			const input = h.view.contentEl.querySelector(".cs-occurrences-picker .cs-combobox-input") as unknown as FakeElement;
-			input.fire("focus");
+			openPicker(input);
 			input.value = t("usage.allTypes");
 			input.fire("input");
 			assert.deepEqual(Array.from(h.view.contentEl.querySelectorAll(".cs-combobox-group-label"), (node) => node.textContent),
@@ -511,7 +521,7 @@ describe("callout occurrence sidebar", () => {
 			await h.view.onOpen();
 			const typeInput = h.view.contentEl.querySelector(".cs-occurrences-picker .cs-combobox-input") as unknown as FakeElement;
 			h.view.contentEl.querySelector<HTMLElement>(".cs-occurrences-scroll")!.scrollTop = 240;
-			typeInput.fire("focus");
+			openPicker(typeInput);
 			typeInput.value = "note";
 			typeInput.fire("input");
 			const note = h.view.contentEl.querySelector(".cs-occurrences-picker .cs-combobox-option") as unknown as FakeElement;
@@ -844,28 +854,29 @@ describe("callout occurrence sidebar", () => {
 		const before = JSON.stringify(h.registry.toSaveData());
 		await h.view.onOpen();
 		const input = h.view.contentEl.querySelector(".cs-combobox-input") as unknown as FakeElement;
-		assert.equal(input.value, t("usage.allTypes"));
-		assert.equal(input.getAttribute("aria-label"), null);
-		const labelId = input.getAttribute("aria-labelledby");
+		const field = h.view.contentEl.querySelector(".cs-dropdown-field") as unknown as FakeElement;
+		assert.equal(shownType(h.view.contentEl), t("usage.allTypes"));
+		assert.equal(field.getAttribute("aria-label"), null);
+		const labelId = field.getAttribute("aria-labelledby")?.split(" ")[0];
 		assert.equal(h.view.contentEl.querySelector(`#${labelId}`)?.textContent, t("vaultStats.columnType"));
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 4);
 		assert.equal(h.view.contentEl.querySelector(".cs-occurrences-metrics"), null);
-		input.fire("focus");
+		openPicker(input);
 		input.value = "caution";
 		input.fire("input");
 		const row = h.view.contentEl.querySelector(".cs-combobox-option") as unknown as FakeElement;
 		assert.ok(row);
 		row.fire("click");
-		assert.equal(input.value, "warning");
+		assert.equal(shownType(h.view.contentEl), "warning");
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 2);
 		assert.deepEqual(h.view.getState(), { ids: h.registry.vaultIdFormsFor(h.registry.get("warning")!), role: undefined });
 		assert.equal(h.savedLayouts(), 1);
-		input.fire("focus");
+		openPicker(input);
 		input.value = "unregistered";
 		input.fire("input");
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-combobox-option").length, 1);
 		(h.view.contentEl.querySelector(".cs-combobox-option") as unknown as FakeElement).fire("click");
-		assert.equal(input.value, "unregistered");
+		assert.equal(shownType(h.view.contentEl), "unregistered");
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 1);
 		assert.deepEqual(h.view.getState(), { ids: ["unregistered"], role: undefined });
 		assert.equal(JSON.stringify(h.registry.toSaveData()), before, "browsing and filtering never register definitions");
@@ -876,7 +887,7 @@ describe("callout occurrence sidebar", () => {
 			value: "note", ariaLabel: t("settings.fallbackCallout"), onChange: () => assert.fail("Sidebar browsing changed a settings picker"),
 		});
 		const settingsInput = settingsHost.querySelector(".cs-combobox-input") as unknown as FakeElement;
-		settingsInput.fire("focus");
+		openPicker(settingsInput);
 		assert.equal(settingsHost.querySelectorAll(".cs-combobox-group-label").length, 0, "ordinary callout pickers keep their ungrouped presentation");
 		settingsInput.value = "unregistered";
 		settingsInput.fire("input");
@@ -900,7 +911,7 @@ describe("callout occurrence sidebar", () => {
 		const names = (): Array<string | null | undefined> => Array.from(h.view.contentEl.querySelectorAll(".cs-combobox-option"), (row) => row.querySelector(".callout-studio-suggestion-name")?.textContent);
 		const search = (query: string): void => { input.value = query; input.fire("input"); };
 		const key = (value: string): void => { input.fire("keydown", { key: value, preventDefault: () => {}, stopPropagation: () => {} }); };
-		input.fire("focus");
+		openPicker(input);
 		assert.deepEqual(headings(), [t("usage.browse"), t("usage.registeredCallouts"), t("usage.unregisteredCallouts")]);
 		const allNames = names();
 		assert.deepEqual(allNames.slice(-2), ["aaa-needle", "needle"], "unknown rows stay after every registered row even when alphabetically earlier");
@@ -916,7 +927,7 @@ describe("callout occurrence sidebar", () => {
 		assert.deepEqual(h.view.getState(), { ids: ["needle"], role: undefined });
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 1);
 		assert.equal(h.registry.get("needle"), undefined);
-		input.fire("focus");
+		openPicker(input);
 		search("Zebra");
 		assert.deepEqual(names(), ["Zebra needle"]);
 		assert.deepEqual(headings(), [], "one matching registered group needs no heading");
@@ -935,7 +946,7 @@ describe("callout occurrence sidebar", () => {
 			if (!registered) h.registry.getBuiltIn = () => [];
 			await h.view.onOpen();
 			const input = h.view.contentEl.querySelector(".cs-combobox-input") as unknown as FakeElement;
-			input.fire("focus");
+			openPicker(input);
 			assert.ok(h.view.contentEl.querySelectorAll(".cs-combobox-option").length > 0);
 			assert.deepEqual(Array.from(h.view.contentEl.querySelectorAll(".cs-combobox-group-label"), (node) => node.textContent), [
 				t("usage.browse"), t(registered ? "usage.registeredCallouts" : "usage.unregisteredCallouts"),
@@ -986,7 +997,7 @@ describe("callout occurrence sidebar", () => {
 		const before = listenerCount();
 		await h.view.onOpen();
 		const input = h.view.contentEl.querySelector(".cs-combobox-input") as unknown as FakeElement;
-		input.fire("focus");
+		openPicker(input);
 		input.value = "emergent";
 		input.fire("input");
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-combobox-option").length, 0);
@@ -1029,16 +1040,16 @@ describe("callout occurrence sidebar", () => {
 		h.registry.add({ ...h.registry.get("note")!, id: "custom", displayName: "Custom", builtIn: false, source: "user" });
 		await h.view.setState({ ids: ["caution"] }, { history: false });
 		await h.view.onOpen();
-		assert.equal((h.view.contentEl.querySelector(".cs-combobox-input") as HTMLInputElement).value, "warning");
+		assert.equal(shownType(h.view.contentEl), "warning");
 		await h.view.setState({ ids: ["custom"] }, { history: false });
-		assert.equal((h.view.contentEl.querySelector(".cs-combobox-input") as HTMLInputElement).value, "custom");
+		assert.equal(shownType(h.view.contentEl), "custom");
 		h.registry.remove("custom");
-		assert.equal((h.view.contentEl.querySelector(".cs-combobox-input") as HTMLInputElement).value, "custom");
+		assert.equal(shownType(h.view.contentEl), "custom");
 		assert.deepEqual(h.view.getState(), { ids: ["custom"], role: undefined });
 		h.contents["a.md"] = "[!note] [!warning]";
 		h.index.invalidate("a.md");
 		await h.index.ensureFresh();
-		assert.equal((h.view.contentEl.querySelector(".cs-combobox-input") as HTMLInputElement).value, "custom");
+		assert.equal(shownType(h.view.contentEl), "custom");
 		assert.deepEqual(h.view.getState(), { ids: ["custom"], role: undefined });
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 0);
 		await h.view.setState({ ids: ["not-a-registered-type"] }, { history: false });
@@ -1057,7 +1068,7 @@ describe("callout occurrence sidebar", () => {
 		await h.view.setState({ ids: ["unknown type"], role: "heading" }, { history: false });
 		const opened = h.view.onOpen();
 		assert.deepEqual(h.view.getState(), { ids: ["unknown type"], role: "heading" });
-		assert.equal((h.view.contentEl.querySelector(".cs-combobox-input") as HTMLInputElement).value, "unknown type");
+		assert.equal(shownType(h.view.contentEl), "unknown type");
 		release(text);
 		await opened;
 		for (const [role, count] of [["heading", 1], ["regular", 1], ["inline", 1], ["", 3]] as const) {
@@ -1078,10 +1089,10 @@ describe("callout occurrence sidebar", () => {
 		await h.view.setState({ ids: ["unknown"] }, { history: false });
 		await h.view.onOpen();
 		const input = h.view.contentEl.querySelector(".cs-combobox-input") as unknown as FakeElement;
-		input.fire("focus");
+		openPicker(input);
 		input.value = "unk";
 		input.fire("input");
-		const lead = h.view.contentEl.querySelector<HTMLElement>(".cs-combobox-lead")!;
+		const lead = h.view.contentEl.querySelector<HTMLElement>(".cs-dropdown-field-icon")!;
 		const optionIcon = (): HTMLElement => h.view.contentEl.querySelector(".callout-studio-suggestion-icon")!;
 		const plugin = { app: h.app, registry: h.registry, settings: h.registry.settings, registerView: () => {},
 			restyleUncustomizedFallbackRows: () => h.registry.restyleUncustomizedFallbackRows(),
@@ -1092,7 +1103,7 @@ describe("callout occurrence sidebar", () => {
 		// The settings page's Default fallback callout picker.
 		const settingsPicker = createFallbackPicker(plugin, settingsHost, (id) => setFallbackCallout(plugin, id));
 		const settingsInput = settingsHost.querySelector(".cs-combobox-input") as unknown as FakeElement;
-		settingsInput.fire("focus");
+		openPicker(settingsInput);
 		settingsInput.value = "template";
 		settingsInput.fire("input");
 		(settingsHost.querySelector(".cs-combobox-option") as unknown as FakeElement).fire("click");
@@ -1122,7 +1133,7 @@ describe("callout occurrence sidebar", () => {
 		}]]));
 		await h.view.setState({ ids: ["theme-only"] }, { history: false });
 		await h.view.onOpen();
-		const lead = h.view.contentEl.querySelector<HTMLElement>(".cs-combobox-lead")!;
+		const lead = h.view.contentEl.querySelector<HTMLElement>(".cs-dropdown-field-icon")!;
 		assert.equal(lead.style.color, "rgb(1, 2, 3)");
 		assert.equal(lead.textContent, "☀");
 		assert.equal(h.registry.get("theme-only"), undefined);
@@ -1134,13 +1145,13 @@ describe("callout occurrence sidebar", () => {
 		await h.view.setState({ ids: ["unknown"] }, { history: false });
 		await h.view.onOpen();
 		const input = h.view.contentEl.querySelector(".cs-combobox-input") as unknown as FakeElement;
-		input.fire("focus");
+		openPicker(input);
 		input.value = "lea";
 		input.fire("input");
 		h.registry.add({ ...h.registry.get("note")!, id: "unknown", displayName: "Unknown", builtIn: false, source: "user", aliases: ["legacy"], colorLight: "#123456", colorDark: "#123456" });
 		assert.equal(input.value, "lea");
 		assert.equal(input.getAttribute("aria-expanded"), "true");
-		assert.equal(h.view.contentEl.querySelector<HTMLElement>(".cs-combobox-lead")?.style.color, "#123456");
+		assert.equal(h.view.contentEl.querySelector<HTMLElement>(".cs-dropdown-field-icon")?.style.color, "#123456");
 		assert.equal(h.view.contentEl.querySelectorAll(".cs-occurrences-result").length, 2);
 		assert.deepEqual(h.view.getState(), { ids: h.registry.vaultIdFormsFor(h.registry.get("unknown")!), role: undefined });
 		await h.view.onClose();

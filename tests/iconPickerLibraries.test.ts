@@ -86,7 +86,7 @@ function harness(
 	return {
 		modal, contentEl, settings, ready, plugin,
 		picker: modal as unknown as Picker,
-		sourceInput: (): FakeElement => contentEl.querySelector(".icon-picker-source-dropdown .cs-combobox-input")!,
+		sourceField: (): FakeElement => contentEl.querySelector(".icon-picker-source-dropdown .cs-dropdown-field")!,
 		destroy: () => {
 			modal.onClose();
 			containerEl.remove();
@@ -121,7 +121,7 @@ async function withLibraryWindow(
 
 describe("Pick an icon — the library menu", () => {
 	const open = (h: ReturnType<typeof harness>): void =>
-		h.sourceInput().fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
+		h.sourceField().fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
 	const headings = (h: ReturnType<typeof harness>): string[] =>
 		h.contentEl.querySelectorAll(".cs-combobox-group-label").map((el) => el.textContent);
 	const closingLine = (h: ReturnType<typeof harness>): string | undefined =>
@@ -159,7 +159,7 @@ describe("Pick an icon — the library menu", () => {
 			h.modal.onOpen();
 			await setImmediate();
 			assert.equal(h.picker.activeSource, "tabler", "the picker opens on the icon's own library");
-			assert.equal((h.sourceInput() as unknown as HTMLInputElement).value, t("iconPicker.tabler"));
+			assert.equal(h.sourceField().querySelector(".cs-dropdown-field-label")?.textContent, t("iconPicker.tabler"));
 			open(h);
 			assert.deepEqual(headings(h), [t("iconPicker.groupDeleted"), t("iconPicker.groupSearch"), t("iconPicker.groupLibraries")]);
 			const first = h.contentEl.querySelector(".icon-picker-source-menu-item")!;
@@ -390,7 +390,7 @@ describe("Pick an icon — after the Icon libraries window", () => {
 			});
 			assert.equal(h.picker.activeSource, "all");
 			assert.equal(h.picker.selectedIcon, null, "confirming it would bring the library back");
-			assert.equal((h.sourceInput() as unknown as HTMLInputElement).value, t("iconPicker.allSources"));
+			assert.equal(h.sourceField().querySelector(".cs-dropdown-field-label")?.textContent, t("iconPicker.allSources"));
 		} finally { h.destroy(); }
 	});
 

@@ -275,7 +275,7 @@ const STICKY_LAYERS: Record<string, string> = {
 	".cs-quick-insert-toolbar":
 		"the quick-insert window's search + source filter, inside .modal-content",
 	".cs-combobox-group-label":
-		"a dropdown's group heading, inside the .cs-combobox-menu scrollport and bounded by its group",
+		"a picker's group heading, inside the .cs-combobox-menu scrollport and bounded by its group",
 	".cs-meta-suggestion-heading":
 		"the metadata autocomplete's group heading, a sibling of the rows inside Obsidian's .suggestion scrollport",
 	".cs-recovery-comparison > thead":
@@ -332,18 +332,16 @@ describe("sticky layers", () => {
 		// menu paints — a different value is a stripe across the list, and a
 		// translucent one lets the rows it is hiding show through.
 		//
-		// The menu's paint is shared with the Fold selector's list, in one rule
-		// for both. On a phone or tablet the list itself turns 90% opaque, as
-		// Obsidian's menus do; the heading keeps the opaque face on purpose, for
-		// the reason above, so that one rule is not compared here.
+		// The popover's ground is app.css's (`--suggestion-background`); the
+		// heading repaints the very token the popover names it by.
 		assert.strictEqual(
 			paintOf(ruleFor(".cs-combobox-group-label")),
 			"var(--cs-menu-face)",
 		);
 		assert.strictEqual(
-			paintOf(ruleFor(".cs-combobox-group-label")),
-			paintOf(ruleFor(".cs-combobox-menu, .cs-palette-menu")),
-			"the heading and the menu it is pinned in must not disagree",
+			valueOf(ruleFor(".cs-combobox-popup"), "--cs-menu-face"),
+			"var(--suggestion-background, var(--background-primary))",
+			"the heading and the popover it is pinned in must not disagree",
 		);
 		assert.strictEqual(
 			valueOf(ruleFor(".cs-combobox-menu.cs-combobox-menu-grouped"), "padding-block-start"),

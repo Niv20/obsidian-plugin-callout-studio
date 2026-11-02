@@ -208,7 +208,6 @@ describe("class names in styles.css and src/ agree", () => {
 	 */
 	const PREFIXES = [
 		"cs-import-issue-",
-		"cs-palette-menu-item",
 	];
 
 	/**
@@ -264,6 +263,10 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-occurrences-result", // identity/query hook; shared cs-sidebar-result supplies the card
 		"cs-occurrences-location", // per-view hook; shared cs-sidebar-location supplies its typography
 		"cs-combobox-iconless-option", // a test hook for the row with no icon; the shared .cs-combobox-option paints it
+		"cs-combobox-input", // finds a picker's search box in tests; Obsidian's .search-input-container rules draw it
+		"cs-palette-combobox", // finds the Color row's picker in tests; Obsidian's .dropdown draws its field
+		"cs-select-button", // finds a SelectDropdown's icon button in tests; its caller dresses it (.cs-footer-tile, .clickable-icon)
+		"cs-select-value", // an icon button's words, hidden or shown; its caller's tile lays them out
 		"callout-studio-suggestion-create-new", // finds a "Create …" row in tests and scenes; it is drawn like any suggestion row (S10-16)
 		"cs-fallback-tag", // finds a callout row's Default tag in tests; Obsidian's .flair.mod-flat draws it, with its own margin after the name
 		"cs-btn-disabled", // marks a blocked button (ui/blockedButton.ts); Obsidian's aria-disabled rule draws the 70% dim
@@ -291,9 +294,6 @@ describe("class names in styles.css and src/ agree", () => {
 		"callout-studio-replace-modal",
 		"cs-cm-widget",
 		"cs-command-editor",
-		"cs-fold-dropdown",
-		"cs-fold-trigger",
-		"cs-icon-source",
 		"cs-source-name",
 		"cs-welcome-hero",
 		"cs-welcome-panel",

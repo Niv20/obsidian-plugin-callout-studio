@@ -12,9 +12,9 @@
  *   `fallbackCalloutId`, which is persisted *and synced to every device*. A
  *   picker that resolved a half-typed word to "probably the first match" on the
  *   way out would write a callout id the user never chose into a synced file.
- * - **A row click outlives the blur it causes.** Clicking a row blurs the input
- *   first; without the popup's `mousedown` guard the revert would land before
- *   the click and every mouse selection would silently undo itself.
+ * - **A row click outlives the blur it causes.** Clicking a row blurs the search
+ *   box first; without the popover's `mousedown` guard the close would land
+ *   before the click and every mouse selection would silently undo itself.
  */
 import assert from "node:assert";
 import { describe, it } from "node:test";
@@ -64,9 +64,14 @@ interface Harness {
 	host: FakeElement;
 	box: CalloutCombobox;
 	committed: string[];
+	/** The search box at the top of the open list. */
 	input: FakeElement;
-	control: FakeElement;
+	/** The field: Obsidian's dropdown, showing the committed callout. */
+	field: FakeElement;
+	popup: FakeElement;
 	menu: FakeElement;
+	/** The words the field shows. */
+	label(): string;
 	rows(): FakeElement[];
 	/** Row names, top to bottom — what the user actually sees listed. */
 	names(): string[];
@@ -100,7 +105,8 @@ function mount(
 		return found;
 	};
 	const input = pick(".cs-combobox-input");
-	const control = pick(".cs-combobox-control");
+	const field = pick(".cs-dropdown-field");
+	const popup = pick(".cs-combobox-popup");
 	const menu = pick(".cs-combobox-menu");
 	const rows = (): FakeElement[] => menu.querySelectorAll(".cs-combobox-option");
 
@@ -109,8 +115,10 @@ function mount(
 		box,
 		committed,
 		input,
-		control,
+		field,
+		popup,
 		menu,
+		label: () => field.querySelector(".cs-dropdown-field-label")?.textContent ?? "",
 		rows,
 		names: () =>
 			rows().map(
@@ -118,13 +126,14 @@ function mount(
 					row.querySelector(".callout-studio-suggestion-name")?.textContent ??
 					"",
 			),
-		open: () => input.fire("focus"),
+		open: () => field.fire("click"),
 		type: (text: string) => {
 			input.value = text;
 			input.fire("input");
 		},
+		// The search box has the keys while the list is open, the field before.
 		key: (key: string) =>
-			input.fire("keydown", {
+			(popup.hasClass("cs-combobox-popup-hidden") ? field : input).fire("keydown", {
 				key,
 				preventDefault: () => {},
 				stopPropagation: () => {},
@@ -141,7 +150,7 @@ function clickRow(h: Harness, index: number): void {
 }
 
 const isOpen = (h: Harness): boolean =>
-	!h.menu.classList.contains("cs-combobox-menu-hidden");
+	!h.popup.classList.contains("cs-combobox-popup-hidden");
 
 /* -------------------------------------------------------------------------- */
 
@@ -150,27 +159,29 @@ describe("CalloutCombobox — the closed field", () => {
 		const first = mount(CHOICES);
 		const second = mount(CHOICES);
 		try {
-			const firstLabel = first.input.getAttribute("aria-labelledby");
-			const secondLabel = second.input.getAttribute("aria-labelledby");
+			// The name's label first, then the words shown ("Callout type, Note").
+			const nameOf = (h: Harness) => h.field.getAttribute("aria-labelledby")?.split(" ")[0];
+			const firstLabel = nameOf(first);
+			const secondLabel = nameOf(second);
 			assert.ok(firstLabel);
 			assert.ok(secondLabel);
 			assert.notStrictEqual(firstLabel, secondLabel);
 			for (const h of [first, second]) {
-				const label = h.host.querySelector(`#${h.input.getAttribute("aria-labelledby")}`);
+				const label = h.host.querySelector(`#${nameOf(h)}`);
 				assert.strictEqual(label?.textContent, "Callout type");
 				assert.strictEqual(label?.hasAttribute("hidden"), true);
-				assert.strictEqual(h.control.querySelector("[aria-label]"), null);
-				assert.strictEqual(h.control.querySelector("[title]"), null);
+				assert.strictEqual(h.field.querySelector("[aria-label]"), null);
+				assert.strictEqual(h.field.querySelector("[title]"), null);
 			}
 		} finally { first.box.destroy(); second.box.destroy(); }
 	});
 	it("can show an ID in the sidebar without changing names in its popup rows", () => {
 		const h = mount(CHOICES, { labelOf: (entry) => entry.id });
-		assert.strictEqual(h.input.value, "note");
+		assert.strictEqual(h.label(), "note");
 		h.open();
 		assert.ok(h.names().includes("Note"));
 		clickRow(h, 0);
-		assert.strictEqual(h.input.value, h.box.value);
+		assert.strictEqual(h.label(), h.box.value);
 		h.box.destroy();
 	});
 	it("shows the display name alone, never 'Abstract (abstract)'", () => {
@@ -178,14 +189,14 @@ describe("CalloutCombobox — the closed field", () => {
 		// welded to every label in the list.
 		const h = mount(CHOICES, { value: "abstract" });
 
-		assert.strictEqual(h.input.value, "Abstract");
-		assert.ok(!h.input.value.includes("("), h.input.value);
+		assert.strictEqual(h.label(), "Abstract");
+		assert.ok(!h.label().includes("("), h.label());
 	});
 
 	it("paints the committed callout's own accent beside the name", () => {
 		const h = mount(CHOICES, { value: "abstract" });
 
-		const lead = h.host.querySelector(".cs-combobox-lead");
+		const lead = h.host.querySelector(".cs-dropdown-field-icon");
 		assert.strictEqual(lead?.style.color, "#00b8d4");
 	});
 
@@ -201,7 +212,7 @@ describe("CalloutCombobox — the closed field", () => {
 		});
 
 		assert.strictEqual(
-			host.querySelector(".cs-combobox-lead")?.style.color,
+			host.querySelector(".cs-dropdown-field-icon")?.style.color,
 			"#88bbee",
 		);
 		fakeDom.light();
@@ -210,7 +221,7 @@ describe("CalloutCombobox — the closed field", () => {
 	it("reads an id it does not know as nothing selected", () => {
 		const h = mount(CHOICES, { value: "ghost" });
 
-		assert.strictEqual(h.input.value, "");
+		assert.strictEqual(h.label(), "");
 		assert.ok(h.host.querySelector(".cs-combobox")?.classList.contains("is-empty"));
 		assert.deepStrictEqual(h.committed, []);
 	});
@@ -218,7 +229,7 @@ describe("CalloutCombobox — the closed field", () => {
 
 describe("CalloutCombobox — opening and filtering", () => {
 	it("offers every choice on open, not a search for what is already chosen", () => {
-		// The query is separate state from the input's text. Treating the
+		// The query is separate state from the field's words. Treating the
 		// committed label as the query would open a list of exactly one row.
 		const h = mount(CHOICES, { value: "abstract" });
 
@@ -226,7 +237,8 @@ describe("CalloutCombobox — opening and filtering", () => {
 
 		assert.ok(isOpen(h));
 		assert.deepStrictEqual(h.names(), ["Abstract", "Note", "Warning"]);
-		assert.strictEqual(h.input.selectCount, 1, "text should be selected");
+		assert.strictEqual(h.input.value, "", "the search box starts empty");
+		assert.strictEqual(fakeDom.document.activeElement, h.input, "and has the focus, ready to type into");
 	});
 
 	it("filters on an alias, and says why the row matched", () => {
@@ -318,7 +330,7 @@ describe("CalloutCombobox — choosing", () => {
 		clickRow(h, 0);
 
 		assert.deepStrictEqual(h.committed, ["abstract"]);
-		assert.strictEqual(h.input.value, "Abstract");
+		assert.strictEqual(h.label(), "Abstract");
 		assert.ok(!isOpen(h));
 	});
 
@@ -368,7 +380,7 @@ describe("CalloutCombobox — leaving without choosing", () => {
 		h.input.fire("blur");
 
 		assert.deepStrictEqual(h.committed, []);
-		assert.strictEqual(h.input.value, "Note");
+		assert.strictEqual(h.label(), "Note");
 		assert.ok(!isOpen(h));
 	});
 
@@ -380,7 +392,7 @@ describe("CalloutCombobox — leaving without choosing", () => {
 		h.key("Escape");
 
 		assert.deepStrictEqual(h.committed, []);
-		assert.strictEqual(h.input.value, "Note");
+		assert.strictEqual(h.label(), "Note");
 		assert.ok(!isOpen(h));
 	});
 
@@ -440,7 +452,7 @@ describe("CalloutCombobox — lifecycle", () => {
 	it("an empty choice list disables the field and refuses to open", () => {
 		const h = mount([], { value: "" });
 
-		assert.strictEqual(h.input.disabled, true);
+		assert.ok(h.field.hasClass("mod-disabled"), "Obsidian's disabled dropdown");
 		h.open();
 		assert.ok(!isOpen(h));
 	});
@@ -450,48 +462,43 @@ describe("CalloutCombobox — lifecycle", () => {
 
 		h.box.setValue("warning");
 
-		assert.strictEqual(h.input.value, "Warning");
+		assert.strictEqual(h.label(), "Warning");
 		assert.strictEqual(h.box.value, "warning");
 		assert.deepStrictEqual(h.committed, []);
 	});
 });
 
-describe("CalloutCombobox — clicking into the field", () => {
-	/**
-	 * A real mouse click: mousedown, then the focus it causes, then click.
-	 * `focus()` as well as `fire("focus")` — the first moves the document's
-	 * `activeElement`, which is the very thing the mousedown handler reads to
-	 * tell a first click from a second.
-	 */
-	function clickControl(h: Harness): void {
-		h.control.fire("mousedown", {});
-		h.input.focus();
-		h.input.fire("focus");
-		h.control.fire("click", {});
-	}
-
-	it("selects the whole label so the first keystroke replaces it", () => {
-		// `openMenu`'s own select() cannot survive a mouse click — the browser's
-		// mouseup places a caret and collapses it — so the control re-selects on
-		// click, which runs after. Without that second select this is the bug the
-		// user reported: you click, and you are typing into the middle of "Note".
+describe("CalloutCombobox — the field", () => {
+	it("closes the list on a second click, choosing nothing, and keeps the focus on the field", () => {
 		const h = mount();
 
-		clickControl(h);
+		h.open();
+		h.type("warn");
+		h.field.fire("click");
 
-		assert.ok(h.input.selectCount >= 2, `selectCount=${h.input.selectCount}`);
+		assert.ok(!isOpen(h));
+		assert.deepStrictEqual(h.committed, []);
+		assert.strictEqual(h.label(), "Note");
+		assert.strictEqual(fakeDom.document.activeElement, h.field);
 	});
 
-	it("leaves a second click alone, so the text stays editable", () => {
+	it("starts a search with a letter typed on the closed field", () => {
 		const h = mount();
 
-		clickControl(h);
-		const afterFirst = h.input.selectCount;
-		// Focus is already on the input now, so this one must place a caret.
-		h.control.fire("mousedown", {});
-		h.control.fire("click", {});
+		h.key("w");
 
-		assert.strictEqual(h.input.selectCount, afterFirst);
+		assert.ok(isOpen(h));
+		assert.strictEqual(h.input.value, "w");
+		assert.deepStrictEqual(h.names(), ["Warning"]);
+	});
+
+	it("focuses the field, without opening it, when asked to", () => {
+		const h = mount();
+
+		h.box.focus();
+
+		assert.strictEqual(fakeDom.document.activeElement, h.field);
+		assert.ok(!isOpen(h));
 	});
 });
 
@@ -521,9 +528,11 @@ describe("CalloutCombobox — creating the callout you searched for", () => {
 		});
 		const input = host.querySelector(".cs-combobox-input");
 		assert.ok(input);
+		const field = host.querySelector(".cs-dropdown-field");
+		assert.ok(field);
 		const menu = host.querySelector(".cs-combobox-menu");
 		assert.ok(menu);
-		return { host, box, input, menu, committed, asked };
+		return { host, box, input, field, menu, committed, asked };
 	}
 
 	const CREATED = def({ id: "recipe", displayName: "Recipe" });
@@ -531,7 +540,7 @@ describe("CalloutCombobox — creating the callout you searched for", () => {
 	it("offers to create it instead of reporting a dead end", () => {
 		const h = mountCreatable(CREATED);
 
-		h.input.fire("focus");
+		h.field.fire("click");
 		h.input.value = "Recipe";
 		h.input.fire("input");
 
@@ -549,7 +558,7 @@ describe("CalloutCombobox — creating the callout you searched for", () => {
 	it("adopts what was created, and reports it as the new value", async () => {
 		const h = mountCreatable(CREATED);
 
-		h.input.fire("focus");
+		h.field.fire("click");
 		h.input.value = "Recipe";
 		h.input.fire("input");
 		h.menu.fire("mousedown", { preventDefault: () => {} });
@@ -560,14 +569,14 @@ describe("CalloutCombobox — creating the callout you searched for", () => {
 
 		assert.deepStrictEqual(h.asked, ["Recipe"]);
 		assert.strictEqual(h.box.value, "recipe");
-		assert.strictEqual(h.input.value, "Recipe");
+		assert.strictEqual(h.field.querySelector(".cs-dropdown-field-label")?.textContent, "Recipe");
 		assert.deepStrictEqual(h.committed, ["recipe"]);
 	});
 
 	it("keeps the old value when the user backs out of the editor", async () => {
 		const h = mountCreatable(null);
 
-		h.input.fire("focus");
+		h.field.fire("click");
 		h.input.value = "Recipe";
 		h.input.fire("input");
 		h.menu.fire("mousedown", { preventDefault: () => {} });
@@ -582,7 +591,7 @@ describe("CalloutCombobox — creating the callout you searched for", () => {
 	it("offers nothing to create for an empty query", () => {
 		const h = mountCreatable(CREATED);
 
-		h.input.fire("focus");
+		h.field.fire("click");
 
 		assert.strictEqual(
 			h.menu.querySelector(".callout-studio-suggestion-create-new"),
@@ -617,7 +626,7 @@ describe("renderComboboxRows — group headings", () => {
 		});
 		const input = host.querySelector(".cs-combobox-input");
 		assert.ok(input);
-		input.fire("focus");
+		host.querySelector(".cs-dropdown-field")?.fire("click");
 		if (query) {
 			input.value = query;
 			input.fire("input");
@@ -700,7 +709,7 @@ describe("New command — Callout type list", () => {
 			const names = () => host.querySelectorAll(".callout-studio-suggestion-name")
 				.map((name) => name.textContent);
 
-			input.fire("focus");
+			host.querySelector(".cs-dropdown-field")?.fire("click");
 			assert.deepStrictEqual(labels(), []);
 			assert.deepStrictEqual(names(), ["A Registered", "B Detected", "Note"]);
 
@@ -752,8 +761,8 @@ describe("the Default fallback callout's picker end to end", () => {
 
 		const input = host.querySelector(".cs-combobox-input");
 		assert.ok(input);
-		assert.strictEqual(input.value, "Note");
-		input.fire("focus");
+		assert.strictEqual(host.querySelector(".cs-dropdown-field-label")?.textContent, "Note");
+		host.querySelector(".cs-dropdown-field")?.fire("click");
 		// The registry seeds the built-ins alongside these, so the assertion is
 		// about who is present, not about the whole list.
 		const names = host
@@ -775,7 +784,7 @@ describe("the Default fallback callout's picker end to end", () => {
 
 		const input = host.querySelector(".cs-combobox-input");
 		assert.ok(input);
-		input.fire("focus");
+		host.querySelector(".cs-dropdown-field")?.fire("click");
 		// Narrow to exactly one row rather than indexing into the built-ins.
 		input.value = "warning";
 		input.fire("input");

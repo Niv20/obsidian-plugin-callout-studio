@@ -72,24 +72,20 @@ describe("command editor field layout", () => {
 });
 
 describe("custom dropdown overflow", () => {
-	it("uses one scrollable maximum-height contract", () => {
+	it("caps the popover's height, and scrolls the list inside it", () => {
 		assert.match(
 			css,
-			/\.cs-scrollable-dropdown-menu\s*\{[^}]*max-height:\s*var\(--cs-combobox-menu-max-height,\s*320px\);[^}]*overflow-y:\s*auto;[^}]*\}/,
+			/\.cs-combobox-popup\.suggestion-container\s*\{[^}]*max-height:\s*var\(--cs-combobox-menu-max-height,\s*320px\);[^}]*\}/,
 		);
+		// Obsidian's `.suggestion` scrolls; the list may shrink below its rows for it.
+		assert.match(readRepoFile("src/ui/listboxPopupDom.ts"), /cls: "suggestion cs-combobox-menu"/);
+		assert.match(css, /\.cs-combobox-menu\s*\{[^}]*min-height:\s*0;/);
 	});
 
-	it("applies the contract to every custom dropdown implementation", () => {
-		for (const path of [
-			"src/ui/listboxPopupDom.ts",
-			"src/settings/CalloutEditor.ts",
-		]) {
-			assert.match(
-				readRepoFile(path),
-				/\bcs-scrollable-dropdown-menu\b/,
-				`${path} has a custom dropdown without the shared overflow class`,
-			);
-		}
+	it("leaves no hand-built dropdown: the callout editor's fold state is a plain choice", () => {
+		const editor = readRepoFile("src/settings/CalloutEditor.ts");
+		assert.doesNotMatch(editor, /cs-palette-menu|cs-fold-menu|cs-palette-trigger/);
+		assert.match(editor, /new SelectDropdown\(foldControl,/);
 	});
 
 	it("keeps group headings pinned over a solid menu surface while scrolling", () => {

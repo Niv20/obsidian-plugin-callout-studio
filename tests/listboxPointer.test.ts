@@ -26,11 +26,13 @@ function mount() {
 		},
 	});
 	popup.setSelected("Beta");
+	const field = host.querySelector(".cs-dropdown-field")!;
 	const input = host.querySelector(".cs-combobox-input")!;
+	const popover = host.querySelector(".cs-combobox-popup")!;
 	const menu = host.querySelector(".cs-combobox-menu")!;
-	input.fire("focus");
+	field.fire("click");
 	return {
-		popup, input, menu, previews, committed, created,
+		popup, field, input, popover, menu, previews, committed, created,
 		rows: () => menu.querySelectorAll(".cs-combobox-option"),
 		key: (key: string) => input.fire("keydown", {
 			key, preventDefault: () => {}, stopPropagation: () => {},
@@ -39,14 +41,37 @@ function mount() {
 }
 
 describe("ListboxPopup — pointer and keyboard highlights", () => {
-	it("keeps its accessible field name without a hover tooltip", () => {
+	it("draws no keyboard ring on the field after a pick made with the mouse", () => {
 		const h = mount();
 		try {
-			assert.equal(h.input.getAttribute("aria-label"), null);
-			assert.equal(h.input.getAttribute("title"), null);
-			const labelId = h.input.getAttribute("aria-labelledby");
-			assert.ok(labelId);
-			assert.equal(h.input.parentElement?.querySelector(`#${labelId}`)?.textContent, "Choices");
+			h.menu.fire("mousedown", { preventDefault: () => {} });
+			h.rows()[0]!.fire("click");
+			assert.equal(fakeDom.document.activeElement, h.field, "the focus is back on the field");
+			// Obsidian's mouse-focus: app.css draws no ring until the next Tab.
+			assert.ok(h.field.hasClass("mouse-focus"));
+		} finally { h.popup.destroy(); }
+	});
+
+	it("keeps the keyboard ring after a pick made with Enter", () => {
+		const h = mount();
+		try {
+			h.key("ArrowDown");
+			h.key("Enter");
+			assert.equal(fakeDom.document.activeElement, h.field);
+			assert.equal(h.field.hasClass("mouse-focus"), false);
+		} finally { h.popup.destroy(); }
+	});
+
+	it("names its field and its search box without a hover tooltip", () => {
+		const h = mount();
+		try {
+			for (const named of [h.field, h.input]) {
+				assert.equal(named.getAttribute("aria-label"), null);
+				assert.equal(named.getAttribute("title"), null);
+				const labelId = named.getAttribute("aria-labelledby")?.split(" ")[0];
+				assert.ok(labelId);
+				assert.equal(named.parentElement?.querySelector(`#${labelId}`)?.textContent, "Choices");
+			}
 		} finally { h.popup.destroy(); }
 	});
 
@@ -64,7 +89,7 @@ describe("ListboxPopup — pointer and keyboard highlights", () => {
 				assert.deepEqual(h.previews, ["Alpha", null]);
 				assert.ok(h.rows()[1]?.classList.contains("is-selected"));
 				assert.equal(h.popup.value, "Beta");
-				assert.ok(!h.menu.classList.contains("cs-combobox-menu-hidden"));
+				assert.ok(!h.popover.classList.contains("cs-combobox-popup-hidden"));
 				h.key("Enter");
 				assert.deepEqual(h.committed, []);
 				h.key("ArrowDown");
@@ -157,10 +182,6 @@ it("dropdown option styling has no independent mouse hover highlight", () => {
 		css,
 		/\.(?:cs-combobox-option|icon-picker-source-menu-item):hover\b/,
 	);
-	for (const [, selector] of css.matchAll(/([^,{}]*\.cs-palette-menu-item:hover)\b/g)) {
-		assert.ok(selector);
-		assert.match(selector, /\.cs-fold-menu\b/);
-	}
 });
 
 it("selected options still show a visible pointer state", () => {
@@ -171,8 +192,8 @@ it("selected options still show a visible pointer state", () => {
 	const css = readRepoFile("styles.css").replace(/\/\*[\s\S]*?\*\//g, "");
 	assert.doesNotMatch(
 		css,
-		/\.(?:cs-combobox-option|cs-palette-menu-item)[^{,]*\.is-selected[^{,]*\{[^}]*background/,
+		/\.cs-combobox-option[^{,]*\.is-selected[^{,]*\{[^}]*background/,
 		"a fill on the chosen row would hide the pointer highlight again",
 	);
-	assert.ok(css.includes(".cs-combobox-option.is-active,"), "the shared highlight covers every row");
+	assert.ok(css.includes(".cs-combobox-option.is-active {"), "the shared highlight covers every row");
 });

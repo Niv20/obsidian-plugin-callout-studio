@@ -380,7 +380,7 @@ describe("quick-insert source controls and empty states", () => {
 		const select = toolbar.filter;
 		for (const [field, name] of [
 			[toolbar.search, en["quickInsert.searchPlaceholder"]],
-			[select.buttonEl, en["quickInsert.sourceAria"]],
+			[select.controlEl, en["quickInsert.sourceAria"]],
 		] as const) {
 			assert.strictEqual(field.getAttribute("aria-label"), null);
 			assert.strictEqual(field.getAttribute("title"), null);

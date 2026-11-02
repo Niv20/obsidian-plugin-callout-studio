@@ -155,9 +155,9 @@ describe("icon picker asynchronous lifecycle", () => {
 			h.modal.onClose();
 			h.modal.onOpen();
 			await Promise.all(h.tasks.slice(2));
-			const input = h.contentEl.querySelector(".icon-picker-source-dropdown .cs-combobox-input");
-			assert.ok(input);
-			input.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
+			const field = h.contentEl.querySelector(".icon-picker-source-dropdown .cs-dropdown-field");
+			assert.ok(field);
+			field.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
 			const row = h.contentEl.querySelectorAll(".icon-picker-source-menu-item")[1];
 			assert.match(row?.textContent ?? "", /42/);
 			index.resolve(emptyIndex);

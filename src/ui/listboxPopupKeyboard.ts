@@ -1,13 +1,68 @@
-/** Keyboard behavior shared by searchable and select-only popup controls. */
+/**
+ * Keyboard behavior of a picker: on its field, and in its search box.
+ *
+ * A searchable picker is driven from its search box once it is open; its field
+ * only opens it (Enter, Space, ↓, ↑, or a letter, which also starts the
+ * search, as in Obsidian's combobox). A select-only picker has no search box,
+ * so its field does everything, as a `<select>` does.
+ */
+import { DropdownField } from "./dropdownField";
 import type { PopupEventTarget } from "./listboxPopupEvents";
 
 const TYPEAHEAD_TIMEOUT = 700;
 const PAGE_ROWS = 10;
 
-/** Each popup owns its buffer; elapsed time resets it without a timer to clean up. */
-export function createPopupKeyHandler(popup: PopupEventTarget): (ev: KeyboardEvent) => void {
+/** One character a user typed, rather than a key that does something. */
+function isPrintable(key: string): boolean {
+	return key !== " " && Array.from(key).length === 1;
+}
+
+/** Keys on the field. Each popup owns its typeahead buffer. */
+export function createFieldKeyHandler(popup: PopupEventTarget): (ev: KeyboardEvent) => void {
+	const selectOnly = createSelectOnlyKeyHandler(popup);
+	return (ev) => {
+		if (popup.isDisabled() || ev.isComposing || ev.ctrlKey || ev.metaKey || ev.altKey) return;
+		if (!popup.inputEl) {
+			selectOnly(ev);
+			return;
+		}
+		// Open, the search box has the keys.
+		if (popup.isOpen()) return;
+		if (DropdownField.isOpenKey(ev)) popup.open();
+		else if (isPrintable(ev.key)) {
+			popup.open();
+			popup.seedQuery(ev.key);
+		} else return;
+		ev.preventDefault();
+		ev.stopPropagation();
+	};
+}
+
+/** Keys in a searchable picker's search box. Everything else edits the text. */
+export function createSearchKeyHandler(popup: PopupEventTarget): (ev: KeyboardEvent) => void {
+	return (ev) => {
+		if (ev.isComposing) return;
+		if (ev.key === "Tab") {
+			// As Obsidian's combobox does: the focus goes back to the field, and
+			// the browser's own Tab then moves on from there. Never commits.
+			popup.dismiss();
+			return;
+		}
+		if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
+		if (ev.key === "Escape") popup.dismiss();
+		else if (ev.key === "ArrowDown" || ev.key === "ArrowUp") popup.moveActive(ev.key === "ArrowDown" ? 1 : -1);
+		else if (ev.key === "Enter") popup.commitActive();
+		else return;
+		ev.preventDefault();
+		ev.stopPropagation();
+	};
+}
+
+/** A select-only picker's field, which works like a `<select>`. */
+function createSelectOnlyKeyHandler(popup: PopupEventTarget): (ev: KeyboardEvent) => void {
 	let typed = "";
 	let lastTypedAt = 0;
+	// Elapsed time resets the buffer, so there is no timer to clean up.
 	const typeAhead = (key: string): void => {
 		const now = Date.now();
 		if (!popup.isOpen() || now - lastTypedAt > TYPEAHEAD_TIMEOUT) typed = "";
@@ -33,9 +88,7 @@ export function createPopupKeyHandler(popup: PopupEventTarget): (ev: KeyboardEve
 	};
 
 	return (ev) => {
-		if (popup.inputEl.disabled || ev.isComposing || ev.ctrlKey || ev.metaKey || ev.altKey) return;
-		const selectOnly = !popup.searchable();
-		if (selectOnly && ev.key !== " " && Array.from(ev.key).length === 1) {
+		if (isPrintable(ev.key)) {
 			ev.preventDefault();
 			ev.stopPropagation();
 			typeAhead(ev.key);
@@ -55,13 +108,13 @@ export function createPopupKeyHandler(popup: PopupEventTarget): (ev: KeyboardEve
 		} else if (ev.key === "ArrowDown" || ev.key === "ArrowUp") {
 			if (!popup.isOpen()) popup.open();
 			else popup.moveActive(ev.key === "ArrowDown" ? 1 : -1);
-		} else if (ev.key === "Enter" || (selectOnly && ev.key === " ")) {
+		} else if (ev.key === "Enter" || ev.key === " ") {
 			if (!popup.isOpen()) popup.open();
 			else popup.commitActive();
-		} else if (selectOnly && (ev.key === "Home" || ev.key === "End")) {
+		} else if (ev.key === "Home" || ev.key === "End") {
 			popup.open();
 			popup.moveActive(ev.key === "Home" ? -Infinity : Infinity);
-		} else if (selectOnly && (ev.key === "PageDown" || ev.key === "PageUp")) {
+		} else if (ev.key === "PageDown" || ev.key === "PageUp") {
 			popup.open();
 			popup.moveActive(ev.key === "PageDown" ? PAGE_ROWS : -PAGE_ROWS);
 		} else {

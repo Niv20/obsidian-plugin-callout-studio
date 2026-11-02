@@ -84,7 +84,7 @@ export class PackToolbarFilters {
 	private buildSkinTone(): void {
 		const choices = SKIN_TONE_SAMPLES.map((sample, tone) => ({
 			value: tone,
-			label: tone === 0 ? t("settings.fallbackTag")
+			label: tone === 0 ? t("iconPicker.skinToneDefault")
 				: `${t("iconPicker.skinTone")} ${tone}`,
 			sample,
 		}));

@@ -9,14 +9,15 @@ import { asEl, el, fakeDom, type FakeElement } from "./support/fakeDom";
 import { dropdownValue, openDropdownMenu } from "./support/selectDropdown";
 
 /**
- * Assert that the filter under `root` is locked: greyed out, and a key that
- * would open it opens nothing. A plain choice is a button opening Obsidian's
- * menu; the skin-tone picker is the plugin's own select-only list.
+ * Assert that the filter at `root` is locked: Obsidian's disabled dropdown,
+ * and a key that would open it opens nothing. A plain choice's field is the
+ * filter itself, opening Obsidian's menu; the skin-tone picker is the plugin's
+ * own select-only list, around the same field.
  */
 function assertLocked(root: FakeElement): void {
-	const field = root.querySelector(".cs-select-button") ?? root.querySelector(".cs-combobox-input");
+	const field = root.matches(".cs-dropdown-field") ? root : root.querySelector(".cs-dropdown-field");
 	assert.ok(field);
-	assert.equal((field as unknown as HTMLButtonElement).disabled, true);
+	assert.ok(field.hasClass("mod-disabled"));
 	field.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
 	assert.equal(field.getAttribute("aria-expanded"), "false");
 }
@@ -96,13 +97,13 @@ describe("icon pack toolbar filters", () => {
 		try {
 			assert.equal(h.host.querySelectorAll("select").length, 0);
 			assert.equal(h.host.querySelectorAll(".icon-picker-filter").length, 4);
-			// Style, weight and category are plain choices: a button and a menu.
-			assert.equal(h.host.querySelectorAll(".icon-picker-filter .cs-select-button").length, 3);
+			// Style, weight and category are plain choices: Obsidian's field and menu.
+			assert.equal(h.host.querySelectorAll(".icon-picker-filter.cs-select-dropdown.dropdown").length, 3);
 			// The tone picker draws emoji samples in its rows, which a menu cannot,
-			// so it stays the plugin's own list, opened from a read-only field.
-			const tone = h.picker("icon-picker-skin-tone-picker").querySelector(".cs-combobox-input")!;
-			assert.equal(tone.readOnly, true);
-			assert.equal(tone.getAttribute("aria-autocomplete"), "none");
+			// so it stays the plugin's own list, with no search box.
+			const tone = h.picker("icon-picker-skin-tone-picker");
+			assert.equal(tone.querySelector(".cs-combobox-input"), null);
+			assert.equal(tone.querySelector(".cs-dropdown-field")?.getAttribute("role"), "combobox");
 			assert.equal(h.filters.setCategories(["Animals", "Food"]), "Animals");
 			assert.equal(dropdownValue(asEl(h.picker("icon-picker-category-picker"))), t("iconPicker.cat.Animals"));
 		} finally { h.destroy(); }
@@ -131,13 +132,13 @@ describe("icon pack toolbar filters", () => {
 		const h = mount();
 		try {
 			const tone = h.picker("icon-picker-skin-tone-picker");
-			assert.equal(tone.querySelector(".cs-combobox-lead")?.textContent, "✋🏼");
-			tone.querySelector(".cs-combobox-input")!.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
+			assert.equal(tone.querySelector(".cs-dropdown-field-icon")?.textContent, "✋🏼");
+			tone.querySelector(".cs-dropdown-field")!.fire("keydown", { key: "ArrowDown", preventDefault: () => {}, stopPropagation: () => {} });
 			const rows = tone.querySelectorAll(".cs-combobox-option");
 			assert.equal(rows.length, 6);
 			assert.equal(rows[4]?.querySelector(".icon-picker-skin-tone-sample")?.textContent, "✋🏾");
 			rows[4].fire("click");
-			assert.equal(tone.querySelector(".cs-combobox-lead")?.textContent, "✋🏾");
+			assert.equal(tone.querySelector(".cs-dropdown-field-icon")?.textContent, "✋🏾");
 			assert.deepEqual(h.variantChanges, [{
 				variants: { style: "outlined", weight: 400, emojiSkinTone: 4 },
 				kind: "skin-tone",

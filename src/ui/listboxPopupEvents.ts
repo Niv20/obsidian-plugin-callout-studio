@@ -6,36 +6,40 @@
  * which gesture is which — and that is where all the browser's awkwardness
  * lives, so it is worth having somewhere it can be read on its own.
  *
- * Two of the three awkward parts are load-bearing and have already been bugs:
+ * Two parts are load-bearing and have already been bugs:
  *
- * - **Selecting the label on click.** The browser fires
- *   mousedown → focus → mouseup → click. A `select()` on focus is undone by
- *   mouseup, which places a caret. So the selection is made again on `click`,
- *   which runs last and sticks. This is the fix for the split-second selection
- *   flicker, and it applies when a click first enters the control so the full
- *   label is ready to overwrite without stealing later caret placement.
- *   Deliberately no `preventDefault()`: suppressing the native focus takes the
- *   on-screen keyboard with it on mobile.
- * - **The menu's `mousedown` preventDefault.** A click on a row is also a blur,
- *   and blur lands first. Killing the default keeps focus on the input so the
- *   row's own click still arrives and wins; without it every selection made
- *   with the mouse would revert before it committed.
+ * - **The popover's `mousedown` preventDefault.** A click on a row is also a
+ *   blur of whatever holds the focus, and blur lands first. Killing the
+ *   default keeps the focus where it is, so the row's own click still arrives
+ *   and wins; without it every selection made with the mouse would close the
+ *   list before it committed. The search box itself is left out: a press there
+ *   has to place the text cursor.
+ * - **Blur that stays inside.** Opening a searchable picker moves the focus
+ *   from the field into its search box, and a press on the field moves it
+ *   back. Neither is the user leaving, so a blur closes the list only when the
+ *   focus goes somewhere outside the picker.
  */
 
-import { createPopupKeyHandler } from "./listboxPopupKeyboard";
+import { createFieldKeyHandler, createSearchKeyHandler } from "./listboxPopupKeyboard";
 
 /** What the popup lets its events do to it. */
 export interface PopupEventTarget {
 	readonly el: HTMLElement;
-	readonly controlEl: HTMLElement;
-	readonly inputEl: HTMLInputElement;
+	readonly fieldEl: HTMLElement;
+	/** The search box, or `null` for a select-only picker. */
+	readonly inputEl: HTMLInputElement | null;
+	/** Obsidian's popover around the search box and the list. */
+	readonly popupEl: HTMLElement;
 	readonly menuEl: HTMLElement;
 	isOpen(): boolean;
+	isDisabled(): boolean;
 	open(): void;
+	/** Close without moving the focus: it is already going elsewhere. */
 	close(): void;
-	searchable(): boolean;
-	/** Re-filter for whatever is in the input now. */
-	refilter(): void;
+	/** Close and give the focus back to the field. */
+	dismiss(): void;
+	/** Put `text` in the search box and filter for it. */
+	seedQuery(text: string): void;
 	/** Move the highlight by `delta`, clamped, without wrapping. */
 	moveActive(delta: number): void;
 	activeIndex(): number;
@@ -51,44 +55,32 @@ export interface PopupEventTarget {
  * outlives its element — the document-level click.
  */
 export function wirePopupEvents(popup: PopupEventTarget): () => void {
-	let selectOnControlClick = false;
-	const doc = popup.inputEl.ownerDocument;
+	const doc = popup.fieldEl.ownerDocument;
 
-	// The whole control opens, not just the input — a bigger tap target.
-	popup.controlEl.addEventListener("mousedown", () => {
-		selectOnControlClick = doc.activeElement !== popup.inputEl;
-	});
-	popup.controlEl.addEventListener("click", (ev) => {
-		if (popup.inputEl.disabled) return;
-		if (ev.target !== popup.inputEl) {
-			popup.inputEl.focus();
-		}
-		if (!popup.searchable() && popup.isOpen()) popup.close();
+	// A click on the field opens the list, and a second click closes it, as on
+	// Obsidian's own dropdowns.
+	popup.fieldEl.addEventListener("click", () => {
+		if (popup.isDisabled()) return;
+		if (popup.isOpen()) popup.dismiss();
 		else popup.open();
-		if (popup.searchable() && selectOnControlClick) popup.inputEl.select();
-		selectOnControlClick = false;
 	});
-	// Keyboard focus (Tab) never gets a mouseup, so the select() the popup does
-	// on open is the whole story there.
-	popup.inputEl.addEventListener("focus", () => {
-		if (popup.inputEl.disabled) return;
-		if (popup.searchable()) popup.open();
-		else popup.inputEl.setSelectionRange(0, 0);
+	popup.fieldEl.addEventListener("keydown", createFieldKeyHandler(popup));
+	popup.inputEl?.addEventListener("keydown", createSearchKeyHandler(popup));
+
+	// See the header: this one line is what lets a mouse selection commit.
+	popup.popupEl.addEventListener("mousedown", (ev) => {
+		if (ev.target !== popup.inputEl) ev.preventDefault();
 	});
-
-	popup.inputEl.addEventListener("input", () => {
-		if (!popup.searchable() || popup.inputEl.disabled) return;
-		if (!popup.isOpen()) popup.open();
-		else popup.refilter();
-	});
-
-	popup.inputEl.addEventListener("keydown", createPopupKeyHandler(popup));
-
-	// See the header — this one line is what lets a mouse selection commit.
-	popup.menuEl.addEventListener("mousedown", (ev) => ev.preventDefault());
 	popup.menuEl.addEventListener("mouseleave", () => popup.clearPointerHighlight());
 
-	popup.inputEl.addEventListener("blur", () => popup.close());
+	// See the header: only a blur that leaves the picker closes it.
+	const onBlur = (ev: FocusEvent | undefined): void => {
+		const next = ev?.relatedTarget as Node | null | undefined;
+		if (next && popup.el.contains(next)) return;
+		popup.close();
+	};
+	popup.fieldEl.addEventListener("blur", onBlur);
+	popup.inputEl?.addEventListener("blur", onBlur);
 
 	// What blur misses: a tap on an inert region that never moves focus.
 	const onDocumentClick = (ev: unknown): void => {

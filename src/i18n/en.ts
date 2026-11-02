@@ -1059,6 +1059,7 @@ export const en: Record<string, string> = {
 	"iconPicker.searchMaterial": "Search Material icons",
 	"iconPicker.searchEmoji": "Search emojis",
 	"iconPicker.skinTone": "Skin tone",
+	"iconPicker.skinToneDefault": "Default",
 	"iconPicker.allCategories": "All categories",
 	"iconPicker.noIconSelected": "No icon selected",
 	"iconPicker.chooseFirst": "Select an icon first.",

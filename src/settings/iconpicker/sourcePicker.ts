@@ -71,10 +71,9 @@ export function mountIconSourcePicker(
 	options: SourcePickerOptions,
 ): ListboxPopup<PickerSourceId> {
 	const row = parent.createDiv("icon-picker-source-row");
-	row.createEl("label", {
+	const label = row.createEl("label", {
 		text: t("iconPicker.chooseSource"),
 		cls: "icon-picker-source-label",
-		attr: { for: "cs-icon-source" },
 	});
 	/** The menu as last built — `groupOf` and the closing line read it. */
 	let listed: MenuLibraries = { current: null, libraries: [], toDownload: [] };
@@ -119,7 +118,9 @@ export function mountIconSourcePicker(
 		},
 	});
 	popup.el.addClass("icon-picker-source-dropdown");
-	popup.inputEl.id = "cs-icon-source";
+	// A `<label for>` reaches only a form control, and the field is a `div`
+	// (ui/dropdownField.ts); a press on the words focuses it all the same.
+	label.addEventListener("click", () => popup.focus());
 	showIconSource(popup, options.value);
 
 	if (options.onManage) {

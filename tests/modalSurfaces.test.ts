@@ -383,6 +383,13 @@ const KNOWN_RAW_PRIMARY = [
 	// `--background-primary`; there is no `--cs-surface` in scope there and the
 	// fallback would resolve to the same colour anyway.
 	".callout-studio-row-syntax | background",
+
+	// Deliberate, and not a window surface: a picker's list is Obsidian's
+	// combobox popover, which app.css paints `--suggestion-background`.
+	// `--background-primary` is only the fallback, and it is the value Obsidian
+	// itself gives that token. This only names it for the sticky headings and
+	// the colour circles that must repaint it.
+	".cs-combobox-popup | --cs-menu-face",
 ];
 
 describe("nothing else paints --background-primary unexamined", () => {
@@ -406,13 +413,7 @@ describe("nothing else paints --background-primary unexamined", () => {
  * raw is never right — the raised half is Obsidian's box colour — so every
  * entry here is outside one, or is not a window surface at all, and says why.
  */
-const KNOWN_RAW_SECONDARY: string[] = [
-	// Deliberate, and not a window surface: a dropdown's list is drawn as
-	// Obsidian draws its menus, on `--menu-background`. `--background-secondary`
-	// is only the fallback, and it is the value Obsidian itself gives that
-	// token, so a list looks like Obsidian's menus even inside a window.
-	".cs-combobox-menu, .cs-palette-menu | --cs-menu-face",
-];
+const KNOWN_RAW_SECONDARY: string[] = [];
 
 describe("nothing else paints --background-secondary unexamined", () => {
 	const found = rules

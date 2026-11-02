@@ -147,8 +147,7 @@ export function nextFrameOrSoon(el: () => Element): Scheduler {
  * Obsidian menu has no closed state: it is taken off the page when it closes.)
  */
 const PICKER_LISTS = [
-	{ list: "cs-combobox-menu", closed: "cs-combobox-menu-hidden" },
-	{ list: "cs-palette-menu", closed: "cs-palette-menu-hidden" },
+	{ list: "cs-combobox-popup", closed: "cs-combobox-popup-hidden" },
 ];
 
 /**

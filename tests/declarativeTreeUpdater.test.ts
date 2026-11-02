@@ -135,9 +135,9 @@ describe("interactionInProgress", () => {
 	it("sees an open menu, an open picker list and a drag, and nothing else", () => {
 		const doc = fakeDom.document as unknown as Document;
 		assert.equal(interactionInProgress(doc), false);
-		const hiddenList = fakeDom.document.body.createDiv({ cls: "cs-combobox-menu cs-combobox-menu-hidden" });
+		const hiddenList = fakeDom.document.body.createDiv({ cls: "cs-combobox-popup cs-combobox-popup-hidden" });
 		assert.equal(interactionInProgress(doc), false, "a closed picker list does not count");
-		hiddenList.removeClass("cs-combobox-menu-hidden");
+		hiddenList.removeClass("cs-combobox-popup-hidden");
 		assert.equal(interactionInProgress(doc), true);
 		hiddenList.remove();
 		const menu = fakeDom.document.body.createDiv({ cls: "menu" });

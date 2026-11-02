@@ -11,16 +11,23 @@ import assert from "node:assert/strict";
 import { createdMenus, type Menu, type MenuItemRecord } from "./obsidianStub";
 import type { FakeElement } from "./fakeDom";
 
-/** The field of the plain choice inside `root`. */
+/**
+ * The control of the plain choice at or inside `root`: the field (Obsidian's
+ * `div.dropdown`, which is the dropdown's own `el`), or an icon button.
+ */
 export function dropdownButton(root: HTMLElement): FakeElement {
-	const button = root.querySelector(".cs-select-button");
-	assert.ok(button, "no plain choice (.cs-select-button) under this element");
-	return button as unknown as FakeElement;
+	const self = root as unknown as FakeElement;
+	const control = self.matches(FIELD) ? self : root.querySelector(`${FIELD}, .cs-select-button`);
+	assert.ok(control, "no plain choice (.cs-select-dropdown) at or under this element");
+	return control as unknown as FakeElement;
 }
+
+/** A plain choice's field: Obsidian's dropdown, worn by the `SelectDropdown` itself. */
+const FIELD = ".cs-dropdown-field.cs-select-dropdown";
 
 /** The words the field shows for the current option. */
 export function dropdownValue(root: HTMLElement): string {
-	return root.querySelector(".cs-select-value")?.textContent ?? "";
+	return dropdownButton(root).querySelector(".cs-dropdown-field-label, .cs-select-value")?.textContent ?? "";
 }
 
 /**
