@@ -167,6 +167,17 @@ Keep `disabled` only for a button that is merely *busy* and says so, in its
 label ("Scanning…") or with Obsidian's own spinner (`setButtonBusy` in
 `ui/busyButton.ts`, as the callout editor's Save does).
 
+## A ↺ is hidden when there is nothing to reset
+
+A "back to the default" arrow shows only while something differs from the
+default. Do not dim it (`aria-disabled` alone), do not leave it live, and do not
+hide it with `opacity: 0`, which leaves it hoverable, focusable and read out.
+Paint it with `paintResetIdle()` (`ui/resetArrow.ts`), or leave the layout with
+`addFieldResetButton` when the arrow sits beside a field that grows into its
+place. See [Scoped reset controls](16-settings-ui-and-modals.md#scoped-reset-controls);
+`declarativeSettingsTree.test.ts` fails on a settings ↺ that shows with nothing
+to reset.
+
 ## Settings that require a runtime refresh, not just a save
 
 Saving `settings.<field>` to disk is necessary but frequently **not
@@ -262,13 +273,31 @@ sufficient**. Common cases that also need an explicit follow-up call:
   control. An unnamed query matches the nearest container of any kind, so a
   row that is itself a container becomes that container for its own children,
   in any narrow window on any device class. Version history's rows were once
-  such containers: the text column collapsed to 0px and every row grew
-  hundreds of pixels tall. Today the one such row is the callout row
-  (`.setting-item.cs-callout-row`, measured by its swatch rule), and it is
+  such containers (`callout-studio-row`): the text column collapsed to 0px and
+  every row grew hundreds of pixels tall. Its cards are plain `.setting-item`s
+  with a 12rem floor under the text column for that reason. The callout row
+  (`.setting-item.cs-callout-row`) was one until 2026-10-31, measured by a rule
+  that hid its colour circles in a narrow row; it no longer is (its colour now
+  follows the device, not the row's width). Were it one again, it would be
   safe only because it always sits in a `.setting-group.mod-list` box, which
   Obsidian exempts from those rules. A row outside such a box must not be a
   container. `tests/calloutSettingRow.test.ts` leaves the row's layout to that
   box, and the callout page tests check that every callout row is in one.
+
+- **`.dropdown` on a `<button>` is not Obsidian's dropdown.** The plugin's
+  dropdown fields wear app.css's own `.dropdown` class so Obsidian draws every
+  state of them (`ui/dropdownField.ts`). On a `<button>`, Obsidian's `button`,
+  `button:not(.clickable-icon)` and `button:hover` rules (0,1,1) outrank the
+  class (0,1,0) and repaint its face and padding, and the chevron then sits on
+  a grey button. The field is a `div` with `tabindex`, as Obsidian's own
+  combobox is. Nor may styles.css paint the field (no background, shadow,
+  border, padding, corners or height): that is how the old hand-made copy
+  drifted from Obsidian's look. `tests/dropdownField.test.ts` holds both.
+- **A dropdown has no width of its own.** It is as wide as its current words,
+  as Obsidian's `<select>` is. A fixed width on the field or on its row's
+  control column (`.setting-item-control`, a growing flex item in Obsidian)
+  brings back fields far wider than their words; "Callout format" was one,
+  stretched to `width: 100%` of a column that grew into the row's free room.
 
 ## A Style Settings class moves nothing you *key a cache on*
 
@@ -336,6 +365,26 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
   `requestFrameFor(el, …)` / `cancelFrame(handle)` in
   [`utils/elementFrame.ts`](../../src/utils/elementFrame.ts), which also keeps
   the window for the cancel (frame ids are per window).
+- **An observer belongs to a window, and a row is drawn by the wrong one.**
+  The same fact as the frame above, with a worse symptom. A `ResizeObserver`
+  hears only the elements of the window that made it. Obsidian draws a
+  settings row in the main window and moves it into the settings window
+  afterwards, so asked at draw time (`el.ownerDocument.defaultView`) the row's
+  window is the main one, and an observer made then watches a window it is not
+  in: measured in Obsidian 1.14.5, an observer on one element made by the
+  settings window heard every resize and one made by the main window heard
+  none. The callout rows' ids line was fitted once, when the page opened, and
+  never again, which looked like ids cut in half and a `+N` out of sight until
+  the page was drawn again. Make the observer with
+  `followWindow(el, start)` ([`utils/elementWindow.ts`](../../src/utils/elementWindow.ts)),
+  which starts it in the window that shows `el` and again in the new window,
+  after undoing the old, when Obsidian says (`onWindowMigrated`) the element
+  has moved. Test it in the real window, not in a headless page, where there
+  is only one: wrap `ResizeObserver` in both windows and list who made each
+  observer and where its elements are (the recipe is in
+  [Layout of a callout row § How it was checked](16-settings-ui-and-modals.md#one-line-each-and-where-the-colour-goes)),
+  and resize the window with `electronWindow.setSize`. `tests/support/fakeWindows.ts`
+  gives a suite a second window and an observer it can call.
 - **A declarative settings control must never use Obsidian's default
   save.** `PluginSettingTab.setControlValue` writes `plugin.settings[key]` and
   calls `plugin.saveData(plugin.settings)`, which here would overwrite
@@ -350,6 +399,25 @@ no-guard case keeps it. `tests/cssInjectorThemeSurface.test.ts` pins both.
   `try/catch` with a full-fidelity static-render fallback
   (`LiveCalloutPreview`'s `buildFallback`). Don't add a second call site
   that assumes it will always succeed.
+
+## Everything drawn in the window slows the editor
+
+> [!WARNING]
+> **Every element drawn anywhere in the window slows every key press in the
+> editor, the ones off screen or in a sidebar included.** An arrow key makes
+> CodeMirror call `Selection.collapse`, which makes the browser bring style and
+> layout up to date, and that grows with the number of drawn elements. Find
+> callouts with 2,600 rows drawn (opening a note deep in its list draws every
+> row before it) made each key press about 2 ms slower, a quarter of a frame on
+> a 120 Hz screen, and the editor seemed to stick on the lines that enter or
+> leave a callout. `content-visibility`, `contain` and `visibility: hidden` did
+> not help; only `display: none` or a detached element did. So a list that can
+> grow past a page parks the groups far from the screen
+> (`ui/sidebarParking.ts`, [Vault discovery § Parking far
+> groups](11-vault-discovery.md#parking-far-groups)), and code that measures a
+> row in such a list calls `unparkGroupOf` first. Measure a change like this in
+> the live app (a trace and a CPU profile over real key presses) rather than
+> guessing: the time shows up inside `collapse`, not in any JavaScript of ours.
 
 ## Mobile-specific behaviour
 

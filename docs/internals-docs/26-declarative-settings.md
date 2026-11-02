@@ -40,6 +40,15 @@ These are the rules every part of the tree is written against.
   number of times, and anything that has to survive a redraw (a banner in the
   middle of an action, a preview someone is typing in, an open menu) must live
   outside the row and be put back by it.
+- **A cleanup also runs when the reader leaves the page, and the page is still
+  on screen.** `closePage` runs every row's cleanup first and only then slides
+  the page away (150 ms). So a cleanup must not take anything visible off its
+  row: an icon removed there vanished from every row of My callout types the
+  moment the back arrow was pressed, for the length of the slide plus the time
+  the hundreds of cleanups took. What a row adds beside its controls is reused
+  by the next draw instead (the callout row's icon, `rowIconElement` in
+  `CalloutRowRenderer.ts`), or kept alive by `releaseLater`
+  ([parts that survive a redraw](#parts-that-survive-a-redraw)).
 - **Nothing refreshes by itself.** Opening the tab draws the tree the last
   `update()` stored; it does not ask for a new one. The tab has to call
   `update()` whenever something the tree shows changes, even while the window
@@ -61,14 +70,21 @@ These are the rules every part of the tree is written against.
   row that is only a description never shows. A page's opening sentence is
   therefore a render row: `pageIntroBox(id, text)` in `rowParts.ts` draws
   Obsidian's own `p.setting-page-desc`, in a box whose `cs-page-intro` class
-  takes the box's and the row's look away.
+  takes the box's and the row's look away. Called without `text` it is the
+  same box with nothing in it, which the right-click menu page fills with its
+  repainting row. No page opens with a sentence now.
 - **Lists** (`type: "list"`) add, when asked: an empty-state row; `addItem`, a
   `+` in the heading on a computer and a last `+ Name` row on mobile; `onDelete`,
   a ✕ on every row and the Delete key; `onReorder`, a drag handle and
   Alt+↑/↓. The heading buttons, the search field and these handlers are made
   once, when the box is first drawn, and read the newest definition when used.
 - **A box's own search field** (`search`, 1.13.1) appears only if the box had
-  rows when first drawn. Rows marked `searchable: false` are never filtered by
+  rows when first drawn, and an `update()` that finds the box under the same
+  key (`type:id:<id>`) changes it in place and never adds one (read in app.js
+  1.14.5: the field is made only where a box is created). A list that can go
+  from no rows to some while the tab is open (My callout types, after a scan)
+  must therefore change its `id` with that, so Obsidian draws a new box.
+  Rows marked `searchable: false` are never filtered by
   it. Its `match` is the one of the box's *first* draw, called with the
   *newest* row definitions, so it must read everything from the row it is
   given, never from the list it was built with.
@@ -129,7 +145,7 @@ directly for a change; it asks
   the one last drawn is dropped unless it is forced (`request(true)`, for a
   change the signature cannot see, such as an icon finishing its download).
 - **Held while the user is busy:** an open Obsidian `.menu`, an open picker
-  list (`.cs-combobox-menu` / `.cs-palette-menu` without their closed class), a
+  list (`.cs-combobox-popup` without its closed class), a
   drag (`body.is-grabbing`), a field of a settings page with the focus (a text
   field, a slider, the style pages' preview editor: Obsidian keeps a focused
   *control* row through a redraw, but not a render row), or a row's ⋮ menu
@@ -156,12 +172,22 @@ holds everything the tree is built with:
   `nextFrameOrSoon`).
 - **The tree's order**, in
   [`declarative/settingsTree.ts`](../../src/settings/declarative/settingsTree.ts):
-  the notices; the callouts box (`callouts`: Callouts from your theme, Use your
-  theme's callout styles, My callout types, Add new callout, Built-in
-  callouts, Default fallback callout, Language); Callout style; Menus and
-  commands (`menus-and-commands`: Customize right-click menu, Commands and
-  shortcuts); Import and export; Version history; Danger zone; About. The
-  file only puts the parts in order; each is built in its own module.
+  the notices; the callouts box (`callouts`: Callouts from your theme, My
+  callout types, Built-in callouts, Default fallback callout); Colors and icons
+  (`colors-and-icons`: Saved color palettes, a page, and Icon libraries, a row
+  that opens a window); Global styling (the three style pages);
+  Editor (`menus-and-commands`, the id from when it was called Menus and
+  commands: Autocomplete and metadata, Customize right-click menu, Commands and
+  shortcuts); Import and export; Danger zone (its first row is
+  Restore an earlier version); the language notice (`language-box`, hidden
+  while nothing is missing); the footer (`footer`: the language and the links,
+  as tiles of an icon and a name). The file only puts the parts in order; each is built in its own
+  module. It also gives every box of the finished tree, at every depth, the
+  plugin's box class (`cs-box`, `PLUGIN_BOX_CLASS` in `rowParts.ts`,
+  `markBoxes`), which the rules that should reach only the plugin's rows are
+  keyed on (no rule uses it for alignment: rows in such a box are laid out as core lays them out). Before
+  2026-10-27 the first box also held the theme's switch and Add new callout, and
+  Language was its last row.
 - **The signals.** The first `definitions()` call (which `addSettingTab`
   makes while the plugin loads) wires, for the plugin's whole life, the old
   page's four (`subscribeSettingsTab`: the registry, the editor's preview, an
@@ -264,15 +290,28 @@ it silently dead. `pausedReason(writer)` is the usual reason.
 | Box (`id`) | Rows | While saving is paused |
 |---|---|---|
 | Import and export (`import-export`) | Import callouts (`import-callouts`, a jump target), Export callouts | Import dimmed; Export works |
-| Version history (`version-history`) | Earlier versions (`earlier-versions`, a jump target) | works; the box shows only on a host with a recovery service |
-| Danger zone (`danger-zone`) | Convert to standard Markdown, Reset everything (red) | Reset dimmed; the conversion review works (it changes notes, not settings) |
-| About (`about`) | About Callout Studio (action), the contact sentence (a nameless row, not searchable), Icon licenses (action), Version (the project's links; the version links to its release notes) | all work |
+| Danger zone (`danger-zone`) | Restore an earlier version (`earlier-versions`): a page, `versionHistoryPage.ts`, drawn by the plugin; the saving notice's **Go to version history** opens it (`openPagePath`, so not on 1.13.x, where the button is left out); the row shows only on a host with a recovery service. Convert to standard Markdown, Reset everything (Obsidian's Log out look: `setDestructive()`, the red every red button wears) | The version page works (browsing); Reset dimmed; the conversion review works (it changes notes, not settings) |
+| Footer (`footer`, no heading) | one render row, not searchable (`footerGroup.ts`): a line of tiles (`footer-tiles`, `cs-footer-row`), each an icon with its name beside it and no tooltip: the language (a globe and the language in use, which opens the menu), Open an issue, Source code, License (opens `LicenseModal`), and the version | the globe is disabled; the rest works |
 
-Manage icon libraries is an action row of its own (`icon-libraries`), placed
-with the style rows; it opens the same window as Pick an icon's **Manage
-libraries**, after loading the libraries and their icon counts itself
-(`iconpicker/openIconLibraries.ts`).
-Search words that are names (Admonition, Callout Manager, the icon libraries)
+Manage icon libraries is a window
+([`iconpicker/IconLibrariesModal.ts`](../../src/settings/iconpicker/IconLibrariesModal.ts),
+16 § `IconLibrariesModal`), never a page, with two doors: Pick an icon's
+**Manage libraries**, and the **Icon libraries** row of the Colors and icons
+box (below). Both go through one opener
+([`iconpicker/openIconLibraries.ts`](../../src/settings/iconpicker/openIconLibraries.ts)),
+so neither can open it half ready. The shapes tried before this one:
+
+- A settings row that opened the window, until 2026-10-27, removed as a second
+  door to the same window. It is back (2026-11-02) with the two doors sharing
+  one opener, which the first version did not have (it counted the icons and
+  read the disk in a copy of its own), and with a guard for the one thing the
+  second door cannot see: an open callout editor's unsaved icon.
+- A settings **page** (`icon-libraries`, 2026-10-29), which could in practice be
+  reached only from the picker, and the picker and the callout editor under it
+  are windows that cover the settings: touching the page meant closing them, and
+  with them the icon the person had just chosen and not yet saved.
+
+Search words that are names (Admonition, Callout Manager)
 are `aliases` and are not translated. Every button calls a flow of its own
 module (`resetEverything.ts`, the import and export windows, …), never a copy.
 
@@ -304,27 +343,42 @@ between them.
 ## Fallback, language and the theme's styles
 
 [`declarative/generalRows.ts`](../../src/settings/declarative/generalRows.ts)
-draws the plugin-wide rows of the main page's first box. The controls come from
-`sections/` (`fallbackPicker.ts` and `languagePicker.ts` export their steps: `createFallbackPicker`,
-`setFallbackCallout`, `addFallbackReset`, `drawLanguageControls`,
-`applyLanguagePreference`, `missingLanguageName`, `languageDownloading`,
-`retryLanguageDownload`).
+draws the plugin-wide row of the main page's first box, and what goes with the
+language. The controls come from `sections/` (`fallbackPicker.ts` and
+`languagePicker.ts` export their steps: `createFallbackPicker`,
+`setFallbackCallout`, `addFallbackReset`, `drawLanguageMenu`,
+`applyLanguagePreference`, `languageDownloading`). The language itself is not a
+row: `drawLanguageMenu` draws the footer's globe (`footerGroup.ts`) and
+`languageChooser(ctx)` is the paused-guarded pick it calls. A language that has
+to be downloaded adds nothing to the page: it is told in notices (see
+[Localization § what happens when a translation download fails](17-i18n.md#what-happens-when-a-translation-download-fails)).
 
 | Row (`id`) | Kind | Notes |
 |---|---|---|
 | Default fallback callout (`fallback-callout`) | render | the callout picker is a kept part; ↺ back to the default |
-| Language (`language`) | render | Obsidian's menu (`SelectDropdown`); aliases are every language's own name, so "Deutsch" finds it; says "Downloading…" and goes grey while the chosen language downloads |
-| *Language* is not downloaded yet (`language-missing`) | button | shown while the chosen language is missing; Retry shows Obsidian's spinner during the download (`busy`); not searchable |
-| Use your theme's callout styles (`theme-callout-styles`) | control (toggle) | key `themeCalloutStyles.enabled`; shown while the theme styles a callout or the switch is off in a community theme |
-
 - **A plugin control as an Obsidian component.** Obsidian disables a row by
   calling `setDisabled` on each component the row made. The pickers are the
   plugin's own, so `addControlComponent(setting, control)` (`rowParts.ts`)
   registers them as components; the row's `disabled` then greys them like a
   toggle.
-- **The theme's switch is on the main page** (a decision taken for the plan's
-  review): the page its callouts open on is drawn by the plugin (a `page()`
-  factory, GAP-15), and nothing on it is in the settings search.
+- **The fallback picker is as wide as the callout's name.** Like every
+  dropdown (see [Settings UI § How an input field focuses](16-settings-ui-and-modals.md#how-an-input-field-focuses)),
+  it fits its words, up to Obsidian's 250px cap for a combobox, and its reset
+  arrow follows it at the row's end (`.cs-reset-setting` keeps the arrow from
+  shrinking). Until 2026-11-01 rows with a picker and a reset arrow shared a
+  fixed 260px column, and the fallback row a 200px one (`cs-fallback-setting`).
+  A row too narrow for its label and its picker stacks them, and the picker
+  then takes the line.
+- **The theme's switch is not here any more.** It was a `control` row on the
+  main page, because the page its callouts open on is drawn by the plugin (a
+  `page()` factory, GAP-15) and nothing on such a page is in the settings
+  search. Since 2026-10-27 it is the top row of that page
+  ([`themeStylesSwitch.ts`](../../src/settings/declarative/themeStylesSwitch.ts),
+  § The callout pages), at Niv's ask; the cost is that the settings search no
+  longer finds the switch itself, only the page, by its name (the search reads
+  `name`, `desc` and `aliases` of the definitions inside pages, never those of
+  a page's own entry, so an alias on the entry would do nothing; read in
+  app.js 1.14.5, `coe`/`uoe`).
 - **What redraws these rows:** the signature holds the fallback id, the
   language and its download, the switch's value and what the theme styles;
   `LocaleStore.onChange` and the registry ask for the update.
@@ -345,15 +399,45 @@ holds the one callout row every list uses, and the user's own callouts.
   ✎ opens the editor (`openCalloutEditorFor`, which saves the callout itself,
   built-ins too) and redraws; ⋮ opens the row menus (`CalloutRowActions.ts`,
   `themeRowActions.ts`).
-- **My callout types** (`callouts-mine`, with "12 callouts" at its end) is one
-  of Obsidian's lists (`callouts-mine-list`): its own search
+- **My callout types** (`callouts-mine`, with "12 callouts" at its end, or
+  "None") is one of Obsidian's lists (`callouts-mine-list`): its own search
   (`rowMatchesQuery`: name or any id), a `+` (`addItem`: the editor for a new
-  callout), the grey row while there is none, and below it a box with **Scan
-  for callouts** (`scan-callouts`), a row the whole of which is the button. It
+  callout; the main page has no Add new callout of its own since 2026-10-27),
+  the grey row while there is none, and below it a box with **Scan for
+  callouts** (`scan-callouts`), a row the whole of which is the button. It
   says "Scanning…" while a scan runs (`scanRunning`, shared with the old
-  page's button) and draws again when it starts and ends.
-- **Add new callout** (`add-callout`) is the same action as `+`, on the main
-  page.
+  page's button) and draws again when it starts and ends. Every count at the
+  end of a row that opens a page (`countValue`) says "None" at none, with the
+  word the version comparison already uses
+  (`recovery.details.value.none`), so no row ends in a blank.
+- **A search that finds nothing says so, with the brush mascot.** Obsidian's
+  list search only hides the rows that do not match (read in app.js 1.14.5:
+  the box's `onChange` toggles each row by `match`, and the list's
+  `emptyState` shows only for a list with no rows at all), so a search for
+  something that is not there left an empty box. The list's last row,
+  `callouts-mine-no-matches`, is a nameless render row with `visible: false`
+  (hidden after every draw, and kept out of the settings search, which skips
+  an invisible row), and the list's `match` (`matchesSearch`) answers `true`
+  for it exactly when something is searched for and no callout of the user's
+  matches: Obsidian then shows it, as it shows any row `match` accepts, and
+  hides it again when the query matches something or is emptied. After a draw
+  with a query typed Obsidian runs the search again, which shows the row
+  again. It reads the live callouts, not the ones of the draw its `match` came
+  from (Obsidian keeps the first draw's `match`). Its `render`
+  (`drawNoMatchesRow`) puts [`NoMatchesRow`](../../src/settings/declarative/noMatchesRow.ts)
+  in it: Obsidian's grey empty-list row (`mod-empty-state`) with the words "No
+  callout matches “query”." (the callout picker's own sentence,
+  `calloutPicker.noMatches`) and the mascot above them, sad, looking around
+  while the query changes (`SearchMascot`, as in the icon picker); a listener on
+  the list's search input, which runs after Obsidian's own, shows or puts
+  away the words and the mascot by whether Obsidian showed the row. The row
+  exists only while the user has a callout of their own: with none the list
+  has no search, and its grey row is the empty state. The list's `id` is
+  `callouts-mine-list` while there are callouts and `callouts-mine-list-empty`
+  while there are none (`CALLOUT_PAGES.mineList`, `mineListEmpty`): the first
+  callout, from **Scan for callouts** for instance, then makes a new box that
+  has its search field, and the last one going takes the field away with the
+  box, so the page never needs to be left and opened again to get it.
 - **Built-in callouts** (`callouts-builtin`) and **Callouts from your theme**
   (`callouts-theme`) are *lazy* pages
   ([`declarative/calloutListPage.ts`](../../src/settings/declarative/calloutListPage.ts)):
@@ -364,18 +448,36 @@ holds the one callout row every list uses, and the user's own callouts.
   out of the page's own search). The page draws one `mod-list` box of the same
   callout rows, with its own search field (name or any id,
   `calloutMatchesQuery`), and on the theme page a description naming the theme
-  (`p.setting-page-desc`, as Obsidian's own list pages have).
+  (`p.setting-page-desc`, as Obsidian's own list pages have). A search that
+  finds nothing shows the same `NoMatchesRow`, the last row of the box,
+  hidden until then (the page filters its own rows, so it simply shows or
+  hides it). The search field is shown only while there are rows to search.
   Obsidian never draws such a page again, so while it is open it listens to
   the settings tab's own signals (`subscribeSettingsTab`) and draws its rows
   again through a `TreeUpdater` of its own (the tab's signature, held while a
   menu is open); the search field keeps its text. `hide()` stops it all. With
   no rows, Built-in says every built-in is the theme's, and the theme page
-  that its theme styles none right now. The theme page's row shows only while
-  the theme styles a callout; the switch beside it on the main page stays for
-  when the switch itself took them away.
+  that its theme styles none right now. While the switch is off the theme page
+  is the switch alone: the box of rows is hidden and no line explains why.
+- **The theme page starts with the switch.** "Use your theme's callout
+  styles" is the page's top row, in a box of its own above the description and
+  the list ([`themeStylesSwitch.ts`](../../src/settings/declarative/themeStylesSwitch.ts)):
+  Obsidian's own toggle, saved the way the tab saves a declarative control
+  (`writeControlValue` with the registry's `settingsChanged()`, never
+  `saveData`), refused with the paused notice while saving is paused, and put
+  back when refused. The page's signature includes the setting and the paused
+  state, so a change from another device redraws it. The description (the
+  sentence naming the theme) is taken out of the page, not hidden, while there
+  are no rows, because Obsidian spaces two boxes by `.setting-group +
+  .setting-group` and a hidden sentence between them would take the space away.
+  The row that opens the page (`themeCalloutsPage`) shows while the theme
+  styles a callout **or** while the switch is off in a community theme (the
+  switch took the callouts away, and the page has to stay reachable to bring
+  them back), with the count at its end, or **Off** (`recovery.details.value.off`)
+  while the switch is off.
 - **While saving is paused** the rows stay as they are and only ✎ is dimmed
   (it says why); ⋮ still opens, so Find callouts works, and the menu's own
-  changes refuse with a reason. `+`, Scan and Add new callout say why.
+  changes refuse with a reason. `+` and Scan say why.
 - **What redraws them:** the callouts (the registry's change round), the
   fallback (its Default flair), light or dark mode (`css-change`), an icon
   finishing its download (a forced request) and a scan starting or ending
@@ -410,12 +512,50 @@ many callouts link to the palette.
 - **What redraws it:** the palettes (in the settings the signature holds), and
   light or dark mode (`css-change`; the colours are the mode on screen).
 
+## The Colors and icons box
+
+`settingsTree.ts`'s `colorsAndIconsBox` (`colors-and-icons`, heading **Colors
+and icons**) sits between the callouts box and Global styling and holds what a
+callout's colour and icon come from: the **Saved color palettes** page above,
+and the **Icon libraries** row. Before 2026-11-02 the palettes were a row of
+the callouts box, above Default fallback callout; their ids (`palettes`,
+`palette-list`) did not change with the move.
+
+[`declarative/iconLibrariesRow.ts`](../../src/settings/declarative/iconLibrariesRow.ts)
+is a `buttonRow` (`icon-libraries`, a jump target) named **Icon libraries**,
+whose button reads **Manage libraries**, the words of the picker's button, so
+the two doors agree. It is a door and not a page: the press counts the icons of
+every library (`iconpicker/sourceCounts.ts`, the same counting the picker does
+in the background as it opens), then opens the window through
+`openIconLibraries`, which first reads the pack files back from disk. `onClick`
+returns the promise, so Obsidian's spinner stays on the button until the window
+closes, which also keeps a second press from opening a second window while the
+counts are made.
+
+- **No callout is being edited.** Pick an icon hands the window the icon the
+  editor holds unsaved (`editing`) so that deleting the library it came from
+  asks first (13 § The callout being edited counts as a user). The row has no
+  way to learn it, so it refuses while `plugin.settingsEditOpen` is true (the
+  flag the callout editor and the two previewing modals raise): the button is
+  dimmed and a press says **Finish with the callout editor first**. The flag is
+  also true for a moment after the editor closes while its save is still
+  running. Nothing should reach the row with an editor on top, since modals stack;
+  this is the cheap guard for the day something does.
+- **While saving is paused** the row is not dimmed. The window guards what
+  needs it (deleting a library callouts use) and says why, as it does from the
+  picker.
+- **The settings search** finds the row by its name, its sentence (which says
+  where to download) and the libraries' own names (`aliases`, not translated:
+  Tabler, Font Awesome, and the rest).
+- **No end value.** Which libraries are on this device is per device, and the
+  window says it.
+
 ## The style pages
 
 [`declarative/stylePages.ts`](../../src/settings/declarative/stylePages.ts):
-the main page's **Callout style** box (`callout-style`) opens Heading
+the main page's **Global styling** box (`callout-style`) opens Heading
 callout, Inline callout and Block callout (`style-heading`, `style-inline`,
-`style-block`), then Saved color palettes. Each page replaces that role's
+`style-block`). Each page replaces that role's
 style window and is built from the same pieces (`StylePreview`, the slider
 definitions of `styleSpecs.ts`, `wireStyleSlider`):
 
@@ -438,6 +578,32 @@ definitions of `styleSpecs.ts`, `wireStyleSlider`):
   it is let go, so the box and the bar it was first given are gone. It holds
   the demo callout (and `settingsEditOpen`) until the page is left. The heading page's preview follows the registry's change round
   itself, so the fold-arrow switch and the spacing reach its demo.
+  - **It rests where it locks.** Obsidian leaves `--size-4-3` between the title
+    bar and the first box (the margin of `.setting-page-content`). Outside the
+    box that gap made the preview slide up 12px on the first scroll, before it
+    stuck. The box takes the gap into itself instead (`margin-top: calc(-1 *
+    var(--size-4-3))` plus the same as `padding-top`, opaque), so its resting
+    top is its stuck top and nothing moves. A phone has no title bar, so the
+    box is static there with neither. If Obsidian changes that margin, this
+    pair has to follow it, or the slide comes back.
+  - **Rows fade out under it.** A `::after` strip on the box (`top: 100%`, its
+    full width, `--size-4-4` tall, `pointer-events: none`) runs from
+    `--settings-background` to transparent, so rows scrolling up under the
+    preview dissolve instead of being cut by its bottom edge. It is shorter
+    than the `--size-4-6` gap to the next box, so at rest it lies over bare page
+    and shows nothing. Off on a phone, where the preview is not pinned.
+  - **It is only as tall as its sample.** The editor's `min-height`s (for a
+    callout being edited) are zeroed under `.cs-style-preview`, the samples are
+    one short line (`editor.loremIpsumShort`), the block sample's blank caret
+    line is collapsed (`collapseTrailingBlankLine`, which
+    `themeRowActions.test.ts` lists as the second file allowed to opt in), and
+    `.cs-live-preview-container` is capped at `25vh` before it scrolls inside
+    itself. Measured in Obsidian 1.14.5 at 900×700: heading 263 → 119px, block
+    193 → 121px, inline 138 → 71px.
+  - **The spacing demo takes the box's place, not more room.** `showGapDemo()`
+    writes the box's current height into `--cs-style-preview-height` before the
+    swap and `hideGapDemo()` removes it; the stacked headers scroll inside that
+    height (`max-height: 100%`), so holding the slider never moves the page.
 - **Switches** are Obsidian's control rows, keyed into the settings
   (`globalStyle.borderSides.top`, `headingCallouts.showFoldArrow`, …), saved by
   the tab's control binding. Border thickness shows while a side has a border.
@@ -445,30 +611,85 @@ definitions of `styleSpecs.ts`, `wireStyleSlider`):
   announces through `registry.settingsChanged()`, like a switch. Each has its
   own ↺ before its value, and a box of several controls has ↺ in its heading
   (made once, as Obsidian makes a box's heading buttons, so it reads the
-  settings anew when pressed). A ↺ with nothing to reset is dimmed
-  (`aria-disabled`, which Obsidian draws at 40%).
+  settings anew when pressed). A ↺ with nothing to reset is
+  invisible (`paintResetIdle`, `ui/resetArrow.ts`: `cs-reset-idle`,
+  `visibility: hidden`, so it keeps its room and a slider's track does not jump
+  when it appears), as every ↺ in the plugin is (16 § Scoped reset controls);
+  `aria-disabled` is still set. Until 2026-10-27 it was only dimmed (Obsidian
+  draws `aria-disabled` at 40%).
 - **The settings search** finds every control by its name and by words in the
   slider definitions ("radius", "border", "title size").
 - **While saving is paused** every control's row is `disabled` (greyed), and a
   box's ↺ says why.
 
+## Autocomplete and metadata
+
+One page, [`declarative/autocompletePage.ts`](../../src/settings/declarative/autocompletePage.ts)
+(page `autocomplete-and-metadata`), opened from the first row of the Editor
+box. It holds two boxes, one for each place in a callout's first line. The two
+lists that open while a callout is typed are switched on and off apart:
+
+- **After `[!`** (box `callout-autocomplete-settings`, headed **Callouts**,
+  [`declarative/autocompleteRows.ts`](../../src/settings/declarative/autocompleteRows.ts)):
+  **Callout autocomplete** and **Include your theme's callouts**
+  (`callout-autocomplete`, `suggest-theme-callouts`), saved at
+  `suggestions.callouts` and `suggestions.themeCallouts`.
+- **After `|`** (box `metadata-settings`, headed **Metadata**,
+  [`declarative/metadataRows.ts`](../../src/settings/declarative/metadataRows.ts)):
+  Metadata colors (`metadataColors.enabled`), Metadata autocomplete
+  (`suggestions.metadata`), Include your theme's words
+  (`suggestions.themeMetadata`), Your words.
+
+The recovery details window shows all of these under one section of the same
+name (`editorItems` in `recoverySections.ts`).
+
+Common to both:
+
+- **The switches** are `control` toggles built by `rowParts.ts`'s `toggleRow`,
+  saved through the tab's `setControlValue` (controlBinding.ts), greyed while
+  saving is paused. Every row is searchable.
+- **`visible`**: a row that would change nothing now is hidden - a theme
+  switch while its list is off, or while the theme adds no callouts
+  (`registry.getThemeProvided()`) or reacts to no word (a `theme` source in
+  `metadataCatalog.sourcesNow()`), and Your words while Metadata
+  autocomplete is off. A theme switch that is off always shows (while its list
+  is on), so it can be turned back on after a theme change. The tab redraws on
+  `css-change`, so a theme switch comes and goes with the theme. Metadata
+  colors always shows: it is about how notes look.
+- **Your words** is a render row holding the callout editor's IDs field
+  (`ui/TagInput.ts`) with its word options: `sanitize`
+  (`sanitizeMetadataWordInput`), `separators` (whitespace, `|`, commas: a key
+  among them commits the word, a paste and a committed text are split on
+  them), `messages` (word wording instead of ID wording), the caps from
+  `constants.ts`. It is a persistent part mounted in `setting.settingEl`,
+  beside the controls, not in them: a redraw empties the controls, and a part
+  kept there never moves, so a focused pill keeps the focus (the tree updater
+  already waits while the text field has it). styles.css hides the empty
+  controls and widens the field where Obsidian stacks the row
+  (`.cs-metadata-words-setting`). A change is saved through
+  `registry.settingsChanged()`; while saving is paused it is refused and the
+  saved words are put back. A draw sets the pills again only when the saved
+  list differs (another device's).
+
 ## Commands and shortcuts
 
 [`declarative/commandsPage.ts`](../../src/settings/declarative/commandsPage.ts):
 `commandsPage(ctx)` is the row that opens the page (`commands`), in place of
-the window of the same name. The page opens with a sentence about ⊕
-(`commands-intro`, `pageIntroBox`; left out on a phone, which hides ⊕), then:
+the window of the same name. The page is two boxes:
 
 - **Your commands** (`commands-mine`), one of Obsidian's lists: `+` (the
   command editor), Obsidian's ✕ and Delete key (`deleteCommand` asks first),
   the grey row while there is none. A row (`command-<id>`) is the callout's
   icon (our element before the row, removed by the row's cleanup), the
   command's name, its shortcuts, ⊕ and ✎; a command whose callout the theme
-  suspended, or which is gone, says so in its description.
+  suspended, or which is gone, is dimmed (`is-command-paused`) and wears a
+  short tag after its name (`cs-paused-tag`: "Paused by theme" or "Callout
+  missing"); the full sentence is the tag's tooltip, and the row has no
+  description.
 - **Built-in commands** (`commands-builtin`): a row per built-in command
   (`command-<fixed id>`) with its shortcuts, ⊕ and a switch
   (`setFixedCommandEnabled`, which registers or unregisters it), and ↺ in the
-  heading that turns them all back on (dimmed while all are on). A command
+  heading that turns them all back on (invisible while all are on). A command
   switched off keeps its row as it is (S8-21): only its shortcuts and ⊕ go.
 - **Shortcuts** are drawn as Obsidian's Hotkeys page draws them
   (`addObsidianHotkeyChips`: `div.setting-command-hotkeys >
@@ -487,17 +708,31 @@ the window of the same name. The page opens with a sentence about ⊕
 
 [`declarative/menuPage.ts`](../../src/settings/declarative/menuPage.ts):
 `menuPage(ctx)` is the row that opens the page (`right-click-menu`), laid out
-like Obsidian's Ribbon settings: an opening sentence (`menu-intro`,
-`pageIntroBox`), then for each role (heading, inline, block) two of
-Obsidian's lists:
+like Obsidian's Ribbon settings: a box that is not seen (`menu-intro`,
+`pageIntroBox` without text) holding the row that repaints the ↺s, then for
+each role (heading, inline, block) two of Obsidian's lists:
 
 - **The role's menu** (`menu-<role>`): the items it shows, in order, each a
   plain row with its icon (`ITEM_ICON`; Obsidian draws a list row's icon only
   on plain and action rows, and hides every icon slot in a box whose rows have
   none), Obsidian's drag handle and Alt+↑/↓ (`onReorder`), and ✕ (`onDelete`),
-  which hides it. ↺ in the heading puts the role back as shipped. It is not
-  dimmed: Obsidian makes a box's heading buttons once, and plain rows have no
-  `render` to repaint it, so a press with nothing to reset changes nothing.
+  which hides it. ↺ in the heading puts the role back as shipped, and shows
+  only while the role's menu differs from it (`isMenuRoleDefault`; invisible
+  otherwise, as every ↺ is, `ui/resetArrow.ts`). Obsidian makes a box's heading
+  buttons once, from the tree that first drew the box, and plain rows have no
+  `render` to repaint it, so:
+  - `boxResetButton`'s `onMade` hands each role's ↺ element over, and
+    `menuPage.ts` keeps them under the tab's context (a `WeakMap` keyed by it:
+    the one thing every tree shares), painting each as it is made;
+  - `saveMenu` paints all three as soon as a change is saved, and a row with
+    nothing on screen (`menu-resets-repaint`, in the intro box) paints them
+    whenever Obsidian draws the page, which catches a change that arrived from
+    another device. It is in the intro box and not in a list, because a list
+    counts every row it draws as one of its items (`settings.indexOf(setting)`
+    for ✕, the clamp of Alt+↓), and a hidden row at the end would be a place
+    the last item could move onto.
+  Until 2026-10-29 the arrow was always shown, and a press with nothing to
+  reset changed nothing.
 - **Hidden from the … menu** (`menu-<role>-hidden`), shown only while the
   role hides something: the hidden items as action rows (Obsidian's accent
   text); a press brings one back at the end of the menu. Each role's heading is

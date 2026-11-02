@@ -827,7 +827,7 @@ fact:
 
 This is why `fallbackPicker` filters on `source !== "theme"`, rather than
 showing theme rows disabled after selection, and why a theme row carries no
-*Default fallback* badge. `tests/calloutCombobox.test.ts` pins the picker
+*Default* or *Auto* tag. `tests/calloutCombobox.test.ts` pins the picker
 boundary; `tests/themeRowActions.test.ts` pins the missing badge; and
 `tests/syncThemeOverlay.test.ts` pins the stronger cross-device rule that
 changing a theme on one machine never changes the synced settings body.
@@ -1153,8 +1153,9 @@ widget) must invalidate whatever remembers a slot.
 ## Switching the theme's callout styling off
 
 **Use your theme's callout styles** (`settings.themeCalloutStyles.enabled`), the
-row under *Callouts from your theme* on the main settings page (see
-[26 § Fallback, language and the theme's styles](26-declarative-settings.md#fallback-language-and-the-themes-styles)), is on
+top row of the *Callouts from your theme* page, which the row of that name on the main
+settings page opens (see
+[26 § The callout pages](26-declarative-settings.md#the-callout-pages)), is on
 by default, and on, nothing in this section runs: the generated sheet is
 byte-identical to the one before the setting existed, and no stylesheet is
 touched. Off, [`themeCalloutsOff.ts`](../../src/manager/theme/themeCalloutsOff.ts)
@@ -1385,7 +1386,7 @@ item is the shared `addConvertUsesItem`, and its confirmation names the theme as
 the reason the type stays.
 
 The use count lives in that menu rather than on the row, and the row carries no
-*Default fallback* tag either: both describe a callout the user cannot act on.
+*Default* or *Auto* tag either: both describe a callout the user cannot act on.
 [`usageMenuItem.ts`](../../src/usage/usageMenuItem.ts) reads the shared
 [`CalloutOccurrenceIndex`](../../src/usage/CalloutOccurrenceIndex.ts), subscribes
 while the menu is open. `prepareUsageMenu` requests freshness only when needed

@@ -59,8 +59,8 @@ Idea completes `> [!idea]+ Idea` and moves the cursor to the next content line.
 The captured component is 233 × 406 and appears at its native scale in the tile.
 
 `scripts/store-bento/find-scene.mjs` renders the production Find callouts pane
-with synthetic notes, as Obsidian lays it out: the pane's nav header with the
-format filter, then the **All types** selector and the summary,
+with synthetic notes, as Obsidian lays it out: the **All types** selector with
+the format filter at the end of its row, then the summary,
 **4 occurrences in 3 files**, with the results below drawn as Obsidian's search
 results (a file title with its faint count, then its matches). The results
 include heading, block, and inline examples. The tile's spacing is tightened
@@ -87,14 +87,15 @@ verifies the five-button order, middle selection, tooltip, and click handler.
 
 `scripts/store-bento/context-menu-scene.mjs` captures the production block
 context-menu actions over the same purple, lightbulb **Idea** callout used in
-the other store images. The composition raises the callout and menu together,
-so the six-row menu fits whole in the tile.
+the other store images. The callout is open (`+`), so the menu has five rows:
+Copy, the two fold states it is not in (closed, non-collapsible), Edit and Open
+settings. (From 2026-10-23 to 2026-10-27 it listed all three fold states with
+the current one checked, six rows; the current state is not offered again now.)
 The shared user-guide context-menu asset remains unchanged.
 The menu fragment is clipped to its exact native shell at (405, 150), sized
-227.53 × 179 with an 8-pixel corner radius (six rows since the menu offers all
-three fold states, the current one checked). This excludes the original scene's
+227.53 × 151.5 with an 8-pixel corner radius. This excludes the original scene's
 purple callout and dark background from the menu's edges and rounded corners.
-It is placed at (30.5, 58) in the tile.
+It is placed at (30.5, 67) in the tile, 24 pixels above its bottom edge.
 
 `scripts/store-bento/saved-palettes-scene.mjs` renders the production
 **Saved color palettes** rows with three synthetic examples, sorted in the
@@ -198,5 +199,5 @@ Custom shortcuts occupies the upper-right tile.
 | Upper middle-right | [Quick insert](../user-guide/15-quick-insert.md) | Native-styled ribbon, real selected plugin icon, production tooltip, and nearby abstract file bars without arrows from `05-ribbon.svg`. |
 | Upper right | [Custom shortcuts](../user-guide/09-commands-and-hotkeys.md) | Editorial collapsed Idea command box and Command, Shift, and C keycaps representing a possible user-assigned shortcut. No default hotkey is implied. |
 | Right, tall | [Autocomplete](../user-guide/01-the-three-callout-types.md#picking-from-the-autocomplete-menu) | Real CodeMirror input and production suggestions in the dedicated capture. |
-| Lower left, double-width | [Version history](../user-guide/13-syncing-and-backups.md) | Two crops from `version-history.svg`: today's date, and its box of versions with their times, eye/delete/Restore actions. This restores plugin settings, not note history. |
+| Lower left, double-width | [Version history](../user-guide/13-syncing-and-backups.md) | One crop of `version-history.svg`, scaled to the tile's width: today's heading on the timeline and its first two versions, with their times, dots, and eye/delete/Restore actions. This restores plugin settings, not note history. |
 | Lower middle-right | [Right-click menu](../user-guide/08-the-right-click-menu.md) | The actual five block-callout actions and icons from `05-context-menu.svg`, centered over a partial Idea block that continues beyond the tile's right edge. The block sits at y = 53 so the raised menu overlaps the lower portion of its Idea title, with extra space below the menu. |

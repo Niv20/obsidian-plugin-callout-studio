@@ -57,9 +57,9 @@ When notes were changed, the notice offers **Undo** for a few seconds. Undo puts
 
 ### Move an ID to another callout
 
-An ID belongs to one callout. If you type one that another callout has, a message under the IDs field says which callout it belongs to. When it can move, the message offers **move it here**: the ID joins this callout, and a note under **Callout IDs** says it moves when you save. On **Save changes**, the other callout gives the ID up and this one takes it. No note changes: callouts written with that ID simply take this callout's style.
+An ID belongs to one callout. If you type one that another callout has, a message under the **Callout IDs** label says which callout it belongs to. When it can move, the message offers **move it here**: the ID joins this callout, and a note under **Callout IDs** says it moves when you save. On **Save changes**, the other callout gives the ID up and this one takes it. No note changes: callouts written with that ID simply take this callout's style.
 
-![The Idea callout's editor after typing project, an ID of Project note, with the move it here offer under the IDs field](../../assets/user-guide/id-move-here.svg)
+![The Idea callout's editor after typing project, an ID of Project note, with the move it here offer under the Callout IDs label](../../assets/user-guide/id-move-here.svg)
 
 You can also do it in two steps: remove the ID from the callout that has it and choose **Leave them as they are**, then add the ID to the other callout. Your notes don't change either way.
 

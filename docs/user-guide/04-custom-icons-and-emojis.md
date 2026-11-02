@@ -14,7 +14,7 @@ With the keyboard, Tab lands once in the grid of icons, on the selected icon or 
 
 The picker can offer Lucide, Tabler Icons, Material Symbols, Emoji, Font Awesome, Octicons, RPG Awesome, and Simple Icons.
 
-The source menu lists only what you can pick from right now. Under **Search** is **All sources**, which searches every library at once. Under **Libraries** are the libraries on this device, in the order you set in **Manage icon libraries** (see below), with rounded counts such as **3.8K+** that keep catalog sizes easy to scan. Each heading stays pinned to the top of the menu while its rows scroll underneath it. A line at the bottom, such as **3 more libraries available for download**, tells you how many more you can get. It isn't a button: you download libraries with **Manage libraries**, next to the menu. Once every library is on this device the line goes away, and it comes back as soon as you delete one. On a phone, the menu leaves out its **Choose source** caption to keep room for the library's name.
+The source menu lists only what you can pick from right now. Under **Search** is **All sources**, which searches every library at once. Under **Libraries** are the libraries on this device, in the order you set in **Manage icon libraries** (see below), with rounded counts such as **3.8K+** that keep catalog sizes easy to scan. Each heading stays pinned to the top of the menu while its rows scroll underneath it. A line at the bottom, such as **3 more libraries available for download**, tells you how many more you can get. It isn't a button: you download libraries with **Manage libraries**, next to the menu, or from **Icon libraries** in the plugin's settings. Once every library is on this device the line goes away, and it comes back as soon as you delete one. On a phone, the menu leaves out its **Choose source** caption to keep room for the library's name.
 
 If you edit a callout whose icon comes from a library this device doesn't have - you deleted it, or you downloaded it only on another device - the callout keeps its icon, and the picker opens on that library. The source menu names it, and when you open the menu it is listed first, under its own **Deleted library** heading. It stays there while you look through other libraries, so you can always go back to it. It still counts toward the libraries available for download: keeping the icon does not keep the full library. That library shows its one-time download prompt, in the middle of the picker, where its icons would be: download it to choose a new icon from it, or choose from another library instead. The library of the icon you are editing is listed under **Current icon** if you hid it.
 
@@ -32,8 +32,7 @@ Moving the pointer again highlights the row under it.
 
 Search works offline. Depending on the selected source, the filters at the top can narrow icons by category, style, stroke weight, or emoji skin tone.
 In **All sources**, each library's result heading shows how many of its icons match as a small faint number at the end of the line, as Obsidian's search does.
-Across all libraries, filters expand to use the available row width, including when they wrap below the search field.
-For Tabler Icons, the search field is slightly narrower to leave more room for the style and category filters.
+Each filter is as wide as its current choice, and the search field takes the rest of the row. On a phone, the filters share a row of their own below the search field.
 For Material Symbols, search sits above the style, weight, and category filters so their choices stay readable.
 The source and filters use matching selection fields and menus. The emoji skin tone menu shows a
 sample hand beside each tone, so you can see the choice before selecting it.
@@ -42,7 +41,12 @@ sample hand beside each tone, so you can see the choice before selecting it.
 
 ## Manage icon libraries
 
-Click **Manage libraries** at the end of the source row to open **Manage icon libraries**, or open it from **Settings → Callout Studio**, under **Callout style**. This is also where you download a library: the source menu lists only the libraries already on this device. The libraries are in up to three boxes, like the lists in Obsidian's own settings, each under its heading.
+**Manage icon libraries** opens from two places, and it is the same window in both:
+
+- In the icon picker, click **Manage libraries** at the end of the source row. The window sits over the picker, so your unsaved choice stays where it is. This is the quickest way to get a library when the icon you want isn't in the ones you have.
+- In the plugin's settings, open **Colors and icons** and press **Manage libraries** on **Icon libraries**. It won't open while a callout editor is open: press it then and a message asks you to finish with the editor first.
+
+This is also where you download a library: the source menu lists only the libraries already on this device. The libraries are in up to three boxes, like the lists in Obsidian's own settings, each under its heading.
 
 Your search text stays in place when you return, including after reordering, downloading, deleting, or hiding a library. The results update to reflect those changes. If removing the active library returns you to **All sources**, the same search continues there.
 
@@ -77,7 +81,7 @@ Three things are worth knowing before you use one:
 
 - **Logos are trademarks of their owners.** Use a logo only to represent the company, product, or service it belongs to, and follow its owner's brand guidelines. The picker keeps this reminder on screen while the source is selected.
 - **Some logos are missing on purpose.** Simple Icons itself no longer carries some well-known brands, and Callout Studio leaves out the few logos whose own license restricts how they may be used or passed on. If you have the right to use such a logo, add its file under **Custom Icons** instead.
-- **Some logos have a license of their own that asks for credit.** **Icon licenses & credits**, at the bottom of the plugin settings, links to the full list, which also names every logo that was left out and why.
+- **Some logos have a license of their own that asks for credit.** The **License** icon (the scales icon) in the row of small icons at the bottom of the plugin settings opens a window with the full list, which also names every logo that was left out and why.
 
 ## Use your own graphic
 

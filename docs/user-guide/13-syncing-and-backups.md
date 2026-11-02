@@ -8,7 +8,7 @@ Choose the Callout Studio backup format to save your full setup as JSON, includi
 
 The export captures the setup currently displayed, even when settings saving is paused. Keep it somewhere separate from the plugin folder. Its format differs from the plugin's internal `data.json`: do not rename an export to `data.json`.
 
-Exporting does not add an entry to **Version history** or create an automatic backup in the vault. The exported file is a separate backup you keep yourself.
+Exporting does not add an entry to **Restore an earlier version** or create an automatic backup in the vault. The exported file is a separate backup you keep yourself.
 
 When importing a Callout Studio backup, matching entries are updated and valid saved palettes are merged into the destination setup without overwriting unrelated palettes. A palette with the same name as one you already have updates it. [Import a Callout Studio backup](10-import-export-and-sharing.md#import-a-callout-studio-backup) explains what the confirmation shows.
 
@@ -18,31 +18,25 @@ When importing a Callout Studio backup, matching entries are updated and valid s
 
 ![Version history listing saved setups, including versions kept before an import and a reset](../../assets/user-guide/version-history.svg)
 
-***Version history** lists earlier setups by day, newest first. Each row compares that setup with the one currently displayed.*
+*The **Restore an earlier version** page is a timeline of earlier setups, newest first. Each card compares that setup with the one currently displayed.*
 
-The **Earlier versions** description flows as one paragraph, wrapping to fit the available width.
+Open **Settings → Callout Studio** and scroll to **Danger zone** and choose **Restore an earlier version**, its first row. It opens as a page of its own, with a back arrow at the top. The page lists every earlier version of your setup that Callout Studio can find, newest first, down a line with a dot for each version. Versions are grouped by your local calendar day. Each heading on the line starts with the full date, followed by **today**, **yesterday** or **N days ago** in parentheses, including for older versions: for example, **October 1, 2026 (3 days ago)**. Dates and relative wording follow the interface language. A future date appears without a relative label. Versions whose dates are unknown appear under a heading of their own at the end. Each card shows:
 
-Each day is a box of its own under its date, with a thin line between the versions inside it, the way Obsidian groups its own settings.
-
-Pointing at a version's row makes its icons a little sharper. The row itself doesn't change, because only its buttons do something.
-
-Open **Settings → Callout Studio**, and under **Version history** choose **View versions**. The window lists every earlier version of your setup that Callout Studio can find, newest first. Versions are grouped by your local calendar day. Each heading starts with the full date, followed by **today**, **yesterday** or **N days ago** in parentheses, including for older versions: for example, **October 1, 2026 (3 days ago)**. Dates and relative wording follow the interface language. A future date appears without a relative label. Versions whose dates are unknown appear in a separate group at the end. Each row shows:
-
-- **The time it was saved,** in muted text at the start of the row (on a phone, on a line of its own above the name). The date heading supplies the date, so each row only shows the time.
+- **The time it was saved,** in muted text beside its dot on the line. The date heading supplies the date, so each card only shows the time.
 - **Its name,** based on why it was saved, such as *Changes saved*, *Before an import* or *Before changes from another device*. These names are automatic and cannot be edited.
 - **How far it is from your current setup:** the number of callout types it holds and the number of callout types and setting groups that differ from now, on separate lines. A version identical to your setup or one that cannot be read shows that status instead.
 
-The buttons stay beside the text on every device. **Restore** is an ordinary grey button; the red one is in the question it asks before restoring.
+The buttons stay beside the text on every device. **Restore** is red, because it replaces your whole setup on every synced device; it asks first, and it is dimmed for a version that is already your current setup. Pointing at a card makes its time and dot a little darker.
 
 ### One list of versions
 
-**Version history** brings the available copies together. You choose the setup you want to restore, without choosing a storage location.
+The **Restore an earlier version** page brings the available copies together. You choose the setup you want to restore, without choosing a storage location.
 
 When several copies would restore exactly the same settings, the list shows one version. Copies saved a moment apart but holding different settings stay separate rows: the copy **Restore** takes of the setup it replaces, and the setup it restores a moment later, are separate versions. The list and details focus on the saved setup and its differences, without source icons, storage badges or filenames.
 
 Callout Studio keeps some automatic copies in this device's app storage and some in the vault's backups folder. It can also find extra settings files left by a sync service. Their independent limits still apply, so the window can show more than ten versions. Appearing in the list does not confirm that a file has uploaded or is available on another device. See [device history retention](#how-much-device-history-is-kept) and [backups in the vault](#automatic-backups).
 
-Callout Studio does not automatically delete sync-copy files or impose a count, size, or age limit on them. Their availability on other devices depends on the sync service, and deleting the plugin folder can remove them. The separate device recovery copy, raw preservation files and upgrade archives are not listed in version history. A [manually exported backup](#export-a-complete-backup) is a separate file you keep yourself.
+Callout Studio does not automatically delete sync-copy files or impose a count, size, or age limit on them. Their availability on other devices depends on the sync service, and deleting the plugin folder can remove them. The separate device recovery copy, raw preservation files and upgrade archives are not listed on the **Restore an earlier version** page. A [manually exported backup](#export-a-complete-backup) is a separate file you keep yourself.
 
 Each version supports **View details** and **Delete**. **Restore** requires readable, supported settings and active saving. Deletion removes the copies available to this device, with a warning when file deletion may sync; another device's private history can still retain the version.
 
@@ -82,7 +76,7 @@ Select the eye button, **View details**, beside any version to open **Version de
 
 **What changed** is a quiet line or two above the tables, with a smaller, muted heading. The total (such as **24 differences from your current setup**) and the removed, changed and added pill labels share the row below the heading where space allows; they wrap on narrow screens. Changed items are marked in yellow, added in green and removed in red. A version identical to your setup shows **Same as your current setup** without counts. An unreadable version shows **Comparison unavailable**, with an explanation beneath. This is a read-only window: opening it does not restore the version, change your settings, create a backup, or contact a server. It remains available while saving is paused.
 
-The window shows only what would change if you restored the selected version, compared with the setup currently displayed when you open it. It is split into the sections of the settings page, in the same order: **My callout types**, **Built-in callouts**, **Custom Icons** and **Icon picker defaults**, **Default fallback callout**, **Saved color palettes**, the global style options, **Context menu**, **Commands & Hotkeys** and **Language**. Anything saved by a newer version of Callout Studio appears last, under **Other settings**. Only sections with a difference appear.
+The window shows only what would change if you restored the selected version, compared with the setup currently displayed when you open it. It is split into the sections of the settings page, in the same order: **My callout types**, **Built-in callouts**, **Default fallback callout**, **Saved color palettes**, **Custom Icons** and **Icon picker defaults**, the global style options, **Context menu**, **Commands & Hotkeys** and **Language**. Anything saved by a newer version of Callout Studio appears last, under **Other settings**. Only sections with a difference appear.
 
 Each section is a table with four columns: **No.**, **Item**, **Current setup** and **After restoring this version**. Select a section's title to fold the section or open it again; the small triangle beside it turns, as it does in Obsidian's file list. The tables use Obsidian's own table lines, so a theme that restyles tables restyles these too. While you scroll through a section, its title and column headings stay pinned at the top of the window.
 
@@ -116,11 +110,11 @@ Callout Studio saves a copy of your setup to its `backups` folder before a chang
 
 - before settings arriving from another device remove or replace callouts or preferences on this one
 - before **Restore these settings** replaces this device's recovery copy
-- before restoring a version from **Version history**
+- before restoring a version with **Restore an earlier version**
 - before **Reset everything**
 - before any import
 
-The folder is inside the plugin's folder, usually `.obsidian/plugins/callout-studio/backups/`. Each new copy is checked after it is saved. When a verified copy with identical content already exists, that copy is reused. Why each copy was taken is recorded beside it, in that device's `labels-….json` file, and is how **Version history** names it; the copies themselves are left exactly as older versions of Callout Studio expect them.
+The folder is inside the plugin's folder, usually `.obsidian/plugins/callout-studio/backups/`. Each new copy is checked after it is saved. When a verified copy with identical content already exists, that copy is reused. Why each copy was taken is recorded beside it, in that device's `labels-….json` file, and is how the **Restore an earlier version** page names it; the copies themselves are left exactly as older versions of Callout Studio expect them.
 
 Each device keeps its ten newest backup copies, shared across all reasons, with no additional daily or weekly copies. Cleanup runs at startup, after writing and verifying a new backup, and when reusing an existing copy. Upgrading therefore removes existing excess backups without waiting for a new backup. Copies needed together for a recovery operation take priority within the ten slots; an operation needing more than ten temporarily exceeds the limit until the next cleanup.
 
@@ -128,18 +122,18 @@ Copies from other devices are left alone while those devices are still producing
 
 Backups written by Callout Studio 2.14 or earlier do not identify their device. They share a separate limit of ten newest copies, and excess copies are also deleted during startup cleanup. Each one is also deleted ninety days after it was saved, including the newest, because no current version replaces them with newer copies. The age is measured by this device's clock, at startup and whenever a new backup is saved.
 
-These are limits per storage source and device, not a limit of ten rows in **Version history**. The list combines those sources and merges identical setups. There is no single file-count or size limit for the whole folder, and some files are never removed automatically:
+These are limits per storage source and device, not a limit of ten rows on the **Restore an earlier version** page. The list combines those sources and merges identical setups. There is no single file-count or size limit for the whole folder, and some files are never removed automatically:
 
-- Exact copies of settings files or device recovery copies replaced because they could not be read are named `unreadable-….txt` and `recovery-copy-….txt`. These are preservation files, not versions listed in **Version history**.
+- Exact copies of settings files or device recovery copies replaced because they could not be read are named `unreadable-….txt` and `recovery-copy-….txt`. These are preservation files, not versions listed on the **Restore an earlier version** page.
 - Files whose names are not recognized as current or legacy automatic backups are left alone, and so are the small `labels-….json` files that hold the reasons backups were saved.
 
-To bring back a readable backup, use [Version history](#version-history). Routine backup copies are thinned automatically, but those exceptions mean the folder is not guaranteed to remain a fixed size.
+To bring back a readable backup, use [Restore an earlier version](#version-history). Routine backup copies are thinned automatically, but those exceptions mean the folder is not guaranteed to remain a fixed size.
 
 The folder can sync if your provider includes it, and deleting the plugin folder removes it. A saved backup does not confirm that synchronization has completed. Keep an exported backup somewhere else as well.
 
 ## Recover paused saving
 
-![The settings page while saving is paused, showing only the Saving is paused notice with its recovery actions and the Version history box](../../assets/user-guide/saving-paused.svg)
+![The settings page while saving is paused, showing only the Saving is paused notice with its recovery actions and the Restore an earlier version row](../../assets/user-guide/saving-paused.svg)
 
 *When the settings file is missing, the banner starts with **Check again** and keeps the recovery and version-history actions available.*
 
@@ -158,13 +152,13 @@ The startup notice uses Callout Studio's selected language when its translation 
    - **The settings file can't be read:** the banner says why. If the file is still downloading, or this device can't open it, wait for sync and select **Try again**. If the file is empty, damaged, has Git merge conflict markers, or was combined from two versions by a sync service, select **Replace settings file**. Callout Studio saves an exact copy of the current file in the backups folder, then writes a readable settings file. If the settings inside the file were intact - a sync service combined two versions of it - they are kept, and the button is shown as the recommended step instead of in red.
    - **This device's recovery copy can't be read:** select **Discard recovery copy**. An exact copy is saved in the backups folder first, and your settings file isn't changed.
    - **The settings file or recovery copy is from a newer version of Callout Studio:** update the plugin on this device. Neither is replaced, even if the settings file is missing or damaged.
-4. To go back to an earlier version, select **Go to version history** in the banner. It takes you to **Version history → Earlier versions** and highlights it, as a result of Obsidian's settings search does; if you pressed it with the keyboard, focus moves there too. You can browse and compare versions there right away with **View versions**; once saving resumes, restore one from the same window.
+4. To go back to an earlier version, select **Go to version history** in the banner. It opens the **Restore an earlier version** page. You can browse and compare versions there right away; once saving resumes, restore one from the same page. (Obsidian 1.13 cannot open a page for a button, so there the banner has no such button: choose **Restore an earlier version** under **Danger zone** on the settings' main page yourself.)
 
 These actions work the same on desktop and mobile, including when the problem starts while Obsidian is open, and you don't need to recover from a particular device. Each one checks the file again before writing, and stops if it changed in the meantime. A failed write leaves saving paused so you can retry. A successful local save does not mean cloud synchronization has finished; let it finish before editing the setup on another device.
 
-If changes you made on this device couldn't be saved, and newer settings from another device then replace them, a notice tells you. Your version is saved in the backups folder, and **Version history** lists it as *Before changes from another device*.
+If changes you made on this device couldn't be saved, and newer settings from another device then replace them, a notice tells you. Your version is saved in the backups folder, and the **Restore an earlier version** page lists it as *Before changes from another device*.
 
-Don't copy files into the plugin folder by hand to recover. Other devices merge their newer settings back over a file copied in from an old backup, so the rollback wouldn't stick. Restoring from **Version history** makes the old version an ordinary change that every device accepts.
+Don't copy files into the plugin folder by hand to recover. Other devices merge their newer settings back over a file copied in from an old backup, so the rollback wouldn't stick. Restoring with **Restore an earlier version** makes the old version an ordinary change that every device accepts.
 
 The device recovery copy can survive plugin removal, but clearing Obsidian's app data can remove it. It is not a substitute for a separate backup. If this device can't update its recovery copy, for example because its storage is full, Callout Studio still saves your settings. It tells you once, and tries again with each later change.
 

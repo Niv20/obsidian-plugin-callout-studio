@@ -20,13 +20,16 @@ Group headings stay visible at the top of the color menu as you scroll.
 
 ## Create a saved palette
 
-Open the plugin settings, open **Saved color palettes** (under **Callout style**), and click **+** above the list (on a phone or tablet, the **New palette** row at its end).
+Open the plugin settings, open **Saved color palettes** (the first row of the **Colors and icons** box, which also holds **Icon libraries**), and click **+** above the list (on a phone or tablet, the **New palette** row at its end).
 
 1. Give the palette a name.
 2. Choose a **Base color**. The background initially follows that color automatically. A new palette starts on a default blue; if you already have a palette with exactly that look, it starts on a blue one shade off, so the window never opens on a "duplicate" message.
-3. If you want a different background, open the separate background controls.
-4. Review any contrast warning: a line under the color that may be hard to read. It does not prevent you from saving the design.
-5. Click **Save**.
+3. If you want to set the colors one by one, click the sliders button at the end of the **Colors** heading. It opens an **Accent color**, a **Background color** and a **Text color** (the color of the text inside the callout). Light mode and dark mode each keep their own three colors, and the rows set the ones for the mode Obsidian is showing. Both start from what the base color gave them, so the mode you haven't changed still looks right. The same button, now an undo arrow, goes back to a single base color and drops the colors you set by hand. It is there only while the background style is **Solid**.
+4. To see or set the other mode, click the sun or moon button at the very end of the **Colors** heading. All of Obsidian switches to that mode while the window is open, so the preview shows exactly how your notes will look in it, theme included. Closing the window switches back, and Obsidian's own setting never changes. The button is there with every background style, so you can also check a base color or a gradient in the other mode.
+5. Review any contrast warning: a small warning triangle appears beside the Accent or Text color that has low contrast against the background, and a line under the three colors says it may be hard to read. The triangle follows the color as you drag it; the line appears once you let go. It checks the mode on screen. It does not prevent you from saving the design.
+6. Click **Save**.
+
+In dark mode, a background darker than the page, such as black, shows exactly as you chose it, in Reading view as well as in Live Preview.
 
 **Save** stays dimmed while the name is already used by another palette, or while the colors are identical to another palette's. Press it and a message says which.
 
@@ -34,7 +37,7 @@ The built-in colors count too, with one exception. A palette you saved before a 
 
 Saved palettes appear at the top of every callout color menu under **Custom**.
 
-Under the name, the editor shows the palette's word for callout metadata: **Comic Red** is `comic-red`. Write `[!note|comic-red]` to give one callout this palette. **Save** also stays dimmed when you give a palette a word another saved palette already has. Two palettes saved before metadata words existed can share one, such as **Note dark** and **Note (dark)**. They still save, and the line under the name says that only one of them answers to the word. See [Callout metadata](18-callout-metadata.md).
+A palette's name also gives it a word for callout metadata: **Comic Red** is `comic-red`. Write `[!note|comic-red]` to give one callout this palette. **Save** stays dimmed when you give a palette a word another saved palette already has. Two palettes saved before metadata words existed can share one, such as **Note dark** and **Note (dark)**. They still save, and a line under the name says that only one of them answers to the word. See [Callout metadata](18-callout-metadata.md).
 
 ![New Ocean palette with a base color, background intensity, and live previews in dark mode](../../assets/user-guide/palette-editor.svg)
 

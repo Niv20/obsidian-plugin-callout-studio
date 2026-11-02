@@ -6,7 +6,7 @@ Quick Insert lets you choose and insert a callout with the mouse instead of typi
 
 Place the cursor in a note, then click the paintbrush icon with a plain plus at its lower right in Obsidian's left ribbon. You can also run **Callout Studio: Quick insert block callout** from the Command Palette.
 
-The window shows rendered previews of the available callouts. Search by name (the **×** at the end of the search field clears it) or filter the list by source, then click a preview or its insert button. Callout Studio writes the selected callout at the cursor. On an empty line, you get an empty callout. Otherwise it wraps your selection, or the paragraph under the cursor, in a block callout, following the block-callout rules of **Wrap in callout** (see [Commands & hotkeys](09-commands-and-hotkeys.md#what-gets-wrapped)).
+The window shows rendered previews of the available callouts. Search by name, ID or alias (the **×** at the end of the search field clears it) or filter the list by source with the funnel beside the search field, then click a preview or its insert button. Callout Studio writes the selected callout at the cursor. On an empty line, you get an empty callout. Otherwise it wraps your selection, or the paragraph under the cursor, in a block callout, following the block-callout rules of **Wrap in callout** (see [Commands & hotkeys](09-commands-and-hotkeys.md#what-gets-wrapped)).
 On desktop, the search field is ready for typing when the window opens. On a phone or tablet, the keyboard stays closed until you tap the field.
 
 Quick Insert creates **Block callouts only**. For Heading and Inline callouts, use **Wrap in callout** or **Insert empty callout**, which pick the kind from where the cursor is (see [Commands & hotkeys](09-commands-and-hotkeys.md)), autocomplete, or a custom command.
@@ -15,11 +15,15 @@ Quick Insert creates **Block callouts only**. For Heading and Inline callouts, u
 
 *Search and choose from rendered block-callout previews. Each row offers an edit action and an insert action.*
 
+## Searching by alias
+
+Search looks at a callout's name, its IDs and its aliases. When an alias is what you searched for, such as `tldr` for **Abstract**, the row is drawn with that alias and inserts it: you get `> [!tldr] Tldr`, not `> [!abstract] Abstract`. The `[!` suggestions follow the same rule and title an alias the way Obsidian does. With an empty search, or when only the name matched, the callout is written with its first ID and its name.
+
 ## Filter by source
 
 ![Quick insert filtered to My callouts, with the source choices open](../../assets/user-guide/quick-insert-filter.svg)
 
-*Select **My callouts** to narrow the list to your own types. The source choice is remembered on this device.*
+*Open the funnel beside the search field and choose **My callouts** to narrow the list to your own types. The funnel stays lit while the list is narrowed, and the source choice is remembered on this device.*
 
 The first time you open Quick Insert, it starts with **All** selected. After you change the source, Callout Studio remembers your latest choice for the next opening, including after restarting Obsidian. Each device remembers its own choice. The available source choices are shown in this order:
 
@@ -29,6 +33,10 @@ The first time you open Quick Insert, it starts with **All** selected. After you
 - **My callouts** - your Callout Studio-managed callouts, including ones you created, imported, or deliberately discovered. A callout moves to the theme filter for as long as the active theme controls it.
 
 When the active theme owns no available callouts, Quick Insert omits its option entirely. If the theme filter was your remembered choice, the window temporarily shows **All** until a theme-owned callout becomes available. Selecting another empty source explains which category has no callouts. If you have typed a search, an empty result instead means that no callout in the selected source matches the search. When you have no custom callouts, the **My callouts** empty state points to **Callout Studio: Create new callout type** in the Command Palette. If you do have custom callouts but the active theme currently controls all of them, the message instead directs you to the theme filter.
+
+## Long lists
+
+If you have hundreds of callouts, Quick Insert shows the first few dozen and draws more as you scroll towards the end of the list, or as you press the down arrow past the last row. Searching or changing the source starts again from the top. Nothing is left out: search and the source filter always look through every callout, not only the ones drawn so far.
 
 ## Edit from the same window
 

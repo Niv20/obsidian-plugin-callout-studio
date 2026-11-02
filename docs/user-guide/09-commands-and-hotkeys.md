@@ -111,7 +111,7 @@ An inline callout that holds another one in its text, or whose `{` is never clos
 
 ## Show, hide, and assign shortcuts
 
-Open **Settings → Callout Studio**, then **Commands and shortcuts** under **Menus and commands**. The page has two boxes: **Your commands** first, then **Built-in commands**.
+Open **Settings → Callout Studio**, then **Commands and shortcuts** under **Editor**. The page has two boxes: **Your commands** first, then **Built-in commands**.
 
 ![The commands page, showing saved custom commands and built-in commands with shortcut labels and switches](../../assets/user-guide/command-manager.svg)
 
@@ -126,7 +126,7 @@ On this page you can:
 - Edit one of your commands with its pencil, or delete it with its **✕** (or
   the **Delete** key). Deleting asks first.
 
-The arrow (↺) in the **Built-in commands** heading turns every built-in command on. It is dimmed while all of them are on. Assigned shortcuts and your custom commands are preserved.
+The arrow (↺) in the **Built-in commands** heading turns every built-in command on. It shows only while one of them is off. Assigned shortcuts and your custom commands are preserved.
 
 Obsidian owns the shortcut itself; Callout Studio provides the command.
 Turning a command off preserves its assigned shortcut. If you want to reuse
@@ -143,10 +143,20 @@ and starts on **Note** when that built-in type is available. You can change it
 before saving. It shows registered types in one list without section headings,
 including types saved through a scan. Types found only in your notes remain
 available in **Find callouts** until you register them.
+Click **Callout type**, or start typing while it is selected, to open its list
+with a search box at the top, like the pickers in Obsidian's own settings.
 **Callout format**, **Heading level**, **Action**, and **Fold state** open
 Obsidian's own menu, with a check mark beside the current choice; **Heading
-level** and **Fold state** show an icon beside each choice. Each field is as
-wide as its longest choice.
+level** and **Fold state** show an icon beside each choice. Every field here
+is Obsidian's own dropdown, as wide as its current choice, at the end of its
+row. On a Mac it looks as it does in Obsidian's settings: the choice and a pair
+of arrows on a small round badge, with a box that appears when you hover over
+it. The
+five choices sit together in one grey box, like the rows in the plugin's other
+windows. Under it, a box of its own, **Command name** shows the name the
+command will have in the Command Palette. It is written in full below its
+label, wrapping onto a second line when it is long. If you already have a
+command that does exactly the same, a message says so under the name.
 
 ![Creating a command that wraps selected text in a collapsed Warning block callout](../../assets/user-guide/command-editor.svg)
 

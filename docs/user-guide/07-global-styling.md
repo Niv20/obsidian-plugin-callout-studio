@@ -1,10 +1,10 @@
 # Global styling
 
-Global styling gives every Callout Studio callout a consistent shape and layout. Open the plugin settings and, under **Callout style**, open **Heading callout**, **Inline callout** or **Block callout**. Changes apply immediately across the vault.
+Global styling gives every Callout Studio callout a consistent shape and layout. Open the plugin settings and, under **Global styling**, open **Heading callout style**, **Inline callout style** or **Block callout style**. Changes apply immediately across the vault.
 
-Each callout format has its own page, so changing one format does not force the others to use the same geometry. A live preview sits at the top of the page and stays in view while you scroll through the controls (on a phone it scrolls with the page).
+Each callout format has its own page, so changing one format does not force the others to use the same geometry. A short live preview sits at the top of the page and stays exactly in place while you scroll through the controls, with the rows fading out as they slide under it (on a phone it scrolls with the page). While you hold the **Spacing between headers** slider, a stack of headers replaces the preview inside the same box, so the page does not shift under your hand.
 
-Each slider has its own **Reset to default** arrow (↺) before its value. A box with several controls, such as **Borders**, also has one in its heading, which restores the whole box. An arrow is dimmed while there is nothing to reset. Other boxes and callout formats keep their values.
+Each slider has its own **Reset to default** arrow (↺) before its value. A box with several controls, such as **Borders**, also has one in its heading, which restores the whole box. An arrow shows only once something differs from the default, and is invisible until then. Other boxes and callout formats keep their values.
 
 Borders are four switches, **Top**, **Right**, **Bottom** and **Left**. **Border thickness** appears once at least one side is on.
 

@@ -26,12 +26,12 @@ with **All types** and **All formats**. Opening **Find callouts** from a callout
 three-dot menu starts with that callout type and **All formats**, even if you
 previously selected a different format in the sidebar.
 
-The sidebar starts like Obsidian's **Search** pane: a small filter icon at the
-top, then the type picker across the pane, then the matching-result summary
+The sidebar starts like Obsidian's **Search** pane: the type picker across the
+pane, with a small filter icon at its end, then the matching-result summary
 over a thin line. The filter icon opens the formats, with a check mark beside
-the one shown, and stays highlighted while you show only one format. On a
-phone, the filter icon sits at the bottom of the sidebar, as Obsidian's own
-pane buttons do. The picker and summary remain fixed while the file groups
+the one shown, and stays highlighted while you show only one format. It sits
+on the picker's own row, on a phone as well, so the pane needs no row of its own for it.
+The picker and summary remain fixed while the file groups
 below scroll. Several inline callouts on one line count as separate
 occurrences. The former vault-wide statistics cards are no longer shown here.
 
@@ -39,8 +39,9 @@ occurrences. The former vault-wide statistics cards are no longer shown here.
 
 *The type picker includes registered callouts and unregistered types found in notes. Here, a search for “de” shows choices from both groups.*
 
-Use the searchable type picker to choose **All types**, a saved type,
-or an unregistered type found in your notes. The iconless **All types** option
+Use the type picker to choose **All types**, a saved type,
+or an unregistered type found in your notes. Click it to open its list, and
+type in the search box at the top of the list to narrow it. The iconless **All types** option
 appears first under **Browse**. It shows every callout occurrence in the vault,
 including unregistered types. **Registered callouts** follow, then
 **Unregistered callouts**. **Browse** and the other group headings stay visible
@@ -74,7 +75,7 @@ out of the picker.
 *Choose a type to see its source references, grouped by note. The results scroll below the fixed filters and summary.*
 
 Results are grouped by note, as Obsidian's **Search** pane groups them: the note's name with a small count at the end, then one rounded box with a row for each occurrence, separated by thin lines. The count covers matches the
-list has not loaded yet. Each row shows its format, line number, and at most
+list has not loaded yet. The small triangle before a note's name folds that note's results away, and unfolds them again, as the triangles in Obsidian's file list do; the count stays, so a folded note still says how many results it has. A note you fold stays folded while the list updates, and until you choose another type or format; folding changes nothing in your notes. In a right-to-left interface the triangle sits at the right and a folded note points left, instead of right. Each row shows its format, line number, and at most
 two lines of raw Markdown, including syntax such as `> [!info]`. Block previews
 include a line of body text when available. From the filter icon, choose **All formats**, **Block**,
 **Heading**, or **Inline** to filter the selected type or all types. With a mouse or
@@ -152,7 +153,9 @@ When the cursor is in no callout, no row is highlighted.
 
 If the highlighted row is outside the visible part of the list, the sidebar
 scrolls just far enough to show it in full. It never takes keyboard focus, and it
-does not load rows the list has not reached yet.
+does not load rows the list has not reached yet. If the row is inside a note you
+have folded, the sidebar scrolls to that note's name instead and leaves it
+folded: unfolding is your choice.
 
 The highlight follows the cursor, not scrolling: scrolling the note without
 clicking leaves it where it is, and Reading view, which has no cursor, highlights

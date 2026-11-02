@@ -33,12 +33,25 @@ scan, and the shared `SettingsContext` (`sections/types.ts`) every flow is
 handed.
 
 The main page, top to bottom: the notices (saving paused, the import offer);
-the callouts box (Callouts from your theme and the switch for its styles, My
-callout types, Add new callout, Built-in callouts, Default fallback callout,
-Language); Callout style (Heading, Inline and Block callout, Saved color
-palettes, Manage icon libraries); Menus and commands; Import and export; Version history; Danger
-zone; About. The table in 26 § The main page, part by part says which module
-builds each.
+the callouts box (Callouts from your theme, My callout types, Built-in
+callouts, Default fallback callout); Colors and icons (Saved color palettes, a
+page, and Icon libraries, a row whose button opens the Manage icon libraries
+window - [`iconLibrariesRow.ts`](../../src/settings/declarative/iconLibrariesRow.ts));
+Global styling (Heading, Inline and Block callout); Editor (Autocomplete and
+metadata, the right-click menu, the commands); Import and export; Danger zone (first row: Restore an earlier version); the
+language notice (a box that shows only while the chosen language is not
+downloaded); and the footer, one row of tiles (the language, the project's
+links, License, the version). The table in 26 § The main page, part by part says which module
+builds each. There is no Add new callout on the main page (the **+** of My
+callout types adds one), and the switch for the theme's styles is the top row
+of the Callouts from your theme page, not a row of the main page (26 § The
+callout pages). Every box of the tree, at every depth, carries the class
+`cs-box` (`settingsTree.ts` `markBoxes`; the plugin's own pages add it to the
+boxes they draw), the hook for any rule that should reach only the plugin's
+rows and not the rows other plugins draw in the same window. No rule uses it
+for alignment: a row in these boxes is laid out as core lays it out, its
+control hanging from the top of the row (`align-items: flex-start`), exactly
+as in the rest of Obsidian (see *Rows and slider values inside a window*).
 
 The tab overrides `getControlValue` and `setControlValue`, so no declarative
 control can ever reach Obsidian's default `saveData(plugin.settings)`, which
@@ -129,21 +142,141 @@ ends. Failures are caught and reported; the scan never focuses a control when
 it finishes. The registry's own change signal redraws the rows and counts it
 added (`tests/manualScan.test.ts`).
 
-### Danger zone and About
+The scan is "running" until its result notice is shown, not only while the
+vault is read. The **Scanning…** notice is a `workNotice` with a minimum of two
+seconds (`SCAN_MIN_MS`) and a gap (`BEFORE_RESULT_MS`) before the result, so a
+scan that takes a blink still shows the brush painting and the two notices
+never land on each other.
+
+**Why the minimum is deliberate.** The floor makes a fast scan slower than it
+needs to be, on purpose. A result that appears instantly after pressing a button
+that "searches the whole vault" reads as shallow or untrustworthy, while visible
+work (the painting brush) reads as proof the scan really looked. Two studies
+back this up. Buell & Norton (2011), "The Labor Illusion": users valued and
+preferred systems (flight search, dating sites) that showed longer waits with
+operational transparency, such as animations or the steps being taken, over
+systems returning identical results instantly. Adar, Tan & Teevan (2013),
+"Benevolent Deception in Human-Computer Interaction": systems sometimes use
+artificial delays to match the user's mental model of the task, because a
+response that is too fast (under about 100 ms for something expected to take
+work) can cause cognitive dissonance and suspicion. The delay is a floor, not an
+addition: a scan that already takes longer than `SCAN_MIN_MS` is never delayed
+further. Keep the number small; the aim is a believable pause, not a slow
+feature. A work notice's brush does not keep still first, as
+the other notices' does: it moves from the first frame. `done()` resolves when
+the next notice may be shown, and a second call returns the same wait; a caller
+with no notice after it (the conversion) does not wait for it.
+
+**Scanning…** covers only the reading of the notes. `runManualScan` hands
+`work.done()` to the scan as its `beforeSave` wait
+([chapter 11](11-vault-discovery.md#one-discovery-entry-point)), so the notice
+is gone before the new rows are built, saved and drawn, and the result notice
+comes right after the list shows them. The brush is drawn frame by frame on the
+page's one thread: with hundreds of new callouts, building them, saving them and
+redrawing the list held that thread for most of a second (measured 2026-11-01:
+753 new rows, about 900 ms), and the brush stood still while that ran. Done
+between the two notices, the work leaves nothing frozen on screen; the row
+still says **Scanning…** until the list is drawn. One redraw remains under a
+notice: the row's name changing to **Scanning…** redraws the whole page, which
+with a long list (766 rows: about 300–500 ms) stalls the brush as it starts.
+
+### Danger zone and the footer
+
+The language and the project's links are not rows of the page: they are the
+tiles of the footer (below). The Language row, the About row and the footer's
+two text rows were each a box of their own until 2026-10-29. The About Callout
+Studio tile, which opened the welcome window, was taken out of the footer the
+same day. The window still opens on a fresh install
+(`maybeShowWelcomeOnLaunch`); the only other way in is `openWelcome()` in the
+DevTools console, since there is no command for it.
 
 **Danger zone** has **Convert to standard Markdown** first and **Reset
 everything** second (`declarative/mainPageGroups.ts`). The reset's whole flow
 (the question listing what goes, the backup first, the reset, the notice) is
 [`settings/resetEverything.ts`](../../src/settings/resetEverything.ts).
+**Reset everything** is red words on a light red wash, `setDestructive()`
+without `setCta()`: the look of Obsidian's own **Log out** button (Settings →
+General → Account, read in app.js 1.14.5: `setButtonText(…).setClass("mod-destructive")`).
+It is the one red every red button of the plugin wears, a window's confirm
+button included (§ below, `ui/destructiveButton.ts`); `buttonRow`'s
+`destructive` flag is how a settings row asks for it.
 **Convert to standard Markdown** opens the registered `PortableConversionView`
 directly in the right sidebar and closes settings (see the sidebars below).
 
-**About** holds About Callout Studio, the contact sentence with its two inline
-links (a GitHub issue for a bug or an idea, and email), **Icon licenses**, and
-the Version row with the source, contribution guide and plugin license links and
-the version, which links to its release notes. The links come from
-[`settings/aboutLinks.ts`](../../src/settings/aboutLinks.ts). **Icon licenses**
-opens `IconCreditsModal`, which renders the registry-backed icon attributions
+The page ends with the **footer** (`declarative/footerGroup.ts`): one box with
+one nameless render row, `footer-tiles`, whose single child is a flex line of
+tiles (`cs-footer-tiles`, centred, wrapping in a narrow pane). A tile is an icon
+with its name beside it. Everything that is about the plugin rather than its
+settings is a tile, in this order:
+
+| Tile | Icon | What it does |
+| --- | --- | --- |
+| Language (shows the language in use, e.g. `English`) | `globe` | opens Obsidian's `Menu` of languages (below) |
+| Open an issue, Source code | `bug`, `github` | the repository pages (`projectLinks()`) |
+| License | `scale` | opens `LicenseModal`: the open-source promise with a link to the plugin's license, and the icons' licenses |
+| `v2.18.0` | no icon, words only | the release notes of the installed version |
+
+A tile is a native-looking button: the height of a field (`--input-height`)
+with the field's face (`--interactive-normal`, hover and focus ring from the
+same tokens as Obsidian's buttons and dropdowns), side padding, and the icon and its name
+(`.cs-footer-tile-label`, one line) side by side, written once as
+`.cs-footer-tile` at four classes so it outweighs Obsidian's `button` rules and
+the browser's link colours, and a link (`a`) and a window opener (`button`)
+look the same. The name is real text, so it is also the tile's name for a
+screen reader, and **no tile has a tooltip** (`drawTileContent` calls no
+`setTooltip`); the first version of the footer was icons alone with the name as
+the tooltip, and the words replaced it on 2026-10-29. The language tile shows
+the language in use, not the word "Language": `SelectDropdown` with
+`{ icon: "globe", showValue: true }` (`ui/selectDropdown.ts`; without
+`showValue` the words are hidden and the name is a tooltip). The labels are the
+existing strings (`footer.openIssue`, "Open an issue", and `footer.sourceCode`),
+and one new key for the License tile, `license.title`, which is also the
+window's title. (The About, email and Contribute tiles were taken away on
+2026-10-29, and the Icon licenses tile was folded into License; their keys, and
+the old `footer.prompt` sentence, were deleted from every locale table on
+2026-10-31. `credits.title` is no longer read either, but the locale files still
+carry it until the next translation pass.) The row's own name and control columns are hidden
+(`.cs-footer-row > :not(.cs-footer-tiles)`), as the page-intro box hides its
+row's (`cs-page-intro`): the tiles are drawn straight into `setting.settingEl`
+and removed in the row's cleanup, because Obsidian keeps a row when it draws the
+page again. The footer is not a setting, so it is not in the settings search;
+neither are the language and About any more (they were rows that a search for
+"language" or "about" found). The words and addresses come from
+[`settings/aboutLinks.ts`](../../src/settings/aboutLinks.ts).
+
+Under the footer the page ends 24px below it, the gap between two boxes, not
+Obsidian's 64px of bottom padding for a tab (`.vertical-tab-content`). The tab
+puts `cs-settings-tab` on its `containerEl` in the constructor
+(`SettingsTab.ts`) and `styles.css` overrides the padding for that class (a class
+the code sets, because the stylesheet takes no `:has()`). Only the main page is
+shortened: a sub-page is its own `.setting-page.vertical-tab-content` element.
+
+**The language tile** is a `SelectDropdown` given an `icon`
+(`ui/selectDropdown.ts`): the same button-plus-`Menu` adapter every plain choice
+uses, minus the words and the caret (the `SelectDropdown` section, below). The current
+language's name stays in the page, visually hidden (`cs-visually-hidden`), so
+the button's accessible name still reads "Language, English". The menu lists
+every language under its own name with a ✓ on the one shown. There is no reset
+arrow and no Automatic row: **picking Obsidian's own language follows Obsidian
+again** (it saves `"auto"`), which is the way back to the default
+(`languagePicker.ts`, `preferenceFor`). While saving is paused, or a language
+downloads, the tile is disabled (read at every draw; the page is drawn again
+whenever either changes), and `languageChooser` (`generalRows.ts`) only explains
+if a pick still gets through. When the chosen language is not on the device it is
+fetched under **notices**, not in the page (a row that appeared above the footer
+mid-switch moved the page under the pointer): a "Downloading translation…"
+work notice with the painting brush, then "Translation downloaded." or, if it
+failed, "Could not download עברית…" with **Retry**. See
+[Localization § what happens when a translation download fails](17-i18n.md#what-happens-when-a-translation-download-fails).
+
+**License** opens `LicenseModal`: a sentence that the plugin is open source and
+will stay that way, ending in a link to the license on GitHub (`LICENSE_URL` in
+`aboutLinks.ts`), then the icons' part. The sentence is two strings, the words
+before the link (`license.openSourceBeforeLink`) and the link's own words
+(`license.openSourceLink`, "here"), with the full stop added in code, so a
+language can word the end of its sentence as it needs. Until 2026-10-29 the
+window began with the brush mascot and a row "Plugin license"
+(`footer.license`, deleted from every locale table on 2026-10-31). The window renders the registry-backed icon attributions
 and links to the full third-party notices. The attributions are one Obsidian
 setting group (finding S8-17), a row per library as Installed plugins lists
 plugins: the name as a link with the version beside it in Obsidian's
@@ -160,20 +293,25 @@ callout. **Review conversion** opens only from the Danger zone's **Convert to
 standard Markdown**, in the right sidebar. Both live in workspace panes, not
 windows.
 
-In Review conversion, the question-mark button is the one button of the
-sidebar's nav header. It opens `PortableConversionHelpModal`: an **About conversion** explanation
+In Review conversion, the question-mark button is the small icon button at the
+end of the **Convert selected** row. It opens `PortableConversionHelpModal`: an **About conversion** explanation
 with one four-row **Before**/**After** table, isolated LTR source text, and a
 backup recommendation. Heading and inline examples share the table without
 separate subheadings. The table is one rounded box with a line between rows, as
-a settings group is drawn, and the recommendation is a plain line of the
-window's text rather than a box.
+a settings group is drawn, and the recommendation is a line of the window's
+text rather than a box, set bold in Obsidian's warning colour
+(`p.mod-warning.cs-portable-backup`) because it is the one thing that cannot
+be taken back.
 The help modal performs no vault reads and has no conversion action.
 The **Review conversion** tab is created only by this action, rather than at
 startup. A tab restored by Obsidian from an earlier session is closed during
 plugin startup, so the review does not remain open across launches.
 
 **Review conversion** groups before/after replacements and dependent
-link repairs by file, using the shared `ui/sidebarResults.ts` components. Each
+link repairs by file, using the shared `ui/sidebarResults.ts` components. It
+lists only what will change: tokens the converter leaves alone are not counted
+or mentioned there (see
+[Portable Markdown conversion](11-vault-discovery.md#portable-markdown-conversion)). Each
 card shows its format and line number, with muted interface-font labels beside
 the monospace **Before** source and **After** replacement. Only the separate
 checkbox changes inclusion; the format/line label and **Before** text form the
@@ -189,37 +327,115 @@ redraws, and the observer moves to the new marker. A zero-height scroller (a
 hidden sidebar tab) never loads, and the view stops watching on every redraw
 and on close. Where the window has no `IntersectionObserver` (the tests' fake
 DOM) the list keeps its **Show 100 more** button. Search does the same with a
-private virtual scroller; there was always a button until 2026-10-24.
+private virtual scroller; there was always a button until 2026-10-24. A long
+list does not slow the editor down, because a file group far from the screen is
+parked, drawn as an empty box of the same height
+([Vault discovery § Parking far groups](11-vault-discovery.md#parking-far-groups)).
 
 **The top of both sidebars is drawn as Obsidian draws the top of its own panes**
-(`ui/sidebarFrame.ts`, finding S10-05). `createSidebarNavHeader` prepends
-Obsidian's nav header (`.nav-header > .nav-buttons-container`) to the view's
-own `containerEl`, before its content, where Obsidian's Search, Backlinks and
-Outline put theirs, so its phone rules apply (the buttons move to the bottom
-of the drawer as touch targets). Each view makes it once per open, keeps it
-through a content rebuild (a language change only relabels it), and removes it
-on close. `addSidebarNavButton` makes each button as Obsidian's `addNavButton`
-does - `.clickable-icon.nav-action-button`, its `aria-label` also its tooltip -
-plus a Tab stop and Enter/Space. Find callouts has one, the format filter
-(`filter`): it opens Obsidian's HTML menu (All formats, then each format, a ✓
+(`ui/sidebarFrame.ts`, finding S10-05). Each pane has one small icon button,
+`addSidebarIconButton`: a `.clickable-icon.cs-sidebar-icon-button` (Obsidian's
+icon button, its `aria-label` also its tooltip) plus a Tab stop and Enter/Space,
+at the **end of the pane's first row**, beside what it belongs to. Find
+callouts has the format filter (`filter`), at the end of the type field's
+`.search-row`: it opens Obsidian's HTML menu (All formats, then each format, a ✓
 on the current one) under the button, as Search's sort button does, and is
 lit (`.is-active`) while a format is chosen; the view closes an open menu when
-it closes. Review conversion has one, help. Under the header, the content's
-fixed part: Find callouts' type field in Obsidian's `.search-row`; Review
-conversion's **Convert selected** across the pane in a row of its own
-(`.cs-portable-convert-row`); and in both, the count over a single line,
-Obsidian's `.search-results-info > .search-results-result-count` (a live
-region). Until 2026-10-24 each pane began with a large bold title (now only the
-tab's name, its tooltip on a computer, as for Search), a sentence (the
-conversion one says what **About conversion** already opens with; neither is
-shown now), the format as a second field beside the type field, and the count
-between two lines.
+it closes. Review conversion has help, at the end of the Convert row. Each view
+draws its button with the rest of its frame (`createOccurrencesFrame(content,
+onFilter)`, `createPortableConversionFrame(root, onHelp)`), so a language
+change, which draws the frame again, relabels it, and closing the view takes it
+away with the content. Until 2026-10-27 the button had a row of its own above
+the fields, Obsidian's nav header (`createSidebarNavHeader` prepended
+`.nav-header > .nav-buttons-container` to the view's `containerEl`, where
+Search, Backlinks and Outline put theirs, so that Obsidian's phone rules moved
+the buttons to the bottom of the drawer): a whole row for one icon. Under it,
+the content's fixed part: Find callouts' type field in Obsidian's `.search-row`;
+Review conversion's **Convert selected** across the pane in a row of its own
+(`.cs-portable-convert-row`, with help at its end); and in both, the count over
+a single line, Obsidian's `.search-results-info >
+.search-results-result-count` (a live region). Until 2026-10-24 each pane began
+with a large bold title (now only the tab's name, its tooltip on a computer, as
+for Search), a sentence (the conversion one says what **About conversion**
+already opens with; neither is shown now), the format as a second field beside
+the type field, and the count between two lines.
+
+**A note's group can be folded** (`ui/sidebarResults.ts`, `ui/sidebarFold.ts`).
+The title row is Obsidian's tree row (`.tree-item-self.search-result-file-title`)
+holding two controls: the fold triangle, a bare `div.tree-item-icon.collapse-icon`
+with `role="button"`, a Tab stop, Enter/Space and `aria-expanded`, named by the
+note's name (`aria-labelledby`, never `aria-label`, which would also be a
+tooltip over the triangle), and the note's name, the `button[data-action="file"]`
+that opens the note. The row gives its padding to the name button so the whole
+row is one click target; the triangle sits over the start of it. Folding
+toggles `is-collapsed` on the group, the triangle and `aria-expanded` **in
+place**: nothing is drawn again, so nothing flickers and the list keeps its
+scroll. The memory of which notes are folded is a `SidebarFold`, one per
+sidebar (`OccurrenceResults.fold`, `PortableConversionNavigation`), keyed by the
+note's path, because both sidebars draw every group again from scratch on every
+change; a group is drawn folded again while its path is in it. Find callouts
+clears it when a new search starts (`resetResults`: a new type or format);
+Review conversion keeps it through a rescan. It is never saved with the layout.
+`revealSidebarCard` scrolls to the **title row** when the row it was asked to
+show is inside a folded group (it has no size), and never unfolds anything.
+**Right-to-left:** the triangle is Obsidian's own, and Obsidian turns it by
+`.collapse-icon.is-collapsed svg.svg-icon { transform: rotate(calc(var(--direction)
+* -1 * 90deg)) }`, where `--direction` is 1, or -1 under `.mod-rtl` / `[dir=rtl]`:
+folded points right in a left-to-right window and left in a right-to-left one,
+with nothing of the plugin's to turn it. The row's padding is written with logical
+sides (`padding-inline: 24px 8px`), so the room for the triangle is on the side
+the triangle is on. (Two traps found drawing it: `--direction` is set on
+`body`/`.mod-rtl`, so a `dir` on `<html>` alone leaves the body's 1 in force; and
+Obsidian also mirrors every other `svg.svg-icon` under `.mod-rtl`, which is how
+the ? is mirrored in Arabic and Persian and not in Hebrew, by Obsidian's own
+`[lang="he"]` exception.)
 
 On Review conversion's count line, a master checkbox before the
 summary has empty, indeterminate and checked states. Clicking an empty or partial
 selection selects all; clicking the fully checked state clears all choices.
 The indeterminate dash uses Obsidian's checkbox fill and marker colors so it
 matches the checked mark across themes.
+
+**Every change between those states is animated** (styles.css, "Review
+conversion's boxes"; the same boxes are on every row). The tick is two thin bars
+(`::before` the short stroke, `::after` the long one) that grow from the end they
+start at, the minus is a `background-size` that grows from the middle, and the
+fill is a colour transition. Order is carried by the delays, written on the state
+a change arrives at (a transition takes its timing from the new state): empty →
+tick fills, then draws the short stroke, then the long one; tick → empty takes
+the long stroke back, then the short one, then fades the fill; empty → minus
+fills and grows the bar; minus ⇄ tick shrinks the bar as the tick is drawn, and
+takes the tick back before the bar grows. Obsidian's own tick (a data-URI mask on
+`:checked::after`) is replaced, since a pseudo-element that vanishes with
+`:checked` cannot be animated away, and the stylesheet carries no data URIs.
+Reduced motion turns all of it into an instant change. The select-all box is a
+single element, so its properties animate by themselves; a row's box is drawn
+again with every change (`portableConversionRows.ts` empties the list), so
+`renderPortableConversionRows` remembers what each box showed when it was last
+drawn (`tickedWhenDrawn`, by change id and not read from the page, because a
+click has already turned the old box over), draws a box whose answer changed as
+it was, reads `offsetWidth` once so the browser works that look out for all of
+them, and then turns them over (`tests/portableTickAnimation.test.ts`). The
+selection takes **two lines** beside
+the box: "74 of 74 replacements selected" and, under it, "3 heading links to
+update", the second only while there are links (`frame.summary` and
+`frame.links`, `hidden` when empty). The two halves are one translated sentence
+cut at its ` · ` (`splitSelectionSummary`), which every language's sentence has
+(`tests/sidebarFrames.test.ts` reads all 31); the box lines up with the first
+line, which is given the box's height.
+
+**The icons of a row, and a clicked row.** A Review conversion row's pencil and
+reset arrow show while the pointer is on the row, while one of them has the focus
+(`.cs-portable-card-actions:focus-within`, so Tab can find them) and while the
+row is being edited. They used to show while *anything* in the row had the focus
+(`.cs-portable-change:focus-within`); a click on a row focuses its source button,
+so the icons stayed lit on the last row clicked after the pointer had moved to
+another. And clicking a row no longer draws every row again:
+`PortableConversionNavigation.navigate` marks the clicked row in place (`mark`),
+drawing again only if that row is no longer on the page. Drawing again built the
+row under the pointer anew, whose icons start hidden, so they vanished and faded
+in again a moment after the click. (Any other redraw, a changed selection, still
+does.)
 Occurrence filters have localized accessible names without visible labels.
 Each fixed toolbar sits outside its own results scrollport, so controls
 stay visible without a measured sticky offset. Keyboard focus has a ring; a
@@ -240,7 +456,13 @@ callout; Obsidian's hover and tap tint); a Review conversion row is a plain
 not a control itself. Both title and Find rows are real buttons, so styles.css
 takes Obsidian's button face off them and restates the tints that face would
 otherwise cover (`button:not(.clickable-icon)` paints at (0,1,1)). The title
-does not stick, and the list spans the pane with Obsidian's 12px inset. Until
+does not stick, and the list spans the pane with Obsidian's 12px side inset.
+Every note's group is set off from the one before it by the 8px under that box
+(`.search-result-file-matches`' bottom margin), and the first group takes the
+same 8px as a top margin (`.cs-sidebar-file:first-child`), so its title row does
+not sit flush under the line above the list. It is a margin on the group, not
+padding on the scroller, so a list with no group in it (the centred "nothing
+found" line) stays in the middle. Until
 2026-10-24 each result was a bordered card, the cards stood in a two-column grid
 at 680px, the list was a centred 1000px column, and each file heading was a
 grey band that stuck to the top.
@@ -360,10 +582,10 @@ is one, ✎ is dimmed and a press says it (`addBlockableIconButton`).
 
 | Part of the row | What it holds |
 |---|---|
-| First child | The callout's icon, `.callout-studio-row-icon`: our own element, muted at Obsidian's small icon size, because `Setting.setIcon` takes Lucide names only and a callout's icon can be an emoji, a picture or another library's glyph. It is not Obsidian's `.setting-item-icon`, which a box whose rows declare no icon (`.mod-no-icon`) hides. Obsidian's `.setting-item > *:first-child` gives it the 16px before the name. |
-| `nameEl` | The display name, wrapping when long, then the **Default** / **Default fallback** tag as Obsidian's `span.flair.mod-flat` (its own 8px margin). No tag on a theme's row. |
-| `descEl` | Every spelling as `code.callout-studio-row-syntax` (`[!id]`), sorted, a space between. One line: `white-space: nowrap` plus the description's own `overflow: hidden` and `text-overflow: ellipsis`; each chip is an inline block, so the cut always falls between whole ids. Obsidian draws description `code` with no fill; these keep the id chip's fill. |
-| `controlEl` | The two colour circles (hidden under a 450px row, as before), then ✎ (👁 on a theme's row) and ⋮ (`addRowMenuButton` in `calloutRowMenu.ts`), both `addExtraButton`: a `div.clickable-icon.extra-setting-button` with `tabindex=0`, whose tooltip is its label. |
+| First child | The callout's icon, `.callout-studio-row-icon`: our own element, muted at Obsidian's small icon size, because `Setting.setIcon` takes Lucide names only and a callout's icon can be an emoji, a picture or another library's glyph. It is not Obsidian's `.setting-item-icon`, which a box whose rows declare no icon (`.mod-no-icon`) hides. Its 16px to the name is the row's `gap` (see *What a narrow row gives up*); its own `margin-inline-end: 0`, on a selector with an extra class, outweighs Obsidian's `.setting-item > *:first-child` margin, which would add a second 16px on a phone, where that gap is already Obsidian's. The element is reused by the next draw of the row (`rowIconElement`), never removed by the row's cleanup, which Obsidian also runs while a page it is leaving is still sliding away. |
+| `nameEl` | The display name, then the tag as Obsidian's `span.flair.mod-flat`: **Default** on the callout that is the vault's fallback and **Auto** on a callout that follows the default fallback style (`settings.fallbackTag`, `settings.fallbackTagAuto`; the second is one short word in every language, [Localization](17-i18n.md)). The name element is a flex row on **one line** (`display: flex; align-items: baseline; gap`). The words are a `span.cs-row-name`, because only a box can end in "…" and a flex row wraps loose text in a box nobody can style: `min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap`, and `unicode-bidi: plaintext`, which is what Obsidian gives a name, kept so that a Hebrew name in an English window is cut at its own end. The tag is `flex: none`. So the name takes the room the tag leaves and ends in "…" when it needs more, and the tag is never pushed under it; a row's height does not depend on its name, and a long name is cut rather than made room for, on purpose. The tag keeps the baseline alignment raised 1px (`top: -1px`, which puts its capitals level with the name's letters), `margin-inline-start: 0` (Obsidian's `.flair` margin is the row's gap now) and a vertical padding of 1px, not 2px, which is as tall as an inline tag looks and keeps a flex item from making its line taller than the name. No tag on a theme's row. |
+| `descEl` | Every spelling as `code.callout-studio-row-syntax` (`[!id]`), sorted, in a flex row (`display: flex`, `gap` where the space between two ids was; the space text nodes stay in the DOM but a flex row draws none). One line (`white-space: nowrap`); each chip is shown or hidden whole. **The ids are what gives way first, and a whole id at a time.** `fitIdsLine` (`idsLineFit.ts`) shows the ids that fit and a `+N` chip for the rest, rather than leaving the browser's own "…", which says nothing about how many are missing and has no element to carry a tooltip. **An id is never shown cut in half:** the first id that does not fit goes into the count with every id after it, and when not even the first fits beside the chip the line is the chip alone (`+3`). The one exception is a row with a single id, which has no count to go into: it gets `cs-id-lone` when drawn (`flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis`), so the **page** shortens it with "…" when the row is too narrow, and the fitter only gives it an `aria-label` with the whole id while its text is wider than its box (`scrollWidth > clientWidth`). It is not measured like the other ids because shortened, its box is no longer as wide as the id is, and the observer would report the shortened width: the fit read a lone id fitting, took the class off, read the natural width, put it on again, and a window resized live disagreed with one drawn fresh. **The `+N`** is a `code` with **both** `callout-studio-row-syntax` and `callout-studio-row-more` (the first class gives it the ids' look, with no copy of their CSS to drift; the second only `user-select: none`). It is there from the start, in the `cs-id-cut` state while it counts nothing, and every id and the chip use that state rather than `display: none`: `position: absolute; visibility: hidden`, out of the line's flow (no room, no gap) and invisible, but with a box at its natural width, which `display: none` does not have. The line is `position: relative`, so it is the containing block of those boxes and clips them, and they add nothing to the page's scroll width (checked in the real settings window). While the chip counts nothing its text is the widest count it can be asked to show (`+9` for ten ids, since ids per callout are capped at `MAX_TAGS_COUNT`, ten, and one digit is all a count beside a shown id ever has), so its width does not depend on what it said before. Tooltips are `aria-label`s (Obsidian shows the nearest): the chip's lists the hidden ids, each in a left-to-right isolate so a right-to-left tooltip cannot turn `[!id]` into `[id!]`; an id that is all there has none. **The fit is arithmetic on sizes the observer reports.** `countShownIds` takes each id's natural width, the `gap` (read once per call from the line's computed `column-gap`), the line's width and the chip's, and says how many ids show; direction does not matter because only widths count. The fitter keeps, per line, the width the observer last gave for the line, for each id and for the chip, and a fit is arithmetic on those: nothing is read from the layout. The observer reports a box's size once when it is first shown and again only when it changes, so a resize (only the lines change width) is one call with all the rows and no id is measured again, while a change of font (the window becomes a phone's) makes the ids report new widths and the line is fitted to them. A box that is not shown reports 0, which says nothing about its width, so the last width is kept (a hidden row is not fitted, and is when shown). A line decides from its sizes alone and writes nothing when the result is what it already shows (`line.showing`), so most rows on most resizes cost an addition. All lines of one call are decided before any is written, the lone ids' `scrollWidth` being the one read. The row's text column is `flex: 1 1 0` and its buttons `flex: 0 1 auto` (Obsidian sizes both `1 1 auto`, which makes the text as wide as its content plus half the spare room), so that the line's width is the room the buttons leave and does not depend on what is in it. **Which window watches it** (found in Obsidian 1.14.5): the settings are a popout window, and a row is drawn by the main window and moved there afterwards, so asked at draw time the row's window is the main one, and a `ResizeObserver` made by the main window never hears the popout being resized (an observer on the same element made by the settings window heard every resize, one made by the main window none; the line was fitted once, when the page opened, and never again, which showed as ids cut in half and a `+N` pushed out of sight until the page was drawn again). So there is **one observer per window** (`IdsFitter`, in a `WeakMap` by window, taken down with its last line), a line is registered with the window that shows it, and `followWindow` (`utils/elementWindow.ts`, Obsidian's `onWindowMigrated`) moves it to the new window's fitter when Obsidian says it has moved. |
+| `controlEl` | The two colour circles (the accent in front, the background behind, a third for a gradient), then ✎ (👁 on a theme's row) and ⋮ (`addRowMenuButton` in `calloutRowMenu.ts`), both `addExtraButton`: a `div.clickable-icon.extra-setting-button` with `tabindex=0`, whose tooltip is its label. The circles are what a **computer** shows; on a phone or an iPad (`.is-mobile`) they are `display: none` at every width and the colour is in the icon and the name (*One line each, and where the colour goes*). |
 
 Being a setting row is what gives Obsidian's keyboard walk (↑/↓ or j/k
 between `.setting-item`s, Enter into the row's first control) and its inset
@@ -379,20 +601,138 @@ and theme pages draw their own `mod-list` box. Obsidian's list rules then give
 the row one centred line, the control column at its own width, and the
 list-row padding (8px 16px, 12px 20px on a phone). Until 2026-10-25 styles.css
 copied those rules for the old page's rows, which sat in no box; the copies
-are gone. What styles.css still adds: the row is the size container the
-narrow-row rule measures (it hides the colour dots), and the iPadOS paint
-workaround on its icon buttons (`translateZ(0)`) sits in `:where()`, so
+are gone. What styles.css still adds: the row's `gap`, its one-line name and
+ids and its colour rules (below), and the iPadOS paint workaround on its icon
+buttons (`translateZ(0)`, kept from when the row was a size container, since
+nothing here can run on an iPad to show the bug gone) sits in `:where()`, so
 Obsidian's own icon transforms win: on macOS and iOS ⋮ is turned on its side,
 as in Obsidian's More options. The colour dots' ring takes the box's colour
 (`--cs-surface` is `--setting-items-background` inside a settings box, finding
 S7-03). `tests/calloutSettingRow.test.ts` holds the shape and the CSS; the page
 tests check that the rows are in a `mod-list` box.
 
-Until 2026-10-24 a callout row was a `div.callout-studio-row` of the plugin's
-own: name and ids on one line, `<button>`s, and the ids hidden as a group under
-380px. No row wears `.callout-studio-row` any more: palettes, commands and the
-right-click menu are Obsidian's list rows, the icon libraries are Obsidian
-setting rows, and Quick insert's rows are `.cs-qi-row`.
+**Only the rows on screen are laid out.** Obsidian draws every row of a list
+before it slides the page in, and nothing in its API defers that (an `items`
+page has no lazy or virtual mode in 1.13). My callout types holds whatever a
+scan found, and a big vault's was 754 rows. The row is therefore
+`content-visibility: auto` with `contain-intrinsic-size: auto 53px` (57px under
+`.is-mobile`), the row's real height measured on 2026-11-02. In Chromium with
+Obsidian 1.14.5's stylesheet the layout of 754 rows went from ~55 ms to ~5 ms;
+a row stands at that height until it nears the screen, then at the one it was
+last drawn at. This works here, where it did not for the Quick insert window
+([Editor integrations](10-editor-integrations.md)), because every row of a list
+is one height, so nothing jumps. A row's ids line is fitted as it comes in: its
+boxes report their sizes once they are laid out, and Chromium does that before
+the frame that first shows the row. **Not on iOS or iPadOS** (`.is-ios`
+sets `content-visibility: visible`): WebKit saved nothing (~80 ms of layout
+either way) and lays a row out one frame after it comes on screen, so the ids
+would be fitted a frame late. The rule does nothing for the cost of each key
+press in the editor, which is what the sidebars' lists needed ([Common
+pitfalls](23-common-pitfalls.md#everything-drawn-in-the-window-slows-the-editor)).
+
+### One line each, and where the colour goes
+
+A row is three parts, the icon, the text and the buttons, and each of the two
+text lines is one line, at every width. The same few rules everywhere (the same
+list heads the *Callout List Rows* block of `styles.css`):
+
+1. **The name** is one line. It ends in "…" when it does not fit, and its tag
+   stays beside it.
+2. **The ids** are whole ids, as many as fit, then a `+N` for the rest
+   (`fitIdsLine`, above). An id is never cut in half; only a row with a single
+   id shortens it.
+3. **The colour is shown by device, not by width.** On a computer, as the two
+   circles before the buttons. On a phone or an iPad (`.is-mobile`, which
+   Obsidian also sets for its desktop mobile emulation, so "phone mode" on a
+   computer is covered) the circles are gone at every width, and the colour is
+   in the row itself: the icon is drawn in the accent on a `--radius-m` tile of
+   the background with the circles' ring (a small callout, as it looks in a
+   note), and the **name is in the accent**, as a callout's title is in a note.
+   `drawCalloutRow` sets `--cs-row-accent` and `--cs-row-bg` on the row
+   (`renderColors`: the same two colours the circles show, so a Studio row's
+   stored colours, a theme row's measured ones, none for an unmeasured theme
+   row, and no `--cs-row-bg` for a callout that paints no background), and the
+   `.is-mobile` rules paint with them. An icon that failed to load keeps its red
+   (`:not(.is-error)`). The variables are set or removed on every draw, because
+   the same row element is drawn again. A computer's row has no colour in its
+   text.
+
+Until 2026-10-31 the circles gave way by width instead (under 450px of
+container). That hid them on every phone, and a rule that depends on width
+makes the same callout look different from one window to the next, so the
+colour now follows the device. The row was a size
+container for it and is not any more, which also retires the pitfall of [a row
+that meets Obsidian's unnamed container
+queries](23-common-pitfalls.md). The name in the accent was Niv's choice after
+both were drawn. A pale accent (`#ffe066` on white, a light grey on white) is
+hard to read as text, and the tile alone already carries both colours, so the
+name is the first thing to drop if that bothers someone.
+
+The name is cut, not wrapped, because a long name is not something the list
+should make room for. Before 2026-10-31 it wrapped (a row could be five lines
+tall) and its tag dropped under it, standing hard against the lines above and
+below. The editor does not limit the length of a display name (an import does:
+`MAX_DISPLAY_NAME`, 80). The tag is also one word now, so it leaves the name
+most of the line even on a phone: `settings.fallbackTagAuto` was "Default
+fallback" and is "Auto" in English and one short word in each language
+([Localization](17-i18n.md)).
+
+The row's `gap` is `12px 16px`: 16px between the icon, the text and the buttons
+on every device. Obsidian gives a phone's rows this gap and a computer's none,
+so an id ran right up to the circles there; and the icon's own
+`margin-inline-end` is `0`, because Obsidian's margin after a row's first child
+would add a second 16px on a phone. (`column-gap` is not available: the repo
+rule that keeps multi-column properties out of `styles.css` also forbids it.)
+
+How it was checked, in two places.
+
+*In the real Obsidian 1.14.5*, a second, isolated instance driven over the
+debugging port (the recipe is in the project's memory notes): the plugin's real
+build, with 40 and with 600 test callouts (some with ten ids, one very long id,
+a lone id of 90 characters), the settings window resized for real with
+`electronWindow.setSize`. Before the fix: no observer call at all after the page
+opened, ids cut in half and `+N` out of sight at 600px. After it: one observer
+call per resize for all the rows, in both directions, and the page equal to a
+freshly drawn one. The cost with 603 callouts, dragging 900px to 600px in 31
+steps: 30 calls of 603 entries each, median 0.5 ms, average 0.85 ms, slowest
+3.1 ms, about 26 ms of the plugin's time for the whole drag. (The first version
+of the fix, which read every box's width on each call, took 7-8 ms a call: one
+call for all the rows, but still about 4,000 reads. The design before it never
+got to run in the real window, and read and wrote row by row, which is what
+makes a long list's resize heavy.) A jump of all 600 rows at once (900px to
+600px) takes 3.5-5.5 ms. No element in the window scrolls sideways, and the page
+screenshots at 600, 700 and 900px show the names ending in "…", the ids whole,
+and the `+N`. A second audit wrapped `ResizeObserver` in both windows and listed,
+page by page, every observer the plugin makes and whether the elements it
+watches are in the window that made it; it is what found the style preview's
+pin (below).
+
+*In headless Chromium* with Obsidian 1.14.5's `app.css` (the guide's offline
+runtime), sixteen awkward callouts (one id, many ids, very long ids, a long name,
+a one-word name longer than the row, a Default tag and an Auto tag, Hebrew, CJK,
+no icon, a pale accent, a lone very long id) at every width from 800px down to a
+280px row, on a computer in light and dark, on an iPad, on a phone in light and
+dark, in a right-to-left window, and in Spanish (928 rows), asserting that
+nothing overflows its row, every name is one line, every row is as tall as the
+others, the tag is beside the name and never over it, no id with others beside it
+is cut, the `+N` is whole, inside the line and counts the hidden ids, a lone
+shortened id says what it is, the text is at least 8px from the buttons, a
+computer shows circles and no tile, a phone or an iPad shows the tile, the accent
+name and no circles, and that a window resized to a width draws what a fresh
+draw at that width does. That last check is what found the lone id's feedback
+loop. A row narrower than about 280px (a 320px phone's is 288) is best effort: the
+text column is under 100px. `tests/idsLineFit.test.ts`,
+`tests/elementWindow.test.ts`, `tests/calloutSettingRow.test.ts` and
+`tests/rowTagLocales.test.ts` hold what that check found; the fake DOM has no
+layout, so `tests/support/fakeWindows.ts` gives a window an observer that a suite
+calls with sizes, and a second window to move an element into.
+
+The same mistake was in `pinBelowTitlebar` (`declarative/stylePages.ts`), which
+keeps a style preview's box under its page's title bar: its comment said the
+observer was made by the preview's own window, and it was made by the main one.
+It uses `followWindow` now. (The other observers on those pages that the audit
+lists as made by the main window are CodeMirror's own, inside the embedded
+editors, and are not the plugin's.)
 
 ### List rows and hover
 
@@ -430,6 +770,10 @@ size, corners, colour, gated hover, 3px focus ring and dimmed state.
 - **The menu button** is `more-vertical` (⋮), Obsidian's "More options" icon.
 - **The drag handle** of the menu and library lists is a `.clickable-icon` too,
   and so are the library action and the image panel's add button.
+- **Quick insert's source filter** is a funnel (`filter`), an icon-only
+  `SelectDropdown` whose button is a `.clickable-icon`, lit
+  (`--icon-color-active`) while the list is narrowed to one source, as the format
+  filter beside Find callouts' type field is.
 - **Quick insert's Edit and Insert** are `.clickable-icon`s too. A blocked
   Insert wears Obsidian's dimmed icon state. Its keyboard- or pointer-active row
   is ringed the way Obsidian rings a focused setting row (2px of
@@ -672,8 +1016,8 @@ scrollBodyOnly(modal): void      // mod-scrollable-content alone, for ConfirmMod
 ┌───────────────────────────────┐
 │ title                       ✕ │  header - fixed, no line under it
 │ content …                     │  body - the ONLY scroll container
-├───────────────────────────────┤
-│              [Cancel] [Save]  │  button bar - fixed, a line over it; optional
+│                               │
+│              [Cancel] [Save]  │  button bar - fixed, no line over it; optional
 └───────────────────────────────┘
 ```
 
@@ -682,7 +1026,8 @@ stylesheet (and a theme's):
 
 - **`mod-scrollable-content`** on `.modal` takes the window's padding off,
   gives the title `16px 16px 0`, makes `.modal-content` the one scroller with
-  `0 16px 16px`, and pins the bar under a line.
+  `0 16px 16px`, and pins the bar under the body. Obsidian also draws a
+  `border-top` on the bar here; the plugin takes it off (below).
 - **`modal-button-container`** is the button bar, built as a child of `.modal`
   after `.modal-content`, as `ConfirmationModal` builds it. On a computer it
   lines the buttons up at the end. On a phone or tablet (`.is-mobile`) it
@@ -696,6 +1041,19 @@ above the main action on a phone; `tests/modalChrome.test.ts` fails if a
 source file builds one itself. Pick an icon's preview ("Lucide: book-open")
 shares the bar as its `mod-secondary` item: at the start on a computer, under
 the buttons on a phone.
+
+**No line over the bar.** Obsidian's `.modal.mod-scrollable-content
+.modal-button-container` carries `border-top` (and `padding: 16px`). Its short
+dialogs - the yes/no question, Settings' pop-ups - are not
+`mod-scrollable-content` and draw none, so a plugin window with the line stood
+out beside them. styles.css sets `border-top: none` on the bar of a window that
+wears `cs-modal` (`applyModalChrome`) or `cs-scroll-body` (`scrollBodyOnly`,
+the long **Reset everything** question), at one class more than Obsidian's rule
+so the order of the stylesheets does not matter. Both classes are the plugin's
+own, so Obsidian's and other plugins' long dialogs keep their line, and the
+padding stays as the gap above the buttons. The lines the plugin draws inside
+popups - between a picker's groups, above a suggestion list's footer note -
+are separators in a list, not this one, and stay.
 
 **The width is Obsidian's dialog width** (`--dialog-width`, 560px, capped by
 `--dialog-max-width`) for every window except the callout and palette editors,
@@ -791,13 +1149,22 @@ check runs.
 
 - **Rows sit at the top, as Obsidian's do.** Core 1.14 lays a `.setting-item`
   out with `align-items: flex-start`; only headings, navigable rows, action
-  rows and list rows are centred. The windows used to pin every row to
-  `center` "against themes that top-align", which by 1.14 meant against core
-  itself: adding an ID in the callout editor pushed the **Callout IDs** label
-  down to stay centred against the growing chips. Nothing pins it now. The IDs
-  row's reset arrow keeps its own `align-self: flex-start`, because it sits
-  inside `.setting-item-control`, which core still centres. (The settings tab
-  keeps its centring pin until it is rebuilt from Obsidian's own groups.)
+  rows and list rows are centred. The plugin pins nothing on top of that, in
+  the windows or in the settings tab's boxes (`cs-box`). Both used to: the
+  windows were pinned to `center` "against themes that top-align", which by
+  1.14 meant against core itself, and adding an ID in the callout editor
+  pushed the **Callout IDs** label down to stay centred against the growing
+  chips; the settings tab's boxes were pinned the same way. Centring was tried
+  again on both and dropped on purpose: it puts a one-line label level with
+  the middle of its field, but beside a multi-line description it drops the
+  field to the middle of the whole block, and the same row then looks
+  different from its neighbours. The result is core's: a one-line label sits
+  about 6px above the middle of a 30px field (4.6px for a colour swatch).
+  The IDs row's reset arrow keeps its own `align-self: flex-start`, because it
+  sits inside `.setting-item-control`, which core centres. The rows that
+  still set their own alignment are specific layouts, each with its reason in
+  `styles.css`: the choice rows' button, the version history's cards, the
+  command-name row and the stacked slider row.
 - **A slider's value is Obsidian's readout.** `span.slider-value` takes core's
   face, size and weight. The plugin adds only a `min-width: 7ch` reserve
   (`flex: 0 0 auto`, `text-align: end`) and restates `tabular-nums`, so a value
@@ -809,20 +1176,24 @@ check runs.
   face still fits. After a UI font or theme change, drag "0.75em", "×1.25" and
   "-4px" and watch the track.
 
-### Links look like Obsidian's
+### A link inside a sentence takes the sentence's colour
 
-A hint's link (`renderInlineLinkHint`: "clicking here", **Revert**,
-**Restore**, "move it here", "use it instead") is a `<button>`, but it is
-painted as Obsidian paints an `a`: `--link-color`, underlined with
-`--link-decoration`, `--link-color-hover` under a pointer. Obsidian's
-`.setting-item-description` redefines those tokens to muted and normal, so in a
-description the link is the grey underlined one Obsidian's own descriptions
-use; elsewhere it is the accent. In
-Obsidian's warning line under a field (`.setting-item-error`, where the IDs
-field's "move it here" now sits) they are the accent already. In that line the
-link is in a row's control column, where Obsidian's phone rules stretch and pad
-every button, so the inline variant resets width and padding at 0,5,0. The
-reset that strips Obsidian's button face also strips its focus ring, so the
+A hint's link (`renderInlineLinkHint`: **Restore**, "move it here",
+"use it instead") is a `<button>` that is part of a sentence, so it takes the
+sentence's colour (`color: inherit`) and is told apart by its underline
+(`--link-decoration`) alone. In a muted setting description it is muted, in the
+IDs field's warning (`.cs-tag-message`) and the palette editor's duplicate-colour
+line (`.cs-palette-color-error`) it is the warning's colour. Hover moves that
+colour a quarter of the way to `--text-normal`
+(`color-mix(in srgb, currentColor 75%, var(--text-normal))`): `--text-normal`
+is dark in a light theme and light in a dark one, so the same rule darkens the
+colour in one and lightens it in the other. There is one rule for all three
+callers (`.cs-inline-hint .cs-link-btn`), and no caller sets `--link-color` to
+bring back an accent: until 2026-10-31 the palette editor's link kept the
+accent and the IDs field's was muted, so a link in a warning was a different
+colour from its sentence. The inline variant resets the width and padding that
+Obsidian's phone rules give every button in a row's control column, at 0,5,0.
+The reset that strips Obsidian's button face also strips its focus ring, so the
 link gets back the 2px `--background-modifier-border-focus` ring Obsidian draws
 on a link in a setting row.
 
@@ -830,16 +1201,44 @@ The credits window and Pick an icon's credit line use plain `<a>`s with no
 colour or underline of their own. The credits window's links sit in setting
 rows now, where Obsidian draws the ring itself; only the one in its first
 sentence, and the credit line's, get that same keyboard ring from the plugin. (The settings
-footer's contact links keep their own no-underline look until the footer
-becomes the About group.)
+footer's tiles are not text links at all: they are bordered buttons with their own
+ring; see the footer above.)
+
+### How long a notice stays
+
+Obsidian's own default is four seconds for any notice. The plugin used to name
+10, 12 or 15 seconds by hand at about thirty call sites, which kept a
+three-word message up as long as a paragraph. A caller that names no duration
+now gets one worked out from the words of the sentence it shows
+(`noticeDuration` in [`ui/noticeDuration.ts`](../../src/ui/noticeDuration.ts),
+called by `showNotice`):
+
+- 1.5 s to notice it, plus 0.3 s a word (about 200 words a minute);
+- never under 4 s (Obsidian's default, so a short notice feels as it always
+  did) and never over 10 s;
+- text without spaces (Japanese, Chinese, Thai) is counted at 2.5 characters
+  to a word, found by an average "word" of 12 characters or more.
+
+The count is made on the translated sentence, so every language gets about the
+same time as English for the same notice (`tests/noticeDuration.test.ts`
+checks all 31). It is one `split` per notice, made when the notice is created;
+nothing runs while it is up. Obsidian keeps a notice up while the pointer is on
+it and for one second after, which is the reader's own way to ask for more.
+
+Two things do not follow the sentence. A notice with a button (`Undo`, `Retry`)
+stays `ACTION_NOTICE_MS`, ten seconds, because the reader has to decide as well
+as read. And a caller can pass its own number of milliseconds, `0` meaning
+"until it is clicked": the two paused-saving notices do, and `workNotice`
+(which lasts as long as the work). Prefer the default, and name a number only
+when the reading time is the wrong answer.
 
 ### Notices with an action
 
 Three notices offer one thing to do: **Undo** after a note rewrite or a delete
-(`settings/rewriteUndoNotice.ts`, 15 seconds), and **Open Callout Studio
+(`settings/rewriteUndoNotice.ts`, ten seconds), and **Open Callout Studio
 settings** when saving pauses (`settings/pausedIndicator.ts`) or the settings
 file is missing (`manager/settingsNotices.ts`), both up until clicked. All
-three go through `showActionNotice(message, { label, run }, duration)` in
+three go through `showActionNotice(kind, message, { label, run }, duration)` in
 [`ui/noticeAction.ts`](../../src/ui/noticeAction.ts), which draws what
 Obsidian draws for its own Undo after it updates links (findings S9-14, S9-V1,
 S10-12): the message as plain text in `.notice-message`, then
@@ -849,6 +1248,11 @@ phone at the end of the notice's line, all from app.css. Obsidian builds these
 with `Notice.addButton`, which its typings do not declare, so the helper builds
 the same elements by hand. The button also gets `role="button"`, a Tab stop and
 Enter/Space, which Obsidian's bare div lacks.
+The notice itself comes from `showNotice` (`ui/mascot/mascotNotices.ts`), as
+every notice does, so the mascot sits beside the words and the button under
+them (a grid in styles.css; [chapter 27](27-brush-mascot.md#notices)). The
+first argument is the kind of notice, which decides the mascot: `"success"`
+for Undo, `"paused"` for the two paused-saving notices.
 
 Obsidian hides a notice on any click on it, the button included, so the action
 runs with the notice already gone; a notice cannot stay up after its button is
@@ -942,18 +1346,42 @@ fills the search query and dispatches input/change on every device; it focuses
 and selects the text only on desktop. The normal `setQuery` path is supplied by
 Obsidian, so this plugin does not programmatically focus a field there.
 
-The chosen row in `ReplaceCalloutModal`'s list wears Obsidian's selected-item
-tint (`--nav-item-background-selected`, a tree row's `.is-selected`) and, at its
-end, the check Obsidian's menus put beside the current value. Every row draws
-the check and `.is-selected` shows it. A hover is plain grey, mouse only, so the
-choice still reads under the pointer.
+`ReplaceCalloutModal` is a search field over a list, and each callout in the list
+is drawn as a row of the settings' *Built-in callouts* list: a `Setting`
+(`.setting-item.cs-callout-row`) in Obsidian's list box
+(`new SettingGroup(listEl).addClass("mod-list")`), with the icon, the name, the
+`[!id]` spellings (`renderIdLine` and `fitIdsLine`, exported from
+`CalloutRowRenderer.ts` and `idsLineFit.ts`) and the colour circles, so the two
+lists read alike and take their CSS from the same place ("Callout List Rows" in
+styles.css). The icon and accent come from `paintCalloutListIcon`, which asks
+whoever paints the callout (the theme's measured pair when the theme owns the
+id), and the circles follow it. A row keeps `data-callout-id` for tests and
+the screenshot scripts; `cs-row-name`'s "…" and the phone's accent tile are
+the settings rows' own.
+
+What the window adds: the box scrolls inside its own border (`max-height: 300px`
+on `.setting-items`), because the search field above has to stay in view; a row
+is the thing to press, so it has a pointer and a hover (the settings' rows have
+neither); and the chosen row wears Obsidian's selected-item tint
+(`--nav-item-background-selected`, a tree row's `.is-selected`) and, at its end,
+the check Obsidian's menus put beside the current value. Every row draws the
+check and `.is-selected` shows it. A hover is plain grey, mouse only, so the
+choice still reads under the pointer. Each redraw (every keystroke) stops the
+previous rows' ids watchers before it replaces them.
 
 The search field's keyboard handling is also why `ReplaceCalloutModal`'s **Enter only chooses**
 (the top row, when nothing is chosen yet) and never confirms. Confirming rewrites
 every note that uses the callout, and its Undo is brief and in memory only, so it takes the confirm button,
-which is Obsidian's red destructive confirmation (`mod-destructive mod-cta`, see
+which is Obsidian's red destructive button (`mod-destructive`, see
 [Red and purple buttons are Obsidian's](#red-and-purple-buttons-are-obsidians)) on
 every device. `tests/replaceCalloutModal.test.ts` pins both.
+
+> The window was tried with the shared `CalloutCombobox` (a closed field opening a
+> list under it) instead, and that was dropped: a picker's list is cut
+> to the room between its field and the edge of the window's scrolling body
+> (`ui/listboxPopupLayout.ts`), and this body is a sentence and a row tall, so
+> the list opened one or two rows high, at the width of a field stretched across
+> the window.
 
 ## Two theme-aware surface tokens
 
@@ -974,9 +1402,9 @@ the box on every device; nothing raised is drawn inside a box today.
 
 - **`--cs-surface`** (fallback `--background-primary`) - anything meant to
   read as flush with the modal window itself: fixed bands, panels, the ring
-  cut around an icon tile's ✕. Not dropdown lists: those stand on Obsidian's
-  menu ground (see
-  [Dropdown popups look like Obsidian's menus](#dropdown-popups-look-like-obsidians-menus)).
+  cut around an icon tile's ✕. Not a picker's list: that is Obsidian's own
+  popover, on its own ground (see
+  [A picker's popover](#a-pickers-popover)).
 - **`--cs-surface-raised`** (fallback `--setting-items-background`) - anything
   meant to read as *raised off* that surface: a group-box header strip, a
   card, a control, a row pill. It is Obsidian's own settings-box colour, so a
@@ -1091,51 +1519,90 @@ The focus ring on a click is deliberate. An earlier version of the plugin drew
 one thin edge for every engaged state so that a click changed nothing; Niv
 chose Obsidian's behaviour instead (decision 14, 2026-10-22).
 
-**Dropdowns are drawn like Obsidian's combobox button.** Every trigger that
-opens a list (`.cs-dropdown-control`: the searchable pickers, the plain choices
-built on them, and the editor's Fold selector) keeps the plugin's own element,
-because it opens the plugin's list, but reads Obsidian's dropdown tokens and
-goes through Obsidian's states:
+**Dropdowns are Obsidian's own dropdown.** Every field that opens a list (a
+plain choice, `SelectDropdown`, and a picker, `ListboxPopup`) is
+`ui/dropdownField.ts`: a `div` wearing app.css's own class, `.dropdown`, so
+Obsidian draws all of it, in every state, from the tokens its
+`<select class="dropdown">` reads (2026-11-01):
 
-| State | A dropdown control |
+| State | A dropdown field (Obsidian's rules) |
 | --- | --- |
-| Rest | `--dropdown-background` (= `--interactive-normal`: white on Windows/Linux light, `#e4e4e4` on macOS light, `#333` in dark); no border; `--input-shadow`; `--input-height` |
-| Pointer hover (mouse only), and a press (`.mobile-tap`) | `--dropdown-background-hover` and `--input-shadow-hover` (on macOS both equal the resting ones, so nothing moves, as with Obsidian's own) |
-| Focus, also after a click | the 3px `--background-modifier-border-focus` ring |
-| Open | `--metadata-label-background-active` plus the ring, like Obsidian's open combobox (`.combobox-button.has-focus`) |
-| Disabled | half opacity |
+| Rest | `--dropdown-background` (= `--interactive-normal`: white on Windows/Linux light, `#e4e4e4` on macOS light, `#333` in dark); no border; `--input-shadow`; `--input-height`; `--dropdown-padding` (0.8em before the words, 2.4em after them for the chevron) |
+| Chevron | a background image, 1em wide, 0.65em from the end; on `--dropdown-icon-background`, a round disc in a 2em box (≈18px), which is `transparent` except in the macOS settings look below |
+| Pointer hover (mouse only), and a press (`.mobile-tap`) | `--dropdown-background-hover` and `--input-shadow-hover` |
+| Focus from the keyboard | the 3px `--background-modifier-border-focus` ring (`:focus-visible`) |
+| Focus from a mouse press | no ring: `mouse-focus`, which the field keeps from a `mousedown` until its `blur`, exactly as Obsidian's `DropdownComponent` does |
+| Open | nothing of its own, as a `<select>` shows nothing while its list is open |
+| Disabled | `.mod-disabled`: half opacity, no hover (plus `aria-disabled` and `tabindex="-1"`) |
 
-The states form a small ladder in `styles.css`: rest (0,3,0), then hover and
-press (0,5,0), then focus and open (0,5,0) written after them, so hovering a
-focused or open control never hides its ring. Padding is Obsidian's combobox
-padding (8px before the text, 6px after the caret; 16px each side on mobile),
-kept in three variables (`--cs-dropdown-pad-start`, `--cs-dropdown-pad-end`,
-`--cs-dropdown-gap`) that the hidden width-sizer of a plain choice reads too,
-so a plain choice is always exactly as wide as its longest translated option
-plus the control's own room.
+**Why a `div`.** Obsidian's `DropdownComponent` is a real `<select>`, whose
+list is the operating system's (no icons, no search box, and the look Niv
+did not want), and which cannot hold a callout's icon in the field. A
+`<button>` cannot wear the class: Obsidian's `button`,
+`button:not(.clickable-icon)` and `button:hover` rules (0,1,1) beat `.dropdown`
+(0,1,0) and repaint the face and the padding. Obsidian's own combobox is a
+`div[tabindex=0]` for the same reason. So the field is a `div` with
+`role="button"` (`combobox` for a select-only picker, see "The shared callout
+picker"), `aria-haspopup` and `aria-expanded`, named through a hidden label plus
+its words ("Callout format, Block"), and it opens on Enter, Space, ↓ and ↑.
 
-A plain choice (`.cs-select-dropdown`) is Obsidian's `select.dropdown` rather
-than a combobox, so in Obsidian's macOS settings window it follows the two
-tokens Obsidian sets there: `--dropdown-text-align` puts its text at the end,
-and `--dropdown-icon-background` sits its chevrons on a small dot. Everywhere
-else those are `start` and `transparent`.
+**styles.css paints none of it.** `.cs-dropdown-field.dropdown` only lays the
+words out the way a `<select>` holds them on its own (`inline-flex`, one line
+cut with "…", `cursor: var(--cursor)`), and `tests/dropdownField.test.ts`
+fails on any plugin rule that sets a background, shadow, border, outline,
+padding, corners, height, colour, opacity or `text-align` on the field. Until
+2026-11-01 a block of rules (`.cs-dropdown-control`, with a hand-made state
+ladder and three padding variables) copied Obsidian's combobox button instead,
+and it had drifted: its chevron disc was drawn on the 14px caret, so it came
+out half the size of Obsidian's; its padding was the combobox's; and it drew
+the ring after a mouse click and while a list was open.
 
-Searchable callout and color pickers are comboboxes: their outer
-`cs-dropdown-control` paints the box, and their inner `cs-combobox-input` stays
-transparent in every state (otherwise Obsidian's input rules would draw a
-second box inside it). `ListboxPopup.setDisabled()` mirrors the input's
-disabled state onto its painted control as `cs-dropdown-disabled` (and keeps
-`is-disabled` on the root), so the hover and focus selectors read that state
-without a parent `:has()` query. Callers must use `setDisabled()` rather than
-disabling the inner input directly. Select-only combobox inputs remain
-readonly. File inputs are separate controls and do not receive field styling.
+**Width: the words.** A field is exactly as wide as its current words plus
+Obsidian's padding, as Obsidian's `<select>` is (`resizeToFit` measures the
+selected option). It grows when a longer value is chosen. In a setting row it
+is capped where Obsidian caps its own controls: 400px for a plain choice, 250px
+for a picker (Obsidian's `.combobox-button`), cut with "…" beyond. A row too
+narrow for its label and control stacks them (Obsidian's
+`@container (max-width: 400px)`), and there the field takes the whole line, as
+Obsidian's `<select>` does. Until 2026-11-01 a plain choice was as wide as its
+longest option, through a hidden "width sizer" (finding S8-16: steadier than
+Obsidian's), and stretched to `width: 100%` of its column. A short description
+let Obsidian's control column grow, which is why "Callout format" in the
+command editor showed a field far wider than "Block" on hover.
+
+**Words where Obsidian puts them, rows at the start.** The plugin sets neither
+`--dropdown-text-align` nor `text-align` on the field: Obsidian's token is
+`start` (the left edge in English, the right in Hebrew) everywhere but its
+macOS settings window, which sets `end`. With the width fitted to the words
+this shows only where the field is stretched, such as Find callouts' type field,
+which reads like Search's text box: the chosen type's icon and name sit together
+at the start, the chevron alone at the end. Until 2026-11-01 the field set `end`
+on itself in every window (2026-10-28, to match the macOS settings window), and
+in that stretched field the icon stayed at one edge and the name was pushed to
+the other. The rows of the list stay at the start, as in Obsidian's menus, which
+turn `direction: rtl` under `.mod-rtl`.
+
+**The macOS settings look, in the plugin's windows.** Obsidian's settings
+window on a Mac (`.mod-macos:not(.is-mobile) .mod-settings`) draws a dropdown
+with no face until hovered, its chevron on a round grey disc. The plugin's
+settings page is inside that window, so it gets the look from Obsidian. The
+plugin's own windows are forms of setting rows too, so
+`.mod-macos:not(.is-mobile) .cs-modal .setting-item-control` sets the same three
+tokens (`--dropdown-background: transparent`,
+`--dropdown-background-hover: var(--interactive-hover)`,
+`--dropdown-icon-background: var(--interactive-normal)`). A toolbar or the
+sidebar keeps Obsidian's ordinary face, as Obsidian's own toolbars do. This
+replaces the command editor's "bare fields" (`cs-bare-fields`, 2026-10-28),
+which drew its own transparent fields, wrapped long choices onto two lines and
+sized the searchable picker's text input with a hidden copy of its text.
 A colour swatch is Obsidian's own `input[type="color"]` (`ui/ColorSwatchInput.ts`,
 finding S6-11): app.css draws it as a round dot with a hover ring and a focus
 ring, 40px on a phone or tablet, and the plugin paints nothing on it. It
-reports every move inside the picker (`input`, for the live preview) and the
-settled pick (`change`, `onCommit`) separately: the palette editor's
-low-contrast line waits for the settled pick, so the rows below do not jump
-while the user is still choosing. Until 2026-10-23 it was a painted rectangle
+reports every move inside the picker (`input`, for the live preview and the
+warning triangles) and the settled pick (`change`, `onCommit`) separately: the
+palette editor's low-contrast line waits for the settled pick, because it takes
+room and the modal is as tall as its content and centred, so a line that came
+and went mid-drag would move the whole window under the cursor. Until 2026-10-23 it was a painted rectangle
 with the real input invisible on top, which answered neither the pointer nor
 the keyboard.
 
@@ -1144,18 +1611,14 @@ the field - `Setting.setErrorMessage`, a line in the warning colour, end-aligned
 - and draws no red edge or ring on the field of an invalid setting row, so the
 plugin's fields do the same: the palette name (finding S7-06), the IDs field
 (S5-V1, see [Callout editor](14-callout-editor.md)) and the palette editor's
-low-contrast colours (S6-12). Until 2026-10-23 an invalid field kept a red edge
+low-contrast colours (S6-12), which Obsidian's line would have squeezed into half
+a row beside a swatch and so draw as a full-width line of their own, plus a
+triangle on the swatch itself (see `PaletteEditorModal`, below). Until 2026-10-23 an invalid field kept a red edge
 and a 1px red ring at `(0,5,1)` (`cs-input-invalid`), and the message faded in
-under the label. On a phone, a `cs-row-inline` row with such a line caps its
-control at half the row, as Obsidian caps an invalid row's control on the
-desktop, so the sentence wraps under the swatch instead of pushing the name
-out.
+under the label.
 
-There are two cascade constraints:
-- **A dropdown's ring wins over its hover.** Focus and open are at least as
-  specific as hover and come after it. `.is-open` draws the ring itself because
-  a tap on a phone does not focus a `<button>` trigger (the Fold selector), and
-  Obsidian's press class, `.mobile-tap`, stands in for hover on a phone.
+There is one cascade constraint left (a dropdown's states are app.css's own
+since 2026-11-01):
 - **The Callout IDs field and its + cap stay one colour.** `cs-tag-add-slot`
   lies over the field's trailing edge and paints `--cs-tag-field-bg`, which the
   row declares as Obsidian's `--background-modifier-form-field` and moves to
@@ -1371,17 +1834,27 @@ plain grey buttons, and neither `.cs-settings-neutral-btn` nor the
 
 ### Red and purple buttons are Obsidian's
 
-**One red.** A destructive action is Obsidian's destructive confirmation,
-`mod-destructive mod-cta`: `setDestructive().setCta()` on a `ButtonComponent`,
+**One red.** A destructive action is Obsidian's quiet destructive button,
+`mod-destructive` alone: `setDestructive()` on a `ButtonComponent`,
 `DESTRUCTIVE_BUTTON_CLASSES` (`ui/destructiveButton.ts`) on a raw `<button>`.
-Obsidian paints it solid red on every device. That covers every
-`ConfirmModal` yes that destroys something (its default `confirmKind`,
-`"destructive"`; a yes that loses nothing passes `"cta"`), **Replace in vault**,
-the paused-saving banner's **Replace settings file** and **Discard recovery
-copy**, **Convert selected** and **Reset everything**. A version's **Restore**
-in Version history is a plain button; the red is on the question it opens.
-A destructive *secondary* action would be `mod-destructive` alone, Obsidian's
-10% red tint with red text; there is none today.
+Obsidian paints it as red words on a light red wash (10% of
+`--background-modifier-error`) on every device, which is how it draws its own
+**Log out** button. Every red button of the plugin wears it, so a settings row
+and a window agree: every `ConfirmModal` yes that destroys something (its
+default `confirmKind`, `"destructive"`; a yes that loses nothing passes
+`"cta"`), **Replace in vault**, the paused-saving banner's **Replace settings
+file** and **Discard recovery copy**, **Convert selected**, a version's
+**Restore** and **Reset everything**. The solid red (`mod-destructive
+mod-cta`, which is what `setDestructive().setCta()` adds) was this plugin's red
+for windows until 2026-10-28 and is gone; nothing pairs the two calls now.
+
+**Locked and lit.** The red button has no state of its own. A locked one
+(`aria-disabled`, see [Blocked main buttons say
+why](#blocked-main-buttons-say-why), or `disabled` while busy, as the paused
+banner's two are) is Obsidian's 70% dim of the same face, which fades both the
+words and the wash and reads as locked in light and dark mode alike; a lit one
+is the resting face. The acknowledged **Reset everything** window starts locked
+and lights when its tick is set, with no class changed (`tests/confirmAcknowledge.test.ts`).
 
 Never the older `mod-warning`. Obsidian still styles it, but under
 `.is-mobile` it is a grey button with bold red text, so the same button was red
@@ -1389,31 +1862,34 @@ on a desktop and grey on a phone or tablet. Never `ButtonComponent.setWarning()`
 either: 1.13 deprecates it, and it is only `setDestructive().setCta()` anyway.
 (`MenuItem.setWarning(true)`, a red menu item, is a different API and stays.)
 
-**No hover of ours.** Obsidian's hover for a red button paints
-`--background-modifier-error-hover`, which it defines as the same
-`--color-red` as the resting `--background-modifier-error`, so a red button does
-not change under the pointer, exactly like Obsidian's own **Delete** buttons. A
+**No hover of ours.** Obsidian's quiet red keeps its wash under the pointer (its
+own `button.mod-destructive` rule comes after `button:hover`), so a red button
+does not change colour when hovered, like Obsidian's own **Log out**. A
 purple button (`mod-cta`) hovers to `--interactive-accent-hover`, a lighter
-purple in both modes. The plugin used to override both: a red stepped darker in
-light and lighter in dark (`--cs-btn-danger-face-hover`), and a purple derived
-from the resting accent, darker in light (`--cs-btn-accent-face-hover`). Both
-tokens and their rules are gone, so these buttons look and behave exactly like
-Obsidian's.
+purple in both modes. The plugin used to override both: a solid red stepped
+darker in light and lighter in dark (`--cs-btn-danger-face-hover`), and a purple
+derived from the resting accent, darker in light (`--cs-btn-accent-face-hover`).
+Both tokens and their rules are gone, so these buttons look and behave exactly
+like Obsidian's.
 
 `tests/dangerButtons.test.ts` fails on a `mod-warning` string in `src/`, an
-argument-less `.setWarning()`, any `styles.css` rule that names `.mod-warning`
-or selects `.mod-destructive`, and the old red token.
+argument-less `.setWarning()`, a `setDestructive().setCta()` pair, any
+`styles.css` rule that names `.mod-warning` or selects `.mod-destructive`, the
+old red token, and a solid red, white glyph or hover colour on the two ✕ badges.
 `tests/accentButtons.test.ts` fails on any rule that repaints a `.mod-cta`
 under the pointer.
 
 > [!NOTE]
-> `.cs-icon-tile-clear` - the small red ✕ on an icon tile - is not a button
-> face and keeps a hover of its own. It mixes toward a hardcoded `black` in both
-> themes, so it darkens in dark mode against the house direction rule. It also
-> carries a hardcoded white glyph, and darkening is what keeps that glyph
-> legible: `color-mix(… black)` holds it at 6.08:1 light and 5.10:1 dark, where
-> switching to `--mono-rgb-100` would drop the dark pair to 2.80:1. The
-> direction rule serves contrast; here it would cost it.
+> `.cs-icon-tile-clear` (the small ✕ on an icon tile) and
+> `.icon-picker-image-delete` (the one on a custom image) are red buttons too,
+> and the only red `styles.css` paints. They are circles straddling a corner,
+> so they take Obsidian's quiet red by its tokens instead of the class: the ✕ in
+> `--text-error` on a `--background-modifier-error` wash at 10%, laid over a
+> solid `--cs-surface` (a translucent wash would let the tile's own border show
+> through the badge). Until 2026-10-28 they were the palette's solid
+> `--color-red` with a hardcoded white glyph and a hover that mixed toward
+> `black`; all three are deleted, and they have no hover colour, like the
+> buttons above.
 
 ## Controls take Obsidian's colours
 
@@ -1451,9 +1927,9 @@ two functions over one reason string.
   fainter than any disabled button in Obsidian; finding S6-01 removed that.)
 - **`explainIfBlocked(reason)`** is the first line of the click handler:
   `if (explainIfBlocked(this.saveBlockedReason())) return;`. It returns true
-  after showing the reason, so the handler stops. The notice stays up for
-  Obsidian's five seconds, stretched at about 60 ms a character (to 12 s) for a
-  longer sentence, and a second press *replaces* it rather than stacking
+  after showing the reason, so the handler stops. The notice stays up as long
+  as any notice does, by the length of the sentence (see "How long a notice
+  stays" below), and a second press *replaces* it rather than stacking
   another.
 
 Each button owns a private `…BlockedReason(): string | null` that returns the
@@ -1473,7 +1949,7 @@ the label.
 | **Replace** / **Confirm** (replacement picker) | `ReplaceCalloutModal.confirmBlockedReason()` | no row chosen → `replaceModal.chooseFirstReplace` |
 | **Import valid only (N)** (import report) | `ImportReportModal` | N is 0 → `import.nothingValid` |
 | **Confirm** (icon picker) | `IconPicker.confirmBlockedReason()` | no icon selected, which is also what switching source does → `iconPicker.chooseFirst` |
-| **Restore** (Version history) | `SettingsRecoveryModal.restoreBlockedReason()` | saving is paused → `notice.blockedWhilePaused`; the version equals the current setup → `versions.restoreSame` |
+| **Restore** (Version history) | `VersionHistoryPage.restoreBlockedReason()` | saving is paused → `notice.blockedWhilePaused`; the version equals the current setup → `versions.restoreSame` |
 
 The callout editor's **Save** (`showSaveBlockedNotice`), the quick-insert
 **Insert** (`quickInsertNotice`) and the plugin import's **Import**
@@ -1488,8 +1964,7 @@ button, `mod-loading` (a spinner in place of the label, at the same width, with
 `aria-busy`), all through `setButtonBusy` in
 [`ui/busyButton.ts`](../../src/ui/busyButton.ts): the icon picker's Confirm
 while its artwork downloads, the callout editor's Save while a save runs (it
-used to read **Saving…**, finding S5-V3), and the declarative page's **Retry**
-while a language downloads. Pressing one of those teaches nothing.
+used to read **Saving…**, finding S5-V3). Pressing one of those teaches nothing.
 
 **Two consequences to keep.** A dimmed button is focusable, so Enter and Space
 answer too. And a press on one is *not* "clicking away": while a Review
@@ -1584,7 +2059,7 @@ longer wording, still true, until they are translated again.
 
 Resolves `Promise<boolean>`. Required `title` (see above), optional
 `confirmLabel`/`cancelLabel`/`confirmKind` (`"destructive"` by default, Obsidian's
-red `mod-destructive mod-cta` - a destructive action reads as one by default
+red `mod-destructive` - a destructive action reads as one by default
 unless the caller passes `"cta"`, the accent, for a yes that loses nothing). Used throughout for anything destructive that isn't
 specific enough to warrant its own modal (bulk vault edits, full reset).
 
@@ -1606,6 +2081,16 @@ What that gives for free, with no CSS of the plugin's:
   then closes the dialog unless the handler returned something truthy.
   `onClose` (which must call `super.onClose()`) answers `false` when no button
   answered, so Cancel, Escape and a click outside all resolve `false`.
+
+`withMascot(subtitle)` is asked for by every red question. It gives the window
+a two-line heading: the title, and under it `subtitle` (a `div.cs-confirm-subtitle`
+in the header row, which gets `cs-confirm-heading`), with the brush mascot beside
+both, except on a phone. The subtitle is a required argument, so a question with
+the mascot cannot go without one, and it is already translated: the name of the
+item in quotes (`confirm.subtitleName`, `“{{name}}”`, the quotes in the string so
+each language can use its own) or a short sentence of what it costs. The message
+under the heading says what the heading does not. See
+[The brush mascot](27-brush-mascot.md#where-it-appears).
 
 An optional last argument, `acknowledgement`, is for a confirmation that
 cannot be taken back. It is `ConfirmationModal.addCheckbox`, the box Obsidian
@@ -1644,10 +2129,12 @@ counted row's sentence opens with its number (`{{count}} custom callout
 type(s)`). Reading the registry cannot say how many notes use the custom types
 that go, so the button handler scans the vault and appends that as the last
 row of `deleted` (`settings.resetItemReferences`, just the count) rather than
-as a paragraph above the lists. The first list is introduced by two paragraphs
-of its own, a reminder (`settings.resetIntro`) and the lead-in
-(`settings.resetDeletes`), drawn only when something is deleted; blocks are
-spaced by `--p-spacing`, with the lead-in kept close to its list. An empty
+as a paragraph above the lists. The first list is introduced by a lead-in
+paragraph (`settings.resetDeletes`), drawn only when something is deleted. The
+reminder that used to open the message (`settings.resetIntro`) is the heading's
+second line now, and when nothing is deleted the second line says what happens
+instead (`settings.resetSubtitleDefaults`). Blocks are spaced by `--p-spacing`,
+with the lead-in kept close to its list. An empty
 inventory means there is nothing to reset, and the button answers with a notice
 (`settings.resetNothing`) instead of opening the window. The inventory mirrors
 `CalloutRegistry.resetAll()`: a group added to one belongs in the other.
@@ -1671,9 +2158,12 @@ Splitting the action removed the reason for it:
   it in the `notes` group; see
   [Callout row menu groups](#callout-row-menu-groups)).
 
-Each is now a plain two-button `ConfirmModal`: Cancel plus a red **Delete** or
-**Convert**. The body is short sentences, one per line, joined with `\n`;
-`ConfirmModal` turns each into its own `<p>`.
+Each is now a two-button `ConfirmModal`: Cancel plus a red **Delete** or
+**Convert**. The heading names the callout in quotes (`confirm.subtitleName`;
+`deleteModal.subtitleFallback` when it is also the default fallback;
+`convertModal.subtitle`, "Every “Project note” in your vault", for Convert). The
+body is short sentences, one per line, joined with `\n`; `ConfirmModal` turns
+each into its own `<p>`.
 
 A callout nothing uses, unless it is the default fallback, is deleted with no
 dialog at all. The notice's **Undo** stands in for the question.
@@ -1755,11 +2245,82 @@ the Colors box while there is a clash, in the warning colour, and out of the
 DOM otherwise (`renderColorError`). **Simple mode**: one
 base colour, and the full six-value palette (light/dark accent, background,
 text) is auto-derived with contrast correction
-(`derivePaletteFromColor` - see [Colour system](12-color-system.md)).
-**Advanced mode** exposes independent accent/background/text rows per theme
-mode directly, each edit inferring the opposite mode's value
-(`inferOppositeModeColor`) - but is only offered while the background style
-is **Solid**; a Gradient palette has no advanced per-colour view.
+(`derivePaletteFromColor` - see [Colour system](12-color-system.md)); the Base
+color row is a bare swatch with no description line (`paletteBaseColorRow.ts`).
+**Advanced mode** exposes accent/background/text rows for the mode Obsidian is
+showing (`shownDark`), and only while the background style is **Solid**; a
+Gradient palette has no advanced per-colour view. Light and dark each keep
+their own three colours: an edit writes only the shown mode's key. Both start
+from what Base color derived, so the mode not yet edited is still a sensible
+one. Until 2026-11-01 every edit overwrote the other mode with a guess that
+mirrored the lightness (`inferOppositeModeColor`, removed): a white background
+came back black, a pale blue near black, and two hand-picked modes could not
+both be kept.
+
+**The mode button** (`paletteModeButton.ts`) is a second extra button at the
+very end of the Colors heading, after the view button, so it keeps its place
+while that one comes and goes. It is offered under every style. A sun in dark
+mode, a moon in light mode; a press shows all of Obsidian in the other mode
+(`showMode`) and rebuilds the rows for it. The preview needs nothing: it is
+the real CSS in the real mode. `onClose` puts the mode back, and every way out
+reaches it (Cancel, Escape, closing Settings, closing the Settings window
+itself - all measured). A `css-change` listener follows a mode Obsidian sets
+by itself while the editor is open (its light/dark command, a theme that
+follows the system) and makes that the mode to go back to; this plugin's own
+css-change after every inject leaves the mode as it was and costs one
+comparison.
+
+Why the whole app and not just the preview. Obsidian's public API only reads
+the mode (`app.isDarkMode()`); it switches by putting `theme-dark` or
+`theme-light` on the main window's body (`updateTheme`, its own "Toggle
+light/dark mode" command under a system theme, and the PDF export's print
+window all do exactly that). A pop-out window - Settings, where this editor
+usually opens - copies the main body's classes on every class or style change
+of that body and on `focuschange`, so classes put on the pop-out alone are
+undone at the next copy; they go on the main window. And a light box inside a
+dark window still matches every `.theme-dark …` rule, this plugin's dark
+blocks and most themes' variables, so a scoped preview would show colours the
+note never gets. The body flip was compared with Obsidian's real
+`changeTheme` in the default theme, Minimal, AnuPpuccin, Things, Vanilla
+AMOLED and Nord: the page colour, the callout background pixel, the title and
+the text came out identical, with or without a `css-change`, and identical
+again after switching back. No `css-change` is fired, so anything that caches
+a mode-dependent value (the graph view, Style Settings) keeps the old one
+behind the modal until the mode comes back.
+
+The switch between the two is one icon button at the end of the **Colors**
+heading (`paletteColorViewButton.ts`, a `SettingGroup.addExtraButton`), not a
+sentence with a link under Base color: that sentence ("...you can control it
+separately by clicking here") was too long for the column and wrapped on every
+line. The sliders icon opens the separate colors and the undo icon (`undo-2`,
+not the ↺ that means "back to the default") reverts to the single base color,
+re-deriving all six from it; the tooltip says which. It hides (`cs-hidden`)
+under Gradient and Transparent, which have no separate colors.
+`renderColorSection` repaints it on every rebuild. The low-contrast warning is
+not the row's `setErrorMessage`, which gives the line half a row beside a
+swatch. It is said twice, because each half is bad at the other's job
+(`paletteContrastLine.ts`):
+
+- **A triangle** (`contrastBadgeIn`, `span.cs-contrast-badge`, the
+  `triangle-alert` icon) is the first child of the control column of the Accent
+  and the Text row, ahead of the swatch, shown when *that* colour is under its
+  limit (Accent 3:1, Text 4.5:1). It says *which* colour; its tooltip is the
+  sentence, and it carries `role="img"` so a screen reader reads that label.
+  It takes no room - the control is aligned to the row's end, so what arrives
+  at its start does not move the swatch - so it follows every `input` event of
+  the picker.
+- **A line** (`contrastLineAfter`, `div.cs-palette-contrast-line`) says *why*, in
+  words that read on a phone, where a tooltip has no hover. It is one line for
+  all three colours, placed right after the last colour row (Text), shown when
+  the Accent or the Text falls short, and wears the same icon as the triangles
+  so the two read as one warning. It draws a divider of its own - Obsidian's
+  hairline, the `::before` that sits above every row but the first - because
+  without one it hung under the Text row like that row's caption, as if the
+  Text colour were always the one at fault. It waits for the settled pick
+  (`change`): it takes room, and the window is as tall as its content and
+  centred, so one that came and went mid-drag would move the whole window. It
+  is registered with the card's teardown list because a rebuild removes the row
+  but not what merely sits after it.
 
 Background style is a further 3-way choice: Solid, Gradient (two-stop linear,
 preset direction, an off-by-default "Gradient title text" toggle), or None
@@ -1793,6 +2354,37 @@ The conditional `rotate-ccw` controls use the shared `settings.resetAction`
 label. They are hidden when their scope already matches its canonical default.
 Settings resets save immediately through the usual settings path; the built-in
 callout editor's field resets still change its draft until Save.
+
+**One rule for every ↺.** An arrow is there only while something differs from
+the default. It is never dimmed (a grey arrow is clutter) and never live with
+nothing to reset. Two ways keep it out of sight, and a screen uses the one its
+layout needs:
+
+| Hidden by | Keeps its room | Used where |
+| --- | --- | --- |
+| `cs-reset-idle` (`paintResetIdle`, [`ui/resetArrow.ts`](../../src/ui/resetArrow.ts)): `visibility: hidden` | yes | The style pages' sliders and box headings, the Commands and right-click menu pages' headings, the editor's icon adjustments, Manage icon libraries |
+| `cs-hidden` (`addFieldResetButton`, `editor/fieldResetButton.ts`): `display: none` | no | Beside a field that grows into its place: Default fallback callout, Language, and the editor's IDs, Icon and Color. (The conversion review's card arrow uses the `hidden` attribute, the same way.) |
+
+- **Why not `opacity: 0`.** A transparent element is still on the page: the
+  pointer reaches it (its tooltip shows over nothing, a click lands on it), Tab
+  stops on it and a screen reader reads it. `visibility: hidden` has none of
+  that, and keeps the room, so nothing beside the arrow moves when it appears.
+  A slider's track must not jump under the pointer in the middle of a drag.
+- **Nothing is redrawn to show it.** The arrow is made once and a class says
+  whether it shows. Measured in headless Chrome with Obsidian 1.14.5's
+  `app.css` and the plugin's stylesheet, style and layout recalculated after
+  each toggle: `cs-reset-idle` 10 µs, `cs-hidden` 34 µs, an inline
+  `opacity` 26 µs. Drawing a whole settings page again (what `ctx.redraw()`
+  does) costs 0.9 ms for a style page (12 rows), 1.3 ms for the right-click
+  menu page (18 rows) and 4.4 ms for the main page (27 rows): cheap, but
+  a hundred times a toggle, so a ↺ is painted in place wherever its box can
+  say when (the style pages' rows, the commands' rows, the menu page's
+  repainting row) and not by a redraw.
+- **The guard.** `declarativeSettingsTree.test.ts` draws every page of the tab
+  with nothing changed and fails on a ↺ that shows. A new screen with a ↺ goes
+  through `paintResetIdle`, or through `addFieldResetButton` beside a field.
+  Until 2026-10-29 the right-click menu page's three arrows were always shown
+  and a press with nothing to reset did nothing.
 
 **Default fallback callout** restores `DEFAULT_SETTINGS.fallbackCalloutId`
 (`note`). **Language** restores `DEFAULT_SETTINGS.language` (`auto`), following
@@ -1842,8 +2434,8 @@ on load, or on a re-pick of the row already shown, would silently change that
 other device. Older versions read the same two kinds of value, so mixed
 versions across devices keep working.
 
-When the language a preference asks for has not downloaded, the warning below
-the picker names it after the row the picker shows, so `zh-hk` reads as 繁體中文.
+When the language a preference asks for has not downloaded, the notice that
+tells so names it after the row the picker shows, so `zh-hk` reads as 繁體中文.
 
 Colored option headers reserve space at their trailing edge for the compact
 reset control without increasing the header's original height. (The callout
@@ -1992,7 +2584,12 @@ removes the slides. Manage icon libraries passes its window body.
 ### `IconLibrariesModal` - libraries in three Obsidian groups
 
 Opened by the **Manage libraries** text button at the end of Pick an icon's
-source row; titled **Manage icon libraries** - the button's words with "icon"
+source row, and by the **Icon libraries** row of the settings' Colors and icons
+box (26 § The Colors and icons box). Both go through
+[`iconpicker/openIconLibraries.ts`](../../src/settings/iconpicker/openIconLibraries.ts),
+which reads the pack files back from disk before the window opens and takes
+from the door the icon counts and, from the picker, the callout being edited
+(`editing`). Titled **Manage icon libraries** - the button's words with "icon"
 put back, since the button is read inside a window already about icons and the
 title has to stand on its own
 ([`iconpicker/IconLibrariesModal.ts`](../../src/settings/iconpicker/IconLibrariesModal.ts)).
@@ -2014,7 +2611,7 @@ counting the ones left to download here.
 
 The groups' headings are keyed `iconPicker.librariesAvailable` and
 `iconPicker.librariesToDownload` - keys the Choose source menu shared until it
-stopped listing libraries to download; they are now this window's alone:
+stopped listing libraries to download; they are now this page's alone:
 
 | Heading | Holds | Order |
 | --- | --- | --- |
@@ -2023,7 +2620,7 @@ stopped listing libraries to download; they are now this window's alone:
 | **Hidden libraries** | built-in libraries the person hid | catalog order |
 
 A hidden library cannot sit under *Libraries to download* - there is nothing to
-download - and the window has to list it to offer **Show**, hence the third
+download - and the page has to list it to offer **Show**, hence the third
 group. A group with no row is not shown (`cs-hidden` on the group), except
 Available libraries, which never empties - the last library cannot leave the
 picker - and holds the reset arrow. `computeRows()` returns the shown
@@ -2094,7 +2691,7 @@ Behaviour to keep in mind before changing it:
   mid-drag waits for the drag's `pointerup`, `pointercancel` or
   `lostpointercapture`: rebuilding under the pointer would detach the dragged
   row.
-- **The window scrolls by itself in exactly one case: the library whose button
+- **The page scrolls by itself in exactly one case: the library whose button
   was pressed changed group and landed out of view.** Then the list scrolls with the
   row, just far enough to show where it went - down to **Libraries to download**
   or **Hidden libraries** for a delete or a hide, up into **Available
@@ -2102,7 +2699,7 @@ Behaviour to keep in mind before changing it:
   it: not a drag, an arrow key, the reset arrow, a download still running
   (the row only shows its spinner in place), a press that was refused, declined
   or failed, a library that arrives from the picker's own prompt, or a move
-  that lands in view anyway. The window keeps a set, `following`, of the
+  that lands in view anyway. The page keeps a set, `following`, of the
   libraries whose button is being pressed through (`run()` adds the id and
   removes it in a `finally`, so a press that ends without the row moving is
   forgotten and a later move of that library by someone else scrolls nothing).
@@ -2110,14 +2707,14 @@ Behaviour to keep in mind before changing it:
   since the last rows - a hide at once, a delete when its first file is gone, a
   download when its last file has arrived - and hands that key to
   `animateAvailable(change, follow)`. There, after the rebuild and before the
-  slide is measured, `scrollToReveal()` (`ui/scrollToReveal.ts`) moves the window's
-  body - `contentEl`, the one scroll container of the chrome
-  ([Modal chrome](#modal-chrome---the-one-shell-every-window-wears)) - by the least that puts the row inside it with
+  slide is measured, `scrollToReveal()` (`ui/scrollToReveal.ts`) moves the page's
+  root - `rootEl`, the `.vertical-tab-content` that is a settings page's one
+  scroll container - by the least that puts the row inside it with
   `REVEAL_MARGIN_PX` (40px, room for a group's heading above its first row) to
   spare, and not at all when it is already in. Because the scroll is instant
   and happens *before* `animateReorder` reads where the rows now are, the
   Available rows slide from where each was on screen to where it now is.
-  Reduced motion skips the slide but still scrolls. (A drag scrolls the window
+  Reduced motion skips the slide but still scrolls. (A drag scrolls the page
   too, when the row is held near its edge - that is the drag's own doing, see
   the `DragSortList` section above.)
 - **A rebuild never leaves a box empty.** `render()` builds each group's rows
@@ -2127,8 +2724,8 @@ Behaviour to keep in mind before changing it:
   node being removed - with the rows after it already gone, since Obsidian's
   `empty()` removes from the last child. The scroller is then too short for
   where it was scrolled, clamps, and stays clamped once the rows are back: with
-  this window's list being most of its content, pressing a button on a row near
-  the top threw the whole window to the top (measured 196px → 0; a press on the
+  this page's list being most of its content, pressing a button on a row near
+  the top threw the whole page to the top (measured 196px → 0; a press on the
   last row lost nothing, which is why it looked erratic). `replaceChildren`
   removes and inserts in one step, so the layout it forces sees the full list.
   `.click()` from a script never reproduces this, because it does not focus the
@@ -2148,7 +2745,7 @@ Behaviour to keep in mind before changing it:
   library (`host.editing`, [Icons](13-icons.md#the-callout-being-edited-counts-as-a-user)):
   the registry cannot see it, and it is exactly what someone has just
   downloaded and applied. The users are worked out when the button is pressed,
-  not when the window opens. An unused library is deleted at once; one in use
+  not when the page opens. An unused library is deleted at once; one in use
   is refused while saving is paused (`blockedWhilePaused`), and the editor's
   icon is passed to `deleteLibrary` so its drawings are sealed too.
 - **The reset arrow** sits at the end of the **Available libraries** heading,
@@ -2206,24 +2803,40 @@ save-on-change convention.
 #### `CommandEditorModal` - the rows, and where each one's rule lives
 
 The form is *Callout type*, *Callout format*, *Heading level*, *Action*, *Fold
-state*, then **Command name**. Every row is built unconditionally and hidden
+state*, then **Command name**. The five choices are the rows of one Obsidian
+`SettingGroup` (the grey rounded box the plugin's other windows put their rows
+in; until 2026-10-31 they were bare rows on the window's background), built
+into its `listEl`, and the group carries `cs-editor-group` for the editors'
+shared 16px inset. Every row is built unconditionally and hidden
 with `cs-row-hidden`; one `syncVisibility()` decides all of it, so the controls
-can never disagree about the current format. **Command name** is one more row
-(finding S8-15): the generated name at its end as Obsidian's read-only value
-(`addDisplayValue`), and a command the user already has said under it through
-the row's `setErrorMessage`. Until 2026-10-23 the name sat in a bordered card
-under the form, with a red line that slid in for a duplicate.
+can never disagree about the current format. **Command name** (finding S8-15)
+is the generated name as Obsidian's read-only value (`addDisplayValue`), and a
+command the user already has said under it through the row's `setErrorMessage`.
+It is the form's result, so it is a second `SettingGroup` of one row rather than
+one more row of the first. Until 2026-10-23 the name sat in a bordered card
+under the form, with a red line that slid in for a duplicate. The row carries
+`cs-command-name` (2026-10-28, restyled 2026-10-31): Obsidian's read-only value
+is a muted, one-line note cut with "…", which hid the name and, in a narrow
+desktop window, squeezed the row's own label down to a letter (a phone stacks
+the row, so it never had that). The stylesheet now stacks the row on every
+platform, label then name across the box's full width, and draws the name at
+the size of a row's label, in the normal text colour, a little heavier, and
+wrapping. The stacking rules are doubled in class weight because Obsidian
+holds the control of an `is-invalid` row (a duplicate) to half the row, and
+puts the error text at the end rather than the start. The row has no
+description line on purpose: the name is the line.
 
-Every configuration row carries `cs-command-field`, a hook. Each picker is as
-wide as its choices, at the end of its row, like Obsidian's dropdowns (finding
-S8-16): a `SelectDropdown` sizes itself to its longest label with its hidden
-sizer - steadier than Obsidian's own `resizeToFit`, which fits the selected
-option and so changes width with the value - and the searchable callout
-picker, which would fill the row, is held to Obsidian's combobox cap of 250px.
-They shared one 180px column until then. All five show the same field shape
-and hover, press, focus and open feedback, and become full-width when Obsidian
-stacks rows on a phone. With no callout to choose from, the window opens on
-Obsidian's warning text (`p.mod-warning`), since that blocks Save.
+Every configuration row carries `cs-command-field`, a hook. Each field is as
+wide as its current choice, at the end of its row, as every dropdown is (see
+[How an input field focuses](#how-an-input-field-focuses)); they shared one
+180px column until finding S8-16, and a plain choice was as wide as its longest
+option until 2026-11-01. Beside its words the control column does not shrink
+(`flex-shrink: 0`), so the row's description wraps rather than the choice being
+cut. On a Mac the five are drawn as in Obsidian's settings window: words and a
+chevron on a round grey disc, with no face until hovered. They take a line of
+their own when Obsidian stacks rows on a phone. With no callout to choose from,
+the window opens on Obsidian's warning text (`p.mod-warning`), since that
+blocks Save.
 
 New commands select the built-in `note` type when available, then the first
 registered type with a visible name. This avoids selecting a discovered fallback
@@ -2262,18 +2875,13 @@ reloaded would differ by a key that means nothing. See
 
 ### Shared dropdown controls
 
-All list-selection triggers carry `cs-dropdown-control`: the searchable
-callout, colour, icon-source and skin-tone pickers; the plain choices in
-commands, palettes, Quick Insert, the icon picker, occurrences and the
-**Language** row; and the callout editor's hidden Fold selector. They are drawn
-like Obsidian's combobox button - `--input-height` tall, Obsidian's combobox
-padding and [field corners](#field-corners-follow-obsidians-input-tokens), no
-border, `--input-shadow`, and the same `chevrons-up-down` indicator - with
-Obsidian's hover, focus and open states; see
-[How an input field focuses](#how-an-input-field-focuses). Text-entry fields
-are Obsidian's own fields. Widths remain specific to each layout.
-[`ui/dropdownControl.ts`](../../src/ui/dropdownControl.ts) exposes
-`appendDropdownCaret` for the inert, `aria-hidden` indicator.
+Every field that opens a list is Obsidian's dropdown
+([`ui/dropdownField.ts`](../../src/ui/dropdownField.ts), see
+[How an input field focuses](#how-an-input-field-focuses)): the searchable
+callout and colour pickers; the select-only icon-source and skin-tone pickers;
+and the plain choices in commands, palettes, the icon picker, the callout
+editor's (hidden) fold state and "Update your notes?". Text-entry fields are
+Obsidian's own fields.
 
 What opens differs by kind, and is the rule since 2026-10-23 (decision 25 of
 the native-look plan: "every menu should look the same as Obsidian's"):
@@ -2281,15 +2889,22 @@ the native-look plan: "every menu should look the same as Obsidian's"):
 | Kind | The list | Why |
 | --- | --- | --- |
 | A plain choice (`SelectDropdown`) | Obsidian's own `Menu`, drawn as HTML | a few fixed options: exactly what Obsidian's menus are for |
-| A picker you search in (`ListboxPopup`) | the plugin's popup, drawn like `.menu` (see the next section) | a menu cannot hold a search field |
-| The icon-source and skin-tone pickers (`ListboxPopup`, select-only) | the same popup | their rows carry what a menu item cannot: a second line with a count, and emoji samples |
+| A picker you search in (`ListboxPopup`) | Obsidian's combobox popover, with a search box at the top (see the next section) | a menu cannot hold a search field |
+| The icon-source and skin-tone pickers (`ListboxPopup`, select-only) | the same popover, with no search box | their rows carry what a menu item cannot: a second line with a count, and emoji samples |
 
 None of them uses the operating system's `<select>` list.
 
 **`SelectDropdown`** ([`ui/selectDropdown.ts`](../../src/ui/selectDropdown.ts))
-is a `<button class="cs-select-button cs-dropdown-control">` showing the
-current option's words (`.cs-select-value`) and the caret, inside a
-`.cs-select-dropdown` wrapper. A click, or ↓/↑, builds a `Menu`:
+is the field itself (`el` and `controlEl` are the same `div.dropdown`, which
+also wears `cs-select-dropdown` for its callers' layout rules), showing the
+current option's words. (Given `{ icon }` as a third constructor argument it is
+a bare icon button instead, a `<button class="cs-select-button">` inside a
+`.cs-select-dropdown` wrapper: the icon in a `cs-select-icon` span, the words
+(`.cs-select-value`) kept hidden with `cs-visually-hidden` so the accessible
+name still ends with the current value, and the name also set as a tooltip with
+`setTooltip`. The settings footer's language globe and Quick insert's funnel are
+the two; the caller adds its own class to `controlEl`.) A click, or Enter,
+Space, ↓ or ↑, builds a `Menu`:
 
 - `setUseNativeMenu(false)`, so it is drawn as HTML and can show icons (and is
   the same on every platform; on a phone it is Obsidian's bottom sheet);
@@ -2298,66 +2913,93 @@ current option's words (`.cs-select-value`) and the caret, inside a
   the words start at the row's edge. Today only *Heading level* (`heading-1` …
   `heading-6`) and *Fold state* (`ban`, `plus`, `minus`, the icons of the fold
   choices in a note's right-click menu) carry icons;
-- `setParentElement(button)`: Obsidian marks the button `has-active-menu`,
+- `setParentElement(field)`: Obsidian marks the field `has-active-menu`,
   treats a press on it as not "outside" (so a second click closes the menu
-  instead of reopening it) and closes the menu if the button disappears;
+  instead of reopening it) and closes the menu if the field disappears;
 - `showAtPosition({ x, y: bottom, width, overlap: true, left: rtl })`, the
   position Obsidian itself uses for a menu under a button.
 
-While open the button carries `is-open` (Obsidian's open-combobox look) and
-`aria-expanded="true"`; `onHide` clears both. If a click on a menu row left
-focus nowhere, focus returns to the button. Inside the menu the keyboard is
-Obsidian's: its arrows, Enter and Escape come from the menu's own key scope, so
-the plugin's Escape handling (`ui/menuEscape.ts`) is not involved. The field's
-accessible name is a hidden label plus the value (`aria-labelledby="<label>
-<value>"`), because a button has no value to announce, and `aria-label` would
-show as an Obsidian tooltip.
+**A long list scrolls with the wheel** ([`ui/menuScroll.ts`](../../src/ui/menuScroll.ts),
+called right after `showAtPosition`). Obsidian's desktop menu is `overflow:
+hidden`: it cannot be scrolled with the wheel at all, and instead a `mousemove`
+listener on its `.menu-scroll` (`ME()` in app.js) sets the scroll position from
+the pointer's height in the menu, so the 32 languages ran along under a moving
+mouse; `Menu.select` also pulls a half-hidden row into view the moment the
+pointer lands on it. Neither can be switched off, so the menu gets the class
+`cs-wheel-menu` (styles.css: `overflow-y: auto`), and around `mousemove` and
+`pointerover` the helper writes the scroll position down in the capture phase
+(before Obsidian's listeners) and puts it back in the bubble phase (after them,
+since it was added later). Both happen inside one event, so nothing is painted
+in between; a wheel step or an arrow key, which are other events, still scroll.
+The menu also opens with the current choice in the middle. Nothing is done where
+Obsidian drew no list (a native menu, a test's stand-in).
+
+**Scrolling the page behind it closes the menu**
+([`ui/menuAnchorScroll.ts`](../../src/ui/menuAnchorScroll.ts), called after the
+menu is shown). `showAtPosition` places the menu once, at window coordinates, and
+nothing moves it afterwards, so a scroll of the settings page or the modal would
+leave it hanging where the field used to be. The helper records the scroll
+position of every ancestor of the field, listens for `scroll` on the document in
+the capture phase (a scroll does not bubble), and closes the menu when an
+ancestor, or the page (`scrollingElement`), is at a different position than when
+the menu opened. Comparing positions ignores a scroll event queued before the
+click; the menu's own list is not an ancestor, so the wheel scroll above is
+untouched. On a phone, where the menu is a bottom sheet that ignores the
+position, nothing is watched. `onHide` takes the listener back. This is the same
+rule as a callout row's menu (`openCalloutRowMenu`), which keeps its own copy
+because its lifetime also covers the wait for the callout counts.
+
+While open the field says `aria-expanded="true"` and shows nothing else, as
+Obsidian's `<select>` shows nothing (an icon button keeps its ring, `is-open`);
+`onHide` clears it. If a click on a menu row left focus nowhere, focus returns
+to the field. Inside the menu the keyboard is Obsidian's: its arrows, Enter and
+Escape come from the menu's own key scope, so the plugin's Escape handling
+(`ui/menuEscape.ts`) is not involved. The field's accessible name is a hidden
+label plus the value (`aria-labelledby="<label> <value>"`), because the field
+has no value of its own to announce, and `aria-label` would show as an
+Obsidian tooltip.
 
 The adapter owns the options and the value: `setValue` is silent, `onChange`
 fires only for a user's pick of a different option, and `onPick` for every pick
-(the language row retries a pending download when its own language is picked
+(the language menu retries a pending download when its own language is picked
 again). `setOptions` keeps a still-valid value or takes the first option, and
 closes an open menu, which would otherwise offer the old options; a pick of an
-option that is gone is ignored. A hidden `cs-dropdown-width-sizer` grid of every
-label gives the field the width of its longest option, so it does not resize
-when the value changes. Callers destroy the adapter when its row or owner goes;
-`destroy()` closes an open menu and disables the field for good.
+option that is gone is ignored. The field is as wide as the current option's
+words, as Obsidian's `<select>` is. Callers destroy the adapter when its row or
+owner goes; `destroy()` closes an open menu and disables the field for good.
 
-### Dropdown popups look like Obsidian's menus
+### A picker's popover
 
-The two popups that open from a `cs-dropdown-control` - `.cs-combobox-menu`
-(every `ListboxPopup`, so every `SelectDropdown` too) and the callout editor's
-Fold selector, `.cs-palette-menu` - are drawn like Obsidian's own `.menu`: the
-menu behind ⋮ **More options**, or a file's right-click menu. Niv decided on
-2026-10-22 that every menu in the plugin should look the same as Obsidian's
-(decision 14, finding S6-04 in the refactor plan).
+A picker (`ListboxPopup`) opens Obsidian's own popover under its field: the one
+Obsidian's combobox opens in Bases and in the file pickers of its Settings
+(2026-11-01). Its markup is Obsidian's, so app.css draws it:
 
-**The list.** One shared rule paints both popups from Obsidian's `--menu-*`
-tokens, so a theme that restyles Obsidian's menus restyles these lists too.
-The fallbacks are Obsidian 1.14's defaults, read from its `app.css`:
+- `div.suggestion-container.cs-combobox-popup`, with `combobox` added when the
+  picker is searchable: Obsidian's popover frame (`--suggestion-background`,
+  the ground; a 1px `--background-modifier-border` edge; `--radius-m` corners;
+  `--shadow-s`);
+- at the top, a searchable picker's search box: Obsidian's `SearchComponent`
+  (`ui/searchField.ts`), which app.css draws flat inside a `.combobox`, with its
+  magnifier and its ×;
+- under it the list, `div.suggestion.cs-combobox-menu[role=listbox]`: Obsidian's
+  `.suggestion`, which gives it its 6px padding and its scrolling.
 
-| Property | Value | Obsidian 1.14 default |
-| --- | --- | --- |
-| ground | `--cs-menu-face` = `var(--menu-background, var(--background-secondary))` | `--background-secondary` |
-| edge | `var(--menu-border-width, 1px) solid var(--menu-border-color, …)` | 1px of `--background-modifier-border-hover` |
-| corners | `var(--menu-radius, var(--radius-m))`, `corner-shape: var(--menu-corner-shape, …)` | 8px on a computer |
-| shadow | `var(--menu-shadow, var(--shadow-s))` | `--shadow-s` |
-| blur | `backdrop-filter: var(--menu-backdrop-filter)` | `none`; a blur on mobile |
-| inner padding | `var(--size-2-3)` | 6px, what `.menu-scroll` gets on a computer |
+styles.css paints none of the frame (`tests/dropdownPopupSurface.test.ts`). It
+only names the ground once, `--cs-menu-face: var(--suggestion-background,
+var(--background-primary))`, for what must repaint it, and places the popover:
+it hangs under the field from the field's **end** edge (`inset-inline-end: 0`:
+the right in English, the left in Hebrew), since a field sits at the end of its
+row, so it opens toward the row's middle. It is at least as wide as the field
+(and 220px), grows with its rows, and stops at 320px wide and 320px tall;
+`ui/listboxPopupLayout.ts` lowers both caps and shifts it sideways
+(`--cs-dropdown-menu-*`) to keep it inside the window and every clipping box,
+and flips it above the field when there is more room there.
 
-The padding is not read from `--menu-padding`, because a phone redefines that
-token for its menus' bottom sheets (16px at the sides, plus the room under the
-home indicator). These lists stay attached to their field on a phone, so they
-keep the computer's 6px.
+A plain choice opens a real Obsidian `Menu` instead (see
+[Shared dropdown controls](#shared-dropdown-controls)): Obsidian's own from end
+to end, so it needs no rule here.
 
-On a phone or tablet Obsidian draws its menus without an edge, 90% opaque over
-a blurred view of what is behind them (`.is-mobile .menu`). The lists do the
-same: `.is-mobile` drops the border and mixes the ground with
-`--blur-opacity-m`, and the blur arrives through `--menu-backdrop-filter`,
-which Obsidian sets for mobile.
-
-**The rows.** `.cs-combobox-option` (and the Fold menu's `.cs-palette-menu-item`,
-which the colour picker's rows also wear) is laid out like `.menu-item`: flex,
+**The rows.** `.cs-combobox-option` is laid out like `.menu-item`: flex,
 an 8px gap, `4px 8px` of padding, `--radius-s` corners, Obsidian's `--cursor`,
 13px text on a computer and 15px under `.is-mobile`. The size lives on the row;
 the words inside inherit it. The row under the pointer or the arrow keys
@@ -2370,17 +3012,10 @@ which is what Obsidian's `MenuItem.setChecked(true)` draws.
 `span.cs-combobox-check` (Lucide `check`, `aria-hidden`, since the row's
 `aria-selected` already says it is chosen). `renderComboboxRows` calls it for the
 committed row of every list after the caller's `renderRow`, so the ✓ always
-lands last; the Fold menu calls it for its own current state. The check is
+lands last. The check is
 muted and at `--icon-s`, as `.menu-item-icon` is, and `margin-inline-start:
 auto` pushes it to the end even when the row's content is short. The icon-source
 menu's own smaller check (`.cs-source-check`) is gone: it uses the shared one.
-
-The list keeps its trigger's width (both inline edges pinned, see
-`.cs-palette-menu`), so the ✓ takes its 24px from the chosen row's words. A
-long name is cut a little earlier on that one row. Obsidian's own menus are
-shrink-to-fit instead, which is why the plain choices open a real Obsidian
-`Menu` rather than this popup (see
-[Shared dropdown controls](#shared-dropdown-controls)).
 
 **Groups.** A `.cs-combobox-group` reaches across the list's 6px side padding
 (negative margin, the same padding put back inside), so that:
@@ -2388,9 +3023,8 @@ shrink-to-fit instead, which is why the plain choices open a real Obsidian
 - the line between two groups spans the whole list, as `.menu-separator` does:
   one `--background-modifier-border` line with 6px of air on each side;
 - the sticky heading (`.cs-combobox-group-label`) can span it too, edge to edge,
-  and hide the rows scrolling under it. It paints the opaque `--cs-menu-face`
-  (also on mobile, where the list itself is 90% opaque: a translucent heading
-  would let the hidden rows show through). Its padding puts its words where the
+  and hide the rows scrolling under it. It paints the opaque `--cs-menu-face`.
+  Its padding puts its words where the
   rows' words start, 14px from the edge. Its type is the S6-05 one: small,
   semibold, `--text-muted`, sentence case.
 
@@ -2401,38 +3035,26 @@ full-width line above it.
 the ring cut around overlapping colour circles, and the transparent swatch's
 checkerboard.
 
-**Dimmed id characters** (`callout-studio-suggestion-id-dim`) are no longer
-overridden inside a list. The override brightened them because the list stood
-on the lighter control face; on Obsidian's menu ground the `[!` popover's own
-`--text-faint` is right, as it is for `.menu-item-desc`.
-
 **History.** Until 2026-10-23 the lists wore their control's grey face
-(`--cs-btn-face`) with a field-coloured edge (`--cs-field-border-hover`), a heavy
-two-layer shadow and a filled stripe behind the chosen row
-(`--cs-menu-row-selected`, mixed from the face toward the text colour). That look
-was chosen on 2026-09-30, because a list in the window's colour read as "a second
-object stuck onto" its field. The menu look replaces it on purpose. Please do
-not bring the control's face back.
+(`--cs-btn-face`) with a field-coloured edge, a heavy two-layer shadow and a
+filled stripe behind the chosen row; from then until 2026-11-01 they were drawn
+by hand like Obsidian's `.menu` (`--menu-*` tokens, kept at the field's width).
+They are Obsidian's combobox popover now, because the picker is Obsidian's
+combobox. Please do not paint the frame again.
 
-`tests/dropdownPopupSurface.test.ts` pins the menu tokens, the mobile treatment,
-the row layout, the absence of any fill on a chosen row, the ✓, the separators
-and every repaint of the ground. `tests/listboxPresentationState.test.ts`
-checks that only the committed row carries the ✓, as its last child, and that it
-moves with the choice. `tests/modalBodyLayers.test.ts` allows the sticky heading
-to paint `--cs-menu-face`, and `tests/modalSurfaces.test.ts` lists the ground's
-`--background-secondary` fallback as reviewed. To check it against the real
-cascade, render each popup open in the harness linked under
-[How an input field focuses](#how-an-input-field-focuses), beside a hand-built
-Obsidian `.menu > .menu-scroll > .menu-group > .menu-item` (one `.selected`,
-one `.mod-checked` with its trailing check), with body classes
-`theme-dark`/`theme-light` × `mod-macos`, `is-mobile is-tablet` and
-`is-mobile is-phone`.
+`tests/dropdownPopupSurface.test.ts` pins the popover's classes, that no plugin
+rule paints its frame, the row layout, the absence of any fill on a chosen row,
+the ✓, the separators and every repaint of the ground.
+`tests/listboxPresentationState.test.ts` checks that only the committed row
+carries the ✓, as its last child, and that it moves with the choice.
+`tests/modalBodyLayers.test.ts` allows the sticky heading to paint
+`--cs-menu-face`, and `tests/modalSurfaces.test.ts` lists the ground's
+`--background-primary` fallback as reviewed.
 
 ### Option rows are padded once
 
 Every row of a popup list is padded in one place: the shared row rule
-(`.cs-combobox-option`, with the Fold menu's `.cs-palette-menu-item`), `4px 8px`
-as on Obsidian's `.menu-item`. The plain choices draw no rows at all any more:
+(`.cs-combobox-option`), `4px 8px` as on Obsidian's `.menu-item`. The plain choices draw no rows at all any more:
 their list is Obsidian's `Menu`.
 
 Until 2026-10-23 a plain choice's label owned the padding (`6px 12px`). Before that, the
@@ -2475,10 +3097,34 @@ Every place the user picks one callout out of a list is the same control:
 [`ui/listboxPopup.ts`](../../src/ui/listboxPopup.ts). It replaced two native
 `<select>`s - *Default fallback callout*
 ([`fallbackPicker.ts`](../../src/settings/sections/fallbackPicker.ts)) and
-*Callout type* above - neither of which could be typed into or showed a callout's
+*Callout type* above - neither of which could be searched or showed a callout's
 icon or colour, while the `[!` popover in the editor had done both for a long
-time. The fallback picker uses the shared field face and interaction rules;
-there is no fallback-specific button styling.
+time.
+
+**It is Obsidian's combobox** (2026-11-01), the shape Obsidian uses in Bases and
+for the file pickers in its Settings: the field is Obsidian's dropdown (see
+[How an input field focuses](#how-an-input-field-focuses)), showing the
+committed callout's icon in its colour before its name, and a click, Enter,
+Space, ↓ or ↑ opens [Obsidian's popover](#a-pickers-popover) with a search box
+at the top and the list under it. A letter typed on the closed field opens it
+too, with that letter already in the search box, as Obsidian's does. Until
+2026-11-01 the field *was* a text input you typed into; it could never look or
+behave like the dropdowns beside it (a text cursor, a ring whenever it had
+focus, a width that had to be faked from a hidden copy of its text).
+
+Who has the keys and the ARIA:
+
+| | Searchable (callout, colour) | Select-only (icon source, skin tone) |
+| --- | --- | --- |
+| The field | `role="button"`, `aria-haspopup="listbox"`, `aria-expanded`; opens the list | `role="combobox"` with `aria-controls` and `aria-activedescendant`; opens, moves, types ahead, commits (a `<select>`'s keys) |
+| The search box | Obsidian's `SearchComponent`, `role="combobox"`, `aria-autocomplete="list"`, `aria-controls`, `aria-activedescendant`; takes the focus on opening (not on a phone or tablet, where that would raise the keyboard every time: a tap does it): ↓/↑ move, Enter commits, Escape and Tab close | none |
+
+Escape and a pick give the focus back to the field (a pick made with the mouse
+marks it `mouse-focus`, so no keyboard ring is drawn); Tab in the search box
+closes the list and puts the focus on the field, and the browser's own Tab then
+moves on from there, as in Obsidian's combobox. A blur closes the list only when
+the focus leaves the picker: moving between the field and its search box is not
+leaving.
 
 The rows are literally the popover's rows: `AutoComplete.renderSuggestion`
 calls [`calloutComboboxRow.ts`](../../src/settings/calloutComboboxRow.ts)'s
@@ -2551,19 +3197,19 @@ re-read after the editor closes, so the new row is simply there.
 Two rules in `listboxPopup.ts` carry the searchable mode and are worth reading
 before changing it:
 
-- **The query is separate state from `input.value`.** Opening does not search
-  for the committed label (that would list exactly one row); it starts empty and
-  selects the text so the first keystroke replaces it.
+- **The query is separate state from the committed choice.** Every opening
+  starts with an empty search box and the whole list (searching for the
+  committed label would list exactly one row), and the field goes on showing the
+  committed choice while you search.
 - **Blur never commits.** Leaving with half a word typed reverts. `fallbackCalloutId`
   is persisted *and* synced, so a picker that guessed "probably the first match"
   would write an id the user never chose onto every device.
 
 `setSelected(key, missingLabel)` can supply a display label when no list item
 resolves. The value remains `undefined`, but the field retains that label and
-keeps its leading swatches visible; dismissing a search returns to the same
-label. `PaletteCombobox.setSelection` uses this for **Deleted color**, so a
-missing palette does not mark the control `is-empty` or fall back to the search
-placeholder. Opening that unresolved selection leaves every option inactive;
+keeps its leading swatches visible; dismissing a search leaves the same label.
+`PaletteCombobox.setSelection` uses this for **Deleted color**, so a missing
+palette does not mark the control `is-empty`. Opening that unresolved selection leaves every option inactive;
 once open, pointer hover or keyboard navigation establishes the active row.
 This prevents the first saved colour from looking preselected when none is
 selected.
@@ -2593,40 +3239,28 @@ the original host. A DOM key listener alone is too late for Obsidian's keymap,
 and a permanent child scope would swallow Escape even when the menu is closed.
 The icon-source menu shares this lifecycle. No global app lookup is needed.
 
-Every custom dropdown menu carries `cs-scrollable-dropdown-menu`, whose 320px
-maximum and vertical scrolling are the common fallback. Shared listboxes and
-the icon-source picker use `listboxPopupLayout.ts` to fit the visual viewport
-and all clipping ancestors, including inner scroll bodies and sidebar panes.
-Menus normally open below the trigger; when their content will not fit and
-there is more room above, they open above. Horizontal bounds also account for
-RTL and viewport offsets. Layout runs after rendering/filtering and updates
-on viewport resize, surrounding scroll, and control/container resizing. Closing
-removes these listeners, observers, and temporary layout properties. The hidden
-three-item Fold menu needs only the shared static cap.
-Shared listboxes have no vertical menu inset; the first and last rows meet
-its inside edge. Selection-only command choices use 8px vertical and 12px
-horizontal row padding.
+Every popover is capped at 320px tall, and `listboxPopupLayout.ts` fits it to
+the visual viewport and all clipping ancestors, including inner scroll bodies
+and sidebar panes. It normally opens below the field; when its content will not
+fit and there is more room above, it opens above. Horizontally it hangs from
+the field's end edge and is shifted back inside the window, in either
+direction. Its natural height is the list's `scrollHeight` plus everything
+around the list (the edge, the search box), so a capped popover does not flip
+back and forth. Layout runs after rendering/filtering and updates on viewport
+resize, surrounding scroll, and control/container resizing. Closing removes
+these listeners, observers, and temporary layout properties.
 
-Two details in [`listboxPopupEvents.ts`](../../src/ui/listboxPopupEvents.ts) are
-load-bearing and have already been bugs. Selecting the label on click has to
-happen on `click`, not on `focus`: the browser fires mousedown → focus →
-mouseup → click, and mouseup places a caret that undoes an earlier `select()`.
-And the menu's `mousedown` `preventDefault()` is what lets a mouse selection
-commit at all - a click on a row is also a blur, and blur lands first.
+One detail in [`listboxPopupEvents.ts`](../../src/ui/listboxPopupEvents.ts) is
+load-bearing and has already been a bug: the popover's `mousedown`
+`preventDefault()` (on everything but the search box itself) is what lets a
+mouse selection commit at all - a click on a row is also a blur, and blur lands
+first.
 
 Field names are assigned by `fieldAccessibleName.ts`, using a hidden sibling
 label referenced through `aria-labelledby`. The label has the `hidden`
 attribute, with `opacity: 0` and `pointer-events: none` as a CSS fallback if a
 theme overrides its display. This keeps accessible names without the hover
 tooltip Obsidian derives from `aria-label`.
-
-The control itself uses the [shared dropdown styling](#shared-dropdown-controls),
-matching the other listbox triggers. The input inside is
-painted down to nothing, and **its rules are descendant-
-qualified on purpose**: Obsidian styles `input[type='text']` at specificity
-(0,1,1), which beats a lone class - a bare `.cs-combobox-input` rule loses, and
-that is how the field first came to look like a second box drawn inside the
-control.
 
 The Color row uses the same popup through
 [`paletteCombobox.ts`](../../src/settings/paletteCombobox.ts), which adds group
@@ -2658,7 +3292,7 @@ Obsidian gives a plugin's name in its details window (`--h2-size`, semibold,
 `--line-height-tight`). The removed title leaves an empty `.modal-header`, and
 it is kept on purpose: its 0.75em bottom margin on the desktop (its padding on a
 phone) is what holds the columns clear of the absolutely positioned close
-button. Hidden, the ✕ lands on the corner of the **See it in action** box. The
+button. Hidden, the ✕ lands on the corner of the preview box. The
 left column aligns to `start`, so it mirrors under a right-to-left interface. Automatic onboarding requires confirmed
 fresh-install eligibility and checks both `settings.welcomeSeen` and the
 device-local welcome marker. An absent `data.json` alone is insufficient; see
@@ -2767,8 +3401,8 @@ In the settings it is a row of the notices box, the first box of the main page
 saved. The notice is a persistent part (26 § Parts that survive a redraw), so
 the page can redraw around it without it forgetting an action under way.
 
-Each redraw builds the same three parts: a header (`alert-triangle` plus a title
-row), the message paragraphs, and `.cs-readonly-banner-actions` holding whatever
+Each redraw builds the same three parts: a header (the brush mascot, or `alert-triangle` where it cannot be drawn,
+plus a title row), the message paragraphs, and `.cs-readonly-banner-actions` holding whatever
 actions apply. The title is chosen from the writer, not from the message -
 `isFrozen || status.frozenReason` reads as *Saving is paused*, a bare
 `status.failure` as *Settings were not saved* - so a frozen session that also
@@ -2807,7 +3441,7 @@ described in the canonical chapter.
 For an unreadable file the banner asks `actions.diagnose()` once per paused
 episode, and again after each action. **Replace settings file** appears only
 for causes waiting cannot fix, and **Discard recovery copy** only for a
-`recovery-read` freeze. Both are red (`mod-destructive mod-cta`) and run only after a
+`recovery-read` freeze. Both are red (`mod-destructive`) and run only after a
 `ConfirmModal`. The one exception to the red is a `combined` file: replacing
 it keeps every setting, so **Replace settings file** is the main button
 (`mod-cta`), its confirmation's button is too, and after the yes the banner
@@ -2875,49 +3509,94 @@ be only the built-ins. Every other state, and the editor, keep one order.
 
 ### Go to version history, and scrolling to a row
 
-**Go to version history** (`showBackup`) does not open the Version history
-window. It takes the reader to **Version history › Earlier versions** on the
-main page, the way the first-install import prompt takes the reader to the
-**Import callouts** row: while saving is paused the window can only be
-browsed, and the banner is what says why. Both use the settings' jump
-(`ctx.jumpTo`, `declarative/jumpToRow.ts`, 26 § Jumping to a row), which does
-what a settings search result does: Obsidian's own page path, the row scrolled
-to the centre and flashed with Obsidian's `is-flashing`, and focus on the row
-only after a key press (the buttons report a click with `event.detail === 0`,
-Enter or Space, as from the keyboard). Until 2026-10-25 the old page scrolled
-there itself and pulsed the row in the accent colour.
+**Go to version history** (`showBackup`) opens the Version history **page**
+(`ctx.jumpTo("earlier-versions", fromKeyboard, ["earlier-versions"])`), the way
+the first-install import prompt takes the reader to the **Import callouts** row.
+Both use the settings' jump (`declarative/jumpToRow.ts`, 26 § Jumping to a row),
+which does what a settings search result does: Obsidian's own page path, and
+(for a row) the row scrolled to the centre and flashed with Obsidian's
+`is-flashing`, and focus on it only after a key press (the buttons report a click
+with `event.detail === 0`, Enter or Space, as from the keyboard). A page is
+opened by `app.setting.openPagePath`, which arrived in 1.14: on 1.13.x the
+button is **left out** (`canOpenSettingsPage`, `bannerRows.ts`), since a button
+that cannot go anywhere is worse than none, and the page stays one row away on
+the main page. Until 2026-10-25 the old page scrolled there itself and pulsed
+the row in the accent colour.
 
-## `SettingsRecoveryModal` - Version history
+## `VersionHistoryPage` - Version history
 
-Opened from **Earlier versions** in the main page's **Version history** box
-(`declarative/mainPageGroups.ts`), whose button reads **View versions**. The
-saving banner's **Go to version history** jumps to that row rather than opening
-the window itself. The window asks `recovery.listVersions()` once per open
-(a generation counter drops a late answer after close) and draws the versions
-newest first, grouped by local calendar day.
+A page of the settings, not a window (until 2026-10-27 it was a window,
+`SettingsRecoveryModal`, opened by a **View versions** button). Its row on the
+main page is `versionHistoryRow` (`declarative/versionHistoryPage.ts`): a page
+named **Restore an earlier version** with the description *settings.versionsDesc*, as
+the first row of the Danger zone, shown only on a host with a recovery service.
+The page is a lazy `SettingPage` like Built-in callouts
+(`calloutListPage.ts`): Obsidian calls `display()` when it opens and `hide()`
+when it is left, never draws it again, and leaves it out of the settings search.
+`display()` asks `recovery.listVersions()` once per open (a generation counter,
+bumped by `hide()` and every reload, drops a late answer) and draws the versions
+newest first; a delete or a restore draws the list again (a restore does not
+leave the page: the comparisons with "now" are simply new). Each draw compares
+every row through one `recovery.differences()`, which reads the setup shown now
+once (`differencesFrom`, `setupDifference.ts`), rather than once per row as
+`difference()` would; that halved the comparison on a 754-callout setup. The
+service keeps what it has read, so a second open and the list after a delete
+or a restore come back faster ([Settings sync and
+recovery](08-settings-sync-and-recovery.md)).
+The saving banner's **Go to version history** opens this page (see above).
 
-**One Obsidian group per day** (finding S9-05). Each day is a `SettingGroup`
-with `mod-list` (`cs-recovery-day`): the date as the group's heading, then one
-rounded box with Obsidian's thin line between its rows, 24px between days.
-`mod-list` keeps a row on one line on a phone (the control stays beside the
-text) and makes the rows a little tighter; app.css draws all of it. The
-heading starts with the localized date (`dateStyle: "long"`), then **today**,
+**A timeline.** The look it had before the 1.13 rewrite, from the 2.x releases,
+restored on 2026-10-27 after a short life as one Obsidian group per day
+(finding S9-05). A rail (`.cs-recovery-rows`, `padding-inline-start` of a 6rem
+gutter, a 1px line made of the `::before` of every day heading and card) runs
+down the start side. Each version is a card (`.cs-recovery-row`: Obsidian's own
+`.setting-item`, which already is a raised rounded box on a page, plus
+`cs-row-inline` so the buttons stay beside the text on a phone) with a `<time>`
+in the gutter (`cs-recovery-time`, the time only: the date is the heading's) and
+a decorative dot on the rail (`renderVersionMarker`, `cs-version-marker`,
+`aria-hidden`). Each local calendar day has a heading, an `<h3
+class="cs-recovery-day">` that joins the rail with a short connector. The rows
+are directly on the rail, not in a `SettingGroup`; the cards sit 2px apart.
+Two Obsidian rules reach the rows and are cleared on specificity. A heading
+after a `.setting-item` gets 24px of margin (`.vertical-tab-content
+.setting-item ~ :is(h1, h2, h3, …)`); that margin lies outside the heading's
+box, where the rail's segment does not reach, so the line used to break off
+above every day but the first. The day's own padding is its whole separation, so
+the margin is 0 (the class is doubled). And `.setting-item` is `align-items:
+flex-start`, which left the buttons at the top of a three-line card; the card is
+`center`, so they sit level with the time and the dot (when they wrap under the
+words on a phone they stay at the end of their own line).
+The page's box (`.cs-recovery-page`, the `.setting-page-content`) is
+`isolation: isolate`. Obsidian's sticky `.setting-page-titlebar` is `z-index: 1`
+and a sibling just before that box; the times are `position: absolute;
+z-index: 1` (above the row's hover area), the same level and later in the
+document, so without the isolation the clock digits were painted over the bar
+while the cards scrolled behind it. As its own stacking context the whole page
+counts as level 0, under the bar.
+`versionRowLayout.ts` (a `ResizeObserver`) puts `cs-recovery-controls-wrapped`
+on a card whose buttons dropped under its words, which is when the two counts
+share a line (`.cs-recovery-summary-counts`). The text column keeps a 12rem
+floor (`min-width: min(12rem, 100%)`, with `flex: 1 1 0`) so a name and its
+summary never shrink to a letter per line. The floor is deliberately not a
+flex-basis: Obsidian's narrow-row rule turns the card into a **column**, and a
+basis of 12rem there is a height, which left a blank gap between the text and
+the buttons below it (a flex item's `min-width` still counts when the row is
+broken into lines, so the card wraps at the same width). The card is not a size
+container (`callout-studio-row` is not used),
+because Obsidian's unnamed `@container (max-width: 400px)` settings rules would
+then pin the controls to the full width of the card. **Restore** is red again
+(`setDestructive()`, Obsidian's red button; the deprecated `setWarning`
+is not used): it replaces the whole setup on every synced device. The heading
+starts with the localized date (`dateStyle: "long"`), then **today**,
 **yesterday** or **N days ago** in parentheses, including for versions older
 than a week. Relative wording uses `Intl.RelativeTimeFormat`, with
 `numeric: "auto"` for today and yesterday and `"always"` for earlier days; day
 differences use local calendar dates so DST and time of day cannot shift the
 age. Future dates have no relative suffix. Unknown dates have their own final
-group. This display grouping does not change stored timestamps or retention
-rules. The window's description sits 24px above the first group, as one group
-sits from the next. **Loading…** and **No earlier versions** are one row in a
-box of their own with Obsidian's `mod-empty-state` (muted, a little taller),
-as the Hotkeys page says **No results found**.
-
-Until 2026-10-24 this was a timeline: a rail down the side, a dot per version,
-the times in a 6rem column, and each version a raised card. On a phone the
-column took 6rem of the width and the cards needed a 12rem text floor, a
-`ResizeObserver` (`versionRowLayout.ts`) and a size-container patch; all of that
-is gone with it.
+heading, and no time is invented for them. This display grouping does not change
+stored timestamps or retention rules. **Loading…** and **No versions were
+found** are one quiet line (`cs-recovery-status`), the latter under the dozing
+mascot.
 
 A setup kept in two places is one row; the merge rule and where the reasons
 behind its automatic name are stored are in
@@ -2955,10 +3634,9 @@ would draw inside the box):
 file deletion syncing only when the version includes backup or sync-copy files.
 Another device's private history may retain the version. Then
 `recovery.removeVersion()` deletes every available copy; the list is read again
-either way. **Restore** is a plain button (finding S9-04): the red belongs to
-the confirmation it opens, whose last button is the destructive one, as in
-Obsidian's own dialogs; a column of red buttons read like a page of warnings.
-It is dimmed (not disabled - a press says
+either way. **Restore** is red, in the same quiet red as the confirmation it opens
+(it was a plain button under finding S9-04, and red again since the 1.13
+rewrite). It is dimmed (not disabled - a press says
 why, see [Blocked main buttons say why](#blocked-main-buttons-say-why)) while
 saving is paused or when the version equals the current setup, and confirms
 before calling `recovery.restore()`; both confirmations and their notices quote
@@ -3089,6 +3767,11 @@ historical reasons, not because the check belongs to FLIP. Its callers:
 
 A jump to a settings row (26 § Jumping to a row) is Obsidian's own scroll and
 flash, as a settings search result's is, and does what Obsidian does.
+
+The brush mascot reads the same media feature itself, once per mascot and
+guarded for a host without `matchMedia` (the test DOM): under reduced motion
+its faces still change but the brush never moves, throws paint or paints a
+stroke ([27 - The brush mascot](27-brush-mascot.md)).
 
 **From CSS** - `@media (prefers-reduced-motion: …)` blocks in
 [`styles.css`](../../styles.css). They take two shapes:

@@ -4,11 +4,11 @@ You can design a callout in the plugin settings or create one directly from auto
 
 ## Create one in settings
 
-Open **Settings → Callout Studio**, then click **Add new callout** on the first page. You can also open **My callout types** and click **+** above its list (on a phone or tablet, the **Add new callout** row at the end of the list).
+Open **Settings → Callout Studio**, then open **My callout types** on the first page and click **+** above its list (on a phone or tablet, the **Add new callout** row at the end of the list).
 
-![Callout Studio's first settings page in dark mode, with Add new callout in its first box](../../assets/user-guide/create-settings.svg)
+![Callout Studio's first settings page in dark mode, with My callout types in its first box](../../assets/user-guide/create-settings.svg)
 
-*Dark-mode render of the first settings page, with **Add new callout** under **My callout types**.*
+*Dark-mode render of the first settings page, with **My callout types** in its first box. Open it, and its **+** adds a callout.*
 
 1. Enter a **Display name**. This is the readable name in Callout Studio and the default title shown when the note does not provide one.
 2. Review the **Callout IDs**. The first ID fills automatically from the display name and is the token you type in your notes. Add more IDs if you want aliases for the same callout. To remove one, click the small **x** on its pill, or press Tab until the pill is selected and press Backspace. An alias looks and behaves exactly like the first ID, but a callout written with it is titled after the alias, as Obsidian titles it: `[!attention]` reads **Attention**, not **Warning**.
@@ -35,8 +35,18 @@ Type a block, heading, or inline token for a callout that does not exist yet. Fo
 
 *Dark-mode render of autocomplete for an unknown `project` type. Selecting **Create "project"** opens its editor.*
 
-Autocomplete is a core editor feature and is always enabled; there is no
-settings switch for it.
+Autocomplete is on by default. To turn it off, open **Settings → Callout
+Studio**, then **Autocomplete and metadata** under **Editor**, and turn off
+**Callout autocomplete**. While it is
+off, typing opens nothing, but the **Insert empty callout** and **Wrap in
+callout** commands still open the list so you can pick a type. Below it,
+**Include your theme's callouts** leaves the callouts your theme adds out of
+the list; it appears only while your theme adds some, or while it is off. A
+callout left out of the list still works in your notes, and typing its full
+name never offers to create it again.
+
+The menu after `|` has a switch of its own on the same page (see
+[Callout metadata](18-callout-metadata.md#metadata-settings)).
 
 Nothing is saved until you click **Create callout**. If you close the editor, the unknown token remains in the note and uses the default fallback style.
 

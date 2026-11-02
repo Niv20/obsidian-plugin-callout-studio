@@ -102,10 +102,11 @@ picture that cannot follow the callout's colour).
 ## A built-in's name, and Save while it saves
 
 A built-in's display name cannot change: Obsidian declares it. Its row shows
-the name the way Obsidian shows a value you cannot change, as quiet text at the
-row's end (`Setting.addDisplayValue`, Obsidian 1.13.1), not as a greyed-out
-field that looks editable (finding S5-V2). `nameTextInput` is therefore `null`
-for a built-in; every reader already uses `?.`.
+the name inside a disabled text field (`addText` + `setDisabled(true)`), so it
+reads as a rectangle like the other rows' fields but cannot be focused or
+clicked. (It was bare `addDisplayValue` text pinned to the row's edge until
+2026-11-01.) `nameTextInput` stays `null` for a built-in; every reader already
+uses `?.`.
 
 While a save runs, **Save** keeps its words and its width and shows Obsidian's
 own spinner: `updateSaveState()` calls `setButtonBusy`
@@ -168,9 +169,9 @@ Size / Horizontal / Vertical trio. It resets only that render role and calls the
 other roles keep their values. The target is
 `resolveIconAdjust(builtInDefault, role)`, not hard-coded `0 / 0 / 1`, so a
 future built-in with a non-neutral shipped adjustment remains correct.
-It is invisible until the trio differs from the defaults (`cs-reset-idle`,
-`visibility: hidden`), so it keeps its room and nothing beside it moves when
-it appears; while invisible it is out of the Tab order and hidden from screen
+It is invisible until the trio differs from the defaults (`paintResetIdle`,
+`ui/resetArrow.ts`: `cs-reset-idle`, `visibility: hidden`), so it keeps its room
+and nothing beside it moves when it appears; while invisible it is out of the Tab order and hidden from screen
 readers. See also
 [settings resets](16-settings-ui-and-modals.md#scoped-reset-controls).
 
@@ -643,22 +644,47 @@ this Save, and nobody was asked about them.
 
 `TagInput` carries the field's messages, in two places (finding S5-V1):
 
-- **Under the field**, where Obsidian shows a rejected value: every error. The
-  editor passes `showFieldError`, which calls `setSettingError(idsSetting, …)`
+- **Under the field**, where Obsidian shows a rejected value: a short message.
+  The editor passes `showFieldError`, which calls `setSettingError(idsSetting, …)`
   (`ui/settingError.ts`) - the row's `setErrorMessage`, so Obsidian draws its
   own `div.setting-item-error` in the warning colour, end-aligned, and marks
-  the row `is-invalid`. A message with a link in it (a `TagMessage` renderer)
-  is drawn into that same element, which `Setting.errorEl` makes public. One
-  message shows at a time, in this order: an **offer** (a `validate` result
-  that is a renderer, like "move it here"), a lasting error the editor sets
-  (`showExternalError`: no ID, a taken or theme-supplied ID, the cap), then
-  the plain refusal of what is typed (a duplicate, a too-long ID, a `validate`
-  string). A refused id stays in the field, and its refusal stays with it
-  until the typed text changes - no timer takes it away. An unchanged message
-  is not redrawn, so an offer's button survives the blur that commits the
-  same id again.
-- **Under the label**: a lasting **note** (`showExternalNote`, "On save,
-  "test" moves here from X."), in the muted colour, as more description.
+  the row `is-invalid`. Short means about what was typed or about the field
+  as a whole: a duplicate, a too-long ID, "At least one ID is required", the
+  "Maximum N IDs" line. Obsidian builds that line inside the control column,
+  which here is only as wide as the field (228px on a desktop), and "Maximum
+  10 IDs. Delete one to add another." broke into two lines there. Since
+  2026-10-31 `setSettingError` moves the line (once; Obsidian reuses the
+  element) up to be a child of the row, and the stylesheet gives it a line
+  across the whole row: the row wraps, the label column's flex-basis is 0 so
+  the field stays beside it, and a negative top margin brings the row's gap
+  down to 8px (the 4px the line had inside the control sat too tight against
+  the pills). Still end-aligned, so a
+  short message stays under the field's edge and a long one grows toward the
+  label. Nothing else in the row moves.
+- **Under the label**, in the wide column: the lasting **note**
+  (`showExternalNote`, "On save, "test" moves here from X.") in the muted
+  colour, and every **wide** message in the warning colour (`.cs-tag-message`).
+  A wide message is a sentence that names another callout, a theme or
+  Obsidian, which wrapped into a tall strip in the field's 220px column:
+  "test" is an ID of X. You can move it here.", "…is the main ID of X. To use
+  it here, delete X first.", the theme and stock-ID refusals, the dash
+  collision and the theme warnings. The caller marks one with `wide(message)`
+  from `ui/TagInput.ts`; `CalloutEditor.takenIdMessage` and `updateIdWarning`
+  do. `TagRefusal` is `TagMessage | WideTagMessage`, what `validate` and
+  `showExternalError` accept.
+
+`paintMessages` draws both places from the state, taking the first of these
+candidates that belongs to each: an **offer** (a `validate` result that is a
+renderer or wide, like "move it here"), a lasting error the editor sets
+(`showExternalError`), the "full" message, then the plain refusal of what is
+typed (a duplicate, a too-long ID, a `validate` string). A short message and a
+wide one can therefore show together. The "full" message is not stored: it is
+read off the tag count each time, so a note the editor sets in `onChange`
+cannot wipe it (it used to share the lasting slot, and a tenth ID that arrived
+by "move it here" left a disabled field with no reason). A refused id stays in
+the field, and its refusal stays with it until the typed text changes - no
+timer takes it away. An unchanged message is not redrawn, so an offer's button
+survives the blur that commits the same id again.
 
 There is no animation: Obsidian's messages appear at once. Without
 `showFieldError` (a field outside a row, as in the tests) TagInput draws the
@@ -778,11 +804,17 @@ picker as `new IconPicker(plugin, this.icon, { id: this.existingId, name })`:
 picker hands the window the callout being edited (`EditedCallout`: that id and
 name plus the icon it was opened on) so deleting a library the draft uses
 asks first - see [Icons](13-icons.md#the-callout-being-edited-counts-as-a-user).
-`openLibraries()` first awaits `packs.loadAllFromDisk()`, the same read the picker
-does before its first paint (free once done): a library downloaded in an earlier
-session reads as missing until its file is read back, and a quick press on
-**Manage libraries** would otherwise list it under **Libraries to download** for
-a moment.
+`openLibraries()` opens the window through `openIconLibraries`
+([`iconpicker/openIconLibraries.ts`](../../src/settings/iconpicker/openIconLibraries.ts),
+the same opener the settings' Icon libraries row uses), which first awaits
+`packs.loadAllFromDisk()`, the same read the picker does before its first paint
+(cheap once done): a library downloaded in an earlier session reads as missing
+until its file is read back, and a quick press on **Manage libraries** would
+otherwise list it under **Libraries to download** for a moment. The opener then
+calls the picker's `beforeOpen`, where the picker takes what it shows (the pool
+and `panelContents()`) - after the read, so the comparison below sees only what
+the window changed - and where it declines if it was closed meanwhile. The
+counts come from the picker's own (`sourceCounts.ts`).
 When that window closes
 having changed something, `openLibraries()` takes it in: a library that was
 offered and no longer is (deleted, or hidden) gives way to All sources, and an

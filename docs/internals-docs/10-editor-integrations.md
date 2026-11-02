@@ -60,10 +60,20 @@ untitled would read "Library voice" in Obsidian, the written title reads
 never touched.
 
 `matchedId` is what carries the typed spelling, and each writer passes what it
-has: `AutoComplete` passes the id or alias the query matched (falling back to
-`def.id`), `CalloutMetadataSuggest` passes the token's own raw id. Quick insert,
-user-built commands, `previewMarkdown` and "Create new" write `def.id` itself
-and pass none, which is the primary-id row of the table.
+has: `AutoComplete` and Quick insert pass the id or alias the query matched
+(falling back to `def.id`), `CalloutMetadataSuggest` passes the token's own raw
+id. User-built commands and "Create new" write `def.id` itself and pass none,
+which is the primary-id row of the table.
+
+The first two get that spelling from the same function,
+`matchedCalloutId(def, lowerQuery)` in
+[`src/utils/calloutSearch.ts`](../../src/utils/calloutSearch.ts): the typed word
+in full, else an id or alias it starts, else `def.id`. It lives beside
+`calloutMatchesQuery` for the same reason that predicate does: a callout is
+*found* by its id, name or any alias, so a pick has to remember which spelling
+did the finding, and the `[!` popover and the quick-insert window must not
+disagree about it. Searching `tldr` and choosing the `abstract` row writes
+`> [!tldr] Tldr`, in either surface.
 
 The same helper names every token the plugin *draws*, so the two paths cannot
 disagree: the token DOM (`buildCalloutTokenDom`), the Live Preview reference
@@ -379,11 +389,24 @@ reachable.
 Obsidian's `EditorSuggest`, triggered by typing `[!` in any of the three role
 positions.
 
-Historically, autocomplete could be toggled off by the user. As of 2.14.1, this
-UI toggle was removed and autocomplete is permanently enabled. The legacy saved
-field is normalized to `true` during load, but the trigger path itself does not
-consult settings; only the heading and inline role switches can suppress their
-respective non-block suggestions.
+Autocomplete could be toggled off until 2.14.1, which removed the toggle and
+normalizes the legacy `autocomplete.enabled` to `true` on load. It is back, as
+**Callout autocomplete** on the settings' Autocomplete and metadata page, under a key of its own
+(`suggestions.callouts`, see [04-data-model.md](04-data-model.md)) that the
+released builds carry through instead of resetting. The heading and inline
+role switches still suppress their own non-block suggestions.
+
+While `suggestions.callouts` is off, `onTrigger` returns null, except on the
+`[!` a command asked about: **Insert empty callout** and **Wrap in callout**
+call `triggerNow(editor, file, true)`, which remembers that token's line and
+`[!` (`askedAt`); the dropdown keeps opening there as the type is typed and
+nowhere else, and the mark is dropped the first time a trigger is read
+anywhere else. The `|` pick's own `triggerNow` (for the metadata dropdown) does
+not pass the flag.
+
+`suggestions.themeCallouts` off takes `source: "theme"` rows out of the rows
+only: the exact-match check that decides on **Create "…"** still reads the full
+list, so typing a hidden theme callout's whole id never offers to create it.
 
 ### Trigger classification
 
@@ -534,12 +557,28 @@ this one past the first `|` and up to the `]` - so Obsidian's manager, which
 asks every suggest in order, only ever finds one. Both are skipped by
 `LinkSuggestDecorator`.
 
-What it offers and what each pick writes is pure
+It opens only while `suggestions.metadata` is on (Settings → Editor →
+Metadata → Metadata autocomplete), whether or not the `[!` dropdown is. A
+**Use "…"** row with rows above it gets a thin line of its own above it
+(`cs-meta-suggestion-separator`, a sibling like the headings, so the arrow
+keys pass it by): it belongs to no group, and under a theme's words it read as
+the theme's last word. What it offers and what each pick writes is pure
 ([`metadataSuggestions.ts`](../../src/editor/metadataSuggestions.ts)):
 
+- **Sources** - each `MetadataWordSource` carries an `origin`: `theme` and
+  `snippet` from `ThemeMetadataCatalog`, `user` for the user's own words
+  (`suggestions.metadataWords`, built by `ownWordsSource` in the suggest, placed
+  first, every word `anywhere` with no guards, drawn with a `user` icon instead
+  of the brush). With `suggestions.themeMetadata` off the theme's source is
+  left out of `sources`, but the full catalog goes in as `styling`, which is
+  what a colour row's **Your theme also styles this word** reads - that stays
+  true whether or not the theme's words are offered. User words never count as
+  styling. A word in two sources is listed once, under the first.
+
 - **Colours** - saved palettes, Obsidian's and the extras together, filtered on
-  the word, the translated name and the aliases. None for a theme-owned
-  callout.
+  the word, the translated name and the aliases. None for the heading or inline
+  form of a theme-owned type (drawn as plain text); a block callout the theme
+  draws gets them, as the stylesheet repaints it.
 - **Order**: each group (the colours, then each source's words) is sorted on
   its own - a prefix match before a match inside the word, then A→Z by the word
   written (`textComparator` from `utils/sorting.ts`, built once per call since
@@ -713,6 +752,70 @@ and switching themes can move a row without mutating its definition. With a
 blank query, an empty visible bucket gets a source-specific explanation; once a
 query is present, every empty result uses the ordinary no-match message.
 
+The source is chosen from a funnel icon at the end of the search row
+(`quickInsertToolbar.ts`), not from a field: an icon-only `SelectDropdown`
+(`{ icon: "filter" }`) whose button also wears `clickable-icon`, so it is
+Obsidian's flat icon button like the funnel beside Find callouts' type field.
+The button takes `is-active` (lit with `--icon-color-active`) while the source
+is anything but `all`; `syncQuickInsertThemeOption` and the dropdown's
+`onChange` both set it.
+
+### Quick Insert draws a page at a time
+
+A vault with hundreds of callouts froze the window when it rendered and drew
+every row at once, then again on every keystroke and every change signal. The
+window now bounds both costs by what is on screen:
+
+- **Rows.** `renderList` filters and sorts the whole list into `visible`, but
+  `drawRows` draws only the first `PAGE_SIZE` (30) rows and ends the list in a
+  `LOAD_MORE_SENTINEL` marker. `LoadOnScroll` (`ui/loadOnScroll.ts`, watching
+  `contentEl`, the window's one scroller) draws the next page as the marker
+  comes within a screen; ArrowDown past the last drawn row does the same.
+  Appending a page keeps the rows already there. A new query or source calls
+  `restartList`, which goes back to the first page and the top of the list.
+  Where the window cannot watch the marker (a test's stand-in; never Obsidian)
+  the whole list is drawn, since no second page could be reached.
+- **Previews.** `QuickInsertPreviews.ensure(defs, matchedId)` renders just the
+  rows it is given, as one `MarkdownRenderer.render` batch, and caches each by
+  id **and spelling** (`previewKey`: the bare id for the primary, `id\nalias`
+  for an alias), because the same callout drawn as `abstract` and as `tldr` is
+  two different lines. A row with no preview yet shows the title it will write
+  (`.cs-qi-pending`); when a batch lands, `onLanded` runs `fillPreviews`, which
+  swaps the preview into the waiting rows in place, so scroll position and the
+  highlight survive.
+- **Spelling.** `matchedIdFor(def)` is `matchedCalloutId(def, query)` with the
+  search trimmed and lowercased as the list reads it. A row is drawn with it
+  (`previewMarkdown(def, matchedId)`, the Insert button's label) and inserts
+  with it (`wrapSelectionInCallout(editor, { def, matchedId })`), by click,
+  Enter or the button, so what the row shows is the line that lands. A changed
+  search redraws every row, which is what keeps the recomputed value in step
+  with what was drawn. A stale preview is only ever reused for the *same*
+  spelling: an `abstract` preview must not stand in for a `tldr` row while its
+  render is in flight.
+- **Changes.** The registry, `css-change` and the icon cache all report into
+  `queueRefresh`, which folds the signals of one change (one edit raises
+  several) into a single microtask. `refresh` calls `previews.invalidate()`,
+  which marks every cached preview stale without rendering anything, and
+  redraws the rows drawn so far; only those are rendered again, and a stale
+  preview stands in until its replacement lands. A cached preview is also
+  re-rendered when its markdown differs from the definition's (a rename), even
+  without an invalidation.
+- **Painting.** Paging alone did not stop the window going blank while it
+  scrolled (measured in a real Obsidian 1.14.5 with 1,500 rows, real wheel
+  gestures over CDP: 1-8% of the list drawn mid-scroll, back to ~75% when the
+  scroll stopped). Obsidian's dark theme puts `mix-blend-mode: lighten` on every
+  `.callout`, and a blend reads what is behind it: with that being the scrolling
+  window, the browser cannot raster a row's tiles on their own and falls behind
+  a fast scroll. `.cs-qi-row` is therefore `isolation: isolate` over the
+  window's own surface (`--cs-surface`, not `--background-primary`, which differs
+  on a phone in dark mode). The blend then runs against the same colour it
+  would have met anyway, so the rows are pixel-identical (at most 9/255 in one
+  edge strip) and 56-74% stays drawn throughout the scroll. Neither
+  `mix-blend-mode: normal` (changes how dark accents are lifted) nor
+  `content-visibility: auto` (rows are 51 or 85px tall, so the scroll position
+  jumped) was kept. The My callout types list never had the problem because its
+  rows are not rendered callouts.
+
 ## `CustomCommandManager` - one idempotent sweep
 
 [`src/editor/CustomCommandManager.ts`](../../src/editor/CustomCommandManager.ts)
@@ -854,12 +957,13 @@ that only make sense for some roles.
   callout `a b` edits that definition. A genuinely unknown id merely borrows
   the fallback's *appearance*, not its identity, so the same configured action
   instead opens a new editor seeded with the token's exact normalized id.
-- **Block-role `foldDefaults`** lists all three fold states - closed / open /
-  non-collapsible - with Obsidian's ✓ (`setChecked`) on the callout's current
-  one, as Obsidian offers a one-of-several choice in its own menus (the sort
-  menu, the tab list). Choosing another rewrites the header's fold mark in
-  place; choosing the current one does nothing. (Until 2026-10-23 it offered
-  only the other two, so the menu never said which state the callout was in.)
+- **Block-role `foldDefaults`** offers the fold states the callout is *not* in -
+  two of closed / open / non-collapsible - and no ✓: "set it to what it
+  already is" would do nothing, so that row is left out
+  (`buildRegularFoldDefaults` skips the option whose mark equals the header's
+  current mark). Choosing one rewrites the header's fold mark in place. (A
+  2026-10-23 experiment listed all three with Obsidian's `setChecked` ✓; it was
+  reverted on 2026-10-27.)
 - **Heading-role section operations** (`cutSection`/`copySection`/`deleteSection`)
   compute the section range via `getHeadingSectionRange` in
   [`sectionOps.ts`](../../src/editor/contextmenu/sectionOps.ts): the heading line

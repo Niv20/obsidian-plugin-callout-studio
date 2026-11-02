@@ -11,7 +11,7 @@ to stop using the plugin's heading and inline formats. Choose **Review
 conversion** to close settings and open the review directly in the right
 sidebar; this does not edit notes. The question-mark icon at the top of the
 sidebar opens **About conversion**, with a single **Before**/**After**
-example table and backup advice. This tab appears when you open the review,
+example table and a highlighted backup warning. This tab appears when you open the review,
 rather than at startup. If it was left open in an earlier session, Callout
 Studio closes it on the next launch; use **Review conversion** to open a new review.
 
@@ -37,14 +37,27 @@ reset settings, remove callout definitions, or uninstall Callout Studio. It
 removes the plugin's additional syntax; other Obsidian-specific features in
 your vault may remain.
 
-### What is left for review
+### What is not converted
 
 Code blocks, inline code, frontmatter, comments, math, raw HTML, and callout-like
-text inside link syntax are protected. If removing a token would expose a raw
-HTML block, that occurrence stays unchanged. Incomplete or unsupported nested
-inline syntax is also left unchanged; for example, `[!note]{unfinished` has no
-closing brace, and `[!note]{outer [!tip]{inner}}` nests one payload inside
-another. The converter cannot safely infer the intended text in those cases.
+text inside link syntax are protected: they stay exactly as written.
+
+The converter only handles inline callouts that are complete and stand on their
+own. These stay exactly as written, and the review neither lists them nor
+mentions them:
+
+- An inline callout whose `{` is never closed on its line, such as
+  `[!note]{unfinished`.
+- An inline callout with another inline callout inside its `{…}`, such as
+  `[!note]{outer [!tip]{inner}}`. Nesting is not supported, so both the outer
+  and the inner one stay.
+- A `[!type]` broken by another bracket inside it, such as `[!broken[!inner]]`.
+- A line where removing the token would start a raw HTML block. The whole line
+  stays.
+
+Other complete callouts on the same line are still converted. If your notes
+contain any of the cases above, simplify them by hand before converting, or
+edit them after.
 
 A heading needs a space after its `#` marks; `#Title` is not repaired. Literal
 `+` and `-` in heading text stay. Braces immediately after a leading heading
@@ -56,9 +69,24 @@ type count as heading text, not as an inline payload.
 
 *Review each proposed replacement before converting. The selected-change summary stays visible while the file groups scroll below it.*
 
+The sidebar starts with **Convert selected**, and at the end of the same row a
+small **?** button that opens the explanation of what converting does. Under
+it, beside the select-all box, the selection takes two lines: how many
+replacements are selected, such as **74 of 74 replacements selected**, and under
+it, only while there are some, how many heading links will be updated.
+
+The boxes animate when they change: an empty box fills and its tick is drawn,
+and a ticked box has its tick taken back and empties. The select-all box shows a
+minus while only some of the changes are chosen, and the minus grows from the
+middle of an empty box, and gives way to the tick when everything is chosen.
+(With the system setting to reduce motion on, they simply change.)
+
 The sidebar groups results by file, as Obsidian's **Search** pane does: the
 note's name with the number of changes at the end, then one box with a row for
-each change. Select a file's name to open its note. Each row shows the format and line
+each change. Select a file's name to open its note. The small triangle before
+the name folds that file's rows away and shows them again (a right-to-left
+interface turns it the other way, so a folded file points left); a file you fold
+stays folded while the review updates. Each row shows the format and line
 number, followed by **Before** and **After** with the original text and proposed
 replacement. Heading rows show the complete heading. Each inline callout gets
 a separate row showing its `[!type]` token and optional `{content}` payload,
@@ -88,8 +116,10 @@ the review is said in orange above them. Switching notes scrolls
 to that file's results.
 
 To change a proposed replacement, click its **After** text or the pencil at the
-end of the row's first line. The pencil fades in when you hover over the row or focus
-its controls, and stays visible on touch devices. Right-clicking the row and
+end of the row's first line. The pencil fades in while the pointer is on the row,
+or while you tab to it, and goes again when the pointer moves on, also from a row
+you have just clicked. It stays visible on touch devices. Clicking a row to open
+its note does not redraw the list, so the pencil under the pointer stays where it is. Right-clicking the row and
 choosing **Custom replacement** opens the same inline editor. The **After**
 text becomes an editable field while **Before** stays visible. All editable
 text is selected so typing replaces it immediately, in a field with a thin ring, as when you rename a file. The row takes a light
@@ -187,6 +217,7 @@ or restores:
 - Customizations to Obsidian's built-in callouts.
 - Global styles, including borders, font scale, shape, spacing, and alignment.
 - Heading and inline callout settings, and the fallback style.
+- The **Autocomplete and metadata** settings, including your own words.
 - Saved color palettes.
 - Right-click menu customization.
 - The order of the icon libraries in the icon picker, and any you hid there.
@@ -194,9 +225,8 @@ or restores:
 
 Callouts supplied by the active theme are not deleted from the theme. They
 remain available while that theme is active. Icon libraries you downloaded stay
-on the device; delete them from **Manage icon libraries** (in the icon picker,
-or under **Callout style** in the settings) if you no longer want them - the
-reset arrow there removes them all at once.
+on the device; delete them from **Manage icon libraries** (the **Manage libraries** button in the icon
+picker, or **Icon libraries** under **Colors and icons** in the settings) if you no longer want them - the reset arrow there removes them all at once.
 
 Before the reset runs, Callout Studio shows a confirmation. It opens with a
 reminder that everything you built is about to be deleted, then lists, as a
@@ -223,7 +253,7 @@ saving problem first. If the reset is displayed but could not be saved, a
 message says so instead of reporting success.
 
 **There is no undo button.** To bring the previous setup back, open
-[Version history](13-syncing-and-backups.md#version-history) and restore the
+[Restore an earlier version](13-syncing-and-backups.md#version-history) and restore the
 version named *Before Reset everything*, saved just before the reset. A synced vault can send the
 reset to your other devices, and the backups folder lives in the synced plugin
 folder. Export a [complete backup](13-syncing-and-backups.md) and keep it

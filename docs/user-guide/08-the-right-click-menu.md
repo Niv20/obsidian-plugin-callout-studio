@@ -32,20 +32,20 @@ An inline callout keeps the menu simple:
 A block callout offers:
 
 - Copy the callout's Markdown.
-- Change its folding state between open, closed, and non-collapsible. All three states are listed, and a check mark shows the one the callout is in now.
+- Change its folding state between open, closed, and non-collapsible. The menu lists only the two states the callout is not in.
 - Create or edit the callout type.
 - Open the main Callout Studio settings.
 
 ## Customize the menu
 
-Open **Settings → Callout Studio**, then **Customize right-click menu** under **Menus and commands**. The page is laid out like Obsidian's own ribbon settings: for each callout format, a list of the actions its menu shows, in their order, each with its icon. Every change is saved immediately.
+Open **Settings → Callout Studio**, then **Customize right-click menu** under **Editor**. The page is laid out like Obsidian's own ribbon settings: for each callout format, a list of the actions its menu shows, in their order, each with its icon. Every change is saved immediately.
 
 ![The menu customization page, with each format's actions, their remove buttons and drag handles](../../assets/user-guide/context-customization.svg)
 
 - **Reorder** an action by dragging its handle (≡). It works like Obsidian's own lists: the row lifts, and a slot in your accent colour shows where it will land. On a touch screen, press and hold the row first. With the keyboard, focus a row and press **Alt+↑** or **Alt+↓**.
 - **Hide** an action with its **✕**. It moves to the list below, **Hidden from the … menu**, which shows only while a format hides something.
 - **Bring an action back** by clicking it in that list. It returns at the end of the menu.
-- **Reset** with the arrow (↺) in a format's heading. It shows every action of that format again, in the original order. The other formats keep their settings.
+- **Reset** with the arrow (↺) in a format's heading. It shows every action of that format again, in the original order. The other formats keep their settings. The arrow is there only while that format's menu differs from the original, and invisible until then.
 
 **Create or edit callout** is a single action here. At most one of its two
 runtime labels appears in a note: **Edit callout settings** for a saved type or

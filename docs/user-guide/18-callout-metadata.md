@@ -22,7 +22,7 @@ It works the same in all three forms:
 A pink [!mark|pink] inline callout, and one [!mark|pink]{with its own text}.
 ```
 
-The callout takes the whole color: accent, background and gradient. When the color has no gradient, a gradient the callout's type has is cleared, and so is a title sweep. The text takes the color's own text color when it has one; otherwise it keeps your theme's text color. The callout's icon, title and frame stay its own.
+The callout takes the whole color: accent, background and gradient. When the color has no gradient, a gradient the callout's type has is cleared, and so is a title sweep. The text takes the color's own text color when it has one; otherwise it keeps your theme's text color. The callout's icon shape and its title text stay its own. (On a callout your theme draws, see [below](#when-your-theme-draws-the-callout).)
 
 ![A regular Note and a purple Note keep the same type while only the second callout takes the metadata color](../../assets/user-guide/metadata-color-scope.svg)
 
@@ -81,7 +81,7 @@ In the menu that opens after `[!`:
 
 Neither key adds or rewrites the `]`, so typing it yourself still works as usual.
 
-The metadata menu lists the colors (your saved palettes, Obsidian's colors and the extra presets), then the words your theme and your enabled CSS snippets react to. Each group is in alphabetical order. Each color shows its word beside the same circles as the color menu in the callout editor: three when the palette has a gradient. When the menu has words from more than one place, each group has a heading, such as **Colors** or the theme's name, that stays on top while you scroll. A thin line separates the groups.
+The metadata menu lists the colors (your saved palettes, Obsidian's colors and the extra presets), then [your own words](#your-own-words), then the words your theme and your enabled CSS snippets react to. Each group is in alphabetical order. Each color shows its word beside the same circles as the color menu in the callout editor: three when the palette has a gradient. When the menu has words from more than one place, each group has a heading, such as **Colors** or the theme's name, that stays on top while you scroll. A thin line separates the groups.
 
 Type to filter it. Words that start with what you typed come first. You don't need the dashes: `comic red` and `comicred` both find `comic-red`, and picking it writes `comic-red`.
 
@@ -90,11 +90,26 @@ Anything a word needs in order to work, such as spaces around it, appears on a l
 - **Tab** writes the word and stays inside the brackets. Type a space or a `|` to add another word.
 - **Enter** writes the word and finishes the callout, just like Enter in the first menu.
 - **Done**, at the top after a space or a pipe that follows a word, finishes without adding a word.
-- **Use "…"** keeps a word that isn't on the list. It is always at the bottom of the menu.
+- **Use "…"** keeps a word that isn't on the list. It is always at the bottom of the menu, below a line of its own.
 
 After the first color, the colors move below the theme's words, and the line at the bottom says **Replaces …** for each one. Picking one swaps the color instead of adding a second.
 
 ![The metadata autocomplete lists the Guide theme word wide above matching colors while pink is already present, and says that brown replaces pink](../../assets/user-guide/metadata-menu.svg)
+
+## Metadata settings
+
+Open **Settings → Callout Studio**, then **Autocomplete and metadata** under **Editor**. The page has two boxes: **Callouts** holds the settings for the menu after `[!`, and **Metadata** the ones below.
+
+- **Metadata colors** turns the colors in this chapter on or off. While it is off, `[!note|red]` is an ordinary note callout again and the menu offers no colors. Words in your notes are not changed, so turning it back on brings the colors back.
+- **Metadata autocomplete** turns the menu after `|` on or off. It doesn't depend on **Callout autocomplete**, the switch for the menu after `[!` (see [Create your first callout](02-create-your-first-callout.md)): each menu can be on while the other is off.
+- **Include your theme's words** shows the words your theme reacts to in that menu. It appears only while your theme reacts to some, or while it is off. Words from your own CSS snippets always show. A color still says **Your theme also styles this word** when that is true.
+- **Your words**: see below.
+
+### Your own words
+
+Add words you want the menu to offer, such as the ones another plugin reads (Callout Metadata's `50` or `center`) or ones your own CSS uses in a way Callout Studio can't find. Type a word and press **Enter**. A space or a `|` also ends a word, so you can type or paste several at once. Each word appears as a pill; click its **×**, or select it and press **Backspace**, to remove it.
+
+Your words come first among the words in the menu, under the heading **Your words**, and can go anywhere in the metadata. A word that is also a color shows once, as the color. Adding a word only adds it to the menu: it doesn't style anything by itself.
 
 ## Two colors in one callout
 
@@ -109,7 +124,11 @@ Some themes react to color words themselves. Dune reads `red`, `blue`, `green` a
 
 A word that one of your own CSS snippets styles is left to that snippet. Callout Studio doesn't color it, and the menu shows it as the snippet's word, not as a color. This includes a saved palette's word.
 
-Callouts that your theme controls (see [Theme integration](17-theme-integration.md)) don't take Callout Studio's colors. The menu only offers your theme's own words for them.
+## When your theme draws the callout
+
+Some themes draw Obsidian's built-in callouts themselves (Lumines draws all thirteen), and Callout Studio leaves their look alone (see [Theme integration](17-theme-integration.md)). A color you write after `|` is different: you asked for it on that one callout, so a block callout like `[!note|red]` takes it anyway. Besides the accent and the background, Callout Studio then also colors the frame, the title and the icon, which such a theme paints from its own colors. Every other `note` keeps the theme's look.
+
+This is the best Callout Studio can do from outside the theme. A theme that draws a callout in a way of its own, such as a stripe made with a shadow, may keep some of its own color. Heading and inline callouts of a type your theme draws aren't available, because they stay plain text there, so the menu offers no colors for them. The exported CSS snippet leaves this part out, because it doesn't know your theme.
 
 ## Renaming or deleting a palette
 
@@ -129,4 +148,4 @@ Deleting a palette never changes your notes. Callouts that name it go back to th
 Metadata colors work in Reading view, Live Preview and PDF exports. The CSS snippet you can export (see [Import, export & sharing](10-import-export-and-sharing.md)) includes them for block callouts. They need a recent engine: iOS 16.5 or later on iPhone and iPad, and on a computer an up-to-date Obsidian installer. Where it is older, callouts simply keep their own colors.
 
 ---
-**Next:** [Back to the guide overview](README.md)
+**Next:** [The brush mascot](19-the-brush-mascot.md)

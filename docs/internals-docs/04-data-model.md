@@ -217,11 +217,12 @@ interface PluginSettings {
   globalStyle: GlobalStyleSettings;
   contextMenu: ContextMenuSettings;
   autocomplete: AutocompleteSettings;    // compatibility marker; enabled is always true
+  suggestions: SuggestionSettings;       // Settings → Editor (see below)
   iconSources: IconSourceSettings;
   iconLibraries: IconLibrarySettings;    // { order: string[]; hidden: string[] }
   headingCallouts: HeadingCalloutSettings;
   inlineCallouts: InlineCalloutSettings;
-  metadataColors: RoleToggleSettings;   // { enabled: true }; no UI
+  metadataColors: RoleToggleSettings;   // { enabled: true }; Settings → Editor → Autocomplete and metadata
   welcomeSeen?: boolean;
   fallbackCalloutId: string;
   language: string;                  // "auto" or a locale code
@@ -259,9 +260,9 @@ keep each other's library order.
 `metadataColors.enabled` switches off the colours a callout takes from its own
 metadata (`[!mark|pink]`) - the stylesheet block, the colour rows in the `|`
 dropdown and the PDF painters' metadata overlay, all through
-`CSSInjector.metadataColorEntries` (`activeMetadataColorEntries` underneath). It
-has no settings UI by decision: the feature is always on, and the switch exists
-to be flipped by hand in `data.json`, the way `inlineCallouts.allowContent` is.
+`CSSInjector.metadataColorEntries` (`activeMetadataColorEntries` underneath). On
+by default; until the Autocomplete and metadata page it had no settings UI and could only be
+flipped by hand in `data.json`. The page's **Metadata colors** switch writes it.
 **Reset all** turns it back on. Builds from 2.13 on carry it through untouched
 as an unknown settings key (`foreignFields.ts`); 2.12 and older drop it when they
 save, which leaves the default - on.
@@ -280,6 +281,30 @@ A saved palette's metadata word is not stored: it is derived from the name
 and exports have an explicit upgrade target, but it is no longer mutable
 application state. The merge always produces `true`, the editor does not gate
 autocomplete on it, and a saved legacy `false` schedules a migration write.
+
+`suggestions` is what the Autocomplete and metadata page edits. The two dropdowns are switched apart:
+
+```ts
+interface SuggestionSettings {
+  callouts: boolean;        // the [! dropdown; off, only Insert/Wrap open it
+  themeCallouts: boolean;   // the theme's own rows in the [! dropdown
+  metadata: boolean;        // the | dropdown
+  themeMetadata: boolean;   // the theme's words in it (snippets' always show)
+  metadataWords: string[];  // the user's own words, offered first after |
+}
+```
+
+The real off switch lives here and not in `autocomplete`, for the same reason
+`iconLibraries` is a key of its own: 2.14.1-2.18 rebuild `autocomplete` as
+`{ enabled: true }` on load, so a new field inside it would be dropped by their
+next save, and a saved `false` there would be flipped back with the "always
+enabled" notice. A top-level key they do not know is carried through
+untouched (`foreignFields.ts`). `metadataWords` is cleaned on load by
+`utils/metadataWordInput.ts` exactly as typing cleans a word: split on
+whitespace, `|` and commas, brackets removed, no duplicates, at most
+`MAX_METADATA_WORDS` of at most `MAX_METADATA_WORD_LENGTH` characters. An
+import replaces the whole group only when the file carries it
+(`backupImport.ts`), so an older export leaves the words alone.
 
 Discovery has no saved preferences or device index. Manual results are ordinary
 fallback definitions in `data.json` (data format 5). The retired automatic-discovery,
