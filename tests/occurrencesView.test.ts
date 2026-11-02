@@ -123,10 +123,10 @@ function action(view: CalloutOccurrencesView, name: string): HTMLButtonElement {
 	return button;
 }
 
-/** The format filter: the button in the view's nav header (finding S10-05). */
+/** The format filter: the small icon button at the end of the type field's row (finding S10-05). */
 function formatFilter(view: CalloutOccurrencesView): FakeElement {
-	const button = (view.containerEl as unknown as FakeElement).querySelector(".nav-header .nav-action-button");
-	assert.ok(button, "the nav header has the format filter");
+	const button = (view.contentEl as unknown as FakeElement).querySelector(".search-row .cs-sidebar-icon-button");
+	assert.ok(button, "the type field's row has the format filter");
 	return button;
 }
 
@@ -190,10 +190,11 @@ describe("callout occurrence sidebar", () => {
 		const second = openFormatMenu(h.view);
 		assert.equal(first.shown, false, "a second press replaces the first menu");
 		h.view.refreshLabels();
-		assert.equal(formatFilter(h.view).getAttribute("aria-label"), t("usage.filterFormat"), "the nav header survives a rebuild");
+		assert.equal(formatFilter(h.view).getAttribute("aria-label"), t("usage.filterFormat"), "the filter button is drawn again with its label");
+		assert.equal((h.view.containerEl as unknown as FakeElement).querySelector(".nav-header"), null, "no row of its own for the icon");
 		await h.view.onClose();
 		assert.equal(second.shown, false, "closing the view closes the menu");
-		assert.equal((h.view.containerEl as unknown as FakeElement).querySelector(".nav-header"), null, "and takes the nav header with it");
+		assert.equal((h.view.contentEl as unknown as FakeElement).querySelector(".cs-sidebar-icon-button"), null, "and takes the filter button with it");
 		assert.equal(h.keymap.scopes.length, 1);
 		h.index.dispose();
 	});

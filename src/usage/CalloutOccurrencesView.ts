@@ -13,8 +13,8 @@ import { ALL_TYPES_ID, OccurrenceTypeChoices, occurrencePickerChoices } from "./
 import { OccurrenceResults } from "./occurrenceResults";
 import { navigateToCalloutOccurrence } from "./navigation";
 import { SidebarCursorSync } from "../ui/sidebarCursorSync";
+import { SidebarParking } from "../ui/sidebarParking";
 import { createOccurrencesFrame, OCCURRENCE_ROLES, openFormatMenu, type OccurrencesFrame } from "./occurrencesViewFrame";
-import { addSidebarNavButton, createSidebarNavHeader } from "../ui/sidebarFrame";
 import { LoadOnScroll } from "../ui/loadOnScroll";
 
 export const CALLOUT_OCCURRENCES_VIEW = "callout-studio-occurrences";
@@ -45,11 +45,6 @@ export class CalloutOccurrencesView extends ItemView {
 	private busyStatusGeneration = 0;
 	private busyStatusKind: "loading" | "stale" | null = null;
 	private frame: OccurrencesFrame | null = null;
-	/**
-	 * Obsidian's nav header above the content, with its one button, the format
-	 * filter. Made once per open and kept through a redraw of the content.
-	 */
-	private nav: { header: HTMLElement; filter: HTMLElement } | null = null;
 	/** The format menu while it is open, so closing the view closes it too. */
 	private formatMenu: Menu | null = null;
 	/** Draws the next 100 results as the list's end scrolls into reach (finding S10-07). */
@@ -57,6 +52,8 @@ export class CalloutOccurrencesView extends ItemView {
 		this.limit += PAGE_SIZE;
 		this.render();
 	});
+	/** Keeps the file groups far from the screen from being drawn, so a long list does not slow the editor. */
+	private readonly parking = new SidebarParking(() => this.frame?.scroll ?? null);
 	private disposeMenuHost?: () => void;
 	private picker: CalloutCombobox | null = null;
 	private lastIndexState = "";
@@ -95,7 +92,7 @@ export class CalloutOccurrencesView extends ItemView {
 	}
 	refreshLabels(): void {
 		if (!this.opened) return;
-		this.nav?.filter.setAttribute("aria-label", t("usage.filterFormat"));
+		// A new frame is drawn in the new language, the filter button's label included.
 		this.clearFrame();
 		this.render();
 	}
@@ -125,7 +122,6 @@ export class CalloutOccurrencesView extends ItemView {
 		this.typeChoices.invalidate();
 		this.lastChoicesRevision = -1;
 		this.contentEl.addClass("cs-occurrences-view");
-		this.ensureNav();
 		if (!this.handlersRegistered) {
 			this.handlersRegistered = true;
 			this.registerDomEvent(this.contentEl, "click", (event) => this.onClick(event));
@@ -154,42 +150,31 @@ export class CalloutOccurrencesView extends ItemView {
 		this.formatMenu?.hide();
 		this.formatMenu = null;
 		this.loadOnScroll.stop();
-		this.nav?.header.remove();
-		this.nav = null;
 		this.cachedQuery = null;
 		return Promise.resolve();
 	}
 
 	/**
-	 * Put Obsidian's nav header above the content, with the format filter: a
-	 * button that opens the format menu and stays lit while a format is
-	 * chosen (finding S10-05).
+	 * The format filter button was pressed: open the format menu under it
+	 * (finding S10-05). The button stays lit while a format is chosen
+	 * ({@link paintFilter}).
 	 */
-	private ensureNav(): void {
-		if (this.nav) return;
-		const { header, buttons } = createSidebarNavHeader(this.containerEl);
-		const filter = addSidebarNavButton(buttons, {
-			icon: "filter",
-			label: t("usage.filterFormat"),
-			onPress: (button) => {
-				this.formatMenu?.hide();
-				this.formatMenu = openFormatMenu(button, this.role, (role) => {
-					if (role === this.role) return;
-					this.role = role;
-					this.resetResults();
-					this.render();
-				});
-			},
+	private openFormats(button: HTMLElement): void {
+		this.formatMenu?.hide();
+		this.formatMenu = openFormatMenu(button, this.role, (role) => {
+			if (role === this.role) return;
+			this.role = role;
+			this.resetResults();
+			this.render();
 		});
-		this.nav = { header, filter };
-		this.paintFilter();
 	}
 
-	/** Light the filter button while one format is chosen, as Obsidian lights an active nav button. */
+	/** Light the filter button while one format is chosen, as Obsidian lights an active icon button. */
 	private paintFilter(): void {
-		this.nav?.filter.toggleClass("is-active", this.role !== undefined);
+		this.frame?.filter.toggleClass("is-active", this.role !== undefined);
 	}
 	private clearFrame(): void {
+		this.parking.stop();
 		this.picker?.destroy();
 		this.picker = null;
 		this.disposeMenuHost?.(); this.disposeMenuHost = undefined;
@@ -220,6 +205,8 @@ export class CalloutOccurrencesView extends ItemView {
 		this.limit = PAGE_SIZE;
 		this.navigationGeneration++;
 		this.resultCards.select(null); this.cursor.reset();
+		// A new search starts with every note's results showing.
+		this.resultCards.fold.clear();
 		// render() preserves the current scroll offset after a picker commit.
 		this.activeFile.cancelReveal();
 		this.app.workspace.requestSaveLayout();
@@ -295,7 +282,7 @@ export class CalloutOccurrencesView extends ItemView {
 	private ensureFrame(): OccurrencesFrame {
 		if (this.frame) return this.frame;
 		this.disposeMenuHost = registerMenuScopeHost(this.contentEl, this.app);
-		const frame = this.frame = createOccurrencesFrame(this.contentEl);
+		const frame = this.frame = createOccurrencesFrame(this.contentEl, (button) => this.openFormats(button));
 		this.picker = new CalloutCombobox(frame.pickerHost, {
 			registry: this.registry, choices: () => occurrencePickerChoices(this.typeChoices, this.selectedType), value: this.selectedType,
 			ariaLabel: t("vaultStats.columnType"), labelOf: (def) => def.id === ALL_TYPES_ID ? t("usage.allTypes") : def.id,
@@ -351,9 +338,11 @@ export class CalloutOccurrencesView extends ItemView {
 		}
 		frame.summary.setText(complete || this.results.length > 0
 			? t("usage.summary", { count: this.results.length, files: this.cachedQuery.result.fileCount }) : "");
-		this.resultCards.render(frame.results, this.results, this.limit, complete,
+		const drawn = this.resultCards.render(frame.results, this.results, this.limit, complete,
 			(path, section) => this.activeFile.addSection(path, section), () => this.activeFile.clearSections());
 		frame.scroll.scrollTop = scrollTop;
+		// New groups to keep an eye on: the far ones are parked, so a long list does not slow the editor.
+		if (drawn) this.parking.watch(frame.results);
 		this.loadOnScroll.watch(this.resultCards.sentinel);
 		this.activeFile.sync(this.results, this.limit, index.status, this.failed);
 		// New or moved cards: the caret may sit in a different one now.

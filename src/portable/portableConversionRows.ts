@@ -1,5 +1,6 @@
 import { setIcon } from "obsidian";
 import { t } from "../i18n";
+import { SidebarFold } from "../ui/sidebarFold";
 import { createSidebarFileGroup, renderSidebarLocation } from "../ui/sidebarResults";
 import type { PortableCalloutConversionPlan } from "../utils/portableCalloutVault";
 import type { PortableCalloutConversionChange, PortableCalloutLinkChange } from "../utils/portableCalloutPlan";
@@ -26,7 +27,22 @@ export function portableConversionRows(plan?: PortableCalloutConversionPlan): Po
 }
 
 /**
+ * Which boxes each list showed ticked when it was last drawn, by change id.
+ * The rows are drawn again from nothing on every change, so a box that is new
+ * has no memory of how it was a moment ago; this does. (What was *drawn*, not
+ * what the page says now: a click has already turned the old box over before
+ * this runs.)
+ */
+const tickedWhenDrawn = new WeakMap<HTMLElement, Map<string, boolean>>();
+
+/**
  * Draw the first `limit` rows, grouped by note.
+ *
+ * @param fold Which notes' groups are folded away; the view keeps one across
+ *   its redraws, and each group's fold button writes to it.
+ * A box whose answer changed since the last draw is drawn as it was and then
+ * turned over once the browser has seen it that way, so that styles.css can
+ * animate the tick being drawn or taken back.
  *
  * @returns The empty marker the list ends in while more rows are left, for
  *   the view's `LoadOnScroll` to watch (finding S10-07); null when every row
@@ -39,21 +55,26 @@ export function renderPortableConversionRows(
 	onSection: (path: string, section: HTMLElement) => void,
 	editingId?: string,
 	resetEnabled = false,
+	fold: SidebarFold = new SidebarFold(),
 ): HTMLElement | null {
+	const before = tickedWhenDrawn.get(root);
+	const nowTicked = new Map<string, boolean>();
+	tickedWhenDrawn.set(root, nowTicked);
 	root.empty();
 	if (!plan) return null;
-	if (plan.skipped) root.createEl("p", { text: t("portable.skipped", { count: plan.skipped }), cls: "cs-portable-change-note" });
 	const selected = new Set(plan.selectedIds);
 	const blocked = new Map(plan.blockedChanges.map(entry => [entry.id, entry.reason]));
 	const counts = new Map<string, number>();
 	for (const row of rows) counts.set(row.path, (counts.get(row.path) ?? 0) + 1);
 	let path: string | undefined;
 	let box: HTMLElement | undefined;
+	/** The turns-over to do once every box is on the page. */
+	const turnOvers: (() => void)[] = [];
 	for (const row of rows.slice(0, limit)) {
 		const { change, linkOnly } = row;
 		if (!box || path !== row.path) {
 			path = row.path;
-			const group = createSidebarFileGroup(root, { path, count: counts.get(path)!, cls: "cs-portable-file" });
+			const group = createSidebarFileGroup(root, { path, count: counts.get(path)!, cls: "cs-portable-file", fold });
 			box = group.matches;
 			onSection(path, group.section);
 		}
@@ -70,7 +91,11 @@ export function renderPortableConversionRows(
 				"data-change-id": change.id,
 				"aria-label": t("portable.selectChange", { path: change.path, line: change.line }),
 			} });
-			checkbox.checked = selected.has(change.id);
+			const ticked = selected.has(change.id);
+			const was = before?.get(change.id);
+			nowTicked.set(change.id, ticked);
+			checkbox.checked = was ?? ticked;
+			if (was !== undefined && was !== ticked) turnOvers.push(() => { checkbox.checked = ticked; });
 			checkbox.disabled = disabled;
 		}
 		const body = card.createDiv({ cls: "cs-sidebar-result cs-portable-change-body", attr: {
@@ -106,6 +131,10 @@ export function renderPortableConversionRows(
 		}
 		if (linkOnly) source.setAttribute("aria-description", t("portable.relatedLinksHint"));
 	}
+	// Reading a measurement makes the browser work out how the boxes look as drawn
+	// (once for all of them); turning them over after that starts their transitions.
+	if (turnOvers.length > 0) void root.offsetWidth;
+	for (const turnOver of turnOvers) turnOver();
 	if (rows.length <= limit) return null;
 	if (canLoadOnScroll(root.ownerDocument)) {
 		return root.createDiv({ cls: LOAD_MORE_SENTINEL, attr: { "aria-hidden": "true" } });

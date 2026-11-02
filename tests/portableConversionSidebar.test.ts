@@ -4,6 +4,7 @@ import { setTimeout as wait } from "node:timers/promises";
 import { t } from "../src/i18n";
 import { fingerprintCalloutContent } from "../src/usage/contentFingerprint";
 import { resolvePortableSourcePosition } from "../src/portable/portableConversionNavigation";
+import { splitSelectionSummary } from "../src/portable/portableConversionFrame";
 import { portableConversionViewHarness as harness } from "./support/portableConversionViewHarness";
 import { deferred } from "./support/portableVaultHarness";
 import { notifySidebarEditorSelection } from "../src/ui/sidebarSelection";
@@ -205,18 +206,53 @@ describe("conversion file groups and cards", () => {
 		} finally { await h.destroy(); }
 	});
 	it("leaves heading links out of the summary when there are none to update", async () => {
-		const summary = (h: ReturnType<typeof harness>): string => h.root.querySelector(".cs-portable-summary-text")!.textContent;
+		/** The selection's two lines, one under the other: the replacements, then the heading links. */
+		const lines = (h: ReturnType<typeof harness>) => h.root.querySelectorAll(".cs-portable-summary-line");
 		const plain = harness({ "a.md": "[!note]\n[!tip]" });
 		try {
 			await plain.view.onOpen();
-			assert.equal(summary(plain), t("portable.selectionSummaryNoLinks", { selected: 2, total: 2 }));
-			assert.ok(!summary(plain).includes("0"));
+			assert.equal(lines(plain)[0]!.textContent, t("portable.selectionSummaryNoLinks", { selected: 2, total: 2 }));
+			assert.ok(!lines(plain)[0]!.textContent.includes("0"));
+			assert.equal((lines(plain)[1] as unknown as HTMLElement).hidden, true, "no second line to say 0");
 		} finally { await plain.destroy(); }
 		const linked = harness({ "a.md": "# Report [!note]", "b.md": "[[a#Report note]]" });
 		try {
 			await linked.view.onOpen();
-			assert.equal(summary(linked), t("portable.selectionSummary", { selected: 1, total: 1, links: 1 }));
+			const [replacements, links] = splitSelectionSummary(t("portable.selectionSummary", { selected: 1, total: 1, links: 1 }));
+			assert.deepEqual(Array.from(lines(linked), (line) => line.textContent), [replacements, links]);
+			assert.equal((lines(linked)[1] as unknown as HTMLElement).hidden, false);
 		} finally { await linked.destroy(); }
+	});
+	it("marks a clicked row where it stands, without drawing the rows again, so the icons under the pointer stay put", async () => {
+		const h = harness({ "a.md": "[!note]\n[!tip]" });
+		try {
+			await h.view.onOpen();
+			const rows = Array.from(h.root.querySelectorAll(".cs-portable-row"));
+			const icons = Array.from(h.root.querySelectorAll(".cs-portable-card-actions"));
+			assert.equal(rows.length, 2);
+			h.root.fire("click", { target: h.root.querySelectorAll('button[data-action="result"]')[0] });
+			await h.settle();
+			// The same elements, not new ones with the same look: a new pair of icons would vanish and fade in again.
+			assert.deepEqual(Array.from(h.root.querySelectorAll(".cs-portable-row"), (row, i) => row === rows[i]), [true, true]);
+			assert.deepEqual(Array.from(h.root.querySelectorAll(".cs-portable-card-actions"), (el, i) => el === icons[i]), [true, true]);
+			assert.deepEqual(rows.map((row) => row.hasClass("is-active")), [true, false]);
+		} finally { await h.destroy(); }
+	});
+	it("keeps a folded note folded when the rows are drawn again, until it is unfolded", async () => {
+		const h = harness({ "a.md": "[!note]\n[!tip]", "b.md": "[!info]" });
+		try {
+			await h.view.onOpen();
+			const sections = (): boolean[] => Array.from(h.root.querySelectorAll(".cs-sidebar-file"), (section) => section.hasClass("is-collapsed"));
+			assert.deepEqual(sections(), [false, false]);
+			h.root.querySelectorAll(".cs-sidebar-fold")[0]!.fire("click");
+			assert.deepEqual(sections(), [true, false], "folded in place");
+			// A choice redraws every row, which used to put every note back to showing.
+			h.choose(0, false);
+			assert.deepEqual(sections(), [true, false], "still folded after the redraw");
+			h.root.querySelectorAll(".cs-sidebar-fold")[0]!.fire("click");
+			h.choose(0, true);
+			assert.deepEqual(sections(), [false, false]);
+		} finally { await h.destroy(); }
 	});
 	it("ignores the caret while a replacement draft holds the highlight", async () => {
 		const h = harness({ "a.md": "[!note]\n[!tip]" });

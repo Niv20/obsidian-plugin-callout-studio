@@ -17,9 +17,9 @@ it("opens conversion help from the sidebar without changing notes or review choi
 		await h.view.onOpen();
 		h.choose(0, false);
 		const choices = h.inputs().map(input => input.checked);
-		// Help is the button in the view's nav header (finding S10-05).
-		const help = (h.view.containerEl as unknown as FakeElement).querySelector(".nav-header .nav-action-button");
-		assert.ok(help, "the nav header has the help button");
+		// Help is the small icon button at the end of the Convert row (finding S10-05).
+		const help = (h.view.contentEl as unknown as FakeElement).querySelector(".cs-portable-convert-row .cs-sidebar-icon-button");
+		assert.ok(help, "the Convert row has the help button");
 		assert.equal(help.getAttribute("aria-label"), t("portable.help"));
 		assert.equal(help.getAttribute("aria-haspopup"), "dialog");
 		help.fire("click");

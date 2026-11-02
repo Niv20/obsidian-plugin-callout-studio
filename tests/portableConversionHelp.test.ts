@@ -47,6 +47,9 @@ describe("portable conversion entry and help", () => {
 			h.modal.onOpen();
 			assert.equal(h.modalEl.querySelector(".modal-title")?.textContent, t("portable.help"));
 			assert.ok(h.contentEl.textContent.includes(t("portable.helpIntro")));
+			// The backup advice is the one line that is emphasised: bold, in the warning colour.
+			const backup = h.contentEl.querySelector("p.mod-warning.cs-portable-backup");
+			assert.equal(backup?.textContent, t("portable.backup"));
 			assert.equal(h.contentEl.querySelectorAll("table").length, 1);
 			assert.equal(h.contentEl.querySelectorAll("h1, h2, h3, h4, h5, h6").length, 0);
 			assert.equal(h.contentEl.querySelectorAll("tbody tr").length, 4);

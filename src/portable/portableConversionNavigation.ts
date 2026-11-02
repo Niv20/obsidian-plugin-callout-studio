@@ -1,6 +1,7 @@
 import type { App, EventRef, MarkdownView, WorkspaceLeaf } from "obsidian";
 import { SidebarActiveFile } from "../ui/sidebarActiveFile";
 import { SidebarCursorSync } from "../ui/sidebarCursorSync";
+import { SidebarFold } from "../ui/sidebarFold";
 import { navigateToSidebarFile, navigateToSidebarResult, type SidebarSourceRange } from "../ui/sidebarNavigation";
 import { revealSidebarCard } from "../ui/sidebarResults";
 import { iterateContentFingerprint } from "../usage/contentFingerprint";
@@ -48,6 +49,8 @@ export async function resolvePortableSourcePosition(
 export class PortableConversionNavigation {
 	private readonly activeFile: SidebarActiveFile;
 	private readonly cursor: SidebarCursorSync;
+	/** Which notes' groups are folded away; kept here so every redraw of the rows draws them folded again. */
+	private readonly fold = new SidebarFold();
 	private rows: PortableConversionRow[] = [];
 	/** Drawn cards only, by note: what the caret can be matched against. */
 	private drawn = new Map<string, PortableConversionRow[]>();
@@ -86,7 +89,7 @@ export class PortableConversionNavigation {
 		if (!this.rows.some(row => row.id === this.current)) this.current = undefined;
 		this.activeFile.clearSections();
 		return renderPortableConversionRows(root, plan, this.rows, limit, disabled, this.current,
-			(path, section) => this.activeFile.addSection(path, section), editingId, resetEnabled);
+			(path, section) => this.activeFile.addSection(path, section), editingId, resetEnabled, this.fold);
 	}
 	sync(ready: boolean, failed: boolean): void {
 		this.ready = ready; this.failed = failed;
@@ -111,7 +114,12 @@ export class PortableConversionNavigation {
 		this.activeFile.openedResult(row.path);
 		this.current = row.id;
 		if (landedIn) landedIn(); else this.cursor.release();
-		this.render();
+		// The clicked row is marked where it stands. Drawing every row again
+		// would build the row under the pointer anew, and its edit and reset
+		// icons, which show while the pointer is on the row, would vanish and
+		// fade in again. Only when the list was drawn again meanwhile and the
+		// row is no longer on the page is it drawn again here.
+		if (!this.mark(row.id)) this.render();
 	}
 	async navigateFile(path: string | undefined, newTab: boolean): Promise<void> {
 		if (!path || !this.opened || !this.rows.some(row => row.path === path)) return;

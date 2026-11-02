@@ -10,13 +10,41 @@ const dom = installFakeDom();
 function harness() {
 	const content = dom.document.createElement("div") as unknown as HTMLElement;
 	const cards = new OccurrenceResults(100);
-	const render = (results: ReturnType<typeof scanCalloutOccurrences>, limit = 100): void =>
+	const render = (results: ReturnType<typeof scanCalloutOccurrences>, limit = 100): boolean =>
 		cards.render(content, results, limit, true, () => {}, () => {});
 	const rows = (): HTMLButtonElement[] => Array.from(content.querySelectorAll<HTMLButtonElement>(".cs-occurrences-result"));
 	return { cards, content, render, rows };
 }
 
 describe("occurrence result identity", () => {
+	it("says whether the list was drawn again, so the sidebar knows when its groups are new", () => {
+		const h = harness();
+		const results = scanCalloutOccurrences("a.md", "[!note]\n[!tip]");
+		assert.equal(h.render(results), true, "first draw");
+		assert.equal(h.render(results), false, "same results, same page: nothing is drawn");
+		assert.equal(h.render(results, 1), true, "another page size draws it again");
+		assert.equal(h.render([...results]), true, "a new result list draws it again");
+	});
+
+	it("keeps a folded note folded when the list is drawn again, until the next search", () => {
+		const h = harness();
+		const a = scanCalloutOccurrences("a.md", "[!note]\n[!tip]");
+		const b = scanCalloutOccurrences("b.md", "[!note]");
+		h.render([...a, ...b]);
+		const folded = (): boolean[] => Array.from(h.content.querySelectorAll<HTMLElement>(".cs-sidebar-file"), (section) => section.hasClass("is-collapsed"));
+		assert.deepEqual(folded(), [false, false]);
+		const triangle = h.content.querySelector<HTMLElement>(".cs-sidebar-fold")!;
+		(triangle as unknown as { fire(type: string): void }).fire("click");
+		assert.deepEqual(folded(), [true, false], "folded in place, with nothing drawn again");
+		// More results arrive: every group is drawn from scratch, and a folded one is still folded.
+		h.render([...a, ...b, ...scanCalloutOccurrences("c.md", "[!info]")]);
+		assert.deepEqual(folded(), [true, false, false]);
+		// A new search starts with every note showing.
+		h.cards.fold.clear();
+		h.render([...a, ...b]);
+		assert.deepEqual(folded(), [false, false]);
+	});
+
 	it("draws each file as Obsidian's Search pane does: a title row over one box of result rows", () => {
 		const h = harness();
 		const a = scanCalloutOccurrences("folder/a.md", "[!note]\n# [!note]\n[!tip]");
@@ -35,11 +63,16 @@ describe("occurrence result identity", () => {
 		for (const section of sections) {
 			assert.ok(section.hasClass("tree-item") && section.hasClass("search-result"), "Obsidian's search group");
 			assert.equal(section.children.length, 2, "the title row, then the box");
-			const link = section.children[0]!;
+			// The title row is Obsidian's tree row; in it, the fold triangle and the note's name.
+			const head = section.children[0]!;
+			assert.equal(head.tagName, "DIV");
+			for (const cls of ["tree-item-self", "search-result-file-title", "is-clickable"]) assert.ok(head.hasClass(cls), cls);
+			assert.deepEqual(Array.from(head.children, (child) => child.hasClass("collapse-icon") ? "fold" : child.tagName), ["fold", "BUTTON"]);
+			const link = head.querySelector(".cs-sidebar-file-link")!;
 			assert.equal(link.tagName, "BUTTON");
-			for (const cls of ["tree-item-self", "search-result-file-title", "is-clickable"]) assert.ok(link.hasClass(cls), cls);
 			assert.equal(link.getAttribute("aria-label"), null, "the visible file name must not create a redundant hover popup");
 			assert.equal(link.getAttribute("title"), null);
+			assert.equal(head.querySelector(".collapse-icon")?.getAttribute("aria-label"), null, "nor must the triangle");
 			for (const row of Array.from(section.children[1]!.children)) {
 				assert.ok(row.classList.contains("search-result-file-match"), "each result is a match row of the box");
 			}

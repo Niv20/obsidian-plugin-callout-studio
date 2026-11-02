@@ -4697,6 +4697,12 @@ body:not(.is-phone) .cs-choice-row {
 	margin-block: var(--size-4-3);
 }
 
+/* The backup advice under the examples: the warning colour comes from
+   `p.mod-warning`, the weight is added here so it is not read as more help text. */
+.cs-portable-backup {
+	font-weight: var(--font-semibold);
+}
+
 /* One rounded box with a line between rows, as a settings group is drawn,
    rather than a grid of filled cells. `separate` because a collapsed table
    cannot round its corners; with no spacing the cells' top lines still meet. */
@@ -4833,23 +4839,38 @@ body:not(.is-phone) .cs-choice-row {
    own, in a two-column grid in a wide pane, under a grey file band that stuck
    to the top of the list. */
 
-/* The title row is a <button> (Tab, Enter and Space for free), so the face
-   Obsidian gives buttons comes off: `button:not(.clickable-icon)` (0,1,1)
-   paints a fill and shadow, `button` a height and centring. Obsidian's tree
-   row keeps its colour, hover fill, and the active fill of the open note
-   (`.is-active`). Its start padding is a tree row's less the room for a fold
-   triangle, which these groups do not have. */
+/* The title row is Obsidian's tree row, which keeps its colour, its hover fill
+   and the active fill of the open note (`.is-active`). It holds two controls
+   (ui/sidebarResults.ts): the note's name, a <button> that opens the note, and
+   the fold triangle, which sits over the start of that button. The row hands
+   its padding to the name button, so the whole row is one click target. */
+.cs-sidebar-file-head {
+	padding: 0;
+}
+
+/* The name button (Tab, Enter and Space for free): the face Obsidian gives
+   buttons comes off, since `button:not(.clickable-icon)` (0,1,1) paints a
+   fill and shadow and `button` a height and centring, and it takes the row's
+   own colour and type. It carries the padding of a tree row, written with
+   logical sides so a right-to-left window keeps the room for the triangle on
+   the side the triangle is on. */
 button.cs-sidebar-file-link {
 	display: flex;
+	flex: 1 1 auto;
 	align-items: baseline;
 	justify-content: flex-start;
-	inline-size: 100%;
+	min-inline-size: 0;
 	block-size: auto;
 	margin: 0;
-	padding-inline-start: var(--size-4-2);
+	padding-block: var(--size-4-1);
+	padding-inline: var(--size-4-6) var(--size-4-2);
+	border: 0;
+	border-radius: inherit;
+	corner-shape: inherit;
 	background-color: transparent;
 	box-shadow: none;
-	font-weight: inherit;
+	color: inherit;
+	font: inherit;
 	line-height: var(--line-height-tight);
 	text-align: start;
 	white-space: normal;
@@ -4861,6 +4882,63 @@ button.cs-sidebar-file-link {
 button.cs-sidebar-file-link.mobile-tap {
 	background-color: var(--nav-item-background-hover);
 	box-shadow: none;
+}
+
+/* The fold triangle is Obsidian's own tree icon, and Obsidian turns it: for a
+   folded group (`.collapse-icon.is-collapsed`), and the other way in a
+   right-to-left window (`--direction`), where a folded group points left, so
+   nothing here turns it. Obsidian hangs a tree icon in the padding of its
+   row, pulled out by a negative margin; this row has no padding of its own,
+   so the triangle is put at the row's start edge instead, as tall as the row,
+   which makes it an easy target. */
+.cs-sidebar-file-head > .cs-sidebar-fold.collapse-icon {
+	inset-block: 0;
+	inset-inline-start: 0;
+	margin: 0;
+	inline-size: var(--size-4-6);
+	cursor: var(--cursor);
+}
+
+/* Obsidian's grey keyboard ring, the one its other controls wear. */
+.cs-sidebar-fold:focus-visible {
+	outline: none;
+	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
+	box-shadow: inset 0 0 0 2px var(--background-modifier-border-focus);
+}
+
+/* A folded note shows only its title row. */
+.cs-sidebar-file.is-collapsed > .cs-sidebar-matches {
+	display: none;
+}
+
+/* A note's group that is a screen or more from the visible part of the list is
+   parked (ui/sidebarParking.ts): it keeps the height the script measured, so
+   the scrollbar and every other group stay where they were, but nothing in it
+   is drawn. Every element drawn anywhere in the window slows each key press in
+   the editor a little, and a list of thousands of rows slowed it a lot. */
+.cs-sidebar-file.is-parked {
+	block-size: var(--cs-parked-size);
+}
+
+/* The group's box holds its rows' outer margins. Without this the last one
+   (8px) collapsed out of the box into the gap before the next group, which a
+   parked group, with nothing inside to carry it, would have lost. */
+section.cs-sidebar-file {
+	display: flow-root;
+}
+
+/* The first note's title row sat flush under the line above the list, with only
+   its own 4px of padding between them, while every later note has that and the
+   8px under the box before it. The first takes the same 8px. It is a margin on
+   the group, not padding on the scroller, so a list with no group in it (the
+   centred "nothing found" line) stays exactly in the middle. */
+.cs-sidebar-file:first-child {
+	margin-block-start: var(--size-4-2);
+}
+
+.cs-sidebar-file.is-parked > * {
+	display: none;
 }
 
 .cs-sidebar-file-name {
@@ -5006,9 +5084,12 @@ button.cs-sidebar-result[aria-current="true"],
 }
 
 /* Review conversion's Convert selected, across the pane in a row of its own,
-   spaced as Search's field row is. */
+   spaced as Search's field row is, with the small help button at the row's
+   end. */
 .cs-portable-convert-row {
 	display: flex;
+	align-items: center;
+	gap: var(--size-4-2);
 	margin: var(--size-4-3) var(--size-4-3) var(--size-4-2);
 }
 
@@ -5016,31 +5097,151 @@ button.cs-sidebar-result[aria-current="true"],
 	flex: 1 1 auto;
 }
 
+/* The pane's small icon button (help beside Convert selected, the format filter
+   beside the type field): it keeps its own size, and the row's field takes the
+   rest. Lit, in Obsidian's active icon colour, while a format is chosen. */
+.cs-sidebar-icon-button {
+	flex: none;
+}
+
+.cs-sidebar-icon-button.is-active {
+	color: var(--icon-color-active);
+}
+
+/* The selection takes two lines (ui/sidebarFrame.ts); the select-all box sits
+   beside the first, whose height it is given. */
 .cs-portable-review-summary {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: var(--size-4-2);
 }
 
 .cs-portable-review-summary input[type="checkbox"] {
 	flex: none;
-	align-self: center;
 	margin: 0;
 	inset: 0;
 }
 
-.cs-portable-review-summary input[type="checkbox"]:indeterminate {
-	appearance: none;
-	border-color: var(--checkbox-color);
-	background-color: var(--checkbox-color);
-	background-image: linear-gradient(var(--checkbox-marker-color), var(--checkbox-marker-color));
-	background-size: 60% 2px;
-	background-position: center;
-	background-repeat: no-repeat;
+.cs-portable-summary-line:first-child {
+	display: flex;
+	align-items: center;
+	min-block-size: var(--checkbox-size, 16px);
 }
 
-.cs-portable-review-summary input[type="checkbox"]:indeterminate::after {
-	display: none;
+/* ── Review conversion's boxes ─────────────────────────────────────────────
+   A row's box, and select-all's at the top, are Obsidian's checkbox with the
+   tick drawn here, so that every change between empty, minus and tick is a
+   small animation (the minus is select-all's "some are chosen"):
+
+     empty → tick   the box fills, then the tick is drawn: the short stroke
+                    first, then the long one
+     tick → empty   the long stroke is taken back, then the short one, then
+                    the fill fades
+     empty → minus  the box fills and the bar grows from the middle
+     minus ⇄ tick   the bar shrinks as the tick is drawn, and the tick is taken
+                    back before the bar grows
+
+   The tick is two thin bars, `::before` the short stroke and `::after` the
+   long one, each grown from the end it starts at (`scaleX`). A box with a
+   real `:checked` and no stylesheet of this kind would change at once, so the
+   times are written on the state a change arrives at (a transition takes its
+   timing from the new state): the stroke that must go first has no delay and
+   the one after it waits. Rows are drawn again on every change, so
+   portableConversionRows.ts draws a box whose answer changed as it was and
+   then flips it, which is what gives the browser a "before" to animate from.
+   (`--cs-u` is 1px at Obsidian's 18px box and scales with its size.) */
+:is(.cs-portable-change, .cs-portable-review-summary) input[type="checkbox"] {
+	--cs-u: calc(var(--checkbox-size) / 18);
+	--cs-tick-weight: max(1.5px, calc(var(--cs-u) * 2));
+	background-image: linear-gradient(var(--checkbox-marker-color), var(--checkbox-marker-color));
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 0% var(--cs-tick-weight);
+	transition:
+		background-color 140ms ease-in 100ms,
+		border-color 140ms ease-in 100ms,
+		background-size 110ms ease-in,
+		box-shadow 0.15s ease-in-out;
+}
+
+:is(.cs-portable-change, .cs-portable-review-summary) input[type="checkbox"]:is(:checked, :indeterminate) {
+	border-color: var(--checkbox-color);
+	background-color: var(--checkbox-color);
+	transition:
+		background-color 140ms ease-out,
+		border-color 140ms ease-out,
+		background-size 140ms ease-out 100ms,
+		box-shadow 0.15s ease-in-out;
+}
+
+:is(.cs-portable-change, .cs-portable-review-summary) input[type="checkbox"]:indeterminate {
+	background-size: 60% var(--cs-tick-weight);
+}
+
+/* The minus grows only once the tick is gone, and goes before the tick arrives. */
+:is(.cs-portable-change, .cs-portable-review-summary) input[type="checkbox"]:checked {
+	background-size: 0% var(--cs-tick-weight);
+	transition:
+		background-color 140ms ease-out,
+		border-color 140ms ease-out,
+		background-size 110ms ease-in,
+		box-shadow 0.15s ease-in-out;
+}
+
+/* Both strokes, resting taken back. The short one is last to go. */
+:is(.cs-portable-change, .cs-portable-review-summary) input[type="checkbox"]::before,
+:is(.cs-portable-change, .cs-portable-review-summary) input[type="checkbox"]::after {
+	content: "";
+	position: absolute;
+	display: block;
+	inset: auto;
+	width: auto;
+	height: var(--cs-tick-weight);
+	/* Thinner than the radius, so the ends are simply round. */
+	border-radius: var(--radius-s);
+	corner-shape: var(--corner-shape);
+	background-color: var(--checkbox-marker-color);
+	-webkit-mask: none;
+	mask: none;
+	transform-origin: 0 50%;
+	pointer-events: none;
+}
+
+:is(.cs-portable-change, .cs-portable-review-summary) input[type="checkbox"]::before {
+	left: calc(var(--cs-u) * 4.6 - 1px);
+	top: calc(var(--cs-u) * 9.4 - var(--cs-tick-weight) / 2 - 1px);
+	width: calc(var(--cs-u) * 4.4);
+	transform: rotate(45deg) scaleX(0);
+	transition: transform 70ms ease-in 90ms;
+}
+
+:is(.cs-portable-change, .cs-portable-review-summary) input[type="checkbox"]::after {
+	left: calc(var(--cs-u) * 7.7 - 1px);
+	top: calc(var(--cs-u) * 12.5 - var(--cs-tick-weight) / 2 - 1px);
+	width: calc(var(--cs-u) * 8.9);
+	transform: rotate(-48deg) scaleX(0);
+	transition: transform 90ms ease-in;
+}
+
+/* Drawn: the short stroke after the fill has begun, the long one after it.
+   `:checked` is repeated so these beat Obsidian's own tick (a mask), which
+   they replace. */
+:is(.cs-portable-change, .cs-portable-review-summary) input[type="checkbox"]:checked::before {
+	transform: rotate(45deg) scaleX(1);
+	transition: transform 80ms ease-out 70ms;
+}
+
+:is(.cs-portable-change, .cs-portable-review-summary) input[type="checkbox"]:checked::after {
+	transform: rotate(-48deg) scaleX(1);
+	transition: transform 110ms ease-out 150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:is(.cs-portable-change, .cs-portable-review-summary) input[type="checkbox"],
+	:is(.cs-portable-change, .cs-portable-review-summary) input[type="checkbox"]::before,
+	:is(.cs-portable-change, .cs-portable-review-summary) input[type="checkbox"]::after {
+		transition: none;
+	}
 }
 
 .cs-portable-summary-text {
@@ -5095,6 +5296,21 @@ button.cs-sidebar-result[aria-current="true"],
 	overflow: hidden;
 	clip-path: inset(50%);
 	white-space: nowrap;
+}
+
+/* Nothing to convert: the mascot and its line sit in the middle of the height
+   the pane has. (`PortableConversionView.paintStatus` marks the scroller.) */
+.cs-portable-results-scroll.is-empty {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding-block-end: 0;
+}
+
+/* No margin above or below the line: Obsidian's `.search-empty-state` has one
+   under it, which would put the middle of the line that much too high. */
+.cs-portable-results-scroll.is-empty > .cs-portable-review-status {
+	margin-block: 0;
 }
 
 /* While the review is out of date its rows take no clicks. */
@@ -5212,6 +5428,12 @@ button.cs-portable-after-button:focus-visible {
 	display: none;
 }
 
+/* On a computer the two icons show while the pointer is on the row, while one
+   of them has the keyboard focus (so Tab can find them), and while the row's
+   replacement is being edited. The row's other controls do not count: a click
+   on a row focuses its source button, and leaving the icons lit on the row
+   that was last clicked, after the pointer has moved on to another, read as a
+   row that was still being edited. */
 @media (hover: hover) and (pointer: fine) {
 	.cs-portable-card-actions {
 		opacity: 0;
@@ -5219,7 +5441,7 @@ button.cs-portable-after-button:focus-visible {
 	}
 
 	.cs-portable-change:hover .cs-portable-card-actions,
-	.cs-portable-change:focus-within .cs-portable-card-actions,
+	.cs-portable-card-actions:focus-within,
 	.cs-portable-change.is-editing .cs-portable-card-actions {
 		opacity: 1;
 		pointer-events: auto;
@@ -7526,7 +7748,8 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	padding: 0 var(--size-4-3) var(--size-4-4);
 }
 
-/* The type field fills Search's field row. */
+/* The type field fills Search's field row, like the search box above it: the
+	one dropdown that is not as wide as its words. */
 .cs-occurrences-picker,
 .cs-occurrences-picker .cs-combobox {
 	flex: 1 1 auto;
@@ -7565,6 +7788,23 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 
 .cs-occurrences-results {
 	padding-block-end: var(--size-4-2);
+}
+
+/* Nothing found: the mascot and its line sit in the middle of the height the
+   pane has, not at the top of it. (`occurrenceResults.ts` marks the list.) */
+.cs-occurrences-results.cs-sidebar-empty {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	/* As tall as the pane's free height, the scroller's own bottom padding
+	   included, so the middle of the line is the middle of what is on screen. */
+	min-block-size: calc(100% + var(--size-4-4));
+	padding-block-end: 0;
+}
+
+/* Obsidian's line has a margin under it; centred, it would sit that much high. */
+.cs-occurrences-results.cs-sidebar-empty > .search-empty-state {
+	margin-block-end: 0;
 }
 
 .cs-occurrences-excerpt {

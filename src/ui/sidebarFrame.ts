@@ -3,54 +3,39 @@
  * sidebars, drawn as Obsidian draws the top of its own panes (Search,
  * Backlinks, Outline).
  *
- * Who calls it. usage/CalloutOccurrencesView.ts with usage/occurrencesViewFrame.ts,
- * and portable/PortableConversionView.ts with portable/portableConversionFrame.ts.
+ * Who calls it. usage/occurrencesViewFrame.ts for Find callouts, and
+ * portable/portableConversionFrame.ts for Review conversion.
  *
- * The main idea (finding S10-05). A pane starts with a slim row of small icon
- * buttons, Obsidian's nav header (`.nav-header > .nav-buttons-container`),
- * which sits in the view itself, above its scrolling content, exactly where
- * Obsidian's own panes put theirs; on a phone Obsidian moves it to the bottom
- * of the drawer as large touch buttons. Under it come the pane's own fields,
- * and a muted count over a single line (`.search-results-info`), as under
- * Search's field. Until 2026-10-24 each pane started with a large bold title,
- * a sentence, and a count between two lines; the title is the tab's name now
- * (its tooltip on a computer, as for Search), and the sentences went to the
- * help window and the empty state.
+ * The main idea (finding S10-05). A pane starts with its own fields, and a
+ * muted count over a single line (`.search-results-info`), as under Search's
+ * field. Each pane has one small icon button, which sits at the end of the
+ * pane's first row, beside what it belongs to: the help button beside Convert
+ * selected, the format filter beside the type field. Until 2026-10-27 the
+ * button had a row of its own above the fields (Obsidian's nav header, the
+ * slim row of icon buttons a pane of its own starts with), which was a whole
+ * row for one icon. Until 2026-10-24 each pane started with a large bold
+ * title, a sentence, and a count between two lines; the title is the tab's
+ * name now (its tooltip on a computer, as for Search), and the sentences went
+ * to the help window and the empty state.
  */
 import { setIcon } from "obsidian";
 
 /**
- * Put Obsidian's nav header at the top of a view, outside its scrolling
- * content, and return the row its buttons go in.
+ * One small icon button, as Obsidian's icon buttons are: a `.clickable-icon`
+ * whose `aria-label` is also its tooltip. Obsidian's are bare divs; this one
+ * also takes a Tab stop, and Enter or Space, so a keyboard can reach it.
  *
- * @param viewContainer The view's own `containerEl` (`.workspace-leaf-content`),
- *   not its `contentEl`: Obsidian's panes put the header there, before the
- *   content, and its phone rules expect it there.
- */
-export function createSidebarNavHeader(viewContainer: HTMLElement): { header: HTMLElement; buttons: HTMLElement } {
-	const header = createDiv({ cls: "nav-header" });
-	viewContainer.insertBefore(header, viewContainer.firstChild);
-	const buttons = header.createDiv({ cls: "nav-buttons-container" });
-	return { header, buttons };
-}
-
-/**
- * One icon button in the nav header, as Obsidian's `addNavButton` makes it: a
- * `.clickable-icon.nav-action-button` whose `aria-label` is also its tooltip.
- * Obsidian's are bare divs; this one also takes a Tab stop, and Enter or
- * Space, so a keyboard can reach it.
- *
- * @param buttons The row from {@link createSidebarNavHeader}.
+ * @param parent The row the button goes at the end of.
  * @param options The Lucide `icon`, the `label` (read out, and shown as the
  *   tooltip), and what a press does (`onPress`, given the button).
  */
-export function addSidebarNavButton(buttons: HTMLElement, options: {
+export function addSidebarIconButton(parent: HTMLElement, options: {
 	icon: string;
 	label: string;
 	onPress: (button: HTMLElement) => void;
 }): HTMLElement {
-	const button = buttons.createDiv({
-		cls: "clickable-icon nav-action-button",
+	const button = parent.createDiv({
+		cls: "clickable-icon cs-sidebar-icon-button",
 		attr: { "aria-label": options.label, role: "button", tabindex: "0" },
 	});
 	setIcon(button, options.icon);

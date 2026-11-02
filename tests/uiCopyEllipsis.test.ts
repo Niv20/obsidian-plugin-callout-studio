@@ -43,7 +43,7 @@ const ASKS_NEXT: readonly string[] = [
 	"settings.export", // opens "Export as": which format? (and the backup's save dialog: where?)
 	"import.upload", // opens the file picker
 	"import.replace", // the same button once a file is staged
-	"settings.replaceAction", // opens "Replace with:": which callout?
+	"settings.replaceAction", // opens "Replace in vault": which callout?
 	"portable.customize", // starts the inline editor: what text?
 	"portable.editCustom", // the same, for a replacement that is already custom
 ];

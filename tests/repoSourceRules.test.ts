@@ -208,6 +208,20 @@ describe("no hardcoded UI copy", () => {
 		assert.deepStrictEqual(bad, [], report("Untranslated Notice text:", bad));
 	});
 
+	it("every notice goes through showNotice, so it has the mascot", () => {
+		// A bare `new Notice(` is a notice without the mascot, and the next one
+		// added would be too. The one file that builds the Obsidian notice
+		// itself is the whole exception.
+		const OWN = new Set(["src/ui/mascot/mascotNotices.ts"]);
+		const bad: string[] = [];
+		// Every source file, the translation store (src/i18n/) included.
+		for (const f of allSourceFiles()) {
+			if (OWN.has(f.path)) continue;
+			for (const m of f.code.matchAll(/new\s+Notice\s*\(/g)) bad.push(at(f, m.index ?? 0));
+		}
+		assert.deepStrictEqual(bad, [], report("Use showNotice (ui/mascot/mascotNotices.ts) instead of new Notice:", bad));
+	});
+
 	it("aria-labels go through t() too", () => {
 		// An aria-label is the only text a screen-reader user gets, so leaving
 		// it in English is worse than leaving a visible label in English, not

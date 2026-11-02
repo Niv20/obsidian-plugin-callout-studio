@@ -1,10 +1,13 @@
 import type { MarkdownView } from "obsidian";
 import { t } from "../i18n";
+import { SidebarFold } from "../ui/sidebarFold";
 import { createSidebarFileGroup, renderSidebarLocation, revealSidebarCard } from "../ui/sidebarResults";
 import { canLoadOnScroll, LOAD_MORE_SENTINEL } from "../ui/loadOnScroll";
 import { occurrenceAtCursor, type OccurrencesByLine } from "./occurrenceAtCursor";
 import type { CalloutOccurrence } from "./occurrenceTypes";
 import { occurrenceButton, occurrenceRoleLabel } from "./occurrencesViewFrame";
+import { NO_RESULTS_MOOD } from "../ui/mascot/mascotAnimations";
+import { KeptMascot } from "../ui/mascot/mascotPlaces";
 
 const occurrenceKey = (item: CalloutOccurrence): string =>
 	JSON.stringify([item.path, item.contentFingerprint, item.line, item.from, item.to, item.identity, item.role]);
@@ -27,10 +30,22 @@ export class OccurrenceResults {
 	 * or when the window cannot watch it (then the list ends in a button).
 	 */
 	sentinel: HTMLElement | null = null;
+	/**
+	 * The brush mascot over "No matching callouts were found", kept while the
+	 * list is drawn again. It looks around twice when the list turns empty, then
+	 * keeps the face of a search that found nothing, like every other search.
+	 */
+	private readonly emptyMascot = new KeptMascot("medium");
+	/**
+	 * Which notes' results are folded away. Every redraw of the list draws them
+	 * folded again; the view clears it when a new search starts.
+	 */
+	readonly fold = new SidebarFold();
 
 	constructor(private readonly pageSize: number) {}
 
 	clear(): void {
+		this.emptyMascot.detach();
 		this.rows.clear();
 		this.byPath.clear();
 		this.currentRow = null;
@@ -77,10 +92,12 @@ export class OccurrenceResults {
 		if (this.selected && this.selected.path !== path) this.select(null);
 	}
 
+	/** Draws the list; returns whether it was drawn again (it is not when nothing changed). */
 	render(content: HTMLElement, results: readonly CalloutOccurrence[], limit: number, complete: boolean,
-		onSection: (path: string, section: HTMLElement) => void, clearSections: () => void): void {
+		onSection: (path: string, section: HTMLElement) => void, clearSections: () => void): boolean {
 		const empty = complete && results.length === 0;
-		if (this.previous?.results === results && this.previous.limit === limit && this.previous.empty === empty) return;
+		if (this.previous?.results === results && this.previous.limit === limit && this.previous.empty === empty) return false;
+		const wasEmpty = this.previous?.empty === true;
 		const focused = content.ownerDocument.activeElement as HTMLElement | null;
 		const focusedOccurrence = focused && this.occurrences.get(focused);
 		const focusMore = focused && content.contains(focused) && focused.dataset.action === "more";
@@ -102,9 +119,12 @@ export class OccurrenceResults {
 		this.previous = { results, limit, empty };
 		content.empty();
 		clearSections();
+		// Nothing found: the line goes in the middle of the pane's height (styles.css).
+		content.toggleClass("cs-sidebar-empty", empty);
 		// Nothing found: a quiet line, as Obsidian's Search says "No matches found".
-		if (empty) content.createDiv({ cls: "search-empty-state", text: t("usage.empty") });
-		renderOccurrenceResults(content, results, limit, this.fileCounts, onSection, (occurrence, row) => {
+		if (empty) this.drawEmpty(content.createDiv({ cls: "search-empty-state", text: t("usage.empty") }), wasEmpty);
+		else this.emptyMascot.detach();
+		renderOccurrenceResults(content, results, limit, this.fileCounts, this.fold, onSection, (occurrence, row) => {
 			this.rows.set(occurrenceKey(occurrence), row);
 			this.occurrences.set(row, occurrence);
 			const lines = this.byPath.get(occurrence.path) ?? new Map<number, CalloutOccurrence[]>();
@@ -123,6 +143,22 @@ export class OccurrenceResults {
 		this.select(this.selected);
 		const restoreFocus = focusedOccurrence ? this.rows.get(occurrenceKey(focusedOccurrence)) : focusMore ? more : null;
 		restoreFocus?.focus({ preventScroll: true });
+		return true;
+	}
+
+	/**
+	 * Put the mascot over the empty line. It keeps the face of a search that
+	 * found nothing for as long as the list stays empty. When the list has only
+	 * just turned empty it first looks around twice for what is not there;
+	 * `lookTwice` hands over to that face itself, so the mascot is never the
+	 * plain icon in between.
+	 */
+	private drawEmpty(line: HTMLElement, wasEmpty: boolean): void {
+		if (!this.emptyMascot.attach(line, "start")) return;
+		line.addClass("cs-mascot-line");
+		this.emptyMascot.setMood(NO_RESULTS_MOOD);
+		if (wasEmpty) return;
+		void this.emptyMascot.play("lookTwice");
 	}
 }
 
@@ -132,6 +168,7 @@ function renderOccurrenceResults(
 	results: readonly CalloutOccurrence[],
 	limit: number,
 	fileCounts: ReadonlyMap<string, number>,
+	fold: SidebarFold,
 	onSection: (path: string, section: HTMLElement) => void,
 	onRow: (occurrence: CalloutOccurrence, row: HTMLButtonElement) => void,
 ): void {
@@ -140,7 +177,7 @@ function renderOccurrenceResults(
 	for (const [offset, occurrence] of results.slice(0, limit).entries()) {
 		if (occurrence.path !== path || !group) {
 			path = occurrence.path;
-			const file = createSidebarFileGroup(content, { path, count: fileCounts.get(path) ?? 0, cls: "cs-occurrences-file" });
+			const file = createSidebarFileGroup(content, { path, count: fileCounts.get(path) ?? 0, cls: "cs-occurrences-file", fold });
 			group = file.matches;
 			onSection(path, file.section);
 		}

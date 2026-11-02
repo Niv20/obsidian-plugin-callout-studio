@@ -1,4 +1,5 @@
 import { MarkdownView, TFile, type App, type EventRef, type WorkspaceLeaf } from "obsidian";
+import { unparkGroupOf } from "./sidebarParking";
 
 /** Tracks the document behind the sidebar and reveals its group in the current query. */
 export class SidebarActiveFile {
@@ -91,6 +92,8 @@ export class SidebarActiveFile {
 		}
 		const section = this.sections.get(path);
 		if (section) {
+			// Drawn again before the jump, so the group is not blank for a frame (ui/sidebarParking.ts).
+			unparkGroupOf(section);
 			section.scrollIntoView({ block: "start" });
 			this.pendingPath = null;
 		}

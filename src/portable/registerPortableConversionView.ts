@@ -1,6 +1,7 @@
-import { Notice, type App, type Plugin } from "obsidian";
+import { type App, type Plugin } from "obsidian";
 import { t } from "../i18n";
 import { PORTABLE_CONVERSION_VIEW, PortableConversionView } from "./PortableConversionView";
+import { showNotice } from "../ui/mascot/mascotNotices";
 
 const registeredViews = new WeakSet<Plugin>();
 
@@ -26,6 +27,6 @@ export async function openPortableConversionFromSettings(app: App): Promise<void
 		const leaf = await app.workspace.ensureSideLeaf(PORTABLE_CONVERSION_VIEW, "right", { active: true, reveal: true });
 		await leaf.loadIfDeferred();
 		await app.workspace.revealLeaf(leaf);
-		if (!closed) new Notice(t("portable.closeSettings"));
-	} catch { new Notice(t("portable.openFailed")); }
+		if (!closed) showNotice("info", t("portable.closeSettings"));
+	} catch { showNotice("problem", t("portable.openFailed")); }
 }
