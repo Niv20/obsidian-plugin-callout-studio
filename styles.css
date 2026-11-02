@@ -118,34 +118,208 @@
    centred, in a narrow tab and on a phone too. Until 2026-10-25 the rules here
    copied what that box does, for the old page's rows that were not in one.
 
-   What is left is the plugin's own: the row is the size container the
-   narrow-row rule (`.callout-studio-row-colors`, below) measures. */
+   What is left is the plugin's own, and it is the same few rules at every
+   width. A row is three parts, the icon, the text and the buttons, and each
+   of the two text lines is ONE line:
+
+     - The name, with its tag beside it. A name longer than its room ends in
+       "…". The tag (one word in every language) is never pushed under it.
+     - The ids. Whole ids, as many as fit, then a `+N` chip for the rest. An
+       id is never cut in half; one that does not fit goes into the count
+       (idsLineFit.ts). Only a row with a single id, which has no count to
+       go into, ends that id in "…" when it is longer than the row.
+
+   Colour is shown one of two ways, by device, not by width. On a computer, as
+   two circles before the buttons. On a phone or an iPad (`.is-mobile`, at
+   any width) the circles are gone and the colours are in the row itself: the
+   icon is drawn in the accent on a tile of the background, and the name is in
+   the accent (the last rules of this block). */
 .setting-item.cs-callout-row {
-	container-type: inline-size;
+	/* The same 16px between the icon, the text and the buttons on every
+	   device (the row gap is Obsidian's own and does nothing in a row that
+	   does not wrap). Obsidian gives a phone's rows this gap and a computer's
+	   none, so an id ran right up to the colour circles there. */
+	gap: var(--size-4-3) var(--size-4-4);
 }
 
-/* A one-word name longer than the row still breaks, rather than running
-   under the buttons. */
-.cs-callout-row .setting-item-name {
-	overflow-wrap: anywhere;
+/* Only the rows on screen are laid out and painted. Obsidian draws every row
+   of a list before the page opens, and My callout types can hold hundreds (a
+   scan of a big vault found 754): measured 2026-11-02 in Chromium with
+   Obsidian 1.14.5's own stylesheet, laying out 754 rows took ~55 ms, and ~5 ms
+   with this rule. A row further down keeps the height given here (its real
+   height, 52.5 px on a computer and 57.4 px on a phone, measured the same day)
+   until it nears the screen, and then the one it was last drawn at (`auto`).
+   Every row of these lists is one height, which is what the Quick insert
+   window's rows (51 or 85 px) were not: there the scroll position jumped.
+   Its ids line is fitted as it comes in: the `ResizeObserver` of idsLineFit.ts
+   reports a row once it is laid out, before the frame that first shows it.
+   An engine that does not know the property skips the rule and draws every
+   row as before.
+
+   Not on iOS and iPadOS (`.is-ios`, WebKit). Measured the same day, WebKit
+   saved nothing (~80 ms of layout either way) and lays a row out a frame after
+   it comes on screen, so the ids line would be fitted a frame late. Not used
+   for the sidebars' results either (ui/sidebarParking.ts): there the cost was
+   the editor's layout on every key, which this does not reduce. */
+.setting-item.cs-callout-row {
+	content-visibility: auto;
+	contain-intrinsic-size: auto 53px;
 }
 
-/* The `[!id]` spellings under the name: one line, cut at its end (Obsidian's
-   description already hides what overflows, with "…"). Each id is an inline
-   block, which the cut hides whole, so it always falls between ids. Obsidian
-   draws a description's `code` in monospace with small corners but no fill;
-   these keep the fill an id chip has always had (below), so they read as
-   things to type. */
+.is-mobile .setting-item.cs-callout-row {
+	contain-intrinsic-size: auto 57px;
+}
+
+.is-ios .setting-item.cs-callout-row {
+	content-visibility: visible;
+}
+
+/* The icon's 16px to the text is the gap above. Obsidian's own margin after a
+   row's first child would add a second 16px on a phone, where that gap is
+   already Obsidian's. The extra class outweighs that margin's rule. */
+.setting-item.cs-callout-row > .callout-studio-row-icon {
+	margin-inline-end: 0;
+}
+
+/* The name and its tag are a flex row on one line: the name takes what room
+   the tag leaves and ends in "…" when it needs more, and the tag keeps its
+   own width. Wrapping them (the tag dropping under a long name, as Obsidian's
+   inline tag does) made a row's height depend on its name and left the tag
+   standing hard against the lines above and below it. A name that does not
+   fit is cut rather than wrapped on purpose: a long name is not something the
+   list should make room for. */
+.setting-item.cs-callout-row .setting-item-name {
+	display: flex;
+	align-items: baseline;
+	gap: var(--size-4-2);
+}
+
+/* The name's words are a span of their own (`drawCalloutRow`), because only a
+   box can end in "…", and a flex container wraps loose text in a box nobody
+   can style. `unicode-bidi: plaintext` is what Obsidian gives a name, and it
+   is kept so that a Hebrew name in an English window is cut at its own end. */
+.cs-callout-row .cs-row-name {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	unicode-bidi: plaintext;
+}
+
+/* The tag sits on the name's baseline, raised 1px: capitals are taller than
+   the lowercase beside them, and measured against the name's centre this
+   lands within half a pixel in the system font and in Ploni alike. Its
+   `.flair` margin is the row's gap now, and its vertical padding is 1px, not
+   2px, which is as tall as an inline tag looks and keeps a flex item from
+   making the line taller than the name. */
+.setting-item.cs-callout-row .cs-fallback-tag {
+	flex: none;
+	margin-inline-start: 0;
+	padding-block: 1px;
+	top: -1px;
+}
+
+/* The `[!id]` spellings under the name: one line, a flex row. A row with
+   more ids than fit shows the ones that fit and a `+N` chip for the rest
+   (idsLineFit.ts). Obsidian draws a description's `code` in monospace with
+   small corners but no fill; these keep the fill an id chip has always had
+   (below), so they read as things to type. The `+N` is one of them, so it
+   looks like the others. The gap stands where the space between two ids was:
+   a flex row draws no whitespace. The line is also the containing block of
+   the ids that are out of it (`cs-id-cut`, below), so they are clipped by it
+   instead of adding to the width of the page. */
 .setting-item.cs-callout-row .setting-item-description {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: var(--size-2-2);
 	white-space: nowrap;
 }
 
-.cs-callout-row .callout-studio-row-syntax {
-	display: inline-block;
+/* The ids line gets all the room the buttons leave, whatever it holds.
+   Obsidian sizes the text and the buttons alike (`flex: 1 1 auto`), so the
+   text column would be as wide as its content plus half the spare room, and
+   hiding an id would shrink the very line `idsLineFit.ts` just measured.
+   Measuring it only works if its width does not depend on what is in it, and
+   a phone's list already sizes the buttons this way. */
+.setting-item.cs-callout-row .setting-item-info {
+	flex: 1 1 0;
 }
 
-/* Same iPadOS WebKit container-paint workaround as the other rows' buttons
-   (`.callout-studio-row-buttons button svg`): the row is a size container.
+.setting-item.cs-callout-row .setting-item-control {
+	flex: 0 1 auto;
+}
+
+/* Every id and the `+N` keep their own width, so the line is measured, and
+   shown, at their natural sizes. */
+.cs-callout-row .callout-studio-row-syntax {
+	display: inline-block;
+	flex: none;
+}
+
+/* An id the line had no room for; the `+N` after the others stands in for it.
+   Out of the line's flow (so it takes no room and adds no gap) and invisible,
+   but not `display: none`: it keeps a box at its natural width, which is what
+   lets the next fit read how wide it is without showing it first. The `+N`
+   chip is in this state while nothing is counted. An absolutely positioned
+   box is as wide as its text, and the line, which is its containing block,
+   clips it. The extra class is what outweighs the rule above. */
+.cs-callout-row .callout-studio-row-syntax.cs-id-cut {
+	position: absolute;
+	visibility: hidden;
+	pointer-events: none;
+}
+
+/* The one id of a row that has only one (`cs-id-lone`, set by idsLineFit.ts).
+   There is no `+N` for it to go into, so when the row is too narrow for it
+   the page shortens it (`[!an-extremely-lo…`) all by itself, and the tooltip
+   with the whole of it is idsLineFit.ts's. It is not measured, because
+   shortened it is no longer as wide as it is. With two or more ids this never
+   applies: they are shown whole or counted. */
+.cs-callout-row .callout-studio-row-syntax.cs-id-lone {
+	flex: 0 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* The `+N` is not part of what the row spells, so it is left out of a
+   selection (a copied line gives only the ids). The rest of its look is the
+   ids', from the class they share. */
+.cs-callout-row .callout-studio-row-more {
+	user-select: none;
+	-webkit-user-select: none;
+}
+
+/* On a phone or an iPad the colours move into the row, at every width: the
+   circles (about 37px of a text column that is short of room, and not what a
+   finger tap is for) give way to the icon, drawn in the accent on a tile of
+   the background as the callout looks in a note, and to the name in the
+   accent, as a callout's title is in a note. A row the page gave no colours
+   (a theme's callout it has not measured) has neither variable, so its icon
+   and name stay as they are. `drawCalloutRow` sets the variables. The tile's
+   ring is the circles' own: a pale background would vanish on the box. An
+   icon that failed to load keeps its red (`.is-error`). */
+.is-mobile .cs-callout-row .callout-studio-row-colors {
+	display: none;
+}
+
+.is-mobile .cs-callout-row .callout-studio-row-icon:not(.is-error) {
+	color: var(--cs-row-accent);
+	background-color: var(--cs-row-bg);
+	border-radius: var(--radius-m);
+	corner-shape: var(--corner-shape);
+	box-shadow: inset 0 0 0 1px var(--background-modifier-border);
+}
+
+.is-mobile .cs-callout-row .cs-row-name {
+	color: var(--cs-row-accent);
+}
+
+/* The iPadOS WebKit container-paint workaround of the other rows' buttons
+   (`.callout-studio-row-buttons button svg`). The callout row was a size
+   container until 2026-10-31 and is not any more, but nothing here could run
+   on an iPad to show the bug gone, and a layer of its own costs nothing.
    `:where()` gives it no weight, so any transform of Obsidian's own wins: on
    macOS and iOS Obsidian turns ⋮ on its side (`.mod-macos
    .lucide-more-vertical`), as its own More options buttons show it. */
@@ -3342,13 +3516,7 @@ body:not(.is-phone) .cs-command-field .setting-item-control > .cs-combobox {
 	white-space: nowrap;
 }
 
-/* ─── Responsive Settings Row ──────────────────────────────── */
-
-@container (max-width: 450px) {
-	.callout-studio-row-colors {
-		display: none;
-	}
-}
+/* ─── Utilities ────────────────────────────────────────────── */
 
 .cs-hidden {
 	display: none;
@@ -7045,6 +7213,12 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 	display: contents;
 }
 
+/* A list's search that finds nothing (declarative/noMatchesRow.ts): Obsidian's
+   grey empty-list row, with the brush mascot over its words, in the middle. */
+.setting-item.cs-no-matches .setting-item-name {
+	text-align: center;
+}
+
 /* The ring of paint a press on the mascot spreads reaches past the mascot's
    box (up to about 14px at 48px), and Obsidian clips a row's name (`overflow:
    hidden`, for its ellipsis), which cut the ring flat at the box's top edge
@@ -7057,6 +7231,16 @@ body.cs-anim-window .cs-heading-callout:not(.cm-line) {
 .setting-item-name.cs-paint-room {
 	overflow: visible;
 	overflow-wrap: anywhere;
+}
+
+/* The row has no control, so it keeps none of the room a row leaves between
+   its words and its control, which would shift the words off the middle. */
+.setting-item.cs-no-matches > .setting-item-info {
+	margin-inline-end: 0;
+}
+
+.setting-item.cs-no-matches > .setting-item-control {
+	display: none;
 }
 
 .cs-competitor-import-banner-message {

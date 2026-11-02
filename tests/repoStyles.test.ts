@@ -264,7 +264,6 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-select-button", // finds a SelectDropdown's icon button in tests; its caller dresses it (.cs-footer-tile, .clickable-icon)
 		"cs-select-value", // an icon button's words, hidden or shown; its caller's tile lays them out
 		"callout-studio-suggestion-create-new", // finds a "Create …" row in tests and scenes; it is drawn like any suggestion row (S10-16)
-		"cs-fallback-tag", // finds a callout row's Default tag in tests; Obsidian's .flair.mod-flat draws it, with its own margin after the name
 		"cs-btn-disabled", // marks a blocked button (ui/blockedButton.ts); Obsidian's aria-disabled rule draws the 70% dim
 		"cs-icon-adjust-reset", // finds an icon-adjustment group's ↺ in tests; Obsidian draws the button, cs-reset-idle hides it
 		"cs-group-reset", // finds a settings box's heading ↺ to dim it (declarative/rowParts.ts); Obsidian draws the button
@@ -275,6 +274,7 @@ describe("class names in styles.css and src/ agree", () => {
 		"cs-quick-insert-search", // finds Quick insert's search box in tests; Obsidian's .search-input-container rules draw it
 		"cs-icon-libraries", // Manage icon libraries' body, a hook for tests and snippets; its groups are Obsidian's SettingGroups
 		"cs-icon-library-reset", // finds the Available heading's reset arrow in tests; Obsidian draws the extra button, cs-reset-idle hides it
+		"cs-box", // marks every box of the plugin's settings (declarative/rowParts.ts); tests find the boxes by it. No rule keys on it since the rows went back to Obsidian's own alignment
 		// Window classes that only set a width until 2026-10-23. The windows are
 		// Obsidian's 560px dialog now; the classes stay as hooks a user's own
 		// snippet may already target.

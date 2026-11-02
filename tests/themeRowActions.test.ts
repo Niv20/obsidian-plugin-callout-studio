@@ -209,6 +209,10 @@ describe("a theme row is not editable", () => {
 		assert.ok(label.includes("rgb(1, 2, 3)"), label);
 		assert.ok(label.includes("rgb(4, 5, 6)"), label);
 		assert.ok(!label.includes("#336699"), "never the stored accent");
+		// A row too narrow for the circles paints its icon with the same two colours.
+		const row = host.querySelector<HTMLElement>(".cs-callout-row");
+		assert.strictEqual(row?.style.getPropertyValue("--cs-row-accent"), "rgb(1, 2, 3)");
+		assert.strictEqual(row?.style.getPropertyValue("--cs-row-bg"), "rgb(4, 5, 6)");
 	});
 
 	it("shows no swatch at all when the theme has not been measured", async () => {
@@ -225,6 +229,10 @@ describe("a theme row is not editable", () => {
 			onOpenUserMenu: () => {},
 		});
 		assert.strictEqual(host.querySelector(".callout-studio-row-colors"), null);
+		// Nor does a narrow row paint its icon with a colour nobody measured.
+		const row = host.querySelector<HTMLElement>(".cs-callout-row");
+		assert.strictEqual(row?.style.getPropertyValue("--cs-row-accent"), "");
+		assert.strictEqual(row?.style.getPropertyValue("--cs-row-bg"), "");
 	});
 });
 

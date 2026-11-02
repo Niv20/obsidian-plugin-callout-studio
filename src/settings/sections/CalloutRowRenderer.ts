@@ -23,6 +23,20 @@
  *   takes a Lucide name only, and a callout's icon can be an emoji, a picture
  *   or another library's glyph.
  *
+ * ## What a narrow row gives up, and where the colour goes
+ *
+ * The row keeps all three parts, and each of its two text lines stays one
+ * line. The name ends in "…" when it does not fit (its tag, one word in every
+ * language, stays beside it). The ids are whole ids, as many as fit, and a
+ * `+N` for the rest; one id is never shown cut in half (idsLineFit.ts).
+ *
+ * The colour is shown by device, not by width. On a computer, as the two
+ * circles before the buttons. On a phone or an iPad they are gone, and the
+ * icon (a tile in the callout's background, drawn in its accent) and the name
+ * (in its accent) carry the colour. The CSS is in styles.css, under *Callout
+ * List Rows*; the one thing this file adds for it is the row's
+ * `--cs-row-accent` and `--cs-row-bg`, which {@link renderColors} sets.
+ *
  * Being a real setting row is what gives Obsidian's keyboard navigation (↑/↓
  * or j/k from row to row, Enter into the row's first button), its inset focus
  * ring, and a row Obsidian can put in a box and find in its search. Until
@@ -63,6 +77,7 @@ import { addThemeRowControls, openThemeRowMenu } from "./themeRowActions";
 import { addRowMenuButton, type RowMenuTrigger } from "./calloutRowMenu";
 import { renderThemeIconInto } from "../../manager/theme/renderThemeIcon";
 import { addBlockableIconButton } from "../../ui/blockedButton";
+import { fitIdsLine } from "./idsLineFit";
 
 /** What a row's buttons do; the lists pass these in. */
 export type RowRendererHandlers = {
@@ -81,10 +96,11 @@ export type RowRendererHandlers = {
 /**
  * Fill `setting`, an empty Obsidian setting row, with one callout.
  *
- * Returns what undoes the two things it adds outside the row's controls (the
- * icon at its start, and the right-click listener), which drawing the same
+ * Returns what undoes the things it adds outside the row's controls (the
+ * right-click listener and the watch on the ids line), which drawing the same
  * row again would otherwise add a second time. Obsidian empties the controls,
- * the name and the description by itself.
+ * the name and the description by itself, and the icon element is reused by the
+ * next draw ({@link rowIconElement}), so nothing here takes it off.
  *
  * @param kind Which list the row is in (see the module comment): a theme's
  *   row gets 👁 instead of ✎, the theme's measured colours, and no tag.
@@ -100,11 +116,7 @@ export function drawCalloutRow(
 	const rowEl = setting.settingEl;
 	setting.setClass("cs-callout-row");
 
-	// The icon goes first in the row, where Obsidian puts a row's icon. It is
-	// made at the end of the row and then moved to the front (`insertBefore`
-	// with the first child), because `createDiv` always appends.
-	const iconEl = rowEl.createDiv({ cls: "callout-studio-row-icon" });
-	rowEl.insertBefore(iconEl, rowEl.firstChild);
+	const iconEl = rowIconElement(rowEl);
 	if (fromTheme) {
 		// The theme's real icon, measured off a rendered callout. The stored
 		// `def.icon` is still on disk but nothing draws it while the theme owns
@@ -116,15 +128,20 @@ export function drawCalloutRow(
 		renderRowIcon(ctx, iconEl, def);
 	}
 
-	// A long name wraps onto a second line, as any setting's name does.
-	setting.setName(def.displayName);
+	// The name is one line and ends in "…" when it is too long, with its tag
+	// beside it (styles.css). Its words are a span of their own, because only
+	// a box can end in "…" and a flex row wraps loose text in a box that
+	// cannot be styled.
+	const nameWords = createFragment((fragment) => fragment.createSpan({ cls: "cs-row-name", text: def.displayName }));
+	setting.setName(nameWords);
 	const tag = rowTag(ctx, def, fromTheme);
 	if (tag) {
 		setting.nameEl.createSpan({ cls: "flair mod-flat cs-fallback-tag", text: tag });
 	}
 
 	renderIdLine(setting.descEl, def);
-	renderSwatches(ctx, setting.controlEl, def, fromTheme);
+	const stopFittingIds = fitIdsLine(setting.descEl);
+	renderColors(ctx, setting, def, fromTheme);
 
 	// The row's menu, whichever way it is asked for: the ⋮ button below, or a
 	// right-click (two-finger click) anywhere on the row, which opens the same
@@ -140,9 +157,10 @@ export function drawCalloutRow(
 		openMenu({ kind: "pointer", row: rowEl, x: event.clientX, y: event.clientY });
 	};
 	rowEl.addEventListener("contextmenu", onContextMenu);
+	// The icon is not taken off here: see rowIconElement.
 	const undo = (): void => {
-		iconEl.remove();
 		rowEl.removeEventListener("contextmenu", onContextMenu);
+		stopFittingIds();
 	};
 
 	if (fromTheme) {
@@ -158,6 +176,34 @@ export function drawCalloutRow(
 	});
 	addRowMenuButton(setting, def.displayName, openMenu);
 	return undo;
+}
+
+/**
+ * The row's icon element, at the start of the row, where Obsidian puts a row's
+ * icon: the one an earlier draw of this row left, emptied, or else a new one.
+ *
+ * Why it is reused and not removed by the row's cleanup. Obsidian runs every
+ * row's cleanup both when it draws the row again and when the reader leaves
+ * the page (`closePage`), and in the second case it runs them *before* the
+ * page slides away, while all of it is still on screen. A cleanup that removed
+ * the icon made every icon vanish for the length of the slide, which with
+ * hundreds of callouts is a long, ugly moment. Leaving the page needs no
+ * cleanup of the icon at all (the page takes the row with it), and drawing the
+ * row again only has to avoid adding a second one.
+ */
+function rowIconElement(rowEl: HTMLElement): HTMLElement {
+	const existing = rowEl.querySelector<HTMLElement>(".callout-studio-row-icon");
+	if (existing) {
+		// Back to how a new element starts; the painters add what the icon needs.
+		existing.empty();
+		existing.removeAttribute("aria-label");
+		return existing;
+	}
+	// Made at the end of the row and then moved to the front (`insertBefore`
+	// with the first child), because `createDiv` always appends.
+	const iconEl = rowEl.createDiv({ cls: "callout-studio-row-icon" });
+	rowEl.insertBefore(iconEl, rowEl.firstChild);
+	return iconEl;
 }
 
 /**
@@ -180,12 +226,12 @@ function rowTag(ctx: SettingsContext, def: CalloutDefinition, fromTheme: boolean
 /**
  * The row's description: every spelling of the callout, `[!id]`, as code.
  *
- * One line: a row with more ids than fit is cut by the browser at the end
- * (styles.css), and because each id is one unbreakable box, the cut always
- * falls between ids. A space separates them, so the line still reads (and
- * copies) as words.
+ * One line: each id is one unbreakable box, and a space separates them, so the
+ * line reads (and copies) as words. A row with more ids than fit shows the ones
+ * that fit and a `+N` for the rest, with the hidden ids in the line's tooltip
+ * ({@link fitIdsLine}); the browser's own "…" would say neither.
  */
-function renderIdLine(descEl: HTMLElement, def: CalloutDefinition): void {
+export function renderIdLine(descEl: HTMLElement, def: CalloutDefinition): void {
 	const ids = getSortedCalloutIds(def, getLocale());
 	ids.forEach((id, index) => {
 		if (index > 0) descEl.appendText(" ");
@@ -194,7 +240,10 @@ function renderIdLine(descEl: HTMLElement, def: CalloutDefinition): void {
 }
 
 /**
- * The two colour circles before the buttons.
+ * The row's colours, shown two ways: the colour circles before the buttons,
+ * and the same colours handed to the style sheet as the row's `--cs-row-accent`
+ * and `--cs-row-bg`, which a row on a phone or an iPad paints its icon and its
+ * name with instead of the circles (styles.css, the `.is-mobile` rules).
  *
  * Two sources, two answers. A Studio row shows its own stored colours. A theme
  * row shows the two the probe actually measured off the rendered callout — the
@@ -202,26 +251,40 @@ function renderIdLine(descEl: HTMLElement, def: CalloutDefinition): void {
  * reading of the theme's CSS, and so are right however the theme arrived at
  * them. A theme row that has not been measured shows none: better an empty slot
  * than a confident wrong colour.
+ *
+ * The variables are set or cleared on every draw, because the same row element
+ * is drawn again and a colour from the last draw must not outlive its callout's
+ * change. A callout with no background paints no tile, so it has no `--cs-row-bg`.
  */
-function renderSwatches(
+function renderColors(
 	ctx: SettingsContext,
-	controlEl: HTMLElement,
+	setting: Setting,
 	def: CalloutDefinition,
 	fromTheme: boolean,
 ): void {
-	let colors: SwatchColors;
-	if (fromTheme) {
-		const { accent, background } = ctx.plugin.registry.themeAppearanceOf(def);
-		if (!accent) return;
-		colors = { accent, bg: background ?? accent };
-	} else {
-		colors = resolveCurrentModeColors(def);
-	}
-	const colorsEl = controlEl.createDiv({ cls: "callout-studio-row-colors" });
+	const colors = rowColors(ctx, def, fromTheme);
+	setRowVariable(setting.settingEl, "--cs-row-accent", colors?.accent);
+	setRowVariable(setting.settingEl, "--cs-row-bg", colors && !colors.transparent ? colors.bg : undefined);
+	if (!colors) return;
+
+	const colorsEl = setting.controlEl.createDiv({ cls: "callout-studio-row-colors" });
 	renderColorCircles(colorsEl, colors, {
 		size: 18,
 		ariaLabel: t("settings.colorSwatchAria", { accent: colors.accent, bg: colors.bg }),
 	});
+}
+
+/** The colours `def`'s row shows, or null when there are none to show. */
+function rowColors(ctx: SettingsContext, def: CalloutDefinition, fromTheme: boolean): SwatchColors | null {
+	if (!fromTheme) return resolveCurrentModeColors(def);
+	const { accent, background } = ctx.plugin.registry.themeAppearanceOf(def);
+	return accent ? { accent, bg: background ?? accent } : null;
+}
+
+/** Set a CSS variable on the row, or take it off when there is no value. */
+function setRowVariable(rowEl: HTMLElement, name: string, value: string | undefined): void {
+	if (value) rowEl.style.setProperty(name, value);
+	else rowEl.style.removeProperty(name);
 }
 
 function renderRowIcon(

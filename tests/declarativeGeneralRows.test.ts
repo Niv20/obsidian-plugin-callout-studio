@@ -1,27 +1,28 @@
 /**
- * tests/declarativeGeneralRows.test.ts — Default fallback callout, the
- * language choice and Use your theme's callout styles, as the declarative
- * settings draw them (settings/declarative/generalRows.ts).
+ * tests/declarativeGeneralRows.test.ts — Default fallback callout and the
+ * language choice, as the declarative settings draw them
+ * (settings/declarative/generalRows.ts).
+ * (The theme's styles switch, which used to be a row here, is the top row of
+ * the theme's page now: tests/declarativeCalloutListPage.test.ts.)
  *
  * Drawn through the test renderer with the real settings tab. The plugin around
  * them is a fake with a real registry. What is checked: the fallback picker is
  * one picker for the whole visit, the row goes grey while saving is paused, a
  * language that has to be downloaded is told in a notice and adds no row, and
  * the footer's globe saves a pick (the globe itself is checked with the footer,
- * declarativeMainPageGroups.test.ts), and the theme's switch shows when the old
- * page showed it and saves through the registry.
+ * declarativeMainPageGroups.test.ts).
  */
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import type { App } from "obsidian";
 import { installFakeDom } from "./support/fakeDom";
 import { DeclarativeHarness } from "./support/declarativeRenderer";
-import { Notice, type ButtonLike, type ToggleComponent } from "./support/obsidianStub";
+import { Notice, type ButtonLike } from "./support/obsidianStub";
 import { DEFAULT_SETTINGS } from "../src/constants";
 import { setLocale, t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import { CalloutStudioSettingsTab } from "../src/settings/SettingsTab";
-import { fallbackRow, GENERAL_ROWS, languageChooser, themeStylesRow } from "../src/settings/declarative/generalRows";
+import { fallbackRow, GENERAL_ROWS, languageChooser } from "../src/settings/declarative/generalRows";
 import { PersistentParts } from "../src/settings/declarative/persistentParts";
 import { RowRegistry } from "../src/settings/declarative/rowRegistry";
 import { toObsidianItems, type TreeContext } from "../src/settings/declarative/types";
@@ -94,7 +95,7 @@ function drawGeneral(plugin: object, app: object = {}) {
 	};
 	const tab = new CalloutStudioSettingsTab(app as App, plugin as SettingsTabPlugin);
 	tab.getSettingDefinitions = () => toObsidianItems([
-		{ type: "group", id: "general", items: [fallbackRow(ctx), themeStylesRow(ctx)] },
+		{ type: "group", id: "general", items: [fallbackRow(ctx)] },
 	]);
 	const harness = new DeclarativeHarness(tab as never);
 	tab.update();
@@ -184,7 +185,7 @@ describe("Default fallback callout", () => {
 describe("Language", () => {
 	it("is not a row at all: the footer's globe is the only place it is chosen", () => {
 		const { harness } = drawGeneral(fakePlugin({ ready: false }).plugin);
-		assert.deepEqual(harness.rows().map((r) => r.def.id), [GENERAL_ROWS.fallback, GENERAL_ROWS.themeStyles]);
+		assert.deepEqual(harness.rows().map((r) => r.def.id), [GENERAL_ROWS.fallback]);
 	});
 
 	it("tells a language that cannot be downloaded in a notice, and adds nothing to the page", async () => {
@@ -222,34 +223,5 @@ describe("Language", () => {
 		assert.equal(registry.settings.language, DEFAULT_SETTINGS.language);
 		assert.deepEqual(calls, []);
 		assert.equal(redraws(), before + 1);
-	});
-});
-
-describe("Use your theme's callout styles", () => {
-	const inMinimal = { customCss: { theme: "Minimal" } };
-
-	it("shows in a theme that styles no callout only while it is off", () => {
-		const shown = (enabled: boolean, app: object): boolean => {
-			const { plugin, registry } = fakePlugin();
-			registry.settings.themeCalloutStyles.enabled = enabled;
-			return drawGeneral(plugin, app).row(GENERAL_ROWS.themeStyles).settingEl.isShown();
-		};
-		assert.equal(shown(true, inMinimal), false);
-		assert.equal(shown(false, inMinimal), true);
-		// Obsidian's default theme: there is nothing to switch off.
-		assert.equal(shown(false, {}), false);
-	});
-
-	it("saves through the registry's change round, which repaints and saves", async () => {
-		const { plugin, registry } = fakePlugin();
-		registry.settings.themeCalloutStyles.enabled = false;
-		const rounds: boolean[] = [];
-		registry.onChange((change) => { rounds.push(change.persists); });
-		const { row } = drawGeneral(plugin, inMinimal);
-		const toggle = row(GENERAL_ROWS.themeStyles).setting.components[0] as ToggleComponent;
-		assert.equal(toggle.getValue(), false);
-		await toggle.commit(true);
-		assert.equal(registry.settings.themeCalloutStyles.enabled, true);
-		assert.deepEqual(rounds, [true]);
 	});
 });

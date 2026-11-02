@@ -47,7 +47,7 @@ export const en: Record<string, string> = {
 
 	// Vault scan / fallback / delete
 	"settings.fallbackTag": "Default",
-	"settings.fallbackTagAuto": "Default fallback",
+	"settings.fallbackTagAuto": "Auto",
 	"settings.rescanVaultDesc": "Add the callout types your notes use that aren't in this list yet.",
 	"settings.rescanVaultHintAction": "Scan for callouts",
 	"manualDiscovery.failed": "Discovery was not saved. Check that settings are writable and sync has finished, then try Settings → My callout types → Scan for callouts again. Existing callouts have not been replaced.",
@@ -492,14 +492,12 @@ export const en: Record<string, string> = {
 	"settings.colorSwatchAria": "Accent: {{accent}} · Background: {{bg}}",
 	// Settings — callouts the active theme styles
 	"settings.themeCalloutsHeading": "Callouts from your theme",
-	"settings.themeCalloutsDesc":
-		"{{theme}} draws these callouts, so Callout Studio leaves them as they are and offers them as Block callouts only.",
 	"settings.themeCalloutsDefaultTheme": "Your theme",
 	"settings.themeCalloutsEmpty": "{{theme}} styles no callouts right now.",
 	"settings.themePreviewAria":
 		'Preview "{{name}}" — see how your theme draws it',
 	"settings.builtInAllThemeStyled":
-		"{{theme}} restyles every built-in callout, so they are all listed above and Callout Studio leaves them alone. To design one of your own, add a callout with a different ID.",
+		"{{theme}} styles every built-in callout, so Callout Studio leaves them all as they are. To design your own, add a callout with a different ID.",
 
 	// The shared callout picker — the fallback row, the command editor
 	"calloutPicker.placeholder": "Search callouts…",
@@ -508,7 +506,7 @@ export const en: Record<string, string> = {
 	// Settings — Fallback callout
 	"settings.fallbackCallout": "Default fallback callout",
 	"settings.fallbackCalloutDesc":
-		"Unrecognized callout types in your vault will inherit the style of this callout.",
+		"Unknown callout types inherit this style.",
 
 	// Settings — Global style
 	"settings.border": "Borders",
@@ -1329,7 +1327,7 @@ export const en: Record<string, string> = {
 		"Adjust the border and shape of every inline callout in your vault.",
 	"settings.themeCalloutStyles": "Use your theme's callout styles",
 	"settings.themeCalloutStylesDesc":
-		"When on, the callouts your theme styles keep its look; when off, Callout Studio draws every callout.",
+		"When on, callouts your theme styles keep its look, and appear only as Block callouts. When off, Callout Studio draws every callout.",
 
 	// Callout types section
 	"settings.calloutTypeRegular": "Block callout",

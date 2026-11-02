@@ -1,8 +1,8 @@
 /**
  * settings/declarative/calloutPages.ts — the user's own callouts as the
- * declarative settings draw them: the My callout types page, its Scan row, and
- * the main page's Add new callout. Also the one callout row every list of
- * callouts uses, the built-in and theme pages included.
+ * declarative settings draw them: the My callout types page and its Scan row.
+ * Also the one callout row every list of callouts uses, the built-in and
+ * theme pages included.
  *
  * Who calls it. The settings tab, for the main page's first box; and
  * calloutListPage.ts, for its rows.
@@ -11,16 +11,21 @@
  * - My callout types is one of Obsidian's lists: its own search field, a +
  *   that opens the editor for a new callout, a grey row while there is none,
  *   and below it a box with Scan for callouts. The rows are in the settings
- *   search, found by name or by any of the callout's ids.
+ *   search, found by name or by any of the callout's ids. (The main page has
+ *   no Add new callout of its own: the + of this list is how one is added.)
  * - Each row is drawn by `drawCalloutRow` (sections/CalloutRowRenderer.ts),
  *   with its ✎ and ⋮.
+ * - A search that finds nothing shows one more row, hidden the rest of the
+ *   time, that says so with the brush mascot (noMatchesRow.ts).
  * - While saving is paused the rows stay as they are; only ✎ is dimmed (it
  *   says why when pressed). ⋮ still opens, so Find callouts works, and the
  *   menu's own changes refuse with a reason. + and Scan say why too.
  */
-import type { SettingDefinition } from "obsidian";
+import type { Setting, SettingDefinition } from "obsidian";
 import { getLocale, t } from "../../i18n";
+import { emptyListState } from "../../ui/mascot/mascotPlaces";
 import type { CalloutDefinition } from "../../types";
+import { calloutMatchesQuery } from "../../utils/calloutSearch";
 import { getSortedCalloutIds, sortCalloutsByDisplayName } from "../../utils/sorting";
 import { CalloutEditor } from "../CalloutEditor";
 import { openCalloutEditorFor } from "../openCalloutEditor";
@@ -28,6 +33,7 @@ import { openBuiltInRowMenu, openRowMenu } from "../sections/CalloutRowActions";
 import { drawCalloutRow, type RowRendererHandlers } from "../sections/CalloutRowRenderer";
 import { runManualScan, scanRunning } from "../sections/manualScan";
 import { partitionCallouts, type RowKind } from "../sections/rowOwnership";
+import { NoMatchesRow } from "./noMatchesRow";
 import { refuseWhilePaused } from "./pausedGuards";
 import { countValue, pausedReason } from "./rowParts";
 import { guardRender } from "./safeTree";
@@ -37,9 +43,10 @@ import type { CsAction, CsGroup, CsList, CsPage, CsRender, TreeContext } from ".
 export const CALLOUT_PAGES = {
 	mine: "callouts-mine",
 	mineList: "callouts-mine-list",
+	mineListEmpty: "callouts-mine-list-empty",
 	scanBox: "callouts-scan",
 	scanRow: "scan-callouts",
-	addCallout: "add-callout",
+	noMatches: "callouts-mine-no-matches",
 } as const;
 
 /** The count at the end of a callout page's row: "12 callouts", "1 callout". */
@@ -121,6 +128,33 @@ export function rowMatchesQuery(row: SettingDefinition, query: string): boolean 
 	return [row.name, ...(row.aliases ?? [])].some((text) => text.toLowerCase().includes(lowerQuery));
 }
 
+/**
+ * My callout types' search, for every row of the list. A callout's row matches
+ * as {@link rowMatchesQuery} says. The "nothing matches" row is the odd one
+ * out: it matches exactly when something is searched for and no callout
+ * does, which shows it and only then.
+ *
+ * Unlike {@link rowMatchesQuery} this reads the live callouts, because the
+ * "nothing matches" row has no words of its own to compare with. (`ctx` is the
+ * same for the life of the settings, so the stale `match` Obsidian keeps from
+ * the first draw still sees the callouts as they are now.)
+ */
+function matchesSearch(ctx: TreeContext, row: SettingDefinition, query: string): boolean {
+	if (!isNoMatchesRow(row)) return rowMatchesQuery(row, query);
+	const lowerQuery = query.trim().toLowerCase();
+	if (lowerQuery === "") return false;
+	return !partitionCallouts(ctx).own.some((def) => calloutMatchesQuery(def, lowerQuery));
+}
+
+/**
+ * Whether `row` is the "nothing matches" row. (Obsidian's typings leave out
+ * the `id` the plugin gives its rows, types.ts; the `in` check is what lets
+ * TypeScript read it safely.)
+ */
+function isNoMatchesRow(row: SettingDefinition): boolean {
+	return "id" in row && row.id === CALLOUT_PAGES.noMatches;
+}
+
 /* ---- My callout types ---- */
 
 /** The row that opens My callout types, with how many there are at its end. */
@@ -135,16 +169,70 @@ export function myCalloutsPage(ctx: TreeContext): CsPage {
 	};
 }
 
-/** The user's own callouts, A→Z, with a search field, a + and an empty row. */
+/**
+ * The user's own callouts, A→Z, with a search field, a + and an empty row.
+ *
+ * Obsidian makes a list's search field once, when it first draws the box, and
+ * only if the box has rows then; a later draw that finds the box under the same
+ * key updates it in place and never adds one. So the list has a key of its own
+ * (`id`) while it is empty: the first callout (a scan finding it, say) or the
+ * last one going makes a new box, with the search field or without it.
+ */
 function myCalloutsList(ctx: TreeContext, own: readonly CalloutDefinition[]): CsList {
 	const handlers = calloutRowHandlers(ctx);
 	return {
 		type: "list",
-		id: CALLOUT_PAGES.mineList,
-		search: { placeholder: t("settings.searchCallouts"), match: rowMatchesQuery },
-		emptyState: t("settings.noCalloutsNow"),
+		id: own.length > 0 ? CALLOUT_PAGES.mineList : CALLOUT_PAGES.mineListEmpty,
+		search: { placeholder: t("settings.searchCallouts"), match: (row, query) => matchesSearch(ctx, row, query) },
+		// The grey row while there is none, with the brush mascot over it (ui/mascot/mascotPlaces.ts).
+		emptyState: emptyListState(t("settings.noCalloutsNow"), t("settings.addNewCallout")),
 		addItem: { name: t("settings.addNewCallout"), action: addNewCallout(ctx) },
-		items: own.map((def) => calloutRow(ctx, def, "user", handlers)),
+		items: [
+			...own.map((def) => calloutRow(ctx, def, "user", handlers)),
+			// Only while there is something to search: an empty list shows its grey row instead.
+			...(own.length > 0 ? [noMatchesRow()] : []),
+		],
+	};
+}
+
+/**
+ * The last row of the list: what the list says while a search finds nothing.
+ * It has no name, so nothing in the settings search can find it, and it is
+ * hidden (`visible: false`) until the list's search shows it (`matchesSearch`).
+ */
+function noMatchesRow(): CsRender {
+	return {
+		id: CALLOUT_PAGES.noMatches,
+		name: "",
+		visible: false,
+		render: guardRender("no matches", drawNoMatchesRow),
+	};
+}
+
+/**
+ * Draw the "nothing matches" row: its words and mascot follow what the list's
+ * search field says. Obsidian shows or hides the row when the query changes,
+ * and its handler runs before ours, so the row is shown exactly when nothing
+ * matches by the time we look at it.
+ *
+ * @returns What takes the row down again (a redraw runs it before drawing anew).
+ */
+function drawNoMatchesRow(setting: Setting): () => void {
+	const row = new NoMatchesRow(setting);
+	const field = setting.settingEl.closest(".setting-group")
+		?.querySelector<HTMLInputElement>(".setting-group-search input") ?? null;
+	const onInput = (): void => {
+		if (setting.settingEl.style.display === "none") {
+			row.hide();
+			return;
+		}
+		row.show(field?.value.trim() ?? "");
+		row.typed();
+	};
+	field?.addEventListener("input", onInput);
+	return () => {
+		field?.removeEventListener("input", onInput);
+		row.dispose();
 	};
 }
 
@@ -175,16 +263,7 @@ async function scanAndRedraw(ctx: TreeContext): Promise<void> {
 	ctx.redraw();
 }
 
-/* ---- Add new callout ---- */
-
-/** Add new callout, on the main page: the row the whole of which is the button. */
-export function addCalloutRow(ctx: TreeContext): CsAction {
-	return {
-		id: CALLOUT_PAGES.addCallout,
-		name: t("settings.addNewCallout"),
-		action: addNewCallout(ctx),
-	};
-}
+/* ---- The list's + ---- */
 
 /** Open the editor for a new callout, then draw again; refused while saving is paused. */
 function addNewCallout(ctx: TreeContext): () => void {

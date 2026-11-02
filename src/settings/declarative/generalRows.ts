@@ -1,7 +1,7 @@
 /**
  * settings/declarative/generalRows.ts — the plugin-wide parts of the main
- * page: the Default fallback callout row, the guarded choice the footer's
- * globe makes for the language, and Use your theme's callout styles.
+ * page: the Default fallback callout row, and the guarded choice the footer's
+ * globe makes for the language.
  *
  * Who calls it. The settings tab, when it builds the main page: the fallback
  * row goes in the first box (settingsTree.ts), and the footer draws the globe
@@ -17,8 +17,9 @@
  * - The language has no row of its own: it is the globe in the footer. A
  *   language that has to be downloaded is told in notices
  *   (sections/languagePicker.ts), not in a row that would appear mid-switch.
- * - The theme's styles switch is a plain control row: Obsidian draws the
- *   toggle, and the tab saves it (controlBinding.ts).
+ *
+ * (The "Use your theme's callout styles" switch used to be a row here. It is
+ * the top row of the theme's own page now: themeStylesSwitch.ts.)
  */
 import { t } from "../../i18n";
 import type { CalloutCombobox } from "../calloutCombobox";
@@ -28,21 +29,16 @@ import {
 	setFallbackCallout,
 } from "../sections/fallbackPicker";
 import { applyLanguagePreference } from "../sections/languagePicker";
-import { partitionCallouts, themeStylesSwitchedOff } from "../sections/rowOwnership";
 import { disabledWhilePaused, refuseWhilePaused } from "./pausedGuards";
 import type { PersistentPart } from "./persistentParts";
 import { addControlComponent } from "./rowParts";
 import { guardRender } from "./safeTree";
-import type { CsControl, CsRender, TreeContext } from "./types";
+import type { CsRender, TreeContext } from "./types";
 
 /** The rows' ids: they key the rows, so they never change. */
 export const GENERAL_ROWS = {
 	fallback: "fallback-callout",
-	themeStyles: "theme-callout-styles",
 } as const;
-
-/** Where the theme's styles switch saves, as a dotted path into the settings. */
-const THEME_STYLES_KEY = "themeCalloutStyles.enabled";
 
 /* ---- Default fallback callout ---- */
 
@@ -101,30 +97,4 @@ export function languageChooser(ctx: TreeContext): (pref: string) => void {
 		(pref: string) => { void applyLanguagePreference(plugin, pref, () => ctx.redraw()); },
 		() => ctx.redraw(),
 	);
-}
-
-/* ---- Use your theme's callout styles ---- */
-
-/**
- * The switch that turns the active theme's callout styles off
- * (manager/theme/themeCalloutsOff.ts). On the main page, below the row that
- * opens the theme's callouts: that page is drawn by the plugin, so a row on it
- * would not be found by the settings search.
- *
- * Shown while the theme's section is: while the theme styles any callout,
- * and while the switch is off (it took the rows away and must stay to bring
- * them back).
- */
-export function themeStylesRow(ctx: TreeContext): CsControl {
-	return {
-		id: GENERAL_ROWS.themeStyles,
-		name: t("settings.themeCalloutStyles"),
-		desc: t("settings.themeCalloutStylesDesc"),
-		visible: () => partitionCallouts(ctx).fromTheme.length > 0 || themeStylesSwitchedOff(ctx),
-		control: {
-			type: "toggle",
-			key: THEME_STYLES_KEY,
-			disabled: disabledWhilePaused(ctx.plugin.settingsWriter),
-		},
-	};
 }

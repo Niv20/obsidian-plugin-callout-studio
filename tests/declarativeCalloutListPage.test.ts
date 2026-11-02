@@ -3,18 +3,20 @@
  * Callouts from your theme pages, which the plugin draws itself
  * (settings/declarative/calloutListPage.ts).
  *
- * What is checked: the rows that open them (their counts, and the theme's
- * showing only while the theme styles a callout), that their callouts stay out
- * of the settings search while the pages' own search field finds them, that an
- * open page draws its rows again when the callouts change (and keeps what is
- * typed in its search field), that it stops once left, and what each page says
- * when it has no rows.
+ * What is checked: the rows that open them (their counts, "None" at none, and
+ * the theme's showing only while the theme styles a callout, or while its
+ * switch is off, with "Off" where the count would be), that their callouts stay
+ * out of the settings search while the pages' own search field finds them, that
+ * an open page draws its rows again when the callouts change (and keeps what is
+ * typed in its search field), that it stops once left, what each page says when
+ * it has no rows, the row that says nothing matches while a search finds
+ * nothing, and the switch at the top of the theme's page.
  */
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
+import { afterEach, describe, it } from "node:test";
 import { installFakeDom } from "./support/fakeDom";
 import { DeclarativeHarness, searchSettings } from "./support/declarativeRenderer";
-import { PluginSettingTab } from "./support/obsidianStub";
+import { createdToggles, PluginSettingTab } from "./support/obsidianStub";
 import { t } from "../src/i18n";
 import { CalloutRegistry } from "../src/manager/CalloutRegistry";
 import {
@@ -39,14 +41,14 @@ function fakeApp(theme?: string) {
 }
 
 /** A tree context around a real registry (with its built-ins loaded). */
-function treeContext(app: object) {
+function treeContext(app: object, options: { paused?: boolean } = {}) {
 	const registry = new CalloutRegistry();
 	registry.load(null);
 	const plugin = {
 		app,
 		registry,
 		get settings() { return registry.settings; },
-		settingsWriter: { isFrozen: false },
+		settingsWriter: { isFrozen: options.paused === true },
 		onIconCacheChange: () => () => {},
 	};
 	const ctx: TreeContext = {
@@ -85,16 +87,12 @@ function drawEntries(ctx: TreeContext) {
 
 /**
  * The names of the callout rows a page shows (hidden ones left out): the
- * name's own text, without the Default flair after it.
+ * name's own words, in their span, without the tag after it.
  */
 function shownNames(page: CalloutListPage): string[] {
-	const TEXT_NODE = 3;
 	return Array.from(page.containerEl.querySelectorAll<HTMLElement>(".cs-callout-row"))
 		.filter((row) => row.isShown())
-		.map((row) => Array.from(row.querySelector(".setting-item-name")?.childNodes ?? [])
-			.filter((node) => node.nodeType === TEXT_NODE)
-			.map((node) => node.textContent)
-			.join(""));
+		.map((row) => row.querySelector(".cs-row-name")?.textContent ?? "");
 }
 
 /** Type `query` into the page's own search field. */
@@ -105,6 +103,30 @@ function searchPage(page: CalloutListPage, query: string): void {
 }
 
 describe("the rows that open the pages", () => {
+	it("say \"None\" at none, never nothing", () => {
+		const { ctx, registry } = treeContext(fakeApp("Minimal"));
+		registry.setThemeOwnedIds(new Set(registry.getBuiltIn().map((def) => def.id)));
+		const { harness } = drawEntries(ctx);
+		assert.equal(harness.row(t("settings.builtInCallouts"))?.settingEl.querySelector(".setting-item-value")?.textContent, "None");
+	});
+
+	it("keep the theme's row while its switch is off, with Off where the count would be", () => {
+		const { ctx, registry } = treeContext(fakeApp("Minimal"));
+		const entry = (): { shown: boolean; value: string | null | undefined } => {
+			const row = drawEntries(ctx).harness.row(t("settings.themeCalloutsHeading"))!;
+			return { shown: row.settingEl.isShown(), value: row.settingEl.querySelector(".setting-item-value")?.textContent };
+		};
+		// A theme that styles no callout, and the switch on: nothing to show.
+		assert.equal(entry().shown, false);
+		// The switch off took the theme's callouts away: the row stays, to bring them back.
+		registry.settings.themeCalloutStyles.enabled = false;
+		assert.deepEqual(entry(), { shown: true, value: "Off" });
+		// Obsidian's default theme has nothing to switch off.
+		const noTheme = treeContext(fakeApp());
+		noTheme.registry.settings.themeCalloutStyles.enabled = false;
+		assert.equal(drawEntries(noTheme.ctx).harness.row(t("settings.themeCalloutsHeading"))!.settingEl.isShown(), false);
+	});
+
 	it("say how many callouts each holds, and the theme's shows only while the theme styles one", () => {
 		const { ctx, registry } = treeContext(fakeApp("Minimal"));
 		const value = (harness: DeclarativeHarness, name: string): string | null | undefined =>
@@ -166,19 +188,147 @@ describe("Built-in callouts", () => {
 		const page = new CalloutListPage(ctx, "builtin", manualSchedule().schedule);
 		page.display();
 		assert.equal(page.containerEl.querySelector(".mod-empty-state .setting-item-name")?.textContent, t("settings.builtInAllThemeStyled", { theme: "Minimal" }));
-		assert.equal(page.containerEl.querySelector(".search-input-container"), null, "no search without rows");
+		assert.equal(page.containerEl.querySelector(".setting-group-search"), null, "no search field in the page without rows, as for any Obsidian box");
+		page.hide();
+	});
+
+	it("says nothing matches, with the row Obsidian draws for an empty list, only while a search finds nothing", () => {
+		const { ctx } = treeContext(fakeApp());
+		const page = new CalloutListPage(ctx, "builtin", manualSchedule().schedule);
+		page.display();
+		const row = (): HTMLElement => page.containerEl.querySelector<HTMLElement>(".cs-no-matches")!;
+		assert.equal(row().isShown(), false, "hidden until something is searched for");
+		searchPage(page, "zzz");
+		assert.equal(row().isShown(), true);
+		assert.ok(row().hasClass("mod-empty-state"), "Obsidian's grey row");
+		assert.equal(row().querySelector(".setting-item-name")?.textContent, t("calloutPicker.noMatches", { query: "zzz" }));
+		assert.deepEqual(shownNames(page), []);
+		// The words follow the query, and the row goes when something matches again.
+		searchPage(page, "  yyy ");
+		assert.equal(row().querySelector(".setting-item-name")?.textContent, t("calloutPicker.noMatches", { query: "yyy" }));
+		searchPage(page, "caution");
+		assert.equal(row().isShown(), false);
+		assert.deepEqual(shownNames(page), ["Warning"]);
+		searchPage(page, "zzz");
+		searchPage(page, "");
+		assert.equal(row().isShown(), false, "an empty search matches everything");
+		page.hide();
+	});
+
+	it("keeps saying so through a redraw while the search still finds nothing", () => {
+		const { ctx, registry } = treeContext(fakeApp("Minimal"));
+		const { schedule, flush } = manualSchedule();
+		const page = new CalloutListPage(ctx, "builtin", schedule);
+		page.display();
+		searchPage(page, "zzz");
+		registry.setThemeOwnedIds(new Set(["note"]));
+		flush();
+		const row = page.containerEl.querySelector<HTMLElement>(".cs-no-matches")!;
+		assert.equal(row.isShown(), true);
+		assert.equal(page.containerEl.querySelectorAll(".cs-no-matches").length, 1, "one row, not one per draw");
+		page.hide();
+	});
+});
+
+describe("the switch at the top of Callouts from your theme", () => {
+	afterEach(() => { createdToggles.length = 0; });
+
+	/** The theme's page, open in a theme that owns Note. */
+	function openThemePage(options: { paused?: boolean } = {}) {
+		const made = treeContext(fakeApp("Minimal"), options);
+		made.registry.setThemeOwnedIds(new Set(["note"]));
+		const { schedule, flush } = manualSchedule();
+		const page = new CalloutListPage(made.ctx, "theme", schedule);
+		page.display();
+		return { ...made, page, flush };
+	}
+
+	/** The one toggle the page drew. */
+	const theSwitch = (): (typeof createdToggles)[number] => createdToggles[createdToggles.length - 1]!;
+
+	it("is the page's first row, in a box of its own, above the list", () => {
+		const { page } = openThemePage();
+		const [switchBox, listBox] = Array.from(page.containerEl.children);
+		assert.ok(switchBox!.hasClass("setting-group") && switchBox!.hasClass("cs-box"));
+		assert.equal(switchBox!.querySelector(".setting-item-name")?.textContent, t("settings.themeCalloutStyles"));
+		assert.equal(switchBox!.querySelector(".setting-item-description")?.textContent, t("settings.themeCalloutStylesDesc"));
+		assert.ok(listBox!.hasClass("mod-list"));
+		assert.equal(theSwitch().getValue(), true, "on, as the setting is");
+		page.hide();
+	});
+
+	it("is not on the Built-in callouts page, which has nothing to switch", () => {
+		const { ctx } = treeContext(fakeApp("Minimal"));
+		const page = new CalloutListPage(ctx, "builtin", manualSchedule().schedule);
+		page.display();
+		assert.equal(createdToggles.length, 0);
+		page.hide();
+	});
+
+	it("saves a flip through the registry's change round, which repaints and saves", async () => {
+		const { page, registry } = openThemePage();
+		const rounds: boolean[] = [];
+		registry.onChange((change) => { rounds.push(change.persists); });
+		await theSwitch().commit(false);
+		assert.equal(registry.settings.themeCalloutStyles.enabled, false);
+		assert.deepEqual(rounds, [true]);
+		page.hide();
+	});
+
+	it("refuses while saving is paused, says why, and puts the switch back", () => {
+		const { page, registry } = openThemePage({ paused: true });
+		const notices: string[] = [];
+		(globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__ = notices;
+		try {
+			assert.equal(theSwitch().disabled, true, "greyed");
+			void theSwitch().commit(false);
+		} finally {
+			delete (globalThis as { __CS_NOTICES__?: string[] }).__CS_NOTICES__;
+		}
+		assert.equal(registry.settings.themeCalloutStyles.enabled, true, "nothing changed");
+		assert.equal(theSwitch().getValue(), true, "the switch is back on");
+		assert.equal(notices.length, 1);
+		page.hide();
+	});
+
+	it("empties the page when it goes off, says why, and fills it again when it goes on", () => {
+		const { page, registry, flush } = openThemePage();
+		void theSwitch().commit(false);
+		// The switch takes the theme's styles away, so the registry stops listing its callouts.
+		registry.setThemeOwnedIds(new Set());
+		flush();
+		assert.deepEqual(shownNames(page), []);
+		assert.equal(page.containerEl.querySelector(".mod-empty-state"), null, "no line about it: the page is the switch alone");
+		assert.equal(page.containerEl.querySelector<HTMLElement>(".mod-list .setting-items")?.isShown(), false, "the empty box is hidden too");
+		assert.equal(page.containerEl.querySelector(".setting-group-search"), null, "the field leaves the page: hidden, it would still square the rows' corners");
+		void theSwitch().commit(true);
+		registry.setThemeOwnedIds(new Set(["note"]));
+		flush();
+		assert.deepEqual(shownNames(page), ["Note"]);
+		assert.equal(page.containerEl.querySelector<HTMLElement>(".mod-list .setting-items")?.isShown(), true, "the box is back with the rows");
+		const search = page.containerEl.querySelector(".setting-group-search");
+		assert.ok(search, "the same field comes back with the rows");
+		const inBox = Array.from(search.parentElement!.children);
+		assert.ok((inBox[inBox.indexOf(search) + 1] as HTMLElement | undefined)?.hasClass("setting-items"), "right above the rows, where Obsidian draws it");
+		page.hide();
+	});
+
+	it("follows the setting when another device changes it", () => {
+		const { page, registry, flush } = openThemePage();
+		registry.settings.themeCalloutStyles.enabled = false;
+		registry.setThemeOwnedIds(new Set());
+		flush();
+		assert.equal(theSwitch().getValue(), false);
 		page.hide();
 	});
 });
 
 describe("Callouts from your theme", () => {
-	it("names the theme above its rows, which are the theme's (👁, not ✎)", () => {
+	it("lists the theme's rows (👁, not ✎)", () => {
 		const { ctx, registry } = treeContext(fakeApp("Minimal"));
 		registry.setThemeOwnedIds(new Set(["note"]));
 		const page = new CalloutListPage(ctx, "theme", manualSchedule().schedule);
 		page.display();
-		// Obsidian's own page description, as its list pages have.
-		assert.match(page.containerEl.querySelector("p.setting-page-desc")?.textContent ?? "", /Minimal/);
 		assert.deepEqual(shownNames(page), ["Note"]);
 		const row = page.containerEl.querySelector<HTMLElement>(".cs-callout-row")!;
 		assert.equal(row.querySelector('[data-cs-tooltip^="Edit"]'), null, "no ✎ on a theme's row");

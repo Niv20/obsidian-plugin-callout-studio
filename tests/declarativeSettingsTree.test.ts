@@ -129,6 +129,28 @@ describe("the settings tab as a tree", () => {
 		assert.equal(harness.rendered[0]!.groupEl.isShown(), false, "no notices, so no box");
 	});
 
+	it("marks every box, at every depth, with the plugin's box class and keeps the classes it had", () => {
+		const { tab, harness } = drawTab();
+		for (const box of harness.rendered) assert.ok(box.groupEl.hasClass("cs-box"), `${box.def.id} carries the box class`);
+		assert.ok(harness.rendered.find((box) => box.def.id === "callouts")!.groupEl.hasClass("cs-callouts-box"), "and keeps the class it already had");
+		// The pages' own boxes too (the lists, the style pages' groups).
+		const pageBoxes = (items: LooseDef[]): LooseDef[] => items.flatMap((item) => [
+			...(item.type === "group" || item.type === "list" ? [item] : []),
+			...pageBoxes(item.items ?? []),
+		]);
+		const boxes = pageBoxes(tab.settingItems as LooseDef[]);
+		assert.ok(boxes.length > 10, "the tree has many boxes");
+		assert.deepEqual(boxes.filter((box) => !(box.cls ?? "").split(" ").includes("cs-box")).map((box) => box.id), []);
+	});
+
+	it("has no Add new callout and no theme switch on the main page: the list's + adds a callout, the theme's page holds the switch", () => {
+		const { harness } = drawTab();
+		const names = harness.rendered.flatMap((box) => box.children.map((row) => row.def.name));
+		assert.equal(names.includes("Add new callout"), false);
+		assert.equal(names.includes("Use your theme's callout styles"), false);
+		assert.equal(names.includes("Language"), false, "the language is the footer's globe now");
+	});
+
 	it("keys every box and row apart, on every page", () => {
 		const { tab, harness } = drawTab();
 		const pages = itemsPages(tab.settingItems as LooseDef[]);

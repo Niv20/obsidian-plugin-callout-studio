@@ -9,25 +9,31 @@
  * in its own module:
  *
  *   (the notices)                          bannerRows.ts
- *   Callouts from your theme ›             calloutListPage.ts
- *     Use your theme's callout styles      generalRows.ts
- *   My callout types ›, Add new callout    calloutPages.ts
+ *   Callouts from your theme ›             calloutListPage.ts (its page
+ *                                            starts with the switch for the
+ *                                            theme's styles: themeStylesSwitch.ts)
+ *   My callout types ›                     calloutPages.ts
  *   Built-in callouts ›                    calloutListPage.ts
  *   Default fallback callout               generalRows.ts
  *   Callout style                          stylePages.ts (with palettesPage.ts)
  *   Menus and commands                     menuPage.ts, commandsPage.ts
  *   Import and export, Danger zone         mainPageGroups.ts
  *   (the footer: language, About, links)   footerGroup.ts
+ *
+ * Every box of the finished tree, at every depth, also carries the plugin's own
+ * box class ({@link markBoxes}), which styles.css keys the rules for the
+ * plugin's rows on.
  */
 import { t } from "../../i18n";
 import { bannersGroup } from "./bannerRows";
 import { builtInCalloutsPage, themeCalloutsPage } from "./calloutListPage";
-import { addCalloutRow, myCalloutsPage } from "./calloutPages";
+import { myCalloutsPage } from "./calloutPages";
 import { commandsPage } from "./commandsPage";
 import { footerGroup } from "./footerGroup";
-import { fallbackRow, themeStylesRow } from "./generalRows";
+import { fallbackRow } from "./generalRows";
 import { dangerZoneGroup, importExportGroup } from "./mainPageGroups";
 import { menuPage } from "./menuPage";
+import { PLUGIN_BOX_CLASS } from "./rowParts";
 import { calloutStyleGroup } from "./stylePages";
 import type { CsGroup, CsItem, CsRender, TreeContext } from "./types";
 
@@ -43,7 +49,7 @@ export const MAIN_PAGE_BOXES = { callouts: "callouts", menus: "menus-and-command
  */
 export function settingsTree(ctx: TreeContext, visitRow: CsRender): CsItem[] {
 	const banners = bannersGroup(ctx);
-	return [
+	const tree: CsItem[] = [
 		{ ...banners, items: [visitRow, ...(banners.items ?? [])] },
 		calloutsBox(ctx),
 		calloutStyleGroup(ctx),
@@ -52,21 +58,22 @@ export function settingsTree(ctx: TreeContext, visitRow: CsRender): CsItem[] {
 		dangerZoneGroup(ctx),
 		footerGroup(ctx),
 	];
+	markBoxes(tree);
+	return tree;
 }
 
-/** The first box: the three callout pages, adding a callout and the fallback. */
+/** The first box: the three callout pages and the fallback. */
 function calloutsBox(ctx: TreeContext): CsGroup {
 	return {
 		type: "group",
 		id: MAIN_PAGE_BOXES.callouts,
-		// Its first two rows show only with a theme that has callouts; the class
-		// keeps the line between rows off the first one shown (styles.css).
+		// Its first row shows only with a theme that has callouts (or while the
+		// switch for them is off); the class keeps the line between rows off the
+		// first one shown (styles.css).
 		cls: "cs-callouts-box",
 		items: [
 			themeCalloutsPage(ctx),
-			themeStylesRow(ctx),
 			myCalloutsPage(ctx),
-			addCalloutRow(ctx),
 			builtInCalloutsPage(ctx),
 			fallbackRow(ctx),
 		],
@@ -81,4 +88,19 @@ function menusBox(ctx: TreeContext): CsGroup {
 		heading: t("settings.menusAndCommands"),
 		items: [menuPage(ctx), commandsPage(ctx)],
 	};
+}
+
+/**
+ * Give every box of `items` (groups and lists, at every depth, through the
+ * pages that hold them) the plugin's box class, keeping any class it already
+ * has. The tree is built anew each time it is asked for, so changing its
+ * boxes in place alters nothing that lives on.
+ */
+function markBoxes(items: readonly CsItem[]): void {
+	for (const item of items) {
+		if ("type" in item && (item.type === "group" || item.type === "list")) {
+			item.cls = item.cls ? `${item.cls} ${PLUGIN_BOX_CLASS}` : PLUGIN_BOX_CLASS;
+		}
+		if ("items" in item && item.items) markBoxes(item.items);
+	}
 }

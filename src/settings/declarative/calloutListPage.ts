@@ -13,17 +13,23 @@
  * the rows `searchable: false` would not do, because that also takes them out
  * of the page's own search field.
  *
- * The page is drawn the way Obsidian draws its own list pages: a description
- * (`p.setting-page-desc`, the theme page only), then one of Obsidian's boxes
- * holding the same callout rows as My callout types (calloutPages.ts), with a
- * search field of its own above them.
+ * The page is drawn the way Obsidian draws its own list pages: one of
+ * Obsidian's boxes holding the same callout rows as My callout types (calloutPages.ts), with a
+ * search field of its own above them. A search that finds nothing says so,
+ * with the brush mascot (noMatchesRow.ts).
+ *
+ * The theme's page starts with the switch that turns the theme's callout
+ * styles off (themeStylesSwitch.ts). While it is off the theme names no callout
+ * the plugin can see, so the page is the switch alone (no box, no empty-state
+ * line), and the row that opens it says "Off" where the count would be.
+ *
  * Obsidian never draws such a page again, so while it is open the page listens
  * for what changes its rows (the same signals as the settings tab) and draws
  * them again itself, through its own `TreeUpdater`, which also waits while a
  * menu is open. Only the rows are drawn again: the search field keeps its text
  * and its focus. Leaving the page stops it all.
  */
-import { Setting, SettingGroup, SettingPage, type App } from "obsidian";
+import { Setting, SettingGroup, SettingPage } from "obsidian";
 import { getLocale, t } from "../../i18n";
 import type { CalloutDefinition } from "../../types";
 import { calloutMatchesQuery } from "../../utils/calloutSearch";
@@ -31,9 +37,11 @@ import { sortCalloutsByDisplayName } from "../../utils/sorting";
 import { isRowMenuActive } from "../sections/calloutRowMenu";
 import { calloutListsSignature } from "../sections/calloutListsSignature";
 import { drawCalloutRow } from "../sections/CalloutRowRenderer";
-import { activeThemeLabel, partitionCallouts } from "../sections/rowOwnership";
+import { activeThemeLabel, partitionCallouts, themeStylesSwitchedOff } from "../sections/rowOwnership";
 import { subscribeSettingsTab } from "../sections/tabSubscriptions";
 import { calloutCount, calloutRowHandlers } from "./calloutPages";
+import { NoMatchesRow } from "./noMatchesRow";
+import { ThemeStylesSwitch } from "./themeStylesSwitch";
 import { interactionInProgress, nextFrameOrSoon, TreeUpdater, type Scheduler } from "./treeUpdater";
 import type { CsPage, TreeContext } from "./types";
 
@@ -55,17 +63,24 @@ export function builtInCalloutsPage(ctx: TreeContext): CsPage {
 }
 
 /**
- * The row that opens Callouts from your theme. Shown only while the theme
- * styles a callout; the switch below it on the main page (generalRows.ts)
- * stays for the case where the switch itself took them away.
+ * The row that opens Callouts from your theme. Shown while the theme styles a
+ * callout, and while the switch on the page itself is off: that switch took
+ * the callouts away, and the page must stay reachable to bring them back. Its
+ * value is the count, or "Off" while the switch is off.
+ *
+ * (`displayValue` and `visible` are asked again at every draw of the main
+ * page, so they follow the switch after it is flipped.)
  */
 export function themeCalloutsPage(ctx: TreeContext): CsPage {
 	return {
 		type: "page",
 		id: CALLOUT_LIST_PAGES.theme,
 		name: t("settings.themeCalloutsHeading"),
-		displayValue: calloutCount(calloutsOf(ctx, "theme").length),
-		visible: () => calloutsOf(ctx, "theme").length > 0,
+		// The same word the version comparison uses for a setting that is off.
+		displayValue: () => (themeStylesSwitchedOff(ctx)
+			? t("recovery.details.value.off")
+			: calloutCount(calloutsOf(ctx, "theme").length)),
+		visible: () => calloutsOf(ctx, "theme").length > 0 || themeStylesSwitchedOff(ctx),
 		page: () => new CalloutListPage(ctx, "theme"),
 	};
 }
@@ -86,10 +101,14 @@ interface DrawnRow {
 export class CalloutListPage extends SettingPage {
 	/** The box of rows; null until the page is displayed. */
 	private list: SettingGroup | null = null;
-	/** The theme page's description (it names the theme, which can change); null on Built-in. */
-	private intro: HTMLElement | null = null;
+	/** The search field above the rows (in the box only while there are rows to search); null until displayed. */
+	private searchEl: HTMLElement | null = null;
+	/** The theme page's switch; null on Built-in. */
+	private readonly stylesSwitch: ThemeStylesSwitch | null;
 	/** The rows on screen. */
 	private rows: DrawnRow[] = [];
+	/** The row that says "nothing matches" (hidden until a search finds nothing). */
+	private noMatches: NoMatchesRow | null = null;
 	/** What undoes each row's drawing (the icon and the right-click listener). */
 	private rowCleanups: (() => void)[] = [];
 	/** What the search field holds. */
@@ -108,6 +127,7 @@ export class CalloutListPage extends SettingPage {
 		schedule?: Scheduler,
 	) {
 		super();
+		this.stylesSwitch = kind === "theme" ? new ThemeStylesSwitch(ctx) : null;
 		this.updater = new TreeUpdater({
 			signature: () => this.signature(),
 			update: () => this.drawRows(),
@@ -122,17 +142,19 @@ export class CalloutListPage extends SettingPage {
 		this.hide();
 		this.containerEl.empty();
 		this.query = "";
-		if (this.kind === "theme") this.intro = this.containerEl.createEl("p", { cls: "setting-page-desc" });
+		// The theme's page opens with its switch, then its list.
+		this.stylesSwitch?.draw(this.containerEl);
 		this.list = new SettingGroup(this.containerEl).addClass("mod-list");
-		// As Obsidian does for a box: a search field only if there are rows to search.
-		if (calloutsOf(this.ctx, this.kind).length > 0) {
-			this.list.addSearch((search) => {
-				search.setPlaceholder(t("settings.searchCallouts")).onChange((query) => {
-					this.query = query;
-					this.applySearch();
-				});
+		this.list.addSearch((search) => {
+			// The field and the box around it, which are hidden together.
+			this.searchEl = search.inputEl.closest<HTMLElement>(".setting-group-search") ?? search.inputEl.parentElement;
+			search.setPlaceholder(t("settings.searchCallouts")).onChange((query) => {
+				this.query = query;
+				this.applySearch();
+				// After the list is filtered, so the mascot is already where it belongs.
+				this.noMatches?.typed();
 			});
-		}
+		});
 		this.drawRows();
 		this.updater.markDrawn();
 		this.stopListening = subscribeSettingsTab(this.ctx.app, this.ctx.plugin, (force) => this.updater.request(force));
@@ -144,6 +166,7 @@ export class CalloutListPage extends SettingPage {
 		this.stopListening = null;
 		this.updater.dispose();
 		this.clearRows();
+		this.stylesSwitch?.dispose();
 	}
 
 	/** Draw the rows again from the callouts now; the search field stays as it is. */
@@ -152,12 +175,17 @@ export class CalloutListPage extends SettingPage {
 		if (!list) return;
 		this.clearRows();
 		list.listEl.empty();
+		this.stylesSwitch?.sync();
 		const defs = calloutsOf(this.ctx, this.kind);
-		this.updateIntro(defs.length > 0);
+		this.showSearch(defs.length > 0);
+		// While the switch is off the page is the switch alone: no box, no line about it.
+		const switchedOff = this.kind === "theme" && themeStylesSwitchedOff(this.ctx);
+		list.listEl.toggle(!switchedOff);
+		if (switchedOff) return;
 		// Each row is a `Setting` made in the box, which is what the box's own
 		// `addSetting` does.
 		if (defs.length === 0) {
-			new Setting(list.listEl).setName(emptyText(this.ctx.app, this.kind)).setClass("mod-empty-state");
+			new Setting(list.listEl).setName(emptyText(this.ctx, this.kind)).setClass("mod-empty-state");
 			return;
 		}
 		const handlers = calloutRowHandlers(this.ctx);
@@ -166,49 +194,79 @@ export class CalloutListPage extends SettingPage {
 			this.rowCleanups.push(drawCalloutRow(this.ctx, setting, def, this.kind, handlers));
 			this.rows.push({ def, setting });
 		}
+		// Last in the box, hidden until a search finds nothing.
+		this.noMatches = new NoMatchesRow(new Setting(list.listEl));
+		this.noMatches.el.hide();
 		this.applySearch();
 	}
 
-	/** The description names the active theme, and goes when there are no rows to describe. */
-	private updateIntro(hasRows: boolean): void {
-		if (!this.intro) return;
-		this.intro.setText(t("settings.themeCalloutsDesc", { theme: activeThemeLabel(this.ctx.app) }));
-		this.intro.toggle(hasRows);
+	/**
+	 * As Obsidian does for a box, the search field is in the box only while
+	 * there are rows to search. The same field (with its listeners and its
+	 * text) is taken out and put back, never just hidden: Obsidian squares
+	 * the top corners of the rows' box under a search field that is in the
+	 * page, hidden or not (`.setting-group-search:not(:empty) + .setting-items`).
+	 */
+	private showSearch(show: boolean): void {
+		const search = this.searchEl;
+		const rowsBox = this.list?.listEl;
+		const box = rowsBox?.parentElement;
+		if (!search || !rowsBox || !box) return;
+		if (!show) search.remove();
+		else if (!search.isConnected) box.insertBefore(search, rowsBox);
 	}
 
-	/** Show only the rows whose name or one of whose ids holds the query. */
+	/**
+	 * Show only the rows whose name or one of whose ids holds the query, and,
+	 * when there are none, the row that says so.
+	 */
 	private applySearch(): void {
 		const lowerQuery = this.query.trim().toLowerCase();
+		let matching = 0;
 		for (const row of this.rows) {
-			row.setting.settingEl.toggle(calloutMatchesQuery(row.def, lowerQuery));
+			const matches = calloutMatchesQuery(row.def, lowerQuery);
+			row.setting.settingEl.toggle(matches);
+			if (matches) matching++;
 		}
+		const none = lowerQuery !== "" && matching === 0;
+		const noMatches = this.noMatches;
+		if (!noMatches) return;
+		noMatches.el.toggle(none);
+		if (none) noMatches.show(this.query.trim());
+		else noMatches.hide();
 	}
 
 	private clearRows(): void {
 		for (const undo of this.rowCleanups) undo();
 		this.rowCleanups = [];
 		this.rows = [];
+		this.noMatches?.dispose();
+		this.noMatches = null;
 	}
 
 	/**
 	 * Everything the rows show, as one string, so a change that would draw
 	 * the same rows is skipped (the settings tab's own signature, which reads
-	 * all three lists: more than this page needs, never less).
+	 * all three lists: more than this page needs, never less). The theme page
+	 * also shows its switch, which follows the setting and the paused state.
 	 */
 	private signature(): string {
 		const { fromTheme, own, builtIn } = partitionCallouts(this.ctx);
-		return calloutListsSignature(this.ctx, activeThemeLabel(this.ctx.app), getLocale(), {
-			theme: fromTheme,
-			user: own,
-			builtin: builtIn,
-		});
+		return JSON.stringify([
+			calloutListsSignature(this.ctx, activeThemeLabel(this.ctx.app), getLocale(), {
+				theme: fromTheme,
+				user: own,
+				builtin: builtIn,
+			}),
+			this.ctx.plugin.settings.themeCalloutStyles.enabled,
+			this.ctx.plugin.settingsWriter.isFrozen,
+		]);
 	}
 }
 
 /** What the page says while it has no rows. */
-function emptyText(app: App, kind: LazyListKind): string {
-	const theme = activeThemeLabel(app);
-	return kind === "builtin"
-		? t("settings.builtInAllThemeStyled", { theme })
-		: t("settings.themeCalloutsEmpty", { theme });
+function emptyText(ctx: TreeContext, kind: LazyListKind): string {
+	const theme = activeThemeLabel(ctx.app);
+	if (kind === "builtin") return t("settings.builtInAllThemeStyled", { theme });
+	return t("settings.themeCalloutsEmpty", { theme });
 }

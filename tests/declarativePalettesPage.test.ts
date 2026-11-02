@@ -95,7 +95,8 @@ describe("the entry on the main page", () => {
 	it("says how many palettes there are", () => {
 		assert.equal(entryValue(drawPalettes(fakePlugin(["Ocean", "Forest", "Sand"]).plugin).harness), "3 palettes");
 		assert.equal(entryValue(drawPalettes(fakePlugin(["Ocean"]).plugin).harness), "1 palette");
-		assert.equal(entryValue(drawPalettes(fakePlugin([]).plugin).harness), "");
+		// "None" at none: the end of the row is never left blank.
+		assert.equal(entryValue(drawPalettes(fakePlugin([]).plugin).harness), "None");
 	});
 });
 

@@ -29,6 +29,15 @@ import type { RowRegistry } from "./rowRegistry";
 import { guardRender } from "./safeTree";
 import type { CsGroup, CsRender } from "./types";
 
+/**
+ * The class every box of the plugin's settings carries: settingsTree.ts puts
+ * it on each box of the tree, and the boxes the plugin draws itself (the lazy
+ * pages) add it. styles.css keys the rules only the plugin's own rows should
+ * get on it, so the rows of other plugins, drawn in the same window, stay as
+ * they are.
+ */
+export const PLUGIN_BOX_CLASS = "cs-box";
+
 /** What {@link buttonRow} is told. */
 export interface ButtonRowSpec {
 	/** A key that never changes; also the name a jump to this row uses. */
@@ -106,12 +115,15 @@ export function pausedReason(writer: { isFrozen: boolean }): string | null {
 
 /**
  * How many there are, for the end of the row that opens a page ("12 callouts",
- * "1 callout"), or nothing at none: the page says so itself.
+ * "1 callout"), or "None" at none: the end of a row is never left blank.
+ *
+ * "None" is the word the version comparison already uses for an empty value
+ * (`recovery.details.value.none`), so it is translated in every language.
  *
  * @param keys The sentence for one, and the one for more (with `{{count}}`).
  */
 export function countValue(count: number, keys: { one: LocaleKey; many: LocaleKey }): string {
-	if (count === 0) return "";
+	if (count === 0) return t("recovery.details.value.none");
 	return count === 1 ? t(keys.one) : t(keys.many, { count });
 }
 

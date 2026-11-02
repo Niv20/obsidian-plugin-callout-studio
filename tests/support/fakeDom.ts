@@ -330,6 +330,8 @@ export class FakeElement {
 	readonly childNodes: FakeNode[] = [];
 	parentElement: FakeElement | null = null;
 	clientWidth = 240;
+	/** The width of the content, which is more than `clientWidth` where the box shortens it. */
+	scrollWidth = 240;
 	clientHeight = 36;
 	/**
 	 * Plain field, not derived from the tree: suites build detached trees and say
@@ -525,6 +527,13 @@ export class FakeElement {
 		return siblingOf(this, -1);
 	}
 
+	/** The element just before this one under the same parent, text skipped, like the real DOM. */
+	get previousElementSibling(): FakeElement | null {
+		const siblings = this.parentElement?.children ?? [];
+		const at = siblings.indexOf(this);
+		return at > 0 ? (siblings[at - 1] ?? null) : null;
+	}
+
 	appendChild<T extends FakeNode>(node: T): T {
 		node.parentElement?.removeChild(node);
 		node.parentElement = this;
@@ -699,6 +708,20 @@ export class FakeElement {
 	 */
 	findAll(selector: string): FakeElement[] {
 		return this.querySelectorAll(selector);
+	}
+
+	/**
+	 * Obsidian's `onWindowMigrated`: the listeners are kept, so a suite can say
+	 * the element has moved to another window (see {@link migrateElement}).
+	 */
+	readonly migrationListeners: Array<(win: FakeWindow) => void> = [];
+
+	onWindowMigrated(listener: (win: FakeWindow) => void): () => void {
+		this.migrationListeners.push(listener);
+		return () => {
+			const at = this.migrationListeners.indexOf(listener);
+			if (at >= 0) this.migrationListeners.splice(at, 1);
+		};
 	}
 
 	toggleClass(classes: string | string[], value: boolean): void {
