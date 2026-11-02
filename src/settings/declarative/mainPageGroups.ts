@@ -12,8 +12,8 @@
  * says why when pressed (rowParts.ts); the ones that change nothing (Export,
  * Version history, the conversion review) stay usable.
  *
- * (The page's last box, the footer with the language, About and the project's
- * links as icon tiles, is footerGroup.ts.)
+ * (The page's last box, the footer with the language, the project's links,
+ * License and the version as icon tiles, is footerGroup.ts.)
  */
 import { t } from "../../i18n";
 import { ExportFormatModal } from "../ExportFormatModal";

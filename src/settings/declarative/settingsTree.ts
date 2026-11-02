@@ -23,7 +23,8 @@
  *                                            commandsPage.ts
  *   Import and export                      mainPageGroups.ts
  *   Danger zone                            mainPageGroups.ts
- *   (the footer: language, About, links)   footerGroup.ts
+ *   (the footer: language, links, License, version)
+ *                                          footerGroup.ts
  *
  * Every box of the finished tree, at every depth, also carries the plugin's own
  * box class ({@link markBoxes}), which styles.css keys the rules for the

@@ -126,6 +126,8 @@ On this page you can:
 - Edit one of your commands with its pencil, or delete it with its **✕** (or
   the **Delete** key). Deleting asks first.
 
+One of your commands that cannot run right now is dimmed and tagged after its name: **Paused by theme** while your theme supplies its callout and the command writes a Heading or Inline callout, or **Callout missing** when its callout no longer exists. Hover over the tag to read why; on a phone or tablet the reason is written under the command's name.
+
 The arrow (↺) in the **Built-in commands** heading turns every built-in command on. It shows only while one of them is off. Assigned shortcuts and your custom commands are preserved.
 
 Obsidian owns the shortcut itself; Callout Studio provides the command.

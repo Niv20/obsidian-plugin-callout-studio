@@ -12,7 +12,8 @@
  *   row while there is none. A row is the callout's icon, the command's name,
  *   its shortcuts, ⊕, and ✎. A command the theme has suspended (or whose
  *   callout is gone) is dimmed and wears a short tag after its name; the
- *   whole sentence is in the tag's tooltip.
+ *   whole sentence is in the tag's tooltip, and on a touch screen, which has
+ *   no hover, under the name as well.
  * - **Built-in commands**: a row per built-in command with its shortcuts, ⊕
  *   and a switch; ↺ in the heading turns them all back on.
  * The shortcuts are drawn as Obsidian's Hotkeys page draws them, and ⊕ opens
@@ -24,7 +25,7 @@
  * While saving is paused nothing changes: +, ✕ and ↺ say why, ✎ is dimmed and
  * says why, and the built-in rows are greyed.
  */
-import { setIcon, setTooltip } from "obsidian";
+import { Platform, setIcon, setTooltip } from "obsidian";
 import { t } from "../../i18n";
 import { emptyListState } from "../../ui/mascot/mascotPlaces";
 import { FIXED_COMMAND_IDS, FIXED_COMMAND_NAME_KEYS, isFixedCommandEnabled, type FixedCommandId } from "../../editor/commands";
@@ -106,6 +107,9 @@ function customCommandRow(ctx: TreeContext, command: CustomCommand, redrawIf: (c
 	return {
 		id: `command-${command.id}`,
 		name,
+		// A touch screen has no hover for the tag's tooltip, so there the
+		// sentence also stands under the name, where a row's description goes.
+		...(paused && Platform.isMobile ? { desc: pausedSentence(def !== undefined) } : {}),
 		render: guardRender(name, (setting) => {
 			// First in the row, where a list row's icon goes; drawn at the end and
 			// moved to the front, because `createDiv` always appends.
@@ -113,7 +117,8 @@ function customCommandRow(ctx: TreeContext, command: CustomCommand, redrawIf: (c
 			const iconEl = rowEl.createDiv({ cls: "callout-studio-row-icon" });
 			rowEl.insertBefore(iconEl, rowEl.firstChild);
 			// A short tag after the name instead of a sentence under it; the
-			// sentence stays in the tag's tooltip.
+			// sentence stays in the tag's tooltip (and, on a touch screen, under
+			// the name too).
 			const tagEl = paused ? addPausedTag(setting.nameEl, rowEl, def !== undefined) : null;
 			// The icon the reader sees beside the callout, the theme's one too. A
 			// callout that is gone gets the dashed ring the lists draw for "no
@@ -142,8 +147,9 @@ function customCommandRow(ctx: TreeContext, command: CustomCommand, redrawIf: (c
 /**
  * Mark a command that cannot run now: a tag after its name saying why in two
  * or three words, and the row dimmed (styles.css, `is-command-paused`). The
- * full sentence is the tag's tooltip, which a phone has no hover for, so the
- * tag's words have to be enough on their own.
+ * full sentence is the tag's tooltip; a touch screen has no hover for it, so
+ * there the row carries the sentence as its description as well
+ * ({@link customCommandRow}).
  *
  * @param calloutExists False when the command's callout is gone; true when the
  *   theme has taken it over.
@@ -154,8 +160,13 @@ function addPausedTag(nameEl: HTMLElement, rowEl: HTMLElement, calloutExists: bo
 	const tagEl = nameEl.createSpan({ cls: "cs-paused-tag" });
 	setIcon(tagEl.createSpan({ cls: "cs-paused-tag-icon" }), "pause");
 	tagEl.createSpan({ text: t(calloutExists ? "commandBuilder.pausedTag" : "commandBuilder.missingTag") });
-	setTooltip(tagEl, t(calloutExists ? "commandBuilder.commandSuspended" : "commandBuilder.missingCallout"));
+	setTooltip(tagEl, pausedSentence(calloutExists));
 	return tagEl;
+}
+
+/** Why a paused command cannot run, in a whole sentence: see {@link addPausedTag}. */
+function pausedSentence(calloutExists: boolean): string {
+	return t(calloutExists ? "commandBuilder.commandSuspended" : "commandBuilder.missingCallout");
 }
 
 /* ---- Built-in commands ---- */

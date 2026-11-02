@@ -152,8 +152,8 @@ export async function deletePalette(
 }
 
 /**
- * What the delete window says under its title (`Delete palette "X"?`) about
- * `palette`.
+ * What the delete window says under its heading (`Delete palette`, with the
+ * palette's name in quotes on the line below) about `palette`.
  */
 function deletePaletteQuestion(plugin: SettingsTabPlugin, palette: CustomPalette): string {
 	// The callouts keep their colors either way — what deletion costs them

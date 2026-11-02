@@ -110,7 +110,7 @@ describe("the Callout style box", () => {
 		]);
 	});
 
-	it("has no row for the icon libraries: Pick an icon's Manage libraries is the one way in", () => {
+	it("has no row for the icon libraries: they live in the Colors and icons box and Pick an icon", () => {
 		const { harness } = drawStyle(fakePlugin().plugin);
 		const names = box(harness, STYLE_PAGES.box).children.map((r) => r.def.name);
 		assert.ok(!names.includes(t("iconLibraries.title")));

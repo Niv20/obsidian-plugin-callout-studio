@@ -685,7 +685,8 @@ the window of the same name. The page is two boxes:
   suspended, or which is gone, is dimmed (`is-command-paused`) and wears a
   short tag after its name (`cs-paused-tag`: "Paused by theme" or "Callout
   missing"); the full sentence is the tag's tooltip, and the row has no
-  description.
+  description - except on a touch screen (`Platform.isMobile`), which has no
+  hover for the tooltip, where the sentence is the row's description too.
 - **Built-in commands** (`commands-builtin`): a row per built-in command
   (`command-<fixed id>`) with its shortcuts, ⊕ and a switch
   (`setFixedCommandEnabled`, which registers or unregisters it), and ↺ in the

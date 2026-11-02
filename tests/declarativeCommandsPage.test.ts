@@ -12,7 +12,7 @@
  */
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import type { App } from "obsidian";
+import { Platform, type App } from "obsidian";
 import { installFakeDom } from "./support/fakeDom";
 import { DeclarativeHarness, searchSettings, type RenderedBox } from "./support/declarativeRenderer";
 import { PluginSettingTab, type ButtonLike, type ToggleComponent } from "./support/obsidianStub";
@@ -147,6 +147,20 @@ describe("Commands and shortcuts", () => {
 		assert.ok(paused.settingEl.hasClass("is-command-paused"), "the row is dimmed");
 		assert.ok(paused.settingEl.querySelector(".callout-studio-row-icon")?.hasClass("cs-icon-none"), "the dashed ring where the icon would be");
 		assert.equal(paused.setting.descEl.textContent, "", "no sentence under the name");
+	});
+
+	it("puts the tag's sentence under the name on a touch screen, which has no hover for the tooltip", () => {
+		const wasMobile = Platform.isMobile;
+		Platform.isMobile = true;
+		try {
+			const { harness } = drawCommands(fakePlugin([GONE, WRAP_NOTE]));
+			const paused = row(harness, "command-c2");
+			assert.equal(paused.setting.descEl.textContent, t("commandBuilder.missingCallout"));
+			assert.equal(paused.settingEl.querySelector<HTMLElement>(".cs-paused-tag")?.textContent, t("commandBuilder.missingTag"), "the tag stays");
+			assert.equal(row(harness, "command-c1").setting.descEl.textContent, "", "a command that can run has nothing to explain");
+		} finally {
+			Platform.isMobile = wasMobile;
+		}
 	});
 
 	it("leaves a command that can run without a tag", () => {

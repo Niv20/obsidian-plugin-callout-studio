@@ -123,8 +123,8 @@ const win = (tab: CalloutStudioSettingsTab): FakeWindow => tab.containerEl.owner
 describe("the settings tab as a tree", () => {
 	it("lays the main page out in its boxes, in order", () => {
 		const { harness } = drawTab();
-		// The danger zone ends the settings; the footer, with the globe, About
-		// and the links, comes after it.
+		// The danger zone ends the settings; the footer, with the globe, the
+		// links, License and the version, comes after it.
 		assert.deepEqual(harness.rendered.map((box) => box.def.id), [
 			"banners", "callouts", "colors-and-icons", "callout-style", "menus-and-commands",
 			"import-export", "danger-zone", "footer",
