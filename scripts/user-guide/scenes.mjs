@@ -52,11 +52,11 @@ function makeHost() {
 	return plugin;
 }
 
-/** The settings' main page, where Add new callout sits in the first box. */
+/** The settings' main page, whose first box holds My callout types (its + adds a callout). */
 function mountSettings(plugin) {
 	return mountSettingsPage(plugin, {
 		title: "Add a callout in settings",
-		description: "Callout Studio's settings as Obsidian draws them, on a fresh setup in the default dark theme. Add new callout opens the editor.",
+		description: "Callout Studio's settings as Obsidian draws them, on a fresh setup in the default dark theme. Open My callout types and its + opens the editor.",
 	});
 }
 
@@ -93,7 +93,8 @@ function mountAutocomplete(plugin) {
 	};
 }
 
-export async function mountScene(name) {
+/** `options` is for a scene another picture reuses with a change (the website's Version history); the guide passes none. */
+export async function mountScene(name, options) {
 	installDomHelpers();
 	setLocale("en");
 	document.body.className = "theme-dark is-desktop";
@@ -102,7 +103,7 @@ export async function mountScene(name) {
 	const plugin = name.startsWith("create-") && name !== "create-settings" ? makeHost() : sharedHost();
 	const mount = mounts[name];
 	if (!mount) throw new Error(`Unknown user-guide scene: ${name}`);
-	const metadata = await mount(plugin);
+	const metadata = await mount(plugin, options);
 	await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 	await document.fonts.ready;
 	return metadata;

@@ -297,12 +297,43 @@ export async function exportSvg(page, selector, options = {}) {
 			const order = context ? own : Math.max(own, ...[...element.children].map(paintOrder));
 			paintOrders.set(element, order); return order;
 		}
+		// What a sticky bar hides. The icon picker opens with its chosen icon centred,
+		// so a row or two of icons sit under the search bar, which stays at the top of
+		// the scroller. The browser never shows them. They were exported anyway,
+		// clipped to the scroller, and the bar's box starts at the very edge of that
+		// clip: at a fractional scale the one pixel row both only half cover let a
+		// hairline of the hidden icons through under the line above. So an element
+		// that lies wholly behind an opaque sticky bar is not drawn at all.
+		const hidingBars = [];
+		const opaque = value => /^rgb\(|,\s*1\)$/.test(color(value));
+		function stickyBarsIn(scroller, view) {
+			// Only a scrolled container has anything passing under its bars.
+			if (!scroller.scrollTop && !scroller.scrollLeft) return [];
+			const bars = [];
+			for (const candidate of scroller.querySelectorAll("*")) {
+				const style = getComputedStyle(candidate), measured = candidate.getBoundingClientRect();
+				if (style.position !== "sticky" || style.display === "none" || style.visibility === "hidden" || Number(style.opacity) < 1 || !opaque(style.backgroundColor)) continue;
+				if (measured.width && measured.height) bars.push({ element: candidate, order: paintOrder(candidate), view, box: box(measured) });
+			}
+			return bars;
+		}
+		function behindBar(element, r) {
+			return hidingBars.some(bar => {
+				// The bar, what it holds and what holds it are drawn; so is anything that paints above it.
+				if (bar.element.contains(element) || element.contains(bar.element) || paintOrder(element) > bar.order) return false;
+				const left = Math.max(r.x, bar.view.x), top = Math.max(r.y, bar.view.y);
+				const right = Math.min(r.x + r.width, bar.view.x + bar.view.width), bottom = Math.min(r.y + r.height, bar.view.y + bar.view.height);
+				return right > left && bottom > top && left >= bar.box.x - .02 && top >= bar.box.y - .02
+					&& right <= bar.box.x + bar.box.width + .02 && bottom <= bar.box.y + bar.box.height + .02;
+			});
+		}
 		function walk(element) {
 			const style = getComputedStyle(element), measured = element.getBoundingClientRect();
 			if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity) === 0) return "";
 			if (!measured.width || !measured.height) return [...element.children].map(walk).join("");
 			const r = box(measured);
 			if (r.x + r.width < padding || r.y + r.height < padding || r.x > width - padding || r.y > height - padding) return "";
+			if (behindBar(element, r)) return "";
 			if (element instanceof SVGSVGElement) return artwork(element, r);
 			if (element instanceof HTMLImageElement) throw new Error("Raster images are not supported by the vector documentation exporter");
 			const after = pseudo(element, "::after", r), afterBehind = Number(getComputedStyle(element, "::after").zIndex) < 0;
@@ -317,8 +348,12 @@ export async function exportSvg(page, selector, options = {}) {
 			let children = "";
 			// Sticky toolbars and floating menus paint above their later siblings.
 			const childNodes = [...element.childNodes].map((node, index) => ({ node, index, z: node.nodeType === Node.ELEMENT_NODE ? paintOrder(node) : 0 })).sort((a, b) => a.z - b.z || a.index - b.index);
+			const clips = ["hidden", "clip", "auto", "scroll"].some(value => style.overflowX === value || style.overflowY === value);
+			const bars = clips ? stickyBarsIn(element, r) : [];
+			hidingBars.push(...bars);
 			for (const { node: child } of childNodes) children += child.nodeType === Node.TEXT_NODE ? textNode(child, style, element) : child.nodeType === Node.ELEMENT_NODE ? walk(child) : "";
-			if (["hidden", "clip", "auto", "scroll"].some(value => style.overflowX === value || style.overflowY === value)) children = `<g clip-path="url(#${clip(r, cornerRadii(style, r))})">${children}</g>`;
+			hidingBars.length -= bars.length;
+			if (clips) children = `<g clip-path="url(#${clip(r, cornerRadii(style, r))})">${children}</g>`;
 			result += children + (beforeOnTop ? before : "") + (afterBehind ? "" : after);
 			return Number(style.opacity) < 1 ? `<g opacity="${style.opacity}">${result}</g>` : result;
 		}

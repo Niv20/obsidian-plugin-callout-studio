@@ -360,8 +360,10 @@ async function outline() {
 }
 
 // ─── 9. Version history (the guide's production scene) ─────────────────────
+// With one more version than the guide shows: the carousel's window is a
+// fixed height and cuts the list off, so the rail needs a row to run into.
 async function history() {
-	return mountGuideScene("version-history");
+	return mountGuideScene("version-history", { older: true });
 }
 
 const mounts = {

@@ -55,7 +55,8 @@ try {
 		};
 	}, metadata.selector);
 	assert.equal(geometry.title, "Idea");
-	assert.deepEqual(geometry.items, ["Copy callout Markdown", "Set callout closed (-)", "Set callout open (+)", "Make callout non-collapsible", "Edit callout settings", "Open Callout Studio settings"]);
+	// The callout is open (`+`), so the fold rows offer the two states it is not in.
+	assert.deepEqual(geometry.items, ["Copy callout Markdown", "Set callout closed (-)", "Make callout non-collapsible", "Edit callout settings", "Open Callout Studio settings"]);
 	assert.deepEqual(geometry.callout.slice(0, 2), [57, 57]);
 	assert.deepEqual(geometry.menu.slice(0, 2), [405, 150]);
 	assert.ok(geometry.iconPaths > 0, "Idea must retain its rendered lightbulb icon");

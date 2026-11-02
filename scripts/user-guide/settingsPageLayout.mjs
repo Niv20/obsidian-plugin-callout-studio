@@ -8,8 +8,8 @@
  * The main idea. The frame is Obsidian's settings window, `.modal.mod-settings`,
  * which app.css sizes like any dialog: 560px wide, and at most 80% of a phone's
  * screen. That is narrower than any picture wants, and narrow enough to change
- * what is drawn (a callout row under 450px hides its colour dots, as it does
- * in a narrow tab). So each renderer gives the frame the size of its own
+ * what is drawn (a callout row keeps fewer of its ids and cuts its name
+ * sooner, as it does in a narrow tab). So each renderer gives the frame the size of its own
  * picture, and the rest is the same for all of them: the page fills the frame,
  * the main page keeps Obsidian's top and bottom padding, and a sub-page starts
  * at its title bar.

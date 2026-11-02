@@ -12,7 +12,6 @@ import { ExportFormatModal } from "../../src/settings/ExportFormatModal.ts";
 import { addItems } from "../../src/editor/contextmenu/items.ts";
 import { MENU_PAGE } from "../../src/settings/declarative/menuPage.ts";
 import { COMMANDS_PAGE } from "../../src/settings/declarative/commandsPage.ts";
-import { GENERAL_ROWS } from "../../src/settings/declarative/generalRows.ts";
 import { registerLocale, setLocale, t } from "../../src/i18n/index.ts";
 import { es } from "../../src/i18n/es.ts";
 import { openModal, mountNote, mountSettings, settingsContext } from "./fixture-host.mjs";
@@ -58,7 +57,7 @@ function replaceCallout(plugin) {
 	input.value = "tip";
 	input.dispatchEvent(new Event("input", { bubbles: true }));
 	const tip = [...modal.modalEl.querySelectorAll(".callout-studio-replace-item")]
-		.find(row => row.querySelector(".callout-studio-replace-item-id")?.textContent === "tip");
+		.find(row => row.getAttribute("data-callout-id") === "tip");
 	if (!tip) throw new Error("Replacement scene needs the real Tip row");
 	tip.click();
 	return metadata;
@@ -114,7 +113,8 @@ function idMoveHere(plugin) {
 	input.value = "project";
 	input.dispatchEvent(new Event("input", { bubbles: true }));
 	input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
-	if (!editor.modalEl.querySelector(".cs-callout-ids-setting .setting-item-error .cs-link-btn")) {
+	// A sentence that names another callout is drawn under the row's label, not under the field.
+	if (!editor.modalEl.querySelector(".cs-callout-ids-setting .cs-tag-message .cs-link-btn")) {
 		throw new Error("ID move scene needs the real move it here offer");
 	}
 	return metadata;
@@ -188,7 +188,7 @@ function chooseField(modal, name, label) {
 	const row = [...modal.modalEl.querySelectorAll(".setting-item")]
 		.find(el => el.querySelector(".setting-item-name")?.textContent === name);
 	if (!row) throw new Error(`Missing actual command field: ${name}`);
-	const plainChoice = row.querySelector(".cs-select-button");
+	const plainChoice = row.querySelector(".cs-select-dropdown.cs-dropdown-field");
 	if (plainChoice) {
 		// A plain choice opens Obsidian's menu, which is added to <body>, not to the row.
 		plainChoice.click();
@@ -198,7 +198,7 @@ function chooseField(modal, name, label) {
 		item.click();
 		return;
 	}
-	row.querySelector(".cs-combobox-control").click();
+	row.querySelector(".cs-combobox .cs-dropdown-field").click();
 	const option = [...row.querySelectorAll('[role="option"]')]
 		.find(el => (el.querySelector(".callout-studio-suggestion-name")?.textContent ?? el.textContent) === label);
 	if (!option) throw new Error(`Missing production command choice: ${label}`);
@@ -220,10 +220,12 @@ function commandEditor(plugin) {
 function languageSelector(plugin) {
 	return mountSettings(plugin, {
 		height: 560,
+		// The foot of the page, where the globe is.
+		boxes: ["danger-zone", "footer"],
 		title: "Choose the interface language",
-		description: "The settings' Language row opens Obsidian's own menu listing every supported language under its native name, with a check mark beside the language shown. The dark-mode settings window crops the menu after its first options.",
+		description: "The globe tile in the settings' footer opens Obsidian's own menu listing every supported language under its native name, with a check mark beside the language shown. The dark-mode settings window crops the menu after its first options.",
 		after(harness, frame) {
-			const field = rowById(harness, GENERAL_ROWS.language).querySelector(".cs-select-button");
+			const field = rowById(harness, "footer-tiles").querySelector(".cs-select-button");
 			field.click();
 			// Obsidian adds its menu to <body>. Keep the real menu, with its CSS,
 			// inside the exported frame, just under its field, and let the frame
@@ -247,7 +249,9 @@ function languageLocalized(plugin) {
 	setLocale("es");
 	return mountSettings(plugin, {
 		title: "Callout Studio in Spanish",
-		description: "The settings' main page in Spanish: production rows resolve their labels through the actual t() function and the repository's Spanish translation table, registered entirely offline. The real language-reset arrow shows the saved preference differs from the fixture's English Obsidian language.",
+		// The foot of the page, where the language is chosen and the tiles sit.
+		boxes: ["import-export", "danger-zone", "footer"],
+		description: "The foot of the settings' main page in Spanish: production rows resolve their labels through the actual t() function and the repository's Spanish translation table, registered entirely offline. The row of icon tiles below them is the footer.",
 	});
 }
 

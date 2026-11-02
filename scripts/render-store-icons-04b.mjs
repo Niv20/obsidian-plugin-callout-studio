@@ -27,7 +27,7 @@ body { margin:0; padding:24px; overflow:hidden; background:var(--background-prim
 .modal { position:relative; margin:0; max-height:640px!important; }
 #guide-picker.modal { height:650px!important; max-height:none!important; }
 #guide-picker.modal > .modal-content { max-height:none; }
-#guide-libraries.modal { width:470px!important; max-width:470px!important; height:720px!important; max-height:none!important; }
+#guide-libraries.modal { width:470px!important; max-width:470px!important; height:768px!important; max-height:none!important; }
 .modal-content { min-height:0; }
 `;
 const browser = await chromium.launch({ headless: true, executablePath: process.env.BROWSER_EXECUTABLE });
@@ -52,15 +52,29 @@ try {
 			return { width: rect.width, height: rect.height, scrollHeight: node.querySelector(".modal-content").scrollHeight,
 				clientHeight: node.querySelector(".modal-content").clientHeight };
 		};
-		const rows = [...document.querySelectorAll("#guide-libraries .cs-icon-library-row")].map(node => ({
-			name: node.querySelector(".setting-item-name")?.textContent,
-			meta: node.querySelector(".setting-item-description")?.textContent,
+		// The window's groups as drawn: an empty group is not shown at all.
+		const groups = [...document.querySelectorAll("#guide-libraries .cs-icon-library-group:not(.cs-hidden)")].map(group => ({
+			group: group.dataset.csGroup,
+			heading: group.querySelector(".setting-item-heading .setting-item-name")?.textContent,
+			rows: [...group.querySelectorAll(".cs-icon-library-row")].map(node => ({
+				name: node.querySelector(".setting-item-name")?.textContent,
+				meta: node.querySelector(".setting-item-description")?.textContent,
+				button: node.querySelector(".cs-icon-library-action")?.getAttribute("aria-label"),
+			})),
 		}));
-		return { picker: measure(selectors.picker), libraries: measure(selectors.libraries), rows };
+		return { picker: measure(selectors.picker), libraries: measure(selectors.libraries), groups };
 	}, selectors);
-	assert.deepEqual(geometry.rows.map(row => row.name), [
-		"Lucide", "Material", "Emoji", "Custom Icons", "Tabler Icons",
-		"Font Awesome", "RPG Awesome", "Octicons", "Simple Icons",
+	assert.deepEqual(geometry.groups.map(({ group, heading, rows }) => ({ group, heading, rows: rows.map(row => row.name) })), [
+		{ group: "available", heading: "Available libraries", rows: ["Lucide", "Material", "Custom Icons", "Tabler Icons", "Font Awesome", "Simple Icons"] },
+		{ group: "download", heading: "Libraries to download", rows: ["Octicons", "RPG Awesome"] },
+		{ group: "hidden", heading: "Hidden libraries", rows: ["Emoji"] },
+	]);
+	// Each kind of row carries the button that says what it is.
+	assert.deepEqual(geometry.groups.flatMap(({ rows }) => rows.map(row => `${row.name}: ${row.button}`)), [
+		"Lucide: Hide Lucide", "Material: Hide Material", "Custom Icons: Hide Custom Icons",
+		"Tabler Icons: Delete Tabler Icons", "Font Awesome: Delete Font Awesome", "Simple Icons: Delete Simple Icons",
+		"Octicons: Download Octicons", "RPG Awesome: Download RPG Awesome",
+		"Emoji: Show Emoji",
 	]);
 	assert.ok(geometry.libraries.scrollHeight <= geometry.libraries.clientHeight,
 		`The library list is clipped: ${geometry.libraries.scrollHeight} > ${geometry.libraries.clientHeight}`);
@@ -86,6 +100,6 @@ try {
 	console.log(`04B-icons: ${Math.round(Buffer.byteLength(svg) / 1024)} KiB; ` +
 		`picker ${geometry.picker.width} × ${geometry.picker.height}; ` +
 		`libraries ${geometry.libraries.width} × ${geometry.libraries.height}`);
-	console.log(geometry.rows.map(row => `${row.name}: ${row.meta}`).join("\n"));
+	console.log(geometry.groups.map(({ heading, rows }) => `${heading}\n${rows.map(row => `  ${row.name}: ${row.meta}`).join("\n")}`).join("\n"));
 	await page.close();
 } finally { await browser.close(); }

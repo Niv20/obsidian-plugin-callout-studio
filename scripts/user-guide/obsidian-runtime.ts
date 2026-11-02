@@ -63,6 +63,8 @@ export function installDomHelpers(table?: IconTable): void {
 		hide(this: HTMLElement) { this.style.display = "none"; },
 		toggle(this: HTMLElement, shown: boolean) { if (shown) this.style.removeProperty("display"); else this.style.display = "none"; },
 		isShown(this: HTMLElement) { return this.style.display !== "none"; },
+		// Obsidian tells an element when it moves to another window; a scene is one window.
+		onWindowMigrated(this: HTMLElement) { return () => {}; },
 	});
 	Object.assign(window, {
 		createEl: (tag: string, options?: any, callback?: any) => make(null, tag, options, callback),

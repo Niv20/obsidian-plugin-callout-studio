@@ -58,7 +58,7 @@ async function fallbackPicker(plugin) {
 		description: "The settings' Default fallback callout row shows Project note as the synthetic saved fallback and its real Reset to default arrow. Its actual CalloutCombobox is opened to registered types, with production names, IDs, icons, and colors in dark mode. Nothing is selected or saved by the scene.",
 		after(harness) {
 			fallbackRow = rowById(harness, GENERAL_ROWS.fallback);
-			fallbackRow.querySelector(".cs-combobox-control").click();
+			fallbackRow.querySelector(".cs-combobox .cs-dropdown-field").click();
 		},
 	});
 	await document.fonts.ready;

@@ -63,20 +63,22 @@ function hero() {
     svg += text(283, 90, "Callout Studio has", 26, "#E3D8FC", `${center} font-weight="500"`);
     return svg + text(283, 151, "so much more to offer...", 44, "#FCF9FF", `${center} font-weight="700" letter-spacing="-1.5"`);
 }
-/** Today's date and its box of versions, cut from the guide's Version history picture. */
+/**
+ * Today's heading on the timeline and its first two versions, with their times,
+ * dots and buttons, cut from the guide's Version history page picture and scaled
+ * to fit the tile's width.
+ */
 function history() {
     return heading("Version history")
-        + component("version-history", [41, 150, 526, 28], 20, 58, 526, 28)
-        + component("version-history", [41, 189.75, 526, 120.56], 20, 92, 526, 120.56);
+        + component("version-history", [100, 176, 700, 195], 20, 62, 526, 160);
 }
 function contextMenu() {
     return heading("Right-click menu")
         // The storefront's real Idea block sits behind its production menu.
         + component("05-context-menu", [57, 57, 280, 101], 74, 53, 280, 101)
         // Clip to the native menu shell, excluding the captured scene behind it.
-        // Six rows since the menu offers all three fold states (one checked), so
-        // it sits higher in the tile to fit whole.
-        + component("05-context-menu", [405, 150, 227.53, 179], 30.5, 58, 227.53, 179, 8);
+        // Five rows: the Idea is open, so the fold rows offer only the other two states.
+        + component("05-context-menu", [405, 150, 227.53, 151.5], 30.5, 67, 227.53, 151.5, 8);
 }
 function savedPalettes() {
     return heading("Saved color palettes")

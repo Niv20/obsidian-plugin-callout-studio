@@ -10,6 +10,7 @@ export function makeHost() {
 	const texts = new Map(), files = new Map(), caches = new Map();
 	const app = {
 		appId: "user-guide-fixture",
+		isDarkMode: () => document.body.classList.contains("theme-dark"),
 		customCss: { theme: "", snippets: [], enabledSnippets: new Set() },
 		vault: {
 			configDir: ".obsidian", getName: () => "Documentation", getMarkdownFiles: () => [...files.values()], getConfig: () => true,

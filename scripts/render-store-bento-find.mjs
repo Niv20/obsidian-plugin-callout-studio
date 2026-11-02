@@ -23,7 +23,7 @@ body { margin:0; padding:20px; overflow:hidden; background:transparent; }
 *, *::before, *::after { animation:none!important; transition:none!important; }
 #bento-find { width:233px; height:414px; display:flex; flex-direction:column; overflow:hidden; background:transparent; }
 #bento-find .view-content { flex:1 1 auto; min-height:0; overflow:hidden; }
-#bento-find .cs-combobox-control input[type="text"].cs-combobox-input { font-size:12.5px; }
+#bento-find .cs-occurrences-picker .cs-dropdown-field { font-size:12.5px; }
 #bento-find .cs-occurrences-scroll { overflow:hidden; }
 #bento-find .search-result-file-title { font-size:12.5px; padding-block:2px; }
 #bento-find .search-result-file-match { font-size:12px; line-height:16px; padding-block:4px; }
@@ -48,8 +48,8 @@ try {
 	assert.equal(metadata.files, 3);
 	assert.equal(metadata.summary, "4 occurrences in 3 files");
 	assert.deepEqual(metadata.locations, ["Line 1 · Heading", "Line 9 · Block", "Line 3 · Heading", "Line 7 · Inline"]);
-	assert.deepEqual(await page.locator("#bento-find input").evaluateAll(inputs => inputs.map(input => input.value)), ["All types"]);
-	assert.equal(await page.locator("#bento-find .nav-header .clickable-icon svg").count(), 1, "the format filter in the pane's header");
+	assert.deepEqual(await page.locator("#bento-find .cs-occurrences-picker .cs-dropdown-field-label").allTextContents(), ["All types"]);
+	assert.equal(await page.locator("#bento-find .search-row .clickable-icon svg").count(), 1, "the format filter at the end of the type field's row");
 	const geometry = await page.locator(metadata.selector).boundingBox();
 	assert.equal(geometry.width, 233);
 	assert.equal(geometry.height, 414);

@@ -6,7 +6,7 @@ import { createOccurrencesFrame } from "../../src/usage/occurrencesViewFrame.ts"
 import { OccurrenceResults } from "../../src/usage/occurrenceResults.ts";
 import { OccurrenceTypeChoices, occurrencePickerChoices, ALL_TYPES_ID } from "../../src/usage/occurrenceTypeChoices.ts";
 import { scanCalloutOccurrences } from "../../src/usage/scanCalloutOccurrences.ts";
-import { SettingsRecoveryModal } from "../../src/settings/SettingsRecoveryModal.ts";
+import { VERSION_HISTORY_PAGE } from "../../src/settings/declarative/versionHistoryPage.ts";
 import { SettingsRecoveryDetailsModal } from "../../src/settings/SettingsRecoveryDetailsModal.ts";
 import { mergeVersions } from "../../src/manager/setupVersions.ts";
 import { setupDetails } from "../../src/manager/setupDetails.ts";
@@ -16,8 +16,6 @@ import { createPortableConversionFrame, updatePortableSelection } from "../../sr
 import { portableConversionRows, renderPortableConversionRows } from "../../src/portable/portableConversionRows.ts";
 import { preparePortableCalloutConversion } from "../../src/utils/portableCalloutVault.ts";
 import { PortableConversionHelpModal } from "../../src/portable/PortableConversionHelpModal.ts";
-import { addSidebarNavButton, createSidebarNavHeader } from "../../src/ui/sidebarFrame.ts";
-import { HELP_ICON_ID } from "../../src/constants.ts";
 import { QuickInsertModal } from "../../src/settings/QuickInsertModal.ts";
 import { mountSettings, openModal, settingsContext } from "./fixture-host.mjs";
 
@@ -43,16 +41,14 @@ function seedCallouts(plugin) {
 
 
 /**
- * A sidebar view as Obsidian lays it out: the leaf's content with the pane's
- * nav header first (one icon button per entry of `buttons`), then the view's
- * content, which is returned.
+ * A sidebar view as Obsidian lays it out: the leaf's content, and in it the
+ * view's content, which is returned. (The pane's icon button, help or filter,
+ * is drawn by the pane's own frame, at the end of its first row.)
  */
-function sidebarPanel(cls, width, height, buttons) {
+function sidebarPanel(cls, width, height) {
 	const leaf = document.body.createDiv({ cls: "workspace-leaf-content", attr: { id: "guide-scene" } });
 	leaf.style.width = `${width}px`;
 	leaf.style.height = `${height}px`;
-	const { buttons: row } = createSidebarNavHeader(leaf);
-	for (const button of buttons) addSidebarNavButton(row, { ...button, onPress() {} });
 	return leaf.createDiv({ cls: `view-content ${cls}` });
 }
 
@@ -83,8 +79,8 @@ async function findScene(plugin, pickerOpen) {
 	const all = Object.entries(noteSources).flatMap(([path, text]) => scanCalloutOccurrences(path, text));
 	const index = { dataRevision: 1, query: () => ({ occurrences: all, fileCount: Object.keys(noteSources).length }) };
 	const types = new OccurrenceTypeChoices(plugin.registry, index);
-	const root = sidebarPanel("cs-occurrences-view", 640, 650, [{ icon: "filter", label: t("usage.filterFormat") }]);
-	const frame = createOccurrencesFrame(root);
+	const root = sidebarPanel("cs-occurrences-view", 640, 650);
+	const frame = createOccurrencesFrame(root, () => {});
 	let selected = pickerOpen ? ALL_TYPES_ID : "project";
 	const picker = new CalloutCombobox(frame.pickerHost, {
 		registry: plugin.registry, choices: () => occurrencePickerChoices(types, selected), value: selected,
@@ -99,19 +95,25 @@ async function findScene(plugin, pickerOpen) {
 	frame.summary.setText(t("usage.summary", { count: shown.length, files: new Set(shown.map(row => row.path)).size }));
 	new OccurrenceResults(100).render(frame.results, shown, 100, true, () => {}, () => {});
 	if (pickerOpen) {
-		const input = frame.pickerHost.querySelector("input");
-		input.click();
+		// The field opens the list; its search box is inside the list.
+		const field = frame.pickerHost.querySelector(".cs-combobox .cs-dropdown-field");
+		field.click();
+		await waitFor(() => field.getAttribute("aria-expanded") === "true");
 		// A real search makes registered and note-only choices visible together.
+		const input = frame.pickerHost.querySelector(".cs-combobox input");
 		input.value = "de";
 		input.dispatchEvent(new Event("input", { bubbles: true }));
-		await waitFor(() => input.getAttribute("aria-expanded") === "true");
 	}
 	return metadata(pickerOpen ? "Find callouts: searchable type picker" : "Find callouts: Project note occurrences",
 		pickerOpen ? "The production CalloutCombobox searches registered types and the unregistered idea type derived by the real source scanner from synthetic notes."
 			: "The production occurrences sidebar frame and cards show source references to project across three synthetic notes, with block and heading formats counted separately.");
 }
 
-function recoveryFixture(plugin) {
+/**
+ * `older` adds one version beneath the three the guide shows: a window that
+ * cuts the list off (the website's) needs a row for the rail to run into.
+ */
+function recoveryFixture(plugin, { older = false } = {}) {
 	seedCallouts(plugin);
 	const current = copy(plugin.registry.toSaveData());
 	const previous = copy(current);
@@ -138,10 +140,17 @@ function recoveryFixture(plugin) {
 		source(oldest, "backup", at(1, 7, 50), "before-reset"),
 		source(oldest, "history", at(1, 7, 40), "edit"),
 	];
+	if (older) {
+		// A colour of its own makes it a setup of its own: one setup kept in two
+		// places is one row.
+		const earliest = copy(oldest);
+		earliest.callouts.find(row => row.id === "project").colorDark = "#f472b6";
+		sources.push(source(earliest, "history", at(1, 7, 10), "edit"));
+	}
 	const versions = mergeVersions(sources);
 	plugin.recovery = {
 		listVersions: async () => versions,
-		difference: data => ({ callouts: data.callouts?.length ?? 0, changed: differingEntries(current, data).size }),
+		differences: () => data => ({ callouts: data.callouts?.length ?? 0, changed: differingEntries(current, data).size }),
 		details: (source, version) => ({ ...setupDetails(source, current), version }),
 		restore: async () => { throw new Error("Guide fixtures never restore settings"); },
 		removeVersion: async () => { throw new Error("Guide fixtures never delete backups"); },
@@ -149,11 +158,10 @@ function recoveryFixture(plugin) {
 	return { current, previous, versions };
 }
 
-async function historyScene(plugin) {
-	recoveryFixture(plugin);
-	const modal = new SettingsRecoveryModal(plugin.app, plugin);
-	const result = openModal(modal, { title: "Version history", description: "The actual version-history timeline compares synthetic saved setups with the current setup. The entries and timestamps are documentation fixtures." });
-	await waitFor(() => modal.contentEl.querySelector(".cs-recovery-row"));
+async function historyScene(plugin, options) {
+	recoveryFixture(plugin, options);
+	const result = mountSettings(plugin, { path: [VERSION_HISTORY_PAGE], title: "Version history", description: "The actual version-history page draws a timeline of synthetic saved setups, each compared with the current setup. The entries and timestamps are documentation fixtures." });
+	await waitFor(() => document.querySelector("#guide-scene .cs-recovery-row"));
 	return result;
 }
 
@@ -187,8 +195,8 @@ async function conversionScene(plugin) {
 	};
 	syntheticVault(plugin, conversionSources);
 	const plan = await preparePortableCalloutConversion(plugin.app);
-	const root = sidebarPanel("cs-portable-view", 640, 670, [{ icon: HELP_ICON_ID, label: t("portable.help") }]);
-	const frame = createPortableConversionFrame(root);
+	const root = sidebarPanel("cs-portable-view", 640, 670);
+	const frame = createPortableConversionFrame(root, () => {});
 	frame.retry.hidden = true;
 	updatePortableSelection(frame, plan, true);
 	renderPortableConversionRows(frame.results, plan, portableConversionRows(plan), 100, false, undefined, () => {});
@@ -223,17 +231,17 @@ async function quickInsertScene(plugin, filtered) {
 	attachSyntheticEditor(plugin);
 	plugin.localState.quickInsertSource = filtered ? "user" : "all";
 	const modal = new QuickInsertModal(plugin);
-	const result = openModal(modal, { title: filtered ? "Quick insert: My callouts" : "Quick insert block callout", description: filtered ? "The actual Quick insert modal filters to synthetic user-defined callouts and renders their real block previews. The source dropdown is opened through its production control."
+	const result = openModal(modal, { title: filtered ? "Quick insert: My callouts" : "Quick insert block callout", description: filtered ? "The actual Quick insert modal filters to synthetic user-defined callouts and renders their real block previews. The source funnel opens its production menu."
 		: "The actual Quick insert modal builds its previews with the plugin's generated CSS and reading processor. A synthetic writable note supplies the insertion target; nothing is inserted." });
 	await waitFor(() => modal.contentEl.querySelector(".cs-qi-preview .callout"));
 	if (filtered) {
-		const field = modal.contentEl.querySelector(".cs-quick-insert-filter .cs-select-button");
+		const field = modal.contentEl.querySelector(".cs-quick-insert-filter");
 		field.click();
 		await waitFor(() => field.getAttribute("aria-expanded") === "true");
 		// Obsidian adds its menu to <body>. Keep the real menu inside the
-		// exported window, just under its field.
+		// exported window, just under its funnel.
 		const menuEl = document.querySelector("body > .menu");
-		if (!menuEl) throw new Error("The source field did not open Obsidian's menu");
+		if (!menuEl) throw new Error("The source funnel did not open Obsidian's menu");
 		const modalRect = modal.modalEl.getBoundingClientRect();
 		const fieldRect = field.getBoundingClientRect();
 		modal.modalEl.appendChild(menuEl);

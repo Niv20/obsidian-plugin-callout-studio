@@ -19,7 +19,7 @@ real vault; all content is synthetic.
 | `carousel_context-menu.svg` | Carousel: the block-callout and heading-callout right-click menus | 620 × 480 |
 | `carousel_find-callouts.svg` | Carousel: the Find callouts sidebar beside a note | 620 × 480 |
 | `carousel_outline.svg` | Carousel: heading callouts in the Outline and in `[[#` link suggestions | 620 × 480 |
-| `carousel_version-history.svg` | Carousel: the Version history window | 620 × 480 |
+| `carousel_version-history.svg` | Carousel: the Version history window, whole, with the timeline running on past its bottom edge | 620 × 480 |
 
 The carousel images are 620:480 to match the site's carousel card. Palette and framing copy the
 site's hero artwork (`#14101e` → `#1c142b` ground, `#39265f` glow, `#6b47c2` bloom, violet rim).
@@ -68,6 +68,12 @@ the same, and a rebuild is byte-identical.
 - Section images render at most 448 px wide, so keep their text large enough to read at that size.
 - The two section images carry their own shadow, so their `img` entries leave out the site's
   `border` and `shadow` flags; those would frame the transparent canvas, not the window.
+- The Version history image is the one carousel window shown whole, in the same margins as the
+  others, rather than cut off by the canvas. Its list is cut by the window's own bottom edge, just
+  under the title of a fourth version, with a short fade into the window colour, so the timeline's
+  rail runs to the edge and the history reads as longer than the window. The guide's Version
+  history scene takes an `older` option that adds that fourth version (`mountScene(name, options)`);
+  the guide's own picture, and the README and store tiles cut from it, keep three.
 - Safari masks each element of a masked group on its own, so the carousel's bottom fade flattens
   the window into one layer first (`compose.mjs`, `panel()`). Without it, the note lines under the
   Quick insert window showed through it. Check a faded image in WebKit, not only in Chrome.
